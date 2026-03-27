@@ -3,12 +3,12 @@ import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  apiKey: 'AIzaSyAGgfUrYYq57nm-vg1KvG0RWmjGC7mnvP0',
+  authDomain: 'nba-showdown-2k25.firebaseapp.com',
+  projectId: 'nba-showdown-2k25',
+  storageBucket: 'nba-showdown-2k25.firebasestorage.app',
+  messagingSenderId: '345880761475',
+  appId: '1:345880761475:web:43ed2bedd9f5c83a4b77b6',
 };
 
 const app = initializeApp(firebaseConfig);

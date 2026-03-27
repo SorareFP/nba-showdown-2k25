@@ -21,7 +21,10 @@
   border-left: 4px solid;
   border-radius: var(--radius);
   padding: 12px;
+  cursor: pointer;
+  transition: border-color 0.15s;
 }
+.card:hover { border-color: rgba(255,255,255,0.25); }
 
 .cardHeader {
   display: flex;
@@ -52,3 +55,13 @@
 .copies { font-size: 10px; color: var(--text-dim); margin-left: auto; }
 
 .desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+
+.cardArt {
+  width: calc(100% + 24px);
+  margin: -12px -12px 8px;
+  height: 140px;
+  object-fit: cover;
+  object-position: top center;
+  border-radius: var(--radius) 0 0 0;
+  display: block;
+}

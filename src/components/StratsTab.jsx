@@ -1,4 +1,6 @@
 import { STRATS } from '../game/strats.js';
+import { getStratImagePath } from '../game/cardImages.js';
+import { useLightbox } from './CardLightbox.jsx';
 import styles from './StratsTab.module.css';
 
 const PHASE_LABELS = {
@@ -26,12 +28,18 @@ export default function StratsTab() {
 }
 
 function Group({ title, cards, col }) {
+  const { open } = useLightbox();
   return (
     <section style={{ marginBottom: '1.5rem' }}>
       <h3 style={{ color: col, marginBottom: '10px', fontSize: '15px' }}>{title}</h3>
       <div className={styles.grid}>
         {cards.map(s => (
-          <div key={s.id} className={styles.card} style={{ borderLeftColor: s.color }}>
+          <div key={s.id} className={styles.card} style={{ borderLeftColor: s.color, cursor: 'pointer' }}
+            onClick={() => open('strat', s)}>
+            {(() => { const img = getStratImagePath(s.id); return img ? (
+              <img src={img} alt={s.name} className={styles.cardArt}
+                onError={e => { e.target.style.display = 'none'; }} />
+            ) : null; })()}
             <div className={styles.cardHeader}>
               <span className={styles.cardName}>{s.name}</span>
               {s.locked && <span className={styles.lock}>🔒</span>}

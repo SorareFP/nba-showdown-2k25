@@ -108,9 +108,17 @@ export function roll20() {
 //   - Both Speed AND Power negative → penalty = max(rawSpeed, rawPower) (least negative)
 //   - DefBoost only reduces POSITIVE advantages, never creates negatives
 //   - Hot/cold: ±2 per marker
-export function calcAdv(off, def, tempEff = {}, idx = 0) {
-  const rawSpeed = off.speed - def.speed + (tempEff['s' + idx] || 0);
-  const rawPower = off.power - def.power + (tempEff['p' + idx] || 0);
+//   - tempDefEff: { [defSlot]: { speedBoost, powerBoost } } from Defensive Stopper etc.
+export function calcAdv(off, def, tempEff = {}, idx = 0, tempDefEff = null, defIdx = null) {
+  // Defensive temp boosts (e.g. Defensive Stopper +5/+5)
+  let defSpeedExtra = 0, defPowerExtra = 0;
+  if (tempDefEff && defIdx !== null && tempDefEff[defIdx]) {
+    defSpeedExtra = tempDefEff[defIdx].speedBoost || 0;
+    defPowerExtra = tempDefEff[defIdx].powerBoost || 0;
+  }
+
+  const rawSpeed = off.speed - (def.speed + defSpeedExtra) + (tempEff['s' + idx] || 0);
+  const rawPower = off.power - (def.power + defPowerExtra) + (tempEff['p' + idx] || 0);
   const db = Math.max(0, def.defBoost || 0);
 
   if (rawSpeed <= 0 && rawPower <= 0) {
@@ -150,6 +158,131 @@ export function shotCheck(player, type, extra, ps) {
   return { die, bonus, total, line: player.shotLine, hit, pts, type };
 }
 
+// ── Assist Spending ────────────────────────────────────────────────────────
+// Spend 1 AST: +1 to a player's next shot check
+// Spend 2 AST: initiate a 3PT shot check for a player with 3PT bonus
+// Spend 3 AST: initiate a Paint shot check for a player with Paint bonus
+export function spendAssist(g, teamKey, type, playerIdx) {
+  const ng = deepClone(g);
+  const myT = getTeam(ng, teamKey);
+  const player = myT.starters[playerIdx];
+  if (!player) return { game: ng, ok: false, msg: 'Invalid player' };
+  const ps = getPS(ng, teamKey, player.id) || {};
+
+  if (type === 'boost') {
+    if (myT.assists < 1) return { game: ng, ok: false, msg: `Need 1 assist (have ${myT.assists})` };
+    myT.assists -= 1;
+    if (!ng.tempEff[teamKey]) ng.tempEff[teamKey] = {};
+    ng.tempEff[teamKey]['astBoost_' + playerIdx] = (ng.tempEff[teamKey]['astBoost_' + playerIdx] || 0) + 1;
+    ng.log = [...ng.log, { team: teamKey, msg: `Spent 1 AST: ${player.name} gets +1 to next shot check` }];
+    return { game: ng, ok: true };
+  }
+
+  if (type === '3pt') {
+    if (myT.assists < 2) return { game: ng, ok: false, msg: `Need 2 assists (have ${myT.assists})` };
+    if (!(player.threePtBoost > 0)) return { game: ng, ok: false, msg: `${player.name} needs a 3PT Bonus` };
+    myT.assists -= 2;
+    const astBonus = ng.tempEff?.[teamKey]?.['astBoost_' + playerIdx] || 0;
+    const r = shotCheck(player, '3pt', astBonus, ps);
+    if (r.hit) {
+      myT.score += r.pts;
+      const ps2 = myT.stats.find(s => s.id === player.id);
+      if (ps2) { ps2.pts += r.pts; ps2.threepa = (ps2.threepa || 0) + 1; ps2.threepm = (ps2.threepm || 0) + 1; }
+    } else {
+      const ps2 = myT.stats.find(s => s.id === player.id);
+      if (ps2) ps2.threepa = (ps2.threepa || 0) + 1;
+    }
+    if (r.die <= 2) ps.cold = (ps.cold || 0) + 1;
+    if (r.die >= 19) ps.hot = (ps.hot || 0) + 1;
+    if (ng.tempEff?.[teamKey]) delete ng.tempEff[teamKey]['astBoost_' + playerIdx];
+    ng.log = [...ng.log, { team: teamKey, msg: `Spent 2 AST: ${player.name} 3PT check 🎲${r.die}${r.bonus ? (r.bonus > 0 ? '+' : '') + r.bonus : ''}=${r.total} vs ${r.line} → ${r.hit ? '3pts!' : 'MISS'}` }];
+    return { game: ng, ok: true };
+  }
+
+  if (type === 'paint') {
+    if (myT.assists < 3) return { game: ng, ok: false, msg: `Need 3 assists (have ${myT.assists})` };
+    if (!(player.paintBoost > 0)) return { game: ng, ok: false, msg: `${player.name} needs a Paint Bonus` };
+    myT.assists -= 3;
+    const astBonus = ng.tempEff?.[teamKey]?.['astBoost_' + playerIdx] || 0;
+    const r = shotCheck(player, 'paint', astBonus, ps);
+    if (r.hit) {
+      myT.score += r.pts;
+      const ps2 = myT.stats.find(s => s.id === player.id);
+      if (ps2) ps2.pts += r.pts;
+    }
+    if (r.die <= 2) ps.cold = (ps.cold || 0) + 1;
+    if (r.die >= 19) ps.hot = (ps.hot || 0) + 1;
+    if (ng.tempEff?.[teamKey]) delete ng.tempEff[teamKey]['astBoost_' + playerIdx];
+    ng.log = [...ng.log, { team: teamKey, msg: `Spent 3 AST: ${player.name} Paint check 🎲${r.die}${r.bonus ? (r.bonus > 0 ? '+' : '') + r.bonus : ''}=${r.total} vs ${r.line} → ${r.hit ? '2pts!' : 'MISS'}` }];
+    return { game: ng, ok: true };
+  }
+
+  return { game: ng, ok: false, msg: 'Unknown assist spend type' };
+}
+
+// ── Rebound Bonus Shot Checks ──────────────────────────────────────────────
+// +3 reb diff → Paint shot check for a chosen player
+// +5 reb diff → Speed-based fast break shot check for a chosen player
+// Putback → player who got 2+ reb in a section gets a Paint check
+export function spendReboundBonus(g, teamKey, type, playerIdx) {
+  const ng = deepClone(g);
+  const myT = getTeam(ng, teamKey);
+  const player = myT.starters[playerIdx];
+  if (!player) return { game: ng, ok: false, msg: 'Invalid player' };
+  const ps = getPS(ng, teamKey, player.id) || {};
+
+  if (type === 'paint_check') {
+    // Second-chance paint shot check (from +3 reb advantage)
+    const r = shotCheck(player, 'paint', 0, ps);
+    if (r.hit) {
+      myT.score += r.pts;
+      const ps2 = myT.stats.find(s => s.id === player.id);
+      if (ps2) ps2.pts += r.pts;
+    }
+    if (r.die <= 2) ps.cold = (ps.cold || 0) + 1;
+    if (r.die >= 19) ps.hot = (ps.hot || 0) + 1;
+    // Mark as used
+    if (ng.reboundBonuses?.[teamKey]) ng.reboundBonuses[teamKey].paintCheck = false;
+    ng.log = [...ng.log, { team: teamKey, msg: `Rebound +3 Paint Check: ${player.name} 🎲${r.die}${r.bonus ? (r.bonus > 0 ? '+' : '') + r.bonus : ''}=${r.total} vs ${r.line} → ${r.hit ? '2pts!' : 'MISS'}` }];
+    return { game: ng, ok: true };
+  }
+
+  if (type === 'fast_break') {
+    // Speed-based fast break (from +5 reb advantage). Use speed as bonus
+    const speedBonus = Math.floor(player.speed / 4);
+    const r = shotCheck(player, 'paint', speedBonus, ps);
+    if (r.hit) {
+      myT.score += r.pts;
+      const ps2 = myT.stats.find(s => s.id === player.id);
+      if (ps2) ps2.pts += r.pts;
+    }
+    if (r.die <= 2) ps.cold = (ps.cold || 0) + 1;
+    if (r.die >= 19) ps.hot = (ps.hot || 0) + 1;
+    if (ng.reboundBonuses?.[teamKey]) ng.reboundBonuses[teamKey].fastBreak = false;
+    ng.log = [...ng.log, { team: teamKey, msg: `Fast Break (Reb +5): ${player.name} 🎲${r.die}${r.bonus ? (r.bonus > 0 ? '+' : '') + r.bonus : ''}=${r.total} vs ${r.line} → ${r.hit ? '2pts!' : 'MISS'}` }];
+    return { game: ng, ok: true };
+  }
+
+  if (type === 'putback') {
+    const r = shotCheck(player, 'paint', 0, ps);
+    if (r.hit) {
+      myT.score += r.pts;
+      const ps2 = myT.stats.find(s => s.id === player.id);
+      if (ps2) ps2.pts += r.pts;
+    }
+    if (r.die <= 2) ps.cold = (ps.cold || 0) + 1;
+    if (r.die >= 19) ps.hot = (ps.hot || 0) + 1;
+    // Remove this player from putback list
+    if (ng.reboundBonuses?.[teamKey]?.putbackPlayers) {
+      ng.reboundBonuses[teamKey].putbackPlayers = ng.reboundBonuses[teamKey].putbackPlayers.filter(p => p.idx !== playerIdx);
+    }
+    ng.log = [...ng.log, { team: teamKey, msg: `Putback (2+ Reb): ${player.name} 🎲${r.die}${r.bonus ? (r.bonus > 0 ? '+' : '') + r.bonus : ''}=${r.total} vs ${r.line} → ${r.hit ? '2pts!' : 'MISS'}` }];
+    return { game: ng, ok: true };
+  }
+
+  return { game: ng, ok: false, msg: 'Unknown rebound bonus type' };
+}
+
 // ── Scoring Roll ───────────────────────────────────────────────────────────
 export function doRoll(g, teamKey, idx) {
   const myT = getTeam(g, teamKey);
@@ -173,7 +306,8 @@ export function doRoll(g, teamKey, idx) {
   if (ghosted) {
     adv = { speedAdv: 0, powerAdv: 0, rollBonus: 0, hasPenalty: false };
   } else {
-    adv = calcAdv(nPlayer, nDefPlayer, ng.tempEff[teamKey], idx);
+    const oppKey = teamKey === 'A' ? 'B' : 'A';
+    adv = calcAdv(nPlayer, nDefPlayer, ng.tempEff[teamKey], idx, ng.tempDefEff?.[oppKey], defIdx);
   }
 
   let bonus = adv.rollBonus;
@@ -234,6 +368,9 @@ function checkAssistDraw(g) {
 export function endSection(g) {
   let ng = deepClone(g);
 
+  // Clear previous section's rebound bonuses before calculating new ones
+  ng.reboundBonuses = {};
+
   // +/- and minutes
   const segPtsA = (ng.rollResults.A || []).reduce((s, r) => s + (r?.pts || 0), 0);
   const segPtsB = (ng.rollResults.B || []).reduce((s, r) => s + (r?.pts || 0), 0);
@@ -246,17 +383,44 @@ export function endSection(g) {
     });
   });
 
-  // Rebound track bonus
+  // Rebound track bonuses (based on differential)
   const rd = ng.teamA.rebounds - ng.teamB.rebounds;
-  if (Math.abs(rd) >= 5) {
+  const absRd = Math.abs(rd);
+  if (absRd > 0) {
     const wk = rd > 0 ? 'A' : 'B';
-    getTeam(ng, wk).assists++;
-    ng.log = [...ng.log, { team: null, msg: `Rebound Track +5 → ${getTeam(ng, wk).name} +1 AST` }];
+    const wTeam = getTeam(ng, wk);
+
+    // Winning the rebound track at section end → +1 stored assist
+    wTeam.assists++;
+    ng.log = [...ng.log, { team: wk, msg: `Rebound Track lead → ${wTeam.name} +1 AST` }];
+
+    // Track rebound bonuses earned this section for UI display
+    if (!ng.reboundBonuses) ng.reboundBonuses = {};
+    ng.reboundBonuses[wk] = { diff: absRd, paintCheck: absRd >= 3, fastBreak: absRd >= 5 };
   }
 
+  // Check individual player +2 reb in this section → putback opportunity
+  ['A', 'B'].forEach(k => {
+    const sectionRolls = ng.rollResults[k] || [];
+    const t = getTeam(ng, k);
+    sectionRolls.forEach((r, i) => {
+      if (r && (r.reb || 0) >= 2) {
+        const p = t.starters[i];
+        if (p) {
+          if (!ng.reboundBonuses) ng.reboundBonuses = {};
+          if (!ng.reboundBonuses[k]) ng.reboundBonuses[k] = {};
+          if (!ng.reboundBonuses[k].putbackPlayers) ng.reboundBonuses[k].putbackPlayers = [];
+          ng.reboundBonuses[k].putbackPlayers.push({ name: p.name, id: p.id, idx: i });
+          ng.log = [...ng.log, { team: k, msg: `${p.name} grabbed 2+ rebounds → Putback opportunity!` }];
+        }
+      }
+    });
+  });
+
   // Reset section state
-  ng.tempEff = {}; ng.ghosted = {}; ng.ignFatigue = {};
+  ng.tempEff = {}; ng.tempDefEff = {}; ng.ghosted = {}; ng.ignFatigue = {};
   ng.rollResults = { A: [], B: [] }; ng.pendingShotCheck = null;
+  // reboundBonuses were set earlier in this function — they persist to the next section's scoring phase
 
   if (ng.section < 3) {
     ng.section++;
@@ -285,6 +449,10 @@ export function endSection(g) {
     else           { ng.teamB = { ...ng.teamB, hand: drawn.hand, deck: drawn.deck }; }
   });
 
+  // Save current starters before clearing for bench recovery check
+  const prevStartersA = ng.teamA.starters.map(p => p.id);
+  const prevStartersB = ng.teamB.starters.map(p => p.id);
+
   // Reset for new draft
   ng.draft = { step: 0, aPool: ng.teamA.roster.slice(), bPool: ng.teamB.roster.slice() };
   ng.teamA.starters = []; ng.teamB.starters = [];
@@ -293,19 +461,20 @@ export function endSection(g) {
   ng.scoringTurn = 'B'; ng.scoringPasses = 0;
   ng.blockedRolls = {};
 
-  // Clear hot/cold for benched players, recover fatigue
-  ng = clearBenchedMarkers(ng);
+  // Clear hot/cold for benched players, recover fatigue (using previous starters)
+  ng = clearBenchedMarkers(ng, { A: prevStartersA, B: prevStartersB });
 
   return ng;
 }
 
-function clearBenchedMarkers(g) {
+function clearBenchedMarkers(g, prevStarters) {
   const ng = { ...g };
   ['A', 'B'].forEach(k => {
     const t = getTeam(ng, k);
+    const wasPlaying = prevStarters[k] || [];
     t.stats.forEach(ps => {
-      const isStarter = t.starters.find(p => p.id === ps.id);
-      if (!isStarter) {
+      if (!wasPlaying.includes(ps.id)) {
+        // Was on the bench last segment — recover fatigue
         ps.hot = 0; ps.cold = 0;
         ps.minutes = Math.max(0, (ps.minutes || 0) - 8);
       }
@@ -315,8 +484,8 @@ function clearBenchedMarkers(g) {
 }
 
 // ── Deep Clone (simple - avoids React mutation issues) ─────────────────────
-function deepClone(obj) {
+export function deepClone(obj) {
   return JSON.parse(JSON.stringify(obj));
 }
 
-export { deepClone, checkAssistDraw };
+export { checkAssistDraw };

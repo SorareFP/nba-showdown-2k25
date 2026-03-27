@@ -1,9 +1,11 @@
 import { useState, useMemo } from 'react';
 import { CARDS, ALL_TEAMS } from '../game/cards.js';
 import PlayerCard from './PlayerCard.jsx';
+import { useLightbox } from './CardLightbox.jsx';
 import styles from './CardsTab.module.css';
 
 export default function CardsTab() {
+  const { open } = useLightbox();
   const [search, setSearch] = useState('');
   const [team, setTeam] = useState('ALL');
   const [sort, setSort] = useState('salary-desc');
@@ -44,7 +46,7 @@ export default function CardsTab() {
       </div>
 
       <div className={styles.grid}>
-        {filtered.map(card => <PlayerCard key={card.id} card={card} />)}
+        {filtered.map(card => <PlayerCard key={card.id} card={card} onClick={() => open('player', card)} />)}
       </div>
     </div>
   );

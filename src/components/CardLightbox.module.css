@@ -1,0 +1,97 @@
+.backdrop {
+  position: fixed; inset: 0; z-index: 300;
+  background: rgba(0,0,0,0.75);
+  display: flex; align-items: center; justify-content: center;
+  padding: 1.5rem;
+}
+
+.modal {
+  background: #0F1E35;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 16px;
+  max-width: 700px; width: 100%;
+  max-height: 90vh; overflow-y: auto;
+  box-shadow: 0 12px 60px rgba(0,0,0,0.7);
+  position: relative;
+}
+
+.closeBtn {
+  position: absolute; top: 10px; right: 14px;
+  background: none; border: none; color: #94A3B8;
+  font-size: 24px; cursor: pointer; z-index: 2;
+  line-height: 1; padding: 4px 8px; border-radius: 6px;
+}
+.closeBtn:hover { color: #F1F5F9; background: rgba(255,255,255,0.1); }
+
+.content { display: flex; gap: 0; }
+@media (max-width: 600px) { .content { flex-direction: column; } }
+
+.imgSide {
+  flex: 0 0 55%; position: relative;
+  background: rgba(0,0,0,0.3);
+  border-radius: 16px 0 0 16px;
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  min-height: 300px;
+}
+@media (max-width: 600px) { .imgSide { border-radius: 16px 16px 0 0; min-height: 200px; } }
+
+.img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.placeholder {
+  padding: 2rem; text-align: center;
+  color: #475569; font-size: 16px; font-style: italic;
+}
+
+.zoomBtn {
+  position: absolute; bottom: 10px; right: 10px;
+  background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.2);
+  color: #F1F5F9; font-size: 18px;
+  width: 36px; height: 36px; border-radius: 8px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+.zoomBtn:hover { background: rgba(0,0,0,0.8); }
+
+.statsSide { flex: 1; padding: 24px 20px; }
+
+.lbName { font-size: 20px; font-weight: 700; color: #F1F5F9; margin: 0 0 4px; }
+.lbTeam { font-size: 13px; color: #94A3B8; margin-bottom: 16px; }
+
+.lbStats { display: flex; gap: 8px; margin-bottom: 14px; }
+.lbStat {
+  flex: 1; text-align: center;
+  background: rgba(255,255,255,0.06); border-radius: 8px; padding: 8px 4px;
+}
+.lbStat span { display: block; font-size: 9px; color: #64748B; text-transform: uppercase; letter-spacing: .06em; }
+.lbStat strong { display: block; font-size: 22px; font-weight: 800; color: #E2E8F0; }
+
+.lbBoosts { font-size: 12px; color: #93C5FD; margin-bottom: 14px; }
+
+.lbChart { border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px; }
+.lbChartHeader { font-size: 11px; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 6px; }
+.lbChartRow { display: flex; justify-content: space-between; font-size: 13px; color: #94A3B8; padding: 3px 0; }
+.lbRange { font-weight: 600; color: #E2E8F0; }
+
+.lbTags { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 14px; }
+.lbOff { font-size: 11px; padding: 3px 10px; border-radius: 999px; font-weight: 600; background: rgba(234,88,12,0.2); color: #FB923C; }
+.lbDef { font-size: 11px; padding: 3px 10px; border-radius: 999px; font-weight: 600; background: rgba(59,130,246,0.2); color: #93C5FD; }
+.lbPhase { font-size: 11px; padding: 3px 10px; border-radius: 999px; background: rgba(255,255,255,0.08); color: #94A3B8; }
+.lbLock { font-size: 11px; padding: 3px 10px; border-radius: 999px; background: rgba(245,158,11,0.2); color: #FCD34D; }
+.lbCopies { font-size: 11px; color: #64748B; }
+
+.lbDesc { font-size: 14px; color: #CBD5E1; line-height: 1.6; }
+
+/* Full-res overlay */
+.fullResImg {
+  max-width: 95vw; max-height: 95vh;
+  object-fit: contain; border-radius: 8px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+}
+.closeBtnFull {
+  position: fixed; top: 16px; right: 20px;
+  background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.2);
+  color: #F1F5F9; font-size: 24px;
+  width: 40px; height: 40px; border-radius: 10px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  z-index: 301;
+}

@@ -79,6 +79,10 @@ export const STRATS = [
     desc:'Opponent rolls a natural 1 or 2 on their scoring roll: apply a cold marker + reduce their Rebound Track by 1.' },
   { id:'anticipate_pass',     name:'Anticipate the Pass',phase:'reaction', side:'def', copies:2, locked:false, color:'#0F766E',
     desc:'Opponent has 6+ assists: spend 1 of your assists to remove 2 from their track.' },
+  { id:'offensive_foul',      name:'Offensive Foul',     phase:'reaction', side:'def', copies:2, locked:false, color:'#64748B',
+    desc:'Play after an opponent activates a card that boosts Power. Their Power boost is halved (rounded down), and they suffer −1 Rebound.' },
+  { id:'dogged',              name:'Dogged',             phase:'scoring',  side:'def', copies:2, locked:false, color:'#78716C',
+    desc:'Target an opposing fatigued player: they suffer an additional −2 Speed and −2 Power until benched for a segment.' },
   { id:'overhelp',            name:'Overhelp',           phase:'reaction', side:'off', copies:2, locked:false, color:'#0369A1',
     desc:'Opponent plays a defensive switching card: one of your players gets +2 to their scoring roll this segment.' },
   { id:'burned_switch',       name:'Burned on the Switch',phase:'reaction',side:'off', copies:2, locked:false, color:'#DC2626',
@@ -87,6 +91,12 @@ export const STRATS = [
     desc:'Spend 3 rebounds: take a second scoring roll with a different player at −2.' },
   { id:'rebound_tap_out',     name:'Rebound Tap-Out',    phase:'reaction', side:'off', copies:2, locked:false, color:'#F59E0B',
     desc:'Spend 2 rebounds: +1 assist to a player with a 3PT Bonus. That player makes a 3PT Shot Check at +1.' },
+
+  // ── SPECIAL ──
+  { id:'coaches_challenge',   name:"Coach's Challenge",  phase:'reaction', side:'def', copies:2, locked:false, color:'#B91C1C',
+    desc:'Challenge the last play. Re-roll the opponent\'s most recent scoring roll. They must accept the new result.' },
+  { id:'delayed_slip',        name:'Delayed Slip',       phase:'scoring',  side:'off', copies:2, locked:false, color:'#7C3AED',
+    desc:'Choose a player with Speed ≥12 and Power ≥10. If they have no matchup advantage, give them +2 to scoring roll and +1 Rebound.' },
 ];
 
 export const STRAT_MAP = Object.fromEntries(STRATS.map(s => [s.id, s]));

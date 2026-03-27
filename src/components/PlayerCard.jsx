@@ -1,10 +1,22 @@
+import { getPlayerImageUrl } from '../game/cardImages.js';
 import styles from './PlayerCard.module.css';
 
-export default function PlayerCard({ card, compact = false, actions, highlighted = false }) {
-  const hasBoosts = card.paintBoost || card.threePtBoost || card.defBoost;
+export default function PlayerCard({ card, compact = false, actions, highlighted = false, onClick }) {
+  const hasBoosts = !!(card.paintBoost || card.threePtBoost || card.defBoost);
+  const imgUrl = getPlayerImageUrl(card.id);
 
   return (
-    <div className={`${styles.card} ${compact ? styles.compact : ''} ${highlighted ? styles.highlighted : ''}`}>
+    <div
+      className={`${styles.card} ${compact ? styles.compact : ''} ${highlighted ? styles.highlighted : ''}`}
+      onClick={onClick}
+      style={onClick ? { cursor: 'pointer' } : undefined}
+    >
+      {imgUrl && !compact && (
+        <div className={styles.cardArt}>
+          <img src={imgUrl} alt={card.name} className={styles.cardArtImg}
+            onError={e => { e.target.parentElement.style.display = 'none'; }} />
+        </div>
+      )}
       <div className={styles.header}>
         <div>
           <div className={styles.name}>{card.name}</div>

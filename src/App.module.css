@@ -52,7 +52,19 @@
 }
 
 @media (max-width: 700px) {
-  .header { flex-direction: column; padding: 0.75rem 1rem; min-height: auto; }
-  .nav { flex-wrap: wrap; justify-content: center; }
-  .main { padding: 1rem; }
+  .header { flex-direction: column; padding: 0.75rem 1rem; min-height: auto; gap: 0.5rem; }
+  .nav { flex-wrap: wrap; justify-content: center; gap: 3px; }
+  .navBtn { padding: 5px 10px; font-size: 12px; }
+  .main { padding: 0.75rem; }
+  .logoTitle { font-size: 14px; }
+  .logoSub { font-size: 10px; }
+}
+
+@media (max-width: 420px) {
+  .header { padding: 0.5rem 0.75rem; }
+  .nav { gap: 2px; }
+  .navBtn { padding: 4px 7px; font-size: 11px; }
+  .main { padding: 0.5rem; }
+  .logoIcon { font-size: 22px; }
+  .logoTitle { font-size: 13px; }
 }

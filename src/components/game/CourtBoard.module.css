@@ -1,0 +1,268 @@
+.wrap { display: flex; flex-direction: column; gap: 8px; }
+
+.phaseBar { display:flex; justify-content:space-between; align-items:center; background:rgba(10,22,40,0.95); border:1px solid rgba(255,255,255,0.1); border-radius:10px; padding:8px 14px; gap:12px; flex-wrap:wrap; }
+.phaseInfo { display:flex; flex-direction:column; gap:1px; }
+.phaseLabel { font-size:13px; font-weight:700; color:#F1F5F9; }
+.phaseSub   { font-size:11px; color:#94A3B8; }
+.phaseCtrls { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.passCount  { font-size:11px; color:#64748B; }
+.segScore   { font-size:14px; font-weight:700; }
+.passBtn    { background:rgba(255,255,255,0.08); color:#F1F5F9; border:1px solid rgba(255,255,255,0.15); padding:5px 14px; border-radius:6px; font-size:13px; }
+.passBtn:hover { background:rgba(255,255,255,0.15); }
+.ctaBtn     { background:var(--orange); color:#fff; padding:6px 16px; border-radius:6px; font-size:13px; font-weight:600; }
+.ctaBtn:hover { background:#C2410C; }
+
+.courtLayout { display:grid; grid-template-columns:160px 1fr 160px; gap:8px; align-items:start; }
+
+.court { position:relative; background:repeating-linear-gradient(90deg,rgba(0,0,0,0.04) 0px,rgba(0,0,0,0.04) 1px,transparent 1px,transparent 44px),linear-gradient(180deg,#9A6A20 0%,#C8954A 30%,#D4A055 50%,#C8954A 70%,#9A6A20 100%); border-radius:12px; border:3px solid #7A5418; overflow:hidden; min-height:460px; display:flex; align-items:stretch; box-shadow:inset 0 0 60px rgba(0,0,0,0.25),0 4px 24px rgba(0,0,0,0.5); }
+.courtSvg { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:0; }
+.teamLabelA,.teamLabelB { position:absolute; top:8px; font-size:11px; font-weight:800; letter-spacing:.1em; text-shadow:0 1px 4px rgba(0,0,0,0.7); pointer-events:none; z-index:2; }
+.teamLabelA { left:14px;  color:var(--orange); }
+.teamLabelB { right:14px; color:var(--blue); }
+
+.matchups { flex:1; display:flex; flex-direction:column; justify-content:space-around; padding:28px 44px 8px; gap:4px; z-index:1; position:relative; }
+.matchupRow { display:grid; grid-template-columns:1fr 28px 1fr; gap:3px; align-items:center; }
+.emptyRow { height:68px; }
+.draftCell { display:flex; flex-direction:column; }
+
+.connector { display:flex; flex-direction:column; align-items:center; gap:2px; height:100%; }
+.connLine  { width:1px; flex:1; background:rgba(255,255,255,0.15); }
+.slotNum   { font-size:9px; font-weight:700; color:rgba(255,255,255,0.4); background:rgba(0,0,0,0.3); border-radius:50%; width:15px; height:15px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+
+.trackPanel { position:absolute; top:36px; bottom:8px; display:flex; flex-direction:column; gap:10px; padding:4px; justify-content:center; z-index:2; }
+.trackL { left:4px; } .trackR { right:4px; }
+.track  { display:flex; flex-direction:column; align-items:center; gap:2px; }
+.tl     { font-size:7px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:rgba(255,255,255,0.45); }
+.tbar   { width:10px; height:55px; background:rgba(0,0,0,0.3); border-radius:5px; display:flex; flex-direction:column; justify-content:flex-end; overflow:hidden; border:1px solid rgba(255,255,255,0.12); }
+.tfill  { width:100%; border-radius:5px; transition:height 0.4s; min-height:2px; }
+.tv     { font-size:12px; font-weight:800; text-shadow:0 1px 3px rgba(0,0,0,0.6); }
+.traw { font-size:7px; color:#64748B; }
+.tbonus { font-size:8px; color:#F59E0B; font-weight:700; }
+
+.cardFace { background:rgba(8,16,32,0.93); border:1.5px solid; border-radius:8px; width:100%; box-shadow:0 2px 12px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.04); transition:box-shadow 0.15s; overflow:hidden; }
+.cardFace:hover { box-shadow:0 4px 20px rgba(0,0,0,0.7),inset 0 1px 0 rgba(255,255,255,0.04); }
+.cardGlow { box-shadow:0 0 0 2px #F59E0B,0 4px 20px rgba(245,158,11,0.3); }
+
+/* ── Horizontal card layout ── */
+.cardHoriz { display:flex; flex-direction:row; padding:0; }
+.cardArtSide { flex:1; min-height:80px; overflow:hidden; position:relative; background:rgba(0,0,0,0.2); }
+.cardArtSideImg { width:100%; height:100%; object-fit:contain; object-position:center; display:block; }
+.cardArtPlaceholder { width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:700; color:rgba(255,255,255,0.2); }
+.cardSidebar { width:130px; flex-shrink:0; padding:4px 6px; display:flex; flex-direction:column; gap:2px; }
+
+.cardNameRow { display:flex; align-items:flex-start; gap:3px; }
+.cardName { font-weight:700; font-size:10px; line-height:1.2; flex:1; min-width:0; }
+.markers  { display:flex; gap:1px; flex-shrink:0; align-items:center; }
+.hot   { font-size:8px; background:rgba(245,158,11,0.2); padding:0 2px; border-radius:3px; }
+.cold  { font-size:8px; background:rgba(96,165,250,0.2); padding:0 2px; border-radius:3px; }
+.fatBadge { font-size:7px; background:rgba(220,38,38,0.35); color:#FCA5A5; padding:0 3px; border-radius:999px; }
+
+.statRows { display:flex; flex-direction:column; }
+.statRow  { display:flex; justify-content:space-between; align-items:baseline; line-height:1.4; }
+.statLabel { font-size:8px; color:#64748B; text-transform:uppercase; letter-spacing:.04em; font-weight:600; }
+.statVal   { font-size:11px; font-weight:700; color:#E2E8F0; }
+
+.boostRow { display:flex; gap:2px; flex-wrap:wrap; }
+.b3pt { font-size:7px; padding:0 3px; border-radius:999px; font-weight:600; background:rgba(59,130,246,0.25); color:#93C5FD; }
+.bpnt { font-size:7px; padding:0 3px; border-radius:999px; font-weight:600; background:rgba(234,179,8,0.25);  color:#FCD34D; }
+.bdef { font-size:7px; padding:0 3px; border-radius:999px; font-weight:600; background:rgba(22,163,74,0.25);   color:#86EFAC; }
+.bneg { font-size:7px; padding:0 3px; border-radius:999px; font-weight:600; background:rgba(220,38,38,0.25);  color:#FCA5A5; }
+.salaryTag { font-size:8px; color:#60A5FA; }
+
+.advBlock { border-top:1px solid rgba(255,255,255,0.07); padding-top:2px; margin-top:1px; }
+.advVs    { font-size:7px; color:#64748B; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.advNums  { display:flex; gap:3px; font-size:8px; font-weight:600; }
+
+.rollArea { border-top:1px solid rgba(255,255,255,0.07); padding-top:3px; margin-top:1px; text-align:center; }
+.rollBtn  { color:#fff; padding:3px 0; border-radius:4px; font-size:10px; font-weight:700; width:100%; }
+.rollBtn:hover { filter:brightness(1.15); }
+.blocked  { font-size:9px; color:#F87171; font-weight:700; }
+.result   {}
+.diceStr  { font-size:8px; color:#94A3B8; font-weight:500; }
+.ptsLg    { font-size:18px; font-weight:800; line-height:1; }
+.ptsUnit  { font-size:9px; font-weight:600; margin-left:1px; }
+.statLine { font-size:8px; color:#94A3B8; }
+
+.assistSpend { display:flex; gap:3px; justify-content:center; margin-top:3px; flex-wrap:wrap; }
+.astBtn { background:rgba(59,130,246,0.2); color:#93C5FD; border:1px solid rgba(59,130,246,0.3); padding:2px 5px; border-radius:3px; font-size:8px; font-weight:600; cursor:pointer; white-space:nowrap; }
+.astBtn:hover { background:rgba(59,130,246,0.35); color:#BFDBFE; }
+.rebBtn { background:rgba(34,197,94,0.2); color:#86EFAC; border:1px solid rgba(34,197,94,0.3); padding:2px 5px; border-radius:3px; font-size:8px; font-weight:600; cursor:pointer; white-space:nowrap; }
+.rebBtn:hover { background:rgba(34,197,94,0.35); color:#BBF7D0; }
+
+.placedCard  { background:rgba(8,16,32,0.9); border:1.5px solid; border-radius:8px; padding:6px 9px; box-shadow:0 2px 8px rgba(0,0,0,0.4); }
+.placedName  { font-weight:700; font-size:12px; margin-bottom:2px; display:flex; align-items:center; gap:3px; flex-wrap:wrap; }
+.placedMeta  { font-size:10px; color:#94A3B8; }
+.fatTag      { font-size:9px; background:rgba(220,38,38,0.3); color:#FCA5A5; padding:1px 4px; border-radius:999px; }
+
+.emptySlot   { border:1.5px dashed; border-radius:8px; min-height:52px; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.1); }
+
+.pickList    { background:rgba(8,16,32,0.97); border:1.5px solid; border-radius:8px; padding:6px; box-shadow:0 4px 20px rgba(0,0,0,0.6); }
+.pickLabel   { font-size:10px; font-weight:700; margin-bottom:4px; }
+.pickSearch  { width:100%; font-size:10px; padding:3px 6px; margin-bottom:4px; background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.12); border-radius:4px; color:#E2E8F0; }
+.pickScroll  { max-height:170px; overflow-y:auto; display:flex; flex-direction:column; gap:2px; }
+.pickItem    { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.07); border-radius:5px; padding:4px 7px; text-align:left; }
+.pickItem:hover { background:rgba(255,255,255,0.12); }
+.pickName    { font-size:11px; font-weight:600; display:block; color:#F1F5F9; }
+.pickMeta    { font-size:9px; color:#94A3B8; display:block; }
+.pickMatchup { font-size:8px; color:#64748B; display:block; margin-top:1px; }
+
+.pendingBanner { display:flex; justify-content:space-between; align-items:center; background:rgba(234,88,12,0.15); border:1.5px solid var(--orange); border-radius:10px; padding:10px 16px; gap:12px; flex-wrap:wrap; }
+.pendingInfo   { display:flex; flex-direction:column; gap:3px; }
+.pendingTitle  { font-weight:700; font-size:14px; color:#F1F5F9; }
+.pendingActions { display:flex; gap:8px; }
+.coBtn      { background:var(--blue); color:#fff; padding:7px 14px; border-radius:6px; font-size:13px; }
+.coBtn:hover { background:#2563EB; }
+.resolveBtn  { background:var(--orange); color:#fff; padding:7px 18px; border-radius:6px; font-size:13px; font-weight:600; }
+.resolveBtn:hover { background:#C2410C; }
+
+.handPanel { display:flex; flex-direction:column; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:10px; overflow:hidden; max-height:calc(100vh - 120px); }
+.handTitle  { padding:6px 8px; font-size:11px; font-weight:700; display:flex; align-items:center; gap:6px; border-bottom:1px solid rgba(255,255,255,0.07); background:rgba(255,255,255,0.03); }
+.handCount  { font-size:10px; font-weight:400; color:#64748B; background:rgba(255,255,255,0.07); padding:1px 5px; border-radius:999px; margin-left:auto; }
+.handList   { flex:1; overflow-y:auto; padding:4px; display:flex; flex-direction:column; gap:3px; }
+@media (min-width:1001px) { .handList { max-height:none; overflow-y:visible; } }
+.handEmpty  { font-size:10px; color:#475569; font-style:italic; padding:6px; text-align:center; }
+
+.hcard { position:relative; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-left:3px solid; border-radius:5px; padding:4px 6px; cursor:pointer; transition:background 0.12s; }
+.hcard:hover:not(.hdim) { background:rgba(255,255,255,0.1); }
+.hdim   { opacity:0.28; cursor:default; }
+.hreact { background:rgba(59,130,246,0.07); border-color:rgba(59,130,246,0.3); }
+.hphase { font-size:7px; color:#475569; text-transform:uppercase; letter-spacing:.05em; margin-bottom:1px; }
+.hname  { font-size:10px; font-weight:700; color:#E2E8F0; margin-bottom:1px; line-height:1.2; }
+.hdesc  { font-size:8px; color:#64748B; line-height:1.3; }
+
+.overlay    { position:fixed; inset:0; background:rgba(0,0,0,0.65); z-index:200; display:flex; align-items:center; justify-content:center; padding:1rem; }
+.modalBox   { background:#0F1E35; border:1px solid rgba(255,255,255,0.15); border-radius:14px; padding:20px; max-width:420px; width:100%; box-shadow:0 8px 40px rgba(0,0,0,0.6); }
+.modalTitle { font-size:16px; font-weight:700; margin-bottom:14px; }
+.modalList  { display:flex; flex-direction:column; gap:6px; margin-bottom:14px; max-height:60vh; overflow-y:auto; }
+.modalBtn   { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-left:4px solid; border-radius:8px; padding:10px 14px; text-align:left; transition:background 0.12s; }
+.modalBtn:hover { background:rgba(255,255,255,0.12); }
+.mName      { font-size:14px; font-weight:600; color:#F1F5F9; margin-bottom:3px; display:flex; align-items:center; gap:4px; flex-wrap:wrap; }
+.mSub       { font-size:11px; color:#94A3B8; }
+.mExtra     { font-size:10px; color:#60A5FA; margin-top:3px; line-height:1.4; }
+.modalCancel { background:rgba(255,255,255,0.07); color:#94A3B8; padding:8px 18px; border-radius:6px; font-size:13px; width:100%; }
+.modalCancel:hover { background:rgba(255,255,255,0.12); }
+
+@media (max-width:1200px) { .courtLayout { grid-template-columns:140px 1fr 140px; } }
+@media (max-width:1000px) { .courtLayout { grid-template-columns:130px 1fr 130px; } }
+@media (max-width:760px) {
+  .courtLayout { grid-template-columns:1fr; gap:6px; }
+  .court { min-height:320px; }
+  .matchups { padding:22px 16px 6px; }
+  .handPanel { max-height:none; }
+  .handList { max-height:200px; overflow-y:auto; }
+  .cardSidebar { width:110px; padding:3px 5px; }
+  .cardName { font-size:9px; }
+  .phaseBar { padding:6px 10px; gap:8px; }
+  .pendingBanner { padding:8px 12px; gap:8px; flex-direction:column; align-items:stretch; }
+  .pendingActions { justify-content:stretch; }
+  .coBtn, .resolveBtn { flex:1; text-align:center; }
+  .modalBox { max-width:95vw; padding:14px; }
+  .modalTitle { font-size:14px; }
+  .mName { font-size:12px; }
+  .mSub { font-size:10px; }
+}
+@media (max-width:480px) {
+  .matchups { padding:18px 8px 4px; gap:2px; }
+  .matchupRow { grid-template-columns:1fr 20px 1fr; gap:2px; }
+  .cardHoriz { flex-direction:column; }
+  .cardArtSide { min-height:50px; max-height:50px; }
+  .cardSidebar { width:100%; padding:3px 5px; }
+  .slotNum { width:13px; height:13px; font-size:8px; }
+  .trackPanel { display:none; }
+  .teamLabelA, .teamLabelB { font-size:9px; }
+  .hcard { padding:3px 5px; }
+  .hname { font-size:9px; }
+  .hdesc { font-size:7px; }
+  .phaseLabel { font-size:11px; }
+  .phaseSub { font-size:10px; }
+  .passBtn { padding:4px 10px; font-size:11px; }
+  .ctaBtn { padding:5px 12px; font-size:11px; }
+  .ptsLg { font-size:14px; }
+  .statVal { font-size:10px; }
+  .rollBtn { font-size:9px; padding:2px 0; }
+  .advVs { font-size:6px; }
+  .advNums { font-size:7px; }
+}
+
+/* ── Placed card art (draft phase) ── */
+.placedArt {
+  width: 100%;
+  height: 80px;
+  object-fit: cover;
+  object-position: top center;
+  border-radius: 6px 6px 0 0;
+  display: block;
+  margin: -6px -9px 4px;
+  width: calc(100% + 18px);
+}
+
+/* ── Strategy card images in hand (compact preview) ── */
+.hcardHasImg {
+  padding: 0;
+  overflow: hidden;
+  position: relative;
+  min-height: 52px;
+}
+.hcardImgEl {
+  width: 100%;
+  height: 52px;
+  object-fit: cover;
+  object-position: top;
+  display: block;
+  border-radius: 4px 4px 0 0;
+}
+.hcardOverlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0,0,0,0.85));
+  padding: 8px 6px 4px;
+  border-radius: 0 0 4px 4px;
+}
+
+/* ── Hand card icons ── */
+.hcardIcons {
+  position: absolute; top: 4px; right: 4px;
+  display: flex; gap: 2px; z-index: 3;
+}
+.hcardIconBtn {
+  background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15);
+  color: #E2E8F0; font-size: 10px;
+  width: 20px; height: 20px; border-radius: 4px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  padding: 0; line-height: 1;
+}
+.hcardIconBtn:hover { background: rgba(0,0,0,0.8); }
+
+/* ── Staged card ── */
+.hcardStaged {
+  box-shadow: 0 0 0 2px #4ADE80, 0 4px 16px rgba(74,222,128,0.25);
+}
+
+.hcardConfirm {
+  display: flex; gap: 4px; padding: 6px 6px 4px;
+}
+.hcard:not(.hcardHasImg) .hcardConfirm { padding-top: 6px; }
+.hcardHasImg .hcardConfirm { position: absolute; bottom: 0; left: 0; right: 0; padding: 6px; background: rgba(0,0,0,0.7); border-radius: 0 0 5px 5px; }
+
+.confirmBtn {
+  flex: 1; color: #fff; font-size: 10px; font-weight: 700;
+  padding: 4px 0; border-radius: 4px; border: none; cursor: pointer;
+}
+.confirmBtn:hover { filter: brightness(1.15); }
+
+.cancelBtn {
+  background: rgba(255,255,255,0.08); color: #94A3B8; font-size: 10px;
+  padding: 4px 8px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1);
+  cursor: pointer;
+}
+.cancelBtn:hover { background: rgba(255,255,255,0.15); }
+
+/* ── View player button on matchup slots ── */
+.viewPlayerBtn {
+  background: none; border: none; color: #64748B;
+  font-size: 10px; cursor: pointer; padding: 0 0 0 4px;
+  vertical-align: middle;
+}
+.viewPlayerBtn:hover { color: #E2E8F0; }

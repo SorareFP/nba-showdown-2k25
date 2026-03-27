@@ -27,8 +27,43 @@
 }
 .phase { font-size: 11px; color: var(--text-muted); }
 
-.tracks { display: flex; align-items: center; gap: 8px; }
+.tracks { display: flex; align-items: center; gap: 10px; }
 .track { text-align: center; min-width: 28px; }
 .trackVal { font-size: 18px; font-weight: 700; line-height: 1; }
 .trackLabel { font-size: 9px; color: var(--text-dim); text-transform: uppercase; letter-spacing: .06em; }
 .trackDiv { font-size: 10px; color: var(--text-dim); }
+
+/* Rebound Differential Display */
+.rebDiff { display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 100px; }
+.rebLabel { font-size: 9px; color: var(--text-dim); text-transform: uppercase; letter-spacing: .06em; }
+.rebSlider { display: flex; align-items: center; gap: 6px; width: 100%; }
+.rebTotal { font-size: 12px; font-weight: 600; min-width: 16px; text-align: center; }
+.rebBarWrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 1px; }
+.rebBar { position: relative; width: 100%; height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; }
+.rebFill { height: 100%; border-radius: 3px; transition: width 0.3s ease; }
+.rebCenter { position: absolute; top: 0; left: 50%; width: 2px; height: 100%; background: rgba(255,255,255,0.3); transform: translateX(-50%); }
+.rebDiffVal { font-size: 11px; font-weight: 700; line-height: 1; }
+.rebThresholds { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+.rebThresh { font-size: 8px; font-weight: 600; padding: 1px 4px; background: rgba(255,255,255,0.06); border-radius: 3px; }
+
+@media (max-width: 600px) {
+  .board { grid-template-columns: 1fr auto 1fr; gap: 0.5rem; padding: 0.75rem 1rem; }
+  .score { font-size: 36px; letter-spacing: -1px; }
+  .teamName { font-size: 11px; }
+  .meta { font-size: 10px; }
+  .badge { font-size: 10px; padding: 3px 10px; }
+  .phase { font-size: 10px; }
+  .tracks { gap: 6px; }
+  .trackVal { font-size: 14px; }
+  .trackLabel { font-size: 8px; }
+  .rebDiff { min-width: 70px; }
+  .rebTotal { font-size: 10px; }
+  .rebDiffVal { font-size: 9px; }
+  .rebThresh { font-size: 7px; padding: 1px 3px; }
+}
+
+@media (max-width: 380px) {
+  .score { font-size: 28px; }
+  .badge { font-size: 9px; padding: 2px 8px; }
+  .tracks { flex-wrap: wrap; gap: 4px; justify-content: center; }
+}

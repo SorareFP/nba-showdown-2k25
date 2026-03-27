@@ -43,8 +43,20 @@ export function canPlayCard(g, teamKey, cardId) {
 
     if (cardId === 'defensive_stopper') {
       if (g.quarter === 1 && g.section === 1) return no('Cannot play in the first segment — no one has sat out yet');
-      const benched = myT.roster.filter(p => !myT.starters.find(s => s.id === p.id));
-      if (!benched.length) return no('No benched players available');
+      // Must target a player currently in starters who was BENCHED last segment
+      const hasBenchedStarter = myT.starters.some(p => {
+        const ps = getPS(g, teamKey, p.id);
+        // If they played last segment their minutes would be > 0 from prior sections
+        // A player who sat out last segment had their minutes reduced by 8 in clearBenchedMarkers
+        // Simple check: they must be in prevBenched tracking or have low minutes relative to sections played
+        return (ps?.wasBenched);
+      });
+      // Fallback: just check if any starter has 0 minutes (meaning they sat last section)
+      const hasFreshStarter = myT.starters.some(p => {
+        const ps = getPS(g, teamKey, p.id);
+        return (ps?.minutes || 0) === 0 && !(g.quarter === 1 && g.section === 1);
+      });
+      if (!hasFreshStarter) return no('Need a starter who was benched last segment (0 minutes)');
       return ok();
     }
   }
@@ -79,8 +91,60 @@ export function canPlayCard(g, teamKey, cardId) {
     return ok();
   }
 
-  if (cardId === 'overhelp') return ok('Play when opponent plays a defensive switching card');
-  if (cardId === 'burned_switch') return ok('Play after opponent forces a matchup switch');
+  // Overhelp: only after opponent plays a defensive switching card (lastMatchupCard set by opponent)
+  if (cardId === 'overhelp') {
+    if (phase !== 'matchup_strats' && phase !== 'scoring') return no('Only playable during Matchup or Scoring Phase');
+    if (!g.lastMatchupCard || g.lastMatchupCard.teamKey === teamKey) return no('Opponent must play a switch card first (e.g. High Screen & Roll)');
+    return ok('Opponent played a switch card — pick a player for +2 roll');
+  }
+
+  // Burned on the Switch: only after opponent forces a matchup switch (lastMatchupCard set by opponent)
+  if (cardId === 'burned_switch') {
+    if (phase !== 'matchup_strats' && phase !== 'scoring') return no('Only playable during Matchup or Scoring Phase');
+    if (!g.lastMatchupCard || g.lastMatchupCard.teamKey === teamKey) return no('Opponent must force a matchup switch first');
+    return ok('Opponent forced a switch — check if new defender is weaker');
+  }
+
+  if (cardId === 'offensive_foul') {
+    if (phase !== 'scoring' && phase !== 'matchup_strats') return no('Only playable during Matchup or Scoring Phase');
+    // Must be played in reaction to an opponent's card that boosts Power
+    const oppKey = teamKey === 'A' ? 'B' : 'A';
+    const oppEff = g.tempEff[oppKey] || {};
+    const hasPowerBoost = Object.keys(oppEff).some(k => k.startsWith('p') && oppEff[k] > 0);
+    if (!hasPowerBoost) return no('Opponent must have played a card that boosts Power first');
+    return ok('Halve opponent\'s Power boost, −1 Rebound');
+  }
+
+  if (cardId === 'dogged') {
+    if (phase !== 'scoring' && phase !== 'matchup_strats') return no('Only playable during Matchup or Scoring Phase');
+    const oppKey = teamKey === 'A' ? 'B' : 'A';
+    const hasFatigued = oppT.starters.some((_, i) => getFatigue(g, oppKey, i) < 0);
+    if (!hasFatigued) return no('No fatigued opponent players in lineup');
+    return ok('Target a fatigued opponent for additional −2 Spd/Pwr');
+  }
+
+  if (cardId === 'coaches_challenge') {
+    if (phase !== 'scoring') return no('Only playable during Scoring Phase');
+    const oppKey = teamKey === 'A' ? 'B' : 'A';
+    const oppRolls = g.rollResults[oppKey] || [];
+    const hasRoll = oppRolls.some(r => r && r.pts !== undefined);
+    if (!hasRoll) return no('Opponent must have a scoring roll result to challenge');
+    return ok('Challenge and re-roll opponent\'s most recent scoring roll');
+  }
+
+  if (cardId === 'delayed_slip') {
+    if (phase !== 'scoring') return no('Only playable during Scoring Phase');
+    const eligible = myT.starters.some((p, i) => {
+      if ((p.speed || 0) < 12 || (p.power || 0) < 10) return false;
+      const di = (g.offMatchups[teamKey] || [])[i] ?? i;
+      const dp = oppT.starters[di];
+      if (!dp) return false;
+      const a = calcAdv(p, dp, g.tempEff[teamKey], i);
+      return a.rollBonus <= 0 && !a.hasPenalty;
+    });
+    if (!eligible) return no('Need a Speed 12+/Power 10+ player with no matchup advantage');
+    return ok();
+  }
 
   if (cardId === 'offensive_board') {
     if (phase !== 'scoring') return no('Only playable during Scoring Phase');
@@ -100,14 +164,17 @@ export function canPlayCard(g, teamKey, cardId) {
     if (phase !== 'scoring') return no('Only playable during Scoring Phase');
 
     if (cardId === 'ghost_screen') {
+      // Can't play on players who already rolled
+      const rolls = g.rollResults[teamKey] || [];
       const hasPenalty = myT.starters.some((p, i) => {
+        if (rolls[i] != null) return false; // already rolled
         const defIdx = (g.offMatchups[teamKey] || [])[i] ?? i;
         const dp = oppT.starters[defIdx];
         if (!dp) return false;
         const adv = calcAdv(p, dp, g.tempEff[teamKey], i);
         return adv.hasPenalty && p.speed >= 12;
       });
-      if (!hasPenalty) return no('Need a Speed 12+ player with a roll penalty');
+      if (!hasPenalty) return no('Need a Speed 12+ player with a roll penalty who hasn\'t rolled yet');
       return ok();
     }
 
@@ -118,7 +185,6 @@ export function canPlayCard(g, teamKey, cardId) {
     }
 
     if (cardId === 'turnover') {
-      // Check if any opponent starter has a cold marker
       const hasOppCold = oppT.starters.some(p => { const ps = getPS(g, teamKey === 'A' ? 'B' : 'A', p.id); return (ps?.cold || 0) > 0; });
       if (!hasOppCold) return no('Opponent needs a player with a cold marker');
       return ok();
@@ -222,15 +288,6 @@ export function canPlayCard(g, teamKey, cardId) {
       return ok();
     case 'switch_everything': return ok('Reassign your entire defense — all opponent advantages doubled');
     case 'this_is_my_house': return ok('Play if your defender has higher Speed AND Power than their matchup');
-    case 'second_wind': {
-      if (g.quarter === 1 && g.section === 1) return no('No one can be fatigued in the first segment');
-      const fat = myT.starters.some((_, i) => getFatigue(g, teamKey, i) < 0);
-      if (!fat) return no('No fatigued players in lineup (need 8+ min played)');
-      return ok();
-    }
-    case 'chip_on_shoulder':
-      if (!myT.starters.some(p => p.salary <= 250)) return no('Need a player with salary ≤$250 in lineup');
-      return ok();
     default: return ok();
   }
 }

@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { CARDS } from '../game/cards.js';
 import PlayerCard from './PlayerCard.jsx';
+import { useLightbox } from './CardLightbox.jsx';
 import styles from './TeamBuilderTab.module.css';
 
 const CAP = 5500;
@@ -9,34 +10,55 @@ const capSal = roster => roster.reduce((s, c) => s + c.salary, 0);
 
 function randomizeTeam(other) {
   const available = CARDS.filter(c => !other.find(r => r.id === c.id));
-  let best = null, bestScore = Infinity;
-  const center = 5100;
-  for (let attempt = 0; attempt < 300; attempt++) {
+  const MIN_SAL = 4800;
+  const MAX_SAL = 5500;
+
+  // Pick a random target salary within range for each attempt
+  // This ensures true spread across the 4800-5500 range
+  let best = null;
+  let bestDist = Infinity;
+
+  for (let attempt = 0; attempt < 500; attempt++) {
+    const target = MIN_SAL + Math.floor(Math.random() * (MAX_SAL - MIN_SAL + 1));
     const shuffled = [...available].sort(() => Math.random() - 0.5);
     const roster = []; let sal = 0;
+    const remaining = () => 10 - roster.length;
+
     for (const card of shuffled) {
       if (roster.length >= 10) break;
-      if (sal + card.salary > CAP) continue;
+      if (sal + card.salary > MAX_SAL) continue;
+      // Skip if adding this card would make it impossible to fill remaining slots
+      // (each remaining player needs at least ~100 salary minimum)
+      const spotsAfter = remaining() - 1;
+      if (spotsAfter > 0 && sal + card.salary + spotsAfter * 80 > MAX_SAL) continue;
       roster.push(card); sal += card.salary;
     }
-    if (roster.length === 10 && sal >= 4900 && sal <= 5300) {
-      const score = Math.abs(sal - center);
-      if (score < bestScore) { best = roster; bestScore = score; }
+
+    if (roster.length === 10 && sal >= MIN_SAL && sal <= MAX_SAL) {
+      const dist = Math.abs(sal - target);
+      if (dist < bestDist) {
+        best = roster;
+        bestDist = dist;
+        // If we're within 50 of our random target, good enough
+        if (dist <= 50) break;
+      }
     }
   }
-  if (!best) {
-    const shuffled = [...available].sort(() => Math.random() - 0.5);
-    const roster = []; let sal = 0;
-    for (const card of shuffled) {
-      if (roster.length >= 10) break;
-      if (sal + card.salary <= CAP) { roster.push(card); sal += card.salary; }
-    }
-    best = roster;
+
+  if (best) return best;
+
+  // Fallback: just fill under cap
+  const shuffled = [...available].sort(() => Math.random() - 0.5);
+  const roster = []; let sal = 0;
+  for (const card of shuffled) {
+    if (roster.length >= 10) break;
+    if (sal + card.salary <= CAP) { roster.push(card); sal += card.salary; }
   }
-  return best;
+  return roster;
 }
 
 export default function TeamBuilderTab({ teamA, setTeamA, teamB, setTeamB, onStartGame }) {
+  const { open } = useLightbox();
   const [search, setSearch] = useState('');
   const [filterTeam, setFilterTeam] = useState('');
   const [maxSal, setMaxSal] = useState(9999);
@@ -80,11 +102,13 @@ export default function TeamBuilderTab({ teamA, setTeamA, teamB, setTeamB, onSta
           name="Team A" color="var(--orange)" sal={salA} roster={teamA}
           onRemove={id => removeFrom(teamA, setTeamA, id)}
           onRandomize={() => setTeamA(randomizeTeam(teamB))}
+          onView={card => open('player', card)}
         />
         <RosterPanel
           name="Team B" color="var(--blue)" sal={salB} roster={teamB}
           onRemove={id => removeFrom(teamB, setTeamB, id)}
           onRandomize={() => setTeamB(randomizeTeam(teamA))}
+          onView={card => open('player', card)}
         />
       </div>
 
@@ -128,7 +152,7 @@ export default function TeamBuilderTab({ teamA, setTeamA, teamB, setTeamB, onSta
       </div>
       <div className={styles.pool}>
         {pool.map(card => (
-          <PlayerCard key={card.id} card={card} actions={
+          <PlayerCard key={card.id} card={card} onClick={() => open('player', card)} actions={
             <div style={{ display:'flex', gap:6, width:'100%' }}>
               <button className={styles.addA} onClick={() => addTo(teamA, setTeamA, card)}>+ A</button>
               <button className={styles.addB} onClick={() => addTo(teamB, setTeamB, card)}>+ B</button>
@@ -140,7 +164,7 @@ export default function TeamBuilderTab({ teamA, setTeamA, teamB, setTeamB, onSta
   );
 }
 
-function RosterPanel({ name, color, sal, roster, onRemove, onRandomize }) {
+function RosterPanel({ name, color, sal, roster, onRemove, onRandomize, onView }) {
   const pct = Math.min(100, sal / CAP * 100);
   const over = sal > CAP;
   return (
@@ -162,7 +186,9 @@ function RosterPanel({ name, color, sal, roster, onRemove, onRandomize }) {
         {roster.map(c => (
           <div key={c.id} className={styles.rosterItem}>
             <div>
-              <div className={styles.rosterName}>{c.name}</div>
+              <div className={styles.rosterName}
+                style={{ cursor: 'pointer', textDecoration: 'underline dotted' }}
+                onClick={() => onView(c)}>{c.name}</div>
               <div className={styles.rosterSub}>{c.team} · S{c.speed} P{c.power} · ${c.salary}</div>
             </div>
             <button className={styles.rmBtn} onClick={() => onRemove(c.id)}>×</button>

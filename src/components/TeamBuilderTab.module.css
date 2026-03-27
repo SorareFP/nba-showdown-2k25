@@ -68,6 +68,51 @@
 .addA:hover { background: #C2410C; }
 .addB:hover { background: #2563EB; }
 
+.saveBtn {
+  background: rgba(255,255,255,0.08);
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+.saveBtn:hover { background: rgba(255,255,255,0.14); }
+
+.loadModal {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.65);
+  z-index: 200;
+  display: flex; align-items: center; justify-content: center;
+  padding: 1rem;
+}
+.loadModalBox {
+  background: #0F1E35;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 14px;
+  padding: 20px;
+  max-width: 400px; width: 100%;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+}
+.loadModalTitle { font-size: 16px; font-weight: 700; margin-bottom: 12px; }
+.loadModalList { display: flex; flex-direction: column; gap: 6px; max-height: 50vh; overflow-y: auto; }
+.loadModalItem {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  padding: 10px 14px;
+  text-align: left; cursor: pointer;
+}
+.loadModalItem:hover { background: rgba(255,255,255,0.12); }
+.loadModalName { font-size: 13px; font-weight: 600; }
+.loadModalMeta { font-size: 11px; color: var(--text-muted); }
+.loadModalCancel {
+  background: rgba(255,255,255,0.07); color: #94A3B8;
+  padding: 8px 18px; border-radius: 6px;
+  font-size: 13px; width: 100%; margin-top: 10px;
+}
+.loadModalCancel:hover { background: rgba(255,255,255,0.12); }
+
 @media (max-width: 700px) {
   .teams { grid-template-columns: 1fr; }
   .pool { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); max-height: 400px; }

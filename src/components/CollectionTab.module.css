@@ -1,0 +1,83 @@
+.wrap { display: flex; flex-direction: column; gap: 2rem; }
+
+.section { display: flex; flex-direction: column; gap: 10px; }
+.sectionHeader { display: flex; justify-content: space-between; align-items: center; }
+.sectionTitle { font-size: 18px; font-weight: 700; }
+
+.newBtn {
+  background: var(--orange); color: #fff;
+  padding: 6px 16px; border-radius: var(--radius-sm);
+  font-size: 12px; font-weight: 600;
+}
+.newBtn:hover { background: #C2410C; }
+
+.loading { color: var(--text-muted); font-size: 13px; font-style: italic; }
+.empty { color: var(--text-dim); font-size: 13px; font-style: italic; padding: 1rem; text-align: center; }
+
+.list { display: flex; flex-direction: column; gap: 8px; }
+
+.item {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.itemHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  cursor: pointer;
+}
+.itemHeader:hover { background: var(--card-hover); }
+
+.itemName { font-weight: 600; font-size: 14px; }
+.itemMeta { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+.chevron { color: var(--text-dim); font-size: 14px; }
+
+.itemBody { padding: 0 14px 12px; border-top: 1px solid var(--border); }
+
+.playerList { display: flex; flex-direction: column; gap: 2px; padding: 8px 0; }
+.playerRow { display: flex; justify-content: space-between; font-size: 12px; padding: 2px 0; }
+.playerMeta { color: var(--text-muted); font-size: 11px; }
+
+.deckContents { display: flex; flex-direction: column; gap: 2px; padding: 8px 0; }
+.deckRow { display: flex; justify-content: space-between; font-size: 12px; padding: 2px 0; }
+.deckCardName { border-left: 3px solid; padding-left: 8px; }
+.deckCardCount { color: var(--text-muted); font-weight: 600; }
+
+.itemActions { display: flex; gap: 8px; padding-top: 8px; border-top: 1px solid var(--border); }
+.loadBtn {
+  background: var(--orange); color: #fff;
+  padding: 6px 14px; border-radius: var(--radius-sm);
+  font-size: 12px; font-weight: 600;
+}
+.loadBtn:hover { background: #C2410C; }
+.loadBtnB {
+  background: var(--blue); color: #fff;
+  padding: 6px 14px; border-radius: var(--radius-sm);
+  font-size: 12px; font-weight: 600;
+}
+.loadBtnB:hover { background: #2563EB; }
+.editBtn {
+  background: rgba(255,255,255,0.08); color: var(--text);
+  border: 1px solid var(--border);
+  padding: 6px 14px; border-radius: var(--radius-sm);
+  font-size: 12px; font-weight: 600;
+}
+.editBtn:hover { background: rgba(255,255,255,0.14); }
+.deleteBtn {
+  background: none; color: var(--red);
+  font-size: 12px; padding: 6px 10px;
+  margin-left: auto;
+}
+.deleteBtn:hover { opacity: 0.7; }
+
+@media (max-width: 600px) {
+  .itemHeader { padding: 10px 12px; }
+  .itemName { font-size: 13px; }
+  .itemActions { flex-wrap: wrap; }
+  .loadBtn, .loadBtnB, .editBtn { flex: 1; text-align: center; }
+  .deleteBtn { margin-left: 0; flex: 1; text-align: center; }
+}

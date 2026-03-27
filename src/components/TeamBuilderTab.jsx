@@ -1,7 +1,9 @@
 import { useState, useMemo } from 'react';
-import { CARDS } from '../game/cards.js';
+import { CARDS, CARD_MAP } from '../game/cards.js';
 import PlayerCard from './PlayerCard.jsx';
 import { useLightbox } from './CardLightbox.jsx';
+import { useAuth } from '../firebase/AuthProvider.jsx';
+import { saveTeam, loadTeams } from '../firebase/savedTeams.js';
 import styles from './TeamBuilderTab.module.css';
 
 const CAP = 5500;
@@ -59,12 +61,34 @@ function randomizeTeam(other) {
 
 export default function TeamBuilderTab({ teamA, setTeamA, teamB, setTeamB, onStartGame }) {
   const { open } = useLightbox();
+  const { user } = useAuth();
   const [search, setSearch] = useState('');
   const [filterTeam, setFilterTeam] = useState('');
   const [maxSal, setMaxSal] = useState(9999);
   const [sort, setSort] = useState('salary-desc');
+  const [loadModal, setLoadModal] = useState(null); // null | { slot: 'A'|'B', teams: [] }
 
   const allTeams = useMemo(() => [...new Set(CARDS.map(c => c.team))].sort(), []);
+
+  const handleSave = async (roster) => {
+    const name = prompt('Team name:');
+    if (!name?.trim()) return;
+    const sal = capSal(roster);
+    await saveTeam(user.uid, { name: name.trim(), players: roster.map(c => c.id), salary: sal });
+    alert('Team saved!');
+  };
+
+  const handleLoadOpen = async (slot) => {
+    const teams = await loadTeams(user.uid);
+    setLoadModal({ slot, teams });
+  };
+
+  const handleLoadSelect = (savedTeam) => {
+    const roster = savedTeam.players.map(id => CARD_MAP[id]).filter(Boolean);
+    if (loadModal.slot === 'A') setTeamA(roster);
+    else setTeamB(roster);
+    setLoadModal(null);
+  };
 
   const pool = useMemo(() => {
     const inTeam = id => teamA.find(c => c.id === id) || teamB.find(c => c.id === id);
@@ -103,12 +127,18 @@ export default function TeamBuilderTab({ teamA, setTeamA, teamB, setTeamB, onSta
           onRemove={id => removeFrom(teamA, setTeamA, id)}
           onRandomize={() => setTeamA(randomizeTeam(teamB))}
           onView={card => open('player', card)}
+          showFirebase={!!user}
+          onSave={() => handleSave(teamA)}
+          onLoad={() => handleLoadOpen('A')}
         />
         <RosterPanel
           name="Team B" color="var(--blue)" sal={salB} roster={teamB}
           onRemove={id => removeFrom(teamB, setTeamB, id)}
           onRandomize={() => setTeamB(randomizeTeam(teamA))}
           onView={card => open('player', card)}
+          showFirebase={!!user}
+          onSave={() => handleSave(teamB)}
+          onLoad={() => handleLoadOpen('B')}
         />
       </div>
 
@@ -160,11 +190,19 @@ export default function TeamBuilderTab({ teamA, setTeamA, teamB, setTeamB, onSta
           } />
         ))}
       </div>
+
+      {loadModal && (
+        <LoadTeamModal
+          teams={loadModal.teams}
+          onSelect={handleLoadSelect}
+          onClose={() => setLoadModal(null)}
+        />
+      )}
     </div>
   );
 }
 
-function RosterPanel({ name, color, sal, roster, onRemove, onRandomize, onView }) {
+function RosterPanel({ name, color, sal, roster, onRemove, onRandomize, onView, onSave, onLoad, showFirebase }) {
   const pct = Math.min(100, sal / CAP * 100);
   const over = sal > CAP;
   return (
@@ -175,6 +213,12 @@ function RosterPanel({ name, color, sal, roster, onRemove, onRandomize, onView }
           <span className={styles.salInfo} style={{ color: over ? 'var(--red)' : 'var(--text-muted)' }}>
             ${sal}/{CAP} · {roster.length}/{MAX}
           </span>
+          {showFirebase && roster.length > 0 && (
+            <button className={styles.saveBtn} onClick={onSave}>💾</button>
+          )}
+          {showFirebase && (
+            <button className={styles.saveBtn} onClick={onLoad}>📂</button>
+          )}
           <button className={styles.randBtn} style={{ background: color }} onClick={onRandomize}>🎲</button>
         </div>
       </div>
@@ -194,6 +238,26 @@ function RosterPanel({ name, color, sal, roster, onRemove, onRandomize, onView }
             <button className={styles.rmBtn} onClick={() => onRemove(c.id)}>×</button>
           </div>
         ))}
+      </div>
+    </div>
+  );
+}
+
+function LoadTeamModal({ teams, onSelect, onClose }) {
+  return (
+    <div className={styles.loadModal} onClick={onClose}>
+      <div className={styles.loadModalBox} onClick={e => e.stopPropagation()}>
+        <div className={styles.loadModalTitle}>Load Saved Team</div>
+        {teams.length === 0 && <div style={{ color: 'var(--text-dim)', fontSize: 13, fontStyle: 'italic', padding: '1rem', textAlign: 'center' }}>No saved teams yet</div>}
+        <div className={styles.loadModalList}>
+          {teams.map(t => (
+            <button key={t.id} className={styles.loadModalItem} onClick={() => onSelect(t)}>
+              <div className={styles.loadModalName}>{t.name}</div>
+              <div className={styles.loadModalMeta}>{t.players.length} players · ${t.salary}</div>
+            </button>
+          ))}
+        </div>
+        <button className={styles.loadModalCancel} onClick={onClose}>Cancel</button>
       </div>
     </div>
   );

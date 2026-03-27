@@ -1,0 +1,42 @@
+.wrap { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1rem; display: flex; flex-direction: column; gap: 10px; }
+.header { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.header h3 { font-size: 15px; }
+.turnBadge { font-size: 11px; font-weight: 600; padding: 3px 12px; border-radius: 999px; margin-left: auto; }
+.subtitle { font-size: 12px; color: var(--text-muted); }
+
+.board { display: flex; flex-direction: column; gap: 6px; }
+.matchupRow { display: grid; grid-template-columns: 1fr 60px 1fr; gap: 8px; align-items: start; background: rgba(255,255,255,0.03); border-radius: var(--radius-sm); padding: 8px 12px; }
+.vs { text-align: center; padding-top: 12px; font-size: 16px; }
+.slot { font-size: 9px; color: var(--text-dim); text-transform: uppercase; }
+
+.player {}
+.playerName { font-weight: 600; font-size: 13px; }
+.playerSub { font-size: 10px; color: var(--text-muted); }
+.boosts { font-size: 10px; color: var(--text-dim); margin-top: 2px; }
+.defSelect { width: 100%; font-size: 10px; padding: 2px 4px; margin-top: 3px; }
+
+.cardsArea { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.handLabel { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 6px; }
+.hand { display: flex; flex-direction: column; gap: 5px; min-height: 40px; }
+.noCards { font-size: 11px; color: var(--text-dim); font-style: italic; }
+
+.card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  border-left: 3px solid;
+  border-radius: var(--radius-sm);
+  padding: 7px 10px;
+  text-align: left;
+  transition: background 0.15s;
+}
+.card:hover:not(.dimCard) { background: rgba(255,255,255,0.1); }
+.reactionCard { background: rgba(59,130,246,0.05); }
+.dimCard { opacity: 0.35; cursor: default; }
+.cardName { font-weight: 600; font-size: 12px; margin-bottom: 2px; }
+.cardDesc { font-size: 10px; color: var(--text-muted); line-height: 1.4; }
+
+.passBtn { background: rgba(255,255,255,0.08); border: 1px solid var(--border); color: var(--text); padding: 7px 18px; border-radius: var(--radius-sm); margin-top: 8px; font-size: 13px; }
+.passBtn:hover { background: rgba(255,255,255,0.14); }
+
+.lockBtn { background: var(--orange); color: #fff; padding: 10px 22px; border-radius: var(--radius); font-size: 13px; align-self: flex-start; }
+.lockBtn:hover { background: #C2410C; }

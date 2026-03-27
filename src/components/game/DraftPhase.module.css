@@ -1,0 +1,42 @@
+.wrap { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1rem; }
+.header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+.header h3 { font-size: 15px; }
+.stepBadge { font-size: 11px; color: var(--text-muted); }
+.turnBadge { font-size: 12px; font-weight: 600; padding: 3px 12px; border-radius: 999px; margin-left: auto; }
+
+.board { display: grid; grid-template-columns: 1fr 48px 1fr; gap: 6px; margin-bottom: 14px; }
+.colLabel { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; padding: 2px 0; }
+.vs { display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--text-dim); }
+
+.slot {
+  background: rgba(255,255,255,0.04);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  min-height: 44px;
+  display: flex; flex-direction: column; justify-content: center;
+}
+.slotName { font-weight: 500; font-size: 12px; }
+.slotSub { font-size: 10px; color: var(--text-muted); }
+.fatBadge { background: rgba(220,38,38,0.3); color: #FCA5A5; font-size: 9px; padding: 1px 5px; border-radius: 999px; margin-left: 4px; }
+.empty { font-size: 11px; color: var(--text-dim); font-style: italic; }
+
+.prompt { font-size: 13px; margin-bottom: 10px; line-height: 1.5; }
+
+.poolLabel { font-size: 12px; font-weight: 600; margin-bottom: 8px; }
+.pool { display: flex; flex-wrap: wrap; gap: 6px; }
+.pickBtn {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
+  text-align: left;
+  transition: background 0.15s, border-color 0.15s;
+}
+.pickBtn:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.3); }
+.pickName { font-weight: 600; font-size: 12px; }
+.pickSub { font-size: 10px; color: var(--text-muted); }
+.fatWarn { color: #FCA5A5; }
+.minNote { color: var(--text-dim); }
+
+.ctaBtn { background: var(--orange); color: #fff; padding: 10px 22px; border-radius: var(--radius); margin-top: 12px; font-size: 14px; }
+.ctaBtn:hover { background: #C2410C; }

@@ -1,0 +1,36 @@
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 1rem;
+  align-items: start;
+}
+.main { display: flex; flex-direction: column; gap: 10px; }
+.sidebar { position: sticky; top: 76px; }
+
+.noGame {
+  display: flex; justify-content: center; align-items: center;
+  min-height: 60vh;
+}
+.noGameCard {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem;
+  text-align: center;
+  max-width: 480px;
+  width: 100%;
+}
+.noGameIcon { font-size: 48px; margin-bottom: 1rem; }
+.noGameCard h2 { font-size: 22px; margin-bottom: 8px; }
+.noGameCard p { color: var(--text-muted); font-size: 13px; margin-bottom: 1.5rem; line-height: 1.6; }
+.noGameBtns { display: flex; flex-direction: column; gap: 10px; }
+.btnPri { background: var(--orange); color: #fff; padding: 12px 24px; font-size: 14px; border-radius: var(--radius); }
+.btnPri:hover { background: #C2410C; }
+.btnSec { background: rgba(255,255,255,0.08); color: var(--text); border: 1px solid var(--border); padding: 12px 24px; font-size: 14px; border-radius: var(--radius); }
+.btnSec:hover { background: rgba(255,255,255,0.14); }
+.hint { font-size: 12px; color: var(--text-dim); margin-top: 1rem; margin-bottom: 0; }
+
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar { position: static; }
+}

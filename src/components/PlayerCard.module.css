@@ -1,0 +1,54 @@
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px;
+  transition: border-color 0.15s, transform 0.1s;
+}
+.card:hover { border-color: rgba(255,255,255,0.25); }
+.card.highlighted { border-color: var(--orange); box-shadow: 0 0 0 1px var(--orange); }
+.card.compact { padding: 8px 10px; }
+
+.header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+.name { font-weight: 600; font-size: 13px; line-height: 1.2; }
+.team { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+.salary {
+  background: rgba(59,130,246,0.2);
+  color: #93C5FD;
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.stats { display: flex; gap: 6px; margin-bottom: 8px; }
+.stat {
+  flex: 1;
+  text-align: center;
+  background: rgba(255,255,255,0.05);
+  border-radius: var(--radius-sm);
+  padding: 4px 2px;
+}
+.statLabel { font-size: 9px; color: var(--text-dim); display: block; text-transform: uppercase; letter-spacing: .05em; }
+.statValue { font-size: 16px; font-weight: 700; display: block; line-height: 1.2; }
+
+.boosts { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 8px; }
+.boost {
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.paint  { background: rgba(234,179,8,0.2);  color: #FCD34D; }
+.three  { background: rgba(59,130,246,0.2); color: #93C5FD; }
+.defPos { background: rgba(22,163,74,0.2);  color: #86EFAC; }
+.defNeg { background: rgba(220,38,38,0.2);  color: #FCA5A5; }
+
+.chart { font-size: 11px; color: var(--text-muted); }
+.chartRow { display: flex; justify-content: space-between; padding: 2px 0; }
+.range { font-weight: 600; color: var(--text); }
+.result { color: var(--text-muted); }
+
+.actions { display: flex; gap: 6px; margin-top: 8px; }

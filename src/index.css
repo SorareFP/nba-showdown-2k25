@@ -1,0 +1,72 @@
+/* NBA Showdown 2K25 — Global Styles */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --court-hardwood: #C8954A;
+  --court-line: rgba(255,255,255,0.6);
+  --court-key: #B8813A;
+  --navy: #0A1628;
+  --navy-light: #152238;
+  --orange: #EA580C;
+  --orange-light: #FB923C;
+  --blue: #3B82F6;
+  --green: #16A34A;
+  --red: #DC2626;
+  --gold: #F59E0B;
+  --text: #F8FAFC;
+  --text-muted: rgba(248,250,252,0.6);
+  --text-dim: rgba(248,250,252,0.35);
+  --border: rgba(255,255,255,0.12);
+  --card-bg: rgba(255,255,255,0.06);
+  --card-hover: rgba(255,255,255,0.1);
+  --radius: 10px;
+  --radius-sm: 6px;
+  --radius-lg: 16px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.4);
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+html, body, #root {
+  height: 100%;
+  background: var(--navy);
+  color: var(--text);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  transition: all 0.15s;
+  font-weight: 500;
+}
+button:active { transform: scale(0.97); }
+button:disabled { opacity: 0.4; cursor: default; }
+
+input, select {
+  font-family: inherit;
+  font-size: 13px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  padding: 6px 10px;
+}
+input:focus, select:focus {
+  outline: 2px solid var(--orange);
+  outline-offset: 1px;
+}
+select option { background: var(--navy); color: var(--text); }
+
+/* Scrollbars */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+
+/* Utility */
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }

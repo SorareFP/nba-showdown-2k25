@@ -1,0 +1,236 @@
+// NBA Showdown 2K25 — Card playability rules
+// Returns { canPlay: bool, reason: string }
+
+import { getTeam, getOpp, getPS, getFatigue, calcAdv } from './engine.js';
+
+const ok = (r = '') => ({ canPlay: true, reason: r });
+const no = (r) => ({ canPlay: false, reason: r });
+
+export function canPlayCard(g, teamKey, cardId) {
+  const myT = getTeam(g, teamKey);
+  const oppT = getOpp(g, teamKey);
+  const phase = g.phase;
+
+  if (phase === 'draft') return no('Cannot play cards during draft');
+
+  // ── MATCHUP PHASE ──────────────────────────────────────────────────────
+  if (['high_screen_roll','stagger_action','second_wind','chip_on_shoulder','defensive_stopper'].includes(cardId)) {
+    if (phase !== 'matchup_strats') return no('Only playable during Matchup Strategy Phase');
+    if (g.matchupTurn !== teamKey) return no("It's not your turn");
+
+    if (cardId === 'high_screen_roll') return ok('Swap which defenders guard your players');
+
+    if (cardId === 'stagger_action') {
+      const has13 = myT.starters.some(p => p.speed >= 13);
+      const has3pt = myT.starters.some(p => (p.threePtBoost || 0) > 0);
+      if (!has13) return no('Need a player with Speed 13+ in lineup');
+      if (!has3pt) return no('Need a player with a 3PT Bonus in lineup');
+      return ok();
+    }
+
+    if (cardId === 'second_wind') {
+      if (g.quarter === 1 && g.section === 1) return no('No one can be fatigued in the first segment');
+      const fatigued = myT.starters.some((_, i) => getFatigue(g, teamKey, i) < 0);
+      if (!fatigued) return no('No fatigued players in lineup (need 8+ min played)');
+      return ok();
+    }
+
+    if (cardId === 'chip_on_shoulder') {
+      const cheap = myT.starters.some(p => p.salary <= 250);
+      if (!cheap) return no('Need a player with salary ≤$250 in lineup');
+      return ok();
+    }
+
+    if (cardId === 'defensive_stopper') {
+      if (g.quarter === 1 && g.section === 1) return no('Cannot play in the first segment — no one has sat out yet');
+      const benched = myT.roster.filter(p => !myT.starters.find(s => s.id === p.id));
+      if (!benched.length) return no('No benched players available');
+      return ok();
+    }
+  }
+
+  // ── REACTION CARDS ─────────────────────────────────────────────────────
+  if (['go_under','fight_over','veer_switch'].includes(cardId)) {
+    if (phase !== 'matchup_strats') return no('Only playable during Matchup Strategy Phase');
+    if (teamKey === g.matchupTurn) return no('Reaction — play in response to opponent\'s switch card');
+    if (!g.lastMatchupCard) return no('No switch card to react to');
+    return ok('Cancel opponent\'s screen card');
+  }
+
+  if (cardId === 'close_out') {
+    if (!g.pendingShotCheck) return no('Wait for opponent to announce a 3PT Shot Check');
+    if (g.pendingShotCheck.teamKey === teamKey) return no('Can only close out opponent\'s shot checks');
+    if (g.pendingShotCheck.type === 'ft') return no('Cannot close out a free throw');
+    return ok('Reduce this shot check by −3 (miss = cold marker)');
+  }
+
+  if (cardId === 'cold_spell') {
+    if (phase !== 'scoring') return no('Only playable during Scoring Phase');
+    const oppRolls = Object.values(g.rollResults[teamKey === 'A' ? 'B' : 'A'] || {});
+    const hasNat12 = oppRolls.some(r => r && (r.die === 1 || r.die === 2) && !r.coldSpellUsed);
+    if (!hasNat12) return no('Wait for opponent to roll a natural 1 or 2 on their scoring roll');
+    return ok('React to opponent\'s natural 1 or 2 scoring roll');
+  }
+
+  if (cardId === 'anticipate_pass') {
+    if (phase !== 'scoring') return no('Only playable during Scoring Phase');
+    if (oppT.assists < 6) return no(`Opponent needs 6+ assists (has ${oppT.assists})`);
+    if (myT.assists < 1) return no('Need at least 1 assist to spend');
+    return ok();
+  }
+
+  if (cardId === 'overhelp') return ok('Play when opponent plays a defensive switching card');
+  if (cardId === 'burned_switch') return ok('Play after opponent forces a matchup switch');
+
+  if (cardId === 'offensive_board') {
+    if (phase !== 'scoring') return no('Only playable during Scoring Phase');
+    if (myT.rebounds < 3) return no(`Need 3 rebounds (have ${myT.rebounds})`);
+    return ok();
+  }
+
+  if (cardId === 'rebound_tap_out') {
+    if (phase !== 'scoring') return no('Only playable during Scoring Phase');
+    if (myT.rebounds < 2) return no(`Need 2 rebounds (have ${myT.rebounds})`);
+    if (!myT.starters.some(p => (p.threePtBoost || 0) > 0)) return no('Need a player with a 3PT Bonus in lineup');
+    return ok();
+  }
+
+  // ── PRE-ROLL ───────────────────────────────────────────────────────────
+  if (['ghost_screen','you_stand_over_there','putback_dunk','pin_down_screen','turnover'].includes(cardId)) {
+    if (phase !== 'scoring') return no('Only playable during Scoring Phase');
+
+    if (cardId === 'ghost_screen') {
+      const hasPenalty = myT.starters.some((p, i) => {
+        const defIdx = (g.offMatchups[teamKey] || [])[i] ?? i;
+        const dp = oppT.starters[defIdx];
+        if (!dp) return false;
+        const adv = calcAdv(p, dp, g.tempEff[teamKey], i);
+        return adv.hasPenalty && p.speed >= 12;
+      });
+      if (!hasPenalty) return no('Need a Speed 12+ player with a roll penalty');
+      return ok();
+    }
+
+    if (cardId === 'putback_dunk') {
+      if (myT.rebounds <= oppT.rebounds) return no('Your team must lead in rebounds');
+      if (!myT.starters.some(p => p.power >= 14)) return no('Need a player with Power 14+ in lineup');
+      return ok();
+    }
+
+    if (cardId === 'turnover') {
+      // Check if any opponent starter has a cold marker
+      const hasOppCold = oppT.starters.some(p => { const ps = getPS(g, teamKey === 'A' ? 'B' : 'A', p.id); return (ps?.cold || 0) > 0; });
+      if (!hasOppCold) return no('Opponent needs a player with a cold marker');
+      return ok();
+    }
+
+    return ok();
+  }
+
+  // ── POST-ROLL ──────────────────────────────────────────────────────────
+  if (cardId === 'heat_check') {
+    if (phase !== 'scoring') return no('Only playable during Scoring Phase');
+    const anyHitTop = (g.rollResults[teamKey] || []).some(r => r?.isTop);
+    if (!anyHitTop) return no('A player must have hit their highest chart tier this segment');
+    return ok();
+  }
+
+  if (cardId === 'burst_of_momentum') {
+    if (phase !== 'scoring') return no('Only playable during Scoring Phase');
+    const ok2 = (g.rollResults[teamKey] || []).some(r => r?.isTop && (r?.pts || 0) >= 5);
+    if (!ok2) return no('Need a player who hit top tier AND scored 5+ pts');
+    return ok();
+  }
+
+  if (cardId === 'flare_screen') {
+    if (phase !== 'scoring') return no('Only playable during Scoring Phase');
+    if (!(g.rollResults[teamKey] || []).some(r => r?.die === 20)) return no('A player must have rolled a natural 20');
+    return ok();
+  }
+
+  // ── SCORING PHASE ──────────────────────────────────────────────────────
+  if (phase !== 'scoring') return no('Only playable during Scoring Phase');
+
+  switch (cardId) {
+    case 'green_light': return ok();
+    case 'from_way_downtown': return ok();
+    case 'catch_and_shoot':
+      if (!myT.starters.some(p => p.speed >= 12)) return no('Need a player with Speed 12+ in lineup');
+      return ok();
+    case 'elevator_doors':
+      if (!myT.starters.some(p => (p.threePtBoost || 0) > 0)) return no('Need a player with a 3PT Bonus in lineup');
+      return ok();
+    case 'bully_ball': {
+      const hasAdv = myT.starters.some((p, i) => {
+        const defIdx = (g.offMatchups[teamKey] || [])[i] ?? i;
+        const dp = oppT.starters[defIdx];
+        return dp && calcAdv(p, dp, g.tempEff[teamKey], i).powerAdv > 0;
+      });
+      if (!hasAdv) return no('Need a player with a Power advantage in their matchup');
+      return ok();
+    }
+    case 'power_move': return ok('Give a player +2 Power (or +3 if Power advantage ≥5)');
+    case 'and_one': {
+      const hasAdv3 = myT.starters.some((p, i) => {
+        const defIdx = (g.offMatchups[teamKey] || [])[i] ?? i;
+        const dp = oppT.starters[defIdx];
+        if (!dp) return false;
+        const adv = calcAdv(p, dp, g.tempEff[teamKey], i);
+        return Math.max(adv.speedAdv, adv.powerAdv) >= 3;
+      });
+      if (!hasAdv3) return no('Need a player with Speed or Power advantage ≥3');
+      return ok();
+    }
+    case 'rimshaker': {
+      const hasHot = myT.starters.some(p => { const ps = getPS(g, teamKey, p.id) || {}; return p.power >= 13 && (ps.hot || 0) > 0; });
+      if (!hasHot) return no('Need a Power 13+ player with a hot marker');
+      return ok();
+    }
+    case 'drive_the_lane': {
+      const hasSpdAdv = myT.starters.some((p, i) => {
+        const defIdx = (g.offMatchups[teamKey] || [])[i] ?? i;
+        const dp = oppT.starters[defIdx];
+        return dp && calcAdv(p, dp, g.tempEff[teamKey], i).speedAdv > 0;
+      });
+      if (!hasSpdAdv) return no('Need a player with a Speed advantage in their matchup');
+      return ok();
+    }
+    case 'uncontested_layup': {
+      const hasDouble = myT.starters.some((p, i) => {
+        const defIdx = (g.offMatchups[teamKey] || [])[i] ?? i;
+        const dp = oppT.starters[defIdx];
+        if (!dp) return false;
+        const adv = calcAdv(p, dp, g.tempEff[teamKey], i);
+        return adv.speedAdv >= 2 && adv.powerAdv >= 2;
+      });
+      if (!hasDouble) return no('Need a player with +2 Speed AND +2 Power advantage');
+      return ok();
+    }
+    case 'back_to_basket':
+      if (!myT.starters.some(p => p.power >= 13 && (p.paintBoost || 0) > 0)) return no('Need Power 13+ player with a Paint Bonus');
+      return ok();
+    case 'cross_court_dime':
+      if (myT.assists < 3) return no(`Need 3 assists (have ${myT.assists})`);
+      return ok();
+    case 'energy_injection': {
+      const cheap = myT.starters.filter(p => p.salary < 400);
+      if (cheap.length < 2) return no(`Need 2 players with salary <$400 (have ${cheap.length})`);
+      return ok();
+    }
+    case 'crowd_favorite':
+      if (!myT.starters.some(p => p.salary <= 350)) return no('Need a player with salary ≤$350 in lineup');
+      return ok();
+    case 'switch_everything': return ok('Reassign your entire defense — all opponent advantages doubled');
+    case 'this_is_my_house': return ok('Play if your defender has higher Speed AND Power than their matchup');
+    case 'second_wind': {
+      if (g.quarter === 1 && g.section === 1) return no('No one can be fatigued in the first segment');
+      const fat = myT.starters.some((_, i) => getFatigue(g, teamKey, i) < 0);
+      if (!fat) return no('No fatigued players in lineup (need 8+ min played)');
+      return ok();
+    }
+    case 'chip_on_shoulder':
+      if (!myT.starters.some(p => p.salary <= 250)) return no('Need a player with salary ≤$250 in lineup');
+      return ok();
+    default: return ok();
+  }
+}

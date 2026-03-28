@@ -84,7 +84,7 @@ export default function DraftPhase({ game, setGame }) {
         {pool.map(p => {
           const ps = (actTeam === 'A' ? teamA : teamB).stats.find(s => s.id === p.id) || {};
           const min = ps.minutes || 0;
-          const fat = min >= 12 ? -4 : min >= 8 ? -2 : 0;
+          const fat = min >= 16 ? -12 : min >= 12 ? -6 : min >= 8 ? -2 : 0;
           return (
             <button key={p.id} className={styles.pickBtn} onClick={() => pick(p)}>
               <div className={styles.pickName}>{p.name}{ps.hot > 0 ? ' 🔥' : ps.cold > 0 ? ' ❄️' : ''}</div>
@@ -104,7 +104,7 @@ export default function DraftPhase({ game, setGame }) {
 function SlotCell({ player, side, stats, align }) {
   const ps = player ? (stats || []).find(s => s.id === player.id) || {} : null;
   const min = ps?.minutes || 0;
-  const fat = min >= 12 ? -4 : min >= 8 ? -2 : 0;
+  const fat = min >= 16 ? -12 : min >= 12 ? -6 : min >= 8 ? -2 : 0;
   const borderSide = side === 'A' ? { borderLeft: '3px solid var(--orange)' } : { borderRight: '3px solid var(--blue)' };
 
   return (

@@ -13,6 +13,9 @@ export function canPlayCard(g, teamKey, cardId) {
 
   if (phase === 'draft') return no('Cannot play cards during draft');
 
+  // While a shot check is pending, only Close Out is allowed
+  if (g.pendingShotCheck && cardId !== 'close_out') return no('Resolve pending shot check first');
+
   // ── MATCHUP PHASE ──────────────────────────────────────────────────────
   if (['high_screen_roll','stagger_action','second_wind','chip_on_shoulder','defensive_stopper'].includes(cardId)) {
     if (phase !== 'matchup_strats') return no('Only playable during Matchup Strategy Phase');
@@ -64,8 +67,8 @@ export function canPlayCard(g, teamKey, cardId) {
   // ── REACTION CARDS ─────────────────────────────────────────────────────
   if (['go_under','fight_over','veer_switch'].includes(cardId)) {
     if (phase !== 'matchup_strats') return no('Only playable during Matchup Strategy Phase');
-    if (teamKey === g.matchupTurn) return no('Reaction — play in response to opponent\'s switch card');
     if (!g.lastMatchupCard) return no('No switch card to react to');
+    if (g.lastMatchupCard.teamKey === teamKey) return no('Cannot react to your own switch card');
     return ok('Cancel opponent\'s screen card');
   }
 
@@ -94,14 +97,16 @@ export function canPlayCard(g, teamKey, cardId) {
   // Overhelp: only after opponent plays a defensive switching card (lastMatchupCard set by opponent)
   if (cardId === 'overhelp') {
     if (phase !== 'matchup_strats' && phase !== 'scoring') return no('Only playable during Matchup or Scoring Phase');
-    if (!g.lastMatchupCard || g.lastMatchupCard.teamKey === teamKey) return no('Opponent must play a switch card first (e.g. High Screen & Roll)');
+    if (!g.lastMatchupCard) return no('Opponent must play a switch card first (e.g. High Screen & Roll)');
+    if (g.lastMatchupCard.teamKey === teamKey) return no('Cannot react to your own switch card');
     return ok('Opponent played a switch card — pick a player for +2 roll');
   }
 
   // Burned on the Switch: only after opponent forces a matchup switch (lastMatchupCard set by opponent)
   if (cardId === 'burned_switch') {
     if (phase !== 'matchup_strats' && phase !== 'scoring') return no('Only playable during Matchup or Scoring Phase');
-    if (!g.lastMatchupCard || g.lastMatchupCard.teamKey === teamKey) return no('Opponent must force a matchup switch first');
+    if (!g.lastMatchupCard) return no('Opponent must force a matchup switch first');
+    if (g.lastMatchupCard.teamKey === teamKey) return no('Cannot react to your own switch card');
     return ok('Opponent forced a switch — check if new defender is weaker');
   }
 

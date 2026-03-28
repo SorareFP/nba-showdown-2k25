@@ -83,11 +83,12 @@ async function buildOpts(game, teamKey, cardId, base, openModal) {
     'ghost_screen', 'bully_ball', 'and_one', 'rimshaker', 'uncontested_layup',
     'back_to_basket', 'putback_dunk', 'chip_on_shoulder', 'defensive_stopper',
     'second_wind', 'crowd_favorite', 'delayed_slip', 'energy_injection',
+    'catch_and_shoot',
   ];
 
   // Cards that show ALL my starters (no filtering needed)
   const unfilteredPlayerCards = [
-    'green_light', 'you_stand_over_there', 'catch_and_shoot', 'elevator_doors',
+    'green_light', 'you_stand_over_there', 'elevator_doors',
     'pin_down_screen', 'power_move', 'from_way_downtown', 'cross_court_dime',
     'rebound_tap_out',
   ];
@@ -225,6 +226,11 @@ async function buildOpts(game, teamKey, cardId, base, openModal) {
       case 'energy_injection': {
         eligible = filterStarters(myT.starters, (p) => (p.salary || 0) < 400);
         label = 'Select first player (salary < $400)';
+        break;
+      }
+      case 'catch_and_shoot': {
+        eligible = filterStarters(myT.starters, (p) => (p.speed || 0) >= 12);
+        label = 'Select player with Speed 12+';
         break;
       }
       default:
@@ -475,7 +481,7 @@ function SelectModal({ modal, game, onClose }) {
           {players.map((p, i) => {
             const ps = stats?.find(s => s.id === p.id) || {};
             const min = ps.minutes || 0;
-            const fat = min >= 12 ? -4 : min >= 8 ? -2 : 0;
+            const fat = min >= 16 ? -12 : min >= 12 ? -6 : min >= 8 ? -2 : 0;
             const boosts = [
               p.threePtBoost ? `3PT${p.threePtBoost>0?'+':''}${p.threePtBoost}` : '',
               p.paintBoost   ? `Paint${p.paintBoost>0?'+':''}${p.paintBoost}` : '',
@@ -623,7 +629,7 @@ function DraftRow({ idx, game, setGame }) {
     d.step++;
     if(g.teamA.starters.length===5&&g.teamB.starters.length===5){
       g.offMatchups={A:[0,1,2,3,4],B:[0,1,2,3,4]};
-      ['A','B'].forEach(k=>{const t=k==='A'?g.teamA:g.teamB;t.stats.forEach(ps=>{if(!t.starters.find(p=>p.id===ps.id)){ps.hot=0;ps.cold=0;ps.minutes=Math.max(0,(ps.minutes||0)-8);}});});
+      ['A','B'].forEach(k=>{const t=k==='A'?g.teamA:g.teamB;t.stats.forEach(ps=>{if(!t.starters.find(p=>p.id===ps.id)){ps.hot=0;ps.cold=0;const m=ps.minutes||0;ps.minutes=m<=8?0:Math.max(0,m-8);}});});
       g.phase='matchup_strats';
       g.log=[...g.log,{team:null,msg:'Draft complete — Matchup Strategy Phase.'}];
     }
@@ -651,7 +657,7 @@ function DraftRow({ idx, game, setGame }) {
 
 function PlacedCard({ player, stats, col }) {
   const ps=stats?.find(s=>s.id===player.id)||{};
-  const min=ps.minutes||0,fat=min>=12?-4:min>=8?-2:0;
+  const min=ps.minutes||0,fat=min>=16?-12:min>=12?-6:min>=8?-2:0;
   const boosts=[
     player.threePtBoost?`3PT${player.threePtBoost>0?'+':''}${player.threePtBoost}`:'',
     player.paintBoost?`Paint${player.paintBoost>0?'+':''}${player.paintBoost}`:'',
@@ -690,7 +696,7 @@ function PickList({ pool, stats, onPick, col, oppStarters = [], myStarters = [],
       <div className={styles.pickScroll}>
         {filtered.map(p=>{
           const ps=stats?.find(s=>s.id===p.id)||{};
-          const min=ps.minutes||0,fat=min>=12?-4:min>=8?-2:0;
+          const min=ps.minutes||0,fat=min>=16?-12:min>=12?-6:min>=8?-2:0;
           const boosts=[
             p.threePtBoost?`3PT${p.threePtBoost>0?'+':''}${p.threePtBoost}`:'',
             p.paintBoost?`Paint${p.paintBoost>0?'+':''}${p.paintBoost}`:'',
@@ -700,7 +706,7 @@ function PickList({ pool, stats, onPick, col, oppStarters = [], myStarters = [],
           return (
             <button key={p.id} className={styles.pickItem} onClick={()=>onPick(p)}>
               <span className={styles.pickName}>{p.name}{ps.hot>0?' 🔥':ps.cold>0?' ❄️':''}</span>
-              <span className={styles.pickMeta}>S{p.speed} P{p.power}{boosts&&' · '+boosts}{fat<0?` FAT${fat}`:min>0?` ${min}m`:''}</span>
+              <span className={styles.pickMeta}>S{p.speed} P{p.power}{boosts&&' · '+boosts}{min>=16?' ⛔ MUST REST':fat<0?` FAT${fat}`:min>0?` ${min}m`:''}</span>
               {preview && (
                 <span className={styles.pickMatchup}>
                   vs {preview.oppName}: Off <span style={{color:preview.offAdv.rollBonus>0?'#4ADE80':preview.offAdv.hasPenalty?'#F87171':'#94A3B8'}}>{preview.offAdv.rollBonus>0?'+':''}{preview.offAdv.rollBonus}</span>
@@ -802,15 +808,17 @@ function PlayerSlot({ player, ps, adv, fat, result, blocked, teamKey, idx, phase
             {onSpendRebound && (() => {
               const rb = game.reboundBonuses?.[teamKey];
               if (!rb) return null;
-              const hasPaint = (player.paintBoost||0) > 0 || player.power >= 10;
-              const isPutback = rb.putbackPlayers?.some(p => p.idx === idx);
-              const anyBtn = (rb.paintCheck && hasPaint) || rb.fastBreak || isPutback;
+              const myT2 = teamKey==='A'?game.teamA:game.teamB;
+              const hasPaint = ((player.paintBoost||0) > 0 || player.power >= 10) && myT2.rebounds >= 2;
+              const isPutback = rb.putbackPlayers?.some(p => p.idx === idx) && myT2.rebounds >= 2;
+              const canFastBrk = rb.fastBreak && myT2.rebounds >= 3;
+              const anyBtn = (rb.paintCheck && hasPaint) || canFastBrk || isPutback;
               if (!anyBtn) return null;
               return (
                 <div className={styles.assistSpend}>
-                  {rb.paintCheck && hasPaint && <button className={styles.rebBtn} title="Reb +3: Paint shot check" onClick={()=>onSpendRebound(teamKey,'paint_check',idx)}>Paint (R+3)</button>}
-                  {rb.fastBreak && <button className={styles.rebBtn} title="Reb +5: Fast break check" onClick={()=>onSpendRebound(teamKey,'fast_break',idx)}>FastBrk (R+5)</button>}
-                  {isPutback && <button className={styles.rebBtn} title="Putback: 2+ reb this section" onClick={()=>onSpendRebound(teamKey,'putback',idx)}>Putback</button>}
+                  {rb.paintCheck && hasPaint && <button className={styles.rebBtn} title="Costs 2 REB: Paint shot check" onClick={()=>onSpendRebound(teamKey,'paint_check',idx)}>Paint (−2R)</button>}
+                  {canFastBrk && <button className={styles.rebBtn} title="Costs 3 REB: Fast break check" onClick={()=>onSpendRebound(teamKey,'fast_break',idx)}>FastBrk (−3R)</button>}
+                  {isPutback && <button className={styles.rebBtn} title="Costs 2 REB: Putback paint check" onClick={()=>onSpendRebound(teamKey,'putback',idx)}>Putback (−2R)</button>}
                 </div>
               );
             })()}

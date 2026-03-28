@@ -30,8 +30,8 @@ export default function GameOver({ game, onPlayAgain }) {
 function BoxScore({ team, col }) {
   const players = team.roster
     .map(p => ({ player: p, st: team.stats.find(s => s.id === p.id) || {} }))
-    .filter(({ st }) => st.pts || st.reb || st.ast || st.minutes || st.threepa || st.fta)
-    .sort((a, b) => (b.st.minutes || 0) - (a.st.minutes || 0));
+    .filter(({ st }) => st.pts || st.reb || st.ast || st.totalMinutes || st.minutes || st.threepa || st.fta)
+    .sort((a, b) => (b.st.totalMinutes || b.st.minutes || 0) - (a.st.totalMinutes || a.st.minutes || 0));
 
   const totals = players.reduce((acc, { st }) => ({
     pts:     acc.pts     + (st.pts || 0),
@@ -70,7 +70,7 @@ function BoxScore({ team, col }) {
               return (
                 <tr key={player.id}>
                   <td className={styles.playerCell}>{player.name}</td>
-                  <td>{st.minutes || 0}</td>
+                  <td>{st.totalMinutes || st.minutes || 0}</td>
                   <td className={styles.pts} style={{ color: col }}>{st.pts || 0}</td>
                   <td>{st.reb || 0}</td>
                   <td>{st.ast || 0}</td>

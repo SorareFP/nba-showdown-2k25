@@ -63,7 +63,8 @@ function makeTeam(roster, name, deckConfig) {
     stats: roster.map(c => ({
       id: c.id,
       pts: 0, reb: 0, ast: 0,
-      minutes: 0,
+      minutes: 0,       // fatigue tracker (decremented by rest)
+      totalMinutes: 0,   // actual minutes played (never decreases)
       hot: 0, cold: 0,
       threepm: 0, threepa: 0,
       ftm: 0, fta: 0,
@@ -143,13 +144,19 @@ export function calcAdv(off, def, tempEff = {}, idx = 0, tempDefEff = null, defI
 }
 
 // ── Fatigue ────────────────────────────────────────────────────────────────
+// Progressive fatigue based on consecutive minutes:
+//   0-8 min: no penalty (2 sections free)
+//   9-12 min: -2
+//   13-16 min: -6
+//   16+ min: -12 (should be benched)
 export function getFatigue(g, key, idx) {
   const player = getTeam(g, key).starters[idx];
   if (!player) return 0;
   const ps = getPS(g, key, player.id);
   if (g.ignFatigue?.[`${key}_${idx}`]) return 0;
   const min = ps?.minutes || 0;
-  if (min >= 12) return -4;
+  if (min >= 16) return -12;
+  if (min >= 12) return -6;
   if (min >= 8) return -2;
   return 0;
 }
@@ -243,7 +250,9 @@ export function spendReboundBonus(g, teamKey, type, playerIdx) {
   const ps = getPS(ng, teamKey, player.id) || {};
 
   if (type === 'paint_check') {
-    // Second-chance paint shot check (from +3 reb advantage)
+    // Second-chance paint shot check (from +3 reb advantage) — costs 2 REB
+    if (myT.rebounds < 2) return { game: ng, ok: false, msg: `Need 2 rebounds (have ${myT.rebounds})` };
+    myT.rebounds -= 2;
     const r = shotCheck(player, 'paint', 0, ps);
     if (r.hit) {
       myT.score += r.pts;
@@ -254,12 +263,14 @@ export function spendReboundBonus(g, teamKey, type, playerIdx) {
     if (r.die >= 19) ps.hot = (ps.hot || 0) + 1;
     // Mark as used
     if (ng.reboundBonuses?.[teamKey]) ng.reboundBonuses[teamKey].paintCheck = false;
-    ng.log = [...ng.log, { team: teamKey, msg: `Rebound +3 Paint Check: ${player.name} 🎲${r.die}${r.bonus ? (r.bonus > 0 ? '+' : '') + r.bonus : ''}=${r.total} vs ${r.line} → ${r.hit ? '2pts!' : 'MISS'}` }];
+    ng.log = [...ng.log, { team: teamKey, msg: `Rebound Paint Check (−2 REB): ${player.name} 🎲${r.die}${r.bonus ? (r.bonus > 0 ? '+' : '') + r.bonus : ''}=${r.total} vs ${r.line} → ${r.hit ? '2pts!' : 'MISS'}` }];
     return { game: ng, ok: true };
   }
 
   if (type === 'fast_break') {
-    // Speed-based fast break (from +5 reb advantage). Use speed as bonus
+    // Speed-based fast break (from +5 reb advantage) — costs 3 REB
+    if (myT.rebounds < 3) return { game: ng, ok: false, msg: `Need 3 rebounds (have ${myT.rebounds})` };
+    myT.rebounds -= 3;
     const speedBonus = Math.floor(player.speed / 4);
     const r = shotCheck(player, 'paint', speedBonus, ps);
     if (r.hit) {
@@ -270,11 +281,14 @@ export function spendReboundBonus(g, teamKey, type, playerIdx) {
     if (r.die <= 2) ps.cold = (ps.cold || 0) + 1;
     if (r.die >= 19) ps.hot = (ps.hot || 0) + 1;
     if (ng.reboundBonuses?.[teamKey]) ng.reboundBonuses[teamKey].fastBreak = false;
-    ng.log = [...ng.log, { team: teamKey, msg: `Fast Break (Reb +5): ${player.name} 🎲${r.die}${r.bonus ? (r.bonus > 0 ? '+' : '') + r.bonus : ''}=${r.total} vs ${r.line} → ${r.hit ? '2pts!' : 'MISS'}` }];
+    ng.log = [...ng.log, { team: teamKey, msg: `Fast Break (−3 REB): ${player.name} 🎲${r.die}${r.bonus ? (r.bonus > 0 ? '+' : '') + r.bonus : ''}=${r.total} vs ${r.line} → ${r.hit ? '2pts!' : 'MISS'}` }];
     return { game: ng, ok: true };
   }
 
   if (type === 'putback') {
+    // Putback costs 2 REB
+    if (myT.rebounds < 2) return { game: ng, ok: false, msg: `Need 2 rebounds (have ${myT.rebounds})` };
+    myT.rebounds -= 2;
     const r = shotCheck(player, 'paint', 0, ps);
     if (r.hit) {
       myT.score += r.pts;
@@ -287,7 +301,7 @@ export function spendReboundBonus(g, teamKey, type, playerIdx) {
     if (ng.reboundBonuses?.[teamKey]?.putbackPlayers) {
       ng.reboundBonuses[teamKey].putbackPlayers = ng.reboundBonuses[teamKey].putbackPlayers.filter(p => p.idx !== playerIdx);
     }
-    ng.log = [...ng.log, { team: teamKey, msg: `Putback (2+ Reb): ${player.name} 🎲${r.die}${r.bonus ? (r.bonus > 0 ? '+' : '') + r.bonus : ''}=${r.total} vs ${r.line} → ${r.hit ? '2pts!' : 'MISS'}` }];
+    ng.log = [...ng.log, { team: teamKey, msg: `Putback (−2 REB): ${player.name} 🎲${r.die}${r.bonus ? (r.bonus > 0 ? '+' : '') + r.bonus : ''}=${r.total} vs ${r.line} → ${r.hit ? '2pts!' : 'MISS'}` }];
     return { game: ng, ok: true };
   }
 
@@ -390,7 +404,7 @@ export function endSection(g) {
     const segAg  = k === 'A' ? segPtsB : segPtsA;
     getTeam(ng, k).starters.forEach(p => {
       const ps = getPS(ng, k, p.id);
-      if (ps) { ps.minutes += 4; ps.pm = (ps.pm || 0) + (segFor - segAg); }
+      if (ps) { ps.minutes += 4; ps.totalMinutes = (ps.totalMinutes || 0) + 4; ps.pm = (ps.pm || 0) + (segFor - segAg); }
     });
   });
 
@@ -441,9 +455,9 @@ export function endSection(g) {
     ng.section = 1;
     ng.phase = 'draft';
     if (ng.quarter === 3) {
-      // Halftime — reset all fatigue
-      ['A', 'B'].forEach(k => getTeam(ng, k).stats.forEach(ps => { ps.minutes = 0; }));
-      ng.log = [...ng.log, { team: null, msg: '=== HALFTIME — All fatigue reset. Q3 begins. ===' }];
+      // Halftime — reset all fatigue and hot/cold markers
+      ['A', 'B'].forEach(k => getTeam(ng, k).stats.forEach(ps => { ps.minutes = 0; ps.hot = 0; ps.cold = 0; }));
+      ng.log = [...ng.log, { team: null, msg: '=== HALFTIME — All fatigue & hot/cold reset. Q3 begins. ===' }];
     } else {
       ng.log = [...ng.log, { team: null, msg: `=== Q${ng.quarter} begins ===` }];
     }
@@ -478,6 +492,13 @@ export function endSection(g) {
   return ng;
 }
 
+// Bench rest recovery:
+//   - Hot/cold markers reset immediately when benched
+//   - First 8 min of fatigue decays at 2x rate (4 min rest = 8 min recovery)
+//   - Beyond 8 min of fatigue, decay is 1:1 (4 min rest = 4 min recovery)
+//   - So: 8 min fatigue → 1 section rest = fully rested
+//         12 min fatigue → 1 section rest = 4 min fatigue (recover 8), need 1 more rest
+//         16 min fatigue → 1 section rest = 8 min fatigue, 2nd rest = fully rested
 function clearBenchedMarkers(g, prevStarters) {
   const ng = { ...g };
   ['A', 'B'].forEach(k => {
@@ -485,9 +506,19 @@ function clearBenchedMarkers(g, prevStarters) {
     const wasPlaying = prevStarters[k] || [];
     t.stats.forEach(ps => {
       if (!wasPlaying.includes(ps.id)) {
-        // Was on the bench last segment — recover fatigue
+        // Was on the bench last segment — recover fatigue and reset markers
         ps.hot = 0; ps.cold = 0;
-        ps.minutes = Math.max(0, (ps.minutes || 0) - 8);
+        const min = ps.minutes || 0;
+        if (min <= 8) {
+          // First 8 min decay at 2x: 4 min rest recovers all 8
+          ps.minutes = 0;
+        } else {
+          // Beyond 8: first recover 8 at 2x rate, then 4 at 1:1 from the rest period
+          // Net: 4 min rest recovers 8 min (2x portion) but only if we have >8
+          // Actually: recover = min(8, fatigue) at 2x + remaining rest at 1:1
+          // With 4 min rest: 2x portion covers first 4 → recovers 8 min
+          ps.minutes = Math.max(0, min - 8);
+        }
       }
     });
   });

@@ -68,6 +68,7 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB }) {
   return (
     <div className={styles.layout}>
       <Scoreboard game={game} />
+      <GameLog log={game.log} />
       <CourtBoard
         game={game}
         setGame={handlers.setGame}
@@ -78,7 +79,6 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB }) {
         onSpendAssist={handlers.onSpendAssist}
         onSpendRebound={handlers.onSpendRebound}
       />
-      <GameLog log={game.log} />
     </div>
   );
 }

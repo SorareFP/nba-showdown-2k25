@@ -52,7 +52,7 @@ export default function PlayerCard({ card, compact = false, actions, highlighted
         </div>
       )}
 
-      {actions && <div className={styles.actions}>{actions}</div>}
+      {actions && <div className={styles.actions} onClick={e => e.stopPropagation()}>{actions}</div>}
     </div>
   );
 }

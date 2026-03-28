@@ -12,18 +12,23 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (fbUser) => {
       if (fbUser) {
-        const ref = doc(db, 'users', fbUser.uid);
-        const snap = await getDoc(ref);
-        if (!snap.exists()) {
-          await setDoc(ref, {
-            displayName: fbUser.displayName,
-            email: fbUser.email,
-            photoURL: fbUser.photoURL,
-            currency: 0,
-            createdAt: serverTimestamp(),
-          });
-        }
+        // Always set user first so auth works even if Firestore fails
         setUser(fbUser);
+        try {
+          const ref = doc(db, 'users', fbUser.uid);
+          const snap = await getDoc(ref);
+          if (!snap.exists()) {
+            await setDoc(ref, {
+              displayName: fbUser.displayName,
+              email: fbUser.email,
+              photoURL: fbUser.photoURL,
+              currency: 0,
+              createdAt: serverTimestamp(),
+            });
+          }
+        } catch (e) {
+          console.warn('Firestore user doc error (check security rules):', e.message);
+        }
       } else {
         setUser(null);
       }

@@ -5,22 +5,21 @@ function teamsRef(uid) {
   return collection(db, 'users', uid, 'teams');
 }
 
-export async function saveTeam(uid, { name, players, salary }) {
+export async function saveTeam(uid, { name, players, salary, linkedDeckId = null }) {
   return addDoc(teamsRef(uid), {
     name,
     players,
     salary,
+    linkedDeckId,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   });
 }
 
-export async function updateTeam(uid, teamId, { name, players, salary }) {
+export async function updateTeam(uid, teamId, data) {
   const ref = doc(db, 'users', uid, 'teams', teamId);
   return updateDoc(ref, {
-    name,
-    players,
-    salary,
+    ...data,
     updatedAt: serverTimestamp(),
   });
 }

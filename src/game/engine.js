@@ -13,16 +13,26 @@ export const SNAKE = [0, 1, 1, 0, 0, 1, 1, 0, 0, 1]; // 0=A, 1=B
 // ── Deck ───────────────────────────────────────────────────────────────────
 import { STRATS } from './strats.js';
 
-export function buildDeck() {
+export function buildDeck(deckConfig) {
   let d = [];
-  for (const s of STRATS) {
-    for (let i = 0; i < (s.copies || 2); i++) d.push(s.id);
+  if (deckConfig && typeof deckConfig === 'object') {
+    // Custom deck: { cardId: count }
+    for (const [cardId, count] of Object.entries(deckConfig)) {
+      for (let i = 0; i < count; i++) d.push(cardId);
+    }
+  } else {
+    // Default deck from STRATS definitions
+    for (const s of STRATS) {
+      for (let i = 0; i < (s.copies || 2); i++) d.push(s.id);
+    }
+    d = d.slice(0, 50);
   }
+  // Shuffle
   for (let i = d.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [d[i], d[j]] = [d[j], d[i]];
   }
-  return d.slice(0, 50);
+  return d;
 }
 
 export function drawCards(hand, deck, n) {
@@ -37,9 +47,9 @@ export function drawCards(hand, deck, n) {
 }
 
 // ── New Game ───────────────────────────────────────────────────────────────
-function makeTeam(roster, name) {
-  const deckA = buildDeck();
-  const { hand, deck } = drawCards([], deckA, 7);
+function makeTeam(roster, name, deckConfig) {
+  const builtDeck = buildDeck(deckConfig);
+  const { hand, deck } = drawCards([], builtDeck, 7);
   return {
     name,
     roster,
@@ -49,6 +59,7 @@ function makeTeam(roster, name) {
     rebounds: 0,
     hand,
     deck,
+    discard: [],
     stats: roster.map(c => ({
       id: c.id,
       pts: 0, reb: 0, ast: 0,
@@ -61,10 +72,10 @@ function makeTeam(roster, name) {
   };
 }
 
-export function newGame(rosterA, rosterB) {
+export function newGame(rosterA, rosterB, deckConfigA, deckConfigB) {
   return {
-    teamA: makeTeam(rosterA, 'Team A'),
-    teamB: makeTeam(rosterB, 'Team B'),
+    teamA: makeTeam(rosterA, 'Team A', deckConfigA),
+    teamB: makeTeam(rosterB, 'Team B', deckConfigB),
     quarter: 1,
     section: 1,
     phase: 'draft', // draft | matchup_strats | scoring | done

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../firebase/AuthProvider.jsx';
-import { loadTeams, deleteTeam } from '../firebase/savedTeams.js';
+import { loadTeams, deleteTeam, updateTeam } from '../firebase/savedTeams.js';
 import { loadDecks, deleteDeck } from '../firebase/savedDecks.js';
 import { CARD_MAP } from '../game/cards.js';
 import { STRAT_MAP } from '../game/strats.js';
@@ -44,6 +44,17 @@ export default function CollectionTab({ onLoadTeam }) {
     refresh();
   };
 
+  const handleLinkDeck = async (teamId, deckId) => {
+    await updateTeam(user.uid, teamId, { linkedDeckId: deckId || null });
+    refresh();
+  };
+
+  const getDeckName = (deckId) => {
+    if (!deckId) return null;
+    const d = decks.find(dk => dk.id === deckId);
+    return d?.name || null;
+  };
+
   if (editingDeck) {
     return (
       <DeckEditor
@@ -71,6 +82,7 @@ export default function CollectionTab({ onLoadTeam }) {
                   <div className={styles.itemName}>{t.name}</div>
                   <div className={styles.itemMeta}>
                     {t.players.length} players · ${t.salary}
+                    {getDeckName(t.linkedDeckId) && ` · 🃏 ${getDeckName(t.linkedDeckId)}`}
                     {t.updatedAt?.toDate && ` · ${t.updatedAt.toDate().toLocaleDateString()}`}
                   </div>
                 </div>
@@ -89,6 +101,21 @@ export default function CollectionTab({ onLoadTeam }) {
                       ) : <div key={pid} className={styles.playerRow}>{pid}</div>;
                     })}
                   </div>
+                  {decks.length > 0 && (
+                    <div className={styles.linkDeck}>
+                      <label className={styles.linkLabel}>Strategy Deck</label>
+                      <select
+                        className={styles.linkSelect}
+                        value={t.linkedDeckId || ''}
+                        onChange={e => handleLinkDeck(t.id, e.target.value)}
+                      >
+                        <option value="">None (use default)</option>
+                        {decks.map(d => (
+                          <option key={d.id} value={d.id}>{d.name} ({d.totalCards}/50)</option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
                   <div className={styles.itemActions}>
                     <button className={styles.loadBtn} onClick={() => onLoadTeam(t, 'A')}>Load as Team A</button>
                     <button className={styles.loadBtnB} onClick={() => onLoadTeam(t, 'B')}>Load as Team B</button>

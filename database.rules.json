@@ -1,0 +1,36 @@
+{
+  "rules": {
+    "rooms": {
+      "$roomCode": {
+        "meta": {
+          ".read": "auth != null",
+          ".write": "auth != null && (!data.exists() || data.child('hostUid').val() === auth.uid || data.child('guestUid').val() === auth.uid || (!data.child('guestUid').exists() && newData.child('guestUid').val() === auth.uid))"
+        },
+        "hostTeam": {
+          ".read": "auth != null && (root.child('rooms').child($roomCode).child('meta').child('hostUid').val() === auth.uid || root.child('rooms').child($roomCode).child('meta').child('guestUid').val() === auth.uid)",
+          ".write": "auth != null && root.child('rooms').child($roomCode).child('meta').child('hostUid').val() === auth.uid"
+        },
+        "guestTeam": {
+          ".read": "auth != null && (root.child('rooms').child($roomCode).child('meta').child('hostUid').val() === auth.uid || root.child('rooms').child($roomCode).child('meta').child('guestUid').val() === auth.uid)",
+          ".write": "auth != null && root.child('rooms').child($roomCode).child('meta').child('guestUid').val() === auth.uid"
+        },
+        "game": {
+          ".read": "auth != null && (root.child('rooms').child($roomCode).child('meta').child('hostUid').val() === auth.uid || root.child('rooms').child($roomCode).child('meta').child('guestUid').val() === auth.uid)",
+          ".write": "auth != null && (root.child('rooms').child($roomCode).child('meta').child('hostUid').val() === auth.uid || root.child('rooms').child($roomCode).child('meta').child('guestUid').val() === auth.uid)"
+        },
+        "private": {
+          "$uid": {
+            ".read": "auth != null && auth.uid === $uid",
+            ".write": "auth != null && auth.uid === $uid"
+          }
+        }
+      }
+    },
+    "userGames": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    }
+  }
+}

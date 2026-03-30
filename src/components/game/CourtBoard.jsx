@@ -6,7 +6,7 @@ import styles from './CourtBoard.module.css';
 import { getPlayerImageUrl, getStratImagePath } from '../../game/cardImages.js';
 import { useLightbox } from '../CardLightbox.jsx';
 
-export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExecCard, onResolve, onSpendAssist, onSpendRebound }) {
+export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExecCard, onResolve, onSpendAssist, onSpendRebound, pvpMode = false, myTeamKey = null, isMyTurn = true }) {
   const [modal, setModal] = useState(null);
 
   const openModal = (config) => new Promise(res => setModal({ ...config, resolve: res }));
@@ -20,10 +20,11 @@ export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExec
 
   return (
     <div className={styles.wrap}>
-      <PhaseBar game={game} setGame={setGame} onEndSection={onEndSection} />
+      <PhaseBar game={game} setGame={setGame} onEndSection={onEndSection} pvpMode={pvpMode} myTeamKey={myTeamKey} isMyTurn={isMyTurn} />
 
       <div className={styles.courtLayout}>
-        <HandPanel game={game} teamKey="A" onExecCard={handleExecCard} />
+        {/* In PvP, only show my hand. In local, show both. */}
+        {(!pvpMode || myTeamKey === 'A') && <HandPanel game={game} teamKey="A" onExecCard={handleExecCard} pvpMode={pvpMode} isMyTurn={isMyTurn} />}
 
         <div className={styles.court}>
           <CourtMarkings />
@@ -32,14 +33,15 @@ export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExec
           <div className={styles.matchups}>
             {[0,1,2,3,4].map(i => (
               <MatchupRow key={i} idx={i} game={game} setGame={setGame}
-                onRoll={onRoll} onExecCard={handleExecCard} onSpendAssist={onSpendAssist} onSpendRebound={onSpendRebound} />
+                onRoll={onRoll} onExecCard={handleExecCard} onSpendAssist={onSpendAssist} onSpendRebound={onSpendRebound}
+                pvpMode={pvpMode} myTeamKey={myTeamKey} isMyTurn={isMyTurn} />
             ))}
           </div>
           <TrackPanel game={game} side="left" />
           <TrackPanel game={game} side="right" />
         </div>
 
-        <HandPanel game={game} teamKey="B" onExecCard={handleExecCard} />
+        {(!pvpMode || myTeamKey === 'B') && <HandPanel game={game} teamKey="B" onExecCard={handleExecCard} pvpMode={pvpMode} isMyTurn={isMyTurn} />}
       </div>
 
       {game.pendingShotCheck && (
@@ -337,7 +339,8 @@ async function buildOpts(game, teamKey, cardId, base, openModal) {
 
   // ── Two-player cards ───────────────────────────────────────────────────
   if (cardId === 'stagger_action') {
-    const idx2 = await openModal({ teamKey, cardId, players: myT.starters, label: 'Select second player' });
+    const eligible = filterStarters(myT.starters, (p, i) => i !== opts.playerIdx);
+    const idx2 = await pickFiltered(eligible, 'Select second player');
     if (idx2 === null) return null;
     opts.player2Idx = idx2;
   }
@@ -503,7 +506,7 @@ function SelectModal({ modal, game, onClose }) {
   );
 }
 
-function PhaseBar({ game, setGame, onEndSection }) {
+function PhaseBar({ game, setGame, onEndSection, pvpMode = false, myTeamKey = null, isMyTurn = true }) {
   const { phase, quarter, section, matchupTurn, matchupPasses, scoringTurn, scoringPasses } = game;
   const rA = game.rollResults.A || [], rB = game.rollResults.B || [];
   // A player is "done" if they have a roll result OR they are blocked
@@ -558,8 +561,8 @@ function PhaseBar({ game, setGame, onEndSection }) {
         <div className={styles.phaseCtrls}>
           <span style={{color:col,fontWeight:600}}>Team {matchupTurn}</span>
           <span className={styles.passCount}>{matchupPasses}/2 passes</span>
-          <button className={styles.passBtn} onClick={pass}>Pass →</button>
-          <button className={styles.ctaBtn} onClick={lock}>Lock → Scoring</button>
+          <button className={styles.passBtn} onClick={pass} disabled={pvpMode && !isMyTurn}>Pass →</button>
+          <button className={styles.ctaBtn} onClick={lock} disabled={pvpMode && !isMyTurn}>Lock → Scoring</button>
         </div>
       </div>
     );
@@ -577,8 +580,9 @@ function PhaseBar({ game, setGame, onEndSection }) {
         </div>
         <div className={styles.phaseCtrls}>
           {(segA>0||segB>0) && <span className={styles.segScore}><span style={{color:'var(--orange)'}}>A {segA}</span>–<span style={{color:'var(--blue)'}}>{segB} B</span></span>}
-          {!rollingOpen && <button className={styles.passBtn} onClick={pass}>Pass →</button>}
+          {!rollingOpen && <button className={styles.passBtn} onClick={pass} disabled={pvpMode && !isMyTurn}>Pass →</button>}
           {allRolled && !game.pendingShotCheck && <button className={styles.ctaBtn} onClick={onEndSection}>End Section →</button>}
+          {pvpMode && !isMyTurn && !rollingOpen && <span style={{color:'var(--text-dim)',fontSize:12,marginLeft:8}}>Waiting for opponent...</span>}
         </div>
       </div>
     );
@@ -586,8 +590,8 @@ function PhaseBar({ game, setGame, onEndSection }) {
   return null;
 }
 
-function MatchupRow({ idx, game, setGame, onRoll, onExecCard, onSpendAssist, onSpendRebound }) {
-  if (game.phase === 'draft') return <DraftRow idx={idx} game={game} setGame={setGame} />;
+function MatchupRow({ idx, game, setGame, onRoll, onExecCard, onSpendAssist, onSpendRebound, pvpMode = false, myTeamKey = null, isMyTurn = true }) {
+  if (game.phase === 'draft') return <DraftRow idx={idx} game={game} setGame={setGame} pvpMode={pvpMode} myTeamKey={myTeamKey} isMyTurn={isMyTurn} />;
   const ap=game.teamA.starters[idx], bp=game.teamB.starters[idx];
   if (!ap||!bp) return <div className={styles.emptyRow}/>;
   const aDefIdx=game.offMatchups.A[idx], bDefIdx=game.offMatchups.B[idx];
@@ -599,7 +603,8 @@ function MatchupRow({ idx, game, setGame, onRoll, onExecCard, onSpendAssist, onS
         teamKey="A" idx={idx} phase={game.phase} game={game}
         defPlayer={aDef} defSelect={game.teamB.starters} defIdx={aDefIdx}
         onDefChange={di=>{const g=JSON.parse(JSON.stringify(game));g.offMatchups.A[idx]=di;setGame(g);}}
-        onRoll={()=>onRoll('A',idx)} onSpendAssist={onSpendAssist} onSpendRebound={onSpendRebound} />
+        onRoll={()=>onRoll('A',idx)} onSpendAssist={onSpendAssist} onSpendRebound={onSpendRebound}
+        pvpDisabled={pvpMode && myTeamKey !== 'A'} />
       <div className={styles.connector}>
         <div className={styles.connLine}/><div className={styles.slotNum}>{idx+1}</div><div className={styles.connLine}/>
       </div>
@@ -608,18 +613,20 @@ function MatchupRow({ idx, game, setGame, onRoll, onExecCard, onSpendAssist, onS
         teamKey="B" idx={idx} phase={game.phase} game={game}
         defPlayer={bDef} defSelect={game.teamA.starters} defIdx={bDefIdx}
         onDefChange={di=>{const g=JSON.parse(JSON.stringify(game));g.offMatchups.B[idx]=di;setGame(g);}}
-        onRoll={()=>onRoll('B',idx)} onSpendAssist={onSpendAssist} onSpendRebound={onSpendRebound} />
+        onRoll={()=>onRoll('B',idx)} onSpendAssist={onSpendAssist} onSpendRebound={onSpendRebound}
+        pvpDisabled={pvpMode && myTeamKey !== 'B'} />
     </div>
   );
 }
 
-function DraftRow({ idx, game, setGame }) {
+function DraftRow({ idx, game, setGame, pvpMode = false, myTeamKey = null, isMyTurn = true }) {
   const { draft, teamA, teamB } = game;
   const aS=teamA.starters, bS=teamB.starters;
   const actTeam = SNAKE[Math.min(draft.step,9)]===0?'A':'B';
   const done = aS.length===5&&bS.length===5;
-  const isNextA = actTeam==='A'&&aS.length===idx&&!done;
-  const isNextB = actTeam==='B'&&bS.length===idx&&!done;
+  // In PvP, only show pick list for my team and only when it's my turn
+  const isNextA = actTeam==='A'&&aS.length===idx&&!done && (!pvpMode || (myTeamKey === 'A' && isMyTurn));
+  const isNextB = actTeam==='B'&&bS.length===idx&&!done && (!pvpMode || (myTeamKey === 'B' && isMyTurn));
 
   const pick = (card, team) => {
     const g=JSON.parse(JSON.stringify(game));
@@ -636,11 +643,16 @@ function DraftRow({ idx, game, setGame }) {
     setGame(g);
   };
 
+  // In PvP, show "Picking..." when opponent has the active pick at this slot
+  const oppPickingA = pvpMode && actTeam==='A' && myTeamKey!=='A' && aS.length===idx && !done;
+  const oppPickingB = pvpMode && actTeam==='B' && myTeamKey!=='B' && bS.length===idx && !done;
+
   return (
     <div className={styles.matchupRow}>
       <div className={styles.draftCell}>
         {aS[idx] ? <PlacedCard player={aS[idx]} stats={teamA.stats} col="var(--orange)"/>
           : isNextA ? <PickList pool={draft.aPool} stats={teamA.stats} onPick={c=>pick(c,'A')} col="var(--orange)" oppStarters={bS} myStarters={aS} slotIdx={idx}/>
+          : oppPickingA ? <div className={styles.oppPicking}>Picking...</div>
           : <EmptySlot idx={idx} col="var(--orange)"/>}
       </div>
       <div className={styles.connector}>
@@ -649,6 +661,7 @@ function DraftRow({ idx, game, setGame }) {
       <div className={styles.draftCell}>
         {bS[idx] ? <PlacedCard player={bS[idx]} stats={teamB.stats} col="var(--blue)"/>
           : isNextB ? <PickList pool={draft.bPool} stats={teamB.stats} onPick={c=>pick(c,'B')} col="var(--blue)" oppStarters={aS} myStarters={bS} slotIdx={idx}/>
+          : oppPickingB ? <div className={styles.oppPicking}>Picking...</div>
           : <EmptySlot idx={idx} col="var(--blue)"/>}
       </div>
     </div>
@@ -725,7 +738,7 @@ function EmptySlot({ idx, col }) {
   return <div className={styles.emptySlot} style={{borderColor:col+'30'}}><span style={{color:col+'50',fontSize:11}}>Slot {idx+1}</span></div>;
 }
 
-function PlayerSlot({ player, ps, adv, fat, result, blocked, teamKey, idx, phase, game, defPlayer, defSelect, defIdx, onDefChange, onRoll, onSpendAssist, onSpendRebound }) {
+function PlayerSlot({ player, ps, adv, fat, result, blocked, teamKey, idx, phase, game, defPlayer, defSelect, defIdx, onDefChange, onRoll, onSpendAssist, onSpendRebound, pvpDisabled = false }) {
   const { open } = useLightbox();
   const col=teamKey==='A'?'var(--orange)':'var(--blue)';
   const rollCol=adv?(adv.rollBonus>0?'#4ADE80':adv.hasPenalty?'#F87171':'#94A3B8'):'#94A3B8';
@@ -787,7 +800,7 @@ function PlayerSlot({ player, ps, adv, fat, result, blocked, teamKey, idx, phase
               <div className={styles.ptsLg} style={{color:col}}>{result.pts}<span className={styles.ptsUnit}>pts</span></div>
               <div className={styles.statLine}>{result.reb}r {result.ast}a</div>
             </div>
-            :<button className={styles.rollBtn} style={{background:col}} onClick={onRoll}>🎲 Roll</button>}
+            :<button className={styles.rollBtn} style={{background:col}} onClick={onRoll} disabled={pvpDisabled}>🎲 Roll</button>}
             {/* Assist spending buttons — 2 AST for 3PT check, 3 AST for Paint check */}
             {onSpendAssist && (() => {
               const myT = teamKey==='A'?game.teamA:game.teamB;
@@ -897,7 +910,7 @@ function PendingBanner({ game, onResolve, onExecCard }) {
   );
 }
 
-function HandPanel({ game, teamKey, onExecCard }) {
+function HandPanel({ game, teamKey, onExecCard, pvpMode = false, isMyTurn = true }) {
   const [staged, setStaged] = useState(null);
   const { open } = useLightbox();
   const t = getTeam(game, teamKey);
@@ -906,6 +919,8 @@ function HandPanel({ game, teamKey, onExecCard }) {
   const rollingOpen = scoringPasses >= 99;
   const isActive = phase === 'matchup_strats' ? matchupTurn === teamKey : (rollingOpen || scoringTurn === teamKey);
   const playablePhases = phase === 'matchup_strats' ? ['matchup'] : (isActive ? ['scoring', 'pre_roll', 'post_roll'] : []);
+  // In PvP, also allow reaction cards when it's your turn to react (isMyTurn handles this)
+  const pvpCanPlay = !pvpMode || isMyTurn;
 
   return (
     <div className={`${styles.handPanel} ${teamKey === 'A' ? styles.handL : styles.handR}`}>
@@ -918,7 +933,7 @@ function HandPanel({ game, teamKey, onExecCard }) {
           const s = getStrat(id); if (!s) return null;
           const isReaction = s.phase === 'reaction';
           const play = canPlayCard(game, teamKey, id);
-          const canClick = play.canPlay && (isReaction || playablePhases.includes(s.phase));
+          const canClick = play.canPlay && (isReaction || playablePhases.includes(s.phase)) && pvpCanPlay;
           const sImg = getStratImagePath(id);
           const isStaged = staged === hi;
 

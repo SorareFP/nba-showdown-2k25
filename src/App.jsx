@@ -5,6 +5,8 @@ import TeamBuilderTab from './components/TeamBuilderTab.jsx';
 import PlayTab from './components/PlayTab.jsx';
 import RulebookTab from './components/RulebookTab.jsx';
 import CollectionTab from './components/CollectionTab.jsx';
+import PvpLobby from './components/PvpLobby.jsx';
+import PvpGame from './components/PvpGame.jsx';
 import AuthButton from './components/AuthButton.jsx';
 import { AuthProvider, useAuth } from './firebase/AuthProvider.jsx';
 import { LightboxProvider } from './components/CardLightbox.jsx';
@@ -24,6 +26,7 @@ const GUEST_TABS = [
 const AUTH_TABS = [
   { id: 'builder', label: '🏗 Team Builder' },
   { id: 'play',    label: '🏀 Play' },
+  { id: 'pvp',     label: '⚔️ PvP' },
   { id: 'collection', label: '💾 Collection' },
   { id: 'rules',   label: '📖 Rulebook' },
 ];
@@ -34,6 +37,7 @@ function AppInner() {
   const [teamA, setTeamA] = useState([]);
   const [teamB, setTeamB] = useState([]);
   const [collection, setCollection] = useState({});
+  const [pvpGame, setPvpGame] = useState(null); // { roomCode, myRole }
   const playMounted = useRef(false);
   if (tab === 'play') playMounted.current = true;
 
@@ -95,6 +99,16 @@ function AppInner() {
           />
         )}
         {tab === 'collection' && <CollectionTab onLoadTeam={handleLoadTeam} onCollectionChange={refreshCollection} />}
+        {tab === 'pvp' && !pvpGame && (
+          <PvpLobby onGameStart={(roomCode, myRole) => setPvpGame({ roomCode, myRole })} />
+        )}
+        {tab === 'pvp' && pvpGame && (
+          <PvpGame
+            roomCode={pvpGame.roomCode}
+            myRole={pvpGame.myRole}
+            onLeave={() => setPvpGame(null)}
+          />
+        )}
         {playMounted.current && (
           <div style={{ display: tab === 'play' ? 'block' : 'none' }}>
             <PlayTab teamA={teamA} teamB={teamB} />

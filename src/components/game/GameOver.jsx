@@ -4,11 +4,15 @@ import { calculateRewards } from '../../game/coinRewards.js';
 import { addCoins, getUserData, updateUserFields, addCardsToCollection } from '../../firebase/collection.js';
 import styles from './GameOver.module.css';
 
-export default function GameOver({ game, onPlayAgain }) {
+export default function GameOver({ game, onPlayAgain, isPvp = false, myTeamKey = null, onLeave = null }) {
   const { user } = useAuth();
   const { teamA, teamB } = game;
   const w = teamA.score > teamB.score ? teamA : teamA.score < teamB.score ? teamB : null;
   const winCol = w === teamA ? 'var(--orange)' : 'var(--blue)';
+
+  // In PvP, determine if this player won
+  const myTeam = myTeamKey === 'A' ? teamA : myTeamKey === 'B' ? teamB : null;
+  const pvpIsWinner = isPvp && myTeam ? w === myTeam : false;
 
   const [rewards, setRewards] = useState(null);
   const [rewardsApplied, setRewardsApplied] = useState(false);
@@ -31,8 +35,8 @@ export default function GameOver({ game, onPlayAgain }) {
         dailyFirstWin = false;
       }
 
-      const isWinner = w !== null; // any outcome counts — self-play always has a winner
-      const result = calculateRewards(game, isWinner, dailyCoins);
+      const isWinner = isPvp ? pvpIsWinner : w !== null; // self-play always has a winner
+      const result = calculateRewards(game, isWinner, dailyCoins, isPvp);
 
       // Daily first win bonus
       if (isWinner && !dailyFirstWin) {
@@ -62,7 +66,7 @@ export default function GameOver({ game, onPlayAgain }) {
 
       setRewardsApplied(true);
     })();
-  }, [user, game, w]);
+  }, [user, game, w, isPvp, pvpIsWinner]);
 
   return (
     <div className={styles.wrap}>
@@ -70,7 +74,10 @@ export default function GameOver({ game, onPlayAgain }) {
         <div className={styles.label}>FINAL SCORE</div>
         <div className={styles.score}>{teamA.score} — {teamB.score}</div>
         <div className={styles.winner} style={{ color: winCol }}>
-          {w ? `${w.name} wins!` : 'Tie game!'}
+          {isPvp
+            ? (pvpIsWinner ? 'You win!' : w ? 'You lose!' : 'Tie game!')
+            : (w ? `${w.name} wins!` : 'Tie game!')
+          }
         </div>
       </div>
 
@@ -104,7 +111,8 @@ export default function GameOver({ game, onPlayAgain }) {
       </div>
 
       <div className={styles.footer}>
-        <button className={styles.playAgain} onClick={onPlayAgain}>Play Again</button>
+        {onPlayAgain && <button className={styles.playAgain} onClick={onPlayAgain}>Play Again</button>}
+        {onLeave && <button className={styles.playAgain} onClick={onLeave}>Leave Game</button>}
       </div>
     </div>
   );

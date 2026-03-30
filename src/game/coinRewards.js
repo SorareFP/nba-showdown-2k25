@@ -35,7 +35,7 @@ const BAM_MILESTONE = {
   cardReward: 'Bam_Adebayo',
 };
 
-export function calculateRewards(game, isWinner, dailyMilestoneCoinsUsed = 0) {
+export function calculateRewards(game, isWinner, dailyMilestoneCoinsUsed = 0, isPvp = false) {
   const DAILY_MILESTONE_CAP = 200;
   let coins = 0;
   const breakdown = [];
@@ -44,10 +44,11 @@ export function calculateRewards(game, isWinner, dailyMilestoneCoinsUsed = 0) {
   coins += 50;
   breakdown.push({ label: 'Game Completed', coins: 50 });
 
-  // Win bonus
+  // Win bonus (PvP wins are worth more)
   if (isWinner) {
-    coins += 25;
-    breakdown.push({ label: 'Victory Bonus', coins: 25 });
+    const winBonus = isPvp ? 50 : 25;
+    coins += winBonus;
+    breakdown.push({ label: isPvp ? 'PvP Victory' : 'Victory Bonus', coins: winBonus });
   }
 
   // Milestone checks (check both teams since self-play is valid)

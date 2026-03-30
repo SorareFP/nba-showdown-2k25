@@ -1,0 +1,326 @@
+/* ---------- layout ---------- */
+.lobby {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 60vh;
+  padding: 2rem 1rem;
+}
+
+/* ---------- landing view ---------- */
+.landing {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  max-width: 520px;
+  width: 100%;
+  text-align: center;
+}
+.landing h2 { font-size: 22px; margin-bottom: 6px; }
+.landing p  { color: var(--text-muted); font-size: 13px; margin-bottom: 1.5rem; }
+
+.btnGold {
+  background: #F59E0B;
+  color: #000;
+  font-weight: 700;
+  padding: 12px 28px;
+  font-size: 15px;
+  border-radius: var(--radius-sm);
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.15s;
+}
+.btnGold:hover { background: #D97706; }
+.btnGold:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 1.25rem 0;
+  color: var(--text-muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.joinRow {
+  display: flex;
+  gap: 8px;
+}
+.codeInput {
+  flex: 1;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  padding: 10px 12px;
+  font-size: 14px;
+  font-family: 'Courier New', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+}
+.codeInput::placeholder { color: var(--text-muted); text-transform: none; letter-spacing: normal; }
+
+.btnSec {
+  background: rgba(255,255,255,0.08);
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 10px 20px;
+  font-size: 14px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
+}
+.btnSec:hover { background: rgba(255,255,255,0.14); }
+.btnSec:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ---------- active games ---------- */
+.gamesSection {
+  margin-top: 1.5rem;
+  text-align: left;
+}
+.gamesSection h3 {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.gamesList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.gameRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  font-size: 13px;
+}
+
+.gameCode {
+  font-family: 'Courier New', monospace;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  min-width: 72px;
+}
+
+.gameOpponent {
+  flex: 1;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.badgeActive   { background: rgba(34,197,94,0.15); color: #22c55e; }
+.badgeWaiting  { background: rgba(245,158,11,0.15); color: #F59E0B; }
+.badgeSelect   { background: rgba(59,130,246,0.15); color: #3b82f6; }
+.badgeEnded    { background: rgba(255,255,255,0.08); color: var(--text-muted); }
+
+.gameTime {
+  font-size: 11px;
+  color: var(--text-muted);
+  min-width: 50px;
+  text-align: right;
+}
+
+.btnSmall {
+  font-size: 12px;
+  padding: 4px 12px;
+  border-radius: var(--radius-sm);
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.15s;
+}
+.btnResume {
+  background: #F59E0B;
+  color: #000;
+}
+.btnResume:hover { background: #D97706; }
+
+.btnLeave {
+  background: rgba(255,255,255,0.08);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+.btnLeave:hover { background: rgba(239,68,68,0.15); color: #ef4444; }
+
+.noGames {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-style: italic;
+}
+
+/* ---------- waiting room ---------- */
+.waitingRoom {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem 2rem;
+  max-width: 480px;
+  width: 100%;
+  text-align: center;
+}
+
+.roomCodeLabel {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.roomCodeDisplay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 1rem;
+}
+
+.roomCode {
+  font-family: 'Courier New', monospace;
+  font-size: 48px;
+  font-weight: 700;
+  color: #F59E0B;
+  letter-spacing: 0.2em;
+  user-select: all;
+}
+
+.btnCopy {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  padding: 6px 10px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btnCopy:hover { background: rgba(255,255,255,0.14); }
+
+.shareHint {
+  color: var(--text-muted);
+  font-size: 13px;
+  margin-bottom: 1.5rem;
+}
+
+.waitingPulse {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-bottom: 1.5rem;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* ---------- team select ---------- */
+.teamSelect {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  max-width: 520px;
+  width: 100%;
+}
+.teamSelect h2 { text-align: center; font-size: 20px; margin-bottom: 4px; }
+
+.roleTag {
+  text-align: center;
+  font-size: 13px;
+  color: #F59E0B;
+  font-weight: 600;
+  margin-bottom: 1.25rem;
+}
+
+.selectGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 1rem;
+}
+
+.selectLabel {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.selectField {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  padding: 10px 12px;
+  font-size: 14px;
+  width: 100%;
+}
+
+.opponentStatus {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 13px;
+  margin: 1rem 0;
+  padding: 8px;
+  border-radius: var(--radius-sm);
+  background: rgba(255,255,255,0.04);
+}
+.oppReady { color: #22c55e; }
+.oppWaiting { color: var(--text-muted); animation: pulse 2s ease-in-out infinite; }
+
+.readyBtn {
+  composes: btnGold;
+  margin-top: 0.5rem;
+}
+
+/* ---------- error banner ---------- */
+.error {
+  background: rgba(239,68,68,0.12);
+  border: 1px solid rgba(239,68,68,0.3);
+  color: #f87171;
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  font-size: 13px;
+  margin-top: 1rem;
+  text-align: center;
+}
+
+/* ---------- responsive ---------- */
+@media (max-width: 480px) {
+  .roomCode { font-size: 32px; }
+  .landing, .waitingRoom, .teamSelect { padding: 1.5rem 1rem; }
+}

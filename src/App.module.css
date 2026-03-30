@@ -20,7 +20,7 @@
 }
 
 .logo { display: flex; align-items: center; gap: 10px; }
-.logoIcon { font-size: 28px; }
+.logoImg { width: 42px; height: 42px; object-fit: contain; border-radius: 4px; }
 .logoTitle { font-size: 16px; font-weight: 700; letter-spacing: -0.3px; }
 .logoSub { font-size: 11px; color: var(--text-muted); }
 
@@ -43,6 +43,16 @@
   border-color: var(--border);
 }
 
+.betaBanner {
+  background: linear-gradient(90deg, #F59E0B, #D97706);
+  color: #000;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 16px;
+  letter-spacing: 0.2px;
+}
+
 .main {
   flex: 1;
   padding: 1.5rem;
@@ -56,6 +66,7 @@
   .nav { flex-wrap: wrap; justify-content: center; gap: 3px; }
   .navBtn { padding: 5px 10px; font-size: 12px; }
   .main { padding: 0.75rem; }
+  .logoImg { width: 34px; height: 34px; }
   .logoTitle { font-size: 14px; }
   .logoSub { font-size: 10px; }
 }

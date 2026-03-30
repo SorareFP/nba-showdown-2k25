@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { CARDS, CARD_MAP } from '../game/cards.js';
+import { getPlayerRarity, RARITY_CONFIG } from '../game/rarity.js';
 import PlayerCard from './PlayerCard.jsx';
 import { useLightbox } from './CardLightbox.jsx';
 import { useAuth } from '../firebase/AuthProvider.jsx';
@@ -10,8 +11,11 @@ const CAP = 5500;
 const MAX = 10;
 const capSal = roster => roster.reduce((s, c) => s + c.salary, 0);
 
-function randomizeTeam(other) {
-  const available = CARDS.filter(c => !other.find(r => r.id === c.id));
+function randomizeTeam(other, ownedOnly, collection) {
+  let available = [...CARDS];
+  if (ownedOnly && collection) {
+    available = available.filter(c => (collection[c.id]?.count || 0) > 0);
+  }
   const MIN_SAL = 4800;
   const MAX_SAL = 5500;
 
@@ -59,9 +63,10 @@ function randomizeTeam(other) {
   return roster;
 }
 
-export default function TeamBuilderTab({ teamA, setTeamA, teamB, setTeamB, onStartGame }) {
+export default function TeamBuilderTab({ teamA, setTeamA, teamB, setTeamB, onStartGame, collection }) {
   const { open } = useLightbox();
   const { user } = useAuth();
+  const enforceOwnership = !!user && Object.keys(collection || {}).length > 0;
   const [search, setSearch] = useState('');
   const [filterTeam, setFilterTeam] = useState('');
   const [maxSal, setMaxSal] = useState(9999);
@@ -91,13 +96,12 @@ export default function TeamBuilderTab({ teamA, setTeamA, teamB, setTeamB, onSta
   };
 
   const pool = useMemo(() => {
-    const inTeam = id => teamA.find(c => c.id === id) || teamB.find(c => c.id === id);
     const q = search.toLowerCase();
     let cards = CARDS.filter(c =>
-      !inTeam(c.id) &&
       (!q || c.name.toLowerCase().includes(q) || c.team.toLowerCase().includes(q)) &&
       (!filterTeam || c.team === filterTeam) &&
-      c.salary <= maxSal
+      c.salary <= maxSal &&
+      (!enforceOwnership || (collection[c.id]?.count || 0) > 0)
     );
     if (sort === 'salary-desc') cards.sort((a, b) => b.salary - a.salary);
     else if (sort === 'salary-asc') cards.sort((a, b) => a.salary - b.salary);
@@ -125,7 +129,7 @@ export default function TeamBuilderTab({ teamA, setTeamA, teamB, setTeamB, onSta
         <RosterPanel
           name="Team A" color="var(--orange)" sal={salA} roster={teamA}
           onRemove={id => removeFrom(teamA, setTeamA, id)}
-          onRandomize={() => setTeamA(randomizeTeam(teamB))}
+          onRandomize={() => setTeamA(randomizeTeam(teamB, enforceOwnership, collection))}
           onView={card => open('player', card)}
           showFirebase={!!user}
           onSave={() => handleSave(teamA)}
@@ -134,7 +138,7 @@ export default function TeamBuilderTab({ teamA, setTeamA, teamB, setTeamB, onSta
         <RosterPanel
           name="Team B" color="var(--blue)" sal={salB} roster={teamB}
           onRemove={id => removeFrom(teamB, setTeamB, id)}
-          onRandomize={() => setTeamB(randomizeTeam(teamA))}
+          onRandomize={() => setTeamB(randomizeTeam(teamA, enforceOwnership, collection))}
           onView={card => open('player', card)}
           showFirebase={!!user}
           onSave={() => handleSave(teamB)}
@@ -148,9 +152,9 @@ export default function TeamBuilderTab({ teamA, setTeamA, teamB, setTeamB, onSta
             🏀 Start Game with These Teams
           </button>
           <button className={styles.randBoth} onClick={() => {
-            const a = randomizeTeam([]);
+            const a = randomizeTeam([], enforceOwnership, collection);
             setTeamA(a);
-            setTeamB(randomizeTeam(a));
+            setTeamB(randomizeTeam(a, enforceOwnership, collection));
           }}>🎲 Randomize Both</button>
         </div>
       )}
@@ -181,14 +185,27 @@ export default function TeamBuilderTab({ teamA, setTeamA, teamB, setTeamB, onSta
         </select>
       </div>
       <div className={styles.pool}>
-        {pool.map(card => (
-          <PlayerCard key={card.id} card={card} onClick={() => open('player', card)} actions={
-            <div style={{ display:'flex', gap:6, width:'100%' }}>
-              <button className={styles.addA} onClick={() => addTo(teamA, setTeamA, card)}>+ A</button>
-              <button className={styles.addB} onClick={() => addTo(teamB, setTeamB, card)}>+ B</button>
-            </div>
-          } />
-        ))}
+        {pool.map(card => {
+          const rarity = getPlayerRarity(card);
+          const cfg = RARITY_CONFIG[rarity];
+          return (
+            <PlayerCard key={card.id} card={card} onClick={() => open('player', card)}
+              actions={
+                <div style={{ display:'flex', gap:6, width:'100%', flexDirection:'column' }}>
+                  {enforceOwnership && (
+                    <div style={{ display:'flex', justifyContent:'space-between', fontSize:10, marginBottom:2 }}>
+                      <span style={{ color: cfg.color, fontWeight:700 }}>{cfg.label}</span>
+                    </div>
+                  )}
+                  <div style={{ display:'flex', gap:6, width:'100%' }}>
+                    <button className={styles.addA} onClick={() => addTo(teamA, setTeamA, card)}>+ A</button>
+                    <button className={styles.addB} onClick={() => addTo(teamB, setTeamB, card)}>+ B</button>
+                  </div>
+                </div>
+              }
+            />
+          );
+        })}
       </div>
 
       {loadModal && (

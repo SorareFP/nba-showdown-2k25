@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { onAuthStateChanged, signInWithPopup, signOut as fbSignOut } from 'firebase/auth';
-import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, googleProvider, db } from './config.js';
 
 const AuthContext = createContext(null);
@@ -23,8 +23,23 @@ export function AuthProvider({ children }) {
               email: fbUser.email,
               photoURL: fbUser.photoURL,
               currency: 0,
+              starterPackOpened: false,
+              dailyMilestoneCoins: 0,
+              dailyMilestoneDate: '',
+              dailyFirstWin: false,
               createdAt: serverTimestamp(),
             });
+          } else {
+            // Migrate pre-collection accounts
+            const data = snap.data();
+            if (data.starterPackOpened === undefined) {
+              await updateDoc(ref, {
+                starterPackOpened: false,
+                dailyMilestoneCoins: 0,
+                dailyMilestoneDate: '',
+                dailyFirstWin: false,
+              });
+            }
           }
         } catch (e) {
           console.warn('Firestore user doc error (check security rules):', e.message);

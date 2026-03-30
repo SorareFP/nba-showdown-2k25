@@ -11,6 +11,35 @@
 .score { font-size: 64px; font-weight: 800; letter-spacing: -3px; line-height: 1; }
 .winner { font-size: 22px; font-weight: 700; margin-top: 10px; }
 
+/* Rewards */
+.rewardsBox {
+  background: linear-gradient(135deg, rgba(245,158,11,0.1), rgba(234,88,12,0.1));
+  border: 1px solid rgba(245,158,11,0.3);
+  border-radius: var(--radius-lg);
+  padding: 16px 20px;
+}
+.rewardsTitle {
+  font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
+  color: #F59E0B; margin-bottom: 10px;
+}
+.rewardsList { display: flex; flex-direction: column; gap: 4px; }
+.rewardRow { display: flex; justify-content: space-between; font-size: 13px; padding: 3px 0; }
+.rewardLabel { color: var(--text); }
+.rewardCoins { color: #F59E0B; font-weight: 700; }
+.rewardSpecial { color: var(--green); font-weight: 700; font-size: 11px; }
+.rewardsTotal {
+  display: flex; justify-content: space-between;
+  border-top: 1px solid rgba(245,158,11,0.3);
+  margin-top: 8px; padding-top: 8px;
+  font-size: 15px; font-weight: 700;
+}
+.totalCoins { color: #F59E0B; font-size: 18px; }
+.bamReward {
+  margin-top: 8px; padding: 8px 12px;
+  background: rgba(74,222,128,0.12); border-radius: var(--radius-sm);
+  color: var(--green); font-size: 13px; font-weight: 600; text-align: center;
+}
+
 .boxScores { display: flex; flex-direction: column; gap: 1rem; }
 
 .box {

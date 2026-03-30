@@ -1,0 +1,108 @@
+.wrap { display: flex; flex-direction: column; gap: 12px; }
+
+.statsBar { font-size: 13px; color: var(--text-muted); font-weight: 600; }
+
+.filters {
+  display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+}
+.filter {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  padding: 5px 8px; font-size: 12px;
+}
+.search {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  padding: 5px 10px; font-size: 12px;
+  min-width: 120px;
+}
+.search::placeholder { color: var(--text-dim); }
+.toggle {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 11px; color: var(--text-muted); cursor: pointer;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 8px;
+}
+
+.card {
+  background: var(--card-bg);
+  border: 2px solid;
+  border-radius: var(--radius);
+  padding: 8px;
+  display: flex; flex-direction: column; gap: 4px;
+  position: relative;
+  transition: transform 0.1s;
+}
+.card:hover { transform: translateY(-2px); }
+.unowned { opacity: 0.35; filter: grayscale(0.6); }
+
+.cardArt {
+  width: 100%; height: 120px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.04);
+}
+.cardArtImg {
+  width: 100%; height: 100%; object-fit: cover;
+}
+
+.rarityBadge {
+  font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
+  padding: 2px 6px; border-radius: 10px; width: fit-content;
+}
+
+.cardName { font-size: 13px; font-weight: 700; line-height: 1.2; }
+.cardSub { font-size: 10px; color: var(--text-muted); }
+
+.countBadge {
+  position: absolute; top: 8px; right: 8px;
+  background: rgba(0,0,0,0.65);
+  border-radius: 10px; padding: 2px 8px;
+  font-size: 11px; font-weight: 700;
+  color: #fff;
+}
+
+.notOwned {
+  font-size: 10px; color: var(--text-dim); font-style: italic; margin-top: 4px;
+}
+
+.burnBtn {
+  margin-top: auto;
+  background: none; color: var(--red);
+  font-size: 10px; padding: 3px 6px;
+  border: 1px solid rgba(239,68,68,0.3);
+  border-radius: var(--radius-sm);
+  width: fit-content;
+}
+.burnBtn:hover { background: rgba(239,68,68,0.1); }
+
+.burnConfirm {
+  display: flex; align-items: center; gap: 6px; margin-top: auto;
+}
+.burnAmt { font-size: 10px; color: #F59E0B; font-weight: 600; }
+.burnYes {
+  font-size: 10px; padding: 2px 8px;
+  background: var(--red); color: #fff;
+  border-radius: var(--radius-sm);
+}
+.burnNo {
+  font-size: 10px; padding: 2px 8px;
+  background: rgba(255,255,255,0.1); color: var(--text);
+  border-radius: var(--radius-sm);
+}
+
+.empty { text-align: center; color: var(--text-dim); font-size: 13px; padding: 2rem; font-style: italic; }
+
+@media (max-width: 600px) {
+  .grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+  .filters { gap: 6px; }
+  .cardArt { height: 90px; }
+}

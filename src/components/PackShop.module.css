@@ -1,0 +1,62 @@
+.wrap { display: flex; flex-direction: column; gap: 16px; }
+
+.balance {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(245,158,11,0.12);
+  border: 1px solid rgba(245,158,11,0.3);
+  border-radius: var(--radius);
+  padding: 10px 16px;
+  width: fit-content;
+}
+.coinIcon { font-weight: 800; color: #F59E0B; font-size: 16px; }
+.coinAmt { font-size: 20px; font-weight: 700; color: #F59E0B; }
+.coinLabel { font-size: 12px; color: var(--text-muted); }
+
+.themedSelectors { display: flex; gap: 16px; flex-wrap: wrap; }
+.selectorLabel { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted); font-weight: 600; }
+.selector {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  padding: 4px 8px; font-size: 12px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.tile {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  display: flex; flex-direction: column; gap: 8px;
+  transition: border-color 0.15s;
+}
+.tile:hover { border-color: var(--orange); }
+.tileDisabled { opacity: 0.5; }
+.tileDisabled:hover { border-color: var(--border); }
+
+.tileName { font-weight: 700; font-size: 14px; }
+.tileDesc { font-size: 11px; color: var(--text-muted); line-height: 1.4; }
+.tilePrice {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 16px; font-weight: 700; color: #F59E0B;
+  margin-top: auto;
+}
+
+.buyBtn {
+  background: var(--orange); color: #fff;
+  padding: 8px 16px; border-radius: var(--radius-sm);
+  font-size: 13px; font-weight: 600;
+  transition: background 0.15s;
+}
+.buyBtn:hover:not(:disabled) { background: #C2410C; }
+.buyBtn:disabled { background: var(--border); color: var(--text-dim); cursor: not-allowed; }
+
+@media (max-width: 600px) {
+  .grid { grid-template-columns: 1fr; }
+}

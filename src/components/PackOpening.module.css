@@ -1,0 +1,170 @@
+.wrap {
+  display: flex; flex-direction: column; gap: 16px;
+  max-width: 700px; margin: 0 auto;
+}
+
+.header { display: flex; justify-content: space-between; align-items: center; }
+.title { font-size: 20px; font-weight: 700; }
+.counter { font-size: 14px; color: var(--text-muted); font-weight: 600; }
+
+/* Stack area — bigger cards */
+.stackArea {
+  position: relative;
+  width: 320px; height: 450px;
+  cursor: pointer;
+  margin: 12px auto;
+  align-self: center;
+}
+
+/* Peek cards behind */
+.peekCard {
+  position: absolute; inset: 0;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+/* Card back face (shared) */
+.cardBackFace {
+  width: 100%; height: 100%;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.cardBackImg {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.backHint {
+  position: absolute; bottom: 20px;
+  font-size: 12px; color: rgba(255,255,255,0.25);
+  animation: hintPulse 2s ease-in-out infinite;
+}
+@keyframes hintPulse {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 0.6; }
+}
+
+/* Main card (flip) */
+.mainCard {
+  position: absolute; inset: 0;
+  perspective: 1200px;
+}
+.mainInner {
+  position: relative;
+  width: 100%; height: 100%;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+}
+.mainFlipped .mainInner {
+  transform: rotateY(180deg);
+}
+
+.mainBack, .mainFront {
+  position: absolute; inset: 0;
+  backface-visibility: hidden;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.mainBack {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  overflow: hidden;
+}
+
+/* Front = full card art, no padding */
+.mainFront {
+  transform: rotateY(180deg);
+  border: 3px solid var(--border);
+}
+
+.faceImg {
+  width: 100%; height: 100%; object-fit: cover;
+  display: block;
+}
+
+/* Rarity-specific front borders */
+.front_common { border-color: #94A3B8; }
+.front_uncommon { border-color: #4ADE80; box-shadow: 0 0 14px rgba(74,222,128,0.25); }
+.front_rare { border-color: #60A5FA; box-shadow: 0 0 22px rgba(96,165,250,0.35); animation: rareBorderGlow 2s ease-in-out infinite; }
+.front_super_rare { border-color: #F59E0B; box-shadow: 0 0 35px rgba(245,158,11,0.45); animation: srBorderGlow 1.5s ease-in-out infinite; }
+
+@keyframes rareBorderGlow {
+  0%, 100% { box-shadow: 0 0 22px rgba(96,165,250,0.35); }
+  50% { box-shadow: 0 0 40px rgba(96,165,250,0.55); }
+}
+@keyframes srBorderGlow {
+  0%, 100% { box-shadow: 0 0 35px rgba(245,158,11,0.45); }
+  50% { box-shadow: 0 0 60px rgba(245,158,11,0.75); }
+}
+
+/* Spark particles */
+.sparks {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 0; height: 0;
+  z-index: 20;
+  pointer-events: none;
+}
+.spark {
+  position: absolute;
+  width: var(--size); height: var(--size);
+  background: var(--color);
+  border-radius: 50%;
+  animation: sparkFly 0.7s ease-out var(--delay) forwards;
+  opacity: 0;
+}
+@keyframes sparkFly {
+  0% { transform: translate(0, 0) scale(1); opacity: 1; }
+  80% { opacity: 0.8; }
+  100% { transform: translate(var(--tx), var(--ty)) scale(0.3); opacity: 0; }
+}
+
+/* Tap hint */
+.tapHint {
+  font-size: 12px; color: var(--text-dim); text-align: center;
+  animation: hintPulse 2s ease-in-out infinite;
+}
+
+/* Actions */
+.actions { display: flex; gap: 12px; justify-content: center; padding: 8px 0; }
+.skipBtn {
+  background: rgba(255,255,255,0.08); color: var(--text-muted);
+  padding: 8px 20px; border-radius: var(--radius-sm);
+  font-size: 12px; font-weight: 600;
+  border: 1px solid var(--border);
+}
+.skipBtn:hover { background: rgba(255,255,255,0.14); }
+.doneBtn {
+  background: var(--green); color: #fff;
+  padding: 12px 32px; border-radius: var(--radius-sm);
+  font-size: 15px; font-weight: 700;
+}
+.doneBtn:hover { background: #15803D; }
+.doneBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Dismissed cards — below button */
+.dismissedStrip {
+  display: flex; gap: 6px; flex-wrap: wrap; justify-content: center;
+  max-width: 100%; padding: 8px 0;
+}
+.miniCard {
+  width: 52px; height: 68px;
+  border: 2px solid;
+  border-radius: 6px;
+  background: var(--card-bg);
+  overflow: hidden;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 2px;
+  transition: transform 0.2s;
+}
+.miniCard:hover { transform: scale(1.15); z-index: 5; }
+.miniImg { width: 100%; height: 42px; object-fit: cover; border-radius: 3px; }
+.miniName { font-size: 7px; font-weight: 600; text-align: center; line-height: 1.1; margin-top: 2px; overflow: hidden; }
+
+@media (max-width: 600px) {
+  .stackArea { width: 260px; height: 370px; }
+  .miniCard { width: 42px; height: 56px; }
+  .miniImg { height: 34px; }
+  .miniName { font-size: 6px; }
+}

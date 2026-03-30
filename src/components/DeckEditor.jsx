@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { useAuth } from '../firebase/AuthProvider.jsx';
 import { saveDeck, updateDeck, validateDeck } from '../firebase/savedDecks.js';
 import { STRATS } from '../game/strats.js';
+import { getStratRarity, RARITY_CONFIG } from '../game/rarity.js';
 import { getStratImagePath } from '../game/cardImages.js';
 import styles from './DeckEditor.module.css';
 
@@ -14,8 +15,9 @@ const PHASE_LABELS = {
   reaction: 'Reaction',
 };
 
-export default function DeckEditor({ deck, onSave, onCancel }) {
+export default function DeckEditor({ deck, onSave, onCancel, collection }) {
   const { user } = useAuth();
+  const enforceOwnership = !!user && Object.keys(collection || {}).length > 0;
   const [name, setName] = useState(deck?.name || '');
   const [cards, setCards] = useState(() => {
     if (deck?.cards) return { ...deck.cards };
@@ -87,21 +89,37 @@ export default function DeckEditor({ deck, onSave, onCancel }) {
               {grouped[phase].map(s => {
                 const count = cards[s.id] || 0;
                 const imgPath = getStratImagePath(s.id);
+                const owned = collection?.[s.id]?.count || 0;
+                const notOwned = enforceOwnership && owned === 0;
+                const atOwnedLimit = enforceOwnership && count >= owned;
+                const rarity = getStratRarity(s);
+                const rcfg = RARITY_CONFIG[rarity];
                 return (
-                  <div key={s.id} className={`${styles.cardRow} ${count > 0 ? styles.cardActive : ''}`}>
+                  <div key={s.id} className={`${styles.cardRow} ${count > 0 ? styles.cardActive : ''}`}
+                    style={notOwned ? { opacity: 0.4 } : undefined}>
                     {imgPath && <img src={imgPath} alt="" className={styles.cardThumb} />}
                     <div className={styles.cardInfo}>
-                      <div className={styles.cardName} style={{ color: s.color }}>{s.name}</div>
+                      <div className={styles.cardName} style={{ color: s.color }}>
+                        {s.name}
+                        {enforceOwnership && (
+                          <span style={{ fontSize: 9, marginLeft: 6, color: rcfg.color, fontWeight: 700 }}>{rcfg.label}</span>
+                        )}
+                      </div>
                       <div className={styles.cardDesc}>{s.desc}</div>
                       <div className={styles.cardTags}>
                         <span className={styles.sideTag}>{s.side === 'off' ? 'OFF' : 'DEF'}</span>
                         {s.locked && <span className={styles.lockTag}>Uncancelable</span>}
+                        {enforceOwnership && (
+                          <span style={{ fontSize: 9, color: owned > 0 ? 'var(--green)' : 'var(--red)', marginLeft: 4 }}>
+                            {owned > 0 ? `Owned x${owned}` : 'Not Owned'}
+                          </span>
+                        )}
                       </div>
                     </div>
                     <div className={styles.qty}>
                       <button className={styles.qtyBtn} onClick={() => setCount(s.id, -1)} disabled={count === 0}>−</button>
                       <span className={styles.qtyVal}>{count}</span>
-                      <button className={styles.qtyBtn} onClick={() => setCount(s.id, 1)} disabled={count >= 8 || total >= 50}>+</button>
+                      <button className={styles.qtyBtn} onClick={() => setCount(s.id, 1)} disabled={count >= 8 || total >= 50 || notOwned || atOwnedLimit}>+</button>
                     </div>
                   </div>
                 );

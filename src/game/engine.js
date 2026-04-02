@@ -73,6 +73,22 @@ function makeTeam(roster, name, deckConfig) {
   };
 }
 
+function emptyAnalytics() {
+  return {
+    chartPts: 0,
+    shotCheckPts: 0,
+    assistSpendPts: 0,
+    reboundBonusPts: 0,
+    freeThrowPts: 0,
+    totalShotChecks: 0,
+    totalShotCheckHits: 0,
+    assistsGenerated: 0,
+    assistsFromCards: 0,
+    reboundsGenerated: 0,
+    cardsPlayed: 0,
+  };
+}
+
 export function newGame(rosterA, rosterB, deckConfigA, deckConfigB) {
   return {
     teamA: makeTeam(rosterA, 'Team A', deckConfigA),
@@ -80,7 +96,12 @@ export function newGame(rosterA, rosterB, deckConfigA, deckConfigB) {
     quarter: 1,
     section: 1,
     phase: 'draft', // draft | matchup_strats | scoring | done
-    draft: { step: 0, aPool: rosterA.slice(), bPool: rosterB.slice() },
+    draft: {
+      aPool: rosterA.slice(),
+      bPool: rosterB.slice(),
+      aReady: false,
+      bReady: false,
+    },
     offMatchups: { A: [0, 1, 2, 3, 4], B: [0, 1, 2, 3, 4] },
     matchupTurn: 'A',
     matchupPasses: 0,
@@ -88,6 +109,8 @@ export function newGame(rosterA, rosterB, deckConfigA, deckConfigB) {
     scoringTurn: 'B',
     scoringPasses: 0,
     pendingShotCheck: null,
+    lastShotCheck: null, // { teamKey, playerIdx, playerId, type, result, pts, cardLabel }
+    challengesUsed: { A: 0, B: 0 },
     rollResults: { A: [], B: [] },
     tempEff: {},
     ghosted: {},
@@ -95,6 +118,7 @@ export function newGame(rosterA, rosterB, deckConfigA, deckConfigB) {
     blockedRolls: {},
     log: [],
     done: false,
+    analytics: { A: emptyAnalytics(), B: emptyAnalytics() },
   };
 }
 
@@ -178,7 +202,7 @@ export function shotCheck(player, type, extra, ps) {
 
 // ── Assist Spending ────────────────────────────────────────────────────────
 // Spend 1 AST: +1 to a player's next shot check
-// Spend 2 AST: initiate a 3PT shot check for a player with 3PT bonus
+// Spend 4 AST: initiate a 3PT shot check for a player with 3PT bonus (was 2)
 // Spend 3 AST: initiate a Paint shot check for a player with Paint bonus
 export function spendAssist(g, teamKey, type, playerIdx) {
   const ng = deepClone(g);
@@ -197,15 +221,16 @@ export function spendAssist(g, teamKey, type, playerIdx) {
   }
 
   if (type === '3pt') {
-    if (myT.assists < 2) return { game: ng, ok: false, msg: `Need 2 assists (have ${myT.assists})` };
+    if (myT.assists < 4) return { game: ng, ok: false, msg: `Need 4 assists (have ${myT.assists})` };
     if (!(player.threePtBoost > 0)) return { game: ng, ok: false, msg: `${player.name} needs a 3PT Bonus` };
-    myT.assists -= 2;
+    myT.assists -= 4;
     const astBonus = ng.tempEff?.[teamKey]?.['astBoost_' + playerIdx] || 0;
     const r = shotCheck(player, '3pt', astBonus, ps);
     if (r.hit) {
       myT.score += r.pts;
       const ps2 = myT.stats.find(s => s.id === player.id);
       if (ps2) { ps2.pts += r.pts; ps2.threepa = (ps2.threepa || 0) + 1; ps2.threepm = (ps2.threepm || 0) + 1; }
+      if (ng.analytics?.[teamKey]) ng.analytics[teamKey].assistSpendPts += r.pts;
     } else {
       const ps2 = myT.stats.find(s => s.id === player.id);
       if (ps2) ps2.threepa = (ps2.threepa || 0) + 1;
@@ -213,7 +238,7 @@ export function spendAssist(g, teamKey, type, playerIdx) {
     if (r.die <= 2) ps.cold = (ps.cold || 0) + 1;
     if (r.die >= 19) ps.hot = (ps.hot || 0) + 1;
     if (ng.tempEff?.[teamKey]) delete ng.tempEff[teamKey]['astBoost_' + playerIdx];
-    ng.log = [...ng.log, { team: teamKey, msg: `Spent 2 AST: ${player.name} 3PT check 🎲${r.die}${r.bonus ? (r.bonus > 0 ? '+' : '') + r.bonus : ''}=${r.total} vs ${r.line} → ${r.hit ? '3pts!' : 'MISS'}` }];
+    ng.log = [...ng.log, { team: teamKey, msg: `Spent 4 AST: ${player.name} 3PT check 🎲${r.die}${r.bonus ? (r.bonus > 0 ? '+' : '') + r.bonus : ''}=${r.total} vs ${r.line} → ${r.hit ? '3pts!' : 'MISS'}` }];
     return { game: ng, ok: true };
   }
 
@@ -227,6 +252,7 @@ export function spendAssist(g, teamKey, type, playerIdx) {
       myT.score += r.pts;
       const ps2 = myT.stats.find(s => s.id === player.id);
       if (ps2) ps2.pts += r.pts;
+      if (ng.analytics?.[teamKey]) ng.analytics[teamKey].assistSpendPts += r.pts;
     }
     if (r.die <= 2) ps.cold = (ps.cold || 0) + 1;
     if (r.die >= 19) ps.hot = (ps.hot || 0) + 1;
@@ -239,9 +265,8 @@ export function spendAssist(g, teamKey, type, playerIdx) {
 }
 
 // ── Rebound Bonus Shot Checks ──────────────────────────────────────────────
-// +3 reb diff → Paint shot check for a chosen player
-// +5 reb diff → Speed-based fast break shot check for a chosen player
-// Putback → player who got 2+ reb in a section gets a Paint check
+// +3 reb diff → Paint shot check for a chosen player (costs 3 REB)
+// Putback → player who got 2+ reb in a section gets a Paint check (costs 2 REB)
 export function spendReboundBonus(g, teamKey, type, playerIdx) {
   const ng = deepClone(g);
   const myT = getTeam(ng, teamKey);
@@ -250,38 +275,21 @@ export function spendReboundBonus(g, teamKey, type, playerIdx) {
   const ps = getPS(ng, teamKey, player.id) || {};
 
   if (type === 'paint_check') {
-    // Second-chance paint shot check (from +3 reb advantage) — costs 2 REB
-    if (myT.rebounds < 2) return { game: ng, ok: false, msg: `Need 2 rebounds (have ${myT.rebounds})` };
-    myT.rebounds -= 2;
+    // Second-chance paint shot check (from +3 reb advantage) — costs 3 REB
+    if (myT.rebounds < 3) return { game: ng, ok: false, msg: `Need 3 rebounds (have ${myT.rebounds})` };
+    myT.rebounds -= 3;
     const r = shotCheck(player, 'paint', 0, ps);
     if (r.hit) {
       myT.score += r.pts;
       const ps2 = myT.stats.find(s => s.id === player.id);
       if (ps2) ps2.pts += r.pts;
+      if (ng.analytics?.[teamKey]) ng.analytics[teamKey].reboundBonusPts += r.pts;
     }
     if (r.die <= 2) ps.cold = (ps.cold || 0) + 1;
     if (r.die >= 19) ps.hot = (ps.hot || 0) + 1;
     // Mark as used
     if (ng.reboundBonuses?.[teamKey]) ng.reboundBonuses[teamKey].paintCheck = false;
-    ng.log = [...ng.log, { team: teamKey, msg: `Rebound Paint Check (−2 REB): ${player.name} 🎲${r.die}${r.bonus ? (r.bonus > 0 ? '+' : '') + r.bonus : ''}=${r.total} vs ${r.line} → ${r.hit ? '2pts!' : 'MISS'}` }];
-    return { game: ng, ok: true };
-  }
-
-  if (type === 'fast_break') {
-    // Speed-based fast break (from +5 reb advantage) — costs 3 REB
-    if (myT.rebounds < 3) return { game: ng, ok: false, msg: `Need 3 rebounds (have ${myT.rebounds})` };
-    myT.rebounds -= 3;
-    const speedBonus = Math.floor(player.speed / 4);
-    const r = shotCheck(player, 'paint', speedBonus, ps);
-    if (r.hit) {
-      myT.score += r.pts;
-      const ps2 = myT.stats.find(s => s.id === player.id);
-      if (ps2) ps2.pts += r.pts;
-    }
-    if (r.die <= 2) ps.cold = (ps.cold || 0) + 1;
-    if (r.die >= 19) ps.hot = (ps.hot || 0) + 1;
-    if (ng.reboundBonuses?.[teamKey]) ng.reboundBonuses[teamKey].fastBreak = false;
-    ng.log = [...ng.log, { team: teamKey, msg: `Fast Break (−3 REB): ${player.name} 🎲${r.die}${r.bonus ? (r.bonus > 0 ? '+' : '') + r.bonus : ''}=${r.total} vs ${r.line} → ${r.hit ? '2pts!' : 'MISS'}` }];
+    ng.log = [...ng.log, { team: teamKey, msg: `Rebound Paint Check (−3 REB): ${player.name} 🎲${r.die}${r.bonus ? (r.bonus > 0 ? '+' : '') + r.bonus : ''}=${r.total} vs ${r.line} → ${r.hit ? '2pts!' : 'MISS'}` }];
     return { game: ng, ok: true };
   }
 
@@ -294,6 +302,7 @@ export function spendReboundBonus(g, teamKey, type, playerIdx) {
       myT.score += r.pts;
       const ps2 = myT.stats.find(s => s.id === player.id);
       if (ps2) ps2.pts += r.pts;
+      if (ng.analytics?.[teamKey]) ng.analytics[teamKey].reboundBonusPts += r.pts;
     }
     if (r.die <= 2) ps.cold = (ps.cold || 0) + 1;
     if (r.die >= 19) ps.hot = (ps.hot || 0) + 1;
@@ -358,6 +367,13 @@ export function doRoll(g, teamKey, idx) {
   const ps2 = nMyT.stats.find(s => s.id === nPlayer.id);
   if (ps2) { ps2.pts += result.pts; ps2.reb += result.reb; ps2.ast += result.ast; }
 
+  // Analytics: chart scoring roll
+  if (ng.analytics?.[teamKey]) {
+    ng.analytics[teamKey].chartPts += result.pts;
+    ng.analytics[teamKey].assistsGenerated += result.ast;
+    ng.analytics[teamKey].reboundsGenerated += result.reb;
+  }
+
   // Auto hot/cold from natural roll
   const ps3 = getPS(ng, teamKey, nPlayer.id) || {};
   if (die <= 2) ps3.cold = (ps3.cold || 0) + 1;
@@ -404,7 +420,13 @@ export function endSection(g) {
     const segAg  = k === 'A' ? segPtsB : segPtsA;
     getTeam(ng, k).starters.forEach(p => {
       const ps = getPS(ng, k, p.id);
-      if (ps) { ps.minutes += 4; ps.totalMinutes = (ps.totalMinutes || 0) + 4; ps.pm = (ps.pm || 0) + (segFor - segAg); }
+      if (ps) {
+        ps.minutes += 4;
+        ps.totalMinutes = (ps.totalMinutes || 0) + 4;
+        ps.pm = (ps.pm || 0) + (segFor - segAg);
+        // Second Wind penalty: +4 extra minutes of fatigue
+        if (ps.secondWindPenalty) { ps.minutes += 4; delete ps.secondWindPenalty; }
+      }
     });
   });
 
@@ -421,7 +443,7 @@ export function endSection(g) {
 
     // Track rebound bonuses earned this section for UI display
     if (!ng.reboundBonuses) ng.reboundBonuses = {};
-    ng.reboundBonuses[wk] = { diff: absRd, paintCheck: absRd >= 3, fastBreak: absRd >= 5 };
+    ng.reboundBonuses[wk] = { diff: absRd, paintCheck: absRd >= 3 };
   }
 
   // Check individual player +2 reb in this section → putback opportunity
@@ -444,7 +466,7 @@ export function endSection(g) {
 
   // Reset section state
   ng.tempEff = {}; ng.tempDefEff = {}; ng.ghosted = {}; ng.ignFatigue = {};
-  ng.rollResults = { A: [], B: [] }; ng.pendingShotCheck = null;
+  ng.rollResults = { A: [], B: [] }; ng.pendingShotCheck = null; ng.lastShotCheck = null;
   // reboundBonuses were set earlier in this function — they persist to the next section's scoring phase
 
   if (ng.section < 3) {
@@ -479,12 +501,18 @@ export function endSection(g) {
   const prevStartersB = ng.teamB.starters.map(p => p.id);
 
   // Reset for new draft
-  ng.draft = { step: 0, aPool: ng.teamA.roster.slice(), bPool: ng.teamB.roster.slice() };
+  ng.draft = {
+    aPool: ng.teamA.roster.slice(),
+    bPool: ng.teamB.roster.slice(),
+    aReady: false,
+    bReady: false,
+  };
   ng.teamA.starters = []; ng.teamB.starters = [];
   ng.offMatchups = { A: [0, 1, 2, 3, 4], B: [0, 1, 2, 3, 4] };
   ng.matchupTurn = 'A'; ng.matchupPasses = 0; ng.lastMatchupCard = null;
   ng.scoringTurn = 'B'; ng.scoringPasses = 0;
   ng.blockedRolls = {};
+  ng.endSectionVotes = { A: false, B: false };
 
   // Clear hot/cold for benched players, recover fatigue (using previous starters)
   ng = clearBenchedMarkers(ng, { A: prevStartersA, B: prevStartersB });
@@ -530,4 +558,4 @@ export function deepClone(obj) {
   return JSON.parse(JSON.stringify(obj));
 }
 
-export { checkAssistDraw };
+export { checkAssistDraw, emptyAnalytics };

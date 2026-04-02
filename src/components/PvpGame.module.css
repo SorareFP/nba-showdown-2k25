@@ -137,6 +137,78 @@
   background: #c2410c;
 }
 
+/* ── Pending shot check / reaction banner ──────────────────────────── */
+
+.pendingBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  background: rgba(234, 88, 12, 0.12);
+  border: 1px solid rgba(234, 88, 12, 0.35);
+  border-radius: var(--radius, 6px);
+}
+
+.pendingInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.pendingTitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--orange, #ea580c);
+}
+
+.pendingCO {
+  font-size: 12px;
+  color: #f87171;
+}
+
+.pendingAvail {
+  font-size: 12px;
+  color: #22c55e;
+  font-weight: 600;
+}
+
+.pendingActions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.coBtn {
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: var(--radius-sm, 4px);
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  cursor: pointer;
+}
+
+.coBtn:hover {
+  background: rgba(59, 130, 246, 0.35);
+}
+
+.resolveBtn {
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: var(--radius-sm, 4px);
+  background: var(--orange, #ea580c);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+.resolveBtn:hover {
+  background: #c2410c;
+}
+
 /* ── Responsive ─────────────────────────────────────────────────────── */
 
 @media (max-width: 480px) {

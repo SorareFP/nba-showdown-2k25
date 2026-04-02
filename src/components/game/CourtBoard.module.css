@@ -12,7 +12,11 @@
 .ctaBtn     { background:var(--orange); color:#fff; padding:6px 16px; border-radius:6px; font-size:13px; font-weight:600; }
 .ctaBtn:hover { background:#C2410C; }
 
+.voteWait  { font-size:12px; color:var(--green); font-weight:600; display:flex; align-items:center; gap:4px; }
+.voteReady { font-size:12px; color:#F59E0B; font-weight:600; display:flex; align-items:center; gap:6px; }
+
 .courtLayout { display:grid; grid-template-columns:160px 1fr 160px; gap:8px; align-items:start; }
+.handPlaceholder { min-height:1px; }
 
 .court { position:relative; background:repeating-linear-gradient(90deg,rgba(0,0,0,0.04) 0px,rgba(0,0,0,0.04) 1px,transparent 1px,transparent 44px),linear-gradient(180deg,#9A6A20 0%,#C8954A 30%,#D4A055 50%,#C8954A 70%,#9A6A20 100%); border-radius:12px; border:3px solid #7A5418; overflow:hidden; min-height:460px; display:flex; align-items:stretch; box-shadow:inset 0 0 60px rgba(0,0,0,0.25),0 4px 24px rgba(0,0,0,0.5); }
 .courtSvg { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:0; }
@@ -57,10 +61,11 @@
 .cold  { font-size:8px; background:rgba(96,165,250,0.2); padding:0 2px; border-radius:3px; }
 .fatBadge { font-size:7px; background:rgba(220,38,38,0.35); color:#FCA5A5; padding:0 3px; border-radius:999px; }
 
-.statRows { display:flex; flex-direction:column; }
-.statRow  { display:flex; justify-content:space-between; align-items:baseline; line-height:1.4; }
-.statLabel { font-size:8px; color:#64748B; text-transform:uppercase; letter-spacing:.04em; font-weight:600; }
-.statVal   { font-size:11px; font-weight:700; color:#E2E8F0; }
+/* Compact horizontal attribute row */
+.attrRow { display:flex; justify-content:space-between; gap:2px; }
+.attrItem { display:flex; flex-direction:column; align-items:center; flex:1; }
+.attrLabel { font-size:7px; color:#64748B; text-transform:uppercase; letter-spacing:.04em; font-weight:600; }
+.attrVal { font-size:11px; font-weight:700; color:#E2E8F0; line-height:1.1; }
 
 .boostRow { display:flex; gap:2px; flex-wrap:wrap; }
 .b3pt { font-size:7px; padding:0 3px; border-radius:999px; font-weight:600; background:rgba(59,130,246,0.25); color:#93C5FD; }
@@ -70,8 +75,18 @@
 .salaryTag { font-size:8px; color:#60A5FA; }
 
 .advBlock { border-top:1px solid rgba(255,255,255,0.07); padding-top:2px; margin-top:1px; }
-.advVs    { font-size:7px; color:#64748B; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.advNums  { display:flex; gap:3px; font-size:8px; font-weight:600; }
+.advVsRow { display:flex; align-items:center; gap:3px; }
+.advVs    { font-size:7px; color:#64748B; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex:1; min-width:0; }
+.advDefBadge { font-size:6px; color:#86EFAC; background:rgba(22,163,74,0.2); padding:0 3px; border-radius:999px; flex-shrink:0; font-weight:600; }
+.advLine  { display:flex; gap:4px; font-size:9px; font-weight:600; flex-wrap:wrap; }
+.advRoll  { font-weight:700; }
+
+/* Game stats */
+.gameStats { border-top:1px solid rgba(255,255,255,0.07); padding-top:2px; margin-top:1px; }
+.gsRow { display:flex; justify-content:center; gap:6px; }
+.gsItem { display:flex; flex-direction:column; align-items:center; }
+.gsVal { font-size:10px; font-weight:700; color:#E2E8F0; line-height:1.2; }
+.gsLbl { font-size:6px; color:#64748B; text-transform:uppercase; letter-spacing:.04em; font-weight:600; }
 
 .rollArea { border-top:1px solid rgba(255,255,255,0.07); padding-top:3px; margin-top:1px; text-align:center; }
 .rollBtn  { color:#fff; padding:3px 0; border-radius:4px; font-size:10px; font-weight:700; width:100%; }
@@ -268,3 +283,54 @@
   vertical-align: middle;
 }
 .viewPlayerBtn:hover { color: #E2E8F0; }
+
+/* ── Help button ── */
+.helpBtn {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #94A3B8;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 6px;
+  flex-shrink: 0;
+}
+.helpBtn:hover { background: rgba(255,255,255,0.15); color: #F1F5F9; }
+
+/* ── Blind Pick Phase ─────────────────────────────────────────────────────── */
+.blindPickWrap { background:rgba(10,22,40,0.95); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:16px; }
+.blindPickHeader { display:flex; align-items:center; gap:12px; margin-bottom:14px; flex-wrap:wrap; }
+.blindPickTitle { font-size:15px; font-weight:700; color:#F1F5F9; }
+.blindPickCount { font-size:13px; color:#94A3B8; font-weight:600; }
+.blindPickSubmit { background:var(--orange); color:#fff; padding:7px 20px; border-radius:6px; font-size:13px; font-weight:700; border:none; cursor:pointer; margin-left:auto; transition:background 0.15s, opacity 0.15s; }
+.blindPickSubmit:hover:not(:disabled) { background:#C2410C; }
+.blindPickSubmit:disabled { opacity:0.35; cursor:not-allowed; }
+.blindPickWaiting { display:flex; align-items:center; justify-content:center; padding:40px 20px; }
+.blindPickGrid { display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:8px; }
+.blindPickCard { position:relative; background:rgba(255,255,255,0.04); border:2px solid rgba(255,255,255,0.1); border-radius:10px; padding:10px; text-align:left; cursor:pointer; transition:border-color 0.15s, background 0.15s, transform 0.1s; display:flex; flex-direction:column; gap:3px; }
+.blindPickCard:hover { background:rgba(255,255,255,0.08); transform:translateY(-1px); }
+.blindPickSelected { border-color:var(--orange) !important; background:rgba(245,158,11,0.08) !important; box-shadow:0 0 12px rgba(245,158,11,0.2); }
+.blindPickExhausted { opacity:0.5; }
+.blindPickCheck { position:absolute; top:6px; right:8px; font-size:16px; font-weight:700; color:var(--orange); line-height:1; }
+.blindPickArt { width:100%; height:60px; border-radius:6px; overflow:hidden; background:rgba(0,0,0,0.2); margin-bottom:2px; display:flex; align-items:center; justify-content:center; }
+.blindPickImg { width:100%; height:100%; object-fit:cover; }
+.blindPickPlaceholder { font-size:24px; font-weight:700; color:rgba(255,255,255,0.15); }
+.blindPickName { font-size:12px; font-weight:700; color:#F1F5F9; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.blindPickHot { color:#F97316; font-size:10px; font-weight:700; }
+.blindPickCold { color:#60A5FA; font-size:10px; font-weight:700; }
+.blindPickStats { font-size:10px; color:#94A3B8; }
+.blindPickMeta { display:flex; gap:6px; font-size:10px; flex-wrap:wrap; }
+.blindPickSalary { color:#60A5FA; font-weight:600; }
+.blindPickBoosts { color:#A78BFA; }
+.blindPickFatigue { font-size:9px; font-weight:700; color:#F59E0B; background:rgba(245,158,11,0.12); border-radius:4px; padding:1px 5px; display:inline-block; margin-top:2px; }
+.blindPickFatWarn { color:#EF4444; background:rgba(239,68,68,0.12); }
+
+@media (max-width:600px) {
+  .blindPickGrid { grid-template-columns:repeat(auto-fill, minmax(130px, 1fr)); }
+}

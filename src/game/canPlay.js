@@ -130,11 +130,11 @@ export function canPlayCard(g, teamKey, cardId) {
 
   if (cardId === 'coaches_challenge') {
     if (phase !== 'scoring') return no('Only playable during Scoring Phase');
-    const oppKey = teamKey === 'A' ? 'B' : 'A';
-    const oppRolls = g.rollResults[oppKey] || [];
-    const hasRoll = oppRolls.some(r => r && r.pts !== undefined);
-    if (!hasRoll) return no('Opponent must have a scoring roll result to challenge');
-    return ok('Challenge and re-roll opponent\'s most recent scoring roll');
+    const used = g.challengesUsed?.[teamKey] || 0;
+    if (used >= 2) return no("Already used 2 Coach's Challenges this game");
+    if (!g.lastShotCheck) return no('No recent shot check to challenge');
+    if (g.lastShotCheck.teamKey === teamKey) return no("Can only challenge opponent's shot checks");
+    return ok("Re-roll opponent's last shot check");
   }
 
   if (cardId === 'delayed_slip') {

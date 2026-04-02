@@ -19,9 +19,13 @@
           ".write": "auth != null && (root.child('rooms').child($roomCode).child('meta').child('hostUid').val() === auth.uid || root.child('rooms').child($roomCode).child('meta').child('guestUid').val() === auth.uid)"
         },
         "private": {
-          "$uid": {
-            ".read": "auth != null && auth.uid === $uid",
-            ".write": "auth != null && auth.uid === $uid"
+          "host": {
+            ".read": "auth != null && root.child('rooms').child($roomCode).child('meta').child('hostUid').val() === auth.uid",
+            ".write": "auth != null && (root.child('rooms').child($roomCode).child('meta').child('hostUid').val() === auth.uid || root.child('rooms').child($roomCode).child('meta').child('guestUid').val() === auth.uid)"
+          },
+          "guest": {
+            ".read": "auth != null && root.child('rooms').child($roomCode).child('meta').child('guestUid').val() === auth.uid",
+            ".write": "auth != null && (root.child('rooms').child($roomCode).child('meta').child('hostUid').val() === auth.uid || root.child('rooms').child($roomCode).child('meta').child('guestUid').val() === auth.uid)"
           }
         }
       }

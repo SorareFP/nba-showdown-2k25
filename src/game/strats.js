@@ -94,7 +94,7 @@ export const STRATS = [
 
   // ── SPECIAL ──
   { id:'coaches_challenge',   name:"Coach's Challenge",  phase:'reaction', side:'def', copies:2, locked:false, color:'#B91C1C', rarity:'rare',
-    desc:'Challenge the last play. Re-roll the opponent\'s most recent scoring roll. They must accept the new result.' },
+    desc:'Re-roll any opponent shot check (not a scoring roll). They must accept the new result. Limit: 2 per game per team.' },
   { id:'delayed_slip',        name:'Delayed Slip',       phase:'scoring',  side:'off', copies:2, locked:false, color:'#7C3AED', rarity:'common',
     desc:'Choose a player with Speed ≥12 and Power ≥10. If they have no matchup advantage, give them +2 to scoring roll and +1 Rebound.' },
 ];

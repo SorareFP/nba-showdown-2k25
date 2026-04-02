@@ -7,6 +7,7 @@ import { loadDecks } from '../firebase/savedDecks.js';
 import CourtBoard from './game/CourtBoard.jsx';
 import GameOver from './game/GameOver.jsx';
 import GameLog from './game/GameLog.jsx';
+import AnalyticsPanel from './game/AnalyticsPanel.jsx';
 import Scoreboard from './game/Scoreboard.jsx';
 import styles from './PlayTab.module.css';
 
@@ -69,6 +70,7 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB }) {
     <div className={styles.layout}>
       <Scoreboard game={game} />
       <GameLog log={game.log} />
+      <AnalyticsPanel analytics={game.analytics} />
       <CourtBoard
         game={game}
         setGame={handlers.setGame}

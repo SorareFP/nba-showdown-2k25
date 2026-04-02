@@ -1,0 +1,42 @@
+.layout { display:flex; flex-direction:column; gap:10px; position:relative; }
+
+.topBar {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:8px 16px;
+  background:rgba(234,88,12,0.12);
+  border:1px solid var(--orange);
+  border-radius:var(--radius);
+}
+.tutorialBadge {
+  font-size:13px; font-weight:700; color:var(--orange);
+  text-transform:uppercase; letter-spacing:.05em;
+}
+.exitBtn {
+  background:rgba(255,255,255,0.08); color:var(--text-muted);
+  border:1px solid var(--border); border-radius:var(--radius-sm);
+  padding:6px 14px; font-size:12px; cursor:pointer;
+}
+.exitBtn:hover { background:rgba(255,255,255,0.14); color:var(--text); }
+
+/* ── Completion screen ─────────────────────────────────────────────────── */
+.completionWrap {
+  display:flex; justify-content:center; align-items:center;
+  min-height:60vh;
+}
+.completionCard {
+  background:var(--card-bg); border:1px solid var(--border);
+  border-radius:var(--radius-lg); padding:2.5rem;
+  text-align:center; max-width:520px; width:100%;
+}
+.completionTitle { font-size:24px; margin-bottom:12px; color:var(--orange); }
+.completionScore { font-size:18px; margin-bottom:16px; }
+.teamA { color:var(--orange); font-weight:700; }
+.teamB { color:var(--blue); font-weight:700; }
+.completionMsg { color:var(--text-muted); font-size:13px; line-height:1.7; margin-bottom:1.5rem; }
+.completionBtns { display:flex; flex-direction:column; gap:10px; align-items:center; }
+.btnPri {
+  background:var(--orange); color:#fff;
+  padding:12px 28px; font-size:14px;
+  border-radius:var(--radius); cursor:pointer;
+}
+.btnPri:hover { background:#C2410C; }

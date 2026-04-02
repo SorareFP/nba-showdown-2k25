@@ -317,15 +317,17 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange }) {
         <PackShop currency={userData?.currency ?? 0} onBuyPack={handleBuyPack} />
       )}
 
-      {/* DEV: Reset button */}
-      <div style={{ marginTop: 32, paddingTop: 16, borderTop: '1px solid var(--border)' }}>
-        <button
-          onClick={handleResetAccount}
-          style={{ background: 'none', color: 'var(--red)', fontSize: 11, padding: '4px 10px', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 4 }}
-        >
-          DEV: Reset Collection &amp; Currency
-        </button>
-      </div>
+      {/* DEV: Reset button — localhost or admin only */}
+      {(window.location.hostname === 'localhost' || user?.email === 'hoopsonhoops@gmail.com') && (
+        <div style={{ marginTop: 32, paddingTop: 16, borderTop: '1px solid var(--border)' }}>
+          <button
+            onClick={handleResetAccount}
+            style={{ background: 'none', color: 'var(--red)', fontSize: 11, padding: '4px 10px', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 4 }}
+          >
+            DEV: Reset Collection &amp; Currency
+          </button>
+        </div>
+      )}
     </div>
   );
 }

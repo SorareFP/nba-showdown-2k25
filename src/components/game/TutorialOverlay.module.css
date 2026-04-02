@@ -1,0 +1,66 @@
+/* src/components/game/TutorialOverlay.module.css */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 100;
+  pointer-events: none;
+}
+
+.tooltip {
+  position: fixed;
+  bottom: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #1E293B, #0F172A);
+  border: 1px solid rgba(234, 88, 12, 0.4);
+  border-radius: 12px;
+  padding: 16px 20px;
+  max-width: 420px;
+  z-index: 101;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.tooltipText {
+  color: #F1F5F9;
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+
+.tooltipDetail {
+  color: #94A3B8;
+  font-size: 12px;
+  line-height: 1.5;
+  margin-bottom: 12px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.tooltipActions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.gotIt {
+  background: var(--orange);
+  color: #fff;
+  border: none;
+  padding: 6px 20px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.gotIt:hover { background: #C2410C; }
+
+.skip {
+  background: none;
+  border: none;
+  color: #64748B;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+.skip:hover { color: #94A3B8; }

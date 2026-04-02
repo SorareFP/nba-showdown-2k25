@@ -1,5 +1,6 @@
 import { rtdb } from './config.js';
 import { ref, set, get, update, onValue, off } from 'firebase/database';
+import { fixFromFirebase, prepareForFirebase } from './pvpGame.js';
 
 // ---------- helpers ----------
 
@@ -62,7 +63,10 @@ export async function joinRoom(code, uid, displayName) {
 
   const meta = snap.val();
 
-  if (meta.hostUid === uid) throw new Error('You cannot join your own room.');
+  // Allow self-join on localhost for testing; block in production
+  if (meta.hostUid === uid && window.location.hostname !== 'localhost') {
+    throw new Error('You cannot join your own room.');
+  }
   if (meta.guestUid) throw new Error('Room is already full.');
   if (meta.status !== 'waiting') throw new Error('Room is no longer accepting players.');
 
@@ -74,8 +78,9 @@ export async function joinRoom(code, uid, displayName) {
     lastActionBy: 'guest',
   });
 
-  // userGames index
-  await set(ref(rtdb, `userGames/${uid}/${code}`), {
+  // userGames index (use role-suffixed key when self-joining to avoid overwrite)
+  const indexKey = meta.hostUid === uid ? `${code}_guest` : code;
+  await set(ref(rtdb, `userGames/${uid}/${indexKey}`), {
     role: 'guest',
     createdAt: Date.now(),
   });
@@ -86,11 +91,11 @@ export async function joinRoom(code, uid, displayName) {
 export async function setTeamSelection(code, role, roster, deckConfig, teamName) {
   const teamPath = role === 'host' ? 'hostTeam' : 'guestTeam';
 
-  await set(ref(rtdb, `rooms/${code}/${teamPath}`), {
+  await set(ref(rtdb, `rooms/${code}/${teamPath}`), prepareForFirebase({
     roster,
     deckConfig,
     teamName,
-  });
+  }));
 
   await update(ref(rtdb, `rooms/${code}/meta`), {
     [`${role}Ready`]: true,
@@ -109,33 +114,39 @@ export function onRoomMeta(code, callback) {
 
 export function onGameState(code, callback) {
   const gameRef = ref(rtdb, `rooms/${code}/game`);
-  onValue(gameRef, (snap) => callback(snap.val()));
+  onValue(gameRef, (snap) => {
+    const val = snap.val();
+    callback(val ? fixFromFirebase(val) : val);
+  });
   return () => off(gameRef);
 }
 
-export function onPrivateData(code, uid, callback) {
-  const privRef = ref(rtdb, `rooms/${code}/private/${uid}`);
-  onValue(privRef, (snap) => callback(snap.val()));
+export function onPrivateData(code, role, callback) {
+  const privRef = ref(rtdb, `rooms/${code}/private/${role}`);
+  onValue(privRef, (snap) => {
+    const val = snap.val();
+    callback(val ? fixFromFirebase(val) : val);
+  });
   return () => off(privRef);
 }
 
 // ---------- game state writes ----------
 
 export async function writeGameState(code, gameState) {
-  await set(ref(rtdb, `rooms/${code}/game`), gameState);
+  await set(ref(rtdb, `rooms/${code}/game`), prepareForFirebase(gameState));
   await update(ref(rtdb, `rooms/${code}/meta`), {
     lastActionAt: Date.now(),
   });
 }
 
-export async function writePrivateData(code, uid, data) {
-  await set(ref(rtdb, `rooms/${code}/private/${uid}`), data);
+export async function writePrivateData(code, role, data) {
+  await set(ref(rtdb, `rooms/${code}/private/${role}`), prepareForFirebase(data));
 }
 
-export async function startGame(code, gameState, hostUid, guestUid, hostPrivate, guestPrivate) {
-  await set(ref(rtdb, `rooms/${code}/game`), gameState);
-  await set(ref(rtdb, `rooms/${code}/private/${hostUid}`), hostPrivate);
-  await set(ref(rtdb, `rooms/${code}/private/${guestUid}`), guestPrivate);
+export async function startGame(code, gameState, hostPrivate, guestPrivate) {
+  await set(ref(rtdb, `rooms/${code}/game`), prepareForFirebase(gameState));
+  await set(ref(rtdb, `rooms/${code}/private/host`), prepareForFirebase(hostPrivate));
+  await set(ref(rtdb, `rooms/${code}/private/guest`), prepareForFirebase(guestPrivate));
   await update(ref(rtdb, `rooms/${code}/meta`), {
     status: 'active',
     lastActionAt: Date.now(),
@@ -207,16 +218,18 @@ export async function loadMyGames(uid) {
   const entries = snap.val(); // { [code]: { role, createdAt } }
   const results = [];
 
-  const codes = Object.keys(entries);
-  const metaPromises = codes.map((c) => get(ref(rtdb, `rooms/${c}/meta`)));
+  const keys = Object.keys(entries);
+  // Keys may have _guest suffix for self-join; extract real room code
+  const codeFromKey = (k) => k.endsWith('_guest') ? k.slice(0, -6) : k;
+  const metaPromises = keys.map((k) => get(ref(rtdb, `rooms/${codeFromKey(k)}/meta`)));
   const metaSnaps = await Promise.all(metaPromises);
 
-  for (let i = 0; i < codes.length; i++) {
+  for (let i = 0; i < keys.length; i++) {
     const metaSnap = metaSnaps[i];
     if (!metaSnap.exists()) continue; // room deleted
     results.push({
-      code: codes[i],
-      role: entries[codes[i]].role,
+      code: codeFromKey(keys[i]),
+      role: entries[keys[i]].role,
       meta: metaSnap.val(),
     });
   }
@@ -224,6 +237,12 @@ export async function loadMyGames(uid) {
   return results;
 }
 
-export async function removeFromMyGames(uid, code) {
-  await set(ref(rtdb, `userGames/${uid}/${code}`), null);
+export async function removeFromMyGames(uid, code, role = null) {
+  // Check both the plain key and _guest suffixed key
+  const key = role === 'guest' ? `${code}_guest` : code;
+  await set(ref(rtdb, `userGames/${uid}/${key}`), null);
+  // Also try the other key in case of self-join cleanup
+  const altKey = role === 'guest' ? code : `${code}_guest`;
+  const snap = await get(ref(rtdb, `userGames/${uid}/${altKey}`));
+  if (snap.exists()) await set(ref(rtdb, `userGames/${uid}/${altKey}`), null);
 }

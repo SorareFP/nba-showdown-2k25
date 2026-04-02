@@ -1,0 +1,104 @@
+/* src/components/HowToPlay.module.css */
+.wrap { max-width: 800px; margin: 0 auto; padding: 16px; }
+
+/* Hero */
+.hero { text-align: center; margin-bottom: 32px; }
+.heroTitle { font-size: 28px; font-weight: 800; color: #F1F5F9; margin: 0 0 4px; }
+.heroSub { font-size: 14px; color: #94A3B8; margin: 0 0 20px; }
+
+.tutorialCard {
+  background: linear-gradient(135deg, rgba(234,88,12,0.15), rgba(37,99,235,0.15));
+  border: 1px solid rgba(234,88,12,0.3);
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  text-align: left;
+}
+.tutorialInfo h2 { font-size: 18px; color: #F1F5F9; margin: 0 0 8px; }
+.tutorialInfo p { font-size: 13px; color: #94A3B8; margin: 0 0 8px; line-height: 1.5; }
+.tutorialTime { font-size: 12px; color: #64748B; }
+.tutorialBtn {
+  background: var(--orange);
+  color: #fff;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.tutorialBtn:hover { background: #C2410C; }
+
+/* Accordion */
+.rules { display: flex; flex-direction: column; gap: 2px; }
+
+.section {
+  background: rgba(10, 22, 40, 0.7);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.section.open { border-color: rgba(255,255,255,0.15); }
+
+.sectionHeader {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: none;
+  border: none;
+  color: #F1F5F9;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+}
+.sectionHeader:hover { background: rgba(255,255,255,0.04); }
+.chevron { font-size: 14px; color: #64748B; }
+
+.sectionBody {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+.sectionContent {
+  padding: 0 16px 16px;
+  color: #CBD5E1;
+  font-size: 13px;
+  line-height: 1.7;
+}
+.sectionContent h4 { color: #F1F5F9; font-size: 14px; margin: 16px 0 6px; }
+.sectionContent ul, .sectionContent ol { padding-left: 20px; margin: 8px 0; }
+.sectionContent li { margin-bottom: 4px; }
+.sectionContent p { margin: 8px 0; }
+
+.draftOrder {
+  font-family: monospace;
+  font-size: 14px;
+  color: var(--orange);
+  font-weight: 700;
+  text-align: center;
+  padding: 8px;
+  background: rgba(234,88,12,0.08);
+  border-radius: 6px;
+}
+
+.formula {
+  font-family: monospace;
+  font-size: 13px;
+  color: #F1F5F9;
+  background: rgba(255,255,255,0.06);
+  padding: 8px 12px;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.glossary { display: grid; grid-template-columns: 140px 1fr; gap: 6px 12px; }
+.glossary dt { color: #F1F5F9; font-weight: 600; font-size: 13px; }
+.glossary dd { color: #94A3B8; font-size: 13px; margin: 0; }

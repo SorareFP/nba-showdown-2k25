@@ -9,6 +9,49 @@ import { startGame } from './pvpRoom.js';
 // Snake draft order: A, B, B, A, A, B, B, A, A, B
 const DRAFT_ORDER = ['A', 'B', 'B', 'A', 'A', 'B', 'B', 'A', 'A', 'B'];
 
+/**
+ * Firebase RTDB mangles data in two ways:
+ *   1. Arrays become objects with numeric keys: [a,b] → {0:a, 1:b}
+ *   2. Empty arrays become null (RTDB can't store empty arrays)
+ *
+ * prepareForFirebase: call BEFORE writing — marks empty arrays with a sentinel.
+ * fixFromFirebase:    call AFTER reading  — restores sentinels & fixes numeric keys.
+ */
+const EMPTY = '__EMPTY_ARRAY__';
+
+export function prepareForFirebase(obj) {
+  if (Array.isArray(obj)) {
+    if (obj.length === 0) return EMPTY;
+    return obj.map(prepareForFirebase);
+  }
+  if (obj !== null && obj !== undefined && typeof obj === 'object') {
+    const result = {};
+    for (const [k, v] of Object.entries(obj)) {
+      result[k] = prepareForFirebase(v);
+    }
+    return result;
+  }
+  return obj;
+}
+
+export function fixFromFirebase(obj) {
+  if (obj === EMPTY) return [];
+  if (obj === null || obj === undefined || typeof obj !== 'object') return obj;
+
+  const keys = Object.keys(obj);
+  const isNumericKeyed = keys.length > 0 && keys.every((k, i) => String(i) === k);
+
+  if (isNumericKeyed) {
+    return keys.map(k => fixFromFirebase(obj[k]));
+  }
+
+  const result = {};
+  for (const k of keys) {
+    result[k] = fixFromFirebase(obj[k]);
+  }
+  return result;
+}
+
 // ── Turn Logic ────────────────────────────────────────────────────────────
 
 /**
@@ -27,8 +70,8 @@ export function getWhoseTurn(game) {
 
   switch (game.phase) {
     case 'draft': {
-      const teamKey = DRAFT_ORDER[game.draft.step];
-      return teamKey ? mapTeamToRole(teamKey, game.hostIs) : null;
+      // Blind pick — both players select simultaneously
+      return 'both';
     }
 
     case 'matchup_strats': {
@@ -56,13 +99,20 @@ export function getWhoseTurn(game) {
 // ── Private Data Extraction ───────────────────────────────────────────────
 
 /**
- * Extract private data (hand & draft pool) for a given team key.
+ * Extract private data (hand, deck, & draft pool) for a given team key.
  */
 export function extractPrivateData(game, teamKey) {
-  return {
-    hand: game[teamKey === 'A' ? 'teamA' : 'teamB'].hand || [],
+  const team = game[teamKey === 'A' ? 'teamA' : 'teamB'];
+  const data = {
+    hand: team.hand || [],
+    deck: Array.isArray(team.deck) ? team.deck : [],
     draftPool: teamKey === 'A' ? (game.draft?.aPool || []) : (game.draft?.bPool || []),
   };
+  // Preserve draft picks during blind pick phase
+  if (game.phase === 'draft' && team._draftPicks) {
+    data.draftPicks = team._draftPicks;
+  }
+  return data;
 }
 
 // ── Strip Private Data ────────────────────────────────────────────────────
@@ -76,8 +126,6 @@ export function stripPrivateData(game) {
 
   pub.teamA.hand = [];
   pub.teamB.hand = [];
-  pub.teamA.deck = Array.isArray(game.teamA.deck) ? game.teamA.deck.length : game.teamA.deck;
-  pub.teamB.deck = Array.isArray(game.teamB.deck) ? game.teamB.deck.length : game.teamB.deck;
 
   if (pub.draft) {
     pub.draft.aPool = [];
@@ -102,8 +150,8 @@ export async function initializePvpGame(code, hostUid, guestUid) {
     get(ref(rtdb, `rooms/${code}/guestTeam`)),
   ]);
 
-  const hostTeam = hostSnap.val();
-  const guestTeam = guestSnap.val();
+  const hostTeam = fixFromFirebase(hostSnap.val());
+  const guestTeam = fixFromFirebase(guestSnap.val());
 
   // 2. Map roster playerIds to card objects
   const hostRoster = hostTeam.roster.map(id => CARD_MAP[id]);
@@ -139,7 +187,7 @@ export async function initializePvpGame(code, hostUid, guestUid) {
   const publicGame = stripPrivateData(game);
 
   // 9. Write to Firebase
-  await startGame(code, publicGame, hostUid, guestUid, hostPrivate, guestPrivate);
+  await startGame(code, publicGame, hostPrivate, guestPrivate);
 
   // 10. Return the public game state
   return publicGame;

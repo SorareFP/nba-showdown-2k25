@@ -2,12 +2,22 @@ import { useState } from 'react';
 import { calcAdv, getTeam, getOpp, getPS, getFatigue, SNAKE } from '../../game/engine.js';
 import { canPlayCard } from '../../game/canPlay.js';
 import { getStrat } from '../../game/strats.js';
+import { aiDraftPick } from '../../game/ai.js';
 import styles from './CourtBoard.module.css';
 import { getPlayerImageUrl, getStratImagePath } from '../../game/cardImages.js';
 import { useLightbox } from '../CardLightbox.jsx';
 
-export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExecCard, onResolve, onSpendAssist, onSpendRebound, pvpMode = false, myTeamKey = null, isMyTurn = true }) {
+function HelpBtn({ section }) {
+  const handleClick = (e) => {
+    e.stopPropagation();
+    window.dispatchEvent(new CustomEvent('showdown-help', { detail: { section } }));
+  };
+  return <button className={styles.helpBtn} onClick={handleClick} title="How to Play">?</button>;
+}
+
+export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExecCard, onResolve, onSpendAssist, onSpendRebound, onDraftSubmit, pvpMode = false, myTeamKey = null, isMyTurn = true }) {
   const [modal, setModal] = useState(null);
+  const [draftSelected, setDraftSelected] = useState([]);
 
   const openModal = (config) => new Promise(res => setModal({ ...config, resolve: res }));
   const closeModal = (val) => { const r = modal?.resolve; setModal(null); r?.(val); };
@@ -20,29 +30,41 @@ export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExec
 
   return (
     <div className={styles.wrap}>
-      <PhaseBar game={game} setGame={setGame} onEndSection={onEndSection} pvpMode={pvpMode} myTeamKey={myTeamKey} isMyTurn={isMyTurn} />
+      <PhaseBar game={game} setGame={setGame} onEndSection={onEndSection} pvpMode={pvpMode} myTeamKey={myTeamKey} isMyTurn={isMyTurn} draftSelectedCount={draftSelected.length} />
 
-      <div className={styles.courtLayout}>
-        {/* In PvP, only show my hand. In local, show both. */}
-        {(!pvpMode || myTeamKey === 'A') && <HandPanel game={game} teamKey="A" onExecCard={handleExecCard} pvpMode={pvpMode} isMyTurn={isMyTurn} />}
+      {game.phase === 'draft' ? (
+        <BlindPickPhase game={game} setGame={setGame} pvpMode={pvpMode} myTeamKey={myTeamKey}
+          onDraftSubmit={onDraftSubmit} selected={draftSelected} setSelected={setDraftSelected} />
+      ) : (
+        <div className={styles.courtLayout}>
+          {/* Left hand panel: Team A's hand (or empty placeholder in PvP if I'm Team B) */}
+          {(!pvpMode || myTeamKey === 'A')
+            ? <HandPanel game={game} teamKey="A" onExecCard={handleExecCard} pvpMode={pvpMode} isMyTurn={isMyTurn} />
+            : <div className={styles.handPlaceholder} />
+          }
 
-        <div className={styles.court}>
-          <CourtMarkings />
-          <div className={styles.teamLabelA}>TEAM A</div>
-          <div className={styles.teamLabelB}>TEAM B</div>
-          <div className={styles.matchups}>
-            {[0,1,2,3,4].map(i => (
-              <MatchupRow key={i} idx={i} game={game} setGame={setGame}
-                onRoll={onRoll} onExecCard={handleExecCard} onSpendAssist={onSpendAssist} onSpendRebound={onSpendRebound}
-                pvpMode={pvpMode} myTeamKey={myTeamKey} isMyTurn={isMyTurn} />
-            ))}
+          <div className={styles.court}>
+            <CourtMarkings />
+            <div className={styles.teamLabelA}>TEAM A</div>
+            <div className={styles.teamLabelB}>TEAM B</div>
+            <div className={styles.matchups}>
+              {[0,1,2,3,4].map(i => (
+                <MatchupRow key={i} idx={i} game={game} setGame={setGame}
+                  onRoll={onRoll} onExecCard={handleExecCard} onSpendAssist={onSpendAssist} onSpendRebound={onSpendRebound}
+                  pvpMode={pvpMode} myTeamKey={myTeamKey} isMyTurn={isMyTurn} />
+              ))}
+            </div>
+            <TrackPanel game={game} side="left" />
+            <TrackPanel game={game} side="right" />
           </div>
-          <TrackPanel game={game} side="left" />
-          <TrackPanel game={game} side="right" />
-        </div>
 
-        {(!pvpMode || myTeamKey === 'B') && <HandPanel game={game} teamKey="B" onExecCard={handleExecCard} pvpMode={pvpMode} isMyTurn={isMyTurn} />}
-      </div>
+          {/* Right hand panel: Team B's hand (or empty placeholder in PvP if I'm Team A) */}
+          {(!pvpMode || myTeamKey === 'B')
+            ? <HandPanel game={game} teamKey="B" onExecCard={handleExecCard} pvpMode={pvpMode} isMyTurn={isMyTurn} />
+            : <div className={styles.handPlaceholder} />
+          }
+        </div>
+      )}
 
       {game.pendingShotCheck && (
         <PendingBanner game={game} onResolve={onResolve} onExecCard={handleExecCard} />
@@ -85,12 +107,12 @@ async function buildOpts(game, teamKey, cardId, base, openModal) {
     'ghost_screen', 'bully_ball', 'and_one', 'rimshaker', 'uncontested_layup',
     'back_to_basket', 'putback_dunk', 'chip_on_shoulder', 'defensive_stopper',
     'second_wind', 'crowd_favorite', 'delayed_slip', 'energy_injection',
-    'catch_and_shoot',
+    'catch_and_shoot', 'green_light',
   ];
 
   // Cards that show ALL my starters (no filtering needed)
   const unfilteredPlayerCards = [
-    'green_light', 'you_stand_over_there', 'elevator_doors',
+    'you_stand_over_there', 'elevator_doors',
     'pin_down_screen', 'power_move', 'from_way_downtown', 'cross_court_dime',
     'rebound_tap_out',
   ];
@@ -235,13 +257,33 @@ async function buildOpts(game, teamKey, cardId, base, openModal) {
         label = 'Select player with Speed 12+';
         break;
       }
+      case 'green_light': {
+        eligible = filterStarters(myT.starters, (_, i) => !rolls[i] || rolls[i]?.isReplaced);
+        label = 'Select player who hasn\'t rolled yet';
+        break;
+      }
       default:
         eligible = filterStarters(myT.starters, () => true);
         label = 'Select target player';
     }
 
     if (eligible.length === 0) { alert('No eligible players for this card.'); return null; }
-    const idx = await pickFiltered(eligible, label);
+
+    // Build info function for cards that benefit from showing matchup details
+    let infoFn = undefined;
+    if (cardId === 'and_one') {
+      infoFn = (p, origIdx) => {
+        const di = offMatchups[origIdx] ?? origIdx;
+        const dp = defenders[di];
+        if (!dp) return '';
+        const a = calcAdv(p, dp, game.tempEff?.[teamKey] || {}, origIdx);
+        const maxA = Math.max(a.speedAdv, a.powerAdv);
+        const tier = maxA >= 5 ? '⭐ +1pt & FT' : '+1pt only';
+        return `(Adv +${maxA} → ${tier})`;
+      };
+    }
+
+    const idx = await pickFiltered(eligible, label, teamKey, infoFn);
     if (idx === null) return null;
     opts.playerIdx = idx;
   }
@@ -339,8 +381,15 @@ async function buildOpts(game, teamKey, cardId, base, openModal) {
 
   // ── Two-player cards ───────────────────────────────────────────────────
   if (cardId === 'stagger_action') {
-    const eligible = filterStarters(myT.starters, (p, i) => i !== opts.playerIdx);
-    const idx2 = await pickFiltered(eligible, 'Select second player');
+    // First pick: player with Speed 13+
+    const speedEligible = filterStarters(myT.starters, (p) => (p.speed || 0) >= 13);
+    const idx1 = await pickFiltered(speedEligible, '⚡ Stagger Action — Pick player with Speed 13+');
+    if (idx1 === null) return null;
+    opts.playerIdx = idx1;
+
+    // Second pick: player with a 3PT bonus (excluding first pick)
+    const threeEligible = filterStarters(myT.starters, (p, i) => i !== idx1 && (p.threePtBoost || 0) > 0);
+    const idx2 = await pickFiltered(threeEligible, `⚡ Pick player with 3PT bonus`);
     if (idx2 === null) return null;
     opts.player2Idx = idx2;
   }
@@ -493,7 +542,7 @@ function SelectModal({ modal, game, onClose }) {
             const extra = extraInfo?.[i];
             return (
               <button key={p.id} className={styles.modalBtn} style={{ borderLeftColor: col }} onClick={() => onClose(i)}>
-                <div className={styles.mName}>{p.name}{ps.hot>0?' 🔥':''}{ps.cold>0?' ❄️':''}{fat<0&&<span className={styles.fatTag}> FAT{fat}</span>}</div>
+                <div className={styles.mName}>{p.name}{(()=>{const n=(ps.hot||0)-(ps.cold||0);return n>0?' 🔥':n<0?' ❄️':'';})()}{fat<0&&<span className={styles.fatTag}> FAT{fat}</span>}</div>
                 <div className={styles.mSub}>S{p.speed} · P{p.power} · Line {p.shotLine}{boosts&&` · ${boosts}`}{min>0&&` · ${min}min`}</div>
                 {extra && <div className={styles.mExtra}>{extra}</div>}
               </button>
@@ -506,7 +555,7 @@ function SelectModal({ modal, game, onClose }) {
   );
 }
 
-function PhaseBar({ game, setGame, onEndSection, pvpMode = false, myTeamKey = null, isMyTurn = true }) {
+function PhaseBar({ game, setGame, onEndSection, pvpMode = false, myTeamKey = null, isMyTurn = true, draftSelectedCount = 0 }) {
   const { phase, quarter, section, matchupTurn, matchupPasses, scoringTurn, scoringPasses } = game;
   const rA = game.rollResults.A || [], rB = game.rollResults.B || [];
   // A player is "done" if they have a roll result OR they are blocked
@@ -536,17 +585,12 @@ function PhaseBar({ game, setGame, onEndSection, pvpMode = false, myTeamKey = nu
   };
 
   if (phase === 'draft') {
-    const step = game.draft.step;
-    const actTeam = SNAKE[Math.min(step,9)]===0?'A':'B';
-    const done = game.teamA.starters.length===5&&game.teamB.starters.length===5;
     return (
       <div className={styles.phaseBar}>
         <div className={styles.phaseInfo}>
-          <span className={styles.phaseLabel}>Q{quarter} · Sec {section}/3 · Draft</span>
-          <span className={styles.phaseSub}>Pick {step+1}/10 · A B B A A B B A A B</span>
+          <span className={styles.phaseLabel}>Q{quarter} · Sec {section}/3 · Lineup Selection<HelpBtn section="draft" /></span>
+          <span className={styles.phaseSub}>{draftSelectedCount}/5 selected</span>
         </div>
-        {done ? <button className={styles.ctaBtn} onClick={lock}>Continue →</button>
-               : <span style={{color:actTeam==='A'?'var(--orange)':'var(--blue)',fontWeight:700}}>Team {actTeam}'s pick</span>}
       </div>
     );
   }
@@ -555,7 +599,7 @@ function PhaseBar({ game, setGame, onEndSection, pvpMode = false, myTeamKey = nu
     return (
       <div className={styles.phaseBar}>
         <div className={styles.phaseInfo}>
-          <span className={styles.phaseLabel}>Q{quarter} · Sec {section}/3 · Matchup Strategy</span>
+          <span className={styles.phaseLabel}>Q{quarter} · Sec {section}/3 · Matchup Strategy<HelpBtn section="matchup" /></span>
           <span className={styles.phaseSub}>Play a card or pass twice to start scoring</span>
         </div>
         <div className={styles.phaseCtrls}>
@@ -573,7 +617,7 @@ function PhaseBar({ game, setGame, onEndSection, pvpMode = false, myTeamKey = nu
     return (
       <div className={styles.phaseBar}>
         <div className={styles.phaseInfo}>
-          <span className={styles.phaseLabel}>Q{quarter} · Sec {section}/3 · Scoring</span>
+          <span className={styles.phaseLabel}>Q{quarter} · Sec {section}/3 · Scoring<HelpBtn section="scoring" /></span>
           {!rollingOpen
             ? <span className={styles.phaseSub} style={{color:col}}>Team {scoringTurn} strategy turn · {Math.min(scoringPasses,2)}/2 passes</span>
             : <span className={styles.phaseSub} style={{color:'var(--green)'}}>All players may roll</span>}
@@ -581,7 +625,19 @@ function PhaseBar({ game, setGame, onEndSection, pvpMode = false, myTeamKey = nu
         <div className={styles.phaseCtrls}>
           {(segA>0||segB>0) && <span className={styles.segScore}><span style={{color:'var(--orange)'}}>A {segA}</span>–<span style={{color:'var(--blue)'}}>{segB} B</span></span>}
           {!rollingOpen && <button className={styles.passBtn} onClick={pass} disabled={pvpMode && !isMyTurn}>Pass →</button>}
-          {allRolled && !game.pendingShotCheck && <button className={styles.ctaBtn} onClick={onEndSection}>End Section →</button>}
+          {allRolled && !game.pendingShotCheck && (() => {
+            const votes = game.endSectionVotes || {};
+            const myVoted = pvpMode && myTeamKey ? votes[myTeamKey] : false;
+            const oppKey = myTeamKey === 'A' ? 'B' : 'A';
+            const oppVoted = pvpMode ? votes[oppKey] : false;
+            return (
+              <>
+                {!myVoted && <button className={styles.ctaBtn} onClick={onEndSection}>End Section →</button>}
+                {pvpMode && myVoted && !oppVoted && <span className={styles.voteWait}>✓ Waiting for opponent to end section...</span>}
+                {pvpMode && oppVoted && !myVoted && <span className={styles.voteReady}>Opponent wants to end section — <button className={styles.ctaBtn} onClick={onEndSection}>End Section →</button></span>}
+              </>
+            );
+          })()}
           {pvpMode && !isMyTurn && !rollingOpen && <span style={{color:'var(--text-dim)',fontSize:12,marginLeft:8}}>Waiting for opponent...</span>}
         </div>
       </div>
@@ -591,7 +647,7 @@ function PhaseBar({ game, setGame, onEndSection, pvpMode = false, myTeamKey = nu
 }
 
 function MatchupRow({ idx, game, setGame, onRoll, onExecCard, onSpendAssist, onSpendRebound, pvpMode = false, myTeamKey = null, isMyTurn = true }) {
-  if (game.phase === 'draft') return <DraftRow idx={idx} game={game} setGame={setGame} pvpMode={pvpMode} myTeamKey={myTeamKey} isMyTurn={isMyTurn} />;
+  if (game.phase === 'draft') return null; // Draft handled by BlindPickPhase
   const ap=game.teamA.starters[idx], bp=game.teamB.starters[idx];
   if (!ap||!bp) return <div className={styles.emptyRow}/>;
   const aDefIdx=game.offMatchups.A[idx], bDefIdx=game.offMatchups.B[idx];
@@ -619,6 +675,175 @@ function MatchupRow({ idx, game, setGame, onRoll, onExecCard, onSpendAssist, onS
   );
 }
 
+// ── Blind Pick Phase ──────────────────────────────────────────────────────
+// Replaces the old snake draft. Player selects 5 from their 10-player roster.
+// On submit, AI picks 5 for the opponent and the game transitions to matchup_strats.
+function BlindPickPhase({ game, setGame, pvpMode = false, myTeamKey = null, onDraftSubmit, selected, setSelected }) {
+  const teamKey = pvpMode ? (myTeamKey || 'A') : 'A';
+  const pool = teamKey === 'A' ? game.draft.aPool : game.draft.bPool;
+  const stats = teamKey === 'A' ? game.teamA.stats : game.teamB.stats;
+  const myReady = pvpMode && (teamKey === 'A' ? game.draft.aReady : game.draft.bReady);
+  const oppReady = pvpMode && (teamKey === 'A' ? game.draft.bReady : game.draft.aReady);
+
+  const toggle = (playerId) => {
+    if (myReady) return; // Already submitted in PvP
+    setSelected(prev => {
+      if (prev.includes(playerId)) return prev.filter(id => id !== playerId);
+      if (prev.length >= 5) return prev;
+      return [...prev, playerId];
+    });
+  };
+
+  const handleSubmit = () => {
+    if (selected.length !== 5) return;
+
+    // PvP mode: delegate to parent handler for Firebase sync
+    if (pvpMode && onDraftSubmit) {
+      onDraftSubmit(selected);
+      return;
+    }
+
+    // Solo mode: AI picks for opponent
+    const g = JSON.parse(JSON.stringify(game));
+
+    // Set player's starters
+    const myPool = teamKey === 'A' ? g.draft.aPool : g.draft.bPool;
+    const picks = selected.map(id => myPool.find(p => p.id === id)).filter(Boolean);
+    if (teamKey === 'A') {
+      g.teamA.starters = picks;
+      g.draft.aPool = myPool.filter(p => !selected.includes(p.id));
+    } else {
+      g.teamB.starters = picks;
+      g.draft.bPool = myPool.filter(p => !selected.includes(p.id));
+    }
+
+    // AI picks 5 for opponent
+    const oppKey = teamKey === 'A' ? 'B' : 'A';
+    for (let i = 0; i < 5; i++) {
+      const action = aiDraftPick(g, oppKey);
+      if (action) {
+        const oppPool = oppKey === 'A' ? g.draft.aPool : g.draft.bPool;
+        const pIdx = oppPool.findIndex(p => p.id === action.playerId);
+        if (pIdx >= 0) {
+          const picked = oppPool[pIdx];
+          if (oppKey === 'A') {
+            g.teamA.starters.push(picked);
+            g.draft.aPool = g.draft.aPool.filter((_, j) => j !== pIdx);
+          } else {
+            g.teamB.starters.push(picked);
+            g.draft.bPool = g.draft.bPool.filter((_, j) => j !== pIdx);
+          }
+        }
+      }
+    }
+
+    // Clear hot/cold for benched players (not in starters)
+    ['A', 'B'].forEach(k => {
+      const t = k === 'A' ? g.teamA : g.teamB;
+      t.stats.forEach(ps => {
+        if (!t.starters.find(p => p.id === ps.id)) {
+          ps.hot = 0; ps.cold = 0;
+          const m = ps.minutes || 0;
+          ps.minutes = m <= 8 ? 0 : Math.max(0, m - 8);
+        }
+      });
+    });
+
+    g.offMatchups = { A: [0, 1, 2, 3, 4], B: [0, 1, 2, 3, 4] };
+    g.phase = 'matchup_strats';
+    g.log = [...g.log, { team: null, msg: 'Lineups locked — Matchup Strategy Phase.' }];
+
+    setSelected([]);
+    setGame(g);
+  };
+
+  // PvP: show waiting state after submission
+  if (myReady) {
+    return (
+      <div className={styles.blindPickWrap}>
+        <div className={styles.blindPickHeader}>
+          <span className={styles.blindPickTitle}>Lineup Submitted!</span>
+          <span className={styles.blindPickCount}>
+            {oppReady ? 'Revealing lineups...' : 'Waiting for opponent...'}
+          </span>
+        </div>
+        <div className={styles.blindPickWaiting}>
+          <div className={styles.voteWait}>Your lineup is locked in. Waiting for opponent to submit theirs.</div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={styles.blindPickWrap}>
+      <div className={styles.blindPickHeader}>
+        <span className={styles.blindPickTitle}>Select Your Starting 5</span>
+        <span className={styles.blindPickCount}>
+          {selected.length}/5 selected
+          {pvpMode && oppReady && <span className={styles.voteReady}> — Opponent ready!</span>}
+        </span>
+        <button
+          className={styles.blindPickSubmit}
+          disabled={selected.length !== 5}
+          onClick={handleSubmit}
+        >
+          Submit Lineup
+        </button>
+      </div>
+      <div className={styles.blindPickGrid}>
+        {pool.map(p => {
+          const ps = stats?.find(s => s.id === p.id) || {};
+          const isSelected = selected.includes(p.id);
+          const min = ps.minutes || 0;
+          const fat = min >= 16 ? -12 : min >= 12 ? -6 : min >= 8 ? -2 : 0;
+          const hotCold = (ps.hot || 0) - (ps.cold || 0);
+          const boosts = [
+            p.threePtBoost ? `3PT+${p.threePtBoost}` : '',
+            p.paintBoost ? `Paint+${p.paintBoost}` : '',
+            p.defBoost ? `Def+${p.defBoost}` : '',
+          ].filter(Boolean);
+          const imgUrl = getPlayerImageUrl(p.id);
+
+          return (
+            <button
+              key={p.id}
+              className={`${styles.blindPickCard} ${isSelected ? styles.blindPickSelected : ''} ${min >= 16 ? styles.blindPickExhausted : ''}`}
+              onClick={() => toggle(p.id)}
+            >
+              {isSelected && <span className={styles.blindPickCheck}>&#10003;</span>}
+              <div className={styles.blindPickArt}>
+                {imgUrl
+                  ? <img src={imgUrl} alt={p.name} className={styles.blindPickImg} onError={e => { e.target.style.display = 'none'; }} />
+                  : <div className={styles.blindPickPlaceholder}>{p.name.charAt(0)}</div>
+                }
+              </div>
+              <div className={styles.blindPickName}>
+                {p.name}
+                {hotCold > 0 && <span className={styles.blindPickHot}> HOT</span>}
+                {hotCold < 0 && <span className={styles.blindPickCold}> COLD</span>}
+              </div>
+              <div className={styles.blindPickStats}>
+                S{p.speed} · P{p.power} · Line {p.shotLine}
+              </div>
+              <div className={styles.blindPickMeta}>
+                <span className={styles.blindPickSalary}>${p.salary}</span>
+                {boosts.length > 0 && <span className={styles.blindPickBoosts}>{boosts.join(' ')}</span>}
+              </div>
+              {min > 0 && (
+                <div className={`${styles.blindPickFatigue} ${fat < 0 ? styles.blindPickFatWarn : ''}`}>
+                  {min}m{fat < 0 ? ` (${fat})` : ''}
+                  {min >= 16 && ' MUST REST'}
+                </div>
+              )}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ── DraftRow (legacy, kept for TutorialGame compatibility) ────────────────
 function DraftRow({ idx, game, setGame, pvpMode = false, myTeamKey = null, isMyTurn = true }) {
   const { draft, teamA, teamB } = game;
   const aS=teamA.starters, bS=teamB.starters;
@@ -680,7 +905,7 @@ function PlacedCard({ player, stats, col }) {
   return (
     <div className={styles.placedCard} style={{borderColor:col}}>
       {pImgUrl && <img src={pImgUrl} alt={player.name} className={styles.placedArt} onError={e=>e.target.style.display='none'} />}
-      <div className={styles.placedName} style={{color:col}}>{player.name}{ps.hot>0?' 🔥':ps.cold>0?' ❄️':''}{fat<0&&<span className={styles.fatTag}> FAT{fat}</span>}</div>
+      <div className={styles.placedName} style={{color:col}}>{player.name}{(()=>{const n=(ps.hot||0)-(ps.cold||0);return n>0?' 🔥':n<0?' ❄️':'';})()}{fat<0&&<span className={styles.fatTag}> FAT{fat}</span>}</div>
       <div className={styles.placedMeta}>S{player.speed} · P{player.power} · <span style={{color:'#60A5FA'}}>${player.salary}</span>{boosts.length>0&&' · '+boosts.join(' ')}</div>
     </div>
   );
@@ -718,7 +943,7 @@ function PickList({ pool, stats, onPick, col, oppStarters = [], myStarters = [],
           const preview = getMatchupPreview(p);
           return (
             <button key={p.id} className={styles.pickItem} onClick={()=>onPick(p)}>
-              <span className={styles.pickName}>{p.name}{ps.hot>0?' 🔥':ps.cold>0?' ❄️':''}</span>
+              <span className={styles.pickName}>{p.name}{(()=>{const n=(ps.hot||0)-(ps.cold||0);return n>0?' 🔥':n<0?' ❄️':'';})()}</span>
               <span className={styles.pickMeta}>S{p.speed} P{p.power}{boosts&&' · '+boosts}{min>=16?' ⛔ MUST REST':fat<0?` FAT${fat}`:min>0?` ${min}m`:''}</span>
               {preview && (
                 <span className={styles.pickMatchup}>
@@ -769,26 +994,28 @@ function PlayerSlot({ player, ps, adv, fat, result, blocked, teamKey, idx, phase
         <div className={styles.cardNameRow}>
           <span className={styles.cardName} style={{color:col}}>{player.name}</span>
           <div className={styles.markers}>
-            {ps.hot>0&&<span className={styles.hot}>🔥{ps.hot>1?'×'+ps.hot:''}</span>}
-            {ps.cold>0&&<span className={styles.cold}>❄️{ps.cold>1?'×'+ps.cold:''}</span>}
+            {(()=>{const net=(ps.hot||0)-(ps.cold||0);if(net>0)return<span className={styles.hot}>🔥{net>1?'×'+net:''}</span>;if(net<0)return<span className={styles.cold}>❄️{Math.abs(net)>1?'×'+Math.abs(net):''}</span>;return null;})()}
             {fat<0&&<span className={styles.fatBadge}>FAT{fat}</span>}
           </div>
         </div>
-        <div className={styles.statRows}>
-          <div className={styles.statRow}><span className={styles.statLabel}>SPD</span><span className={styles.statVal}>{player.speed}</span></div>
-          <div className={styles.statRow}><span className={styles.statLabel}>PWR</span><span className={styles.statVal}>{player.power}</span></div>
-          <div className={styles.statRow}><span className={styles.statLabel}>SHOT</span><span className={styles.statVal}>{player.shotLine}</span></div>
-          {min>0&&<div className={styles.statRow}><span className={styles.statLabel} style={{color:'#64748B'}}>MIN</span><span className={styles.statVal} style={{color:'#64748B'}}>{min}</span></div>}
+        <div className={styles.attrRow}>
+          <span className={styles.attrItem}><span className={styles.attrLabel}>SPD</span> <span className={styles.attrVal}>{player.speed}</span></span>
+          <span className={styles.attrItem}><span className={styles.attrLabel}>PWR</span> <span className={styles.attrVal}>{player.power}</span></span>
+          <span className={styles.attrItem}><span className={styles.attrLabel}>SHOT</span> <span className={styles.attrVal}>{player.shotLine}</span></span>
         </div>
         {boosts.length>0&&<div className={styles.boostRow}>{boosts}</div>}
         {adv&&defPlayer&&(
           <div className={styles.advBlock}>
-            <span className={styles.advVs}>vs {defPlayer.name}{adv.db>0?` (Def+${adv.db})`:''}</span>
-            <div className={styles.advNums}>
+            <div className={styles.advVsRow}>
+              <span className={styles.advVs}>vs {defPlayer.name}</span>
+              {adv.db>0&&<span className={styles.advDefBadge}>DEF+{adv.db}</span>}
+            </div>
+            <div className={styles.advLine}>
               <span style={{color:adv.speedAdv>0?'#4ADE80':adv.rawSpeedDiff<0?'#F87171':'#94A3B8'}}>S{adv.rawSpeedDiff>0?'+':''}{adv.rawSpeedDiff}</span>
+              {' '}
               <span style={{color:adv.powerAdv>0?'#4ADE80':adv.rawPowerDiff<0?'#F87171':'#94A3B8'}}>P{adv.rawPowerDiff>0?'+':''}{adv.rawPowerDiff}</span>
-              {adv.db>0&&!adv.hasPenalty&&<span style={{color:'#F87171',fontSize:'7px'}}>−{adv.db}def</span>}
-              <span style={{color:rollCol,fontWeight:700}}>Roll {adv.rollBonus>0?'+':''}{adv.rollBonus}{adv.hasPenalty?' ⚠':''}</span>
+              {' '}
+              <span className={styles.advRoll} style={{color:rollCol}}>Roll {adv.rollBonus>0?'+':''}{adv.rollBonus}{adv.hasPenalty?' ⚠':''}</span>
             </div>
           </div>
         )}
@@ -801,40 +1028,53 @@ function PlayerSlot({ player, ps, adv, fat, result, blocked, teamKey, idx, phase
               <div className={styles.statLine}>{result.reb}r {result.ast}a</div>
             </div>
             :<button className={styles.rollBtn} style={{background:col}} onClick={onRoll} disabled={pvpDisabled}>🎲 Roll</button>}
-            {/* Assist spending buttons — 2 AST for 3PT check, 3 AST for Paint check */}
-            {onSpendAssist && (() => {
+            {/* Assist spending buttons — 4 AST for 3PT check, 3 AST for Paint check */}
+            {onSpendAssist && !pvpDisabled && (() => {
               const myT = teamKey==='A'?game.teamA:game.teamB;
               const ast = myT.assists;
               const has3pt = (player.threePtBoost||0) > 0;
               const hasPaint = (player.paintBoost||0) > 0;
-              if (ast < 2) return null;
-              const anyBtn = (ast>=2 && has3pt) || (ast>=3 && hasPaint);
+              if (ast < 3) return null;
+              const anyBtn = (ast>=4 && has3pt) || (ast>=3 && hasPaint);
               if (!anyBtn) return null;
               return (
                 <div className={styles.assistSpend}>
-                  {ast>=2 && has3pt && <button className={styles.astBtn} title="Spend 2 AST: 3PT shot check" onClick={()=>onSpendAssist(teamKey,'3pt',idx)}>3PT (2A)</button>}
+                  {ast>=4 && has3pt && <button className={styles.astBtn} title="Spend 4 AST: 3PT shot check" onClick={()=>onSpendAssist(teamKey,'3pt',idx)}>3PT (4A)</button>}
                   {ast>=3 && hasPaint && <button className={styles.astBtn} title="Spend 3 AST: Paint shot check" onClick={()=>onSpendAssist(teamKey,'paint',idx)}>Paint (3A)</button>}
                 </div>
               );
             })()}
             {/* Rebound bonus buttons */}
-            {onSpendRebound && (() => {
+            {onSpendRebound && !pvpDisabled && (() => {
               const rb = game.reboundBonuses?.[teamKey];
               if (!rb) return null;
               const myT2 = teamKey==='A'?game.teamA:game.teamB;
-              const hasPaint = ((player.paintBoost||0) > 0 || player.power >= 10) && myT2.rebounds >= 2;
+              const hasPaint = ((player.paintBoost||0) > 0 || player.power >= 10) && myT2.rebounds >= 3;
               const isPutback = rb.putbackPlayers?.some(p => p.idx === idx) && myT2.rebounds >= 2;
-              const canFastBrk = rb.fastBreak && myT2.rebounds >= 3;
-              const anyBtn = (rb.paintCheck && hasPaint) || canFastBrk || isPutback;
+              const anyBtn = (rb.paintCheck && hasPaint) || isPutback;
               if (!anyBtn) return null;
               return (
                 <div className={styles.assistSpend}>
-                  {rb.paintCheck && hasPaint && <button className={styles.rebBtn} title="Costs 2 REB: Paint shot check" onClick={()=>onSpendRebound(teamKey,'paint_check',idx)}>Paint (−2R)</button>}
-                  {canFastBrk && <button className={styles.rebBtn} title="Costs 3 REB: Fast break check" onClick={()=>onSpendRebound(teamKey,'fast_break',idx)}>FastBrk (−3R)</button>}
+                  {rb.paintCheck && hasPaint && <button className={styles.rebBtn} title="Costs 3 REB: Paint shot check" onClick={()=>onSpendRebound(teamKey,'paint_check',idx)}>Paint (−3R)</button>}
                   {isPutback && <button className={styles.rebBtn} title="Costs 2 REB: Putback paint check" onClick={()=>onSpendRebound(teamKey,'putback',idx)}>Putback (−2R)</button>}
                 </div>
               );
             })()}
+          </div>
+        )}
+        {/* Game stats for this player */}
+        {(ps.pts > 0 || ps.reb > 0 || ps.ast > 0 || (ps.totalMinutes || 0) > 0) && (
+          <div className={styles.gameStats}>
+            <div className={styles.gsRow}>
+              {ps.pts > 0 && <span className={styles.gsItem}><span className={styles.gsVal} style={{color:col}}>{ps.pts}</span><span className={styles.gsLbl}>PTS</span></span>}
+              {ps.reb > 0 && <span className={styles.gsItem}><span className={styles.gsVal}>{ps.reb}</span><span className={styles.gsLbl}>REB</span></span>}
+              {ps.ast > 0 && <span className={styles.gsItem}><span className={styles.gsVal}>{ps.ast}</span><span className={styles.gsLbl}>AST</span></span>}
+            </div>
+            <div className={styles.gsRow}>
+              {(ps.totalMinutes || 0) > 0 && <span className={styles.gsItem}><span className={styles.gsVal} style={{color:'#64748B'}}>{ps.totalMinutes}</span><span className={styles.gsLbl}>MIN</span></span>}
+              {ps.pm != null && ps.pm !== 0 && <span className={styles.gsItem}><span className={styles.gsVal} style={{color:ps.pm>0?'#4ADE80':ps.pm<0?'#F87171':'#94A3B8'}}>{ps.pm>0?'+':''}{ps.pm}</span><span className={styles.gsLbl}>+/−</span></span>}
+              {(ps.threepm || 0) > 0 && <span className={styles.gsItem}><span className={styles.gsVal}>{ps.threepm}/{ps.threepa}</span><span className={styles.gsLbl}>3PT</span></span>}
+            </div>
           </div>
         )}
       </div>

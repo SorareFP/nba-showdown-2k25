@@ -6,9 +6,22 @@ import { getTeam, getOpp, getPS, calcAdv, shotCheck, drawCards, deepClone, getFa
 import { lookupChart } from './cards.js';
 import { getStrat } from './strats.js';
 
+// ── Analytics helper ────────────────────────────────────────────────────────
+function trackShotCheck(g, teamKey, r, type) {
+  if (!g.analytics?.[teamKey]) return;
+  g.analytics[teamKey].totalShotChecks++;
+  if (r.hit) {
+    g.analytics[teamKey].totalShotCheckHits++;
+    g.analytics[teamKey].shotCheckPts += r.pts;
+    if (type === 'ft') g.analytics[teamKey].freeThrowPts += r.pts;
+  }
+}
+
 // ── Helpers ─────────────────────────────────────────────────────────────────
-function scStr(r) {
-  return `🎲${r.die}${r.bonus !== 0 ? (r.bonus > 0 ? '+' : '') + r.bonus : ''}=${r.total} vs ${r.line} → ${r.hit ? r.pts + 'pts ✓' : 'MISS'}`;
+function scStr(r, ps) {
+  const hotCold = ps ? ((ps.hot || 0) - (ps.cold || 0)) : 0;
+  const hcTag = hotCold > 0 ? ` 🔥×${ps.hot}` : hotCold < 0 ? ` 🧊×${ps.cold}` : '';
+  return `🎲${r.die}${r.bonus !== 0 ? (r.bonus > 0 ? '+' : '') + r.bonus : ''}=${r.total} vs ${r.line} → ${r.hit ? r.pts + 'pts ✓' : 'MISS'}${hcTag}`;
 }
 
 function recordShot(g, teamKey, playerId, type, hit) {
@@ -99,7 +112,10 @@ export function execCard(game, teamKey, cardId, opts = {}) {
     case 'second_wind': {
       if (!g.ignFatigue) g.ignFatigue = {};
       g.ignFatigue[teamKey + '_' + idx] = true;
-      addLog(g, teamKey, `Second Wind: ${player?.name} ignores fatigue this segment`);
+      // Mark for +4 bonus fatigue at section end
+      const swPs = getPS(g, teamKey, player.id);
+      if (swPs) swPs.secondWindPenalty = true;
+      addLog(g, teamKey, `Second Wind: ${player?.name} ignores fatigue this segment (+4 min penalty after)`);
       break;
     }
 
@@ -143,6 +159,7 @@ export function execCard(game, teamKey, cardId, opts = {}) {
       const offPs = getPS(g, lc.teamKey, offPlayer?.id) || {};
       if (offPlayer) {
         const r = shotCheck(offPlayer, '3pt', 2, offPs);
+        trackShotCheck(g, lc.teamKey, r, '3pt');
         if (r.hit) getTeam(g, lc.teamKey).score += r.pts;
         if (offPs && r.die <= 2)  offPs.cold = (offPs.cold || 0) + 1;
         if (offPs && r.die >= 19) offPs.hot  = (offPs.hot  || 0) + 1;
@@ -254,8 +271,10 @@ export function execCard(game, teamKey, cardId, opts = {}) {
       if (!((player?.threePtBoost || 0) > 0)) return fail(player?.name + ' needs a 3PT Bonus');
       myT.rebounds -= 2;
       myT.assists++;
+      if (g.analytics?.[teamKey]) g.analytics[teamKey].assistsFromCards++;
       const r = _shotCheck(player, '3pt', 1, ps);
       recordShot(g, teamKey, player?.id, '3pt', r.hit);
+      trackShotCheck(g, teamKey, r, '3pt');
       if (r.die <= 2)  pss().cold = (pss().cold || 0) + 1;
       if (r.die >= 19) pss().hot  = (pss().hot  || 0) + 1;
       if (r.hit) myT.score += r.pts;
@@ -281,18 +300,22 @@ export function execCard(game, teamKey, cardId, opts = {}) {
       if (!rr?.isTop) return fail(player?.name + ' didn\'t hit highest tier.');
       const r = _shotCheck(player, '3pt', -2, ps);
       recordShot(g, teamKey, player?.id, '3pt', r.hit);
+      trackShotCheck(g, teamKey, r, '3pt');
       if (r.die <= 2)  pss().cold = (pss().cold || 0) + 1;
       if (r.die >= 19) pss().hot  = (pss().hot  || 0) + 1;
       if (r.hit) { myT.score += r.pts; pss().hot = (pss().hot || 0) + 1; }
-      addLog(g, teamKey, `Heat Check: ${player.name} ${scStr(r)}${r.hit ? ' 🔥' : ''}`);
+      addLog(g, teamKey, `Heat Check: ${player.name} ${scStr(r, pss())}${r.hit ? ' 🔥' : ''}`);
       break;
     }
 
     case 'green_light': {
+      const existingRoll = (g.rollResults[teamKey] || [])[idx];
+      if (existingRoll && !existingRoll.isReplaced) return fail(player?.name + ' has already rolled this segment.');
       let tot = 0;
       for (let i = 0; i < 3; i++) {
         const r = _shotCheck(player, '3pt', 0, ps);
         recordShot(g, teamKey, player?.id, '3pt', r.hit);
+        trackShotCheck(g, teamKey, r, '3pt');
         if (r.die <= 2)  pss().cold = (pss().cold || 0) + 1;
         if (r.die >= 19) pss().hot  = (pss().hot  || 0) + 1;
         tot += r.pts;
@@ -307,6 +330,7 @@ export function execCard(game, teamKey, cardId, opts = {}) {
     case 'from_way_downtown': {
       // Sets pendingShotCheck — resolved by resolvePendingShotCheck
       removeFromHand(myT, cardId);
+      if (g.analytics?.[teamKey]) g.analytics[teamKey].cardsPlayed++;
       g.pendingShotCheck = { teamKey, playerIdx: idx, type: '3pt', bonus: 1, cardLabel: 'From Way Downtown', specialRoll: 'fwd' };
       addLog(g, teamKey, `From Way Downtown: ${player?.name} announces 3PT check at +1. Opponent may play Close Out.`);
       return { game: g, ok: true };
@@ -317,6 +341,7 @@ export function execCard(game, teamKey, cardId, opts = {}) {
       for (let i = 0; i < 2; i++) {
         const r = _shotCheck(player, '3pt', 0, ps);
         recordShot(g, teamKey, player?.id, '3pt', r.hit);
+        trackShotCheck(g, teamKey, r, '3pt');
         if (r.die <= 2)  pss().cold = (pss().cold || 0) + 1;
         if (r.die >= 19) pss().hot  = (pss().hot  || 0) + 1;
         tot += r.pts;
@@ -331,6 +356,7 @@ export function execCard(game, teamKey, cardId, opts = {}) {
     case 'catch_and_shoot': {
       if ((player?.speed || 0) < 12) return fail(player?.name + ' needs Speed 12+');
       removeFromHand(myT, cardId);
+      if (g.analytics?.[teamKey]) g.analytics[teamKey].cardsPlayed++;
       g.pendingShotCheck = { teamKey, playerIdx: idx, type: '3pt', bonus: 2, cardLabel: 'Catch & Shoot', onHit: 'ast' };
       addLog(g, teamKey, `Catch & Shoot: ${player?.name} announces 3PT check at +2. Opponent may play Close Out.`);
       return { game: g, ok: true };
@@ -339,6 +365,7 @@ export function execCard(game, teamKey, cardId, opts = {}) {
     case 'elevator_doors': {
       if (!((player?.threePtBoost || 0) > 0)) return fail(player?.name + ' needs a 3PT Bonus');
       removeFromHand(myT, cardId);
+      if (g.analytics?.[teamKey]) g.analytics[teamKey].cardsPlayed++;
       g.pendingShotCheck = { teamKey, playerIdx: idx, type: '3pt', bonus: 3, cardLabel: 'Elevator Doors' };
       addLog(g, teamKey, `Elevator Doors: ${player?.name} announces 3PT check at +3. Opponent may play Close Out.`);
       return { game: g, ok: true };
@@ -348,9 +375,10 @@ export function execCard(game, teamKey, cardId, opts = {}) {
       if (opts.discardId) removeFromHand(myT, opts.discardId);
       const r = _shotCheck(player, '3pt', 5, ps);
       recordShot(g, teamKey, player?.id, '3pt', r.hit);
+      trackShotCheck(g, teamKey, r, '3pt');
       if (r.die <= 2)  pss().cold = (pss().cold || 0) + 1;
       if (r.die >= 19) pss().hot  = (pss().hot  || 0) + 1;
-      if (r.hit) { myT.score += r.pts; myT.assists++; }
+      if (r.hit) { myT.score += r.pts; myT.assists++; if (g.analytics?.[teamKey]) g.analytics[teamKey].assistsFromCards++; }
       addLog(g, teamKey, `Pin-Down Screen: ${scStr(r)}${r.hit ? ' +1 AST' : ''}`);
       break;
     }
@@ -362,6 +390,7 @@ export function execCard(game, teamKey, cardId, opts = {}) {
       for (let i = 0; i < 2; i++) {
         const r = _shotCheck(player, 'paint', pb, ps);
         recordShot(g, teamKey, player?.id, 'paint', r.hit);
+        trackShotCheck(g, teamKey, r, 'paint');
         tot += r.pts;
         addLog(g, teamKey, `Bully Ball paint #${i + 1}: ${scStr(r)}`);
       }
@@ -381,10 +410,12 @@ export function execCard(game, teamKey, cardId, opts = {}) {
       const maxA = Math.max(adv.speedAdv, adv.powerAdv);
       if (maxA < 3) return fail(`Need Spd/Pwr advantage ≥3 (has ${maxA})`);
       myT.score += 1;
+      if (g.analytics?.[teamKey]) g.analytics[teamKey].shotCheckPts += 1;
       addLog(g, teamKey, `And One!!! +1pt (advantage ${maxA})`);
       if (maxA >= 5) {
         const r = _shotCheck(player, 'ft', 0, ps);
         recordShot(g, teamKey, player?.id, 'ft', r.hit);
+        trackShotCheck(g, teamKey, r, 'ft');
         if (r.die <= 2)  pss().cold = (pss().cold || 0) + 1;
         if (r.die >= 19) pss().hot  = (pss().hot  || 0) + 1;
         if (r.hit) myT.score += r.pts;
@@ -397,6 +428,7 @@ export function execCard(game, teamKey, cardId, opts = {}) {
       if ((player?.power || 0) < 13) return fail('Need Power 13+');
       if (!(ps.hot > 0)) return fail(player?.name + ' needs a hot marker');
       myT.score += 2;
+      if (g.analytics?.[teamKey]) g.analytics[teamKey].shotCheckPts += 2;
       pss().hot = (pss().hot || 0) + 1;
       addLog(g, teamKey, `Rimshaker: ${player?.name} +2pts + extra 🔥`);
       break;
@@ -408,6 +440,7 @@ export function execCard(game, teamKey, cardId, opts = {}) {
       for (let i = 0; i < 2; i++) {
         const r = _shotCheck(player, 'ft', 0, ps);
         recordShot(g, teamKey, player?.id, 'ft', r.hit);
+        trackShotCheck(g, teamKey, r, 'ft');
         if (r.die <= 2)  pss().cold = (pss().cold || 0) + 1;
         if (r.die >= 19) pss().hot  = (pss().hot  || 0) + 1;
         tot += r.pts;
@@ -431,6 +464,7 @@ export function execCard(game, teamKey, cardId, opts = {}) {
       if (ucAdv.speedAdv < 2 || ucAdv.powerAdv < 2)
         return fail(`${player?.name} needs +2 Spd AND +2 Pwr advantage (has +${ucAdv.speedAdv} Spd, +${ucAdv.powerAdv} Pwr)`);
       myT.score += 2;
+      if (g.analytics?.[teamKey]) g.analytics[teamKey].shotCheckPts += 2;
       addLog(g, teamKey, `Uncontested Layup: ${player?.name} auto 2pts`);
       break;
     }
@@ -439,6 +473,7 @@ export function execCard(game, teamKey, cardId, opts = {}) {
       if ((player?.power || 0) < 13) return fail('Need Power 13+');
       if (!((player?.paintBoost || 0) > 0)) return fail(player?.name + ' needs a Paint Bonus');
       const r = _shotCheck(player, 'paint', 0, ps);
+      trackShotCheck(g, teamKey, r, 'paint');
       if (r.die <= 2)  pss().cold = (pss().cold || 0) + 1;
       if (r.die >= 19) pss().hot  = (pss().hot  || 0) + 1;
       if (r.hit) myT.score += r.pts;
@@ -450,6 +485,7 @@ export function execCard(game, teamKey, cardId, opts = {}) {
       if (myT.rebounds <= oppT.rebounds) return fail('Team must lead in rebounds');
       if ((player?.power || 0) < 14) return fail('Need Power 14+');
       myT.score += 2;
+      if (g.analytics?.[teamKey]) g.analytics[teamKey].shotCheckPts += 2;
       addLog(g, teamKey, `Putback Dunk: ${player?.name} auto 2pts!`);
       break;
     }
@@ -468,6 +504,7 @@ export function execCard(game, teamKey, cardId, opts = {}) {
       if ((rr?.pts || 0) < 5) return fail(`Player scored ${rr?.pts} pts (need 5+)`);
       myT.assists++;
       myT.rebounds++;
+      if (g.analytics?.[teamKey]) { g.analytics[teamKey].assistsFromCards++; g.analytics[teamKey].reboundsGenerated++; }
       pss().hot = (pss().hot || 0) + 1;
       addLog(g, teamKey, `Burst of Momentum: ${player?.name} +1 AST +1 REB 🔥`);
       break;
@@ -478,6 +515,7 @@ export function execCard(game, teamKey, cardId, opts = {}) {
       if (rr?.die !== 20) return fail('Player must have rolled a natural 20');
       const r = _shotCheck(player, '3pt', 0, ps);
       recordShot(g, teamKey, player?.id, '3pt', r.hit);
+      trackShotCheck(g, teamKey, r, '3pt');
       if (r.die <= 2)  pss().cold = (pss().cold || 0) + 1;
       if (r.die >= 19) pss().hot  = (pss().hot  || 0) + 1;
       if (r.hit) {
@@ -485,7 +523,7 @@ export function execCard(game, teamKey, cardId, opts = {}) {
         const drawn = drawCards(myT.hand, myT.deck || [], 1);
         myT.hand = drawn.hand;
       }
-      addLog(g, teamKey, `Flare Screen: ${scStr(r)}${r.hit ? ' + draw a card' : ''}`);
+      addLog(g, teamKey, `Flare Screen: ${scStr(r, pss())}${r.hit ? ' + draw a card' : ''}`);
       break;
     }
 
@@ -495,6 +533,8 @@ export function execCard(game, teamKey, cardId, opts = {}) {
       const r1 = _shotCheck(player, 'paint', 0, ps);
       const r2 = _shotCheck(player, '3pt',  0, ps);
       recordShot(g, teamKey, player?.id, '3pt', r2.hit);
+      trackShotCheck(g, teamKey, r1, 'paint');
+      trackShotCheck(g, teamKey, r2, '3pt');
       if (r1.hit) myT.score += r1.pts;
       if (r2.hit) myT.score += r2.pts;
       addLog(g, teamKey, `Cross-Court Dime (−3 AST): Paint ${scStr(r1)} | 3PT ${scStr(r2)}`);
@@ -591,45 +631,74 @@ export function execCard(game, teamKey, cardId, opts = {}) {
     }
 
     case 'coaches_challenge': {
-      // Re-roll opponent's most recent scoring roll
-      const oppKey2 = teamKey === 'A' ? 'B' : 'A';
-      const oppRolls = g.rollResults[oppKey2] || [];
-      // Find last roll result
-      let lastIdx = -1;
-      for (let i = oppRolls.length - 1; i >= 0; i--) {
-        if (oppRolls[i] && oppRolls[i].pts !== undefined && !oppRolls[i].isReplaced) { lastIdx = i; break; }
-      }
-      if (lastIdx === -1) return fail('No opponent scoring roll to challenge');
-      const origResult = oppRolls[lastIdx];
-      const ccPlayer = oppT.starters[lastIdx];
+      // Re-roll opponent's most recent non-scoring shot check
+      // Hard limit: 2 per game per team
+      if (!g.challengesUsed) g.challengesUsed = { A: 0, B: 0 };
+      if (g.challengesUsed[teamKey] >= 2) return fail("Coach's Challenge: already used 2 this game");
+
+      const lsc = g.lastShotCheck;
+      if (!lsc) return fail('No recent shot check to challenge');
+      if (lsc.teamKey === teamKey) return fail("Can only challenge opponent's shot checks");
+
+      const oppKey2 = lsc.teamKey;
+      const ccPlayer = getTeam(g, oppKey2).starters[lsc.playerIdx];
       if (!ccPlayer) return fail('Cannot find the player who rolled');
-      const oldPts = origResult.pts || 0;
-      const oldReb = origResult.reb || 0;
-      const oldAst = origResult.ast || 0;
-      // Re-roll: new D20 die with same bonus
-      const newDie = Math.floor(Math.random() * 20) + 1;
-      const newFinal = Math.max(1, Math.min(newDie + (origResult.bonus || 0), 99));
-      const newResult = lookupChart(ccPlayer, newFinal);
-      const topPts = ccPlayer.chart[ccPlayer.chart.length - 1].pts;
-      const newIsTop = newResult.pts >= topPts && newResult.pts > 0;
-      // Adjust opponent's score/assists/rebounds by the difference
-      oppT.score += (newResult.pts - oldPts);
-      oppT.assists += (newResult.ast - oldAst);
-      oppT.rebounds += (newResult.reb - oldReb);
-      // Update player stats
-      const ccPs = getPS(g, oppKey2, ccPlayer.id);
-      if (ccPs) {
-        ccPs.pts += (newResult.pts - oldPts);
-        ccPs.reb += (newResult.reb - oldReb);
-        ccPs.ast += (newResult.ast - oldAst);
+
+      const ccPs = getPS(g, oppKey2, ccPlayer.id) || {};
+      const oldResult = lsc.result;
+      const oldPts = oldResult.pts || 0;
+
+      // Reverse the original result
+      const ccTeam = getTeam(g, oppKey2);
+      ccTeam.score -= oldPts;
+      if (ccPs) ccPs.pts = (ccPs.pts || 0) - oldPts;
+      // Analytics: reverse the old shot check result
+      if (g.analytics?.[oppKey2]) {
+        g.analytics[oppKey2].shotCheckPts -= oldPts;
+        if (oldResult.hit) g.analytics[oppKey2].totalShotCheckHits--;
+        g.analytics[oppKey2].totalShotChecks--;
+        if (oldResult.hit && oldResult.type === 'ft') g.analytics[oppKey2].freeThrowPts -= oldPts;
       }
-      // Update roll result record
-      oppRolls[lastIdx] = { ...origResult, die: newDie, finalRoll: newFinal, pts: newResult.pts, reb: newResult.reb, ast: newResult.ast, isTop: newIsTop };
-      // Auto hot/cold on new die
-      if (newDie <= 2 && ccPs) ccPs.cold = (ccPs.cold || 0) + 1;
-      if (newDie >= 19 && ccPs) ccPs.hot = (ccPs.hot || 0) + 1;
-      const diff = newResult.pts - oldPts;
-      addLog(g, teamKey, `Coach's Challenge: ${ccPlayer.name}'s roll re-rolled! 🎲${origResult.die}→🎲${newDie} (${newFinal}) → ${newResult.pts}pts ${diff >= 0 ? '+' : ''}${diff}`);
+      if (oldResult.hit && lsc.onHit === 'ast') { ccTeam.assists--; }
+      // Reverse shot stats
+      if (oldResult.type === '3pt') {
+        if (ccPs) { ccPs.threepa = Math.max(0, (ccPs.threepa || 0) - 1); if (oldResult.hit) ccPs.threepm = Math.max(0, (ccPs.threepm || 0) - 1); }
+      }
+      if (oldResult.type === 'ft') {
+        if (ccPs) { ccPs.fta = Math.max(0, (ccPs.fta || 0) - 1); if (oldResult.hit) ccPs.ftm = Math.max(0, (ccPs.ftm || 0) - 1); }
+      }
+
+      // Re-roll the shot check with same bonus
+      const newR = shotCheck(ccPlayer, lsc.type, lsc.bonus || 0, ccPs);
+      recordShot(g, oppKey2, ccPlayer.id, lsc.type, newR.hit);
+      trackShotCheck(g, oppKey2, newR, lsc.type);
+
+      // Apply new hot/cold
+      if (lsc.specialRoll === 'fwd') {
+        if (newR.die <= 3)  ccPs.cold = (ccPs.cold || 0) + 1;
+        if (newR.die >= 18) ccPs.hot  = (ccPs.hot  || 0) + 1;
+      } else {
+        if (newR.die <= 2)  ccPs.cold = (ccPs.cold || 0) + 1;
+        if (newR.die >= 19) ccPs.hot  = (ccPs.hot  || 0) + 1;
+      }
+
+      // Apply new result
+      if (newR.hit) {
+        ccTeam.score += newR.pts;
+        if (ccPs) ccPs.pts += newR.pts;
+        if (lsc.onHit === 'ast') ccTeam.assists++;
+      }
+
+      // Close Out cold marker on miss still applies if original had it
+      if (lsc.closeOutApplied && !newR.hit) {
+        ccPs.cold = (ccPs.cold || 0) + 1;
+      }
+
+      g.challengesUsed[teamKey]++;
+      g.lastShotCheck = null; // Can't challenge the same check twice
+
+      const diff = (newR.hit ? newR.pts : 0) - oldPts;
+      addLog(g, teamKey, `Coach's Challenge: ${ccPlayer.name}'s ${lsc.cardLabel} re-rolled! ${scStr(oldResult)}→${scStr(newR)} (${diff >= 0 ? '+' : ''}${diff}pts)`);
       break;
     }
 
@@ -640,6 +709,7 @@ export function execCard(game, teamKey, cardId, opts = {}) {
       if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
       g.tempEff[teamKey]['r' + idx] = (g.tempEff[teamKey]['r' + idx] || 0) + 2;
       myT.rebounds++;
+      if (g.analytics?.[teamKey]) g.analytics[teamKey].reboundsGenerated++;
       addLog(g, teamKey, `Delayed Slip: ${player?.name} +2 scoring roll + 1 REB`);
       break;
     }
@@ -651,6 +721,9 @@ export function execCard(game, teamKey, cardId, opts = {}) {
 
   // Remove card from hand (cards that return early have already removed)
   removeFromHand(myT, cardId);
+
+  // Analytics: count cards played
+  if (g.analytics?.[teamKey]) g.analytics[teamKey].cardsPlayed++;
 
   // Check assist bonus draw
   const checkAssist = (t, k) => {
@@ -682,6 +755,7 @@ export function resolvePendingShotCheck(game) {
 
   const r = shotCheck(player, psc.type, bonus, ps);
   recordShot(g, psc.teamKey, player?.id, psc.type, r.hit);
+  trackShotCheck(g, psc.teamKey, r, psc.type);
 
   // Auto hot/cold from natural roll
   // FWD uses wider range (1-3 cold, 18-20 hot) instead of standard (1-2, 19-20)
@@ -695,7 +769,10 @@ export function resolvePendingShotCheck(game) {
 
   if (r.hit) {
     myT.score += r.pts;
-    if (psc.onHit === 'ast') myT.assists++;
+    if (psc.onHit === 'ast') {
+      myT.assists++;
+      if (g.analytics?.[psc.teamKey]) g.analytics[psc.teamKey].assistsFromCards++;
+    }
   }
 
   const label = psc.cardLabel || psc.type.toUpperCase();
@@ -707,6 +784,15 @@ export function resolvePendingShotCheck(game) {
   if (r.hit && psc.onHit === 'ast') msg += ' +1 AST';
 
   g.log = [...g.log, { team: psc.teamKey, msg }];
+
+  // Track for Coach's Challenge
+  g.lastShotCheck = {
+    teamKey: psc.teamKey, playerIdx: psc.playerIdx, playerId: player?.id,
+    type: psc.type, result: r, pts: r.pts, cardLabel: label,
+    bonus: bonus, specialRoll: psc.specialRoll, onHit: psc.onHit,
+    closeOutApplied: !!psc.closeOutBonus,
+  };
+
   g.pendingShotCheck = null;
 
   // Check assist draw

@@ -3,10 +3,11 @@ import CardsTab from './components/CardsTab.jsx';
 import StratsTab from './components/StratsTab.jsx';
 import TeamBuilderTab from './components/TeamBuilderTab.jsx';
 import PlayTab from './components/PlayTab.jsx';
-import RulebookTab from './components/RulebookTab.jsx';
+import HowToPlay from './components/HowToPlay.jsx';
 import CollectionTab from './components/CollectionTab.jsx';
 import PvpLobby from './components/PvpLobby.jsx';
 import PvpGame from './components/PvpGame.jsx';
+import TutorialGame from './components/TutorialGame.jsx';
 import AuthButton from './components/AuthButton.jsx';
 import { AuthProvider, useAuth } from './firebase/AuthProvider.jsx';
 import { LightboxProvider } from './components/CardLightbox.jsx';
@@ -20,7 +21,7 @@ const GUEST_TABS = [
   { id: 'strats',  label: '🃏 Strategy Cards' },
   { id: 'builder', label: '🏗 Team Builder' },
   { id: 'play',    label: '🏀 Play' },
-  { id: 'rules',   label: '📖 Rulebook' },
+  { id: 'howtoplay', label: '📖 How to Play' },
 ];
 // Tabs visible to logged-in users (cards/strats hidden to preserve pack surprise)
 const AUTH_TABS = [
@@ -28,7 +29,7 @@ const AUTH_TABS = [
   { id: 'play',    label: '🏀 Play' },
   { id: 'pvp',     label: '⚔️ PvP' },
   { id: 'collection', label: '💾 Collection' },
-  { id: 'rules',   label: '📖 Rulebook' },
+  { id: 'howtoplay', label: '📖 How to Play' },
 ];
 
 function AppInner() {
@@ -38,6 +39,8 @@ function AppInner() {
   const [teamB, setTeamB] = useState([]);
   const [collection, setCollection] = useState({});
   const [pvpGame, setPvpGame] = useState(null); // { roomCode, myRole }
+  const [tutorialMode, setTutorialMode] = useState(false);
+  const [helpSection, setHelpSection] = useState(null);
   const playMounted = useRef(false);
   if (tab === 'play') playMounted.current = true;
 
@@ -48,6 +51,15 @@ function AppInner() {
   }, [user]);
 
   useEffect(() => { refreshCollection(); }, [refreshCollection]);
+
+  useEffect(() => {
+    const handler = (e) => {
+      setHelpSection(e.detail.section);
+      setTab('howtoplay');
+    };
+    window.addEventListener('showdown-help', handler);
+    return () => window.removeEventListener('showdown-help', handler);
+  }, []);
 
   const tabs = user ? AUTH_TABS : GUEST_TABS;
 
@@ -87,32 +99,43 @@ function AppInner() {
       </div>
 
       <main className={styles.main}>
-        {tab === 'cards'   && <CardsTab />}
-        {tab === 'strats'  && <StratsTab />}
-        {tab === 'rules'   && <RulebookTab />}
-        {tab === 'builder' && (
-          <TeamBuilderTab
-            teamA={teamA} setTeamA={setTeamA}
-            teamB={teamB} setTeamB={setTeamB}
-            onStartGame={() => setTab('play')}
-            collection={collection}
-          />
-        )}
-        {tab === 'collection' && <CollectionTab onLoadTeam={handleLoadTeam} onCollectionChange={refreshCollection} />}
-        {tab === 'pvp' && !pvpGame && (
-          <PvpLobby onGameStart={(roomCode, myRole) => setPvpGame({ roomCode, myRole })} />
-        )}
-        {tab === 'pvp' && pvpGame && (
-          <PvpGame
-            roomCode={pvpGame.roomCode}
-            myRole={pvpGame.myRole}
-            onLeave={() => setPvpGame(null)}
-          />
-        )}
-        {playMounted.current && (
-          <div style={{ display: tab === 'play' ? 'block' : 'none' }}>
-            <PlayTab teamA={teamA} teamB={teamB} />
-          </div>
+        {tutorialMode ? (
+          <TutorialGame onExit={() => { setTutorialMode(false); setTab('howtoplay'); }} />
+        ) : (
+          <>
+            {tab === 'cards'   && <CardsTab />}
+            {tab === 'strats'  && <StratsTab />}
+            {tab === 'howtoplay' && (
+              <HowToPlay
+                scrollToSection={helpSection}
+                onStartTutorial={() => { setTutorialMode(true); }}
+              />
+            )}
+            {tab === 'builder' && (
+              <TeamBuilderTab
+                teamA={teamA} setTeamA={setTeamA}
+                teamB={teamB} setTeamB={setTeamB}
+                onStartGame={() => setTab('play')}
+                collection={collection}
+              />
+            )}
+            {tab === 'collection' && <CollectionTab onLoadTeam={handleLoadTeam} onCollectionChange={refreshCollection} />}
+            {tab === 'pvp' && !pvpGame && (
+              <PvpLobby onGameStart={(roomCode, myRole) => setPvpGame({ roomCode, myRole })} />
+            )}
+            {tab === 'pvp' && pvpGame && (
+              <PvpGame
+                roomCode={pvpGame.roomCode}
+                myRole={pvpGame.myRole}
+                onLeave={() => setPvpGame(null)}
+              />
+            )}
+            {playMounted.current && (
+              <div style={{ display: tab === 'play' ? 'block' : 'none' }}>
+                <PlayTab teamA={teamA} teamB={teamB} />
+              </div>
+            )}
+          </>
         )}
       </main>
     </div>

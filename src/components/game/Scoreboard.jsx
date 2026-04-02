@@ -1,16 +1,29 @@
 import styles from './Scoreboard.module.css';
+import { SNAKE } from '../../game/engine.js';
 
-export default function Scoreboard({ game }) {
+function HelpBtn() {
+  const handleClick = (e) => {
+    e.stopPropagation();
+    window.dispatchEvent(new CustomEvent('showdown-help', { detail: { section: 'overview' } }));
+  };
+  return <button className={styles.helpBtn} onClick={handleClick} title="How to Play">?</button>;
+}
+
+export default function Scoreboard({ game, pvpMode = false, myTeamKey = null, isMyTurn = true }) {
   const { teamA: ga, teamB: gb, quarter, section, phase } = game;
   const phaseLabel = { draft:'Matchup Draft', matchup_strats:'Strategy Phase', scoring:'Scoring Phase' }[phase] || phase;
   const rebDiff = ga.rebounds - gb.rebounds;
+
+  // Build turn detail string
+  const turnDetail = buildTurnDetail(game, pvpMode, myTeamKey, isMyTurn);
 
   return (
     <div className={styles.board}>
       <TeamScore team={ga} color="var(--orange)" side="left" />
       <div className={styles.center}>
         <div className={styles.badge}>Q{quarter} · Sec {section}/3</div>
-        <div className={styles.phase}>{phaseLabel}</div>
+        <div className={styles.phase}>{phaseLabel} <HelpBtn /></div>
+        {turnDetail && <div className={styles.turnDetail}>{turnDetail}</div>}
         <div className={styles.tracks}>
           <Track label="AST" val={ga.assists} col="var(--orange)" />
           <ReboundDiff diff={rebDiff} aReb={ga.rebounds} bReb={gb.rebounds} />
@@ -20,6 +33,33 @@ export default function Scoreboard({ game }) {
       <TeamScore team={gb} color="var(--blue)" side="right" />
     </div>
   );
+}
+
+function buildTurnDetail(game, pvpMode, myTeamKey, isMyTurn) {
+  const { phase, matchupTurn, matchupPasses, scoringTurn, scoringPasses } = game;
+
+  if (phase === 'draft') {
+    const step = game.draft?.step || 0;
+    const actTeam = SNAKE[Math.min(step, 9)] === 0 ? 'A' : 'B';
+    const done = game.teamA.starters.length === 5 && game.teamB.starters.length === 5;
+    if (done) return 'Draft complete';
+    if (pvpMode) return actTeam === myTeamKey ? `Pick ${step+1}/10 · Your pick` : `Pick ${step+1}/10 · Opponent picking...`;
+    return `Pick ${step+1}/10 · Team ${actTeam}'s pick`;
+  }
+
+  if (phase === 'matchup_strats') {
+    if (pvpMode) return isMyTurn ? `Your turn · ${matchupPasses}/2 passes` : `Opponent's turn · ${matchupPasses}/2 passes`;
+    return `Team ${matchupTurn} · ${matchupPasses}/2 passes`;
+  }
+
+  if (phase === 'scoring') {
+    const rollingOpen = scoringPasses >= 99;
+    if (rollingOpen) return '🎲 All players may roll';
+    if (pvpMode) return isMyTurn ? `Your strategy turn · ${Math.min(scoringPasses,2)}/2 passes` : `Opponent's strategy turn`;
+    return `Team ${scoringTurn} strategy · ${Math.min(scoringPasses,2)}/2 passes`;
+  }
+
+  return null;
 }
 
 function TeamScore({ team, color, side }) {

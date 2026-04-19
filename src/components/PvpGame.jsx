@@ -281,40 +281,35 @@ export default function PvpGame({ roomCode, myRole, onLeave }) {
 
       console.log('[DRAFT] Resolver:', { myPool: myPool?.length, oppPool: oppPool?.length, oppPicks: oppPicks?.length });
 
-      // Resolve starters from pools
-      const myStarters = selectedPlayerIds.map(id => myPool.find(p => p.id === id)).filter(Boolean);
-      const oppStarters = oppPicks.map(id => oppPool.find(p => p.id === id)).filter(Boolean);
+      // Starters start EMPTY — players are placed one at a time via snake order.
+      clone.teamA.starters = [];
+      clone.teamB.starters = [];
 
-      console.log('[DRAFT] Starters resolved:', { myStarters: myStarters.length, oppStarters: oppStarters.length });
-
-      // Set starters on both teams
+      // Reduce pools to the 5 that each coach did NOT pick (= bench candidates).
+      // These are revealed once placement completes (step === 10).
+      const myUnpicked = myPool.filter(p => !selectedPlayerIds.includes(p.id));
+      const oppUnpicked = oppPool.filter(p => !oppPicks.includes(p.id));
       if (myTeamKey === 'A') {
-        clone.teamA.starters = myStarters;
-        clone.teamB.starters = oppStarters;
-        clone.draft.aPool = myPool.filter(p => !selectedPlayerIds.includes(p.id));
-        clone.draft.bPool = oppPool.filter(p => !oppPicks.includes(p.id));
+        clone.draft.aPool = myUnpicked;
+        clone.draft.bPool = oppUnpicked;
       } else {
-        clone.teamB.starters = myStarters;
-        clone.teamA.starters = oppStarters;
-        clone.draft.bPool = myPool.filter(p => !selectedPlayerIds.includes(p.id));
-        clone.draft.aPool = oppPool.filter(p => !oppPicks.includes(p.id));
+        clone.draft.bPool = myUnpicked;
+        clone.draft.aPool = oppUnpicked;
       }
 
-      // Clear hot/cold for benched players
-      ['A', 'B'].forEach(k => {
-        const t = k === 'A' ? clone.teamA : clone.teamB;
-        t.stats.forEach(ps => {
-          if (!t.starters.find(p => p.id === ps.id)) {
-            ps.hot = 0; ps.cold = 0;
-            const m = ps.minutes || 0;
-            ps.minutes = m <= 8 ? 0 : Math.max(0, m - 8);
-          }
-        });
-      });
+      // Store the ORDERED pick lists for each side so the placement handler
+      // knows whose picks are whose.
+      clone.draft.aPicks = myTeamKey === 'A' ? selectedPlayerIds : oppPicks;
+      clone.draft.bPicks = myTeamKey === 'A' ? oppPicks : selectedPlayerIds;
 
       clone.offMatchups = { A: [0, 1, 2, 3, 4], B: [0, 1, 2, 3, 4] };
       clone.phase = 'matchup_strats';
-      clone.log = [...clone.log, { team: null, msg: 'Both lineups locked — Matchup Strategy Phase.' }];
+      clone.placementStep = 0;
+      clone.placementOrder = ['A','B','B','A','A','B','B','A','A','B'];
+      clone.bench = null;
+      clone.matchupTurn = 'A';
+      clone.matchupPasses = 0;
+      clone.log = [...clone.log, { team: null, msg: 'Lineups locked — begin placement.' }];
 
       // Write ONLY the public game state. Private data is NEVER touched.
       const pubGame = stripPrivateData(clone);

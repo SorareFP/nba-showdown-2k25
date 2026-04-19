@@ -75,6 +75,12 @@ export function getWhoseTurn(game) {
     }
 
     case 'matchup_strats': {
+      // During snake placement, active placer is driven by placementOrder.
+      // Return 'both' so either coach can play matchup cards at any time;
+      // the placement UI separately gates the pick action to the active team.
+      if ((game.placementStep ?? 10) < 10) {
+        return 'both';
+      }
       return mapTeamToRole(game.matchupTurn, game.hostIs);
     }
 

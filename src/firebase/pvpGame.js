@@ -103,16 +103,11 @@ export function getWhoseTurn(game) {
  */
 export function extractPrivateData(game, teamKey) {
   const team = game[teamKey === 'A' ? 'teamA' : 'teamB'];
-  const data = {
+  return {
     hand: team.hand || [],
     deck: Array.isArray(team.deck) ? team.deck : [],
     draftPool: teamKey === 'A' ? (game.draft?.aPool || []) : (game.draft?.bPool || []),
   };
-  // Preserve draft picks during blind pick phase
-  if (game.phase === 'draft' && team._draftPicks) {
-    data.draftPicks = team._draftPicks;
-  }
-  return data;
 }
 
 // ── Strip Private Data ────────────────────────────────────────────────────

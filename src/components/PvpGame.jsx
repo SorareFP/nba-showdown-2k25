@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useAuth } from '../firebase/AuthProvider.jsx';
 import {
   onGameState, onPrivateData, onRoomMeta,
@@ -6,9 +6,9 @@ import {
 } from '../firebase/pvpRoom.js';
 import {
   initializePvpGame, getWhoseTurn, extractPrivateData, stripPrivateData,
-  fixFromFirebase,
+  fixFromFirebase, prepareForFirebase,
 } from '../firebase/pvpGame.js';
-import { ref, get } from 'firebase/database';
+import { ref, get, set } from 'firebase/database';
 import { rtdb } from '../firebase/config.js';
 import { doRoll, endSection, spendAssist, spendReboundBonus, getTeam, emptyAnalytics } from '../game/engine.js';
 import { execCard, resolvePendingShotCheck } from '../game/execCard.js';
@@ -27,12 +27,24 @@ export default function PvpGame({ roomCode, myRole, onLeave }) {
   const [publicGame, setPublicGame] = useState(null);
   const [privateData, setPrivateData] = useState(null);
 
+  // Defensive: preserve last known good hand so it can't vanish during phase transitions
+  const lastGoodHandRef = useRef(null);
+
   // ── RTDB listeners ──────────────────────────────────────────────────────
   useEffect(() => {
     const unsubs = [
       onRoomMeta(roomCode, (m) => { console.log('[PvP] meta:', m?.status); setMeta(m); }),
-      onGameState(roomCode, (g) => { console.log('[PvP] game state:', g ? 'received' : 'null'); setPublicGame(g); }),
-      onPrivateData(roomCode, myRole, (p) => { console.log('[PvP] private data:', p ? 'received' : 'null'); setPrivateData(p); }),
+      onGameState(roomCode, (g) => { console.log('[PvP] game state:', g?.phase, 'hand A:', g?.teamA?.hand?.length, 'hand B:', g?.teamB?.hand?.length); setPublicGame(g); }),
+      onPrivateData(roomCode, myRole, (p) => {
+        console.log('[PvP] private data:', {
+          received: !!p,
+          hand: p?.hand?.length ?? 'null',
+          deck: p?.deck?.length ?? 'null',
+          draftPool: p?.draftPool?.length ?? 'null',
+          keys: p ? Object.keys(p) : null,
+        });
+        setPrivateData(p);
+      }),
     ];
     return () => unsubs.forEach(fn => fn());
   }, [roomCode, myRole]);
@@ -100,8 +112,21 @@ export default function PvpGame({ roomCode, myRole, onLeave }) {
 
     // Inject my private data (hand, deck, draft pool)
     const team = myTeamKey === 'A' ? g.teamA : g.teamB;
-    team.hand = privateData.hand || [];
+    let effectiveHand = privateData.hand || [];
+
+    // Defensive: if hand vanished but we had one before, use the preserved copy
+    if (effectiveHand.length === 0 && lastGoodHandRef.current && lastGoodHandRef.current.length > 0) {
+      console.warn('[LOCAL_GAME] ⚠ Hand lost! privateData.hand is empty but lastGoodHand has', lastGoodHandRef.current.length, 'cards. Restoring.');
+      effectiveHand = lastGoodHandRef.current;
+    }
+    // Track the last known good hand
+    if (effectiveHand.length > 0) {
+      lastGoodHandRef.current = [...effectiveHand]; // store a copy
+    }
+
+    team.hand = effectiveHand;
     if (Array.isArray(privateData.deck)) team.deck = privateData.deck;
+    console.log('[LOCAL_GAME]', myRole, 'myTeamKey:', myTeamKey, 'phase:', g.phase, 'hand:', team.hand.length, 'deck:', (team.deck || []).length, 'privateData.hand:', privateData?.hand?.length ?? 'null');
 
     if (g.draft) {
       g.draft.aReady = g.draft.aReady || false;
@@ -144,6 +169,11 @@ export default function PvpGame({ roomCode, myRole, onLeave }) {
     const guestTeamKey = updatedGame.hostIs === 'A' ? 'B' : 'A';
     const guestPrivate = extractPrivateData(updatedGame, guestTeamKey);
     const pubGame = stripPrivateData(updatedGame);
+
+    console.log('[SYNC_BOTH] hostIs:', updatedGame.hostIs, 'guestTeamKey:', guestTeamKey);
+    console.log('[SYNC_BOTH] hostPrivate hand:', hostPrivate.hand?.length, 'deck:', hostPrivate.deck?.length);
+    console.log('[SYNC_BOTH] guestPrivate hand:', guestPrivate.hand?.length, 'deck:', guestPrivate.deck?.length);
+    console.log('[SYNC_BOTH] teamA.hand:', updatedGame.teamA?.hand?.length, 'teamB.hand:', updatedGame.teamB?.hand?.length);
 
     await Promise.all([
       writeGameState(roomCode, pubGame),
@@ -215,52 +245,59 @@ export default function PvpGame({ roomCode, myRole, onLeave }) {
     await syncToFirebase(updatedGame);
   }, [publicGame, syncToFirebase]);
 
-  // ── PvP Blind Pick: submit my 5 picks privately, wait for opponent ─────
+  // ── PvP Blind Pick: submit my 5 picks, wait for opponent ────────────────
+  // KEY FIX: We NEVER write to private data during draft. Private data (hand,
+  // deck) was set at game init and must stay untouched. Draft picks go to a
+  // separate Firebase path (rooms/${code}/draftPicks/${role}).
   const handleDraftSubmit = useCallback(async (selectedPlayerIds) => {
+    console.log('[DRAFT] handleDraftSubmit called', { selectedPlayerIds, myTeamKey, myRole });
     const clone = JSON.parse(JSON.stringify(localGame));
     clone.hostIs = publicGame.hostIs;
 
-    // Store my picks in private data
-    const myTeam = myTeamKey === 'A' ? clone.teamA : clone.teamB;
-    myTeam._draftPicks = selectedPlayerIds;
-
-    // Mark me as ready
+    // Mark me as ready in public state
     if (myTeamKey === 'A') clone.draft.aReady = true;
     else clone.draft.bReady = true;
 
     // Check if opponent already submitted
     const oppReady = myTeamKey === 'A' ? clone.draft.bReady : clone.draft.aReady;
+    console.log('[DRAFT] ready state', { myReady: true, oppReady, aReady: clone.draft.aReady, bReady: clone.draft.bReady });
 
     if (oppReady) {
-      // Both ready — read opponent's private picks and reveal lineups
+      // ── RESOLVER: Both ready — resolve starters from picks + pools ────
       const oppRole = myRole === 'host' ? 'guest' : 'host';
-      const oppTeamKey = myTeamKey === 'A' ? 'B' : 'A';
 
-      // Read opponent's private data to get their picks
-      const oppSnap = await get(ref(rtdb, `rooms/${roomCode}/private/${oppRole}`));
-      const oppPrivate = fixFromFirebase(oppSnap.val());
-      const oppPicks = oppPrivate?.draftPicks || [];
+      // Read opponent's draft picks (separate path) and pool (from private data)
+      const [oppPicksSnap, oppPrivSnap] = await Promise.all([
+        get(ref(rtdb, `rooms/${roomCode}/draftPicks/${oppRole}`)),
+        get(ref(rtdb, `rooms/${roomCode}/private/${oppRole}`)),
+      ]);
 
-      // Set my starters
+      const oppPicks = fixFromFirebase(oppPicksSnap.val()) || [];
+      const oppPrivate = fixFromFirebase(oppPrivSnap.val());
+      const oppPool = oppPrivate?.draftPool || [];
+
+      // My pool is already in localGame (injected from my privateData)
       const myPool = myTeamKey === 'A' ? clone.draft.aPool : clone.draft.bPool;
-      const myPicks = selectedPlayerIds.map(id => myPool.find(p => p.id === id)).filter(Boolean);
-      if (myTeamKey === 'A') {
-        clone.teamA.starters = myPicks;
-        clone.draft.aPool = myPool.filter(p => !selectedPlayerIds.includes(p.id));
-      } else {
-        clone.teamB.starters = myPicks;
-        clone.draft.bPool = myPool.filter(p => !selectedPlayerIds.includes(p.id));
-      }
 
-      // Set opponent starters
-      const oppPool = oppTeamKey === 'A' ? clone.draft.aPool : clone.draft.bPool;
+      console.log('[DRAFT] Resolver:', { myPool: myPool?.length, oppPool: oppPool?.length, oppPicks: oppPicks?.length });
+
+      // Resolve starters from pools
+      const myStarters = selectedPlayerIds.map(id => myPool.find(p => p.id === id)).filter(Boolean);
       const oppStarters = oppPicks.map(id => oppPool.find(p => p.id === id)).filter(Boolean);
-      if (oppTeamKey === 'A') {
-        clone.teamA.starters = oppStarters;
-        clone.draft.aPool = oppPool.filter(p => !oppPicks.includes(p.id));
-      } else {
+
+      console.log('[DRAFT] Starters resolved:', { myStarters: myStarters.length, oppStarters: oppStarters.length });
+
+      // Set starters on both teams
+      if (myTeamKey === 'A') {
+        clone.teamA.starters = myStarters;
         clone.teamB.starters = oppStarters;
+        clone.draft.aPool = myPool.filter(p => !selectedPlayerIds.includes(p.id));
         clone.draft.bPool = oppPool.filter(p => !oppPicks.includes(p.id));
+      } else {
+        clone.teamB.starters = myStarters;
+        clone.teamA.starters = oppStarters;
+        clone.draft.bPool = myPool.filter(p => !selectedPlayerIds.includes(p.id));
+        clone.draft.aPool = oppPool.filter(p => !oppPicks.includes(p.id));
       }
 
       // Clear hot/cold for benched players
@@ -275,21 +312,27 @@ export default function PvpGame({ roomCode, myRole, onLeave }) {
         });
       });
 
-      // Clean up private draft data
-      delete clone.teamA._draftPicks;
-      delete clone.teamB._draftPicks;
-
       clone.offMatchups = { A: [0, 1, 2, 3, 4], B: [0, 1, 2, 3, 4] };
       clone.phase = 'matchup_strats';
       clone.log = [...clone.log, { team: null, msg: 'Both lineups locked — Matchup Strategy Phase.' }];
 
-      await syncBothToFirebase(clone);
+      // Write ONLY the public game state. Private data is NEVER touched.
+      const pubGame = stripPrivateData(clone);
+      await writeGameState(roomCode, pubGame);
     } else {
-      // Only my vote — save and wait
-      clone.log = [...clone.log, { team: myTeamKey, msg: `${myTeamKey === 'A' ? clone.teamA.name : clone.teamB.name} locked in their lineup.` }];
-      await syncToFirebase(clone);
+      // ── FIRST SUBMITTER: store picks in a separate path, update game state ──
+      console.log('[DRAFT] First to submit — storing picks at draftPicks/' + myRole);
+
+      const pubGame = stripPrivateData(clone);
+      pubGame.log = [...pubGame.log, { team: myTeamKey, msg: `${myTeamKey === 'A' ? clone.teamA.name : clone.teamB.name} locked in their lineup.` }];
+
+      // Store picks separately — do NOT touch private data (hand/deck)
+      await Promise.all([
+        writeGameState(roomCode, pubGame),
+        set(ref(rtdb, `rooms/${roomCode}/draftPicks/${myRole}`), prepareForFirebase(selectedPlayerIds)),
+      ]);
     }
-  }, [localGame, publicGame, myTeamKey, myRole, roomCode, syncToFirebase, syncBothToFirebase]);
+  }, [localGame, publicGame, myTeamKey, myRole, roomCode]);
 
   // ── End-game actions ────────────────────────────────────────────────────
   const handleForfeit = useCallback(async () => {

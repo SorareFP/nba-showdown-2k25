@@ -63,10 +63,11 @@ export async function joinRoom(code, uid, displayName) {
 
   const meta = snap.val();
 
-  // Allow self-join on localhost for testing; block in production
-  if (meta.hostUid === uid && window.location.hostname !== 'localhost') {
-    throw new Error('You cannot join your own room.');
-  }
+  // Allow self-join for testing (both localhost and production)
+  // TODO: re-enable production block when real multiplayer testing begins
+  // if (meta.hostUid === uid && window.location.hostname !== 'localhost') {
+  //   throw new Error('You cannot join your own room.');
+  // }
   if (meta.guestUid) throw new Error('Room is already full.');
   if (meta.status !== 'waiting') throw new Error('Room is no longer accepting players.');
 
@@ -140,6 +141,7 @@ export async function writeGameState(code, gameState) {
 }
 
 export async function writePrivateData(code, role, data) {
+  console.log('[WRITE_PRIVATE]', role, 'hand:', data?.hand?.length ?? 'null', 'deck:', data?.deck?.length ?? 'null', 'keys:', data ? Object.keys(data) : null);
   await set(ref(rtdb, `rooms/${code}/private/${role}`), prepareForFirebase(data));
 }
 

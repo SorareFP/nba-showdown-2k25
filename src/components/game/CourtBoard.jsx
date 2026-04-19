@@ -15,7 +15,7 @@ function HelpBtn({ section }) {
   return <button className={styles.helpBtn} onClick={handleClick} title="How to Play">?</button>;
 }
 
-export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExecCard, onResolve, onSpendAssist, onSpendRebound, onDraftSubmit, pvpMode = false, myTeamKey = null, isMyTurn = true }) {
+export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExecCard, onResolve, onSpendAssist, onSpendRebound, onDraftSubmit, onPlacePlayer, pvpMode = false, myTeamKey = null, isMyTurn = true }) {
   const [modal, setModal] = useState(null);
   const [draftSelected, setDraftSelected] = useState([]);
 
@@ -51,6 +51,7 @@ export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExec
               {[0,1,2,3,4].map(i => (
                 <MatchupRow key={i} idx={i} game={game} setGame={setGame}
                   onRoll={onRoll} onExecCard={handleExecCard} onSpendAssist={onSpendAssist} onSpendRebound={onSpendRebound}
+                  onPlacePlayer={onPlacePlayer}
                   pvpMode={pvpMode} myTeamKey={myTeamKey} isMyTurn={isMyTurn} />
               ))}
             </div>
@@ -646,10 +647,63 @@ function PhaseBar({ game, setGame, onEndSection, pvpMode = false, myTeamKey = nu
   return null;
 }
 
-function MatchupRow({ idx, game, setGame, onRoll, onExecCard, onSpendAssist, onSpendRebound, pvpMode = false, myTeamKey = null, isMyTurn = true }) {
+function MatchupRow({ idx, game, setGame, onRoll, onExecCard, onSpendAssist, onSpendRebound, onPlacePlayer, pvpMode = false, myTeamKey = null, isMyTurn = true }) {
   if (game.phase === 'draft') return null; // Draft handled by BlindPickPhase
   const ap=game.teamA.starters[idx], bp=game.teamB.starters[idx];
-  if (!ap||!bp) return <div className={styles.emptyRow}/>;
+  // During placement phase, empty slots need special handling
+  const step = game.placementStep ?? 10;
+  const inPlacement = game.phase === 'matchup_strats' && step < 10;
+
+  if (!ap || !bp) {
+    if (!inPlacement) {
+      return <div className={styles.emptyRow}/>;
+    }
+    // Figure out which side is the "next to be placed" given the snake order
+    const order = game.placementOrder || ['A','B','B','A','A','B','B','A','A','B'];
+    const activeTeam = order[step];
+    const aCount = game.teamA.starters.length;
+    const bCount = game.teamB.starters.length;
+    const isActiveSlotA = activeTeam === 'A' && idx === aCount;
+    const isActiveSlotB = activeTeam === 'B' && idx === bCount;
+
+    return (
+      <div className={styles.matchupRow}>
+        <div className={styles.placementSlot}>
+          {ap ? (
+            <PlayerSlot player={ap} ps={getPS(game,'A',ap.id)||{}} adv={null}
+              fat={getFatigue(game,'A',idx)} result={null} blocked={null}
+              teamKey="A" idx={idx} phase={game.phase} game={game}
+              defPlayer={null} defSelect={[]} defIdx={0}
+              onDefChange={()=>{}} onRoll={()=>{}} pvpDisabled={true} />
+          ) : isActiveSlotA && pvpMode && myTeamKey === 'A' ? (
+            <PlacementAffordance game={game} teamKey="A" onPlacePlayer={onPlacePlayer} />
+          ) : (
+            <div className={styles.placementWaiting}>
+              {activeTeam === 'A' ? 'Team A is placing…' : 'Awaiting pick'}
+            </div>
+          )}
+        </div>
+        <div className={styles.connector}>
+          <div className={styles.connLine}/><div className={styles.slotNum}>{idx+1}</div><div className={styles.connLine}/>
+        </div>
+        <div className={styles.placementSlot}>
+          {bp ? (
+            <PlayerSlot player={bp} ps={getPS(game,'B',bp.id)||{}} adv={null}
+              fat={getFatigue(game,'B',idx)} result={null} blocked={null}
+              teamKey="B" idx={idx} phase={game.phase} game={game}
+              defPlayer={null} defSelect={[]} defIdx={0}
+              onDefChange={()=>{}} onRoll={()=>{}} pvpDisabled={true} />
+          ) : isActiveSlotB && pvpMode && myTeamKey === 'B' ? (
+            <PlacementAffordance game={game} teamKey="B" onPlacePlayer={onPlacePlayer} />
+          ) : (
+            <div className={styles.placementWaiting}>
+              {activeTeam === 'B' ? 'Team B is placing…' : 'Awaiting pick'}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
   const aDefIdx=game.offMatchups.A[idx], bDefIdx=game.offMatchups.B[idx];
   const aDef=game.teamB.starters[aDefIdx], bDef=game.teamA.starters[bDefIdx];
   return (
@@ -671,6 +725,46 @@ function MatchupRow({ idx, game, setGame, onRoll, onExecCard, onSpendAssist, onS
         onDefChange={di=>{const g=JSON.parse(JSON.stringify(game));g.offMatchups.B[idx]=di;setGame(g);}}
         onRoll={()=>onRoll('B',idx)} onSpendAssist={onSpendAssist} onSpendRebound={onSpendRebound}
         pvpDisabled={pvpMode && myTeamKey !== 'B'} />
+    </div>
+  );
+}
+
+// ── Placement Affordance ─────────────────────────────────────────────────
+// Shown in the active placer's next empty slot during snake placement.
+// Reads my picks from game.draft.aPicks / bPicks and shows remaining ones.
+function PlacementAffordance({ game, teamKey, onPlacePlayer }) {
+  const [open, setOpen] = useState(false);
+  const pickIds = teamKey === 'A' ? (game.draft?.aPicks || []) : (game.draft?.bPicks || []);
+  const team = teamKey === 'A' ? game.teamA : game.teamB;
+  const placedIds = new Set(team.starters.map(p => p.id));
+  const roster = team.roster || [];
+  const remaining = pickIds.filter(id => !placedIds.has(id));
+
+  if (remaining.length === 0) return <div className={styles.placementWaiting}>Placed.</div>;
+
+  return (
+    <div className={styles.placementAffordance}>
+      {!open ? (
+        <button className={styles.placementBtn} onClick={() => setOpen(true)}>
+          Place next player →
+        </button>
+      ) : (
+        <div className={styles.placementPopover}>
+          <div className={styles.placementHeader}>Choose a player:</div>
+          {remaining.map(id => {
+            const p = roster.find(r => r.id === id);
+            if (!p) return null;
+            return (
+              <button key={id} className={styles.placementOption}
+                onClick={() => { setOpen(false); onPlacePlayer(id); }}>
+                <span className={styles.placementName}>{p.name}</span>
+                <span className={styles.placementStats}>S{p.speed}·P{p.power}·D{p.defBoost||0}</span>
+              </button>
+            );
+          })}
+          <button className={styles.placementCancel} onClick={() => setOpen(false)}>Cancel</button>
+        </div>
+      )}
     </div>
   );
 }

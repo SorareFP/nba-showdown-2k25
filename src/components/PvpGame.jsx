@@ -329,6 +329,76 @@ export default function PvpGame({ roomCode, myRole, onLeave }) {
     }
   }, [localGame, publicGame, myTeamKey, myRole, roomCode]);
 
+  // ── PvP Snake Placement: place one of my picks into the next open slot ─
+  const handlePlacePlayer = useCallback(async (playerId) => {
+    const step = publicGame.placementStep ?? 10;
+    if (step >= 10) return;
+    const order = publicGame.placementOrder || ['A','B','B','A','A','B','B','A','A','B'];
+    const activeTeam = order[step];
+    if (activeTeam !== myTeamKey) {
+      console.warn('[PLACE] Not your turn to place');
+      return;
+    }
+
+    // Look up the full player object from my privateData.draftPool
+    const player = (privateData?.draftPool || []).find(p => p.id === playerId);
+    if (!player) {
+      console.error('[PLACE] Player not found in draftPool:', playerId);
+      return;
+    }
+
+    const clone = JSON.parse(JSON.stringify(localGame));
+    const team = activeTeam === 'A' ? clone.teamA : clone.teamB;
+    // Guard against double-placement
+    if (team.starters.find(p => p.id === playerId)) {
+      console.warn('[PLACE] Player already placed:', playerId);
+      return;
+    }
+    team.starters.push(player);
+    clone.placementStep = step + 1;
+    clone.log = [...clone.log, { team: activeTeam, msg: `${player.name} takes the floor.` }];
+
+    // If placement just completed, compute bench and reset pass counters
+    if (clone.placementStep === 10) {
+      // Bench = full 10-player pool minus the 5 placed starters, per team.
+      // We need each coach's full pool. My own is in privateData.draftPool.
+      // Opponent's is at rooms/{code}/private/{oppRole}.draftPool.
+      const oppRole = myRole === 'host' ? 'guest' : 'host';
+      const oppSnap = await get(ref(rtdb, `rooms/${roomCode}/private/${oppRole}`));
+      const oppPrivate = fixFromFirebase(oppSnap.val());
+      const oppPool = oppPrivate?.draftPool || [];
+
+      const myPool = privateData?.draftPool || [];
+      const myTeamBench = myPool.filter(p => !clone[myTeamKey === 'A' ? 'teamA' : 'teamB'].starters.find(s => s.id === p.id));
+      const oppTeamKey = myTeamKey === 'A' ? 'B' : 'A';
+      const oppTeamBench = oppPool.filter(p => !clone[oppTeamKey === 'A' ? 'teamA' : 'teamB'].starters.find(s => s.id === p.id));
+
+      clone.bench = {
+        [myTeamKey]: myTeamBench,
+        [oppTeamKey]: oppTeamBench,
+      };
+      clone.matchupTurn = 'A';
+      clone.matchupPasses = 0;
+
+      // Clear hot/cold for benched players (moved here from draft resolver)
+      ['A', 'B'].forEach(k => {
+        const t = k === 'A' ? clone.teamA : clone.teamB;
+        t.stats.forEach(ps => {
+          if (!t.starters.find(p => p.id === ps.id)) {
+            ps.hot = 0; ps.cold = 0;
+            const m = ps.minutes || 0;
+            ps.minutes = m <= 8 ? 0 : Math.max(0, m - 8);
+          }
+        });
+      });
+
+      clone.log = [...clone.log, { team: null, msg: 'All ten on the floor — matchup strategy continues.' }];
+    }
+
+    const pubGame = stripPrivateData(clone);
+    await writeGameState(roomCode, pubGame);
+  }, [localGame, publicGame, privateData, myTeamKey, myRole, roomCode]);
+
   // ── End-game actions ────────────────────────────────────────────────────
   const handleForfeit = useCallback(async () => {
     if (!confirm('Are you sure you want to forfeit? Your opponent will be declared the winner.')) return;
@@ -440,6 +510,7 @@ export default function PvpGame({ roomCode, myRole, onLeave }) {
           onSpendAssist={handleSpendAssist}
           onSpendRebound={handleSpendRebound}
           onDraftSubmit={handleDraftSubmit}
+          onPlacePlayer={handlePlacePlayer}
           pvpMode={true}
           myTeamKey={myTeamKey}
           isMyTurn={isMyTurn}

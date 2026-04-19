@@ -596,18 +596,31 @@ function PhaseBar({ game, setGame, onEndSection, pvpMode = false, myTeamKey = nu
     );
   }
   if (phase === 'matchup_strats') {
-    const col = matchupTurn==='A'?'var(--orange)':'var(--blue)';
+    const step = game.placementStep ?? 10;
+    const inPlacement = step < 10;
+    const order = game.placementOrder || ['A','B','B','A','A','B','B','A','A','B'];
+    const activeTeam = inPlacement ? order[step] : matchupTurn;
+    const activeCol = activeTeam === 'A' ? 'var(--orange)' : 'var(--blue)';
+
     return (
       <div className={styles.phaseBar}>
         <div className={styles.phaseInfo}>
-          <span className={styles.phaseLabel}>Q{quarter} · Sec {section}/3 · Matchup Strategy<HelpBtn section="matchup" /></span>
-          <span className={styles.phaseSub}>Play a card or pass twice to start scoring</span>
+          <span className={styles.phaseLabel}>
+            Q{quarter} · Sec {section}/3 · Matchup Strategy
+            {inPlacement && <span> · Placement {step}/10</span>}
+            <HelpBtn section="matchup" />
+          </span>
+          <span className={styles.phaseSub}>
+            {inPlacement
+              ? 'Place your players (strategy cards also playable)'
+              : 'Play a card or pass twice to start scoring'}
+          </span>
         </div>
         <div className={styles.phaseCtrls}>
-          <span style={{color:col,fontWeight:600}}>Team {matchupTurn}</span>
-          <span className={styles.passCount}>{matchupPasses}/2 passes</span>
-          <button className={styles.passBtn} onClick={pass} disabled={pvpMode && !isMyTurn}>Pass →</button>
-          <button className={styles.ctaBtn} onClick={lock} disabled={pvpMode && !isMyTurn}>Lock → Scoring</button>
+          <span style={{color:activeCol,fontWeight:600}}>Team {activeTeam}</span>
+          {!inPlacement && <span className={styles.passCount}>{matchupPasses}/2 passes</span>}
+          <button className={styles.passBtn} onClick={pass} disabled={inPlacement || (pvpMode && !isMyTurn)}>Pass →</button>
+          <button className={styles.ctaBtn} onClick={lock} disabled={inPlacement || (pvpMode && !isMyTurn)}>Lock → Scoring</button>
         </div>
       </div>
     );

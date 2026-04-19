@@ -105,6 +105,8 @@ export function newGame(rosterA, rosterB, deckConfigA, deckConfigB) {
     offMatchups: { A: [0, 1, 2, 3, 4], B: [0, 1, 2, 3, 4] },
     matchupTurn: 'A',
     matchupPasses: 0,
+    placementStep: 10,                    // 10 = all placed (solo default). PvP overrides to 0.
+    placementOrder: ['A','B','B','A','A','B','B','A','A','B'],
     lastMatchupCard: null,
     scoringTurn: 'B',
     scoringPasses: 0,

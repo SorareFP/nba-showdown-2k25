@@ -39,10 +39,19 @@ export function fixFromFirebase(obj) {
   if (obj === null || obj === undefined || typeof obj !== 'object') return obj;
 
   const keys = Object.keys(obj);
-  const isNumericKeyed = keys.length > 0 && keys.every((k, i) => String(i) === k);
+  // Treat any all-numeric-keyed object as a (possibly sparse) array.
+  // Firebase RTDB drops null/undefined values, so a sparse array like
+  // [empty, empty, {r}] is stored as {2: {r}} and would otherwise read back
+  // as a non-array object. Fill missing indices with null.
+  const allNumeric = keys.length > 0 && keys.every(k => /^\d+$/.test(k));
 
-  if (isNumericKeyed) {
-    return keys.map(k => fixFromFirebase(obj[k]));
+  if (allNumeric) {
+    const maxIdx = Math.max(...keys.map(k => parseInt(k, 10)));
+    const arr = new Array(maxIdx + 1).fill(null);
+    for (const k of keys) {
+      arr[parseInt(k, 10)] = fixFromFirebase(obj[k]);
+    }
+    return arr;
   }
 
   const result = {};

@@ -399,6 +399,7 @@
 
 .placementOption {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   background: var(--card-bg);
@@ -427,3 +428,13 @@
 }
 
 .placementCancel:hover { color: var(--text); }
+
+.placementAdv {
+  width: 100%;
+  font-size: 11px;
+  font-family: monospace;
+  margin-top: 2px;
+  padding-top: 4px;
+  border-top: 1px solid var(--border);
+  letter-spacing: 0.02em;
+}

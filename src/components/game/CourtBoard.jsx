@@ -753,6 +753,13 @@ function PlacementAffordance({ game, teamKey, onPlacePlayer }) {
   const roster = team.roster || [];
   const remaining = pickIds.filter(id => !placedIds.has(id));
 
+  // If the opposing team has already placed someone in my upcoming slot,
+  // my pick will defend against them. Preview the matchup for each candidate.
+  const mySlot = team.starters.length;
+  const oppKey = teamKey === 'A' ? 'B' : 'A';
+  const oppTeam = oppKey === 'A' ? game.teamA : game.teamB;
+  const oppPlayer = oppTeam.starters[mySlot] || null;
+
   if (remaining.length === 0) return <div className={styles.placementWaiting}>Placed.</div>;
 
   return (
@@ -763,15 +770,32 @@ function PlacementAffordance({ game, teamKey, onPlacePlayer }) {
         </button>
       ) : (
         <div className={styles.placementPopover}>
-          <div className={styles.placementHeader}>Choose a player:</div>
+          <div className={styles.placementHeader}>
+            {oppPlayer
+              ? <>Defending vs <b>{oppPlayer.name}</b> (S{oppPlayer.speed}·P{oppPlayer.power})</>
+              : 'Choose a player:'}
+          </div>
           {remaining.map(id => {
             const p = roster.find(r => r.id === id);
             if (!p) return null;
+            // adv is computed from the OPPONENT's perspective:
+            // high rollBonus = opponent has a big advantage (bad for my defender).
+            const adv = oppPlayer ? calcAdv(oppPlayer, p, {}, 0) : null;
+            const advCol = adv
+              ? (adv.rollBonus > 0 ? '#F87171' : adv.hasPenalty ? '#4ADE80' : '#94A3B8')
+              : '#94A3B8';
             return (
               <button key={id} className={styles.placementOption}
                 onClick={() => { setOpen(false); onPlacePlayer(id); }}>
                 <span className={styles.placementName}>{p.name}</span>
                 <span className={styles.placementStats}>S{p.speed}·P{p.power}·D{p.defBoost||0}</span>
+                {adv && (
+                  <span className={styles.placementAdv} style={{color: advCol}}>
+                    S{adv.rawSpeedDiff>0?'+':''}{adv.rawSpeedDiff}
+                    {' '}P{adv.rawPowerDiff>0?'+':''}{adv.rawPowerDiff}
+                    {' '}Roll {adv.rollBonus>0?'+':''}{adv.rollBonus}{adv.hasPenalty?' ⚠':''}
+                  </span>
+                )}
               </button>
             );
           })}

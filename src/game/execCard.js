@@ -337,6 +337,7 @@ export function execCard(game, teamKey, cardId, opts = {}) {
     }
 
     case 'you_stand_over_there': {
+      if (g.rollResults[teamKey]?.[idx] != null) return fail(`${player?.name} has already rolled this segment.`);
       let tot = 0;
       for (let i = 0; i < 2; i++) {
         const r = _shotCheck(player, '3pt', 0, ps);
@@ -529,6 +530,7 @@ export function execCard(game, teamKey, cardId, opts = {}) {
 
     case 'cross_court_dime': {
       if (myT.assists < 3) return fail(`Need 3 assists (have ${myT.assists})`);
+      if (g.rollResults[teamKey]?.[idx] != null) return fail(`${player?.name} has already rolled this segment.`);
       myT.assists -= 3;
       const r1 = _shotCheck(player, 'paint', 0, ps);
       const r2 = _shotCheck(player, '3pt',  0, ps);
@@ -569,6 +571,8 @@ export function execCard(game, teamKey, cardId, opts = {}) {
       const offSlot = opts.offSlot !== undefined ? opts.offSlot : idx;
       const offPlayer = oppT.starters[offSlot];
       if (!offPlayer) return fail('No offensive player at that slot');
+      const oppTeamKey = teamKey === 'A' ? 'B' : 'A';
+      if (g.rollResults[oppTeamKey]?.[offSlot] != null) return fail(`${offPlayer.name} has already rolled — cannot skip their roll.`);
       const myDefIdx = (g.offMatchups[teamKey === 'A' ? 'B' : 'A'] || [])[offSlot];
       const myDef = myT.starters[myDefIdx];
       if (!myDef) return fail('No defender assigned to that slot');

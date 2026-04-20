@@ -109,12 +109,13 @@ async function buildOpts(game, teamKey, cardId, base, openModal) {
     'back_to_basket', 'putback_dunk', 'chip_on_shoulder', 'defensive_stopper',
     'second_wind', 'crowd_favorite', 'delayed_slip', 'energy_injection',
     'catch_and_shoot', 'green_light',
+    // Roll-replacing / roll-modifying cards — must be pre-roll only.
+    'cross_court_dime', 'you_stand_over_there', 'elevator_doors',
+    'pin_down_screen', 'from_way_downtown', 'power_move',
   ];
 
-  // Cards that show ALL my starters (no filtering needed)
+  // Cards that show ALL my starters (no filtering — additive, safe post-roll)
   const unfilteredPlayerCards = [
-    'you_stand_over_there', 'elevator_doors',
-    'pin_down_screen', 'power_move', 'from_way_downtown', 'cross_court_dime',
     'rebound_tap_out',
   ];
 
@@ -261,6 +262,21 @@ async function buildOpts(game, teamKey, cardId, base, openModal) {
       case 'green_light': {
         eligible = filterStarters(myT.starters, (_, i) => !rolls[i] || rolls[i]?.isReplaced);
         label = 'Select player who hasn\'t rolled yet';
+        break;
+      }
+      // Roll-replacing / roll-modifying cards — must be pre-roll only.
+      case 'cross_court_dime':
+      case 'you_stand_over_there':
+      case 'pin_down_screen':
+      case 'from_way_downtown':
+      case 'power_move': {
+        eligible = filterStarters(myT.starters, (_, i) => rolls[i] == null);
+        label = 'Select player (must not have rolled yet)';
+        break;
+      }
+      case 'elevator_doors': {
+        eligible = filterStarters(myT.starters, (p, i) => rolls[i] == null && (p.threePtBoost || 0) > 0);
+        label = 'Select 3PT player (must not have rolled yet)';
         break;
       }
       default:
@@ -440,10 +456,20 @@ async function buildOpts(game, teamKey, cardId, base, openModal) {
   }
 
   // ── This Is My House ───────────────────────────────────────────────────
+  // Must be played BEFORE the opponent rolls (it skips their scoring roll).
   if (cardId === 'this_is_my_house') {
-    const slot = await openModal({ teamKey: oppKey, cardId, players: oppT.starters, label: 'Block which opponent?' });
-    if (slot === null) return null;
-    opts.offSlot = slot;
+    const oppRolls = game.rollResults[oppKey] || [];
+    const eligible = oppT.starters
+      .map((p, i) => ({ p, origIdx: i }))
+      .filter(({ origIdx }) => oppRolls[origIdx] == null);
+    if (eligible.length === 0) {
+      alert('No eligible opponents — all have already rolled.');
+      return null;
+    }
+    const display = eligible.map(({ p }) => p);
+    const pick = await openModal({ teamKey: oppKey, cardId, players: display, label: 'Block which opponent? (must not have rolled yet)' });
+    if (pick === null) return null;
+    opts.offSlot = eligible[pick].origIdx;
   }
 
   // ── Offensive Board Mastery: pick which player gets a second roll ───────

@@ -76,3 +76,31 @@ Same shape the app already reads (`[lo, hi, pts, reb, ast]` tuples) — no chang
 - Swap the interim leaderboard scrape for the real dunksandthrees.com API once it ships.
 - Evaluate EPM as an input to the Speed/Power matchup-budget system.
 - Additional stat-source integration once identified.
+
+## Calibration finding
+
+**Resolved 2026-08-28 via `scripts/cardgen/calibrate.js` against Nikola Jokic's real 2023-24 game log (`card-data/fixtures/jokic-2023-24-gamelog.json`, 79 games, scraped from Basketball-Reference and verified against his known 2023-24 averages: 26.4 PPG / 12.4 RPG / 9.0 APG).**
+
+**Use the `double` division variant — `PTS_norm = (PTS * (36/minutes)) / minutes` — with `nearest`-integer rounding of the raw `ROUNDDOWN(PERCENTILE.EXC(...) * 4, 1)` decimal.** This is the answer Task 4 should implement.
+
+### Reasoning
+
+Both open questions (single vs. double division, and the final rounding rule) were tested together in one sweep: 2 variants x 3 rounding rules x 3 stats x 5 percentile bands = 15 values per combination, compared against Jokic's real published chart from `Final Cards.csv` (`1-3:"2,1,1"` `4-11:"3,1,1"` `12-15:"3,1,1"` `16-20:"4,2,1"` `21+:"4,2,2"`, i.e. PTS=[2,3,3,4,4], REB=[1,1,1,2,2], AST=[1,1,1,1,2] across the five cuts 0.10/0.33/0.50/0.66/0.90).
+
+Raw decimal output from `node scripts/cardgen/calibrate.js`:
+
+- `single` variant produces values in the tens-to-hundreds range (e.g. PTS raw `[68, 96, 117, 125.1, 138.1]`) — nowhere close to the real single-digit chart values. Sum of `|raw - real|` across all 15 values: **961.4**. Ruled out immediately; dividing by minutes only once leaves the result on a per-36-scaled-again-by-4 magnitude, not a per-game point value.
+- `double` variant produces values already in the right neighborhood (e.g. PTS raw `[1.8, 2.7, 3.2, 3.5, 4.2]` vs. real `[2, 3, 3, 4, 4]`). Sum of `|raw - real|`: **3.7**, and every individual diff is within ±0.5.
+
+Rounding-rule sweep on the `double` variant's raw values:
+
+- `double` + **nearest**: **15/15 exact matches** — PTS `[2,3,3,4,4]`, REB `[1,1,1,2,2]`, AST `[1,1,1,1,2]`, all identical to the real card.
+- `double` + ceiling: 9/15 matches (systematically overshoots, e.g. PTS `[2,3,4,4,5]`).
+- `double` + floor: 7/15 matches (systematically undershoots, e.g. PTS `[1,2,3,3,4]`).
+- `single` + any rounding rule: 0/15 matches (confirms `single` is not the right division variant regardless of rounding).
+
+The `double`/`nearest` combination reproduces Jokic's real published chart exactly, with no need to invoke the "manual cleanup pass" caveat from the task brief — the formula alone accounts for all 15 values. This is a stronger result than expected going in (an exact match, not just "closest fit"), which increases confidence this is the actual original formula rather than a coincidentally close approximation.
+
+### Caveat
+
+This is calibrated against a single player (Jokic, a very high-minutes, high-usage center). An exact match on one player's chart is strong evidence but not proof the formula holds for every archetype (e.g. low-minutes bench players, where the double-division's steeper scaling could behave differently) — worth a spot-check against a second published player if discrepancies show up during Task 4/5 bulk generation.

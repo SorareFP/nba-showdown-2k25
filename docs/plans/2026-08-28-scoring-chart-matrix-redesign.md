@@ -720,6 +720,7 @@ git commit -m "feat(cardgen): orchestrate band generation into rawCards.js-compa
 - Speed/Power/defBoost generation, including the EPM/DEF-EPM ideas in `memory/speed_power_methodology.md`.
 - Wiring generated output into the live app (`rawCards.js` replacement) — that's a separate integration decision once a real pool exists, with knock-on effects on salary balance, saved teams, etc.
 - Swapping in the real dunksandthrees.com API — `sources/dunksAndThrees.js` stays a stub until that access exists.
+- **Known landmine for future work:** `generate.js`'s `reconcileBands` combines pts/reb/ast bands by array INDEX, not by overlapping roll-range. It must be replaced with true overlap-aware reconciliation (not index-based) before any full-pool or production card generation run — verified to misattribute reb/ast values when a player's per-stat bucket boundaries diverge from pts's (didn't manifest for the Jokic validation run only because his boundaries happened to align across all three stats). Flagged during Task 8 code review; not fixed there since it's a correct implementation of the plan's own reference code and out of scope for that task.
 
 ## Rollback plan
 

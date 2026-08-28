@@ -26,4 +26,13 @@ describe('parseGameLogHtml', () => {
     const games = parseGameLogHtml(html);
     expect(games[0]).toEqual({ minutes: '36:16', pts: 29, reb: 13, ast: 11 });
   });
+
+  it('throws instead of silently parsing the whole page when the expected table id is missing', () => {
+    // Guards against a repeat of this task's own discovery (BBRef's table id changed from
+    // `pgl_basic` to `player_game_log_reg` between when the plan was written and now): if the
+    // site's markup changes again, a batch job over hundreds of players should fail loudly on
+    // the first mismatch instead of silently returning [] or blending in unrelated rows.
+    const htmlWithoutExpectedTable = '<table id="some_other_table"><tbody><tr></tr></tbody></table>';
+    expect(() => parseGameLogHtml(htmlWithoutExpectedTable)).toThrow(/player_game_log_reg/);
+  });
 });

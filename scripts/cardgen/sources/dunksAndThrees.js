@@ -4,6 +4,6 @@
  * orchestrator can swap sources without other code changes once this is
  * real.
  */
-export async function fetchGameLog(/* playerId, season */) {
+export async function fetchGameLog(playerId, season) {
   throw new Error('dunksandthrees.com game-log source not yet available — use sources/basketballReference.js');
 }

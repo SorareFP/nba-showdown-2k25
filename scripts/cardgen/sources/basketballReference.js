@@ -30,24 +30,47 @@ const REG_SEASON_TABLE_ID = 'player_game_log_reg';
 
 /**
  * Isolates the `<tbody>...</tbody>` of `<table id="player_game_log_reg">` from a full page
- * (or a fixture that already *is* just that table's tbody — in which case, since there's
- * no further `id="player_game_log_reg"` to find, this falls back to the whole input).
+ * (or a fixture that already *is* just that table's markup, id attribute included).
  *
  * We isolate `<tbody>` specifically, not the whole `<table>...</table>`: the table also has
  * a `<tfoot>` with a season-totals row that (like a real game row) has a non-empty
  * `data-stat="mp"` cell, so scoping to just the table would let that summary row slip through
  * and get counted as an extra "game".
+ *
+ * Deliberately throws rather than falling back to parsing the unscoped input when any expected
+ * landmark is missing: this ran into exactly this failure mode once already during development
+ * (Basketball-Reference's table id turned out to be `player_game_log_reg`, not the `pgl_basic`
+ * older docs/tooling assumed), and a silent fallback would let a future markup change either
+ * quietly drop a player from a 300+-player batch (empty result) or, worse, quietly blend
+ * regular-season and playoff rows together — both wrong-data failures with no visible signal.
+ * A loud throw on the first player where the site structure doesn't match is far preferable.
  */
 function isolateRegSeasonTable(html) {
   const idAttr = `id="${REG_SEASON_TABLE_ID}"`;
   const idIndex = html.indexOf(idAttr);
-  if (idIndex === -1) return html; // not found — fall back to parsing whatever we were given
+  if (idIndex === -1) {
+    throw new Error(
+      `parseGameLogHtml: could not find ${idAttr} in the input HTML — Basketball-Reference's ` +
+        'game-log table structure may have changed again; verify against a live page before ' +
+        'assuming the site is just temporarily unreachable.'
+    );
+  }
 
   const tbodyStart = html.indexOf('<tbody', idIndex);
-  if (tbodyStart === -1) return html;
+  if (tbodyStart === -1) {
+    throw new Error(
+      `parseGameLogHtml: found ${idAttr} but no following <tbody> — table markup around the ` +
+        'regular-season game log has changed shape.'
+    );
+  }
 
   const tbodyEndTagIndex = html.indexOf('</tbody>', tbodyStart);
-  if (tbodyEndTagIndex === -1) return html;
+  if (tbodyEndTagIndex === -1) {
+    throw new Error(
+      `parseGameLogHtml: found <tbody> after ${idAttr} but no matching </tbody> — input HTML ` +
+        'may be truncated.'
+    );
+  }
 
   return html.slice(tbodyStart, tbodyEndTagIndex + '</tbody>'.length);
 }

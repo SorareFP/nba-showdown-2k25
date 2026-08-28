@@ -13,17 +13,19 @@ The current 306-card scoring chart data (`src/game/rawCards.js`) produces too mu
 
 For the upcoming season's new card batch (a fully new player pool, not a refresh of the existing 306), every card should guarantee at least one true 0pts/0reb/0ast outcome, with a second non-scoring tier as the norm rather than the rare exception.
 
-## Background: the original methodology (recovered, not documented anywhere else)
+## Background: the original methodology (source recovered 2026-08-28)
 
-The spreadsheet that originally generated `rawCards.js` (referenced only in a code comment: "Generated from Final Cards spreadsheet") could not be located — checked the repo, `docs/plans/`, and Google Drive including the project's own folder and Rulebook doc. The method below was reconstructed from the user's direct recollection on 2026-08-28 and is now the canonical record (see `memory/scoring_chart_methodology.md` and `memory/speed_power_methodology.md` in this project's Claude memory for the full write-up):
+The spreadsheet that originally generated `rawCards.js` (referenced only in a code comment: "Generated from Final Cards spreadsheet") was not on Google Drive, but **was found as local files in Downloads** and copied into `card-data/source-recovered/` in this repo (gitignored — the repo is public on GitHub, this data is not). That folder contains the literal `Final Cards.csv`, the matchup-matrix outputs, and — critically — a "Chart playground" sheet (in `Corrected_Speed_and_Power_Attributes.xlsx`) with **live, working Excel formulas** for the scoring-chart derivation, plus real individual game logs used to calibrate it. A separate corrupted master workbook (`NBA Showdown 2K25-DESKTOP-VFORBTS.xlsx`) was recovered byte-for-byte via raw zip-part extraction and contains a ~557-player season stat dump (Per36/Per100/Advanced). Full detail in `memory/scoring_chart_methodology.md`.
 
-1. Start from individual real game logs (PTS/REB/AST), not season averages.
-2. Normalize each game to a common minutes basis.
-3. Cut the normalized distribution at the 10th/30th/50th/75th/90th percentiles to set **roll-range width** per band — proportional to how many historical games actually landed there (probability).
-4. Cut a separate ~10th/33rd/50th/66th/90th percentile of production to set **each band's value** (magnitude), scaled into the game's point framework and floored to integers.
-5. Do steps 3-4 independently per stat (PTS, REB, AST), then reconcile onto one shared roll-range table.
+Verified method (from live formulas, not just recollection):
 
-Philosophy: probability × magnitude, not a flat average — a card is a statistical fingerprint of how often a player reaches each performance level and what that level is worth, not "he averages 25, give him 3 every roll." Speed/Power/Shot Line/bonuses are a separate system (a matchup-matrix-derived budget split by position), built independently and merged only at the final card. This redesign does not touch that system.
+1. Start from individual real game logs (PTS/REB/AST + minutes), not season averages.
+2. Normalize each game to a minutes basis: `PTS_norm = (PTS * (36/minutes)) / minutes` — note this divides by minutes **twice**, not the standard single-division per-36 rate. Flagged as unconfirmed whether intentional; the implementation plan includes a task to test both variants against a real player's known published chart.
+3. Cut the normalized distribution at the 10th/33rd/50th/66th/90th percentiles via `PERCENTILE.EXC(FILTER(...), p)`; each band's magnitude value is `ROUNDDOWN(threshold * 4, 1)`.
+4. Roll-range **width** per band comes from counting how many historical games fell at/below each threshold (`COUNTIFS`), then scaling those counts proportionally against a **25-slot total** — a band with more historical games gets more roll slots.
+5. Steps 2-4 are done independently for PTS, REB, AST, then reconciled onto one shared roll-range table.
+
+Philosophy (confirmed via the user's own extended writeup, see `memory/card_design_philosophy.md`): probability × magnitude, not a flat average — a card is a statistical fingerprint of how often a player reaches each performance level and what that level is worth, not "he averages 25, give him 3 every roll." Speed/Power/Shot Line/bonuses are a separate system (a matchup-matrix-derived budget split by position), built independently and merged only at the final card. This redesign does not touch that system.
 
 ## Why the zero floor doesn't emerge naturally
 
@@ -37,18 +39,17 @@ Real rotation players essentially never post a literal 0-point game, so the pure
 
 ## Design
 
-### 1. Data input — source-agnostic ingestion, dunksandthrees.com as the concrete source
+### 1. Data input — two separate needs, two separate sources
 
-Build an ingestion layer that isn't hard-wired to one provider, since the promised dunksandthrees.com API isn't live yet:
+The scoring chart (this redesign) needs a **real distribution of individual games per player** — a single point-estimate isn't enough to cut percentile bands from. The Speed/Power/defBoost layer (out of scope here) needs the opposite: a single point-estimate per player. Don't conflate the two:
 
-- **Interim source (usable now):** `https://dunksandthrees.com/epm` is a public, server-rendered leaderboard (full table in the HTML, not behind a client-side fetch) exposing, per player: EPM, MPG, USG, PTS, TS%, 2PA/2P%, 3PA/3P%, FTA/FT%, ORB, DRB, AST, TOV, STL, BLK, OFF/DEF component splits, all with percentile rankings. No documented export/endpoint, so this means a scrape rather than a clean API call — scrape it courteously (cache results locally, don't re-pull on every run).
-- **Primary source (once available):** the dunksandthrees.com API, expected "shortly." Same logical data, cleaner access — swap-in replacement for the scrape, not a separate pipeline.
-- **Prefer Estimated Skills over raw box scores** as the statistical input where available. Skills are already decay-weighted and de-noised per-stat (they solve the small-sample problem the original raw-game-log method had to handle manually via minutes-normalization). This is a genuine improvement on the original method, not just a substitution.
-- Ingestion output is a normalized intermediate format (one record per player: id, per-stat skill/percentile values, EPM) that the rest of the pipeline consumes — this is the seam where a future second data source plugs in without touching anything downstream.
+- **Scoring chart input — real per-game box scores.** Primary: the dunksandthrees.com API once available ("shortly," per a contact who can provide it). Fallback: Basketball-Reference per-game logs. Some amount of modeling will still be needed where full game-log coverage isn't available for a given player — not a pure lookup for all 300+ players.
+- **Speed/Power/defBoost input (future pass, not built here) — EPM and DEF EPM point-estimates**, scraped today from the public, server-rendered `https://dunksandthrees.com/epm` leaderboard (no documented export/endpoint yet) until the real API ships. Recorded for the next design pass in `memory/dunks_and_threes_stats_source.md` and `memory/speed_power_methodology.md`.
+- Ingestion is a source-agnostic interface (one normalized game-log record shape in, regardless of provider) so a second data source can be added later without touching the percentile/magnitude logic downstream.
 
 ### 2. Frequency + magnitude bands
 
-Unchanged from the original method: percentile cuts on the normalized input define roll-range width (how often) and a separate percentile cut defines each band's value (how much), computed independently for PTS/REB/AST and reconciled onto one shared roll-range table per player.
+Implements the verified formula from the Background section: `PERCENTILE.EXC` cuts at 0.1/0.33/0.5/0.66/0.9 on the normalized per-game distribution set each band's magnitude (`ROUNDDOWN(threshold * 4, 1)`), and proportional counts at/below each threshold (scaled to a 25-slot total) set each band's roll-range width — computed independently for PTS/REB/AST, reconciled onto one shared roll-range table per player. The minutes-normalization formula's single- vs. double-division question (see Background) gets resolved empirically as the first implementation task, against a known player's real published chart in `Final Cards.csv`.
 
 ### 3. Zero-floor rule
 

@@ -29,4 +29,12 @@ describe('roundDown', () => {
     expect(roundDown(2.789, 0)).toBe(2);
     expect(roundDown(-2.789, 1)).toBe(-2.7);
   });
+
+  it('does not drop a unit when value * 10^digits has floating-point representation error', () => {
+    // e.g. 19.99 * 100 === 1998.9999999999998 in binary floating point, which a naive
+    // Math.trunc(value * factor) / factor would truncate down to 19.98.
+    expect(roundDown(19.99, 2)).toBe(19.99);
+    expect(roundDown(64.1, 2)).toBe(64.1);
+    expect(roundDown(18.4, 2)).toBe(18.4);
+  });
 });

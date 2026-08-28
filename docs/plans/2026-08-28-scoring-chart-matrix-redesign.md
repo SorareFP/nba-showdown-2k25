@@ -131,7 +131,14 @@ export function percentileExc(values, p) {
 /** Excel ROUNDDOWN: truncate toward zero at the given number of decimal digits. */
 export function roundDown(value, digits) {
   const factor = 10 ** digits;
-  return Math.trunc(value * factor) / factor;
+  const scaled = value * factor;
+  // value * factor can land just under the true value due to binary floating-point
+  // representation (e.g. 19.99 * 100 === 1998.9999999999998), which would make
+  // Math.trunc silently drop a whole unit. Nudge toward the sign of value by a tiny
+  // epsilon (scaled to magnitude) before truncating so representation error can't
+  // erase a full unit.
+  const nudged = scaled + Math.sign(scaled) * 1e-9 * Math.max(1, Math.abs(scaled));
+  return Math.trunc(nudged) / factor;
 }
 ```
 

@@ -26,6 +26,16 @@
 // method, so exact boundary reproduction was not attempted here — only the
 // magnitude values were cross-checked, per the task's guidance that exact
 // boundary reproduction isn't required.
+//
+// Fixed post-Task-4 (code review): allocateSlots previously computed weights
+// already pre-scaled to a 25-slot budget, and computeStatBands patched a
+// zero-weight band up to width 1 via `slots[i] || 1` *without* deducting that
+// slot from anywhere else — so total width could exceed TOTAL_SLOTS (seen:
+// 29 instead of 25 for a mostly-zero-value stat, e.g. blocks/steals for a
+// non-specialist). allocateSlots now reserves 1 slot per band out of the
+// TOTAL_SLOTS budget itself before apportioning the rest, so the sum is
+// always exactly TOTAL_SLOTS by construction; computeStatBands also asserts
+// this invariant and throws loudly if it's ever violated.
 
 import { percentileExc, roundDown } from './excelMath.js';
 
@@ -48,13 +58,41 @@ function toCardValue(raw) {
   return Math.round(roundDown(raw, 1));
 }
 
-/** Largest-remainder rounding so per-band slot counts sum exactly to TOTAL_SLOTS. */
-function allocateSlots(weights) {
-  const floors = weights.map(Math.floor);
-  let remaining = TOTAL_SLOTS - floors.reduce((a, b) => a + b, 0);
-  const remainders = weights.map((w, i) => ({ i, frac: w - floors[i] }))
+/**
+ * Apportion `totalSlots` slots across `weights.length` bands via largest-remainder
+ * rounding, guaranteeing every band gets at least `minPerBand` slot(s) AND the
+ * returned slot counts always sum to exactly `totalSlots`.
+ *
+ * The minimum is reserved out of the budget up front (not added on top of it):
+ * `minPerBand` per band is set aside first, then the *remaining* budget
+ * (`totalSlots - weights.length * minPerBand`) is apportioned proportionally to
+ * `weights` by largest remainder. This is what makes the invariant hold even
+ * when a band's raw weight is 0 (e.g. a stat value that never occurs in a
+ * percentile bucket) — previously, a bare `slots[i] || 1` fallback promoted a
+ * zero-weight band to width 1 *without* removing a slot from anywhere else,
+ * so the total could exceed totalSlots (observed: 29 instead of 25 for a
+ * mostly-zero-value stat). Reserving the minimum inside the budget instead of
+ * bolting it on afterward means the invariant is structural, not incidental.
+ */
+function allocateSlots(weights, totalSlots = TOTAL_SLOTS, minPerBand = 1) {
+  const n = weights.length;
+  const reserved = n * minPerBand;
+  if (reserved > totalSlots) {
+    throw new Error(
+      `allocateSlots: cannot reserve ${minPerBand} slot(s) for each of ${n} bands within a budget of ${totalSlots} slots`
+    );
+  }
+  const budget = totalSlots - reserved;
+  const totalWeight = weights.reduce((a, b) => a + b, 0);
+  const shares = totalWeight > 0
+    ? weights.map(w => (w / totalWeight) * budget)
+    : weights.map(() => budget / n);
+
+  const floors = shares.map(Math.floor);
+  const remaining = budget - floors.reduce((a, b) => a + b, 0);
+  const remainders = shares.map((s, i) => ({ i, frac: s - floors[i] }))
     .sort((a, b) => b.frac - a.frac);
-  const slots = [...floors];
+  const slots = floors.map(f => f + minPerBand);
   for (let k = 0; k < remaining; k++) slots[remainders[k].i] += 1;
   return slots;
 }
@@ -68,15 +106,22 @@ export function computeStatBands(games, statKey) {
     if (i === 0) return normalized.filter(v => v <= t).length;
     return normalized.filter(v => v > thresholds[i - 1] && v <= t).length;
   });
-  const totalCount = counts.reduce((a, b) => a + b, 0) || 1;
-  const weights = counts.map(c => (c / totalCount) * TOTAL_SLOTS);
-  const slots = allocateSlots(weights);
+  const slots = allocateSlots(counts);
 
   let start = 1;
-  return values.map((value, i) => {
-    const width = slots[i] || 1;
+  const bands = values.map((value, i) => {
+    const width = slots[i];
     const band = { lo: start, hi: start + width - 1, value, slots: width };
     start += width;
     return band;
   });
+
+  const totalWidth = bands.reduce((sum, b) => sum + b.slots, 0);
+  if (totalWidth !== TOTAL_SLOTS) {
+    throw new Error(
+      `computeStatBands: band slot widths summed to ${totalWidth}, expected ${TOTAL_SLOTS} (stat=${statKey})`
+    );
+  }
+
+  return bands;
 }

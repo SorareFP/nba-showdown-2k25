@@ -1,0 +1,365 @@
+/* Card Studio chrome. Dev-only tool UI — the CARD's own look lives in
+ * src/cards/CardTemplate.module.css and must not be influenced from here.
+ * Variables come from src/index.css. */
+
+/* Flex column, NOT a grid with named rows: the notice banner is conditional,
+ * so with `grid-template-rows: auto auto 1fr` the body lands in the middle
+ * `auto` row whenever there is no notice, sizes itself to the full 331-row
+ * list, and overflows the window instead of letting the list scroll. */
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ── Top bar ─────────────────────────────────────────────────────────────── */
+
+.topBar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--navy-light);
+  flex: none;
+}
+
+.title {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+}
+
+.spacer { flex: 1; }
+
+.toggle {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+.toggleButton {
+  background: transparent;
+  color: var(--text-muted);
+  padding: 5px 12px;
+  border-radius: 0;
+  white-space: nowrap;
+}
+.toggleButton:hover { background: var(--card-hover); color: var(--text); }
+.toggleButtonActive {
+  background: var(--orange);
+  color: #fff;
+  font-weight: 600;
+}
+.toggleButtonActive:hover { background: var(--orange); color: #fff; }
+
+/* Save indicator: subtle by design — it should be reassuring, not loud. */
+.save {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-dim);
+  min-width: 96px;
+  justify-content: flex-end;
+}
+.saveDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.saveSaving { color: var(--gold); }
+.saveSaved { color: var(--green); }
+.saveError { color: var(--red); }
+
+/* ── Notice banner ───────────────────────────────────────────────────────── */
+
+.notice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 16px;
+  font-size: 13px;
+  border-bottom: 1px solid var(--border);
+  flex: none;
+}
+.noticeOk { background: rgba(22, 163, 74, 0.18); color: #C9F5D6; }
+.noticeError { background: rgba(220, 38, 38, 0.22); color: #FFD3D3; }
+.noticeDismiss {
+  background: rgba(255, 255, 255, 0.12);
+  color: inherit;
+  padding: 2px 8px;
+  font-size: 12px;
+}
+
+/* ── Body split ──────────────────────────────────────────────────────────── */
+
+.body {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 330px 1fr;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-right: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.stage {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  min-height: 0;
+  min-width: 0;
+}
+
+/* ── Player list ─────────────────────────────────────────────────────────── */
+
+.listHead {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.progressRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+.progressCount {
+  font-size: 18px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.progressLabel { font-size: 12px; color: var(--text-muted); }
+
+.progressTrack {
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+.progressFill {
+  height: 100%;
+  background: var(--green);
+  transition: width 0.2s;
+}
+
+.filterRow { display: flex; gap: 8px; align-items: center; }
+.filterInput { flex: 1; min-width: 0; }
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.checkbox input { width: 14px; height: 14px; padding: 0; accent-color: var(--orange); }
+
+.list {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  list-style: none;
+  padding: 4px 0 24px;
+}
+
+.rowEmpty {
+  padding: 24px 16px;
+  font-size: 13px;
+  color: var(--text-dim);
+  text-align: center;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 14px 1fr auto;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 6px 12px;
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+  border-radius: 0;
+  border-left: 3px solid transparent;
+  font-size: 13px;
+}
+.row:active { transform: none; }
+.row:hover { background: var(--card-hover); }
+
+.rowSelected {
+  background: rgba(234, 88, 12, 0.18);
+  border-left-color: var(--orange);
+}
+.rowSelected:hover { background: rgba(234, 88, 12, 0.24); }
+
+/* Drop target feedback has to be unmistakable: the row under the cursor is the
+ * player about to be overwritten. */
+.rowDropping {
+  background: rgba(59, 130, 246, 0.3);
+  border-left-color: var(--blue);
+  outline: 1px dashed var(--blue);
+  outline-offset: -2px;
+}
+
+.dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 1.5px solid var(--text-dim);
+  justify-self: center;
+}
+.dotFilled {
+  background: var(--green);
+  border-color: var(--green);
+}
+
+.rowName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.rowMeta {
+  font-size: 11px;
+  color: var(--text-dim);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.rowBusy { color: var(--gold); font-size: 11px; }
+
+.listFoot {
+  padding: 8px 12px;
+  border-top: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--text-dim);
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+/* ── Preview ─────────────────────────────────────────────────────────────── */
+
+.preview {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  padding: 14px;
+  overflow: hidden;
+}
+
+.cardFrame {
+  position: relative;
+  flex: none;
+  box-shadow: var(--shadow);
+}
+
+/* The card renders at its true 843x1181 inside here; only this wrapper is
+ * scaled, so the preview is literally the pixels the export writes. */
+.cardScaler { transform-origin: top left; }
+
+/* Sits exactly over the card's photo window. Positioned from
+ * crop.js PHOTO_WINDOW, which crop.test.js keeps in sync with the card CSS. */
+.dragSurface {
+  position: absolute;
+  cursor: grab;
+  touch-action: none;
+  outline: 1px dashed rgba(255, 255, 255, 0.28);
+  outline-offset: -1px;
+}
+.dragSurfaceActive { cursor: grabbing; outline-color: var(--orange); }
+.dragSurfaceDisabled { cursor: default; }
+
+/* Whole-preview drop target for the selected player. */
+.previewDropping::after {
+  content: 'drop to replace this photo';
+  position: absolute;
+  inset: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed var(--blue);
+  border-radius: var(--radius);
+  background: rgba(59, 130, 246, 0.16);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  pointer-events: none;
+}
+
+.emptyStage {
+  color: var(--text-dim);
+  font-size: 13px;
+}
+
+/* ── Crop controls ───────────────────────────────────────────────────────── */
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 10px 16px;
+  border-top: 1px solid var(--border);
+  background: var(--navy-light);
+}
+
+.controlName {
+  font-size: 14px;
+  font-weight: 600;
+  min-width: 150px;
+}
+.controlSub {
+  font-size: 11px;
+  color: var(--text-dim);
+  font-weight: 400;
+}
+
+.zoomGroup { display: flex; align-items: center; gap: 8px; }
+.zoomLabel { font-size: 12px; color: var(--text-muted); }
+.zoomSlider { width: 190px; accent-color: var(--orange); padding: 0; background: none; border: none; }
+
+.readout {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace;
+}
+
+.resetButton {
+  background: var(--card-bg);
+  color: var(--text);
+  padding: 5px 12px;
+  border: 1px solid var(--border);
+}
+.resetButton:hover:not(:disabled) { background: var(--card-hover); }
+
+.hint {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-left: auto;
+  text-align: right;
+}
+.kbd {
+  display: inline-block;
+  padding: 0 4px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.07);
+  font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  font-size: 10px;
+}

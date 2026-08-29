@@ -28,6 +28,30 @@ const render = props => renderToStaticMarkup(React.createElement(CardTemplate, p
 const rows = html => html.match(/<tr>.*?<\/tr>/gs) ?? [];
 
 /**
+ * The card's layout is absolutely positioned against a fixed 843x1181 field, so
+ * the geometry that has to hold BETWEEN two elements — an edge that meets
+ * another edge — lives in the stylesheet and nowhere else. These two read it.
+ */
+const CARD_CSS = readFileSync(new URL('./CardTemplate.module.css', import.meta.url), 'utf8');
+
+/** One rule block of that stylesheet, by selector (string) or selector list. */
+const cssBlock = selector => {
+  const head =
+    typeof selector === 'string'
+      ? selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      : selector.source;
+  const block = CARD_CSS.match(new RegExp(`${head}\\s*\\{[^}]*\\}`, 's'));
+  if (!block) throw new Error(`no rule for ${selector} in CardTemplate.module.css`);
+  return block[0];
+};
+
+/** The px value of one declaration in a rule block, or undefined if unset. */
+const pxIn = (block, prop) => {
+  const found = block.match(new RegExp(`(?:^|[;{\\s])${prop}:\\s*(-?[\\d.]+)px`));
+  return found ? Number(found[1]) : undefined;
+};
+
+/**
  * LeBron's 2008-09 card, transcribed from the printed art in
  * public/cards/players/08_09_LeBron_James.png. Shot Line 14 puts the arrow on
  * the "14-20" row — the 4th of 5 — which is the specific real-world case this
@@ -302,6 +326,63 @@ describe('the sidebar scrim', () => {
     const block = css.match(/\.sidebarScrim\s*\{[^}]*\}/s)[0];
     expect(block).toContain('var(--field-scrim)');
     expect(block).not.toMatch(/rgba?\(/);
+  });
+
+  it('runs into the top-right corner and stops at the frame', () => {
+    // The art settles the bar's LEFT edge and nothing else — 814..843 is bare
+    // field on both reference cards, and a field-toned scrim leaves no trace on
+    // the field. So where the top and right edges go is a design call, and the
+    // call overrides the art: the bar fills the card's right-hand column into
+    // the corner. It used to start at the art's y=33 and stop at the photo
+    // window's x=828, which left an L of unveiled band across that corner.
+    const block = cssBlock('.sidebarScrim');
+    // Read the frame's width off .card::after rather than pinning 7 twice — the
+    // whole claim is "as far as the frame", not "as far as 7px".
+    const frame = Number(
+      cssBlock('.card::after').match(/box-shadow:\s*inset 0 0 0 (\d+)px/)[1],
+    );
+    expect(pxIn(block, 'top')).toBe(frame);
+    expect(pxIn(block, 'left') + pxIn(block, 'width')).toBe(CARD_WIDTH - frame);
+  });
+
+  it('gives the chevron exactly the bar’s column, so the two meet flush', () => {
+    // The chevron used to be 152px at right:26px — 665..817 — which straddled
+    // the bar's left edge: the bar cut a hard vertical line down the middle of
+    // the dot field and left the ornament's left arm outside it on bare field.
+    // Trimming the chevron to the bar's own column is what makes them flush,
+    // and it has to STAY the bar's column, so assert the two against each other
+    // rather than against 701 and 836.
+    const scrim = cssBlock('.sidebarScrim');
+    const chevron = cssBlock('.chevronTop');
+    const left = pxIn(scrim, 'left');
+    const right = left + pxIn(scrim, 'width');
+    expect(CARD_WIDTH - pxIn(chevron, 'right')).toBe(right);
+    expect(CARD_WIDTH - pxIn(chevron, 'right') - pxIn(chevron, 'width')).toBe(left);
+  });
+
+  it('phases the chevron’s dots so that column clips none of them', () => {
+    // The seam this exists for is small and specific. The dots are a tiled
+    // background, so an edge of the chevron's box that lands mid-dot paints the
+    // sliver of it that falls inside — and at the right-hand edge that is a row
+    // of clipped crescents pressed up against the frame. The bar's column is
+    // 135px, which is not a whole number of 13px tiles, so the phase has to be
+    // chosen rather than left at 0; at 0 a dot centre lands 1.5px past the right
+    // edge and the crescents appear.
+    const shared = cssBlock(/\.chevronTop,\s*\.chevronBottom/);
+    const pitch = Number(shared.match(/background-size:\s*([\d.]+)px/)[1]);
+    // The dot fades out at `transparent <r>px` — that r is its painted radius.
+    const radius = Number(shared.match(/transparent\s+([\d.]+)px/)[1]);
+    const chevron = cssBlock('.chevronTop');
+    const width = pxIn(chevron, 'width');
+    const phase = pxIn(chevron, 'background-position') ?? 0;
+
+    // Dot centres relative to the box's left edge, one tile either side so the
+    // dots that live just OUTSIDE the box are checked too — those are the ones
+    // that bleed back in.
+    for (let c = phase + pitch / 2 - pitch; c < width + pitch; c += pitch) {
+      expect(Math.abs(c - 0), `dot at ${c} vs left edge`).toBeGreaterThanOrEqual(radius);
+      expect(Math.abs(c - width), `dot at ${c} vs right edge`).toBeGreaterThanOrEqual(radius);
+    }
   });
 });
 

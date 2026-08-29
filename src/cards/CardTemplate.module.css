@@ -221,12 +221,27 @@
  *
  * The one other thing this raises the chevron over is the photo, which it
  * overlaps for 26px below y=110 — and the reference art has the dots over the
- * photo there too, so that is a step toward the art rather than away. */
+ * photo there too, so that is a step toward the art rather than away.
+ *
+ * WIDTH IS THE BAR'S COLUMN, EXACTLY: 701..836, the same 135px .sidebarScrim
+ * spans. It used to be 152px at right:26px — 665..817 — which straddled the
+ * bar's left edge, so the bar cut a hard vertical line down the middle of the
+ * dot field and the ornament's left arm sat outside it on bare field. Narrowing
+ * rather than widening the bar keeps x=701, the one edge of the bar the
+ * reference art actually settles (see .sidebarScrim). Only the width moved: the
+ * top, the bottom and the 66px arm thickness are unchanged, so the arm angle
+ * steepens from 41° to 44°, which is not readable against .chevronBottom.
+ *
+ * The dot grid is then PHASED to that column. Ten 13px columns leave 18px over
+ * in 135, so 9px a side centres them; the default 6.5px phase would instead put
+ * an eleventh dot centre 1.5px past the right edge and leave a row of clipped
+ * crescents pressed against the frame. 9 - 6.5 = 2.5. */
 .chevronTop {
-  right: 26px;
+  right: 7px;
   top: 4px;
-  width: 152px;
+  width: 135px;
   height: 132px;
+  background-position: 2.5px 0;
   z-index: 1;
 }
 .chevronBottom {
@@ -312,36 +327,44 @@
 
 /* ── The scrim behind the sidebar ────────────────────────────────────────── */
 
-/* The translucent bar down the right of the printed cards. Every number here
- * is MEASURED off the reference art rather than chosen:
+/* The translucent bar down the right of the printed cards.
+ *
+ * MEASURED off the reference art rather than chosen:
  *
  *   left    x=701. The seam is one pixel wide and lands between 700 and 701 on
  *           BOTH reference cards, over the photo and again up in the top band.
- *   top     y=33. Visible where the bar crosses the band's flat grey; above it
- *           the band paints through at full strength.
  *   tone    the field, stepped away from the ink and painted at 0.57 — see
  *           SCRIM_ALPHA in fieldTheme.js, which recovers both numbers from the
  *           pixels either side of that seam.
  *
- * The two edges the art CANNOT settle, because a field-toned scrim leaves no
- * trace on the field:
+ * The other three edges are NOT measurable — a field-toned scrim leaves no
+ * trace on the field, and 814..843 is bare field on both reference cards — so
+ * they are the user's call, and the call is that the bar fills the card's
+ * right-hand column corner to corner:
  *
- *   right   the art's bar ends at x=814, which is exactly where the art's photo
- *           ends. This layout's photo window is 14px wider, so the bar follows
- *           the photo to 828 rather than stopping short and leaving a strip of
- *           unveiled photo down its right side.
- *   bottom  taken to the sidebar's own bottom edge (762 + 390 = 1152), which is
- *           what the bar is backing.
+ *   top     y=7 and right x=836, which is to say the top-right corner, stopping
+ *           at .card::after's 7px frame. The bar used to start at y=33 (the one
+ *           height the art does show, where it crosses the band's flat grey) and
+ *           stop at x=828 (the photo window's right edge), which left an L of
+ *           unveiled band along the top and right of that corner.
+ *   bottom  the sidebar's own bottom edge (762 + 390 = 1152), which is what the
+ *           bar is backing.
+ *
+ * Reaching x=836 does mean the bar now veils the 5px of accent outline down the
+ * photo's right side (828..833) that it used to stop against. That is a step
+ * toward the art, not away: the art has no outline on that side at all, just
+ * field, so a veiled outline sits nearer the reference than a bright one.
  *
  * Sits between the photo and the sidebar in DOM order, which is the whole
  * point: it veils the photo the sidebar is printed over, and never the sidebar.
- * The chevron is lifted back over it — see .chevronTop. */
+ * The chevron is lifted back over it and trimmed to this exact 701..836 column
+ * so the two meet flush — see .chevronTop. */
 .sidebarScrim {
   position: absolute;
   left: 701px;
-  top: 33px;
-  width: 127px;
-  height: 1119px;
+  top: 7px;
+  width: 135px;
+  height: 1145px;
   background: var(--field-scrim);
   pointer-events: none;
 }

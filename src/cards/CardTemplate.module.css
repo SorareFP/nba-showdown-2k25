@@ -54,9 +54,11 @@
  *    in the studio re-themes the whole card with no other edit:
  *      --team-primary / --team-secondary  raw brand colors, decorative fills
  *      --team-accent                      the readable one, for text/hairlines
- *                                         (CardTemplate.pickAccent picks it —
- *                                         nine teams have #000000 as a brand
- *                                         color, invisible on this navy)
+ *                                         (teams.js resolveAccent: the studio's
+ *                                         chosen accent if there is one, else
+ *                                         pickAccent's brighter-of-the-two —
+ *                                         nine teams carry near-black as a
+ *                                         brand color, invisible on this navy)
  */
 
 .card {

@@ -156,9 +156,12 @@
   background: rgba(0, 0, 0, 0.18);
 }
 
+/* Preview, then crop controls, then the team panel. The preview takes the
+ * slack (1fr) so the card stays as large as the window allows; the two control
+ * strips are sized by their content. */
 .stage {
   display: grid;
-  grid-template-rows: 1fr auto;
+  grid-template-rows: 1fr auto auto;
   min-height: 0;
   min-width: 0;
 }
@@ -406,4 +409,159 @@
   background: rgba(255, 255, 255, 0.07);
   font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace;
   font-size: 10px;
+}
+
+/* ── Team template editor ────────────────────────────────────────────────── */
+
+/* Sits under the crop controls: one strip edits THIS card, the next edits
+ * every card on this team. Visually separated so the wider blast radius is
+ * apparent before a color is dragged. */
+.teamPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 16px 12px;
+  border-top: 1px solid var(--border);
+  background: var(--navy);
+}
+
+.teamHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.teamName {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.teamAbbr {
+  padding: 1px 6px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-dim);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace;
+}
+
+/* The one team on screen. Gold rather than red — a departure from official is
+ * the intended state here, not an error. */
+.teamCustomTag {
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  background: rgba(234, 179, 8, 0.2);
+  color: var(--gold);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+/* Every customised team, including the 29 not on screen. Overrides accumulate
+ * across sessions and are invisible on any card but this one, so the standing
+ * count is the only answer to "what have I already changed". */
+.teamCount {
+  font-size: 11px;
+  color: var(--text-dim);
+  font-variant-numeric: tabular-nums;
+  cursor: help;
+}
+
+.teamFields {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.teamField {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-rows: auto auto;
+  gap: 3px 8px;
+  align-items: center;
+}
+
+.teamFieldLabel {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.3px;
+}
+
+/* "official" / "auto" — this field is following something, not chosen. */
+.teamFieldAuto {
+  font-size: 9px;
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 0 4px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+/* Per-field revert. Sized as a target, not a glyph — it is next to a color
+ * picker that is very easy to hit by accident. */
+.teamFieldClear {
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-muted);
+  font-size: 11px;
+  line-height: 1;
+}
+.teamFieldClear:hover { background: var(--card-hover); color: var(--text); }
+
+.teamSwatch {
+  width: 34px;
+  height: 26px;
+  padding: 2px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--card-bg);
+  cursor: pointer;
+}
+
+/* Wide enough for "#RRGGBB" without reflowing as it is typed. */
+.teamHex {
+  width: 88px;
+  padding: 4px 6px;
+  font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+/* Mid-type, not wrong: the field holds "#FEC5" on the way to "#FEC524". Says
+ * "not committed yet" rather than "error", which is why it is a border and not
+ * a message. */
+.teamHexInvalid {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.teamEmpty {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+.teamEmpty code {
+  font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  font-size: 11px;
+  background: rgba(255, 255, 255, 0.07);
+  padding: 1px 4px;
+  border-radius: 3px;
 }

@@ -54,13 +54,26 @@ export async function uploadPhoto(playerId, file) {
   return body;
 }
 
-/** Persists the whole crops map. The server rewrites the file wholesale. */
-export async function saveCrops(crops) {
-  const res = await fetch(cropsUrl(), {
+/**
+ * Persists a whole JSON map, wholesale — the server replaces the file.
+ *
+ * Wholesale rather than per-key because that is what makes REMOVAL work.
+ * Resetting a team to its official colors means its key is GONE from
+ * team-overrides.json, and a merge-on-write endpoint could only ever express
+ * that as some sentinel value. Same reason a deleted crop disappears.
+ */
+async function saveJson(url, value) {
+  const res = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(crops),
+    body: JSON.stringify(value),
   });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json();
 }
+
+/** Persists the whole crops map. */
+export const saveCrops = crops => saveJson(cropsUrl(), crops);
+
+/** Persists the whole team-override map. See teamTheme.js for its shape. */
+export const saveTeams = overrides => saveJson(teamsUrl(), overrides);

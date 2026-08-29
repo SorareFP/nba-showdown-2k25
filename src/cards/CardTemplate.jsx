@@ -13,7 +13,7 @@
 // generators are run. A missing field renders a placeholder, never a crash —
 // the studio has to stay usable while the data is half-built.
 import { useState } from 'react';
-import { getThemedTeam } from './teams.js';
+import { getThemedTeam, resolveAccent } from './teams.js';
 import { resolvePhotoUrl, cropToStyle } from './photo.js';
 import styles from './CardTemplate.module.css';
 
@@ -53,36 +53,14 @@ export function findShotLineIndex(chart, shotLine) {
   return chart.findIndex(t => t && shotLine >= t.lo && shotLine <= t.hi);
 }
 
-/** Perceptual luminance of a #rrggbb color, 0 (black) to 1 (white). */
-function luminance(hex) {
-  if (typeof hex !== 'string' || !/^#[0-9A-Fa-f]{6}$/.test(hex)) return 0;
-  const n = parseInt(hex.slice(1), 16);
-  const [r, g, b] = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map(c => c / 255);
-  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-}
-
-/**
- * Picks the color used for team-tinted TEXT on the card's navy field.
- *
- * Neither brand color is safe to use blind: nine teams (Bulls, Rockets,
- * Spurs, Raptors, Trail Blazers, Nets...) carry #000000 as one of their two
- * colors, and black text on a navy card is invisible. So take the brighter of
- * the pair, and if even that is too dark to read, fall back to a neutral
- * off-white. Decorative fills still use the raw brand colors — only text and
- * hairlines route through here.
- *
- * The threshold is set where it is because it is the lowest value that clears
- * the two teams whose brighter color is still a mid-tone blue on a navy field
- * (Timberwolves #236192, Hornets #00788C) while keeping the ones that read
- * fine (Thunder #007AC1, Grizzlies #5D76A9). The printed Timberwolves card
- * uses cream for exactly this reason.
- */
-const MIN_ACCENT_LUMINANCE = 0.38;
-
-export function pickAccent(primary, secondary) {
-  const brighter = luminance(secondary) > luminance(primary) ? secondary : primary;
-  return luminance(brighter) < MIN_ACCENT_LUMINANCE ? '#E6ECF8' : brighter;
-}
+// The accent rule lives in teams.js now, with the rest of a team's theme: the
+// studio's team editor has to offer the same value the card renders, and two
+// copies of that rule would drift. Import pickAccent/resolveAccent from there.
+//
+// Deliberately NOT re-exported from here. A re-export would keep the old
+// import path working, but it also makes this module export a non-component,
+// which breaks React Fast Refresh — the studio's whole workflow is editing a
+// card and watching it update.
 
 /**
  * Font size for the vertical name, computed rather than measured.
@@ -139,7 +117,9 @@ export default function CardTemplate({
   onPhotoLoad,
 }) {
   const team = getThemedTeam(card.team, teamOverrides);
-  const accent = pickAccent(team.primary, team.secondary);
+  // An accent the studio's team editor set wins; otherwise it is computed from
+  // the pair. See resolveAccent — Denver is why the override exists.
+  const accent = resolveAccent(team);
 
   const photoUrl = resolvePhotoUrl({
     playerId: card.id,

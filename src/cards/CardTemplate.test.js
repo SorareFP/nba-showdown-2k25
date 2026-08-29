@@ -13,7 +13,6 @@ import CardTemplate, {
   CARD_HEIGHT,
   formatRollRange,
   findShotLineIndex,
-  pickAccent,
   nameFontSize,
   logoSrc,
 } from './CardTemplate.jsx';
@@ -186,6 +185,38 @@ describe('team theming', () => {
     expect(html).toContain('--team-primary:#FF0000');
     expect(html).toContain('--team-secondary:#B9975B'); // untouched
   });
+
+  it('computes --team-accent when no override names one', () => {
+    // Cavaliers Gold #B9975B is the brighter of the pair and readable on navy.
+    expect(render({ card: LEBRON_08_09 })).toContain('--team-accent:#B9975B');
+  });
+
+  it('lets a studio override choose --team-accent outright', () => {
+    // THE DENVER CASE, in the only place it finally matters: the accent is
+    // derived, so editing primary/secondary cannot always produce the color
+    // the user wants. This is the path that puts Nuggets gold on the card.
+    const html = render({
+      card: LEBRON_08_09,
+      teamOverrides: { CLE: { accent: '#FEC524' } },
+    });
+    expect(html).toContain('--team-accent:#FEC524');
+    // The brand colors themselves are untouched — only the tinted text moves.
+    expect(html).toContain('--team-primary:#6F263D');
+    expect(html).toContain('--team-secondary:#B9975B');
+  });
+
+  it('goes back to the computed accent when the override is removed', () => {
+    // Reset removes the key rather than freezing today's value into it.
+    expect(render({ card: LEBRON_08_09, teamOverrides: {} })).toContain('--team-accent:#B9975B');
+  });
+
+  it('still recomputes the accent from an overridden pair', () => {
+    const html = render({
+      card: LEBRON_08_09,
+      teamOverrides: { CLE: { secondary: '#FFFFFF' } },
+    });
+    expect(html).toContain('--team-accent:#FFFFFF');
+  });
 });
 
 describe('team logo', () => {
@@ -249,31 +280,9 @@ describe('findShotLineIndex', () => {
   });
 });
 
-describe('pickAccent', () => {
-  it('picks the brighter of the two brand colors', () => {
-    expect(pickAccent('#1D4289', '#FFC72C')).toBe('#FFC72C'); // Warriors
-  });
-  it('never returns a color too dark to read on the navy field', () => {
-    // Bulls: Red #BA0C2F / Black #010101 — both dark, neither usable as text.
-    expect(pickAccent('#BA0C2F', '#010101')).toBe('#E6ECF8');
-    // Timberwolves: mid-tone blue on a navy card, verified too dim in-studio.
-    expect(pickAccent('#0C2340', '#236192')).toBe('#E6ECF8');
-    // Spurs: official Silver is bright enough to keep.
-    expect(pickAccent('#9EA2A2', '#010101')).toBe('#9EA2A2');
-  });
-
-  it('produces a readable accent for every one of the 30 teams', () => {
-    for (const [abbr, team] of Object.entries(TEAMS)) {
-      const accent = pickAccent(team.primary, team.secondary);
-      expect(accent, abbr).toMatch(/^#[0-9A-Fa-f]{6}$/);
-      expect(accent, abbr).not.toBe('#000000');
-    }
-  });
-
-  it('survives a garbage override color rather than crashing', () => {
-    expect(pickAccent(undefined, 'not-a-color')).toBe('#E6ECF8');
-  });
-});
+// pickAccent and resolveAccent moved to teams.js and are tested there, beside
+// the table they read. What stays this file's business is that the card puts
+// the resolved value on --team-accent — see the team theming block above.
 
 describe('nameFontSize', () => {
   // Tomorrow's measured metrics: cap height 0.74em, average uppercase advance

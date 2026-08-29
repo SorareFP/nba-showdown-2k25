@@ -12,6 +12,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import PlayerList from './PlayerList.jsx';
 import CropEditor from './CropEditor.jsx';
+import TeamEditor from './TeamEditor.jsx';
 import { CARD_WIDTH, CARD_HEIGHT } from '../cards/CardTemplate.jsx';
 import {
   CURRENT_SET,
@@ -22,7 +23,8 @@ import {
 } from '../cards/sets.js';
 import { SOURCES, DEFAULT_SOURCE, TEAMS_RESOLVED, filterPlayers, stepSelection } from './players.js';
 import { pruneCrops, resetCrop } from './crop.js';
-import { fetchStudioState, uploadPhoto, saveCrops, isImageFile } from './api.js';
+import { pruneTeamOverrides } from './teamTheme.js';
+import { fetchStudioState, uploadPhoto, saveCrops, saveTeams, isImageFile } from './api.js';
 import styles from './Studio.module.css';
 
 /** Long enough that a drag saves once, short enough to feel immediate. */
@@ -67,8 +69,11 @@ export default function Studio() {
   const [listEl, setListEl] = useState(null);
 
   // Only a user edit should trigger a save — loading the server's own crops
-  // back must not immediately POST them again.
+  // back must not immediately POST them again. Same for team overrides, and it
+  // matters more there: a spurious first save would write a pruned copy of the
+  // file over the file it was just read from.
   const cropsDirty = useRef(false);
+  const teamsDirty = useRef(false);
   // Where the selection last sat in the filtered list, so the keyboard can
   // carry on from there after a filter drops the selected player out.
   const anchorIndex = useRef(0);
@@ -118,6 +123,29 @@ export default function Studio() {
     }, SAVE_DEBOUNCE_MS);
     return () => clearTimeout(timer);
   }, [crops]);
+
+  // ── Debounced team-override persistence ───────────────────────────────────
+  //
+  // Same shape and the same indicator as crops, for the same reason: colors
+  // are dragged out of a picker and typed into a hex box, so the value changes
+  // many times per second and only the last one is worth a write.
+  //
+  // pruneTeamOverrides on the way out is what makes "reset to official" stick.
+  // A team whose last color was cleared has to leave the file entirely — an
+  // empty `{"DEN": {}}` would still read back as a customised team.
+  useEffect(() => {
+    if (!teamsDirty.current) return undefined;
+    setSaveStatus('saving');
+    const timer = setTimeout(() => {
+      saveTeams(pruneTeamOverrides(teamOverrides))
+        .then(() => setSaveStatus('saved'))
+        .catch(err => {
+          setSaveStatus('error');
+          setNotice({ kind: 'error', text: `Team colors save failed: ${err.message}` });
+        });
+    }, SAVE_DEBOUNCE_MS);
+    return () => clearTimeout(timer);
+  }, [teamOverrides]);
 
   // ── Keyboard navigation ───────────────────────────────────────────────────
   useEffect(() => {
@@ -182,6 +210,14 @@ export default function Studio() {
     [editable]
   );
 
+  // The whole map, not one team: TeamEditor works out the next map with the
+  // pure helpers in teamTheme.js, and this only marks it as the user's doing
+  // so the effect above is allowed to write it.
+  const updateTeamOverrides = useCallback(next => {
+    teamsDirty.current = true;
+    setTeamOverrides(next);
+  }, []);
+
   const handleDropFile = useCallback(async (playerId, file) => {
     if (!file) return;
     // The last line of defence. The row and the preview already refuse the
@@ -208,11 +244,12 @@ export default function Studio() {
       await uploadPhoto(playerId, file);
       // Re-read the server's photo list rather than assuming: this is what
       // flips the row's indicator and is the only confirmation the write
-      // actually landed. Crops are deliberately NOT taken from the refresh —
-      // a debounced local save may still be in flight.
+      // actually landed. ONLY the photo list is taken from the refresh —
+      // crops and team colors may have a debounced local save still in
+      // flight, and adopting the server's older copy here would both discard
+      // that edit and then persist the stale value over it.
       const state = await fetchStudioState();
       setPhotos(state.photos ?? []);
-      setTeamOverrides(state.teamOverrides ?? {});
       // After the refresh, so the new bytes are already on disk when the
       // browser goes back for them. Date.now() rather than a counter: two
       // uploads of the same player in one session must not be able to reuse a
@@ -361,16 +398,31 @@ export default function Studio() {
             onDropFile={handleDropFile}
             editable={editable}
           />
+
+          {/* Not gated on `editable`. Photos and crops are per-player and the
+              two lists share player ids, which is what made them unsafe to
+              edit from the reference set. A team's colors are neither: there
+              are thirty franchises, they mean the same thing in both lists,
+              and the panel names the team it is writing. Editing them while
+              judging the template against real stats is the point. */}
+          <TeamEditor
+            team={selected?.team}
+            overrides={teamOverrides}
+            onChange={updateTeamOverrides}
+          />
         </section>
       </div>
     </div>
   );
 }
 
+// One indicator for both files. It answers "is my work on disk", and the user
+// does not care which of the two just wrote — naming crops here would make the
+// team editor look like it saves nothing.
 const SAVE_TEXT = {
-  idle: 'crops saved on disk',
+  idle: 'saved on disk',
   saving: 'saving…',
-  saved: 'crops saved',
+  saved: 'saved',
   error: 'save failed',
 };
 

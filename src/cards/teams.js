@@ -116,15 +116,102 @@ export function getTeam(abbr) {
 /**
  * Team record with any studio overrides applied.
  *
- * Overrides live in card-art/team-overrides.json and let colors be tuned per
- * team without editing this file. `overrides` is the whole map keyed by
- * abbreviation; only the fields it names are replaced.
+ * Overrides live in the set's team-overrides.json (src/cards/sets.js) and let
+ * colors be tuned per team without editing this file. `overrides` is the whole
+ * map keyed by abbreviation; only the fields it names are replaced.
  *
  * The override key is canonicalized too, so a tuned "BKN" reaches the pool's
  * "BRK" players — otherwise they would get the Nets' stock colors while every
  * other Net got the tuned ones.
+ *
+ * BLANK VALUES ARE IGNORED rather than applied. The editor writes this file
+ * live, character by character, out of text fields: an in-progress `""` in the
+ * hex box must not blank a team's primary color on every card at once. A field
+ * the user has actually cleared is removed from the override, not emptied.
+ *
+ * `accent` may appear here even though no TEAMS row carries one — see
+ * resolveAccent. That is the point of the field: it is normally computed, and
+ * an override is how a team stops computing it.
  */
 export function getThemedTeam(abbr, overrides = {}) {
   const canonical = canonicalTeam(abbr);
-  return { ...getTeam(canonical), ...(overrides?.[canonical] ?? {}) };
+  const base = getTeam(canonical);
+  const override = overrides?.[canonical];
+  if (!override || typeof override !== 'object') return { ...base };
+
+  const applied = {};
+  for (const [field, value] of Object.entries(override)) {
+    if (typeof value === 'string' && value.trim() === '') continue;
+    if (value == null) continue;
+    applied[field] = value;
+  }
+  return { ...base, ...applied };
+}
+
+// ── The third color ─────────────────────────────────────────────────────────
+//
+// A card is themed from THREE values, but a team only has two official ones.
+// The third — the accent, used for team-tinted text and hairlines — is derived
+// from the pair by pickAccent below, and derivation is exactly why an override
+// for it has to exist.
+//
+// The problem in one team: Denver's official second color is Flatirons Red,
+// not the gold everyone pictures. Faithful to the source, and pickAccent then
+// finds neither Midnight Blue nor Flatirons Red bright enough to read on the
+// card's navy field, so the Nuggets' accent falls back to cream and the card
+// has no gold anywhere. Fifteen of the thirty teams reach that same fallback,
+// because so many official second colors are black or navy. Fixing that by
+// editing TEAMS would mean writing an unofficial color into a file whose whole
+// job is to record the official ones — hence: override the accent directly.
+
+/** Perceptual luminance of a #rrggbb color, 0 (black) to 1 (white). */
+function luminance(hex) {
+  if (typeof hex !== 'string' || !/^#[0-9A-Fa-f]{6}$/.test(hex)) return 0;
+  const n = parseInt(hex.slice(1), 16);
+  const [r, g, b] = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map(c => c / 255);
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+/**
+ * The threshold is set where it is because it is the lowest value that clears
+ * the two teams whose brighter color is still a mid-tone blue on a navy field
+ * (Timberwolves #236192, Hornets #00788C) while keeping the ones that read
+ * fine (Thunder #007AC1, Grizzlies #5D76A9). The printed Timberwolves card
+ * uses cream for exactly this reason.
+ */
+const MIN_ACCENT_LUMINANCE = 0.38;
+
+/** The neutral off-white a team falls back to when both its colors are dark. */
+export const ACCENT_FALLBACK = '#E6ECF8';
+
+/**
+ * Picks the color used for team-tinted TEXT on the card's navy field.
+ *
+ * Neither brand color is safe to use blind: nine teams (Bulls, Rockets,
+ * Spurs, Raptors, Trail Blazers, Nets...) carry #010101 as one of their two
+ * colors, and black text on a navy card is invisible. So take the brighter of
+ * the pair, and if even that is too dark to read, fall back to a neutral
+ * off-white. Decorative fills still use the raw brand colors — only text and
+ * hairlines route through here.
+ */
+export function pickAccent(primary, secondary) {
+  const brighter = luminance(secondary) > luminance(primary) ? secondary : primary;
+  return luminance(brighter) < MIN_ACCENT_LUMINANCE ? ACCENT_FALLBACK : brighter;
+}
+
+/**
+ * The accent a themed team actually renders with: the explicit override when
+ * there is one, the computed pick when there is not.
+ *
+ * Deliberately NOT folded into getThemedTeam's return value. An absent accent
+ * has to stay absent in the merged record, because that is what distinguishes
+ * "this team is following the computation" from "this team's accent was
+ * chosen" — and only the second should survive into team-overrides.json. Bake
+ * the computed value into the record and every team the editor touches would
+ * silently freeze its accent at whatever pickAccent happened to return.
+ */
+export function resolveAccent(team) {
+  const explicit = team?.accent;
+  if (typeof explicit === 'string' && explicit.trim()) return explicit.trim();
+  return pickAccent(team?.primary, team?.secondary);
 }

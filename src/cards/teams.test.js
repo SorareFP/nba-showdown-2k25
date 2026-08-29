@@ -1,5 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { TEAMS, TEAM_ALIASES, canonicalTeam, getTeam, getThemedTeam } from './teams.js';
+import {
+  TEAMS,
+  TEAM_ALIASES,
+  ACCENT_FALLBACK,
+  canonicalTeam,
+  getTeam,
+  getThemedTeam,
+  pickAccent,
+  resolveAccent,
+} from './teams.js';
 import pool from '../../card-data/generated/player-pool-2026.json';
 
 describe('TEAMS', () => {
@@ -166,5 +175,91 @@ describe('getThemedTeam', () => {
   it('does not mutate the source table', () => {
     getThemedTeam('LAL', { LAL: { primary: '#FF0000' } });
     expect(TEAMS.LAL.primary).toBe('#330072');
+  });
+
+  it('ignores a blank value instead of applying it', () => {
+    // The studio's team editor writes this map live out of a text field, so an
+    // in-progress "" must not blank a color on every card on the team at once.
+    expect(getThemedTeam('LAL', { LAL: { primary: '' } }).primary).toBe('#330072');
+    expect(getThemedTeam('LAL', { LAL: { primary: '   ' } }).primary).toBe('#330072');
+    expect(getThemedTeam('LAL', { LAL: { primary: null } }).primary).toBe('#330072');
+  });
+
+  it('carries an accent through even though no team has one', () => {
+    // The accent is normally computed (see resolveAccent). This field is how a
+    // team stops computing it, so the merge has to pass it along.
+    expect(TEAMS.DEN.accent).toBeUndefined();
+    expect(getThemedTeam('DEN', { DEN: { accent: '#FEC524' } }).accent).toBe('#FEC524');
+  });
+
+  it('leaves the accent absent when nothing overrides it', () => {
+    // Load-bearing: "absent" is what tells the editor this team is following
+    // the computation rather than pinned to a chosen color.
+    expect(getThemedTeam('DEN', {})).not.toHaveProperty('accent');
+    expect(getThemedTeam('DEN', { DEN: { primary: '#FF0000' } })).not.toHaveProperty('accent');
+  });
+});
+
+describe('pickAccent', () => {
+  it('takes the brighter of the two brand colors', () => {
+    expect(pickAccent('#1D4289', '#FFC72C')).toBe('#FFC72C'); // Warriors
+    expect(pickAccent('#FFC72C', '#1D4289')).toBe('#FFC72C'); // order-independent
+  });
+
+  it('falls back to cream when even the brighter one is unreadable on navy', () => {
+    expect(pickAccent('#BA0C2F', '#010101')).toBe(ACCENT_FALLBACK); // Bulls
+    expect(pickAccent(undefined, 'not-a-color')).toBe(ACCENT_FALLBACK);
+  });
+
+  it('falls back for half the league, which is why the override exists', () => {
+    // So many official second colors are black or navy that the computation
+    // gives up on 15 of 30 teams — Denver among them. Pinned because it is the
+    // premise of the team editor's accent field, not an incidental number.
+    const fellBack = Object.entries(TEAMS).filter(
+      ([, t]) => pickAccent(t.primary, t.secondary) === ACCENT_FALLBACK
+    );
+    expect(fellBack).toHaveLength(15);
+    expect(fellBack.map(([abbr]) => abbr)).toContain('DEN');
+  });
+});
+
+describe('resolveAccent', () => {
+  it('prefers an explicit accent over the computed one', () => {
+    // Denver: Midnight Blue and Flatirons Red are both too dark, so the card
+    // computes cream and has no gold anywhere. This is the fix.
+    const computed = resolveAccent(getThemedTeam('DEN', {}));
+    expect(computed).toBe(ACCENT_FALLBACK);
+    expect(resolveAccent(getThemedTeam('DEN', { DEN: { accent: '#FEC524' } }))).toBe('#FEC524');
+  });
+
+  it('falls back to the computed accent when none is set', () => {
+    expect(resolveAccent(getThemedTeam('GSW', {}))).toBe('#FFC72C');
+    expect(resolveAccent(TEAMS.GSW)).toBe(pickAccent(TEAMS.GSW.primary, TEAMS.GSW.secondary));
+  });
+
+  it('treats a blank accent as no accent, not as a color', () => {
+    expect(resolveAccent({ primary: '#1D4289', secondary: '#FFC72C', accent: '' })).toBe('#FFC72C');
+    expect(resolveAccent({ primary: '#1D4289', secondary: '#FFC72C', accent: '   ' })).toBe('#FFC72C');
+    expect(resolveAccent({ primary: '#1D4289', secondary: '#FFC72C', accent: null })).toBe('#FFC72C');
+  });
+
+  it('recomputes when primary/secondary are overridden and no accent is set', () => {
+    // Editing the pair still moves the accent — that is the default behaviour
+    // an explicit accent opts out of.
+    expect(resolveAccent(getThemedTeam('DEN', { DEN: { secondary: '#FEC524' } }))).toBe('#FEC524');
+  });
+
+  it('reaches an aliased team through its canonical override', () => {
+    // The pool's 12 "BRK" players must get the same accent as every "BKN" one.
+    const overrides = { BKN: { accent: '#FEC524' } };
+    expect(resolveAccent(getThemedTeam('BRK', overrides))).toBe('#FEC524');
+    expect(resolveAccent(getThemedTeam('BKN', overrides))).toBe('#FEC524');
+    expect(resolveAccent(getThemedTeam('CHO', { CHA: { accent: '#123456' } }))).toBe('#123456');
+    expect(resolveAccent(getThemedTeam('PHO', { PHX: { accent: '#123456' } }))).toBe('#123456');
+  });
+
+  it('survives a missing team rather than throwing', () => {
+    expect(resolveAccent(undefined)).toBe(ACCENT_FALLBACK);
+    expect(resolveAccent({})).toBe(ACCENT_FALLBACK);
   });
 });

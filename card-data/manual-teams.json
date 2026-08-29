@@ -1,0 +1,7 @@
+{
+  "_comment": "Teams for players neither nba.com's active roster nor their own pool record can resolve (absent from the roster AND carrying a 2TM/3TM aggregate code). Keyed by the player name exactly as it appears in player-pool-2026.json. null means unresolved — the resolver reports these rather than guessing, since a wrong team puts the wrong logo and colors on a card.",
+  "Cam Thomas": null,
+  "Vince Williams Jr.": null,
+  "Ochai Agbaji": null,
+  "Guerschon Yabusele": null
+}

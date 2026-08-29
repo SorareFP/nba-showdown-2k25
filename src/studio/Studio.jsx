@@ -47,9 +47,12 @@ export default function Studio() {
   const [notice, setNotice] = useState(null);
   const [uploadingId, setUploadingId] = useState(null);
   const [droppingId, setDroppingId] = useState(null);
-  // Bumped on every upload to force the <img> to re-request a path that did
-  // not change.
-  const [photoVersion, setPhotoVersion] = useState(0);
+  // playerId -> cache-busting token, set fresh on every successful upload so
+  // the <img> re-requests a path that did not change. Per player rather than
+  // one global counter: a token that moves for everybody re-downloads every
+  // photo the session touches. Kept OUT of the server state so the refresh
+  // that follows an upload cannot wipe it.
+  const [photoVersions, setPhotoVersions] = useState({});
 
   // Callback refs rather than useRef: these effects must re-run if the element
   // they observe is ever replaced.
@@ -180,7 +183,15 @@ export default function Studio() {
       const state = await fetchStudioState();
       setPhotos(state.photos ?? []);
       setTeamOverrides(state.teamOverrides ?? {});
-      setPhotoVersion(v => v + 1);
+      // After the refresh, so the new bytes are already on disk when the
+      // browser goes back for them. Date.now() rather than a counter: two
+      // uploads of the same player in one session must not be able to reuse a
+      // token, which is exactly the case that looked "fixed" before.
+      setPhotoVersions(prev => {
+        const previous = prev[playerId] ?? 0;
+        const now = Date.now();
+        return { ...prev, [playerId]: now > previous ? now : previous + 1 };
+      });
       setSelectedId(playerId);
       setNotice({ kind: 'ok', text: `Saved ${file.name} as ${playerId}.jpg` });
     } catch (err) {
@@ -263,7 +274,7 @@ export default function Studio() {
             hasPhoto={selectedId ? photoIds.has(selectedId) : false}
             teamOverrides={teamOverrides}
             scale={scale}
-            photoVersion={photoVersion}
+            photoVersion={selectedId ? photoVersions[selectedId] : undefined}
             previewRef={setPreviewEl}
             onCropChange={next => updateCrop(selectedId, next)}
             onReset={() => updateCrop(selectedId, resetCrop())}

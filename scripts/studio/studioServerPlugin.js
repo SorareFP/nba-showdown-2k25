@@ -178,7 +178,12 @@ export function studioServerPlugin() {
           }
           if (!existsSync(file) || !statSync(file).isFile()) return next();
           res.setHeader('Content-Type', CONTENT_TYPES[extname(file).toLowerCase()] ?? 'application/octet-stream');
-          res.setHeader('Cache-Control', 'no-cache');
+          // no-store, not no-cache: these files are rewritten in place under an
+          // unchanged name, and `no-cache` still permits the browser to serve
+          // the bytes it already decoded. The URL's ?v= token (see
+          // src/cards/photo.js) is the real fix; this is the belt to its
+          // braces, and costs nothing on a dev server.
+          res.setHeader('Cache-Control', 'no-store, must-revalidate');
           res.end(readFileSync(file));
         })
       );

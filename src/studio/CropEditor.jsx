@@ -8,7 +8,17 @@
 // turns pointer events into calls on it.
 import { useEffect, useRef, useState } from 'react';
 import CardTemplate, { CARD_WIDTH, CARD_HEIGHT } from '../cards/CardTemplate.jsx';
-import { normalizeCrop, panCrop, setZoom, zoomByWheel, isDefaultCrop, PHOTO_WINDOW, ZOOM_MIN, ZOOM_MAX } from './crop.js';
+import {
+  normalizeCrop,
+  panCrop,
+  setZoom,
+  zoomByWheel,
+  isDefaultCrop,
+  clampCropToImage,
+  PHOTO_WINDOW,
+  ZOOM_MIN,
+  ZOOM_MAX,
+} from './crop.js';
 import styles from './Studio.module.css';
 
 export default function CropEditor({
@@ -30,12 +40,21 @@ export default function CropEditor({
   const dragRef = useRef(null);
   const [dragging, setDragging] = useState(false);
   const [dropping, setDropping] = useState(false);
+  // The source image's natural size, once it has loaded, tagged with WHICH
+  // photo it describes. Tagged rather than cleared by an effect because a
+  // cached image can fire load before a passive effect flushes, and a stale
+  // size bounding the new photo's pan is exactly the bug this is here to avoid.
+  // Until it arrives, crop.js falls back to its generous hard limit.
+  const [loaded, setLoaded] = useState(null);
+  const photoKey = `${card?.id ?? ''}:${photoVersion ?? ''}:${hasPhoto ? 1 : 0}`;
+  const photoSize = loaded?.key === photoKey ? loaded.size : null;
 
   const value = normalizeCrop(crop);
+  const commit = next => onCropChange(clampCropToImage(next, photoSize));
 
   // Latest props for the native wheel listener below, which is registered once.
   const latest = useRef();
-  latest.current = { crop: value, onCropChange };
+  latest.current = { crop: value, commit };
 
   // React's onWheel is passive, so preventDefault() inside it is ignored and
   // the page scrolls while you try to zoom. A native non-passive listener is
@@ -45,7 +64,7 @@ export default function CropEditor({
     if (!el) return undefined;
     const onWheel = event => {
       event.preventDefault();
-      latest.current.onCropChange(zoomByWheel(latest.current.crop, event.deltaY));
+      latest.current.commit(zoomByWheel(latest.current.crop, event.deltaY));
     };
     el.addEventListener('wheel', onWheel, { passive: false });
     return () => el.removeEventListener('wheel', onWheel);
@@ -81,7 +100,7 @@ export default function CropEditor({
   const handlePointerMove = event => {
     const start = dragRef.current;
     if (!start) return;
-    onCropChange(
+    commit(
       panCrop(start.crop, {
         dx: event.clientX - start.x,
         dy: event.clientY - start.y,
@@ -127,14 +146,17 @@ export default function CropEditor({
           style={{ width: CARD_WIDTH * scale, height: CARD_HEIGHT * scale }}
         >
           <div className={styles.cardScaler} style={{ transform: `scale(${scale})` }}>
-            {/* Remounted when a photo is replaced so the browser re-requests
-                the (identically named) file instead of showing the old one. */}
+            {/* photoVersion goes INTO the photo's URL (see resolvePhotoUrl) —
+                remounting the card was not enough to defeat the browser's
+                image cache, because the reused bytes are not in the React
+                tree. */}
             <CardTemplate
-              key={`${card.id}:${photoVersion}`}
               card={card}
               crop={value}
               hasPhoto={hasPhoto}
               teamOverrides={teamOverrides}
+              photoVersion={photoVersion}
+              onPhotoLoad={size => setLoaded({ key: photoKey, size })}
             />
           </div>
 
@@ -180,7 +202,7 @@ export default function CropEditor({
             max={ZOOM_MAX}
             step={0.01}
             value={value.zoom}
-            onChange={event => onCropChange(setZoom(value, Number(event.target.value)))}
+            onChange={event => commit(setZoom(value, Number(event.target.value)))}
             aria-label="Photo zoom"
           />
           <span className={styles.readout}>{value.zoom.toFixed(2)}x</span>

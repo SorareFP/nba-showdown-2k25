@@ -12,6 +12,8 @@ import {
   resetCrop,
   isDefaultCrop,
   pruneCrops,
+  panLimits,
+  clampCropToImage,
 } from './crop.js';
 import { DEFAULT_CROP, cropToStyle } from '../cards/photo.js';
 
@@ -53,9 +55,10 @@ describe('normalizeCrop', () => {
   });
 
   it('produces a crop cropToStyle can consume', () => {
-    expect(cropToStyle(normalizeCrop({ x: 10, y: -5, zoom: 1.5 })).transform).toBe(
-      'translate(10%, -5%) scale(1.5)'
-    );
+    const style = cropToStyle(normalizeCrop({ x: 10, y: -5, zoom: 1.5 }));
+    expect(style.transform).toContain('scale(1.5)');
+    expect(style.objectPosition).not.toContain('NaN');
+    expect(style.transform).not.toContain('NaN');
   });
 });
 
@@ -119,9 +122,12 @@ describe('panCrop', () => {
   });
 
   it('stops a runaway drag from flinging the photo out of reach', () => {
+    // The hard ceiling, used only while the image is unmeasured. Set clear of
+    // the widest realistic source at 3x zoom so it never fences a real photo
+    // in — clampCropToImage does the real bounding.
     const far = panCrop(DEFAULT_CROP, { dx: 99999, dy: -99999, scale: 1 });
-    expect(far.x).toBe(200);
-    expect(far.y).toBe(-200);
+    expect(far.x).toBe(400);
+    expect(far.y).toBe(-400);
   });
 
   it('treats a zero or missing scale as 1 instead of dividing by zero', () => {
@@ -133,6 +139,91 @@ describe('panCrop', () => {
 
   it('rounds to two decimals so crops.json stays readable', () => {
     expect(String(panCrop(DEFAULT_CROP, { dx: 7, scale: 0.37 }).x)).toMatch(/^-?\d+(\.\d{1,2})?$/);
+  });
+});
+
+describe('panLimits', () => {
+  // A wide frame in the tall photo window: cover trims the sides, so there is
+  // a lot of photo to the left and right and almost none above or below.
+  const WIDE = { width: 3200, height: 1800 };
+  // A frame taller than the window: the overflow is the other way round.
+  const TALL = { width: 1200, height: 2400 };
+
+  it('reports the real travel of a wide photo at zoom 1', () => {
+    const cover = PHOTO_WINDOW.height / WIDE.height; // height is the binding side
+    const shownWidth = WIDE.width * cover;
+    expect(panLimits(1, WIDE).x).toBeCloseTo(
+      ((shownWidth - PHOTO_WINDOW.width) / 2 / PHOTO_WINDOW.width) * 100,
+      6
+    );
+    // Cover made the height exactly the window's, so there is nowhere to go.
+    expect(panLimits(1, WIDE).y).toBeCloseTo(0, 6);
+  });
+
+  it('gives a tall photo vertical room and a wide photo horizontal room', () => {
+    expect(panLimits(1, TALL).y).toBeGreaterThan(0);
+    expect(panLimits(1, TALL).x).toBeCloseTo(0, 6);
+    expect(panLimits(1, WIDE).x).toBeGreaterThan(0);
+  });
+
+  it('opens up BOTH axes as soon as you zoom in', () => {
+    // The reason zoom exists in this editor: a photo pinned on one axis at
+    // zoom 1 has to become pannable there, or framing it is impossible.
+    for (const image of [WIDE, TALL]) {
+      const at1 = panLimits(1, image);
+      const at2 = panLimits(2, image);
+      expect(at2.x).toBeGreaterThan(at1.x);
+      expect(at2.y).toBeGreaterThan(at1.y);
+      expect(Math.min(at2.x, at2.y)).toBeGreaterThan(10);
+    }
+  });
+
+  it('grows the travel in proportion to the zoom', () => {
+    // At zoom z the shown image is z times as big, so the overhang past the
+    // window is (shown*z - window)/2 — checked against the axis cover pins.
+    const z = 2.5;
+    expect(panLimits(z, WIDE).y).toBeCloseTo(((z - 1) / 2) * 100, 6);
+  });
+
+  it('falls back to the hard ceiling when the image has not been measured', () => {
+    // Never zero: a crop that silently refuses to move would be worse than the
+    // bug this bounding exists to fix.
+    for (const unknown of [undefined, null, {}, { width: 0, height: 0 }, { width: 'x' }]) {
+      expect(panLimits(1, unknown)).toEqual({ x: 400, y: 400 });
+    }
+  });
+});
+
+describe('clampCropToImage', () => {
+  const WIDE = { width: 3200, height: 1800 };
+
+  it('pulls a pan back to the photo edge instead of past it', () => {
+    const clamped = clampCropToImage({ x: 300, y: 300, zoom: 1 }, WIDE);
+    expect(clamped.x).toBeCloseTo(panLimits(1, WIDE).x, 1);
+    expect(clamped.y).toBeCloseTo(0, 1);
+  });
+
+  it('leaves a crop inside the photo untouched', () => {
+    expect(clampCropToImage({ x: 10, y: 0, zoom: 1 }, WIDE)).toEqual({ x: 10, y: 0, zoom: 1 });
+  });
+
+  it('re-bounds an existing pan when zooming back OUT shrinks the travel', () => {
+    // Panned to the edge at 3x, then zoomed out: the crop that was legal is
+    // now past the edge, and without this the next drag back would move
+    // nothing for hundreds of pixels.
+    const panned = clampCropToImage({ x: 400, y: 400, zoom: 3 }, WIDE);
+    const zoomedOut = clampCropToImage({ ...panned, zoom: 1 }, WIDE);
+    expect(zoomedOut.x).toBeLessThan(panned.x);
+    expect(zoomedOut.x).toBeCloseTo(panLimits(1, WIDE).x, 1);
+    expect(zoomedOut.y).toBeCloseTo(0, 1);
+  });
+
+  it('leaves the crop alone while the image is unmeasured', () => {
+    expect(clampCropToImage({ x: 120, y: -80, zoom: 1.5 }, null)).toEqual({
+      x: 120,
+      y: -80,
+      zoom: 1.5,
+    });
   });
 });
 

@@ -107,7 +107,18 @@ function formatBoost(value) {
   return value < 0 ? `${value}` : `+${value}`;
 }
 
-export default function CardTemplate({ card = {}, crop, hasPhoto = false, teamOverrides }) {
+export default function CardTemplate({
+  card = {},
+  crop,
+  hasPhoto = false,
+  teamOverrides,
+  // A token that changes when this player's photo file is rewritten, so the
+  // browser re-requests a URL that did not change. See resolvePhotoUrl.
+  photoVersion,
+  // Optional: the studio needs the source image's real dimensions to know how
+  // far it can be panned. Nothing about the card depends on it.
+  onPhotoLoad,
+}) {
   const team = getThemedTeam(card.team, teamOverrides);
   const accent = pickAccent(team.primary, team.secondary);
 
@@ -115,6 +126,7 @@ export default function CardTemplate({ card = {}, crop, hasPhoto = false, teamOv
     playerId: card.id,
     hasPhoto,
     personId: card.personId ?? null,
+    version: photoVersion,
   });
 
   const chart = Array.isArray(card.chart) ? card.chart : [];
@@ -160,7 +172,14 @@ export default function CardTemplate({ card = {}, crop, hasPhoto = false, teamOv
               src={photoUrl}
               alt={card.name ?? ''}
               className={styles.photo}
+              data-card-photo=""
               style={cropToStyle(crop)}
+              onLoad={event =>
+                onPhotoLoad?.({
+                  width: event.currentTarget.naturalWidth,
+                  height: event.currentTarget.naturalHeight,
+                })
+              }
             />
           ) : (
             <div className={styles.photoPlaceholder}>NO PHOTO</div>

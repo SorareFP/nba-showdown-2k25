@@ -1,34 +1,31 @@
 // Crop math for the studio's pan/zoom editor.
 //
-// Crop is METADATA ({x, y, zoom}) applied to the photo as a CSS transform by
-// src/cards/photo.js — the file dropped into card-art/photos/ is never touched.
-// Everything here is pure so the one piece that is genuinely easy to get wrong
-// — converting a mouse movement in scaled-preview pixels into a percentage of
-// the card's photo window — is tested rather than eyeballed.
-import { DEFAULT_CROP } from '../cards/photo.js';
+// Crop is METADATA ({x, y, zoom}) turned into CSS by src/cards/photo.js — the
+// file dropped into card-art/photos/ is never touched. Everything here is pure
+// so the two pieces that are genuinely easy to get wrong —
+// converting a mouse movement in scaled-preview pixels into a percentage of the
+// card's photo window, and working out how far a given photo can actually be
+// panned — are tested rather than eyeballed.
+import { DEFAULT_CROP, PHOTO_WINDOW } from '../cards/photo.js';
 
-/**
- * The photo window's position and size within the 843x1181 card.
- *
- * MUST match .photoOuter + .photoWindow in src/cards/CardTemplate.module.css:
- * left/top are the two nested offsets summed (150+5, 110+5), width/height are
- * the inner window's. crop.test.js parses that stylesheet and fails if these
- * drift, because a stale value here makes the drag overlay sit off the photo
- * and makes every pan translate by the wrong amount.
- */
-export const PHOTO_WINDOW = { left: 155, top: 115, width: 673, height: 796 };
+// Re-exported because the drag overlay and the crop math are the two things
+// that have to agree with the card's photo window, and both live here.
+export { PHOTO_WINDOW };
 
 export const ZOOM_MIN = 1;
 export const ZOOM_MAX = 3;
 
 /**
- * How far the photo may be pushed, as a percentage of the window.
+ * Hard ceiling on a pan, as a percentage of the window.
  *
- * At the maximum 3x zoom the image overhangs the window by 100% of it in each
- * direction, so 200 is well past any useful framing while still stopping a
- * runaway drag from flinging the photo somewhere it can't be found.
+ * Only reached when the source image's dimensions are unknown (it has not
+ * loaded yet, or failed to). Once they are known, panLimits below computes the
+ * exact travel and this never binds. 400 clears the widest realistic source —
+ * a 21:9 frame at 3x zoom needs ~364% — so an unloaded image is never
+ * artificially fenced in, while a runaway drag still cannot fling the crop
+ * somewhere it takes a thousand pixels of dragging to come back from.
  */
-const PAN_LIMIT = 200;
+const PAN_LIMIT = 400;
 
 /** Two decimals: enough precision to be invisible, keeps crops.json readable. */
 const round = n => Math.round(n * 100) / 100;
@@ -58,15 +55,16 @@ export function clampZoom(zoom) {
  * roughly half size, so 100px of mouse travel is ~200px of card, and without
  * the correction the photo crawls along at half the cursor's speed.
  *
- * The result is a percentage of the photo window because that is what the CSS
- * translate() takes — and because a percentage means the same framing whether
- * the card is previewed at 40% or screenshotted at full size for export.
+ * The result is a percentage of the photo window because that is the unit
+ * cropToStyle consumes — and because a percentage means the same framing
+ * whether the card is previewed at 40% or screenshotted at full size for
+ * export.
  *
- * Note it does NOT divide by zoom: `translate(x%, y%) scale(z)` composes as
- * translate-then-scale, so the translation happens in the card's own
- * coordinate space and a given percentage moves the image the same distance at
- * every zoom level. Dividing by zoom here would make zoomed-in drags lag the
- * cursor.
+ * Note it does NOT divide by zoom. x/y describe how far the visible photo
+ * moves in the card's own coordinate space, so a given percentage is the same
+ * on-screen distance at every zoom level; cropToStyle works out how much of
+ * that the magnified element absorbs. Dividing by zoom here would make
+ * zoomed-in drags lag the cursor.
  *
  * Call this ONCE PER DRAG with the total delta since pointerdown, not once per
  * pointermove event with the step: the two-decimal rounding below is invisible
@@ -82,6 +80,55 @@ export function panCrop(crop, { dx = 0, dy = 0, scale = 1 } = {}) {
     ...base,
     x: round(clamp(base.x + (ddx / s / PHOTO_WINDOW.width) * 100, -PAN_LIMIT, PAN_LIMIT)),
     y: round(clamp(base.y + (ddy / s / PHOTO_WINDOW.height) * 100, -PAN_LIMIT, PAN_LIMIT)),
+  };
+}
+
+/**
+ * How far this particular photo can actually be panned, each way, as a
+ * percentage of the photo window.
+ *
+ * cropToStyle already guarantees the window stays covered — the browser clamps
+ * object-position against the real image. What it cannot do is stop the STORED
+ * x/y from running past the edge, and a crop parked at 300% on a photo that
+ * only travels 55% means the next drag back moves nothing for a thousand
+ * pixels. So the studio clamps here, where the loaded image's dimensions are
+ * known, and the picture stops exactly at its own edge.
+ *
+ * The geometry is a plain image cropper's: `object-fit: cover` scales the
+ * source by whichever of the two window/source ratios is larger, zoom
+ * magnifies that, and the overhang past the window is the travel.
+ *
+ * Falls back to PAN_LIMIT when the image is unmeasured, never to zero — a crop
+ * that silently refuses to move would be a worse bug than the one this fixes.
+ */
+export function panLimits(zoom, image) {
+  const z = clampZoom(zoom);
+  const w = Number(image?.width);
+  const h = Number(image?.height);
+  if (!Number.isFinite(w) || !Number.isFinite(h) || w <= 0 || h <= 0) {
+    return { x: PAN_LIMIT, y: PAN_LIMIT };
+  }
+  const cover = Math.max(PHOTO_WINDOW.width / w, PHOTO_WINDOW.height / h);
+  const travel = (shown, window) => Math.min(PAN_LIMIT, Math.max(0, ((shown - window) / 2 / window) * 100));
+  return {
+    x: travel(w * cover * z, PHOTO_WINDOW.width),
+    y: travel(h * cover * z, PHOTO_WINDOW.height),
+  };
+}
+
+/**
+ * Pulls a crop back inside what the photo can reach.
+ *
+ * Applied by the editor after every pan and every zoom — zooming OUT shrinks
+ * the travel, so a crop that was legal at 3x can be past the edge at 1.2x.
+ */
+export function clampCropToImage(crop, image) {
+  const base = normalizeCrop(crop);
+  const limits = panLimits(base.zoom, image);
+  return {
+    ...base,
+    x: round(clamp(base.x, -limits.x, limits.x)),
+    y: round(clamp(base.y, -limits.y, limits.y)),
   };
 }
 

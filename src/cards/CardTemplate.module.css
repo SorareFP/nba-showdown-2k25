@@ -51,21 +51,42 @@
  *  - Nothing responsive. The layout is absolutely positioned against the fixed
  *    843x1181 field on purpose — it is a print asset, not a web page.
  *  - Team color goes through the custom properties only, so re-theming a team
- *    in the studio re-themes the whole card with no other edit:
- *      --team-primary / --team-secondary  raw brand colors, decorative fills
- *      --team-accent                      the readable one, for text/hairlines
- *                                         (teams.js resolveAccent: the studio's
- *                                         chosen accent if there is one, else
- *                                         pickAccent's brighter-of-the-two —
- *                                         nine teams carry near-black as a
- *                                         brand color, invisible on this navy)
+ *    in the studio re-themes the whole card with no other edit.
+ *
+ * ── NO COLOR IN THIS FILE IS A CONSTANT ─────────────────────────────────────
+ *
+ * The card's FIELD is the team's primary color — a Bulls card is red, a
+ * Celtics card is green — so light-on-dark can no longer be assumed and every
+ * value that used to be a hardcoded navy or white is now derived from that
+ * field by contrast ratio in src/cards/fieldTheme.js. Do not reintroduce a
+ * literal color here: on the thirty stock primaries you would not notice, and
+ * on the first light primary someone types into the team editor the card would
+ * go white-on-gold.
+ *
+ * The properties CardTemplate sets, and what each one is for:
+ *
+ *   --team-primary / --team-secondary   the raw brand pair, as recorded
+ *   --team-accent                       teams.js resolveAccent's answer
+ *   --field                             the card's field = primary
+ *   --field-ink / --field-ink-dim       legible text on the field
+ *   --field-ink-shadow                  a drop shadow that suits that ink
+ *   --field-panel / --field-panel-alt   raised (or recessed) chart panels
+ *   --field-panel-ink / -ink-dim        text on those panels
+ *   --field-frame                       the card's inner keyline
+ *   --field-rule                        chart hairlines
+ *   --field-well                        the deep recess behind the photo
+ *   --field-band-top / -bottom / -ink   the top band and its text
+ *   --accent-on-field                   the accent, nudged until it READS on
+ *                                       the field (an accent that equalled the
+ *                                       primary would erase the player's name)
+ *   --stripe-tonal / --stripe-secondary  the band's diagonal stripes
  */
 
 .card {
   position: relative;
   overflow: hidden;
-  background: #0C1B3A;
-  color: #FFFFFF;
+  background: var(--field);
+  color: var(--field-ink);
   /* Tomorrow is the face the printed set was made in. The fallbacks are only
    * there so a card is still legible if the font request fails; they are not
    * metrically compatible and the layout will be visibly off if one is used. */
@@ -87,7 +108,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  box-shadow: inset 0 0 0 7px #16305F;
+  box-shadow: inset 0 0 0 7px var(--field-frame);
   pointer-events: none;
 }
 
@@ -100,7 +121,7 @@
   width: 843px;
   height: 112px;
   overflow: hidden;
-  background: linear-gradient(180deg, #354C74 0%, #263A5F 100%);
+  background: linear-gradient(180deg, var(--field-band-top) 0%, var(--field-band-bottom) 100%);
 }
 .topBand::before {
   content: '';
@@ -109,9 +130,9 @@
   opacity: 0.62;
   background-image: repeating-linear-gradient(
     115deg,
-    var(--team-primary) 0 56px,
+    var(--stripe-tonal) 0 56px,
     transparent 56px 104px,
-    var(--team-secondary) 104px 128px,
+    var(--stripe-secondary) 104px 128px,
     transparent 128px 214px
   );
 }
@@ -137,6 +158,8 @@
   width: 28px;
   height: 63px;
   border-radius: 5px;
+  /* The ONE place literal colors are correct: this is the league's mark, not
+   * the team's, so it does not follow the field. */
   background: linear-gradient(180deg, #1D428A 0% 50%, #C8102E 50% 100%);
   border: 2px solid #FFFFFF;
   color: #FFFFFF;
@@ -158,18 +181,22 @@
 .speedBlock { left: 126px; }
 .powerBlock { left: 453px; }
 
+/* SPEED/POWER sit on the BAND, not on the field, so their ink is computed
+ * against the band — which on a light-primary card is a different answer. */
 .statLabel {
   font-size: 39px;
   font-weight: 700;
   letter-spacing: 1px;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.55);
+  color: var(--field-band-ink);
+  text-shadow: 0 2px 4px var(--field-band-shadow);
 }
 .statValue {
   margin-top: 10px;
   font-size: 39px;
   font-weight: 700;
   letter-spacing: 1px;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.55);
+  color: var(--field-band-ink);
+  text-shadow: 0 2px 4px var(--field-band-shadow);
 }
 
 /* ── Dotted chevron ornaments (top-right, bottom-left) ───────────────────── */
@@ -177,7 +204,7 @@
 .chevronTop,
 .chevronBottom {
   position: absolute;
-  color: var(--team-accent);
+  color: var(--accent-on-field);
   background-image: radial-gradient(circle, currentColor 2.3px, transparent 2.7px);
   background-size: 13px 13px;
   clip-path: polygon(50% 0%, 100% 50%, 100% 100%, 50% 50%, 0% 100%, 0% 50%);
@@ -219,8 +246,8 @@
   font-weight: 700;
   letter-spacing: 0;
   text-transform: uppercase;
-  color: var(--team-accent);
-  text-shadow: 0 3px 6px rgba(0, 0, 0, 0.5);
+  color: var(--accent-on-field);
+  text-shadow: 0 3px 6px var(--field-ink-shadow);
 }
 
 /* ── Photo window ────────────────────────────────────────────────────────── */
@@ -232,7 +259,7 @@
   top: 110px;
   width: 683px;
   height: 806px;
-  background: var(--team-accent);
+  background: var(--accent-on-field);
   clip-path: polygon(0 44px, 44px 0, 100% 0, 100% 660px, 462px 100%, 0 100%);
 }
 .photoWindow {
@@ -242,7 +269,7 @@
   width: 673px;
   height: 796px;
   overflow: hidden;
-  background: #060D1E;
+  background: var(--field-well);
   clip-path: polygon(0 40px, 40px 0, 100% 0, 100% 653px, 456px 100%, 0 100%);
 }
 .photo {
@@ -260,7 +287,9 @@
   font-size: 40px;
   font-weight: 700;
   letter-spacing: 6px;
-  color: rgba(255, 255, 255, 0.3);
+  color: var(--field-ink-dim);
+  /* A 4.5% hatch, deliberately left neutral: it is only ever seen through the
+   * "NO PHOTO" state on a well that a photo will cover. */
   background-image: repeating-linear-gradient(
     45deg,
     rgba(255, 255, 255, 0.045) 0 14px,
@@ -295,10 +324,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 3px solid var(--team-accent);
+  border: 3px solid var(--accent-on-field);
   border-radius: 50%;
-  background: var(--team-primary);
-  color: var(--team-accent);
+  background: var(--field-panel);
+  color: var(--accent-on-field);
   font-size: 23px;
   font-weight: 700;
   letter-spacing: 1px;
@@ -335,7 +364,7 @@
   width: 440px;
   border-collapse: collapse;
   table-layout: fixed;
-  border: 3px solid var(--team-accent);
+  border: 3px solid var(--accent-on-field);
 }
 .colRoll { width: 162px; }
 .colStat { width: 92px; }
@@ -343,26 +372,26 @@
 .chart th,
 .chart td {
   height: 41px;
-  border: 2px solid #5A7AAC;
+  border: 2px solid var(--field-rule);
   text-align: center;
   vertical-align: middle;
   font-size: 19px;
   font-weight: 700;
   letter-spacing: 1px;
-  color: #FFFFFF;
+  color: var(--field-panel-ink);
 }
 .chart th {
-  background: #0B2044;
+  background: var(--field-panel-alt);
   letter-spacing: 2px;
 }
 .chart td {
-  background: #14294F;
+  background: var(--field-panel);
 }
 .chartEmpty {
   font-size: 16px;
   font-weight: 400;
   letter-spacing: 1px;
-  color: rgba(255, 255, 255, 0.55);
+  color: var(--field-panel-ink-dim);
 }
 
 /* The shot-line marker. Sits against the table's left edge, on the row whose
@@ -378,7 +407,7 @@
   transform: translateY(-50%);
   font-size: 17px;
   line-height: 1;
-  color: #FFFFFF;
+  color: var(--field-panel-ink);
   font-family: 'Segoe UI Symbol', 'Apple Symbols', 'Noto Sans Symbols 2', sans-serif;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+  text-shadow: 0 1px 2px var(--field-ink-shadow);
 }

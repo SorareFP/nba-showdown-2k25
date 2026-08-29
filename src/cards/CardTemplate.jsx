@@ -14,6 +14,7 @@
 // the studio has to stay usable while the data is half-built.
 import { useState } from 'react';
 import { getThemedTeam, resolveAccent } from './teams.js';
+import { deriveFieldTheme, fieldThemeVars } from './fieldTheme.js';
 import { resolvePhotoUrl, cropToStyle } from './photo.js';
 import styles from './CardTemplate.module.css';
 
@@ -120,6 +121,10 @@ export default function CardTemplate({
   // An accent the studio's team editor set wins; otherwise it is computed from
   // the pair. See resolveAccent — Denver is why the override exists.
   const accent = resolveAccent(team);
+  // The card's FIELD is the team's primary color, so every other color on it —
+  // ink, panels, hairlines, the band — is derived from that primary by
+  // contrast rather than hardcoded. See fieldTheme.js.
+  const field = deriveFieldTheme(team.primary, team.secondary, accent);
 
   const photoUrl = resolvePhotoUrl({
     playerId: card.id,
@@ -138,9 +143,12 @@ export default function CardTemplate({
       style={{
         width: CARD_WIDTH,
         height: CARD_HEIGHT,
+        // The raw brand pair stays exposed: it is what the team editor round-
+        // trips, and the derived values below are only ever computed FROM it.
         '--team-primary': team.primary,
         '--team-secondary': team.secondary,
         '--team-accent': accent,
+        ...fieldThemeVars(field),
       }}
     >
       <div className={styles.topBand} />

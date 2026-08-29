@@ -5,6 +5,7 @@
 // markup. Going the testing-library route would mean adding two devDeps and
 // switching the suite (or this file) to a jsdom environment to buy assertions
 // we don't need. react-dom is already a production dependency here.
+import { readFileSync } from 'node:fs';
 import { describe, it, expect } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import React from 'react';
@@ -217,6 +218,44 @@ describe('team theming', () => {
       teamOverrides: { CLE: { secondary: '#FFFFFF' } },
     });
     expect(html).toContain('--team-accent:#FFFFFF');
+  });
+});
+
+describe('the field is the team primary', () => {
+  it('paints the card in the team color rather than a fixed navy', () => {
+    // The whole point of the change: a Bulls card is red, not navy with red
+    // trim. --field is what .card's background reads.
+    expect(render({ card: LEBRON_08_09 })).toContain('--field:#6F263D');
+    const bulls = render({ card: { name: 'X', team: 'CHI' } });
+    expect(bulls).toContain('--field:#BA0C2F');
+  });
+
+  it('follows a primary override, field and all', () => {
+    const html = render({
+      card: LEBRON_08_09,
+      teamOverrides: { CLE: { primary: '#FFC72C' } },
+    });
+    expect(html).toContain('--field:#FFC72C');
+    // ...and flips to dark ink for it, rather than leaving white on gold.
+    expect(html).not.toContain('--field-ink:#FFFFFF');
+  });
+
+  it('uses the light ink on every stock team', () => {
+    for (const abbr of Object.keys(TEAMS)) {
+      expect(render({ card: { name: 'X', team: abbr } }), abbr)
+        .toContain('--field-ink:#FFFFFF');
+    }
+  });
+
+  it('sets every custom property the stylesheet reads', () => {
+    // The failure this exists for is silent: a var(--typo) in the CSS simply
+    // paints nothing, and the card renders looking almost right. Cross-check
+    // the stylesheet's own var() calls against what the component sets.
+    const css = readFileSync(new URL('./CardTemplate.module.css', import.meta.url), 'utf8');
+    const used = new Set(Array.from(css.matchAll(/var\((--[a-z0-9-]+)\)/g), m => m[1]));
+    expect(used.size).toBeGreaterThan(10);
+    const html = render({ card: LEBRON_08_09 });
+    for (const name of used) expect(html, name).toContain(`${name}:`);
   });
 });
 

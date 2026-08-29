@@ -32,6 +32,10 @@ export default function CropEditor({
   onCropChange,
   onReset,
   onDropFile,
+  // False for the finished reference set. The card still renders — that is the
+  // whole point of that set — but nothing that would write into the 2026-27
+  // set's photos or crops is reachable.
+  editable = true,
 }) {
   const surfaceRef = useRef(null);
   // The crop as of pointerdown, plus the pointer's origin. Panning from the
@@ -50,7 +54,10 @@ export default function CropEditor({
   const photoSize = loaded?.key === photoKey ? loaded.size : null;
 
   const value = normalizeCrop(crop);
-  const commit = next => onCropChange(clampCropToImage(next, photoSize));
+  const commit = next => {
+    if (!editable) return;
+    onCropChange(clampCropToImage(next, photoSize));
+  };
 
   // Latest props for the native wheel listener below, which is registered once.
   const latest = useRef();
@@ -61,14 +68,17 @@ export default function CropEditor({
   // the only way to stop that.
   useEffect(() => {
     const el = surfaceRef.current;
-    if (!el) return undefined;
+    // Not registered at all when read-only, rather than registered and inert:
+    // this listener's job is to preventDefault, so leaving it in place would
+    // swallow the page's scroll in exchange for a zoom that never happens.
+    if (!el || !editable) return undefined;
     const onWheel = event => {
       event.preventDefault();
       latest.current.commit(zoomByWheel(latest.current.crop, event.deltaY));
     };
     el.addEventListener('wheel', onWheel, { passive: false });
     return () => el.removeEventListener('wheel', onWheel);
-  }, [card?.id]);
+  }, [card?.id, editable]);
 
   if (!card) {
     return (
@@ -84,7 +94,7 @@ export default function CropEditor({
   }
 
   const handlePointerDown = event => {
-    if (event.button !== 0) return;
+    if (event.button !== 0 || !editable) return;
     // Capture keeps the drag alive when the cursor leaves the photo window,
     // which it constantly does. It is not essential though — a browser that
     // refuses the capture should still pan, so never let it abort the drag.
@@ -125,21 +135,35 @@ export default function CropEditor({
       <div
         ref={previewRef}
         className={`${styles.preview} ${dropping ? styles.previewDropping : ''}`}
-        onDragOver={event => {
-          event.preventDefault();
-          event.dataTransfer.dropEffect = 'copy';
-        }}
-        onDragEnter={() => setDropping(true)}
-        onDragLeave={event => {
-          // Only clear when the pointer actually leaves the preview, not when
-          // it crosses onto a child element.
-          if (!event.currentTarget.contains(event.relatedTarget)) setDropping(false);
-        }}
-        onDrop={event => {
-          event.preventDefault();
-          setDropping(false);
-          onDropFile(card.id, event.dataTransfer.files?.[0]);
-        }}
+        // Read-only: no dragover preventDefault, so the preview is not a drop
+        // target and never offers to "replace this photo".
+        onDragOver={
+          editable
+            ? event => {
+                event.preventDefault();
+                event.dataTransfer.dropEffect = 'copy';
+              }
+            : undefined
+        }
+        onDragEnter={editable ? () => setDropping(true) : undefined}
+        onDragLeave={
+          editable
+            ? event => {
+                // Only clear when the pointer actually leaves the preview, not
+                // when it crosses onto a child element.
+                if (!event.currentTarget.contains(event.relatedTarget)) setDropping(false);
+              }
+            : undefined
+        }
+        onDrop={
+          editable
+            ? event => {
+                event.preventDefault();
+                setDropping(false);
+                onDropFile(card.id, event.dataTransfer.files?.[0]);
+              }
+            : undefined
+        }
       >
         <div
           className={styles.cardFrame}
@@ -165,7 +189,7 @@ export default function CropEditor({
             className={[
               styles.dragSurface,
               dragging ? styles.dragSurfaceActive : '',
-              hasPhoto ? '' : styles.dragSurfaceDisabled,
+              hasPhoto && editable ? '' : styles.dragSurfaceDisabled,
             ]
               .filter(Boolean)
               .join(' ')}
@@ -175,7 +199,13 @@ export default function CropEditor({
               width: PHOTO_WINDOW.width * scale,
               height: PHOTO_WINDOW.height * scale,
             }}
-            title={hasPhoto ? 'Drag to pan · scroll to zoom' : 'Drop an image here'}
+            title={
+              !editable
+                ? 'Read-only — this set is finished. Photos and crops belong to the set being built.'
+                : hasPhoto
+                  ? 'Drag to pan · scroll to zoom'
+                  : 'Drop an image here'
+            }
             onPointerDown={handlePointerDown}
             onPointerMove={handlePointerMove}
             onPointerUp={endDrag}
@@ -202,6 +232,7 @@ export default function CropEditor({
             max={ZOOM_MAX}
             step={0.01}
             value={value.zoom}
+            disabled={!editable}
             onChange={event => commit(setZoom(value, Number(event.target.value)))}
             aria-label="Photo zoom"
           />
@@ -216,13 +247,13 @@ export default function CropEditor({
           type="button"
           className={styles.resetButton}
           onClick={onReset}
-          disabled={isDefaultCrop(value)}
+          disabled={!editable || isDefaultCrop(value)}
         >
           Reset crop
         </button>
 
         <span className={styles.hint}>
-          drag the photo to pan · scroll to zoom
+          {editable ? 'drag the photo to pan · scroll to zoom' : 'read-only — preview only'}
           <br />
           <span className={styles.kbd}>↑</span> <span className={styles.kbd}>↓</span> or{' '}
           <span className={styles.kbd}>j</span> <span className={styles.kbd}>k</span> to change

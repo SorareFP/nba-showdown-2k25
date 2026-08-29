@@ -48,25 +48,28 @@
   white-space: nowrap;
 }
 
-/* The stats season, subordinate to the set name in the same badge: one fact
- * ("2025-26 stats build the 2026-27 set"), not two competing labels. */
-.setBadgeSub {
-  color: var(--text-dim);
-  font-weight: 400;
-}
-
 .toggle {
   display: flex;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   overflow: hidden;
 }
+/* Two lines: the SET on top, the stats season under it. Stacked rather than
+ * run together because the second line is the fact that has to be available
+ * without being read first — it is true, and leading with it is what made the
+ * user believe the set they were building was the old one. */
 .toggleButton {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
   background: transparent;
   color: var(--text-muted);
-  padding: 5px 12px;
+  padding: 4px 12px;
   border-radius: 0;
   white-space: nowrap;
+  line-height: 1.25;
+  text-align: left;
 }
 .toggleButton:hover { background: var(--card-hover); color: var(--text); }
 .toggleButtonActive {
@@ -75,6 +78,26 @@
   font-weight: 600;
 }
 .toggleButtonActive:hover { background: var(--orange); color: #fff; }
+
+.toggleSub {
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.2px;
+  opacity: 0.72;
+}
+
+/* ── Read-only bar ───────────────────────────────────────────────────────── */
+
+/* Standing, not dismissible: it describes the mode the tool is in, and the
+ * alternative is the user learning it by dropping a photo that vanishes. */
+.readOnlyBar {
+  padding: 7px 16px;
+  font-size: 12px;
+  color: #FFE3B8;
+  background: rgba(234, 88, 12, 0.16);
+  border-bottom: 1px solid var(--border);
+  flex: none;
+}
 
 /* Save indicator: subtle by design — it should be reassuring, not loud. */
 .save {

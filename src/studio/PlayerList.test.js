@@ -91,6 +91,23 @@ describe('the player list', () => {
     expect(render({ uploadingId: 'Luka_Don_i_' })).toContain('saving…');
   });
 
+  it('invites a drop only where a drop is allowed', () => {
+    // The finished set is a preview of the template with real stats. It shares
+    // its player ids with the set being built and writes to the same photo
+    // store, so a row there must not offer to take a photo.
+    expect(render()).toContain('drop an image on a row');
+    const readOnly = render({ editable: false });
+    expect(readOnly).not.toContain('drop an image on a row');
+    expect(readOnly).toContain('read-only — preview only');
+  });
+
+  it('still renders every row when read-only — it is a preview, not a lockout', () => {
+    const html = render({ editable: false, photoIds: new Set(['Kevin_Durant']) });
+    expect(html.match(/data-player-id=/g)).toHaveLength(3);
+    expect(html).toContain('Kevin Durant');
+    expect(rowAttrs(html, 'data-has-photo')[0]).toEqual(['Kevin_Durant', 'true']);
+  });
+
   it('renders the whole 331-player pool without choking', () => {
     const players = SOURCES.pool.players;
     const html = render({ players, visible: players });

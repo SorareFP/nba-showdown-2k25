@@ -4,6 +4,7 @@ import {
   POOL_PLAYERS,
   CARD_PLAYERS,
   SOURCES,
+  DEFAULT_SOURCE,
   photoProgress,
   filterPlayers,
   stepSelection,
@@ -208,25 +209,57 @@ describe('SOURCES', () => {
     expect(SOURCES.cards.players[0].chart.length).toBeGreaterThan(0);
   });
 
-  it('labels each list with its season AND what kind of season that is', () => {
-    // The bug this pins: "2025-26 pool" sitting beside "set 2026-27" gave the
-    // reader two bare season numbers and no way to tell which was which. Each
-    // label now carries its own noun, so neither can be read as the other.
-    expect(SOURCES.pool.label).toBe(`Players · ${STATS_SEASON} stats`);
-    expect(SOURCES.cards.label).toBe(`Shipped cards · ${FINISHED_SET} set`);
-    expect(SOURCES.pool.label).not.toBe(SOURCES.cards.label);
+  it('names each option by the SET it is, with its size', () => {
+    // THE BUG THIS PINS. The editable option was labelled "2025-26 pool" — for
+    // the season its STATS came from — beside a badge reading "set 2026-27".
+    // The user read the toggle, saw only the old season, and concluded: "I
+    // can't edit the 2026-27 set." They could; it was the label.
+    expect(SOURCES.pool.label).toBe(`${CURRENT_SET} set · 331 players`);
+    expect(SOURCES.cards.label).toBe(`${FINISHED_SET} set · 306 cards (reference)`);
   });
 
-  it('never labels the pool with the set it is building', () => {
-    // The pool is named for its STATS season; CURRENT_SET is a year later.
-    // Putting CURRENT_SET on this toggle is what would restore the ambiguity.
-    expect(SOURCES.pool.label).not.toContain(CURRENT_SET);
+  it('leads the editable option with the set being built, not the stats season', () => {
+    // The specific regression: STATS_SEASON reaching the front of this label
+    // again. It may appear in `sub` and in `hint`; it may not lead.
+    expect(SOURCES.pool.label.startsWith(CURRENT_SET)).toBe(true);
+    expect(SOURCES.pool.label).not.toContain(STATS_SEASON);
     expect(STATS_SEASON).not.toBe(CURRENT_SET);
   });
 
+  it('marks the reference option as reference in the label itself', () => {
+    // Not only in hover text: which option is preview-only has to survive
+    // someone who never hovers anything.
+    expect(SOURCES.cards.label).toContain('reference');
+    expect(SOURCES.cards.label.startsWith(FINISHED_SET)).toBe(true);
+  });
+
+  it('quotes a count that cannot drift from the list it labels', () => {
+    for (const source of Object.values(SOURCES)) {
+      expect(source.label, source.key).toContain(String(source.players.length));
+    }
+  });
+
+  it('keeps the stats season as subtext, where it cannot mislead', () => {
+    expect(SOURCES.pool.sub).toContain(STATS_SEASON);
+    expect(SOURCES.cards.sub).toBeTruthy();
+  });
+
+  it('defaults to the set being built', () => {
+    expect(DEFAULT_SOURCE).toBe('pool');
+    expect(SOURCES[DEFAULT_SOURCE].editable).toBe(true);
+  });
+
+  it('marks the finished set read-only and the set being built editable', () => {
+    // Load-bearing, not cosmetic: both lists share one photo store keyed by
+    // player id, so an upload made against the finished set writes into the
+    // set being built. See Studio.jsx / PlayerList.jsx / CropEditor.jsx.
+    expect(SOURCES.pool.editable).toBe(true);
+    expect(SOURCES.cards.editable).toBe(false);
+  });
+
   it('explains the stats-season-to-set relationship in each hint', () => {
-    // The hover text is the "without explanation" escape hatch, so it has to
-    // actually name both seasons rather than restating the label.
+    // The hover text is where the full explanation lives now that the labels
+    // no longer carry it, so it has to name both seasons.
     expect(SOURCES.pool.hint).toContain(STATS_SEASON);
     expect(SOURCES.pool.hint).toContain(CURRENT_SET);
     expect(SOURCES.cards.hint).toContain(FINISHED_SET);

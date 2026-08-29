@@ -1,22 +1,28 @@
 // The Card Studio's player list: where the records come from, and every pure
 // operation the list UI performs on them.
 //
-// TWO SOURCES, deliberately — and they are named for TWO DIFFERENT SEASONS,
-// which is the single most confusable thing in this tool. A set is named for
-// the season it will be played in; its numbers come from the season before.
-// See STATS_SEASON in src/cards/sets.js.
+// TWO SOURCES, and each one IS a set — that is the only thing a label here is
+// allowed to leave ambiguous, because it already went wrong once:
 //
-//  - `pool` (the default) is the player list for the set being built now, and
-//    it is named for the season its STATS came from: 2025-26 stats build the
-//    2026-27 set. It has names, teams and positions and nothing else — charts,
-//    Speed/Power and salaries have not been generated yet — so cards from it
-//    render mostly placeholders. That is correct: the photo is the thing being
-//    judged here, and this is the real target list of 331.
+//  - `pool` (the default) is the 2026-27 SET — the one being built right now,
+//    the one every photo and crop in this tool belongs to, and the editable
+//    one. Its 331 players have names, teams and positions and nothing else;
+//    charts, Speed/Power and salaries have not been generated yet, so its
+//    cards render mostly placeholders. That is correct: the photo is the thing
+//    being judged, and this is the real target list.
 //
-//  - `cards` is the shipped 306-card set — the FINISHED 2025-26 set, built
-//    from 2024-25 stats — and the only data with every field populated. It
-//    exists so the template itself can be judged with real stats in place.
-//    Photos curated against it are not part of the new set.
+//  - `cards` is the 2025-26 SET — finished, printed, 306 cards, and the only
+//    data with every field populated. It is here so the template can be judged
+//    with real numbers in place, and for nothing else. READ-ONLY: nothing
+//    curated against it belongs to the new set (see `editable` below).
+//
+// WHY THE LABELS SAY WHAT THEY SAY. A set is named for the season it will be
+// PLAYED in; the stats printed on it come from the season before. So the
+// 2026-27 set is built from 2025-26 stats, exactly as the finished 2025-26 set
+// was built from 2024-25 stats. This toggle used to lead with the STATS season
+// — "2025-26 pool" — which reads as the old set, and the user concluded they
+// could not edit the set they were building. The stats season is now subtext
+// and hover text; the primary label names the SET.
 //
 // The pool JSON is imported, not fetched: Vite handles JSON natively, so the
 // list is present on first paint instead of arriving a round trip later, and a
@@ -126,31 +132,47 @@ export const CARD_PLAYERS = CARDS;
 const byName = (a, b) => a.name.localeCompare(b.name);
 
 /**
- * The two lists, labelled so nobody has to ask which season is which.
+ * The two lists, each labelled with the SET it is.
  *
- * Both labels name a season, and they are DIFFERENT seasons on purpose — so
- * each one also says what its season is: a stats season for the pool being
- * photographed, a set for the cards already printed. Labels are composed from
- * the constants in sets.js rather than typed, so the season a label claims
- * cannot drift from the season the tool is actually working on.
+ * `label` is the whole primary string, count included, composed from the
+ * constants in sets.js and from the lists themselves — so neither the season a
+ * label claims nor the number it quotes can drift from what the tool actually
+ * holds.
+ *
+ * `sub` carries the stats season, and it is subtext ON PURPOSE. That fact —
+ * true, and the reason the two seasons differ — is what made the old label
+ * unreadable when it led. It belongs one size down, or in `hint` on hover.
+ *
+ * `editable` is not decoration. Both lists derive player ids with the same
+ * rule and both render against the same photo store, so a photo dropped while
+ * the reference set is on screen would land in the 2026-27 set under whatever
+ * id that 2025-26 player happens to share. The reference set exists to be
+ * looked at; the studio enforces that.
  */
 export const SOURCES = {
   pool: {
     key: 'pool',
-    label: `Players · ${STATS_SEASON} stats`,
+    label: `${CURRENT_SET} set · ${POOL_PLAYERS.length} players`,
+    sub: `built from ${STATS_SEASON} season stats`,
+    editable: true,
     hint:
-      `The ${CURRENT_SET} set's player list — every player being given a card this cycle. ` +
-      `Named for the season its stats came from: ${STATS_SEASON} stats → the ${CURRENT_SET} set. ` +
-      `Photos and crops you save here belong to the ${CURRENT_SET} set.`,
+      `THE SET YOU ARE BUILDING. Every player getting a card this cycle, and the only list you ` +
+      `can edit — photos and crops save into the ${CURRENT_SET} set. ` +
+      `Its stats come from the ${STATS_SEASON} season, because a set is named for the season it ` +
+      `will be played in and printed with the numbers from the season before.`,
     players: [...POOL_PLAYERS].sort(byName),
   },
   cards: {
     key: 'cards',
-    label: `Shipped cards · ${FINISHED_SET} set`,
+    label: `${FINISHED_SET} set · ${CARD_PLAYERS.length} cards (reference)`,
+    sub: 'finished — template preview only',
+    editable: false,
     hint:
-      `The finished ${FINISHED_SET} set, already printed (built from ${FINISHED_STATS_SEASON} stats). ` +
-      `Here only because it is the one data set with every stat filled in, so the template can be ` +
-      `judged with real numbers. Photos curated against it are NOT part of the ${CURRENT_SET} set.`,
+      `THE FINISHED ${FINISHED_SET} SET, already printed (its stats came from the ` +
+      `${FINISHED_STATS_SEASON} season, one year back, for the same reason). ` +
+      `Here for one reason: it is the only data with every chart, Speed/Power and salary filled in, ` +
+      `so the template can be judged with real numbers. Read-only — nothing you do here becomes ` +
+      `part of the ${CURRENT_SET} set.`,
     players: [...CARD_PLAYERS].sort(byName),
   },
 };

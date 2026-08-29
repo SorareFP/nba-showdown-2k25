@@ -27,6 +27,11 @@ export default function PlayerList({
   missingOnly,
   onMissingOnlyChange,
   listRef,
+  // False for the finished reference set, whose rows must not accept a photo —
+  // its player ids collide with the set being built. Withholding the drag
+  // handlers is what makes a row stop being a drop target at all: without a
+  // dragover preventDefault the browser refuses the drop itself.
+  editable = true,
 }) {
   const progress = photoProgress(players, photoIds);
   const pct = progress.total ? Math.round((progress.withPhoto / progress.total) * 100) : 0;
@@ -83,21 +88,35 @@ export default function PlayerList({
                 onClick={() => onSelect(player.id)}
                 // preventDefault on dragover is what makes an element a valid
                 // drop target at all — without it the browser navigates to the
-                // dropped file instead.
-                onDragOver={e => {
-                  e.preventDefault();
-                  e.dataTransfer.dropEffect = 'copy';
-                }}
-                onDragEnter={e => {
-                  e.preventDefault();
-                  onDropTargetChange(player.id);
-                }}
-                onDragLeave={() => onDropTargetChange(null)}
-                onDrop={e => {
-                  e.preventDefault();
-                  onDropTargetChange(null);
-                  onDropFile(player.id, e.dataTransfer.files?.[0]);
-                }}
+                // dropped file instead. Read-only rows therefore get no
+                // handlers rather than handlers that decline: the row stops
+                // lighting up, and the browser's own refusal is the feedback.
+                onDragOver={
+                  editable
+                    ? e => {
+                        e.preventDefault();
+                        e.dataTransfer.dropEffect = 'copy';
+                      }
+                    : undefined
+                }
+                onDragEnter={
+                  editable
+                    ? e => {
+                        e.preventDefault();
+                        onDropTargetChange(player.id);
+                      }
+                    : undefined
+                }
+                onDragLeave={editable ? () => onDropTargetChange(null) : undefined}
+                onDrop={
+                  editable
+                    ? e => {
+                        e.preventDefault();
+                        onDropTargetChange(null);
+                        onDropFile(player.id, e.dataTransfer.files?.[0]);
+                      }
+                    : undefined
+                }
               >
                 <span
                   className={`${styles.dot} ${hasPhoto ? styles.dotFilled : ''}`}
@@ -117,7 +136,9 @@ export default function PlayerList({
         <span>
           showing {visible.length} of {players.length}
         </span>
-        <span>drop an image on a row</span>
+        <span data-testid="list-foot-hint">
+          {editable ? 'drop an image on a row' : 'read-only — preview only'}
+        </span>
       </div>
     </>
   );

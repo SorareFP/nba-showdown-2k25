@@ -73,7 +73,13 @@ export default function Studio() {
   // carry on from there after a filter drops the selected player out.
   const anchorIndex = useRef(0);
 
-  const players = SOURCES[sourceKey].players;
+  const source = SOURCES[sourceKey];
+  const players = source.players;
+  // The reference set is preview-only. Not a style choice: both lists derive
+  // ids with the same rule and share one photo store, so an upload made while
+  // the finished set is on screen writes into the 2026-27 set under a name
+  // that 2025-26 player happens to share. See SOURCES in players.js.
+  const editable = source.editable !== false;
   const photoIds = useMemo(() => new Set(photos), [photos]);
   const visible = useMemo(
     () => filterPlayers(players, { query, missingOnly, photoIds }),
@@ -165,13 +171,30 @@ export default function Studio() {
     return () => clearTimeout(timer);
   }, [notice]);
 
-  const updateCrop = useCallback((playerId, next) => {
-    cropsDirty.current = true;
-    setCrops(prev => ({ ...prev, [playerId]: next }));
-  }, []);
+  const updateCrop = useCallback(
+    (playerId, next) => {
+      // Same reason as handleDropFile: the crops file belongs to the 2026-27
+      // set, and its keys are player ids the two lists share.
+      if (!editable) return;
+      cropsDirty.current = true;
+      setCrops(prev => ({ ...prev, [playerId]: next }));
+    },
+    [editable]
+  );
 
   const handleDropFile = useCallback(async (playerId, file) => {
     if (!file) return;
+    // The last line of defence. The row and the preview already refuse the
+    // drag in the reference set, but a file that reaches here would be written
+    // into the 2026-27 photo store under a shared id — the exact silent edit
+    // the reference set is not allowed to make.
+    if (!editable) {
+      setNotice({
+        kind: 'error',
+        text: `The ${FINISHED_SET} set is finished and read-only here — nothing was saved. Switch to the ${CURRENT_SET} set to add photos.`,
+      });
+      return;
+    }
     if (!isImageFile(file)) {
       setNotice({
         kind: 'error',
@@ -206,7 +229,7 @@ export default function Studio() {
     } finally {
       setUploadingId(null);
     }
-  }, []);
+  }, [editable]);
 
   const switchSource = key => {
     setSourceKey(key);
@@ -219,28 +242,25 @@ export default function Studio() {
       <header className={styles.topBar}>
         <span className={styles.title}>Card Studio</span>
 
-        {/* Which SEASON's cards this session is building. Everything written
-            here — photos, crops, team colors — is scoped to it, and the
-            finished 2025-26 cards are somewhere else entirely. Worth a
-            permanent label: "which set am I editing" is not a question the
-            user should have to answer from memory.
+        {/* Which set this session writes to. Everything saved here — photos,
+            crops, team colors — is scoped to it, and the finished 2025-26
+            cards are somewhere else entirely.
 
-            Phrased as a full sentence ("Building the 2026-27 set") rather than
-            "set 2026-27" because a bare season number sitting next to another
-            bare season number — the pool's stats season, in the toggle — reads
-            as two labels for the same thing. Only one of them is the thing
-            being built, and this is it. */}
+            This badge and the toggle's first option now name the SAME season,
+            deliberately. They used to disagree ("set 2026-27" beside a
+            "2025-26 pool"), and two bare season numbers side by side, meaning
+            different things, is what convinced the user the set they were
+            building was not editable. */}
         <span
           className={styles.setBadge}
           title={
-            `A set is named for the season it will be PLAYED in; its stats come from the season ` +
-            `before. ${STATS_SEASON} stats → the ${CURRENT_SET} set. ` +
-            `(The finished ${FINISHED_SET} set was built the same way, from ${FINISHED_STATS_SEASON} stats.) ` +
-            `Everything you save here is written to ${setPaths().root}/`
+            `Everything you save is written to ${setPaths().root}/ — the ${CURRENT_SET} set. ` +
+            `Its stats come from the ${STATS_SEASON} season: a set is named for the season it will ` +
+            `be PLAYED in and printed with the numbers from the season before, which is also how ` +
+            `the finished ${FINISHED_SET} set was built from ${FINISHED_STATS_SEASON} stats.`
           }
         >
           Building the {CURRENT_SET} set
-          <span className={styles.setBadgeSub}> · from {STATS_SEASON} stats</span>
         </span>
 
         {/* Only when the generated team file is missing. Without it 45 players
@@ -255,11 +275,11 @@ export default function Studio() {
           </span>
         )}
 
-        {/* Each label names its own season AND says what kind of season it is
-            — a stats season for the list being photographed, a set for the
-            cards already printed. Both are spelled out because the two sit
-            side by side and are one year apart. */}
-        <div className={styles.toggle} role="group" aria-label="Which list to work from">
+        {/* Each option leads with the SET it is, so the question "which of
+            these is the set I'm building?" is answered by reading, not by
+            knowing which season the stats came from. The stats season is the
+            second line, one size down; the full explanation is on hover. */}
+        <div className={styles.toggle} role="group" aria-label="Which set to work on">
           {Object.values(SOURCES).map(source => (
             <button
               key={source.key}
@@ -268,10 +288,12 @@ export default function Studio() {
                 source.key === sourceKey ? styles.toggleButtonActive : ''
               }`}
               aria-pressed={source.key === sourceKey}
+              data-source={source.key}
               title={source.hint}
               onClick={() => switchSource(source.key)}
             >
-              {source.label} ({source.players.length})
+              {source.label}
+              <span className={styles.toggleSub}>{source.sub}</span>
             </button>
           ))}
         </div>
@@ -279,6 +301,15 @@ export default function Studio() {
         <span className={styles.spacer} />
         <SaveIndicator status={saveStatus} />
       </header>
+
+      {/* Says WHY the tool has gone quiet, in one line, before the user
+          discovers it by dropping a photo that does nothing. */}
+      {!editable && (
+        <div className={styles.readOnlyBar} role="status">
+          Read-only — the {FINISHED_SET} set is finished. It is here to preview the template with
+          real stats; photos and crops save only in the {CURRENT_SET} set.
+        </div>
+      )}
 
       {notice && (
         <div
@@ -312,6 +343,7 @@ export default function Studio() {
             missingOnly={missingOnly}
             onMissingOnlyChange={setMissingOnly}
             listRef={setListEl}
+            editable={editable}
           />
         </aside>
 
@@ -327,6 +359,7 @@ export default function Studio() {
             onCropChange={next => updateCrop(selectedId, next)}
             onReset={() => updateCrop(selectedId, resetCrop())}
             onDropFile={handleDropFile}
+            editable={editable}
           />
         </section>
       </div>

@@ -9,6 +9,7 @@ import {
   filterPlayers,
   stepSelection,
   TEAMS_RESOLVED,
+  STATS_GENERATED,
 } from './players.js';
 import { isSafePlayerId } from '../../scripts/studio/studioServerPlugin.js';
 import { getTeam } from '../cards/teams.js';
@@ -86,11 +87,59 @@ describe('the 2025-26 pool', () => {
     expect(rejected).toEqual([]);
   });
 
-  it('carries name, team and position and no generated stats', () => {
+  it('carries name, team and position', () => {
     const maxey = POOL_PLAYERS.find(p => p.name === 'Tyrese Maxey');
     expect(maxey).toMatchObject({ id: 'Tyrese_Maxey', team: 'PHI', pos: 'PG' });
-    expect(maxey.chart).toBeUndefined();
-    expect(maxey.salary).toBeUndefined();
+  });
+
+  // Stats are OPTIONAL by design: cards-2026-27.json is generated, and a
+  // checkout that has never run the generator must still open a studio you can
+  // curate photos in. So this asserts the two shapes are each internally
+  // coherent, not that one of them is the case — a test that demanded stats
+  // would fail on a fresh clone, and one that demanded their absence (which is
+  // what this used to do) fails the moment the generator is run.
+  it('either has a complete generated stat line or none at all', () => {
+    const maxey = POOL_PLAYERS.find(p => p.name === 'Tyrese Maxey');
+    if (STATS_GENERATED) {
+      expect(maxey.provisional).toBe(true);
+      expect(typeof maxey.speed).toBe('number');
+      expect(typeof maxey.power).toBe('number');
+      expect(typeof maxey.shotLine).toBe('number');
+      expect(typeof maxey.salary).toBe('number');
+      expect(Array.isArray(maxey.chart)).toBe(true);
+      expect(maxey.chart[0]).toMatchObject({
+        lo: expect.any(Number),
+        hi: expect.any(Number),
+        pts: expect.any(Number),
+      });
+    } else {
+      expect(maxey.chart).toBeUndefined();
+      expect(maxey.salary).toBeUndefined();
+    }
+  });
+
+  it('takes stats from the generated file but identity from the pool', async () => {
+    // The generated file carries its own name/team/pos alongside the stats. If
+    // the whole record were spread in, a team resolved by
+    // scripts/cardgen/generateTeams.js (or fixed by hand in
+    // card-data/manual-teams.json) would silently revert to whatever the card
+    // generator last happened to see. Stats must come across; identity must not.
+    if (!STATS_GENERATED) return;
+    const generated = (await import('../../card-data/generated/cards-2026-27.json')).default.cards;
+    const resolved = new Map(
+      (await import('../../card-data/generated/player-teams-2026.json')).default.map(t => [
+        t.name,
+        t,
+      ])
+    );
+    for (const card of generated) {
+      const player = POOL_PLAYERS.find(p => p.id === card.id);
+      expect(player).toBeDefined();
+      expect(player.speed).toBe(card.speed);
+      expect(player.chart).toEqual(card.chart);
+      const fromTeamsFile = resolved.get(player.name);
+      if (fromTeamsFile) expect(player.team).toBe(fromTeamsFile.team);
+    }
   });
 
   it('leaves no underscore where a diacritic used to be', () => {

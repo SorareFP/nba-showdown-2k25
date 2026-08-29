@@ -21,7 +21,14 @@ import {
   FINISHED_STATS_SEASON,
   setPaths,
 } from '../cards/sets.js';
-import { SOURCES, DEFAULT_SOURCE, TEAMS_RESOLVED, filterPlayers, stepSelection } from './players.js';
+import {
+  SOURCES,
+  DEFAULT_SOURCE,
+  TEAMS_RESOLVED,
+  STATS_GENERATED,
+  filterPlayers,
+  stepSelection,
+} from './players.js';
 import { pruneCrops, resetCrop } from './crop.js';
 import { pruneTeamOverrides } from './teamTheme.js';
 import { fetchStudioState, uploadPhoto, saveCrops, saveTeams, isImageFile } from './api.js';
@@ -311,6 +318,24 @@ export default function Studio() {
             teams unresolved
           </span>
         )}
+
+        {/* The stat badge is ALWAYS shown once numbers exist, and says
+            "provisional" rather than anything reassuring. A card that renders a
+            complete stat line reads as finished — that is what a card is for —
+            and these numbers are a first pass: charts synthesized from season
+            rates rather than real game logs, Shot Line and boosts refitted
+            against the old set rather than recovered. The badge is the one place
+            that distinction is visible while looking at the card. */}
+        <span
+          className={styles.setBadge}
+          title={
+            STATS_GENERATED
+              ? 'Every number on these cards is PROVISIONAL, from card-data/generated/cards-2026-27.json. Charts are synthesized from per-100 season rates, not real per-game logs; Shot Line and the Paint/3PT boosts are refits against the finished 2025-26 set, not the original hand-calibrated rules. Re-run `node scripts/cardgen/generateCards.js` to regenerate.'
+              : 'card-data/generated/cards-2026-27.json is missing — run `node scripts/cardgen/generateCards.js`. Until then every stat renders as a placeholder dash.'
+          }
+        >
+          {STATS_GENERATED ? 'provisional numbers' : 'no stats yet'}
+        </span>
 
         {/* Each option leads with the SET it is, so the question "which of
             these is the set I'm building?" is answered by reading, not by

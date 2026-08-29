@@ -6,10 +6,11 @@
 //
 //  - `pool` (the default) is the 2026-27 SET — the one being built right now,
 //    the one every photo and crop in this tool belongs to, and the editable
-//    one. Its 331 players have names, teams and positions and nothing else;
-//    charts, Speed/Power and salaries have not been generated yet, so its
-//    cards render mostly placeholders. That is correct: the photo is the thing
-//    being judged, and this is the real target list.
+//    one. Its 331 players always have names, teams and positions; they also
+//    carry a full PROVISIONAL stat line — chart, Speed/Power, Shot Line, boosts
+//    and salary — whenever `node scripts/cardgen/generateCards.js` has been run.
+//    Before that they render placeholders, which is still a usable studio: the
+//    photo is the thing being judged.
 //
 //  - `cards` is the 2025-26 SET — finished, printed, 306 cards, and the only
 //    data with every field populated. It is here so the template can be judged
@@ -30,6 +31,7 @@
 import rawPool from '../../card-data/generated/player-pool-2026.json';
 import { CARDS } from '../game/cards.js';
 import { CURRENT_SET, STATS_SEASON, FINISHED_SET, FINISHED_STATS_SEASON } from '../cards/sets.js';
+import { playerIdFromName } from '../cards/playerId.js';
 
 /**
  * The team-resolved pool, when `node scripts/cardgen/generateTeams.js` has been
@@ -76,38 +78,78 @@ export const TEAMS_RESOLVED = resolvedPool !== null;
 const resolvedByName = new Map((resolvedPool ?? []).map(p => [p.name, p]));
 const pool = rawPool.map(p => ({ ...p, ...(resolvedByName.get(p.name) ?? {}) }));
 
+// The id rule itself lives in src/cards/playerId.js and is re-exported here so
+// every existing importer keeps working. It moved because the Node card
+// generators need the SAME rule — cards-2026-27.json is keyed by it, and the
+// studio joins those stats onto a player it may already hold a photo for — and
+// they cannot import this module (JSON imports, import.meta.glob). One rule that
+// names photo files, in one place.
+// Imported as well as re-exported: a bare `export ... from` does not bind the
+// name locally, and POOL_PLAYERS below calls it.
+export { playerIdFromName };
+
+
 /**
- * Derives a player's stable id from their name.
+ * The generated 2026-27 stat lines, when `node scripts/cardgen/generateCards.js`
+ * has been run.
  *
- * This id IS the photo filename (`card-art/sets/{set}/photos/{id}.jpg`) and the key in
- * crops.json, so it must never change for a given name — renaming the scheme
- * would orphan every photo already curated. The batch export derives ids the
- * same way, which is what lets it find the photos the studio wrote.
+ * Same import.meta.glob treatment as the resolved-teams file above, for the same
+ * reason: this file is GENERATED and gitignore-free but not guaranteed present,
+ * and a checkout that has never run the generator must still open a studio you
+ * can curate photos in. Eager, so the numbers are on the card at first paint
+ * rather than one repaint later.
  *
- * Diacritics are stripped before the character replacement, so accented names
- * survive as readable ASCII ("Luka Dončić" -> "Luka_Doncic") instead of
- * collapsing to "Luka_Don_i_". That is this repo's existing convention, not a
- * new one: the shipped card art is named `Vit_Krejci.png` and the shipped ids
- * in src/game/rawCards.js are `Alperen_Sengun`, `Nikola_Jokic`. Matching it
- * makes 194 of the 331 pool ids line up with an existing card id, up from 177.
- *
- * Unlike the cross-source matching key in scripts/cardgen/resolveTeams.js, this
- * PRESERVES case and word separators — it is a filename, meant to be read by a
- * human scrolling the set's photos/, so "Luka_Doncic" and not "lukadoncic".
- *
- * Leading and trailing underscores are trimmed, so "Jabari Smith Jr." is
- * `Jabari_Smith_Jr` rather than `Jabari_Smith_Jr_` — again matching the shipped
- * ids. Interior punctuation still collapses to one underscore ("De'Aaron Fox"
- * -> "De_Aaron_Fox"). Verified collision-free across all 331 pool names and all
- * 306 shipped cards, and inside the character set the studio server's path
- * guard accepts.
+ * Every value in it is PROVISIONAL — synthesized charts, refitted Shot Line and
+ * boosts (see scripts/cardgen/variance.js). The studio says so on screen, and
+ * this is why: numbers that look finished get trusted, and these are a first
+ * pass to react to, not a set to sign off.
  */
-export function playerIdFromName(name) {
-  return String(name ?? '')
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^A-Za-z0-9]+/g, '_')
-    .replace(/^_+|_+$/g, '');
+const generatedModules = import.meta.glob('../../card-data/generated/cards-2026-27.json', {
+  eager: true,
+});
+const generatedFile = Object.values(generatedModules)[0]?.default ?? null;
+const generatedCards = generatedFile?.cards ?? null;
+
+/** True when the studio is rendering generated stats rather than placeholders. */
+export const STATS_GENERATED = Array.isArray(generatedCards) && generatedCards.length > 0;
+
+/**
+ * Keyed by ID, not by name, because the id is what both sides already agree on:
+ * the generator derives it with src/cards/playerId.js and so does this file, and
+ * it is the same key the photo store uses. Matching on the raw name would work
+ * today and break the first time a source spells one differently.
+ */
+const generatedById = new Map((generatedCards ?? []).map(c => [c.id, c]));
+
+/**
+ * The stat fields a generated card contributes, listed rather than spread.
+ *
+ * An `{...pool, ...card}` spread would look equivalent and would not be: the
+ * generated record also carries `name`, `team` and `pos`, and letting those
+ * through would put the generator's snapshot of a roster on screen instead of
+ * the studio's own resolved one — silently reverting a team the user fixed in
+ * card-data/manual-teams.json. Stats come from the stat file; identity stays
+ * with the pool.
+ */
+const STAT_FIELDS = [
+  'speed',
+  'power',
+  'shotLine',
+  'paintBoost',
+  'threePtBoost',
+  'defBoost',
+  'salary',
+  'chart',
+];
+
+function withGeneratedStats(player) {
+  const card = generatedById.get(player.id);
+  if (!card) return player;
+  const stats = {};
+  for (const field of STAT_FIELDS) {
+    if (card[field] !== undefined && card[field] !== null) stats[field] = card[field];
+  }
+  return { ...player, ...stats, provisional: true };
 }
 
 /** The pool, shaped like a card. Missing stats stay missing. */
@@ -122,9 +164,11 @@ export const POOL_PLAYERS = pool.map(p => ({
   // the field always exists and resolvePhotoUrl's `if (personId)` reads the
   // same either way.
   personId: p.personId ?? null,
-  // No chart / speed / power / salary / shotLine: they have not been generated
-  // for this pool. CardTemplate renders placeholders for each.
-}));
+  // Chart / Speed / Power / Shot Line / boosts / salary arrive from
+  // cards-2026-27.json when it exists. When it does not, they stay absent and
+  // CardTemplate renders a placeholder for each — never a crash, never a zero
+  // pretending to be a rating.
+})).map(withGeneratedStats);
 
 /** The shipped 306-card set, already in card shape. */
 export const CARD_PLAYERS = CARDS;
@@ -153,13 +197,20 @@ export const SOURCES = {
   pool: {
     key: 'pool',
     label: `${CURRENT_SET} set · ${POOL_PLAYERS.length} players`,
-    sub: `built from ${STATS_SEASON} season stats`,
+    sub: STATS_GENERATED
+      ? `${STATS_SEASON} stats · provisional numbers`
+      : `built from ${STATS_SEASON} season stats`,
     editable: true,
     hint:
       `THE SET YOU ARE BUILDING. Every player getting a card this cycle, and the only list you ` +
       `can edit — photos and crops save into the ${CURRENT_SET} set. ` +
       `Its stats come from the ${STATS_SEASON} season, because a set is named for the season it ` +
-      `will be played in and printed with the numbers from the season before.`,
+      `will be played in and printed with the numbers from the season before.` +
+      (STATS_GENERATED
+        ? ' The numbers on these cards are a PROVISIONAL first pass — charts synthesized from ' +
+          'season rates, Shot Line and boosts refitted against the finished set. Re-run ' +
+          '`node scripts/cardgen/generateCards.js` after changing anything upstream.'
+        : ' No numbers yet — run `node scripts/cardgen/generateCards.js` to fill them in.'),
     players: [...POOL_PLAYERS].sort(byName),
   },
   cards: {

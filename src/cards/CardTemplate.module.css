@@ -381,11 +381,29 @@
 
 /* ── Right sidebar: logo, position, boosts, salary ───────────────────────── */
 
+/* CENTRED ON THE BAR — the column is .sidebarScrim's, exactly: same left, same
+ * width, so everything in here centres on 768.5 and not on some other number.
+ *
+ * It used to be left:658 width:185, a column centred on 750.5 — 18px left of the
+ * bar's centreline. That was invisible while the bar was a wash BEHIND the text
+ * and wrong the moment the bar became an element in its own right: DEFENSE, the
+ * widest string the sidebar renders, ran from 697.9 to 803.1, three pixels
+ * outside the bar's left edge, while 33px of bar sat empty on the right.
+ *
+ * 135px is enough for the content, with margin to spare. Measured off the
+ * loaded face rather than estimated — Tomorrow 700 at 20px with this file's
+ * tracking: DEFENSE 105px, SALARY 91px, PAINT 68px, a two-letter position 35px,
+ * a four-digit salary 55px. The widest of those leaves 15px of bar either side.
+ *
+ * Vertically it is unchanged: 762..1152, bottom-anchored, which is where the
+ * printed art puts these rows. The bar now runs 22px below that (see
+ * .sidebarScrim) and is meant to — a bar that stopped where its content does is
+ * the seam that change removed. */
 .sidebar {
   position: absolute;
-  left: 658px;
+  left: 701px;
   top: 762px;
-  width: 185px;
+  width: 135px;
   height: 390px;
   display: flex;
   flex-direction: column;
@@ -415,10 +433,20 @@
   letter-spacing: 1px;
 }
 
+/* padding-left is NOT a typo and not spacing. text-align centres a line by its
+ * ADVANCE width, and letter-spacing lays a gap after the last glyph as well as
+ * between them, so centred tracked text lands letter-spacing/2 LEFT of the
+ * centreline. Half of this 2px is the largest single bias in the column, so it
+ * is paid back here: padding on a shrink-to-fit flex item moves the glyphs by
+ * half of it. The boosts below are left alone deliberately — their tracking is
+ * 1px, so the same bias is 0.5px, which is inside the per-glyph sidebearing
+ * noise (measured -0.9..+0.4px across the strings the card actually renders)
+ * and correcting it would move PAINT and 3PT further off than they are now. */
 .pos {
   font-size: 20px;
   font-weight: 700;
   letter-spacing: 2px;
+  padding-left: 2px;
 }
 
 .boost {

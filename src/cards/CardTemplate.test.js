@@ -405,6 +405,26 @@ describe('the sidebar scrim', () => {
   });
 });
 
+describe('the sidebar', () => {
+  // The bar stopped being a wash behind the sidebar and became an element, so
+  // the sidebar's job is now to sit ON it. Everything here is about that.
+
+  it('takes the bar’s exact column, which is what centres it', () => {
+    // The box used to be left:658 width:185 — centred on 750.5, 18px left of the
+    // bar's own centreline at 768.5. Nothing inside the sidebar was wrong: every
+    // line was centred, just centred on the wrong column, which put DEFENSE
+    // three pixels outside the bar's left edge and left 33px of bar empty on the
+    // right. Assert against the scrim rather than against 701 and 135 so the two
+    // cannot drift apart.
+    const scrim = cssBlock('.sidebarScrim');
+    const sidebar = cssBlock('.sidebar');
+    expect(pxIn(sidebar, 'left')).toBe(pxIn(scrim, 'left'));
+    expect(pxIn(sidebar, 'width')).toBe(pxIn(scrim, 'width'));
+    expect(sidebar).toMatch(/text-align:\s*center/);
+    expect(sidebar).toMatch(/align-items:\s*center/);
+  });
+});
+
 describe('team logo', () => {
   it('resolves the logo path against the app base path', () => {
     // TEAMS stores '/logos/CLE.png', but the app is served under a base path

@@ -33,6 +33,15 @@
 
 const SCRIPT_ID = '__NEXT_DATA__';
 
+// Keys every record must carry for this adapter's output to mean anything. We
+// check PRESENCE, not truthiness — see the `in` check in parseRosterHtml.
+const REQUIRED_KEYS = [
+  'PERSON_ID',
+  'PLAYER_FIRST_NAME',
+  'PLAYER_LAST_NAME',
+  'TEAM_ABBREVIATION',
+];
+
 /**
  * Extracts and parses the __NEXT_DATA__ JSON blob from an nba.com page.
  *
@@ -80,17 +89,52 @@ export function parseRosterHtml(html) {
     );
   }
 
-  return players.map((p) => ({
-    personId: p.PERSON_ID,
-    firstName: p.PLAYER_FIRST_NAME,
-    lastName: p.PLAYER_LAST_NAME,
-    fullName: `${p.PLAYER_FIRST_NAME} ${p.PLAYER_LAST_NAME}`,
-    team: p.TEAM_ABBREVIATION,
-    teamCity: p.TEAM_CITY,
-    teamName: p.TEAM_NAME,
-    jersey: p.JERSEY_NUMBER,
-    position: p.POSITION,
-  }));
+  // An empty array is a failure, not a valid roster. nba.com/players is the
+  // league's full active-player list (581 on 2026-08-29); it is never legitimately
+  // empty. The realistic way to get [] is nba.com moving the roster out of
+  // __NEXT_DATA__ into a client-side fetch and leaving the key behind as an empty
+  // placeholder — which Array.isArray() happily accepts. Returning [] there would
+  // strand all 45 traded players on their "2TM" codes with no visible signal,
+  // exactly the silent-wrong-data failure extractNextData's throws exist to prevent.
+  if (players.length === 0) {
+    throw new Error(
+      'parseRosterHtml: props.pageProps.players was empty — nba.com never serves an empty ' +
+        'active-player list, so its data is likely no longer server-rendered into ' +
+        `${SCRIPT_ID}; verify against a live page.`
+    );
+  }
+
+  return players.map((p, i) => {
+    if (!p || typeof p !== 'object') {
+      throw new Error(
+        `parseRosterHtml: players[${i}] was not an object — nba.com's record shape has changed.`
+      );
+    }
+    for (const key of REQUIRED_KEYS) {
+      // `in`, not truthiness: TEAM_ABBREVIATION is legitimately null for unsigned
+      // free agents (see the DeRozan case in this module's header), and
+      // JERSEY_NUMBER can be an empty string. Testing presence is what lets us
+      // tell "nba.com renamed its keys" apart from "this player has no team" —
+      // a distinction resolveTeams.js depends on and could not otherwise recover.
+      if (!(key in p)) {
+        throw new Error(
+          `parseRosterHtml: players[${i}] has no ${key} key — nba.com's record shape has changed.`
+        );
+      }
+    }
+
+    return {
+      personId: p.PERSON_ID,
+      firstName: p.PLAYER_FIRST_NAME,
+      lastName: p.PLAYER_LAST_NAME,
+      fullName: `${p.PLAYER_FIRST_NAME} ${p.PLAYER_LAST_NAME}`,
+      team: p.TEAM_ABBREVIATION,
+      teamCity: p.TEAM_CITY,
+      teamName: p.TEAM_NAME,
+      jersey: p.JERSEY_NUMBER,
+      position: p.POSITION,
+    };
+  });
 }
 
 /** Fetches and parses the current active-player roster from nba.com. */

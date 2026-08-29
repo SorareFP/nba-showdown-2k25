@@ -312,21 +312,26 @@ Expected: FAIL — cannot resolve `./resolveTeams.js`.
 // They're returned as `unresolved` rather than guessed at, and get their team
 // from card-data/manual-teams.json.
 
-/** Basketball-Reference abbreviation -> nba.com abbreviation. */
-const TEAM_ALIASES = { BRK: 'BKN', CHO: 'CHA', PHO: 'PHX' };
+// Basketball-Reference -> nba.com abbreviations. ALREADY IMPLEMENTED in
+// src/cards/teams.js (TEAM_ALIASES + canonicalTeam), because card theming needs
+// the same three pairs to avoid rendering 32 pool players on the grey fallback.
+// Re-export rather than redeclare — two copies of BRK/CHO/PHO drifting apart is
+// a bug nobody would spot until a Nets card came out grey.
+export { TEAM_ALIASES, canonicalTeam } from '../../src/cards/teams.js';
+import { canonicalTeam } from '../../src/cards/teams.js';
 
 const MULTI_TEAM_CODES = new Set(['2TM', '3TM', '4TM', 'TOT']);
-
-/** Canonicalizes a team abbreviation to nba.com's spelling. */
-export function canonicalTeam(abbr) {
-  return TEAM_ALIASES[abbr] ?? abbr;
-}
 
 /**
  * Normalizes a player name for cross-source matching: strips diacritics
  * ("Jokić" -> "jokic"), lowercases, and drops all non-letters so punctuation
  * differences ("A.J. Green" vs "AJ Green", "De'Aaron" vs "DeAaron") don't
  * prevent a match.
+ *
+ * Deliberately NOT the same as src/studio/players.js's playerIdFromName, which
+ * shares the diacritic strip but keeps case and word breaks because its output
+ * is a filename a human reads. This one is a lookup key nobody sees, so it can
+ * be as lossy as matching requires.
  */
 export function normalizeName(name) {
   return name
@@ -491,9 +496,10 @@ Expected: FAIL — cannot resolve `./teams.js`.
 // src/cards/teams.js
 //
 // Team reference data for card theming. Keyed by nba.com abbreviations (NOT
-// Basketball-Reference's — see scripts/cardgen/resolveTeams.js TEAM_ALIASES;
-// they differ on BKN/CHA/PHX). Colors are each team's primary and secondary
-// brand colors.
+// Basketball-Reference's; they differ on BKN/CHA/PHX). This module owns the
+// TEAM_ALIASES map that canonicalizes those three and exports it for
+// scripts/cardgen/resolveTeams.js to reuse. Colors are each team's primary and
+// secondary brand colors.
 //
 // Logo image files are NOT in this repo — the user adds them to
 // public/logos/{ABBR}.png. Cards render without a logo if the file is absent.
@@ -1023,7 +1029,11 @@ export async function loadStudioCards() {
     if (res.ok) {
       const pool = await res.json();
       return pool.map(p => ({
-        id: p.name.replace(/[^A-Za-z0-9]+/g, '_'),
+        // Superseded by src/studio/players.js: the pool JSON is imported, not
+        // fetched, and the id comes from its exported `playerIdFromName`, which
+        // strips diacritics ("Luka Dončić" -> "Luka_Doncic"). Do not derive ids
+        // inline anywhere — see the note in the export script below.
+        id: playerIdFromName(p.name),
         name: p.name,
         team: p.team,
         pos: p.pos,
@@ -1229,6 +1239,10 @@ export default function ExportFrame() {
 import { chromium } from 'playwright';
 import { mkdirSync } from 'node:fs';
 import { resolve } from 'node:path';
+// IMPORT the id derivation, never re-implement it: this is how the export finds
+// the photo the studio wrote, and a second copy of the rule silently exports
+// blank cards the day the two drift.
+import { playerIdFromName } from '../../src/studio/players.js';
 
 const BASE = process.env.STUDIO_URL ?? 'http://localhost:5173';
 const OUT = resolve(process.cwd(), 'public/cards/players');
@@ -1251,7 +1265,7 @@ const page = await browser.newPage({ viewport: { width: CARD_WIDTH, height: CARD
 
 let done = 0;
 for (const player of cards) {
-  const playerId = player.name.replace(/[^A-Za-z0-9]+/g, '_');
+  const playerId = playerIdFromName(player.name);
   await page.goto(`${BASE}/studio-export.html?playerId=${encodeURIComponent(playerId)}`, {
     waitUntil: 'networkidle',
   });

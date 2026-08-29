@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { TEAMS, getTeam, getThemedTeam } from './teams.js';
+import { TEAMS, TEAM_ALIASES, canonicalTeam, getTeam, getThemedTeam } from './teams.js';
+import pool from '../../card-data/generated/player-pool-2026.json';
 
 describe('TEAMS', () => {
   it('has all 30 NBA teams', () => {
@@ -33,9 +34,47 @@ describe('TEAMS', () => {
   });
 });
 
+describe('TEAM_ALIASES', () => {
+  it('covers exactly the three codes the two sources spell differently', () => {
+    expect(TEAM_ALIASES).toEqual({ BRK: 'BKN', CHO: 'CHA', PHO: 'PHX' });
+  });
+
+  it('maps every alias onto a real entry in the table', () => {
+    for (const [from, to] of Object.entries(TEAM_ALIASES)) {
+      expect(TEAMS[to], `${from} -> ${to}`).toBeDefined();
+      expect(TEAMS[from], from).toBeUndefined();
+    }
+  });
+
+  it('leaves anything else alone, including inherited property names', () => {
+    expect(canonicalTeam('LAL')).toBe('LAL');
+    expect(canonicalTeam('2TM')).toBe('2TM');
+    // `TEAM_ALIASES[abbr] ?? abbr` would hand back Object.prototype.toString.
+    expect(canonicalTeam('toString')).toBe('toString');
+    expect(canonicalTeam('constructor')).toBe('constructor');
+  });
+});
+
 describe('getTeam', () => {
   it('returns the team for a known abbreviation', () => {
     expect(getTeam('DEN').name).toBe('Nuggets');
+  });
+
+  it('resolves Basketball-Reference spellings to the right team', () => {
+    // The pool comes from Basketball-Reference; 32 of its 331 players carry
+    // these codes and used to render on the grey fallback.
+    expect(getTeam('BRK')).toEqual(TEAMS.BKN);
+    expect(getTeam('CHO')).toEqual(TEAMS.CHA);
+    expect(getTeam('PHO')).toEqual(TEAMS.PHX);
+  });
+
+  it('gives an aliased code the same colors and logo as its canonical one', () => {
+    expect(getTeam('CHO')).toMatchObject({
+      name: 'Hornets',
+      primary: '#1D1160',
+      secondary: '#00788C',
+      logo: '/logos/CHA.png',
+    });
   });
 
   it('returns a neutral fallback for an unknown abbreviation', () => {
@@ -47,7 +86,9 @@ describe('getTeam', () => {
   });
 
   it('falls back for multi-team aggregate codes, which are not teams', () => {
-    // 45 players in the 2025-26 pool still carry these.
+    // 45 players in the 2025-26 pool still carry these. They are bad data, not
+    // an alias problem, and looking unstyled is the point until team resolution
+    // replaces them — so aliasing must NOT quietly rescue them.
     expect(getTeam('2TM').name).toBe('Unknown');
     expect(getTeam('3TM').name).toBe('Unknown');
   });
@@ -55,6 +96,21 @@ describe('getTeam', () => {
   it('falls back rather than throwing on a missing abbreviation', () => {
     expect(getTeam(undefined).name).toBe('Unknown');
     expect(getTeam(null).name).toBe('Unknown');
+  });
+});
+
+describe('the 2025-26 pool against this table', () => {
+  const unresolved = pool.filter(p => getTeam(p.team).name === 'Unknown');
+
+  it('leaves only the 45 multi-team-code players unthemed', () => {
+    expect(unresolved).toHaveLength(45);
+    expect(new Set(unresolved.map(p => p.team))).toEqual(new Set(['2TM', '3TM']));
+  });
+
+  it('themes the 32 players on Basketball-Reference-spelled teams', () => {
+    const aliased = pool.filter(p => p.team in TEAM_ALIASES);
+    expect(aliased).toHaveLength(32);
+    for (const p of aliased) expect(getTeam(p.team).logo, p.name).not.toBeNull();
   });
 });
 
@@ -77,6 +133,14 @@ describe('getThemedTeam', () => {
 
   it('still returns the fallback for an unknown abbreviation', () => {
     expect(getThemedTeam('ZZZ', { LAL: { primary: '#FF0000' } }).name).toBe('Unknown');
+  });
+
+  it('applies a canonical override to an aliased abbreviation', () => {
+    // Otherwise the pool's 12 "BRK" players would keep the stock Nets colors
+    // while every "BKN" player picked up the tuned ones.
+    const themed = getThemedTeam('BRK', { BKN: { primary: '#FF0000' } });
+    expect(themed.primary).toBe('#FF0000');
+    expect(themed.name).toBe('Nets');
   });
 
   it('does not mutate the source table', () => {

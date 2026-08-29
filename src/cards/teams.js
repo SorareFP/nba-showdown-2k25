@@ -3,8 +3,9 @@
 // Keyed by NBA.COM abbreviations, not Basketball-Reference's. The two sources
 // disagree on exactly three teams — BKN/BRK, CHA/CHO, PHX/PHO — and card data
 // flows through nba.com's roster feed, so nba.com spelling is canonical here.
-// Anything that still carries a Basketball-Reference code must be normalized
-// before it reaches this table (see scripts/cardgen/resolveTeams.js).
+// Lookups canonicalize the three Basketball-Reference spellings on the way in
+// (see TEAM_ALIASES), so a record that has not been through team resolution
+// still themes correctly.
 //
 // Logo image files are NOT in this repo — the user drops them into
 // public/logos/{ABBR}.png. CardTemplate hides the <img> on a 404, so cards
@@ -44,19 +45,45 @@ export const TEAMS = {
 };
 
 /**
+ * Basketball-Reference abbreviation -> nba.com abbreviation.
+ *
+ * The player pool is derived from Basketball-Reference, which spells exactly
+ * three teams differently. 32 of the 331 pool players carry these codes (BRK
+ * 12, CHO 9, PHO 11); without this map every one of them rendered on the grey
+ * fallback despite being on a perfectly ordinary team.
+ *
+ * Exported so scripts/cardgen/resolveTeams.js can canonicalize against the same
+ * table rather than declaring its own copy — two lists of the same three pairs
+ * drifting apart is a bug waiting to happen.
+ */
+export const TEAM_ALIASES = { BRK: 'BKN', CHO: 'CHA', PHO: 'PHX' };
+
+/**
+ * The nba.com spelling of a team abbreviation.
+ *
+ * Own-property lookup, not `TEAM_ALIASES[abbr] ?? abbr`: the latter answers
+ * `canonicalTeam('toString')` with a function off Object.prototype.
+ */
+export function canonicalTeam(abbr) {
+  return Object.hasOwn(TEAM_ALIASES, abbr) ? TEAM_ALIASES[abbr] : abbr;
+}
+
+/**
  * Neutral theme for anything this table can't identify.
  *
  * This is load-bearing, not defensive padding: 45 players in the 2025-26 pool
  * still carry Basketball-Reference's "2TM"/"3TM" mid-season-trade aggregate
  * codes, which are not teams and have no colors or logo. A card for one of
  * those players must still render, so they get the neutral navy/silver theme
- * and no logo until a real team is resolved for them.
+ * and no logo until a real team is resolved for them — and looking unstyled is
+ * the correct signal for data that is genuinely wrong, which is why the aliases
+ * above deliberately do not try to rescue "2TM"/"3TM" as well.
  */
 const FALLBACK = { name: 'Unknown', city: '', primary: '#1B2A4A', secondary: '#C0C0C0', logo: null };
 
 /** Team record for an abbreviation, or a neutral fallback so cards still render. */
 export function getTeam(abbr) {
-  return TEAMS[abbr] ?? FALLBACK;
+  return TEAMS[canonicalTeam(abbr)] ?? FALLBACK;
 }
 
 /**
@@ -65,7 +92,12 @@ export function getTeam(abbr) {
  * Overrides live in card-art/team-overrides.json and let colors be tuned per
  * team without editing this file. `overrides` is the whole map keyed by
  * abbreviation; only the fields it names are replaced.
+ *
+ * The override key is canonicalized too, so a tuned "BKN" reaches the pool's
+ * "BRK" players — otherwise they would get the Nets' stock colors while every
+ * other Net got the tuned ones.
  */
 export function getThemedTeam(abbr, overrides = {}) {
-  return { ...getTeam(abbr), ...(overrides?.[abbr] ?? {}) };
+  const canonical = canonicalTeam(abbr);
+  return { ...getTeam(canonical), ...(overrides?.[canonical] ?? {}) };
 }

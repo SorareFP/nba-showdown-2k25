@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   playerIdFromName,
   POOL_PLAYERS,
+  CARD_PLAYERS,
   SOURCES,
   photoProgress,
   filterPlayers,
@@ -14,7 +15,7 @@ const P = (id, name, team, pos) => ({ id, name, team, pos });
 const SAMPLE = [
   P('Tyrese_Maxey', 'Tyrese Maxey', 'PHI', 'PG'),
   P('Kevin_Durant', 'Kevin Durant', 'HOU', 'SF'),
-  P('Luka_Don_i_', 'Luka Dončić', 'LAL', 'PG'),
+  P('Luka_Doncic', 'Luka Dončić', 'LAL', 'PG'),
 ];
 
 describe('playerIdFromName', () => {
@@ -24,19 +25,38 @@ describe('playerIdFromName', () => {
 
   it('collapses runs of punctuation into a single underscore', () => {
     expect(playerIdFromName("De'Aaron Fox")).toBe('De_Aaron_Fox');
-    expect(playerIdFromName('Jabari Smith Jr.')).toBe('Jabari_Smith_Jr_');
+    expect(playerIdFromName('A.J. Green')).toBe('A_J_Green');
   });
 
-  it('collapses non-ASCII letters, which is ugly but must stay stable', () => {
-    // This id is the photo filename. Changing the scheme to strip diacritics
-    // properly ("Luka_Doncic") would orphan every photo already curated, so it
-    // is locked here on purpose.
-    expect(playerIdFromName('Luka Dončić')).toBe('Luka_Don_i_');
-    expect(playerIdFromName('Nikola Jokić')).toBe('Nikola_Joki_');
+  it('trims the underscore a trailing suffix dot would leave', () => {
+    // "Jabari_Smith_Jr_" would be the id; the shipped set spells it
+    // "Jabari_Smith_Jr", and this id is a filename people read.
+    expect(playerIdFromName('Jabari Smith Jr.')).toBe('Jabari_Smith_Jr');
+    expect(playerIdFromName('  Kevin Durant  ')).toBe('Kevin_Durant');
+  });
+
+  it('strips diacritics instead of collapsing them to underscores', () => {
+    // This id is the photo filename, so the scheme must not churn — and the
+    // form it is pinned to is the one the repo already ships: card art named
+    // "Vit_Krejci.png", ids in src/game/rawCards.js like "Alperen_Sengun".
+    expect(playerIdFromName('Luka Dončić')).toBe('Luka_Doncic');
+    expect(playerIdFromName('Nikola Jokić')).toBe('Nikola_Jokic');
+    expect(playerIdFromName('Alperen Şengün')).toBe('Alperen_Sengun');
+    expect(playerIdFromName('Vít Krejčí')).toBe('Vit_Krejci');
+    expect(playerIdFromName('Jonas Valančiūnas')).toBe('Jonas_Valanciunas');
+    expect(playerIdFromName('Dennis Schröder')).toBe('Dennis_Schroder');
+  });
+
+  it('keeps case and word breaks, unlike a cross-source match key', () => {
+    // resolveTeams.js's normalizeName lowercases and drops separators to match
+    // names across feeds. This is a filename, so it must stay readable.
+    expect(playerIdFromName('Luka Dončić')).not.toBe('lukadoncic');
   });
 
   it('survives a missing name instead of throwing', () => {
     expect(playerIdFromName(undefined)).toBe('');
+    expect(playerIdFromName(null)).toBe('');
+    expect(playerIdFromName('...')).toBe('');
   });
 });
 
@@ -62,6 +82,53 @@ describe('the 2025-26 pool', () => {
     expect(maxey).toMatchObject({ id: 'Tyrese_Maxey', team: 'PHI', pos: 'PG' });
     expect(maxey.chart).toBeUndefined();
     expect(maxey.salary).toBeUndefined();
+  });
+
+  it('leaves no underscore where a diacritic used to be', () => {
+    // A letter this scheme cannot decompose (Đ, ø, ł — none of which NFD
+    // touches) would silently become an underscore again. Doubled or edge
+    // underscores are the symptom, so fail on them by name.
+    const ugly = POOL_PLAYERS.filter(p => /^_|_$|__/.test(p.id)).map(p => p.name);
+    expect(ugly).toEqual([]);
+  });
+});
+
+describe('photo-id collisions', () => {
+  // The photo directory is ONE namespace shared by both sources, so this is the
+  // check that matters: two different people must never derive the same
+  // filename, or curating one silently overwrites the other's photo.
+  const bare = name =>
+    name
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, '');
+
+  it('gives all 331 pool players distinct ids', () => {
+    expect(new Set(POOL_PLAYERS.map(p => p.id)).size).toBe(331);
+  });
+
+  it('gives all 306 shipped cards distinct ids', () => {
+    expect(new Set(CARD_PLAYERS.map(p => p.id)).size).toBe(306);
+  });
+
+  it('never gives two different people the same id across both sets', () => {
+    const byId = new Map();
+    const clashes = [];
+    for (const p of [...POOL_PLAYERS, ...CARD_PLAYERS]) {
+      const seen = byId.get(p.id);
+      if (seen === undefined) byId.set(p.id, p.name);
+      else if (bare(seen) !== bare(p.name)) clashes.push(`${p.id}: ${seen} vs ${p.name}`);
+    }
+    expect(clashes).toEqual([]);
+  });
+
+  it('lands 194 pool players on an id the shipped set already uses', () => {
+    // Not a requirement, a canary: this was 177 while accents collapsed to
+    // underscores. If it drops, the id scheme has drifted off the convention
+    // src/game/rawCards.js and public/cards/players/ were built on.
+    const shipped = new Set(CARD_PLAYERS.map(p => p.id));
+    expect(POOL_PLAYERS.filter(p => shipped.has(p.id))).toHaveLength(194);
   });
 });
 

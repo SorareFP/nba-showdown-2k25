@@ -27,13 +27,30 @@ import { CARDS } from '../game/cards.js';
  * would orphan every photo already curated. The batch export derives ids the
  * same way, which is what lets it find the photos the studio wrote.
  *
- * Non-ASCII letters collapse to underscores ("Luka Dončić" -> "Luka_Don_i_",
- * "Jabari Smith Jr." -> "Jabari_Smith_Jr_"). Ugly, but stable, collision-free
- * across all 331 pool names (verified), and inside the character set the studio
- * server's path guard accepts.
+ * Diacritics are stripped before the character replacement, so accented names
+ * survive as readable ASCII ("Luka Dončić" -> "Luka_Doncic") instead of
+ * collapsing to "Luka_Don_i_". That is this repo's existing convention, not a
+ * new one: the shipped card art is named `Vit_Krejci.png` and the shipped ids
+ * in src/game/rawCards.js are `Alperen_Sengun`, `Nikola_Jokic`. Matching it
+ * makes 194 of the 331 pool ids line up with an existing card id, up from 177.
+ *
+ * Unlike the cross-source matching key in scripts/cardgen/resolveTeams.js, this
+ * PRESERVES case and word separators — it is a filename, meant to be read by a
+ * human scrolling card-art/photos/, so "Luka_Doncic" and not "lukadoncic".
+ *
+ * Leading and trailing underscores are trimmed, so "Jabari Smith Jr." is
+ * `Jabari_Smith_Jr` rather than `Jabari_Smith_Jr_` — again matching the shipped
+ * ids. Interior punctuation still collapses to one underscore ("De'Aaron Fox"
+ * -> "De_Aaron_Fox"). Verified collision-free across all 331 pool names and all
+ * 306 shipped cards, and inside the character set the studio server's path
+ * guard accepts.
  */
 export function playerIdFromName(name) {
-  return String(name ?? '').replace(/[^A-Za-z0-9]+/g, '_');
+  return String(name ?? '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^A-Za-z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '');
 }
 
 /** The 2025-26 pool, shaped like a card. Missing stats stay missing. */

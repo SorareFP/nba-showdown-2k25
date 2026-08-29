@@ -13,6 +13,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import PlayerList from './PlayerList.jsx';
 import CropEditor from './CropEditor.jsx';
 import { CARD_WIDTH, CARD_HEIGHT } from '../cards/CardTemplate.jsx';
+import { CURRENT_SET, setPaths } from '../cards/sets.js';
 import { SOURCES, DEFAULT_SOURCE, filterPlayers, stepSelection } from './players.js';
 import { pruneCrops, resetCrop } from './crop.js';
 import { fetchStudioState, uploadPhoto, saveCrops, isImageFile } from './api.js';
@@ -211,6 +212,15 @@ export default function Studio() {
     <div className={styles.page}>
       <header className={styles.topBar}>
         <span className={styles.title}>Card Studio</span>
+
+        {/* Which SEASON's cards this session is building. Everything written
+            here — photos, crops, team colors — is scoped to it, and the
+            finished 2025-26 cards are somewhere else entirely. Worth a
+            permanent label: "which set am I editing" is not a question the
+            user should have to answer from memory. */}
+        <span className={styles.setBadge} title={`Writing to ${setPaths().root}/`}>
+          set {CURRENT_SET}
+        </span>
 
         <div className={styles.toggle} role="group" aria-label="Player set">
           {Object.values(SOURCES).map(source => (

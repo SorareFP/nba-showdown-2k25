@@ -17,7 +17,7 @@ Read these first — they carry context this plan assumes:
 - `docs/plans/2026-08-29-card-studio-design.md` — the approved design and the reasoning behind each decision.
 - `scripts/cardgen/sources/basketballReference.js` and `scripts/cardgen/sources/playerPool.js` — the established source-adapter conventions. **Follow them:** throw loudly when expected page structure is missing (never silently fall back to parsing unscoped input), test against a real trimmed HTML fixture in `__fixtures__/`, and document dedup rules in comments.
 - `src/game/cards.js` — the card data shape (`chart` is an array of `{lo, hi, pts, reb, ast}`).
-- `src/game/cardImages.js` — confirms exported PNGs go to `public/cards/players/{playerId}.png`.
+- `src/game/cardImages.js` — where the RUNNING GAME reads cards from: `public/cards/players/{playerId}.png`. That flat path belongs to the FINISHED 2025-26 set and is read-only for everything in this plan. The set being built here writes to `public/cards/{CURRENT_SET}/` — see `src/cards/sets.js`, which is the one place the set id is declared.
 
 ### ⚠️ Card data for the new pool does not exist yet
 
@@ -1184,6 +1184,14 @@ git commit -m "feat(studio): add per-team color template editor"
 
 ## Task 9: Batch export to PNG
 
+**WRITE TARGET — READ THIS FIRST.** The export writes to `public/cards/<SET>/`,
+where the set comes from `CURRENT_SET` in `src/cards/sets.js`. It must NEVER
+write to `public/cards/players/`. That flat directory holds the ~300 finished,
+hand-made 2025-26 cards that `src/game/cardImages.js` serves to the running
+game; they are not regenerable, this export derives ids by the same rule that
+named them, and a run pointed there would overwrite every one of them. Take the
+directory from `setPaths().cards`, never from a literal.
+
 **Files:**
 - Create: `scripts/studio/export.js`
 - Create: `studio-export.html`
@@ -1244,8 +1252,12 @@ import { resolve } from 'node:path';
 // blank cards the day the two drift.
 import { playerIdFromName } from '../../src/studio/players.js';
 
+import { setPaths } from '../../src/cards/sets.js';
+
 const BASE = process.env.STUDIO_URL ?? 'http://localhost:5173';
-const OUT = resolve(process.cwd(), 'public/cards/players');
+// public/cards/{set}/ — set-scoped so a re-run can never land on the finished
+// set's art in public/cards/players/. See sets.js.
+const OUT = resolve(process.cwd(), setPaths().cards);
 const CARD_WIDTH = 843;
 const CARD_HEIGHT = 1181;
 
@@ -1288,7 +1300,7 @@ for (const player of cards) {
 }
 
 await browser.close();
-console.log(`exported ${done}/${cards.length} cards to public/cards/players/`);
+console.log(`exported ${done}/${cards.length} cards to ${setPaths().cards}/`);
 ```
 
 **Step 4: Add the npm script**
@@ -1312,7 +1324,7 @@ Then verify the output is print-correct:
 python3 -c "
 from PIL import Image
 import glob
-f = sorted(glob.glob('public/cards/players/*.png'))[0]
+f = sorted(glob.glob('public/cards/2026-27/*.png'))[0]
 im = Image.open(f); print(f, im.size)
 assert im.size == (843, 1181), f'wrong size: {im.size}'
 print('OK')

@@ -1,8 +1,8 @@
 // Crop math for the studio's pan/zoom editor.
 //
 // Crop is METADATA ({x, y, zoom}) turned into CSS by src/cards/photo.js — the
-// file dropped into card-art/photos/ is never touched. Everything here is pure
-// so the two pieces that are genuinely easy to get wrong —
+// file dropped into the set's photos/ directory is never touched. Everything
+// here is pure so the two pieces that are genuinely easy to get wrong —
 // converting a mouse movement in scaled-preview pixels into a percentage of the
 // card's photo window, and working out how far a given photo can actually be
 // panned — are tested rather than eyeballed.

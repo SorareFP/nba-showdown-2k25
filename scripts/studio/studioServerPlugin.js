@@ -1,8 +1,9 @@
 // Vite dev-server middleware backing the Card Studio's file persistence.
 //
 // DEV ONLY. Registered with `apply: 'serve'`, so it is never part of a `vite
-// build` and cannot reach production. Every write it performs is inside
-// card-art/.
+// build` and cannot reach production. Every write it performs is inside the
+// CURRENT set's directory under card-art/ (src/cards/sets.js) — never near
+// public/cards/, where the finished set's hand-made art lives.
 //
 // Why a plugin rather than a companion server: the studio needs to write files
 // (photos, crop metadata, team colors). A `configureServer` hook adds routes to
@@ -16,6 +17,7 @@
 // having to be prefixed with the base. Do not convert these to post hooks.
 import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, statSync } from 'node:fs';
 import { resolve, extname, sep } from 'node:path';
+import { ART_ROOT, CURRENT_SET, setPaths } from '../../src/cards/sets.js';
 
 const ALLOWED_PHOTO_EXT = new Set(['.jpg', '.jpeg', '.png', '.webp']);
 
@@ -27,14 +29,21 @@ const CONTENT_TYPES = {
   '.json': 'application/json',
 };
 
-/** Every path the studio is allowed to touch, derived from the Vite root. */
-function studioPaths(root) {
-  const art = resolve(root, 'card-art');
+/**
+ * Every path the studio is allowed to touch, derived from the Vite root.
+ *
+ * All of them sit under the CURRENT set (src/cards/sets.js). `art` stays the
+ * un-scoped card-art/ root only because it is the traversal boundary for
+ * static serving — no route writes there directly.
+ */
+function studioPaths(root, set = CURRENT_SET) {
+  const paths = setPaths(set);
   return {
-    art,
-    photos: resolve(art, 'photos'),
-    crops: resolve(art, 'crops.json'),
-    teams: resolve(art, 'team-overrides.json'),
+    set,
+    art: resolve(root, ART_ROOT),
+    photos: resolve(root, paths.photos),
+    crops: resolve(root, paths.crops),
+    teams: resolve(root, paths.teamOverrides),
   };
 }
 
@@ -73,7 +82,7 @@ async function readBody(req) {
 
 /**
  * A playerId is interpolated straight into a filesystem path, so it must not be
- * able to escape card-art/photos/. Real card ids look like "Nikola_Jokic".
+ * able to escape the set's photos/ directory. Real ids look like "Nikola_Jokic".
  */
 export function isSafePlayerId(id) {
   return typeof id === 'string' && id.length > 0 && /^[A-Za-z0-9_.-]+$/.test(id) && !id.includes('..');
@@ -160,11 +169,12 @@ export function studioServerPlugin() {
       //
       // Vite's own static middleware would do this, but it runs AFTER the base
       // middleware, so it only ever sees `/nba-showdown-2k25/card-art/...`.
-      // src/cards/photo.js resolves photos to the bare `/card-art/photos/{id}.jpg`
-      // because that is also the path the production-independent export uses,
-      // so serve that path directly here.
+      // src/cards/photo.js resolves photos to the bare
+      // `/card-art/sets/{set}/photos/{id}.jpg` because that is also the path
+      // the production-independent export uses, so serve that path directly
+      // here. Mounted on the un-scoped root so every set stays reachable.
       server.middlewares.use(
-        '/card-art',
+        `/${ART_ROOT}`,
         guard((req, res, next) => {
           const rel = decodeURIComponent(new URL(req.url, 'http://studio.local').pathname).replace(
             /^\/+/,

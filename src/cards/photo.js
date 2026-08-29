@@ -1,9 +1,10 @@
 // Photo resolution and crop metadata for card art.
 //
 // Crop is stored as METADATA, never baked into the source image. The original
-// file dropped into card-art/photos/ is left byte-identical forever, so a crop
-// can be redone later without re-sourcing the photo, and a template change can
-// never destroy work already done.
+// file dropped into the set's photos/ directory is left byte-identical forever,
+// so a crop can be redone later without re-sourcing the photo, and a template
+// change can never destroy work already done.
+import { CURRENT_SET, photoUrlPath } from './sets.js';
 
 /** Neutral crop: centered, no zoom. */
 export const DEFAULT_CROP = { x: 0, y: 0, zoom: 1 };
@@ -42,9 +43,15 @@ const HEADSHOT_BASE = 'https://cdn.nba.com/headshots/nba/latest/1040x760';
  *
  * Returns null when neither is available; callers render a placeholder.
  */
-export function resolvePhotoUrl({ playerId, hasPhoto, personId, version } = {}) {
+export function resolvePhotoUrl({
+  playerId,
+  hasPhoto,
+  personId,
+  version,
+  set = CURRENT_SET,
+} = {}) {
   if (hasPhoto) {
-    const url = `/card-art/photos/${playerId}.jpg`;
+    const url = photoUrlPath(playerId, set);
     return version == null || version === '' ? url : `${url}?v=${encodeURIComponent(version)}`;
   }
   if (personId) return `${HEADSHOT_BASE}/${personId}.png`;

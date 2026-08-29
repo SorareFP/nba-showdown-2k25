@@ -34,6 +34,20 @@
 
 .spacer { flex: 1; }
 
+/* The card set being edited. Quiet — it is a standing fact, not a control —
+ * but always present, because writing a season of art into the wrong set is
+ * the one mistake here that cannot be undone. */
+.setBadge {
+  padding: 3px 9px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+
 .toggle {
   display: flex;
   border: 1px solid var(--border);

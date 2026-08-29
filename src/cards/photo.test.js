@@ -1,10 +1,16 @@
 import { describe, it, expect } from 'vitest';
 import { resolvePhotoUrl, DEFAULT_CROP, cropToStyle, PHOTO_WINDOW } from './photo.js';
+import { CURRENT_SET } from './sets.js';
 
 describe('resolvePhotoUrl', () => {
   it('prefers a curated photo when one exists', () => {
     expect(resolvePhotoUrl({ playerId: 'Nikola_Jokic', hasPhoto: true, personId: 203999 }))
-      .toBe('/card-art/photos/Nikola_Jokic.jpg');
+      .toBe(`/card-art/sets/${CURRENT_SET}/photos/Nikola_Jokic.jpg`);
+  });
+
+  it('scopes the photo to the set, so one season cannot read another', () => {
+    expect(resolvePhotoUrl({ playerId: 'Nikola_Jokic', hasPhoto: true, set: '2025-26' }))
+      .toBe('/card-art/sets/2025-26/photos/Nikola_Jokic.jpg');
   });
 
   it('appends a cache-busting token so a replaced photo is re-fetched', () => {
@@ -13,12 +19,12 @@ describe('resolvePhotoUrl', () => {
     // appears. Two different tokens must produce two different URLs.
     const a = resolvePhotoUrl({ playerId: 'Nikola_Jokic', hasPhoto: true, version: 1712000000000 });
     const b = resolvePhotoUrl({ playerId: 'Nikola_Jokic', hasPhoto: true, version: 1712000000001 });
-    expect(a).toBe('/card-art/photos/Nikola_Jokic.jpg?v=1712000000000');
+    expect(a).toBe(`/card-art/sets/${CURRENT_SET}/photos/Nikola_Jokic.jpg?v=1712000000000`);
     expect(a).not.toBe(b);
   });
 
   it('omits the token when there is none, keeping the export URL clean', () => {
-    const bare = '/card-art/photos/X.jpg';
+    const bare = `/card-art/sets/${CURRENT_SET}/photos/X.jpg`;
     expect(resolvePhotoUrl({ playerId: 'X', hasPhoto: true })).toBe(bare);
     expect(resolvePhotoUrl({ playerId: 'X', hasPhoto: true, version: null })).toBe(bare);
     expect(resolvePhotoUrl({ playerId: 'X', hasPhoto: true, version: '' })).toBe(bare);

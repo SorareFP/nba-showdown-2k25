@@ -22,7 +22,7 @@ import { CARDS } from '../game/cards.js';
 /**
  * Derives a player's stable id from their name.
  *
- * This id IS the photo filename (`card-art/photos/{id}.jpg`) and the key in
+ * This id IS the photo filename (`card-art/sets/{set}/photos/{id}.jpg`) and the key in
  * crops.json, so it must never change for a given name — renaming the scheme
  * would orphan every photo already curated. The batch export derives ids the
  * same way, which is what lets it find the photos the studio wrote.
@@ -36,7 +36,7 @@ import { CARDS } from '../game/cards.js';
  *
  * Unlike the cross-source matching key in scripts/cardgen/resolveTeams.js, this
  * PRESERVES case and word separators — it is a filename, meant to be read by a
- * human scrolling card-art/photos/, so "Luka_Doncic" and not "lukadoncic".
+ * human scrolling the set's photos/, so "Luka_Doncic" and not "lukadoncic".
  *
  * Leading and trailing underscores are trimmed, so "Jabari Smith Jr." is
  * `Jabari_Smith_Jr` rather than `Jabari_Smith_Jr_` — again matching the shipped
@@ -86,9 +86,9 @@ function asSet(photoIds) {
 /**
  * How far through the set the photo curation is.
  *
- * Counts only photos belonging to the ACTIVE set: card-art/photos/ accumulates
- * files from both sources, and reporting "310 / 331" because the shipped-card
- * photos were counted too would make the progress number useless.
+ * Counts only photos belonging to the ACTIVE source list: the set's photos/
+ * accumulates files from both sources, and reporting "310 / 331" because the
+ * shipped-card photos were counted too would make the progress number useless.
  */
 export function photoProgress(players, photoIds) {
   const have = asSet(photoIds);

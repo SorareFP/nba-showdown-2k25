@@ -16,8 +16,53 @@
 // The pool JSON is imported, not fetched: Vite handles JSON natively, so the
 // list is present on first paint instead of arriving a round trip later, and a
 // missing/renamed file becomes a build error rather than an empty studio.
-import pool from '../../card-data/generated/player-pool-2026.json';
+import rawPool from '../../card-data/generated/player-pool-2026.json';
 import { CARDS } from '../game/cards.js';
+
+/**
+ * The team-resolved pool, when `node scripts/cardgen/generateTeams.js` has been
+ * run. PREFERRED over the raw pool, for two reasons:
+ *
+ *  - 45 of the 331 raw records carry Basketball-Reference's "2TM"/"3TM"
+ *    mid-season-trade aggregate codes, which are not teams. Every one of those
+ *    cards rendered on the neutral grey fallback with no logo and no colors.
+ *    The resolved file replaces them with the player's real current team.
+ *  - It carries `personId`, nba.com's player id, which is the ONLY thing that
+ *    makes the headshot fallback (see src/cards/photo.js) work for a pool
+ *    player who has no curated photo yet.
+ *
+ * import.meta.glob rather than a plain import so an absent file degrades to the
+ * raw pool instead of breaking the studio: this file is GENERATED, and a
+ * checkout that has never run the generator (or a season whose generator has
+ * not been re-run yet) must still open a usable studio. Eager, so the list is
+ * still there on first paint.
+ */
+const resolvedModules = import.meta.glob('../../card-data/generated/player-teams-2026.json', {
+  eager: true,
+});
+const resolvedPool = Object.values(resolvedModules)[0]?.default ?? null;
+
+/** True when the studio is showing real resolved teams rather than raw codes. */
+export const TEAMS_RESOLVED = resolvedPool !== null;
+
+/**
+ * The raw pool with resolved records OVERLAID — not replaced by them.
+ *
+ * The resolved file is deliberately shorter than the pool: the generator emits
+ * only players it could give a real team, which today leaves 4 out (they are on
+ * no active roster AND carry an aggregate code, so no source knows their team).
+ * Taking the resolved file as the list would quietly drop those 4 from a
+ * 331-player set — the user would simply never be offered them to photograph.
+ *
+ * So the pool stays the spine and resolution is an overlay. The unresolved few
+ * keep their raw "2TM" code and go on rendering the neutral fallback theme,
+ * which is the correct signal: those are the cards still needing a human
+ * decision, and they should look unfinished until they get one.
+ *
+ * Keyed by `name` because that is what the generator copies through verbatim.
+ */
+const resolvedByName = new Map((resolvedPool ?? []).map(p => [p.name, p]));
+const pool = rawPool.map(p => ({ ...p, ...(resolvedByName.get(p.name) ?? {}) }));
 
 /**
  * Derives a player's stable id from their name.
@@ -61,6 +106,10 @@ export const POOL_PLAYERS = pool.map(p => ({
   pos: p.pos,
   games: p.games,
   mpg: p.mpg,
+  // Present only on the resolved file. `?? null` rather than left undefined so
+  // the field always exists and resolvePhotoUrl's `if (personId)` reads the
+  // same either way.
+  personId: p.personId ?? null,
   // No chart / speed / power / salary / shotLine: they have not been generated
   // for this pool. CardTemplate renders placeholders for each.
 }));

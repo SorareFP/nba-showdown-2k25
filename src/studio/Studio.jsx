@@ -14,7 +14,7 @@ import PlayerList from './PlayerList.jsx';
 import CropEditor from './CropEditor.jsx';
 import { CARD_WIDTH, CARD_HEIGHT } from '../cards/CardTemplate.jsx';
 import { CURRENT_SET, setPaths } from '../cards/sets.js';
-import { SOURCES, DEFAULT_SOURCE, filterPlayers, stepSelection } from './players.js';
+import { SOURCES, DEFAULT_SOURCE, TEAMS_RESOLVED, filterPlayers, stepSelection } from './players.js';
 import { pruneCrops, resetCrop } from './crop.js';
 import { fetchStudioState, uploadPhoto, saveCrops, isImageFile } from './api.js';
 import styles from './Studio.module.css';
@@ -221,6 +221,18 @@ export default function Studio() {
         <span className={styles.setBadge} title={`Writing to ${setPaths().root}/`}>
           set {CURRENT_SET}
         </span>
+
+        {/* Only when the generated team file is missing. Without it 45 players
+            render on the grey no-team theme, which looks like a template bug
+            rather than the missing data it is — say so, and say what fixes it. */}
+        {!TEAMS_RESOLVED && (
+          <span
+            className={styles.setBadge}
+            title="card-data/generated/player-teams-2026.json is missing — run `node scripts/cardgen/generateTeams.js`. Until then, traded players show a 2TM/3TM code and no team colors."
+          >
+            teams unresolved
+          </span>
+        )}
 
         <div className={styles.toggle} role="group" aria-label="Player set">
           {Object.values(SOURCES).map(source => (

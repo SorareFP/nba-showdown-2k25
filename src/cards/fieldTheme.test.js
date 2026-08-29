@@ -12,10 +12,13 @@ import {
   FIELD_FALLBACK,
   INK_LIGHT,
   MIN_ACCENT_CONTRAST,
+  SCRIM_ALPHA,
   parseHex,
   toHex,
   mix,
   shade,
+  rgba,
+  compositeOver,
   relativeLuminance,
   contrastRatio,
   pickInk,
@@ -96,6 +99,33 @@ describe('mix / shade', () => {
     expect(relativeLuminance(shade('#BA0C2F', -0.3))).toBeLessThan(
       relativeLuminance('#BA0C2F')
     );
+  });
+});
+
+describe('rgba / compositeOver', () => {
+  it('formats a hex as an rgba string', () => {
+    expect(rgba('#BA0C2F', 0.5)).toBe('rgba(186, 12, 47, 0.5)');
+  });
+
+  it('reads a non-color as black rather than emitting rgba(NaN)', () => {
+    expect(rgba('nonsense', 0.5)).toBe('rgba(0, 0, 0, 0.5)');
+  });
+
+  it('composites a translucent fill onto a background', () => {
+    expect(compositeOver('rgba(255, 255, 255, 0.5)', '#000000')).toBe('#808080');
+    expect(compositeOver('rgba(255, 255, 255, 0)', '#BA0C2F')).toBe('#BA0C2F');
+    expect(compositeOver('rgba(255, 255, 255, 1)', '#BA0C2F')).toBe('#FFFFFF');
+  });
+
+  it('passes an opaque hex straight through', () => {
+    expect(compositeOver('#BA0C2F', '#000000')).toBe('#BA0C2F');
+  });
+
+  it('falls back to the background rather than throwing on junk', () => {
+    for (const bad of ['rgba(1,2)', 'chartreuse', '', null, undefined, 42]) {
+      expect(compositeOver(bad, '#BA0C2F'), String(bad)).toBe('#BA0C2F');
+    }
+    expect(compositeOver('rgba(0, 0, 0, 0.5)', 'not-a-color')).toBe('not-a-color');
   });
 });
 
@@ -349,6 +379,119 @@ describe('deriveFieldTheme', () => {
     // Chicago's black stripe reads 1.64:1 on their band and stays black.
     expect(deriveFieldTheme('#BA0C2F', '#010101', '#E6ECF8').stripeSecondary)
       .toBe('#010101');
+  });
+});
+
+describe('the sidebar scrim', () => {
+  // The bar down the right of the card. It is the ONE thing the card paints at
+  // less than full opacity, so everything below composites it first: `scrim`
+  // is not what the card shows, `compositeOver(scrim, …)` is.
+
+  it('holds the alpha measured off the reference art', () => {
+    // Recovered by regressing the pixels inside the bar's left edge against the
+    // pixels outside it: median 0.575 on LeBron, 0.562 on Edwards, and 0.564 /
+    // 0.563 / 0.574 per channel from the flat patch of top band the bar crosses.
+    // A bound rather than an equality — the art is three measurements that
+    // disagree in the third decimal, not a constant someone wrote down.
+    expect(SCRIM_ALPHA).toBeGreaterThanOrEqual(0.53);
+    expect(SCRIM_ALPHA).toBeLessThanOrEqual(0.61);
+  });
+
+  it('lands on panelAlt once the browser has composited it, on every stock team', () => {
+    // This IS the derivation: the scrim is defined by where it ends up over the
+    // field, not by the fill it starts as. Off by at most one count per channel
+    // because the fill is rounded to a hex before it is composited and rounded
+    // again after — two trips through toHex where panelAlt takes one.
+    for (const [abbr, primary, secondary, accent] of STOCK) {
+      const t = deriveFieldTheme(primary, secondary, accent);
+      const painted = parseHex(compositeOver(t.scrim, t.field));
+      const target = parseHex(t.panelAlt);
+      for (let i = 0; i < 3; i += 1) {
+        expect(Math.abs(painted[i] - target[i]), `${abbr} ${t.field} channel ${i}`)
+          .toBeLessThanOrEqual(1);
+      }
+    }
+  });
+
+  it('lands on panelAlt across the whole colour cube too', () => {
+    for (const field of CUBE) {
+      const t = deriveFieldTheme(field, '#FFC72C', '#B9975B');
+      const painted = parseHex(compositeOver(t.scrim, t.field));
+      const target = parseHex(t.panelAlt);
+      for (let i = 0; i < 3; i += 1) {
+        expect(Math.abs(painted[i] - target[i]), `${field} channel ${i}`)
+          .toBeLessThanOrEqual(1);
+      }
+    }
+  });
+
+  it('takes its direction from panelDirection, not from a fixed white wash', () => {
+    // The whole point of deriving it. A hardcoded rgba(255,255,255,…) reads on
+    // a dark card and washes out a light one; this steps the same way the rest
+    // of the card's layering does, which on OKC's #0072CE means DARKER and on
+    // San Antonio's #010101 — where there is no darker — means lighter.
+    const okc = deriveFieldTheme('#0072CE', '#EF3B24', '#E6ECF8');
+    expect(relativeLuminance(compositeOver(okc.scrim, okc.field)))
+      .toBeLessThan(relativeLuminance(okc.field));
+
+    const spurs = deriveFieldTheme('#010101', '#9EA2A2', '#9EA2A2');
+    expect(relativeLuminance(compositeOver(spurs.scrim, spurs.field)))
+      .toBeGreaterThan(relativeLuminance(spurs.field));
+
+    // And it never steps the opposite way from the card's other layers — the
+    // claim that matters, since the point of deriving it through `step` was to
+    // reuse that decision rather than take one of its own. Includes the cases
+    // where panelDirection's own separation fallback overrules the luminance
+    // test: on #FFC72C both the panels and the scrim come out DARKER, because
+    // a gold field has almost nowhere left to lighten.
+    for (const field of CUBE) {
+      const t = deriveFieldTheme(field, '#FFC72C', '#B9975B');
+      const here = relativeLuminance(compositeOver(t.scrim, t.field));
+      const there = relativeLuminance(t.panel);
+      const base = relativeLuminance(t.field);
+      expect(Math.sign(here - base) === Math.sign(there - base) || here === base, field)
+        .toBe(true);
+    }
+  });
+
+  it('is never flat on its own field, anywhere in the cube', () => {
+    // 1.05 rather than the panels' 1.15: this is a veil, deliberately the
+    // quietest layer on the card, and the floor is what panelAlt itself can
+    // manage on the worst field in the cube (#D269B4, 1.061).
+    for (const field of CUBE) {
+      const t = deriveFieldTheme(field, '#FFC72C', '#B9975B');
+      expect(contrastRatio(compositeOver(t.scrim, t.field), t.field), field)
+        .toBeGreaterThan(1.05);
+    }
+  });
+
+  it('lifts the sidebar off the photo, which is what it is for', () => {
+    // The sidebar's ink is chosen against the FIELD, and the top of the sidebar
+    // is printed over the photo — so the worst case is a photo pixel that is
+    // exactly the ink colour: white kit under white text, 1:1, invisible. The
+    // scrim cannot know the photo, but it can guarantee how far it drags any
+    // pixel toward the card's own tone. Every stock team clears 2.6:1 on that
+    // worst case, and the darkest fields clear 4.2:1.
+    for (const [abbr, primary, secondary, accent] of STOCK) {
+      const t = deriveFieldTheme(primary, secondary, accent);
+      const worstPhoto = t.ink; // a photo pixel the ink would vanish into
+      expect(contrastRatio(t.ink, compositeOver(t.scrim, worstPhoto)), abbr)
+        .toBeGreaterThan(2.6);
+    }
+  });
+
+  it('reproduces the reference art on the reference art\'s own field', () => {
+    // The one place the bar crosses a flat surface in the printed cards: the
+    // top band's #5B6A7D grey reads #2F425A inside it. Ours steps off the field
+    // where the art's scrim was the field exactly, so it veils very slightly
+    // less; 15 counts per channel bounds that difference, and the measured gap
+    // is 6 / 8 / 12.
+    const art = deriveFieldTheme('#031E44', '#FFFFFF', '#FFC72C');
+    const painted = parseHex(compositeOver(art.scrim, '#5B6A7D'));
+    const measured = parseHex('#2F425A');
+    for (let i = 0; i < 3; i += 1) {
+      expect(Math.abs(painted[i] - measured[i]), `channel ${i}`).toBeLessThanOrEqual(15);
+    }
   });
 });
 

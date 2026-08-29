@@ -103,13 +103,17 @@
   padding: 0;
 }
 
-/* Thin inner frame, the way the printed cards are trimmed. */
+/* Thin inner frame, the way the printed cards are trimmed. Painted last, and
+ * z-indexed so it STAYS last: ::after outranks children at z-index auto by
+ * being the final box in tree order, but not a child that has raised itself
+ * (.chevronTop), whose apex reaches into the frame's top 3px. */
 .card::after {
   content: '';
   position: absolute;
   inset: 0;
   box-shadow: inset 0 0 0 7px var(--field-frame);
   pointer-events: none;
+  z-index: 2;
 }
 
 /* ── Top band: SPEED / POWER over team-colored diagonal stripes ──────────── */
@@ -210,11 +214,20 @@
   clip-path: polygon(50% 0%, 100% 50%, 100% 100%, 50% 50%, 0% 100%, 0% 50%);
   opacity: 0.85;
 }
+/* Lifted over the scrim, which is DOM-later than this and would otherwise veil
+ * the top half of the chevron and leave a horizontal seam across the dots
+ * where the bar's top edge crosses them. The printed cards draw these dots at
+ * full strength inside the bar, so the dots belong ON TOP of it.
+ *
+ * The one other thing this raises the chevron over is the photo, which it
+ * overlaps for 26px below y=110 — and the reference art has the dots over the
+ * photo there too, so that is a step toward the art rather than away. */
 .chevronTop {
   right: 26px;
   top: 4px;
   width: 152px;
   height: 132px;
+  z-index: 1;
 }
 .chevronBottom {
   left: 28px;
@@ -295,6 +308,42 @@
     rgba(255, 255, 255, 0.045) 0 14px,
     transparent 14px 28px
   );
+}
+
+/* ── The scrim behind the sidebar ────────────────────────────────────────── */
+
+/* The translucent bar down the right of the printed cards. Every number here
+ * is MEASURED off the reference art rather than chosen:
+ *
+ *   left    x=701. The seam is one pixel wide and lands between 700 and 701 on
+ *           BOTH reference cards, over the photo and again up in the top band.
+ *   top     y=33. Visible where the bar crosses the band's flat grey; above it
+ *           the band paints through at full strength.
+ *   tone    the field, stepped away from the ink and painted at 0.57 — see
+ *           SCRIM_ALPHA in fieldTheme.js, which recovers both numbers from the
+ *           pixels either side of that seam.
+ *
+ * The two edges the art CANNOT settle, because a field-toned scrim leaves no
+ * trace on the field:
+ *
+ *   right   the art's bar ends at x=814, which is exactly where the art's photo
+ *           ends. This layout's photo window is 14px wider, so the bar follows
+ *           the photo to 828 rather than stopping short and leaving a strip of
+ *           unveiled photo down its right side.
+ *   bottom  taken to the sidebar's own bottom edge (762 + 390 = 1152), which is
+ *           what the bar is backing.
+ *
+ * Sits between the photo and the sidebar in DOM order, which is the whole
+ * point: it veils the photo the sidebar is printed over, and never the sidebar.
+ * The chevron is lifted back over it — see .chevronTop. */
+.sidebarScrim {
+  position: absolute;
+  left: 701px;
+  top: 33px;
+  width: 127px;
+  height: 1119px;
+  background: var(--field-scrim);
+  pointer-events: none;
 }
 
 /* ── Right sidebar: logo, position, boosts, salary ───────────────────────── */

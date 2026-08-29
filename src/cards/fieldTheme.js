@@ -97,6 +97,59 @@ const PANEL_CEIL = 0.85;
  */
 const DARKEN_BOOST = 1.8;
 
+/**
+ * How opaque the sidebar scrim is. MEASURED off the reference art, not chosen.
+ *
+ * The bar down the right of the printed cards is a translucent fill, so it has
+ * two unknowns — a color and an alpha — and one pixel can only give you their
+ * product. Both were recovered by regressing the pixels just inside the bar's
+ * left edge (x 701) against the pixels just outside it (x 693..699), over the
+ * ~100 rows of each card where the photo is locally flat across that seam.
+ * The fit is `inside = (1 - a)·outside + a·C`, so the slope gives the alpha and
+ * the intercept the color, and it is unusually clean: r = 0.999 on LeBron's
+ * blue channel.
+ *
+ * It recovers C = the FIELD COLOR, exactly, on both cards and all three
+ * channels — (3.0, 30.0, 68.0) against a #031E44 field and (13.6, 34.5, 63.8)
+ * against #0D2340. The bar is not a lighter panel; it is the card's own field
+ * laid back over the photo, which is why it is invisible where it crosses the
+ * field below the photo and why nobody could measure it from those rows.
+ *
+ * The alpha, over the rows where the seam is flat on both sides: median 0.575
+ * on LeBron, 0.562 on Edwards, with 10th-90th percentiles inside 0.53-0.61.
+ * Cross-checked against the one place the bar crosses a FLAT surface, the top
+ * band, where no regression is needed: the band's grey #5B6A7D reads #2F425A
+ * inside the bar, which solves to a = 0.564 / 0.563 / 0.574 per channel.
+ */
+export const SCRIM_ALPHA = 0.57;
+
+/**
+ * Where the scrim lands once it has been composited over the FIELD.
+ *
+ * The art's scrim is the field exactly, which makes it a no-op on the field and
+ * leaves the whole effect on the photo. That reproduces on a #010101 card and
+ * on OKC's #0072CE alike — but it also means the "bar" the user is asking for
+ * disappears below the photo, where the boosts and the salary are.
+ *
+ * So the scrim is stepped off the field through `step`, which is to say by the
+ * same `panelDirection` every other layer on the card uses: away from the ink
+ * where the field has room, toward it on the five #010101 cards where it has
+ * none. That is what carries it across a range from near-black to OKC's
+ * #0072CE — on OKC it darkens, on San Antonio it lightens, and neither is a
+ * special case here because the direction was settled once, upstream.
+ *
+ * The AMOUNT is pinned by where it has to LAND, not by how far it starts out.
+ * It lands on `panelAlt`, the quietest layer the card already draws (the
+ * chart's header row, which also sits directly on the field). Anything louder
+ * starts to read as a second panel behind the sidebar rather than as a veil.
+ *
+ * Divided by the alpha because the fill is translucent: at 0.57 opacity only
+ * 0.57 of the step survives compositing, so the fill has to start 1/0.57 as far
+ * out to arrive in the right place. `compositeOver(theme.scrim, theme.field)`
+ * === `theme.panelAlt` is asserted for every stock team and across the cube.
+ */
+const SCRIM_STEP = 0.05;
+
 const HEX = /^#[0-9A-Fa-f]{6}$/;
 
 /** [r, g, b] 0-255 for a #rrggbb string, or null if it isn't one. */
@@ -125,6 +178,39 @@ export function mix(a, b, t) {
 /** Positive `amount` mixes toward white, negative toward black. */
 export function shade(hex, amount) {
   return amount >= 0 ? mix(hex, '#FFFFFF', amount) : mix(hex, '#000000', -amount);
+}
+
+/** `hex` as a CSS `rgba()` string at `alpha`. A non-color reads as black. */
+export function rgba(hex, alpha) {
+  const [r, g, b] = parseHex(hex) ?? [0, 0, 0];
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+/**
+ * What a translucent fill actually PAINTS, once the browser has composited it
+ * over `background`.
+ *
+ * The scrim is the only thing on the card drawn at less than full opacity, so
+ * it is the only value whose rendered color is not the value itself. Every
+ * question worth asking about it — is it still a layer where it crosses the
+ * field, does the sidebar's ink still read where it crosses the photo — is a
+ * question about the COMPOSITE, and answering it by compositing rather than by
+ * eye is the difference between a measured claim and a hopeful one.
+ *
+ * Takes either an `rgba(r, g, b, a)` string (what this module produces) or a
+ * plain hex, which composites to itself.
+ */
+export function compositeOver(fill, background) {
+  if (typeof fill !== 'string') return background;
+  const match = fill.match(
+    /^rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*([\d.]+)\s*\)$/
+  );
+  if (!match) return parseHex(fill) ? fill : background;
+  const bg = parseHex(background);
+  if (!bg) return background;
+  const alpha = Math.max(0, Math.min(1, Number(match[4])));
+  const fg = [Number(match[1]), Number(match[2]), Number(match[3])];
+  return toHex(bg.map((v, i) => v + (fg[i] - v) * alpha));
 }
 
 /** WCAG relative luminance, 0 (black) to 1 (white). Non-colors read as black. */
@@ -262,6 +348,11 @@ export function deriveFieldTheme(primary, secondary, accent) {
   // raised, whichever way "raised" happens to be for this field.
   const well = shade(field, dir * -0.45);
 
+  // The bar down the right of the card, over the photo and under the sidebar.
+  // Painted translucent, so it is `step(SCRIM_STEP)` only AFTER the browser has
+  // composited it — see SCRIM_ALPHA and SCRIM_STEP.
+  const scrim = rgba(step(SCRIM_STEP / SCRIM_ALPHA), SCRIM_ALPHA);
+
   const bandTop = step(0.24);
   const bandBottom = step(0.15);
 
@@ -286,6 +377,9 @@ export function deriveFieldTheme(primary, secondary, accent) {
     frame,
     rule,
     well,
+    // The one value the card paints translucent, so the one whose rendered
+    // color is not itself: reason about `compositeOver(scrim, …)`, not `scrim`.
+    scrim,
     bandTop,
     bandBottom,
     bandInk,
@@ -328,6 +422,7 @@ export function fieldThemeVars(theme) {
     '--field-frame': theme.frame,
     '--field-rule': theme.rule,
     '--field-well': theme.well,
+    '--field-scrim': theme.scrim,
     '--field-band-top': theme.bandTop,
     '--field-band-bottom': theme.bandBottom,
     '--field-band-ink': theme.bandInk,

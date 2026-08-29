@@ -259,6 +259,52 @@ describe('the field is the team primary', () => {
   });
 });
 
+describe('the sidebar scrim', () => {
+  // The translucent bar down the right of the printed cards. Its TONE is
+  // fieldTheme's problem and is tested there; what has to hold here is where it
+  // sits in the stack, because everything the bar is for depends on that.
+
+  it('paints after the photo and before the sidebar', () => {
+    // Not cosmetic ordering — it is the whole mechanism. One step earlier and
+    // the photo covers the bar; one step later and the bar veils the logo and
+    // the boosts it is supposed to be making legible. These three elements are
+    // all position:absolute at z-index auto, so document order IS paint order.
+    const html = render({ card: LEBRON_08_09 });
+    const photo = html.indexOf('_photoOuter');
+    const scrim = html.indexOf('_sidebarScrim');
+    const sidebar = html.search(/_sidebar_/);
+    expect(photo).toBeGreaterThan(-1);
+    expect(scrim).toBeGreaterThan(photo);
+    expect(sidebar).toBeGreaterThan(scrim);
+  });
+
+  it('keeps the chevron and the card frame above it', () => {
+    // The chevron is DOM-earlier than the scrim, so it needs a z-index to stay
+    // on top — the printed cards draw its dots at full strength inside the bar,
+    // and without the lift there is a seam across them where the bar's top edge
+    // crosses. Raising the chevron then has to be answered by raising ::after,
+    // which is only "last" while nothing else has climbed above auto.
+    const css = readFileSync(new URL('./CardTemplate.module.css', import.meta.url), 'utf8');
+    const zIndexIn = selector => {
+      const block = css.match(new RegExp(`\\${selector}\\s*\\{[^}]*\\}`, 's'));
+      const z = block?.[0].match(/z-index:\s*(-?\d+)/);
+      return z ? Number(z[1]) : 0;
+    };
+    expect(zIndexIn('.sidebarScrim')).toBe(0);
+    expect(zIndexIn('.chevronTop')).toBeGreaterThan(zIndexIn('.sidebarScrim'));
+    expect(zIndexIn('.card::after')).toBeGreaterThan(zIndexIn('.chevronTop'));
+  });
+
+  it('is drawn from the derived scrim, never a hardcoded wash', () => {
+    // The failure mode this guards is a plausible-looking rgba(255,255,255,.08)
+    // that reads on a dark field and vanishes on OKC's #0072CE.
+    const css = readFileSync(new URL('./CardTemplate.module.css', import.meta.url), 'utf8');
+    const block = css.match(/\.sidebarScrim\s*\{[^}]*\}/s)[0];
+    expect(block).toContain('var(--field-scrim)');
+    expect(block).not.toMatch(/rgba?\(/);
+  });
+});
+
 describe('team logo', () => {
   it('resolves the logo path against the app base path', () => {
     // TEAMS stores '/logos/CLE.png', but the app is served under a base path

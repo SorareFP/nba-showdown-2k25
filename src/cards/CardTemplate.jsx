@@ -194,6 +194,11 @@ export default function CardTemplate({
         </div>
       </div>
 
+      {/* After the photo and before the sidebar, and that ORDER is the feature:
+        * the scrim's job is to quiet the photo the sidebar is printed over, so
+        * it has to paint above the one and below the other. */}
+      <div className={styles.sidebarScrim} />
+
       <div className={styles.sidebar}>
         <TeamLogo key={card.team ?? 'none'} team={team} abbr={card.team} />
         <div className={styles.pos}>{card.pos ?? MISSING}</div>

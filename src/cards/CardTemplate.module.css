@@ -347,8 +347,16 @@
  *           height the art does show, where it crosses the band's flat grey) and
  *           stop at x=828 (the photo window's right edge), which left an L of
  *           unveiled band along the top and right of that corner.
- *   bottom  the sidebar's own bottom edge (762 + 390 = 1152), which is what the
- *           bar is backing.
+ *   bottom  y=1174, the bottom-right corner, on the same rule and for the same
+ *           reason. It used to stop at the sidebar's own bottom edge (762 + 390
+ *           = 1152), which left a 22px step of bare field below the bar. A scrim
+ *           is a TONE, not an outline, so that step read as a horizontal seam
+ *           straight across the column rather than as an edge — the giveaway
+ *           that the bar was backing the sidebar rather than being an element.
+ *
+ * So the height is the frame's inner span, 1181 - 7 - 7 = 1167, and the width is
+ * 843 - 701 - 7 = 135. Both are corner-to-corner against .card::after, and both
+ * have to move if that frame's 7px ever does.
  *
  * Reaching x=836 does mean the bar now veils the 5px of accent outline down the
  * photo's right side (828..833) that it used to stop against. That is a step
@@ -358,13 +366,15 @@
  * Sits between the photo and the sidebar in DOM order, which is the whole
  * point: it veils the photo the sidebar is printed over, and never the sidebar.
  * The chevron is lifted back over it and trimmed to this exact 701..836 column
- * so the two meet flush — see .chevronTop. */
+ * so the two meet flush — see .chevronTop. There is no counterpart to that lift
+ * at the bottom: the ornaments are a top-RIGHT / bottom-LEFT pair, so
+ * .chevronBottom sits at x 28..180 and the bar's column never reaches it. */
 .sidebarScrim {
   position: absolute;
   left: 701px;
   top: 7px;
   width: 135px;
-  height: 1145px;
+  height: 1167px;
   background: var(--field-scrim);
   pointer-events: none;
 }

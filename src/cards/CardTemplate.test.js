@@ -328,21 +328,40 @@ describe('the sidebar scrim', () => {
     expect(block).not.toMatch(/rgba?\(/);
   });
 
-  it('runs into the top-right corner and stops at the frame', () => {
+  it('runs corner to corner down the right edge and stops at the frame', () => {
     // The art settles the bar's LEFT edge and nothing else — 814..843 is bare
     // field on both reference cards, and a field-toned scrim leaves no trace on
-    // the field. So where the top and right edges go is a design call, and the
-    // call overrides the art: the bar fills the card's right-hand column into
-    // the corner. It used to start at the art's y=33 and stop at the photo
-    // window's x=828, which left an L of unveiled band across that corner.
+    // the field. So where the other three edges go is a design call, and the
+    // call overrides the art: the bar fills the card's right-hand column from
+    // corner to corner. It used to start at the art's y=33 and stop at the photo
+    // window's x=828, which left an L of unveiled band across the top corner,
+    // and it used to end at the sidebar's own bottom edge (1152), which left a
+    // 22px step of bare field in the bottom one. A scrim is a tone rather than
+    // an outline, so that step read as a seam across the column, not an edge.
     const block = cssBlock('.sidebarScrim');
-    // Read the frame's width off .card::after rather than pinning 7 twice — the
-    // whole claim is "as far as the frame", not "as far as 7px".
+    // Read the frame's width off .card::after rather than pinning 7 four times
+    // — the whole claim is "as far as the frame", not "as far as 7px".
     const frame = Number(
       cssBlock('.card::after').match(/box-shadow:\s*inset 0 0 0 (\d+)px/)[1],
     );
     expect(pxIn(block, 'top')).toBe(frame);
     expect(pxIn(block, 'left') + pxIn(block, 'width')).toBe(CARD_WIDTH - frame);
+    expect(pxIn(block, 'top') + pxIn(block, 'height')).toBe(CARD_HEIGHT - frame);
+  });
+
+  it('never reaches the bottom chevron, which is on the far side', () => {
+    // The top chevron had to be lifted over the bar and trimmed to its column
+    // so the two would meet flush. That question does not arise at the bottom:
+    // the ornaments are a top-RIGHT / bottom-LEFT pair, so the bar's column and
+    // .chevronBottom are on opposite sides of the card and cannot seam. Asserted
+    // rather than assumed, because "do the same at the bottom" is the obvious
+    // next edit and this is the reason it is not made.
+    const barLeft = pxIn(cssBlock('.sidebarScrim'), 'left');
+    // .chevronBottom names itself twice — once in the ornaments' shared rule and
+    // once in its own — and cssBlock() returns the first of those. The one with
+    // the geometry in it is the second.
+    const chevron = CARD_CSS.match(/\.chevronBottom\s*\{[^}]*left:[^}]*\}/s)[0];
+    expect(pxIn(chevron, 'left') + pxIn(chevron, 'width')).toBeLessThan(barLeft);
   });
 
   it('gives the chevron exactly the bar’s column, so the two meet flush', () => {

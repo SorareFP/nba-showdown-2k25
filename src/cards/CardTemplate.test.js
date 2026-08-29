@@ -19,6 +19,7 @@ import CardTemplate, {
 } from './CardTemplate.jsx';
 import { CARDS } from '../game/cards.js';
 import { TEAMS } from './teams.js';
+import { POOL_PLAYERS } from '../studio/players.js';
 
 const render = props => renderToStaticMarkup(React.createElement(CardTemplate, props));
 
@@ -275,22 +276,59 @@ describe('pickAccent', () => {
 });
 
 describe('nameFontSize', () => {
+  // Tomorrow's measured metrics: cap height 0.74em, average uppercase advance
+  // ~0.70em. Used here to check the OUTPUT against the printed art in pixels,
+  // which is the only thing that actually matters.
+  const CAP_RATIO = 0.74;
+  const ADVANCE_RATIO = 0.7;
+  const capHeight = name => nameFontSize(name) * CAP_RATIO;
+  const inkLength = (name, advance = ADVANCE_RATIO) => nameFontSize(name) * advance * name.length;
+  const within = (actual, target, pct) => Math.abs(actual - target) / target <= pct;
+
   it('caps at the display size for short names', () => {
-    expect(nameFontSize('LeBron James')).toBe(78);
+    expect(nameFontSize('LeBron James')).toBe(96);
   });
+
+  it('reproduces the printed reference cards', () => {
+    // Measured by bounding box off the art itself, and by canvas TextMetrics
+    // off the loaded Tomorrow face at weight 700 for the per-string advance:
+    //
+    //   08_09_LeBron_James.png  "LeBron James"     71px cap, 772px long, 0.6797em/char
+    //   Anthony_Edwards.png     "Anthony Edwards"  62px cap, 872px long, 0.7099em/char
+    //
+    // One rule has to serve all 331 names, so neither card is reproduced
+    // exactly — but both land close, and that is what the constants in
+    // nameFontSize are FOR. Tidy them to rounder numbers and the new cards
+    // stop matching the set they are joining.
+    expect(within(capHeight('LeBron James'), 71, 0.02), 'LeBron cap').toBe(true);
+    expect(within(inkLength('LeBron James', 0.6797), 772, 0.04), 'LeBron length').toBe(true);
+    expect(within(capHeight('Anthony Edwards'), 62, 0.02), 'Edwards cap').toBe(true);
+    expect(within(inkLength('Anthony Edwards', 0.7099), 872, 0.04), 'Edwards length').toBe(true);
+  });
+
   it('shrinks long names so they fit the card height', () => {
     const long = nameFontSize('Shai Gilgeous-Alexander');
-    expect(long).toBeLessThan(78);
+    expect(long).toBeLessThan(96);
     expect(long).toBeGreaterThan(30);
   });
+
   it('never returns NaN for a missing name', () => {
     expect(Number.isFinite(nameFontSize(undefined))).toBe(true);
   });
 
-  it('keeps every name in the shipped set within the card', () => {
+  it('keeps every name in the shipped set inside the name slot', () => {
+    // 900px is .nameSlot's height in CardTemplate.module.css. A name longer
+    // than its slot is a name painted over the top of the card.
     for (const card of CARDS) {
-      const px = nameFontSize(card.name);
-      expect(px * 0.55 * card.name.length, card.name).toBeLessThanOrEqual(880);
+      expect(inkLength(card.name), card.name).toBeLessThanOrEqual(900);
+    }
+  });
+
+  it('keeps every name in the 2026 pool inside the name slot', () => {
+    // The set actually being built, including its longest entries
+    // ("Nickeil Alexander-Walker", "Kentavious Caldwell-Pope", 24 chars).
+    for (const p of POOL_PLAYERS) {
+      expect(inkLength(p.name), p.name).toBeLessThanOrEqual(900);
     }
   });
 });

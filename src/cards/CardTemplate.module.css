@@ -1,4 +1,47 @@
+/* The card's typeface, loaded from HERE rather than from a <link> in a page.
+ *
+ * The card component is the single source of truth for rendering, and the font
+ * is part of the card, not part of any one page that shows it. Importing it in
+ * the component's own stylesheet means every renderer gets it automatically:
+ * studio.html today, the deferred studio-export.html tomorrow, and anything
+ * else that mounts CardTemplate. A <link> in studio.html would have to be
+ * remembered and copied into the export page, and the day it wasn't, the batch
+ * would silently write 331 cards in Arial.
+ *
+ * display=block, NOT swap. During loading, block renders the text invisible
+ * while swap renders it in the fallback face. In the studio that difference is
+ * a blink either way; in a headless screenshot it is the difference between an
+ * obviously broken card someone re-runs and 331 subtly wrong cards that ship.
+ * The export should still await document.fonts.ready before screenshotting.
+ *
+ * A self-hosted copy under public/fonts/ would be more reliable still — it
+ * removes a network dependency from a batch job — but needs the woff2 files
+ * downloaded, so it is deliberately not done here.
+ *
+ * TWO WEIGHTS, and 700 is the card. Which weight the printed set used was
+ * settled by measurement, not eye: stem width over cap height is 0.24 on the
+ * art (SPEED, the SPEED value, and both cards' names all agree), and Tomorrow
+ * measures 0.128 at 400, 0.257 at 700 and 0.385 at 800. 800 is nearly half
+ * again too heavy. 400 is here only for the "chart not generated" placeholder,
+ * which is deliberately quiet. Do not request weights nothing renders. */
+@import url('https://fonts.googleapis.com/css2?family=Tomorrow:wght@400;700&display=block');
+
 /* Card face styling — 843x1181 (2.5in x 3.5in at 337 DPI).
+ *
+ * TYPE SCALE: every size below was measured off the printed reference art
+ * (public/cards/players/08_09_LeBron_James.png and Anthony_Edwards.png) by
+ * bounding-box, not chosen by eye. The cap heights those measurements found,
+ * which is what the sizes here are derived from:
+ *
+ *   SPEED/POWER label and value   29px cap   (the two are the SAME size)
+ *   vertical player name          71px cap on LeBron, 62px on Edwards
+ *   position, boosts, salary      15px cap
+ *   chart table cells             14px cap
+ *   team logo                     74px square
+ *
+ * The user's remembered "size 17" for the chart table was a Canva setting on a
+ * different canvas; the art itself measures a 14px cap, which is ~20px in this
+ * face. Trust the art.
  *
  * RULES THIS FILE MUST KEEP:
  *  - Every length in px. No rem/em anywhere: the batch export screenshots
@@ -21,7 +64,10 @@
   overflow: hidden;
   background: #0C1B3A;
   color: #FFFFFF;
-  font-family: 'Arial Narrow', Arial, 'Segoe UI', Helvetica, sans-serif;
+  /* Tomorrow is the face the printed set was made in. The fallbacks are only
+   * there so a card is still legible if the font request fails; they are not
+   * metrically compatible and the layout will be visibly off if one is used. */
+  font-family: 'Tomorrow', 'Arial Narrow', Arial, 'Segoe UI', Helvetica, sans-serif;
   line-height: 1.1;
   /* Do not inherit the host page's reset — the export page may not have one. */
   box-sizing: border-box;
@@ -88,7 +134,7 @@
 
 .statBlock {
   position: absolute;
-  top: 12px;
+  top: 7px;
   width: 250px;
   text-align: center;
 }
@@ -96,14 +142,14 @@
 .powerBlock { left: 453px; }
 
 .statLabel {
-  font-size: 45px;
+  font-size: 39px;
   font-weight: 700;
-  letter-spacing: 3px;
+  letter-spacing: 1px;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.55);
 }
 .statValue {
-  margin-top: 2px;
-  font-size: 52px;
+  margin-top: 10px;
+  font-size: 39px;
   font-weight: 700;
   letter-spacing: 1px;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.55);
@@ -135,12 +181,15 @@
 
 /* ── Vertical player name down the left edge ─────────────────────────────── */
 
+/* Height and offset put this slot's CENTRE at y=568, which is where the name
+ * is centred on both reference cards (LeBron 183..954, Edwards 150..1021).
+ * The height is also nameFontSize's budget — keep the two in step. */
 .nameSlot {
   position: absolute;
   left: 0;
   top: 118px;
   width: 148px;
-  height: 850px;
+  height: 900px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -151,7 +200,7 @@
   transform: rotate(-90deg);
   white-space: nowrap;
   font-weight: 700;
-  letter-spacing: 2px;
+  letter-spacing: 0;
   text-transform: uppercase;
   color: var(--team-accent);
   text-shadow: 0 3px 6px rgba(0, 0, 0, 0.5);
@@ -209,19 +258,19 @@
   left: 658px;
   top: 762px;
   width: 185px;
-  height: 400px;
+  height: 390px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
-  gap: 12px;
+  gap: 18px;
   text-align: center;
 }
 
 .logo,
 .logoFallback {
-  width: 84px;
-  height: 84px;
+  width: 74px;
+  height: 74px;
   object-fit: contain;
   flex: none;
 }
@@ -233,13 +282,13 @@
   border-radius: 50%;
   background: var(--team-primary);
   color: var(--team-accent);
-  font-size: 26px;
+  font-size: 23px;
   font-weight: 700;
   letter-spacing: 1px;
 }
 
 .pos {
-  font-size: 32px;
+  font-size: 20px;
   font-weight: 700;
   letter-spacing: 2px;
 }
@@ -248,12 +297,12 @@
   width: 100%;
 }
 .boostLabel {
-  font-size: 29px;
+  font-size: 20px;
   font-weight: 700;
   letter-spacing: 1px;
 }
 .boostValue {
-  font-size: 28px;
+  font-size: 20px;
   font-weight: 700;
   letter-spacing: 1px;
 }
@@ -280,7 +329,7 @@
   border: 2px solid #5A7AAC;
   text-align: center;
   vertical-align: middle;
-  font-size: 25px;
+  font-size: 19px;
   font-weight: 700;
   letter-spacing: 1px;
   color: #FFFFFF;
@@ -293,7 +342,7 @@
   background: #14294F;
 }
 .chartEmpty {
-  font-size: 21px;
+  font-size: 16px;
   font-weight: 400;
   letter-spacing: 1px;
   color: rgba(255, 255, 255, 0.55);
@@ -310,7 +359,7 @@
   left: 4px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 21px;
+  font-size: 17px;
   line-height: 1;
   color: #FFFFFF;
   font-family: 'Segoe UI Symbol', 'Apple Symbols', 'Noto Sans Symbols 2', sans-serif;

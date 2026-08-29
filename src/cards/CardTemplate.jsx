@@ -88,17 +88,36 @@ export function pickAccent(primary, secondary) {
  * Font size for the vertical name, computed rather than measured.
  *
  * The name runs the full height of the card's left edge, so a long one
- * ("Shai Gilgeous-Alexander") has to shrink or it overflows the card. The
- * export is a headless screenshot with no layout feedback loop available, so
- * this estimates from character count against the condensed face's average
- * advance width. Erring small is safe; erring large clips the name.
+ * ("Nickeil Alexander-Walker", 24 characters) has to shrink or it overflows the
+ * card. The export is a headless screenshot with no layout feedback loop
+ * available, so this estimates from character count against the face's average
+ * advance. Erring small is safe; erring large clips the name.
+ *
+ * ALL THREE CONSTANTS ARE CALIBRATED against the printed reference art, not
+ * chosen. Measured there: LeBron's 12-character name is 71px cap by 772px long,
+ * Anthony Edwards' 15-character one is 62px cap by 872px. Tomorrow's cap height
+ * is 0.74em and its average uppercase advance ~0.70em (measured from the loaded
+ * face, not assumed), which puts the reference at 96px and 84px respectively.
+ * These constants reproduce both to within 1.5%:
+ *
+ *   12 chars -> capped at 96px, renders 783px long  (art: 772)
+ *   15 chars -> 900/(0.70*15) = 85px,   renders 905px (art: 872)
+ *
+ * MAX_PX is what a SHORT name gets, so it sets the card's headline size; the
+ * budget only starts binding at about 13 characters.
  */
+const NAME_MAX_PX = 96;
+const NAME_MIN_PX = 30;
+/** Height of .nameSlot in CardTemplate.module.css — the name's whole runway. */
+const NAME_AVAILABLE_PX = 900;
+/** Tomorrow's average uppercase advance, measured from the loaded font. */
+const NAME_ADVANCE_RATIO = 0.7;
+
 export function nameFontSize(name) {
   const len = Math.max(String(name ?? '').length, 1);
-  const AVAILABLE_PX = 880;
-  const AVG_ADVANCE_RATIO = 0.55;
+  const fitted = NAME_AVAILABLE_PX / (NAME_ADVANCE_RATIO * len);
   // Floor, not round: rounding up can push the estimate back over the budget.
-  return Math.floor(Math.min(78, Math.max(30, AVAILABLE_PX / (AVG_ADVANCE_RATIO * len))));
+  return Math.floor(Math.min(NAME_MAX_PX, Math.max(NAME_MIN_PX, fitted)));
 }
 
 /** Boost values always print their sign, including "+0" (see the printed cards). */

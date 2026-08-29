@@ -1,0 +1,2981 @@
+[
+  {
+    "name": "Luka Dončić",
+    "team": "LAL",
+    "pos": "PG",
+    "epm": 6.4,
+    "composite": 3.9902,
+    "speedPowerTotal": 28,
+    "provisional": true
+  },
+  {
+    "name": "Nikola Jokić",
+    "team": "DEN",
+    "pos": "C",
+    "epm": 7.3,
+    "composite": 4.986,
+    "speedPowerTotal": 28,
+    "provisional": true
+  },
+  {
+    "name": "Shai Gilgeous-Alexander",
+    "team": "OKC",
+    "pos": "PG",
+    "epm": 7.0,
+    "composite": 4.7325,
+    "speedPowerTotal": 28,
+    "provisional": true
+  },
+  {
+    "name": "Kawhi Leonard",
+    "team": "LAC",
+    "pos": "SF",
+    "epm": 7.3,
+    "composite": 4.3157,
+    "speedPowerTotal": 28,
+    "provisional": true
+  },
+  {
+    "name": "Victor Wembanyama",
+    "team": "SAS",
+    "pos": "C",
+    "epm": 7.8,
+    "composite": 4.8172,
+    "speedPowerTotal": 28,
+    "provisional": true
+  },
+  {
+    "name": "Karl-Anthony Towns",
+    "team": "NYK",
+    "pos": "C",
+    "epm": 4.6,
+    "composite": 2.8354,
+    "speedPowerTotal": 27,
+    "provisional": true
+  },
+  {
+    "name": "Chet Holmgren",
+    "team": "OKC",
+    "pos": "PF",
+    "epm": 4.6,
+    "composite": 2.8918,
+    "speedPowerTotal": 27,
+    "provisional": true
+  },
+  {
+    "name": "LaMelo Ball",
+    "team": "CHO",
+    "pos": "PG",
+    "epm": 5.1,
+    "composite": 2.9084,
+    "speedPowerTotal": 27,
+    "provisional": true
+  },
+  {
+    "name": "Cade Cunningham",
+    "team": "DET",
+    "pos": "PG",
+    "epm": 3.7,
+    "composite": 2.4779,
+    "speedPowerTotal": 26,
+    "provisional": true
+  },
+  {
+    "name": "Donovan Mitchell",
+    "team": "CLE",
+    "pos": "SG",
+    "epm": 3.7,
+    "composite": 2.4048,
+    "speedPowerTotal": 26,
+    "provisional": true
+  },
+  {
+    "name": "Stephen Curry",
+    "team": "GSW",
+    "pos": "PG",
+    "epm": 4.4,
+    "composite": 2.493,
+    "speedPowerTotal": 26,
+    "provisional": true
+  },
+  {
+    "name": "Kevin Durant",
+    "team": "HOU",
+    "pos": "SF",
+    "epm": 2.8,
+    "composite": 2.0852,
+    "speedPowerTotal": 25,
+    "provisional": true
+  },
+  {
+    "name": "Scottie Barnes",
+    "team": "TOR",
+    "pos": "PF",
+    "epm": 3.1,
+    "composite": 2.1075,
+    "speedPowerTotal": 25,
+    "provisional": true
+  },
+  {
+    "name": "Bam Adebayo",
+    "team": "MIA",
+    "pos": "C",
+    "epm": 3.9,
+    "composite": 2.2545,
+    "speedPowerTotal": 25,
+    "provisional": true
+  },
+  {
+    "name": "Jarrett Allen",
+    "team": "CLE",
+    "pos": "C",
+    "epm": 3.7,
+    "composite": 2.22,
+    "speedPowerTotal": 25,
+    "provisional": true
+  },
+  {
+    "name": "Paul Reed",
+    "team": "DET",
+    "pos": "C",
+    "epm": 3.5,
+    "composite": 2.2127,
+    "speedPowerTotal": 25,
+    "provisional": true
+  },
+  {
+    "name": "Amen Thompson",
+    "team": "HOU",
+    "pos": "PG",
+    "epm": 3.0,
+    "composite": 2.0647,
+    "speedPowerTotal": 24,
+    "provisional": true
+  },
+  {
+    "name": "Jamal Murray",
+    "team": "DEN",
+    "pos": "PG",
+    "epm": 2.6,
+    "composite": 1.8745,
+    "speedPowerTotal": 24,
+    "provisional": true
+  },
+  {
+    "name": "Jalen Brunson",
+    "team": "NYK",
+    "pos": "PG",
+    "epm": 2.9,
+    "composite": 1.9276,
+    "speedPowerTotal": 24,
+    "provisional": true
+  },
+  {
+    "name": "Lauri Markkanen",
+    "team": "UTA",
+    "pos": "PF",
+    "epm": 3.7,
+    "composite": 1.9767,
+    "speedPowerTotal": 24,
+    "provisional": true
+  },
+  {
+    "name": "Derrick White",
+    "team": "BOS",
+    "pos": "SG",
+    "epm": 2.9,
+    "composite": 1.8633,
+    "speedPowerTotal": 24,
+    "provisional": true
+  },
+  {
+    "name": "Devin Booker",
+    "team": "PHO",
+    "pos": "SG",
+    "epm": 2.9,
+    "composite": 1.7747,
+    "speedPowerTotal": 24,
+    "provisional": true
+  },
+  {
+    "name": "Dyson Daniels",
+    "team": "ATL",
+    "pos": "SG",
+    "epm": 3.5,
+    "composite": 2.0373,
+    "speedPowerTotal": 24,
+    "provisional": true
+  },
+  {
+    "name": "Rudy Gobert",
+    "team": "MIN",
+    "pos": "C",
+    "epm": 2.7,
+    "composite": 1.7722,
+    "speedPowerTotal": 24,
+    "provisional": true
+  },
+  {
+    "name": "Jalen Duren",
+    "team": "DET",
+    "pos": "C",
+    "epm": 2.1,
+    "composite": 1.8734,
+    "speedPowerTotal": 24,
+    "provisional": true
+  },
+  {
+    "name": "Donovan Clingan",
+    "team": "POR",
+    "pos": "C",
+    "epm": 2.6,
+    "composite": 1.8366,
+    "speedPowerTotal": 24,
+    "provisional": true
+  },
+  {
+    "name": "Ausar Thompson",
+    "team": "DET",
+    "pos": "SF",
+    "epm": 3.1,
+    "composite": 1.9314,
+    "speedPowerTotal": 24,
+    "provisional": true
+  },
+  {
+    "name": "Ajay Mitchell",
+    "team": "OKC",
+    "pos": "SG",
+    "epm": 3.1,
+    "composite": 1.7974,
+    "speedPowerTotal": 24,
+    "provisional": true
+  },
+  {
+    "name": "Neemias Queta",
+    "team": "BOS",
+    "pos": "C",
+    "epm": 3.0,
+    "composite": 2.0598,
+    "speedPowerTotal": 24,
+    "provisional": true
+  },
+  {
+    "name": "Isaiah Hartenstein",
+    "team": "OKC",
+    "pos": "C",
+    "epm": 3.1,
+    "composite": 1.9942,
+    "speedPowerTotal": 24,
+    "provisional": true
+  },
+  {
+    "name": "Tyrese Maxey",
+    "team": "PHI",
+    "pos": "PG",
+    "epm": 2.0,
+    "composite": 1.6678,
+    "speedPowerTotal": 23,
+    "provisional": true
+  },
+  {
+    "name": "Austin Reaves",
+    "team": "LAL",
+    "pos": "SG",
+    "epm": 2.3,
+    "composite": 1.4795,
+    "speedPowerTotal": 23,
+    "provisional": true
+  },
+  {
+    "name": "OG Anunoby",
+    "team": "NYK",
+    "pos": "PF",
+    "epm": 2.5,
+    "composite": 1.5823,
+    "speedPowerTotal": 23,
+    "provisional": true
+  },
+  {
+    "name": "Payton Pritchard",
+    "team": "BOS",
+    "pos": "PG",
+    "epm": 2.6,
+    "composite": 1.7245,
+    "speedPowerTotal": 23,
+    "provisional": true
+  },
+  {
+    "name": "Kon Knueppel",
+    "team": "CHO",
+    "pos": "SF",
+    "epm": 2.6,
+    "composite": 1.7248,
+    "speedPowerTotal": 23,
+    "provisional": true
+  },
+  {
+    "name": "De'Aaron Fox",
+    "team": "SAS",
+    "pos": "PG",
+    "epm": 2.2,
+    "composite": 1.4624,
+    "speedPowerTotal": 23,
+    "provisional": true
+  },
+  {
+    "name": "Brandon Miller",
+    "team": "CHO",
+    "pos": "SF",
+    "epm": 2.6,
+    "composite": 1.4987,
+    "speedPowerTotal": 23,
+    "provisional": true
+  },
+  {
+    "name": "Jalen Johnson",
+    "team": "ATL",
+    "pos": "SF",
+    "epm": 1.4,
+    "composite": 1.2938,
+    "speedPowerTotal": 22,
+    "provisional": true
+  },
+  {
+    "name": "Anthony Edwards",
+    "team": "MIN",
+    "pos": "SG",
+    "epm": 1.4,
+    "composite": 1.231,
+    "speedPowerTotal": 22,
+    "provisional": true
+  },
+  {
+    "name": "Jaylen Brown",
+    "team": "BOS",
+    "pos": "SF",
+    "epm": 1.3,
+    "composite": 1.1621,
+    "speedPowerTotal": 22,
+    "provisional": true
+  },
+  {
+    "name": "Desmond Bane",
+    "team": "ORL",
+    "pos": "SG",
+    "epm": 1.8,
+    "composite": 1.2571,
+    "speedPowerTotal": 22,
+    "provisional": true
+  },
+  {
+    "name": "Deni Avdija",
+    "team": "POR",
+    "pos": "SF",
+    "epm": 1.8,
+    "composite": 1.4156,
+    "speedPowerTotal": 22,
+    "provisional": true
+  },
+  {
+    "name": "Pascal Siakam",
+    "team": "IND",
+    "pos": "PF",
+    "epm": 2.6,
+    "composite": 1.3505,
+    "speedPowerTotal": 22,
+    "provisional": true
+  },
+  {
+    "name": "LeBron James",
+    "team": "LAL",
+    "pos": "SF",
+    "epm": 2.1,
+    "composite": 1.4373,
+    "speedPowerTotal": 22,
+    "provisional": true
+  },
+  {
+    "name": "Michael Porter Jr.",
+    "team": "BRK",
+    "pos": "SF",
+    "epm": 2.5,
+    "composite": 1.4236,
+    "speedPowerTotal": 22,
+    "provisional": true
+  },
+  {
+    "name": "Stephon Castle",
+    "team": "SAS",
+    "pos": "PG",
+    "epm": 2.1,
+    "composite": 1.3734,
+    "speedPowerTotal": 22,
+    "provisional": true
+  },
+  {
+    "name": "Darius Garland",
+    "team": "2TM",
+    "pos": "PG",
+    "epm": 2.5,
+    "composite": 1.2289,
+    "speedPowerTotal": 22,
+    "provisional": true
+  },
+  {
+    "name": "Norman Powell",
+    "team": "MIA",
+    "pos": "SG",
+    "epm": 2.0,
+    "composite": 1.1864,
+    "speedPowerTotal": 22,
+    "provisional": true
+  },
+  {
+    "name": "Jrue Holiday",
+    "team": "POR",
+    "pos": "PG",
+    "epm": 2.5,
+    "composite": 1.3979,
+    "speedPowerTotal": 22,
+    "provisional": true
+  },
+  {
+    "name": "Grayson Allen",
+    "team": "PHO",
+    "pos": "SG",
+    "epm": 2.1,
+    "composite": 1.2479,
+    "speedPowerTotal": 22,
+    "provisional": true
+  },
+  {
+    "name": "Collin Gillespie",
+    "team": "PHO",
+    "pos": "PG",
+    "epm": 1.7,
+    "composite": 1.2023,
+    "speedPowerTotal": 22,
+    "provisional": true
+  },
+  {
+    "name": "Tobias Harris",
+    "team": "DET",
+    "pos": "PF",
+    "epm": 1.9,
+    "composite": 1.2149,
+    "speedPowerTotal": 22,
+    "provisional": true
+  },
+  {
+    "name": "Julian Champagnie",
+    "team": "SAS",
+    "pos": "SF",
+    "epm": 1.9,
+    "composite": 1.243,
+    "speedPowerTotal": 22,
+    "provisional": true
+  },
+  {
+    "name": "Cason Wallace",
+    "team": "OKC",
+    "pos": "SG",
+    "epm": 2.0,
+    "composite": 1.2772,
+    "speedPowerTotal": 22,
+    "provisional": true
+  },
+  {
+    "name": "Dylan Harper",
+    "team": "SAS",
+    "pos": "SG",
+    "epm": 2.2,
+    "composite": 1.3048,
+    "speedPowerTotal": 22,
+    "provisional": true
+  },
+  {
+    "name": "Mitchell Robinson",
+    "team": "NYK",
+    "pos": "C",
+    "epm": 1.8,
+    "composite": 1.3746,
+    "speedPowerTotal": 22,
+    "provisional": true
+  },
+  {
+    "name": "Alex Caruso",
+    "team": "OKC",
+    "pos": "SG",
+    "epm": 2.6,
+    "composite": 1.428,
+    "speedPowerTotal": 22,
+    "provisional": true
+  },
+  {
+    "name": "Trey Murphy III",
+    "team": "NOP",
+    "pos": "SF",
+    "epm": 1.3,
+    "composite": 1.0014,
+    "speedPowerTotal": 21,
+    "provisional": true
+  },
+  {
+    "name": "James Harden",
+    "team": "2TM",
+    "pos": "PG",
+    "epm": 1.2,
+    "composite": 1.1324,
+    "speedPowerTotal": 21,
+    "provisional": true
+  },
+  {
+    "name": "Paolo Banchero",
+    "team": "ORL",
+    "pos": "PF",
+    "epm": 1.4,
+    "composite": 0.9748,
+    "speedPowerTotal": 21,
+    "provisional": true
+  },
+  {
+    "name": "Nickeil Alexander-Walker",
+    "team": "ATL",
+    "pos": "SG",
+    "epm": 1.6,
+    "composite": 1.1004,
+    "speedPowerTotal": 21,
+    "provisional": true
+  },
+  {
+    "name": "Alperen Şengün",
+    "team": "HOU",
+    "pos": "C",
+    "epm": 0.7,
+    "composite": 0.9985,
+    "speedPowerTotal": 21,
+    "provisional": true
+  },
+  {
+    "name": "Mikal Bridges",
+    "team": "NYK",
+    "pos": "SF",
+    "epm": 0.9,
+    "composite": 0.9562,
+    "speedPowerTotal": 21,
+    "provisional": true
+  },
+  {
+    "name": "Evan Mobley",
+    "team": "CLE",
+    "pos": "PF",
+    "epm": 1.3,
+    "composite": 1.1182,
+    "speedPowerTotal": 21,
+    "provisional": true
+  },
+  {
+    "name": "Immanuel Quickley",
+    "team": "TOR",
+    "pos": "PG",
+    "epm": 1.3,
+    "composite": 1.0468,
+    "speedPowerTotal": 21,
+    "provisional": true
+  },
+  {
+    "name": "Devin Vassell",
+    "team": "SAS",
+    "pos": "SG",
+    "epm": 1.3,
+    "composite": 0.8415,
+    "speedPowerTotal": 21,
+    "provisional": true
+  },
+  {
+    "name": "Donte DiVincenzo",
+    "team": "MIN",
+    "pos": "SG",
+    "epm": 1.5,
+    "composite": 0.9612,
+    "speedPowerTotal": 21,
+    "provisional": true
+  },
+  {
+    "name": "Josh Hart",
+    "team": "NYK",
+    "pos": "SF",
+    "epm": 1.0,
+    "composite": 0.9334,
+    "speedPowerTotal": 21,
+    "provisional": true
+  },
+  {
+    "name": "Moussa Diabaté",
+    "team": "CHO",
+    "pos": "C",
+    "epm": 1.4,
+    "composite": 1.1333,
+    "speedPowerTotal": 21,
+    "provisional": true
+  },
+  {
+    "name": "Moses Moody",
+    "team": "GSW",
+    "pos": "SG",
+    "epm": 2.1,
+    "composite": 1.0754,
+    "speedPowerTotal": 21,
+    "provisional": true
+  },
+  {
+    "name": "Coby White",
+    "team": "2TM",
+    "pos": "SG",
+    "epm": 2.1,
+    "composite": 0.9597,
+    "speedPowerTotal": 21,
+    "provisional": true
+  },
+  {
+    "name": "Sandro Mamukelashvili",
+    "team": "TOR",
+    "pos": "C",
+    "epm": 1.0,
+    "composite": 0.9276,
+    "speedPowerTotal": 21,
+    "provisional": true
+  },
+  {
+    "name": "Collin Murray-Boyles",
+    "team": "TOR",
+    "pos": "PF",
+    "epm": 1.4,
+    "composite": 0.9256,
+    "speedPowerTotal": 21,
+    "provisional": true
+  },
+  {
+    "name": "Isaiah Joe",
+    "team": "OKC",
+    "pos": "SG",
+    "epm": 1.1,
+    "composite": 0.9087,
+    "speedPowerTotal": 21,
+    "provisional": true
+  },
+  {
+    "name": "Day'Ron Sharpe",
+    "team": "BRK",
+    "pos": "C",
+    "epm": 1.2,
+    "composite": 0.8445,
+    "speedPowerTotal": 21,
+    "provisional": true
+  },
+  {
+    "name": "Luka Garza",
+    "team": "BOS",
+    "pos": "C",
+    "epm": 1.2,
+    "composite": 0.9807,
+    "speedPowerTotal": 21,
+    "provisional": true
+  },
+  {
+    "name": "VJ Edgecombe",
+    "team": "PHI",
+    "pos": "SG",
+    "epm": 1.2,
+    "composite": 0.7199,
+    "speedPowerTotal": 20,
+    "provisional": true
+  },
+  {
+    "name": "Cooper Flagg",
+    "team": "DAL",
+    "pos": "SF",
+    "epm": 1.1,
+    "composite": 0.7782,
+    "speedPowerTotal": 20,
+    "provisional": true
+  },
+  {
+    "name": "Julius Randle",
+    "team": "MIN",
+    "pos": "PF",
+    "epm": 0.7,
+    "composite": 0.7817,
+    "speedPowerTotal": 20,
+    "provisional": true
+  },
+  {
+    "name": "Jaden McDaniels",
+    "team": "MIN",
+    "pos": "PF",
+    "epm": 1.0,
+    "composite": 0.6943,
+    "speedPowerTotal": 20,
+    "provisional": true
+  },
+  {
+    "name": "Saddiq Bey",
+    "team": "NOP",
+    "pos": "SF",
+    "epm": 0.9,
+    "composite": 0.6611,
+    "speedPowerTotal": 20,
+    "provisional": true
+  },
+  {
+    "name": "Jaren Jackson Jr.",
+    "team": "2TM",
+    "pos": "C",
+    "epm": 1.2,
+    "composite": 0.5752,
+    "speedPowerTotal": 20,
+    "provisional": true
+  },
+  {
+    "name": "RJ Barrett",
+    "team": "TOR",
+    "pos": "SF",
+    "epm": 1.3,
+    "composite": 0.8049,
+    "speedPowerTotal": 20,
+    "provisional": true
+  },
+  {
+    "name": "Ivica Zubac",
+    "team": "2TM",
+    "pos": "C",
+    "epm": 0.9,
+    "composite": 0.6246,
+    "speedPowerTotal": 20,
+    "provisional": true
+  },
+  {
+    "name": "Zion Williamson",
+    "team": "NOP",
+    "pos": "PF",
+    "epm": 0.7,
+    "composite": 0.7833,
+    "speedPowerTotal": 20,
+    "provisional": true
+  },
+  {
+    "name": "Wendell Carter Jr.",
+    "team": "ORL",
+    "pos": "C",
+    "epm": 1.1,
+    "composite": 0.7794,
+    "speedPowerTotal": 20,
+    "provisional": true
+  },
+  {
+    "name": "Marcus Smart",
+    "team": "LAL",
+    "pos": "SG",
+    "epm": 1.7,
+    "composite": 0.7189,
+    "speedPowerTotal": 20,
+    "provisional": true
+  },
+  {
+    "name": "Jalen Suggs",
+    "team": "ORL",
+    "pos": "PG",
+    "epm": 1.0,
+    "composite": 0.7199,
+    "speedPowerTotal": 20,
+    "provisional": true
+  },
+  {
+    "name": "Duncan Robinson",
+    "team": "DET",
+    "pos": "SG",
+    "epm": 0.5,
+    "composite": 0.5286,
+    "speedPowerTotal": 20,
+    "provisional": true
+  },
+  {
+    "name": "Tre Jones",
+    "team": "CHI",
+    "pos": "PG",
+    "epm": 0.9,
+    "composite": 0.7673,
+    "speedPowerTotal": 20,
+    "provisional": true
+  },
+  {
+    "name": "Miles McBride",
+    "team": "NYK",
+    "pos": "SG",
+    "epm": 1.0,
+    "composite": 0.6105,
+    "speedPowerTotal": 20,
+    "provisional": true
+  },
+  {
+    "name": "Cedric Coward",
+    "team": "MEM",
+    "pos": "SG",
+    "epm": 1.2,
+    "composite": 0.6287,
+    "speedPowerTotal": 20,
+    "provisional": true
+  },
+  {
+    "name": "Jakob Poeltl",
+    "team": "TOR",
+    "pos": "C",
+    "epm": 0.8,
+    "composite": 0.7091,
+    "speedPowerTotal": 20,
+    "provisional": true
+  },
+  {
+    "name": "Sam Hauser",
+    "team": "BOS",
+    "pos": "PF",
+    "epm": 1.2,
+    "composite": 0.7859,
+    "speedPowerTotal": 20,
+    "provisional": true
+  },
+  {
+    "name": "Jordan Goodwin",
+    "team": "PHO",
+    "pos": "PG",
+    "epm": 1.1,
+    "composite": 0.7905,
+    "speedPowerTotal": 20,
+    "provisional": true
+  },
+  {
+    "name": "Gui Santos",
+    "team": "GSW",
+    "pos": "PF",
+    "epm": 1.1,
+    "composite": 0.5938,
+    "speedPowerTotal": 20,
+    "provisional": true
+  },
+  {
+    "name": "Jaylin Williams",
+    "team": "OKC",
+    "pos": "PF",
+    "epm": 0.5,
+    "composite": 0.591,
+    "speedPowerTotal": 20,
+    "provisional": true
+  },
+  {
+    "name": "Javonte Green",
+    "team": "DET",
+    "pos": "SG",
+    "epm": 0.6,
+    "composite": 0.635,
+    "speedPowerTotal": 20,
+    "provisional": true
+  },
+  {
+    "name": "Robert Williams",
+    "team": "POR",
+    "pos": "C",
+    "epm": 0.6,
+    "composite": 0.8016,
+    "speedPowerTotal": 20,
+    "provisional": true
+  },
+  {
+    "name": "Gary Payton II",
+    "team": "GSW",
+    "pos": "SG",
+    "epm": 0.7,
+    "composite": 0.6199,
+    "speedPowerTotal": 20,
+    "provisional": true
+  },
+  {
+    "name": "Jabari Smith Jr.",
+    "team": "HOU",
+    "pos": "PF",
+    "epm": 0.5,
+    "composite": 0.5017,
+    "speedPowerTotal": 19,
+    "provisional": true
+  },
+  {
+    "name": "Toumani Camara",
+    "team": "POR",
+    "pos": "PF",
+    "epm": 0.3,
+    "composite": 0.2768,
+    "speedPowerTotal": 19,
+    "provisional": true
+  },
+  {
+    "name": "Ryan Rollins",
+    "team": "MIL",
+    "pos": "PG",
+    "epm": 0.6,
+    "composite": 0.4322,
+    "speedPowerTotal": 19,
+    "provisional": true
+  },
+  {
+    "name": "Josh Giddey",
+    "team": "CHI",
+    "pos": "PG",
+    "epm": 0.1,
+    "composite": 0.33,
+    "speedPowerTotal": 19,
+    "provisional": true
+  },
+  {
+    "name": "Andrew Nembhard",
+    "team": "IND",
+    "pos": "PG",
+    "epm": 0.9,
+    "composite": 0.4609,
+    "speedPowerTotal": 19,
+    "provisional": true
+  },
+  {
+    "name": "Miles Bridges",
+    "team": "CHO",
+    "pos": "PF",
+    "epm": -0.1,
+    "composite": 0.3185,
+    "speedPowerTotal": 19,
+    "provisional": true
+  },
+  {
+    "name": "Onyeka Okongwu",
+    "team": "ATL",
+    "pos": "C",
+    "epm": 0.1,
+    "composite": 0.3937,
+    "speedPowerTotal": 19,
+    "provisional": true
+  },
+  {
+    "name": "Cameron Johnson",
+    "team": "DEN",
+    "pos": "SF",
+    "epm": 0.9,
+    "composite": 0.5102,
+    "speedPowerTotal": 19,
+    "provisional": true
+  },
+  {
+    "name": "Dillon Brooks",
+    "team": "PHO",
+    "pos": "SF",
+    "epm": 0.9,
+    "composite": 0.3646,
+    "speedPowerTotal": 19,
+    "provisional": true
+  },
+  {
+    "name": "CJ McCollum",
+    "team": "2TM",
+    "pos": "PG",
+    "epm": 0.7,
+    "composite": 0.3984,
+    "speedPowerTotal": 19,
+    "provisional": true
+  },
+  {
+    "name": "Naji Marshall",
+    "team": "DAL",
+    "pos": "SF",
+    "epm": 0.5,
+    "composite": 0.3966,
+    "speedPowerTotal": 19,
+    "provisional": true
+  },
+  {
+    "name": "Davion Mitchell",
+    "team": "MIA",
+    "pos": "PG",
+    "epm": 0.5,
+    "composite": 0.3597,
+    "speedPowerTotal": 19,
+    "provisional": true
+  },
+  {
+    "name": "Brandin Podziemski",
+    "team": "GSW",
+    "pos": "SG",
+    "epm": 0.6,
+    "composite": 0.5186,
+    "speedPowerTotal": 19,
+    "provisional": true
+  },
+  {
+    "name": "Nic Claxton",
+    "team": "BRK",
+    "pos": "C",
+    "epm": 0.1,
+    "composite": 0.3306,
+    "speedPowerTotal": 19,
+    "provisional": true
+  },
+  {
+    "name": "Derrick Jones Jr.",
+    "team": "LAC",
+    "pos": "SF",
+    "epm": 0.5,
+    "composite": 0.2997,
+    "speedPowerTotal": 19,
+    "provisional": true
+  },
+  {
+    "name": "Pelle Larsson",
+    "team": "MIA",
+    "pos": "SG",
+    "epm": 0.3,
+    "composite": 0.2469,
+    "speedPowerTotal": 19,
+    "provisional": true
+  },
+  {
+    "name": "Reed Sheppard",
+    "team": "HOU",
+    "pos": "SG",
+    "epm": -0.3,
+    "composite": 0.2985,
+    "speedPowerTotal": 19,
+    "provisional": true
+  },
+  {
+    "name": "Naz Reid",
+    "team": "MIN",
+    "pos": "C",
+    "epm": 0.0,
+    "composite": 0.2609,
+    "speedPowerTotal": 19,
+    "provisional": true
+  },
+  {
+    "name": "Tari Eason",
+    "team": "HOU",
+    "pos": "PF",
+    "epm": 1.0,
+    "composite": 0.5156,
+    "speedPowerTotal": 19,
+    "provisional": true
+  },
+  {
+    "name": "Cam Spencer",
+    "team": "MEM",
+    "pos": "SG",
+    "epm": -0.1,
+    "composite": 0.2851,
+    "speedPowerTotal": 19,
+    "provisional": true
+  },
+  {
+    "name": "De'Anthony Melton",
+    "team": "GSW",
+    "pos": "PG",
+    "epm": 0.8,
+    "composite": 0.2596,
+    "speedPowerTotal": 19,
+    "provisional": true
+  },
+  {
+    "name": "Kel'el Ware",
+    "team": "MIA",
+    "pos": "C",
+    "epm": 0.1,
+    "composite": 0.5085,
+    "speedPowerTotal": 19,
+    "provisional": true
+  },
+  {
+    "name": "Oso Ighodaro",
+    "team": "PHO",
+    "pos": "PF",
+    "epm": 0.3,
+    "composite": 0.3929,
+    "speedPowerTotal": 19,
+    "provisional": true
+  },
+  {
+    "name": "Brook Lopez",
+    "team": "LAC",
+    "pos": "C",
+    "epm": 0.4,
+    "composite": 0.2188,
+    "speedPowerTotal": 19,
+    "provisional": true
+  },
+  {
+    "name": "Daniel Gafford",
+    "team": "DAL",
+    "pos": "C",
+    "epm": 0.1,
+    "composite": 0.3391,
+    "speedPowerTotal": 19,
+    "provisional": true
+  },
+  {
+    "name": "Al Horford",
+    "team": "GSW",
+    "pos": "C",
+    "epm": 0.3,
+    "composite": 0.3021,
+    "speedPowerTotal": 19,
+    "provisional": true
+  },
+  {
+    "name": "Luke Kornet",
+    "team": "SAS",
+    "pos": "C",
+    "epm": -0.1,
+    "composite": 0.5247,
+    "speedPowerTotal": 19,
+    "provisional": true
+  },
+  {
+    "name": "Jalen Smith",
+    "team": "CHI",
+    "pos": "C",
+    "epm": 0.9,
+    "composite": 0.5036,
+    "speedPowerTotal": 19,
+    "provisional": true
+  },
+  {
+    "name": "Jose Alvarado",
+    "team": "2TM",
+    "pos": "PG",
+    "epm": 0.8,
+    "composite": 0.3833,
+    "speedPowerTotal": 19,
+    "provisional": true
+  },
+  {
+    "name": "Baylor Scheierman",
+    "team": "BOS",
+    "pos": "SG",
+    "epm": 0.1,
+    "composite": 0.2388,
+    "speedPowerTotal": 19,
+    "provisional": true
+  },
+  {
+    "name": "T.J. McConnell",
+    "team": "IND",
+    "pos": "PG",
+    "epm": 0.1,
+    "composite": 0.3104,
+    "speedPowerTotal": 19,
+    "provisional": true
+  },
+  {
+    "name": "Goga Bitadze",
+    "team": "ORL",
+    "pos": "C",
+    "epm": 0.2,
+    "composite": 0.5237,
+    "speedPowerTotal": 19,
+    "provisional": true
+  },
+  {
+    "name": "Christian Braun",
+    "team": "DEN",
+    "pos": "SG",
+    "epm": 0.0,
+    "composite": 0.0324,
+    "speedPowerTotal": 18,
+    "provisional": true
+  },
+  {
+    "name": "DeMar DeRozan",
+    "team": "SAC",
+    "pos": "PF",
+    "epm": -0.5,
+    "composite": -0.0032,
+    "speedPowerTotal": 18,
+    "provisional": true
+  },
+  {
+    "name": "Peyton Watson",
+    "team": "DEN",
+    "pos": "SF",
+    "epm": 0.3,
+    "composite": 0.1761,
+    "speedPowerTotal": 18,
+    "provisional": true
+  },
+  {
+    "name": "Nikola Vučević",
+    "team": "2TM",
+    "pos": "C",
+    "epm": -0.4,
+    "composite": 0.1067,
+    "speedPowerTotal": 18,
+    "provisional": true
+  },
+  {
+    "name": "Herbert Jones",
+    "team": "NOP",
+    "pos": "SF",
+    "epm": 0.4,
+    "composite": -0.0029,
+    "speedPowerTotal": 18,
+    "provisional": true
+  },
+  {
+    "name": "Santi Aldama",
+    "team": "MEM",
+    "pos": "PF",
+    "epm": -0.4,
+    "composite": -0.0176,
+    "speedPowerTotal": 18,
+    "provisional": true
+  },
+  {
+    "name": "Kris Dunn",
+    "team": "LAC",
+    "pos": "PG",
+    "epm": -0.1,
+    "composite": 0.0809,
+    "speedPowerTotal": 18,
+    "provisional": true
+  },
+  {
+    "name": "Sam Merrill",
+    "team": "CLE",
+    "pos": "SG",
+    "epm": 0.1,
+    "composite": 0.1796,
+    "speedPowerTotal": 18,
+    "provisional": true
+  },
+  {
+    "name": "Jusuf Nurkić",
+    "team": "UTA",
+    "pos": "C",
+    "epm": 0.1,
+    "composite": 0.1648,
+    "speedPowerTotal": 18,
+    "provisional": true
+  },
+  {
+    "name": "Mark Williams",
+    "team": "PHO",
+    "pos": "C",
+    "epm": -0.6,
+    "composite": 0.2091,
+    "speedPowerTotal": 18,
+    "provisional": true
+  },
+  {
+    "name": "Kyle Filipowski",
+    "team": "UTA",
+    "pos": "C",
+    "epm": -0.2,
+    "composite": -0.0166,
+    "speedPowerTotal": 18,
+    "provisional": true
+  },
+  {
+    "name": "Keldon Johnson",
+    "team": "SAS",
+    "pos": "SF",
+    "epm": -0.9,
+    "composite": -0.0407,
+    "speedPowerTotal": 18,
+    "provisional": true
+  },
+  {
+    "name": "Jamal Shead",
+    "team": "TOR",
+    "pos": "PG",
+    "epm": -0.1,
+    "composite": -0.0719,
+    "speedPowerTotal": 18,
+    "provisional": true
+  },
+  {
+    "name": "Kevin Huerter",
+    "team": "2TM",
+    "pos": "SF",
+    "epm": 0.1,
+    "composite": 0.1137,
+    "speedPowerTotal": 18,
+    "provisional": true
+  },
+  {
+    "name": "Dean Wade",
+    "team": "CLE",
+    "pos": "PF",
+    "epm": 0.1,
+    "composite": 0.1661,
+    "speedPowerTotal": 18,
+    "provisional": true
+  },
+  {
+    "name": "Ja'Kobe Walter",
+    "team": "TOR",
+    "pos": "SG",
+    "epm": -0.5,
+    "composite": -0.0832,
+    "speedPowerTotal": 18,
+    "provisional": true
+  },
+  {
+    "name": "Javon Small",
+    "team": "MEM",
+    "pos": "PG",
+    "epm": -0.1,
+    "composite": 0.0619,
+    "speedPowerTotal": 18,
+    "provisional": true
+  },
+  {
+    "name": "Daniss Jenkins",
+    "team": "DET",
+    "pos": "PG",
+    "epm": -0.0,
+    "composite": 0.0892,
+    "speedPowerTotal": 18,
+    "provisional": true
+  },
+  {
+    "name": "Justin Champagnie",
+    "team": "WAS",
+    "pos": "SF",
+    "epm": -0.3,
+    "composite": -0.0202,
+    "speedPowerTotal": 18,
+    "provisional": true
+  },
+  {
+    "name": "Jaxson Hayes",
+    "team": "LAL",
+    "pos": "C",
+    "epm": -0.8,
+    "composite": -0.0298,
+    "speedPowerTotal": 18,
+    "provisional": true
+  },
+  {
+    "name": "Jordan Walsh",
+    "team": "BOS",
+    "pos": "PF",
+    "epm": -0.4,
+    "composite": 0.0222,
+    "speedPowerTotal": 18,
+    "provisional": true
+  },
+  {
+    "name": "Quinten Post",
+    "team": "GSW",
+    "pos": "PF",
+    "epm": 0.0,
+    "composite": 0.0032,
+    "speedPowerTotal": 18,
+    "provisional": true
+  },
+  {
+    "name": "Josh Minott",
+    "team": "2TM",
+    "pos": "PF",
+    "epm": -0.1,
+    "composite": 0.188,
+    "speedPowerTotal": 18,
+    "provisional": true
+  },
+  {
+    "name": "Simone Fontecchio",
+    "team": "MIA",
+    "pos": "SF",
+    "epm": 0.1,
+    "composite": 0.1584,
+    "speedPowerTotal": 18,
+    "provisional": true
+  },
+  {
+    "name": "Bones Hyland",
+    "team": "MIN",
+    "pos": "PG",
+    "epm": -0.4,
+    "composite": 0.0295,
+    "speedPowerTotal": 18,
+    "provisional": true
+  },
+  {
+    "name": "Dru Smith",
+    "team": "MIA",
+    "pos": "SG",
+    "epm": -0.7,
+    "composite": -0.0451,
+    "speedPowerTotal": 18,
+    "provisional": true
+  },
+  {
+    "name": "Jonas Valančiūnas",
+    "team": "DEN",
+    "pos": "C",
+    "epm": -0.6,
+    "composite": -0.0699,
+    "speedPowerTotal": 18,
+    "provisional": true
+  },
+  {
+    "name": "Brandon Ingram",
+    "team": "TOR",
+    "pos": "SF",
+    "epm": -0.9,
+    "composite": -0.1653,
+    "speedPowerTotal": 17,
+    "provisional": true
+  },
+  {
+    "name": "Keyonte George",
+    "team": "UTA",
+    "pos": "PG",
+    "epm": -0.9,
+    "composite": -0.2672,
+    "speedPowerTotal": 17,
+    "provisional": true
+  },
+  {
+    "name": "P.J. Washington",
+    "team": "DAL",
+    "pos": "PF",
+    "epm": -0.7,
+    "composite": -0.3482,
+    "speedPowerTotal": 17,
+    "provisional": true
+  },
+  {
+    "name": "Andrew Wiggins",
+    "team": "MIA",
+    "pos": "SF",
+    "epm": -0.8,
+    "composite": -0.0973,
+    "speedPowerTotal": 17,
+    "provisional": true
+  },
+  {
+    "name": "Aaron Nesmith",
+    "team": "IND",
+    "pos": "SF",
+    "epm": 0.1,
+    "composite": -0.1703,
+    "speedPowerTotal": 17,
+    "provisional": true
+  },
+  {
+    "name": "Matas Buzelis",
+    "team": "CHI",
+    "pos": "PF",
+    "epm": -0.5,
+    "composite": -0.1826,
+    "speedPowerTotal": 17,
+    "provisional": true
+  },
+  {
+    "name": "Jaime Jaquez Jr.",
+    "team": "MIA",
+    "pos": "SF",
+    "epm": -1.0,
+    "composite": -0.2663,
+    "speedPowerTotal": 17,
+    "provisional": true
+  },
+  {
+    "name": "Ayo Dosunmu",
+    "team": "2TM",
+    "pos": "SG",
+    "epm": -1.2,
+    "composite": -0.2902,
+    "speedPowerTotal": 17,
+    "provisional": true
+  },
+  {
+    "name": "Alex Sarr",
+    "team": "WAS",
+    "pos": "C",
+    "epm": -0.7,
+    "composite": -0.2189,
+    "speedPowerTotal": 17,
+    "provisional": true
+  },
+  {
+    "name": "Deandre Ayton",
+    "team": "LAL",
+    "pos": "C",
+    "epm": -1.1,
+    "composite": -0.2319,
+    "speedPowerTotal": 17,
+    "provisional": true
+  },
+  {
+    "name": "John Collins",
+    "team": "LAC",
+    "pos": "PF",
+    "epm": -0.9,
+    "composite": -0.2269,
+    "speedPowerTotal": 17,
+    "provisional": true
+  },
+  {
+    "name": "Jaylon Tyson",
+    "team": "CLE",
+    "pos": "SG",
+    "epm": -0.7,
+    "composite": -0.1521,
+    "speedPowerTotal": 17,
+    "provisional": true
+  },
+  {
+    "name": "Myles Turner",
+    "team": "MIL",
+    "pos": "C",
+    "epm": -0.8,
+    "composite": -0.2933,
+    "speedPowerTotal": 17,
+    "provisional": true
+  },
+  {
+    "name": "Jaylen Wells",
+    "team": "MEM",
+    "pos": "SG",
+    "epm": -0.3,
+    "composite": -0.2954,
+    "speedPowerTotal": 17,
+    "provisional": true
+  },
+  {
+    "name": "Anfernee Simons",
+    "team": "2TM",
+    "pos": "SG",
+    "epm": -0.5,
+    "composite": -0.1412,
+    "speedPowerTotal": 17,
+    "provisional": true
+  },
+  {
+    "name": "Collin Sexton",
+    "team": "2TM",
+    "pos": "SG",
+    "epm": -1.0,
+    "composite": -0.249,
+    "speedPowerTotal": 17,
+    "provisional": true
+  },
+  {
+    "name": "Svi Mykhailiuk",
+    "team": "UTA",
+    "pos": "SF",
+    "epm": -0.3,
+    "composite": -0.2749,
+    "speedPowerTotal": 17,
+    "provisional": true
+  },
+  {
+    "name": "Sion James",
+    "team": "CHO",
+    "pos": "SG",
+    "epm": -0.7,
+    "composite": -0.3259,
+    "speedPowerTotal": 17,
+    "provisional": true
+  },
+  {
+    "name": "Brandon Williams",
+    "team": "DAL",
+    "pos": "PG",
+    "epm": -0.9,
+    "composite": -0.2834,
+    "speedPowerTotal": 17,
+    "provisional": true
+  },
+  {
+    "name": "Jock Landale",
+    "team": "2TM",
+    "pos": "C",
+    "epm": -0.9,
+    "composite": -0.2551,
+    "speedPowerTotal": 17,
+    "provisional": true
+  },
+  {
+    "name": "Ryan Kalkbrenner",
+    "team": "CHO",
+    "pos": "C",
+    "epm": -1.5,
+    "composite": -0.2832,
+    "speedPowerTotal": 17,
+    "provisional": true
+  },
+  {
+    "name": "Jay Huff",
+    "team": "IND",
+    "pos": "C",
+    "epm": -1.2,
+    "composite": -0.3774,
+    "speedPowerTotal": 17,
+    "provisional": true
+  },
+  {
+    "name": "Vince Williams Jr.",
+    "team": "2TM",
+    "pos": "SG",
+    "epm": -0.5,
+    "composite": -0.3647,
+    "speedPowerTotal": 17,
+    "provisional": true
+  },
+  {
+    "name": "Ron Holland",
+    "team": "DET",
+    "pos": "SF",
+    "epm": -0.6,
+    "composite": -0.2294,
+    "speedPowerTotal": 17,
+    "provisional": true
+  },
+  {
+    "name": "Olivier-Maxence Prosper",
+    "team": "MEM",
+    "pos": "PF",
+    "epm": -0.7,
+    "composite": -0.2256,
+    "speedPowerTotal": 17,
+    "provisional": true
+  },
+  {
+    "name": "Mike Conley",
+    "team": "MIN",
+    "pos": "PG",
+    "epm": -0.6,
+    "composite": -0.2953,
+    "speedPowerTotal": 17,
+    "provisional": true
+  },
+  {
+    "name": "Kasparas Jakučionis",
+    "team": "MIA",
+    "pos": "PG",
+    "epm": -0.9,
+    "composite": -0.3565,
+    "speedPowerTotal": 17,
+    "provisional": true
+  },
+  {
+    "name": "Josh Okogie",
+    "team": "HOU",
+    "pos": "SG",
+    "epm": -0.8,
+    "composite": -0.3343,
+    "speedPowerTotal": 17,
+    "provisional": true
+  },
+  {
+    "name": "Leonard Miller",
+    "team": "2TM",
+    "pos": "SF",
+    "epm": -0.6,
+    "composite": -0.2763,
+    "speedPowerTotal": 17,
+    "provisional": true
+  },
+  {
+    "name": "Mouhamed Gueye",
+    "team": "ATL",
+    "pos": "PF",
+    "epm": -0.6,
+    "composite": -0.2115,
+    "speedPowerTotal": 17,
+    "provisional": true
+  },
+  {
+    "name": "Clint Capela",
+    "team": "HOU",
+    "pos": "C",
+    "epm": -0.9,
+    "composite": -0.199,
+    "speedPowerTotal": 17,
+    "provisional": true
+  },
+  {
+    "name": "Kelly Oubre Jr.",
+    "team": "PHI",
+    "pos": "SF",
+    "epm": -1.2,
+    "composite": -0.5238,
+    "speedPowerTotal": 16,
+    "provisional": true
+  },
+  {
+    "name": "Bennedict Mathurin",
+    "team": "2TM",
+    "pos": "SF",
+    "epm": -1.0,
+    "composite": -0.5226,
+    "speedPowerTotal": 16,
+    "provisional": true
+  },
+  {
+    "name": "Anthony Black",
+    "team": "ORL",
+    "pos": "PG",
+    "epm": -1.2,
+    "composite": -0.4641,
+    "speedPowerTotal": 16,
+    "provisional": true
+  },
+  {
+    "name": "Jerami Grant",
+    "team": "POR",
+    "pos": "PF",
+    "epm": -1.4,
+    "composite": -0.4801,
+    "speedPowerTotal": 16,
+    "provisional": true
+  },
+  {
+    "name": "Shaedon Sharpe",
+    "team": "POR",
+    "pos": "SG",
+    "epm": -0.9,
+    "composite": -0.4535,
+    "speedPowerTotal": 16,
+    "provisional": true
+  },
+  {
+    "name": "A.J. Green",
+    "team": "MIL",
+    "pos": "SG",
+    "epm": -0.6,
+    "composite": -0.4434,
+    "speedPowerTotal": 16,
+    "provisional": true
+  },
+  {
+    "name": "Kyshawn George",
+    "team": "WAS",
+    "pos": "SF",
+    "epm": -0.7,
+    "composite": -0.418,
+    "speedPowerTotal": 16,
+    "provisional": true
+  },
+  {
+    "name": "Rui Hachimura",
+    "team": "LAL",
+    "pos": "PF",
+    "epm": -0.9,
+    "composite": -0.4451,
+    "speedPowerTotal": 16,
+    "provisional": true
+  },
+  {
+    "name": "Luguentz Dort",
+    "team": "OKC",
+    "pos": "SF",
+    "epm": -1.3,
+    "composite": -0.5917,
+    "speedPowerTotal": 16,
+    "provisional": true
+  },
+  {
+    "name": "Tim Hardaway Jr.",
+    "team": "DEN",
+    "pos": "SG",
+    "epm": -1.4,
+    "composite": -0.537,
+    "speedPowerTotal": 16,
+    "provisional": true
+  },
+  {
+    "name": "De'Andre Hunter",
+    "team": "2TM",
+    "pos": "SF",
+    "epm": -0.9,
+    "composite": -0.6129,
+    "speedPowerTotal": 16,
+    "provisional": true
+  },
+  {
+    "name": "Jeremiah Fears",
+    "team": "NOP",
+    "pos": "PG",
+    "epm": -1.0,
+    "composite": -0.6206,
+    "speedPowerTotal": 16,
+    "provisional": true
+  },
+  {
+    "name": "Harrison Barnes",
+    "team": "SAS",
+    "pos": "PF",
+    "epm": -1.3,
+    "composite": -0.4102,
+    "speedPowerTotal": 16,
+    "provisional": true
+  },
+  {
+    "name": "Egor Dëmin",
+    "team": "BRK",
+    "pos": "PG",
+    "epm": -1.2,
+    "composite": -0.6739,
+    "speedPowerTotal": 16,
+    "provisional": true
+  },
+  {
+    "name": "Jake LaRavia",
+    "team": "LAL",
+    "pos": "PF",
+    "epm": -1.5,
+    "composite": -0.5986,
+    "speedPowerTotal": 16,
+    "provisional": true
+  },
+  {
+    "name": "Tristan Da Silva",
+    "team": "ORL",
+    "pos": "SF",
+    "epm": -1.6,
+    "composite": -0.644,
+    "speedPowerTotal": 16,
+    "provisional": true
+  },
+  {
+    "name": "Bobby Portis",
+    "team": "MIL",
+    "pos": "PF",
+    "epm": -1.1,
+    "composite": -0.4072,
+    "speedPowerTotal": 16,
+    "provisional": true
+  },
+  {
+    "name": "Precious Achiuwa",
+    "team": "SAC",
+    "pos": "C",
+    "epm": -1.0,
+    "composite": -0.4211,
+    "speedPowerTotal": 16,
+    "provisional": true
+  },
+  {
+    "name": "Dominick Barlow",
+    "team": "PHI",
+    "pos": "PF",
+    "epm": -1.7,
+    "composite": -0.6635,
+    "speedPowerTotal": 16,
+    "provisional": true
+  },
+  {
+    "name": "Landry Shamet",
+    "team": "NYK",
+    "pos": "SG",
+    "epm": -1.3,
+    "composite": -0.5419,
+    "speedPowerTotal": 16,
+    "provisional": true
+  },
+  {
+    "name": "Ziaire Williams",
+    "team": "BRK",
+    "pos": "SF",
+    "epm": -1.2,
+    "composite": -0.5972,
+    "speedPowerTotal": 16,
+    "provisional": true
+  },
+  {
+    "name": "Isaiah Stewart",
+    "team": "DET",
+    "pos": "C",
+    "epm": -2.0,
+    "composite": -0.6991,
+    "speedPowerTotal": 16,
+    "provisional": true
+  },
+  {
+    "name": "Jordan Miller",
+    "team": "LAC",
+    "pos": "SF",
+    "epm": -1.5,
+    "composite": -0.5293,
+    "speedPowerTotal": 16,
+    "provisional": true
+  },
+  {
+    "name": "Malik Monk",
+    "team": "SAC",
+    "pos": "SG",
+    "epm": -0.8,
+    "composite": -0.4721,
+    "speedPowerTotal": 16,
+    "provisional": true
+  },
+  {
+    "name": "Aaron Wiggins",
+    "team": "OKC",
+    "pos": "SG",
+    "epm": -1.6,
+    "composite": -0.703,
+    "speedPowerTotal": 16,
+    "provisional": true
+  },
+  {
+    "name": "Klay Thompson",
+    "team": "DAL",
+    "pos": "SF",
+    "epm": -0.8,
+    "composite": -0.5047,
+    "speedPowerTotal": 16,
+    "provisional": true
+  },
+  {
+    "name": "Luke Kennard",
+    "team": "2TM",
+    "pos": "SG",
+    "epm": -1.7,
+    "composite": -0.5872,
+    "speedPowerTotal": 16,
+    "provisional": true
+  },
+  {
+    "name": "GG Jackson II",
+    "team": "MEM",
+    "pos": "PF",
+    "epm": -1.2,
+    "composite": -0.5927,
+    "speedPowerTotal": 16,
+    "provisional": true
+  },
+  {
+    "name": "Kentavious Caldwell-Pope",
+    "team": "MEM",
+    "pos": "SG",
+    "epm": -0.7,
+    "composite": -0.48,
+    "speedPowerTotal": 16,
+    "provisional": true
+  },
+  {
+    "name": "Jamir Watkins",
+    "team": "WAS",
+    "pos": "SG",
+    "epm": -0.7,
+    "composite": -0.4844,
+    "speedPowerTotal": 16,
+    "provisional": true
+  },
+  {
+    "name": "Marvin Bagley III",
+    "team": "2TM",
+    "pos": "PF",
+    "epm": -1.8,
+    "composite": -0.5945,
+    "speedPowerTotal": 16,
+    "provisional": true
+  },
+  {
+    "name": "Kobe Sanders",
+    "team": "LAC",
+    "pos": "SG",
+    "epm": -1.0,
+    "composite": -0.5986,
+    "speedPowerTotal": 16,
+    "provisional": true
+  },
+  {
+    "name": "John Konchar",
+    "team": "2TM",
+    "pos": "SG",
+    "epm": -1.7,
+    "composite": -0.6355,
+    "speedPowerTotal": 16,
+    "provisional": true
+  },
+  {
+    "name": "Andre Drummond",
+    "team": "PHI",
+    "pos": "C",
+    "epm": -1.5,
+    "composite": -0.5386,
+    "speedPowerTotal": 16,
+    "provisional": true
+  },
+  {
+    "name": "Micah Potter",
+    "team": "IND",
+    "pos": "C",
+    "epm": -1.5,
+    "composite": -0.5482,
+    "speedPowerTotal": 16,
+    "provisional": true
+  },
+  {
+    "name": "Quenton Jackson",
+    "team": "IND",
+    "pos": "PG",
+    "epm": -0.8,
+    "composite": -0.4263,
+    "speedPowerTotal": 16,
+    "provisional": true
+  },
+  {
+    "name": "Isaiah Jackson",
+    "team": "2TM",
+    "pos": "C",
+    "epm": -1.4,
+    "composite": -0.5294,
+    "speedPowerTotal": 16,
+    "provisional": true
+  },
+  {
+    "name": "Nae'Qwan Tomlin",
+    "team": "CLE",
+    "pos": "PF",
+    "epm": -1.0,
+    "composite": -0.4671,
+    "speedPowerTotal": 16,
+    "provisional": true
+  },
+  {
+    "name": "Josh Green",
+    "team": "CHO",
+    "pos": "SG",
+    "epm": -1.4,
+    "composite": -0.6386,
+    "speedPowerTotal": 16,
+    "provisional": true
+  },
+  {
+    "name": "Kenrich Williams",
+    "team": "OKC",
+    "pos": "PF",
+    "epm": -1.5,
+    "composite": -0.574,
+    "speedPowerTotal": 16,
+    "provisional": true
+  },
+  {
+    "name": "Hugo González",
+    "team": "BOS",
+    "pos": "SF",
+    "epm": -1.3,
+    "composite": -0.5835,
+    "speedPowerTotal": 16,
+    "provisional": true
+  },
+  {
+    "name": "Dwight Powell",
+    "team": "DAL",
+    "pos": "C",
+    "epm": -1.5,
+    "composite": -0.6244,
+    "speedPowerTotal": 16,
+    "provisional": true
+  },
+  {
+    "name": "Aaron Holiday",
+    "team": "HOU",
+    "pos": "PG",
+    "epm": -1.3,
+    "composite": -0.6965,
+    "speedPowerTotal": 16,
+    "provisional": true
+  },
+  {
+    "name": "Thomas Bryant",
+    "team": "CLE",
+    "pos": "C",
+    "epm": -1.4,
+    "composite": -0.5153,
+    "speedPowerTotal": 16,
+    "provisional": true
+  },
+  {
+    "name": "Quentin Grimes",
+    "team": "PHI",
+    "pos": "SG",
+    "epm": -1.8,
+    "composite": -0.7827,
+    "speedPowerTotal": 15,
+    "provisional": true
+  },
+  {
+    "name": "Max Christie",
+    "team": "DAL",
+    "pos": "SG",
+    "epm": -1.8,
+    "composite": -0.8491,
+    "speedPowerTotal": 15,
+    "provisional": true
+  },
+  {
+    "name": "Russell Westbrook",
+    "team": "SAC",
+    "pos": "SF",
+    "epm": -1.6,
+    "composite": -0.8045,
+    "speedPowerTotal": 15,
+    "provisional": true
+  },
+  {
+    "name": "Royce O'Neale",
+    "team": "PHO",
+    "pos": "SF",
+    "epm": -2.4,
+    "composite": -0.8775,
+    "speedPowerTotal": 15,
+    "provisional": true
+  },
+  {
+    "name": "Draymond Green",
+    "team": "GSW",
+    "pos": "PF",
+    "epm": -1.7,
+    "composite": -0.8137,
+    "speedPowerTotal": 15,
+    "provisional": true
+  },
+  {
+    "name": "Isaac Okoro",
+    "team": "CHI",
+    "pos": "SG",
+    "epm": -1.5,
+    "composite": -0.8531,
+    "speedPowerTotal": 15,
+    "provisional": true
+  },
+  {
+    "name": "Bilal Coulibaly",
+    "team": "WAS",
+    "pos": "SG",
+    "epm": -1.7,
+    "composite": -0.8941,
+    "speedPowerTotal": 15,
+    "provisional": true
+  },
+  {
+    "name": "Brice Sensabaugh",
+    "team": "UTA",
+    "pos": "SF",
+    "epm": -1.5,
+    "composite": -0.8608,
+    "speedPowerTotal": 15,
+    "provisional": true
+  },
+  {
+    "name": "Kris Murray",
+    "team": "POR",
+    "pos": "SF",
+    "epm": -1.8,
+    "composite": -0.8493,
+    "speedPowerTotal": 15,
+    "provisional": true
+  },
+  {
+    "name": "Dylan Cardwell",
+    "team": "SAC",
+    "pos": "C",
+    "epm": -2.1,
+    "composite": -0.9256,
+    "speedPowerTotal": 15,
+    "provisional": true
+  },
+  {
+    "name": "Keon Ellis",
+    "team": "2TM",
+    "pos": "SG",
+    "epm": -1.9,
+    "composite": -0.8428,
+    "speedPowerTotal": 15,
+    "provisional": true
+  },
+  {
+    "name": "Will Richard",
+    "team": "GSW",
+    "pos": "SG",
+    "epm": -2.2,
+    "composite": -1.0055,
+    "speedPowerTotal": 15,
+    "provisional": true
+  },
+  {
+    "name": "Kyle Anderson",
+    "team": "3TM",
+    "pos": "SF",
+    "epm": -2.4,
+    "composite": -1.015,
+    "speedPowerTotal": 15,
+    "provisional": true
+  },
+  {
+    "name": "Ryan Nembhard",
+    "team": "DAL",
+    "pos": "PG",
+    "epm": -1.2,
+    "composite": -0.7883,
+    "speedPowerTotal": 15,
+    "provisional": true
+  },
+  {
+    "name": "Ryan Dunn",
+    "team": "PHO",
+    "pos": "SF",
+    "epm": -1.9,
+    "composite": -0.8121,
+    "speedPowerTotal": 15,
+    "provisional": true
+  },
+  {
+    "name": "Craig Porter Jr.",
+    "team": "CLE",
+    "pos": "PG",
+    "epm": -2.5,
+    "composite": -0.9382,
+    "speedPowerTotal": 15,
+    "provisional": true
+  },
+  {
+    "name": "Jarred Vanderbilt",
+    "team": "LAL",
+    "pos": "PF",
+    "epm": -1.9,
+    "composite": -0.8905,
+    "speedPowerTotal": 15,
+    "provisional": true
+  },
+  {
+    "name": "Jared McCain",
+    "team": "2TM",
+    "pos": "SG",
+    "epm": -1.4,
+    "composite": -0.7452,
+    "speedPowerTotal": 15,
+    "provisional": true
+  },
+  {
+    "name": "Nikola Jović",
+    "team": "MIA",
+    "pos": "PF",
+    "epm": -1.4,
+    "composite": -0.8878,
+    "speedPowerTotal": 15,
+    "provisional": true
+  },
+  {
+    "name": "Buddy Hield",
+    "team": "2TM",
+    "pos": "SG",
+    "epm": -1.6,
+    "composite": -0.7894,
+    "speedPowerTotal": 15,
+    "provisional": true
+  },
+  {
+    "name": "Guerschon Yabusele",
+    "team": "2TM",
+    "pos": "C",
+    "epm": -1.5,
+    "composite": -0.7863,
+    "speedPowerTotal": 15,
+    "provisional": true
+  },
+  {
+    "name": "Karlo Matković",
+    "team": "NOP",
+    "pos": "PF",
+    "epm": -2.1,
+    "composite": -0.8017,
+    "speedPowerTotal": 15,
+    "provisional": true
+  },
+  {
+    "name": "Jamaree Bouyea",
+    "team": "PHO",
+    "pos": "PG",
+    "epm": -1.8,
+    "composite": -0.8131,
+    "speedPowerTotal": 15,
+    "provisional": true
+  },
+  {
+    "name": "Tristan Vukcevic",
+    "team": "WAS",
+    "pos": "C",
+    "epm": -1.6,
+    "composite": -0.7383,
+    "speedPowerTotal": 15,
+    "provisional": true
+  },
+  {
+    "name": "Jaylen Clark",
+    "team": "MIN",
+    "pos": "SG",
+    "epm": -1.4,
+    "composite": -0.7144,
+    "speedPowerTotal": 15,
+    "provisional": true
+  },
+  {
+    "name": "Jamal Cain",
+    "team": "ORL",
+    "pos": "SF",
+    "epm": -1.8,
+    "composite": -0.8701,
+    "speedPowerTotal": 15,
+    "provisional": true
+  },
+  {
+    "name": "Noah Clowney",
+    "team": "BRK",
+    "pos": "PF",
+    "epm": -2.0,
+    "composite": -1.1072,
+    "speedPowerTotal": 14,
+    "provisional": true
+  },
+  {
+    "name": "Maxime Raynaud",
+    "team": "SAC",
+    "pos": "C",
+    "epm": -2.8,
+    "composite": -1.2746,
+    "speedPowerTotal": 14,
+    "provisional": true
+  },
+  {
+    "name": "Nique Clifford",
+    "team": "SAC",
+    "pos": "SG",
+    "epm": -1.9,
+    "composite": -1.2507,
+    "speedPowerTotal": 14,
+    "provisional": true
+  },
+  {
+    "name": "Terance Mann",
+    "team": "BRK",
+    "pos": "SG",
+    "epm": -2.2,
+    "composite": -1.1713,
+    "speedPowerTotal": 14,
+    "provisional": true
+  },
+  {
+    "name": "Dennis Schröder",
+    "team": "2TM",
+    "pos": "PG",
+    "epm": -2.3,
+    "composite": -1.1685,
+    "speedPowerTotal": 14,
+    "provisional": true
+  },
+  {
+    "name": "Khris Middleton",
+    "team": "2TM",
+    "pos": "SF",
+    "epm": -1.8,
+    "composite": -1.1175,
+    "speedPowerTotal": 14,
+    "provisional": true
+  },
+  {
+    "name": "Spencer Jones",
+    "team": "DEN",
+    "pos": "SF",
+    "epm": -2.3,
+    "composite": -1.1085,
+    "speedPowerTotal": 14,
+    "provisional": true
+  },
+  {
+    "name": "Vít Krejčí",
+    "team": "2TM",
+    "pos": "PG",
+    "epm": -2.3,
+    "composite": -1.0454,
+    "speedPowerTotal": 14,
+    "provisional": true
+  },
+  {
+    "name": "Gary Trent Jr.",
+    "team": "MIL",
+    "pos": "SG",
+    "epm": -2.0,
+    "composite": -1.3091,
+    "speedPowerTotal": 14,
+    "provisional": true
+  },
+  {
+    "name": "Cam Thomas",
+    "team": "2TM",
+    "pos": "SG",
+    "epm": -1.4,
+    "composite": -1.0206,
+    "speedPowerTotal": 14,
+    "provisional": true
+  },
+  {
+    "name": "Danny Wolf",
+    "team": "BRK",
+    "pos": "PF",
+    "epm": -2.0,
+    "composite": -1.0601,
+    "speedPowerTotal": 14,
+    "provisional": true
+  },
+  {
+    "name": "Caleb Love",
+    "team": "POR",
+    "pos": "SG",
+    "epm": -2.1,
+    "composite": -1.1696,
+    "speedPowerTotal": 14,
+    "provisional": true
+  },
+  {
+    "name": "Caris LeVert",
+    "team": "DET",
+    "pos": "SG",
+    "epm": -2.3,
+    "composite": -1.0364,
+    "speedPowerTotal": 14,
+    "provisional": true
+  },
+  {
+    "name": "Taylor Hendricks",
+    "team": "2TM",
+    "pos": "PF",
+    "epm": -2.1,
+    "composite": -1.0894,
+    "speedPowerTotal": 14,
+    "provisional": true
+  },
+  {
+    "name": "Corey Kispert",
+    "team": "2TM",
+    "pos": "SF",
+    "epm": -2.2,
+    "composite": -1.0832,
+    "speedPowerTotal": 14,
+    "provisional": true
+  },
+  {
+    "name": "Pat Spencer",
+    "team": "GSW",
+    "pos": "PG",
+    "epm": -2.4,
+    "composite": -1.2027,
+    "speedPowerTotal": 14,
+    "provisional": true
+  },
+  {
+    "name": "Jordan Clarkson",
+    "team": "NYK",
+    "pos": "SG",
+    "epm": -2.1,
+    "composite": -1.0917,
+    "speedPowerTotal": 14,
+    "provisional": true
+  },
+  {
+    "name": "Nicolas Batum",
+    "team": "LAC",
+    "pos": "PF",
+    "epm": -2.2,
+    "composite": -1.0538,
+    "speedPowerTotal": 14,
+    "provisional": true
+  },
+  {
+    "name": "Adem Bona",
+    "team": "PHI",
+    "pos": "C",
+    "epm": -2.3,
+    "composite": -1.0627,
+    "speedPowerTotal": 14,
+    "provisional": true
+  },
+  {
+    "name": "Jevon Carter",
+    "team": "2TM",
+    "pos": "PG",
+    "epm": -2.7,
+    "composite": -1.3207,
+    "speedPowerTotal": 14,
+    "provisional": true
+  },
+  {
+    "name": "Jalen Pickett",
+    "team": "DEN",
+    "pos": "SG",
+    "epm": -2.2,
+    "composite": -1.1577,
+    "speedPowerTotal": 14,
+    "provisional": true
+  },
+  {
+    "name": "Justin Edwards",
+    "team": "PHI",
+    "pos": "SF",
+    "epm": -2.6,
+    "composite": -1.2114,
+    "speedPowerTotal": 14,
+    "provisional": true
+  },
+  {
+    "name": "Julian Strawther",
+    "team": "DEN",
+    "pos": "SG",
+    "epm": -2.5,
+    "composite": -1.2551,
+    "speedPowerTotal": 14,
+    "provisional": true
+  },
+  {
+    "name": "Gradey Dick",
+    "team": "TOR",
+    "pos": "SG",
+    "epm": -2.3,
+    "composite": -1.2032,
+    "speedPowerTotal": 14,
+    "provisional": true
+  },
+  {
+    "name": "Terrence Shannon Jr.",
+    "team": "MIN",
+    "pos": "SG",
+    "epm": -1.9,
+    "composite": -1.0344,
+    "speedPowerTotal": 14,
+    "provisional": true
+  },
+  {
+    "name": "Rasheer Fleming",
+    "team": "PHO",
+    "pos": "PF",
+    "epm": -1.8,
+    "composite": -1.0213,
+    "speedPowerTotal": 14,
+    "provisional": true
+  },
+  {
+    "name": "Bub Carrington",
+    "team": "WAS",
+    "pos": "PG",
+    "epm": -2.5,
+    "composite": -1.5397,
+    "speedPowerTotal": 13,
+    "provisional": true
+  },
+  {
+    "name": "Ace Bailey",
+    "team": "UTA",
+    "pos": "SF",
+    "epm": -2.2,
+    "composite": -1.3417,
+    "speedPowerTotal": 13,
+    "provisional": true
+  },
+  {
+    "name": "Kyle Kuzma",
+    "team": "MIL",
+    "pos": "PF",
+    "epm": -2.9,
+    "composite": -1.4124,
+    "speedPowerTotal": 13,
+    "provisional": true
+  },
+  {
+    "name": "Derik Queen",
+    "team": "NOP",
+    "pos": "C",
+    "epm": -3.1,
+    "composite": -1.3352,
+    "speedPowerTotal": 13,
+    "provisional": true
+  },
+  {
+    "name": "Bruce Brown",
+    "team": "DEN",
+    "pos": "SG",
+    "epm": -3.3,
+    "composite": -1.5483,
+    "speedPowerTotal": 13,
+    "provisional": true
+  },
+  {
+    "name": "Tre Johnson",
+    "team": "WAS",
+    "pos": "SG",
+    "epm": -2.1,
+    "composite": -1.3699,
+    "speedPowerTotal": 13,
+    "provisional": true
+  },
+  {
+    "name": "Zaccharie Risacher",
+    "team": "ATL",
+    "pos": "SF",
+    "epm": -2.8,
+    "composite": -1.3327,
+    "speedPowerTotal": 13,
+    "provisional": true
+  },
+  {
+    "name": "Ben Sheppard",
+    "team": "IND",
+    "pos": "SG",
+    "epm": -2.8,
+    "composite": -1.4488,
+    "speedPowerTotal": 13,
+    "provisional": true
+  },
+  {
+    "name": "Bryce McGowens",
+    "team": "NOP",
+    "pos": "SG",
+    "epm": -2.8,
+    "composite": -1.3951,
+    "speedPowerTotal": 13,
+    "provisional": true
+  },
+  {
+    "name": "Yves Missi",
+    "team": "NOP",
+    "pos": "C",
+    "epm": -3.3,
+    "composite": -1.4895,
+    "speedPowerTotal": 13,
+    "provisional": true
+  },
+  {
+    "name": "Jericho Sims",
+    "team": "MIL",
+    "pos": "C",
+    "epm": -3.1,
+    "composite": -1.456,
+    "speedPowerTotal": 13,
+    "provisional": true
+  },
+  {
+    "name": "Ousmane Dieng",
+    "team": "2TM",
+    "pos": "C",
+    "epm": -2.8,
+    "composite": -1.5425,
+    "speedPowerTotal": 13,
+    "provisional": true
+  },
+  {
+    "name": "Sidy Cissoko",
+    "team": "POR",
+    "pos": "SF",
+    "epm": -2.6,
+    "composite": -1.4031,
+    "speedPowerTotal": 13,
+    "provisional": true
+  },
+  {
+    "name": "Tyrese Martin",
+    "team": "2TM",
+    "pos": "SG",
+    "epm": -2.9,
+    "composite": -1.5934,
+    "speedPowerTotal": 13,
+    "provisional": true
+  },
+  {
+    "name": "Gabe Vincent",
+    "team": "2TM",
+    "pos": "PG",
+    "epm": -2.6,
+    "composite": -1.471,
+    "speedPowerTotal": 13,
+    "provisional": true
+  },
+  {
+    "name": "Jaden Hardy",
+    "team": "2TM",
+    "pos": "SG",
+    "epm": -2.4,
+    "composite": -1.4606,
+    "speedPowerTotal": 13,
+    "provisional": true
+  },
+  {
+    "name": "Kobe Brown",
+    "team": "2TM",
+    "pos": "PF",
+    "epm": -3.0,
+    "composite": -1.5095,
+    "speedPowerTotal": 13,
+    "provisional": true
+  },
+  {
+    "name": "Ochai Agbaji",
+    "team": "2TM",
+    "pos": "SG",
+    "epm": -2.6,
+    "composite": -1.416,
+    "speedPowerTotal": 13,
+    "provisional": true
+  },
+  {
+    "name": "Micah Peavy",
+    "team": "NOP",
+    "pos": "SG",
+    "epm": -2.5,
+    "composite": -1.462,
+    "speedPowerTotal": 13,
+    "provisional": true
+  },
+  {
+    "name": "Caleb Martin",
+    "team": "DAL",
+    "pos": "SF",
+    "epm": -3.1,
+    "composite": -1.5452,
+    "speedPowerTotal": 13,
+    "provisional": true
+  },
+  {
+    "name": "Tyus Jones",
+    "team": "3TM",
+    "pos": "PG",
+    "epm": -3.2,
+    "composite": -1.6188,
+    "speedPowerTotal": 13,
+    "provisional": true
+  },
+  {
+    "name": "Noah Penda",
+    "team": "ORL",
+    "pos": "SF",
+    "epm": -3.2,
+    "composite": -1.5353,
+    "speedPowerTotal": 13,
+    "provisional": true
+  },
+  {
+    "name": "Jett Howard",
+    "team": "ORL",
+    "pos": "SF",
+    "epm": -3.0,
+    "composite": -1.4754,
+    "speedPowerTotal": 13,
+    "provisional": true
+  },
+  {
+    "name": "Tre Mann",
+    "team": "CHO",
+    "pos": "PG",
+    "epm": -2.2,
+    "composite": -1.3489,
+    "speedPowerTotal": 13,
+    "provisional": true
+  },
+  {
+    "name": "Zeke Nnaji",
+    "team": "DEN",
+    "pos": "PF",
+    "epm": -3.1,
+    "composite": -1.5966,
+    "speedPowerTotal": 13,
+    "provisional": true
+  },
+  {
+    "name": "Isaiah Collier",
+    "team": "UTA",
+    "pos": "PG",
+    "epm": -3.7,
+    "composite": -1.8108,
+    "speedPowerTotal": 12,
+    "provisional": true
+  },
+  {
+    "name": "Jarace Walker",
+    "team": "IND",
+    "pos": "PF",
+    "epm": -3.3,
+    "composite": -1.6869,
+    "speedPowerTotal": 12,
+    "provisional": true
+  },
+  {
+    "name": "Will Riley",
+    "team": "WAS",
+    "pos": "SF",
+    "epm": -3.2,
+    "composite": -1.777,
+    "speedPowerTotal": 12,
+    "provisional": true
+  },
+  {
+    "name": "Walter Clayton",
+    "team": "2TM",
+    "pos": "PG",
+    "epm": -3.3,
+    "composite": -1.8216,
+    "speedPowerTotal": 12,
+    "provisional": true
+  },
+  {
+    "name": "Sharife Cooper",
+    "team": "WAS",
+    "pos": "PG",
+    "epm": -3.7,
+    "composite": -1.9344,
+    "speedPowerTotal": 12,
+    "provisional": true
+  },
+  {
+    "name": "Trendon Watford",
+    "team": "PHI",
+    "pos": "PF",
+    "epm": -3.6,
+    "composite": -1.7147,
+    "speedPowerTotal": 12,
+    "provisional": true
+  },
+  {
+    "name": "Pete Nance",
+    "team": "MIL",
+    "pos": "PF",
+    "epm": -3.4,
+    "composite": -1.6873,
+    "speedPowerTotal": 12,
+    "provisional": true
+  },
+  {
+    "name": "Gary Harris",
+    "team": "MIL",
+    "pos": "SG",
+    "epm": -3.4,
+    "composite": -1.7322,
+    "speedPowerTotal": 12,
+    "provisional": true
+  },
+  {
+    "name": "Drew Eubanks",
+    "team": "SAC",
+    "pos": "C",
+    "epm": -3.8,
+    "composite": -1.9276,
+    "speedPowerTotal": 12,
+    "provisional": true
+  },
+  {
+    "name": "Nolan Traoré",
+    "team": "BRK",
+    "pos": "PG",
+    "epm": -3.4,
+    "composite": -2.0959,
+    "speedPowerTotal": 11,
+    "provisional": true
+  },
+  {
+    "name": "Anthony Gill",
+    "team": "WAS",
+    "pos": "PF",
+    "epm": -4.4,
+    "composite": -2.1236,
+    "speedPowerTotal": 11,
+    "provisional": true
+  },
+  {
+    "name": "Jalen Wilson",
+    "team": "BRK",
+    "pos": "PF",
+    "epm": -3.5,
+    "composite": -1.9694,
+    "speedPowerTotal": 11,
+    "provisional": true
+  },
+  {
+    "name": "Nick Richards",
+    "team": "2TM",
+    "pos": "C",
+    "epm": -4.0,
+    "composite": -2.1283,
+    "speedPowerTotal": 11,
+    "provisional": true
+  },
+  {
+    "name": "Cody Williams",
+    "team": "UTA",
+    "pos": "SG",
+    "epm": -4.4,
+    "composite": -2.4033,
+    "speedPowerTotal": 10,
+    "provisional": true
+  },
+  {
+    "name": "Drake Powell",
+    "team": "BRK",
+    "pos": "SG",
+    "epm": -4.5,
+    "composite": -2.4728,
+    "speedPowerTotal": 10,
+    "provisional": true
+  },
+  {
+    "name": "Ben Saraf",
+    "team": "BRK",
+    "pos": "SG",
+    "epm": -4.9,
+    "composite": -2.7705,
+    "speedPowerTotal": 10,
+    "provisional": true
+  },
+  {
+    "name": "Patrick Williams",
+    "team": "CHI",
+    "pos": "PF",
+    "epm": -4.2,
+    "composite": -2.2627,
+    "speedPowerTotal": 10,
+    "provisional": true
+  },
+  {
+    "name": "Rayan Rupert",
+    "team": "2TM",
+    "pos": "SG",
+    "epm": -5.4,
+    "composite": -2.771,
+    "speedPowerTotal": 10,
+    "provisional": true
+  },
+  {
+    "name": "Rob Dillingham",
+    "team": "2TM",
+    "pos": "PG",
+    "epm": -4.6,
+    "composite": -2.6147,
+    "speedPowerTotal": 10,
+    "provisional": true
+  },
+  {
+    "name": "Jordan Hawkins",
+    "team": "NOP",
+    "pos": "SG",
+    "epm": -4.9,
+    "composite": -2.7054,
+    "speedPowerTotal": 10,
+    "provisional": true
+  }
+]

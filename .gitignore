@@ -8,3 +8,11 @@ card-data/source-recovered
 # Card Studio working photos — large binaries, not design decisions.
 # Each set's crops.json and team-overrides.json stay TRACKED.
 card-art/sets/*/photos
+
+# Fetched stat snapshots (scripts/cardgen/cache.js). Derived, re-fetchable, and
+# not a design decision — `node scripts/cardgen/fetchCalibrationData.js` rebuilds
+# the whole directory. Kept out of the repo because it is a bulk copy of two
+# other people's data (Basketball-Reference season tables, dunksandthrees' EPM
+# leaderboard) and this repo is public; the DERIVED outputs in
+# card-data/generated/ are committed, so the studio and the game need no network.
+card-data/cache

@@ -138,3 +138,104 @@ export async function fetchGameLog(playerId, season) {
   if (!res.ok) throw new Error(`Basketball-Reference fetch failed: ${res.status}`);
   return parseGameLogHtml(await res.text());
 }
+
+// ---------------------------------------------------------------------------
+// Season-level stat tables.
+//
+// Separate from the game log above because they answer a different question:
+// the game log gives one player's DISTRIBUTION, these give every player's
+// season MEAN. Both are needed — see scripts/cardgen/variance.js, which fits
+// the first onto the second.
+//
+// Why Basketball-Reference for this at all, when dunksandthrees has richer
+// per-100 data: only dunksandthrees' CURRENT season is public. Every fit that
+// looks BACKWARD — anything calibrated against the finished 2025-26 card set,
+// whose stats are the 2024-25 season — has to read a prior season, and this is
+// the source that serves one.
+//
+// The three tables share one markup shape (`<table id="{kind}">` with
+// `data-stat` cells), so one parser covers them. `data-append-csv` on the name
+// cell carries Basketball-Reference's own player id, which is the key the game
+// log is fetched by.
+// ---------------------------------------------------------------------------
+
+/**
+ * The season tables this module knows how to ask for.
+ *
+ * `slug` is the URL segment, `tableId` is the `<table id>` on the page — and
+ * they are NOT the same string for every table (`NBA_2025_per_game.html` holds
+ * `<table id="per_game_stats">`, while `per_poss` and `advanced` both match
+ * their slug). Verified against live pages 2026-08-29; assuming they matched is
+ * exactly the failure this shape exists to prevent.
+ */
+export const SEASON_TABLES = {
+  perGame: { slug: 'per_game', tableId: 'per_game_stats' },
+  perPoss: { slug: 'per_poss', tableId: 'per_poss' },
+  advanced: { slug: 'advanced', tableId: 'advanced' },
+};
+
+function isolateTableBody(html, tableId) {
+  const idAttr = `id="${tableId}"`;
+  const idIndex = html.indexOf(idAttr);
+  if (idIndex === -1) {
+    throw new Error(`parseSeasonTableHtml: no ${idAttr} in the input HTML`);
+  }
+  const tbodyStart = html.indexOf('<tbody', idIndex);
+  const tbodyEnd = html.indexOf('</tbody>', tbodyStart);
+  if (tbodyStart === -1 || tbodyEnd === -1) {
+    throw new Error(`parseSeasonTableHtml: no <tbody> for ${idAttr}`);
+  }
+  return html.slice(tbodyStart, tbodyEnd + '</tbody>'.length);
+}
+
+/**
+ * Every `data-stat` cell in a row, as strings.
+ *
+ * Reads `<th>` as well as `<td>` here (unlike the game-log parser): on the
+ * season tables the player-name cell is a `<th>`, and it is the one cell we
+ * cannot do without. Repeated header rows are excluded by the caller instead,
+ * on the absence of a `data-append-csv` player id.
+ */
+function parseRowCells(rowHtml) {
+  const cells = {};
+  const re = /<(?:td|th)[^>]*data-stat="([^"]+)"[^>]*>([\s\S]*?)<\/(?:td|th)>/g;
+  let m;
+  while ((m = re.exec(rowHtml)) !== null) {
+    cells[m[1]] = m[2].replace(/<[^>]*>/g, '').trim();
+  }
+  return cells;
+}
+
+/**
+ * Parses one of the season tables into `{ playerId, name, cells }` records.
+ *
+ * Values stay strings: the three tables disagree about which columns exist and
+ * a caller that knows which table it asked for is better placed to coerce than
+ * a parser that does not.
+ */
+export function parseSeasonTableHtml(html, tableId) {
+  const body = isolateTableBody(html, tableId);
+  const rows = extractRows(body);
+  const out = [];
+  for (const row of rows) {
+    const idMatch = row.match(/data-append-csv="([^"]+)"/);
+    if (!idMatch) continue; // repeated header row, or a league-average footer
+    const cells = parseRowCells(row);
+    const name = cells.name_display ?? cells.player;
+    if (!name) continue;
+    out.push({ playerId: idMatch[1], name, cells });
+  }
+  return out;
+}
+
+/** Fetches and parses one season table. `season` is the END year (2025 = 2024-25). */
+export async function fetchSeasonTable(season, kind, { fetchImpl = fetch } = {}) {
+  const table = SEASON_TABLES[kind];
+  if (!table) throw new Error(`fetchSeasonTable: unknown table kind ${JSON.stringify(kind)}`);
+  const res = await fetchImpl(
+    `https://www.basketball-reference.com/leagues/NBA_${season}_${table.slug}.html`,
+    { headers: { 'User-Agent': 'Mozilla/5.0' } }
+  );
+  if (!res.ok) throw new Error(`Basketball-Reference fetch failed: ${res.status}`);
+  return parseSeasonTableHtml(await res.text(), table.tableId);
+}

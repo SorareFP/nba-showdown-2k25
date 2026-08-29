@@ -3,16 +3,18 @@
 //
 // ── WHY A TEST ABOUT IMAGE DIMENSIONS ───────────────────────────────────────
 //
-// The card draws the team logo with `object-fit: contain` into a 74px SQUARE
-// slot (.logo in CardTemplate.module.css). `contain` fits the WHOLE canvas,
-// padding included, so what sets the mark's on-card size is the file's longest
-// side — not how much of the file the mark occupies. Two ways that goes wrong,
-// both of which shipped at least once:
+// The card draws the team logo with `object-fit: contain` into a 115x96 slot
+// (.logo in CardTemplate.module.css — it was a 74px square until the sidebar
+// was centred on its bar and the marks were grown to fill it). `contain` fits
+// the WHOLE canvas, padding included, so what sets the mark's on-card size is
+// the file's own proportions — not how much of the file the mark occupies. Two
+// ways that goes wrong, both of which shipped at least once:
 //
 //   padding   MIA.png arrived as 4400x2080 holding a 1624x1704 mark. Correct
-//             art, but `contain` scaled the 4400 down to 74, so the mark drew
-//             at 29px and looked like a smudge. Trimming to the content box
-//             made it 2.6x larger with no other change.
+//             art, but `contain` scaled the 4400 down to the slot's width, so
+//             the mark drew at a third of its size and looked like a smudge.
+//             Trimming to the content box made it 2.6x larger with no other
+//             change.
 //   lockups   SAS.png and POR.png arrived as full wordmark lockups — 2.2:1 and
 //             1.2:1 canvases that are mostly LETTERING. In a square slot the
 //             type is unreadable at any size, and on those teams' near-black
@@ -48,10 +50,12 @@ function pngSize(path) {
 /**
  * The widest a TEAM logo's canvas may be before the mark stops reading.
  *
- * At 2:1 the mark already draws at only 74x37 — half the slot's height — and
- * every ratio past that is a lockup wearing a logo's filename. Held as a
- * one-sided bound applied to both orientations rather than two constants: a
- * 1:2.5 canvas is exactly as bad as a 2.5:1 one.
+ * The 115x96 slot bounds the two orientations on different axes — a wide canvas
+ * is held by the width, a tall one by the height — but 2:1 is about the same
+ * loss either way, which is why one constant still covers both: a 2:1 canvas
+ * draws 115x58, three-fifths of the slot's height, and a 1:2 one draws 48x96,
+ * two-fifths of its width. Past that the file is a lockup wearing a logo's
+ * filename, whichever way round it is.
  */
 const MAX_TEAM_ASPECT = 2;
 
@@ -61,9 +65,11 @@ const MAX_TEAM_ASPECT = 2;
  * design: delete the entry when a mark-only file replaces the lockup, and do
  * not add to it to make a newly-dropped file pass.
  *
- *   UTA  'UTAH JAZZ' set beside a basketball, 750x327 (2.29:1) — draws 74x32,
- *        filling a fifth of the slot, in mid purple on a field the set's
- *        team-overrides.json has pinned to pure black.
+ *   UTA  'UTAH JAZZ' set beside a basketball, 750x327 (2.29:1). The wider slot
+ *        helped it more than any other file — it draws 115x50 now rather than
+ *        74x32, so the wordmark is legible where it was a smear — but it is
+ *        still lettering, still half the slot's height, and still mid purple on
+ *        a field the set's team-overrides.json has pinned to pure black.
  */
 const KNOWN_WIDE_LOCKUPS = ['UTA'];
 
@@ -83,7 +89,7 @@ describe('logo files', () => {
     }
   });
 
-  it('gives every team logo a canvas the 74px square slot can use', () => {
+  it('gives every team logo a canvas the 115x96 slot can use', () => {
     const offenders = [];
     for (const [abbr, team] of Object.entries(TEAMS)) {
       const file = team.logo?.split('/').pop();

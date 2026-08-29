@@ -37,7 +37,10 @@
  *   vertical player name          71px cap on LeBron, 62px on Edwards
  *   position, boosts, salary      15px cap
  *   chart table cells             14px cap
- *   team logo                     74px square
+ *   team logo                     74px square ON THE ART. The card deliberately
+ *                                 departs from this one: the mark is drawn in a
+ *                                 115x96 slot so it fills the bar it now sits
+ *                                 in, whatever its aspect ratio — see .logo.
  *
  * The user's remembered "size 17" for the chart table was a Canva setting on a
  * different canvas; the art itself measures a 14px cap, which is ~20px in this
@@ -413,22 +416,57 @@
   text-align: center;
 }
 
-.logo,
-.logoFallback {
-  width: 74px;
-  height: 74px;
+/* NOT A SQUARE, and not 74px any more.
+ *
+ * `contain` fits the whole FILE inside the box, so a square slot is sized by
+ * each mark's longest side and every non-square logo pays for that twice: OKC's
+ * 1.72:1 mark drew 74x43 in the 74px box while 60px of the bar beside it went
+ * unused. Sizing the box to the bar's usable width and the column's spare
+ * height instead makes the constraint per-axis, so wide marks are held by the
+ * width and tall ones by the height, and both end up prominent.
+ *
+ *   115px wide   the bar is 135 (701..836). 10px either side keeps the mark off
+ *                the frame, in step with the 15px the widest label leaves.
+ *   96px tall    what .sidebar's 390px has left after the fixed rows below: 22
+ *                for the position, 4x44 for the boosts, 5x18 of gap = 288, so
+ *                102 is the ceiling and 96 keeps 6px of slack. CardTemplate's
+ *                suite redoes that arithmetic from this file, so a later change
+ *                to the type sizes or the gap cannot silently overflow it.
+ *
+ * What that does to the aspect ratios actually on disk (public/logos, guarded by
+ * logoFiles.test.js), rendered size before -> after:
+ *
+ *   0.76  MIL, the tallest      56x74  ->  73x96   height-bound
+ *   1.00  ATL, DEN, TOR, ...    74x74  ->  96x96   height-bound
+ *   1.72  OKC, the widest       74x43  -> 115x67   width-bound
+ *   2.29  UTA, still a lockup   74x32  -> 115x50   width-bound
+ *
+ * — near-square marks up 30%, wide ones up 55%. That asymmetry is the intent:
+ * what should read as consistent across the set is the size of the MARK, not
+ * the size of its box. */
+.logo {
+  width: 115px;
+  height: 96px;
   object-fit: contain;
   flex: none;
 }
+/* The lettered circle for a team with no logo file. Stays SQUARE — it is drawn
+ * by this rule rather than fitted from a file, and border-radius:50% on the
+ * 115x96 box above would draw an ellipse. Sized to the slot's height so the
+ * column's rhythm does not shift between a card with a logo and one without;
+ * the border and the type scale with it (3->4px, 23->30px, both x96/74). */
 .logoFallback {
+  width: 96px;
+  height: 96px;
+  flex: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 3px solid var(--accent-on-field);
+  border: 4px solid var(--accent-on-field);
   border-radius: 50%;
   background: var(--field-panel);
   color: var(--accent-on-field);
-  font-size: 23px;
+  font-size: 30px;
   font-weight: 700;
   letter-spacing: 1px;
 }

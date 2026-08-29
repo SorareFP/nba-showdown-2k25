@@ -423,6 +423,42 @@ describe('the sidebar', () => {
     expect(sidebar).toMatch(/text-align:\s*center/);
     expect(sidebar).toMatch(/align-items:\s*center/);
   });
+
+  it('gives the logo the bar’s width and the column’s spare height', () => {
+    // The slot was a 74px square, which sized every mark by its longest side and
+    // wasted the bar's width on all 29 of the 31 logo files that are not square.
+    // Its two bounds now come from two different places, and both have to hold:
+    // the width from the bar, the height from what the fixed rows below it leave.
+    const logo = cssBlock('.logo');
+    const sidebar = cssBlock('.sidebar');
+    expect(pxIn(logo, 'width')).toBeGreaterThan(74);
+    expect(pxIn(logo, 'width')).toBeLessThanOrEqual(pxIn(cssBlock('.sidebarScrim'), 'width'));
+    expect(logo).toMatch(/object-fit:\s*contain/);
+
+    // The rows below the logo are fixed type at a fixed gap, so the height that
+    // is left for it is arithmetic — done here from the stylesheet rather than
+    // pinned at 96, so that raising a font size or the gap fails HERE instead of
+    // silently pushing the logo out through the top of the sidebar.
+    const lineHeight = Number(cssBlock('.card').match(/line-height:\s*([\d.]+)/)[1]);
+    const line = block => pxIn(block, 'font-size') * lineHeight;
+    const rows =
+      line(cssBlock('.pos')) +
+      4 * (line(cssBlock('.boostLabel')) + line(cssBlock('.boostValue')));
+    const gaps = 5 * pxIn(sidebar, 'gap');
+    expect(pxIn(logo, 'height') + rows + gaps).toBeLessThanOrEqual(pxIn(sidebar, 'height'));
+  });
+
+  it('keeps the lettered fallback square, so it stays a circle', () => {
+    // .logo and .logoFallback shared one rule while the slot was square. They
+    // cannot now: the fallback is DRAWN by its rule rather than fitted from a
+    // file, and border-radius:50% on a 115x96 box is an ellipse.
+    const fallback = cssBlock('.logoFallback');
+    expect(pxIn(fallback, 'width')).toBe(pxIn(fallback, 'height'));
+    expect(fallback).toMatch(/border-radius:\s*50%/);
+    // Same height as the real slot, so the column does not shift between a card
+    // with a logo file and one without.
+    expect(pxIn(fallback, 'height')).toBe(pxIn(cssBlock('.logo'), 'height'));
+  });
 });
 
 describe('team logo', () => {

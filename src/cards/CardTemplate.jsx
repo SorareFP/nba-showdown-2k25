@@ -249,24 +249,49 @@ export default function CardTemplate({
 }
 
 /**
+ * The browser URL for a logo file, from the path TEAMS records for it.
+ *
+ * teams.js deliberately stores a bare root-relative PATH ('/logos/CLE.png'):
+ * it is plain data, imported by Node scripts (scripts/cardgen/resolveTeams.js)
+ * as well as by the browser, so it must not depend on a bundler's environment.
+ *
+ * But this app is served under a BASE PATH ('/nba-showdown-2k25/'), and public/
+ * assets live beneath it. The bare path 404s — verified against the running dev
+ * server, which is how this was caught: the logo fallback made every card look
+ * fine while the present-a-logo path was quietly broken for every team.
+ *
+ * BASE_URL rather than a fourth hardcoded copy of the base string. The typeof
+ * guard keeps teams.js's consumers honest in plain Node, where import.meta.env
+ * does not exist.
+ */
+export function logoSrc(path) {
+  if (!path) return null;
+  const base = typeof import.meta.env === 'object' && import.meta.env !== null
+    ? import.meta.env.BASE_URL
+    : '/';
+  return `${String(base).replace(/\/+$/, '')}${path}`;
+}
+
+/**
  * Team logo with a text fallback.
  *
  * Logo files are NOT in this repo — the user drops them into
- * public/logos/{ABBR}.png — so right now EVERY card 404s its logo. That has to
- * look deliberate, not broken: on error we swap the <img> for the team
- * abbreviation in the same slot, so the sidebar layout below it never shifts
- * and no browser broken-image glyph appears.
+ * public/logos/{ABBR}.png — so until they arrive EVERY card 404s its logo. That
+ * has to look deliberate, not broken: on error we swap the <img> for the team
+ * abbreviation in a matching circle, in the same slot and at the same size, so
+ * the sidebar below it never shifts and no browser broken-image glyph appears.
  */
 function TeamLogo({ team, abbr }) {
   const [failed, setFailed] = useState(false);
   const label = abbr ?? '';
+  const src = logoSrc(team.logo);
 
-  if (!team.logo || failed) {
+  if (!src || failed) {
     return <div className={styles.logoFallback}>{label}</div>;
   }
   return (
     <img
-      src={team.logo}
+      src={src}
       alt={team.name}
       className={styles.logo}
       onError={() => setFailed(true)}

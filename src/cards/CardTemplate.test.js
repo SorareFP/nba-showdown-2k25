@@ -15,6 +15,7 @@ import CardTemplate, {
   findShotLineIndex,
   pickAccent,
   nameFontSize,
+  logoSrc,
 } from './CardTemplate.jsx';
 import { CARDS } from '../game/cards.js';
 import { TEAMS } from './teams.js';
@@ -183,6 +184,37 @@ describe('team theming', () => {
     });
     expect(html).toContain('--team-primary:#FF0000');
     expect(html).toContain('--team-secondary:#B9975B'); // untouched
+  });
+});
+
+describe('team logo', () => {
+  it('resolves the logo path against the app base path', () => {
+    // TEAMS stores '/logos/CLE.png', but the app is served under a base path
+    // and public/ assets live beneath it. The bare path 404s — and because the
+    // <img> then falls back to the lettered circle, every card LOOKED fine
+    // while the present-a-logo path was broken for all 30 teams.
+    const base = String(import.meta.env.BASE_URL).replace(/\/+$/, '');
+    expect(logoSrc('/logos/CLE.png')).toBe(`${base}/logos/CLE.png`);
+    // Never a doubled slash, whether or not the base carries a trailing one.
+    expect(logoSrc('/logos/CLE.png')).not.toMatch(/[^:]\/\//);
+  });
+
+  it('renders the resolved src, not the raw table path', () => {
+    const html = render({ card: LEBRON_08_09 });
+    expect(html).toContain(`src="${logoSrc('/logos/CLE.png')}"`);
+  });
+
+  it('has no logo url for a team with no logo path', () => {
+    expect(logoSrc(null)).toBeNull();
+    expect(logoSrc(undefined)).toBeNull();
+  });
+
+  it('falls back to the team abbreviation for an unknown team', () => {
+    // getTeam('2TM').logo is null, so the <img> is never rendered at all and
+    // the lettered circle stands in — deliberate, not a broken-image glyph.
+    const html = render({ card: { name: 'X', team: '2TM' } });
+    expect(html).not.toContain('/logos/');
+    expect(html).toContain('2TM');
   });
 });
 

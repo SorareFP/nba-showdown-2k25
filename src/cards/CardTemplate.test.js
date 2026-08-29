@@ -172,8 +172,8 @@ describe('degrading gracefully', () => {
 describe('team theming', () => {
   it('sets the team custom properties on the root', () => {
     const html = render({ card: LEBRON_08_09 });
-    expect(html).toContain('--team-primary:#860038'); // Cavaliers wine
-    expect(html).toContain('--team-secondary:#FDBB30');
+    expect(html).toContain('--team-primary:#6F263D'); // Cavaliers Wine (official)
+    expect(html).toContain('--team-secondary:#B9975B'); // Cavaliers Gold (official)
   });
 
   it('applies a studio override so a color change re-themes the card', () => {
@@ -182,7 +182,7 @@ describe('team theming', () => {
       teamOverrides: { CLE: { primary: '#FF0000' } },
     });
     expect(html).toContain('--team-primary:#FF0000');
-    expect(html).toContain('--team-secondary:#FDBB30'); // untouched
+    expect(html).toContain('--team-secondary:#B9975B'); // untouched
   });
 });
 
@@ -218,15 +218,15 @@ describe('findShotLineIndex', () => {
 
 describe('pickAccent', () => {
   it('picks the brighter of the two brand colors', () => {
-    expect(pickAccent('#0E2240', '#FEC524')).toBe('#FEC524'); // Nuggets
+    expect(pickAccent('#1D4289', '#FFC72C')).toBe('#FFC72C'); // Warriors
   });
   it('never returns a color too dark to read on the navy field', () => {
-    // Bulls: #CE1141 / #000000 — both dark, so neither is usable as text.
-    expect(pickAccent('#CE1141', '#000000')).toBe('#E6ECF8');
+    // Bulls: Red #BA0C2F / Black #010101 — both dark, neither usable as text.
+    expect(pickAccent('#BA0C2F', '#010101')).toBe('#E6ECF8');
     // Timberwolves: mid-tone blue on a navy card, verified too dim in-studio.
     expect(pickAccent('#0C2340', '#236192')).toBe('#E6ECF8');
-    // Spurs: silver primary is bright enough to keep.
-    expect(pickAccent('#C4CED4', '#000000')).toBe('#C4CED4');
+    // Spurs: official Silver is bright enough to keep.
+    expect(pickAccent('#9EA2A2', '#010101')).toBe('#9EA2A2');
   });
 
   it('produces a readable accent for every one of the 30 teams', () => {

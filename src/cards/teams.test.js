@@ -26,11 +26,31 @@ describe('TEAMS', () => {
     expect(TEAMS.PHO).toBeUndefined();
   });
 
-  it('carries real brand colors for spot-checked teams', () => {
-    expect(TEAMS.LAL).toMatchObject({ primary: '#552583', secondary: '#FDB927' });
-    expect(TEAMS.BOS).toMatchObject({ primary: '#007A33', secondary: '#BA9653' });
-    expect(TEAMS.DEN).toMatchObject({ primary: '#0E2240', secondary: '#FEC524' });
-    expect(TEAMS.GSW).toMatchObject({ primary: '#1D428A', secondary: '#FFC72C' });
+  it('carries the OFFICIAL brand colors for spot-checked teams', () => {
+    // Values read off trucolor.net's current-era block per franchise (see the
+    // header of teams.js). Pinned so a future edit from memory — which is how
+    // this table was wrong in the first place — fails loudly.
+    expect(TEAMS.LAL).toMatchObject({ primary: '#330072', secondary: '#FFC72C' }); // Royal Purple, Gold
+    expect(TEAMS.BOS).toMatchObject({ primary: '#007A33', secondary: '#FFFFFF' }); // Celtic Green, White
+    expect(TEAMS.DEN).toMatchObject({ primary: '#0C2340', secondary: '#862633' }); // Midnight Blue, Flatirons Red
+    expect(TEAMS.GSW).toMatchObject({ primary: '#1D4289', secondary: '#FFC72C' }); // Warriors Royal Blue, California Golden Yellow
+  });
+
+  it('is on each franchise\'s CURRENT identity, not a retired one', () => {
+    // The six that were still wearing a dead look: the Jazz's 2016-2022
+    // navy/yellow, the Hawks' 2015-2020 volt green, and four more.
+    expect(TEAMS.UTA.primary).toBe('#330072'); // Mountain Purple, not navy #002B5C
+    expect(TEAMS.ATL.secondary).toBe('#FFC72C'); // Legacy Yellow, not volt green #C1D32F
+    expect(TEAMS.MIN).toMatchObject({ primary: '#1D4289', secondary: '#009A44' }); // 2026-27 rebrand
+    expect(TEAMS.HOU.secondary).toBe('#FFCD00'); // Championship Yellow, added 2026-27
+  });
+
+  it('uses no pure #000000 or #FFFFFF where the source names a real color', () => {
+    // "Black C" is #010101 on this source, not #000000. A card themed from a
+    // hand-typed #000000 is a card themed from memory.
+    expect(TEAMS.CHI.secondary).toBe('#010101');
+    expect(TEAMS.SAS.primary).toBe('#010101');
+    expect(TEAMS.POR.primary).toBe('#010101');
   });
 });
 
@@ -71,8 +91,8 @@ describe('getTeam', () => {
   it('gives an aliased code the same colors and logo as its canonical one', () => {
     expect(getTeam('CHO')).toMatchObject({
       name: 'Hornets',
-      primary: '#1D1160',
-      secondary: '#00788C',
+      primary: '#00778B',
+      secondary: '#211747',
       logo: '/logos/CHA.png',
     });
   });
@@ -123,7 +143,7 @@ describe('getThemedTeam', () => {
   it('replaces only the fields the override names', () => {
     const themed = getThemedTeam('LAL', { LAL: { primary: '#FF0000' } });
     expect(themed.primary).toBe('#FF0000');
-    expect(themed.secondary).toBe('#FDB927');
+    expect(themed.secondary).toBe('#FFC72C');
     expect(themed.name).toBe('Lakers');
   });
 
@@ -145,6 +165,6 @@ describe('getThemedTeam', () => {
 
   it('does not mutate the source table', () => {
     getThemedTeam('LAL', { LAL: { primary: '#FF0000' } });
-    expect(TEAMS.LAL.primary).toBe('#552583');
+    expect(TEAMS.LAL.primary).toBe('#330072');
   });
 });

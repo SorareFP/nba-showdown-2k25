@@ -10,38 +10,65 @@
 // Logo image files are NOT in this repo — the user drops them into
 // public/logos/{ABBR}.png. CardTemplate hides the <img> on a 404, so cards
 // render correctly with no logo files present at all.
+//
+// ── WHERE THESE COLORS COME FROM ─────────────────────────────────────────────
+//
+// SOURCE: TruColor's NBA franchise color records, the authority the user chose:
+//   https://www.trucolor.net/portfolio/national-basketball-association-official-
+//   colors-franchise-records-1946-1947-through-present/
+// Fetched and parsed 2026-08-29; every hex below was read off that page's
+// CURRENT-era block for that franchise ("<season> through present"), never from
+// an earlier era and never from memory.
+//
+// THE RULE: primary is the franchise's FIRST official color, secondary its
+// SECOND, in the order the source lists them. Mechanical on purpose — the point
+// of having an authority is not to then re-rank it by taste. Each row records
+// the two official color names so any value can be checked against the page
+// without re-deriving which color was meant.
+//
+// These are PANTONE-derived values and they are NOT the hexes that circulate on
+// fan color sites (which is what this table held before, from memory: every
+// team but four was wrong, and six were still on a retired identity). Expect
+// them to look slightly deeper and less saturated than the familiar ones.
+//
+// Where the official second color makes a weak pairing for THIS design — the
+// Nuggets' Flatirons Red where the eye expects Sunshine Yellow, the Thunder's
+// navy behind Thunder Blue — that is the source's ordering, not an oversight.
+// Tune it per team in the studio's team editor; overrides live in the set's
+// team-overrides.json and never touch this file.
 
 export const TEAMS = {
-  ATL: { name: 'Hawks',         city: 'Atlanta',       primary: '#E03A3E', secondary: '#C1D32F', logo: '/logos/ATL.png' },
-  BOS: { name: 'Celtics',       city: 'Boston',        primary: '#007A33', secondary: '#BA9653', logo: '/logos/BOS.png' },
-  BKN: { name: 'Nets',          city: 'Brooklyn',      primary: '#000000', secondary: '#FFFFFF', logo: '/logos/BKN.png' },
-  CHA: { name: 'Hornets',       city: 'Charlotte',     primary: '#1D1160', secondary: '#00788C', logo: '/logos/CHA.png' },
-  CHI: { name: 'Bulls',         city: 'Chicago',       primary: '#CE1141', secondary: '#000000', logo: '/logos/CHI.png' },
-  CLE: { name: 'Cavaliers',     city: 'Cleveland',     primary: '#860038', secondary: '#FDBB30', logo: '/logos/CLE.png' },
-  DAL: { name: 'Mavericks',     city: 'Dallas',        primary: '#00538C', secondary: '#B8C4CA', logo: '/logos/DAL.png' },
-  DEN: { name: 'Nuggets',       city: 'Denver',        primary: '#0E2240', secondary: '#FEC524', logo: '/logos/DEN.png' },
-  DET: { name: 'Pistons',       city: 'Detroit',       primary: '#C8102E', secondary: '#1D42BA', logo: '/logos/DET.png' },
-  GSW: { name: 'Warriors',      city: 'Golden State',  primary: '#1D428A', secondary: '#FFC72C', logo: '/logos/GSW.png' },
-  HOU: { name: 'Rockets',       city: 'Houston',       primary: '#CE1141', secondary: '#000000', logo: '/logos/HOU.png' },
-  IND: { name: 'Pacers',        city: 'Indiana',       primary: '#002D62', secondary: '#FDBB30', logo: '/logos/IND.png' },
-  LAC: { name: 'Clippers',      city: 'LA',            primary: '#C8102E', secondary: '#1D428A', logo: '/logos/LAC.png' },
-  LAL: { name: 'Lakers',        city: 'Los Angeles',   primary: '#552583', secondary: '#FDB927', logo: '/logos/LAL.png' },
-  MEM: { name: 'Grizzlies',     city: 'Memphis',       primary: '#5D76A9', secondary: '#12173F', logo: '/logos/MEM.png' },
-  MIA: { name: 'Heat',          city: 'Miami',         primary: '#98002E', secondary: '#F9A01B', logo: '/logos/MIA.png' },
-  MIL: { name: 'Bucks',         city: 'Milwaukee',     primary: '#00471B', secondary: '#EEE1C6', logo: '/logos/MIL.png' },
-  MIN: { name: 'Timberwolves',  city: 'Minnesota',     primary: '#0C2340', secondary: '#236192', logo: '/logos/MIN.png' },
-  NOP: { name: 'Pelicans',      city: 'New Orleans',   primary: '#0C2340', secondary: '#C8102E', logo: '/logos/NOP.png' },
-  NYK: { name: 'Knicks',        city: 'New York',      primary: '#006BB6', secondary: '#F58426', logo: '/logos/NYK.png' },
-  OKC: { name: 'Thunder',       city: 'Oklahoma City', primary: '#007AC1', secondary: '#EF3B24', logo: '/logos/OKC.png' },
-  ORL: { name: 'Magic',         city: 'Orlando',       primary: '#0077C0', secondary: '#C4CED4', logo: '/logos/ORL.png' },
-  PHI: { name: '76ers',         city: 'Philadelphia',  primary: '#006BB6', secondary: '#ED174C', logo: '/logos/PHI.png' },
-  PHX: { name: 'Suns',          city: 'Phoenix',       primary: '#1D1160', secondary: '#E56020', logo: '/logos/PHX.png' },
-  POR: { name: 'Trail Blazers', city: 'Portland',      primary: '#E03A3E', secondary: '#000000', logo: '/logos/POR.png' },
-  SAC: { name: 'Kings',         city: 'Sacramento',    primary: '#5A2D81', secondary: '#63727A', logo: '/logos/SAC.png' },
-  SAS: { name: 'Spurs',         city: 'San Antonio',   primary: '#C4CED4', secondary: '#000000', logo: '/logos/SAS.png' },
-  TOR: { name: 'Raptors',       city: 'Toronto',       primary: '#CE1141', secondary: '#000000', logo: '/logos/TOR.png' },
-  UTA: { name: 'Jazz',          city: 'Utah',          primary: '#002B5C', secondary: '#F9A01B', logo: '/logos/UTA.png' },
-  WAS: { name: 'Wizards',       city: 'Washington',    primary: '#002B5C', secondary: '#E31837', logo: '/logos/WAS.png' },
+  //                                                                                                                        official color names
+  ATL: { name: 'Hawks',         city: 'Atlanta',       primary: '#C8102E', secondary: '#FFC72C', logo: '/logos/ATL.png' }, // Torch Red, Legacy Yellow
+  BOS: { name: 'Celtics',       city: 'Boston',        primary: '#007A33', secondary: '#FFFFFF', logo: '/logos/BOS.png' }, // Celtic Green, White
+  BKN: { name: 'Nets',          city: 'Brooklyn',      primary: '#010101', secondary: '#FFFFFF', logo: '/logos/BKN.png' }, // Black, White
+  CHA: { name: 'Hornets',       city: 'Charlotte',     primary: '#00778B', secondary: '#211747', logo: '/logos/CHA.png' }, // Teal, Dark Purple
+  CHI: { name: 'Bulls',         city: 'Chicago',       primary: '#BA0C2F', secondary: '#010101', logo: '/logos/CHI.png' }, // Red, Black
+  CLE: { name: 'Cavaliers',     city: 'Cleveland',     primary: '#6F263D', secondary: '#B9975B', logo: '/logos/CLE.png' }, // Wine, Gold
+  DAL: { name: 'Mavericks',     city: 'Dallas',        primary: '#0050B5', secondary: '#0C2340', logo: '/logos/DAL.png' }, // Royal Blue, Navy
+  DEN: { name: 'Nuggets',       city: 'Denver',        primary: '#0C2340', secondary: '#862633', logo: '/logos/DEN.png' }, // Midnight Blue, Flatirons Red
+  DET: { name: 'Pistons',       city: 'Detroit',       primary: '#1D4289', secondary: '#C8102E', logo: '/logos/DET.png' }, // Royal Blue, Red
+  GSW: { name: 'Warriors',      city: 'Golden State',  primary: '#1D4289', secondary: '#FFC72C', logo: '/logos/GSW.png' }, // Warriors Royal Blue, California Golden Yellow
+  HOU: { name: 'Rockets',       city: 'Houston',       primary: '#C8102E', secondary: '#FFCD00', logo: '/logos/HOU.png' }, // Rockets Red, Championship Yellow
+  IND: { name: 'Pacers',        city: 'Indiana',       primary: '#0C2340', secondary: '#FFCD00', logo: '/logos/IND.png' }, // Navy, Yellow
+  LAC: { name: 'Clippers',      city: 'LA',            primary: '#0C2340', secondary: '#C8102E', logo: '/logos/LAC.png' }, // Naval Blue, Ember Red
+  LAL: { name: 'Lakers',        city: 'Los Angeles',   primary: '#330072', secondary: '#FFC72C', logo: '/logos/LAL.png' }, // Royal Purple, Gold
+  MEM: { name: 'Grizzlies',     city: 'Memphis',       primary: '#0C2340', secondary: '#7D9CC0', logo: '/logos/MEM.png' }, // Memphis Midnight Blue, Beale Street Blue
+  MIA: { name: 'Heat',          city: 'Miami',         primary: '#010101', secondary: '#862633', logo: '/logos/MIA.png' }, // Black, Deep Red
+  MIL: { name: 'Bucks',         city: 'Milwaukee',     primary: '#2C5234', secondary: '#DDCBA4', logo: '/logos/MIL.png' }, // Good Land Green, Cream City Cream
+  MIN: { name: 'Timberwolves',  city: 'Minnesota',     primary: '#1D4289', secondary: '#009A44', logo: '/logos/MIN.png' }, // Blue, Green
+  NOP: { name: 'Pelicans',      city: 'New Orleans',   primary: '#0C2340', secondary: '#B9975B', logo: '/logos/NOP.png' }, // Dark Blue, Gold
+  NYK: { name: 'Knicks',        city: 'New York',      primary: '#1D4289', secondary: '#FF8200', logo: '/logos/NYK.png' }, // Royal Blue, Orange
+  OKC: { name: 'Thunder',       city: 'Oklahoma City', primary: '#0072CE', secondary: '#041E42', logo: '/logos/OKC.png' }, // Thunder Blue, Navy
+  ORL: { name: 'Magic',         city: 'Orlando',       primary: '#0050B5', secondary: '#010101', logo: '/logos/ORL.png' }, // Magic Blue, Black
+  PHI: { name: '76ers',         city: 'Philadelphia',  primary: '#1D4289', secondary: '#C8102E', logo: '/logos/PHI.png' }, // Royal Blue, Red
+  PHX: { name: 'Suns',          city: 'Phoenix',       primary: '#211747', secondary: '#CB6015', logo: '/logos/PHX.png' }, // Dark Purple, Burnt Orange
+  POR: { name: 'Trail Blazers', city: 'Portland',      primary: '#010101', secondary: '#C8102E', logo: '/logos/POR.png' }, // Black, Red
+  SAC: { name: 'Kings',         city: 'Sacramento',    primary: '#010101', secondary: '#582C83', logo: '/logos/SAC.png' }, // Black, Royal Purple
+  SAS: { name: 'Spurs',         city: 'San Antonio',   primary: '#010101', secondary: '#9EA2A2', logo: '/logos/SAS.png' }, // Black, Silver
+  TOR: { name: 'Raptors',       city: 'Toronto',       primary: '#BA0C2F', secondary: '#010101', logo: '/logos/TOR.png' }, // Red, Black
+  UTA: { name: 'Jazz',          city: 'Utah',          primary: '#330072', secondary: '#010101', logo: '/logos/UTA.png' }, // Mountain Purple, Midnight Black
+  WAS: { name: 'Wizards',       city: 'Washington',    primary: '#C8102E', secondary: '#0C2340', logo: '/logos/WAS.png' }, // Red, Navy
 };
 
 /**

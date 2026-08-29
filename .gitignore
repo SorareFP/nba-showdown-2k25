@@ -4,3 +4,7 @@ dist
 *.local
 card-data/source-recovered
 .worktrees
+
+# Card Studio working photos — large binaries, not design decisions.
+# card-art/crops.json and card-art/team-overrides.json stay TRACKED.
+card-art/photos

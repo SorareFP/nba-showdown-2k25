@@ -144,7 +144,7 @@ export default function CardTemplate({
       }}
     >
       <div className={styles.topBand} />
-      <div className={styles.leagueMark}>NBA</div>
+      <LeagueMark />
 
       <div className={`${styles.statBlock} ${styles.speedBlock}`}>
         <div className={styles.statLabel}>SPEED</div>
@@ -269,6 +269,37 @@ export function logoSrc(path) {
     ? import.meta.env.BASE_URL
     : '/';
   return `${String(base).replace(/\/+$/, '')}${path}`;
+}
+
+/**
+ * The league mark's file, the one logo that is not a team's.
+ *
+ * Lives next to the team logos in public/logos/ and is resolved through the
+ * same logoSrc(), so it picks up the app's base path like everything else.
+ */
+export const LEAGUE_LOGO = '/logos/NBA.png';
+
+/**
+ * The NBA mark in the card's top-left corner.
+ *
+ * Position and size are MEASURED off the printed reference art, not chosen:
+ * in public/cards/players/08_09_LeBron_James.png the mark's white keyline
+ * spans x 80..107, y 23..85 — 28x63, an aspect of 0.444 that matches the real
+ * mark's 405x905 to within a percent. See .leagueMark in the stylesheet.
+ *
+ * Falls back to the lettered badge this used to draw by hand, for the same
+ * reason TeamLogo does: a missing file has to look deliberate, and the export
+ * must never show a browser broken-image glyph.
+ */
+function LeagueMark() {
+  const [failed, setFailed] = useState(false);
+  const src = logoSrc(LEAGUE_LOGO);
+  if (!src || failed) {
+    return <div className={styles.leagueMarkFallback}>NBA</div>;
+  }
+  return (
+    <img src={src} alt="NBA" className={styles.leagueMark} onError={() => setFailed(true)} />
+  );
 }
 
 /**

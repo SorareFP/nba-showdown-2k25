@@ -116,22 +116,37 @@
   );
 }
 
+/* The real league mark, from public/logos/NBA.png. Box measured off the
+ * printed reference art: its white keyline spans x 80..107, y 23..85. The file
+ * is 405x905 (aspect 0.4475) and this box is 28x63 (0.444), so `contain` has
+ * essentially nothing to letterbox — the mark lands where the art has it. */
 .leagueMark {
   position: absolute;
-  left: 62px;
-  top: 20px;
-  width: 58px;
-  height: 74px;
-  border-radius: 8px;
+  left: 80px;
+  top: 23px;
+  width: 28px;
+  height: 63px;
+  object-fit: contain;
+}
+/* Drawn only if that file is missing — see LeagueMark. Same box, so the band
+ * around it does not reflow when a card falls back. */
+.leagueMarkFallback {
+  position: absolute;
+  left: 80px;
+  top: 23px;
+  width: 28px;
+  height: 63px;
+  border-radius: 5px;
   background: linear-gradient(180deg, #1D428A 0% 50%, #C8102E 50% 100%);
-  border: 3px solid #FFFFFF;
+  border: 2px solid #FFFFFF;
   color: #FFFFFF;
-  font-size: 17px;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 1px;
+  letter-spacing: 0;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
+  padding-bottom: 4px;
 }
 
 .statBlock {

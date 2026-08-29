@@ -15,6 +15,7 @@ import CardTemplate, {
   findShotLineIndex,
   nameFontSize,
   logoSrc,
+  LEAGUE_LOGO,
 } from './CardTemplate.jsx';
 import { CARDS } from '../game/cards.js';
 import { TEAMS } from './teams.js';
@@ -244,9 +245,26 @@ describe('team logo', () => {
   it('falls back to the team abbreviation for an unknown team', () => {
     // getTeam('2TM').logo is null, so the <img> is never rendered at all and
     // the lettered circle stands in — deliberate, not a broken-image glyph.
+    // The league mark is still there, so this checks for TEAM logo files only.
     const html = render({ card: { name: 'X', team: '2TM' } });
-    expect(html).not.toContain('/logos/');
+    expect(html).not.toMatch(/\/logos\/(?!NBA\.png)/);
     expect(html).toContain('2TM');
+  });
+});
+
+describe('league mark', () => {
+  it('renders the real NBA logo file, base-path resolved', () => {
+    // Was a hand-drawn badge; the printed art uses the actual mark. Same
+    // logoSrc() as the team logos, so it cannot drift from the base path.
+    const html = render({ card: LEBRON_08_09 });
+    expect(html).toContain(`src="${logoSrc(LEAGUE_LOGO)}"`);
+    expect(LEAGUE_LOGO).toBe('/logos/NBA.png');
+  });
+
+  it('is present on a card with no team at all', () => {
+    // It is the LEAGUE's mark — it does not depend on team resolution.
+    const html = render({ card: { name: 'X' } });
+    expect(html).toContain(`src="${logoSrc(LEAGUE_LOGO)}"`);
   });
 });
 

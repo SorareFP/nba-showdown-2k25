@@ -48,6 +48,13 @@
   white-space: nowrap;
 }
 
+/* The stats season, subordinate to the set name in the same badge: one fact
+ * ("2025-26 stats build the 2026-27 set"), not two competing labels. */
+.setBadgeSub {
+  color: var(--text-dim);
+  font-weight: 400;
+}
+
 .toggle {
   display: flex;
   border: 1px solid var(--border);

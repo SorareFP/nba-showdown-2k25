@@ -15,6 +15,22 @@
 export const CURRENT_SET = '2026-27';
 
 /**
+ * The season whose STATS the current set is built from.
+ *
+ * TWO DIFFERENT SEASONS ARE ON SCREEN IN THE STUDIO AT ONCE, and confusing
+ * them is the whole reason this constant exists rather than a literal in a
+ * label. A set is named for the season it will be PLAYED in; the numbers
+ * printed on it come from the season just finished. So:
+ *
+ *   2024-25 stats  ->  the 2025-26 set  (FINISHED — the ~300 cards on disk)
+ *   2025-26 stats  ->  the 2026-27 set  (BEING BUILT here)
+ *
+ * The player pool the studio lists is named for its stats season, which is why
+ * a "2025-26 pool" builds a "2026-27 set" and neither label is a typo.
+ */
+export const STATS_SEASON = '2025-26';
+
+/**
  * The finished set.
  *
  * Its cards live at the FLAT legacy path `public/cards/players/{id}.png` —
@@ -23,6 +39,13 @@ export const CURRENT_SET = '2026-27';
  * writes anywhere near them. Recorded here only so the name has a home.
  */
 export const FINISHED_SET = '2025-26';
+
+/**
+ * The stats season behind the finished set — the other half of the pairing
+ * described on STATS_SEASON. It sits one season back from FINISHED_SET for
+ * exactly the same reason STATS_SEASON sits one back from CURRENT_SET.
+ */
+export const FINISHED_STATS_SEASON = '2024-25';
 
 /** Working files root. Outside public/ — photos are inputs, not shipped assets. */
 export const ART_ROOT = 'card-art';

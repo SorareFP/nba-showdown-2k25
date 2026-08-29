@@ -1,23 +1,29 @@
 // The Card Studio's player list: where the records come from, and every pure
 // operation the list UI performs on them.
 //
-// TWO SOURCES, deliberately:
+// TWO SOURCES, deliberately — and they are named for TWO DIFFERENT SEASONS,
+// which is the single most confusable thing in this tool. A set is named for
+// the season it will be played in; its numbers come from the season before.
+// See STATS_SEASON in src/cards/sets.js.
 //
-//  - `pool` (the default) is the 2025-26 set the photos are actually being
-//    curated FOR. It has names, teams and positions and nothing else — charts,
+//  - `pool` (the default) is the player list for the set being built now, and
+//    it is named for the season its STATS came from: 2025-26 stats build the
+//    2026-27 set. It has names, teams and positions and nothing else — charts,
 //    Speed/Power and salaries have not been generated yet — so cards from it
 //    render mostly placeholders. That is correct: the photo is the thing being
 //    judged here, and this is the real target list of 331.
 //
-//  - `cards` is the shipped 306-card set, the only data with every field
-//    populated. It exists so the template itself can be judged with real stats
-//    in place. Photos curated against it are not part of the new set.
+//  - `cards` is the shipped 306-card set — the FINISHED 2025-26 set, built
+//    from 2024-25 stats — and the only data with every field populated. It
+//    exists so the template itself can be judged with real stats in place.
+//    Photos curated against it are not part of the new set.
 //
 // The pool JSON is imported, not fetched: Vite handles JSON natively, so the
 // list is present on first paint instead of arriving a round trip later, and a
 // missing/renamed file becomes a build error rather than an empty studio.
 import rawPool from '../../card-data/generated/player-pool-2026.json';
 import { CARDS } from '../game/cards.js';
+import { CURRENT_SET, STATS_SEASON, FINISHED_SET, FINISHED_STATS_SEASON } from '../cards/sets.js';
 
 /**
  * The team-resolved pool, when `node scripts/cardgen/generateTeams.js` has been
@@ -98,7 +104,7 @@ export function playerIdFromName(name) {
     .replace(/^_+|_+$/g, '');
 }
 
-/** The 2025-26 pool, shaped like a card. Missing stats stay missing. */
+/** The pool, shaped like a card. Missing stats stay missing. */
 export const POOL_PLAYERS = pool.map(p => ({
   id: playerIdFromName(p.name),
   name: p.name,
@@ -119,9 +125,34 @@ export const CARD_PLAYERS = CARDS;
 
 const byName = (a, b) => a.name.localeCompare(b.name);
 
+/**
+ * The two lists, labelled so nobody has to ask which season is which.
+ *
+ * Both labels name a season, and they are DIFFERENT seasons on purpose — so
+ * each one also says what its season is: a stats season for the pool being
+ * photographed, a set for the cards already printed. Labels are composed from
+ * the constants in sets.js rather than typed, so the season a label claims
+ * cannot drift from the season the tool is actually working on.
+ */
 export const SOURCES = {
-  pool: { key: 'pool', label: '2025-26 pool', players: [...POOL_PLAYERS].sort(byName) },
-  cards: { key: 'cards', label: 'Shipped cards', players: [...CARD_PLAYERS].sort(byName) },
+  pool: {
+    key: 'pool',
+    label: `Players · ${STATS_SEASON} stats`,
+    hint:
+      `The ${CURRENT_SET} set's player list — every player being given a card this cycle. ` +
+      `Named for the season its stats came from: ${STATS_SEASON} stats → the ${CURRENT_SET} set. ` +
+      `Photos and crops you save here belong to the ${CURRENT_SET} set.`,
+    players: [...POOL_PLAYERS].sort(byName),
+  },
+  cards: {
+    key: 'cards',
+    label: `Shipped cards · ${FINISHED_SET} set`,
+    hint:
+      `The finished ${FINISHED_SET} set, already printed (built from ${FINISHED_STATS_SEASON} stats). ` +
+      `Here only because it is the one data set with every stat filled in, so the template can be ` +
+      `judged with real numbers. Photos curated against it are NOT part of the ${CURRENT_SET} set.`,
+    players: [...CARD_PLAYERS].sort(byName),
+  },
 };
 
 export const DEFAULT_SOURCE = 'pool';

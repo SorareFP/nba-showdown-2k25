@@ -11,6 +11,12 @@ import {
 } from './players.js';
 import { isSafePlayerId } from '../../scripts/studio/studioServerPlugin.js';
 import { getTeam } from '../cards/teams.js';
+import {
+  CURRENT_SET,
+  STATS_SEASON,
+  FINISHED_SET,
+  FINISHED_STATS_SEASON,
+} from '../cards/sets.js';
 
 const P = (id, name, team, pos) => ({ id, name, team, pos });
 
@@ -200,6 +206,41 @@ describe('SOURCES', () => {
 
   it('gives the shipped set full stats, unlike the pool', () => {
     expect(SOURCES.cards.players[0].chart.length).toBeGreaterThan(0);
+  });
+
+  it('labels each list with its season AND what kind of season that is', () => {
+    // The bug this pins: "2025-26 pool" sitting beside "set 2026-27" gave the
+    // reader two bare season numbers and no way to tell which was which. Each
+    // label now carries its own noun, so neither can be read as the other.
+    expect(SOURCES.pool.label).toBe(`Players · ${STATS_SEASON} stats`);
+    expect(SOURCES.cards.label).toBe(`Shipped cards · ${FINISHED_SET} set`);
+    expect(SOURCES.pool.label).not.toBe(SOURCES.cards.label);
+  });
+
+  it('never labels the pool with the set it is building', () => {
+    // The pool is named for its STATS season; CURRENT_SET is a year later.
+    // Putting CURRENT_SET on this toggle is what would restore the ambiguity.
+    expect(SOURCES.pool.label).not.toContain(CURRENT_SET);
+    expect(STATS_SEASON).not.toBe(CURRENT_SET);
+  });
+
+  it('explains the stats-season-to-set relationship in each hint', () => {
+    // The hover text is the "without explanation" escape hatch, so it has to
+    // actually name both seasons rather than restating the label.
+    expect(SOURCES.pool.hint).toContain(STATS_SEASON);
+    expect(SOURCES.pool.hint).toContain(CURRENT_SET);
+    expect(SOURCES.cards.hint).toContain(FINISHED_SET);
+    expect(SOURCES.cards.hint).toContain(FINISHED_STATS_SEASON);
+  });
+});
+
+describe('season constants', () => {
+  it('keeps a set one year ahead of the stats it is built from', () => {
+    // Both pairings follow the same rule, which is the fact the labels teach:
+    // 2024-25 stats -> the 2025-26 set; 2025-26 stats -> the 2026-27 set.
+    expect(STATS_SEASON).toBe(FINISHED_SET);
+    expect(FINISHED_STATS_SEASON).toBe('2024-25');
+    expect(CURRENT_SET).toBe('2026-27');
   });
 });
 

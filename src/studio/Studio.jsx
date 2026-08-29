@@ -13,7 +13,13 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import PlayerList from './PlayerList.jsx';
 import CropEditor from './CropEditor.jsx';
 import { CARD_WIDTH, CARD_HEIGHT } from '../cards/CardTemplate.jsx';
-import { CURRENT_SET, setPaths } from '../cards/sets.js';
+import {
+  CURRENT_SET,
+  STATS_SEASON,
+  FINISHED_SET,
+  FINISHED_STATS_SEASON,
+  setPaths,
+} from '../cards/sets.js';
 import { SOURCES, DEFAULT_SOURCE, TEAMS_RESOLVED, filterPlayers, stepSelection } from './players.js';
 import { pruneCrops, resetCrop } from './crop.js';
 import { fetchStudioState, uploadPhoto, saveCrops, isImageFile } from './api.js';
@@ -217,9 +223,24 @@ export default function Studio() {
             here — photos, crops, team colors — is scoped to it, and the
             finished 2025-26 cards are somewhere else entirely. Worth a
             permanent label: "which set am I editing" is not a question the
-            user should have to answer from memory. */}
-        <span className={styles.setBadge} title={`Writing to ${setPaths().root}/`}>
-          set {CURRENT_SET}
+            user should have to answer from memory.
+
+            Phrased as a full sentence ("Building the 2026-27 set") rather than
+            "set 2026-27" because a bare season number sitting next to another
+            bare season number — the pool's stats season, in the toggle — reads
+            as two labels for the same thing. Only one of them is the thing
+            being built, and this is it. */}
+        <span
+          className={styles.setBadge}
+          title={
+            `A set is named for the season it will be PLAYED in; its stats come from the season ` +
+            `before. ${STATS_SEASON} stats → the ${CURRENT_SET} set. ` +
+            `(The finished ${FINISHED_SET} set was built the same way, from ${FINISHED_STATS_SEASON} stats.) ` +
+            `Everything you save here is written to ${setPaths().root}/`
+          }
+        >
+          Building the {CURRENT_SET} set
+          <span className={styles.setBadgeSub}> · from {STATS_SEASON} stats</span>
         </span>
 
         {/* Only when the generated team file is missing. Without it 45 players
@@ -234,7 +255,11 @@ export default function Studio() {
           </span>
         )}
 
-        <div className={styles.toggle} role="group" aria-label="Player set">
+        {/* Each label names its own season AND says what kind of season it is
+            — a stats season for the list being photographed, a set for the
+            cards already printed. Both are spelled out because the two sit
+            side by side and are one year apart. */}
+        <div className={styles.toggle} role="group" aria-label="Which list to work from">
           {Object.values(SOURCES).map(source => (
             <button
               key={source.key}
@@ -243,6 +268,7 @@ export default function Studio() {
                 source.key === sourceKey ? styles.toggleButtonActive : ''
               }`}
               aria-pressed={source.key === sourceKey}
+              title={source.hint}
               onClick={() => switchSource(source.key)}
             >
               {source.label} ({source.players.length})

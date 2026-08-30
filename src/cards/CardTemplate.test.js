@@ -24,6 +24,13 @@ import { TEAMS, HISTORICAL_TEAMS, resolveAccent } from './teams.js';
 import { deriveFieldTheme } from './fieldTheme.js';
 import { GOLD, applyTreatment } from './treatments.js';
 import {
+  BADGES,
+  ROOKIE_BADGE,
+  SUPER_SEASON_BADGE,
+  badgeColors,
+  getBadge,
+} from './badges.js';
+import {
   CURRENT_SET,
   FINISHED_SET,
   ROOKIE_SET,
@@ -1099,11 +1106,18 @@ describe('the set treatment on the rendered card', () => {
 });
 
 describe('the season and the card-type badge', () => {
-  // Both are SET-level, exactly like the hidden empty rows: which season a card
-  // represents is the whole point of a Super Season or a Rookie card, and is
-  // noise on a base-set card that IS this season. The finished set's legend
+  // THE SEASON IS SET-LEVEL, exactly like the hidden empty rows: which season a
+  // card represents is the whole point of a Super Season or a Rookie card, and
+  // is noise on a base-set card that IS this season. The finished set's legend
   // cards carry a season too — but in the hand-made art, so the template must
   // not print a second one over the top of it.
+  //
+  // THE BADGE IS NOT. It used to be, and the exclusion rule was why: a player
+  // whose best season is the most recent one got no Super Season card, so no
+  // card outside that set could ever want the pill. Now his BASE card carries
+  // it. So the badge is the union of what the SET declares and what the CARD
+  // does — see pickBadge in badges.js — and a 2026-27 card gains a badge and
+  // NOT a season, which is the case these tests exist to pin.
 
   /** Tomorrow 700, measured off the loaded face in the browser at 1000px. */
   const TOMORROW_CAP = 0.74;
@@ -1212,7 +1226,10 @@ describe('the season and the card-type badge', () => {
     const inner = pxIn(badge, 'width');
     const size = pxIn(badge, 'font-size');
     const tracking = Number(badge.match(/letter-spacing:\s*([\d.]+)px/)[1]);
-    const labels = SETS.map(s => s.badge).filter(Boolean);
+    // EVERY DECLARED BADGE, not every declared SET. A set now names a badge by
+    // id, and ids are shorter than the labels they stand for — measuring those
+    // would have quietly stopped measuring anything.
+    const labels = BADGES.map(b => b.text);
     expect(labels.length).toBeGreaterThan(0); // non-vacuous
     for (const label of labels) {
       const width = label.length * (0.7 * size + tracking);
@@ -1232,29 +1249,98 @@ describe('the season and the card-type badge', () => {
   });
 
   it('takes both badge colours from the theme, never a literal', () => {
-    // The whole point of the treatment layer. A hex in the stylesheet would be
-    // a colour no contrast sweep can see.
+    // A hex in the stylesheet would be a colour no contrast sweep can see.
     const badge = cssBlock('.badge');
-    expect(badge).toMatch(/background:\s*var\(--treatment-badge,/);
-    expect(badge).toMatch(/color:\s*var\(--treatment-badge-ink,/);
+    expect(badge).toMatch(/background:\s*var\(--badge-fill,/);
+    expect(badge).toMatch(/color:\s*var\(--badge-ink,/);
     expect(badge).not.toMatch(/#[0-9A-Fa-f]{3,6}/);
-    for (const set of [SUPER_SEASON_SET, ROOKIE_SET]) {
-      const html = render({ card: SPECIAL, set });
-      expect(html, set).toMatch(/--treatment-badge:\s*#[0-9A-F]{6}/i);
-      expect(html, set).toMatch(/--treatment-badge-ink:\s*#[0-9A-F]{6}/i);
+    // On the treated sets AND on an untreated base card, which is the pairing
+    // that did not exist before: no treatment properties are emitted there at
+    // all, so the pill has to bring its own two or fall back to the accent.
+    for (const [set, card] of [
+      [SUPER_SEASON_SET, SPECIAL],
+      [ROOKIE_SET, SPECIAL],
+      [CURRENT_SET, { ...SPECIAL, badges: [SUPER_SEASON_BADGE] }],
+      [CURRENT_SET, { ...SPECIAL, badges: [ROOKIE_BADGE] }],
+    ]) {
+      const html = render({ card, set });
+      expect(html, set).toMatch(/--badge-fill:\s*#[0-9A-F]{6}/i);
+      expect(html, set).toMatch(/--badge-ink:\s*#[0-9A-F]{6}/i);
     }
+  });
+
+  it('emits no badge properties at all on a card with no badge', () => {
+    const html = render({ card: SPECIAL, set: CURRENT_SET });
+    expect(html).not.toContain('--badge-fill');
+    expect(html).not.toContain('--badge-ink');
   });
 
   it("gives Super Season a gold pill and Rookie the TEAM's accent", () => {
     // "Super Season can be gold, while rookie can just be secondary/accent team
     // color". Curry's card is Golden State, whose accent is their yellow — so
-    // the two sets produce two different pills on the same card, and the rookie
-    // one is emphatically not the green the rest of that treatment paints.
-    const gold = themeFor('GSW', 'gold-foil');
-    const rookie = themeFor('GSW', 'green-accent');
-    expect(gold.treatment.badgeFill).toBe(GOLD);
-    expect(rookie.treatment.badgeFill).toBe(resolveAccent(TEAMS.GSW));
-    expect(rookie.treatment.badgeFill).not.toBe(rookie.accentOnField);
+    // the two badges produce two different pills on the same card, and the
+    // rookie one is emphatically not the green that treatment paints.
+    //
+    // Read off the UNTREATED theme, because that is what CardTemplate hands the
+    // badge — and asserted against the TREATED palettes to show the pill is
+    // still in step with the foil name and still out of step with the green.
+    const base = deriveFieldTheme(
+      TEAMS.GSW.primary, TEAMS.GSW.secondary, resolveAccent(TEAMS.GSW)
+    );
+    expect(badgeColors(base, getBadge(SUPER_SEASON_BADGE)).fill).toBe(GOLD);
+    expect(badgeColors(base, getBadge(SUPER_SEASON_BADGE)).fill)
+      .toBe(themeFor('GSW', 'gold-foil').accentOnField);
+    expect(badgeColors(base, getBadge(ROOKIE_BADGE)).fill).toBe(resolveAccent(TEAMS.GSW));
+    expect(badgeColors(base, getBadge(ROOKIE_BADGE)).fill)
+      .not.toBe(themeFor('GSW', 'green-accent').accentOnField);
+  });
+
+  it('badges a 2026-27 card from its OWN record, keeping the 26-27 design', () => {
+    // THE CHANGE, stated as one test. "If last year was their super season,
+    // keep the 26-27 design and just add the badge." So: the pill prints, the
+    // season does NOT (the card is this season by definition), and the card
+    // carries no treatment — no gold foil, no green, nothing but the base set's
+    // own palette with one pill in it.
+    const html = render({
+      card: { ...SPECIAL, badges: [SUPER_SEASON_BADGE] },
+      set: CURRENT_SET,
+    });
+    expect(html).toContain('SUPER SEASON');
+    expect(html).not.toContain('2015-16');
+    expect(html).not.toContain('data-treatment');
+    expect(html).not.toContain('--treatment-');
+  });
+
+  it('prints the HIGHEST-PRIORITY badge only, never two pills', () => {
+    // The 33 players who are both: their rookie season is the current one, so
+    // it is also their best one. "Prioritize in that order" — Super Season
+    // wins, and the sidebar keeps its one badge row.
+    const html = render({
+      card: { ...SPECIAL, badges: [ROOKIE_BADGE, SUPER_SEASON_BADGE] },
+      set: CURRENT_SET,
+    });
+    expect(html).toContain('SUPER SEASON');
+    expect(html.match(/SUPER SEASON/g)).toHaveLength(1);
+    // "ROOKIE" is a substring of nothing else the card prints, so an absent
+    // second pill is an absent string.
+    expect(html).not.toContain('>ROOKIE<');
+  });
+
+  it('lets a card badge itself on the finished set too, without a treatment', () => {
+    // The mechanism is not special-cased to 2026-27 — that set is simply the
+    // first whose cards carry their own. Asserted on a DIFFERENT untreated set
+    // so nothing can start branching on the current one.
+    const html = render({ card: { ...SPECIAL, badges: [ROOKIE_BADGE] }, set: FINISHED_SET });
+    expect(html).toContain('ROOKIE');
+    expect(html).not.toContain('2015-16');
+  });
+
+  it('ignores a badge id it does not know, and a badges field that is not a list', () => {
+    for (const badges of [['championship-standout'], 'super-season', 42, null]) {
+      const html = render({ card: { ...SPECIAL, badges }, set: CURRENT_SET });
+      expect(html, JSON.stringify(badges)).not.toContain('--badge-fill');
+      expect(html, JSON.stringify(badges)).not.toContain('SUPER SEASON');
+    }
   });
 
   it('renders both special sets for every franchise without throwing', () => {

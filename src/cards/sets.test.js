@@ -9,6 +9,7 @@
 // cards. Both are pinned here, by set id, not by whatever the constants happen
 // to hold.
 import { describe, it, expect } from 'vitest';
+import { BADGE_IDS, ROOKIE_BADGE, SUPER_SEASON_BADGE } from './badges.js';
 import {
   ART_ROOT,
   CURRENT_SET,
@@ -111,9 +112,30 @@ describe('showsSeason and setBadge', () => {
     expect(setBadge(FINISHED_SET)).toBeNull();
   });
 
-  it('badges the two special sets with the card type', () => {
-    expect(setBadge(SUPER_SEASON_SET)).toBe('SUPER SEASON');
-    expect(setBadge(ROOKIE_SET)).toBe('ROOKIE');
+  it('badges the two special sets with the card type, BY ID', () => {
+    // An ID now, not the pill's text — the badge stopped being a set property
+    // and became a card property, so the text, the colour and the priority all
+    // live in src/cards/badges.js. What a set declares is which badge EVERY
+    // card in it carries; a card may carry more of its own.
+    expect(setBadge(SUPER_SEASON_SET)).toBe(SUPER_SEASON_BADGE);
+    expect(setBadge(ROOKIE_SET)).toBe(ROOKIE_BADGE);
+  });
+
+  it('declares only badges that exist', () => {
+    // The ids are strings in a data table, so nothing but this stops a typo
+    // from silently rendering no pill at all on a set that asked for one.
+    for (const set of SETS) {
+      if (set.badge === null) continue;
+      expect(BADGE_IDS, `${set.id}`).toContain(set.badge);
+    }
+  });
+
+  it('leaves the base set unbadged as a SET while its cards badge themselves', () => {
+    // The distinction the whole change turns on. `setBadge` says nothing about
+    // whether a 2026-27 card shows a pill — 149 of them do, from their own
+    // record — only whether the SET puts one on every card. It does not.
+    expect(setBadge(CURRENT_SET)).toBeNull();
+    expect(getSet(CURRENT_SET).badge).toBeNull();
   });
 
   it('says no for an unknown set rather than throwing', () => {

@@ -494,9 +494,11 @@
  * BOTTOM-ANCHORED, AND THAT IS WHAT MAKES THE BOX'S TOP FREE. It ends at
  * y=1152, which is where the printed art puts the last of these rows, and
  * `justify-content: flex-end` stacks the content up from there — so the two
- * rows the special sets add (.badge and .season) push the TOP of the stack
- * upward and move nothing below them. The box therefore has to be tall enough
- * for the tallest set, not for the commonest one:
+ * optional rows (.badge and .season) push the TOP of the stack upward and move
+ * nothing below them. That is what lets a 2026-27 card gain a badge and NOT a
+ * season without anything else in the column moving. The box therefore has to
+ * be tall enough for the tallest case — both rows, which is the special sets —
+ * not for the commonest one:
  *
  *   badge   13px x 1.1 line + 2x6px padding   26.3
  *   season  16px x 1.1 line                   17.6
@@ -508,8 +510,11 @@
  *                                            463.9
  *
  * 470 keeps 6px of slack, in step with the 6px the four-row layout already had.
- * A base-set card renders neither extra row, sits 80px lower in the same box,
- * and is unchanged to the pixel. CardTemplate.test.js redoes this arithmetic
+ * An UNBADGED base-set card renders neither extra row, sits 80px lower in the
+ * same box, and is unchanged to the pixel; a BADGED one gains only the badge's
+ * 26.3 + one 18px gap and still clears the box by a wide margin, because the
+ * budget above already pays for the season line it does not draw.
+ * CardTemplate.test.js redoes this arithmetic
  * from this file, so raising a type size or the gap fails there rather than
  * pushing the badge silently out through the top.
  *
@@ -532,19 +537,22 @@
 
 /* ── The card-type badge, on the sets that are a card TYPE ───────────────── */
 
-/* "SUPER SEASON" / "ROOKIE" — which set this card belongs to, said on the card
- * rather than only in the file it came from. Rendered only by a set that
- * DECLARES a badge (see setBadge in src/cards/sets.js), so the two season sets
- * never draw this box at all.
+/* "SUPER SEASON" / "ROOKIE" — what KIND of card this is, said on the card
+ * rather than only in the file it came from. Drawn only when the card resolves
+ * a badge, which it can do two ways: the SET badges every card in it (the two
+ * special sets), or the CARD carries the id itself (149 of the 2026-27 pool,
+ * whose best season is the one that set is built from). See pickBadge in
+ * src/cards/badges.js. A card with neither never draws this box at all.
  *
- * A FLAT FILL, and the colour comes from the treatment: gold for Super Season,
- * the TEAM's own accent for Rookie ("Super Season can be gold, while rookie can
- * just be secondary/accent team color"). Both are values `readableOn` has
- * already cleared against the field, and the type on them is `pickInkFor` of
- * the fill — so the pill reads on the card and the label reads on the pill, on
- * all thirty live teams and the seven defunct ones. src/cards/treatments.test.js
- * sweeps both. The var fallbacks are for a set that declared a badge and no
- * treatment, which does not exist yet and must not render invisibly if it does.
+ * A FLAT FILL, and the colour is derived per badge from the UNTREATED field
+ * theme: gold for Super Season, the TEAM's own accent for Rookie ("Super Season
+ * can be gold, while rookie can just be secondary/accent team color"). Both are
+ * values `readableOn` has already cleared against the field, and the type on
+ * them is `pickInkFor` of the fill — so the pill reads on the card and the
+ * label reads on the pill, on all thirty live teams and the seven defunct ones,
+ * on treated AND untreated fields. src/cards/treatments.test.js sweeps every
+ * combination. The var fallbacks are for a badge id this build does not
+ * declare, which must degrade to a visible pill rather than an invisible one.
  *
  * 127px WIDE, WHICH IS THE LONGEST LABEL PLUS MARGIN. The bar is 135 (701..836)
  * and the card's keyline takes the last 7px of the card, so 127 centred in the
@@ -562,8 +570,8 @@
   letter-spacing: 1px;
   white-space: nowrap;
   border-radius: 4px;
-  background: var(--treatment-badge, var(--accent-on-field));
-  color: var(--treatment-badge-ink, var(--field-ink));
+  background: var(--badge-fill, var(--accent-on-field));
+  color: var(--badge-ink, var(--field-ink));
   flex: none;
 }
 

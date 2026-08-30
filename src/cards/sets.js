@@ -34,8 +34,11 @@
 //   editable        whether photos and crops may be saved against it
 //   hidesEmptyRows  whether a chart row that produces nothing at all is printed
 //   showsSeason     whether the card prints the season it represents
-//   badge           the card-type badge's text, or null
+//   badge           the card-type badge EVERY card in the set carries, by id,
+//                   or null — see src/cards/badges.js
 //   treatment       the set-level visual treatment, or null — see treatments.js
+
+import { ROOKIE_BADGE, SUPER_SEASON_BADGE } from './badges.js';
 
 /** The set currently being built. Every studio write goes under this. */
 export const CURRENT_SET = '2026-27';
@@ -103,6 +106,12 @@ export const SETS = [
     // The base set is THIS season's cards. There is no other season it could be
     // mistaken for, so naming one would be noise — see showsSeason.
     showsSeason: false,
+    // NO BLANKET BADGE — which is NOT the same as "no badges on this set".
+    // 149 of its cards carry the Super Season badge in their own record,
+    // because their best season is the one this set is built from and the
+    // separate Super Season set therefore has no card for them. The badge is a
+    // CARD property now; this field only says whether the SET puts one on
+    // every card. See src/cards/badges.js.
     badge: null,
     treatment: null,
   },
@@ -137,11 +146,12 @@ export const SETS = [
     // out of a career, so a card that does not name it is unreadable — the
     // finished set's legend cards print theirs for the same reason.
     showsSeason: true,
-    // Uppercase because it is set on the card, not composed at render time:
-    // every other label the card prints (SPEED, PAINT, SALARY) is written the
-    // way it is drawn, and text-transform would hide the real string from the
-    // width budget the badge is measured against.
-    badge: 'SUPER SEASON',
+    // A BADGE ID, not the text on the pill — the text, the priority order and
+    // the colour derivation all live in src/cards/badges.js, because the badge
+    // is no longer a thing only a set can have. This row says "every card in
+    // this set carries the Super Season badge", which is the same behaviour it
+    // had when it held the string.
+    badge: SUPER_SEASON_BADGE,
     treatment: 'gold-foil',
   },
   {
@@ -152,7 +162,7 @@ export const SETS = [
     editable: true,
     hidesEmptyRows: true,
     showsSeason: true,
-    badge: 'ROOKIE',
+    badge: ROOKIE_BADGE,
     treatment: 'green-accent',
   },
 ];
@@ -246,12 +256,18 @@ export function showsSeason(set) {
 }
 
 /**
- * The card-type badge's text for this set, or null.
+ * The card-type badge EVERY card in this set carries, BY ID, or null.
  *
- * TEXT ONLY. What COLOUR the badge is comes from the set's treatment (gold for
- * Super Season, the team's own accent for Rookie — see treatments.js), because
- * that is a question about the palette and every other palette question on this
- * card is answered there by measured contrast rather than by a literal.
+ * AN ID, NOT A LABEL, and null here does not mean "no badge on this set". A
+ * card carries its own badge ids as well (see `badges` on the card record and
+ * `pickBadge` in badges.js); this is only the set's blanket one, unioned with
+ * the card's by CardTemplate. The two special sets badge every card, so they
+ * declare one; the base set badges 149 of 350, so it declares none and those
+ * 149 say so in their own data.
+ *
+ * The text and the colour both live in src/cards/badges.js — the colour because
+ * every palette question on this card is answered by measured contrast rather
+ * than by a literal, and the text because it belongs with the colour.
  */
 export function setBadge(set) {
   return getSet(set)?.badge ?? null;

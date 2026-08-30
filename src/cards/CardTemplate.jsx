@@ -15,6 +15,7 @@
 import { useState } from 'react';
 import { getThemedTeam, resolveAccent } from './teams.js';
 import { hidesEmptyRows, setBadge, setTreatment, showsSeason } from './sets.js';
+import { badgeVars, pickBadge } from './badges.js';
 import { deriveFieldTheme, fieldThemeVars } from './fieldTheme.js';
 import { applyTreatment, treatmentVars } from './treatments.js';
 import { resolvePhotoUrl, cropToStyle } from './photo.js';
@@ -209,11 +210,13 @@ export default function CardTemplate({
   hasPhoto = false,
   // WHICH SET this card belongs to. Decides three things, all of them set-level
   // rules rather than card-level ones: whether a row that produces nothing is
-  // printed (visibleTiers), whether the season and the card-type badge are
-  // (showsSeason / setBadge in sets.js), and which visual treatment the palette
-  // is run through (treatments.js). Left undefined, every tier prints, which is
-  // correct for the finished set and fails loudly (a sixth row, over the photo)
-  // rather than quietly for the set being built.
+  // printed (visibleTiers), whether the season is (showsSeason in sets.js), and
+  // which visual treatment the palette is run through (treatments.js). It also
+  // supplies a BLANKET badge for the sets that give every card one — but the
+  // badge itself is a card property now, so `set` is only half of that answer.
+  // Left undefined, every tier prints, which is correct for the finished set
+  // and fails loudly (a sixth row, over the photo) rather than quietly for the
+  // set being built.
   set,
   // The extension the curated photo is stored under. Defaults to .jpg inside
   // resolvePhotoUrl, which is what the studio's own uploads are written as —
@@ -239,10 +242,12 @@ export default function CardTemplate({
   // Super Season, a green accent for Rookie, nothing at all for the two season
   // sets, which is why they render byte-identically to before. A treatment may
   // only spend contrast the untreated card already had; see treatments.js.
-  const field = applyTreatment(
-    deriveFieldTheme(team.primary, team.secondary, accent),
-    setTreatment(set)
-  );
+  //
+  // The UNTREATED theme is kept: the card-type badge is derived from it, not
+  // from the treated one, because the Rookie pill is the TEAM's accent and the
+  // green treatment overwrites `accentOnField` with its own green. See badges.js.
+  const base = deriveFieldTheme(team.primary, team.secondary, accent);
+  const field = applyTreatment(base, setTreatment(set));
   const treatment = field.treatment ?? null;
 
   const photoUrl = resolvePhotoUrl({
@@ -258,11 +263,20 @@ export default function CardTemplate({
   const chart = visibleTiers(card.chart, set);
   const shotLineRow = findShotLineBoundary(chart, card.shotLine);
 
-  // Both are SET questions, not card questions — see showsSeason and setBadge.
-  // A base-set record carries no seasonLabel at all, and a 2025-26 legend card
-  // has its season drawn into the hand-made art, so gating on the data instead
-  // of the set would print a second season over the top of 23 finished cards.
-  const badge = setBadge(set);
+  // THE BADGE IS BOTH QUESTIONS AT ONCE, and that union is the whole model.
+  // A set may badge EVERY card in it (the two special sets do); a CARD may
+  // carry badge ids of its own (149 of the 2026-27 pool do, because their best
+  // season is the one that set is built from, so the separate Super Season set
+  // has no card for them — see card-data/generated/card-badges.json). pickBadge
+  // resolves the union to the ONE that prints, in badges.js's declared priority
+  // order: Super Season before Rookie, the user's "prioritize in that order".
+  const badge = pickBadge([setBadge(set), ...(Array.isArray(card.badges) ? card.badges : [])]);
+  // The season, by contrast, IS purely a set question. A base-set record
+  // carries no seasonLabel at all, and a 2025-26 legend card has its season
+  // drawn into the hand-made art, so gating on the data instead of the set
+  // would print a second season over the top of 23 finished cards. A badged
+  // 2026-27 card does NOT gain one: the card is this season by definition, and
+  // "keep the 26-27 design and just add the badge" is what was asked for.
   const season = showsSeason(set);
 
   return (
@@ -280,6 +294,9 @@ export default function CardTemplate({
         '--team-accent': accent,
         ...fieldThemeVars(field),
         ...treatmentVars(field),
+        // From `base`, not `field` — see the note where `base` is derived.
+        // Emits nothing at all when this card has no badge.
+        ...badgeVars(base, badge),
       }}
     >
       {/* FIRST CHILD, and that is the whole positioning rule: it paints over
@@ -342,14 +359,17 @@ export default function CardTemplate({
         {/* The card-type badge and the season, in that order, directly above
           * the team mark — which is where the finished set's legend cards put
           * the season, measured off the art: 12px cap height, centred on the
-          * sidebar's own column, one gap above the logo. Both are set-level, so
-          * a base-set card renders neither and its sidebar is byte-identical to
-          * what it was (the column is bottom-anchored, so nothing below moves).
+          * sidebar's own column, one gap above the logo. The column is
+          * BOTTOM-ANCHORED, so each row pushes the stack upward and moves
+          * nothing below it — which is exactly what lets a 2026-27 card gain a
+          * badge without gaining a season and without a pixel of the rest of
+          * its sidebar moving. A card with neither is byte-identical to what it
+          * was before either row existed.
           *
           * The badge FIRST because it says what kind of card this is and the
           * season answers "which one" — and because the pill is the louder of
           * the two, so it belongs further from the type it would crowd. */}
-        {badge && <div className={styles.badge}>{badge}</div>}
+        {badge && <div className={styles.badge}>{badge.text}</div>}
         {season && <div className={styles.season}>{card.seasonLabel ?? MISSING}</div>}
         <TeamLogo key={card.team ?? 'none'} team={team} abbr={card.team} />
         <div className={styles.pos}>{card.pos ?? MISSING}</div>

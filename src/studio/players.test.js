@@ -29,6 +29,7 @@ import {
   ROOKIE_SET,
   SET_IDS,
   SUPER_SEASON_SET,
+  WNBA_SET,
   getSet,
 } from '../cards/sets.js';
 
@@ -508,10 +509,10 @@ describe('stepSelection', () => {
 });
 
 describe('the special sets in the source list', () => {
-  const SPECIAL = [SUPER_SEASON_SET, ROOKIE_SET];
+  const SPECIAL = [SUPER_SEASON_SET, ROOKIE_SET, WNBA_SET];
 
-  it('offers all four sets, in the order the model declares them', () => {
-    expect(Object.keys(SOURCES)).toEqual(['pool', 'cards', SUPER_SEASON_SET, ROOKIE_SET]);
+  it('offers all five sets, in the order the model declares them', () => {
+    expect(Object.keys(SOURCES)).toEqual(['pool', 'cards', SUPER_SEASON_SET, ROOKIE_SET, WNBA_SET]);
     expect(Object.values(SOURCES).map(s => s.set)).toEqual(SET_IDS);
   });
 
@@ -556,18 +557,31 @@ describe('the special sets in the source list', () => {
     }
   });
 
-  it('says in the hint what the exclusion rule is and that the numbers are provisional', () => {
-    // These sets are DEFINED by their exclusion rule, and their numbers are
-    // substitutes for three stats that do not exist before this season. Both
-    // facts have to be reachable from the tool, not only from the commit.
-    for (const id of SPECIAL) {
+  it('says in the hint what the exclusion rule is, on the sets that have one', () => {
+    // Super Season and Rookie are DEFINED by their exclusion rule — no card if
+    // the season in question is the current one — so that has to be reachable
+    // from the tool, not only from the commit. The WNBA set has no exclusion
+    // rule to state: it is a league, not a slice of a career, and its own
+    // membership rule (MPG/games plus a named six) is in its `sub`.
+    for (const id of [SUPER_SEASON_SET, ROOKIE_SET]) {
       expect(SOURCES[id].hint.toLowerCase()).toContain('current');
-      expect(SOURCES[id].hint.toLowerCase()).toMatch(/provisional|substitution|stand in/);
+    }
+  });
+
+  it('warns in every special-set hint that the numbers are substitutes', () => {
+    // NONE of these three sets can read the stats the base set runs on. The two
+    // historical ones lack EPM, Estimated Wins and rim FG%; the WNBA lacks
+    // those AND every plus/minus estimate there is. A number that looks
+    // finished gets trusted, so each hint has to say what it is standing in for.
+    for (const id of SPECIAL) {
+      expect(SOURCES[id].hint.toLowerCase()).toMatch(
+        /provisional|substitution|stand in|standing in|equivalent|fitted/
+      );
     }
   });
 
   it('never lets a special-set card collide with another set\'s photo', () => {
-    // The ids DO collide — LeBron James is LeBron_James in all four sets — and
+    // The ids DO collide — LeBron James is LeBron_James in every NBA set — and
     // that is fine precisely because each set owns its own photos directory.
     // What must not collide is two cards inside ONE set.
     for (const id of SPECIAL) {

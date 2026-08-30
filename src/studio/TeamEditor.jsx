@@ -18,7 +18,14 @@
 // many official second colors are black or navy. Denver is one of them. So the
 // accent is not merely also-editable: without it Denver cannot be fixed at all.
 import { useState } from 'react';
-import { getTeam, getThemedTeam, resolveAccent, canonicalTeam } from '../cards/teams.js';
+import {
+  getTeam,
+  getThemedTeam,
+  resolveAccent,
+  canonicalTeamFor,
+  leagueTeamCount,
+} from '../cards/teams.js';
+import { DEFAULT_LEAGUE } from '../cards/sets.js';
 import {
   THEME_FIELDS,
   normalizeHex,
@@ -43,11 +50,18 @@ const FIELD_HINT = {
     'dark to read on navy (15 of 30 teams). Set it here to choose it outright.',
 };
 
-export default function TeamEditor({ team: abbr, overrides, onChange }) {
-  const canonical = canonicalTeam(abbr);
-  const official = getTeam(canonical);
-  const themed = getThemedTeam(canonical, overrides);
+export default function TeamEditor({ team: abbr, overrides, onChange, league = DEFAULT_LEAGUE }) {
+  // THE LEAGUE IS NOT OPTIONAL DECORATION. Nine abbreviations name a different
+  // franchise in each league's table, so without it this panel sat under a
+  // Toronto TEMPO card calling itself the Toronto Raptors and offering the
+  // Raptors' colours to edit — and under an Aces card it said "this player has
+  // no resolved team", because LVA is in no NBA table at all. Both are the same
+  // omission the card itself already fixed by asking for the league.
+  const canonical = canonicalTeamFor(abbr, { league });
+  const official = getTeam(canonical, { league });
+  const themed = getThemedTeam(canonical, overrides, { league });
   const customised = overriddenTeams(overrides);
+  const teamCount = leagueTeamCount(league);
 
   // A team that isn't a team. 45 pool players still carry Basketball-
   // Reference's "2TM"/"3TM" trade aggregates, and 'Unknown' has no official
@@ -86,7 +100,7 @@ export default function TeamEditor({ team: abbr, overrides, onChange }) {
           }
           data-customised-count={customised.length}
         >
-          {customised.length} of 30 customised
+          {customised.length} of {teamCount} customised
         </span>
 
         <button
@@ -123,8 +137,12 @@ export default function TeamEditor({ team: abbr, overrides, onChange }) {
       ) : abbr ? (
         <p className={styles.teamEmpty}>
           This player has no resolved team ({canonical}), so there is no template to edit. Run{' '}
-          <code>node scripts/cardgen/generateTeams.js</code> to give the trade-aggregate players a
-          real team.
+          <code>
+            {league === 'WNBA'
+              ? 'node scripts/cardgen/wnba/fetchWnba.js'
+              : 'node scripts/cardgen/generateTeams.js'}
+          </code>{' '}
+          to give the trade-aggregate players a real team.
         </p>
       ) : (
         <p className={styles.teamEmpty}>Select a player to edit their team’s colors.</p>

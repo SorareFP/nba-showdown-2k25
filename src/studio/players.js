@@ -37,6 +37,7 @@ import {
   FINISHED_STATS_SEASON,
   SUPER_SEASON_SET,
   ROOKIE_SET,
+  WNBA_SET,
   getSet,
 } from '../cards/sets.js';
 import { playerIdFromName } from '../cards/playerId.js';
@@ -239,7 +240,7 @@ export const CARD_PLAYERS = CARDS;
  * here the way the pool does.
  */
 const specialModules = import.meta.glob(
-  '../../card-data/generated/cards-{super-season,rookie}.json',
+  '../../card-data/generated/cards-{super-season,rookie,wnba}.json',
   { eager: true }
 );
 
@@ -253,6 +254,7 @@ function loadSpecialSet(id) {
 
 export const SUPER_SEASON_FILE = loadSpecialSet(SUPER_SEASON_SET);
 export const ROOKIE_FILE = loadSpecialSet(ROOKIE_SET);
+export const WNBA_FILE = loadSpecialSet(WNBA_SET);
 
 const byName = (a, b) => a.name.localeCompare(b.name);
 
@@ -266,7 +268,16 @@ const byName = (a, b) => a.name.localeCompare(b.name);
  * a Basketball-Reference substitute for a stat that does not exist before this
  * season.
  */
-function specialSource(id, file, { sub, hint }) {
+/**
+ * `missingHint` is a parameter because the sets no longer share a generator.
+ * Super Season and Rookie come out of fetchHistory + generateSpecialSets; the
+ * WNBA set comes out of its own three-step pipeline, and telling someone to run
+ * the wrong script is worse than telling them nothing.
+ */
+const HISTORY_MISSING_HINT =
+  '`node scripts/cardgen/fetchHistory.js` then `node scripts/cardgen/generateSpecialSets.js`';
+
+function specialSource(id, file, { sub, hint, missingHint = HISTORY_MISSING_HINT }) {
   const declared = getSet(id);
   const players = [...(file?.cards ?? [])].sort(byName);
   return {
@@ -277,9 +288,8 @@ function specialSource(id, file, { sub, hint }) {
     editable: declared?.editable !== false,
     hint: file
       ? hint
-      : `card-data/generated/cards-${id}.json is missing — run ` +
-        '`node scripts/cardgen/fetchHistory.js` then ' +
-        '`node scripts/cardgen/generateSpecialSets.js`. Until then this set is empty.',
+      : `card-data/generated/cards-${id}.json is missing — run ${missingHint}. ` +
+        'Until then this set is empty.',
     players,
   };
 }
@@ -372,6 +382,28 @@ export const SOURCES = {
       'is ALSO having his best season — a first season is the only season — and Super Season ' +
       'outranks Rookie, so what they actually print is the gold pill. Same ' +
       'Basketball-Reference substitutions, same provisional numbers.',
+  }),
+  // A different LEAGUE, which is the third kind of thing a set can be. It is
+  // listed here rather than in a second selector because everything the studio
+  // does to it — photos, crops, team colours, the card preview — is identical.
+  [WNBA_SET]: specialSource(WNBA_SET, WNBA_FILE, {
+    sub: `${WNBA_FILE?.statsSeason ?? '2026'} season · MPG>=16 & G>=20, plus 6 named`,
+    hint:
+      'THE WNBA SET, built from the 2026 Basketball-Reference WNBA tables. Two things about it ' +
+      'are unlike every other set here. FIRST, the WNBA has no BPM, OBPM, DBPM or VORP anywhere ' +
+      '— nothing publishes a plus/minus estimate for it — so the Speed+Power budget and the Def ' +
+      'Boost run on a BPM EQUIVALENT fitted on fifteen NBA seasons using only the inputs the ' +
+      'WNBA pages also carry, every input centred on its own league. SECOND, a WNBA game is 40 ' +
+      'minutes and the league plays slower, so a four-minute section is 7.92 possessions rather ' +
+      "than the NBA's 8.33 — every chart on every card is scaled by that. Six players are " +
+      'carded on 2025 AND 2026 pooled by volume, because their 2026 seasons were injury-' +
+      'shortened and Basketball-Reference publishes the prior WNBA season in full. Teams are ' +
+      "resolved against wnba.com's live roster, so a player who moved shows her CURRENT club " +
+      'rather than the TOT aggregate her stat row carries. Re-run ' +
+      '`node scripts/cardgen/wnba/generateWnbaCards.js`.',
+    missingHint:
+      '`node scripts/cardgen/wnba/fetchWnba.js`, `node scripts/cardgen/wnba/fitBpmModel.js` ' +
+      'then `node scripts/cardgen/wnba/generateWnbaCards.js`',
   }),
 };
 

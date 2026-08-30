@@ -20,6 +20,7 @@ import {
   FINISHED_SET,
   FINISHED_STATS_SEASON,
   getSet,
+  setLeague,
   setPaths,
   setTreatment,
 } from '../cards/sets.js';
@@ -491,13 +492,18 @@ export default function Studio() {
           />
 
           {/* Not gated on `editable`. Photos and crops are per-player and the
-              two lists share player ids, which is what made them unsafe to
-              edit from the reference set. A team's colors are neither: there
-              are thirty franchises, they mean the same thing in both lists,
-              and the panel names the team it is writing. Editing them while
-              judging the template against real stats is the point. */}
+              NBA lists share player ids, which is what made them unsafe to
+              edit from the reference set. A team's colors are not: the panel
+              names the franchise it is writing, and editing colours while
+              judging the template against real stats is the point.
+
+              The LEAGUE is passed for the same reason the card takes it. Nine
+              abbreviations name a different franchise in each table, so
+              without it this panel would offer the Raptors' colours under a
+              Toronto Tempo card and write the override under the wrong key. */}
           <TeamEditor
             team={selected?.team}
+            league={setLeague(activeSet)}
             overrides={teamOverrides}
             onChange={updateTeamOverrides}
           />

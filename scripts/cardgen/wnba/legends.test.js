@@ -392,7 +392,12 @@ describe.runIf(has)('the generated WNBA Super Season set', () => {
 
   it('reports the historical logos it needs', () => {
     expect(SET.logosNeeded).toBeTruthy();
-    for (const e of [...SET.logosNeeded.missing, ...SET.logosNeeded.anachronistic]) {
+    const asked = [
+      ...SET.logosNeeded.missing,
+      ...SET.logosNeeded.anachronistic,
+      ...SET.logosNeeded.poor,
+    ];
+    for (const e of asked) {
       expect(e.cards.length).toBeGreaterThan(0);
       expect(e.team).toMatch(/\w/);
     }
@@ -403,6 +408,14 @@ describe.runIf(has)('the generated WNBA Super Season set', () => {
     for (const e of SET.logosNeeded.anachronistic) {
       expect(getWnbaTeam(e.key).logo).toBeTruthy();
       expect(getWnbaTeam(e.key).logoEra).toBeTruthy();
+    }
+    // And a `poor` one has an ERA-CORRECT mark that simply draws badly, which
+    // is the weakest of the three asks and the one worth not confusing with
+    // the others: the Comets' file is the right franchise in the right decade.
+    for (const e of SET.logosNeeded.poor) {
+      expect(getWnbaTeam(e.key).logo).toBeTruthy();
+      expect(getWnbaTeam(e.key).logoEra).toBeUndefined();
+      expect(e.note).toBeTruthy();
     }
   });
 
@@ -415,6 +428,7 @@ describe('logoShoppingList', () => {
   it('asks for a mark only where one is missing or from the wrong era', () => {
     const teams = {
       HOU: { city: 'Houston', name: 'Comets', era: '1997-2008', logo: null },
+      TUL: { city: 'Tulsa', name: 'Shock', era: '2010-2015', logo: '/x/TUL.gif', logoNote: 'a lockup' },
       SEA00: { city: 'Seattle', name: 'Storm', era: '2000-2015', logo: '/x/SEA.png', logoEra: '2021-present' },
       LAS: { city: 'Los Angeles', name: 'Sparks', logo: '/x/LAS.png' },
     };
@@ -425,11 +439,13 @@ describe('logoShoppingList', () => {
         // An era-correct mark asks for nothing at all, which is the case that
         // keeps the list short enough to act on.
         { name: 'C', season: 2004, team: 'LAS' },
+        { name: 'D', season: 2012, team: 'TUL' },
       ],
       abbr => teams[abbr] ?? null
     );
     expect(list.missing.map(e => e.key)).toEqual(['HOU']);
     expect(list.anachronistic.map(e => e.key)).toEqual(['SEA00']);
+    expect(list.poor.map(e => e.key)).toEqual(['TUL']);
     expect(list.missing[0].file).toBe('public/logos/WNBA/HOU.png');
     expect(list.missing[0].cards).toEqual(['A 2000']);
   });

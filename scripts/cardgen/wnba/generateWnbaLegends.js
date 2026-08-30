@@ -372,34 +372,47 @@ export function buildLegendCard({ row, shooting, speedPowerTotal, calibration })
  * historical table — the user asked which marks they need to supply, and the
  * answer is sixteen cards' worth, not twenty-six franchises' worth.
  *
- * Two grades, because they are two different asks. A `missing` franchise draws
- * a lettered circle and has no mark at all. An `anachronistic` one draws the
- * modern mark on a card from another era, which is legible, correct as to
- * franchise, and wrong as to year.
+ * THREE GRADES, because they are three different asks and only the first is
+ * urgent:
+ *
+ *   missing         no mark at all. The card draws CardTemplate's lettered
+ *                   circle, which is a correct placeholder and obviously one.
+ *   anachronistic   the modern mark on a card from another era — legible,
+ *                   right as to franchise, wrong as to year.
+ *   poor            an era-correct mark that draws badly. Today that is the
+ *                   Comets' wordmark lockup, which `contain` shrinks to half
+ *                   the slot; see `logoNote` on the row.
+ *
+ * A franchise whose mark is era-correct AND draws well asks for nothing, which
+ * is what keeps this list short enough to act on.
  */
 export function logoShoppingList(cards, teamOf) {
-  const missing = new Map();
-  const anachronistic = new Map();
+  const buckets = { missing: new Map(), anachronistic: new Map(), poor: new Map() };
   for (const card of cards) {
     const team = teamOf(card.team);
     if (!team) continue;
-    const entry = {
-      key: card.team,
-      team: `${team.city} ${team.name}`,
-      era: team.era ?? null,
-      cards: [],
-      file: `public/logos/WNBA/${card.team}.png`,
-      have: team.logo ?? null,
-      haveEra: team.logoEra ?? null,
-    };
-    const bucket = team.logo ? anachronistic : missing;
-    if (team.logo && !team.logoEra) continue; // an era-correct mark: nothing to ask for
-    if (!bucket.has(card.team)) bucket.set(card.team, entry);
+    const grade = !team.logo ? 'missing' : team.logoEra ? 'anachronistic' : team.logoNote ? 'poor' : null;
+    if (!grade) continue;
+    const bucket = buckets[grade];
+    if (!bucket.has(card.team)) {
+      bucket.set(card.team, {
+        key: card.team,
+        team: `${team.city} ${team.name}`,
+        era: team.era ?? null,
+        cards: [],
+        file: `public/logos/WNBA/${card.team}.png`,
+        have: team.logo ?? null,
+        haveEra: team.logoEra ?? null,
+        note: team.logoNote ?? null,
+      });
+    }
     bucket.get(card.team).cards.push(`${card.name} ${card.season}`);
   }
+  const sorted = m => [...m.values()].sort((a, b) => a.team.localeCompare(b.team));
   return {
-    missing: [...missing.values()].sort((a, b) => a.team.localeCompare(b.team)),
-    anachronistic: [...anachronistic.values()].sort((a, b) => a.team.localeCompare(b.team)),
+    missing: sorted(buckets.missing),
+    anachronistic: sorted(buckets.anachronistic),
+    poor: sorted(buckets.poor),
   };
 }
 
@@ -834,6 +847,11 @@ function report({ log, cards, selections, audit, shoppingList, model, seasons, r
   }
   for (const e of shoppingList.anachronistic) {
     log(`  WRONG ERA ${e.team} (${e.era}) — currently drawing the ${e.haveEra} mark, ${e.have}`);
+    log(`            for ${e.cards.join(', ')}`);
+  }
+  for (const e of shoppingList.poor) {
+    log(`  DRAWS BAD ${e.team} (${e.era}) — ${e.have}`);
+    log(`            ${e.note}`);
     log(`            for ${e.cards.join(', ')}`);
   }
 }

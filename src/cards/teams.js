@@ -302,7 +302,7 @@ export const WNBA_HISTORICAL_TEAMS = {
   // LOCKUP — 2.17:1, past what logoFiles.test.js allows a live team — so it
   // draws small in the 115x96 slot. Wired anyway: a small mark beats three
   // letters, and the shopping list asks for a mark-only file.
-  HOU:  { name: 'Comets',       city: 'Houston',      primary: '#BA0C2F', secondary: '#041E42', logo: '/logos/WNBA/HOU.gif', league: 'WNBA', era: '1997-2008', folded: true }, // Fireball Red, Galaxy Blue
+  HOU:  { name: 'Comets',       city: 'Houston',      primary: '#BA0C2F', secondary: '#041E42', logo: '/logos/WNBA/HOU.gif', logoNote: 'a 545x251 wordmark lockup (2.17:1) — era-correct, but past what logoFiles.test.js allows a live team, so it draws about half the slot. A mark-only file would draw twice the size.', league: 'WNBA', era: '1997-2008', folded: true }, // Fireball Red, Galaxy Blue
   // ⚠ NOT public/logos/WNBA/CLE.png. The user has stated that file is the 2028
   // CLEVELAND SIRENS — the incoming expansion team — and not the Rockers, who
   // folded in 2003. Pointing this row at it would print the wrong franchise's

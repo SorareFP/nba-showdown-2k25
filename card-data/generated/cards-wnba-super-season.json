@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-30T16:57:21.797Z",
+ "generatedAt": "2026-08-30T17:04:09.615Z",
  "provisional": true,
  "set": "wnba-super-season",
  "league": "WNBA",
@@ -45,7 +45,8 @@
     ],
     "file": "public/logos/WNBA/SAS.png",
     "have": null,
-    "haveEra": null
+    "haveEra": null,
+    "note": null
    }
   ],
   "anachronistic": [
@@ -58,7 +59,8 @@
     ],
     "file": "public/logos/WNBA/CON03.png",
     "have": "/logos/WNBA/CONN.png",
-    "haveEra": "2021-present"
+    "haveEra": "2021-present",
+    "note": null
    },
    {
     "key": "MIN99",
@@ -69,7 +71,8 @@
     ],
     "file": "public/logos/WNBA/MIN99.png",
     "have": "/logos/WNBA/MIN.png",
-    "haveEra": "2018-present"
+    "haveEra": "2018-present",
+    "note": null
    },
    {
     "key": "MIN11",
@@ -81,7 +84,8 @@
     ],
     "file": "public/logos/WNBA/MIN11.png",
     "have": "/logos/WNBA/MIN.png",
-    "haveEra": "2018-present"
+    "haveEra": "2018-present",
+    "note": null
    },
    {
     "key": "NYL12",
@@ -92,7 +96,8 @@
     ],
     "file": "public/logos/WNBA/NYL12.png",
     "have": "/logos/WNBA/NYL.png",
-    "haveEra": "2020-present"
+    "haveEra": "2020-present",
+    "note": null
    },
    {
     "key": "PHO11",
@@ -103,7 +108,8 @@
     ],
     "file": "public/logos/WNBA/PHO11.png",
     "have": "/logos/WNBA/PHO.png",
-    "haveEra": "2026-present"
+    "haveEra": "2026-present",
+    "note": null
    },
    {
     "key": "PHO97",
@@ -114,7 +120,8 @@
     ],
     "file": "public/logos/WNBA/PHO97.png",
     "have": "/logos/WNBA/PHO.png",
-    "haveEra": "2026-present"
+    "haveEra": "2026-present",
+    "note": null
    },
    {
     "key": "SEA00",
@@ -126,7 +133,23 @@
     ],
     "file": "public/logos/WNBA/SEA00.png",
     "have": "/logos/WNBA/SEA.png",
-    "haveEra": "2021-present"
+    "haveEra": "2021-present",
+    "note": null
+   }
+  ],
+  "poor": [
+   {
+    "key": "HOU",
+    "team": "Houston Comets",
+    "era": "1997-2008",
+    "cards": [
+     "Sheryl Swoopes 2000",
+     "Tina Thompson 2000"
+    ],
+    "file": "public/logos/WNBA/HOU.png",
+    "have": "/logos/WNBA/HOU.gif",
+    "haveEra": null,
+    "note": "a 545x251 wordmark lockup (2.17:1) — era-correct, but past what logoFiles.test.js allows a live team, so it draws about half the slot. A mark-only file would draw twice the size."
    }
   ]
  },

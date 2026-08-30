@@ -602,15 +602,31 @@
  * so translateY(50%) lands the glyph's centre on the rule's centre, verified in
  * the browser rather than assumed. Anchoring to the row ABOVE (rather than the
  * row below, with top: 0) matters for the last row: there is no rule under it,
- * only the table frame, and findShotLineBoundary refuses that case outright. */
+ * only the table frame, and findShotLineBoundary refuses that case outright.
+ *
+ * FLUSH WITH THE TABLE'S LEFT BORDER, asked for directly: "it should be flush
+ * with the left side of the box, blending in with the border". The cell's
+ * padding box starts 3px inside the table (that is the collapsed accent
+ * border), so -3px puts the glyph's box on the border's outer edge and its ink
+ * across the border line itself — which is where the printed art puts it, base
+ * against the frame rather than floating in the roll column.
+ *
+ * Z-INDEX BECAUSE THE ROW BELOW WAS PAINTING OVER IT. Every .rollCell is
+ * positioned, so the cells paint in tree order and the make row's background
+ * covered the half of the triangle that hangs into it — the arrow appeared
+ * sliced off along the rule. Raising only the glyph fixes that without
+ * disturbing the frame: .card::after keeps z-index 2 and still draws last, and
+ * .chevronTop (also 1) is at the opposite corner of the card. Do not raise
+ * .rollCell instead — that lifts all five cells equally and changes nothing. */
 .rollCell {
   position: relative;
 }
 .shotArrow {
   position: absolute;
-  left: 4px;
+  left: -3px;
   bottom: 0;
   transform: translateY(50%);
+  z-index: 1;
   font-size: 17px;
   line-height: 1;
   color: var(--field-panel-ink);

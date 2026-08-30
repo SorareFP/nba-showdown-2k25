@@ -155,6 +155,29 @@ describe('the shot-line arrow', () => {
     expect(arrow).not.toMatch(/top:\s*50%/);
   });
 
+  it('starts flush with the left border of the chart box, not inside the column', () => {
+    // "it should be flush with the left side of the box, blending in with the
+    // border". The cell's padding box begins one collapsed border inside the
+    // table, so the offset has to be exactly minus that border's width.
+    const arrow = cssBlock('.shotArrow');
+    const border = Number(cssBlock('.chart').match(/border:\s*(\d+)px/)[1]);
+    const left = Number(arrow.match(/left:\s*(-?\d+)px/)[1]);
+    expect(left).toBe(-border);
+  });
+
+  it('is painted above the row below, which used to slice it in half', () => {
+    // Every .rollCell is positioned, so the cells paint in tree order and the
+    // make row's background covered the half of the triangle hanging into it.
+    // The glyph is raised; the card's frame stays above it, which is what
+    // .card::after's z-index 2 is for.
+    const arrowZ = Number(cssBlock('.shotArrow').match(/z-index:\s*(\d+)/)[1]);
+    const frameZ = Number(cssBlock('.card::after').match(/z-index:\s*(\d+)/)[1]);
+    expect(arrowZ).toBeGreaterThan(0);
+    expect(frameZ).toBeGreaterThan(arrowZ);
+    // ...and raising the CELL would lift all five equally and fix nothing.
+    expect(cssBlock('.rollCell')).not.toMatch(/z-index/);
+  });
+
   it('renders no arrow when the card has no shot line', () => {
     const { shotLine, ...noShotLine } = LEBRON_08_09;
     expect(render({ card: noShotLine })).not.toContain('shot-line-arrow');

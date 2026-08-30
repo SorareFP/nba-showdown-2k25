@@ -1,0 +1,544 @@
+{
+ "generatedAt": "2026-08-30T14:14:05.481Z",
+ "what": "A BPM/OBPM/DBPM equivalent for the WNBA. Fitted on NBA player-seasons using ONLY the inputs Basketball-Reference's WNBA season tables also carry, with every input expressed as a deviation from its own league-season minutes-weighted mean. See scripts/cardgen/wnba/bpmModel.js for what real BPM uses that this cannot, and for the league-context assumption the transfer rests on.",
+ "fittedOn": {
+  "league": "nba",
+  "seasons": [
+   2012,
+   2013,
+   2014,
+   2015,
+   2016,
+   2017,
+   2018,
+   2019,
+   2020,
+   2021,
+   2022,
+   2023,
+   2024,
+   2025,
+   2026
+  ],
+  "playerSeasons": 5354,
+  "minMinutes": 500,
+  "weight": "minutes",
+  "ridgeLambda": 0.1
+ },
+ "validation": {
+  "heldOutSeasons": [
+   2025,
+   2026
+  ],
+  "heldOutPlayerShare": 0.3,
+  "lambdaSweep": {
+   "0": {
+    "r2": 0.9562,
+    "coefL1": 70.1
+   },
+   "1": {
+    "r2": 0.8919,
+    "coefL1": 33.9
+   },
+   "3": {
+    "r2": 0.7849,
+    "coefL1": 25.7
+   },
+   "10": {
+    "r2": 0.5388,
+    "coefL1": 14.3
+   },
+   "100": {
+    "r2": 0.1022,
+    "coefL1": 2.2
+   },
+   "0.01": {
+    "r2": 0.9509,
+    "coefL1": 55.2
+   },
+   "0.1": {
+    "r2": 0.9446,
+    "coefL1": 40.1
+   },
+   "0.3": {
+    "r2": 0.9331,
+    "coefL1": 38.6
+   }
+  },
+  "byFeatureSet": {
+   "perWinShares": {
+    "bpm": {
+     "inSample": {
+      "n": 3097,
+      "r2": 0.8563,
+      "rmse": 1.0223
+     },
+     "heldOutPlayers": {
+      "n": 1503,
+      "r2": 0.8565,
+      "rmse": 1.1251
+     },
+     "heldOutSeasons": {
+      "n": 754,
+      "r2": 0.8612,
+      "rmse": 1.0945
+     }
+    },
+    "obpm": {
+     "inSample": {
+      "n": 3097,
+      "r2": 0.8808,
+      "rmse": 0.8223
+     },
+     "heldOutPlayers": {
+      "n": 1503,
+      "r2": 0.8817,
+      "rmse": 0.8553
+     },
+     "heldOutSeasons": {
+      "n": 754,
+      "r2": 0.861,
+      "rmse": 0.919
+     }
+    },
+    "dbpm": {
+     "inSample": {
+      "n": 3097,
+      "r2": 0.6705,
+      "rmse": 0.6459
+     },
+     "heldOutPlayers": {
+      "n": 1503,
+      "r2": 0.6784,
+      "rmse": 0.6928
+     },
+     "heldOutSeasons": {
+      "n": 754,
+      "r2": 0.7136,
+      "rmse": 0.6574
+     }
+    }
+   },
+   "boxScore": {
+    "bpm": {
+     "inSample": {
+      "n": 3097,
+      "r2": 0.8831,
+      "rmse": 0.9222
+     },
+     "heldOutPlayers": {
+      "n": 1503,
+      "r2": 0.8822,
+      "rmse": 1.0193
+     },
+     "heldOutSeasons": {
+      "n": 754,
+      "r2": 0.8502,
+      "rmse": 1.1371
+     }
+    },
+    "obpm": {
+     "inSample": {
+      "n": 3097,
+      "r2": 0.94,
+      "rmse": 0.5833
+     },
+     "heldOutPlayers": {
+      "n": 1503,
+      "r2": 0.9409,
+      "rmse": 0.6046
+     },
+     "heldOutSeasons": {
+      "n": 754,
+      "r2": 0.9405,
+      "rmse": 0.6015
+     }
+    },
+    "dbpm": {
+     "inSample": {
+      "n": 3097,
+      "r2": 0.6959,
+      "rmse": 0.6205
+     },
+     "heldOutPlayers": {
+      "n": 1503,
+      "r2": 0.6982,
+      "rmse": 0.671
+     },
+     "heldOutSeasons": {
+      "n": 754,
+      "r2": 0.6404,
+      "rmse": 0.7367
+     }
+    }
+   },
+   "boxScoreTeam": {
+    "bpm": {
+     "inSample": {
+      "n": 3097,
+      "r2": 0.9241,
+      "rmse": 0.743
+     },
+     "heldOutPlayers": {
+      "n": 1503,
+      "r2": 0.9165,
+      "rmse": 0.8584
+     },
+     "heldOutSeasons": {
+      "n": 754,
+      "r2": 0.9189,
+      "rmse": 0.8366
+     }
+    },
+    "obpm": {
+     "inSample": {
+      "n": 3097,
+      "r2": 0.9548,
+      "rmse": 0.5062
+     },
+     "heldOutPlayers": {
+      "n": 1503,
+      "r2": 0.9541,
+      "rmse": 0.5329
+     },
+     "heldOutSeasons": {
+      "n": 754,
+      "r2": 0.9538,
+      "rmse": 0.5302
+     }
+    },
+    "dbpm": {
+     "inSample": {
+      "n": 3097,
+      "r2": 0.8645,
+      "rmse": 0.4142
+     },
+     "heldOutPlayers": {
+      "n": 1503,
+      "r2": 0.8384,
+      "rmse": 0.491
+     },
+     "heldOutSeasons": {
+      "n": 754,
+      "r2": 0.8591,
+      "rmse": 0.4611
+     }
+    }
+   },
+   "advancedOnly": {
+    "bpm": {
+     "inSample": {
+      "n": 3097,
+      "r2": 0.9403,
+      "rmse": 0.6591
+     },
+     "heldOutPlayers": {
+      "n": 1503,
+      "r2": 0.9389,
+      "rmse": 0.7339
+     },
+     "heldOutSeasons": {
+      "n": 754,
+      "r2": 0.935,
+      "rmse": 0.7492
+     }
+    },
+    "obpm": {
+     "inSample": {
+      "n": 3097,
+      "r2": 0.957,
+      "rmse": 0.4941
+     },
+     "heldOutPlayers": {
+      "n": 1503,
+      "r2": 0.9572,
+      "rmse": 0.5146
+     },
+     "heldOutSeasons": {
+      "n": 754,
+      "r2": 0.9499,
+      "rmse": 0.5519
+     }
+    },
+    "dbpm": {
+     "inSample": {
+      "n": 3097,
+      "r2": 0.8702,
+      "rmse": 0.4055
+     },
+     "heldOutPlayers": {
+      "n": 1503,
+      "r2": 0.8459,
+      "rmse": 0.4795
+     },
+     "heldOutSeasons": {
+      "n": 754,
+      "r2": 0.8652,
+      "rmse": 0.451
+     }
+    }
+   },
+   "noWinShares": {
+    "bpm": {
+     "inSample": {
+      "n": 3097,
+      "r2": 0.9375,
+      "rmse": 0.6742
+     },
+     "heldOutPlayers": {
+      "n": 1503,
+      "r2": 0.9356,
+      "rmse": 0.7539
+     },
+     "heldOutSeasons": {
+      "n": 754,
+      "r2": 0.9356,
+      "rmse": 0.7456
+     }
+    },
+    "obpm": {
+     "inSample": {
+      "n": 3097,
+      "r2": 0.9656,
+      "rmse": 0.4417
+     },
+     "heldOutPlayers": {
+      "n": 1503,
+      "r2": 0.9662,
+      "rmse": 0.4576
+     },
+     "heldOutSeasons": {
+      "n": 754,
+      "r2": 0.9659,
+      "rmse": 0.455
+     }
+    },
+    "dbpm": {
+     "inSample": {
+      "n": 3097,
+      "r2": 0.8727,
+      "rmse": 0.4014
+     },
+     "heldOutPlayers": {
+      "n": 1503,
+      "r2": 0.8531,
+      "rmse": 0.4682
+     },
+     "heldOutSeasons": {
+      "n": 754,
+      "r2": 0.8686,
+      "rmse": 0.4453
+     }
+    }
+   },
+   "full": {
+    "bpm": {
+     "inSample": {
+      "n": 3097,
+      "r2": 0.9489,
+      "rmse": 0.6096
+     },
+     "heldOutPlayers": {
+      "n": 1503,
+      "r2": 0.9486,
+      "rmse": 0.6736
+     },
+     "heldOutSeasons": {
+      "n": 754,
+      "r2": 0.9446,
+      "rmse": 0.6915
+     }
+    },
+    "obpm": {
+     "inSample": {
+      "n": 3097,
+      "r2": 0.9727,
+      "rmse": 0.3935
+     },
+     "heldOutPlayers": {
+      "n": 1503,
+      "r2": 0.974,
+      "rmse": 0.4012
+     },
+     "heldOutSeasons": {
+      "n": 754,
+      "r2": 0.9714,
+      "rmse": 0.417
+     }
+    },
+    "dbpm": {
+     "inSample": {
+      "n": 3097,
+      "r2": 0.8822,
+      "rmse": 0.3862
+     },
+     "heldOutPlayers": {
+      "n": 1503,
+      "r2": 0.8634,
+      "rmse": 0.4515
+     },
+     "heldOutSeasons": {
+      "n": 754,
+      "r2": 0.8757,
+      "rmse": 0.4331
+     }
+    }
+   }
+  }
+ },
+ "featureSet": "full",
+ "features": [
+  "per",
+  "wsRate",
+  "owsRate",
+  "dwsRate",
+  "tsPct",
+  "efg",
+  "fg3aRate",
+  "ftRate",
+  "usgPct",
+  "orbPct",
+  "trbPct",
+  "astPct",
+  "stlPct",
+  "blkPct",
+  "tovPct",
+  "offRtg",
+  "defRtg",
+  "pts100",
+  "fga100",
+  "fg3a100",
+  "fta100",
+  "orb100",
+  "drb100",
+  "ast100",
+  "stl100",
+  "blk100",
+  "tov100",
+  "pf100",
+  "minShare",
+  "isGuard",
+  "isCenter"
+ ],
+ "missingVsRealBpm": [
+  "the team adjustment (BPM forces a team's players to sum to its efficiency margin); proxied only by the player's own ORtg/DRtg",
+  "DRB% as a percentage — the WNBA advanced page carries ORB% and TRB% only; defensive rebounds enter as drb100 = trb100 - orb100 instead",
+  "Basketball-Reference's own estimated position and offensive role; only the listed position is available, and it is collapsed to G/F/C on both sides because the WNBA lists no more than that"
+ ],
+ "targets": {
+  "bpm": {
+   "intercept": 0.166962782450923,
+   "coef": [
+    0.09350497008001454,
+    9.61818608586468,
+    11.320896784271588,
+    10.962215073210862,
+    0.5618263860054582,
+    1.9514101076259693,
+    0.9970340722684287,
+    -1.0437065564660548,
+    0.006281115413344933,
+    -0.035986826275154996,
+    0.019946899956190922,
+    0.03508114915581199,
+    0.32510459174237505,
+    0.09499164130611475,
+    0.007850604737676299,
+    0.03381983508251225,
+    -0.055869021287026664,
+    0.03158281958227836,
+    0.012629728009430371,
+    0.06701897493600276,
+    0.045291981169967806,
+    -0.07576193467785297,
+    0.08182523086147053,
+    0.07288258698845901,
+    0.32746086590907486,
+    0.19732808904609872,
+    -0.04476738858540851,
+    -0.23914278825617422,
+    1.3878264352284004,
+    -0.3156019842013325,
+    -0.07675198870251336
+   ],
+   "heldOutSeasonsR2": 0.9446,
+   "heldOutPlayersR2": 0.9486
+  },
+  "obpm": {
+   "intercept": 0.15470317758771068,
+   "coef": [
+    0.09242065309349046,
+    6.338389087489267,
+    9.658152175127757,
+    -3.4442576297225123,
+    1.107816438056258,
+    2.3123901643702274,
+    0.8153783182638891,
+    -0.6968741733041611,
+    0.03182117531513879,
+    0.016889101380566297,
+    0.025615462687454918,
+    0.026955402965489844,
+    0.039451921058032954,
+    0.02460382760646681,
+    -0.010876687835977894,
+    0.031827348092917554,
+    0.022443022613861524,
+    0.04531952147442958,
+    0.044872923932907025,
+    0.09578494646590192,
+    0.03602901662856587,
+    0.03402520184961162,
+    0.04290734436250998,
+    0.06302560735302043,
+    0.039871297089978656,
+    0.0440436443754563,
+    0.011564649785866995,
+    -0.28349184076361267,
+    0.9432113152738034,
+    -0.17294249925558888,
+    -0.11764737395749374
+   ],
+   "heldOutSeasonsR2": 0.9714,
+   "heldOutPlayersR2": 0.974
+  },
+  "dbpm": {
+   "intercept": 0.013144531932030329,
+   "coef": [
+    0.0009709021580223583,
+    3.2761040739826366,
+    1.642057716791931,
+    14.480477857410591,
+    -0.5411099035783138,
+    -0.3532881845337345,
+    0.17493593433432666,
+    -0.3433702484326446,
+    -0.025524627643465192,
+    -0.05278663887974459,
+    -0.005665197462977413,
+    0.008147508279645818,
+    0.28502393154541306,
+    0.07010069063428909,
+    0.018757384400087472,
+    0.0021187352577508797,
+    -0.07833235095375381,
+    -0.013801627815595177,
+    -0.0321333721488515,
+    -0.028508111492829828,
+    0.009087428918432958,
+    -0.10945631339699328,
+    0.03903139724634795,
+    0.009684861487955469,
+    0.28683099011103524,
+    0.15194784061610966,
+    -0.05563920618509976,
+    0.04418539444201885,
+    0.44820938071742444,
+    -0.13996853039773113,
+    0.04053989541447518
+   ],
+   "heldOutSeasonsR2": 0.8757,
+   "heldOutPlayersR2": 0.8634
+  }
+ }
+}

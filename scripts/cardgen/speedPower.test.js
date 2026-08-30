@@ -44,26 +44,20 @@ describe('compositeScores', () => {
     expect(scores).toEqual([...scores].sort((a, b) => b - a));
   });
 
-  // EPM is exactly OFF + DEF, so the refinement carries no new totals — what it
-  // carries is the SPLIT. OFF has the wider spread across a real pool, so EPM
-  // alone under-weights defence; averaging the two z-scores puts them level.
-  it('lifts a defence-first player relative to EPM alone', () => {
-    const balanced = [
+  // The OFF/DEF term used to up-weight defence inside the budget. It is gone on
+  // purpose: a defence-first player is compensated through Def Boost, which is
+  // derived from the same DEF number, so paying him inside the budget as well
+  // paid him twice. Two players with the same EPM and the same playing time now
+  // get the same budget however that EPM is split.
+  it('does not separate two players whose EPM is split differently', () => {
+    const split = [
       player('Offence', 4, 0, 0.12),
       player('Defence', 0, 4, 0.12),
       player('Nobody', 0, 0, 0.02),
       player('Spread', -4, -4, -0.01),
     ];
-    // Give OFF twice the spread of DEF, as the real pool has.
-    balanced[0].epmOff = 8;
-    balanced[0].epm = 8;
-    balanced[3].epmOff = -8;
-    balanced[3].epm = -12;
-    const epmOnly = compositeScores(balanced, { weight: 0 });
-    const refined = compositeScores(balanced, { weight: 1 });
-    const gapBefore = epmOnly[0] - epmOnly[1];
-    const gapAfter = refined[0] - refined[1];
-    expect(gapAfter).toBeLessThan(gapBefore);
+    const scores = compositeScores(split);
+    expect(scores[0]).toBeCloseTo(scores[1], 10);
   });
 
   it('separates two players with equal EPM by playing time', () => {
@@ -118,6 +112,54 @@ describe('mapToReferenceScale', () => {
 
   it('does not divide by zero when every composite is identical', () => {
     expect(mapToReferenceScale([1, 1, 1], reference)).toEqual([18, 18, 18]);
+  });
+
+  describe('the tapered tail', () => {
+    // knee 22, ceiling 28, and one card in twenty allowed to reach the ceiling.
+    const shaped = { ...reference, p90: 22, ceilingShare: 0.01 };
+    // A dense body plus a thin string of outliers — the shape the EPM curve has.
+    const body = Array.from({ length: 200 }, (_, i) => (i - 100) / 100);
+    const composites = [...body, 1.6, 1.9, 2.3, 2.8, 3.4, 4.4];
+
+    it('stops the clamp swallowing every outlier into the ceiling', () => {
+      const clipped = mapToReferenceScale(composites, reference);
+      const tapered = mapToReferenceScale(composites, shaped);
+      const atCeiling = totals => totals.filter(t => t === reference.max).length;
+      expect(atCeiling(clipped)).toBeGreaterThan(atCeiling(tapered));
+      expect(atCeiling(tapered)).toBeGreaterThan(0);
+    });
+
+    it('leaves every card below the knee exactly where it was', () => {
+      const clipped = mapToReferenceScale(composites, reference);
+      const tapered = mapToReferenceScale(composites, shaped);
+      clipped.forEach((v, i) => {
+        if (v < shaped.p90) expect(tapered[i]).toBe(v);
+      });
+    });
+
+    // The complaint the taper exists for: Curry one step below Shai despite
+    // sitting with the body of the league. A clamp flattens the outliers into
+    // each other; the taper keeps daylight between them and the cluster.
+    it('leaves daylight between the outliers and the top of the cluster', () => {
+      const tapered = mapToReferenceScale(composites, shaped);
+      const clipped = mapToReferenceScale(composites, reference);
+      const clusterTop = totals => Math.max(...totals.slice(0, body.length));
+      expect(Math.max(...tapered) - clusterTop(tapered)).toBeGreaterThan(
+        Math.max(...clipped) - clusterTop(clipped)
+      );
+    });
+
+    it('keeps the tail monotone and ordered by composite', () => {
+      const tail = mapToReferenceScale(composites, shaped).slice(-6);
+      expect(tail).toEqual([...tail].sort((a, b) => a - b));
+      expect(tail[5]).toBeGreaterThan(tail[0]);
+    });
+
+    it('never stretches a tail that already fits inside the ceiling', () => {
+      const tight = Array.from({ length: 40 }, (_, i) => (i - 20) / 40);
+      const totals = mapToReferenceScale(tight, shaped);
+      expect(Math.max(...totals)).toBeLessThan(reference.max);
+    });
   });
 });
 

@@ -72,6 +72,70 @@ export const TEAMS = {
 };
 
 /**
+ * ── FRANCHISES THAT NO LONGER EXIST ─────────────────────────────────────────
+ *
+ * Kevin Durant's rookie season was played for the SEATTLE SUPERSONICS, and the
+ * Rookie and Super Season sets are made of seasons exactly like it. Those cards
+ * have to say SEA.
+ *
+ * TWO OPTIONS WERE AVAILABLE and this is the one taken: extend the table, do
+ * not map to the successor franchise. Mapping Durant's 2008 card to OKC would
+ * be a factual error printed on the card, and design philosophy point 9 is
+ * explicit that the historical layer exists so peak seasons can be asked about
+ * as themselves. The cost of extending is only the logo, and a missing logo
+ * already degrades to the lettered circle (see TeamLogo) — which reads "SEA"
+ * and is exactly right.
+ *
+ * SEPARATE FROM `TEAMS`, NOT MERGED INTO IT, for two reasons. `TEAMS` is
+ * "the thirty franchises playing today" — the team editor enumerates it, the
+ * logo test requires a file for every row, and the studio's colour work is
+ * against live teams. And CHARLOTTE COLLIDES: Basketball-Reference spells the
+ * 2005-2014 Bobcats "CHA" and the 2015-present Hornets "CHO", while nba.com
+ * spells today's Hornets "CHA". One abbreviation, two franchises, so the
+ * Bobcats get a synthetic key and `franchiseForSeason` is what tells them
+ * apart — by SEASON, the only thing that actually distinguishes them.
+ *
+ * ⚠ THE COLOURS HERE ARE NOT FROM TruColor. Every hex in `TEAMS` was read off
+ * the franchise-records page the user chose as the authority; these were
+ * written from general knowledge, because the point of the exercise was to stop
+ * historical cards falling back to neutral grey today rather than to get the
+ * 1997 Nets' Pantone right. They are marked so they can be corrected against
+ * the same source when the set is finalised.
+ */
+export const HISTORICAL_TEAMS = {
+  SEA: { name: 'SuperSonics', city: 'Seattle',     primary: '#00653A', secondary: '#FFC72C', logo: null, era: '1967-2008', unverifiedColors: true },
+  NJN: { name: 'Nets',        city: 'New Jersey',  primary: '#002A60', secondary: '#CE1141', logo: null, era: '1977-2012', unverifiedColors: true },
+  NOH: { name: 'Hornets',     city: 'New Orleans', primary: '#002B5C', secondary: '#B4975A', logo: null, era: '2002-2013', unverifiedColors: true },
+  NOK: { name: 'Hornets',     city: 'New Orleans/Oklahoma City', primary: '#002B5C', secondary: '#B4975A', logo: null, era: '2005-2007', unverifiedColors: true },
+  CHH: { name: 'Hornets',     city: 'Charlotte',   primary: '#00778B', secondary: '#280071', logo: null, era: '1988-2002', unverifiedColors: true },
+  CHB: { name: 'Bobcats',     city: 'Charlotte',   primary: '#F9423A', secondary: '#004071', logo: null, era: '2004-2014', unverifiedColors: true },
+  VAN: { name: 'Grizzlies',   city: 'Vancouver',   primary: '#00B2A9', secondary: '#BC7844', logo: null, era: '1995-2001', unverifiedColors: true },
+};
+
+/**
+ * The last season (as an END year) Basketball-Reference's "CHA" meant the
+ * Bobcats. From 2015 it means nothing — that franchise is "CHO" there — and
+ * nba.com's "CHA" is today's Hornets.
+ */
+const LAST_BOBCATS_SEASON = 2014;
+
+/**
+ * The franchise key for an abbreviation AS OF a season.
+ *
+ * Only one abbreviation is genuinely ambiguous, and this exists for it: see
+ * HISTORICAL_TEAMS. Everything else is the ordinary canonicalization, so a
+ * caller with a season in hand can always route through here.
+ *
+ * A missing or non-numeric season means "today", which keeps every existing
+ * caller's behaviour if one ever passes through this by mistake.
+ */
+export function franchiseForSeason(abbr, season) {
+  const raw = String(abbr ?? '').toUpperCase();
+  if (raw === 'CHA' && Number.isFinite(season) && season <= LAST_BOBCATS_SEASON) return 'CHB';
+  return canonicalTeam(raw);
+}
+
+/**
  * Basketball-Reference abbreviation -> nba.com abbreviation.
  *
  * The player pool is derived from Basketball-Reference, which spells exactly
@@ -108,9 +172,19 @@ export function canonicalTeam(abbr) {
  */
 const FALLBACK = { name: 'Unknown', city: '', primary: '#1B2A4A', secondary: '#C0C0C0', logo: null };
 
-/** Team record for an abbreviation, or a neutral fallback so cards still render. */
+/**
+ * Team record for an abbreviation, or a neutral fallback so cards still render.
+ *
+ * Current franchises first, then the defunct ones. The order is not arbitrary:
+ * every key in HISTORICAL_TEAMS is one that TEAMS does not have (Charlotte's
+ * collision is resolved by franchiseForSeason before it ever reaches here), so
+ * the fallthrough can only ever add teams, never shadow a live one.
+ */
 export function getTeam(abbr) {
-  return TEAMS[canonicalTeam(abbr)] ?? FALLBACK;
+  const key = canonicalTeam(abbr);
+  if (Object.hasOwn(TEAMS, key)) return TEAMS[key];
+  if (Object.hasOwn(HISTORICAL_TEAMS, key)) return HISTORICAL_TEAMS[key];
+  return FALLBACK;
 }
 
 /**

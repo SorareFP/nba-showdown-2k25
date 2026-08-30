@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-30T17:04:09.615Z",
+ "generatedAt": "2026-08-30T17:05:49.839Z",
  "provisional": true,
  "set": "wnba-super-season",
  "league": "WNBA",
@@ -180,6 +180,7 @@
     },
     "complete": false
    },
+   "gapsAreZeroAttempt": true,
    "extrapolation": {
     "cells": 2813,
     "outside": 458,
@@ -214,6 +215,7 @@
     "missing": {},
     "complete": true
    },
+   "gapsAreZeroAttempt": true,
    "extrapolation": {
     "cells": 3683,
     "outside": 536,
@@ -273,6 +275,7 @@
     },
     "complete": false
    },
+   "gapsAreZeroAttempt": true,
    "extrapolation": {
     "cells": 4350,
     "outside": 625,
@@ -332,6 +335,7 @@
     },
     "complete": false
    },
+   "gapsAreZeroAttempt": true,
    "extrapolation": {
     "cells": 5916,
     "outside": 815,
@@ -383,6 +387,7 @@
     },
     "complete": false
    },
+   "gapsAreZeroAttempt": true,
    "extrapolation": {
     "cells": 6003,
     "outside": 966,
@@ -442,6 +447,7 @@
     },
     "complete": false
    },
+   "gapsAreZeroAttempt": true,
    "extrapolation": {
     "cells": 5974,
     "outside": 891,
@@ -501,6 +507,7 @@
     },
     "complete": false
    },
+   "gapsAreZeroAttempt": true,
    "extrapolation": {
     "cells": 5133,
     "outside": 693,
@@ -560,6 +567,7 @@
     },
     "complete": false
    },
+   "gapsAreZeroAttempt": true,
    "extrapolation": {
     "cells": 4756,
     "outside": 616,
@@ -594,6 +602,7 @@
     "missing": {},
     "complete": true
    },
+   "gapsAreZeroAttempt": true,
    "extrapolation": {
     "cells": 4872,
     "outside": 703,
@@ -645,6 +654,7 @@
     },
     "complete": false
    },
+   "gapsAreZeroAttempt": true,
    "extrapolation": {
     "cells": 5278,
     "outside": 630,
@@ -696,6 +706,7 @@
     },
     "complete": false
    },
+   "gapsAreZeroAttempt": true,
    "extrapolation": {
     "cells": 5017,
     "outside": 630,
@@ -730,6 +741,7 @@
     "missing": {},
     "complete": true
    },
+   "gapsAreZeroAttempt": true,
    "extrapolation": {
     "cells": 5568,
     "outside": 771,
@@ -789,6 +801,7 @@
     },
     "complete": false
    },
+   "gapsAreZeroAttempt": true,
    "extrapolation": {
     "cells": 4756,
     "outside": 493,
@@ -823,6 +836,7 @@
     "missing": {},
     "complete": true
    },
+   "gapsAreZeroAttempt": true,
    "extrapolation": {
     "cells": 4147,
     "outside": 420,
@@ -857,6 +871,7 @@
     "missing": {},
     "complete": true
    },
+   "gapsAreZeroAttempt": true,
    "extrapolation": {
     "cells": 4118,
     "outside": 402,
@@ -891,6 +906,7 @@
     "missing": {},
     "complete": true
    },
+   "gapsAreZeroAttempt": true,
    "extrapolation": {
     "cells": 4234,
     "outside": 451,
@@ -925,6 +941,7 @@
     "missing": {},
     "complete": true
    },
+   "gapsAreZeroAttempt": true,
    "extrapolation": {
     "cells": 4234,
     "outside": 449,
@@ -984,6 +1001,7 @@
     },
     "complete": false
    },
+   "gapsAreZeroAttempt": true,
    "extrapolation": {
     "cells": 4466,
     "outside": 489,
@@ -1018,6 +1036,7 @@
     "missing": {},
     "complete": true
    },
+   "gapsAreZeroAttempt": true,
    "extrapolation": {
     "cells": 4611,
     "outside": 406,
@@ -1052,6 +1071,7 @@
     "missing": {},
     "complete": true
    },
+   "gapsAreZeroAttempt": true,
    "extrapolation": {
     "cells": 4582,
     "outside": 446,
@@ -1086,6 +1106,7 @@
     "missing": {},
     "complete": true
    },
+   "gapsAreZeroAttempt": true,
    "extrapolation": {
     "cells": 4553,
     "outside": 484,
@@ -1145,6 +1166,7 @@
     },
     "complete": false
    },
+   "gapsAreZeroAttempt": true,
    "extrapolation": {
     "cells": 4553,
     "outside": 478,
@@ -1204,6 +1226,7 @@
     },
     "complete": false
    },
+   "gapsAreZeroAttempt": true,
    "extrapolation": {
     "cells": 4553,
     "outside": 455,
@@ -1263,6 +1286,7 @@
     },
     "complete": false
    },
+   "gapsAreZeroAttempt": true,
    "extrapolation": {
     "cells": 4205,
     "outside": 411,
@@ -1322,6 +1346,7 @@
     },
     "complete": false
    },
+   "gapsAreZeroAttempt": true,
    "extrapolation": {
     "cells": 4495,
     "outside": 511,
@@ -1381,6 +1406,7 @@
     },
     "complete": false
    },
+   "gapsAreZeroAttempt": true,
    "extrapolation": {
     "cells": 4814,
     "outside": 578,
@@ -1440,6 +1466,7 @@
     },
     "complete": false
    },
+   "gapsAreZeroAttempt": true,
    "extrapolation": {
     "cells": 4524,
     "outside": 463,
@@ -1491,6 +1518,7 @@
     },
     "complete": false
    },
+   "gapsAreZeroAttempt": true,
    "extrapolation": {
     "cells": 4553,
     "outside": 558,
@@ -1550,6 +1578,7 @@
     },
     "complete": false
    },
+   "gapsAreZeroAttempt": true,
    "extrapolation": {
     "cells": 5278,
     "outside": 622,
@@ -1609,6 +1638,7 @@
     },
     "complete": false
    },
+   "gapsAreZeroAttempt": true,
    "extrapolation": {
     "cells": 6670,
     "outside": 858,

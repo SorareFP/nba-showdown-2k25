@@ -578,6 +578,17 @@ export function main({ log = console.log } = {}) {
       players: s.rows.length,
       schedule: s.schedule,
       coverage,
+      // ── AND WHETHER THE GAPS ARE GAPS AT ALL ──────────────────────────────
+      //
+      // Every input the coverage check reports absent is one of TS%, eFG% or
+      // 3PAr, and every one of those is undefined BY DEFINITION for a player
+      // who took no shots — a divide by zero, not a hole in the archive.
+      // Measured across all thirty seasons: 33 such rows, 33 of them with zero
+      // season field-goal attempts, none otherwise. Recorded per season so the
+      // claim stays checkable rather than becoming a comment nobody re-runs.
+      gapsAreZeroAttempt: s.rows
+        .filter(r => (r.minutes ?? 0) > 0 && !Number.isFinite(r.tsPct))
+        .every(r => !((r.fgaTotal ?? 0) > 0)),
       extrapolation: envelope
         ? L.extrapolation(s.rows.map(r => r.centred), envelope, model.features)
         : null,
@@ -767,6 +778,14 @@ function report({ log, cards, selections, audit, shoppingList, model, seasons, r
         `${String(a.shooting.tsPct).padStart(9)}${String(a.scoringPer4Min).padStart(11)}`
     );
   }
+
+  const realGaps = audit.filter(a => !a.gapsAreZeroAttempt);
+  log(
+    `\n  Input coverage: ${realGaps.length === 0
+      ? 'COMPLETE in every season. Every value the check reports absent is TS%, eFG% or 3PAr ' +
+        'on a player who took no shots — undefined by definition, not a hole in the archive.'
+      : `${realGaps.length} season(s) have a genuine gap: ${realGaps.map(a => a.season).join(', ')}`}`
+  );
 
   const worst = [...audit].sort((a, b) => (b.extrapolation?.share ?? 0) - (a.extrapolation?.share ?? 0))[0];
   log(

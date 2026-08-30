@@ -9,10 +9,19 @@
 //
 // WHAT IT FETCHES, and why each one is needed:
 //
-//  0. dunksandthrees ACTUAL season rates for the CURRENT season (2025-26). What
-//     each player really did: TS%, FG% by location, and the OFF/DEF/EPM/EW
-//     quartet. The primary source — Shot Line, both shooting boosts, Def Boost
-//     and the Speed/Power budget all read it. One request for all ~600 players.
+//  0. dunksandthrees ACTUAL season rates for the CURRENT season (2025-26), BOTH
+//     SEASON TYPES. What each player really did: TS%, FG% by location, and the
+//     OFF/DEF/EPM/EW quartet. The primary source — Shot Line, both shooting
+//     boosts, Def Boost and the Speed/Power budget all read it. One request per
+//     season type for all ~600 players.
+//
+//     The playoff split (`seasontype=4`) is fetched into its own cache entry and
+//     folded into the regular season on read by scripts/cardgen/poolSeasons.js,
+//     volume-weighted per stat, so those games count as additional data rather
+//     than as a second set. Only ~254 players have a playoff row — a player
+//     whose team missed the playoffs simply keeps his regular-season figures.
+//     The two caches stay separate because each is a faithful copy of what one
+//     page served; the fold is a derivation, and derivations belong in code.
 //  1. dunksandthrees PREDICTED per-100 rates for the same season. Kept for one
 //     job only: the scoring chart's per-100 PTS/REB/AST anchor, which the actual
 //     page does not carry (it gives rebounds and assists as rate percentages,
@@ -194,7 +203,17 @@ export async function fetchSampleGameLogs(sample, season, { force = false, spaci
 export async function main({ force = false, log = console.log } = {}) {
   log(`dunksandthrees ACTUAL season rates, season ${CURRENT_STATS_SEASON}...`);
   const actual = await dt.fetchActualSeasonRates(CURRENT_STATS_SEASON, { force });
-  log(`  ${actual.length} players`);
+  log(`  ${actual.length} players (regular season)`);
+
+  // The postseason, same page and same 61 columns, one query parameter apart.
+  // Fetched unconditionally: an empty or absent playoff table is a legitimate
+  // state (nobody has played a playoff game yet) and poolSeasons.js handles it
+  // by returning the regular season untouched.
+  const playoffs = await dt.fetchActualSeasonRates(CURRENT_STATS_SEASON, {
+    force,
+    seasonType: dt.SEASON_TYPE_PLAYOFFS,
+  });
+  log(`  ${playoffs.length} players (playoffs)`);
 
   log(`dunksandthrees predicted per-100 rates, season ${CURRENT_STATS_SEASON}...`);
   const rates = await dt.fetchSeasonRates(CURRENT_STATS_SEASON, { force });

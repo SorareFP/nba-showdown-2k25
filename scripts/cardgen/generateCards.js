@@ -13,6 +13,12 @@
 // The layers come from different places and are of different qualities, which is
 // worth knowing before trusting any single number:
 //
+// "THE ACTUAL SEASON" below means the regular season AND THE PLAYOFFS, folded
+// into a single sample per player by scripts/cardgen/poolSeasons.js — each stat
+// weighted by the volume it is actually a rate over, so those games count as
+// additional data rather than as a second set to average against. A player whose
+// team missed the playoffs keeps his regular-season figures exactly.
+//
 //   Speed / Power   From the ACTUAL season's OFF / DEF / EPM / EW-per-game
 //                   (scripts/cardgen/speedPower.js), mapped onto the finished
 //                   set's own distribution by magnitude. All that happens here
@@ -58,6 +64,7 @@ import { applyOverrides } from './overrides.js';
 import * as V from './variance.js';
 import * as A from './attributes.js';
 import * as S from './shooting.js';
+import { readPooledActual, poolingSummary } from './poolSeasons.js';
 import { trb100 } from './sources/dunksAndThrees.js';
 import { CALIBRATION_FILE } from './calibrateAttributes.js';
 import { CURRENT_STATS_SEASON } from './fetchCalibrationData.js';
@@ -100,6 +107,13 @@ const lookup = (index, name) =>
  * than overall 2P%, which blends the rim with the midrange and so understates
  * exactly the players the boost exists to mark. `attemptsFromPer75` reconstructs
  * the volume behind each percentage, which gates how far it is trusted.
+ *
+ * `rate` is a POOLED row (regular season plus playoffs), and that is what makes
+ * the volume gate behave correctly across the fold: the attempt rate is
+ * possession-weighted and `minutes` is a pooled total, so their product is
+ * exactly regular-season attempts plus playoff attempts. A player with a deep
+ * run therefore arrives at the shrinkage with a genuinely larger sample and is
+ * shrunk less — pooled before shrinking, not after. See poolSeasons.js.
  */
 export function actualShootingInput(rate) {
   return {
@@ -250,6 +264,9 @@ export function generateCards({
     missingRates,
     missingActual,
     shooting,
+    // How much of the pool's stat line is postseason. Zero for a pool built off
+    // regular-season-only rows, which is what makes this safe to report always.
+    pooling: poolingSummary(actualRows.filter(Boolean)),
     names: resolved.map(p => p.name),
   };
 }
@@ -383,7 +400,9 @@ export function main({ log = console.log } = {}) {
         'scripts/cardgen/fetchCalibrationData.js first.'
     );
   }
-  const actual = readCache(`dunksandthrees-actual-${CURRENT_STATS_SEASON}`);
+  // Regular season and playoffs folded into one sample per player — see
+  // scripts/cardgen/poolSeasons.js for which volume each stat pools on.
+  const actual = readPooledActual(CURRENT_STATS_SEASON);
   if (!actual) {
     throw new Error(
       `No cached dunksandthrees ACTUAL rates for ${CURRENT_STATS_SEASON} — run ` +
@@ -391,7 +410,7 @@ export function main({ log = console.log } = {}) {
     );
   }
   const overridesFile = path.join(REPO_ROOT, 'scripts', 'cardgen', 'overrides.json');
-  const { cards, missingRates, missingActual, shooting, names } = generateCards({
+  const { cards, missingRates, missingActual, shooting, pooling, names } = generateCards({
     pool: readJson(path.join(GEN_DIR, 'player-pool-2026.json')),
     teams: readJson(path.join(GEN_DIR, 'player-teams-2026.json')),
     speedPower: readJson(path.join(GEN_DIR, 'speed-power-totals-2026.json')),
@@ -409,11 +428,15 @@ export function main({ log = console.log } = {}) {
     calibratedAgainst: calibration.referenceSeason,
     note:
       'PROVISIONAL. Shot Line, Paint Boost, 3PT Boost, Def Boost and the Speed/Power budget come ' +
-      "from dunksandthrees' ACTUAL 2025-26 season page; the shooting three are the stated " +
-      'probability rule (a player misses at his real miss rate) compressed onto the finished ' +
-      "set's own distribution. Charts are still synthesized from the PREDICTED per-100 rates, " +
-      'because the actual page carries no per-100 rebound or assist counts. See ' +
-      'scripts/cardgen/shooting.js and card-data/generated/card-calibration.json.',
+      "from dunksandthrees' ACTUAL 2025-26 season page, REGULAR SEASON AND PLAYOFFS POOLED — " +
+      'playoff games are folded in as additional data, each stat volume-weighted by the ' +
+      'denominator it is a rate over (possessions for EPM/OFF/DEF, true shooting attempts for ' +
+      'TS%, the relevant attempts for each location percentage, games for EW/GP); a player whose ' +
+      'team missed the playoffs is unchanged. The shooting three are the stated probability rule ' +
+      "(a player misses at his real miss rate) compressed onto the finished set's own " +
+      'distribution. Charts are still synthesized from the PREDICTED per-100 rates, because the ' +
+      'actual page carries no per-100 rebound or assist counts. See scripts/cardgen/shooting.js, ' +
+      'scripts/cardgen/poolSeasons.js and card-data/generated/card-calibration.json.',
     cards,
   };
   fs.writeFileSync(OUTPUT_FILE, `${JSON.stringify(payload, null, 1)}\n`);
@@ -425,6 +448,11 @@ export function main({ log = console.log } = {}) {
   if (missingActual.length) {
     log(`  no ACTUAL stat line for ${missingActual.length}: ${missingActual.join(', ')}`);
   }
+  log(
+    `  playoffs folded in: ${pooling.gained}/${pooling.players} players gained games ` +
+      `(${pooling.playoffGames} playoff games total, median ${pooling.medianPlayoffGames}, ` +
+      `max ${pooling.maxPlayoffGames}); the other ${pooling.players - pooling.gained} are unchanged`
+  );
   log('');
   const fields = ['speed', 'power', 'shotLine', 'paintBoost', 'threePtBoost', 'defBoost', 'salary'];
   log('field         n   min   p10   med   p90   max   mean');

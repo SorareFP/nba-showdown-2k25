@@ -32,6 +32,13 @@
 //
 //   composite = z(EPM) + 0.35 * mean( z(OFF), z(DEF), z(EW/GP) )
 //
+// "THE ACTUAL SEASON" NOW MEANS REGULAR SEASON PLUS PLAYOFFS, folded into one
+// sample by scripts/cardgen/poolSeasons.js rather than averaged. EPM, OFF and
+// DEF are per-100-possession rates and pool by possessions; EW/GP is already
+// per-game and pools by games played. A player whose team missed the playoffs
+// keeps his regular-season numbers untouched, so his composite is bit-for-bit
+// what it was. The derivation below is unchanged — only its input grew.
+//
 // WHY THOSE THREE as the refinement, when EPM is exactly OFF + DEF and so
 // carries no information the split does not:
 //
@@ -55,7 +62,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { readCache, REPO_ROOT } from './cache.js';
+import { REPO_ROOT } from './cache.js';
+import { readPooledActual, poolingSummary } from './poolSeasons.js';
 import { normalizeName } from './resolveTeams.js';
 import { loadReferenceCards } from './referenceCards.js';
 import { meanSd, zScorer } from './attributes.js';
@@ -162,6 +170,10 @@ export function buildSpeedPowerTotals({ pool, actual, reference = REFERENCE_TOTA
       epmOff: r?.epmOff ?? null,
       epmDef: r?.epmDef ?? null,
       ewinsPerGame: r?.ewinsPerGame ?? null,
+      // Provenance, not an input: how many of the games behind those four
+      // numbers were playoff games. Zero means the composite is his regular
+      // season exactly as it was before the postseason was folded in.
+      playoffGames: r?.playoffGames ?? 0,
     };
   });
 
@@ -175,6 +187,7 @@ export function buildSpeedPowerTotals({ pool, actual, reference = REFERENCE_TOTA
     epmOff: r.epmOff,
     epmDef: r.epmDef,
     ewinsPerGame: r.ewinsPerGame == null ? null : Number(r.ewinsPerGame.toFixed(4)),
+    playoffGames: r.playoffGames,
     composite: Number(composites[i].toFixed(4)),
     speedPowerTotal: totals[i],
     provisional: true,
@@ -184,7 +197,10 @@ export function buildSpeedPowerTotals({ pool, actual, reference = REFERENCE_TOTA
 }
 
 export function main({ log = console.log } = {}) {
-  const actual = readCache(`dunksandthrees-actual-${CURRENT_STATS_SEASON}`);
+  // Regular season and playoffs, already folded into one row per player by
+  // volume-weighted pooling — EPM, OFF and DEF by possessions, EW/GP by games.
+  // See scripts/cardgen/poolSeasons.js.
+  const actual = readPooledActual(CURRENT_STATS_SEASON);
   if (!actual) {
     throw new Error(
       `No cached dunksandthrees ACTUAL rates for ${CURRENT_STATS_SEASON} — run ` +
@@ -205,6 +221,12 @@ export function main({ log = console.log } = {}) {
   const { mean, sd } = meanSd(totals);
   log(`${records.length} budgets -> ${path.relative(REPO_ROOT, OUTPUT_FILE)}`);
   if (missing.length) log(`  no actual stat line for ${missing.length}: ${missing.join(', ')}`);
+  const fold = poolingSummary(records);
+  log(
+    `  playoffs folded in: ${fold.gained}/${fold.players} players gained games ` +
+      `(${fold.playoffGames} playoff games total, median ${fold.medianPlayoffGames}, ` +
+      `max ${fold.maxPlayoffGames}); the other ${fold.players - fold.gained} are unchanged`
+  );
   log(
     `  reference (${measured ? `measured, n=${measured.n}` : 'committed fallback'}): ` +
       `mean ${reference.mean} sd ${reference.sd} [${reference.min}, ${reference.max}]`

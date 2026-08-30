@@ -17,6 +17,7 @@ import { CALIBRATION_FILE } from './calibrateAttributes.js';
 import { playerIdFromName } from '../../src/cards/playerId.js';
 import { REPO_ROOT } from './cache.js';
 import * as V from './variance.js';
+import { MAX_CHART_TIERS } from './generate.js';
 
 const calibration = JSON.parse(readFileSync(CALIBRATION_FILE, 'utf8'));
 
@@ -124,56 +125,72 @@ describe('buildCard', () => {
     );
   });
 
-  // The hard floor from design doc section 3: a natural 1 is unconditionally
-  // 0/0/0, for every card, no exceptions.
-  it('puts a blank natural-1 tier under every card, however good the player', () => {
+  // The hard floor from design doc section 3, widened to rolls 1-2 so the card
+  // and engine.js agree about which rolls are the bad ones: engine.js already
+  // marks a player cold on a die of 1 or 2.
+  it('blanks rolls 1 and 2 on every card, however good the player', () => {
     for (const pts100 of [8, 20, 36]) {
-      // lo AND hi are both 1: "a natural 1", not "the bottom band". This is
-      // the tier the card does not print (see visibleTiers in CardTemplate).
-      expect(card({}, { pts100 }).chart[0]).toMatchObject({
-        lo: 1,
-        hi: 1,
-        pts: 0,
-        reb: 0,
-        ast: 0,
-      });
+      const bottom = card({}, { pts100 }).chart[0];
+      expect(bottom).toMatchObject({ lo: 1, pts: 0, reb: 0, ast: 0 });
+      // hi is at LEAST 2. It can be more: where the no-scoring tier above also
+      // reads 0/0/0 the merge folds the two into one row, which is the merge
+      // working rather than a missing tier.
+      expect(bottom.hi).toBeGreaterThanOrEqual(2);
     }
   });
 
-  it('gives every card a SECOND, no-scoring tier above the blank one', () => {
+  it('keeps a SECOND, no-scoring tier where one survives the merge', () => {
     // The founding requirement: "at least a natural 1 result in 0pts, 0reb,
-    // 0ast, and then a second tier where they don't score". Two tiers, and the
-    // second one is different — it scores nothing but may still rebound and
-    // assist, which is the only thing distinguishing it from the first.
-    for (const pts100 of [8, 20, 36]) {
-      const { chart } = card({}, { pts100 });
-      expect(chart[1].lo).toBe(2);
-      expect(chart[1].pts).toBe(0);
-      // Deliberately NOT asserting that tier 2 scores. A weak enough scorer
-      // legitimately rounds a third band to zero points as well, and the top
-      // of the chart is left to the statistics — the floor guarantees a
-      // minimum of two non-scoring tiers, not a maximum.
+    // 0ast, and then a second tier where they don't score". The second tier is
+    // different — it scores nothing but may still rebound and assist, which is
+    // the only thing distinguishing it from the first. A light scorer's chart
+    // keeps one; where the bottom decile does neither, the row says exactly
+    // what the blank row already said and the merge folds the two together.
+    const { chart } = card({}, { pts100: 8 });
+    expect(chart[0]).toMatchObject({ lo: 1, pts: 0, reb: 0, ast: 0 });
+    const noScoring = chart[1];
+    expect(noScoring.lo).toBe(chart[0].hi + 1);
+    expect(noScoring.pts).toBe(0);
+    // A rebounder who never shot on the possession is the case this exists for.
+    // Zeroing reb/ast here would make tier 2 a copy of tier 1.
+    expect(noScoring.reb + noScoring.ast).toBeGreaterThan(0);
+    expect(noScoring).not.toMatchObject({ reb: chart[0].reb, ast: chart[0].ast });
+  });
+
+  it('never leaves two printed rows saying the same three numbers, except across the shot line', () => {
+    // The merge, and its one exception. A chart that breaks at the shot line
+    // can legitimately show the same outcome either side of the break — that
+    // is the price of giving the arrow a rule, and it is paid deliberately.
+    const c = card();
+    for (let i = 1; i < c.chart.length; i += 1) {
+      const prev = c.chart[i - 1];
+      const t = c.chart[i];
+      const identical = t.pts === prev.pts && t.reb === prev.reb && t.ast === prev.ast;
+      if (identical) expect(t.lo, `rows ${i - 1}/${i}`).toBe(c.shotLine);
     }
   });
 
-  it('keeps rebounds and assists on the no-scoring tier rather than blanking them', () => {
-    // A rebounder who never shot on the possession is the case this exists
-    // for. Zeroing reb/ast here would make tier 2 a copy of tier 1.
-    const { chart } = card({}, { orb100: 8, drb100: 22, ast100: 14 });
-    expect(chart[1].pts).toBe(0);
-    expect(chart[1].reb).toBeGreaterThan(0);
-    expect(chart[1].ast).toBeGreaterThan(0);
-    // And that is what makes it a DIFFERENT row from the blank one below it.
-    expect(chart[1]).not.toMatchObject({ reb: chart[0].reb, ast: chart[0].ast });
+  it('breaks the chart exactly at the shot line, so the arrow has a rule to sit on', () => {
+    // The card communicates Shot Line with one arrow and nothing else, and that
+    // arrow sits ON the hairline between the last miss and the first make. The
+    // hairline only exists if a band starts at the shot line — so the generator
+    // makes one, rather than hoping the percentiles landed there.
+    for (const pts100 of [8, 20, 36]) {
+      const c = card({}, { pts100 });
+      const at = c.chart.findIndex(t => t.lo === c.shotLine);
+      expect(at, `shot line ${c.shotLine} in ${JSON.stringify(c.chart.map(t => t.lo))}`)
+        .toBeGreaterThan(0); // > 0: a rule between two rows, not the top frame
+    }
   });
 
-  it('lays a contiguous roll range with an open top over at most six tiers', () => {
-    // NOT exactly five any more. Adjacent tiers whose three printed numbers
-    // are identical after rounding are merged (see shapeChart), so the count
-    // varies with the player: two floor tiers plus up to four scoring ones.
+  it('lays a contiguous roll range with an open top, within the rows the card can print', () => {
+    // NOT exactly five any more. Adjacent tiers whose three printed numbers are
+    // identical after rounding are merged (see shapeChart) — except across the
+    // shot line, which has to stay a break. Every tier is printed, so the table
+    // height caps the count outright.
     const { chart } = card();
     expect(chart.length).toBeGreaterThanOrEqual(2);
-    expect(chart.length).toBeLessThanOrEqual(6);
+    expect(chart.length).toBeLessThanOrEqual(MAX_CHART_TIERS);
     expect(chart[0].lo).toBe(1);
     for (let i = 1; i < chart.length; i += 1) {
       expect(chart[i].lo).toBe(chart[i - 1].hi + 1);
@@ -193,10 +210,11 @@ describe('buildCard', () => {
   });
 
   it('puts the shot line on a row that exists, so the card can draw its arrow', () => {
-    // CardTemplate.findShotLineIndex renders NO arrow when no tier contains the
-    // shot line — a card silently missing a stat rather than showing a wrong one.
+    // CardTemplate.findShotLineBoundary renders NO arrow when no tier holds the
+    // last miss — a card silently missing a stat rather than showing a wrong one.
     const c = card();
     expect(c.chart.some(t => c.shotLine >= t.lo && c.shotLine <= t.hi)).toBe(true);
+    expect(c.chart.some(t => c.shotLine - 1 >= t.lo && c.shotLine - 1 <= t.hi)).toBe(true);
   });
 
   it('scales the chart with production', () => {
@@ -227,8 +245,9 @@ describe('buildCard', () => {
     // allows — the blank natural 1 and one flat band — rather than five
     // identical rows. That IS the merge working, not a degenerate card.
     expect(c.chart.length).toBeGreaterThanOrEqual(2);
-    expect(c.chart.length).toBeLessThanOrEqual(6);
-    expect(c.chart[0]).toMatchObject({ lo: 1, hi: 1, pts: 0, reb: 0, ast: 0 });
+    expect(c.chart.length).toBeLessThanOrEqual(MAX_CHART_TIERS);
+    expect(c.chart[0]).toMatchObject({ lo: 1, pts: 0, reb: 0, ast: 0 });
+    expect(c.chart[0].hi).toBeGreaterThanOrEqual(2); // rolls 1-2 at minimum
     expect(c.chart[c.chart.length - 1].hi).toBe(99);
     expect(Number.isFinite(c.salary)).toBe(true);
   });
@@ -388,24 +407,30 @@ describe('the committed cards-2026-27.json', () => {
       expect(c.shotLine, c.name).toBeGreaterThanOrEqual(12);
       expect(c.shotLine, c.name).toBeLessThanOrEqual(18);
       expect(c.salary, c.name).toBeGreaterThanOrEqual(10);
-      // Between two and six: the blank natural-1 tier, the no-scoring tier,
-      // and up to four scoring bands. Fixed at five before the merge landed.
+      // Every tier is printed now, so the table's five-row height is the cap.
       expect(c.chart.length, c.name).toBeGreaterThanOrEqual(2);
-      expect(c.chart.length, c.name).toBeLessThanOrEqual(6);
-      expect(c.chart[0], c.name).toMatchObject({ lo: 1, hi: 1, pts: 0, reb: 0, ast: 0 });
-      expect(c.chart[1].lo, c.name).toBe(2);
-      expect(c.chart[1].pts, c.name).toBe(0);
+      expect(c.chart.length, c.name).toBeLessThanOrEqual(MAX_CHART_TIERS);
+      // Rolls 1 AND 2 produce nothing, on every card — the same two rolls
+      // engine.js hands out a cold marker for.
+      expect(c.chart[0], c.name).toMatchObject({ lo: 1, pts: 0, reb: 0, ast: 0 });
+      expect(c.chart[0].hi, c.name).toBeGreaterThanOrEqual(2);
       expect(c.chart.at(-1).hi, c.name).toBe(99);
+      // The chart breaks exactly at the shot line, between two printed rows, so
+      // the arrow has a real dividing rule to sit on.
+      expect(c.chart.findIndex(t => t.lo === c.shotLine), c.name).toBeGreaterThan(0);
       // Contiguous: every roll from 1 to 20 resolves against exactly one tier.
       for (let i = 1; i < c.chart.length; i += 1) {
         expect(c.chart[i].lo, c.name).toBe(c.chart[i - 1].hi + 1);
       }
-      // No two printed rows say the same three numbers — that is the merge.
-      for (let i = 2; i < c.chart.length; i += 1) {
+      // No two printed rows say the same three numbers — that is the merge —
+      // unless they sit either side of the shot line, which may not close up.
+      for (let i = 1; i < c.chart.length; i += 1) {
         const prev = c.chart[i - 1];
         const same =
           c.chart[i].pts === prev.pts && c.chart[i].reb === prev.reb && c.chart[i].ast === prev.ast;
-        expect(same, `${c.name} tiers ${i - 1}/${i} print identically`).toBe(false);
+        if (same) {
+          expect(c.chart[i].lo, `${c.name} tiers ${i - 1}/${i} print identically`).toBe(c.shotLine);
+        }
       }
     }
   });

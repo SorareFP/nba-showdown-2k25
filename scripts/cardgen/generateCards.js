@@ -58,7 +58,7 @@ import { pathToFileURL } from 'node:url';
 import { readCache, REPO_ROOT } from './cache.js';
 import { normalizeName } from './resolveTeams.js';
 import { computeStatBands } from './bands.js';
-import { reconcileBands, shapeChart } from './generate.js';
+import { reconcileBands, shapeChart, MAX_CHART_TIERS } from './generate.js';
 import { isBlankTier } from './zeroFloor.js';
 import { applyOverrides } from './overrides.js';
 import * as V from './variance.js';
@@ -162,7 +162,10 @@ export function buildCard({ player, rate, actual, shooting, speedPowerTotal, cal
     });
     bands[stat] = computeStatBands(games, stat);
   }
-  const chart = shapeChart(reconcileBands(bands));
+  // The shot line is an INPUT to the chart's shape, not just a number printed
+  // beside it: the chart is made to break exactly there so the card's one arrow
+  // has a real dividing line to sit on. See forceBandBoundary.
+  const chart = shapeChart(reconcileBands(bands), { shotLine });
 
   const card = {
     id: playerIdFromName(player.name),
@@ -240,11 +243,20 @@ export function generateCards({
   const cards = [];
   const missingRates = [];
   const missingActual = [];
+  // Per-4-minute production, per card, in card order. Carried out of the build
+  // because it is what a chart is SUPPOSED to integrate to, and the run report
+  // cannot check that without it. See reportChartFit.
+  const targets = [];
   resolved.forEach((player, i) => {
     const rate = lookup(rateIndex, player.name);
     if (!rate) missingRates.push(player.name);
     if (!actualRows[i]) missingActual.push(player.name);
     const sp = spIndex.get(normalizeName(player.name));
+    targets.push({
+      pts: V.per4MinFromPer100(rate?.pts100 ?? 0),
+      reb: V.per4MinFromPer100(rate ? trb100(rate) : 0),
+      ast: V.per4MinFromPer100(rate?.ast100 ?? 0),
+    });
     cards.push(
       buildCard({
         player,
@@ -264,6 +276,7 @@ export function generateCards({
     missingRates,
     missingActual,
     shooting,
+    targets,
     // How much of the pool's stat line is postseason. Zero for a pool built off
     // regular-season-only rows, which is what makes this safe to report always.
     pooling: poolingSummary(actualRows.filter(Boolean)),
@@ -383,15 +396,77 @@ export function reportShooting({ cards, shooting, names, calibration, log }) {
     log(`    ${' '.repeat(key.length)} real      ${asShare(real)}`);
   }
 
-  // Sizes the follow-up task: the chart restructure wants a band boundary AT the
-  // shot line, so that the arrow marks the row where scoring starts. This counts
-  // how many charts already happen to break there.
+  // The chart is now MADE to break at the shot line, so the card's one arrow has
+  // a real dividing line to sit on (see forceBandBoundary). This is the check
+  // that it actually did: anything short of every card is a bug, not a statistic.
   const breaks = cards.filter(c => c.chart.some(t => t.lo === c.shotLine)).length;
+  // ...and the break has to fall BETWEEN two printed rows. A break at the very
+  // first row's start is the table's top frame, not a rule, and carries no arrow.
+  const printable = cards.filter(c => c.chart.findIndex(t => t.lo === c.shotLine) > 0).length;
   log('');
   log(
-    `  charts whose band already starts exactly at the shot line: ${breaks}/${cards.length} ` +
-      `(${((100 * breaks) / cards.length).toFixed(0)}%)`
+    `  charts that break exactly at the shot line: ${breaks}/${cards.length}` +
+      `  (between two printed rows: ${printable}/${cards.length})`
   );
+  if (breaks < cards.length || printable < cards.length) {
+    log(
+      `  *** ${cards.length - printable} charts have no rule for the shot-line arrow to sit on: ` +
+        cards
+          .filter(c => c.chart.findIndex(t => t.lo === c.shotLine) <= 0)
+          .map(c => `${c.id}(L${c.shotLine})`)
+          .join(', ')
+    );
+  }
+}
+
+/**
+ * Does the chart still add up to the player the statistics describe?
+ *
+ * THE REQUIREMENT THIS CHECKS, in the user's words: "I want a player's standard
+ * per-4 minute numbers to occur naturally based on the remaining rolls above 1
+ * or 2." Blanking rolls 1-2 and moving a boundary onto the shot line both take
+ * production off the card, and neither announces itself — the chart still looks
+ * like a chart. So the run measures it.
+ *
+ * The measure is the chart's expected value per d20 roll over the player's own
+ * per-4-minute rate. It is a RATIO rather than a difference because the level
+ * the charts are built at is itself a fitted multiple of that rate (see
+ * variance.js): what matters is that the restructure did not move it, not that
+ * it equals one. A pool median that drifts from the finished 2025-26 set's is
+ * the failure mode — every card quietly weaker or stronger than the set it
+ * shares a table with.
+ *
+ * Rolls above 20 are excluded by construction: expectedValuePerRoll walks a
+ * d20, so a top band starting at 21 contributes nothing here. That is the point
+ * of putting one there.
+ */
+export function reportChartFit({ cards, targets, log }) {
+  // Measured off the finished 2025-26 set with this same ratio, for the pool
+  // players who have one. Committed here rather than recomputed because it is a
+  // property of cards that are done, and this is the line the new set is held to.
+  const REFERENCE = { pts: 1.0, reb: 1.16, ast: 0.88 };
+  log('');
+  log('chart expected value per roll, over the player\'s per-4-minute rate');
+  log('  (1.00 = the chart pays exactly his real rate; the 2025-26 set sits at');
+  log('   pts 1.00 / reb 1.16 / ast 0.88, and matching that is the requirement)');
+  for (const stat of V.CHART_STATS) {
+    const ratios = cards
+      .map((c, i) => {
+        const target = targets[i]?.[stat] ?? 0;
+        return target > 0 ? expectedValuePerRoll(c.chart, stat) / target : null;
+      })
+      .filter(Number.isFinite)
+      .sort((a, b) => a - b);
+    if (ratios.length === 0) continue;
+    const at = p => ratios[Math.floor(p * (ratios.length - 1))];
+    const median = at(0.5);
+    const drift = median - REFERENCE[stat];
+    log(
+      `  ${stat}  p10 ${at(0.1).toFixed(2)}  median ${median.toFixed(2)}  p90 ${at(0.9).toFixed(2)}` +
+        `   vs 2025-26 ${REFERENCE[stat].toFixed(2)} -> ${drift >= 0 ? '+' : ''}${drift.toFixed(3)}` +
+        `${Math.abs(drift) > 0.05 ? '  *** DRIFTED' : ''}`
+    );
+  }
 }
 
 export function main({ log = console.log } = {}) {
@@ -413,7 +488,7 @@ export function main({ log = console.log } = {}) {
     );
   }
   const overridesFile = path.join(REPO_ROOT, 'scripts', 'cardgen', 'overrides.json');
-  const { cards, missingRates, missingActual, shooting, pooling, names } = generateCards({
+  const { cards, missingRates, missingActual, shooting, pooling, names, targets } = generateCards({
     pool: readJson(path.join(GEN_DIR, 'player-pool-2026.json')),
     teams: readJson(path.join(GEN_DIR, 'player-teams-2026.json')),
     speedPower: readJson(path.join(GEN_DIR, 'speed-power-totals-2026.json')),
@@ -476,20 +551,37 @@ export function main({ log = console.log } = {}) {
     const s = summarize(cards.map(c => Number(expectedValuePerRoll(c.chart, stat).toFixed(2))));
     log(`  ${stat}  min ${s.min}  median ${s.median}  p90 ${s.p90}  max ${s.max}  mean ${s.mean}`);
   }
+  // Tier 1 covers rolls 1-2 exactly when nothing merged into it; where the
+  // no-scoring tier also read 0/0/0 the two became one wider blank row, which
+  // is the merge doing its job rather than a missing tier.
   const blank = cards.filter(c => isBlankTier(c.chart[0]));
+  const blankRun = cards.filter(c => c.chart[0].lo === 1 && c.chart[0].pts === 0
+    && c.chart[0].reb === 0 && c.chart[0].ast === 0);
   const noScoring = cards.filter(c => c.chart.length > 1 && c.chart[1].pts === 0);
   // Tier 2 is meant to READ differently from tier 1 — "they don't score", not
   // "nothing happens". Where the bottom decile's rebounds and assists both
   // round to zero it cannot, and that is worth counting rather than hiding.
   const alsoBlank = noScoring.filter(c => c.chart[1].reb === 0 && c.chart[1].ast === 0);
-  log(`  blank natural-1 tier    : ${blank.length}/${cards.length}`);
+  log(`  blank tier exactly 1-2  : ${blank.length}/${cards.length}`);
+  log(
+    `  blank tier of any width : ${blankRun.length}/${cards.length}  widths ${histogram(
+      blankRun.map(c => c.chart[0].hi)
+    )
+      .map(([k, v]) => `1-${k}:${v}`)
+      .join(' ')}`
+  );
   log(`  second non-scoring tier : ${noScoring.length}/${cards.length}`);
   log(`    of those, also 0 reb and 0 ast : ${alsoBlank.length}`);
   log(
     `  tiers per card          : ${histogram(cards.map(c => c.chart.length))
       .map(([k, v]) => `${k}:${v}`)
-      .join(' ')}  (printed rows: one fewer)`
+      .join(' ')}  (every tier is printed; the table holds ${MAX_CHART_TIERS})`
   );
+  const tooTall = cards.filter(c => c.chart.length > MAX_CHART_TIERS);
+  if (tooTall.length) {
+    log(`  *** ${tooTall.length} CHARTS ARE TOO TALL TO PRINT: ${tooTall.map(c => c.id).join(', ')}`);
+  }
+  reportChartFit({ cards, targets, log });
   log(`  speed+power sums to budget : ${cards.every(c => c.speed >= 1 && c.power >= 1) ? 'all >= 1 each' : 'CHECK'}`);
   log('');
   reportShooting({ cards, shooting, names, calibration, log });

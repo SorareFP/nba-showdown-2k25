@@ -29,7 +29,7 @@ export default function CropEditor({
   // through to the card; the editor itself never touches it.
   photoExt,
   // The set this card belongs to. The editor never reads it; the card does, to
-  // decide whether its structural blank tier is printed (see visibleTiers).
+  // decide which rows, badge and treatment it prints (see visibleTiers).
   set,
   teamOverrides,
   scale,

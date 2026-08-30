@@ -265,7 +265,7 @@ export const SOURCES = {
   pool: {
     key: 'pool',
     // The SET these records belong to, not a label. CardTemplate reads it to
-    // decide whether the structural blank tier is printed — see hidesBlankTier.
+    // decide whether rows that produce nothing are printed — see hidesEmptyRows.
     set: CURRENT_SET,
     label: `${CURRENT_SET} set · ${POOL_PLAYERS.length} players`,
     sub: STATS_GENERATED

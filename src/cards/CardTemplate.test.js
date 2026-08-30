@@ -28,7 +28,7 @@ import {
   SET_IDS,
   SUPER_SEASON_SET,
 } from './sets.js';
-import { POOL_PLAYERS } from '../studio/players.js';
+import { POOL_PLAYERS, SOURCES } from '../studio/players.js';
 
 const render = props => renderToStaticMarkup(React.createElement(CardTemplate, props));
 
@@ -619,11 +619,24 @@ describe('findShotLineBoundary', () => {
 // the table they read. What stays this file's business is that the card puts
 // the resolved value on --team-accent — see the team theming block above.
 
-describe('visibleTiers — the blank tier is hidden for the set that generates one', () => {
-  /** What the 2026-27 generator emits: a blank 1-2 tier under the real chart. */
+describe('visibleTiers — rows that pay nothing are hidden for the sets that generate them', () => {
+  /**
+   * What the 2026-27 generator emits: a blank 1-2 tier under the real chart.
+   * Its no-scoring tier keeps a rebound AND an assist, so it is NOT empty and
+   * goes on printing — the Gobert case, and the reason this fixture is the one
+   * the arrow tests below are written against.
+   */
   const generated = [
     { lo: 1, hi: 2, pts: 0, reb: 0, ast: 0 },
     { lo: 3, hi: 3, pts: 0, reb: 1, ast: 1 },
+    { lo: 4, hi: 19, pts: 3, reb: 1, ast: 1 },
+    { lo: 20, hi: 99, pts: 5, reb: 2, ast: 2 },
+  ];
+
+  /** The commoner shape: the no-scoring tier's reb and ast round to zero too. */
+  const twoEmpty = [
+    { lo: 1, hi: 2, pts: 0, reb: 0, ast: 0 },
+    { lo: 3, hi: 3, pts: 0, reb: 0, ast: 0 },
     { lo: 4, hi: 19, pts: 3, reb: 1, ast: 1 },
     { lo: 20, hi: 99, pts: 5, reb: 2, ast: 2 },
   ];
@@ -632,6 +645,44 @@ describe('visibleTiers — the blank tier is hidden for the set that generates o
     const shown = visibleTiers(generated, CURRENT_SET);
     expect(shown).toHaveLength(3);
     expect(shown[0]).toMatchObject({ lo: 3, hi: 3 });
+  });
+
+  it('drops a SECOND row when it also pays nothing — Jalen Brunson\'s "3: 0-0-0"', () => {
+    const shown = visibleTiers(twoEmpty, CURRENT_SET);
+    expect(shown).toHaveLength(2);
+    expect(shown[0]).toMatchObject({ lo: 4, hi: 19 });
+  });
+
+  it('KEEPS a no-scoring row that carries a rebound — the Gobert case', () => {
+    // "3-4 | 0 | 1 | 0" is exactly what the no-scoring tier exists for, so it
+    // is not empty and must not be hidden. pts:0 alone is never the test.
+    const gobert = [
+      { lo: 1, hi: 2, pts: 0, reb: 0, ast: 0 },
+      { lo: 3, hi: 4, pts: 0, reb: 1, ast: 0 },
+      { lo: 5, hi: 99, pts: 4, reb: 3, ast: 0 },
+    ];
+    const shown = visibleTiers(gobert, CURRENT_SET);
+    expect(shown).toHaveLength(2);
+    expect(shown[0]).toMatchObject({ lo: 3, hi: 4, reb: 1 });
+    expect(render({ card: { ...LEBRON_08_09, chart: gobert }, set: CURRENT_SET })).toContain('3-4');
+  });
+
+  it('hides a PREFIX, never a row out of the middle', () => {
+    // The justification for hiding an empty row is that every roll below the
+    // lowest PRINTED row implicitly produces nothing. That is only true at the
+    // bottom: dropping an empty row from the middle would leave the printed
+    // ranges with a hole in them and a roll of 6 matching no row at all. No
+    // generated chart has one (864 cards checked, 0 occurrences); if one ever
+    // appears it prints.
+    const holed = [
+      { lo: 1, hi: 2, pts: 0, reb: 0, ast: 0 },
+      { lo: 3, hi: 5, pts: 1, reb: 0, ast: 0 },
+      { lo: 6, hi: 7, pts: 0, reb: 0, ast: 0 },
+      { lo: 8, hi: 99, pts: 2, reb: 1, ast: 1 },
+    ];
+    const shown = visibleTiers(holed, CURRENT_SET);
+    expect(shown).toHaveLength(3);
+    expect(shown.map(t => t.lo)).toEqual([3, 6, 8]);
   });
 
   it('PRINTS the same shape for the finished set, where it is a real row', () => {
@@ -680,6 +731,17 @@ describe('visibleTiers — the blank tier is hidden for the set that generates o
     expect(visibleTiers(only, CURRENT_SET)).toEqual(only);
   });
 
+  it('keeps the LAST row when every row is empty, rather than none', () => {
+    // A chart with no rows at all is not a card. The row it keeps is the top
+    // tier, which is the one a reader would look for.
+    const allEmpty = [
+      { lo: 1, hi: 2, pts: 0, reb: 0, ast: 0 },
+      { lo: 3, hi: 9, pts: 0, reb: 0, ast: 0 },
+      { lo: 10, hi: 99, pts: 0, reb: 0, ast: 0 },
+    ];
+    expect(visibleTiers(allEmpty, CURRENT_SET)).toEqual([{ lo: 10, hi: 99, pts: 0, reb: 0, ast: 0 }]);
+  });
+
   it('degrades to an empty list rather than throwing', () => {
     expect(visibleTiers(undefined, CURRENT_SET)).toEqual([]);
     expect(visibleTiers(null, CURRENT_SET)).toEqual([]);
@@ -704,6 +766,48 @@ describe('visibleTiers — the blank tier is hidden for the set that generates o
     const withArrow = printed.findIndex(r => r.includes('shot-line-arrow'));
     expect(withArrow).toBe(1);
     expect(printed[withArrow]).toContain('4-19');
+  });
+
+  it('puts the arrow on the right printed row with TWO rows hidden', () => {
+    // The same off-by-one, one row deeper. Hiding a second empty row shifts
+    // every index again, so the arrow is only ever right if it is searched on
+    // the same list that gets rendered. Shot line 20 misses on 1..19, and 19 is
+    // the last roll of "4-19", so the arrow rides that row's bottom edge — the
+    // FIRST printed row now that both empty rows are gone.
+    const card = { ...LEBRON_08_09, chart: twoEmpty, shotLine: 20 };
+    expect(findShotLineBoundary(visibleTiers(twoEmpty, CURRENT_SET), 20)).toBe(0);
+    const printed = rows(render({ card, set: CURRENT_SET })).slice(1);
+    expect(printed).toHaveLength(2);
+    const withArrow = printed.findIndex(r => r.includes('shot-line-arrow'));
+    expect(withArrow).toBe(0);
+    expect(printed[withArrow]).toContain('4-19');
+  });
+
+  it('drops the arrow rather than misplacing it when the last miss is hidden', () => {
+    // Two rookie cards (Jay Huff, Jordan Goodwin — both Shot Line 18, both
+    // paying nothing at all below roll 18) now have their last-miss row hidden.
+    // The rule the arrow would sit on is the TABLE'S TOP BORDER, which is a
+    // frame and not a dividing line, so findShotLineBoundary refuses it. A
+    // missing arrow beats a wrong one.
+    const huff = [
+      { lo: 1, hi: 2, pts: 0, reb: 0, ast: 0 },
+      { lo: 3, hi: 17, pts: 0, reb: 0, ast: 0 },
+      { lo: 18, hi: 23, pts: 0, reb: 1, ast: 0 },
+      { lo: 24, hi: 99, pts: 0, reb: 3, ast: 1 },
+    ];
+    expect(findShotLineBoundary(visibleTiers(huff, ROOKIE_SET), 18)).toBe(-1);
+    const html = render({ card: { ...LEBRON_08_09, chart: huff, shotLine: 18 }, set: ROOKIE_SET });
+    expect(html).not.toContain('shot-line-arrow');
+  });
+
+  it('leaves EVERY chart in the finished set exactly as it was printed', () => {
+    // The regression that would be invisible: the generalised rule fires on
+    // "all three numbers are zero" and the finished set has 66 such rows, so
+    // the only thing keeping them on the card is that its set does not hide
+    // them. Asserted over all 306, not just the 66.
+    for (const card of CARDS) {
+      expect(visibleTiers(card.chart, FINISHED_SET), card.name).toBe(card.chart);
+    }
   });
 
   it('still resolves a natural 1 or 2 in the DATA, which is why the tier stays there', () => {
@@ -801,6 +905,22 @@ describe('the chart clears the photo frame', () => {
     expect(worst).toBe(MAX_PRINTED_ROWS); // non-vacuous: the cap is reached
     expect(Math.min(...printed)).toBeGreaterThanOrEqual(2);
     for (const n of printed) expect(paintedBottom()).toBeLessThan(chartTop(n));
+  });
+
+  it('agrees with every chart in BOTH special sets too', () => {
+    // Hiding empty rows freed a row on 697 of the 864 generated cards, so the
+    // tallest chart is the one worth re-checking — and it is still five rows,
+    // because the cards that keep five had nothing empty above the floor.
+    for (const set of [SUPER_SEASON_SET, ROOKIE_SET]) {
+      const players = SOURCES[set].players;
+      if (players.length === 0) continue; // set not generated in this checkout
+      const printed = players.map(p => visibleTiers(p.chart, set).length);
+      expect(Math.max(...printed), set).toBeLessThanOrEqual(MAX_PRINTED_ROWS);
+      // Two rows is the floor the rookie set actually reaches — four cards
+      // whose whole chart above the floor is a single make band.
+      expect(Math.min(...printed), set).toBeGreaterThanOrEqual(2);
+      for (const n of printed) expect(paintedBottom(), `${set} ${n}`).toBeLessThan(chartTop(n));
+    }
   });
 });
 

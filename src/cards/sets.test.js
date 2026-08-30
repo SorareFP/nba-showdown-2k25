@@ -1,7 +1,7 @@
 // The set model, and the one thing it must never do: change how the two sets
 // that already exist behave.
 //
-// `hidesBlankTier` used to be `set === CURRENT_SET`. It is now a lookup in a
+// `hidesEmptyRows` used to be `set === CURRENT_SET`. It is now a lookup in a
 // declared list, which is a strictly more powerful rule and therefore a strictly
 // better place to introduce a silent regression — the 2026-27 set losing its
 // hidden row would push a sixth row into the photo frame on 350 cards, and the
@@ -19,11 +19,13 @@ import {
   SET_IDS,
   SUPER_SEASON_SET,
   getSet,
-  hidesBlankTier,
+  hidesEmptyRows,
   isEditableSet,
   photoUrlPath,
+  setBadge,
   setPaths,
   setTreatment,
+  showsSeason,
 } from './sets.js';
 
 describe('the declared set list', () => {
@@ -46,7 +48,11 @@ describe('the declared set list', () => {
       // the record, not a field somebody forgot.
       expect(set).toHaveProperty('treatment');
       expect(typeof set.editable).toBe('boolean');
-      expect(typeof set.hidesBlankTier).toBe('boolean');
+      expect(typeof set.hidesEmptyRows).toBe('boolean');
+      expect(typeof set.showsSeason).toBe('boolean');
+      // Same rule as `treatment`: null is a decision, undefined is an omission.
+      expect(set, JSON.stringify(set)).toHaveProperty('badge');
+      expect(set.badge === null || typeof set.badge === 'string').toBe(true);
     }
   });
 
@@ -66,26 +72,55 @@ describe('the declared set list', () => {
   });
 });
 
-describe('hidesBlankTier', () => {
-  it('hides the structural row on the set being built — unchanged', () => {
-    expect(hidesBlankTier(CURRENT_SET)).toBe(true);
+describe('hidesEmptyRows', () => {
+  it('hides rows that pay nothing on the set being built — unchanged', () => {
+    expect(hidesEmptyRows(CURRENT_SET)).toBe(true);
   });
 
-  it('PRINTS it on the finished set, where 66 cards really have that row', () => {
-    expect(hidesBlankTier(FINISHED_SET)).toBe(false);
+  it('PRINTS them on the finished set, where 66 cards really have that row', () => {
+    expect(hidesEmptyRows(FINISHED_SET)).toBe(false);
   });
 
-  it('hides it on both special sets, whose charts come out of the same generator', () => {
-    expect(hidesBlankTier(SUPER_SEASON_SET)).toBe(true);
-    expect(hidesBlankTier(ROOKIE_SET)).toBe(true);
+  it('hides them on both special sets, whose charts come out of the same generator', () => {
+    expect(hidesEmptyRows(SUPER_SEASON_SET)).toBe(true);
+    expect(hidesEmptyRows(ROOKIE_SET)).toBe(true);
   });
 
   it('prints everything for an unknown set — the fail-loud default', () => {
     // An unprinted row that should have shown is invisible; an extra row
     // overflows the chart into the photo frame and trips a test.
-    expect(hidesBlankTier('who-knows')).toBe(false);
-    expect(hidesBlankTier(undefined)).toBe(false);
-    expect(hidesBlankTier('constructor')).toBe(false);
+    expect(hidesEmptyRows('who-knows')).toBe(false);
+    expect(hidesEmptyRows(undefined)).toBe(false);
+    expect(hidesEmptyRows('constructor')).toBe(false);
+  });
+});
+
+describe('showsSeason and setBadge', () => {
+  it('names the season on the two sets that cut across seasons', () => {
+    expect(showsSeason(SUPER_SEASON_SET)).toBe(true);
+    expect(showsSeason(ROOKIE_SET)).toBe(true);
+  });
+
+  it('leaves BOTH season sets alone', () => {
+    // The base set IS this season, so a season line would be noise. The
+    // finished set draws its legend cards' seasons in the hand-made art, so a
+    // template-drawn one would print a second season over the top of it.
+    expect(showsSeason(CURRENT_SET)).toBe(false);
+    expect(showsSeason(FINISHED_SET)).toBe(false);
+    expect(setBadge(CURRENT_SET)).toBeNull();
+    expect(setBadge(FINISHED_SET)).toBeNull();
+  });
+
+  it('badges the two special sets with the card type', () => {
+    expect(setBadge(SUPER_SEASON_SET)).toBe('SUPER SEASON');
+    expect(setBadge(ROOKIE_SET)).toBe('ROOKIE');
+  });
+
+  it('says no for an unknown set rather than throwing', () => {
+    expect(showsSeason('who-knows')).toBe(false);
+    expect(showsSeason(undefined)).toBe(false);
+    expect(setBadge('who-knows')).toBeNull();
+    expect(setBadge('constructor')).toBeNull();
   });
 });
 

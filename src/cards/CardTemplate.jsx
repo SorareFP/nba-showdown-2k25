@@ -14,7 +14,7 @@
 // the studio has to stay usable while the data is half-built.
 import { useState } from 'react';
 import { getThemedTeam, resolveAccent } from './teams.js';
-import { hidesBlankTier, setTreatment } from './sets.js';
+import { hidesEmptyRows, setBadge, setTreatment, showsSeason } from './sets.js';
 import { deriveFieldTheme, fieldThemeVars } from './fieldTheme.js';
 import { applyTreatment, treatmentVars } from './treatments.js';
 import { resolvePhotoUrl, cropToStyle } from './photo.js';
@@ -51,35 +51,61 @@ export function formatRollRange(tier) {
  * from the chart starting at 3, and the table only has room for five rows. The
  * user's call, in their own words: "We could even leave the lowest band off the
  * card and start the no-scoring band at 2 or whatever we decide should be the
- * case, just in order to save room." So it is dropped here, and the row it
- * gives back goes to the no-scoring tier above it.
+ * case, just in order to save room."
+ *
+ * ── AND THE SAME IS TRUE OF ANY OTHER ROW THAT PAYS NOTHING ─────────────────
+ *
+ * The tier above the floor is the NO-SCORING tier: `pts: 0` with reb and ast
+ * carried over from the player's real bottom decile. On most of the pool those
+ * two also round to zero, so the card printed a SECOND row saying nothing —
+ * "like Jalen Brunson's 'Roll: 3 - 0-0-0' Line", in the user's words. Same
+ * argument, so same answer: an all-zero row is dropped too. A row that carries
+ * something — Rudy Gobert's "3-4 | 0 | 1 | 0" — is not empty, and goes on
+ * printing; that rebound is the entire reason the no-scoring tier exists.
+ *
+ * A PREFIX, NOT A FILTER, and that is a real distinction rather than an
+ * implementation detail. The justification above is "every roll below the
+ * lowest printed row implicitly produces nothing", which is only true of rows
+ * at the BOTTOM. Dropping an all-zero row from the middle would leave the
+ * printed ranges with a hole in them — "3-5" followed by "8+", and a roll of 6
+ * matching no row at all — which is worse than the redundant ink it saves. So
+ * the leading run is dropped and anything above it is printed as-is. No chart
+ * in any of the three generated sets has an all-zero row anywhere but the
+ * bottom (checked: 864 cards, 0 occurrences), so today the two rules print
+ * identically; this one stays correct if that ever stops being true.
  *
  * GATED ON THE SET, NOT ON THE TIER'S SHAPE, and that is the whole point. 66 of
  * the finished 2025-26 cards print "1-2: 0,0,0" as a genuine hand-made bottom
  * row, and the reference set exists so the template can be judged against the
  * cards as they were really printed. The two are the same three numbers over
  * the same two rolls, so no shape match can separate them — hiding by shape
- * would silently delete a row from all 66. See hidesBlankTier in sets.js.
+ * would silently delete a row from all 66. See hidesEmptyRows in sets.js.
  *
  * The last remaining tier is never dropped: a chart with no rows at all is not
  * a card, and "chart not generated" is what the empty case is for.
  */
 export function visibleTiers(chart, set) {
   if (!Array.isArray(chart)) return [];
-  const hide = chart.length > 1 && hidesBlankTier(set) && isBlankTier(chart[0]);
-  return hide ? chart.slice(1) : chart;
+  if (!hidesEmptyRows(set)) return chart;
+  let first = 0;
+  // `chart.length - 1` is the floor, not `chart.length`: a chart whose every
+  // tier is empty still has to render one row.
+  while (first < chart.length - 1 && isEmptyTier(chart[first])) first += 1;
+  return first === 0 ? chart : chart.slice(first);
 }
 
 /**
- * The structural blank tier the generator prepends. Kept in sync with
- * zeroFloor.js's isBlankTier, but deliberately looser about WIDTH: the merge
- * can fold an equally blank no-scoring tier into it, so the floor reaches roll
- * 3 on some cards and roll 4 on a few (low-usage players whose bottom deciles
- * genuinely all round to zero). What identifies it is that it starts at roll 1
- * and produces nothing — never its width.
+ * A tier that produces nothing at all.
+ *
+ * Deliberately says nothing about WHERE the tier sits or how WIDE it is. The
+ * structural floor zeroFloor.js prepends reaches roll 2 on most cards, roll 3
+ * on many and roll 4 on a few (the merge folds an equally blank no-scoring tier
+ * into it for low-usage players), and the no-scoring tier above it is a
+ * different row with the same emptiness. What they have in common — the only
+ * thing that matters here — is that rolling into one pays the player nothing.
  */
-function isBlankTier(tier) {
-  return !!tier && tier.lo === 1 && tier.pts === 0 && tier.reb === 0 && tier.ast === 0;
+function isEmptyTier(tier) {
+  return !!tier && tier.pts === 0 && tier.reb === 0 && tier.ast === 0;
 }
 
 /**
@@ -181,8 +207,11 @@ export default function CardTemplate({
   card = {},
   crop,
   hasPhoto = false,
-  // WHICH SET this card belongs to. Decides whether the structural blank tier
-  // is printed — see visibleTiers. Left undefined, every tier prints, which is
+  // WHICH SET this card belongs to. Decides three things, all of them set-level
+  // rules rather than card-level ones: whether a row that produces nothing is
+  // printed (visibleTiers), whether the season and the card-type badge are
+  // (showsSeason / setBadge in sets.js), and which visual treatment the palette
+  // is run through (treatments.js). Left undefined, every tier prints, which is
   // correct for the finished set and fails loudly (a sixth row, over the photo)
   // rather than quietly for the set being built.
   set,

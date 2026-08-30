@@ -44,8 +44,8 @@ import { pathToFileURL } from 'node:url';
 import { readCache, REPO_ROOT } from './cache.js';
 import { normalizeName } from './resolveTeams.js';
 import { computeStatBands } from './bands.js';
-import { reconcileBands } from './generate.js';
-import { enforceZeroFloor } from './zeroFloor.js';
+import { reconcileBands, shapeChart } from './generate.js';
+import { isBlankTier } from './zeroFloor.js';
 import { applyOverrides } from './overrides.js';
 import * as V from './variance.js';
 import * as A from './attributes.js';
@@ -158,7 +158,7 @@ export function buildCard({ player, rate, speedPowerTotal, calibration, pool }) 
     });
     bands[stat] = computeStatBands(games, stat);
   }
-  const chart = enforceZeroFloor(reconcileBands(bands));
+  const chart = shapeChart(reconcileBands(bands));
 
   const card = {
     id: playerIdFromName(player.name),
@@ -328,12 +328,20 @@ export function main({ log = console.log } = {}) {
     const s = summarize(cards.map(c => Number(expectedValuePerRoll(c.chart, stat).toFixed(2))));
     log(`  ${stat}  min ${s.min}  median ${s.median}  p90 ${s.p90}  max ${s.max}  mean ${s.mean}`);
   }
-  const zeroFloor = cards.filter(c => c.chart[0].pts === 0 && c.chart[0].reb === 0 && c.chart[0].ast === 0);
-  const twoZero = cards.filter(
-    c => c.chart.length > 1 && c.chart[1].pts === 0 && c.chart[1].reb === 0 && c.chart[1].ast === 0
+  const blank = cards.filter(c => isBlankTier(c.chart[0]));
+  const noScoring = cards.filter(c => c.chart.length > 1 && c.chart[1].pts === 0);
+  // Tier 2 is meant to READ differently from tier 1 — "they don't score", not
+  // "nothing happens". Where the bottom decile's rebounds and assists both
+  // round to zero it cannot, and that is worth counting rather than hiding.
+  const alsoBlank = noScoring.filter(c => c.chart[1].reb === 0 && c.chart[1].ast === 0);
+  log(`  blank natural-1 tier    : ${blank.length}/${cards.length}`);
+  log(`  second non-scoring tier : ${noScoring.length}/${cards.length}`);
+  log(`    of those, also 0 reb and 0 ast : ${alsoBlank.length}`);
+  log(
+    `  tiers per card          : ${histogram(cards.map(c => c.chart.length))
+      .map(([k, v]) => `${k}:${v}`)
+      .join(' ')}  (printed rows: one fewer)`
   );
-  log(`  zero floor on natural 1 : ${zeroFloor.length}/${cards.length}`);
-  log(`  second non-scoring tier : ${twoZero.length}/${cards.length}`);
   log(`  speed+power sums to budget : ${cards.every(c => c.speed >= 1 && c.power >= 1) ? 'all >= 1 each' : 'CHECK'}`);
   return payload;
 }

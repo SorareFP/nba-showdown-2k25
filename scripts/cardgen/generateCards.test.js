@@ -111,15 +111,54 @@ describe('buildCard', () => {
 
   // The hard floor from design doc section 3: a natural 1 is unconditionally
   // 0/0/0, for every card, no exceptions.
-  it('always zeroes the natural-1 tier', () => {
+  it('puts a blank natural-1 tier under every card, however good the player', () => {
     for (const pts100 of [8, 20, 36]) {
-      expect(card({}, { pts100 }).chart[0]).toMatchObject({ lo: 1, pts: 0, reb: 0, ast: 0 });
+      // lo AND hi are both 1: "a natural 1", not "the bottom band". This is
+      // the tier the card does not print (see visibleTiers in CardTemplate).
+      expect(card({}, { pts100 }).chart[0]).toMatchObject({
+        lo: 1,
+        hi: 1,
+        pts: 0,
+        reb: 0,
+        ast: 0,
+      });
     }
   });
 
-  it('lays five tiers over a contiguous roll range with an open top', () => {
+  it('gives every card a SECOND, no-scoring tier above the blank one', () => {
+    // The founding requirement: "at least a natural 1 result in 0pts, 0reb,
+    // 0ast, and then a second tier where they don't score". Two tiers, and the
+    // second one is different — it scores nothing but may still rebound and
+    // assist, which is the only thing distinguishing it from the first.
+    for (const pts100 of [8, 20, 36]) {
+      const { chart } = card({}, { pts100 });
+      expect(chart[1].lo).toBe(2);
+      expect(chart[1].pts).toBe(0);
+      // Deliberately NOT asserting that tier 2 scores. A weak enough scorer
+      // legitimately rounds a third band to zero points as well, and the top
+      // of the chart is left to the statistics — the floor guarantees a
+      // minimum of two non-scoring tiers, not a maximum.
+    }
+  });
+
+  it('keeps rebounds and assists on the no-scoring tier rather than blanking them', () => {
+    // A rebounder who never shot on the possession is the case this exists
+    // for. Zeroing reb/ast here would make tier 2 a copy of tier 1.
+    const { chart } = card({}, { orb100: 8, drb100: 22, ast100: 14 });
+    expect(chart[1].pts).toBe(0);
+    expect(chart[1].reb).toBeGreaterThan(0);
+    expect(chart[1].ast).toBeGreaterThan(0);
+    // And that is what makes it a DIFFERENT row from the blank one below it.
+    expect(chart[1]).not.toMatchObject({ reb: chart[0].reb, ast: chart[0].ast });
+  });
+
+  it('lays a contiguous roll range with an open top over at most six tiers', () => {
+    // NOT exactly five any more. Adjacent tiers whose three printed numbers
+    // are identical after rounding are merged (see shapeChart), so the count
+    // varies with the player: two floor tiers plus up to four scoring ones.
     const { chart } = card();
-    expect(chart).toHaveLength(5);
+    expect(chart.length).toBeGreaterThanOrEqual(2);
+    expect(chart.length).toBeLessThanOrEqual(6);
     expect(chart[0].lo).toBe(1);
     for (let i = 1; i < chart.length; i += 1) {
       expect(chart[i].lo).toBe(chart[i - 1].hi + 1);
@@ -168,7 +207,13 @@ describe('buildCard', () => {
       pool: poolCtx([{ player: p, rate: {} }]),
     });
     expect(c.speed + c.power).toBe(12);
-    expect(c.chart).toHaveLength(5);
+    // A player with nothing to say collapses to the fewest tiers the shape
+    // allows — the blank natural 1 and one flat band — rather than five
+    // identical rows. That IS the merge working, not a degenerate card.
+    expect(c.chart.length).toBeGreaterThanOrEqual(2);
+    expect(c.chart.length).toBeLessThanOrEqual(6);
+    expect(c.chart[0]).toMatchObject({ lo: 1, hi: 1, pts: 0, reb: 0, ast: 0 });
+    expect(c.chart[c.chart.length - 1].hi).toBe(99);
     expect(Number.isFinite(c.salary)).toBe(true);
   });
 
@@ -309,9 +354,25 @@ describe('the committed cards-2026-27.json', () => {
       expect(c.shotLine, c.name).toBeGreaterThanOrEqual(12);
       expect(c.shotLine, c.name).toBeLessThanOrEqual(18);
       expect(c.salary, c.name).toBeGreaterThanOrEqual(10);
-      expect(c.chart, c.name).toHaveLength(5);
-      expect(c.chart[0], c.name).toMatchObject({ pts: 0, reb: 0, ast: 0 });
-      expect(c.chart[4].hi, c.name).toBe(99);
+      // Between two and six: the blank natural-1 tier, the no-scoring tier,
+      // and up to four scoring bands. Fixed at five before the merge landed.
+      expect(c.chart.length, c.name).toBeGreaterThanOrEqual(2);
+      expect(c.chart.length, c.name).toBeLessThanOrEqual(6);
+      expect(c.chart[0], c.name).toMatchObject({ lo: 1, hi: 1, pts: 0, reb: 0, ast: 0 });
+      expect(c.chart[1].lo, c.name).toBe(2);
+      expect(c.chart[1].pts, c.name).toBe(0);
+      expect(c.chart.at(-1).hi, c.name).toBe(99);
+      // Contiguous: every roll from 1 to 20 resolves against exactly one tier.
+      for (let i = 1; i < c.chart.length; i += 1) {
+        expect(c.chart[i].lo, c.name).toBe(c.chart[i - 1].hi + 1);
+      }
+      // No two printed rows say the same three numbers — that is the merge.
+      for (let i = 2; i < c.chart.length; i += 1) {
+        const prev = c.chart[i - 1];
+        const same =
+          c.chart[i].pts === prev.pts && c.chart[i].reb === prev.reb && c.chart[i].ast === prev.ast;
+        expect(same, `${c.name} tiers ${i - 1}/${i} print identically`).toBe(false);
+      }
     }
   });
 });

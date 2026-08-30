@@ -16,11 +16,13 @@ import CardTemplate, {
   findShotLineBoundary,
   nameFontSize,
   logoSrc,
+  leagueMarkFallbackClass,
   LEAGUE_LOGO,
+  LEAGUE_LOGOS,
   visibleTiers,
 } from './CardTemplate.jsx';
 import { CARDS } from '../game/cards.js';
-import { TEAMS, HISTORICAL_TEAMS, resolveAccent } from './teams.js';
+import { TEAMS, HISTORICAL_TEAMS, WNBA_TEAMS, resolveAccent } from './teams.js';
 import { deriveFieldTheme } from './fieldTheme.js';
 import { GOLD, applyTreatment } from './treatments.js';
 import {
@@ -37,6 +39,9 @@ import {
   SETS,
   SET_IDS,
   SUPER_SEASON_SET,
+  WNBA_SET,
+  setLeague,
+  showsSeason,
 } from './sets.js';
 import { POOL_PLAYERS, SOURCES } from '../studio/players.js';
 
@@ -597,6 +602,110 @@ describe('league mark', () => {
     // It is the LEAGUE's mark — it does not depend on team resolution.
     const html = render({ card: { name: 'X' } });
     expect(html).toContain(`src="${logoSrc(LEAGUE_LOGO)}"`);
+  });
+
+  it('draws the WNBA mark, and never the NBA one, on a WNBA card', () => {
+    // An NBA mark on a WNBA card would be a factual error printed on the face
+    // of it — the same argument that keeps Kevin Durant's rookie card on SEA.
+    const html = render({ card: { name: 'X', team: 'MIN' }, set: WNBA_SET });
+    expect(LEAGUE_LOGOS.WNBA).toBe('/logos/WNBA/WNBA.png');
+    expect(html).toContain(`src="${logoSrc(LEAGUE_LOGOS.WNBA)}"`);
+    expect(html).toContain('alt="WNBA"');
+    // The NBA file, not merely the letters "NBA" — which "WNBA" contains.
+    expect(html).not.toContain(logoSrc(LEAGUE_LOGO));
+    // And it is a real <img>, not the lettered stand-in.
+    expect(html).toMatch(/<img[^>]*leagueMark/);
+  });
+
+  it('gives the four-letter fallback a class narrow enough for the 28px box', () => {
+    // The box is measured off the printed art for three letters. A fourth at
+    // the same size runs off the band's left edge.
+    //
+    // Asserted on the helper rather than on rendered markup because the
+    // fallback is no longer REACHABLE from a render: both declared leagues have
+    // a mark file now, so the only route to it is an <img> that fails to load,
+    // which renderToStaticMarkup cannot produce. The rule still governs what
+    // gets drawn when a file goes missing, so it is still pinned.
+    expect(leagueMarkFallbackClass('WNBA')).toMatch(/leagueMarkFallbackWide/);
+    expect(leagueMarkFallbackClass('NBA')).not.toMatch(/leagueMarkFallbackWide/);
+    // Neither card renders it today, which is the point of the two above.
+    expect(render({ card: { name: 'X' }, set: WNBA_SET })).not.toMatch(/leagueMarkFallback/);
+    expect(render({ card: { name: 'X' }, set: CURRENT_SET })).not.toMatch(/leagueMarkFallback/);
+  });
+
+  it('keeps every pre-existing set on the NBA mark without either being edited', () => {
+    for (const id of SET_IDS.filter(i => i !== WNBA_SET)) {
+      expect(setLeague(id)).toBe('NBA');
+      expect(LEAGUE_LOGOS[setLeague(id)]).toBe(LEAGUE_LOGO);
+    }
+    expect(setLeague(WNBA_SET)).toBe('WNBA');
+  });
+});
+
+describe('a WNBA card', () => {
+  const COLLIER = {
+    id: 'Napheesa_Collier',
+    name: 'Napheesa Collier',
+    team: 'MIN',
+    pos: 'F',
+    speed: 14,
+    power: 14,
+    shotLine: 14,
+    paintBoost: 0,
+    threePtBoost: 2,
+    defBoost: 2,
+    salary: 1270,
+    seasonLabel: '2025+2026',
+    chart: [
+      { lo: 1, hi: 2, pts: 0, reb: 0, ast: 0 },
+      { lo: 3, hi: 5, pts: 0, reb: 1, ast: 0 },
+      { lo: 6, hi: 13, pts: 2, reb: 1, ast: 0 },
+      { lo: 14, hi: 20, pts: 3, reb: 1, ast: 1 },
+      { lo: 21, hi: 99, pts: 4, reb: 2, ast: 1 },
+    ],
+  };
+
+  it('themes from the WNBA table, not from the NBA team sharing the code', () => {
+    const html = render({ card: COLLIER, set: WNBA_SET });
+    // Minnesota Lynx blue, not Minnesota Timberwolves blue — different hexes,
+    // and the failure this guards is a card that looks perfectly fine.
+    expect(html.toLowerCase()).not.toContain(TEAMS.MIN.primary.toLowerCase());
+    expect(html.toLowerCase()).toContain(WNBA_TEAMS.MIN.primary.toLowerCase());
+  });
+
+  it('renders the real team mark out of the WNBA\'s OWN logo directory', () => {
+    const html = render({ card: COLLIER, set: WNBA_SET });
+    expect(html).toContain(`src="${logoSrc('/logos/WNBA/MIN.png')}"`);
+    // The Lynx, named as the Lynx. And NOT public/logos/MIN.png, which is the
+    // Timberwolves' file — the directory is the whole defence against nine
+    // abbreviations that mean a different franchise in each league, and a card
+    // that picked up the wrong one would look completely fine.
+    expect(html).toContain('alt="Lynx"');
+    expect(html).not.toMatch(/src="[^"]*\/logos\/MIN\.png"/);
+    // No lettered circle: the file exists, so the degraded path is not taken.
+    expect(html).not.toMatch(/logoFallback/);
+  });
+
+  it('prints NO season, exactly like the current-season set it is', () => {
+    // A USER DECISION, recorded as `showsSeason: false` in sets.js. The season
+    // text belongs to the Super Season and Rookie sets, where WHICH season a
+    // card represents is the point of the card. This is a current-season set,
+    // so it prints like 2026-27: no season, no badge.
+    const html = render({ card: COLLIER, set: WNBA_SET });
+    expect(showsSeason(WNBA_SET)).toBe(false);
+    expect(html).not.toContain('2025+2026');
+    // The DATA still carries it — this is a print rule, not a data one, and the
+    // generated cards keep `seasonLabel` for anything that wants to report it.
+    expect(COLLIER.seasonLabel).toBe('2025+2026');
+  });
+
+  it('hides the structural blank tier, like every other generated set', () => {
+    expect(visibleTiers(COLLIER.chart, WNBA_SET)).toHaveLength(4);
+  });
+
+  it('carries no card-type badge — the league mark already says WNBA', () => {
+    const html = render({ card: COLLIER, set: WNBA_SET });
+    expect(html).not.toMatch(/class="[^"]*badge/);
   });
 });
 

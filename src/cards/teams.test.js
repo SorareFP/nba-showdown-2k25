@@ -2,14 +2,20 @@ import { describe, it, expect } from 'vitest';
 import {
   TEAMS,
   TEAM_ALIASES,
+  HISTORICAL_TEAMS,
+  WNBA_TEAMS,
   ACCENT_FALLBACK,
   canonicalTeam,
+  canonicalTeamFor,
   getTeam,
   getThemedTeam,
+  getWnbaTeam,
+  leagueTeamCount,
   pickAccent,
   resolveAccent,
 } from './teams.js';
 import pool from '../../card-data/generated/player-pool-2026.json';
+import wnbaPool from '../../card-data/generated/wnba-pool-2026.json';
 
 describe('TEAMS', () => {
   it('has all 30 NBA teams', () => {
@@ -266,5 +272,196 @@ describe('resolveAccent', () => {
   it('survives a missing team rather than throwing', () => {
     expect(resolveAccent(undefined)).toBe(ACCENT_FALLBACK);
     expect(resolveAccent({})).toBe(ACCENT_FALLBACK);
+  });
+});
+
+
+describe('WNBA_TEAMS', () => {
+  it('holds the fifteen franchises that played the 2026 season', () => {
+    // FIFTEEN, not thirteen: Golden State joined in 2025, Portland and Toronto
+    // in 2026. A table written from a 2024 memory would leave every Fire and
+    // Tempo player on the neutral fallback.
+    expect(Object.keys(WNBA_TEAMS)).toHaveLength(15);
+    expect(Object.keys(WNBA_TEAMS)).toEqual(expect.arrayContaining(['GSV', 'POR', 'TOR']));
+  });
+
+  it('gives every team a name, a city and two colours', () => {
+    for (const [abbr, team] of Object.entries(WNBA_TEAMS)) {
+      expect(team.name, abbr).toBeTruthy();
+      expect(team.city, abbr).toBeTruthy();
+      expect(team.primary, abbr).toMatch(/^#[0-9A-Fa-f]{6}$/);
+      expect(team.secondary, abbr).toMatch(/^#[0-9A-Fa-f]{6}$/);
+      expect(team.league, abbr).toBe('WNBA');
+    }
+  });
+
+  /**
+   * TruColor's WNBA page, read on 2026-08-30, franchise by franchise.
+   *
+   * Colours #1 and #2 of each franchise's CURRENT era — the "through present"
+   * block, which is the first one the page lists — under the same mechanical
+   * rule the NBA table above was corrected with. Transcribed here rather than
+   * left implicit in teams.js so the source and the table are two independent
+   * statements that have to agree, which is the only way this test can catch a
+   * hex being "improved" by hand later.
+   *
+   *   https://www.trucolor.net/portfolio/womens-national-basketball-association-official-colors-1997-through-present/
+   *
+   * Three of these are on an era that did not exist a season ago and that
+   * recall would get wrong: Phoenix REBRANDED for 2026 (purple/orange, over the
+   * 2015-2025 identity), and Portland and Toronto are 2026 expansion clubs with
+   * no prior identity at all — Portland's is PINK, not the red a guess reaches
+   * for. Note also that the page carries a SECOND, defunct "Portland Fire
+   * (2000 through 2002)"; only the current-era block counts.
+   */
+  const TRUCOLOR = {
+    ATL: ['#C8102E', '#373A36'], // Red, Dark Gray                 (2020-present)
+    CHI: ['#418FDE', '#FFCD00'], // Sky Blue, Radiant Yellow       (2019-present)
+    CON: ['#FC4C02', '#0C2340'], // Orange, Navy                   (2021-present)
+    DAL: ['#C4D600', '#0C2340'], // Lime Green, Navy               (2021-present)
+    GSV: ['#010101', '#AD96DC'], // Black, Valkyrie Violet         (2025-present)
+    IND: ['#041E42', '#C8102E'], // Navy, Red                      (2019-present)
+    LAS: ['#702F8A', '#FFC72C'], // Purple, Gold                   (2021-present)
+    LVA: ['#010101', '#A7A8A9'], // Black, Silver                  (2024-present)
+    MIN: ['#236192', '#0C2340'], // Lake Blue, Midnight Blue       (2018-present)
+    NYL: ['#010101', '#6ECEB2'], // Black, Seafoam Green           (2020-present)
+    PHO: ['#582C83', '#FC4C02'], // Purple, Orange                 (2026-present)
+    POR: ['#E93CAC', '#C8102E'], // Pink, Red                      (2026-present)
+    SEA: ['#2C5234', '#FBE122'], // Storm Green, Lightning Yellow  (2021-present)
+    TOR: ['#612C51', '#B8CCEA'], // Bordeaux, Hydrogen Blue        (2026-present)
+    WAS: ['#C8102E', '#0C2340'], // Red, Navy                      (2011-present)
+  };
+
+  it('takes every colour off TruColor, the same authority the NBA table uses', () => {
+    // The NBA table was read off the authority the user chose; so is this one,
+    // off that page's WNBA counterpart. The rule is mechanical on purpose —
+    // official colours #1 and #2 of the current era, no judgement on top — so
+    // that a surprising result is visibly the rule's answer rather than
+    // somebody's taste.
+    expect(Object.keys(TRUCOLOR).sort()).toEqual(Object.keys(WNBA_TEAMS).sort());
+    for (const [abbr, [primary, secondary]] of Object.entries(TRUCOLOR)) {
+      expect(WNBA_TEAMS[abbr].primary, abbr).toBe(primary);
+      expect(WNBA_TEAMS[abbr].secondary, abbr).toBe(secondary);
+    }
+  });
+
+  it('carries no unverified flag, unlike the historical NBA franchises', () => {
+    // HISTORICAL_TEAMS is flagged because nothing checked it. These were
+    // checked, so the absence of the flag is a claim — and a row that quietly
+    // gained one would be a row somebody stopped standing behind.
+    for (const [abbr, team] of Object.entries(WNBA_TEAMS)) {
+      expect(team.unverifiedColors, abbr).toBeUndefined();
+    }
+    expect(HISTORICAL_TEAMS.SEA.unverifiedColors).toBe(true);
+  });
+
+  it('points every team at a logo file inside the WNBA\'s own directory', () => {
+    // public/logos/ is a FLAT directory of NBA marks and nine of these
+    // abbreviations mean an NBA franchise there. The subdirectory is what stops
+    // a WNBA "PHO" from silently resolving to the Phoenix Suns' file — which
+    // would not 404, and would look completely fine on the card.
+    // logoFiles.test.js checks the files themselves exist and are usable.
+    //
+    // The file is {abbr}.png for fourteen of the fifteen. Connecticut is
+    // CONN.png because "CON" is a reserved Windows device name and git cannot
+    // index a file called CON.png at all — see RESERVED_DEVICE_NAMES in
+    // teams.js, and the test that refuses a new one in logoFiles.test.js.
+    for (const [abbr, team] of Object.entries(WNBA_TEAMS)) {
+      const expected = abbr === 'CON' ? 'CONN' : abbr;
+      expect(team.logo, abbr).toBe(`/logos/WNBA/${expected}.png`);
+    }
+  });
+
+  it('stays out of TEAMS, which logoFiles.test.js requires a real file for', () => {
+    for (const abbr of Object.keys(WNBA_TEAMS)) {
+      const collides = Object.hasOwn(TEAMS, abbr);
+      // Nine DO collide by abbreviation — that is exactly why they are a
+      // separate table rather than extra rows.
+      if (collides) expect(TEAMS[abbr].name).not.toBe(WNBA_TEAMS[abbr].name);
+    }
+    expect(Object.keys(TEAMS)).toHaveLength(30);
+  });
+});
+
+describe('getTeam with a league', () => {
+  it('answers with the WNBA franchise, not the NBA one that shares the code', () => {
+    // The failure this prevents: an Atlanta Dream card themed as the Hawks.
+    expect(getTeam('ATL', { league: 'WNBA' }).name).toBe('Dream');
+    expect(getTeam('ATL').name).toBe('Hawks');
+    expect(getTeam('PHO', { league: 'WNBA' }).name).toBe('Mercury');
+    expect(getTeam('SEA', { league: 'WNBA' }).name).toBe('Storm');
+    // SEA in the NBA table is the defunct SuperSonics, a different franchise.
+    expect(getTeam('SEA').name).toBe('SuperSonics');
+  });
+
+  it('never falls through to an NBA team for an unknown WNBA code', () => {
+    // Falling through would print the Boston Celtics on a card whose team the
+    // data got wrong — wrong in a way that looks completely fine.
+    expect(getTeam('BOS', { league: 'WNBA' }).name).toBe('Unknown');
+    expect(getWnbaTeam('BOS')).toBeNull();
+  });
+
+  it('leaves every existing caller alone', () => {
+    expect(getTeam('LAL').name).toBe('Lakers');
+    expect(getTeam('BRK').name).toBe('Nets');
+  });
+});
+
+describe('canonicalTeamFor', () => {
+  it('is the key an override is written and read under', () => {
+    // The studio's team editor derives this key to WRITE an override; the card
+    // derives it to READ one. If the two disagreed, tuning a colour on a
+    // Mercury card would save under "PHX" and the card would never show it.
+    expect(canonicalTeamFor('PHO', { league: 'WNBA' })).toBe('PHO');
+    expect(canonicalTeamFor('PHO')).toBe('PHX');
+    const overrides = { PHO: { primary: '#123456' } };
+    expect(getThemedTeam('PHO', overrides, { league: 'WNBA' }).primary).toBe('#123456');
+    // And the NBA path is untouched: the same override keyed the NBA way.
+    expect(getThemedTeam('PHO', { PHX: { primary: '#654321' } }).primary).toBe('#654321');
+  });
+
+  it('uppercases a WNBA code rather than leaving it as typed', () => {
+    expect(canonicalTeamFor('lva', { league: 'WNBA' })).toBe('LVA');
+    expect(canonicalTeamFor(null, { league: 'WNBA' })).toBe('');
+  });
+});
+
+describe('leagueTeamCount', () => {
+  it('is the denominator the team editor prints', () => {
+    // "0 of 30 customised" under a WNBA card was wrong in a way nobody would
+    // report, so the count follows the table the panel is actually editing.
+    expect(leagueTeamCount('WNBA')).toBe(15);
+    expect(leagueTeamCount('NBA')).toBe(30);
+    expect(leagueTeamCount(undefined)).toBe(30);
+  });
+});
+
+describe('getThemedTeam with a league', () => {
+  it('does not run a WNBA code through the NBA alias map', () => {
+    // TEAM_ALIASES maps Basketball-Reference's NBA spellings onto nba.com's.
+    // 'PHO' -> 'PHX' would turn the Phoenix Mercury into the key of the Suns.
+    expect(canonicalTeam('PHO')).toBe('PHX');
+    expect(getThemedTeam('PHO', {}, { league: 'WNBA' }).name).toBe('Mercury');
+  });
+
+  it('applies an override under the WNBA key', () => {
+    const themed = getThemedTeam('MIN', { MIN: { primary: '#123456' } }, { league: 'WNBA' });
+    expect(themed.primary).toBe('#123456');
+    expect(themed.name).toBe('Lynx');
+  });
+});
+
+describe('the WNBA pool against this table', () => {
+  it('resolves every carded player to a real franchise', () => {
+    const unknown = [
+      ...new Set(wnbaPool.map(p => p.team).filter(t => !getWnbaTeam(t))),
+    ];
+    expect(unknown).toEqual([]);
+  });
+
+  it('never leaves a carded player on the TOT aggregate code', () => {
+    // TOT is not a team. A player who moved mid-season is resolved to the
+    // franchise she played the most games for — see resolveDisplayTeams.
+    expect(wnbaPool.filter(p => p.team === 'TOT')).toEqual([]);
   });
 });

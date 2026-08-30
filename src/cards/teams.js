@@ -113,6 +113,128 @@ export const HISTORICAL_TEAMS = {
 };
 
 /**
+ * ── THE WNBA ────────────────────────────────────────────────────────────────
+ *
+ * A THIRD TABLE, not rows added to `TEAMS`, and the reason is the same one that
+ * kept HISTORICAL_TEAMS separate: `TEAMS` means "the thirty NBA franchises
+ * playing today". The team-colour editor enumerates it, and logoFiles.test.js
+ * RESOLVES EVERY ROW IN IT AGAINST public/logos/ — a flat directory of NBA
+ * marks — so a WNBA row merged in there would be looked for in the wrong
+ * place, and on the nine colliding abbreviations below it would silently find
+ * the NBA team's file and pass.
+ *
+ * FIFTEEN TEAMS, NOT THIRTEEN. Golden State joined in 2025 and Portland and
+ * Toronto in 2026, so a table written from a 2024 memory is two franchises
+ * short — which would have put every Fire and Tempo player on the neutral grey
+ * fallback. The list below is derived from the teams actually appearing in
+ * Basketball-Reference's 2026 WNBA table, not from recall.
+ *
+ * Keyed by Basketball-Reference's own WNBA abbreviations, which is what the
+ * generated cards carry. Note LVA (not LV), NYL (not NY), GSV, PHO — spelled as
+ * the source spells them, so there is nothing to canonicalize.
+ *
+ * ── THE COLOURS ARE VERIFIED ────────────────────────────────────────────────
+ *
+ * Read off TruColor's WNBA franchise-records page, the counterpart of the NBA
+ * page every hex in `TEAMS` was corrected against:
+ *
+ *   https://www.trucolor.net/portfolio/womens-national-basketball-association-official-colors-1997-through-present/
+ *
+ * SAME MECHANICAL RULE AS THE NBA TABLE: take the franchise's CURRENT era —
+ * the "through present" block, which is the first one the page lists — and use
+ * its official colours #1 and #2 as primary and secondary. No judgement is
+ * applied on top of that ordering, which is the point of having a rule; where
+ * it lands somewhere surprising the row says so rather than being quietly
+ * "fixed". So `unverifiedColors` is absent here, unlike HISTORICAL_TEAMS.
+ *
+ * Three franchises are on a current era that did not exist a season ago and
+ * that recall would get wrong, which is most of the argument for the rule:
+ * PHOENIX REBRANDED FOR 2026 (purple/orange, replacing the 2015-2025
+ * dark-purple and burnt-orange), and Portland and Toronto are 2026 expansion
+ * franchises with no prior identity at all — Portland's is PINK, not the red a
+ * guess would reach for.
+ *
+ * ⚠ PORTLAND FIRE APPEARS TWICE ON THAT PAGE — "(2026 through present)" and a
+ * dead "(2000 through 2002)" franchise of the same name in the same city. Only
+ * the current one is a WNBA team today, and it is the one taken here. Anyone
+ * re-scraping the page must filter on "through present" or they will card the
+ * 2026 Fire in a defunct team's red-and-black.
+ *
+ * ── LOGOS ───────────────────────────────────────────────────────────────────
+ *
+ * Supplied by the user, under public/logos/WNBA/ — their OWN directory, so a
+ * WNBA "PHO" can never collide with the NBA's Phoenix file. A missing file
+ * still degrades to CardTemplate's lettered circle rather than a broken image.
+ *
+ * That directory holds files no row below points at, and they are not
+ * oversights: `CLE.png` (Rockers, folded 2003) and `HOU.gif` (Comets, folded
+ * 2008) are defunct franchises with no 2026 row to attach to, and `TOR Alt.png`
+ * is a second Toronto mark. Nothing resolves `.gif`, and nothing needs to —
+ * every path below is a `.png` that exists. logoFiles.test.js pins both halves
+ * of that so a future Houston row cannot quietly 404.
+ *
+ * ⚠ CONNECTICUT'S FILE IS `CONN.png`, BREAKING THE {abbr}.png RULE, because
+ * Windows will not let it be anything else. `CON` is a RESERVED DOS DEVICE
+ * NAME — the console — and Windows resolves it before the extension, so
+ * `CON.png` names the console rather than a file. Node happens to read it
+ * (libuv opens paths through a route that skips the DOS device table), which is
+ * why it renders perfectly in the dev server, but git cannot: `git add` reports
+ * "No such file or directory" for a file that is plainly sitting there, and a
+ * `git checkout` on Windows could not write it back even if it were committed.
+ * So the file is CONN.png and this row says so. See RESERVED_DEVICE_NAMES.
+ */
+
+/**
+ * Names Windows reserves for devices, which therefore cannot be filenames —
+ * with or without an extension, since the reservation is on the stem.
+ *
+ * Here so logoFiles.test.js can refuse a NEW one rather than leaving the next
+ * person to rediscover it through a `git add` that fails with a message about
+ * a file that is visibly present. AUX and PRN are the ones to watch: neither is
+ * a team code today, and both are three letters.
+ */
+export const RESERVED_DEVICE_NAMES = new Set([
+  'CON', 'PRN', 'AUX', 'NUL',
+  'COM1', 'COM2', 'COM3', 'COM4', 'COM5', 'COM6', 'COM7', 'COM8', 'COM9',
+  'LPT1', 'LPT2', 'LPT3', 'LPT4', 'LPT5', 'LPT6', 'LPT7', 'LPT8', 'LPT9',
+]);
+export const WNBA_TEAMS = {
+  ATL: { name: 'Dream',     city: 'Atlanta',      primary: '#C8102E', secondary: '#373A36', logo: '/logos/WNBA/ATL.png', league: 'WNBA' }, // Red, Dark Gray
+  CHI: { name: 'Sky',       city: 'Chicago',      primary: '#418FDE', secondary: '#FFCD00', logo: '/logos/WNBA/CHI.png', league: 'WNBA' }, // Sky Blue, Radiant Yellow
+  // CONN, not CON — see RESERVED_DEVICE_NAMES below. The one row where the
+  // file's name is not simply the abbreviation, and it is not a style choice.
+  CON: { name: 'Sun',       city: 'Connecticut',  primary: '#FC4C02', secondary: '#0C2340', logo: '/logos/WNBA/CONN.png', league: 'WNBA' }, // Orange, Navy
+  DAL: { name: 'Wings',     city: 'Dallas',       primary: '#C4D600', secondary: '#0C2340', logo: '/logos/WNBA/DAL.png', league: 'WNBA' }, // Lime Green, Navy
+  GSV: { name: 'Valkyries', city: 'Golden State', primary: '#010101', secondary: '#AD96DC', logo: '/logos/WNBA/GSV.png', league: 'WNBA' }, // Black, Valkyrie Violet
+  IND: { name: 'Fever',     city: 'Indiana',      primary: '#041E42', secondary: '#C8102E', logo: '/logos/WNBA/IND.png', league: 'WNBA' }, // Navy, Red
+  LAS: { name: 'Sparks',    city: 'Los Angeles',  primary: '#702F8A', secondary: '#FFC72C', logo: '/logos/WNBA/LAS.png', league: 'WNBA' }, // Purple, Gold
+  LVA: { name: 'Aces',      city: 'Las Vegas',    primary: '#010101', secondary: '#A7A8A9', logo: '/logos/WNBA/LVA.png', league: 'WNBA' }, // Black, Silver
+  MIN: { name: 'Lynx',      city: 'Minnesota',    primary: '#236192', secondary: '#0C2340', logo: '/logos/WNBA/MIN.png', league: 'WNBA' }, // Lake Blue, Midnight Blue
+  NYL: { name: 'Liberty',   city: 'New York',     primary: '#010101', secondary: '#6ECEB2', logo: '/logos/WNBA/NYL.png', league: 'WNBA' }, // Black, Seafoam Green
+  PHO: { name: 'Mercury',   city: 'Phoenix',      primary: '#582C83', secondary: '#FC4C02', logo: '/logos/WNBA/PHO.png', league: 'WNBA' }, // Purple, Orange (2026 rebrand)
+  POR: { name: 'Fire',      city: 'Portland',     primary: '#E93CAC', secondary: '#C8102E', logo: '/logos/WNBA/POR.png', league: 'WNBA' }, // Pink, Red
+  SEA: { name: 'Storm',     city: 'Seattle',      primary: '#2C5234', secondary: '#FBE122', logo: '/logos/WNBA/SEA.png', league: 'WNBA' }, // Storm Green, Lightning Yellow
+  TOR: { name: 'Tempo',     city: 'Toronto',      primary: '#612C51', secondary: '#B8CCEA', logo: '/logos/WNBA/TOR.png', league: 'WNBA' }, // Bordeaux, Hydrogen Blue
+  WAS: { name: 'Mystics',   city: 'Washington',   primary: '#C8102E', secondary: '#0C2340', logo: '/logos/WNBA/WAS.png', league: 'WNBA' }, // Red, Navy
+};
+
+/**
+ * NINE WNBA ABBREVIATIONS COLLIDE WITH NBA ONES — ATL, CHI, DAL, IND, POR, SEA,
+ * TOR, WAS and PHO all mean something in both tables, and in every case a
+ * different franchise. `getTeam('ATL')` cannot answer for both.
+ *
+ * So WNBA lookups are EXPLICIT rather than a fallthrough: `getTeam` never
+ * reaches this table, and a caller who knows it is holding a WNBA card asks for
+ * it by passing the league. That is the same shape as `franchiseForSeason` —
+ * resolve the ambiguity with the one fact that actually distinguishes them,
+ * and never guess.
+ */
+export function getWnbaTeam(abbr) {
+  const key = String(abbr ?? '').toUpperCase();
+  return Object.hasOwn(WNBA_TEAMS, key) ? WNBA_TEAMS[key] : null;
+}
+
+/**
  * The last season (as an END year) Basketball-Reference's "CHA" meant the
  * Bobcats. From 2015 it means nothing — that franchise is "CHO" there — and
  * nba.com's "CHA" is today's Hornets.
@@ -160,6 +282,30 @@ export function canonicalTeam(abbr) {
 }
 
 /**
+ * The key a team is stored and OVERRIDDEN under, once its league is known.
+ *
+ * WNBA codes are NOT canonicalized: TEAM_ALIASES maps Basketball-Reference's
+ * NBA spellings onto nba.com's, and the WNBA table is already keyed the way its
+ * own source spells it. Running "PHO" through the alias map would turn the
+ * Phoenix Mercury into the key of the Phoenix Suns — so a colour tuned on a
+ * Mercury card would be written under "PHX" and never read back.
+ *
+ * A named function rather than a line inside getThemedTeam because the studio's
+ * team editor has to derive the SAME key to write an override the card will
+ * read. Two copies of this rule drifting apart is an override that silently
+ * does nothing.
+ */
+export function canonicalTeamFor(abbr, { league } = {}) {
+  if (league === 'WNBA') return String(abbr ?? '').toUpperCase();
+  return canonicalTeam(abbr);
+}
+
+/** How many franchises a league's table holds — the editor's denominator. */
+export function leagueTeamCount(league) {
+  return league === 'WNBA' ? Object.keys(WNBA_TEAMS).length : Object.keys(TEAMS).length;
+}
+
+/**
  * Neutral theme for anything this table can't identify.
  *
  * This is load-bearing, not defensive padding: 45 players in the 2025-26 pool
@@ -180,7 +326,14 @@ const FALLBACK = { name: 'Unknown', city: '', primary: '#1B2A4A', secondary: '#C
  * collision is resolved by franchiseForSeason before it ever reaches here), so
  * the fallthrough can only ever add teams, never shadow a live one.
  */
-export function getTeam(abbr) {
+export function getTeam(abbr, { league } = {}) {
+  // A LEAGUE, WHEN GIVEN, IS AN EXCLUSIVE ROUTE, not a first guess. Nine
+  // abbreviations mean one franchise in the NBA table and a different one in
+  // the WNBA table, so a WNBA card falling through to `TEAMS` would print the
+  // Atlanta Hawks' colours on an Atlanta Dream card — wrong, and wrong in a way
+  // that looks perfectly fine. An unknown WNBA code gets the neutral fallback,
+  // which is the correct signal, rather than an NBA team's identity.
+  if (league === 'WNBA') return getWnbaTeam(abbr) ?? FALLBACK;
   const key = canonicalTeam(abbr);
   if (Object.hasOwn(TEAMS, key)) return TEAMS[key];
   if (Object.hasOwn(HISTORICAL_TEAMS, key)) return HISTORICAL_TEAMS[key];
@@ -207,9 +360,9 @@ export function getTeam(abbr) {
  * resolveAccent. That is the point of the field: it is normally computed, and
  * an override is how a team stops computing it.
  */
-export function getThemedTeam(abbr, overrides = {}) {
-  const canonical = canonicalTeam(abbr);
-  const base = getTeam(canonical);
+export function getThemedTeam(abbr, overrides = {}, { league } = {}) {
+  const canonical = canonicalTeamFor(abbr, { league });
+  const base = getTeam(canonical, { league });
   const override = overrides?.[canonical];
   if (!override || typeof override !== 'object') return { ...base };
 

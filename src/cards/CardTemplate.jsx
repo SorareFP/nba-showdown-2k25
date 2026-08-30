@@ -14,7 +14,7 @@
 // the studio has to stay usable while the data is half-built.
 import { useState } from 'react';
 import { getThemedTeam, resolveAccent } from './teams.js';
-import { hidesEmptyRows, setBadge, setTreatment, showsSeason } from './sets.js';
+import { hidesEmptyRows, setBadge, setLeague, setTreatment, showsSeason } from './sets.js';
 import { badgeVars, pickBadge } from './badges.js';
 import { deriveFieldTheme, fieldThemeVars } from './fieldTheme.js';
 import { applyTreatment, treatmentVars } from './treatments.js';
@@ -220,7 +220,8 @@ export default function CardTemplate({
   set,
   // The extension the curated photo is stored under. Defaults to .jpg inside
   // resolvePhotoUrl, which is what the studio's own uploads are written as —
-  // only a hand-saved .jpeg/.png/.webp/.avif needs this to be passed.
+  // only a hand-saved file needs this passed. See PHOTO_EXTENSIONS in sets.js
+  // for what the studio serves.
   photoExt,
   teamOverrides,
   // A token that changes when this player's photo file is rewritten, so the
@@ -230,7 +231,11 @@ export default function CardTemplate({
   // far it can be panned. Nothing about the card depends on it.
   onPhotoLoad,
 }) {
-  const team = getThemedTeam(card.team, teamOverrides);
+  // WHICH LEAGUE, which is a SET question like the three below it. Nine team
+  // abbreviations mean different franchises in the two leagues, so the lookup
+  // has to be told rather than left to guess — see getTeam.
+  const league = setLeague(set);
+  const team = getThemedTeam(card.team, teamOverrides, { league });
   // An accent the studio's team editor set wins; otherwise it is computed from
   // the pair. See resolveAccent — Denver is why the override exists.
   const accent = resolveAccent(team);
@@ -308,7 +313,7 @@ export default function CardTemplate({
       {treatment?.sheen && <div className={styles.treatmentSheen} />}
 
       <div className={styles.topBand} />
-      <LeagueMark />
+      <LeagueMark league={league} />
 
       <div className={`${styles.statBlock} ${styles.speedBlock}`}>
         <div className={styles.statLabel}>SPEED</div>
@@ -473,7 +478,43 @@ export function logoSrc(path) {
 export const LEAGUE_LOGO = '/logos/NBA.png';
 
 /**
- * The NBA mark in the card's top-left corner.
+ * The mark for each league a set can belong to.
+ *
+ * LEAGUE_LOGO stays exported and stays the NBA's: logoFiles.test.js asserts
+ * its aspect ratio, and every set that existed before the WNBA arrived resolves
+ * to it through DEFAULT_LEAGUE.
+ */
+export const LEAGUE_LOGOS = {
+  NBA: LEAGUE_LOGO,
+  // Supplied by the user, and kept inside public/logos/WNBA/ alongside that
+  // league's team marks rather than beside NBA.png — the directory is what
+  // separates the two leagues' files everywhere else, and the league mark is
+  // not an exception to that.
+  //
+  // 380x905 (0.42:1), which is the shape .leagueMark's 28x63 box wants; the NBA
+  // file is 0.44:1. logoFiles.test.js holds both to it.
+  WNBA: '/logos/WNBA/WNBA.png',
+};
+
+/**
+ * The class list for the LETTERED league fallback, which is a four-letter
+ * problem and not a three-letter one.
+ *
+ * The box is 28px wide, MEASURED off the printed art for the three letters of
+ * "NBA"; "WNBA" at the same size spills over the band's left edge. Exported
+ * because the fallback is no longer reachable from a render — every declared
+ * league now has a real mark file, so the only way to see it is an <img> that
+ * fails to load at runtime, which static markup cannot produce. The rule it
+ * encodes still has to be pinned, so it is pinned here rather than deleted
+ * along with the render path that used to reach it.
+ */
+export function leagueMarkFallbackClass(league, sheet = styles) {
+  const wide = String(league ?? '').length > 3 ? ` ${sheet.leagueMarkFallbackWide}` : '';
+  return `${sheet.leagueMarkFallback}${wide}`;
+}
+
+/**
+ * The league mark in the card's top-left corner.
  *
  * Position and size are MEASURED off the printed reference art, not chosen:
  * in public/cards/players/08_09_LeBron_James.png the mark's white keyline
@@ -484,14 +525,21 @@ export const LEAGUE_LOGO = '/logos/NBA.png';
  * reason TeamLogo does: a missing file has to look deliberate, and the export
  * must never show a browser broken-image glyph.
  */
-function LeagueMark() {
+function LeagueMark({ league = 'NBA' }) {
   const [failed, setFailed] = useState(false);
-  const src = logoSrc(LEAGUE_LOGO);
+  // `??` would be wrong: a declared league whose mark file is missing stores
+  // null, and `??` would quietly hand it the NBA's — an NBA mark on a WNBA card
+  // is a factual error printed on the face of it, and worse than no mark at
+  // all. Own-property lookup separates "this league has no art" from "this is
+  // not a league I know".
+  const src = logoSrc(
+    Object.hasOwn(LEAGUE_LOGOS, league) ? LEAGUE_LOGOS[league] : LEAGUE_LOGO
+  );
   if (!src || failed) {
-    return <div className={styles.leagueMarkFallback}>NBA</div>;
+    return <div className={leagueMarkFallbackClass(league)}>{league}</div>;
   }
   return (
-    <img src={src} alt="NBA" className={styles.leagueMark} onError={() => setFailed(true)} />
+    <img src={src} alt={league} className={styles.leagueMark} onError={() => setFailed(true)} />
   );
 }
 

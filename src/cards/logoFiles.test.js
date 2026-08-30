@@ -26,10 +26,11 @@
 // floor on quality, not a proof of it — the eye still has to look.
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { describe, it, expect } from 'vitest';
-import { TEAMS } from './teams.js';
-import { LEAGUE_LOGO } from './CardTemplate.jsx';
+import { TEAMS, WNBA_TEAMS, RESERVED_DEVICE_NAMES } from './teams.js';
+import { LEAGUE_LOGO, LEAGUE_LOGOS } from './CardTemplate.jsx';
 
 const LOGO_DIR = new URL('../../public/logos/', import.meta.url);
+const WNBA_LOGO_DIR = new URL('../../public/logos/WNBA/', import.meta.url);
 
 /**
  * A PNG's pixel dimensions, straight out of the IHDR header.
@@ -116,6 +117,111 @@ describe('logo files', () => {
     const file = LEAGUE_LOGO.split('/').pop();
     if (!present.has(file)) return;
     const { width, height } = pngSize(new URL(file, LOGO_DIR));
+    expect(width / height).toBeLessThan(0.6);
+  });
+});
+
+/**
+ * The WNBA's marks live in a SUBDIRECTORY, public/logos/WNBA/, and the flat
+ * suite above cannot see them: it lists `*.png` at the top level, where a
+ * directory named WNBA is not a match.
+ *
+ * Their own describe block rather than extra loops in that one, because the
+ * question they answer is different. For the NBA the files are long settled and
+ * what is at risk is their SHAPE; here the risk is a path in WNBA_TEAMS with no
+ * file behind it, which prints a lettered circle on a card that was supposed to
+ * have a mark and looks like a design decision rather than a missing asset.
+ */
+const wnbaPresent = existsSync(WNBA_LOGO_DIR) ? new Set(readdirSync(WNBA_LOGO_DIR)) : new Set();
+
+/**
+ * Files in that directory that no WNBA_TEAMS row points at, and why each is
+ * allowed to sit there unreferenced.
+ *
+ *   CLE.png      Cleveland Rockers, folded 2003.
+ *   HOU.gif      Houston Comets, folded 2008 — and the ONE non-PNG in the
+ *                directory. It needs neither converting nor an
+ *                extension-tolerant resolver, because no franchise row points
+ *                at it: the WNBA has not had a Houston team since 2008. If one
+ *                is ever added, this list is where the omission surfaces.
+ *   TOR Alt.png  A second Toronto mark; TOR.png is the one in use.
+ *   WNBA.png     The LEAGUE mark, not a team's. Checked below.
+ *   CON.png      A LOCAL LEFTOVER, and the reason this list is a permitted set
+ *                rather than an exact one. `CON` is a reserved Windows device
+ *                name, so git cannot index that file and it is not in the
+ *                repository — CONN.png is. It is harmless where it exists and
+ *                absent on a fresh clone, so the assertion has to tolerate
+ *                both. Safe to delete.
+ */
+const UNREFERENCED = new Set(['CLE.png', 'HOU.gif', 'TOR Alt.png', 'WNBA.png', 'CON.png']);
+
+describe('WNBA logo files', () => {
+  it('has a real PNG behind every franchise in the table', () => {
+    const missing = [];
+    for (const [abbr, team] of Object.entries(WNBA_TEAMS)) {
+      const file = team.logo?.split('/').pop();
+      if (!file || !wnbaPresent.has(file)) {
+        missing.push(`${abbr} -> ${team.logo}`);
+        continue;
+      }
+      const size = pngSize(new URL(encodeURIComponent(file), WNBA_LOGO_DIR));
+      expect(size, abbr).not.toBeNull();
+      expect(size.width, abbr).toBeGreaterThan(0);
+    }
+    expect(missing).toEqual([]);
+  });
+
+  it('gives every one of them a canvas the 115x96 slot can use', () => {
+    // Same bound as the NBA marks, and no exemption list: none of these is a
+    // wordmark lockup. The widest is Portland at 1.65:1.
+    const offenders = [];
+    for (const [abbr, team] of Object.entries(WNBA_TEAMS)) {
+      const file = team.logo.split('/').pop();
+      if (!wnbaPresent.has(file)) continue;
+      const { width, height } = pngSize(new URL(encodeURIComponent(file), WNBA_LOGO_DIR));
+      const aspect = Math.max(width / height, height / width);
+      if (aspect > MAX_TEAM_ASPECT) offenders.push(`${abbr} ${width}x${height}`);
+    }
+    expect(offenders).toEqual([]);
+  });
+
+  it('accounts for every file in the directory, referenced or not', () => {
+    // A file nobody points at is fine and a path with no file is not, so the
+    // two sets are checked against each other rather than the directory being
+    // trusted. This is also where HOU.gif is on the record as deliberate.
+    const referenced = new Set(Object.values(WNBA_TEAMS).map(t => t.logo.split('/').pop()));
+    const unexplained = [...wnbaPresent]
+      .filter(f => !referenced.has(f) && !UNREFERENCED.has(f))
+      .sort();
+    expect(unexplained).toEqual([]);
+  });
+
+  it('never names a logo file after a reserved Windows device', () => {
+    // THE FAILURE THIS PREVENTS, which cost an afternoon once: `CON.png` is the
+    // console, not a file. Windows resolves the reserved stem before the
+    // extension, so Node reads the file happily (libuv skips the DOS device
+    // table) and the dev server renders it, while `git add` reports "No such
+    // file or directory" for a file plainly sitting in the directory — and a
+    // checkout on Windows could not write it back either. Connecticut's mark is
+    // CONN.png for this reason and no other.
+    const offenders = [];
+    for (const [abbr, team] of Object.entries(WNBA_TEAMS)) {
+      const stem = team.logo.split('/').pop().replace(/\.[^.]+$/, '').toUpperCase();
+      if (RESERVED_DEVICE_NAMES.has(stem)) offenders.push(`${abbr} -> ${team.logo}`);
+    }
+    expect(offenders).toEqual([]);
+    // And the abbreviation that forced the exception is still reserved, so
+    // nobody "tidies" the filename back to matching the code.
+    expect(RESERVED_DEVICE_NAMES.has('CON')).toBe(true);
+    expect(WNBA_TEAMS.CON.logo).toBe('/logos/WNBA/CONN.png');
+  });
+
+  it('gives the WNBA league mark the same tall shape as the NBA one', () => {
+    // .leagueMark is one 28x63 box for both leagues, so both files have to be
+    // that shape or the mark draws small in the corner of half the set.
+    const file = LEAGUE_LOGOS.WNBA.split('/').pop();
+    expect(wnbaPresent.has(file)).toBe(true);
+    const { width, height } = pngSize(new URL(file, WNBA_LOGO_DIR));
     expect(width / height).toBeLessThan(0.6);
   });
 });

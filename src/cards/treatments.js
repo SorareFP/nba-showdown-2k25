@@ -177,9 +177,26 @@ function foilSweep(angle, base, hi, lo) {
 }
 
 /**
+ * The card-type badge's two colours, from the tone the treatment is built on.
+ *
+ * A FLAT FILL, deliberately, even on the foil set. The badge is a small filled
+ * pill with tracked type inside it, and the foil sweep runs from GOLD_LO
+ * (#7A5C16) to GOLD_HI (#F6E7A8) — a luminance range no single ink covers, so
+ * text on it would read at one end of the pill and vanish at the other. The
+ * frame and the band can carry the sweep because neither has type on it.
+ *
+ * The fill is whatever `readableOn` already made safe against the FIELD (so the
+ * pill is tellable from the card it sits on) and the ink is picked against the
+ * fill (so the label reads on the pill). Both by measurement, neither by hand.
+ */
+function badgeFor(fill) {
+  return { badgeFill: fill, badgeInk: pickInkFor(fill) };
+}
+
+/**
  * GOLD FOIL — the Super Season set.
  *
- * Four surfaces carry it, in descending order of how loud they are:
+ * Five surfaces carry it, in descending order of how loud they are:
  *
  *   the band     goes metallic. This is the set's signature: at full amplitude
  *                the SPEED/POWER header is gold with near-black type on it.
@@ -187,6 +204,9 @@ function foilSweep(angle, base, hi, lo) {
  *                the existing frame so the untreated rule is untouched.
  *   the name     the 96px vertical name takes the gold as its accent, nudged by
  *                readableOn until it clears the field.
+ *   the badge    "SUPER SEASON", on a flat gold pill — the user's call, "Super
+ *                Season can be gold". Same nudged gold as the name, so the two
+ *                cannot drift apart on a field that needed lifting.
  *   the field    a low-amplitude diagonal sheen, budgeted against the ink.
  */
 function goldFoil(theme) {
@@ -234,6 +254,12 @@ function goldFoil(theme) {
   const bandStops = [bandBase, bandHi, bandLo];
   const bandInk = pickInkFor(...bandStops);
 
+  // ONE gold, computed once and used for both the name and the badge. On a
+  // field bright enough to need it (Atlanta, the Bobcats, Vancouver) readableOn
+  // lifts it toward the ink, and the two would otherwise be lifted separately —
+  // same call today, but nothing would keep them that way.
+  const goldOnField = readableOn(GOLD, theme.field, MIN_ACCENT_CONTRAST);
+
   return {
     ...theme,
     ink,
@@ -253,9 +279,10 @@ function goldFoil(theme) {
     // the foil as a flat band of colour.
     stripeTonal: readableOn(GOLD_HI, bandBase, MIN_DECOR_CONTRAST),
     stripeSecondary: readableOn(GOLD_LO, bandBase, MIN_DECOR_CONTRAST),
-    accentOnField: readableOn(GOLD, theme.field, MIN_ACCENT_CONTRAST),
+    accentOnField: goldOnField,
     treatment: {
       id: 'gold-foil',
+      ...badgeFor(goldOnField),
       fieldStops,
       bandStops,
       fieldAmount,
@@ -279,6 +306,15 @@ function goldFoil(theme) {
  * the band that both treatments share. The field, the band and the chart are
  * the team's, untouched, which is why this treatment cannot move contrast at
  * all: `ink`, `panelInk` and `bandInk` are the values deriveFieldTheme chose.
+ *
+ * ── THE BADGE IS THE ONE THING THAT IS NOT GREEN ────────────────────────────
+ *
+ * "Rookie can just be secondary/accent team color", in the user's words. So the
+ * "ROOKIE" pill takes `theme.accentOnField` — the TEAM's accent, as
+ * deriveFieldTheme resolved it from the pair by measured luminance, read BEFORE
+ * the line below replaces it with the green. That is deliberate rather than an
+ * accident of ordering: a rookie card is about the team a player came into the
+ * league with, and the badge is the one place that gets to say so in colour.
  */
 function greenAccent(theme) {
   return {
@@ -288,6 +324,10 @@ function greenAccent(theme) {
     stripeSecondary: readableOn(GREEN, theme.bandTop, MIN_DECOR_CONTRAST),
     treatment: {
       id: 'green-accent',
+      // theme.accentOnField, not the green above it — see the note in the doc
+      // comment. Half the league falls back to cream, which makes a pale pill
+      // with near-black type; that is a real team colour and stays.
+      ...badgeFor(theme.accentOnField),
       fieldStops: [theme.field],
       bandStops: [theme.bandTop, theme.bandBottom],
       sheen: null,
@@ -348,5 +388,12 @@ export function treatmentVars(theme) {
     '--treatment-band': t.band ?? 'none',
     '--treatment-frame': t.frameImage ?? 'none',
     '--treatment-band-edge': t.bandEdge ?? 'transparent',
+    // The card-type badge's pill and the type on it. Only a set that DECLARES a
+    // badge renders the element (see setBadge in sets.js), so these are inert
+    // on a treated set that has none — but they are still emitted, for the same
+    // reason every other property here is: the stylesheet falls back through
+    // them, and a missing property inherits rather than resets.
+    '--treatment-badge': t.badgeFill ?? 'transparent',
+    '--treatment-badge-ink': t.badgeInk ?? 'currentColor',
   };
 }

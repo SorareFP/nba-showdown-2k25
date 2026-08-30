@@ -20,11 +20,14 @@ import CardTemplate, {
   visibleTiers,
 } from './CardTemplate.jsx';
 import { CARDS } from '../game/cards.js';
-import { TEAMS, HISTORICAL_TEAMS } from './teams.js';
+import { TEAMS, HISTORICAL_TEAMS, resolveAccent } from './teams.js';
+import { deriveFieldTheme } from './fieldTheme.js';
+import { GOLD, applyTreatment } from './treatments.js';
 import {
   CURRENT_SET,
   FINISHED_SET,
   ROOKIE_SET,
+  SETS,
   SET_IDS,
   SUPER_SEASON_SET,
 } from './sets.js';
@@ -500,17 +503,33 @@ describe('the sidebar', () => {
     expect(pxIn(logo, 'width')).toBeLessThanOrEqual(pxIn(cssBlock('.sidebarScrim'), 'width'));
     expect(logo).toMatch(/object-fit:\s*contain/);
 
-    // The rows below the logo are fixed type at a fixed gap, so the height that
-    // is left for it is arithmetic — done here from the stylesheet rather than
+    // Every row in the column is fixed type at a fixed gap, so the height the
+    // logo may have is arithmetic — done here from the stylesheet rather than
     // pinned at 96, so that raising a font size or the gap fails HERE instead of
     // silently pushing the logo out through the top of the sidebar.
+    //
+    // The TALLEST case, which is a special set: the badge and the season are
+    // two extra rows and two extra gaps that only Super Season and Rookie draw.
+    // A base-set card stacks the same content 80px lower in the same box.
     const lineHeight = Number(cssBlock('.card').match(/line-height:\s*([\d.]+)/)[1]);
     const line = block => pxIn(block, 'font-size') * lineHeight;
+    const badge = cssBlock('.badge');
     const rows =
+      line(badge) + 2 * pxIn(badge, 'padding') +
+      line(cssBlock('.season')) +
       line(cssBlock('.pos')) +
       4 * (line(cssBlock('.boostLabel')) + line(cssBlock('.boostValue')));
-    const gaps = 5 * pxIn(sidebar, 'gap');
+    const gaps = 7 * pxIn(sidebar, 'gap');
     expect(pxIn(logo, 'height') + rows + gaps).toBeLessThanOrEqual(pxIn(sidebar, 'height'));
+  });
+
+  it('keeps its bottom edge where the printed art puts the last row', () => {
+    // The box grew UPWARD to make room for the badge and the season, and that
+    // is the only direction it may grow: everything in the column is measured
+    // off the art by its bottom, and a box that grew downward would move the
+    // salary row off it on all four sets at once.
+    const sidebar = cssBlock('.sidebar');
+    expect(pxIn(sidebar, 'top') + pxIn(sidebar, 'height')).toBe(1152);
   });
 
   it('keeps the lettered fallback square, so it stays a circle', () => {
@@ -1074,6 +1093,175 @@ describe('the set treatment on the rendered card', () => {
       for (const team of [...Object.keys(TEAMS), ...Object.keys(HISTORICAL_TEAMS)]) {
         const html = render({ card: { ...CARD, team }, set });
         expect(html.length, `${set} ${team}`).toBeGreaterThan(1000);
+      }
+    }
+  });
+});
+
+describe('the season and the card-type badge', () => {
+  // Both are SET-level, exactly like the hidden empty rows: which season a card
+  // represents is the whole point of a Super Season or a Rookie card, and is
+  // noise on a base-set card that IS this season. The finished set's legend
+  // cards carry a season too — but in the hand-made art, so the template must
+  // not print a second one over the top of it.
+
+  /** Tomorrow 700, measured off the loaded face in the browser at 1000px. */
+  const TOMORROW_CAP = 0.74;
+  const TOMORROW_DIGIT = 0.6975;
+  const TOMORROW_HYPHEN = 0.46;
+  /** A season label is six digits and one hyphen — "2008-09". */
+  const seasonAdvance = size => size * (6 * TOMORROW_DIGIT + TOMORROW_HYPHEN);
+
+  /** A Super Season card as the generator emits one, seasonLabel included. */
+  const SPECIAL = {
+    id: 'Stephen_Curry',
+    name: 'Stephen Curry',
+    team: 'GSW',
+    pos: 'PG',
+    speed: 16,
+    power: 8,
+    shotLine: 12,
+    paintBoost: 0,
+    threePtBoost: 5,
+    defBoost: 0,
+    salary: 1490,
+    season: 2016,
+    seasonLabel: '2015-16',
+    chart: [
+      { lo: 1, hi: 2, pts: 0, reb: 0, ast: 0 },
+      { lo: 3, hi: 3, pts: 0, reb: 0, ast: 0 },
+      { lo: 4, hi: 11, pts: 3, reb: 1, ast: 1 },
+      { lo: 12, hi: 19, pts: 4, reb: 1, ast: 2 },
+      { lo: 20, hi: 99, pts: 6, reb: 2, ast: 3 },
+    ],
+  };
+
+  const themeFor = (abbr, treatment) =>
+    applyTreatment(
+      deriveFieldTheme(TEAMS[abbr].primary, TEAMS[abbr].secondary, resolveAccent(TEAMS[abbr])),
+      treatment
+    );
+
+  it('prints the badge and the season on both special sets', () => {
+    expect(render({ card: SPECIAL, set: SUPER_SEASON_SET })).toContain('SUPER SEASON');
+    expect(render({ card: SPECIAL, set: ROOKIE_SET })).toContain('ROOKIE');
+    for (const set of [SUPER_SEASON_SET, ROOKIE_SET]) {
+      expect(render({ card: SPECIAL, set }), set).toContain('2015-16');
+    }
+  });
+
+  it('prints NEITHER on either season set', () => {
+    // The regression that would be silent on screen and loud on 23 finished
+    // cards: the 2025-26 legend cards already have a season drawn into the art.
+    for (const set of [CURRENT_SET, FINISHED_SET]) {
+      const html = render({ card: SPECIAL, set });
+      expect(html, set).not.toContain('2015-16');
+      expect(html, set).not.toContain('SUPER SEASON');
+      expect(html, set).not.toContain('ROOKIE');
+    }
+  });
+
+  it('gates on the SET, not on whether the record happens to carry a season', () => {
+    // A base-set record has no seasonLabel at all, so gating on the data would
+    // look identical today and would start printing the moment a generator
+    // added the field. And a special-set card with the field missing must
+    // degrade to the card's own placeholder rather than throwing or vanishing.
+    const { seasonLabel, ...noSeason } = SPECIAL;
+    const html = render({ card: noSeason, set: ROOKIE_SET });
+    expect(html).toContain('ROOKIE');
+    expect(html).toContain('—');
+  });
+
+  it('stacks the badge, then the season, then the logo', () => {
+    // The column is a bottom-anchored flex stack, so DOM order IS the order on
+    // the card. The badge is the loudest of the three and sits furthest from
+    // the type below it; the season sits directly above the mark, which is
+    // where all 23 printed legend cards put theirs.
+    const html = render({ card: SPECIAL, set: SUPER_SEASON_SET });
+    const at = s => html.indexOf(s);
+    expect(at('SUPER SEASON')).toBeGreaterThan(-1);
+    expect(at('SUPER SEASON')).toBeLessThan(at('2015-16'));
+    expect(at('2015-16')).toBeLessThan(at('/logos/GSW.png'));
+  });
+
+  it('reproduces the printed season line: 12px caps, untracked, ~74px of ink', () => {
+    // MEASURED off all 23 legend cards in public/cards/players/: every one of
+    // them has a 12px digit height, and LeBron's, Wade's and McGrady's
+    // "2008-09" spans exactly 74px of ink (the set ranges 66-74, hand-set).
+    const season = cssBlock('.season');
+    const size = pxIn(season, 'font-size');
+    expect(size * TOMORROW_CAP).toBeCloseTo(12, 0);
+    // Untracked, unlike the rest of the column: 1px of tracking would put
+    // "2008-09" at 80px and overshoot every card in the reference.
+    expect(season).toMatch(/letter-spacing:\s*0\s*;/);
+    expect(seasonAdvance(size)).toBeCloseTo(74, 0);
+    // And the tracking claim, stated rather than asserted by absence: 1px would
+    // put it 6px over the widest card in the reference.
+    expect(seasonAdvance(size) + 6).toBeGreaterThan(74 + 5);
+    // Inherited ink — the same white the art uses and the rest of the sidebar
+    // takes from .card. A colour here would be a second source of truth.
+    expect(season).not.toMatch(/(?:^|[;{\s])color:/);
+  });
+
+  it('fits the longest declared badge label inside the pill', () => {
+    // The same budget nameFontSize is held to, and the same conservative
+    // estimate: 0.7em average uppercase advance over-states the real width
+    // (SUPER SEASON measures 118.8px off the loaded face, 121.2 here), so
+    // passing this is passing with room to spare.
+    const badge = cssBlock('.badge');
+    const inner = pxIn(badge, 'width');
+    const size = pxIn(badge, 'font-size');
+    const tracking = Number(badge.match(/letter-spacing:\s*([\d.]+)px/)[1]);
+    const labels = SETS.map(s => s.badge).filter(Boolean);
+    expect(labels.length).toBeGreaterThan(0); // non-vacuous
+    for (const label of labels) {
+      const width = label.length * (0.7 * size + tracking);
+      expect(width, `${label} at ${size}px`).toBeLessThanOrEqual(inner);
+    }
+  });
+
+  it('stays inside the bar, clear of the card frame', () => {
+    // The pill is the widest thing in the column, so it is the one that can
+    // reach the keyline. Centred in the 135px bar, it has to leave room on both
+    // sides — and the right side is the one that matters, because .card::after
+    // paints its 7px frame over everything.
+    const badge = pxIn(cssBlock('.badge'), 'width');
+    const bar = pxIn(cssBlock('.sidebarScrim'), 'width');
+    expect(badge).toBeLessThan(bar);
+    expect((bar - badge) / 2).toBeGreaterThanOrEqual(4);
+  });
+
+  it('takes both badge colours from the theme, never a literal', () => {
+    // The whole point of the treatment layer. A hex in the stylesheet would be
+    // a colour no contrast sweep can see.
+    const badge = cssBlock('.badge');
+    expect(badge).toMatch(/background:\s*var\(--treatment-badge,/);
+    expect(badge).toMatch(/color:\s*var\(--treatment-badge-ink,/);
+    expect(badge).not.toMatch(/#[0-9A-Fa-f]{3,6}/);
+    for (const set of [SUPER_SEASON_SET, ROOKIE_SET]) {
+      const html = render({ card: SPECIAL, set });
+      expect(html, set).toMatch(/--treatment-badge:\s*#[0-9A-F]{6}/i);
+      expect(html, set).toMatch(/--treatment-badge-ink:\s*#[0-9A-F]{6}/i);
+    }
+  });
+
+  it("gives Super Season a gold pill and Rookie the TEAM's accent", () => {
+    // "Super Season can be gold, while rookie can just be secondary/accent team
+    // color". Curry's card is Golden State, whose accent is their yellow — so
+    // the two sets produce two different pills on the same card, and the rookie
+    // one is emphatically not the green the rest of that treatment paints.
+    const gold = themeFor('GSW', 'gold-foil');
+    const rookie = themeFor('GSW', 'green-accent');
+    expect(gold.treatment.badgeFill).toBe(GOLD);
+    expect(rookie.treatment.badgeFill).toBe(resolveAccent(TEAMS.GSW));
+    expect(rookie.treatment.badgeFill).not.toBe(rookie.accentOnField);
+  });
+
+  it('renders both special sets for every franchise without throwing', () => {
+    for (const set of [SUPER_SEASON_SET, ROOKIE_SET]) {
+      for (const team of [...Object.keys(TEAMS), ...Object.keys(HISTORICAL_TEAMS)]) {
+        const html = render({ card: { ...SPECIAL, team }, set });
+        expect(html, `${set} ${team}`).toContain('2015-16');
       }
     }
   });

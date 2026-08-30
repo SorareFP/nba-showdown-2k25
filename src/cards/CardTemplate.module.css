@@ -491,22 +491,110 @@
  * tracking: DEFENSE 105px, SALARY 91px, PAINT 68px, a two-letter position 35px,
  * a four-digit salary 55px. The widest of those leaves 15px of bar either side.
  *
- * Vertically it is unchanged: 762..1152, bottom-anchored, which is where the
- * printed art puts these rows. The bar now runs 22px below that (see
- * .sidebarScrim) and is meant to — a bar that stopped where its content does is
- * the seam that change removed. */
+ * BOTTOM-ANCHORED, AND THAT IS WHAT MAKES THE BOX'S TOP FREE. It ends at
+ * y=1152, which is where the printed art puts the last of these rows, and
+ * `justify-content: flex-end` stacks the content up from there — so the two
+ * rows the special sets add (.badge and .season) push the TOP of the stack
+ * upward and move nothing below them. The box therefore has to be tall enough
+ * for the tallest set, not for the commonest one:
+ *
+ *   badge   13px x 1.1 line + 2x6px padding   26.3
+ *   season  16px x 1.1 line                   17.6
+ *   logo                                      96
+ *   pos     20px x 1.1 line                   22
+ *   boosts  4 x (20 + 20) x 1.1               176
+ *   gaps    7 x 18                            126
+ *                                            ————
+ *                                            463.9
+ *
+ * 470 keeps 6px of slack, in step with the 6px the four-row layout already had.
+ * A base-set card renders neither extra row, sits 80px lower in the same box,
+ * and is unchanged to the pixel. CardTemplate.test.js redoes this arithmetic
+ * from this file, so raising a type size or the gap fails there rather than
+ * pushing the badge silently out through the top.
+ *
+ * Top is therefore 1152 - 470 = 682. The bar behind it (see .sidebarScrim) runs
+ * from y=7 to y=1174, so both new rows are veiled by it exactly as the rest of
+ * the column is. */
 .sidebar {
   position: absolute;
   left: 701px;
-  top: 762px;
+  top: 682px;
   width: 135px;
-  height: 390px;
+  height: 470px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
   gap: 18px;
   text-align: center;
+}
+
+/* ── The card-type badge, on the sets that are a card TYPE ───────────────── */
+
+/* "SUPER SEASON" / "ROOKIE" — which set this card belongs to, said on the card
+ * rather than only in the file it came from. Rendered only by a set that
+ * DECLARES a badge (see setBadge in src/cards/sets.js), so the two season sets
+ * never draw this box at all.
+ *
+ * A FLAT FILL, and the colour comes from the treatment: gold for Super Season,
+ * the TEAM's own accent for Rookie ("Super Season can be gold, while rookie can
+ * just be secondary/accent team color"). Both are values `readableOn` has
+ * already cleared against the field, and the type on them is `pickInkFor` of
+ * the fill — so the pill reads on the card and the label reads on the pill, on
+ * all thirty live teams and the seven defunct ones. src/cards/treatments.test.js
+ * sweeps both. The var fallbacks are for a set that declared a badge and no
+ * treatment, which does not exist yet and must not render invisibly if it does.
+ *
+ * 127px WIDE, WHICH IS THE LONGEST LABEL PLUS MARGIN. The bar is 135 (701..836)
+ * and the card's keyline takes the last 7px of the card, so 127 centred in the
+ * column spans 705..832 — 4px clear of the bar's left edge and 4px clear of the
+ * frame. "SUPER SEASON" is 12 characters, which at 13px with this tracking
+ * measures 118.8px off the loaded face (121.2 by the conservative 0.7em average
+ * advance the name budget uses), leaving 6px of slack. The type is smaller than
+ * the season's because the fill is doing half the work — a tracked cap line on
+ * a solid pill reads as a stamp at a size that would be weak on bare field. */
+.badge {
+  width: 127px;
+  padding: 6px 0;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  white-space: nowrap;
+  border-radius: 4px;
+  background: var(--treatment-badge, var(--accent-on-field));
+  color: var(--treatment-badge-ink, var(--field-ink));
+  flex: none;
+}
+
+/* ── The season, on the sets that cut across seasons ─────────────────────── */
+
+/* MEASURED OFF THE PRINTED ART, not chosen. All 23 legend cards in the finished
+ * 2025-26 set print their season in the sidebar directly above the team mark,
+ * and every one of them measures the SAME 12px digit height; 18 of the 23 are
+ * centred on x=743.5, which is the centreline the rest of that art's sidebar
+ * uses (its DEFENSE row measures 743.5, its PAINT row 744.5). So: same column
+ * as everything else in the sidebar, one gap above the logo, 12px caps.
+ *
+ * Tomorrow's digits are 0.74em tall, so 12px of cap is a 16px font — and at
+ * 16px with NO tracking "2008-09" measures 74.6px of ink against the art's 74px
+ * on LeBron, Wade and McGrady (the set ranges 66-74, hand-set). Tracking is
+ * therefore zero here and not the 1-2px the rest of the column carries: adding
+ * 1px would put it at 80.6 and overshoot every card in the reference.
+ *
+ * The ink is INHERITED — `--field-ink`, the same white the printed art uses and
+ * the same colour as the rest of the sidebar. The shadow is the one departure
+ * from the art: this row sits over the photo (veiled by the bar, but a photo
+ * all the same) where the rows below it sit over flat field, and it is the
+ * card's existing idiom for exactly that — see .statLabel. It costs nothing on
+ * a flat surface. */
+.season {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0;
+  white-space: nowrap;
+  text-shadow: 0 2px 4px var(--field-ink-shadow);
+  flex: none;
 }
 
 /* NOT A SQUARE, and not 74px any more.

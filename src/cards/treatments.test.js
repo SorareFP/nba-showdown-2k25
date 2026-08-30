@@ -17,6 +17,7 @@ import { readFileSync } from 'node:fs';
 import {
   INK_LIGHT,
   MIN_ACCENT_CONTRAST,
+  compositeOver,
   contrastRatio,
   deriveFieldTheme,
   parseHex,
@@ -95,6 +96,8 @@ describe('the treatment layer composes rather than replaces', () => {
     expect(vars['--treatment-band']).toBe('none');
     expect(vars['--treatment-frame']).toBe('none');
     expect(vars['--treatment-band-edge']).toBeTruthy();
+    expect(vars['--treatment-badge']).toBeTruthy();
+    expect(vars['--treatment-badge-ink']).toBeTruthy();
   });
 
   it('keeps every key the field theme produced', () => {
@@ -191,6 +194,53 @@ describe.each(TREATMENT_IDS)('the %s treatment', treatment => {
     }
   });
 
+  it('keeps the card-type badge legible on every field, live and defunct', () => {
+    // THE BADGE IS THE ONE SURFACE THIS LAYER INVENTS. Everything else a
+    // treatment touches already existed and is held to "no worse than the
+    // untreated card"; a filled pill that was not there before has no untreated
+    // counterpart, so it is held to the flat WCAG body floor instead — which it
+    // can be, because both of its colours are chosen rather than inherited.
+    //
+    // NOT EXEMPTED ANYWHERE, and the Rookie badge is why that matters: it takes
+    // the TEAM's accent, which on half the league is the cream fallback
+    // (#E6ECF8, a near-white pill with near-black type) and on Phoenix is a
+    // mid-tone orange — the two ends of the range a single ink has to cover.
+    for (const team of ALL_TEAMS) {
+      const [abbr] = team;
+      const t = themeFor(team, treatment);
+      const { badgeFill, badgeInk } = t.treatment;
+      expect(badgeFill, `${abbr} badge fill`).toMatch(/^#[0-9A-F]{6}$/i);
+      expect(contrastRatio(badgeInk, badgeFill), `${abbr} badge label`)
+        .toBeGreaterThanOrEqual(AA_BODY);
+      // And the pill has to be tellable from the card it sits on, at the same
+      // floor the accent already clears — it is a filled shape ON the field.
+      expect(contrastRatio(badgeFill, t.field), `${abbr} badge on field`)
+        .toBeGreaterThanOrEqual(MIN_ACCENT_CONTRAST - 1e-9);
+    }
+  });
+
+  it('keeps the season line reading wherever the sidebar puts it', () => {
+    // The season is the sidebar's own ink — it inherits, exactly as POS, the
+    // boosts and the salary do — so what has to hold is that the treatment did
+    // not spend that ink's contrast. Two surfaces, because the sidebar column
+    // is the only place on the card where a translucent fill is involved: the
+    // bare field, and the field once the bar has been composited over it.
+    for (const team of ALL_TEAMS) {
+      const [abbr, primary, secondary, accent] = team;
+      const base = deriveFieldTheme(primary, secondary, accent);
+      const t = applyTreatment(base, treatment);
+      for (const [where, surface] of [
+        ['field', s => s.field],
+        ['bar', s => compositeOver(s.scrim, s.field)],
+      ]) {
+        expect(contrastRatio(t.ink, surface(t)), `${abbr} season over the ${where}`)
+          .toBeGreaterThanOrEqual(
+            Math.min(AA_BODY, contrastRatio(base.ink, surface(base))) - 1e-9
+          );
+      }
+    }
+  });
+
   it('is a static gradient — nothing that needs a second frame', () => {
     // The batch export screenshots the card. Anything animated would come out
     // as one arbitrary moment of itself.
@@ -268,6 +318,21 @@ describe('gold foil', () => {
     }
   });
 
+  it('fills the SUPER SEASON badge with the same gold as the name', () => {
+    // "Super Season can be gold." One value, so a field that needed the gold
+    // lifted (Atlanta, Vancouver, the Bobcats) lifts both together — and 20+ of
+    // the 37 keep the gold exactly, which is what makes the pill read as metal
+    // beside the foil band rather than as a yellow label.
+    for (const [abbr, t] of themes) {
+      expect(t.treatment.badgeFill, abbr).toBe(t.accentOnField);
+      const [r, g, b] = parseHex(t.treatment.badgeFill);
+      expect(r, `${abbr} badge is warm`).toBeGreaterThan(b);
+      expect(g, `${abbr} badge is gold, not red`).toBeGreaterThan(b);
+    }
+    expect(themes.filter(([, t]) => t.treatment.badgeFill === GOLD).length)
+      .toBeGreaterThanOrEqual(20);
+  });
+
   it('turns the field sheen down rather than off on the fields that can afford it', () => {
     // The five near-black primaries have twenty contrast points to spend and
     // should get the full amplitude; OKC's blue has almost none and should get
@@ -302,6 +367,23 @@ describe('green accent', () => {
       expect(g, `${abbr} accent is green-dominant`).toBeGreaterThan(r);
       expect(g, `${abbr} accent is green-dominant`).toBeGreaterThan(b);
       expect(contrastRatio(t.frame, t.field), `${abbr} keyline reads`).toBeGreaterThan(1.15);
+    }
+  });
+
+  it('fills the ROOKIE badge with the TEAM\'s accent, not the green', () => {
+    // "Rookie can just be secondary/accent team color". This is the one place
+    // on a rookie card where the team's own colour survives the treatment, and
+    // it is deliberate: the card is about the franchise a player came into the
+    // league with. Asserted as inequality on the teams where the two differ —
+    // which is all of them, since nothing in the league accents itself green.
+    for (const team of ALL_TEAMS) {
+      const [abbr, primary, secondary, accent] = team;
+      const base = deriveFieldTheme(primary, secondary, accent);
+      const t = applyTreatment(base, 'green-accent');
+      expect(t.treatment.badgeFill, `${abbr} badge is the team accent`)
+        .toBe(base.accentOnField);
+      expect(t.treatment.badgeFill, `${abbr} badge is not the set green`)
+        .not.toBe(t.accentOnField);
     }
   });
 
@@ -392,6 +474,15 @@ describe('the stylesheet the treatments paint through', () => {
       expect(CARD_CSS, prop).toContain(`var(${prop}, none)`);
     }
     expect(CARD_CSS).toContain('var(--treatment-band-edge, transparent)');
+  });
+
+  it('falls the badge back to the derived accent, never to nothing', () => {
+    // The badge's two properties are the only ones whose inert value would be
+    // INVISIBLE rather than merely absent — a transparent pill with no ink is a
+    // missing badge, and the set that declared it would look broken instead of
+    // untreated. So they fall back through the palette every card has.
+    expect(CARD_CSS).toContain('var(--treatment-badge, var(--accent-on-field))');
+    expect(CARD_CSS).toContain('var(--treatment-badge-ink, var(--field-ink))');
   });
 
   it('animates nothing', () => {

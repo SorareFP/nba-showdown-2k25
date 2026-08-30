@@ -258,6 +258,13 @@ export default function CardTemplate({
   const chart = visibleTiers(card.chart, set);
   const shotLineRow = findShotLineBoundary(chart, card.shotLine);
 
+  // Both are SET questions, not card questions — see showsSeason and setBadge.
+  // A base-set record carries no seasonLabel at all, and a 2025-26 legend card
+  // has its season drawn into the hand-made art, so gating on the data instead
+  // of the set would print a second season over the top of 23 finished cards.
+  const badge = setBadge(set);
+  const season = showsSeason(set);
+
   return (
     <div
       className={styles.card}
@@ -332,6 +339,18 @@ export default function CardTemplate({
       <div className={styles.sidebarScrim} />
 
       <div className={styles.sidebar}>
+        {/* The card-type badge and the season, in that order, directly above
+          * the team mark — which is where the finished set's legend cards put
+          * the season, measured off the art: 12px cap height, centred on the
+          * sidebar's own column, one gap above the logo. Both are set-level, so
+          * a base-set card renders neither and its sidebar is byte-identical to
+          * what it was (the column is bottom-anchored, so nothing below moves).
+          *
+          * The badge FIRST because it says what kind of card this is and the
+          * season answers "which one" — and because the pill is the louder of
+          * the two, so it belongs further from the type it would crowd. */}
+        {badge && <div className={styles.badge}>{badge}</div>}
+        {season && <div className={styles.season}>{card.seasonLabel ?? MISSING}</div>}
         <TeamLogo key={card.team ?? 'none'} team={team} abbr={card.team} />
         <div className={styles.pos}>{card.pos ?? MISSING}</div>
         <Boost label="PAINT" value={card.paintBoost} />

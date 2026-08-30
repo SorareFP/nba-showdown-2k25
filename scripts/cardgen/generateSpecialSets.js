@@ -2,10 +2,11 @@
 //
 //   node scripts/cardgen/generateSpecialSets.js
 //
-// Writes card-data/generated/cards-super-season.json and cards-rookie.json,
-// which the studio picks up automatically (src/studio/players.js). Needs no
-// network: everything comes out of card-data/cache/bbref-history.json, which
-// scripts/cardgen/fetchHistory.js produces and which is committed.
+// Writes card-data/generated/cards-super-season.json, cards-rookie.json and
+// card-badges.json, which the studio picks up automatically
+// (src/studio/players.js). Needs no network: everything comes out of
+// card-data/cache/bbref-history.json, which scripts/cardgen/fetchHistory.js
+// produces and which is committed.
 //
 // ── WHAT EACH SET IS ────────────────────────────────────────────────────────
 //
@@ -20,10 +21,35 @@
 //
 //   Rookie         Each active player's rookie-year card. Same exclusion, for
 //                  the same reason: a player whose rookie season IS the current
-//                  one already has that card in the base set. (This is the
-//                  user's open question about current-season rookies, answered
-//                  the way the Super Season rule answers its own version of it —
-//                  one rule, one reason, in both sets.)
+//                  one already has that card in the base set.
+//
+// ── AND THE EXCLUSION NO LONGER THROWS THE FACT AWAY ────────────────────────
+//
+// It used to. 149 players are known to have just had the best season of their
+// careers and 33 to have just debuted, and until now the only trace of either
+// was a line on an `excluded` list inside a generated file. Nothing on any card
+// said so, which made the exclusion a silent loss of exactly the information
+// these sets exist to surface.
+//
+// The user's call: "if there is any overlap between 2026-27 cards, Super Season
+// and Rookie Cards, you can combine them. If 2025-26 was a player's 'Super
+// Season' and/or rookie season, add the badges to that player and pull
+// prioritize in that order. If last year was their super season, keep the 26-27
+// design and just add the badge."
+//
+// So the exclusion stands — there is still no second card of the same season —
+// and the fact moves onto the player's BASE card as a badge. That is what
+// card-badges.json is: the exclusion lists, restated as the thing the base set
+// should print. See src/cards/badges.js for how one is chosen and drawn.
+//
+// THE TWO LISTS ARE NESTED, and that is structural rather than a coincidence
+// worth checking each run: a player whose FIRST season is the most recent one
+// has exactly one season, so it is also his BEST one. Every rookie-excluded
+// player is therefore super-season-excluded too (33 of 33), and since Super
+// Season wins the priority, the ROOKIE badge does not print on any base card
+// today. The data below records BOTH badges for those 33 anyway — the file says
+// what is true, badges.js decides what prints — so flipping the priority is a
+// one-line change in one place and needs no regeneration.
 //
 // ── EVERY NUMBER ON THESE CARDS IS PROVISIONAL, AND MORE SO THAN THE BASE SET ─
 //
@@ -101,12 +127,44 @@ import {
 } from './history.js';
 import { playerIdFromName } from '../../src/cards/playerId.js';
 import { franchiseForSeason } from '../../src/cards/teams.js';
-import { SUPER_SEASON_SET, ROOKIE_SET } from '../../src/cards/sets.js';
+import { CURRENT_SET, SUPER_SEASON_SET, ROOKIE_SET } from '../../src/cards/sets.js';
+import {
+  BADGE_IDS,
+  ROOKIE_BADGE,
+  SUPER_SEASON_BADGE,
+  pickBadge,
+} from '../../src/cards/badges.js';
 
 const GEN_DIR = path.join(REPO_ROOT, 'card-data', 'generated');
 export const OUTPUT_FILES = {
   [SUPER_SEASON_SET]: path.join(GEN_DIR, `cards-${SUPER_SEASON_SET}.json`),
   [ROOKIE_SET]: path.join(GEN_DIR, `cards-${ROOKIE_SET}.json`),
+};
+
+/**
+ * Where the base set's badges are written.
+ *
+ * NOT INTO cards-2026-27.json, deliberately, even though that is the file whose
+ * cards wear them. That file belongs to generateCards.js, which is deliberately
+ * history-free and can be re-run at any time; writing badges into it from here
+ * would make the two generators order-dependent and would lose every badge the
+ * next time the other one ran. A separate file joined by player id has neither
+ * problem, and it is also the one the studio already had a slot for — it
+ * degrades to "no badges" if it was never generated, exactly as the stat file
+ * degrades to placeholders.
+ */
+export const BADGE_FILE = path.join(GEN_DIR, 'card-badges.json');
+
+/**
+ * Which badge each exclusion turns into.
+ *
+ * The two rules are the same rule — "this season IS the card, so there is no
+ * second card of it" — so the mapping is one table rather than a branch in each
+ * of the two places that used to say it.
+ */
+export const EXCLUSION_BADGES = {
+  superSeason: SUPER_SEASON_BADGE,
+  rookie: ROOKIE_BADGE,
 };
 
 const readJson = file => JSON.parse(fs.readFileSync(file, 'utf8'));
@@ -460,6 +518,8 @@ export function selectSets({
   const superSeason = [];
   const rookie = [];
   const excluded = { superSeason: [], rookie: [] };
+  /** The base set's badges: one record per player who earned at least one. */
+  const baseBadges = [];
   const metricSetSplits = [];
   const notes = { fallbackFloor: [], beyondRange: [], partialSeason: [] };
 
@@ -504,9 +564,17 @@ export function selectSets({
 
     // THE EXCLUSION RULE. A best season that IS the most recent season is
     // already the player's base card; a second card of it would be the same
-    // card twice.
+    // card twice. What it now ALSO does is badge that base card — the reason
+    // for the exclusion is a fact about the player, and `badge` on the record
+    // is that fact travelling to where it can be printed.
+    const earned = [];
     if (best.season === LAST_SEASON) {
-      excluded.superSeason.push({ name: player.name, reason: 'best season is the current one' });
+      excluded.superSeason.push({
+        name: player.name,
+        reason: 'best season is the current one',
+        badge: EXCLUSION_BADGES.superSeason,
+      });
+      earned.push(EXCLUSION_BADGES.superSeason);
     } else {
       if (best.partialSeason) notes.partialSeason.push(`${player.name} ${best.season}`);
       superSeason.push({ player, season: best, perMetric });
@@ -515,13 +583,60 @@ export function selectSets({
     const first = rookieSeason(seasons, firstSeason);
     if (first.beyondRange) notes.beyondRange.push(player.name);
     if (first.season === LAST_SEASON) {
-      excluded.rookie.push({ name: player.name, reason: 'rookie season is the current one' });
+      excluded.rookie.push({
+        name: player.name,
+        reason: 'rookie season is the current one',
+        badge: EXCLUSION_BADGES.rookie,
+      });
+      earned.push(EXCLUSION_BADGES.rookie);
     } else {
       rookie.push({ player, season: first });
     }
+
+    // EVERY badge that applies, in the priority order badges.js declares —
+    // never only the winner. The file states what is TRUE of the player; which
+    // of them prints is a rendering decision, and keeping it out of the data is
+    // what makes re-prioritising a one-line change rather than a regeneration.
+    if (earned.length) {
+      baseBadges.push({
+        id: playerIdFromName(player.name),
+        name: player.name,
+        badges: BADGE_IDS.filter(b => earned.includes(b)),
+      });
+    }
   }
 
-  return { superSeason, rookie, excluded, metricSetSplits, notes, missingIds: missing };
+  baseBadges.sort((a, b) => a.name.localeCompare(b.name));
+  return {
+    superSeason,
+    rookie,
+    excluded,
+    baseBadges,
+    metricSetSplits,
+    notes,
+    missingIds: missing,
+  };
+}
+
+/**
+ * What the base set will actually PRINT, from what the file records.
+ *
+ * Runs the same `pickBadge` the card does, so the run report cannot claim a
+ * distribution the template would not draw — which matters more than usual
+ * here, because the honest answer today is that one of the two badges never
+ * wins. See the header.
+ */
+export function badgeCounts(baseBadges) {
+  const applies = Object.fromEntries(BADGE_IDS.map(id => [id, 0]));
+  const printed = Object.fromEntries(BADGE_IDS.map(id => [id, 0]));
+  let multiple = 0;
+  for (const record of baseBadges) {
+    for (const id of record.badges) applies[id] += 1;
+    if (record.badges.length > 1) multiple += 1;
+    const shown = pickBadge(record.badges);
+    if (shown) printed[shown.id] += 1;
+  }
+  return { players: baseBadges.length, applies, printed, multiple };
 }
 
 function writeSet(file, { set, cards, meta }) {
@@ -534,6 +649,37 @@ function writeSet(file, { set, cards, meta }) {
     cards,
   };
   fs.writeFileSync(file, `${JSON.stringify(body, null, 1)}\n`);
+  return body;
+}
+
+/**
+ * The base set's badge file.
+ *
+ * Keyed by the player id `src/cards/playerId.js` derives — the same key the
+ * photo store, cards-2026-27.json and the studio's own list all use — because
+ * this file exists only to be JOINED onto a base-set card and a name would
+ * work today and break the first time a source spelled one differently.
+ */
+function writeBadges({ set, badges, counts }) {
+  fs.mkdirSync(GEN_DIR, { recursive: true });
+  const body = {
+    generatedAt: new Date().toISOString(),
+    // WHICH set wears these. The studio checks it rather than assuming, so a
+    // stale file from another season degrades to no badges instead of badging
+    // the wrong 149 players.
+    set,
+    provisional: true,
+    source:
+      'the Super Season and Rookie exclusion lists: a player whose best or rookie season is ' +
+      `${LAST_SEASON} gets no card in that set, because his base card already IS that season — ` +
+      'so the fact is printed on the base card as a badge instead',
+    // Recorded for provenance only; the ORDER THAT DECIDES lives in
+    // src/cards/badges.js and is applied at render time, not here.
+    priority: BADGE_IDS,
+    counts,
+    badges,
+  };
+  fs.writeFileSync(BADGE_FILE, `${JSON.stringify(body, null, 1)}\n`);
   return body;
 }
 
@@ -601,7 +747,11 @@ export function main({ log = console.log } = {}) {
         excludedCount: excluded.length,
       },
     });
-    log(`\n${set}: ${cards.length} cards (${excluded.length} excluded — ${set === SUPER_SEASON_SET ? 'best season is the current one' : 'rookie season is the current one'})`);
+    log(
+      `\n${set}: ${cards.length} cards (${excluded.length} excluded — ` +
+        `${set === SUPER_SEASON_SET ? 'best season is the current one' : 'rookie season is the current one'}` +
+        `; each gets the ${set === SUPER_SEASON_SET ? EXCLUSION_BADGES.superSeason : EXCLUSION_BADGES.rookie} badge on their ${CURRENT_SET} card)`
+    );
     reportSet(cards, log);
     reportCompositeMetricSets(
       compareComposites({ selections, currentRows }),
@@ -609,6 +759,14 @@ export function main({ log = console.log } = {}) {
       log
     );
   }
+
+  const counts = badgeCounts(selection.baseBadges);
+  files.badges = writeBadges({
+    set: CURRENT_SET,
+    badges: selection.baseBadges,
+    counts,
+  });
+  reportBadges(counts, log);
 
   reportBestSeasonMetricSets(selection.metricSetSplits, BEST_SEASON_METRIC_SETS, log);
   if (selection.notes.fallbackFloor.length) {
@@ -618,8 +776,31 @@ export function main({ log = console.log } = {}) {
   if (selection.notes.beyondRange.length) {
     log(`\n⚠ Earliest archived season is ${FIRST_SEASON} — the debut may be older: ${selection.notes.beyondRange.join(', ')}`);
   }
-  log(`\nWrote:\n  ${OUTPUT_FILES[SUPER_SEASON_SET]}\n  ${OUTPUT_FILES[ROOKIE_SET]}`);
+  log(
+    `\nWrote:\n  ${OUTPUT_FILES[SUPER_SEASON_SET]}\n  ${OUTPUT_FILES[ROOKIE_SET]}\n  ${BADGE_FILE}`
+  );
   return { files, selection };
+}
+
+/**
+ * What the base set gains, and — the line worth reading — what it does not.
+ *
+ * `applies` is how many players each badge is TRUE of; `printed` is how many
+ * cards will actually draw it once the priority has been applied. They differ
+ * by the 33 players who are both, and the gap is the whole reason both numbers
+ * are reported rather than one.
+ */
+function reportBadges(c, log) {
+  log(`\n${CURRENT_SET} badges: ${c.players} of the pool carry at least one.`);
+  for (const id of BADGE_IDS) {
+    const lost = c.applies[id] - c.printed[id];
+    log(
+      `  ${id.padEnd(14)}applies to ${String(c.applies[id]).padStart(3)}` +
+        `   prints on ${String(c.printed[id]).padStart(3)}` +
+        `${lost ? `   (${lost} outranked)` : ''}`
+    );
+  }
+  log(`  ${c.multiple} players earn more than one; the priority is ${BADGE_IDS.join(' > ')}.`);
 }
 
 function counts(values) {

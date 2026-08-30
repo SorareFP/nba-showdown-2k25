@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-30T13:43:00.916Z",
+ "generatedAt": "2026-08-30T15:02:39.392Z",
  "set": "super-season",
  "provisional": true,
  "sources": {
@@ -21,599 +21,748 @@
  "excluded": [
   {
    "name": "Tyrese Maxey",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Jalen Johnson",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "VJ Edgecombe",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Austin Reaves",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Jaylen Brown",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Cade Cunningham",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Cooper Flagg",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Scottie Barnes",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Nickeil Alexander-Walker",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Deni Avdija",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "OG Anunoby",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Keyonte George",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Ryan Rollins",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Immanuel Quickley",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Kon Knueppel",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Andrew Nembhard",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Saddiq Bey",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Brandon Miller",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Andrew Wiggins",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Josh Hart",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Bennedict Mathurin",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Stephon Castle",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Anthony Black",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Peyton Watson",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Naji Marshall",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Shaedon Sharpe",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Victor Wembanyama",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Matas Buzelis",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Max Christie",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Kyshawn George",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Chet Holmgren",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Grayson Allen",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Davion Mitchell",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Collin Gillespie",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Jaime Jaquez Jr.",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Jalen Duren",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "LaMelo Ball",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Bub Carrington",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Ace Bailey",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Jalen Suggs",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Julian Champagnie",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Duncan Robinson",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Ayo Dosunmu",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Alex Sarr",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Donovan Clingan",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Tre Jones",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Noah Clowney",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Jaylon Tyson",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Cason Wallace",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Maxime Raynaud",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Pelle Larsson",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Miles McBride",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Reed Sheppard",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Bilal Coulibaly",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Ausar Thompson",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Moussa Diabaté",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Jeremiah Fears",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Cedric Coward",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Ajay Mitchell",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Isaiah Collier",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Neemias Queta",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Egor Dëmin",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Nique Clifford",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Derik Queen",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Tristan Da Silva",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Cody Williams",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Tre Johnson",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Cam Spencer",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Dominick Barlow",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Kyle Filipowski",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Kris Murray",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Keldon Johnson",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Svi Mykhailiuk",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Landry Shamet",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Ziaire Williams",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Dylan Harper",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Jamal Shead",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Jordan Goodwin",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Sion James",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Zaccharie Risacher",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Brandon Williams",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Nolan Traoré",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Kel'el Ware",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Jock Landale",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Will Riley",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Jordan Miller",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Spencer Jones",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Oso Ighodaro",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Sandro Mamukelashvili",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Collin Murray-Boyles",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "GG Jackson II",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Ryan Kalkbrenner",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Isaiah Joe",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Jay Huff",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Bryce McGowens",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Luke Kornet",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Drake Powell",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Danny Wolf",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Ben Saraf",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Caleb Love",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Jamir Watkins",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Dylan Cardwell",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Gui Santos",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Ja'Kobe Walter",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Walter Clayton",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Javon Small",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Daniss Jenkins",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Marvin Bagley III",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Justin Champagnie",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Will Richard",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Ron Holland",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Kobe Sanders",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Yves Missi",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Jericho Sims",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Jaylin Williams",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Mitchell Robinson",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Ryan Nembhard",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Ryan Dunn",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Ousmane Dieng",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Sidy Cissoko",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Taylor Hendricks",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Day'Ron Sharpe",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Olivier-Maxence Prosper",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Pat Spencer",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Baylor Scheierman",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Jaxson Hayes",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Craig Porter Jr.",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Kasparas Jakučionis",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Jordan Walsh",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Javonte Green",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Adem Bona",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Jared McCain",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Quinten Post",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Sharife Cooper",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Simone Fontecchio",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Rayan Rupert",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Bones Hyland",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Dru Smith",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Luka Garza",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Nae'Qwan Tomlin",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Pete Nance",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Mouhamed Gueye",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Micah Peavy",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Karlo Matković",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Hugo González",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Jamaree Bouyea",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Tristan Vukcevic",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Noah Penda",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   },
   {
    "name": "Rasheer Fleming",
-   "reason": "best season is the current one"
+   "reason": "best season is the current one",
+   "badge": "super-season"
   }
  ],
  "excludedCount": 149,

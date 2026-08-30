@@ -13,25 +13,34 @@ import {
   COMPOSITE_WEIGHTS,
   FULL_SEASON_MINUTES,
   REPLACEMENT_BPM,
+  badgeCounts,
   compositeBasis,
   historicalComposite,
   resolvePlayerIds,
   rowsById,
   seasonLabel,
 } from './generateSpecialSets.js';
+import {
+  BADGE_IDS,
+  ROOKIE_BADGE,
+  SUPER_SEASON_BADGE,
+  pickBadge,
+} from '../../src/cards/badges.js';
 import { LAST_SEASON, FIRST_SEASON, isAggregateTeam, loadPool } from './fetchHistory.js';
 import { REPO_ROOT } from './cache.js';
 import { playerIdFromName } from '../../src/cards/playerId.js';
 import { TEAMS, HISTORICAL_TEAMS, canonicalTeam } from '../../src/cards/teams.js';
-import { ROOKIE_SET, SUPER_SEASON_SET } from '../../src/cards/sets.js';
+import { CURRENT_SET, ROOKIE_SET, SUPER_SEASON_SET } from '../../src/cards/sets.js';
 
-const read = set =>
-  JSON.parse(
-    readFileSync(path.join(REPO_ROOT, 'card-data', 'generated', `cards-${set}.json`), 'utf8')
-  );
+const readGenerated = name =>
+  JSON.parse(readFileSync(path.join(REPO_ROOT, 'card-data', 'generated', name), 'utf8'));
+
+const read = set => readGenerated(`cards-${set}.json`);
 
 const SUPER = read(SUPER_SEASON_SET);
 const ROOKIE = read(ROOKIE_SET);
+/** The base set's card-type badges — the two exclusion lists, made printable. */
+const BADGES = readGenerated('card-badges.json');
 const POOL = loadPool();
 
 /** The scraped archive, when this checkout has one. See the runIf below. */
@@ -212,6 +221,98 @@ describe('Rookie', () => {
     for (const name of ['Victor Wembanyama', 'Luka Dončić', 'Nikola Jokić']) {
       expect(top, `${name} missing from the top of the rookie set`).toContain(name);
     }
+  });
+});
+
+describe('the base set\'s badges', () => {
+  // THE EXCLUSION LISTS, RESTATED AS SOMETHING PRINTABLE. Every assertion here
+  // is about the artefact the studio actually loads, like the two above it: a
+  // regeneration that changed the rule shows up as a failing claim about the
+  // file on disk rather than as a silently different set of pills.
+
+  it('names the set it belongs to, so a stale file cannot badge the wrong season', () => {
+    expect(BADGES.set).toBe(CURRENT_SET);
+    expect(BADGES.provisional).toBe(true);
+    expect(Array.isArray(BADGES.badges)).toBe(true);
+  });
+
+  it('records the priority for provenance and applies it nowhere', () => {
+    // The order that DECIDES lives in src/cards/badges.js and is applied at
+    // render time. Recording it here is documentation; if the two ever
+    // disagree, the file is the one that is wrong.
+    expect(BADGES.priority).toEqual(BADGE_IDS);
+  });
+
+  it('badges exactly the players the two sets excluded, and nobody else', () => {
+    // The join that makes this a restatement rather than a second rule.
+    const expected = new Map();
+    for (const [file, badge] of [[SUPER, SUPER_SEASON_BADGE], [ROOKIE, ROOKIE_BADGE]]) {
+      for (const e of file.excluded) {
+        expect(e.badge, `${e.name} in ${file.set}`).toBe(badge);
+        if (!expected.has(e.name)) expected.set(e.name, []);
+        expected.get(e.name).push(badge);
+      }
+    }
+    expect(BADGES.badges.length).toBe(expected.size);
+    for (const record of BADGES.badges) {
+      expect(record.badges.slice().sort(), record.name)
+        .toEqual(expected.get(record.name).slice().sort());
+    }
+  });
+
+  it('keys every record by the id the studio joins on', () => {
+    const pool = new Map(POOL.map(p => [playerIdFromName(p.name), p.name]));
+    for (const record of BADGES.badges) {
+      expect(record.id, record.name).toBe(playerIdFromName(record.name));
+      expect(pool.get(record.id), `${record.name} is not in the pool`).toBe(record.name);
+    }
+  });
+
+  it('declares only badges the card layer knows how to draw', () => {
+    for (const record of BADGES.badges) {
+      expect(record.badges.length, record.name).toBeGreaterThan(0);
+      for (const id of record.badges) expect(BADGE_IDS, record.name).toContain(id);
+      // Stored in priority order, so the file reads the way the card resolves.
+      expect(record.badges).toEqual(BADGE_IDS.filter(id => record.badges.includes(id)));
+    }
+  });
+
+  it('leaves the two special sets exactly as big as they were', () => {
+    // The badge is what the EXCLUDED players get. Nobody moves into or out of
+    // either roster because of it, and these two numbers are how you know.
+    expect(SUPER.cards.length).toBe(201);
+    expect(ROOKIE.cards.length).toBe(317);
+    expect(SUPER.cards.length + SUPER.excluded.length).toBe(POOL.length);
+    expect(ROOKIE.cards.length + ROOKIE.excluded.length).toBe(POOL.length);
+  });
+
+  it('has NESTED lists, which is why the rookie badge never prints', () => {
+    // Structural, not a coincidence: a player whose FIRST season is the most
+    // recent one has exactly one season, so it is also his BEST one. Every
+    // rookie-badged player is therefore super-season-badged too — and Super
+    // Season outranks Rookie, so what prints on all 33 is the gold pill.
+    //
+    // Asserted rather than described because it is the surprising consequence
+    // of the priority the user asked for, and the thing that would change if
+    // anyone reordered BADGES.
+    const rookieBadged = BADGES.badges.filter(b => b.badges.includes(ROOKIE_BADGE));
+    expect(rookieBadged.length).toBeGreaterThan(0);
+    for (const record of rookieBadged) {
+      expect(record.badges, record.name).toContain(SUPER_SEASON_BADGE);
+      expect(pickBadge(record.badges).id, record.name).toBe(SUPER_SEASON_BADGE);
+    }
+  });
+
+  it('counts what applies and what actually prints, and they differ', () => {
+    const counts = badgeCounts(BADGES.badges);
+    expect(BADGES.counts).toEqual(counts);
+    expect(counts.players).toBe(SUPER.excluded.length);
+    expect(counts.applies[SUPER_SEASON_BADGE]).toBe(SUPER.excluded.length);
+    expect(counts.applies[ROOKIE_BADGE]).toBe(ROOKIE.excluded.length);
+    expect(counts.printed[SUPER_SEASON_BADGE]).toBe(SUPER.excluded.length);
+    // The number this whole block exists to make impossible to miss.
+    expect(counts.printed[ROOKIE_BADGE]).toBe(0);
+    expect(counts.multiple).toBe(ROOKIE.excluded.length);
   });
 });
 

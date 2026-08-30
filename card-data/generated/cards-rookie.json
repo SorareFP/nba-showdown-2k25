@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-30T13:43:00.969Z",
+ "generatedAt": "2026-08-30T15:02:39.459Z",
  "set": "rookie",
  "provisional": true,
  "sources": {
@@ -21,135 +21,168 @@
  "excluded": [
   {
    "name": "VJ Edgecombe",
-   "reason": "rookie season is the current one"
+   "reason": "rookie season is the current one",
+   "badge": "rookie"
   },
   {
    "name": "Cooper Flagg",
-   "reason": "rookie season is the current one"
+   "reason": "rookie season is the current one",
+   "badge": "rookie"
   },
   {
    "name": "Kon Knueppel",
-   "reason": "rookie season is the current one"
+   "reason": "rookie season is the current one",
+   "badge": "rookie"
   },
   {
    "name": "Ace Bailey",
-   "reason": "rookie season is the current one"
+   "reason": "rookie season is the current one",
+   "badge": "rookie"
   },
   {
    "name": "Maxime Raynaud",
-   "reason": "rookie season is the current one"
+   "reason": "rookie season is the current one",
+   "badge": "rookie"
   },
   {
    "name": "Jeremiah Fears",
-   "reason": "rookie season is the current one"
+   "reason": "rookie season is the current one",
+   "badge": "rookie"
   },
   {
    "name": "Cedric Coward",
-   "reason": "rookie season is the current one"
+   "reason": "rookie season is the current one",
+   "badge": "rookie"
   },
   {
    "name": "Egor Dëmin",
-   "reason": "rookie season is the current one"
+   "reason": "rookie season is the current one",
+   "badge": "rookie"
   },
   {
    "name": "Nique Clifford",
-   "reason": "rookie season is the current one"
+   "reason": "rookie season is the current one",
+   "badge": "rookie"
   },
   {
    "name": "Derik Queen",
-   "reason": "rookie season is the current one"
+   "reason": "rookie season is the current one",
+   "badge": "rookie"
   },
   {
    "name": "Tre Johnson",
-   "reason": "rookie season is the current one"
+   "reason": "rookie season is the current one",
+   "badge": "rookie"
   },
   {
    "name": "Dylan Harper",
-   "reason": "rookie season is the current one"
+   "reason": "rookie season is the current one",
+   "badge": "rookie"
   },
   {
    "name": "Sion James",
-   "reason": "rookie season is the current one"
+   "reason": "rookie season is the current one",
+   "badge": "rookie"
   },
   {
    "name": "Nolan Traoré",
-   "reason": "rookie season is the current one"
+   "reason": "rookie season is the current one",
+   "badge": "rookie"
   },
   {
    "name": "Will Riley",
-   "reason": "rookie season is the current one"
+   "reason": "rookie season is the current one",
+   "badge": "rookie"
   },
   {
    "name": "Collin Murray-Boyles",
-   "reason": "rookie season is the current one"
+   "reason": "rookie season is the current one",
+   "badge": "rookie"
   },
   {
    "name": "Ryan Kalkbrenner",
-   "reason": "rookie season is the current one"
+   "reason": "rookie season is the current one",
+   "badge": "rookie"
   },
   {
    "name": "Drake Powell",
-   "reason": "rookie season is the current one"
+   "reason": "rookie season is the current one",
+   "badge": "rookie"
   },
   {
    "name": "Danny Wolf",
-   "reason": "rookie season is the current one"
+   "reason": "rookie season is the current one",
+   "badge": "rookie"
   },
   {
    "name": "Ben Saraf",
-   "reason": "rookie season is the current one"
+   "reason": "rookie season is the current one",
+   "badge": "rookie"
   },
   {
    "name": "Caleb Love",
-   "reason": "rookie season is the current one"
+   "reason": "rookie season is the current one",
+   "badge": "rookie"
   },
   {
    "name": "Jamir Watkins",
-   "reason": "rookie season is the current one"
+   "reason": "rookie season is the current one",
+   "badge": "rookie"
   },
   {
    "name": "Dylan Cardwell",
-   "reason": "rookie season is the current one"
+   "reason": "rookie season is the current one",
+   "badge": "rookie"
   },
   {
    "name": "Walter Clayton",
-   "reason": "rookie season is the current one"
+   "reason": "rookie season is the current one",
+   "badge": "rookie"
   },
   {
    "name": "Javon Small",
-   "reason": "rookie season is the current one"
+   "reason": "rookie season is the current one",
+   "badge": "rookie"
   },
   {
    "name": "Will Richard",
-   "reason": "rookie season is the current one"
+   "reason": "rookie season is the current one",
+   "badge": "rookie"
   },
   {
    "name": "Kobe Sanders",
-   "reason": "rookie season is the current one"
+   "reason": "rookie season is the current one",
+   "badge": "rookie"
   },
   {
    "name": "Ryan Nembhard",
-   "reason": "rookie season is the current one"
+   "reason": "rookie season is the current one",
+   "badge": "rookie"
   },
   {
    "name": "Kasparas Jakučionis",
-   "reason": "rookie season is the current one"
+   "reason": "rookie season is the current one",
+   "badge": "rookie"
   },
   {
    "name": "Micah Peavy",
-   "reason": "rookie season is the current one"
+   "reason": "rookie season is the current one",
+   "badge": "rookie"
   },
   {
    "name": "Hugo González",
-   "reason": "rookie season is the current one"
+   "reason": "rookie season is the current one",
+   "badge": "rookie"
   },
   {
    "name": "Noah Penda",
-   "reason": "rookie season is the current one"
+   "reason": "rookie season is the current one",
+   "badge": "rookie"
   },
   {
    "name": "Rasheer Fleming",
-   "reason": "rookie season is the current one"
+   "reason": "rookie season is the current one",
+   "badge": "rookie"
   }
  ],
  "excludedCount": 33,

@@ -10,7 +10,15 @@ import {
   stepSelection,
   TEAMS_RESOLVED,
   STATS_GENERATED,
+  BADGES_GENERATED,
+  BADGE_FILE,
 } from './players.js';
+import {
+  BADGE_IDS,
+  ROOKIE_BADGE,
+  SUPER_SEASON_BADGE,
+  pickBadge,
+} from '../cards/badges.js';
 import { isSafePlayerId } from '../../scripts/studio/studioServerPlugin.js';
 import { getTeam } from '../cards/teams.js';
 import {
@@ -342,6 +350,63 @@ describe('season constants', () => {
     expect(STATS_SEASON).toBe(FINISHED_SET);
     expect(FINISHED_STATS_SEASON).toBe('2024-25');
     expect(CURRENT_SET).toBe('2026-27');
+  });
+});
+
+describe('the base set\'s card-type badges', () => {
+  // The 2026-27 pool is the first list whose CARDS carry badges rather than
+  // inheriting one from the set they are in. What is checked here is the JOIN —
+  // that the studio hands CardTemplate the ids the generator wrote, for the
+  // right players, keyed the way everything else in this tool is keyed.
+
+  it('gives every pool player a badges array, empty or not', () => {
+    // Always present, so nothing downstream has to test for the generated
+    // file's absence — CardTemplate spreads it into pickBadge unconditionally.
+    for (const p of POOL_PLAYERS) {
+      expect(Array.isArray(p.badges), p.name).toBe(true);
+    }
+  });
+
+  it('badges exactly the players the generator named, and only them', () => {
+    expect(BADGES_GENERATED).toBe(true);
+    const named = new Map(BADGE_FILE.badges.map(b => [b.id, b.badges]));
+    let badged = 0;
+    for (const p of POOL_PLAYERS) {
+      if (p.badges.length === 0) {
+        expect(named.has(p.id), `${p.name} was badged and should not be`).toBe(false);
+        continue;
+      }
+      badged += 1;
+      expect(p.badges, p.name).toEqual(named.get(p.id));
+    }
+    expect(badged).toBe(BADGE_FILE.badges.length);
+  });
+
+  it('declares only badges the card layer can draw, and resolves to one', () => {
+    for (const p of POOL_PLAYERS.filter(p => p.badges.length)) {
+      for (const id of p.badges) expect(BADGE_IDS, p.name).toContain(id);
+      expect(pickBadge(p.badges), p.name).not.toBeNull();
+    }
+  });
+
+  it('prints SUPER SEASON on every badged card, and ROOKIE on none', () => {
+    // The consequence of the priority the user asked for, on the real list:
+    // a player whose rookie season is the current one has only that season, so
+    // it is his best one too, and Super Season outranks Rookie.
+    const printed = POOL_PLAYERS
+      .filter(p => p.badges.length)
+      .map(p => pickBadge(p.badges).id);
+    expect(printed.filter(id => id === SUPER_SEASON_BADGE).length).toBe(printed.length);
+    expect(printed.filter(id => id === ROOKIE_BADGE).length).toBe(0);
+    // …while the ROOKIE fact itself is still on the record, not thrown away.
+    expect(POOL_PLAYERS.filter(p => p.badges.includes(ROOKIE_BADGE)).length)
+      .toBe(BADGE_FILE.counts.applies[ROOKIE_BADGE]);
+  });
+
+  it('is scoped to the set it was generated for', () => {
+    // A file from another season must degrade to no badges rather than badging
+    // 149 players of a pool it was not built from.
+    expect(BADGE_FILE.set).toBe(CURRENT_SET);
   });
 });
 

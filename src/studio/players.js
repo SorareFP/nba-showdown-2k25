@@ -150,6 +150,42 @@ const STAT_FIELDS = [
   'chart',
 ];
 
+/**
+ * The base set's CARD-TYPE BADGES, when generateSpecialSets.js has been run.
+ *
+ * Same import.meta.glob treatment as the two files above, for the same reason:
+ * generated, not guaranteed present, and a checkout without it must still open
+ * a studio you can curate photos in — it simply shows no pills.
+ *
+ * ── WHY A BADGE IS ON THE CARD AND NOT ON THE SET ───────────────────────────
+ *
+ * A player whose best season is the one this set is built from gets NO card in
+ * the Super Season set: his base card already is that season. The exclusion is
+ * right and it stays — but it used to be the end of the story, so nothing on
+ * any card said that 149 players had just had the best year of their careers.
+ * The fact now rides onto the base card as a badge. Same for the 33 whose
+ * rookie season is the current one. "If last year was their super season, keep
+ * the 26-27 design and just add the badge", in the user's words — so the pill
+ * is all these cards gain: no treatment, no season line.
+ *
+ * THE SET IS CHECKED, not assumed. The file names the set it was generated for,
+ * and a stale one from another season degrades to no badges rather than badging
+ * the wrong 149 players.
+ */
+const badgeModules = import.meta.glob('../../card-data/generated/card-badges.json', {
+  eager: true,
+});
+export const BADGE_FILE = Object.values(badgeModules)[0]?.default ?? null;
+
+const badgesById = new Map(
+  BADGE_FILE?.set === CURRENT_SET && Array.isArray(BADGE_FILE.badges)
+    ? BADGE_FILE.badges.map(b => [b.id, b.badges])
+    : []
+);
+
+/** True when the studio is showing the base set's badges. */
+export const BADGES_GENERATED = badgesById.size > 0;
+
 function withGeneratedStats(player) {
   const card = generatedById.get(player.id);
   if (!card) return player;
@@ -172,6 +208,11 @@ export const POOL_PLAYERS = pool.map(p => ({
   // the field always exists and resolvePhotoUrl's `if (personId)` reads the
   // same either way.
   personId: p.personId ?? null,
+  // EVERY badge that is true of this player, in priority order — not the one
+  // that prints. CardTemplate resolves that with pickBadge, so the rule lives
+  // in one place and re-prioritising needs no regeneration. Always an array, so
+  // nothing downstream has to test for the file's absence.
+  badges: badgesById.get(playerIdFromName(p.name)) ?? [],
   // Chart / Speed / Power / Shot Line / boosts / salary arrive from
   // cards-2026-27.json when it exists. When it does not, they stay absent and
   // CardTemplate renders a placeholder for each — never a crash, never a zero
@@ -277,6 +318,11 @@ export const SOURCES = {
       `can edit — photos and crops save into the ${CURRENT_SET} set. ` +
       `Its stats come from the ${STATS_SEASON} season, because a set is named for the season it ` +
       `will be played in and printed with the numbers from the season before.` +
+      (BADGES_GENERATED
+        ? ` ${badgesById.size} of them carry a card-type badge, because their best or rookie ` +
+          'season is the one this set is built from — so the separate set has no card for them ' +
+          'and the fact is printed here instead.'
+        : '') +
       (STATS_GENERATED
         ? ' The numbers on these cards are a PROVISIONAL first pass — charts synthesized from ' +
           'season rates, Shot Line and boosts refitted against the finished set. Re-run ' +
@@ -305,23 +351,27 @@ export const SOURCES = {
   // refers to them. A new set's key IS its id, so `SOURCES[id].set === id` and
   // there is nothing to keep in step.
   [SUPER_SEASON_SET]: specialSource(SUPER_SEASON_SET, SUPER_SEASON_FILE, {
-    sub: `best season per player · ${SUPER_SEASON_FILE?.excludedCount ?? 0} excluded`,
+    sub: `best season per player · ${SUPER_SEASON_FILE?.excludedCount ?? 0} badged instead`,
     hint:
       'EACH ACTIVE PLAYER\'S BEST INDIVIDUAL SEASON, chosen on Basketball-Reference\'s BPM, ' +
       'scored against its own season\'s league. Win Shares is deliberately NOT in it: it ' +
       'allocates team wins, so it docks a good player on a bad team. A player whose best ' +
-      'season is the CURRENT one gets no card here: his base card already is that season. ' +
-      'Every number is provisional and more so than the base set — EPM, Estimated Wins and ' +
-      'rim FG% do not exist for past seasons, so BPM and 2P% stand in for them. ' +
-      'Re-run `node scripts/cardgen/generateSpecialSets.js`.',
+      `season is the CURRENT one gets no card here — his base card already is that season — but ` +
+      `his ${CURRENT_SET} card now carries a SUPER SEASON badge instead, so the fact is on a ` +
+      'card rather than only in a file. Every number is provisional and more so than the base ' +
+      'set — EPM, Estimated Wins and rim FG% do not exist for past seasons, so BPM and 2P% ' +
+      'stand in for them. Re-run `node scripts/cardgen/generateSpecialSets.js`.',
   }),
   [ROOKIE_SET]: specialSource(ROOKIE_SET, ROOKIE_FILE, {
-    sub: `rookie-year cards · ${ROOKIE_FILE?.excludedCount ?? 0} excluded`,
+    sub: `rookie-year cards · ${ROOKIE_FILE?.excludedCount ?? 0} badged instead`,
     hint:
       'EACH ACTIVE PLAYER\'S ROOKIE SEASON, on the team he played it for — which is why some of ' +
-      'these say SEA or NJN. A player whose rookie year IS the current season is excluded, the ' +
-      'same rule and the same reason as the Super Season set: his base card already is that ' +
-      'season. Same Basketball-Reference substitutions, same provisional numbers.',
+      'these say SEA or NJN. A player whose rookie year IS the current season gets no card ' +
+      'here, the same rule and the same reason as the Super Season set, and the same ' +
+      `consolation: a badge on his ${CURRENT_SET} card. In practice every one of those players ` +
+      'is ALSO having his best season — a first season is the only season — and Super Season ' +
+      'outranks Rookie, so what they actually print is the gold pill. Same ' +
+      'Basketball-Reference substitutions, same provisional numbers.',
   }),
 };
 

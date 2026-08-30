@@ -4,6 +4,8 @@ import {
   TEAM_ALIASES,
   HISTORICAL_TEAMS,
   WNBA_TEAMS,
+  WNBA_HISTORICAL_TEAMS,
+  WNBA_TEAM_ERAS,
   ACCENT_FALLBACK,
   canonicalTeam,
   canonicalTeamFor,
@@ -13,6 +15,7 @@ import {
   leagueTeamCount,
   pickAccent,
   resolveAccent,
+  wnbaFranchiseForSeason,
 } from './teams.js';
 import pool from '../../card-data/generated/player-pool-2026.json';
 import wnbaPool from '../../card-data/generated/wnba-pool-2026.json';
@@ -471,5 +474,120 @@ describe('the WNBA pool against this table', () => {
     // TOT is not a team. A player who moved mid-season is resolved to the
     // franchise she played the most games for — see resolveDisplayTeams.
     expect(wnbaPool.filter(p => p.team === 'TOT')).toEqual([]);
+  });
+});
+
+/**
+ * The WNBA BEFORE NOW — the table the legends set reaches into.
+ *
+ * Two failure modes it guards, and they are opposite. A DEFUNCT franchise that
+ * does not resolve puts a card on the neutral grey fallback, which reads as
+ * broken. A SURVIVING franchise that resolves to its LIVE row puts a 2006 card
+ * in 2026's colours, which reads as fine and is wrong — and that second one is
+ * the reason this block exists at all, because nothing about the card would
+ * look off.
+ */
+describe('WNBA_HISTORICAL_TEAMS', () => {
+  it('gives every row a name, a city, two colours and an era', () => {
+    for (const [key, team] of Object.entries(WNBA_HISTORICAL_TEAMS)) {
+      expect(team.name, key).toBeTruthy();
+      expect(team.city, key).toBeTruthy();
+      expect(team.primary, key).toMatch(/^#[0-9A-Fa-f]{6}$/);
+      expect(team.secondary, key).toMatch(/^#[0-9A-Fa-f]{6}$/);
+      expect(team.era, key).toMatch(/^\d{4}-\d{4}$/);
+      expect(team.league, key).toBe('WNBA');
+    }
+  });
+
+  it('never shadows a live franchise', () => {
+    // The fallthrough in getWnbaTeam can only ever ADD teams. Portland is the
+    // one genuine collision — the 2000-2002 Fire and the 2026 Fire — and it is
+    // resolved by SEASON under a synthetic key rather than by merging.
+    const live = new Set(Object.keys(WNBA_TEAMS));
+    for (const key of Object.keys(WNBA_HISTORICAL_TEAMS)) {
+      expect(live.has(key), `${key} would shadow the live row`).toBe(false);
+    }
+    expect(WNBA_HISTORICAL_TEAMS.PORF.city).toBe('Portland');
+    expect(WNBA_TEAMS.POR.city).toBe('Portland');
+    expect(WNBA_HISTORICAL_TEAMS.PORF.primary).not.toBe(WNBA_TEAMS.POR.primary);
+  });
+
+  it('points every era row at a key the era table can actually produce', () => {
+    const produced = new Set(WNBA_TEAM_ERAS.map(e => e.key));
+    for (const e of WNBA_TEAM_ERAS) {
+      expect(WNBA_HISTORICAL_TEAMS[e.key], e.key).toBeTruthy();
+    }
+    // And every row a season can land on is reachable — a row nothing resolves
+    // to is a colour nobody will ever see.
+    const unreachable = Object.keys(WNBA_HISTORICAL_TEAMS).filter(
+      k => !produced.has(k) && !WNBA_HISTORICAL_TEAMS[k].era.startsWith('19') &&
+        !['HOU', 'CLE', 'SAC', 'UTA', 'ORL', 'MIA', 'SAS', 'TUL'].includes(k)
+    );
+    expect(unreachable).toEqual([]);
+  });
+
+  it('reads era ranges oldest-first, so the first match is the right one', () => {
+    const byAbbr = new Map();
+    for (const e of WNBA_TEAM_ERAS) {
+      const prev = byAbbr.get(e.abbr);
+      if (prev !== undefined) expect(e.through, e.abbr).toBeGreaterThan(prev);
+      byAbbr.set(e.abbr, e.through);
+    }
+  });
+});
+
+describe('wnbaFranchiseForSeason', () => {
+  it('resolves a surviving franchise to the identity it actually wore', () => {
+    // Seattle is the case that would otherwise be silently wrong: the Storm
+    // played 2000-2015 in hunter green and maroon, not today's Storm green.
+    expect(wnbaFranchiseForSeason('SEA', 2006)).toBe('SEA00');
+    expect(getWnbaTeam('SEA00').primary).toBe('#00573F');
+    expect(wnbaFranchiseForSeason('SEA', 2016)).toBe('SEA');
+    expect(getWnbaTeam('SEA').primary).toBe('#2C5234');
+  });
+
+  it('separates the two Portland Fires, twenty-four years apart', () => {
+    expect(wnbaFranchiseForSeason('POR', 2001)).toBe('PORF');
+    expect(wnbaFranchiseForSeason('POR', 2026)).toBe('POR');
+    expect(getWnbaTeam('PORF').name).toBe('Fire');
+    expect(getWnbaTeam('POR').name).toBe('Fire');
+  });
+
+  it('walks the Mercury through all four of their identities', () => {
+    expect(wnbaFranchiseForSeason('PHO', 2008)).toBe('PHO97');
+    expect(wnbaFranchiseForSeason('PHO', 2014)).toBe('PHO11');
+    expect(wnbaFranchiseForSeason('PHO', 2020)).toBe('PHO15');
+    expect(wnbaFranchiseForSeason('PHO', 2026)).toBe('PHO');
+  });
+
+  it('means TODAY when no season is given, which is what the current set passes', () => {
+    // Every caller in the 2026 WNBA set omits the season, and this is the
+    // assertion that keeps that set behaving exactly as it did.
+    expect(wnbaFranchiseForSeason('SEA')).toBe('SEA');
+    expect(wnbaFranchiseForSeason('PHO')).toBe('PHO');
+    expect(wnbaFranchiseForSeason('POR')).toBe('POR');
+  });
+
+  it('leaves a franchise with one identity alone', () => {
+    // Los Angeles, Indiana, Chicago and Dallas never changed hex, so they have
+    // no era rows and resolve to themselves in any year.
+    for (const abbr of ['LAS', 'IND', 'CHI', 'DAL']) {
+      expect(wnbaFranchiseForSeason(abbr, 1999)).toBe(abbr);
+      expect(wnbaFranchiseForSeason(abbr, 2026)).toBe(abbr);
+    }
+  });
+
+  it('finds the folded franchises, which have no live row to fall back to', () => {
+    for (const [key, city] of [['HOU', 'Houston'], ['CLE', 'Cleveland'], ['SAC', 'Sacramento'],
+      ['UTA', 'Utah'], ['ORL', 'Orlando'], ['MIA', 'Miami'], ['SAS', 'San Antonio'],
+      ['TUL', 'Tulsa']]) {
+      expect(getWnbaTeam(key), key).toBeTruthy();
+      expect(getWnbaTeam(key).city, key).toBe(city);
+    }
+  });
+
+  it('still answers null for a code neither table knows', () => {
+    expect(getWnbaTeam('ZZZ')).toBeNull();
+    expect(getWnbaTeam(null)).toBeNull();
   });
 });

@@ -44,7 +44,13 @@ import {
   getBadge,
   pickBadge,
 } from './badges.js';
-import { TEAMS, HISTORICAL_TEAMS, resolveAccent } from './teams.js';
+import {
+  TEAMS,
+  HISTORICAL_TEAMS,
+  WNBA_TEAMS,
+  WNBA_HISTORICAL_TEAMS,
+  resolveAccent,
+} from './teams.js';
 import { SETS, setTreatment } from './sets.js';
 
 const CARD_CSS = readFileSync(new URL('./CardTemplate.module.css', import.meta.url), 'utf8');
@@ -72,7 +78,36 @@ const HISTORIC = Object.entries(HISTORICAL_TEAMS).map(([abbr, team]) => [
   resolveAccent(team),
 ]);
 
-const ALL_TEAMS = [...STOCK, ...HISTORIC];
+/**
+ * AND THE WNBA, BOTH TABLES, which this sweep did not used to reach.
+ *
+ * It had no reason to: the WNBA set declares `treatment: null`, so no WNBA
+ * field ever met the gold foil. The WNBA SUPER SEASON set changed that — it is
+ * gold foil on WNBA franchises, live and historical — and a treatment whose
+ * whole design is "may not make the card less legible than it already is"
+ * cannot be trusted on fields it was never measured against.
+ *
+ * The historical WNBA rows are the sharper half. Several are colours nothing
+ * else in this repo contains: the Tulsa Shock's #FFB81C is a YELLOW field, far
+ * lighter than the Bobcats' orange and the lightest ground the foil has ever
+ * been asked to sit on, and the Utah Starzz's #006271 and the Storm's #00573F
+ * are dark saturated greens the NBA table has no equivalent of.
+ */
+const WNBA_STOCK = Object.entries(WNBA_TEAMS).map(([abbr, team]) => [
+  `W:${abbr}`,
+  team.primary,
+  team.secondary,
+  resolveAccent(team),
+]);
+
+const WNBA_HISTORIC = Object.entries(WNBA_HISTORICAL_TEAMS).map(([abbr, team]) => [
+  `W:${abbr}`,
+  team.primary,
+  team.secondary,
+  resolveAccent(team),
+]);
+
+const ALL_TEAMS = [...STOCK, ...HISTORIC, ...WNBA_STOCK, ...WNBA_HISTORIC];
 
 const themeFor = ([, primary, secondary, accent], treatment) =>
   applyTreatment(deriveFieldTheme(primary, secondary, accent), treatment);

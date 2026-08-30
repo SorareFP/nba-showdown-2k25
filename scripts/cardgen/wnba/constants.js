@@ -56,6 +56,31 @@
 export const WNBA_SEASON = 2026;
 
 /**
+ * The league's FIRST season, and the earliest year the archive can reach.
+ *
+ * 1997 is not a choice — it is the first WNBA season there was. Basketball-
+ * Reference publishes it in full: 99 players, and the advanced table already
+ * carries PER, TS%, USG%, ORtg/DRtg and the Win Shares family, the same columns
+ * 2026 does. See scripts/cardgen/wnba/fetchWnbaHistory.js.
+ *
+ * Nothing here claims the MODEL reaches that far — that is a separate question
+ * about whether the columns are populated and whether an NBA-fitted exchange
+ * rate holds in a 1997 league, and generateWnbaLegends.js measures it rather
+ * than assuming either way.
+ */
+export const WNBA_FIRST_SEASON = 1997;
+
+/**
+ * The last season the ARCHIVE covers, which is one behind the set's own season.
+ *
+ * The legends set is historical: every player in it is retired, and the most
+ * recent of them (Diana Taurasi, Tina Charles) last played in 2024. Fetching
+ * 2025 and 2026 through this path would be redundant anyway — fetchWnba.js
+ * already caches both for the current set.
+ */
+export const WNBA_LAST_ARCHIVED_SEASON = 2024;
+
+/**
  * The season blended in for the force-included six.
  *
  * THIS IS POSSIBLE HERE AND IS NOT POSSIBLE FOR THE NBA SETS, which is worth

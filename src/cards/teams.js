@@ -166,13 +166,25 @@ export const HISTORICAL_TEAMS = {
  * WNBA "PHO" can never collide with the NBA's Phoenix file. A missing file
  * still degrades to CardTemplate's lettered circle rather than a broken image.
  *
- * That directory holds files no row below points at, and they are not
- * oversights: `CLE.png` (Rockers, folded 2003) and `HOU.gif` (Comets, folded
- * 2008) are defunct franchises with no 2026 row to attach to, and `TOR.png` is
- * Toronto's PRIMARY mark, superseded here by the alt (see the row). Nothing
- * resolves `.gif`, and nothing needs to — every path below is a `.png` that
- * exists. logoFiles.test.js pins both halves of that so a future Houston row
- * cannot quietly 404.
+ * That directory holds files no row BELOW points at, and they are not
+ * oversights. `TOR.png` is Toronto's PRIMARY mark, superseded here by the alt
+ * (see the row). The other two are defunct franchises with no 2026 row to
+ * attach to, and BOTH have since been settled by WNBA_HISTORICAL_TEAMS further
+ * down rather than by this table:
+ *
+ *   HOU.gif   THE HOUSTON COMETS, and now referenced — by the historical
+ *             table, which is the only place a franchise that folded in 2008
+ *             can live. It is the one non-PNG in the directory, which is why
+ *             logoFiles.test.js measures the historical rows with a
+ *             format-aware reader rather than its PNG-only one.
+ *   CLE.png   NOT the Cleveland Rockers. ⚠ The user has stated this file is the
+ *             2028 CLEVELAND SIRENS — the incoming expansion team — so it is
+ *             wrong for any historical use, and the Rockers row deliberately
+ *             carries `logo: null` and asks for a real mark. This note replaces
+ *             an earlier one here that called it the Rockers.
+ *
+ * logoFiles.test.js pins every one of these so a future Houston row cannot
+ * quietly 404 and the Sirens file cannot quietly become the Rockers.
  *
  * ⚠ TORONTO IS THE ONE ROW NOT ON ITS `{abbr}.png`, and the reason is contrast,
  * not Windows. The Tempo's primary mark is drawn in the team's OWN bordeaux, so
@@ -229,6 +241,159 @@ export const WNBA_TEAMS = {
 };
 
 /**
+ * ── THE WNBA BEFORE NOW ─────────────────────────────────────────────────────
+ *
+ * WNBA_TEAMS is "the fifteen franchises playing in 2026", exactly as `TEAMS` is
+ * "the thirty NBA franchises playing today". The legends set
+ * (WNBA_SUPER_SEASON_SET) reaches back to 1997, and almost nothing about the
+ * league it reaches into is in that table:
+ *
+ *   ELEVEN FRANCHISES NO LONGER EXIST or no longer exist THERE. The Houston
+ *   Comets won the league's first four titles and folded in 2008; the Detroit
+ *   Shock won three and are now the Dallas Wings by way of Tulsa; the Utah
+ *   Starzz are the Aces by way of San Antonio. None of them has a 2026 row to
+ *   attach to.
+ *
+ *   AND THE SURVIVORS DID NOT LOOK LIKE THIS. This is the half that would have
+ *   been missed by anyone checking only for missing teams: the SEATTLE STORM
+ *   played 2000-2015 in HUNTER GREEN AND MAROON, not the Storm Green and
+ *   Lightning Yellow of the current row — so Lauren Jackson's and Sue Bird's
+ *   peak seasons are in colours the live table does not contain. The Mercury
+ *   have had four identities, the Liberty four, the Lynx three, the Sun three,
+ *   the Mystics two, the Dream three, the Aces two.
+ *
+ * So a card that names a season has to resolve its franchise BY SEASON, and
+ * `wnbaFranchiseForSeason` is what does it — the exact counterpart of the NBA's
+ * `franchiseForSeason`, which exists because "CHA" meant two different teams.
+ *
+ * ── THE COLOURS ARE VERIFIED, TO THE SAME PAGE AND BY THE SAME RULE ─────────
+ *
+ * Read off TruColor's WNBA franchise-records page, which covers 1997-present
+ * era by era — the same source and the same mechanical rule as WNBA_TEAMS:
+ * take the era's official colours #1 and #2 as primary and secondary, apply no
+ * judgement on top. So `unverifiedColors` is absent here, unlike the NBA's
+ * HISTORICAL_TEAMS, whose hexes really were written from memory.
+ *
+ *   https://www.trucolor.net/portfolio/womens-national-basketball-association-official-colors-1997-through-present/
+ *
+ * ⚠ ONE CAVEAT ON HOW THEY WERE READ: the page was fetched and its text
+ * extracted, not eyeballed swatch by swatch the way the fifteen live rows were.
+ * The era BOUNDARIES below are therefore the more likely place for an error
+ * than the hexes, and a card landing one season either side of a boundary is
+ * the case to spot-check.
+ *
+ * ── LOGOS: ALMOST ALL OF THESE ARE MISSING, AND THAT IS EXPECTED ────────────
+ *
+ * `logo: null` renders CardTemplate's lettered circle, which reads "HOU" or
+ * "SAS" and is exactly right for a mark nobody has supplied yet. The generator
+ * reports the shopping list on every run — see generateWnbaLegends.js's
+ * `logoShoppingList`, which names only the franchises the finished cards
+ * ACTUALLY land on rather than all twenty-odd rows below.
+ *
+ * A PRIOR ERA OF A LIVE FRANCHISE KEEPS THE MODERN MARK rather than dropping
+ * to a circle, because a Storm logo from the wrong decade is still a Storm
+ * logo and still better than three letters. Those rows carry `logoEra` saying
+ * which era the file is really from, so the shopping list can tell a MISSING
+ * mark (must supply) from an ANACHRONISTIC one (nice to have).
+ */
+export const WNBA_HISTORICAL_TEAMS = {
+  // ── Folded, in the order they arrived ───────────────────────────────────────
+  // HOU.gif is the one non-PNG in the directory and it is a 545x251 WORDMARK
+  // LOCKUP — 2.17:1, past what logoFiles.test.js allows a live team — so it
+  // draws small in the 115x96 slot. Wired anyway: a small mark beats three
+  // letters, and the shopping list asks for a mark-only file.
+  HOU:  { name: 'Comets',       city: 'Houston',      primary: '#BA0C2F', secondary: '#041E42', logo: '/logos/WNBA/HOU.gif', league: 'WNBA', era: '1997-2008', folded: true }, // Fireball Red, Galaxy Blue
+  // ⚠ NOT public/logos/WNBA/CLE.png. The user has stated that file is the 2028
+  // CLEVELAND SIRENS — the incoming expansion team — and not the Rockers, who
+  // folded in 2003. Pointing this row at it would print the wrong franchise's
+  // mark on a card from twenty-five years earlier.
+  CLE:  { name: 'Rockers',      city: 'Cleveland',    primary: '#010101', secondary: '#009FDF', logo: null, league: 'WNBA', era: '1997-2003', folded: true }, // Black, Blue
+  CHA:  { name: 'Sting',        city: 'Charlotte',    primary: '#00778B', secondary: '#280071', logo: null, league: 'WNBA', era: '1997-2003', folded: true }, // Teal, Purple
+  CHA2: { name: 'Sting',        city: 'Charlotte',    primary: '#F9423A', secondary: '#1B365D', logo: null, league: 'WNBA', era: '2004-2006', folded: true }, // Orange, Blue
+  SAC:  { name: 'Monarchs',     city: 'Sacramento',   primary: '#753BBD', secondary: '#010101', logo: null, league: 'WNBA', era: '1997-2009', folded: true }, // Purple, Black
+  UTA:  { name: 'Starzz',       city: 'Utah',         primary: '#006271', secondary: '#753BBD', logo: null, league: 'WNBA', era: '1997-2002', folded: false }, // Green, Purple — became San Antonio
+  DET:  { name: 'Shock',        city: 'Detroit',      primary: '#010101', secondary: '#FFA400', logo: null, league: 'WNBA', era: '1998-2001', folded: false }, // Black, Yellow
+  DET2: { name: 'Shock',        city: 'Detroit',      primary: '#003DA5', secondary: '#041E42', logo: null, league: 'WNBA', era: '2002-2009', folded: false }, // Blue, Dark Blue — became Tulsa
+  ORL:  { name: 'Miracle',      city: 'Orlando',      primary: '#0057B7', secondary: '#010101', logo: null, league: 'WNBA', era: '1999-2002', folded: false }, // Miracle Blue, Black — became Connecticut
+  // ⚠ PORTLAND FIRE, TWICE. This is the 2000-2002 franchise, which folded; the
+  // POR row in WNBA_TEAMS is the 2026 EXPANSION team of the same name in the
+  // same city, and it is pink. One abbreviation, two franchises, twenty-four
+  // years apart — the WNBA's version of the NBA's CHA/CHB collision, and the
+  // reason wnbaFranchiseForSeason exists rather than a flat merge of the two
+  // tables. Keyed PORF so it can never shadow the live row.
+  PORF: { name: 'Fire',         city: 'Portland',     primary: '#C8102E', secondary: '#010101', logo: null, league: 'WNBA', era: '2000-2002', folded: true }, // Red, Black
+  MIA:  { name: 'Sol',          city: 'Miami',        primary: '#A6192E', secondary: '#010101', logo: null, league: 'WNBA', era: '2000-2002', folded: true }, // Fiery Red, Black
+  SAS:  { name: 'Silver Stars', city: 'San Antonio',  primary: '#010101', secondary: '#8D9093', logo: null, league: 'WNBA', era: '2003-2017', folded: false }, // Black, Silver — became Las Vegas
+  TUL:  { name: 'Shock',        city: 'Tulsa',        primary: '#FFB81C', secondary: '#010101', logo: null, league: 'WNBA', era: '2010-2015', folded: false }, // Yellow, Black — became Dallas
+
+  // ── Live franchises, in the colours they actually wore ─────────────────────
+  SEA00:  { name: 'Storm',   city: 'Seattle',      primary: '#00573F', secondary: '#9E2B2F', logo: '/logos/WNBA/SEA.png', logoEra: '2021-present', league: 'WNBA', era: '2000-2015' }, // Hunter Green, Maroon
+  MIN99:  { name: 'Lynx',    city: 'Minnesota',    primary: '#00843D', secondary: '#236192', logo: '/logos/WNBA/MIN.png', logoEra: '2018-present', league: 'WNBA', era: '1999-2010' }, // Green, Slate Blue
+  MIN11:  { name: 'Lynx',    city: 'Minnesota',    primary: '#236192', secondary: '#010101', logo: '/logos/WNBA/MIN.png', logoEra: '2018-present', league: 'WNBA', era: '2011-2017' }, // Slate Blue, Black
+  PHO97:  { name: 'Mercury', city: 'Phoenix',      primary: '#EF3340', secondary: '#5F249F', logo: '/logos/WNBA/PHO.png', logoEra: '2026-present', league: 'WNBA', era: '1997-2010' }, // Planet Red, Purple
+  PHO11:  { name: 'Mercury', city: 'Phoenix',      primary: '#582C83', secondary: '#CB6015', logo: '/logos/WNBA/PHO.png', logoEra: '2026-present', league: 'WNBA', era: '2011-2014' }, // Purple, Orange
+  PHO15:  { name: 'Mercury', city: 'Phoenix',      primary: '#211747', secondary: '#CB6015', logo: '/logos/WNBA/PHO.png', logoEra: '2026-present', league: 'WNBA', era: '2015-2025' }, // Dark Purple, Burnt Orange
+  NYL97:  { name: 'Liberty', city: 'New York',     primary: '#010101', secondary: '#0057B7', logo: '/logos/WNBA/NYL.png', logoEra: '2020-present', league: 'WNBA', era: '1997-2002' }, // Gotham Black, Harbor Blue
+  NYL03:  { name: 'Liberty', city: 'New York',     primary: '#0057B7', secondary: '#6ECEB2', logo: '/logos/WNBA/NYL.png', logoEra: '2020-present', league: 'WNBA', era: '2003-2011' }, // Harbor Blue, Liberty Green
+  NYL12:  { name: 'Liberty', city: 'New York',     primary: '#010101', secondary: '#003DA5', logo: '/logos/WNBA/NYL.png', logoEra: '2020-present', league: 'WNBA', era: '2012-2019' }, // Black, Blue
+  WAS98:  { name: 'Mystics', city: 'Washington',   primary: '#236192', secondary: '#8F654D', logo: '/logos/WNBA/WAS.png', logoEra: '2011-present', league: 'WNBA', era: '1998-2010' }, // Slate Blue, Bronze
+  CON03:  { name: 'Sun',     city: 'Connecticut',  primary: '#041E42', secondary: '#A6192E', logo: '/logos/WNBA/CONN.png', logoEra: '2021-present', league: 'WNBA', era: '2003-2015' }, // Navy, Dark Red
+  CON16:  { name: 'Sun',     city: 'Connecticut',  primary: '#DC4405', secondary: '#041E42', logo: '/logos/WNBA/CONN.png', logoEra: '2021-present', league: 'WNBA', era: '2016-2020' }, // Orange, Navy
+  ATL08:  { name: 'Dream',   city: 'Atlanta',      primary: '#418FDE', secondary: '#C8102E', logo: '/logos/WNBA/ATL.png', logoEra: '2020-present', league: 'WNBA', era: '2008-2015' }, // Sky Blue, Red
+  ATL16:  { name: 'Dream',   city: 'Atlanta',      primary: '#0C2340', secondary: '#C8102E', logo: '/logos/WNBA/ATL.png', logoEra: '2020-present', league: 'WNBA', era: '2016-2019' }, // Navy, Red
+  LVA18:  { name: 'Aces',    city: 'Las Vegas',    primary: '#010101', secondary: '#BA0C2F', logo: '/logos/WNBA/LVA.png', logoEra: '2024-present', league: 'WNBA', era: '2018-2023' }, // Black, Red
+};
+
+/**
+ * Which WNBA franchise key an abbreviation meant IN A GIVEN SEASON.
+ *
+ * A DECLARED TABLE rather than a chain of ifs, because it is a fact about the
+ * league and not a computation: each row says "this abbreviation, through this
+ * season, is that key". Rows are checked in order and the FIRST season-match
+ * wins, so the ranges may be written oldest-first and read as a timeline.
+ *
+ * An abbreviation with no row, or a season past every row's `through`, resolves
+ * to the abbreviation itself — which is the live WNBA_TEAMS row. That default
+ * is what keeps the current set, which never passes a season at all, behaving
+ * exactly as it did before this table existed.
+ */
+export const WNBA_TEAM_ERAS = [
+  { abbr: 'CHA', through: 2003, key: 'CHA' },
+  { abbr: 'CHA', through: 2006, key: 'CHA2' },
+  { abbr: 'DET', through: 2001, key: 'DET' },
+  { abbr: 'DET', through: 2009, key: 'DET2' },
+  { abbr: 'POR', through: 2002, key: 'PORF' },
+  { abbr: 'SEA', through: 2015, key: 'SEA00' },
+  { abbr: 'MIN', through: 2010, key: 'MIN99' },
+  { abbr: 'MIN', through: 2017, key: 'MIN11' },
+  { abbr: 'PHO', through: 2010, key: 'PHO97' },
+  { abbr: 'PHO', through: 2014, key: 'PHO11' },
+  { abbr: 'PHO', through: 2025, key: 'PHO15' },
+  { abbr: 'NYL', through: 2002, key: 'NYL97' },
+  { abbr: 'NYL', through: 2011, key: 'NYL03' },
+  { abbr: 'NYL', through: 2019, key: 'NYL12' },
+  { abbr: 'WAS', through: 2010, key: 'WAS98' },
+  { abbr: 'CON', through: 2015, key: 'CON03' },
+  { abbr: 'CON', through: 2020, key: 'CON16' },
+  { abbr: 'ATL', through: 2015, key: 'ATL08' },
+  { abbr: 'ATL', through: 2019, key: 'ATL16' },
+  { abbr: 'LVA', through: 2023, key: 'LVA18' },
+];
+
+/**
+ * The WNBA franchise key for an abbreviation AS OF a season.
+ *
+ * No season means "today", which is what every caller in the current WNBA set
+ * passes by omission and is the answer they already relied on.
+ */
+export function wnbaFranchiseForSeason(abbr, season) {
+  const key = String(abbr ?? '').toUpperCase();
+  if (!Number.isFinite(season)) return key;
+  const era = WNBA_TEAM_ERAS.find(e => e.abbr === key && season <= e.through);
+  return era ? era.key : key;
+}
+
+/**
  * NINE WNBA ABBREVIATIONS COLLIDE WITH NBA ONES — ATL, CHI, DAL, IND, POR, SEA,
  * TOR, WAS and PHO all mean something in both tables, and in every case a
  * different franchise. `getTeam('ATL')` cannot answer for both.
@@ -238,10 +403,18 @@ export const WNBA_TEAMS = {
  * it by passing the league. That is the same shape as `franchiseForSeason` —
  * resolve the ambiguity with the one fact that actually distinguishes them,
  * and never guess.
+ *
+ * The live table first, then the historical one — the same order and the same
+ * argument as `getTeam`: every key in WNBA_HISTORICAL_TEAMS is either one
+ * WNBA_TEAMS does not have (HOU, CLE, SAC, …) or a synthetic era key that
+ * cannot collide by construction (SEA00, PHO97, …), so the fallthrough can only
+ * ever add franchises and never shadow a live one. Portland's genuine collision
+ * is resolved by wnbaFranchiseForSeason before it reaches here.
  */
 export function getWnbaTeam(abbr) {
   const key = String(abbr ?? '').toUpperCase();
-  return Object.hasOwn(WNBA_TEAMS, key) ? WNBA_TEAMS[key] : null;
+  if (Object.hasOwn(WNBA_TEAMS, key)) return WNBA_TEAMS[key];
+  return Object.hasOwn(WNBA_HISTORICAL_TEAMS, key) ? WNBA_HISTORICAL_TEAMS[key] : null;
 }
 
 /**

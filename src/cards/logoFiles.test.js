@@ -26,7 +26,7 @@
 // floor on quality, not a proof of it — the eye still has to look.
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { describe, it, expect } from 'vitest';
-import { TEAMS, WNBA_TEAMS, RESERVED_DEVICE_NAMES } from './teams.js';
+import { TEAMS, WNBA_TEAMS, WNBA_HISTORICAL_TEAMS, RESERVED_DEVICE_NAMES } from './teams.js';
 import { LEAGUE_LOGO, LEAGUE_LOGOS } from './CardTemplate.jsx';
 
 const LOGO_DIR = new URL('../../public/logos/', import.meta.url);
@@ -138,12 +138,11 @@ const wnbaPresent = existsSync(WNBA_LOGO_DIR) ? new Set(readdirSync(WNBA_LOGO_DI
  * Files in that directory that no WNBA_TEAMS row points at, and why each is
  * allowed to sit there unreferenced.
  *
- *   CLE.png      Cleveland Rockers, folded 2003.
- *   HOU.gif      Houston Comets, folded 2008 — and the ONE non-PNG in the
- *                directory. It needs neither converting nor an
- *                extension-tolerant resolver, because no franchise row points
- *                at it: the WNBA has not had a Houston team since 2008. If one
- *                is ever added, this list is where the omission surfaces.
+ *   CLE.png      ⚠ NOT the Cleveland Rockers, whatever its filename suggests.
+ *                The user has stated it is the 2028 CLEVELAND SIRENS — the
+ *                incoming expansion team — so nothing may point at it, and the
+ *                Rockers row in WNBA_HISTORICAL_TEAMS deliberately carries
+ *                `logo: null` and asks for a real mark instead. Pinned below.
  *   TOR.png      Toronto's PRIMARY mark, and the one file here that is unused
  *                for a reason of DESIGN rather than history: it is drawn in the
  *                Tempo's own bordeaux, so on a bordeaux field it vanishes. The
@@ -158,7 +157,21 @@ const wnbaPresent = existsSync(WNBA_LOGO_DIR) ? new Set(readdirSync(WNBA_LOGO_DI
  *                absent on a fresh clone, so the assertion has to tolerate
  *                both. Safe to delete.
  */
-const UNREFERENCED = new Set(['CLE.png', 'HOU.gif', 'TOR.png', 'WNBA.png', 'CON.png']);
+const UNREFERENCED = new Set(['CLE.png', 'TOR.png', 'WNBA.png', 'CON.png']);
+
+/**
+ * Every logo path the app can build, live and historical.
+ *
+ * WNBA_HISTORICAL_TEAMS is checked ALONGSIDE the live table rather than
+ * separately, because the failure is the same one: a path with no file behind
+ * it draws a lettered circle on a card that was supposed to have a mark. What
+ * differs is that a historical row is ALLOWED to have no path at all — most of
+ * these franchises have no mark yet and the lettered circle is the correct
+ * placeholder — so the null case is a pass here and a failure there.
+ */
+const HISTORICAL_WITH_LOGOS = Object.entries(WNBA_HISTORICAL_TEAMS).filter(
+  ([, team]) => team.logo
+);
 
 describe('WNBA logo files', () => {
   it('has a real PNG behind every franchise in the table', () => {
@@ -193,8 +206,12 @@ describe('WNBA logo files', () => {
   it('accounts for every file in the directory, referenced or not', () => {
     // A file nobody points at is fine and a path with no file is not, so the
     // two sets are checked against each other rather than the directory being
-    // trusted. This is also where HOU.gif is on the record as deliberate.
-    const referenced = new Set(Object.values(WNBA_TEAMS).map(t => t.logo.split('/').pop()));
+    // trusted. HOU.gif left this list when the Comets got a historical row.
+    const referenced = new Set(
+      [...Object.values(WNBA_TEAMS), ...Object.values(WNBA_HISTORICAL_TEAMS)]
+        .filter(t => t.logo)
+        .map(t => t.logo.split('/').pop())
+    );
     const unexplained = [...wnbaPresent]
       .filter(f => !referenced.has(f) && !UNREFERENCED.has(f))
       .sort();
@@ -252,5 +269,67 @@ describe('WNBA logo files', () => {
     expect(wnbaPresent.has(file)).toBe(true);
     const { width, height } = pngSize(new URL(file, WNBA_LOGO_DIR));
     expect(width / height).toBeLessThan(0.6);
+  });
+});
+
+/**
+ * The historical WNBA rows, whose logo situation is deliberately different.
+ *
+ * Most of them have NO mark and must not pretend to: `logo: null` draws
+ * CardTemplate's lettered circle, which reads "SAS" on a Becky Hammon card and
+ * is exactly the right placeholder until a real Silver Stars mark arrives. What
+ * IS checked is that every path which does exist resolves to a real file, and
+ * that a prior era of a live franchise says so.
+ */
+describe('WNBA historical logo files', () => {
+  it('has a real file behind every historical path that exists', () => {
+    const missing = [];
+    for (const [key, team] of HISTORICAL_WITH_LOGOS) {
+      const file = team.logo.split('/').pop();
+      if (!wnbaPresent.has(file)) missing.push(`${key} -> ${team.logo}`);
+    }
+    expect(missing).toEqual([]);
+  });
+
+  it('lets a defunct franchise have no mark at all, and draws a circle instead', () => {
+    // A FEATURE, not a gap: eleven of these franchises folded or moved and
+    // nobody has supplied their marks. The generator reports the shopping list
+    // on every run; until it is filled the cards degrade to three letters.
+    const withoutLogos = Object.entries(WNBA_HISTORICAL_TEAMS).filter(([, t]) => !t.logo);
+    expect(withoutLogos.length).toBeGreaterThan(0);
+    for (const [key, team] of withoutLogos) {
+      expect(team.logo, key).toBeNull();
+    }
+  });
+
+  it('marks a prior era of a LIVE franchise as wearing the modern mark', () => {
+    // The Storm's file is the current mark, on a card from 2006. That is
+    // legible and correct as to franchise and wrong as to year, and `logoEra`
+    // is what lets the shopping list say so rather than reporting it as fine.
+    for (const [key, team] of HISTORICAL_WITH_LOGOS) {
+      if (key === 'HOU') continue; // folded, and its file IS the era's mark
+      expect(team.logoEra, key).toBeTruthy();
+    }
+    expect(WNBA_HISTORICAL_TEAMS.SEA00.logo).toBe('/logos/WNBA/SEA.png');
+    expect(WNBA_HISTORICAL_TEAMS.SEA00.logoEra).toBe('2021-present');
+  });
+
+  it('never points the Rockers at the file that is actually the Sirens', () => {
+    // ⚠ public/logos/WNBA/CLE.png is the 2028 Cleveland Sirens, per the user.
+    // The Rockers folded in 2003 and share nothing with that franchise but a
+    // city, so wiring the row to it would print the wrong team's mark on a
+    // twenty-five-year-old card and look entirely plausible.
+    expect(WNBA_HISTORICAL_TEAMS.CLE.name).toBe('Rockers');
+    expect(WNBA_HISTORICAL_TEAMS.CLE.logo).toBeNull();
+    expect(UNREFERENCED.has('CLE.png')).toBe(true);
+  });
+
+  it('keeps every historical path URL-safe too', () => {
+    for (const [key, team] of HISTORICAL_WITH_LOGOS) {
+      const file = team.logo.split('/').pop();
+      expect(file, key).toBe(encodeURIComponent(file));
+      const stem = file.replace(/\.[^.]+$/, '').toUpperCase();
+      expect(RESERVED_DEVICE_NAMES.has(stem), key).toBe(false);
+    }
   });
 });

@@ -72,28 +72,47 @@ function isBlankTier(tier) {
 }
 
 /**
- * Index of the chart row the shot-line arrow belongs on.
+ * Index of the PRINTED row whose BOTTOM EDGE carries the shot-line arrow.
  *
- * Shot Line is not printed as a number anywhere on the card — the ONLY way it
- * is communicated is this arrow against the row whose roll range contains it
- * (LeBron 08-09's Shot Line 14 puts the arrow on his "14-20" row). A card
- * without the arrow is missing a stat, not missing a decoration.
+ * THE ARROW IS A BOUNDARY MARKER, NOT A ROW MARKER. It sits ON the hairline
+ * between the last roll that MISSES and the first roll that MAKES — "right on
+ * the line", in the user's words. Returning the row ABOVE the line (rather than
+ * the row below it) is an arbitrary but fixed convention: the renderer pins the
+ * glyph to that row's bottom edge, so both halves of the triangle straddle the
+ * rule the two rows share.
  *
- * Returns -1 when there is no shot line or no row contains it, which renders
- * no arrow rather than defaulting to row 0 — a wrong arrow is worse than none.
+ * MEASURED OFF THE PRINTED ART, not chosen. Every one of the 300 shipped card
+ * PNGs was decoded and the arrow's triangle located against the table's own
+ * hairlines: 297 of 300 centre it on a rule and NOT ONE centres it in a row
+ * (median offset from the rule 0.5px, versus ~20px to the nearest row centre).
+ * On 08_09_LeBron_James.png — Shot Line 14, rows "10-13" and "14-20" — the
+ * triangle spans y 1069..1088 and the rule between those two rows is at y 1077.
+ *
+ * WHICH rule follows from the engine, and the two agree. src/game/engine.js
+ * resolves a shot as `total >= player.shotLine`, so the player misses on
+ * 1..(shotLine-1) and makes on shotLine..20; the line therefore falls directly
+ * below the row containing `shotLine - 1`. 286 of the 300 printed cards place
+ * it exactly there. (Two use the `>` reading and twelve are a boundary out —
+ * the design errors the user remembers. The majority and the code agree, so
+ * this follows both.)
+ *
+ * Returns -1 when there is no shot line, when no row contains the last miss, or
+ * when that row is the LAST one — the bottom of the table is the frame, not a
+ * dividing line, and a card with no make row has nothing to divide. A missing
+ * arrow beats a wrong one.
  *
  * IT INDEXES WHATEVER ARRAY IT IS GIVEN, and the arrow is drawn against a
  * PRINTED row, so it must be given the PRINTED tiers — `visibleTiers(chart)`,
- * not `card.chart`. Passing the full chart while rendering the visible one
- * puts every arrow exactly one row too low, and it would still look plausible
- * on every card: the ranges are what decide, so the only defence is to search
- * the same list that gets rendered. (Nothing shifts by 1 here as a correction;
- * dropping a leading tier does not change any remaining tier's roll range, so
- * searching the shortened list is the whole fix.)
+ * not `card.chart`. Passing the full chart while rendering the visible one puts
+ * every arrow exactly one row too low, and it would still look plausible on
+ * every card: the ranges are what decide, so the only defence is to search the
+ * same list that gets rendered.
  */
-export function findShotLineIndex(chart, shotLine) {
+export function findShotLineBoundary(chart, shotLine) {
   if (!Array.isArray(chart) || shotLine == null || !Number.isFinite(shotLine)) return -1;
-  return chart.findIndex(t => t && shotLine >= t.lo && shotLine <= t.hi);
+  const lastMiss = shotLine - 1;
+  const row = chart.findIndex(t => t && lastMiss >= t.lo && lastMiss <= t.hi);
+  return row >= 0 && row < chart.length - 1 ? row : -1;
 }
 
 // The accent rule lives in teams.js now, with the rest of a team's theme: the
@@ -180,10 +199,10 @@ export default function CardTemplate({
     ext: photoExt,
   });
 
-  // The printed rows, and the arrow's row within them — searched together so
-  // they cannot disagree. See visibleTiers and findShotLineIndex.
+  // The printed rows, and the rule the arrow sits on within them — searched
+  // together so they cannot disagree. See visibleTiers and findShotLineBoundary.
   const chart = visibleTiers(card.chart);
-  const shotLineRow = findShotLineIndex(chart, card.shotLine);
+  const shotLineRow = findShotLineBoundary(chart, card.shotLine);
 
   return (
     <div
@@ -286,6 +305,8 @@ export default function CardTemplate({
             chart.map((tier, i) => (
               <tr key={i}>
                 <td className={styles.rollCell}>
+                  {/* Pinned to this row's BOTTOM edge, so it straddles the rule
+                    * this row shares with the one below. See .shotArrow. */}
                   {i === shotLineRow && (
                     <span
                       className={styles.shotArrow}

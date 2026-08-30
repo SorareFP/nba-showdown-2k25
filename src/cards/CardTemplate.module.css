@@ -582,17 +582,35 @@
   color: var(--field-panel-ink-dim);
 }
 
-/* The shot-line marker. Sits against the table's left edge, on the row whose
- * roll range contains the shot line — the only place Shot Line appears on the
- * card at all. */
+/* The shot-line marker — the only place Shot Line appears on the card at all.
+ *
+ * ON THE RULE, NOT IN A ROW. It marks the BOUNDARY between the last roll that
+ * misses and the first roll that makes, so it is pinned to the bottom edge of
+ * the row above that boundary and pulled half its own height back down, leaving
+ * the triangle centred on the hairline the two rows share.
+ *
+ * That is what the printed art does: all 300 shipped card PNGs were decoded and
+ * the triangle located against the table's own hairlines — 297 sit on a rule,
+ * none sits in a row. On 08_09_LeBron_James.png the rows are "10-13" and
+ * "14-20" (Shot Line 14), their shared rule is at y=1077, and the triangle
+ * spans y 1069..1088: 19px tall, 19px wide, its base flush against the table's
+ * left border. Across the set the glyph measures 16-28px tall and 10-23px wide,
+ * so 17px of Segoe UI Symbol sits mid-range.
+ *
+ * BOTTOM, NOT TOP. `bottom: 0` resolves against the cell's padding box, and
+ * with border-collapse the shared 2px rule is painted centred on that edge —
+ * so translateY(50%) lands the glyph's centre on the rule's centre, verified in
+ * the browser rather than assumed. Anchoring to the row ABOVE (rather than the
+ * row below, with top: 0) matters for the last row: there is no rule under it,
+ * only the table frame, and findShotLineBoundary refuses that case outright. */
 .rollCell {
   position: relative;
 }
 .shotArrow {
   position: absolute;
   left: 4px;
-  top: 50%;
-  transform: translateY(-50%);
+  bottom: 0;
+  transform: translateY(50%);
   font-size: 17px;
   line-height: 1;
   color: var(--field-panel-ink);

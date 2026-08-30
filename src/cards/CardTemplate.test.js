@@ -13,7 +13,7 @@ import CardTemplate, {
   CARD_WIDTH,
   CARD_HEIGHT,
   formatRollRange,
-  findShotLineIndex,
+  findShotLineBoundary,
   nameFontSize,
   logoSrc,
   LEAGUE_LOGO,
@@ -127,7 +127,13 @@ describe('rendering a fully-populated card', () => {
 });
 
 describe('the shot-line arrow', () => {
-  it('lands on the row whose roll range contains the shot line', () => {
+  // The arrow marks the LINE between the last roll that misses and the first
+  // that makes, so it is carried by the row ABOVE that line and pinned to that
+  // row's bottom edge. LeBron 08-09's Shot Line is 14, he misses on 1..13, and
+  // 13 is the last roll of "10-13" — so the arrow belongs to "10-13", sitting
+  // on the rule it shares with "14-20". Measured in the art at exactly that
+  // rule; see findShotLineBoundary.
+  it('is carried by the row above the miss/make line, not the row containing it', () => {
     const html = render({ card: LEBRON_08_09 });
     const body = rows(html);
     // body[0] is the header row; tiers start at index 1.
@@ -135,8 +141,18 @@ describe('the shot-line arrow', () => {
       .map((row, i) => (row.includes('shot-line-arrow') ? i : -1))
       .filter(i => i !== -1);
 
-    expect(arrowRows).toEqual([4]); // exactly one arrow, on the "14-20" row
-    expect(body[4]).toContain('14-20');
+    expect(arrowRows).toEqual([3]); // exactly one arrow, on the "10-13" row
+    expect(body[3]).toContain('10-13');
+    expect(body[4]).toContain('14-20'); // the row on the other side of the line
+  });
+
+  it('sits on the row edge in CSS, not in the middle of the row', () => {
+    // The markup alone cannot say WHERE in the row the glyph lands, and
+    // "on the line" is the whole request. This is the half that lives in CSS.
+    const arrow = cssBlock('.shotArrow');
+    expect(arrow).toMatch(/bottom:\s*0/);
+    expect(arrow).toMatch(/translateY\(50%\)/);
+    expect(arrow).not.toMatch(/top:\s*50%/);
   });
 
   it('renders no arrow when the card has no shot line', () => {
@@ -144,32 +160,50 @@ describe('the shot-line arrow', () => {
     expect(render({ card: noShotLine })).not.toContain('shot-line-arrow');
   });
 
-  it('renders no arrow when no tier contains the shot line', () => {
+  it('renders no arrow when no tier contains the last miss', () => {
     expect(render({ card: { ...LEBRON_08_09, shotLine: 0 } })).not.toContain('shot-line-arrow');
   });
 
-  it('lands on the right row for every card in the shipped 306-card set', () => {
+  it('renders no arrow when the line falls below the bottom of the table', () => {
+    // Shot Line 22 puts the last miss (21) inside the open-ended top tier.
+    // There is no rule under the last row — only the table frame — so there is
+    // nowhere to draw it, and no arrow beats one hanging off the bottom.
+    expect(render({ card: { ...LEBRON_08_09, shotLine: 22 } })).not.toContain('shot-line-arrow');
+  });
+
+  it('lands on the right rule for every card in the shipped 306-card set', () => {
     // Exhaustive rather than sampled: a shot line sitting exactly on a tier
-    // boundary (lo or hi) is the off-by-one case, and 306 cards is cheap to
-    // render. Every card must get exactly one arrow, on the containing tier.
+    // boundary is the off-by-one case, and 306 cards is cheap to render. Every
+    // card must get exactly one arrow, on the row holding `shotLine - 1`.
     const wrong = [];
     for (const card of CARDS) {
-      const expected = card.chart.findIndex(t => card.shotLine >= t.lo && card.shotLine <= t.hi);
+      const lastMiss = card.shotLine - 1;
+      const row = card.chart.findIndex(t => lastMiss >= t.lo && lastMiss <= t.hi);
+      const expected = row >= 0 && row < card.chart.length - 1 ? row : -1;
       const body = rows(render({ card })).slice(1); // drop the header row
       const actual = body.findIndex(r => r.includes('shot-line-arrow'));
       const arrowCount = body.filter(r => r.includes('shot-line-arrow')).length;
-      if (actual !== expected || arrowCount !== 1) {
+      if (actual !== expected || arrowCount !== (expected === -1 ? 0 : 1)) {
         wrong.push({ id: card.id, shotLine: card.shotLine, expected, actual, arrowCount });
       }
     }
     expect(wrong).toEqual([]);
   });
 
+  it('agrees with the engine about which rolls miss', () => {
+    // src/game/engine.js resolves `total >= shotLine`, so the last miss is
+    // shotLine - 1 and the arrow's rule is the one directly below it. If that
+    // comparison ever changes to `>`, this is the card-side half that has to
+    // move with it.
+    const engine = readFileSync(new URL('../game/engine.js', import.meta.url), 'utf8');
+    expect(engine).toContain('const hit = total >= player.shotLine');
+  });
+
   it('covers cards whose shot line sits exactly on a tier boundary', () => {
-    // Guards the assertion above from silently becoming vacuous.
-    const boundary = CARDS.filter(c =>
-      c.chart.some(t => t.lo === c.shotLine || t.hi === c.shotLine)
-    );
+    // Guards the assertion above from silently becoming vacuous: on these the
+    // "row containing shotLine" and "row containing shotLine - 1" readings
+    // differ, which is exactly the distinction this change is about.
+    const boundary = CARDS.filter(c => c.chart.some(t => t.lo === c.shotLine));
     expect(boundary.length).toBeGreaterThan(50);
   });
 });
@@ -525,18 +559,29 @@ describe('formatRollRange', () => {
   });
 });
 
-describe('findShotLineIndex', () => {
-  const chart = LEBRON_08_09.chart;
-  it('finds the containing tier', () => {
-    expect(findShotLineIndex(chart, 14)).toBe(3);
-    expect(findShotLineIndex(chart, 1)).toBe(0);
-    expect(findShotLineIndex(chart, 99)).toBe(4);
+describe('findShotLineBoundary', () => {
+  const chart = LEBRON_08_09.chart; // 1-3 | 4-9 | 10-13 | 14-20 | 21+
+  it('returns the row ABOVE the miss/make line', () => {
+    expect(findShotLineBoundary(chart, 14)).toBe(2); // last miss 13, in "10-13"
+    expect(findShotLineBoundary(chart, 10)).toBe(1); // last miss  9, in "4-9"
+    expect(findShotLineBoundary(chart, 4)).toBe(0); //  last miss  3, in "1-3"
+  });
+  it('follows the line, not the row containing it', () => {
+    // Shot Line 15 sits INSIDE "14-20", but so does the last miss (14), so the
+    // rule is the one above that row — the same rule Shot Line 14 gets. The old
+    // containing-tier reading returned 3 for both, one row too low.
+    expect(findShotLineBoundary(chart, 15)).toBe(3);
+    expect(findShotLineBoundary(chart, 20)).toBe(3);
   });
   it('returns -1 rather than defaulting to row 0', () => {
-    expect(findShotLineIndex(chart, undefined)).toBe(-1);
-    expect(findShotLineIndex(chart, null)).toBe(-1);
-    expect(findShotLineIndex(undefined, 14)).toBe(-1);
-    expect(findShotLineIndex([], 14)).toBe(-1);
+    expect(findShotLineBoundary(chart, undefined)).toBe(-1);
+    expect(findShotLineBoundary(chart, null)).toBe(-1);
+    expect(findShotLineBoundary(undefined, 14)).toBe(-1);
+    expect(findShotLineBoundary([], 14)).toBe(-1);
+  });
+  it('returns -1 when there is no rule for it to sit on', () => {
+    expect(findShotLineBoundary(chart, 22)).toBe(-1); // last miss below the table
+    expect(findShotLineBoundary(chart, 1)).toBe(-1); //  nothing misses at all
   });
 });
 
@@ -593,12 +638,13 @@ describe('visibleTiers — the blank natural-1 tier is not printed', () => {
   });
 
   it('puts the arrow on the right printed row with the blank tier hidden', () => {
-    // THE off-by-one this guards. findShotLineIndex indexes whatever array it
-    // is handed; hand it the full chart while rendering the visible one and
+    // THE off-by-one this guards. findShotLineBoundary indexes whatever array
+    // it is handed; hand it the full chart while rendering the visible one and
     // every arrow sits exactly one row too low — and still looks plausible.
-    // Shot line 5 is inside "4-19", the SECOND printed row (index 1).
+    // Shot line 5 misses on 1..4, and 4 is the first roll of "4-19", so the
+    // arrow rides that row's bottom edge — the SECOND printed row (index 1).
     const card = { ...LEBRON_08_09, chart: generated, shotLine: 5 };
-    expect(findShotLineIndex(visibleTiers(generated), 5)).toBe(1);
+    expect(findShotLineBoundary(visibleTiers(generated), 5)).toBe(1);
     const printed = rows(render({ card })).slice(1); // drop the header row
     const withArrow = printed.findIndex(r => r.includes('shot-line-arrow'));
     expect(withArrow).toBe(1);
@@ -608,8 +654,9 @@ describe('visibleTiers — the blank natural-1 tier is not printed', () => {
   it('still resolves a natural 1 in the DATA, which is why the tier stays there', () => {
     // Hidden from the chart, present for the game: rolling a 1 has to find a
     // tier or the card cannot be resolved at all.
-    expect(findShotLineIndex(generated, 1)).toBe(0);
-    expect(generated[0]).toMatchObject({ lo: 1, hi: 1, pts: 0, reb: 0, ast: 0 });
+    const forRoll1 = generated.find(t => 1 >= t.lo && 1 <= t.hi);
+    expect(forRoll1).toMatchObject({ lo: 1, hi: 1, pts: 0, reb: 0, ast: 0 });
+    expect(generated.indexOf(forRoll1)).toBe(0);
   });
 });
 

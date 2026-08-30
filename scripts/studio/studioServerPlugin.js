@@ -22,6 +22,8 @@ import {
   CURRENT_SET,
   DEFAULT_PHOTO_EXT,
   PHOTO_EXTENSIONS,
+  SET_IDS,
+  isEditableSet,
   setPaths,
 } from '../../src/cards/sets.js';
 
@@ -71,9 +73,8 @@ const CONTENT_TYPES = {
 /**
  * Every path the studio is allowed to touch, derived from the Vite root.
  *
- * All of them sit under the CURRENT set (src/cards/sets.js). `art` stays the
- * un-scoped card-art/ root only because it is the traversal boundary for
- * static serving — no route writes there directly.
+ * Scoped to ONE set. `art` stays the un-scoped card-art/ root only because it
+ * is the traversal boundary for static serving — no route writes there directly.
  */
 function studioPaths(root, set = CURRENT_SET) {
   const paths = setPaths(set);
@@ -84,6 +85,24 @@ function studioPaths(root, set = CURRENT_SET) {
     crops: resolve(root, paths.crops),
     teams: resolve(root, paths.teamOverrides),
   };
+}
+
+/**
+ * The set a request is for, from its `?set=` parameter.
+ *
+ * ALLOW-LISTED AGAINST THE DECLARED SETS, never taken as given, and that is the
+ * whole reason this is a function. The set id is interpolated straight into a
+ * filesystem path — `card-art/sets/{set}/photos/{id}.jpg` — so an unchecked
+ * parameter is a directory traversal with a photo upload attached to it.
+ * Matching against SET_IDS means the only reachable directories are the four
+ * the tool declares.
+ *
+ * An absent or unknown set falls back to the set being built, which is what
+ * every request looked like before the studio had more than one.
+ */
+export function requestedSet(url, sets = SET_IDS) {
+  const asked = new URL(url ?? '/', 'http://studio.local').searchParams.get('set');
+  return sets.includes(asked) ? asked : CURRENT_SET;
 }
 
 function ensureDirs(paths) {
@@ -143,8 +162,19 @@ export function studioServerPlugin() {
     name: 'card-studio-server',
     apply: 'serve',
     configureServer(server) {
-      const paths = studioPaths(server.config.root);
-      ensureDirs(paths);
+      // One directory tree per set, all created up front. Creating them lazily
+      // on first write would work, but the studio reads state before it ever
+      // writes, and an absent directory there is indistinguishable from a set
+      // with no photos yet — so the reads would be fine and the FIRST DROP
+      // would be the thing that had to create a directory, which is the worst
+      // moment for it to fail.
+      const forSet = Object.fromEntries(
+        SET_IDS.map(id => [id, studioPaths(server.config.root, id)])
+      );
+      for (const id of SET_IDS) ensureDirs(forSet[id]);
+      const pathsFor = req => forSet[requestedSet(req.url)] ?? forSet[CURRENT_SET];
+      // The un-scoped card-art/ root, the traversal boundary for static serving.
+      const paths = forSet[CURRENT_SET];
 
       // The app ships under `base: '/nba-showdown-2k25/'`, so Vite only serves
       // studio.html at /nba-showdown-2k25/studio.html and 404s the bare path.
@@ -160,10 +190,16 @@ export function studioServerPlugin() {
       server.middlewares.use(
         '/__studio/state',
         guard((req, res) => {
-          const photos = existsSync(paths.photos)
-            ? readdirSync(paths.photos).filter(f => ALLOWED_PHOTO_EXT.has(extname(f).toLowerCase()))
+          // Per set, from `?set=`. The studio re-reads this whenever the set
+          // selector changes, so switching sets swaps the whole photo/crop/
+          // team-override world rather than showing one set's work against
+          // another's roster.
+          const scope = pathsFor(req);
+          const photos = existsSync(scope.photos)
+            ? readdirSync(scope.photos).filter(f => ALLOWED_PHOTO_EXT.has(extname(f).toLowerCase()))
             : [];
           json(res, 200, {
+            set: scope.set,
             photos: photos.map(playerIdFromFile),
             // The extension each of those files is ACTUALLY stored under.
             //
@@ -175,8 +211,8 @@ export function studioServerPlugin() {
             // real file. Only entries that are not the default are worth
             // sending, but sending all of them keeps the consumer trivial.
             photoExt: photoExtMap(photos),
-            crops: readJsonFile(paths.crops, {}),
-            teamOverrides: readJsonFile(paths.teams, {}),
+            crops: readJsonFile(scope.crops, {}),
+            teamOverrides: readJsonFile(scope.teams, {}),
           });
         })
       );
@@ -190,16 +226,43 @@ export function studioServerPlugin() {
           if (req.method !== 'POST') return json(res, 405, { error: 'POST only' });
           const playerId = new URL(req.url, 'http://studio.local').searchParams.get('playerId');
           if (!isSafePlayerId(playerId)) return json(res, 400, { error: 'invalid playerId' });
+          const scope = pathsFor(req);
+          // THE LAST LINE OF DEFENCE on the read-only set. The studio already
+          // refuses the drag and refuses the upload, but the id spaces of the
+          // sets overlap by design — every set derives ids with the same rule —
+          // so a request that got here for the finished 2025-26 set would write
+          // a photo into a set that is not supposed to change.
+          if (!isEditableSet(scope.set)) {
+            return json(res, 403, { error: `the ${scope.set} set is read-only` });
+          }
           const body = await readBody(req);
           if (!body.length) return json(res, 400, { error: 'empty body' });
-          writeFileSync(resolve(paths.photos, `${playerId}.jpg`), body);
-          json(res, 200, { ok: true, playerId, bytes: body.length });
+          writeFileSync(resolve(scope.photos, `${playerId}.jpg`), body);
+          json(res, 200, { ok: true, set: scope.set, playerId, bytes: body.length });
         })
       );
 
-      const writeJsonRoute = file =>
+      /**
+       * `editableOnly` is false for exactly one route, and the asymmetry is the
+       * same one the studio UI already draws.
+       *
+       * Crops are keyed by PLAYER ID, and every set derives ids with the same
+       * rule — so a crop saved while the finished set is on screen would land
+       * on whichever player of the editable set happens to share that name.
+       * That is what the read-only rule is protecting against.
+       *
+       * Team colours are keyed by FRANCHISE. There are thirty of them, they
+       * mean the same thing in every set, and each set keeps its own file, so
+       * tuning the Bulls' red while judging the template against the finished
+       * cards is both safe and the point of having the finished cards there.
+       */
+      const writeJsonRoute = (pick, { editableOnly = true } = {}) =>
         guard(async (req, res) => {
           if (req.method !== 'POST') return json(res, 405, { error: 'POST only' });
+          const scope = pathsFor(req);
+          if (editableOnly && !isEditableSet(scope.set)) {
+            return json(res, 403, { error: `the ${scope.set} set is read-only` });
+          }
           const raw = (await readBody(req)).toString('utf-8');
           let parsed;
           try {
@@ -207,12 +270,15 @@ export function studioServerPlugin() {
           } catch (err) {
             return json(res, 400, { error: `invalid JSON: ${err.message}` });
           }
-          writeFileSync(file, JSON.stringify(parsed, null, 2) + '\n');
-          json(res, 200, { ok: true });
+          writeFileSync(pick(scope), JSON.stringify(parsed, null, 2) + '\n');
+          json(res, 200, { ok: true, set: scope.set });
         });
 
-      server.middlewares.use('/__studio/crops', writeJsonRoute(paths.crops));
-      server.middlewares.use('/__studio/teams', writeJsonRoute(paths.teams));
+      server.middlewares.use('/__studio/crops', writeJsonRoute(s => s.crops));
+      server.middlewares.use(
+        '/__studio/teams',
+        writeJsonRoute(s => s.teams, { editableOnly: false })
+      );
 
       // Serve card-art/ back to the browser.
       //

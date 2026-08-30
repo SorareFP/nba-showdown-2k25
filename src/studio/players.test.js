@@ -18,6 +18,10 @@ import {
   STATS_SEASON,
   FINISHED_SET,
   FINISHED_STATS_SEASON,
+  ROOKIE_SET,
+  SET_IDS,
+  SUPER_SEASON_SET,
+  getSet,
 } from '../cards/sets.js';
 
 const P = (id, name, team, pos) => ({ id, name, team, pos });
@@ -435,5 +439,75 @@ describe('stepSelection', () => {
   it('returns null for an empty list', () => {
     expect(stepSelection([], 'x', 1)).toBeNull();
     expect(stepSelection([], 'x', 1, 3)).toBeNull();
+  });
+});
+
+describe('the special sets in the source list', () => {
+  const SPECIAL = [SUPER_SEASON_SET, ROOKIE_SET];
+
+  it('offers all four sets, in the order the model declares them', () => {
+    expect(Object.keys(SOURCES)).toEqual(['pool', 'cards', SUPER_SEASON_SET, ROOKIE_SET]);
+    expect(Object.values(SOURCES).map(s => s.set)).toEqual(SET_IDS);
+  });
+
+  it('keys each special source by its own set id, so the two cannot drift', () => {
+    for (const id of SPECIAL) expect(SOURCES[id].set).toBe(id);
+  });
+
+  it('names each one by the set it is, with a count that cannot drift', () => {
+    for (const id of SPECIAL) {
+      const source = SOURCES[id];
+      expect(source.label).toContain(getSet(id).name);
+      expect(source.label).toContain(String(source.players.length));
+    }
+  });
+
+  it('has both rosters loaded in this checkout', () => {
+    // If this fails, run `node scripts/cardgen/fetchHistory.js` then
+    // `node scripts/cardgen/generateSpecialSets.js`. The studio degrades to an
+    // empty, clearly-labelled set rather than failing to build — this asserts
+    // the committed files are actually there.
+    for (const id of SPECIAL) expect(SOURCES[id].players.length).toBeGreaterThan(100);
+  });
+
+  it('makes both editable — they are sets being curated, not references', () => {
+    for (const id of SPECIAL) expect(SOURCES[id].editable).toBe(true);
+  });
+
+  it('sorts them by name like every other list', () => {
+    for (const id of SPECIAL) {
+      const names = SOURCES[id].players.map(p => p.name);
+      expect(names).toEqual([...names].sort((a, b) => a.localeCompare(b)));
+    }
+  });
+
+  it('gives every card a complete stat line, unlike the pool', () => {
+    for (const id of SPECIAL) {
+      for (const card of SOURCES[id].players) {
+        expect(card.chart.length, `${id} ${card.name}`).toBeGreaterThan(1);
+        expect(card.speed, `${id} ${card.name}`).toBeGreaterThan(0);
+        expect(card.seasonLabel, `${id} ${card.name}`).toBeTruthy();
+      }
+    }
+  });
+
+  it('says in the hint what the exclusion rule is and that the numbers are provisional', () => {
+    // These sets are DEFINED by their exclusion rule, and their numbers are
+    // substitutes for three stats that do not exist before this season. Both
+    // facts have to be reachable from the tool, not only from the commit.
+    for (const id of SPECIAL) {
+      expect(SOURCES[id].hint.toLowerCase()).toContain('current');
+      expect(SOURCES[id].hint.toLowerCase()).toMatch(/provisional|substitution|stand in/);
+    }
+  });
+
+  it('never lets a special-set card collide with another set\'s photo', () => {
+    // The ids DO collide — LeBron James is LeBron_James in all four sets — and
+    // that is fine precisely because each set owns its own photos directory.
+    // What must not collide is two cards inside ONE set.
+    for (const id of SPECIAL) {
+      const ids = SOURCES[id].players.map(p => p.id);
+      expect(new Set(ids).size).toBe(ids.length);
+    }
   });
 });

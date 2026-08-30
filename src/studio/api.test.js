@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { stateUrl, cropsUrl, teamsUrl, photoUrl, isImageFile, saveCrops, saveTeams } from './api.js';
+import { SET_IDS } from '../cards/sets.js';
 
 describe('studio route paths', () => {
   it('addresses the dev-server plugin on bare, base-less paths', () => {
@@ -87,5 +88,45 @@ describe('isImageFile', () => {
     expect(isImageFile(file('kd.JPEG', ''))).toBe(true);
     expect(isImageFile(file('kd.pdf', ''))).toBe(false);
     expect(isImageFile(file('', ''))).toBe(false);
+  });
+});
+
+describe('every route is scoped to a set', () => {
+  it('carries the set on all four routes', () => {
+    // THE CLAIM THE CURATION DEPENDS ON. Photos, crops and team colours all
+    // live under card-art/sets/{id}/, and the sets derive player ids with the
+    // same rule — so a request with no set on it is a photo dropped on a Super
+    // Season card landing on top of the 2026-27 set's art for the same player.
+    expect(stateUrl('rookie')).toBe('/__studio/state?set=rookie');
+    expect(cropsUrl('rookie')).toBe('/__studio/crops?set=rookie');
+    expect(teamsUrl('rookie')).toBe('/__studio/teams?set=rookie');
+    expect(photoUrl('LeBron_James', 'super-season')).toBe(
+      '/__studio/photo?playerId=LeBron_James&set=super-season'
+    );
+  });
+
+  it('gives each set a distinct URL for the same player', () => {
+    const urls = SET_IDS.map(id => photoUrl('LeBron_James', id));
+    expect(new Set(urls).size).toBe(SET_IDS.length);
+  });
+
+  it('encodes the set, like the player id', () => {
+    expect(photoUrl('X', 'a b&c')).toContain('set=a%20b%26c');
+    expect(stateUrl('a b&c')).toBe('/__studio/state?set=a%20b%26c');
+  });
+
+  it('omits the parameter entirely when no set is named', () => {
+    // The server then falls back to the set being built, which is what these
+    // routes meant before there was more than one — so nothing that predates
+    // set-scoping changes shape.
+    expect(stateUrl()).toBe('/__studio/state');
+    expect(photoUrl('X')).toBe('/__studio/photo?playerId=X');
+  });
+
+  it('still addresses the plugin on a bare, base-less path', () => {
+    for (const url of [stateUrl('rookie'), cropsUrl('rookie'), teamsUrl('rookie'), photoUrl('X', 'rookie')]) {
+      expect(url.startsWith('/__studio/')).toBe(true);
+      expect(url).not.toContain('nba-showdown-2k25');
+    }
   });
 });

@@ -19,7 +19,9 @@ import {
   STATS_SEASON,
   FINISHED_SET,
   FINISHED_STATS_SEASON,
+  getSet,
   setPaths,
+  setTreatment,
 } from '../cards/sets.js';
 import {
   SOURCES,
@@ -94,6 +96,13 @@ export default function Studio() {
 
   const source = SOURCES[sourceKey];
   const players = source.players;
+  // The SET every write in this session belongs to. Not the same thing as the
+  // source key: `pool` is the 2026-27 set and `cards` is 2025-26, while the two
+  // special sets are keyed by their own ids. Everything that touches the server
+  // takes this, never the key.
+  const activeSet = source.set;
+  const activeSetName = getSet(activeSet)?.name ?? activeSet;
+  const activeTreatment = setTreatment(activeSet);
   // The reference set is preview-only. Not a style choice: both lists derive
   // ids with the same rule and share one photo store, so an upload made while
   // the finished set is on screen writes into the 2026-27 set under a name
@@ -107,29 +116,50 @@ export default function Studio() {
   const selected = players.find(p => p.id === selectedId) ?? null;
   const scale = useFitScale(previewEl);
 
-  // ── Load persisted state ──────────────────────────────────────────────────
+  // ── Load persisted state, per SET ─────────────────────────────────────────
+  //
+  // Re-runs on every set change, and everything it loads is replaced rather
+  // than merged: each set owns its own photos/, crops.json and
+  // team-overrides.json under card-art/sets/{id}/, so carrying one set's crops
+  // into another would show the user framing that does not exist on disk and
+  // then save it there on the next keystroke.
+  //
+  // The dirty flags are cleared FIRST. Without that, the state this effect
+  // loads counts as a user edit the moment it lands, and the debounced saver
+  // writes the set it just read straight back out — harmless for crops,
+  // actively destructive for team overrides, which get pruned on the way out.
   useEffect(() => {
-    fetchStudioState()
+    cropsDirty.current = false;
+    teamsDirty.current = false;
+    let live = true;
+    fetchStudioState(activeSet)
       .then(state => {
+        if (!live) return;
         setPhotos(state.photos ?? []);
         setPhotoExts(state.photoExt ?? {});
         setCrops(state.crops ?? {});
         setTeamOverrides(state.teamOverrides ?? {});
       })
-      .catch(err =>
+      .catch(err => {
+        if (!live) return;
         setNotice({
           kind: 'error',
           text: `Could not reach the studio server (${err.message}). Nothing will save — is this page open through \`npm run dev\`?`,
-        })
-      );
-  }, []);
+        });
+      });
+    // A set switched twice in quick succession must not let the first response
+    // land after the second: the list would be one set's, the photos another's.
+    return () => {
+      live = false;
+    };
+  }, [activeSet]);
 
   // ── Debounced crop persistence ────────────────────────────────────────────
   useEffect(() => {
     if (!cropsDirty.current) return undefined;
     setSaveStatus('saving');
     const timer = setTimeout(() => {
-      saveCrops(pruneCrops(crops))
+      saveCrops(pruneCrops(crops), activeSet)
         .then(() => setSaveStatus('saved'))
         .catch(err => {
           setSaveStatus('error');
@@ -137,7 +167,7 @@ export default function Studio() {
         });
     }, SAVE_DEBOUNCE_MS);
     return () => clearTimeout(timer);
-  }, [crops]);
+  }, [crops, activeSet]);
 
   // ── Debounced team-override persistence ───────────────────────────────────
   //
@@ -152,7 +182,7 @@ export default function Studio() {
     if (!teamsDirty.current) return undefined;
     setSaveStatus('saving');
     const timer = setTimeout(() => {
-      saveTeams(pruneTeamOverrides(teamOverrides))
+      saveTeams(pruneTeamOverrides(teamOverrides), activeSet)
         .then(() => setSaveStatus('saved'))
         .catch(err => {
           setSaveStatus('error');
@@ -160,7 +190,7 @@ export default function Studio() {
         });
     }, SAVE_DEBOUNCE_MS);
     return () => clearTimeout(timer);
-  }, [teamOverrides]);
+  }, [teamOverrides, activeSet]);
 
   // ── Keyboard navigation ───────────────────────────────────────────────────
   useEffect(() => {
@@ -235,14 +265,16 @@ export default function Studio() {
 
   const handleDropFile = useCallback(async (playerId, file) => {
     if (!file) return;
-    // The last line of defence. The row and the preview already refuse the
-    // drag in the reference set, but a file that reaches here would be written
-    // into the 2026-27 photo store under a shared id — the exact silent edit
-    // the reference set is not allowed to make.
+    // The row and the preview already refuse the drag in a read-only set; this
+    // is the client's last line of defence, and the server's /__studio/photo
+    // route refuses it a third time. Three checks because the id spaces of the
+    // sets overlap BY DESIGN — every set derives ids with the same rule — so a
+    // drop that slipped through would not error, it would silently overwrite
+    // another set's art for a player who happens to share the name.
     if (!editable) {
       setNotice({
         kind: 'error',
-        text: `The ${FINISHED_SET} set is finished and read-only here — nothing was saved. Switch to the ${CURRENT_SET} set to add photos.`,
+        text: `The ${activeSetName} set is finished and read-only here — nothing was saved. Switch to a set you can edit to add photos.`,
       });
       return;
     }
@@ -256,14 +288,14 @@ export default function Studio() {
     setUploadingId(playerId);
     setNotice(null);
     try {
-      await uploadPhoto(playerId, file);
+      await uploadPhoto(playerId, file, activeSet);
       // Re-read the server's photo list rather than assuming: this is what
       // flips the row's indicator and is the only confirmation the write
       // actually landed. ONLY the photo list is taken from the refresh —
       // crops and team colors may have a debounced local save still in
       // flight, and adopting the server's older copy here would both discard
       // that edit and then persist the stale value over it.
-      const state = await fetchStudioState();
+      const state = await fetchStudioState(activeSet);
       setPhotos(state.photos ?? []);
       // Travels with the photo list for the same reason: an upload that lands
       // as {id}.jpg beside a hand-saved {id}.jpeg changes which file the
@@ -279,13 +311,13 @@ export default function Studio() {
         return { ...prev, [playerId]: now > previous ? now : previous + 1 };
       });
       setSelectedId(playerId);
-      setNotice({ kind: 'ok', text: `Saved ${file.name} as ${playerId}.jpg` });
+      setNotice({ kind: 'ok', text: `Saved ${file.name} as ${playerId}.jpg in the ${activeSetName} set` });
     } catch (err) {
       setNotice({ kind: 'error', text: `Upload failed for ${playerId}: ${err.message}` });
     } finally {
       setUploadingId(null);
     }
-  }, [editable]);
+  }, [editable, activeSet, activeSetName]);
 
   const switchSource = key => {
     setSourceKey(key);
@@ -298,26 +330,45 @@ export default function Studio() {
       <header className={styles.topBar}>
         <span className={styles.title}>Card Studio</span>
 
-        {/* Which set this session writes to. Everything saved here — photos,
-            crops, team colors — is scoped to it, and the finished 2025-26
-            cards are somewhere else entirely.
-
-            This badge and the toggle's first option now name the SAME season,
-            deliberately. They used to disagree ("set 2026-27" beside a
-            "2025-26 pool"), and two bare season numbers side by side, meaning
-            different things, is what convinced the user the set they were
-            building was not editable. */}
+        {/* Which set this session writes to — the ACTIVE one, not a constant.
+            There are four now and each owns its photos, crops and team colours
+            under its own directory, so this badge naming a fixed season while
+            the user worked in another set would be the same confusion that made
+            it necessary in the first place (it used to read "set 2026-27" beside
+            a "2025-26 pool", and the user concluded the set they were building
+            could not be edited). It names the directory it is writing to. */}
         <span
           className={styles.setBadge}
           title={
-            `Everything you save is written to ${setPaths().root}/ — the ${CURRENT_SET} set. ` +
-            `Its stats come from the ${STATS_SEASON} season: a set is named for the season it will ` +
-            `be PLAYED in and printed with the numbers from the season before, which is also how ` +
-            `the finished ${FINISHED_SET} set was built from ${FINISHED_STATS_SEASON} stats.`
+            `Everything you save is written to ${setPaths(activeSet).root}/ — the ` +
+            `${activeSetName} set, and nowhere else. ` +
+            (activeSet === CURRENT_SET || activeSet === FINISHED_SET
+              ? `Its stats come from the ${activeSet === CURRENT_SET ? STATS_SEASON : FINISHED_STATS_SEASON} ` +
+                'season: a set is named for the season it will be PLAYED in and printed with the ' +
+                'numbers from the season before.'
+              : 'A card TYPE rather than a season — every card in it is one player, one season, ' +
+                'chosen by rule. See the set button for which rule.')
           }
         >
-          Building the {CURRENT_SET} set
+          {editable ? 'Building' : 'Viewing'} the {activeSetName} set
         </span>
+
+        {/* Only on a set that has one. Says what the look IS, because the whole
+            point of a treatment is that the card should be recognisable across
+            the table before anyone reads it. */}
+        {activeTreatment && (
+          <span
+            className={styles.setBadge}
+            title={
+              `This set carries the "${activeTreatment}" treatment, composed on top of each team's ` +
+              'own colours rather than replacing them (src/cards/treatments.js). It is a static ' +
+              'gradient, so it survives the PNG export, and it is only ever allowed to spend ' +
+              'contrast the untreated card already had.'
+            }
+          >
+            {activeTreatment}
+          </span>
+        )}
 
         {/* Only when the generated team file is missing. Without it 45 players
             render on the grey no-team theme, which looks like a template bug
@@ -381,8 +432,8 @@ export default function Studio() {
           discovers it by dropping a photo that does nothing. */}
       {!editable && (
         <div className={styles.readOnlyBar} role="status">
-          Read-only — the {FINISHED_SET} set is finished. It is here to preview the template with
-          real stats; photos and crops save only in the {CURRENT_SET} set.
+          Read-only — the {activeSetName} set is finished. It is here to preview the template with
+          real stats; photos and crops save only in a set you can edit.
         </div>
       )}
 

@@ -1,6 +1,13 @@
 import { describe, it, expect } from 'vitest';
-import { photoExtMap, isSafePlayerId } from './studioServerPlugin.js';
-import { DEFAULT_PHOTO_EXT, PHOTO_EXTENSIONS, photoUrlPath, CURRENT_SET } from '../../src/cards/sets.js';
+import { photoExtMap, isSafePlayerId, requestedSet } from './studioServerPlugin.js';
+import {
+  DEFAULT_PHOTO_EXT,
+  PHOTO_EXTENSIONS,
+  SET_IDS,
+  isEditableSet,
+  photoUrlPath,
+  CURRENT_SET,
+} from '../../src/cards/sets.js';
 
 describe('photoExtMap', () => {
   it('reports the real extension for every listed photo', () => {
@@ -69,5 +76,62 @@ describe('isSafePlayerId', () => {
     expect(isSafePlayerId('a/b')).toBe(false);
     expect(isSafePlayerId('')).toBe(false);
     expect(isSafePlayerId(null)).toBe(false);
+  });
+});
+
+describe('requestedSet — which set a request writes to', () => {
+  it('reads the set out of the query string', () => {
+    for (const id of SET_IDS) {
+      expect(requestedSet(`/__studio/state?set=${id}`)).toBe(id);
+    }
+  });
+
+  it('ALLOW-LISTS the value rather than trusting it', () => {
+    // The set id is interpolated straight into card-art/sets/{set}/photos/, so
+    // an unchecked parameter is a directory traversal with a photo upload
+    // attached. Every one of these has to come back as the set being built.
+    for (const attack of [
+      '../../../public/cards/players',
+      '..%2F..%2Fpublic%2Fcards%2Fplayers',
+      '/etc',
+      'C:\Windows',
+      '2026-27/../2025-26',
+      '__proto__',
+      'constructor',
+      'toString',
+    ]) {
+      expect(requestedSet(`/__studio/photo?set=${encodeURIComponent(attack)}`)).toBe(CURRENT_SET);
+    }
+  });
+
+  it('falls back to the set being built when none is named', () => {
+    // Which is exactly what an un-scoped request meant before the studio had
+    // more than one set, so nothing that predates `?set=` changes behaviour.
+    expect(requestedSet('/__studio/state')).toBe(CURRENT_SET);
+    expect(requestedSet('/__studio/state?set=')).toBe(CURRENT_SET);
+    expect(requestedSet(undefined)).toBe(CURRENT_SET);
+  });
+
+  it('ignores the other parameters on the photo route', () => {
+    expect(requestedSet('/__studio/photo?playerId=LeBron_James&set=rookie')).toBe('rookie');
+  });
+
+  it('only ever answers with a set the tool declares', () => {
+    for (const url of ['/x?set=rookie', '/x?set=nope', '/x', '/x?set=2025-26']) {
+      expect(SET_IDS).toContain(requestedSet(url));
+    }
+  });
+});
+
+describe('which sets the server will write to', () => {
+  it('refuses the finished set and accepts the three being curated', () => {
+    // The server is the LAST of three checks — the row refuses the drag, the
+    // client refuses the upload, and this refuses the request. Three because
+    // the sets' id spaces overlap by design, so a drop that slipped through
+    // would not error, it would silently overwrite another set's art.
+    expect(isEditableSet(CURRENT_SET)).toBe(true);
+    expect(isEditableSet('super-season')).toBe(true);
+    expect(isEditableSet('rookie')).toBe(true);
+    expect(isEditableSet('2025-26')).toBe(false);
   });
 });

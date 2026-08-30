@@ -10,12 +10,25 @@
 // fallback and comes back as HTML, which then fails to parse as JSON — a
 // confusing failure, hence this comment. Verified against the running dev
 // server, not just reasoned about.
+//
+// EVERY ROUTE IS SET-SCOPED. There are four sets now and each owns its photos,
+// its crops and its team colours under card-art/sets/{id}/, so `?set=` is not
+// optional decoration — it is the difference between a photo dropped on a
+// Super Season card landing in the Super Season set and landing on top of the
+// 2026-27 set's art under the same player's name. The server allow-lists the
+// value against the declared sets and falls back to the set being built, which
+// is what an un-scoped request used to mean.
 const BASE = '/__studio';
 
-export const stateUrl = () => `${BASE}/state`;
-export const cropsUrl = () => `${BASE}/crops`;
-export const teamsUrl = () => `${BASE}/teams`;
-export const photoUrl = playerId => `${BASE}/photo?playerId=${encodeURIComponent(playerId)}`;
+/** `?set=…`, or nothing when the caller did not name one. */
+const scope = set => (set ? `?set=${encodeURIComponent(set)}` : '');
+
+export const stateUrl = set => `${BASE}/state${scope(set)}`;
+export const cropsUrl = set => `${BASE}/crops${scope(set)}`;
+export const teamsUrl = set => `${BASE}/teams${scope(set)}`;
+export const photoUrl = (playerId, set) =>
+  `${BASE}/photo?playerId=${encodeURIComponent(playerId)}` +
+  (set ? `&set=${encodeURIComponent(set)}` : '');
 
 /** Extensions the studio server will store (it rejects nothing, but see below). */
 const IMAGE_EXT = /\.(jpe?g|png|webp|gif|avif)$/i;
@@ -36,19 +49,19 @@ export function isImageFile(file) {
   return IMAGE_EXT.test(file.name ?? '');
 }
 
-/** Reads the whole persisted studio state in one round trip. */
-export async function fetchStudioState() {
-  const res = await fetch(stateUrl());
+/** Reads one set's whole persisted studio state in one round trip. */
+export async function fetchStudioState(set) {
+  const res = await fetch(stateUrl(set));
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json();
 }
 
 /**
- * Uploads one photo. The body is the raw file — the server writes it untouched,
- * so the source stays byte-identical and the crop stays metadata.
+ * Uploads one photo into one set. The body is the raw file — the server writes
+ * it untouched, so the source stays byte-identical and the crop stays metadata.
  */
-export async function uploadPhoto(playerId, file) {
-  const res = await fetch(photoUrl(playerId), { method: 'POST', body: file });
+export async function uploadPhoto(playerId, file, set) {
+  const res = await fetch(photoUrl(playerId, set), { method: 'POST', body: file });
   const body = await res.json().catch(() => ({}));
   if (!res.ok || !body.ok) throw new Error(body.error ?? `HTTP ${res.status}`);
   return body;
@@ -72,8 +85,8 @@ async function saveJson(url, value) {
   return res.json();
 }
 
-/** Persists the whole crops map. */
-export const saveCrops = crops => saveJson(cropsUrl(), crops);
+/** Persists one set's whole crops map. */
+export const saveCrops = (crops, set) => saveJson(cropsUrl(set), crops);
 
-/** Persists the whole team-override map. See teamTheme.js for its shape. */
-export const saveTeams = overrides => saveJson(teamsUrl(), overrides);
+/** Persists one set's whole team-override map. See teamTheme.js for its shape. */
+export const saveTeams = (overrides, set) => saveJson(teamsUrl(set), overrides);

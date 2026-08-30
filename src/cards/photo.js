@@ -4,7 +4,7 @@
 // file dropped into the set's photos/ directory is left byte-identical forever,
 // so a crop can be redone later without re-sourcing the photo, and a template
 // change can never destroy work already done.
-import { CURRENT_SET, photoUrlPath } from './sets.js';
+import { CURRENT_SET, DEFAULT_PHOTO_EXT, photoUrlPath } from './sets.js';
 
 /** Neutral crop: centered, no zoom. */
 export const DEFAULT_CROP = { x: 0, y: 0, zoom: 1 };
@@ -41,6 +41,13 @@ const HEADSHOT_BASE = 'https://cdn.nba.com/headshots/nba/latest/1040x760';
  * on every upload; the batch export passes none, because a headless browser
  * launched per run has nothing cached.
  *
+ * `ext` is the extension the photo is actually STORED under, which is not
+ * always .jpg: the studio's own uploads are, but a photo saved by hand out of
+ * a browser lands as .jpeg or .png, and those are served too. It is passed in
+ * rather than guessed because only the server has looked at the directory —
+ * see the photoExt map on /__studio/state. Defaulting to .jpg keeps every
+ * caller that never had a photo but its own upload working unchanged.
+ *
  * Returns null when neither is available; callers render a placeholder.
  */
 export function resolvePhotoUrl({
@@ -49,9 +56,10 @@ export function resolvePhotoUrl({
   personId,
   version,
   set = CURRENT_SET,
+  ext = DEFAULT_PHOTO_EXT,
 } = {}) {
   if (hasPhoto) {
-    const url = photoUrlPath(playerId, set);
+    const url = photoUrlPath(playerId, set, ext);
     return version == null || version === '' ? url : `${url}?v=${encodeURIComponent(version)}`;
   }
   if (personId) return `${HEADSHOT_BASE}/${personId}.png`;

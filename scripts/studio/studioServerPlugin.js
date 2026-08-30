@@ -17,15 +17,54 @@
 // having to be prefixed with the base. Do not convert these to post hooks.
 import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, statSync } from 'node:fs';
 import { resolve, extname, sep } from 'node:path';
-import { ART_ROOT, CURRENT_SET, setPaths } from '../../src/cards/sets.js';
+import {
+  ART_ROOT,
+  CURRENT_SET,
+  DEFAULT_PHOTO_EXT,
+  PHOTO_EXTENSIONS,
+  setPaths,
+} from '../../src/cards/sets.js';
 
-const ALLOWED_PHOTO_EXT = new Set(['.jpg', '.jpeg', '.png', '.webp']);
+/** Kept in step with PHOTO_EXTENSIONS in src/cards/sets.js — a test asserts it. */
+const ALLOWED_PHOTO_EXT = new Set(PHOTO_EXTENSIONS);
+
+/** The player id a photo filename encodes — the name with its extension removed. */
+const playerIdFromFile = file => file.replace(/\.[^.]+$/, '');
+
+/**
+ * playerId -> the extension that player's photo is stored under.
+ *
+ * WHY THE SERVER HAS TO SAY. The listing above has always accepted four
+ * extensions and derived the id by throwing the extension away, so a
+ * hand-saved `Luka_Doncic.jpeg` counted as a photo — but the browser then
+ * asked for `Luka_Doncic.jpg`, because that was hardcoded in the URL builder,
+ * and got a 404. The directory is the only place the truth exists and only
+ * this process can read it, so it is reported rather than guessed at.
+ *
+ * COLLISIONS RESOLVE TO THE DEFAULT. Nothing stops both `X.jpg` and `X.png`
+ * from existing (save one by hand, then drop one on the studio). Both are one
+ * player, the studio can only show one, and the .jpg is the one the studio
+ * itself most recently wrote — so it wins, regardless of readdir order. Sorted
+ * first so the choice does not depend on the filesystem's listing order
+ * either.
+ */
+export function photoExtMap(files) {
+  const map = {};
+  for (const file of [...files].sort()) {
+    const id = playerIdFromFile(file);
+    const ext = extname(file).toLowerCase();
+    if (map[id] === DEFAULT_PHOTO_EXT) continue;
+    map[id] = ext;
+  }
+  return map;
+}
 
 const CONTENT_TYPES = {
   '.jpg': 'image/jpeg',
   '.jpeg': 'image/jpeg',
   '.png': 'image/png',
   '.webp': 'image/webp',
+  '.avif': 'image/avif',
   '.json': 'application/json',
 };
 
@@ -125,7 +164,17 @@ export function studioServerPlugin() {
             ? readdirSync(paths.photos).filter(f => ALLOWED_PHOTO_EXT.has(extname(f).toLowerCase()))
             : [];
           json(res, 200, {
-            photos: photos.map(f => f.replace(/\.[^.]+$/, '')),
+            photos: photos.map(playerIdFromFile),
+            // The extension each of those files is ACTUALLY stored under.
+            //
+            // Sent alongside `photos` rather than folded into it because the
+            // id list is what every "does this player have a photo yet?" check
+            // in the studio reads, and changing its shape would touch all of
+            // them. This map is additive: ignore it and the studio behaves
+            // exactly as before, read it and the photo URL can point at the
+            // real file. Only entries that are not the default are worth
+            // sending, but sending all of them keeps the consumer trivial.
+            photoExt: photoExtMap(photos),
             crops: readJsonFile(paths.crops, {}),
             teamOverrides: readJsonFile(paths.teams, {}),
           });

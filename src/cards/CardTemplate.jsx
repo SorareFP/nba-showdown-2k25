@@ -109,6 +109,10 @@ export default function CardTemplate({
   card = {},
   crop,
   hasPhoto = false,
+  // The extension the curated photo is stored under. Defaults to .jpg inside
+  // resolvePhotoUrl, which is what the studio's own uploads are written as —
+  // only a hand-saved .jpeg/.png/.webp/.avif needs this to be passed.
+  photoExt,
   teamOverrides,
   // A token that changes when this player's photo file is rewritten, so the
   // browser re-requests a URL that did not change. See resolvePhotoUrl.
@@ -131,6 +135,7 @@ export default function CardTemplate({
     hasPhoto,
     personId: card.personId ?? null,
     version: photoVersion,
+    ext: photoExt,
   });
 
   const chart = Array.isArray(card.chart) ? card.chart : [];

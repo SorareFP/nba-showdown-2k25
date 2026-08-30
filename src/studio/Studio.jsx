@@ -54,6 +54,13 @@ function consumesArrowKeys(target) {
 export default function Studio() {
   const [sourceKey, setSourceKey] = useState(DEFAULT_SOURCE);
   const [photos, setPhotos] = useState([]);
+  // playerId -> the extension that player's photo is stored under (".jpeg",
+  // ".png", ...). Only the server can know it, so it comes down with the rest
+  // of the state; see photoExtMap in scripts/studio/studioServerPlugin.js. Kept
+  // separate from `photos` so every "has a photo?" check stays a Set lookup on
+  // ids — this map answers a different question, "which file", and only the
+  // card preview asks it.
+  const [photoExts, setPhotoExts] = useState({});
   const [teamOverrides, setTeamOverrides] = useState({});
   const [crops, setCrops] = useState({});
   const [query, setQuery] = useState('');
@@ -105,6 +112,7 @@ export default function Studio() {
     fetchStudioState()
       .then(state => {
         setPhotos(state.photos ?? []);
+        setPhotoExts(state.photoExt ?? {});
         setCrops(state.crops ?? {});
         setTeamOverrides(state.teamOverrides ?? {});
       })
@@ -257,6 +265,10 @@ export default function Studio() {
       // that edit and then persist the stale value over it.
       const state = await fetchStudioState();
       setPhotos(state.photos ?? []);
+      // Travels with the photo list for the same reason: an upload that lands
+      // as {id}.jpg beside a hand-saved {id}.jpeg changes which file the
+      // preview should point at, and only the server can see that.
+      setPhotoExts(state.photoExt ?? {});
       // After the refresh, so the new bytes are already on disk when the
       // browser goes back for them. Date.now() rather than a counter: two
       // uploads of the same player in one session must not be able to reuse a
@@ -414,6 +426,7 @@ export default function Studio() {
             card={selected}
             crop={crops[selectedId]}
             hasPhoto={selectedId ? photoIds.has(selectedId) : false}
+            photoExt={selectedId ? photoExts[selectedId] : undefined}
             teamOverrides={teamOverrides}
             scale={scale}
             photoVersion={selectedId ? photoVersions[selectedId] : undefined}

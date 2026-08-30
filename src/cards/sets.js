@@ -71,7 +71,51 @@ export function setPaths(set = CURRENT_SET) {
   };
 }
 
-/** The browser URL for a curated photo. Leading slash: served at the bare path. */
-export function photoUrlPath(playerId, set = CURRENT_SET) {
-  return `/${setPaths(set).photos}/${playerId}.jpg`;
+/**
+ * The extension a photo UPLOADED through the studio is stored under.
+ *
+ * The upload route rewrites whatever bytes it is handed to `{id}.jpg`, so this
+ * is the right answer for anything the studio itself wrote, and it stays the
+ * default here for exactly that reason.
+ */
+export const DEFAULT_PHOTO_EXT = '.jpg';
+
+/**
+ * Photo extensions a set will serve. Mirrors ALLOWED_PHOTO_EXT in the server
+ * plugin, and src/studio/api.js's isImageFile accepts the same set on drop.
+ *
+ * .avif earns its place the same way .jpeg did: it is what a browser's "Save
+ * image as" produces on a growing share of sites, so photos saved by hand
+ * arrive under it, and every browser that can run this studio can display it.
+ */
+export const PHOTO_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp', '.avif'];
+
+/**
+ * Normalizes an extension to the dotted lowercase form the paths use.
+ *
+ * Accepts "png", ".PNG" or ".png" and returns ".png"; anything not on the
+ * allowed list falls back to the default rather than being interpolated into a
+ * path. Callers pass values that ultimately came off a directory listing, so
+ * "reject and fall back" beats "trust and 404".
+ */
+export function normalizePhotoExt(ext) {
+  if (typeof ext !== 'string' || ext === '') return DEFAULT_PHOTO_EXT;
+  const dotted = (ext.startsWith('.') ? ext : `.${ext}`).toLowerCase();
+  return PHOTO_EXTENSIONS.includes(dotted) ? dotted : DEFAULT_PHOTO_EXT;
+}
+
+/**
+ * The browser URL for a curated photo. Leading slash: served at the bare path.
+ *
+ * THE EXTENSION IS A PARAMETER because the photos directory does not only
+ * contain .jpg. Photos are saved by hand as often as they are dropped on the
+ * studio, and a browser's "Save image as" writes .jpeg or .png — files the
+ * server already lists (ALLOWED_PHOTO_EXT) and already serves, and which the
+ * studio therefore counts as present. Hardcoding `.jpg` here made every one of
+ * them resolve to a path with no file behind it: the player showed as having a
+ * photo and rendered a broken image. The state endpoint reports the real
+ * extension per player; this turns it into the URL.
+ */
+export function photoUrlPath(playerId, set = CURRENT_SET, ext = DEFAULT_PHOTO_EXT) {
+  return `/${setPaths(set).photos}/${playerId}${normalizePhotoExt(ext)}`;
 }

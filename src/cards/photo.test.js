@@ -1,6 +1,11 @@
 import { describe, it, expect } from 'vitest';
 import { resolvePhotoUrl, DEFAULT_CROP, cropToStyle, PHOTO_WINDOW } from './photo.js';
-import { CURRENT_SET } from './sets.js';
+import {
+  CURRENT_SET,
+  PHOTO_EXTENSIONS,
+  normalizePhotoExt,
+  photoUrlPath,
+} from './sets.js';
 
 describe('resolvePhotoUrl', () => {
   it('prefers a curated photo when one exists', () => {
@@ -47,6 +52,67 @@ describe('resolvePhotoUrl', () => {
 
   it('does not crash when called with nothing', () => {
     expect(resolvePhotoUrl()).toBeNull();
+  });
+
+  // ── Extensions other than .jpg ────────────────────────────────────────────
+  //
+  // THE BUG THESE COVER. The studio's own uploads are written as {id}.jpg, but
+  // photos are also saved by hand out of the browser, and Chrome writes .jpeg.
+  // The server has always LISTED four extensions and derived the id by
+  // stripping whatever it found, so such a file counted as a photo — while the
+  // URL builder hardcoded .jpg, so the card asked for a file that was not
+  // there. Detected, marked present, and permanently blank.
+  it('points at the extension the photo is actually stored under', () => {
+    expect(resolvePhotoUrl({ playerId: 'A_J_Green', hasPhoto: true, ext: '.jpeg' }))
+      .toBe(`/card-art/sets/${CURRENT_SET}/photos/A_J_Green.jpeg`);
+    expect(resolvePhotoUrl({ playerId: 'A_J_Green', hasPhoto: true, ext: '.png' }))
+      .toBe(`/card-art/sets/${CURRENT_SET}/photos/A_J_Green.png`);
+    expect(resolvePhotoUrl({ playerId: 'A_J_Green', hasPhoto: true, ext: '.webp' }))
+      .toBe(`/card-art/sets/${CURRENT_SET}/photos/A_J_Green.webp`);
+  });
+
+  it('still defaults to .jpg, so studio uploads are unaffected', () => {
+    const jpg = `/card-art/sets/${CURRENT_SET}/photos/X.jpg`;
+    expect(resolvePhotoUrl({ playerId: 'X', hasPhoto: true })).toBe(jpg);
+    expect(resolvePhotoUrl({ playerId: 'X', hasPhoto: true, ext: undefined })).toBe(jpg);
+    expect(resolvePhotoUrl({ playerId: 'X', hasPhoto: true, ext: '' })).toBe(jpg);
+  });
+
+  it('keeps the extension out in front of the cache-busting token', () => {
+    // ?v= has to stay a query string. Appending it before the extension would
+    // produce "X.jpeg?v=7" reordered into "X?v=7.jpeg" — a 404 with a plausible
+    // look to it.
+    expect(resolvePhotoUrl({ playerId: 'X', hasPhoto: true, ext: '.jpeg', version: 7 }))
+      .toBe(`/card-art/sets/${CURRENT_SET}/photos/X.jpeg?v=7`);
+  });
+});
+
+describe('photoUrlPath extensions', () => {
+  const photos = `/card-art/sets/${CURRENT_SET}/photos`;
+
+  it('accepts an extension with or without its dot, in any case', () => {
+    expect(photoUrlPath('X', CURRENT_SET, 'png')).toBe(`${photos}/X.png`);
+    expect(photoUrlPath('X', CURRENT_SET, '.PNG')).toBe(`${photos}/X.png`);
+    expect(photoUrlPath('X', CURRENT_SET, '.JPEG')).toBe(`${photos}/X.jpeg`);
+  });
+
+  it('falls back to .jpg rather than interpolating an extension it does not serve', () => {
+    // These values reach here from a directory listing, so "reject and fall
+    // back" beats trusting them into a path.
+    expect(photoUrlPath('X', CURRENT_SET, '.gif')).toBe(`${photos}/X.jpg`);
+    expect(photoUrlPath('X', CURRENT_SET, '.bmp')).toBe(`${photos}/X.jpg`);
+    expect(photoUrlPath('X', CURRENT_SET, '../../etc/passwd')).toBe(`${photos}/X.jpg`);
+    expect(photoUrlPath('X', CURRENT_SET, null)).toBe(`${photos}/X.jpg`);
+  });
+
+  it('agrees with the extensions the studio server will list', () => {
+    // If one list grows and the other does not, a file the server happily
+    // reports as a photo resolves to a .jpg that is not there — the original
+    // bug, re-created. ALLOWED_PHOTO_EXT is the server's copy of this.
+    expect([...PHOTO_EXTENSIONS].sort()).toEqual(['.avif', '.jpeg', '.jpg', '.png', '.webp']);
+    for (const ext of PHOTO_EXTENSIONS) {
+      expect(normalizePhotoExt(ext)).toBe(ext);
+    }
   });
 });
 

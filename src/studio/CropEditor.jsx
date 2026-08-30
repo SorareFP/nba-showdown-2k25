@@ -25,6 +25,9 @@ export default function CropEditor({
   card,
   crop,
   hasPhoto,
+  // Which file the photo actually is (".jpeg", ".png", ...). Passed straight
+  // through to the card; the editor itself never touches it.
+  photoExt,
   teamOverrides,
   scale,
   photoVersion,
@@ -50,7 +53,10 @@ export default function CropEditor({
   // size bounding the new photo's pan is exactly the bug this is here to avoid.
   // Until it arrives, crop.js falls back to its generous hard limit.
   const [loaded, setLoaded] = useState(null);
-  const photoKey = `${card?.id ?? ''}:${photoVersion ?? ''}:${hasPhoto ? 1 : 0}`;
+  // The extension is part of the key: swapping {id}.jpeg for {id}.jpg is a
+  // different source image at the same id and version, and a natural size
+  // measured from the old one would bound the new one's pan wrongly.
+  const photoKey = `${card?.id ?? ''}:${photoVersion ?? ''}:${photoExt ?? ''}:${hasPhoto ? 1 : 0}`;
   const photoSize = loaded?.key === photoKey ? loaded.size : null;
 
   const value = normalizeCrop(crop);
@@ -178,6 +184,7 @@ export default function CropEditor({
               card={card}
               crop={value}
               hasPhoto={hasPhoto}
+              photoExt={photoExt}
               teamOverrides={teamOverrides}
               photoVersion={photoVersion}
               onPhotoLoad={size => setLoaded({ key: photoKey, size })}

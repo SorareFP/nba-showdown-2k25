@@ -15,10 +15,16 @@
 
 /* ── Top bar ─────────────────────────────────────────────────────────────── */
 
+/* WRAPS, because the set selector grew from two options to four and there will
+ * be more (Championship Standouts is designed; WNBA is its own set). On a
+ * 1280px window the fourth button was being clipped by the save indicator —
+ * and a set you cannot see is a set you cannot switch to. Wrapping costs a row
+ * of chrome on a narrow window and nothing at all on a wide one. */
 .topBar {
   display: flex;
   align-items: center;
-  gap: 16px;
+  flex-wrap: wrap;
+  gap: 10px 16px;
   padding: 10px 16px;
   border-bottom: 1px solid var(--border);
   background: var(--navy-light);

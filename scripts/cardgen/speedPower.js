@@ -197,15 +197,31 @@ export function compositeScores(rows, { weight = REFINEMENT_WEIGHT } = {}) {
  * maybe Wemby/Jokic should have 28" — and it is a different thing from the six
  * it used to catch.
  */
-export function mapToReferenceScale(composites, reference = REFERENCE_TOTALS) {
-  const { mean, sd } = meanSd(composites);
-  const scaled = composites.map(
-    c => reference.mean + (sd > 0 ? (c - mean) / sd : 0) * reference.sd
-  );
+/**
+ * `calibrateOn` is the population the map is FITTED to, when that is not the
+ * population being mapped.
+ *
+ * It exists for the historical sets. A Super Season card has to sit correctly
+ * relative to CURRENT players, and the only way to guarantee that is to derive
+ * the whole map — the composite's mean and standard deviation, and the tail
+ * anchor — from the current pool and then push a 2009 season through it. Fit
+ * the map to the historical seasons themselves and you get a set that is
+ * internally sensible and means nothing next to a 2026-27 card: every card in a
+ * set of career-best seasons is above average FOR THAT SET, so the map would
+ * recentre a league of peaks onto the same mean as a league of everybodys.
+ *
+ * Defaults to the input, which is bit-for-bit the behaviour this function had
+ * before the option existed — asserted in speedPower.test.js.
+ */
+export function mapToReferenceScale(composites, reference = REFERENCE_TOTALS, { calibrateOn } = {}) {
+  const basis = Array.isArray(calibrateOn) && calibrateOn.length > 0 ? calibrateOn : composites;
+  const { mean, sd } = meanSd(basis);
+  const rescale = c => reference.mean + (sd > 0 ? (c - mean) / sd : 0) * reference.sd;
+  const scaled = composites.map(rescale);
 
   const knee = Number.isFinite(reference.p90) ? reference.p90 : reference.max;
   const anchor = quantile(
-    [...scaled].sort((a, b) => a - b),
+    basis.map(rescale).sort((a, b) => a - b),
     1 - (Number.isFinite(reference.ceilingShare) ? reference.ceilingShare : 0)
   );
   // Never STRETCH a tail that already fits — the map preserves magnitude, and a

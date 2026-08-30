@@ -101,6 +101,12 @@ export function trimSeasonTable(rows, kind) {
     }
     return {
       ...base,
+      // pos and age ride along because the ADVANCED table is the only one the
+      // historical fetch reads for identity (scripts/cardgen/history.js), and a
+      // card needs a position to split Speed/Power. Harmless for the 2025
+      // calibration snapshot, which simply ignores them.
+      pos: c.pos ?? null,
+      age: num(c.age),
       games: num(c.games),
       minutes: num(c.mp),
       per: num(c.per),
@@ -112,6 +118,9 @@ export function trimSeasonTable(rows, kind) {
       dbpm: num(c.dbpm),
       bpm: num(c.bpm),
       vorp: num(c.vorp),
+      // TOTAL Win Shares, not just the rate. The two are a volume/rate pair and
+      // the Super Season score deliberately carries both — see history.js.
+      ws: num(c.ws),
       ws48: num(c.ws_per_48),
     };
   });

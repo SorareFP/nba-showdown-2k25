@@ -205,6 +205,67 @@ export const hasSample = row =>
   !!row && ((row.games ?? 0) > 0 || (row.minutes ?? 0) > 0);
 
 /**
+ * TWO SAMPLES OF THE SAME PLAYER, FOLDED. The arithmetic, with no opinion about
+ * what the two samples ARE.
+ *
+ * Pulled out of `poolActualRow` because the regular season and the playoffs are
+ * not the only two things this fold is right for. scripts/cardgen/
+ * priorSeasonBlend.js folds a player's PREVIOUS SEASON into his current one for
+ * the injury-shortened names on the force-include list, and it is the identical
+ * question — "what would the combined sample have produced" — asked of a
+ * different pair. Writing that fold a second time would be writing
+ * RATE_DENOMINATORS a second time, and the two copies would drift.
+ *
+ * `a` supplies the identity fields, so the caller decides which side the name,
+ * team and age come from. For the playoff fold that is the regular season; for
+ * the prior-season blend it is the CURRENT season, because a card should say
+ * which team he plays for now.
+ *
+ * PROVENANCE IS THE CALLER'S JOB. What comes back is the pooled sample and
+ * nothing else — each caller knows what its two sides mean and labels them
+ * accordingly.
+ */
+export function foldRows(a, b) {
+  const vA = volumes(a);
+  const vB = volumes(b);
+
+  const pooled = {};
+  for (const [field, weightKey] of Object.entries(RATE_DENOMINATORS)) {
+    pooled[field] = poolWeighted([
+      { value: a[field], weight: vA[weightKey] },
+      { value: b[field], weight: vB[weightKey] },
+    ]);
+  }
+  for (const field of SUMMED_FIELDS) {
+    pooled[field] = poolSum([a[field], b[field]]);
+  }
+
+  const games = pooled.games ?? 0;
+  const minutes = pooled.minutes ?? 0;
+
+  return {
+    ...Object.fromEntries(IDENTITY_FIELDS.map(f => [f, a[f]])),
+    ...pooled,
+    mpg: games > 0 ? minutes / games : null,
+    // EW/GP is already per-game, so it pools WEIGHTED BY GAMES PLAYED. When both
+    // sides report EW that is arithmetically the same as pooled EW over pooled
+    // games — but it is NOT written that way, and the difference is not academic.
+    //
+    // dunksandthrees withholds EPM and EW below fifty minutes, and 74 of the 254
+    // playoff rows fall under that line while still carrying real games. Dividing
+    // an EW total that covers only one side by BOTH sides' games would credit
+    // zero expected wins to games the source declined to rate, quietly marking a
+    // player down for having reached the postseason. Weighting the two per-game
+    // RATES drops the unrated side instead, which is the honest reading of "no
+    // data" and leaves such a player's EW/GP exactly where it was.
+    ewinsPerGame: poolWeighted([
+      { value: a.ewinsPerGame, weight: vA.games },
+      { value: b.ewinsPerGame, weight: vB.games },
+    ]),
+  };
+}
+
+/**
  * One player's regular season and playoffs, folded into a single row.
  *
  * Shape in, same shape out — `toActualSeasonRate`'s — plus provenance fields, so
@@ -238,42 +299,8 @@ export function poolActualRow(regular, playoffs) {
     };
   }
 
-  const vRs = volumes(regular);
-  const vPo = volumes(playoffs);
-
-  const pooled = {};
-  for (const [field, weightKey] of Object.entries(RATE_DENOMINATORS)) {
-    pooled[field] = poolWeighted([
-      { value: regular[field], weight: vRs[weightKey] },
-      { value: playoffs[field], weight: vPo[weightKey] },
-    ]);
-  }
-  for (const field of SUMMED_FIELDS) {
-    pooled[field] = poolSum([regular[field], playoffs[field]]);
-  }
-
-  const games = pooled.games ?? 0;
-  const minutes = pooled.minutes ?? 0;
-
   return {
-    ...Object.fromEntries(IDENTITY_FIELDS.map(f => [f, regular[f]])),
-    ...pooled,
-    mpg: games > 0 ? minutes / games : null,
-    // EW/GP is already per-game, so it pools WEIGHTED BY GAMES PLAYED. When both
-    // splits report EW that is arithmetically the same as pooled EW over pooled
-    // games — but it is NOT written that way, and the difference is not academic.
-    //
-    // dunksandthrees withholds EPM and EW below fifty minutes, and 74 of the 254
-    // playoff rows fall under that line while still carrying real games. Dividing
-    // a regular-season-only EW total by regular-season-PLUS-playoff games would
-    // credit zero expected wins to games the source declined to rate, quietly
-    // marking a player down for having reached the postseason. Weighting the two
-    // per-game RATES drops the unrated split instead, which is the honest reading
-    // of "no data" and leaves such a player's EW/GP exactly where it was.
-    ewinsPerGame: poolWeighted([
-      { value: regular.ewinsPerGame, weight: vRs.games },
-      { value: playoffs.ewinsPerGame, weight: vPo.games },
-    ]),
+    ...foldRows(regular, playoffs),
     regularGames: regular.games ?? 0,
     regularMinutes: regular.minutes ?? 0,
     playoffGames: playoffs.games ?? 0,

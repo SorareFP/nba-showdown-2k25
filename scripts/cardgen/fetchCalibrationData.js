@@ -4,8 +4,13 @@
 // normalized JSON, which is committed, so `node scripts/cardgen/generateCards.js`
 // works with no network at all.
 //
-//   node scripts/cardgen/fetchCalibrationData.js
-//   node scripts/cardgen/fetchCalibrationData.js --force   (ignore the cache)
+//   node --env-file=.env.local scripts/cardgen/fetchCalibrationData.js
+//   node --env-file=.env.local scripts/cardgen/fetchCalibrationData.js --force
+//
+// THE `--env-file` IS NOT OPTIONAL ANY MORE. Step 1a below reads the PRIOR
+// season through dunksandthrees' authenticated API, which is the only source
+// that serves one, and it needs DUNKSANDTHREES_API_KEY out of .env.local. Every
+// other step still works without a key — see `--skip-prior` if you have none.
 //
 // WHAT IT FETCHES, and why each one is needed:
 //
@@ -26,6 +31,20 @@
 //     job only: the scoring chart's per-100 PTS/REB/AST anchor, which the actual
 //     page does not carry (it gives rebounds and assists as rate percentages,
 //     which cannot be inverted without team and opponent totals).
+//  1a. THE PRIOR SEASON (2024-25), both season types, through the AUTHENTICATED
+//     API rather than the public page. This is the one step that needs a key:
+//     the website locks every prior season, and the API does not.
+//
+//     It exists for the nineteen force-included players, who are carded on a
+//     2025-26 sample as short as eleven games. scripts/cardgen/priorSeasonBlend.js
+//     folds their previous season in, volume-weighted, exactly as the playoffs
+//     are folded in. Verified before it was relied on: for the OVERLAPPING season
+//     the API and the scraped page agree on all 602 rows to every digit, so this
+//     is the same table rather than a second opinion.
+//
+//     The whole league is fetched, not just the nineteen — the endpoint serves
+//     one season at a time regardless, so filtering would cost the same request
+//     and lose the ability to answer a later question without re-fetching.
 //  2. Basketball-Reference's 2024-25 season tables (per-game, per-100,
 //     advanced). The season the FINISHED card set was built from — the only way
 //     to fit anything against those 283 real cards, since dunksandthrees keeps
@@ -48,6 +67,7 @@ import { pathToFileURL } from 'node:url';
 import { cached, readCache, writeCache, politeDelay, DEFAULT_REQUEST_SPACING_MS } from './cache.js';
 import * as bbref from './sources/basketballReference.js';
 import * as dt from './sources/dunksAndThrees.js';
+import * as dtApi from './sources/dunksAndThreesApi.js';
 import { loadReferenceCards } from './referenceCards.js';
 import { normalizeName } from './resolveTeams.js';
 
@@ -209,7 +229,31 @@ export async function fetchSampleGameLogs(sample, season, { force = false, spaci
   return { logs, fetched };
 }
 
-export async function main({ force = false, log = console.log } = {}) {
+/**
+ * The prior season, both season types, through the authenticated API.
+ *
+ * Two requests. The endpoint's documented allowance is 90 a minute and the
+ * client spaces them itself, so nothing here needs to be polite by hand — see
+ * the per-endpoint throttle in sources/dunksAndThreesApi.js.
+ *
+ * A MISSING KEY IS A LOUD FAILURE, not a skipped step: the blend it feeds
+ * changes nineteen cards, and a run that quietly produced the unblended set
+ * would look exactly like a run that worked.
+ */
+export async function fetchPriorSeason(season, { force = false, log = () => {} } = {}) {
+  const out = {};
+  for (const [label, seasonType] of [
+    ['regular season', dtApi.SEASON_TYPE_REGULAR],
+    ['playoffs', dtApi.SEASON_TYPE_PLAYOFFS],
+  ]) {
+    const rows = await dtApi.fetchSeasonEpm(season, { seasonType, force, log });
+    log(`  ${rows.length} players (${label})`);
+    out[seasonType] = rows;
+  }
+  return out;
+}
+
+export async function main({ force = false, skipPrior = false, log = console.log } = {}) {
   log(`dunksandthrees ACTUAL season rates, season ${CURRENT_STATS_SEASON}...`);
   const actual = await dt.fetchActualSeasonRates(CURRENT_STATS_SEASON, { force });
   log(`  ${actual.length} players (regular season)`);
@@ -227,6 +271,15 @@ export async function main({ force = false, log = console.log } = {}) {
   log(`dunksandthrees predicted per-100 rates, season ${CURRENT_STATS_SEASON}...`);
   const rates = await dt.fetchSeasonRates(CURRENT_STATS_SEASON, { force });
   log(`  ${rates.length} players`);
+
+  // The prior season, from the API — the only source that serves one.
+  if (skipPrior) {
+    log(`Prior season ${REFERENCE_STATS_SEASON} SKIPPED (--skip-prior).`);
+    log('  the force-include blend will refuse to run without it.');
+  } else {
+    log(`dunksandthrees API, season ${REFERENCE_STATS_SEASON} (needs ${dtApi.API_KEY_ENV})...`);
+    await fetchPriorSeason(REFERENCE_STATS_SEASON, { force, log });
+  }
 
   const tables = {};
   for (const kind of ['perGame', 'perPoss', 'advanced']) {
@@ -259,7 +312,10 @@ export async function main({ force = false, log = console.log } = {}) {
 // Windows `process.argv[1]` is `C:\...` and `import.meta.url` is `file:///C:/...`,
 // which never match as strings.
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  main({ force: process.argv.includes('--force') }).catch(err => {
+  main({
+    force: process.argv.includes('--force'),
+    skipPrior: process.argv.includes('--skip-prior'),
+  }).catch(err => {
     console.error(err);
     process.exit(1);
   });

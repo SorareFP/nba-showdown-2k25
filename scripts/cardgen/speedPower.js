@@ -36,6 +36,15 @@
 // and pools by games played. A player whose team missed the playoffs keeps his
 // regular-season numbers untouched.
 //
+// FOR NINETEEN PLAYERS IT ALSO MEANS THE SEASON BEFORE. The force-include list
+// suspends the G>=40 rule for eighteen injury-shortened stars and Ty Jerome, so
+// several of them reach this file on a sample of ten to twenty games — Jerome's
+// fifteen produced the seventh-highest budget in the set. Their 2024-25 is
+// folded in by the same volume weighting, which is what makes a 15-game EPM
+// count as fifteen games of evidence rather than as a season. See
+// scripts/cardgen/priorSeasonBlend.js; every other player in the pool is
+// untouched.
+//
 // --- WHY THE OFF/DEF TERM IS GONE -------------------------------------------
 //
 // The composite used to be `z(EPM) + 0.35 * mean(z(OFF), z(DEF), z(EW/GP))`. The
@@ -68,7 +77,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { REPO_ROOT } from './cache.js';
-import { readPooledActual, poolingSummary } from './poolSeasons.js';
+import { poolingSummary } from './poolSeasons.js';
+import { readBlendedActual, reportBlend } from './priorSeasonBlend.js';
 import { normalizeName } from './resolveTeams.js';
 import { loadReferenceCards } from './referenceCards.js';
 import { meanSd, zScorer } from './attributes.js';
@@ -269,6 +279,14 @@ export function buildSpeedPowerTotals({ pool, actual, reference = REFERENCE_TOTA
       // numbers were playoff games. Zero means the composite is his regular
       // season exactly as it was before the postseason was folded in.
       playoffGames: r?.playoffGames ?? 0,
+      // And whether a PRIOR SEASON is in there too, which is true for the
+      // force-included nineteen and nobody else. `games` is the pooled total,
+      // so without this pair a reader cannot tell a 70-game season from a
+      // 15-game one blended with a 70-game one — and the difference is the
+      // whole reason those budgets moved.
+      blended: r?.blended ?? false,
+      currentGames: r?.blended ? r.currentGames : (r?.games ?? 0),
+      priorGames: r?.priorGames ?? 0,
     };
   });
 
@@ -283,6 +301,9 @@ export function buildSpeedPowerTotals({ pool, actual, reference = REFERENCE_TOTA
     epmDef: r.epmDef,
     ewinsPerGame: r.ewinsPerGame == null ? null : Number(r.ewinsPerGame.toFixed(4)),
     playoffGames: r.playoffGames,
+    blended: r.blended,
+    currentGames: r.currentGames,
+    priorGames: r.priorGames,
     composite: Number(composites[i].toFixed(4)),
     speedPowerTotal: totals[i],
     provisional: true,
@@ -295,13 +316,20 @@ export function main({ log = console.log } = {}) {
   // Regular season and playoffs, already folded into one row per player by
   // volume-weighted pooling — EPM, OFF and DEF by possessions, EW/GP by games.
   // See scripts/cardgen/poolSeasons.js.
-  const actual = readPooledActual(CURRENT_STATS_SEASON);
-  if (!actual) {
+  //
+  // ...and then the PRIOR SEASON folded into the same row for the nineteen
+  // force-included players, by the same arithmetic. Those nineteen are in the
+  // pool despite failing the G>=40 rule, so several of them arrive here on ten
+  // to twenty games — a sample that produced a top-ten budget for Ty Jerome off
+  // fifteen. See scripts/cardgen/priorSeasonBlend.js.
+  const blend = readBlendedActual(CURRENT_STATS_SEASON);
+  if (!blend) {
     throw new Error(
       `No cached dunksandthrees ACTUAL rates for ${CURRENT_STATS_SEASON} — run ` +
         'scripts/cardgen/fetchCalibrationData.js first.'
     );
   }
+  const actual = blend.rows;
   const pool = JSON.parse(fs.readFileSync(path.join(GEN_DIR, 'player-pool-2026.json'), 'utf8'));
   // The reference distribution is measured when the gitignored CSV is present
   // and falls back to the committed constants when it is not, so a public
@@ -324,6 +352,7 @@ export function main({ log = console.log } = {}) {
       `(${fold.playoffGames} playoff games total, median ${fold.medianPlayoffGames}, ` +
       `max ${fold.maxPlayoffGames}); the other ${fold.players - fold.gained} are unchanged`
   );
+  reportBlend(blend, log);
   log(
     `  reference (${measured ? `measured, n=${measured.n}` : 'committed fallback'}): ` +
       `mean ${reference.mean} sd ${reference.sd} [${reference.min}, ${reference.max}] ` +

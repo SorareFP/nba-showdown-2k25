@@ -19,6 +19,17 @@
 // additional data rather than as a second set to average against. A player whose
 // team missed the playoffs keeps his regular-season figures exactly.
 //
+// AND FOR NINETEEN PLAYERS IT MEANS 2024-25 TOO. The force-include list puts
+// eighteen injury-shortened stars and Ty Jerome in the pool despite the G>=40
+// rule, and several of them played under twenty games; their previous season is
+// folded in by the same volume weighting
+// (scripts/cardgen/priorSeasonBlend.js). WHICH LAYERS THAT REACHES, exactly:
+// the Speed/Power budget, the shooting three and Def Boost, all of which read
+// the actual row. NOT the scoring chart, which reads the PREDICTED per-100
+// leaderboard — and that is the right place for it to stop rather than an
+// oversight, because those rates are dunksandthrees' own stabilized estimates,
+// already regressed toward a prior for exactly the small samples in question.
+//
 //   Speed / Power   From the ACTUAL season's OFF / DEF / EPM / EW-per-game
 //                   (scripts/cardgen/speedPower.js), mapped onto the finished
 //                   set's own distribution by magnitude. All that happens here
@@ -64,7 +75,8 @@ import { applyOverrides } from './overrides.js';
 import * as V from './variance.js';
 import * as A from './attributes.js';
 import * as S from './shooting.js';
-import { readPooledActual, poolingSummary } from './poolSeasons.js';
+import { poolingSummary } from './poolSeasons.js';
+import { readBlendedActual, reportBlend, PRIOR_STATS_SEASON } from './priorSeasonBlend.js';
 import { trb100 } from './sources/dunksAndThrees.js';
 import { CALIBRATION_FILE } from './calibrateAttributes.js';
 import { CURRENT_STATS_SEASON } from './fetchCalibrationData.js';
@@ -480,14 +492,17 @@ export function main({ log = console.log } = {}) {
     );
   }
   // Regular season and playoffs folded into one sample per player — see
-  // scripts/cardgen/poolSeasons.js for which volume each stat pools on.
-  const actual = readPooledActual(CURRENT_STATS_SEASON);
-  if (!actual) {
+  // scripts/cardgen/poolSeasons.js for which volume each stat pools on — and
+  // then the PRIOR SEASON folded in on top for the nineteen force-included
+  // players, by the same arithmetic. See scripts/cardgen/priorSeasonBlend.js.
+  const blend = readBlendedActual(CURRENT_STATS_SEASON);
+  if (!blend) {
     throw new Error(
       `No cached dunksandthrees ACTUAL rates for ${CURRENT_STATS_SEASON} — run ` +
         'scripts/cardgen/fetchCalibrationData.js first.'
     );
   }
+  const actual = blend.rows;
   const overridesFile = path.join(REPO_ROOT, 'scripts', 'cardgen', 'overrides.json');
   const { cards, missingRates, missingActual, shooting, pooling, names, targets } = generateCards({
     pool: readJson(path.join(GEN_DIR, 'player-pool-2026.json')),
@@ -511,7 +526,11 @@ export function main({ log = console.log } = {}) {
       'playoff games are folded in as additional data, each stat volume-weighted by the ' +
       'denominator it is a rate over (possessions for EPM/OFF/DEF, true shooting attempts for ' +
       'TS%, the relevant attempts for each location percentage, games for EW/GP); a player whose ' +
-      'team missed the playoffs is unchanged. The shooting three are the stated probability rule ' +
+      `team missed the playoffs is unchanged. The ${blend.blended.length} force-included players ` +
+      `ALSO have their ${PRIOR_STATS_SEASON - 1}-${String(PRIOR_STATS_SEASON % 100).padStart(2, '0')} ` +
+      'season folded in by the same volume weighting, because they are in the pool despite failing ' +
+      'the G>=40 rule and several of them played under twenty games; no other player is blended. ' +
+      'The shooting three are the stated probability rule ' +
       "(a player misses at his real miss rate) compressed onto the finished set's own " +
       'distribution. Charts are still synthesized from the PREDICTED per-100 rates, because the ' +
       'actual page carries no per-100 rebound or assist counts. See scripts/cardgen/shooting.js, ' +
@@ -532,6 +551,7 @@ export function main({ log = console.log } = {}) {
       `(${pooling.playoffGames} playoff games total, median ${pooling.medianPlayoffGames}, ` +
       `max ${pooling.maxPlayoffGames}); the other ${pooling.players - pooling.gained} are unchanged`
   );
+  reportBlend(blend, log);
   log('');
   const fields = ['speed', 'power', 'shotLine', 'paintBoost', 'threePtBoost', 'defBoost', 'salary'];
   log('field         n   min   p10   med   p90   max   mean');

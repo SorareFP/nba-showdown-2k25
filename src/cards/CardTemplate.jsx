@@ -39,6 +39,39 @@ export function formatRollRange(tier) {
 }
 
 /**
+ * The tiers the card actually PRINTS.
+ *
+ * The generator puts a blank tier on the bottom of every chart — roll 1 alone,
+ * 0/0/0 — because a natural 1 always produces nothing (see
+ * scripts/cardgen/zeroFloor.js). A row that is guaranteed to read "1 | 0 | 0 |
+ * 0" on every card in the set tells the player nothing they cannot infer from
+ * the chart starting at 2, and it costs a row out of a table that only has
+ * room for a handful. So it is dropped here, and the printed chart starts at
+ * the no-scoring tier. The tier stays in the DATA — the game resolves a
+ * natural 1 against it — it just is not drawn.
+ *
+ * CONDITIONAL, not unconditional, and the condition is the shape of the tier
+ * rather than its position. The shipped 2025-26 set is rendered through this
+ * same component and its bottom tier is a REAL band 3-4 rolls wide that often
+ * scores (LeBron's "1-3: 2,0,0"); 168 of those 306 cards do have an all-zero
+ * bottom tier, but none of them is one roll wide. Hiding row 0 on position
+ * alone would silently delete a scoring row from every one of them. Matching
+ * on "exactly roll 1 and completely blank" hides precisely the structural tier
+ * this rule is about and nothing else.
+ */
+export function visibleTiers(chart) {
+  if (!Array.isArray(chart)) return [];
+  return chart.length > 1 && isBlankTier(chart[0]) ? chart.slice(1) : chart;
+}
+
+/** The blank natural-1 tier the generator prepends. Kept in sync with zeroFloor.js. */
+function isBlankTier(tier) {
+  return (
+    !!tier && tier.lo === 1 && tier.hi === 1 && tier.pts === 0 && tier.reb === 0 && tier.ast === 0
+  );
+}
+
+/**
  * Index of the chart row the shot-line arrow belongs on.
  *
  * Shot Line is not printed as a number anywhere on the card — the ONLY way it
@@ -48,6 +81,15 @@ export function formatRollRange(tier) {
  *
  * Returns -1 when there is no shot line or no row contains it, which renders
  * no arrow rather than defaulting to row 0 — a wrong arrow is worse than none.
+ *
+ * IT INDEXES WHATEVER ARRAY IT IS GIVEN, and the arrow is drawn against a
+ * PRINTED row, so it must be given the PRINTED tiers — `visibleTiers(chart)`,
+ * not `card.chart`. Passing the full chart while rendering the visible one
+ * puts every arrow exactly one row too low, and it would still look plausible
+ * on every card: the ranges are what decide, so the only defence is to search
+ * the same list that gets rendered. (Nothing shifts by 1 here as a correction;
+ * dropping a leading tier does not change any remaining tier's roll range, so
+ * searching the shortened list is the whole fix.)
  */
 export function findShotLineIndex(chart, shotLine) {
   if (!Array.isArray(chart) || shotLine == null || !Number.isFinite(shotLine)) return -1;
@@ -138,7 +180,9 @@ export default function CardTemplate({
     ext: photoExt,
   });
 
-  const chart = Array.isArray(card.chart) ? card.chart : [];
+  // The printed rows, and the arrow's row within them — searched together so
+  // they cannot disagree. See visibleTiers and findShotLineIndex.
+  const chart = visibleTiers(card.chart);
   const shotLineRow = findShotLineIndex(chart, card.shotLine);
 
   return (

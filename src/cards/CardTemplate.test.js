@@ -17,6 +17,7 @@ import CardTemplate, {
   nameFontSize,
   logoSrc,
   LEAGUE_LOGO,
+  visibleTiers,
 } from './CardTemplate.jsx';
 import { CARDS } from '../game/cards.js';
 import { TEAMS } from './teams.js';
@@ -542,6 +543,157 @@ describe('findShotLineIndex', () => {
 // pickAccent and resolveAccent moved to teams.js and are tested there, beside
 // the table they read. What stays this file's business is that the card puts
 // the resolved value on --team-accent — see the team theming block above.
+
+describe('visibleTiers — the blank natural-1 tier is not printed', () => {
+  /** What the generator emits: a one-roll blank tier under the real chart. */
+  const generated = [
+    { lo: 1, hi: 1, pts: 0, reb: 0, ast: 0 },
+    { lo: 2, hi: 3, pts: 0, reb: 1, ast: 1 },
+    { lo: 4, hi: 19, pts: 3, reb: 1, ast: 1 },
+    { lo: 20, hi: 99, pts: 5, reb: 2, ast: 2 },
+  ];
+
+  it('drops the structural blank tier so the printed chart starts at roll 2', () => {
+    const shown = visibleTiers(generated);
+    expect(shown).toHaveLength(3);
+    expect(shown[0]).toMatchObject({ lo: 2, hi: 3 });
+  });
+
+  it('KEEPS a real bottom band that happens to sit at roll 1', () => {
+    // The regression this exists to prevent. The shipped 2025-26 set renders
+    // through this same component and its bottom tier is a genuine 3-roll band
+    // that often scores — LeBron's "1-3: 2,0,0". Hiding row 0 by POSITION
+    // would silently delete a scoring row from all 306 of those cards.
+    expect(visibleTiers(LEBRON_08_09.chart)).toEqual(LEBRON_08_09.chart);
+  });
+
+  it('keeps an all-zero bottom band that is wider than one roll', () => {
+    // 168 of the shipped cards have a 0/0/0 bottom tier, and none of them is
+    // one roll wide. "Blank" is not enough to hide a row; it has to be the
+    // one-roll structural tier.
+    const chart = [{ lo: 1, hi: 3, pts: 0, reb: 0, ast: 0 }, { lo: 4, hi: 99, pts: 2, reb: 1, ast: 0 }];
+    expect(visibleTiers(chart)).toEqual(chart);
+  });
+
+  it('never prints an empty chart, even if the blank tier is all there is', () => {
+    const only = [{ lo: 1, hi: 1, pts: 0, reb: 0, ast: 0 }];
+    expect(visibleTiers(only)).toEqual(only);
+  });
+
+  it('degrades to an empty list rather than throwing', () => {
+    expect(visibleTiers(undefined)).toEqual([]);
+    expect(visibleTiers(null)).toEqual([]);
+    expect(visibleTiers([])).toEqual([]);
+  });
+
+  it('renders one row per VISIBLE tier plus the header', () => {
+    const html = render({ card: { ...LEBRON_08_09, chart: generated } });
+    expect(rows(html)).toHaveLength(4); // 3 printed tiers + header
+    expect(html).not.toContain('>1-1<');
+  });
+
+  it('puts the arrow on the right printed row with the blank tier hidden', () => {
+    // THE off-by-one this guards. findShotLineIndex indexes whatever array it
+    // is handed; hand it the full chart while rendering the visible one and
+    // every arrow sits exactly one row too low — and still looks plausible.
+    // Shot line 5 is inside "4-19", the SECOND printed row (index 1).
+    const card = { ...LEBRON_08_09, chart: generated, shotLine: 5 };
+    expect(findShotLineIndex(visibleTiers(generated), 5)).toBe(1);
+    const printed = rows(render({ card })).slice(1); // drop the header row
+    const withArrow = printed.findIndex(r => r.includes('shot-line-arrow'));
+    expect(withArrow).toBe(1);
+    expect(printed[withArrow]).toContain('4-19');
+  });
+
+  it('still resolves a natural 1 in the DATA, which is why the tier stays there', () => {
+    // Hidden from the chart, present for the game: rolling a 1 has to find a
+    // tier or the card cannot be resolved at all.
+    expect(findShotLineIndex(generated, 1)).toBe(0);
+    expect(generated[0]).toMatchObject({ lo: 1, hi: 1, pts: 0, reb: 0, ast: 0 });
+  });
+});
+
+describe('the chart clears the photo frame', () => {
+  // WHY THIS IS ARITHMETIC AND NOT A SCREENSHOT. Both elements are absolutely
+  // positioned in the same fixed 843x1181 field, and the chart is
+  // BOTTOM-anchored, so it grows upward as tiers are added. Its top edge is a
+  // function of the row count — which stopped being a constant when the band
+  // merge landed. Nothing in CSS notices when those two numbers cross.
+
+  const chart = cssBlock('.chart');
+  const cell = cssBlock(/\.chart th,\s*\.chart td/);
+  const outer = cssBlock('.photoOuter');
+
+  const CHART_BOTTOM = pxIn(chart, 'bottom');
+  const CELL_H = pxIn(cell, 'height');
+  const CHART_BORDER = Number(chart.match(/border:\s*(\d+)px/)[1]);
+  /** Six tiers is the generator's cap; one is the blank tier, which is hidden. */
+  const MAX_PRINTED_ROWS = 5;
+
+  /** The chart's top edge, in card pixels, for N printed tiers. */
+  const chartTop = n => CARD_HEIGHT - CHART_BOTTOM - (n + 1) * CELL_H - CHART_BORDER;
+
+  /**
+   * The photo frame's PAINTED bottom — the lowest vertex of its clip-path, not
+   * the bottom of its layout box. The box has always ended below the chart;
+   * what changed is the clip, and the clip is what is on screen.
+   */
+  const paintedBottom = () => {
+    const top = pxIn(outer, 'top');
+    const poly = outer.match(/clip-path:\s*polygon\(([^)]*)\)/)[1];
+    const vertexYs = poly.split(',').map(pair => {
+      const [, y] = pair.trim().split(/\s+/);
+      return y.endsWith('%') ? (parseFloat(y) / 100) * pxIn(outer, 'height') : parseFloat(y);
+    });
+    return top + Math.max(...vertexYs);
+  };
+
+  it('reads the geometry out of the stylesheet, not out of this test', () => {
+    expect(CHART_BOTTOM).toBe(21);
+    expect(CELL_H).toBe(41);
+    expect(CHART_BORDER).toBe(3);
+  });
+
+  it('leaves the photo above the TALLEST chart the generator can produce', () => {
+    // The tallest case is the only one that can fail: the chart grows upward,
+    // so every shorter chart clears by more. Measured in the browser at this
+    // exact geometry: photo painted bottom y=900, chart top y=911.
+    expect(paintedBottom()).toBe(900);
+    expect(chartTop(MAX_PRINTED_ROWS)).toBe(911);
+    expect(paintedBottom()).toBeLessThan(chartTop(MAX_PRINTED_ROWS));
+  });
+
+  it('clears by at least the gap the printed reference art leaves', () => {
+    // The art's photo boundary clears its chart's top border by a minimum of
+    // 8px. A positive gap is not enough on its own — 1px would technically
+    // pass and would read as a collision.
+    expect(chartTop(MAX_PRINTED_ROWS) - paintedBottom()).toBeGreaterThanOrEqual(8);
+  });
+
+  it('clears at the SHORTEST chart too, which simply has further to fall', () => {
+    for (const n of [2, 3, 4, 5]) {
+      expect(paintedBottom(), `${n} printed rows`).toBeLessThan(chartTop(n));
+    }
+  });
+
+  it('fails loudly if a sixth printed row is ever added', () => {
+    // Not a prediction — a tripwire. Six printed rows (seven chart tiers) puts
+    // the chart's top edge at y=870, back through the photo, and this is the
+    // only place that arithmetic is written down.
+    expect(chartTop(MAX_PRINTED_ROWS + 1)).toBeLessThan(paintedBottom());
+  });
+
+  it('agrees with every chart in the committed 2026-27 set', () => {
+    // Closes the loop: the stylesheet is safe for MAX_PRINTED_ROWS, and no
+    // card actually asks for more than that.
+    const printed = POOL_PLAYERS.map(p => visibleTiers(p.chart).length);
+    const worst = Math.max(...printed);
+    expect(printed).toHaveLength(331);
+    expect(worst).toBe(MAX_PRINTED_ROWS); // non-vacuous: the cap is reached
+    expect(Math.min(...printed)).toBeGreaterThanOrEqual(2);
+    for (const n of printed) expect(paintedBottom()).toBeLessThan(chartTop(n));
+  });
+});
 
 describe('nameFontSize', () => {
   // Tomorrow's measured metrics: cap height 0.74em, average uppercase advance

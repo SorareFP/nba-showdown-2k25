@@ -283,7 +283,43 @@
 
 /* ── Photo window ────────────────────────────────────────────────────────── */
 
-/* Outer shape is the accent-colored outline; the window sits 5px inside it. */
+/* Outer shape is the accent-colored outline; the window sits 5px inside it.
+ *
+ * ── THE PHOTO'S PAINTED BOTTOM CLEARS THE CHART, AND CLIP-PATH IS WHY ───────
+ *
+ * The chart is bottom-anchored (see .chart) so it GROWS UPWARD, and its top
+ * edge is set by the tallest chart in the set: 1181 - 21 bottom - 249 for a
+ * six-row table = y=911. These boxes end at 110 + 806 = y=916, five pixels
+ * BELOW that, and the bottom edge is horizontal from x=150 to x=612 — straight
+ * through the chart's 218..658 column. The chart drew on top of the photo.
+ *
+ * The printed art does not do that. Measured on both reference cards, the photo's
+ * lower boundary clears the chart's top border by a minimum of 8px (at the
+ * chart's left edge, x=220, opening up to 120px+ by the chart's right edge,
+ * because the art's boundary there is one long diagonal). So a gap is the
+ * intent; 916 was simply never checked against the table it sits over.
+ *
+ * WHAT MOVED IS THE CLIP, NOT THE BOX. The heights above are unchanged and
+ * deliberately so: crop metadata is stored as a PERCENTAGE of the photo window
+ * (see PHOTO_WINDOW and cropToStyle in src/cards/photo.js), object-fit: cover
+ * fits the source to the ELEMENT'S BOX, and photo.js's PHOTO_WINDOW mirrors
+ * these four numbers with crop.test.js parsing this file to keep them in step.
+ * Shortening the box would therefore re-resolve every crop already curated for
+ * the set against a different window — silently renudging hundreds of photos
+ * someone framed by hand. Moving only the clip leaves every stored crop meaning
+ * exactly what it meant, and costs nothing else: these shapes have NEVER been
+ * their boxes (the corners and the bottom-right diagonal are all clip), so the
+ * bottom vertices are the same kind of edit as the ones already here.
+ *
+ * 790px = 806 - 16, putting the painted bottom at y=900 and leaving an 11px gap
+ * to the chart's tallest top edge — a shade more than the art's 8px minimum,
+ * and uniform across the width where the art's diagonal opens up. The diagonal
+ * vertex moves with it (660 -> 644) so its 146px vertical run is untouched: the
+ * shape is translated up, not reproportioned.
+ *
+ * If the chart's row height, row count or bottom offset ever change, this has
+ * to be re-checked — CardTemplate.test.js redoes that arithmetic from this
+ * stylesheet and fails here rather than letting the two silently re-overlap. */
 .photoOuter {
   position: absolute;
   left: 150px;
@@ -291,8 +327,12 @@
   width: 683px;
   height: 806px;
   background: var(--accent-on-field);
-  clip-path: polygon(0 44px, 44px 0, 100% 0, 100% 660px, 462px 100%, 0 100%);
+  clip-path: polygon(0 44px, 44px 0, 100% 0, 100% 644px, 462px 790px, 0 790px);
 }
+/* Same move, 5px inside the outline on the bottom edge as on every other:
+ * 780 = 790 - 5 - 5 in the window's own coordinates (it is offset 5px down
+ * inside .photoOuter), so the accent outline still shows as a 5px band under
+ * the photo. Its diagonal keeps its 143px run for the same reason. */
 .photoWindow {
   position: absolute;
   left: 5px;
@@ -301,7 +341,7 @@
   height: 796px;
   overflow: hidden;
   background: var(--field-well);
-  clip-path: polygon(0 40px, 40px 0, 100% 0, 100% 653px, 456px 100%, 0 100%);
+  clip-path: polygon(0 40px, 40px 0, 100% 0, 100% 637px, 456px 780px, 0 780px);
 }
 .photo {
   display: block;

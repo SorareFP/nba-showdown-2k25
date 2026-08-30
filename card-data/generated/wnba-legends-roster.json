@@ -1,0 +1,178 @@
+[
+  {
+    "name": "Becky Hammon",
+    "season": 2009,
+    "team": "SAS",
+    "pos": "G",
+    "games": 31,
+    "mpg": 33.8,
+    "bbrefId": "hammobe01w",
+    "eligibility": "both",
+    "careerSeasons": 16
+  },
+  {
+    "name": "Candace Parker",
+    "season": 2008,
+    "team": "LAS",
+    "pos": "F-C",
+    "games": 33,
+    "mpg": 33.6,
+    "bbrefId": "parkeca01w",
+    "eligibility": "both",
+    "careerSeasons": 16
+  },
+  {
+    "name": "Candice Dupree",
+    "season": 2014,
+    "team": "PHO11",
+    "pos": "F",
+    "games": 34,
+    "mpg": 31.2,
+    "bbrefId": "dupreca01w",
+    "eligibility": "both",
+    "careerSeasons": 16
+  },
+  {
+    "name": "Diana Taurasi",
+    "season": 2008,
+    "team": "PHO97",
+    "pos": "G",
+    "games": 34,
+    "mpg": 31.9,
+    "bbrefId": "tauradi01w",
+    "eligibility": "both",
+    "careerSeasons": 20
+  },
+  {
+    "name": "Elena Delle Donne",
+    "season": 2015,
+    "team": "CHI",
+    "pos": "F-G",
+    "games": 31,
+    "mpg": 33.3,
+    "bbrefId": "delleel01w",
+    "eligibility": "both",
+    "careerSeasons": 10
+  },
+  {
+    "name": "Katie Smith",
+    "season": 2000,
+    "team": "MIN99",
+    "pos": "G",
+    "games": 32,
+    "mpg": 37.3,
+    "bbrefId": "smithka01w",
+    "eligibility": "both",
+    "careerSeasons": 15
+  },
+  {
+    "name": "Lauren Jackson",
+    "season": 2006,
+    "team": "SEA00",
+    "pos": "F-C",
+    "games": 30,
+    "mpg": 28.4,
+    "bbrefId": "jacksla01w",
+    "eligibility": "both",
+    "careerSeasons": 12
+  },
+  {
+    "name": "Lindsay Whalen",
+    "season": 2008,
+    "team": "CON03",
+    "pos": "G",
+    "games": 31,
+    "mpg": 29.3,
+    "bbrefId": "whaleli01w",
+    "eligibility": "both",
+    "careerSeasons": 15
+  },
+  {
+    "name": "Lisa Leslie",
+    "season": 2004,
+    "team": "LAS",
+    "pos": "C",
+    "games": 34,
+    "mpg": 33.8,
+    "bbrefId": "leslili01w",
+    "eligibility": "both",
+    "careerSeasons": 12
+  },
+  {
+    "name": "Maya Moore",
+    "season": 2014,
+    "team": "MIN11",
+    "pos": "F",
+    "games": 34,
+    "mpg": 34.7,
+    "bbrefId": "moorema01w",
+    "eligibility": "both",
+    "careerSeasons": 8
+  },
+  {
+    "name": "Sheryl Swoopes",
+    "season": 2000,
+    "team": "HOU",
+    "pos": "F-G",
+    "games": 31,
+    "mpg": 35.2,
+    "bbrefId": "swoopsh01w",
+    "eligibility": "both",
+    "careerSeasons": 12
+  },
+  {
+    "name": "Sue Bird",
+    "season": 2004,
+    "team": "SEA00",
+    "pos": "G",
+    "games": 34,
+    "mpg": 33.4,
+    "bbrefId": "birdsu01w",
+    "eligibility": "both",
+    "careerSeasons": 19
+  },
+  {
+    "name": "Sylvia Fowles",
+    "season": 2017,
+    "team": "MIN11",
+    "pos": "C",
+    "games": 34,
+    "mpg": 30.8,
+    "bbrefId": "fowlesy01w",
+    "eligibility": "both",
+    "careerSeasons": 15
+  },
+  {
+    "name": "Tamika Catchings",
+    "season": 2002,
+    "team": "IND",
+    "pos": "F",
+    "games": 32,
+    "mpg": 36.5,
+    "bbrefId": "catchta01w",
+    "eligibility": "both",
+    "careerSeasons": 15
+  },
+  {
+    "name": "Tina Charles",
+    "season": 2016,
+    "team": "NYL12",
+    "pos": "C",
+    "games": 32,
+    "mpg": 33.7,
+    "bbrefId": "charlti01w",
+    "eligibility": "both",
+    "careerSeasons": 14
+  },
+  {
+    "name": "Tina Thompson",
+    "season": 2000,
+    "team": "HOU",
+    "pos": "F",
+    "games": 32,
+    "mpg": 34,
+    "bbrefId": "thompti01w",
+    "eligibility": "both",
+    "careerSeasons": 17
+  }
+]

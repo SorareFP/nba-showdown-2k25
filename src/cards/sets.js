@@ -62,6 +62,22 @@ export const ROOKIE_SET = 'rookie';
 export const WNBA_SET = 'wnba';
 
 /**
+ * The WNBA legends set — sixteen retired greats, each on her best season.
+ *
+ * BOTH of the things a set can be at once, which is why it is its own id rather
+ * than a flag on either of the two it resembles. It is a CARD TYPE cut across
+ * seasons, exactly like `super-season`; and it is a LEAGUE, exactly like
+ * `wnba`. Nothing about a Super Season card knows how to be a WNBA card — the
+ * team table, the league mark and the whole generator differ — and nothing
+ * about the WNBA set knows how to be historical.
+ *
+ * It is also the ONLY set in this file whose roster is a NAMED LIST rather than
+ * a rule. See card-data/wnba-legends.json: the user named these players, and no
+ * threshold can produce or withhold one.
+ */
+export const WNBA_SUPER_SEASON_SET = 'wnba-super-season';
+
+/**
  * The season whose STATS the current set is built from.
  *
  * TWO DIFFERENT SEASONS ARE ON SCREEN IN THE STUDIO AT ONCE, and confusing
@@ -212,6 +228,34 @@ export const SETS = [
     // No visual treatment decided yet. It renders on the team's own derived
     // field theme, exactly as the base set does.
     treatment: null,
+  },
+  {
+    id: WNBA_SUPER_SEASON_SET,
+    name: 'WNBA Super Season',
+    statsSeason: 'career-best season',
+    // A CARD TYPE, like `super-season` — not a league, even though it carries
+    // one. `kind` answers "what makes this a set", and what makes this one a
+    // set is that every card in it is somebody's best year. The league is
+    // carried in `league` below, which is what the mark in the corner reads.
+    kind: 'special',
+    league: 'WNBA',
+    editable: true,
+    hidesEmptyRows: true,
+    // ── AND THIS ONE DOES PRINT ITS SEASON, UNLIKE THE OTHER WNBA SET ────────
+    //
+    // The `wnba` row above sets `showsSeason: false` with a paragraph of
+    // argument, and none of it applies here. That set is a CURRENT-season set,
+    // so naming its season would be noise; this one is a career-best set
+    // spanning 1997 to 2024, and WHICH season a card is IS the card — the same
+    // sentence the NBA Super Season row makes. Lauren Jackson has four seasons
+    // anyone could argue for and a card that does not say which one it is
+    // cannot be read.
+    showsSeason: true,
+    // The gold pill, the same badge the NBA Super Season set carries. It says
+    // what KIND of card this is, and the kind is identical; the league mark in
+    // the opposite corner is what says the rest.
+    badge: SUPER_SEASON_BADGE,
+    treatment: 'gold-foil',
   },
 ];
 

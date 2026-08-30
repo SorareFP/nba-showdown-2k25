@@ -20,6 +20,7 @@ import {
   SET_IDS,
   SUPER_SEASON_SET,
   WNBA_SET,
+  WNBA_SUPER_SEASON_SET,
   getSet,
   hidesEmptyRows,
   isEditableSet,
@@ -31,8 +32,10 @@ import {
 } from './sets.js';
 
 describe('the declared set list', () => {
-  it('holds the five sets the studio offers', () => {
-    expect(SET_IDS).toEqual(['2026-27', '2025-26', 'super-season', 'rookie', 'wnba']);
+  it('holds the six sets the studio offers', () => {
+    expect(SET_IDS).toEqual([
+      '2026-27', '2025-26', 'super-season', 'rookie', 'wnba', 'wnba-super-season',
+    ]);
   });
 
   it('names the season sets in the constants everything else imports', () => {
@@ -41,6 +44,7 @@ describe('the declared set list', () => {
     expect(SUPER_SEASON_SET).toBe('super-season');
     expect(ROOKIE_SET).toBe('rookie');
     expect(WNBA_SET).toBe('wnba');
+    expect(WNBA_SUPER_SEASON_SET).toBe('wnba-super-season');
   });
 
   it('gives every set an id, a name and an explicit treatment', () => {

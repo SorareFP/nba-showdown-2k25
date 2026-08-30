@@ -38,6 +38,7 @@ import {
   SUPER_SEASON_SET,
   ROOKIE_SET,
   WNBA_SET,
+  WNBA_SUPER_SEASON_SET,
   getSet,
 } from '../cards/sets.js';
 import { playerIdFromName } from '../cards/playerId.js';
@@ -240,7 +241,7 @@ export const CARD_PLAYERS = CARDS;
  * here the way the pool does.
  */
 const specialModules = import.meta.glob(
-  '../../card-data/generated/cards-{super-season,rookie,wnba}.json',
+  '../../card-data/generated/cards-{super-season,rookie,wnba,wnba-super-season}.json',
   { eager: true }
 );
 
@@ -255,6 +256,7 @@ function loadSpecialSet(id) {
 export const SUPER_SEASON_FILE = loadSpecialSet(SUPER_SEASON_SET);
 export const ROOKIE_FILE = loadSpecialSet(ROOKIE_SET);
 export const WNBA_FILE = loadSpecialSet(WNBA_SET);
+export const WNBA_SUPER_SEASON_FILE = loadSpecialSet(WNBA_SUPER_SEASON_SET);
 
 const byName = (a, b) => a.name.localeCompare(b.name);
 
@@ -412,6 +414,29 @@ export const SOURCES = {
     missingHint:
       '`node scripts/cardgen/wnba/fetchWnba.js`, `node scripts/cardgen/wnba/fitBpmModel.js` ' +
       'then `node scripts/cardgen/wnba/generateWnbaCards.js`',
+  }),
+  // BOTH a card type and a league, which is why it is its own set rather than
+  // rows added to either of the two above. Its roster is also the only NAMED
+  // one in the tool — sixteen players the user asked for, not a threshold.
+  [WNBA_SUPER_SEASON_SET]: specialSource(WNBA_SUPER_SEASON_SET, WNBA_SUPER_SEASON_FILE, {
+    sub: `${WNBA_SUPER_SEASON_FILE?.firstSeason ?? 1997}-${WNBA_SUPER_SEASON_FILE?.lastSeason ?? 2024} · named roster`,
+    hint:
+      'SIXTEEN RETIRED WNBA GREATS, each on her best individual season — the Super Season ' +
+      'question asked of the WNBA. Three things about it differ from every other set here. ' +
+      'FIRST, the roster is a NAMED LIST (card-data/wnba-legends.json), not a threshold: no ' +
+      'rule can add a seventeenth player or drop one of the sixteen. SECOND, the WNBA publishes ' +
+      'no BPM in any season, so the best season is chosen on the FITTED BPM equivalent, rated ' +
+      'against her own season\'s league — the run reports how far back that can honestly be ' +
+      'applied, and the answer is in the file\'s `audit` block. THIRD, the shooting numbers are ' +
+      'ERA-SHIFTED onto the current league\'s scale, because this set spans 1997 to 2024 and a ' +
+      '1997 true-shooting percentage compared with 2026 would read as a bad shooter rather ' +
+      'than a different league. Teams resolve THROUGH THE ERA, so Lauren Jackson\'s Storm is ' +
+      'hunter green and Diana Taurasi\'s Mercury is Planet Red — several of those franchises ' +
+      'have no logo file yet and draw the lettered circle until one arrives. Re-run ' +
+      '`node scripts/cardgen/wnba/generateWnbaLegends.js`.',
+    missingHint:
+      '`node scripts/cardgen/wnba/fetchWnbaHistory.js` then ' +
+      '`node scripts/cardgen/wnba/generateWnbaLegends.js`',
   }),
 };
 

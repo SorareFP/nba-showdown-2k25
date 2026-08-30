@@ -30,6 +30,7 @@ import {
   SET_IDS,
   SUPER_SEASON_SET,
   WNBA_SET,
+  WNBA_SUPER_SEASON_SET,
   getSet,
 } from '../cards/sets.js';
 
@@ -509,10 +510,12 @@ describe('stepSelection', () => {
 });
 
 describe('the special sets in the source list', () => {
-  const SPECIAL = [SUPER_SEASON_SET, ROOKIE_SET, WNBA_SET];
+  const SPECIAL = [SUPER_SEASON_SET, ROOKIE_SET, WNBA_SET, WNBA_SUPER_SEASON_SET];
 
-  it('offers all five sets, in the order the model declares them', () => {
-    expect(Object.keys(SOURCES)).toEqual(['pool', 'cards', SUPER_SEASON_SET, ROOKIE_SET, WNBA_SET]);
+  it('offers all six sets, in the order the model declares them', () => {
+    expect(Object.keys(SOURCES)).toEqual([
+      'pool', 'cards', SUPER_SEASON_SET, ROOKIE_SET, WNBA_SET, WNBA_SUPER_SEASON_SET,
+    ]);
     expect(Object.values(SOURCES).map(s => s.set)).toEqual(SET_IDS);
   });
 
@@ -528,12 +531,19 @@ describe('the special sets in the source list', () => {
     }
   });
 
-  it('has both rosters loaded in this checkout', () => {
-    // If this fails, run `node scripts/cardgen/fetchHistory.js` then
-    // `node scripts/cardgen/generateSpecialSets.js`. The studio degrades to an
-    // empty, clearly-labelled set rather than failing to build — this asserts
-    // the committed files are actually there.
-    for (const id of SPECIAL) expect(SOURCES[id].players.length).toBeGreaterThan(100);
+  it('has every roster loaded in this checkout', () => {
+    // If this fails, run the generator each set's `hint` names. The studio
+    // degrades to an empty, clearly-labelled set rather than failing to build —
+    // this asserts the committed files are actually there.
+    //
+    // THE WNBA LEGENDS SET IS SIXTEEN CARDS AND THAT IS NOT A LOAD FAILURE: it
+    // is the one set here whose roster is a NAMED LIST rather than a rule, so
+    // "big enough to look loaded" is the wrong test for it. It is checked
+    // against the list itself in scripts/cardgen/wnba/legends.test.js.
+    for (const id of SPECIAL) {
+      const floor = id === WNBA_SUPER_SEASON_SET ? 16 : 100;
+      expect(SOURCES[id].players.length, id).toBeGreaterThanOrEqual(floor);
+    }
   });
 
   it('makes both editable — they are sets being curated, not references', () => {

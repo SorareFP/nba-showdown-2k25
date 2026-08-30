@@ -1,0 +1,20 @@
+{
+  "_comment": "THE WNBA SUPER SEASON ROSTER — a NAMED list, not a rule, and that is what makes it different from every other set in this repo. The 2026-27 pool is MPG>=12 & G>=40, the WNBA set is MPG>=16 & G>=20; both answer 'who is good enough to card this year'. This set answers a question no threshold can: which retired players are LEGENDS. The user named these sixteen, and scripts/cardgen/wnba/generateWnbaLegends.js cards exactly them — no rule adds anyone and none of them can be dropped by one. A name matching no row in the archive is reported and the run exits non-zero rather than leaving the set quietly one player short. Keyed by the player name exactly as Basketball-Reference's WNBA tables spell it; the value is the era, which is documentation and is never read. NOTE ON SPELLING: the user's list read 'Lisa Lesia', which is Lisa Leslie — corrected here because the join is by name and a typo would silently cost her a card. Every other name was already Basketball-Reference's spelling.",
+
+  "Sheryl Swoopes": "1997-2011 — Houston Comets, Seattle Storm, Tulsa Shock",
+  "Lisa Leslie": "1997-2009 — Los Angeles Sparks",
+  "Tina Thompson": "1997-2013 — Houston Comets, Los Angeles Sparks, Seattle Storm",
+  "Katie Smith": "1999-2013 — Minnesota Lynx, Detroit Shock, Washington Mystics, Seattle Storm, New York Liberty",
+  "Becky Hammon": "1999-2014 — New York Liberty, San Antonio Silver Stars",
+  "Lauren Jackson": "2001-2012 — Seattle Storm",
+  "Sue Bird": "2002-2022 — Seattle Storm",
+  "Tamika Catchings": "2002-2016 — Indiana Fever",
+  "Diana Taurasi": "2004-2024 — Phoenix Mercury",
+  "Lindsay Whalen": "2004-2018 — Connecticut Sun, Minnesota Lynx",
+  "Candice Dupree": "2006-2021 — Chicago Sky, Phoenix Mercury, Indiana Fever, Atlanta Dream",
+  "Candace Parker": "2008-2023 — Los Angeles Sparks, Chicago Sky, Las Vegas Aces",
+  "Sylvia Fowles": "2008-2022 — Chicago Sky, Minnesota Lynx",
+  "Tina Charles": "2010-2024 — Connecticut Sun, New York Liberty, Washington Mystics, Phoenix Mercury, Seattle Storm, Atlanta Dream",
+  "Maya Moore": "2011-2018 — Minnesota Lynx",
+  "Elena Delle Donne": "2013-2023 — Chicago Sky, Washington Mystics"
+}

@@ -40,6 +40,7 @@ import {
   SET_IDS,
   SUPER_SEASON_SET,
   WNBA_SET,
+  WNBA_SUPER_SEASON_SET,
   photoUrlPath,
   setLeague,
   showsSeason,
@@ -634,12 +635,18 @@ describe('league mark', () => {
     expect(render({ card: { name: 'X' }, set: CURRENT_SET })).not.toMatch(/leagueMarkFallback/);
   });
 
-  it('keeps every pre-existing set on the NBA mark without either being edited', () => {
-    for (const id of SET_IDS.filter(i => i !== WNBA_SET)) {
-      expect(setLeague(id)).toBe('NBA');
-      expect(LEAGUE_LOGOS[setLeague(id)]).toBe(LEAGUE_LOGO);
+  it('keeps every NBA set on the NBA mark without either being edited', () => {
+    // DEFAULT_LEAGUE is what does this, and it is why no set that predates the
+    // WNBA needed a line added when the WNBA arrived. The exclusion list grew
+    // when the WNBA legends set did — it is a second WNBA set, and a card type
+    // rather than a season, so it declares its league for the same reason.
+    const wnbaSets = SET_IDS.filter(i => setLeague(i) === 'WNBA');
+    expect(wnbaSets).toEqual([WNBA_SET, WNBA_SUPER_SEASON_SET]);
+    for (const id of SET_IDS.filter(i => !wnbaSets.includes(i))) {
+      expect(setLeague(id), id).toBe('NBA');
+      expect(LEAGUE_LOGOS[setLeague(id)], id).toBe(LEAGUE_LOGO);
     }
-    expect(setLeague(WNBA_SET)).toBe('WNBA');
+    for (const id of wnbaSets) expect(LEAGUE_LOGOS[setLeague(id)]).toBe(LEAGUE_LOGOS.WNBA);
   });
 });
 

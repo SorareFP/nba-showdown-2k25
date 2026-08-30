@@ -4,6 +4,7 @@ import {
   LINE_CEIL,
   LINE_FLOOR,
   attemptsFromPer75,
+  buildShootingLayer,
   compressBoost,
   compressShotLine,
   fitLinearMap,
@@ -89,6 +90,19 @@ describe('rawLines', () => {
     const lines = rawLines({ tsPct: 0.6, paintPct: 0.7, threePct: null });
     expect(lines.paintGap).toBe(2);
     expect(lines.threeGap).toBeNull();
+    expect(lines.exactThreeStrength).toBeNull();
+  });
+
+  // The 3PT signal must not know anything about TS%: that is exactly the
+  // self-cancelling the boost used to suffer from, since TS% contains the threes.
+  it('reads three-point strength off the three-point line alone', () => {
+    const shooter = rawLines({ tsPct: 0.45, paintPct: 0.5, threePct: 0.42 });
+    const complete = rawLines({ tsPct: 0.68, paintPct: 0.75, threePct: 0.42 });
+    expect(shooter.exactThreeStrength).toBeCloseTo(complete.exactThreeStrength, 10);
+    // ...and it rises with the percentage, so a better shooter scores higher.
+    expect(rawLines({ tsPct: 0.5, paintPct: 0.5, threePct: 0.44 }).exactThreeStrength).toBeGreaterThan(
+      shooter.exactThreeStrength
+    );
   });
 });
 
@@ -236,5 +250,68 @@ describe('compressBoost', () => {
   it('returns no modifier for a missing gap', () => {
     expect(compressBoost(null, shape)).toBe(0);
     expect(compressBoost(NaN, shape)).toBe(0);
+  });
+});
+
+describe('buildShootingLayer — the 3PT boost', () => {
+  const shotLineTarget = { mean: 15.2624, sd: 1.289, min: 12, max: 18 };
+  /** Enough volume that the shrinkage barely moves anybody. */
+  const shooter = (tsPct, threePct) => ({
+    tsPct,
+    paintPct: 0.6,
+    threePct,
+    paintAttempts: 400,
+    threeAttempts: 500,
+  });
+
+  // The four players from the bug report, with their real 2025-26 numbers. The
+  // old rule handed Herbert Jones +2 on 30.9% and Stephen Curry -1 on 39.3%,
+  // because Curry's threes inflated the TS% his own baseline was built from.
+  const pool = [
+    shooter(0.647, 0.393), // Curry
+    shooter(0.636, 0.417), // Duncan Robinson
+    shooter(0.547, 0.383), // Klay Thompson
+    shooter(0.49, 0.309), // Herbert Jones
+    // Filler, so the pool has a league to be measured against.
+    ...Array.from({ length: 40 }, (_, i) => shooter(0.5 + i * 0.005, 0.3 + i * 0.004)),
+  ];
+
+  const build = () =>
+    buildShootingLayer(pool, { shotLineTarget, three: { targetSd: 1.5118, deadband: 1.35 } });
+
+  it('puts the better three-point shooters above the worse one', () => {
+    const [curry, robinson, klay, jones] = build().players.map(p => p.threePtBoost);
+    expect(curry).toBeGreaterThan(jones);
+    expect(robinson).toBeGreaterThan(jones);
+    expect(robinson).toBeGreaterThanOrEqual(curry);
+    expect(klay).toBeGreaterThan(jones);
+  });
+
+  it('does not let a high TS% eat a shooter’s own boost', () => {
+    // Same 3P%, wildly different overall efficiency: the boost must not move.
+    const twins = [shooter(0.68, 0.4), shooter(0.47, 0.4), ...pool];
+    const built = buildShootingLayer(twins, {
+      shotLineTarget,
+      three: { targetSd: 1.5118, deadband: 1.35 },
+    });
+    expect(built.players[0].threePtBoost).toBe(built.players[1].threePtBoost);
+    // The Shot Lines still differ — only the boost is independent of them.
+    expect(built.players[0].shotLine).toBeLessThan(built.players[1].shotLine);
+  });
+
+  it('scales the boost to the finished set’s own spread, not the Shot Line’s', () => {
+    const built = build();
+    expect(built.threeShape.scale).toBeCloseTo(1.5118 / built.threeStrengthSd, 6);
+    expect(built.threeShape.scale).not.toBeCloseTo(built.map.scale, 3);
+  });
+
+  it('falls back to the Shot Line scale when no target spread is calibrated', () => {
+    const built = buildShootingLayer(pool, { shotLineTarget });
+    expect(built.threeShape.scale).toBeCloseTo(built.map.scale, 10);
+  });
+
+  it('leaves the paint boost on the Shot Line scale', () => {
+    const built = build();
+    expect(built.paintShape.scale).toBeCloseTo(built.map.scale, 10);
   });
 });

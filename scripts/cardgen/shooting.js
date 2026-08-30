@@ -50,22 +50,70 @@
 // Affine, so relative spacing survives exactly: if one player's raw line is
 // twice as far above the pool mean as another's, it still is afterwards.
 //
-// --- WHY A BOOST USES THE SAME SCALE FACTOR ---------------------------------
+// --- THE PAINT BOOST USES THE SAME SCALE FACTOR -----------------------------
 //
-// `boost = shotLine - effective_line` is a distance in LINE UNITS, and the game
+// `paintBoost = shotLine - rim_line` is a distance in LINE UNITS, and the game
 // spends it in line units — a +2 lowers the line by 2, which is 10% on a d20. So
-// the boost has to be measured on the same compressed scale as the line itself,
-// or a +2 stops meaning 10%. Hence one scale factor, derived from the Shot Line,
-// applied to both boosts.
+// that boost has to be measured on the same compressed scale as the line itself,
+// or a +2 stops meaning 10%. Hence one scale factor, derived from the Shot Line.
 //
-// The boosts are re-centred on zero rather than on the pool mean of the raw gap.
-// That gap has a large systematic offset — everybody finishes better at the rim
-// than their overall TS% (mean raw Paint gap about +1.2) and almost everybody
-// shoots worse from three (mean raw 3PT gap about -4.5) — and shipping the
-// offset would hand every player in the league the same +1 Paint and the same
-// -5 from three, which is not a modifier, it is a rule change. Centred, a boost
-// says what it is supposed to say: better or worse THAN THE LEAGUE at that spot,
-// relative to your own baseline.
+// The boosts are re-centred on zero rather than on the pool mean of the raw
+// signal. The Paint gap has a large systematic offset — everybody finishes
+// better at the rim than at their overall TS% (mean raw gap about +1.2) — and
+// shipping it would hand every player in the league the same +1, which is not a
+// modifier, it is a rule change. Centred, a boost says what it is supposed to
+// say: better or worse THAN THE LEAGUE at that spot.
+//
+// --- THE 3PT BOOST IS NOT A DISTANCE FROM THE SHOT LINE ---------------------
+//
+// It used to be — `threeGap = shotLine - three_line`, the mirror of Paint — and
+// that was WRONG, for a reason that is easy to miss: TS% ALREADY CONTAINS THE
+// THREES. A specialist's own three-point shooting inflates the TS% his Shot Line
+// is built from, which raises the bar his three-point line is then measured
+// against, and the boost cancels itself. It came out inverted on real data:
+//
+//     Herbert Jones   30.9% from three   +2
+//     Klay Thompson   38.3%              +1
+//     Duncan Robinson 41.0%               0
+//     Stephen Curry   39.3%              -1
+//
+// Against the finished 283-card set that rule correlates with the real 3PT
+// Boosts at only r = 0.23. Two replacements were measured on the same cards:
+//
+//     baseline = the player's own 2P line   r = 0.42
+//     baseline = the LEAGUE's three line    r = 0.43
+//
+// 2P% is the obvious candidate and it does fix the self-cancelling, but it swaps
+// one confound for another: it rewards being BAD AT TWOS. On the 2025-26 pool it
+// puts Herbert Jones (30.9% from three, 47.0% on twos) at +1 and Stephen Curry
+// (39.3% from three, 58.4% on twos) at 0, because Curry is also an excellent
+// two-point scorer and Jones is not. Stripping the rim out as well was the other
+// idea, and the user ruled it out for the right reason: what is left is
+// mid-range plus free throws, and the game has no mid-range check.
+//
+// So the baseline is the LEAGUE, and the 3PT Boost measures ABSOLUTE
+// three-point ability: how many rolls better than a league-average shooter this
+// player is, applied on top of whatever Shot Line he earned. That is also what
+// memory/shooting_attributes_methodology.md says the finished set was doing —
+// "the boost is sized to hit a target probability, not assigned by rank" — and
+// a target probability is an absolute claim about the player, not a claim
+// relative to the rest of his own game.
+//
+// It follows that the 3PT Boost is no longer a distance in Shot Line units, so
+// the argument for sharing the Shot Line's scale factor no longer applies to it.
+// It carries its own, fitted the same way the Shot Line's is: the finished set
+// supplies the SPREAD (the standard deviation of its own 3PT Boosts, 1.51) and
+// the pool's spread of three-point ability supplies the ORDERING. That is also
+// what fixes the tail — under the old rule the +3/+4/+5 band held about 1% of
+// the pool against 11% of the finished set.
+//
+// The Paint Boost has the same defect in principle (rim shots are inside TS%
+// too) and measurably: it correlates with the finished set's real Paint Boosts
+// at r = 0.13 against r = 0.31 for an absolute 2P baseline. It is left alone
+// here because it was not in scope, because it is much less broken in practice
+// (90% of real Paint Boosts are 0 and the produced histogram already matches to
+// a distance of 0.08), and because changing both at once would have made
+// neither change measurable. It is a real follow-up, not an oversight.
 //
 // --- THE VOLUME GATE --------------------------------------------------------
 //
@@ -262,6 +310,11 @@ export function rawLines({ tsPct, paintPct, threePct }) {
     exactShotLine: ts,
     exactPaintGap: ts != null && paint != null ? ts - paint : null,
     exactThreeGap: ts != null && three != null ? ts - three : null,
+    // What the 3PT Boost is actually built from: the player's OWN three-point
+    // line, negated so a better shooter scores higher, and compared against the
+    // pool rather than against his own Shot Line. See the header — comparing it
+    // to a TS%-derived line lets his threes cancel their own boost.
+    exactThreeStrength: three == null ? null : -three,
   };
 }
 
@@ -303,24 +356,39 @@ export function buildShootingLayer(players, { shotLineTarget, paint = {}, three 
   );
 
   const map = fitLinearMap(raw.map(r => r.exactShotLine), shotLineTarget);
+  const threeStrength = meanSd(raw.map(r => r.exactThreeStrength));
   const poolMean = {
     paintGap: meanSd(raw.map(r => r.exactPaintGap)).mean,
-    threeGap: meanSd(raw.map(r => r.exactThreeGap)).mean,
+    threeStrength: threeStrength.mean,
   };
-  const shape = (gapMean, bounds) => ({
+  const paintShape = {
     scale: map.scale,
-    poolMean: gapMean,
-    deadband: bounds.deadband ?? 0,
-    min: bounds.min ?? -5,
-    max: bounds.max ?? 5,
-  });
-  const paintShape = shape(poolMean.paintGap, paint);
-  const threeShape = shape(poolMean.threeGap, three);
+    poolMean: poolMean.paintGap,
+    deadband: paint.deadband ?? 0,
+    min: paint.min ?? -5,
+    max: paint.max ?? 5,
+  };
+  const threeShape = {
+    // NOT the Shot Line's scale: see the header. The 3PT Boost is no longer a
+    // distance measured in Shot Line units, so it carries its own, fitted so the
+    // pool's spread of three-point ability lands on the finished set's own
+    // spread of 3PT Boosts. Falling back to the Shot Line's scale keeps an
+    // uncalibrated caller working rather than dividing by an absent target.
+    scale:
+      Number.isFinite(three.targetSd) && threeStrength.sd > 1e-9
+        ? three.targetSd / threeStrength.sd
+        : map.scale,
+    poolMean: poolMean.threeStrength,
+    deadband: three.deadband ?? 0,
+    min: three.min ?? -5,
+    max: three.max ?? 5,
+  };
 
   return {
     shrink,
     map,
     poolMean,
+    threeStrengthSd: threeStrength.sd,
     paintShape,
     threeShape,
     players: players.map((p, i) => ({
@@ -328,7 +396,7 @@ export function buildShootingLayer(players, { shotLineTarget, paint = {}, three 
       literal: literal[i],
       shotLine: compressShotLine(raw[i].exactShotLine, map),
       paintBoost: compressBoost(raw[i].exactPaintGap, paintShape),
-      threePtBoost: compressBoost(raw[i].exactThreeGap, threeShape),
+      threePtBoost: compressBoost(raw[i].exactThreeStrength, threeShape),
     })),
   };
 }

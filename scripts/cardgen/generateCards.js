@@ -332,7 +332,10 @@ export function reportShooting({ cards, shooting, names, calibration, log }) {
   line('shot line COMPRESSED', cards.map(c => c.shotLine));
   line('paint boost RAW', players.map(p => p.literal.paintGap));
   line('paint boost COMPRESSED', cards.map(c => c.paintBoost));
-  line('3PT boost RAW', players.map(p => p.literal.threeGap));
+  // The 3PT column is the player's own three-point LINE, not a gap: the boost is
+  // absolute three-point ability re-centred on the pool, not a distance from the
+  // Shot Line. See scripts/cardgen/shooting.js.
+  line('3PT line RAW (3P%)', players.map(p => p.literal.threeLine));
   line('3PT boost COMPRESSED', cards.map(c => c.threePtBoost));
   log(
     `  d20 success rate at the median line: raw ${(
@@ -361,7 +364,7 @@ export function reportShooting({ cards, shooting, names, calibration, log }) {
     log(
       `    ${name.padEnd(24)} line ${String(p.literal.shotLine).padStart(2)} -> ${String(c.shotLine).padStart(2)}` +
         `   paint ${num(p.literal.paintGap)} -> ${String(c.paintBoost).padStart(2)}` +
-        `   3PT ${num(p.literal.threeGap)} -> ${String(c.threePtBoost).padStart(2)}`
+        `   3PT line ${num(p.literal.threeLine)} -> boost ${String(c.threePtBoost).padStart(2)}`
     );
   }
 

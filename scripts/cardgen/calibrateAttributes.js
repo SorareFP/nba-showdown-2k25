@@ -243,6 +243,11 @@ export function measurePositionSpeedShare(rows) {
 //      modifier is FOR, and nothing in the shooting data implies it.
 //   3. The BOUNDS on each boost, taken as the finished set's own min and max, so
 //      a regenerated card can never carry a boost the game has never issued.
+//   4. The TARGET SPREAD of the 3PT Boost. The Paint Boost is a distance in Shot
+//      Line units and so inherits the Shot Line's scale; the 3PT Boost measures
+//      absolute three-point ability instead (scripts/cardgen/shooting.js has the
+//      argument) and so needs its own, and the finished set's own 3PT Boost
+//      spread is what supplies it.
 //
 // The reference season is 2024-25 Basketball-Reference, which has no rim FG%, so
 // overall 2P% stands in for the paint signal HERE ONLY. That is defensible
@@ -347,15 +352,36 @@ export function fitDeadband(gaps, shape, reals) {
   };
 }
 
+/**
+ * The finished set's own 3PT Boost spread — the target the boost is scaled to.
+ *
+ * The Paint Boost borrows the Shot Line's scale because it IS a distance in Shot
+ * Line units. The 3PT Boost is not (see scripts/cardgen/shooting.js), so it
+ * needs a target of its own, and the finished set is the only thing that can
+ * supply one. Measuring the spread rather than fitting a free parameter is
+ * deliberate: a joint search over scale and deadband was run and converged on
+ * a scale within 1% of this, so the extra freedom bought nothing.
+ */
+export function measureThreePtTarget(cards) {
+  const values = (cards ?? []).map(c => c.threePtBoost).filter(Number.isFinite);
+  if (values.length === 0) return null;
+  const { mean, sd } = A.meanSd(values);
+  return { mean: Number(mean.toFixed(4)), sd: Number(sd.toFixed(4)), n: values.length };
+}
+
 export function fitShootingLayer(rows) {
   const cards = rows.map(r => r.card);
   const shotLineTarget = measureShotLineTarget(cards);
+  const threeTarget = measureThreePtTarget(cards);
   const inputs = rows.map(referenceShootingInput);
 
-  // Pass one: no deadbands, purely to get the compression scale and the pool
+  // Pass one: no deadbands, purely to get the compression scales and the pool
   // means the boosts are centred on. Those depend only on the pool, not on the
   // deadband, so one pass is enough before the search.
-  const layer = S.buildShootingLayer(inputs, { shotLineTarget });
+  const layer = S.buildShootingLayer(inputs, {
+    shotLineTarget,
+    three: { targetSd: threeTarget?.sd },
+  });
 
   let slExact = 0;
   let slWithin1 = 0;
@@ -371,7 +397,7 @@ export function fitShootingLayer(rows) {
     cards.map(c => c.paintBoost)
   );
   const three = fitDeadband(
-    layer.players.map(p => p.raw.exactThreeGap),
+    layer.players.map(p => p.raw.exactThreeStrength),
     layer.threeShape,
     cards.map(c => c.threePtBoost)
   );
@@ -399,7 +425,14 @@ export function fitShootingLayer(rows) {
     },
     threePtBoost: {
       ...three,
-      referenceGapSd: Number(A.meanSd(layer.players.map(p => p.raw.exactThreeGap)).sd.toFixed(4)),
+      // The spread the generated pool's own three-point ability is rescaled ONTO
+      // — generateCards.js divides its own pool spread into this, exactly as the
+      // Shot Line target is applied, so a season's or a provider's systematic
+      // difference cancels on both sides.
+      targetSd: threeTarget?.sd ?? null,
+      referenceStrengthSd: Number(
+        A.meanSd(layer.players.map(p => p.raw.exactThreeStrength)).sd.toFixed(4)
+      ),
     },
   };
 }
@@ -567,7 +600,11 @@ export function main({ log = console.log } = {}) {
   log(`    three  mean ${c.shrinkage.three.mean} k ${c.shrinkage.three.k}`);
   for (const key of ['threePtBoost', 'paintBoost']) {
     const b = c[key];
-    log(`  ${key.padEnd(13)} deadband ${b.deadband} bounds [${b.min}, ${b.max}] | reference gap sd ${b.referenceGapSd}`);
+    log(
+      `  ${key.padEnd(13)} deadband ${b.deadband} bounds [${b.min}, ${b.max}] | ` +
+        `reference signal sd ${b.referenceGapSd ?? b.referenceStrengthSd}` +
+        (b.targetSd == null ? '' : ` -> target boost sd ${b.targetSd}`)
+    );
     log(`              exact ${b.quality.exactPct.toFixed(0)}% within1 ${b.quality.within1Pct.toFixed(0)}% | zeros ${b.quality.zeroPct.toFixed(0)}% (real ${b.quality.realZeroPct.toFixed(0)}%) | histogram distance ${b.quality.histogramDistance}`);
   }
   log(`  salary      r2 ${c.salary.model.r2.toFixed(3)} | median |err| ${c.salary.quality.medianAbsError} p90 ${c.salary.quality.p90AbsError}`);

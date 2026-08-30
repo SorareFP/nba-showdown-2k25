@@ -1,12 +1,12 @@
 {
- "generatedAt": "2026-08-30T16:34:39.752Z",
+ "generatedAt": "2026-08-30T22:52:14.571Z",
  "set": "super-season",
  "provisional": true,
  "sources": {
   "origin": "basketball-reference.com season tables (advanced + per-100), 2000-2026",
-  "bestSeason": "BPM, scored against its own season's league. Win Shares and WS/48 are deliberately excluded: they allocate TEAM wins, so they dock a good player on a bad team",
+  "bestSeason": "BPM and VORP, equally weighted, each scored against its own season's league. Win Shares and WS/48 are deliberately excluded: they allocate TEAM wins, so they dock a good player on a bad team. VORP is in the rule for DURABILITY — it is BPM weighted by playing time, so a full season can outrank a shorter one at a higher rate. It does NOT make the score team-independent: VORP inherits BPM's team adjustment rather than removing it",
   "eligibility": "a season must be at least 1000 minutes AND 58 games — 70% of an 82-game schedule — to be eligible as a career best. The two floors ask different questions: minutes ask whether a rate is measurable, games ask whether the season happened. They fall back one at a time (games first, then minutes) so a player whose only real season is short still gets a card",
-  "speedPower": "z(BPM), shrunk toward replacement level for a short season, mapped onto the finished set's Speed+Power distribution with the 2026-27 pool as the calibration basis",
+  "speedPower": "z(BPM) + 0.35 * z(VORP per game) — the same shape as the live pipeline's z(EPM) + 0.35 * z(EW per game), with the two Basketball-Reference stats standing in for the two dunksandthrees ones. Shrunk toward replacement level for a short season, then mapped onto the finished set's Speed+Power distribution with the 2026-27 pool as the calibration basis",
   "defBoost": "DBPM, rounded — DEF EPM does not exist before the current season",
   "paintBoost": "2P% standing in for rim FG%, which Basketball-Reference does not carry",
   "chart": "synthesized from Basketball-Reference per-100 PTS/TRB/AST, same model as the base set",
@@ -27,6 +27,11 @@
   },
   {
    "name": "Trey Murphy III",
+   "reason": "best season is the current one",
+   "badge": "super-season"
+  },
+  {
+   "name": "Jamal Murray",
    "reason": "best season is the current one",
    "badge": "super-season"
   },
@@ -111,22 +116,12 @@
    "badge": "super-season"
   },
   {
-   "name": "Josh Hart",
-   "reason": "best season is the current one",
-   "badge": "super-season"
-  },
-  {
    "name": "Stephon Castle",
    "reason": "best season is the current one",
    "badge": "super-season"
   },
   {
    "name": "Anthony Black",
-   "reason": "best season is the current one",
-   "badge": "super-season"
-  },
-  {
-   "name": "Norman Powell",
    "reason": "best season is the current one",
    "badge": "super-season"
   },
@@ -272,6 +267,11 @@
   },
   {
    "name": "Tari Eason",
+   "reason": "best season is the current one",
+   "badge": "super-season"
+  },
+  {
+   "name": "Moses Moody",
    "reason": "best season is the current one",
    "badge": "super-season"
   },
@@ -551,11 +551,6 @@
    "badge": "super-season"
   },
   {
-   "name": "Mitchell Robinson",
-   "reason": "best season is the current one",
-   "badge": "super-season"
-  },
-  {
    "name": "Ryan Nembhard",
    "reason": "best season is the current one",
    "badge": "super-season"
@@ -726,7 +721,7 @@
    "badge": "super-season"
   }
  ],
- "excludedCount": 141,
+ "excludedCount": 140,
  "cards": [
   {
    "id": "A_J_Green",
@@ -1290,11 +1285,11 @@
    "pos": "C",
    "speed": 9,
    "power": 15,
-   "shotLine": 15,
+   "shotLine": 16,
    "paintBoost": 0,
-   "threePtBoost": -2,
+   "threePtBoost": -3,
    "defBoost": 2,
-   "salary": 820,
+   "salary": 710,
    "chart": [
     {
      "lo": 1,
@@ -1312,20 +1307,20 @@
     },
     {
      "lo": 4,
-     "hi": 9,
+     "hi": 10,
      "pts": 2,
      "reb": 1,
      "ast": 1
     },
     {
-     "lo": 10,
-     "hi": 14,
+     "lo": 11,
+     "hi": 15,
      "pts": 3,
-     "reb": 1,
+     "reb": 2,
      "ast": 1
     },
     {
-     "lo": 15,
+     "lo": 16,
      "hi": 19,
      "pts": 3,
      "reb": 2,
@@ -1339,19 +1334,19 @@
      "ast": 2
     }
    ],
-   "season": 2024,
-   "seasonLabel": "2023-24",
-   "age": 21,
-   "games": 63,
-   "mpg": 32.5,
+   "season": 2025,
+   "seasonLabel": "2024-25",
+   "age": 22,
+   "games": 76,
+   "mpg": 31.5,
    "bbrefId": "sengual01",
    "traded": false,
    "metrics": {
-    "bpm": 4.9,
-    "vorp": 3.5,
-    "ws": 6.9,
-    "ws48": 0.163,
-    "per": 22
+    "bpm": 4.4,
+    "vorp": 3.9,
+    "ws": 8.3,
+    "ws48": 0.166,
+    "per": 21.4
    },
    "provisional": true
   },
@@ -1707,12 +1702,12 @@
    "team": "MIN",
    "pos": "SG",
    "speed": 14,
-   "power": 9,
+   "power": 10,
    "shotLine": 15,
-   "paintBoost": -1,
+   "paintBoost": 0,
    "threePtBoost": 2,
    "defBoost": 0,
-   "salary": 890,
+   "salary": 920,
    "chart": [
     {
      "lo": 1,
@@ -2607,11 +2602,11 @@
    "name": "Buddy Hield",
    "team": "SAC",
    "pos": "SG",
-   "speed": 12,
+   "speed": 13,
    "power": 9,
    "shotLine": 15,
    "paintBoost": -1,
-   "threePtBoost": 4,
+   "threePtBoost": 3,
    "defBoost": -1,
    "salary": 840,
    "chart": [
@@ -2874,13 +2869,13 @@
    "name": "Caris LeVert",
    "team": "CLE",
    "pos": "SG",
-   "speed": 12,
+   "speed": 11,
    "power": 8,
    "shotLine": 15,
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 650,
+   "salary": 610,
    "chart": [
     {
      "lo": 1,
@@ -3019,12 +3014,12 @@
    "team": "NOP",
    "pos": "PG",
    "speed": 14,
-   "power": 8,
+   "power": 9,
    "shotLine": 15,
    "paintBoost": -1,
-   "threePtBoost": 4,
+   "threePtBoost": 3,
    "defBoost": 0,
-   "salary": 920,
+   "salary": 930,
    "chart": [
     {
      "lo": 1,
@@ -3294,11 +3289,11 @@
    "pos": "SF",
    "speed": 8,
    "power": 8,
-   "shotLine": 13,
+   "shotLine": 14,
    "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": -1,
-   "salary": 690,
+   "salary": 620,
    "chart": [
     {
      "lo": 1,
@@ -3323,13 +3318,13 @@
     },
     {
      "lo": 10,
-     "hi": 12,
+     "hi": 13,
      "pts": 2,
      "reb": 0,
      "ast": 0
     },
     {
-     "lo": 13,
+     "lo": 14,
      "hi": 19,
      "pts": 2,
      "reb": 1,
@@ -3430,12 +3425,12 @@
    "team": "CLE",
    "pos": "PG",
    "speed": 14,
-   "power": 8,
+   "power": 9,
    "shotLine": 15,
    "paintBoost": 0,
    "threePtBoost": 2,
    "defBoost": -1,
-   "salary": 800,
+   "salary": 850,
    "chart": [
     {
      "lo": 1,
@@ -3930,9 +3925,9 @@
    "power": 9,
    "shotLine": 16,
    "paintBoost": 0,
-   "threePtBoost": -3,
+   "threePtBoost": -2,
    "defBoost": -1,
-   "salary": 530,
+   "salary": 570,
    "chart": [
     {
      "lo": 1,
@@ -3950,46 +3945,46 @@
     },
     {
      "lo": 4,
-     "hi": 10,
+     "hi": 9,
      "pts": 3,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
-     "lo": 11,
+     "lo": 10,
      "hi": 15,
-     "pts": 4,
+     "pts": 3,
      "reb": 1,
      "ast": 1
     },
     {
      "lo": 16,
      "hi": 19,
-     "pts": 4,
+     "pts": 3,
      "reb": 1,
      "ast": 1
     },
     {
      "lo": 20,
      "hi": 99,
-     "pts": 6,
-     "reb": 2,
-     "ast": 1
+     "pts": 5,
+     "reb": 1,
+     "ast": 2
     }
    ],
-   "season": 2017,
-   "seasonLabel": "2016-17",
-   "age": 27,
-   "games": 74,
-   "mpg": 35.4,
+   "season": 2018,
+   "seasonLabel": "2017-18",
+   "age": 28,
+   "games": 80,
+   "mpg": 33.9,
    "bbrefId": "derozde01",
    "traded": false,
    "metrics": {
-    "bpm": 3,
-    "vorp": 3.3,
-    "ws": 9,
-    "ws48": 0.166,
-    "per": 24
+    "bpm": 2.8,
+    "vorp": 3.2,
+    "ws": 9.6,
+    "ws48": 0.17,
+    "per": 21
    },
    "provisional": true
   },
@@ -4146,9 +4141,9 @@
    "power": 9,
    "shotLine": 15,
    "paintBoost": 0,
-   "threePtBoost": 2,
+   "threePtBoost": 0,
    "defBoost": 1,
-   "salary": 900,
+   "salary": 810,
    "chart": [
     {
      "lo": 1,
@@ -4169,7 +4164,7 @@
      "hi": 10,
      "pts": 2,
      "reb": 0,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 11,
@@ -4181,7 +4176,7 @@
     {
      "lo": 15,
      "hi": 19,
-     "pts": 2,
+     "pts": 3,
      "reb": 1,
      "ast": 1
     },
@@ -4193,19 +4188,19 @@
      "ast": 2
     }
    ],
-   "season": 2024,
-   "seasonLabel": "2023-24",
-   "age": 29,
-   "games": 73,
-   "mpg": 32.6,
+   "season": 2025,
+   "seasonLabel": "2024-25",
+   "age": 30,
+   "games": 76,
+   "mpg": 33.9,
    "bbrefId": "whitede01",
    "traded": false,
    "metrics": {
-    "bpm": 3.8,
-    "vorp": 3.5,
+    "bpm": 3.5,
+    "vorp": 3.6,
     "ws": 8.5,
-    "ws48": 0.171,
-    "per": 16.9
+    "ws48": 0.158,
+    "per": 16.6
    },
    "provisional": true
   },
@@ -4218,9 +4213,9 @@
    "power": 9,
    "shotLine": 15,
    "paintBoost": 0,
-   "threePtBoost": 2,
-   "defBoost": 0,
-   "salary": 870,
+   "threePtBoost": 0,
+   "defBoost": 1,
+   "salary": 820,
    "chart": [
     {
      "lo": 1,
@@ -4240,8 +4235,8 @@
      "lo": 4,
      "hi": 10,
      "pts": 2,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 11,
@@ -4252,32 +4247,32 @@
     },
     {
      "lo": 15,
-     "hi": 18,
+     "hi": 19,
      "pts": 3,
      "reb": 1,
      "ast": 1
     },
     {
-     "lo": 19,
+     "lo": 20,
      "hi": 99,
-     "pts": 5,
+     "pts": 4,
      "reb": 2,
      "ast": 2
     }
    ],
-   "season": 2023,
-   "seasonLabel": "2022-23",
-   "age": 24,
-   "games": 58,
-   "mpg": 31.7,
+   "season": 2025,
+   "seasonLabel": "2024-25",
+   "age": 26,
+   "games": 69,
+   "mpg": 32,
    "bbrefId": "banede01",
    "traded": false,
    "metrics": {
-    "bpm": 3.5,
-    "vorp": 2.5,
-    "ws": 5.8,
-    "ws48": 0.151,
-    "per": 19.1
+    "bpm": 3.2,
+    "vorp": 2.9,
+    "ws": 6.5,
+    "ws48": 0.142,
+    "per": 17.9
    },
    "provisional": true
   },
@@ -4647,12 +4642,12 @@
    "team": "GSW",
    "pos": "PF",
    "speed": 11,
-   "power": 13,
+   "power": 14,
    "shotLine": 15,
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 3,
-   "salary": 920,
+   "salary": 960,
    "chart": [
     {
      "lo": 1,
@@ -4856,12 +4851,12 @@
    "team": "ATL",
    "pos": "SG",
    "speed": 12,
-   "power": 8,
+   "power": 9,
    "shotLine": 16,
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 3,
-   "salary": 660,
+   "salary": 700,
    "chart": [
     {
      "lo": 1,
@@ -5000,12 +4995,12 @@
    "team": "ORL",
    "pos": "SF",
    "speed": 11,
-   "power": 11,
+   "power": 12,
    "shotLine": 16,
    "paintBoost": 0,
    "threePtBoost": -3,
    "defBoost": 1,
-   "salary": 580,
+   "salary": 630,
    "chart": [
     {
      "lo": 1,
@@ -5143,13 +5138,13 @@
    "name": "Gary Harris",
    "team": "DEN",
    "pos": "SG",
-   "speed": 11,
+   "speed": 12,
    "power": 8,
    "shotLine": 15,
    "paintBoost": 0,
    "threePtBoost": 2,
    "defBoost": 0,
-   "salary": 680,
+   "salary": 730,
    "chart": [
     {
      "lo": 1,
@@ -5274,12 +5269,12 @@
    "team": "TOR",
    "pos": "SG",
    "speed": 11,
-   "power": 7,
+   "power": 8,
    "shotLine": 16,
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 480,
+   "salary": 520,
    "chart": [
     {
      "lo": 1,
@@ -5290,13 +5285,13 @@
     },
     {
      "lo": 3,
-     "hi": 3,
+     "hi": 4,
      "pts": 0,
      "reb": 0,
      "ast": 0
     },
     {
-     "lo": 4,
+     "lo": 5,
      "hi": 15,
      "pts": 2,
      "reb": 0,
@@ -5317,19 +5312,19 @@
      "ast": 1
     }
    ],
-   "season": 2023,
-   "seasonLabel": "2022-23",
-   "age": 24,
-   "games": 66,
-   "mpg": 32.1,
+   "season": 2022,
+   "seasonLabel": "2021-22",
+   "age": 23,
+   "games": 70,
+   "mpg": 35,
    "bbrefId": "trentga02",
    "traded": false,
    "metrics": {
     "bpm": 0.2,
-    "vorp": 1.2,
-    "ws": 4.5,
-    "ws48": 0.102,
-    "per": 15
+    "vorp": 1.3,
+    "ws": 5.6,
+    "ws48": 0.11,
+    "per": 14.7
    },
    "provisional": true
   },
@@ -5340,11 +5335,11 @@
    "pos": "PF",
    "speed": 12,
    "power": 16,
-   "shotLine": 15,
+   "shotLine": 14,
    "paintBoost": 0,
    "threePtBoost": -3,
    "defBoost": 4,
-   "salary": 1030,
+   "salary": 1100,
    "chart": [
     {
      "lo": 1,
@@ -5362,39 +5357,46 @@
     },
     {
      "lo": 4,
-     "hi": 14,
+     "hi": 9,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 10,
+     "hi": 13,
      "pts": 4,
      "reb": 2,
      "ast": 1
     },
     {
-     "lo": 15,
+     "lo": 14,
      "hi": 19,
      "pts": 5,
-     "reb": 3,
+     "reb": 2,
      "ast": 1
     },
     {
      "lo": 20,
      "hi": 99,
      "pts": 6,
-     "reb": 4,
+     "reb": 3,
      "ast": 2
     }
    ],
-   "season": 2020,
-   "seasonLabel": "2019-20",
-   "age": 25,
-   "games": 63,
-   "mpg": 30.4,
+   "season": 2022,
+   "seasonLabel": "2021-22",
+   "age": 27,
+   "games": 67,
+   "mpg": 32.9,
    "bbrefId": "antetgi01",
    "traded": false,
    "metrics": {
-    "bpm": 11.5,
-    "vorp": 6.6,
-    "ws": 11.1,
-    "ws48": 0.279,
-    "per": 31.9
+    "bpm": 11.2,
+    "vorp": 7.4,
+    "ws": 12.9,
+    "ws48": 0.281,
+    "per": 32.1
    },
    "provisional": true
   },
@@ -5404,12 +5406,12 @@
    "team": "ORL",
    "pos": "C",
    "speed": 8,
-   "power": 14,
+   "power": 13,
    "shotLine": 14,
    "paintBoost": 0,
    "threePtBoost": -2,
    "defBoost": 3,
-   "salary": 810,
+   "salary": 760,
    "chart": [
     {
      "lo": 1,
@@ -5617,15 +5619,15 @@
   {
    "id": "Harrison_Barnes",
    "name": "Harrison Barnes",
-   "team": "GSW",
-   "pos": "SF",
-   "speed": 9,
-   "power": 9,
-   "shotLine": 16,
-   "paintBoost": 0,
-   "threePtBoost": 1,
-   "defBoost": 0,
-   "salary": 510,
+   "team": "SAC",
+   "pos": "PF",
+   "speed": 8,
+   "power": 11,
+   "shotLine": 14,
+   "paintBoost": -1,
+   "threePtBoost": 0,
+   "defBoost": -1,
+   "salary": 650,
    "chart": [
     {
      "lo": 1,
@@ -5643,20 +5645,13 @@
     },
     {
      "lo": 4,
-     "hi": 9,
-     "pts": 1,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 10,
-     "hi": 15,
+     "hi": 13,
      "pts": 2,
      "reb": 1,
      "ast": 0
     },
     {
-     "lo": 16,
+     "lo": 14,
      "hi": 19,
      "pts": 2,
      "reb": 1,
@@ -5665,24 +5660,24 @@
     {
      "lo": 20,
      "hi": 99,
-     "pts": 3,
+     "pts": 4,
      "reb": 2,
      "ast": 1
     }
    ],
-   "season": 2015,
-   "seasonLabel": "2014-15",
-   "age": 22,
-   "games": 82,
-   "mpg": 28.3,
+   "season": 2022,
+   "seasonLabel": "2021-22",
+   "age": 29,
+   "games": 77,
+   "mpg": 33.5,
    "bbrefId": "barneha02",
    "traded": false,
    "metrics": {
-    "bpm": 0.1,
-    "vorp": 1.2,
-    "ws": 6.7,
-    "ws48": 0.139,
-    "per": 13.4
+    "bpm": 0.2,
+    "vorp": 1.4,
+    "ws": 6,
+    "ws48": 0.112,
+    "per": 15.7
    },
    "provisional": true
   },
@@ -5835,13 +5830,13 @@
    "name": "Isaiah Hartenstein",
    "team": "LAC",
    "pos": "C",
-   "speed": 9,
+   "speed": 8,
    "power": 14,
    "shotLine": 13,
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 3,
-   "salary": 1020,
+   "salary": 980,
    "chart": [
     {
      "lo": 1,
@@ -6051,13 +6046,13 @@
    "name": "Ivica Zubac",
    "team": "LAC",
    "pos": "C",
-   "speed": 8,
+   "speed": 9,
    "power": 14,
    "shotLine": 14,
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 1,
-   "salary": 840,
+   "salary": 880,
    "chart": [
     {
      "lo": 1,
@@ -6120,9 +6115,9 @@
    "power": 9,
    "shotLine": 16,
    "paintBoost": 0,
-   "threePtBoost": -2,
+   "threePtBoost": -3,
    "defBoost": 1,
-   "salary": 780,
+   "salary": 740,
    "chart": [
     {
      "lo": 1,
@@ -6478,11 +6473,11 @@
    "pos": "C",
    "speed": 8,
    "power": 13,
-   "shotLine": 15,
+   "shotLine": 14,
    "paintBoost": 0,
    "threePtBoost": 0,
-   "defBoost": 2,
-   "salary": 750,
+   "defBoost": 1,
+   "salary": 800,
    "chart": [
     {
      "lo": 1,
@@ -6500,46 +6495,46 @@
     },
     {
      "lo": 4,
-     "hi": 10,
-     "pts": 1,
+     "hi": 9,
+     "pts": 2,
      "reb": 1,
      "ast": 0
     },
     {
-     "lo": 11,
-     "hi": 14,
+     "lo": 10,
+     "hi": 13,
      "pts": 2,
      "reb": 2,
      "ast": 1
     },
     {
-     "lo": 15,
+     "lo": 14,
      "hi": 19,
-     "pts": 2,
+     "pts": 3,
      "reb": 2,
      "ast": 1
     },
     {
      "lo": 20,
      "hi": 99,
-     "pts": 3,
-     "reb": 4,
+     "pts": 4,
+     "reb": 3,
      "ast": 1
     }
    ],
-   "season": 2020,
-   "seasonLabel": "2019-20",
-   "age": 24,
-   "games": 66,
-   "mpg": 17.7,
+   "season": 2023,
+   "seasonLabel": "2022-23",
+   "age": 27,
+   "games": 72,
+   "mpg": 26.5,
    "bbrefId": "poeltja01",
-   "traded": false,
+   "traded": true,
    "metrics": {
-    "bpm": 2.5,
-    "vorp": 1.3,
-    "ws": 4,
-    "ws48": 0.163,
-    "per": 19.1
+    "bpm": 1.9,
+    "vorp": 1.9,
+    "ws": 6,
+    "ws48": 0.15,
+    "per": 21
    },
    "provisional": true
   },
@@ -6765,12 +6760,12 @@
    "team": "IND",
    "pos": "C",
    "speed": 7,
-   "power": 13,
+   "power": 12,
    "shotLine": 13,
    "paintBoost": 0,
    "threePtBoost": 2,
    "defBoost": -1,
-   "salary": 840,
+   "salary": 790,
    "chart": [
     {
      "lo": 1,
@@ -7102,78 +7097,6 @@
     "ws": 0.8,
     "ws48": 0.169,
     "per": 16.5
-   },
-   "provisional": true
-  },
-  {
-   "id": "Jamal_Murray",
-   "name": "Jamal Murray",
-   "team": "DEN",
-   "pos": "PG",
-   "speed": 14,
-   "power": 9,
-   "shotLine": 15,
-   "paintBoost": 0,
-   "threePtBoost": 3,
-   "defBoost": 0,
-   "salary": 930,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 3,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 4,
-     "hi": 9,
-     "pts": 3,
-     "reb": 0,
-     "ast": 1
-    },
-    {
-     "lo": 10,
-     "hi": 14,
-     "pts": 3,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 15,
-     "hi": 18,
-     "pts": 4,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 19,
-     "hi": 99,
-     "pts": 5,
-     "reb": 1,
-     "ast": 2
-    }
-   ],
-   "season": 2024,
-   "seasonLabel": "2023-24",
-   "age": 26,
-   "games": 59,
-   "mpg": 31.5,
-   "bbrefId": "murraja01",
-   "traded": false,
-   "metrics": {
-    "bpm": 4.1,
-    "vorp": 2.9,
-    "ws": 5.9,
-    "ws48": 0.153,
-    "per": 20.7
    },
    "provisional": true
   },
@@ -7680,12 +7603,12 @@
    "team": "BOS",
    "pos": "SF",
    "speed": 12,
-   "power": 12,
+   "power": 13,
    "shotLine": 15,
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 1,
-   "salary": 870,
+   "salary": 920,
    "chart": [
     {
      "lo": 1,
@@ -7755,9 +7678,9 @@
    "power": 11,
    "shotLine": 15,
    "paintBoost": 0,
-   "threePtBoost": -2,
-   "defBoost": 0,
-   "salary": 510,
+   "threePtBoost": 0,
+   "defBoost": 1,
+   "salary": 610,
    "chart": [
     {
      "lo": 1,
@@ -7768,13 +7691,20 @@
     },
     {
      "lo": 3,
-     "hi": 3,
+     "hi": 4,
      "pts": 0,
      "reb": 0,
      "ast": 0
     },
     {
-     "lo": 4,
+     "lo": 5,
+     "hi": 10,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 11,
      "hi": 14,
      "pts": 2,
      "reb": 1,
@@ -7790,24 +7720,24 @@
     {
      "lo": 20,
      "hi": 99,
-     "pts": 4,
+     "pts": 3,
      "reb": 2,
-     "ast": 1
+     "ast": 0
     }
    ],
-   "season": 2018,
-   "seasonLabel": "2017-18",
-   "age": 23,
-   "games": 81,
-   "mpg": 20.3,
+   "season": 2019,
+   "seasonLabel": "2018-19",
+   "age": 24,
+   "games": 80,
+   "mpg": 32.6,
    "bbrefId": "grantje01",
    "traded": false,
    "metrics": {
-    "bpm": 0.3,
-    "vorp": 1,
-    "ws": 5.4,
-    "ws48": 0.156,
-    "per": 16.2
+    "bpm": 0.2,
+    "vorp": 1.5,
+    "ws": 7.3,
+    "ws48": 0.134,
+    "per": 13.8
    },
    "provisional": true
   },
@@ -8162,13 +8092,13 @@
    "name": "John Konchar",
    "team": "MEM",
    "pos": "SG",
-   "speed": 12,
+   "speed": 11,
    "power": 8,
    "shotLine": 15,
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 1,
-   "salary": 660,
+   "salary": 620,
    "chart": [
     {
      "lo": 1,
@@ -8569,6 +8499,78 @@
    "provisional": true
   },
   {
+   "id": "Josh_Hart",
+   "name": "Josh Hart",
+   "team": "NYK",
+   "pos": "SG",
+   "speed": 14,
+   "power": 9,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 2,
+   "salary": 850,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 10,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 18,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 19,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 2
+    }
+   ],
+   "season": 2025,
+   "seasonLabel": "2024-25",
+   "age": 29,
+   "games": 77,
+   "mpg": 37.6,
+   "bbrefId": "hartjo01",
+   "traded": false,
+   "metrics": {
+    "bpm": 2.8,
+    "vorp": 3.6,
+    "ws": 9.2,
+    "ws48": 0.153,
+    "per": 16.5
+   },
+   "provisional": true
+  },
+  {
    "id": "Josh_Minott",
    "name": "Josh Minott",
    "team": "MIN",
@@ -8645,13 +8647,13 @@
    "name": "Josh Okogie",
    "team": "PHX",
    "pos": "SG",
-   "speed": 11,
+   "speed": 10,
    "power": 7,
    "shotLine": 17,
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 1,
-   "salary": 440,
+   "salary": 390,
    "chart": [
     {
      "lo": 1,
@@ -8714,9 +8716,9 @@
    "power": 9,
    "shotLine": 15,
    "paintBoost": 0,
-   "threePtBoost": 0,
-   "defBoost": 1,
-   "salary": 820,
+   "threePtBoost": 2,
+   "defBoost": 0,
+   "salary": 870,
    "chart": [
     {
      "lo": 1,
@@ -8734,13 +8736,13 @@
     },
     {
      "lo": 4,
-     "hi": 10,
+     "hi": 9,
      "pts": 2,
      "reb": 0,
      "ast": 1
     },
     {
-     "lo": 11,
+     "lo": 10,
      "hi": 14,
      "pts": 2,
      "reb": 1,
@@ -8757,23 +8759,23 @@
      "lo": 20,
      "hi": 99,
      "pts": 4,
-     "reb": 2,
+     "reb": 1,
      "ast": 2
     }
    ],
-   "season": 2021,
-   "seasonLabel": "2020-21",
-   "age": 30,
-   "games": 59,
-   "mpg": 32.3,
+   "season": 2022,
+   "seasonLabel": "2021-22",
+   "age": 31,
+   "games": 67,
+   "mpg": 33,
    "bbrefId": "holidjr01",
    "traded": false,
    "metrics": {
-    "bpm": 3.4,
-    "vorp": 2.6,
-    "ws": 6.6,
-    "ws48": 0.165,
-    "per": 20
+    "bpm": 3.2,
+    "vorp": 2.9,
+    "ws": 6.9,
+    "ws48": 0.15,
+    "per": 19.8
    },
    "provisional": true
   },
@@ -8849,11 +8851,11 @@
    "pos": "PF",
    "speed": 10,
    "power": 13,
-   "shotLine": 15,
+   "shotLine": 16,
    "paintBoost": 0,
-   "threePtBoost": 0,
-   "defBoost": 0,
-   "salary": 800,
+   "threePtBoost": 2,
+   "defBoost": 1,
+   "salary": 840,
    "chart": [
     {
      "lo": 1,
@@ -8866,27 +8868,27 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
      "lo": 4,
      "hi": 9,
-     "pts": 3,
+     "pts": 2,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 10,
-     "hi": 14,
+     "hi": 15,
      "pts": 3,
      "reb": 1,
      "ast": 1
     },
     {
-     "lo": 15,
+     "lo": 16,
      "hi": 19,
-     "pts": 4,
+     "pts": 3,
      "reb": 2,
      "ast": 1
     },
@@ -8895,22 +8897,22 @@
      "hi": 99,
      "pts": 5,
      "reb": 3,
-     "ast": 1
+     "ast": 2
     }
    ],
-   "season": 2023,
-   "seasonLabel": "2022-23",
-   "age": 28,
-   "games": 77,
-   "mpg": 35.5,
+   "season": 2021,
+   "seasonLabel": "2020-21",
+   "age": 26,
+   "games": 71,
+   "mpg": 37.6,
    "bbrefId": "randlju01",
    "traded": false,
    "metrics": {
-    "bpm": 3.7,
+    "bpm": 3.8,
     "vorp": 3.9,
-    "ws": 8.1,
-    "ws48": 0.142,
-    "per": 20.3
+    "ws": 7.8,
+    "ws48": 0.14,
+    "per": 19.7
    },
    "provisional": true
   },
@@ -9550,9 +9552,9 @@
    "power": 14,
    "shotLine": 14,
    "paintBoost": 0,
-   "threePtBoost": 1,
+   "threePtBoost": 0,
    "defBoost": 1,
-   "salary": 1170,
+   "salary": 1130,
    "chart": [
     {
      "lo": 1,
@@ -10393,9 +10395,9 @@
    "power": 13,
    "shotLine": 14,
    "paintBoost": 0,
-   "threePtBoost": 1,
+   "threePtBoost": 0,
    "defBoost": -1,
-   "salary": 870,
+   "salary": 830,
    "chart": [
     {
      "lo": 1,
@@ -10599,12 +10601,12 @@
    "team": "OKC",
    "pos": "SF",
    "speed": 9,
-   "power": 9,
+   "power": 10,
    "shotLine": 15,
    "paintBoost": 0,
    "threePtBoost": 2,
    "defBoost": 1,
-   "salary": 650,
+   "salary": 700,
    "chart": [
     {
      "lo": 1,
@@ -11031,12 +11033,12 @@
    "team": "DEN",
    "pos": "SF",
    "speed": 11,
-   "power": 11,
+   "power": 12,
    "shotLine": 13,
    "paintBoost": 0,
    "threePtBoost": 4,
    "defBoost": -1,
-   "salary": 1010,
+   "salary": 1050,
    "chart": [
     {
      "lo": 1,
@@ -11161,12 +11163,12 @@
    "team": "MEM",
    "pos": "PG",
    "speed": 16,
-   "power": 9,
+   "power": 10,
    "shotLine": 15,
    "paintBoost": -1,
    "threePtBoost": 2,
    "defBoost": 1,
-   "salary": 1010,
+   "salary": 1060,
    "chart": [
     {
      "lo": 1,
@@ -11234,83 +11236,11 @@
    "pos": "PF",
    "speed": 9,
    "power": 12,
-   "shotLine": 16,
-   "paintBoost": 0,
-   "threePtBoost": -3,
-   "defBoost": -1,
-   "salary": 480,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 3,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 4,
-     "hi": 9,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 10,
-     "hi": 15,
-     "pts": 3,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 16,
-     "hi": 19,
-     "pts": 3,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 20,
-     "hi": 99,
-     "pts": 5,
-     "reb": 3,
-     "ast": 2
-    }
-   ],
-   "season": 2025,
-   "seasonLabel": "2024-25",
-   "age": 26,
-   "games": 64,
-   "mpg": 31.7,
-   "bbrefId": "bridgmi02",
-   "traded": false,
-   "metrics": {
-    "bpm": 1.8,
-    "vorp": 2,
-    "ws": 3.2,
-    "ws48": 0.075,
-    "per": 17.7
-   },
-   "provisional": true
-  },
-  {
-   "id": "Miles_McBride",
-   "name": "Miles McBride",
-   "team": "NYK",
-   "pos": "PG",
-   "speed": 11,
-   "power": 7,
    "shotLine": 15,
    "paintBoost": 0,
-   "threePtBoost": 2,
+   "threePtBoost": -2,
    "defBoost": 0,
-   "salary": 640,
+   "salary": 610,
    "chart": [
     {
      "lo": 1,
@@ -11330,7 +11260,7 @@
      "lo": 4,
      "hi": 14,
      "pts": 2,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -11344,38 +11274,38 @@
      "lo": 20,
      "hi": 99,
      "pts": 4,
-     "reb": 1,
+     "reb": 2,
      "ast": 1
     }
    ],
-   "season": 2024,
-   "seasonLabel": "2023-24",
+   "season": 2022,
+   "seasonLabel": "2021-22",
    "age": 23,
-   "games": 68,
-   "mpg": 19.5,
-   "bbrefId": "mcbrimi01",
+   "games": 80,
+   "mpg": 35.5,
+   "bbrefId": "bridgmi02",
    "traded": false,
    "metrics": {
-    "bpm": -0.1,
-    "vorp": 0.6,
-    "ws": 3.6,
-    "ws48": 0.131,
-    "per": 13.1
+    "bpm": 1.5,
+    "vorp": 2.5,
+    "ws": 7.2,
+    "ws48": 0.123,
+    "per": 17.9
    },
    "provisional": true
   },
   {
-   "id": "Moses_Moody",
-   "name": "Moses Moody",
-   "team": "GSW",
+   "id": "Miles_McBride",
+   "name": "Miles McBride",
+   "team": "NYK",
    "pos": "SG",
-   "speed": 10,
+   "speed": 11,
    "power": 7,
-   "shotLine": 16,
+   "shotLine": 17,
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 430,
+   "salary": 410,
    "chart": [
     {
      "lo": 1,
@@ -11393,39 +11323,111 @@
     },
     {
      "lo": 4,
-     "hi": 15,
+     "hi": 10,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 11,
+     "hi": 16,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 17,
+     "hi": 19,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 2
+    }
+   ],
+   "season": 2025,
+   "seasonLabel": "2024-25",
+   "age": 24,
+   "games": 64,
+   "mpg": 24.9,
+   "bbrefId": "mcbrimi01",
+   "traded": false,
+   "metrics": {
+    "bpm": 0,
+    "vorp": 0.8,
+    "ws": 3.2,
+    "ws48": 0.098,
+    "per": 12.6
+   },
+   "provisional": true
+  },
+  {
+   "id": "Mitchell_Robinson",
+   "name": "Mitchell Robinson",
+   "team": "NYK",
+   "pos": "C",
+   "speed": 8,
+   "power": 14,
+   "shotLine": 12,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 1,
+   "salary": 970,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 11,
      "pts": 2,
      "reb": 1,
      "ast": 0
     },
     {
-     "lo": 16,
+     "lo": 12,
      "hi": 19,
-     "pts": 3,
-     "reb": 1,
+     "pts": 2,
+     "reb": 2,
      "ast": 0
     },
     {
      "lo": 20,
      "hi": 99,
      "pts": 4,
-     "reb": 2,
-     "ast": 1
+     "reb": 3,
+     "ast": 0
     }
    ],
-   "season": 2024,
-   "seasonLabel": "2023-24",
+   "season": 2020,
+   "seasonLabel": "2019-20",
    "age": 21,
-   "games": 66,
-   "mpg": 17.5,
-   "bbrefId": "moodymo01",
+   "games": 61,
+   "mpg": 23.1,
+   "bbrefId": "robinmi01",
    "traded": false,
    "metrics": {
-    "bpm": -0.1,
-    "vorp": 0.6,
-    "ws": 2.4,
-    "ws48": 0.101,
-    "per": 13.7
+    "bpm": 2.9,
+    "vorp": 1.8,
+    "ws": 6.8,
+    "ws48": 0.23,
+    "per": 23.5
    },
    "provisional": true
   },
@@ -11985,6 +11987,78 @@
    "provisional": true
   },
   {
+   "id": "Norman_Powell",
+   "name": "Norman Powell",
+   "team": "LAC",
+   "pos": "SG",
+   "speed": 12,
+   "power": 9,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 3,
+   "defBoost": 0,
+   "salary": 810,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 14,
+     "pts": 3,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 19,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 5,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2025,
+   "seasonLabel": "2024-25",
+   "age": 31,
+   "games": 60,
+   "mpg": 32.6,
+   "bbrefId": "powelno01",
+   "traded": false,
+   "metrics": {
+    "bpm": 1.5,
+    "vorp": 1.8,
+    "ws": 5.3,
+    "ws48": 0.129,
+    "per": 17.5
+   },
+   "provisional": true
+  },
+  {
    "id": "Ochai_Agbaji",
    "name": "Ochai Agbaji",
    "team": "TOR",
@@ -12487,12 +12561,12 @@
    "team": "PHI",
    "pos": "C",
    "speed": 7,
-   "power": 12,
+   "power": 11,
    "shotLine": 15,
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 1,
-   "salary": 620,
+   "salary": 580,
    "chart": [
     {
      "lo": 1,
@@ -13546,12 +13620,12 @@
    "team": "MEM",
    "pos": "PF",
    "speed": 10,
-   "power": 13,
+   "power": 12,
    "shotLine": 15,
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 1,
-   "salary": 820,
+   "salary": 770,
    "chart": [
     {
      "lo": 1,
@@ -13905,13 +13979,13 @@
    "name": "T.J. McConnell",
    "team": "IND",
    "pos": "PG",
-   "speed": 14,
+   "speed": 13,
    "power": 8,
    "shotLine": 15,
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 760,
+   "salary": 720,
    "chart": [
     {
      "lo": 1,
@@ -14683,13 +14757,13 @@
    "name": "Tyler Herro",
    "team": "MIA",
    "pos": "SG",
-   "speed": 13,
+   "speed": 14,
    "power": 9,
    "shotLine": 15,
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": -1,
-   "salary": 720,
+   "salary": 770,
    "chart": [
     {
      "lo": 1,
@@ -14821,12 +14895,12 @@
    "team": "MEM",
    "pos": "PG",
    "speed": 13,
-   "power": 8,
+   "power": 7,
    "shotLine": 16,
    "paintBoost": 0,
    "threePtBoost": 0,
-   "defBoost": 1,
-   "salary": 660,
+   "defBoost": 0,
+   "salary": 580,
    "chart": [
     {
      "lo": 1,
@@ -14844,16 +14918,9 @@
     },
     {
      "lo": 4,
-     "hi": 10,
-     "pts": 2,
-     "reb": 0,
-     "ast": 1
-    },
-    {
-     "lo": 11,
      "hi": 15,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 1
     },
     {
@@ -14868,22 +14935,22 @@
      "hi": 99,
      "pts": 4,
      "reb": 1,
-     "ast": 3
+     "ast": 2
     }
    ],
-   "season": 2022,
-   "seasonLabel": "2021-22",
-   "age": 25,
-   "games": 73,
-   "mpg": 21.2,
+   "season": 2023,
+   "seasonLabel": "2022-23",
+   "age": 26,
+   "games": 80,
+   "mpg": 24.3,
    "bbrefId": "jonesty01",
    "traded": false,
    "metrics": {
-    "bpm": 1.7,
-    "vorp": 1.4,
-    "ws": 5.1,
-    "ws48": 0.158,
-    "per": 16.5
+    "bpm": 1.6,
+    "vorp": 1.7,
+    "ws": 5.7,
+    "ws48": 0.141,
+    "per": 16
    },
    "provisional": true
   },
@@ -15174,12 +15241,12 @@
    "team": "DEN",
    "pos": "PF",
    "speed": 7,
-   "power": 9,
+   "power": 8,
    "shotLine": 16,
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 1,
-   "salary": 410,
+   "salary": 360,
    "chart": [
     {
      "lo": 1,

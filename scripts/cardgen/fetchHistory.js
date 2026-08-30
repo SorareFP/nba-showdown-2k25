@@ -26,8 +26,8 @@
 //      league that played at a different pace with a different three-point
 //      rate. That is four means and four standard deviations per season — a few
 //      hundred bytes, computed here over the FULL table. All four are cached
-//      even though the best-season rule now scores on BPM alone; see
-//      ARCHIVED_METRICS.
+//      even though the best-season rule scores on only two of them (BPM and
+//      VORP); see ARCHIVED_METRICS.
 //   2. The rows belonging to players who are actually being carded.
 //
 // So the summaries are computed over everything and the rows are filtered down
@@ -89,8 +89,8 @@ export const DISTRIBUTION_MIN_MINUTES = 500;
  * All four are measured and cached because a per-season mean and sd costs a few
  * hundred bytes and re-fetching twenty-seven league tables to add one back costs
  * twenty minutes of polite delay. WHICH of them the best-season rule actually
- * scores on is declared in history.js (`BEST_SEASON_WEIGHTS`), and as of the
- * Win Shares removal that is BPM alone. `ws` and `ws48` stay here so the run
+ * scores on is declared in history.js (`BEST_SEASON_WEIGHTS`), and that is BPM
+ * and VORP — the Win Shares pair is out. `ws` and `ws48` stay here so the run
  * report can still say what they would have chosen — and so the decision to
  * ignore them is visible rather than invisible.
  */

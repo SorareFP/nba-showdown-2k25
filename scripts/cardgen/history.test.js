@@ -48,9 +48,9 @@ describe('zAgainstSeason', () => {
 });
 
 describe('seasonScore — the combining rule', () => {
-  it('scores on BPM alone', () => {
+  it('scores on BPM and VORP, evenly weighted', () => {
     const { score } = seasonScore({ bpm: 2, vorp: 1, ws: 3, ws48: 2 }, flatDistribution);
-    expect(score).toBe(2);
+    expect(score).toBe(1.5);
   });
 
   it('IGNORES WIN SHARES ENTIRELY — the change this rule exists to make', () => {
@@ -71,19 +71,16 @@ describe('seasonScore — the combining rule', () => {
   });
 
   it('takes its metric set from the weights, so swapping is one line', () => {
-    // BPM+VORP is the alternative on the table: it restores the volume
-    // dimension BPM-only gives up, without restoring Win Shares' team bias.
-    const s = seasonScore({ bpm: 4, vorp: 2, ws: 40, ws48: 40 }, flatDistribution, {
-      bpm: 1,
-      vorp: 1,
-    });
-    expect(s.score).toBe(3);
+    // BPM-only is the alternative still on the table — it is what the rule was
+    // before VORP put the volume dimension back.
+    const s = seasonScore({ bpm: 4, vorp: 2, ws: 40, ws48: 40 }, flatDistribution, { bpm: 1 });
+    expect(s.score).toBe(4);
   });
 
-  it('declares the active rule as BPM only, with BPM+VORP alongside it', () => {
-    expect(BEST_SEASON_WEIGHTS).toBe(BEST_SEASON_METRIC_SETS.bpmOnly);
-    expect(Object.keys(BEST_SEASON_WEIGHTS)).toEqual(['bpm']);
-    expect(Object.keys(BEST_SEASON_METRIC_SETS.bpmVorp).sort()).toEqual(['bpm', 'vorp']);
+  it('declares the active rule as BPM+VORP, with BPM-only alongside it', () => {
+    expect(BEST_SEASON_WEIGHTS).toBe(BEST_SEASON_METRIC_SETS.bpmVorp);
+    expect(Object.keys(BEST_SEASON_WEIGHTS).sort()).toEqual(['bpm', 'vorp']);
+    expect(Object.keys(BEST_SEASON_METRIC_SETS.bpmOnly)).toEqual(['bpm']);
     // Neither declared set may reach for a Win Shares column.
     for (const weights of Object.values(BEST_SEASON_METRIC_SETS)) {
       expect(Object.keys(weights)).not.toContain('ws');
@@ -247,20 +244,36 @@ describe('bestSeason', () => {
     for (const s of scored) expect(s.z).toHaveProperty('bpm');
   });
 
-  it('WILL still take the shorter season when its rate is higher — the residue', () => {
-    // Pinned deliberately, because it is what the volume metrics used to buy
-    // and the user was told about it. THE GAMES FLOOR NARROWS THIS AND DOES NOT
-    // CLOSE IT: both seasons below clear 58 games, so BPM-only is free to
-    // prefer the 61-game year at +6.0 over the 82-game year at +5.8. What it
-    // can no longer do is prefer a 35-game one — see the test above.
+  // ── THE RESIDUE THE GAMES FLOOR COULD NOT REACH, AND WHAT CLOSED IT ───────
+  //
+  // Both seasons below clear 58 games, so the floor cannot separate them: a
+  // pure-rate rule is free to prefer the 61-game year at +6.0 over the 82-game
+  // year at +5.8, which is the band the user was told about when Win Shares
+  // came out. VORP is what closes it, and this pins the pair in BOTH
+  // directions so a switch back could not be silent.
+  it('takes the LONGER season once VORP is in the rule — the residue, closed', () => {
     const career = () => [
       row({ season: 2020, games: 82, minutes: 2800, bpm: 5.8, vorp: 5.2, ws: 14, ws48: 0.23 }),
       row({ season: 2021, games: 61, minutes: 1850, bpm: 6.0, vorp: 2.9, ws: 5.1, ws48: 0.204 }),
     ];
-    expect(bestSeason(career(), distributions).best.season).toBe(2021);
-    // And the alternative on the table is exactly the thing that undoes it.
-    const alt = bestSeason(career(), distributions, BEST_SEASON_METRIC_SETS.bpmVorp);
-    expect(alt.best.season).toBe(2020);
+    expect(bestSeason(career(), distributions).best.season).toBe(2020);
+    // And BPM alone is exactly the thing that reopens it.
+    const alt = bestSeason(career(), distributions, BEST_SEASON_METRIC_SETS.bpmOnly);
+    expect(alt.best.season).toBe(2021);
+  });
+
+  // VORP buys DURABILITY, not team-independence — it is BPM weighted by playing
+  // time, so it inherits BPM's team adjustment rather than removing it. What is
+  // still true, and is what this asserts, is that no WIN-ALLOCATION term can
+  // move the pick: the two careers differ only in Win Shares.
+  it('is still immune to Win Shares with VORP in the rule', () => {
+    const at = ws => [
+      row({ season: 2020, games: 82, minutes: 2800, bpm: 5.8, vorp: 5.2, ws, ws48: ws / 82 }),
+      row({ season: 2021, games: 61, minutes: 1850, bpm: 6.0, vorp: 2.9, ws: 5.1, ws48: 0.204 }),
+    ];
+    expect(bestSeason(at(3), distributions).best.season).toBe(
+      bestSeason(at(14), distributions).best.season
+    );
   });
 });
 

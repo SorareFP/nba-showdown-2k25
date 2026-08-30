@@ -67,37 +67,42 @@ export function zAgainstSeason(value, stats) {
  *     whose entire question is "how good was this player, that year", that is
  *     not noise — it is a bias with a known direction.
  *
- * BPM has no such term: it is a per-100-possession plus/minus estimated from a
- * player's own box score, adjusted for teammates and opponents but not credited
- * out of a team's win total. Neither does VORP, which is BPM converted to a
- * volume figure by multiplying through minutes played — it inherits BPM's
- * team-independence exactly.
+ * BPM has no such term. It is a per-100-possession plus/minus estimated from a
+ * player's own box score, and it is ADJUSTED for the quality of his teammates
+ * and opponents rather than being credited out of a team's win total. That
+ * adjustment is not the same thing as team-independence, and this file is
+ * careful not to claim it is: BPM's regression includes a team-performance term,
+ * so a player's BPM still carries some of his team with it. What it does not do
+ * is divide up a win column.
  *
- * ── WHAT BPM-ONLY COSTS, STATED PLAINLY ─────────────────────────────────────
+ * ── THE RULE IS BPM + VORP, AND VORP IS BUYING DURABILITY ───────────────────
  *
  * The old four split evenly between RATE (BPM, WS/48) and VOLUME (VORP, WS).
- * BPM alone is pure rate, so DURABILITY NOW COUNTS FOR NOTHING in the choice: a
- * 1,000-minute season at +6.0 outranks a 2,800-minute season at +5.8, even
- * though almost anyone asked which was the better year would say the second.
- * Two things already blunt this and neither removes it —
- * BEST_SEASON_MIN_MINUTES throws out anything under a thousand minutes before
- * the comparison starts, and the Speed+Power composite shrinks a thin season
- * toward replacement level afterwards — so the failure mode is confined to the
- * band between "a thousand minutes" and "a full season", where it is real.
+ * BPM alone is pure rate, and for a while that is what the rule was, which meant
+ * DURABILITY COUNTED FOR NOTHING in the choice: a 1,000-minute season at +6.0
+ * outranked a 2,800-minute season at +5.8, even though almost anyone asked which
+ * was the better year would say the second.
  *
- * BEST_SEASON_MIN_GAMES IS THE DIRECT ANSWER TO THAT BAND, and it was added
- * after this paragraph was written. A thousand minutes is thirty games for a
- * star, so the band it left open was wide; sixty percent of it is now closed by
- * requiring the season to have been a season. What remains open — a 58-game
- * year outscoring an 80-game one — is narrow enough to be a judgement rather
- * than an artefact.
+ * VORP is BPM converted to a volume figure — BPM above replacement, multiplied
+ * through by the share of team minutes played — so adding it puts playing time
+ * back into the comparison. BE PRECISE ABOUT WHAT THAT DOES AND DOES NOT BUY.
+ * VORP INHERITS BPM'S TEAM ADJUSTMENT RATHER THAN REMOVING IT; it is BPM with a
+ * minutes weighting on top, so whatever team influence BPM carries, VORP carries
+ * too, and multiplied by availability. The case for it is durability, not
+ * team-independence: a season that was a whole season should be able to outrank
+ * a hot two months, and VORP is the term that says so. That is the user's own
+ * call, made 2026-08-30 with this caveat stated.
  *
- * `bpmVorp` below is the fix if the user wants it: adding VORP restores the
- * volume dimension WITHOUT reintroducing team quality, and it is the direct
- * analogue of the `EW/GP` refinement term the live NBA pipeline already carries
- * (speedPower.js). Switching is one line — reassign BEST_SEASON_WEIGHTS — and
- * generateSpecialSets prints both rankings side by side on every run, so the
- * size of the difference is visible without editing anything at all.
+ * BEST_SEASON_MIN_GAMES DOES THE SAME JOB FROM THE OTHER SIDE, and the two are
+ * complementary rather than redundant. The games floor is a hard gate — a season
+ * under 58 games cannot be chosen at all while any qualifying season exists —
+ * and VORP is a continuous preference that keeps working ABOVE the floor, where
+ * a 58-game year would otherwise still outscore an 80-game one on rate alone.
+ * With only the floor active, 19 of the 350 careers still had a best season that
+ * VORP disagreed with, every one of them a shorter year beating a longer one.
+ *
+ * generateSpecialSets prints both metric sets side by side on every run, so the
+ * size of the difference stays visible without editing anything at all.
  */
 export const BEST_SEASON_METRIC_SETS = {
   bpmOnly: { bpm: 1 },
@@ -105,7 +110,7 @@ export const BEST_SEASON_METRIC_SETS = {
 };
 
 /** THE ACTIVE RULE. One line to change; the report compares it against the rest. */
-export const BEST_SEASON_WEIGHTS = BEST_SEASON_METRIC_SETS.bpmOnly;
+export const BEST_SEASON_WEIGHTS = BEST_SEASON_METRIC_SETS.bpmVorp;
 
 /**
  * A season's score under one declared metric set, plus the z of every archived
@@ -190,14 +195,15 @@ export function careerSeasons(rows) {
  * with them. 1000 minutes is roughly a season of 15 minutes a night, which is
  * the point at which a rate stops being an accident.
  *
- * THIS FLOOR CARRIES MORE WEIGHT THAN IT USED TO. While the rule averaged in
- * VORP and WS, a thin season was penalised twice — once by this floor and again
- * by two volume metrics that a short season cannot score well on. Under
- * BPM-only it lost that second penalty, and BEST_SEASON_MIN_GAMES below is what
- * replaced it. The two floors ask DIFFERENT questions and neither implies the
- * other: a thousand minutes is thirty games for a starter and eighty for a deep
- * reserve, so minutes alone cannot say whether a season happened and games
- * alone cannot say whether a rate is measurable.
+ * THIS FLOOR BRIEFLY CARRIED MORE WEIGHT THAN IT DOES NOW. While the rule was
+ * BPM alone, nothing but this floor penalised a thin season, and
+ * BEST_SEASON_MIN_GAMES below was added to cover that. VORP is back in the rule
+ * as of 2026-08-30, so a short season is once again marked down continuously as
+ * well as gated — but neither floor is redundant, because a floor and a
+ * preference do different work. The two floors also ask DIFFERENT questions and
+ * neither implies the other: a thousand minutes is thirty games for a starter
+ * and eighty for a deep reserve, so minutes alone cannot say whether a season
+ * happened and games alone cannot say whether a rate is measurable.
  */
 export const BEST_SEASON_MIN_MINUTES = 1000;
 
@@ -274,6 +280,24 @@ export const BEST_SEASON_MIN_MINUTES = 1000;
  * lockout, where 58 games is 88% of the schedule. Nobody in the current pool
  * has a 2012 best season, so it costs nothing today; it is recorded here rather
  * than solved, because solving it is the schedule table above.
+ *
+ * ── EVERY NUMBER ABOVE WAS MEASURED UNDER BPM-ONLY ──────────────────────────
+ *
+ * The tables and the four 65-game examples all date from when BEST_SEASON_WEIGHTS
+ * was `bpmOnly`; the rule is now `bpmVorp`. The 58 itself is unaffected — it is a
+ * gate applied before any scoring happens, so it moves the same seasons in or out
+ * of contention whichever metric set ranks them — but two of the examples above
+ * now read differently, and it is worth knowing which:
+ *
+ *   - GIANNIS IS ALREADY ON 2021-22. VORP prefers his 67-game 2021-22 (7.4) to
+ *     his 63-game 2019-20 (6.6) on its own, so the thing a 65-game floor would
+ *     have forced, the rule now chooses. The paragraph stands as the argument
+ *     against 65; it is simply no longer the example that demonstrates it.
+ *   - WEMBANYAMA IS UNCHANGED and is still the sharpest case: his 2025-26 wins
+ *     under both metric sets, and a 65-game floor would still cost him the badge.
+ *
+ * Nothing was re-measured, because nothing here depends on the measurement: the
+ * decision this comment defends is the CUTOFF, and it is metric-set-independent.
  */
 export const BEST_SEASON_MIN_GAMES = 58;
 

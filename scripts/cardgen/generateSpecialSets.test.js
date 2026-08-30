@@ -26,6 +26,7 @@ import {
   SUPER_SEASON_BADGE,
   pickBadge,
 } from '../../src/cards/badges.js';
+import { REFINEMENT_WEIGHT } from './speedPower.js';
 import { LAST_SEASON, FIRST_SEASON, isAggregateTeam, loadPool } from './fetchHistory.js';
 import { REPO_ROOT } from './cache.js';
 import { playerIdFromName } from '../../src/cards/playerId.js';
@@ -288,7 +289,14 @@ describe('the base set\'s badges', () => {
     // earlier season now have 2026 as their best and take the badge instead of
     // a card. The rookie set cannot move at all — a rookie year carries no
     // floor, because it is whatever it was.
-    expect(SUPER.cards.length).toBe(209);
+    //
+    // AND 209 -> 210 WHEN VORP JOINED THE RULE, which is the same mechanism a
+    // second time: three players (Josh Hart, Mitchell Robinson, Norman Powell)
+    // whose 2026 outscored an earlier year on RATE now have that longer earlier
+    // year carded, and two (Jamal Murray, Moses Moody) go the other way. The
+    // rookie set is untouched by the metric set entirely — WHICH season a
+    // rookie card is cannot depend on how seasons are scored.
+    expect(SUPER.cards.length).toBe(210);
     expect(ROOKIE.cards.length).toBe(317);
     expect(SUPER.cards.length + SUPER.excluded.length).toBe(POOL.length);
     expect(ROOKIE.cards.length + ROOKIE.excluded.length).toBe(POOL.length);
@@ -327,26 +335,31 @@ describe('the base set\'s badges', () => {
 describe('the Speed+Power composite', () => {
   const basis = { bpm: { mean: 0, sd: 2 }, vorpPerGame: { mean: 0.02, sd: 0.02 } };
 
-  it('is BPM alone — WIN SHARES CANNOT MOVE IT', () => {
+  it('is BPM + VORP per game — WIN SHARES CANNOT MOVE IT', () => {
     // WS per game used to be the 0.35 refinement term, on the argument that it
     // was the analogue of the live pipeline's Estimated Wins per game. It is
-    // not: EW comes from EPM, WS comes from a TEAM's win total. Two identical
-    // players, one on a 60-win team and one on a 20-win team, now price the
-    // same.
-    const goodTeam = historicalComposite({ bpm: 4, ws: 12, games: 80, minutes: 2500 }, basis);
-    const badTeam = historicalComposite({ bpm: 4, ws: 2, games: 80, minutes: 2500 }, basis);
+    // not: EW comes from EPM, WS comes from a TEAM's win total. VORP per game
+    // holds that slot instead, and it really is the analogue — same plus/minus
+    // estimate, weighted by playing time. Two identical players, one on a
+    // 60-win team and one on a 20-win team, price the same.
+    const w = { bpm: 4, vorp: 3, games: 80, minutes: 2500 };
+    const goodTeam = historicalComposite({ ...w, ws: 12 }, basis);
+    const badTeam = historicalComposite({ ...w, ws: 2 }, basis);
     expect(goodTeam).toBe(badTeam);
-    expect(Object.keys(COMPOSITE_WEIGHTS)).toEqual(['bpm']);
+    expect(Object.keys(COMPOSITE_WEIGHTS).sort()).toEqual(['bpm', 'vorpPerGame']);
+    expect(COMPOSITE_WEIGHTS.vorpPerGame).toBe(REFINEMENT_WEIGHT);
     for (const weights of Object.values(COMPOSITE_METRIC_SETS)) {
       expect(Object.keys(weights)).not.toContain('wsPerGame');
     }
   });
 
   it('shrinks a season toward replacement in proportion to how little of it there was', () => {
-    // THE ONLY DURABILITY CORRECTION LEFT once the volume term is gone, which
-    // is why it matters more than it did.
-    const full = historicalComposite({ bpm: 8, games: 70, minutes: 2400 }, basis);
-    const sliver = historicalComposite({ bpm: 8, games: 17, minutes: 53 }, basis);
+    // Still the correction doing most of the work at the thin end, and it runs
+    // whichever metric set is active — VORP marks a short season down
+    // continuously, the shrink pulls it to replacement level outright.
+    const w = { bpm: 8, vorp: 6 };
+    const full = historicalComposite({ ...w, games: 70, minutes: 2400 }, basis);
+    const sliver = historicalComposite({ ...w, games: 17, minutes: 53 }, basis);
     expect(sliver).toBeLessThan(full / 4);
   });
 
@@ -359,22 +372,29 @@ describe('the Speed+Power composite', () => {
   it('pulls a tiny season toward REPLACEMENT, not toward average', () => {
     // Shrinking toward the pool mean would be wrong at both ends: it would hand
     // a 53-minute flier an average card, and a 53-minute disaster one too.
-    const nothing = historicalComposite({ bpm: 8, games: 3, minutes: 0 }, basis);
-    expect(nothing).toBeCloseTo((REPLACEMENT_BPM - basis.bpm.mean) / basis.bpm.sd, 10);
+    // Replacement is -2.0 BPM and ZERO VORP, both by Basketball-Reference's own
+    // definition, so with VORP in the rule the target is both terms' z at those
+    // values rather than BPM's alone.
+    const nothing = historicalComposite({ bpm: 8, vorp: 6, games: 3, minutes: 0 }, basis);
+    const target =
+      (REPLACEMENT_BPM - basis.bpm.mean) / basis.bpm.sd +
+      REFINEMENT_WEIGHT * ((0 - basis.vorpPerGame.mean) / basis.vorpPerGame.sd);
+    expect(nothing).toBeCloseTo(target, 10);
     expect(nothing).toBeLessThan(0);
   });
 
-  it('buys volume back through VORP, not Win Shares, when asked to', () => {
-    // VORP is BPM times minutes share, so VORP per game is BPM weighted by
-    // playing time — what EW/GP is to EPM, this time honestly. Same BPM, more
-    // minutes behind it, higher composite.
-    const w = COMPOSITE_METRIC_SETS.bpmVorp;
-    const heavy = historicalComposite({ bpm: 4, vorp: 4, games: 80, minutes: 2500 }, basis, w);
-    const light = historicalComposite({ bpm: 4, vorp: 1, games: 80, minutes: 2500 }, basis, w);
+  it('buys volume back through VORP, not Win Shares', () => {
+    // VORP is BPM above replacement times minutes share, so VORP per game is
+    // BPM weighted by playing time — what EW/GP is to EPM, this time honestly,
+    // since both come from a plus/minus estimate rather than a win column. Same
+    // BPM, more volume behind it, higher composite.
+    const heavy = historicalComposite({ bpm: 4, vorp: 4, games: 80, minutes: 2500 }, basis);
+    const light = historicalComposite({ bpm: 4, vorp: 1, games: 80, minutes: 2500 }, basis);
     expect(heavy).toBeGreaterThan(light);
-    // ...and it changes nothing under the active rule.
-    expect(historicalComposite({ bpm: 4, vorp: 4, games: 80, minutes: 2500 }, basis)).toBe(
-      historicalComposite({ bpm: 4, vorp: 1, games: 80, minutes: 2500 }, basis)
+    // ...and BPM alone is what cannot tell them apart.
+    const w = COMPOSITE_METRIC_SETS.bpmOnly;
+    expect(historicalComposite({ bpm: 4, vorp: 4, games: 80, minutes: 2500 }, basis, w)).toBe(
+      historicalComposite({ bpm: 4, vorp: 1, games: 80, minutes: 2500 }, basis, w)
     );
   });
 
@@ -385,9 +405,9 @@ describe('the Speed+Power composite', () => {
     ];
     expect(compositeBasis(rows).bpm.mean).toBe(2);
     // And it measures exactly the inputs the declared weighting names.
-    expect(Object.keys(compositeBasis(rows))).toEqual(['bpm']);
-    const alt = compositeBasis(rows, COMPOSITE_METRIC_SETS.bpmVorp);
-    expect(alt.vorpPerGame.mean).toBeCloseTo(0.0375, 10);
+    expect(Object.keys(compositeBasis(rows)).sort()).toEqual(['bpm', 'vorpPerGame']);
+    expect(compositeBasis(rows).vorpPerGame.mean).toBeCloseTo(0.0375, 10);
+    expect(Object.keys(compositeBasis(rows, COMPOSITE_METRIC_SETS.bpmOnly))).toEqual(['bpm']);
   });
 });
 

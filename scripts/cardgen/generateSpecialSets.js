@@ -11,13 +11,15 @@
 // ── WHAT EACH SET IS ────────────────────────────────────────────────────────
 //
 //   Super Season   Each active player's best individual season, chosen on BPM
-//                  scored against that season's own league. WIN SHARES USED TO
-//                  BE IN THIS AND IS NOT ANY MORE — it allocates TEAM wins, so
-//                  it docks a good player on a bad team; history.js states the
-//                  argument and what dropping it costs. THE EXCLUSION RULE IS
-//                  WHAT MAKES THE SET: if a player's best season IS the most
-//                  recent one, he gets no card, because his base card already
-//                  is that season.
+//                  AND VORP, each scored against that season's own league. WIN
+//                  SHARES USED TO BE IN THIS AND IS NOT ANY MORE — it allocates
+//                  TEAM wins, so it docks a good player on a bad team;
+//                  history.js states the argument, and states plainly what VORP
+//                  does and does not fix (it buys durability back; it does not
+//                  make the score team-independent). THE EXCLUSION RULE IS WHAT
+//                  MAKES THE SET: if a player's best season IS the most recent
+//                  one, he gets no card, because his base card already is that
+//                  season.
 //
 //   Rookie         Each active player's rookie-year card. Same exclusion, for
 //                  the same reason: a player whose rookie season IS the current
@@ -58,10 +60,11 @@
 // Boost are built on — do not exist for any of these seasons. The substitutes,
 // each named so nobody has to guess later:
 //
-//   Speed + Power   BPM in EPM's place, with NO stand-in for the Estimated
-//                   Wins refinement term — Win Shares per game used to fill
-//                   that slot and was removed for the same reason it left the
-//                   best-season rule. The composite is then mapped onto the
+//   Speed + Power   BPM in EPM's place, and VORP PER GAME in the Estimated
+//                   Wins refinement slot, at the same 0.35 weight the live
+//                   pipeline uses. Win Shares per game used to fill that slot
+//                   and was removed for the same reason it left the best-season
+//                   rule. The composite is then mapped onto the
 //                   finished set's Speed+Power distribution using the CURRENT
 //                   POOL as the calibration basis. That last part is the whole
 //                   of "work Speed+Power in by using the numbers we have and
@@ -242,17 +245,24 @@ export const FULL_SEASON_MINUTES = 1500;
  * best-season rule was just cleared of. Carrying it here would have docked the
  * same players a second time, on the same card.
  *
- * So the composite is BPM alone, and the volume dimension it loses is the same
- * one the best-season rule lost — see history.js for the full statement of what
- * that costs. What limits the damage here is the shrink below rather than a
- * minutes floor: a thin season is pulled toward replacement level in proportion
- * to how thin it is, which is a softer and better-behaved version of the same
- * correction a volume term would have applied.
+ * For a while the composite was therefore BPM alone, and the volume dimension it
+ * lost was the same one the best-season rule lost. VORP PER GAME NOW FILLS THAT
+ * SLOT: VORP is BPM above replacement times minutes share, so VORP per game is
+ * BPM weighted by playing time — which is what EW/GP is to EPM, this time
+ * honestly, since both terms are derived from the same plus/minus estimate
+ * rather than from a team's win column.
  *
- * `bpmVorp` restores volume without restoring team quality. VORP is BPM times
- * minutes share, so VORP per game is BPM weighted by playing time — which is
- * what EW/GP is to EPM, this time honestly. Switching is one line
- * (COMPOSITE_WEIGHTS) and the run report prints both scales side by side.
+ * SAY EXACTLY WHAT THAT BUYS. It buys DURABILITY: a season that was a whole
+ * season now outscores a hot two months at the same rate. It does NOT buy
+ * team-independence. VORP inherits BPM's team adjustment rather than removing
+ * it, so whatever team influence BPM carries is still here, now multiplied
+ * through by availability. What it avoids is ADDING a second, different team
+ * term — which is precisely what Win Shares per game was doing.
+ *
+ * The shrink below still runs and is still doing most of the work at the thin
+ * end: a season is pulled toward replacement level in proportion to how little
+ * of a season it is, which is a softer correction than any volume term and
+ * applies to both of them. The run report prints both metric sets side by side.
  */
 export const COMPOSITE_INPUTS = {
   bpm: s => s.bpm,
@@ -277,7 +287,7 @@ export const COMPOSITE_METRIC_SETS = {
 };
 
 /** THE ACTIVE COMPOSITE. One line to change. */
-export const COMPOSITE_WEIGHTS = COMPOSITE_METRIC_SETS.bpmOnly;
+export const COMPOSITE_WEIGHTS = COMPOSITE_METRIC_SETS.bpmVorp;
 
 /**
  * Where a season with no minutes behind it is pulled TO.
@@ -695,14 +705,24 @@ function writeBadges({ set, badges, counts }) {
 /** The one-line description of every substitution, carried into both files. */
 const SOURCES = {
   origin: 'basketball-reference.com season tables (advanced + per-100), 2000-2026',
-  bestSeason: 'BPM, scored against its own season\'s league. Win Shares and WS/48 are deliberately excluded: they allocate TEAM wins, so they dock a good player on a bad team',
+  bestSeason:
+    'BPM and VORP, equally weighted, each scored against its own season\'s league. Win Shares and ' +
+    'WS/48 are deliberately excluded: they allocate TEAM wins, so they dock a good player on a bad ' +
+    'team. VORP is in the rule for DURABILITY — it is BPM weighted by playing time, so a full ' +
+    'season can outrank a shorter one at a higher rate. It does NOT make the score ' +
+    'team-independent: VORP inherits BPM\'s team adjustment rather than removing it',
   eligibility:
     `a season must be at least ${BEST_SEASON_MIN_MINUTES} minutes AND ${BEST_SEASON_MIN_GAMES} ` +
     'games — 70% of an 82-game schedule — to be eligible as a career best. The two floors ask ' +
     'different questions: minutes ask whether a rate is measurable, games ask whether the season ' +
     'happened. They fall back one at a time (games first, then minutes) so a player whose only ' +
     'real season is short still gets a card',
-  speedPower: 'z(BPM), shrunk toward replacement level for a short season, mapped onto the finished set\'s Speed+Power distribution with the 2026-27 pool as the calibration basis',
+  speedPower:
+    `z(BPM) + ${REFINEMENT_WEIGHT} * z(VORP per game) — the same shape as the live pipeline's ` +
+    'z(EPM) + 0.35 * z(EW per game), with the two Basketball-Reference stats standing in for the ' +
+    'two dunksandthrees ones. Shrunk toward replacement level for a short season, then mapped ' +
+    'onto the finished set\'s Speed+Power distribution with the 2026-27 pool as the calibration ' +
+    'basis',
   defBoost: 'DBPM, rounded — DEF EPM does not exist before the current season',
   paintBoost: '2P% standing in for rim FG%, which Basketball-Reference does not carry',
   chart: 'synthesized from Basketball-Reference per-100 PTS/TRB/AST, same model as the base set',
@@ -859,12 +879,12 @@ function reportSet(cards, log) {
 /**
  * BPM-ONLY VERSUS BPM+VORP, SIDE BY SIDE, ON EVERY RUN.
  *
- * The rule is BPM alone and that costs the volume dimension — see history.js.
- * VORP is the way to buy it back without buying back Win Shares' team-quality
- * bias, and this report is the reason nobody has to edit a weight and
- * regenerate to find out how much it would move. The `Δmin` column is the point
- * of the whole exercise: a positive number means BPM-only chose the SHORTER
- * season, which is exactly the side effect to watch.
+ * The rule is BPM+VORP as of 2026-08-30 — see history.js for what VORP does buy
+ * (durability) and what it does not (team-independence). This report is what
+ * makes the switch legible after the fact and what would make a switch BACK
+ * legible before it: the `Δmin` column is the point of the whole exercise, and
+ * a positive number means bpmOnly chose the SHORTER season, which is exactly the
+ * side effect VORP is here to remove.
  */
 function reportBestSeasonMetricSets(splits, metricSets, log) {
   const names = Object.keys(metricSets);

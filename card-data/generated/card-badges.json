@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-30T16:34:39.815Z",
+ "generatedAt": "2026-08-30T22:52:14.628Z",
  "set": "2026-27",
  "provisional": true,
  "source": "the Super Season and Rookie exclusion lists: a player whose best or rookie season is 2026 gets no card in that set, because his base card already IS that season — so the fact is printed on the base card as a badge instead",
@@ -8,13 +8,13 @@
   "rookie"
  ],
  "counts": {
-  "players": 141,
+  "players": 140,
   "applies": {
-   "super-season": 141,
+   "super-season": 140,
    "rookie": 33
   },
   "printed": {
-   "super-season": 141,
+   "super-season": 140,
    "rookie": 0
   },
   "multiple": 33
@@ -391,6 +391,13 @@
    ]
   },
   {
+   "id": "Jamal_Murray",
+   "name": "Jamal Murray",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
    "id": "Jamal_Shead",
    "name": "Jamal Shead",
    "badges": [
@@ -515,13 +522,6 @@
   {
    "id": "Jose_Alvarado",
    "name": "Jose Alvarado",
-   "badges": [
-    "super-season"
-   ]
-  },
-  {
-   "id": "Josh_Hart",
-   "name": "Josh Hart",
    "badges": [
     "super-season"
    ]
@@ -658,8 +658,8 @@
    ]
   },
   {
-   "id": "Mitchell_Robinson",
-   "name": "Mitchell Robinson",
+   "id": "Moses_Moody",
+   "name": "Moses Moody",
    "badges": [
     "super-season"
    ]
@@ -735,13 +735,6 @@
    "badges": [
     "super-season",
     "rookie"
-   ]
-  },
-  {
-   "id": "Norman_Powell",
-   "name": "Norman Powell",
-   "badges": [
-    "super-season"
    ]
   },
   {

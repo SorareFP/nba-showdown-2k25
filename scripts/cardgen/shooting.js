@@ -119,7 +119,7 @@
 //
 // memory/shooting_attributes_methodology.md: "A player shooting 42-43% on
 // relatively low volume might still get 0 — volume gates the modifier." It has
-// to. Thirty-one players in the 331-pool attempt under one three per 75
+// to. Thirty-one players in the 350-pool attempt under one three per 75
 // possessions, and their raw 3P% includes a 0-for-9 (0%), a 1-for-1 (100%) and a
 // 2-for-8. Ungated, those produce raw boosts from -16 to +6 — the widest values
 // in the set handed to the players with the least evidence behind them.

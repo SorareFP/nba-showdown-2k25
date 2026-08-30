@@ -75,7 +75,7 @@ export const TEAMS = {
  * Basketball-Reference abbreviation -> nba.com abbreviation.
  *
  * The player pool is derived from Basketball-Reference, which spells exactly
- * three teams differently. 32 of the 331 pool players carry these codes (BRK
+ * three teams differently. 33 of the 350 pool players carry these codes (BRK
  * 12, CHO 9, PHO 11); without this map every one of them rendered on the grey
  * fallback despite being on a perfectly ordinary team.
  *

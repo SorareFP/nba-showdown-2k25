@@ -3,7 +3,7 @@
 //
 // Pool rule (decided 2026-08-28, see memory/new_season_player_pool.md): every
 // player with MPG >= 12 and G >= 40 in the source season, no further manual
-// curation. Verified against the real 2025-26 season page: 331 players.
+// curation. Verified against the real 2025-26 season page: 331 players clear it.
 //
 // PLUS A FORCE-INCLUDE LIST, which the threshold rule needs because of what it
 // silently does: G >= 40 drops everyone whose season was cut short by injury,

@@ -352,7 +352,7 @@ describe('photoProgress', () => {
 
   it('ignores photos belonging to players outside the active set', () => {
     // card-art/photos/ accumulates files from both sources; counting the
-    // shipped-card photos against the 331-player pool would inflate progress.
+    // shipped-card photos against the 350-player pool would inflate progress.
     expect(photoProgress(SAMPLE, ['08_09_LeBron_James', 'Kevin_Durant'])).toMatchObject({
       withPhoto: 1,
       total: 3,

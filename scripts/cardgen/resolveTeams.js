@@ -3,7 +3,7 @@
 //
 // Two problems this solves:
 //  1. Basketball-Reference reports mid-season-traded players under aggregate
-//     codes "2TM"/"3TM" (45 of the 331 pool players). Those aren't teams: a
+//     codes "2TM"/"3TM" (46 of the 350 pool players). Those aren't teams: a
 //     card for one has no colors and no logo, so it renders on the grey
 //     fallback and looks broken.
 //  2. The two sources disagree on three abbreviations (see TEAM_ALIASES).

@@ -94,7 +94,7 @@ describe('fitLeastSquares', () => {
   });
 
   // A singular system used to produce NaN coefficients, which then rode all the
-  // way into 331 cards as blank stats. It has to fail loudly instead.
+  // way into every card in the set as blank stats. It has to fail loudly instead.
   it('returns null on a singular system rather than NaN coefficients', () => {
     const rows = [1, 2, 3].map(x => ({ x, y: x }));
     expect(A.fitLeastSquares(rows, r => r.y, [r => r.x, r => r.x])).toBe(null);

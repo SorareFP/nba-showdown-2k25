@@ -25,7 +25,7 @@
 // Leading and trailing underscores are trimmed, so "Jabari Smith Jr." is
 // `Jabari_Smith_Jr` rather than `Jabari_Smith_Jr_` — again matching the shipped
 // ids. Interior punctuation still collapses to one underscore ("De'Aaron Fox"
-// -> "De_Aaron_Fox"). Verified collision-free across all 331 pool names and all
+// -> "De_Aaron_Fox"). Verified collision-free across all 350 pool names and all
 // 306 shipped cards, and inside the character set the studio server's path
 // guard accepts.
 //

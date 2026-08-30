@@ -6,7 +6,7 @@
 //
 //  - `pool` (the default) is the 2026-27 SET — the one being built right now,
 //    the one every photo and crop in this tool belongs to, and the editable
-//    one. Its 331 players always have names, teams and positions; they also
+//    one. Its 350 players always have names, teams and positions; they also
 //    carry a full PROVISIONAL stat line — chart, Speed/Power, Shot Line, boosts
 //    and salary — whenever `node scripts/cardgen/generateCards.js` has been run.
 //    Before that they render placeholders, which is still a usable studio: the
@@ -37,7 +37,7 @@ import { playerIdFromName } from '../cards/playerId.js';
  * The team-resolved pool, when `node scripts/cardgen/generateTeams.js` has been
  * run. PREFERRED over the raw pool, for two reasons:
  *
- *  - 45 of the 331 raw records carry Basketball-Reference's "2TM"/"3TM"
+ *  - 46 of the 350 raw records carry Basketball-Reference's "2TM"/"3TM"
  *    mid-season-trade aggregate codes, which are not teams. Every one of those
  *    cards rendered on the neutral grey fallback with no logo and no colors.
  *    The resolved file replaces them with the player's real current team.
@@ -66,7 +66,7 @@ export const TEAMS_RESOLVED = resolvedPool !== null;
  * only players it could give a real team, which today leaves 4 out (they are on
  * no active roster AND carry an aggregate code, so no source knows their team).
  * Taking the resolved file as the list would quietly drop those 4 from a
- * 331-player set — the user would simply never be offered them to photograph.
+ * 350-player set — the user would simply never be offered them to photograph.
  *
  * So the pool stays the spine and resolution is an overlay. The unresolved few
  * keep their raw "2TM" code and go on rendering the neutral fallback theme,
@@ -240,7 +240,7 @@ function asSet(photoIds) {
  * How far through the set the photo curation is.
  *
  * Counts only photos belonging to the ACTIVE source list: the set's photos/
- * accumulates files from both sources, and reporting "310 / 331" because the
+ * accumulates files from both sources, and reporting "310 / 350" because the
  * shipped-card photos were counted too would make the progress number useless.
  */
 export function photoProgress(players, photoIds) {
@@ -255,7 +255,7 @@ export function photoProgress(players, photoIds) {
  *
  * `missingOnly` is the one that earns its keep across sessions: on session
  * five, "who still needs a photo" is the only question being asked, and
- * scrolling 331 rows looking for hollow dots is not an answer.
+ * scrolling 350 rows looking for hollow dots is not an answer.
  */
 export function filterPlayers(players, { query = '', missingOnly = false, photoIds } = {}) {
   const have = asSet(photoIds);
@@ -275,12 +275,12 @@ export function filterPlayers(players, { query = '', missingOnly = false, photoI
  * The id `delta` steps away from `currentId` in a list — the keyboard nav.
  *
  * Clamps at both ends rather than wrapping: wrapping from the last player back
- * to the first, mid-session, silently loses your place in a 331-row list.
+ * to the first, mid-session, silently loses your place in a 350-row list.
  *
  * `anchorIndex` is where the selection last WAS in this list, and it carries
  * the main workflow. Filter to "needs photo", drop a photo on someone, and
  * they leave the list on the spot — with no anchor the very next keypress
- * would jump to the top of 331 rows instead of continuing to the next player
+ * would jump to the top of 350 rows instead of continuing to the next player
  * who needs one. Stepping forward from a vanished row lands on whoever took
  * its place; stepping back lands on the row above it.
  */

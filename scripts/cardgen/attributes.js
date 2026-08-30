@@ -100,7 +100,7 @@ export function zScorer(values) {
  *
  * Returns `null` when the system is singular (a constant or duplicated
  * predictor) rather than propagating NaN coefficients into a card — a silent
- * NaN here becomes a blank stat on 331 cards, which is exactly the failure this
+ * NaN here becomes a blank stat on every card in the set, which is exactly the failure this
  * whole file exists to end.
  */
 export function fitLeastSquares(rows, yOf, xOf) {

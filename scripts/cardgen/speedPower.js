@@ -135,7 +135,7 @@ export function measureReferenceTotals(cards) {
  * The composite ranking score, one per player.
  *
  * Every input is z-scored WITHIN THIS POOL, so the composite says "relative to
- * the 331 players being carded" rather than "relative to all 602 in the league",
+ * the 350 players being carded" rather than "relative to all 602 in the league",
  * which is the population the card set actually has to spread across.
  */
 export function compositeScores(rows, { weight = REFINEMENT_WEIGHT } = {}) {

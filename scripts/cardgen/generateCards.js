@@ -1,4 +1,4 @@
-// Builds the whole 2026-27 card set: every stat on every card, for all 331
+// Builds the whole 2026-27 card set: every stat on every card, for all 350
 // players in the pool.
 //
 //   node scripts/cardgen/generateCards.js
@@ -228,7 +228,7 @@ export function generateCards({
 
   // The shooting layer is a POOL operation, not a per-player one: the
   // compression scale, the shrinkage strength and the centre of each boost are
-  // all measured across these 331 players, so it has to run once over all of
+  // all measured across these 350 players, so it has to run once over all of
   // them before any single card can be built.
   const actualRows = resolved.map(p => lookup(actualIndex, p.name));
   const shooting = S.buildShootingLayer(actualRows.map(actualShootingInput), {

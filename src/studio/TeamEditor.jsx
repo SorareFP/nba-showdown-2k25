@@ -2,7 +2,7 @@
 //
 // Everything else in the studio edits ONE card. This edits a team, and every
 // player on that team re-themes at once, which is the only sane way to hold
-// thirty color schemes to a standard across 331 cards.
+// thirty color schemes to a standard across 350 cards.
 //
 // It exists because src/cards/teams.js is deliberately not the place to put
 // taste. That table records the OFFICIAL colors, verified against TruColor,

@@ -2,7 +2,7 @@
 //
 // Why this exists: Basketball-Reference (our stats source) reports players who
 // were traded mid-season under aggregate team codes "2TM"/"3TM" rather than a
-// real team. 45 of the 331-player pool carry those codes. A card can't show a
+// real team. 46 of the 350-player pool carry those codes. A card can't show a
 // logo or team colors for "2TM", so we need a real-team source.
 //
 // STRUCTURE (verified 2026-08-29 against the live page): nba.com is a Next.js

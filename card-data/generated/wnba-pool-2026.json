@@ -1,0 +1,965 @@
+[
+  {
+    "name": "Rhyne Howard",
+    "team": "ATL",
+    "pos": "G",
+    "games": 38,
+    "mpg": 34.6,
+    "bbrefId": "howarrh01w",
+    "blended": false
+  },
+  {
+    "name": "Kelsey Plum",
+    "team": "PHO",
+    "pos": "G",
+    "games": 60,
+    "mpg": 33.8,
+    "bbrefId": "plumke01w",
+    "blended": true
+  },
+  {
+    "name": "Alyssa Thomas",
+    "team": "PHO",
+    "pos": "F",
+    "games": 38,
+    "mpg": 33.5,
+    "bbrefId": "thomaal01w",
+    "blended": false
+  },
+  {
+    "name": "Paige Bueckers",
+    "team": "DAL",
+    "pos": "G",
+    "games": 37,
+    "mpg": 33.2,
+    "bbrefId": "bueckpa01w",
+    "blended": false
+  },
+  {
+    "name": "Sonia Citron",
+    "team": "WAS",
+    "pos": "G",
+    "games": 37,
+    "mpg": 33.2,
+    "bbrefId": "citroso01w",
+    "blended": false
+  },
+  {
+    "name": "Breanna Stewart",
+    "team": "NYL",
+    "pos": "F",
+    "games": 39,
+    "mpg": 33,
+    "bbrefId": "stewabr01w",
+    "blended": false
+  },
+  {
+    "name": "Kahleah Copper",
+    "team": "PHO",
+    "pos": "G-F",
+    "games": 38,
+    "mpg": 32.9,
+    "bbrefId": "coppeka01w",
+    "blended": false
+  },
+  {
+    "name": "Allisha Gray",
+    "team": "ATL",
+    "pos": "G",
+    "games": 39,
+    "mpg": 32.9,
+    "bbrefId": "grayal01w",
+    "blended": false
+  },
+  {
+    "name": "Chelsea Gray",
+    "team": "LVA",
+    "pos": "G",
+    "games": 39,
+    "mpg": 32.9,
+    "bbrefId": "graych01w",
+    "blended": false
+  },
+  {
+    "name": "Kelsey Mitchell",
+    "team": "IND",
+    "pos": "G",
+    "games": 40,
+    "mpg": 32.9,
+    "bbrefId": "mitchke01w",
+    "blended": false
+  },
+  {
+    "name": "Kayla McBride",
+    "team": "MIN",
+    "pos": "G",
+    "games": 39,
+    "mpg": 32.5,
+    "bbrefId": "mcbrika01w",
+    "blended": false
+  },
+  {
+    "name": "Jackie Young",
+    "team": "LVA",
+    "pos": "G",
+    "games": 39,
+    "mpg": 32.4,
+    "bbrefId": "youngja01w",
+    "blended": false
+  },
+  {
+    "name": "Jessica Shepard",
+    "team": "DAL",
+    "pos": "F",
+    "games": 37,
+    "mpg": 32,
+    "bbrefId": "shepaje01w",
+    "blended": false
+  },
+  {
+    "name": "A'ja Wilson",
+    "team": "LVA",
+    "pos": "C",
+    "games": 37,
+    "mpg": 32,
+    "bbrefId": "wilsoa01w",
+    "blended": false
+  },
+  {
+    "name": "Azzi Fudd",
+    "team": "DAL",
+    "pos": "G",
+    "games": 30,
+    "mpg": 31.7,
+    "bbrefId": "fuddaz01w",
+    "blended": false
+  },
+  {
+    "name": "Napheesa Collier",
+    "team": "MIN",
+    "pos": "F",
+    "games": 44,
+    "mpg": 31.7,
+    "bbrefId": "collina01w",
+    "blended": true
+  },
+  {
+    "name": "Angel Reese",
+    "team": "ATL",
+    "pos": "F",
+    "games": 38,
+    "mpg": 31.5,
+    "bbrefId": "reesean01w",
+    "blended": false
+  },
+  {
+    "name": "Jordin Canada",
+    "team": "ATL",
+    "pos": "G",
+    "games": 38,
+    "mpg": 31.4,
+    "bbrefId": "canadjo01w",
+    "blended": false
+  },
+  {
+    "name": "Caitlin Clark",
+    "team": "IND",
+    "pos": "G",
+    "games": 36,
+    "mpg": 31.3,
+    "bbrefId": "clarkca02w",
+    "blended": false
+  },
+  {
+    "name": "Nneka Ogwumike",
+    "team": "LAS",
+    "pos": "F",
+    "games": 38,
+    "mpg": 31,
+    "bbrefId": "ogwumnn01w",
+    "blended": false
+  },
+  {
+    "name": "Olivia Miles",
+    "team": "MIN",
+    "pos": "G",
+    "games": 37,
+    "mpg": 30.9,
+    "bbrefId": "milesol01w",
+    "blended": false
+  },
+  {
+    "name": "Bridget Carleton",
+    "team": "POR",
+    "pos": "F",
+    "games": 38,
+    "mpg": 30.7,
+    "bbrefId": "carlebr01w",
+    "blended": false
+  },
+  {
+    "name": "Courtney Williams",
+    "team": "MIN",
+    "pos": "G",
+    "games": 38,
+    "mpg": 30.6,
+    "bbrefId": "willico01w",
+    "blended": false
+  },
+  {
+    "name": "Skylar Diggins",
+    "team": "CHI",
+    "pos": "G",
+    "games": 62,
+    "mpg": 30.6,
+    "bbrefId": "diggisk01w",
+    "blended": true
+  },
+  {
+    "name": "Sabrina Ionescu",
+    "team": "NYL",
+    "pos": "G",
+    "games": 27,
+    "mpg": 30.4,
+    "bbrefId": "ionessa01w",
+    "blended": false
+  },
+  {
+    "name": "Brittney Sykes",
+    "team": "TOR",
+    "pos": "G",
+    "games": 56,
+    "mpg": 30.3,
+    "bbrefId": "sykesbr01w",
+    "blended": true
+  },
+  {
+    "name": "Arike Ogunbowale",
+    "team": "DAL",
+    "pos": "G",
+    "games": 39,
+    "mpg": 29.9,
+    "bbrefId": "ogunbar01w",
+    "blended": false
+  },
+  {
+    "name": "Natisha Hiedeman",
+    "team": "SEA",
+    "pos": "G",
+    "games": 36,
+    "mpg": 29.8,
+    "bbrefId": "hiedena01w",
+    "blended": false
+  },
+  {
+    "name": "Shakira Austin",
+    "team": "WAS",
+    "pos": "C",
+    "games": 39,
+    "mpg": 29.6,
+    "bbrefId": "austish01w",
+    "blended": false
+  },
+  {
+    "name": "Marina Mabrey",
+    "team": "TOR",
+    "pos": "G",
+    "games": 32,
+    "mpg": 29.5,
+    "bbrefId": "mabrema01w",
+    "blended": false
+  },
+  {
+    "name": "Naz Hillmon",
+    "team": "ATL",
+    "pos": "F",
+    "games": 38,
+    "mpg": 29.3,
+    "bbrefId": "hillmna01w",
+    "blended": false
+  },
+  {
+    "name": "Natasha Howard",
+    "team": "MIN",
+    "pos": "F",
+    "games": 39,
+    "mpg": 29.3,
+    "bbrefId": "howarna01w",
+    "blended": false
+  },
+  {
+    "name": "Rae Burrell",
+    "team": "LAS",
+    "pos": "G-F",
+    "games": 38,
+    "mpg": 29,
+    "bbrefId": "burrera01w",
+    "blended": false
+  },
+  {
+    "name": "Dearica Hamby",
+    "team": "LAS",
+    "pos": "F",
+    "games": 39,
+    "mpg": 28.9,
+    "bbrefId": "hambyde01w",
+    "blended": false
+  },
+  {
+    "name": "Julie Allemand",
+    "team": "TOR",
+    "pos": "G",
+    "games": 29,
+    "mpg": 28.7,
+    "bbrefId": "allemju01w",
+    "blended": false
+  },
+  {
+    "name": "Leonie Fiebich",
+    "team": "NYL",
+    "pos": "F",
+    "games": 54,
+    "mpg": 28.6,
+    "bbrefId": "fiebile01w",
+    "blended": true
+  },
+  {
+    "name": "Natasha Cloud",
+    "team": "CHI",
+    "pos": "G",
+    "games": 39,
+    "mpg": 28.5,
+    "bbrefId": "cloudna01w",
+    "blended": false
+  },
+  {
+    "name": "Veronica Burton",
+    "team": "GSV",
+    "pos": "G",
+    "games": 39,
+    "mpg": 28.4,
+    "bbrefId": "burtove01w",
+    "blended": false
+  },
+  {
+    "name": "Kiki Iriafen",
+    "team": "WAS",
+    "pos": "F",
+    "games": 37,
+    "mpg": 28.4,
+    "bbrefId": "iriafki01w",
+    "blended": false
+  },
+  {
+    "name": "Jonquel Jones",
+    "team": "NYL",
+    "pos": "C",
+    "games": 39,
+    "mpg": 28.4,
+    "bbrefId": "jonesjo01w",
+    "blended": false
+  },
+  {
+    "name": "Leïla Lacan",
+    "team": "CON",
+    "pos": "G",
+    "games": 27,
+    "mpg": 28.4,
+    "bbrefId": "lacanle01w",
+    "blended": false
+  },
+  {
+    "name": "Flau'jae Johnson",
+    "team": "SEA",
+    "pos": "G",
+    "games": 37,
+    "mpg": 28.2,
+    "bbrefId": "johnsfl03w",
+    "blended": false
+  },
+  {
+    "name": "DeWanna Bonner",
+    "team": "ATL",
+    "pos": "F-G",
+    "games": 37,
+    "mpg": 27.6,
+    "bbrefId": "bonnede01w",
+    "blended": false
+  },
+  {
+    "name": "Aliyah Boston",
+    "team": "IND",
+    "pos": "C-F",
+    "games": 36,
+    "mpg": 27.6,
+    "bbrefId": "bostoal01w",
+    "blended": false
+  },
+  {
+    "name": "Awa Fam",
+    "team": "SEA",
+    "pos": "C",
+    "games": 33,
+    "mpg": 27.6,
+    "bbrefId": "famaw01w",
+    "blended": false
+  },
+  {
+    "name": "Ariel Atkins",
+    "team": "LAS",
+    "pos": "G",
+    "games": 37,
+    "mpg": 27.5,
+    "bbrefId": "atkinar01w",
+    "blended": false
+  },
+  {
+    "name": "Erica Wheeler",
+    "team": "LAS",
+    "pos": "G",
+    "games": 38,
+    "mpg": 27.2,
+    "bbrefId": "wheeler01w",
+    "blended": false
+  },
+  {
+    "name": "Maria Conde",
+    "team": "TOR",
+    "pos": "F",
+    "games": 33,
+    "mpg": 26.9,
+    "bbrefId": "condema01w",
+    "blended": false
+  },
+  {
+    "name": "Kamilla Cardoso",
+    "team": "CHI",
+    "pos": "C",
+    "games": 39,
+    "mpg": 26.7,
+    "bbrefId": "cardoka01w",
+    "blended": false
+  },
+  {
+    "name": "Kiki Rice",
+    "team": "TOR",
+    "pos": "G",
+    "games": 24,
+    "mpg": 26.6,
+    "bbrefId": "riceki01w",
+    "blended": false
+  },
+  {
+    "name": "Jewell Loyd",
+    "team": "LVA",
+    "pos": "G",
+    "games": 38,
+    "mpg": 26.3,
+    "bbrefId": "loydje01w",
+    "blended": false
+  },
+  {
+    "name": "Dominique Malonga",
+    "team": "SEA",
+    "pos": "C",
+    "games": 30,
+    "mpg": 26.2,
+    "bbrefId": "malondo01w",
+    "blended": false
+  },
+  {
+    "name": "Carla Leite",
+    "team": "POR",
+    "pos": "G",
+    "games": 36,
+    "mpg": 25.9,
+    "bbrefId": "leiteca01w",
+    "blended": false
+  },
+  {
+    "name": "Jade Melbourne",
+    "team": "SEA",
+    "pos": "G",
+    "games": 38,
+    "mpg": 25.2,
+    "bbrefId": "melboja01w",
+    "blended": false
+  },
+  {
+    "name": "Michaela Onyenwere",
+    "team": "WAS",
+    "pos": "F",
+    "games": 36,
+    "mpg": 25.2,
+    "bbrefId": "onyenmi01w",
+    "blended": false
+  },
+  {
+    "name": "Laura Juškaitė",
+    "team": "TOR",
+    "pos": "F",
+    "games": 40,
+    "mpg": 24.9,
+    "bbrefId": "juskala01w",
+    "blended": false
+  },
+  {
+    "name": "Gabby Williams",
+    "team": "GSV",
+    "pos": "F",
+    "games": 37,
+    "mpg": 24.8,
+    "bbrefId": "williga01w",
+    "blended": false
+  },
+  {
+    "name": "Sarah Ashlee Barker",
+    "team": "POR",
+    "pos": "G",
+    "games": 26,
+    "mpg": 24.7,
+    "bbrefId": "barkesa01w",
+    "blended": false
+  },
+  {
+    "name": "Azura Stevens",
+    "team": "CHI",
+    "pos": "F-C",
+    "games": 31,
+    "mpg": 24.6,
+    "bbrefId": "steveaz01w",
+    "blended": false
+  },
+  {
+    "name": "Emily Engstler",
+    "team": "POR",
+    "pos": "F",
+    "games": 39,
+    "mpg": 24.5,
+    "bbrefId": "engstem01w",
+    "blended": false
+  },
+  {
+    "name": "NaLyssa Smith",
+    "team": "LVA",
+    "pos": "F",
+    "games": 38,
+    "mpg": 24.3,
+    "bbrefId": "smithna01w",
+    "blended": false
+  },
+  {
+    "name": "Kayla Thornton",
+    "team": "GSV",
+    "pos": "F",
+    "games": 39,
+    "mpg": 24.1,
+    "bbrefId": "thornka01w",
+    "blended": false
+  },
+  {
+    "name": "Megan DiLeo",
+    "team": "POR",
+    "pos": "C",
+    "games": 37,
+    "mpg": 24,
+    "bbrefId": "gustame01w",
+    "blended": false
+  },
+  {
+    "name": "Nyara Sabally",
+    "team": "TOR",
+    "pos": "F",
+    "games": 24,
+    "mpg": 23.9,
+    "bbrefId": "sabalny01w",
+    "blended": false
+  },
+  {
+    "name": "Kennedy Burke",
+    "team": "CON",
+    "pos": "G-F",
+    "games": 37,
+    "mpg": 23.8,
+    "bbrefId": "burkeke01w",
+    "blended": false
+  },
+  {
+    "name": "Isabelle Harrison",
+    "team": "TOR",
+    "pos": "F",
+    "games": 28,
+    "mpg": 23.5,
+    "bbrefId": "harriis01w",
+    "blended": false
+  },
+  {
+    "name": "Charlisse Leger-Walker",
+    "team": "CON",
+    "pos": "G",
+    "games": 39,
+    "mpg": 23.5,
+    "bbrefId": "legerch01w",
+    "blended": false
+  },
+  {
+    "name": "Pauline Astier",
+    "team": "NYL",
+    "pos": "G",
+    "games": 40,
+    "mpg": 23.3,
+    "bbrefId": "astiepa01w",
+    "blended": false
+  },
+  {
+    "name": "Nia Coffey",
+    "team": "MIN",
+    "pos": "F",
+    "games": 39,
+    "mpg": 23.1,
+    "bbrefId": "coffeni01w",
+    "blended": false
+  },
+  {
+    "name": "Georgia Amoore",
+    "team": "WAS",
+    "pos": "G",
+    "games": 40,
+    "mpg": 23,
+    "bbrefId": "amoorge01w",
+    "blended": false
+  },
+  {
+    "name": "Noémie Brochant",
+    "team": "PHO",
+    "pos": "F-G",
+    "games": 39,
+    "mpg": 22.9,
+    "bbrefId": "brochno01w",
+    "blended": false
+  },
+  {
+    "name": "Sophie Cunningham",
+    "team": "IND",
+    "pos": "G",
+    "games": 39,
+    "mpg": 22.7,
+    "bbrefId": "cunniso01w",
+    "blended": false
+  },
+  {
+    "name": "Saniya Rivers",
+    "team": "CON",
+    "pos": "G",
+    "games": 35,
+    "mpg": 22.6,
+    "bbrefId": "riversa01w",
+    "blended": false
+  },
+  {
+    "name": "Diamond Miller",
+    "team": "CON",
+    "pos": "F",
+    "games": 39,
+    "mpg": 22.4,
+    "bbrefId": "milledi03w",
+    "blended": false
+  },
+  {
+    "name": "Janelle Salaün",
+    "team": "GSV",
+    "pos": "F",
+    "games": 38,
+    "mpg": 22.3,
+    "bbrefId": "salauja01w",
+    "blended": false
+  },
+  {
+    "name": "Brittney Griner",
+    "team": "CON",
+    "pos": "C",
+    "games": 57,
+    "mpg": 22.2,
+    "bbrefId": "grinebr01w",
+    "blended": true
+  },
+  {
+    "name": "Natasha Mack",
+    "team": "PHO",
+    "pos": "F-C",
+    "games": 32,
+    "mpg": 22.2,
+    "bbrefId": "mackna01w",
+    "blended": false
+  },
+  {
+    "name": "Kiah Stokes",
+    "team": "GSV",
+    "pos": "C",
+    "games": 38,
+    "mpg": 22.2,
+    "bbrefId": "stokeki01w",
+    "blended": false
+  },
+  {
+    "name": "Aneesah Morrow",
+    "team": "TOR",
+    "pos": "F",
+    "games": 27,
+    "mpg": 22.2,
+    "bbrefId": "morroan02w",
+    "blended": false
+  },
+  {
+    "name": "Courtney Vandersloot",
+    "team": "CHI",
+    "pos": "G",
+    "games": 23,
+    "mpg": 22,
+    "bbrefId": "vandeco01w",
+    "blended": false
+  },
+  {
+    "name": "Monique Akoa Makani",
+    "team": "LAS",
+    "pos": "G",
+    "games": 25,
+    "mpg": 21.8,
+    "bbrefId": "akoamo01w",
+    "blended": false
+  },
+  {
+    "name": "Olivia Nelson-Ododa",
+    "team": "CON",
+    "pos": "C",
+    "games": 32,
+    "mpg": 21.4,
+    "bbrefId": "nelsool01w",
+    "blended": false
+  },
+  {
+    "name": "Marine Johannes",
+    "team": "NYL",
+    "pos": "G",
+    "games": 37,
+    "mpg": 20.8,
+    "bbrefId": "johanma01w",
+    "blended": false
+  },
+  {
+    "name": "Jacy Sheldon",
+    "team": "CHI",
+    "pos": "G",
+    "games": 40,
+    "mpg": 20.7,
+    "bbrefId": "sheldja01w",
+    "blended": false
+  },
+  {
+    "name": "Sydney Taylor",
+    "team": "CHI",
+    "pos": "G",
+    "games": 33,
+    "mpg": 20.3,
+    "bbrefId": "taylosy01w",
+    "blended": false
+  },
+  {
+    "name": "Aaliyah Edwards",
+    "team": "CON",
+    "pos": "F",
+    "games": 25,
+    "mpg": 20,
+    "bbrefId": "edwaraa01w",
+    "blended": false
+  },
+  {
+    "name": "Cotie McMahon",
+    "team": "WAS",
+    "pos": "G",
+    "games": 38,
+    "mpg": 19.7,
+    "bbrefId": "mcmahco01w",
+    "blended": false
+  },
+  {
+    "name": "Monique Billings",
+    "team": "IND",
+    "pos": "F",
+    "games": 39,
+    "mpg": 19.6,
+    "bbrefId": "billimo01w",
+    "blended": false
+  },
+  {
+    "name": "Kaila Charles",
+    "team": "GSV",
+    "pos": "G-F",
+    "games": 39,
+    "mpg": 19.4,
+    "bbrefId": "charlka01w",
+    "blended": false
+  },
+  {
+    "name": "Lexie Hull",
+    "team": "IND",
+    "pos": "G",
+    "games": 40,
+    "mpg": 19.2,
+    "bbrefId": "hullle01w",
+    "blended": false
+  },
+  {
+    "name": "Makayla Timpson",
+    "team": "IND",
+    "pos": "F-C",
+    "games": 39,
+    "mpg": 19.2,
+    "bbrefId": "timpsma01w",
+    "blended": false
+  },
+  {
+    "name": "Cecilia Zandalasini",
+    "team": "GSV",
+    "pos": "F",
+    "games": 35,
+    "mpg": 19.1,
+    "bbrefId": "zandace01w",
+    "blended": false
+  },
+  {
+    "name": "Gabriela Jaquez",
+    "team": "CHI",
+    "pos": "G",
+    "games": 35,
+    "mpg": 18.9,
+    "bbrefId": "jaquega01w",
+    "blended": false
+  },
+  {
+    "name": "Cameron Brink",
+    "team": "LAS",
+    "pos": "F",
+    "games": 29,
+    "mpg": 18.8,
+    "bbrefId": "brinkca01w",
+    "blended": false
+  },
+  {
+    "name": "Rebecca Allen",
+    "team": "NYL",
+    "pos": "F-G",
+    "games": 25,
+    "mpg": 18.4,
+    "bbrefId": "allenre01w",
+    "blended": false
+  },
+  {
+    "name": "Alanna Smith",
+    "team": "DAL",
+    "pos": "F",
+    "games": 31,
+    "mpg": 17.9,
+    "bbrefId": "smithal01w",
+    "blended": false
+  },
+  {
+    "name": "Awak Kuier",
+    "team": "DAL",
+    "pos": "F",
+    "games": 36,
+    "mpg": 17.6,
+    "bbrefId": "kuieraw01w",
+    "blended": false
+  },
+  {
+    "name": "Jordan Horston",
+    "team": "SEA",
+    "pos": "F",
+    "games": 34,
+    "mpg": 17.5,
+    "bbrefId": "horstjo02w",
+    "blended": false
+  },
+  {
+    "name": "Nyadiew Puoch",
+    "team": "POR",
+    "pos": "F",
+    "games": 38,
+    "mpg": 17.5,
+    "bbrefId": "puochny01w",
+    "blended": false
+  },
+  {
+    "name": "Temi Fagbenle",
+    "team": "TOR",
+    "pos": "C",
+    "games": 23,
+    "mpg": 17.3,
+    "bbrefId": "fagbete01w",
+    "blended": false
+  },
+  {
+    "name": "Lauren Betts",
+    "team": "WAS",
+    "pos": "C",
+    "games": 40,
+    "mpg": 17.1,
+    "bbrefId": "bettsla01w",
+    "blended": false
+  },
+  {
+    "name": "Stephanie Talbot",
+    "team": "LVA",
+    "pos": "F",
+    "games": 40,
+    "mpg": 16.9,
+    "bbrefId": "talbost01w",
+    "blended": false
+  },
+  {
+    "name": "Luisa Geiselsöder",
+    "team": "POR",
+    "pos": "C",
+    "games": 21,
+    "mpg": 16.6,
+    "bbrefId": "geiselu01w",
+    "blended": false
+  },
+  {
+    "name": "Betnijah Laney-Hamilton",
+    "team": "WAS",
+    "pos": "G-F",
+    "games": 26,
+    "mpg": 16.6,
+    "bbrefId": "laneybe01w",
+    "blended": false
+  },
+  {
+    "name": "Valeriane Ayayi",
+    "team": "PHO",
+    "pos": "F",
+    "games": 33,
+    "mpg": 16.5,
+    "bbrefId": "ayayiva01w",
+    "blended": false
+  },
+  {
+    "name": "Tiffany Hayes",
+    "team": "GSV",
+    "pos": "G",
+    "games": 37,
+    "mpg": 16.5,
+    "bbrefId": "hayesti01w",
+    "blended": false
+  },
+  {
+    "name": "Elizabeth Williams",
+    "team": "CHI",
+    "pos": "C-F",
+    "games": 40,
+    "mpg": 16.4,
+    "bbrefId": "williel01w",
+    "blended": false
+  }
+]

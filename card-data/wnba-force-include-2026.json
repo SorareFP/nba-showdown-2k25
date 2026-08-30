@@ -1,0 +1,10 @@
+{
+  "_comment": "Players who join the WNBA pool REGARDLESS of the MPG>=16 / G>=20 rule. This file COMPOSES with that rule rather than replacing it: scripts/cardgen/wnba/generateWnbaCards.js keeps everyone the rule already admits and adds everyone named here, so an entry can only ever ADD a player. Keyed by the player name exactly as Basketball-Reference's WNBA per-game table spells it; a name matching no row is reported and the run exits non-zero rather than leaving the pool quietly one player short. WHY THESE SIX: the G>=20 half of the rule drops anyone whose season was cut short, star or not. Every name below was a 25+ MPG player when healthy — the same standard the NBA pool's injury exceptions were chosen against — and each is excluded on games alone. Deliberately NOT included: Rickea Jackson (4 G) and Kara Dunn (1 G), whose samples are too thin to card on even with a blend. THEIR NUMBERS ARE BLENDED, unlike the NBA's: each of these six is carded on 2025 AND 2026 pooled by volume, per stat, against the denominator each stat is a rate over (possessions for per-100 and rate percentages, the relevant attempts for each shooting percentage, minutes for per-four-minute production, sums for season totals). That blend is possible here and blocked on the NBA side for one reason only — Basketball-Reference publishes WNBA 2025 in full and for free, where dunksandthrees paywalls prior NBA seasons. See scripts/cardgen/wnba/pool.js.",
+
+  "Kelsey Plum": "injury-shortened 2026: 17 G at 30.5 MPG",
+  "Napheesa Collier": "injury-shortened 2026: 11 G at 30.0 MPG",
+  "Brittney Sykes": "injury-shortened 2026: 17 G at 29.4 MPG",
+  "Skylar Diggins": "injury-shortened 2026: 19 G at 29.1 MPG",
+  "Brittney Griner": "injury-shortened 2026: 18 G at 25.3 MPG",
+  "Leonie Fiebich": "injury-shortened 2026: 17 G at 29.6 MPG"
+}

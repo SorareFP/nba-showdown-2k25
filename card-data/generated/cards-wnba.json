@@ -1,0 +1,8315 @@
+{
+ "generatedAt": "2026-08-30T15:41:20.982Z",
+ "provisional": true,
+ "set": "wnba",
+ "league": "WNBA",
+ "statsSeason": "2026",
+ "blendSeason": "2025",
+ "poolRule": {
+  "minMpg": 16,
+  "minGames": 20
+ },
+ "poolSize": 107,
+ "byRule": 101,
+ "forced": [
+  "Napheesa Collier",
+  "Skylar Diggins",
+  "Leonie Fiebich",
+  "Brittney Griner",
+  "Brittney Sykes",
+  "Kelsey Plum"
+ ],
+ "sources": {
+  "origin": "basketball-reference.com/wnba season tables (per-game, advanced, per-100), 2025-2026",
+  "speedPower": "z(fitted BPM) + 0.35 * z(fitted VORP per game), mapped onto the finished set's Speed+Power distribution with the current NBA pool as the calibration basis. Both sides of that map are scored with the SAME fitted model, so its compression cancels.",
+  "bpm": "FITTED. Basketball-Reference publishes no BPM, OBPM, DBPM or VORP for the WNBA. The model is regressed on 15 NBA seasons using only inputs the WNBA pages also carry, every input centred on its own league-season mean. See card-data/generated/wnba-bpm-model.json for the out-of-sample R² and what real BPM uses that this cannot.",
+  "defBoost": "the fitted DBPM, rounded — the special sets' rule on a fitted input",
+  "paintBoost": "2P% standing in for rim FG%, which Basketball-Reference does not carry for either league",
+  "shotLine": "real WNBA TS%, compressed onto the finished set's Shot Line distribution using the WNBA POOL as the compression basis, so a league-wide shooting offset cancels instead of becoming a flat balance change",
+  "chart": "synthesized from Basketball-Reference WNBA season TOTALS: production per four-minute section is 4 * total / minutes, measured, with no pace in it. For reference, a 40-minute WNBA game at the measured 2026 league pace of 79.24 possessions per 40 minutes makes a four-minute section 7.924 possessions, against the NBA convention's 8.333 — which is what a per-100 rate would have had to be read against, and what carries each team’s own pace as error. Same synthesis model as the base set.",
+  "missing": [
+   "BPM",
+   "OBPM",
+   "DBPM",
+   "VORP",
+   "EPM",
+   "rim FG%",
+   "DRB%"
+  ]
+ },
+ "note": "PROVISIONAL, and league-relative by design. Every cross-league number here says where a player stands in HER OWN league, placed on the NBA set's scale so the cards can share a table. It is not a claim that the leagues are equally strong; no published data could settle that.",
+ "cards": [
+  {
+   "id": "A_ja_Wilson",
+   "name": "A'ja Wilson",
+   "team": "LVA",
+   "pos": "C",
+   "speed": 10,
+   "power": 18,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": 1,
+   "defBoost": 2,
+   "salary": 1190,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 13,
+     "pts": 4,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 19,
+     "pts": 4,
+     "reb": 2,
+     "ast": 1
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 6,
+     "reb": 3,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 37,
+   "mpg": 32,
+   "bbrefId": "wilsoa01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 9.29,
+    "obpmHat": 7.22,
+    "dbpmHat": 2.06,
+    "per": 31.9,
+    "ws": 8,
+    "wsPer40": 0.27,
+    "offRtg": 120,
+    "defRtg": 102,
+    "tsPct": 0.62,
+    "pts100": 40.9
+   },
+   "provisional": true
+  },
+  {
+   "id": "Aaliyah_Edwards",
+   "name": "Aaliyah Edwards",
+   "team": "CON",
+   "pos": "F",
+   "speed": 8,
+   "power": 8,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": -1,
+   "salary": 430,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 14,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 19,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 5,
+     "reb": 3,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 25,
+   "mpg": 20,
+   "bbrefId": "edwaraa01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -1.18,
+    "obpmHat": -0.6,
+    "dbpmHat": -0.58,
+    "per": 16.8,
+    "ws": 1,
+    "wsPer40": 0.077,
+    "offRtg": 106,
+    "defRtg": 110,
+    "tsPct": 0.59,
+    "pts100": 26.5
+   },
+   "provisional": true
+  },
+  {
+   "id": "Alanna_Smith",
+   "name": "Alanna Smith",
+   "team": "DAL",
+   "pos": "F",
+   "speed": 7,
+   "power": 8,
+   "shotLine": 16,
+   "paintBoost": 2,
+   "threePtBoost": -2,
+   "defBoost": 1,
+   "salary": 250,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 19,
+     "pts": 2,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 3,
+     "reb": 3,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 31,
+   "mpg": 17.9,
+   "bbrefId": "smithal01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -1.74,
+    "obpmHat": -2.36,
+    "dbpmHat": 0.61,
+    "per": 11.8,
+    "ws": 0.8,
+    "wsPer40": 0.061,
+    "offRtg": 100,
+    "defRtg": 107,
+    "tsPct": 0.533,
+    "pts100": 17.1
+   },
+   "provisional": true
+  },
+  {
+   "id": "Aliyah_Boston",
+   "name": "Aliyah Boston",
+   "team": "IND",
+   "pos": "C-F",
+   "speed": 9,
+   "power": 16,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": 2,
+   "defBoost": 2,
+   "salary": 1090,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 10,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 11,
+     "hi": 13,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    },
+    {
+     "lo": 14,
+     "hi": 19,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 5,
+     "reb": 3,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 36,
+   "mpg": 27.6,
+   "bbrefId": "bostoal01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 5.67,
+    "obpmHat": 3.8,
+    "dbpmHat": 1.88,
+    "per": 24.6,
+    "ws": 5,
+    "wsPer40": 0.203,
+    "offRtg": 117,
+    "defRtg": 104,
+    "tsPct": 0.614,
+    "pts100": 30.2
+   },
+   "provisional": true
+  },
+  {
+   "id": "Allisha_Gray",
+   "name": "Allisha Gray",
+   "team": "ATL",
+   "pos": "G",
+   "speed": 13,
+   "power": 9,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 0,
+   "salary": 730,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 14,
+     "pts": 3,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 18,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 19,
+     "hi": 99,
+     "pts": 4,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 39,
+   "mpg": 32.9,
+   "bbrefId": "grayal01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 2.68,
+    "obpmHat": 2.53,
+    "dbpmHat": 0.15,
+    "per": 17.7,
+    "ws": 5.3,
+    "wsPer40": 0.167,
+    "offRtg": 119,
+    "defRtg": 109,
+    "tsPct": 0.579,
+    "pts100": 29
+   },
+   "provisional": true
+  },
+  {
+   "id": "Alyssa_Thomas",
+   "name": "Alyssa Thomas",
+   "team": "PHO",
+   "pos": "F",
+   "speed": 11,
+   "power": 12,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 1,
+   "salary": 820,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 10,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 19,
+     "pts": 2,
+     "reb": 1,
+     "ast": 2
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 3
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 38,
+   "mpg": 33.5,
+   "bbrefId": "thomaal01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 2.78,
+    "obpmHat": 1.93,
+    "dbpmHat": 0.85,
+    "per": 19.4,
+    "ws": 3.7,
+    "wsPer40": 0.117,
+    "offRtg": 110,
+    "defRtg": 109,
+    "tsPct": 0.559,
+    "pts100": 21.5
+   },
+   "provisional": true
+  },
+  {
+   "id": "Aneesah_Morrow",
+   "name": "Aneesah Morrow",
+   "team": "TOR",
+   "pos": "F",
+   "speed": 8,
+   "power": 9,
+   "shotLine": 17,
+   "paintBoost": 0,
+   "threePtBoost": -2,
+   "defBoost": -1,
+   "salary": 250,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 9,
+     "pts": 0,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 16,
+     "pts": 2,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 17,
+     "hi": 18,
+     "pts": 3,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 19,
+     "hi": 99,
+     "pts": 4,
+     "reb": 4,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 27,
+   "mpg": 22.2,
+   "bbrefId": "morroan02w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -0.35,
+    "obpmHat": 0.37,
+    "dbpmHat": -0.72,
+    "per": 17.6,
+    "ws": 0.8,
+    "wsPer40": 0.054,
+    "offRtg": 100,
+    "defRtg": 107,
+    "tsPct": 0.492,
+    "pts100": 24.9
+   },
+   "provisional": true
+  },
+  {
+   "id": "Angel_Reese",
+   "name": "Angel Reese",
+   "team": "ATL",
+   "pos": "F",
+   "speed": 10,
+   "power": 11,
+   "shotLine": 17,
+   "paintBoost": 0,
+   "threePtBoost": -3,
+   "defBoost": 1,
+   "salary": 450,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 16,
+     "pts": 2,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 17,
+     "hi": 19,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 4,
+     "reb": 4,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 38,
+   "mpg": 31.5,
+   "bbrefId": "reesean01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 1.78,
+    "obpmHat": 1.07,
+    "dbpmHat": 0.71,
+    "per": 20,
+    "ws": 4.1,
+    "wsPer40": 0.135,
+    "offRtg": 106,
+    "defRtg": 102,
+    "tsPct": 0.511,
+    "pts100": 25.4
+   },
+   "provisional": true
+  },
+  {
+   "id": "Ariel_Atkins",
+   "name": "Ariel Atkins",
+   "team": "LAS",
+   "pos": "G",
+   "speed": 8,
+   "power": 6,
+   "shotLine": 17,
+   "paintBoost": 0,
+   "threePtBoost": -2,
+   "defBoost": 0,
+   "salary": 140,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 16,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 17,
+     "hi": 19,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 37,
+   "mpg": 27.5,
+   "bbrefId": "atkinar01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -2.07,
+    "obpmHat": -2.37,
+    "dbpmHat": 0.29,
+    "per": 10.3,
+    "ws": 0.6,
+    "wsPer40": 0.023,
+    "offRtg": 99,
+    "defRtg": 112,
+    "tsPct": 0.49,
+    "pts100": 15.5
+   },
+   "provisional": true
+  },
+  {
+   "id": "Arike_Ogunbowale",
+   "name": "Arike Ogunbowale",
+   "team": "DAL",
+   "pos": "G",
+   "speed": 11,
+   "power": 7,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": -1,
+   "salary": 450,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 15,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 18,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 19,
+     "hi": 99,
+     "pts": 4,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 39,
+   "mpg": 29.9,
+   "bbrefId": "ogunbar01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 0.14,
+    "obpmHat": 1.11,
+    "dbpmHat": -0.97,
+    "per": 15.1,
+    "ws": 2.8,
+    "wsPer40": 0.095,
+    "offRtg": 110,
+    "defRtg": 112,
+    "tsPct": 0.536,
+    "pts100": 25.8
+   },
+   "provisional": true
+  },
+  {
+   "id": "Awa_Fam",
+   "name": "Awa Fam",
+   "team": "SEA",
+   "pos": "C",
+   "speed": 6,
+   "power": 11,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 0,
+   "salary": 500,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 19,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 33,
+   "mpg": 27.6,
+   "bbrefId": "famaw01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -0.57,
+    "obpmHat": -0.37,
+    "dbpmHat": -0.2,
+    "per": 13.7,
+    "ws": 1.7,
+    "wsPer40": 0.073,
+    "offRtg": 106,
+    "defRtg": 110,
+    "tsPct": 0.558,
+    "pts100": 18.6
+   },
+   "provisional": true
+  },
+  {
+   "id": "Awak_Kuier",
+   "name": "Awak Kuier",
+   "team": "DAL",
+   "pos": "F",
+   "speed": 10,
+   "power": 10,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 2,
+   "salary": 690,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 10,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 11,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 19,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 3,
+     "reb": 3,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 36,
+   "mpg": 17.6,
+   "bbrefId": "kuieraw01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 1.38,
+    "obpmHat": -0.66,
+    "dbpmHat": 2.03,
+    "per": 15.2,
+    "ws": 1.7,
+    "wsPer40": 0.108,
+    "offRtg": 107,
+    "defRtg": 104,
+    "tsPct": 0.578,
+    "pts100": 17.3
+   },
+   "provisional": true
+  },
+  {
+   "id": "Azura_Stevens",
+   "name": "Azura Stevens",
+   "team": "CHI",
+   "pos": "F-C",
+   "speed": 8,
+   "power": 8,
+   "shotLine": 17,
+   "paintBoost": 0,
+   "threePtBoost": -3,
+   "defBoost": 0,
+   "salary": 190,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 16,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 17,
+     "hi": 19,
+     "pts": 2,
+     "reb": 2,
+     "ast": 1
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 4,
+     "reb": 3,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 31,
+   "mpg": 24.6,
+   "bbrefId": "steveaz01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -0.84,
+    "obpmHat": -1.1,
+    "dbpmHat": 0.26,
+    "per": 13.9,
+    "ws": 1.1,
+    "wsPer40": 0.056,
+    "offRtg": 99,
+    "defRtg": 107,
+    "tsPct": 0.509,
+    "pts100": 21.4
+   },
+   "provisional": true
+  },
+  {
+   "id": "Azzi_Fudd",
+   "name": "Azzi Fudd",
+   "team": "DAL",
+   "pos": "G",
+   "speed": 11,
+   "power": 8,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 2,
+   "defBoost": 1,
+   "salary": 700,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 14,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 20,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 30,
+   "mpg": 31.7,
+   "bbrefId": "fuddaz01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 0.7,
+    "obpmHat": -0.03,
+    "dbpmHat": 0.73,
+    "per": 14,
+    "ws": 2.1,
+    "wsPer40": 0.088,
+    "offRtg": 108,
+    "defRtg": 109,
+    "tsPct": 0.558,
+    "pts100": 21.1
+   },
+   "provisional": true
+  },
+  {
+   "id": "Betnijah_Laney_Hamilton",
+   "name": "Betnijah Laney-Hamilton",
+   "team": "WAS",
+   "pos": "G-F",
+   "speed": 7,
+   "power": 5,
+   "shotLine": 17,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": -1,
+   "salary": 110,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 10,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 11,
+     "hi": 16,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 17,
+     "hi": 18,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 19,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 2
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 26,
+   "mpg": 16.6,
+   "bbrefId": "laneybe01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -3.78,
+    "obpmHat": -3.25,
+    "dbpmHat": -0.53,
+    "per": 7.7,
+    "ws": 0.2,
+    "wsPer40": 0.021,
+    "offRtg": 96,
+    "defRtg": 111,
+    "tsPct": 0.507,
+    "pts100": 14.5
+   },
+   "provisional": true
+  },
+  {
+   "id": "Breanna_Stewart",
+   "name": "Breanna Stewart",
+   "team": "NYL",
+   "pos": "F",
+   "speed": 12,
+   "power": 13,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": -3,
+   "defBoost": 1,
+   "salary": 780,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 10,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 11,
+     "hi": 14,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 19,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 5,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 39,
+   "mpg": 33,
+   "bbrefId": "stewabr01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 5.26,
+    "obpmHat": 4.09,
+    "dbpmHat": 1.17,
+    "per": 23.2,
+    "ws": 6.1,
+    "wsPer40": 0.189,
+    "offRtg": 116,
+    "defRtg": 105,
+    "tsPct": 0.569,
+    "pts100": 31.4
+   },
+   "provisional": true
+  },
+  {
+   "id": "Bridget_Carleton",
+   "name": "Bridget Carleton",
+   "team": "POR",
+   "pos": "F",
+   "speed": 11,
+   "power": 11,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 0,
+   "salary": 730,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 18,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 19,
+     "hi": 99,
+     "pts": 4,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 38,
+   "mpg": 30.7,
+   "bbrefId": "carlebr01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 2.08,
+    "obpmHat": 2.11,
+    "dbpmHat": -0.03,
+    "per": 16.2,
+    "ws": 2.7,
+    "wsPer40": 0.094,
+    "offRtg": 112,
+    "defRtg": 113,
+    "tsPct": 0.56,
+    "pts100": 23.8
+   },
+   "provisional": true
+  },
+  {
+   "id": "Brittney_Griner",
+   "name": "Brittney Griner",
+   "team": "CON",
+   "pos": "C",
+   "speed": 7,
+   "power": 11,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 0,
+   "salary": 550,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 19,
+     "pts": 3,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 4,
+     "reb": 3,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2025+2026",
+   "games": 57,
+   "mpg": 22.2,
+   "bbrefId": "grinebr01w",
+   "blended": true,
+   "seasonsPooled": [
+    2025,
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 0.19,
+    "obpmHat": -0.15,
+    "dbpmHat": 0.35,
+    "per": 17.5,
+    "ws": 3.6,
+    "wsPer40": 0.114,
+    "offRtg": 105,
+    "defRtg": 103,
+    "tsPct": 0.5628439407149084,
+    "pts100": 25
+   },
+   "provisional": true
+  },
+  {
+   "id": "Brittney_Sykes",
+   "name": "Brittney Sykes",
+   "team": "TOR",
+   "pos": "G",
+   "speed": 10,
+   "power": 6,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": -2,
+   "defBoost": -1,
+   "salary": 280,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 15,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 18,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 19,
+     "hi": 99,
+     "pts": 4,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2025+2026",
+   "games": 56,
+   "mpg": 30.3,
+   "bbrefId": "sykesbr01w",
+   "blended": true,
+   "seasonsPooled": [
+    2025,
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -0.87,
+    "obpmHat": -0.09,
+    "dbpmHat": -0.78,
+    "per": 15.1,
+    "ws": 2.3,
+    "wsPer40": 0.054,
+    "offRtg": 101,
+    "defRtg": 110,
+    "tsPct": 0.5128562834541235,
+    "pts100": 25.8
+   },
+   "provisional": true
+  },
+  {
+   "id": "Caitlin_Clark",
+   "name": "Caitlin Clark",
+   "team": "IND",
+   "pos": "G",
+   "speed": 15,
+   "power": 10,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": -1,
+   "salary": 940,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 3,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 10,
+     "hi": 13,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 14,
+     "hi": 19,
+     "pts": 4,
+     "reb": 1,
+     "ast": 2
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 5,
+     "reb": 1,
+     "ast": 3
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 36,
+   "mpg": 31.3,
+   "bbrefId": "clarkca02w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 5.1,
+    "obpmHat": 5.64,
+    "dbpmHat": -0.53,
+    "per": 22.8,
+    "ws": 4.6,
+    "wsPer40": 0.165,
+    "offRtg": 114,
+    "defRtg": 112,
+    "tsPct": 0.608,
+    "pts100": 35.4
+   },
+   "provisional": true
+  },
+  {
+   "id": "Cameron_Brink",
+   "name": "Cameron Brink",
+   "team": "LAS",
+   "pos": "F",
+   "speed": 8,
+   "power": 9,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 1,
+   "salary": 610,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 13,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 18,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    },
+    {
+     "lo": 19,
+     "hi": 99,
+     "pts": 5,
+     "reb": 3,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 29,
+   "mpg": 18.8,
+   "bbrefId": "brinkca01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -0.31,
+    "obpmHat": -0.88,
+    "dbpmHat": 0.57,
+    "per": 17,
+    "ws": 0.9,
+    "wsPer40": 0.067,
+    "offRtg": 102,
+    "defRtg": 108,
+    "tsPct": 0.619,
+    "pts100": 25
+   },
+   "provisional": true
+  },
+  {
+   "id": "Carla_Leite",
+   "name": "Carla Leite",
+   "team": "POR",
+   "pos": "G",
+   "speed": 12,
+   "power": 8,
+   "shotLine": 14,
+   "paintBoost": -1,
+   "threePtBoost": 1,
+   "defBoost": -2,
+   "salary": 730,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 10,
+     "hi": 13,
+     "pts": 3,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 14,
+     "hi": 19,
+     "pts": 3,
+     "reb": 1,
+     "ast": 2
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 5,
+     "reb": 1,
+     "ast": 3
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 36,
+   "mpg": 25.9,
+   "bbrefId": "leiteca01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 1.22,
+    "obpmHat": 3.23,
+    "dbpmHat": -2.01,
+    "per": 19.8,
+    "ws": 2.7,
+    "wsPer40": 0.118,
+    "offRtg": 115,
+    "defRtg": 119,
+    "tsPct": 0.604,
+    "pts100": 31.2
+   },
+   "provisional": true
+  },
+  {
+   "id": "Cecilia_Zandalasini",
+   "name": "Cecilia Zandalasini",
+   "team": "GSV",
+   "pos": "F",
+   "speed": 9,
+   "power": 9,
+   "shotLine": 17,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 1,
+   "salary": 440,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 16,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 17,
+     "hi": 19,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 4,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 35,
+   "mpg": 19.1,
+   "bbrefId": "zandace01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 0.07,
+    "obpmHat": -0.93,
+    "dbpmHat": 1,
+    "per": 12.1,
+    "ws": 1.2,
+    "wsPer40": 0.07,
+    "offRtg": 98,
+    "defRtg": 103,
+    "tsPct": 0.506,
+    "pts100": 24.7
+   },
+   "provisional": true
+  },
+  {
+   "id": "Charlisse_Leger_Walker",
+   "name": "Charlisse Leger-Walker",
+   "team": "CON",
+   "pos": "G",
+   "speed": 7,
+   "power": 5,
+   "shotLine": 17,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 0,
+   "salary": 140,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 16,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 17,
+     "hi": 19,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 2
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 39,
+   "mpg": 23.5,
+   "bbrefId": "legerch01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -3.43,
+    "obpmHat": -3.02,
+    "dbpmHat": -0.41,
+    "per": 8.9,
+    "ws": 0,
+    "wsPer40": -0.001,
+    "offRtg": 94,
+    "defRtg": 113,
+    "tsPct": 0.483,
+    "pts100": 15
+   },
+   "provisional": true
+  },
+  {
+   "id": "Chelsea_Gray",
+   "name": "Chelsea Gray",
+   "team": "LVA",
+   "pos": "G",
+   "speed": 12,
+   "power": 8,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 1,
+   "salary": 680,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 10,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 11,
+     "hi": 14,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 19,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 2
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 39,
+   "mpg": 32.9,
+   "bbrefId": "graych01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 1.4,
+    "obpmHat": 0.76,
+    "dbpmHat": 0.64,
+    "per": 14.3,
+    "ws": 2.8,
+    "wsPer40": 0.088,
+    "offRtg": 108,
+    "defRtg": 110,
+    "tsPct": 0.56,
+    "pts100": 18.4
+   },
+   "provisional": true
+  },
+  {
+   "id": "Cotie_McMahon",
+   "name": "Cotie McMahon",
+   "team": "WAS",
+   "pos": "G",
+   "speed": 8,
+   "power": 5,
+   "shotLine": 17,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 0,
+   "salary": 180,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 16,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 17,
+     "hi": 18,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 19,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 38,
+   "mpg": 19.7,
+   "bbrefId": "mcmahco01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -2.71,
+    "obpmHat": -2.9,
+    "dbpmHat": 0.2,
+    "per": 9.1,
+    "ws": 1.1,
+    "wsPer40": 0.057,
+    "offRtg": 99,
+    "defRtg": 107,
+    "tsPct": 0.48,
+    "pts100": 16.6
+   },
+   "provisional": true
+  },
+  {
+   "id": "Courtney_Vandersloot",
+   "name": "Courtney Vandersloot",
+   "team": "CHI",
+   "pos": "G",
+   "speed": 12,
+   "power": 8,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 1,
+   "salary": 620,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 10,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 19,
+     "pts": 2,
+     "reb": 1,
+     "ast": 2
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 4,
+     "reb": 2,
+     "ast": 3
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 23,
+   "mpg": 22,
+   "bbrefId": "vandeco01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 1.76,
+    "obpmHat": 0.82,
+    "dbpmHat": 0.94,
+    "per": 16.6,
+    "ws": 1.2,
+    "wsPer40": 0.093,
+    "offRtg": 107,
+    "defRtg": 109,
+    "tsPct": 0.549,
+    "pts100": 20.1
+   },
+   "provisional": true
+  },
+  {
+   "id": "Courtney_Williams",
+   "name": "Courtney Williams",
+   "team": "MIN",
+   "pos": "G",
+   "speed": 12,
+   "power": 9,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 0,
+   "salary": 620,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 18,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 19,
+     "hi": 99,
+     "pts": 4,
+     "reb": 2,
+     "ast": 2
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 38,
+   "mpg": 30.6,
+   "bbrefId": "willico01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 1.64,
+    "obpmHat": 1.2,
+    "dbpmHat": 0.45,
+    "per": 16.2,
+    "ws": 3.4,
+    "wsPer40": 0.119,
+    "offRtg": 109,
+    "defRtg": 107,
+    "tsPct": 0.515,
+    "pts100": 23.8
+   },
+   "provisional": true
+  },
+  {
+   "id": "Dearica_Hamby",
+   "name": "Dearica Hamby",
+   "team": "LAS",
+   "pos": "F",
+   "speed": 10,
+   "power": 10,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 0,
+   "salary": 720,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 19,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 4,
+     "reb": 3,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 39,
+   "mpg": 28.9,
+   "bbrefId": "hambyde01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 1.4,
+    "obpmHat": 1.35,
+    "dbpmHat": 0.05,
+    "per": 19.2,
+    "ws": 3.5,
+    "wsPer40": 0.126,
+    "offRtg": 114,
+    "defRtg": 111,
+    "tsPct": 0.602,
+    "pts100": 24.9
+   },
+   "provisional": true
+  },
+  {
+   "id": "DeWanna_Bonner",
+   "name": "DeWanna Bonner",
+   "team": "ATL",
+   "pos": "F-G",
+   "speed": 10,
+   "power": 10,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": -3,
+   "defBoost": 1,
+   "salary": 470,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 10,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 11,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 19,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 37,
+   "mpg": 27.6,
+   "bbrefId": "bonnede01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 1.34,
+    "obpmHat": 0.36,
+    "dbpmHat": 0.97,
+    "per": 14.9,
+    "ws": 2.4,
+    "wsPer40": 0.093,
+    "offRtg": 107,
+    "defRtg": 107,
+    "tsPct": 0.522,
+    "pts100": 19.5
+   },
+   "provisional": true
+  },
+  {
+   "id": "Diamond_Miller",
+   "name": "Diamond Miller",
+   "team": "CON",
+   "pos": "F",
+   "speed": 5,
+   "power": 6,
+   "shotLine": 17,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": -1,
+   "salary": 60,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 16,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 17,
+     "hi": 19,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 4,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 39,
+   "mpg": 22.4,
+   "bbrefId": "milledi03w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -4.3,
+    "obpmHat": -3.18,
+    "dbpmHat": -1.12,
+    "per": 8.5,
+    "ws": -0.1,
+    "wsPer40": -0.003,
+    "offRtg": 95,
+    "defRtg": 113,
+    "tsPct": 0.498,
+    "pts100": 21.9
+   },
+   "provisional": true
+  },
+  {
+   "id": "Dominique_Malonga",
+   "name": "Dominique Malonga",
+   "team": "SEA",
+   "pos": "C",
+   "speed": 7,
+   "power": 13,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 0,
+   "salary": 570,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 15,
+     "pts": 3,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 19,
+     "pts": 3,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 5,
+     "reb": 4,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 30,
+   "mpg": 26.2,
+   "bbrefId": "malondo01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 1.34,
+    "obpmHat": 1.17,
+    "dbpmHat": 0.17,
+    "per": 21.5,
+    "ws": 1.6,
+    "wsPer40": 0.084,
+    "offRtg": 101,
+    "defRtg": 104,
+    "tsPct": 0.549,
+    "pts100": 32.5
+   },
+   "provisional": true
+  },
+  {
+   "id": "Elizabeth_Williams",
+   "name": "Elizabeth Williams",
+   "team": "CHI",
+   "pos": "C-F",
+   "speed": 5,
+   "power": 8,
+   "shotLine": 17,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 0,
+   "salary": 180,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 16,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 17,
+     "hi": 20,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 3,
+     "reb": 3,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 40,
+   "mpg": 16.4,
+   "bbrefId": "williel01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -2.84,
+    "obpmHat": -3.08,
+    "dbpmHat": 0.24,
+    "per": 12.3,
+    "ws": 0.7,
+    "wsPer40": 0.044,
+    "offRtg": 98,
+    "defRtg": 108,
+    "tsPct": 0.471,
+    "pts100": 15
+   },
+   "provisional": true
+  },
+  {
+   "id": "Emily_Engstler",
+   "name": "Emily Engstler",
+   "team": "POR",
+   "pos": "F",
+   "speed": 10,
+   "power": 11,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 2,
+   "salary": 740,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 19,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 4,
+     "reb": 3,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 39,
+   "mpg": 24.5,
+   "bbrefId": "engstem01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 1.75,
+    "obpmHat": -0.07,
+    "dbpmHat": 1.81,
+    "per": 16.8,
+    "ws": 2,
+    "wsPer40": 0.083,
+    "offRtg": 105,
+    "defRtg": 107,
+    "tsPct": 0.568,
+    "pts100": 20.7
+   },
+   "provisional": true
+  },
+  {
+   "id": "Erica_Wheeler",
+   "name": "Erica Wheeler",
+   "team": "LAS",
+   "pos": "G",
+   "speed": 8,
+   "power": 6,
+   "shotLine": 17,
+   "paintBoost": 0,
+   "threePtBoost": -2,
+   "defBoost": -1,
+   "salary": 120,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 16,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 17,
+     "hi": 19,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 2
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 38,
+   "mpg": 27.2,
+   "bbrefId": "wheeler01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -2.55,
+    "obpmHat": -1.46,
+    "dbpmHat": -1.09,
+    "per": 10.2,
+    "ws": 0.4,
+    "wsPer40": 0.014,
+    "offRtg": 102,
+    "defRtg": 117,
+    "tsPct": 0.502,
+    "pts100": 16.3
+   },
+   "provisional": true
+  },
+  {
+   "id": "Flau_jae_Johnson",
+   "name": "Flau'jae Johnson",
+   "team": "SEA",
+   "pos": "G",
+   "speed": 10,
+   "power": 6,
+   "shotLine": 17,
+   "paintBoost": 0,
+   "threePtBoost": -2,
+   "defBoost": 0,
+   "salary": 240,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 16,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 17,
+     "hi": 19,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 4,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 37,
+   "mpg": 28.2,
+   "bbrefId": "johnsfl03w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -0.8,
+    "obpmHat": -0.71,
+    "dbpmHat": -0.08,
+    "per": 14.3,
+    "ws": 0.8,
+    "wsPer40": 0.03,
+    "offRtg": 97,
+    "defRtg": 109,
+    "tsPct": 0.504,
+    "pts100": 24.7
+   },
+   "provisional": true
+  },
+  {
+   "id": "Gabby_Williams",
+   "name": "Gabby Williams",
+   "team": "GSV",
+   "pos": "F",
+   "speed": 11,
+   "power": 12,
+   "shotLine": 17,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 2,
+   "salary": 700,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 16,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 17,
+     "hi": 19,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 5,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 37,
+   "mpg": 24.8,
+   "bbrefId": "williga01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 3.6,
+    "obpmHat": 1.83,
+    "dbpmHat": 1.77,
+    "per": 17.9,
+    "ws": 2.7,
+    "wsPer40": 0.117,
+    "offRtg": 102,
+    "defRtg": 100,
+    "tsPct": 0.51,
+    "pts100": 30.9
+   },
+   "provisional": true
+  },
+  {
+   "id": "Gabriela_Jaquez",
+   "name": "Gabriela Jaquez",
+   "team": "CHI",
+   "pos": "G",
+   "speed": 7,
+   "power": 5,
+   "shotLine": 17,
+   "paintBoost": 0,
+   "threePtBoost": -2,
+   "defBoost": -1,
+   "salary": 20,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 16,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 17,
+     "hi": 19,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 35,
+   "mpg": 18.9,
+   "bbrefId": "jaquega01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -3.84,
+    "obpmHat": -3.13,
+    "dbpmHat": -0.71,
+    "per": 9.4,
+    "ws": 0.3,
+    "wsPer40": 0.021,
+    "offRtg": 96,
+    "defRtg": 111,
+    "tsPct": 0.508,
+    "pts100": 16.8
+   },
+   "provisional": true
+  },
+  {
+   "id": "Georgia_Amoore",
+   "name": "Georgia Amoore",
+   "team": "WAS",
+   "pos": "G",
+   "speed": 7,
+   "power": 5,
+   "shotLine": 17,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": -1,
+   "salary": 110,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 16,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 17,
+     "hi": 19,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 2
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 40,
+   "mpg": 23,
+   "bbrefId": "amoorge01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -3.71,
+    "obpmHat": -2.99,
+    "dbpmHat": -0.72,
+    "per": 6.2,
+    "ws": 0.3,
+    "wsPer40": 0.015,
+    "offRtg": 95,
+    "defRtg": 111,
+    "tsPct": 0.508,
+    "pts100": 14.8
+   },
+   "provisional": true
+  },
+  {
+   "id": "Isabelle_Harrison",
+   "name": "Isabelle Harrison",
+   "team": "TOR",
+   "pos": "F",
+   "speed": 8,
+   "power": 8,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": -1,
+   "salary": 360,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 15,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 19,
+     "pts": 3,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 5,
+     "reb": 3,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 28,
+   "mpg": 23.5,
+   "bbrefId": "harriis01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -1.17,
+    "obpmHat": 0.25,
+    "dbpmHat": -1.42,
+    "per": 17.1,
+    "ws": 0.7,
+    "wsPer40": 0.041,
+    "offRtg": 103,
+    "defRtg": 114,
+    "tsPct": 0.521,
+    "pts100": 26.6
+   },
+   "provisional": true
+  },
+  {
+   "id": "Jackie_Young",
+   "name": "Jackie Young",
+   "team": "LVA",
+   "pos": "G",
+   "speed": 15,
+   "power": 10,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": 2,
+   "defBoost": 0,
+   "salary": 1040,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 10,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 11,
+     "hi": 13,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 14,
+     "hi": 19,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 4,
+     "reb": 2,
+     "ast": 2
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 39,
+   "mpg": 32.4,
+   "bbrefId": "youngja01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 4.84,
+    "obpmHat": 5.17,
+    "dbpmHat": -0.32,
+    "per": 22,
+    "ws": 5.9,
+    "wsPer40": 0.188,
+    "offRtg": 121,
+    "defRtg": 111,
+    "tsPct": 0.613,
+    "pts100": 29.4
+   },
+   "provisional": true
+  },
+  {
+   "id": "Jacy_Sheldon",
+   "name": "Jacy Sheldon",
+   "team": "CHI",
+   "pos": "G",
+   "speed": 8,
+   "power": 5,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 0,
+   "salary": 240,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 15,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 20,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 40,
+   "mpg": 20.7,
+   "bbrefId": "sheldja01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -3.05,
+    "obpmHat": -2.9,
+    "dbpmHat": -0.14,
+    "per": 8.9,
+    "ws": 0.9,
+    "wsPer40": 0.044,
+    "offRtg": 104,
+    "defRtg": 112,
+    "tsPct": 0.544,
+    "pts100": 15.1
+   },
+   "provisional": true
+  },
+  {
+   "id": "Jade_Melbourne",
+   "name": "Jade Melbourne",
+   "team": "SEA",
+   "pos": "G",
+   "speed": 10,
+   "power": 6,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 0,
+   "salary": 470,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 10,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 11,
+     "hi": 14,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 18,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 19,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 2
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 38,
+   "mpg": 25.2,
+   "bbrefId": "melboja01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -1.15,
+    "obpmHat": -0.98,
+    "dbpmHat": -0.17,
+    "per": 12.8,
+    "ws": 1.8,
+    "wsPer40": 0.075,
+    "offRtg": 109,
+    "defRtg": 113,
+    "tsPct": 0.565,
+    "pts100": 19.2
+   },
+   "provisional": true
+  },
+  {
+   "id": "Janelle_Salaun",
+   "name": "Janelle Salaün",
+   "team": "GSV",
+   "pos": "F",
+   "speed": 11,
+   "power": 12,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 2,
+   "defBoost": 0,
+   "salary": 860,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 10,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 11,
+     "hi": 14,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 19,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 5,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 38,
+   "mpg": 22.3,
+   "bbrefId": "salauja01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 4.02,
+    "obpmHat": 3.77,
+    "dbpmHat": 0.26,
+    "per": 19.2,
+    "ws": 4.3,
+    "wsPer40": 0.202,
+    "offRtg": 119,
+    "defRtg": 104,
+    "tsPct": 0.588,
+    "pts100": 31.1
+   },
+   "provisional": true
+  },
+  {
+   "id": "Jessica_Shepard",
+   "name": "Jessica Shepard",
+   "team": "DAL",
+   "pos": "F",
+   "speed": 12,
+   "power": 12,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 0,
+   "salary": 910,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 10,
+     "hi": 13,
+     "pts": 2,
+     "reb": 2,
+     "ast": 1
+    },
+    {
+     "lo": 14,
+     "hi": 19,
+     "pts": 2,
+     "reb": 2,
+     "ast": 1
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 4,
+     "reb": 3,
+     "ast": 2
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 37,
+   "mpg": 32,
+   "bbrefId": "shepaje01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 4.24,
+    "obpmHat": 3.98,
+    "dbpmHat": 0.27,
+    "per": 22.5,
+    "ws": 6.1,
+    "wsPer40": 0.206,
+    "offRtg": 125,
+    "defRtg": 107,
+    "tsPct": 0.612,
+    "pts100": 22.9
+   },
+   "provisional": true
+  },
+  {
+   "id": "Jewell_Loyd",
+   "name": "Jewell Loyd",
+   "team": "LVA",
+   "pos": "G",
+   "speed": 8,
+   "power": 6,
+   "shotLine": 17,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 0,
+   "salary": 210,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 16,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 17,
+     "hi": 19,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 38,
+   "mpg": 26.3,
+   "bbrefId": "loydje01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -2.52,
+    "obpmHat": -2.37,
+    "dbpmHat": -0.15,
+    "per": 8.1,
+    "ws": 1,
+    "wsPer40": 0.04,
+    "offRtg": 100,
+    "defRtg": 111,
+    "tsPct": 0.504,
+    "pts100": 14.7
+   },
+   "provisional": true
+  },
+  {
+   "id": "Jonquel_Jones",
+   "name": "Jonquel Jones",
+   "team": "NYL",
+   "pos": "C",
+   "speed": 9,
+   "power": 15,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": 2,
+   "defBoost": 1,
+   "salary": 1010,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 13,
+     "pts": 2,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 18,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    },
+    {
+     "lo": 19,
+     "hi": 99,
+     "pts": 4,
+     "reb": 3,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 39,
+   "mpg": 28.4,
+   "bbrefId": "jonesjo01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 4.16,
+    "obpmHat": 3.53,
+    "dbpmHat": 0.63,
+    "per": 21.1,
+    "ws": 5.2,
+    "wsPer40": 0.189,
+    "offRtg": 120,
+    "defRtg": 106,
+    "tsPct": 0.636,
+    "pts100": 26
+   },
+   "provisional": true
+  },
+  {
+   "id": "Jordan_Horston",
+   "name": "Jordan Horston",
+   "team": "SEA",
+   "pos": "F",
+   "speed": 6,
+   "power": 7,
+   "shotLine": 18,
+   "paintBoost": 2,
+   "threePtBoost": -2,
+   "defBoost": 1,
+   "salary": 20,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 17,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 18,
+     "hi": 20,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 3,
+     "reb": 3,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 34,
+   "mpg": 17.5,
+   "bbrefId": "horstjo02w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -2.68,
+    "obpmHat": -3.84,
+    "dbpmHat": 1.16,
+    "per": 9.9,
+    "ws": 0.1,
+    "wsPer40": 0.01,
+    "offRtg": 89,
+    "defRtg": 107,
+    "tsPct": 0.447,
+    "pts100": 13.7
+   },
+   "provisional": true
+  },
+  {
+   "id": "Jordin_Canada",
+   "name": "Jordin Canada",
+   "team": "ATL",
+   "pos": "G",
+   "speed": 14,
+   "power": 9,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": -1,
+   "defBoost": 2,
+   "salary": 740,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 10,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 18,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 19,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 3
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 38,
+   "mpg": 31.4,
+   "bbrefId": "canadjo01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 3.16,
+    "obpmHat": 1.09,
+    "dbpmHat": 2.07,
+    "per": 16.3,
+    "ws": 4.3,
+    "wsPer40": 0.143,
+    "offRtg": 114,
+    "defRtg": 106,
+    "tsPct": 0.55,
+    "pts100": 18.1
+   },
+   "provisional": true
+  },
+  {
+   "id": "Julie_Allemand",
+   "name": "Julie Allemand",
+   "team": "TOR",
+   "pos": "G",
+   "speed": 12,
+   "power": 8,
+   "shotLine": 12,
+   "paintBoost": -1,
+   "threePtBoost": 2,
+   "defBoost": 0,
+   "salary": 950,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 11,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 12,
+     "hi": 14,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 18,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 19,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 2
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 29,
+   "mpg": 28.7,
+   "bbrefId": "allemju01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 1.5,
+    "obpmHat": 1.03,
+    "dbpmHat": 0.47,
+    "per": 13.6,
+    "ws": 1.6,
+    "wsPer40": 0.079,
+    "offRtg": 123,
+    "defRtg": 117,
+    "tsPct": 0.693,
+    "pts100": 11.2
+   },
+   "provisional": true
+  },
+  {
+   "id": "Kahleah_Copper",
+   "name": "Kahleah Copper",
+   "team": "PHO",
+   "pos": "G-F",
+   "speed": 10,
+   "power": 6,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": -2,
+   "defBoost": -2,
+   "salary": 320,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 14,
+     "pts": 3,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 19,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 5,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 38,
+   "mpg": 32.9,
+   "bbrefId": "coppeka01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -1.23,
+    "obpmHat": 0.87,
+    "dbpmHat": -2.09,
+    "per": 15.7,
+    "ws": 1.5,
+    "wsPer40": 0.047,
+    "offRtg": 104,
+    "defRtg": 114,
+    "tsPct": 0.56,
+    "pts100": 32.8
+   },
+   "provisional": true
+  },
+  {
+   "id": "Kaila_Charles",
+   "name": "Kaila Charles",
+   "team": "GSV",
+   "pos": "G-F",
+   "speed": 10,
+   "power": 7,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 1,
+   "salary": 450,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 15,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 18,
+     "pts": 2,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 19,
+     "hi": 99,
+     "pts": 3,
+     "reb": 3,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 39,
+   "mpg": 19.4,
+   "bbrefId": "charlka01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -0.37,
+    "obpmHat": -1.64,
+    "dbpmHat": 1.27,
+    "per": 12.4,
+    "ws": 2.4,
+    "wsPer40": 0.128,
+    "offRtg": 107,
+    "defRtg": 101,
+    "tsPct": 0.512,
+    "pts100": 16.7
+   },
+   "provisional": true
+  },
+  {
+   "id": "Kamilla_Cardoso",
+   "name": "Kamilla Cardoso",
+   "team": "CHI",
+   "pos": "C",
+   "speed": 8,
+   "power": 14,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 1,
+   "salary": 840,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 13,
+     "pts": 3,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 18,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    },
+    {
+     "lo": 19,
+     "hi": 99,
+     "pts": 4,
+     "reb": 3,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 39,
+   "mpg": 26.7,
+   "bbrefId": "cardoka01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 2.73,
+    "obpmHat": 2.16,
+    "dbpmHat": 0.57,
+    "per": 22.7,
+    "ws": 4.8,
+    "wsPer40": 0.185,
+    "offRtg": 118,
+    "defRtg": 106,
+    "tsPct": 0.599,
+    "pts100": 27.2
+   },
+   "provisional": true
+  },
+  {
+   "id": "Kayla_McBride",
+   "name": "Kayla McBride",
+   "team": "MIN",
+   "pos": "G",
+   "speed": 15,
+   "power": 10,
+   "shotLine": 14,
+   "paintBoost": -1,
+   "threePtBoost": 3,
+   "defBoost": 1,
+   "salary": 1110,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 13,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 19,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 4,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 39,
+   "mpg": 32.5,
+   "bbrefId": "mcbrika01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 4.83,
+    "obpmHat": 4.02,
+    "dbpmHat": 0.82,
+    "per": 19.6,
+    "ws": 6.3,
+    "wsPer40": 0.2,
+    "offRtg": 126,
+    "defRtg": 108,
+    "tsPct": 0.634,
+    "pts100": 28.2
+   },
+   "provisional": true
+  },
+  {
+   "id": "Kayla_Thornton",
+   "name": "Kayla Thornton",
+   "team": "GSV",
+   "pos": "F",
+   "speed": 8,
+   "power": 9,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 1,
+   "salary": 450,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 15,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 19,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 0
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 39,
+   "mpg": 24.1,
+   "bbrefId": "thornka01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -0.27,
+    "obpmHat": -0.83,
+    "dbpmHat": 0.56,
+    "per": 10.7,
+    "ws": 2.7,
+    "wsPer40": 0.116,
+    "offRtg": 109,
+    "defRtg": 104,
+    "tsPct": 0.512,
+    "pts100": 16.9
+   },
+   "provisional": true
+  },
+  {
+   "id": "Kelsey_Mitchell",
+   "name": "Kelsey Mitchell",
+   "team": "IND",
+   "pos": "G",
+   "speed": 14,
+   "power": 10,
+   "shotLine": 13,
+   "paintBoost": 0,
+   "threePtBoost": 5,
+   "defBoost": -1,
+   "salary": 1150,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 12,
+     "pts": 3,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 13,
+     "hi": 15,
+     "pts": 3,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 19,
+     "pts": 4,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 6,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 40,
+   "mpg": 32.9,
+   "bbrefId": "mitchke01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 4.33,
+    "obpmHat": 5.7,
+    "dbpmHat": -1.38,
+    "per": 23.6,
+    "ws": 6.8,
+    "wsPer40": 0.206,
+    "offRtg": 126,
+    "defRtg": 115,
+    "tsPct": 0.643,
+    "pts100": 37.5
+   },
+   "provisional": true
+  },
+  {
+   "id": "Kelsey_Plum",
+   "name": "Kelsey Plum",
+   "team": "PHO",
+   "pos": "G",
+   "speed": 13,
+   "power": 9,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": -1,
+   "salary": 790,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 10,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 11,
+     "hi": 13,
+     "pts": 3,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 14,
+     "hi": 19,
+     "pts": 3,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 4,
+     "reb": 1,
+     "ast": 2
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2025+2026",
+   "games": 60,
+   "mpg": 33.8,
+   "bbrefId": "plumke01w",
+   "blended": true,
+   "seasonsPooled": [
+    2025,
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 1.99,
+    "obpmHat": 3.47,
+    "dbpmHat": -1.49,
+    "per": 19.1,
+    "ws": 6,
+    "wsPer40": 0.118,
+    "offRtg": 113,
+    "defRtg": 115,
+    "tsPct": 0.5973670765569218,
+    "pts100": 29.4
+   },
+   "provisional": true
+  },
+  {
+   "id": "Kennedy_Burke",
+   "name": "Kennedy Burke",
+   "team": "CON",
+   "pos": "G-F",
+   "speed": 10,
+   "power": 6,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 0,
+   "salary": 380,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 19,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 37,
+   "mpg": 23.8,
+   "bbrefId": "burkeke01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -1.15,
+    "obpmHat": -1.45,
+    "dbpmHat": 0.3,
+    "per": 12.5,
+    "ws": 0.8,
+    "wsPer40": 0.038,
+    "offRtg": 98,
+    "defRtg": 109,
+    "tsPct": 0.517,
+    "pts100": 18.6
+   },
+   "provisional": true
+  },
+  {
+   "id": "Kiah_Stokes",
+   "name": "Kiah Stokes",
+   "team": "GSV",
+   "pos": "C",
+   "speed": 8,
+   "power": 13,
+   "shotLine": 17,
+   "paintBoost": 2,
+   "threePtBoost": 0,
+   "defBoost": 4,
+   "salary": 620,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 16,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 17,
+     "hi": 18,
+     "pts": 1,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 19,
+     "hi": 99,
+     "pts": 2,
+     "reb": 3,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 38,
+   "mpg": 22.2,
+   "bbrefId": "stokeki01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 2.11,
+    "obpmHat": -1.93,
+    "dbpmHat": 4.03,
+    "per": 12.2,
+    "ws": 3.2,
+    "wsPer40": 0.153,
+    "offRtg": 112,
+    "defRtg": 97,
+    "tsPct": 0.509,
+    "pts100": 8.9
+   },
+   "provisional": true
+  },
+  {
+   "id": "Kiki_Iriafen",
+   "name": "Kiki Iriafen",
+   "team": "WAS",
+   "pos": "F",
+   "speed": 10,
+   "power": 11,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 0,
+   "salary": 690,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 14,
+     "pts": 2,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 19,
+     "pts": 3,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 4,
+     "reb": 3,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 37,
+   "mpg": 28.4,
+   "bbrefId": "iriafki01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 1.59,
+    "obpmHat": 1.63,
+    "dbpmHat": -0.02,
+    "per": 19.8,
+    "ws": 4.4,
+    "wsPer40": 0.166,
+    "offRtg": 113,
+    "defRtg": 104,
+    "tsPct": 0.559,
+    "pts100": 28
+   },
+   "provisional": true
+  },
+  {
+   "id": "Kiki_Rice",
+   "name": "Kiki Rice",
+   "team": "TOR",
+   "pos": "G",
+   "speed": 10,
+   "power": 7,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": -2,
+   "salary": 530,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 14,
+     "hi": 19,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 4,
+     "reb": 2,
+     "ast": 2
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 24,
+   "mpg": 26.6,
+   "bbrefId": "riceki01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -0.66,
+    "obpmHat": 1.25,
+    "dbpmHat": -1.9,
+    "per": 16.5,
+    "ws": 1.6,
+    "wsPer40": 0.1,
+    "offRtg": 120,
+    "defRtg": 120,
+    "tsPct": 0.607,
+    "pts100": 23.7
+   },
+   "provisional": true
+  },
+  {
+   "id": "Laura_Juskaite",
+   "name": "Laura Juškaitė",
+   "team": "TOR",
+   "pos": "F",
+   "speed": 6,
+   "power": 7,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": -1,
+   "salary": 290,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 10,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 11,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 19,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 4,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 40,
+   "mpg": 24.9,
+   "bbrefId": "juskala01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -2.64,
+    "obpmHat": -1.5,
+    "dbpmHat": -1.14,
+    "per": 12.4,
+    "ws": 0.6,
+    "wsPer40": 0.024,
+    "offRtg": 103,
+    "defRtg": 117,
+    "tsPct": 0.576,
+    "pts100": 20.7
+   },
+   "provisional": true
+  },
+  {
+   "id": "Lauren_Betts",
+   "name": "Lauren Betts",
+   "team": "WAS",
+   "pos": "C",
+   "speed": 7,
+   "power": 13,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 2,
+   "salary": 690,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 10,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 11,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 19,
+     "pts": 2,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 4,
+     "reb": 3,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 40,
+   "mpg": 17.1,
+   "bbrefId": "bettsla01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 1.75,
+    "obpmHat": -0.04,
+    "dbpmHat": 1.8,
+    "per": 17.3,
+    "ws": 2.8,
+    "wsPer40": 0.161,
+    "offRtg": 116,
+    "defRtg": 102,
+    "tsPct": 0.592,
+    "pts100": 19.2
+   },
+   "provisional": true
+  },
+  {
+   "id": "Leila_Lacan",
+   "name": "Leïla Lacan",
+   "team": "CON",
+   "pos": "G",
+   "speed": 10,
+   "power": 6,
+   "shotLine": 17,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 0,
+   "salary": 320,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 9,
+     "pts": 0,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 10,
+     "hi": 16,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 17,
+     "hi": 18,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 19,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 2
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 27,
+   "mpg": 28.4,
+   "bbrefId": "lacanle01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -0.82,
+    "obpmHat": -1.18,
+    "dbpmHat": 0.36,
+    "per": 13.2,
+    "ws": 0.7,
+    "wsPer40": 0.035,
+    "offRtg": 100,
+    "defRtg": 111,
+    "tsPct": 0.507,
+    "pts100": 20.7
+   },
+   "provisional": true
+  },
+  {
+   "id": "Leonie_Fiebich",
+   "name": "Leonie Fiebich",
+   "team": "NYL",
+   "pos": "F",
+   "speed": 9,
+   "power": 9,
+   "shotLine": 13,
+   "paintBoost": -1,
+   "threePtBoost": 3,
+   "defBoost": 0,
+   "salary": 820,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 12,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 13,
+     "hi": 19,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2025+2026",
+   "games": 54,
+   "mpg": 28.6,
+   "bbrefId": "fiebile01w",
+   "blended": true,
+   "seasonsPooled": [
+    2025,
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 0.15,
+    "obpmHat": -0.15,
+    "dbpmHat": 0.31,
+    "per": 12,
+    "ws": 4.1,
+    "wsPer40": 0.106,
+    "offRtg": 115,
+    "defRtg": 108,
+    "tsPct": 0.6388190830235441,
+    "pts100": 16.1
+   },
+   "provisional": true
+  },
+  {
+   "id": "Lexie_Hull",
+   "name": "Lexie Hull",
+   "team": "IND",
+   "pos": "G",
+   "speed": 7,
+   "power": 5,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": -1,
+   "salary": 240,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 14,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 20,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 40,
+   "mpg": 19.1,
+   "bbrefId": "hullle01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -3.3,
+    "obpmHat": -2.7,
+    "dbpmHat": -0.6,
+    "per": 8.7,
+    "ws": 1.3,
+    "wsPer40": 0.069,
+    "offRtg": 111,
+    "defRtg": 112,
+    "tsPct": 0.559,
+    "pts100": 13.8
+   },
+   "provisional": true
+  },
+  {
+   "id": "Luisa_Geiselsoder",
+   "name": "Luisa Geiselsöder",
+   "team": "POR",
+   "pos": "C",
+   "speed": 4,
+   "power": 6,
+   "shotLine": 18,
+   "paintBoost": 2,
+   "threePtBoost": 0,
+   "defBoost": -1,
+   "salary": 10,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 17,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 18,
+     "hi": 19,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 21,
+   "mpg": 16.6,
+   "bbrefId": "geiselu01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -6.05,
+    "obpmHat": -4.7,
+    "dbpmHat": -1.35,
+    "per": 5.8,
+    "ws": -0.3,
+    "wsPer40": -0.032,
+    "offRtg": 91,
+    "defRtg": 116,
+    "tsPct": 0.441,
+    "pts100": 13.7
+   },
+   "provisional": true
+  },
+  {
+   "id": "Makayla_Timpson",
+   "name": "Makayla Timpson",
+   "team": "IND",
+   "pos": "F-C",
+   "speed": 8,
+   "power": 9,
+   "shotLine": 13,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 0,
+   "salary": 640,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 12,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 13,
+     "hi": 18,
+     "pts": 2,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 19,
+     "hi": 99,
+     "pts": 3,
+     "reb": 3,
+     "ast": 0
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 39,
+   "mpg": 19.2,
+   "bbrefId": "timpsma01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -0.22,
+    "obpmHat": -0.7,
+    "dbpmHat": 0.49,
+    "per": 14.4,
+    "ws": 2.5,
+    "wsPer40": 0.134,
+    "offRtg": 125,
+    "defRtg": 109,
+    "tsPct": 0.651,
+    "pts100": 14.2
+   },
+   "provisional": true
+  },
+  {
+   "id": "Maria_Conde",
+   "name": "Maria Conde",
+   "team": "TOR",
+   "pos": "F",
+   "speed": 6,
+   "power": 6,
+   "shotLine": 17,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": -2,
+   "salary": 70,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 16,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 17,
+     "hi": 19,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 33,
+   "mpg": 26.9,
+   "bbrefId": "condema01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -3.73,
+    "obpmHat": -1.32,
+    "dbpmHat": -2.42,
+    "per": 9.5,
+    "ws": -0.3,
+    "wsPer40": -0.013,
+    "offRtg": 100,
+    "defRtg": 120,
+    "tsPct": 0.497,
+    "pts100": 16.6
+   },
+   "provisional": true
+  },
+  {
+   "id": "Marina_Mabrey",
+   "name": "Marina Mabrey",
+   "team": "TOR",
+   "pos": "G",
+   "speed": 12,
+   "power": 8,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": 2,
+   "defBoost": -3,
+   "salary": 730,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 3,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 13,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 14,
+     "hi": 18,
+     "pts": 4,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 19,
+     "hi": 99,
+     "pts": 5,
+     "reb": 1,
+     "ast": 2
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 32,
+   "mpg": 29.5,
+   "bbrefId": "mabrema01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 1.11,
+    "obpmHat": 3.83,
+    "dbpmHat": -2.72,
+    "per": 19.6,
+    "ws": 1.6,
+    "wsPer40": 0.068,
+    "offRtg": 110,
+    "defRtg": 120,
+    "tsPct": 0.599,
+    "pts100": 35.6
+   },
+   "provisional": true
+  },
+  {
+   "id": "Marine_Johannes",
+   "name": "Marine Johannes",
+   "team": "NYL",
+   "pos": "G",
+   "speed": 11,
+   "power": 7,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 2,
+   "defBoost": 0,
+   "salary": 640,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 10,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 11,
+     "hi": 14,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 19,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 4,
+     "reb": 1,
+     "ast": 2
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 37,
+   "mpg": 20.8,
+   "bbrefId": "johanma01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 0.25,
+    "obpmHat": 0.6,
+    "dbpmHat": -0.34,
+    "per": 12.8,
+    "ws": 1.4,
+    "wsPer40": 0.071,
+    "offRtg": 106,
+    "defRtg": 111,
+    "tsPct": 0.591,
+    "pts100": 20.8
+   },
+   "provisional": true
+  },
+  {
+   "id": "Megan_DiLeo",
+   "name": "Megan DiLeo",
+   "team": "POR",
+   "pos": "C",
+   "speed": 7,
+   "power": 13,
+   "shotLine": 13,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": -2,
+   "salary": 720,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 12,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 13,
+     "hi": 19,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 5,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 37,
+   "mpg": 24,
+   "bbrefId": "gustame01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 1.26,
+    "obpmHat": 3.02,
+    "dbpmHat": -1.77,
+    "per": 19.8,
+    "ws": 3.3,
+    "wsPer40": 0.149,
+    "offRtg": 127,
+    "defRtg": 117,
+    "tsPct": 0.649,
+    "pts100": 28.1
+   },
+   "provisional": true
+  },
+  {
+   "id": "Michaela_Onyenwere",
+   "name": "Michaela Onyenwere",
+   "team": "WAS",
+   "pos": "F",
+   "speed": 7,
+   "power": 8,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 2,
+   "defBoost": -1,
+   "salary": 460,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 10,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 11,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 19,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 36,
+   "mpg": 25.2,
+   "bbrefId": "onyenmi01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -1.87,
+    "obpmHat": -1.06,
+    "dbpmHat": -0.81,
+    "per": 10.5,
+    "ws": 2,
+    "wsPer40": 0.089,
+    "offRtg": 110,
+    "defRtg": 110,
+    "tsPct": 0.589,
+    "pts100": 18.3
+   },
+   "provisional": true
+  },
+  {
+   "id": "Monique_Akoa_Makani",
+   "name": "Monique Akoa Makani",
+   "team": "LAS",
+   "pos": "G",
+   "speed": 8,
+   "power": 5,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 0,
+   "salary": 320,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 14,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 19,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 4,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 25,
+   "mpg": 21.8,
+   "bbrefId": "akoamo01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -2.89,
+    "obpmHat": -2.98,
+    "dbpmHat": 0.09,
+    "per": 10.2,
+    "ws": 0.3,
+    "wsPer40": 0.023,
+    "offRtg": 98,
+    "defRtg": 112,
+    "tsPct": 0.564,
+    "pts100": 18.9
+   },
+   "provisional": true
+  },
+  {
+   "id": "Monique_Billings",
+   "name": "Monique Billings",
+   "team": "IND",
+   "pos": "F",
+   "speed": 9,
+   "power": 10,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 1,
+   "salary": 690,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 18,
+     "pts": 2,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 19,
+     "hi": 99,
+     "pts": 3,
+     "reb": 3,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 39,
+   "mpg": 19.6,
+   "bbrefId": "billimo01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 0.84,
+    "obpmHat": 0.09,
+    "dbpmHat": 0.75,
+    "per": 16.2,
+    "ws": 3.1,
+    "wsPer40": 0.16,
+    "offRtg": 125,
+    "defRtg": 108,
+    "tsPct": 0.598,
+    "pts100": 17.1
+   },
+   "provisional": true
+  },
+  {
+   "id": "NaLyssa_Smith",
+   "name": "NaLyssa Smith",
+   "team": "LVA",
+   "pos": "F",
+   "speed": 10,
+   "power": 10,
+   "shotLine": 13,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 0,
+   "salary": 780,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 12,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 13,
+     "hi": 18,
+     "pts": 3,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 19,
+     "hi": 99,
+     "pts": 4,
+     "reb": 3,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 38,
+   "mpg": 24.3,
+   "bbrefId": "smithna01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 1.6,
+    "obpmHat": 1.54,
+    "dbpmHat": 0.06,
+    "per": 19.9,
+    "ws": 4.4,
+    "wsPer40": 0.189,
+    "offRtg": 126,
+    "defRtg": 108,
+    "tsPct": 0.642,
+    "pts100": 24.2
+   },
+   "provisional": true
+  },
+  {
+   "id": "Napheesa_Collier",
+   "name": "Napheesa Collier",
+   "team": "MIN",
+   "pos": "F",
+   "speed": 14,
+   "power": 14,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": 3,
+   "defBoost": 2,
+   "salary": 1270,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 13,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 19,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 5,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2025+2026",
+   "games": 44,
+   "mpg": 31.7,
+   "bbrefId": "collina01w",
+   "blended": true,
+   "seasonsPooled": [
+    2025,
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 8.86,
+    "obpmHat": 6.47,
+    "dbpmHat": 2.4,
+    "per": 28.5,
+    "ws": 9.9,
+    "wsPer40": 0.284,
+    "offRtg": 121,
+    "defRtg": 97,
+    "tsPct": 0.6310597734011012,
+    "pts100": 34.9
+   },
+   "provisional": true
+  },
+  {
+   "id": "Natasha_Cloud",
+   "name": "Natasha Cloud",
+   "team": "CHI",
+   "pos": "G",
+   "speed": 11,
+   "power": 8,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 1,
+   "salary": 700,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 10,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 14,
+     "hi": 19,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 2
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 39,
+   "mpg": 28.5,
+   "bbrefId": "cloudna01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 0.95,
+    "obpmHat": 0.37,
+    "dbpmHat": 0.58,
+    "per": 14.8,
+    "ws": 3,
+    "wsPer40": 0.108,
+    "offRtg": 113,
+    "defRtg": 110,
+    "tsPct": 0.623,
+    "pts100": 19.5
+   },
+   "provisional": true
+  },
+  {
+   "id": "Natasha_Howard",
+   "name": "Natasha Howard",
+   "team": "MIN",
+   "pos": "F",
+   "speed": 12,
+   "power": 12,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 2,
+   "salary": 960,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 14,
+     "hi": 19,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 4,
+     "reb": 3,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 39,
+   "mpg": 29.3,
+   "bbrefId": "howarna01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 4.41,
+    "obpmHat": 2.75,
+    "dbpmHat": 1.66,
+    "per": 23.1,
+    "ws": 6.1,
+    "wsPer40": 0.212,
+    "offRtg": 120,
+    "defRtg": 103,
+    "tsPct": 0.623,
+    "pts100": 26
+   },
+   "provisional": true
+  },
+  {
+   "id": "Natasha_Mack",
+   "name": "Natasha Mack",
+   "team": "PHO",
+   "pos": "F-C",
+   "speed": 11,
+   "power": 11,
+   "shotLine": 13,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 1,
+   "salary": 890,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 12,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 13,
+     "hi": 19,
+     "pts": 2,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 3,
+     "reb": 3,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 32,
+   "mpg": 22.2,
+   "bbrefId": "mackna01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 2.54,
+    "obpmHat": 1.39,
+    "dbpmHat": 1.15,
+    "per": 20,
+    "ws": 3.1,
+    "wsPer40": 0.175,
+    "offRtg": 125,
+    "defRtg": 106,
+    "tsPct": 0.637,
+    "pts100": 19.2
+   },
+   "provisional": true
+  },
+  {
+   "id": "Natisha_Hiedeman",
+   "name": "Natisha Hiedeman",
+   "team": "SEA",
+   "pos": "G",
+   "speed": 12,
+   "power": 8,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": -1,
+   "salary": 630,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 14,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 19,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 4,
+     "reb": 1,
+     "ast": 2
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 36,
+   "mpg": 29.8,
+   "bbrefId": "hiedena01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 1.34,
+    "obpmHat": 2.06,
+    "dbpmHat": -0.72,
+    "per": 16.5,
+    "ws": 2.3,
+    "wsPer40": 0.086,
+    "offRtg": 109,
+    "defRtg": 113,
+    "tsPct": 0.563,
+    "pts100": 25.8
+   },
+   "provisional": true
+  },
+  {
+   "id": "Naz_Hillmon",
+   "name": "Naz Hillmon",
+   "team": "ATL",
+   "pos": "F",
+   "speed": 8,
+   "power": 8,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 0,
+   "salary": 450,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 14,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 19,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 38,
+   "mpg": 29.3,
+   "bbrefId": "hillmna01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -0.88,
+    "obpmHat": -0.63,
+    "dbpmHat": -0.25,
+    "per": 10.9,
+    "ws": 2.6,
+    "wsPer40": 0.092,
+    "offRtg": 113,
+    "defRtg": 110,
+    "tsPct": 0.582,
+    "pts100": 15.6
+   },
+   "provisional": true
+  },
+  {
+   "id": "Nia_Coffey",
+   "name": "Nia Coffey",
+   "team": "MIN",
+   "pos": "F",
+   "speed": 11,
+   "power": 11,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 1,
+   "defBoost": 2,
+   "salary": 830,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 14,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 18,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 19,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 39,
+   "mpg": 23.1,
+   "bbrefId": "coffeni01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 2.43,
+    "obpmHat": 0.17,
+    "dbpmHat": 2.26,
+    "per": 13.8,
+    "ws": 3.2,
+    "wsPer40": 0.14,
+    "offRtg": 117,
+    "defRtg": 104,
+    "tsPct": 0.565,
+    "pts100": 14.4
+   },
+   "provisional": true
+  },
+  {
+   "id": "Nneka_Ogwumike",
+   "name": "Nneka Ogwumike",
+   "team": "LAS",
+   "pos": "F",
+   "speed": 11,
+   "power": 12,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 0,
+   "salary": 850,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 19,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 4,
+     "reb": 3,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 38,
+   "mpg": 31,
+   "bbrefId": "ogwumnn01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 3.04,
+    "obpmHat": 3.32,
+    "dbpmHat": -0.27,
+    "per": 20.9,
+    "ws": 3.9,
+    "wsPer40": 0.133,
+    "offRtg": 115,
+    "defRtg": 110,
+    "tsPct": 0.598,
+    "pts100": 27
+   },
+   "provisional": true
+  },
+  {
+   "id": "Noemie_Brochant",
+   "name": "Noémie Brochant",
+   "team": "PHO",
+   "pos": "F-G",
+   "speed": 8,
+   "power": 8,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 0,
+   "salary": 450,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 14,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 18,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 19,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 39,
+   "mpg": 22.9,
+   "bbrefId": "brochno01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -1.32,
+    "obpmHat": -1.71,
+    "dbpmHat": 0.39,
+    "per": 10.2,
+    "ws": 1.1,
+    "wsPer40": 0.05,
+    "offRtg": 105,
+    "defRtg": 112,
+    "tsPct": 0.566,
+    "pts100": 13.6
+   },
+   "provisional": true
+  },
+  {
+   "id": "Nyadiew_Puoch",
+   "name": "Nyadiew Puoch",
+   "team": "POR",
+   "pos": "F",
+   "speed": 5,
+   "power": 5,
+   "shotLine": 18,
+   "paintBoost": 2,
+   "threePtBoost": -2,
+   "defBoost": -1,
+   "salary": 10,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 10,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 11,
+     "hi": 17,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 18,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 38,
+   "mpg": 17.5,
+   "bbrefId": "puochny01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -6.02,
+    "obpmHat": -4.75,
+    "dbpmHat": -1.27,
+    "per": 5.9,
+    "ws": -0.2,
+    "wsPer40": -0.014,
+    "offRtg": 94,
+    "defRtg": 117,
+    "tsPct": 0.437,
+    "pts100": 11.3
+   },
+   "provisional": true
+  },
+  {
+   "id": "Nyara_Sabally",
+   "name": "Nyara Sabally",
+   "team": "TOR",
+   "pos": "F",
+   "speed": 9,
+   "power": 10,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": -1,
+   "salary": 640,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 19,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 5,
+     "reb": 3,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 24,
+   "mpg": 23.9,
+   "bbrefId": "sabalny01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 0.93,
+    "obpmHat": 1.78,
+    "dbpmHat": -0.86,
+    "per": 19.8,
+    "ws": 1.6,
+    "wsPer40": 0.11,
+    "offRtg": 116,
+    "defRtg": 115,
+    "tsPct": 0.612,
+    "pts100": 25.9
+   },
+   "provisional": true
+  },
+  {
+   "id": "Olivia_Miles",
+   "name": "Olivia Miles",
+   "team": "MIN",
+   "pos": "G",
+   "speed": 15,
+   "power": 10,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": 2,
+   "defBoost": 1,
+   "salary": 1070,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 10,
+     "hi": 13,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 14,
+     "hi": 19,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 5,
+     "reb": 2,
+     "ast": 2
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 37,
+   "mpg": 30.9,
+   "bbrefId": "milesol01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 5.59,
+    "obpmHat": 4.46,
+    "dbpmHat": 1.13,
+    "per": 22.9,
+    "ws": 5.8,
+    "wsPer40": 0.204,
+    "offRtg": 118,
+    "defRtg": 106,
+    "tsPct": 0.608,
+    "pts100": 32.2
+   },
+   "provisional": true
+  },
+  {
+   "id": "Olivia_Nelson_Ododa",
+   "name": "Olivia Nelson-Ododa",
+   "team": "CON",
+   "pos": "C",
+   "speed": 7,
+   "power": 11,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 1,
+   "salary": 650,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 19,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 4,
+     "reb": 3,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 32,
+   "mpg": 21.4,
+   "bbrefId": "nelsool01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 0.44,
+    "obpmHat": -0.3,
+    "dbpmHat": 0.74,
+    "per": 18.6,
+    "ws": 2.1,
+    "wsPer40": 0.126,
+    "offRtg": 112,
+    "defRtg": 107,
+    "tsPct": 0.608,
+    "pts100": 23.7
+   },
+   "provisional": true
+  },
+  {
+   "id": "Paige_Bueckers",
+   "name": "Paige Bueckers",
+   "team": "DAL",
+   "pos": "G",
+   "speed": 14,
+   "power": 10,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": 2,
+   "defBoost": 0,
+   "salary": 990,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 10,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 11,
+     "hi": 13,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 14,
+     "hi": 19,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 5,
+     "reb": 1,
+     "ast": 2
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 37,
+   "mpg": 33.2,
+   "bbrefId": "bueckpa01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 4.36,
+    "obpmHat": 4.74,
+    "dbpmHat": -0.37,
+    "per": 22.5,
+    "ws": 5.6,
+    "wsPer40": 0.184,
+    "offRtg": 120,
+    "defRtg": 111,
+    "tsPct": 0.605,
+    "pts100": 31.7
+   },
+   "provisional": true
+  },
+  {
+   "id": "Pauline_Astier",
+   "name": "Pauline Astier",
+   "team": "NYL",
+   "pos": "G",
+   "speed": 11,
+   "power": 7,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 0,
+   "salary": 630,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 10,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 14,
+     "hi": 20,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 4,
+     "reb": 1,
+     "ast": 2
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 40,
+   "mpg": 23.3,
+   "bbrefId": "astiepa01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 0.06,
+    "obpmHat": -0.18,
+    "dbpmHat": 0.24,
+    "per": 14.6,
+    "ws": 3,
+    "wsPer40": 0.129,
+    "offRtg": 118,
+    "defRtg": 111,
+    "tsPct": 0.63,
+    "pts100": 19.9
+   },
+   "provisional": true
+  },
+  {
+   "id": "Rae_Burrell",
+   "name": "Rae Burrell",
+   "team": "LAS",
+   "pos": "G-F",
+   "speed": 9,
+   "power": 6,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 2,
+   "defBoost": -2,
+   "salary": 440,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 14,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 19,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 4,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 38,
+   "mpg": 29,
+   "bbrefId": "burrera01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -1.39,
+    "obpmHat": 0.16,
+    "dbpmHat": -1.56,
+    "per": 14.1,
+    "ws": 1,
+    "wsPer40": 0.035,
+    "offRtg": 104,
+    "defRtg": 116,
+    "tsPct": 0.587,
+    "pts100": 24.4
+   },
+   "provisional": true
+  },
+  {
+   "id": "Rebecca_Allen",
+   "name": "Rebecca Allen",
+   "team": "NYL",
+   "pos": "F-G",
+   "speed": 8,
+   "power": 8,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 0,
+   "salary": 450,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 14,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 19,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 25,
+   "mpg": 18.4,
+   "bbrefId": "allenre01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -1.16,
+    "obpmHat": -1.25,
+    "dbpmHat": 0.08,
+    "per": 10.3,
+    "ws": 1,
+    "wsPer40": 0.084,
+    "offRtg": 112,
+    "defRtg": 110,
+    "tsPct": 0.569,
+    "pts100": 15.8
+   },
+   "provisional": true
+  },
+  {
+   "id": "Rhyne_Howard",
+   "name": "Rhyne Howard",
+   "team": "ATL",
+   "pos": "G",
+   "speed": 15,
+   "power": 11,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 2,
+   "salary": 980,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 14,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 18,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 19,
+     "hi": 99,
+     "pts": 4,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 38,
+   "mpg": 34.6,
+   "bbrefId": "howarrh01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 5.88,
+    "obpmHat": 3.68,
+    "dbpmHat": 2.19,
+    "per": 19.3,
+    "ws": 6.4,
+    "wsPer40": 0.195,
+    "offRtg": 121,
+    "defRtg": 104,
+    "tsPct": 0.573,
+    "pts100": 26.4
+   },
+   "provisional": true
+  },
+  {
+   "id": "Sabrina_Ionescu",
+   "name": "Sabrina Ionescu",
+   "team": "NYL",
+   "pos": "G",
+   "speed": 11,
+   "power": 8,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": -2,
+   "defBoost": -1,
+   "salary": 420,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 9,
+     "pts": 0,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 10,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 18,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 19,
+     "hi": 99,
+     "pts": 4,
+     "reb": 2,
+     "ast": 2
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 27,
+   "mpg": 30.4,
+   "bbrefId": "ionessa01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 0.36,
+    "obpmHat": 1.59,
+    "dbpmHat": -1.23,
+    "per": 14.7,
+    "ws": 1.4,
+    "wsPer40": 0.068,
+    "offRtg": 105,
+    "defRtg": 112,
+    "tsPct": 0.533,
+    "pts100": 25.2
+   },
+   "provisional": true
+  },
+  {
+   "id": "Saniya_Rivers",
+   "name": "Saniya Rivers",
+   "team": "CON",
+   "pos": "G",
+   "speed": 7,
+   "power": 5,
+   "shotLine": 18,
+   "paintBoost": 2,
+   "threePtBoost": -3,
+   "defBoost": 0,
+   "salary": 10,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 10,
+     "hi": 15,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 17,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 18,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 2
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 35,
+   "mpg": 22.6,
+   "bbrefId": "riversa01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -3.59,
+    "obpmHat": -3.81,
+    "dbpmHat": 0.22,
+    "per": 9.2,
+    "ws": -0.6,
+    "wsPer40": -0.028,
+    "offRtg": 88,
+    "defRtg": 110,
+    "tsPct": 0.404,
+    "pts100": 15.7
+   },
+   "provisional": true
+  },
+  {
+   "id": "Sarah_Ashlee_Barker",
+   "name": "Sarah Ashlee Barker",
+   "team": "POR",
+   "pos": "G",
+   "speed": 10,
+   "power": 6,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": 1,
+   "defBoost": -1,
+   "salary": 540,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 19,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 4,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 26,
+   "mpg": 24.7,
+   "bbrefId": "barkesa01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -0.82,
+    "obpmHat": 0.01,
+    "dbpmHat": -0.83,
+    "per": 14.6,
+    "ws": 0.9,
+    "wsPer40": 0.058,
+    "offRtg": 107,
+    "defRtg": 114,
+    "tsPct": 0.603,
+    "pts100": 22
+   },
+   "provisional": true
+  },
+  {
+   "id": "Shakira_Austin",
+   "name": "Shakira Austin",
+   "team": "WAS",
+   "pos": "C",
+   "speed": 8,
+   "power": 14,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 1,
+   "salary": 770,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 14,
+     "pts": 3,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 18,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    },
+    {
+     "lo": 19,
+     "hi": 99,
+     "pts": 4,
+     "reb": 3,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 39,
+   "mpg": 29.6,
+   "bbrefId": "austish01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 2.88,
+    "obpmHat": 1.79,
+    "dbpmHat": 1.1,
+    "per": 20.4,
+    "ws": 4,
+    "wsPer40": 0.137,
+    "offRtg": 106,
+    "defRtg": 101,
+    "tsPct": 0.56,
+    "pts100": 29.5
+   },
+   "provisional": true
+  },
+  {
+   "id": "Skylar_Diggins",
+   "name": "Skylar Diggins",
+   "team": "CHI",
+   "pos": "G",
+   "speed": 12,
+   "power": 9,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 0,
+   "salary": 630,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 15,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 19,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 4,
+     "reb": 1,
+     "ast": 2
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2025+2026",
+   "games": 62,
+   "mpg": 30.6,
+   "bbrefId": "diggisk01w",
+   "blended": true,
+   "seasonsPooled": [
+    2025,
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 2,
+    "obpmHat": 1.84,
+    "dbpmHat": 0.17,
+    "per": 17.9,
+    "ws": 5.7,
+    "wsPer40": 0.12,
+    "offRtg": 108,
+    "defRtg": 107,
+    "tsPct": 0.5297911968482544,
+    "pts100": 24.5
+   },
+   "provisional": true
+  },
+  {
+   "id": "Sonia_Citron",
+   "name": "Sonia Citron",
+   "team": "WAS",
+   "pos": "G",
+   "speed": 14,
+   "power": 10,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 1,
+   "salary": 930,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 13,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 14,
+     "hi": 19,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 4,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 37,
+   "mpg": 33.2,
+   "bbrefId": "citroso01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 3.9,
+    "obpmHat": 2.92,
+    "dbpmHat": 0.98,
+    "per": 18.9,
+    "ws": 5.6,
+    "wsPer40": 0.182,
+    "offRtg": 119,
+    "defRtg": 106,
+    "tsPct": 0.617,
+    "pts100": 26.2
+   },
+   "provisional": true
+  },
+  {
+   "id": "Sophie_Cunningham",
+   "name": "Sophie Cunningham",
+   "team": "IND",
+   "pos": "G",
+   "speed": 11,
+   "power": 7,
+   "shotLine": 13,
+   "paintBoost": -1,
+   "threePtBoost": 3,
+   "defBoost": -1,
+   "salary": 790,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 12,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 13,
+     "hi": 15,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 19,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 39,
+   "mpg": 22.7,
+   "bbrefId": "cunniso01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 0.25,
+    "obpmHat": 0.89,
+    "dbpmHat": -0.64,
+    "per": 12.6,
+    "ws": 2.8,
+    "wsPer40": 0.125,
+    "offRtg": 129,
+    "defRtg": 114,
+    "tsPct": 0.669,
+    "pts100": 17.9
+   },
+   "provisional": true
+  },
+  {
+   "id": "Stephanie_Talbot",
+   "name": "Stephanie Talbot",
+   "team": "LVA",
+   "pos": "F",
+   "speed": 7,
+   "power": 7,
+   "shotLine": 16,
+   "paintBoost": 2,
+   "threePtBoost": -2,
+   "defBoost": 1,
+   "salary": 200,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 15,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 19,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 2,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 40,
+   "mpg": 16.9,
+   "bbrefId": "talbost01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -2.35,
+    "obpmHat": -2.92,
+    "dbpmHat": 0.57,
+    "per": 8.6,
+    "ws": 1,
+    "wsPer40": 0.06,
+    "offRtg": 104,
+    "defRtg": 109,
+    "tsPct": 0.519,
+    "pts100": 10.3
+   },
+   "provisional": true
+  },
+  {
+   "id": "Sydney_Taylor",
+   "name": "Sydney Taylor",
+   "team": "CHI",
+   "pos": "G",
+   "speed": 10,
+   "power": 6,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": -2,
+   "salary": 410,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 14,
+     "pts": 3,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 19,
+     "pts": 4,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 6,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 33,
+   "mpg": 20.3,
+   "bbrefId": "taylosy01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -0.76,
+    "obpmHat": 0.88,
+    "dbpmHat": -1.63,
+    "per": 16.2,
+    "ws": 0.9,
+    "wsPer40": 0.053,
+    "offRtg": 103,
+    "defRtg": 112,
+    "tsPct": 0.56,
+    "pts100": 33.3
+   },
+   "provisional": true
+  },
+  {
+   "id": "Temi_Fagbenle",
+   "name": "Temi Fagbenle",
+   "team": "TOR",
+   "pos": "C",
+   "speed": 4,
+   "power": 7,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": -2,
+   "salary": 170,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 19,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 3,
+     "reb": 3,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 23,
+   "mpg": 17.3,
+   "bbrefId": "fagbete01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -4.55,
+    "obpmHat": -2.88,
+    "dbpmHat": -1.67,
+    "per": 10.6,
+    "ws": 0.1,
+    "wsPer40": 0.011,
+    "offRtg": 103,
+    "defRtg": 118,
+    "tsPct": 0.575,
+    "pts100": 16.1
+   },
+   "provisional": true
+  },
+  {
+   "id": "Tiffany_Hayes",
+   "name": "Tiffany Hayes",
+   "team": "GSV",
+   "pos": "G",
+   "speed": 14,
+   "power": 9,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 2,
+   "salary": 850,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 10,
+     "hi": 14,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 19,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 5,
+     "reb": 2,
+     "ast": 2
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 37,
+   "mpg": 16.5,
+   "bbrefId": "hayesti01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 3.76,
+    "obpmHat": 2.01,
+    "dbpmHat": 1.75,
+    "per": 19.5,
+    "ws": 3.1,
+    "wsPer40": 0.206,
+    "offRtg": 117,
+    "defRtg": 102,
+    "tsPct": 0.581,
+    "pts100": 28.3
+   },
+   "provisional": true
+  },
+  {
+   "id": "Valeriane_Ayayi",
+   "name": "Valeriane Ayayi",
+   "team": "PHO",
+   "pos": "F",
+   "speed": 7,
+   "power": 7,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 0,
+   "salary": 360,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 10,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 11,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 19,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 4,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 33,
+   "mpg": 16.5,
+   "bbrefId": "ayayiva01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -2.23,
+    "obpmHat": -1.84,
+    "dbpmHat": -0.4,
+    "per": 11.8,
+    "ws": 0.9,
+    "wsPer40": 0.066,
+    "offRtg": 106,
+    "defRtg": 111,
+    "tsPct": 0.586,
+    "pts100": 19.5
+   },
+   "provisional": true
+  },
+  {
+   "id": "Veronica_Burton",
+   "name": "Veronica Burton",
+   "team": "GSV",
+   "pos": "G",
+   "speed": 15,
+   "power": 11,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 2,
+   "salary": 990,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 10,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 11,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 18,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 19,
+     "hi": 99,
+     "pts": 4,
+     "reb": 1,
+     "ast": 2
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2026",
+   "games": 39,
+   "mpg": 28.4,
+   "bbrefId": "burtove01w",
+   "blended": false,
+   "seasonsPooled": [
+    2026
+   ],
+   "metrics": {
+    "bpmHat": 6.17,
+    "obpmHat": 3.74,
+    "dbpmHat": 2.43,
+    "per": 20.6,
+    "ws": 6.7,
+    "wsPer40": 0.241,
+    "offRtg": 125,
+    "defRtg": 102,
+    "tsPct": 0.568,
+    "pts100": 23.3
+   },
+   "provisional": true
+  }
+ ]
+}

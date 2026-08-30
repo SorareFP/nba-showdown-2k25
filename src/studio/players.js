@@ -337,8 +337,11 @@ export const SOURCES = {
         : '') +
       (STATS_GENERATED
         ? ' The numbers on these cards are a PROVISIONAL first pass — charts synthesized from ' +
-          'season rates, Shot Line and boosts refitted against the finished set. Re-run ' +
-          '`node scripts/cardgen/generateCards.js` after changing anything upstream.'
+          'season rates, Shot Line and boosts refitted against the finished set. The players on ' +
+          'the force-include list — the injury-shortened stars who fail the G>=40 rule, plus Ty ' +
+          'Jerome — are carded on their PREVIOUS season pooled in by volume as well, the same ' +
+          'way the WNBA set handles the same problem, because eleven games is not a season. ' +
+          'Re-run `node scripts/cardgen/generateCards.js` after changing anything upstream.'
         : ' No numbers yet — run `node scripts/cardgen/generateCards.js` to fill them in.'),
     players: [...POOL_PLAYERS].sort(byName),
   },
@@ -365,9 +368,11 @@ export const SOURCES = {
   [SUPER_SEASON_SET]: specialSource(SUPER_SEASON_SET, SUPER_SEASON_FILE, {
     sub: `best season per player · ${SUPER_SEASON_FILE?.excludedCount ?? 0} badged instead`,
     hint:
-      'EACH ACTIVE PLAYER\'S BEST INDIVIDUAL SEASON, chosen on Basketball-Reference\'s BPM, ' +
-      'scored against its own season\'s league. Win Shares is deliberately NOT in it: it ' +
-      'allocates team wins, so it docks a good player on a bad team. A player whose best ' +
+      'EACH ACTIVE PLAYER\'S BEST INDIVIDUAL SEASON, chosen on Basketball-Reference\'s BPM AND ' +
+      'VORP, each scored against its own season\'s league. Win Shares is deliberately NOT in it: ' +
+      'it allocates team wins, so it docks a good player on a bad team. VORP is in it for ' +
+      'DURABILITY — it is BPM weighted by playing time, so a full season can outrank a shorter ' +
+      'one at a higher rate; it does not make the score team-independent. A player whose best ' +
       `season is the CURRENT one gets no card here — his base card already is that season — but ` +
       `his ${CURRENT_SET} card now carries a SUPER SEASON badge instead, so the fact is on a ` +
       'card rather than only in a file. Every number is provisional and more so than the base ' +

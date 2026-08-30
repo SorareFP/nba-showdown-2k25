@@ -9,6 +9,8 @@ import { describe, it, expect } from 'vitest';
 import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import {
+  COMPOSITE_METRIC_SETS,
+  COMPOSITE_WEIGHTS,
   FULL_SEASON_MINUTES,
   REPLACEMENT_BPM,
   compositeBasis,
@@ -148,9 +150,23 @@ describe('Super Season', () => {
     for (const e of SUPER.excluded) expect(e.reason).toBe('best season is the current one');
   });
 
+  it('chooses on BPM alone, and says so on the file', () => {
+    // The rule is a property of the artefact, not just of the code that made
+    // it: anyone reading the roster should be able to see that Win Shares was
+    // taken out on purpose rather than lost by accident.
+    expect(SUPER.sources.bestSeason).toMatch(/BPM/);
+    expect(SUPER.sources.bestSeason).toMatch(/Win Shares/);
+    expect(SUPER.sources.speedPower).not.toMatch(/WS per game/);
+  });
+
   it('leans on seasons a player really played', () => {
     // The 1000-minute eligibility floor at work: a career-best season should
-    // essentially never be a handful of games.
+    // essentially never be a handful of games. Under BPM-only this floor is the
+    // ONLY thing holding the line — the volume metrics that used to penalise a
+    // thin season a second time are gone — and the margin moved accordingly,
+    // from 13/197 of the roster under the old rule to 14/201 under this one.
+    // Every one of the 14 is a player with no 1000-minute season anywhere in
+    // his career, i.e. the floor's declared fallback rather than a leak.
     const thin = SUPER.cards.filter(c => c.games * c.mpg < 800);
     expect(thin.length / SUPER.cards.length).toBeLessThan(0.1);
   });
@@ -200,38 +216,69 @@ describe('Rookie', () => {
 });
 
 describe('the Speed+Power composite', () => {
-  const basis = { bpm: { mean: 0, sd: 2 }, wsPerGame: { mean: 0.05, sd: 0.05 } };
+  const basis = { bpm: { mean: 0, sd: 2 }, vorpPerGame: { mean: 0.02, sd: 0.02 } };
+
+  it('is BPM alone — WIN SHARES CANNOT MOVE IT', () => {
+    // WS per game used to be the 0.35 refinement term, on the argument that it
+    // was the analogue of the live pipeline's Estimated Wins per game. It is
+    // not: EW comes from EPM, WS comes from a TEAM's win total. Two identical
+    // players, one on a 60-win team and one on a 20-win team, now price the
+    // same.
+    const goodTeam = historicalComposite({ bpm: 4, ws: 12, games: 80, minutes: 2500 }, basis);
+    const badTeam = historicalComposite({ bpm: 4, ws: 2, games: 80, minutes: 2500 }, basis);
+    expect(goodTeam).toBe(badTeam);
+    expect(Object.keys(COMPOSITE_WEIGHTS)).toEqual(['bpm']);
+    for (const weights of Object.values(COMPOSITE_METRIC_SETS)) {
+      expect(Object.keys(weights)).not.toContain('wsPerGame');
+    }
+  });
 
   it('shrinks a season toward replacement in proportion to how little of it there was', () => {
-    const full = historicalComposite({ bpm: 8, ws: 10, games: 70, minutes: 2400 }, basis);
-    const sliver = historicalComposite({ bpm: 8, ws: 0.3, games: 17, minutes: 53 }, basis);
+    // THE ONLY DURABILITY CORRECTION LEFT once the volume term is gone, which
+    // is why it matters more than it did.
+    const full = historicalComposite({ bpm: 8, games: 70, minutes: 2400 }, basis);
+    const sliver = historicalComposite({ bpm: 8, games: 17, minutes: 53 }, basis);
     expect(sliver).toBeLessThan(full / 4);
   });
 
   it('leaves a full season completely untouched', () => {
-    const a = historicalComposite({ bpm: 4, ws: 8, games: 80, minutes: 2500 }, basis);
-    const b = historicalComposite({ bpm: 4, ws: 8, games: 80, minutes: FULL_SEASON_MINUTES }, basis);
+    const a = historicalComposite({ bpm: 4, games: 80, minutes: 2500 }, basis);
+    const b = historicalComposite({ bpm: 4, games: 80, minutes: FULL_SEASON_MINUTES }, basis);
     expect(a).toBeCloseTo(b, 10);
   });
 
   it('pulls a tiny season toward REPLACEMENT, not toward average', () => {
     // Shrinking toward the pool mean would be wrong at both ends: it would hand
     // a 53-minute flier an average card, and a 53-minute disaster one too.
-    const nothing = historicalComposite({ bpm: 8, ws: 5, games: 3, minutes: 0 }, basis);
-    const expected = (REPLACEMENT_BPM - basis.bpm.mean) / basis.bpm.sd +
-      0.35 * ((0 - basis.wsPerGame.mean) / basis.wsPerGame.sd);
-    expect(nothing).toBeCloseTo(expected, 10);
+    const nothing = historicalComposite({ bpm: 8, games: 3, minutes: 0 }, basis);
+    expect(nothing).toBeCloseTo((REPLACEMENT_BPM - basis.bpm.mean) / basis.bpm.sd, 10);
     expect(nothing).toBeLessThan(0);
+  });
+
+  it('buys volume back through VORP, not Win Shares, when asked to', () => {
+    // VORP is BPM times minutes share, so VORP per game is BPM weighted by
+    // playing time — what EW/GP is to EPM, this time honestly. Same BPM, more
+    // minutes behind it, higher composite.
+    const w = COMPOSITE_METRIC_SETS.bpmVorp;
+    const heavy = historicalComposite({ bpm: 4, vorp: 4, games: 80, minutes: 2500 }, basis, w);
+    const light = historicalComposite({ bpm: 4, vorp: 1, games: 80, minutes: 2500 }, basis, w);
+    expect(heavy).toBeGreaterThan(light);
+    // ...and it changes nothing under the active rule.
+    expect(historicalComposite({ bpm: 4, vorp: 4, games: 80, minutes: 2500 }, basis)).toBe(
+      historicalComposite({ bpm: 4, vorp: 1, games: 80, minutes: 2500 }, basis)
+    );
   });
 
   it('measures its basis off the current pool, so the sets share a yardstick', () => {
     const rows = [
-      { bpm: 1, ws: 4, games: 80 },
-      { bpm: 3, ws: 8, games: 80 },
+      { bpm: 1, vorp: 1.6, games: 80 },
+      { bpm: 3, vorp: 4.4, games: 80 },
     ];
-    const b = compositeBasis(rows);
-    expect(b.bpm.mean).toBe(2);
-    expect(b.wsPerGame.mean).toBeCloseTo(0.075, 10);
+    expect(compositeBasis(rows).bpm.mean).toBe(2);
+    // And it measures exactly the inputs the declared weighting names.
+    expect(Object.keys(compositeBasis(rows))).toEqual(['bpm']);
+    const alt = compositeBasis(rows, COMPOSITE_METRIC_SETS.bpmVorp);
+    expect(alt.vorpPerGame.mean).toBeCloseTo(0.0375, 10);
   });
 });
 

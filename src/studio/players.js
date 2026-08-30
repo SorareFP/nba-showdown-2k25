@@ -307,12 +307,13 @@ export const SOURCES = {
   [SUPER_SEASON_SET]: specialSource(SUPER_SEASON_SET, SUPER_SEASON_FILE, {
     sub: `best season per player · ${SUPER_SEASON_FILE?.excludedCount ?? 0} excluded`,
     hint:
-      'EACH ACTIVE PLAYER\'S BEST INDIVIDUAL SEASON, chosen from Basketball-Reference\'s VORP, WS, ' +
-      'WS/48 and BPM — the mean of the four, each scored against its own season\'s league. ' +
-      'A player whose best season is the CURRENT one gets no card here: his base card already ' +
-      'is that season. Every number is provisional and more so than the base set — EPM, ' +
-      'Estimated Wins and rim FG% do not exist for past seasons, so BPM, Win Shares per game ' +
-      'and 2P% stand in for them. Re-run `node scripts/cardgen/generateSpecialSets.js`.',
+      'EACH ACTIVE PLAYER\'S BEST INDIVIDUAL SEASON, chosen on Basketball-Reference\'s BPM, ' +
+      'scored against its own season\'s league. Win Shares is deliberately NOT in it: it ' +
+      'allocates team wins, so it docks a good player on a bad team. A player whose best ' +
+      'season is the CURRENT one gets no card here: his base card already is that season. ' +
+      'Every number is provisional and more so than the base set — EPM, Estimated Wins and ' +
+      'rim FG% do not exist for past seasons, so BPM and 2P% stand in for them. ' +
+      'Re-run `node scripts/cardgen/generateSpecialSets.js`.',
   }),
   [ROOKIE_SET]: specialSource(ROOKIE_SET, ROOKIE_FILE, {
     sub: `rookie-year cards · ${ROOKIE_FILE?.excludedCount ?? 0} excluded`,

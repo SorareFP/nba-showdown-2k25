@@ -9,12 +9,14 @@
 //
 // ── WHAT EACH SET IS ────────────────────────────────────────────────────────
 //
-//   Super Season   Each active player's best individual season, chosen from
-//                  Basketball-Reference's VORP, WS, WS/48 and BPM. THE
-//                  EXCLUSION RULE IS WHAT MAKES THE SET: if a player's best
-//                  season IS the most recent one, he gets no card, because his
-//                  base card already is that season. See history.js for how the
-//                  four metrics are combined and why.
+//   Super Season   Each active player's best individual season, chosen on BPM
+//                  scored against that season's own league. WIN SHARES USED TO
+//                  BE IN THIS AND IS NOT ANY MORE — it allocates TEAM wins, so
+//                  it docks a good player on a bad team; history.js states the
+//                  argument and what dropping it costs. THE EXCLUSION RULE IS
+//                  WHAT MAKES THE SET: if a player's best season IS the most
+//                  recent one, he gets no card, because his base card already
+//                  is that season.
 //
 //   Rookie         Each active player's rookie-year card. Same exclusion, for
 //                  the same reason: a player whose rookie season IS the current
@@ -30,15 +32,17 @@
 // Boost are built on — do not exist for any of these seasons. The substitutes,
 // each named so nobody has to guess later:
 //
-//   Speed + Power   BPM in EPM's place and WS-per-game in Estimated Wins',
-//                   combined with the SAME 0.35 refinement weight, and then
-//                   mapped onto the finished set's Speed+Power distribution
-//                   using the CURRENT POOL as the calibration basis. That last
-//                   part is the whole of "work Speed+Power in by using the
-//                   numbers we have and making best comparisons": a 2009 season
-//                   is scored on the same yardstick the 2026-27 pool is, so the
-//                   card sits correctly next to a current player instead of
-//                   being recentred among other peaks. See mapToReferenceScale's
+//   Speed + Power   BPM in EPM's place, with NO stand-in for the Estimated
+//                   Wins refinement term — Win Shares per game used to fill
+//                   that slot and was removed for the same reason it left the
+//                   best-season rule. The composite is then mapped onto the
+//                   finished set's Speed+Power distribution using the CURRENT
+//                   POOL as the calibration basis. That last part is the whole
+//                   of "work Speed+Power in by using the numbers we have and
+//                   making best comparisons": a 2009 season is scored on the
+//                   same yardstick the 2026-27 pool is, so the card sits
+//                   correctly next to a current player instead of being
+//                   recentred among other peaks. See mapToReferenceScale's
 //                   `calibrateOn`.
 //
 //   Def Boost       DBPM instead of DEF EPM, through the same rounding rule.
@@ -87,11 +91,13 @@ import {
   isAggregateTeam,
 } from './fetchHistory.js';
 import {
+  BEST_SEASON_METRIC_SETS,
+  BEST_SEASON_WEIGHTS,
   careerSeasons,
   bestSeason,
+  bestSeasonByMetricSet,
   rookieSeason,
   perMetricBest,
-  metricsDisagree,
 } from './history.js';
 import { playerIdFromName } from '../../src/cards/playerId.js';
 import { franchiseForSeason } from '../../src/cards/teams.js';
@@ -141,22 +147,11 @@ export function rowsById(rows) {
   return byId;
 }
 
-/**
- * The Speed+Power composite, in Basketball-Reference's vocabulary.
- *
- * Deliberately the SAME SHAPE as speedPower.js's `z(EPM) + 0.35 * z(EW/GP)`,
- * with the closest available stand-in in each slot — BPM for EPM (both are
- * per-100-possession plus/minus estimates) and Win Shares per game for
- * Estimated Wins per game (both are wins credited, divided by games). Keeping
- * the shape and the weight means the only thing that changed between the two
- * sets is the measurement, not the model.
- *
- * The z-scores are taken against the CURRENT POOL's mean and spread, passed in,
- * so a historical season's composite is directly comparable with a 2026-27
- * card's.
- */
 const z = (value, stats) =>
   Number.isFinite(value) && stats?.sd > 0 ? (value - stats.mean) / stats.sd : 0;
+
+/** Null rather than 0 for a season with no games, so it leaves a basis alone. */
+const perGame = (total, games) => (games > 0 ? (total ?? 0) / games : null);
 
 /**
  * Minutes at which a season's composite is trusted in full.
@@ -175,27 +170,67 @@ const z = (value, stats) =>
 export const FULL_SEASON_MINUTES = 1500;
 
 /**
- * Where a season with no minutes behind it is pulled TO.
+ * ── THE SPEED+POWER COMPOSITE, AND WHY WIN SHARES IS NOT IN IT EITHER ───────
  *
- * Replacement level, -2.0 BPM, and it is not a taste call: that is the
- * definition Basketball-Reference builds VORP on, so it is the value the rest
- * of this composite is already stated against. Shrinking toward the POOL MEAN
- * instead — the obvious alternative — would be wrong at both ends: it would
- * hand a 53-minute flier an average card, and it would hand a 53-minute
- * disaster one too.
+ * It used to be `z(BPM) + 0.35 * z(WS per game)` — deliberately the same shape
+ * as speedPower.js's `z(EPM) + 0.35 * z(EW/GP)`, with Win Shares per game
+ * standing in for Estimated Wins per game because both are "wins credited,
+ * divided by games". THE ANALOGY IS THE PROBLEM. Estimated Wins is derived from
+ * EPM, a player-level plus/minus; Win Shares is derived from a TEAM's actual
+ * win total, divided up. They look alike in units and are not alike in what
+ * they measure, and the difference is precisely the team-quality bias the
+ * best-season rule was just cleared of. Carrying it here would have docked the
+ * same players a second time, on the same card.
+ *
+ * So the composite is BPM alone, and the volume dimension it loses is the same
+ * one the best-season rule lost — see history.js for the full statement of what
+ * that costs. What limits the damage here is the shrink below rather than a
+ * minutes floor: a thin season is pulled toward replacement level in proportion
+ * to how thin it is, which is a softer and better-behaved version of the same
+ * correction a volume term would have applied.
+ *
+ * `bpmVorp` restores volume without restoring team quality. VORP is BPM times
+ * minutes share, so VORP per game is BPM weighted by playing time — which is
+ * what EW/GP is to EPM, this time honestly. Switching is one line
+ * (COMPOSITE_WEIGHTS) and the run report prints both scales side by side.
  */
-export const REPLACEMENT_BPM = -2.0;
+export const COMPOSITE_INPUTS = {
+  bpm: s => s.bpm,
+  vorpPerGame: s => perGame(s.vorp, s.games),
+  wsPerGame: s => perGame(s.ws, s.games),
+};
 
 /**
- * The Speed+Power composite, in Basketball-Reference's vocabulary, shrunk for
- * how much season is behind it.
+ * What each input reads at replacement level — where a season with no minutes
+ * behind it is shrunk TO.
  *
- * Deliberately the SAME SHAPE as speedPower.js's `z(EPM) + 0.35 * z(EW/GP)`,
- * with the closest available stand-in in each slot — BPM for EPM (both are
- * per-100-possession plus/minus estimates) and Win Shares per game for
- * Estimated Wins per game (both are wins credited, divided by games). Keeping
- * the shape and the weight means the only thing that changed between the two
- * sets is the measurement, not the model.
+ * -2.0 BPM is not a taste call: it is the definition Basketball-Reference
+ * builds VORP on, so it is the value the rest of this composite is already
+ * stated against. VORP is zero at replacement level by that same definition,
+ * which is what makes it drop into this table without a second decision.
+ */
+export const COMPOSITE_REPLACEMENT = { bpm: -2.0, vorpPerGame: 0, wsPerGame: 0 };
+
+export const COMPOSITE_METRIC_SETS = {
+  bpmOnly: { bpm: 1 },
+  bpmVorp: { bpm: 1, vorpPerGame: REFINEMENT_WEIGHT },
+};
+
+/** THE ACTIVE COMPOSITE. One line to change. */
+export const COMPOSITE_WEIGHTS = COMPOSITE_METRIC_SETS.bpmOnly;
+
+/**
+ * Where a season with no minutes behind it is pulled TO.
+ *
+ * Kept as its own export because the shrink's whole argument is about this
+ * number: shrinking toward the POOL MEAN instead — the obvious alternative —
+ * would be wrong at both ends. It would hand a 53-minute flier an average card,
+ * and it would hand a 53-minute disaster one too.
+ */
+export const REPLACEMENT_BPM = COMPOSITE_REPLACEMENT.bpm;
+
+/**
+ * The composite for one season, shrunk for how much season is behind it.
  *
  * The z-scores are taken against the CURRENT POOL's mean and spread, passed in,
  * so a historical season's composite is directly comparable with a 2026-27
@@ -203,21 +238,40 @@ export const REPLACEMENT_BPM = -2.0;
  * reason: the map is only a like-for-like comparison if both sides of it were
  * measured the same way.
  */
-export function historicalComposite(season, basis, weight = REFINEMENT_WEIGHT) {
-  const wsPerGame = season.games > 0 ? (season.ws ?? 0) / season.games : 0;
-  const raw = z(season.bpm, basis.bpm) + weight * z(wsPerGame, basis.wsPerGame);
-  const replacement = z(REPLACEMENT_BPM, basis.bpm) + weight * z(0, basis.wsPerGame);
+export function historicalComposite(season, basis, weights = COMPOSITE_WEIGHTS) {
+  let raw = 0;
+  let replacement = 0;
+  for (const [key, w] of Object.entries(weights)) {
+    raw += w * z(COMPOSITE_INPUTS[key](season), basis[key]);
+    replacement += w * z(COMPOSITE_REPLACEMENT[key], basis[key]);
+  }
   const trust = Math.min(Math.max((season.minutes ?? 0) / FULL_SEASON_MINUTES, 0), 1);
   return trust * raw + (1 - trust) * replacement;
 }
 
-/** Mean/sd of the two composite inputs across the current pool's own season. */
-export function compositeBasis(currentRows) {
-  const bpm = A.meanSd(currentRows.map(r => r.bpm));
-  const wsPerGame = A.meanSd(
-    currentRows.map(r => (r.games > 0 ? (r.ws ?? 0) / r.games : null))
-  );
-  return { bpm, wsPerGame };
+/** Mean/sd of each composite input across the current pool's own season. */
+export function compositeBasis(currentRows, weights = COMPOSITE_WEIGHTS) {
+  const basis = {};
+  for (const key of Object.keys(weights)) {
+    basis[key] = A.meanSd(currentRows.map(COMPOSITE_INPUTS[key]));
+  }
+  return basis;
+}
+
+/**
+ * Every season's Speed+Power total on the finished set's scale.
+ *
+ * `all` is the current pool's rows followed by the seasons being carded, and
+ * `cut` is where the first ends — both layers are FITTED to the pool and then
+ * applied to the history, which is what puts these cards on the base set's
+ * scale rather than on a scale of their own.
+ */
+export function speedPowerTotals(all, cut, weights = COMPOSITE_WEIGHTS) {
+  const basis = compositeBasis(all.slice(0, cut), weights);
+  const composites = all.map(s => historicalComposite(s, basis, weights));
+  return mapToReferenceScale(composites, REFERENCE_TOTALS, {
+    calibrateOn: composites.slice(0, cut),
+  });
 }
 
 /** The shooting inputs one archived season contributes. */
@@ -343,7 +397,7 @@ export function buildHistoricalCard({ player, season, shooting, speedPowerTotal,
  * their own. Both are computed over `[...current, ...selected]` and the
  * historical tail is sliced back out.
  */
-export function buildSet({ selections, currentRows, calibration }) {
+export function buildSet({ selections, currentRows, calibration, weights = COMPOSITE_WEIGHTS }) {
   const seasons = selections.map(s => s.season);
   const all = [...currentRows, ...seasons];
   const cut = currentRows.length;
@@ -354,11 +408,7 @@ export function buildSet({ selections, currentRows, calibration }) {
     three: calibration.threePtBoost,
   });
 
-  const basis = compositeBasis(currentRows);
-  const composites = all.map(s => historicalComposite(s, basis));
-  const totals = mapToReferenceScale(composites, REFERENCE_TOTALS, {
-    calibrateOn: composites.slice(0, cut),
-  });
+  const totals = speedPowerTotals(all, cut, weights);
 
   return selections.map((selection, i) =>
     buildHistoricalCard({
@@ -372,20 +422,56 @@ export function buildSet({ selections, currentRows, calibration }) {
 }
 
 /**
+ * The same selections' Speed+Power totals under EVERY declared composite, so
+ * the run report can show what the alternative would have printed.
+ */
+export function compareComposites({ selections, currentRows, sets = COMPOSITE_METRIC_SETS }) {
+  const all = [...currentRows, ...selections.map(s => s.season)];
+  const cut = currentRows.length;
+  const byName = {};
+  for (const [name, weights] of Object.entries(sets)) {
+    byName[name] = speedPowerTotals(all, cut, weights).slice(cut);
+  }
+  return selections.map((selection, i) => ({
+    name: selection.player.name,
+    season: selection.season.season,
+    minutes: selection.season.minutes,
+    totals: Object.fromEntries(Object.entries(byName).map(([set, t]) => [set, t[i]])),
+  }));
+}
+
+/**
  * Which players are in each set, and who was excluded and why.
  *
  * Runs both selections in one pass because they share all their expensive work:
  * one career grouping per player answers both questions.
  */
-export function selectSets({ pool, rows, distributions, firstSeason = FIRST_SEASON }) {
+export function selectSets({
+  pool,
+  rows,
+  distributions,
+  firstSeason = FIRST_SEASON,
+  weights = BEST_SEASON_WEIGHTS,
+  metricSets = BEST_SEASON_METRIC_SETS,
+}) {
   const { ids, missing } = resolvePlayerIds(pool, rows);
   const byId = rowsById(rows);
 
   const superSeason = [];
   const rookie = [];
   const excluded = { superSeason: [], rookie: [] };
-  const disagreements = [];
+  const metricSetSplits = [];
   const notes = { fallbackFloor: [], beyondRange: [], partialSeason: [] };
+
+  const describe = s => ({
+    season: s.season,
+    games: s.games,
+    minutes: s.minutes,
+    bpm: s.bpm,
+    vorp: s.vorp,
+    ws: s.ws,
+    ws48: s.ws48,
+  });
 
   for (const player of pool) {
     const bbrefId = ids.get(player.name);
@@ -393,29 +479,26 @@ export function selectSets({ pool, rows, distributions, firstSeason = FIRST_SEAS
     const seasons = careerSeasons(byId.get(bbrefId) ?? []);
     if (seasons.length === 0) continue;
 
-    const { scored, best, usedFallbackFloor } = bestSeason(seasons, distributions);
+    const { scored, best, usedFallbackFloor } = bestSeason(seasons, distributions, weights);
     if (usedFallbackFloor) notes.fallbackFloor.push(player.name);
 
     const perMetric = perMetricBest(scored);
-    if (metricsDisagree(perMetric)) {
-      disagreements.push({
+
+    // What every OTHER declared metric set would have chosen. Recorded only
+    // where they part company — the agreements are the boring majority and
+    // printing them would bury the cases worth looking at.
+    const alternatives = bestSeasonByMetricSet(seasons, distributions, metricSets);
+    const picks = Object.fromEntries(
+      Object.entries(alternatives).map(([name, r]) => [name, r.best?.season ?? null])
+    );
+    if (new Set(Object.values(picks)).size > 1) {
+      metricSetSplits.push({
         name: player.name,
         chosen: best.season,
-        perMetric,
-        // The two seasons the disagreement is actually between, with the
-        // numbers that drive it — enough to judge the rule without re-running.
+        picks,
         seasons: scored
-          .filter(s => Object.values(perMetric).includes(s.season))
-          .map(s => ({
-            season: s.season,
-            games: s.games,
-            minutes: s.minutes,
-            bpm: s.bpm,
-            vorp: s.vorp,
-            ws: s.ws,
-            ws48: s.ws48,
-            score: Number(s.score.toFixed(3)),
-          })),
+          .filter(s => Object.values(picks).includes(s.season))
+          .map(describe),
       });
     }
 
@@ -438,7 +521,7 @@ export function selectSets({ pool, rows, distributions, firstSeason = FIRST_SEAS
     }
   }
 
-  return { superSeason, rookie, excluded, disagreements, notes, missingIds: missing };
+  return { superSeason, rookie, excluded, metricSetSplits, notes, missingIds: missing };
 }
 
 function writeSet(file, { set, cards, meta }) {
@@ -457,7 +540,8 @@ function writeSet(file, { set, cards, meta }) {
 /** The one-line description of every substitution, carried into both files. */
 const SOURCES = {
   origin: 'basketball-reference.com season tables (advanced + per-100), 2000-2026',
-  speedPower: 'z(BPM) + 0.35 * z(WS per game), mapped onto the finished set\'s Speed+Power distribution with the 2026-27 pool as the calibration basis',
+  bestSeason: 'BPM, scored against its own season\'s league. Win Shares and WS/48 are deliberately excluded: they allocate TEAM wins, so they dock a good player on a bad team',
+  speedPower: 'z(BPM), shrunk toward replacement level for a short season, mapped onto the finished set\'s Speed+Power distribution with the 2026-27 pool as the calibration basis',
   defBoost: 'DBPM, rounded — DEF EPM does not exist before the current season',
   paintBoost: '2P% standing in for rim FG%, which Basketball-Reference does not carry',
   chart: 'synthesized from Basketball-Reference per-100 PTS/TRB/AST, same model as the base set',
@@ -519,9 +603,14 @@ export function main({ log = console.log } = {}) {
     });
     log(`\n${set}: ${cards.length} cards (${excluded.length} excluded — ${set === SUPER_SEASON_SET ? 'best season is the current one' : 'rookie season is the current one'})`);
     reportSet(cards, log);
+    reportCompositeMetricSets(
+      compareComposites({ selections, currentRows }),
+      COMPOSITE_METRIC_SETS,
+      log
+    );
   }
 
-  reportDisagreements(selection.disagreements, log);
+  reportBestSeasonMetricSets(selection.metricSetSplits, BEST_SEASON_METRIC_SETS, log);
   if (selection.notes.fallbackFloor.length) {
     log(`\nNo season over ${1000} minutes (largest season used instead): ${selection.notes.fallbackFloor.length}`);
     log(`  ${selection.notes.fallbackFloor.slice(0, 12).join(', ')}`);
@@ -556,28 +645,70 @@ function reportSet(cards, log) {
 }
 
 /**
- * The players the four metrics disagree about — printed on EVERY run.
+ * BPM-ONLY VERSUS BPM+VORP, SIDE BY SIDE, ON EVERY RUN.
  *
- * This is the whole reason the combining rule is a defensible default rather
- * than a decision made behind the user's back. The rule chose one of these
- * seasons; the report shows the others it chose against, with the numbers.
+ * The rule is BPM alone and that costs the volume dimension — see history.js.
+ * VORP is the way to buy it back without buying back Win Shares' team-quality
+ * bias, and this report is the reason nobody has to edit a weight and
+ * regenerate to find out how much it would move. The `Δmin` column is the point
+ * of the whole exercise: a positive number means BPM-only chose the SHORTER
+ * season, which is exactly the side effect to watch.
  */
-function reportDisagreements(disagreements, log) {
-  log(`\nMetrics disagree about the best season for ${disagreements.length} players.`);
-  const spread = d => Math.max(...d.seasons.map(s => s.season)) - Math.min(...d.seasons.map(s => s.season));
-  const worst = [...disagreements].sort((a, b) => spread(b) - spread(a)).slice(0, 10);
+function reportBestSeasonMetricSets(splits, metricSets, log) {
+  const names = Object.keys(metricSets);
+  log(
+    `\nBest season — metric sets compared (${names.join(' vs ')}):` +
+      ` ${splits.length} players where they do not agree.`
+  );
+  const at = (d, set) => d.seasons.find(s => s.season === d.picks[set]) ?? null;
+  const minutesGap = d => {
+    const a = at(d, names[0]);
+    const b = at(d, names[1] ?? names[0]);
+    return (b?.minutes ?? 0) - (a?.minutes ?? 0);
+  };
+  const worst = [...splits].sort((a, b) => minutesGap(b) - minutesGap(a)).slice(0, 12);
   for (const d of worst) {
     log(
-      `  ${d.name.padEnd(26)}chose ${d.chosen}  ` +
-        `[BPM ${d.perMetric.bpm} · VORP ${d.perMetric.vorp} · WS ${d.perMetric.ws} · WS/48 ${d.perMetric.ws48}]`
+      `  ${d.name.padEnd(26)}${names.map(n => `${n} ${d.picks[n]}`).join('  ')}` +
+        `   Δmin ${String(minutesGap(d)).padStart(5)}`
     );
     for (const s of d.seasons) {
+      const chose = names.filter(n => d.picks[n] === s.season);
       log(
         `      ${s.season}  ${String(s.games).padStart(2)}g ${String(s.minutes).padStart(4)}m  ` +
           `BPM ${String(s.bpm).padStart(5)}  VORP ${String(s.vorp).padStart(4)}  ` +
-          `WS ${String(s.ws).padStart(4)}  WS/48 ${String(s.ws48).padStart(5)}  score ${s.score}`
+          `WS ${String(s.ws).padStart(4)}  WS/48 ${String(s.ws48).padStart(5)}` +
+          `${chose.length ? `   ← ${chose.join(', ')}` : ''}`
       );
     }
+  }
+}
+
+/**
+ * The same comparison for the Speed+Power composite, in printed card units.
+ *
+ * A metric-set difference that never changes a printed number is a difference
+ * nobody needs to care about, so this reports the count that MOVE and how far,
+ * not the composites themselves.
+ */
+function reportCompositeMetricSets(rows, sets, log) {
+  const names = Object.keys(sets);
+  if (names.length < 2) return;
+  const [a, b] = names;
+  const moved = rows.filter(r => r.totals[a] !== r.totals[b]);
+  const deltas = moved.map(r => r.totals[b] - r.totals[a]);
+  log(
+    `  Speed+Power under ${b} instead of ${a}: ${moved.length}/${rows.length} cards move` +
+      `${moved.length ? `, range ${Math.min(...deltas)} to ${Math.max(...deltas)}` : ''}`
+  );
+  const worst = [...moved]
+    .sort((x, y) => Math.abs(y.totals[b] - y.totals[a]) - Math.abs(x.totals[b] - x.totals[a]))
+    .slice(0, 6);
+  for (const r of worst) {
+    log(
+      `    ${r.name.padEnd(26)}${r.season}  ${String(r.minutes).padStart(4)}m  ` +
+        `${a} ${r.totals[a]} → ${b} ${r.totals[b]}`
+    );
   }
 }
 

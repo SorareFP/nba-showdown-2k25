@@ -32,7 +32,7 @@
 // jersey to put on it. See seasonFromRows.
 
 import {
-  BEST_SEASON_METRICS,
+  ARCHIVED_METRICS,
   isAggregateTeam,
 } from './fetchHistory.js';
 
@@ -41,9 +41,8 @@ import {
  *
  * PER SEASON, not against the whole archive pooled, and that is a decision
  * rather than a detail. Pace, three-point rate and scoring level all moved a
- * long way across the seasons in range, and the four metrics move with them —
- * WS/48 is defined against a league average of .100 in every era, but VORP and
- * WS both scale with how many possessions a season contains, and BPM's spread
+ * long way across the seasons in range, and the archived metrics move with them
+ * — VORP scales with how many possessions a season contains, and BPM's spread
  * is not constant either. Scoring a season against its contemporaries is what
  * "best season" means to anyone who watched them, and it is the only version of
  * the question that does not quietly reward whoever played in the highest-pace
@@ -55,37 +54,70 @@ export function zAgainstSeason(value, stats) {
 }
 
 /**
- * ── THE BEST-SEASON SCORE ───────────────────────────────────────────────────
+ * ── THE BEST-SEASON SCORE, AND WHY WIN SHARES IS NOT IN IT ──────────────────
  *
- * The user named four metrics — VORP, WS, WS/48, BPM — and left how to combine
- * them open, because they disagree: WS and VORP reward VOLUME (a great season
- * played 82 times beats the same season played 55), WS/48 and BPM reward RATE
- * (they do not care how long it lasted). Pick either family alone and the set
- * comes out lopsided in an obvious way: rate-only crowns injury-shortened
- * half-seasons, volume-only crowns whoever was healthiest.
+ * The rule used to be the mean of four per-season z-scores — VORP, WS, WS/48,
+ * BPM. WIN SHARES AND WS/48 ARE GONE, at the user's instruction, and the reason
+ * is a property of the statistic rather than a preference:
  *
- * THE DEFAULT TAKEN HERE: the mean of the four per-season z-scores, equally
- * weighted. That is exactly a 50/50 split between the rate family and the
- * volume family, because the families happen to be the same size — average
- * within each family first and you get the identical number. So it is
- * defensible on the reading that actually matters ("half of a great season is
- * how good it was, half is how much of it there was") rather than only on the
- * reading that it is the simplest thing to do.
+ *     Win Shares ALLOCATES TEAM WINS to the players who produced them. Its
+ *     denominator is what the team actually won, so a very good player on a
+ *     64-loss team is systematically docked for the company he kept, and a
+ *     rotation player on a 60-win team is systematically flattered. In a set
+ *     whose entire question is "how good was this player, that year", that is
+ *     not noise — it is a bias with a known direction.
  *
- * IT IS ONE LINE TO CHANGE. `weights` is a parameter, the per-metric z-scores
- * are kept on every record this module emits, and generateSpecialSets prints
- * the players the four metrics disagree about on every run — so the consequence
- * of a different weighting is visible before anyone commits to it.
+ * BPM has no such term: it is a per-100-possession plus/minus estimated from a
+ * player's own box score, adjusted for teammates and opponents but not credited
+ * out of a team's win total. Neither does VORP, which is BPM converted to a
+ * volume figure by multiplying through minutes played — it inherits BPM's
+ * team-independence exactly.
+ *
+ * ── WHAT BPM-ONLY COSTS, STATED PLAINLY ─────────────────────────────────────
+ *
+ * The old four split evenly between RATE (BPM, WS/48) and VOLUME (VORP, WS).
+ * BPM alone is pure rate, so DURABILITY NOW COUNTS FOR NOTHING in the choice: a
+ * 1,000-minute season at +6.0 outranks a 2,800-minute season at +5.8, even
+ * though almost anyone asked which was the better year would say the second.
+ * Two things already blunt this and neither removes it —
+ * BEST_SEASON_MIN_MINUTES throws out anything under a thousand minutes before
+ * the comparison starts, and the Speed+Power composite shrinks a thin season
+ * toward replacement level afterwards — so the failure mode is confined to the
+ * band between "a thousand minutes" and "a full season", where it is real.
+ *
+ * `bpmVorp` below is the fix if the user wants it: adding VORP restores the
+ * volume dimension WITHOUT reintroducing team quality, and it is the direct
+ * analogue of the `EW/GP` refinement term the live NBA pipeline already carries
+ * (speedPower.js). Switching is one line — reassign BEST_SEASON_WEIGHTS — and
+ * generateSpecialSets prints both rankings side by side on every run, so the
+ * size of the difference is visible without editing anything at all.
  */
-export const EQUAL_WEIGHTS = Object.fromEntries(BEST_SEASON_METRICS.map(m => [m, 1]));
+export const BEST_SEASON_METRIC_SETS = {
+  bpmOnly: { bpm: 1 },
+  bpmVorp: { bpm: 1, vorp: 1 },
+};
 
-export function seasonScore(season, distribution, weights = EQUAL_WEIGHTS) {
+/** THE ACTIVE RULE. One line to change; the report compares it against the rest. */
+export const BEST_SEASON_WEIGHTS = BEST_SEASON_METRIC_SETS.bpmOnly;
+
+/**
+ * A season's score under one declared metric set, plus the z of every archived
+ * metric.
+ *
+ * The z-scores cover ARCHIVED_METRICS — all four, including the two the rule no
+ * longer uses — because they are what the report needs to say "WS would have
+ * chosen 2019 here". Only the metrics named in `weights` reach `score`.
+ */
+export function seasonScore(season, distribution, weights = BEST_SEASON_WEIGHTS) {
   const z = {};
+  for (const metric of ARCHIVED_METRICS) {
+    z[metric] = zAgainstSeason(season[metric], distribution?.metrics?.[metric]);
+  }
   let sum = 0;
   let total = 0;
-  for (const metric of BEST_SEASON_METRICS) {
-    z[metric] = zAgainstSeason(season[metric], distribution?.metrics?.[metric]);
-    const w = weights[metric] ?? 0;
+  for (const [metric, w] of Object.entries(weights)) {
+    if (!(w > 0)) continue;
+    z[metric] ??= zAgainstSeason(season[metric], distribution?.metrics?.[metric]);
     sum += w * z[metric];
     total += w;
   }
@@ -146,10 +178,16 @@ export function careerSeasons(rows) {
 /**
  * Minutes a season needs before it is allowed to be someone's BEST.
  *
- * WS/48 and BPM are rates, and a rate over 300 minutes is mostly noise — every
- * player has one fluke month somewhere in his career and without a floor the
- * set fills up with them. 1000 minutes is roughly a season of 15 minutes a
- * night, which is the point at which a rate stops being an accident.
+ * BPM is a rate, and a rate over 300 minutes is mostly noise — every player has
+ * one fluke month somewhere in his career and without a floor the set fills up
+ * with them. 1000 minutes is roughly a season of 15 minutes a night, which is
+ * the point at which a rate stops being an accident.
+ *
+ * THIS FLOOR CARRIES MORE WEIGHT THAN IT USED TO. While the rule averaged in
+ * VORP and WS, a thin season was penalised twice — once by this floor and again
+ * by two volume metrics that a short season cannot score well on. Under
+ * BPM-only the floor is the ONLY thing standing between the set and a run of
+ * 1,100-minute career years, so it is doing real work rather than backstopping.
  */
 export const BEST_SEASON_MIN_MINUTES = 1000;
 
@@ -161,7 +199,7 @@ export const BEST_SEASON_MIN_MINUTES = 1000;
  * the player: he simply gets his largest season. Producing a provisional card
  * beats producing a hole, and the record says which happened.
  */
-export function bestSeason(seasons, distributions, weights = EQUAL_WEIGHTS) {
+export function bestSeason(seasons, distributions, weights = BEST_SEASON_WEIGHTS) {
   const scored = seasons.map(s => ({ ...s, ...seasonScore(s, distributions?.[s.season], weights) }));
   const eligible = scored.filter(s => (s.minutes ?? 0) >= BEST_SEASON_MIN_MINUTES);
   const pool = eligible.length > 0 ? eligible : scored;
@@ -170,15 +208,16 @@ export function bestSeason(seasons, distributions, weights = EQUAL_WEIGHTS) {
 }
 
 /**
- * Which season each metric would have chosen ON ITS OWN.
+ * Which season each ARCHIVED metric would have chosen ON ITS OWN.
  *
- * Printed on every run so the combining rule above stays a visible decision.
- * The interesting cases are the players where these four seasons are not all
- * the same one — see generateSpecialSets's report.
+ * Still computed over all four, including the two the rule dropped. That is the
+ * point: `ws` and `ws48` in this record are the evidence for what removing Win
+ * Shares actually did, and a season only WS liked is exactly the season the
+ * team-quality bias was propping up.
  */
-export function perMetricBest(scored) {
+export function perMetricBest(scored, metrics = ARCHIVED_METRICS) {
   const out = {};
-  for (const metric of BEST_SEASON_METRICS) {
+  for (const metric of metrics) {
     const best = scored.reduce(
       (a, b) => (a === null || (b.z?.[metric] ?? -Infinity) > (a.z?.[metric] ?? -Infinity) ? b : a),
       null
@@ -188,9 +227,26 @@ export function perMetricBest(scored) {
   return out;
 }
 
-/** True when the four metrics do not all point at the same season. */
+/** True when the metrics do not all point at the same season. */
 export function metricsDisagree(perMetric) {
   return new Set(Object.values(perMetric)).size > 1;
+}
+
+/**
+ * One career's best season under EVERY declared metric set, side by side.
+ *
+ * The whole reason the metric set is a parameter. `bestSeasonByMetricSet` is
+ * what lets the run report answer "and what would BPM+VORP have picked?"
+ * without anyone editing a weight and regenerating to find out. Scoring a
+ * career twice is a few dozen arithmetic operations, so it is done on every run
+ * rather than behind a flag nobody remembers to pass.
+ */
+export function bestSeasonByMetricSet(seasons, distributions, sets = BEST_SEASON_METRIC_SETS) {
+  const out = {};
+  for (const [name, weights] of Object.entries(sets)) {
+    out[name] = bestSeason(seasons, distributions, weights);
+  }
+  return out;
 }
 
 /**

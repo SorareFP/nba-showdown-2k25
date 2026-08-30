@@ -25,7 +25,9 @@
 //      season can be scored against its contemporaries rather than against a
 //      league that played at a different pace with a different three-point
 //      rate. That is four means and four standard deviations per season — a few
-//      hundred bytes, computed here over the FULL table.
+//      hundred bytes, computed here over the FULL table. All four are cached
+//      even though the best-season rule now scores on BPM alone; see
+//      ARCHIVED_METRICS.
 //   2. The rows belonging to players who are actually being carded.
 //
 // So the summaries are computed over everything and the rows are filtered down
@@ -81,8 +83,18 @@ export const LAST_SEASON = 2026;
  */
 export const DISTRIBUTION_MIN_MINUTES = 500;
 
-/** The four metrics the user named for choosing a best season. */
-export const BEST_SEASON_METRICS = ['bpm', 'vorp', 'ws', 'ws48'];
+/**
+ * The metrics the archive summarises per season — the MENU, not the rule.
+ *
+ * All four are measured and cached because a per-season mean and sd costs a few
+ * hundred bytes and re-fetching twenty-seven league tables to add one back costs
+ * twenty minutes of polite delay. WHICH of them the best-season rule actually
+ * scores on is declared in history.js (`BEST_SEASON_WEIGHTS`), and as of the
+ * Win Shares removal that is BPM alone. `ws` and `ws48` stay here so the run
+ * report can still say what they would have chosen — and so the decision to
+ * ignore them is visible rather than invisible.
+ */
+export const ARCHIVED_METRICS = ['bpm', 'vorp', 'ws', 'ws48'];
 
 /** Basketball-Reference's multi-team aggregate codes. Not teams. */
 export const AGGREGATE_TEAMS = new Set(['TOT', '2TM', '3TM', '4TM', '5TM']);
@@ -119,7 +131,7 @@ export function seasonDistribution(advancedRows) {
     r => (r.minutes ?? 0) >= DISTRIBUTION_MIN_MINUTES
   );
   const metrics = {};
-  for (const key of BEST_SEASON_METRICS) metrics[key] = meanSd(qualified.map(r => r[key]));
+  for (const key of ARCHIVED_METRICS) metrics[key] = meanSd(qualified.map(r => r[key]));
   return { players: qualified.length, metrics };
 }
 

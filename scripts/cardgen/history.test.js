@@ -1,8 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import {
+  BEST_SEASON_METRIC_SETS,
   BEST_SEASON_MIN_MINUTES,
-  EQUAL_WEIGHTS,
+  BEST_SEASON_WEIGHTS,
   bestSeason,
+  bestSeasonByMetricSet,
   careerSeasons,
   metricsDisagree,
   perMetricBest,
@@ -11,7 +13,7 @@ import {
   seasonScore,
   zAgainstSeason,
 } from './history.js';
-import { BEST_SEASON_METRICS, dedupeForDistribution, seasonDistribution } from './fetchHistory.js';
+import { ARCHIVED_METRICS, dedupeForDistribution, seasonDistribution } from './fetchHistory.js';
 
 const row = (over = {}) => ({
   season: 2020,
@@ -27,9 +29,9 @@ const row = (over = {}) => ({
   ...over,
 });
 
-/** A season whose four metrics all sit exactly one sd above the mean. */
+/** Every archived metric measured in plain sd units above a zero mean. */
 const flatDistribution = {
-  metrics: Object.fromEntries(BEST_SEASON_METRICS.map(m => [m, { mean: 0, sd: 1 }])),
+  metrics: Object.fromEntries(ARCHIVED_METRICS.map(m => [m, { mean: 0, sd: 1 }])),
 };
 
 describe('zAgainstSeason', () => {
@@ -45,35 +47,47 @@ describe('zAgainstSeason', () => {
 });
 
 describe('seasonScore — the combining rule', () => {
-  it('is the mean of the four metrics\' z-scores', () => {
-    const { score, z } = seasonScore(
-      { bpm: 2, vorp: 1, ws: 3, ws48: 2 },
-      flatDistribution
-    );
-    expect(z).toEqual({ bpm: 2, vorp: 1, ws: 3, ws48: 2 });
+  it('scores on BPM alone', () => {
+    const { score } = seasonScore({ bpm: 2, vorp: 1, ws: 3, ws48: 2 }, flatDistribution);
     expect(score).toBe(2);
   });
 
-  it('weighs the rate family and the volume family equally', () => {
-    // The claim the default rests on. BPM and WS/48 are rates, VORP and WS are
-    // volume; with equal weights on four metrics and two in each family, the
-    // families are exactly 50/50 — so a season that is all volume and no rate
-    // ties a season that is all rate and no volume.
-    const rateOnly = seasonScore({ bpm: 4, ws48: 4, vorp: 0, ws: 0 }, flatDistribution);
-    const volumeOnly = seasonScore({ bpm: 0, ws48: 0, vorp: 4, ws: 4 }, flatDistribution);
-    expect(rateOnly.score).toBe(volumeOnly.score);
+  it('IGNORES WIN SHARES ENTIRELY — the change this rule exists to make', () => {
+    // Win Shares allocates TEAM wins, so it docks a good player on a bad team
+    // and flatters a rotation player on a good one. The whole point of the
+    // removal is that no amount of it can move the pick any more: same BPM,
+    // wildly different WS and WS/48, identical score.
+    const badTeam = seasonScore({ bpm: 5, vorp: 4, ws: 3, ws48: 0.08 }, flatDistribution);
+    const goodTeam = seasonScore({ bpm: 5, vorp: 4, ws: 14, ws48: 0.26 }, flatDistribution);
+    expect(badTeam.score).toBe(goodTeam.score);
   });
 
-  it('can be reweighted without touching anything else', () => {
-    // The rule is a defensible default, not a decision made permanent. Feeding
-    // it a different weighting is how the alternative gets evaluated.
-    const rateHeavy = { bpm: 1, ws48: 1, vorp: 0, ws: 0 };
-    const s = seasonScore({ bpm: 4, ws48: 4, vorp: 0, ws: 0 }, flatDistribution, rateHeavy);
-    expect(s.score).toBe(4);
+  it('still records every archived metric\'s z, including the dropped two', () => {
+    // The rule ignores WS; the RECORD does not, because "what would Win Shares
+    // have chosen" is the evidence for what the removal did.
+    const { z } = seasonScore({ bpm: 2, vorp: 1, ws: 3, ws48: 2 }, flatDistribution);
+    expect(z).toEqual({ bpm: 2, vorp: 1, ws: 3, ws48: 2 });
   });
 
-  it('defaults to equal weights across exactly the four named metrics', () => {
-    expect(Object.keys(EQUAL_WEIGHTS).sort()).toEqual(['bpm', 'vorp', 'ws', 'ws48']);
+  it('takes its metric set from the weights, so swapping is one line', () => {
+    // BPM+VORP is the alternative on the table: it restores the volume
+    // dimension BPM-only gives up, without restoring Win Shares' team bias.
+    const s = seasonScore({ bpm: 4, vorp: 2, ws: 40, ws48: 40 }, flatDistribution, {
+      bpm: 1,
+      vorp: 1,
+    });
+    expect(s.score).toBe(3);
+  });
+
+  it('declares the active rule as BPM only, with BPM+VORP alongside it', () => {
+    expect(BEST_SEASON_WEIGHTS).toBe(BEST_SEASON_METRIC_SETS.bpmOnly);
+    expect(Object.keys(BEST_SEASON_WEIGHTS)).toEqual(['bpm']);
+    expect(Object.keys(BEST_SEASON_METRIC_SETS.bpmVorp).sort()).toEqual(['bpm', 'vorp']);
+    // Neither declared set may reach for a Win Shares column.
+    for (const weights of Object.values(BEST_SEASON_METRIC_SETS)) {
+      expect(Object.keys(weights)).not.toContain('ws');
+      expect(Object.keys(weights)).not.toContain('ws48');
+    }
   });
 });
 
@@ -194,6 +208,52 @@ describe('bestSeason', () => {
     const { scored } = bestSeason([row({ season: 2020 }), row({ season: 2021 })], distributions);
     expect(scored).toHaveLength(2);
     for (const s of scored) expect(s.z).toHaveProperty('bpm');
+  });
+
+  it('WILL take the shorter season when its rate is higher — the known cost', () => {
+    // Pinned deliberately, because it is the price of dropping the volume
+    // metrics and the user was told about it. Above the 1000-minute floor,
+    // BPM-only has nothing left to say about durability: a thousand minutes at
+    // +6.0 beats twenty-eight hundred at +5.8. Karl-Anthony Towns is the real
+    // case — 2019-20's 35 games at 7.8 BPM over 2017-18's 82 at 5.1.
+    const { best } = bestSeason(
+      [
+        row({ season: 2020, games: 82, minutes: 2800, bpm: 5.8, vorp: 5.2, ws: 14, ws48: 0.23 }),
+        row({ season: 2021, games: 35, minutes: 1050, bpm: 6.0, vorp: 2.9, ws: 5.1, ws48: 0.204 }),
+      ],
+      distributions
+    );
+    expect(best.season).toBe(2021);
+    // And the alternative on the table is exactly the thing that undoes it.
+    const alt = bestSeason(
+      [
+        row({ season: 2020, games: 82, minutes: 2800, bpm: 5.8, vorp: 5.2, ws: 14, ws48: 0.23 }),
+        row({ season: 2021, games: 35, minutes: 1050, bpm: 6.0, vorp: 2.9, ws: 5.1, ws48: 0.204 }),
+      ],
+      distributions,
+      BEST_SEASON_METRIC_SETS.bpmVorp
+    );
+    expect(alt.best.season).toBe(2020);
+  });
+});
+
+describe('bestSeasonByMetricSet', () => {
+  const distributions = { 2020: flatDistribution, 2021: flatDistribution };
+  const career = [
+    row({ season: 2020, minutes: 2800, bpm: 5.8, vorp: 5.2 }),
+    row({ season: 2021, minutes: 1050, bpm: 6.0, vorp: 2.9 }),
+  ];
+
+  it('answers "and what would the other rule have picked?" without a code change', () => {
+    const bySet = bestSeasonByMetricSet(career, distributions);
+    expect(bySet.bpmOnly.best.season).toBe(2021);
+    expect(bySet.bpmVorp.best.season).toBe(2020);
+  });
+
+  it('covers every declared set, so a new one shows up in the report for free', () => {
+    expect(Object.keys(bestSeasonByMetricSet(career, distributions)).sort()).toEqual(
+      Object.keys(BEST_SEASON_METRIC_SETS).sort()
+    );
   });
 });
 

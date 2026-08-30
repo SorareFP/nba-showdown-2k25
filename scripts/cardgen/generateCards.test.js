@@ -5,13 +5,14 @@ import {
   buildCard,
   generateCards,
   expectedValuePerRoll,
-  shootingInputFromRate,
+  actualShootingInput,
   indexByName,
   summarize,
   histogram,
   STAT_NAME_ALIASES,
   OUTPUT_FILE,
 } from './generateCards.js';
+import * as S from './shooting.js';
 import { CALIBRATION_FILE } from './calibrateAttributes.js';
 import { playerIdFromName } from '../../src/cards/playerId.js';
 import { REPO_ROOT } from './cache.js';
@@ -19,20 +20,26 @@ import * as V from './variance.js';
 
 const calibration = JSON.parse(readFileSync(CALIBRATION_FILE, 'utf8'));
 
+/** A PREDICTED per-100 row — all the chart reads. */
 const rate = (over = {}) => ({
   name: 'Test Player',
   pts100: 30,
   ast100: 6,
   orb100: 2,
   drb100: 8,
+  ...over,
+});
+
+/** An ACTUAL season row — everything else reads this. */
+const actual = (over = {}) => ({
+  name: 'Test Player',
+  games: 70,
+  minutes: 2100,
   tsPct: 0.58,
-  usage: 0.25,
-  fga2Per100: 14,
-  fga3Per100: 8,
-  ftaPer100: 5,
-  fgPct2: 0.55,
+  fgPctRim: 0.66,
   fgPct3: 0.37,
-  ftPct: 0.8,
+  fgaRimPer75: 4,
+  fga3Per75: 6,
   epmDef: 1.4,
   ...over,
 });
@@ -46,23 +53,31 @@ const player = (over = {}) => ({
   ...over,
 });
 
-const poolCtx = players => {
-  const inputs = players.map(p => shootingInputFromRate(p.rate, p.player.mpg));
-  // Mirrors calibrateAttributes.poolContext without importing it, so a pool of
-  // one still produces finite z-scores.
-  const z = () => () => 0;
-  return { z: { ts: z(), pts100: z(), usg: z(), mpg: z() }, meanFg3: 0.36, meanFg2: 0.54, inputs };
-};
+/**
+ * The shooting layer over a one-player pool.
+ *
+ * The rule is pool-relative, so a single player is always exactly average and
+ * every boost comes out 0. That is the correct answer for a pool of one, and it
+ * keeps these tests about the parts buildCard still decides.
+ */
+const shootingFor = rows =>
+  S.buildShootingLayer(rows.map(actualShootingInput), {
+    shotLineTarget: calibration.shotLine.target,
+    paint: calibration.paintBoost,
+    three: calibration.threePtBoost,
+  });
 
-function card(over = {}, rateOver = {}) {
+function card(over = {}, rateOver = {}, actualOver = {}) {
   const p = player(over);
   const r = rate(rateOver);
+  const a = actual(actualOver);
   return buildCard({
     player: p,
     rate: r,
+    actual: a,
+    shooting: shootingFor([a]).players[0],
     speedPowerTotal: over.speedPowerTotal ?? 20,
     calibration,
-    pool: poolCtx([{ player: p, rate: r }]),
   });
 }
 
@@ -192,9 +207,9 @@ describe('buildCard', () => {
     );
   });
 
-  it('follows DEF EPM straight into the Def Boost', () => {
-    expect(card({}, { epmDef: 3.4 }).defBoost).toBe(3);
-    expect(card({}, { epmDef: -1.6 }).defBoost).toBe(-2);
+  it('follows the ACTUAL DEF EPM straight into the Def Boost', () => {
+    expect(card({}, {}, { epmDef: 3.4 }).defBoost).toBe(3);
+    expect(card({}, {}, { epmDef: -1.6 }).defBoost).toBe(-2);
   });
 
   it('survives a player with no stat line at all', () => {
@@ -202,9 +217,10 @@ describe('buildCard', () => {
     const c = buildCard({
       player: p,
       rate: null,
+      actual: null,
+      shooting: shootingFor([null]).players[0],
       speedPowerTotal: 12,
       calibration,
-      pool: poolCtx([{ player: p, rate: {} }]),
     });
     expect(c.speed + c.power).toBe(12);
     // A player with nothing to say collapses to the fewest tiers the shape
@@ -218,8 +234,8 @@ describe('buildCard', () => {
   });
 
   it('prices a better card higher', () => {
-    const star = card({ speedPowerTotal: 28 }, { pts100: 38, epmDef: 3 });
-    const bench = card({ speedPowerTotal: 11 }, { pts100: 14, epmDef: -1 });
+    const star = card({ speedPowerTotal: 28 }, { pts100: 38 }, { epmDef: 3 });
+    const bench = card({ speedPowerTotal: 11 }, { pts100: 14 }, { epmDef: -1 });
     expect(star.salary).toBeGreaterThan(bench.salary);
   });
 });
@@ -267,9 +283,13 @@ describe('generateCards', () => {
     { name: 'Beta Big', speedPowerTotal: 15 },
   ];
   const rates = [rate({ name: 'Alpha Guard' }), rate({ name: 'Beta Big', pts100: 18 })];
+  const actuals = [
+    actual({ name: 'Alpha Guard' }),
+    actual({ name: 'Beta Big', tsPct: 0.62, fgPctRim: 0.72, fgPct3: 0.24 }),
+  ];
 
   it('prefers the resolved team over the pool\'s trade aggregate code', () => {
-    const { cards } = generateCards({ pool, teams, speedPower, rates, calibration });
+    const { cards } = generateCards({ pool, teams, speedPower, rates, actual: actuals, calibration });
     expect(cards[0].team).toBe('BOS');
     expect(cards[0].pos).toBe('SG');
     // Untouched where the resolver has nothing to say.
@@ -277,14 +297,27 @@ describe('generateCards', () => {
   });
 
   it('reports players it could find no stat line for instead of silently zeroing them', () => {
-    const { missingRates } = generateCards({
+    const { missingRates, missingActual } = generateCards({
       pool,
       teams,
       speedPower,
       rates: [rate({ name: 'Alpha Guard' })],
+      actual: [actual({ name: 'Alpha Guard' })],
       calibration,
     });
     expect(missingRates).toEqual(['Beta Big']);
+    expect(missingActual).toEqual(['Beta Big']);
+  });
+
+  // The rule is pool-relative, so a card cannot be built one player at a time:
+  // the compression scale and each boost's centre are measured across everyone.
+  it('reads the shooting layer off the whole pool, not one player at a time', () => {
+    const { cards } = generateCards({ pool, teams, speedPower, rates, actual: actuals, calibration });
+    // Beta Big is the better finisher and much the worse shooter of the two, so
+    // the two cards have to differ in the direction the stats do.
+    const [alpha, beta] = cards;
+    expect(beta.shotLine).toBeLessThan(alpha.shotLine);
+    expect(beta.threePtBoost).toBeLessThan(alpha.threePtBoost);
   });
 
   it('applies a sparse chart override on top of the generated chart', () => {
@@ -293,6 +326,7 @@ describe('generateCards', () => {
       teams,
       speedPower,
       rates,
+      actual: actuals,
       calibration,
       overrides: { Beta_Big: { chart: { 4: { pts: 9 } } } },
     });

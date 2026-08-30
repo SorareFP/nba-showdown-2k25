@@ -12,11 +12,22 @@
 //
 // WHAT "FIT AGAINST THE FINISHED SET" BUYS. Every parameter below has the same
 // ground truth: 283 real cards a person made and shipped. That is a much better
-// target than any principle argued from first principles, and it is the only
-// honest way to approach the layer memory/shooting_attributes_methodology.md says
-// was hand-calibrated and is not recoverable. Nothing here claims to have found
-// the original rules. What it claims is a measured error against them, printed
-// on every run and stored in the output.
+// target than any principle argued from first principles.
+//
+// WHAT IS AND IS NOT FITTED HERE, because the two halves make different claims:
+//
+//   The chart level and salary are REFITS. They reproduce the finished cards by
+//   regression, and their error against those cards is the honest measure of
+//   them; it is printed on every run and stored in the output.
+//
+//   The shooting layer is NOT. scripts/cardgen/shooting.js states a rule — a
+//   player's Shot Line is the roll at which he misses at his real TS% miss rate
+//   — and what is fitted here is only the SCALE that rule is expressed on: the
+//   Shot Line range the finished set occupies, and how large a relative strength
+//   has to be before it earns a modifier. Its agreement with the finished cards
+//   is therefore reported rather than optimised, and it is lower than the
+//   regression it replaced. That is the point: the old fit reproduced what a
+//   card of a player's SORT looked like, and the rule says what the player did.
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -25,9 +36,9 @@ import { readCache, REPO_ROOT } from './cache.js';
 import { normalizeName } from './resolveTeams.js';
 import { loadReferenceCards, chartExpectedValue } from './referenceCards.js';
 import { reconcileBands } from './generate.js';
-import { enforceZeroFloor } from './zeroFloor.js';
 import * as V from './variance.js';
 import * as A from './attributes.js';
+import * as S from './shooting.js';
 import { REFERENCE_STATS_SEASON } from './fetchCalibrationData.js';
 
 export const CALIBRATION_FILE = path.join(
@@ -81,6 +92,10 @@ export function joinReferenceRows({ cards, perGame, perPoss, advanced }) {
       fgPct3: p.fgPct3,
       fgPct2: p.fgPct2,
       ftPct: p.ftPct,
+      // Season TOTAL minutes, which the attempt counts behind the shrinkage
+      // weights are reconstructed from. `mpg * games` would round differently
+      // for every player; the per-100 table carries the real figure.
+      minutes: p.minutes,
       tsPct: a.tsPct,
       usgPct: a.usgPct,
       fg3aRate: a.fg3aRate,
@@ -211,68 +226,62 @@ export function measurePositionSpeedShare(rows) {
 }
 
 // --- shooting layer ---------------------------------------------------------
+//
+// NOT a regression any more. scripts/cardgen/shooting.js states the rule — a
+// player's Shot Line is the roll at which he misses at his real TS% miss rate,
+// and a boost is the distance from that line to what he really shoots at a
+// location — and what is fitted here is only the three things the rule leaves
+// open, all of them measured off the finished cards:
+//
+//   1. The TARGET DISTRIBUTION for the Shot Line. Raw TS% puts the median player
+//      on a line of 9, which converts 60% of his shot checks against 30% on the
+//      finished cards. So the finished set supplies mean, spread and range, and
+//      TS% supplies the ordering.
+//   2. The DEADBAND on each boost, i.e. how big a relative strength has to be
+//      before the card carries a modifier at all. 90% of real Paint Boosts and
+//      64% of real 3PT Boosts are exactly 0; that is a design rule about what a
+//      modifier is FOR, and nothing in the shooting data implies it.
+//   3. The BOUNDS on each boost, taken as the finished set's own min and max, so
+//      a regenerated card can never carry a boost the game has never issued.
+//
+// The reference season is 2024-25 Basketball-Reference, which has no rim FG%, so
+// overall 2P% stands in for the paint signal HERE ONLY. That is defensible
+// because everything the fit produces is pool-relative — the deadband is applied
+// to a value already centred on its own pool's mean and scaled by its own pool's
+// spread — so a systematic difference between "2P%" and "rim%" cancels. The
+// generated set uses rim%, which is the better signal and the one the user asked
+// for; the transfer is checked by reporting both pools' spreads on every run.
+
+/** The finished set's own Shot Line distribution — the target of the compression. */
+export function measureShotLineTarget(cards) {
+  const lines = (cards ?? []).map(c => c.shotLine).filter(Number.isFinite);
+  if (lines.length === 0) return null;
+  const { mean, sd } = A.meanSd(lines);
+  return {
+    mean: Number(mean.toFixed(4)),
+    sd: Number(sd.toFixed(4)),
+    min: Math.min(...lines),
+    max: Math.max(...lines),
+    n: lines.length,
+  };
+}
 
 /**
- * The feature vectors, defined ONCE so calibration and generation cannot drift.
+ * A reference row in the shape scripts/cardgen/shooting.js reads.
  *
- * Every input is either z-scored WITHIN ITS OWN POOL or expressed in units that
- * mean the same thing in both. That matters because the two pools come from
- * different providers — the fit reads Basketball-Reference's 2024-25 tables, and
- * generation reads dunksandthrees' 2025-26 payload — and a provider's systematic
- * offset in, say, usage would otherwise ride straight into every card.
- *
- * `pool` carries the pool-level constants a feature needs: the z-scorers and the
- * pool's mean 3P%/2P%, so "efficiency" always means "relative to this pool".
+ * Attempts are reconstructed from the per-100 rate and season minutes, because
+ * Basketball-Reference's per-100 table reports no raw counts. They feed the
+ * shrinkage weight and nothing else.
  */
-export const shotLineFeatures = (p, pool) => [
-  pool.z.ts(p.ts),
-  pool.z.pts100(p.pts100),
-  pool.z.usg(p.usg),
-  pool.z.mpg(p.mpg),
-];
-
-export const threePtFeatures = (p, pool) => [
-  // The verified anchor, in line units: how far the player's own 3-point
-  // conversion sits from the line his card already asks him to beat.
-  p.shotLine - A.impliedLine(p.fg3),
-  p.fg3a100,
-  p.fg3aRate,
-  p.fg3a100 * (p.fg3 - pool.meanFg3),
-];
-
-export const paintFeatures = (p, pool) => [
-  p.shotLine - A.impliedLine(p.fg2),
-  p.fg2a100,
-  p.fta100,
-  p.fg2a100 * (p.fg2 - pool.meanFg2),
-];
-
-/**
- * Fits a boost's SHAPING — the deadband, the spread correction, and the bounds.
- *
- * Both corrections aim at reproducing the real DISTRIBUTION, not at minimising
- * error, and the objective says so: the pair is chosen to minimise the total
- * variation distance between the produced histogram and the real one.
- *
- * Error minimisation is a trap for this quantity. 90% of real Paint Boosts are
- * 0, so a model returning 0 for everybody "agrees" 90% of the time while saying
- * nothing at all, and a least-squares fit under-disperses by construction — its
- * job is to predict close to the mean when the target is noisy. Optimised that
- * way the first version of this produced 3PT Boosts running -1 to +2 where the
- * real set runs -5 to +5, sanding every specialist down into an average shooter.
- * That is the "player identity" pillar of the design philosophy being quietly
- * deleted, and no error metric would have flagged it.
- *
- *   deadband  How close to zero a prediction has to be to become no modifier at
- *             all. Applied to the raw prediction.
- *   spread    How far the survivors are pushed out from the mean.
- *
- * Bounds are the real set's own observed min and max, so a refit can never issue
- * a boost the game has never had. Agreement rates are still reported — they just
- * are not what is being optimised.
- */
-export const DEADBAND_SEARCH = Array.from({ length: 41 }, (_, i) => i * 0.05);
-export const SPREAD_SEARCH = Array.from({ length: 41 }, (_, i) => 0.6 + i * 0.05);
+export function referenceShootingInput(row) {
+  return {
+    tsPct: row.tsPct,
+    paintPct: row.fgPct2,
+    threePct: row.fgPct3,
+    paintAttempts: S.attemptsFromPer100(row.fg2a100, row.minutes),
+    threeAttempts: S.attemptsFromPer100(row.fg3a100, row.minutes),
+  };
+}
 
 /** Sum of |produced share - real share| over every value. 0 is a perfect match. */
 export function histogramDistance(produced, real) {
@@ -286,20 +295,31 @@ export function histogramDistance(produced, real) {
   return distance;
 }
 
-export function fitBoostShaping(rows, predict, actual) {
-  const preds = rows.map(predict);
-  const reals = rows.map(actual);
-  const mean = A.meanSd(reals).mean;
+/**
+ * Deadbands searched in twentieths of a roll, out to a full roll and a half.
+ *
+ * Finer than the eye can use, but the search is over a few hundred rows and runs
+ * once, and a coarse grid would quantise the zero share it is trying to hit.
+ */
+export const DEADBAND_SEARCH = Array.from({ length: 61 }, (_, i) => i * 0.025);
+
+/**
+ * Picks the deadband whose produced histogram is closest to the real one.
+ *
+ * Distribution matching, NOT error minimisation, and the distinction is the
+ * whole point. 90% of real Paint Boosts are 0, so a rule returning 0 for
+ * everybody "agrees" 90% of the time while saying nothing at all, and any
+ * accuracy metric would happily choose it. Agreement rates are still reported —
+ * they are just not what is being optimised.
+ */
+export function fitDeadband(gaps, shape, reals) {
   const min = Math.min(...reals);
   const max = Math.max(...reals);
-
   let best = null;
   for (const deadband of DEADBAND_SEARCH) {
-    for (const spread of SPREAD_SEARCH) {
-      const values = preds.map(p => A.shapeBoost(p, { spread, mean, deadband, min, max }));
-      const distance = histogramDistance(values, reals);
-      if (!best || distance < best.distance) best = { deadband, spread, distance, values };
-    }
+    const values = gaps.map(g => S.compressBoost(g, { ...shape, deadband, min, max }));
+    const distance = histogramDistance(values, reals);
+    if (!best || distance < best.distance) best = { deadband, distance, values };
   }
 
   const { values } = best;
@@ -312,9 +332,7 @@ export function fitBoostShaping(rows, predict, actual) {
     if (Math.abs(v - reals[i]) <= 1) within1 += 1;
   });
   return {
-    spread: Number(best.spread.toFixed(4)),
-    mean: Number(mean.toFixed(4)),
-    deadband: Number(best.deadband.toFixed(2)),
+    deadband: Number(best.deadband.toFixed(3)),
     min,
     max,
     quality: {
@@ -329,87 +347,59 @@ export function fitBoostShaping(rows, predict, actual) {
   };
 }
 
-/** Pool-level constants the feature builders need. */
-export function poolContext(players) {
-  return {
-    z: {
-      ts: A.zScorer(players.map(p => p.ts)),
-      pts100: A.zScorer(players.map(p => p.pts100)),
-      usg: A.zScorer(players.map(p => p.usg)),
-      mpg: A.zScorer(players.map(p => p.mpg)),
-    },
-    meanFg3: A.meanSd(players.map(p => p.fg3)).mean,
-    meanFg2: A.meanSd(players.map(p => p.fg2)).mean,
-  };
-}
-
-/** The shape every feature builder consumes, from a reference row. */
-const toShootingInput = row => ({
-  ts: row.tsPct,
-  pts100: row.pts100,
-  usg: row.usgPct,
-  mpg: row.mpg,
-  fg3: row.fgPct3,
-  fg3a100: row.fg3a100,
-  fg3aRate: row.fg3aRate,
-  fg2: row.fgPct2,
-  fg2a100: row.fg2a100,
-  fta100: row.fta100,
-  shotLine: row.card.shotLine,
-});
-
 export function fitShootingLayer(rows) {
-  const inputs = rows.map(toShootingInput);
-  const pool = poolContext(inputs);
-  const paired = rows.map((row, i) => ({ row, input: inputs[i] }));
+  const cards = rows.map(r => r.card);
+  const shotLineTarget = measureShotLineTarget(cards);
+  const inputs = rows.map(referenceShootingInput);
 
-  const shotLine = A.fitLeastSquares(
-    paired,
-    p => p.row.card.shotLine,
-    [0, 1, 2, 3].map(i => p => shotLineFeatures(p.input, pool)[i])
-  );
+  // Pass one: no deadbands, purely to get the compression scale and the pool
+  // means the boosts are centred on. Those depend only on the pool, not on the
+  // deadband, so one pass is enough before the search.
+  const layer = S.buildShootingLayer(inputs, { shotLineTarget });
+
   let slExact = 0;
   let slWithin1 = 0;
-  for (const p of paired) {
-    const got = A.shotLineFromScore(A.applyModel(shotLine, shotLineFeatures(p.input, pool)));
-    if (got === p.row.card.shotLine) slExact += 1;
-    if (Math.abs(got - p.row.card.shotLine) <= 1) slWithin1 += 1;
-  }
+  layer.players.forEach((p, i) => {
+    const want = cards[i].shotLine;
+    if (p.shotLine === want) slExact += 1;
+    if (Math.abs(p.shotLine - want) <= 1) slWithin1 += 1;
+  });
 
-  const threePt = A.fitLeastSquares(
-    paired,
-    p => p.row.card.threePtBoost,
-    [0, 1, 2, 3].map(i => p => threePtFeatures(p.input, pool)[i])
+  const paint = fitDeadband(
+    layer.players.map(p => p.raw.exactPaintGap),
+    layer.paintShape,
+    cards.map(c => c.paintBoost)
   );
-  const paint = A.fitLeastSquares(
-    paired,
-    p => p.row.card.paintBoost,
-    [0, 1, 2, 3].map(i => p => paintFeatures(p.input, pool)[i])
+  const three = fitDeadband(
+    layer.players.map(p => p.raw.exactThreeGap),
+    layer.threeShape,
+    cards.map(c => c.threePtBoost)
   );
 
   return {
     shotLine: {
-      model: shotLine,
+      target: shotLineTarget,
+      referencePool: {
+        rawMean: Number(layer.map.poolMean.toFixed(4)),
+        rawSd: Number(layer.map.poolSd.toFixed(4)),
+        scale: Number(layer.map.scale.toFixed(4)),
+      },
       quality: {
-        exactPct: (100 * slExact) / paired.length,
-        within1Pct: (100 * slWithin1) / paired.length,
+        exactPct: (100 * slExact) / rows.length,
+        within1Pct: (100 * slWithin1) / rows.length,
       },
     },
-    threePtBoost: {
-      model: threePt,
-      ...fitBoostShaping(
-        paired,
-        p => A.applyModel(threePt, threePtFeatures(p.input, pool)),
-        p => p.row.card.threePtBoost
-      ),
+    shrinkage: {
+      paint: { mean: Number(layer.shrink.paint.mean.toFixed(4)), k: Number(layer.shrink.paint.k.toFixed(1)) },
+      three: { mean: Number(layer.shrink.three.mean.toFixed(4)), k: Number(layer.shrink.three.k.toFixed(1)) },
     },
     paintBoost: {
-      model: paint,
-      ...fitBoostShaping(
-        paired,
-        p => A.applyModel(paint, paintFeatures(p.input, pool)),
-        p => p.row.card.paintBoost
-      ),
+      ...paint,
+      referenceGapSd: Number(A.meanSd(layer.players.map(p => p.raw.exactPaintGap)).sd.toFixed(4)),
+    },
+    threePtBoost: {
+      ...three,
+      referenceGapSd: Number(A.meanSd(layer.players.map(p => p.raw.exactThreeGap)).sd.toFixed(4)),
     },
   };
 }
@@ -478,6 +468,7 @@ export function buildCalibration({ cards, perGame, perPoss, advanced, sample, ga
     positionSpeedShare: position.shares,
     positionCounts: position.counts,
     shotLine: shooting.shotLine,
+    shrinkage: shooting.shrinkage,
     threePtBoost: shooting.threePtBoost,
     paintBoost: shooting.paintBoost,
     salary,
@@ -565,12 +556,19 @@ export function main({ log = console.log } = {}) {
     log(`  ${pos.padEnd(3)} ${share.toFixed(4)}  (n=${c.positionCounts[pos]})`);
   }
   log('');
-  log('SHOOTING LAYER — refits, not recovered formulas');
-  log(`  shot line   r2 ${c.shotLine.model.r2.toFixed(3)} | exact ${c.shotLine.quality.exactPct.toFixed(0)}% within1 ${c.shotLine.quality.within1Pct.toFixed(0)}%`);
+  log('SHOOTING LAYER — the stated probability rule, compressed onto the finished set');
+  const t = c.shotLine.target;
+  const rp = c.shotLine.referencePool;
+  log(`  shot line target (finished cards) : mean ${t.mean} sd ${t.sd} range [${t.min}, ${t.max}] n=${t.n}`);
+  log(`  reference pool raw TS%% lines      : mean ${rp.rawMean} sd ${rp.rawSd} -> compression x${rp.scale}`);
+  log(`  reproduces the real lines         : exact ${c.shotLine.quality.exactPct.toFixed(0)}% within1 ${c.shotLine.quality.within1Pct.toFixed(0)}%`);
+  log(`  volume gate (shrink toward league mean, k = imaginary league-average attempts)`);
+  log(`    paint  mean ${c.shrinkage.paint.mean} k ${c.shrinkage.paint.k}`);
+  log(`    three  mean ${c.shrinkage.three.mean} k ${c.shrinkage.three.k}`);
   for (const key of ['threePtBoost', 'paintBoost']) {
     const b = c[key];
-    log(`  ${key.padEnd(13)} r2 ${b.model.r2.toFixed(3)} | spread x${b.spread} deadband ${b.deadband} bounds [${b.min}, ${b.max}]`);
-    log(`              exact ${b.quality.exactPct.toFixed(0)}% within1 ${b.quality.within1Pct.toFixed(0)}% | zeros ${b.quality.zeroPct.toFixed(0)}% (real ${b.quality.realZeroPct.toFixed(0)}%)`);
+    log(`  ${key.padEnd(13)} deadband ${b.deadband} bounds [${b.min}, ${b.max}] | reference gap sd ${b.referenceGapSd}`);
+    log(`              exact ${b.quality.exactPct.toFixed(0)}% within1 ${b.quality.within1Pct.toFixed(0)}% | zeros ${b.quality.zeroPct.toFixed(0)}% (real ${b.quality.realZeroPct.toFixed(0)}%) | histogram distance ${b.quality.histogramDistance}`);
   }
   log(`  salary      r2 ${c.salary.model.r2.toFixed(3)} | median |err| ${c.salary.quality.medianAbsError} p90 ${c.salary.quality.p90AbsError}`);
   log('');

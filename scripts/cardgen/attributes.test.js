@@ -1,25 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import * as A from './attributes.js';
 
-describe('the D20 probability calibration', () => {
-  // The one verified fact in the whole shooting layer
-  // (memory/shooting_attributes_methodology.md): Curry's Shot Line 13 with a
-  // 3PT Boost of +2 gives an effective line of 11, and 11 is what ~45% from
-  // three is worth. Everything else in that layer is a refit hanging off this.
-  it('reproduces the verified real-card examples', () => {
-    expect(A.successProbability(13 - 2)).toBeCloseTo(0.45, 10); // Curry
-    expect(A.successProbability(13 - 1)).toBeCloseTo(0.4, 10); // Haliburton
-    expect(A.successProbability(14 - 2)).toBeCloseTo(0.4, 10); // Pritchard, Edwards
-    expect(A.successProbability(12 - 0)).toBeCloseTo(0.4, 10); // Jokic
-  });
-
-  it('inverts', () => {
-    for (const line of [11, 12, 13, 14, 15, 16, 17]) {
-      expect(A.impliedLine(A.successProbability(line))).toBeCloseTo(line, 10);
-    }
-  });
-});
-
 describe('basePosition', () => {
   it('reduces every spelling the two sources use', () => {
     expect(A.basePosition('PG')).toBe('PG');
@@ -87,48 +68,6 @@ describe('defBoostFromEpm', () => {
   it('treats a missing EPM as neutral', () => {
     expect(A.defBoostFromEpm(undefined)).toBe(0);
     expect(A.defBoostFromEpm(NaN)).toBe(0);
-  });
-});
-
-describe('shapeBoost', () => {
-  const shaping = { spread: 1.2, mean: 0.5, deadband: 1.05, min: -5, max: 5 };
-
-  it('zeroes anything inside the deadband', () => {
-    expect(A.shapeBoost(1.0, shaping)).toBe(0);
-    expect(A.shapeBoost(-1.0, shaping)).toBe(0);
-  });
-
-  // The regression this test exists for: applying the deadband AFTER the spread
-  // made every +1 unreachable, because nothing could land between the band edge
-  // and 1.5. A whole tier disappeared from the set and no error metric noticed.
-  it('can still produce a +1, the tier a post-spread deadband deleted', () => {
-    const values = [];
-    for (let x = -4; x <= 4; x += 0.01) values.push(A.shapeBoost(x, shaping));
-    expect(values).toContain(1);
-    expect(values).toContain(-1);
-  });
-
-  it('clamps to the bounds it is given', () => {
-    expect(A.shapeBoost(100, { ...shaping, min: -1, max: 3 })).toBe(3);
-    expect(A.shapeBoost(-100, { ...shaping, min: -1, max: 3 })).toBe(-1);
-  });
-
-  it('is monotone in the prediction outside the deadband', () => {
-    let previous = -Infinity;
-    for (let x = 1.05; x <= 6; x += 0.05) {
-      const value = A.shapeBoost(x, shaping);
-      expect(value).toBeGreaterThanOrEqual(previous);
-      previous = value;
-    }
-  });
-});
-
-describe('shotLineFromScore', () => {
-  it('clamps into the range the finished set actually occupies', () => {
-    expect(A.shotLineFromScore(3)).toBe(A.SHOT_LINE_MIN);
-    expect(A.shotLineFromScore(40)).toBe(A.SHOT_LINE_MAX);
-    expect(A.shotLineFromScore(15.4)).toBe(15);
-    expect(A.shotLineFromScore(15.6)).toBe(16);
   });
 });
 

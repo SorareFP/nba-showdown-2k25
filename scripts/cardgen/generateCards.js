@@ -10,33 +10,41 @@
 // snapshot and scripts/cardgen/calibrateAttributes.js to refit.
 //
 // EVERY VALUE IT PRODUCES IS PROVISIONAL, and the file says so on every record.
-// The three layers come from three different places and are of three different
-// qualities, which is worth knowing before trusting any single number:
+// The layers come from different places and are of different qualities, which is
+// worth knowing before trusting any single number:
 //
-//   Speed / Power   The combined budget was already derived (EPM-led composite,
-//                   mapped onto the finished set's distribution). All that
-//                   happens here is the positional split from
+//   Speed / Power   From the ACTUAL season's OFF / DEF / EPM / EW-per-game
+//                   (scripts/cardgen/speedPower.js), mapped onto the finished
+//                   set's own distribution by magnitude. All that happens here
+//                   is the positional split from
 //                   memory/speed_power_methodology.md, using shares measured off
-//                   the finished cards. This is the most faithful layer.
+//                   the finished cards.
 //
-//   Scoring chart   A real distribution is not available for this pool, only
-//                   per-100 means. The spread is borrowed from a fitted model of
-//                   30 real game logs and the size from the finished card set;
-//                   the band logic itself is the untouched, validated
-//                   computeStatBands. Reproduces the finished cards' band values
-//                   exactly about 70% of the time and within one about 99%.
+//   Shooting        From the ACTUAL season's TS%, rim FG% and 3P%, by the rule
+//                   in scripts/cardgen/shooting.js: a player misses at his real
+//                   miss rate, compressed onto the range the finished cards
+//                   occupy. This is the layer that changed most — it used to be
+//                   a regression against those cards.
 //
-//   Shooting        The weakest. The original rules were hand-calibrated and are
-//                   not recoverable (memory/shooting_attributes_methodology.md
-//                   says so plainly). These are refits against the finished
-//                   cards, anchored on the one verified thing — the D20
-//                   probability calibration — and their error rates are printed
-//                   on every run. Paint Boost in particular is close to
-//                   unpredictable from box-score rates: 90% of real ones are
-//                   zero and the model largely agrees by also saying zero.
+//   Def Boost       The ACTUAL season's DEF EPM, rounded. The user's own
+//                   recorded proposal, followed literally.
 //
-// Def Boost is neither of those: it is dunksandthrees' DEF EPM rounded, which is
-// the user's own recorded proposal, followed literally.
+//   Scoring chart   THE ONE THING STILL ON PREDICTED DATA, and the weakest
+//                   layer. A chart needs per-100 PTS / REB / AST, and the actual
+//                   page reports rebounds and assists as rate percentages that
+//                   cannot be inverted without team and opponent totals. (Points
+//                   alone could be recovered — TS% is defined as
+//                   PTS / (2 * (FGA + 0.44 * FTA)) and both attempt rates are on
+//                   the page — but a chart built from actual points and
+//                   predicted rebounds would be worse than one built
+//                   consistently.) A real per-game distribution is not available
+//                   for this pool either, so the spread comes from a fitted
+//                   model of 30 real game logs and the size from the finished
+//                   card set; the band logic itself is the untouched, validated
+//                   computeStatBands.
+//
+//   Salary          Prices the FINISHED card, so it moves whenever any of the
+//                   above does. Still a refit against the finished cards.
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -49,14 +57,9 @@ import { isBlankTier } from './zeroFloor.js';
 import { applyOverrides } from './overrides.js';
 import * as V from './variance.js';
 import * as A from './attributes.js';
+import * as S from './shooting.js';
 import { trb100 } from './sources/dunksAndThrees.js';
-import {
-  poolContext,
-  shotLineFeatures,
-  threePtFeatures,
-  paintFeatures,
-  CALIBRATION_FILE,
-} from './calibrateAttributes.js';
+import { CALIBRATION_FILE } from './calibrateAttributes.js';
 import { CURRENT_STATS_SEASON } from './fetchCalibrationData.js';
 import { playerIdFromName } from '../../src/cards/playerId.js';
 
@@ -90,35 +93,34 @@ export function indexByName(rows, keyOf = r => r.name) {
 const lookup = (index, name) =>
   index.get(normalizeName(STAT_NAME_ALIASES[name] ?? name)) ?? index.get(normalizeName(name)) ?? null;
 
-/** The shooting inputs, in the units calibrateAttributes.js's feature builders expect. */
-export function shootingInputFromRate(rate, mpg) {
-  const fga3 = rate.fga3Per100 ?? 0;
-  const fga2 = rate.fga2Per100 ?? 0;
+/**
+ * The shooting inputs for one player, from his ACTUAL season row.
+ *
+ * Rim FG% is the paint signal — the location the Paint Boost is about — rather
+ * than overall 2P%, which blends the rim with the midrange and so understates
+ * exactly the players the boost exists to mark. `attemptsFromPer75` reconstructs
+ * the volume behind each percentage, which gates how far it is trusted.
+ */
+export function actualShootingInput(rate) {
   return {
-    ts: rate.tsPct ?? 0,
-    pts100: rate.pts100 ?? 0,
-    usg: rate.usage ?? 0,
-    mpg: mpg ?? 0,
-    fg3: rate.fgPct3 ?? 0,
-    fg3a100: fga3,
-    // Basketball-Reference's 3PAr is 3PA/FGA; dunksandthrees splits attempts by
-    // location instead, so it is reconstructed rather than read.
-    fg3aRate: fga2 + fga3 > 0 ? fga3 / (fga2 + fga3) : 0,
-    fg2: rate.fgPct2 ?? 0,
-    fg2a100: fga2,
-    fta100: rate.ftaPer100 ?? 0,
+    tsPct: rate?.tsPct ?? null,
+    paintPct: rate?.fgPctRim ?? null,
+    threePct: rate?.fgPct3 ?? null,
+    paintAttempts: S.attemptsFromPer75(rate?.fgaRimPer75, rate?.minutes),
+    threeAttempts: S.attemptsFromPer75(rate?.fga3Per75, rate?.minutes),
   };
 }
 
 /**
  * Builds one card.
  *
- * ORDER MATTERS and is the resolution order from the shooting model: the Shot
- * Line is the baseline, the boosts are modifiers measured AGAINST that baseline
- * (which is why they need it as an input, not the other way round), and salary
- * prices the finished card, so it comes last.
+ * The shooting values arrive already computed, because the rule that produces
+ * them is pool-relative and cannot be evaluated one player at a time — see
+ * generateCards below. What is still ordered here is salary: it prices the
+ * FINISHED card (design philosophy point 8), so it comes last, after the chart
+ * it is a function of exists.
  */
-export function buildCard({ player, rate, speedPowerTotal, calibration, pool }) {
+export function buildCard({ player, rate, actual, shooting, speedPowerTotal, calibration }) {
   const per100 = {
     pts: rate?.pts100 ?? 0,
     reb: rate ? trb100(rate) : 0,
@@ -130,20 +132,8 @@ export function buildCard({ player, rate, speedPowerTotal, calibration, pool }) 
     calibration.positionSpeedShare
   );
 
-  const input = shootingInputFromRate(rate ?? {}, player.mpg);
-  const shotLine = A.shotLineFromScore(
-    A.applyModel(calibration.shotLine.model, shotLineFeatures(input, pool))
-  );
-  const withLine = { ...input, shotLine };
-  const threePtBoost = A.shapeBoost(
-    A.applyModel(calibration.threePtBoost.model, threePtFeatures(withLine, pool)),
-    calibration.threePtBoost
-  );
-  const paintBoost = A.shapeBoost(
-    A.applyModel(calibration.paintBoost.model, paintFeatures(withLine, pool)),
-    calibration.paintBoost
-  );
-  const defBoost = A.defBoostFromEpm(rate?.epmDef);
+  const { shotLine, paintBoost, threePtBoost } = shooting;
+  const defBoost = A.defBoostFromEpm(actual?.epmDef);
 
   // Each stat gets its own corrected level (see fitChartLevel), so the three
   // columns are synthesized separately and then reconciled onto one spine.
@@ -203,39 +193,65 @@ export function expectedValuePerRoll(chart, stat, faces = 20) {
   return total / faces;
 }
 
-export function generateCards({ pool: poolPlayers, teams, speedPower, rates, calibration, overrides = {} }) {
+export function generateCards({
+  pool: poolPlayers,
+  teams,
+  speedPower,
+  rates,
+  actual,
+  calibration,
+  overrides = {},
+}) {
   const teamIndex = indexByName(teams);
   const spIndex = indexByName(speedPower);
   const rateIndex = indexByName(rates);
+  const actualIndex = indexByName(actual);
 
   const resolved = poolPlayers.map(p => {
     const team = teamIndex.get(normalizeName(p.name));
     return { ...p, team: team?.team ?? p.team, pos: team?.pos ?? p.pos };
   });
 
-  const inputs = resolved.map(p => shootingInputFromRate(lookup(rateIndex, p.name) ?? {}, p.mpg));
-  const poolCtx = poolContext(inputs);
+  // The shooting layer is a POOL operation, not a per-player one: the
+  // compression scale, the shrinkage strength and the centre of each boost are
+  // all measured across these 331 players, so it has to run once over all of
+  // them before any single card can be built.
+  const actualRows = resolved.map(p => lookup(actualIndex, p.name));
+  const shooting = S.buildShootingLayer(actualRows.map(actualShootingInput), {
+    shotLineTarget: calibration.shotLine.target,
+    paint: calibration.paintBoost,
+    three: calibration.threePtBoost,
+  });
 
   const cards = [];
   const missingRates = [];
-  for (const player of resolved) {
+  const missingActual = [];
+  resolved.forEach((player, i) => {
     const rate = lookup(rateIndex, player.name);
     if (!rate) missingRates.push(player.name);
+    if (!actualRows[i]) missingActual.push(player.name);
     const sp = spIndex.get(normalizeName(player.name));
     cards.push(
       buildCard({
         player,
         rate,
+        actual: actualRows[i],
+        shooting: shooting.players[i],
         speedPowerTotal: sp?.speedPowerTotal ?? 0,
         calibration,
-        pool: poolCtx,
       })
     );
-  }
+  });
 
   const byId = Object.fromEntries(cards.map(c => [c.id, c]));
   const overridden = applyOverrides(byId, overrides);
-  return { cards: cards.map(c => overridden[c.id]), missingRates };
+  return {
+    cards: cards.map(c => overridden[c.id]),
+    missingRates,
+    missingActual,
+    shooting,
+    names: resolved.map(p => p.name),
+  };
 }
 
 /** min / median / max plus a value histogram, for the run report. */
@@ -270,6 +286,94 @@ export function histogram(values) {
   return [...counts.entries()].sort((a, b) => a[0] - b[0]);
 }
 
+/**
+ * The shooting layer, RAW against COMPRESSED, side by side.
+ *
+ * The raw column is the rule applied literally — a player's Shot Line is the
+ * roll at which he misses at his real TS% miss rate, and a boost is the distance
+ * from there to what he really shoots at that spot. It is printed on every run
+ * because it is the thing being traded away: raw lines are three to seven rolls
+ * easier than any card the game has ever printed, which would roughly double
+ * shot-check success and undo the balance pass in
+ * docs/plans/2026-03-31-scoring-balance-design.md. Seeing both is how that trade
+ * stays a decision rather than a default.
+ */
+export function reportShooting({ cards, shooting, names, calibration, log }) {
+  const players = shooting.players;
+  const line = (label, values) => {
+    const v = summarize(values);
+    log(
+      `  ${label.padEnd(22)}${String(v.min).padStart(6)}${String(v.p10).padStart(6)}` +
+        `${String(v.median).padStart(6)}${String(v.p90).padStart(6)}${String(v.max).padStart(6)}` +
+        `${String(v.mean).padStart(8)}`
+    );
+  };
+
+  log('SHOOTING — the rule raw, and compressed onto the finished set');
+  log('                            min   p10   med   p90   max    mean');
+  line('shot line RAW (TS%)', players.map(p => p.literal.shotLine));
+  line('shot line COMPRESSED', cards.map(c => c.shotLine));
+  line('paint boost RAW', players.map(p => p.literal.paintGap));
+  line('paint boost COMPRESSED', cards.map(c => c.paintBoost));
+  line('3PT boost RAW', players.map(p => p.literal.threeGap));
+  line('3PT boost COMPRESSED', cards.map(c => c.threePtBoost));
+  log(
+    `  d20 success rate at the median line: raw ${(
+      100 * S.successRateForLine(summarize(players.map(p => p.literal.shotLine)).median)
+    ).toFixed(0)}%, compressed ${(
+      100 * S.successRateForLine(summarize(cards.map(c => c.shotLine)).median)
+    ).toFixed(0)}%`
+  );
+
+  log('');
+  log('  a spread of players, raw -> compressed');
+  // One player per compressed line, and within each the one with the biggest
+  // Speed+Power budget — spanning the range while naming players a reader can
+  // actually check, rather than eight names nobody recognises.
+  const byLine = new Map();
+  names.forEach((name, i) => {
+    const line = cards[i].shotLine;
+    const best = byLine.get(line);
+    const budget = cards[i].speed + cards[i].power;
+    if (!best || budget > best.budget) byLine.set(line, { name, i, budget });
+  });
+  const num = v => (v == null ? '  -' : String(v).padStart(3));
+  for (const [, { name, i }] of [...byLine.entries()].sort((a, b) => a[0] - b[0])) {
+    const p = players[i];
+    const c = cards[i];
+    log(
+      `    ${name.padEnd(24)} line ${String(p.literal.shotLine).padStart(2)} -> ${String(c.shotLine).padStart(2)}` +
+        `   paint ${num(p.literal.paintGap)} -> ${String(c.paintBoost).padStart(2)}` +
+        `   3PT ${num(p.literal.threeGap)} -> ${String(c.threePtBoost).padStart(2)}`
+    );
+  }
+
+  log('');
+  log('  boost distribution vs the finished cards it was calibrated against');
+  for (const key of ['paintBoost', 'threePtBoost']) {
+    const real = calibration[key].quality.realHistogram;
+    const realTotal = Object.values(real).reduce((a, b) => a + b, 0);
+    const asShare = h =>
+      Object.entries(h)
+        .sort((a, b) => Number(a[0]) - Number(b[0]))
+        .map(([k, v]) => `${k}:${((100 * v) / (h === real ? realTotal : cards.length)).toFixed(0)}%`)
+        .join(' ');
+    const produced = Object.fromEntries(histogram(cards.map(c => c[key])));
+    log(`    ${key} produced  ${asShare(produced)}`);
+    log(`    ${' '.repeat(key.length)} real      ${asShare(real)}`);
+  }
+
+  // Sizes the follow-up task: the chart restructure wants a band boundary AT the
+  // shot line, so that the arrow marks the row where scoring starts. This counts
+  // how many charts already happen to break there.
+  const breaks = cards.filter(c => c.chart.some(t => t.lo === c.shotLine)).length;
+  log('');
+  log(
+    `  charts whose band already starts exactly at the shot line: ${breaks}/${cards.length} ` +
+      `(${((100 * breaks) / cards.length).toFixed(0)}%)`
+  );
+}
+
 export function main({ log = console.log } = {}) {
   const calibration = readJson(CALIBRATION_FILE);
   const rates = readCache(`dunksandthrees-epm-${CURRENT_STATS_SEASON}`);
@@ -279,12 +383,20 @@ export function main({ log = console.log } = {}) {
         'scripts/cardgen/fetchCalibrationData.js first.'
     );
   }
+  const actual = readCache(`dunksandthrees-actual-${CURRENT_STATS_SEASON}`);
+  if (!actual) {
+    throw new Error(
+      `No cached dunksandthrees ACTUAL rates for ${CURRENT_STATS_SEASON} — run ` +
+        'scripts/cardgen/fetchCalibrationData.js first.'
+    );
+  }
   const overridesFile = path.join(REPO_ROOT, 'scripts', 'cardgen', 'overrides.json');
-  const { cards, missingRates } = generateCards({
+  const { cards, missingRates, missingActual, shooting, names } = generateCards({
     pool: readJson(path.join(GEN_DIR, 'player-pool-2026.json')),
     teams: readJson(path.join(GEN_DIR, 'player-teams-2026.json')),
     speedPower: readJson(path.join(GEN_DIR, 'speed-power-totals-2026.json')),
     rates,
+    actual,
     calibration,
     overrides: fs.existsSync(overridesFile) ? readJson(overridesFile) : {},
   });
@@ -296,17 +408,22 @@ export function main({ log = console.log } = {}) {
     statsSeason: CURRENT_STATS_SEASON,
     calibratedAgainst: calibration.referenceSeason,
     note:
-      'PROVISIONAL. Charts are synthesized from per-100 season rates, not real per-game logs; ' +
-      'Shot Line and the Paint/3PT boosts are refits against the finished 2025-26 card set, not ' +
-      'the original hand-calibrated rules. See scripts/cardgen/variance.js and ' +
-      'card-data/generated/card-calibration.json for the fitted parameters and their error rates.',
+      'PROVISIONAL. Shot Line, Paint Boost, 3PT Boost, Def Boost and the Speed/Power budget come ' +
+      "from dunksandthrees' ACTUAL 2025-26 season page; the shooting three are the stated " +
+      'probability rule (a player misses at his real miss rate) compressed onto the finished ' +
+      "set's own distribution. Charts are still synthesized from the PREDICTED per-100 rates, " +
+      'because the actual page carries no per-100 rebound or assist counts. See ' +
+      'scripts/cardgen/shooting.js and card-data/generated/card-calibration.json.',
     cards,
   };
   fs.writeFileSync(OUTPUT_FILE, `${JSON.stringify(payload, null, 1)}\n`);
 
   log(`${cards.length} cards -> ${path.relative(REPO_ROOT, OUTPUT_FILE)}`);
   if (missingRates.length) {
-    log(`  no stat line for ${missingRates.length}: ${missingRates.join(', ')}`);
+    log(`  no predicted stat line for ${missingRates.length}: ${missingRates.join(', ')}`);
+  }
+  if (missingActual.length) {
+    log(`  no ACTUAL stat line for ${missingActual.length}: ${missingActual.join(', ')}`);
   }
   log('');
   const fields = ['speed', 'power', 'shotLine', 'paintBoost', 'threePtBoost', 'defBoost', 'salary'];
@@ -343,6 +460,8 @@ export function main({ log = console.log } = {}) {
       .join(' ')}  (printed rows: one fewer)`
   );
   log(`  speed+power sums to budget : ${cards.every(c => c.speed >= 1 && c.power >= 1) ? 'all >= 1 each' : 'CHECK'}`);
+  log('');
+  reportShooting({ cards, shooting, names, calibration, log });
   return payload;
 }
 

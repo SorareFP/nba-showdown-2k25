@@ -1,40 +1,22 @@
-// Everything on a card that is NOT the scoring chart: the Speed/Power split,
-// Shot Line, the three boosts, and Salary.
+// Everything on a card that is NOT the scoring chart and NOT the shooting
+// layer: the Speed/Power split, Def Boost, Salary, and the small shared numeric
+// helpers the rest of scripts/cardgen/ builds on.
 //
-// PROVENANCE, AND WHAT IS AND IS NOT CLAIMED HERE.
+// The shooting layer — Shot Line, Paint Boost, 3PT Boost — moved to
+// scripts/cardgen/shooting.js when it stopped being a regression against the
+// finished cards and became a stated rule applied to real shooting percentages.
+// That file carries its own provenance, including why its d20 arithmetic reads
+// `total >= line` rather than the rulebook's "beat".
+//
+// PROVENANCE OF WHAT IS LEFT.
 //
 // memory/speed_power_methodology.md preserved its derivation, so the Speed/Power
-// split below FOLLOWS it: a combined budget (already produced, in
-// card-data/generated/speed-power-totals-2026.json) divided by positional
-// tendency. The position ratios are not invented — they are measured off the 283
-// finished cards, joined to those players' real primary positions.
+// split below FOLLOWS it: a combined budget (produced by
+// scripts/cardgen/speedPower.js) divided by positional tendency. The position
+// ratios are not invented — they are measured off the 283 finished cards, joined
+// to those players' real primary positions.
 //
-// memory/shooting_attributes_methodology.md says the opposite about the shooting
-// layer: "The exact conversion rules from raw stats to boost values are NOT
-// preserved... Do not invent a formula and present it as recovered." Nothing
-// here is presented as recovered. What is done instead is a REFIT: a candidate
-// rule is proposed from the ONE thing that IS verified — the D20 probability
-// calibration — and then its coefficients are fitted against the 283 finished
-// cards and its error reported. A refit with a published error rate is a
-// different claim from a recovered formula, and the difference is kept visible
-// in the output (every record is marked provisional, and the calibration file
-// carries the fit quality).
-//
-// THE VERIFIED ANCHOR, which everything in the shooting layer hangs off:
-//
-//     effective_line = shot_line - boost
-//     success_probability = (20 - effective_line) / 20
-//
-// Confirmed against real cards — Curry's Shot Line 13 with 3PT +2 gives an
-// effective 11, and 11 is what ~45% from three is worth on a D20. So a boost is
-// SIZED TO HIT A TARGET PERCENTAGE, not assigned by rank, and the same boost
-// value means different things on two different cards. That is why the 3PT
-// predictor below is `shotLine - impliedLine(3P%)` — a distance in line units —
-// rather than a ranking of 3P%.
-
-/** The D20 conversion, both directions. `line` is what a roll must beat. */
-export const successProbability = line => (20 - line) / 20;
-export const impliedLine = probability => 20 - 20 * probability;
+// Salary is a refit against those same finished cards, and says so.
 
 /**
  * Share of a player's Speed+Power budget that goes to SPEED, by position.
@@ -165,52 +147,6 @@ export const applyModel = (model, xs) =>
   model.coef.reduce((s, c, i) => s + c * (i === 0 ? 1 : (xs[i - 1] ?? 0)), 0);
 
 /**
- * Rounds a boost prediction, with a DEADBAND around zero.
- *
- * The deadband is what makes the output look like the real set instead of like a
- * regression. On the 283 finished cards, 64% of 3PT Boosts and 90% of Paint
- * Boosts are exactly 0 — the modifier is the exception, reserved for a genuine
- * relative strength or weakness, and plain rounding of a continuous prediction
- * would hand nearly everybody a +1 and destroy that. The width is calibrated
- * against those real zero shares, not picked.
- */
-export function roundBoost(value, deadband, { min = -5, max = 5 } = {}) {
-  if (!Number.isFinite(value)) return 0;
-  if (Math.abs(value) < deadband) return 0;
-  return Math.min(Math.max(Math.round(value), min), max);
-}
-
-/**
- * Turns a least-squares prediction into a boost, restoring its SPREAD first.
- *
- * A least-squares fit is deliberately under-dispersed: it minimises squared
- * error, which for a noisy target means predicting closer to the mean than the
- * truth ever is. Left alone that produced a set whose 3PT Boosts ran -1 to +2
- * where the real set runs -5 to +5, and 84% zeros where the real set has 64% —
- * every specialist quietly sanded down into an average shooter, which is
- * precisely the "player identity" the design philosophy exists to protect.
- *
- * So the prediction is rescaled about the target's mean by `spread`, the ratio
- * of the real standard deviation to the fitted one, before the deadband and the
- * rounding. This deliberately trades a little accuracy for a distribution that
- * looks like the real set's — the right trade here, because a boost's job is to
- * mark a player out from the field, and a metric that rewards predicting the
- * mean cannot see that.
- */
-export function shapeBoost(value, { spread = 1, mean = 0, deadband = 1, min = -5, max = 5 }) {
-  if (!Number.isFinite(value)) return 0;
-  // The deadband is applied to the RAW prediction, the spread only to what
-  // survives it. Applying them the other way round couples two things that need
-  // to be tuned separately, and does so destructively: a deadband of 1.5 on an
-  // already-widened value cannot produce a +1 at all — nothing lands between the
-  // band edge and 1.5 — so the whole "+1, a legitimate high-level threat" tier
-  // silently disappeared from a set that should have had about thirty of them.
-  if (Math.abs(value) < deadband) return 0;
-  const widened = mean + (value - mean) * spread;
-  return Math.min(Math.max(Math.round(widened), min), max);
-}
-
-/**
  * Def Boost from dunksandthrees' DEF EPM, rounded.
  *
  * This is the user's own recorded proposal (memory/speed_power_methodology.md,
@@ -230,23 +166,15 @@ export function defBoostFromEpm(defEpm) {
 }
 
 /**
- * Shot Line: the baseline chance of converting, before location modifiers.
+ * The worst Shot Line the finished set ever printed.
  *
- * Fitted, not asserted. memory/shooting_attributes_methodology.md is explicit
- * that Shot Line is deliberately NOT TS% or FG% — those are descriptive, this is
- * a game dial tuned to produce the right amount of scoring once modifiers and
- * matchups apply — and that it is compressed into a narrow playable band. So the
- * model regresses the real 283 Shot Lines on shooting efficiency and scoring
- * volume, and the output is clamped back into the band the real set occupies.
- *
- * Lower is easier. The clamp bounds are the real set's own min and max.
+ * Kept only as the reference point salaryFeatures prices a line against —
+ * `SHOT_LINE_MAX - shotLine` is "how much easier than the worst card in the set"
+ * — so a better line always raises the salary. The range the generator actually
+ * clamps to is measured off the finished cards at calibration time and lives in
+ * card-data/generated/card-calibration.json.
  */
-export const SHOT_LINE_MIN = 12;
 export const SHOT_LINE_MAX = 18;
-
-export function shotLineFromScore(score) {
-  return Math.min(Math.max(Math.round(score), SHOT_LINE_MIN), SHOT_LINE_MAX);
-}
 
 /**
  * The salary model.

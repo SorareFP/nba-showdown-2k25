@@ -15,6 +15,7 @@ import {
   forceBandBoundary,
   shapeChart,
   MAX_CHART_TIERS,
+  MAX_PRINTED_ROWS,
 } from './generate.js';
 import * as basketballReference from './sources/basketballReference.js';
 import { computeStatBands } from './bands.js';
@@ -221,19 +222,24 @@ describe('shapeChart', () => {
   ];
 
   it('floors before it merges, so duplicates the floor CREATES are collapsed too', () => {
-    // Tier 1's points are about to be zeroed, which makes it identical to the
-    // blank tier. A merge that ran first would not see that and would leave a
-    // redundant row on the card.
-    const shaped = shapeChart([tier(1, 3, 1, 0, 0), tier(4, 20, 0, 1, 0), tier(21, 99, 2, 1, 0)]);
+    // The floor zeroes the 3-3 tier's points, which makes it identical to the
+    // 4-20 band above. A merge that ran first would not see that and would
+    // leave a redundant row on the card.
+    const shaped = shapeChart([tier(1, 3, 1, 1, 0), tier(4, 20, 0, 1, 0), tier(21, 99, 2, 1, 0)]);
     expect(shaped).toEqual([
-      tier(1, 3, 0, 0, 0), // the carved 1-2 blank plus the zeroed 3-3 above it
-      tier(4, 20, 0, 1, 0),
+      tier(1, 2, 0, 0, 0), // the blank tier, carved out and never merged into
+      tier(3, 20, 0, 1, 0), // the zeroed 3-3 tier, collapsed into 4-20
       tier(21, 99, 2, 1, 0),
     ]);
-    // Without the floor running first, the bottom band still scores 1 and no
-    // two rows are alike — four rows instead of three.
-    expect(mergeIdenticalTiers([tier(1, 3, 1, 0, 0), tier(4, 20, 0, 1, 0), tier(21, 99, 2, 1, 0)]))
-      .toHaveLength(3);
+  });
+
+  it('never merges the blank tier away, so every card keeps a no-scoring row', () => {
+    // The blank tier is not printed, so swallowing an equally blank no-scoring
+    // tier would save no row — it would delete the second tier the two-tier
+    // floor exists to create and start the printed chart at roll 4.
+    const shaped = shapeChart([tier(1, 3, 1, 0, 0), tier(4, 20, 2, 1, 0), tier(21, 99, 3, 1, 0)]);
+    expect(shaped[0]).toEqual(tier(1, 2, 0, 0, 0));
+    expect(shaped[1]).toEqual(tier(3, 3, 0, 0, 0)); // the no-scoring row, kept
   });
 
   it('breaks the chart at the shot line', () => {
@@ -257,16 +263,20 @@ describe('shapeChart', () => {
     expect(shaped.some(t => t.lo === 15)).toBe(true);
     expect(shaped.filter(t => t.pts === 3 && t.reb === 1 && t.ast === 1)).toHaveLength(2);
     // Without a shot line there is nothing to protect and they collapse.
-    expect(shapeChart(bands)).toHaveLength(4);
+    expect(shapeChart(bands)).toHaveLength(5);
   });
 
   it('never hands the card more rows than the table can print', () => {
-    // Five bands plus the blank tier is six, and the table holds five. Nothing
-    // here merges, so the row cap is the only thing that can save it.
+    // Five percentile bands plus the blank tier is the whole budget, and the
+    // blank one is not printed — so the worst case is exactly five ROWS. This
+    // holds by construction: nothing downstream of computeStatBands adds a
+    // tier, so there is no clamp here to go wrong.
     const shaped = shapeChart(fiveBands(), { shotLine: 15 });
     expect(shaped.length).toBeLessThanOrEqual(MAX_CHART_TIERS);
-    expect(MAX_CHART_TIERS).toBe(5);
-    expect(shaped[0]).toMatchObject({ lo: 1, pts: 0, reb: 0, ast: 0 });
+    expect(MAX_PRINTED_ROWS).toBe(5);
+    expect(MAX_CHART_TIERS).toBe(6);
+    expect(shaped[0]).toMatchObject({ lo: 1, hi: 2, pts: 0, reb: 0, ast: 0 });
+    expect(shaped.length - 1).toBeLessThanOrEqual(MAX_PRINTED_ROWS);
     expect(shaped.some(t => t.lo === 15)).toBe(true); // the break survives it
   });
 

@@ -196,6 +196,9 @@ const byName = (a, b) => a.name.localeCompare(b.name);
 export const SOURCES = {
   pool: {
     key: 'pool',
+    // The SET these records belong to, not a label. CardTemplate reads it to
+    // decide whether the structural blank tier is printed — see hidesBlankTier.
+    set: CURRENT_SET,
     label: `${CURRENT_SET} set · ${POOL_PLAYERS.length} players`,
     sub: STATS_GENERATED
       ? `${STATS_SEASON} stats · provisional numbers`
@@ -215,6 +218,7 @@ export const SOURCES = {
   },
   cards: {
     key: 'cards',
+    set: FINISHED_SET,
     label: `${FINISHED_SET} set · ${CARD_PLAYERS.length} cards (reference)`,
     sub: 'finished — template preview only',
     editable: false,

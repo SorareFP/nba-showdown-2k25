@@ -58,7 +58,7 @@ import { pathToFileURL } from 'node:url';
 import { readCache, REPO_ROOT } from './cache.js';
 import { normalizeName } from './resolveTeams.js';
 import { computeStatBands } from './bands.js';
-import { reconcileBands, shapeChart, MAX_CHART_TIERS } from './generate.js';
+import { reconcileBands, shapeChart, MAX_CHART_TIERS, MAX_PRINTED_ROWS } from './generate.js';
 import { isBlankTier } from './zeroFloor.js';
 import { applyOverrides } from './overrides.js';
 import * as V from './variance.js';
@@ -400,9 +400,10 @@ export function reportShooting({ cards, shooting, names, calibration, log }) {
   // a real dividing line to sit on (see forceBandBoundary). This is the check
   // that it actually did: anything short of every card is a bug, not a statistic.
   const breaks = cards.filter(c => c.chart.some(t => t.lo === c.shotLine)).length;
-  // ...and the break has to fall BETWEEN two printed rows. A break at the very
-  // first row's start is the table's top frame, not a rule, and carries no arrow.
-  const printable = cards.filter(c => c.chart.findIndex(t => t.lo === c.shotLine) > 0).length;
+  // ...and the break has to fall BETWEEN two printed rows. Tier 0 is the blank
+  // tier, which is not drawn, so the first PRINTED row is tier 1 — a break at
+  // its start would be the table's top frame, not a rule, and carry no arrow.
+  const printable = cards.filter(c => c.chart.findIndex(t => t.lo === c.shotLine) > 1).length;
   log('');
   log(
     `  charts that break exactly at the shot line: ${breaks}/${cards.length}` +
@@ -412,7 +413,7 @@ export function reportShooting({ cards, shooting, names, calibration, log }) {
     log(
       `  *** ${cards.length - printable} charts have no rule for the shot-line arrow to sit on: ` +
         cards
-          .filter(c => c.chart.findIndex(t => t.lo === c.shotLine) <= 0)
+          .filter(c => c.chart.findIndex(t => t.lo === c.shotLine) <= 1)
           .map(c => `${c.id}(L${c.shotLine})`)
           .join(', ')
     );
@@ -551,31 +552,21 @@ export function main({ log = console.log } = {}) {
     const s = summarize(cards.map(c => Number(expectedValuePerRoll(c.chart, stat).toFixed(2))));
     log(`  ${stat}  min ${s.min}  median ${s.median}  p90 ${s.p90}  max ${s.max}  mean ${s.mean}`);
   }
-  // Tier 1 covers rolls 1-2 exactly when nothing merged into it; where the
-  // no-scoring tier also read 0/0/0 the two became one wider blank row, which
-  // is the merge doing its job rather than a missing tier.
   const blank = cards.filter(c => isBlankTier(c.chart[0]));
-  const blankRun = cards.filter(c => c.chart[0].lo === 1 && c.chart[0].pts === 0
-    && c.chart[0].reb === 0 && c.chart[0].ast === 0);
   const noScoring = cards.filter(c => c.chart.length > 1 && c.chart[1].pts === 0);
   // Tier 2 is meant to READ differently from tier 1 — "they don't score", not
   // "nothing happens". Where the bottom decile's rebounds and assists both
-  // round to zero it cannot, and that is worth counting rather than hiding.
+  // round to zero it cannot, and that is worth counting rather than hiding:
+  // those cards print a bottom row of straight zeros, which is the truth about
+  // a low-usage player rather than a defect.
   const alsoBlank = noScoring.filter(c => c.chart[1].reb === 0 && c.chart[1].ast === 0);
-  log(`  blank tier exactly 1-2  : ${blank.length}/${cards.length}`);
-  log(
-    `  blank tier of any width : ${blankRun.length}/${cards.length}  widths ${histogram(
-      blankRun.map(c => c.chart[0].hi)
-    )
-      .map(([k, v]) => `1-${k}:${v}`)
-      .join(' ')}`
-  );
-  log(`  second non-scoring tier : ${noScoring.length}/${cards.length}`);
+  log(`  blank 1-2 tier (not printed) : ${blank.length}/${cards.length}`);
+  log(`  second non-scoring tier      : ${noScoring.length}/${cards.length}`);
   log(`    of those, also 0 reb and 0 ast : ${alsoBlank.length}`);
   log(
-    `  tiers per card          : ${histogram(cards.map(c => c.chart.length))
+    `  PRINTED rows per card        : ${histogram(cards.map(c => c.chart.length - 1))
       .map(([k, v]) => `${k}:${v}`)
-      .join(' ')}  (every tier is printed; the table holds ${MAX_CHART_TIERS})`
+      .join(' ')}  (the blank tier is not drawn; the table holds ${MAX_PRINTED_ROWS})`
   );
   const tooTall = cards.filter(c => c.chart.length > MAX_CHART_TIERS);
   if (tooTall.length) {

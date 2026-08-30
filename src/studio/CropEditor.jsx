@@ -28,6 +28,9 @@ export default function CropEditor({
   // Which file the photo actually is (".jpeg", ".png", ...). Passed straight
   // through to the card; the editor itself never touches it.
   photoExt,
+  // The set this card belongs to. The editor never reads it; the card does, to
+  // decide whether its structural blank tier is printed (see visibleTiers).
+  set,
   teamOverrides,
   scale,
   photoVersion,
@@ -185,6 +188,7 @@ export default function CropEditor({
               crop={value}
               hasPhoto={hasPhoto}
               photoExt={photoExt}
+              set={set}
               teamOverrides={teamOverrides}
               photoVersion={photoVersion}
               onPhotoLoad={size => setLoaded({ key: photoKey, size })}

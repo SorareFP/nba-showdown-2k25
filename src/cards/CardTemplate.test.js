@@ -21,6 +21,7 @@ import CardTemplate, {
 } from './CardTemplate.jsx';
 import { CARDS } from '../game/cards.js';
 import { TEAMS } from './teams.js';
+import { CURRENT_SET, FINISHED_SET } from './sets.js';
 import { POOL_PLAYERS } from '../studio/players.js';
 
 const render = props => renderToStaticMarkup(React.createElement(CardTemplate, props));
@@ -612,52 +613,77 @@ describe('findShotLineBoundary', () => {
 // the table they read. What stays this file's business is that the card puts
 // the resolved value on --team-accent — see the team theming block above.
 
-describe('visibleTiers — the blank natural-1 tier is not printed', () => {
-  /** What the generator emits: a one-roll blank tier under the real chart. */
+describe('visibleTiers — the blank tier is hidden for the set that generates one', () => {
+  /** What the 2026-27 generator emits: a blank 1-2 tier under the real chart. */
   const generated = [
-    { lo: 1, hi: 1, pts: 0, reb: 0, ast: 0 },
-    { lo: 2, hi: 3, pts: 0, reb: 1, ast: 1 },
+    { lo: 1, hi: 2, pts: 0, reb: 0, ast: 0 },
+    { lo: 3, hi: 3, pts: 0, reb: 1, ast: 1 },
     { lo: 4, hi: 19, pts: 3, reb: 1, ast: 1 },
     { lo: 20, hi: 99, pts: 5, reb: 2, ast: 2 },
   ];
 
-  it('drops the structural blank tier so the printed chart starts at roll 2', () => {
-    const shown = visibleTiers(generated);
+  it('drops the structural blank tier so the printed chart starts at roll 3', () => {
+    const shown = visibleTiers(generated, CURRENT_SET);
     expect(shown).toHaveLength(3);
-    expect(shown[0]).toMatchObject({ lo: 2, hi: 3 });
+    expect(shown[0]).toMatchObject({ lo: 3, hi: 3 });
+  });
+
+  it('PRINTS the same shape for the finished set, where it is a real row', () => {
+    // THE REGRESSION THIS SCOPING EXISTS TO PREVENT. 66 of the shipped 306
+    // cards print "1-2: 0,0,0" as a genuine hand-made bottom row. It is the
+    // same three numbers over the same two rolls as the generated blank tier,
+    // so nothing about the SHAPE can tell them apart — only the set can.
+    const shipped = CARDS.filter(
+      c => c.chart[0].lo === 1 && c.chart[0].hi === 2 && c.chart[0].pts === 0
+        && c.chart[0].reb === 0 && c.chart[0].ast === 0
+    );
+    expect(shipped.length).toBe(66); // non-vacuous, and the exact count
+    for (const card of shipped) {
+      expect(visibleTiers(card.chart, FINISHED_SET), card.name).toEqual(card.chart);
+      const printed = rows(render({ card, set: FINISHED_SET })).slice(1);
+      expect(printed.length, card.name).toBe(card.chart.length);
+      expect(printed[0], card.name).toContain('1-2');
+    }
+  });
+
+  it('prints everything for an unknown set — the fail-loud default', () => {
+    // An extra row overflows the chart into the photo and trips the height
+    // check below. A row wrongly hidden would just be invisible.
+    expect(visibleTiers(generated, undefined)).toEqual(generated);
+    expect(visibleTiers(generated, 'some-other-set')).toEqual(generated);
   });
 
   it('KEEPS a real bottom band that happens to sit at roll 1', () => {
-    // The regression this exists to prevent. The shipped 2025-26 set renders
-    // through this same component and its bottom tier is a genuine 3-roll band
-    // that often scores — LeBron's "1-3: 2,0,0". Hiding row 0 by POSITION
-    // would silently delete a scoring row from all 306 of those cards.
-    expect(visibleTiers(LEBRON_08_09.chart)).toEqual(LEBRON_08_09.chart);
+    // The shipped set's bottom tier is often a genuine 3-roll band that scores
+    // — LeBron's "1-3: 2,0,0". Even under the current set's rule, a tier that
+    // produces something is never the structural one.
+    expect(visibleTiers(LEBRON_08_09.chart, CURRENT_SET)).toEqual(LEBRON_08_09.chart);
   });
 
-  it('keeps an all-zero bottom band that is wider than one roll', () => {
-    // 168 of the shipped cards have a 0/0/0 bottom tier, and none of them is
-    // one roll wide. "Blank" is not enough to hide a row; it has to be the
-    // one-roll structural tier.
-    const chart = [{ lo: 1, hi: 3, pts: 0, reb: 0, ast: 0 }, { lo: 4, hi: 99, pts: 2, reb: 1, ast: 0 }];
-    expect(visibleTiers(chart)).toEqual(chart);
+  it('hides a WIDER all-zero floor, which the merge can produce', () => {
+    // 33 cards have rolls 1-4 producing nothing, because their bottom decile
+    // genuinely rounds to zero. Width is not what identifies the blank tier;
+    // starting at roll 1 and paying nothing is.
+    const chart = [{ lo: 1, hi: 4, pts: 0, reb: 0, ast: 0 }, { lo: 5, hi: 99, pts: 2, reb: 1, ast: 0 }];
+    expect(visibleTiers(chart, CURRENT_SET)).toHaveLength(1);
+    expect(visibleTiers(chart, FINISHED_SET)).toEqual(chart);
   });
 
   it('never prints an empty chart, even if the blank tier is all there is', () => {
-    const only = [{ lo: 1, hi: 1, pts: 0, reb: 0, ast: 0 }];
-    expect(visibleTiers(only)).toEqual(only);
+    const only = [{ lo: 1, hi: 2, pts: 0, reb: 0, ast: 0 }];
+    expect(visibleTiers(only, CURRENT_SET)).toEqual(only);
   });
 
   it('degrades to an empty list rather than throwing', () => {
-    expect(visibleTiers(undefined)).toEqual([]);
-    expect(visibleTiers(null)).toEqual([]);
-    expect(visibleTiers([])).toEqual([]);
+    expect(visibleTiers(undefined, CURRENT_SET)).toEqual([]);
+    expect(visibleTiers(null, CURRENT_SET)).toEqual([]);
+    expect(visibleTiers([], CURRENT_SET)).toEqual([]);
   });
 
   it('renders one row per VISIBLE tier plus the header', () => {
-    const html = render({ card: { ...LEBRON_08_09, chart: generated } });
+    const html = render({ card: { ...LEBRON_08_09, chart: generated }, set: CURRENT_SET });
     expect(rows(html)).toHaveLength(4); // 3 printed tiers + header
-    expect(html).not.toContain('>1-1<');
+    expect(html).not.toContain('>1-2<');
   });
 
   it('puts the arrow on the right printed row with the blank tier hidden', () => {
@@ -667,19 +693,22 @@ describe('visibleTiers — the blank natural-1 tier is not printed', () => {
     // Shot line 5 misses on 1..4, and 4 is the first roll of "4-19", so the
     // arrow rides that row's bottom edge — the SECOND printed row (index 1).
     const card = { ...LEBRON_08_09, chart: generated, shotLine: 5 };
-    expect(findShotLineBoundary(visibleTiers(generated), 5)).toBe(1);
-    const printed = rows(render({ card })).slice(1); // drop the header row
+    expect(findShotLineBoundary(visibleTiers(generated, CURRENT_SET), 5)).toBe(1);
+    const printed = rows(render({ card, set: CURRENT_SET })).slice(1); // drop the header
     const withArrow = printed.findIndex(r => r.includes('shot-line-arrow'));
     expect(withArrow).toBe(1);
     expect(printed[withArrow]).toContain('4-19');
   });
 
-  it('still resolves a natural 1 in the DATA, which is why the tier stays there', () => {
-    // Hidden from the chart, present for the game: rolling a 1 has to find a
-    // tier or the card cannot be resolved at all.
-    const forRoll1 = generated.find(t => 1 >= t.lo && 1 <= t.hi);
-    expect(forRoll1).toMatchObject({ lo: 1, hi: 1, pts: 0, reb: 0, ast: 0 });
-    expect(generated.indexOf(forRoll1)).toBe(0);
+  it('still resolves a natural 1 or 2 in the DATA, which is why the tier stays there', () => {
+    // Hidden from the chart, present for the game: rolling a 1 or a 2 has to
+    // find a tier or the card cannot be resolved at all — and those are the
+    // same two rolls engine.js hands out a cold marker for.
+    for (const roll of [1, 2]) {
+      const forRoll = generated.find(t => roll >= t.lo && roll <= t.hi);
+      expect(forRoll).toMatchObject({ lo: 1, hi: 2, pts: 0, reb: 0, ast: 0 });
+      expect(generated.indexOf(forRoll)).toBe(0);
+    }
   });
 });
 
@@ -756,7 +785,7 @@ describe('the chart clears the photo frame', () => {
   it('agrees with every chart in the committed 2026-27 set', () => {
     // Closes the loop: the stylesheet is safe for MAX_PRINTED_ROWS, and no
     // card actually asks for more than that.
-    const printed = POOL_PLAYERS.map(p => visibleTiers(p.chart).length);
+    const printed = POOL_PLAYERS.map(p => visibleTiers(p.chart, CURRENT_SET).length);
     const worst = Math.max(...printed);
     // A floor, not the exact size: the pool grows whenever a name is added to
     // card-data/force-include-2026.json, and this test is about chart heights,

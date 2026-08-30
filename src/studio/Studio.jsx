@@ -428,6 +428,7 @@ export default function Studio() {
             crop={crops[selectedId]}
             hasPhoto={selectedId ? photoIds.has(selectedId) : false}
             photoExt={selectedId ? photoExts[selectedId] : undefined}
+            set={source.set}
             teamOverrides={teamOverrides}
             scale={scale}
             photoVersion={selectedId ? photoVersions[selectedId] : undefined}

@@ -1,12 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, it, expect } from 'vitest';
-import {
-  BLANK_TIER_HI,
-  enforceZeroFloor,
-  enforceZeroTiers,
-  foldNoScoringTier,
-  isBlankTier,
-} from './zeroFloor.js';
+import { BLANK_TIER_HI, enforceZeroFloor, enforceZeroTiers, isBlankTier } from './zeroFloor.js';
 
 describe('enforceZeroFloor', () => {
   it('forces the first tier to 0/0/0 regardless of input', () => {
@@ -152,51 +146,5 @@ describe('isBlankTier', () => {
 
   it('rejects nothing at all', () => {
     expect(isBlankTier(undefined)).toBe(false);
-  });
-});
-
-describe('foldNoScoringTier', () => {
-  const tier = (lo, hi, pts, reb, ast) => ({ lo, hi, pts, reb, ast });
-  const blank = tier(1, 2, 0, 0, 0);
-
-  it('hands the no-scoring tier UPWARD, so the blank tier stays 1-2', () => {
-    // The shape the finished 2025-26 set already prints: a 1-2 blank running
-    // straight into a scoring band (Sam Hauser, Vit Krejci, Trae Young).
-    const folded = foldNoScoringTier([blank, tier(3, 3, 0, 1, 0), tier(4, 25, 2, 1, 1)]);
-    expect(folded).toEqual([blank, tier(3, 25, 2, 1, 1)]);
-  });
-
-  it('keeps the rebound rather than widening the blank over it', () => {
-    // Everything reaching this function rebounds or assists — a no-scoring
-    // tier reading 0/0/0 was already merged into the blank one. Widening the
-    // blank across it would delete the board the tier exists to record.
-    const folded = foldNoScoringTier([blank, tier(3, 4, 0, 2, 1), tier(5, 25, 2, 2, 1)]);
-    expect(folded[0]).toEqual(blank);
-    expect(folded[1]).toMatchObject({ lo: 3, reb: 2, ast: 1 });
-  });
-
-  it('never hands them upward across the shot-line break', () => {
-    // Moving that band down to roll 3 would delete the break the arrow sits on
-    // — silently. A blank tier wider than asked for is the visible cost, and
-    // the one worth paying.
-    const folded = foldNoScoringTier([blank, tier(3, 5, 0, 1, 0), tier(6, 25, 2, 1, 1)], {
-      keepBoundaryAt: 6,
-    });
-    expect(folded).toEqual([tier(1, 5, 0, 0, 0), tier(6, 25, 2, 1, 1)]);
-  });
-
-  it('leaves a chart alone when there is nothing under it to fold', () => {
-    const two = [blank, tier(3, 25, 2, 1, 1)];
-    expect(foldNoScoringTier(two)).toEqual(two);
-    // ...and when the bottom tier is not the structural blank one at all.
-    const noBlank = [tier(1, 3, 2, 0, 0), tier(4, 9, 2, 1, 0), tier(10, 25, 3, 1, 1)];
-    expect(foldNoScoringTier(noBlank)).toEqual(noBlank);
-  });
-
-  it('does not mutate the chart it was given', () => {
-    const chart = [blank, tier(3, 3, 0, 1, 0), tier(4, 25, 2, 1, 1)];
-    const copy = JSON.parse(JSON.stringify(chart));
-    foldNoScoringTier(chart);
-    expect(chart).toEqual(copy);
   });
 });

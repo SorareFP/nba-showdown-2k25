@@ -47,6 +47,36 @@ export const FINISHED_SET = '2025-26';
  */
 export const FINISHED_STATS_SEASON = '2024-25';
 
+/**
+ * Does this set's chart carry a structural blank tier the card does NOT print?
+ *
+ * A SET-LEVEL RULE, NOT A SHAPE MATCH, and the difference is the whole reason
+ * this function exists. Both sets can print a bottom row reading "1-2: 0,0,0",
+ * and they mean opposite things:
+ *
+ *   2026-27  The generator floors every chart with a blank tier on rolls 1-2
+ *            (scripts/cardgen/zeroFloor.js) so the engine can resolve a natural
+ *            1 or 2 — the same two rolls engine.js hands a cold marker for. It
+ *            is structure. Printing it costs a row of a five-row table to say
+ *            something every card in the set says, and the row is needed for
+ *            the no-scoring tier above it. Hidden.
+ *
+ *   2025-26  66 of the 306 finished cards print "1-2: 0,0,0" as a REAL bottom
+ *            row, hand-made, and the reference set exists so the template can
+ *            be judged against the cards as they were actually printed. Shown.
+ *
+ * Matching on shape alone cannot tell those apart — they are the same three
+ * numbers over the same two rolls — so it would silently delete a row from 66
+ * finished cards. Asking which SET a card belongs to always can.
+ *
+ * Unknown sets print everything. That is the fail-loud default: an unprinted
+ * row that should have shown is invisible, while an extra row overflows the
+ * chart into the photo frame and trips CardTemplate.test.js's height check.
+ */
+export function hidesBlankTier(set) {
+  return set === CURRENT_SET;
+}
+
 /** Working files root. Outside public/ — photos are inputs, not shipped assets. */
 export const ART_ROOT = 'card-art';
 

@@ -14,6 +14,7 @@
 // the studio has to stay usable while the data is half-built.
 import { useState } from 'react';
 import { getThemedTeam, resolveAccent } from './teams.js';
+import { hidesBlankTier } from './sets.js';
 import { deriveFieldTheme, fieldThemeVars } from './fieldTheme.js';
 import { resolvePhotoUrl, cropToStyle } from './photo.js';
 import styles from './CardTemplate.module.css';
@@ -39,36 +40,45 @@ export function formatRollRange(tier) {
 }
 
 /**
- * The tiers the card actually PRINTS.
+ * The tiers the card actually PRINTS, for the set the card belongs to.
  *
- * The generator puts a blank tier on the bottom of every chart — roll 1 alone,
- * 0/0/0 — because a natural 1 always produces nothing (see
- * scripts/cardgen/zeroFloor.js). A row that is guaranteed to read "1 | 0 | 0 |
- * 0" on every card in the set tells the player nothing they cannot infer from
- * the chart starting at 2, and it costs a row out of a table that only has
- * room for a handful. So it is dropped here, and the printed chart starts at
- * the no-scoring tier. The tier stays in the DATA — the game resolves a
- * natural 1 against it — it just is not drawn.
+ * The 2026-27 generator floors every chart with a blank tier on rolls 1-2,
+ * 0/0/0 (see scripts/cardgen/zeroFloor.js) — the same two rolls engine.js hands
+ * out a cold marker for. It is STRUCTURE: the game resolves a natural 1 or 2
+ * against it and it stays in the data, but a row guaranteed to read "1-2 | 0 |
+ * 0 | 0" on every card in the set tells the player nothing they cannot infer
+ * from the chart starting at 3, and the table only has room for five rows. The
+ * user's call, in their own words: "We could even leave the lowest band off the
+ * card and start the no-scoring band at 2 or whatever we decide should be the
+ * case, just in order to save room." So it is dropped here, and the row it
+ * gives back goes to the no-scoring tier above it.
  *
- * CONDITIONAL, not unconditional, and the condition is the shape of the tier
- * rather than its position. The shipped 2025-26 set is rendered through this
- * same component and its bottom tier is a REAL band 3-4 rolls wide that often
- * scores (LeBron's "1-3: 2,0,0"); 168 of those 306 cards do have an all-zero
- * bottom tier, but none of them is one roll wide. Hiding row 0 on position
- * alone would silently delete a scoring row from every one of them. Matching
- * on "exactly roll 1 and completely blank" hides precisely the structural tier
- * this rule is about and nothing else.
+ * GATED ON THE SET, NOT ON THE TIER'S SHAPE, and that is the whole point. 66 of
+ * the finished 2025-26 cards print "1-2: 0,0,0" as a genuine hand-made bottom
+ * row, and the reference set exists so the template can be judged against the
+ * cards as they were really printed. The two are the same three numbers over
+ * the same two rolls, so no shape match can separate them — hiding by shape
+ * would silently delete a row from all 66. See hidesBlankTier in sets.js.
+ *
+ * The last remaining tier is never dropped: a chart with no rows at all is not
+ * a card, and "chart not generated" is what the empty case is for.
  */
-export function visibleTiers(chart) {
+export function visibleTiers(chart, set) {
   if (!Array.isArray(chart)) return [];
-  return chart.length > 1 && isBlankTier(chart[0]) ? chart.slice(1) : chart;
+  const hide = chart.length > 1 && hidesBlankTier(set) && isBlankTier(chart[0]);
+  return hide ? chart.slice(1) : chart;
 }
 
-/** The blank natural-1 tier the generator prepends. Kept in sync with zeroFloor.js. */
+/**
+ * The structural blank tier the generator prepends. Kept in sync with
+ * zeroFloor.js's isBlankTier, but deliberately looser about WIDTH: the merge
+ * can fold an equally blank no-scoring tier into it, so the floor reaches roll
+ * 3 on some cards and roll 4 on a few (low-usage players whose bottom deciles
+ * genuinely all round to zero). What identifies it is that it starts at roll 1
+ * and produces nothing — never its width.
+ */
 function isBlankTier(tier) {
-  return (
-    !!tier && tier.lo === 1 && tier.hi === 1 && tier.pts === 0 && tier.reb === 0 && tier.ast === 0
-  );
+  return !!tier && tier.lo === 1 && tier.pts === 0 && tier.reb === 0 && tier.ast === 0;
 }
 
 /**
@@ -170,6 +180,11 @@ export default function CardTemplate({
   card = {},
   crop,
   hasPhoto = false,
+  // WHICH SET this card belongs to. Decides whether the structural blank tier
+  // is printed — see visibleTiers. Left undefined, every tier prints, which is
+  // correct for the finished set and fails loudly (a sixth row, over the photo)
+  // rather than quietly for the set being built.
+  set,
   // The extension the curated photo is stored under. Defaults to .jpg inside
   // resolvePhotoUrl, which is what the studio's own uploads are written as —
   // only a hand-saved .jpeg/.png/.webp/.avif needs this to be passed.
@@ -201,7 +216,7 @@ export default function CardTemplate({
 
   // The printed rows, and the rule the arrow sits on within them — searched
   // together so they cannot disagree. See visibleTiers and findShotLineBoundary.
-  const chart = visibleTiers(card.chart);
+  const chart = visibleTiers(card.chart, set);
   const shotLineRow = findShotLineBoundary(chart, card.shotLine);
 
   return (

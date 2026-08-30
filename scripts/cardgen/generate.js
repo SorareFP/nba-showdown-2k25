@@ -6,7 +6,7 @@
 // applyOverrides (Task 6) -> toRawCardFormat.
 
 import { computeStatBands } from './bands.js';
-import { enforceZeroTiers, foldNoScoringTier } from './zeroFloor.js';
+import { enforceZeroTiers } from './zeroFloor.js';
 import { applyOverrides } from './overrides.js';
 import * as basketballReference from './sources/basketballReference.js';
 
@@ -16,10 +16,23 @@ import * as basketballReference from './sources/basketballReference.js';
  * Not a style choice: the chart is bottom-anchored and grows UPWARD into the
  * photo frame above it. src/cards/CardTemplate.test.js re-derives this number
  * from the stylesheet's own geometry (41px rows, 21px bottom offset, the photo
- * clip's lowest vertex) and fails if a sixth row would ever be asked for. Every
- * tier is printed, so this caps the tier count outright.
+ * clip's lowest vertex) and fails if a sixth row would ever be asked for.
  */
-export const MAX_CHART_TIERS = 5;
+export const MAX_PRINTED_ROWS = 5;
+
+/**
+ * Tiers a chart may hold — one more than it prints, because the blank tier is
+ * structure the 2026-27 card does not draw (see visibleTiers in CardTemplate).
+ *
+ * The budget works out exactly: computeStatBands always returns five percentile
+ * bands, enforceZeroTiers adds the blank one, and nothing downstream adds a
+ * tier — the merge and the forced shot-line break can only ever remove or move
+ * boundaries. So six is the ceiling by construction rather than by clamping,
+ * and a chart that exceeded it would mean a new percentile cut had been added
+ * upstream. generateCards' run report names any card that does, and the test
+ * over the committed set fails, rather than a row being quietly folded away.
+ */
+export const MAX_CHART_TIERS = MAX_PRINTED_ROWS + 1;
 
 /** Two tiers are the same OUTCOME when all three printed numbers match. */
 const sameOutcome = (a, b) => a.pts === b.pts && a.reb === b.reb && a.ast === b.ast;
@@ -49,10 +62,13 @@ const sameOutcome = (a, b) => a.pts === b.pts && a.reb === b.reb && a.ast === b.
  * "unless needed for a shot chart" half of the user's instruction, and without
  * it the merge would happily undo the break the previous step just forced.
  *
- * `fixedTiers` leading tiers are held out of the merge entirely. Nothing passes
- * it today: the blank tier is PRINTED now, so letting it absorb a no-scoring
- * tier that also reads 0/0/0 is exactly right — it turns two identical printed
- * rows ("1-2: 0,0,0" and "3: 0,0,0") into the one row that says the same thing.
+ * `fixedTiers` leading tiers are held out of the merge entirely, and shapeChart
+ * passes 1 for the blank tier. It is not printed (see visibleTiers), so letting
+ * it swallow a no-scoring tier that also reads 0/0/0 would not save a row — it
+ * would delete the second tier the whole two-tier floor exists to create, and
+ * start the printed chart at roll 4 or 5 on the 292 cards whose bottom decile
+ * rounds to nothing. Holding it out is what makes "a second tier where they
+ * don't score" true on every card rather than on a sixth of them.
  */
 export function mergeIdenticalTiers(chart, { fixedTiers = 0, keepBoundaryAt = null } = {}) {
   if (!Array.isArray(chart)) return chart;
@@ -127,20 +143,19 @@ export function forceBandBoundary(chart, roll, { firstMovable = 1 } = {}) {
  * been shortened, so each move would distort a wider band. The merge is told to
  * leave the shot line alone, so it cannot undo the break.
  *
- * FINALLY THE ROW CAP. Every tier is printed and the table holds five rows, so
- * a chart where nothing merged has one tier too many; foldNoScoringTier gives
- * that row back. The merge runs again afterwards because folding can create a
- * fresh pair of identical neighbours.
+ * NOTHING TRIMS THE RESULT, because nothing has to: five percentile bands plus
+ * the blank tier is MAX_CHART_TIERS exactly, and the blank tier is not printed.
+ * There was a fold here that gave a row back when every tier was printed and
+ * six of them would not fit; the row it took was the no-scoring tier's, on the
+ * cards that could least afford to lose it. Hiding the blank tier instead is
+ * the user's call and frees the same row without spending anything.
  */
 export function shapeChart(chart, { shotLine = null } = {}) {
   const floored = enforceZeroTiers(chart);
   // firstMovable = 2: tier 0 is the blank tier and tier 1 is where the
   // statistics resume, so the lowest boundary a shot line may move is tier 2's.
   const { chart: broken } = forceBandBoundary(floored, shotLine, { firstMovable: 2 });
-  const merged = mergeIdenticalTiers(broken, { keepBoundaryAt: shotLine });
-  if (merged.length <= MAX_CHART_TIERS) return merged;
-  const folded = foldNoScoringTier(merged, { keepBoundaryAt: shotLine });
-  return mergeIdenticalTiers(folded, { keepBoundaryAt: shotLine });
+  return mergeIdenticalTiers(broken, { fixedTiers: 1, keepBoundaryAt: shotLine });
 }
 
 /**

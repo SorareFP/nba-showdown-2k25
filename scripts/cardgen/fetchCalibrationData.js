@@ -9,8 +9,14 @@
 //
 // WHAT IT FETCHES, and why each one is needed:
 //
-//  1. dunksandthrees per-100 rates for the CURRENT season (2025-26). The mean
-//     every 2026-27 card is built from. One request for all ~600 players.
+//  0. dunksandthrees ACTUAL season rates for the CURRENT season (2025-26). What
+//     each player really did: TS%, FG% by location, and the OFF/DEF/EPM/EW
+//     quartet. The primary source — Shot Line, both shooting boosts, Def Boost
+//     and the Speed/Power budget all read it. One request for all ~600 players.
+//  1. dunksandthrees PREDICTED per-100 rates for the same season. Kept for one
+//     job only: the scoring chart's per-100 PTS/REB/AST anchor, which the actual
+//     page does not carry (it gives rebounds and assists as rate percentages,
+//     which cannot be inverted without team and opponent totals).
 //  2. Basketball-Reference's 2024-25 season tables (per-game, per-100,
 //     advanced). The season the FINISHED card set was built from — the only way
 //     to fit anything against those 283 real cards, since dunksandthrees keeps
@@ -186,7 +192,11 @@ export async function fetchSampleGameLogs(sample, season, { force = false, spaci
 }
 
 export async function main({ force = false, log = console.log } = {}) {
-  log(`dunksandthrees per-100 rates, season ${CURRENT_STATS_SEASON}...`);
+  log(`dunksandthrees ACTUAL season rates, season ${CURRENT_STATS_SEASON}...`);
+  const actual = await dt.fetchActualSeasonRates(CURRENT_STATS_SEASON, { force });
+  log(`  ${actual.length} players`);
+
+  log(`dunksandthrees predicted per-100 rates, season ${CURRENT_STATS_SEASON}...`);
   const rates = await dt.fetchSeasonRates(CURRENT_STATS_SEASON, { force });
   log(`  ${rates.length} players`);
 

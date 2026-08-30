@@ -2,9 +2,13 @@ import { describe, it, expect } from 'vitest';
 import {
   unflattenDevalue,
   parseEpmPayload,
+  parseActualPayload,
   toSeasonRate,
+  toActualSeasonRate,
+  fetchActualSeasonRates,
   trb100,
   fetchGameLog,
+  SEASON_TYPE_PLAYOFFS,
 } from './dunksAndThrees.js';
 
 /**
@@ -124,6 +128,154 @@ describe('toSeasonRate', () => {
   it('keeps the offensive and defensive EPM split, which Def Boost needs', () => {
     expect(rate.epmOff).toBe(3.8);
     expect(rate.epmDef).toBe(4.0);
+  });
+});
+
+// The ACTUAL route serves each row as a bare array plus one shared `k` map from
+// column name to index. Building the fixture the same way — declare the row by
+// name, then knock it down to an array through `k` — is what makes these tests
+// able to catch an off-by-one in the zip, which is the only interesting way this
+// parser can fail. A hand-written array fixture would just encode the bug.
+const ACTUAL_COLUMNS = [
+  'player_name',
+  'player_id',
+  'team_alias',
+  'pos_text',
+  'gp',
+  'mp',
+  'mpg',
+  'off',
+  'def',
+  'tot',
+  'ewins',
+  'tspct',
+  'fgpct_rim',
+  'fg3pct',
+  'fg3a_75',
+];
+
+const actualPayload = (rows, extra = {}) => {
+  const k = Object.fromEntries(ACTUAL_COLUMNS.map((name, i) => [name, i]));
+  return {
+    nodes: [
+      { type: 'skip' },
+      {
+        type: 'data',
+        data: flatten({
+          season: 2026,
+          seasontype: 2,
+          k,
+          stats: rows.map(r => ACTUAL_COLUMNS.map(c => r[c] ?? null)),
+          ...extra,
+        }),
+      },
+    ],
+  };
+};
+
+const actualRow = (name, extra = {}) => ({
+  player_name: name,
+  player_id: 1641705,
+  team_alias: 'SAS',
+  pos_text: 'C',
+  gp: 64,
+  mp: 1865.74,
+  mpg: 29.1406,
+  off: 4.29721,
+  def: 4.44645,
+  tot: 8.74366,
+  ewins: 15.2306,
+  tspct: 0.625489,
+  fgpct_rim: 0.731235,
+  fg3pct: 0.348571,
+  fg3a_75: 6.71184,
+  ...extra,
+});
+
+describe('parseActualPayload', () => {
+  it('zips each row array back together against the `k` column index', () => {
+    const parsed = parseActualPayload(
+      actualPayload([actualRow('Victor Wembanyama'), actualRow('Nikola Jokic', { gp: 70 })])
+    );
+    expect(parsed.season).toBe(2026);
+    expect(parsed.seasonType).toBe(2);
+    expect(parsed.rows.map(r => r.player_name)).toEqual(['Victor Wembanyama', 'Nikola Jokic']);
+    expect(parsed.rows[0].tspct).toBeCloseTo(0.625489, 10);
+    expect(parsed.rows[1].gp).toBe(70);
+  });
+
+  it('throws when the `k` column index is missing', () => {
+    const body = actualPayload([actualRow('Victor Wembanyama')]);
+    const data = body.nodes[1].data;
+    // Blank out whatever `k` resolved to, leaving the rest of the payload valid.
+    const kIndex = data.findIndex(v => v && typeof v === 'object' && !Array.isArray(v) && 'k' in v);
+    data[kIndex] = { ...data[kIndex], k: -1 };
+    expect(() => parseActualPayload(body)).toThrow(/`k` column index/);
+  });
+
+  it('throws on a subscription-locked table, like the predicted route does', () => {
+    const body = actualPayload([actualRow('Nikola Jokic'), actualRow('Locked Player')]);
+    expect(() => parseActualPayload(body)).toThrow(/Locked Player/);
+  });
+
+  it('throws when there is no data node or no rows', () => {
+    expect(() => parseActualPayload({ nodes: [{ type: 'skip' }] })).toThrow(/no data node/);
+    expect(() => parseActualPayload(actualPayload([]))).toThrow(/no `stats` array/);
+  });
+});
+
+describe('toActualSeasonRate', () => {
+  const rate = toActualSeasonRate(actualRow('Victor Wembanyama'));
+
+  it('renames the actual columns to the ones the generators speak', () => {
+    expect(rate).toMatchObject({
+      name: 'Victor Wembanyama',
+      team: 'SAS',
+      position: 'C',
+      games: 64,
+      epm: 8.74366,
+      epmOff: 4.29721,
+      epmDef: 4.44645,
+      tsPct: 0.625489,
+      fgPctRim: 0.731235,
+      fgPct3: 0.348571,
+    });
+  });
+
+  // EW is a season TOTAL, so raw EW rewards availability as much as play. Every
+  // consumer wants the rate, so the division happens once, here.
+  it('derives expected wins per game from the season total', () => {
+    expect(rate.ewinsPerGame).toBeCloseTo(15.2306 / 64, 10);
+  });
+
+  it('returns null rather than Infinity for a player with no games', () => {
+    expect(toActualSeasonRate(actualRow('Ghost', { gp: 0 })).ewinsPerGame).toBeNull();
+  });
+});
+
+describe('fetchActualSeasonRates', () => {
+  const okResponse = body => ({ ok: true, json: async () => body });
+
+  it('refuses a payload for a season other than the one asked for', async () => {
+    const fetchImpl = async () => okResponse(actualPayload([actualRow('X')], { season: 2025 }));
+    await expect(
+      fetchActualSeasonRates(2026, { force: true, fetchImpl })
+    ).rejects.toThrow(/season 2025, not 2026/);
+  });
+
+  // The seasontype is a query parameter, so a silently-ignored one would hand
+  // back regular-season rows labelled as playoff rows. Check the answer, not the
+  // request.
+  it('refuses a payload for a season type other than the one asked for', async () => {
+    const fetchImpl = async () => okResponse(actualPayload([actualRow('X')]));
+    await expect(
+      fetchActualSeasonRates(2026, { force: true, fetchImpl, seasonType: SEASON_TYPE_PLAYOFFS })
+    ).rejects.toThrow(/seasontype 2, not 4/);
+  });
+
+  it('surfaces a failed request rather than caching an empty result', async () => {
+    const fetchImpl = async () => ({ ok: false, status: 503 });
+    await expect(fetchActualSeasonRates(2026, { force: true, fetchImpl })).rejects.toThrow(/503/);
   });
 });
 

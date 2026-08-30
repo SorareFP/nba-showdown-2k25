@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-30T01:51:43.898Z",
+ "generatedAt": "2026-08-30T09:07:20.648Z",
  "provisional": true,
  "referenceSeason": 2025,
  "referenceCards": 282,
@@ -403,24 +403,25 @@
   }
  },
  "threePtBoost": {
-  "deadband": 0.875,
+  "deadband": 1.35,
   "min": -5,
   "max": 5,
   "quality": {
-   "exactPct": 40.780141843971634,
+   "exactPct": 52.12765957446808,
    "within1Pct": 64.53900709219859,
-   "zeroPct": 64.18439716312056,
+   "zeroPct": 64.8936170212766,
    "realZeroPct": 64.18439716312056,
-   "histogramDistance": 0.3546,
+   "histogramDistance": 0.2837,
    "histogram": {
-    "0": 181,
-    "1": 36,
-    "2": 14,
-    "3": 1,
-    "-1": 27,
-    "-2": 14,
-    "-4": 4,
-    "-3": 5
+    "0": 183,
+    "1": 7,
+    "2": 26,
+    "3": 19,
+    "4": 1,
+    "-2": 27,
+    "-3": 12,
+    "-4": 3,
+    "-1": 4
    },
    "realHistogram": {
     "0": 181,
@@ -436,7 +437,8 @@
     "-3": 2
    }
   },
-  "referenceGapSd": 0.7572
+  "targetSd": 1.5118,
+  "referenceStrengthSd": 0.4088
  },
  "paintBoost": {
   "deadband": 1.4,

@@ -85,6 +85,13 @@ export function zAgainstSeason(value, stats) {
  * toward replacement level afterwards — so the failure mode is confined to the
  * band between "a thousand minutes" and "a full season", where it is real.
  *
+ * BEST_SEASON_MIN_GAMES IS THE DIRECT ANSWER TO THAT BAND, and it was added
+ * after this paragraph was written. A thousand minutes is thirty games for a
+ * star, so the band it left open was wide; sixty percent of it is now closed by
+ * requiring the season to have been a season. What remains open — a 58-game
+ * year outscoring an 80-game one — is narrow enough to be a judgement rather
+ * than an artefact.
+ *
  * `bpmVorp` below is the fix if the user wants it: adding VORP restores the
  * volume dimension WITHOUT reintroducing team quality, and it is the direct
  * analogue of the `EW/GP` refinement term the live NBA pipeline already carries
@@ -186,25 +193,139 @@ export function careerSeasons(rows) {
  * THIS FLOOR CARRIES MORE WEIGHT THAN IT USED TO. While the rule averaged in
  * VORP and WS, a thin season was penalised twice — once by this floor and again
  * by two volume metrics that a short season cannot score well on. Under
- * BPM-only the floor is the ONLY thing standing between the set and a run of
- * 1,100-minute career years, so it is doing real work rather than backstopping.
+ * BPM-only it lost that second penalty, and BEST_SEASON_MIN_GAMES below is what
+ * replaced it. The two floors ask DIFFERENT questions and neither implies the
+ * other: a thousand minutes is thirty games for a starter and eighty for a deep
+ * reserve, so minutes alone cannot say whether a season happened and games
+ * alone cannot say whether a rate is measurable.
  */
 export const BEST_SEASON_MIN_MINUTES = 1000;
 
 /**
+ * GAMES a season needs before it is allowed to be someone's BEST.
+ *
+ * ── WHY MINUTES WERE NOT ENOUGH ─────────────────────────────────────────────
+ *
+ * The minutes floor asks "did he play enough basketball to measure a rate", and
+ * a thousand minutes answers it. It does NOT ask "was this a season", and those
+ * are different questions the moment a star is involved: a 33-minutes-a-night
+ * player clears a thousand minutes in THIRTY GAMES. So the floor let through
+ * exactly the cases the user objected to —
+ *
+ *     Joel Embiid          2023-24   39 games   1309 minutes   BPM 11.6
+ *     Karl-Anthony Towns   2019-20   35 games   1187 minutes   BPM  7.8
+ *
+ * — both of which are genuinely those players' best RATE seasons, and neither
+ * of which anyone would name as the season that defines the player. Minutes
+ * cannot separate them from a real year, because by minutes they are not
+ * remarkable. Games can, and that is the whole argument for a second floor
+ * rather than a higher first one: RAISING the minutes floor would throw out
+ * low-usage rotation players who did play the whole season, which is the wrong
+ * players entirely.
+ *
+ * ── WHY 58 ──────────────────────────────────────────────────────────────────
+ *
+ * 58 is 70% of an 82-game season — "he was there for most of it", the same
+ * sentence the minutes floor says about playing time, in the unit that actually
+ * carries it. Measured over the pool's careers (350 players, 1642 seasons that
+ * clear the minutes floor), against 50 and 65 as the alternatives:
+ *
+ *     cutoff   picks moved   cards under 58g   cards   median games
+ *     none               0                41     201             68
+ *     G>=50             13                32     201             68
+ *     G>=58             40                17     209             70
+ *     G>=65             73                18     210             72
+ *
+ * and every one of the 40 moves at 58 goes to a LONGER season — median +18
+ * games and +411 minutes, none shorter. That is the whole point: this floor can
+ * only ever replace a short season with a longer one, never the reverse.
+ *
+ * 50 was measured and rejected as too weak: it catches Embiid and Towns and
+ * leaves thirty-two other cards under 58 games.
+ *
+ * ── AND WHY NOT 65, WHICH IS THE INTERESTING ONE ────────────────────────────
+ *
+ * Because it stops removing implausible seasons and starts removing REAL ones,
+ * and it does it to the best players in the set. A 65-game floor is above what
+ * a full season even WAS in three of the seasons in range — the 2011-12 lockout
+ * (66 games), 2019-20 (suspended; teams played 63-75) and 2020-21 (72) — so it
+ * reads a COVID season's near-complete year as a partial one:
+ *
+ *     Giannis Antetokounmpo  2019-20  63 of 73   BPM 11.5  ->  2021-22  BPM 11.2
+ *     Zion Williamson        2020-21  61 of 72   BPM  5.8  ->  2023-24  BPM  3.8
+ *     Ja Morant              2021-22  57 of 82   BPM  6.1  ->  2019-20  BPM  0.3
+ *     Victor Wembanyama      2025-26  64 of 82   BPM 10.7  ->  2023-24  BPM  5.2
+ *
+ * Wembanyama's is the sharpest: at 65 his current season stops being his best,
+ * so he LOSES the Super Season badge off his base card and gains a worse card
+ * in the set. Trading a +10.7 season for a +5.2 one to buy seven games is the
+ * opposite of the error this floor exists to fix.
+ *
+ * A share-of-schedule rule — `games >= 70% of what the league actually played
+ * that year` — was built and measured as the principled alternative. It
+ * disagrees with a flat 58 about FIVE of 350 players, all of them between -2.6
+ * and +2.3 BPM, and it costs a hand-maintained table of schedule lengths whose
+ * 2019-20 entry cannot be right for everyone (teams played 63 to 75 games). Not
+ * worth it. The flat number already clears every shortened-season peak in the
+ * pool — Giannis 63, Bam Adebayo 64, Zion 61, Jrue Holiday 59, Zach LaVine 58 —
+ * because 58 is BELOW those seasons rather than above them.
+ *
+ * The one case a flat number is knowingly wrong about is the 66-game 2011-12
+ * lockout, where 58 games is 88% of the schedule. Nobody in the current pool
+ * has a 2012 best season, so it costs nothing today; it is recorded here rather
+ * than solved, because solving it is the schedule table above.
+ */
+export const BEST_SEASON_MIN_GAMES = 58;
+
+/**
  * The player's best season, and every season scored.
  *
- * If NO season clears the minutes floor — a career of injuries, or a player
- * whose only real year is the current one — the floor is dropped rather than
- * the player: he simply gets his largest season. Producing a provisional card
- * beats producing a hole, and the record says which happened.
+ * ── THE TWO FLOORS ARE TIERED, NOT ANDed ────────────────────────────────────
+ *
+ * A career of injuries, or a player whose only real year is the current one,
+ * must still produce a card — producing a provisional card beats producing a
+ * hole. So eligibility falls back a step at a time and the record says how far
+ * it fell:
+ *
+ *   both          a season clears BOTH floors. The normal case: 310 of 350.
+ *   minutesOnly   nothing clears the games floor, so THAT floor is dropped and
+ *                 the minutes floor still stands. 12 players — every one of
+ *                 them young, and every one of them with a 1000-minute season
+ *                 that is simply not 58 games long yet.
+ *   none          nothing clears either. Both are dropped. 28 players, exactly
+ *                 the same 28 the minutes floor alone was already falling back
+ *                 for, so the games floor costs nobody a card.
+ *
+ * DROPPING THE GAMES FLOOR FIRST IS THE POINT OF THE ORDER. Collapsing the two
+ * into one `minutes >= 1000 && games >= 58` filter with a single fallback would
+ * hand a player with a 57-game, 1473-minute season the same treatment as a
+ * player with an 11-minute career — his fallback pool would reopen to include
+ * every three-game flier he has ever had, and the shrink in
+ * generateSpecialSets.js is the only thing that would stop one being chosen.
+ * Falling back one floor at a time never widens the pool further than it has
+ * to.
  */
 export function bestSeason(seasons, distributions, weights = BEST_SEASON_WEIGHTS) {
   const scored = seasons.map(s => ({ ...s, ...seasonScore(s, distributions?.[s.season], weights) }));
-  const eligible = scored.filter(s => (s.minutes ?? 0) >= BEST_SEASON_MIN_MINUTES);
-  const pool = eligible.length > 0 ? eligible : scored;
+  const longEnough = scored.filter(s => (s.minutes ?? 0) >= BEST_SEASON_MIN_MINUTES);
+  const qualified = longEnough.filter(s => (s.games ?? 0) >= BEST_SEASON_MIN_GAMES);
+
+  const [pool, eligibility] = qualified.length > 0
+    ? [qualified, 'both']
+    : longEnough.length > 0
+      ? [longEnough, 'minutesOnly']
+      : [scored, 'none'];
+
   const best = pool.reduce((a, b) => (b.score > a.score ? b : a), pool[0] ?? null);
-  return { scored, best, usedFallbackFloor: eligible.length === 0 && scored.length > 0 };
+  return {
+    scored,
+    best,
+    eligibility,
+    /** Nothing cleared the games floor; it was dropped and minutes still held. */
+    usedGamesFallback: eligibility === 'minutesOnly',
+    /** Nothing cleared either floor. The name predates the games floor. */
+    usedFallbackFloor: eligibility === 'none' && scored.length > 0,
+  };
 }
 
 /**

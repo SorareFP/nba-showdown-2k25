@@ -1,10 +1,11 @@
 {
- "generatedAt": "2026-08-30T15:02:39.459Z",
+ "generatedAt": "2026-08-30T16:34:39.809Z",
  "set": "rookie",
  "provisional": true,
  "sources": {
   "origin": "basketball-reference.com season tables (advanced + per-100), 2000-2026",
   "bestSeason": "BPM, scored against its own season's league. Win Shares and WS/48 are deliberately excluded: they allocate TEAM wins, so they dock a good player on a bad team",
+  "eligibility": "a season must be at least 1000 minutes AND 58 games — 70% of an 82-game schedule — to be eligible as a career best. The two floors ask different questions: minutes ask whether a rate is measurable, games ask whether the season happened. They fall back one at a time (games first, then minutes) so a player whose only real season is short still gets a card",
   "speedPower": "z(BPM), shrunk toward replacement level for a short season, mapped onto the finished set's Speed+Power distribution with the 2026-27 pool as the calibration basis",
   "defBoost": "DBPM, rounded — DEF EPM does not exist before the current season",
   "paintBoost": "2P% standing in for rim FG%, which Basketball-Reference does not carry",

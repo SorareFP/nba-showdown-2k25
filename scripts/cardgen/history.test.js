@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   BEST_SEASON_METRIC_SETS,
+  BEST_SEASON_MIN_GAMES,
   BEST_SEASON_MIN_MINUTES,
   BEST_SEASON_WEIGHTS,
   bestSeason,
@@ -193,7 +194,7 @@ describe('bestSeason', () => {
   });
 
   it('drops the floor rather than the player when no season clears it', () => {
-    const { best, usedFallbackFloor } = bestSeason(
+    const { best, usedFallbackFloor, eligibility } = bestSeason(
       [
         row({ season: 2019, minutes: 200, bpm: 1, vorp: 1, ws: 1, ws48: 1 }),
         row({ season: 2020, minutes: 400, bpm: 3, vorp: 3, ws: 3, ws48: 3 }),
@@ -202,6 +203,42 @@ describe('bestSeason', () => {
     );
     expect(best.season).toBe(2020);
     expect(usedFallbackFloor).toBe(true);
+    expect(eligibility).toBe('none');
+  });
+
+  it('will not crown a thousand minutes played over thirty games', () => {
+    // THE CASE THE GAMES FLOOR EXISTS FOR, and it is a real one twice over:
+    // Joel Embiid's 2023-24 is 39 games at +11.6 BPM and Karl-Anthony Towns'
+    // 2019-20 is 35 games at +7.8. Both clear the minutes floor comfortably —
+    // a star plays a thousand minutes in thirty nights — and neither is the
+    // season anyone would name as the player's own.
+    const { best } = bestSeason(
+      [
+        row({ season: 2019, games: 39, minutes: 1309, bpm: 11.6 }),
+        row({ season: 2020, games: 68, minutes: 2297, bpm: 9.2 }),
+      ],
+      distributions
+    );
+    expect(best.season).toBe(2020);
+    expect(BEST_SEASON_MIN_GAMES).toBe(58);
+  });
+
+  it('drops the GAMES floor first, keeping the minutes floor standing', () => {
+    // The tiering, and why the order matters. This player has one measurable
+    // season (57 games, 1473 minutes) and one three-game flier. Collapsing both
+    // floors into a single filter with one fallback would reopen the pool to
+    // the flier; falling back a floor at a time cannot.
+    const { best, eligibility, usedGamesFallback, usedFallbackFloor } = bestSeason(
+      [
+        row({ season: 2019, games: 3, minutes: 40, bpm: 14 }),
+        row({ season: 2020, games: 57, minutes: 1473, bpm: 2 }),
+      ],
+      distributions
+    );
+    expect(best.season).toBe(2020);
+    expect(eligibility).toBe('minutesOnly');
+    expect(usedGamesFallback).toBe(true);
+    expect(usedFallbackFloor).toBe(false);
   });
 
   it('scores every season, not just the winner', () => {
@@ -210,29 +247,19 @@ describe('bestSeason', () => {
     for (const s of scored) expect(s.z).toHaveProperty('bpm');
   });
 
-  it('WILL take the shorter season when its rate is higher — the known cost', () => {
-    // Pinned deliberately, because it is the price of dropping the volume
-    // metrics and the user was told about it. Above the 1000-minute floor,
-    // BPM-only has nothing left to say about durability: a thousand minutes at
-    // +6.0 beats twenty-eight hundred at +5.8. Karl-Anthony Towns is the real
-    // case — 2019-20's 35 games at 7.8 BPM over 2017-18's 82 at 5.1.
-    const { best } = bestSeason(
-      [
-        row({ season: 2020, games: 82, minutes: 2800, bpm: 5.8, vorp: 5.2, ws: 14, ws48: 0.23 }),
-        row({ season: 2021, games: 35, minutes: 1050, bpm: 6.0, vorp: 2.9, ws: 5.1, ws48: 0.204 }),
-      ],
-      distributions
-    );
-    expect(best.season).toBe(2021);
+  it('WILL still take the shorter season when its rate is higher — the residue', () => {
+    // Pinned deliberately, because it is what the volume metrics used to buy
+    // and the user was told about it. THE GAMES FLOOR NARROWS THIS AND DOES NOT
+    // CLOSE IT: both seasons below clear 58 games, so BPM-only is free to
+    // prefer the 61-game year at +6.0 over the 82-game year at +5.8. What it
+    // can no longer do is prefer a 35-game one — see the test above.
+    const career = () => [
+      row({ season: 2020, games: 82, minutes: 2800, bpm: 5.8, vorp: 5.2, ws: 14, ws48: 0.23 }),
+      row({ season: 2021, games: 61, minutes: 1850, bpm: 6.0, vorp: 2.9, ws: 5.1, ws48: 0.204 }),
+    ];
+    expect(bestSeason(career(), distributions).best.season).toBe(2021);
     // And the alternative on the table is exactly the thing that undoes it.
-    const alt = bestSeason(
-      [
-        row({ season: 2020, games: 82, minutes: 2800, bpm: 5.8, vorp: 5.2, ws: 14, ws48: 0.23 }),
-        row({ season: 2021, games: 35, minutes: 1050, bpm: 6.0, vorp: 2.9, ws: 5.1, ws48: 0.204 }),
-      ],
-      distributions,
-      BEST_SEASON_METRIC_SETS.bpmVorp
-    );
+    const alt = bestSeason(career(), distributions, BEST_SEASON_METRIC_SETS.bpmVorp);
     expect(alt.best.season).toBe(2020);
   });
 });

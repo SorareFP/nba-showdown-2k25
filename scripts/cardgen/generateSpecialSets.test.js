@@ -280,7 +280,15 @@ describe('the base set\'s badges', () => {
   it('leaves the two special sets exactly as big as they were', () => {
     // The badge is what the EXCLUDED players get. Nobody moves into or out of
     // either roster because of it, and these two numbers are how you know.
-    expect(SUPER.cards.length).toBe(201);
+    //
+    // SUPER SEASON MOVED 201 -> 209 WHEN THE GAMES FLOOR ARRIVED, and that is
+    // the floor's doing rather than the badge's. It cuts both ways and the net
+    // is small: 16 players whose best was a SHORT 2026 now have a longer
+    // earlier season carded instead of a badge, and 8 whose best was a short
+    // earlier season now have 2026 as their best and take the badge instead of
+    // a card. The rookie set cannot move at all — a rookie year carries no
+    // floor, because it is whatever it was.
+    expect(SUPER.cards.length).toBe(209);
     expect(ROOKIE.cards.length).toBe(317);
     expect(SUPER.cards.length + SUPER.excluded.length).toBe(POOL.length);
     expect(ROOKIE.cards.length + ROOKIE.excluded.length).toBe(POOL.length);

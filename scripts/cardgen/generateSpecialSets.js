@@ -119,6 +119,8 @@ import {
 import {
   BEST_SEASON_METRIC_SETS,
   BEST_SEASON_WEIGHTS,
+  BEST_SEASON_MIN_GAMES,
+  BEST_SEASON_MIN_MINUTES,
   careerSeasons,
   bestSeason,
   bestSeasonByMetricSet,
@@ -521,7 +523,7 @@ export function selectSets({
   /** The base set's badges: one record per player who earned at least one. */
   const baseBadges = [];
   const metricSetSplits = [];
-  const notes = { fallbackFloor: [], beyondRange: [], partialSeason: [] };
+  const notes = { fallbackFloor: [], gamesFallback: [], beyondRange: [], partialSeason: [] };
 
   const describe = s => ({
     season: s.season,
@@ -539,8 +541,15 @@ export function selectSets({
     const seasons = careerSeasons(byId.get(bbrefId) ?? []);
     if (seasons.length === 0) continue;
 
-    const { scored, best, usedFallbackFloor } = bestSeason(seasons, distributions, weights);
+    const { scored, best, usedFallbackFloor, usedGamesFallback } = bestSeason(
+      seasons,
+      distributions,
+      weights
+    );
     if (usedFallbackFloor) notes.fallbackFloor.push(player.name);
+    if (usedGamesFallback) {
+      notes.gamesFallback.push(`${player.name} ${best.season} ${best.games}g ${best.minutes}m`);
+    }
 
     const perMetric = perMetricBest(scored);
 
@@ -687,6 +696,12 @@ function writeBadges({ set, badges, counts }) {
 const SOURCES = {
   origin: 'basketball-reference.com season tables (advanced + per-100), 2000-2026',
   bestSeason: 'BPM, scored against its own season\'s league. Win Shares and WS/48 are deliberately excluded: they allocate TEAM wins, so they dock a good player on a bad team',
+  eligibility:
+    `a season must be at least ${BEST_SEASON_MIN_MINUTES} minutes AND ${BEST_SEASON_MIN_GAMES} ` +
+    'games — 70% of an 82-game schedule — to be eligible as a career best. The two floors ask ' +
+    'different questions: minutes ask whether a rate is measurable, games ask whether the season ' +
+    'happened. They fall back one at a time (games first, then minutes) so a player whose only ' +
+    'real season is short still gets a card',
   speedPower: 'z(BPM), shrunk toward replacement level for a short season, mapped onto the finished set\'s Speed+Power distribution with the 2026-27 pool as the calibration basis',
   defBoost: 'DBPM, rounded — DEF EPM does not exist before the current season',
   paintBoost: '2P% standing in for rim FG%, which Basketball-Reference does not carry',
@@ -769,8 +784,24 @@ export function main({ log = console.log } = {}) {
   reportBadges(counts, log);
 
   reportBestSeasonMetricSets(selection.metricSetSplits, BEST_SEASON_METRIC_SETS, log);
+  // ── HOW FAR ELIGIBILITY HAD TO FALL BACK, one line per tier ──────────────
+  //
+  // Both numbers are the cost of the two floors, and they are reported
+  // separately because they mean different things: the games fallback is a
+  // player who HAS a measurable season that is simply not long enough yet, and
+  // the minutes fallback is a player who has no measurable season at all.
+  if (selection.notes.gamesFallback.length) {
+    log(
+      `\nNo season of ${BEST_SEASON_MIN_GAMES}+ games over ${BEST_SEASON_MIN_MINUTES} minutes ` +
+        `(games floor dropped, minutes floor held): ${selection.notes.gamesFallback.length}`
+    );
+    log(`  ${selection.notes.gamesFallback.join('; ')}`);
+  }
   if (selection.notes.fallbackFloor.length) {
-    log(`\nNo season over ${1000} minutes (largest season used instead): ${selection.notes.fallbackFloor.length}`);
+    log(
+      `\nNo season over ${BEST_SEASON_MIN_MINUTES} minutes at all (both floors dropped): ` +
+        `${selection.notes.fallbackFloor.length}`
+    );
     log(`  ${selection.notes.fallbackFloor.slice(0, 12).join(', ')}`);
   }
   if (selection.notes.beyondRange.length) {

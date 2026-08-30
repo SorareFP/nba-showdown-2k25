@@ -119,6 +119,41 @@
   z-index: 2;
 }
 
+/* ── Set treatments ───────────────────────────────────────────────────────────
+ *
+ * Two boxes, rendered ONLY by a set that declares a treatment (see
+ * src/cards/treatments.js and CardTemplate's `treatment?.sheen` guards). Both
+ * are static gradients on purpose: the batch export screenshots this element,
+ * so anything animated or viewer-dependent would come out as one arbitrary
+ * frame. What the studio shows is what the PNG gets.
+ *
+ * The sheen is the FIRST child of .card and the frame is the LAST, which is the
+ * whole of their z-ordering: every element on the card is positioned at z-index
+ * auto, so tree order decides, and that puts the sheen over the flat field and
+ * under all the content while the frame lands over everything. Neither needs a
+ * z-index of its own, and neither should get one — a stacking context here
+ * would reorder the shot-line arrow and the chevrons against .card::after. */
+.treatmentSheen {
+  position: absolute;
+  inset: 0;
+  background-image: var(--treatment-sheen, none);
+  pointer-events: none;
+}
+
+/* The metallic keyline. A gradient cannot be a box-shadow colour, so this is a
+ * border-image over the top of .card::after's solid one — additive, so the
+ * untreated rule (and the test that measures the frame's width out of it) is
+ * untouched. `border-image-slice: 1` is what makes a linear-gradient fill the
+ * whole border box rather than being sliced into nine unusable pieces. */
+.treatmentFrame {
+  position: absolute;
+  inset: 0;
+  border: 7px solid transparent;
+  border-image-source: var(--treatment-frame, none);
+  border-image-slice: 1;
+  pointer-events: none;
+}
+
 /* ── Top band: SPEED / POWER over team-colored diagonal stripes ──────────── */
 
 .topBand {
@@ -128,7 +163,25 @@
   width: 843px;
   height: 112px;
   overflow: hidden;
-  background: linear-gradient(180deg, var(--field-band-top) 0%, var(--field-band-bottom) 100%);
+  /* TWO LAYERS, first one on top. `--treatment-band` is the set's foil sweep
+   * and resolves to `none` on every untreated card, which paints nothing at all
+   * and leaves the team gradient below it exactly as it was. Layering rather
+   * than substituting is what lets a treatment be added without any set that
+   * does not use one changing by a pixel. */
+  background-image:
+    var(--treatment-band, none),
+    linear-gradient(180deg, var(--field-band-top) 0%, var(--field-band-bottom) 100%);
+}
+/* The set's accent bar along the bottom of the band. `transparent` by default,
+ * so an untreated card draws an invisible 6px box and nothing else. */
+.topBand::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 6px;
+  background: var(--treatment-band-edge, transparent);
 }
 .topBand::before {
   content: '';

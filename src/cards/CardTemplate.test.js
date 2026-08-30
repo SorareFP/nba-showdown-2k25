@@ -20,8 +20,14 @@ import CardTemplate, {
   visibleTiers,
 } from './CardTemplate.jsx';
 import { CARDS } from '../game/cards.js';
-import { TEAMS } from './teams.js';
-import { CURRENT_SET, FINISHED_SET } from './sets.js';
+import { TEAMS, HISTORICAL_TEAMS } from './teams.js';
+import {
+  CURRENT_SET,
+  FINISHED_SET,
+  ROOKIE_SET,
+  SET_IDS,
+  SUPER_SEASON_SET,
+} from './sets.js';
 import { POOL_PLAYERS } from '../studio/players.js';
 
 const render = props => renderToStaticMarkup(React.createElement(CardTemplate, props));
@@ -852,6 +858,103 @@ describe('nameFontSize', () => {
     // ("Nickeil Alexander-Walker", "Kentavious Caldwell-Pope", 24 chars).
     for (const p of POOL_PLAYERS) {
       expect(inkLength(p.name), p.name).toBeLessThanOrEqual(900);
+    }
+  });
+});
+
+describe('the set treatment on the rendered card', () => {
+  /** A card with the structural blank tier and a full five printed rows. */
+  const CARD = {
+    id: 'Kevin_Durant',
+    name: 'Kevin Durant',
+    team: 'SEA',
+    pos: 'SG',
+    speed: 10,
+    power: 7,
+    shotLine: 14,
+    paintBoost: 1,
+    threePtBoost: 2,
+    defBoost: 0,
+    salary: 480,
+    chart: [
+      { lo: 1, hi: 2, pts: 0, reb: 0, ast: 0 },
+      { lo: 3, hi: 7, pts: 1, reb: 1, ast: 0 },
+      { lo: 8, hi: 13, pts: 2, reb: 1, ast: 1 },
+      { lo: 14, hi: 18, pts: 3, reb: 2, ast: 1 },
+      { lo: 19, hi: 99, pts: 5, reb: 2, ast: 2 },
+    ],
+  };
+
+  const forSet = set => render({ card: CARD, set });
+
+  it('leaves BOTH season sets with no treatment markup at all', () => {
+    // The regression that matters most in this file: these two sets shipped
+    // before treatments existed and must render as if they still did not.
+    for (const set of [CURRENT_SET, FINISHED_SET]) {
+      const html = forSet(set);
+      expect(html, set).not.toContain('data-treatment');
+      expect(html, set).not.toContain('--treatment-sheen');
+      expect(html, set).not.toContain('--treatment-band');
+      expect(html, set).not.toContain('--treatment-frame');
+    }
+  });
+
+  it('still hides the blank tier for the set being built and prints it for the finished one', () => {
+    // Restated here against a treated-card fixture, because `set` now does two
+    // jobs — it picks the treatment AND decides this — and a change to one must
+    // not be able to quietly move the other.
+    expect(rows(forSet(CURRENT_SET))).toHaveLength(5); // header + 4 printed
+    expect(rows(forSet(FINISHED_SET))).toHaveLength(6); // header + 5 printed
+  });
+
+  it('marks a treated card with the treatment it carries', () => {
+    expect(forSet(SUPER_SEASON_SET)).toContain('data-treatment="gold-foil"');
+    expect(forSet(ROOKIE_SET)).toContain('data-treatment="green-accent"');
+  });
+
+  it('paints the Super Season card with a static foil, no animation', () => {
+    const html = forSet(SUPER_SEASON_SET);
+    expect(html).toContain('linear-gradient');
+    expect(html).not.toMatch(/animation|keyframes|transition/i);
+    // The two extra boxes: a sheen under the content and a gradient keyline
+    // over it. See the z-order note in CardTemplate.
+    expect(html).toContain('repeating-linear-gradient');
+    expect(html).toMatch(/--treatment-frame:\s*linear-gradient/);
+  });
+
+  it('keeps the Rookie card plain — a green accent, not a second look', () => {
+    const html = forSet(ROOKIE_SET);
+    expect(html).toMatch(/--treatment-sheen:\s*none/);
+    expect(html).toMatch(/--treatment-band:\s*none/);
+    expect(html).toMatch(/--treatment-frame:\s*none/);
+    // The one thing it does paint.
+    expect(html).toMatch(/--treatment-band-edge:\s*#/);
+  });
+
+  it('hides the blank tier on both special sets too', () => {
+    for (const set of [SUPER_SEASON_SET, ROOKIE_SET]) {
+      expect(rows(forSet(set)), set).toHaveLength(5);
+    }
+  });
+
+  it('renders a defunct franchise without falling back to the neutral grey', () => {
+    // Kevin Durant's rookie card says SEA. The logo file does not exist and is
+    // not supposed to — the lettered circle is the intended fallback — but the
+    // COLOURS have to be Seattle's, or the card looks like a data error.
+    const html = forSet(ROOKIE_SET);
+    expect(html).toContain(HISTORICAL_TEAMS.SEA.primary);
+    expect(html).toContain('SEA');
+  });
+
+  it('renders every set for every team without throwing', () => {
+    // The sweep. Four sets times thirty-seven franchises: the treated themes
+    // are searched per field, so this is the cheapest way to catch a field the
+    // search cannot handle at all.
+    for (const set of SET_IDS) {
+      for (const team of [...Object.keys(TEAMS), ...Object.keys(HISTORICAL_TEAMS)]) {
+        const html = render({ card: { ...CARD, team }, set });
+        expect(html.length, `${set} ${team}`).toBeGreaterThan(1000);
+      }
     }
   });
 });

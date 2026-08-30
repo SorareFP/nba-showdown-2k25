@@ -14,8 +14,9 @@
 // the studio has to stay usable while the data is half-built.
 import { useState } from 'react';
 import { getThemedTeam, resolveAccent } from './teams.js';
-import { hidesBlankTier } from './sets.js';
+import { hidesBlankTier, setTreatment } from './sets.js';
 import { deriveFieldTheme, fieldThemeVars } from './fieldTheme.js';
+import { applyTreatment, treatmentVars } from './treatments.js';
 import { resolvePhotoUrl, cropToStyle } from './photo.js';
 import styles from './CardTemplate.module.css';
 
@@ -204,7 +205,16 @@ export default function CardTemplate({
   // The card's FIELD is the team's primary color, so every other color on it —
   // ink, panels, hairlines, the band — is derived from that primary by
   // contrast rather than hardcoded. See fieldTheme.js.
-  const field = deriveFieldTheme(team.primary, team.secondary, accent);
+  //
+  // Then the SET's treatment composes on top of that palette — gold foil for
+  // Super Season, a green accent for Rookie, nothing at all for the two season
+  // sets, which is why they render byte-identically to before. A treatment may
+  // only spend contrast the untreated card already had; see treatments.js.
+  const field = applyTreatment(
+    deriveFieldTheme(team.primary, team.secondary, accent),
+    setTreatment(set)
+  );
+  const treatment = field.treatment ?? null;
 
   const photoUrl = resolvePhotoUrl({
     playerId: card.id,
@@ -223,6 +233,7 @@ export default function CardTemplate({
     <div
       className={styles.card}
       data-card-root=""
+      data-treatment={treatment?.id ?? undefined}
       style={{
         width: CARD_WIDTH,
         height: CARD_HEIGHT,
@@ -232,8 +243,17 @@ export default function CardTemplate({
         '--team-secondary': team.secondary,
         '--team-accent': accent,
         ...fieldThemeVars(field),
+        ...treatmentVars(field),
       }}
     >
+      {/* FIRST CHILD, and that is the whole positioning rule: it paints over
+        * the card's flat field and under everything else, because every other
+        * element here is positioned at z-index auto and so paints in tree
+        * order. Rendered only when the treatment actually produced a sheen —
+        * on a field with no contrast to spare, fitAmplitude returns 0 and the
+        * card simply keeps its plain surface. */}
+      {treatment?.sheen && <div className={styles.treatmentSheen} />}
+
       <div className={styles.topBand} />
       <LeagueMark />
 
@@ -341,6 +361,13 @@ export default function CardTemplate({
           )}
         </tbody>
       </table>
+
+      {/* LAST CHILD, over .card::after's own keyline rather than instead of it.
+        * A gradient cannot be a box-shadow colour, so the metallic frame has to
+        * be a border-image on a box of its own — and layering it keeps the
+        * existing rule (and the test that reads its width out of the
+        * stylesheet) exactly as it was. Untreated sets never render it. */}
+      {treatment?.frameImage && <div className={styles.treatmentFrame} />}
     </div>
   );
 }

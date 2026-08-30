@@ -71,8 +71,16 @@ describe('playerIdFromName', () => {
 });
 
 describe('the 2025-26 pool', () => {
-  it('loads all 331 players', () => {
-    expect(POOL_PLAYERS).toHaveLength(331);
+  // THE ONE PLACE THE POOL SIZE IS PINNED. Every other test that used to quote
+  // 331 now derives its count, because that number moves whenever a name is
+  // added to card-data/force-include-2026.json and eleven tests failing for
+  // that reason teaches nobody anything. Here it is the assertion: 331 players
+  // clear the MPG>=12 / G>=40 rule and 19 more are force-included (18 whose
+  // 2025-26 season was cut short by injury, plus Ty Jerome by name). Update
+  // this number, deliberately, when the list changes — and see
+  // scripts/cardgen/generatePool.test.js, which checks the composition itself.
+  it('loads the whole 350-player pool', () => {
+    expect(POOL_PLAYERS).toHaveLength(350);
   });
 
   it('gives every player a unique id', () => {
@@ -175,10 +183,12 @@ describe('resolved teams overlaid on the pool', () => {
     ]);
   });
 
-  it('keeps every pool player, including the ones it could not resolve', () => {
-    // The resolved file is SHORTER than the pool (327 vs 331). Reading it as the
-    // list rather than as an overlay would silently drop 4 players from the set.
-    expect(POOL_PLAYERS).toHaveLength(331);
+  it('keeps every pool player, including the ones it could not resolve', async () => {
+    // The resolved file is SHORTER than the pool — the generator emits only
+    // players it could give a real team, and 4 have none from any source.
+    // Reading it as the list rather than as an overlay would silently drop them.
+    const resolved = (await import('../../card-data/generated/player-teams-2026.json')).default;
+    expect(POOL_PLAYERS.length - resolved.length).toBe(4);
   });
 
   it('gives resolved players the personId the headshot fallback needs', () => {
@@ -213,8 +223,8 @@ describe('photo-id collisions', () => {
       .toLowerCase()
       .replace(/[^a-z0-9]/g, '');
 
-  it('gives all 331 pool players distinct ids', () => {
-    expect(new Set(POOL_PLAYERS.map(p => p.id)).size).toBe(331);
+  it('gives every pool player a distinct id', () => {
+    expect(new Set(POOL_PLAYERS.map(p => p.id)).size).toBe(POOL_PLAYERS.length);
   });
 
   it('gives all 306 shipped cards distinct ids', () => {
@@ -232,18 +242,23 @@ describe('photo-id collisions', () => {
     expect(clashes).toEqual([]);
   });
 
-  it('lands 194 pool players on an id the shipped set already uses', () => {
+  it('lands most of the pool on an id the shipped set already uses', () => {
     // Not a requirement, a canary: this was 177 while accents collapsed to
-    // underscores. If it drops, the id scheme has drifted off the convention
-    // src/game/rawCards.js and public/cards/players/ were built on.
+    // underscores, 194 on the 331-player pool, and 211 once the 19
+    // force-included players were added (nearly all of them are 2025-26 cards
+    // too). If the SHARE drops, the id scheme has drifted off the convention
+    // src/game/rawCards.js and public/cards/players/ were built on. A share
+    // rather than a count, so adding a name to the force-include list cannot
+    // fail it.
     const shipped = new Set(CARD_PLAYERS.map(p => p.id));
-    expect(POOL_PLAYERS.filter(p => shipped.has(p.id))).toHaveLength(194);
+    const overlap = POOL_PLAYERS.filter(p => shipped.has(p.id)).length;
+    expect(overlap / POOL_PLAYERS.length).toBeGreaterThan(0.55);
   });
 });
 
 describe('SOURCES', () => {
   it('offers the new pool and the shipped card set', () => {
-    expect(SOURCES.pool.players).toHaveLength(331);
+    expect(SOURCES.pool.players).toHaveLength(POOL_PLAYERS.length);
     expect(SOURCES.cards.players).toHaveLength(306);
   });
 
@@ -263,7 +278,7 @@ describe('SOURCES', () => {
     // the season its STATS came from — beside a badge reading "set 2026-27".
     // The user read the toggle, saw only the old season, and concluded: "I
     // can't edit the 2026-27 set." They could; it was the label.
-    expect(SOURCES.pool.label).toBe(`${CURRENT_SET} set · 331 players`);
+    expect(SOURCES.pool.label).toBe(`${CURRENT_SET} set · ${POOL_PLAYERS.length} players`);
     expect(SOURCES.cards.label).toBe(`${FINISHED_SET} set · 306 cards (reference)`);
   });
 

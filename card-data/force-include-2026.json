@@ -1,0 +1,24 @@
+{
+  "_comment": "Players who join the 2026-27 pool REGARDLESS of the MPG>=12 / G>=40 rule. This file COMPOSES with that rule rather than replacing it: scripts/cardgen/generatePool.js keeps everyone the rule already admits and adds everyone named here. Keyed by the player name exactly as Basketball-Reference's per-game table spells it (a name that matches no row is reported by the generator rather than silently ignored). The value is the one-line reason, which is the whole point of the file: a bare list of names would lose why each one is here. WHY THIS EXISTS: the G>=40 half of the rule quietly drops anyone whose season was cut short by injury, star or not — the 18 names below are every player in the 2025-26 table with MPG>=25 (a real rotation or star role when healthy) and G<40, found and decided on 2026-08-28. Ty Jerome is a separate case: a direct individual pick, not an injury exception. See memory/new_season_player_pool.md. NOTE ON THEIR NUMBERS: these players are carded on their 2025-26 sample alone. The shooting layer's empirical-Bayes shrinkage already discounts their low-volume location percentages automatically, but TS% (and so the Shot Line) is deliberately not shrunk, so a short sample carries full weight there. Blending in 2024-25 was the stated preference and is NOT done: the season's EPM/EW source is locked for prior seasons and Basketball-Reference carries neither stat, so a blend is a cross-source normalisation project rather than a pooling job.",
+
+  "Giannis Antetokounmpo": "injury-shortened 2025-26: 36 G at 28.9 MPG",
+  "Joel Embiid": "injury-shortened 2025-26: 38 G at 31.6 MPG",
+  "Jayson Tatum": "injury-shortened 2025-26: 16 G at 32.6 MPG",
+  "Franz Wagner": "injury-shortened 2025-26: 34 G at 30.0 MPG",
+  "Tyler Herro": "injury-shortened 2025-26: 33 G at 31.3 MPG",
+  "Anthony Davis": "injury-shortened 2025-26: 20 G at 31.3 MPG",
+  "Jimmy Butler": "injury-shortened 2025-26: 38 G at 31.1 MPG",
+  "Ja Morant": "injury-shortened 2025-26: 20 G at 28.5 MPG",
+  "Zach LaVine": "injury-shortened 2025-26: 39 G at 31.4 MPG",
+  "Trae Young": "injury-shortened 2025-26: 15 G at 25.6 MPG",
+  "Jalen Green": "injury-shortened 2025-26: 32 G at 25.9 MPG",
+  "Paul George": "injury-shortened 2025-26: 37 G at 30.7 MPG",
+  "Jalen Williams": "injury-shortened 2025-26: 33 G at 28.4 MPG",
+  "Dejounte Murray": "injury-shortened 2025-26: 14 G at 27.8 MPG",
+  "Aaron Gordon": "injury-shortened 2025-26: 36 G at 27.9 MPG",
+  "Domantas Sabonis": "injury-shortened 2025-26: 19 G at 29.7 MPG",
+  "Keegan Murray": "injury-shortened 2025-26: 23 G at 34.5 MPG",
+  "Zach Edey": "injury-shortened 2025-26: 11 G at 25.8 MPG",
+
+  "Ty Jerome": "individual pick, asked for by name 2026-08-29 — 15 G at 22.6 MPG, fails both halves of the rule and is not an injury-star case"
+}

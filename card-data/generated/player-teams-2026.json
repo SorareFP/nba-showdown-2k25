@@ -120,6 +120,14 @@
     "personId": 1630559
   },
   {
+    "name": "Keegan Murray",
+    "team": "SAC",
+    "pos": "PF",
+    "games": 23,
+    "mpg": 34.5,
+    "personId": 1631099
+  },
+  {
     "name": "Jaylen Brown",
     "team": "PHI",
     "pos": "SF",
@@ -296,6 +304,14 @@
     "personId": 1628969
   },
   {
+    "name": "Jayson Tatum",
+    "team": "BOS",
+    "pos": "PF",
+    "games": 16,
+    "mpg": 32.6,
+    "personId": 1628369
+  },
+  {
     "name": "Michael Porter Jr.",
     "team": "BKN",
     "pos": "SF",
@@ -376,6 +392,14 @@
     "personId": 1630183
   },
   {
+    "name": "Joel Embiid",
+    "team": "PHI",
+    "pos": "C",
+    "games": 38,
+    "mpg": 31.6,
+    "personId": 203954
+  },
+  {
     "name": "Kon Knueppel",
     "team": "CHA",
     "pos": "SF",
@@ -390,6 +414,30 @@
     "games": 50,
     "mpg": 31.5,
     "personId": 1626162
+  },
+  {
+    "name": "Zach LaVine",
+    "team": "SAC",
+    "pos": "SG",
+    "games": 39,
+    "mpg": 31.4,
+    "personId": 203897
+  },
+  {
+    "name": "Tyler Herro",
+    "team": "MIL",
+    "pos": "SG",
+    "games": 33,
+    "mpg": 31.3,
+    "personId": 1629639
+  },
+  {
+    "name": "Anthony Davis",
+    "team": "WAS",
+    "pos": "PF",
+    "games": 20,
+    "mpg": 31.3,
+    "personId": 203076
   },
   {
     "name": "Andrew Nembhard",
@@ -422,6 +470,14 @@
     "games": 72,
     "mpg": 31.2,
     "personId": 1630180
+  },
+  {
+    "name": "Jimmy Butler",
+    "team": "GSW",
+    "pos": "SF",
+    "games": 38,
+    "mpg": 31.1,
+    "personId": 202710
   },
   {
     "name": "Karl-Anthony Towns",
@@ -470,6 +526,14 @@
     "games": 43,
     "mpg": 30.9,
     "personId": 201939
+  },
+  {
+    "name": "Paul George",
+    "team": "BOS",
+    "pos": "PF",
+    "games": 37,
+    "mpg": 30.7,
+    "personId": 202331
   },
   {
     "name": "Devin Vassell",
@@ -552,6 +616,14 @@
     "personId": 1627826
   },
   {
+    "name": "Franz Wagner",
+    "team": "ORL",
+    "pos": "SF",
+    "games": 34,
+    "mpg": 30,
+    "personId": 1630532
+  },
+  {
     "name": "Bennedict Mathurin",
     "team": "LAC",
     "pos": "SF",
@@ -606,6 +678,14 @@
     "games": 57,
     "mpg": 29.7,
     "personId": 203924
+  },
+  {
+    "name": "Domantas Sabonis",
+    "team": "SAC",
+    "pos": "C",
+    "games": 19,
+    "mpg": 29.7,
+    "personId": 1627734
   },
   {
     "name": "Aaron Nesmith",
@@ -720,6 +800,14 @@
     "personId": 1642273
   },
   {
+    "name": "Giannis Antetokounmpo",
+    "team": "MIA",
+    "pos": "PF",
+    "games": 36,
+    "mpg": 28.9,
+    "personId": 203507
+  },
+  {
     "name": "Chet Holmgren",
     "team": "OKC",
     "pos": "PF",
@@ -744,6 +832,14 @@
     "personId": 1630558
   },
   {
+    "name": "Ja Morant",
+    "team": "POR",
+    "pos": "PG",
+    "games": 20,
+    "mpg": 28.5,
+    "personId": 1629630
+  },
+  {
     "name": "Brandin Podziemski",
     "team": "GSW",
     "pos": "SG",
@@ -766,6 +862,14 @@
     "games": 62,
     "mpg": 28.5,
     "personId": 203935
+  },
+  {
+    "name": "Jalen Williams",
+    "team": "OKC",
+    "pos": "SG",
+    "games": 33,
+    "mpg": 28.4,
+    "personId": 1631114
   },
   {
     "name": "Nikola Vučević",
@@ -824,12 +928,28 @@
     "personId": 1630163
   },
   {
+    "name": "Aaron Gordon",
+    "team": "DEN",
+    "pos": "PF",
+    "games": 36,
+    "mpg": 27.9,
+    "personId": 203932
+  },
+  {
     "name": "Santi Aldama",
     "team": "DAL",
     "pos": "PF",
     "games": 43,
     "mpg": 27.9,
     "personId": 1630583
+  },
+  {
+    "name": "Dejounte Murray",
+    "team": "NOP",
+    "pos": "PG",
+    "games": 14,
+    "mpg": 27.8,
+    "personId": 1627749
   },
   {
     "name": "Nic Claxton",
@@ -1128,6 +1248,14 @@
     "personId": 1631217
   },
   {
+    "name": "Jalen Green",
+    "team": "PHX",
+    "pos": "SG",
+    "games": 32,
+    "mpg": 25.9,
+    "personId": 1630224
+  },
+  {
     "name": "Jeremiah Fears",
     "team": "NOP",
     "pos": "PG",
@@ -1142,6 +1270,14 @@
     "games": 62,
     "mpg": 25.8,
     "personId": 1642907
+  },
+  {
+    "name": "Zach Edey",
+    "team": "MEM",
+    "pos": "C",
+    "games": 11,
+    "mpg": 25.8,
+    "personId": 1641744
   },
   {
     "name": "Ajay Mitchell",
@@ -1190,6 +1326,14 @@
     "games": 76,
     "mpg": 25.7,
     "personId": 1641716
+  },
+  {
+    "name": "Trae Young",
+    "team": "WAS",
+    "pos": "PG",
+    "games": 15,
+    "mpg": 25.6,
+    "personId": 1629027
   },
   {
     "name": "Neemias Queta",
@@ -1446,6 +1590,14 @@
     "games": 58,
     "mpg": 22.7,
     "personId": 1630191
+  },
+  {
+    "name": "Ty Jerome",
+    "team": "MEM",
+    "pos": "SG",
+    "games": 15,
+    "mpg": 22.6,
+    "personId": 1629660
   },
   {
     "name": "Dylan Harper",

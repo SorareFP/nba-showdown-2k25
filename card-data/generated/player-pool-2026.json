@@ -105,6 +105,13 @@
     "mpg": 34.5
   },
   {
+    "name": "Keegan Murray",
+    "team": "SAC",
+    "pos": "PF",
+    "games": 23,
+    "mpg": 34.5
+  },
+  {
     "name": "Jaylen Brown",
     "team": "BOS",
     "pos": "SF",
@@ -259,6 +266,13 @@
     "mpg": 32.8
   },
   {
+    "name": "Jayson Tatum",
+    "team": "BOS",
+    "pos": "PF",
+    "games": 16,
+    "mpg": 32.6
+  },
+  {
     "name": "Michael Porter Jr.",
     "team": "BRK",
     "pos": "SF",
@@ -329,6 +343,13 @@
     "mpg": 31.7
   },
   {
+    "name": "Joel Embiid",
+    "team": "PHI",
+    "pos": "C",
+    "games": 38,
+    "mpg": 31.6
+  },
+  {
     "name": "Kon Knueppel",
     "team": "CHO",
     "pos": "SF",
@@ -341,6 +362,27 @@
     "pos": "SF",
     "games": 50,
     "mpg": 31.5
+  },
+  {
+    "name": "Zach LaVine",
+    "team": "SAC",
+    "pos": "SG",
+    "games": 39,
+    "mpg": 31.4
+  },
+  {
+    "name": "Tyler Herro",
+    "team": "MIA",
+    "pos": "SG",
+    "games": 33,
+    "mpg": 31.3
+  },
+  {
+    "name": "Anthony Davis",
+    "team": "DAL",
+    "pos": "PF",
+    "games": 20,
+    "mpg": 31.3
   },
   {
     "name": "Andrew Nembhard",
@@ -369,6 +411,13 @@
     "pos": "SF",
     "games": 72,
     "mpg": 31.2
+  },
+  {
+    "name": "Jimmy Butler",
+    "team": "GSW",
+    "pos": "SF",
+    "games": 38,
+    "mpg": 31.1
   },
   {
     "name": "Karl-Anthony Towns",
@@ -411,6 +460,13 @@
     "pos": "PG",
     "games": 43,
     "mpg": 30.9
+  },
+  {
+    "name": "Paul George",
+    "team": "PHI",
+    "pos": "PF",
+    "games": 37,
+    "mpg": 30.7
   },
   {
     "name": "Devin Vassell",
@@ -483,6 +539,13 @@
     "mpg": 30.1
   },
   {
+    "name": "Franz Wagner",
+    "team": "ORL",
+    "pos": "SF",
+    "games": 34,
+    "mpg": 30
+  },
+  {
     "name": "Bennedict Mathurin",
     "team": "2TM",
     "pos": "SF",
@@ -529,6 +592,13 @@
     "team": "POR",
     "pos": "PF",
     "games": 57,
+    "mpg": 29.7
+  },
+  {
+    "name": "Domantas Sabonis",
+    "team": "SAC",
+    "pos": "C",
+    "games": 19,
     "mpg": 29.7
   },
   {
@@ -630,6 +700,13 @@
     "mpg": 29
   },
   {
+    "name": "Giannis Antetokounmpo",
+    "team": "MIL",
+    "pos": "PF",
+    "games": 36,
+    "mpg": 28.9
+  },
+  {
     "name": "Chet Holmgren",
     "team": "OKC",
     "pos": "PF",
@@ -651,6 +728,13 @@
     "mpg": 28.6
   },
   {
+    "name": "Ja Morant",
+    "team": "MEM",
+    "pos": "PG",
+    "games": 20,
+    "mpg": 28.5
+  },
+  {
     "name": "Brandin Podziemski",
     "team": "GSW",
     "pos": "SG",
@@ -670,6 +754,13 @@
     "pos": "SG",
     "games": 62,
     "mpg": 28.5
+  },
+  {
+    "name": "Jalen Williams",
+    "team": "OKC",
+    "pos": "SG",
+    "games": 33,
+    "mpg": 28.4
   },
   {
     "name": "Nikola Vučević",
@@ -721,11 +812,25 @@
     "mpg": 28
   },
   {
+    "name": "Aaron Gordon",
+    "team": "DEN",
+    "pos": "PF",
+    "games": 36,
+    "mpg": 27.9
+  },
+  {
     "name": "Santi Aldama",
     "team": "MEM",
     "pos": "PF",
     "games": 43,
     "mpg": 27.9
+  },
+  {
+    "name": "Dejounte Murray",
+    "team": "NOP",
+    "pos": "PG",
+    "games": 14,
+    "mpg": 27.8
   },
   {
     "name": "Nic Claxton",
@@ -987,6 +1092,13 @@
     "mpg": 26
   },
   {
+    "name": "Jalen Green",
+    "team": "PHO",
+    "pos": "SG",
+    "games": 32,
+    "mpg": 25.9
+  },
+  {
     "name": "Jeremiah Fears",
     "team": "NOP",
     "pos": "PG",
@@ -998,6 +1110,13 @@
     "team": "MEM",
     "pos": "SG",
     "games": 62,
+    "mpg": 25.8
+  },
+  {
+    "name": "Zach Edey",
+    "team": "MEM",
+    "pos": "C",
+    "games": 11,
     "mpg": 25.8
   },
   {
@@ -1041,6 +1160,13 @@
     "pos": "PF",
     "games": 76,
     "mpg": 25.7
+  },
+  {
+    "name": "Trae Young",
+    "team": "2TM",
+    "pos": "PG",
+    "games": 15,
+    "mpg": 25.6
   },
   {
     "name": "Neemias Queta",
@@ -1265,6 +1391,13 @@
     "pos": "C",
     "games": 58,
     "mpg": 22.7
+  },
+  {
+    "name": "Ty Jerome",
+    "team": "MEM",
+    "pos": "SG",
+    "games": 15,
+    "mpg": 22.6
   },
   {
     "name": "Dylan Harper",

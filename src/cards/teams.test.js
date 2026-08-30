@@ -90,7 +90,7 @@ describe('getTeam', () => {
   });
 
   it('resolves Basketball-Reference spellings to the right team', () => {
-    // The pool comes from Basketball-Reference; 32 of its 331 players carry
+    // The pool comes from Basketball-Reference; three dozen of its players carry
     // these codes and used to render on the grey fallback.
     expect(getTeam('BRK')).toEqual(TEAMS.BKN);
     expect(getTeam('CHO')).toEqual(TEAMS.CHA);
@@ -115,7 +115,7 @@ describe('getTeam', () => {
   });
 
   it('falls back for multi-team aggregate codes, which are not teams', () => {
-    // 45 players in the 2025-26 pool still carry these. They are bad data, not
+    // Dozens of players in the 2025-26 pool still carry these. They are bad data, not
     // an alias problem, and looking unstyled is the point until team resolution
     // replaces them — so aliasing must NOT quietly rescue them.
     expect(getTeam('2TM').name).toBe('Unknown');
@@ -131,14 +131,19 @@ describe('getTeam', () => {
 describe('the 2025-26 pool against this table', () => {
   const unresolved = pool.filter(p => getTeam(p.team).name === 'Unknown');
 
-  it('leaves only the 45 multi-team-code players unthemed', () => {
-    expect(unresolved).toHaveLength(45);
+  // The COUNTS here are deliberately not asserted: the pool grows whenever a
+  // name is added to card-data/force-include-2026.json, and pinning "45" made
+  // this test fail for the one reason that is not a bug. What matters is the
+  // CLASSIFICATION — that the only unthemed players are the multi-team codes,
+  // and that every Basketball-Reference spelling still finds its logo.
+  it('leaves only the multi-team-code players unthemed', () => {
+    expect(unresolved.length).toBeGreaterThan(0); // non-vacuous
     expect(new Set(unresolved.map(p => p.team))).toEqual(new Set(['2TM', '3TM']));
   });
 
-  it('themes the 32 players on Basketball-Reference-spelled teams', () => {
+  it('themes the players on Basketball-Reference-spelled teams', () => {
     const aliased = pool.filter(p => p.team in TEAM_ALIASES);
-    expect(aliased).toHaveLength(32);
+    expect(aliased.length).toBeGreaterThan(0);
     for (const p of aliased) expect(getTeam(p.team).logo, p.name).not.toBeNull();
   });
 });

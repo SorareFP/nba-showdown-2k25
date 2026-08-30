@@ -8,7 +8,7 @@
   "epmDef": 4.89679186390588,
   "ewinsPerGame": 0.2512,
   "playoffGames": 22,
-  "composite": 5.4392,
+  "composite": 5.2302,
   "speedPowerTotal": 28,
   "provisional": true
  },
@@ -21,7 +21,7 @@
   "epmDef": 1.5162266762191419,
   "ewinsPerGame": 0.2485,
   "playoffGames": 15,
-  "composite": 5.0787,
+  "composite": 4.8794,
   "speedPowerTotal": 28,
   "provisional": true
  },
@@ -34,7 +34,20 @@
   "epmDef": 0.549081525428965,
   "ewinsPerGame": 0.2457,
   "playoffGames": 6,
-  "composite": 4.7657,
+  "composite": 4.5747,
+  "speedPowerTotal": 28,
+  "provisional": true
+ },
+ {
+  "name": "Giannis Antetokounmpo",
+  "team": "MIL",
+  "pos": "PF",
+  "epm": 7.35897,
+  "epmOff": 5.79904,
+  "epmDef": 1.55993,
+  "ewinsPerGame": 0.2052,
+  "playoffGames": 0,
+  "composite": 4.249,
   "speedPowerTotal": 28,
   "provisional": true
  },
@@ -47,7 +60,7 @@
   "epmDef": 0.181022,
   "ewinsPerGame": 0.236,
   "playoffGames": 0,
-  "composite": 4.3355,
+  "composite": 4.1558,
   "speedPowerTotal": 27,
   "provisional": true
  },
@@ -60,8 +73,21 @@
   "epmDef": 0.382395,
   "ewinsPerGame": 0.2118,
   "playoffGames": 0,
-  "composite": 4.1652,
+  "composite": 3.9887,
   "speedPowerTotal": 27,
+  "provisional": true
+ },
+ {
+  "name": "Ty Jerome",
+  "team": "MEM",
+  "pos": "SG",
+  "epm": 6.17303,
+  "epmOff": 7.07268,
+  "epmDef": -0.899649,
+  "ewinsPerGame": 0.1421,
+  "playoffGames": 0,
+  "composite": 3.3093,
+  "speedPowerTotal": 26,
   "provisional": true
  },
  {
@@ -73,7 +99,7 @@
   "epmDef": 3.0071945640686413,
   "ewinsPerGame": 0.1585,
   "playoffGames": 15,
-  "composite": 3.1799,
+  "composite": 3.0271,
   "speedPowerTotal": 25,
   "provisional": true
  },
@@ -86,7 +112,7 @@
   "epmDef": -0.615277,
   "ewinsPerGame": 0.1696,
   "playoffGames": 0,
-  "composite": 3.1627,
+  "composite": 3.011,
   "speedPowerTotal": 25,
   "provisional": true
  },
@@ -99,7 +125,7 @@
   "epmDef": 0.66925,
   "ewinsPerGame": 0.1768,
   "playoffGames": 1,
-  "composite": 2.8164,
+  "composite": 2.6747,
   "speedPowerTotal": 25,
   "provisional": true
  },
@@ -112,7 +138,7 @@
   "epmDef": -0.326994,
   "ewinsPerGame": 0.1472,
   "playoffGames": 0,
-  "composite": 2.7911,
+  "composite": 2.6483,
   "speedPowerTotal": 25,
   "provisional": true
  },
@@ -125,8 +151,21 @@
   "epmDef": 1.5285721346706154,
   "ewinsPerGame": 0.1493,
   "playoffGames": 19,
-  "composite": 2.7438,
-  "speedPowerTotal": 25,
+  "composite": 2.6024,
+  "speedPowerTotal": 24,
+  "provisional": true
+ },
+ {
+  "name": "Jimmy Butler",
+  "team": "GSW",
+  "pos": "SF",
+  "epm": 4.29419,
+  "epmOff": 3.74655,
+  "epmDef": 0.547639,
+  "ewinsPerGame": 0.1516,
+  "playoffGames": 0,
+  "composite": 2.5883,
+  "speedPowerTotal": 24,
   "provisional": true
  },
  {
@@ -138,7 +177,7 @@
   "epmDef": -0.2942017561487384,
   "ewinsPerGame": 0.1595,
   "playoffGames": 18,
-  "composite": 2.6507,
+  "composite": 2.5125,
   "speedPowerTotal": 24,
   "provisional": true
  },
@@ -151,7 +190,7 @@
   "epmDef": 0.6755703780346021,
   "ewinsPerGame": 0.1578,
   "playoffGames": 14,
-  "composite": 2.6146,
+  "composite": 2.4773,
   "speedPowerTotal": 24,
   "provisional": true
  },
@@ -164,7 +203,7 @@
   "epmDef": 2.3736504206645455,
   "ewinsPerGame": 0.1589,
   "playoffGames": 7,
-  "composite": 2.5717,
+  "composite": 2.4356,
   "speedPowerTotal": 24,
   "provisional": true
  },
@@ -177,7 +216,7 @@
   "epmDef": 0.410633,
   "ewinsPerGame": 0.1597,
   "playoffGames": 0,
-  "composite": 2.5631,
+  "composite": 2.4273,
   "speedPowerTotal": 24,
   "provisional": true
  },
@@ -190,7 +229,33 @@
   "epmDef": 1.84581,
   "ewinsPerGame": 0.1457,
   "playoffGames": 0,
-  "composite": 2.3545,
+  "composite": 2.2236,
+  "speedPowerTotal": 24,
+  "provisional": true
+ },
+ {
+  "name": "Zach Edey",
+  "team": "MEM",
+  "pos": "C",
+  "epm": 3.88267,
+  "epmOff": 0.530531,
+  "epmDef": 3.35214,
+  "ewinsPerGame": 0.1218,
+  "playoffGames": 0,
+  "composite": 2.2061,
+  "speedPowerTotal": 24,
+  "provisional": true
+ },
+ {
+  "name": "Joel Embiid",
+  "team": "PHI",
+  "pos": "C",
+  "epm": 3.5251542024975775,
+  "epmOff": 3.41712051346056,
+  "epmDef": 0.1080314773356389,
+  "ewinsPerGame": 0.1376,
+  "playoffGames": 7,
+  "composite": 2.1672,
   "speedPowerTotal": 24,
   "provisional": true
  },
@@ -203,7 +268,7 @@
   "epmDef": 1.01153,
   "ewinsPerGame": 0.1372,
   "playoffGames": 0,
-  "composite": 2.2765,
+  "composite": 2.1471,
   "speedPowerTotal": 24,
   "provisional": true
  },
@@ -216,8 +281,8 @@
   "epmDef": 0.11511178831162798,
   "ewinsPerGame": 0.1539,
   "playoffGames": 11,
-  "composite": 2.2231,
-  "speedPowerTotal": 24,
+  "composite": 2.0963,
+  "speedPowerTotal": 23,
   "provisional": true
  },
  {
@@ -229,7 +294,7 @@
   "epmDef": -1.702827904796796,
   "ewinsPerGame": 0.1439,
   "playoffGames": 6,
-  "composite": 2.0678,
+  "composite": 1.9446,
   "speedPowerTotal": 23,
   "provisional": true
  },
@@ -242,7 +307,7 @@
   "epmDef": 0.5382185809884958,
   "ewinsPerGame": 0.1224,
   "playoffGames": 14,
-  "composite": 2.0551,
+  "composite": 1.9309,
   "speedPowerTotal": 23,
   "provisional": true
  },
@@ -255,7 +320,7 @@
   "epmDef": 2.6126641337588694,
   "ewinsPerGame": 0.1008,
   "playoffGames": 15,
-  "composite": 2.0517,
+  "composite": 1.9263,
   "speedPowerTotal": 23,
   "provisional": true
  },
@@ -268,7 +333,7 @@
   "epmDef": 1.1894123432557284,
   "ewinsPerGame": 0.1341,
   "playoffGames": 17,
-  "composite": 2.0467,
+  "composite": 1.9235,
   "speedPowerTotal": 23,
   "provisional": true
  },
@@ -281,7 +346,7 @@
   "epmDef": -1.2077924834004923,
   "ewinsPerGame": 0.1364,
   "playoffGames": 19,
-  "composite": 1.9667,
+  "composite": 1.8459,
   "speedPowerTotal": 23,
   "provisional": true
  },
@@ -294,7 +359,7 @@
   "epmDef": 4.1499227132199055,
   "ewinsPerGame": 0.106,
   "playoffGames": 14,
-  "composite": 1.9257,
+  "composite": 1.8041,
   "speedPowerTotal": 23,
   "provisional": true
  },
@@ -307,7 +372,20 @@
   "epmDef": 2.100759551876433,
   "ewinsPerGame": 0.1036,
   "playoffGames": 7,
-  "composite": 1.8936,
+  "composite": 1.7728,
+  "speedPowerTotal": 23,
+  "provisional": true
+ },
+ {
+  "name": "Jayson Tatum",
+  "team": "BOS",
+  "pos": "PF",
+  "epm": 3.0285399979727816,
+  "epmOff": 2.6368235046558457,
+  "epmDef": 0.3917150827781007,
+  "ewinsPerGame": 0.1102,
+  "playoffGames": 6,
+  "composite": 1.7666,
   "speedPowerTotal": 23,
   "provisional": true
  },
@@ -320,7 +398,7 @@
   "epmDef": 1.7707446281150967,
   "ewinsPerGame": 0.1251,
   "playoffGames": 7,
-  "composite": 1.8818,
+  "composite": 1.7626,
   "speedPowerTotal": 23,
   "provisional": true
  },
@@ -333,7 +411,7 @@
   "epmDef": 1.2990513946906705,
   "ewinsPerGame": 0.1372,
   "playoffGames": 6,
-  "composite": 1.8134,
+  "composite": 1.6968,
   "speedPowerTotal": 23,
   "provisional": true
  },
@@ -346,7 +424,7 @@
   "epmDef": -0.238365,
   "ewinsPerGame": 0.1232,
   "playoffGames": 0,
-  "composite": 1.806,
+  "composite": 1.6888,
   "speedPowerTotal": 23,
   "provisional": true
  },
@@ -359,7 +437,7 @@
   "epmDef": 2.506624792225637,
   "ewinsPerGame": 0.124,
   "playoffGames": 6,
-  "composite": 1.7967,
+  "composite": 1.6798,
   "speedPowerTotal": 23,
   "provisional": true
  },
@@ -372,7 +450,7 @@
   "epmDef": 1.1404910019138244,
   "ewinsPerGame": 0.1049,
   "playoffGames": 18,
-  "composite": 1.7605,
+  "composite": 1.6434,
   "speedPowerTotal": 23,
   "provisional": true
  },
@@ -385,8 +463,8 @@
   "epmDef": 2.211843447027046,
   "ewinsPerGame": 0.0582,
   "playoffGames": 9,
-  "composite": 1.749,
-  "speedPowerTotal": 23,
+  "composite": 1.6293,
+  "speedPowerTotal": 22,
   "provisional": true
  },
  {
@@ -398,8 +476,8 @@
   "epmDef": -0.634959046754588,
   "ewinsPerGame": 0.1267,
   "playoffGames": 10,
-  "composite": 1.7265,
-  "speedPowerTotal": 23,
+  "composite": 1.6116,
+  "speedPowerTotal": 22,
   "provisional": true
  },
  {
@@ -411,8 +489,8 @@
   "epmDef": -0.005575285992781211,
   "ewinsPerGame": 0.1281,
   "playoffGames": 6,
-  "composite": 1.726,
-  "speedPowerTotal": 23,
+  "composite": 1.6112,
+  "speedPowerTotal": 22,
   "provisional": true
  },
  {
@@ -424,8 +502,8 @@
   "epmDef": -0.813072271521861,
   "ewinsPerGame": 0.1238,
   "playoffGames": 18,
-  "composite": 1.7174,
-  "speedPowerTotal": 23,
+  "composite": 1.6026,
+  "speedPowerTotal": 22,
   "provisional": true
  },
  {
@@ -437,8 +515,8 @@
   "epmDef": -1.33442,
   "ewinsPerGame": 0.1191,
   "playoffGames": 0,
-  "composite": 1.6565,
-  "speedPowerTotal": 23,
+  "composite": 1.543,
+  "speedPowerTotal": 22,
   "provisional": true
  },
  {
@@ -450,7 +528,20 @@
   "epmDef": 2.1617693099828865,
   "ewinsPerGame": 0.0947,
   "playoffGames": 11,
-  "composite": 1.647,
+  "composite": 1.5323,
+  "speedPowerTotal": 22,
+  "provisional": true
+ },
+ {
+  "name": "Franz Wagner",
+  "team": "ORL",
+  "pos": "SF",
+  "epm": 2.504993392702365,
+  "epmOff": 1.5238018577499455,
+  "epmDef": 0.9811864955189653,
+  "ewinsPerGame": 0.1073,
+  "playoffGames": 4,
+  "composite": 1.5269,
   "speedPowerTotal": 22,
   "provisional": true
  },
@@ -463,7 +554,7 @@
   "epmDef": 1.3455044516843577,
   "ewinsPerGame": 0.1143,
   "playoffGames": 23,
-  "composite": 1.6211,
+  "composite": 1.5084,
   "speedPowerTotal": 22,
   "provisional": true
  },
@@ -476,7 +567,7 @@
   "epmDef": 0.4709473354108698,
   "ewinsPerGame": 0.1163,
   "playoffGames": 21,
-  "composite": 1.6199,
+  "composite": 1.5073,
   "speedPowerTotal": 22,
   "provisional": true
  },
@@ -489,7 +580,7 @@
   "epmDef": -0.4840619915987215,
   "ewinsPerGame": 0.1217,
   "playoffGames": 4,
-  "composite": 1.5954,
+  "composite": 1.4838,
   "speedPowerTotal": 22,
   "provisional": true
  },
@@ -502,7 +593,7 @@
   "epmDef": 0.0894035,
   "ewinsPerGame": 0.115,
   "playoffGames": 0,
-  "composite": 1.5883,
+  "composite": 1.4765,
   "speedPowerTotal": 22,
   "provisional": true
  },
@@ -515,7 +606,7 @@
   "epmDef": 0.630985223427608,
   "ewinsPerGame": 0.0998,
   "playoffGames": 5,
-  "composite": 1.5399,
+  "composite": 1.4285,
   "speedPowerTotal": 22,
   "provisional": true
  },
@@ -528,7 +619,7 @@
   "epmDef": 0.38521252974270154,
   "ewinsPerGame": 0.1011,
   "playoffGames": 4,
-  "composite": 1.4493,
+  "composite": 1.3405,
   "speedPowerTotal": 22,
   "provisional": true
  },
@@ -541,7 +632,7 @@
   "epmDef": -0.575315,
   "ewinsPerGame": 0.1184,
   "playoffGames": 0,
-  "composite": 1.4438,
+  "composite": 1.3361,
   "speedPowerTotal": 22,
   "provisional": true
  },
@@ -554,7 +645,7 @@
   "epmDef": -0.10918288238523984,
   "ewinsPerGame": 0.1129,
   "playoffGames": 7,
-  "composite": 1.4097,
+  "composite": 1.3027,
   "speedPowerTotal": 22,
   "provisional": true
  },
@@ -567,7 +658,7 @@
   "epmDef": 1.72919,
   "ewinsPerGame": 0.0918,
   "playoffGames": 0,
-  "composite": 1.405,
+  "composite": 1.2968,
   "speedPowerTotal": 22,
   "provisional": true
  },
@@ -580,7 +671,33 @@
   "epmDef": 1.0228917278600038,
   "ewinsPerGame": 0.1075,
   "playoffGames": 19,
-  "composite": 1.3931,
+  "composite": 1.2862,
+  "speedPowerTotal": 22,
+  "provisional": true
+ },
+ {
+  "name": "Jalen Williams",
+  "team": "OKC",
+  "pos": "SG",
+  "epm": 2.1358008900747625,
+  "epmOff": 1.0000402936672097,
+  "epmDef": 1.135760596407553,
+  "ewinsPerGame": 0.0945,
+  "playoffGames": 5,
+  "composite": 1.2821,
+  "speedPowerTotal": 22,
+  "provisional": true
+ },
+ {
+  "name": "Paul George",
+  "team": "PHI",
+  "pos": "PF",
+  "epm": 2.0366333365269984,
+  "epmOff": 0.9832576973364033,
+  "epmDef": 1.0533756391905953,
+  "ewinsPerGame": 0.0999,
+  "playoffGames": 11,
+  "composite": 1.2782,
   "speedPowerTotal": 22,
   "provisional": true
  },
@@ -593,7 +710,20 @@
   "epmDef": 0.03927912549032701,
   "ewinsPerGame": 0.1117,
   "playoffGames": 6,
-  "composite": 1.383,
+  "composite": 1.2766,
+  "speedPowerTotal": 22,
+  "provisional": true
+ },
+ {
+  "name": "Trae Young",
+  "team": "2TM",
+  "pos": "PG",
+  "epm": 2.12647,
+  "epmOff": 3.79329,
+  "epmDef": -1.66682,
+  "ewinsPerGame": 0.0933,
+  "playoffGames": 0,
+  "composite": 1.2697,
   "speedPowerTotal": 22,
   "provisional": true
  },
@@ -606,7 +736,33 @@
   "epmDef": 0.8610024456550961,
   "ewinsPerGame": 0.1071,
   "playoffGames": 23,
-  "composite": 1.3698,
+  "composite": 1.2635,
+  "speedPowerTotal": 22,
+  "provisional": true
+ },
+ {
+  "name": "Aaron Gordon",
+  "team": "DEN",
+  "pos": "PF",
+  "epm": 2.06777775175622,
+  "epmOff": 2.2292549741484766,
+  "epmDef": -0.16148114076112347,
+  "ewinsPerGame": 0.0957,
+  "playoffGames": 3,
+  "composite": 1.2619,
+  "speedPowerTotal": 22,
+  "provisional": true
+ },
+ {
+  "name": "Anthony Davis",
+  "team": "DAL",
+  "pos": "PF",
+  "epm": 1.88599,
+  "epmOff": 0.266289,
+  "epmDef": 1.6197,
+  "ewinsPerGame": 0.1062,
+  "playoffGames": 0,
+  "composite": 1.2592,
   "speedPowerTotal": 22,
   "provisional": true
  },
@@ -619,7 +775,7 @@
   "epmDef": -0.9609558878933565,
   "ewinsPerGame": 0.1088,
   "playoffGames": 5,
-  "composite": 1.3559,
+  "composite": 1.2501,
   "speedPowerTotal": 22,
   "provisional": true
  },
@@ -632,8 +788,8 @@
   "epmDef": 0.5934379199123327,
   "ewinsPerGame": 0.0985,
   "playoffGames": 5,
-  "composite": 1.31,
-  "speedPowerTotal": 22,
+  "composite": 1.2049,
+  "speedPowerTotal": 21,
   "provisional": true
  },
  {
@@ -645,8 +801,8 @@
   "epmDef": 2.980491596526894,
   "ewinsPerGame": 0.0839,
   "playoffGames": 15,
-  "composite": 1.2443,
-  "speedPowerTotal": 22,
+  "composite": 1.14,
+  "speedPowerTotal": 21,
   "provisional": true
  },
  {
@@ -658,8 +814,8 @@
   "epmDef": 0.741443048647228,
   "ewinsPerGame": 0.0963,
   "playoffGames": 4,
-  "composite": 1.2399,
-  "speedPowerTotal": 22,
+  "composite": 1.1365,
+  "speedPowerTotal": 21,
   "provisional": true
  },
  {
@@ -671,8 +827,8 @@
   "epmDef": 0.9278378436177361,
   "ewinsPerGame": 0.1009,
   "playoffGames": 18,
-  "composite": 1.2319,
-  "speedPowerTotal": 22,
+  "composite": 1.129,
+  "speedPowerTotal": 21,
   "provisional": true
  },
  {
@@ -684,7 +840,7 @@
   "epmDef": -0.996438307031818,
   "ewinsPerGame": 0.0986,
   "playoffGames": 7,
-  "composite": 1.2057,
+  "composite": 1.1034,
   "speedPowerTotal": 21,
   "provisional": true
  },
@@ -697,7 +853,7 @@
   "epmDef": 1.7499449113985202,
   "ewinsPerGame": 0.0935,
   "playoffGames": 7,
-  "composite": 1.2051,
+  "composite": 1.1025,
   "speedPowerTotal": 21,
   "provisional": true
  },
@@ -710,7 +866,7 @@
   "epmDef": -0.10191085152119302,
   "ewinsPerGame": 0.103,
   "playoffGames": 7,
-  "composite": 1.2003,
+  "composite": 1.0984,
   "speedPowerTotal": 21,
   "provisional": true
  },
@@ -723,7 +879,7 @@
   "epmDef": 2.6485223296422022,
   "ewinsPerGame": 0.0955,
   "playoffGames": 12,
-  "composite": 1.1647,
+  "composite": 1.0634,
   "speedPowerTotal": 21,
   "provisional": true
  },
@@ -736,7 +892,7 @@
   "epmDef": 0.03018118976795237,
   "ewinsPerGame": 0.1026,
   "playoffGames": 6,
-  "composite": 1.1376,
+  "composite": 1.0374,
   "speedPowerTotal": 21,
   "provisional": true
  },
@@ -749,7 +905,7 @@
   "epmDef": -0.345497,
   "ewinsPerGame": 0.0933,
   "playoffGames": 0,
-  "composite": 1.1251,
+  "composite": 1.0247,
   "speedPowerTotal": 21,
   "provisional": true
  },
@@ -762,7 +918,20 @@
   "epmDef": -0.253707,
   "ewinsPerGame": 0.0898,
   "playoffGames": 2,
-  "composite": 1.1052,
+  "composite": 1.0051,
+  "speedPowerTotal": 21,
+  "provisional": true
+ },
+ {
+  "name": "Dejounte Murray",
+  "team": "NOP",
+  "pos": "PG",
+  "epm": 1.58142,
+  "epmOff": 0.837587,
+  "epmDef": 0.743831,
+  "ewinsPerGame": 0.0874,
+  "playoffGames": 0,
+  "composite": 1.0001,
   "speedPowerTotal": 21,
   "provisional": true
  },
@@ -775,7 +944,7 @@
   "epmDef": -0.686656,
   "ewinsPerGame": 0.0934,
   "playoffGames": 0,
-  "composite": 1.0871,
+  "composite": 0.9877,
   "speedPowerTotal": 21,
   "provisional": true
  },
@@ -788,7 +957,7 @@
   "epmDef": -0.151587,
   "ewinsPerGame": 0.0991,
   "playoffGames": 0,
-  "composite": 1.0866,
+  "composite": 0.9876,
   "speedPowerTotal": 21,
   "provisional": true
  },
@@ -801,7 +970,7 @@
   "epmDef": -0.5462444787951994,
   "ewinsPerGame": 0.0886,
   "playoffGames": 7,
-  "composite": 1.0779,
+  "composite": 0.9785,
   "speedPowerTotal": 21,
   "provisional": true
  },
@@ -814,7 +983,7 @@
   "epmDef": 0.11738212081561054,
   "ewinsPerGame": 0.0871,
   "playoffGames": 23,
-  "composite": 1.0396,
+  "composite": 0.9412,
   "speedPowerTotal": 21,
   "provisional": true
  },
@@ -827,7 +996,7 @@
   "epmDef": 0.048947279729661404,
   "ewinsPerGame": 0.0927,
   "playoffGames": 10,
-  "composite": 1.0184,
+  "composite": 0.9208,
   "speedPowerTotal": 21,
   "provisional": true
  },
@@ -840,7 +1009,7 @@
   "epmDef": 0.685369,
   "ewinsPerGame": 0.0814,
   "playoffGames": 0,
-  "composite": 1.0114,
+  "composite": 0.9134,
   "speedPowerTotal": 21,
   "provisional": true
  },
@@ -853,7 +1022,7 @@
   "epmDef": -0.197406,
   "ewinsPerGame": 0.0886,
   "playoffGames": 0,
-  "composite": 1.0078,
+  "composite": 0.9103,
   "speedPowerTotal": 21,
   "provisional": true
  },
@@ -866,7 +1035,7 @@
   "epmDef": 0.6966502351176432,
   "ewinsPerGame": 0.0681,
   "playoffGames": 7,
-  "composite": 1.0009,
+  "composite": 0.9024,
   "speedPowerTotal": 21,
   "provisional": true
  },
@@ -879,8 +1048,8 @@
   "epmDef": -0.5798089997426182,
   "ewinsPerGame": 0.081,
   "playoffGames": 13,
-  "composite": 0.9598,
-  "speedPowerTotal": 21,
+  "composite": 0.8632,
+  "speedPowerTotal": 20,
   "provisional": true
  },
  {
@@ -892,8 +1061,8 @@
   "epmDef": -0.11276189612704651,
   "ewinsPerGame": 0.0936,
   "playoffGames": 12,
-  "composite": 0.9433,
-  "speedPowerTotal": 21,
+  "composite": 0.8479,
+  "speedPowerTotal": 20,
   "provisional": true
  },
  {
@@ -905,8 +1074,8 @@
   "epmDef": 2.7264156031064655,
   "ewinsPerGame": 0.055,
   "playoffGames": 15,
-  "composite": 0.9431,
-  "speedPowerTotal": 21,
+  "composite": 0.8454,
+  "speedPowerTotal": 20,
   "provisional": true
  },
  {
@@ -918,8 +1087,8 @@
   "epmDef": 0.208753,
   "ewinsPerGame": 0.0645,
   "playoffGames": 0,
-  "composite": 0.9211,
-  "speedPowerTotal": 21,
+  "composite": 0.8245,
+  "speedPowerTotal": 20,
   "provisional": true
  },
  {
@@ -931,8 +1100,8 @@
   "epmDef": 1.51659,
   "ewinsPerGame": 0.0842,
   "playoffGames": 0,
-  "composite": 0.915,
-  "speedPowerTotal": 21,
+  "composite": 0.8198,
+  "speedPowerTotal": 20,
   "provisional": true
  },
  {
@@ -944,8 +1113,8 @@
   "epmDef": 0.302043,
   "ewinsPerGame": 0.09,
   "playoffGames": 0,
-  "composite": 0.9047,
-  "speedPowerTotal": 21,
+  "composite": 0.8101,
+  "speedPowerTotal": 20,
   "provisional": true
  },
  {
@@ -957,8 +1126,8 @@
   "epmDef": 1.68556,
   "ewinsPerGame": 0.0693,
   "playoffGames": 1,
-  "composite": 0.8996,
-  "speedPowerTotal": 21,
+  "composite": 0.8038,
+  "speedPowerTotal": 20,
   "provisional": true
  },
  {
@@ -970,7 +1139,7 @@
   "epmDef": -0.08951608032030725,
   "ewinsPerGame": 0.0801,
   "playoffGames": 6,
-  "composite": 0.8801,
+  "composite": 0.7856,
   "speedPowerTotal": 20,
   "provisional": true
  },
@@ -983,7 +1152,20 @@
   "epmDef": 1.0566172152942501,
   "ewinsPerGame": 0.0699,
   "playoffGames": 23,
-  "composite": 0.839,
+  "composite": 0.745,
+  "speedPowerTotal": 20,
+  "provisional": true
+ },
+ {
+  "name": "Tyler Herro",
+  "team": "MIA",
+  "pos": "SG",
+  "epm": 0.928738,
+  "epmOff": 1.9797,
+  "epmDef": -1.05097,
+  "ewinsPerGame": 0.0871,
+  "playoffGames": 0,
+  "composite": 0.724,
   "speedPowerTotal": 20,
   "provisional": true
  },
@@ -996,7 +1178,7 @@
   "epmDef": 0.3358732636044502,
   "ewinsPerGame": 0.0673,
   "playoffGames": 19,
-  "composite": 0.8147,
+  "composite": 0.7212,
   "speedPowerTotal": 20,
   "provisional": true
  },
@@ -1009,7 +1191,7 @@
   "epmDef": 1.159099489645403,
   "ewinsPerGame": 0.0771,
   "playoffGames": 7,
-  "composite": 0.7902,
+  "composite": 0.698,
   "speedPowerTotal": 20,
   "provisional": true
  },
@@ -1022,7 +1204,7 @@
   "epmDef": 0.875389253932529,
   "ewinsPerGame": 0.0802,
   "playoffGames": 19,
-  "composite": 0.7848,
+  "composite": 0.6929,
   "speedPowerTotal": 20,
   "provisional": true
  },
@@ -1035,7 +1217,7 @@
   "epmDef": 1.35647,
   "ewinsPerGame": 0.0521,
   "playoffGames": 0,
-  "composite": 0.7758,
+  "composite": 0.6824,
   "speedPowerTotal": 20,
   "provisional": true
  },
@@ -1048,20 +1230,7 @@
   "epmDef": -1.03477,
   "ewinsPerGame": 0.0711,
   "playoffGames": 0,
-  "composite": 0.76,
-  "speedPowerTotal": 20,
-  "provisional": true
- },
- {
-  "name": "Clint Capela",
-  "team": "HOU",
-  "pos": "C",
-  "epm": 1.5829500000000003,
-  "epmOff": -1.7593,
-  "epmDef": 3.34226,
-  "ewinsPerGame": 0.0388,
-  "playoffGames": 4,
-  "composite": 0.7535,
+  "composite": 0.6683,
   "speedPowerTotal": 20,
   "provisional": true
  },
@@ -1074,7 +1243,20 @@
   "epmDef": 1.901385119273239,
   "ewinsPerGame": 0.0736,
   "playoffGames": 10,
-  "composite": 0.7524,
+  "composite": 0.661,
+  "speedPowerTotal": 20,
+  "provisional": true
+ },
+ {
+  "name": "Clint Capela",
+  "team": "HOU",
+  "pos": "C",
+  "epm": 1.5829500000000003,
+  "epmOff": -1.7593,
+  "epmDef": 3.34226,
+  "ewinsPerGame": 0.0388,
+  "playoffGames": 4,
+  "composite": 0.6599,
   "speedPowerTotal": 20,
   "provisional": true
  },
@@ -1087,7 +1269,7 @@
   "epmDef": 1.35398,
   "ewinsPerGame": 0.0549,
   "playoffGames": 0,
-  "composite": 0.7353,
+  "composite": 0.6432,
   "speedPowerTotal": 20,
   "provisional": true
  },
@@ -1100,7 +1282,7 @@
   "epmDef": 1.9800835566489672,
   "ewinsPerGame": 0.0481,
   "playoffGames": 5,
-  "composite": 0.7325,
+  "composite": 0.6401,
   "speedPowerTotal": 20,
   "provisional": true
  },
@@ -1113,7 +1295,7 @@
   "epmDef": 1.17293,
   "ewinsPerGame": 0.0723,
   "playoffGames": 0,
-  "composite": 0.6991,
+  "composite": 0.6091,
   "speedPowerTotal": 20,
   "provisional": true
  },
@@ -1126,7 +1308,7 @@
   "epmDef": 0.2677416836594103,
   "ewinsPerGame": 0.0768,
   "playoffGames": 4,
-  "composite": 0.6917,
+  "composite": 0.6022,
   "speedPowerTotal": 20,
   "provisional": true
  },
@@ -1139,7 +1321,7 @@
   "epmDef": -0.618191,
   "ewinsPerGame": 0.0805,
   "playoffGames": 0,
-  "composite": 0.6784,
+  "composite": 0.5894,
   "speedPowerTotal": 20,
   "provisional": true
  },
@@ -1152,20 +1334,7 @@
   "epmDef": 1.6493873707813127,
   "ewinsPerGame": 0.0518,
   "playoffGames": 18,
-  "composite": 0.667,
-  "speedPowerTotal": 20,
-  "provisional": true
- },
- {
-  "name": "Isaiah Joe",
-  "team": "OKC",
-  "pos": "SG",
-  "epm": 1.0919081172687297,
-  "epmOff": 1.415872628071455,
-  "epmDef": -0.32396764359185315,
-  "ewinsPerGame": 0.0546,
-  "playoffGames": 13,
-  "composite": 0.6543,
+  "composite": 0.5766,
   "speedPowerTotal": 20,
   "provisional": true
  },
@@ -1178,7 +1347,20 @@
   "epmDef": -0.15717550128447633,
   "ewinsPerGame": 0.0751,
   "playoffGames": 6,
-  "composite": 0.6535,
+  "composite": 0.5649,
+  "speedPowerTotal": 20,
+  "provisional": true
+ },
+ {
+  "name": "Isaiah Joe",
+  "team": "OKC",
+  "pos": "SG",
+  "epm": 1.0919081172687297,
+  "epmOff": 1.415872628071455,
+  "epmDef": -0.32396764359185315,
+  "ewinsPerGame": 0.0546,
+  "playoffGames": 13,
+  "composite": 0.5644,
   "speedPowerTotal": 20,
   "provisional": true
  },
@@ -1191,8 +1373,8 @@
   "epmDef": -0.07342393045997773,
   "ewinsPerGame": 0.064,
   "playoffGames": 7,
-  "composite": 0.6212,
-  "speedPowerTotal": 20,
+  "composite": 0.5328,
+  "speedPowerTotal": 19,
   "provisional": true
  },
  {
@@ -1204,8 +1386,8 @@
   "epmDef": -1.1271931720918464,
   "ewinsPerGame": 0.0642,
   "playoffGames": 17,
-  "composite": 0.6017,
-  "speedPowerTotal": 20,
+  "composite": 0.5138,
+  "speedPowerTotal": 19,
   "provisional": true
  },
  {
@@ -1217,8 +1399,8 @@
   "epmDef": 1.1221676465391848,
   "ewinsPerGame": 0.0766,
   "playoffGames": 12,
-  "composite": 0.6,
-  "speedPowerTotal": 20,
+  "composite": 0.513,
+  "speedPowerTotal": 19,
   "provisional": true
  },
  {
@@ -1230,8 +1412,8 @@
   "epmDef": 0.8533447965846502,
   "ewinsPerGame": 0.0809,
   "playoffGames": 5,
-  "composite": 0.5955,
-  "speedPowerTotal": 20,
+  "composite": 0.5088,
+  "speedPowerTotal": 19,
   "provisional": true
  },
  {
@@ -1243,8 +1425,8 @@
   "epmDef": 0.196033,
   "ewinsPerGame": 0.0732,
   "playoffGames": 0,
-  "composite": 0.5952,
-  "speedPowerTotal": 20,
+  "composite": 0.5081,
+  "speedPowerTotal": 19,
   "provisional": true
  },
  {
@@ -1256,8 +1438,8 @@
   "epmDef": 0.0830966,
   "ewinsPerGame": 0.0661,
   "playoffGames": 0,
-  "composite": 0.5849,
-  "speedPowerTotal": 20,
+  "composite": 0.4976,
+  "speedPowerTotal": 19,
   "provisional": true
  },
  {
@@ -1269,8 +1451,8 @@
   "epmDef": -0.944332,
   "ewinsPerGame": 0.0762,
   "playoffGames": 0,
-  "composite": 0.5792,
-  "speedPowerTotal": 20,
+  "composite": 0.4927,
+  "speedPowerTotal": 19,
   "provisional": true
  },
  {
@@ -1282,8 +1464,8 @@
   "epmDef": 0.1072303075139543,
   "ewinsPerGame": 0.0692,
   "playoffGames": 14,
-  "composite": 0.574,
-  "speedPowerTotal": 20,
+  "composite": 0.4872,
+  "speedPowerTotal": 19,
   "provisional": true
  },
  {
@@ -1295,8 +1477,8 @@
   "epmDef": 2.01299,
   "ewinsPerGame": 0.0574,
   "playoffGames": 0,
-  "composite": 0.563,
-  "speedPowerTotal": 20,
+  "composite": 0.4758,
+  "speedPowerTotal": 19,
   "provisional": true
  },
  {
@@ -1308,7 +1490,7 @@
   "epmDef": -0.7749122987516683,
   "ewinsPerGame": 0.0779,
   "playoffGames": 6,
-  "composite": 0.5588,
+  "composite": 0.4729,
   "speedPowerTotal": 19,
   "provisional": true
  },
@@ -1321,7 +1503,7 @@
   "epmDef": 0.063818594167671,
   "ewinsPerGame": 0.0804,
   "playoffGames": 6,
-  "composite": 0.5586,
+  "composite": 0.4729,
   "speedPowerTotal": 19,
   "provisional": true
  },
@@ -1334,7 +1516,7 @@
   "epmDef": 0.128985,
   "ewinsPerGame": 0.0466,
   "playoffGames": 0,
-  "composite": 0.5375,
+  "composite": 0.4503,
   "speedPowerTotal": 19,
   "provisional": true
  },
@@ -1347,7 +1529,7 @@
   "epmDef": 1.8989083886110727,
   "ewinsPerGame": 0.0489,
   "playoffGames": 15,
-  "composite": 0.5317,
+  "composite": 0.4448,
   "speedPowerTotal": 19,
   "provisional": true
  },
@@ -1360,7 +1542,7 @@
   "epmDef": 0.36650155498876513,
   "ewinsPerGame": 0.059,
   "playoffGames": 7,
-  "composite": 0.5037,
+  "composite": 0.4182,
   "speedPowerTotal": 19,
   "provisional": true
  },
@@ -1373,7 +1555,7 @@
   "epmDef": 0.35192364611917426,
   "ewinsPerGame": 0.071,
   "playoffGames": 6,
-  "composite": 0.5022,
+  "composite": 0.4175,
   "speedPowerTotal": 19,
   "provisional": true
  },
@@ -1386,7 +1568,7 @@
   "epmDef": 0.16714767407250503,
   "ewinsPerGame": 0.0755,
   "playoffGames": 11,
-  "composite": 0.4918,
+  "composite": 0.4077,
   "speedPowerTotal": 19,
   "provisional": true
  },
@@ -1399,7 +1581,7 @@
   "epmDef": 0.110764,
   "ewinsPerGame": 0.057,
   "playoffGames": 0,
-  "composite": 0.4869,
+  "composite": 0.4017,
   "speedPowerTotal": 19,
   "provisional": true
  },
@@ -1412,20 +1594,7 @@
   "epmDef": -0.1158939462067226,
   "ewinsPerGame": 0.0744,
   "playoffGames": 7,
-  "composite": 0.4841,
-  "speedPowerTotal": 19,
-  "provisional": true
- },
- {
-  "name": "Gary Payton II",
-  "team": "GSW",
-  "pos": "SG",
-  "epm": 0.85089,
-  "epmOff": -0.150749,
-  "epmDef": 1.00164,
-  "ewinsPerGame": 0.0413,
-  "playoffGames": 0,
-  "composite": 0.4558,
+  "composite": 0.4001,
   "speedPowerTotal": 19,
   "provisional": true
  },
@@ -1438,7 +1607,20 @@
   "epmDef": -2.43125,
   "ewinsPerGame": 0.0748,
   "playoffGames": 0,
-  "composite": 0.4557,
+  "composite": 0.3725,
+  "speedPowerTotal": 19,
+  "provisional": true
+ },
+ {
+  "name": "Gary Payton II",
+  "team": "GSW",
+  "pos": "SG",
+  "epm": 0.85089,
+  "epmOff": -0.150749,
+  "epmDef": 1.00164,
+  "ewinsPerGame": 0.0413,
+  "playoffGames": 0,
+  "composite": 0.3705,
   "speedPowerTotal": 19,
   "provisional": true
  },
@@ -1451,7 +1633,7 @@
   "epmDef": 1.9029339755555132,
   "ewinsPerGame": 0.0443,
   "playoffGames": 11,
-  "composite": 0.4555,
+  "composite": 0.3705,
   "speedPowerTotal": 19,
   "provisional": true
  },
@@ -1464,7 +1646,7 @@
   "epmDef": 0.0856327,
   "ewinsPerGame": 0.0704,
   "playoffGames": 0,
-  "composite": 0.432,
+  "composite": 0.3491,
   "speedPowerTotal": 19,
   "provisional": true
  },
@@ -1477,7 +1659,7 @@
   "epmDef": -1.42708,
   "ewinsPerGame": 0.0572,
   "playoffGames": 0,
-  "composite": 0.4165,
+  "composite": 0.3333,
   "speedPowerTotal": 19,
   "provisional": true
  },
@@ -1490,7 +1672,7 @@
   "epmDef": -1.374126830156134,
   "ewinsPerGame": 0.0391,
   "playoffGames": 7,
-  "composite": 0.4152,
+  "composite": 0.3309,
   "speedPowerTotal": 19,
   "provisional": true
  },
@@ -1503,7 +1685,7 @@
   "epmDef": -0.502406,
   "ewinsPerGame": 0.0622,
   "playoffGames": 0,
-  "composite": 0.3952,
+  "composite": 0.3129,
   "speedPowerTotal": 19,
   "provisional": true
  },
@@ -1516,7 +1698,7 @@
   "epmDef": 1.1326231649895842,
   "ewinsPerGame": 0.051,
   "playoffGames": 7,
-  "composite": 0.3739,
+  "composite": 0.2915,
   "speedPowerTotal": 19,
   "provisional": true
  },
@@ -1529,7 +1711,7 @@
   "epmDef": 0.9676700988836451,
   "ewinsPerGame": 0.0385,
   "playoffGames": 6,
-  "composite": 0.3646,
+  "composite": 0.2817,
   "speedPowerTotal": 19,
   "provisional": true
  },
@@ -1542,7 +1724,7 @@
   "epmDef": 0.07471449961891172,
   "ewinsPerGame": 0.0594,
   "playoffGames": 6,
-  "composite": 0.3456,
+  "composite": 0.2644,
   "speedPowerTotal": 19,
   "provisional": true
  },
@@ -1555,8 +1737,8 @@
   "epmDef": 0.052151202673700735,
   "ewinsPerGame": 0.0542,
   "playoffGames": 17,
-  "composite": 0.3008,
-  "speedPowerTotal": 19,
+  "composite": 0.2206,
+  "speedPowerTotal": 18,
   "provisional": true
  },
  {
@@ -1568,8 +1750,8 @@
   "epmDef": -0.46834477461666013,
   "ewinsPerGame": 0.0593,
   "playoffGames": 6,
-  "composite": 0.2768,
-  "speedPowerTotal": 19,
+  "composite": 0.1975,
+  "speedPowerTotal": 18,
   "provisional": true
  },
  {
@@ -1581,8 +1763,8 @@
   "epmDef": 1.1590723421025324,
   "ewinsPerGame": 0.0525,
   "playoffGames": 6,
-  "composite": 0.2706,
-  "speedPowerTotal": 19,
+  "composite": 0.1911,
+  "speedPowerTotal": 18,
   "provisional": true
  },
  {
@@ -1594,8 +1776,8 @@
   "epmDef": 0.264651,
   "ewinsPerGame": 0.0576,
   "playoffGames": 0,
-  "composite": 0.2664,
-  "speedPowerTotal": 19,
+  "composite": 0.1873,
+  "speedPowerTotal": 18,
   "provisional": true
  },
  {
@@ -1607,8 +1789,8 @@
   "epmDef": -1.05795,
   "ewinsPerGame": 0.0659,
   "playoffGames": 0,
-  "composite": 0.2626,
-  "speedPowerTotal": 19,
+  "composite": 0.1841,
+  "speedPowerTotal": 18,
   "provisional": true
  },
  {
@@ -1620,8 +1802,8 @@
   "epmDef": -0.0365199,
   "ewinsPerGame": 0.0527,
   "playoffGames": 0,
-  "composite": 0.2597,
-  "speedPowerTotal": 19,
+  "composite": 0.1805,
+  "speedPowerTotal": 18,
   "provisional": true
  },
  {
@@ -1633,8 +1815,8 @@
   "epmDef": -0.06200493169749938,
   "ewinsPerGame": 0.0379,
   "playoffGames": 10,
-  "composite": 0.2574,
-  "speedPowerTotal": 19,
+  "composite": 0.1774,
+  "speedPowerTotal": 18,
   "provisional": true
  },
  {
@@ -1646,8 +1828,8 @@
   "epmDef": -0.153477,
   "ewinsPerGame": 0.0617,
   "playoffGames": 0,
-  "composite": 0.2443,
-  "speedPowerTotal": 19,
+  "composite": 0.1661,
+  "speedPowerTotal": 18,
   "provisional": true
  },
  {
@@ -1659,8 +1841,8 @@
   "epmDef": -0.436559,
   "ewinsPerGame": 0.0457,
   "playoffGames": 0,
-  "composite": 0.2437,
-  "speedPowerTotal": 19,
+  "composite": 0.1645,
+  "speedPowerTotal": 18,
   "provisional": true
  },
  {
@@ -1672,8 +1854,8 @@
   "epmDef": -0.0917565,
   "ewinsPerGame": 0.0672,
   "playoffGames": 0,
-  "composite": 0.2414,
-  "speedPowerTotal": 19,
+  "composite": 0.1636,
+  "speedPowerTotal": 18,
   "provisional": true
  },
  {
@@ -1685,8 +1867,8 @@
   "epmDef": 0.610487,
   "ewinsPerGame": 0.0594,
   "playoffGames": 0,
-  "composite": 0.2377,
-  "speedPowerTotal": 19,
+  "composite": 0.1595,
+  "speedPowerTotal": 18,
   "provisional": true
  },
  {
@@ -1698,7 +1880,7 @@
   "epmDef": 1.0809041785559954,
   "ewinsPerGame": 0.0393,
   "playoffGames": 7,
-  "composite": 0.2299,
+  "composite": 0.1507,
   "speedPowerTotal": 18,
   "provisional": true
  },
@@ -1711,7 +1893,7 @@
   "epmDef": -1.17139,
   "ewinsPerGame": 0.0633,
   "playoffGames": 0,
-  "composite": 0.2223,
+  "composite": 0.1448,
   "speedPowerTotal": 18,
   "provisional": true
  },
@@ -1724,7 +1906,7 @@
   "epmDef": -0.249675,
   "ewinsPerGame": 0.0606,
   "playoffGames": 0,
-  "composite": 0.2212,
+  "composite": 0.1436,
   "speedPowerTotal": 18,
   "provisional": true
  },
@@ -1737,7 +1919,20 @@
   "epmDef": -0.34156117557409277,
   "ewinsPerGame": 0.0537,
   "playoffGames": 10,
-  "composite": 0.1814,
+  "composite": 0.1045,
+  "speedPowerTotal": 18,
+  "provisional": true
+ },
+ {
+  "name": "Jalen Green",
+  "team": "PHO",
+  "pos": "SG",
+  "epm": -0.010830381274565079,
+  "epmOff": -0.19469313930086043,
+  "epmDef": 0.1838637274328112,
+  "ewinsPerGame": 0.0548,
+  "playoffGames": 4,
+  "composite": 0.1034,
   "speedPowerTotal": 18,
   "provisional": true
  },
@@ -1750,7 +1945,20 @@
   "epmDef": -0.496798,
   "ewinsPerGame": 0.0378,
   "playoffGames": 0,
-  "composite": 0.1809,
+  "composite": 0.103,
+  "speedPowerTotal": 18,
+  "provisional": true
+ },
+ {
+  "name": "Ja Morant",
+  "team": "MEM",
+  "pos": "PG",
+  "epm": -0.0609585,
+  "epmOff": 0.356573,
+  "epmDef": -0.417531,
+  "ewinsPerGame": 0.0573,
+  "playoffGames": 0,
+  "composite": 0.1,
   "speedPowerTotal": 18,
   "provisional": true
  },
@@ -1763,7 +1971,7 @@
   "epmDef": -0.145727,
   "ewinsPerGame": 0.0563,
   "playoffGames": 0,
-  "composite": 0.173,
+  "composite": 0.0965,
   "speedPowerTotal": 18,
   "provisional": true
  },
@@ -1776,7 +1984,7 @@
   "epmDef": -0.7687590000000001,
   "ewinsPerGame": 0.0306,
   "playoffGames": 4,
-  "composite": 0.1552,
+  "composite": 0.0775,
   "speedPowerTotal": 18,
   "provisional": true
  },
@@ -1789,7 +1997,7 @@
   "epmDef": 1.33585,
   "ewinsPerGame": 0.0546,
   "playoffGames": 0,
-  "composite": 0.1525,
+  "composite": 0.0764,
   "speedPowerTotal": 18,
   "provisional": true
  },
@@ -1802,7 +2010,7 @@
   "epmDef": 1.450995567911762,
   "ewinsPerGame": 0.047,
   "playoffGames": 4,
-  "composite": 0.1335,
+  "composite": 0.0574,
   "speedPowerTotal": 18,
   "provisional": true
  },
@@ -1815,7 +2023,7 @@
   "epmDef": 1.09944,
   "ewinsPerGame": 0.0528,
   "playoffGames": 0,
-  "composite": 0.1324,
+  "composite": 0.0567,
   "speedPowerTotal": 18,
   "provisional": true
  },
@@ -1828,7 +2036,7 @@
   "epmDef": 0.93479,
   "ewinsPerGame": 0.0472,
   "playoffGames": 0,
-  "composite": 0.129,
+  "composite": 0.0531,
   "speedPowerTotal": 18,
   "provisional": true
  },
@@ -1841,7 +2049,7 @@
   "epmDef": -1.07528227127574,
   "ewinsPerGame": 0.0571,
   "playoffGames": 5,
-  "composite": 0.1277,
+  "composite": 0.0524,
   "speedPowerTotal": 18,
   "provisional": true
  },
@@ -1854,7 +2062,7 @@
   "epmDef": -0.073047,
   "ewinsPerGame": 0.0558,
   "playoffGames": 0,
-  "composite": 0.1008,
+  "composite": 0.0262,
   "speedPowerTotal": 18,
   "provisional": true
  },
@@ -1867,7 +2075,7 @@
   "epmDef": 0.5398676747324169,
   "ewinsPerGame": 0.0492,
   "playoffGames": 12,
-  "composite": 0.097,
+  "composite": 0.0221,
   "speedPowerTotal": 18,
   "provisional": true
  },
@@ -1880,7 +2088,7 @@
   "epmDef": 0.7297758474446604,
   "ewinsPerGame": 0.0434,
   "playoffGames": 18,
-  "composite": 0.0934,
+  "composite": 0.0182,
   "speedPowerTotal": 18,
   "provisional": true
  },
@@ -1893,7 +2101,7 @@
   "epmDef": 0.0577224,
   "ewinsPerGame": 0.0558,
   "playoffGames": 0,
-  "composite": 0.0877,
+  "composite": 0.0134,
   "speedPowerTotal": 18,
   "provisional": true
  },
@@ -1906,20 +2114,7 @@
   "epmDef": -0.5822785963748277,
   "ewinsPerGame": 0.0612,
   "playoffGames": 5,
-  "composite": 0.0818,
-  "speedPowerTotal": 18,
-  "provisional": true
- },
- {
-  "name": "Jose Alvarado",
-  "team": "2TM",
-  "pos": "PG",
-  "epm": 0.03288487114621738,
-  "epmOff": -0.7553732523968381,
-  "epmDef": 0.7882581235430557,
-  "ewinsPerGame": 0.0365,
-  "playoffGames": 18,
-  "composite": 0.0684,
+  "composite": 0.008,
   "speedPowerTotal": 18,
   "provisional": true
  },
@@ -1932,7 +2127,20 @@
   "epmDef": -0.409865,
   "ewinsPerGame": 0.0466,
   "playoffGames": 0,
-  "composite": 0.0679,
+  "composite": -0.0064,
+  "speedPowerTotal": 18,
+  "provisional": true
+ },
+ {
+  "name": "Jose Alvarado",
+  "team": "2TM",
+  "pos": "PG",
+  "epm": 0.03288487114621738,
+  "epmOff": -0.7553732523968381,
+  "epmDef": 0.7882581235430557,
+  "ewinsPerGame": 0.0365,
+  "playoffGames": 18,
+  "composite": -0.0065,
   "speedPowerTotal": 18,
   "provisional": true
  },
@@ -1945,7 +2153,7 @@
   "epmDef": 0.08783813675122408,
   "ewinsPerGame": 0.044,
   "playoffGames": 23,
-  "composite": 0.0543,
+  "composite": -0.0198,
   "speedPowerTotal": 18,
   "provisional": true
  },
@@ -1958,7 +2166,7 @@
   "epmDef": 0.148172,
   "ewinsPerGame": 0.0357,
   "playoffGames": 0,
-  "composite": 0.0525,
+  "composite": -0.0221,
   "speedPowerTotal": 18,
   "provisional": true
  },
@@ -1971,7 +2179,7 @@
   "epmDef": -1.29525,
   "ewinsPerGame": 0.0473,
   "playoffGames": 0,
-  "composite": 0.0305,
+  "composite": -0.0427,
   "speedPowerTotal": 18,
   "provisional": true
  },
@@ -1984,7 +2192,7 @@
   "epmDef": 0.042306690462696486,
   "ewinsPerGame": 0.0545,
   "playoffGames": 6,
-  "composite": -0.0015,
+  "composite": -0.0734,
   "speedPowerTotal": 18,
   "provisional": true
  },
@@ -1997,7 +2205,7 @@
   "epmDef": 0.6032788157248672,
   "ewinsPerGame": 0.052,
   "playoffGames": 7,
-  "composite": -0.0144,
+  "composite": -0.0861,
   "speedPowerTotal": 18,
   "provisional": true
  },
@@ -2010,7 +2218,7 @@
   "epmDef": -0.685194,
   "ewinsPerGame": 0.0361,
   "playoffGames": 0,
-  "composite": -0.0184,
+  "composite": -0.091,
   "speedPowerTotal": 18,
   "provisional": true
  },
@@ -2023,7 +2231,7 @@
   "epmDef": -0.724965,
   "ewinsPerGame": 0.0426,
   "playoffGames": 0,
-  "composite": -0.0192,
+  "composite": -0.0913,
   "speedPowerTotal": 18,
   "provisional": true
  },
@@ -2036,7 +2244,7 @@
   "epmDef": 0.7233020412651479,
   "ewinsPerGame": 0.039,
   "playoffGames": 14,
-  "composite": -0.0238,
+  "composite": -0.096,
   "speedPowerTotal": 18,
   "provisional": true
  },
@@ -2049,8 +2257,8 @@
   "epmDef": 2.06648,
   "ewinsPerGame": 0.0323,
   "playoffGames": 0,
-  "composite": -0.0257,
-  "speedPowerTotal": 18,
+  "composite": -0.0983,
+  "speedPowerTotal": 17,
   "provisional": true
  },
  {
@@ -2062,8 +2270,8 @@
   "epmDef": 0.269574,
   "ewinsPerGame": 0.0409,
   "playoffGames": 0,
-  "composite": -0.0322,
-  "speedPowerTotal": 18,
+  "composite": -0.1041,
+  "speedPowerTotal": 17,
   "provisional": true
  },
  {
@@ -2075,21 +2283,8 @@
   "epmDef": -0.183037,
   "ewinsPerGame": 0.025,
   "playoffGames": 9,
-  "composite": -0.0332,
-  "speedPowerTotal": 18,
-  "provisional": true
- },
- {
-  "name": "Gui Santos",
-  "team": "GSW",
-  "pos": "PF",
-  "epm": -0.262515,
-  "epmOff": -0.185462,
-  "epmDef": -0.0770527,
-  "ewinsPerGame": 0.0385,
-  "playoffGames": 0,
-  "composite": -0.0444,
-  "speedPowerTotal": 18,
+  "composite": -0.1061,
+  "speedPowerTotal": 17,
   "provisional": true
  },
  {
@@ -2101,8 +2296,21 @@
   "epmDef": 0.19371799999999997,
   "ewinsPerGame": 0.0422,
   "playoffGames": 5,
-  "composite": -0.0444,
-  "speedPowerTotal": 18,
+  "composite": -0.1159,
+  "speedPowerTotal": 17,
+  "provisional": true
+ },
+ {
+  "name": "Gui Santos",
+  "team": "GSW",
+  "pos": "PF",
+  "epm": -0.262515,
+  "epmOff": -0.185462,
+  "epmDef": -0.0770527,
+  "ewinsPerGame": 0.0385,
+  "playoffGames": 0,
+  "composite": -0.1161,
+  "speedPowerTotal": 17,
   "provisional": true
  },
  {
@@ -2114,8 +2322,8 @@
   "epmDef": -0.024169248343472987,
   "ewinsPerGame": 0.0362,
   "playoffGames": 23,
-  "composite": -0.0585,
-  "speedPowerTotal": 18,
+  "composite": -0.1299,
+  "speedPowerTotal": 17,
   "provisional": true
  },
  {
@@ -2127,8 +2335,8 @@
   "epmDef": 0.23189498055249813,
   "ewinsPerGame": 0.0376,
   "playoffGames": 19,
-  "composite": -0.0783,
-  "speedPowerTotal": 18,
+  "composite": -0.1492,
+  "speedPowerTotal": 17,
   "provisional": true
  },
  {
@@ -2140,7 +2348,7 @@
   "epmDef": 0.7335515603094774,
   "ewinsPerGame": 0.0372,
   "playoffGames": 7,
-  "composite": -0.1042,
+  "composite": -0.1743,
   "speedPowerTotal": 17,
   "provisional": true
  },
@@ -2153,20 +2361,7 @@
   "epmDef": -0.6535290934735816,
   "ewinsPerGame": 0.0399,
   "playoffGames": 20,
-  "composite": -0.1062,
-  "speedPowerTotal": 17,
-  "provisional": true
- },
- {
-  "name": "Jock Landale",
-  "team": "2TM",
-  "pos": "C",
-  "epm": -0.42567,
-  "epmOff": 0.998011,
-  "epmDef": -1.42368,
-  "ewinsPerGame": 0.0372,
-  "playoffGames": 0,
-  "composite": -0.1242,
+  "composite": -0.1762,
   "speedPowerTotal": 17,
   "provisional": true
  },
@@ -2179,7 +2374,20 @@
   "epmDef": -0.470564,
   "ewinsPerGame": 0.0454,
   "playoffGames": 0,
-  "composite": -0.1244,
+  "composite": -0.1935,
+  "speedPowerTotal": 17,
+  "provisional": true
+ },
+ {
+  "name": "Jock Landale",
+  "team": "2TM",
+  "pos": "C",
+  "epm": -0.42567,
+  "epmOff": 0.998011,
+  "epmDef": -1.42368,
+  "ewinsPerGame": 0.0372,
+  "playoffGames": 0,
+  "composite": -0.1938,
   "speedPowerTotal": 17,
   "provisional": true
  },
@@ -2192,7 +2400,7 @@
   "epmDef": 0.5264938927196674,
   "ewinsPerGame": 0.0315,
   "playoffGames": 7,
-  "composite": -0.145,
+  "composite": -0.2143,
   "speedPowerTotal": 17,
   "provisional": true
  },
@@ -2205,7 +2413,7 @@
   "epmDef": -0.694332,
   "ewinsPerGame": 0.0437,
   "playoffGames": 0,
-  "composite": -0.1471,
+  "composite": -0.2157,
   "speedPowerTotal": 17,
   "provisional": true
  },
@@ -2218,7 +2426,7 @@
   "epmDef": -0.289938,
   "ewinsPerGame": 0.0469,
   "playoffGames": 0,
-  "composite": -0.1473,
+  "composite": -0.2157,
   "speedPowerTotal": 17,
   "provisional": true
  },
@@ -2231,7 +2439,7 @@
   "epmDef": -0.624433,
   "ewinsPerGame": 0.0463,
   "playoffGames": 0,
-  "composite": -0.1637,
+  "composite": -0.2317,
   "speedPowerTotal": 17,
   "provisional": true
  },
@@ -2244,7 +2452,7 @@
   "epmDef": 0.00255209,
   "ewinsPerGame": 0.0365,
   "playoffGames": 0,
-  "composite": -0.1754,
+  "composite": -0.2436,
   "speedPowerTotal": 17,
   "provisional": true
  },
@@ -2257,7 +2465,7 @@
   "epmDef": 2.5330325665025906,
   "ewinsPerGame": 0.0322,
   "playoffGames": 9,
-  "composite": -0.1851,
+  "composite": -0.2533,
   "speedPowerTotal": 17,
   "provisional": true
  },
@@ -2270,7 +2478,7 @@
   "epmDef": 1.1028482809480449,
   "ewinsPerGame": 0.0298,
   "playoffGames": 6,
-  "composite": -0.1875,
+  "composite": -0.2559,
   "speedPowerTotal": 17,
   "provisional": true
  },
@@ -2283,7 +2491,7 @@
   "epmDef": -0.463218,
   "ewinsPerGame": 0.046,
   "playoffGames": 0,
-  "composite": -0.1964,
+  "composite": -0.2635,
   "speedPowerTotal": 17,
   "provisional": true
  },
@@ -2296,7 +2504,7 @@
   "epmDef": -0.484093,
   "ewinsPerGame": 0.043,
   "playoffGames": 0,
-  "composite": -0.197,
+  "composite": -0.2643,
   "speedPowerTotal": 17,
   "provisional": true
  },
@@ -2309,7 +2517,7 @@
   "epmDef": 0.6383558803433454,
   "ewinsPerGame": 0.0359,
   "playoffGames": 7,
-  "composite": -0.2223,
+  "composite": -0.2893,
   "speedPowerTotal": 17,
   "provisional": true
  },
@@ -2322,7 +2530,7 @@
   "epmDef": -0.3720898782801758,
   "ewinsPerGame": 0.0409,
   "playoffGames": 10,
-  "composite": -0.2324,
+  "composite": -0.2988,
   "speedPowerTotal": 17,
   "provisional": true
  },
@@ -2335,7 +2543,7 @@
   "epmDef": 0.0590135,
   "ewinsPerGame": 0.0411,
   "playoffGames": 0,
-  "composite": -0.2468,
+  "composite": -0.3128,
   "speedPowerTotal": 17,
   "provisional": true
  },
@@ -2348,7 +2556,7 @@
   "epmDef": -0.295282,
   "ewinsPerGame": 0.0421,
   "playoffGames": 0,
-  "composite": -0.2496,
+  "composite": -0.3155,
   "speedPowerTotal": 17,
   "provisional": true
  },
@@ -2361,7 +2569,7 @@
   "epmDef": -0.231404,
   "ewinsPerGame": 0.0294,
   "playoffGames": 0,
-  "composite": -0.2555,
+  "composite": -0.322,
   "speedPowerTotal": 17,
   "provisional": true
  },
@@ -2374,7 +2582,7 @@
   "epmDef": 0.935568,
   "ewinsPerGame": 0.0423,
   "playoffGames": 0,
-  "composite": -0.2607,
+  "composite": -0.3263,
   "speedPowerTotal": 17,
   "provisional": true
  },
@@ -2387,7 +2595,7 @@
   "epmDef": 0.504204,
   "ewinsPerGame": 0.0394,
   "playoffGames": 0,
-  "composite": -0.2747,
+  "composite": -0.34,
   "speedPowerTotal": 17,
   "provisional": true
  },
@@ -2400,7 +2608,20 @@
   "epmDef": 1.25014,
   "ewinsPerGame": 0.0311,
   "playoffGames": 4,
-  "composite": -0.2754,
+  "composite": -0.3412,
+  "speedPowerTotal": 17,
+  "provisional": true
+ },
+ {
+  "name": "Zach LaVine",
+  "team": "SAC",
+  "pos": "SG",
+  "epm": -0.944454,
+  "epmOff": 0.771223,
+  "epmDef": -1.71568,
+  "ewinsPerGame": 0.0443,
+  "playoffGames": 0,
+  "composite": -0.3619,
   "speedPowerTotal": 17,
   "provisional": true
  },
@@ -2413,7 +2634,7 @@
   "epmDef": -1.06885,
   "ewinsPerGame": 0.0205,
   "playoffGames": 0,
-  "composite": -0.2995,
+  "composite": -0.3653,
   "speedPowerTotal": 17,
   "provisional": true
  },
@@ -2426,7 +2647,7 @@
   "epmDef": -0.606197,
   "ewinsPerGame": 0.037,
   "playoffGames": 0,
-  "composite": -0.31,
+  "composite": -0.3745,
   "speedPowerTotal": 17,
   "provisional": true
  },
@@ -2439,7 +2660,7 @@
   "epmDef": 0.93717,
   "ewinsPerGame": 0.0248,
   "playoffGames": 0,
-  "composite": -0.3178,
+  "composite": -0.3829,
   "speedPowerTotal": 17,
   "provisional": true
  },
@@ -2452,7 +2673,7 @@
   "epmDef": -1.14715,
   "ewinsPerGame": 0.0302,
   "playoffGames": 0,
-  "composite": -0.3248,
+  "composite": -0.3894,
   "speedPowerTotal": 17,
   "provisional": true
  },
@@ -2465,7 +2686,7 @@
   "epmDef": -0.819005,
   "ewinsPerGame": 0.0302,
   "playoffGames": 0,
-  "composite": -0.3341,
+  "composite": -0.3984,
   "speedPowerTotal": 17,
   "provisional": true
  },
@@ -2478,8 +2699,8 @@
   "epmDef": -2.33494,
   "ewinsPerGame": 0.0417,
   "playoffGames": 0,
-  "composite": -0.364,
-  "speedPowerTotal": 17,
+  "composite": -0.4268,
+  "speedPowerTotal": 16,
   "provisional": true
  },
  {
@@ -2491,8 +2712,8 @@
   "epmDef": 1.131219130904067,
   "ewinsPerGame": 0.0229,
   "playoffGames": 6,
-  "composite": -0.3715,
-  "speedPowerTotal": 17,
+  "composite": -0.4352,
+  "speedPowerTotal": 16,
   "provisional": true
  },
  {
@@ -2504,8 +2725,8 @@
   "epmDef": -0.2999008423468763,
   "ewinsPerGame": 0.0422,
   "playoffGames": 11,
-  "composite": -0.3772,
-  "speedPowerTotal": 17,
+  "composite": -0.4396,
+  "speedPowerTotal": 16,
   "provisional": true
  },
  {
@@ -2517,21 +2738,21 @@
   "epmDef": 0.741518,
   "ewinsPerGame": 0.0404,
   "playoffGames": 0,
-  "composite": -0.3791,
-  "speedPowerTotal": 17,
+  "composite": -0.4415,
+  "speedPowerTotal": 16,
   "provisional": true
  },
  {
-  "name": "Hugo González",
-  "team": "BOS",
-  "pos": "SF",
-  "epm": -0.784123,
-  "epmOff": -2.23486,
-  "epmDef": 1.45073,
-  "ewinsPerGame": 0.0223,
-  "playoffGames": 4,
-  "composite": -0.3856,
-  "speedPowerTotal": 17,
+  "name": "Domantas Sabonis",
+  "team": "SAC",
+  "pos": "C",
+  "epm": -1.06409,
+  "epmOff": -0.00384145,
+  "epmDef": -1.06025,
+  "ewinsPerGame": 0.0394,
+  "playoffGames": 0,
+  "composite": -0.4464,
+  "speedPowerTotal": 16,
   "provisional": true
  },
  {
@@ -2543,8 +2764,21 @@
   "epmDef": -1.6926498589334436,
   "ewinsPerGame": 0.0354,
   "playoffGames": 6,
-  "composite": -0.3859,
-  "speedPowerTotal": 17,
+  "composite": -0.4484,
+  "speedPowerTotal": 16,
+  "provisional": true
+ },
+ {
+  "name": "Hugo González",
+  "team": "BOS",
+  "pos": "SF",
+  "epm": -0.784123,
+  "epmOff": -2.23486,
+  "epmDef": 1.45073,
+  "ewinsPerGame": 0.0223,
+  "playoffGames": 4,
+  "composite": -0.4489,
+  "speedPowerTotal": 16,
   "provisional": true
  },
  {
@@ -2556,8 +2790,8 @@
   "epmDef": 0.6519377248506288,
   "ewinsPerGame": 0.0319,
   "playoffGames": 9,
-  "composite": -0.3924,
-  "speedPowerTotal": 17,
+  "composite": -0.455,
+  "speedPowerTotal": 16,
   "provisional": true
  },
  {
@@ -2569,8 +2803,8 @@
   "epmDef": 0.094177,
   "ewinsPerGame": 0.022,
   "playoffGames": 0,
-  "composite": -0.4035,
-  "speedPowerTotal": 17,
+  "composite": -0.4664,
+  "speedPowerTotal": 16,
   "provisional": true
  },
  {
@@ -2582,8 +2816,8 @@
   "epmDef": -0.101942,
   "ewinsPerGame": 0.0303,
   "playoffGames": 0,
-  "composite": -0.4066,
-  "speedPowerTotal": 17,
+  "composite": -0.4689,
+  "speedPowerTotal": 16,
   "provisional": true
  },
  {
@@ -2595,8 +2829,8 @@
   "epmDef": 0.428131,
   "ewinsPerGame": 0.023,
   "playoffGames": 0,
-  "composite": -0.4154,
-  "speedPowerTotal": 17,
+  "composite": -0.4779,
+  "speedPowerTotal": 16,
   "provisional": true
  },
  {
@@ -2608,8 +2842,8 @@
   "epmDef": 1.10162,
   "ewinsPerGame": 0.0286,
   "playoffGames": 0,
-  "composite": -0.4229,
-  "speedPowerTotal": 17,
+  "composite": -0.4849,
+  "speedPowerTotal": 16,
   "provisional": true
  },
  {
@@ -2621,7 +2855,7 @@
   "epmDef": 0.965648,
   "ewinsPerGame": 0.0309,
   "playoffGames": 0,
-  "composite": -0.4297,
+  "composite": -0.4913,
   "speedPowerTotal": 16,
   "provisional": true
  },
@@ -2634,7 +2868,7 @@
   "epmDef": 0.886849,
   "ewinsPerGame": 0.0283,
   "playoffGames": 0,
-  "composite": -0.436,
+  "composite": -0.4976,
   "speedPowerTotal": 16,
   "provisional": true
  },
@@ -2647,7 +2881,7 @@
   "epmDef": -0.426042,
   "ewinsPerGame": 0.0365,
   "playoffGames": 0,
-  "composite": -0.4512,
+  "composite": -0.5119,
   "speedPowerTotal": 16,
   "provisional": true
  },
@@ -2660,7 +2894,7 @@
   "epmDef": -0.779127,
   "ewinsPerGame": 0.022,
   "playoffGames": 0,
-  "composite": -0.4563,
+  "composite": -0.5177,
   "speedPowerTotal": 16,
   "provisional": true
  },
@@ -2673,7 +2907,7 @@
   "epmDef": -0.19534751514307536,
   "ewinsPerGame": 0.0359,
   "playoffGames": 11,
-  "composite": -0.4728,
+  "composite": -0.5329,
   "speedPowerTotal": 16,
   "provisional": true
  },
@@ -2686,20 +2920,7 @@
   "epmDef": 0.359918,
   "ewinsPerGame": 0.0281,
   "playoffGames": 0,
-  "composite": -0.481,
-  "speedPowerTotal": 16,
-  "provisional": true
- },
- {
-  "name": "Dwight Powell",
-  "team": "DAL",
-  "pos": "C",
-  "epm": -0.985143,
-  "epmOff": -1.44104,
-  "epmDef": 0.455892,
-  "ewinsPerGame": 0.0198,
-  "playoffGames": 0,
-  "composite": -0.4896,
+  "composite": -0.5413,
   "speedPowerTotal": 16,
   "provisional": true
  },
@@ -2712,7 +2933,20 @@
   "epmDef": 0.2298621006324144,
   "ewinsPerGame": 0.0327,
   "playoffGames": 15,
-  "composite": -0.4902,
+  "composite": -0.5501,
+  "speedPowerTotal": 16,
+  "provisional": true
+ },
+ {
+  "name": "Dwight Powell",
+  "team": "DAL",
+  "pos": "C",
+  "epm": -0.985143,
+  "epmOff": -1.44104,
+  "epmDef": 0.455892,
+  "ewinsPerGame": 0.0198,
+  "playoffGames": 0,
+  "composite": -0.5503,
   "speedPowerTotal": 16,
   "provisional": true
  },
@@ -2725,7 +2959,7 @@
   "epmDef": 0.70854,
   "ewinsPerGame": 0.0258,
   "playoffGames": 0,
-  "composite": -0.4912,
+  "composite": -0.5514,
   "speedPowerTotal": 16,
   "provisional": true
  },
@@ -2738,7 +2972,7 @@
   "epmDef": -0.3429395960500857,
   "ewinsPerGame": 0.023,
   "playoffGames": 10,
-  "composite": -0.4952,
+  "composite": -0.5555,
   "speedPowerTotal": 16,
   "provisional": true
  },
@@ -2751,7 +2985,7 @@
   "epmDef": 0.267441,
   "ewinsPerGame": 0.0237,
   "playoffGames": 7,
-  "composite": -0.5004,
+  "composite": -0.5605,
   "speedPowerTotal": 16,
   "provisional": true
  },
@@ -2764,7 +2998,7 @@
   "epmDef": -0.12056963033831879,
   "ewinsPerGame": 0.0304,
   "playoffGames": 7,
-  "composite": -0.5093,
+  "composite": -0.5687,
   "speedPowerTotal": 16,
   "provisional": true
  },
@@ -2777,7 +3011,7 @@
   "epmDef": -0.757334,
   "ewinsPerGame": 0.0186,
   "playoffGames": 0,
-  "composite": -0.5127,
+  "composite": -0.5728,
   "speedPowerTotal": 16,
   "provisional": true
  },
@@ -2790,7 +3024,7 @@
   "epmDef": -0.573743,
   "ewinsPerGame": 0.0273,
   "playoffGames": 0,
-  "composite": -0.5164,
+  "composite": -0.5758,
   "speedPowerTotal": 16,
   "provisional": true
  },
@@ -2803,7 +3037,7 @@
   "epmDef": -0.8091610331868376,
   "ewinsPerGame": 0.0313,
   "playoffGames": 5,
-  "composite": -0.5356,
+  "composite": -0.5942,
   "speedPowerTotal": 16,
   "provisional": true
  },
@@ -2816,7 +3050,7 @@
   "epmDef": -1.54943,
   "ewinsPerGame": 0.0335,
   "playoffGames": 0,
-  "composite": -0.537,
+  "composite": -0.5955,
   "speedPowerTotal": 16,
   "provisional": true
  },
@@ -2829,7 +3063,7 @@
   "epmDef": -0.267417,
   "ewinsPerGame": 0.0308,
   "playoffGames": 0,
-  "composite": -0.5406,
+  "composite": -0.5992,
   "speedPowerTotal": 16,
   "provisional": true
  },
@@ -2842,7 +3076,7 @@
   "epmDef": -0.478918,
   "ewinsPerGame": 0.0229,
   "playoffGames": 0,
-  "composite": -0.5503,
+  "composite": -0.6091,
   "speedPowerTotal": 16,
   "provisional": true
  },
@@ -2855,7 +3089,7 @@
   "epmDef": -0.0033466592031065265,
   "ewinsPerGame": 0.0287,
   "playoffGames": 8,
-  "composite": -0.5607,
+  "composite": -0.6189,
   "speedPowerTotal": 16,
   "provisional": true
  },
@@ -2868,7 +3102,7 @@
   "epmDef": -0.633176,
   "ewinsPerGame": 0.0324,
   "playoffGames": 0,
-  "composite": -0.5612,
+  "composite": -0.6191,
   "speedPowerTotal": 16,
   "provisional": true
  },
@@ -2881,7 +3115,7 @@
   "epmDef": -0.10096432046985827,
   "ewinsPerGame": 0.0245,
   "playoffGames": 14,
-  "composite": -0.5719,
+  "composite": -0.63,
   "speedPowerTotal": 16,
   "provisional": true
  },
@@ -2894,7 +3128,7 @@
   "epmDef": -0.948301,
   "ewinsPerGame": 0.0254,
   "playoffGames": 0,
-  "composite": -0.5731,
+  "composite": -0.6311,
   "speedPowerTotal": 16,
   "provisional": true
  },
@@ -2907,7 +3141,7 @@
   "epmDef": -1.49878,
   "ewinsPerGame": 0.0268,
   "playoffGames": 0,
-  "composite": -0.5877,
+  "composite": -0.6452,
   "speedPowerTotal": 16,
   "provisional": true
  },
@@ -2920,7 +3154,7 @@
   "epmDef": 0.564452,
   "ewinsPerGame": 0.023,
   "playoffGames": 0,
-  "composite": -0.6066,
+  "composite": -0.6638,
   "speedPowerTotal": 16,
   "provisional": true
  },
@@ -2933,7 +3167,7 @@
   "epmDef": 1.10116,
   "ewinsPerGame": 0.0264,
   "playoffGames": 5,
-  "composite": -0.6092,
+  "composite": -0.6662,
   "speedPowerTotal": 16,
   "provisional": true
  },
@@ -2946,7 +3180,7 @@
   "epmDef": 0.350069,
   "ewinsPerGame": 0.0188,
   "playoffGames": 8,
-  "composite": -0.6136,
+  "composite": -0.6709,
   "speedPowerTotal": 16,
   "provisional": true
  },
@@ -2959,7 +3193,7 @@
   "epmDef": -0.953392348848743,
   "ewinsPerGame": 0.0264,
   "playoffGames": 10,
-  "composite": -0.6173,
+  "composite": -0.674,
   "speedPowerTotal": 16,
   "provisional": true
  },
@@ -2972,7 +3206,7 @@
   "epmDef": -0.879732,
   "ewinsPerGame": 0.0248,
   "playoffGames": 0,
-  "composite": -0.6204,
+  "composite": -0.6772,
   "speedPowerTotal": 16,
   "provisional": true
  },
@@ -2985,7 +3219,7 @@
   "epmDef": -1.0413868965311048,
   "ewinsPerGame": 0.0243,
   "playoffGames": 10,
-  "composite": -0.6327,
+  "composite": -0.6891,
   "speedPowerTotal": 16,
   "provisional": true
  },
@@ -2998,7 +3232,7 @@
   "epmDef": 0.7548514730946672,
   "ewinsPerGame": 0.022,
   "playoffGames": 13,
-  "composite": -0.6336,
+  "composite": -0.6902,
   "speedPowerTotal": 16,
   "provisional": true
  },
@@ -3011,7 +3245,7 @@
   "epmDef": -0.6447646996961514,
   "ewinsPerGame": 0.0281,
   "playoffGames": 4,
-  "composite": -0.6516,
+  "composite": -0.7073,
   "speedPowerTotal": 16,
   "provisional": true
  },
@@ -3024,7 +3258,7 @@
   "epmDef": 0.9857775619972753,
   "ewinsPerGame": 0.0149,
   "playoffGames": 6,
-  "composite": -0.6571,
+  "composite": -0.7135,
   "speedPowerTotal": 16,
   "provisional": true
  },
@@ -3037,7 +3271,7 @@
   "epmDef": -0.015550885713078179,
   "ewinsPerGame": 0.0208,
   "playoffGames": 11,
-  "composite": -0.6632,
+  "composite": -0.719,
   "speedPowerTotal": 16,
   "provisional": true
  },
@@ -3050,7 +3284,7 @@
   "epmDef": -0.37805726895134867,
   "ewinsPerGame": 0.0159,
   "playoffGames": 7,
-  "composite": -0.678,
+  "composite": -0.7337,
   "speedPowerTotal": 16,
   "provisional": true
  },
@@ -3063,7 +3297,7 @@
   "epmDef": 0.9279610000000001,
   "ewinsPerGame": 0.0134,
   "playoffGames": 4,
-  "composite": -0.6798,
+  "composite": -0.7357,
   "speedPowerTotal": 16,
   "provisional": true
  },
@@ -3076,7 +3310,7 @@
   "epmDef": -0.757781,
   "ewinsPerGame": 0.0292,
   "playoffGames": 0,
-  "composite": -0.6864,
+  "composite": -0.7411,
   "speedPowerTotal": 16,
   "provisional": true
  },
@@ -3089,7 +3323,7 @@
   "epmDef": 0.43558099999999994,
   "ewinsPerGame": 0.0139,
   "playoffGames": 4,
-  "composite": -0.6886,
+  "composite": -0.7441,
   "speedPowerTotal": 16,
   "provisional": true
  },
@@ -3102,8 +3336,8 @@
   "epmDef": -0.550716,
   "ewinsPerGame": 0.0169,
   "playoffGames": 2,
-  "composite": -0.7032,
-  "speedPowerTotal": 16,
+  "composite": -0.7582,
+  "speedPowerTotal": 15,
   "provisional": true
  },
  {
@@ -3115,8 +3349,8 @@
   "epmDef": 0.41853,
   "ewinsPerGame": 0.0259,
   "playoffGames": 0,
-  "composite": -0.7237,
-  "speedPowerTotal": 16,
+  "composite": -0.7776,
+  "speedPowerTotal": 15,
   "provisional": true
  },
  {
@@ -3128,8 +3362,8 @@
   "epmDef": -0.23004928426599056,
   "ewinsPerGame": 0.0144,
   "playoffGames": 12,
-  "composite": -0.7307,
-  "speedPowerTotal": 16,
+  "composite": -0.785,
+  "speedPowerTotal": 15,
   "provisional": true
  },
  {
@@ -3141,8 +3375,8 @@
   "epmDef": 0.61486,
   "ewinsPerGame": 0.0216,
   "playoffGames": 0,
-  "composite": -0.7461,
-  "speedPowerTotal": 16,
+  "composite": -0.7996,
+  "speedPowerTotal": 15,
   "provisional": true
  },
  {
@@ -3154,7 +3388,7 @@
   "epmDef": -0.732493,
   "ewinsPerGame": 0.0197,
   "playoffGames": 0,
-  "composite": -0.7684,
+  "composite": -0.8214,
   "speedPowerTotal": 15,
   "provisional": true
  },
@@ -3167,7 +3401,7 @@
   "epmDef": -0.91286,
   "ewinsPerGame": 0.0234,
   "playoffGames": 0,
-  "composite": -0.7855,
+  "composite": -0.8379,
   "speedPowerTotal": 15,
   "provisional": true
  },
@@ -3180,7 +3414,7 @@
   "epmDef": -1.18651,
   "ewinsPerGame": 0.0196,
   "playoffGames": 0,
-  "composite": -0.8033,
+  "composite": -0.8554,
   "speedPowerTotal": 15,
   "provisional": true
  },
@@ -3193,7 +3427,7 @@
   "epmDef": 0.24551382465495328,
   "ewinsPerGame": 0.018,
   "playoffGames": 6,
-  "composite": -0.8037,
+  "composite": -0.8559,
   "speedPowerTotal": 15,
   "provisional": true
  },
@@ -3206,7 +3440,7 @@
   "epmDef": -2.09214,
   "ewinsPerGame": 0.0203,
   "playoffGames": 0,
-  "composite": -0.8278,
+  "composite": -0.8791,
   "speedPowerTotal": 15,
   "provisional": true
  },
@@ -3219,7 +3453,7 @@
   "epmDef": -0.0196175,
   "ewinsPerGame": 0.0174,
   "playoffGames": 0,
-  "composite": -0.8283,
+  "composite": -0.8798,
   "speedPowerTotal": 15,
   "provisional": true
  },
@@ -3232,7 +3466,7 @@
   "epmDef": -0.2762103047048896,
   "ewinsPerGame": 0.0129,
   "playoffGames": 6,
-  "composite": -0.8372,
+  "composite": -0.8887,
   "speedPowerTotal": 15,
   "provisional": true
  },
@@ -3245,7 +3479,7 @@
   "epmDef": -0.53346,
   "ewinsPerGame": 0.0196,
   "playoffGames": 0,
-  "composite": -0.852,
+  "composite": -0.9027,
   "speedPowerTotal": 15,
   "provisional": true
  },
@@ -3258,7 +3492,7 @@
   "epmDef": -0.829416,
   "ewinsPerGame": 0.0137,
   "playoffGames": 0,
-  "composite": -0.8548,
+  "composite": -0.9058,
   "speedPowerTotal": 15,
   "provisional": true
  },
@@ -3271,7 +3505,7 @@
   "epmDef": -0.612573,
   "ewinsPerGame": 0.0177,
   "playoffGames": 4,
-  "composite": -0.8661,
+  "composite": -0.9165,
   "speedPowerTotal": 15,
   "provisional": true
  },
@@ -3284,7 +3518,7 @@
   "epmDef": -0.7162945312346186,
   "ewinsPerGame": 0.0139,
   "playoffGames": 18,
-  "composite": -0.8673,
+  "composite": -0.918,
   "speedPowerTotal": 15,
   "provisional": true
  },
@@ -3297,7 +3531,7 @@
   "epmDef": -1.21416,
   "ewinsPerGame": 0.0202,
   "playoffGames": 0,
-  "composite": -0.8859,
+  "composite": -0.9356,
   "speedPowerTotal": 15,
   "provisional": true
  },
@@ -3310,7 +3544,7 @@
   "epmDef": -0.713056,
   "ewinsPerGame": 0.0195,
   "playoffGames": 0,
-  "composite": -0.8924,
+  "composite": -0.9421,
   "speedPowerTotal": 15,
   "provisional": true
  },
@@ -3323,7 +3557,7 @@
   "epmDef": 1.05436,
   "ewinsPerGame": 0.015,
   "playoffGames": 0,
-  "composite": -0.9023,
+  "composite": -0.9519,
   "speedPowerTotal": 15,
   "provisional": true
  },
@@ -3336,7 +3570,7 @@
   "epmDef": -0.566865,
   "ewinsPerGame": 0.0126,
   "playoffGames": 2,
-  "composite": -0.9194,
+  "composite": -0.9687,
   "speedPowerTotal": 15,
   "provisional": true
  },
@@ -3349,7 +3583,7 @@
   "epmDef": -0.898622,
   "ewinsPerGame": 0.0117,
   "playoffGames": 2,
-  "composite": -0.9276,
+  "composite": -0.9767,
   "speedPowerTotal": 15,
   "provisional": true
  },
@@ -3362,7 +3596,7 @@
   "epmDef": -0.908287,
   "ewinsPerGame": 0.0145,
   "playoffGames": 0,
-  "composite": -0.9312,
+  "composite": -0.9801,
   "speedPowerTotal": 15,
   "provisional": true
  },
@@ -3375,7 +3609,7 @@
   "epmDef": -0.71193,
   "ewinsPerGame": 0.0126,
   "playoffGames": 0,
-  "composite": -0.9346,
+  "composite": -0.9835,
   "speedPowerTotal": 15,
   "provisional": true
  },
@@ -3388,7 +3622,7 @@
   "epmDef": -2.26009,
   "ewinsPerGame": 0.016,
   "playoffGames": 0,
-  "composite": -0.9578,
+  "composite": -1.0059,
   "speedPowerTotal": 15,
   "provisional": true
  },
@@ -3401,7 +3635,7 @@
   "epmDef": -0.9634952487960264,
   "ewinsPerGame": 0.0097,
   "playoffGames": 11,
-  "composite": -0.9646,
+  "composite": -1.0128,
   "speedPowerTotal": 15,
   "provisional": true
  },
@@ -3414,7 +3648,7 @@
   "epmDef": -1.8708,
   "ewinsPerGame": 0.0147,
   "playoffGames": 0,
-  "composite": -0.9754,
+  "composite": -1.0231,
   "speedPowerTotal": 15,
   "provisional": true
  },
@@ -3427,7 +3661,7 @@
   "epmDef": 0.30850894246816385,
   "ewinsPerGame": 0.0118,
   "playoffGames": 10,
-  "composite": -0.9771,
+  "composite": -1.0249,
   "speedPowerTotal": 15,
   "provisional": true
  },
@@ -3440,7 +3674,7 @@
   "epmDef": 0.00912161,
   "ewinsPerGame": 0.0137,
   "playoffGames": 0,
-  "composite": -0.9873,
+  "composite": -1.0347,
   "speedPowerTotal": 15,
   "provisional": true
  },
@@ -3453,7 +3687,7 @@
   "epmDef": -1.25854,
   "ewinsPerGame": 0.0133,
   "playoffGames": 0,
-  "composite": -1.005,
+  "composite": -1.0519,
   "speedPowerTotal": 15,
   "provisional": true
  },
@@ -3466,7 +3700,7 @@
   "epmDef": 0.4329247938103789,
   "ewinsPerGame": 0.0122,
   "playoffGames": 12,
-  "composite": -1.0099,
+  "composite": -1.0567,
   "speedPowerTotal": 15,
   "provisional": true
  },
@@ -3479,7 +3713,7 @@
   "epmDef": -1.72674,
   "ewinsPerGame": 0.0103,
   "playoffGames": 0,
-  "composite": -1.0223,
+  "composite": -1.0689,
   "speedPowerTotal": 15,
   "provisional": true
  },
@@ -3492,7 +3726,7 @@
   "epmDef": -0.775699,
   "ewinsPerGame": 0.0132,
   "playoffGames": 3,
-  "composite": -1.0346,
+  "composite": -1.0807,
   "speedPowerTotal": 15,
   "provisional": true
  },
@@ -3505,8 +3739,8 @@
   "epmDef": -1.2421109667863783,
   "ewinsPerGame": 0.0093,
   "playoffGames": 15,
-  "composite": -1.0484,
-  "speedPowerTotal": 15,
+  "composite": -1.0944,
+  "speedPowerTotal": 14,
   "provisional": true
  },
  {
@@ -3518,7 +3752,7 @@
   "epmDef": -1.6025199999999997,
   "ewinsPerGame": 0.0067,
   "playoffGames": 1,
-  "composite": -1.1211,
+  "composite": -1.1653,
   "speedPowerTotal": 14,
   "provisional": true
  },
@@ -3531,7 +3765,7 @@
   "epmDef": -0.6359991159540794,
   "ewinsPerGame": 0.0102,
   "playoffGames": 17,
-  "composite": -1.1519,
+  "composite": -1.195,
   "speedPowerTotal": 14,
   "provisional": true
  },
@@ -3544,7 +3778,7 @@
   "epmDef": -0.778209,
   "ewinsPerGame": 0.0065,
   "playoffGames": 0,
-  "composite": -1.1811,
+  "composite": -1.2236,
   "speedPowerTotal": 14,
   "provisional": true
  },
@@ -3557,7 +3791,7 @@
   "epmDef": -1.6832486256325023,
   "ewinsPerGame": 0.0074,
   "playoffGames": 5,
-  "composite": -1.1884,
+  "composite": -1.2307,
   "speedPowerTotal": 14,
   "provisional": true
  },
@@ -3570,7 +3804,7 @@
   "epmDef": 0.778616,
   "ewinsPerGame": 0.0049,
   "playoffGames": 2,
-  "composite": -1.2125,
+  "composite": -1.2542,
   "speedPowerTotal": 14,
   "provisional": true
  },
@@ -3583,7 +3817,7 @@
   "epmDef": -1.2646294325539194,
   "ewinsPerGame": 0.0034,
   "playoffGames": 9,
-  "composite": -1.2525,
+  "composite": -1.2932,
   "speedPowerTotal": 14,
   "provisional": true
  },
@@ -3596,7 +3830,7 @@
   "epmDef": 0.581596,
   "ewinsPerGame": 0.0055,
   "playoffGames": 0,
-  "composite": -1.2587,
+  "composite": -1.2991,
   "speedPowerTotal": 14,
   "provisional": true
  },
@@ -3609,7 +3843,7 @@
   "epmDef": -0.479407,
   "ewinsPerGame": 0.0061,
   "playoffGames": 0,
-  "composite": -1.2607,
+  "composite": -1.301,
   "speedPowerTotal": 14,
   "provisional": true
  },
@@ -3622,7 +3856,7 @@
   "epmDef": -1.16031,
   "ewinsPerGame": 0.0072,
   "playoffGames": 0,
-  "composite": -1.2727,
+  "composite": -1.3127,
   "speedPowerTotal": 14,
   "provisional": true
  },
@@ -3635,7 +3869,7 @@
   "epmDef": 0.18604132089376713,
   "ewinsPerGame": 0.0043,
   "playoffGames": 13,
-  "composite": -1.2733,
+  "composite": -1.3134,
   "speedPowerTotal": 14,
   "provisional": true
  },
@@ -3648,7 +3882,7 @@
   "epmDef": -1.0549932143327165,
   "ewinsPerGame": 0.0061,
   "playoffGames": 9,
-  "composite": -1.2749,
+  "composite": -1.3149,
   "speedPowerTotal": 14,
   "provisional": true
  },
@@ -3661,7 +3895,7 @@
   "epmDef": -0.730862,
   "ewinsPerGame": 0.0056,
   "playoffGames": 0,
-  "composite": -1.295,
+  "composite": -1.3345,
   "speedPowerTotal": 14,
   "provisional": true
  },
@@ -3674,7 +3908,20 @@
   "epmDef": -1.19822,
   "ewinsPerGame": 0.0053,
   "playoffGames": 0,
-  "composite": -1.3158,
+  "composite": -1.3547,
+  "speedPowerTotal": 14,
+  "provisional": true
+ },
+ {
+  "name": "Keegan Murray",
+  "team": "SAC",
+  "pos": "PF",
+  "epm": -2.69962,
+  "epmOff": -2.10676,
+  "epmDef": -0.592862,
+  "ewinsPerGame": 0.0071,
+  "playoffGames": 0,
+  "composite": -1.3587,
   "speedPowerTotal": 14,
   "provisional": true
  },
@@ -3687,7 +3934,7 @@
   "epmDef": -1.39768,
   "ewinsPerGame": 0.006,
   "playoffGames": 0,
-  "composite": -1.3216,
+  "composite": -1.3603,
   "speedPowerTotal": 14,
   "provisional": true
  },
@@ -3700,7 +3947,7 @@
   "epmDef": -0.35466364891191454,
   "ewinsPerGame": 0.0035,
   "playoffGames": 7,
-  "composite": -1.3451,
+  "composite": -1.3833,
   "speedPowerTotal": 14,
   "provisional": true
  },
@@ -3713,7 +3960,7 @@
   "epmDef": -0.435688,
   "ewinsPerGame": 0.0025,
   "playoffGames": 3,
-  "composite": -1.371,
+  "composite": -1.4085,
   "speedPowerTotal": 14,
   "provisional": true
  },
@@ -3726,8 +3973,8 @@
   "epmDef": -2.01535,
   "ewinsPerGame": 0.0041,
   "playoffGames": 0,
-  "composite": -1.3726,
-  "speedPowerTotal": 14,
+  "composite": -1.41,
+  "speedPowerTotal": 13,
   "provisional": true
  },
  {
@@ -3739,8 +3986,8 @@
   "epmDef": -1.10681,
   "ewinsPerGame": 0.0038,
   "playoffGames": 0,
-  "composite": -1.3763,
-  "speedPowerTotal": 14,
+  "composite": -1.4137,
+  "speedPowerTotal": 13,
   "provisional": true
  },
  {
@@ -3752,8 +3999,8 @@
   "epmDef": -0.784879,
   "ewinsPerGame": 0.0025,
   "playoffGames": 0,
-  "composite": -1.386,
-  "speedPowerTotal": 14,
+  "composite": -1.4232,
+  "speedPowerTotal": 13,
   "provisional": true
  },
  {
@@ -3765,8 +4012,8 @@
   "epmDef": 0.0927396,
   "ewinsPerGame": 0.0028,
   "playoffGames": 4,
-  "composite": -1.3882,
-  "speedPowerTotal": 14,
+  "composite": -1.4252,
+  "speedPowerTotal": 13,
   "provisional": true
  },
  {
@@ -3778,8 +4025,8 @@
   "epmDef": -1.18408,
   "ewinsPerGame": 0.0024,
   "playoffGames": 3,
-  "composite": -1.3902,
-  "speedPowerTotal": 14,
+  "composite": -1.4272,
+  "speedPowerTotal": 13,
   "provisional": true
  },
  {
@@ -3791,8 +4038,8 @@
   "epmDef": -1.66118,
   "ewinsPerGame": 0.0028,
   "playoffGames": 0,
-  "composite": -1.4057,
-  "speedPowerTotal": 14,
+  "composite": -1.4423,
+  "speedPowerTotal": 13,
   "provisional": true
  },
  {
@@ -3804,7 +4051,7 @@
   "epmDef": -1.53616,
   "ewinsPerGame": 0.0019,
   "playoffGames": 0,
-  "composite": -1.4088,
+  "composite": -1.4453,
   "speedPowerTotal": 13,
   "provisional": true
  },
@@ -3817,7 +4064,7 @@
   "epmDef": -0.186325,
   "ewinsPerGame": 0.0025,
   "playoffGames": 0,
-  "composite": -1.4209,
+  "composite": -1.4571,
   "speedPowerTotal": 13,
   "provisional": true
  },
@@ -3830,7 +4077,7 @@
   "epmDef": -0.660707,
   "ewinsPerGame": 0.0013,
   "playoffGames": 0,
-  "composite": -1.446,
+  "composite": -1.4816,
   "speedPowerTotal": 13,
   "provisional": true
  },
@@ -3843,7 +4090,7 @@
   "epmDef": -1.0748983557266807,
   "ewinsPerGame": 0.0009,
   "playoffGames": 6,
-  "composite": -1.4528,
+  "composite": -1.4882,
   "speedPowerTotal": 13,
   "provisional": true
  },
@@ -3856,7 +4103,7 @@
   "epmDef": -1.70181,
   "ewinsPerGame": 0.0008,
   "playoffGames": 0,
-  "composite": -1.4682,
+  "composite": -1.5032,
   "speedPowerTotal": 13,
   "provisional": true
  },
@@ -3869,7 +4116,7 @@
   "epmDef": -0.12328018991474045,
   "ewinsPerGame": 0.0003,
   "playoffGames": 8,
-  "composite": -1.4996,
+  "composite": -1.5338,
   "speedPowerTotal": 13,
   "provisional": true
  },
@@ -3882,7 +4129,7 @@
   "epmDef": -1.05735,
   "ewinsPerGame": -0.0001,
   "playoffGames": 0,
-  "composite": -1.5052,
+  "composite": -1.5392,
   "speedPowerTotal": 13,
   "provisional": true
  },
@@ -3895,7 +4142,7 @@
   "epmDef": 0.966165,
   "ewinsPerGame": -0.0004,
   "playoffGames": 0,
-  "composite": -1.5198,
+  "composite": -1.5534,
   "speedPowerTotal": 13,
   "provisional": true
  },
@@ -3908,7 +4155,7 @@
   "epmDef": -0.0454577,
   "ewinsPerGame": -0.0015,
   "playoffGames": 0,
-  "composite": -1.5671,
+  "composite": -1.5996,
   "speedPowerTotal": 13,
   "provisional": true
  },
@@ -3921,7 +4168,7 @@
   "epmDef": -0.208063,
   "ewinsPerGame": -0.0019,
   "playoffGames": 0,
-  "composite": -1.5949,
+  "composite": -1.6266,
   "speedPowerTotal": 13,
   "provisional": true
  },
@@ -3934,7 +4181,7 @@
   "epmDef": -2.07252,
   "ewinsPerGame": -0.0042,
   "playoffGames": 0,
-  "composite": -1.6871,
+  "composite": -1.7164,
   "speedPowerTotal": 13,
   "provisional": true
  },
@@ -3947,8 +4194,8 @@
   "epmDef": -1.94667,
   "ewinsPerGame": -0.0062,
   "playoffGames": 0,
-  "composite": -1.7324,
-  "speedPowerTotal": 13,
+  "composite": -1.7605,
+  "speedPowerTotal": 12,
   "provisional": true
  },
  {
@@ -3960,7 +4207,7 @@
   "epmDef": -0.904266,
   "ewinsPerGame": -0.0044,
   "playoffGames": 1,
-  "composite": -1.745,
+  "composite": -1.7727,
   "speedPowerTotal": 12,
   "provisional": true
  },
@@ -3973,7 +4220,7 @@
   "epmDef": -1.17727,
   "ewinsPerGame": -0.0103,
   "playoffGames": 0,
-  "composite": -1.8239,
+  "composite": -1.8498,
   "speedPowerTotal": 12,
   "provisional": true
  },
@@ -3986,7 +4233,7 @@
   "epmDef": -1.74339,
   "ewinsPerGame": -0.008,
   "playoffGames": 0,
-  "composite": -1.8504,
+  "composite": -1.8754,
   "speedPowerTotal": 12,
   "provisional": true
  },
@@ -3999,7 +4246,7 @@
   "epmDef": -0.3743663436821465,
   "ewinsPerGame": -0.011,
   "playoffGames": 6,
-  "composite": -1.8849,
+  "composite": -1.9092,
   "speedPowerTotal": 12,
   "provisional": true
  },
@@ -4012,7 +4259,7 @@
   "epmDef": -2.0536,
   "ewinsPerGame": -0.0107,
   "playoffGames": 0,
-  "composite": -1.8948,
+  "composite": -1.9188,
   "speedPowerTotal": 12,
   "provisional": true
  },
@@ -4025,7 +4272,7 @@
   "epmDef": -2.19515,
   "ewinsPerGame": -0.013,
   "playoffGames": 0,
-  "composite": -1.9103,
+  "composite": -1.934,
   "speedPowerTotal": 12,
   "provisional": true
  },
@@ -4038,7 +4285,7 @@
   "epmDef": -3.24544,
   "ewinsPerGame": -0.01,
   "playoffGames": 0,
-  "composite": -1.9192,
+  "composite": -1.9424,
   "speedPowerTotal": 12,
   "provisional": true
  },
@@ -4051,7 +4298,7 @@
   "epmDef": -1.96496,
   "ewinsPerGame": -0.0133,
   "playoffGames": 0,
-  "composite": -1.9884,
+  "composite": -2.01,
   "speedPowerTotal": 12,
   "provisional": true
  },
@@ -4064,8 +4311,8 @@
   "epmDef": -1.33298,
   "ewinsPerGame": -0.01,
   "playoffGames": 0,
-  "composite": -2.0515,
-  "speedPowerTotal": 12,
+  "composite": -2.0711,
+  "speedPowerTotal": 11,
   "provisional": true
  },
  {
@@ -4077,8 +4324,8 @@
   "epmDef": -0.76453,
   "ewinsPerGame": -0.0106,
   "playoffGames": 0,
-  "composite": -2.0593,
-  "speedPowerTotal": 12,
+  "composite": -2.0787,
+  "speedPowerTotal": 11,
   "provisional": true
  },
  {
@@ -4090,7 +4337,7 @@
   "epmDef": -2.43876,
   "ewinsPerGame": -0.0156,
   "playoffGames": 0,
-  "composite": -2.1091,
+  "composite": -2.1275,
   "speedPowerTotal": 11,
   "provisional": true
  },
@@ -4103,7 +4350,7 @@
   "epmDef": -1.72895,
   "ewinsPerGame": -0.0169,
   "playoffGames": 0,
-  "composite": -2.1519,
+  "composite": -2.1692,
   "speedPowerTotal": 11,
   "provisional": true
  },
@@ -4116,7 +4363,7 @@
   "epmDef": -1.66524,
   "ewinsPerGame": -0.0232,
   "playoffGames": 0,
-  "composite": -2.266,
+  "composite": -2.2806,
   "speedPowerTotal": 11,
   "provisional": true
  },
@@ -4129,7 +4376,7 @@
   "epmDef": -1.90804,
   "ewinsPerGame": -0.0165,
   "playoffGames": 0,
-  "composite": -2.2686,
+  "composite": -2.2827,
   "speedPowerTotal": 11,
   "provisional": true
  },
@@ -4142,7 +4389,7 @@
   "epmDef": -1.71039,
   "ewinsPerGame": -0.0147,
   "playoffGames": 3,
-  "composite": -2.2776,
+  "composite": -2.2913,
   "speedPowerTotal": 11,
   "provisional": true
  },
@@ -4155,7 +4402,7 @@
   "epmDef": -0.468685,
   "ewinsPerGame": -0.0232,
   "playoffGames": 0,
-  "composite": -2.3772,
+  "composite": -2.3887,
   "speedPowerTotal": 11,
   "provisional": true
  },
@@ -4168,8 +4415,8 @@
   "epmDef": -2.09027,
   "ewinsPerGame": -0.0194,
   "playoffGames": 7,
-  "composite": -2.3865,
-  "speedPowerTotal": 11,
+  "composite": -2.3975,
+  "speedPowerTotal": 10,
   "provisional": true
  },
  {
@@ -4181,7 +4428,7 @@
   "epmDef": -2.56638,
   "ewinsPerGame": -0.0251,
   "playoffGames": 0,
-  "composite": -2.3957,
+  "composite": -2.4068,
   "speedPowerTotal": 10,
   "provisional": true
  },
@@ -4194,7 +4441,7 @@
   "epmDef": -2.78387,
   "ewinsPerGame": -0.0312,
   "playoffGames": 0,
-  "composite": -2.4325,
+  "composite": -2.443,
   "speedPowerTotal": 10,
   "provisional": true
  },
@@ -4207,7 +4454,7 @@
   "epmDef": -0.747411,
   "ewinsPerGame": -0.0268,
   "playoffGames": 0,
-  "composite": -2.4954,
+  "composite": -2.5039,
   "speedPowerTotal": 10,
   "provisional": true
  },
@@ -4220,7 +4467,7 @@
   "epmDef": -1.80797,
   "ewinsPerGame": -0.03,
   "playoffGames": 0,
-  "composite": -2.5651,
+  "composite": -2.5719,
   "speedPowerTotal": 10,
   "provisional": true
  },
@@ -4233,7 +4480,7 @@
   "epmDef": -1.73142,
   "ewinsPerGame": -0.0188,
   "playoffGames": 0,
-  "composite": -2.5706,
+  "composite": -2.5765,
   "speedPowerTotal": 10,
   "provisional": true
  },
@@ -4246,7 +4493,7 @@
   "epmDef": -0.854065,
   "ewinsPerGame": -0.0278,
   "playoffGames": 0,
-  "composite": -2.8702,
+  "composite": -2.8685,
   "speedPowerTotal": 10,
   "provisional": true
  },
@@ -4259,7 +4506,7 @@
   "epmDef": -2.26261,
   "ewinsPerGame": -0.0257,
   "playoffGames": 0,
-  "composite": -2.876,
+  "composite": -2.874,
   "speedPowerTotal": 10,
   "provisional": true
  },
@@ -4272,7 +4519,7 @@
   "epmDef": -1.41933,
   "ewinsPerGame": -0.0329,
   "playoffGames": 0,
-  "composite": -2.9255,
+  "composite": -2.9226,
   "speedPowerTotal": 10,
   "provisional": true
  },
@@ -4285,7 +4532,7 @@
   "epmDef": -2.54063,
   "ewinsPerGame": -0.0321,
   "playoffGames": 0,
-  "composite": -3.1139,
+  "composite": -3.1058,
   "speedPowerTotal": 10,
   "provisional": true
  },
@@ -4298,7 +4545,7 @@
   "epmDef": -1.45208,
   "ewinsPerGame": -0.0445,
   "playoffGames": 0,
-  "composite": -3.1634,
+  "composite": -3.1547,
   "speedPowerTotal": 10,
   "provisional": true
  }

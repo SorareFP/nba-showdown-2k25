@@ -5,6 +5,16 @@
 // player with MPG >= 12 and G >= 40 in the source season, no further manual
 // curation. Verified against the real 2025-26 season page: 331 players.
 //
+// PLUS A FORCE-INCLUDE LIST, which the threshold rule needs because of what it
+// silently does: G >= 40 drops everyone whose season was cut short by injury,
+// star or not — Giannis Antetokounmpo (36 G, still 28.9 MPG), Jayson Tatum
+// (16 G), Zach Edey (11 G). Nothing about a games-played floor distinguishes "not
+// good enough to card" from "hurt", so the names are declared in
+// card-data/force-include-2026.json and read by ../forceInclude.js. The two
+// COMPOSE — `passes the rule OR is named` — rather than the list replacing the
+// rule, so adding a name can only ever add a player. 331 -> 350 with the list as
+// it stands.
+//
 // NOTE ON TABLE STRUCTURE (verified 2026-08-28 against
 // https://www.basketball-reference.com/leagues/NBA_2026_per_game.html): the
 // per-game stats table is `<table id="per_game_stats">` inside
@@ -18,6 +28,8 @@
 // player name — the combined row always has the highest games-played of the
 // set, so keeping the max-games row per name naturally picks the combined row
 // over the partial per-team ones.
+
+import { normalizeName } from '../resolveTeams.js';
 
 const TABLE_ID = 'per_game_stats';
 
@@ -116,22 +128,73 @@ export function parsePerGameStatsHtml(html) {
   return [...players.values()];
 }
 
-/** Applies the new-season pool rule: MPG >= minMpg and G >= minGames. */
-export function filterPlayerPool(players, { minMpg, minGames }) {
-  return players.filter((p) => p.mpg >= minMpg && p.games >= minGames);
+/**
+ * Name matching for the force-include list, reusing the resolver's key.
+ *
+ * The list is written the way Basketball-Reference spells a name, but the two
+ * disagree about generational suffixes often enough that an exact-string match
+ * would be a trap: dunksandthrees carries "Jimmy Butler III" and BBRef carries
+ * "Jimmy Butler", and whichever spelling ends up in the file, the other one has
+ * to still match. normalizeName folds suffixes, diacritics, case and punctuation
+ * and is already what every other cross-source join in this pipeline uses.
+ */
+const forceKeySet = names => new Set((names ?? []).map(normalizeName));
+
+/**
+ * Applies the new-season pool rule: MPG >= minMpg and G >= minGames, OR named in
+ * the force-include list.
+ *
+ * The disjunction is the whole design. A force-include entry can only ADD a
+ * player — it cannot remove one, cannot change one's stats, and is a no-op for
+ * anyone already over both thresholds — so the list is safe to append to without
+ * re-reasoning about the rule each time.
+ */
+export function filterPlayerPool(players, { minMpg, minGames, forceInclude = [] }) {
+  const forced = forceKeySet(forceInclude);
+  return players.filter(
+    (p) => (p.mpg >= minMpg && p.games >= minGames) || forced.has(normalizeName(p.name))
+  );
+}
+
+/**
+ * Force-include names that match no row in the source table.
+ *
+ * A misspelled name is otherwise perfectly silent: the player just never appears
+ * in the pool, and nothing says why. Callers report this; nobody guesses.
+ */
+export function unmatchedForceIncludes(players, forceInclude = []) {
+  const present = forceKeySet((players ?? []).map((p) => p.name));
+  return (forceInclude ?? []).filter((name) => !present.has(normalizeName(name)));
+}
+
+/**
+ * Which pool players are in only because they were named — for run reports.
+ * Excludes anyone the threshold rule would have admitted anyway.
+ */
+export function forcedOnly(players, { minMpg, minGames, forceInclude = [] }) {
+  const forced = forceKeySet(forceInclude);
+  return (players ?? []).filter(
+    (p) => forced.has(normalizeName(p.name)) && !(p.mpg >= minMpg && p.games >= minGames)
+  );
 }
 
 /**
  * Fetches and filters a season's per-game stats into the card-set player pool.
  * @param {number} season End-year of the season (e.g. 2026 = 2025-26).
- * @param {{minMpg?: number, minGames?: number}} [opts] Defaults to the decided
- *   pool rule (MPG >= 12, G >= 40).
+ * @param {{minMpg?: number, minGames?: number, forceInclude?: string[]}} [opts]
+ *   Defaults to the decided pool rule (MPG >= 12, G >= 40) with no force-includes;
+ *   scripts/cardgen/generatePool.js passes the committed list.
  */
-export async function fetchPlayerPool(season, { minMpg = 12, minGames = 40 } = {}) {
+export async function fetchPlayerPool(season, { minMpg = 12, minGames = 40, forceInclude = [] } = {}) {
+  const players = await fetchPerGameStats(season);
+  return filterPlayerPool(players, { minMpg, minGames, forceInclude });
+}
+
+/** The whole per-game table, parsed and unfiltered — every player in the league. */
+export async function fetchPerGameStats(season) {
   const res = await fetch(`https://www.basketball-reference.com/leagues/NBA_${season}_per_game.html`, {
     headers: { 'User-Agent': 'Mozilla/5.0' },
   });
   if (!res.ok) throw new Error(`Basketball-Reference fetch failed: ${res.status}`);
-  const players = parsePerGameStatsHtml(await res.text());
-  return filterPlayerPool(players, { minMpg, minGames });
+  return parsePerGameStatsHtml(await res.text());
 }

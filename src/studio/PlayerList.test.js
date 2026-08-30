@@ -108,11 +108,15 @@ describe('the player list', () => {
     expect(rowAttrs(html, 'data-has-photo')[0]).toEqual(['Kevin_Durant', 'true']);
   });
 
-  it('renders the whole 331-player pool without choking', () => {
+  it('renders the whole pool without choking', () => {
     const players = SOURCES.pool.players;
     const html = render({ players, visible: players });
-    expect(html.match(/data-player-id=/g)).toHaveLength(331);
-    expect(html).toContain('0 / 331 photos');
+    // Derived rather than pinned: the pool grows whenever a name is added to
+    // card-data/force-include-2026.json, and this test is about the list
+    // rendering every row it is given, not about how many rows that is.
+    expect(players.length).toBeGreaterThan(300);
+    expect(html.match(/data-player-id=/g)).toHaveLength(players.length);
+    expect(html).toContain(`0 / ${players.length} photos`);
   });
 
   it('renders a filtered pool view end to end', () => {
@@ -122,6 +126,6 @@ describe('the player list', () => {
     const html = render({ players, visible, photoIds, missingOnly: true, query: 'LAL' });
     expect(visible.length).toBeGreaterThan(0);
     expect(html.match(/data-player-id=/g)).toHaveLength(visible.length);
-    expect(html).toContain(`showing ${visible.length} of 331`);
+    expect(html).toContain(`showing ${visible.length} of ${players.length}`);
   });
 });

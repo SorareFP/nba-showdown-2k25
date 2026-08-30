@@ -688,7 +688,11 @@ describe('the chart clears the photo frame', () => {
     // card actually asks for more than that.
     const printed = POOL_PLAYERS.map(p => visibleTiers(p.chart).length);
     const worst = Math.max(...printed);
-    expect(printed).toHaveLength(331);
+    // A floor, not the exact size: the pool grows whenever a name is added to
+    // card-data/force-include-2026.json, and this test is about chart heights,
+    // not about how many players there are. src/studio/players.test.js owns the
+    // count.
+    expect(printed.length).toBeGreaterThan(300);
     expect(worst).toBe(MAX_PRINTED_ROWS); // non-vacuous: the cap is reached
     expect(Math.min(...printed)).toBeGreaterThanOrEqual(2);
     for (const n of printed) expect(paintedBottom()).toBeLessThan(chartTop(n));
@@ -716,7 +720,7 @@ describe('nameFontSize', () => {
     //   08_09_LeBron_James.png  "LeBron James"     71px cap, 772px long, 0.6797em/char
     //   Anthony_Edwards.png     "Anthony Edwards"  62px cap, 872px long, 0.7099em/char
     //
-    // One rule has to serve all 331 names, so neither card is reproduced
+    // One rule has to serve every name in the pool, so neither card is reproduced
     // exactly — but both land close, and that is what the constants in
     // nameFontSize are FOR. Tidy them to rounder numbers and the new cards
     // stop matching the set they are joining.

@@ -144,7 +144,12 @@ const wnbaPresent = existsSync(WNBA_LOGO_DIR) ? new Set(readdirSync(WNBA_LOGO_DI
  *                extension-tolerant resolver, because no franchise row points
  *                at it: the WNBA has not had a Houston team since 2008. If one
  *                is ever added, this list is where the omission surfaces.
- *   TOR Alt.png  A second Toronto mark; TOR.png is the one in use.
+ *   TOR.png      Toronto's PRIMARY mark, and the one file here that is unused
+ *                for a reason of DESIGN rather than history: it is drawn in the
+ *                Tempo's own bordeaux, so on a bordeaux field it vanishes. The
+ *                row points at TOR_ALT.png, the same mark in Hydrogen Blue.
+ *                Kept because it is the primary and a future light-ground
+ *                surface would want it.
  *   WNBA.png     The LEAGUE mark, not a team's. Checked below.
  *   CON.png      A LOCAL LEFTOVER, and the reason this list is a permitted set
  *                rather than an exact one. `CON` is a reserved Windows device
@@ -153,7 +158,7 @@ const wnbaPresent = existsSync(WNBA_LOGO_DIR) ? new Set(readdirSync(WNBA_LOGO_DI
  *                absent on a fresh clone, so the assertion has to tolerate
  *                both. Safe to delete.
  */
-const UNREFERENCED = new Set(['CLE.png', 'HOU.gif', 'TOR Alt.png', 'WNBA.png', 'CON.png']);
+const UNREFERENCED = new Set(['CLE.png', 'HOU.gif', 'TOR.png', 'WNBA.png', 'CON.png']);
 
 describe('WNBA logo files', () => {
   it('has a real PNG behind every franchise in the table', () => {
@@ -214,6 +219,30 @@ describe('WNBA logo files', () => {
     // nobody "tidies" the filename back to matching the code.
     expect(RESERVED_DEVICE_NAMES.has('CON')).toBe(true);
     expect(WNBA_TEAMS.CON.logo).toBe('/logos/WNBA/CONN.png');
+  });
+
+  it('keeps every logo path URL-safe, so no filename needs escaping', () => {
+    // The second Windows-shaped landmine in this directory, after CON.png. The
+    // Tempo's alt mark was delivered as `TOR Alt.png`, and a SPACE in a path
+    // has to survive the shell, git, Vite's static server and finally an <img
+    // src> that is written into the DOM UN-ENCODED — four hands, any one of
+    // which turns "TOR Alt.png" into a 404 or a half-quoted argument. The file
+    // is TOR_ALT.png instead, and this is the rule that keeps the next drop
+    // from reintroducing the class.
+    //
+    // Scoped to the PATHS THE APP RESOLVES rather than to the directory: a file
+    // sitting there unreferenced can be named anything, because nothing ever
+    // builds a URL out of it.
+    const offenders = [];
+    for (const [abbr, team] of Object.entries({ ...TEAMS, ...WNBA_TEAMS })) {
+      if (!team.logo) continue;
+      const file = team.logo.split('/').pop();
+      if (file !== encodeURIComponent(file)) offenders.push(`${abbr} -> ${team.logo}`);
+    }
+    expect(offenders).toEqual([]);
+    // And Toronto is on the alt on purpose — the primary is bordeaux on a
+    // bordeaux field. Pinned so a "fix" back to {abbr}.png has to be deliberate.
+    expect(WNBA_TEAMS.TOR.logo).toBe('/logos/WNBA/TOR_ALT.png');
   });
 
   it('gives the WNBA league mark the same tall shape as the NBA one', () => {

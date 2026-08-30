@@ -168,10 +168,20 @@ export const HISTORICAL_TEAMS = {
  *
  * That directory holds files no row below points at, and they are not
  * oversights: `CLE.png` (Rockers, folded 2003) and `HOU.gif` (Comets, folded
- * 2008) are defunct franchises with no 2026 row to attach to, and `TOR Alt.png`
- * is a second Toronto mark. Nothing resolves `.gif`, and nothing needs to —
- * every path below is a `.png` that exists. logoFiles.test.js pins both halves
- * of that so a future Houston row cannot quietly 404.
+ * 2008) are defunct franchises with no 2026 row to attach to, and `TOR.png` is
+ * Toronto's PRIMARY mark, superseded here by the alt (see the row). Nothing
+ * resolves `.gif`, and nothing needs to — every path below is a `.png` that
+ * exists. logoFiles.test.js pins both halves of that so a future Houston row
+ * cannot quietly 404.
+ *
+ * ⚠ TORONTO IS THE ONE ROW NOT ON ITS `{abbr}.png`, and the reason is contrast,
+ * not Windows. The Tempo's primary mark is drawn in the team's OWN bordeaux, so
+ * on a bordeaux field it disappears — the mark and the ground are the same
+ * colour. The alt is the same mark in Hydrogen Blue on a bordeaux plaque, which
+ * separates. The file was delivered as `TOR Alt.png`; it is `TOR_ALT.png` here
+ * because a SPACE in a filename has to survive the shell, git, Vite's static
+ * server and a URL that reaches the browser un-encoded, and one of those four
+ * eventually gets it wrong. Renaming costs nothing and removes the class.
  *
  * ⚠ CONNECTICUT'S FILE IS `CONN.png`, BREAKING THE {abbr}.png RULE, because
  * Windows will not let it be anything else. `CON` is a RESERVED DOS DEVICE
@@ -214,7 +224,7 @@ export const WNBA_TEAMS = {
   PHO: { name: 'Mercury',   city: 'Phoenix',      primary: '#582C83', secondary: '#FC4C02', logo: '/logos/WNBA/PHO.png', league: 'WNBA' }, // Purple, Orange (2026 rebrand)
   POR: { name: 'Fire',      city: 'Portland',     primary: '#E93CAC', secondary: '#C8102E', logo: '/logos/WNBA/POR.png', league: 'WNBA' }, // Pink, Red
   SEA: { name: 'Storm',     city: 'Seattle',      primary: '#2C5234', secondary: '#FBE122', logo: '/logos/WNBA/SEA.png', league: 'WNBA' }, // Storm Green, Lightning Yellow
-  TOR: { name: 'Tempo',     city: 'Toronto',      primary: '#612C51', secondary: '#B8CCEA', logo: '/logos/WNBA/TOR.png', league: 'WNBA' }, // Bordeaux, Hydrogen Blue
+  TOR: { name: 'Tempo',     city: 'Toronto',      primary: '#612C51', secondary: '#B8CCEA', logo: '/logos/WNBA/TOR_ALT.png', league: 'WNBA' }, // Bordeaux, Hydrogen Blue — ALT mark: the primary is bordeaux-on-bordeaux
   WAS: { name: 'Mystics',   city: 'Washington',   primary: '#C8102E', secondary: '#0C2340', logo: '/logos/WNBA/WAS.png', league: 'WNBA' }, // Red, Navy
 };
 

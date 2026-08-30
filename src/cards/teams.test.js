@@ -362,12 +362,20 @@ describe('WNBA_TEAMS', () => {
     // would not 404, and would look completely fine on the card.
     // logoFiles.test.js checks the files themselves exist and are usable.
     //
-    // The file is {abbr}.png for fourteen of the fifteen. Connecticut is
-    // CONN.png because "CON" is a reserved Windows device name and git cannot
-    // index a file called CON.png at all — see RESERVED_DEVICE_NAMES in
-    // teams.js, and the test that refuses a new one in logoFiles.test.js.
+    // The file is {abbr}.png for thirteen of the fifteen, and the two
+    // exceptions are exceptions for UNRELATED reasons:
+    //
+    //   CON  CONN.png, because "CON" is a reserved Windows device name and git
+    //        cannot index a file called CON.png at all — see
+    //        RESERVED_DEVICE_NAMES in teams.js, and the test that refuses a new
+    //        one in logoFiles.test.js.
+    //   TOR  TOR_ALT.png, a CONTRAST call rather than a filesystem one: the
+    //        Tempo's primary mark is drawn in the team's own bordeaux and
+    //        disappears on a bordeaux field. The alt is the same mark in
+    //        Hydrogen Blue. TOR.png is still in the directory, unused.
+    const EXCEPTIONS = { CON: 'CONN', TOR: 'TOR_ALT' };
     for (const [abbr, team] of Object.entries(WNBA_TEAMS)) {
-      const expected = abbr === 'CON' ? 'CONN' : abbr;
+      const expected = EXCEPTIONS[abbr] ?? abbr;
       expect(team.logo, abbr).toBe(`/logos/WNBA/${expected}.png`);
     }
   });

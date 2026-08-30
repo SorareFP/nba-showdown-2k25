@@ -109,10 +109,29 @@ describe('photoUrlPath extensions', () => {
     // If one list grows and the other does not, a file the server happily
     // reports as a photo resolves to a .jpg that is not there — the original
     // bug, re-created. ALLOWED_PHOTO_EXT is the server's copy of this.
-    expect([...PHOTO_EXTENSIONS].sort()).toEqual(['.avif', '.jpeg', '.jpg', '.png', '.webp']);
+    expect([...PHOTO_EXTENSIONS].sort()).toEqual([
+      '.avif',
+      '.jfif',
+      '.jpeg',
+      '.jpg',
+      '.png',
+      '.webp',
+    ]);
     for (const ext of PHOTO_EXTENSIONS) {
       expect(normalizePhotoExt(ext)).toBe(ext);
     }
+  });
+
+  it('accepts .jfif, which is a JPEG with a Windows name on it', () => {
+    // Chrome on Windows writes .jfif for a "Save image as" on an image/jpeg
+    // with no filename, and a curated photo arrived under it. The studio
+    // listed the player as having no photo at all, because the extension —
+    // not the file — was unrecognised.
+    expect(normalizePhotoExt('.jfif')).toBe('.jfif');
+    expect(normalizePhotoExt('JFIF')).toBe('.jfif');
+    expect(photoUrlPath('DiJonai_Carrington', 'wnba', '.jfif')).toBe(
+      '/card-art/sets/wnba/photos/DiJonai_Carrington.jfif'
+    );
   });
 });
 

@@ -255,11 +255,20 @@ export default function CardTemplate({
   const field = applyTreatment(base, setTreatment(set));
   const treatment = field.treatment ?? null;
 
+  // THE SET IS PART OF THE PHOTO'S PATH, and leaving it out was a real bug:
+  // photos live at card-art/sets/{set}/photos/{id}{ext}, so a card rendered
+  // without it resolved every photo into the 2026-27 set's directory no matter
+  // which set was on screen. It went unnoticed for as long as it did because
+  // 2026-27 is `resolvePhotoUrl`'s default and was the only set with any
+  // curated photos in it — the first photo dropped on any OTHER set listed as
+  // present (the /__studio/state scan IS per set) and then rendered as a hole,
+  // which is exactly how the WNBA set's one photo behaved.
   const photoUrl = resolvePhotoUrl({
     playerId: card.id,
     hasPhoto,
     personId: card.personId ?? null,
     version: photoVersion,
+    set,
     ext: photoExt,
   });
 

@@ -64,6 +64,9 @@ export function photoExtMap(files) {
 const CONTENT_TYPES = {
   '.jpg': 'image/jpeg',
   '.jpeg': 'image/jpeg',
+  // A JPEG under the name Chrome-on-Windows gives it. Served as one, because
+  // that is what it is — there is no such thing as a JFIF decoder.
+  '.jfif': 'image/jpeg',
   '.png': 'image/png',
   '.webp': 'image/webp',
   '.avif': 'image/avif',

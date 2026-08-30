@@ -31,7 +31,7 @@ export const photoUrl = (playerId, set) =>
   (set ? `&set=${encodeURIComponent(set)}` : '');
 
 /** Extensions the studio server will store (it rejects nothing, but see below). */
-const IMAGE_EXT = /\.(jpe?g|png|webp|gif|avif)$/i;
+const IMAGE_EXT = /\.(jpe?g|jfif|png|webp|gif|avif)$/i;
 
 /**
  * Guards against dropping something that isn't an image.

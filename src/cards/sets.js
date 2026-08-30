@@ -374,8 +374,15 @@ export const DEFAULT_PHOTO_EXT = '.jpg';
  * .avif earns its place the same way .jpeg did: it is what a browser's "Save
  * image as" produces on a growing share of sites, so photos saved by hand
  * arrive under it, and every browser that can run this studio can display it.
+ *
+ * .jfif is the same story with a worse name. It IS a JPEG — same bytes, same
+ * decoder — and it is what Chrome on Windows writes for a "Save image as" on a
+ * site that serves `image/jpeg` without a filename. Found in the wild in this
+ * repo: card-art/sets/wnba/photos/DiJonai_Carrington.jfif, which the studio
+ * listed as no photo at all because the extension was not on this list.
+ * Rejecting it would be rejecting a JPEG for its spelling.
  */
-export const PHOTO_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp', '.avif'];
+export const PHOTO_EXTENSIONS = ['.jpg', '.jpeg', '.jfif', '.png', '.webp', '.avif'];
 
 /**
  * Normalizes an extension to the dotted lowercase form the paths use.

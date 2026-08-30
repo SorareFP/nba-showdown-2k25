@@ -40,6 +40,7 @@ import {
   SET_IDS,
   SUPER_SEASON_SET,
   WNBA_SET,
+  photoUrlPath,
   setLeague,
   showsSeason,
 } from './sets.js';
@@ -706,6 +707,36 @@ describe('a WNBA card', () => {
   it('carries no card-type badge — the league mark already says WNBA', () => {
     const html = render({ card: COLLIER, set: WNBA_SET });
     expect(html).not.toMatch(/class="[^"]*badge/);
+  });
+});
+
+describe('the curated photo is looked up in THIS card\'s set', () => {
+  // THE BUG THIS PINS: CardTemplate resolved every photo without saying which
+  // set it was rendering, so resolvePhotoUrl fell back to its default — the
+  // 2026-27 set — and pointed at card-art/sets/2026-27/photos/{id} whatever was
+  // on screen. It stayed invisible while 2026-27 was the only set with photos
+  // in it; the moment the WNBA set got its first one, that player counted as
+  // having a photo (the /__studio/state scan IS per set) and rendered a hole.
+  const MABREY = { id: 'Marina_Mabrey', name: 'Marina Mabrey', team: 'TOR' };
+  const srcOf = html => html.match(/<img[^>]*class="[^"]*photo[^"]*"[^>]*>/i)?.[0] ?? html;
+
+  it('points at the set it was told to render, not at the default set', () => {
+    const html = render({ card: MABREY, hasPhoto: true, photoExt: '.webp', set: WNBA_SET });
+    expect(html).toContain(photoUrlPath('Marina_Mabrey', WNBA_SET, '.webp'));
+    expect(html).not.toContain(photoUrlPath('Marina_Mabrey', CURRENT_SET, '.webp'));
+  });
+
+  it('gives every set its own path, including the two special ones', () => {
+    for (const id of SET_IDS) {
+      const html = render({ card: MABREY, hasPhoto: true, set: id });
+      expect(srcOf(html), id).toContain(`/card-art/sets/${id}/photos/Marina_Mabrey.jpg`);
+    }
+  });
+
+  it('still defaults to the set being built when no set is given', () => {
+    // The batch export and any other caller that predates multi-set rendering.
+    const html = render({ card: MABREY, hasPhoto: true });
+    expect(html).toContain(photoUrlPath('Marina_Mabrey', CURRENT_SET));
   });
 });
 

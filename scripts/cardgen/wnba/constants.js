@@ -72,8 +72,8 @@ export const WNBA_BLEND_SEASON = 2025;
  * for an 82-game one: a minutes floor that means "real rotation player" and a
  * games floor that means "played enough of the season to measure".
  *
- * Produces 101 players out of the 230 in the 2026 table, plus the six named in
- * card-data/wnba-force-include-2026.json — 107 cards.
+ * Produces 101 players out of the 230 in the 2026 table, plus the seven named
+ * in card-data/wnba-force-include-2026.json — 108 cards.
  */
 export const WNBA_POOL_RULE = { minMpg: 16, minGames: 20 };
 

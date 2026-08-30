@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-30T15:41:20.982Z",
+ "generatedAt": "2026-08-30T16:06:10.523Z",
  "provisional": true,
  "set": "wnba",
  "league": "WNBA",
@@ -9,9 +9,10 @@
   "minMpg": 16,
   "minGames": 20
  },
- "poolSize": 107,
+ "poolSize": 108,
  "byRule": 101,
  "forced": [
+  "DiJonai Carrington",
   "Napheesa Collier",
   "Skylar Diggins",
   "Leonie Fiebich",
@@ -599,11 +600,11 @@
    "pos": "F",
    "speed": 10,
    "power": 11,
-   "shotLine": 17,
+   "shotLine": 16,
    "paintBoost": 0,
    "threePtBoost": -3,
    "defBoost": 1,
-   "salary": 450,
+   "salary": 520,
    "chart": [
     {
      "lo": 1,
@@ -621,13 +622,13 @@
     },
     {
      "lo": 4,
-     "hi": 16,
+     "hi": 15,
      "pts": 2,
      "reb": 2,
      "ast": 0
     },
     {
-     "lo": 17,
+     "lo": 16,
      "hi": 19,
      "pts": 3,
      "reb": 2,
@@ -2473,6 +2474,80 @@
    "provisional": true
   },
   {
+   "id": "DiJonai_Carrington",
+   "name": "DiJonai Carrington",
+   "team": "CHI",
+   "pos": "G-F",
+   "speed": 7,
+   "power": 5,
+   "shotLine": 17,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": -1,
+   "salary": 100,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 16,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 17,
+     "hi": 19,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 4,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2026,
+   "seasonLabel": "2025+2026",
+   "games": 42,
+   "mpg": 20.4,
+   "bbrefId": "carridi01w",
+   "blended": true,
+   "seasonsPooled": [
+    2025,
+    2026
+   ],
+   "metrics": {
+    "bpmHat": -3.51,
+    "obpmHat": -2.43,
+    "dbpmHat": -1.08,
+    "per": 12.2,
+    "ws": 0.1,
+    "wsPer40": 0.005,
+    "offRtg": 93,
+    "defRtg": 108,
+    "tsPct": 0.4719822557810288,
+    "pts100": 23.2
+   },
+   "provisional": true
+  },
+  {
    "id": "Dominique_Malonga",
    "name": "Dominique Malonga",
    "team": "SEA",
@@ -2947,9 +3022,9 @@
    "power": 5,
    "shotLine": 17,
    "paintBoost": 0,
-   "threePtBoost": -2,
+   "threePtBoost": -1,
    "defBoost": -1,
-   "salary": 20,
+   "salary": 60,
    "chart": [
     {
      "lo": 1,

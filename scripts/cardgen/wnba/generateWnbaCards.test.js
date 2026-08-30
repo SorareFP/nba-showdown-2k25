@@ -143,11 +143,11 @@ describe('expectedValuePerRoll', () => {
 });
 
 describe('the generated WNBA set', () => {
-  it('holds the 101 who pass the bar plus the six who were named', () => {
-    expect(CARDS).toHaveLength(107);
+  it('holds the 101 who pass the bar plus the seven who were named', () => {
+    expect(CARDS).toHaveLength(108);
     expect(SET.byRule).toBe(101);
-    expect(SET.forced).toHaveLength(6);
-    expect(POOL).toHaveLength(107);
+    expect(SET.forced).toHaveLength(7);
+    expect(POOL).toHaveLength(108);
   });
 
   it('gives every card the full stat line', () => {
@@ -181,7 +181,7 @@ describe('the generated WNBA set', () => {
     expect(new Set(CARDS.map(c => c.id)).size).toBe(CARDS.length);
   });
 
-  it('blends exactly the six named players and nobody else', () => {
+  it('blends exactly the seven named players and nobody else', () => {
     const blended = CARDS.filter(c => c.blended);
     expect(blended.map(c => c.name).sort()).toEqual(SET.forced.slice().sort());
     for (const c of blended) {

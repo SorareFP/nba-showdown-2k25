@@ -41,7 +41,7 @@ import { resolveDisplayTeams } from './pool.js';
  * dropped — MINUS the generational-suffix strip, which is an NBA problem
  * ("Bobby Portis Jr.", "Robert Williams III") that the WNBA does not have and
  * that can only collapse two real people onto one key. Verified 2026-08-30:
- * every one of the 107 pool players matches a wnba.com record under this rule,
+ * every one of the 108 pool players matches a wnba.com record under this rule,
  * and no two records collide.
  */
 export function normalizeWnbaName(name) {

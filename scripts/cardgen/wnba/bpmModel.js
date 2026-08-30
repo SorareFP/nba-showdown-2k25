@@ -391,7 +391,7 @@ export function rmse(actual, predicted, weights) {
  * one `{ bpm, obpm, dbpm }` per row, in the same order.
  *
  * `basisRows` exists for the case the WNBA generator needs: the centring must
- * be measured over the WHOLE LEAGUE, not over the 107 players being carded,
+ * be measured over the WHOLE LEAGUE, not over the 108 players being carded,
  * because "league average" means the league. Pass the full table there and the
  * pool here.
  */

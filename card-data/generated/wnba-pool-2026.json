@@ -756,6 +756,15 @@
     "blended": false
   },
   {
+    "name": "DiJonai Carrington",
+    "team": "CHI",
+    "pos": "G-F",
+    "games": 42,
+    "mpg": 20.4,
+    "bbrefId": "carridi01w",
+    "blended": true
+  },
+  {
     "name": "Sydney Taylor",
     "team": "CHI",
     "pos": "G",

@@ -387,7 +387,15 @@ export const SOURCES = {
   // listed here rather than in a second selector because everything the studio
   // does to it — photos, crops, team colours, the card preview — is identical.
   [WNBA_SET]: specialSource(WNBA_SET, WNBA_FILE, {
-    sub: `${WNBA_FILE?.statsSeason ?? '2026'} season · MPG>=16 & G>=20, plus 6 named`,
+    // The force-include COUNT is read off the payload rather than written out.
+    // It was a literal "plus 6 named", and the first time the user added a
+    // player the label went stale while the card count beside it updated —
+    // two numbers from one file disagreeing on screen. Both come from the file
+    // now.
+    sub:
+      `${WNBA_FILE?.statsSeason ?? '2026'} season · ` +
+      `MPG>=${WNBA_FILE?.poolRule?.minMpg ?? 16} & G>=${WNBA_FILE?.poolRule?.minGames ?? 20}` +
+      `, plus ${WNBA_FILE?.forced?.length ?? 0} named`,
     hint:
       'THE WNBA SET, built from the 2026 Basketball-Reference WNBA tables. Two things about it ' +
       'are unlike every other set here. FIRST, the WNBA has no BPM, OBPM, DBPM or VORP anywhere ' +

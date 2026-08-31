@@ -146,6 +146,136 @@ describe('size inside the split', () => {
   });
 });
 
+describe('positional SHARES inside the split', () => {
+  const oneHot = pos => Object.fromEntries(A.POSITIONS.map(p => [p, p === pos ? 100 : 0]));
+
+  it('is the old rule exactly when the shares are all on one position', () => {
+    for (const pos of A.POSITIONS) {
+      expect(A.speedShare('DH', null, { positionShares: oneHot(pos) })).toBeCloseTo(
+        A.POSITION_SPEED_SHARE[pos],
+        12
+      );
+    }
+  });
+
+  it('is the old rule exactly when no shares are supplied', () => {
+    for (const pos of A.POSITIONS) {
+      expect(A.speedShare(pos, null, { positionShares: null })).toBeCloseTo(
+        A.POSITION_SPEED_SHARE[pos],
+        12
+      );
+    }
+  });
+
+  // The case the change exists for. James Harden's label says PG; his minutes
+  // say 46% PG / 52% SG / 2% SF, and the blend lands between the two centres
+  // instead of on the guard end of them.
+  it('lands a combo guard between the two positions he actually played', () => {
+    const blended = A.speedShare('PG', null, { positionShares: { PG: 46, SG: 52, SF: 2, PF: 0, C: 0 } });
+    expect(blended).toBeLessThan(A.POSITION_SPEED_SHARE.PG);
+    expect(blended).toBeGreaterThan(A.POSITION_SPEED_SHARE.SF);
+    expect(blended).toBeCloseTo(
+      (46 * A.POSITION_SPEED_SHARE.PG + 52 * A.POSITION_SPEED_SHARE.SG + 2 * A.POSITION_SPEED_SHARE.SF) /
+        100,
+      12
+    );
+  });
+
+  // The rows are whole percents and total 99 to 102, so a blend that trusted
+  // the sum would scale every centre by up to 2% in one direction.
+  it('normalizes a row that does not total 100', () => {
+    const under = A.speedShare('SF', null, { positionShares: { PG: 0, SG: 0, SF: 50, PF: 49, C: 0 } });
+    const exact = A.speedShare('SF', null, { positionShares: { PG: 0, SG: 0, SF: 50 / 99, PF: 49 / 99, C: 0 } });
+    expect(under).toBeCloseTo(exact, 12);
+  });
+
+  // The half of this that is not a refinement: the size term is a deviation
+  // from a position's average BUILD, and with shares that baseline is the same
+  // blend as the centre. A stretch big who is exactly the average of the two
+  // builds he splits his minutes between gets no size adjustment at all.
+  it('blends the SIZE baseline as well as the centre', () => {
+    const shares = { PG: 0, SG: 0, SF: 0, PF: 50, C: 50 };
+    const build = {
+      inches: (A.POSITION_SIZE.PF.inches + A.POSITION_SIZE.C.inches) / 2,
+      weight: (A.POSITION_SIZE.PF.weight + A.POSITION_SIZE.C.weight) / 2,
+    };
+    expect(A.speedShare('PF', build, { positionShares: shares })).toBeCloseTo(
+      (A.POSITION_SPEED_SHARE.PF + A.POSITION_SPEED_SHARE.C) / 2,
+      12
+    );
+    // The label-only rule has to measure the same player against a power
+    // forward's build ALONE, so it reads a perfectly ordinary PF/C build as
+    // oversized and docks him for it — from a power forward's centre, which is
+    // the wrong origin to dock him from. It lands between the two answers and
+    // agrees with neither: too big to be a PF, and credited as one anyway.
+    const labelOnly = A.speedShare('PF', build);
+    expect(labelOnly).toBeLessThan(A.POSITION_SPEED_SHARE.PF);
+    expect(labelOnly).toBeGreaterThan((A.POSITION_SPEED_SHARE.PF + A.POSITION_SPEED_SHARE.C) / 2);
+  });
+
+  it('still sums to exactly the budget for every blend', () => {
+    const blends = [
+      { PG: 100, SG: 0, SF: 0, PF: 0, C: 0 },
+      { PG: 46, SG: 52, SF: 2, PF: 0, C: 0 },
+      { PG: 20, SG: 20, SF: 20, PF: 20, C: 20 },
+      { PG: 0, SG: 0, SF: 1, PF: 40, C: 60 },
+    ];
+    for (let total = 2; total <= 40; total += 1) {
+      for (const positionShares of blends) {
+        for (const size of [null, { inches: 68, weight: 160 }, { inches: 88, weight: 300 }]) {
+          const { speed, power } = A.splitSpeedPower(total, 'SF', A.POSITION_SPEED_SHARE, {
+            positionShares,
+            size,
+          });
+          expect(speed + power).toBe(total);
+          expect(speed).toBeGreaterThanOrEqual(1);
+          expect(power).toBeGreaterThanOrEqual(1);
+        }
+      }
+    }
+  });
+
+  // Every degradation path, because three sets depend on one of them: the WNBA
+  // has no play-by-play page at all, and any player the table misses has to
+  // keep producing the card he produced before.
+  it('DEGRADES to the label for empty, zeroed or unusable shares', () => {
+    const labelOnly = A.splitSpeedPower(22, 'SG');
+    for (const positionShares of [
+      null,
+      undefined,
+      {},
+      { PG: 0, SG: 0, SF: 0, PF: 0, C: 0 },
+      { PG: NaN, SG: NaN, SF: NaN, PF: NaN, C: NaN },
+      { GUARD: 100 },
+    ]) {
+      expect(A.splitSpeedPower(22, 'SG', A.POSITION_SPEED_SHARE, { positionShares })).toEqual(
+        labelOnly
+      );
+    }
+  });
+
+  // A blend beats a missing label: a player with no recognised position but a
+  // real measurement should be split on the measurement, not on 50/50.
+  it('uses the shares even when the label is unrecognised', () => {
+    expect(A.speedShare('DH', null, { positionShares: { PG: 0, SG: 0, SF: 0, PF: 0, C: 100 } })).toBeCloseTo(
+      A.POSITION_SPEED_SHARE.C,
+      12
+    );
+    expect(A.speedShare('DH', null)).toBe(A.DEFAULT_SPEED_SHARE);
+  });
+
+  it('falls back to the un-sized centre when a weighted position has no measured build', () => {
+    const shares = { PG: 0, SG: 0, SF: 0, PF: 50, C: 50 };
+    const centre = (A.POSITION_SPEED_SHARE.PF + A.POSITION_SPEED_SHARE.C) / 2;
+    expect(
+      A.speedShare('PF', { inches: 84, weight: 260 }, {
+        positionShares: shares,
+        positionSize: { PF: A.POSITION_SIZE.PF },
+      })
+    ).toBeCloseTo(centre, 12);
+  });
+});
+
 describe('defBoostFromEpm', () => {
   // The rounding rule the user asked for, spelled out in
   // memory/speed_power_methodology.md: "-0.5 down to -1".

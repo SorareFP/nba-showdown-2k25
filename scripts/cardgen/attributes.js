@@ -47,6 +47,9 @@ export const POSITION_SPEED_SHARE = {
   C: 0.3701,
 };
 
+/** The five, in order, so a blend and a share vector can agree on what index 0 is. */
+export const POSITIONS = ['PG', 'SG', 'SF', 'PF', 'C'];
+
 /** Neither guard nor big — used only when a position is missing or unrecognised. */
 export const DEFAULT_SPEED_SHARE = 0.5;
 
@@ -124,28 +127,94 @@ export const SIZE_SPEED_SHARE = { inches: -0.004393, weight: -0.000754 };
 export const SPEED_SHARE_BOUNDS = { min: 0.15, max: 0.85 };
 
 /**
- * The share of a budget that goes to Speed, from position AND size.
+ * How much of each position a player actually is, as five weights summing to 1.
  *
- * `size` is `{ inches, weight }` or null. WITHOUT IT THIS IS EXACTLY THE OLD
- * RULE — the positional average, unmodified — which is what lets the WNBA set,
- * where the API serves no biometrics at all, keep running unchanged rather than
- * dropping the players it cannot measure.
+ * `positionShares` is Basketball-Reference's own measurement — the share of his
+ * minutes he spent at each spot, off the play-by-play page, via
+ * scripts/cardgen/positionShares.js. When it is present the player IS that
+ * blend. When it is missing he is one-hot on his label, which is exactly the
+ * rule this file has always applied, so a source without shares (the WNBA, a
+ * player the table does not carry) is unchanged rather than dropped.
+ *
+ * Re-normalized here even though positionShares.js normalizes on the way in:
+ * this is the function every split runs through, and a caller passing raw
+ * percentages — or a vector that has drifted — should get a correct blend
+ * rather than a silently scaled one.
+ */
+export function positionWeights(pos, positionShares = null) {
+  if (positionShares) {
+    const raw = POSITIONS.map(p => {
+      const v = positionShares[p];
+      return Number.isFinite(v) && v > 0 ? v : 0;
+    });
+    const total = raw.reduce((a, b) => a + b, 0);
+    if (total > 0) return Object.fromEntries(POSITIONS.map((p, i) => [p, raw[i] / total]));
+  }
+  const base = basePosition(pos);
+  if (!base) return null;
+  return Object.fromEntries(POSITIONS.map(p => [p, p === base ? 1 : 0]));
+}
+
+/**
+ * The share of a budget that goes to Speed, from positional MIX and size.
+ *
+ * `size` is `{ inches, weight }` or null; `options.positionShares` is the five
+ * weights or null. With neither, this is exactly the rule the file shipped
+ * with — the positional average of the single label — which is what lets the
+ * WNBA set, where neither biometrics nor position estimates exist, keep running
+ * unchanged.
+ *
+ * ── WHY THE SIZE BASELINE IS BLENDED TOO, AND WHY THAT IS THE POINT ─────────
+ *
+ * The size term is a deviation from `POSITION_SIZE` — the average BUILD of a
+ * position — because a player of average build for his position should land
+ * exactly on his position's average share and leave the set-level distribution
+ * where the finished cards put it. Stating that baseline used to require
+ * committing to one position, which is a fudge for everyone who is two of them:
+ * Draymond Green measured against a power forward's 80" and 228lb is a
+ * different player from Draymond Green measured against a centre's 83" and
+ * 250lb, and the label picked one arbitrarily.
+ *
+ * With shares, BOTH the centre and the baseline are the same weighted blend, so
+ * the deviation is taken against the build of his own positional mix. That
+ * removes an arbitrary choice rather than adding a parameter — there is no new
+ * coefficient here, only a better-posed origin for the two that already exist.
  */
 export function speedShare(
   pos,
   size = null,
-  { shares = POSITION_SPEED_SHARE, positionSize = POSITION_SIZE, sizeModel = SIZE_SPEED_SHARE } = {}
+  {
+    shares = POSITION_SPEED_SHARE,
+    positionSize = POSITION_SIZE,
+    sizeModel = SIZE_SPEED_SHARE,
+    positionShares = null,
+  } = {}
 ) {
-  const base = basePosition(pos);
-  const share = shares[base] ?? DEFAULT_SPEED_SHARE;
-  const centre = positionSize?.[base];
-  if (!centre || !sizeModel) return share;
-  if (!Number.isFinite(size?.inches) || !Number.isFinite(size?.weight)) return share;
-  const adjusted =
-    share +
-    (sizeModel.inches ?? 0) * (size.inches - centre.inches) +
-    (sizeModel.weight ?? 0) * (size.weight - centre.weight);
-  return Math.min(Math.max(adjusted, SPEED_SHARE_BOUNDS.min), SPEED_SHARE_BOUNDS.max);
+  const weights = positionWeights(pos, positionShares);
+  if (!weights) return DEFAULT_SPEED_SHARE;
+  const centre = POSITIONS.reduce(
+    (sum, p) => sum + weights[p] * (shares[p] ?? DEFAULT_SPEED_SHARE),
+    0
+  );
+  const clamp = v => Math.min(Math.max(v, SPEED_SHARE_BOUNDS.min), SPEED_SHARE_BOUNDS.max);
+  if (!positionSize || !sizeModel) return clamp(centre);
+  if (!Number.isFinite(size?.inches) || !Number.isFinite(size?.weight)) return clamp(centre);
+  let baseInches = 0;
+  let baseWeight = 0;
+  for (const p of POSITIONS) {
+    if (weights[p] <= 0) continue;
+    // A position carrying weight but no measured build makes the baseline a
+    // partial sum, which would read as an enormous deviation. Falling back to
+    // the un-sized centre is the only honest answer.
+    if (!positionSize[p]) return clamp(centre);
+    baseInches += weights[p] * positionSize[p].inches;
+    baseWeight += weights[p] * positionSize[p].weight;
+  }
+  return clamp(
+    centre +
+      (sizeModel.inches ?? 0) * (size.inches - baseInches) +
+      (sizeModel.weight ?? 0) * (size.weight - baseWeight)
+  );
 }
 
 /**
@@ -175,8 +244,9 @@ export function basePosition(pos) {
  *
  * Both sides are kept at 1 or above: a 0 on a card reads as missing data.
  *
- * `options.size` is `{ inches, weight }`; omitting it gives the position-only
- * split this function has always produced.
+ * `options.size` is `{ inches, weight }` and `options.positionShares` is the
+ * five positional weights; omitting both gives the position-label-only split
+ * this function has always produced.
  */
 export function splitSpeedPower(total, pos, shares = POSITION_SPEED_SHARE, options = {}) {
   const t = Math.max(Math.round(total ?? 0), 2);
@@ -208,9 +278,17 @@ export function zScorer(values) {
  * predictor) rather than propagating NaN coefficients into a card — a silent
  * NaN here becomes a blank stat on every card in the set, which is exactly the failure this
  * whole file exists to end.
+ *
+ * `intercept: false` drops the constant column, and the returned `coef` is then
+ * the predictors alone. It exists for ONE fit: the positional centres against
+ * five shares that sum to 1. Those five columns already span the constant, so an
+ * intercept makes the design exactly singular and the fit would return null —
+ * and the coefficients without it are the thing wanted anyway, each one the
+ * Speed share of a player who was 100% that position. `applyModel` reads the
+ * same flag, so a model and its application cannot disagree.
  */
-export function fitLeastSquares(rows, yOf, xOf) {
-  const X = rows.map(r => [1, ...xOf.map(f => f(r))]);
+export function fitLeastSquares(rows, yOf, xOf, { intercept = true } = {}) {
+  const X = rows.map(r => (intercept ? [1, ...xOf.map(f => f(r))] : xOf.map(f => f(r))));
   const Y = rows.map(yOf);
   if (X.length === 0) return null;
   const k = X[0].length;
@@ -237,20 +315,32 @@ export function fitLeastSquares(rows, yOf, xOf) {
     }
   }
   const coef = b.map((v, i) => v / A[i][i]);
-  const predictWith = xs => coef.reduce((s, c, i) => s + c * (i === 0 ? 1 : xs[i - 1]), 0);
+  const model = { coef, intercept, n: rows.length };
   const meanY = Y.reduce((a, c) => a + c, 0) / Y.length;
   let ssRes = 0;
   let ssTot = 0;
   rows.forEach((r, i) => {
-    ssRes += (Y[i] - predictWith(xOf.map(f => f(r)))) ** 2;
+    ssRes += (Y[i] - applyModel(model, xOf.map(f => f(r)))) ** 2;
     ssTot += (Y[i] - meanY) ** 2;
   });
-  return { coef, r2: ssTot > 1e-12 ? 1 - ssRes / ssTot : 0, n: rows.length };
+  return { ...model, r2: ssTot > 1e-12 ? 1 - ssRes / ssTot : 0 };
 }
 
-/** Applies a fitted model to a raw predictor vector. */
-export const applyModel = (model, xs) =>
-  model.coef.reduce((s, c, i) => s + c * (i === 0 ? 1 : (xs[i - 1] ?? 0)), 0);
+/**
+ * Applies a fitted model to a raw predictor vector.
+ *
+ * `model.intercept === false` means coef[0] is a real predictor rather than a
+ * constant. Defaulting the missing flag to TRUE is what keeps every model
+ * fitted before the flag existed — including the salary model already stored in
+ * card-data/generated/card-calibration.json — reading exactly as it did.
+ */
+export const applyModel = (model, xs) => {
+  const withIntercept = model.intercept !== false;
+  return model.coef.reduce(
+    (s, c, i) => s + c * (withIntercept ? (i === 0 ? 1 : (xs[i - 1] ?? 0)) : (xs[i] ?? 0)),
+    0
+  );
+};
 
 /**
  * Def Boost from dunksandthrees' DEF EPM, rounded.

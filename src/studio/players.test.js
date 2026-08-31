@@ -5,6 +5,9 @@ import {
   CARD_PLAYERS,
   SOURCES,
   DEFAULT_SOURCE,
+  PRIMARY_SOURCES,
+  SECONDARY_SOURCES,
+  visibleSources,
   photoProgress,
   filterPlayers,
   stepSelection,
@@ -513,6 +516,11 @@ describe('the special sets in the source list', () => {
   const SPECIAL = [SUPER_SEASON_SET, ROOKIE_SET, WNBA_SET, WNBA_SUPER_SEASON_SET];
 
   it('offers all six sets, in the order the model declares them', () => {
+    // THE MODEL, not the row of buttons. Every set is still a source and still
+    // reachable; one of them (`cards`) is now folded behind the selector's
+    // disclosure, which is a rendering rule and is pinned separately against
+    // visibleSources below. Nothing may fall out of SOURCES to achieve that —
+    // a set removed from here is a set the studio cannot open at all.
     expect(Object.keys(SOURCES)).toEqual([
       'pool', 'cards', SUPER_SEASON_SET, ROOKIE_SET, WNBA_SET, WNBA_SUPER_SEASON_SET,
     ]);
@@ -597,6 +605,77 @@ describe('the special sets in the source list', () => {
     for (const id of SPECIAL) {
       const ids = SOURCES[id].players.map(p => p.id);
       expect(new Set(ids).size).toBe(ids.length);
+    }
+  });
+});
+
+describe('the selector\'s reference group', () => {
+  it('marks exactly the finished set as secondary', () => {
+    // The finished 2025-26 set is the one thing here that is not being worked
+    // on: it is printed, read-only, and consulted rather than curated. Nothing
+    // else may quietly join it — a live set folded away is a set the user
+    // stops finding.
+    expect(SECONDARY_SOURCES.map(s => s.key)).toEqual(['cards']);
+    expect(SOURCES.cards.secondary).toBe(true);
+  });
+
+  it('declares secondary rather than reading it off editable', () => {
+    // They coincide today on one set, and that is a coincidence, not a rule —
+    // see the comment on the field. This pins that the studio asks the
+    // question it means: `pool` is editable and primary, `cards` is neither,
+    // and every special set is editable and primary too, so `editable` alone
+    // could not have produced this split without also being wrong about them.
+    for (const source of PRIMARY_SOURCES) {
+      expect(source.secondary, source.key).not.toBe(true);
+    }
+    expect(PRIMARY_SOURCES.map(s => s.key)).toEqual([
+      'pool', SUPER_SEASON_SET, ROOKIE_SET, WNBA_SET, WNBA_SUPER_SEASON_SET,
+    ]);
+  });
+
+  it('keeps every set in the model, folded or not', () => {
+    // The request was to de-emphasise the reference set, NOT to drop it. It is
+    // the only list with a complete stat line for every player, so it is how
+    // the template gets judged against the cards that were actually printed.
+    const folded = [...PRIMARY_SOURCES, ...SECONDARY_SOURCES].map(s => s.key);
+    expect(folded.sort()).toEqual(Object.keys(SOURCES).sort());
+  });
+
+  it('hides the reference set by default', () => {
+    expect(visibleSources().map(s => s.key)).toEqual(PRIMARY_SOURCES.map(s => s.key));
+    expect(visibleSources().map(s => s.key)).not.toContain('cards');
+  });
+
+  it('offers every set once the group is open, in declared order', () => {
+    expect(visibleSources({ showSecondary: true }).map(s => s.key)).toEqual(
+      Object.keys(SOURCES)
+    );
+  });
+
+  it('never hides the set that is currently on screen', () => {
+    // The failure this prevents: a collapsed group swallowing the active
+    // button, so the selector shows nothing selected while the stage below it
+    // renders that set's cards, and the control at fault is unguessable.
+    const shown = visibleSources({ showSecondary: false, activeKey: 'cards' });
+    expect(shown.map(s => s.key)).toContain('cards');
+    expect(shown.map(s => s.key)).toEqual(Object.keys(SOURCES));
+  });
+
+  it('does not reorder the sets to put the folded one last', () => {
+    // Declared order is the model's order (SET_IDS). The reference set sits
+    // second there and the selector must not renumber the world to move it —
+    // when the group is open, the row reads exactly as the model does.
+    const open = visibleSources({ showSecondary: true }).map(s => s.set);
+    expect(open).toEqual(SET_IDS);
+  });
+
+  it('leaves the default source visible and selected in every state', () => {
+    for (const showSecondary of [true, false]) {
+      for (const activeKey of Object.keys(SOURCES)) {
+        const keys = visibleSources({ showSecondary, activeKey }).map(s => s.key);
+        expect(keys, `${showSecondary} / ${activeKey}`).toContain(DEFAULT_SOURCE);
+        expect(keys, `${showSecondary} / ${activeKey}`).toContain(activeKey);
+      }
     }
   });
 });

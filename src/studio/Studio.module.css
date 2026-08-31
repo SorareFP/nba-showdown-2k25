@@ -15,11 +15,16 @@
 
 /* ── Top bar ─────────────────────────────────────────────────────────────── */
 
-/* WRAPS, because the set selector grew from two options to four and there will
- * be more (Championship Standouts is designed; WNBA is its own set). On a
- * 1280px window the fourth button was being clipped by the save indicator —
- * and a set you cannot see is a set you cannot switch to. Wrapping costs a row
- * of chrome on a narrow window and nothing at all on a wide one. */
+/* WRAPS, because the set selector grew from two options to six and there will
+ * be more (Championship Standouts is designed). On a 1280px window the fourth
+ * button was being clipped by the save indicator — and a set you cannot see is
+ * a set you cannot switch to. Wrapping costs a row of chrome on a narrow window
+ * and nothing at all on a wide one.
+ *
+ * Wrapping is the RELIEF VALVE, not the answer to a selector that keeps
+ * growing: every set added past this point costs the whole bar another row on
+ * a laptop. That is why the finished reference set now folds away behind a
+ * disclosure (.referenceGroup below) rather than holding a permanent slot. */
 .topBar {
   display: flex;
   align-items: center;
@@ -54,8 +59,17 @@
   white-space: nowrap;
 }
 
+/* WRAPS INTERNALLY TOO, and that is a second fix rather than a repeat of the
+ * top bar's. The bar wraps its ITEMS, and this group is one item: a group wider
+ * than the bar has nowhere to wrap TO, so it just overflowed and `overflow:
+ * hidden` sliced the last set in half. Measured at 1024px with five buttons:
+ * 1066px of buttons in a 992px row, so "WNBA Super Season · 16 cards" was cut
+ * mid-word. Wrapping inside the group turns that into a second line of the same
+ * control, which is what the bar was already doing one level up. */
 .toggle {
   display: flex;
+  flex-wrap: wrap;
+  max-width: 100%;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   overflow: hidden;
@@ -91,6 +105,62 @@
   letter-spacing: 0.2px;
   opacity: 0.72;
 }
+
+/* ── The reference disclosure ────────────────────────────────────────────── */
+
+/* The button and the group it opens, held together. `min-width: 0` so that a
+ * top bar tight enough to wrap shrinks this cluster instead of forcing an
+ * overflow — the sets inside keep `white-space: nowrap`, so without it the
+ * expanded group is a hard floor on the bar's width. */
+.referenceGroup {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  min-width: 0;
+}
+
+/* Quieter than a set button on purpose: this is a shelf, not a set. It reads
+ * as chrome until it is opened, which is the entire point of moving the
+ * finished set behind it. */
+.disclosure {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: transparent;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-dim);
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+.disclosure:hover { background: var(--card-hover); color: var(--text); }
+
+/* Solid once it is open — the dashed border says "there is more here"; a group
+ * that is already showing its contents has stopped making that offer. */
+.disclosureOpen {
+  border-style: solid;
+  color: var(--text-muted);
+}
+
+.disclosureCaret {
+  font-size: 9px;
+  line-height: 1;
+  opacity: 0.8;
+}
+
+/* Dimmer than the live sets even when open, so the eye still sorts the row
+ * into "what I am building" and "what I am comparing against". Only the
+ * inactive buttons are dimmed — the active one is the card on screen and must
+ * not be the quietest thing in the bar. */
+.toggleReference .toggleButton:not(.toggleButtonActive) { opacity: 0.75; }
+.toggleReference .toggleButton:not(.toggleButtonActive):hover { opacity: 1; }
+
+/* Collapsed. A class rather than not rendering the element, so the
+ * disclosure's aria-controls always resolves. */
+.toggleHidden { display: none; }
 
 /* ── Read-only bar ───────────────────────────────────────────────────────── */
 

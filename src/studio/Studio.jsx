@@ -27,14 +27,17 @@ import {
 import {
   SOURCES,
   DEFAULT_SOURCE,
+  SECONDARY_SOURCES,
   TEAMS_RESOLVED,
   STATS_GENERATED,
   filterPlayers,
   stepSelection,
+  visibleSources,
 } from './players.js';
 import { pruneCrops, resetCrop } from './crop.js';
 import { pruneTeamOverrides } from './teamTheme.js';
 import { fetchStudioState, uploadPhoto, saveCrops, saveTeams, isImageFile } from './api.js';
+import { readShowReferenceSets, writeShowReferenceSets } from './prefs.js';
 import styles from './Studio.module.css';
 
 /** Long enough that a drag saves once, short enough to feel immediate. */
@@ -54,8 +57,16 @@ function consumesArrowKeys(target) {
   return target.type !== 'checkbox';
 }
 
+/** The id the disclosure's aria-controls points at. Stable, so it can. */
+const REFERENCE_GROUP_ID = 'studio-reference-sets';
+
 export default function Studio() {
   const [sourceKey, setSourceKey] = useState(DEFAULT_SOURCE);
+  // Is the selector's reference group open? Read from localStorage ONCE, as a
+  // lazy initialiser rather than in an effect, so the first paint is already
+  // the arrangement the user left — a group that flickers open and then folds
+  // shut is worse than one that never folded.
+  const [showReference, setShowReference] = useState(readShowReferenceSets);
   const [photos, setPhotos] = useState([]);
   // playerId -> the extension that player's photo is stored under (".jpeg",
   // ".png", ...). Only the server can know it, so it comes down with the rest
@@ -109,6 +120,15 @@ export default function Studio() {
   // the finished set is on screen writes into the 2026-27 set under a name
   // that 2025-26 player happens to share. See SOURCES in players.js.
   const editable = source.editable !== false;
+  // What the selector actually renders, split into the two groups it draws.
+  // Both halves come out of ONE tested function, so the group a set lands in
+  // and the rule that decides whether it is offered at all cannot disagree.
+  const offered = useMemo(
+    () => visibleSources({ showSecondary: showReference, activeKey: sourceKey }),
+    [showReference, sourceKey]
+  );
+  const primaryOffered = offered.filter(s => !s.secondary);
+  const secondaryOffered = offered.filter(s => s.secondary);
   const photoIds = useMemo(() => new Set(photos), [photos]);
   const visible = useMemo(
     () => filterPlayers(players, { query, missingOnly, photoIds }),
@@ -326,6 +346,29 @@ export default function Studio() {
     setMissingOnly(false);
   };
 
+  /**
+   * Opens and closes the reference group, and remembers which.
+   *
+   * CLOSING IT WHILE ONE OF ITS SETS IS ACTIVE ALSO LEAVES THAT SET. Without
+   * that, the button is dead in exactly the state a user is most likely to
+   * press it: they opened the group, looked at a finished card, and now want it
+   * out of the way again — and the one set the group cannot hide is the one
+   * they are looking at. Returning to the set being built is what "put this
+   * away" means here, it costs nothing (the reference set is read-only, so
+   * there is no edit to lose), and it keeps the collapsed state honest: closed
+   * means closed.
+   *
+   * The preference is written from the handler rather than from an effect on
+   * `showReference`, so a mount never writes — the studio only records a choice
+   * the user actually made.
+   */
+  const toggleReference = () => {
+    const next = !showReference;
+    setShowReference(next);
+    writeShowReferenceSets(next);
+    if (!next && SOURCES[sourceKey]?.secondary) switchSource(DEFAULT_SOURCE);
+  };
+
   return (
     <div className={styles.page}>
       <header className={styles.topBar}>
@@ -405,9 +448,17 @@ export default function Studio() {
         {/* Each option leads with the SET it is, so the question "which of
             these is the set I'm building?" is answered by reading, not by
             knowing which season the stats came from. The stats season is the
-            second line, one size down; the full explanation is on hover. */}
+            second line, one size down; the full explanation is on hover.
+
+            TWO GROUPS, because six equal buttons stopped being a list of
+            choices and became a wall. The first holds the sets actually being
+            curated; the second is the finished reference set, folded away
+            behind a disclosure and remembered across reloads. Deliberately NOT
+            removed: it is the only list with a complete stat line for every
+            player, so it is how the template gets judged against what was
+            really printed. Out of the way, one click deep, is the whole ask. */}
         <div className={styles.toggle} role="group" aria-label="Which set to work on">
-          {Object.values(SOURCES).map(source => (
+          {primaryOffered.map(source => (
             <button
               key={source.key}
               type="button"
@@ -424,6 +475,68 @@ export default function Studio() {
             </button>
           ))}
         </div>
+
+        {/* The disclosure and the sets it governs, kept in one flex box so a
+            wrapping top bar cannot break the control away from what it opens.
+            Rendered only if there is something behind it — `secondary` is a
+            declared field, and a build with none of it set should show no
+            vestigial control. */}
+        {SECONDARY_SOURCES.length > 0 && (
+          <div className={styles.referenceGroup}>
+            <button
+              type="button"
+              className={`${styles.disclosure} ${
+                showReference ? styles.disclosureOpen : ''
+              }`}
+              aria-expanded={showReference}
+              aria-controls={REFERENCE_GROUP_ID}
+              data-reference-open={showReference}
+              onClick={toggleReference}
+              title={
+                showReference
+                  ? 'Hide the finished reference set again. It stays one click away — it is ' +
+                    'the only list with a complete stat line for every player, so it is how ' +
+                    'the template gets compared against the cards that were actually printed.'
+                  : 'Show the finished reference set — the printed cards, read-only, kept out ' +
+                    'of the way because comparing against them is an occasional job. This ' +
+                    'choice is remembered across reloads.'
+              }
+            >
+              <span className={styles.disclosureCaret} aria-hidden="true">
+                {showReference ? '▾' : '▸'}
+              </span>
+              reference
+            </button>
+
+            {/* Always in the DOM so aria-controls points at something real;
+                hidden by a class rather than by not rendering. */}
+            <div
+              id={REFERENCE_GROUP_ID}
+              className={`${styles.toggle} ${styles.toggleReference} ${
+                secondaryOffered.length ? '' : styles.toggleHidden
+              }`}
+              role="group"
+              aria-label="Reference sets"
+            >
+              {secondaryOffered.map(source => (
+                <button
+                  key={source.key}
+                  type="button"
+                  className={`${styles.toggleButton} ${
+                    source.key === sourceKey ? styles.toggleButtonActive : ''
+                  }`}
+                  aria-pressed={source.key === sourceKey}
+                  data-source={source.key}
+                  title={source.hint}
+                  onClick={() => switchSource(source.key)}
+                >
+                  {source.label}
+                  <span className={styles.toggleSub}>{source.sub}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         <span className={styles.spacer} />
         <SaveIndicator status={saveStatus} />

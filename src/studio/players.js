@@ -15,7 +15,11 @@
 //  - `cards` is the 2025-26 SET — finished, printed, 306 cards, and the only
 //    data with every field populated. It is here so the template can be judged
 //    with real numbers in place, and for nothing else. READ-ONLY: nothing
-//    curated against it belongs to the new set (see `editable` below).
+//    curated against it belongs to the new set (see `editable` below). It is
+//    also the only SECONDARY source — the selector folds it away behind a
+//    disclosure, because comparing against it is an occasional job and it was
+//    holding a permanent slot beside five sets being actively curated. See
+//    `secondary` on the entry and visibleSources at the bottom of this file.
 //
 // WHY THE LABELS SAY WHAT THEY SAY. A set is named for the season it will be
 // PLAYED in; the stats printed on it come from the season before. So the
@@ -351,6 +355,21 @@ export const SOURCES = {
     label: `${FINISHED_SET} set · ${CARD_PLAYERS.length} cards (reference)`,
     sub: 'finished — template preview only',
     editable: false,
+    // TUCKED BEHIND THE SELECTOR'S DISCLOSURE — see visibleSources below.
+    //
+    // DECLARED, not derived from `editable === false`. Those two facts happen
+    // to coincide on the only set that has either of them, and reading one off
+    // the other would be a rule the moment a second set needed it: a set can be
+    // read-only and still be the one being worked in (a frozen set mid-export),
+    // and a set can be perfectly editable and still be background material.
+    // This field answers a UI question — "is this one of the sets the user is
+    // actually working in today?" — and nothing about the card data can answer
+    // it. The finished set's job is comparison: it is the only list with a
+    // complete stat line for every player, so it is how the template gets
+    // judged against what was really printed. That job is occasional, and it
+    // was costing a permanent sixth of a selector that now holds five live
+    // sets.
+    secondary: true,
     hint:
       `THE FINISHED ${FINISHED_SET} SET, already printed (its stats came from the ` +
       `${FINISHED_STATS_SEASON} season, one year back, for the same reason). ` +
@@ -446,6 +465,42 @@ export const SOURCES = {
 };
 
 export const DEFAULT_SOURCE = 'pool';
+
+/**
+ * The sets the selector shows without being asked, in declared order.
+ *
+ * The live ones — everything actually being curated this cycle.
+ */
+export const PRIMARY_SOURCES = Object.values(SOURCES).filter(s => !s.secondary);
+
+/**
+ * The sets behind the selector's disclosure, in declared order.
+ *
+ * A LIST rather than the single `cards` entry, for the same reason SETS itself
+ * is a list: `secondary` is a field on a source, so the day a second set earns
+ * it — the 2026-27 set becomes reference material once 2027-28 starts — the
+ * selector needs no edit at all.
+ */
+export const SECONDARY_SOURCES = Object.values(SOURCES).filter(s => s.secondary);
+
+/**
+ * The sources the selector should render, given the disclosure's state.
+ *
+ * ── WHY THE ACTIVE SET IS ALWAYS IN THE RESULT ──────────────────────────────
+ *
+ * A collapsed group must never be able to hide the set that is on screen. If it
+ * did, the selector would show no active button while the stage below it
+ * rendered that set's cards, and the only way back would be to guess that the
+ * disclosure was the control at fault. Studio.jsx additionally returns to the
+ * default set when the group is collapsed while one of its sets is active, so
+ * in practice this clause is an invariant rather than a state anyone reaches —
+ * which is exactly why it is worth keeping: it holds even if that handler is
+ * changed, and the cost is one comparison.
+ */
+export function visibleSources({ showSecondary = false, activeKey = DEFAULT_SOURCE } = {}) {
+  if (showSecondary) return Object.values(SOURCES);
+  return Object.values(SOURCES).filter(s => !s.secondary || s.key === activeKey);
+}
 
 /** Accepts an array or a Set of photo ids and returns a Set. */
 function asSet(photoIds) {

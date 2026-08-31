@@ -36,6 +36,7 @@ import { readCache, REPO_ROOT } from './cache.js';
 import { normalizeName } from './resolveTeams.js';
 import { loadReferenceCards, chartExpectedValue } from './referenceCards.js';
 import { indexBiometrics, loadBiometrics } from './biometrics.js';
+import { normalizeShares } from './positionShares.js';
 import { reconcileBands } from './generate.js';
 import * as V from './variance.js';
 import * as A from './attributes.js';
@@ -209,6 +210,36 @@ export function fitChartLevel(rows, shape) {
 
 // --- positional split -------------------------------------------------------
 
+/**
+ * The reference season's play-by-play position estimates, by name.
+ *
+ * BY NAME, not by Basketball-Reference id, and that is safe HERE for the reason
+ * it is not safe in the archive: this is one season's table joined to one
+ * season's cards, and a normalized name is unique inside a single season. The
+ * father/son collisions history.js warns about only exist across seasons.
+ *
+ * Calibration is allowed to read the gitignored cache directly — it already
+ * needs the gitignored reference CSV, so it can never run from a bare checkout.
+ * GENERATION may not, which is why card-data/generated/position-shares.json is
+ * a committed file.
+ */
+export function indexShares(playByPlay) {
+  const m = new Map();
+  for (const row of playByPlay ?? []) {
+    const shares = normalizeShares(row.pct);
+    if (!shares) continue;
+    const key = normalizeName(row.name);
+    const prev = m.get(key);
+    if (!prev || (row.games ?? 0) > (prev.games ?? 0)) m.set(key, { ...shares, games: row.games ?? 0 });
+  }
+  // The games count was only a tiebreak; the consumers want five numbers.
+  for (const [k, v] of m) {
+    const { games, ...shares } = v;
+    m.set(k, shares);
+  }
+  return m;
+}
+
 export function measurePositionSpeedShare(rows) {
   const buckets = {};
   for (const row of rows) {
@@ -227,93 +258,295 @@ export function measurePositionSpeedShare(rows) {
 }
 
 /**
- * How far SIZE bends the Speed share away from the positional average.
+ * ── FOUR RULES FOR ONE SPLIT, MEASURED AGAINST THE FINISHED CARDS ───────────
  *
- * Two outputs, and they are two different kinds of thing:
+ * The Speed/Power split has been stated four different ways, and this measures
+ * all four against the same 283 real cards so the choice between them is made
+ * on a number rather than on a preference:
  *
- *   `positionSize` — the mean height and weight of each position in the finished
- *     set. These are the CENTRES the size term is measured from, so a player of
- *     average build for his position lands exactly on the positional share and
- *     the set-level distribution does not move.
- *   `model` — the ordinary-least-squares slope of speed share on height and
- *     weight, both taken as deviations from those centres, so the fit describes
- *     only what size says BEYOND the label.
+ *   label       the position LABEL's own average share. The original rule.
+ *   labelSize   that, bent by height and weight away from the average BUILD of
+ *               the label's position. What ships today.
+ *   shares      the player as a weighted blend of all five positional centres,
+ *               weighted by the share of his minutes he really spent at each —
+ *               Basketball-Reference's play-by-play position estimates.
+ *   sharesSize  that, bent by size away from the blend of those five builds.
  *
- * `quality` is reported honestly and is not flattering. The size term does not
- * reproduce the finished cards better than position alone; on a held-out half of
- * the set it is slightly worse. It is applied for RESOLUTION rather than for
- * fit — see SIZE_SPEED_SHARE in attributes.js, which carries the argument.
- * Reporting the number that does not support the change is the point: the next
- * person should not have to rediscover that this constant is a design choice
- * with a measured magnitude, not a refit.
+ * ── AND MEASURED HELD OUT, WHICH IS THE ONLY MEASUREMENT THAT SETTLES IT ────
+ *
+ * Every one of these rules is FITTED on the cards it is then scored against, so
+ * in-sample error falls monotonically as parameters are added whether or not the
+ * added parameter is real. `shares` has the same five parameters as `label` but
+ * spends them on a richer predictor; `sharesSize` has two more. Ranking them on
+ * in-sample RMSE would therefore reward complexity for its own sake.
+ *
+ * So each rule is also re-fitted with a fifth of the cards withheld, scored on
+ * that fifth, and the five folds pooled — and it is the HELD-OUT number that
+ * decides. The folds are deterministic — every fifth card of a name-sorted list
+ * — so the answer does not move between runs and cannot be reshuffled until it
+ * flatters a preference.
+ *
+ * AND IT IS RE-RUN LEAVE-ONE-OUT, which is not belt and braces. At two folds
+ * `labelSize` scores 0.943, better than its own in-sample 0.967, which is not a
+ * thing a real out-of-sample error does; it is the luck of one particular half.
+ * Leave-one-out has no such freedom, and reporting both is what stops a future
+ * reader from picking whichever k flatters the rule they already liked. The
+ * ORDER of the four is identical at k = 2, 3, 5, 10, 25 and n.
+ *
+ * This exists because the last change here had an honest negative result: size
+ * did NOT reproduce the finished cards better than the label, and shipped anyway
+ * on an argument about resolution. That number is still printed on every run.
+ * Whatever this one says, it gets the same treatment.
  */
-export function measureSizeSpeedShare(rows, biometrics) {
+export const SPEED_SHARE_FOLDS = 5;
+
+const mean = xs => xs.reduce((a, b) => a + b, 0) / xs.length;
+
+/** Per-position means of a value, over the points whose LABEL is that position. */
+function labelMeans(points, valueOf) {
+  const out = {};
+  for (const pos of A.POSITIONS) {
+    const g = points.filter(p => p.pos === pos);
+    if (g.length) out[pos] = { value: mean(g.map(valueOf)), n: g.length };
+  }
+  return out;
+}
+
+/**
+ * The five positional centres implied by fractional shares.
+ *
+ * A blend is `share = Σ w_p c_p`, which is a linear model in the five weights
+ * with NO intercept — the weights already sum to 1, so a constant would make the
+ * design singular. The recovered coefficients are the answer to "what would a
+ * player who was 100% this position get", which is the same quantity `label`
+ * measures as a group mean, so the two are directly comparable.
+ */
+function shareCentres(points, valueOf) {
+  const fit = A.fitLeastSquares(
+    points,
+    valueOf,
+    A.POSITIONS.map(p => r => r.shares[p]),
+    { intercept: false }
+  );
+  if (!fit) return null;
+  return Object.fromEntries(A.POSITIONS.map((p, i) => [p, fit.coef[i]]));
+}
+
+/** The size slopes, from residuals that already have their own baseline removed. */
+function sizeSlopes(points, centreOf, buildOf) {
+  const centred = points.map(p => {
+    const build = buildOf(p);
+    return {
+      ds: p.share - centreOf(p),
+      di: p.inches - build.inches,
+      dw: p.weight - build.weight,
+    };
+  });
+  const fit = A.fitLeastSquares(centred, r => r.ds, [r => r.di, r => r.dw]);
+  if (!fit) return null;
+  return { inches: fit.coef[1], weight: fit.coef[2], r2: fit.r2 };
+}
+
+/**
+ * The four rules, each as `fit(trainingPoints) -> splitSpeedPower options`.
+ *
+ * Every one returns the exact option bag `A.splitSpeedPower` takes, so scoring a
+ * rule runs the SHIPPING code path rather than a re-implementation of it. A rule
+ * that cannot be fitted (too few points, a singular system) returns null and is
+ * reported as unavailable instead of silently scoring as its simpler cousin.
+ */
+export const SPEED_SHARE_RULES = {
+  label: points => {
+    const m = labelMeans(points, p => p.share);
+    return { shares: Object.fromEntries(Object.entries(m).map(([k, v]) => [k, v.value])) };
+  },
+
+  labelSize: points => {
+    const shareBy = labelMeans(points, p => p.share);
+    const inchBy = labelMeans(points, p => p.inches);
+    const lbBy = labelMeans(points, p => p.weight);
+    const shares = Object.fromEntries(Object.entries(shareBy).map(([k, v]) => [k, v.value]));
+    const positionSize = Object.fromEntries(
+      A.POSITIONS.filter(p => inchBy[p]).map(p => [
+        p,
+        { inches: inchBy[p].value, weight: lbBy[p].value, n: inchBy[p].n },
+      ])
+    );
+    const usable = points.filter(p => shares[p.pos] !== undefined && positionSize[p.pos]);
+    const sizeModel = sizeSlopes(usable, p => shares[p.pos], p => positionSize[p.pos]);
+    if (!sizeModel) return null;
+    return { shares, positionSize, sizeModel, useSize: true };
+  },
+
+  shares: points => {
+    const shares = shareCentres(points, p => p.share);
+    return shares ? { shares, useShares: true } : null;
+  },
+
+  sharesSize: points => {
+    const shares = shareCentres(points, p => p.share);
+    const inches = shareCentres(points, p => p.inches);
+    const weight = shareCentres(points, p => p.weight);
+    if (!shares || !inches || !weight) return null;
+    const positionSize = Object.fromEntries(
+      A.POSITIONS.map(p => [p, { inches: inches[p], weight: weight[p] }])
+    );
+    const blend = (p, of) => A.POSITIONS.reduce((s, q) => s + p.shares[q] * of(q), 0);
+    const sizeModel = sizeSlopes(
+      points,
+      p => blend(p, q => shares[q]),
+      p => ({
+        inches: blend(p, q => positionSize[q].inches),
+        weight: blend(p, q => positionSize[q].weight),
+      })
+    );
+    if (!sizeModel) return null;
+    return { shares, positionSize, sizeModel, useShares: true, useSize: true };
+  },
+};
+
+/** Runs a fitted rule on one card, through the same code generation uses. */
+export function applySpeedShareRule(rule, point) {
+  return A.splitSpeedPower(point.total, point.pos, rule.shares, {
+    positionSize: rule.positionSize ?? null,
+    sizeModel: rule.useSize ? rule.sizeModel : null,
+    size: rule.useSize ? { inches: point.inches, weight: point.weight } : null,
+    positionShares: rule.useShares ? point.shares : null,
+  });
+}
+
+/** RMSE in whole printed Speed points, plus how often the rule lands exactly. */
+function scoreSpeed(pairs) {
+  if (pairs.length === 0) return null;
+  const se = pairs.reduce((s, [got, want]) => s + (got - want) ** 2, 0);
+  const exact = pairs.filter(([got, want]) => got === want).length;
+  return {
+    rmse: Number(Math.sqrt(se / pairs.length).toFixed(3)),
+    exactPct: Number(((100 * exact) / pairs.length).toFixed(1)),
+  };
+}
+
+/**
+ * In-sample and held-out error for every rule, on ONE common set of cards.
+ *
+ * The common set matters: a rule scored on more cards than its rival is not
+ * being compared with it. Only cards carrying a printed split, a height and
+ * weight, AND a play-by-play share row are used, and how many were dropped to
+ * get there is reported.
+ */
+export function compareSpeedShareRules(points, { folds = SPEED_SHARE_FOLDS } = {}) {
+  const ordered = points.slice().sort((a, b) => a.name.localeCompare(b.name));
+
+  const crossValidate = (fit, k) => {
+    const pairs = [];
+    for (let f = 0; f < k; f += 1) {
+      const trained = fit(ordered.filter((_, i) => i % k !== f));
+      if (!trained) return null;
+      for (const p of ordered.filter((_, i) => i % k === f)) {
+        pairs.push([applySpeedShareRule(trained, p).speed, p.speed]);
+      }
+    }
+    return scoreSpeed(pairs);
+  };
+
+  const out = {};
+  for (const [name, fit] of Object.entries(SPEED_SHARE_RULES)) {
+    const whole = fit(ordered);
+    if (!whole) {
+      out[name] = { available: false };
+      continue;
+    }
+    out[name] = {
+      available: true,
+      inSample: scoreSpeed(ordered.map(p => [applySpeedShareRule(whole, p).speed, p.speed])),
+      heldOut: crossValidate(fit, folds),
+      // Leave-one-out: the same measurement with no freedom left in how the
+      // cards were divided up. See SPEED_SHARE_FOLDS.
+      leaveOneOut: crossValidate(fit, ordered.length),
+    };
+  }
+  return out;
+}
+
+/**
+ * Everything the split needs, fitted, plus the four-way comparison behind it.
+ *
+ * Two families of constant come out of here and they are NOT interchangeable:
+ *
+ *   `positionSize` / `sizeSpeedShare` — the LABEL rule's centres and slopes,
+ *     unchanged, still what a caller with no share data applies.
+ *   `sharePositionSpeedShare` / `sharePositionSize` / `shareSizeSpeedShare` —
+ *     the same three quantities re-fitted against the SHARES.
+ *
+ * Re-fitting is not optional. Blending label-fitted centres with weights that
+ * are only mostly one-hot pulls every player toward the middle, so the set's
+ * whole distribution of splits would compress — and the finished 306-card set,
+ * the four other sets and the REFERENCE_TOTALS scale are all priced against the
+ * current level. The share-fitted centres are wider by exactly enough to undo
+ * that, because they are what a 100%-one-position player is measured to get.
+ *
+ * `quality` is reported honestly whichever way it falls. See
+ * SPEED_SHARE_RULES above for why the held-out column is the one that decides.
+ */
+export function measureSpeedShareRules(rows, biometrics, shareIndex) {
   const points = [];
+  let noSize = 0;
+  let noShares = 0;
   for (const row of rows) {
     const total = (row.card.speed ?? 0) + (row.card.power ?? 0);
     const pos = A.basePosition(row.pos);
-    const size = biometrics?.get(normalizeName(row.card.name));
     if (!pos || !total) continue;
-    if (!Number.isFinite(size?.inches) || !Number.isFinite(size?.weight)) continue;
-    points.push({ pos, total, speed: row.card.speed, share: row.card.speed / total, ...size });
+    const size = biometrics?.get(normalizeName(row.card.name));
+    const hasSize = Number.isFinite(size?.inches) && Number.isFinite(size?.weight);
+    const shares = shareIndex?.get(normalizeName(row.card.name)) ?? null;
+    if (!hasSize) noSize += 1;
+    if (!shares) noShares += 1;
+    if (!hasSize || !shares) continue;
+    points.push({
+      name: row.card.name,
+      pos,
+      total,
+      speed: row.card.speed,
+      share: row.card.speed / total,
+      shares,
+      ...size,
+    });
   }
   if (points.length === 0) return null;
 
-  const mean = xs => xs.reduce((a, b) => a + b, 0) / xs.length;
-  const positionSize = {};
-  const positionShare = {};
-  for (const pos of Object.keys(A.POSITION_SPEED_SHARE)) {
-    const g = points.filter(p => p.pos === pos);
-    if (g.length === 0) continue;
-    positionSize[pos] = {
-      inches: Number(mean(g.map(p => p.inches)).toFixed(2)),
-      weight: Number(mean(g.map(p => p.weight)).toFixed(1)),
-      n: g.length,
-    };
-    positionShare[pos] = mean(g.map(p => p.share));
-  }
+  const label = SPEED_SHARE_RULES.labelSize(points);
+  const shares = SPEED_SHARE_RULES.sharesSize(points);
+  if (!label || !shares) return null;
 
-  const centred = points
-    .filter(p => positionSize[p.pos])
-    .map(p => ({
-      ds: p.share - positionShare[p.pos],
-      di: p.inches - positionSize[p.pos].inches,
-      dw: p.weight - positionSize[p.pos].weight,
-    }));
-  const fit = A.fitLeastSquares(centred, r => r.ds, [r => r.di, r => r.dw]);
-  if (!fit) return null;
-  const model = {
-    inches: Number(fit.coef[1].toFixed(6)),
-    weight: Number(fit.coef[2].toFixed(6)),
-  };
-
-  // How each rule reproduces the printed Speed value, in whole Speed points.
-  const score = shareOf => {
-    let se = 0;
-    let exact = 0;
-    for (const p of points) {
-      const { speed } = A.splitSpeedPower(p.total, p.pos, positionShare, shareOf(p));
-      se += (speed - p.speed) ** 2;
-      if (speed === p.speed) exact += 1;
-    }
-    return {
-      rmse: Number(Math.sqrt(se / points.length).toFixed(3)),
-      exactPct: Number(((100 * exact) / points.length).toFixed(1)),
-    };
-  };
+  const round = (o, d) => Object.fromEntries(Object.entries(o).map(([k, v]) => [k, Number(v.toFixed(d))]));
+  const roundBuilds = o =>
+    Object.fromEntries(
+      Object.entries(o).map(([k, v]) => [
+        k,
+        { inches: Number(v.inches.toFixed(2)), weight: Number(v.weight.toFixed(1)), ...(v.n ? { n: v.n } : {}) },
+      ])
+    );
 
   return {
-    positionSize,
-    model,
+    positionSize: roundBuilds(label.positionSize),
+    sizeSpeedShare: {
+      inches: Number(label.sizeModel.inches.toFixed(6)),
+      weight: Number(label.sizeModel.weight.toFixed(6)),
+    },
+    sharePositionSpeedShare: round(shares.shares, 4),
+    sharePositionSize: roundBuilds(shares.positionSize),
+    shareSizeSpeedShare: {
+      inches: Number(shares.sizeModel.inches.toFixed(6)),
+      weight: Number(shares.sizeModel.weight.toFixed(6)),
+    },
     quality: {
       n: points.length,
-      r2: Number(fit.r2.toFixed(4)),
-      positionOnly: score(() => ({})),
-      positionAndSize: score(p => ({
-        size: { inches: p.inches, weight: p.weight },
-        positionSize,
-        sizeModel: model,
-      })),
+      folds: SPEED_SHARE_FOLDS,
+      droppedNoSize: noSize,
+      droppedNoShares: noShares,
+      labelSizeR2: Number(label.sizeModel.r2.toFixed(4)),
+      shareSizeR2: Number(shares.sizeModel.r2.toFixed(4)),
+      rules: compareSpeedShareRules(points),
     },
   };
 }
@@ -560,7 +793,16 @@ export function fitSalary(rows) {
 
 // --- orchestration ----------------------------------------------------------
 
-export function buildCalibration({ cards, perGame, perPoss, advanced, sample, gameLogs, biometrics }) {
+export function buildCalibration({
+  cards,
+  perGame,
+  perPoss,
+  advanced,
+  playByPlay,
+  sample,
+  gameLogs,
+  biometrics,
+}) {
   const rows = joinReferenceRows({ cards, perGame, perPoss, advanced });
   const shape = V.fitSpreadShape(
     sample.map(s => ({ playerId: s.playerId, mpg: s.mpg, games: gameLogs[s.playerId] ?? [] }))
@@ -575,11 +817,12 @@ export function buildCalibration({ cards, perGame, perPoss, advanced, sample, ga
   const chartQuality = scoreChartFitPerStat(rows, scaledLevels, shape);
 
   const position = measurePositionSpeedShare(rows);
-  // Null when card-data/generated/player-biometrics.json has not been built.
-  // The calibration is still complete without it and generateCards falls back to
-  // the constants in attributes.js, so a missing biometric table costs the size
-  // term and nothing else.
-  const size = measureSizeSpeedShare(rows, biometrics);
+  // Null when either input is absent — card-data/generated/player-biometrics.json
+  // for the size term, the cached play-by-play table for the shares. The
+  // calibration is still complete without it and generation falls back to the
+  // constants in attributes.js, so a missing table costs those two terms and
+  // nothing else.
+  const split = measureSpeedShareRules(rows, biometrics, indexShares(playByPlay));
   const shooting = fitShootingLayer(rows);
   const salary = fitSalary(rows);
 
@@ -598,9 +841,16 @@ export function buildCalibration({ cards, perGame, perPoss, advanced, sample, ga
     },
     positionSpeedShare: position.shares,
     positionCounts: position.counts,
-    positionSize: size?.positionSize ?? null,
-    sizeSpeedShare: size?.model ?? null,
-    sizeSpeedShareQuality: size?.quality ?? null,
+    positionSize: split?.positionSize ?? null,
+    sizeSpeedShare: split?.sizeSpeedShare ?? null,
+    // The same three quantities re-fitted against the positional SHARES rather
+    // than the label. Separate keys, never a silent replacement: the two sets
+    // are not interchangeable, and a checkout that reads one while applying the
+    // other would compress every split toward the middle.
+    sharePositionSpeedShare: split?.sharePositionSpeedShare ?? null,
+    sharePositionSize: split?.sharePositionSize ?? null,
+    shareSizeSpeedShare: split?.shareSizeSpeedShare ?? null,
+    speedShareQuality: split?.quality ?? null,
     shotLine: shooting.shotLine,
     shrinkage: shooting.shrinkage,
     threePtBoost: shooting.threePtBoost,
@@ -665,6 +915,7 @@ export function main({ log = console.log } = {}) {
     perGame: readCache(`bbref-${REFERENCE_STATS_SEASON}-perGame`),
     perPoss: readCache(`bbref-${REFERENCE_STATS_SEASON}-perPoss`),
     advanced: readCache(`bbref-${REFERENCE_STATS_SEASON}-advanced`),
+    playByPlay: readCache(`bbref-${REFERENCE_STATS_SEASON}-playByPlay`),
     sample,
     gameLogs,
     biometrics: indexBiometrics(loadBiometrics()),
@@ -690,28 +941,70 @@ export function main({ log = console.log } = {}) {
   for (const [pos, share] of Object.entries(c.positionSpeedShare).sort()) {
     log(`  ${pos.padEnd(3)} ${share.toFixed(4)}  (n=${c.positionCounts[pos]})`);
   }
-  if (c.sizeSpeedShare) {
+  if (c.speedShareQuality) {
+    const q = c.speedShareQuality;
     log('');
-    log('SIZE INSIDE THE SPLIT (deviation from the positional average)');
-    for (const [pos, m] of Object.entries(c.positionSize).sort()) {
-      log(`  ${pos.padEnd(3)} mean ${m.inches}" ${m.weight} lb  (n=${m.n})`);
+    log('THE SPLIT, BY LABEL AND BY POSITIONAL SHARES');
+    log('  centres a 100%-one-position player is measured to get:');
+    log('       label   shares      mean build (label)      mean build (shares)');
+    for (const pos of A.POSITIONS) {
+      const lb = c.positionSize[pos];
+      const sb = c.sharePositionSize[pos];
+      log(
+        `  ${pos.padEnd(3)} ${c.positionSpeedShare[pos].toFixed(4)}  ` +
+          `${c.sharePositionSpeedShare[pos].toFixed(4)}    ` +
+          `${lb ? `${lb.inches}" ${lb.weight} lb (n=${lb.n})` : '—'}`.padEnd(26) +
+          `${sb ? `${sb.inches}" ${sb.weight} lb` : '—'}`
+      );
     }
-    const q = c.sizeSpeedShareQuality;
     log(
-      `  share per inch ${c.sizeSpeedShare.inches}  per pound ${c.sizeSpeedShare.weight}  ` +
-        `r2 ${q.r2} (n=${q.n})`
+      `  size slope per inch / per pound: label ${c.sizeSpeedShare.inches} / ` +
+        `${c.sizeSpeedShare.weight} (r2 ${q.labelSizeR2})  |  shares ` +
+        `${c.shareSizeSpeedShare.inches} / ${c.shareSizeSpeedShare.weight} (r2 ${q.shareSizeR2})`
+    );
+    log('');
+    log(
+      `  REPRODUCING THE PRINTED SPEED — ${q.n} cards with a build AND a share row ` +
+        `(${q.droppedNoShares} had no shares, ${q.droppedNoSize} no build)`
     );
     log(
-      `  reproducing the printed Speed: position only rmse ${q.positionOnly.rmse} ` +
-        `(exact ${q.positionOnly.exactPct}%) | position+size rmse ${q.positionAndSize.rmse} ` +
-        `(exact ${q.positionAndSize.exactPct}%)`
+      `  rule         in-sample rmse  exact%    ${q.folds}-fold rmse  exact%    leave-one-out rmse`
     );
-    log('  ^ size does NOT fit the finished cards better. It is applied for RESOLUTION —');
-    log('    see SIZE_SPEED_SHARE in attributes.js for the argument and the measured cost.');
+    for (const [name, r] of Object.entries(q.rules)) {
+      if (!r.available) {
+        log(`  ${name.padEnd(12)} unavailable — could not be fitted on this sample`);
+        continue;
+      }
+      log(
+        `  ${name.padEnd(12)} ${String(r.inSample.rmse).padStart(13)}  ${String(r.inSample.exactPct).padStart(6)}   ` +
+          `${String(r.heldOut?.rmse ?? '—').padStart(12)}  ${String(r.heldOut?.exactPct ?? '—').padStart(6)}   ` +
+          `${String(r.leaveOneOut?.rmse ?? '—').padStart(17)}`
+      );
+    }
+    const ranked = Object.entries(q.rules)
+      .filter(([, r]) => r.available && r.leaveOneOut)
+      .sort((a, b) => a[1].leaveOneOut.rmse - b[1].leaveOneOut.rmse);
+    if (ranked.length) {
+      log('  ^ HELD OUT is the column that decides. Every rule is fitted on the cards it is then');
+      log('    scored against, so in-sample error falls as parameters are added whether or not the');
+      log('    parameter is real. Ranked by leave-one-out:');
+      log(`      ${ranked.map(([n, r]) => `${n} ${r.leaveOneOut.rmse}`).join('  <  ')}`);
+      log(`    ACTIVE RULE: ${A.SPLIT_RULE.name}.`);
+      if (ranked[0][0] !== A.SPLIT_RULE.name) {
+        log(
+          `    The active rule is NOT the best-fitting one — ${ranked[0][0]} is, by ` +
+            `${(q.rules[A.SPLIT_RULE.name].leaveOneOut.rmse - ranked[0][1].leaveOneOut.rmse).toFixed(3)} ` +
+            'of a Speed point.'
+        );
+        log('    See SPLIT_RULE in attributes.js for what it is applied for instead, and how to');
+        log('    change it back. One line.');
+      }
+    }
   } else {
     log('');
-    log('SIZE INSIDE THE SPLIT: skipped — no card-data/generated/player-biometrics.json.');
-    log('  run `node --env-file=.env.local scripts/cardgen/biometrics.js` to build it.');
+    log('THE SPLIT: label only — no biometrics and/or no cached play-by-play table.');
+    log('  run `node --env-file=.env.local scripts/cardgen/biometrics.js` and');
+    log('      `node scripts/cardgen/positionShares.js`.');
   }
   log('');
   log('SHOOTING LAYER — the stated probability rule, compressed onto the finished set');

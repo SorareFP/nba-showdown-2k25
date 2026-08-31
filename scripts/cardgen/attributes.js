@@ -16,6 +16,14 @@
 // ratios are not invented — they are measured off the 283 finished cards, joined
 // to those players' real primary positions.
 //
+// WHAT "POSITIONAL TENDENCY" MEANS HAS BEEN SHARPENED TWICE, and both times the
+// sharper input fitted the finished cards no better than the cruder one. Height
+// and weight went in first (SIZE_SPEED_SHARE); Basketball-Reference's per-season
+// positional SHARES went in second (SPLIT_RULE). Which combination is live is
+// declared in one place — SPLIT_RULE — and all four are scored, held out, on
+// every calibration run. Read those two blocks before changing anything here:
+// they carry the numbers that do not flatter the current choice.
+//
 // Salary is a refit against those same finished cards, and says so.
 
 /**
@@ -91,23 +99,34 @@ export const POSITION_SIZE = {
  *
  * ── WHAT THIS IS AND IS NOT JUSTIFIED BY ────────────────────────────────────
  *
- * It is NOT justified by reproducing the finished cards better. It does not.
- * Across the whole finished set the size term is a wash (RMSE against the
- * printed Speed value 0.977 -> 0.967 points), and on a held-out half of the set
- * it is WORSE than position alone (1.028 -> 1.035). The person who made those
- * cards split by position, and asking size to predict his choices is asking it
- * to predict something it did not drive. That is stated plainly rather than
- * buried, because the rest of this file's constants ARE refits and this one is
- * not.
+ * It is barely justified by reproducing the finished cards better. Across the
+ * whole finished set the size term is a wash (RMSE against the printed Speed
+ * value 0.977 -> 0.967 points). The person who made those cards split by
+ * position, and asking size to predict his choices is asking it to predict
+ * something it did not drive. That is stated plainly rather than buried, because
+ * the rest of this file's constants ARE refits and this one is not.
+ *
+ * ── ONE CLAIM HERE HAS BEEN CORRECTED ───────────────────────────────────────
+ *
+ * This block used to say the size term was WORSE than position alone out of
+ * sample (1.028 -> 1.035). Re-measured properly when the four-way comparison in
+ * calibrateAttributes.js was built — pooled k-fold on a deterministic split,
+ * plus leave-one-out — it is slightly BETTER: 1.012 for the label alone against
+ * 1.000 with size, leave-one-out, and the same ordering at every k tried. The
+ * old figure is not reproducible by anything now in the tree and is most likely
+ * a single unpooled half-split. The honest version of the finding survives
+ * either way — size is a wash, not a win — but the specific number was wrong and
+ * is not left standing.
  *
  * What it IS justified by is resolution — design philosophy point 3, player
- * identity. The matchup matrix found 124 distinct mechanical identities across
- * 350 cards, with fourteen cards sharing a single one; the split is the only
- * lever that separates same-budget players, and position gives just five values
- * to separate them with. Size gives a continuum, and it is a REAL physical fact
- * about the player rather than an invented tiebreak. On the 2026-27 pool it
- * takes the set from 124 identities to 142 and moves 84 of the 350 splits, at a
- * measured cost of about a fifth of a point per team per game.
+ * identity. The split is the only lever that separates same-budget players, and
+ * position gives just five values to separate them with. Size gives a continuum,
+ * and it is a REAL physical fact about the player rather than an invented
+ * tiebreak. On the 2026-27 pool it takes the set from 143 distinct mechanical
+ * identities to 168 and moves 80 of the 350 splits, at a measured cost of about
+ * a fifth of a point per team per game. That is the term that buys resolution
+ * here; the positional shares layered on top of it do not add more (see
+ * SPLIT_RULE).
  *
  * The magnitude is the fitted one and is not amplified. At this strength Luka
  * Dončić — a 6'8", 230lb point guard — goes from 18/10 to 16/12, Rudy Gobert
@@ -125,6 +144,133 @@ export const SIZE_SPEED_SHARE = { inches: -0.004393, weight: -0.000754 };
  * instead of a card with 0 Power.
  */
 export const SPEED_SHARE_BOUNDS = { min: 0.15, max: 0.85 };
+
+/**
+ * The same three quantities, re-fitted against the positional SHARES.
+ *
+ * NOT interchangeable with the three above, and applying one set while reading
+ * the other is the failure mode these separate names exist to prevent. The
+ * label centres are group means over players filed under one position; the share
+ * centres are what ordinary least squares says a hypothetical 100%-one-position
+ * player is worth, recovered from everyone's fractional mix at once.
+ *
+ * They come out WIDER at the wings and narrower in the middle — a shooting guard
+ * 0.6139 against the label's 0.5940, a small forward 0.5189 against 0.4921 —
+ * because a blend of centres pulls every real player toward the middle, and the
+ * centres have to be spread by exactly that much for the SET's distribution of
+ * splits to stay where the finished cards put it. Blending the label centres
+ * instead would quietly compress the whole set, and the 306-card set, the four
+ * other sets and the REFERENCE_TOTALS scale are all priced against the current
+ * level.
+ *
+ * Re-derive with `node scripts/cardgen/calibrateAttributes.js`, which writes
+ * them into the calibration file. Duplicated here as the fallback for a checkout
+ * that has neither that file nor the gitignored CSV.
+ */
+export const SHARE_POSITION_SPEED_SHARE = {
+  PG: 0.6254,
+  SG: 0.6139,
+  SF: 0.5189,
+  PF: 0.4445,
+  C: 0.366,
+};
+
+export const SHARE_POSITION_SIZE = {
+  PG: { inches: 74.55, weight: 192.8 },
+  SG: { inches: 76.66, weight: 202.9 },
+  SF: { inches: 78.63, weight: 210.7 },
+  PF: { inches: 79.8, weight: 227 },
+  C: { inches: 83.19, weight: 250.7 },
+};
+
+export const SHARE_SIZE_SPEED_SHARE = { inches: -0.004658, weight: -0.000819 };
+
+/**
+ * ── THE FOUR WAYS THIS SPLIT HAS BEEN STATED, AND WHICH ONE IS ACTIVE ───────
+ *
+ * The menu, not the rule. Same shape as BEST_SEASON_METRIC_SETS in history.js
+ * and for the same reason: every one of these is measured against the finished
+ * cards on every calibration run, so the choice between them stays visible and
+ * is one line to change.
+ *
+ *   label       the position label's own average share. The original.
+ *   labelSize   that, bent by height and weight away from the average BUILD of
+ *               the label's position.
+ *   shares      the player as a weighted blend of all five positional centres,
+ *               weighted by the share of his minutes really spent at each.
+ *   sharesSize  that, bent by size away from the blend of those five builds.
+ */
+export const SPLIT_RULES = {
+  label: { name: 'label', shares: false, size: false },
+  labelSize: { name: 'labelSize', shares: false, size: true },
+  shares: { name: 'shares', shares: true, size: false },
+  sharesSize: { name: 'sharesSize', shares: true, size: true },
+};
+
+/**
+ * THE ACTIVE RULE. One line to change; the calibration report scores all four.
+ *
+ * ── IT IS NOT THE BEST-FITTING ONE, AND THAT IS SAID FIRST ──────────────────
+ *
+ * Measured against the 281 finished cards that carry a build and a share row,
+ * leave-one-out, RMSE in whole printed Speed points:
+ *
+ *     labelSize   1.000      <- best fit, and what shipped before this
+ *     label       1.012
+ *     sharesSize  1.025      <- ACTIVE
+ *     shares      1.072
+ *
+ * The order is identical at 2, 3, 5, 10, 25 and n folds, so it is not an
+ * artefact of how the cards were divided. THE SHARES FIT THE FINISHED CARDS
+ * WORSE THAN THE LABEL DOES, by about a fortieth of a Speed point.
+ *
+ * That is not surprising once stated: the person who made those cards had a
+ * position LABEL in front of him and split on it. Asking a truer description of
+ * the player to predict what a human did with a coarser one is asking it to
+ * predict something it did not drive — exactly the finding SIZE_SPEED_SHARE
+ * records, and it lands the same way twice.
+ *
+ * ── AND IT DOES NOT BUY RESOLUTION EITHER, WHICH WAS THE OTHER HOPE ─────────
+ *
+ * That was the argument that carried the size term, so it was measured rather
+ * than assumed. Distinct mechanical identities across the 350-card 2026-27 pool
+ * (speed | power | effective Def Boost):
+ *
+ *     label       143
+ *     shares      160
+ *     labelSize   168      <- best
+ *     sharesSize  167      <- ACTIVE
+ *
+ * Size is what buys resolution here, and it has already been bought. Shares on
+ * top of it are a wash — one identity worse, four more cards sharing one with
+ * somebody. The set's spread of Speed values is likewise unmoved (sd 3.037 ->
+ * 3.015), which is the check that the share-fitted centres really did undo the
+ * compression a blend would otherwise cause.
+ *
+ * ── SO WHAT IS LEFT IS THE ONLY THING LEFT: THE CARD IS TRUER ───────────────
+ *
+ * Not a better predictor and not a finer instrument — a more accurate statement
+ * about the player. The label is a one-word summary of something
+ * Basketball-Reference measures continuously, and in this pool it names a
+ * different position from the player's most-played one for 79 of the 350, while
+ * 97 of them spent under 60% of their minutes at any single spot. Under the
+ * label a combo guard is a guard and a stretch big is a forward, and there is no
+ * spelling of "he played both" available at all.
+ *
+ * 84 of the 350 splits move, none by more than two points, and no BUDGET moves
+ * at all — so this is a flavour change by construction and the matchup matrix
+ * confirms it: Net Edge with Def Boost zeroed still equals Speed+Power minus the
+ * field mean to 1.8e-15.
+ *
+ * THAT IS THE WHOLE CASE, and it is a judgement rather than a measurement. It is
+ * the user's own (2026-08-31: "bkref has positional data, what % of time the
+ * player played that position"), taken with the two numbers above in view.
+ *
+ * TO CHANGE IT BACK: `SPLIT_RULES.labelSize` on the next line. Nothing else
+ * moves — the share-fitted constants stay measured and unused, generation reads
+ * whichever pair this names, and `npm test` covers all four.
+ */
+export const SPLIT_RULE = SPLIT_RULES.sharesSize;
 
 /**
  * How much of each position a player actually is, as five weights summing to 1.
@@ -253,6 +399,43 @@ export function splitSpeedPower(total, pos, shares = POSITION_SPEED_SHARE, optio
   const share = speedShare(pos, options.size ?? null, { shares, ...options });
   const speed = Math.min(Math.max(Math.round(t * share), 1), t - 1);
   return { speed, power: t - speed };
+}
+
+/**
+ * The split as GENERATION performs it: the active rule, the calibrated
+ * constants that go with it, and this player's own measurements.
+ *
+ * ONE ENTRY POINT for all three generators, because the failure this replaces is
+ * subtle and silent — the label constants and the share constants are different
+ * numbers for the same idea, and a call site that reached for the wrong pair
+ * would compress or stretch the whole set's distribution of splits without
+ * erroring. Choosing the pair here means a call site cannot get it wrong.
+ *
+ * Everything degrades independently. No calibration file falls back to the
+ * constants in this file; no `positionShares` falls back to the label (which is
+ * every WNBA card, since that league has no play-by-play page at all); no `size`
+ * falls back to the un-sized centre.
+ */
+export function splitFromCalibration(
+  total,
+  { pos, size = null, positionShares = null, calibration = null, rule = SPLIT_RULE } = {}
+) {
+  const useShares = rule.shares;
+  const shares = useShares
+    ? (calibration?.sharePositionSpeedShare ?? SHARE_POSITION_SPEED_SHARE)
+    : (calibration?.positionSpeedShare ?? POSITION_SPEED_SHARE);
+  const positionSize = useShares
+    ? (calibration?.sharePositionSize ?? SHARE_POSITION_SIZE)
+    : (calibration?.positionSize ?? POSITION_SIZE);
+  const sizeModel = useShares
+    ? (calibration?.shareSizeSpeedShare ?? SHARE_SIZE_SPEED_SHARE)
+    : (calibration?.sizeSpeedShare ?? SIZE_SPEED_SHARE);
+  return splitSpeedPower(total, pos, shares, {
+    positionSize: rule.size ? positionSize : null,
+    sizeModel: rule.size ? sizeModel : null,
+    size: rule.size ? size : null,
+    positionShares: useShares ? positionShares : null,
+  });
 }
 
 /** Mean and (population) standard deviation, ignoring non-finite values. */

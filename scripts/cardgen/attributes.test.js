@@ -276,6 +276,115 @@ describe('positional SHARES inside the split', () => {
   });
 });
 
+describe('splitFromCalibration — the one entry point generation uses', () => {
+  const SIZE = { inches: 80, weight: 230 };
+  const SHARES = { PG: 46, SG: 52, SF: 2, PF: 0, C: 0 };
+  const CAL = {
+    positionSpeedShare: A.POSITION_SPEED_SHARE,
+    positionSize: A.POSITION_SIZE,
+    sizeSpeedShare: A.SIZE_SPEED_SHARE,
+    sharePositionSpeedShare: A.SHARE_POSITION_SPEED_SHARE,
+    sharePositionSize: A.SHARE_POSITION_SIZE,
+    shareSizeSpeedShare: A.SHARE_SIZE_SPEED_SHARE,
+  };
+
+  // The failure this entry point exists to make impossible: the label constants
+  // and the share constants are different numbers for the same idea, and a call
+  // site that mixed them would compress or stretch the whole set's distribution
+  // of splits without erroring anywhere.
+  it('pairs each rule with its OWN fitted constants', () => {
+    const label = A.splitFromCalibration(28, {
+      pos: 'PG', size: SIZE, positionShares: SHARES, calibration: CAL, rule: A.SPLIT_RULES.labelSize,
+    });
+    const shares = A.splitFromCalibration(28, {
+      pos: 'PG', size: SIZE, positionShares: SHARES, calibration: CAL, rule: A.SPLIT_RULES.sharesSize,
+    });
+    expect(label).toEqual(
+      A.splitSpeedPower(28, 'PG', A.POSITION_SPEED_SHARE, {
+        size: SIZE,
+        positionSize: A.POSITION_SIZE,
+        sizeModel: A.SIZE_SPEED_SHARE,
+      })
+    );
+    expect(shares).toEqual(
+      A.splitSpeedPower(28, 'PG', A.SHARE_POSITION_SPEED_SHARE, {
+        size: SIZE,
+        positionShares: SHARES,
+        positionSize: A.SHARE_POSITION_SIZE,
+        sizeModel: A.SHARE_SIZE_SPEED_SHARE,
+      })
+    );
+  });
+
+  it('ignores the inputs a rule does not declare', () => {
+    for (const rule of [A.SPLIT_RULES.label, A.SPLIT_RULES.shares]) {
+      const withSize = A.splitFromCalibration(28, { pos: 'PG', size: SIZE, positionShares: SHARES, calibration: CAL, rule });
+      const without = A.splitFromCalibration(28, { pos: 'PG', positionShares: SHARES, calibration: CAL, rule });
+      expect(withSize).toEqual(without);
+    }
+    for (const rule of [A.SPLIT_RULES.label, A.SPLIT_RULES.labelSize]) {
+      const withShares = A.splitFromCalibration(28, { pos: 'PG', size: SIZE, positionShares: SHARES, calibration: CAL, rule });
+      const without = A.splitFromCalibration(28, { pos: 'PG', size: SIZE, calibration: CAL, rule });
+      expect(withShares).toEqual(without);
+    }
+  });
+
+  // Three independent degradations, and the WNBA depends on two of them at once.
+  it('degrades one step at a time', () => {
+    for (const rule of Object.values(A.SPLIT_RULES)) {
+      for (const calibration of [null, CAL, {}]) {
+        for (const size of [null, SIZE]) {
+          for (const positionShares of [null, SHARES]) {
+            const { speed, power } = A.splitFromCalibration(24, { pos: 'SG', size, positionShares, calibration, rule });
+            expect(speed + power).toBe(24);
+            expect(speed).toBeGreaterThanOrEqual(1);
+            expect(power).toBeGreaterThanOrEqual(1);
+          }
+        }
+      }
+    }
+  });
+
+  it('falls back to this file s constants when there is no calibration file', () => {
+    expect(A.splitFromCalibration(28, { pos: 'PG', size: SIZE, calibration: null, rule: A.SPLIT_RULES.labelSize }))
+      .toEqual(A.splitSpeedPower(28, 'PG', A.POSITION_SPEED_SHARE, { size: SIZE }));
+  });
+
+  // Conservation is what makes any of this a flavour change: the matchup matrix
+  // established that Net Edge equals Speed+Power minus the field mean, so a
+  // rule that redistributed the budget by even one point would be a balance
+  // change wearing a flavour change's clothes.
+  it('conserves the budget under every rule, for every input', () => {
+    for (const rule of Object.values(A.SPLIT_RULES)) {
+      for (let total = 2; total <= 40; total += 1) {
+        const a = A.splitFromCalibration(total, { pos: 'C', size: SIZE, positionShares: SHARES, calibration: CAL, rule });
+        const b = A.splitFromCalibration(total, { pos: 'C', calibration: CAL, rule });
+        expect(a.speed + a.power).toBe(total);
+        expect(b.speed + b.power).toBe(total);
+      }
+    }
+  });
+
+  it('declares an active rule that is one of the four on the menu', () => {
+    expect(Object.values(A.SPLIT_RULES)).toContain(A.SPLIT_RULE);
+    expect(A.SPLIT_RULES[A.SPLIT_RULE.name]).toBe(A.SPLIT_RULE);
+  });
+
+  // The share-fitted centres are WIDER at the wings than the label-fitted ones,
+  // and they have to be: blending pulls every real player toward the middle, so
+  // centres that were not spread by that much would compress the whole set.
+  it('keeps the share-fitted centres wider than the label-fitted ones', () => {
+    const labelSpread = A.POSITION_SPEED_SHARE.PG - A.POSITION_SPEED_SHARE.C;
+    const shareSpread = A.SHARE_POSITION_SPEED_SHARE.PG - A.SHARE_POSITION_SPEED_SHARE.C;
+    expect(shareSpread).toBeGreaterThan(labelSpread);
+    for (const p of A.POSITIONS) {
+      expect(A.SHARE_POSITION_SIZE[p]).toBeTruthy();
+      expect(A.SHARE_POSITION_SPEED_SHARE[p]).toBeGreaterThan(A.SPEED_SHARE_BOUNDS.min);
+      expect(A.SHARE_POSITION_SPEED_SHARE[p]).toBeLessThan(A.SPEED_SHARE_BOUNDS.max);
+    }
+  });
+});
+
 describe('defBoostFromEpm', () => {
   // The rounding rule the user asked for, spelled out in
   // memory/speed_power_methodology.md: "-0.5 down to -1".

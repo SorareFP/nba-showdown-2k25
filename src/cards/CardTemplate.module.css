@@ -509,7 +509,7 @@
  * be tall enough for the tallest case — both rows, which is the special sets —
  * not for the commonest one:
  *
- *   awards  one row of 38px chips             38
+ *   awards  TWO rows of 72px slots + 8 gap   152
  *   badge   13px x 1.1 line + 2x6px padding   26.3
  *   season  16px x 1.1 line                   17.6
  *   logo                                      96
@@ -517,12 +517,18 @@
  *   boosts  4 x (20 + 20) x 1.1               176
  *   gaps    8 x 18                            144
  *                                            ————
- *                                            519.9
+ *                                            633.9
  *
- * 526 keeps 6px of slack, in step with the 6px the four-row and six-row layouts
+ * 640 keeps 6px of slack, in step with the 6px the four-row and six-row layouts
  * both had. An UNBADGED, UNMARKED base-set card renders none of the three
- * optional rows, sits 136px lower in the same box, and is unchanged to the
+ * optional rows, sits 250px lower in the same box, and is unchanged to the
  * pixel; every card that gains one gains only that row and its gap.
+ *
+ * THE AWARD ROW IS THE ONLY LINE THAT MOVED, and it moved by 114px: it used to
+ * be one row of 38px chips and is now up to two rows of 72px slots, because a
+ * 38px mark left 45px of the bar empty on a card carrying one and because a
+ * square slot drew the MVP at a third of the All-Star's area. See .awards. The
+ * box grew UPWARD to pay for it, which is the only direction it may grow.
  * CardTemplate.test.js redoes this arithmetic
  * from this file, so raising a type size or the gap fails there rather than
  * pushing the top row silently out through the top.
@@ -531,15 +537,17 @@
  * season that carried hardware draws all three — Nikola Jokić's 2021-22 has an
  * MVP chip, the SUPER SEASON pill and the season line above his team's mark.
  *
- * Top is therefore 1152 - 526 = 626, still 514px below the top band's 112px
+ * Top is therefore 1152 - 640 = 512, still 400px below the top band's 112px
  * edge. The bar behind it (see .sidebarScrim) runs from y=7 to y=1174, so all
- * three optional rows are veiled by it exactly as the rest of the column is. */
+ * three optional rows are veiled by it exactly as the rest of the column is —
+ * including the taller award block, whose top edge at y=512 is 505px below the
+ * bar's own top. */
 .sidebar {
   position: absolute;
   left: 701px;
-  top: 626px;
+  top: 512px;
   width: 135px;
-  height: 526px;
+  height: 640px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -560,40 +568,122 @@
  * three, which the box does not have and which would push a two-award card's
  * badge above the top band. Laid across, three cost 38px total.
  *
+ * ── AND THEN IT WRAPPED, BECAUSE ONE ROW CANNOT BE MADE BIG ────────────────
+ *
+ * The user: "we have that whole sidebar to work with, so feel free to fill the
+ * width." The marks were 38px — sized so THREE would fit a 127px column, which
+ * left 45px of the bar empty on the commonest card of all, the one with a
+ * single mark.
+ *
+ * A single row cannot fix that, and the arithmetic says so rather than taste.
+ * Three marks across 127px with two gaps is 38px each whatever the height, and
+ * the two square marks (the All-Star star, 1.06:1) cannot be given a height a
+ * one-row layout has room for: three of them at height H measure 3.18H, so H
+ * tops out at 39. TWO COLUMNS is what buys the size — the row wraps at two, so
+ * a third mark drops to a second line and every mark gets 59px of width instead
+ * of 38.
+ *
+ * SIZED BY COUNT, three cases, and the sizes below are the whole rule:
+ *
+ *   ONE    127 x 82   the full column, because there is nothing to share it
+ *                     with. A lone All-Star draws 87x82, a lone MVP 34x82.
+ *   TWO     59 x 78   one row of two. 59+59+8 = 126, inside the 127.
+ *   THREE   59 x 72   two rows, the third centred under the first two.
+ *          (and four)  72+8+72 = 152, which is the tallest this block gets.
+ *
+ * HEIGHT IS THE BINDING AXIS, NOT WIDTH, and that is a fact about the art
+ * rather than a preference. Stripped and trimmed to their own bounding boxes,
+ * six of the eight marks are TALL — MVP 0.41:1, the four crystal trophies
+ * 0.48:1, the Larry O'Brien 0.65:1 — and only the All-Star star is wider than
+ * it is high (1.06:1). "Fill the width" cannot be taken literally for a 0.41:1
+ * trophy: 127px of width would make it 310px tall. Filling the column means
+ * giving every mark the tallest box the column can afford and letting the width
+ * follow.
+ *
+ * ── AND THE SLOT IS TALLER THAN IT IS WIDE, WHICH IS THE WHOLE BALANCE ─────
+ *
+ * A SQUARE slot at these widths would have made the trophies tiny beside the
+ * star, and by a factor worth writing down: at 59x54 the star fits 57x54 and
+ * the MVP fits 22x54 — 3,078 square pixels against 1,188, so the mark that ONE
+ * man a season holds would have drawn at a third of the mark that thirty do.
+ *
+ * 59x72 fixes it without growing the star at all, because the two are bound on
+ * DIFFERENT AXES. The star is already width-bound at 59, so extra height does
+ * nothing to it; every trophy is height-bound, so all of it goes to them:
+ *
+ *              at 59x54            at 59x72
+ *   AS  1.06   57x54  = 3,078      59x56  = 3,304   width-bound, +7%
+ *   LOB 0.65   35x54  = 1,890      47x72  = 3,384   height-bound, +79%
+ *   ROY 0.48   26x54  = 1,404      35x72  = 2,520   height-bound, +79%
+ *   MVP 0.41   22x54  = 1,188      30x72  = 2,160   height-bound, +82%
+ *
+ * — a 2.6:1 spread down to 1.5:1, paid for entirely out of vertical space the
+ * sidebar had to give. This is .logo's per-axis argument applied to a row
+ * rather than to one file, and it is why the slot is not a square.
+ *
  * 127px WIDE, the same column .badge takes and for the same reason: the bar is
  * 135 (701..836) and the card's keyline takes the last 7px, so 127 centred
  * spans 705..832 and clears both. MAX_CARD_AWARDS in awards.js is the number
- * this width buys — 3 x 38 + 2 x 6 = 126 — and it is derived there from these
- * numbers rather than chosen. */
+ * these numbers buy — FOUR now, because a fourth mark costs the second row
+ * nothing it has not already spent. */
 .awards {
   width: 127px;
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
   flex: none;
 }
 
-/* SQUARE, unlike the team mark directly below it. .logo is 115x96 because it
- * fits ONE file per card and can afford to be sized by the bar; these sit up to
- * three abreast, so a per-axis box would let a wide trophy squeeze a tall one.
- * `contain` still means no file is ever cropped or stretched — a wide mark
- * simply uses less of its 38px than a square one. */
+/* THE SLOT IS THE BOX; the file inside it is only ever fitted, never sized.
+ * Splitting the two is what lets one <img> rule serve three layouts and what
+ * keeps the lettered fallback the same size as the art it stands in for. */
+.awardSlot {
+  width: 59px;
+  height: 72px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* One mark: the whole column, and the tallest box in the set. */
+.awardSlotOne {
+  width: 127px;
+  height: 82px;
+}
+
+/* Two marks: one row, 59+8+59 = 126 inside the 127. */
+.awardSlotTwo {
+  width: 59px;
+  height: 78px;
+}
+
+/* FITTED, NOT SIZED. `max-*: 100%` with `contain` means the file is scaled to
+ * the largest it can be inside its slot without cropping or stretching — so a
+ * tall trophy is held by the height and the wide star by the width, and both
+ * end up as big as their own shape allows. This is .logo's per-axis argument
+ * applied to a row rather than to one file. */
 .award {
-  width: 38px;
-  height: 38px;
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
-  flex: none;
 }
 
-/* The lettered chip for an award with no art yet — which today is ALL of them:
- * public/awards/ is empty and every file the user is going to add lands there.
- * See AwardMark in CardTemplate.jsx for why this renders a code rather than
- * nothing.
+/* The lettered chip for an award with no art. It is no longer every mark —
+ * public/awards/ now holds a stripped PNG for all eight declared codes — but it
+ * is still what a misnamed or missing file degrades to, and it must look
+ * deliberate rather than broken. See AwardMark in CardTemplate.jsx.
  *
- * SAME 38px BOX as the real mark, so the column does not shift by a pixel when
- * a trophy PNG replaces a chip.
+ * SQUARE, AND SIZED BY THE SLOT'S HEIGHT rather than by its width. The slot is
+ * 59x54 for three marks and 127x74 for one, and a chip stretched to a 127px box
+ * would read as a banner rather than as a mark standing in for a trophy. Taking
+ * the height keeps it a chip at every count, and keeps the column's height
+ * identical whether a card's art has landed yet or not — which is the property
+ * that lets the user drop files in while the studio is open without anything
+ * below shifting.
  *
  * THE COLOURS ARE THE BEST SEASON PILL'S, not new ones: `--award-fill` is the
  * team's `accentOnField` as deriveFieldTheme cleared it against the field, and
@@ -604,24 +694,33 @@
  * mark rendered from a theme this build did not emit properties for, which must
  * degrade to a visible chip rather than an invisible one.
  *
- * 11px, and that is the width doing the choosing rather than a preference:
- * 6MOY is the longest code and measures 28.4px off the loaded face at 11px with
- * this tracking, which leaves 4.8px of chip either side of it. At 12px it is
- * 31px and the padding stops reading as padding. CardTemplate.test.js measures
- * every declared code against the box. */
+ * 13px: 6MOY is the longest code and measures 33.6px off the loaded face at
+ * 13px on the conservative 0.7em average advance, which leaves 19px of chip
+ * either side of it inside the smallest (72px) box. CardTemplate.test.js
+ * measures every declared code against that box. */
 .awardFallback {
-  width: 38px;
-  height: 38px;
+  width: 72px;
+  height: 72px;
   flex: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 4px;
+  border-radius: 6px;
   background: var(--award-fill, var(--accent-on-field));
   color: var(--award-ink, var(--field-ink));
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 0;
+}
+
+.awardFallbackOne {
+  width: 82px;
+  height: 82px;
+}
+
+.awardFallbackTwo {
+  width: 78px;
+  height: 78px;
 }
 
 /* ── The card-type badge, on the sets that are a card TYPE ───────────────── */

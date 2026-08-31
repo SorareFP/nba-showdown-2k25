@@ -2,6 +2,8 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import {
   parseGameLogHtml,
+  parseLeagueChampionHtml,
+  parseRosterHtml,
   parseSeasonTableHtml,
   POSITION_ESTIMATE_STATS,
   SEASON_TABLES,
@@ -213,5 +215,75 @@ describe('the awards column', () => {
     expect(() => parseSeasonTableHtml(POST, SEASON_TABLES.advanced.tableId)).toThrow(
       /no id="advanced"/
     );
+  });
+});
+
+// ── THE CHAMPION, WHICH IS ON NO TABLE AT ALL ───────────────────────────────
+describe('parseLeagueChampionHtml', () => {
+  // The real sentence off NBA_2026.html, single-quoted href and all.
+  const PAGE =
+    "<p><strong>League Champion</strong>: <a href='/teams/NYK/2026.html'>New York Knicks</a></p>" +
+    "<p><strong>Most Valuable Player</strong>: <a href='/players/g/gilgesh01.html'>SGA</a></p>";
+
+  it('reads the team, its season abbreviation and its name', () => {
+    expect(parseLeagueChampionHtml(PAGE)).toEqual({
+      abbr: 'NYK',
+      season: 2026,
+      name: 'New York Knicks',
+    });
+  });
+
+  it('takes the abbreviation off the LINK, not from this repo', () => {
+    // The champions span 2004..2026, a range in which New Jersey became
+    // Brooklyn and New Orleans was NOH before it was NOP. teams.js knows only
+    // today's spelling, so the href is the only answer that cannot drift.
+    const nets = "<p><strong>League Champion</strong>: <a href='/teams/NJN/2003.html'>New Jersey Nets</a></p>";
+    expect(parseLeagueChampionHtml(nets)).toEqual({
+      abbr: 'NJN',
+      season: 2003,
+      name: 'New Jersey Nets',
+    });
+  });
+
+  it('returns null for a season nobody has won yet, rather than throwing', () => {
+    // Not hypothetical: an in-progress season's index page exists and lists
+    // leaders months before it lists a champion.
+    expect(parseLeagueChampionHtml('<p><strong>PPG Leader</strong>: someone</p>')).toBeNull();
+    expect(parseLeagueChampionHtml('')).toBeNull();
+    expect(parseLeagueChampionHtml(null)).toBeNull();
+  });
+});
+
+describe('parseRosterHtml', () => {
+  // Basketball-Reference repeats `data-append-csv` on a roster row — the linked
+  // name cell and the sortable-key cell both carry it — so a naive scan returns
+  // every player twice. Verified on the live NYK 2026 page: 40 hits, 20 men.
+  const ROSTER = `<table id="roster"><tbody>
+    <tr><td data-append-csv="brunsja01" data-stat="player">Jalen Brunson</td>
+        <td data-append-csv="brunsja01" data-stat="pos">PG</td></tr>
+    <tr><td data-append-csv="townska01" data-stat="player">Karl-Anthony Towns</td></tr>
+    <tr><td data-stat="player">(a header row, no id)</td></tr>
+  </tbody></table>`;
+
+  it('deduplicates by id and skips rows with no player id', () => {
+    expect(parseRosterHtml(ROSTER)).toEqual([
+      { playerId: 'brunsja01', name: 'Jalen Brunson' },
+      { playerId: 'townska01', name: 'Karl-Anthony Towns' },
+    ]);
+  });
+
+  it('reads the ROSTER table, which is the team as it FINISHED the season', () => {
+    // The same page carries per_game_stats, which lists everyone who logged a
+    // minute — including a player traded away in February who was not there in
+    // June. Reading the harder table is what makes the ring's rule correct.
+    const withStats =
+      ROSTER +
+      '<table id="per_game_stats"><tbody><tr>' +
+      '<td data-append-csv="tradedaw01" data-stat="player">Traded Away</td>' +
+      '</tr></tbody></table>';
+    expect(parseRosterHtml(withStats).map(p => p.playerId)).toEqual([
+      'brunsja01',
+      'townska01',
+    ]);
   });
 });

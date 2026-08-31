@@ -272,3 +272,102 @@ export async function fetchSeasonTable(season, kind, { fetchImpl = fetch } = {})
   if (!res.ok) throw new Error(`Basketball-Reference fetch failed: ${res.status}`);
   return parseSeasonTableHtml(await res.text(), table.tableId);
 }
+
+// ---------------------------------------------------------------------------
+// The season SUMMARY page, and the champion's roster.
+//
+// A DIFFERENT KIND OF FACT FROM EVERYTHING ABOVE. The tables above are per
+// player: a row exists because a player played, and every column on it is
+// something he did. A championship is not on any of them, because it is not
+// something a player did — it is something his TEAM did, and Basketball-
+// Reference records it exactly once per season, as a sentence on the league
+// index page:
+//
+//   <p><strong>League Champion</strong>: <a href='/teams/NYK/2026.html'>New
+//   York Knicks</a></p>
+//
+// So the ring takes TWO fetches where an award takes none extra: the summary
+// page says WHICH team, and that team's own season page says WHO was on it.
+// ---------------------------------------------------------------------------
+
+/**
+ * The champion named on a season summary page, as `{ abbr, name, season }`.
+ *
+ * ── THE ABBREVIATION COMES OFF THE LINK, NEVER OUT OF teams.js ──────────────
+ *
+ * Basketball-Reference indexes a team by the abbreviation it used THAT SEASON,
+ * and the champions this repo needs span 2004..2026 — a range in which New
+ * Jersey became Brooklyn, New Orleans was NOH and then NOP, and Charlotte was
+ * CHA and then CHO. src/cards/teams.js knows today's spelling and only today's,
+ * so deriving the roster URL from it would silently 404 on the older half of
+ * the range. The href on the page is the site's own answer to "what is this
+ * team called in 2011", and it is the only one that cannot drift.
+ *
+ * `season` is read off the same href rather than passed in, so a caller that
+ * asked for the wrong year finds out here instead of joining a roster to the
+ * wrong set of cards.
+ *
+ * Returns null when the page carries no champion row — which is not an error
+ * and not hypothetical: an unfinished season's index page exists and lists
+ * leaders long before anyone has won anything.
+ */
+const LEAGUE_CHAMPION =
+  /<strong>\s*League Champion\s*<\/strong>\s*:\s*<a href=['"]\/teams\/([A-Za-z]{3})\/(\d{4})\.html['"]\s*>([^<]+)<\/a>/;
+
+export function parseLeagueChampionHtml(html) {
+  const m = LEAGUE_CHAMPION.exec(String(html ?? ''));
+  if (!m) return null;
+  return { abbr: m[1].toUpperCase(), season: Number(m[2]), name: m[3].trim() };
+}
+
+/**
+ * A team season page's ROSTER table, as `{ playerId, name }`.
+ *
+ * ── THE ROSTER TABLE, NOT THE STATS TABLES, AND THAT IS THE TRADE RULE ──────
+ *
+ * The same page carries `per_game_stats`, which lists everyone who logged a
+ * minute for the team — INCLUDING a player traded away in February, who was not
+ * there in June and did not win anything. `<table id="roster">` is the team as
+ * it finished the season, so a deadline acquisition is on it and a deadline
+ * casualty is not. That is the correct rule for a ring and it is the reason
+ * this reads the harder table rather than the one already parsed above.
+ *
+ * DEDUPLICATED BY ID. The roster markup repeats each player's
+ * `data-append-csv` (the linked name cell and the sortable-key cell both carry
+ * it), so a naive scan returns every player twice.
+ */
+export function parseRosterHtml(html) {
+  const body = isolateTableBody(String(html ?? ''), 'roster');
+  const out = [];
+  const seen = new Set();
+  for (const row of extractRows(body)) {
+    const idMatch = row.match(/data-append-csv="([^"]+)"/);
+    if (!idMatch) continue;
+    if (seen.has(idMatch[1])) continue;
+    seen.add(idMatch[1]);
+    const cells = parseRowCells(row);
+    const name = cells.name_display ?? cells.player;
+    if (!name) continue;
+    out.push({ playerId: idMatch[1], name });
+  }
+  return out;
+}
+
+/** Fetches and parses one season's champion. `season` is the END year (2026 = 2025-26). */
+export async function fetchLeagueChampion(season, { fetchImpl = fetch } = {}) {
+  const res = await fetchImpl(`https://www.basketball-reference.com/leagues/NBA_${season}.html`, {
+    headers: { 'User-Agent': 'Mozilla/5.0' },
+  });
+  if (!res.ok) throw new Error(`Basketball-Reference fetch failed: ${res.status}`);
+  return parseLeagueChampionHtml(await res.text());
+}
+
+/** Fetches and parses one team-season's roster. `abbr` is Basketball-Reference's own. */
+export async function fetchTeamRoster(abbr, season, { fetchImpl = fetch } = {}) {
+  const res = await fetchImpl(
+    `https://www.basketball-reference.com/teams/${abbr}/${season}.html`,
+    { headers: { 'User-Agent': 'Mozilla/5.0' } }
+  );
+  if (!res.ok) throw new Error(`Basketball-Reference fetch failed: ${res.status}`);
+  return parseRosterHtml(await res.text());
+}

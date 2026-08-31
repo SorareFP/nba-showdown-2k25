@@ -3,6 +3,8 @@ import { describe, it, expect } from 'vitest';
 import {
   AWARDS_CACHE_KEY,
   AWARDS_TABLE,
+  CHAMPION_CACHE_KEY,
+  championIndex,
   countAwards,
   extractAwards,
   joinById,
@@ -12,6 +14,7 @@ import {
   statsSeasonEndYear,
 } from './generateAwards.js';
 import { SEASON_TABLES } from './sources/basketballReference.js';
+import { normalizeName } from './resolveTeams.js';
 import { AWARD_CODES, MAX_CARD_AWARDS } from '../../src/cards/awards.js';
 import { CURRENT_SET, ROOKIE_SET, SUPER_SEASON_SET, WNBA_SET } from '../../src/cards/sets.js';
 
@@ -199,6 +202,129 @@ describe('joining awards to cards', () => {
   });
 });
 
+// ── THE RING, WHICH IS IN NO COLUMN ────────────────────────────────────────
+describe('joining the champion roster to cards', () => {
+  const CHAMPION = {
+    abbr: 'OKC',
+    season: 2025,
+    name: 'Oklahoma City Thunder',
+    roster: [
+      { playerId: 'gilgesh01', name: 'Shai Gilgeous-Alexander' },
+      { playerId: 'dortlu01', name: 'Luguentz Dort' },
+      { playerId: 'willija06', name: 'Jalen Williams' },
+    ],
+  };
+  const index = championIndex(CHAMPION);
+
+  it('indexes the roster both ways, because the two sets join differently', () => {
+    // The special sets carry bbrefId and match on it; the base set carries no
+    // id at all and matches on normalizeName.
+    expect(index.byId.get('dortlu01')).toEqual({
+      playerId: 'dortlu01',
+      name: 'Luguentz Dort',
+      team: 'OKC',
+    });
+    expect(index.byName.get(normalizeName('Luguentz Dort')).playerId).toBe('dortlu01');
+    expect(index.abbr).toBe('OKC');
+    expect(index.season).toBe(2025);
+  });
+
+  it('is null for a season nobody has won yet', () => {
+    expect(championIndex(null)).toBeNull();
+    expect(championIndex({ abbr: 'X', season: 1, name: 'X' })).toBeNull();
+  });
+
+  it("throws rather than giving one man another man's ring", () => {
+    expect(() =>
+      championIndex({
+        ...CHAMPION,
+        roster: [
+          { playerId: 'a01', name: 'Jalen Williams' },
+          { playerId: 'b01', name: 'Jalen Williams' },
+        ],
+      })
+    ).toThrow(/champion name join is unsafe/);
+  });
+
+  it('marks a champion who won NOTHING individually, by id', () => {
+    // The case a join gated on "has an awards row" would have missed, and the
+    // reason awardRecord no longer returns early without one: most of a title
+    // roster wins nothing, and the ring is a team fact.
+    const cards = [{ id: 'Lu_Dort', name: 'Luguentz Dort', bbrefId: 'dortlu01', season: 2025 }];
+    const [record] = joinById(cards, new Map([[2025, new Map()]]), new Map([[2025, index]]));
+    expect(record.awards).toEqual(['CHAMP']);
+    expect(record.champion).toBe('OKC');
+    expect(record.bbrefId).toBe('dortlu01');
+    // `raw` is null rather than empty: the column carried nothing, which is a
+    // different fact from a column that was never read.
+    expect(record.raw).toBeNull();
+  });
+
+  it('puts the ring in its declared place beside what the column earned', () => {
+    const cards = [
+      { id: 'SGA', name: 'Shai Gilgeous-Alexander', bbrefId: 'gilgesh01', season: 2025 },
+    ];
+    const awards = new Map([
+      [2025, new Map([['gilgesh01', {
+        playerId: 'gilgesh01',
+        name: 'Shai Gilgeous-Alexander',
+        awards: 'MVP-1,DPOY-10,CPOY-8,AS,NBA1',
+      }]])],
+    ]);
+    const [record] = joinById(cards, awards, new Map([[2025, index]]));
+    // Not ['MVP','AS','CHAMP'] — the ring sorts below the trophy and above the
+    // selection, which is what orderAwardCodes is for.
+    expect(record.awards).toEqual(['MVP', 'CHAMP', 'AS']);
+    expect(record.raw).toBe('MVP-1,DPOY-10,CPOY-8,AS,NBA1');
+    expect(record.champion).toBe('OKC');
+  });
+
+  it("reads each card's OWN season, so a ring lands on the right card", () => {
+    // The same man, two seasons, one champion. This is the whole reason the
+    // champion is looked up per card on the special sets.
+    const cards = [
+      { id: 'A', name: 'Shai Gilgeous-Alexander', bbrefId: 'gilgesh01', season: 2025 },
+      { id: 'B', name: 'Shai Gilgeous-Alexander', bbrefId: 'gilgesh01', season: 2024 },
+    ];
+    const awards = new Map([[2024, new Map()], [2025, new Map()]]);
+    const champions = new Map([[2025, index], [2024, championIndex({
+      abbr: 'BOS', season: 2024, name: 'Boston Celtics', roster: [],
+    })]]);
+    const records = joinById(cards, awards, champions);
+    expect(records).toHaveLength(1);
+    expect(records[0].id).toBe('A');
+    expect(records[0].season).toBe(2025);
+  });
+
+  it('marks the base set by NAME, since those cards carry no id', () => {
+    const { records } = joinByName(
+      [
+        { id: 'Lu_Dort', name: 'Luguentz Dort' },
+        { id: 'Nobody', name: 'Some Other Player' },
+      ],
+      [],
+      2025,
+      index
+    );
+    expect(records).toHaveLength(1);
+    expect(records[0].id).toBe('Lu_Dort');
+    expect(records[0].awards).toEqual(['CHAMP']);
+    expect(records[0].bbrefId).toBe('dortlu01');
+  });
+
+  it('marks nobody when the season has no champion', () => {
+    const { records } = joinByName([{ id: 'X', name: 'Luguentz Dort' }], [], 2025, null);
+    expect(records).toEqual([]);
+    expect(joinById([{ id: 'X', name: 'X', bbrefId: 'dortlu01', season: 2025 }],
+      new Map([[2025, new Map()]]), null)).toEqual([]);
+  });
+
+  it('caches the champion under a key of its own', () => {
+    expect(CHAMPION_CACHE_KEY(2026)).toBe('bbref-2026-champion');
+    expect(CHAMPION_CACHE_KEY(2026)).not.toBe(AWARDS_CACHE_KEY(2026));
+  });
+});
+
 describe('the run report', () => {
   it('counts what prints AND what would print if EVERY selection counted', () => {
     const counts = countAwards([
@@ -221,7 +347,13 @@ describe('the run report', () => {
     // Nothing over the row the card can draw. A four-code record would show up
     // here rather than as a silently dropped mark at export time.
     expect(counts.capped).toBe(0);
-    expect(countAwards([{ raw: 'x', awards: ['MVP', 'DPOY', 'ROY', 'AS'] }]).capped).toBe(1);
+    expect(
+      countAwards([{ raw: 'x', awards: ['MVP', 'DPOY', 'ROY', 'MIP', 'AS'] }]).capped
+    ).toBe(1);
+    // And the high-water mark, which says how much headroom is left BEFORE the
+    // row overflows rather than only whether it has.
+    expect(counts.mostHeld).toBe(3);
+    expect(countAwards([]).mostHeld).toBe(0);
     // The number that keeps the argument for leaving All-NBA and
     // All-Defensive out measurable rather than asserted: the four marked cards
     // plus the NBA3/DEF2 one, and NOT the pure near-miss.
@@ -267,33 +399,74 @@ describe('the committed file', () => {
   });
 
   it('marks a minority of each set, which is what a mark is for', () => {
-    // THE PRICE OF ALL-STAR, on the record. The user took this decision with
-    // these numbers in front of him; they are quoted in src/cards/awards.js and
-    // they are pinned here so the file and the comment cannot drift apart.
+    // THE PRICE OF ALL-STAR AND THE RING, on the record. The user took the
+    // All-Star decision with these numbers in front of him; they are quoted in
+    // src/cards/awards.js and pinned here so the file and the comment cannot
+    // drift apart.
     //
-    //   2026-27         5 ->  31   of 350 cards   (1% ->  9%)
-    //   super-season   15 ->  44   of 210 cards   (7% -> 21%)
-    //   rookie         11 ->  11   of 317 cards   (3% ->  3%)
-    expect(AWARDS.counts[CURRENT_SET].marked).toBe(31);
-    expect(AWARDS.counts[SUPER_SEASON_SET].marked).toBe(44);
-    // Unchanged: no player in the rookie pool was an All-Star as a rookie.
-    expect(AWARDS.counts[ROOKIE_SET].marked).toBe(11);
+    //                  bare   +All-Star   +ring        of
+    //   2026-27           5 ->      31 ->    40   350 cards   (1% -> 11%)
+    //   super-season     15 ->      44 ->    51   210 cards   (7% -> 24%)
+    //   rookie           11 ->      11 ->    17   317 cards   (3% ->  5%)
+    expect(AWARDS.counts[CURRENT_SET].marked).toBe(40);
+    expect(AWARDS.counts[SUPER_SEASON_SET].marked).toBe(51);
+    // The rookie set moves at last, and only on the ring: no player in that
+    // pool was an All-Star as a rookie, but six of them won a title as one.
+    expect(AWARDS.counts[ROOKIE_SET].marked).toBe(17);
     expect(AWARDS.counts[ROOKIE_SET].byCode.AS).toBe(0);
+    expect(AWARDS.counts[ROOKIE_SET].byCode.CHAMP).toBe(6);
+    // The ring is a TEAM fact, so it marks a whole roster's worth at once and
+    // still leaves each set a minority.
+    expect(AWARDS.counts[CURRENT_SET].byCode.CHAMP).toBe(11);
+    expect(AWARDS.counts[SUPER_SEASON_SET].byCode.CHAMP).toBe(10);
     // …against what admitting All-NBA and All-Defensive as well would mark.
     // Still a step up on every set, which is the case for stopping here.
-    expect(AWARDS.counts[CURRENT_SET].ifSelectionsCounted).toBe(38);
-    expect(AWARDS.counts[SUPER_SEASON_SET].ifSelectionsCounted).toBe(58);
-    expect(AWARDS.counts[ROOKIE_SET].ifSelectionsCounted).toBe(11);
+    // (Unchanged by the ring: ifSelectionsCounted asks about the awards column,
+    // and the ring is not in it.)
+    expect(AWARDS.counts[CURRENT_SET].ifSelectionsCounted).toBe(46);
+    expect(AWARDS.counts[SUPER_SEASON_SET].ifSelectionsCounted).toBe(64);
+    expect(AWARDS.counts[ROOKIE_SET].ifSelectionsCounted).toBe(17);
   });
 
-  it('never exceeds the row the card can draw', () => {
-    // MAX_CARD_AWARDS is 3 and the most anybody holds is now exactly 3 — Shai
-    // Gilgeous-Alexander's 2026-27 card, MVP + CPOY + AS — so no card is
-    // silently losing a mark, but the cap is at the ceiling rather than above
-    // it. When that stops being true this fails HERE rather than dropping a
-    // mark at export time.
+  it('names every champion it marked, and gets them right', () => {
+    // The rings are otherwise unfalsifiable without re-fetching. Six of the
+    // twenty, spread across the range and each checkable from memory.
+    const byYear = Object.fromEntries(AWARDS.champions.map(c => [c.season, c.abbr]));
+    expect(AWARDS.champions).toHaveLength(AWARDS.seasons.length);
+    expect(byYear[2004]).toBe('DET');
+    expect(byYear[2008]).toBe('BOS');
+    expect(byYear[2016]).toBe('CLE');
+    expect(byYear[2021]).toBe('MIL');
+    expect(byYear[2023]).toBe('DEN');
+    expect(byYear[2025]).toBe('OKC');
+    // And every ring on a card belongs to a team on that list, for that season.
+    for (const records of Object.values(AWARDS.sets)) {
+      for (const r of records.filter(x => x.awards.includes('CHAMP'))) {
+        expect(r.champion, `${r.name} ${r.season}`).toBe(byYear[r.season]);
+      }
+    }
+  });
+
+  it('never exceeds the row the card can draw, and keeps a mark of headroom', () => {
+    // MAX_CARD_AWARDS is 4 since .awards started wrapping, and the most anybody
+    // holds is 3 — both of Shai Gilgeous-Alexander's cards, MVP + CPOY + AS on
+    // the base set and MVP + CHAMP + AS on Super Season. So no card is losing a
+    // mark AND the cap is above the ceiling rather than on it, which is the
+    // state it was raised past three to restore.
     const most = Math.max(...Object.values(AWARDS.sets).flat().map(r => r.awards.length));
-    expect(most).toBe(MAX_CARD_AWARDS);
-    for (const counts of Object.values(AWARDS.counts)) expect(counts.capped).toBe(0);
+    expect(most).toBe(3);
+    expect(most).toBeLessThan(MAX_CARD_AWARDS);
+    for (const counts of Object.values(AWARDS.counts)) {
+      expect(counts.capped).toBe(0);
+      expect(counts.mostHeld).toBeLessThanOrEqual(MAX_CARD_AWARDS);
+    }
+    // The two cards that reach three, named so a regression says WHO changed.
+    const three = Object.entries(AWARDS.sets).flatMap(([set, rs]) =>
+      rs.filter(r => r.awards.length === 3).map(r => `${set} ${r.name} ${r.season}`)
+    );
+    expect(three.sort()).toEqual([
+      '2026-27 Shai Gilgeous-Alexander 2026',
+      'super-season Shai Gilgeous-Alexander 2025',
+    ]);
   });
 });

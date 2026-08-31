@@ -1836,9 +1836,22 @@ describe('the award marks', () => {
     // whole reason the fallback is a rendered element rather than a bare <img>.
     expect(chip).toContain('Not A Real Award');
     // The box does not change size when art arrives, so the column will not
-    // shift under the user as they add files.
-    expect(pxIn(cssBlock('.awardFallback'), 'width')).toBe(pxIn(cssBlock('.award'), 'width'));
-    expect(pxIn(cssBlock('.awardFallback'), 'height')).toBe(pxIn(cssBlock('.award'), 'height'));
+    // shift under the user as they add files. The SLOT is what holds the size
+    // now — `.award` is fitted into it with max-width/max-height rather than
+    // sized — and the chip takes the slot's HEIGHT on both axes, because a chip
+    // stretched to a 127px box would read as a banner rather than as a mark.
+    expect(cssBlock('.award')).toMatch(/max-width:\s*100%/);
+    expect(cssBlock('.award')).toMatch(/max-height:\s*100%/);
+    expect(cssBlock('.award')).toMatch(/object-fit:\s*contain/);
+    for (const [slot, chip] of [
+      ['.awardSlot', '.awardFallback'],
+      ['.awardSlotOne', '.awardFallbackOne'],
+      ['.awardSlotTwo', '.awardFallbackTwo'],
+    ]) {
+      const box = pxIn(cssBlock(slot), 'height');
+      expect(pxIn(cssBlock(chip), 'width'), chip).toBe(box);
+      expect(pxIn(cssBlock(chip), 'height'), chip).toBe(box);
+    }
   });
 
   it('points at public/awards/{CODE}.png through the app base path', () => {
@@ -1846,32 +1859,55 @@ describe('the award marks', () => {
     // as a literal, because a bare path 404s under this app's base — the exact
     // bug that once made every team logo silently fall back.
     for (const code of AWARD_CODES) {
-      expect(logoSrc(awardImagePath(code)), code).toContain(`/awards/${code}.png`);
-      expect(logoSrc(awardImagePath(code)).endsWith(`/awards/${code}.png`), code).toBe(true);
+      const stem = getAward(code).file ?? code;
+      expect(logoSrc(awardImagePath(code)), code).toContain(`/awards/${stem}.png`);
+      expect(logoSrc(awardImagePath(code)).endsWith(`/awards/${stem}.png`), code).toBe(true);
     }
+    // Seven of the eight are named by their code. The ring is the exception —
+    // it is in no awards column, so nothing outside this repo dictates its
+    // spelling and the user's own filename stands. See AWARDS in awards.js.
+    expect(logoSrc(awardImagePath('CHAMP')).endsWith('/awards/LarryOBrien.png')).toBe(true);
   });
 
-  it('fits three chips across the bar, and the longest code inside one', () => {
+  it('fits the capped row inside the bar, and the longest code inside one slot', () => {
     // BOTH HALVES OF MAX_CARD_AWARDS, redone here from the stylesheet so that
-    // raising the chip size or the gap fails HERE rather than pushing a third
-    // mark off the bar at export time.
+    // raising a slot or the gap fails HERE rather than pushing a mark off the
+    // bar at export time.
+    //
+    // THE ROW WRAPS AT TWO NOW, which is what made the marks 59px wide instead
+    // of 38 — so the constraint is no longer "N across" but "two across, and
+    // the block no taller than the sidebar was grown to pay for".
     const row = cssBlock('.awards');
-    const chip = cssBlock('.awardFallback');
-    const across =
-      MAX_CARD_AWARDS * pxIn(chip, 'width') + (MAX_CARD_AWARDS - 1) * pxIn(row, 'gap');
-    expect(across).toBeLessThanOrEqual(pxIn(row, 'width'));
-    // One more would not fit, which is what makes the cap a measurement rather
-    // than a preference.
-    expect(across + pxIn(chip, 'width') + pxIn(row, 'gap')).toBeGreaterThan(pxIn(row, 'width'));
+    const gap = pxIn(row, 'gap');
+    const width = pxIn(row, 'width');
+    expect(row).toMatch(/flex-wrap:\s*wrap/);
+
+    // Two per line at both wrapped sizes, with the gap between them.
+    for (const slot of ['.awardSlot', '.awardSlotTwo']) {
+      expect(2 * pxIn(cssBlock(slot), 'width') + gap, slot).toBeLessThanOrEqual(width);
+      // And a THIRD does not fit on the line, which is what makes the wrap a
+      // measurement rather than a hope.
+      expect(3 * pxIn(cssBlock(slot), 'width') + 2 * gap, slot).toBeGreaterThan(width);
+    }
+    // One mark takes the whole column, because there is nothing to share it with.
+    expect(pxIn(cssBlock('.awardSlotOne'), 'width')).toBe(width);
+
+    // MAX_CARD_AWARDS is what two columns hold in two rows.
+    expect(MAX_CARD_AWARDS).toBe(4);
+    const lines = Math.ceil(MAX_CARD_AWARDS / 2);
+    expect(lines).toBe(2);
+    // The block's height at the cap, which is what .sidebar was grown by.
+    const block = lines * pxIn(cssBlock('.awardSlot'), 'height') + (lines - 1) * gap;
+    expect(block).toBe(152);
     // And the row takes the badge's column exactly, so the two line up.
-    expect(pxIn(row, 'width')).toBe(pxIn(cssBlock('.badge'), 'width'));
+    expect(width).toBe(pxIn(cssBlock('.badge'), 'width'));
 
     // The longest declared code, on the same conservative 0.7em average advance
-    // the name budget and the badge budget use.
-    const size = pxIn(chip, 'font-size');
+    // the name budget and the badge budget use, against the SMALLEST chip.
+    const size = pxIn(cssBlock('.awardFallback'), 'font-size');
+    const smallest = pxIn(cssBlock('.awardFallback'), 'width');
     for (const code of AWARD_CODES) {
-      expect(code.length * 0.7 * size, `${code} at ${size}px`)
-        .toBeLessThanOrEqual(pxIn(chip, 'width'));
+      expect(code.length * 0.7 * size, `${code} at ${size}px`).toBeLessThanOrEqual(smallest);
     }
   });
 
@@ -1879,7 +1915,8 @@ describe('the award marks', () => {
     for (const code of AWARD_CODES) {
       for (const team of [...Object.keys(TEAMS), ...Object.keys(HISTORICAL_TEAMS)]) {
         const html = render({ card: { ...MARKED, team, awards: [code] }, set: CURRENT_SET });
-        expect(html, `${code} ${team}`).toContain(`/awards/${code}.png`);
+        const stem = getAward(code).file ?? code;
+        expect(html, `${code} ${team}`).toContain(`/awards/${stem}.png`);
       }
     }
   });
@@ -1909,12 +1946,23 @@ describe('the generated award file, on the cards it belongs to', () => {
   it('gives Shai Gilgeous-Alexander an MVP on his 2026-27 card', () => {
     const sga = marked(CURRENT_SET).find(r => r.id === 'Shai_Gilgeous_Alexander');
     expect(sga.raw).toContain('MVP-1');
-    // THE ONE CARD IN THREE SETS THAT FILLS THE ROW. MVP, Clutch Player and the
-    // All-Star selection, in priority order, at exactly MAX_CARD_AWARDS — so
-    // this is also the card that would lose a mark first if a fourth code were
-    // ever declared, and it would lose the All-Star.
+    // THE MOST ANY CARD IN THREE SETS HOLDS. MVP, Clutch Player and the
+    // All-Star selection, in priority order — three of the four the wrapped row
+    // draws, so nothing is dropped and a mark of headroom is left. He is also
+    // the card that would lose one first if a fifth code were ever declared,
+    // and it would be the All-Star.
     expect(sga.awards).toEqual(['MVP', 'CPOY', 'AS']);
-    expect(sga.awards).toHaveLength(MAX_CARD_AWARDS);
+    expect(sga.awards.length).toBeLessThan(MAX_CARD_AWARDS);
+    // Oklahoma City won 2025, not 2026, so his BASE card carries no ring — the
+    // season selection doing its job. His Super Season card, which IS 2024-25,
+    // carries one instead, and that pair is the clearest evidence in the file
+    // that the ring is read per card rather than per set.
+    expect(sga.awards).not.toContain('CHAMP');
+    expect(sga.champion).toBeNull();
+    const ss = marked(SUPER_SEASON_SET).find(r => r.id === 'Shai_Gilgeous_Alexander');
+    expect(ss.season).toBe(2025);
+    expect(ss.awards).toEqual(['MVP', 'CHAMP', 'AS']);
+    expect(ss.champion).toBe('OKC');
     const html = render({
       card: POOL_PLAYERS.find(p => p.id === sga.id),
       set: CURRENT_SET,
@@ -1957,10 +2005,18 @@ describe('the generated award file, on the cards it belongs to', () => {
     // applies to it. A trophy needs its -1 in the raw row; a selection needs
     // the bare token. Nothing else can put a mark on a card.
     const selections = new Set(AWARD_CODES.filter(c => getAward(c).selection));
+    // The ring is EXTERNAL — in no awards string at all — so it is checked
+    // against the roster join instead, in its own test below. A record can now
+    // exist with `raw: null` for that reason: most of a title-winning roster
+    // wins nothing individually, and fourteen of the Knicks' twenty have no
+    // awards string.
+    const external = new Set(AWARD_CODES.filter(c => getAward(c).external));
     for (const records of Object.values(AWARDS_FILE.sets)) {
       for (const r of records) {
-        const tokens = r.raw.split(',').map(t => t.trim());
+        const tokens = (r.raw ?? '').split(',').map(t => t.trim());
+        if (r.raw === null) expect(r.awards, r.name).toEqual(['CHAMP']);
         for (const code of r.awards) {
+          if (external.has(code)) continue;
           // Every code it recorded is one this build declares and can draw.
           expect(AWARD_CODES, `${r.name} ${code}`).toContain(code);
           expect(
@@ -1970,7 +2026,7 @@ describe('the generated award file, on the cards it belongs to', () => {
         }
         // And no trophy ever rides in on a selection's rule.
         for (const code of r.awards) {
-          if (selections.has(code)) continue;
+          if (selections.has(code) || external.has(code)) continue;
           expect(tokens, `${r.name} ${code}`).not.toContain(code);
         }
       }
@@ -1982,13 +2038,21 @@ describe('the generated award file, on the cards it belongs to', () => {
     // you: the rookie set reads each card's ROOKIE season, so ROY is the only
     // trophy that can land there — and eleven of them do.
     const rookies = marked(ROOKIE_SET);
-    expect(rookies.length).toBe(11);
+    expect(rookies.length).toBe(17);
     // ALL-STAR DID NOT MOVE THIS SET AT ALL — no player in the rookie pool was
     // an All-Star in his rookie year. Blake Griffin (`MVP-10,ROY-1,AS`,
     // 2010-11) is the case that would have, and he is retired and out of the
     // pool. Pinned so that a pool change which adds one is visible here.
-    for (const r of rookies) expect(r.awards, r.name).toEqual(['ROY']);
     expect(AWARDS_FILE.counts[ROOKIE_SET].byCode.AS).toBe(0);
+    // THE RING IS THE ONLY OTHER THING A ROOKIE CARD CAN CARRY, and it is a
+    // team fact rather than a trophy: six of them won a title in their first
+    // year. Nobody holds both — a Rookie of the Year on a champion would, and
+    // none of the eleven is one.
+    for (const r of rookies) {
+      expect(r.awards, r.name).toEqual(r.champion ? ['CHAMP'] : ['ROY']);
+    }
+    expect(rookies.filter(r => r.awards.includes('ROY'))).toHaveLength(11);
+    expect(rookies.filter(r => r.awards.includes('CHAMP'))).toHaveLength(6);
     // And no Rookie of the Year is on a Super Season card, for the same reason
     // from the other side: a player whose best season is his rookie one is
     // excluded from that set.

@@ -3,7 +3,9 @@ import {
   AWARDS,
   AWARD_CODES,
   AWARD_WIN_RANK,
+  CHAMPION_CODE,
   MAX_CARD_AWARDS,
+  orderAwardCodes,
   awardColors,
   awardImagePath,
   awardVars,
@@ -226,10 +228,43 @@ describe('a compound award token', () => {
   });
 });
 
+// ── THE RING IS NOT IN THE STRING ───────────────────────────────────────────
+describe('the externally-resolved championship mark', () => {
+  it('cannot be earned by any awards string, however it is spelled', () => {
+    // `external: true` is what makes this a rule rather than an accident of
+    // Basketball-Reference's vocabulary. A token spelled CHAMP-1 would satisfy
+    // the -1 rule exactly, and would hand the ring to the ten men who lost.
+    for (const raw of ['CHAMP', 'CHAMP-1', 'MVP-1,CHAMP-1', 'CHAMP,AS']) {
+      expect(awardsEarned(raw), raw).not.toContain(CHAMPION_CODE);
+    }
+    expect(awardsEarned('MVP-1,CHAMP-1')).toEqual(['MVP']);
+    expect(awardsEarned('CHAMP,AS')).toEqual(['AS']);
+  });
+
+  it('orders into its declared place when the generator adds it', () => {
+    // The generator holds two lists — what the string earned, and a ring it
+    // resolved from a roster — and concatenating them would put the ring after
+    // All-Star. `orderAwardCodes` is the one door to the declared order.
+    expect(orderAwardCodes([...awardsEarned('MVP-1,AS,NBA1'), CHAMPION_CODE]))
+      .toEqual(['MVP', 'CHAMP', 'AS']);
+    expect(orderAwardCodes(['AS', 'CHAMP'])).toEqual(['CHAMP', 'AS']);
+    // Uncapped, unlike pickAwards: the generated file has to record every mark
+    // a card EARNED so that `capped` can count the ones the row cannot draw.
+    expect(orderAwardCodes([...AWARD_CODES])).toHaveLength(AWARD_CODES.length);
+    expect(orderAwardCodes([...AWARD_CODES]).length).toBeGreaterThan(MAX_CARD_AWARDS);
+    // Filters to the declaration and deduplicates, like everything else here.
+    expect(orderAwardCodes(['NBA1', 'CHAMP', 'CHAMP', 42, null])).toEqual(['CHAMP']);
+    expect(orderAwardCodes('MVP')).toEqual([]);
+    expect(orderAwardCodes(null)).toEqual([]);
+  });
+});
+
 // ── THE DECLARATION ─────────────────────────────────────────────────────────
 describe('the declared awards', () => {
-  it('is the six voted trophies plus All-Star, and no other selection', () => {
-    expect(AWARD_CODES).toEqual(['MVP', 'DPOY', 'ROY', 'MIP', '6MOY', 'CPOY', 'AS']);
+  it('is the six voted trophies, the ring and All-Star, and no other selection', () => {
+    expect(AWARD_CODES).toEqual([
+      'MVP', 'DPOY', 'ROY', 'MIP', '6MOY', 'CPOY', 'CHAMP', 'AS',
+    ]);
     // The four that stay out, named so this is a decision on the record rather
     // than an omission: All-NBA puts 15 more players on the list every season
     // and All-Defensive another 10, overlapping almost entirely with the
@@ -276,13 +311,14 @@ describe('the marks a card prints', () => {
     expect(pickCodes(['6MOY', 'ROY', 'DPOY'])).toEqual(['DPOY', 'ROY', '6MOY']);
   });
 
-  it('caps at the row the 135px bar can hold, dropping the LEAST of them', () => {
-    // Four marks do not fit — see MAX_CARD_AWARDS. What goes is the bottom of
-    // the priority order, so the MVP is never the one dropped.
+  it('caps at the row the wrapped block can hold, dropping the LEAST of them', () => {
+    // FIVE marks do not fit — see MAX_CARD_AWARDS, which is four now that
+    // .awards wraps at two rather than laying three across. What goes is the
+    // bottom of the priority order, so the MVP is never the one dropped.
     const all = pickCodes([...AWARD_CODES]);
     expect(all).toHaveLength(MAX_CARD_AWARDS);
-    expect(all).toEqual(['MVP', 'DPOY', 'ROY']);
-    expect(MAX_CARD_AWARDS).toBe(3);
+    expect(all).toEqual(['MVP', 'DPOY', 'ROY', 'MIP']);
+    expect(MAX_CARD_AWARDS).toBe(4);
   });
 
   it('drops ALL-STAR first when the cap bites, whatever else is on the card', () => {
@@ -290,8 +326,19 @@ describe('the marks a card prints', () => {
     // the reason the order was chosen. Every four-mark hand loses the All-Star
     // and keeps the three trophies — a card that won three things and made the
     // team prints the three it won.
-    expect(pickCodes(['MVP', 'DPOY', 'ROY', 'AS'])).toEqual(['MVP', 'DPOY', 'ROY']);
-    expect(pickCodes(['AS', 'MIP', '6MOY', 'CPOY'])).toEqual(['MIP', '6MOY', 'CPOY']);
+    expect(pickCodes(['MVP', 'DPOY', 'ROY', 'MIP', 'AS'])).toEqual([
+      'MVP', 'DPOY', 'ROY', 'MIP',
+    ]);
+    expect(pickCodes(['AS', 'MIP', '6MOY', 'CPOY', 'CHAMP'])).toEqual([
+      'MIP', '6MOY', 'CPOY', 'CHAMP',
+    ]);
+    // And the RING goes second, never before a trophy: a five-mark hand loses
+    // All-Star, a six-mark hand loses the ring too, and the four trophies stay.
+    expect(pickCodes(['MVP', 'DPOY', 'ROY', 'MIP', 'CHAMP', 'AS'])).toEqual([
+      'MVP', 'DPOY', 'ROY', 'MIP',
+    ]);
+    // Under the cap the ring prints, in its declared place.
+    expect(pickCodes(['AS', 'CHAMP', 'MVP'])).toEqual(['MVP', 'CHAMP', 'AS']);
     // Under the cap it stays, and stays at the end.
     expect(pickCodes(['AS', 'MVP'])).toEqual(['MVP', 'AS']);
     expect(pickCodes(['AS', 'CPOY', 'MVP'])).toEqual(['MVP', 'CPOY', 'AS']);
@@ -325,8 +372,17 @@ describe('the marks a card prints', () => {
 describe('award art', () => {
   it('resolves every declared code into public/awards/', () => {
     for (const code of AWARD_CODES) {
+      const award = getAward(code);
+      expect(awardImagePath(code), code).toBe(`/awards/${award.file ?? code}.png`);
+    }
+    // Seven of the eight are named by their code, because the code is
+    // Basketball-Reference's spelling and the art is what gets renamed to match.
+    for (const code of ['MVP', 'DPOY', 'ROY', 'MIP', '6MOY', 'CPOY', 'AS']) {
       expect(awardImagePath(code), code).toBe(`/awards/${code}.png`);
     }
+    // The ring is the exception, and the only one: it comes out of no column, so
+    // no external spelling constrains it and the user's own filename stands.
+    expect(awardImagePath('CHAMP')).toBe('/awards/LarryOBrien.png');
   });
 
   it('resolves an undeclared code to nothing, never to a guessed path', () => {

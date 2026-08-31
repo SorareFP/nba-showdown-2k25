@@ -446,7 +446,7 @@ export default function CardTemplate({
         {awards.length > 0 && (
           <div className={styles.awards}>
             {awards.map(award => (
-              <AwardMark key={award.code} award={award} />
+              <AwardMark key={award.code} award={award} count={awards.length} />
             ))}
           </div>
         )}
@@ -773,19 +773,48 @@ function TeamLogo({ team, abbr }) {
  * thing the user is actually looking at today is to render this component with
  * an award that has no path at all. See CardTemplate.test.js.
  */
-export function AwardMark({ award }) {
+export function AwardMark({ award, count = 1 }) {
+  const slot = `${styles.awardSlot}${awardSizeClass(count, 'awardSlot')}`;
+  const chip = `${styles.awardFallback}${awardSizeClass(count, 'awardFallback')}`;
   return (
-    <AssetImage
-      path={awardImagePath(award.code)}
-      alt={award.name}
-      className={styles.award}
-      fallback={
-        <div className={styles.awardFallback} title={award.name}>
-          {award.code}
-        </div>
-      }
-    />
+    <div className={slot}>
+      <AssetImage
+        path={awardImagePath(award.code)}
+        alt={award.name}
+        className={styles.award}
+        fallback={
+          <div className={chip} title={award.name}>
+            {award.code}
+          </div>
+        }
+      />
+    </div>
   );
+}
+
+/**
+ * The size modifier for a row of `count` marks, or '' for the base size.
+ *
+ * ── THE COUNT IS A CLASS, NOT AN INLINE STYLE ──────────────────────────────
+ *
+ * Every dimension on this card is declared in the stylesheet and measured back
+ * out of it by the test suite — that is how raising a type size fails in
+ * CardTemplate.test.js instead of silently pushing the logo out through the top
+ * of the sidebar. Inline `style={{ height: … }}` would put three numbers
+ * somewhere no CSS-reading test can see them, and the award block is now the
+ * TALLEST optional row in the column, so it is the last one that should
+ * disappear from that arithmetic.
+ *
+ * ONE AND TWO ARE THE MODIFIERS; three and four take the base rule. That is not
+ * arbitrary — three and four are the two counts that WRAP, and a wrapped row is
+ * two lines of the same slot whichever it is, so they are one case and not two.
+ * A count past MAX_CARD_AWARDS cannot reach here (`pickAwards` caps it) and
+ * would take the base size if it did, which is the safe direction.
+ */
+export function awardSizeClass(count, base, sheet = styles) {
+  if (count === 1) return ` ${sheet[`${base}One`]}`;
+  if (count === 2) return ` ${sheet[`${base}Two`]}`;
+  return '';
 }
 
 function Boost({ label, value }) {

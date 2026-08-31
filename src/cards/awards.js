@@ -212,13 +212,36 @@ function codesIn(raw, keep) {
  *   6MOY   a role award: it is about the bench, not about the league.
  *   CPOY   a role award over a slice of a season, and the newest of the six
  *          (first awarded 2022-23), so the fewest cards can carry it.
- *   AS     LAST, and not by a narrow margin. It is the only SELECTION here and
- *          the only mark 24+ players hold every season, so it is the least
- *          distinguishing of the seven by an order of magnitude — every one of
- *          the six above it has exactly one holder a year. Being last is also
- *          what makes it the FIRST DROPPED when MAX_CARD_AWARDS bites, which
- *          is the correct casualty: a card that won three things and made the
- *          team should print the three it won.
+ *   CHAMP  SECOND TO LAST, below every individual trophy and above All-Star.
+ *          This is the one placement that had to be argued rather than read
+ *          off the list, so:
+ *
+ *          It cannot sit among the six, because the property that ordered
+ *          them is HOW FEW HOLD IT — each of the six has exactly ONE holder a
+ *          season, and a ring has fifteen to twenty. Putting a mark that a
+ *          fifth of a champion's bench carries above Defensive Player of the
+ *          Year would break the same rule the header invokes to keep All-NBA
+ *          out: a mark is worth its place in proportion to how few of them
+ *          there are. It is also the only mark here that is not a fact about
+ *          the PLAYER at all — the other seven are things he did, and this is
+ *          something his team did with him on it.
+ *
+ *          It sits ABOVE All-Star for the same measurement, one step down: a
+ *          champion's roster is ~17 men against the All-Star teams' 24-30, the
+ *          ring is unarguable where an All-Star nod is voted, and a player can
+ *          make twelve All-Star teams and never hold this. Every argument for
+ *          All-Star being last is an argument for the championship being above
+ *          it.
+ *
+ *          And the drop order that follows is the right one. On a card holding
+ *          four codes it is ALL-STAR that goes, never the ring and never a
+ *          trophy — see MAX_CARD_AWARDS.
+ *   AS     LAST, and not by a narrow margin. It is the only VOTED SELECTION
+ *          here and the only mark 24+ players hold every season, so it is the
+ *          least distinguishing of the eight by an order of magnitude. Being
+ *          last is also what makes it the FIRST DROPPED when MAX_CARD_AWARDS
+ *          bites, which is the correct casualty: a card that won three things
+ *          and made the team should print the three it won.
  *
  * `name` is not rendered anywhere on the card. It is here so that the studio,
  * the run report and this file's own tests say "Most Improved Player" instead
@@ -237,11 +260,36 @@ function codesIn(raw, keep) {
  * header says why they are not there — the door being cheap is not a reason to
  * walk through it.
  *
- * The CODE IS THE FILENAME. `/awards/{code}` under public/ — see
- * awardImagePath — so a row's code has to be spelled the way the art is, and
- * these seven are spelled the way Basketball-Reference spells them, because
- * that is the side of the join that cannot be renamed. The user's file for the
- * last row is therefore `AS.…`, not `All-Star.…`.
+ * The CODE IS THE FILENAME BY DEFAULT, and `file` is the exception that proves
+ * why. `/awards/{file ?? code}` under public/ — see awardImagePath. For the
+ * seven codes that come out of Basketball-Reference's column the two must be
+ * the same string, because the code is not ours to choose: it is the site's
+ * spelling, it is the side of the join that cannot be renamed, and the art has
+ * to be named to match. The user's All-Star file is therefore `AS.…`, not
+ * `All-Star.…`.
+ *
+ * CHAMP IS THE ONE ROW WITH NO SUCH CONSTRAINT. It is not read out of that
+ * column and Basketball-Reference has no token for it, so there is no external
+ * spelling to honour — which frees the code to be short and semantic and the
+ * FILE to be whatever the user actually saved. He saved
+ * `public/awards/LarryOBrien.jpg`, named for the trophy, and renaming a file in
+ * a directory he is actively curating to satisfy a convention that exists for a
+ * different reason would be the tail wagging the dog.
+ *
+ * ── `external: true` — THIS ROW IS NOT IN THE AWARDS STRING ─────────────────
+ *
+ * `selection` distinguishes a code that is HELD from one that is WON. `external`
+ * answers a question one level up: whether the code comes out of the awards
+ * string AT ALL. CHAMP does not — it is a TEAM fact, resolved by the generator
+ * from the season's League Champion row and that team's roster, and attached to
+ * the record afterwards.
+ *
+ * So `awardsEarned` must not go looking for it, and the flag is what keeps that
+ * honest rather than accidental. Without it the guard would be "the string
+ * never contains CHAMP", which is true today and is not a rule — a future token
+ * spelled `CHAMP-1` on some page would hand this mark to the ten men who
+ * finished second. With it, no awards string can produce this code however it
+ * is spelled, and the ONLY thing that can is the roster join.
  */
 export const AWARDS = [
   { code: 'MVP', name: 'Most Valuable Player' },
@@ -250,8 +298,19 @@ export const AWARDS = [
   { code: 'MIP', name: 'Most Improved Player' },
   { code: '6MOY', name: 'Sixth Man of the Year' },
   { code: 'CPOY', name: 'Clutch Player of the Year' },
+  { code: 'CHAMP', name: 'NBA Champion', file: 'LarryOBrien', external: true },
   { code: 'AS', name: 'All-Star', selection: true },
 ];
+
+/**
+ * The code the champion mark is carried under, for the generator that resolves
+ * it.
+ *
+ * Exported so scripts/cardgen/generateAwards.js never spells 'CHAMP' itself.
+ * The generator's job is to decide WHO was on a champion's roster; which code
+ * that earns is this file's business, exactly as the -1 rule is.
+ */
+export const CHAMPION_CODE = 'CHAMP';
 
 const AWARDS_BY_CODE = new Map(AWARDS.map(a => [a.code, a]));
 
@@ -274,7 +333,9 @@ export function getAward(code) {
  * `selection` flag is for.
  *
  * A ranked award needs its `-1`. A declared selection needs only to be present.
- * Nothing else earns a mark.
+ * AN EXTERNAL AWARD IS NOT REACHABLE FROM HERE AT ALL — no awards string can
+ * earn CHAMP, however it is spelled, because the ring is a team fact resolved
+ * from a roster and not a token in this column. Nothing else earns a mark.
  *
  * AND THE COMPOUND TOKEN IS REFUSED. `Finals MVP-1` is a real string on
  * Basketball-Reference — see the header — and it reaches neither half: `codesIn`
@@ -284,36 +345,77 @@ export function getAward(code) {
 export function awardsEarned(raw) {
   const won = new Set(awardsWon(raw));
   const held = new Set(selectionsIn(raw));
-  return AWARDS.filter(a => (a.selection ? held.has(a.code) : won.has(a.code))).map(a => a.code);
+  return AWARDS.filter(a => {
+    if (a.external) return false;
+    return a.selection ? held.has(a.code) : won.has(a.code);
+  }).map(a => a.code);
+}
+
+/**
+ * Codes filtered to the declaration and sorted into its order, UNCAPPED.
+ *
+ * The code-level twin of `pickAwards`, and the difference is the cap. This is
+ * what the GENERATOR writes into card-awards.json: the file has to record every
+ * mark a card has EARNED so that `capped` can count the ones the row cannot
+ * draw, and a writer that had already truncated to three could not tell a card
+ * holding exactly three from one holding five.
+ *
+ * It exists because the champion join produces a code OUTSIDE the awards
+ * string, so the generator ends up holding two lists — `awardsEarned`'s, in
+ * order, and a CHAMP it resolved separately — and concatenating them would put
+ * the ring after All-Star, which is neither the declared order nor the drop
+ * order. Ordering is declared in one place, and this is the door to it.
+ */
+export function orderAwardCodes(codes) {
+  const wanted = new Set(Array.isArray(codes) ? codes.filter(c => typeof c === 'string') : []);
+  return AWARD_CODES.filter(code => wanted.has(code));
 }
 
 /**
  * How many marks one card prints.
  *
- * ── THE NUMBER IS THE BAR'S WIDTH, AND THE BAR IS 135px ────────────────────
+ * ── FOUR, BECAUSE THE ROW WRAPS NOW ────────────────────────────────────────
  *
- * The sidebar column is 127px of usable width (see .badge — the bar is 135 and
- * the card's keyline takes 7 of them). A row of THREE 38px marks with two 6px
- * gaps measures 126. A fourth would not fit, and shrinking all four to make it
- * fit would cost every card with one mark the size of that mark.
+ * It was THREE, and three was the bar's width doing the choosing: the sidebar
+ * column is 127px of usable width (see .badge — the bar is 135 and the card's
+ * keyline takes 7 of them), and three 38px marks with two 6px gaps measured
+ * 126. A fourth did not fit across.
  *
- * THREE STILL FITS THE DATA, and All-Star is what made that worth re-checking
- * rather than assuming. Before it, exactly one card in the three generated sets
- * carried more than one mark; with it, THIRTEEN do — eleven on Super Season,
- * two on the base set — because a trophy winner is nearly always an All-Star
- * too. Even so nothing is dropped: the most any card carries is exactly THREE,
- * and there is one of them, Shai Gilgeous-Alexander's 2026-27 base card
- * (`MVP-1,CPOY-1,AS,NBA1` -> MVP + CPOY + AS). The cap is at the ceiling rather
- * than above it now, which is the state it was raised past three to avoid — so
- * if a fourth code is ever declared, this number and the bar's width have to be
- * revisited together, not one of them.
+ * .awards no longer lays them across. It WRAPS AT TWO — which is what made the
+ * marks 59px wide instead of 38 — so three marks are two rows and a fourth
+ * costs the second row nothing it has not already spent. 54 + 8 + 54 = 116px
+ * whether the card holds three marks or four. The number that used to be the
+ * bar's width is now the second row's occupancy, and it is 4.
+ *
+ * ── AND FOUR IS HEADROOM RATHER THAN A CHANGE ──────────────────────────────
+ *
+ * NOTHING IS DROPPED TODAY AND NOTHING WAS BEING DROPPED BEFORE. Measured on
+ * the generated file rather than argued (`mostHeld` in card-awards.json):
+ *
+ *        2026-27       most held 3   40 of 61 marked   4 with more than one
+ *        super-season  most held 3   51 of 82 marked  13 with more than one
+ *        rookie        most held 1   17 of 76 marked   0 with more than one
+ *
+ * — a maximum of THREE across all three sets, and exactly two cards reach it,
+ * both of them Shai Gilgeous-Alexander: the 2026-27 base card
+ * (`MVP-1,CPOY-1,AS,NBA1` -> MVP + CPOY + AS) and the Super Season card of his
+ * 2024-25 (`MVP-1,DPOY-10,CPOY-8,AS,NBA1` plus Oklahoma City's title -> MVP +
+ * CHAMP + AS). So the cap sat exactly ON the ceiling, which is the state it was
+ * raised past three to avoid; it now sits one above, and the fourth mark is
+ * free.
+ *
+ * A FOURTH IS REACHABLE, which is why the headroom is worth having: a player
+ * who wins a trophy, makes the All-Star team and wins the title already holds
+ * three, and one more trophy in the same season makes four. Giannis
+ * Antetokounmpo's 2019-20 (MVP + DPOY + AS) is three of those four; had
+ * Milwaukee won that June it would have been the card this number exists for.
  *
  * `pickAwards` drops from the BOTTOM of the priority order when it must, so the
- * mark that goes is always the least of them — and All-Star, being last, is
- * always the first to go. That ordering is the reason a fourth mark could never
- * cost a card a trophy.
+ * mark that goes is always the least of them — All-Star first, then the ring,
+ * and never a trophy. That ordering is the reason a fifth mark could not cost a
+ * card its MVP.
  */
-export const MAX_CARD_AWARDS = 3;
+export const MAX_CARD_AWARDS = 4;
 
 /**
  * The marks a card actually prints, from every code it carries.
@@ -359,12 +461,19 @@ export function pickAwards(codes) {
  * not a browser — a Node exporter can hand this to `assetCandidates` and
  * resolve it against the filesystem with the same list.
  *
- * THE STEM IS NOT NEGOTIABLE. The code is the filename, so the All-Star mark is
- * `AS.…`; `All-Star.webp` is a file nothing asks for, and a card whose art is
- * misnamed falls back to the lettered chip — see AwardMark in CardTemplate.jsx.
+ * THE STEM IS THE ROW'S `file`, WHICH DEFAULTS TO ITS CODE. For the seven codes
+ * Basketball-Reference names, those are the same string and the stem is not
+ * negotiable: the All-Star mark is `AS.…`, and `All-Star.webp` is a file
+ * nothing asks for. CHAMP is the row that declares a `file` instead —
+ * `LarryOBrien`, which is what the user saved — and the reason it may is that
+ * no external source dictates its spelling. See AWARDS.
+ *
+ * A card whose art is missing under every accepted format falls back to the
+ * lettered chip — see AwardMark in CardTemplate.jsx.
  */
 export function awardImagePath(code) {
-  return getAward(code) ? `/awards/${code}.png` : null;
+  const award = getAward(code);
+  return award ? `/awards/${award.file ?? award.code}.png` : null;
 }
 
 /**

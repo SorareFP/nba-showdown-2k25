@@ -51,12 +51,19 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 import { cached, CACHE_DIR, politeDelay, DEFAULT_REQUEST_SPACING_MS } from './cache.js';
-import { fetchSeasonTable, SEASON_TABLES } from './sources/basketballReference.js';
+import {
+  fetchLeagueChampion,
+  fetchSeasonTable,
+  fetchTeamRoster,
+  SEASON_TABLES,
+} from './sources/basketballReference.js';
 import { normalizeName } from './resolveTeams.js';
 import {
   AWARD_CODES,
+  CHAMPION_CODE,
   MAX_CARD_AWARDS,
   awardsEarned,
+  orderAwardCodes,
   selectionsIn,
 } from '../../src/cards/awards.js';
 import {
@@ -136,6 +143,47 @@ export async function loadSeasonAwards(season, { fetchImpl = fetch, force = fals
   );
 }
 
+/**
+ * The cache key one season's CHAMPION is stored under.
+ *
+ * ONE ENTRY FOR TWO FETCHES. The champion is named on the league index page and
+ * his roster is on the team's own page, and neither is useful without the
+ * other: knowing the Knicks won 2026 marks no cards, and a roster with no
+ * season attached marks the wrong ones. So the cached value is the joined
+ * answer — team, season and the twenty men on it — and a cache hit costs the
+ * site nothing where a miss costs it two requests.
+ */
+export const CHAMPION_CACHE_KEY = season => `bbref-${season}-champion`;
+
+/**
+ * One season's champion and his roster, or null for a season nobody has won yet.
+ *
+ * The roster is fetched at the abbreviation the SUMMARY PAGE linked, never one
+ * this repo spells — see parseLeagueChampionHtml. And the season on the record
+ * is the one the href carried, so a page that answered about a different year
+ * cannot be joined to this year's cards.
+ */
+export async function loadSeasonChampion(season, { fetchImpl = fetch, force = false } = {}) {
+  return cached(
+    CHAMPION_CACHE_KEY(season),
+    async () => {
+      const champion = await fetchLeagueChampion(season, { fetchImpl });
+      if (!champion) return null;
+      await politeDelay(DEFAULT_REQUEST_SPACING_MS);
+      const roster = await fetchTeamRoster(champion.abbr, champion.season, { fetchImpl });
+      return { ...champion, roster };
+    },
+    {
+      force,
+      meta: {
+        source: `https://www.basketball-reference.com/leagues/NBA_${season}.html`,
+        season,
+        kind: 'champion',
+      },
+    }
+  );
+}
+
 const readJson = file => JSON.parse(fs.readFileSync(file, 'utf8'));
 
 /**
@@ -169,8 +217,15 @@ export function statsSeasonEndYear(set) {
  * countAwards is computed from it, and the header of src/cards/awards.js
  * quotes the result.
  */
-function awardRecord(card, row, season) {
-  if (!row) return null;
+function awardRecord(card, row, season, championEntry = null) {
+  // TWO SOURCES, EITHER OF WHICH IS ENOUGH. The awards column is one; the
+  // champion's roster is the other, and it is the reason this no longer returns
+  // early on a missing `row`. Most of a title-winning roster wins nothing
+  // individually — fourteen of the Knicks' twenty in 2026 have no awards string
+  // at all — and a guard that required one would have handed the ring to the
+  // stars and to nobody else, which is the opposite of what a team fact means.
+  if (!row && !championEntry) return null;
+  const earned = awardsEarned(row?.awards);
   return {
     id: card.id,
     name: card.name,
@@ -180,13 +235,64 @@ function awardRecord(card, row, season) {
     // sets.js), so taking it from the record would have written `undefined`
     // into every row of the biggest set in the file.
     season,
-    bbrefId: row.playerId,
-    raw: row.awards,
+    // FROM WHICHEVER SIDE MATCHED. Both carry Basketball-Reference's own id and
+    // they agree where both are present (the roster and the season table are
+    // the same site's key for the same man); the awards row is preferred only
+    // because it is the join this file was built around.
+    bbrefId: row?.playerId ?? championEntry?.playerId ?? null,
+    // Null rather than absent when the only reason this card has a record is
+    // the ring: `raw` is the EVIDENCE for the -1 rule, and a champion with no
+    // awards string has no such evidence to record. An empty string would read
+    // as "the column was empty", which is a different fact from "he is here for
+    // something that was never in the column".
+    raw: row?.awards ?? null,
+    // The TEAM he won it with, in Basketball-Reference's own abbreviation for
+    // that season — NJN in 2011, BRK in 2013. Recorded because "why does this
+    // card have a ring" is the first question anyone will ask of the output,
+    // and answering it from the file beats re-deriving it from a cache.
+    champion: championEntry ? championEntry.team : null,
     // Declared codes only — the file records what a card may PRINT, and `raw`
     // above is what it records for everything it does not. `awardsEarned` is
-    // where the -1 rule and the declaration meet; see src/cards/awards.js.
-    awards: awardsEarned(row.awards),
+    // where the -1 rule and the declaration meet; `orderAwardCodes` is what
+    // puts the externally-resolved ring in its declared place rather than on
+    // the end. See src/cards/awards.js.
+    awards: orderAwardCodes(championEntry ? [...earned, CHAMPION_CODE] : earned),
   };
+}
+
+/**
+ * One season's champion roster, indexed BOTH WAYS, because the two sets join
+ * differently.
+ *
+ * The special sets carry `bbrefId` and match on it exactly. The base set does
+ * not carry one at all, so it matches on `normalizeName` — the same key
+ * `joinByName` already uses for the awards column, and safe here for a stronger
+ * reason than it is there: the pool being matched against is ONE SEVENTEEN-MAN
+ * ROSTER rather than the league's six hundred, so the chance of two entries
+ * folding to one key is nil. It is checked anyway, and throws rather than
+ * quietly giving one man another man's ring.
+ *
+ * Returns null for a season nobody has won yet — the state an in-progress
+ * season's index page is genuinely in, and not an error.
+ */
+export function championIndex(champion) {
+  if (!champion?.roster) return null;
+  const byId = new Map();
+  const byName = new Map();
+  for (const player of champion.roster) {
+    const entry = { playerId: player.playerId, name: player.name, team: champion.abbr };
+    byId.set(player.playerId, entry);
+    const key = normalizeName(player.name);
+    if (byName.has(key)) {
+      throw new Error(
+        `generateAwards: two ${champion.abbr} ${champion.season} roster entries normalize to ` +
+          `${JSON.stringify(key)} (${byName.get(key).name} / ${player.name}) — ` +
+          'the champion name join is unsafe'
+      );
+    }
+    byName.set(key, entry);
+  }
+  return { byId, byName, abbr: champion.abbr, season: champion.season, name: champion.name };
 }
 
 /**
@@ -203,7 +309,7 @@ function awardRecord(card, row, season) {
  * key is required to be unique on BOTH sides and the run throws if it is not.
  * A generator that stops is recoverable; an MVP on the wrong card is not.
  */
-export function joinByName(cards, seasonAwards, season) {
+export function joinByName(cards, seasonAwards, season, champions = null) {
   const matched = new Set();
   const byKey = new Map();
   for (const row of seasonAwards) {
@@ -228,7 +334,7 @@ export function joinByName(cards, seasonAwards, season) {
     seen.add(key);
     const row = byKey.get(key);
     if (row) matched.add(key);
-    const record = awardRecord(card, row, season);
+    const record = awardRecord(card, row, season, champions?.byName.get(key) ?? null);
     if (record) out.push(record);
   }
   // EVERY AWARD ROW SHOULD FIND A CARD, and when one does not it is worth
@@ -247,13 +353,31 @@ export function joinByName(cards, seasonAwards, season) {
  * cards carry `bbrefId` because generateSpecialSets.js resolved it once, from
  * the most recent season only, which is the rule that keeps fathers and sons
  * apart. Reusing it costs nothing and cannot be wrong.
+ *
+ * THE RING IS JOINED ON THE SAME KEY, and the champion looked up is THIS CARD'S
+ * OWN SEASON's — which is the whole reason the two special sets could not have
+ * shared the base set's single-season lookup. A Super Season card of Andre
+ * Iguodala's 2014-15 wants the 2015 champion; the Rookie card of the same man
+ * wants 2005's, and neither wants 2026's. `card.season` answers both.
+ *
+ * ── A CARD CAN NOW HAVE A RECORD WITH NO AWARDS ROW ─────────────────────────
+ *
+ * `awardsBySeason` still gates the loop, because a season nobody fetched has
+ * neither awards NOR a champion. But past that gate the awards row is optional:
+ * a role player on a title team gets a record built from the roster alone.
  */
-export function joinById(cards, awardsBySeason) {
+export function joinById(cards, awardsBySeason, championsBySeason = null) {
   const out = [];
   for (const card of cards) {
     const season = awardsBySeason.get(card.season);
     if (!season) continue;
-    const record = awardRecord(card, season.get(card.bbrefId), card.season);
+    const champions = championsBySeason?.get(card.season) ?? null;
+    const record = awardRecord(
+      card,
+      season.get(card.bbrefId),
+      card.season,
+      champions?.byId.get(card.bbrefId) ?? null
+    );
     if (record) out.push(record);
   }
   return out;
@@ -294,14 +418,29 @@ export function countAwards(records) {
   let ifSelectionsCounted = 0;
   let multiple = 0;
   let capped = 0;
+  let mostHeld = 0;
   for (const r of records) {
     if (r.awards.length > 0) marked += 1;
     if (r.awards.length > 1) multiple += 1;
     if (r.awards.length > MAX_CARD_AWARDS) capped += 1;
+    if (r.awards.length > mostHeld) mostHeld = r.awards.length;
     if (r.awards.length > 0 || selectionsIn(r.raw).length > 0) ifSelectionsCounted += 1;
     for (const code of r.awards) byCode[code] += 1;
   }
-  return { cards: records.length, marked, multiple, capped, ifSelectionsCounted, byCode };
+  return {
+    cards: records.length,
+    marked,
+    multiple,
+    capped,
+    // THE HIGH-WATER MARK, recorded rather than inferred. `capped` says whether
+    // the row is overflowing TODAY; this says how much headroom is left before
+    // it does, which is the number MAX_CARD_AWARDS and the sidebar's height are
+    // chosen against. A season in which one man wins MVP, DPOY, makes the team
+    // and wins the title moves this to 4 and nothing else in the file notices.
+    mostHeld,
+    ifSelectionsCounted,
+    byCode,
+  };
 }
 
 /**
@@ -340,6 +479,8 @@ async function main() {
   const seasons = seasonsNeeded(plan);
 
   const bySeason = new Map();
+  const championsBySeason = new Map();
+  const champions = [];
   let fetched = 0;
   for (const season of seasons) {
     const before = fs.existsSync(path.join(CACHE_DIR, `${AWARDS_CACHE_KEY(season)}.json`));
@@ -349,6 +490,24 @@ async function main() {
       fetched += 1;
       // Only after a real request. A cache hit asks nothing of the site and so
       // owes it nothing.
+      await politeDelay(DEFAULT_REQUEST_SPACING_MS);
+    }
+    // THE RING'S TWO PAGES, in the same polite pass and behind the same cache.
+    const hadChampion = fs.existsSync(
+      path.join(CACHE_DIR, `${CHAMPION_CACHE_KEY(season)}.json`)
+    );
+    const champion = await loadSeasonChampion(season);
+    championsBySeason.set(season, championIndex(champion));
+    if (champion) {
+      champions.push({
+        season,
+        abbr: champion.abbr,
+        name: champion.name,
+        roster: champion.roster.length,
+      });
+    }
+    if (!hadChampion) {
+      fetched += 1;
       if (season !== seasons[seasons.length - 1]) await politeDelay(DEFAULT_REQUEST_SPACING_MS);
     }
   }
@@ -356,12 +515,13 @@ async function main() {
   const baseJoin = joinByName(
     base.cards,
     [...bySeason.get(baseSeason).values()],
-    baseSeason
+    baseSeason,
+    championsBySeason.get(baseSeason)
   );
   const sets = {
     [CURRENT_SET]: baseJoin.records,
-    [SUPER_SEASON_SET]: joinById(superSeason.cards, bySeason),
-    [ROOKIE_SET]: joinById(rookie.cards, bySeason),
+    [SUPER_SEASON_SET]: joinById(superSeason.cards, bySeason, championsBySeason),
+    [ROOKIE_SET]: joinById(rookie.cards, bySeason, championsBySeason),
   };
 
   const counts = Object.fromEntries(
@@ -376,9 +536,16 @@ async function main() {
         generatedAt: new Date().toISOString(),
         source:
           "Basketball-Reference's season `advanced` tables, awards column — a voted award's " +
-          'suffix is its finishing position, so only -1 is a win',
+          'suffix is its finishing position, so only -1 is a win — plus each season index ' +
+          "page's League Champion row and that team's roster, which is where the ring comes " +
+          'from and which is in no column at all',
         declared: AWARD_CODES,
         seasons,
+        // WHICH TEAM WON EACH SEASON, WRITTEN DOWN. The rings in `sets` below
+        // are otherwise unfalsifiable without re-fetching: a reader who wants
+        // to check that the 2016 marks went to Cleveland and not to Golden
+        // State can do it from this list, and so can a test.
+        champions,
         counts,
         sets,
       },
@@ -388,11 +555,16 @@ async function main() {
   );
 
   const log = console.log;
-  log(`Seasons read: ${seasons.length} (${fetched} fetched, ${seasons.length - fetched} cached)`);
+  log(`Seasons read: ${seasons.length} (${fetched} page fetches)`);
+  log(
+    `Champions resolved: ${champions.length} of ${seasons.length} ` +
+      `(${champions.map(c => `${c.season} ${c.abbr}`).join(', ')})`
+  );
   for (const [set, c] of Object.entries(counts)) {
     log(
       `  ${set.padEnd(14)} ${String(c.marked).padStart(3)} of ${String(c.cards).padStart(3)} ` +
         `cards marked  (${c.multiple} with more than one; ` +
+        `most held ${c.mostHeld}; ` +
         `${c.capped} over the ${MAX_CARD_AWARDS}-mark row; ` +
         `${c.ifSelectionsCounted} if every selection counted)`
     );

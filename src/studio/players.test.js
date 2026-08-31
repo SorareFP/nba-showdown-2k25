@@ -735,9 +735,13 @@ describe('the award marks the studio joins on', () => {
   it('marks the six 2025-26 TROPHIES in the pool, and nobody else', () => {
     // The six voted awards are still six players — one of them holding two —
     // and the five names below are what the base set looked like before
-    // All-Star was admitted. Asserted separately from the selection so that a
-    // regression in the -1 rule cannot hide inside the larger All-Star count.
-    const trophies = POOL_PLAYERS.filter(p => p.awards.some(c => c !== 'AS'));
+    // All-Star was admitted. Asserted separately from the selection AND from
+    // the ring so that a regression in the -1 rule cannot hide inside either of
+    // the two larger counts: both of those mark whole groups at a time, and a
+    // spurious trophy would be invisible in a total of forty.
+    const trophies = POOL_PLAYERS.filter(
+      p => p.awards.some(c => c !== 'AS' && c !== 'CHAMP')
+    );
     expect(trophies.map(p => p.name).sort()).toEqual([
       'Cooper Flagg',
       'Keldon Johnson',
@@ -747,13 +751,47 @@ describe('the award marks the studio joins on', () => {
     ]);
   });
 
-  it('marks 31 cards once All-Star counts, which is the price of admitting it', () => {
-    // 5 -> 31 of a 350-card set. The user took the decision with this number in
-    // front of him; it is pinned here, in awards.js and in the generated file's
-    // own counts, so the three cannot drift apart.
+  it('marks 40 cards once All-Star and the ring count', () => {
+    // 5 -> 31 -> 40 of a 350-card set. The user took the All-Star decision with
+    // the middle number in front of him; all three are pinned here, in
+    // awards.js and in the generated file's own counts, so they cannot drift.
     const marked = POOL_PLAYERS.filter(p => p.awards.length > 0);
-    expect(marked.length).toBe(31);
+    expect(marked.length).toBe(40);
     expect(marked.filter(p => p.awards.includes('AS')).length).toBe(28);
+    expect(marked.filter(p => p.awards.includes('CHAMP')).length).toBe(11);
+  });
+
+  it('gives the ring to the champion ROSTER, not only to its stars', () => {
+    // THE POINT OF A TEAM FACT. The base set reads 2025-26, which the Knicks
+    // won, and eleven of that roster are in the pool — most of them holding
+    // nothing else, which is exactly what a roster join should produce and what
+    // a join gated on "has an awards row" would have missed.
+    const ringed = POOL_PLAYERS.filter(p => p.awards.includes('CHAMP'));
+    expect(ringed.map(p => p.name).sort()).toEqual([
+      'Guerschon Yabusele',
+      'Jalen Brunson',
+      'Jordan Clarkson',
+      'Jose Alvarado',
+      'Josh Hart',
+      'Karl-Anthony Towns',
+      'Landry Shamet',
+      'Mikal Bridges',
+      'Miles McBride',
+      'Mitchell Robinson',
+      'OG Anunoby',
+    ]);
+    // NINE OF THE ELEVEN CARRY THE RING AND NOTHING ELSE, which is the measure
+    // of what a roster join adds over the awards column: only Brunson and Towns
+    // were All-Stars, and OG Anunoby's `DPOY-10,DEF2` earns him nothing at all
+    // under the -1 rule, so without the ring he would have no mark either.
+    expect(ringed.filter(p => p.awards.length === 1)).toHaveLength(9);
+    expect(ringed.filter(p => p.awards.length > 1).map(p => p.name).sort()).toEqual([
+      'Jalen Brunson',
+      'Karl-Anthony Towns',
+    ]);
+    // And it sorts below the trophies and above All-Star wherever it appears.
+    const brunson = POOL_PLAYERS.find(p => p.id === 'Jalen_Brunson');
+    expect(brunson.awards).toEqual(['CHAMP', 'AS']);
   });
 
   it('gives Shai Gilgeous-Alexander all three of his, in importance order', () => {

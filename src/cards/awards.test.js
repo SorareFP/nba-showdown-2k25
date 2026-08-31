@@ -174,6 +174,58 @@ describe('the -1 rule', () => {
   });
 });
 
+// ── THE COMPOUND TOKEN ──────────────────────────────────────────────────────
+//
+// `Finals MVP-1` IS A REAL STRING ON BASKETBALL-REFERENCE. Verified live
+// against NBA_2026_advanced.html: it sits in the awards cell of Jalen
+// Brunson's row in `<table id="advanced_post">`, the PLAYOFF table, as
+// `<b><a href="/awards/finals_mvp.html">Finals MVP-1</a></b>`.
+//
+// It is the one string on the site that could put a REGULAR-SEASON MVP MARK ON
+// A FINALS MVP, because it ends in `-1` and the `-1` rule is the whole of what
+// earns a trophy. A splitter that broke tokens on `[,\s]+` would yield
+// `Finals` and `MVP-1`, and the second of those is indistinguishable from the
+// real thing.
+//
+// TWO SEPARATE THINGS STOP IT and this is where both are pinned, because
+// neither is obvious enough to survive a tidy-up unpinned:
+//
+//   parseSeasonTableHtml never reads that table — `isolateTableBody` matches
+//   `id="advanced"` INCLUDING the closing quote, so `advanced_post` is not a
+//   match. That half is pinned in sources/basketballReference.test.js.
+//
+//   And this file's parser would refuse the token anyway, which is the half
+//   below. It is the one that matters if the scoping ever fails.
+describe('a compound award token', () => {
+  it('refuses `Finals MVP-1` rather than reading an MVP out of it', () => {
+    // The space is what does it: `codesIn` splits on ',' ALONE, and TOKEN then
+    // requires the whole token to be [A-Za-z0-9]+ with an optional -{digits}.
+    // If anyone is ever tempted to "tidy" that split into /[,\s]+/, this fails.
+    expect(parseAwardToken('Finals MVP-1')).toBeNull();
+    expect(awardsWon('Finals MVP-1')).toEqual([]);
+    expect(selectionsIn('Finals MVP-1')).toEqual([]);
+    expect(awardsEarned('Finals MVP-1')).toEqual([]);
+  });
+
+  it('does not let it become an MVP mark beside a losing MVP finish', () => {
+    // The failure in the shape it would actually take: a player who came fourth
+    // in the regular-season voting and won the Finals MVP. Neither token earns
+    // a trophy, so neither does the pair.
+    expect(awardsEarned('MVP-4,Finals MVP-1')).toEqual([]);
+    // Brunson's real 2026 pair of strings, regular season and postseason, run
+    // together. The All-Star selection is earned; nothing else is.
+    expect(awardsEarned('CPOY-5,AS,NBA2,Finals MVP-1')).toEqual(['AS']);
+    expect(awardsEarned('Finals MVP-1,AS')).toEqual(['AS']);
+  });
+
+  it('leaves the rest of the string alone, rather than dropping it', () => {
+    // A token it cannot parse costs that token its mark and nothing else — the
+    // scraped-string contract in the header. A site change must not silently
+    // strip a card of the trophy it did win.
+    expect(awardsEarned('MVP-1,Finals MVP-1')).toEqual(['MVP']);
+  });
+});
+
 // ── THE DECLARATION ─────────────────────────────────────────────────────────
 describe('the declared awards', () => {
   it('is the six voted trophies plus All-Star, and no other selection', () => {

@@ -168,3 +168,50 @@ describe('SEASON_TABLES', () => {
     );
   });
 });
+
+// ── THE AWARDS COLUMN, AND THE ONE TOKEN THAT MUST NOT REACH IT ─────────────
+//
+// The advanced page is the same shape: `<table id="advanced">` for the regular
+// season and `<table id="advanced_post">` for the playoffs, one after the
+// other. And the playoff table carries a token the regular-season one never
+// does — `Finals MVP-1`, live on Jalen Brunson's 2026 row:
+//
+//   <td data-stat="awards"><b><a href="/awards/finals_mvp.html">
+//      Finals MVP-1</a></b></td>
+//
+// That token ends in `-1`, and `-1` is the entire rule that earns a trophy in
+// src/cards/awards.js. If it ever reached the awards join, a parser that split
+// on whitespace would print a REGULAR-SEASON MVP on the Finals MVP. It does not
+// reach it, for the reason the pbp_stats test above gives — and this is that
+// guarantee stated on the table the awards column is actually read off, with
+// the real markup rather than an analogous one.
+describe('the awards column', () => {
+  const REG = `<table id="advanced"><tbody>
+    <tr><td data-append-csv="gilgesh01" data-stat="name_display">Shai Gilgeous-Alexander</td>
+        <td data-stat="awards"><b>MVP-1,CPOY-1,AS,NBA1</b></td></tr>
+    <tr><td data-append-csv="brunsja01" data-stat="name_display">Jalen Brunson</td>
+        <td data-stat="awards">CPOY-5,AS,NBA2</td></tr>
+  </tbody></table>`;
+  const POST = `<table id="advanced_post"><tbody>
+    <tr><td data-append-csv="brunsja01" data-stat="name_display">Jalen Brunson</td>
+        <td data-stat="awards"><b><a href="/awards/finals_mvp.html">Finals MVP-1</a></b></td></tr>
+  </tbody></table>`;
+
+  it('reads the column, with the markup stripped out of the cell', () => {
+    // The cell is wrapped in <b> and sometimes in <a>; the value is the text.
+    const rows = parseSeasonTableHtml(REG, SEASON_TABLES.advanced.tableId);
+    expect(rows.map(r => r.cells.awards)).toEqual(['MVP-1,CPOY-1,AS,NBA1', 'CPOY-5,AS,NBA2']);
+  });
+
+  it('never reads the playoff table, so Finals MVP cannot reach the join', () => {
+    const rows = parseSeasonTableHtml(REG + POST, SEASON_TABLES.advanced.tableId);
+    expect(rows).toHaveLength(2);
+    for (const row of rows) expect(row.cells.awards, row.playerId).not.toMatch(/Finals/);
+    // And the reason: `id="advanced"` includes the closing quote, so
+    // `advanced_post` is not a prefix match for it. On a page carrying only the
+    // playoff table this throws rather than silently parsing the wrong rows.
+    expect(() => parseSeasonTableHtml(POST, SEASON_TABLES.advanced.tableId)).toThrow(
+      /no id="advanced"/
+    );
+  });
+});

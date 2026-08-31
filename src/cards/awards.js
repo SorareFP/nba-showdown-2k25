@@ -31,12 +31,47 @@
 //                    (All-Defensive). No rank suffix, because there is no
 //                    single winner to rank against.
 //
-// THOSE TWELVE ARE ALL OF THEM. Every award token across the twenty seasons the
-// generator reads (2004 and 2008-2026) is one of the twelve above — no Finals
-// MVP, no championship mark, nothing else. Basketball-Reference's season tables
-// are regular-season tables, and Finals MVP is a postseason award, so it never
-// appears in this column; a card that wanted one would need a different source
-// as well as a row here.
+// THOSE TWELVE ARE ALL OF THEM — IN THE TABLE THE GENERATOR ACTUALLY READS,
+// which is a narrower and much more fragile claim than the one this comment
+// used to make, and the difference is worth spelling out because it was checked
+// against the live site and the old wording was WRONG about why.
+//
+// The old wording said Finals MVP "never appears in this column" because
+// Basketball-Reference's season tables are regular-season tables. They are not.
+// `NBA_2026_advanced.html` carries TWO tables — `<table id="advanced">` for the
+// regular season and `<table id="advanced_post">` for the playoffs — and the
+// postseason one carries, on Jalen Brunson's 2026 row:
+//
+//     <td data-stat="awards"><b><a href="/awards/finals_mvp.html">
+//        Finals MVP-1</a></b></td>
+//
+// THAT TOKEN CONTAINS A SPACE, and it is the one string on the site that could
+// put a REGULAR-SEASON MVP MARK ON A FINALS MVP: a parser splitting on
+// `[,\s]+` yields `Finals` and `MVP-1`, and `MVP-1` satisfies the `-1` rule
+// exactly. Two things stop that, both of them load-bearing and both of them now
+// pinned by tests rather than by luck:
+//
+//   THE TABLE IS NEVER READ. `isolateTableBody` matches `id="advanced"`
+//   INCLUDING the closing quote, so `id="advanced_post"` is not a match and the
+//   playoff rows are outside the slice. Checked live: 733 regular-season rows
+//   parsed from that page, 54 with awards, and `Finals` in none of them.
+//
+//   AND THE TOKEN WOULD BE REFUSED ANYWAY. `codesIn` splits on `,` ALONE — not
+//   on whitespace — and TOKEN then requires the whole token to be
+//   `[A-Za-z0-9]+` with an optional `-{digits}`. `Finals MVP-1` has a space in
+//   the middle, matches nothing, and `parseAwardToken` returns null. So
+//   `awardsEarned('MVP-4,Finals MVP-1')` is empty, and the compound token
+//   cannot be mistaken for the trophy even if the scoping above ever fails.
+//
+// NEITHER of those is a coincidence to be relied on quietly, so awards.test.js
+// asserts both, by name, against the real strings. If a future reader is tempted
+// to "tidy" the split into `[,\s]+`, that test is what stops him.
+//
+// FINALS MVP IS NOT A MARK, and that is a decision rather than a limitation: the
+// user has not asked for one, so the default is to leave it out. What matters is
+// only that it never masquerades as the regular-season MVP, which is what the
+// above is about. Adding it later would be a row here plus reading the
+// `advanced_post` table — not a change to any rule below.
 //
 // SEVEN OF THE TWELVE PRINT: the six trophies, and ALL-STAR.
 //
@@ -240,6 +275,11 @@ export function getAward(code) {
  *
  * A ranked award needs its `-1`. A declared selection needs only to be present.
  * Nothing else earns a mark.
+ *
+ * AND THE COMPOUND TOKEN IS REFUSED. `Finals MVP-1` is a real string on
+ * Basketball-Reference — see the header — and it reaches neither half: `codesIn`
+ * splits on `,` alone and TOKEN rejects the embedded space, so
+ * `awardsEarned('MVP-4,Finals MVP-1')` is empty rather than an MVP.
  */
 export function awardsEarned(raw) {
   const won = new Set(awardsWon(raw));

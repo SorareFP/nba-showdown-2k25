@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-31T01:30:37.605Z",
+ "generatedAt": "2026-08-31T12:01:54.194Z",
  "provisional": true,
  "referenceSeason": 2025,
  "referenceCards": 282,
@@ -405,16 +405,107 @@
   "inches": -0.004393,
   "weight": -0.000754
  },
- "sizeSpeedShareQuality": {
-  "n": 281,
-  "r2": 0.0796,
-  "positionOnly": {
-   "rmse": 0.977,
-   "exactPct": 52
+ "sharePositionSpeedShare": {
+  "PG": 0.6254,
+  "SG": 0.6139,
+  "SF": 0.5189,
+  "PF": 0.4445,
+  "C": 0.366
+ },
+ "sharePositionSize": {
+  "PG": {
+   "inches": 74.55,
+   "weight": 192.8
   },
-  "positionAndSize": {
-   "rmse": 0.967,
-   "exactPct": 45.9
+  "SG": {
+   "inches": 76.66,
+   "weight": 202.9
+  },
+  "SF": {
+   "inches": 78.63,
+   "weight": 210.7
+  },
+  "PF": {
+   "inches": 79.8,
+   "weight": 227
+  },
+  "C": {
+   "inches": 83.19,
+   "weight": 250.7
+  }
+ },
+ "shareSizeSpeedShare": {
+  "inches": -0.004658,
+  "weight": -0.000819
+ },
+ "speedShareQuality": {
+  "n": 281,
+  "folds": 5,
+  "droppedNoSize": 1,
+  "droppedNoShares": 0,
+  "labelSizeR2": 0.0796,
+  "shareSizeR2": 0.074,
+  "rules": {
+   "label": {
+    "available": true,
+    "inSample": {
+     "rmse": 0.977,
+     "exactPct": 52
+    },
+    "heldOut": {
+     "rmse": 1.028,
+     "exactPct": 48
+    },
+    "leaveOneOut": {
+     "rmse": 1.012,
+     "exactPct": 49.1
+    }
+   },
+   "labelSize": {
+    "available": true,
+    "inSample": {
+     "rmse": 0.967,
+     "exactPct": 45.9
+    },
+    "heldOut": {
+     "rmse": 1,
+     "exactPct": 43.4
+    },
+    "leaveOneOut": {
+     "rmse": 1,
+     "exactPct": 45.6
+    }
+   },
+   "shares": {
+    "available": true,
+    "inSample": {
+     "rmse": 1.044,
+     "exactPct": 40.2
+    },
+    "heldOut": {
+     "rmse": 1.079,
+     "exactPct": 38.8
+    },
+    "leaveOneOut": {
+     "rmse": 1.072,
+     "exactPct": 38.8
+    }
+   },
+   "sharesSize": {
+    "available": true,
+    "inSample": {
+     "rmse": 0.993,
+     "exactPct": 41.6
+    },
+    "heldOut": {
+     "rmse": 1.047,
+     "exactPct": 38.1
+    },
+    "leaveOneOut": {
+     "rmse": 1.025,
+     "exactPct": 40.6
+    }
+   }
   }
  },
  "shotLine": {
@@ -523,8 +614,9 @@
     -14.600318887980098,
     70.76064434020172
    ],
-   "r2": 0.9816140850533837,
-   "n": 282
+   "intercept": true,
+   "n": 282,
+   "r2": 0.9816140850533837
   },
   "quality": {
    "n": 282,

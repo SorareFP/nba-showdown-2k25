@@ -108,6 +108,7 @@ import * as A from './attributes.js';
 import * as S from './shooting.js';
 import { CALIBRATION_FILE } from './calibrateAttributes.js';
 import { indexBiometrics, loadBiometrics } from './biometrics.js';
+import { indexPositionShares, loadPositionShares } from './positionShares.js';
 import { PRINTED_SCALE, REFINEMENT_WEIGHT, mapToReferenceScale } from './speedPower.js';
 import { archiveBasis, collectRows, requireArchive } from './epmArchive.js';
 import {
@@ -438,7 +439,15 @@ export function seasonLabel(endYear) {
  * relative and cannot be evaluated a player at a time — exactly as in
  * generateCards.js, and for the same reason.
  */
-export function buildHistoricalCard({ player, season, shooting, speedPowerTotal, size, calibration }) {
+export function buildHistoricalCard({
+  player,
+  season,
+  shooting,
+  speedPowerTotal,
+  size,
+  positionShares,
+  calibration,
+}) {
   const games = season.games ?? 0;
   const mpg = games > 0 ? (season.minutes ?? 0) / games : 0;
   const per100 = {
@@ -446,14 +455,17 @@ export function buildHistoricalCard({ player, season, shooting, speedPowerTotal,
     reb: season.trb100 ?? 0,
     ast: season.ast100 ?? 0,
   };
-  // Position sets the centre and SIZE bends it, exactly as in generateCards.js.
-  // The biometric table covers 2002 onwards and these sets reach back to 2004,
-  // so a historical card is measured the same way a current one is; a player it
-  // does not carry falls back to the position-only split.
-  const { speed, power } = A.splitSpeedPower(speedPowerTotal, season.pos, calibration.positionSpeedShare, {
+  // The positional MIX sets the centre and SIZE bends it, exactly as in
+  // generateCards.js. Both tables reach back past 2004 — biometrics to 2002,
+  // the play-by-play position estimates to 1997 — so a historical card is
+  // measured the same way a current one is, and THE SHARES ARE THIS SEASON'S:
+  // a Super Season card shows the role he played that year, not the one he
+  // plays now. A player either table misses falls back a step.
+  const { speed, power } = A.splitFromCalibration(speedPowerTotal, {
+    pos: season.pos,
     size,
-    positionSize: calibration.positionSize ?? A.POSITION_SIZE,
-    sizeModel: calibration.sizeSpeedShare ?? A.SIZE_SPEED_SHARE,
+    positionShares,
+    calibration,
   });
   const { shotLine, paintBoost, threePtBoost } = shooting;
   // DBPM in DEF EPM's place — the same rounding rule on the same kind of number.
@@ -533,6 +545,7 @@ export function buildSet({
   archive = requireArchive(),
   weights = COMPOSITE_WEIGHTS,
   biometrics = new Map(),
+  positionShares = null,
 }) {
   const seasons = selections.map(s => s.season);
   const all = [...currentRows, ...seasons];
@@ -556,6 +569,10 @@ export function buildSet({
       shooting: shooting.players[cut + i],
       speedPowerTotal: totals[cut + i],
       size: biometrics.get(normalizeName(selection.player.name)) ?? null,
+      // BY ID, not by name. These sets span 2004 onwards, where six pool names
+      // belong to two different players — see the header of history.js.
+      positionShares:
+        positionShares?.forId(selection.season.playerId, selection.season.season) ?? null,
       calibration,
     })
   );
@@ -874,19 +891,30 @@ export function main({ log = console.log } = {}) {
   // covers 2002 onwards and these sets reach back to 2004, so coverage is
   // reported rather than assumed.
   const biometrics = indexBiometrics(loadBiometrics());
+  // The five positional shares of the season each card actually shows.
+  const positionShares = indexPositionShares(loadPositionShares());
+  log(`Split rule: ${A.SPLIT_RULE.name} (see SPLIT_RULE in scripts/cardgen/attributes.js).`);
   const files = {};
   for (const [set, selections, file] of [
     [SUPER_SEASON_SET, selection.superSeason, OUTPUT_FILES[SUPER_SEASON_SET]],
     [ROOKIE_SET, selection.rookie, OUTPUT_FILES[ROOKIE_SET]],
   ]) {
-    const cards = buildSet({ selections, currentRows, calibration, biometrics });
+    const cards = buildSet({ selections, currentRows, calibration, biometrics, positionShares });
     const noSize = selections.filter(
       sel => !biometrics.get(normalizeName(sel.player.name))
     ).length;
+    const noShares = selections.filter(
+      sel => !positionShares.forId(sel.season.playerId, sel.season.season)
+    ).length;
     log(
       noSize
-        ? `  ${set}: ${noSize} of ${selections.length} have no height/weight (position-only split)`
+        ? `  ${set}: ${noSize} of ${selections.length} have no height/weight (unsized split)`
         : `  ${set}: height and weight for all ${selections.length}`
+    );
+    log(
+      noShares
+        ? `  ${set}: ${noShares} of ${selections.length} have no positional shares for their season (position-LABEL split)`
+        : `  ${set}: positional shares for all ${selections.length}`
     );
     cards.sort((a, b) => a.name.localeCompare(b.name));
     const excluded = set === SUPER_SEASON_SET ? selection.excluded.superSeason : selection.excluded.rookie;

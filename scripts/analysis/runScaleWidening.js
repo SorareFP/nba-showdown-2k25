@@ -35,14 +35,10 @@
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { mapToReferenceScale, REFERENCE_TOTALS, WIDENING } from '../cardgen/speedPower.js';
 import { requireArchive } from '../cardgen/epmArchive.js';
-import {
-  SALARY_MAX,
-  POSITION_SIZE,
-  POSITION_SPEED_SHARE,
-  SIZE_SPEED_SHARE,
-  splitSpeedPower,
-} from '../cardgen/attributes.js';
+import { SALARY_MAX, splitFromCalibration } from '../cardgen/attributes.js';
 import { indexBiometrics, loadBiometrics } from '../cardgen/biometrics.js';
+import { indexPositionShares, loadPositionShares } from '../cardgen/positionShares.js';
+import { CURRENT_STATS_SEASON as STATS_SEASON } from '../cardgen/fetchCalibrationData.js';
 import { normalizeName } from '../cardgen/resolveTeams.js';
 import {
   SCORING_ROLLS_PER_GAME,
@@ -61,19 +57,17 @@ const readJson = p => JSON.parse(readFileSync(new URL(p, ROOT)));
 const cards = (j => j.cards ?? j)(readJson('card-data/generated/cards-2026-27.json'));
 const budgets = readJson('card-data/generated/speed-power-totals-2026.json');
 const calibration = readJson('card-data/generated/card-calibration.json');
-const shares = calibration.positionSpeedShare ?? POSITION_SPEED_SHARE;
 const salaryModel = calibration.salary.model;
 
-// The SAME split rule generateCards.js uses, size included. A candidate scale
-// has to be measured against the set as it is actually printed — split by
-// position AND size — or the "current" row would not be the shipped set and
-// every delta below would be measured from somewhere the set has never been.
+// The SAME split rule generateCards.js uses — which is A.SPLIT_RULE, whatever
+// it currently names, reached through the one entry point both share. A
+// candidate scale has to be measured against the set as it is actually printed
+// or the "current" row would not be the shipped set and every delta below would
+// be measured from somewhere the set has never been.
 const biometrics = indexBiometrics(loadBiometrics());
-const sizeOptions = {
-  positionSize: calibration.positionSize ?? POSITION_SIZE,
-  sizeModel: calibration.sizeSpeedShare ?? SIZE_SPEED_SHARE,
-};
+const positionShares = indexPositionShares(loadPositionShares());
 const sizes = cards.map(c => biometrics.get(normalizeName(c.name)) ?? null);
+const shareVectors = cards.map(c => positionShares.forName(c.name, STATS_SEASON));
 
 const compositeByName = new Map(budgets.map(b => [b.name, b.composite]));
 const composites = cards.map(c => compositeByName.get(c.name));
@@ -158,7 +152,12 @@ function buildCandidate({ opts, perPool }) {
     perPool ? {} : { calibrateOn: archive.composites }
   );
   return cards.map((c, i) =>
-    respec(c, splitSpeedPower(totals[i], c.pos, shares, { ...sizeOptions, size: sizes[i] }), {
+    respec(c, splitFromCalibration(totals[i], {
+      pos: c.pos,
+      size: sizes[i],
+      positionShares: shareVectors[i],
+      calibration,
+    }), {
       salaryModel,
       chartEv: chartEvs[i],
     })

@@ -237,13 +237,22 @@ export function buildWnbaCard({ row, team, shooting, speedPowerTotal, calibratio
     reb: nbaConventionPer100(per4MinFromTotals(row.trbTotal, minutes)),
     ast: nbaConventionPer100(per4MinFromTotals(row.astTotal, minutes)),
   };
-  // POSITION ONLY, deliberately. The NBA sets bend this split by the player's
-  // height and weight (A.SIZE_SPEED_SHARE), but the biometrics come from
-  // dunksandthrees' `season-epm`, which is an NBA endpoint with no WNBA
-  // equivalent — Basketball-Reference is the only source this set has, and it is
-  // the reason every WNBA card is provisional. Omitting the size argument gives
-  // exactly the rule this file has always used rather than dropping players who
-  // cannot be measured, which is what `splitSpeedPower` makes the default.
+  // POSITION LABEL ONLY, deliberately, and now for two reasons rather than one.
+  //
+  // SIZE: the NBA sets bend this split by height and weight (A.SIZE_SPEED_SHARE),
+  // but the biometrics come from dunksandthrees' `season-epm`, which is an NBA
+  // endpoint with no WNBA equivalent.
+  //
+  // SHARES: the NBA sets also read Basketball-Reference's play-by-play position
+  // estimates (A.SPLIT_RULE). CHECKED, NOT ASSUMED —
+  // /wnba/years/2025_play-by-play.html and /wnba/years/2026_play-by-play.html
+  // both answer 404 (verified 2026-08-31), and no WNBA table on the site carries
+  // a Position Estimate group at all.
+  //
+  // Basketball-Reference is the only source this set has, and that is the reason
+  // every WNBA card is provisional. Omitting both arguments gives exactly the
+  // rule this file has always used rather than dropping players who cannot be
+  // measured, which is what `splitSpeedPower` makes the default.
   const { speed, power } = A.splitSpeedPower(
     speedPowerTotal,
     row.pos,

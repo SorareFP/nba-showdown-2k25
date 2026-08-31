@@ -81,6 +81,7 @@ import { readBlendedActual, reportBlend, PRIOR_STATS_SEASON } from './priorSeaso
 import { trb100 } from './sources/dunksAndThrees.js';
 import { CALIBRATION_FILE } from './calibrateAttributes.js';
 import { CURRENT_STATS_SEASON } from './fetchCalibrationData.js';
+import { indexPositionShares, loadPositionShares } from './positionShares.js';
 import { playerIdFromName } from '../../src/cards/playerId.js';
 
 const GEN_DIR = path.join(REPO_ROOT, 'card-data', 'generated');
@@ -147,20 +148,31 @@ export function actualShootingInput(rate) {
  * FINISHED card (design philosophy point 8), so it comes last, after the chart
  * it is a function of exists.
  */
-export function buildCard({ player, rate, actual, shooting, speedPowerTotal, size, calibration }) {
+export function buildCard({
+  player,
+  rate,
+  actual,
+  shooting,
+  speedPowerTotal,
+  size,
+  positionShares,
+  calibration,
+}) {
   const per100 = {
     pts: rate?.pts100 ?? 0,
     reb: rate ? trb100(rate) : 0,
     ast: rate?.ast100 ?? 0,
   };
-  // Position sets the centre of the split and SIZE bends it away from that
-  // centre — see A.SIZE_SPEED_SHARE. `size` is null for a player the biometric
-  // table does not carry, and the split is then the position-only one it always
-  // was rather than a dropped card.
-  const { speed, power } = A.splitSpeedPower(speedPowerTotal, player.pos, calibration.positionSpeedShare, {
+  // The positional MIX sets the centre of the split and SIZE bends it away from
+  // that centre — see A.SPLIT_RULE for which of the four statements of this rule
+  // is active, and why it is not the best-fitting one. Both inputs are optional
+  // and independent: a player the biometric table or the play-by-play table does
+  // not carry falls back a step rather than being dropped.
+  const { speed, power } = A.splitFromCalibration(speedPowerTotal, {
+    pos: player.pos,
     size,
-    positionSize: calibration.positionSize ?? A.POSITION_SIZE,
-    sizeModel: calibration.sizeSpeedShare ?? A.SIZE_SPEED_SHARE,
+    positionShares,
+    calibration,
   });
 
   const { shotLine, paintBoost, threePtBoost } = shooting;
@@ -238,6 +250,10 @@ export function generateCards({
   // card-data/generated/player-biometrics.json, and every split falls back to
   // position alone.
   biometrics = new Map(),
+  // Name -> the five positional shares for the current season. Absent for a
+  // checkout that has not built card-data/generated/position-shares.json, and
+  // every split falls back to the position label.
+  positionShares = null,
   overrides = {},
 }) {
   const teamIndex = indexByName(teams);
@@ -265,6 +281,7 @@ export function generateCards({
   const missingRates = [];
   const missingActual = [];
   const missingSize = [];
+  const missingShares = [];
   // Per-4-minute production, per card, in card order. Carried out of the build
   // because it is what a chart is SUPPOSED to integrate to, and the run report
   // cannot check that without it. See reportChartFit.
@@ -276,6 +293,8 @@ export function generateCards({
     const sp = spIndex.get(normalizeName(player.name));
     const size = lookup(biometrics, player.name);
     if (!size) missingSize.push(player.name);
+    const shares = positionShares?.forName(player.name, CURRENT_STATS_SEASON) ?? null;
+    if (!shares) missingShares.push(player.name);
     targets.push({
       pts: V.per4MinFromPer100(rate?.pts100 ?? 0),
       reb: V.per4MinFromPer100(rate ? trb100(rate) : 0),
@@ -289,6 +308,7 @@ export function generateCards({
         shooting: shooting.players[i],
         speedPowerTotal: sp?.speedPowerTotal ?? 0,
         size,
+        positionShares: shares,
         calibration,
       })
     );
@@ -301,6 +321,7 @@ export function generateCards({
     missingRates,
     missingActual,
     missingSize,
+    missingShares,
     shooting,
     targets,
     // How much of the pool's stat line is postseason. Zero for a pool built off
@@ -518,11 +539,22 @@ export function main({ log = console.log } = {}) {
   }
   const actual = blend.rows;
   const overridesFile = path.join(REPO_ROOT, 'scripts', 'cardgen', 'overrides.json');
-  const { cards, missingRates, missingActual, missingSize, shooting, pooling, names, targets } = generateCards({
+  const {
+    cards,
+    missingRates,
+    missingActual,
+    missingSize,
+    missingShares,
+    shooting,
+    pooling,
+    names,
+    targets,
+  } = generateCards({
     pool: readJson(path.join(GEN_DIR, 'player-pool-2026.json')),
     teams: readJson(path.join(GEN_DIR, 'player-teams-2026.json')),
     speedPower: readJson(path.join(GEN_DIR, 'speed-power-totals-2026.json')),
     biometrics: indexBiometrics(loadBiometrics()),
+    positionShares: indexPositionShares(loadPositionShares()),
     rates,
     actual,
     calibration,
@@ -563,9 +595,15 @@ export function main({ log = console.log } = {}) {
   }
   log(
     missingSize.length
-      ? `  no height/weight for ${missingSize.length} (position-only split): ${missingSize.join(', ')}`
-      : '  height and weight for all 350 — every split is position AND size'
+      ? `  no height/weight for ${missingSize.length} (unsized split): ${missingSize.join(', ')}`
+      : `  height and weight for all ${cards.length} — every split carries its size term`
   );
+  log(
+    missingShares.length
+      ? `  no positional shares for ${missingShares.length} (position-LABEL split): ${missingShares.join(', ')}`
+      : `  positional shares for all ${cards.length} — no card falls back to its label`
+  );
+  log(`  active split rule: ${A.SPLIT_RULE.name} (see SPLIT_RULE in scripts/cardgen/attributes.js)`);
   log(
     `  playoffs folded in: ${pooling.gained}/${pooling.players} players gained games ` +
       `(${pooling.playoffGames} playoff games total, median ${pooling.medianPlayoffGames}, ` +

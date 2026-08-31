@@ -181,8 +181,8 @@ export const SETS = [
     // had when it held the string.
     // ── BOTH OF THESE ARE THE GILDED TIER'S ─────────────────────────────────
     //
-    // 106 of the 210 cards in this set render exactly as declared here. The
-    // other 104 cost less than SUPER_SEASON_MIN_SALARY, print BEST SEASON in
+    // 55 of the 210 cards in this set render exactly as declared here. The
+    // other 155 cost less than SUPER_SEASON_MIN_SALARY, print BEST SEASON in
     // the team's accent, and take no treatment at all — see `cardTreatment`
     // below and `tierBadge` in badges.js. The row is not written as a pair
     // because the set genuinely declares one badge and one treatment; what the
@@ -263,12 +263,14 @@ export const SETS = [
     // what KIND of card this is, and the kind is identical; the league mark in
     // the opposite corner is what says the rest.
     //
-    // TIERED BY SALARY LIKE THE NBA SET, and today that changes nothing: the
-    // cheapest of the sixteen is Tina Charles' 2016 at $860, comfortably over
-    // SUPER_SEASON_MIN_SALARY, so all sixteen keep the gold. The rule is not
-    // special-cased away for that — a named roster is one edit from gaining a
-    // legend whose best year prices below the line, and `cardTreatment` asks
-    // the same question of every set rather than of a list of set ids.
+    // TIERED BY SALARY LIKE THE NBA SET, AND FIFTEEN OF THE SIXTEEN ARE GOLD.
+    // Tina Charles' 2016 at $860 is the one that is not: it cleared the old
+    // $700 line and does not clear the $900 one, so it prints BEST SEASON on
+    // the team's own palette like any other demoted card. That is the argument
+    // for not special-casing this set, arriving one threshold change after the
+    // argument was made — `cardTreatment` asks the same question of every set
+    // rather than of a list of set ids, so nothing here had to be edited for a
+    // named roster of sixteen to stop being unanimous.
     badge: SUPER_SEASON_BADGE,
     treatment: 'gold-foil',
   },
@@ -308,9 +310,11 @@ export function setTreatment(id) {
  * thing — a Super Season card under SUPER_SEASON_MIN_SALARY prints BEST SEASON
  * and keeps its team's own palette, gold foil and all — but it is written as
  * the general sentence because the rule is general: "not make the tab gold for
- * anyone under 700 salary" is one decision about the pill AND the foil, and
- * both halves have to come out of the same comparison or they will drift into
- * a gold band under a team-coloured pill.
+ * anyone under [the line] salary" is one decision about the pill AND the foil,
+ * and both halves have to come out of the same comparison or they will drift
+ * into a gold band under a team-coloured pill. (The user said 700 when the tier
+ * was introduced and 900 when it was moved; neither number appears here, which
+ * is the point.)
  *
  * ── WHY IT ASKS `tierBadge` INSTEAD OF COMPARING THE SALARY ITSELF ──────────
  *

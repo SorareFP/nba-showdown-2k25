@@ -188,20 +188,21 @@ describe('cardTreatment', () => {
   });
 
   it('covers the WNBA legends without naming them', () => {
-    // None of the sixteen falls below the line today — the cheapest is Tina
-    // Charles' 2016 at $860 — so all sixteen keep the gold. The rule is applied
-    // generally anyway: a named roster is one edit from gaining a legend who
-    // prices lower, and `cardTreatment` asks the same question of every set
-    // rather than of a list of set ids.
-    expect(cardTreatment(WNBA_SUPER_SEASON_SET, 860)).toBe('gold-foil');
-    expect(cardTreatment(WNBA_SUPER_SEASON_SET, 690)).toBeNull();
+    // Fifteen of the sixteen are gold. The cheapest — Tina Charles' 2016 at
+    // $860 — cleared the old $700 line and does not clear the $900 one, so it
+    // is now the set's one BEST SEASON card. That is the whole argument for
+    // applying the rule generally arriving in practice: `cardTreatment` asks
+    // the same question of every set rather than of a list of set ids, so a
+    // named roster of sixteen stopped being unanimous with nothing edited.
+    expect(cardTreatment(WNBA_SUPER_SEASON_SET, 1100)).toBe('gold-foil');
+    expect(cardTreatment(WNBA_SUPER_SEASON_SET, 860)).toBeNull();
   });
 
   it('leaves the Rookie set green at every price', () => {
     // Its badge does not tier: "this was his first season" is a fact about a
     // career, not a claim a small salary can overstate. A rookie card is cheap
     // by definition and the green is not the gold.
-    for (const salary of [10, 690, 700, 1500, undefined]) {
+    for (const salary of [10, 890, 900, 1500, undefined]) {
       expect(cardTreatment(ROOKIE_SET, salary), String(salary)).toBe('green-accent');
     }
   });
@@ -209,7 +210,7 @@ describe('cardTreatment', () => {
   it('is exactly setTreatment for every set that does not tier', () => {
     for (const set of SETS) {
       if (set.badge === SUPER_SEASON_BADGE) continue;
-      for (const salary of [10, 699, 700, 1500, undefined]) {
+      for (const salary of [10, 899, 900, 1500, undefined]) {
         expect(cardTreatment(set.id, salary), `${set.id} $${salary}`)
           .toBe(setTreatment(set.id));
       }

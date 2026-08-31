@@ -1189,7 +1189,8 @@ describe('the set treatment on the rendered card', () => {
    * SUPER_SEASON_MIN_SALARY, so on the Super Season set that same record is now
    * a BEST SEASON card with no foil on it, and every assertion about the gold
    * has to name a card that actually gets the gold. Exactly at the line, which
-   * is the inclusive side: "under 700" is what was asked for, so 700 is gold.
+   * is the inclusive side: "under [the line]" is what was asked for, so the
+   * line itself is gold.
    */
   const GILDED = { ...CARD, salary: SUPER_SEASON_MIN_SALARY };
 
@@ -1231,7 +1232,8 @@ describe('the set treatment on the rendered card', () => {
   });
 
   it('withholds the whole foil from a Super Season card under the salary line', () => {
-    // "not make the tab gold for anyone under 700 salary". The gold is not one
+    // "not make the tab gold for anyone under 700 salary" — 900 since. The
+    // threshold moved; this rule did not. The gold is not one
     // surface — it is the band, the frame, the field sheen and the 96px name —
     // so the tier does not strip the pill and leave the rest. The card keeps
     // the TEAM's palette, exactly as `applyTreatment(base, null)` returns it,
@@ -1247,8 +1249,9 @@ describe('the set treatment on the rendered card', () => {
   });
 
   it('gilds at the line and not one dollar below it', () => {
-    // The boundary, both sides, on the same record. Two real cards sit exactly
-    // at 700 (A.J. Green, Miles Bridges) so this is not a hypothetical edge.
+    // The boundary, both sides, on the same record. A real card sits exactly at
+    // the line — Jonas Valančiūnas' 2020-21 at $900 — so this is not a
+    // hypothetical edge. (It was A.J. Green and Miles Bridges at $700.)
     const at = render({ card: { ...CARD, salary: SUPER_SEASON_MIN_SALARY }, set: SUPER_SEASON_SET });
     const below = render({
       card: { ...CARD, salary: SUPER_SEASON_MIN_SALARY - 10 },
@@ -1269,7 +1272,7 @@ describe('the set treatment on the rendered card', () => {
     expect(html).toContain('data-treatment="green-accent"');
     expect(html).toContain('ROOKIE');
     // And at every price, so nothing can start reading the salary here.
-    for (const salary of [10, 690, 700, 1500, undefined]) {
+    for (const salary of [10, 890, 900, 1500, undefined]) {
       expect(render({ card: { ...CARD, salary }, set: ROOKIE_SET }), String(salary))
         .toContain('data-treatment="green-accent"');
     }
@@ -1598,16 +1601,18 @@ describe('the season and the card-type badge', () => {
     // THE CONSEQUENCE WORTH STATING OUT LOUD. The pill is the pill: a $10 base
     // card wearing the gold while a $10 Super Season card does not would be the
     // rule contradicting itself about the same player in the same season. So
-    // the 107 split 41/66 on the same constant, and card-badges.json's own
-    // `printed` counts — computed through the same pickBadge — agree.
+    // the 107 split 13/94 on the same constant, and card-badges.json's own
+    // `printed` counts — computed through the same pickBadge — agree. (It was
+    // 41/66 while the line was $700; both numbers moved together, which is the
+    // property this test exists to hold.)
     const superSeason = POOL_PLAYERS.filter(
       p => p.badges.includes(SUPER_SEASON_BADGE) && !p.badges.includes(ROOKIE_BADGE)
     );
     const gilded = superSeason.filter(p => p.salary >= SUPER_SEASON_MIN_SALARY);
-    expect(gilded.length).toBe(41);
-    expect(superSeason.length - gilded.length).toBe(66);
-    expect(BADGE_FILE.counts.printed[SUPER_SEASON_BADGE]).toBe(41);
-    expect(BADGE_FILE.counts.printed[BEST_SEASON_BADGE]).toBe(66);
+    expect(gilded.length).toBe(13);
+    expect(superSeason.length - gilded.length).toBe(94);
+    expect(BADGE_FILE.counts.printed[SUPER_SEASON_BADGE]).toBe(13);
+    expect(BADGE_FILE.counts.printed[BEST_SEASON_BADGE]).toBe(94);
     expect(BADGE_FILE.counts.printed[ROOKIE_BADGE]).toBe(33);
   });
 

@@ -370,8 +370,8 @@ describe('the base set\'s badges', () => {
     const contested = SUPER.excluded.length - ROOKIE.excluded.length;
     expect(counts.printed[SUPER_SEASON_BADGE] + counts.printed[BEST_SEASON_BADGE])
       .toBe(contested);
-    expect(counts.printed[BEST_SEASON_BADGE]).toBe(66);
-    expect(counts.printed[SUPER_SEASON_BADGE]).toBe(41);
+    expect(counts.printed[BEST_SEASON_BADGE]).toBe(94);
+    expect(counts.printed[SUPER_SEASON_BADGE]).toBe(13);
     // Nobody loses their pill entirely in the resolution.
     expect(BADGE_IDS.reduce((n, id) => n + counts.printed[id], 0)).toBe(counts.players);
     expect(counts.multiple).toBe(ROOKIE.excluded.length);

@@ -132,20 +132,41 @@ export const ROOKIE_BADGE = 'rookie';
  *
  * ── ONE DECLARED NUMBER, NOT A DERIVED ONE ──────────────────────────────────
  *
- * The user named 700 and 700 is what this says. It is NOT a quantile, and that
- * is deliberate even though it currently sits almost exactly on one: of the 210
- * NBA Super Season cards, 104 fall below it and 106 do not, so it is the median
- * to within a card. That is a coincidence of this pool, and pinning it to the
- * median would mean the tier boundary MOVED every time the pool was regenerated
- * — a player's card could lose its gold because somebody else got a raise.
- * Salary is a stated value on the face of the card, so the line between the
- * tiers is drawn on that value and stays where it is put.
+ * It is NOT a quantile, and never was. Salary is a stated value on the face of
+ * the card, so the line between the tiers is drawn on that value and stays
+ * where it is put; pinning it to a quantile would mean the boundary MOVED every
+ * time the pool was regenerated, and a player's card could lose its gold
+ * because somebody else got a raise.
  *
- * INCLUSIVE AT THE LINE, because "under 700" is what was asked for: 700 itself
- * is gold. Two cards sit exactly there (A.J. Green, Miles Bridges) and they are
- * gilded.
+ * ── WHY IT MOVED FROM 700 TO 900 ────────────────────────────────────────────
+ *
+ * Because 700 was the median, and a median is a coin flip rather than a
+ * distinction. Of the 210 NBA Super Season cards, 104 fell below 700 and 106 did
+ * not — the split the first version of this rule was measured at, and almost
+ * exactly the thing the tier was introduced to stop being. "Gold that every card
+ * has is not a distinction" is the argument above, and gold that half the cards
+ * have is barely a better one.
+ *
+ * The user named 900 on being shown that. What it actually buys, across the
+ * three sets that can print this badge:
+ *
+ *   super-season          55 gold / 155 best   (was 106 / 104)
+ *   2026-27 base cards    13 gold /  94 best   (was  41 /  66)
+ *   wnba-super-season     15 gold /   1 best   (was  16 /   0)
+ *
+ * — 83 gilded cards out of 333, a touch under a quarter. Note the last row: the
+ * WNBA set is no longer unanimous. Tina Charles' 2016 at $860 is the first card
+ * in it to print BEST SEASON, which is the rule working rather than the rule
+ * misfiring, and it is why `cardTreatment` in sets.js was written to ask this
+ * question of every set instead of a list of set ids.
+ *
+ * INCLUSIVE AT THE LINE, because "under 700" was what was asked for the first
+ * time and nothing about moving the number changes which side of it the line
+ * falls on: 900 itself is gold. One Super Season card sits exactly there (Jonas
+ * Valančiūnas' 2020-21) and two base cards do (Brandon Miller, Cam Spencer);
+ * all three are gilded.
  */
-export const SUPER_SEASON_MIN_SALARY = 700;
+export const SUPER_SEASON_MIN_SALARY = 900;
 
 /**
  * The badge id a card actually prints, given what it costs.

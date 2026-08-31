@@ -507,7 +507,9 @@ describe('the badge model', () => {
 // ── THE SALARY TIER ─────────────────────────────────────────────────────────
 //
 // "re: Super Season, I think we can just put 'Best Season' and not make the tab
-// gold for anyone under 700 salary." One decision with two consequences — the
+// gold for anyone under 700 salary." The line has since moved to 900 — see
+// SUPER_SEASON_MIN_SALARY for why — and nothing below changed with it except
+// the one assertion that names the number. One decision with two consequences — the
 // pill's label and colour, and the gold foil — and the reason they are tested
 // together here is that they are computed from ONE comparison. `tierBadge` is
 // asked by `pickBadge` for the badge and by `cardTreatment` for the treatment,
@@ -521,26 +523,32 @@ describe('the Super Season salary tier', () => {
     expect(pickBadge([SUPER_SEASON_BADGE], at - 1).id).toBe(BEST_SEASON_BADGE);
     expect(pickBadge([SUPER_SEASON_BADGE], 10).id).toBe(BEST_SEASON_BADGE);
     expect(pickBadge([SUPER_SEASON_BADGE], 1500).id).toBe(SUPER_SEASON_BADGE);
-    // "under 700" — so 700 itself is gold. Two real cards sit exactly there.
+    // "under [the line]" — so the line itself is gold. A real card sits exactly
+    // there: Jonas Valančiūnas' 2020-21 at $900.
     expect(tierBadge(SUPER_SEASON_BADGE, at)).toBe(SUPER_SEASON_BADGE);
     expect(tierBadge(SUPER_SEASON_BADGE, at - 0.01)).toBe(BEST_SEASON_BADGE);
   });
 
   it('is a DECLARED number, not a quantile of whatever the pool is today', () => {
-    // It currently sits within one card of the set's median (104 of 210 below,
-    // 106 at or above) and that is a coincidence of this pool, not the rule.
     // Pinning it to a quantile would move the boundary every time the rosters
     // were regenerated — a player could lose his gold because somebody else got
     // a raise. Salary is printed on the face of the card; the line is drawn on
     // that value and stays where it is put.
-    expect(SUPER_SEASON_MIN_SALARY).toBe(700);
+    //
+    // THAT THE NUMBER MOVED IS NOT AN ARGUMENT AGAINST THIS. It was 700, which
+    // landed within one card of the Super Season set's median (104 of 210 below,
+    // 106 at or above) and so made the gold a coin flip; the user moved it to
+    // 900 on being shown that, which gilds 55 of the 210. A declared value that
+    // a person changes deliberately is exactly what this is; a derived one would
+    // have changed itself, unannounced, on the next regeneration.
+    expect(SUPER_SEASON_MIN_SALARY).toBe(900);
     expect(Number.isInteger(SUPER_SEASON_MIN_SALARY)).toBe(true);
   });
 
   it('demotes NOTHING else, at any price', () => {
     // Only the badge that makes a CLAIM can overstate one. "This was his rookie
     // season" is a fact about a career and is exactly as true at $10.
-    for (const salary of [0, 10, 699, 700, 1500, null, undefined, NaN]) {
+    for (const salary of [0, 10, 699, 700, 899, 900, 1500, null, undefined, NaN]) {
       expect(tierBadge(ROOKIE_BADGE, salary), String(salary)).toBe(ROOKIE_BADGE);
       expect(tierBadge(BEST_SEASON_BADGE, salary), String(salary)).toBe(BEST_SEASON_BADGE);
       expect(tierBadge('championship-standout', salary), String(salary))
@@ -578,7 +586,7 @@ describe('the Super Season salary tier', () => {
     // every one of them — a gold band under a BEST SEASON pill is the bug this
     // exists to make impossible.
     for (const set of [SUPER_SEASON_SET, WNBA_SUPER_SEASON_SET]) {
-      for (const salary of [10, 690, 699, 700, 860, 1500, undefined]) {
+      for (const salary of [10, 690, 699, 700, 860, 899, 900, 1500, undefined]) {
         const gilded = pickBadge([setBadge(set)], salary).id === SUPER_SEASON_BADGE;
         expect(cardTreatment(set, salary), `${set} $${salary}`)
           .toBe(gilded ? setTreatment(set) : null);
@@ -592,7 +600,7 @@ describe('the Super Season salary tier', () => {
     // so a card in them cannot be given a treatment it did not have either.
     for (const set of SETS.map(s => s.id)) {
       if (set === SUPER_SEASON_SET || set === WNBA_SUPER_SEASON_SET) continue;
-      for (const salary of [10, 699, 700, 1500, undefined]) {
+      for (const salary of [10, 699, 700, 899, 900, 1500, undefined]) {
         expect(cardTreatment(set, salary), `${set} $${salary}`).toBe(setTreatment(set));
       }
     }

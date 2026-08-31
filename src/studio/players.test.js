@@ -409,13 +409,13 @@ describe('the base set\'s card-type badges', () => {
     // The gold pill is now the GILDED TIER of the Super Season badge: under
     // SUPER_SEASON_MIN_SALARY the same card prints BEST SEASON in the team's
     // accent instead. So `pickBadge` is given the salary here, exactly as
-    // CardTemplate gives it, and the 107 split 41/66.
+    // CardTemplate gives it, and the 107 split 13/94 (41/66 at the old $700).
     const badged = POOL_PLAYERS.filter(p => p.badges.length);
     const printed = badged.map(p => pickBadge(p.badges, p.salary).id);
     expect(printed.length).toBe(BADGE_FILE.counts.players);
     expect(printed.filter(id => id === ROOKIE_BADGE).length).toBe(33);
-    expect(printed.filter(id => id === SUPER_SEASON_BADGE).length).toBe(41);
-    expect(printed.filter(id => id === BEST_SEASON_BADGE).length).toBe(66);
+    expect(printed.filter(id => id === SUPER_SEASON_BADGE).length).toBe(13);
+    expect(printed.filter(id => id === BEST_SEASON_BADGE).length).toBe(94);
     // Everyone who prints ROOKIE is someone the SUPER SEASON fact is also true
     // of — the nesting is what makes this a priority question and not a rule.
     // The tier does not touch it: a rookie card is cheap, its Super Season
@@ -437,8 +437,8 @@ describe('the base set\'s card-type badges', () => {
     // and the salary file having been generated from different pools.
     expect(BADGE_FILE.counts.printed).toEqual({
       [ROOKIE_BADGE]: 33,
-      [SUPER_SEASON_BADGE]: 41,
-      [BEST_SEASON_BADGE]: 66,
+      [SUPER_SEASON_BADGE]: 13,
+      [BEST_SEASON_BADGE]: 94,
     });
   });
 

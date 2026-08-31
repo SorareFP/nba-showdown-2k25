@@ -374,8 +374,12 @@ describe('the base set\'s badges', () => {
     // what it does in play moved one more base card across
     // SUPER_SEASON_MIN_SALARY. The split is a measurement of the price, so it
     // is expected to move whenever the price does.
-    expect(counts.printed[BEST_SEASON_BADGE]).toBe(93);
-    expect(counts.printed[SUPER_SEASON_BADGE]).toBe(14);
+    // 12/95, moved again by the ceiling suppression in generate.js: pulling the
+    // top tier in lowers play value, which lowers salary, which moves cards
+    // across SUPER_SEASON_MIN_SALARY. The split is a MEASUREMENT of the price,
+    // so it moves whenever the price does.
+    expect(counts.printed[BEST_SEASON_BADGE]).toBe(95);
+    expect(counts.printed[SUPER_SEASON_BADGE]).toBe(12);
     // Nobody loses their pill entirely in the resolution.
     expect(BADGE_IDS.reduce((n, id) => n + counts.printed[id], 0)).toBe(counts.players);
     expect(counts.multiple).toBe(ROOKIE.excluded.length);

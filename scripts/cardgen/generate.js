@@ -150,12 +150,67 @@ export function forceBandBoundary(chart, roll, { firstMovable = 1 } = {}) {
  * cards that could least afford to lose it. Hiding the blank tier instead is
  * the user's call and frees the same row without spending anything.
  */
+/**
+ * How far the ceiling is pulled in.
+ *
+ * A DELIBERATE DEPARTURE FROM FIDELITY, and the only one in the pipeline. Every
+ * other layer is calibrated to reproduce what a player actually did; this one
+ * knowingly prints less than he did, at the top of the chart only, because the
+ * game scores too much.
+ *
+ * The measurement that motivates it: at the observed +1.89 mean roll bonus the
+ * TOP TIER ALONE is 23.8% of every chart point scored, and simulated games run
+ * about 181 points per team against the ~96-152 a real NBA team scores and the
+ * 150-170 the balance design targets. The chart channel is 93% of scoring, so
+ * nothing in the assist or rebound economy can reach it -- doubling every spend
+ * cost moves the total by 8 points.
+ *
+ * TWO DIALS, and they do different things:
+ *
+ *   TOP_TIER_DELAY  pushes the top tier's opening roll up, so reaching it needs
+ *                   a bigger matchup advantage. Preserves the above-20 ceiling
+ *                   as something a Speed/Power edge BUYS, which is the part of
+ *                   the design worth keeping. Saturates: past about +4 the tier
+ *                   is already out of reach and further delay buys little.
+ *   TOP_TIER_SHAVE  lowers what the top tier pays. Keeps saturating because it
+ *                   does not depend on reachability, but flattens the ceiling.
+ *
+ * Held at +2 / -1: 181 -> ~165 per team, inside the target band, with the top
+ * tier still opening at 23 on average so the above-20 mechanic keeps its point.
+ * The scoring removed here is meant to come back through strategy cards and
+ * shot checks, which are a choice a player makes rather than a number the chart
+ * hands out.
+ */
+export const TOP_TIER_DELAY = 2;
+export const TOP_TIER_SHAVE = 1;
+
+/**
+ * Pull in the top tier. Never below the tier beneath it -- a ceiling that sinks
+ * under its own floor is not a suppressed chart, it is a broken one.
+ */
+export function suppressCeiling(chart, { delay = TOP_TIER_DELAY, shave = TOP_TIER_SHAVE } = {}) {
+  if (chart.length < 2 || (!delay && !shave)) return chart;
+  const out = chart.map(t => ({ ...t }));
+  const k = out.length - 1;
+  if (delay) {
+    out[k].lo += delay;
+    out[k - 1].hi = out[k].lo - 1;
+  }
+  if (shave) out[k].pts = Math.max(out[k].pts - shave, out[k - 1].pts);
+  return out;
+}
+
 export function shapeChart(chart, { shotLine = null } = {}) {
   const floored = enforceZeroTiers(chart);
   // firstMovable = 2: tier 0 is the blank tier and tier 1 is where the
   // statistics resume, so the lowest boundary a shot line may move is tier 2's.
   const { chart: broken } = forceBandBoundary(floored, shotLine, { firstMovable: 2 });
-  return mergeIdenticalTiers(broken, { fixedTiers: 1, keepBoundaryAt: shotLine });
+  // BEFORE the merge, not after. Shaving the top tier can make it identical to
+  // the tier beneath it, and only mergeIdenticalTiers collapses that -- running
+  // suppression last printed Toumani Camara with two identical bottom-of-chart
+  // rows. The merge protects the shot-line boundary, so the break survives.
+  const suppressed = suppressCeiling(broken);
+  return mergeIdenticalTiers(suppressed, { fixedTiers: 1, keepBoundaryAt: shotLine });
 }
 
 /**

@@ -1709,7 +1709,7 @@ describe('the season and the card-type badge', () => {
     // THE CONSEQUENCE WORTH STATING OUT LOUD. The pill is the pill: a $10 base
     // card wearing the gold while a $10 Super Season card does not would be the
     // rule contradicting itself about the same player in the same season. So
-    // the 107 split 14/93 on the same constant, and card-badges.json's own
+    // the 107 split 12/95 on the same constant, and card-badges.json's own
     // `printed` counts — computed through the same pickBadge — agree. (It was
     // 41/66 while the line was $700, and 13/94 while salary was a linear fit on
     // card attributes rather than a measure of what the card does in play; all
@@ -1719,10 +1719,10 @@ describe('the season and the card-type badge', () => {
       p => p.badges.includes(SUPER_SEASON_BADGE) && !p.badges.includes(ROOKIE_BADGE)
     );
     const gilded = superSeason.filter(p => p.salary >= SUPER_SEASON_MIN_SALARY);
-    expect(gilded.length).toBe(14);
-    expect(superSeason.length - gilded.length).toBe(93);
-    expect(BADGE_FILE.counts.printed[SUPER_SEASON_BADGE]).toBe(14);
-    expect(BADGE_FILE.counts.printed[BEST_SEASON_BADGE]).toBe(93);
+    expect(gilded.length).toBe(12);
+    expect(superSeason.length - gilded.length).toBe(95);
+    expect(BADGE_FILE.counts.printed[SUPER_SEASON_BADGE]).toBe(12);
+    expect(BADGE_FILE.counts.printed[BEST_SEASON_BADGE]).toBe(95);
     expect(BADGE_FILE.counts.printed[ROOKIE_BADGE]).toBe(33);
   });
 

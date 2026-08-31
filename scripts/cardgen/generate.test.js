@@ -75,8 +75,8 @@ describe('generatePlayerChart', () => {
     const result = await generatePlayerChart('testplayer', 2024, {});
     expect(result).toEqual([
       [1, 2, 0, 0, 0], // blank: a natural 1 or 2, and nothing else
-      [3, 3, 0, 5, 2], // no scoring, but the REB/AST the statistics produced
-      [4, 99, 8, 6, 3], // last tier's hi capped at 99
+      [3, 5, 0, 5, 2], // no scoring, but the REB/AST the statistics produced
+      [6, 99, 7, 6, 3], // ceiling suppressed: opens TOP_TIER_DELAY later, pays TOP_TIER_SHAVE less
     ]);
     for (const tuple of result) {
       expect(tuple).toHaveLength(5);
@@ -228,8 +228,8 @@ describe('shapeChart', () => {
     const shaped = shapeChart([tier(1, 3, 1, 1, 0), tier(4, 20, 0, 1, 0), tier(21, 99, 2, 1, 0)]);
     expect(shaped).toEqual([
       tier(1, 2, 0, 0, 0), // the blank tier, carved out and never merged into
-      tier(3, 20, 0, 1, 0), // the zeroed 3-3 tier, collapsed into 4-20
-      tier(21, 99, 2, 1, 0),
+      tier(3, 22, 0, 1, 0), // the zeroed 3-3 tier, collapsed into 4-20
+      tier(23, 99, 1, 1, 0), // ceiling suppressed by TOP_TIER_DELAY / TOP_TIER_SHAVE
     ]);
   });
 

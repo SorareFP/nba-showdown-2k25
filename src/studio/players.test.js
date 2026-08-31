@@ -412,7 +412,7 @@ describe('the base set\'s card-type badges', () => {
     // The gold pill is now the GILDED TIER of the Super Season badge: under
     // SUPER_SEASON_MIN_SALARY the same card prints BEST SEASON in the team's
     // accent instead. So `pickBadge` is given the salary here, exactly as
-    // CardTemplate gives it, and the 107 split 14/93 (41/66 at the old $700).
+    // CardTemplate gives it, and the 107 split 12/95 (41/66 at the old $700).
     const badged = POOL_PLAYERS.filter(p => p.badges.length);
     const printed = badged.map(p => pickBadge(p.badges, p.salary).id);
     expect(printed.length).toBe(BADGE_FILE.counts.players);
@@ -421,8 +421,12 @@ describe('the base set\'s card-type badges', () => {
     // what it does in play moved one more base card across
     // SUPER_SEASON_MIN_SALARY. The split is a measurement of the price, so it
     // is expected to move whenever the price does.
-    expect(printed.filter(id => id === SUPER_SEASON_BADGE).length).toBe(14);
-    expect(printed.filter(id => id === BEST_SEASON_BADGE).length).toBe(93);
+    // 12/95, moved again by the ceiling suppression in generate.js: pulling the
+    // top tier in lowers play value, which lowers salary, which moves cards
+    // across SUPER_SEASON_MIN_SALARY. The split is a MEASUREMENT of the price,
+    // so it moves whenever the price does.
+    expect(printed.filter(id => id === SUPER_SEASON_BADGE).length).toBe(12);
+    expect(printed.filter(id => id === BEST_SEASON_BADGE).length).toBe(95);
     // Everyone who prints ROOKIE is someone the SUPER SEASON fact is also true
     // of — the nesting is what makes this a priority question and not a rule.
     // The tier does not touch it: a rookie card is cheap, its Super Season
@@ -444,8 +448,8 @@ describe('the base set\'s card-type badges', () => {
     // and the salary file having been generated from different pools.
     expect(BADGE_FILE.counts.printed).toEqual({
       [ROOKIE_BADGE]: 33,
-      [SUPER_SEASON_BADGE]: 14,
-      [BEST_SEASON_BADGE]: 93,
+      [SUPER_SEASON_BADGE]: 12,
+      [BEST_SEASON_BADGE]: 95,
     });
   });
 

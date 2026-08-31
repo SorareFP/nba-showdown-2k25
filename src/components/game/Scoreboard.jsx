@@ -88,7 +88,6 @@ function ReboundDiff({ diff, aReb, bReb }) {
 
   // Threshold markers
   const has3 = absDiff >= 3;
-  const has5 = absDiff >= 5;
 
   return (
     <div className={styles.rebDiff}>
@@ -114,8 +113,9 @@ function ReboundDiff({ diff, aReb, bReb }) {
         <span className={styles.rebTotal} style={{ color: 'var(--blue)' }}>{bReb}</span>
       </div>
       <div className={styles.rebThresholds}>
+        {/* +5 Fast Break is gone — the mechanic was removed from the engine and
+            the scoreboard was still promising it. */}
         {has3 && <span className={styles.rebThresh} style={{ color: leadCol }}>+3: Paint Check</span>}
-        {has5 && <span className={styles.rebThresh} style={{ color: leadCol }}>+5: Fast Break</span>}
       </div>
     </div>
   );

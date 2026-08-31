@@ -1,0 +1,13 @@
+{
+  "what": "Which card wins when a playoff standout and a Super Season land on the same team. Salary is the default tiebreak (scripts/analysis/runConflictSalaries.js); these are the user's explicit overrides on top of it.",
+  "rule": "Default: keep whichever card prices higher. A name listed here overrides that.",
+  "keepPlayoffCard": {
+    "Tyrese Haliburton": "User's call, against the salary. Super Season 2024 IND prices 1070 to the playoff card's 820, but the 2025 Finals run is the card he wants. No Super Season for him.",
+    "Daniel Gibson": "Playoff card also wins on salary, 590 to 510. The 2007 Cleveland run IS his peak — a role player whose playoff lift (+3.15) is the whole reason he is in the set.",
+    "Mickael Pietrus": "Playoff card also wins on salary, 570 to 510. Same archetype as Gibson."
+  },
+  "open": {
+    "Shaquille O'Neal": "Needs a decision. He ALREADY has a 1999-2000 card in the 25-26 set (RTR legend, S+P 29, salary 710 under the old pricing), so no new Super Season is required — the collision is against a card that exists. The playoff side is 2002 LAL at S+P 22, salary 890. Both are Lakers. NOTE the priced table shows his Super Season at 630/S+P 14, which is an artefact: EPM begins in 2002 and his best season is 2000, so the composite prices it at replacement. Read 710 as the real comparison, and even that is the old salary model's number."
+  },
+  "note": "Everyone else defaults to salary. That is Super Season on 21 of 27 and ties on 3 (Ben Wallace, Glen Davis, Jason Collins), which are also open."
+}

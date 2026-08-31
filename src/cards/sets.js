@@ -485,21 +485,46 @@ export function setPaths(set = CURRENT_SET) {
 export const DEFAULT_PHOTO_EXT = '.jpg';
 
 /**
- * Photo extensions a set will serve. Mirrors ALLOWED_PHOTO_EXT in the server
- * plugin, and src/studio/api.js's isImageFile accepts the same set on drop.
+ * EVERY IMAGE FORMAT A CARD WILL DRAW, whatever the image is of.
+ *
+ * ── ONE LIST, BECAUSE THE SPLIT WAS THE BUG ─────────────────────────────────
+ *
+ * This started life as PHOTO_EXTENSIONS and governed player photos only. Team
+ * logos and award marks resolved through `logoSrc` instead, which took whatever
+ * extension the DATA spelled and could not consider another — so `/awards/AS`
+ * was `.png` or it was nothing, and a user with `All-Star.webp` got a lettered
+ * chip and no explanation. The user's question was the right one: "Can we
+ * really only do pngs? I thought we changed things to be able to use other
+ * formats." Half of it had been changed. This is the other half, and the way it
+ * stays fixed is that there is now ONE list rather than two that agree today.
+ *
+ * Renamed rather than duplicated for exactly that reason. `DEFAULT_PHOTO_EXT`
+ * and `normalizePhotoExt` stay photo-shaped — the studio's upload route really
+ * does write `.jpg` and nothing else does — but WHICH FORMATS EXIST is not a
+ * question about photos.
+ *
+ * Mirrored by ALLOWED_PHOTO_EXT in the server plugin (a test asserts it),
+ * read by src/studio/api.js's isImageFile on drop, and walked by
+ * `assetCandidates` in CardTemplate.jsx for logos and award marks.
  *
  * .avif earns its place the same way .jpeg did: it is what a browser's "Save
- * image as" produces on a growing share of sites, so photos saved by hand
+ * image as" produces on a growing share of sites, so images saved by hand
  * arrive under it, and every browser that can run this studio can display it.
  *
  * .jfif is the same story with a worse name. It IS a JPEG — same bytes, same
  * decoder — and it is what Chrome on Windows writes for a "Save image as" on a
  * site that serves `image/jpeg` without a filename. Found in the wild in this
- * repo: card-art/sets/wnba/photos/DiJonai_Carrington.jfif, which the studio
- * listed as no photo at all because the extension was not on this list.
- * Rejecting it would be rejecting a JPEG for its spelling.
+ * repo twice: card-art/sets/wnba/photos/DiJonai_Carrington.jfif, which the
+ * studio listed as no photo at all because the extension was not on this list,
+ * and public/awards/All-Star MVP.jfif. Rejecting it would be rejecting a JPEG
+ * for its spelling.
+ *
+ * ORDER IS PROBE ORDER for `assetCandidates`, which tries the extension the
+ * data declared first and then the rest of this list in sequence. It is not
+ * worth optimising — the alternatives are only reached for a file that is not
+ * where the data said, and each miss is one 404 against a local static server.
  */
-export const PHOTO_EXTENSIONS = ['.jpg', '.jpeg', '.jfif', '.png', '.webp', '.avif'];
+export const IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.jfif', '.png', '.webp', '.avif'];
 
 /**
  * Normalizes an extension to the dotted lowercase form the paths use.
@@ -512,7 +537,7 @@ export const PHOTO_EXTENSIONS = ['.jpg', '.jpeg', '.jfif', '.png', '.webp', '.av
 export function normalizePhotoExt(ext) {
   if (typeof ext !== 'string' || ext === '') return DEFAULT_PHOTO_EXT;
   const dotted = (ext.startsWith('.') ? ext : `.${ext}`).toLowerCase();
-  return PHOTO_EXTENSIONS.includes(dotted) ? dotted : DEFAULT_PHOTO_EXT;
+  return IMAGE_EXTENSIONS.includes(dotted) ? dotted : DEFAULT_PHOTO_EXT;
 }
 
 /**

@@ -306,12 +306,22 @@ export function pickAwards(codes) {
  * The user named the second one, and it is the wrong home for the same reason
  * it would be for a team mark: card-art/logo-originals/ is the BACKUP store for
  * stripped originals and is not served or bundled. public/awards/ is parallel
- * to public/logos/, which is what actually reaches a card.
+ * to public/logos/, which is what actually reaches a card — and, being under
+ * public/, is copied verbatim into dist/ by `vite build`, so the same file
+ * serves the studio, the built app and the batch export.
  *
- * THE FILES DO NOT EXIST YET. Every one of these paths 404s today and the card
- * falls back to the lettered chip — see AwardMark in CardTemplate.jsx. That is
- * the same state public/logos/ was in when TeamLogo's fallback was written, and
- * it is why the fallback is a real design rather than a placeholder.
+ * ── `.png` IS THE SPELLING TRIED FIRST, NOT A REQUIREMENT ───────────────────
+ *
+ * `assetCandidates` in CardTemplate.jsx retries this stem under every format in
+ * IMAGE_EXTENSIONS, so `MVP.avif` and `6MOY.jpg` resolve as readily as a PNG
+ * would and nothing here has to know which the user saved. The extension stays
+ * on the path because a path is more useful than a stem to everything that is
+ * not a browser — a Node exporter can hand this to `assetCandidates` and
+ * resolve it against the filesystem with the same list.
+ *
+ * THE STEM IS NOT NEGOTIABLE. The code is the filename, so the All-Star mark is
+ * `AS.…`; `All-Star.webp` is a file nothing asks for, and a card whose art is
+ * misnamed falls back to the lettered chip — see AwardMark in CardTemplate.jsx.
  */
 export function awardImagePath(code) {
   return getAward(code) ? `/awards/${code}.png` : null;

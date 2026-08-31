@@ -8,8 +8,14 @@
 // still themes correctly.
 //
 // Logo image files are NOT in this repo — the user drops them into
-// public/logos/{ABBR}.png. CardTemplate hides the <img> on a 404, so cards
-// render correctly with no logo files present at all.
+// public/logos/{ABBR}.png. CardTemplate swaps in a lettered circle when there
+// is no file, so cards render correctly with no logo files present at all.
+//
+// THE `.png` IN EACH ROW BELOW IS THE SPELLING TRIED FIRST, not a requirement:
+// `assetCandidates` in CardTemplate.jsx retries the same stem under every
+// format in IMAGE_EXTENSIONS, so a mark saved as .webp resolves without this
+// table being edited. A row is still free to name a different extension
+// outright, and one does — the Houston Comets' HOU.gif.
 //
 // ── WHERE THESE COLORS COME FROM ─────────────────────────────────────────────
 //

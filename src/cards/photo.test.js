@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { resolvePhotoUrl, DEFAULT_CROP, cropToStyle, PHOTO_WINDOW } from './photo.js';
 import {
   CURRENT_SET,
-  PHOTO_EXTENSIONS,
+  IMAGE_EXTENSIONS,
   normalizePhotoExt,
   photoUrlPath,
 } from './sets.js';
@@ -109,7 +109,7 @@ describe('photoUrlPath extensions', () => {
     // If one list grows and the other does not, a file the server happily
     // reports as a photo resolves to a .jpg that is not there — the original
     // bug, re-created. ALLOWED_PHOTO_EXT is the server's copy of this.
-    expect([...PHOTO_EXTENSIONS].sort()).toEqual([
+    expect([...IMAGE_EXTENSIONS].sort()).toEqual([
       '.avif',
       '.jfif',
       '.jpeg',
@@ -117,7 +117,7 @@ describe('photoUrlPath extensions', () => {
       '.png',
       '.webp',
     ]);
-    for (const ext of PHOTO_EXTENSIONS) {
+    for (const ext of IMAGE_EXTENSIONS) {
       expect(normalizePhotoExt(ext)).toBe(ext);
     }
   });

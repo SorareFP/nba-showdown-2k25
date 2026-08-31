@@ -28,25 +28,158 @@ import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { describe, it, expect } from 'vitest';
 import { TEAMS, WNBA_TEAMS, WNBA_HISTORICAL_TEAMS, RESERVED_DEVICE_NAMES } from './teams.js';
 import { LEAGUE_LOGO, LEAGUE_LOGOS } from './CardTemplate.jsx';
+import { IMAGE_EXTENSIONS } from './sets.js';
 
 const LOGO_DIR = new URL('../../public/logos/', import.meta.url);
 const WNBA_LOGO_DIR = new URL('../../public/logos/WNBA/', import.meta.url);
 
 /**
- * A PNG's pixel dimensions, straight out of the IHDR header.
+ * An image's pixel dimensions, straight out of its header. Null if the bytes
+ * are not a format this knows.
  *
- * The header is fixed-layout and always the first chunk, so width and height
- * are at byte offsets 16 and 20 — no decoder and no dependency needed, which
- * is the point: this suite runs in plain Node with react-dom as its heaviest
- * import, and reading two big-endian integers does not justify adding one.
+ * ── WHY THIS GREW PAST PNG ──────────────────────────────────────────────────
+ *
+ * It was `pngSize`, and that was honest while `.png` was the only extension a
+ * logo path could carry. It is not any more: `assetCandidates` resolves a mark
+ * under any of IMAGE_EXTENSIONS, so the user can drop `MIA.webp` and the card
+ * will draw it. A guard that could only measure PNGs would then SILENTLY STOP
+ * GUARDING — the aspect-ratio checks below skip what they cannot measure, so
+ * the first .webp lockup would sail through the very test written to catch
+ * lockups. Accepting a format and checking it have to arrive together.
+ *
+ * Still no dependency, for the reason the PNG version gave: every one of these
+ * is a fixed-layout header a few bytes in, this suite runs in plain Node, and
+ * decoding pixels is not what is being asked. Each parser is exercised against
+ * a hand-built header below, so "we accept it" and "we can read it" cannot
+ * drift apart either.
  */
-function pngSize(path) {
-  const buf = readFileSync(path);
+function imageSize(buf) {
+  for (const read of [pngSize, gifSize, jpegSize, webpSize, isobmffSize]) {
+    const size = read(buf);
+    if (size) return size;
+  }
+  return null;
+}
+
+/** The same, for a file on disk — which is how every guard below asks. */
+const sizeOf = path => imageSize(readFileSync(path));
+
+/** PNG: IHDR is always the first chunk, so width and height are at 16 and 20. */
+function pngSize(buf) {
   const signature = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+  if (buf.length < 24) return null;
   if (!buf.subarray(0, 8).equals(signature)) return null;
   if (buf.subarray(12, 16).toString('latin1') !== 'IHDR') return null;
   return { width: buf.readUInt32BE(16), height: buf.readUInt32BE(20) };
 }
+
+/** GIF: the logical screen descriptor follows the six-byte signature, LITTLE-endian. */
+function gifSize(buf) {
+  if (buf.length < 10) return null;
+  const sig = buf.subarray(0, 6).toString('latin1');
+  if (sig !== 'GIF87a' && sig !== 'GIF89a') return null;
+  return { width: buf.readUInt16LE(6), height: buf.readUInt16LE(8) };
+}
+
+/**
+ * JPEG: walk the marker segments to the frame header, which is the only place
+ * the dimensions live.
+ *
+ * There is no fixed offset — an EXIF or ICC block of arbitrary length usually
+ * sits in front — so the segments are stepped through by their own lengths.
+ * SOF0/1/2/3, SOF5/6/7, SOF9/10/11 and SOF13/14/15 are all frame headers laid
+ * out the same way; C4 (Huffman tables), C8 (reserved) and CC (arithmetic
+ * coding conditioning) share the range and are NOT frames, which is the one
+ * trap in this format's marker numbering.
+ */
+function jpegSize(buf) {
+  if (buf.length < 4 || buf[0] !== 0xff || buf[1] !== 0xd8) return null;
+  let i = 2;
+  while (i + 3 < buf.length) {
+    if (buf[i] !== 0xff) return null;
+    const marker = buf[i + 1];
+    // Standalone markers: padding, RSTn, SOI/EOI. No length word follows.
+    if (marker === 0xff || marker === 0x01 || (marker >= 0xd0 && marker <= 0xd9)) {
+      i += 2;
+      continue;
+    }
+    const length = buf.readUInt16BE(i + 2);
+    const isFrame =
+      marker >= 0xc0 && marker <= 0xcf && marker !== 0xc4 && marker !== 0xc8 && marker !== 0xcc;
+    if (isFrame) {
+      if (i + 9 > buf.length) return null;
+      return { width: buf.readUInt16BE(i + 7), height: buf.readUInt16BE(i + 5) };
+    }
+    i += 2 + length;
+  }
+  return null;
+}
+
+/**
+ * WebP: three sub-formats in one RIFF container, and they store the size
+ * differently enough that each needs its own read.
+ *
+ *   VP8   lossy. 14-bit width and height after the 3-byte frame tag and the
+ *         0x9D 0x01 0x2A start code.
+ *   VP8L  lossless. One 32-bit little-endian word packing width-1 and height-1
+ *         into 14 bits each.
+ *   VP8X  extended (animation, alpha, ICC). 24-bit canvas width-1/height-1.
+ */
+function webpSize(buf) {
+  if (buf.length < 30) return null;
+  if (buf.subarray(0, 4).toString('latin1') !== 'RIFF') return null;
+  if (buf.subarray(8, 12).toString('latin1') !== 'WEBP') return null;
+  const chunk = buf.subarray(12, 16).toString('latin1');
+  if (chunk === 'VP8 ') {
+    if (buf[23] !== 0x9d || buf[24] !== 0x01 || buf[25] !== 0x2a) return null;
+    return { width: buf.readUInt16LE(26) & 0x3fff, height: buf.readUInt16LE(28) & 0x3fff };
+  }
+  if (chunk === 'VP8L') {
+    if (buf[20] !== 0x2f) return null;
+    const bits = buf.readUInt32LE(21);
+    return { width: (bits & 0x3fff) + 1, height: ((bits >> 14) & 0x3fff) + 1 };
+  }
+  if (chunk === 'VP8X') {
+    return {
+      width: buf.readUIntLE(24, 3) + 1,
+      height: buf.readUIntLE(27, 3) + 1,
+    };
+  }
+  return null;
+}
+
+/**
+ * AVIF (and its HEIF relatives): the size is in an `ispe` box, nested four
+ * levels down inside `meta`.
+ *
+ * SCANNED FOR RATHER THAN WALKED TO, deliberately. Walking meta -> iprp -> ipco
+ * -> ispe properly means implementing enough of ISOBMFF to handle full boxes,
+ * extended sizes and item property association — a real parser, for a test that
+ * wants two integers. `ispe` is a four-byte type code in a container whose
+ * brand has already been checked, so finding the first one and reading the two
+ * words after its version/flags is reliable in practice. A file with several
+ * images stores the primary item's box first, which is the one wanted here.
+ */
+function isobmffSize(buf) {
+  if (buf.length < 16) return null;
+  if (buf.subarray(4, 8).toString('latin1') !== 'ftyp') return null;
+  const at = buf.indexOf('ispe', 0, 'latin1');
+  if (at < 0 || at + 16 > buf.length) return null;
+  return { width: buf.readUInt32BE(at + 8), height: buf.readUInt32BE(at + 12) };
+}
+
+/**
+ * Every extension a logo file may be saved under, as a filename filter.
+ *
+ * IMAGE_EXTENSIONS is the list `assetCandidates` will actually ask for, plus
+ * `.gif` — which is not on it and does not need to be, because the Comets' row
+ * names HOU.gif outright and a declared spelling is always tried first. It has
+ * to be listed HERE, though: this is the set of files the guards below are
+ * responsible for, and leaving the one non-PNG in the directory out of it would
+ * be the exact silence this widening exists to remove.
+ */
+const LOGO_EXTENSIONS = [...IMAGE_EXTENSIONS, '.gif'];
+const isLogoFile = f => LOGO_EXTENSIONS.some(ext => f.toLowerCase().endsWith(ext));
 
 /**
  * The widest a TEAM logo's canvas may be before the mark stops reading.
@@ -76,14 +209,136 @@ const KNOWN_WIDE_LOCKUPS = ['UTA'];
 
 /** Files actually present, since the user drops these in by hand. */
 const present = existsSync(LOGO_DIR)
-  ? new Set(readdirSync(LOGO_DIR).filter(f => f.endsWith('.png')))
+  ? new Set(readdirSync(LOGO_DIR).filter(isLogoFile))
   : new Set();
 
+// ── THE HEADER READERS THEMSELVES ───────────────────────────────────────────
+//
+// The guards below are only as honest as these are. A parser that quietly
+// returned null for .webp would turn every .webp logo into a file the aspect
+// checks skip, which is the failure this whole widening exists to prevent — and
+// it would look exactly like a directory that happens to contain no .webp.
+//
+// Exercised against HAND-BUILT HEADERS rather than fixture files, for two
+// reasons: nothing in the repo is a .webp or an .avif today (the user's are
+// untracked and he swaps them as he works), and a fixture would only prove one
+// encoder's output anyway. These are the byte layouts the specifications
+// define, written out, so a wrong offset fails here and not silently.
+describe('reading dimensions out of a header', () => {
+  const size = bytes => imageSize(Buffer.from(bytes));
+
+  it('reads a PNG', () => {
+    const buf = Buffer.alloc(24);
+    Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]).copy(buf);
+    buf.write('IHDR', 12, 'latin1');
+    buf.writeUInt32BE(4400, 16);
+    buf.writeUInt32BE(2080, 20);
+    expect(size(buf)).toEqual({ width: 4400, height: 2080 });
+  });
+
+  it('reads a GIF, which is little-endian where PNG is big', () => {
+    // HOU.gif is the real one of these — 545x251, the Comets' wordmark. Getting
+    // the endianness wrong reads it as 8706x60416 and passes the aspect check
+    // by accident, which is worse than failing.
+    const buf = Buffer.alloc(10);
+    buf.write('GIF89a', 0, 'latin1');
+    buf.writeUInt16LE(545, 6);
+    buf.writeUInt16LE(251, 8);
+    expect(size(buf)).toEqual({ width: 545, height: 251 });
+  });
+
+  it('reads a JPEG past a leading EXIF block, and HEIGHT comes first', () => {
+    // The two traps in one test: the frame header is not at a fixed offset, and
+    // the SOF stores height before width — the reverse of every other format
+    // here, so a copy-paste from the PNG reader transposes every JPEG.
+    const exif = Buffer.alloc(20);
+    exif.writeUInt16BE(0xffe1, 0);
+    exif.writeUInt16BE(18, 2); // segment length, covering the rest of `exif`
+    const sof = Buffer.alloc(11);
+    sof.writeUInt16BE(0xffc0, 0);
+    sof.writeUInt16BE(8, 2);
+    sof.writeUInt8(8, 4); // sample precision
+    sof.writeUInt16BE(251, 5); // height
+    sof.writeUInt16BE(545, 7); // width
+    const buf = Buffer.concat([Buffer.from([0xff, 0xd8]), exif, sof]);
+    expect(size(buf)).toEqual({ width: 545, height: 251 });
+  });
+
+  it('reads a JPEG whose frame marker is one of the progressive ones', () => {
+    // SOF2 is what "Save for web" writes as often as SOF0, and C4/C8/CC sit in
+    // the same numeric range without being frames at all.
+    const buf = Buffer.alloc(13);
+    buf.writeUInt16BE(0xffd8, 0);
+    buf.writeUInt16BE(0xffc2, 2);
+    buf.writeUInt16BE(8, 4);
+    buf.writeUInt8(8, 6);
+    buf.writeUInt16BE(96, 7);
+    buf.writeUInt16BE(115, 9);
+    expect(size(buf)).toEqual({ width: 115, height: 96 });
+  });
+
+  it('reads all three kinds of WebP, which store the size three ways', () => {
+    const riff = chunk => {
+      const buf = Buffer.alloc(40);
+      buf.write('RIFF', 0, 'latin1');
+      buf.write('WEBP', 8, 'latin1');
+      buf.write(chunk, 12, 'latin1');
+      return buf;
+    };
+    // Lossy: 14-bit fields after the start code.
+    const lossy = riff('VP8 ');
+    lossy[23] = 0x9d;
+    lossy[24] = 0x01;
+    lossy[25] = 0x2a;
+    lossy.writeUInt16LE(545, 26);
+    lossy.writeUInt16LE(251, 28);
+    expect(size(lossy)).toEqual({ width: 545, height: 251 });
+
+    // Lossless: one packed word, and the stored values are one LESS than the
+    // real dimensions — an off-by-one that would pass every plausible aspect
+    // check while being wrong on every file.
+    const lossless = riff('VP8L');
+    lossless[20] = 0x2f;
+    lossless.writeUInt32LE((544 & 0x3fff) | ((250 & 0x3fff) << 14), 21);
+    expect(size(lossless)).toEqual({ width: 545, height: 251 });
+
+    // Extended: 24-bit canvas fields, also stored minus one.
+    const extended = riff('VP8X');
+    extended.writeUIntLE(544, 24, 3);
+    extended.writeUIntLE(250, 27, 3);
+    expect(size(extended)).toEqual({ width: 545, height: 251 });
+  });
+
+  it('reads an AVIF out of its ispe box', () => {
+    const buf = Buffer.alloc(64);
+    buf.writeUInt32BE(32, 0);
+    buf.write('ftyp', 4, 'latin1');
+    buf.write('avif', 8, 'latin1');
+    buf.write('ispe', 32, 'latin1');
+    buf.writeUInt32BE(0, 36); // version and flags
+    buf.writeUInt32BE(545, 40);
+    buf.writeUInt32BE(251, 44);
+    expect(size(buf)).toEqual({ width: 545, height: 251 });
+  });
+
+  it('returns null rather than a number for bytes it cannot read', () => {
+    // The contract the guards depend on: an unreadable file is REPORTED, and
+    // the first test in the next block is what reports it.
+    expect(size(Buffer.from('this is not an image at all'))).toBeNull();
+    expect(size(Buffer.alloc(0))).toBeNull();
+    // A PDF, which the user does have lying around in art folders.
+    expect(size(Buffer.from('%PDF-1.7\n%\xe2\xe3\xcf\xd3\n'))).toBeNull();
+  });
+});
+
 describe('logo files', () => {
-  it('reads as PNGs with real dimensions', () => {
+  it('reads every file in the directory, in whatever format it was saved', () => {
+    // NOT "reads as PNGs" any more, and the difference is the point: a logo may
+    // now be any of the formats a card can draw, so a file this cannot measure
+    // is a hole in the aspect guard below rather than a file to skip.
     expect(present.size).toBeGreaterThan(0);
     for (const file of present) {
-      const size = pngSize(new URL(file, LOGO_DIR));
+      const size = sizeOf(new URL(file, LOGO_DIR));
       expect(size, file).not.toBeNull();
       expect(size.width, file).toBeGreaterThan(0);
       expect(size.height, file).toBeGreaterThan(0);
@@ -95,7 +350,7 @@ describe('logo files', () => {
     for (const [abbr, team] of Object.entries(TEAMS)) {
       const file = team.logo?.split('/').pop();
       if (!file || !present.has(file) || KNOWN_WIDE_LOCKUPS.includes(abbr)) continue;
-      const { width, height } = pngSize(new URL(file, LOGO_DIR));
+      const { width, height } = sizeOf(new URL(file, LOGO_DIR));
       const aspect = Math.max(width / height, height / width);
       if (aspect > MAX_TEAM_ASPECT) {
         offenders.push(`${abbr} ${width}x${height} (${aspect.toFixed(2)}:1)`);
@@ -116,7 +371,7 @@ describe('logo files', () => {
     // never be applied to it.
     const file = LEAGUE_LOGO.split('/').pop();
     if (!present.has(file)) return;
-    const { width, height } = pngSize(new URL(file, LOGO_DIR));
+    const { width, height } = sizeOf(new URL(file, LOGO_DIR));
     expect(width / height).toBeLessThan(0.6);
   });
 });
@@ -132,7 +387,9 @@ describe('logo files', () => {
  * file behind it, which prints a lettered circle on a card that was supposed to
  * have a mark and looks like a design decision rather than a missing asset.
  */
-const wnbaPresent = existsSync(WNBA_LOGO_DIR) ? new Set(readdirSync(WNBA_LOGO_DIR)) : new Set();
+const wnbaPresent = existsSync(WNBA_LOGO_DIR)
+  ? new Set(readdirSync(WNBA_LOGO_DIR).filter(isLogoFile))
+  : new Set();
 
 /**
  * Files in that directory that no WNBA_TEAMS row points at, and why each is
@@ -174,7 +431,7 @@ const HISTORICAL_WITH_LOGOS = Object.entries(WNBA_HISTORICAL_TEAMS).filter(
 );
 
 describe('WNBA logo files', () => {
-  it('has a real PNG behind every franchise in the table', () => {
+  it('has a real image file behind every franchise in the table', () => {
     const missing = [];
     for (const [abbr, team] of Object.entries(WNBA_TEAMS)) {
       const file = team.logo?.split('/').pop();
@@ -182,7 +439,7 @@ describe('WNBA logo files', () => {
         missing.push(`${abbr} -> ${team.logo}`);
         continue;
       }
-      const size = pngSize(new URL(encodeURIComponent(file), WNBA_LOGO_DIR));
+      const size = sizeOf(new URL(encodeURIComponent(file), WNBA_LOGO_DIR));
       expect(size, abbr).not.toBeNull();
       expect(size.width, abbr).toBeGreaterThan(0);
     }
@@ -196,7 +453,7 @@ describe('WNBA logo files', () => {
     for (const [abbr, team] of Object.entries(WNBA_TEAMS)) {
       const file = team.logo.split('/').pop();
       if (!wnbaPresent.has(file)) continue;
-      const { width, height } = pngSize(new URL(encodeURIComponent(file), WNBA_LOGO_DIR));
+      const { width, height } = sizeOf(new URL(encodeURIComponent(file), WNBA_LOGO_DIR));
       const aspect = Math.max(width / height, height / width);
       if (aspect > MAX_TEAM_ASPECT) offenders.push(`${abbr} ${width}x${height}`);
     }
@@ -267,7 +524,7 @@ describe('WNBA logo files', () => {
     // that shape or the mark draws small in the corner of half the set.
     const file = LEAGUE_LOGOS.WNBA.split('/').pop();
     expect(wnbaPresent.has(file)).toBe(true);
-    const { width, height } = pngSize(new URL(file, WNBA_LOGO_DIR));
+    const { width, height } = sizeOf(new URL(file, WNBA_LOGO_DIR));
     expect(width / height).toBeLessThan(0.6);
   });
 });

@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { photoExtMap, isSafePlayerId, requestedSet } from './studioServerPlugin.js';
 import {
   DEFAULT_PHOTO_EXT,
-  PHOTO_EXTENSIONS,
+  IMAGE_EXTENSIONS,
   SET_IDS,
   isEditableSet,
   photoUrlPath,
@@ -60,8 +60,8 @@ describe('photoExtMap', () => {
   });
 
   it('covers every extension the URL builder is willing to emit', () => {
-    const files = PHOTO_EXTENSIONS.map((ext, i) => `P${i}${ext}`);
-    expect(Object.values(photoExtMap(files)).sort()).toEqual([...PHOTO_EXTENSIONS].sort());
+    const files = IMAGE_EXTENSIONS.map((ext, i) => `P${i}${ext}`);
+    expect(Object.values(photoExtMap(files)).sort()).toEqual([...IMAGE_EXTENSIONS].sort());
   });
 });
 

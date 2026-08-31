@@ -15,6 +15,7 @@
 import { useState } from 'react';
 import { getThemedTeam, resolveAccent } from './teams.js';
 import {
+  IMAGE_EXTENSIONS,
   cardTreatment,
   hidesEmptyRows,
   setBadge,
@@ -228,7 +229,7 @@ export default function CardTemplate({
   set,
   // The extension the curated photo is stored under. Defaults to .jpg inside
   // resolvePhotoUrl, which is what the studio's own uploads are written as —
-  // only a hand-saved file needs this passed. See PHOTO_EXTENSIONS in sets.js
+  // only a hand-saved file needs this passed. See IMAGE_EXTENSIONS in sets.js
   // for what the studio serves.
   photoExt,
   teamOverrides,
@@ -545,10 +546,110 @@ export function logoSrc(path) {
 }
 
 /**
+ * Every path this asset could actually be on disk at, DECLARED ONE FIRST.
+ *
+ * ── THE PROBLEM ─────────────────────────────────────────────────────────────
+ *
+ * The user's question: "Can we really only do pngs? I thought we changed
+ * things to be able to use other formats." He was half right, and the half he
+ * was right about is the half that had already bitten once. PLAYER PHOTOS
+ * accept six formats, because a `.avif` he had saved by hand was silently
+ * invisible until they did. TEAM LOGOS and AWARD MARKS did not: their paths
+ * are spelled in data — `/logos/CLE.png`, `/awards/MVP.png` — and `logoSrc`
+ * passes the spelling straight through, so a file saved as `.webp` resolves to
+ * nothing and falls back to a lettered chip that looks like a design decision.
+ *
+ * ── WHY A PROBE AND NOT A MANIFEST ──────────────────────────────────────────
+ *
+ * The photos' answer was a SERVER SCAN: the studio plugin reads the directory
+ * and reports the real extension per player, and the browser is told. That
+ * answer does not transfer, and the reason is where these files live. Photos
+ * are under card-art/, outside public/, and are served by the studio plugin —
+ * which is `apply: 'serve'` and therefore DEV ONLY. Logos and awards are under
+ * public/, served by Vite itself in dev and copied verbatim into dist/ by
+ * `vite build`. A scan endpoint would fix the studio and leave the built app
+ * and the batch export exactly as broken as they are now, which is the half of
+ * this that a dev-only fix would miss.
+ *
+ * A build-time manifest would cover both, and costs more than it is worth here:
+ * it has to be regenerated or the dev server restarted every time the user
+ * drops a file, and he curates these WHILE the studio is open. This asks the
+ * browser instead, which is the one participant that is always present and
+ * always right: try the declared path, and on error try the same stem under
+ * every other format this build accepts before giving up. Dev, production
+ * build and any browser-driven export all behave identically, and a file
+ * swapped on disk is picked up on the next render with nothing to invalidate.
+ *
+ * The cost is one 404 per format skipped, against a local static server, only
+ * for a file that is not where the data said it was. There is deliberately NO
+ * memo of what resolved: the user replaces these files as he works — DPOY.avif
+ * became DPOY.jpg during the session this was written — and a cache would hold
+ * a dead URL until reload in exactly the workflow this exists to serve.
+ *
+ * DECLARED FIRST, ALWAYS. Every team logo is a `.png` and the data says so, so
+ * the common path costs nothing extra; and where the data names something else
+ * — `/logos/WNBA/HOU.gif`, the Comets' wordmark, the one non-PNG in the
+ * directory — that spelling is still tried before any substitute, so a format
+ * NOT on IMAGE_EXTENSIONS keeps working exactly as it did.
+ *
+ * Bare and root-relative, like the paths it is derived from: `logoSrc` puts the
+ * app's base path on, and this must not do it twice. A path with no extension
+ * has nothing to vary and comes back alone.
+ */
+export function assetCandidates(path) {
+  if (typeof path !== 'string' || path === '') return [];
+  const dot = path.lastIndexOf('.');
+  if (dot <= path.lastIndexOf('/')) return [path];
+  const stem = path.slice(0, dot);
+  const declared = path.slice(dot).toLowerCase();
+  return [path, ...IMAGE_EXTENSIONS.filter(ext => ext !== declared).map(ext => `${stem}${ext}`)];
+}
+
+/**
+ * An <img> for a public/ asset, in whatever format it was actually saved, with
+ * a DESIGNED fallback when it is in none of them.
+ *
+ * The three marks on a card — league, team, award — each used to hold their own
+ * `failed` boolean and their own `onError`, and each would give up on the first
+ * miss. They now share this, which is what makes "any format" one rule rather
+ * than three copies of one: `onError` steps to the next candidate and only the
+ * exhausted end of the list reaches `fallback`.
+ *
+ * THE FALLBACK IS NOT A PLACEHOLDER. A missing file has to look deliberate: no
+ * browser broken-image glyph may ever reach the batch export, and a lettered
+ * chip in the same slot at the same size means nothing in the column shifts
+ * when real art lands on top of it.
+ *
+ * The counter is reset DURING RENDER when `path` changes, rather than in an
+ * effect. React documents this for derived state, and it is load-bearing here:
+ * the studio swaps one card for another under the same mounted tree, so without
+ * it a new team's logo would inherit the previous team's exhausted counter and
+ * draw a lettered circle over a file that exists.
+ */
+function AssetImage({ path, alt, className, fallback }) {
+  const [tried, setTried] = useState({ path, index: 0 });
+  const index = tried.path === path ? tried.index : 0;
+  if (tried.path !== path) setTried({ path, index: 0 });
+
+  const src = logoSrc(assetCandidates(path)[index]);
+  if (!src) return fallback;
+  return (
+    <img
+      src={src}
+      alt={alt}
+      className={className}
+      onError={() => setTried({ path, index: index + 1 })}
+    />
+  );
+}
+
+/**
  * The league mark's file, the one logo that is not a team's.
  *
  * Lives next to the team logos in public/logos/ and is resolved through the
  * same logoSrc(), so it picks up the app's base path like everything else.
+ * The `.png` here is the SPELLING TRIED FIRST rather than a requirement — see
+ * assetCandidates.
  */
 export const LEAGUE_LOGO = '/logos/NBA.png';
 
@@ -601,20 +702,19 @@ export function leagueMarkFallbackClass(league, sheet = styles) {
  * must never show a browser broken-image glyph.
  */
 function LeagueMark({ league = 'NBA' }) {
-  const [failed, setFailed] = useState(false);
   // `??` would be wrong: a declared league whose mark file is missing stores
   // null, and `??` would quietly hand it the NBA's — an NBA mark on a WNBA card
   // is a factual error printed on the face of it, and worse than no mark at
   // all. Own-property lookup separates "this league has no art" from "this is
   // not a league I know".
-  const src = logoSrc(
-    Object.hasOwn(LEAGUE_LOGOS, league) ? LEAGUE_LOGOS[league] : LEAGUE_LOGO
-  );
-  if (!src || failed) {
-    return <div className={leagueMarkFallbackClass(league)}>{league}</div>;
-  }
+  const path = Object.hasOwn(LEAGUE_LOGOS, league) ? LEAGUE_LOGOS[league] : LEAGUE_LOGO;
   return (
-    <img src={src} alt={league} className={styles.leagueMark} onError={() => setFailed(true)} />
+    <AssetImage
+      path={path}
+      alt={league}
+      className={styles.leagueMark}
+      fallback={<div className={leagueMarkFallbackClass(league)}>{league}</div>}
+    />
   );
 }
 
@@ -628,19 +728,12 @@ function LeagueMark({ league = 'NBA' }) {
  * the sidebar below it never shifts and no browser broken-image glyph appears.
  */
 function TeamLogo({ team, abbr }) {
-  const [failed, setFailed] = useState(false);
-  const label = abbr ?? '';
-  const src = logoSrc(team.logo);
-
-  if (!src || failed) {
-    return <div className={styles.logoFallback}>{label}</div>;
-  }
   return (
-    <img
-      src={src}
+    <AssetImage
+      path={team.logo}
       alt={team.name}
       className={styles.logo}
-      onError={() => setFailed(true)}
+      fallback={<div className={styles.logoFallback}>{abbr ?? ''}</div>}
     />
   );
 }
@@ -648,15 +741,17 @@ function TeamLogo({ team, abbr }) {
 /**
  * One award mark, with a LETTERED CHIP fallback.
  *
- * ── THE FALLBACK IS THE FEATURE, FOR NOW ────────────────────────────────────
+ * ── THE FALLBACK IS THE FEATURE UNTIL THE FILE IS NAMED RIGHT ───────────────
  *
- * public/awards/ IS EMPTY. The user is going to put files there — "I'm going to
- * add some awards to [a folder]" — and until they arrive every one of these
- * <img>s 404s. That is exactly the state public/logos/ was in when TeamLogo's
- * fallback was written, and this follows it: the chip is drawn in the same
- * slot, at the same size, so nothing in the column moves when a real trophy
- * lands on top of it, and no browser broken-image glyph can ever reach the
- * batch export.
+ * public/awards/ is filling up, and the files are in four different formats —
+ * .avif, .webp, .jpg, .jfif — which is why AssetImage probes rather than
+ * assuming. What it CANNOT do is guess a different stem: the code is the
+ * filename, so the All-Star mark is `AS.…` and a file called `All-Star.webp` is
+ * a file nothing asks for.
+ *
+ * So the chip still matters, and it is drawn in the same slot at the same size:
+ * nothing in the column moves when a real trophy lands on top of it, and no
+ * browser broken-image glyph can ever reach the batch export.
  *
  * ── WHY A CODE AND NOT NOTHING ──────────────────────────────────────────────
  *
@@ -679,22 +774,16 @@ function TeamLogo({ team, abbr }) {
  * an award that has no path at all. See CardTemplate.test.js.
  */
 export function AwardMark({ award }) {
-  const [failed, setFailed] = useState(false);
-  const src = logoSrc(awardImagePath(award.code));
-
-  if (!src || failed) {
-    return (
-      <div className={styles.awardFallback} title={award.name}>
-        {award.code}
-      </div>
-    );
-  }
   return (
-    <img
-      src={src}
+    <AssetImage
+      path={awardImagePath(award.code)}
       alt={award.name}
       className={styles.award}
-      onError={() => setFailed(true)}
+      fallback={
+        <div className={styles.awardFallback} title={award.name}>
+          {award.code}
+        </div>
+      }
     />
   );
 }

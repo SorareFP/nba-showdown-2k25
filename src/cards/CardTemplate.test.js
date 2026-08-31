@@ -11,6 +11,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import React from 'react';
 import CardTemplate, {
   AwardMark,
+  assetCandidates,
   CARD_WIDTH,
   CARD_HEIGHT,
   formatRollRange,
@@ -23,7 +24,13 @@ import CardTemplate, {
   visibleTiers,
 } from './CardTemplate.jsx';
 import { CARDS } from '../game/cards.js';
-import { TEAMS, HISTORICAL_TEAMS, WNBA_TEAMS, resolveAccent } from './teams.js';
+import {
+  TEAMS,
+  HISTORICAL_TEAMS,
+  WNBA_TEAMS,
+  WNBA_HISTORICAL_TEAMS,
+  resolveAccent,
+} from './teams.js';
 import { deriveFieldTheme } from './fieldTheme.js';
 import { GOLD, applyTreatment } from './treatments.js';
 import {
@@ -39,6 +46,7 @@ import {
 import {
   CURRENT_SET,
   FINISHED_SET,
+  IMAGE_EXTENSIONS,
   ROOKIE_SET,
   SETS,
   SET_IDS,
@@ -596,6 +604,88 @@ describe('team logo', () => {
     const html = render({ card: { name: 'X', team: '2TM' } });
     expect(html).not.toMatch(/\/logos\/(?!NBA\.png)/);
     expect(html).toContain('2TM');
+  });
+});
+
+// ── THE FORMAT PROBE ────────────────────────────────────────────────────────
+//
+// The user's question, and it was a fair one: "Can we really only do pngs? I
+// thought we changed things to be able to use other formats." Player photos had
+// been fixed; logos and award marks had not, because their paths are spelled in
+// DATA and logoSrc passes the spelling through. assetCandidates is the fix, and
+// the half of it that a test can hold is which URLs get tried and in what
+// order — the walk itself needs a real failed fetch, which static markup cannot
+// produce (the same limit leagueMarkFallbackClass and AwardMark live with).
+describe('resolving an asset in whatever format it was saved', () => {
+  it('tries the DECLARED path first, always', () => {
+    // The property that makes this free for the 60-odd files already on disk:
+    // every team mark is a .png and the table says .png, so the common case is
+    // one request and no 404s at all.
+    expect(assetCandidates('/logos/CLE.png')[0]).toBe('/logos/CLE.png');
+    expect(assetCandidates('/awards/MVP.png')[0]).toBe('/awards/MVP.png');
+    for (const team of Object.values({ ...TEAMS, ...WNBA_TEAMS })) {
+      if (!team.logo) continue;
+      expect(assetCandidates(team.logo)[0], team.name).toBe(team.logo);
+    }
+    for (const code of AWARD_CODES) {
+      expect(assetCandidates(awardImagePath(code))[0], code).toBe(awardImagePath(code));
+    }
+  });
+
+  it('then offers the same stem under every format this build accepts', () => {
+    const candidates = assetCandidates('/awards/AS.png');
+    // Every accepted extension is reachable, exactly once, on the right stem.
+    expect(candidates).toHaveLength(IMAGE_EXTENSIONS.length);
+    expect(new Set(candidates).size).toBe(candidates.length);
+    for (const ext of IMAGE_EXTENSIONS) expect(candidates, ext).toContain(`/awards/AS${ext}`);
+    // The user's own award files are in four different formats. Each of them is
+    // a URL this will actually ask for.
+    for (const ext of ['.avif', '.webp', '.jpg', '.jfif']) {
+      expect(candidates, ext).toContain(`/awards/AS${ext}`);
+    }
+  });
+
+  it('keeps a declared extension the list does not carry, rather than dropping it', () => {
+    // public/logos/WNBA/HOU.gif — the Houston Comets' wordmark, the one non-PNG
+    // in the logo directories and the reason "declared first" is a rule and not
+    // an optimisation. .gif is not on IMAGE_EXTENSIONS, so if the declared path
+    // were merely one candidate among the six it would never be requested and a
+    // mark that works today would stop working.
+    const candidates = assetCandidates('/logos/WNBA/HOU.gif');
+    expect(candidates[0]).toBe('/logos/WNBA/HOU.gif');
+    expect(candidates).toHaveLength(IMAGE_EXTENSIONS.length + 1);
+    expect(WNBA_HISTORICAL_TEAMS.HOU.logo).toBe('/logos/WNBA/HOU.gif');
+  });
+
+  it('does not offer the declared extension twice, whatever its case', () => {
+    expect(assetCandidates('/logos/CLE.PNG')).toHaveLength(IMAGE_EXTENSIONS.length);
+    expect(assetCandidates('/logos/CLE.PNG')[0]).toBe('/logos/CLE.PNG');
+    // The retries are lowercase, because that is how the files are named.
+    expect(assetCandidates('/logos/CLE.PNG').slice(1)).not.toContain('/logos/CLE.PNG');
+  });
+
+  it('has nothing to vary for a path with no extension, and says so', () => {
+    // Guessing six extensions onto a stem that never had one would be six 404s
+    // for a path no data in this repo produces.
+    expect(assetCandidates('/logos/CLE')).toEqual(['/logos/CLE']);
+    // A dot in a DIRECTORY name is not an extension.
+    expect(assetCandidates('/logos/v1.2/CLE')).toEqual(['/logos/v1.2/CLE']);
+  });
+
+  it('answers nothing for nothing, so a team with no logo asks for no file', () => {
+    for (const empty of [null, undefined, '', 0, {}, []]) {
+      expect(assetCandidates(empty), JSON.stringify(empty)).toEqual([]);
+    }
+  });
+
+  it('stays bare and root-relative, so logoSrc still owns the base path', () => {
+    // Doing the base path here as well would double it. Same contract the raw
+    // table paths keep.
+    for (const path of assetCandidates('/awards/MVP.png')) {
+      expect(path.startsWith('/')).toBe(true);
+      expect(path).not.toMatch(/^https?:|^\.\.?\//);
+      expect(logoSrc(path)).not.toMatch(/[^:]\/\//);
+    }
   });
 });
 

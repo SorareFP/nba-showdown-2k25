@@ -21,14 +21,14 @@ import {
   ART_ROOT,
   CURRENT_SET,
   DEFAULT_PHOTO_EXT,
-  PHOTO_EXTENSIONS,
+  IMAGE_EXTENSIONS,
   SET_IDS,
   isEditableSet,
   setPaths,
 } from '../../src/cards/sets.js';
 
-/** Kept in step with PHOTO_EXTENSIONS in src/cards/sets.js — a test asserts it. */
-const ALLOWED_PHOTO_EXT = new Set(PHOTO_EXTENSIONS);
+/** Kept in step with IMAGE_EXTENSIONS in src/cards/sets.js — a test asserts it. */
+const ALLOWED_PHOTO_EXT = new Set(IMAGE_EXTENSIONS);
 
 /** The player id a photo filename encodes — the name with its extension removed. */
 const playerIdFromFile = file => file.replace(/\.[^.]+$/, '');

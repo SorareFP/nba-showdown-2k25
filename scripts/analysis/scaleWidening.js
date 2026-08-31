@@ -63,6 +63,12 @@
 import { evaluateMatchup, ADVANTAGE, DISADVANTAGE } from './matchupMatrix.js';
 import { lookupChart } from '../../src/game/cards.js';
 import { applyModel, salaryFeatures, roundSalary } from '../cardgen/attributes.js';
+import { widenReference } from '../cardgen/speedPower.js';
+
+// `widenReference` moved into scripts/cardgen/speedPower.js when the widening
+// stopped being a candidate and became the shipped scale. Re-exported here so
+// this module still reads as the one place a candidate scale is described.
+export { widenReference };
 
 /**
  * Chart scoring rolls per team per game.
@@ -242,37 +248,6 @@ export function scoringProfile(cards) {
     axisSpeed: bySpeed / a,
     axisPower: byPower / a,
     axisBoth: byBoth / a,
-  };
-}
-
-/**
- * A widened target distribution for `mapToReferenceScale`.
- *
- * The reference is what the map aims at, so a widening IS a different reference
- * — no new mapping code is needed, and every property speedPower.js documents
- * about the map (the untouched bulk, the tapered tail, the earned ceiling) still
- * holds for the widened one.
- *
- * `sdScale` is the dial that actually buys resolution. `min`/`max` alone only
- * release the cards the clamp was flattening, which is about sixteen of 350;
- * the compression that matters is in the BULK (46 cards share S+P 16), and only
- * a larger spread separates those. The knee moves with the spread so the taper
- * keeps describing the same part of the shape.
- *
- * `meanShift` is included for completeness and is very nearly a no-op at the
- * table: `calcAdv` reads only differences, so moving the whole set up or down
- * cancels. It is not free OUTSIDE the set — the other four sets and the shipped
- * 306 cards are priced against this level — which is why it defaults to zero.
- */
-export function widenReference(reference, { min, max, sdScale = 1, meanShift = 0 } = {}) {
-  const mean = reference.mean + meanShift;
-  return {
-    mean,
-    sd: reference.sd * sdScale,
-    min: min ?? reference.min,
-    max: max ?? reference.max,
-    p90: mean + (reference.p90 - reference.mean) * sdScale,
-    ceilingShare: reference.ceilingShare,
   };
 }
 

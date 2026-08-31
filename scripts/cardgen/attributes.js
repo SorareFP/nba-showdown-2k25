@@ -35,8 +35,8 @@
  *
  * Checked and deliberately NOT modelled: whether the share drifts with the size
  * of the budget. The per-position slopes come out between -0.003 and +0.006 per
- * point of total, i.e. under a tenth of a Speed point across the whole 10-28
- * range. A pure positional average is what the methodology describes and the
+ * point of total, i.e. under a tenth of a Speed point across the whole printed
+ * 6-30 range. A pure positional average is what the methodology describes and the
  * data gives no reason to add a term.
  */
 export const POSITION_SPEED_SHARE = {

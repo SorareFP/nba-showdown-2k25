@@ -28,7 +28,7 @@
 // weighted in effect, and no choice of league pace can change a pooled value.
 // (Playoff pace really does run a percent or two slower than the regular
 // season's. Modelling that would move a weight by that same percent, on a number
-// that is then z-scored across the pool and rounded onto a 10-28 integer scale.
+// that is then z-scored against the archive and rounded onto a 6-30 integer scale.
 // It cannot survive to the card, so it is not modelled.)
 //
 // SHOOTING PERCENTAGES pool by ATTEMPTS, and by the RELEVANT attempts — a rim

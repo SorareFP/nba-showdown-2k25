@@ -258,11 +258,18 @@ describe('the generated budgets', () => {
   // THE TWO ARTEFACTS THAT MOTIVATED THE WHOLE EXERCISE. Ty Jerome's 26 off
   // fifteen games was the seventh-highest budget in a 350-card set; Zach Edey's
   // 24 came off eleven. Pinned so that losing the blend would fail loudly.
+  //
+  // THE RANK IS THE CLAIM, and the raw budgets are pinned second because they
+  // are SCALE-DEPENDENT in a way the rank is not: the printed range is now 6-30
+  // rather than 10-28, so both numbers rose without either player moving
+  // relative to anybody. A future rescaling should expect to edit the two
+  // `toBe`s and should NOT expect to edit the rank.
   it('no longer prices a fifteen-game season into the top of the set', () => {
     const ranked = [...totals].sort((a, b) => b.speedPowerTotal - a.speedPowerTotal);
     const rank = name => ranked.findIndex(r => r.name === name) + 1;
-    expect(byName.get('Ty Jerome').speedPowerTotal).toBe(23);
     expect(rank('Ty Jerome')).toBeGreaterThan(20);
-    expect(byName.get('Zach Edey').speedPowerTotal).toBe(19);
+    expect(rank('Zach Edey')).toBeGreaterThan(60);
+    expect(byName.get('Ty Jerome').speedPowerTotal).toBe(25);
+    expect(byName.get('Zach Edey').speedPowerTotal).toBe(20);
   });
 });

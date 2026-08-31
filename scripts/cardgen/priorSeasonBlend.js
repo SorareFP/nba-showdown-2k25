@@ -57,7 +57,7 @@
 //
 // NO AGE CURVE, NO PACE ADJUSTMENT. Same argument as poolSeasons.js makes about
 // playoff pace: the effect is a percent or two on a number that is then z-scored
-// across the pool and rounded onto a 10-28 integer scale, so it cannot survive
+// against the archive and rounded onto a 6-30 integer scale, so it cannot survive
 // to the card.
 //
 // ONLY THE DECLARED LIST IS BLENDED. Every other player in the pool cleared

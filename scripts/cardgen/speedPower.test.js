@@ -1,10 +1,12 @@
 import { describe, it, expect } from 'vitest';
 import {
+  PRINTED_SCALE,
   REFERENCE_TOTALS,
   buildSpeedPowerTotals,
   compositeScores,
   mapToReferenceScale,
   measureReferenceTotals,
+  poolBasis,
 } from './speedPower.js';
 import { zScorer } from './attributes.js';
 
@@ -39,8 +41,28 @@ describe('zScorer', () => {
 });
 
 describe('compositeScores', () => {
+  // The composite's basis is now the 2002-2026 archive rather than the rows
+  // being scored (see epmArchive.js). These tests are about the ARITHMETIC, so
+  // they hand it the pool's own basis explicitly — which is exactly what the
+  // function did implicitly before the archive existed.
+  const basis = poolBasis(pool);
+
+  it('takes an explicit basis, and the pool no longer defines its own', () => {
+    // The property the change is FOR: a player's composite depends only on his
+    // own numbers and the basis, so adding a superstar to the pool cannot
+    // demote everybody else.
+    const alone = compositeScores([pool[2]], { basis });
+    const crowded = compositeScores([pool[2], player('Alien', 30, 20, 0.9)], { basis });
+    expect(crowded[0]).toBeCloseTo(alone[0], 10);
+    // Whereas measuring the basis off the rows — the old behaviour — moves it.
+    const wasRelative = compositeScores([pool[2], player('Alien', 30, 20, 0.9)], {
+      basis: poolBasis([pool[2], player('Alien', 30, 20, 0.9)]),
+    });
+    expect(wasRelative[0]).not.toBeCloseTo(alone[0], 3);
+  });
+
   it('orders players the way their impact does', () => {
-    const scores = compositeScores(pool);
+    const scores = compositeScores(pool, { basis });
     expect(scores).toEqual([...scores].sort((a, b) => b - a));
   });
 
@@ -56,7 +78,7 @@ describe('compositeScores', () => {
       player('Nobody', 0, 0, 0.02),
       player('Spread', -4, -4, -0.01),
     ];
-    const scores = compositeScores(split);
+    const scores = compositeScores(split, { basis: poolBasis(split) });
     expect(scores[0]).toBeCloseTo(scores[1], 10);
   });
 
@@ -67,12 +89,12 @@ describe('compositeScores', () => {
       player('Anchor', 0, 0, 0.05),
       player('Floor', -3, -2, 0),
     ];
-    const scores = compositeScores(same);
+    const scores = compositeScores(same, { basis: poolBasis(same) });
     expect(scores[0]).toBeGreaterThan(scores[1]);
   });
 
   it('weight 0 reduces the composite to EPM alone', () => {
-    const scores = compositeScores(pool, { weight: 0 });
+    const scores = compositeScores(pool, { weight: 0, basis });
     const z = zScorer(pool.map(p => p.epm));
     expect(scores).toEqual(pool.map(p => z(p.epm)));
   });
@@ -199,13 +221,33 @@ describe('buildSpeedPowerTotals', () => {
   ];
   const actual = [...pool, player('Ronald Holland II', 1, 0, 0.06)];
 
-  it('gives every pool player a budget inside the reference range', () => {
+  it('gives every pool player a budget inside the printed range', () => {
     const { records } = buildSpeedPowerTotals({ pool: poolPlayers, actual });
     expect(records).toHaveLength(4);
     for (const r of records) {
-      expect(r.speedPowerTotal).toBeGreaterThanOrEqual(REFERENCE_TOTALS.min);
-      expect(r.speedPowerTotal).toBeLessThanOrEqual(REFERENCE_TOTALS.max);
+      expect(r.speedPowerTotal).toBeGreaterThanOrEqual(PRINTED_SCALE.min);
+      expect(r.speedPowerTotal).toBeLessThanOrEqual(PRINTED_SCALE.max);
     }
+  });
+
+  // PRINTED_SCALE is REFERENCE_TOTALS widened, and the two are different things:
+  // the measurement of the finished 2025-26 set, and the decision applied on top
+  // of it. Neither is edited to hold the other's numbers.
+  it('prints on a wider range than the finished set it was measured from', () => {
+    expect(PRINTED_SCALE.min).toBeLessThan(REFERENCE_TOTALS.min);
+    expect(PRINTED_SCALE.max).toBeGreaterThan(REFERENCE_TOTALS.max);
+    expect(PRINTED_SCALE.sd).toBeGreaterThan(REFERENCE_TOTALS.sd);
+    expect(PRINTED_SCALE.mean).toBe(REFERENCE_TOTALS.mean);
+  });
+
+  // The whole point of the recalibration, asserted where it is cheapest to
+  // check: the budgets a pool gets do not depend on who else is in it.
+  it('does not move a player because the rest of the pool changed', () => {
+    const solo = buildSpeedPowerTotals({ pool: poolPlayers.slice(0, 2), actual });
+    const full = buildSpeedPowerTotals({ pool: poolPlayers, actual });
+    const find = r => rs => rs.records.find(x => x.name === r).speedPowerTotal;
+    expect(find('Star')(solo)).toBe(find('Star')(full));
+    expect(find('Average')(solo)).toBe(find('Average')(full));
   });
 
   // A fuzzy matcher that guesses wrong hands a player somebody else's stat line

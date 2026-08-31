@@ -155,7 +155,6 @@ export default function HowToPlay({ scrollToSection, onStartTutorial }) {
           <ul>
             <li><strong>Winning:</strong> +1 stored assist</li>
             <li><strong>+3 differential:</strong> Second-chance Paint check (costs 3 REB)</li>
-            <li><strong>Individual 2+ REB in a section:</strong> Putback opportunity (costs 2 REB)</li>
           </ul>
         </AccordionSection>
 

@@ -222,7 +222,6 @@ export default function RulebookTab() {
           <ul>
             <li><strong>Winning by 3+:</strong> Earn one second-chance Paint shot check (costs 3 REB).</li>
             <li><strong>Winning the track at section end:</strong> Gain +1 stored Assist for the next section.</li>
-            <li><strong>Individual +2 REB in a section:</strong> That player may attempt a Putback shot check.</li>
           </ul>
         </div>
       </div>

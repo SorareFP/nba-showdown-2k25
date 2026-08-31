@@ -268,7 +268,6 @@ export function spendAssist(g, teamKey, type, playerIdx) {
 
 // ── Rebound Bonus Shot Checks ──────────────────────────────────────────────
 // +3 reb diff → Paint shot check for a chosen player (costs 3 REB)
-// Putback → player who got 2+ reb in a section gets a Paint check (costs 2 REB)
 export function spendReboundBonus(g, teamKey, type, playerIdx) {
   const ng = deepClone(g);
   const myT = getTeam(ng, teamKey);
@@ -295,26 +294,16 @@ export function spendReboundBonus(g, teamKey, type, playerIdx) {
     return { game: ng, ok: true };
   }
 
-  if (type === 'putback') {
-    // Putback costs 2 REB
-    if (myT.rebounds < 2) return { game: ng, ok: false, msg: `Need 2 rebounds (have ${myT.rebounds})` };
-    myT.rebounds -= 2;
-    const r = shotCheck(player, 'paint', 0, ps);
-    if (r.hit) {
-      myT.score += r.pts;
-      const ps2 = myT.stats.find(s => s.id === player.id);
-      if (ps2) ps2.pts += r.pts;
-      if (ng.analytics?.[teamKey]) ng.analytics[teamKey].reboundBonusPts += r.pts;
-    }
-    if (r.die <= 2) ps.cold = (ps.cold || 0) + 1;
-    if (r.die >= 19) ps.hot = (ps.hot || 0) + 1;
-    // Remove this player from putback list
-    if (ng.reboundBonuses?.[teamKey]?.putbackPlayers) {
-      ng.reboundBonuses[teamKey].putbackPlayers = ng.reboundBonuses[teamKey].putbackPlayers.filter(p => p.idx !== playerIdx);
-    }
-    ng.log = [...ng.log, { team: teamKey, msg: `Putback (−2 REB): ${player.name} 🎲${r.die}${r.bonus ? (r.bonus > 0 ? '+' : '') + r.bonus : ''}=${r.total} vs ${r.line} → ${r.hit ? '2pts!' : 'MISS'}` }];
-    return { game: ng, ok: true };
-  }
+  // THE PUTBACK IS GONE. It let a player who grabbed 2+ rebounds in a section
+  // spend 2 REB on a paint check, and it was the one conversion route that
+  // ignored shooting entirely -- the opportunity went to whoever rebounded, so
+  // the points went to bigs regardless of whether they could finish. Measured
+  // over 9,440 games it was 4.3% of ALL scoring, and 31.5% of every converted
+  // point went to players on the worst shot line in the set. Removing it leaves
+  // conversion gated on the boosts, which is what the boosts are for.
+  //
+  // The +3 rebound-differential paint check above is untouched: it is a TEAM
+  // reward the player chooses a target for, so shooting still decides it.
 
   return { game: ng, ok: false, msg: 'Unknown rebound bonus type' };
 }
@@ -448,23 +437,7 @@ export function endSection(g) {
     ng.reboundBonuses[wk] = { diff: absRd, paintCheck: absRd >= 3 };
   }
 
-  // Check individual player +2 reb in this section → putback opportunity
-  ['A', 'B'].forEach(k => {
-    const sectionRolls = ng.rollResults[k] || [];
-    const t = getTeam(ng, k);
-    sectionRolls.forEach((r, i) => {
-      if (r && (r.reb || 0) >= 2) {
-        const p = t.starters[i];
-        if (p) {
-          if (!ng.reboundBonuses) ng.reboundBonuses = {};
-          if (!ng.reboundBonuses[k]) ng.reboundBonuses[k] = {};
-          if (!ng.reboundBonuses[k].putbackPlayers) ng.reboundBonuses[k].putbackPlayers = [];
-          ng.reboundBonuses[k].putbackPlayers.push({ name: p.name, id: p.id, idx: i });
-          ng.log = [...ng.log, { team: k, msg: `${p.name} grabbed 2+ rebounds → Putback opportunity!` }];
-        }
-      }
-    });
-  });
+  // No putback detection: the rule was removed (see spendReboundBonus).
 
   // Reset section state
   ng.tempEff = {}; ng.tempDefEff = {}; ng.ghosted = {}; ng.ignFatigue = {};

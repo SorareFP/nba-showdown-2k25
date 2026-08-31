@@ -9,7 +9,7 @@
  *   chart      `doRoll` -> `score += result.pts`, ungated
  *   assists    4 AST -> a 3PT check (needs a 3PT boost)
  *              3 AST -> a paint check (needs a paint boost)
- *   rebounds   2 REB -> a putback, 3 REB -> a paint check
+ *   rebounds   3 REB -> a paint check (the 2-REB putback was REMOVED)
  *
  * If conversion is a third of the scoring, a good shooter's chart ceiling is
  * double-counting his upside and should come down. If it is a twentieth, the
@@ -149,16 +149,11 @@ function spendAll(g, key) {
       }
     }
     // Rebound spends are gated by what endSection published for this section.
+    // The 2-REB PUTBACK IS GONE (removed from engine.js): it was the one
+    // conversion route that ignored shooting, handing points to whoever
+    // rebounded regardless of whether he could finish. Only the +3
+    // differential paint check remains, and that one the player aims.
     const bonuses = ng.reboundBonuses?.[key];
-    if (!acted && team.rebounds >= 2 && bonuses?.putbackPlayers?.length) {
-      const idx = bonuses.putbackPlayers[0].idx;
-      const before = (key === 'A' ? ng.teamA : ng.teamB).score;
-      const r = spendReboundBonus(ng, key, 'putback', idx);
-      if (r.ok) {
-        credit(team.starters[idx], (key === 'A' ? r.game.teamA : r.game.teamB).score - before);
-        ng = r.game; acted = true;
-      }
-    }
     if (!acted && team.rebounds >= 3 && bonuses?.paintCheck && paint >= 0) {
       const before = (key === 'A' ? ng.teamA : ng.teamB).score;
       const r = spendReboundBonus(ng, key, 'paint_check', paint);

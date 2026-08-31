@@ -1207,13 +1207,11 @@ function PlayerSlot({ player, ps, adv, fat, result, blocked, teamKey, idx, phase
               if (!rb) return null;
               const myT2 = teamKey==='A'?game.teamA:game.teamB;
               const hasPaint = ((player.paintBoost||0) > 0 || player.power >= 10) && myT2.rebounds >= 3;
-              const isPutback = rb.putbackPlayers?.some(p => p.idx === idx) && myT2.rebounds >= 2;
-              const anyBtn = (rb.paintCheck && hasPaint) || isPutback;
-              if (!anyBtn) return null;
+              // The 2-REB putback was removed — see spendReboundBonus in engine.js.
+              if (!(rb.paintCheck && hasPaint)) return null;
               return (
                 <div className={styles.assistSpend}>
-                  {rb.paintCheck && hasPaint && <button className={styles.rebBtn} title="Costs 3 REB: Paint shot check" onClick={()=>onSpendRebound(teamKey,'paint_check',idx)}>Paint (−3R)</button>}
-                  {isPutback && <button className={styles.rebBtn} title="Costs 2 REB: Putback paint check" onClick={()=>onSpendRebound(teamKey,'putback',idx)}>Putback (−2R)</button>}
+                  <button className={styles.rebBtn} title="Costs 3 REB: Paint shot check" onClick={()=>onSpendRebound(teamKey,'paint_check',idx)}>Paint (−3R)</button>
                 </div>
               );
             })()}

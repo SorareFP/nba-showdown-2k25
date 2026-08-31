@@ -192,6 +192,53 @@ const badgesById = new Map(
 /** True when the studio is showing the base set's badges. */
 export const BADGES_GENERATED = badgesById.size > 0;
 
+/**
+ * The AWARD MARKS, for every set the generator covers.
+ *
+ * ── ONE FILE FOR ALL THREE SETS, WHERE card-badges.json IS ONE SET's ────────
+ *
+ * A badge is a fact about the BASE set — it exists because the special sets
+ * excluded a player and the fact had to land somewhere — so its file names one
+ * set and `badgesById` is one map. An award is a fact about a SEASON, and every
+ * set has seasons, so card-awards.json is keyed by set and this is a map of
+ * maps. A set the generator did not cover (both WNBA sets today) is simply
+ * absent, and `awardsFor` hands back an empty array for it — which is the same
+ * answer a missing file gives, so a checkout that has never run the generator
+ * and a set that has no data render identically: no marks, no error.
+ *
+ * Same import.meta.glob treatment as everything else generated here, for the
+ * same reason: the file is produced by a polite twenty-request scrape
+ * (scripts/cardgen/generateAwards.js) and a checkout without it must still open
+ * a studio that photos can be curated in.
+ */
+const awardModules = import.meta.glob('../../card-data/generated/card-awards.json', {
+  eager: true,
+});
+export const AWARDS_FILE = Object.values(awardModules)[0]?.default ?? null;
+
+const awardsBySet = new Map(
+  Object.entries(AWARDS_FILE?.sets ?? {}).map(([set, records]) => [
+    set,
+    new Map(
+      (Array.isArray(records) ? records : [])
+        // Records with an empty `awards` are in the file on purpose — they are
+        // the evidence that a `MVP-4` produced nothing — but they are not marks
+        // and must not become an empty array in a card's `awards` field, which
+        // would be indistinguishable from a card the generator never saw.
+        .filter(r => Array.isArray(r.awards) && r.awards.length > 0)
+        .map(r => [r.id, r.awards])
+    ),
+  ])
+);
+
+/** Every award code true of this card, or an empty array. Never null. */
+export function awardsFor(set, id) {
+  return awardsBySet.get(set)?.get(id) ?? [];
+}
+
+/** True when the studio is showing award marks on at least one set. */
+export const AWARDS_GENERATED = [...awardsBySet.values()].some(m => m.size > 0);
+
 function withGeneratedStats(player) {
   const card = generatedById.get(player.id);
   if (!card) return player;
@@ -219,6 +266,11 @@ export const POOL_PLAYERS = pool.map(p => ({
   // in one place and re-prioritising needs no regeneration. Always an array, so
   // nothing downstream has to test for the file's absence.
   badges: badgesById.get(playerIdFromName(p.name)) ?? [],
+  // Every award this player WON in the season this set is built from — see
+  // awardsFor. Like `badges`, this is the fact and not the rendering:
+  // CardTemplate orders and caps it with pickAwards, so re-prioritising or
+  // re-capping needs no regeneration.
+  awards: awardsFor(CURRENT_SET, playerIdFromName(p.name)),
   // Chart / Speed / Power / Shot Line / boosts / salary arrive from
   // cards-2026-27.json when it exists. When it does not, they stay absent and
   // CardTemplate renders a placeholder for each — never a crash, never a zero
@@ -285,7 +337,14 @@ const HISTORY_MISSING_HINT =
 
 function specialSource(id, file, { sub, hint, missingHint = HISTORY_MISSING_HINT }) {
   const declared = getSet(id);
-  const players = [...(file?.cards ?? [])].sort(byName);
+  // The awards are joined HERE rather than in the generator's own file, for
+  // card-badges.json's reason restated: cards-super-season.json belongs to
+  // generateSpecialSets.js, and writing another generator's output into it
+  // would make the two order-dependent and lose the awards the next time that
+  // one ran. A separate file joined by set and id has neither problem.
+  const players = [...(file?.cards ?? [])]
+    .map(card => ({ ...card, awards: awardsFor(id, card.id) }))
+    .sort(byName);
   return {
     key: id,
     set: id,

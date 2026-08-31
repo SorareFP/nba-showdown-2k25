@@ -10,6 +10,7 @@ import { describe, it, expect } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import React from 'react';
 import CardTemplate, {
+  AwardMark,
   CARD_WIDTH,
   CARD_HEIGHT,
   formatRollRange,
@@ -48,7 +49,8 @@ import {
   setLeague,
   showsSeason,
 } from './sets.js';
-import { BADGE_FILE, POOL_PLAYERS, SOURCES } from '../studio/players.js';
+import { AWARD_CODES, MAX_CARD_AWARDS, awardImagePath } from './awards.js';
+import { AWARDS_FILE, BADGE_FILE, POOL_PLAYERS, SOURCES } from '../studio/players.js';
 
 const render = props => renderToStaticMarkup(React.createElement(CardTemplate, props));
 
@@ -525,18 +527,21 @@ describe('the sidebar', () => {
     // pinned at 96, so that raising a font size or the gap fails HERE instead of
     // silently pushing the logo out through the top of the sidebar.
     //
-    // The TALLEST case, which is a special set: the badge and the season are
-    // two extra rows and two extra gaps that only Super Season and Rookie draw.
-    // A base-set card stacks the same content 80px lower in the same box.
+    // The TALLEST case, which is a Super Season card of a season that carried
+    // hardware: the award row, the badge and the season are three extra rows
+    // and three extra gaps. Nikola Jokić's 2021-22 draws all three; a base-set
+    // card with neither an award nor a badge stacks the same content 136px
+    // lower in the same box.
     const lineHeight = Number(cssBlock('.card').match(/line-height:\s*([\d.]+)/)[1]);
     const line = block => pxIn(block, 'font-size') * lineHeight;
     const badge = cssBlock('.badge');
     const rows =
+      pxIn(cssBlock('.awardFallback'), 'height') +
       line(badge) + 2 * pxIn(badge, 'padding') +
       line(cssBlock('.season')) +
       line(cssBlock('.pos')) +
       4 * (line(cssBlock('.boostLabel')) + line(cssBlock('.boostValue')));
-    const gaps = 7 * pxIn(sidebar, 'gap');
+    const gaps = 8 * pxIn(sidebar, 'gap');
     expect(pxIn(logo, 'height') + rows + gaps).toBeLessThanOrEqual(pxIn(sidebar, 'height'));
   });
 
@@ -1644,5 +1649,248 @@ describe('the season and the card-type badge', () => {
         expect(html, `${set} ${team}`).toContain('2015-16');
       }
     }
+  });
+});
+
+// ── AWARD MARKS ─────────────────────────────────────────────────────────────
+//
+// "I'd like to add them to the sidebar above the badges if a player won them."
+//
+// Three things have to hold and they fail in three different ways. WHICH marks
+// (the -1 rule, tested exhaustively in awards.test.js and here against the real
+// generated file, because a trophy on the wrong card is the failure this
+// feature cannot have). WHERE they sit (above the badge, in a bottom-anchored
+// column, so a card that wins nothing is unchanged to the pixel). And WHAT
+// happens while public/awards/ is empty, which is the state every card is in
+// today.
+describe('the award marks', () => {
+  /** A card whose season carried hardware, in the shape the studio hands over. */
+  const MARKED = {
+    id: 'Shai_Gilgeous_Alexander',
+    name: 'Shai Gilgeous-Alexander',
+    team: 'OKC',
+    pos: 'PG',
+    speed: 17,
+    power: 9,
+    shotLine: 12,
+    paintBoost: 1,
+    threePtBoost: 2,
+    defBoost: 1,
+    salary: 1500,
+    awards: ['MVP', 'CPOY'],
+    chart: [
+      { lo: 1, hi: 2, pts: 0, reb: 0, ast: 0 },
+      { lo: 3, hi: 9, pts: 3, reb: 1, ast: 1 },
+      { lo: 10, hi: 19, pts: 4, reb: 1, ast: 2 },
+      { lo: 20, hi: 99, pts: 6, reb: 2, ast: 3 },
+    ],
+  };
+
+  it('prints a chip per award, above the badge and above the season', () => {
+    // DOM order IS the order on the card — the column is a bottom-anchored flex
+    // stack — so the assertion is on positions in the markup. Reading downward:
+    // what he won, what kind of card this is, which season, then the team.
+    const html = render({
+      card: { ...MARKED, season: 2026, seasonLabel: '2025-26', badges: [SUPER_SEASON_BADGE] },
+      set: SUPER_SEASON_SET,
+    });
+    const at = s => html.indexOf(s);
+    expect(at('/awards/MVP.png')).toBeGreaterThan(-1);
+    expect(at('/awards/MVP.png')).toBeLessThan(at('/awards/CPOY.png'));
+    expect(at('/awards/CPOY.png')).toBeLessThan(at('SUPER SEASON'));
+    expect(at('SUPER SEASON')).toBeLessThan(at('2025-26'));
+    expect(at('2025-26')).toBeLessThan(at('/logos/OKC.png'));
+  });
+
+  it('draws no row at all for a card that won nothing', () => {
+    // The contract that makes this safe to add to five sets at once: a card
+    // without the feature carries none of it — no row, no custom properties —
+    // so it renders exactly as it did before this existed.
+    const { awards, ...unmarked } = MARKED;
+    const html = render({ card: unmarked, set: CURRENT_SET });
+    expect(html).not.toContain('--award-fill');
+    expect(html).not.toContain('/awards/');
+    for (const code of AWARD_CODES) expect(html, code).not.toContain(`>${code}<`);
+  });
+
+  it('ignores an awards field that is not a list of codes it knows', () => {
+    for (const awards of [['AS', 'NBA1'], 'MVP', 42, null, [null, {}]]) {
+      const html = render({ card: { ...MARKED, awards }, set: CURRENT_SET });
+      expect(html, JSON.stringify(awards)).not.toContain('--award-fill');
+      expect(html, JSON.stringify(awards)).not.toContain('/awards/');
+    }
+  });
+
+  it('emits the chip colours, and only for a card that has marks', () => {
+    const html = render({ card: MARKED, set: CURRENT_SET });
+    expect(html).toMatch(/--award-fill:\s*#[0-9A-F]{6}/i);
+    expect(html).toMatch(/--award-ink:\s*#[0-9A-F]{6}/i);
+  });
+
+  it('falls back to the lettered chip when there is no art to point at', () => {
+    // WHAT THE USER SEES TODAY, and the one thing a static render cannot show
+    // by itself. public/awards/ is empty, so every <img> above 404s in a
+    // browser and `onError` swaps in this chip — but markup rendered to a
+    // string never fetches anything, so the swap is unreachable from `render`.
+    // Same problem leagueMarkFallbackClass has, and the same answer: reach the
+    // fallback by its OTHER door, an award with no path at all, and pin the
+    // shape there.
+    const chip = renderToStaticMarkup(
+      React.createElement(AwardMark, { award: { code: 'XX', name: 'Not A Real Award' } })
+    );
+    expect(chip).toContain('>XX<');
+    expect(chip).not.toContain('<img');
+    // No browser broken-image glyph can reach the batch export, which is the
+    // whole reason the fallback is a rendered element rather than a bare <img>.
+    expect(chip).toContain('Not A Real Award');
+    // The box does not change size when art arrives, so the column will not
+    // shift under the user as they add files.
+    expect(pxIn(cssBlock('.awardFallback'), 'width')).toBe(pxIn(cssBlock('.award'), 'width'));
+    expect(pxIn(cssBlock('.awardFallback'), 'height')).toBe(pxIn(cssBlock('.award'), 'height'));
+  });
+
+  it('points at public/awards/{CODE}.png through the app base path', () => {
+    // The <img> src the fallback replaces. Asserted through logoSrc rather than
+    // as a literal, because a bare path 404s under this app's base — the exact
+    // bug that once made every team logo silently fall back.
+    for (const code of AWARD_CODES) {
+      expect(logoSrc(awardImagePath(code)), code).toContain(`/awards/${code}.png`);
+      expect(logoSrc(awardImagePath(code)).endsWith(`/awards/${code}.png`), code).toBe(true);
+    }
+  });
+
+  it('fits three chips across the bar, and the longest code inside one', () => {
+    // BOTH HALVES OF MAX_CARD_AWARDS, redone here from the stylesheet so that
+    // raising the chip size or the gap fails HERE rather than pushing a third
+    // mark off the bar at export time.
+    const row = cssBlock('.awards');
+    const chip = cssBlock('.awardFallback');
+    const across =
+      MAX_CARD_AWARDS * pxIn(chip, 'width') + (MAX_CARD_AWARDS - 1) * pxIn(row, 'gap');
+    expect(across).toBeLessThanOrEqual(pxIn(row, 'width'));
+    // One more would not fit, which is what makes the cap a measurement rather
+    // than a preference.
+    expect(across + pxIn(chip, 'width') + pxIn(row, 'gap')).toBeGreaterThan(pxIn(row, 'width'));
+    // And the row takes the badge's column exactly, so the two line up.
+    expect(pxIn(row, 'width')).toBe(pxIn(cssBlock('.badge'), 'width'));
+
+    // The longest declared code, on the same conservative 0.7em average advance
+    // the name budget and the badge budget use.
+    const size = pxIn(chip, 'font-size');
+    for (const code of AWARD_CODES) {
+      expect(code.length * 0.7 * size, `${code} at ${size}px`)
+        .toBeLessThanOrEqual(pxIn(chip, 'width'));
+    }
+  });
+
+  it('renders every declared code on every franchise without throwing', () => {
+    for (const code of AWARD_CODES) {
+      for (const team of [...Object.keys(TEAMS), ...Object.keys(HISTORICAL_TEAMS)]) {
+        const html = render({ card: { ...MARKED, team, awards: [code] }, set: CURRENT_SET });
+        expect(html, `${code} ${team}`).toContain(`/awards/${code}.png`);
+      }
+    }
+  });
+});
+
+// ── THE REAL DATA, JOINED ───────────────────────────────────────────────────
+describe('the generated award file, on the cards it belongs to', () => {
+  // The unit tests in awards.test.js prove the -1 rule against strings. This
+  // proves it against the file that will actually be shipped, on the two names
+  // the whole feature is judged by.
+
+  const marked = set => (AWARDS_FILE?.sets?.[set] ?? []).filter(r => r.awards.length > 0);
+
+  it('was generated, and covers the three sets with Basketball-Reference seasons', () => {
+    expect(AWARDS_FILE).not.toBeNull();
+    expect(Object.keys(AWARDS_FILE.sets).sort()).toEqual(
+      [CURRENT_SET, ROOKIE_SET, SUPER_SEASON_SET].sort()
+    );
+    // The WNBA sets are absent, and that is a data gap rather than a decision:
+    // Basketball-Reference serves that league under a different path and the
+    // adapter for it reads no awards column. Absent means no marks, not an error.
+    for (const set of [WNBA_SET, WNBA_SUPER_SEASON_SET]) {
+      expect(AWARDS_FILE.sets[set], set).toBeUndefined();
+    }
+  });
+
+  it('gives Shai Gilgeous-Alexander an MVP on his 2026-27 card', () => {
+    const sga = marked(CURRENT_SET).find(r => r.id === 'Shai_Gilgeous_Alexander');
+    expect(sga.raw).toContain('MVP-1');
+    expect(sga.awards).toEqual(['MVP', 'CPOY']);
+    const html = render({
+      card: POOL_PLAYERS.find(p => p.id === sga.id),
+      set: CURRENT_SET,
+    });
+    expect(html).toContain('/awards/MVP.png');
+    expect(html).toContain('/awards/CPOY.png');
+  });
+
+  it('gives Luka Dončić NONE, despite an MVP-4 on the same row', () => {
+    // THE TEST THIS FEATURE EXISTS TO PASS. He finished fourth; a parser that
+    // read the code and not the rank would print an MVP trophy on his card, on
+    // Donovan Mitchell's, and on eight more, every season.
+    const luka = (AWARDS_FILE.sets[CURRENT_SET] ?? []).find(r => r.id === 'Luka_Doncic');
+    expect(luka.raw).toContain('MVP-4');
+    expect(luka.awards).toEqual([]);
+    const html = render({
+      card: POOL_PLAYERS.find(p => p.id === 'Luka_Doncic'),
+      set: CURRENT_SET,
+    });
+    expect(html).not.toContain('/awards/');
+    expect(html).not.toContain('--award-fill');
+  });
+
+  it('never marks a card whose raw row carries no -1 at all', () => {
+    // The rule, restated over every record in the file rather than over two.
+    for (const records of Object.values(AWARDS_FILE.sets)) {
+      for (const r of records) {
+        const hasWin = r.raw.split(',').some(t => t.trim().endsWith('-1'));
+        expect(r.awards.length > 0 && !hasWin, `${r.name} ${r.season}`).toBe(false);
+        // And every code it DID record is one this build declares and can draw.
+        for (const code of r.awards) expect(AWARD_CODES, `${r.name} ${code}`).toContain(code);
+      }
+    }
+  });
+
+  it('puts every rookie set mark on a Rookie of the Year and nothing else', () => {
+    // A season-selection sanity check that no amount of string parsing gives
+    // you: the rookie set reads each card's ROOKIE season, so ROY is the only
+    // trophy that can land there — and eleven of them do.
+    const rookies = marked(ROOKIE_SET);
+    expect(rookies.length).toBe(11);
+    for (const r of rookies) expect(r.awards, r.name).toEqual(['ROY']);
+    // And no Rookie of the Year is on a Super Season card, for the same reason
+    // from the other side: a player whose best season is his rookie one is
+    // excluded from that set.
+    for (const r of marked(SUPER_SEASON_SET)) {
+      expect(r.awards, r.name).not.toContain('ROY');
+    }
+  });
+
+  it('reads each set from the right season, which is the point of the feature', () => {
+    // A base card shows the season it is built FROM (2025-26 stats -> 2026);
+    // a Super Season or Rookie card shows ITS OWN season. Getting this wrong is
+    // invisible on screen and wrong on every historical card.
+    for (const r of AWARDS_FILE.sets[CURRENT_SET]) expect(r.season, r.name).toBe(2026);
+    for (const set of [SUPER_SEASON_SET, ROOKIE_SET]) {
+      const cards = new Map(SOURCES[set].players.map(c => [c.id, c]));
+      for (const r of AWARDS_FILE.sets[set]) {
+        expect(r.season, `${set} ${r.name}`).toBe(cards.get(r.id)?.season);
+      }
+    }
+  });
+
+  it('reaches the special sets through the studio, not only the file', () => {
+    // The join the studio actually performs. Nikola Jokić's 2021-22 is a Super
+    // Season card whose season carried an MVP, which is the case the whole
+    // feature was argued for.
+    const jokic = SOURCES[SUPER_SEASON_SET].players.find(c => c.id === 'Nikola_Jokic');
+    expect(jokic.season).toBe(2022);
+    expect(jokic.awards).toEqual(['MVP']);
+    const html = render({ card: jokic, set: SUPER_SEASON_SET });
+    expect(html).toContain('/awards/MVP.png');
+    expect(html).toContain('SUPER SEASON');
+    expect(html).toContain('2021-22');
   });
 });

@@ -509,39 +509,119 @@
  * be tall enough for the tallest case — both rows, which is the special sets —
  * not for the commonest one:
  *
+ *   awards  one row of 38px chips             38
  *   badge   13px x 1.1 line + 2x6px padding   26.3
  *   season  16px x 1.1 line                   17.6
  *   logo                                      96
  *   pos     20px x 1.1 line                   22
  *   boosts  4 x (20 + 20) x 1.1               176
- *   gaps    7 x 18                            126
+ *   gaps    8 x 18                            144
  *                                            ————
- *                                            463.9
+ *                                            519.9
  *
- * 470 keeps 6px of slack, in step with the 6px the four-row layout already had.
- * An UNBADGED base-set card renders neither extra row, sits 80px lower in the
- * same box, and is unchanged to the pixel; a BADGED one gains only the badge's
- * 26.3 + one 18px gap and still clears the box by a wide margin, because the
- * budget above already pays for the season line it does not draw.
+ * 526 keeps 6px of slack, in step with the 6px the four-row and six-row layouts
+ * both had. An UNBADGED, UNMARKED base-set card renders none of the three
+ * optional rows, sits 136px lower in the same box, and is unchanged to the
+ * pixel; every card that gains one gains only that row and its gap.
  * CardTemplate.test.js redoes this arithmetic
  * from this file, so raising a type size or the gap fails there rather than
- * pushing the badge silently out through the top.
+ * pushing the top row silently out through the top.
  *
- * Top is therefore 1152 - 470 = 682. The bar behind it (see .sidebarScrim) runs
- * from y=7 to y=1174, so both new rows are veiled by it exactly as the rest of
- * the column is. */
+ * THE TALLEST CASE IS REAL AND NOT HYPOTHETICAL: a Super Season card of a
+ * season that carried hardware draws all three — Nikola Jokić's 2021-22 has an
+ * MVP chip, the SUPER SEASON pill and the season line above his team's mark.
+ *
+ * Top is therefore 1152 - 526 = 626, still 514px below the top band's 112px
+ * edge. The bar behind it (see .sidebarScrim) runs from y=7 to y=1174, so all
+ * three optional rows are veiled by it exactly as the rest of the column is. */
 .sidebar {
   position: absolute;
   left: 701px;
-  top: 682px;
+  top: 626px;
   width: 135px;
-  height: 470px;
+  height: 526px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
   gap: 18px;
   text-align: center;
+}
+
+/* ── The award marks, on the cards whose season carried hardware ─────────── */
+
+/* THE TOP ROW OF THE COLUMN, which is where the user put it: "I'd like to add
+ * them to the sidebar above the badges if a player won them."
+ *
+ * A ROW rather than a stack, and that is the difference between this and every
+ * other thing in the sidebar. One card can hold several marks (Shai
+ * Gilgeous-Alexander won MVP and Clutch Player of the Year in 2025-26), and
+ * stacking them would cost the column 38px and a gap for every one — 112px for
+ * three, which the box does not have and which would push a two-award card's
+ * badge above the top band. Laid across, three cost 38px total.
+ *
+ * 127px WIDE, the same column .badge takes and for the same reason: the bar is
+ * 135 (701..836) and the card's keyline takes the last 7px, so 127 centred
+ * spans 705..832 and clears both. MAX_CARD_AWARDS in awards.js is the number
+ * this width buys — 3 x 38 + 2 x 6 = 126 — and it is derived there from these
+ * numbers rather than chosen. */
+.awards {
+  width: 127px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex: none;
+}
+
+/* SQUARE, unlike the team mark directly below it. .logo is 115x96 because it
+ * fits ONE file per card and can afford to be sized by the bar; these sit up to
+ * three abreast, so a per-axis box would let a wide trophy squeeze a tall one.
+ * `contain` still means no file is ever cropped or stretched — a wide mark
+ * simply uses less of its 38px than a square one. */
+.award {
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+  flex: none;
+}
+
+/* The lettered chip for an award with no art yet — which today is ALL of them:
+ * public/awards/ is empty and every file the user is going to add lands there.
+ * See AwardMark in CardTemplate.jsx for why this renders a code rather than
+ * nothing.
+ *
+ * SAME 38px BOX as the real mark, so the column does not shift by a pixel when
+ * a trophy PNG replaces a chip.
+ *
+ * THE COLOURS ARE THE BEST SEASON PILL'S, not new ones: `--award-fill` is the
+ * team's `accentOnField` as deriveFieldTheme cleared it against the field, and
+ * `--award-ink` is pickInkFor of that fill. So this chip introduces no surface
+ * the card did not already have a contrast argument for, and treatments.test.js
+ * sweeps it over all thirty-seven franchises on treated and untreated fields
+ * beside the badges. The var fallbacks exist for the same case .badge's do — a
+ * mark rendered from a theme this build did not emit properties for, which must
+ * degrade to a visible chip rather than an invisible one.
+ *
+ * 11px, and that is the width doing the choosing rather than a preference:
+ * 6MOY is the longest code and measures 28.4px off the loaded face at 11px with
+ * this tracking, which leaves 4.8px of chip either side of it. At 12px it is
+ * 31px and the padding stops reading as padding. CardTemplate.test.js measures
+ * every declared code against the box. */
+.awardFallback {
+  width: 38px;
+  height: 38px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  background: var(--award-fill, var(--accent-on-field));
+  color: var(--award-ink, var(--field-ink));
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0;
 }
 
 /* ── The card-type badge, on the sets that are a card TYPE ───────────────── */

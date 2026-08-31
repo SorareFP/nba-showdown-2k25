@@ -15,6 +15,8 @@ import {
   STATS_GENERATED,
   BADGES_GENERATED,
   BADGE_FILE,
+  AWARDS_GENERATED,
+  awardsFor,
 } from './players.js';
 import {
   BADGE_IDS,
@@ -23,6 +25,7 @@ import {
   SUPER_SEASON_BADGE,
   pickBadge,
 } from '../cards/badges.js';
+import { AWARD_CODES } from '../cards/awards.js';
 import { isSafePlayerId } from '../../scripts/studio/studioServerPlugin.js';
 import { getTeam } from '../cards/teams.js';
 import {
@@ -711,5 +714,96 @@ describe('the selector\'s reference group', () => {
         expect(keys, `${showSecondary} / ${activeKey}`).toContain(activeKey);
       }
     }
+  });
+});
+
+describe('the award marks the studio joins on', () => {
+  // WHERE THIS IS DIFFERENT FROM THE BADGES. card-badges.json is one set's file
+  // and `badges` is one map, because a badge exists to carry a fact the special
+  // sets excluded from the BASE set. An award is a fact about a SEASON and every
+  // set has seasons, so card-awards.json is keyed by set and the join has to
+  // happen per set — which is what these tests are for.
+
+  it('gives every pool player an array, generated file or not', () => {
+    // Nothing downstream may have to test for the file's absence: a checkout
+    // that has never run generateAwards.js gets empty arrays, not undefined.
+    for (const p of POOL_PLAYERS) {
+      expect(Array.isArray(p.awards), p.name).toBe(true);
+    }
+  });
+
+  it('marks the five 2025-26 winners in the pool, and nobody else', () => {
+    const marked = POOL_PLAYERS.filter(p => p.awards.length > 0);
+    expect(marked.length).toBe(5);
+    expect(marked.map(p => p.name).sort()).toEqual([
+      'Cooper Flagg',
+      'Keldon Johnson',
+      'Nickeil Alexander-Walker',
+      'Shai Gilgeous-Alexander',
+      'Victor Wembanyama',
+    ]);
+  });
+
+  it('gives Shai Gilgeous-Alexander both of his, in importance order', () => {
+    const sga = POOL_PLAYERS.find(p => p.id === 'Shai_Gilgeous_Alexander');
+    expect(sga.awards).toEqual(['MVP', 'CPOY']);
+  });
+
+  it('gives Luka Dončić none, because MVP-4 is not an MVP', () => {
+    // The failure this feature is judged by, asserted where the studio actually
+    // hands a record to the template.
+    expect(POOL_PLAYERS.find(p => p.id === 'Luka_Doncic').awards).toEqual([]);
+    // And Victor Wembanyama, who was third in the same vote, gets DPOY and only
+    // DPOY — which is the same rule producing a mark rather than withholding one.
+    expect(POOL_PLAYERS.find(p => p.id === 'Victor_Wembanyama').awards).toEqual(['DPOY']);
+  });
+
+  it('joins the special sets by their own ids, not the pool\'s', () => {
+    // A Super Season card and a base card can be the same player; they are
+    // different cards of different seasons and must not share a mark. Kevin
+    // Durant has a card in both special sets, an MVP on one and a Rookie of the
+    // Year on the other.
+    const superSeason = SOURCES[SUPER_SEASON_SET].players.find(c => c.id === 'Kevin_Durant');
+    const rookie = SOURCES[ROOKIE_SET].players.find(c => c.id === 'Kevin_Durant');
+    expect(superSeason.season).toBe(2014);
+    expect(superSeason.awards).toEqual(['MVP']);
+    expect(rookie.season).toBe(2008);
+    expect(rookie.awards).toEqual(['ROY']);
+  });
+
+  it('gives every card in every set an array, WNBA included', () => {
+    // The WNBA sets are not covered by the generator — Basketball-Reference
+    // serves that league under a different path — and "not covered" has to look
+    // exactly like "won nothing" rather than like a crash.
+    for (const set of [SUPER_SEASON_SET, ROOKIE_SET, WNBA_SET, WNBA_SUPER_SEASON_SET]) {
+      for (const card of SOURCES[set].players) {
+        expect(Array.isArray(card.awards), `${set} ${card.name}`).toBe(true);
+      }
+    }
+    for (const set of [WNBA_SET, WNBA_SUPER_SEASON_SET]) {
+      expect(SOURCES[set].players.every(c => c.awards.length === 0), set).toBe(true);
+    }
+  });
+
+  it('never records a code the template cannot draw', () => {
+    const all = [
+      ...POOL_PLAYERS,
+      ...SET_IDS.flatMap(id => SOURCES[id]?.players ?? []),
+    ];
+    for (const card of all) {
+      for (const code of card.awards ?? []) {
+        expect(AWARD_CODES, `${card.name} ${code}`).toContain(code);
+      }
+    }
+  });
+
+  it('says out loud that it is showing marks at all', () => {
+    expect(AWARDS_GENERATED).toBe(true);
+    expect(awardsFor(CURRENT_SET, 'Shai_Gilgeous_Alexander')).toEqual(['MVP', 'CPOY']);
+    // A set the generator does not cover, and an id nobody has, both answer the
+    // same empty array — and neither can reach the prototype.
+    expect(awardsFor(WNBA_SET, 'A_ja_Wilson')).toEqual([]);
+    expect(awardsFor(CURRENT_SET, 'Nobody_At_All')).toEqual([]);
+    expect(awardsFor('constructor', 'constructor')).toEqual([]);
   });
 });

@@ -23,6 +23,7 @@ import {
   showsSeason,
 } from './sets.js';
 import { badgeLabel, badgeVars, pickBadge } from './badges.js';
+import { awardImagePath, awardVars, pickAwards } from './awards.js';
 import { deriveFieldTheme, fieldThemeVars } from './fieldTheme.js';
 import { applyTreatment, treatmentVars } from './treatments.js';
 import { resolvePhotoUrl, cropToStyle } from './photo.js';
@@ -324,6 +325,19 @@ export default function CardTemplate({
   // season IS printed is what keeps the year from being said twice.
   const label = badgeLabel(badge, season ? null : setStatsSeason(set));
 
+  // THE AWARDS ARE PURELY A CARD PROPERTY — no set declares one, and no set
+  // could: an award is a fact about the SEASON a card's numbers came from, and
+  // the sets that can carry marks carry a different season on every card. The
+  // generator resolves which season that is (scripts/cardgen/generateAwards.js);
+  // by the time a record reaches here it holds the codes and nothing else.
+  //
+  // A LIST, NOT A CHOICE, which is the one structural difference from the badge
+  // directly below it. Shai Gilgeous-Alexander won MVP and Clutch Player of the
+  // Year in the same season and a rule that printed one of them would be
+  // throwing away the fact the mark exists for. `pickAwards` orders them by
+  // importance and caps the row at what the 135px bar can hold. See awards.js.
+  const awards = pickAwards(card.awards);
+
   return (
     <div
       className={styles.card}
@@ -342,6 +356,10 @@ export default function CardTemplate({
         // From `base`, not `field` — see the note where `base` is derived.
         // Emits nothing at all when this card has no badge.
         ...badgeVars(base, badge),
+        // Same argument, same theme: an award is a fact about a player's
+        // season, so the foil must not gild the chip and the green must not
+        // repaint it. Emits nothing at all when this card has no marks.
+        ...awardVars(base, awards),
       }}
     >
       {/* FIRST CHILD, and that is the whole positioning rule: it paints over
@@ -414,6 +432,23 @@ export default function CardTemplate({
           * The badge FIRST because it says what kind of card this is and the
           * season answers "which one" — and because the pill is the louder of
           * the two, so it belongs further from the type it would crowd. */}
+        {/* ABOVE THE BADGE, which is where the user put them: "I'd like to add
+          * them to the sidebar above the badges if a player won them." The
+          * column is bottom-anchored, so this row pushes the stack upward and
+          * moves nothing below it — a card that wins nothing is byte-identical
+          * to what it was before this row existed, exactly as a card with no
+          * badge is.
+          *
+          * And the order reads downward as it should: what he WON, then what
+          * KIND of card this is, then WHICH season, then the team. Each line is
+          * more general than the one above it. */}
+        {awards.length > 0 && (
+          <div className={styles.awards}>
+            {awards.map(award => (
+              <AwardMark key={award.code} award={award} />
+            ))}
+          </div>
+        )}
         {badge && <div className={styles.badge}>{label}</div>}
         {season && <div className={styles.season}>{card.seasonLabel ?? MISSING}</div>}
         <TeamLogo key={card.team ?? 'none'} team={team} abbr={card.team} />
@@ -605,6 +640,60 @@ function TeamLogo({ team, abbr }) {
       src={src}
       alt={team.name}
       className={styles.logo}
+      onError={() => setFailed(true)}
+    />
+  );
+}
+
+/**
+ * One award mark, with a LETTERED CHIP fallback.
+ *
+ * ── THE FALLBACK IS THE FEATURE, FOR NOW ────────────────────────────────────
+ *
+ * public/awards/ IS EMPTY. The user is going to put files there — "I'm going to
+ * add some awards to [a folder]" — and until they arrive every one of these
+ * <img>s 404s. That is exactly the state public/logos/ was in when TeamLogo's
+ * fallback was written, and this follows it: the chip is drawn in the same
+ * slot, at the same size, so nothing in the column moves when a real trophy
+ * lands on top of it, and no browser broken-image glyph can ever reach the
+ * batch export.
+ *
+ * ── WHY A CODE AND NOT NOTHING ──────────────────────────────────────────────
+ *
+ * The alternative was to render nothing at all until the art exists, and it is
+ * the wrong one for a reason the team logos already demonstrated: a feature
+ * that renders nothing is indistinguishable from a feature that is broken, and
+ * every card in every set would look untouched while the join, the priority
+ * order, the cap and the season selection all went unverified. "MVP" in a chip
+ * is also not a placeholder — it is the label the user named the awards by, so
+ * a card that never gets art is still a card that says what he won.
+ *
+ * The chip's two colours are the BEST SEASON pill's, derived rather than
+ * chosen, and swept over all thirty-seven franchises on treated and untreated
+ * fields in treatments.test.js. See `awardColors` in awards.js.
+ *
+ * EXPORTED FOR THE SAME REASON leagueMarkFallbackClass is: the fallback cannot
+ * be reached from a static render of a CARD. `onError` needs a real fetch, and
+ * markup rendered to a string never makes one — so the only way to test the
+ * thing the user is actually looking at today is to render this component with
+ * an award that has no path at all. See CardTemplate.test.js.
+ */
+export function AwardMark({ award }) {
+  const [failed, setFailed] = useState(false);
+  const src = logoSrc(awardImagePath(award.code));
+
+  if (!src || failed) {
+    return (
+      <div className={styles.awardFallback} title={award.name}>
+        {award.code}
+      </div>
+    );
+  }
+  return (
+    <img
+      src={src}
+      alt={award.name}
+      className={styles.award}
       onError={() => setFailed(true)}
     />
   );

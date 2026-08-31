@@ -49,6 +49,7 @@ import {
   pickBadge,
   tierBadge,
 } from './badges.js';
+import { awardColors } from './awards.js';
 import {
   TEAMS,
   HISTORICAL_TEAMS,
@@ -361,6 +362,56 @@ describe.each(BADGES.map(b => [b.id, b]))('the %s badge', (badgeId, badge) => {
       // starts repainting the field cannot slip past this.
       expect(contrastRatio(fill, rendered.field), `${abbr} ${badgeId} on field`)
         .toBeGreaterThanOrEqual(MIN_ACCENT_CONTRAST - 1e-9);
+    }
+  });
+});
+
+// ── AND THE AWARD CHIP IS SWEPT BESIDE THEM, NOT EXEMPTED ──────────────────
+//
+// The lettered chip an award falls back to (public/awards/ is empty, so today
+// that is every mark on every card) is a FILLED SHAPE the card invents, exactly
+// like a badge pill, so it is held to exactly what a badge pill is held to:
+// its type reads on it at the WCAG body floor, and it reads on the field it
+// sits on at MIN_ACCENT_CONTRAST, on all thirty-seven franchises and in every
+// field state.
+//
+// It happens to be cheap to satisfy, and that is the design rather than luck:
+// `awardColors` returns the BEST SEASON pill's own pair, so this sweep is
+// asserting that no new colour was introduced as much as it is asserting the
+// contrast. Which is why it is here rather than skipped as redundant — the day
+// somebody gives the chip a colour of its own, this is what notices.
+describe.each(FIELD_STATES)('the award chip, %s', (_label, treatment) => {
+  it('reads on every field, and never on a colour of its own', () => {
+    for (const team of ALL_TEAMS) {
+      const [abbr, primary, secondary, accent] = team;
+      // The UNTREATED theme, for badges.js's reason: an award is a fact about a
+      // player's season, so the foil must not gild the chip and the green must
+      // not repaint it. CardTemplate passes `base` here exactly as it does to
+      // badgeVars.
+      const base = deriveFieldTheme(primary, secondary, accent);
+      const rendered = applyTreatment(base, treatment);
+      const { fill, ink } = awardColors(base);
+
+      expect(fill, `${abbr} award fill`).toMatch(/^#[0-9A-F]{6}$/i);
+      // NOT A NEW COLOUR. The whole contrast argument for this chip is that it
+      // borrows one that was already cleared.
+      expect(fill, `${abbr} award fill is the accent`).toBe(base.accentOnField);
+      expect(ink, `${abbr} award ink`).toBe(pickInkFor(fill));
+      expect(contrastRatio(ink, fill), `${abbr} award code`).toBeGreaterThanOrEqual(AA_BODY);
+      expect(contrastRatio(fill, rendered.field), `${abbr} award chip on field`)
+        .toBeGreaterThanOrEqual(MIN_ACCENT_CONTRAST - 1e-9);
+    }
+  });
+
+  it('is the BEST SEASON pill exactly, so the two can never drift apart', () => {
+    // Stated as an identity rather than as two numbers that happen to match: if
+    // one of them is ever re-derived, this fails instead of the pair silently
+    // becoming two slightly different accents in one sidebar.
+    const bestSeason = getBadge(BEST_SEASON_BADGE);
+    for (const team of ALL_TEAMS) {
+      const [abbr, primary, secondary, accent] = team;
+      const base = deriveFieldTheme(primary, secondary, accent);
+      expect(awardColors(base), abbr).toEqual(badgeColors(base, bestSeason));
     }
   });
 });

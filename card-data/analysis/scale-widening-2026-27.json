@@ -1,6 +1,6 @@
 {
- "generatedAt": "2026-08-31T01:41:06.407Z",
- "note": "Candidate Speed+Power scales, measured. Nothing here is applied — the shipped scale is REFERENCE_TOTALS in scripts/cardgen/speedPower.js.",
+ "generatedAt": "2026-08-31T11:28:00.880Z",
+ "note": "Candidate Speed+Power scales, measured. This script applies nothing; the shipped scale is WIDENING applied to REFERENCE_TOTALS in scripts/cardgen/speedPower.js, and the row marked SHIPPED is that scale. Deltas are measured from the BEFORE row, which is the per-pool 10-28 scale the set was on before both the archive recalibration and the widening; the absolute 10-28 row separates the two.",
  "scoringRollsPerGame": 60,
  "reference": {
   "mean": 17.7951,
@@ -10,36 +10,44 @@
   "p90": 22,
   "ceilingShare": 0.0071
  },
+ "shipped": {
+  "min": 6,
+  "max": 30,
+  "sdScale": 1.25
+ },
  "rows": [
   {
    "starterPercentile": 0.9828571428571429,
-   "id": "current",
-   "label": "current 10-28",
+   "id": "before",
+   "label": "BEFORE: per-pool 10-28",
    "opts": {},
+   "perPool": true,
    "min": 10,
    "max": 28,
    "full": {
     "cards": 350,
     "matchups": 122150,
-    "meanRollBonus": 1.8237085550552599,
-    "ptsPerRoll": 2.2163209169053166,
-    "rebPerRoll": 1.0289828080228913,
-    "astPerRoll": 0.5340560785919712,
-    "pointsPerGame": 132.979255014319,
+    "meanRollBonus": 1.8220712239050347,
+    "ptsPerRoll": 2.216063855914726,
+    "rebPerRoll": 1.0288305362259211,
+    "astPerRoll": 0.5338857961523501,
+    "pointsPerGame": 132.96383135488355,
     "identities": 142,
-    "advantageRate": 0.63061809250921,
-    "neutralRate": 0.16521489971346706,
-    "disadvantageRate": 0.20416700777732297,
-    "axisSpeed": 0.34252888485005845,
-    "axisPower": 0.35918473322082306,
-    "axisBoth": 0.29828638192911855
+    "advantageRate": 0.6302005730659026,
+    "neutralRate": 0.16518215309046255,
+    "disadvantageRate": 0.20461727384363487,
+    "axisSpeed": 0.34193741150183815,
+    "axisPower": 0.35878616245989164,
+    "axisBoth": 0.2992764260382702
    },
    "game": {
-    "samples": 400,
-    "pointsPerGame": 197.10794999999493,
-    "meanRollBonus": 2.25775,
-    "meanStarterBudget": 25.33475,
-    "meanStarterSalary": 914.485
+    "samples": 6000,
+    "seeds": 5,
+    "pointsPerGame": 197.60922000000818,
+    "seedSd": 0.2828174669292381,
+    "meanRollBonus": 2.283336666666666,
+    "meanStarterBudget": 25.352183333333336,
+    "meanStarterSalary": 916.7218333333334
    },
    "topSalary": 1240,
    "salaryClamped": 0,
@@ -63,7 +71,60 @@
    ]
   },
   {
-   "starterPercentile": 0.9828571428571429,
+   "starterPercentile": 0.9771428571428571,
+   "id": "absolute",
+   "label": "absolute 10-28 (no widening)",
+   "opts": {},
+   "min": 10,
+   "max": 28,
+   "full": {
+    "cards": 350,
+    "matchups": 122150,
+    "meanRollBonus": 1.865992632009824,
+    "ptsPerRoll": 2.221122390503377,
+    "rebPerRoll": 1.0324629553826885,
+    "astPerRoll": 0.537467048710681,
+    "pointsPerGame": 133.26734343020263,
+    "identities": 147,
+    "advantageRate": 0.6259107654523127,
+    "neutralRate": 0.15902578796561603,
+    "disadvantageRate": 0.21506344658207122,
+    "axisSpeed": 0.33355568635144855,
+    "axisPower": 0.3492904322804264,
+    "axisBoth": 0.31715388136812506
+   },
+   "game": {
+    "samples": 6000,
+    "seeds": 5,
+    "pointsPerGame": 203.49719000001915,
+    "seedSd": 0.22812543566940502,
+    "meanRollBonus": 2.51421,
+    "meanStarterBudget": 25.868449999999996,
+    "meanStarterSalary": 939.5911666666667
+   },
+   "topSalary": 1240,
+   "salaryClamped": 0,
+   "medianSalary": 550,
+   "starSalary": 1124,
+   "ceiling": [
+    "Luka Dončić 28",
+    "Nikola Jokić 28",
+    "Shai Gilgeous-Alexander 28",
+    "Kawhi Leonard 28",
+    "Victor Wembanyama 28",
+    "Giannis Antetokounmpo 28"
+   ],
+   "floor": [
+    "Bub Carrington 10",
+    "Cody Williams 10",
+    "Nolan Traoré 10",
+    "Will Riley 10",
+    "Drake Powell 10",
+    "Ben Saraf 10"
+   ]
+  },
+  {
+   "starterPercentile": 0.9771428571428571,
    "id": "ceiling-32",
    "label": "ceiling only 10-32",
    "opts": {
@@ -74,49 +135,51 @@
    "full": {
     "cards": 350,
     "matchups": 122150,
-    "meanRollBonus": 1.8606303724928366,
-    "ptsPerRoll": 2.2214007367989073,
-    "rebPerRoll": 1.0319508800654604,
-    "astPerRoll": 0.5374437167417939,
-    "pointsPerGame": 133.28404420793444,
-    "identities": 148,
-    "advantageRate": 0.6285714285714286,
-    "neutralRate": 0.16128530495292673,
-    "disadvantageRate": 0.21014326647564469,
-    "axisSpeed": 0.3380567856212555,
-    "axisPower": 0.35329512893982806,
-    "axisBoth": 0.30864808543891636
+    "meanRollBonus": 1.8977404830126894,
+    "ptsPerRoll": 2.2250679492426384,
+    "rebPerRoll": 1.0346647564469496,
+    "astPerRoll": 0.5405022513304107,
+    "pointsPerGame": 133.50407695455831,
+    "identities": 151,
+    "advantageRate": 0.6229635693819074,
+    "neutralRate": 0.1553417928776095,
+    "disadvantageRate": 0.221694637740483,
+    "axisSpeed": 0.3283527169984887,
+    "axisPower": 0.3422958144424732,
+    "axisBoth": 0.329351468559038
    },
    "game": {
-    "samples": 400,
-    "pointsPerGame": 202.18859999999253,
-    "meanRollBonus": 2.7226,
-    "meanStarterBudget": 27.2115,
-    "meanStarterSalary": 1003.375
+    "samples": 6000,
+    "seeds": 5,
+    "pointsPerGame": 200.37948000001398,
+    "seedSd": 0.33833042961027066,
+    "meanRollBonus": 2.85668,
+    "meanStarterBudget": 27.642000000000003,
+    "meanStarterSalary": 1011.2494999999999
    },
    "topSalary": 1420,
    "salaryClamped": 0,
-   "medianSalary": 540,
-   "starSalary": 1226,
+   "medianSalary": 550,
+   "starSalary": 1265,
    "ceiling": [
+    "Luka Dončić 32",
     "Nikola Jokić 32",
     "Shai Gilgeous-Alexander 32",
     "Victor Wembanyama 32",
-    "Luka Dončić 31",
-    "Kawhi Leonard 30",
-    "Giannis Antetokounmpo 30"
+    "Kawhi Leonard 31",
+    "Giannis Antetokounmpo 31"
    ],
    "floor": [
     "Bub Carrington 10",
+    "Cody Williams 10",
     "Nolan Traoré 10",
     "Will Riley 10",
     "Drake Powell 10",
-    "Ben Saraf 10",
-    "Patrick Williams 10"
+    "Ben Saraf 10"
    ]
   },
   {
-   "starterPercentile": 0.9828571428571429,
+   "starterPercentile": 0.9771428571428571,
    "id": "ceiling-34",
    "label": "ceiling only 10-34",
    "opts": {
@@ -127,98 +190,47 @@
    "full": {
     "cards": 350,
     "matchups": 122150,
-    "meanRollBonus": 1.8584199754400328,
-    "ptsPerRoll": 2.221109701186952,
-    "rebPerRoll": 1.0317891936143766,
-    "astPerRoll": 0.5373512075318065,
-    "pointsPerGame": 133.26658207121713,
-    "identities": 148,
-    "advantageRate": 0.6285059353254195,
-    "neutralRate": 0.1609578387228817,
-    "disadvantageRate": 0.21053622595169874,
-    "axisSpeed": 0.33777939873912366,
-    "axisPower": 0.3528760485593706,
-    "axisBoth": 0.30934455270150574
+    "meanRollBonus": 1.901301678264429,
+    "ptsPerRoll": 2.2254269340973245,
+    "rebPerRoll": 1.0348465002046265,
+    "astPerRoll": 0.540815800245678,
+    "pointsPerGame": 133.52561604583948,
+    "identities": 151,
+    "advantageRate": 0.6228980761358985,
+    "neutralRate": 0.1550225133033156,
+    "disadvantageRate": 0.22207941056078592,
+    "axisSpeed": 0.3279929554325969,
+    "axisPower": 0.3418718046446831,
+    "axisBoth": 0.33013523992272004
    },
    "game": {
-    "samples": 400,
-    "pointsPerGame": 201.30074999999346,
-    "meanRollBonus": 2.717,
-    "meanStarterBudget": 27.3345,
-    "meanStarterSalary": 1008.0725
+    "samples": 6000,
+    "seeds": 5,
+    "pointsPerGame": 200.27686000000915,
+    "seedSd": 0.17512220133406742,
+    "meanRollBonus": 2.9470033333333334,
+    "meanStarterBudget": 27.843466666666664,
+    "meanStarterSalary": 1017.1953333333333
    },
    "topSalary": 1500,
-   "salaryClamped": 1,
-   "medianSalary": 540,
-   "starSalary": 1239,
+   "salaryClamped": 2,
+   "medianSalary": 550,
+   "starSalary": 1286,
    "ceiling": [
+    "Shai Gilgeous-Alexander 34",
     "Victor Wembanyama 34",
-    "Shai Gilgeous-Alexander 33",
-    "Nikola Jokić 32",
-    "Luka Dončić 31",
-    "Kawhi Leonard 30",
-    "Giannis Antetokounmpo 30"
+    "Nikola Jokić 33",
+    "Luka Dončić 32",
+    "Kawhi Leonard 31",
+    "Giannis Antetokounmpo 31"
    ],
    "floor": [
     "Bub Carrington 10",
+    "Cody Williams 10",
     "Nolan Traoré 10",
     "Will Riley 10",
     "Drake Powell 10",
-    "Ben Saraf 10",
-    "Patrick Williams 10"
-   ]
-  },
-  {
-   "starterPercentile": 0.9828571428571429,
-   "id": "ceiling-38",
-   "label": "ceiling only 10-38",
-   "opts": {
-    "max": 38
-   },
-   "min": 10,
-   "max": 34,
-   "full": {
-    "cards": 350,
-    "matchups": 122150,
-    "meanRollBonus": 1.8584199754400328,
-    "ptsPerRoll": 2.221109701186952,
-    "rebPerRoll": 1.0317891936143766,
-    "astPerRoll": 0.5373512075318065,
-    "pointsPerGame": 133.26658207121713,
-    "identities": 148,
-    "advantageRate": 0.6285059353254195,
-    "neutralRate": 0.1609578387228817,
-    "disadvantageRate": 0.21053622595169874,
-    "axisSpeed": 0.33777939873912366,
-    "axisPower": 0.3528760485593706,
-    "axisBoth": 0.30934455270150574
-   },
-   "game": {
-    "samples": 400,
-    "pointsPerGame": 201.30074999999346,
-    "meanRollBonus": 2.717,
-    "meanStarterBudget": 27.3345,
-    "meanStarterSalary": 1008.0725
-   },
-   "topSalary": 1500,
-   "salaryClamped": 1,
-   "medianSalary": 540,
-   "starSalary": 1239,
-   "ceiling": [
-    "Victor Wembanyama 34",
-    "Shai Gilgeous-Alexander 33",
-    "Nikola Jokić 32",
-    "Luka Dončić 31",
-    "Kawhi Leonard 30",
-    "Giannis Antetokounmpo 30"
-   ],
-   "floor": [
-    "Bub Carrington 10",
-    "Nolan Traoré 10",
-    "Will Riley 10",
-    "Drake Powell 10",
-    "Ben Saraf 10",
-    "Patrick Williams 10"
+    "Ben Saraf 10"
    ]
   },
   {
@@ -234,45 +246,47 @@
    "full": {
     "cards": 350,
     "matchups": 122150,
-    "meanRollBonus": 1.8584609087187884,
-    "ptsPerRoll": 2.2210282439622255,
-    "rebPerRoll": 1.0316033565288296,
-    "astPerRoll": 0.5371817437577565,
-    "pointsPerGame": 133.26169463773354,
+    "meanRollBonus": 1.868006549324601,
+    "ptsPerRoll": 2.2209676627096737,
+    "rebPerRoll": 1.0327171510437645,
+    "astPerRoll": 0.538740483012773,
+    "pointsPerGame": 133.25805976258042,
     "identities": 150,
-    "advantageRate": 0.630225133033156,
-    "neutralRate": 0.1621367171510438,
-    "disadvantageRate": 0.20763814981580025,
-    "axisSpeed": 0.34024836974877243,
-    "axisPower": 0.3558364292951599,
-    "axisBoth": 0.30391520095606767
+    "advantageRate": 0.6233319688907082,
+    "neutralRate": 0.15453950061399918,
+    "disadvantageRate": 0.2221285304952927,
+    "axisSpeed": 0.3285526661413186,
+    "axisPower": 0.3416075650118203,
+    "axisBoth": 0.32983976884686106
    },
    "game": {
-    "samples": 400,
-    "pointsPerGame": 204.08294999999526,
-    "meanRollBonus": 2.68075,
-    "meanStarterBudget": 26.40975,
-    "meanStarterSalary": 967.7025
+    "samples": 6000,
+    "seeds": 5,
+    "pointsPerGame": 202.16927000001584,
+    "seedSd": 0.3113161328932448,
+    "meanRollBonus": 2.5644733333333334,
+    "meanStarterBudget": 27.12995,
+    "meanStarterSalary": 1004.2681666666667
    },
    "topSalary": 1330,
    "salaryClamped": 0,
-   "medianSalary": 540,
-   "starSalary": 1163,
+   "medianSalary": 550,
+   "starSalary": 1197,
    "ceiling": [
+    "Luka Dončić 30",
     "Nikola Jokić 30",
     "Shai Gilgeous-Alexander 30",
+    "Kawhi Leonard 30",
     "Victor Wembanyama 30",
-    "Luka Dončić 29",
-    "Kawhi Leonard 29",
-    "Giannis Antetokounmpo 29"
+    "Giannis Antetokounmpo 30"
    ],
    "floor": [
     "Ben Saraf 8",
+    "Rayan Rupert 8",
+    "Rob Dillingham 8",
     "Nick Richards 8",
-    "Rayan Rupert 9",
-    "Rob Dillingham 9",
-    "Jordan Hawkins 9",
-    "Bub Carrington 10"
+    "Jordan Hawkins 8",
+    "Nolan Traoré 9"
    ]
   },
   {
@@ -289,312 +303,324 @@
    "full": {
     "cards": 350,
     "matchups": 122150,
-    "meanRollBonus": 1.8641588211215718,
-    "ptsPerRoll": 2.21837658616442,
-    "rebPerRoll": 1.0316884977486418,
-    "astPerRoll": 0.5389246827671755,
-    "pointsPerGame": 133.1025951698652,
-    "identities": 155,
-    "advantageRate": 0.6143020875972165,
-    "neutralRate": 0.14665575112566517,
-    "disadvantageRate": 0.2390421612771183,
-    "axisSpeed": 0.3122992656955902,
-    "axisPower": 0.3258659061529645,
-    "axisBoth": 0.3618348281514453
+    "meanRollBonus": 1.876815390912812,
+    "ptsPerRoll": 2.218986082685121,
+    "rebPerRoll": 1.0335124846499908,
+    "astPerRoll": 0.5411223905035584,
+    "pointsPerGame": 133.1391649611073,
+    "identities": 160,
+    "advantageRate": 0.6084486287351617,
+    "neutralRate": 0.140065493246009,
+    "disadvantageRate": 0.2514858780188293,
+    "axisSpeed": 0.30238691100885334,
+    "axisPower": 0.31226285622023087,
+    "axisBoth": 0.38535023277091573
    },
    "game": {
-    "samples": 400,
-    "pointsPerGame": 195.26234999999804,
-    "meanRollBonus": 2.41405,
-    "meanStarterBudget": 26.69725,
-    "meanStarterSalary": 969.2775
+    "samples": 6000,
+    "seeds": 5,
+    "pointsPerGame": 197.903230000012,
+    "seedSd": 0.3248710661165719,
+    "meanRollBonus": 2.576293333333333,
+    "meanStarterBudget": 27.19228333333333,
+    "meanStarterSalary": 986.8786666666667
+   },
+   "topSalary": 1330,
+   "salaryClamped": 0,
+   "medianSalary": 550,
+   "starSalary": 1221,
+   "ceiling": [
+    "Luka Dončić 30",
+    "Nikola Jokić 30",
+    "Shai Gilgeous-Alexander 30",
+    "Kawhi Leonard 30",
+    "Victor Wembanyama 30",
+    "Giannis Antetokounmpo 30"
+   ],
+   "floor": [
+    "Bub Carrington 8",
+    "Nolan Traoré 8",
+    "Will Riley 8",
+    "Drake Powell 8",
+    "Ben Saraf 8",
+    "Patrick Williams 8"
+   ]
+  },
+  {
+   "starterPercentile": 0.9771428571428571,
+   "id": "wide-6-30-12",
+   "label": "spread x1.2, 6-30",
+   "opts": {
+    "min": 6,
+    "max": 30,
+    "sdScale": 1.2
+   },
+   "min": 6,
+   "max": 30,
+   "full": {
+    "cards": 350,
+    "matchups": 122150,
+    "meanRollBonus": 1.877200163733115,
+    "ptsPerRoll": 2.2189611133850713,
+    "rebPerRoll": 1.0334768726974732,
+    "astPerRoll": 0.5415742939010167,
+    "pointsPerGame": 133.13766680310428,
+    "identities": 164,
+    "advantageRate": 0.6083667621776504,
+    "neutralRate": 0.13954154727793697,
+    "disadvantageRate": 0.2520916905444126,
+    "axisSpeed": 0.30191624502099257,
+    "axisPower": 0.3116858650016148,
+    "axisBoth": 0.3863978899773926
+   },
+   "game": {
+    "samples": 6000,
+    "seeds": 5,
+    "pointsPerGame": 197.98937000001246,
+    "seedSd": 0.38031322695899544,
+    "meanRollBonus": 2.5785733333333334,
+    "meanStarterBudget": 27.180333333333333,
+    "meanStarterSalary": 985.7748333333333
+   },
+   "topSalary": 1330,
+   "salaryClamped": 0,
+   "medianSalary": 550,
+   "starSalary": 1221,
+   "ceiling": [
+    "Luka Dončić 30",
+    "Nikola Jokić 30",
+    "Shai Gilgeous-Alexander 30",
+    "Kawhi Leonard 30",
+    "Victor Wembanyama 30",
+    "Giannis Antetokounmpo 30"
+   ],
+   "floor": [
+    "Ben Saraf 6",
+    "Rayan Rupert 6",
+    "Nick Richards 6",
+    "Jordan Hawkins 6",
+    "Rob Dillingham 7",
+    "Bub Carrington 8"
+   ]
+  },
+  {
+   "starterPercentile": 0.9771428571428571,
+   "id": "wide-6-30",
+   "label": ">> SHIPPED spread x1.25, 6-30",
+   "opts": {
+    "min": 6,
+    "max": 30,
+    "sdScale": 1.25
+   },
+   "min": 6,
+   "max": 30,
+   "full": {
+    "cards": 350,
+    "matchups": 122150,
+    "meanRollBonus": 1.8943593941874743,
+    "ptsPerRoll": 2.220663528448528,
+    "rebPerRoll": 1.0347977896029157,
+    "astPerRoll": 0.5431273024970008,
+    "pointsPerGame": 133.2398117069117,
+    "identities": 168,
+    "advantageRate": 0.6068031109291854,
+    "neutralRate": 0.13612771182971756,
+    "disadvantageRate": 0.257069177241097,
+    "axisSpeed": 0.297311153384331,
+    "axisPower": 0.3065662902551234,
+    "axisBoth": 0.3961225563605456
+   },
+   "game": {
+    "samples": 6000,
+    "seeds": 5,
+    "pointsPerGame": 197.1976400000101,
+    "seedSd": 0.25407468075412326,
+    "meanRollBonus": 2.54243,
+    "meanStarterBudget": 27.229150000000004,
+    "meanStarterSalary": 986.7318333333333
    },
    "topSalary": 1330,
    "salaryClamped": 0,
    "medianSalary": 540,
-   "starSalary": 1176,
+   "starSalary": 1221,
    "ceiling": [
+    "Luka Dončić 30",
     "Nikola Jokić 30",
     "Shai Gilgeous-Alexander 30",
+    "Kawhi Leonard 30",
     "Victor Wembanyama 30",
-    "Luka Dončić 29",
-    "Kawhi Leonard 29",
-    "Giannis Antetokounmpo 29"
+    "Giannis Antetokounmpo 30"
    ],
    "floor": [
-    "Nolan Traoré 8",
-    "Ben Saraf 8",
-    "Rayan Rupert 8",
-    "Rob Dillingham 8",
-    "Nick Richards 8",
-    "Jordan Hawkins 8"
+    "Ben Saraf 6",
+    "Rayan Rupert 6",
+    "Rob Dillingham 6",
+    "Nick Richards 6",
+    "Jordan Hawkins 6",
+    "Nolan Traoré 7"
    ]
   },
   {
    "starterPercentile": 0.9771428571428571,
-   "id": "wide-8-32",
-   "label": "spread x1.2, 8-32",
+   "id": "wide-6-31",
+   "label": "spread x1.25, 6-31",
    "opts": {
-    "min": 8,
-    "max": 32,
-    "sdScale": 1.2
-   },
-   "min": 8,
-   "max": 32,
-   "full": {
-    "cards": 350,
-    "matchups": 122150,
-    "meanRollBonus": 1.879484240687679,
-    "ptsPerRoll": 2.2199545640604597,
-    "rebPerRoll": 1.0329050347932542,
-    "astPerRoll": 0.5404703233729851,
-    "pointsPerGame": 133.19727384362758,
-    "identities": 156,
-    "advantageRate": 0.6125092099877201,
-    "neutralRate": 0.14501841997544004,
-    "disadvantageRate": 0.24247237003683994,
-    "axisSpeed": 0.3095511775241252,
-    "axisPower": 0.32239568018391296,
-    "axisBoth": 0.36805314229196184
-   },
-   "game": {
-    "samples": 400,
-    "pointsPerGame": 200.2712999999942,
-    "meanRollBonus": 2.84815,
-    "meanStarterBudget": 27.55975,
-    "meanStarterSalary": 1006.2775
-   },
-   "topSalary": 1420,
-   "salaryClamped": 0,
-   "medianSalary": 540,
-   "starSalary": 1256,
-   "ceiling": [
-    "Nikola Jokić 32",
-    "Shai Gilgeous-Alexander 32",
-    "Victor Wembanyama 32",
-    "Luka Dončić 31",
-    "Kawhi Leonard 31",
-    "Giannis Antetokounmpo 30"
-   ],
-   "floor": [
-    "Nolan Traoré 8",
-    "Ben Saraf 8",
-    "Rayan Rupert 8",
-    "Rob Dillingham 8",
-    "Nick Richards 8",
-    "Jordan Hawkins 8"
-   ]
-  },
-  {
-   "starterPercentile": 0.98,
-   "id": "wide-8-31",
-   "label": "spread x1.3, 8-31",
-   "opts": {
-    "min": 8,
+    "min": 6,
     "max": 31,
-    "sdScale": 1.3
+    "sdScale": 1.25
    },
-   "min": 8,
+   "min": 6,
    "max": 31,
    "full": {
     "cards": 350,
     "matchups": 122150,
-    "meanRollBonus": 1.869242734343021,
-    "ptsPerRoll": 2.217670487105905,
-    "rebPerRoll": 1.03255873925499,
-    "astPerRoll": 0.5411526811298426,
-    "pointsPerGame": 133.0602292263543,
-    "identities": 160,
-    "advantageRate": 0.6067621776504298,
-    "neutralRate": 0.14,
-    "disadvantageRate": 0.2532378223495702,
-    "axisSpeed": 0.3005019159155918,
-    "axisPower": 0.3099060931512764,
-    "axisBoth": 0.38959199093313185
+    "meanRollBonus": 1.8964551780597625,
+    "ptsPerRoll": 2.220943512075215,
+    "rebPerRoll": 1.0348608268522008,
+    "astPerRoll": 0.5435239459681456,
+    "pointsPerGame": 133.25661072451288,
+    "identities": 169,
+    "advantageRate": 0.6056733524355301,
+    "neutralRate": 0.13513712648383136,
+    "disadvantageRate": 0.2591895210806386,
+    "axisSpeed": 0.2951624021734723,
+    "axisPower": 0.30442128597110146,
+    "axisBoth": 0.40041631185542625
    },
    "game": {
-    "samples": 400,
-    "pointsPerGame": 197.3776499999916,
-    "meanRollBonus": 2.5558,
-    "meanStarterBudget": 27.27375,
-    "meanStarterSalary": 986.2225
+    "samples": 6000,
+    "seeds": 5,
+    "pointsPerGame": 196.67411000001712,
+    "seedSd": 0.2928490488286825,
+    "meanRollBonus": 2.4746633333333334,
+    "meanStarterBudget": 27.803716666666666,
+    "meanStarterSalary": 1015.2536666666667
    },
    "topSalary": 1370,
    "salaryClamped": 0,
-   "medianSalary": 530,
-   "starSalary": 1211,
+   "medianSalary": 540,
+   "starSalary": 1239,
    "ceiling": [
+    "Luka Dončić 31",
     "Nikola Jokić 31",
     "Shai Gilgeous-Alexander 31",
+    "Kawhi Leonard 31",
     "Victor Wembanyama 31",
-    "Luka Dončić 30",
-    "Kawhi Leonard 30",
-    "Giannis Antetokounmpo 30"
+    "Giannis Antetokounmpo 31"
    ],
    "floor": [
-    "Bub Carrington 8",
-    "Nolan Traoré 8",
-    "Will Riley 8",
-    "Drake Powell 8",
-    "Ben Saraf 8",
-    "Patrick Williams 8"
+    "Ben Saraf 6",
+    "Rayan Rupert 6",
+    "Rob Dillingham 6",
+    "Nick Richards 6",
+    "Jordan Hawkins 6",
+    "Nolan Traoré 7"
    ]
   },
   {
    "starterPercentile": 0.9771428571428571,
-   "id": "wide-8-34",
-   "label": "spread x1.2, 8-34",
-   "opts": {
-    "min": 8,
-    "max": 34,
-    "sdScale": 1.2
-   },
-   "min": 8,
-   "max": 34,
-   "full": {
-    "cards": 350,
-    "matchups": 122150,
-    "meanRollBonus": 1.884297994269341,
-    "ptsPerRoll": 2.2206225951697522,
-    "rebPerRoll": 1.0331686451084443,
-    "astPerRoll": 0.541460908718867,
-    "pointsPerGame": 133.23735571018514,
-    "identities": 155,
-    "advantageRate": 0.6114040114613181,
-    "neutralRate": 0.14325828898894802,
-    "disadvantageRate": 0.24533769954973395,
-    "axisSpeed": 0.3069105418903901,
-    "axisPower": 0.31924266566688536,
-    "axisBoth": 0.37384679244272456
-   },
-   "game": {
-    "samples": 400,
-    "pointsPerGame": 199.7012999999933,
-    "meanRollBonus": 2.8125,
-    "meanStarterBudget": 28.3255,
-    "meanStarterSalary": 1038.055
-   },
-   "topSalary": 1500,
-   "salaryClamped": 2,
-   "medianSalary": 540,
-   "starSalary": 1306,
-   "ceiling": [
-    "Nikola Jokić 34",
-    "Shai Gilgeous-Alexander 34",
-    "Victor Wembanyama 34",
-    "Luka Dončić 33",
-    "Kawhi Leonard 32",
-    "Giannis Antetokounmpo 32"
-   ],
-   "floor": [
-    "Nolan Traoré 8",
-    "Ben Saraf 8",
-    "Rayan Rupert 8",
-    "Rob Dillingham 8",
-    "Nick Richards 8",
-    "Jordan Hawkins 8"
-   ]
-  },
-  {
-   "starterPercentile": 0.9771428571428571,
-   "id": "wide-8-34b",
-   "label": "spread x1.3, 8-34",
-   "opts": {
-    "min": 8,
-    "max": 34,
-    "sdScale": 1.3
-   },
-   "min": 8,
-   "max": 34,
-   "full": {
-    "cards": 350,
-    "matchups": 122150,
-    "meanRollBonus": 1.8915104379860828,
-    "ptsPerRoll": 2.2204478100694733,
-    "rebPerRoll": 1.034320098239847,
-    "astPerRoll": 0.5433405648793292,
-    "pointsPerGame": 133.2268686041684,
-    "identities": 164,
-    "advantageRate": 0.605468686041752,
-    "neutralRate": 0.13750306999590667,
-    "disadvantageRate": 0.25702824396234136,
-    "axisSpeed": 0.29703345141837256,
-    "axisPower": 0.30614673192893266,
-    "axisBoth": 0.3968198166526948
-   },
-   "game": {
-    "samples": 400,
-    "pointsPerGame": 197.00744999999185,
-    "meanRollBonus": 2.77365,
-    "meanStarterBudget": 28.3615,
-    "meanStarterSalary": 1035.925
-   },
-   "topSalary": 1500,
-   "salaryClamped": 2,
-   "medianSalary": 530,
-   "starSalary": 1329,
-   "ceiling": [
-    "Nikola Jokić 34",
-    "Shai Gilgeous-Alexander 34",
-    "Victor Wembanyama 34",
-    "Luka Dončić 33",
-    "Kawhi Leonard 33",
-    "Giannis Antetokounmpo 32"
-   ],
-   "floor": [
-    "Bub Carrington 8",
-    "Nolan Traoré 8",
-    "Will Riley 8",
-    "Drake Powell 8",
-    "Ben Saraf 8",
-    "Patrick Williams 8"
-   ]
-  },
-  {
-   "starterPercentile": 0.9771428571428571,
-   "id": "wide-6-34",
-   "label": "spread x1.4, 6-34",
+   "id": "wide-6-32",
+   "label": "spread x1.25, 6-32",
    "opts": {
     "min": 6,
-    "max": 34,
-    "sdScale": 1.4
+    "max": 32,
+    "sdScale": 1.25
    },
    "min": 6,
-   "max": 34,
+   "max": 32,
    "full": {
     "cards": 350,
     "matchups": 122150,
-    "meanRollBonus": 1.8959885386819484,
-    "ptsPerRoll": 2.219686860417441,
-    "rebPerRoll": 1.0351743757674765,
-    "astPerRoll": 0.5450814572247961,
-    "pointsPerGame": 133.18121162504647,
+    "meanRollBonus": 1.914785100286533,
+    "ptsPerRoll": 2.2232001637330185,
+    "rebPerRoll": 1.0362885796151926,
+    "astPerRoll": 0.5449033974622127,
+    "pointsPerGame": 133.3920098239811,
     "identities": 169,
-    "advantageRate": 0.6000900532132624,
-    "neutralRate": 0.12975849365534178,
-    "disadvantageRate": 0.2701514531313958,
-    "axisSpeed": 0.2852757806851203,
-    "axisPower": 0.2923152480866564,
-    "axisBoth": 0.42240897122822335
+    "advantageRate": 0.6053131395824806,
+    "neutralRate": 0.13428571428571429,
+    "disadvantageRate": 0.26040114613180515,
+    "axisSpeed": 0.2940532060211796,
+    "axisPower": 0.30334464896739205,
+    "axisBoth": 0.4026021450114283
    },
    "game": {
-    "samples": 400,
-    "pointsPerGame": 195.53909999999556,
-    "meanRollBonus": 2.7561,
-    "meanStarterBudget": 28.5425,
-    "meanStarterSalary": 1037.18
+    "samples": 6000,
+    "seeds": 5,
+    "pointsPerGame": 196.78147000001348,
+    "seedSd": 0.3011166926627542,
+    "meanRollBonus": 2.7330866666666664,
+    "meanStarterBudget": 28.134750000000004,
+    "meanStarterSalary": 1023.5500000000002
    },
-   "topSalary": 1500,
-   "salaryClamped": 2,
+   "topSalary": 1420,
+   "salaryClamped": 0,
    "medianSalary": 540,
-   "starSalary": 1315,
+   "starSalary": 1295,
    "ceiling": [
-    "Nikola Jokić 34",
-    "Shai Gilgeous-Alexander 34",
-    "Victor Wembanyama 34",
-    "Luka Dončić 33",
-    "Kawhi Leonard 33",
+    "Luka Dončić 32",
+    "Nikola Jokić 32",
+    "Shai Gilgeous-Alexander 32",
+    "Kawhi Leonard 32",
+    "Victor Wembanyama 32",
     "Giannis Antetokounmpo 32"
+   ],
+   "floor": [
+    "Ben Saraf 6",
+    "Rayan Rupert 6",
+    "Rob Dillingham 6",
+    "Nick Richards 6",
+    "Jordan Hawkins 6",
+    "Nolan Traoré 7"
+   ]
+  },
+  {
+   "starterPercentile": 0.9771428571428571,
+   "id": "wide-6-30b",
+   "label": "spread x1.3, 6-30",
+   "opts": {
+    "min": 6,
+    "max": 30,
+    "sdScale": 1.3
+   },
+   "min": 6,
+   "max": 30,
+   "full": {
+    "cards": 350,
+    "matchups": 122150,
+    "meanRollBonus": 1.886844044207941,
+    "ptsPerRoll": 2.2190110519851625,
+    "rebPerRoll": 1.0345824805566606,
+    "astPerRoll": 0.5432075317233607,
+    "pointsPerGame": 133.14066311910975,
+    "identities": 170,
+    "advantageRate": 0.6032992222677036,
+    "neutralRate": 0.1330822758902988,
+    "disadvantageRate": 0.26361850184199753,
+    "axisSpeed": 0.2907874560677405,
+    "axisPower": 0.29960783249426676,
+    "axisBoth": 0.40960471143799276
+   },
+   "game": {
+    "samples": 6000,
+    "seeds": 5,
+    "pointsPerGame": 197.19555000001583,
+    "seedSd": 0.34346206049585687,
+    "meanRollBonus": 2.4844099999999996,
+    "meanStarterBudget": 27.290633333333336,
+    "meanStarterSalary": 991.4603333333334
+   },
+   "topSalary": 1330,
+   "salaryClamped": 0,
+   "medianSalary": 550,
+   "starSalary": 1211,
+   "ceiling": [
+    "Luka Dončić 30",
+    "Nikola Jokić 30",
+    "Shai Gilgeous-Alexander 30",
+    "Kawhi Leonard 30",
+    "Victor Wembanyama 30",
+    "Giannis Antetokounmpo 30"
    ],
    "floor": [
     "Ben Saraf 6",
@@ -606,7 +632,178 @@
    ]
   },
   {
+   "starterPercentile": 0.9771428571428571,
+   "id": "wide-8-31b",
+   "label": "spread x1.3, 8-31 (was approved)",
+   "opts": {
+    "min": 8,
+    "max": 31,
+    "sdScale": 1.3
+   },
+   "min": 8,
+   "max": 31,
+   "full": {
+    "cards": 350,
+    "matchups": 122150,
+    "meanRollBonus": 1.8960540319279575,
+    "ptsPerRoll": 2.2202337290216003,
+    "rebPerRoll": 1.0351444944739716,
+    "astPerRoll": 0.5434645927139553,
+    "pointsPerGame": 133.21402374129602,
+    "identities": 167,
+    "advantageRate": 0.6025214899713467,
+    "neutralRate": 0.13295947605403194,
+    "disadvantageRate": 0.26451903397462134,
+    "axisSpeed": 0.2895594988994266,
+    "axisPower": 0.2989347536617843,
+    "axisBoth": 0.4115057474387891
+   },
+   "game": {
+    "samples": 6000,
+    "seeds": 5,
+    "pointsPerGame": 190.60768000001386,
+    "seedSd": 0.25621808015876874,
+    "meanRollBonus": 2.325413333333333,
+    "meanStarterBudget": 27.76475,
+    "meanStarterSalary": 1002.2448333333334
+   },
+   "topSalary": 1370,
+   "salaryClamped": 0,
+   "medianSalary": 550,
+   "starSalary": 1239,
+   "ceiling": [
+    "Luka Dončić 31",
+    "Nikola Jokić 31",
+    "Shai Gilgeous-Alexander 31",
+    "Kawhi Leonard 31",
+    "Victor Wembanyama 31",
+    "Giannis Antetokounmpo 31"
+   ],
+   "floor": [
+    "Bub Carrington 8",
+    "Cody Williams 8",
+    "Nolan Traoré 8",
+    "Will Riley 8",
+    "Drake Powell 8",
+    "Ben Saraf 8"
+   ]
+  },
+  {
+   "starterPercentile": 0.9771428571428571,
+   "id": "wide-6-30c",
+   "label": "spread x1.35, 6-30",
+   "opts": {
+    "min": 6,
+    "max": 30,
+    "sdScale": 1.35
+   },
+   "min": 6,
+   "max": 30,
+   "full": {
+    "cards": 350,
+    "matchups": 122150,
+    "meanRollBonus": 1.8956610724519034,
+    "ptsPerRoll": 2.2198321735570237,
+    "rebPerRoll": 1.0351481784690622,
+    "astPerRoll": 0.5446279164961838,
+    "pointsPerGame": 133.18993041342142,
+    "identities": 172,
+    "advantageRate": 0.6017519443307409,
+    "neutralRate": 0.1297912402783463,
+    "disadvantageRate": 0.2684568153909128,
+    "axisSpeed": 0.287059207662168,
+    "axisPower": 0.29454179364388333,
+    "axisBoth": 0.41839899869394864
+   },
+   "game": {
+    "samples": 6000,
+    "seeds": 5,
+    "pointsPerGame": 190.97718000000918,
+    "seedSd": 0.18264296482366074,
+    "meanRollBonus": 2.263446666666667,
+    "meanStarterBudget": 27.2639,
+    "meanStarterSalary": 976.3984999999999
+   },
+   "topSalary": 1330,
+   "salaryClamped": 0,
+   "medianSalary": 550,
+   "starSalary": 1207,
+   "ceiling": [
+    "Luka Dončić 30",
+    "Nikola Jokić 30",
+    "Shai Gilgeous-Alexander 30",
+    "Kawhi Leonard 30",
+    "Victor Wembanyama 30",
+    "Giannis Antetokounmpo 30"
+   ],
+   "floor": [
+    "Nolan Traoré 6",
+    "Ben Saraf 6",
+    "Rayan Rupert 6",
+    "Rob Dillingham 6",
+    "Nick Richards 6",
+    "Jordan Hawkins 6"
+   ]
+  },
+  {
    "starterPercentile": 0.9685714285714285,
+   "id": "wide-8-34",
+   "label": "spread x1.3, 8-34",
+   "opts": {
+    "min": 8,
+    "max": 34,
+    "sdScale": 1.3
+   },
+   "min": 8,
+   "max": 34,
+   "full": {
+    "cards": 350,
+    "matchups": 122150,
+    "meanRollBonus": 1.9369873106835858,
+    "ptsPerRoll": 2.2253917314776075,
+    "rebPerRoll": 1.0379083094555523,
+    "astPerRoll": 0.547437986082759,
+    "pointsPerGame": 133.52350388865642,
+    "identities": 169,
+    "advantageRate": 0.6009414654113795,
+    "neutralRate": 0.12898076135898484,
+    "disadvantageRate": 0.2700777732296357,
+    "axisSpeed": 0.28534840950888907,
+    "axisPower": 0.2928955793202098,
+    "axisBoth": 0.42175601117090117
+   },
+   "game": {
+    "samples": 6000,
+    "seeds": 5,
+    "pointsPerGame": 195.21078000001927,
+    "seedSd": 0.27773390970562767,
+    "meanRollBonus": 2.8323500000000004,
+    "meanStarterBudget": 28.84185,
+    "meanStarterSalary": 1052.8211666666664
+   },
+   "topSalary": 1500,
+   "salaryClamped": 2,
+   "medianSalary": 550,
+   "starSalary": 1365,
+   "ceiling": [
+    "Luka Dončić 34",
+    "Nikola Jokić 34",
+    "Shai Gilgeous-Alexander 34",
+    "Kawhi Leonard 34",
+    "Victor Wembanyama 34",
+    "Giannis Antetokounmpo 34"
+   ],
+   "floor": [
+    "Bub Carrington 8",
+    "Cody Williams 8",
+    "Nolan Traoré 8",
+    "Will Riley 8",
+    "Drake Powell 8",
+    "Ben Saraf 8"
+   ]
+  },
+  {
+   "starterPercentile": 0.9542857142857143,
    "id": "wide-4-36",
    "label": "spread x1.75, 4-36",
    "opts": {
@@ -619,45 +816,47 @@
    "full": {
     "cards": 350,
     "matchups": 122150,
-    "meanRollBonus": 1.9482194023741302,
-    "ptsPerRoll": 2.2217081457224075,
-    "rebPerRoll": 1.038759721653685,
-    "astPerRoll": 0.5540884158821798,
-    "pointsPerGame": 133.30248874334444,
+    "meanRollBonus": 1.9875071633237822,
+    "ptsPerRoll": 2.2253164142447255,
+    "rebPerRoll": 1.0428997134670261,
+    "astPerRoll": 0.5576643471142753,
+    "pointsPerGame": 133.5189848546835,
     "identities": 182,
-    "advantageRate": 0.5820139173147769,
-    "neutralRate": 0.10929185427752763,
-    "disadvantageRate": 0.30869422840769545,
-    "axisSpeed": 0.2465502932778192,
-    "axisPower": 0.25221892450733546,
-    "axisBoth": 0.5012307822148453
+    "advantageRate": 0.5796316004911993,
+    "neutralRate": 0.10428980761358984,
+    "disadvantageRate": 0.3160785918952108,
+    "axisSpeed": 0.23791700799412446,
+    "axisPower": 0.2449789553967402,
+    "axisBoth": 0.5171040366091353
    },
    "game": {
-    "samples": 400,
-    "pointsPerGame": 192.7636499999927,
-    "meanRollBonus": 3.04895,
-    "meanStarterBudget": 29.47725,
-    "meanStarterSalary": 1050.7775
+    "samples": 6000,
+    "seeds": 5,
+    "pointsPerGame": 190.9080500000141,
+    "seedSd": 0.4712993921076123,
+    "meanRollBonus": 2.9031333333333333,
+    "meanStarterBudget": 29.842450000000003,
+    "meanStarterSalary": 1066.9811666666667
    },
    "topSalary": 1500,
-   "salaryClamped": 3,
+   "salaryClamped": 4,
    "medianSalary": 540,
-   "starSalary": 1395,
+   "starSalary": 1431,
    "ceiling": [
+    "Luka Dončić 36",
     "Nikola Jokić 36",
     "Shai Gilgeous-Alexander 36",
+    "Kawhi Leonard 36",
     "Victor Wembanyama 36",
-    "Luka Dončić 35",
-    "Kawhi Leonard 35",
-    "Giannis Antetokounmpo 34"
+    "Giannis Antetokounmpo 36"
    ],
    "floor": [
+    "Bub Carrington 4",
     "Nolan Traoré 4",
+    "Will Riley 4",
     "Drake Powell 4",
     "Ben Saraf 4",
-    "Rayan Rupert 4",
-    "Rob Dillingham 4",
-    "Nick Richards 4"
+    "Patrick Williams 4"
    ]
   }
  ]

@@ -7,14 +7,34 @@
 // change the shipped scale. Flipping to a candidate is a change to
 // WIDENING in scripts/cardgen/speedPower.js.
 //
+// THE SHIPPED SCALE IS ONE OF THESE ROWS — `spread x1.25, 6-30`, which takes its
+// options straight from WIDENING so the two cannot drift.
+//
+// THE BASELINE ROW IS THE SCALE THE SET WAS ACTUALLY ON BEFORE, which is
+// per-pool 10-28: the pre-archive calibration AND the pre-widening range. Both
+// changed together, so measuring the widening from an archive-calibrated 10-28
+// would hide half the move. The two are separable in the table — `absolute
+// 10-28` is the recalibration with no widening at all — and separating them is
+// the point: the recalibration alone buys +5 identities and +7 pts/team/game on
+// a cap-legal field, and the widening is chosen to give that back.
+//
 // Each candidate is re-mapped from the COMMITTED composites in
 // speed-power-totals-2026.json through the production `mapToReferenceScale`,
 // then re-split and RE-PRICED, so every row is what the generator would
 // actually produce at that scale — including the salary rise that makes a
 // widened star harder to fit under the cap.
+//
+// CAP-LEGAL SCORING IS NOT SMOOTH IN THE SCALE and the table should not be read
+// as if it were. A candidate moves cards across salary steps, and a step decides
+// whether a ten-man roster can still afford its second star; neighbouring
+// candidates can therefore differ by six points. Measured across five seeds the
+// sampling error is about 0.3, so the dips are real rather than noise — which
+// means a scale should be chosen from a FLAT neighbourhood, not from whichever
+// single row reads best.
 
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
-import { mapToReferenceScale, REFERENCE_TOTALS } from '../cardgen/speedPower.js';
+import { mapToReferenceScale, REFERENCE_TOTALS, WIDENING } from '../cardgen/speedPower.js';
+import { requireArchive } from '../cardgen/epmArchive.js';
 import {
   SALARY_MAX,
   POSITION_SIZE,
@@ -60,13 +80,38 @@ const composites = cards.map(c => compositeByName.get(c.name));
 const chartEvs = cards.map(chartExpectedValues);
 
 /**
- * How many cap-legal drafts the game-scoring figure averages over, and the seed.
+ * How many cap-legal drafts the game-scoring figure averages over, and the seeds.
  *
- * Every candidate is sampled with the SAME seed, so the drafts differ only
+ * Every candidate is sampled with the SAME seeds, so the drafts differ only
  * because the salaries and budgets differ — which is the comparison being made.
+ *
+ * FIVE SEEDS RATHER THAN ONE, AND 1200 DRAFTS RATHER THAN 400, because the
+ * decision this table informs turns on differences of a few tenths of a point
+ * and one 400-draft sample cannot resolve those. Measured across seeds, one
+ * sample of 400 carries about 0.4 of standard error and 1200 about 0.25; five of
+ * those averaged brings it near 0.1, which is finally smaller than the
+ * acceptance band. `seedSd` is reported per row so the number stays checkable
+ * rather than merely tighter.
  */
-const DRAFT_SAMPLES = 400;
-const DRAFT_SEED = 0x5eed;
+const DRAFT_SAMPLES = 1200;
+const DRAFT_SEEDS = [0x5eed, 0x5eed + 7919, 0x5eed + 15838, 0x5eed + 23757, 0x5eed + 31676];
+
+/** The mean of `sampledGameScoring` over the seeds, plus the spread across them. */
+function averagedGameScoring(set) {
+  const runs = DRAFT_SEEDS.map(seed => sampledGameScoring(set, { samples: DRAFT_SAMPLES, seed }));
+  const mean = key => runs.reduce((a, r) => a + r[key], 0) / runs.length;
+  const points = runs.map(r => r.pointsPerGame);
+  const m = mean('pointsPerGame');
+  return {
+    samples: runs.reduce((a, r) => a + r.samples, 0),
+    seeds: DRAFT_SEEDS.length,
+    pointsPerGame: m,
+    seedSd: Math.sqrt(points.reduce((a, v) => a + (v - m) ** 2, 0) / points.length),
+    meanRollBonus: mean('meanRollBonus'),
+    meanStarterBudget: mean('meanStarterBudget'),
+    meanStarterSalary: mean('meanStarterSalary'),
+  };
+}
 
 /**
  * The candidates.
@@ -77,23 +122,41 @@ const DRAFT_SEED = 0x5eed;
  * to depend on neither of them very much.
  */
 export const CANDIDATES = [
-  { id: 'current', label: 'current 10-28', opts: {} },
+  // THE BASELINE. `perPool: true` drops `calibrateOn`, which is the pre-archive
+  // behaviour exactly — the scale the shipped 350 cards were on before this
+  // change. Every delta in the report is measured from here.
+  { id: 'before', label: 'BEFORE: per-pool 10-28', opts: {}, perPool: true },
+  // The recalibration on its own, so its cost is separable from the widening's.
+  { id: 'absolute', label: 'absolute 10-28 (no widening)', opts: {} },
   { id: 'ceiling-32', label: 'ceiling only 10-32', opts: { max: 32 } },
   { id: 'ceiling-34', label: 'ceiling only 10-34', opts: { max: 34 } },
-  { id: 'ceiling-38', label: 'ceiling only 10-38', opts: { max: 38 } },
   { id: 'ends-8-30', label: 'both ends 8-30 (clamp only)', opts: { min: 8, max: 30 } },
   { id: 'wide-8-30', label: 'spread x1.2, 8-30', opts: { min: 8, max: 30, sdScale: 1.2 } },
-  { id: 'wide-8-32', label: 'spread x1.2, 8-32', opts: { min: 8, max: 32, sdScale: 1.2 } },
-  { id: 'wide-8-31', label: 'spread x1.3, 8-31', opts: { min: 8, max: 31, sdScale: 1.3 } },
-  { id: 'wide-8-34', label: 'spread x1.2, 8-34', opts: { min: 8, max: 34, sdScale: 1.2 } },
-  { id: 'wide-8-34b', label: 'spread x1.3, 8-34', opts: { min: 8, max: 34, sdScale: 1.3 } },
-  { id: 'wide-6-34', label: 'spread x1.4, 6-34', opts: { min: 6, max: 34, sdScale: 1.4 } },
+  { id: 'wide-6-30-12', label: 'spread x1.2, 6-30', opts: { min: 6, max: 30, sdScale: 1.2 } },
+  // The shipped scale, straight from the production constant.
+  { id: 'wide-6-30', label: '>> SHIPPED spread x1.25, 6-30', opts: WIDENING },
+  { id: 'wide-6-31', label: 'spread x1.25, 6-31', opts: { min: 6, max: 31, sdScale: 1.25 } },
+  { id: 'wide-6-32', label: 'spread x1.25, 6-32', opts: { min: 6, max: 32, sdScale: 1.25 } },
+  { id: 'wide-6-30b', label: 'spread x1.3, 6-30', opts: { min: 6, max: 30, sdScale: 1.3 } },
+  { id: 'wide-8-31b', label: 'spread x1.3, 8-31 (was approved)', opts: { min: 8, max: 31, sdScale: 1.3 } },
+  { id: 'wide-6-30c', label: 'spread x1.35, 6-30', opts: { min: 6, max: 30, sdScale: 1.35 } },
+  { id: 'wide-8-34', label: 'spread x1.3, 8-34', opts: { min: 8, max: 34, sdScale: 1.3 } },
   { id: 'wide-4-36', label: 'spread x1.75, 4-36', opts: { min: 4, max: 36, sdScale: 1.75 } },
 ];
 
-function buildCandidate({ opts }) {
+// The absolute basis, exactly as the generator uses it. Measuring a candidate
+// against the pool's own spread instead would price it on a scale the shipped
+// set is not on any more, and the tail — where every candidate differs — is the
+// part that would be wrong.
+const archive = requireArchive();
+
+function buildCandidate({ opts, perPool }) {
   const reference = widenReference(REFERENCE_TOTALS, opts);
-  const totals = mapToReferenceScale(composites, reference);
+  const totals = mapToReferenceScale(
+    composites,
+    reference,
+    perPool ? {} : { calibrateOn: archive.composites }
+  );
   return cards.map((c, i) =>
     respec(c, splitSpeedPower(totals[i], c.pos, shares, { ...sizeOptions, size: sizes[i] }), {
       salaryModel,
@@ -105,12 +168,12 @@ function buildCandidate({ opts }) {
 const rows = CANDIDATES.map(cand => {
   const set = buildCandidate(cand);
   const full = scoringProfile(set);
-  const game = sampledGameScoring(set, { samples: DRAFT_SAMPLES, seed: DRAFT_SEED });
+  const game = averagedGameScoring(set);
   const totals = set.map(c => c.speed + c.power);
   const salaries = set.map(c => c.salary);
   // The drafted starter's budget expressed as a percentile of THIS candidate's
   // own scale, so the number is comparable across candidates: a 29.5 on a 4-36
-  // scale is not a bigger card than a 25.3 on a 10-28 one.
+  // scale is not a bigger card than a 25.3 on a 6-30 one.
   const ascending = totals.slice().sort((a, b) => a - b);
   const starterPercentile =
     ascending.filter(t => t < game.meanStarterBudget).length / ascending.length;
@@ -155,10 +218,14 @@ writeFileSync(
     {
       generatedAt: new Date().toISOString(),
       note:
-        'Candidate Speed+Power scales, measured. Nothing here is applied — the shipped scale ' +
-        'is REFERENCE_TOTALS in scripts/cardgen/speedPower.js.',
+        'Candidate Speed+Power scales, measured. This script applies nothing; the shipped scale ' +
+        'is WIDENING applied to REFERENCE_TOTALS in scripts/cardgen/speedPower.js, and the row ' +
+        'marked SHIPPED is that scale. Deltas are measured from the BEFORE row, which is the ' +
+        'per-pool 10-28 scale the set was on before both the archive recalibration and the ' +
+        'widening; the absolute 10-28 row separates the two.',
       scoringRollsPerGame: SCORING_ROLLS_PER_GAME,
       reference: REFERENCE_TOTALS,
+      shipped: WIDENING,
       rows,
     },
     null,

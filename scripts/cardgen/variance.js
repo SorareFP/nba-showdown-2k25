@@ -286,7 +286,7 @@ export const MIN_SYNTHETIC_GAMES = 20;
  * `per100` maps are `{ pts, reb, ast }` per 100 possessions. The returned array
  * is exactly the shape `computeStatBands` consumes, and is handed to it unchanged.
  */
-export function synthesizeGames({ per100, mpg, games, fit }) {
+export function synthesizeGames({ per100, mpg, games, fit, mix = null, sections = true }) {
   const n = Math.max(Math.round(games ?? 0), MIN_SYNTHETIC_GAMES);
   const inflation = predictInflation(fit, mpg);
   const columns = {};
@@ -294,11 +294,29 @@ export function synthesizeGames({ per100, mpg, games, fit }) {
     const rate = per100?.[statKey] ?? 0;
     const T = per4MinFromPer100(rate);
     const per36 = per36FromPer100(rate);
-    const curve = predictShape(fit, per36);
-    const gridMean = shapeGridMean(fit, per36, n) || 1;
-    columns[statKey] = Array.from({ length: n }, (_, i) => {
+    // `sections` picks WHICH SHAPE, and the two are measured at different time
+    // scales. The section model is the right one — the chart is a four-minute
+    // distribution and that is what it describes. The game-log curve is kept
+    // reachable because it is what every published number in this repo was
+    // generated against, so a comparison stays possible.
+    const sectionQ = sections ? pmfQuantiles(capZeroMass(sectionPmf(statKey, rate, mix))) : null;
+    const curve = sections ? null : predictShape(fit, per36);
+    const gridMean = sections ? 1 : shapeGridMean(fit, per36, n) || 1;
+    const shapes = Array.from({ length: n }, (_, i) => {
       const u = (i + 0.5) / n;
-      const v = (T * inflation * shapeAt(fit.shape.grid, curve, u)) / gridMean;
+      return sections
+        ? sectionShapeAt(sectionQ, u)
+        : shapeAt(fit.shape.grid, curve, u) / gridMean;
+    });
+    // Re-centre the SAMPLE, not just the distribution. The section model is
+    // discrete, so n quantiles drawn from it do not average to exactly one the
+    // way a smooth curve's do — 20 draws off a lumpy pmf came in 0.8% light,
+    // which would quietly shrink every chart. Dividing by the realised mean
+    // makes the level exact whatever the lumpiness.
+    const realised = shapes.reduce((s, x) => s + x, 0) / (n || 1);
+    const norm = realised > 0 ? realised : 1;
+    columns[statKey] = shapes.map(shape => {
+      const v = (T * inflation * shape) / norm;
       // 9 * v is the count in a 36-minute game; a real log holds integers.
       return Math.max(Math.round(9 * v), 0);
     });
@@ -320,4 +338,164 @@ export function synthesizeBands(input) {
     reb: computeStatBands(games, 'reb'),
     ast: computeStatBands(games, 'ast'),
   };
+}
+
+// ── The section event model ────────────────────────────────────────────────
+//
+// WHY THIS EXISTS, and why it replaces the fitted shape above rather than
+// tuning it. The `shape` factor is measured from real Basketball-Reference
+// GAME LOGS: the spread of a player's per-GAME values around his own season
+// mean. The chart is a per-FOUR-MINUTE distribution. Those are not the same
+// quantity and the difference is not small — a 32-minute game averages about
+// eight independent four-minute stretches, so game-level relative spread is
+// narrower than section-level spread by roughly the square root of that, and
+// using one as the other hands computeStatBands a distribution far too tight to
+// cut real bands out of.
+//
+// Measured on the shipped 2026-27 set: 117 of 350 cards have NO low-but-nonzero
+// face at all, going blank straight to at-or-above their own average. Giannis
+// prints 4 points on rolls 4 through 13 — his card's coefficient of variation is
+// 0.46 where a real four-minute stretch is nearer 0.75 — so a card that averages
+// under a point a minute cannot produce a quiet stretch, which is the one thing
+// every real player does.
+//
+// WHAT IS ASSUMED HERE, precisely, because the file above is right that
+// assuming a shape is a modeling decision: only that SHOT ATTEMPTS ARRIVE AS A
+// COUNTING PROCESS over a fixed number of possessions. Everything else follows.
+// By Poisson thinning, if attempts are Poisson then MAKES are Poisson too, at
+// the attempt rate times the make rate — so points are a convolution of three
+// independent Poissons (twos, threes, free throws) at rates the stat source
+// already publishes per 100 possessions. Rebounds and assists need even less:
+// their event is worth exactly one, so they are a single Poisson and no shot
+// mix is required.
+//
+// This is a WEAKER assumption than the fitted curve it replaces, not a stronger
+// one — that curve assumed the game-level shape transfers to sections, which is
+// false by construction.
+//
+// The LEVEL is untouched. These distributions are normalised to unit mean and
+// used only in place of the shape factor, so `T * inflation` still sets how big
+// a card is and the fit against the 283 finished cards still governs it.
+
+/** Possessions in a four-minute section at NBA pace: 100 * 4/48. */
+export const SECTION_POSSESSIONS = 100 * (4 / 48);
+
+const MAX_EVENTS = 14;
+
+function poissonPmf(lambda, kmax = MAX_EVENTS) {
+  const out = [];
+  let term = Math.exp(-lambda);
+  for (let k = 0; k <= kmax; k += 1) {
+    out.push(term);
+    term = (term * lambda) / (k + 1);
+  }
+  return out;
+}
+
+/** Convolve a points distribution with `count` Poisson events each worth `worth`. */
+function addComponent(dist, lambda, worth) {
+  if (!(lambda > 0)) return dist;
+  const p = poissonPmf(lambda);
+  const next = new Map();
+  for (const [pts, prob] of dist) {
+    for (let k = 0; k < p.length; k += 1) {
+      if (p[k] < 1e-12) continue;
+      const key = pts + k * worth;
+      next.set(key, (next.get(key) ?? 0) + prob * p[k]);
+    }
+  }
+  return next;
+}
+
+/**
+ * The distribution of one stat over a single four-minute section.
+ *
+ * `mix` carries the per-100 shot profile and is only needed for points. Absent,
+ * points fall back to a single Poisson on a league-typical two-point event,
+ * which is still a section-level distribution and still vastly closer than a
+ * game-level one.
+ */
+export function sectionPmf(statKey, per100Value, mix = null) {
+  const scale = SECTION_POSSESSIONS / 100;
+  if (statKey !== 'pts') {
+    // One rebound is one rebound: the event is worth exactly 1.
+    return addComponent(new Map([[0, 1]]), Math.max(per100Value, 0) * scale, 1);
+  }
+  let dist = new Map([[0, 1]]);
+  if (mix && (mix.fga2 > 0 || mix.fga3 > 0 || mix.fta > 0)) {
+    dist = addComponent(dist, (mix.fga2 ?? 0) * scale * (mix.pct2 ?? 0), 2);
+    dist = addComponent(dist, (mix.fga3 ?? 0) * scale * (mix.pct3 ?? 0), 3);
+    dist = addComponent(dist, (mix.fta ?? 0) * scale * (mix.pctFt ?? 0), 1);
+    return dist;
+  }
+  return addComponent(dist, (Math.max(per100Value, 0) * scale) / 2, 2);
+}
+
+/**
+ * The share of the die a card is allowed to spend on nothing.
+ *
+ * MEASURED off the finished 2025-26 set, not chosen: its 306 cards blank a
+ * median of 3 faces of 20, and 291 of them blank between 0 and 3.
+ *
+ * WHY A CAP IS NEEDED AT ALL, since the raw section distribution is the honest
+ * one. A low-usage player really is scoreless in most four-minute stretches —
+ * Nicolas Batum's true P(0) is around 82% — and a chart that prints that
+ * faithfully is both unplayable and, worse, WRONG ON THE MEAN: with 5 tiers and
+ * integer values, so much mass at zero drags nearly every percentile threshold
+ * to zero, and his chart's expected value collapsed from 0.85 to 0.20. The
+ * distribution cannot be represented at this resolution without losing the one
+ * property that has to survive.
+ *
+ * So the excess zero mass is REDISTRIBUTED over the scoring outcomes in
+ * proportion rather than discarded, which keeps the mean where it belongs and
+ * keeps the lumpy ramp the section model exists to produce. Read the chart as a
+ * four-minute stretch in which the player is actually involved; the stretches
+ * where he touches nothing are the blank tier, capped at what the finished set
+ * spends on them.
+ */
+export const ZERO_MASS_CAP = 0.15;
+
+/** Move zero mass above the cap onto the scoring outcomes, in proportion. */
+export function capZeroMass(pmf, cap = ZERO_MASS_CAP) {
+  const total = [...pmf.values()].reduce((s, v) => s + v, 0) || 1;
+  const zero = (pmf.get(0) ?? 0) / total;
+  if (zero <= cap) return pmf;
+  const nonZero = 1 - zero;
+  if (!(nonZero > 0)) return pmf;
+  const scale = (1 - cap) / nonZero;
+  const out = new Map();
+  for (const [k, v] of pmf) {
+    out.set(k, k === 0 ? cap : (v / total) * scale);
+  }
+  return out;
+}
+
+/** Sorted [value, cumulative] pairs, plus the mean, for quantile lookup. */
+export function pmfQuantiles(pmf) {
+  const total = [...pmf.values()].reduce((s, v) => s + v, 0) || 1;
+  const keys = [...pmf.keys()].sort((a, b) => a - b);
+  let cum = 0;
+  const steps = [];
+  let mean = 0;
+  for (const k of keys) {
+    const p = pmf.get(k) / total;
+    mean += k * p;
+    cum += p;
+    steps.push([k, cum]);
+  }
+  return { steps, mean };
+}
+
+/**
+ * The section distribution as a UNIT-MEAN shape, sampled at quantile `u`.
+ *
+ * Unit-mean is what makes this a drop-in for the fitted shape: the level factor
+ * keeps doing exactly what it did.
+ */
+export function sectionShapeAt({ steps, mean }, u) {
+  if (!(mean > 0)) return 1;
+  for (const [value, cum] of steps) {
+    if (u <= cum) return value / mean;
+  }
+  return steps[steps.length - 1][0] / mean;
 }

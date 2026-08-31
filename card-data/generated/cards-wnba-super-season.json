@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-31T19:15:40.995Z",
+ "generatedAt": "2026-08-31T19:56:50.603Z",
  "provisional": true,
  "set": "wnba-super-season",
  "league": "WNBA",
@@ -1578,7 +1578,7 @@
    "paintBoost": 0,
    "threePtBoost": 2,
    "defBoost": -1,
-   "salary": 1010,
+   "salary": 1060,
    "chart": [
     {
      "lo": 1,
@@ -1589,29 +1589,36 @@
     },
     {
      "lo": 3,
-     "hi": 3,
+     "hi": 4,
      "pts": 0,
      "reb": 0,
      "ast": 0
     },
     {
-     "lo": 4,
+     "lo": 5,
      "hi": 13,
      "pts": 2,
-     "reb": 0,
-     "ast": 1
-    },
-    {
-     "lo": 14,
-     "hi": 19,
-     "pts": 3,
      "reb": 1,
      "ast": 1
     },
     {
-     "lo": 20,
-     "hi": 99,
+     "lo": 14,
+     "hi": 16,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 17,
+     "hi": 22,
      "pts": 4,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 6,
      "reb": 1,
      "ast": 2
     }
@@ -1649,7 +1656,7 @@
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 3,
-   "salary": 1100,
+   "salary": 1150,
    "chart": [
     {
      "lo": 1,
@@ -1660,29 +1667,36 @@
     },
     {
      "lo": 3,
-     "hi": 3,
+     "hi": 4,
      "pts": 0,
      "reb": 0,
      "ast": 0
     },
     {
-     "lo": 4,
+     "lo": 5,
      "hi": 13,
      "pts": 2,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 14,
-     "hi": 19,
-     "pts": 3,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 22,
+     "pts": 4,
      "reb": 2,
      "ast": 1
     },
     {
-     "lo": 20,
+     "lo": 23,
      "hi": 99,
-     "pts": 4,
+     "pts": 6,
      "reb": 3,
      "ast": 1
     }
@@ -1720,7 +1734,7 @@
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 1,
-   "salary": 860,
+   "salary": 830,
    "chart": [
     {
      "lo": 1,
@@ -1731,13 +1745,13 @@
     },
     {
      "lo": 3,
-     "hi": 3,
+     "hi": 4,
      "pts": 0,
      "reb": 0,
      "ast": 0
     },
     {
-     "lo": 4,
+     "lo": 5,
      "hi": 13,
      "pts": 2,
      "reb": 1,
@@ -1745,9 +1759,16 @@
     },
     {
      "lo": 14,
-     "hi": 19,
+     "hi": 18,
      "pts": 2,
      "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 19,
+     "hi": 19,
+     "pts": 2,
+     "reb": 2,
      "ast": 0
     },
     {
@@ -1791,7 +1812,7 @@
    "paintBoost": 0,
    "threePtBoost": 2,
    "defBoost": 0,
-   "salary": 1450,
+   "salary": 1310,
    "chart": [
     {
      "lo": 1,
@@ -1802,36 +1823,36 @@
     },
     {
      "lo": 3,
-     "hi": 3,
+     "hi": 4,
      "pts": 0,
      "reb": 0,
      "ast": 0
     },
     {
-     "lo": 4,
-     "hi": 9,
-     "pts": 3,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 10,
+     "lo": 5,
      "hi": 13,
-     "pts": 3,
+     "pts": 2,
      "reb": 1,
      "ast": 1
     },
     {
      "lo": 14,
-     "hi": 19,
+     "hi": 14,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 21,
      "pts": 4,
      "reb": 1,
      "ast": 1
     },
     {
-     "lo": 20,
+     "lo": 22,
      "hi": 99,
-     "pts": 6,
+     "pts": 7,
      "reb": 2,
      "ast": 1
     }
@@ -1869,7 +1890,7 @@
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 1,
-   "salary": 1290,
+   "salary": 1150,
    "chart": [
     {
      "lo": 1,
@@ -1880,31 +1901,38 @@
     },
     {
      "lo": 3,
-     "hi": 3,
+     "hi": 4,
      "pts": 0,
      "reb": 0,
      "ast": 0
     },
     {
-     "lo": 4,
+     "lo": 5,
      "hi": 13,
-     "pts": 3,
+     "pts": 2,
      "reb": 1,
      "ast": 0
     },
     {
      "lo": 14,
-     "hi": 19,
-     "pts": 4,
+     "hi": 14,
+     "pts": 2,
      "reb": 1,
      "ast": 0
     },
     {
-     "lo": 20,
+     "lo": 15,
+     "hi": 21,
+     "pts": 4,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 22,
      "hi": 99,
-     "pts": 5,
+     "pts": 6,
      "reb": 3,
-     "ast": 1
+     "ast": 0
     }
    ],
    "league": "WNBA",
@@ -1940,7 +1968,7 @@
    "paintBoost": 0,
    "threePtBoost": 2,
    "defBoost": -1,
-   "salary": 910,
+   "salary": 900,
    "chart": [
     {
      "lo": 1,
@@ -1951,13 +1979,13 @@
     },
     {
      "lo": 3,
-     "hi": 3,
+     "hi": 4,
      "pts": 0,
      "reb": 0,
      "ast": 0
     },
     {
-     "lo": 4,
+     "lo": 5,
      "hi": 13,
      "pts": 2,
      "reb": 0,
@@ -1965,15 +1993,22 @@
     },
     {
      "lo": 14,
-     "hi": 19,
-     "pts": 3,
+     "hi": 16,
+     "pts": 2,
      "reb": 0,
      "ast": 0
     },
     {
-     "lo": 20,
-     "hi": 99,
+     "lo": 17,
+     "hi": 22,
      "pts": 4,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 5,
      "reb": 1,
      "ast": 1
     }
@@ -2011,7 +2046,7 @@
    "paintBoost": 0,
    "threePtBoost": 2,
    "defBoost": 1,
-   "salary": 1370,
+   "salary": 1240,
    "chart": [
     {
      "lo": 1,
@@ -2022,36 +2057,36 @@
     },
     {
      "lo": 3,
-     "hi": 3,
+     "hi": 5,
      "pts": 0,
      "reb": 0,
      "ast": 0
     },
     {
-     "lo": 4,
+     "lo": 6,
      "hi": 11,
-     "pts": 3,
+     "pts": 2,
      "reb": 1,
      "ast": 0
     },
     {
      "lo": 12,
-     "hi": 14,
-     "pts": 3,
+     "hi": 15,
+     "pts": 2,
      "reb": 1,
      "ast": 0
     },
     {
-     "lo": 15,
-     "hi": 19,
+     "lo": 16,
+     "hi": 22,
      "pts": 4,
      "reb": 2,
      "ast": 0
     },
     {
-     "lo": 20,
+     "lo": 23,
      "hi": 99,
-     "pts": 5,
+     "pts": 7,
      "reb": 3,
      "ast": 1
     }
@@ -2100,13 +2135,13 @@
     },
     {
      "lo": 3,
-     "hi": 3,
+     "hi": 4,
      "pts": 0,
      "reb": 0,
      "ast": 0
     },
     {
-     "lo": 4,
+     "lo": 5,
      "hi": 13,
      "pts": 2,
      "reb": 1,
@@ -2114,15 +2149,22 @@
     },
     {
      "lo": 14,
-     "hi": 19,
+     "hi": 17,
      "pts": 2,
      "reb": 1,
      "ast": 1
     },
     {
-     "lo": 20,
-     "hi": 99,
+     "lo": 18,
+     "hi": 24,
      "pts": 4,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 25,
+     "hi": 99,
+     "pts": 5,
      "reb": 2,
      "ast": 2
     }
@@ -2160,7 +2202,7 @@
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 4,
-   "salary": 1070,
+   "salary": 1050,
    "chart": [
     {
      "lo": 1,
@@ -2171,13 +2213,13 @@
     },
     {
      "lo": 3,
-     "hi": 3,
+     "hi": 4,
      "pts": 0,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
-     "lo": 4,
+     "lo": 5,
      "hi": 13,
      "pts": 2,
      "reb": 1,
@@ -2185,15 +2227,22 @@
     },
     {
      "lo": 14,
-     "hi": 19,
-     "pts": 3,
+     "hi": 16,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 17,
+     "hi": 22,
+     "pts": 4,
      "reb": 2,
      "ast": 0
     },
     {
-     "lo": 20,
+     "lo": 23,
      "hi": 99,
-     "pts": 4,
+     "pts": 5,
      "reb": 3,
      "ast": 1
     }
@@ -2231,7 +2280,7 @@
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 1,
-   "salary": 1150,
+   "salary": 1130,
    "chart": [
     {
      "lo": 1,
@@ -2242,37 +2291,37 @@
     },
     {
      "lo": 3,
-     "hi": 3,
+     "hi": 4,
      "pts": 0,
      "reb": 0,
      "ast": 0
     },
     {
-     "lo": 4,
-     "hi": 10,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 11,
+     "lo": 5,
      "hi": 13,
-     "pts": 3,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 14,
-     "hi": 20,
-     "pts": 3,
+     "pts": 2,
      "reb": 1,
      "ast": 1
     },
     {
-     "lo": 21,
+     "lo": 14,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 22,
+     "pts": 4,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 23,
      "hi": 99,
-     "pts": 5,
-     "reb": 2,
+     "pts": 6,
+     "reb": 3,
      "ast": 1
     }
    ],
@@ -2309,7 +2358,7 @@
    "paintBoost": 0,
    "threePtBoost": 1,
    "defBoost": 4,
-   "salary": 1090,
+   "salary": 1160,
    "chart": [
     {
      "lo": 1,
@@ -2320,29 +2369,36 @@
     },
     {
      "lo": 3,
-     "hi": 3,
+     "hi": 4,
      "pts": 0,
      "reb": 0,
      "ast": 0
     },
     {
-     "lo": 4,
+     "lo": 5,
      "hi": 13,
      "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 14,
-     "hi": 19,
-     "pts": 3,
      "reb": 1,
      "ast": 1
     },
     {
-     "lo": 20,
-     "hi": 99,
+     "lo": 14,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 22,
      "pts": 4,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 6,
      "reb": 2,
      "ast": 1
     }
@@ -2391,23 +2447,16 @@
     },
     {
      "lo": 3,
-     "hi": 3,
+     "hi": 4,
      "pts": 0,
      "reb": 0,
      "ast": 0
     },
     {
-     "lo": 4,
-     "hi": 9,
-     "pts": 1,
-     "reb": 0,
-     "ast": 1
-    },
-    {
-     "lo": 10,
+     "lo": 5,
      "hi": 12,
      "pts": 2,
-     "reb": 0,
+     "reb": 1,
      "ast": 1
     },
     {
@@ -2458,7 +2507,7 @@
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 3,
-   "salary": 1250,
+   "salary": 1230,
    "chart": [
     {
      "lo": 1,
@@ -2469,13 +2518,13 @@
     },
     {
      "lo": 3,
-     "hi": 3,
+     "hi": 4,
      "pts": 0,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
-     "lo": 4,
+     "lo": 5,
      "hi": 11,
      "pts": 2,
      "reb": 1,
@@ -2483,16 +2532,23 @@
     },
     {
      "lo": 12,
-     "hi": 19,
-     "pts": 3,
-     "reb": 2,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
      "ast": 0
     },
     {
-     "lo": 20,
-     "hi": 99,
-     "pts": 5,
+     "lo": 16,
+     "hi": 22,
+     "pts": 4,
      "reb": 3,
+     "ast": 0
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 6,
+     "reb": 4,
      "ast": 1
     }
    ],
@@ -2529,7 +2585,7 @@
    "paintBoost": -1,
    "threePtBoost": 3,
    "defBoost": 3,
-   "salary": 1120,
+   "salary": 1100,
    "chart": [
     {
      "lo": 1,
@@ -2540,30 +2596,37 @@
     },
     {
      "lo": 3,
-     "hi": 3,
+     "hi": 4,
      "pts": 0,
      "reb": 0,
      "ast": 0
     },
     {
-     "lo": 4,
+     "lo": 5,
      "hi": 13,
      "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 14,
-     "hi": 19,
-     "pts": 3,
      "reb": 1,
      "ast": 1
     },
     {
-     "lo": 20,
-     "hi": 99,
-     "pts": 4,
+     "lo": 14,
+     "hi": 16,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 17,
+     "hi": 22,
+     "pts": 3,
      "reb": 2,
+     "ast": 1
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 5,
+     "reb": 3,
      "ast": 1
     }
    ],
@@ -2600,7 +2663,7 @@
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 1120,
+   "salary": 1020,
    "chart": [
     {
      "lo": 1,
@@ -2611,36 +2674,29 @@
     },
     {
      "lo": 3,
-     "hi": 3,
+     "hi": 4,
      "pts": 0,
      "reb": 0,
      "ast": 0
     },
     {
-     "lo": 4,
-     "hi": 9,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 10,
+     "lo": 5,
      "hi": 15,
-     "pts": 3,
+     "pts": 2,
      "reb": 1,
      "ast": 1
     },
     {
      "lo": 16,
-     "hi": 18,
-     "pts": 3,
+     "hi": 22,
+     "pts": 4,
      "reb": 2,
      "ast": 1
     },
     {
-     "lo": 19,
+     "lo": 23,
      "hi": 99,
-     "pts": 5,
+     "pts": 6,
      "reb": 3,
      "ast": 1
     }
@@ -2678,7 +2734,7 @@
    "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": 2,
-   "salary": 1000,
+   "salary": 1070,
    "chart": [
     {
      "lo": 1,
@@ -2689,13 +2745,13 @@
     },
     {
      "lo": 3,
-     "hi": 3,
+     "hi": 4,
      "pts": 0,
      "reb": 0,
      "ast": 0
     },
     {
-     "lo": 4,
+     "lo": 5,
      "hi": 13,
      "pts": 2,
      "reb": 1,
@@ -2703,17 +2759,24 @@
     },
     {
      "lo": 14,
-     "hi": 19,
+     "hi": 17,
      "pts": 2,
      "reb": 1,
      "ast": 0
     },
     {
-     "lo": 20,
+     "lo": 18,
+     "hi": 18,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 19,
      "hi": 99,
-     "pts": 4,
-     "reb": 2,
-     "ast": 1
+     "pts": 5,
+     "reb": 3,
+     "ast": 0
     }
    ],
    "league": "WNBA",

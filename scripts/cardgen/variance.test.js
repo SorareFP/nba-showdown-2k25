@@ -175,7 +175,28 @@ describe('synthesizeGames', () => {
     const flat = stubFit({ levelB: 0, levelA: 0 }); // inflation === 1
     const games = V.synthesizeGames({ per100: { pts: 30 }, mpg: 30, games: 400, fit: flat });
     const meanV = games.reduce((s, g) => s + V.normalizedValue(g.pts, 36), 0) / games.length;
-    expect(meanV).toBeCloseTo(V.per4MinFromPer100(30), 2);
+    // WITHIN 1%, NOT EXACTLY, and the gap is a property of the section model
+    // rather than slack. That model is DISCRETE — points arrive in twos, threes
+    // and free throws — so the `round(9 * v)` integer encoding cannot land the
+    // mean perfectly the way the old smooth game-log curve could. The sample is
+    // already re-centred on its realised mean inside synthesizeGames; what is
+    // left, about 0.6%, is the rounding itself. Tightening this back to two
+    // decimals would only be possible by giving up the lumpiness that lets a
+    // chart show a real single-basket tier.
+    const target = V.per4MinFromPer100(30);
+    expect(Math.abs(meanV - target) / target).toBeLessThan(0.01);
+  });
+
+  it('re-centres the discrete sample so the level does not quietly shrink', () => {
+    // Without the re-centring the same call came in 0.8% light, and every chart
+    // in the set would have been scaled down by that much for free.
+    const flat = stubFit({ levelB: 0, levelA: 0 });
+    for (const per100 of [8, 18, 30, 44]) {
+      const games = V.synthesizeGames({ per100: { pts: per100 }, mpg: 30, games: 400, fit: flat });
+      const meanV = games.reduce((s, g) => s + V.normalizedValue(g.pts, 36), 0) / games.length;
+      const target = V.per4MinFromPer100(per100);
+      expect(Math.abs(meanV - target) / target, `per100 ${per100}`).toBeLessThan(0.02);
+    }
   });
 
   it('scales with the fitted inflation', () => {

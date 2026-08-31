@@ -1173,8 +1173,21 @@ describe('the chart clears the photo frame', () => {
     // not about how many players there are. src/studio/players.test.js owns the
     // count.
     expect(printed.length).toBeGreaterThan(300);
-    expect(worst).toBe(MAX_PRINTED_ROWS); // non-vacuous: the cap is reached
+    // THE CAP IS NO LONGER REACHED, and that is the section chart model working
+    // rather than a chart going missing. Every one of the 350 cards now opens
+    // with TWO all-zero tiers — the founding requirement of the redesign, a
+    // guaranteed natural-1 blank plus a second non-scoring tier — and an
+    // editable set hides that leading run, so the tallest card prints four rows
+    // of a possible five. The stylesheet is still checked against
+    // MAX_PRINTED_ROWS below, which is the thing that would actually break the
+    // frame; `worst` is held here only so a chart that starts printing MORE
+    // than the sheet allows still fails.
+    expect(worst).toBeLessThanOrEqual(MAX_PRINTED_ROWS);
+    expect(worst).toBeGreaterThanOrEqual(4); // non-vacuous: tall charts exist
     expect(Math.min(...printed)).toBeGreaterThanOrEqual(2);
+    // The frame check must still be exercised at the full height the sheet
+    // allows, even though no card asks for it today.
+    expect(paintedBottom()).toBeLessThan(chartTop(MAX_PRINTED_ROWS));
     for (const n of printed) expect(paintedBottom()).toBeLessThan(chartTop(n));
   });
 

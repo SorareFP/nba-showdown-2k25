@@ -197,6 +197,18 @@ export function buildCard({
       mpg: player.mpg,
       games: player.games,
       fit,
+      // The shot profile, for the points event model. Rebounds and assists need
+      // none of it — their event is worth exactly one.
+      mix: rate
+        ? {
+            fga2: rate.fga2Per100,
+            fga3: rate.fga3Per100,
+            fta: rate.ftaPer100,
+            pct2: rate.fgPct2,
+            pct3: rate.fgPct3,
+            pctFt: rate.ftPct,
+          }
+        : null,
     });
     bands[stat] = computeStatBands(games, stat);
   }

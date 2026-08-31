@@ -93,6 +93,26 @@ export function trimSeasonTable(rows, kind) {
     if (kind === 'perGame') {
       return { ...base, pos: c.pos ?? null, games: num(c.games), mpg: num(c.mp_per_g) };
     }
+    if (kind === 'playByPlay') {
+      // The five Position Estimate columns, kept as the INTEGER percentages the
+      // page prints. Basketball-Reference also carries a full-precision copy in
+      // each cell's `csk` sort key (0.4601419196062 behind a printed 46), and
+      // that precision is deliberately not taken: the five integers are read by
+      // the same tested `data-stat` parser the other three tables use, and the
+      // rounding is worth about 0.03 of a Speed point on a 25-point budget —
+      // three thousandths of the gap between a point guard's share and a
+      // centre's. The printed row does not always total 100 (99-102 across the
+      // 2026 table, for the same rounding reason); consumers normalize.
+      return {
+        ...base,
+        pos: c.pos ?? null,
+        games: num(c.games),
+        minutes: num(c.mp),
+        pct: Object.fromEntries(
+          Object.entries(bbref.POSITION_ESTIMATE_STATS).map(([p, stat]) => [p, num(c[stat]) ?? 0])
+        ),
+      };
+    }
     if (kind === 'perPoss') {
       // The counting columns are suffixed `_per_poss` on this table only —
       // `pts_per_poss`, not `pts`. Reading them as `pts` silently yields zero
@@ -282,7 +302,13 @@ export async function main({ force = false, skipPrior = false, log = console.log
   }
 
   const tables = {};
-  for (const kind of ['perGame', 'perPoss', 'advanced']) {
+  // `playByPlay` rides along with the other three because the calibration needs
+  // it for the same season and the same reason they are here: the four-way fit
+  // that decides whether the Speed/Power split reads a position LABEL or the
+  // five positional SHARES is measured against the finished cards, and the
+  // finished cards are 2024-25. scripts/cardgen/positionShares.js fetches the
+  // other 26 seasons for generation.
+  for (const kind of ['perGame', 'perPoss', 'advanced', 'playByPlay']) {
     log(`Basketball-Reference ${REFERENCE_STATS_SEASON} ${kind}...`);
     tables[kind] = await fetchSeasonTableCached(REFERENCE_STATS_SEASON, kind, { force });
     log(`  ${tables[kind].length} players`);

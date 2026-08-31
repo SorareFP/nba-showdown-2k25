@@ -153,7 +153,7 @@ export async function fetchGameLog(playerId, season) {
 // whose stats are the 2024-25 season — has to read a prior season, and this is
 // the source that serves one.
 //
-// The three tables share one markup shape (`<table id="{kind}">` with
+// The four tables share one markup shape (`<table id="{kind}">` with
 // `data-stat` cells), so one parser covers them. `data-append-csv` on the name
 // cell carries Basketball-Reference's own player id, which is the key the game
 // log is fetched by.
@@ -167,11 +167,44 @@ export async function fetchGameLog(playerId, season) {
  * `<table id="per_game_stats">`, while `per_poss` and `advanced` both match
  * their slug). Verified against live pages 2026-08-29; assuming they matched is
  * exactly the failure this shape exists to prevent.
+ *
+ * ── PLAY-BY-PLAY, AND WHY IT IS HERE ───────────────────────────────────────
+ *
+ * `NBA_{season}_play-by-play.html` holds `<table id="pbp_stats">` — a THIRD
+ * spelling, and one that shares no substring with its slug. It is the only page
+ * on the site that answers "what share of his minutes did this player spend at
+ * each position", under an over-header group `header_pos_estimates`:
+ *
+ *     pct_1 = PG%   pct_2 = SG%   pct_3 = SF%   pct_4 = PF%   pct_5 = C%
+ *
+ * The page also carries `<table id="pbp_stats_post">` for the playoffs.
+ * `isolateTableBody` matches on `id="pbp_stats"` INCLUDING the closing quote,
+ * so the regular-season table is picked and the playoff one cannot be reached
+ * by accident — the same discipline the game-log parser applies.
+ *
+ * Verified live 2026-08-31 for 2026, 2004 and 1997: the group exists in all
+ * three, every body row carries all five cells, and no cell is ever blank.
  */
 export const SEASON_TABLES = {
   perGame: { slug: 'per_game', tableId: 'per_game_stats' },
   perPoss: { slug: 'per_poss', tableId: 'per_poss' },
   advanced: { slug: 'advanced', tableId: 'advanced' },
+  playByPlay: { slug: 'play-by-play', tableId: 'pbp_stats' },
+};
+
+/**
+ * The five `data-stat` names of the Position Estimate group, in position order.
+ *
+ * Spelled out rather than generated from an index so that a reader who has the
+ * page open can check the mapping without counting columns — `pct_1` is PG and
+ * `pct_5` is C, which is only obvious once someone has looked.
+ */
+export const POSITION_ESTIMATE_STATS = {
+  PG: 'pct_1',
+  SG: 'pct_2',
+  SF: 'pct_3',
+  PF: 'pct_4',
+  C: 'pct_5',
 };
 
 function isolateTableBody(html, tableId) {

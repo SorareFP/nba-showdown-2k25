@@ -1,6 +1,11 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
-import { parseGameLogHtml, parseSeasonTableHtml, SEASON_TABLES } from './basketballReference.js';
+import {
+  parseGameLogHtml,
+  parseSeasonTableHtml,
+  POSITION_ESTIMATE_STATS,
+  SEASON_TABLES,
+} from './basketballReference.js';
 
 describe('parseGameLogHtml', () => {
   const html = readFileSync(new URL('./__fixtures__/sample-gamelog.html', import.meta.url), 'utf-8');
@@ -83,6 +88,64 @@ describe('parseSeasonTableHtml', () => {
   });
 });
 
+describe('the play-by-play position estimates', () => {
+  const html = readFileSync(
+    new URL('./__fixtures__/sample-play-by-play.html', import.meta.url),
+    'utf8'
+  );
+  const rows = parseSeasonTableHtml(html, 'pbp_stats');
+  const pct = row => Object.values(POSITION_ESTIMATE_STATS).map(s => Number(row.cells[s]));
+
+  it('reads the five pct_N cells for every player', () => {
+    expect(rows.map(r => r.playerId)).toEqual([
+      'thompam01',
+      'hardeja01',
+      'goberru01',
+      'doncilu01',
+    ]);
+    // Amen Thompson, a near-pure point guard: 83% PG, 16% SG, 1% SF.
+    expect(pct(rows[0])).toEqual([83, 16, 1, 0, 0]);
+    // Rudy Gobert, the other end of the same scale.
+    expect(pct(rows[2])).toEqual([0, 0, 0, 0, 100]);
+  });
+
+  // The whole reason this table is worth fetching: the single `pos` label calls
+  // James Harden a point guard, and the shares say he spent more of his minutes
+  // at the two. A label cannot express that and a blend can.
+  it('disagrees with the single position label where the label is a simplification', () => {
+    const harden = rows[1];
+    expect(harden.cells.pos).toBe('PG');
+    expect(pct(harden)).toEqual([46, 52, 2, 0, 0]);
+  });
+
+  // A traded player's whole season lives on his 2TM aggregate row, which is the
+  // one `dedupeByMaxGames` keeps. Losing it would leave half a season's shares.
+  it('keeps the multi-team aggregate row a traded player s season lives on', () => {
+    expect(rows[1].cells.team_name_abbr).toBe('2TM');
+    expect(Number(rows[1].cells.games)).toBe(70);
+  });
+
+  // Integer percentages, so a row need not total exactly 100 — 99 to 102 across
+  // the real 2026 table. Every consumer normalizes rather than trusting the sum.
+  it('does not promise the five shares total 100', () => {
+    for (const row of rows) {
+      const sum = pct(row).reduce((a, b) => a + b, 0);
+      expect(sum).toBeGreaterThanOrEqual(99);
+      expect(sum).toBeLessThanOrEqual(102);
+    }
+  });
+
+  it('maps pct_1 to PG and pct_5 to C, which is not guessable from the markup', () => {
+    expect(POSITION_ESTIMATE_STATS).toEqual({
+      PG: 'pct_1',
+      SG: 'pct_2',
+      SF: 'pct_3',
+      PF: 'pct_4',
+      C: 'pct_5',
+    });
+  });
+});
+
 describe('SEASON_TABLES', () => {
   // The URL slug and the table id are NOT the same string for every table, and
   // assuming they were is what broke the first fetch of per_game.
@@ -90,5 +153,18 @@ describe('SEASON_TABLES', () => {
     expect(SEASON_TABLES.perGame).toEqual({ slug: 'per_game', tableId: 'per_game_stats' });
     expect(SEASON_TABLES.perPoss.slug).toBe('per_poss');
     expect(SEASON_TABLES.perPoss.tableId).toBe('per_poss');
+    // The play-by-play page shares no substring between the two, which is the
+    // strongest case yet for spelling them out rather than deriving one.
+    expect(SEASON_TABLES.playByPlay).toEqual({ slug: 'play-by-play', tableId: 'pbp_stats' });
+  });
+
+  // The page carries `pbp_stats_post` for the playoffs right beside the
+  // regular-season table. `id="pbp_stats"` includes the closing quote, so the
+  // playoff table cannot be selected by a prefix match.
+  it('cannot select the playoff table by prefix', () => {
+    const playoffOnly = '<table id="pbp_stats_post"><tbody><tr></tr></tbody></table>';
+    expect(() => parseSeasonTableHtml(playoffOnly, SEASON_TABLES.playByPlay.tableId)).toThrow(
+      /no id="pbp_stats"/
+    );
   });
 });

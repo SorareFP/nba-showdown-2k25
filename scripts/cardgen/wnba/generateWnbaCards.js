@@ -68,7 +68,8 @@ import * as V from '../variance.js';
 import * as A from '../attributes.js';
 import * as S from '../shooting.js';
 import { CALIBRATION_FILE } from '../calibrateAttributes.js';
-import { REFERENCE_TOTALS, REFINEMENT_WEIGHT, mapToReferenceScale } from '../speedPower.js';
+import { PRINTED_SCALE, REFINEMENT_WEIGHT, mapToReferenceScale } from '../speedPower.js';
+import * as bpmArchive from './nbaBpmArchive.js';
 import { playerIdFromName } from '../../../src/cards/playerId.js';
 import { WNBA_SET } from '../../../src/cards/sets.js';
 import { applyModel, centringBasis, centredFeatures, predict } from './bpmModel.js';
@@ -155,30 +156,29 @@ export function compositeBasis(rows, weights = COMPOSITE_WEIGHTS) {
 }
 
 /**
- * Speed+Power totals for the WNBA pool, on the NBA pool's scale.
+ * Speed+Power totals for the WNBA pool, on the NBA's absolute scale.
  *
- * `all` is the NBA pool's rows followed by the WNBA's and `cut` is where the
- * first ends. BOTH the z-score basis and the map's tail anchor are fitted to
- * the NBA half and then applied to the WNBA half — the structure
- * generateSpecialSets.js uses for a historical season, for the identical
- * reason: fit the map to the population being mapped and you recentre that
- * population onto the reference mean, which would say nothing about how a WNBA
- * card compares with an NBA one.
+ * `archive` is scripts/cardgen/wnba/nbaBpmArchive.js — 4,780 cardable NBA
+ * player-seasons, 2012-2026, rated by this same fitted model. BOTH the z-score
+ * basis and the map's tail anchor come from it, and the WNBA rows are then
+ * pushed through unchanged. That file carries the full argument, including the
+ * cross-league assumption this rests on and the reason both sides are scored
+ * with PREDICTED rather than real BPM.
  *
- * THE NBA SIDE IS MEASURED WITH THE FITTED MODEL TOO, not with its real BPM.
- * That is not a shortcut, it is the whole validity of the comparison: a fitted
- * value is slightly compressed toward the mean relative to the quantity it
- * predicts, so scoring one league on real BPM and the other on predicted BPM
- * would hand the WNBA a systematically narrower spread and a middle-heavy set.
- * Both sides are predicted, so both are compressed identically and the
- * compression cancels.
+ * WHAT THIS REPLACED: the basis used to be the 2026-27 NBA POOL — one season,
+ * 350 players — so a WNBA card was placed relative to this year's NBA field and
+ * the tail anchor was "the third-best NBA player of 2025-26". The reason it is
+ * not any more is the reason every other set changed; see epmArchive.js.
  */
-export function speedPowerTotals(all, cut, weights = COMPOSITE_WEIGHTS, reference = REFERENCE_TOTALS) {
-  const basis = compositeBasis(all.slice(0, cut), weights);
-  const composites = all.map(r => composite(r, basis, weights));
+export function speedPowerTotals(
+  rows,
+  { archive = bpmArchive.requireArchive(), weights = COMPOSITE_WEIGHTS, reference = PRINTED_SCALE } = {}
+) {
+  const basis = bpmArchive.archiveBasis(archive);
+  const composites = rows.map(r => composite(r, basis, weights));
   return {
     composites,
-    totals: mapToReferenceScale(composites, reference, { calibrateOn: composites.slice(0, cut) }),
+    totals: mapToReferenceScale(composites, reference, { calibrateOn: archive.composites }),
   };
 }
 
@@ -519,9 +519,8 @@ export function main({ log = console.log } = {}) {
     );
   }
 
-  const all = [...nba.rows, ...rated];
-  const cut = nba.rows.length;
-  const { totals } = speedPowerTotals(all, cut);
+  const spArchive = bpmArchive.requireArchive();
+  const { totals } = speedPowerTotals(rated, { archive: spArchive });
   const shooting = runShooting(rated, calibration);
 
   const cards = rated.map((row, i) =>
@@ -529,7 +528,7 @@ export function main({ log = console.log } = {}) {
       row,
       team: displayTeam(row),
       shooting: shooting.players[i],
-      speedPowerTotal: totals[cut + i],
+      speedPowerTotal: totals[i],
       calibration,
     })
   );
@@ -647,7 +646,12 @@ export function main({ log = console.log } = {}) {
   if (nba.missing.length) {
     log(`  ⚠ no NBA 2026 row for ${nba.missing.length} pool players: ${nba.missing.join(', ')}`);
   }
-  log(`  Speed+Power calibrated on ${nba.rows.length} NBA pool players, scored with the same model.`);
+  log(
+    `  Speed+Power calibrated on ${spArchive.n} cardable NBA player-seasons ` +
+      `${spArchive.seasons[0]}-${spArchive.seasons[spArchive.seasons.length - 1]}, ` +
+      'scored with this same fitted model (card-data/generated/nba-bpm-archive.json). ' +
+      'The 2026 NBA pool below is context, not the basis.'
+  );
 
   const nbaHats = nba.rows.map(r => r.bpmHat);
   const wnbaHats = rated.map(r => r.bpmHat);
@@ -721,14 +725,17 @@ export function main({ log = console.log } = {}) {
   // What the other declared composite would have printed. Same reporting the
   // special sets do, and for the same reason: a weight nobody can see the
   // effect of is a weight nobody can review.
-  const alt = speedPowerTotals(all, cut, COMPOSITE_METRIC_SETS.bpmOnly).totals.slice(cut);
-  const moved = rated.filter((r, i) => alt[i] !== totals[cut + i]);
+  const alt = speedPowerTotals(rated, {
+    archive: spArchive,
+    weights: COMPOSITE_METRIC_SETS.bpmOnly,
+  }).totals;
+  const moved = rated.filter((r, i) => alt[i] !== totals[i]);
   log('');
   log(
     `  Speed+Power under bpmOnly instead of bpmVorp: ${moved.length}/${rated.length} cards move` +
       (moved.length
-        ? `, range ${Math.min(...rated.map((r, i) => alt[i] - totals[cut + i]))} to ` +
-          `${Math.max(...rated.map((r, i) => alt[i] - totals[cut + i]))}`
+        ? `, range ${Math.min(...rated.map((r, i) => alt[i] - totals[i]))} to ` +
+          `${Math.max(...rated.map((r, i) => alt[i] - totals[i]))}`
         : '')
   );
   log(`\nWrote:\n  ${path.relative(REPO_ROOT, POOL_FILE)}\n  ${path.relative(REPO_ROOT, CARDS_FILE)}`);

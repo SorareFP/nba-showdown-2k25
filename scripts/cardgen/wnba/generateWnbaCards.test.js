@@ -11,7 +11,7 @@ import {
   vorpPerGame,
   wnbaShootingInput,
 } from './generateWnbaCards.js';
-import { REFERENCE_TOTALS, REFINEMENT_WEIGHT } from '../speedPower.js';
+import { PRINTED_SCALE, REFERENCE_TOTALS, REFINEMENT_WEIGHT } from '../speedPower.js';
 import { WNBA_GAME_MINUTES } from './constants.js';
 import { getWnbaTeam } from '../../../src/cards/teams.js';
 
@@ -79,31 +79,50 @@ describe('the composite', () => {
 });
 
 describe('speedPowerTotals', () => {
-  it('fits the map to the FIRST population and applies it to both', () => {
-    // The historical sets' structure, for the same reason: fit the map to the
-    // population being mapped and every card in it is recentred onto the
-    // reference mean, which would say nothing about how a WNBA card compares
-    // with an NBA one.
-    const nba = Array.from({ length: 50 }, (_, i) => ({
-      bpmHat: -4 + i * 0.2,
-      vorpPerGameHat: i * 0.05,
-    }));
-    // A WNBA half that is uniformly excellent must NOT come back centred.
+  // A stand-in for the committed NBA BPM-equivalent archive: the map is fitted
+  // to THIS and applied to whatever rows are handed in, so a set that is
+  // uniformly excellent must come back uniformly high rather than recentred.
+  const nba = Array.from({ length: 500 }, (_, i) => ({
+    bpmHat: -4 + i * 0.02,
+    vorpPerGameHat: i * 0.005,
+  }));
+  const basis = {
+    bpm: { mean: -1, sd: 2.9 },
+    vorpPerGame: { mean: 1.25, sd: 0.72 },
+    composites: nba
+      .map(r => (r.bpmHat + 1) / 2.9 + REFINEMENT_WEIGHT * ((r.vorpPerGameHat - 1.25) / 0.72))
+      .sort((a, b) => a - b),
+  };
+
+  it('fits the map to the ARCHIVE and applies it to the rows handed in', () => {
+    // Fit the map to the population being mapped and every card in it is
+    // recentred onto the reference mean, which would say nothing about how a
+    // WNBA card compares with an NBA one.
     const wnba = Array.from({ length: 10 }, () => ({ bpmHat: 6, vorpPerGameHat: 1.5 }));
-    const { totals } = speedPowerTotals([...nba, ...wnba], nba.length);
-    const wnbaTotals = totals.slice(nba.length);
-    expect(Math.min(...wnbaTotals)).toBeGreaterThan(REFERENCE_TOTALS.mean);
+    const { totals } = speedPowerTotals(wnba, { archive: basis });
+    expect(Math.min(...totals)).toBeGreaterThan(PRINTED_SCALE.mean);
   });
 
-  it('holds every total inside the finished set\'s printed range', () => {
+  it('does not move a WNBA card because of the other WNBA cards', () => {
+    // The property the absolute basis exists for. A player's number depends on
+    // her own profile and the archive, and on nothing else in her set.
+    const one = { bpmHat: 2.5, vorpPerGameHat: 1.4 };
+    const alone = speedPowerTotals([one], { archive: basis }).totals[0];
+    const crowded = speedPowerTotals([one, { bpmHat: 14, vorpPerGameHat: 4 }], {
+      archive: basis,
+    }).totals[0];
+    expect(crowded).toBe(alone);
+  });
+
+  it('holds every total inside the printed range', () => {
     const rows = Array.from({ length: 40 }, (_, i) => ({
       bpmHat: -20 + i,
       vorpPerGameHat: i * 0.5,
     }));
-    const { totals } = speedPowerTotals(rows, rows.length);
+    const { totals } = speedPowerTotals(rows, { archive: basis });
     for (const t of totals) {
-      expect(t).toBeGreaterThanOrEqual(REFERENCE_TOTALS.min);
-      expect(t).toBeLessThanOrEqual(REFERENCE_TOTALS.max);
+      expect(t).toBeGreaterThanOrEqual(PRINTED_SCALE.min);
+      expect(t).toBeLessThanOrEqual(PRINTED_SCALE.max);
     }
   });
 });
@@ -153,8 +172,8 @@ describe('the generated WNBA set', () => {
   it('gives every card the full stat line', () => {
     for (const c of CARDS) {
       expect(c.id, c.name).toBeTruthy();
-      expect(c.speed + c.power, c.name).toBeGreaterThanOrEqual(REFERENCE_TOTALS.min);
-      expect(c.speed + c.power, c.name).toBeLessThanOrEqual(REFERENCE_TOTALS.max);
+      expect(c.speed + c.power, c.name).toBeGreaterThanOrEqual(PRINTED_SCALE.min);
+      expect(c.speed + c.power, c.name).toBeLessThanOrEqual(PRINTED_SCALE.max);
       expect(c.speed, c.name).toBeGreaterThanOrEqual(1);
       expect(c.power, c.name).toBeGreaterThanOrEqual(1);
       expect(c.shotLine, c.name).toBeGreaterThanOrEqual(1);
@@ -230,15 +249,16 @@ describe('the generated WNBA set', () => {
   });
 
   it('sits on the same scale as the base set rather than on one of its own', () => {
-    // The Speed+Power map is calibrated on the NBA pool, so the WNBA set has to
-    // reach the same floor and ceiling and sit at a comparable centre — not
-    // cluster in the middle and not fill the top.
+    // The Speed+Power map is calibrated on 4,780 cardable NBA player-seasons
+    // rated by this same fitted model, so the WNBA set has to reach the same
+    // floor and ceiling and sit at a comparable centre — not cluster in the
+    // middle and not fill the top.
     const totals = CARDS.map(c => c.speed + c.power).sort((a, b) => a - b);
-    expect(totals[0]).toBe(REFERENCE_TOTALS.min);
-    expect(totals[totals.length - 1]).toBe(REFERENCE_TOTALS.max);
+    expect(totals[0]).toBe(PRINTED_SCALE.min);
+    expect(totals[totals.length - 1]).toBe(PRINTED_SCALE.max);
     const median = totals[Math.floor(totals.length / 2)];
-    expect(median).toBeGreaterThan(REFERENCE_TOTALS.mean - 3);
-    expect(median).toBeLessThan(REFERENCE_TOTALS.mean + 3);
+    expect(median).toBeGreaterThan(PRINTED_SCALE.mean - 3);
+    expect(median).toBeLessThan(PRINTED_SCALE.mean + 3);
   });
 
   it('produces Shot Lines in the finished set\'s own range', () => {

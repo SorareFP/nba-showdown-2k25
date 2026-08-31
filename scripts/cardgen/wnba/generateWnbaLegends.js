@@ -83,7 +83,8 @@ import * as V from '../variance.js';
 import * as A from '../attributes.js';
 import * as S from '../shooting.js';
 import { CALIBRATION_FILE } from '../calibrateAttributes.js';
-import { REFERENCE_TOTALS, mapToReferenceScale } from '../speedPower.js';
+import { PRINTED_SCALE, mapToReferenceScale } from '../speedPower.js';
+import * as bpmArchive from './nbaBpmArchive.js';
 import { playerIdFromName } from '../../../src/cards/playerId.js';
 import { WNBA_SET, WNBA_SUPER_SEASON_SET } from '../../../src/cards/sets.js';
 import { getWnbaTeam, wnbaFranchiseForSeason } from '../../../src/cards/teams.js';
@@ -98,7 +99,7 @@ import {
   WNBA_LAST_ARCHIVED_SEASON,
 } from './constants.js';
 import { joinWnbaSeason, per4MinFromTotals, wnbaFeatureRow } from './pool.js';
-import { vorpPerGame, COMPOSITE_WEIGHTS, compositeBasis, composite } from './generateWnbaCards.js';
+import { vorpPerGame, COMPOSITE_WEIGHTS, composite } from './generateWnbaCards.js';
 import * as L from './legends.js';
 
 const GEN_DIR = path.join(REPO_ROOT, 'card-data', 'generated');
@@ -551,25 +552,27 @@ export function main({ log = console.log } = {}) {
     three: calibration.threePtBoost,
   });
 
-  const nba = readJson(path.join(GEN_DIR, 'player-pool-2026.json'));
-  const nbaRows = nbaBasisRows(model, nba);
+  // The Speed+Power basis is the NBA BPM-EQUIVALENT ARCHIVE — 4,780 cardable NBA
+  // player-seasons, 2012-2026, rated by this same fitted model — not the 2026-27
+  // NBA pool it used to be. See scripts/cardgen/wnba/nbaBpmArchive.js, which
+  // also states the cross-league assumption plainly.
+  const spArchive = bpmArchive.requireArchive();
   const withVorp = r => ({
     bpmHat: r.bpmHat,
     vorpPerGameHat: vorpPerGame(r.bpmHat, r, WNBA_GAME_MINUTES),
   });
-  const spRows = [...nbaRows, ...selections.map(s => withVorp(s.best))];
-  const cut = nbaRows.length;
-  const basis = compositeBasis(spRows.slice(0, cut), COMPOSITE_WEIGHTS);
+  const spRows = selections.map(s => withVorp(s.best));
+  const basis = bpmArchive.archiveBasis(spArchive);
   const composites = spRows.map(r => composite(r, basis, COMPOSITE_WEIGHTS));
-  const totals = mapToReferenceScale(composites, REFERENCE_TOTALS, {
-    calibrateOn: composites.slice(0, cut),
+  const totals = mapToReferenceScale(composites, PRINTED_SCALE, {
+    calibrateOn: spArchive.composites,
   });
 
   const cards = selections.map((s, i) =>
     buildLegendCard({
       row: s.best,
       shooting: shooting.players[poolRows.length + i],
-      speedPowerTotal: totals[cut + i],
+      speedPowerTotal: totals[i],
       calibration,
     })
   );
@@ -693,45 +696,6 @@ export function main({ log = console.log } = {}) {
   report({ log, cards, selections, audit, shoppingList, model, seasons, reference, legends });
   log(`\nWrote:\n  ${path.relative(REPO_ROOT, CARDS_FILE)}\n  ${path.relative(REPO_ROOT, ROSTER_FILE)}`);
   return payload;
-}
-
-/** The NBA pool's rows, rated by the SAME fitted model — the Speed+Power basis. */
-function nbaBasisRows(model, pool) {
-  const advanced = readCache('bbref-wide-2026-advanced');
-  const perPoss = readCache('bbref-wide-2026-perposs');
-  if (!advanced || !perPoss) {
-    throw new Error(
-      'No cached bbref-wide-2026 tables — run `node scripts/cardgen/wnba/fitBpmModel.js` first; ' +
-        'the NBA pool is the calibration basis for the Speed+Power map.'
-    );
-  }
-  const rates = new Map(perPoss.map(r => [`${r.playerId}|${r.team}`, r]));
-  const best = new Map();
-  for (const a of advanced) {
-    const prev = best.get(a.playerId);
-    if (!prev || (a.games ?? 0) > (prev.games ?? 0)) best.set(a.playerId, a);
-  }
-  const league = [];
-  for (const a of best.values()) {
-    const p = rates.get(`${a.playerId}|${a.team}`);
-    if (!p) continue;
-    league.push(featureRow({ ...a, ...p, season: 2026, league: 'nba' }));
-  }
-  const basis = centringBasis(league, model.features);
-  const byName = new Map();
-  for (const row of league) {
-    const key = normalizeName(row.name);
-    const prev = byName.get(key);
-    if (!prev || (row.minutes ?? 0) > (prev.minutes ?? 0)) byName.set(key, row);
-  }
-  const rows = [];
-  for (const p of pool) {
-    const hit = byName.get(normalizeName(p.name));
-    if (!hit) continue;
-    const bpmHat = predict(model.targets.bpm, centredFeatures(hit, basis, model.features));
-    rows.push({ bpmHat, vorpPerGameHat: vorpPerGame(bpmHat, hit, 48) });
-  }
-  return rows;
 }
 
 function report({ log, cards, selections, audit, shoppingList, model, seasons, reference, legends }) {

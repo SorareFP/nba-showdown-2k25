@@ -8,6 +8,7 @@ import {
   TEAM_CONTEXT_FEATURES,
   WIN_SHARE_FEATURES,
   applyModel,
+  betweenTeamShare,
   centredFeatures,
   centringBasis,
   fitRidge,
@@ -21,6 +22,10 @@ import {
 const MODEL = JSON.parse(
   readFileSync(new URL('../../../card-data/generated/wnba-bpm-model.json', import.meta.url), 'utf8')
 );
+
+const readCards = name =>
+  JSON.parse(readFileSync(new URL(`../../../card-data/generated/${name}`, import.meta.url), 'utf8'))
+    .cards;
 
 describe('positionGroup', () => {
   it('collapses to the three positions the WNBA lists, and only three', () => {
@@ -273,5 +278,125 @@ describe('predict', () => {
   it('is an intercept plus a dot product, and tolerates a short vector', () => {
     expect(predict({ intercept: 1, coef: [2, 3] }, [1, 1])).toBe(6);
     expect(predict({ intercept: 1, coef: [2, 3] }, [1])).toBe(3);
+  });
+});
+
+describe('betweenTeamShare', () => {
+  const team = r => r.team;
+  const v = r => r.v;
+  const flat = () => 1;
+
+  it('is 1 when every team-mate is identical and teams differ', () => {
+    const rows = [
+      { team: 'A', v: 5 }, { team: 'A', v: 5 },
+      { team: 'B', v: -5 }, { team: 'B', v: -5 },
+    ];
+    expect(betweenTeamShare(rows, v, team, flat)).toBeCloseTo(1, 10);
+  });
+
+  it('is 0 when the teams have the same mean, however spread their players are', () => {
+    const rows = [
+      { team: 'A', v: 10 }, { team: 'A', v: -10 },
+      { team: 'B', v: 10 }, { team: 'B', v: -10 },
+    ];
+    expect(betweenTeamShare(rows, v, team, flat)).toBeCloseTo(0, 10);
+  });
+
+  it('answers 0 for a column with no spread at all, rather than dividing by zero', () => {
+    // A constant is not "entirely team" — it carries no information either way,
+    // and 0/0 must not read as maximal bias.
+    const rows = [{ team: 'A', v: 3 }, { team: 'B', v: 3 }];
+    expect(betweenTeamShare(rows, v, team, flat)).toBe(0);
+    expect(betweenTeamShare([], v, team, flat)).toBe(0);
+  });
+
+  it('weights by minutes by default, so a garbage-time row cannot swing a team', () => {
+    // B's two players disagree wildly, but the one with the minutes is on A's
+    // number, so B's weighted mean is close to A's and the share stays low.
+    const rows = [
+      { team: 'A', v: 0, minutes: 1000 },
+      { team: 'B', v: 0, minutes: 1000 },
+      { team: 'B', v: 40, minutes: 1 },
+    ];
+    expect(betweenTeamShare(rows, v, team)).toBeLessThan(0.05);
+  });
+
+  it('skips rows with no value, no group or no weight', () => {
+    const rows = [
+      { team: 'A', v: 5, minutes: 10 },
+      { team: 'A', v: null, minutes: 10 },
+      { team: null, v: 99, minutes: 10 },
+      { team: 'B', v: 99, minutes: 0 },
+      { team: 'B', v: -5, minutes: 10 },
+    ];
+    expect(betweenTeamShare(rows, v, team)).toBeCloseTo(1, 10);
+  });
+});
+
+describe('Def Boost is the player, not the team', () => {
+  // THE CLAIM UNDER TEST, and the reason it is a test and not a comment: the
+  // "WNBA Def Boost is contaminated by team defence" reading is reached by
+  // correlating team mean Def Boost against team defensive rating, which gives
+  // r = -0.926 and looks damning until the NBA set — built on DEF EPM, the
+  // metric designed to isolate the individual — scores -0.912 on the same test.
+  // See TEAM_CONTEXT_FEATURES in bpmModel.js for the full measurement.
+  //
+  // These assert the measure that IS diagnostic, on the shipped card files, so
+  // that both failure modes are caught: leaving the team in, and scrubbing so
+  // hard that a WNBA card becomes less team-aware than the NBA cards it is
+  // played against.
+  const wnba = readCards('cards-wnba.json');
+  const nba = readCards('cards-2026-27.json');
+  const share = cards => betweenTeamShare(cards, c => c.defBoost, c => c.team, () => 1);
+
+  it('keeps both halves of the team term in the fit, because dropping one only moves it', () => {
+    // `dwsRate` is as team-bound as `defRtg` (61.7% vs 62.0% between-team in the
+    // 2026 WNBA), so a refit without `defRtg` hands its job to the largest
+    // coefficient in the model and changes no card. Both stay.
+    expect(FEATURE_SETS.full).toContain('defRtg');
+    expect(FEATURE_SETS.full).toContain('dwsRate');
+    expect(MODEL.features).toContain('defRtg');
+    expect(MODEL.features).toContain('dwsRate');
+  });
+
+  it('spends most of Def Boost on differences between team-mates, not between teams', () => {
+    // Under half: team-mates must out-vary teams, or the card is a team badge.
+    expect(share(wnba)).toBeLessThan(0.5);
+    expect(share(nba)).toBeLessThan(0.5);
+  });
+
+  it('is not scrubbed below the team signal real DBPM legitimately carries', () => {
+    // Good defenders do cluster on good defences, so 0 is the WRONG answer.
+    // The floor is the NBA's own real-DBPM Def Boost measured at this set's
+    // shape (15 teams, 6-10 cards each), which averages 30%. Refitting with
+    // both `defRtg` and `dwsRate` removed lands at 25.3% and would trip this.
+    expect(share(wnba)).toBeGreaterThan(0.28);
+  });
+
+  it('reads the defensive standouts as standouts and the sieves as sieves', () => {
+    // Reputation, not arithmetic: whatever the team term is doing, it is not
+    // deciding these.
+    const by = name => wnba.find(c => c.name === name);
+    // Ezi Magbegor is deliberately absent: 13 games and 257 minutes in 2026 put
+    // her under the pool rule, so she has no card to check. The model rates her
+    // +1.27 if asked, which is the answer her reputation wants.
+    for (const name of ["A'ja Wilson", 'Alanna Smith', 'Napheesa Collier', 'Aliyah Boston']) {
+      expect(by(name), name).toBeDefined();
+      expect(by(name).defBoost, name).toBeGreaterThan(0);
+    }
+    // Mabrey is 4th-worst in the league in Defensive Win Shares per 40 and has
+    // the 3rd-worst individual defensive rating; negative is the honest answer.
+    expect(by('Marina Mabrey').defBoost).toBeLessThan(0);
+  });
+
+  it('spreads Def Boost about as widely as the NBA set does', () => {
+    // A WNBA card and an NBA card are played against each other, so the two
+    // sets have to price defence on one scale. Measured: sd 1.20 vs 1.22.
+    const sd = cards => {
+      const v = cards.map(c => c.defBoost);
+      const m = v.reduce((a, b) => a + b, 0) / v.length;
+      return Math.sqrt(v.reduce((a, b) => a + (b - m) ** 2, 0) / v.length);
+    };
+    expect(Math.abs(sd(wnba) - sd(nba))).toBeLessThan(0.3);
   });
 });

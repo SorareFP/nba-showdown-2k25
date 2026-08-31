@@ -157,7 +157,59 @@ export const FEATURES = {
 /** The three Win Shares rates, named once so a set can be built without them. */
 export const WIN_SHARE_FEATURES = ['wsRate', 'owsRate', 'dwsRate'];
 
-/** The only two features that carry anything about the player's TEAM. */
+/**
+ * The only two features that carry anything about the player's TEAM.
+ *
+ * ── DO NOT "DE-TEAM" defRtg. IT WAS MEASURED, AND IT DOES NOT DO WHAT IT LOOKS
+ *    LIKE IT DOES ───────────────────────────────────────────────────────────
+ *
+ * The observation that starts this every time: WNBA Def Boost, aggregated to
+ * team means, correlates with team defensive rating at r = -0.926 across the
+ * fifteen teams. It looks like proof that the card is printing the team.
+ *
+ * IT IS NOT DIAGNOSTIC, and the NBA is the control that shows why. The NBA set
+ * builds Def Boost from DEF EPM — the metric explicitly engineered to isolate
+ * one player's contribution from his team's — and on the identical test it
+ * scores r = -0.912. A team's defensive rating IS its players' defence summed;
+ * a perfect individual metric would still correlate with it at about -0.9.
+ * The test cannot separate "the card is contaminated" from "good defenders
+ * play on good defences", so it should not be used to claim either.
+ *
+ * THE MEASURE THAT DOES SEPARATE THEM is the between-team share of variance
+ * (`betweenTeamShare` below) — of all the spread in a metric, how much is
+ * between teams rather than between team-mates. Measured on 2026:
+ *
+ *     real BBRef DBPM, NBA, 500+ min, minutes-weighted   38.3%   <- benchmark
+ *     this model's dbpmHat, WNBA, 400+ min, weighted     37.8%
+ *
+ * The fitted WNBA output is no more team-bound than the published NBA DBPM it
+ * is imitating. There is no excess to remove.
+ *
+ * AND THE TWO OBVIOUS FIXES DO NOT WORK, because `defRtg` is not the team term
+ * — it is HALF of a team term. Between-team share of the inputs themselves:
+ *
+ *     defRtg   62.0%        dwsRate  61.7%       (WNBA 2026, 400+ min)
+ *     defRtg   67.0%        dwsRate  67.1%       (NBA  2026, 500+ min)
+ *
+ * Defensive Win Shares is built on individual Defensive Rating, so it is a team
+ * stat wearing a player's name to exactly the same degree. Refitting with
+ * `defRtg` made team-relative, or dropped outright, moves its weight onto
+ * `dwsRate` — which is already the largest coefficient in the DBPM fit — and
+ * changes almost nothing while costing accuracy against real DBPM:
+ *
+ *     shipped (full)              held-out-season R² 0.876   Mabrey -2.72
+ *     defRtg -> team-relative                     0.871      Mabrey -2.56
+ *     defRtg dropped                              0.870      Mabrey -2.58
+ *     defRtg AND dwsRate dropped                  0.804      Mabrey -1.86
+ *
+ * Only the last one moves a card, and it over-corrects: it drives the
+ * between-team share to 17.1%, less than half the 38.3% that real DBPM carries,
+ * for seven points of R². A WNBA card would then be LESS team-aware than the
+ * NBA cards it is played against.
+ *
+ * So the team term stays. `betweenTeamShare` and the tests over the shipped
+ * card files are what stop a future edit from "fixing" this into being wrong.
+ */
 export const TEAM_CONTEXT_FEATURES = ['offRtg', 'defRtg'];
 
 /**
@@ -219,6 +271,48 @@ export function weightedMean(rows, of, weightOf = r => r.minutes ?? 0) {
     sx += v * w;
   }
   return sw > 0 ? sx / sw : 0;
+}
+
+/**
+ * Of all the spread in a quantity, how much sits BETWEEN groups rather than
+ * within them. 0 means team-mates differ as much as teams do; 1 means every
+ * team-mate is identical and only the team badge matters.
+ *
+ * This is the honest measure of "is this a player stat or a team stat", and the
+ * reason it is here rather than in a scratch script is that the correlation
+ * everyone reaches for instead is not diagnostic — see TEAM_CONTEXT_FEATURES.
+ *
+ * Weighted, and by minutes wherever the rows carry them, for the same reason
+ * `centringBasis` is: a league table's replacement-level rows are noise, and
+ * they would otherwise dominate the within-group half and flatter the metric.
+ * Pass `() => 1` for an unweighted share over a set of finished cards, which is
+ * what the card-level tests use — a card has no minutes on it.
+ */
+export function betweenTeamShare(rows, valueOf, groupOf, weightOf = r => r.minutes ?? 1) {
+  const use = rows.filter(
+    r => Number.isFinite(valueOf(r)) && groupOf(r) != null && weightOf(r) > 0
+  );
+  if (use.length === 0) return 0;
+  const total = use.reduce((a, r) => a + weightOf(r), 0);
+  const grand = use.reduce((a, r) => a + valueOf(r) * weightOf(r), 0) / total;
+  const groups = new Map();
+  for (const r of use) {
+    const g = groupOf(r);
+    if (!groups.has(g)) groups.set(g, []);
+    groups.get(g).push(r);
+  }
+  let between = 0;
+  let within = 0;
+  for (const [, members] of groups) {
+    const w = members.reduce((a, r) => a + weightOf(r), 0);
+    const mean = members.reduce((a, r) => a + valueOf(r) * weightOf(r), 0) / w;
+    between += w * (mean - grand) ** 2;
+    for (const r of members) within += weightOf(r) * (valueOf(r) - mean) ** 2;
+  }
+  const spread = between + within;
+  // A quantity with no spread at all is not "all team" — it is nothing, and 0
+  // is the answer that keeps a constant column from reading as maximal bias.
+  return spread > 1e-12 ? between / spread : 0;
 }
 
 /**

@@ -237,6 +237,13 @@ export function buildWnbaCard({ row, team, shooting, speedPowerTotal, calibratio
     reb: nbaConventionPer100(per4MinFromTotals(row.trbTotal, minutes)),
     ast: nbaConventionPer100(per4MinFromTotals(row.astTotal, minutes)),
   };
+  // POSITION ONLY, deliberately. The NBA sets bend this split by the player's
+  // height and weight (A.SIZE_SPEED_SHARE), but the biometrics come from
+  // dunksandthrees' `season-epm`, which is an NBA endpoint with no WNBA
+  // equivalent — Basketball-Reference is the only source this set has, and it is
+  // the reason every WNBA card is provisional. Omitting the size argument gives
+  // exactly the rule this file has always used rather than dropping players who
+  // cannot be measured, which is what `splitSpeedPower` makes the default.
   const { speed, power } = A.splitSpeedPower(
     speedPowerTotal,
     row.pos,

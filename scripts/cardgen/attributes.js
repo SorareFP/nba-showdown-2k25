@@ -51,6 +51,104 @@ export const POSITION_SPEED_SHARE = {
 export const DEFAULT_SPEED_SHARE = 0.5;
 
 /**
+ * The average SIZE of each position in the finished set, in inches and pounds.
+ *
+ * Measured on the same join POSITION_SPEED_SHARE is measured on — the 283
+ * non-legend cards against Basketball-Reference's 2024-25 per-game positions —
+ * with height and weight from card-data/generated/player-biometrics.json (281
+ * of 283 matched; Dennis Schroeder and Ron Holland are absent from the API's
+ * name spellings). Re-derive with `node scripts/cardgen/calibrateAttributes.js`.
+ *
+ * These are CENTRES, not inputs: the size term below is a deviation from them,
+ * so a player of exactly his position's average build gets exactly his
+ * position's average share and the set-level distribution is untouched. That
+ * matters because the shipped 306-card set, the four other sets and the
+ * REFERENCE_TOTALS scale are all priced against the current level.
+ */
+export const POSITION_SIZE = {
+  PG: { inches: 75.15, weight: 195.7 },
+  SG: { inches: 76.69, weight: 202.6 },
+  SF: { inches: 78.76, weight: 215.5 },
+  PF: { inches: 80.36, weight: 227.9 },
+  C: { inches: 82.91, weight: 250.2 },
+};
+
+/**
+ * How far a player's SIZE bends his Speed share away from his position's.
+ *
+ * memory/speed_power_methodology.md states the split rule as "guards skew
+ * Speed, bigger players skew Power" — a claim about size, for which the position
+ * label was only ever a proxy. This is the term that reads the size directly.
+ *
+ * MEASURED, like everything else here: ordinary least squares of each finished
+ * card's speed share against height and weight, both taken as deviations from
+ * that card's POSITION average, so the fit describes only what size says BEYOND
+ * the label. Both coefficients come out negative — taller is more Power, heavier
+ * is more Power — which is the direction the methodology asserts.
+ *
+ * ── WHAT THIS IS AND IS NOT JUSTIFIED BY ────────────────────────────────────
+ *
+ * It is NOT justified by reproducing the finished cards better. It does not.
+ * Across the whole finished set the size term is a wash (RMSE against the
+ * printed Speed value 0.977 -> 0.967 points), and on a held-out half of the set
+ * it is WORSE than position alone (1.028 -> 1.035). The person who made those
+ * cards split by position, and asking size to predict his choices is asking it
+ * to predict something it did not drive. That is stated plainly rather than
+ * buried, because the rest of this file's constants ARE refits and this one is
+ * not.
+ *
+ * What it IS justified by is resolution — design philosophy point 3, player
+ * identity. The matchup matrix found 124 distinct mechanical identities across
+ * 350 cards, with fourteen cards sharing a single one; the split is the only
+ * lever that separates same-budget players, and position gives just five values
+ * to separate them with. Size gives a continuum, and it is a REAL physical fact
+ * about the player rather than an invented tiebreak. On the 2026-27 pool it
+ * takes the set from 124 identities to 142 and moves 84 of the 350 splits, at a
+ * measured cost of about a fifth of a point per team per game.
+ *
+ * The magnitude is the fitted one and is not amplified. At this strength Luka
+ * Dončić — a 6'8", 230lb point guard — goes from 18/10 to 16/12, Rudy Gobert
+ * from 8/13 to 7/14, and a guard of average build does not move at all.
+ */
+export const SIZE_SPEED_SHARE = { inches: -0.004393, weight: -0.000754 };
+
+/**
+ * The share is kept well inside 0 and 1 so no card can be all of one thing.
+ *
+ * Slack rather than a working limit: the widest share the finished set ever
+ * printed is 0.727 and the size term's full range on the 2026-27 pool is 0.31 to
+ * 0.66, so nothing reaches these. They exist so that a future set with an
+ * outlier build — or a corrupt biometric row — degrades to a lopsided card
+ * instead of a card with 0 Power.
+ */
+export const SPEED_SHARE_BOUNDS = { min: 0.15, max: 0.85 };
+
+/**
+ * The share of a budget that goes to Speed, from position AND size.
+ *
+ * `size` is `{ inches, weight }` or null. WITHOUT IT THIS IS EXACTLY THE OLD
+ * RULE — the positional average, unmodified — which is what lets the WNBA set,
+ * where the API serves no biometrics at all, keep running unchanged rather than
+ * dropping the players it cannot measure.
+ */
+export function speedShare(
+  pos,
+  size = null,
+  { shares = POSITION_SPEED_SHARE, positionSize = POSITION_SIZE, sizeModel = SIZE_SPEED_SHARE } = {}
+) {
+  const base = basePosition(pos);
+  const share = shares[base] ?? DEFAULT_SPEED_SHARE;
+  const centre = positionSize?.[base];
+  if (!centre || !sizeModel) return share;
+  if (!Number.isFinite(size?.inches) || !Number.isFinite(size?.weight)) return share;
+  const adjusted =
+    share +
+    (sizeModel.inches ?? 0) * (size.inches - centre.inches) +
+    (sizeModel.weight ?? 0) * (size.weight - centre.weight);
+  return Math.min(Math.max(adjusted, SPEED_SHARE_BOUNDS.min), SPEED_SHARE_BOUNDS.max);
+}
+
+/**
  * Reduces whatever a source calls a position to one of the five.
  *
  * Sources disagree: Basketball-Reference writes "PF" or "SF-PF", dunksandthrees
@@ -69,12 +167,20 @@ export function basePosition(pos) {
  * Divides a combined budget into Speed and Power.
  *
  * Power is the REMAINDER, never independently rounded, so the two always sum to
- * exactly the budget — the conservation rule in step 4 of the methodology. Both
- * sides are kept at 1 or above: a 0 on a card reads as missing data.
+ * exactly the budget — the conservation rule in step 4 of the methodology, and
+ * the reason the size term below cannot change a card's matchup STANDING. The
+ * matchup matrix proved that a card's two-way Net Edge equals its Speed+Power
+ * total minus the field mean exactly, so redistributing between the two changes
+ * WHO a card beats and never how much it wins overall.
+ *
+ * Both sides are kept at 1 or above: a 0 on a card reads as missing data.
+ *
+ * `options.size` is `{ inches, weight }`; omitting it gives the position-only
+ * split this function has always produced.
  */
-export function splitSpeedPower(total, pos, shares = POSITION_SPEED_SHARE) {
+export function splitSpeedPower(total, pos, shares = POSITION_SPEED_SHARE, options = {}) {
   const t = Math.max(Math.round(total ?? 0), 2);
-  const share = shares[basePosition(pos)] ?? DEFAULT_SPEED_SHARE;
+  const share = speedShare(pos, options.size ?? null, { shares, ...options });
   const speed = Math.min(Math.max(Math.round(t * share), 1), t - 1);
   return { speed, power: t - speed };
 }

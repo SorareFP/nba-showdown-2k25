@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-30T09:07:20.648Z",
+ "generatedAt": "2026-08-31T01:30:37.605Z",
  "provisional": true,
  "referenceSeason": 2025,
  "referenceCards": 282,
@@ -373,6 +373,49 @@
   "PF": 55,
   "SF": 46,
   "SG": 78
+ },
+ "positionSize": {
+  "PG": {
+   "inches": 75.15,
+   "weight": 195.7,
+   "n": 48
+  },
+  "SG": {
+   "inches": 76.69,
+   "weight": 202.6,
+   "n": 78
+  },
+  "SF": {
+   "inches": 78.76,
+   "weight": 215.5,
+   "n": 45
+  },
+  "PF": {
+   "inches": 80.36,
+   "weight": 227.9,
+   "n": 55
+  },
+  "C": {
+   "inches": 82.91,
+   "weight": 250.2,
+   "n": 55
+  }
+ },
+ "sizeSpeedShare": {
+  "inches": -0.004393,
+  "weight": -0.000754
+ },
+ "sizeSpeedShareQuality": {
+  "n": 281,
+  "r2": 0.0796,
+  "positionOnly": {
+   "rmse": 0.977,
+   "exactPct": 52
+  },
+  "positionAndSize": {
+   "rmse": 0.967,
+   "exactPct": 45.9
+  }
  },
  "shotLine": {
   "target": {

@@ -35,6 +35,7 @@ import { pathToFileURL } from 'node:url';
 import { readCache, REPO_ROOT } from './cache.js';
 import { normalizeName } from './resolveTeams.js';
 import { loadReferenceCards, chartExpectedValue } from './referenceCards.js';
+import { indexBiometrics, loadBiometrics } from './biometrics.js';
 import { reconcileBands } from './generate.js';
 import * as V from './variance.js';
 import * as A from './attributes.js';
@@ -223,6 +224,98 @@ export function measurePositionSpeedShare(rows) {
     counts[pos] = arr.length;
   }
   return { shares, counts };
+}
+
+/**
+ * How far SIZE bends the Speed share away from the positional average.
+ *
+ * Two outputs, and they are two different kinds of thing:
+ *
+ *   `positionSize` — the mean height and weight of each position in the finished
+ *     set. These are the CENTRES the size term is measured from, so a player of
+ *     average build for his position lands exactly on the positional share and
+ *     the set-level distribution does not move.
+ *   `model` — the ordinary-least-squares slope of speed share on height and
+ *     weight, both taken as deviations from those centres, so the fit describes
+ *     only what size says BEYOND the label.
+ *
+ * `quality` is reported honestly and is not flattering. The size term does not
+ * reproduce the finished cards better than position alone; on a held-out half of
+ * the set it is slightly worse. It is applied for RESOLUTION rather than for
+ * fit — see SIZE_SPEED_SHARE in attributes.js, which carries the argument.
+ * Reporting the number that does not support the change is the point: the next
+ * person should not have to rediscover that this constant is a design choice
+ * with a measured magnitude, not a refit.
+ */
+export function measureSizeSpeedShare(rows, biometrics) {
+  const points = [];
+  for (const row of rows) {
+    const total = (row.card.speed ?? 0) + (row.card.power ?? 0);
+    const pos = A.basePosition(row.pos);
+    const size = biometrics?.get(normalizeName(row.card.name));
+    if (!pos || !total) continue;
+    if (!Number.isFinite(size?.inches) || !Number.isFinite(size?.weight)) continue;
+    points.push({ pos, total, speed: row.card.speed, share: row.card.speed / total, ...size });
+  }
+  if (points.length === 0) return null;
+
+  const mean = xs => xs.reduce((a, b) => a + b, 0) / xs.length;
+  const positionSize = {};
+  const positionShare = {};
+  for (const pos of Object.keys(A.POSITION_SPEED_SHARE)) {
+    const g = points.filter(p => p.pos === pos);
+    if (g.length === 0) continue;
+    positionSize[pos] = {
+      inches: Number(mean(g.map(p => p.inches)).toFixed(2)),
+      weight: Number(mean(g.map(p => p.weight)).toFixed(1)),
+      n: g.length,
+    };
+    positionShare[pos] = mean(g.map(p => p.share));
+  }
+
+  const centred = points
+    .filter(p => positionSize[p.pos])
+    .map(p => ({
+      ds: p.share - positionShare[p.pos],
+      di: p.inches - positionSize[p.pos].inches,
+      dw: p.weight - positionSize[p.pos].weight,
+    }));
+  const fit = A.fitLeastSquares(centred, r => r.ds, [r => r.di, r => r.dw]);
+  if (!fit) return null;
+  const model = {
+    inches: Number(fit.coef[1].toFixed(6)),
+    weight: Number(fit.coef[2].toFixed(6)),
+  };
+
+  // How each rule reproduces the printed Speed value, in whole Speed points.
+  const score = shareOf => {
+    let se = 0;
+    let exact = 0;
+    for (const p of points) {
+      const { speed } = A.splitSpeedPower(p.total, p.pos, positionShare, shareOf(p));
+      se += (speed - p.speed) ** 2;
+      if (speed === p.speed) exact += 1;
+    }
+    return {
+      rmse: Number(Math.sqrt(se / points.length).toFixed(3)),
+      exactPct: Number(((100 * exact) / points.length).toFixed(1)),
+    };
+  };
+
+  return {
+    positionSize,
+    model,
+    quality: {
+      n: points.length,
+      r2: Number(fit.r2.toFixed(4)),
+      positionOnly: score(() => ({})),
+      positionAndSize: score(p => ({
+        size: { inches: p.inches, weight: p.weight },
+        positionSize,
+        sizeModel: model,
+      })),
+    },
+  };
 }
 
 // --- shooting layer ---------------------------------------------------------
@@ -467,7 +560,7 @@ export function fitSalary(rows) {
 
 // --- orchestration ----------------------------------------------------------
 
-export function buildCalibration({ cards, perGame, perPoss, advanced, sample, gameLogs }) {
+export function buildCalibration({ cards, perGame, perPoss, advanced, sample, gameLogs, biometrics }) {
   const rows = joinReferenceRows({ cards, perGame, perPoss, advanced });
   const shape = V.fitSpreadShape(
     sample.map(s => ({ playerId: s.playerId, mpg: s.mpg, games: gameLogs[s.playerId] ?? [] }))
@@ -482,6 +575,11 @@ export function buildCalibration({ cards, perGame, perPoss, advanced, sample, ga
   const chartQuality = scoreChartFitPerStat(rows, scaledLevels, shape);
 
   const position = measurePositionSpeedShare(rows);
+  // Null when card-data/generated/player-biometrics.json has not been built.
+  // The calibration is still complete without it and generateCards falls back to
+  // the constants in attributes.js, so a missing biometric table costs the size
+  // term and nothing else.
+  const size = measureSizeSpeedShare(rows, biometrics);
   const shooting = fitShootingLayer(rows);
   const salary = fitSalary(rows);
 
@@ -500,6 +598,9 @@ export function buildCalibration({ cards, perGame, perPoss, advanced, sample, ga
     },
     positionSpeedShare: position.shares,
     positionCounts: position.counts,
+    positionSize: size?.positionSize ?? null,
+    sizeSpeedShare: size?.model ?? null,
+    sizeSpeedShareQuality: size?.quality ?? null,
     shotLine: shooting.shotLine,
     shrinkage: shooting.shrinkage,
     threePtBoost: shooting.threePtBoost,
@@ -566,6 +667,7 @@ export function main({ log = console.log } = {}) {
     advanced: readCache(`bbref-${REFERENCE_STATS_SEASON}-advanced`),
     sample,
     gameLogs,
+    biometrics: indexBiometrics(loadBiometrics()),
   });
 
   fs.mkdirSync(path.dirname(CALIBRATION_FILE), { recursive: true });
@@ -587,6 +689,29 @@ export function main({ log = console.log } = {}) {
   log('POSITIONAL SPEED SHARE (speed / (speed+power))');
   for (const [pos, share] of Object.entries(c.positionSpeedShare).sort()) {
     log(`  ${pos.padEnd(3)} ${share.toFixed(4)}  (n=${c.positionCounts[pos]})`);
+  }
+  if (c.sizeSpeedShare) {
+    log('');
+    log('SIZE INSIDE THE SPLIT (deviation from the positional average)');
+    for (const [pos, m] of Object.entries(c.positionSize).sort()) {
+      log(`  ${pos.padEnd(3)} mean ${m.inches}" ${m.weight} lb  (n=${m.n})`);
+    }
+    const q = c.sizeSpeedShareQuality;
+    log(
+      `  share per inch ${c.sizeSpeedShare.inches}  per pound ${c.sizeSpeedShare.weight}  ` +
+        `r2 ${q.r2} (n=${q.n})`
+    );
+    log(
+      `  reproducing the printed Speed: position only rmse ${q.positionOnly.rmse} ` +
+        `(exact ${q.positionOnly.exactPct}%) | position+size rmse ${q.positionAndSize.rmse} ` +
+        `(exact ${q.positionAndSize.exactPct}%)`
+    );
+    log('  ^ size does NOT fit the finished cards better. It is applied for RESOLUTION —');
+    log('    see SIZE_SPEED_SHARE in attributes.js for the argument and the measured cost.');
+  } else {
+    log('');
+    log('SIZE INSIDE THE SPLIT: skipped — no card-data/generated/player-biometrics.json.');
+    log('  run `node --env-file=.env.local scripts/cardgen/biometrics.js` to build it.');
   }
   log('');
   log('SHOOTING LAYER — the stated probability rule, compressed onto the finished set');

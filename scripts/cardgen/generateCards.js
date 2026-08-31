@@ -76,6 +76,7 @@ import * as V from './variance.js';
 import * as A from './attributes.js';
 import * as S from './shooting.js';
 import { poolingSummary } from './poolSeasons.js';
+import { indexBiometrics, loadBiometrics } from './biometrics.js';
 import { readBlendedActual, reportBlend, PRIOR_STATS_SEASON } from './priorSeasonBlend.js';
 import { trb100 } from './sources/dunksAndThrees.js';
 import { CALIBRATION_FILE } from './calibrateAttributes.js';
@@ -146,17 +147,21 @@ export function actualShootingInput(rate) {
  * FINISHED card (design philosophy point 8), so it comes last, after the chart
  * it is a function of exists.
  */
-export function buildCard({ player, rate, actual, shooting, speedPowerTotal, calibration }) {
+export function buildCard({ player, rate, actual, shooting, speedPowerTotal, size, calibration }) {
   const per100 = {
     pts: rate?.pts100 ?? 0,
     reb: rate ? trb100(rate) : 0,
     ast: rate?.ast100 ?? 0,
   };
-  const { speed, power } = A.splitSpeedPower(
-    speedPowerTotal,
-    player.pos,
-    calibration.positionSpeedShare
-  );
+  // Position sets the centre of the split and SIZE bends it away from that
+  // centre — see A.SIZE_SPEED_SHARE. `size` is null for a player the biometric
+  // table does not carry, and the split is then the position-only one it always
+  // was rather than a dropped card.
+  const { speed, power } = A.splitSpeedPower(speedPowerTotal, player.pos, calibration.positionSpeedShare, {
+    size,
+    positionSize: calibration.positionSize ?? A.POSITION_SIZE,
+    sizeModel: calibration.sizeSpeedShare ?? A.SIZE_SPEED_SHARE,
+  });
 
   const { shotLine, paintBoost, threePtBoost } = shooting;
   const defBoost = A.defBoostFromEpm(actual?.epmDef);
@@ -229,6 +234,10 @@ export function generateCards({
   rates,
   actual,
   calibration,
+  // Name -> { inches, weight }. Absent for a checkout that has not built
+  // card-data/generated/player-biometrics.json, and every split falls back to
+  // position alone.
+  biometrics = new Map(),
   overrides = {},
 }) {
   const teamIndex = indexByName(teams);
@@ -255,6 +264,7 @@ export function generateCards({
   const cards = [];
   const missingRates = [];
   const missingActual = [];
+  const missingSize = [];
   // Per-4-minute production, per card, in card order. Carried out of the build
   // because it is what a chart is SUPPOSED to integrate to, and the run report
   // cannot check that without it. See reportChartFit.
@@ -264,6 +274,8 @@ export function generateCards({
     if (!rate) missingRates.push(player.name);
     if (!actualRows[i]) missingActual.push(player.name);
     const sp = spIndex.get(normalizeName(player.name));
+    const size = lookup(biometrics, player.name);
+    if (!size) missingSize.push(player.name);
     targets.push({
       pts: V.per4MinFromPer100(rate?.pts100 ?? 0),
       reb: V.per4MinFromPer100(rate ? trb100(rate) : 0),
@@ -276,6 +288,7 @@ export function generateCards({
         actual: actualRows[i],
         shooting: shooting.players[i],
         speedPowerTotal: sp?.speedPowerTotal ?? 0,
+        size,
         calibration,
       })
     );
@@ -287,6 +300,7 @@ export function generateCards({
     cards: cards.map(c => overridden[c.id]),
     missingRates,
     missingActual,
+    missingSize,
     shooting,
     targets,
     // How much of the pool's stat line is postseason. Zero for a pool built off
@@ -504,10 +518,11 @@ export function main({ log = console.log } = {}) {
   }
   const actual = blend.rows;
   const overridesFile = path.join(REPO_ROOT, 'scripts', 'cardgen', 'overrides.json');
-  const { cards, missingRates, missingActual, shooting, pooling, names, targets } = generateCards({
+  const { cards, missingRates, missingActual, missingSize, shooting, pooling, names, targets } = generateCards({
     pool: readJson(path.join(GEN_DIR, 'player-pool-2026.json')),
     teams: readJson(path.join(GEN_DIR, 'player-teams-2026.json')),
     speedPower: readJson(path.join(GEN_DIR, 'speed-power-totals-2026.json')),
+    biometrics: indexBiometrics(loadBiometrics()),
     rates,
     actual,
     calibration,
@@ -546,6 +561,11 @@ export function main({ log = console.log } = {}) {
   if (missingActual.length) {
     log(`  no ACTUAL stat line for ${missingActual.length}: ${missingActual.join(', ')}`);
   }
+  log(
+    missingSize.length
+      ? `  no height/weight for ${missingSize.length} (position-only split): ${missingSize.join(', ')}`
+      : '  height and weight for all 350 — every split is position AND size'
+  );
   log(
     `  playoffs folded in: ${pooling.gained}/${pooling.players} players gained games ` +
       `(${pooling.playoffGames} playoff games total, median ${pooling.medianPlayoffGames}, ` +

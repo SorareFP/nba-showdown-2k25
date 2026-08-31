@@ -50,6 +50,102 @@ describe('splitSpeedPower', () => {
   });
 });
 
+describe('size inside the split', () => {
+  // The share moves by SIZE_SPEED_SHARE per inch and per pound AWAY from the
+  // position's own average build, so the sign is the one the methodology states:
+  // bigger is more Power.
+  const pgCentre = A.POSITION_SIZE.PG;
+
+  it('leaves a player of exactly his position\'s build on the positional share', () => {
+    expect(A.speedShare('PG', { ...pgCentre })).toBeCloseTo(A.POSITION_SPEED_SHARE.PG, 12);
+  });
+
+  it('gives a TALLER player of the same position less Speed', () => {
+    const tall = A.speedShare('PG', { inches: pgCentre.inches + 4, weight: pgCentre.weight });
+    expect(tall).toBeLessThan(A.POSITION_SPEED_SHARE.PG);
+    expect(tall).toBeCloseTo(A.POSITION_SPEED_SHARE.PG + 4 * A.SIZE_SPEED_SHARE.inches, 12);
+  });
+
+  it('gives a HEAVIER player of the same position less Speed', () => {
+    const heavy = A.speedShare('C', { inches: A.POSITION_SIZE.C.inches, weight: A.POSITION_SIZE.C.weight + 30 });
+    expect(heavy).toBeLessThan(A.POSITION_SPEED_SHARE.C);
+  });
+
+  it('gives a SMALLER player of the same position more Speed', () => {
+    expect(
+      A.speedShare('C', { inches: A.POSITION_SIZE.C.inches - 3, weight: A.POSITION_SIZE.C.weight - 20 })
+    ).toBeGreaterThan(A.POSITION_SPEED_SHARE.C);
+  });
+
+  // The requirement the matrix work turns on: the split may move, the BUDGET
+  // may not. Net Edge is a function of speed + power alone, so conservation is
+  // what keeps a flavour change from becoming a balance change.
+  it('still sums to exactly the budget at every size', () => {
+    for (let total = 2; total <= 40; total += 1) {
+      for (const inches of [66, 72, 78, 84, 90]) {
+        for (const weight of [150, 200, 250, 320]) {
+          for (const pos of ['PG', 'SG', 'SF', 'PF', 'C', null]) {
+            const { speed, power } = A.splitSpeedPower(total, pos, A.POSITION_SPEED_SHARE, {
+              size: { inches, weight },
+            });
+            expect(speed + power).toBe(total);
+            expect(speed).toBeGreaterThanOrEqual(1);
+            expect(power).toBeGreaterThanOrEqual(1);
+          }
+        }
+      }
+    }
+  });
+
+  // Every set without biometrics — the WNBA, and any player the archive misses —
+  // has to keep producing the card it produced before.
+  it('DEGRADES to position-only for a missing, partial or unparseable size', () => {
+    const positionOnly = A.splitSpeedPower(22, 'SG');
+    for (const size of [
+      null,
+      undefined,
+      {},
+      { inches: 76 },
+      { weight: 200 },
+      { inches: null, weight: 200 },
+      { inches: 76, weight: NaN },
+      { inches: '76', weight: '200' },
+    ]) {
+      expect(A.splitSpeedPower(22, 'SG', A.POSITION_SPEED_SHARE, { size })).toEqual(positionOnly);
+    }
+  });
+
+  it('leaves an unrecognised position on the even split whatever the size', () => {
+    expect(
+      A.splitSpeedPower(20, 'DH', A.POSITION_SPEED_SHARE, { size: { inches: 88, weight: 300 } })
+    ).toEqual({ speed: 10, power: 10 });
+  });
+
+  it('clamps an absurd build well short of a card with 0 on one side', () => {
+    expect(A.speedShare('C', { inches: 200, weight: 900 })).toBe(A.SPEED_SHARE_BOUNDS.min);
+    expect(A.speedShare('PG', { inches: 10, weight: 10 })).toBe(A.SPEED_SHARE_BOUNDS.max);
+  });
+
+  it('takes its centres and slopes from the calibration when given them', () => {
+    const flat = A.speedShare('PG', { inches: 90, weight: 300 }, {
+      sizeModel: { inches: 0, weight: 0 },
+    });
+    expect(flat).toBeCloseTo(A.POSITION_SPEED_SHARE.PG, 12);
+  });
+
+  // The 2026-27 pool's biggest mover, worked by hand: Luka Doncic is a 6'8",
+  // 230lb point guard, 4.85 inches and 34.3 pounds above the average PG build.
+  //   share = 0.6269 + (-0.004393 * 4.85) + (-0.000754 * 34.3) = 0.5798
+  //   speed = round(28 * 0.5798) = 16, power = 28 - 16 = 12
+  // against the position-only round(28 * 0.6269) = 18 / 10.
+  it('reproduces the pool\'s biggest mover by hand', () => {
+    expect(A.splitSpeedPower(28, 'PG')).toEqual({ speed: 18, power: 10 });
+    expect(
+      A.splitSpeedPower(28, 'PG', A.POSITION_SPEED_SHARE, { size: { inches: 80, weight: 230 } })
+    ).toEqual({ speed: 16, power: 12 });
+  });
+});
+
 describe('defBoostFromEpm', () => {
   // The rounding rule the user asked for, spelled out in
   // memory/speed_power_methodology.md: "-0.5 down to -1".

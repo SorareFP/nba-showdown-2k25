@@ -291,6 +291,13 @@ export function buildLegendCard({ row, shooting, speedPowerTotal, calibration })
     reb: per4(row.trbTotal) / NBA_PER_100_TO_PER_4MIN,
     ast: per4(row.astTotal) / NBA_PER_100_TO_PER_4MIN,
   };
+  // POSITION ONLY, deliberately. The NBA sets bend this split by the player's
+  // height and weight (A.SIZE_SPEED_SHARE), but the biometrics come from
+  // dunksandthrees' `season-epm`, which is an NBA endpoint with no WNBA
+  // equivalent — Basketball-Reference is the only source this set has, and it is
+  // the reason every WNBA card is provisional. Omitting the size argument gives
+  // exactly the rule this file has always used rather than dropping players who
+  // cannot be measured, which is what `splitSpeedPower` makes the default.
   const { speed, power } = A.splitSpeedPower(speedPowerTotal, row.pos, calibration.positionSpeedShare);
   const { shotLine, paintBoost, threePtBoost } = shooting;
   const defBoost = A.defBoostFromEpm(row.dbpmHat);

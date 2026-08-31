@@ -107,6 +107,7 @@ import * as V from './variance.js';
 import * as A from './attributes.js';
 import * as S from './shooting.js';
 import { CALIBRATION_FILE } from './calibrateAttributes.js';
+import { indexBiometrics, loadBiometrics } from './biometrics.js';
 import {
   REFERENCE_TOTALS,
   REFINEMENT_WEIGHT,
@@ -383,7 +384,7 @@ export function seasonLabel(endYear) {
  * relative and cannot be evaluated a player at a time — exactly as in
  * generateCards.js, and for the same reason.
  */
-export function buildHistoricalCard({ player, season, shooting, speedPowerTotal, calibration }) {
+export function buildHistoricalCard({ player, season, shooting, speedPowerTotal, size, calibration }) {
   const games = season.games ?? 0;
   const mpg = games > 0 ? (season.minutes ?? 0) / games : 0;
   const per100 = {
@@ -391,11 +392,15 @@ export function buildHistoricalCard({ player, season, shooting, speedPowerTotal,
     reb: season.trb100 ?? 0,
     ast: season.ast100 ?? 0,
   };
-  const { speed, power } = A.splitSpeedPower(
-    speedPowerTotal,
-    season.pos,
-    calibration.positionSpeedShare
-  );
+  // Position sets the centre and SIZE bends it, exactly as in generateCards.js.
+  // The biometric table covers 2002 onwards and these sets reach back to 2004,
+  // so a historical card is measured the same way a current one is; a player it
+  // does not carry falls back to the position-only split.
+  const { speed, power } = A.splitSpeedPower(speedPowerTotal, season.pos, calibration.positionSpeedShare, {
+    size,
+    positionSize: calibration.positionSize ?? A.POSITION_SIZE,
+    sizeModel: calibration.sizeSpeedShare ?? A.SIZE_SPEED_SHARE,
+  });
   const { shotLine, paintBoost, threePtBoost } = shooting;
   // DBPM in DEF EPM's place — the same rounding rule on the same kind of number.
   const defBoost = A.defBoostFromEpm(season.dbpm);
@@ -467,7 +472,13 @@ export function buildHistoricalCard({ player, season, shooting, speedPowerTotal,
  * their own. Both are computed over `[...current, ...selected]` and the
  * historical tail is sliced back out.
  */
-export function buildSet({ selections, currentRows, calibration, weights = COMPOSITE_WEIGHTS }) {
+export function buildSet({
+  selections,
+  currentRows,
+  calibration,
+  weights = COMPOSITE_WEIGHTS,
+  biometrics = new Map(),
+}) {
   const seasons = selections.map(s => s.season);
   const all = [...currentRows, ...seasons];
   const cut = currentRows.length;
@@ -486,6 +497,7 @@ export function buildSet({ selections, currentRows, calibration, weights = COMPO
       season: selection.season,
       shooting: shooting.players[cut + i],
       speedPowerTotal: totals[cut + i],
+      size: biometrics.get(normalizeName(selection.player.name)) ?? null,
       calibration,
     })
   );
@@ -762,12 +774,24 @@ export function main({ log = console.log } = {}) {
   const currentRows = [...currentByName.values()].filter(r => poolIds.has(r.playerId));
   log(`Calibration basis: ${currentRows.length} current-season rows.`);
 
+  // Height and weight, for the size half of the Speed/Power split. The archive
+  // covers 2002 onwards and these sets reach back to 2004, so coverage is
+  // reported rather than assumed.
+  const biometrics = indexBiometrics(loadBiometrics());
   const files = {};
   for (const [set, selections, file] of [
     [SUPER_SEASON_SET, selection.superSeason, OUTPUT_FILES[SUPER_SEASON_SET]],
     [ROOKIE_SET, selection.rookie, OUTPUT_FILES[ROOKIE_SET]],
   ]) {
-    const cards = buildSet({ selections, currentRows, calibration });
+    const cards = buildSet({ selections, currentRows, calibration, biometrics });
+    const noSize = selections.filter(
+      sel => !biometrics.get(normalizeName(sel.player.name))
+    ).length;
+    log(
+      noSize
+        ? `  ${set}: ${noSize} of ${selections.length} have no height/weight (position-only split)`
+        : `  ${set}: height and weight for all ${selections.length}`
+    );
     cards.sort((a, b) => a.name.localeCompare(b.name));
     const excluded = set === SUPER_SEASON_SET ? selection.excluded.superSeason : selection.excluded.rookie;
     files[set] = writeSet(file, {

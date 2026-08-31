@@ -329,21 +329,21 @@ export const WNBA_HISTORICAL_TEAMS = {
   // tables. Keyed PORF so it can never shadow the live row.
   PORF: { name: 'Fire',         city: 'Portland',     primary: '#C8102E', secondary: '#010101', logo: null, league: 'WNBA', era: '2000-2002', folded: true }, // Red, Black
   MIA:  { name: 'Sol',          city: 'Miami',        primary: '#A6192E', secondary: '#010101', logo: null, league: 'WNBA', era: '2000-2002', folded: true }, // Fiery Red, Black
-  SAS:  { name: 'Silver Stars', city: 'San Antonio',  primary: '#010101', secondary: '#8D9093', logo: null, league: 'WNBA', era: '2003-2017', folded: false }, // Black, Silver — became Las Vegas
+  SAS:  { name: 'Silver Stars', city: 'San Antonio',  primary: '#010101', secondary: '#8D9093', logo: '/logos/WNBA/SAS.png', league: 'WNBA', era: '2003-2017', folded: false }, // Black, Silver — became Las Vegas
   TUL:  { name: 'Shock',        city: 'Tulsa',        primary: '#FFB81C', secondary: '#010101', logo: null, league: 'WNBA', era: '2010-2015', folded: false }, // Yellow, Black — became Dallas
 
   // ── Live franchises, in the colours they actually wore ─────────────────────
-  SEA00:  { name: 'Storm',   city: 'Seattle',      primary: '#00573F', secondary: '#9E2B2F', logo: '/logos/WNBA/SEA.png', logoEra: '2021-present', league: 'WNBA', era: '2000-2015' }, // Hunter Green, Maroon
-  MIN99:  { name: 'Lynx',    city: 'Minnesota',    primary: '#00843D', secondary: '#236192', logo: '/logos/WNBA/MIN.png', logoEra: '2018-present', league: 'WNBA', era: '1999-2010' }, // Green, Slate Blue
-  MIN11:  { name: 'Lynx',    city: 'Minnesota',    primary: '#236192', secondary: '#010101', logo: '/logos/WNBA/MIN.png', logoEra: '2018-present', league: 'WNBA', era: '2011-2017' }, // Slate Blue, Black
-  PHO97:  { name: 'Mercury', city: 'Phoenix',      primary: '#EF3340', secondary: '#5F249F', logo: '/logos/WNBA/PHO.png', logoEra: '2026-present', league: 'WNBA', era: '1997-2010' }, // Planet Red, Purple
-  PHO11:  { name: 'Mercury', city: 'Phoenix',      primary: '#582C83', secondary: '#CB6015', logo: '/logos/WNBA/PHO.png', logoEra: '2026-present', league: 'WNBA', era: '2011-2014' }, // Purple, Orange
+  SEA00:  { name: 'Storm',   city: 'Seattle',      primary: '#00573F', secondary: '#9E2B2F', logo: '/logos/WNBA/SEA00.png', league: 'WNBA', era: '2000-2015' }, // Hunter Green, Maroon
+  MIN99:  { name: 'Lynx',    city: 'Minnesota',    primary: '#00843D', secondary: '#236192', logo: '/logos/WNBA/MIN99.png', league: 'WNBA', era: '1999-2010' }, // Green, Slate Blue
+  MIN11:  { name: 'Lynx',    city: 'Minnesota',    primary: '#236192', secondary: '#010101', logo: '/logos/WNBA/MIN11.png', league: 'WNBA', era: '2011-2017' }, // Slate Blue, Black
+  PHO97:  { name: 'Mercury', city: 'Phoenix',      primary: '#EF3340', secondary: '#5F249F', logo: '/logos/WNBA/PHO97.png', league: 'WNBA', era: '1997-2010' }, // Planet Red, Purple
+  PHO11:  { name: 'Mercury', city: 'Phoenix',      primary: '#582C83', secondary: '#CB6015', logo: '/logos/WNBA/PHO11.png', league: 'WNBA', era: '2011-2014' }, // Purple, Orange
   PHO15:  { name: 'Mercury', city: 'Phoenix',      primary: '#211747', secondary: '#CB6015', logo: '/logos/WNBA/PHO.png', logoEra: '2026-present', league: 'WNBA', era: '2015-2025' }, // Dark Purple, Burnt Orange
   NYL97:  { name: 'Liberty', city: 'New York',     primary: '#010101', secondary: '#0057B7', logo: '/logos/WNBA/NYL.png', logoEra: '2020-present', league: 'WNBA', era: '1997-2002' }, // Gotham Black, Harbor Blue
   NYL03:  { name: 'Liberty', city: 'New York',     primary: '#0057B7', secondary: '#6ECEB2', logo: '/logos/WNBA/NYL.png', logoEra: '2020-present', league: 'WNBA', era: '2003-2011' }, // Harbor Blue, Liberty Green
-  NYL12:  { name: 'Liberty', city: 'New York',     primary: '#010101', secondary: '#003DA5', logo: '/logos/WNBA/NYL.png', logoEra: '2020-present', league: 'WNBA', era: '2012-2019' }, // Black, Blue
+  NYL12:  { name: 'Liberty', city: 'New York',     primary: '#010101', secondary: '#003DA5', logo: '/logos/WNBA/NYL12.png', league: 'WNBA', era: '2012-2019' }, // Black, Blue
   WAS98:  { name: 'Mystics', city: 'Washington',   primary: '#236192', secondary: '#8F654D', logo: '/logos/WNBA/WAS.png', logoEra: '2011-present', league: 'WNBA', era: '1998-2010' }, // Slate Blue, Bronze
-  CON03:  { name: 'Sun',     city: 'Connecticut',  primary: '#041E42', secondary: '#A6192E', logo: '/logos/WNBA/CONN.png', logoEra: '2021-present', league: 'WNBA', era: '2003-2015' }, // Navy, Dark Red
+  CON03:  { name: 'Sun',     city: 'Connecticut',  primary: '#041E42', secondary: '#A6192E', logo: '/logos/WNBA/CON03.png', league: 'WNBA', era: '2003-2015' }, // Navy, Dark Red
   CON16:  { name: 'Sun',     city: 'Connecticut',  primary: '#DC4405', secondary: '#041E42', logo: '/logos/WNBA/CONN.png', logoEra: '2021-present', league: 'WNBA', era: '2016-2020' }, // Orange, Navy
   ATL08:  { name: 'Dream',   city: 'Atlanta',      primary: '#418FDE', secondary: '#C8102E', logo: '/logos/WNBA/ATL.png', logoEra: '2020-present', league: 'WNBA', era: '2008-2015' }, // Sky Blue, Red
   ATL16:  { name: 'Dream',   city: 'Atlanta',      primary: '#0C2340', secondary: '#C8102E', logo: '/logos/WNBA/ATL.png', logoEra: '2020-present', league: 'WNBA', era: '2016-2019' }, // Navy, Red

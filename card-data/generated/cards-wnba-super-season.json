@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-31T11:20:50.101Z",
+ "generatedAt": "2026-08-31T18:13:18.093Z",
  "provisional": true,
  "set": "wnba-super-season",
  "league": "WNBA",
@@ -35,108 +35,8 @@
  },
  "note": "PROVISIONAL, and league-and-era-relative by design. Every rating here says where a player stood in the league SHE played in, placed on the current sets' scale so the cards can share a table. It is not a claim that the 1997 and 2024 WNBA were equally strong, nor that either is comparable in absolute terms with the NBA.",
  "logosNeeded": {
-  "missing": [
-   {
-    "key": "SAS",
-    "team": "San Antonio Silver Stars",
-    "era": "2003-2017",
-    "cards": [
-     "Becky Hammon 2009"
-    ],
-    "file": "public/logos/WNBA/SAS.png",
-    "have": null,
-    "haveEra": null,
-    "note": null
-   }
-  ],
-  "anachronistic": [
-   {
-    "key": "CON03",
-    "team": "Connecticut Sun",
-    "era": "2003-2015",
-    "cards": [
-     "Lindsay Whalen 2008"
-    ],
-    "file": "public/logos/WNBA/CON03.png",
-    "have": "/logos/WNBA/CONN.png",
-    "haveEra": "2021-present",
-    "note": null
-   },
-   {
-    "key": "MIN99",
-    "team": "Minnesota Lynx",
-    "era": "1999-2010",
-    "cards": [
-     "Katie Smith 2000"
-    ],
-    "file": "public/logos/WNBA/MIN99.png",
-    "have": "/logos/WNBA/MIN.png",
-    "haveEra": "2018-present",
-    "note": null
-   },
-   {
-    "key": "MIN11",
-    "team": "Minnesota Lynx",
-    "era": "2011-2017",
-    "cards": [
-     "Maya Moore 2014",
-     "Sylvia Fowles 2017"
-    ],
-    "file": "public/logos/WNBA/MIN11.png",
-    "have": "/logos/WNBA/MIN.png",
-    "haveEra": "2018-present",
-    "note": null
-   },
-   {
-    "key": "NYL12",
-    "team": "New York Liberty",
-    "era": "2012-2019",
-    "cards": [
-     "Tina Charles 2016"
-    ],
-    "file": "public/logos/WNBA/NYL12.png",
-    "have": "/logos/WNBA/NYL.png",
-    "haveEra": "2020-present",
-    "note": null
-   },
-   {
-    "key": "PHO11",
-    "team": "Phoenix Mercury",
-    "era": "2011-2014",
-    "cards": [
-     "Candice Dupree 2014"
-    ],
-    "file": "public/logos/WNBA/PHO11.png",
-    "have": "/logos/WNBA/PHO.png",
-    "haveEra": "2026-present",
-    "note": null
-   },
-   {
-    "key": "PHO97",
-    "team": "Phoenix Mercury",
-    "era": "1997-2010",
-    "cards": [
-     "Diana Taurasi 2008"
-    ],
-    "file": "public/logos/WNBA/PHO97.png",
-    "have": "/logos/WNBA/PHO.png",
-    "haveEra": "2026-present",
-    "note": null
-   },
-   {
-    "key": "SEA00",
-    "team": "Seattle Storm",
-    "era": "2000-2015",
-    "cards": [
-     "Lauren Jackson 2006",
-     "Sue Bird 2004"
-    ],
-    "file": "public/logos/WNBA/SEA00.png",
-    "have": "/logos/WNBA/SEA.png",
-    "haveEra": "2021-present",
-    "note": null
-   }
-  ],
+  "missing": [],
+  "anachronistic": [],
   "poor": [
    {
     "key": "HOU",

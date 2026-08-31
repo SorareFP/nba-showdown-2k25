@@ -559,16 +559,32 @@ describe('WNBA historical logo files', () => {
     }
   });
 
-  it('marks a prior era of a LIVE franchise as wearing the modern mark', () => {
-    // The Storm's file is the current mark, on a card from 2006. That is
-    // legible and correct as to franchise and wrong as to year, and `logoEra`
-    // is what lets the shopping list say so rather than reporting it as fine.
+  it('carries logoEra exactly when the mark is borrowed from the live team', () => {
+    // `logoEra` is not decoration: it is the flag that tells the shopping list
+    // a mark is legible and correct as to franchise but WRONG AS TO YEAR. A
+    // row earns it precisely when it has no file of its own and points at the
+    // living franchise's current mark, so the two facts must never drift
+    // apart -- a row with its own era mark that still claimed a logoEra would
+    // keep asking to be replaced forever, and a row still borrowing that
+    // dropped the flag would silently pass as era-correct.
+    const liveFiles = new Set(
+      Object.values(WNBA_TEAMS)
+        .map(t => t.logo)
+        .filter(Boolean)
+    );
     for (const [key, team] of HISTORICAL_WITH_LOGOS) {
-      if (key === 'HOU') continue; // folded, and its file IS the era's mark
-      expect(team.logoEra, key).toBeTruthy();
+      expect(Boolean(team.logoEra), `${key} -> ${team.logo}`).toBe(liveFiles.has(team.logo));
     }
-    expect(WNBA_HISTORICAL_TEAMS.SEA00.logo).toBe('/logos/WNBA/SEA.png');
-    expect(WNBA_HISTORICAL_TEAMS.SEA00.logoEra).toBe('2021-present');
+    // The eight rows the finished Super Season cards actually reach for now
+    // have era-correct marks of their own, named for the row so the decade is
+    // legible from the filename.
+    for (const key of ['SAS', 'SEA00', 'MIN99', 'MIN11', 'PHO97', 'PHO11', 'NYL12', 'CON03']) {
+      expect(WNBA_HISTORICAL_TEAMS[key].logo, key).toBe(`/logos/WNBA/${key}.png`);
+      expect(WNBA_HISTORICAL_TEAMS[key].logoEra, key).toBeUndefined();
+    }
+    // Minnesota's two are a real pair, not one file wired twice: 2011 added a
+    // silver outline the 1999 mark does not have.
+    expect(WNBA_HISTORICAL_TEAMS.MIN99.logo).not.toBe(WNBA_HISTORICAL_TEAMS.MIN11.logo);
   });
 
   it('never points the Rockers at the file that is actually the Sirens', () => {

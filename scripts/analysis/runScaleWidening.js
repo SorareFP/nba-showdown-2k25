@@ -15,7 +15,15 @@
 
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { mapToReferenceScale, REFERENCE_TOTALS } from '../cardgen/speedPower.js';
-import { splitSpeedPower, POSITION_SPEED_SHARE } from '../cardgen/attributes.js';
+import {
+  SALARY_MAX,
+  POSITION_SIZE,
+  POSITION_SPEED_SHARE,
+  SIZE_SPEED_SHARE,
+  splitSpeedPower,
+} from '../cardgen/attributes.js';
+import { indexBiometrics, loadBiometrics } from '../cardgen/biometrics.js';
+import { normalizeName } from '../cardgen/resolveTeams.js';
 import {
   SCORING_ROLLS_PER_GAME,
   bonusExchangeRate,
@@ -35,6 +43,17 @@ const budgets = readJson('card-data/generated/speed-power-totals-2026.json');
 const calibration = readJson('card-data/generated/card-calibration.json');
 const shares = calibration.positionSpeedShare ?? POSITION_SPEED_SHARE;
 const salaryModel = calibration.salary.model;
+
+// The SAME split rule generateCards.js uses, size included. A candidate scale
+// has to be measured against the set as it is actually printed — split by
+// position AND size — or the "current" row would not be the shipped set and
+// every delta below would be measured from somewhere the set has never been.
+const biometrics = indexBiometrics(loadBiometrics());
+const sizeOptions = {
+  positionSize: calibration.positionSize ?? POSITION_SIZE,
+  sizeModel: calibration.sizeSpeedShare ?? SIZE_SPEED_SHARE,
+};
+const sizes = cards.map(c => biometrics.get(normalizeName(c.name)) ?? null);
 
 const compositeByName = new Map(budgets.map(b => [b.name, b.composite]));
 const composites = cards.map(c => compositeByName.get(c.name));
@@ -61,10 +80,13 @@ export const CANDIDATES = [
   { id: 'current', label: 'current 10-28', opts: {} },
   { id: 'ceiling-32', label: 'ceiling only 10-32', opts: { max: 32 } },
   { id: 'ceiling-34', label: 'ceiling only 10-34', opts: { max: 34 } },
+  { id: 'ceiling-38', label: 'ceiling only 10-38', opts: { max: 38 } },
   { id: 'ends-8-30', label: 'both ends 8-30 (clamp only)', opts: { min: 8, max: 30 } },
   { id: 'wide-8-30', label: 'spread x1.2, 8-30', opts: { min: 8, max: 30, sdScale: 1.2 } },
   { id: 'wide-8-32', label: 'spread x1.2, 8-32', opts: { min: 8, max: 32, sdScale: 1.2 } },
   { id: 'wide-8-31', label: 'spread x1.3, 8-31', opts: { min: 8, max: 31, sdScale: 1.3 } },
+  { id: 'wide-8-34', label: 'spread x1.2, 8-34', opts: { min: 8, max: 34, sdScale: 1.2 } },
+  { id: 'wide-8-34b', label: 'spread x1.3, 8-34', opts: { min: 8, max: 34, sdScale: 1.3 } },
   { id: 'wide-6-34', label: 'spread x1.4, 6-34', opts: { min: 6, max: 34, sdScale: 1.4 } },
   { id: 'wide-4-36', label: 'spread x1.75, 4-36', opts: { min: 4, max: 36, sdScale: 1.75 } },
 ];
@@ -73,7 +95,7 @@ function buildCandidate({ opts }) {
   const reference = widenReference(REFERENCE_TOTALS, opts);
   const totals = mapToReferenceScale(composites, reference);
   return cards.map((c, i) =>
-    respec(c, splitSpeedPower(totals[i], c.pos, shares), {
+    respec(c, splitSpeedPower(totals[i], c.pos, shares, { ...sizeOptions, size: sizes[i] }), {
       salaryModel,
       chartEv: chartEvs[i],
     })
@@ -100,6 +122,10 @@ const rows = CANDIDATES.map(cand => {
     full,
     game,
     topSalary: Math.max(...salaries),
+    // Cards pinned to SALARY_MAX. A scale that pushes several cards onto the
+    // clamp has stopped pricing them apart, which is the roster-construction
+    // tradeoff (design philosophy point 8) quietly failing.
+    salaryClamped: salaries.filter(v => v >= SALARY_MAX).length,
     medianSalary: salaries.slice().sort((a, b) => a - b)[Math.floor(salaries.length / 2)],
     starSalary: Math.round(
       set
@@ -210,8 +236,12 @@ console.log(
   'candidate                     top card   median   top-10 mean   starter S+P (pctile)    $     mean bonus'
 );
 for (const r of rows) {
+  // "1500 *2" — two cards pinned to SALARY_MAX. A scale that puts several cards
+  // on the clamp has stopped pricing its best cards apart, which is the
+  // roster-construction tradeoff (design philosophy point 8) quietly failing.
+  const top = r.salaryClamped ? `${r.topSalary} *${r.salaryClamped}` : String(r.topSalary);
   console.log(
-    `${r.label.padEnd(28)} ${String(r.topSalary).padStart(8)} ${String(r.medianSalary).padStart(8)}` +
+    `${r.label.padEnd(28)} ${top.padStart(8)} ${String(r.medianSalary).padStart(8)}` +
       `   ${String(r.starSalary).padStart(11)}` +
       `   ${`${f(r.game.meanStarterBudget, 1)} (${pct(r.starterPercentile)})`.padStart(20)}` +
       ` ${f(r.game.meanStarterSalary, 0).padStart(6)}   ${f(r.game.meanRollBonus, 2).padStart(10)}`

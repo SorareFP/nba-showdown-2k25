@@ -182,11 +182,16 @@ describe('SEASON_TABLES', () => {
 //      Finals MVP-1</a></b></td>
 //
 // That token ends in `-1`, and `-1` is the entire rule that earns a trophy in
-// src/cards/awards.js. If it ever reached the awards join, a parser that split
-// on whitespace would print a REGULAR-SEASON MVP on the Finals MVP. It does not
-// reach it, for the reason the pbp_stats test above gives — and this is that
-// guarantee stated on the table the awards column is actually read off, with
-// the real markup rather than an analogous one.
+// src/cards/awards.js. A parser that split on whitespace would print a
+// REGULAR-SEASON MVP on the Finals MVP.
+//
+// BOTH TABLES ARE READ NOW — `advancedPost` is where the Finals MVP mark comes
+// from — so the guarantee this file owes is no longer "the playoff rows are
+// never seen" but the stronger and more useful one: THE TWO REQUESTS RETURN
+// DISJOINT ROWS. Asking for `advanced` gets the regular season and only the
+// regular season; asking for `advancedPost` gets the playoffs and only the
+// playoffs. `isolateTableBody` matching the closing quote is what does it, and
+// it is stated here on the real markup rather than an analogous one.
 describe('the awards column', () => {
   const REG = `<table id="advanced"><tbody>
     <tr><td data-append-csv="gilgesh01" data-stat="name_display">Shai Gilgeous-Alexander</td>
@@ -205,7 +210,7 @@ describe('the awards column', () => {
     expect(rows.map(r => r.cells.awards)).toEqual(['MVP-1,CPOY-1,AS,NBA1', 'CPOY-5,AS,NBA2']);
   });
 
-  it('never reads the playoff table, so Finals MVP cannot reach the join', () => {
+  it('never reads the playoff table when asked for the regular season', () => {
     const rows = parseSeasonTableHtml(REG + POST, SEASON_TABLES.advanced.tableId);
     expect(rows).toHaveLength(2);
     for (const row of rows) expect(row.cells.awards, row.playerId).not.toMatch(/Finals/);
@@ -215,6 +220,18 @@ describe('the awards column', () => {
     expect(() => parseSeasonTableHtml(POST, SEASON_TABLES.advanced.tableId)).toThrow(
       /no id="advanced"/
     );
+  });
+
+  it('reads the playoff table, and ONLY it, when asked for the postseason', () => {
+    // The other half of the disjointness, and the half the Finals MVP mark
+    // depends on. The two entries share a slug — same page — and differ only in
+    // the table they isolate, so this is what says the pair is a partition and
+    // not two views of the same rows.
+    const rows = parseSeasonTableHtml(REG + POST, SEASON_TABLES.advancedPost.tableId);
+    expect(rows).toHaveLength(1);
+    expect(rows[0].playerId).toBe('brunsja01');
+    expect(rows[0].cells.awards).toBe('Finals MVP-1');
+    expect(SEASON_TABLES.advancedPost.slug).toBe(SEASON_TABLES.advanced.slug);
   });
 });
 

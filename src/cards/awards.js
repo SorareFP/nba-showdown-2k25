@@ -31,13 +31,11 @@
 //                    (All-Defensive). No rank suffix, because there is no
 //                    single winner to rank against.
 //
-// THOSE TWELVE ARE ALL OF THEM — IN THE TABLE THE GENERATOR ACTUALLY READS,
-// which is a narrower and much more fragile claim than the one this comment
-// used to make, and the difference is worth spelling out because it was checked
-// against the live site and the old wording was WRONG about why.
+// THOSE TWELVE ARE ALL OF THEM IN THE REGULAR-SEASON TABLE. There is a
+// THIRTEENTH, and it is in a different table on the same page.
 //
-// The old wording said Finals MVP "never appears in this column" because
-// Basketball-Reference's season tables are regular-season tables. They are not.
+// ── FINALS MVP, AND THE COMPOUND TOKEN ──────────────────────────────────────
+//
 // `NBA_2026_advanced.html` carries TWO tables — `<table id="advanced">` for the
 // regular season and `<table id="advanced_post">` for the playoffs — and the
 // postseason one carries, on Jalen Brunson's 2026 row:
@@ -45,35 +43,42 @@
 //     <td data-stat="awards"><b><a href="/awards/finals_mvp.html">
 //        Finals MVP-1</a></b></td>
 //
+// That is the WHOLE of the playoff column. Verified live for 2004, 2015, 2021
+// and 2026: the postseason table holds 230-odd rows a season and EXACTLY ONE of
+// them has an awards cell, always `Finals MVP-1`. So reading it adds one mark
+// and cannot add anything else — which is what makes it safe to read at all.
+//
 // THAT TOKEN CONTAINS A SPACE, and it is the one string on the site that could
 // put a REGULAR-SEASON MVP MARK ON A FINALS MVP: a parser splitting on
 // `[,\s]+` yields `Finals` and `MVP-1`, and `MVP-1` satisfies the `-1` rule
-// exactly. Two things stop that, both of them load-bearing and both of them now
-// pinned by tests rather than by luck:
+// exactly. ADMITTING THE MARK DID NOT SOFTEN THAT BY A HAIR, and the way it did
+// not is the point:
 //
-//   THE TABLE IS NEVER READ. `isolateTableBody` matches `id="advanced"`
-//   INCLUDING the closing quote, so `id="advanced_post"` is not a match and the
-//   playoff rows are outside the slice. Checked live: 733 regular-season rows
-//   parsed from that page, 54 with awards, and `Finals` in none of them.
+//   `codesIn` STILL SPLITS ON `,` ALONE. The separator was never widened and
+//   must never be. What changed is TOKEN, which now admits a space INSIDE a
+//   code — so `Finals MVP-1` parses as the single code `Finals MVP` at rank 1,
+//   and `MVP` is not a substring the parser can ever reach. The space went from
+//   being the thing that BROKE the parse to being part of the name, which is
+//   the same protection stated positively and is strictly harder to undo by
+//   accident: there is no longer a "tidy-up" that turns this into an MVP, only
+//   a rewrite.
 //
-//   AND THE TOKEN WOULD BE REFUSED ANYWAY. `codesIn` splits on `,` ALONE — not
-//   on whitespace — and TOKEN then requires the whole token to be
-//   `[A-Za-z0-9]+` with an optional `-{digits}`. `Finals MVP-1` has a space in
-//   the middle, matches nothing, and `parseAwardToken` returns null. So
-//   `awardsEarned('MVP-4,Finals MVP-1')` is empty, and the compound token
-//   cannot be mistaken for the trophy even if the scoping above ever fails.
+//   AND THE CODE IS NOT THE TOKEN. `Finals MVP` is Basketball-Reference's
+//   spelling and it is a poor code and an impossible filename, so the row
+//   declares `token: 'Finals MVP'` and carries the code `FMVP`. The join is
+//   therefore DECLARED rather than implied by string equality — see AWARDS.
 //
-// NEITHER of those is a coincidence to be relied on quietly, so awards.test.js
-// asserts both, by name, against the real strings. If a future reader is tempted
-// to "tidy" the split into `[,\s]+`, that test is what stops him.
+//   AND THE PLAYOFF COLUMN CAN EARN NOTHING ELSE. `postSeason: true` is the
+//   third flag on a row, beside `selection` and `external`, and it is what
+//   `postSeasonAwardsEarned` filters on. The generator reads the regular table
+//   through `awardsEarned` and the playoff table through that one, so no string
+//   in `advanced_post` can ever produce an All-Star selection or a
+//   regular-season trophy however the site rewrites it.
 //
-// FINALS MVP IS NOT A MARK, and that is a decision rather than a limitation: the
-// user has not asked for one, so the default is to leave it out. What matters is
-// only that it never masquerades as the regular-season MVP, which is what the
-// above is about. Adding it later would be a row here plus reading the
-// `advanced_post` table — not a change to any rule below.
+// NONE of those is a coincidence to be relied on quietly, so awards.test.js
+// asserts all three, by name, against the real strings.
 //
-// SEVEN OF THE TWELVE PRINT: the six trophies, and ALL-STAR.
+// NINE OF THE THIRTEEN PRINT: the six trophies, FINALS MVP, the ring, ALL-STAR.
 //
 // All-Star is here on the user's call — "AS should map to the All-Star file" —
 // made with the cost in front of him, and it is a real cost. Measured on the
@@ -143,8 +148,28 @@ export const AWARD_WIN_RANK = 1;
  * Anything that is not one of those two shapes returns null rather than
  * throwing. The string comes off a scraped page: a site change should cost a
  * card its mark, not take the generator down.
+ *
+ * ── THE SPACE IS PART OF THE CODE, NEVER A SEPARATOR ────────────────────────
+ *
+ * A code may contain SINGLE INTERNAL SPACES — `Finals MVP` is the site's own
+ * spelling and the only such code today. That is a widening of what a code may
+ * LOOK like and emphatically not of how a string is SPLIT: `codesIn` divides on
+ * `,` alone, exactly as it always has, so a space can only ever appear in the
+ * middle of a token this regex then swallows whole.
+ *
+ * WHICH IS THE PROTECTION, RESTATED. `Finals MVP-1` yields the one code
+ * `Finals MVP` at rank 1. It does not yield `MVP`, because `MVP` is not a token
+ * — the anchors mean the code runs from the start of the token to the rank, and
+ * a parser that matched a suffix of it would have to be a different parser.
+ * `parseAwardToken('Finals MVP-1').code` is asserted to be `'Finals MVP'` in
+ * awards.test.js for exactly this reason.
+ *
+ * `(?: [A-Za-z0-9]+)*` and not `[\s]*`: ONE space, never a tab, a newline or a
+ * run — so a cell that arrives with its whitespace mangled by a site change
+ * fails to parse and costs a card its mark, which is the scraped-string
+ * contract above rather than a guess at what was meant.
  */
-const TOKEN = /^([A-Za-z0-9]+)(?:-(\d+))?$/;
+const TOKEN = /^([A-Za-z0-9]+(?: [A-Za-z0-9]+)*)(?:-(\d+))?$/;
 
 export function parseAwardToken(token) {
   const m = TOKEN.exec(String(token ?? '').trim());
@@ -204,6 +229,26 @@ function codesIn(raw, keep) {
  * ends and barely one in the middle:
  *
  *   MVP    the league's award. Nothing else on this list is argued about.
+ *   FMVP   SECOND, and the placement is an argument rather than a taste:
+ *
+ *          BY THE RARITY RULE it belongs among the trophies and not below the
+ *          ring. Every one of the six has exactly ONE holder a season and so
+ *          does this; a championship has fifteen to twenty. The user's own
+ *          words for it were "rarer than a ring", and that is measurable rather
+ *          than a feeling — over the twenty-three seasons this build reads,
+ *          twenty-three men won it and roughly four hundred wear the ring.
+ *
+ *          AND IT MUST OUTRANK THE RING SPECIFICALLY, because it IMPLIES the
+ *          ring: a Finals MVP is on the winning team by definition, so every
+ *          card that holds this holds CHAMP too. If those two were the other
+ *          way round, a capped row would drop the rarer mark and keep the one
+ *          it is entailed by — printing the weaker half of the same fact. See
+ *          MAX_CARD_AWARDS for why that is the drop order and not a coincidence.
+ *
+ *          ABOVE DPOY because it is the other award named Most Valuable Player
+ *          and is decided on the games that decide the title, and BELOW MVP
+ *          because a season outranks a series. That last one is the only line
+ *          here anybody could reasonably want drawn elsewhere.
  *   DPOY   its defensive counterpart, and the only other award voted on the
  *          whole of a player's game rather than on a slice of it.
  *   ROY    a career fact as much as a season one, and unrepeatable — which is
@@ -260,21 +305,62 @@ function codesIn(raw, keep) {
  * header says why they are not there — the door being cheap is not a reason to
  * walk through it.
  *
- * The CODE IS THE FILENAME BY DEFAULT, and `file` is the exception that proves
- * why. `/awards/{file ?? code}` under public/ — see awardImagePath. For the
- * seven codes that come out of Basketball-Reference's column the two must be
- * the same string, because the code is not ours to choose: it is the site's
- * spelling, it is the side of the join that cannot be renamed, and the art has
- * to be named to match. The user's All-Star file is therefore `AS.…`, not
- * `All-Star.…`.
+ * ── `token` — WHEN THE SITE'S SPELLING CANNOT BE THE CODE ───────────────────
  *
- * CHAMP IS THE ONE ROW WITH NO SUCH CONSTRAINT. It is not read out of that
- * column and Basketball-Reference has no token for it, so there is no external
- * spelling to honour — which frees the code to be short and semantic and the
- * FILE to be whatever the user actually saved. He saved
- * `public/awards/LarryOBrien.jpg`, named for the trophy, and renaming a file in
- * a directory he is actively curating to satisfy a convention that exists for a
- * different reason would be the tail wagging the dog.
+ * THE CODE IS THE JOIN KEY BY DEFAULT: for the seven codes that come out of
+ * Basketball-Reference's column as bare initialisms, `code` IS the site's
+ * string, because that side of the join is not ours to rename.
+ *
+ * `Finals MVP` breaks that, and it is the reason this field exists. It is the
+ * site's spelling, so the join must use it; and it contains a SPACE, so it is a
+ * poor code (`byCode` keys, run-report columns, anything a reader types) and an
+ * impossible filename stem. `token` splits the two jobs: the row joins on
+ * `token ?? code` and is known everywhere else by `FMVP`.
+ *
+ * Which also makes the join DECLARED. Before this, "the code equals the site's
+ * token" was a convention held up by nothing; now the one row that departs from
+ * it says so in the row, and `awardsEarned` reads `token ?? code` rather than
+ * assuming.
+ *
+ * ── `file` — WHEN THE FILENAME IS NOT THE CODE EITHER ───────────────────────
+ *
+ * The CODE IS THE FILENAME BY DEFAULT — `/awards/{file ?? code}` under public/,
+ * see awardImagePath — and `file` is the exception. It is needed exactly when
+ * nothing external dictates the spelling, because then the user's own saved
+ * filename is the only fact in play and renaming a file in a directory he is
+ * actively curating would be the tail wagging the dog. Two rows use it:
+ *
+ *   CHAMP  is not in that column at all and Basketball-Reference has no token
+ *          for it, so there is no external spelling to honour. He saved
+ *          `public/awards/LarryOBrien.jpg`, named for the trophy.
+ *
+ *   FMVP   has an external TOKEN but no external FILENAME — `token` is what
+ *          carries the site's spelling now, which frees the stem completely. He
+ *          saved `Finals_MVP`, so that is the stem.
+ *
+ * The five plain rows need neither field, and that is the shape to keep: a row
+ * declares only the ways in which it is unusual.
+ *
+ * ── `postSeason: true` — WHICH TABLE THIS CODE MAY COME OUT OF ──────────────
+ *
+ * The third flag, and the narrowest. `selection` says a code is HELD rather
+ * than WON; `external` says it is not in the awards column at all; `postSeason`
+ * says it is in the awards column of the PLAYOFF table and only there.
+ *
+ * It exists because the generator now reads two tables, and the whole risk of
+ * doing so is the playoff column contributing something it should not. The flag
+ * makes that a rule instead of an observation: `postSeasonAwardsEarned` keeps
+ * only rows carrying it, so no string in `advanced_post` can produce an
+ * All-Star selection or a regular-season trophy — not today, when that column
+ * holds nothing but `Finals MVP-1`, and not if the site starts repeating the
+ * regular-season cell there tomorrow.
+ *
+ * Deliberately NOT the mirror rule. `awardsEarned` does not exclude postSeason
+ * rows, so a `Finals MVP-1` that ever appeared in the REGULAR table would still
+ * mark the card. That direction is harmless — it is the same man with the same
+ * trophy — and refusing it would mean losing a real mark to a site
+ * reorganisation. The guard is one-directional because only one direction is
+ * dangerous.
  *
  * ── `external: true` — THIS ROW IS NOT IN THE AWARDS STRING ─────────────────
  *
@@ -293,6 +379,14 @@ function codesIn(raw, keep) {
  */
 export const AWARDS = [
   { code: 'MVP', name: 'Most Valuable Player' },
+  {
+    code: 'FMVP',
+    name: 'Finals MVP',
+    // Basketball-Reference's own spelling, space and all — see `token` above.
+    token: 'Finals MVP',
+    file: 'Finals_MVP',
+    postSeason: true,
+  },
   { code: 'DPOY', name: 'Defensive Player of the Year' },
   { code: 'ROY', name: 'Rookie of the Year' },
   { code: 'MIP', name: 'Most Improved Player' },
@@ -337,18 +431,47 @@ export function getAward(code) {
  * earn CHAMP, however it is spelled, because the ring is a team fact resolved
  * from a roster and not a token in this column. Nothing else earns a mark.
  *
- * AND THE COMPOUND TOKEN IS REFUSED. `Finals MVP-1` is a real string on
- * Basketball-Reference — see the header — and it reaches neither half: `codesIn`
- * splits on `,` alone and TOKEN rejects the embedded space, so
- * `awardsEarned('MVP-4,Finals MVP-1')` is empty rather than an MVP.
+ * MATCHED ON `token ?? code`, which is the row's side of the join and the whole
+ * of what `token` is for: `FMVP` is what this build calls the mark and
+ * `Finals MVP` is what Basketball-Reference calls it, and only one of those two
+ * strings is ever compared against a scraped cell.
+ *
+ * AND THE COMPOUND TOKEN STILL CANNOT BECOME AN MVP. `Finals MVP-1` parses as
+ * the single code `Finals MVP` — the space is inside the code, `codesIn` splits
+ * on `,` alone, and `MVP` is not a token anywhere in that string. So
+ * `awardsEarned('MVP-4,Finals MVP-1')` is `['FMVP']`: the Finals MVP he won,
+ * and not the regular-season MVP he came fourth in.
  */
 export function awardsEarned(raw) {
   const won = new Set(awardsWon(raw));
   const held = new Set(selectionsIn(raw));
   return AWARDS.filter(a => {
     if (a.external) return false;
-    return a.selection ? held.has(a.code) : won.has(a.code);
+    const key = a.token ?? a.code;
+    return a.selection ? held.has(key) : won.has(key);
   }).map(a => a.code);
+}
+
+/**
+ * The DECLARED codes a PLAYOFF awards string earns, in priority order.
+ *
+ * The `advanced_post` table's column, and the one door it is allowed through.
+ * `postSeason: true` is the filter — see AWARDS — so today this can return
+ * `['FMVP']` or nothing at all, and there is no string it can be handed that
+ * produces a regular-season trophy or an All-Star selection.
+ *
+ * THAT IS THE POINT OF HAVING A SECOND FUNCTION rather than an argument to the
+ * first. The generator reads two tables and must not confuse them; two named
+ * doors make the call site say which table it is holding, where a boolean would
+ * have made it say `true`.
+ *
+ * Built on `awardsEarned` rather than beside it, so the `-1` rule, the
+ * `token` join and the `external` guard are all the SAME code — a Finals MVP
+ * still has to have finished first, and `postSeason` narrows what may be
+ * returned without loosening anything about how it is read.
+ */
+export function postSeasonAwardsEarned(raw) {
+  return awardsEarned(raw).filter(code => getAward(code)?.postSeason === true);
 }
 
 /**
@@ -387,33 +510,32 @@ export function orderAwardCodes(codes) {
  * whether the card holds three marks or four. The number that used to be the
  * bar's width is now the second row's occupancy, and it is 4.
  *
- * ── AND FOUR IS HEADROOM RATHER THAN A CHANGE ──────────────────────────────
+ * ── AND THE FOURTH MARK IS NOW SPENT ───────────────────────────────────────
  *
- * NOTHING IS DROPPED TODAY AND NOTHING WAS BEING DROPPED BEFORE. Measured on
- * the generated file rather than argued (`mostHeld` in card-awards.json):
+ * NOTHING IS DROPPED TODAY. Measured on the generated file rather than argued
+ * (`mostHeld` in card-awards.json):
  *
  *        2026-27       most held 3   40 of 61 marked   4 with more than one
- *        super-season  most held 3   51 of 82 marked  13 with more than one
+ *        super-season  most held 4   51 of 82 marked  13 with more than one
  *        rookie        most held 1   17 of 76 marked   0 with more than one
  *
- * — a maximum of THREE across all three sets, and exactly two cards reach it,
- * both of them Shai Gilgeous-Alexander: the 2026-27 base card
- * (`MVP-1,CPOY-1,AS,NBA1` -> MVP + CPOY + AS) and the Super Season card of his
- * 2024-25 (`MVP-1,DPOY-10,CPOY-8,AS,NBA1` plus Oklahoma City's title -> MVP +
- * CHAMP + AS). So the cap sat exactly ON the ceiling, which is the state it was
- * raised past three to avoid; it now sits one above, and the fourth mark is
- * free.
+ * THE FOUR IS SHAI GILGEOUS-ALEXANDER'S 2024-25 SUPER SEASON CARD, and it is
+ * the exact card this number was raised past three for. `MVP-1,DPOY-10,
+ * CPOY-8,AS,NBA1` in the regular-season column, `Finals MVP-1` in the playoff
+ * one, and Oklahoma City's title: MVP + FMVP + CHAMP + AS. Before Finals MVP
+ * was a mark he held three of those and the cap sat one clear; admitting the
+ * mark spent that headroom on the first card that could use it, which is what
+ * headroom is for and is also why `capped` is worth counting every run.
  *
- * A FOURTH IS REACHABLE, which is why the headroom is worth having: a player
- * who wins a trophy, makes the All-Star team and wins the title already holds
- * three, and one more trophy in the same season makes four. Giannis
- * Antetokounmpo's 2019-20 (MVP + DPOY + AS) is three of those four; had
- * Milwaukee won that June it would have been the card this number exists for.
+ * A FIFTH IS REACHABLE and would be dropped. It needs a man who won two
+ * regular-season trophies, the Finals MVP, the title and an All-Star place in
+ * one season — nobody has, and if he ever does the All-Star nod is what goes.
  *
  * `pickAwards` drops from the BOTTOM of the priority order when it must, so the
  * mark that goes is always the least of them — All-Star first, then the ring,
  * and never a trophy. That ordering is the reason a fifth mark could not cost a
- * card its MVP.
+ * card its MVP, and the reason a capped Finals MVP keeps the trophy and drops
+ * the ring it implies rather than the other way round. See AWARDS.
  */
 export const MAX_CARD_AWARDS = 4;
 
@@ -461,12 +583,16 @@ export function pickAwards(codes) {
  * not a browser — a Node exporter can hand this to `assetCandidates` and
  * resolve it against the filesystem with the same list.
  *
- * THE STEM IS THE ROW'S `file`, WHICH DEFAULTS TO ITS CODE. For the seven codes
- * Basketball-Reference names, those are the same string and the stem is not
- * negotiable: the All-Star mark is `AS.…`, and `All-Star.webp` is a file
- * nothing asks for. CHAMP is the row that declares a `file` instead —
- * `LarryOBrien`, which is what the user saved — and the reason it may is that
- * no external source dictates its spelling. See AWARDS.
+ * THE STEM IS THE ROW'S `file`, WHICH DEFAULTS TO ITS CODE. For the six codes
+ * Basketball-Reference names as bare initialisms, those are the same string and
+ * the stem is not negotiable: the All-Star mark is `AS.…`, and `All-Star.webp`
+ * is a file nothing asks for.
+ *
+ * TWO ROWS DECLARE A `file` INSTEAD, and both may because no external source
+ * dictates their FILENAME: CHAMP (`LarryOBrien`), which is in no column at all,
+ * and FMVP (`Finals_MVP`), whose site spelling lives in `token` and could not
+ * be a filename anyway — `Finals MVP.png` would put a space in a URL. Both are
+ * what the user actually saved. See AWARDS.
  *
  * A card whose art is missing under every accepted format falls back to the
  * lettered chip — see AwardMark in CardTemplate.jsx.

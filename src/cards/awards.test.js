@@ -12,6 +12,7 @@ import {
   awardsEarned,
   awardsWon,
   getAward,
+  postSeasonAwardsEarned,
   selectionsIn,
   parseAwardToken,
   pickAwards,
@@ -189,42 +190,98 @@ describe('the -1 rule', () => {
 // `Finals` and `MVP-1`, and the second of those is indistinguishable from the
 // real thing.
 //
-// TWO SEPARATE THINGS STOP IT and this is where both are pinned, because
-// neither is obvious enough to survive a tidy-up unpinned:
+// THE TOKEN IS NOW READ RATHER THAN REFUSED, and the protection did not move an
+// inch — it changed from "the parser cannot make sense of this" to "the parser
+// knows exactly what this is, and it is not an MVP". The space is INSIDE the
+// code: `Finals MVP-1` is the single code `Finals MVP` at rank 1, `codesIn`
+// still splits on ',' ALONE, and `MVP` is not a token anywhere in that string.
 //
-//   parseSeasonTableHtml never reads that table — `isolateTableBody` matches
-//   `id="advanced"` INCLUDING the closing quote, so `advanced_post` is not a
-//   match. That half is pinned in sources/basketballReference.test.js.
+// THREE SEPARATE THINGS KEEP IT HONEST and this is where all three are pinned,
+// because none is obvious enough to survive a tidy-up unpinned:
 //
-//   And this file's parser would refuse the token anyway, which is the half
-//   below. It is the one that matters if the scoping ever fails.
+//   The regular-season table still never carries it — `isolateTableBody` matches
+//   `id="advanced"` INCLUDING the closing quote, so a request for `advanced` is
+//   not a request for `advanced_post`. Pinned in sources/basketballReference.test.js.
+//
+//   The whole token is one code, below.
+//
+//   And the playoff column can earn NOTHING BUT this trophy, which is
+//   `postSeason: true` and `postSeasonAwardsEarned`, also below.
 describe('a compound award token', () => {
-  it('refuses `Finals MVP-1` rather than reading an MVP out of it', () => {
-    // The space is what does it: `codesIn` splits on ',' ALONE, and TOKEN then
-    // requires the whole token to be [A-Za-z0-9]+ with an optional -{digits}.
-    // If anyone is ever tempted to "tidy" that split into /[,\s]+/, this fails.
-    expect(parseAwardToken('Finals MVP-1')).toBeNull();
-    expect(awardsWon('Finals MVP-1')).toEqual([]);
+  it('reads `Finals MVP-1` as one code, with the space inside it', () => {
+    // THE WHOLE PROTECTION, IN ONE ASSERTION. The code is `Finals MVP` — not
+    // `Finals`, not `MVP`. If anyone is ever tempted to "tidy" the split in
+    // `codesIn` into /[,\s]+/, or to let TOKEN match a suffix of its input,
+    // these fail.
+    expect(parseAwardToken('Finals MVP-1')).toEqual({ code: 'Finals MVP', rank: 1 });
+    expect(awardsWon('Finals MVP-1')).toEqual(['Finals MVP']);
     expect(selectionsIn('Finals MVP-1')).toEqual([]);
-    expect(awardsEarned('Finals MVP-1')).toEqual([]);
+    expect(awardsEarned('Finals MVP-1')).toEqual(['FMVP']);
   });
 
-  it('does not let it become an MVP mark beside a losing MVP finish', () => {
+  it('still needs its -1, exactly as every other trophy does', () => {
+    // Admitting the mark did not soften the rank rule for it. There is only ever
+    // one Finals MVP so a `-2` has never been seen; the rule is uniform anyway,
+    // because "the suffix is a finishing position" is a fact about the column
+    // and not about any one award.
+    expect(awardsEarned('Finals MVP-2')).toEqual([]);
+    expect(awardsEarned('Finals MVP')).toEqual([]);
+  });
+
+  it('does not become a REGULAR-SEASON MVP mark beside a losing MVP finish', () => {
     // The failure in the shape it would actually take: a player who came fourth
-    // in the regular-season voting and won the Finals MVP. Neither token earns
-    // a trophy, so neither does the pair.
-    expect(awardsEarned('MVP-4,Finals MVP-1')).toEqual([]);
+    // in the regular-season voting and won the Finals MVP. He gets the Finals
+    // MVP and emphatically not the MVP.
+    expect(awardsEarned('MVP-4,Finals MVP-1')).toEqual(['FMVP']);
+    expect(awardsEarned('MVP-4,Finals MVP-1')).not.toContain('MVP');
     // Brunson's real 2026 pair of strings, regular season and postseason, run
-    // together. The All-Star selection is earned; nothing else is.
-    expect(awardsEarned('CPOY-5,AS,NBA2,Finals MVP-1')).toEqual(['AS']);
-    expect(awardsEarned('Finals MVP-1,AS')).toEqual(['AS']);
+    // together. The All-Star selection and the Finals MVP; not the fifth-place
+    // Clutch Player finish and not the All-NBA second team.
+    expect(awardsEarned('CPOY-5,AS,NBA2,Finals MVP-1')).toEqual(['FMVP', 'AS']);
+    expect(awardsEarned('Finals MVP-1,AS')).toEqual(['FMVP', 'AS']);
   });
 
-  it('leaves the rest of the string alone, rather than dropping it', () => {
-    // A token it cannot parse costs that token its mark and nothing else — the
-    // scraped-string contract in the header. A site change must not silently
-    // strip a card of the trophy it did win.
-    expect(awardsEarned('MVP-1,Finals MVP-1')).toEqual(['MVP']);
+  it('leaves the rest of the string alone', () => {
+    // Both marks, in declared order, off one string — the case where a man wins
+    // the MVP and the Finals MVP in the same season. Twelve have.
+    expect(awardsEarned('MVP-1,Finals MVP-1')).toEqual(['MVP', 'FMVP']);
+  });
+
+  it('admits ONE space and not a run of whitespace', () => {
+    // The scraped-string contract: a cell whose whitespace a site change has
+    // mangled fails to parse and costs a card its mark, rather than being
+    // guessed at. A tab or a newline is not a space.
+    expect(parseAwardToken('Finals  MVP-1')).toBeNull();
+    expect(parseAwardToken('Finals\tMVP-1')).toBeNull();
+    expect(parseAwardToken('Finals\nMVP-1')).toBeNull();
+  });
+});
+
+// ── THE PLAYOFF COLUMN'S ONE DOOR ───────────────────────────────────────────
+//
+// The generator reads two tables and the whole risk of that is the playoff one
+// contributing something it should not. `postSeason: true` on the FMVP row is
+// what makes "it can only ever add a Finals MVP" a rule instead of an
+// observation about today's data.
+describe('what the postseason column may earn', () => {
+  it('keeps the Finals MVP and nothing else, whatever the string says', () => {
+    expect(postSeasonAwardsEarned('Finals MVP-1')).toEqual(['FMVP']);
+    // If Basketball-Reference ever started repeating the regular-season cell in
+    // the playoff table, none of it would reach a card through this door.
+    expect(postSeasonAwardsEarned('MVP-1,DPOY-1,AS,Finals MVP-1')).toEqual(['FMVP']);
+    expect(postSeasonAwardsEarned('MVP-1,CPOY-1,AS')).toEqual([]);
+    expect(postSeasonAwardsEarned(null)).toEqual([]);
+  });
+
+  it('is the only door that admits it, and the other one is not narrowed', () => {
+    // ONE-DIRECTIONAL ON PURPOSE. The dangerous direction is the playoff column
+    // producing a regular-season mark, and that is shut. The reverse is
+    // harmless — the same man with the same trophy — so `awardsEarned` is not
+    // made to refuse it, and a site reorganisation cannot cost a card the mark.
+    expect(awardsEarned('Finals MVP-1')).toEqual(['FMVP']);
+    // And no regular-season trophy can be smuggled through the playoff door by
+    // spelling it like one.
+    expect(postSeasonAwardsEarned('FMVP-1')).toEqual([]);
   });
 });
 
@@ -261,9 +318,9 @@ describe('the externally-resolved championship mark', () => {
 
 // ── THE DECLARATION ─────────────────────────────────────────────────────────
 describe('the declared awards', () => {
-  it('is the six voted trophies, the ring and All-Star, and no other selection', () => {
+  it('is the six voted trophies, Finals MVP, the ring and All-Star', () => {
     expect(AWARD_CODES).toEqual([
-      'MVP', 'DPOY', 'ROY', 'MIP', '6MOY', 'CPOY', 'CHAMP', 'AS',
+      'MVP', 'FMVP', 'DPOY', 'ROY', 'MIP', '6MOY', 'CPOY', 'CHAMP', 'AS',
     ]);
     // The four that stay out, named so this is a decision on the record rather
     // than an omission: All-NBA puts 15 more players on the list every season
@@ -274,6 +331,22 @@ describe('the declared awards', () => {
     }
     // Exactly one row is a selection, and it is the one the user asked for.
     expect(getAward('AS')).toEqual({ code: 'AS', name: 'All-Star', selection: true });
+    // And exactly one row declares a `token`, because exactly one code on
+    // Basketball-Reference is not a bare initialism. A second row growing one
+    // silently would mean a second string this file joins on.
+    expect(AWARDS.filter(a => a.token).map(a => a.code)).toEqual(['FMVP']);
+    expect(getAward('FMVP')).toEqual({
+      code: 'FMVP',
+      name: 'Finals MVP',
+      token: 'Finals MVP',
+      file: 'Finals_MVP',
+      postSeason: true,
+    });
+    // The five plain rows declare nothing but a code and a name — a row says
+    // only how it is unusual, and these are not.
+    for (const code of ['MVP', 'DPOY', 'ROY', 'MIP', '6MOY', 'CPOY']) {
+      expect(Object.keys(getAward(code)).sort(), code).toEqual(['code', 'name']);
+    }
   });
 
   it('orders by standing, MVP first and All-Star last', () => {
@@ -317,8 +390,22 @@ describe('the marks a card prints', () => {
     // bottom of the priority order, so the MVP is never the one dropped.
     const all = pickCodes([...AWARD_CODES]);
     expect(all).toHaveLength(MAX_CARD_AWARDS);
-    expect(all).toEqual(['MVP', 'DPOY', 'ROY', 'MIP']);
+    expect(all).toEqual(['MVP', 'FMVP', 'DPOY', 'ROY']);
     expect(MAX_CARD_AWARDS).toBe(4);
+  });
+
+  it('keeps the Finals MVP over the ring it implies', () => {
+    // EVERY Finals MVP holds the ring — he is on the winning team by
+    // definition — so the two marks say overlapping things and one of them is
+    // twenty times rarer. The order has to drop the ring first, or a capped row
+    // would print the weaker half of the same fact. See AWARDS.
+    expect(AWARD_CODES.indexOf('FMVP')).toBeLessThan(AWARD_CODES.indexOf('CHAMP'));
+    expect(pickCodes(['MVP', 'DPOY', 'AS', 'CHAMP', 'FMVP'])).toEqual([
+      'MVP', 'FMVP', 'DPOY', 'CHAMP',
+    ]);
+    // The real shape it takes: a Finals MVP who also made the All-Star team and
+    // won the title prints all three, in that order, under the cap.
+    expect(pickCodes(['AS', 'CHAMP', 'FMVP'])).toEqual(['FMVP', 'CHAMP', 'AS']);
   });
 
   it('drops ALL-STAR first when the cap bites, whatever else is on the card', () => {

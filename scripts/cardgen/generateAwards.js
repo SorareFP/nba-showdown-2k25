@@ -64,6 +64,7 @@ import {
   MAX_CARD_AWARDS,
   awardsEarned,
   orderAwardCodes,
+  postSeasonAwardsEarned,
   selectionsIn,
 } from '../../src/cards/awards.js';
 import {
@@ -91,15 +92,42 @@ export const AWARDS_FILE = path.join(GEN_DIR, 'card-awards.json');
 export const AWARDS_CACHE_KEY = season => `bbref-${season}-awards`;
 
 /**
- * WHICH TABLE THE COLUMN IS READ OFF.
+ * The cache key one season's PLAYOFF awards column is stored under.
+ *
+ * A SECOND KEY RATHER THAN A WIDER FIRST ONE, for exactly the reason
+ * AWARDS_CACHE_KEY gives for existing at all. Twenty-three
+ * `bbref-{season}-awards.json` files are committed and correct; folding the
+ * playoff rows into them would invalidate every one and force a re-scrape of
+ * pages this repo already has. A new key is additive — nothing that exists is
+ * stale, and a rebuild fetches only what is genuinely new.
+ *
+ * It also keeps the two tables apart in the FILE, which is worth more than the
+ * saved requests: a reader can see that the regular-season cache holds no
+ * `Finals` anywhere and the playoff cache holds nothing else.
+ */
+export const POST_AWARDS_CACHE_KEY = season => `bbref-${season}-awards-post`;
+
+/**
+ * WHICH TABLES THE COLUMN IS READ OFF.
  *
  * `advanced` — one row per player per team, the same table history.js already
  * reads, and it carries `awards` on every season checked (2004, 2025, 2026).
  * The choice is not free: the four season tables list the same players but the
  * awards column is a per-PLAYER fact, so reading it off two of them would be
  * two chances to disagree. One table, named here.
+ *
+ * `advanced_post` — THE SAME PAGE'S PLAYOFF TABLE, and the exception that
+ * proves the rule above rather than breaking it. It is not a second chance to
+ * disagree, because it does not carry the same facts: its awards column holds
+ * ONE cell a season and that cell is always `Finals MVP-1` (verified live for
+ * 2004, 2015, 2021 and 2026), a trophy the regular-season table has never
+ * carried. The two tables are read into two fields and joined by two functions
+ * — `awardsEarned` for the first and `postSeasonAwardsEarned` for the second —
+ * so a playoff string cannot produce a regular-season mark even if the site
+ * starts repeating the cell. See src/cards/awards.js.
  */
 export const AWARDS_TABLE = 'advanced';
+export const POST_AWARDS_TABLE = 'advancedPost';
 
 /**
  * One season's awards, as `{ playerId, name, awards }` for the players who have
@@ -138,6 +166,34 @@ export async function loadSeasonAwards(season, { fetchImpl = fetch, force = fals
         source: `https://www.basketball-reference.com/leagues/NBA_${season}_${SEASON_TABLES[AWARDS_TABLE].slug}.html`,
         season,
         kind: 'awards',
+      },
+    }
+  );
+}
+
+/**
+ * Fetches (or reads from cache) one season's PLAYOFF awards column.
+ *
+ * SAME URL AS ABOVE, second table — so a cold rebuild costs two requests for
+ * one page. Deliberate, and cheap at the scale this runs: the alternative is a
+ * fetch layer that returns several parsed tables per page, which would be a
+ * change to every caller of `fetchSeasonTable` to save twenty-three requests
+ * once. The cache is what makes it once.
+ *
+ * `extractAwards` is reused unchanged: the playoff table has the same shape,
+ * the same `data-append-csv` ids and the same awards cell, and a player traded
+ * mid-season has the same several rows there too.
+ */
+export async function loadSeasonPostAwards(season, { fetchImpl = fetch, force = false } = {}) {
+  return cached(
+    POST_AWARDS_CACHE_KEY(season),
+    async () => extractAwards(await fetchSeasonTable(season, POST_AWARDS_TABLE, { fetchImpl })),
+    {
+      force,
+      meta: {
+        source: `https://www.basketball-reference.com/leagues/NBA_${season}_${SEASON_TABLES[POST_AWARDS_TABLE].slug}.html#${SEASON_TABLES[POST_AWARDS_TABLE].tableId}`,
+        season,
+        kind: 'awards-post',
       },
     }
   );
@@ -217,15 +273,25 @@ export function statsSeasonEndYear(set) {
  * countAwards is computed from it, and the header of src/cards/awards.js
  * quotes the result.
  */
-function awardRecord(card, row, season, championEntry = null) {
-  // TWO SOURCES, EITHER OF WHICH IS ENOUGH. The awards column is one; the
-  // champion's roster is the other, and it is the reason this no longer returns
-  // early on a missing `row`. Most of a title-winning roster wins nothing
-  // individually — fourteen of the Knicks' twenty in 2026 have no awards string
-  // at all — and a guard that required one would have handed the ring to the
-  // stars and to nobody else, which is the opposite of what a team fact means.
-  if (!row && !championEntry) return null;
+function awardRecord(card, row, season, championEntry = null, postRow = null) {
+  // THREE SOURCES, ANY OF WHICH IS ENOUGH. The regular-season awards column is
+  // one; the champion's roster is the second, and it is the reason this does
+  // not return early on a missing `row` — most of a title-winning roster wins
+  // nothing individually (fourteen of the Knicks' twenty in 2026 have no awards
+  // string at all) and a guard that required one would have handed the ring to
+  // the stars and to nobody else, which is the opposite of what a team fact
+  // means. The PLAYOFF column is the third, and it is the same argument once
+  // more: a Finals MVP need not have won anything in the regular season, and
+  // Andre Iguodala's 2015 is exactly that card — no regular-season awards
+  // string at all, and the Finals MVP.
+  if (!row && !championEntry && !postRow) return null;
   const earned = awardsEarned(row?.awards);
+  // THE PLAYOFF STRING GOES THROUGH ITS OWN DOOR, never through `awardsEarned`.
+  // That is the whole guard: `postSeasonAwardsEarned` keeps only codes declared
+  // `postSeason`, so this column can contribute a Finals MVP and nothing else —
+  // not an All-Star selection, not a regular-season trophy — however the site
+  // rewrites it. See src/cards/awards.js.
+  const earnedInPlayoffs = postSeasonAwardsEarned(postRow?.awards);
   return {
     id: card.id,
     name: card.name,
@@ -239,13 +305,22 @@ function awardRecord(card, row, season, championEntry = null) {
     // they agree where both are present (the roster and the season table are
     // the same site's key for the same man); the awards row is preferred only
     // because it is the join this file was built around.
-    bbrefId: row?.playerId ?? championEntry?.playerId ?? null,
+    bbrefId: row?.playerId ?? championEntry?.playerId ?? postRow?.playerId ?? null,
     // Null rather than absent when the only reason this card has a record is
     // the ring: `raw` is the EVIDENCE for the -1 rule, and a champion with no
     // awards string has no such evidence to record. An empty string would read
     // as "the column was empty", which is a different fact from "he is here for
     // something that was never in the column".
     raw: row?.awards ?? null,
+    // THE PLAYOFF COLUMN'S OWN STRING, kept in its own field and never
+    // concatenated into `raw`. Two reasons, and the second is the load-bearing
+    // one. It is the same evidence argument as `raw` — a reader can see that
+    // `Finals MVP-1` is what produced the mark. And joining the two strings
+    // would hand ONE string to whichever parser ran on it, which is precisely
+    // the confusion the two-door design exists to prevent: `raw` is read by
+    // `awardsEarned` and this is read by `postSeasonAwardsEarned`, and neither
+    // can ever see the other's cell.
+    rawPost: postRow?.awards ?? null,
     // The TEAM he won it with, in Basketball-Reference's own abbreviation for
     // that season — NJN in 2011, BRK in 2013. Recorded because "why does this
     // card have a ring" is the first question anyone will ask of the output,
@@ -254,9 +329,14 @@ function awardRecord(card, row, season, championEntry = null) {
     // Declared codes only — the file records what a card may PRINT, and `raw`
     // above is what it records for everything it does not. `awardsEarned` is
     // where the -1 rule and the declaration meet; `orderAwardCodes` is what
-    // puts the externally-resolved ring in its declared place rather than on
-    // the end. See src/cards/awards.js.
-    awards: orderAwardCodes(championEntry ? [...earned, CHAMPION_CODE] : earned),
+    // puts the externally-resolved ring, and now the playoff column's trophy,
+    // in their declared places rather than on the end. THREE lists arrive here
+    // in three different orders and exactly one leaves. See src/cards/awards.js.
+    awards: orderAwardCodes([
+      ...earned,
+      ...earnedInPlayoffs,
+      ...(championEntry ? [CHAMPION_CODE] : []),
+    ]),
   };
 }
 
@@ -296,6 +376,29 @@ export function championIndex(champion) {
 }
 
 /**
+ * Award rows indexed by the cross-source name key, throwing on a collision.
+ *
+ * Shared by the two tables so the guard is written once and cannot drift: a
+ * name that is unsafe to join on is unsafe whichever column it came out of.
+ * `what` names the table in the error, because "two award rows collide" is a
+ * different thing to go and look at from "two playoff award rows collide".
+ */
+function indexAwardsByName(rows, what) {
+  const byKey = new Map();
+  for (const row of rows ?? []) {
+    const key = normalizeName(row.name);
+    if (byKey.has(key)) {
+      throw new Error(
+        `generateAwards: two ${what} rows normalize to ${JSON.stringify(key)} ` +
+          `(${byKey.get(key).name} / ${row.name}) — the name join is unsafe`
+      );
+    }
+    byKey.set(key, row);
+  }
+  return byKey;
+}
+
+/**
  * The base set's cards joined to one season's awards BY NAME.
  *
  * BY NAME BECAUSE THERE IS NOTHING ELSE. cards-2026-27.json carries no
@@ -308,20 +411,15 @@ export function championIndex(champion) {
  * normalized name would silently give one of them the other's trophy, so the
  * key is required to be unique on BOTH sides and the run throws if it is not.
  * A generator that stops is recoverable; an MVP on the wrong card is not.
+ *
+ * `postSeasonAwards` is the playoff table's rows for the same season, indexed
+ * and collision-checked the same way — a one-row list today, and checked anyway
+ * for the reason above rather than because it is close to colliding.
  */
-export function joinByName(cards, seasonAwards, season, champions = null) {
+export function joinByName(cards, seasonAwards, season, champions = null, postSeasonAwards = []) {
   const matched = new Set();
-  const byKey = new Map();
-  for (const row of seasonAwards) {
-    const key = normalizeName(row.name);
-    if (byKey.has(key)) {
-      throw new Error(
-        `generateAwards: two award rows normalize to ${JSON.stringify(key)} ` +
-          `(${byKey.get(key).name} / ${row.name}) — the name join is unsafe`
-      );
-    }
-    byKey.set(key, row);
-  }
+  const byKey = indexAwardsByName(seasonAwards, 'award');
+  const postByKey = indexAwardsByName(postSeasonAwards, 'playoff award');
   const seen = new Set();
   const out = [];
   for (const card of cards) {
@@ -334,7 +432,13 @@ export function joinByName(cards, seasonAwards, season, champions = null) {
     seen.add(key);
     const row = byKey.get(key);
     if (row) matched.add(key);
-    const record = awardRecord(card, row, season, champions?.byName.get(key) ?? null);
+    const record = awardRecord(
+      card,
+      row,
+      season,
+      champions?.byName.get(key) ?? null,
+      postByKey.get(key) ?? null
+    );
     if (record) out.push(record);
   }
   // EVERY AWARD ROW SHOULD FIND A CARD, and when one does not it is worth
@@ -364,19 +468,32 @@ export function joinByName(cards, seasonAwards, season, champions = null) {
  *
  * `awardsBySeason` still gates the loop, because a season nobody fetched has
  * neither awards NOR a champion. But past that gate the awards row is optional:
- * a role player on a title team gets a record built from the roster alone.
+ * a role player on a title team gets a record built from the roster alone, and
+ * so does a Finals MVP who won nothing in the regular season.
+ *
+ * `postAwardsBySeason` is the playoff column, keyed the same two ways — season,
+ * then bbref id — and read through the same card season, so Andre Iguodala's
+ * Super Season card of 2014-15 finds 2015's Finals MVP and his Rookie card of
+ * 2004-05 finds nothing.
  */
-export function joinById(cards, awardsBySeason, championsBySeason = null) {
+export function joinById(
+  cards,
+  awardsBySeason,
+  championsBySeason = null,
+  postAwardsBySeason = null
+) {
   const out = [];
   for (const card of cards) {
     const season = awardsBySeason.get(card.season);
     if (!season) continue;
     const champions = championsBySeason?.get(card.season) ?? null;
+    const post = postAwardsBySeason?.get(card.season) ?? null;
     const record = awardRecord(
       card,
       season.get(card.bbrefId),
       card.season,
-      champions?.byId.get(card.bbrefId) ?? null
+      champions?.byId.get(card.bbrefId) ?? null,
+      post?.get(card.bbrefId) ?? null
     );
     if (record) out.push(record);
   }
@@ -479,8 +596,10 @@ async function main() {
   const seasons = seasonsNeeded(plan);
 
   const bySeason = new Map();
+  const postBySeason = new Map();
   const championsBySeason = new Map();
   const champions = [];
+  const finalsMvps = [];
   let fetched = 0;
   for (const season of seasons) {
     const before = fs.existsSync(path.join(CACHE_DIR, `${AWARDS_CACHE_KEY(season)}.json`));
@@ -490,6 +609,24 @@ async function main() {
       fetched += 1;
       // Only after a real request. A cache hit asks nothing of the site and so
       // owes it nothing.
+      await politeDelay(DEFAULT_REQUEST_SPACING_MS);
+    }
+    // THE SAME PAGE'S PLAYOFF TABLE, behind a key of its own — one more request
+    // on a cold cache and none on a warm one. See POST_AWARDS_CACHE_KEY.
+    const hadPost = fs.existsSync(path.join(CACHE_DIR, `${POST_AWARDS_CACHE_KEY(season)}.json`));
+    const postRows = await loadSeasonPostAwards(season);
+    postBySeason.set(season, new Map(postRows.map(r => [r.playerId, r])));
+    // WHO WON THE FINALS MVP EACH SEASON, WRITTEN DOWN — the same argument the
+    // `champions` list is kept for one loop down. The marks in `sets` below are
+    // otherwise unfalsifiable without re-fetching, and a reader who wants to
+    // check that 2015 went to Iguodala and not to Curry can do it from the file.
+    for (const row of postRows) {
+      for (const code of postSeasonAwardsEarned(row.awards)) {
+        finalsMvps.push({ season, code, name: row.name, playerId: row.playerId });
+      }
+    }
+    if (!hadPost) {
+      fetched += 1;
       await politeDelay(DEFAULT_REQUEST_SPACING_MS);
     }
     // THE RING'S TWO PAGES, in the same polite pass and behind the same cache.
@@ -516,12 +653,13 @@ async function main() {
     base.cards,
     [...bySeason.get(baseSeason).values()],
     baseSeason,
-    championsBySeason.get(baseSeason)
+    championsBySeason.get(baseSeason),
+    [...(postBySeason.get(baseSeason)?.values() ?? [])]
   );
   const sets = {
     [CURRENT_SET]: baseJoin.records,
-    [SUPER_SEASON_SET]: joinById(superSeason.cards, bySeason, championsBySeason),
-    [ROOKIE_SET]: joinById(rookie.cards, bySeason, championsBySeason),
+    [SUPER_SEASON_SET]: joinById(superSeason.cards, bySeason, championsBySeason, postBySeason),
+    [ROOKIE_SET]: joinById(rookie.cards, bySeason, championsBySeason, postBySeason),
   };
 
   const counts = Object.fromEntries(
@@ -536,7 +674,9 @@ async function main() {
         generatedAt: new Date().toISOString(),
         source:
           "Basketball-Reference's season `advanced` tables, awards column — a voted award's " +
-          'suffix is its finishing position, so only -1 is a win — plus each season index ' +
+          'suffix is its finishing position, so only -1 is a win — plus the same pages\' ' +
+          '`advanced_post` table, whose awards column holds one cell a season and that cell ' +
+          'is always `Finals MVP-1`, plus each season index ' +
           "page's League Champion row and that team's roster, which is where the ring comes " +
           'from and which is in no column at all',
         declared: AWARD_CODES,
@@ -546,6 +686,11 @@ async function main() {
         // to check that the 2016 marks went to Cleveland and not to Golden
         // State can do it from this list, and so can a test.
         champions,
+        // AND WHO WON THE FINALS EACH SEASON, for the same reason and checked
+        // the same way. This is EVERY holder the playoff column named, not only
+        // the ones who have a card — so a reader can tell a season whose Finals
+        // MVP is out of the pool from one the join missed.
+        finalsMvps,
         counts,
         sets,
       },
@@ -559,6 +704,10 @@ async function main() {
   log(
     `Champions resolved: ${champions.length} of ${seasons.length} ` +
       `(${champions.map(c => `${c.season} ${c.abbr}`).join(', ')})`
+  );
+  log(
+    `Finals MVPs read: ${finalsMvps.length} of ${seasons.length} ` +
+      `(${finalsMvps.map(f => `${f.season} ${f.name}`).join(', ')})`
   );
   for (const [set, c] of Object.entries(counts)) {
     log(

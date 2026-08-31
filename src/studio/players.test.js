@@ -732,18 +732,19 @@ describe('the award marks the studio joins on', () => {
     }
   });
 
-  it('marks the six 2025-26 TROPHIES in the pool, and nobody else', () => {
-    // The six voted awards are still six players — one of them holding two —
-    // and the five names below are what the base set looked like before
-    // All-Star was admitted. Asserted separately from the selection AND from
-    // the ring so that a regression in the -1 rule cannot hide inside either of
-    // the two larger counts: both of those mark whole groups at a time, and a
+  it('marks the 2025-26 TROPHIES in the pool, and nobody else', () => {
+    // The six voted awards are six players, one of them holding two, and the
+    // SEVENTH trophy is the Finals MVP — Jalen Brunson, off the playoff column
+    // and off no other. Asserted separately from the selection AND from the
+    // ring so that a regression in the -1 rule cannot hide inside either of the
+    // two larger counts: both of those mark whole groups at a time, and a
     // spurious trophy would be invisible in a total of forty.
     const trophies = POOL_PLAYERS.filter(
       p => p.awards.some(c => c !== 'AS' && c !== 'CHAMP')
     );
     expect(trophies.map(p => p.name).sort()).toEqual([
       'Cooper Flagg',
+      'Jalen Brunson',
       'Keldon Johnson',
       'Nickeil Alexander-Walker',
       'Shai Gilgeous-Alexander',
@@ -789,9 +790,11 @@ describe('the award marks the studio joins on', () => {
       'Jalen Brunson',
       'Karl-Anthony Towns',
     ]);
-    // And it sorts below the trophies and above All-Star wherever it appears.
+    // And it sorts below the trophies and above All-Star wherever it appears —
+    // on the card that proves it, since Brunson's Finals MVP is a trophy the
+    // ring sits under and his All-Star place is a selection it sits over.
     const brunson = POOL_PLAYERS.find(p => p.id === 'Jalen_Brunson');
-    expect(brunson.awards).toEqual(['CHAMP', 'AS']);
+    expect(brunson.awards).toEqual(['FMVP', 'CHAMP', 'AS']);
   });
 
   it('gives Shai Gilgeous-Alexander all three of his, in importance order', () => {

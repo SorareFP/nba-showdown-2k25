@@ -184,11 +184,34 @@ export async function fetchGameLog(playerId, season) {
  *
  * Verified live 2026-08-31 for 2026, 2004 and 1997: the group exists in all
  * three, every body row carries all five cells, and no cell is ever blank.
+ *
+ * ── advancedPost — THE SAME PAGE, THE SECOND TABLE ──────────────────────────
+ *
+ * `advanced` and `advancedPost` SHARE A SLUG and differ only in `tableId`, and
+ * that is a real property of the site rather than a shortcut here:
+ * `NBA_{season}_advanced.html` holds the regular season in `<table
+ * id="advanced">` and the playoffs in `<table id="advanced_post">`. Two entries
+ * because a caller asks for one table at a time, and `fetchSeasonTable` picks
+ * the body by id.
+ *
+ * IT IS THE ONLY PLACE FINALS MVP EXISTS. The awards column of the playoff
+ * table carries exactly one non-empty cell a season — `Finals MVP-1` — and the
+ * regular-season table never carries it. Verified live 2026-08-31 for 2004,
+ * 2015, 2021 and 2026: 230-odd postseason rows a season, one with an award,
+ * that string every time.
+ *
+ * AND THE TWO CANNOT BE CONFUSED, which was true before this entry existed and
+ * is what makes adding it safe. `isolateTableBody` matches `id="advanced"`
+ * INCLUDING the closing quote, so `id="advanced_post"` is not a prefix match
+ * and a request for `advanced` cannot slide into the playoff rows — the same
+ * discipline `pbp_stats` relies on one entry up, and pinned by name in
+ * basketballReference.test.js.
  */
 export const SEASON_TABLES = {
   perGame: { slug: 'per_game', tableId: 'per_game_stats' },
   perPoss: { slug: 'per_poss', tableId: 'per_poss' },
   advanced: { slug: 'advanced', tableId: 'advanced' },
+  advancedPost: { slug: 'advanced', tableId: 'advanced_post' },
   playByPlay: { slug: 'play-by-play', tableId: 'pbp_stats' },
 };
 

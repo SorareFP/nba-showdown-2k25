@@ -1946,11 +1946,8 @@ describe('the generated award file, on the cards it belongs to', () => {
   it('gives Shai Gilgeous-Alexander an MVP on his 2026-27 card', () => {
     const sga = marked(CURRENT_SET).find(r => r.id === 'Shai_Gilgeous_Alexander');
     expect(sga.raw).toContain('MVP-1');
-    // THE MOST ANY CARD IN THREE SETS HOLDS. MVP, Clutch Player and the
-    // All-Star selection, in priority order — three of the four the wrapped row
-    // draws, so nothing is dropped and a mark of headroom is left. He is also
-    // the card that would lose one first if a fifth code were ever declared,
-    // and it would be the All-Star.
+    // MVP, Clutch Player and the All-Star selection, in priority order — three
+    // of the four the wrapped row draws, so nothing is dropped.
     expect(sga.awards).toEqual(['MVP', 'CPOY', 'AS']);
     expect(sga.awards.length).toBeLessThan(MAX_CARD_AWARDS);
     // Oklahoma City won 2025, not 2026, so his BASE card carries no ring — the
@@ -1959,10 +1956,18 @@ describe('the generated award file, on the cards it belongs to', () => {
     // that the ring is read per card rather than per set.
     expect(sga.awards).not.toContain('CHAMP');
     expect(sga.champion).toBeNull();
+    // AND THE SUPER SEASON CARD IS THE FULLEST IN THREE SETS: he won the 2025
+    // MVP, the 2025 Finals MVP and the title, and made the All-Star team —
+    // four marks, exactly MAX_CARD_AWARDS, nothing dropped. The Finals MVP is
+    // the mark the base card cannot have and this one must, off a column the
+    // base card's season has its own row in.
     const ss = marked(SUPER_SEASON_SET).find(r => r.id === 'Shai_Gilgeous_Alexander');
     expect(ss.season).toBe(2025);
-    expect(ss.awards).toEqual(['MVP', 'CHAMP', 'AS']);
+    expect(ss.awards).toEqual(['MVP', 'FMVP', 'CHAMP', 'AS']);
+    expect(ss.awards).toHaveLength(MAX_CARD_AWARDS);
     expect(ss.champion).toBe('OKC');
+    expect(ss.rawPost).toBe('Finals MVP-1');
+    expect(sga.rawPost).toBeNull();
     const html = render({
       card: POOL_PLAYERS.find(p => p.id === sga.id),
       set: CURRENT_SET,
@@ -2011,23 +2016,46 @@ describe('the generated award file, on the cards it belongs to', () => {
     // wins nothing individually, and fourteen of the Knicks' twenty have no
     // awards string.
     const external = new Set(AWARD_CODES.filter(c => getAward(c).external));
+    // AND A THIRD RULE NOW: a postseason code is earned by the PLAYOFF column
+    // and must be checked against `rawPost`, never against `raw`. Checking it
+    // against the wrong string is the mistake this split exists to make
+    // impossible, so the test makes the same split the generator does.
+    const postSeason = new Set(AWARD_CODES.filter(c => getAward(c).postSeason));
     for (const records of Object.values(AWARDS_FILE.sets)) {
       for (const r of records) {
         const tokens = (r.raw ?? '').split(',').map(t => t.trim());
-        if (r.raw === null) expect(r.awards, r.name).toEqual(['CHAMP']);
+        const postTokens = (r.rawPost ?? '').split(',').map(t => t.trim());
+        // A record with NO regular-season string exists only for a fact that
+        // was never in that column: the ring, the Finals MVP, or both.
+        if (r.raw === null) {
+          expect(r.awards.every(c => external.has(c) || postSeason.has(c)), r.name).toBe(true);
+        }
         for (const code of r.awards) {
           if (external.has(code)) continue;
           // Every code it recorded is one this build declares and can draw.
           expect(AWARD_CODES, `${r.name} ${code}`).toContain(code);
+          const where = postSeason.has(code) ? postTokens : tokens;
+          const wanted = selections.has(code) ? code : `${getAward(code).token ?? code}-1`;
           expect(
-            tokens.includes(selections.has(code) ? code : `${code}-1`),
-            `${r.name} ${r.season} ${code} not earned by ${r.raw}`
+            where.includes(wanted),
+            `${r.name} ${r.season} ${code} not earned by ${postSeason.has(code) ? r.rawPost : r.raw}`
           ).toBe(true);
         }
         // And no trophy ever rides in on a selection's rule.
         for (const code of r.awards) {
           if (selections.has(code) || external.has(code)) continue;
-          expect(tokens, `${r.name} ${code}`).not.toContain(code);
+          const where = postSeason.has(code) ? postTokens : tokens;
+          expect(where, `${r.name} ${code}`).not.toContain(getAward(code).token ?? code);
+        }
+        // THE PLAYOFF COLUMN CANNOT REACH A REGULAR-SEASON MARK. Brunson's
+        // `Finals MVP-1` sits next to nothing else, and no card anywhere takes
+        // a non-postseason code out of that string.
+        for (const code of r.awards) {
+          if (postSeason.has(code) || external.has(code)) continue;
+          expect(
+            postTokens.includes(selections.has(code) ? code : `${code}-1`),
+            `${r.name} ${code} came out of the PLAYOFF column`
+          ).toBe(false);
         }
       }
     }

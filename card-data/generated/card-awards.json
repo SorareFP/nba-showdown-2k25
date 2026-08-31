@@ -1,8 +1,9 @@
 {
- "generatedAt": "2026-08-31T14:30:01.897Z",
- "source": "Basketball-Reference's season `advanced` tables, awards column — a voted award's suffix is its finishing position, so only -1 is a win — plus each season index page's League Champion row and that team's roster, which is where the ring comes from and which is in no column at all",
+ "generatedAt": "2026-08-31T15:47:53.233Z",
+ "source": "Basketball-Reference's season `advanced` tables, awards column — a voted award's suffix is its finishing position, so only -1 is a win — plus the same pages' `advanced_post` table, whose awards column holds one cell a season and that cell is always `Finals MVP-1`, plus each season index page's League Champion row and that team's roster, which is where the ring comes from and which is in no column at all",
  "declared": [
   "MVP",
+  "FMVP",
   "DPOY",
   "ROY",
   "MIP",
@@ -155,6 +156,128 @@
    "roster": 20
   }
  ],
+ "finalsMvps": [
+  {
+   "season": 2004,
+   "code": "FMVP",
+   "name": "Chauncey Billups",
+   "playerId": "billuch01"
+  },
+  {
+   "season": 2008,
+   "code": "FMVP",
+   "name": "Paul Pierce",
+   "playerId": "piercpa01"
+  },
+  {
+   "season": 2009,
+   "code": "FMVP",
+   "name": "Kobe Bryant",
+   "playerId": "bryanko01"
+  },
+  {
+   "season": 2010,
+   "code": "FMVP",
+   "name": "Kobe Bryant",
+   "playerId": "bryanko01"
+  },
+  {
+   "season": 2011,
+   "code": "FMVP",
+   "name": "Dirk Nowitzki",
+   "playerId": "nowitdi01"
+  },
+  {
+   "season": 2012,
+   "code": "FMVP",
+   "name": "LeBron James",
+   "playerId": "jamesle01"
+  },
+  {
+   "season": 2013,
+   "code": "FMVP",
+   "name": "LeBron James",
+   "playerId": "jamesle01"
+  },
+  {
+   "season": 2014,
+   "code": "FMVP",
+   "name": "Kawhi Leonard",
+   "playerId": "leonaka01"
+  },
+  {
+   "season": 2015,
+   "code": "FMVP",
+   "name": "Andre Iguodala",
+   "playerId": "iguodan01"
+  },
+  {
+   "season": 2016,
+   "code": "FMVP",
+   "name": "LeBron James",
+   "playerId": "jamesle01"
+  },
+  {
+   "season": 2017,
+   "code": "FMVP",
+   "name": "Kevin Durant",
+   "playerId": "duranke01"
+  },
+  {
+   "season": 2018,
+   "code": "FMVP",
+   "name": "Kevin Durant",
+   "playerId": "duranke01"
+  },
+  {
+   "season": 2019,
+   "code": "FMVP",
+   "name": "Kawhi Leonard",
+   "playerId": "leonaka01"
+  },
+  {
+   "season": 2020,
+   "code": "FMVP",
+   "name": "LeBron James",
+   "playerId": "jamesle01"
+  },
+  {
+   "season": 2021,
+   "code": "FMVP",
+   "name": "Giannis Antetokounmpo",
+   "playerId": "antetgi01"
+  },
+  {
+   "season": 2022,
+   "code": "FMVP",
+   "name": "Stephen Curry",
+   "playerId": "curryst01"
+  },
+  {
+   "season": 2023,
+   "code": "FMVP",
+   "name": "Nikola Jokić",
+   "playerId": "jokicni01"
+  },
+  {
+   "season": 2024,
+   "code": "FMVP",
+   "name": "Jaylen Brown",
+   "playerId": "brownja02"
+  },
+  {
+   "season": 2025,
+   "code": "FMVP",
+   "name": "Shai Gilgeous-Alexander",
+   "playerId": "gilgesh01"
+  },
+  {
+   "season": 2026,
+   "code": "FMVP",
+   "name": "Jalen Brunson",
+   "playerId": "brunsja01"
+  }
+ ],
  "counts": {
   "2026-27": {
    "cards": 61,
@@ -165,6 +288,7 @@
    "ifSelectionsCounted": 46,
    "byCode": {
     "MVP": 1,
+    "FMVP": 1,
     "DPOY": 1,
     "ROY": 1,
     "MIP": 1,
@@ -179,10 +303,11 @@
    "marked": 51,
    "multiple": 13,
    "capped": 0,
-   "mostHeld": 3,
+   "mostHeld": 4,
    "ifSelectionsCounted": 64,
    "byCode": {
     "MVP": 6,
+    "FMVP": 1,
     "DPOY": 4,
     "ROY": 0,
     "MIP": 3,
@@ -201,6 +326,7 @@
    "ifSelectionsCounted": 17,
    "byCode": {
     "MVP": 0,
+    "FMVP": 0,
     "DPOY": 0,
     "ROY": 11,
     "MIP": 0,
@@ -219,6 +345,7 @@
     "season": 2026,
     "bbrefId": "maxeyty01",
     "raw": "CPOY-7,AS,NBA3",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -230,6 +357,7 @@
     "season": 2026,
     "bbrefId": "thompam01",
     "raw": "DPOY-8",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -239,6 +367,7 @@
     "season": 2026,
     "bbrefId": "duranke01",
     "raw": "CPOY-9,AS,NBA2",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -250,6 +379,7 @@
     "season": 2026,
     "bbrefId": "doncilu01",
     "raw": "MVP-4,CPOY-8,AS,NBA1",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -261,6 +391,7 @@
     "season": 2026,
     "bbrefId": "murraja01",
     "raw": "CPOY-2,AS,NBA3",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -272,6 +403,7 @@
     "season": 2026,
     "bbrefId": "johnsja05",
     "raw": "AS,NBA3",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -283,6 +415,7 @@
     "season": 2026,
     "bbrefId": "edwaran01",
     "raw": "CPOY-3,AS",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -294,8 +427,10 @@
     "season": 2026,
     "bbrefId": "brunsja01",
     "raw": "CPOY-5,AS,NBA2",
+    "rawPost": "Finals MVP-1",
     "champion": "NYK",
     "awards": [
+     "FMVP",
      "CHAMP",
      "AS"
     ]
@@ -306,6 +441,7 @@
     "season": 2026,
     "bbrefId": "edgecvj01",
     "raw": "ROY-3",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -315,6 +451,7 @@
     "season": 2026,
     "bbrefId": "jokicni01",
     "raw": "MVP-2,CPOY-6,AS,NBA1",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -326,6 +463,7 @@
     "season": 2026,
     "bbrefId": "brownja02",
     "raw": "MVP-6,AS,NBA2",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -337,6 +475,7 @@
     "season": 2026,
     "bbrefId": "whitede01",
     "raw": "DPOY-6,DEF1",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -346,6 +485,7 @@
     "season": 2026,
     "bbrefId": "cunnica01",
     "raw": "MVP-5,CPOY-4,AS,NBA1",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -357,6 +497,7 @@
     "season": 2026,
     "bbrefId": "ingrabr01",
     "raw": "AS",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -368,6 +509,7 @@
     "season": 2026,
     "bbrefId": "mitchdo01",
     "raw": "MVP-7,AS,NBA2",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -379,6 +521,7 @@
     "season": 2026,
     "bbrefId": "bookede01",
     "raw": "AS",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -390,6 +533,7 @@
     "season": 2026,
     "bbrefId": "flaggco01",
     "raw": "ROY-1",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "ROY"
@@ -401,6 +545,7 @@
     "season": 2026,
     "bbrefId": "barnesc01",
     "raw": "DPOY-5,AS,DEF2",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -412,6 +557,7 @@
     "season": 2026,
     "bbrefId": "alexani01",
     "raw": "MIP-1",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "MIP"
@@ -423,6 +569,7 @@
     "season": 2026,
     "bbrefId": "avdijde01",
     "raw": "AS",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -434,6 +581,7 @@
     "season": 2026,
     "bbrefId": "sengual01",
     "raw": "AS",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -445,6 +593,7 @@
     "season": 2026,
     "bbrefId": "gilgesh01",
     "raw": "MVP-1,CPOY-1,AS,NBA1",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "MVP",
@@ -458,6 +607,7 @@
     "season": 2026,
     "bbrefId": "siakapa01",
     "raw": "AS",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -469,6 +619,7 @@
     "season": 2026,
     "bbrefId": "jamesle01",
     "raw": "AS",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -480,6 +631,7 @@
     "season": 2026,
     "bbrefId": "anunoog01",
     "raw": "DPOY-10,DEF2",
+    "rawPost": null,
     "champion": "NYK",
     "awards": [
      "CHAMP"
@@ -491,6 +643,7 @@
     "season": 2026,
     "bbrefId": "daniedy01",
     "raw": "DPOY-9,DEF2",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -500,6 +653,7 @@
     "season": 2026,
     "bbrefId": "bridgmi01",
     "raw": null,
+    "rawPost": null,
     "champion": "NYK",
     "awards": [
      "CHAMP"
@@ -511,6 +665,7 @@
     "season": 2026,
     "bbrefId": "adebaba01",
     "raw": "DPOY-11,DEF2",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -520,6 +675,7 @@
     "season": 2026,
     "bbrefId": "leonaka01",
     "raw": "MVP-7,CPOY-10,AS,NBA2",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -531,6 +687,7 @@
     "season": 2026,
     "bbrefId": "knuepko01",
     "raw": "ROY-2",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -540,6 +697,7 @@
     "season": 2026,
     "bbrefId": "goberru01",
     "raw": "DPOY-4,DEF1",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -549,6 +707,7 @@
     "season": 2026,
     "bbrefId": "townska01",
     "raw": "AS",
+    "rawPost": null,
     "champion": "NYK",
     "awards": [
      "CHAMP",
@@ -561,6 +720,7 @@
     "season": 2026,
     "bbrefId": "foxde01",
     "raw": "AS",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -572,6 +732,7 @@
     "season": 2026,
     "bbrefId": "curryst01",
     "raw": "AS",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -583,6 +744,7 @@
     "season": 2026,
     "bbrefId": "hartjo01",
     "raw": null,
+    "rawPost": null,
     "champion": "NYK",
     "awards": [
      "CHAMP"
@@ -594,6 +756,7 @@
     "season": 2026,
     "bbrefId": "powelno01",
     "raw": "AS",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -605,6 +768,7 @@
     "season": 2026,
     "bbrefId": "wembavi01",
     "raw": "MVP-3,DPOY-1,AS,NBA1,DEF1",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "DPOY",
@@ -617,6 +781,7 @@
     "season": 2026,
     "bbrefId": "antetgi01",
     "raw": "AS",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -628,6 +793,7 @@
     "season": 2026,
     "bbrefId": "holmgch01",
     "raw": "DPOY-2,AS,NBA3,DEF1",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -639,6 +805,7 @@
     "season": 2026,
     "bbrefId": "jaqueja01",
     "raw": "6MOY-2",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -648,6 +815,7 @@
     "season": 2026,
     "bbrefId": "durenja01",
     "raw": "DPOY-11,AS,NBA3",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -659,6 +827,7 @@
     "season": 2026,
     "bbrefId": "greendr01",
     "raw": "DPOY-11",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -668,6 +837,7 @@
     "season": 2026,
     "bbrefId": "dosunay01",
     "raw": "6MOY-9",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -677,6 +847,7 @@
     "season": 2026,
     "bbrefId": "hardati02",
     "raw": "6MOY-3",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -686,6 +857,7 @@
     "season": 2026,
     "bbrefId": "wallaca01",
     "raw": "DPOY-7,DEF2",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -695,6 +867,7 @@
     "season": 2026,
     "bbrefId": "mcbrimi01",
     "raw": null,
+    "rawPost": null,
     "champion": "NYK",
     "awards": [
      "CHAMP"
@@ -706,6 +879,7 @@
     "season": 2026,
     "bbrefId": "sheppre01",
     "raw": "6MOY-6",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -715,6 +889,7 @@
     "season": 2026,
     "bbrefId": "reidna01",
     "raw": "6MOY-4",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -724,6 +899,7 @@
     "season": 2026,
     "bbrefId": "thompau01",
     "raw": "DPOY-3,DEF1",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -733,6 +909,7 @@
     "season": 2026,
     "bbrefId": "cowarce01",
     "raw": "ROY-5",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -742,6 +919,7 @@
     "season": 2026,
     "bbrefId": "mitchaj01",
     "raw": "6MOY-5",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -751,6 +929,7 @@
     "season": 2026,
     "bbrefId": "johnske04",
     "raw": "6MOY-1",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "6MOY"
@@ -762,6 +941,7 @@
     "season": 2026,
     "bbrefId": "shamela01",
     "raw": null,
+    "rawPost": null,
     "champion": "NYK",
     "awards": [
      "CHAMP"
@@ -773,6 +953,7 @@
     "season": 2026,
     "bbrefId": "stewais01",
     "raw": "6MOY-7",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -782,6 +963,7 @@
     "season": 2026,
     "bbrefId": "harpedy01",
     "raw": "ROY-4,6MOY-11",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -791,6 +973,7 @@
     "season": 2026,
     "bbrefId": "sheadja01",
     "raw": "6MOY-12",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -800,6 +983,7 @@
     "season": 2026,
     "bbrefId": "mamuksa01",
     "raw": "6MOY-10",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -809,6 +993,7 @@
     "season": 2026,
     "bbrefId": "alvarjo01",
     "raw": null,
+    "rawPost": null,
     "champion": "NYK",
     "awards": [
      "CHAMP"
@@ -820,6 +1005,7 @@
     "season": 2026,
     "bbrefId": "robinmi01",
     "raw": "6MOY-8",
+    "rawPost": null,
     "champion": "NYK",
     "awards": [
      "CHAMP"
@@ -831,6 +1017,7 @@
     "season": 2026,
     "bbrefId": "clarkjo01",
     "raw": null,
+    "rawPost": null,
     "champion": "NYK",
     "awards": [
      "CHAMP"
@@ -842,6 +1029,7 @@
     "season": 2026,
     "bbrefId": "yabusgu01",
     "raw": null,
+    "rawPost": null,
     "champion": "NYK",
     "awards": [
      "CHAMP"
@@ -855,6 +1043,7 @@
     "season": 2023,
     "bbrefId": "gordoaa01",
     "raw": null,
+    "rawPost": null,
     "champion": "DEN",
     "awards": [
      "CHAMP"
@@ -866,6 +1055,7 @@
     "season": 2025,
     "bbrefId": "wiggiaa01",
     "raw": null,
+    "rawPost": null,
     "champion": "OKC",
     "awards": [
      "CHAMP"
@@ -877,6 +1067,7 @@
     "season": 2024,
     "bbrefId": "carusal01",
     "raw": "DPOY-10,DEF2",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -886,6 +1077,7 @@
     "season": 2025,
     "bbrefId": "sarral01",
     "raw": "ROY-4",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -895,6 +1087,7 @@
     "season": 2025,
     "bbrefId": "sengual01",
     "raw": "AS",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -906,6 +1099,7 @@
     "season": 2025,
     "bbrefId": "thompam01",
     "raw": "DPOY-5,DEF1",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -915,6 +1109,7 @@
     "season": 2018,
     "bbrefId": "drumman01",
     "raw": "DPOY-15,AS",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -926,6 +1121,7 @@
     "season": 2015,
     "bbrefId": "davisan02",
     "raw": "MVP-5,DPOY-4,AS,NBA1,DEF2",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -937,6 +1133,7 @@
     "season": 2025,
     "bbrefId": "edwaran01",
     "raw": "MVP-7,CPOY-3,AS,NBA2",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -948,6 +1145,7 @@
     "season": 2021,
     "bbrefId": "adebaba01",
     "raw": "DPOY-4,DEF2",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -957,6 +1155,7 @@
     "season": 2021,
     "bbrefId": "portibo01",
     "raw": "6MOY-9",
+    "rawPost": null,
     "champion": "MIL",
     "awards": [
      "CHAMP"
@@ -968,6 +1167,7 @@
     "season": 2013,
     "bbrefId": "lopezbr01",
     "raw": "AS",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -979,6 +1179,7 @@
     "season": 2022,
     "bbrefId": "johnsca02",
     "raw": "6MOY-3",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -988,6 +1189,7 @@
     "season": 2018,
     "bbrefId": "capelca01",
     "raw": "DPOY-14",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -997,6 +1199,7 @@
     "season": 2025,
     "bbrefId": "garlada01",
     "raw": "CPOY-6,AS",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -1008,6 +1211,7 @@
     "season": 2024,
     "bbrefId": "foxde01",
     "raw": "CPOY-12",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1017,6 +1221,7 @@
     "season": 2025,
     "bbrefId": "huntede01",
     "raw": "6MOY-4",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1026,6 +1231,7 @@
     "season": 2022,
     "bbrefId": "meltode01",
     "raw": "6MOY-8",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1035,6 +1241,7 @@
     "season": 2022,
     "bbrefId": "murrade01",
     "raw": "AS",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -1046,6 +1253,7 @@
     "season": 2018,
     "bbrefId": "derozde01",
     "raw": "MVP-8,AS,NBA2",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -1057,6 +1265,7 @@
     "season": 2025,
     "bbrefId": "whitede01",
     "raw": "DPOY-10",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1066,6 +1275,7 @@
     "season": 2022,
     "bbrefId": "bookede01",
     "raw": "MVP-4,AS,NBA1",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -1077,6 +1287,7 @@
     "season": 2024,
     "bbrefId": "sabondo01",
     "raw": "MVP-8,DPOY-10,NBA3",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1086,6 +1297,7 @@
     "season": 2023,
     "bbrefId": "mitchdo01",
     "raw": "MVP-6,CPOY-6,AS,NBA2",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -1097,6 +1309,7 @@
     "season": 2016,
     "bbrefId": "greendr01",
     "raw": "MVP-7,DPOY-2,AS,NBA2,DEF1",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -1108,6 +1321,7 @@
     "season": 2025,
     "bbrefId": "daniedy01",
     "raw": "DPOY-2,MIP-1,DEF1",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "MIP"
@@ -1119,6 +1333,7 @@
     "season": 2025,
     "bbrefId": "mobleev01",
     "raw": "MVP-10,DPOY-1,AS,NBA2,DEF1",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "DPOY",
@@ -1131,6 +1346,7 @@
     "season": 2022,
     "bbrefId": "paytoga02",
     "raw": null,
+    "rawPost": null,
     "champion": "GSW",
     "awards": [
      "CHAMP"
@@ -1142,6 +1358,7 @@
     "season": 2022,
     "bbrefId": "antetgi01",
     "raw": "MVP-3,DPOY-6,AS,NBA1,DEF1",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -1153,6 +1370,7 @@
     "season": 2024,
     "bbrefId": "joneshe01",
     "raw": "DPOY-5,DEF1",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1162,6 +1380,7 @@
     "season": 2025,
     "bbrefId": "zubaciv01",
     "raw": "DPOY-6,DEF2",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1171,6 +1390,7 @@
     "season": 2023,
     "bbrefId": "moranja01",
     "raw": "MVP-12,AS",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -1182,6 +1402,7 @@
     "season": 2024,
     "bbrefId": "brunsja01",
     "raw": "MVP-5,CPOY-5,AS,NBA2",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -1193,6 +1414,7 @@
     "season": 2024,
     "bbrefId": "suggsja01",
     "raw": "DPOY-10,DEF2",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1202,6 +1424,7 @@
     "season": 2025,
     "bbrefId": "willija06",
     "raw": "AS,NBA3,DEF2",
+    "rawPost": null,
     "champion": "OKC",
     "awards": [
      "CHAMP",
@@ -1214,6 +1437,7 @@
     "season": 2019,
     "bbrefId": "hardeja01",
     "raw": "MVP-2,AS,NBA1",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -1225,6 +1449,7 @@
     "season": 2023,
     "bbrefId": "jacksja02",
     "raw": "DPOY-1,AS,DEF1",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "DPOY",
@@ -1237,6 +1462,7 @@
     "season": 2025,
     "bbrefId": "wellsja01",
     "raw": "ROY-3",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1246,6 +1472,7 @@
     "season": 2023,
     "bbrefId": "tatumja01",
     "raw": "MVP-4,CPOY-10,AS,NBA1",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -1257,6 +1484,7 @@
     "season": 2023,
     "bbrefId": "butleji01",
     "raw": "MVP-10,DPOY-12,CPOY-2,NBA2",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1266,6 +1494,7 @@
     "season": 2022,
     "bbrefId": "embiijo01",
     "raw": "MVP-2,AS,NBA2",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -1277,6 +1506,7 @@
     "season": 2021,
     "bbrefId": "clarkjo01",
     "raw": "6MOY-1",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "6MOY"
@@ -1288,6 +1518,7 @@
     "season": 2022,
     "bbrefId": "holidjr01",
     "raw": "DPOY-8,DEF2",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1297,6 +1528,7 @@
     "season": 2021,
     "bbrefId": "randlju01",
     "raw": "MVP-8,MIP-1,AS,NBA2",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "MIP",
@@ -1309,6 +1541,7 @@
     "season": 2019,
     "bbrefId": "townska01",
     "raw": "AS",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -1320,6 +1553,7 @@
     "season": 2016,
     "bbrefId": "leonaka01",
     "raw": "MVP-2,DPOY-1,AS,NBA1,DEF1",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "DPOY",
@@ -1332,6 +1566,7 @@
     "season": 2023,
     "bbrefId": "murrake02",
     "raw": "ROY-5",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1341,6 +1576,7 @@
     "season": 2025,
     "bbrefId": "willike04",
     "raw": null,
+    "rawPost": null,
     "champion": "OKC",
     "awards": [
      "CHAMP"
@@ -1352,6 +1588,7 @@
     "season": 2014,
     "bbrefId": "duranke01",
     "raw": "MVP-1,AS,NBA1",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "MVP",
@@ -1364,6 +1601,7 @@
     "season": 2020,
     "bbrefId": "middlkh01",
     "raw": "AS",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -1375,6 +1613,7 @@
     "season": 2015,
     "bbrefId": "thompkl01",
     "raw": "MVP-10,AS,NBA3",
+    "rawPost": null,
     "champion": "GSW",
     "awards": [
      "CHAMP",
@@ -1387,6 +1626,7 @@
     "season": 2023,
     "bbrefId": "markkla01",
     "raw": "MIP-1,AS",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "MIP",
@@ -1399,6 +1639,7 @@
     "season": 2009,
     "bbrefId": "jamesle01",
     "raw": "MVP-1,DPOY-2,AS,NBA1,DEF1",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "MVP",
@@ -1411,6 +1652,7 @@
     "season": 2025,
     "bbrefId": "dortlu01",
     "raw": "DPOY-4,DEF1",
+    "rawPost": null,
     "champion": "OKC",
     "awards": [
      "CHAMP"
@@ -1422,6 +1664,7 @@
     "season": 2024,
     "bbrefId": "doncilu01",
     "raw": "MVP-3,CPOY-6,AS,NBA1",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -1433,6 +1676,7 @@
     "season": 2024,
     "bbrefId": "monkma01",
     "raw": "CPOY-12,6MOY-2",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1442,6 +1686,7 @@
     "season": 2020,
     "bbrefId": "smartma01",
     "raw": "DPOY-6,DEF1",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1451,6 +1696,7 @@
     "season": 2019,
     "bbrefId": "turnemy01",
     "raw": "DPOY-5",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1460,6 +1706,7 @@
     "season": 2025,
     "bbrefId": "reidna01",
     "raw": "6MOY-5",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1469,6 +1716,7 @@
     "season": 2023,
     "bbrefId": "claxtni01",
     "raw": "DPOY-9",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1478,6 +1726,7 @@
     "season": 2022,
     "bbrefId": "jokicni01",
     "raw": "MVP-1,AS,NBA1",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "MVP",
@@ -1490,6 +1739,7 @@
     "season": 2019,
     "bbrefId": "vucevni01",
     "raw": "AS",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -1501,6 +1751,7 @@
     "season": 2024,
     "bbrefId": "banchpa01",
     "raw": "AS",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -1512,6 +1763,7 @@
     "season": 2022,
     "bbrefId": "siakapa01",
     "raw": "NBA3",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1521,6 +1773,7 @@
     "season": 2019,
     "bbrefId": "georgpa01",
     "raw": "MVP-3,DPOY-3,AS,NBA1,DEF1",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -1532,6 +1785,7 @@
     "season": 2025,
     "bbrefId": "pritcpa01",
     "raw": "6MOY-1",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "6MOY"
@@ -1543,6 +1797,7 @@
     "season": 2022,
     "bbrefId": "williro04",
     "raw": "DPOY-7,DEF2",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1552,6 +1807,7 @@
     "season": 2019,
     "bbrefId": "goberru01",
     "raw": "MVP-11,DPOY-1,NBA3,DEF1",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "DPOY"
@@ -1563,6 +1819,7 @@
     "season": 2017,
     "bbrefId": "westbru01",
     "raw": "MVP-1,AS,NBA1",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "MVP",
@@ -1575,6 +1832,7 @@
     "season": 2024,
     "bbrefId": "hausesa01",
     "raw": null,
+    "rawPost": null,
     "champion": "BOS",
     "awards": [
      "CHAMP"
@@ -1586,9 +1844,11 @@
     "season": 2025,
     "bbrefId": "gilgesh01",
     "raw": "MVP-1,DPOY-10,CPOY-8,AS,NBA1",
+    "rawPost": "Finals MVP-1",
     "champion": "OKC",
     "awards": [
      "MVP",
+     "FMVP",
      "CHAMP",
      "AS"
     ]
@@ -1599,6 +1859,7 @@
     "season": 2016,
     "bbrefId": "curryst01",
     "raw": "MVP-1,AS,NBA1",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "MVP",
@@ -1611,6 +1872,7 @@
     "season": 2024,
     "bbrefId": "mccontj01",
     "raw": "6MOY-7",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1620,6 +1882,7 @@
     "season": 2017,
     "bbrefId": "hardati02",
     "raw": "6MOY-10",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1629,6 +1892,7 @@
     "season": 2025,
     "bbrefId": "camarto01",
     "raw": "DPOY-9,DEF2",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1638,6 +1902,7 @@
     "season": 2022,
     "bbrefId": "youngtr01",
     "raw": "AS,NBA3",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -1649,6 +1914,7 @@
     "season": 2025,
     "bbrefId": "jeromty01",
     "raw": "6MOY-3",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1658,6 +1924,7 @@
     "season": 2025,
     "bbrefId": "herroty01",
     "raw": "AS",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -1669,6 +1936,7 @@
     "season": 2023,
     "bbrefId": "jonesty01",
     "raw": "6MOY-6",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1678,6 +1946,7 @@
     "season": 2025,
     "bbrefId": "edeyza01",
     "raw": "ROY-5",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1687,6 +1956,7 @@
     "season": 2021,
     "bbrefId": "lavinza01",
     "raw": "AS",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -1698,6 +1968,7 @@
     "season": 2021,
     "bbrefId": "willizi01",
     "raw": "AS",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "AS"
@@ -1711,6 +1982,7 @@
     "season": 2025,
     "bbrefId": "mitchaj01",
     "raw": null,
+    "rawPost": null,
     "champion": "OKC",
     "awards": [
      "CHAMP"
@@ -1722,6 +1994,7 @@
     "season": 2008,
     "bbrefId": "horfoal01",
     "raw": "ROY-2",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1731,6 +2004,7 @@
     "season": 2025,
     "bbrefId": "sarral01",
     "raw": "ROY-4",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1740,6 +2014,7 @@
     "season": 2013,
     "bbrefId": "drumman01",
     "raw": "ROY-4",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1749,6 +2024,7 @@
     "season": 2015,
     "bbrefId": "wiggian01",
     "raw": "ROY-1",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "ROY"
@@ -1760,6 +2036,7 @@
     "season": 2013,
     "bbrefId": "davisan02",
     "raw": "ROY-2",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1769,6 +2046,7 @@
     "season": 2021,
     "bbrefId": "edwaran01",
     "raw": "ROY-2",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1778,6 +2056,7 @@
     "season": 2023,
     "bbrefId": "mathube01",
     "raw": "ROY-4,6MOY-8",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1787,6 +2066,7 @@
     "season": 2024,
     "bbrefId": "podzibr01",
     "raw": "ROY-5",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1796,6 +2076,7 @@
     "season": 2024,
     "bbrefId": "millebr02",
     "raw": "ROY-3",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1805,6 +2086,7 @@
     "season": 2009,
     "bbrefId": "lopezbr01",
     "raw": "ROY-3",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1814,6 +2096,7 @@
     "season": 2017,
     "bbrefId": "hieldbu01",
     "raw": "ROY-4",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1823,6 +2106,7 @@
     "season": 2022,
     "bbrefId": "cunnica01",
     "raw": "ROY-3",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1832,6 +2116,7 @@
     "season": 2024,
     "bbrefId": "holmgch01",
     "raw": "ROY-2",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1841,6 +2126,7 @@
     "season": 2023,
     "bbrefId": "braunch01",
     "raw": null,
+    "rawPost": null,
     "champion": "DEN",
     "awards": [
      "CHAMP"
@@ -1852,6 +2138,7 @@
     "season": 2020,
     "bbrefId": "whiteco01",
     "raw": "ROY-5",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1861,6 +2148,7 @@
     "season": 2019,
     "bbrefId": "sextoco01",
     "raw": "ROY-5",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1870,6 +2158,7 @@
     "season": 2019,
     "bbrefId": "aytonde01",
     "raw": "ROY-3",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1879,6 +2168,7 @@
     "season": 2016,
     "bbrefId": "bookede01",
     "raw": "ROY-4",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1888,6 +2178,7 @@
     "season": 2018,
     "bbrefId": "mitchdo01",
     "raw": "ROY-2",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1897,6 +2188,7 @@
     "season": 2022,
     "bbrefId": "mobleev01",
     "raw": "ROY-2",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1906,6 +2198,7 @@
     "season": 2022,
     "bbrefId": "wagnefr01",
     "raw": "ROY-5",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1915,6 +2208,7 @@
     "season": 2014,
     "bbrefId": "antetgi01",
     "raw": "ROY-7",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1924,6 +2218,7 @@
     "season": 2013,
     "bbrefId": "barneha02",
     "raw": "ROY-6",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1933,6 +2228,7 @@
     "season": 2022,
     "bbrefId": "joneshe01",
     "raw": "ROY-6",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1942,6 +2238,7 @@
     "season": 2020,
     "bbrefId": "moranja01",
     "raw": "ROY-1",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "ROY"
@@ -1953,6 +2250,7 @@
     "season": 2024,
     "bbrefId": "jaqueja01",
     "raw": "ROY-4,6MOY-9",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1962,6 +2260,7 @@
     "season": 2022,
     "bbrefId": "greenja05",
     "raw": "ROY-4",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1971,6 +2270,7 @@
     "season": 2023,
     "bbrefId": "willija06",
     "raw": "ROY-2",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1980,6 +2280,7 @@
     "season": 2017,
     "bbrefId": "murraja01",
     "raw": "ROY-5",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1989,6 +2290,7 @@
     "season": 2025,
     "bbrefId": "mccaija01",
     "raw": "ROY-7",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -1998,6 +2300,7 @@
     "season": 2019,
     "bbrefId": "jacksja02",
     "raw": "ROY-4",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -2007,6 +2310,7 @@
     "season": 2017,
     "bbrefId": "brownja02",
     "raw": "ROY-8",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -2016,6 +2320,7 @@
     "season": 2025,
     "bbrefId": "wellsja01",
     "raw": "ROY-3",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -2025,6 +2330,7 @@
     "season": 2018,
     "bbrefId": "tatumja01",
     "raw": "ROY-3",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -2034,6 +2340,7 @@
     "season": 2017,
     "bbrefId": "embiijo01",
     "raw": "ROY-3",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -2043,6 +2350,7 @@
     "season": 2013,
     "bbrefId": "valanjo01",
     "raw": "ROY-9",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -2052,6 +2360,7 @@
     "season": 2015,
     "bbrefId": "clarkjo01",
     "raw": "ROY-7",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -2061,6 +2370,7 @@
     "season": 2024,
     "bbrefId": "walshjo01",
     "raw": null,
+    "rawPost": null,
     "champion": "BOS",
     "awards": [
      "CHAMP"
@@ -2072,6 +2382,7 @@
     "season": 2019,
     "bbrefId": "okogijo01",
     "raw": "ROY-8",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -2081,6 +2392,7 @@
     "season": 2015,
     "bbrefId": "nurkiju01",
     "raw": "ROY-6",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -2090,6 +2402,7 @@
     "season": 2016,
     "bbrefId": "townska01",
     "raw": "ROY-1",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "ROY"
@@ -2101,6 +2414,7 @@
     "season": 2012,
     "bbrefId": "leonaka01",
     "raw": "ROY-4",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -2110,6 +2424,7 @@
     "season": 2023,
     "bbrefId": "murrake02",
     "raw": "ROY-5",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -2119,6 +2434,7 @@
     "season": 2025,
     "bbrefId": "wareke01",
     "raw": "ROY-6",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -2128,6 +2444,7 @@
     "season": 2008,
     "bbrefId": "duranke01",
     "raw": "ROY-1",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "ROY"
@@ -2139,6 +2456,7 @@
     "season": 2012,
     "bbrefId": "thompkl01",
     "raw": "ROY-6",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -2148,6 +2466,7 @@
     "season": 2018,
     "bbrefId": "kuzmaky01",
     "raw": "ROY-4,6MOY-9",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -2157,6 +2476,7 @@
     "season": 2021,
     "bbrefId": "ballla01",
     "raw": "ROY-1",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "ROY"
@@ -2168,6 +2488,7 @@
     "season": 2004,
     "bbrefId": "jamesle01",
     "raw": "MVP-9,ROY-1",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "ROY"
@@ -2179,6 +2500,7 @@
     "season": 2019,
     "bbrefId": "doncilu01",
     "raw": "ROY-1",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "ROY"
@@ -2190,6 +2512,7 @@
     "season": 2015,
     "bbrefId": "smartma01",
     "raw": "ROY-5",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -2199,6 +2522,7 @@
     "season": 2019,
     "bbrefId": "baglema01",
     "raw": "ROY-7",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -2208,6 +2532,7 @@
     "season": 2025,
     "bbrefId": "buzelma01",
     "raw": "ROY-7",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -2217,6 +2542,7 @@
     "season": 2008,
     "bbrefId": "conlemi01",
     "raw": "ROY-8",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -2226,6 +2552,7 @@
     "season": 2019,
     "bbrefId": "robinmi01",
     "raw": "ROY-8",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -2235,6 +2562,7 @@
     "season": 2022,
     "bbrefId": "moodymo01",
     "raw": null,
+    "rawPost": null,
     "champion": "GSW",
     "awards": [
      "CHAMP"
@@ -2246,6 +2574,7 @@
     "season": 2016,
     "bbrefId": "turnemy01",
     "raw": "ROY-8",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -2255,6 +2584,7 @@
     "season": 2009,
     "bbrefId": "batumni01",
     "raw": "ROY-13",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -2264,6 +2594,7 @@
     "season": 2016,
     "bbrefId": "jokicni01",
     "raw": "ROY-3",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -2273,6 +2604,7 @@
     "season": 2023,
     "bbrefId": "banchpa01",
     "raw": "ROY-1",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "ROY"
@@ -2284,6 +2616,7 @@
     "season": 2023,
     "bbrefId": "watsope01",
     "raw": null,
+    "rawPost": null,
     "champion": "DEN",
     "awards": [
      "CHAMP"
@@ -2295,6 +2628,7 @@
     "season": 2020,
     "bbrefId": "barrerj01",
     "raw": "ROY-8",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -2304,6 +2638,7 @@
     "season": 2009,
     "bbrefId": "westbru01",
     "raw": "ROY-4",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -2313,6 +2648,7 @@
     "season": 2021,
     "bbrefId": "beysa01",
     "raw": "ROY-4",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -2322,6 +2658,7 @@
     "season": 2021,
     "bbrefId": "merrisa01",
     "raw": null,
+    "rawPost": null,
     "champion": "MIL",
     "awards": [
      "CHAMP"
@@ -2333,6 +2670,7 @@
     "season": 2022,
     "bbrefId": "barnesc01",
     "raw": "ROY-1",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "ROY"
@@ -2344,6 +2682,7 @@
     "season": 2019,
     "bbrefId": "gilgesh01",
     "raw": "ROY-6",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -2353,6 +2692,7 @@
     "season": 2010,
     "bbrefId": "curryst01",
     "raw": "ROY-2",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -2362,6 +2702,7 @@
     "season": 2025,
     "bbrefId": "castlst01",
     "raw": "ROY-1",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "ROY"
@@ -2373,6 +2714,7 @@
     "season": 2014,
     "bbrefId": "hardati02",
     "raw": "ROY-5,6MOY-13",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -2382,6 +2724,7 @@
     "season": 2019,
     "bbrefId": "youngtr01",
     "raw": "ROY-2",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -2391,6 +2734,7 @@
     "season": 2024,
     "bbrefId": "wembavi01",
     "raw": "ROY-1,DPOY-2,DEF1",
+    "rawPost": null,
     "champion": null,
     "awards": [
      "ROY"
@@ -2402,6 +2746,7 @@
     "season": 2025,
     "bbrefId": "risacza01",
     "raw": "ROY-2",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -2411,6 +2756,7 @@
     "season": 2025,
     "bbrefId": "edeyza01",
     "raw": "ROY-5",
+    "rawPost": null,
     "champion": null,
     "awards": []
    },
@@ -2420,6 +2766,7 @@
     "season": 2020,
     "bbrefId": "willizi01",
     "raw": "ROY-3",
+    "rawPost": null,
     "champion": null,
     "awards": []
    }

@@ -447,26 +447,58 @@ describe('the committed file', () => {
     }
   });
 
-  it('never exceeds the row the card can draw, and keeps a mark of headroom', () => {
-    // MAX_CARD_AWARDS is 4 since .awards started wrapping, and the most anybody
-    // holds is 3 — both of Shai Gilgeous-Alexander's cards, MVP + CPOY + AS on
-    // the base set and MVP + CHAMP + AS on Super Season. So no card is losing a
-    // mark AND the cap is above the ceiling rather than on it, which is the
-    // state it was raised past three to restore.
+  it('never exceeds the row the card can draw, now that the fourth mark is spent', () => {
+    // MAX_CARD_AWARDS is 4 since .awards started wrapping, and one card now
+    // holds exactly four: Shai Gilgeous-Alexander's 2024-25 Super Season, MVP +
+    // FMVP + CHAMP + AS. It is the card the cap was raised past three FOR, and
+    // admitting Finals MVP is what filled it. NOTHING IS DROPPED — `capped` is
+    // still zero in every set — but the ceiling and the cap are level again, so
+    // this assertion is the early warning if a fifth ever appears.
     const most = Math.max(...Object.values(AWARDS.sets).flat().map(r => r.awards.length));
-    expect(most).toBe(3);
-    expect(most).toBeLessThan(MAX_CARD_AWARDS);
+    expect(most).toBe(4);
+    expect(most).toBeLessThanOrEqual(MAX_CARD_AWARDS);
     for (const counts of Object.values(AWARDS.counts)) {
       expect(counts.capped).toBe(0);
       expect(counts.mostHeld).toBeLessThanOrEqual(MAX_CARD_AWARDS);
     }
-    // The two cards that reach three, named so a regression says WHO changed.
-    const three = Object.entries(AWARDS.sets).flatMap(([set, rs]) =>
-      rs.filter(r => r.awards.length === 3).map(r => `${set} ${r.name} ${r.season}`)
+    // Every card at three or more, named so a regression says WHO changed.
+    const crowded = Object.entries(AWARDS.sets).flatMap(([set, rs]) =>
+      rs.filter(r => r.awards.length >= 3).map(r => `${set} ${r.name} ${r.season} ${r.awards.join('+')}`)
     );
-    expect(three.sort()).toEqual([
-      '2026-27 Shai Gilgeous-Alexander 2026',
-      'super-season Shai Gilgeous-Alexander 2025',
+    expect(crowded.sort()).toEqual([
+      '2026-27 Jalen Brunson 2026 FMVP+CHAMP+AS',
+      '2026-27 Shai Gilgeous-Alexander 2026 MVP+CPOY+AS',
+      'super-season Shai Gilgeous-Alexander 2025 MVP+FMVP+CHAMP+AS',
     ]);
+  });
+
+  it('marks every Finals MVP it read, and only from the playoff column', () => {
+    // TWENTY SEASONS, TWENTY FINALS MVPs — the playoff column has never had a
+    // gap in the range these sets span, so a run that reads fewer than one per
+    // season has lost a page rather than found a season nobody won.
+    expect(AWARDS.finalsMvps).toHaveLength(AWARDS.seasons.length);
+    const byYear = Object.fromEntries(AWARDS.finalsMvps.map(f => [f.season, f.name]));
+    expect(byYear[2004]).toBe('Chauncey Billups');
+    expect(byYear[2015]).toBe('Andre Iguodala');
+    expect(byYear[2021]).toBe('Giannis Antetokounmpo');
+    expect(byYear[2026]).toBe('Jalen Brunson');
+    // Every FMVP mark on a card is that season's man, and the EVIDENCE for it
+    // is in `rawPost` and never in `raw` — which is the two-column split doing
+    // its job. Brunson's regular-season string is `CPOY-5,AS,NBA2`: no trophy
+    // in it at all, and the mark comes from the other table entirely.
+    for (const records of Object.values(AWARDS.sets)) {
+      for (const r of records.filter(x => x.awards.includes('FMVP'))) {
+        expect(r.name, `${r.name} ${r.season}`).toBe(byYear[r.season]);
+        expect(r.rawPost, `${r.name} ${r.season}`).toBe('Finals MVP-1');
+        expect(r.raw ?? '', `${r.name} ${r.season}`).not.toMatch(/Finals/);
+      }
+    }
+    // And no card carries a Finals MVP its own season did not produce.
+    expect(AWARDS.counts[CURRENT_SET].byCode.FMVP).toBe(1);
+    expect(AWARDS.counts[SUPER_SEASON_SET].byCode.FMVP).toBe(1);
+    // ZERO IN THE ROOKIE SET, and that is a fact about the award rather than a
+    // miss: no rookie has won a Finals MVP in the 2004..2026 range, and only
+    // Magic Johnson ever has.
+    expect(AWARDS.counts[ROOKIE_SET].byCode.FMVP).toBe(0);
   });
 });

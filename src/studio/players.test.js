@@ -732,10 +732,13 @@ describe('the award marks the studio joins on', () => {
     }
   });
 
-  it('marks the five 2025-26 winners in the pool, and nobody else', () => {
-    const marked = POOL_PLAYERS.filter(p => p.awards.length > 0);
-    expect(marked.length).toBe(5);
-    expect(marked.map(p => p.name).sort()).toEqual([
+  it('marks the six 2025-26 TROPHIES in the pool, and nobody else', () => {
+    // The six voted awards are still six players — one of them holding two —
+    // and the five names below are what the base set looked like before
+    // All-Star was admitted. Asserted separately from the selection so that a
+    // regression in the -1 rule cannot hide inside the larger All-Star count.
+    const trophies = POOL_PLAYERS.filter(p => p.awards.some(c => c !== 'AS'));
+    expect(trophies.map(p => p.name).sort()).toEqual([
       'Cooper Flagg',
       'Keldon Johnson',
       'Nickeil Alexander-Walker',
@@ -744,18 +747,32 @@ describe('the award marks the studio joins on', () => {
     ]);
   });
 
-  it('gives Shai Gilgeous-Alexander both of his, in importance order', () => {
-    const sga = POOL_PLAYERS.find(p => p.id === 'Shai_Gilgeous_Alexander');
-    expect(sga.awards).toEqual(['MVP', 'CPOY']);
+  it('marks 31 cards once All-Star counts, which is the price of admitting it', () => {
+    // 5 -> 31 of a 350-card set. The user took the decision with this number in
+    // front of him; it is pinned here, in awards.js and in the generated file's
+    // own counts, so the three cannot drift apart.
+    const marked = POOL_PLAYERS.filter(p => p.awards.length > 0);
+    expect(marked.length).toBe(31);
+    expect(marked.filter(p => p.awards.includes('AS')).length).toBe(28);
   });
 
-  it('gives Luka Dončić none, because MVP-4 is not an MVP', () => {
+  it('gives Shai Gilgeous-Alexander all three of his, in importance order', () => {
+    const sga = POOL_PLAYERS.find(p => p.id === 'Shai_Gilgeous_Alexander');
+    expect(sga.awards).toEqual(['MVP', 'CPOY', 'AS']);
+  });
+
+  it('gives Luka Dončić an All-Star mark and no MVP, because MVP-4 is not an MVP', () => {
     // The failure this feature is judged by, asserted where the studio actually
-    // hands a record to the template.
-    expect(POOL_PLAYERS.find(p => p.id === 'Luka_Doncic').awards).toEqual([]);
-    // And Victor Wembanyama, who was third in the same vote, gets DPOY and only
-    // DPOY — which is the same rule producing a mark rather than withholding one.
-    expect(POOL_PLAYERS.find(p => p.id === 'Victor_Wembanyama').awards).toEqual(['DPOY']);
+    // hands a record to the template — and now carrying both halves of the same
+    // row: `MVP-4,CPOY-8,AS,NBA1`. The selection prints, the fourth-place
+    // finish does not, and admitting the first did not weaken the second.
+    const luka = POOL_PLAYERS.find(p => p.id === 'Luka_Doncic');
+    expect(luka.awards).toEqual(['AS']);
+    expect(luka.awards).not.toContain('MVP');
+    // And Victor Wembanyama, who was third in the same vote, gets DPOY and the
+    // All-Star — not the MVP — which is the same rule producing a mark rather
+    // than withholding one.
+    expect(POOL_PLAYERS.find(p => p.id === 'Victor_Wembanyama').awards).toEqual(['DPOY', 'AS']);
   });
 
   it('joins the special sets by their own ids, not the pool\'s', () => {
@@ -766,7 +783,9 @@ describe('the award marks the studio joins on', () => {
     const superSeason = SOURCES[SUPER_SEASON_SET].players.find(c => c.id === 'Kevin_Durant');
     const rookie = SOURCES[ROOKIE_SET].players.find(c => c.id === 'Kevin_Durant');
     expect(superSeason.season).toBe(2014);
-    expect(superSeason.awards).toEqual(['MVP']);
+    expect(superSeason.awards).toEqual(['MVP', 'AS']);
+    // His ROOKIE season carried no All-Star selection, so that card is a
+    // one-mark card — the season really is part of the join.
     expect(rookie.season).toBe(2008);
     expect(rookie.awards).toEqual(['ROY']);
   });
@@ -799,7 +818,7 @@ describe('the award marks the studio joins on', () => {
 
   it('says out loud that it is showing marks at all', () => {
     expect(AWARDS_GENERATED).toBe(true);
-    expect(awardsFor(CURRENT_SET, 'Shai_Gilgeous_Alexander')).toEqual(['MVP', 'CPOY']);
+    expect(awardsFor(CURRENT_SET, 'Shai_Gilgeous_Alexander')).toEqual(['MVP', 'CPOY', 'AS']);
     // A set the generator does not cover, and an id nobody has, both answer the
     // same empty array — and neither can reach the prototype.
     expect(awardsFor(WNBA_SET, 'A_ja_Wilson')).toEqual([]);

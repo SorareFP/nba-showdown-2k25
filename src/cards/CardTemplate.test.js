@@ -49,7 +49,7 @@ import {
   setLeague,
   showsSeason,
 } from './sets.js';
-import { AWARD_CODES, MAX_CARD_AWARDS, awardImagePath } from './awards.js';
+import { AWARD_CODES, MAX_CARD_AWARDS, awardImagePath, getAward } from './awards.js';
 import { AWARDS_FILE, BADGE_FILE, POOL_PLAYERS, SOURCES } from '../studio/players.js';
 
 const render = props => renderToStaticMarkup(React.createElement(CardTemplate, props));
@@ -1714,7 +1714,9 @@ describe('the award marks', () => {
   });
 
   it('ignores an awards field that is not a list of codes it knows', () => {
-    for (const awards of [['AS', 'NBA1'], 'MVP', 42, null, [null, {}]]) {
+    // NBA1/DEF1 are the real undeclared codes now that All-Star is in — the
+    // shape of the failure is unchanged, the example had to move.
+    for (const awards of [['NBA1', 'DEF1'], 'MVP', 42, null, [null, {}]]) {
       const html = render({ card: { ...MARKED, awards }, set: CURRENT_SET });
       expect(html, JSON.stringify(awards)).not.toContain('--award-fill');
       expect(html, JSON.stringify(awards)).not.toContain('/awards/');
@@ -1817,38 +1819,70 @@ describe('the generated award file, on the cards it belongs to', () => {
   it('gives Shai Gilgeous-Alexander an MVP on his 2026-27 card', () => {
     const sga = marked(CURRENT_SET).find(r => r.id === 'Shai_Gilgeous_Alexander');
     expect(sga.raw).toContain('MVP-1');
-    expect(sga.awards).toEqual(['MVP', 'CPOY']);
+    // THE ONE CARD IN THREE SETS THAT FILLS THE ROW. MVP, Clutch Player and the
+    // All-Star selection, in priority order, at exactly MAX_CARD_AWARDS — so
+    // this is also the card that would lose a mark first if a fourth code were
+    // ever declared, and it would lose the All-Star.
+    expect(sga.awards).toEqual(['MVP', 'CPOY', 'AS']);
+    expect(sga.awards).toHaveLength(MAX_CARD_AWARDS);
     const html = render({
       card: POOL_PLAYERS.find(p => p.id === sga.id),
       set: CURRENT_SET,
     });
-    expect(html).toContain('/awards/MVP.png');
-    expect(html).toContain('/awards/CPOY.png');
+    expect(html).toContain('/awards/MVP');
+    expect(html).toContain('/awards/CPOY');
+    expect(html).toContain('/awards/AS');
   });
 
-  it('gives Luka Dončić NONE, despite an MVP-4 on the same row', () => {
-    // THE TEST THIS FEATURE EXISTS TO PASS. He finished fourth; a parser that
-    // read the code and not the rank would print an MVP trophy on his card, on
-    // Donovan Mitchell's, and on eight more, every season.
+  it('gives Luka Dončić an ALL-STAR mark and no MVP, off the same row', () => {
+    // THE TEST THIS FEATURE EXISTS TO PASS, now carrying both halves. He
+    // finished FOURTH in the MVP voting and made the All-Star team, and the two
+    // facts live in one string: `MVP-4,CPOY-8,AS,NBA1`. A parser that read the
+    // code and not the rank would print an MVP trophy on his card, on Donovan
+    // Mitchell's and on eight more every season; admitting All-Star must not
+    // have softened that by a hair, and this is where it is checked against the
+    // real generated file rather than against an invented string.
     const luka = (AWARDS_FILE.sets[CURRENT_SET] ?? []).find(r => r.id === 'Luka_Doncic');
     expect(luka.raw).toContain('MVP-4');
-    expect(luka.awards).toEqual([]);
+    expect(luka.raw).toContain('AS');
+    expect(luka.awards).toEqual(['AS']);
     const html = render({
       card: POOL_PLAYERS.find(p => p.id === 'Luka_Doncic'),
       set: CURRENT_SET,
     });
-    expect(html).not.toContain('/awards/');
-    expect(html).not.toContain('--award-fill');
+    expect(html).toContain('/awards/AS');
+    // Not the MVP he did not win, not the Clutch Player he came eighth in, and
+    // not the All-NBA selection this build does not declare.
+    expect(html).not.toContain('/awards/MVP');
+    expect(html).not.toContain('/awards/CPOY');
+    expect(html).not.toContain('/awards/NBA1');
+    // He is a marked card now, so the chip colours DO appear — the contract
+    // that a card without marks carries none of them is asserted elsewhere.
+    expect(html).toContain('--award-fill');
   });
 
-  it('never marks a card whose raw row carries no -1 at all', () => {
-    // The rule, restated over every record in the file rather than over two.
+  it('never marks a card on anything but a -1 win or a declared selection', () => {
+    // The rule, restated over every record in the file rather than over two —
+    // and it is TWO rules now, so each code is checked against the one that
+    // applies to it. A trophy needs its -1 in the raw row; a selection needs
+    // the bare token. Nothing else can put a mark on a card.
+    const selections = new Set(AWARD_CODES.filter(c => getAward(c).selection));
     for (const records of Object.values(AWARDS_FILE.sets)) {
       for (const r of records) {
-        const hasWin = r.raw.split(',').some(t => t.trim().endsWith('-1'));
-        expect(r.awards.length > 0 && !hasWin, `${r.name} ${r.season}`).toBe(false);
-        // And every code it DID record is one this build declares and can draw.
-        for (const code of r.awards) expect(AWARD_CODES, `${r.name} ${code}`).toContain(code);
+        const tokens = r.raw.split(',').map(t => t.trim());
+        for (const code of r.awards) {
+          // Every code it recorded is one this build declares and can draw.
+          expect(AWARD_CODES, `${r.name} ${code}`).toContain(code);
+          expect(
+            tokens.includes(selections.has(code) ? code : `${code}-1`),
+            `${r.name} ${r.season} ${code} not earned by ${r.raw}`
+          ).toBe(true);
+        }
+        // And no trophy ever rides in on a selection's rule.
+        for (const code of r.awards) {
+          if (selections.has(code)) continue;
+          expect(tokens, `${r.name} ${code}`).not.toContain(code);
+        }
       }
     }
   });
@@ -1859,7 +1893,12 @@ describe('the generated award file, on the cards it belongs to', () => {
     // trophy that can land there — and eleven of them do.
     const rookies = marked(ROOKIE_SET);
     expect(rookies.length).toBe(11);
+    // ALL-STAR DID NOT MOVE THIS SET AT ALL — no player in the rookie pool was
+    // an All-Star in his rookie year. Blake Griffin (`MVP-10,ROY-1,AS`,
+    // 2010-11) is the case that would have, and he is retired and out of the
+    // pool. Pinned so that a pool change which adds one is visible here.
     for (const r of rookies) expect(r.awards, r.name).toEqual(['ROY']);
+    expect(AWARDS_FILE.counts[ROOKIE_SET].byCode.AS).toBe(0);
     // And no Rookie of the Year is on a Super Season card, for the same reason
     // from the other side: a player whose best season is his rookie one is
     // excluded from that set.
@@ -1887,9 +1926,10 @@ describe('the generated award file, on the cards it belongs to', () => {
     // feature was argued for.
     const jokic = SOURCES[SUPER_SEASON_SET].players.find(c => c.id === 'Nikola_Jokic');
     expect(jokic.season).toBe(2022);
-    expect(jokic.awards).toEqual(['MVP']);
+    expect(jokic.awards).toEqual(['MVP', 'AS']);
     const html = render({ card: jokic, set: SUPER_SEASON_SET });
-    expect(html).toContain('/awards/MVP.png');
+    expect(html).toContain('/awards/MVP');
+    expect(html).toContain('/awards/AS');
     expect(html).toContain('SUPER SEASON');
     expect(html).toContain('2021-22');
   });

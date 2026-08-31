@@ -98,66 +98,109 @@ describe('the -1 rule', () => {
     expect(awardsWon('MVP-1,MVP-1')).toEqual(['MVP']);
   });
 
-  it('reads the selections out separately, and prints none of them', () => {
-    // The other half of the same string, parsed without consulting the
-    // declaration — which is what makes admitting one a row in AWARDS rather
-    // than a second parser. Nothing declares a selection today, so nothing this
-    // half finds reaches a card.
+  it('reads the selections out separately, declaration or no declaration', () => {
+    // The other half of the same string, parsed WITHOUT consulting the
+    // declaration — which is what made admitting All-Star a row in AWARDS
+    // rather than a second parser. All five come back here; only the declared
+    // one reaches a card, and that filtering happens in awardsEarned.
     expect(selectionsIn('MVP-1,CPOY-1,AS,NBA1')).toEqual(['AS', 'NBA1']);
     expect(selectionsIn('MVP-4')).toEqual([]);
-    expect(awardsEarned('AS,NBA1,DEF1')).toEqual([]);
+    expect(selectionsIn('AS,NBA1,NBA2,NBA3,DEF1,DEF2')).toEqual([
+      'AS',
+      'NBA1',
+      'NBA2',
+      'NBA3',
+      'DEF1',
+      'DEF2',
+    ]);
   });
 
   it('joins the two halves to the declaration, and only there', () => {
     // awardsEarned is the ONE function that knows both the syntax and the
-    // declaration. A ranked award needs its -1; a declared selection would need
-    // only to be present; nothing else earns a mark.
-    expect(awardsEarned('MVP-1,CPOY-1,AS,NBA1')).toEqual(['MVP', 'CPOY']);
-    expect(awardsEarned('MVP-4,CPOY-8,AS,NBA1')).toEqual([]);
-    // Priority order, not the order the site listed them in.
+    // declaration. A ranked award needs its -1; a declared selection needs only
+    // to be present; nothing else earns a mark.
+    expect(awardsEarned('MVP-1,CPOY-1,AS,NBA1')).toEqual(['MVP', 'CPOY', 'AS']);
+    // Priority order, not the order the site listed them in — and All-Star
+    // sorts LAST however early the site printed it.
     expect(awardsEarned('CPOY-1,MVP-1')).toEqual(['MVP', 'CPOY']);
-    // Undeclared codes never earn one, whichever shape they are.
-    expect(awardsEarned('NBA1,DEF1,AS')).toEqual([]);
+    expect(awardsEarned('AS,CPOY-1,MVP-1')).toEqual(['MVP', 'CPOY', 'AS']);
+    // The four UNDECLARED selections never earn a mark, and neither does a
+    // losing rank, so a row of nothing but those is a row of nothing.
+    expect(awardsEarned('NBA1,NBA2,NBA3,DEF1,DEF2')).toEqual([]);
+    expect(awardsEarned('MVP-4,CPOY-8,NBA1,DEF1')).toEqual([]);
     for (const junk of ['', null, undefined, 42, {}]) {
       expect(awardsEarned(junk), String(junk)).toEqual([]);
     }
   });
 
-  it('would take a declared selection on presence alone', () => {
-    // The `selection` flag's whole contract, asserted through the real function
-    // on a hypothetical declaration — so that the day somebody adds
-    // `{ code: 'AS', name: 'All-Star', selection: true }` they are adding one
-    // row and not a parsing rule. Nothing declares one today.
-    expect(AWARDS.some(a => a.selection)).toBe(false);
-    AWARDS.push({ code: 'AS', name: 'All-Star', selection: true });
-    try {
-      expect(awardsEarned('MVP-4,CPOY-8,AS,NBA1')).toEqual(['AS']);
-      expect(awardsEarned('MVP-1,AS')).toEqual(['MVP', 'AS']);
-      // And it is still not a WIN — the fact and the decision stay apart.
-      expect(awardsWon('MVP-1,AS')).toEqual(['MVP']);
-    } finally {
-      AWARDS.pop();
-    }
-    expect(awardsEarned('MVP-1,AS')).toEqual(['MVP']);
+  it("gives Luka Dončić an All-Star mark and STILL no MVP, off one row", () => {
+    // THE RECORD THE WHOLE CHANGE IS JUDGED ON, and both halves are asserted
+    // together on purpose: admitting a selection is only safe if it left the
+    // -1 rule untouched, and the way to show that is one string that exercises
+    // both shapes at once. His real 2025-26 row — fourth in MVP voting, eighth
+    // in Clutch Player, All-Star, First Team All-NBA.
+    const LUKA = 'MVP-4,CPOY-8,AS,NBA1';
+    expect(awardsEarned(LUKA)).toEqual(['AS']);
+    // Not the MVP, not the CPOY, and not the All-NBA either.
+    expect(awardsEarned(LUKA)).not.toContain('MVP');
+    expect(awardsEarned(LUKA)).not.toContain('CPOY');
+    expect(awardsEarned(LUKA)).not.toContain('NBA1');
+    // And the All-Star mark is still NOT A WIN. The fact and the decision stay
+    // apart: awardsWon answers "what did he win" and the answer is nothing.
+    expect(awardsWon(LUKA)).toEqual([]);
+    // The same row with the MVP actually won — Shai's 2025-26 — for contrast,
+    // so the difference between the two really is the suffix.
+    expect(awardsEarned('MVP-1,CPOY-1,AS,NBA1')).toEqual(['MVP', 'CPOY', 'AS']);
+  });
+
+  it('takes a declared selection on presence alone, and nothing else does', () => {
+    // The `selection` flag's contract, now that a row uses it. A selection is
+    // HELD rather than WON, so presence is the whole test for it — and the
+    // trophies are unaffected, which is the property that has to hold for the
+    // flag to have been a safe door to open.
+    expect(getAward('AS').selection).toBe(true);
+    expect(AWARDS.filter(a => a.selection).map(a => a.code)).toEqual(['AS']);
+    expect(awardsEarned('AS')).toEqual(['AS']);
+    // A trophy with no rank at all is NOT a win, flag or no flag: the six
+    // voted rows carry no `selection`, so a bare `MVP` earns nothing.
+    expect(awardsEarned('MVP')).toEqual([]);
+    expect(awardsEarned('MVP,DPOY,ROY,MIP,6MOY,CPOY')).toEqual([]);
+    // …and a RANKED All-Star token is not a thing Basketball-Reference writes,
+    // but if it ever were, the selection rule reads presence and would still
+    // want the bare token. `AS-1` is a token with a rank, so selectionsIn does
+    // not see it and no mark is earned — a shape change would fail here rather
+    // than quietly marking every All-Star ballot.
+    expect(awardsEarned('AS-1')).toEqual([]);
   });
 });
 
 // ── THE DECLARATION ─────────────────────────────────────────────────────────
 describe('the declared awards', () => {
-  it('is the six voted trophies, and no selections', () => {
-    expect(AWARD_CODES).toEqual(['MVP', 'DPOY', 'ROY', 'MIP', '6MOY', 'CPOY']);
-    // The selections, named so this is a decision on the record rather than an
-    // omission: none of them has a single winner to rank against, and each puts
-    // 10-30 players on the list every season.
-    for (const code of ['AS', 'NBA1', 'NBA2', 'NBA3', 'DEF1', 'DEF2']) {
+  it('is the six voted trophies plus All-Star, and no other selection', () => {
+    expect(AWARD_CODES).toEqual(['MVP', 'DPOY', 'ROY', 'MIP', '6MOY', 'CPOY', 'AS']);
+    // The four that stay out, named so this is a decision on the record rather
+    // than an omission: All-NBA puts 15 more players on the list every season
+    // and All-Defensive another 10, overlapping almost entirely with the
+    // All-Star team that is already in. See the header of awards.js.
+    for (const code of ['NBA1', 'NBA2', 'NBA3', 'DEF1', 'DEF2']) {
       expect(getAward(code), code).toBeNull();
     }
+    // Exactly one row is a selection, and it is the one the user asked for.
+    expect(getAward('AS')).toEqual({ code: 'AS', name: 'All-Star', selection: true });
   });
 
-  it('orders by standing, MVP first', () => {
+  it('orders by standing, MVP first and All-Star last', () => {
     expect(AWARD_CODES[0]).toBe('MVP');
     expect(AWARD_CODES.indexOf('DPOY')).toBeLessThan(AWARD_CODES.indexOf('6MOY'));
     expect(AWARD_CODES.indexOf('ROY')).toBeLessThan(AWARD_CODES.indexOf('CPOY'));
+    // LAST, and it has to be: 24+ players hold it every season against one for
+    // each of the six above, so it is the least distinguishing mark on the
+    // list — which is also what makes it the first the cap drops.
+    expect(AWARD_CODES.at(-1)).toBe('AS');
+    for (const code of AWARD_CODES) {
+      if (code === 'AS') continue;
+      expect(AWARD_CODES.indexOf(code), code).toBeLessThan(AWARD_CODES.indexOf('AS'));
+    }
   });
 
   it('names every one of them, for the studio and for a reader', () => {
@@ -190,10 +233,25 @@ describe('the marks a card prints', () => {
     expect(MAX_CARD_AWARDS).toBe(3);
   });
 
+  it('drops ALL-STAR first when the cap bites, whatever else is on the card', () => {
+    // The consequence of putting it last, stated as its own rule because it is
+    // the reason the order was chosen. Every four-mark hand loses the All-Star
+    // and keeps the three trophies — a card that won three things and made the
+    // team prints the three it won.
+    expect(pickCodes(['MVP', 'DPOY', 'ROY', 'AS'])).toEqual(['MVP', 'DPOY', 'ROY']);
+    expect(pickCodes(['AS', 'MIP', '6MOY', 'CPOY'])).toEqual(['MIP', '6MOY', 'CPOY']);
+    // Under the cap it stays, and stays at the end.
+    expect(pickCodes(['AS', 'MVP'])).toEqual(['MVP', 'AS']);
+    expect(pickCodes(['AS', 'CPOY', 'MVP'])).toEqual(['MVP', 'CPOY', 'AS']);
+  });
+
   it('ignores a code this build does not declare, rather than throwing', () => {
     // A data file naming an award this build has never heard of should cost
     // that card a mark, not take the studio down. Same contract as pickBadge.
-    expect(pickCodes(['AS', 'NBA1', 'MVP'])).toEqual(['MVP']);
+    expect(pickCodes(['NBA1', 'DEF1', 'MVP'])).toEqual(['MVP']);
+    // All-Star IS declared now, so it survives the same filter the other four
+    // selections do not.
+    expect(pickCodes(['AS', 'NBA1', 'MVP'])).toEqual(['MVP', 'AS']);
     expect(pickCodes(['nonsense'])).toEqual([]);
     expect(pickCodes(['constructor'])).toEqual([]);
   });
@@ -222,9 +280,19 @@ describe('award art', () => {
   it('resolves an undeclared code to nothing, never to a guessed path', () => {
     // A path is a request. Inventing one for a code this build does not declare
     // would put a 404 on the card in place of a fallback that was designed.
-    expect(awardImagePath('AS')).toBeNull();
+    for (const code of ['NBA1', 'NBA2', 'NBA3', 'DEF1', 'DEF2']) {
+      expect(awardImagePath(code), code).toBeNull();
+    }
     expect(awardImagePath('constructor')).toBeNull();
     expect(awardImagePath(null)).toBeNull();
+  });
+
+  it('names the All-Star file by its CODE, which is the side of the join that is fixed', () => {
+    // The user's file is called "All-Star". The card asks for AS, because the
+    // code is what Basketball-Reference writes and what every other row here is
+    // spelled as — so the art is what gets renamed, not the declaration.
+    expect(awardImagePath('AS')).toContain('/awards/AS');
+    expect(awardImagePath('AS')).not.toContain('All-Star');
   });
 
   it('is bare and root-relative, so Node and the browser read the same string', () => {

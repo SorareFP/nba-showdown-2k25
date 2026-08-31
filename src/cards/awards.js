@@ -18,7 +18,7 @@
 // to one and `pickAwards` resolves many down to several, and folding them
 // together would mean one of the two rules pretending to be the other.
 //
-// ── WHICH CODES QUALIFY, AND WHY THE SELECTIONS DO NOT ──────────────────────
+// ── WHICH CODES QUALIFY, AND WHY FOUR OF THE FIVE SELECTIONS DO NOT ─────────
 //
 // Basketball-Reference's season tables carry one `awards` string per player,
 // and it mixes two different kinds of thing:
@@ -38,31 +38,45 @@
 // appears in this column; a card that wanted one would need a different source
 // as well as a row here.
 //
-// Only the trophies qualify, and there are three reasons, of which the third is
-// the one that would decide it on its own:
+// SEVEN OF THE TWELVE PRINT: the six trophies, and ALL-STAR.
 //
-//   1. IT IS WHAT WAS ASKED FOR. "MVP, MIP, DPOY, etc." names the trophies.
+// All-Star is here on the user's call — "AS should map to the All-Star file" —
+// made with the cost in front of him, and it is a real cost. Measured on the
+// generated data rather than argued (card-data/generated/card-awards.json
+// records the counts, so these regenerate rather than rotting):
 //
-//   2. THE PARSING RULE DOES NOT APPLY TO THEM. A mark is earned by finishing
-//      FIRST, and a selection has no finishing position — so admitting one
-//      would mean a second, differently-shaped rule for what counts as won.
+//        super-season   15 marked cards -> 44   (7% of the set -> 21%)
+//        2026-27         5 marked cards -> 31   (1% -> 9%)
+//        rookie         11 marked cards -> 11   (3% -> 3%)
 //
-//   3. THE VOLUME WOULD DESTROY THE MARK. 24+ players make an All-Star team
-//      every season, 15 make an All-NBA team, 10 an All-Defensive team, and
-//      across the twenty seasons this build reads there are 524 All-Star
-//      selections against 260 MVP ballots and 20 MIP awards. The Super Season
-//      set is 210 cards, each one somebody's CAREER-BEST year — precisely the
-//      season a player is likeliest to have been selected in. Measured on the
-//      generated data (card-data/generated/card-awards.json records both
-//      numbers, so this one regenerates rather than rotting):
+// The rookie set does not move AT ALL, and that is a fact about the pool rather
+// than a bug: no player in it was an All-Star in his rookie year. Blake Griffin
+// (`MVP-10,ROY-1,AS`, 2010-11) is the case that would have, and he is retired
+// and therefore not in the pool.
 //
-//        super-season   15 marked cards -> 77   (7% of the set -> 37%)
-//        2026-27         5 marked cards -> 54   (1% -> 15%)
-//        rookie         11 marked cards -> 70   (3% -> 22%)
+// THE OTHER FOUR STAY OUT — All-NBA (NBA1/2/3) and All-Defensive (DEF1/2) —
+// and the numbers above are why the line falls between them and All-Star
+// rather than around all five. 24+ players make an All-Star team every season;
+// admitting them costs the Super Season set a fifth. All-NBA puts 15 more on
+// the list and All-Defensive another 10, and those two overlap so heavily with
+// the All-Star team and with each other that what they mostly add is a SECOND
+// and THIRD mark to the cards that already have one — which spends the row's
+// three slots without telling a reader anything the first mark did not. A mark
+// better than a third of a set carries is not a mark, it is a background, and
+// that is the same argument SUPER_SEASON_MIN_SALARY was moved for one file
+// over.
 //
-//      A mark better than a third of a set carries is not a mark, it is a
-//      background — the same argument SUPER_SEASON_MIN_SALARY was moved for,
-//      one file over.
+// (The 37% figure quoted while this was being decided was `ifSelectionsCounted`
+// in the generated file, which answers the wider question — what if EVERY
+// selection counted. All-Star ALONE is the 21% above. The two numbers are both
+// in card-awards.json and neither is a typo for the other.)
+//
+// AND THE PARSING RULE STILL ONLY APPLIES TO THE TROPHIES. A trophy is earned
+// by finishing FIRST, a selection has no finishing position, and the two shapes
+// are read by two functions that meet in exactly one place — `awardsEarned`.
+// Admitting All-Star did not soften the `-1` rule by a hair: Luka Dončić's
+// `MVP-4,CPOY-8,AS,NBA1` still yields no MVP mark and now yields an All-Star
+// one, off the same record, in the same call. That is the test.
 //
 // ONE LINE TO CHANGE. AWARDS below is the whole declaration: adding NBA1 to it
 // is adding a row, and everything downstream — the generator, the ordering, the
@@ -125,9 +139,10 @@ export function awardsWon(raw) {
  * Every code in the string that carries NO finishing position.
  *
  * The other half of the same fact, and equally declaration-free: `AS,NBA1,DEF1`
- * yields all three, `MVP-4` yields none. Nothing prints from this today — see
- * the header for why the selections are excluded — and it exists so that
- * admitting one is a row in AWARDS rather than a second parser.
+ * yields all three, `MVP-4` yields none. WHICH of them prints is not decided
+ * here — that is `awardsEarned` against the declaration, where AS is a row and
+ * the other four are not — and keeping the two apart is what made admitting
+ * All-Star a row rather than a second parser.
  */
 export function selectionsIn(raw) {
   return codesIn(raw, parsed => parsed.rank === null);
@@ -162,6 +177,13 @@ function codesIn(raw, keep) {
  *   6MOY   a role award: it is about the bench, not about the league.
  *   CPOY   a role award over a slice of a season, and the newest of the six
  *          (first awarded 2022-23), so the fewest cards can carry it.
+ *   AS     LAST, and not by a narrow margin. It is the only SELECTION here and
+ *          the only mark 24+ players hold every season, so it is the least
+ *          distinguishing of the seven by an order of magnitude — every one of
+ *          the six above it has exactly one holder a year. Being last is also
+ *          what makes it the FIRST DROPPED when MAX_CARD_AWARDS bites, which
+ *          is the correct casualty: a card that won three things and made the
+ *          team should print the three it won.
  *
  * `name` is not rendered anywhere on the card. It is here so that the studio,
  * the run report and this file's own tests say "Most Improved Player" instead
@@ -170,21 +192,21 @@ function codesIn(raw, keep) {
  * ── ADDING ONE IS ADDING A ROW, INCLUDING A SELECTION ───────────────────────
  *
  * `selection: true` says this code is HELD rather than WON, and it is what
- * makes admitting All-Star or All-NBA a one-line change rather than a one-line
- * change plus a second parsing rule. With it:
+ * makes admitting a selection a one-line change rather than a one-line change
+ * plus a second parsing rule. `awardsEarned` stops requiring a `-1` for that
+ * code and takes the bare token instead; nothing else moves — not the
+ * generator, not the priority order, not the cap, not the renderer.
  *
- *     { code: 'AS', name: 'All-Star', selection: true },
+ * AS IS THE PROOF OF THAT, and it went in as exactly the one line the flag was
+ * written for. NBA1/NBA2/NBA3 and DEF1/DEF2 would each be one more, and the
+ * header says why they are not there — the door being cheap is not a reason to
+ * walk through it.
  *
- * `awardsEarned` stops requiring a `-1` for that code and takes the bare token
- * instead. Nothing else moves — not the generator, not the priority order, not
- * the cap, not the renderer. NOTHING DECLARES IT TODAY, and the header says
- * why: on the Super Season set the selections would take the marked cards from
- * 15 to 77. The flag is the door, not an invitation through it.
- *
- * The CODE IS THE FILENAME. `{code}.png` under public/awards/ — see
+ * The CODE IS THE FILENAME. `/awards/{code}` under public/ — see
  * awardImagePath — so a row's code has to be spelled the way the art is, and
- * these six are spelled the way Basketball-Reference spells them, because that
- * is the side of the join that cannot be renamed.
+ * these seven are spelled the way Basketball-Reference spells them, because
+ * that is the side of the join that cannot be renamed. The user's file for the
+ * last row is therefore `AS.…`, not `All-Star.…`.
  */
 export const AWARDS = [
   { code: 'MVP', name: 'Most Valuable Player' },
@@ -193,6 +215,7 @@ export const AWARDS = [
   { code: 'MIP', name: 'Most Improved Player' },
   { code: '6MOY', name: 'Sixth Man of the Year' },
   { code: 'CPOY', name: 'Clutch Player of the Year' },
+  { code: 'AS', name: 'All-Star', selection: true },
 ];
 
 const AWARDS_BY_CODE = new Map(AWARDS.map(a => [a.code, a]));
@@ -234,16 +257,21 @@ export function awardsEarned(raw) {
  * gaps measures 126. A fourth would not fit, and shrinking all four to make it
  * fit would cost every card with one mark the size of that mark.
  *
- * THREE IS ALSO MORE THAN THE DATA NEEDS, and that is deliberate rather than
- * lucky. Exactly ONE card in the three generated sets carries more than one
- * mark — Shai Gilgeous-Alexander's 2026-27 base card, MVP and Clutch Player of
- * the Year in the same season — so nothing is being dropped by anybody today.
- * A cap that only just fit the current maximum would silently start dropping
- * marks the first season somebody swept three, and a dropped trophy is the one
- * failure this feature cannot have; the doubles that are one vote away are all
- * plausible (MVP+DPOY was Giannis in 2019-20, MVP+CPOY has already happened).
+ * THREE STILL FITS THE DATA, and All-Star is what made that worth re-checking
+ * rather than assuming. Before it, exactly one card in the three generated sets
+ * carried more than one mark; with it, THIRTEEN do — eleven on Super Season,
+ * two on the base set — because a trophy winner is nearly always an All-Star
+ * too. Even so nothing is dropped: the most any card carries is exactly THREE,
+ * and there is one of them, Shai Gilgeous-Alexander's 2026-27 base card
+ * (`MVP-1,CPOY-1,AS,NBA1` -> MVP + CPOY + AS). The cap is at the ceiling rather
+ * than above it now, which is the state it was raised past three to avoid — so
+ * if a fourth code is ever declared, this number and the bar's width have to be
+ * revisited together, not one of them.
+ *
  * `pickAwards` drops from the BOTTOM of the priority order when it must, so the
- * mark that goes is always the least of them.
+ * mark that goes is always the least of them — and All-Star, being last, is
+ * always the first to go. That ordering is the reason a fourth mark could never
+ * cost a card a trophy.
  */
 export const MAX_CARD_AWARDS = 3;
 

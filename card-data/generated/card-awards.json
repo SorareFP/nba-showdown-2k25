@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-31T13:33:23.395Z",
+ "generatedAt": "2026-08-31T13:56:07.325Z",
  "source": "Basketball-Reference's season `advanced` tables, awards column — a voted award's suffix is its finishing position, so only -1 is a win",
  "declared": [
   "MVP",
@@ -7,7 +7,8 @@
   "ROY",
   "MIP",
   "6MOY",
-  "CPOY"
+  "CPOY",
+  "AS"
  ],
  "seasons": [
   2004,
@@ -34,44 +35,50 @@
  "counts": {
   "2026-27": {
    "cards": 54,
-   "marked": 5,
-   "multiple": 1,
-   "ifSelectionsCounted": 54,
+   "marked": 31,
+   "multiple": 2,
+   "capped": 0,
+   "ifSelectionsCounted": 38,
    "byCode": {
     "MVP": 1,
     "DPOY": 1,
     "ROY": 1,
     "MIP": 1,
     "6MOY": 1,
-    "CPOY": 1
+    "CPOY": 1,
+    "AS": 28
    }
   },
   "super-season": {
    "cards": 77,
-   "marked": 15,
-   "multiple": 0,
-   "ifSelectionsCounted": 77,
+   "marked": 44,
+   "multiple": 11,
+   "capped": 0,
+   "ifSelectionsCounted": 58,
    "byCode": {
     "MVP": 6,
     "DPOY": 4,
     "ROY": 0,
     "MIP": 3,
     "6MOY": 2,
-    "CPOY": 0
+    "CPOY": 0,
+    "AS": 40
    }
   },
   "rookie": {
    "cards": 70,
    "marked": 11,
    "multiple": 0,
-   "ifSelectionsCounted": 70,
+   "capped": 0,
+   "ifSelectionsCounted": 11,
    "byCode": {
     "MVP": 0,
     "DPOY": 0,
     "ROY": 11,
     "MIP": 0,
     "6MOY": 0,
-    "CPOY": 0
+    "CPOY": 0,
+    "AS": 0
    }
   }
  },
@@ -83,7 +90,9 @@
     "season": 2026,
     "bbrefId": "maxeyty01",
     "raw": "CPOY-7,AS,NBA3",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Amen_Thompson",
@@ -99,7 +108,9 @@
     "season": 2026,
     "bbrefId": "duranke01",
     "raw": "CPOY-9,AS,NBA2",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Luka_Doncic",
@@ -107,7 +118,9 @@
     "season": 2026,
     "bbrefId": "doncilu01",
     "raw": "MVP-4,CPOY-8,AS,NBA1",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Jamal_Murray",
@@ -115,7 +128,9 @@
     "season": 2026,
     "bbrefId": "murraja01",
     "raw": "CPOY-2,AS,NBA3",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Jalen_Johnson",
@@ -123,7 +138,9 @@
     "season": 2026,
     "bbrefId": "johnsja05",
     "raw": "AS,NBA3",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Anthony_Edwards",
@@ -131,7 +148,9 @@
     "season": 2026,
     "bbrefId": "edwaran01",
     "raw": "CPOY-3,AS",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Jalen_Brunson",
@@ -139,7 +158,9 @@
     "season": 2026,
     "bbrefId": "brunsja01",
     "raw": "CPOY-5,AS,NBA2",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "VJ_Edgecombe",
@@ -155,7 +176,9 @@
     "season": 2026,
     "bbrefId": "jokicni01",
     "raw": "MVP-2,CPOY-6,AS,NBA1",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Jaylen_Brown",
@@ -163,7 +186,9 @@
     "season": 2026,
     "bbrefId": "brownja02",
     "raw": "MVP-6,AS,NBA2",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Derrick_White",
@@ -179,7 +204,9 @@
     "season": 2026,
     "bbrefId": "cunnica01",
     "raw": "MVP-5,CPOY-4,AS,NBA1",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Brandon_Ingram",
@@ -187,7 +214,9 @@
     "season": 2026,
     "bbrefId": "ingrabr01",
     "raw": "AS",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Donovan_Mitchell",
@@ -195,7 +224,9 @@
     "season": 2026,
     "bbrefId": "mitchdo01",
     "raw": "MVP-7,AS,NBA2",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Devin_Booker",
@@ -203,7 +234,9 @@
     "season": 2026,
     "bbrefId": "bookede01",
     "raw": "AS",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Cooper_Flagg",
@@ -221,7 +254,9 @@
     "season": 2026,
     "bbrefId": "barnesc01",
     "raw": "DPOY-5,AS,DEF2",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Nickeil_Alexander_Walker",
@@ -239,7 +274,9 @@
     "season": 2026,
     "bbrefId": "avdijde01",
     "raw": "AS",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Alperen_Sengun",
@@ -247,7 +284,9 @@
     "season": 2026,
     "bbrefId": "sengual01",
     "raw": "AS",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Shai_Gilgeous_Alexander",
@@ -257,7 +296,8 @@
     "raw": "MVP-1,CPOY-1,AS,NBA1",
     "awards": [
      "MVP",
-     "CPOY"
+     "CPOY",
+     "AS"
     ]
    },
    {
@@ -266,7 +306,9 @@
     "season": 2026,
     "bbrefId": "siakapa01",
     "raw": "AS",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "LeBron_James",
@@ -274,7 +316,9 @@
     "season": 2026,
     "bbrefId": "jamesle01",
     "raw": "AS",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "OG_Anunoby",
@@ -306,7 +350,9 @@
     "season": 2026,
     "bbrefId": "leonaka01",
     "raw": "MVP-7,CPOY-10,AS,NBA2",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Kon_Knueppel",
@@ -330,7 +376,9 @@
     "season": 2026,
     "bbrefId": "townska01",
     "raw": "AS",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "De_Aaron_Fox",
@@ -338,7 +386,9 @@
     "season": 2026,
     "bbrefId": "foxde01",
     "raw": "AS",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Stephen_Curry",
@@ -346,7 +396,9 @@
     "season": 2026,
     "bbrefId": "curryst01",
     "raw": "AS",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Norman_Powell",
@@ -354,7 +406,9 @@
     "season": 2026,
     "bbrefId": "powelno01",
     "raw": "AS",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Victor_Wembanyama",
@@ -363,7 +417,8 @@
     "bbrefId": "wembavi01",
     "raw": "MVP-3,DPOY-1,AS,NBA1,DEF1",
     "awards": [
-     "DPOY"
+     "DPOY",
+     "AS"
     ]
    },
    {
@@ -372,7 +427,9 @@
     "season": 2026,
     "bbrefId": "antetgi01",
     "raw": "AS",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Chet_Holmgren",
@@ -380,7 +437,9 @@
     "season": 2026,
     "bbrefId": "holmgch01",
     "raw": "DPOY-2,AS,NBA3,DEF1",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Jaime_Jaquez_Jr",
@@ -396,7 +455,9 @@
     "season": 2026,
     "bbrefId": "durenja01",
     "raw": "DPOY-11,AS,NBA3",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Draymond_Green",
@@ -544,7 +605,9 @@
     "season": 2025,
     "bbrefId": "sengual01",
     "raw": "AS",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Amen_Thompson",
@@ -560,7 +623,9 @@
     "season": 2018,
     "bbrefId": "drumman01",
     "raw": "DPOY-15,AS",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Anthony_Davis",
@@ -568,7 +633,9 @@
     "season": 2015,
     "bbrefId": "davisan02",
     "raw": "MVP-5,DPOY-4,AS,NBA1,DEF2",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Anthony_Edwards",
@@ -576,7 +643,9 @@
     "season": 2025,
     "bbrefId": "edwaran01",
     "raw": "MVP-7,CPOY-3,AS,NBA2",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Bam_Adebayo",
@@ -600,7 +669,9 @@
     "season": 2013,
     "bbrefId": "lopezbr01",
     "raw": "AS",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Cameron_Johnson",
@@ -624,7 +695,9 @@
     "season": 2025,
     "bbrefId": "garlada01",
     "raw": "CPOY-6,AS",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "De_Aaron_Fox",
@@ -656,7 +729,9 @@
     "season": 2022,
     "bbrefId": "murrade01",
     "raw": "AS",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "DeMar_DeRozan",
@@ -664,7 +739,9 @@
     "season": 2018,
     "bbrefId": "derozde01",
     "raw": "MVP-8,AS,NBA2",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Derrick_White",
@@ -680,7 +757,9 @@
     "season": 2022,
     "bbrefId": "bookede01",
     "raw": "MVP-4,AS,NBA1",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Domantas_Sabonis",
@@ -696,7 +775,9 @@
     "season": 2023,
     "bbrefId": "mitchdo01",
     "raw": "MVP-6,CPOY-6,AS,NBA2",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Draymond_Green",
@@ -704,7 +785,9 @@
     "season": 2016,
     "bbrefId": "greendr01",
     "raw": "MVP-7,DPOY-2,AS,NBA2,DEF1",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Dyson_Daniels",
@@ -723,7 +806,8 @@
     "bbrefId": "mobleev01",
     "raw": "MVP-10,DPOY-1,AS,NBA2,DEF1",
     "awards": [
-     "DPOY"
+     "DPOY",
+     "AS"
     ]
    },
    {
@@ -732,7 +816,9 @@
     "season": 2022,
     "bbrefId": "antetgi01",
     "raw": "MVP-3,DPOY-6,AS,NBA1,DEF1",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Herbert_Jones",
@@ -756,7 +842,9 @@
     "season": 2023,
     "bbrefId": "moranja01",
     "raw": "MVP-12,AS",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Jalen_Brunson",
@@ -764,7 +852,9 @@
     "season": 2024,
     "bbrefId": "brunsja01",
     "raw": "MVP-5,CPOY-5,AS,NBA2",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Jalen_Suggs",
@@ -780,7 +870,9 @@
     "season": 2025,
     "bbrefId": "willija06",
     "raw": "AS,NBA3,DEF2",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "James_Harden",
@@ -788,7 +880,9 @@
     "season": 2019,
     "bbrefId": "hardeja01",
     "raw": "MVP-2,AS,NBA1",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Jaren_Jackson_Jr",
@@ -797,7 +891,8 @@
     "bbrefId": "jacksja02",
     "raw": "DPOY-1,AS,DEF1",
     "awards": [
-     "DPOY"
+     "DPOY",
+     "AS"
     ]
    },
    {
@@ -814,7 +909,9 @@
     "season": 2023,
     "bbrefId": "tatumja01",
     "raw": "MVP-4,CPOY-10,AS,NBA1",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Jimmy_Butler",
@@ -830,7 +927,9 @@
     "season": 2022,
     "bbrefId": "embiijo01",
     "raw": "MVP-2,AS,NBA2",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Jordan_Clarkson",
@@ -857,7 +956,8 @@
     "bbrefId": "randlju01",
     "raw": "MVP-8,MIP-1,AS,NBA2",
     "awards": [
-     "MIP"
+     "MIP",
+     "AS"
     ]
    },
    {
@@ -866,7 +966,9 @@
     "season": 2019,
     "bbrefId": "townska01",
     "raw": "AS",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Kawhi_Leonard",
@@ -875,7 +977,8 @@
     "bbrefId": "leonaka01",
     "raw": "MVP-2,DPOY-1,AS,NBA1,DEF1",
     "awards": [
-     "DPOY"
+     "DPOY",
+     "AS"
     ]
    },
    {
@@ -893,7 +996,8 @@
     "bbrefId": "duranke01",
     "raw": "MVP-1,AS,NBA1",
     "awards": [
-     "MVP"
+     "MVP",
+     "AS"
     ]
    },
    {
@@ -902,7 +1006,9 @@
     "season": 2020,
     "bbrefId": "middlkh01",
     "raw": "AS",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Klay_Thompson",
@@ -910,7 +1016,9 @@
     "season": 2015,
     "bbrefId": "thompkl01",
     "raw": "MVP-10,AS,NBA3",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Lauri_Markkanen",
@@ -919,7 +1027,8 @@
     "bbrefId": "markkla01",
     "raw": "MIP-1,AS",
     "awards": [
-     "MIP"
+     "MIP",
+     "AS"
     ]
    },
    {
@@ -929,7 +1038,8 @@
     "bbrefId": "jamesle01",
     "raw": "MVP-1,DPOY-2,AS,NBA1,DEF1",
     "awards": [
-     "MVP"
+     "MVP",
+     "AS"
     ]
    },
    {
@@ -946,7 +1056,9 @@
     "season": 2024,
     "bbrefId": "doncilu01",
     "raw": "MVP-3,CPOY-6,AS,NBA1",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Malik_Monk",
@@ -995,7 +1107,8 @@
     "bbrefId": "jokicni01",
     "raw": "MVP-1,AS,NBA1",
     "awards": [
-     "MVP"
+     "MVP",
+     "AS"
     ]
    },
    {
@@ -1004,7 +1117,9 @@
     "season": 2019,
     "bbrefId": "vucevni01",
     "raw": "AS",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Paolo_Banchero",
@@ -1012,7 +1127,9 @@
     "season": 2024,
     "bbrefId": "banchpa01",
     "raw": "AS",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Pascal_Siakam",
@@ -1028,7 +1145,9 @@
     "season": 2019,
     "bbrefId": "georgpa01",
     "raw": "MVP-3,DPOY-3,AS,NBA1,DEF1",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Payton_Pritchard",
@@ -1065,7 +1184,8 @@
     "bbrefId": "westbru01",
     "raw": "MVP-1,AS,NBA1",
     "awards": [
-     "MVP"
+     "MVP",
+     "AS"
     ]
    },
    {
@@ -1075,7 +1195,8 @@
     "bbrefId": "gilgesh01",
     "raw": "MVP-1,DPOY-10,CPOY-8,AS,NBA1",
     "awards": [
-     "MVP"
+     "MVP",
+     "AS"
     ]
    },
    {
@@ -1085,7 +1206,8 @@
     "bbrefId": "curryst01",
     "raw": "MVP-1,AS,NBA1",
     "awards": [
-     "MVP"
+     "MVP",
+     "AS"
     ]
    },
    {
@@ -1118,7 +1240,9 @@
     "season": 2022,
     "bbrefId": "youngtr01",
     "raw": "AS,NBA3",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Ty_Jerome",
@@ -1134,7 +1258,9 @@
     "season": 2025,
     "bbrefId": "herroty01",
     "raw": "AS",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Tyus_Jones",
@@ -1158,7 +1284,9 @@
     "season": 2021,
     "bbrefId": "lavinza01",
     "raw": "AS",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Zion_Williamson",
@@ -1166,7 +1294,9 @@
     "season": 2021,
     "bbrefId": "willizi01",
     "raw": "AS",
-    "awards": []
+    "awards": [
+     "AS"
+    ]
    }
   ],
   "rookie": [

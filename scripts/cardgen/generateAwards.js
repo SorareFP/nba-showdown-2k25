@@ -53,7 +53,12 @@ import { pathToFileURL } from 'node:url';
 import { cached, CACHE_DIR, politeDelay, DEFAULT_REQUEST_SPACING_MS } from './cache.js';
 import { fetchSeasonTable, SEASON_TABLES } from './sources/basketballReference.js';
 import { normalizeName } from './resolveTeams.js';
-import { AWARD_CODES, awardsEarned } from '../../src/cards/awards.js';
+import {
+  AWARD_CODES,
+  MAX_CARD_AWARDS,
+  awardsEarned,
+  selectionsIn,
+} from '../../src/cards/awards.js';
 import {
   CURRENT_SET,
   ROOKIE_SET,
@@ -156,10 +161,13 @@ export function statsSeasonEndYear(set) {
  *
  * `raw` is kept ALONGSIDE the parsed codes, and it is not redundant. It is the
  * evidence for the rule: Luka Dončić's 2025-26 row reads `MVP-4,CPOY-8,AS,NBA1`
- * and produces NO awards, and a file that recorded only the empty result could
- * not be told apart from one where the fetch had failed. It is also what any
- * future argument about admitting the selections would be settled against —
- * see the header of src/cards/awards.js.
+ * and produces `['AS']` — the All-Star selection and NOT the fourth-place MVP
+ * finish, off one string, in one call. A file that recorded only the outcome
+ * could not tell that apart from a row that simply said `AS`, nor either of
+ * them from a fetch that had failed. It is also what the argument about the
+ * REMAINING selections is settled against — `ifSelectionsCounted` in
+ * countAwards is computed from it, and the header of src/cards/awards.js
+ * quotes the result.
  */
 function awardRecord(card, row, season) {
   if (!row) return null;
@@ -254,25 +262,46 @@ export function joinById(cards, awardsBySeason) {
 /**
  * What the run reports, and what the file records.
  *
- * TWO NUMBERS PER SET, deliberately: `marked` is how many cards print at least
- * one mark, and `ifSelectionsCounted` is how many WOULD if All-Star and the
- * All-NBA/All-Defensive teams were admitted. The second exists to keep the
- * argument in src/cards/awards.js measurable rather than asserted — it is the
- * whole case for excluding them, and a number that regenerates is a better
- * version of it than a number typed into a comment.
+ * FOUR NUMBERS PER SET, and each one answers a question the others cannot:
+ *
+ *   marked                cards that print at least one mark.
+ *   multiple              cards that print more than one.
+ *   capped                cards holding MORE codes than the row can draw, so
+ *                         `pickAwards` is silently dropping the least of them.
+ *                         ZERO IN EVERY SET TODAY and it needs to stay that
+ *                         way — a dropped trophy is the one failure this
+ *                         feature cannot have, and a count that regenerates is
+ *                         how the next season's data says so out loud instead
+ *                         of at export time. See MAX_CARD_AWARDS.
+ *   ifSelectionsCounted   cards that would be marked if ALL FIVE selections
+ *                         counted, not just the All-Star one this build now
+ *                         declares. It keeps the argument for leaving All-NBA
+ *                         and All-Defensive out measurable rather than
+ *                         asserted, which is worth more than a number typed
+ *                         into a comment in src/cards/awards.js.
+ *
+ * The last one is measured through `selectionsIn` rather than as "has any award
+ * string at all", which is what it used to be and which was WRONG in a way that
+ * mattered: a card whose only token is `MVP-4` holds no selection and would not
+ * be marked by admitting them, but it was counted anyway. That inflation is
+ * where the 37%-of-Super-Season figure came from while All-Star was being
+ * decided; the honest ceiling is lower, and the All-Star-alone cost — the
+ * decision that was actually taken — is `marked`.
  */
 export function countAwards(records) {
   const byCode = Object.fromEntries(AWARD_CODES.map(c => [c, 0]));
   let marked = 0;
   let ifSelectionsCounted = 0;
   let multiple = 0;
+  let capped = 0;
   for (const r of records) {
     if (r.awards.length > 0) marked += 1;
     if (r.awards.length > 1) multiple += 1;
-    if (r.raw) ifSelectionsCounted += 1;
+    if (r.awards.length > MAX_CARD_AWARDS) capped += 1;
+    if (r.awards.length > 0 || selectionsIn(r.raw).length > 0) ifSelectionsCounted += 1;
     for (const code of r.awards) byCode[code] += 1;
   }
-  return { cards: records.length, marked, multiple, ifSelectionsCounted, byCode };
+  return { cards: records.length, marked, multiple, capped, ifSelectionsCounted, byCode };
 }
 
 /**
@@ -364,7 +393,8 @@ async function main() {
     log(
       `  ${set.padEnd(14)} ${String(c.marked).padStart(3)} of ${String(c.cards).padStart(3)} ` +
         `cards marked  (${c.multiple} with more than one; ` +
-        `${c.ifSelectionsCounted} if the selections counted)`
+        `${c.capped} over the ${MAX_CARD_AWARDS}-mark row; ` +
+        `${c.ifSelectionsCounted} if every selection counted)`
     );
     log(
       `                 ${AWARD_CODES.map(code => `${code} ${c.byCode[code]}`).join('  ')}`

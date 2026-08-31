@@ -12,7 +12,7 @@ import {
   statsSeasonEndYear,
 } from './generateAwards.js';
 import { SEASON_TABLES } from './sources/basketballReference.js';
-import { AWARD_CODES } from '../../src/cards/awards.js';
+import { AWARD_CODES, MAX_CARD_AWARDS } from '../../src/cards/awards.js';
 import { CURRENT_SET, ROOKIE_SET, SUPER_SEASON_SET, WNBA_SET } from '../../src/cards/sets.js';
 
 const generated = name =>
@@ -129,10 +129,11 @@ describe('joining awards to cards', () => {
     );
     expect(records).toHaveLength(1);
     expect(records[0].id).toBe('Luka_Doncic');
-    // FOURTH IN THE VOTING. The record exists — that is what `raw` is for — and
-    // it carries no award.
+    // FOURTH IN THE VOTING, and an All-Star. `raw` keeps both — that is what it
+    // is for — and the parsed result takes the selection and NOT the losing
+    // rank, off the one string.
     expect(records[0].raw).toBe('MVP-4,AS');
-    expect(records[0].awards).toEqual([]);
+    expect(records[0].awards).toEqual(['AS']);
     // And the season is the SET's, because a base card has none of its own.
     expect(records[0].season).toBe(2026);
   });
@@ -179,10 +180,11 @@ describe('joining awards to cards', () => {
       [{ id: 'Kevin_Durant', name: 'Kevin Durant', bbrefId: 'duranke01', season: 2014 }],
       bySeason
     );
-    expect(superSeason[0].awards).toEqual(['MVP']);
+    expect(superSeason[0].awards).toEqual(['MVP', 'AS']);
     expect(superSeason[0].season).toBe(2014);
-    // The SAME player, the SAME id, a different card — and a different trophy,
-    // which is the whole reason the season is part of the join.
+    // The SAME player, the SAME id, a different card — a different trophy AND
+    // no All-Star selection, which is the whole reason the season is part of
+    // the join.
     const rookie = joinById(
       [{ id: 'Kevin_Durant', name: 'Kevin Durant', bbrefId: 'duranke01', season: 2008 }],
       bySeason
@@ -198,22 +200,36 @@ describe('joining awards to cards', () => {
 });
 
 describe('the run report', () => {
-  it('counts what prints AND what would print if the selections counted', () => {
+  it('counts what prints AND what would print if EVERY selection counted', () => {
     const counts = countAwards([
-      { raw: 'MVP-1,CPOY-1,AS,NBA1', awards: ['MVP', 'CPOY'] },
-      { raw: 'MVP-4,AS', awards: [] },
-      { raw: 'AS', awards: [] },
+      { raw: 'MVP-1,CPOY-1,AS,NBA1', awards: ['MVP', 'CPOY', 'AS'] },
+      { raw: 'MVP-4,AS', awards: ['AS'] },
+      { raw: 'AS', awards: ['AS'] },
       { raw: 'ROY-1', awards: ['ROY'] },
+      // Near-misses and nothing else — no trophy, no selection of any kind.
+      // This card is not marked and would NOT be marked by admitting All-NBA
+      // or All-Defensive either, which is exactly what the old counter got
+      // wrong: it counted any non-empty raw string.
+      { raw: 'MVP-9,DPOY-6', awards: [] },
+      // A selection this build does not declare, on a card with no trophy: not
+      // marked today, and the one shape ifSelectionsCounted exists to count.
+      { raw: 'NBA3,DEF2', awards: [] },
     ]);
-    expect(counts.cards).toBe(4);
-    expect(counts.marked).toBe(2);
+    expect(counts.cards).toBe(6);
+    expect(counts.marked).toBe(4);
     expect(counts.multiple).toBe(1);
-    // The number that keeps the exclusion argument in awards.js measurable
-    // rather than asserted.
-    expect(counts.ifSelectionsCounted).toBe(4);
+    // Nothing over the row the card can draw. A four-code record would show up
+    // here rather than as a silently dropped mark at export time.
+    expect(counts.capped).toBe(0);
+    expect(countAwards([{ raw: 'x', awards: ['MVP', 'DPOY', 'ROY', 'AS'] }]).capped).toBe(1);
+    // The number that keeps the argument for leaving All-NBA and
+    // All-Defensive out measurable rather than asserted: the four marked cards
+    // plus the NBA3/DEF2 one, and NOT the pure near-miss.
+    expect(counts.ifSelectionsCounted).toBe(5);
     expect(counts.byCode.MVP).toBe(1);
     expect(counts.byCode.CPOY).toBe(1);
     expect(counts.byCode.ROY).toBe(1);
+    expect(counts.byCode.AS).toBe(3);
     expect(counts.byCode.DPOY).toBe(0);
   });
 });
@@ -238,6 +254,11 @@ describe('the committed file', () => {
       const records = AWARDS.sets[set];
       expect(records.length, set).toBe(counts.cards);
       expect(records.filter(r => r.awards.length > 0).length, set).toBe(counts.marked);
+      expect(records.filter(r => r.awards.length > 1).length, set).toBe(counts.multiple);
+      expect(
+        records.filter(r => r.awards.length > MAX_CARD_AWARDS).length,
+        set
+      ).toBe(counts.capped);
       for (const code of AWARD_CODES) {
         expect(records.filter(r => r.awards.includes(code)).length, `${set} ${code}`)
           .toBe(counts.byCode[code]);
@@ -245,24 +266,34 @@ describe('the committed file', () => {
     }
   });
 
-  it('marks a small minority of each set, which is what a mark is for', () => {
-    // The numbers the exclusion argument in src/cards/awards.js quotes. If a
-    // future declaration admits the selections, THIS is what will move.
-    expect(AWARDS.counts[CURRENT_SET].marked).toBe(5);
-    expect(AWARDS.counts[SUPER_SEASON_SET].marked).toBe(15);
+  it('marks a minority of each set, which is what a mark is for', () => {
+    // THE PRICE OF ALL-STAR, on the record. The user took this decision with
+    // these numbers in front of him; they are quoted in src/cards/awards.js and
+    // they are pinned here so the file and the comment cannot drift apart.
+    //
+    //   2026-27         5 ->  31   of 350 cards   (1% ->  9%)
+    //   super-season   15 ->  44   of 210 cards   (7% -> 21%)
+    //   rookie         11 ->  11   of 317 cards   (3% ->  3%)
+    expect(AWARDS.counts[CURRENT_SET].marked).toBe(31);
+    expect(AWARDS.counts[SUPER_SEASON_SET].marked).toBe(44);
+    // Unchanged: no player in the rookie pool was an All-Star as a rookie.
     expect(AWARDS.counts[ROOKIE_SET].marked).toBe(11);
-    // …against what admitting All-Star and the All-NBA/All-Defensive teams
-    // would have marked, which is between five and eleven times as many.
-    expect(AWARDS.counts[CURRENT_SET].ifSelectionsCounted).toBe(54);
-    expect(AWARDS.counts[SUPER_SEASON_SET].ifSelectionsCounted).toBe(77);
-    expect(AWARDS.counts[ROOKIE_SET].ifSelectionsCounted).toBe(70);
+    expect(AWARDS.counts[ROOKIE_SET].byCode.AS).toBe(0);
+    // …against what admitting All-NBA and All-Defensive as well would mark.
+    // Still a step up on every set, which is the case for stopping here.
+    expect(AWARDS.counts[CURRENT_SET].ifSelectionsCounted).toBe(38);
+    expect(AWARDS.counts[SUPER_SEASON_SET].ifSelectionsCounted).toBe(58);
+    expect(AWARDS.counts[ROOKIE_SET].ifSelectionsCounted).toBe(11);
   });
 
   it('never exceeds the row the card can draw', () => {
-    // MAX_CARD_AWARDS is 3 and the most anybody holds is 2, so no card is
-    // silently losing a trophy today. When that stops being true this fails
-    // here rather than dropping a mark at export time.
+    // MAX_CARD_AWARDS is 3 and the most anybody holds is now exactly 3 — Shai
+    // Gilgeous-Alexander's 2026-27 card, MVP + CPOY + AS — so no card is
+    // silently losing a mark, but the cap is at the ceiling rather than above
+    // it. When that stops being true this fails HERE rather than dropping a
+    // mark at export time.
     const most = Math.max(...Object.values(AWARDS.sets).flat().map(r => r.awards.length));
-    expect(most).toBe(2);
+    expect(most).toBe(MAX_CARD_AWARDS);
+    for (const counts of Object.values(AWARDS.counts)) expect(counts.capped).toBe(0);
   });
 });

@@ -1,13 +1,38 @@
 {
-  "what": "Which card wins when a playoff standout and a Super Season land on the same team. Salary is the default tiebreak (scripts/analysis/runConflictSalaries.js); these are the user's explicit overrides on top of it.",
-  "rule": "Default: keep whichever card prices higher. A name listed here overrides that.",
+  "what": "Which card wins when a playoff standout and a Super Season land on the same team, for the 27 players where both exist.",
+  "rule": "THE GOLD LINE DECIDES. Keep the Super Season only when it clears SUPER_SEASON_MIN_SALARY (900, src/cards/badges.js) — the same line that decides whether a card prints the gold SUPER SEASON pill or the plain BEST SEASON one. Below it the card is a best season the set does not gild, and a playoff run is the more distinctive card. Named overrides beat the rule.",
+  "whyNotSalaryAlone": "Straight salary favoured the Super Season on 21 of 27, including cards at 360 and 400 that would displace a playoff run while printing no gold. The gold line is a threshold the set already applies to exactly this question.",
+  "keepSuperSeason": [
+    { "name": "Nikola Jokic",     "season": 2022, "team": "DEN", "salary": 1500, "displaces": "2023 DEN (1370)" },
+    { "name": "Luka Doncic",      "season": 2024, "team": "DAL", "salary": 1500, "displaces": "2024 DAL (1080)" },
+    { "name": "Dwight Howard",    "season": 2011, "team": "ORL", "salary": 1260, "displaces": "2009 ORL (890)" },
+    { "name": "Manu Ginobili",    "season": 2008, "team": "SAS", "salary": 1250, "displaces": "2005 SAS (980)" },
+    { "name": "Kyle Lowry",       "season": 2016, "team": "TOR", "salary": 1120, "displaces": "2019 TOR (680)" },
+    { "name": "Paul Pierce",      "season": 2002, "team": "BOS", "salary": 1060, "displaces": "2008 BOS (800)" },
+    { "name": "Pau Gasol",        "season": 2011, "team": "LAL", "salary": 1000, "displaces": "2010 LAL (810)" },
+    { "name": "Jason Terry",      "season": 2007, "team": "DAL", "salary":  950, "displaces": "2011 DAL (740)" }
+  ],
   "keepPlayoffCard": {
-    "Tyrese Haliburton": "User's call, against the salary. Super Season 2024 IND prices 1070 to the playoff card's 820, but the 2025 Finals run is the card he wants. No Super Season for him.",
-    "Daniel Gibson": "Playoff card also wins on salary, 590 to 510. The 2007 Cleveland run IS his peak — a role player whose playoff lift (+3.15) is the whole reason he is in the set.",
-    "Mickael Pietrus": "Playoff card also wins on salary, 570 to 510. Same archetype as Gibson."
+    "Tyrese Haliburton": { "season": 2025, "team": "IND", "salary": 820, "why": "Your call, against the rule — the Super Season clears the line at 1070. The 2025 Finals run is the card wanted. No Super Season for him." },
+    "Ben Wallace":       { "season": 2004, "team": "DET", "salary": 590, "why": "Your call. Tied at 590 either way." },
+    "Glen Davis":        { "season": 2010, "team": "BOS", "salary": 440, "why": "Your call. Tied at 440 either way." },
+    "Jason Collins":     { "season": 2003, "team": "NJN", "salary": 340, "why": "Your call. Tied at 340 either way." },
+    "Daniel Gibson":     { "season": 2007, "team": "CLE", "salary": 590, "why": "Your call, and the rule agrees — 2007 Cleveland is his actual peak, +3.15 playoff lift." },
+    "Mickael Pietrus":   { "season": 2010, "team": "ORL", "salary": 570, "why": "Your call, and the rule agrees. Same archetype as Gibson." },
+    "Josh Howard":       { "season": 2006, "team": "DAL", "salary": 690, "why": "Super Season 890 misses the gold line by 10." },
+    "Danny Green":       { "season": 2014, "team": "SAS", "salary": 690, "why": "Super Season 800, under the line." },
+    "Mike Bibby":        { "season": 2002, "team": "SAC", "salary": 650, "why": "Super Season 880, under the line." },
+    "Jameer Nelson":     { "season": 2010, "team": "ORL", "salary": 650, "why": "Super Season 860, under the line." },
+    "Max Strus":         { "season": 2022, "team": "MIA", "salary": 560, "why": "Super Season 740, under the line." },
+    "Jared Dudley":      { "season": 2010, "team": "PHX", "salary": 510, "why": "Super Season 660, under the line." },
+    "Doug Christie":     { "season": 2002, "team": "SAC", "salary": 440, "why": "Super Season 570, under the line." },
+    "Serge Ibaka":       { "season": 2016, "team": "OKC", "salary": 400, "why": "Super Season 700, under the line." },
+    "Derek Fisher":      { "season": 2008, "team": "LAL", "salary": 390, "why": "Super Season 600, under the line." },
+    "Eric Williams":     { "season": 2002, "team": "BOS", "salary": 340, "why": "Super Season 360, under the line." },
+    "Fabricio Oberto":   { "season": 2007, "team": "SAS", "salary": 270, "why": "Super Season 400, under the line." },
+    "Joel Anthony":      { "season": 2011, "team": "MIA", "salary": 260, "why": "Super Season 360, under the line." }
   },
   "open": {
-    "Shaquille O'Neal": "Needs a decision. He ALREADY has a 1999-2000 card in the 25-26 set (RTR legend, S+P 29, salary 710 under the old pricing), so no new Super Season is required — the collision is against a card that exists. The playoff side is 2002 LAL at S+P 22, salary 890. Both are Lakers. NOTE the priced table shows his Super Season at 630/S+P 14, which is an artefact: EPM begins in 2002 and his best season is 2000, so the composite prices it at replacement. Read 710 as the real comparison, and even that is the old salary model's number."
-  },
-  "note": "Everyone else defaults to salary. That is Super Season on 21 of 27 and ties on 3 (Ben Wallace, Glen Davis, Jason Collins), which are also open."
+    "Shaquille O'Neal": "The rule cannot be applied to him yet. He ALREADY holds a 1999-2000 card in the 25-26 set (RTR legend, S+P 29, salary 710 under the OLD price model), so no new Super Season is needed — the collision is with a card that exists. And the priced table's 630 / S+P 14 for him is an artefact: EPM begins in 2002 and his best season is 2000, so the composite prices it at replacement. Repricing that legend card under the play-value model is what would settle it; S+P 29 suggests it clears 900 and keeps the Super Season."
+  }
 }

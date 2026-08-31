@@ -14,8 +14,15 @@
 // the studio has to stay usable while the data is half-built.
 import { useState } from 'react';
 import { getThemedTeam, resolveAccent } from './teams.js';
-import { hidesEmptyRows, setBadge, setLeague, setTreatment, showsSeason } from './sets.js';
-import { badgeVars, pickBadge } from './badges.js';
+import {
+  hidesEmptyRows,
+  setBadge,
+  setLeague,
+  setStatsSeason,
+  setTreatment,
+  showsSeason,
+} from './sets.js';
+import { badgeLabel, badgeVars, pickBadge } from './badges.js';
 import { deriveFieldTheme, fieldThemeVars } from './fieldTheme.js';
 import { applyTreatment, treatmentVars } from './treatments.js';
 import { resolvePhotoUrl, cropToStyle } from './photo.js';
@@ -279,11 +286,13 @@ export default function CardTemplate({
 
   // THE BADGE IS BOTH QUESTIONS AT ONCE, and that union is the whole model.
   // A set may badge EVERY card in it (the two special sets do); a CARD may
-  // carry badge ids of its own (149 of the 2026-27 pool do, because their best
-  // season is the one that set is built from, so the separate Super Season set
-  // has no card for them — see card-data/generated/card-badges.json). pickBadge
-  // resolves the union to the ONE that prints, in badges.js's declared priority
-  // order: Super Season before Rookie, the user's "prioritize in that order".
+  // carry badge ids of its own (140 of the 2026-27 pool do, because their best
+  // or first season is the one that set is built from, so the Super Season and
+  // Rookie sets have no card for them — see card-data/generated/card-badges.json).
+  // pickBadge resolves the union to the ONE that prints, in badges.js's declared
+  // priority order: Rookie before Super Season, because the 33 cards that carry
+  // both are by definition rookies and "his best season" says nothing about a
+  // player who has had exactly one.
   const badge = pickBadge([setBadge(set), ...(Array.isArray(card.badges) ? card.badges : [])]);
   // The season, by contrast, IS purely a set question. A base-set record
   // carries no seasonLabel at all, and a 2025-26 legend card has its season
@@ -292,6 +301,14 @@ export default function CardTemplate({
   // 2026-27 card does NOT gain one: the card is this season by definition, and
   // "keep the 26-27 design and just add the badge" is what was asked for.
   const season = showsSeason(set);
+  // AND THAT IS EXACTLY WHEN THE PILL HAS TO CARRY THE YEAR ITSELF. A card with
+  // no season row leaves the badge as the only place a year could appear, so
+  // the badge is handed the set's stats season and dates itself if it can:
+  // "25-26 ROOKIE" here, plain "ROOKIE" on a Rookie-set card whose own season
+  // row sits one line below it. The SUPER SEASON pill has no dated form — see
+  // badges.js — so this changes nothing for the other 107. Passing null when a
+  // season IS printed is what keeps the year from being said twice.
+  const label = badgeLabel(badge, season ? null : setStatsSeason(set));
 
   return (
     <div
@@ -383,7 +400,7 @@ export default function CardTemplate({
           * The badge FIRST because it says what kind of card this is and the
           * season answers "which one" — and because the pill is the louder of
           * the two, so it belongs further from the type it would crowd. */}
-        {badge && <div className={styles.badge}>{badge.text}</div>}
+        {badge && <div className={styles.badge}>{label}</div>}
         {season && <div className={styles.season}>{card.seasonLabel ?? MISSING}</div>}
         <TeamLogo key={card.team ?? 'none'} team={team} abbr={card.team} />
         <div className={styles.pos}>{card.pos ?? MISSING}</div>

@@ -135,11 +135,11 @@ export const SETS = [
     // mistaken for, so naming one would be noise — see showsSeason.
     showsSeason: false,
     // NO BLANKET BADGE — which is NOT the same as "no badges on this set".
-    // 149 of its cards carry the Super Season badge in their own record,
-    // because their best season is the one this set is built from and the
-    // separate Super Season set therefore has no card for them. The badge is a
-    // CARD property now; this field only says whether the SET puts one on
-    // every card. See src/cards/badges.js.
+    // 140 of its cards carry a badge in their own record: their best or first
+    // season is the one this set is built from, so the separate Super Season
+    // and Rookie sets have no card for them. 107 print SUPER SEASON and 33
+    // print the dated ROOKIE pill. The badge is a CARD property now; this field
+    // only says whether the SET puts one on every card. See src/cards/badges.js.
     badge: null,
     treatment: null,
   },
@@ -354,8 +354,8 @@ export function showsSeason(set) {
  * card carries its own badge ids as well (see `badges` on the card record and
  * `pickBadge` in badges.js); this is only the set's blanket one, unioned with
  * the card's by CardTemplate. The two special sets badge every card, so they
- * declare one; the base set badges 149 of 350, so it declares none and those
- * 149 say so in their own data.
+ * declare one; the base set badges 140 of 350, so it declares none and those
+ * 140 say so in their own data.
  *
  * The text and the colour both live in src/cards/badges.js — the colour because
  * every palette question on this card is answered by measured contrast rather
@@ -363,6 +363,25 @@ export function showsSeason(set) {
  */
 export function setBadge(set) {
   return getSet(set)?.badge ?? null;
+}
+
+/**
+ * The season a set's cards are built FROM, as the row declares it.
+ *
+ * A PLAIN ACCESSOR, like setBadge and setLeague, and it hands back the prose
+ * rows too ('career-best season', 'rookie season') rather than nulling them: a
+ * set whose every card comes from a different year genuinely has no single
+ * stats season, and saying so is more useful than pretending the field is
+ * empty. Callers that need a real season label test for one — badgeLabel in
+ * badges.js does, and it is the reason this accessor exists: a base-set card
+ * prints no season line, so the ROOKIE pill has to get the year from the SET.
+ *
+ * Note the pairing this reads out, spelled out on STATS_SEASON above: the
+ * 2026-27 set's stats season is 2025-26, which is why a 2026-27 rookie card
+ * says "25-26 ROOKIE" and not "26-27 ROOKIE".
+ */
+export function setStatsSeason(set) {
+  return getSet(set)?.statsSeason ?? null;
 }
 
 /**

@@ -40,6 +40,8 @@ import {
   ROOKIE_BADGE,
   SUPER_SEASON_BADGE,
   badgeColors,
+  badgeLabel,
+  badgeLabels,
   badgeVars,
   getBadge,
   pickBadge,
@@ -297,10 +299,24 @@ describe.each(TREATMENT_IDS)('the %s treatment', treatment => {
 //
 // So the sweep is the CROSS PRODUCT: every badge × every treatment INCLUDING no
 // treatment at all × all thirty-seven live and defunct franchises. 222 pairings,
-// no exemptions. Two of the four badge/treatment combinations are what the sets
-// actually ship today (gold on foil, rookie on green) and two are what the card
-// property makes reachable (either badge on a bare field) — all four are held to
-// the same floor, because the mechanism does not know which is which.
+// no exemptions.
+//
+// ROOKIE-ON-UNTREATED IS NOW A SHIPPING COMBINATION, not a hypothetical, and
+// that is why the sweep was written this way before it was one. When the pill
+// was added, three of the four badge/treatment pairs shipped (gold on foil,
+// rookie on green, gold on a bare field) and the fourth — the team accent on
+// an untreated field — was reachable only by someone temporarily flipping the
+// priority in badges.js to see what would happen. Then the priority flipped for
+// real: 33 base cards print the ROOKIE pill on their raw team primary, across
+// whatever franchises those 33 rookies happen to play for. Nothing had to be
+// added here, because the sweep never asked which pairs were live. That is the
+// argument for sweeping the cross product rather than the shipping set — the
+// combination that becomes reachable is exactly the one nobody thought to add.
+//
+// The 33 are also not a general sample: they are one draft class, so they cover
+// maybe twenty franchises. All thirty-seven are swept anyway, live and defunct,
+// because a trade or a defunct-team rookie card is a data change and not a code
+// change, and this test must not have to be revisited when the roster moves.
 const FIELD_STATES = [['untreated', null], ...TREATMENT_IDS.map(id => [id, id])];
 
 describe.each(BADGES.map(b => [b.id, b]))('the %s badge', (badgeId, badge) => {
@@ -340,14 +356,48 @@ describe.each(BADGES.map(b => [b.id, b]))('the %s badge', (badgeId, badge) => {
 
 describe('the badge model', () => {
   it('prints ONE badge, the highest-priority one that applies', () => {
-    // "pull prioritize in that order" — Super Season before Rookie. This is the
-    // resolution the 33 players who are BOTH go through: their rookie season is
-    // the current one, so their best season is too (it is their only one), and
-    // the pill says SUPER SEASON.
-    expect(pickBadge([SUPER_SEASON_BADGE, ROOKIE_BADGE]).id).toBe(SUPER_SEASON_BADGE);
-    expect(pickBadge([ROOKIE_BADGE, SUPER_SEASON_BADGE]).id).toBe(SUPER_SEASON_BADGE);
+    // ROOKIE BEATS SUPER SEASON, and the 33 players who are BOTH are the only
+    // ones this resolution ever runs on. Their rookie season is the current
+    // one, so their best season is too — it is their only one — which makes
+    // "his best season" a superlative over a set of one and "his rookie season"
+    // the fact worth the pill. See the argument in badges.js.
+    expect(pickBadge([SUPER_SEASON_BADGE, ROOKIE_BADGE]).id).toBe(ROOKIE_BADGE);
+    expect(pickBadge([ROOKIE_BADGE, SUPER_SEASON_BADGE]).id).toBe(ROOKIE_BADGE);
     // The order of the ARGUMENT must not matter; the order of BADGES must.
-    expect(BADGE_IDS.indexOf(SUPER_SEASON_BADGE)).toBeLessThan(BADGE_IDS.indexOf(ROOKIE_BADGE));
+    expect(BADGE_IDS.indexOf(ROOKIE_BADGE)).toBeLessThan(BADGE_IDS.indexOf(SUPER_SEASON_BADGE));
+  });
+
+  it('dates the ROOKIE pill only when the card prints no season of its own', () => {
+    // The other half of the change. A base-set card has no season row, so the
+    // year goes in the pill or nowhere; a Rookie-set card dates itself one line
+    // below the pill, so the pill must NOT say it twice.
+    const rookie = getBadge(ROOKIE_BADGE);
+    expect(badgeLabel(rookie, '2025-26')).toBe('25-26 ROOKIE');
+    expect(badgeLabel(rookie, null)).toBe('ROOKIE');
+    // Every season the tree can actually hand it, shortened the same way.
+    expect(badgeLabel(rookie, '2024-25')).toBe('24-25 ROOKIE');
+    // SUPER SEASON has no dated form: 18 characters in a 12-character pill.
+    expect(badgeLabel(getBadge(SUPER_SEASON_BADGE), '2025-26')).toBe('SUPER SEASON');
+    // Anything that is not a season LABEL leaves the pill undated rather than
+    // being interpolated into it — the two special sets' `statsSeason` rows are
+    // prose, and the WNBA's is a single year.
+    for (const s of ['career-best season', 'rookie season', '2026', '', null, undefined, 2026]) {
+      expect(badgeLabel(rookie, s), String(s)).toBe('ROOKIE');
+    }
+    expect(badgeLabel(null, '2025-26')).toBeNull();
+  });
+
+  it('offers the width budget every label a badge can print', () => {
+    // badgeLabels is what CardTemplate.test.js measures against the 127px pill.
+    // It has to include the DATED forms, or the longest string on the card stops
+    // being measured the moment a badge learns to date itself.
+    const labels = badgeLabels(SETS.map(s => s.statsSeason));
+    expect(labels).toContain('ROOKIE');
+    expect(labels).toContain('SUPER SEASON');
+    expect(labels).toContain('25-26 ROOKIE');
+    expect(labels).toContain('24-25 ROOKIE');
+    // Deduplicated: the undated labels are produced once per season tried.
+    expect(new Set(labels).size).toBe(labels.length);
   });
 
   it('resolves one badge on its own, and nothing from nothing', () => {

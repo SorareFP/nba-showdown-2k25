@@ -30,6 +30,7 @@ import {
   ROOKIE_BADGE,
   SUPER_SEASON_BADGE,
   badgeColors,
+  badgeLabels,
   getBadge,
 } from './badges.js';
 import {
@@ -1373,11 +1374,21 @@ describe('the season and the card-type badge', () => {
     const inner = pxIn(badge, 'width');
     const size = pxIn(badge, 'font-size');
     const tracking = Number(badge.match(/letter-spacing:\s*([\d.]+)px/)[1]);
-    // EVERY DECLARED BADGE, not every declared SET. A set now names a badge by
-    // id, and ids are shorter than the labels they stand for — measuring those
-    // would have quietly stopped measuring anything.
-    const labels = BADGES.map(b => b.text);
-    expect(labels.length).toBeGreaterThan(0); // non-vacuous
+    // EVERY LABEL A BADGE CAN PRINT, which is no longer the same as every
+    // declared badge. Two things this must not become: the declared SETS (a set
+    // names a badge by id, and ids are shorter than the labels they stand for,
+    // so measuring those would have quietly stopped measuring anything), and
+    // `BADGES.map(b => b.text)` (which stopped being the full list when the
+    // ROOKIE pill learned to date itself — "25-26 ROOKIE" is twice the length of
+    // "ROOKIE" and is the string 33 base cards actually draw).
+    //
+    // Fed EVERY set's declared stats season, so the longest label this build can
+    // produce is measured whatever the seasons are. It is deliberately the
+    // whole list rather than STATS_SEASON: a season label is a fixed seven
+    // characters, but nothing here should depend on that staying true.
+    const labels = badgeLabels(SETS.map(s => s.statsSeason));
+    expect(labels.length).toBeGreaterThan(BADGES.length); // non-vacuous, and dated
+    expect(labels).toContain('25-26 ROOKIE');
     for (const label of labels) {
       const width = label.length * (0.7 * size + tracking);
       expect(width, `${label} at ${size}px`).toBeLessThanOrEqual(inner);
@@ -1459,26 +1470,61 @@ describe('the season and the card-type badge', () => {
   });
 
   it('prints the HIGHEST-PRIORITY badge only, never two pills', () => {
-    // The 33 players who are both: their rookie season is the current one, so
-    // it is also their best one. "Prioritize in that order" — Super Season
-    // wins, and the sidebar keeps its one badge row.
+    // THE 33 WHO ARE BOTH, and the one case the priority is ever asked about.
+    // Their rookie season is the current one, so it is also their best one —
+    // which is exactly why ROOKIE wins: "his best season" is a superlative over
+    // a career of one season and says nothing, while "his rookie season" is the
+    // fact. The sidebar still keeps its single badge row.
     const html = render({
       card: { ...SPECIAL, badges: [ROOKIE_BADGE, SUPER_SEASON_BADGE] },
       set: CURRENT_SET,
     });
+    expect(html).toContain('25-26 ROOKIE');
+    expect(html.match(/ROOKIE/g)).toHaveLength(1);
+    // The outranked pill is gone entirely, not merely second.
+    expect(html).not.toContain('SUPER SEASON');
+  });
+
+  it('was long asserted to be unreachable, and now prints on all 33', () => {
+    // THIS TEST USED TO SAY THE OPPOSITE, and the reasoning it gave was sound:
+    // a first season is trivially also a best season, so every rookie-badged
+    // player carried the Super Season badge too, and with Super Season ranked
+    // first the ROOKIE pill was structurally unreachable on a base card. All of
+    // that was true. What it was not was intended — the user, seeing SUPER
+    // SEASON on Cooper Flagg's card, asked for the rookie badge instead. So the
+    // structural claim is now the other way round, and it is asserted over the
+    // REAL badge file rather than over one contrived record.
+    const overlap = POOL_PLAYERS.filter(p => p.badges.includes(ROOKIE_BADGE));
+    expect(overlap.length).toBe(33);
+    for (const player of overlap) {
+      // Nested, still: every rookie is also a Super Season, which is the fact
+      // that makes the priority a matter of which one is worth saying.
+      expect(player.badges, player.name).toContain(SUPER_SEASON_BADGE);
+      const html = render({ card: player, set: CURRENT_SET });
+      expect(html, player.name).toContain('25-26 ROOKIE');
+      expect(html, player.name).not.toContain('SUPER SEASON');
+    }
+    // And the other 107 are untouched: a Super Season that is NOT a rookie
+    // keeps the gold pill, undated.
+    const gold = POOL_PLAYERS.filter(
+      p => p.badges.includes(SUPER_SEASON_BADGE) && !p.badges.includes(ROOKIE_BADGE)
+    );
+    expect(gold.length).toBe(107);
+    const html = render({ card: gold[0], set: CURRENT_SET });
     expect(html).toContain('SUPER SEASON');
-    expect(html.match(/SUPER SEASON/g)).toHaveLength(1);
-    // "ROOKIE" is a substring of nothing else the card prints, so an absent
-    // second pill is an absent string.
-    expect(html).not.toContain('>ROOKIE<');
+    expect(html).not.toContain('ROOKIE');
   });
 
   it('lets a card badge itself on the finished set too, without a treatment', () => {
     // The mechanism is not special-cased to 2026-27 — that set is simply the
     // first whose cards carry their own. Asserted on a DIFFERENT untreated set
     // so nothing can start branching on the current one.
+    //
+    // AND THE PILL DATES ITSELF FROM THE SET, not from a constant: this set is
+    // built from 2024-25 stats, one year back from the current one, so the same
+    // record that reads "25-26 ROOKIE" over there reads "24-25 ROOKIE" here.
     const html = render({ card: { ...SPECIAL, badges: [ROOKIE_BADGE] }, set: FINISHED_SET });
-    expect(html).toContain('ROOKIE');
+    expect(html).toContain('24-25 ROOKIE');
     expect(html).not.toContain('2015-16');
   });
 

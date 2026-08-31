@@ -27,7 +27,7 @@
 //
 // ── AND THE EXCLUSION NO LONGER THROWS THE FACT AWAY ────────────────────────
 //
-// It used to. 149 players are known to have just had the best season of their
+// It used to. 140 players are known to have just had the best season of their
 // careers and 33 to have just debuted, and until now the only trace of either
 // was a line on an `excluded` list inside a generated file. Nothing on any card
 // said so, which made the exclusion a silent loss of exactly the information
@@ -47,11 +47,15 @@
 // THE TWO LISTS ARE NESTED, and that is structural rather than a coincidence
 // worth checking each run: a player whose FIRST season is the most recent one
 // has exactly one season, so it is also his BEST one. Every rookie-excluded
-// player is therefore super-season-excluded too (33 of 33), and since Super
-// Season wins the priority, the ROOKIE badge does not print on any base card
-// today. The data below records BOTH badges for those 33 anyway — the file says
-// what is true, badges.js decides what prints — so flipping the priority is a
-// one-line change in one place and needs no regeneration.
+// player is therefore super-season-excluded too (33 of 33) — which is precisely
+// why ROOKIE outranks SUPER SEASON in badges.js. The overlap set is not a mixed
+// bag that needed a tie-break; it is the rookies, and calling a one-season
+// career's only season his best one tells a reader nothing.
+//
+// The data below records BOTH badges for those 33 regardless — the file says
+// what is TRUE, badges.js decides what PRINTS — which is what made that
+// reprioritisation a one-line change needing no new run of this script. The
+// counts it reports do change, because they are computed through pickBadge.
 //
 // ── EVERY NUMBER ON THESE CARDS IS PROVISIONAL, AND MORE SO THAN THE BASE SET ─
 //
@@ -731,9 +735,11 @@ export function selectSets({
  * What the base set will actually PRINT, from what the file records.
  *
  * Runs the same `pickBadge` the card does, so the run report cannot claim a
- * distribution the template would not draw — which matters more than usual
- * here, because the honest answer today is that one of the two badges never
- * wins. See the header.
+ * distribution the template would not draw — which is the whole point of
+ * reporting `applies` and `printed` separately. They differ by exactly the
+ * nested overlap described in the header: 140 players are true Super Seasons
+ * and 33 are true rookies, but those 33 are a SUBSET, so what prints is 33
+ * ROOKIE pills and 107 SUPER SEASON ones.
  */
 export function badgeCounts(baseBadges) {
   const applies = Object.fromEntries(BADGE_IDS.map(id => [id, 0]));

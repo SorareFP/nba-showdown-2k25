@@ -25,19 +25,61 @@
 //
 // ── PRIORITY IS DECLARATION ORDER ───────────────────────────────────────────
 //
-// "pull prioritize in that order" — Super Season first, Rookie second. The
-// order of BADGES below IS that rule, so there is no separate priority table to
-// keep in step with the list. One badge prints, never two: the pill is 127px in
-// a 135px bar and a second one would cost the sidebar a row it does not have.
+// The order of BADGES below IS the priority rule, so there is no separate
+// priority table to keep in step with the list. One badge prints, never two:
+// the pill is 127px in a 135px bar and a second one would cost the sidebar a
+// row it does not have.
 //
-// WORTH KNOWING BEFORE YOU CHANGE THE ORDER: on the current data the rookie
-// badge never wins on a base card, and that is structural rather than a
-// coincidence. A player whose FIRST season is the most recent one has only one
-// season, so it is also his BEST one — every rookie-excluded player is
-// therefore also super-season-excluded (33 of 33, checked). Swapping the two
-// rows below would move all 33 to ROOKIE. It is one line, and it is a design
-// decision rather than a bug, which is why this note is here rather than a
-// carve-out in the code.
+// ROOKIE IS FIRST, AND THE OVERLAP IS THE WHOLE ARGUMENT. 33 base cards carry
+// both badges, and it is 33 for a structural reason rather than by chance: a
+// player whose FIRST season is the most recent one has exactly one season, so
+// that season is also his BEST one. Every card where the two badges compete is,
+// definitionally, a rookie's. And on such a card "this was his best season" is
+// trivially true — a superlative over a set of one — while "this is his rookie
+// season" is the fact a reader could not have worked out for himself. The badge
+// that wins is the one that says something.
+//
+// THIS IS NOT A GENERAL RANKING OF THE TWO. It does not claim that a debut
+// outranks a career year; it observes that the only cards forced to choose are
+// rookie cards. A future badge whose overlap with Super Season is not nested
+// like this needs its own argument, not a place in this list.
+//
+// The user's call, on seeing Cooper Flagg's card: "If players were rookies in
+// 25-26, you can replace that badge with a '25-26 Rookie' badge similar to what
+// is on the rookie card page."
+//
+// It ran the other way first, on a reading of "pull prioritize in that order",
+// and the consequence was recorded here as a structural fact: the ROOKIE badge
+// could not print on any base card, because all 33 players it was true of wore
+// the gold pill instead. The fact was real. It was also the bug.
+//
+// ── THE ROOKIE PILL CARRIES ITS SEASON WHEN THE CARD DOES NOT ───────────────
+//
+// A card in the Rookie SET prints its season on its own line directly under the
+// pill (showsSeason in sets.js), so there the pill only has to say ROOKIE. A
+// base-set card prints no season anywhere — deliberately, because every card in
+// that set is the same season and naming it would be noise — which leaves the
+// pill as the only place a year can appear. So it appears there: "25-26 ROOKIE"
+// on Cooper Flagg's 2026-27 card, "ROOKIE" on a Rookie-set card that dates
+// itself one line lower. Same badge, same colour, same pill; the label picks up
+// the season exactly when nothing else on the card will.
+//
+// THE YEAR IS NEVER WRITTEN DOWN. `badgeLabel` is handed the season the card's
+// numbers came from — setStatsSeason in sets.js, which is '2025-26' for the
+// 2026-27 set — and shortens it. Next season's set prints "26-27 ROOKIE" with
+// nothing edited here, the same way nothing else in the tree spells a season.
+//
+// SUPER SEASON DOES NOT DATE ITSELF, and the asymmetry is a decision:
+//   - It does not fit. "25-26 SUPER SEASON" is 18 characters in a pill that
+//     holds 12 at 13px. "25-26 ROOKIE" is exactly 12 — the same width as the
+//     label it sits beside, which is also why the dated pill looks deliberate
+//     rather than padded. CardTemplate.test.js measures every label a badge can
+//     produce, dated ones included.
+//   - It has less to say. The Super Season pill is a superlative ABOUT the
+//     numbers printed beneath it, and those numbers are the exhibit; which year
+//     they belong to changes nothing a reader can act on. A rookie year is a
+//     date in a career, and it is the one thing the Rookie set judged worth
+//     printing beside its own pill.
 //
 // ── THE COLOURS ARE DERIVED, NEVER WRITTEN DOWN ─────────────────────────────
 //
@@ -64,6 +106,28 @@ export const SUPER_SEASON_BADGE = 'super-season';
 export const ROOKIE_BADGE = 'rookie';
 
 /**
+ * A season label as the rest of the tree spells one: "2025-26".
+ *
+ * The gate on dating a pill at all. `setStatsSeason` hands back whatever its
+ * row declares, and two of those rows hold prose ('career-best season') while
+ * the WNBA's holds a single year ('2026') — none of which shortens to anything
+ * a reader would take for a season. Anything that does not match this stays
+ * undated rather than being interpolated into a label.
+ */
+const SEASON_LABEL = /^\d{4}-\d{2}$/;
+
+/**
+ * "2025-26" -> "25-26". The PILL's abbreviation, and only the pill's.
+ *
+ * The season LINE prints its season in full, measured against the 23 finished
+ * legend cards (see .season in CardTemplate.module.css). The pill abbreviates
+ * because it has 127px and a label to fit beside — and, usefully, because the
+ * two forms then cannot be mistaken for each other: a card reading "25-26" in
+ * a pill is not claiming to be a 2025-26 card.
+ */
+const shortSeason = season => season.slice(2);
+
+/**
  * Every badge, IN PRIORITY ORDER. See the header: this list is the rule.
  *
  * `fill` takes the UNTREATED field theme — `deriveFieldTheme`'s output, before
@@ -76,24 +140,30 @@ export const ROOKIE_BADGE = 'rookie';
  */
 export const BADGES = [
   {
-    id: SUPER_SEASON_BADGE,
+    id: ROOKIE_BADGE,
     // Uppercase in the DATA, not via text-transform: this is the string the
     // width budget in CardTemplate.test.js measures, and a transform would hide
     // the real one from it.
+    text: 'ROOKIE',
+    // The dated form, for a card that prints no season of its own. See the
+    // header: the season arrives from the caller, never from a literal here.
+    datedText: season => `${shortSeason(season)} ROOKIE`,
+    // The TEAM's accent, already cleared against the field by deriveFieldTheme.
+    // Half the league falls back to cream, which makes a pale pill with
+    // near-black type; that is a real team colour and it stays.
+    fill: theme => theme.accentOnField,
+  },
+  {
+    id: SUPER_SEASON_BADGE,
     text: 'SUPER SEASON',
+    // NO `datedText` — see the header. The pill has no room for a year and
+    // nothing to gain from one.
+    //
     // "Super Season can be gold." The same GOLD the foil treatment is built on
     // — imported rather than restated, so the pill on an untreated 2026-27 card
     // and the pill on a foil Super Season card cannot drift apart — nudged only
     // as far as it must go to clear the field it sits on.
     fill: theme => readableOn(GOLD, theme.field, MIN_ACCENT_CONTRAST),
-  },
-  {
-    id: ROOKIE_BADGE,
-    text: 'ROOKIE',
-    // The TEAM's accent, already cleared against the field by deriveFieldTheme.
-    // Half the league falls back to cream, which makes a pale pill with
-    // near-black type; that is a real team colour and it stays.
-    fill: theme => theme.accentOnField,
   },
 ];
 
@@ -120,6 +190,41 @@ export function pickBadge(ids) {
   if (!Array.isArray(ids)) return null;
   const wanted = new Set(ids.filter(id => typeof id === 'string'));
   return BADGES.find(b => wanted.has(b.id)) ?? null;
+}
+
+/**
+ * The string the pill actually prints.
+ *
+ * `season` is THE SEASON THIS CARD HAS NOWHERE ELSE TO PRINT — the caller
+ * passes one only when the card draws no season line of its own, which is the
+ * single condition under which a badge folds the year into its label. Pass null
+ * (or anything that is not a "2025-26"-shaped label) and every badge prints its
+ * plain `text`, which is what the two special sets do: their cards date
+ * themselves one row lower.
+ *
+ * Structured like `fill` on purpose. Nothing about a badge's presentation is
+ * written down twice — the colour is a function of the field it lands on, and
+ * the label is a function of what the rest of the card already says.
+ */
+export function badgeLabel(badge, season = null) {
+  if (!badge) return null;
+  if (typeof badge.datedText !== 'function') return badge.text;
+  if (typeof season !== 'string' || !SEASON_LABEL.test(season)) return badge.text;
+  return badge.datedText(season);
+}
+
+/**
+ * Every label a badge can ever print, for the width budget to measure.
+ *
+ * The pill is a fixed 127px and `text` is no longer the whole story, so a test
+ * that measured only `text` would have stopped measuring the longest thing on
+ * the card the moment `datedText` arrived. Given the seasons a build can
+ * actually hand `badgeLabel`, this returns the full set — deduplicated, because
+ * every badge that cannot date itself contributes the same string twice.
+ */
+export function badgeLabels(seasons = []) {
+  const tried = [null, ...seasons];
+  return [...new Set(BADGES.flatMap(b => tried.map(s => badgeLabel(b, s))))];
 }
 
 /**

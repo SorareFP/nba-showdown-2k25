@@ -394,18 +394,33 @@ describe('the base set\'s card-type badges', () => {
     }
   });
 
-  it('prints SUPER SEASON on every badged card, and ROOKIE on none', () => {
-    // The consequence of the priority the user asked for, on the real list:
-    // a player whose rookie season is the current one has only that season, so
-    // it is his best one too, and Super Season outranks Rookie.
+  it('prints ROOKIE on all 33 who are both, and SUPER SEASON on the other 107', () => {
+    // THIS TEST USED TO ASSERT THE REVERSE — "SUPER SEASON on every badged
+    // card, and ROOKIE on none" — and its reasoning was correct: a player whose
+    // rookie season is the current one has only that season, so it is his best
+    // one too, and Super Season outranked Rookie. What it recorded was a real
+    // structural fact and an unintended design. The overlap set is not a mixed
+    // population that needed a tie-break; it IS the 2025-26 rookies, and
+    // "his best season" over a one-season career says nothing. So ROOKIE wins.
     const printed = POOL_PLAYERS
       .filter(p => p.badges.length)
       .map(p => pickBadge(p.badges).id);
-    expect(printed.filter(id => id === SUPER_SEASON_BADGE).length).toBe(printed.length);
-    expect(printed.filter(id => id === ROOKIE_BADGE).length).toBe(0);
-    // …while the ROOKIE fact itself is still on the record, not thrown away.
+    expect(printed.length).toBe(BADGE_FILE.counts.players);
+    expect(printed.filter(id => id === ROOKIE_BADGE).length).toBe(33);
+    expect(printed.filter(id => id === SUPER_SEASON_BADGE).length).toBe(107);
+    // Everyone who prints ROOKIE is someone the SUPER SEASON fact is also true
+    // of — the nesting is what makes this a priority question and not a rule.
+    for (const p of POOL_PLAYERS.filter(p => pickBadge(p.badges)?.id === ROOKIE_BADGE)) {
+      expect(p.badges, p.name).toContain(SUPER_SEASON_BADGE);
+    }
+    // …and both facts are still on every record, neither thrown away.
     expect(POOL_PLAYERS.filter(p => p.badges.includes(ROOKIE_BADGE)).length)
       .toBe(BADGE_FILE.counts.applies[ROOKIE_BADGE]);
+    expect(POOL_PLAYERS.filter(p => p.badges.includes(SUPER_SEASON_BADGE)).length)
+      .toBe(BADGE_FILE.counts.applies[SUPER_SEASON_BADGE]);
+    // The generator's own tally of what will print, held against the pool the
+    // studio actually lists.
+    expect(BADGE_FILE.counts.printed).toEqual({ [ROOKIE_BADGE]: 33, [SUPER_SEASON_BADGE]: 107 });
   });
 
   it('is scoped to the set it was generated for', () => {

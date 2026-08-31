@@ -314,21 +314,27 @@ describe('the base set\'s badges', () => {
     expect(ROOKIE.cards.length + ROOKIE.excluded.length).toBe(POOL.length);
   });
 
-  it('has NESTED lists, which is why the rookie badge never prints', () => {
+  it('has NESTED lists, which is why the rookie badge is the one that prints', () => {
     // Structural, not a coincidence: a player whose FIRST season is the most
     // recent one has exactly one season, so it is also his BEST one. Every
-    // rookie-badged player is therefore super-season-badged too — and Super
-    // Season outranks Rookie, so what prints on all 33 is the gold pill.
+    // rookie-badged player is therefore super-season-badged too.
     //
-    // Asserted rather than described because it is the surprising consequence
-    // of the priority the user asked for, and the thing that would change if
-    // anyone reordered BADGES.
+    // THIS TEST ONCE ASSERTED THE OPPOSITE OUTCOME from the same premise —
+    // "which is why the rookie badge never prints", because Super Season
+    // outranked Rookie and so the gold pill won all 33. The premise was right
+    // and is unchanged; what it was taken to justify was not. The overlap set
+    // is not a mixed population needing a tie-break, it IS the 2025-26 rookie
+    // class, and telling a reader that a one-season career's only season was
+    // its best one is telling him nothing. So ROOKIE outranks SUPER SEASON, and
+    // these 33 are the cards that say so.
     const rookieBadged = BADGES.badges.filter(b => b.badges.includes(ROOKIE_BADGE));
-    expect(rookieBadged.length).toBeGreaterThan(0);
+    expect(rookieBadged.length).toBe(ROOKIE.excluded.length);
     for (const record of rookieBadged) {
       expect(record.badges, record.name).toContain(SUPER_SEASON_BADGE);
-      expect(pickBadge(record.badges).id, record.name).toBe(SUPER_SEASON_BADGE);
+      expect(pickBadge(record.badges).id, record.name).toBe(ROOKIE_BADGE);
     }
+    // Cooper Flagg by name — the card the user was looking at when he asked.
+    expect(rookieBadged.map(r => r.id)).toContain('Cooper_Flagg');
   });
 
   it('counts what applies and what actually prints, and they differ', () => {
@@ -337,9 +343,15 @@ describe('the base set\'s badges', () => {
     expect(counts.players).toBe(SUPER.excluded.length);
     expect(counts.applies[SUPER_SEASON_BADGE]).toBe(SUPER.excluded.length);
     expect(counts.applies[ROOKIE_BADGE]).toBe(ROOKIE.excluded.length);
-    expect(counts.printed[SUPER_SEASON_BADGE]).toBe(SUPER.excluded.length);
-    // The number this whole block exists to make impossible to miss.
-    expect(counts.printed[ROOKIE_BADGE]).toBe(0);
+    // THE GAP IS THE NESTING, and it now falls on the Super Season side: every
+    // rookie is also a Super Season, so the 33 that print ROOKIE are 33 the
+    // gold pill loses. `applies` still reports both facts in full.
+    expect(counts.printed[ROOKIE_BADGE]).toBe(ROOKIE.excluded.length);
+    expect(counts.printed[SUPER_SEASON_BADGE])
+      .toBe(SUPER.excluded.length - ROOKIE.excluded.length);
+    // Nobody loses their pill entirely in the resolution.
+    expect(counts.printed[ROOKIE_BADGE] + counts.printed[SUPER_SEASON_BADGE])
+      .toBe(counts.players);
     expect(counts.multiple).toBe(ROOKIE.excluded.length);
   });
 });

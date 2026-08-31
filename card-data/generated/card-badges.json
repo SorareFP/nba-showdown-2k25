@@ -1,21 +1,21 @@
 {
- "generatedAt": "2026-08-31T12:02:22.250Z",
+ "generatedAt": "2026-08-31T12:31:57.463Z",
  "set": "2026-27",
  "provisional": true,
  "source": "the Super Season and Rookie exclusion lists: a player whose best or rookie season is 2026 gets no card in that set, because his base card already IS that season — so the fact is printed on the base card as a badge instead",
  "priority": [
-  "super-season",
-  "rookie"
+  "rookie",
+  "super-season"
  ],
  "counts": {
   "players": 140,
   "applies": {
-   "super-season": 140,
-   "rookie": 33
+   "rookie": 33,
+   "super-season": 140
   },
   "printed": {
-   "super-season": 140,
-   "rookie": 0
+   "rookie": 33,
+   "super-season": 107
   },
   "multiple": 33
  },
@@ -24,8 +24,8 @@
    "id": "Ace_Bailey",
    "name": "Ace Bailey",
    "badges": [
-    "super-season",
-    "rookie"
+    "rookie",
+    "super-season"
    ]
   },
   {
@@ -81,8 +81,8 @@
    "id": "Ben_Saraf",
    "name": "Ben Saraf",
    "badges": [
-    "super-season",
-    "rookie"
+    "rookie",
+    "super-season"
    ]
   },
   {
@@ -131,8 +131,8 @@
    "id": "Caleb_Love",
    "name": "Caleb Love",
    "badges": [
-    "super-season",
-    "rookie"
+    "rookie",
+    "super-season"
    ]
   },
   {
@@ -153,8 +153,8 @@
    "id": "Cedric_Coward",
    "name": "Cedric Coward",
    "badges": [
-    "super-season",
-    "rookie"
+    "rookie",
+    "super-season"
    ]
   },
   {
@@ -182,16 +182,16 @@
    "id": "Collin_Murray_Boyles",
    "name": "Collin Murray-Boyles",
    "badges": [
-    "super-season",
-    "rookie"
+    "rookie",
+    "super-season"
    ]
   },
   {
    "id": "Cooper_Flagg",
    "name": "Cooper Flagg",
    "badges": [
-    "super-season",
-    "rookie"
+    "rookie",
+    "super-season"
    ]
   },
   {
@@ -212,8 +212,8 @@
    "id": "Danny_Wolf",
    "name": "Danny Wolf",
    "badges": [
-    "super-season",
-    "rookie"
+    "rookie",
+    "super-season"
    ]
   },
   {
@@ -241,8 +241,8 @@
    "id": "Derik_Queen",
    "name": "Derik Queen",
    "badges": [
-    "super-season",
-    "rookie"
+    "rookie",
+    "super-season"
    ]
   },
   {
@@ -270,8 +270,8 @@
    "id": "Drake_Powell",
    "name": "Drake Powell",
    "badges": [
-    "super-season",
-    "rookie"
+    "rookie",
+    "super-season"
    ]
   },
   {
@@ -292,24 +292,24 @@
    "id": "Dylan_Cardwell",
    "name": "Dylan Cardwell",
    "badges": [
-    "super-season",
-    "rookie"
+    "rookie",
+    "super-season"
    ]
   },
   {
    "id": "Dylan_Harper",
    "name": "Dylan Harper",
    "badges": [
-    "super-season",
-    "rookie"
+    "rookie",
+    "super-season"
    ]
   },
   {
    "id": "Egor_Demin",
    "name": "Egor Dëmin",
    "badges": [
-    "super-season",
-    "rookie"
+    "rookie",
+    "super-season"
    ]
   },
   {
@@ -337,8 +337,8 @@
    "id": "Hugo_Gonzalez",
    "name": "Hugo González",
    "badges": [
-    "super-season",
-    "rookie"
+    "rookie",
+    "super-season"
    ]
   },
   {
@@ -415,8 +415,8 @@
    "id": "Jamir_Watkins",
    "name": "Jamir Watkins",
    "badges": [
-    "super-season",
-    "rookie"
+    "rookie",
+    "super-season"
    ]
   },
   {
@@ -430,8 +430,8 @@
    "id": "Javon_Small",
    "name": "Javon Small",
    "badges": [
-    "super-season",
-    "rookie"
+    "rookie",
+    "super-season"
    ]
   },
   {
@@ -480,8 +480,8 @@
    "id": "Jeremiah_Fears",
    "name": "Jeremiah Fears",
    "badges": [
-    "super-season",
-    "rookie"
+    "rookie",
+    "super-season"
    ]
   },
   {
@@ -551,8 +551,8 @@
    "id": "Kasparas_Jakucionis",
    "name": "Kasparas Jakučionis",
    "badges": [
-    "super-season",
-    "rookie"
+    "rookie",
+    "super-season"
    ]
   },
   {
@@ -573,16 +573,16 @@
    "id": "Kobe_Sanders",
    "name": "Kobe Sanders",
    "badges": [
-    "super-season",
-    "rookie"
+    "rookie",
+    "super-season"
    ]
   },
   {
    "id": "Kon_Knueppel",
    "name": "Kon Knueppel",
    "badges": [
-    "super-season",
-    "rookie"
+    "rookie",
+    "super-season"
    ]
   },
   {
@@ -645,16 +645,16 @@
    "id": "Maxime_Raynaud",
    "name": "Maxime Raynaud",
    "badges": [
-    "super-season",
-    "rookie"
+    "rookie",
+    "super-season"
    ]
   },
   {
    "id": "Micah_Peavy",
    "name": "Micah Peavy",
    "badges": [
-    "super-season",
-    "rookie"
+    "rookie",
+    "super-season"
    ]
   },
   {
@@ -710,8 +710,8 @@
    "id": "Nique_Clifford",
    "name": "Nique Clifford",
    "badges": [
-    "super-season",
-    "rookie"
+    "rookie",
+    "super-season"
    ]
   },
   {
@@ -725,16 +725,16 @@
    "id": "Noah_Penda",
    "name": "Noah Penda",
    "badges": [
-    "super-season",
-    "rookie"
+    "rookie",
+    "super-season"
    ]
   },
   {
    "id": "Nolan_Traore",
    "name": "Nolan Traoré",
    "badges": [
-    "super-season",
-    "rookie"
+    "rookie",
+    "super-season"
    ]
   },
   {
@@ -797,8 +797,8 @@
    "id": "Rasheer_Fleming",
    "name": "Rasheer Fleming",
    "badges": [
-    "super-season",
-    "rookie"
+    "rookie",
+    "super-season"
    ]
   },
   {
@@ -833,16 +833,16 @@
    "id": "Ryan_Kalkbrenner",
    "name": "Ryan Kalkbrenner",
    "badges": [
-    "super-season",
-    "rookie"
+    "rookie",
+    "super-season"
    ]
   },
   {
    "id": "Ryan_Nembhard",
    "name": "Ryan Nembhard",
    "badges": [
-    "super-season",
-    "rookie"
+    "rookie",
+    "super-season"
    ]
   },
   {
@@ -898,8 +898,8 @@
    "id": "Sion_James",
    "name": "Sion James",
    "badges": [
-    "super-season",
-    "rookie"
+    "rookie",
+    "super-season"
    ]
   },
   {
@@ -934,8 +934,8 @@
    "id": "Tre_Johnson",
    "name": "Tre Johnson",
    "badges": [
-    "super-season",
-    "rookie"
+    "rookie",
+    "super-season"
    ]
   },
   {
@@ -991,32 +991,32 @@
    "id": "VJ_Edgecombe",
    "name": "VJ Edgecombe",
    "badges": [
-    "super-season",
-    "rookie"
+    "rookie",
+    "super-season"
    ]
   },
   {
    "id": "Walter_Clayton",
    "name": "Walter Clayton",
    "badges": [
-    "super-season",
-    "rookie"
+    "rookie",
+    "super-season"
    ]
   },
   {
    "id": "Will_Richard",
    "name": "Will Richard",
    "badges": [
-    "super-season",
-    "rookie"
+    "rookie",
+    "super-season"
    ]
   },
   {
    "id": "Will_Riley",
    "name": "Will Riley",
    "badges": [
-    "super-season",
-    "rookie"
+    "rookie",
+    "super-season"
    ]
   },
   {

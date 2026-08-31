@@ -19,11 +19,13 @@ import {
   STATS_SEASON,
   FINISHED_SET,
   FINISHED_STATS_SEASON,
+  cardTreatment,
   getSet,
   setLeague,
   setPaths,
   setTreatment,
 } from '../cards/sets.js';
+import { SUPER_SEASON_MIN_SALARY } from '../cards/badges.js';
 import {
   SOURCES,
   DEFAULT_SOURCE,
@@ -135,6 +137,12 @@ export default function Studio() {
     [players, query, missingOnly, photoIds]
   );
   const selected = players.find(p => p.id === selectedId) ?? null;
+  // WHAT THE CARD ON SCREEN ACTUALLY GETS, which is no longer the same as what
+  // the SET declares: a Super Season card under SUPER_SEASON_MIN_SALARY prints
+  // BEST SEASON and keeps its team's own palette. The chip below reads this,
+  // not `activeTreatment`, because a header reading "gold-foil" over a card
+  // with no gold on it is the studio lying about its own preview.
+  const shownTreatment = cardTreatment(activeSet, selected?.salary);
   const scale = useFitScale(previewEl);
 
   // ── Load persisted state, per SET ─────────────────────────────────────────
@@ -399,7 +407,9 @@ export default function Studio() {
 
         {/* Only on a set that has one. Says what the look IS, because the whole
             point of a treatment is that the card should be recognisable across
-            the table before anyone reads it. */}
+            the table before anyone reads it — and, on a set that TIERS, which
+            side of the line the card in front of you is on. Flipping through
+            210 Super Season cards, that is the question this chip answers. */}
         {activeTreatment && (
           <span
             className={styles.setBadge}
@@ -407,10 +417,15 @@ export default function Studio() {
               `This set carries the "${activeTreatment}" treatment, composed on top of each team's ` +
               'own colours rather than replacing them (src/cards/treatments.js). It is a static ' +
               'gradient, so it survives the PNG export, and it is only ever allowed to spend ' +
-              'contrast the untreated card already had.'
+              'contrast the untreated card already had.' +
+              (shownTreatment
+                ? ''
+                : ` This card is under $${SUPER_SEASON_MIN_SALARY}, so it prints BEST SEASON in the ` +
+                  "team's accent and takes no treatment at all — see SUPER_SEASON_MIN_SALARY in " +
+                  'src/cards/badges.js.')
             }
           >
-            {activeTreatment}
+            {shownTreatment ?? `no foil · under $${SUPER_SEASON_MIN_SALARY}`}
           </span>
         )}
 

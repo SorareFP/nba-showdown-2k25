@@ -10,12 +10,15 @@ import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import {
   COMPOSITE_METRIC_SETS,
+  COMPOSITE_REPLACEMENT,
   COMPOSITE_WEIGHTS,
+  EPM_NAME_ALIASES,
   FULL_SEASON_MINUTES,
-  REPLACEMENT_BPM,
+  REPLACEMENT_EPM,
+  attachEpm,
   badgeCounts,
-  compositeBasis,
   historicalComposite,
+  indexEpmSeasons,
   resolvePlayerIds,
   rowsById,
   seasonLabel,
@@ -26,7 +29,7 @@ import {
   SUPER_SEASON_BADGE,
   pickBadge,
 } from '../../src/cards/badges.js';
-import { REFINEMENT_WEIGHT } from './speedPower.js';
+import { PRINTED_SCALE, REFINEMENT_WEIGHT } from './speedPower.js';
 import { LAST_SEASON, FIRST_SEASON, isAggregateTeam, loadPool } from './fetchHistory.js';
 import { REPO_ROOT } from './cache.js';
 import { playerIdFromName } from '../../src/cards/playerId.js';
@@ -61,11 +64,18 @@ describe.each([
   });
 
   it('says out loud that every number on it is provisional', () => {
-    // These cards carry substitutes for three stats that do not exist before
-    // this season. A card that renders a complete stat line reads as finished,
-    // so the file has to be the thing that disagrees.
+    // These cards carry a substitute for a stat that does not exist before this
+    // season. A card that renders a complete stat line reads as finished, so the
+    // file has to be the thing that disagrees.
+    //
+    // The list used to be three. EPM and Estimated Wins came off it when the
+    // Speed+Power budget stopped being a BPM stand-in and became the base set's
+    // own composite on dunksandthrees' 2002-2026 archive; rim FG% is still
+    // genuinely absent and 2P% is still standing in for it.
     expect(file.provisional).toBe(true);
-    expect(file.sources.missing).toEqual(['EPM', 'Estimated Wins', 'rim FG%']);
+    expect(file.sources.missing).toEqual(['rim FG%']);
+    expect(file.sources.speedPower).toMatch(/z\(EPM\)/);
+    expect(file.sources.speedPower).toMatch(/2002-2026 archive/);
     for (const card of file.cards) expect(card.provisional).toBe(true);
   });
 
@@ -115,13 +125,15 @@ describe.each([
   });
 
   it('sits on the same Speed+Power scale as the base set', () => {
-    // The scale runs 10-28, and it means the same thing here as on a 2026-27
-    // card BECAUSE the map was calibrated on the current pool rather than on
-    // these seasons — see mapToReferenceScale's `calibrateOn`.
+    // The printed scale is PRINTED_SCALE's range, and it means the same thing
+    // here as on a 2026-27 card BECAUSE the map is calibrated on the 2002-2026
+    // EPM archive rather than on either set — see epmArchive.js. Read from the
+    // constant rather than written out, so a re-derived widening does not need
+    // this file edited to keep telling the truth.
     for (const card of file.cards) {
       const total = card.speed + card.power;
-      expect(total, card.name).toBeGreaterThanOrEqual(10);
-      expect(total, card.name).toBeLessThanOrEqual(28);
+      expect(total, card.name).toBeGreaterThanOrEqual(PRINTED_SCALE.min);
+      expect(total, card.name).toBeLessThanOrEqual(PRINTED_SCALE.max);
     }
   });
 
@@ -333,81 +345,111 @@ describe('the base set\'s badges', () => {
 });
 
 describe('the Speed+Power composite', () => {
-  const basis = { bpm: { mean: 0, sd: 2 }, vorpPerGame: { mean: 0.02, sd: 0.02 } };
+  // The archive's own shape, near enough: composite = z(EPM) + 0.35 * z(EW/GP).
+  const basis = { epm: { mean: -0.32, sd: 2.14 }, ewinsPerGame: { mean: 0.051, sd: 0.049 } };
 
-  it('is BPM + VORP per game — WIN SHARES CANNOT MOVE IT', () => {
-    // WS per game used to be the 0.35 refinement term, on the argument that it
-    // was the analogue of the live pipeline's Estimated Wins per game. It is
-    // not: EW comes from EPM, WS comes from a TEAM's win total. VORP per game
-    // holds that slot instead, and it really is the analogue — same plus/minus
-    // estimate, weighted by playing time. Two identical players, one on a
-    // 60-win team and one on a 20-win team, price the same.
-    const w = { bpm: 4, vorp: 3, games: 80, minutes: 2500 };
-    const goodTeam = historicalComposite({ ...w, ws: 12 }, basis);
-    const badTeam = historicalComposite({ ...w, ws: 2 }, basis);
-    expect(goodTeam).toBe(badTeam);
-    expect(Object.keys(COMPOSITE_WEIGHTS).sort()).toEqual(['bpm', 'vorpPerGame']);
-    expect(COMPOSITE_WEIGHTS.vorpPerGame).toBe(REFINEMENT_WEIGHT);
+  it('is the base set own composite — real EPM, not a BPM stand-in', () => {
+    // These sets used to be priced on `z(BPM) + 0.35 * z(VORP per game)`,
+    // because dunksandthrees' prior seasons were paywalled. They are not any
+    // more: `season-epm` serves 2002-2026 and every carded season falls inside
+    // it, so a Super Season card is now priced on the same two numbers a
+    // 2026-27 card is. Nothing derived from a TEAM's win column can move it,
+    // and neither can BPM.
+    const w = { epm: 4, ewinsPerGame: 0.15, games: 80, minutes: 2500 };
+    expect(historicalComposite({ ...w, ws: 12 }, basis)).toBe(
+      historicalComposite({ ...w, ws: 2 }, basis)
+    );
+    expect(historicalComposite({ ...w, bpm: 9 }, basis)).toBe(
+      historicalComposite({ ...w, bpm: -9 }, basis)
+    );
+    expect(Object.keys(COMPOSITE_WEIGHTS).sort()).toEqual(['epm', 'ewinsPerGame']);
+    expect(COMPOSITE_WEIGHTS.ewinsPerGame).toBe(REFINEMENT_WEIGHT);
     for (const weights of Object.values(COMPOSITE_METRIC_SETS)) {
       expect(Object.keys(weights)).not.toContain('wsPerGame');
+      expect(Object.keys(weights)).not.toContain('bpm');
     }
   });
 
   it('shrinks a season toward replacement in proportion to how little of it there was', () => {
-    // Still the correction doing most of the work at the thin end, and it runs
-    // whichever metric set is active — VORP marks a short season down
-    // continuously, the shrink pulls it to replacement level outright.
-    const w = { bpm: 8, vorp: 6 };
+    const w = { epm: 8, ewinsPerGame: 0.25 };
     const full = historicalComposite({ ...w, games: 70, minutes: 2400 }, basis);
     const sliver = historicalComposite({ ...w, games: 17, minutes: 53 }, basis);
     expect(sliver).toBeLessThan(full / 4);
   });
 
   it('leaves a full season completely untouched', () => {
-    const a = historicalComposite({ bpm: 4, games: 80, minutes: 2500 }, basis);
-    const b = historicalComposite({ bpm: 4, games: 80, minutes: FULL_SEASON_MINUTES }, basis);
+    const a = historicalComposite({ epm: 4, games: 80, minutes: 2500 }, basis);
+    const b = historicalComposite({ epm: 4, games: 80, minutes: FULL_SEASON_MINUTES }, basis);
     expect(a).toBeCloseTo(b, 10);
   });
 
   it('pulls a tiny season toward REPLACEMENT, not toward average', () => {
     // Shrinking toward the pool mean would be wrong at both ends: it would hand
     // a 53-minute flier an average card, and a 53-minute disaster one too.
-    // Replacement is -2.0 BPM and ZERO VORP, both by Basketball-Reference's own
-    // definition, so with VORP in the rule the target is both terms' z at those
-    // values rather than BPM's alone.
-    const nothing = historicalComposite({ bpm: 8, vorp: 6, games: 3, minutes: 0 }, basis);
+    // Replacement is MEASURED in EPM units — the mean EPM and EW/GP of the
+    // player-seasons sitting at Basketball-Reference's -2.0 BPM — and crucially
+    // EW/GP is NOT zero there, which is where the old analogy with VORP broke.
+    const nothing = historicalComposite(
+      { epm: 8, ewinsPerGame: 0.25, games: 3, minutes: 0 },
+      basis
+    );
     const target =
-      (REPLACEMENT_BPM - basis.bpm.mean) / basis.bpm.sd +
-      REFINEMENT_WEIGHT * ((0 - basis.vorpPerGame.mean) / basis.vorpPerGame.sd);
+      (REPLACEMENT_EPM - basis.epm.mean) / basis.epm.sd +
+      REFINEMENT_WEIGHT *
+        ((COMPOSITE_REPLACEMENT.ewinsPerGame - basis.ewinsPerGame.mean) / basis.ewinsPerGame.sd);
     expect(nothing).toBeCloseTo(target, 10);
     expect(nothing).toBeLessThan(0);
+    expect(COMPOSITE_REPLACEMENT.ewinsPerGame).toBeGreaterThan(0);
   });
 
-  it('buys volume back through VORP, not Win Shares', () => {
-    // VORP is BPM above replacement times minutes share, so VORP per game is
-    // BPM weighted by playing time — what EW/GP is to EPM, this time honestly,
-    // since both come from a plus/minus estimate rather than a win column. Same
-    // BPM, more volume behind it, higher composite.
-    const heavy = historicalComposite({ bpm: 4, vorp: 4, games: 80, minutes: 2500 }, basis);
-    const light = historicalComposite({ bpm: 4, vorp: 1, games: 80, minutes: 2500 }, basis);
-    expect(heavy).toBeGreaterThan(light);
-    // ...and BPM alone is what cannot tell them apart.
-    const w = COMPOSITE_METRIC_SETS.bpmOnly;
-    expect(historicalComposite({ bpm: 4, vorp: 4, games: 80, minutes: 2500 }, basis, w)).toBe(
-      historicalComposite({ bpm: 4, vorp: 1, games: 80, minutes: 2500 }, basis, w)
+  it('prices an unrated season at replacement outright, whatever minutes it had', () => {
+    // One rookie season in 317 — Jordan Goodwin's 2021-22, two NBA games in a
+    // G-League year — has no EPM at all. A z-score of null would read as the
+    // archive MEAN, i.e. an average card for no evidence, so the trust weight
+    // goes to zero instead.
+    const unrated = historicalComposite({ epm: null, games: 80, minutes: 2500 }, basis);
+    const none = historicalComposite({ epm: null, games: 3, minutes: 0 }, basis);
+    expect(unrated).toBe(none);
+    expect(unrated).toBeLessThan(0);
+  });
+
+  it('buys volume back through Estimated Wins, not through the rate alone', () => {
+    // EW/GP is EPM multiplied by playing time, so the same rate over more of a
+    // game prices higher — and the rate alone is what cannot tell them apart.
+    const heavy = historicalComposite(
+      { epm: 4, ewinsPerGame: 0.16, games: 80, minutes: 2500 },
+      basis
     );
+    const light = historicalComposite(
+      { epm: 4, ewinsPerGame: 0.06, games: 80, minutes: 2500 },
+      basis
+    );
+    expect(heavy).toBeGreaterThan(light);
+    const w = COMPOSITE_METRIC_SETS.epmOnly;
+    expect(
+      historicalComposite({ epm: 4, ewinsPerGame: 0.16, games: 80, minutes: 2500 }, basis, w)
+    ).toBe(historicalComposite({ epm: 4, ewinsPerGame: 0.06, games: 80, minutes: 2500 }, basis, w));
   });
 
-  it('measures its basis off the current pool, so the sets share a yardstick', () => {
-    const rows = [
-      { bpm: 1, vorp: 1.6, games: 80 },
-      { bpm: 3, vorp: 4.4, games: 80 },
-    ];
-    expect(compositeBasis(rows).bpm.mean).toBe(2);
-    // And it measures exactly the inputs the declared weighting names.
-    expect(Object.keys(compositeBasis(rows)).sort()).toEqual(['bpm', 'vorpPerGame']);
-    expect(compositeBasis(rows).vorpPerGame.mean).toBeCloseTo(0.0375, 10);
-    expect(Object.keys(compositeBasis(rows, COMPOSITE_METRIC_SETS.bpmOnly))).toEqual(['bpm']);
+  it('joins a season to EPM by name and year, aliases included', () => {
+    const index = indexEpmSeasons([
+      { name: 'Ronald Holland II', season: 2025, epm: -2.4, ewinsPerGame: 0.02, games: 86 },
+      { name: 'LeBron James', season: 2009, epm: 9.2, ewinsPerGame: 0.298, games: 81 },
+    ]);
+    const { selections, unmatched } = attachEpm(
+      [
+        { player: { name: 'Ron Holland' }, season: { season: 2025 } },
+        { player: { name: 'LeBron James' }, season: { season: 2009 } },
+        { player: { name: 'LeBron James' }, season: { season: 2010 } },
+      ],
+      index
+    );
+    expect(EPM_NAME_ALIASES['Ron Holland']).toBe('Ronald Holland II');
+    expect(selections[0].season.epm).toBe(-2.4);
+    expect(selections[1].season.ewinsPerGame).toBeCloseTo(0.298, 10);
+    // A player who really has no row for that year comes back null AND named.
+    expect(selections[2].season.epm).toBe(null);
+    expect(unmatched).toEqual(['LeBron James 2010']);
   });
 });
 

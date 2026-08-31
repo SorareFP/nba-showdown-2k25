@@ -108,11 +108,8 @@ import * as A from './attributes.js';
 import * as S from './shooting.js';
 import { CALIBRATION_FILE } from './calibrateAttributes.js';
 import { indexBiometrics, loadBiometrics } from './biometrics.js';
-import {
-  REFERENCE_TOTALS,
-  REFINEMENT_WEIGHT,
-  mapToReferenceScale,
-} from './speedPower.js';
+import { PRINTED_SCALE, REFINEMENT_WEIGHT, mapToReferenceScale } from './speedPower.js';
+import { archiveBasis, collectRows, requireArchive } from './epmArchive.js';
 import {
   HISTORY_CACHE_KEY,
   FIRST_SEASON,
@@ -234,61 +231,74 @@ const perGame = (total, games) => (games > 0 ? (total ?? 0) / games : null);
 export const FULL_SEASON_MINUTES = 1500;
 
 /**
- * ── THE SPEED+POWER COMPOSITE, AND WHY WIN SHARES IS NOT IN IT EITHER ───────
+ * ── THE SPEED+POWER COMPOSITE IS THE BASE SET'S, ON THE BASE SET'S DATA ─────
  *
- * It used to be `z(BPM) + 0.35 * z(WS per game)` — deliberately the same shape
- * as speedPower.js's `z(EPM) + 0.35 * z(EW/GP)`, with Win Shares per game
- * standing in for Estimated Wins per game because both are "wins credited,
- * divided by games". THE ANALOGY IS THE PROBLEM. Estimated Wins is derived from
- * EPM, a player-level plus/minus; Win Shares is derived from a TEAM's actual
- * win total, divided up. They look alike in units and are not alike in what
- * they measure, and the difference is precisely the team-quality bias the
- * best-season rule was just cleared of. Carrying it here would have docked the
- * same players a second time, on the same card.
+ * It used to be a BPM STAND-IN, and the reason it was is now gone. The header
+ * still records the substitution table because Def Boost and Paint Boost are
+ * still standing in; Speed+Power no longer is. dunksandthrees' `season-epm`
+ * serves 2002-2026, every Super Season and every Rookie season selected falls
+ * inside that window (2009-2025 and 2004-2025 respectively), and so these cards
+ * are now priced on THE SAME TWO NUMBERS a 2026-27 card is priced on:
  *
- * For a while the composite was therefore BPM alone, and the volume dimension it
- * lost was the same one the best-season rule lost. VORP PER GAME NOW FILLS THAT
- * SLOT: VORP is BPM above replacement times minutes share, so VORP per game is
- * BPM weighted by playing time — which is what EW/GP is to EPM, this time
- * honestly, since both terms are derived from the same plus/minus estimate
- * rather than from a team's win column.
+ *     composite = z(EPM) + 0.35 * z(EW/GP)
  *
- * SAY EXACTLY WHAT THAT BUYS. It buys DURABILITY: a season that was a whole
- * season now outscores a hot two months at the same rate. It does NOT buy
- * team-independence. VORP inherits BPM's team adjustment rather than removing
- * it, so whatever team influence BPM carries is still here, now multiplied
- * through by availability. What it avoids is ADDING a second, different team
- * term — which is precisely what Win Shares per game was doing.
+ * with the z-scores taken against the 7,773-season archive rather than against
+ * anybody's pool. See scripts/cardgen/epmArchive.js. That is the whole of the
+ * user's "use it across all years and distribute power/speed based on the entire
+ * data set", applied to the sets that are literally made of other years.
  *
- * The shrink below still runs and is still doing most of the work at the thin
+ * WHAT THIS REPLACED, kept here because the old argument is still the reason the
+ * shape of the composite is what it is: the stand-in was `z(BPM) + 0.35 *
+ * z(VORP per game)`. BPM stood in for EPM and VORP per game for Estimated Wins
+ * per game — VORP being BPM above replacement times minutes share, which is what
+ * EW/GP is to EPM. (Win Shares per game filled that slot before VORP and was
+ * removed: it is derived from a TEAM's win total, so it re-imported exactly the
+ * team-quality bias the best-season rule had just been cleared of.) BPM and EPM
+ * correlate 0.708 across the 15,219 player-seasons where both exist, which is
+ * the size of the improvement this change buys.
+ *
+ * THE BEST-SEASON SELECTION IS STILL MADE ON BPM AND VORP, deliberately and not
+ * as an oversight. Which season a player's Super Season card shows is a
+ * curation decision with photographs already cropped against it; re-picking on
+ * EPM would silently reshuffle the roster. So a card can now show a season that
+ * is a player's best by BPM and merely his second-best by EPM. That is a real
+ * inconsistency and it is the cheaper one.
+ *
+ * THE SHRINK BELOW IS UNCHANGED and is still doing most of the work at the thin
  * end: a season is pulled toward replacement level in proportion to how little
- * of a season it is, which is a softer correction than any volume term and
- * applies to both of them. The run report prints both metric sets side by side.
+ * of a season it is.
  */
 export const COMPOSITE_INPUTS = {
-  bpm: s => s.bpm,
-  vorpPerGame: s => perGame(s.vorp, s.games),
-  wsPerGame: s => perGame(s.ws, s.games),
+  epm: s => s.epm,
+  ewinsPerGame: s => s.ewinsPerGame,
 };
 
 /**
  * What each input reads at replacement level — where a season with no minutes
  * behind it is shrunk TO.
  *
- * -2.0 BPM is not a taste call: it is the definition Basketball-Reference
- * builds VORP on, so it is the value the rest of this composite is already
- * stated against. VORP is zero at replacement level by that same definition,
- * which is what makes it drop into this table without a second decision.
+ * MEASURED, not chosen. Basketball-Reference defines replacement level as
+ * -2.0 BPM and builds VORP on it, so that definition is the anchor; what these
+ * two numbers are is the mean EPM and mean EW/GP of the 986 player-seasons whose
+ * BPM lands within 0.25 of it, over the 15,219 seasons where the two sources
+ * join. Carrying -2.0 across as if EPM and BPM were the same scale would have
+ * been wrong by 0.3 of a point: EPM runs about half a point above BPM at that
+ * level, and its spread is half BPM's.
+ *
+ * EW/GP is NOT zero at replacement, which is where the analogy with VORP breaks.
+ * VORP is value ABOVE replacement and so is zero there by construction;
+ * Estimated Wins is not a value-over-replacement measure, and a replacement
+ * player who plays still produces a small positive number of them.
  */
-export const COMPOSITE_REPLACEMENT = { bpm: -2.0, vorpPerGame: 0, wsPerGame: 0 };
+export const COMPOSITE_REPLACEMENT = { epm: -1.691, ewinsPerGame: 0.0175 };
 
 export const COMPOSITE_METRIC_SETS = {
-  bpmOnly: { bpm: 1 },
-  bpmVorp: { bpm: 1, vorpPerGame: REFINEMENT_WEIGHT },
+  epmOnly: { epm: 1 },
+  epmEwins: { epm: 1, ewinsPerGame: REFINEMENT_WEIGHT },
 };
 
-/** THE ACTIVE COMPOSITE. One line to change. */
-export const COMPOSITE_WEIGHTS = COMPOSITE_METRIC_SETS.bpmVorp;
+/** THE ACTIVE COMPOSITE. One line to change; the run report prints both. */
+export const COMPOSITE_WEIGHTS = COMPOSITE_METRIC_SETS.epmEwins;
 
 /**
  * Where a season with no minutes behind it is pulled TO.
@@ -298,16 +308,15 @@ export const COMPOSITE_WEIGHTS = COMPOSITE_METRIC_SETS.bpmVorp;
  * would be wrong at both ends. It would hand a 53-minute flier an average card,
  * and it would hand a 53-minute disaster one too.
  */
-export const REPLACEMENT_BPM = COMPOSITE_REPLACEMENT.bpm;
+export const REPLACEMENT_EPM = COMPOSITE_REPLACEMENT.epm;
 
 /**
  * The composite for one season, shrunk for how much season is behind it.
  *
- * The z-scores are taken against the CURRENT POOL's mean and spread, passed in,
- * so a historical season's composite is directly comparable with a 2026-27
- * card's. The shrink is applied to the pool's own composites too, for the same
- * reason: the map is only a like-for-like comparison if both sides of it were
- * measured the same way.
+ * The z-scores are taken against the ARCHIVE's mean and spread, passed in, so a
+ * historical season's composite is directly comparable with a 2026-27 card's —
+ * and with a 1997 WNBA card's, which reaches the same scale by a different
+ * route. The shrink is applied on top, toward the replacement composite.
  */
 export function historicalComposite(season, basis, weights = COMPOSITE_WEIGHTS) {
   let raw = 0;
@@ -316,33 +325,78 @@ export function historicalComposite(season, basis, weights = COMPOSITE_WEIGHTS) 
     raw += w * z(COMPOSITE_INPUTS[key](season), basis[key]);
     replacement += w * z(COMPOSITE_REPLACEMENT[key], basis[key]);
   }
-  const trust = Math.min(Math.max((season.minutes ?? 0) / FULL_SEASON_MINUTES, 0), 1);
+  // A season with no plus/minus estimate at all carries no evidence, so it is
+  // priced at replacement outright rather than at whatever a z-score of a null
+  // rounds to. One rookie season in 317 is in this state — see EPM_JOIN below.
+  const rated = Number.isFinite(COMPOSITE_INPUTS.epm(season));
+  const trust = rated ? Math.min(Math.max((season.minutes ?? 0) / FULL_SEASON_MINUTES, 0), 1) : 0;
   return trust * raw + (1 - trust) * replacement;
 }
 
-/** Mean/sd of each composite input across the current pool's own season. */
-export function compositeBasis(currentRows, weights = COMPOSITE_WEIGHTS) {
-  const basis = {};
-  for (const key of Object.keys(weights)) {
-    basis[key] = A.meanSd(currentRows.map(COMPOSITE_INPUTS[key]));
-  }
-  return basis;
+/**
+ * Every season's Speed+Power total on the printed scale.
+ *
+ * NO `cut` AND NO CURRENT POOL. Both used to be arguments, because the map was
+ * fitted to the 2026-27 pool and then applied to the history; it is now fitted
+ * to the archive, which contains both and is a property of neither. What the
+ * current pool still calibrates is the SHOOTING layer, which is why `buildSet`
+ * still assembles a combined list.
+ */
+export function speedPowerTotals(seasons, { archive, weights = COMPOSITE_WEIGHTS } = {}) {
+  const basis = archiveBasis(archive);
+  const composites = seasons.map(s => historicalComposite(s, basis, weights));
+  return mapToReferenceScale(composites, PRINTED_SCALE, { calibrateOn: archive.composites });
 }
 
 /**
- * Every season's Speed+Power total on the finished set's scale.
+ * EPM AND ESTIMATED WINS FOR ONE ARCHIVED SEASON, joined by name and year.
  *
- * `all` is the current pool's rows followed by the seasons being carded, and
- * `cut` is where the first ends — both layers are FITTED to the pool and then
- * applied to the history, which is what puts these cards on the base set's
- * scale rather than on a scale of their own.
+ * The two sources spell a handful of players differently, and every difference
+ * is the same kind: dunksandthrees carries the registered name where
+ * Basketball-Reference carries the one on the jersey. Listed rather than
+ * fuzzy-matched, because a fuzzy match between two 12,000-row tables is how a
+ * father gets his son's card.
  */
-export function speedPowerTotals(all, cut, weights = COMPOSITE_WEIGHTS) {
-  const basis = compositeBasis(all.slice(0, cut), weights);
-  const composites = all.map(s => historicalComposite(s, basis, weights));
-  return mapToReferenceScale(composites, REFERENCE_TOTALS, {
-    calibrateOn: composites.slice(0, cut),
+export const EPM_NAME_ALIASES = {
+  'Alex Sarr': 'Alexandre Sarr',
+  'Bub Carrington': 'Carlton Carrington',
+  'Nic Claxton': 'Nicolas Claxton',
+  'Ron Holland': 'Ronald Holland II',
+};
+
+/** `name|season` -> the pooled regular-season-plus-playoffs row. */
+export function indexEpmSeasons(rows) {
+  const index = new Map();
+  for (const r of rows ?? []) {
+    if (!Number.isFinite(r?.epm)) continue;
+    const key = `${normalizeName(r.name)}|${r.season}`;
+    const prev = index.get(key);
+    if (!prev || (r.games ?? 0) > (prev.games ?? 0)) index.set(key, r);
+  }
+  return index;
+}
+
+/**
+ * Attaches EPM and EW/GP to each selection's season.
+ *
+ * Returns the unmatched list too, and the caller prints it: the ONE season that
+ * legitimately has no EPM row is Jordan Goodwin's 2021-22, two NBA games in a
+ * G-League year, which dunksandthrees rates as null. A second name appearing on
+ * that list means a spelling has drifted, not that the archive has a hole.
+ */
+export function attachEpm(selections, index) {
+  const unmatched = [];
+  const attached = selections.map(sel => {
+    const name = sel.player.name;
+    const key = n => `${normalizeName(n)}|${sel.season.season}`;
+    const row = index.get(key(EPM_NAME_ALIASES[name] ?? name)) ?? index.get(key(name)) ?? null;
+    if (!row) unmatched.push(`${name} ${sel.season.season}`);
+    return {
+      ...sel,
+      season: { ...sel.season, epm: row?.epm ?? null, ewinsPerGame: row?.ewinsPerGame ?? null },
+    };
   });
+  return { selections: attached, unmatched };
 }
 
 /** The shooting inputs one archived season contributes. */
@@ -465,17 +519,18 @@ export function buildHistoricalCard({ player, season, shooting, speedPowerTotal,
 /**
  * Builds one set from a list of `{ player, season }` selections.
  *
- * `currentRows` is the CURRENT pool's own season, and it is not optional: both
- * pool-relative layers — the shooting compression and the Speed+Power map — are
- * calibrated on it and then applied to the historical seasons, which is what
- * puts these cards on the same scale as the base set rather than on a scale of
- * their own. Both are computed over `[...current, ...selected]` and the
- * historical tail is sliced back out.
+ * `currentRows` is the CURRENT pool's own season, and it is still not optional
+ * — but it now calibrates ONE of the two pool-relative layers rather than both.
+ * The shooting compression is measured over `[...current, ...selected]` and the
+ * historical tail sliced back out, exactly as before. THE SPEED+POWER MAP NO
+ * LONGER USES IT: it calibrates on the 2002-2026 archive, which is a property of
+ * no pool at all. See speedPowerTotals.
  */
 export function buildSet({
   selections,
   currentRows,
   calibration,
+  archive = requireArchive(),
   weights = COMPOSITE_WEIGHTS,
   biometrics = new Map(),
 }) {
@@ -489,7 +544,10 @@ export function buildSet({
     three: calibration.threePtBoost,
   });
 
-  const totals = speedPowerTotals(all, cut, weights);
+  const totals = [
+    ...Array(cut).fill(null),
+    ...speedPowerTotals(seasons, { archive, weights }),
+  ];
 
   return selections.map((selection, i) =>
     buildHistoricalCard({
@@ -507,12 +565,15 @@ export function buildSet({
  * The same selections' Speed+Power totals under EVERY declared composite, so
  * the run report can show what the alternative would have printed.
  */
-export function compareComposites({ selections, currentRows, sets = COMPOSITE_METRIC_SETS }) {
-  const all = [...currentRows, ...selections.map(s => s.season)];
-  const cut = currentRows.length;
+export function compareComposites({
+  selections,
+  archive = requireArchive(),
+  sets = COMPOSITE_METRIC_SETS,
+}) {
+  const seasons = selections.map(s => s.season);
   const byName = {};
   for (const [name, weights] of Object.entries(sets)) {
-    byName[name] = speedPowerTotals(all, cut, weights).slice(cut);
+    byName[name] = speedPowerTotals(seasons, { archive, weights });
   }
   return selections.map((selection, i) => ({
     name: selection.player.name,
@@ -716,7 +777,9 @@ function writeBadges({ set, badges, counts }) {
 
 /** The one-line description of every substitution, carried into both files. */
 const SOURCES = {
-  origin: 'basketball-reference.com season tables (advanced + per-100), 2000-2026',
+  origin:
+    'basketball-reference.com season tables (advanced + per-100), 2000-2026, for the roster and ' +
+    'every printed stat; dunksandthrees season-epm, 2002-2026, for the Speed+Power budget',
   bestSeason:
     'BPM and VORP, equally weighted, each scored against its own season\'s league. Win Shares and ' +
     'WS/48 are deliberately excluded: they allocate TEAM wins, so they dock a good player on a bad ' +
@@ -730,15 +793,19 @@ const SOURCES = {
     'happened. They fall back one at a time (games first, then minutes) so a player whose only ' +
     'real season is short still gets a card',
   speedPower:
-    `z(BPM) + ${REFINEMENT_WEIGHT} * z(VORP per game) — the same shape as the live pipeline's ` +
-    'z(EPM) + 0.35 * z(EW per game), with the two Basketball-Reference stats standing in for the ' +
-    'two dunksandthrees ones. Shrunk toward replacement level for a short season, then mapped ' +
-    'onto the finished set\'s Speed+Power distribution with the 2026-27 pool as the calibration ' +
-    'basis',
-  defBoost: 'DBPM, rounded — DEF EPM does not exist before the current season',
+    `z(EPM) + ${REFINEMENT_WEIGHT} * z(EW per game) — the base set's own composite on the base ` +
+    "set's own data, no longer a BPM stand-in: dunksandthrees' season-epm covers 2002-2026 and " +
+    'every carded season falls inside it. Shrunk toward replacement level for a short season, ' +
+    'then mapped onto the printed Speed+Power scale with the 2002-2026 archive of every cardable ' +
+    'player-season as the calibration basis — not any one pool',
+  defBoost: 'DBPM, rounded — still a stand-in, though DEF EPM now exists back to 2002 as well',
   paintBoost: '2P% standing in for rim FG%, which Basketball-Reference does not carry',
   chart: 'synthesized from Basketball-Reference per-100 PTS/TRB/AST, same model as the base set',
-  missing: ['EPM', 'Estimated Wins', 'rim FG%'],
+  missing: ['rim FG%'],
+  note:
+    'the best-season SELECTION is still made on BPM and VORP, so a card can show a season that ' +
+    'is a player\'s best by BPM and his second-best by EPM. That is deliberate: which season a ' +
+    'card shows is a curation decision with photographs cropped against it',
 };
 
 export function main({ log = console.log } = {}) {
@@ -756,6 +823,35 @@ export function main({ log = console.log } = {}) {
   log(`Pool ${pool.length}; ${rows.length} archived player-seasons.`);
   if (selection.missingIds.length) {
     log(`  ⚠ no ${LAST_SEASON} row for: ${selection.missingIds.join(', ')}`);
+  }
+
+  // ── The Speed+Power inputs, which are now the base set's own ──────────────
+  //
+  // The absolute scale (committed) and the per-player-season EPM rows behind it
+  // (cached, like bbref-history.json above). Both selections are enriched here
+  // rather than inside `buildSet`, so the join is reported once and both sets
+  // are demonstrably scored off the same table.
+  const archive = requireArchive();
+  const epmIndex = indexEpmSeasons(collectRows().rows);
+  if (epmIndex.size === 0) {
+    throw new Error(
+      'No cached season-epm rows. Run `node --env-file=.env.local ' +
+        'scripts/cardgen/epmArchive.js` first — these sets are priced on real EPM now.'
+    );
+  }
+  log(
+    `Speed+Power basis: ${archive.n} cardable player-seasons ${archive.seasons[0]}-` +
+      `${archive.seasons[archive.seasons.length - 1]}; ${epmIndex.size} rated seasons to join against.`
+  );
+  for (const key of ['superSeason', 'rookie']) {
+    const joined = attachEpm(selection[key], epmIndex);
+    selection[key] = joined.selections;
+    log(
+      joined.unmatched.length
+        ? `  ${key}: no EPM row for ${joined.unmatched.length} — ${joined.unmatched.join(', ')} ` +
+            '(priced at replacement level)'
+        : `  ${key}: EPM for all ${joined.selections.length}`
+    );
   }
 
   // The current pool's own season rows, one per player, as the calibration
@@ -813,7 +909,7 @@ export function main({ log = console.log } = {}) {
     );
     reportSet(cards, log);
     reportCompositeMetricSets(
-      compareComposites({ selections, currentRows }),
+      compareComposites({ selections, archive }),
       COMPOSITE_METRIC_SETS,
       log
     );

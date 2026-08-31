@@ -13,6 +13,10 @@ import {
   OUTPUT_FILE,
 } from './generateCards.js';
 import * as S from './shooting.js';
+import * as A from './attributes.js';
+import * as PV from './playValue.js';
+
+const BASE_SET = PV.BASE_SET_FILE;
 import { CALIBRATION_FILE } from './calibrateAttributes.js';
 import { playerIdFromName } from '../../src/cards/playerId.js';
 import { REPO_ROOT } from './cache.js';
@@ -96,12 +100,16 @@ describe('buildCard', () => {
       'paintBoost',
       'threePtBoost',
       'defBoost',
-      'salary',
       'chart',
     ]) {
       expect(c[field], field).not.toBe(undefined);
       expect(c[field], field).not.toBe(null);
     }
+    // Salary is the ONE field buildCard deliberately leaves unset. Play value is
+    // measured against a field, so it cannot exist until every card does;
+    // generateCards fills it in as a post-pass. Null rather than a placeholder
+    // so a card that escapes that pass is obviously broken, not quietly cheap.
+    expect(c.salary).toBeNull();
   });
 
   it('marks itself provisional, because every number on it is', () => {
@@ -246,13 +254,64 @@ describe('buildCard', () => {
     expect(c.chart[0]).toMatchObject({ lo: 1, pts: 0, reb: 0, ast: 0 });
     expect(c.chart[0].hi).toBeGreaterThanOrEqual(2); // rolls 1-2 at minimum
     expect(c.chart[c.chart.length - 1].hi).toBe(99);
-    expect(Number.isFinite(c.salary)).toBe(true);
+    expect(c.salary).toBeNull(); // priced by the post-pass, not here
   });
 
-  it('prices a better card higher', () => {
+  it('prices a better card higher, once the post-pass has run', () => {
     const star = card({ speedPowerTotal: 28 }, { pts100: 38 }, { epmDef: 3 });
     const bench = card({ speedPowerTotal: 11 }, { pts100: 14 }, { epmDef: -1 });
-    expect(star.salary).toBeGreaterThan(bench.salary);
+    // Both come back null from buildCard; the ordering is the PRICER's job now.
+    expect(star.salary).toBeNull();
+    expect(bench.salary).toBeNull();
+
+    // Priced against the real set, because play value is measured against a
+    // FIELD and a two-card field is degenerate -- each card would face exactly
+    // one opponent, and the pair can come out identical.
+    const field = JSON.parse(readFileSync(BASE_SET, 'utf8')).cards;
+    const salaries = PV.priceSet([star, bench], {
+      field,
+      basis: PV.computePlayValue(field, { field }).value,
+      roundSalary: A.roundSalary,
+      min: A.SALARY_MIN,
+      max: A.SALARY_MAX,
+    });
+    expect(salaries[0]).toBeGreaterThan(salaries[1]);
+  });
+
+  it('sees chart SHAPE, not just the chart average', () => {
+    // The whole reason the price changed. These two have IDENTICAL expected
+    // points on a bare d20 -- 2.0 each -- and the old linear fit, which read
+    // only that average, therefore priced them the same. They are nothing alike
+    // at the table, and the play-derived price says so.
+    //
+    // Note which way it goes is NOT asserted, deliberately. A cliff at 17 gains
+    // more from a positive roll bonus than a flat chart that is already
+    // saturated, so the volatile card can be worth MORE once matchups are
+    // played out. What matters is that the price can tell them apart at all.
+    const base = card({ speedPowerTotal: 20 }, { pts100: 24 }, {});
+    const flat = {
+      ...base, id: 'flat', name: 'Flat',
+      chart: [{ lo: 1, hi: 99, pts: 2, reb: 1, ast: 1 }],
+    };
+    const cliff = {
+      ...base, id: 'cliff', name: 'Cliff',
+      chart: [
+        { lo: 1, hi: 16, pts: 0, reb: 0, ast: 0 },
+        { lo: 17, hi: 99, pts: 10, reb: 5, ast: 5 },
+      ],
+    };
+    expect(expectedValuePerRoll(flat.chart, 'pts')).toBeCloseTo(2, 10);
+    expect(expectedValuePerRoll(cliff.chart, 'pts')).toBeCloseTo(2, 10);
+
+    const field = JSON.parse(readFileSync(BASE_SET, 'utf8')).cards;
+    const [a, b] = PV.priceSet([flat, cliff], {
+      field,
+      basis: PV.computePlayValue(field, { field }).value,
+      roundSalary: A.roundSalary,
+      min: A.SALARY_MIN,
+      max: A.SALARY_MAX,
+    });
+    expect(Math.abs(a - b)).toBeGreaterThan(100);
   });
 });
 

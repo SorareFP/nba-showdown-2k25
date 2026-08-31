@@ -81,6 +81,7 @@ import { computeStatBands } from '../bands.js';
 import { reconcileBands, shapeChart, MAX_CHART_TIERS } from '../generate.js';
 import * as V from '../variance.js';
 import * as A from '../attributes.js';
+import * as PV from '../playValue.js';
 import * as S from '../shooting.js';
 import { CALIBRATION_FILE } from '../calibrateAttributes.js';
 import { PRINTED_SCALE, mapToReferenceScale } from '../speedPower.js';
@@ -375,10 +376,8 @@ export function buildLegendCard({ row, shooting, speedPowerTotal, calibration })
     provisional: true,
   };
 
-  const ev = Object.fromEntries(
-    V.CHART_STATS.map(stat => [stat, expectedValuePerRoll(card.chart, stat)])
-  );
-  card.salary = A.roundSalary(A.applyModel(calibration.salary.model, A.salaryFeatures(card, ev)));
+  // Salary is NOT set here. Play value is measured against a FIELD, so it is
+  // filled in as a post-pass once every card exists — see priceCardsInPlace.
   return card;
 }
 
@@ -642,6 +641,10 @@ export function main({ log = console.log } = {}) {
     }))
     .sort((a, b) => a.name.localeCompare(b.name));
   fs.writeFileSync(ROSTER_FILE, `${JSON.stringify(roster, null, 2)}\n`);
+
+  // Priced against the NBA base set, the same common field every other set
+  // uses -- these cards share a table with it.
+  PV.priceAgainstBase(cards, { roundSalary: A.roundSalary, min: A.SALARY_MIN, max: A.SALARY_MAX });
 
   const payload = {
     generatedAt: new Date().toISOString(),

@@ -370,8 +370,12 @@ describe('the base set\'s badges', () => {
     const contested = SUPER.excluded.length - ROOKIE.excluded.length;
     expect(counts.printed[SUPER_SEASON_BADGE] + counts.printed[BEST_SEASON_BADGE])
       .toBe(contested);
-    expect(counts.printed[BEST_SEASON_BADGE]).toBe(94);
-    expect(counts.printed[SUPER_SEASON_BADGE]).toBe(13);
+    // 14/93, not the 13/94 the linear salary model produced: pricing a card by
+    // what it does in play moved one more base card across
+    // SUPER_SEASON_MIN_SALARY. The split is a measurement of the price, so it
+    // is expected to move whenever the price does.
+    expect(counts.printed[BEST_SEASON_BADGE]).toBe(93);
+    expect(counts.printed[SUPER_SEASON_BADGE]).toBe(14);
     // Nobody loses their pill entirely in the resolution.
     expect(BADGE_IDS.reduce((n, id) => n + counts.printed[id], 0)).toBe(counts.players);
     expect(counts.multiple).toBe(ROOKIE.excluded.length);

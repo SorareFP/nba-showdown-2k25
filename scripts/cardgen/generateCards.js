@@ -60,8 +60,15 @@
 //                   card set; the band logic itself is the untouched, validated
 //                   computeStatBands.
 //
-//   Salary          Prices the FINISHED card, so it moves whenever any of the
-//                   above does. Still a refit against the finished cards.
+//   Salary          Prices the FINISHED card by WHAT IT PRODUCES IN PLAY
+//                   (scripts/cardgen/playValue.js) rather than by a linear fit
+//                   on its attributes, so it moves whenever any of the above
+//                   does AND responds to chart shape, which the old fit could
+//                   not see: Speed+Power moved the old price across 1094 points
+//                   and chart expected points across 32. Measured against the
+//                   whole field through the engine's own matchup rule, then
+//                   expressed on the finished 2025-26 set's salary mean and
+//                   spread so the 5500 cap keeps its meaning.
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -74,6 +81,7 @@ import { isBlankTier } from './zeroFloor.js';
 import { applyOverrides } from './overrides.js';
 import * as V from './variance.js';
 import * as A from './attributes.js';
+import * as PV from './playValue.js';
 import * as S from './shooting.js';
 import { poolingSummary } from './poolSeasons.js';
 import { indexBiometrics, loadBiometrics } from './biometrics.js';
@@ -144,9 +152,10 @@ export function actualShootingInput(rate) {
  *
  * The shooting values arrive already computed, because the rule that produces
  * them is pool-relative and cannot be evaluated one player at a time — see
- * generateCards below. What is still ordered here is salary: it prices the
- * FINISHED card (design philosophy point 8), so it comes last, after the chart
- * it is a function of exists.
+ * generateCards below. SALARY is now pool-relative too, and for the same kind
+ * of reason: it prices the finished card (design philosophy point 8) by what
+ * that card produces against a field, so it is filled in by generateCards after
+ * every card exists rather than here.
  */
 export function buildCard({
   player,
@@ -220,12 +229,12 @@ export function buildCard({
     provisional: true,
   };
 
-  const ev = Object.fromEntries(
-    V.CHART_STATS.map(stat => [stat, expectedValuePerRoll(card.chart, stat)])
-  );
-  card.salary = A.roundSalary(
-    A.applyModel(calibration.salary.model, A.salaryFeatures(card, ev))
-  );
+  // Salary is deliberately NOT set here. It used to be, and could be, while the
+  // price was a linear function of this card's own eight features. Play value is
+  // measured against a FIELD, so it cannot be known until every card exists —
+  // `generateCards` fills it in as a post-pass. Leaving it null rather than
+  // guessing means a card that somehow escapes that pass is obviously broken
+  // instead of quietly cheap.
   return card;
 }
 
@@ -314,10 +323,24 @@ export function generateCards({
     );
   });
 
+  // Salary is a POST-PASS, and has to be: play value is measured against a
+  // field, so it does not exist until every card in that field has its
+  // attributes. Overrides are applied FIRST so that a hand-tuned chart is
+  // priced as the card actually prints, not as the generator first drew it.
   const byId = Object.fromEntries(cards.map(c => [c.id, c]));
   const overridden = applyOverrides(byId, overrides);
+  const priced = cards.map(c => overridden[c.id]);
+  const salaries = PV.priceSet(priced, {
+    roundSalary: A.roundSalary,
+    min: A.SALARY_MIN,
+    max: A.SALARY_MAX,
+  });
+  priced.forEach((c, i) => {
+    c.salary = salaries[i];
+  });
+
   return {
-    cards: cards.map(c => overridden[c.id]),
+    cards: priced,
     missingRates,
     missingActual,
     missingSize,

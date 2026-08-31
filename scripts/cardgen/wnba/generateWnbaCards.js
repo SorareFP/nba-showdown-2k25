@@ -66,6 +66,7 @@ import { computeStatBands } from '../bands.js';
 import { reconcileBands, shapeChart, MAX_CHART_TIERS } from '../generate.js';
 import * as V from '../variance.js';
 import * as A from '../attributes.js';
+import * as PV from '../playValue.js';
 import * as S from '../shooting.js';
 import { CALIBRATION_FILE } from '../calibrateAttributes.js';
 import { PRINTED_SCALE, REFINEMENT_WEIGHT, mapToReferenceScale } from '../speedPower.js';
@@ -318,10 +319,8 @@ export function buildWnbaCard({ row, team, shooting, speedPowerTotal, calibratio
     provisional: true,
   };
 
-  const ev = Object.fromEntries(
-    V.CHART_STATS.map(stat => [stat, expectedValuePerRoll(card.chart, stat)])
-  );
-  card.salary = A.roundSalary(A.applyModel(calibration.salary.model, A.salaryFeatures(card, ev)));
+  // Salary is NOT set here. Play value is measured against a FIELD, so it is
+  // filled in as a post-pass once every card exists — see priceCardsInPlace.
   return card;
 }
 
@@ -558,6 +557,10 @@ export function main({ log = console.log } = {}) {
   fs.writeFileSync(POOL_FILE, `${JSON.stringify(poolRecords, null, 2)}\n`);
 
   const pace = leaguePace(WNBA_SEASON);
+  // Priced against the NBA base set, the same common field every other set
+  // uses -- these cards share a table with it.
+  PV.priceAgainstBase(cards, { roundSalary: A.roundSalary, min: A.SALARY_MIN, max: A.SALARY_MAX });
+
   const payload = {
     generatedAt: new Date().toISOString(),
     provisional: true,

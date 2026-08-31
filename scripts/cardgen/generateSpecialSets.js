@@ -109,6 +109,7 @@ import { computeStatBands } from './bands.js';
 import { reconcileBands, shapeChart } from './generate.js';
 import * as V from './variance.js';
 import * as A from './attributes.js';
+import * as PV from './playValue.js';
 import * as S from './shooting.js';
 import { CALIBRATION_FILE } from './calibrateAttributes.js';
 import { indexBiometrics, loadBiometrics } from './biometrics.js';
@@ -526,10 +527,8 @@ export function buildHistoricalCard({
     provisional: true,
   };
 
-  const ev = Object.fromEntries(
-    V.CHART_STATS.map(stat => [stat, expectedValuePerRoll(card.chart, stat)])
-  );
-  card.salary = A.roundSalary(A.applyModel(calibration.salary.model, A.salaryFeatures(card, ev)));
+  // Salary is NOT set here. Play value is measured against a FIELD, so it is
+  // filled in as a post-pass once every card exists — see priceCardsInPlace.
   return card;
 }
 
@@ -788,6 +787,11 @@ export function loadBaseSalaries(
 
 function writeSet(file, { set, cards, meta }) {
   fs.mkdirSync(GEN_DIR, { recursive: true });
+  // Priced against the BASE SET, not against this set: a 210-card best-season
+  // pool standardised on its own spread would call its weakest card
+  // replacement level, when every card in it is somebody's peak.
+  PV.priceAgainstBase(cards, { roundSalary: A.roundSalary, min: A.SALARY_MIN, max: A.SALARY_MAX });
+
   const body = {
     generatedAt: new Date().toISOString(),
     set,

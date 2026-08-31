@@ -394,9 +394,12 @@ export const SOURCES = {
       'one at a higher rate; it does not make the score team-independent. A player whose best ' +
       `season is the CURRENT one gets no card here — his base card already is that season — but ` +
       `his ${CURRENT_SET} card now carries a SUPER SEASON badge instead, so the fact is on a ` +
-      'card rather than only in a file. Every number is provisional and more so than the base ' +
-      'set — EPM, Estimated Wins and rim FG% do not exist for past seasons, so BPM and 2P% ' +
-      'stand in for them. Re-run `node scripts/cardgen/generateSpecialSets.js`.',
+      'card rather than only in a file. THE SPEED+POWER BUDGET IS REAL EPM, the same composite ' +
+      'the base set uses: dunksandthrees\' season-epm covers 2002-2026 and every season carded ' +
+      'here falls inside it, and every card in every set is now placed against that whole ' +
+      'archive rather than against one pool. What is still provisional is the rest — DBPM stands ' +
+      'in for DEF EPM and 2P% for rim FG%. Re-run ' +
+      '`node scripts/cardgen/generateSpecialSets.js`.',
   }),
   [ROOKIE_SET]: specialSource(ROOKIE_SET, ROOKIE_FILE, {
     sub: `rookie-year cards · ${ROOKIE_FILE?.excludedCount ?? 0} badged instead`,
@@ -406,8 +409,8 @@ export const SOURCES = {
       'here, the same rule and the same reason as the Super Season set, and the same ' +
       `consolation: a badge on his ${CURRENT_SET} card. In practice every one of those players ` +
       'is ALSO having his best season — a first season is the only season — and Super Season ' +
-      'outranks Rookie, so what they actually print is the gold pill. Same ' +
-      'Basketball-Reference substitutions, same provisional numbers.',
+      'outranks Rookie, so what they actually print is the gold pill. Same real-EPM Speed+Power ' +
+      'budget, same remaining Basketball-Reference substitutions, same provisional numbers.',
   }),
   // A different LEAGUE, which is the third kind of thing a set can be. It is
   // listed here rather than in a second selector because everything the studio
@@ -427,7 +430,11 @@ export const SOURCES = {
       'are unlike every other set here. FIRST, the WNBA has no BPM, OBPM, DBPM or VORP anywhere ' +
       '— nothing publishes a plus/minus estimate for it — so the Speed+Power budget and the Def ' +
       'Boost run on a BPM EQUIVALENT fitted on fifteen NBA seasons using only the inputs the ' +
-      'WNBA pages also carry, every input centred on its own league. SECOND, a WNBA game is 40 ' +
+      'WNBA pages also carry, every input centred on its own league. That equivalent is what ' +
+      'places her on the same scale as an NBA card: she sits where an NBA player with the same ' +
+      'box-score profile sits among 4,780 NBA player-seasons rated by the same model. Whether ' +
+      'that is the RIGHT cross-league equivalence is a design decision, not something the data ' +
+      'establishes — the two leagues have never played each other. SECOND, a WNBA game is 40 ' +
       'minutes and the league plays slower, so a four-minute section is 7.92 possessions rather ' +
       "than the NBA's 8.33 — every chart on every card is scaled by that. Six players are " +
       'carded on 2025 AND 2026 pooled by volume, because their 2026 seasons were injury-' +

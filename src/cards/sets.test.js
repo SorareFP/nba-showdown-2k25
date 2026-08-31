@@ -9,7 +9,12 @@
 // cards. Both are pinned here, by set id, not by whatever the constants happen
 // to hold.
 import { describe, it, expect } from 'vitest';
-import { BADGE_IDS, ROOKIE_BADGE, SUPER_SEASON_BADGE } from './badges.js';
+import {
+  BADGE_IDS,
+  ROOKIE_BADGE,
+  SUPER_SEASON_BADGE,
+  SUPER_SEASON_MIN_SALARY,
+} from './badges.js';
 import {
   ART_ROOT,
   CURRENT_SET,
@@ -21,6 +26,7 @@ import {
   SUPER_SEASON_SET,
   WNBA_SET,
   WNBA_SUPER_SEASON_SET,
+  cardTreatment,
   getSet,
   hidesEmptyRows,
   isEditableSet,
@@ -165,6 +171,58 @@ describe('setTreatment', () => {
 
   it('returns null for an unknown set rather than throwing', () => {
     expect(setTreatment('nope')).toBeNull();
+  });
+});
+
+describe('cardTreatment', () => {
+  // A set declares its treatment for the TIER it declares its badge for, and a
+  // card demoted out of that tier does not get it. `setTreatment` still answers
+  // the set-level question and is unchanged; this is the card-level refinement
+  // of it. See `tierBadge` in badges.js for the comparison both halves share.
+
+  it('withholds the gold foil from a Super Season card under the salary line', () => {
+    expect(cardTreatment(SUPER_SEASON_SET, SUPER_SEASON_MIN_SALARY)).toBe('gold-foil');
+    expect(cardTreatment(SUPER_SEASON_SET, SUPER_SEASON_MIN_SALARY - 10)).toBeNull();
+    expect(cardTreatment(SUPER_SEASON_SET, 10)).toBeNull();
+    expect(cardTreatment(SUPER_SEASON_SET, 1500)).toBe('gold-foil');
+  });
+
+  it('covers the WNBA legends without naming them', () => {
+    // None of the sixteen falls below the line today — the cheapest is Tina
+    // Charles' 2016 at $860 — so all sixteen keep the gold. The rule is applied
+    // generally anyway: a named roster is one edit from gaining a legend who
+    // prices lower, and `cardTreatment` asks the same question of every set
+    // rather than of a list of set ids.
+    expect(cardTreatment(WNBA_SUPER_SEASON_SET, 860)).toBe('gold-foil');
+    expect(cardTreatment(WNBA_SUPER_SEASON_SET, 690)).toBeNull();
+  });
+
+  it('leaves the Rookie set green at every price', () => {
+    // Its badge does not tier: "this was his first season" is a fact about a
+    // career, not a claim a small salary can overstate. A rookie card is cheap
+    // by definition and the green is not the gold.
+    for (const salary of [10, 690, 700, 1500, undefined]) {
+      expect(cardTreatment(ROOKIE_SET, salary), String(salary)).toBe('green-accent');
+    }
+  });
+
+  it('is exactly setTreatment for every set that does not tier', () => {
+    for (const set of SETS) {
+      if (set.badge === SUPER_SEASON_BADGE) continue;
+      for (const salary of [10, 699, 700, 1500, undefined]) {
+        expect(cardTreatment(set.id, salary), `${set.id} $${salary}`)
+          .toBe(setTreatment(set.id));
+      }
+    }
+  });
+
+  it('keeps the treatment when the salary is unknown, and answers for no set at all', () => {
+    // Demotion needs evidence — see tierBadge. And an unknown set has no
+    // treatment to withhold or grant.
+    expect(cardTreatment(SUPER_SEASON_SET, undefined)).toBe('gold-foil');
+    expect(cardTreatment(SUPER_SEASON_SET, null)).toBe('gold-foil');
+    expect(cardTreatment('nope', 10)).toBeNull();
+    expect(cardTreatment('constructor', 10)).toBeNull();
   });
 });
 

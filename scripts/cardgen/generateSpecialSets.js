@@ -140,6 +140,7 @@ import {
   BADGE_IDS,
   ROOKIE_BADGE,
   SUPER_SEASON_BADGE,
+  SUPER_SEASON_MIN_SALARY,
   pickBadge,
 } from '../../src/cards/badges.js';
 
@@ -736,22 +737,53 @@ export function selectSets({
  *
  * Runs the same `pickBadge` the card does, so the run report cannot claim a
  * distribution the template would not draw — which is the whole point of
- * reporting `applies` and `printed` separately. They differ by exactly the
- * nested overlap described in the header: 140 players are true Super Seasons
- * and 33 are true rookies, but those 33 are a SUBSET, so what prints is 33
- * ROOKIE pills and 107 SUPER SEASON ones.
+ * reporting `applies` and `printed` separately. They differ first by the nested
+ * overlap described in the header: 140 players are true Super Seasons and 33
+ * are true rookies, but those 33 are a SUBSET, so the gold pill loses 33.
+ *
+ * ── AND NOW BY THE SALARY TIER, WHICH IS WHY THIS TAKES A SECOND ARGUMENT ───
+ *
+ * `super-season` under SUPER_SEASON_MIN_SALARY prints BEST SEASON instead (see
+ * `tierBadge` in badges.js), and a base card is as subject to that as a card in
+ * the Super Season set — it is the same pill, and a $10 base card wearing the
+ * gold while a $10 Super Season card does not would be the rule contradicting
+ * itself on the same player.
+ *
+ * THE SALARIES ARE NOT THIS GENERATOR'S. They live in cards-2026-27.json, which
+ * belongs to generateCards.js, so they arrive as a plain lookup rather than
+ * being read here — and an EMPTY lookup is a legitimate answer, not an error.
+ * A checkout that has never run the other generator has no salaries to tier on,
+ * and `tierBadge` treats an unknown salary as gilded, so `printed` degrades to
+ * exactly the distribution it reported before the tier existed.
  */
-export function badgeCounts(baseBadges) {
+export function badgeCounts(baseBadges, salaries = new Map()) {
   const applies = Object.fromEntries(BADGE_IDS.map(id => [id, 0]));
   const printed = Object.fromEntries(BADGE_IDS.map(id => [id, 0]));
   let multiple = 0;
   for (const record of baseBadges) {
     for (const id of record.badges) applies[id] += 1;
     if (record.badges.length > 1) multiple += 1;
-    const shown = pickBadge(record.badges);
+    const shown = pickBadge(record.badges, salaries.get(record.id));
     if (shown) printed[shown.id] += 1;
   }
   return { players: baseBadges.length, applies, printed, multiple };
+}
+
+/**
+ * The base set's salaries, by player id, when generateCards.js has produced any.
+ *
+ * MISSING IS FINE and returns an empty map — see badgeCounts. This is the only
+ * thing this generator reads out of the other one's output, and it reads it
+ * solely to report an honest `printed` count; nothing it WRITES depends on it,
+ * so the two generators stay order-independent exactly as BADGE_FILE's note
+ * requires.
+ */
+export function loadBaseSalaries(
+  file = path.join(GEN_DIR, `cards-${CURRENT_SET}.json`)
+) {
+  if (!fs.existsSync(file)) return new Map();
+  const cards = JSON.parse(fs.readFileSync(file, 'utf8')).cards ?? [];
+  return new Map(cards.filter(c => c?.id != null).map(c => [c.id, c.salary]));
 }
 
 function writeSet(file, { set, cards, meta }) {
@@ -949,7 +981,7 @@ export function main({ log = console.log } = {}) {
     );
   }
 
-  const counts = badgeCounts(selection.baseBadges);
+  const counts = badgeCounts(selection.baseBadges, loadBaseSalaries());
   files.badges = writeBadges({
     set: CURRENT_SET,
     badges: selection.baseBadges,
@@ -991,9 +1023,14 @@ export function main({ log = console.log } = {}) {
  * What the base set gains, and — the line worth reading — what it does not.
  *
  * `applies` is how many players each badge is TRUE of; `printed` is how many
- * cards will actually draw it once the priority has been applied. They differ
- * by the 33 players who are both, and the gap is the whole reason both numbers
- * are reported rather than one.
+ * cards will actually draw it once the priority AND the salary tier have been
+ * applied. They differ by the 33 players who are both, and by the Super Seasons
+ * that price under SUPER_SEASON_MIN_SALARY and print BEST SEASON instead — the
+ * gap is the whole reason both numbers are reported rather than one.
+ *
+ * `best-season` is the one row where `applies` is legitimately 0 against a
+ * non-zero `printed`: no player record claims that id, because it is not a fact
+ * about a player. It is what the gilded badge becomes below the line.
  */
 function reportBadges(c, log) {
   log(`\n${CURRENT_SET} badges: ${c.players} of the pool carry at least one.`);
@@ -1002,7 +1039,7 @@ function reportBadges(c, log) {
     log(
       `  ${id.padEnd(14)}applies to ${String(c.applies[id]).padStart(3)}` +
         `   prints on ${String(c.printed[id]).padStart(3)}` +
-        `${lost ? `   (${lost} outranked)` : ''}`
+        `${lost > 0 ? `   (${lost} outranked or under $${SUPER_SEASON_MIN_SALARY})` : ''}`
     );
   }
   log(`  ${c.multiple} players earn more than one; the priority is ${BADGE_IDS.join(' > ')}.`);

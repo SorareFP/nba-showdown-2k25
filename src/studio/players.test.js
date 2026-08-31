@@ -18,6 +18,7 @@ import {
 } from './players.js';
 import {
   BADGE_IDS,
+  BEST_SEASON_BADGE,
   ROOKIE_BADGE,
   SUPER_SEASON_BADGE,
   pickBadge,
@@ -394,7 +395,7 @@ describe('the base set\'s card-type badges', () => {
     }
   });
 
-  it('prints ROOKIE on all 33 who are both, and SUPER SEASON on the other 107', () => {
+  it('prints ROOKIE on all 33 who are both, and tiers the other 107 by salary', () => {
     // THIS TEST USED TO ASSERT THE REVERSE — "SUPER SEASON on every badged
     // card, and ROOKIE on none" — and its reasoning was correct: a player whose
     // rookie season is the current one has only that season, so it is his best
@@ -402,25 +403,43 @@ describe('the base set\'s card-type badges', () => {
     // structural fact and an unintended design. The overlap set is not a mixed
     // population that needed a tie-break; it IS the 2025-26 rookies, and
     // "his best season" over a one-season career says nothing. So ROOKIE wins.
-    const printed = POOL_PLAYERS
-      .filter(p => p.badges.length)
-      .map(p => pickBadge(p.badges).id);
+    //
+    // ── AND THE 107 ARE NO LONGER ONE NUMBER ────────────────────────────────
+    //
+    // The gold pill is now the GILDED TIER of the Super Season badge: under
+    // SUPER_SEASON_MIN_SALARY the same card prints BEST SEASON in the team's
+    // accent instead. So `pickBadge` is given the salary here, exactly as
+    // CardTemplate gives it, and the 107 split 41/66.
+    const badged = POOL_PLAYERS.filter(p => p.badges.length);
+    const printed = badged.map(p => pickBadge(p.badges, p.salary).id);
     expect(printed.length).toBe(BADGE_FILE.counts.players);
     expect(printed.filter(id => id === ROOKIE_BADGE).length).toBe(33);
-    expect(printed.filter(id => id === SUPER_SEASON_BADGE).length).toBe(107);
+    expect(printed.filter(id => id === SUPER_SEASON_BADGE).length).toBe(41);
+    expect(printed.filter(id => id === BEST_SEASON_BADGE).length).toBe(66);
     // Everyone who prints ROOKIE is someone the SUPER SEASON fact is also true
     // of — the nesting is what makes this a priority question and not a rule.
-    for (const p of POOL_PLAYERS.filter(p => pickBadge(p.badges)?.id === ROOKIE_BADGE)) {
+    // The tier does not touch it: a rookie card is cheap, its Super Season
+    // badge demotes, and ROOKIE still outranks whichever form of it survives.
+    for (const p of badged.filter(p => pickBadge(p.badges, p.salary)?.id === ROOKIE_BADGE)) {
       expect(p.badges, p.name).toContain(SUPER_SEASON_BADGE);
     }
-    // …and both facts are still on every record, neither thrown away.
+    // …and both facts are still on every record, neither thrown away. `applies`
+    // is untouched by the tier — no player RECORD claims `best-season`, because
+    // it is not a fact about a player but a rendering of the one above it.
     expect(POOL_PLAYERS.filter(p => p.badges.includes(ROOKIE_BADGE)).length)
       .toBe(BADGE_FILE.counts.applies[ROOKIE_BADGE]);
     expect(POOL_PLAYERS.filter(p => p.badges.includes(SUPER_SEASON_BADGE)).length)
       .toBe(BADGE_FILE.counts.applies[SUPER_SEASON_BADGE]);
+    expect(POOL_PLAYERS.filter(p => p.badges.includes(BEST_SEASON_BADGE)).length).toBe(0);
+    expect(BADGE_FILE.counts.applies[BEST_SEASON_BADGE]).toBe(0);
     // The generator's own tally of what will print, held against the pool the
-    // studio actually lists.
-    expect(BADGE_FILE.counts.printed).toEqual({ [ROOKIE_BADGE]: 33, [SUPER_SEASON_BADGE]: 107 });
+    // studio actually lists — which is the join that would catch the badge file
+    // and the salary file having been generated from different pools.
+    expect(BADGE_FILE.counts.printed).toEqual({
+      [ROOKIE_BADGE]: 33,
+      [SUPER_SEASON_BADGE]: 41,
+      [BEST_SEASON_BADGE]: 66,
+    });
   });
 
   it('is scoped to the set it was generated for', () => {

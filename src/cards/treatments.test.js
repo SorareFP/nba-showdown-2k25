@@ -37,14 +37,17 @@ import {
 import {
   BADGES,
   BADGE_IDS,
+  BEST_SEASON_BADGE,
   ROOKIE_BADGE,
   SUPER_SEASON_BADGE,
+  SUPER_SEASON_MIN_SALARY,
   badgeColors,
   badgeLabel,
   badgeLabels,
   badgeVars,
   getBadge,
   pickBadge,
+  tierBadge,
 } from './badges.js';
 import {
   TEAMS,
@@ -53,7 +56,15 @@ import {
   WNBA_HISTORICAL_TEAMS,
   resolveAccent,
 } from './teams.js';
-import { SETS, setTreatment } from './sets.js';
+import {
+  SETS,
+  SUPER_SEASON_SET,
+  WNBA_SUPER_SEASON_SET,
+  cardTreatment,
+  setBadge,
+  setTreatment,
+  showsSeason,
+} from './sets.js';
 
 const CARD_CSS = readFileSync(new URL('./CardTemplate.module.css', import.meta.url), 'utf8');
 
@@ -454,6 +465,28 @@ describe('the badge model', () => {
     expect(kept.length).toBeGreaterThanOrEqual(20);
   });
 
+  it('takes the BEST SEASON pill from the team accent too, and never from the gold', () => {
+    // THE UNGILDED TIER'S WHOLE VISUAL ARGUMENT, on all thirty-seven fields.
+    // "not make the tab gold" settles what it is not; this settles what it is.
+    // The team's accent is the pill the ROOKIE badge already takes, so the pair
+    // reads deliberately: a gold pill means a gold card, a team-coloured pill
+    // means a card with the team's own palette on it.
+    for (const team of ALL_TEAMS) {
+      const [abbr, primary, secondary, accent] = team;
+      const base = deriveFieldTheme(primary, secondary, accent);
+      const best = badgeColors(base, getBadge(BEST_SEASON_BADGE));
+      const superSeason = badgeColors(base, getBadge(SUPER_SEASON_BADGE));
+      expect(best.fill, `${abbr} is the team accent`).toBe(base.accentOnField);
+      expect(best.fill, `${abbr} is the ROOKIE pill's colour`)
+        .toBe(badgeColors(base, getBadge(ROOKIE_BADGE)).fill);
+      // And it is NOT the gilded tier's, which is the thing a reader has to be
+      // able to tell at a glance. Held on every field including the ones where
+      // readableOn has lifted the gold — the two must not converge there.
+      expect(best.fill, `${abbr} is not the foil gold`).not.toBe(superSeason.fill);
+      expect(best.fill, `${abbr} is not raw GOLD either`).not.toBe(GOLD);
+    }
+  });
+
   it("takes the ROOKIE pill from the TEAM's accent, never the set green", () => {
     // "Rookie can just be secondary/accent team color". This is the one place
     // on a rookie card where the team's own colour survives the treatment, and
@@ -468,6 +501,129 @@ describe('the badge model', () => {
       expect(fill, `${abbr} badge is the team accent`).toBe(base.accentOnField);
       expect(fill, `${abbr} badge is not the set green`).not.toBe(green.accentOnField);
     }
+  });
+});
+
+// ── THE SALARY TIER ─────────────────────────────────────────────────────────
+//
+// "re: Super Season, I think we can just put 'Best Season' and not make the tab
+// gold for anyone under 700 salary." One decision with two consequences — the
+// pill's label and colour, and the gold foil — and the reason they are tested
+// together here is that they are computed from ONE comparison. `tierBadge` is
+// asked by `pickBadge` for the badge and by `cardTreatment` for the treatment,
+// so the failure mode this guards against is not a wrong threshold (that is one
+// constant) but the two answers drifting: a gold band under a team-coloured
+// pill, or a BEST SEASON pill on a foil card.
+describe('the Super Season salary tier', () => {
+  it('demotes the badge below the line and gilds at it', () => {
+    const at = SUPER_SEASON_MIN_SALARY;
+    expect(pickBadge([SUPER_SEASON_BADGE], at).id).toBe(SUPER_SEASON_BADGE);
+    expect(pickBadge([SUPER_SEASON_BADGE], at - 1).id).toBe(BEST_SEASON_BADGE);
+    expect(pickBadge([SUPER_SEASON_BADGE], 10).id).toBe(BEST_SEASON_BADGE);
+    expect(pickBadge([SUPER_SEASON_BADGE], 1500).id).toBe(SUPER_SEASON_BADGE);
+    // "under 700" — so 700 itself is gold. Two real cards sit exactly there.
+    expect(tierBadge(SUPER_SEASON_BADGE, at)).toBe(SUPER_SEASON_BADGE);
+    expect(tierBadge(SUPER_SEASON_BADGE, at - 0.01)).toBe(BEST_SEASON_BADGE);
+  });
+
+  it('is a DECLARED number, not a quantile of whatever the pool is today', () => {
+    // It currently sits within one card of the set's median (104 of 210 below,
+    // 106 at or above) and that is a coincidence of this pool, not the rule.
+    // Pinning it to a quantile would move the boundary every time the rosters
+    // were regenerated — a player could lose his gold because somebody else got
+    // a raise. Salary is printed on the face of the card; the line is drawn on
+    // that value and stays where it is put.
+    expect(SUPER_SEASON_MIN_SALARY).toBe(700);
+    expect(Number.isInteger(SUPER_SEASON_MIN_SALARY)).toBe(true);
+  });
+
+  it('demotes NOTHING else, at any price', () => {
+    // Only the badge that makes a CLAIM can overstate one. "This was his rookie
+    // season" is a fact about a career and is exactly as true at $10.
+    for (const salary of [0, 10, 699, 700, 1500, null, undefined, NaN]) {
+      expect(tierBadge(ROOKIE_BADGE, salary), String(salary)).toBe(ROOKIE_BADGE);
+      expect(tierBadge(BEST_SEASON_BADGE, salary), String(salary)).toBe(BEST_SEASON_BADGE);
+      expect(tierBadge('championship-standout', salary), String(salary))
+        .toBe('championship-standout');
+    }
+  });
+
+  it('keeps the gold when the salary is unknown, never the other way round', () => {
+    // Demotion requires EVIDENCE. The opposite default would strip the foil off
+    // a whole set on a checkout where the salary generator had not been run,
+    // and that would read as the feature having broken rather than as data
+    // being absent. Every caller that predates the tier omits the argument, so
+    // this is also what freezes their behaviour.
+    for (const salary of [undefined, null, NaN, Infinity, '10', {}, []]) {
+      expect(tierBadge(SUPER_SEASON_BADGE, salary), String(salary)).toBe(SUPER_SEASON_BADGE);
+      expect(pickBadge([SUPER_SEASON_BADGE], salary).id, String(salary))
+        .toBe(SUPER_SEASON_BADGE);
+    }
+    expect(pickBadge([SUPER_SEASON_BADGE]).id).toBe(SUPER_SEASON_BADGE);
+  });
+
+  it('is applied BEFORE the priority, so ROOKIE still wins on the 33', () => {
+    // A rookie card is cheap and its Super Season badge demotes — and it must
+    // still lose to ROOKIE, exactly as the gilded form does. The two rules
+    // compose; neither is a special case of the other.
+    expect(pickBadge([ROOKIE_BADGE, SUPER_SEASON_BADGE], 10).id).toBe(ROOKIE_BADGE);
+    expect(pickBadge([SUPER_SEASON_BADGE, ROOKIE_BADGE], 10).id).toBe(ROOKIE_BADGE);
+    expect(BADGE_IDS.indexOf(ROOKIE_BADGE))
+      .toBeLessThan(BADGE_IDS.indexOf(BEST_SEASON_BADGE));
+  });
+
+  it('withholds the SET treatment by the same comparison that demotes the pill', () => {
+    // THE ONE THING THAT MUST NOT DRIFT. Both super-season sets, both sides of
+    // the line, and the treatment answer has to agree with the badge answer on
+    // every one of them — a gold band under a BEST SEASON pill is the bug this
+    // exists to make impossible.
+    for (const set of [SUPER_SEASON_SET, WNBA_SUPER_SEASON_SET]) {
+      for (const salary of [10, 690, 699, 700, 860, 1500, undefined]) {
+        const gilded = pickBadge([setBadge(set)], salary).id === SUPER_SEASON_BADGE;
+        expect(cardTreatment(set, salary), `${set} $${salary}`)
+          .toBe(gilded ? setTreatment(set) : null);
+      }
+    }
+  });
+
+  it('leaves every other set exactly as it was, at every price', () => {
+    // The Rookie set's green does not tier (its badge does not), and the two
+    // season sets have no treatment to withhold. Identity with `setTreatment`,
+    // so a card in them cannot be given a treatment it did not have either.
+    for (const set of SETS.map(s => s.id)) {
+      if (set === SUPER_SEASON_SET || set === WNBA_SUPER_SEASON_SET) continue;
+      for (const salary of [10, 699, 700, 1500, undefined]) {
+        expect(cardTreatment(set, salary), `${set} $${salary}`).toBe(setTreatment(set));
+      }
+    }
+    expect(cardTreatment('no-such-set', 10)).toBeNull();
+  });
+
+  it('gives the ungilded tier the untouched team theme — not a quieter foil', () => {
+    // WHAT AN UNGILDED CARD LOOKS LIKE, asserted as an identity rather than
+    // described. `applyTreatment(base, null)` returns the object it was given,
+    // so a BEST SEASON card renders on precisely the palette deriveFieldTheme
+    // produced: no second metal invented for the cheap tier, no half-strength
+    // gold, nothing. What still separates it from a base card is the SEASON
+    // LINE (showsSeason is a set property and does not tier) and the pill.
+    for (const team of ALL_TEAMS) {
+      const [abbr, primary, secondary, accent] = team;
+      const base = deriveFieldTheme(primary, secondary, accent);
+      expect(applyTreatment(base, cardTreatment(SUPER_SEASON_SET, 10)), abbr).toBe(base);
+      expect(base.treatment, abbr).toBeUndefined();
+    }
+    expect(showsSeason(SUPER_SEASON_SET)).toBe(true);
+  });
+
+  it('prints a label that fits the pill it is not gold in', () => {
+    // 11 characters against SUPER SEASON's 12, and no dated form — every set
+    // that can print it prints a season line one row below. The 127px budget
+    // itself is measured in CardTemplate.test.js over `badgeLabels`, which
+    // picks this up from BADGES without being told.
+    expect(badgeLabel(getBadge(BEST_SEASON_BADGE))).toBe('BEST SEASON');
+    expect(badgeLabel(getBadge(BEST_SEASON_BADGE), '2025-26')).toBe('BEST SEASON');
+    expect(badgeLabels(SETS.map(s => s.statsSeason))).toContain('BEST SEASON');
+    expect('BEST SEASON'.length).toBeLessThan('SUPER SEASON'.length);
   });
 });
 

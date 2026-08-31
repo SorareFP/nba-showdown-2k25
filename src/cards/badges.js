@@ -81,6 +81,15 @@
 //     date in a career, and it is the one thing the Rookie set judged worth
 //     printing beside its own pill.
 //
+// ── ONE BADGE HAS TWO TIERS, AND THE SALARY PICKS BETWEEN THEM ─────────────
+//
+// SUPER SEASON is the only badge that makes a claim rather than stating a fact,
+// and a claim can be overstated. Below SUPER_SEASON_MIN_SALARY the same card
+// prints BEST SEASON in the team's accent and gives up the gold foil with it.
+// See SUPER_SEASON_MIN_SALARY and `tierBadge` below for the whole rule; the
+// treatment half of it is `cardTreatment` in sets.js, which asks `tierBadge`
+// the same question rather than re-deriving the answer.
+//
 // ── THE COLOURS ARE DERIVED, NEVER WRITTEN DOWN ─────────────────────────────
 //
 // Same rule as everything else on the card: `fill` is a FUNCTION of the derived
@@ -103,7 +112,69 @@ import { GOLD } from './treatments.js';
  * which badge its cards carry (see `badge` in SETS); that is the only link.
  */
 export const SUPER_SEASON_BADGE = 'super-season';
+export const BEST_SEASON_BADGE = 'best-season';
 export const ROOKIE_BADGE = 'rookie';
+
+/**
+ * The salary at which a best season is a SUPER season.
+ *
+ * ── WHY THE SET TIERS AT ALL ────────────────────────────────────────────────
+ *
+ * The user's call: "re: Super Season, I think we can just put 'Best Season' and
+ * not make the tab gold for anyone under 700 salary."
+ *
+ * Every card in the Super Season set is somebody's best year, and until now
+ * every one of them got the identical gold foil and the identical gold pill —
+ * Alex Sarr's $10 2024-25 and Stephen Curry's $1500 2015-16 as the same rare
+ * object. Gold that every card has is not a distinction, it is a background.
+ * So the set splits in two: the gold marks the seasons worth the word SUPER,
+ * and the rest print the plainer, truer claim.
+ *
+ * ── ONE DECLARED NUMBER, NOT A DERIVED ONE ──────────────────────────────────
+ *
+ * The user named 700 and 700 is what this says. It is NOT a quantile, and that
+ * is deliberate even though it currently sits almost exactly on one: of the 210
+ * NBA Super Season cards, 104 fall below it and 106 do not, so it is the median
+ * to within a card. That is a coincidence of this pool, and pinning it to the
+ * median would mean the tier boundary MOVED every time the pool was regenerated
+ * — a player's card could lose its gold because somebody else got a raise.
+ * Salary is a stated value on the face of the card, so the line between the
+ * tiers is drawn on that value and stays where it is put.
+ *
+ * INCLUSIVE AT THE LINE, because "under 700" is what was asked for: 700 itself
+ * is gold. Two cards sit exactly there (A.J. Green, Miles Bridges) and they are
+ * gilded.
+ */
+export const SUPER_SEASON_MIN_SALARY = 700;
+
+/**
+ * The badge id a card actually prints, given what it costs.
+ *
+ * THE ONE PLACE THE TIER IS DECIDED. Both consequences of the split run through
+ * this function and nothing else computes the comparison: the LABEL and the
+ * PILL COLOUR follow from which badge comes back (see BADGES below), and the
+ * GOLD FOIL follows from `cardTreatment` in sets.js asking this same question
+ * and withholding the set's treatment when the answer has changed. Two rules
+ * that must agree, expressed once.
+ *
+ * ONLY THE SUPER SEASON BADGE TIERS. The Rookie badge is a fact about a career,
+ * not a claim about quality, and a cheap rookie card is not an overstatement;
+ * the green treatment is untouched at every salary.
+ *
+ * AN UNKNOWN SALARY STAYS GOLD. Every generated card in every set carries a
+ * real salary today, but the studio's whole contract is that a half-built
+ * record renders rather than breaking, and the two failure directions are not
+ * symmetric: a missing number that demoted the card would strip the gold off a
+ * whole set the moment a generator had not been run yet, and would look like
+ * the feature had broken. Demotion requires EVIDENCE — a finite number below
+ * the line — so anything else keeps the card exactly as it rendered before this
+ * tier existed.
+ */
+export function tierBadge(id, salary) {
+  if (id !== SUPER_SEASON_BADGE) return id;
+  if (Number.isFinite(salary) && salary < SUPER_SEASON_MIN_SALARY) return BEST_SEASON_BADGE;
+  return id;
+}
 
 /**
  * A season label as the rest of the tree spells one: "2025-26".
@@ -165,6 +236,43 @@ export const BADGES = [
     // as far as it must go to clear the field it sits on.
     fill: theme => readableOn(GOLD, theme.field, MIN_ACCENT_CONTRAST),
   },
+  {
+    // THE UNGILDED TIER OF THE ONE ABOVE IT — see SUPER_SEASON_MIN_SALARY and
+    // `tierBadge`. Its position in this list is unobservable and deliberately
+    // so: `tierBadge` is a FUNCTION of the salary, so it maps every occurrence
+    // of `super-season` on a card to the same answer and no card can ever carry
+    // both ids at once. What its position DOES have to respect is Rookie, which
+    // still outranks it for exactly the reason it outranks the gilded form: a
+    // player whose first season is his best has had one season, and the
+    // superlative over a set of one is the less interesting of the two facts.
+    id: BEST_SEASON_BADGE,
+    // The SAME FACT, stated without the superlative. "Best" is a comparison
+    // inside one career and is exactly as true of a $10 card as of a $1500 one;
+    // "super" ranks the season against every other season in the set, and that
+    // is the claim the cheap end could not support. The demoted pill does not
+    // say less than it means — it stops saying more.
+    text: 'BEST SEASON',
+    // No dated form, for both of SUPER SEASON's reasons: every set that can
+    // print this badge prints a season line of its own one row below it, and
+    // the pill has no width to spare. 11 characters against a 12-character
+    // budget — one shorter than the label it replaces, so it is not even the
+    // binding case in CardTemplate.test.js's measurement.
+    //
+    // ── THE TEAM'S ACCENT, WHICH IS HALF THE POINT OF THE SPLIT ─────────────
+    //
+    // "not make the tab gold" settles what the pill is NOT; this settles what
+    // it is. A gold pill on a card with no other gold on it would read as the
+    // one surface the change forgot — a bug, not a tier. A neutral grey would
+    // be a third colour invented for one badge and measurable against nothing.
+    //
+    // The team's accent is neither. It is the pill the ROOKIE badge already
+    // takes ("Rookie can just be secondary/accent team color"), already cleared
+    // against all thirty-seven fields by deriveFieldTheme, and it makes the two
+    // Super Season tiers a legible PAIR: a gold pill means a gold card, a
+    // team-coloured pill means a team-coloured card. The colour says which tier
+    // this is before the word has been read, which is what the split is for.
+    fill: theme => theme.accentOnField,
+  },
 ];
 
 const BADGES_BY_ID = new Map(BADGES.map(b => [b.id, b]));
@@ -185,10 +293,25 @@ export function getBadge(id) {
  * own. Unknown ids and nulls are ignored rather than throwing: a data file
  * naming a badge this build does not have should cost that card its pill, not
  * the whole studio.
+ *
+ * ── THE SALARY IS THE TIER, AND IT IS APPLIED BEFORE THE PRIORITY ───────────
+ *
+ * `super-season` on a card under SUPER_SEASON_MIN_SALARY resolves to
+ * `best-season` — see `tierBadge` — and the mapping happens on the way IN, so
+ * the priority order below decides between whatever the card really prints
+ * rather than between the ids the data happened to name. Nothing downstream has
+ * to know a tier exists: it gets a badge, and the badge carries its own text
+ * and its own fill as every badge always has.
+ *
+ * OMITTING THE SALARY MEANS GOLD, which is what keeps every caller that
+ * predates the tier behaving exactly as it did. See `tierBadge` for why the
+ * unknown case resolves that way rather than the other.
  */
-export function pickBadge(ids) {
+export function pickBadge(ids, salary) {
   if (!Array.isArray(ids)) return null;
-  const wanted = new Set(ids.filter(id => typeof id === 'string'));
+  const wanted = new Set(
+    ids.filter(id => typeof id === 'string').map(id => tierBadge(id, salary))
+  );
   return BADGES.find(b => wanted.has(b.id)) ?? null;
 }
 

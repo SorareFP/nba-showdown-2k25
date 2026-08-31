@@ -17,6 +17,7 @@ import {
   REPLACEMENT_EPM,
   attachEpm,
   badgeCounts,
+  loadBaseSalaries,
   historicalComposite,
   indexEpmSeasons,
   resolvePlayerIds,
@@ -25,6 +26,7 @@ import {
 } from './generateSpecialSets.js';
 import {
   BADGE_IDS,
+  BEST_SEASON_BADGE,
   ROOKIE_BADGE,
   SUPER_SEASON_BADGE,
   pickBadge,
@@ -45,6 +47,16 @@ const SUPER = read(SUPER_SEASON_SET);
 const ROOKIE = read(ROOKIE_SET);
 /** The base set's card-type badges — the two exclusion lists, made printable. */
 const BADGES = readGenerated('card-badges.json');
+/**
+ * The base set's cards, for their SALARIES and nothing else.
+ *
+ * They belong to generateCards.js, not to this generator, and the badge file
+ * reads them for one purpose: `printed` claims what the template will draw, and
+ * since the salary tier decides between SUPER SEASON and BEST SEASON, a count
+ * computed without them would claim a distribution no card matches.
+ */
+const BASE = readGenerated(`cards-${CURRENT_SET}.json`);
+const SALARIES = new Map(BASE.cards.map(c => [c.id, c.salary]));
 const POOL = loadPool();
 
 /** The scraped archive, when this checkout has one. See the runIf below. */
@@ -338,21 +350,56 @@ describe('the base set\'s badges', () => {
   });
 
   it('counts what applies and what actually prints, and they differ', () => {
-    const counts = badgeCounts(BADGES.badges);
+    const counts = badgeCounts(BADGES.badges, SALARIES);
     expect(BADGES.counts).toEqual(counts);
     expect(counts.players).toBe(SUPER.excluded.length);
     expect(counts.applies[SUPER_SEASON_BADGE]).toBe(SUPER.excluded.length);
     expect(counts.applies[ROOKIE_BADGE]).toBe(ROOKIE.excluded.length);
-    // THE GAP IS THE NESTING, and it now falls on the Super Season side: every
-    // rookie is also a Super Season, so the 33 that print ROOKIE are 33 the
-    // gold pill loses. `applies` still reports both facts in full.
+    // NO PLAYER RECORD CLAIMS `best-season` and none ever will: it is not a
+    // fact about a player, it is what the gilded badge becomes below the salary
+    // line. `applies` 0 against a non-zero `printed` is the correct shape here,
+    // and the one row in the table where it is.
+    expect(counts.applies[BEST_SEASON_BADGE]).toBe(0);
+    // THE FIRST GAP IS THE NESTING, and it falls on the Super Season side:
+    // every rookie is also a Super Season, so the 33 that print ROOKIE are 33
+    // the pill loses. `applies` still reports both facts in full.
     expect(counts.printed[ROOKIE_BADGE]).toBe(ROOKIE.excluded.length);
-    expect(counts.printed[SUPER_SEASON_BADGE])
-      .toBe(SUPER.excluded.length - ROOKIE.excluded.length);
+    // AND THE SECOND IS THE SALARY TIER. Of the 107 left, the ones under
+    // SUPER_SEASON_MIN_SALARY print BEST SEASON — the same rule the Super
+    // Season SET is tiered by, because it is the same pill on the same player.
+    const contested = SUPER.excluded.length - ROOKIE.excluded.length;
+    expect(counts.printed[SUPER_SEASON_BADGE] + counts.printed[BEST_SEASON_BADGE])
+      .toBe(contested);
+    expect(counts.printed[BEST_SEASON_BADGE]).toBe(66);
+    expect(counts.printed[SUPER_SEASON_BADGE]).toBe(41);
     // Nobody loses their pill entirely in the resolution.
-    expect(counts.printed[ROOKIE_BADGE] + counts.printed[SUPER_SEASON_BADGE])
-      .toBe(counts.players);
+    expect(BADGE_IDS.reduce((n, id) => n + counts.printed[id], 0)).toBe(counts.players);
     expect(counts.multiple).toBe(ROOKIE.excluded.length);
+  });
+
+  it('degrades to the untiered counts when there are no salaries to tier on', () => {
+    // The salaries belong to generateCards.js, not to this generator, so an
+    // absent lookup has to be a legitimate answer rather than an error — a
+    // checkout that has never run the other generator still reports something
+    // true. `tierBadge` treats an unknown salary as gilded, so `printed` falls
+    // back to exactly the distribution this reported before the tier existed.
+    const untiered = badgeCounts(BADGES.badges);
+    expect(untiered.printed[BEST_SEASON_BADGE]).toBe(0);
+    expect(untiered.printed[SUPER_SEASON_BADGE])
+      .toBe(SUPER.excluded.length - ROOKIE.excluded.length);
+    expect(loadBaseSalaries(path.join(REPO_ROOT, 'no-such-file.json')).size).toBe(0);
+    expect(untiered.applies).toEqual(BADGES.counts.applies);
+  });
+
+  it('reads the salaries out of the base set the studio actually loads', () => {
+    // Not recomputed here: the tier is a comparison against the number PRINTED
+    // on the card, so the number this reads has to be the one the card draws.
+    expect(SALARIES.size).toBe(BASE.cards.length);
+    for (const record of BADGES.badges) {
+      expect(SALARIES.get(record.id), record.name).toBe(
+        BASE.cards.find(c => c.id === record.id)?.salary
+      );
+    }
   });
 });
 

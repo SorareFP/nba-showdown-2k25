@@ -15,11 +15,11 @@
 import { useState } from 'react';
 import { getThemedTeam, resolveAccent } from './teams.js';
 import {
+  cardTreatment,
   hidesEmptyRows,
   setBadge,
   setLeague,
   setStatsSeason,
-  setTreatment,
   showsSeason,
 } from './sets.js';
 import { badgeLabel, badgeVars, pickBadge } from './badges.js';
@@ -258,8 +258,14 @@ export default function CardTemplate({
   // The UNTREATED theme is kept: the card-type badge is derived from it, not
   // from the treated one, because the Rookie pill is the TEAM's accent and the
   // green treatment overwrites `accentOnField` with its own green. See badges.js.
+  //
+  // AND THE TREATMENT IS A CARD QUESTION NOW, not purely a set one — see
+  // `cardTreatment` in sets.js. A Super Season card under the salary line keeps
+  // its team's own palette: the gold foil is the gilded tier's, and it is
+  // withheld by the same comparison that turns its pill from SUPER SEASON into
+  // BEST SEASON, so the two can never disagree about whether this card is gold.
   const base = deriveFieldTheme(team.primary, team.secondary, accent);
-  const field = applyTreatment(base, setTreatment(set));
+  const field = applyTreatment(base, cardTreatment(set, card.salary));
   const treatment = field.treatment ?? null;
 
   // THE SET IS PART OF THE PHOTO'S PATH, and leaving it out was a real bug:
@@ -293,7 +299,15 @@ export default function CardTemplate({
   // priority order: Rookie before Super Season, because the 33 cards that carry
   // both are by definition rookies and "his best season" says nothing about a
   // player who has had exactly one.
-  const badge = pickBadge([setBadge(set), ...(Array.isArray(card.badges) ? card.badges : [])]);
+  //
+  // AND THE SALARY TIERS IT. `super-season` under SUPER_SEASON_MIN_SALARY comes
+  // back as `best-season` — a plainer label in the team's accent instead of the
+  // gold — which is why the salary is passed here and to `cardTreatment` above
+  // and nowhere else: one comparison, in badges.js, asked twice.
+  const badge = pickBadge(
+    [setBadge(set), ...(Array.isArray(card.badges) ? card.badges : [])],
+    card.salary
+  );
   // The season, by contrast, IS purely a set question. A base-set record
   // carries no seasonLabel at all, and a 2025-26 legend card has its season
   // drawn into the hand-made art, so gating on the data instead of the set

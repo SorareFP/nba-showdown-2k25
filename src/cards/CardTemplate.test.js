@@ -27,8 +27,10 @@ import { deriveFieldTheme } from './fieldTheme.js';
 import { GOLD, applyTreatment } from './treatments.js';
 import {
   BADGES,
+  BEST_SEASON_BADGE,
   ROOKIE_BADGE,
   SUPER_SEASON_BADGE,
+  SUPER_SEASON_MIN_SALARY,
   badgeColors,
   badgeLabels,
   getBadge,
@@ -46,7 +48,7 @@ import {
   setLeague,
   showsSeason,
 } from './sets.js';
-import { POOL_PLAYERS, SOURCES } from '../studio/players.js';
+import { BADGE_FILE, POOL_PLAYERS, SOURCES } from '../studio/players.js';
 
 const render = props => renderToStaticMarkup(React.createElement(CardTemplate, props));
 
@@ -1179,7 +1181,19 @@ describe('the set treatment on the rendered card', () => {
     ],
   };
 
-  const forSet = set => render({ card: CARD, set });
+  /**
+   * The same card priced into the GILDED tier.
+   *
+   * CARD is $480 and that is not an accident to be edited away — it is a Kevin
+   * Durant ROOKIE card, and a rookie card is cheap. But $480 is under
+   * SUPER_SEASON_MIN_SALARY, so on the Super Season set that same record is now
+   * a BEST SEASON card with no foil on it, and every assertion about the gold
+   * has to name a card that actually gets the gold. Exactly at the line, which
+   * is the inclusive side: "under 700" is what was asked for, so 700 is gold.
+   */
+  const GILDED = { ...CARD, salary: SUPER_SEASON_MIN_SALARY };
+
+  const forSet = (set, card = CARD) => render({ card, set });
 
   it('leaves BOTH season sets with no treatment markup at all', () => {
     // The regression that matters most in this file: these two sets shipped
@@ -1202,18 +1216,74 @@ describe('the set treatment on the rendered card', () => {
   });
 
   it('marks a treated card with the treatment it carries', () => {
-    expect(forSet(SUPER_SEASON_SET)).toContain('data-treatment="gold-foil"');
+    expect(forSet(SUPER_SEASON_SET, GILDED)).toContain('data-treatment="gold-foil"');
     expect(forSet(ROOKIE_SET)).toContain('data-treatment="green-accent"');
   });
 
   it('paints the Super Season card with a static foil, no animation', () => {
-    const html = forSet(SUPER_SEASON_SET);
+    const html = forSet(SUPER_SEASON_SET, GILDED);
     expect(html).toContain('linear-gradient');
     expect(html).not.toMatch(/animation|keyframes|transition/i);
     // The two extra boxes: a sheen under the content and a gradient keyline
     // over it. See the z-order note in CardTemplate.
     expect(html).toContain('repeating-linear-gradient');
     expect(html).toMatch(/--treatment-frame:\s*linear-gradient/);
+  });
+
+  it('withholds the whole foil from a Super Season card under the salary line', () => {
+    // "not make the tab gold for anyone under 700 salary". The gold is not one
+    // surface — it is the band, the frame, the field sheen and the 96px name —
+    // so the tier does not strip the pill and leave the rest. The card keeps
+    // the TEAM's palette, exactly as `applyTreatment(base, null)` returns it,
+    // and the assertion is the same absence the two season sets are held to.
+    const html = forSet(SUPER_SEASON_SET, CARD); // $480
+    expect(html).not.toContain('data-treatment');
+    expect(html).not.toContain('--treatment-');
+    expect(html).not.toContain('linear-gradient');
+    // Still a historical card, and this is what keeps it from reading as a
+    // base card: the season line, which no 2026-27 card prints.
+    expect(html).toContain('BEST SEASON');
+    expect(html).not.toContain('SUPER SEASON');
+  });
+
+  it('gilds at the line and not one dollar below it', () => {
+    // The boundary, both sides, on the same record. Two real cards sit exactly
+    // at 700 (A.J. Green, Miles Bridges) so this is not a hypothetical edge.
+    const at = render({ card: { ...CARD, salary: SUPER_SEASON_MIN_SALARY }, set: SUPER_SEASON_SET });
+    const below = render({
+      card: { ...CARD, salary: SUPER_SEASON_MIN_SALARY - 10 },
+      set: SUPER_SEASON_SET,
+    });
+    expect(at).toContain('data-treatment="gold-foil"');
+    expect(at).toContain('SUPER SEASON');
+    expect(below).not.toContain('data-treatment');
+    expect(below).toContain('BEST SEASON');
+  });
+
+  it('leaves the Rookie set gilt-free and therefore tier-free', () => {
+    // The green treatment is not the gold and does not tier: a rookie card is
+    // cheap by definition, and "this was his first season" is not a claim that
+    // can be overstated by a small salary. CARD is $480 — under the line — and
+    // keeps everything the Rookie set declares.
+    const html = forSet(ROOKIE_SET, CARD);
+    expect(html).toContain('data-treatment="green-accent"');
+    expect(html).toContain('ROOKIE');
+    // And at every price, so nothing can start reading the salary here.
+    for (const salary of [10, 690, 700, 1500, undefined]) {
+      expect(render({ card: { ...CARD, salary }, set: ROOKIE_SET }), String(salary))
+        .toContain('data-treatment="green-accent"');
+    }
+  });
+
+  it('keeps the gold when the card has no salary at all', () => {
+    // The studio's contract: a half-built record renders. Demotion needs
+    // EVIDENCE — a real number below the line — because the other default would
+    // strip the foil off the whole set on a checkout where the salary generator
+    // had not been run. See `tierBadge` in badges.js.
+    const { salary, ...noSalary } = CARD;
+    const html = render({ card: noSalary, set: SUPER_SEASON_SET });
+    expect(html).toContain('data-treatment="gold-foil"');
+    expect(html).toContain('SUPER SEASON');
   });
 
   it('keeps the Rookie card plain — a green accent, not a second look', () => {
@@ -1504,15 +1574,41 @@ describe('the season and the card-type badge', () => {
       expect(html, player.name).toContain('25-26 ROOKIE');
       expect(html, player.name).not.toContain('SUPER SEASON');
     }
-    // And the other 107 are untouched: a Super Season that is NOT a rookie
-    // keeps the gold pill, undated.
-    const gold = POOL_PLAYERS.filter(
+    // And the other 107 print the Super Season pill — at whichever of its two
+    // TIERS their salary puts them, which is the half of this that is new.
+    const superSeason = POOL_PLAYERS.filter(
       p => p.badges.includes(SUPER_SEASON_BADGE) && !p.badges.includes(ROOKIE_BADGE)
     );
-    expect(gold.length).toBe(107);
-    const html = render({ card: gold[0], set: CURRENT_SET });
-    expect(html).toContain('SUPER SEASON');
-    expect(html).not.toContain('ROOKIE');
+    expect(superSeason.length).toBe(107);
+    for (const player of superSeason) {
+      const html = render({ card: player, set: CURRENT_SET });
+      expect(html, player.name).not.toContain('ROOKIE');
+      // Every one of them says one of the two things, and never both.
+      const gilded = player.salary >= SUPER_SEASON_MIN_SALARY;
+      expect(html, player.name).toContain(gilded ? 'SUPER SEASON' : 'BEST SEASON');
+      expect(html, player.name).not.toContain(gilded ? 'BEST SEASON' : 'SUPER SEASON');
+      // The base set is untreated at BOTH tiers — "keep the 26-27 design and
+      // just add the badge" was never about the foil. What the tier changes on
+      // a base card is the pill and nothing else.
+      expect(html, player.name).not.toContain('--treatment-');
+    }
+  });
+
+  it('tiers the base cards by the same line the Super Season set is tiered by', () => {
+    // THE CONSEQUENCE WORTH STATING OUT LOUD. The pill is the pill: a $10 base
+    // card wearing the gold while a $10 Super Season card does not would be the
+    // rule contradicting itself about the same player in the same season. So
+    // the 107 split 41/66 on the same constant, and card-badges.json's own
+    // `printed` counts — computed through the same pickBadge — agree.
+    const superSeason = POOL_PLAYERS.filter(
+      p => p.badges.includes(SUPER_SEASON_BADGE) && !p.badges.includes(ROOKIE_BADGE)
+    );
+    const gilded = superSeason.filter(p => p.salary >= SUPER_SEASON_MIN_SALARY);
+    expect(gilded.length).toBe(41);
+    expect(superSeason.length - gilded.length).toBe(66);
+    expect(BADGE_FILE.counts.printed[SUPER_SEASON_BADGE]).toBe(41);
+    expect(BADGE_FILE.counts.printed[BEST_SEASON_BADGE]).toBe(66);
+    expect(BADGE_FILE.counts.printed[ROOKIE_BADGE]).toBe(33);
   });
 
   it('lets a card badge itself on the finished set too, without a treatment', () => {

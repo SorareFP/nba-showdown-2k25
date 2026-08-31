@@ -38,7 +38,7 @@
 //                   or null — see src/cards/badges.js
 //   treatment       the set-level visual treatment, or null — see treatments.js
 
-import { ROOKIE_BADGE, SUPER_SEASON_BADGE } from './badges.js';
+import { ROOKIE_BADGE, SUPER_SEASON_BADGE, tierBadge } from './badges.js';
 
 /** The set currently being built. Every studio write goes under this. */
 export const CURRENT_SET = '2026-27';
@@ -179,6 +179,14 @@ export const SETS = [
     // is no longer a thing only a set can have. This row says "every card in
     // this set carries the Super Season badge", which is the same behaviour it
     // had when it held the string.
+    // ── BOTH OF THESE ARE THE GILDED TIER'S ─────────────────────────────────
+    //
+    // 106 of the 210 cards in this set render exactly as declared here. The
+    // other 104 cost less than SUPER_SEASON_MIN_SALARY, print BEST SEASON in
+    // the team's accent, and take no treatment at all — see `cardTreatment`
+    // below and `tierBadge` in badges.js. The row is not written as a pair
+    // because the set genuinely declares one badge and one treatment; what the
+    // salary decides is whether a given card is still in the tier they name.
     badge: SUPER_SEASON_BADGE,
     treatment: 'gold-foil',
   },
@@ -254,6 +262,13 @@ export const SETS = [
     // The gold pill, the same badge the NBA Super Season set carries. It says
     // what KIND of card this is, and the kind is identical; the league mark in
     // the opposite corner is what says the rest.
+    //
+    // TIERED BY SALARY LIKE THE NBA SET, and today that changes nothing: the
+    // cheapest of the sixteen is Tina Charles' 2016 at $860, comfortably over
+    // SUPER_SEASON_MIN_SALARY, so all sixteen keep the gold. The rule is not
+    // special-cased away for that — a named roster is one edit from gaining a
+    // legend whose best year prices below the line, and `cardTreatment` asks
+    // the same question of every set rather than of a list of set ids.
     badge: SUPER_SEASON_BADGE,
     treatment: 'gold-foil',
   },
@@ -283,6 +298,41 @@ export function isEditableSet(id) {
  */
 export function setTreatment(id) {
   return getSet(id)?.treatment ?? null;
+}
+
+/**
+ * The treatment ONE CARD in that set actually renders with.
+ *
+ * A set declares its treatment for the tier it declares its badge for, and a
+ * card demoted out of that tier does not get it. Today that means exactly one
+ * thing — a Super Season card under SUPER_SEASON_MIN_SALARY prints BEST SEASON
+ * and keeps its team's own palette, gold foil and all — but it is written as
+ * the general sentence because the rule is general: "not make the tab gold for
+ * anyone under 700 salary" is one decision about the pill AND the foil, and
+ * both halves have to come out of the same comparison or they will drift into
+ * a gold band under a team-coloured pill.
+ *
+ * ── WHY IT ASKS `tierBadge` INSTEAD OF COMPARING THE SALARY ITSELF ──────────
+ *
+ * Because the comparison lives in exactly one place, and it is not this one.
+ * This function names no salary, no threshold and no treatment id: it asks
+ * whether the set's OWN declared badge still prints at the id the set declared,
+ * and withholds the treatment when it does not. So the Rookie set is untouched
+ * at every salary (its badge does not tier), the base and finished sets are
+ * untouched because they declare no treatment to withhold, `wnba-super-season`
+ * is covered without being named — none of its sixteen falls below the line
+ * today, and the rule stays right if a future legend does — and a set that
+ * declares a badge this build does not tier goes on rendering exactly as it
+ * did.
+ *
+ * TAKES THE SALARY, NOT THE CARD, so this file still knows nothing about the
+ * shape of a card record — the same reason `pickBadge` takes a list of ids.
+ * Omitting it means gold, exactly as it does there.
+ */
+export function cardTreatment(set, salary) {
+  const badge = setBadge(set);
+  if (badge !== null && tierBadge(badge, salary) !== badge) return null;
+  return setTreatment(set);
 }
 
 /**

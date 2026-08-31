@@ -198,12 +198,12 @@ export function getFatigue(g, key, idx) {
 export const SPEND_COSTS = {
   /** 1 AST: +1 to a player's next shot check. */
   assistBoost: 1,
-  /** 4 AST: a 3PT check, 3 points, needs a 3PT boost. */
-  assistThree: 4,
-  /** 3 AST: a paint check, 2 points, needs a Paint boost. */
-  assistPaint: 3,
-  /** 3 REB: the +3-differential paint check. */
-  reboundPaint: 3,
+  /** 5 AST: a 3PT check, 3 points, needs a 3PT boost. */
+  assistThree: 5,
+  /** 5 AST: a paint check, 2 points, needs a Paint boost. */
+  assistPaint: 5,
+  /** 5 REB: the +3-differential paint check. */
+  reboundPaint: 5,
 };
 
 // ── Shot Check ─────────────────────────────────────────────────────────────

@@ -481,7 +481,25 @@ export function buildHistoricalCard({
   for (const stat of V.CHART_STATS) {
     const fit = { level: calibration.chart.levels[stat], shape: calibration.chart.shape };
     bands[stat] = computeStatBands(
-      V.synthesizeGames({ per100: { [stat]: per100[stat] }, mpg, games, fit }),
+      V.synthesizeGames({
+        per100: { [stat]: per100[stat] },
+        mpg,
+        games,
+        fit,
+        // The shot profile, for the points event model. Without it points fall
+        // back to a single Poisson on a league-typical two-point event, which
+        // is what these sets were silently getting while the base set had the
+        // real 2s / 3s / free-throw convolution. Basketball-Reference's
+        // per-possession table carries every term.
+        mix: {
+          fga2: season.fg2a100,
+          fga3: season.fg3a100,
+          fta: season.fta100,
+          pct2: season.fgPct2,
+          pct3: season.fgPct3,
+          pctFt: season.ftPct,
+        },
+      }),
       stat
     );
   }

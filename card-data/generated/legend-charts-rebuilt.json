@@ -1,0 +1,1577 @@
+{
+ "generatedAt": "2026-09-01T11:31:37.878Z",
+ "note": "PROPOSED, not shipped — the 25-26 legend cards are printed.",
+ "cards": [
+  {
+   "id": "LeBron_James",
+   "name": "LeBron James",
+   "team": "CLE",
+   "pos": "SF",
+   "speed": 14,
+   "power": 16,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 4,
+   "salary": 1500,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 11,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 12,
+     "hi": 14,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 21,
+     "pts": 5,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 7,
+     "reb": 2,
+     "ast": 2
+    }
+   ],
+   "season": 2009,
+   "seasonLabel": "2008-09",
+   "age": 24,
+   "games": 81,
+   "mpg": 37.7,
+   "bbrefId": "jamesle01",
+   "traded": false,
+   "metrics": {
+    "bpm": 13.2,
+    "vorp": 11.8,
+    "ws": 20.3,
+    "ws48": 0.318,
+    "per": 31.7
+   },
+   "provisional": true,
+   "label": "08-09 LeBron James"
+  },
+  {
+   "id": "Michael_Jordan",
+   "name": "Michael Jordan",
+   "team": "CHI",
+   "pos": "SG",
+   "speed": 8,
+   "power": 6,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": -4,
+   "defBoost": 4,
+   "salary": 780,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 10,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 11,
+     "hi": 14,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 21,
+     "pts": 5,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 7,
+     "reb": 1,
+     "ast": 2
+    }
+   ],
+   "season": 1988,
+   "seasonLabel": "1987-88",
+   "age": 24,
+   "games": 82,
+   "mpg": 40.4,
+   "bbrefId": "jordami01",
+   "traded": false,
+   "metrics": {
+    "bpm": 13,
+    "vorp": 12.5,
+    "ws": 21.2,
+    "ws48": 0.308,
+    "per": 31.7
+   },
+   "provisional": true,
+   "label": "87-88 Michael Jordan"
+  },
+  {
+   "id": "David_Robinson",
+   "name": "David Robinson",
+   "team": "SAS",
+   "pos": "C",
+   "speed": 5,
+   "power": 9,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 4,
+   "salary": 760,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 12,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 13,
+     "hi": 15,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 22,
+     "pts": 5,
+     "reb": 2,
+     "ast": 1
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 7,
+     "reb": 3,
+     "ast": 1
+    }
+   ],
+   "season": 1994,
+   "seasonLabel": "1993-94",
+   "age": 28,
+   "games": 80,
+   "mpg": 40.5,
+   "bbrefId": "robinda01",
+   "traded": false,
+   "metrics": {
+    "bpm": 11.9,
+    "vorp": 11.4,
+    "ws": 20,
+    "ws48": 0.296,
+    "per": 30.7
+   },
+   "provisional": true,
+   "label": "93-94 David Robinson"
+  },
+  {
+   "id": "Larry_Bird",
+   "name": "Larry Bird",
+   "team": "BOS",
+   "pos": "SF",
+   "speed": 7,
+   "power": 7,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": 2,
+   "defBoost": 2,
+   "salary": 640,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 14,
+     "hi": 15,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 23,
+     "pts": 4,
+     "reb": 2,
+     "ast": 1
+    },
+    {
+     "lo": 24,
+     "hi": 99,
+     "pts": 6,
+     "reb": 3,
+     "ast": 2
+    }
+   ],
+   "season": 1985,
+   "seasonLabel": "1984-85",
+   "age": 28,
+   "games": 80,
+   "mpg": 39.5,
+   "bbrefId": "birdla01",
+   "traded": false,
+   "metrics": {
+    "bpm": 8.8,
+    "vorp": 8.7,
+    "ws": 15.7,
+    "ws48": 0.238,
+    "per": 26.5
+   },
+   "provisional": true,
+   "label": "84-85 Larry Bird"
+  },
+  {
+   "id": "Dwyane_Wade",
+   "name": "Dwyane Wade",
+   "team": "MIA",
+   "pos": "SG",
+   "speed": 18,
+   "power": 12,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 2,
+   "salary": 1480,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 11,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 12,
+     "hi": 15,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 21,
+     "pts": 5,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 7,
+     "reb": 1,
+     "ast": 2
+    }
+   ],
+   "season": 2009,
+   "seasonLabel": "2008-09",
+   "age": 27,
+   "games": 79,
+   "mpg": 38.6,
+   "bbrefId": "wadedw01",
+   "traded": false,
+   "metrics": {
+    "bpm": 10.6,
+    "vorp": 9.6,
+    "ws": 14.7,
+    "ws48": 0.232,
+    "per": 30.4
+   },
+   "provisional": true,
+   "label": "08-09 Dwyane Wade"
+  },
+  {
+   "id": "Shaquille_O_Neal",
+   "name": "Shaquille O'Neal",
+   "team": "LAL",
+   "pos": "C",
+   "speed": 4,
+   "power": 10,
+   "shotLine": 16,
+   "paintBoost": 2,
+   "threePtBoost": 0,
+   "defBoost": 2,
+   "salary": 770,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 12,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 13,
+     "hi": 15,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 22,
+     "pts": 5,
+     "reb": 2,
+     "ast": 1
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 6,
+     "reb": 4,
+     "ast": 1
+    }
+   ],
+   "season": 2000,
+   "seasonLabel": "1999-00",
+   "age": 27,
+   "games": 79,
+   "mpg": 40,
+   "bbrefId": "onealsh01",
+   "traded": false,
+   "metrics": {
+    "bpm": 9.3,
+    "vorp": 9,
+    "ws": 18.6,
+    "ws48": 0.283,
+    "per": 30.6
+   },
+   "provisional": true,
+   "label": "99-00 Shaquille O'Neal"
+  },
+  {
+   "id": "Kevin_Durant",
+   "name": "Kevin Durant",
+   "team": "OKC",
+   "pos": "SF",
+   "speed": 14,
+   "power": 16,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 1,
+   "salary": 1430,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 14,
+     "hi": 15,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 21,
+     "pts": 5,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 7,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "season": 2014,
+   "seasonLabel": "2013-14",
+   "age": 25,
+   "games": 81,
+   "mpg": 38.5,
+   "bbrefId": "duranke01",
+   "traded": false,
+   "metrics": {
+    "bpm": 10.2,
+    "vorp": 9.6,
+    "ws": 19.2,
+    "ws48": 0.295,
+    "per": 29.8
+   },
+   "provisional": true,
+   "label": "13-14 Kevin Durant"
+  },
+  {
+   "id": "Stephen_Curry",
+   "name": "Stephen Curry",
+   "team": "GSW",
+   "pos": "PG",
+   "speed": 19,
+   "power": 11,
+   "shotLine": 12,
+   "paintBoost": -1,
+   "threePtBoost": 3,
+   "defBoost": 2,
+   "salary": 1500,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 11,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 12,
+     "hi": 15,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 20,
+     "pts": 6,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 8,
+     "reb": 2,
+     "ast": 2
+    }
+   ],
+   "season": 2016,
+   "seasonLabel": "2015-16",
+   "age": 27,
+   "games": 79,
+   "mpg": 34.2,
+   "bbrefId": "curryst01",
+   "traded": false,
+   "metrics": {
+    "bpm": 11.9,
+    "vorp": 9.5,
+    "ws": 17.9,
+    "ws48": 0.318,
+    "per": 31.5
+   },
+   "provisional": true,
+   "label": "15-16 Stephen Curry"
+  },
+  {
+   "id": "Russell_Westbrook",
+   "name": "Russell Westbrook",
+   "team": "OKC",
+   "pos": "PG",
+   "speed": 18,
+   "power": 12,
+   "shotLine": 17,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 2,
+   "salary": 1500,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 10,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 11,
+     "hi": 16,
+     "pts": 4,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 17,
+     "hi": 23,
+     "pts": 6,
+     "reb": 2,
+     "ast": 2
+    },
+    {
+     "lo": 24,
+     "hi": 99,
+     "pts": 8,
+     "reb": 3,
+     "ast": 4
+    }
+   ],
+   "season": 2017,
+   "seasonLabel": "2016-17",
+   "age": 28,
+   "games": 81,
+   "mpg": 34.6,
+   "bbrefId": "westbru01",
+   "traded": false,
+   "metrics": {
+    "bpm": 11.1,
+    "vorp": 9.3,
+    "ws": 13.1,
+    "ws48": 0.224,
+    "per": 30.6
+   },
+   "provisional": true,
+   "label": "16-17 Russell Westbrook"
+  },
+  {
+   "id": "Chris_Paul",
+   "name": "Chris Paul",
+   "team": "NOH",
+   "pos": "PG",
+   "speed": 20,
+   "power": 10,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 4,
+   "salary": 1420,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 20,
+     "pts": 3,
+     "reb": 1,
+     "ast": 2
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 6,
+     "reb": 2,
+     "ast": 4
+    }
+   ],
+   "season": 2009,
+   "seasonLabel": "2008-09",
+   "age": 23,
+   "games": 78,
+   "mpg": 38.5,
+   "bbrefId": "paulch01",
+   "traded": false,
+   "metrics": {
+    "bpm": 11,
+    "vorp": 9.9,
+    "ws": 18.3,
+    "ws48": 0.292,
+    "per": 30
+   },
+   "provisional": true,
+   "label": "08-09 Chris Paul"
+  },
+  {
+   "id": "Dirk_Nowitzki",
+   "name": "Dirk Nowitzki",
+   "team": "DAL",
+   "pos": "PF",
+   "speed": 12,
+   "power": 18,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 2,
+   "defBoost": 0,
+   "salary": 1490,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 16,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 17,
+     "hi": 22,
+     "pts": 5,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 7,
+     "reb": 3,
+     "ast": 1
+    }
+   ],
+   "season": 2006,
+   "seasonLabel": "2005-06",
+   "age": 27,
+   "games": 81,
+   "mpg": 38.1,
+   "bbrefId": "nowitdi01",
+   "traded": false,
+   "metrics": {
+    "bpm": 8.1,
+    "vorp": 7.9,
+    "ws": 17.7,
+    "ws48": 0.275,
+    "per": 28.1
+   },
+   "provisional": true,
+   "label": "05-06 Dirk Nowitzki"
+  },
+  {
+   "id": "Kevin_Garnett",
+   "name": "Kevin Garnett",
+   "team": "MIN",
+   "pos": "PF",
+   "speed": 13,
+   "power": 17,
+   "shotLine": 17,
+   "paintBoost": 0,
+   "threePtBoost": -1,
+   "defBoost": 3,
+   "salary": 1280,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 14,
+     "hi": 16,
+     "pts": 2,
+     "reb": 2,
+     "ast": 1
+    },
+    {
+     "lo": 17,
+     "hi": 23,
+     "pts": 4,
+     "reb": 2,
+     "ast": 1
+    },
+    {
+     "lo": 24,
+     "hi": 99,
+     "pts": 6,
+     "reb": 4,
+     "ast": 1
+    }
+   ],
+   "season": 2004,
+   "seasonLabel": "2003-04",
+   "age": 27,
+   "games": 82,
+   "mpg": 39.4,
+   "bbrefId": "garneke01",
+   "traded": false,
+   "metrics": {
+    "bpm": 10.2,
+    "vorp": 10,
+    "ws": 18.3,
+    "ws48": 0.272,
+    "per": 29.4
+   },
+   "provisional": true,
+   "label": "03-04 Kevin Garnett"
+  },
+  {
+   "id": "Tracy_McGrady",
+   "name": "Tracy McGrady",
+   "team": "ORL",
+   "pos": "SG",
+   "speed": 17,
+   "power": 13,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 1,
+   "salary": 1480,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 11,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 12,
+     "hi": 15,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 21,
+     "pts": 5,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 7,
+     "reb": 2,
+     "ast": 2
+    }
+   ],
+   "season": 2003,
+   "seasonLabel": "2002-03",
+   "age": 23,
+   "games": 75,
+   "mpg": 39.4,
+   "bbrefId": "mcgratr01",
+   "traded": false,
+   "metrics": {
+    "bpm": 10.5,
+    "vorp": 9.3,
+    "ws": 16.1,
+    "ws48": 0.262,
+    "per": 30.3
+   },
+   "provisional": true,
+   "label": "02-03 Tracy McGrady"
+  },
+  {
+   "id": "Hakeem_Olajuwon",
+   "name": "Hakeem Olajuwon",
+   "team": "HOU",
+   "pos": "C",
+   "speed": 5,
+   "power": 9,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 4,
+   "salary": 660,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 23,
+     "pts": 4,
+     "reb": 2,
+     "ast": 1
+    },
+    {
+     "lo": 24,
+     "hi": 99,
+     "pts": 6,
+     "reb": 4,
+     "ast": 1
+    }
+   ],
+   "season": 1993,
+   "seasonLabel": "1992-93",
+   "age": 30,
+   "games": 82,
+   "mpg": 39.5,
+   "bbrefId": "olajuha01",
+   "traded": false,
+   "metrics": {
+    "bpm": 7.5,
+    "vorp": 7.8,
+    "ws": 15.8,
+    "ws48": 0.234,
+    "per": 27.3
+   },
+   "provisional": true,
+   "label": "92-93 Hakeem Olajuwon"
+  },
+  {
+   "id": "Kevin_Love",
+   "name": "Kevin Love",
+   "team": "MIN",
+   "pos": "PF",
+   "speed": 12,
+   "power": 17,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 1,
+   "salary": 1310,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 17,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 18,
+     "hi": 23,
+     "pts": 5,
+     "reb": 2,
+     "ast": 1
+    },
+    {
+     "lo": 24,
+     "hi": 99,
+     "pts": 6,
+     "reb": 4,
+     "ast": 1
+    }
+   ],
+   "season": 2014,
+   "seasonLabel": "2013-14",
+   "age": 25,
+   "games": 77,
+   "mpg": 36.3,
+   "bbrefId": "loveke01",
+   "traded": false,
+   "metrics": {
+    "bpm": 8.9,
+    "vorp": 7.7,
+    "ws": 14.3,
+    "ws48": 0.245,
+    "per": 26.9
+   },
+   "provisional": true,
+   "label": "13-14 Kevin Love"
+  },
+  {
+   "id": "Grant_Hill",
+   "name": "Grant Hill",
+   "team": "DET",
+   "pos": "SF",
+   "speed": 7,
+   "power": 7,
+   "shotLine": 17,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 3,
+   "salary": 550,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 16,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 17,
+     "hi": 21,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 5,
+     "reb": 3,
+     "ast": 2
+    }
+   ],
+   "season": 1997,
+   "seasonLabel": "1996-97",
+   "age": 24,
+   "games": 80,
+   "mpg": 39.3,
+   "bbrefId": "hillgr01",
+   "traded": false,
+   "metrics": {
+    "bpm": 8.2,
+    "vorp": 8,
+    "ws": 14.6,
+    "ws48": 0.223,
+    "per": 25.5
+   },
+   "provisional": true,
+   "label": "96-97 Grant Hill"
+  },
+  {
+   "id": "Magic_Johnson",
+   "name": "Magic Johnson",
+   "team": "LAL",
+   "pos": "PG",
+   "speed": 9,
+   "power": 5,
+   "shotLine": 14,
+   "paintBoost": -1,
+   "threePtBoost": 0,
+   "defBoost": 2,
+   "salary": 580,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 14,
+     "hi": 21,
+     "pts": 3,
+     "reb": 1,
+     "ast": 2
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 6,
+     "reb": 2,
+     "ast": 4
+    }
+   ],
+   "season": 1990,
+   "seasonLabel": "1989-90",
+   "age": 30,
+   "games": 79,
+   "mpg": 37.2,
+   "bbrefId": "johnsma02",
+   "traded": false,
+   "metrics": {
+    "bpm": 10.1,
+    "vorp": 8.9,
+    "ws": 16.5,
+    "ws48": 0.27,
+    "per": 26.6
+   },
+   "provisional": true,
+   "label": "89-90 Magic Johnson"
+  },
+  {
+   "id": "Kobe_Bryant",
+   "name": "Kobe Bryant",
+   "team": "LAL",
+   "pos": "SG",
+   "speed": 17,
+   "power": 12,
+   "shotLine": 17,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 0,
+   "salary": 1480,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 10,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 11,
+     "hi": 16,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 17,
+     "hi": 23,
+     "pts": 6,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 24,
+     "hi": 99,
+     "pts": 8,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2006,
+   "seasonLabel": "2005-06",
+   "age": 27,
+   "games": 80,
+   "mpg": 41,
+   "bbrefId": "bryanko01",
+   "traded": false,
+   "metrics": {
+    "bpm": 7.6,
+    "vorp": 8,
+    "ws": 15.3,
+    "ws48": 0.224,
+    "per": 28
+   },
+   "provisional": true,
+   "label": "05-06 Kobe Bryant"
+  },
+  {
+   "id": "James_Harden",
+   "name": "James Harden",
+   "team": "HOU",
+   "pos": "PG",
+   "speed": 18,
+   "power": 12,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 2,
+   "salary": 1500,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 10,
+     "hi": 13,
+     "pts": 5,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 14,
+     "hi": 21,
+     "pts": 6,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 8,
+     "reb": 2,
+     "ast": 2
+    }
+   ],
+   "season": 2019,
+   "seasonLabel": "2018-19",
+   "age": 29,
+   "games": 78,
+   "mpg": 36.8,
+   "bbrefId": "hardeja01",
+   "traded": false,
+   "metrics": {
+    "bpm": 11,
+    "vorp": 9.3,
+    "ws": 15.2,
+    "ws48": 0.254,
+    "per": 30.6
+   },
+   "provisional": true,
+   "label": "18-19 James Harden"
+  },
+  {
+   "id": "Kareem_Abdul_Jabbar",
+   "name": "Kareem Abdul-Jabbar",
+   "team": "LAL",
+   "pos": "C",
+   "speed": 5,
+   "power": 9,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 3,
+   "salary": 680,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 14,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 20,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 21,
+     "hi": 23,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    },
+    {
+     "lo": 24,
+     "hi": 99,
+     "pts": 5,
+     "reb": 4,
+     "ast": 1
+    }
+   ],
+   "season": 1977,
+   "seasonLabel": "1976-77",
+   "age": 29,
+   "games": 82,
+   "mpg": 36.8,
+   "bbrefId": "abdulka01",
+   "traded": false,
+   "metrics": {
+    "bpm": 9.4,
+    "vorp": 8.7,
+    "ws": 17.8,
+    "ws48": 0.283,
+    "per": 27.8
+   },
+   "provisional": true,
+   "label": "76-77 Kareem Abdul-Jabbar"
+  },
+  {
+   "id": "Charles_Barkley",
+   "name": "Charles Barkley",
+   "team": "PHI",
+   "pos": "SF",
+   "speed": 7,
+   "power": 7,
+   "shotLine": 12,
+   "paintBoost": 0,
+   "threePtBoost": -3,
+   "defBoost": 1,
+   "salary": 540,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 11,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 12,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 20,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 6,
+     "reb": 3,
+     "ast": 1
+    }
+   ],
+   "season": 1990,
+   "seasonLabel": "1989-90",
+   "age": 26,
+   "games": 79,
+   "mpg": 39.1,
+   "bbrefId": "barklch01",
+   "traded": false,
+   "metrics": {
+    "bpm": 8.2,
+    "vorp": 8,
+    "ws": 17.3,
+    "ws48": 0.269,
+    "per": 27.1
+   },
+   "provisional": true,
+   "label": "89-90 Charles Barkley"
+  },
+  {
+   "id": "Tim_Duncan",
+   "name": "Tim Duncan",
+   "team": "SAS",
+   "pos": "PF",
+   "speed": 12,
+   "power": 17,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": -2,
+   "defBoost": 2,
+   "salary": 1350,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 20,
+     "pts": 4,
+     "reb": 2,
+     "ast": 1
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 6,
+     "reb": 4,
+     "ast": 1
+    }
+   ],
+   "season": 2002,
+   "seasonLabel": "2001-02",
+   "age": 25,
+   "games": 82,
+   "mpg": 40.6,
+   "bbrefId": "duncati01",
+   "traded": false,
+   "metrics": {
+    "bpm": 7.6,
+    "vorp": 8,
+    "ws": 17.8,
+    "ws48": 0.257,
+    "per": 27
+   },
+   "provisional": true,
+   "label": "01-02 Tim Duncan"
+  }
+ ]
+}

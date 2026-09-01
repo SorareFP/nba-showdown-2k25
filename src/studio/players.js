@@ -43,6 +43,7 @@ import {
   SUMMER_STANDOUTS_SET,
   ROOKIE_SET,
   WNBA_SET,
+  WNBA_ROOKIE_SET,
   WNBA_SUPER_SEASON_SET,
   getSet,
 } from '../cards/sets.js';
@@ -298,7 +299,7 @@ export const CARD_PLAYERS = CARDS;
  * here the way the pool does.
  */
 const specialModules = import.meta.glob(
-  '../../card-data/generated/cards-{super-season,rookie,summer-standouts,wnba,wnba-super-season}.json',
+  '../../card-data/generated/cards-{super-season,rookie,summer-standouts,wnba,wnba-rookie,wnba-super-season}.json',
   { eager: true }
 );
 
@@ -315,6 +316,7 @@ export const ROOKIE_FILE = loadSpecialSet(ROOKIE_SET);
 export const SUMMER_STANDOUTS_FILE = loadSpecialSet(SUMMER_STANDOUTS_SET);
 export const WNBA_FILE = loadSpecialSet(WNBA_SET);
 export const WNBA_SUPER_SEASON_FILE = loadSpecialSet(WNBA_SUPER_SEASON_SET);
+export const WNBA_ROOKIE_FILE = loadSpecialSet(WNBA_ROOKIE_SET);
 
 const byName = (a, b) => a.name.localeCompare(b.name);
 
@@ -542,6 +544,17 @@ export const SOURCES = {
     missingHint:
       '`node scripts/cardgen/wnba/fetchWnbaHistory.js` then ' +
       '`node scripts/cardgen/wnba/generateWnbaLegends.js`',
+  }),
+  [WNBA_ROOKIE_SET]: specialSource(WNBA_ROOKIE_SET, WNBA_ROOKIE_FILE, {
+    sub: `rookie-year cards · ${WNBA_ROOKIE_FILE?.excludedCount ?? 0} current rookies excluded`,
+    missingHint: '`node scripts/cardgen/wnba/generateWnbaRookies.js`',
+    hint:
+      'EACH CARDED WNBA PLAYER\'S ROOKIE SEASON, through the legends pipeline: the fitted BPM ' +
+      'bridge in EPM\'s place, Speed+Power against the NBA BPM-equivalent archive, shooting ' +
+      'calibrated on the current WNBA pool. The archive reaches the league\'s own 1997, so a ' +
+      'first archived season IS the rookie season. A player whose rookie year is the current ' +
+      'one gets no card here — her base card already is that season. Re-run ' +
+      '`node scripts/cardgen/wnba/generateWnbaRookies.js`.',
   }),
 };
 

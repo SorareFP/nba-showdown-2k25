@@ -86,6 +86,15 @@ export const SUMMER_STANDOUTS_SET = 'summer-standouts';
 export const WNBA_SUPER_SEASON_SET = 'wnba-super-season';
 
 /**
+ * The WNBA Rookie set — each carded player's rookie season. The same pairing
+ * with `wnba` that `rookie` has with the base set, and the same double life
+ * `wnba-super-season` leads: a CARD TYPE and a LEAGUE at once. The archive
+ * reaches the league's own 1997, so unlike the NBA side there is no season a
+ * rookie year can hide behind.
+ */
+export const WNBA_ROOKIE_SET = 'wnba-rookie';
+
+/**
  * The season whose STATS the current set is built from.
  *
  * TWO DIFFERENT SEASONS ARE ON SCREEN IN THE STUDIO AT ONCE, and confusing
@@ -297,6 +306,19 @@ export const SETS = [
     // named roster of sixteen to stop being unanimous.
     badge: SUPER_SEASON_BADGE,
     treatment: 'gold-foil',
+  },
+  {
+    id: WNBA_ROOKIE_SET,
+    name: 'WNBA Rookie',
+    statsSeason: 'rookie season',
+    kind: 'special',
+    league: 'WNBA',
+    editable: true,
+    hidesEmptyRows: true,
+    // WHICH season a rookie card is IS the card, same as the NBA Rookie set.
+    showsSeason: true,
+    badge: ROOKIE_BADGE,
+    treatment: 'green-accent',
   },
 ];
 

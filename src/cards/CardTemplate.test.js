@@ -53,6 +53,7 @@ import {
   SUPER_SEASON_SET,
   SUMMER_STANDOUTS_SET,
   WNBA_SET,
+  WNBA_ROOKIE_SET,
   WNBA_SUPER_SEASON_SET,
   photoUrlPath,
   setLeague,
@@ -740,7 +741,7 @@ describe('league mark', () => {
     // when the WNBA legends set did — it is a second WNBA set, and a card type
     // rather than a season, so it declares its league for the same reason.
     const wnbaSets = SET_IDS.filter(i => setLeague(i) === 'WNBA');
-    expect(wnbaSets).toEqual([WNBA_SET, WNBA_SUPER_SEASON_SET]);
+    expect(wnbaSets).toEqual([WNBA_SET, WNBA_SUPER_SEASON_SET, WNBA_ROOKIE_SET]);
     for (const id of SET_IDS.filter(i => !wnbaSets.includes(i))) {
       expect(setLeague(id), id).toBe('NBA');
       expect(LEAGUE_LOGOS[setLeague(id)], id).toBe(LEAGUE_LOGO);

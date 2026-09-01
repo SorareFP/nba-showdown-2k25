@@ -1022,6 +1022,63 @@ export function main({ log = console.log } = {}) {
     );
   }
 
+  // ── Rookie cards for the standout NEWCOMERS ───────────────────────────────
+  //
+  // "Can we also add rookie cards for all new players that don't already have
+  // one?" A standout who is not a pool member has no rookie card, because the
+  // rookie set is derived from the pool. The rule here: every player named in
+  // card-data/summer-standouts.json (either block) who is outside the pool
+  // gets his rookie season carded, PROVIDED the career's first season in the
+  // full-league cache is 2002 or later — 2000/2001 first appearances are
+  // indistinguishable from a career the cache window truncated (Jason Kidd
+  // "debuts" in 2000 by that reading), and 2002 is also where EPM begins, so
+  // earlier rookies would price at replacement. The skipped are REPORTED, not
+  // dropped silently: carding them means fetching the 1990s tables first.
+  {
+    const standoutBlocks = readSummerStandouts();
+    const poolNames = new Set(pool.map(pl => normalizeName(pl.name)));
+    const rookieNames = [...new Set([
+      ...Object.keys(standoutBlocks.playoffCards ?? {}),
+      ...Object.keys(standoutBlocks.superSeasons ?? {}),
+    ])].filter(n => !poolNames.has(normalizeName(n)));
+    if (rookieNames.length) {
+      const tables = loadFullSeasonTables();
+      const league = loadLeagueRows();
+      const apiEpm = buildApiEpmIndex();
+      const added = [];
+      const skipped = [];
+      for (const name of rookieNames) {
+        const careerRows = pickCareer(league.get(normalizeName(name)), {});
+        const first = careerRows?.slice().sort((a, b) => a.season - b.season)[0];
+        if (!first) { skipped.push(`${name} (no career rows)`); continue; }
+        if (first.season < 2002) {
+          skipped.push(`${name} (first cached season ${first.season} — pre-EPM, possibly truncated)`);
+          continue;
+        }
+        const id = first.playerId;
+        const adv = tables.advanced.get(`${id}|${first.season}`);
+        const pp = tables.perPoss.get(`${id}|${first.season}`);
+        if (!adv || !pp) { skipped.push(`${name} (no ${first.season} full-table row)`); continue; }
+        const epm = apiEpm.get(`${normalizeName(name)}|${first.season}`);
+        selection.rookie.push({
+          player: { name, pos: adv.pos },
+          season: {
+            ...adv, ...pp,
+            playerId: id,
+            season: first.season,
+            epm: epm?.epm ?? null,
+            ewinsPerGame: epm?.ewinsPerGame ?? null,
+          },
+        });
+        added.push(`${name} ${first.season}`);
+      }
+      log(`  standout rookies: ${added.length} added (${added.join(', ') || 'none'})`);
+      if (skipped.length) {
+        log(`    skipped ${skipped.length} — ${skipped.join('; ')}`);
+      }
+    }
+  }
+
   // The current pool's own season rows, one per player, as the calibration
   // basis for both pool-relative layers. Aggregates only — a traded player's
   // whole season, not one of its halves.

@@ -38,6 +38,7 @@ import {
   SUPER_SEASON_SET,
   SUMMER_STANDOUTS_SET,
   WNBA_SET,
+  WNBA_ROOKIE_SET,
   WNBA_SUPER_SEASON_SET,
   getSet,
 } from '../cards/sets.js';
@@ -581,7 +582,7 @@ describe('stepSelection', () => {
 describe('the special sets in the source list', () => {
   const SPECIAL = [SUPER_SEASON_SET, ROOKIE_SET, WNBA_SET, WNBA_SUPER_SEASON_SET];
 
-  it('offers all seven sets, in the order the model declares them', () => {
+  it('offers all eight sets, in the order the model declares them', () => {
     // THE MODEL, not the row of buttons. Every set is still a source and still
     // reachable; one of them (`cards`) is now folded behind the selector's
     // disclosure, which is a rendering rule and is pinned separately against
@@ -589,7 +590,7 @@ describe('the special sets in the source list', () => {
     // a set removed from here is a set the studio cannot open at all.
     expect(Object.keys(SOURCES)).toEqual([
       'pool', 'cards', SUPER_SEASON_SET, ROOKIE_SET, SUMMER_STANDOUTS_SET,
-      WNBA_SET, WNBA_SUPER_SEASON_SET,
+      WNBA_SET, WNBA_SUPER_SEASON_SET, WNBA_ROOKIE_SET,
     ]);
     expect(Object.values(SOURCES).map(s => s.set)).toEqual(SET_IDS);
   });
@@ -697,7 +698,7 @@ describe('the selector\'s reference group', () => {
     }
     expect(PRIMARY_SOURCES.map(s => s.key)).toEqual([
       'pool', SUPER_SEASON_SET, ROOKIE_SET, SUMMER_STANDOUTS_SET,
-      WNBA_SET, WNBA_SUPER_SEASON_SET,
+      WNBA_SET, WNBA_SUPER_SEASON_SET, WNBA_ROOKIE_SET,
     ]);
   });
 

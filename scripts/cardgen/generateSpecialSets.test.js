@@ -163,7 +163,12 @@ describe.each([
     // of those players are retirees no pool has ever held. Named list, not a
     // loophole — anyone else from outside the pool still fails the test.
     const pool = new Set(POOL.map(p => p.name));
-    const standouts = new Set(Object.keys(STANDOUTS.superSeasons ?? {}));
+    // BOTH standout blocks: the standout Super Seasons land in that set, and
+    // the newcomer ROOKIE cards draw from either block's names.
+    const standouts = new Set([
+      ...Object.keys(STANDOUTS.superSeasons ?? {}),
+      ...Object.keys(STANDOUTS.playoffCards ?? {}),
+    ]);
     for (const card of file.cards) {
       expect(pool.has(card.name) || standouts.has(card.name), card.name).toBe(true);
     }
@@ -178,8 +183,10 @@ describe.each([
     // one-per-pool-player accounting; the displaced picks were pool members
     // and stay counted through their replacements.
     const pool = new Set(POOL.map(p => p.name));
-    const offPool = Object.keys(STANDOUTS.superSeasons ?? {})
-      .filter(name => carded.has(name) && !pool.has(name)).length;
+    const offPool = [...new Set([
+      ...Object.keys(STANDOUTS.superSeasons ?? {}),
+      ...Object.keys(STANDOUTS.playoffCards ?? {}),
+    ])].filter(name => carded.has(name) && !pool.has(name)).length;
     expect(carded.size + excluded.size).toBe(POOL.length + offPool);
     for (const name of carded) expect(excluded.has(name)).toBe(false);
     for (const e of file.excluded) expect(e.reason).toBeTruthy();
@@ -255,9 +262,12 @@ describe('Rookie', () => {
   });
 
   it('has the top of the set look like the rookie classes people remember', () => {
+    // Top TWELVE now: the standout newcomers put Chris Paul's, Carmelo's and
+    // Dwight Howard's rookie years into this set, and those classes are also
+    // ones people remember — the window widens rather than evicting anyone.
     const top = [...ROOKIE.cards]
       .sort((a, b) => b.speed + b.power - (a.speed + a.power))
-      .slice(0, 8)
+      .slice(0, 12)
       .map(c => c.name);
     for (const name of ['Victor Wembanyama', 'Luka Dončić', 'Nikola Jokić']) {
       expect(top, `${name} missing from the top of the rookie set`).toContain(name);
@@ -347,12 +357,23 @@ describe('the base set\'s badges', () => {
     // beat the playoff card. Seven are retirees new to the set; Jokic and
     // Doncic displaced their own algorithmic picks in place.
     expect(SUPER.cards.length).toBe(221);
-    expect(ROOKIE.cards.length).toBe(321);
-    const offPool = Object.keys(STANDOUTS.superSeasons ?? {}).filter(
-      name => !new Set(POOL.map(p => p.name)).has(name)
-    ).length;
-    expect(SUPER.cards.length + SUPER.excluded.length).toBe(POOL.length + offPool);
-    expect(ROOKIE.cards.length + ROOKIE.excluded.length).toBe(POOL.length);
+    //
+    // AND 321 -> 348 WHEN THE STANDOUT NEWCOMERS' ROOKIE YEARS ARRIVED — every
+    // standout outside the pool whose career begins inside the cache-and-EPM
+    // window (2002+) gets his rookie season carded; 19 pre-2000 careers are
+    // skipped and reported until the 1990s tables are fetched.
+    expect(ROOKIE.cards.length).toBe(348);
+    const poolNames = new Set(POOL.map(p => p.name));
+    const bothBlocks = [...new Set([
+      ...Object.keys(STANDOUTS.superSeasons ?? {}),
+      ...Object.keys(STANDOUTS.playoffCards ?? {}),
+    ])];
+    const ssOffPool = Object.keys(STANDOUTS.superSeasons ?? {})
+      .filter(name => !poolNames.has(name)).length;
+    const rookieOffPool = bothBlocks
+      .filter(name => ROOKIE.cards.some(c => c.name === name) && !poolNames.has(name)).length;
+    expect(SUPER.cards.length + SUPER.excluded.length).toBe(POOL.length + ssOffPool);
+    expect(ROOKIE.cards.length + ROOKIE.excluded.length).toBe(POOL.length + rookieOffPool);
   });
 
   it('has NESTED lists, which is why the rookie badge is the one that prints', () => {

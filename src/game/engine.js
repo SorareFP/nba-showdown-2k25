@@ -12,6 +12,7 @@ export const SNAKE = [0, 1, 1, 0, 0, 1, 1, 0, 0, 1]; // 0=A, 1=B
 
 // ── Deck ───────────────────────────────────────────────────────────────────
 import { STRATS } from './strats.js';
+import { DEFAULT_DECK_COPIES } from './defaultDeckWeights.js';
 
 export function buildDeck(deckConfig) {
   let d = [];
@@ -20,12 +21,19 @@ export function buildDeck(deckConfig) {
     for (const [cardId, count] of Object.entries(deckConfig)) {
       for (let i = 0; i < count; i++) d.push(cardId);
     }
+  } else if (DEFAULT_DECK_COPIES && Object.keys(DEFAULT_DECK_COPIES).length) {
+    // The SIM-LEARNED default: every card at least once, proven value with
+    // extras — see defaultDeckWeights.js. The old path truncated STRATS in
+    // definition order at fifty copies, which silently made 21 of 43 cards
+    // unreachable in any default game (every reaction, every post-roll).
+    for (const [cardId, count] of Object.entries(DEFAULT_DECK_COPIES)) {
+      for (let i = 0; i < count; i++) d.push(cardId);
+    }
   } else {
-    // Default deck from STRATS definitions
+    // Fallback when no learned weights exist: STRATS copies, untruncated.
     for (const s of STRATS) {
       for (let i = 0; i < (s.copies || 2); i++) d.push(s.id);
     }
-    d = d.slice(0, 50);
   }
   // Shuffle
   for (let i = d.length - 1; i > 0; i--) {
@@ -223,9 +231,8 @@ export function shotCheck(player, type, extra, ps) {
 }
 
 // ── Assist Spending ────────────────────────────────────────────────────────
-// Spend 1 AST: +1 to a player's next shot check
-// Spend 4 AST: initiate a 3PT shot check for a player with 3PT bonus (was 2)
-// Spend 3 AST: initiate a Paint shot check for a player with Paint bonus
+// Costs live in SPEND_COSTS above — that block is the single source of truth
+// for both the engine checks here and the buttons in CourtBoard.
 export function spendAssist(g, teamKey, type, playerIdx) {
   const ng = deepClone(g);
   const myT = getTeam(ng, teamKey);

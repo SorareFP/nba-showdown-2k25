@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { calcAdv, getTeam, getOpp, getPS, getFatigue, SNAKE } from '../../game/engine.js';
+import { calcAdv, getTeam, getOpp, getPS, getFatigue, SNAKE, SPEND_COSTS } from '../../game/engine.js';
 import { canPlayCard } from '../../game/canPlay.js';
 import { getStrat } from '../../game/strats.js';
 import { aiDraftPick, aiPlacementPick } from '../../game/ai.js';
@@ -1241,19 +1241,20 @@ function PlayerSlot({ player, ps, adv, fat, result, blocked, teamKey, idx, phase
               <div className={styles.statLine}>{result.reb}r {result.ast}a</div>
             </div>
             :<button className={styles.rollBtn} style={{background:col}} onClick={onRoll} disabled={pvpDisabled}>🎲 Roll</button>}
-            {/* Assist spending buttons — 4 AST for 3PT check, 3 AST for Paint check */}
+            {/* Assist spending buttons — costs come from SPEND_COSTS so the
+                buttons can never show at a count the engine will refuse */}
             {onSpendAssist && !pvpDisabled && (() => {
               const myT = teamKey==='A'?game.teamA:game.teamB;
               const ast = myT.assists;
               const has3pt = (player.threePtBoost||0) > 0;
               const hasPaint = (player.paintBoost||0) > 0;
-              if (ast < 3) return null;
-              const anyBtn = (ast>=4 && has3pt) || (ast>=3 && hasPaint);
+              const c3 = SPEND_COSTS.assistThree, cP = SPEND_COSTS.assistPaint;
+              const anyBtn = (ast>=c3 && has3pt) || (ast>=cP && hasPaint);
               if (!anyBtn) return null;
               return (
                 <div className={styles.assistSpend}>
-                  {ast>=4 && has3pt && <button className={styles.astBtn} title="Spend 4 AST: 3PT shot check" onClick={()=>onSpendAssist(teamKey,'3pt',idx)}>3PT (4A)</button>}
-                  {ast>=3 && hasPaint && <button className={styles.astBtn} title="Spend 3 AST: Paint shot check" onClick={()=>onSpendAssist(teamKey,'paint',idx)}>Paint (3A)</button>}
+                  {ast>=c3 && has3pt && <button className={styles.astBtn} title={`Spend ${c3} AST: 3PT shot check`} onClick={()=>onSpendAssist(teamKey,'3pt',idx)}>3PT ({c3}A)</button>}
+                  {ast>=cP && hasPaint && <button className={styles.astBtn} title={`Spend ${cP} AST: Paint shot check`} onClick={()=>onSpendAssist(teamKey,'paint',idx)}>Paint ({cP}A)</button>}
                 </div>
               );
             })()}
@@ -1262,12 +1263,13 @@ function PlayerSlot({ player, ps, adv, fat, result, blocked, teamKey, idx, phase
               const rb = game.reboundBonuses?.[teamKey];
               if (!rb) return null;
               const myT2 = teamKey==='A'?game.teamA:game.teamB;
-              const hasPaint = ((player.paintBoost||0) > 0 || player.power >= 10) && myT2.rebounds >= 3;
+              const cR = SPEND_COSTS.reboundPaint;
+              const hasPaint = ((player.paintBoost||0) > 0 || player.power >= 10) && myT2.rebounds >= cR;
               // The 2-REB putback was removed — see spendReboundBonus in engine.js.
               if (!(rb.paintCheck && hasPaint)) return null;
               return (
                 <div className={styles.assistSpend}>
-                  <button className={styles.rebBtn} title="Costs 3 REB: Paint shot check" onClick={()=>onSpendRebound(teamKey,'paint_check',idx)}>Paint (−3R)</button>
+                  <button className={styles.rebBtn} title={`Costs ${cR} REB: Paint shot check`} onClick={()=>onSpendRebound(teamKey,'paint_check',idx)}>Paint (−{cR}R)</button>
                 </div>
               );
             })()}

@@ -3,7 +3,7 @@
 // Pure functions: takes game state + team key, returns an action object.
 // No React, no side effects. Used by tutorial, solo mode, sim-to-end.
 
-import { getTeam, getOpp, getPS, calcAdv, getFatigue } from './engine.js';
+import { getTeam, getOpp, getPS, calcAdv, getFatigue, SPEND_COSTS } from './engine.js';
 import { canPlayCard } from './canPlay.js';
 import { getStrat, STRATS } from './strats.js';
 
@@ -136,6 +136,45 @@ export function aiPlacementPick(game, teamKey) {
     if (score > bestScore) { bestScore = score; best = cand; }
   }
   return { type: 'place_player', playerId: best.id };
+}
+
+// ── Conversion spends ───────────────────────────────────────────────────────
+//
+// The sim harness proved the value (the conversion channel is ~10% of all
+// scoring) and the live AI never touched it — no spendAssist caller existed
+// anywhere in this file. One decision per call, greedy: threes ahead of paint
+// by the best boost in the lineup, rebound paint-checks when the section
+// published one. The caller loops until null.
+export function aiSpendDecision(game, teamKey) {
+  const team = getTeam(game, teamKey);
+  if (!team?.starters?.length) return null;
+  const best = boost => {
+    let bi = -1, bv = -Infinity;
+    team.starters.forEach((p, i) => {
+      const v = p?.[boost] ?? -99;
+      if (p && v > bv) { bv = v; bi = i; }
+    });
+    return bi;
+  };
+  // spendAssist's type strings are '3pt' and 'paint', and it re-checks that
+  // the chosen player actually carries the matching boost — so only nominate
+  // a player whose boost is real, not merely the least-bad on the floor.
+  const three = best('threePtBoost');
+  if ((team.assists ?? 0) >= SPEND_COSTS.assistThree && three >= 0 && (team.starters[three]?.threePtBoost || 0) > 0) {
+    return { type: 'spend_assist', spendType: '3pt', playerIdx: three };
+  }
+  const paint = best('paintBoost');
+  const paintOk = paint >= 0 && (team.starters[paint]?.paintBoost || 0) > 0;
+  if ((team.assists ?? 0) >= SPEND_COSTS.assistPaint && paintOk) {
+    return { type: 'spend_assist', spendType: 'paint', playerIdx: paint };
+  }
+  const bonuses = game.reboundBonuses?.[teamKey];
+  if ((team.rebounds ?? 0) >= SPEND_COSTS.reboundPaint && bonuses?.paintCheck) {
+    // The rebound paint check has no boost requirement — any finisher works,
+    // so take the best paint hand available even at +0.
+    return { type: 'spend_rebound', rebType: 'paint_check', playerIdx: Math.max(paint, 0) };
+  }
+  return null;
 }
 
 // ── Scoring Phase: Card or Pass ─────────────────────────────────────────────
@@ -338,10 +377,30 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
       return { playerIdx: best.idx };
     }
 
-    case 'bully_ball':
-    case 'power_move':
+    case 'bully_ball': {
+      // execCard re-checks the CHOSEN player's power ADVANTAGE, so picking by
+      // raw power can nominate a star who is out-muscled in his matchup and
+      // fail at the door (canPlay only asks whether SOMEONE has an edge).
+      const best = starters.reduce((b, p, i) => {
+        const di = (game.offMatchups?.[teamKey] || [])[i] ?? i;
+        const dp = oppT.starters[di];
+        if (!dp) return b;
+        const adv = calcAdv(p, dp, game.tempEff?.[teamKey] || {}, i);
+        return adv.powerAdv > (b.adv || 0) ? { idx: i, adv: adv.powerAdv } : b;
+      }, { idx: 0, adv: 0 });
+      return { playerIdx: best.idx };
+    }
+
     case 'back_to_basket': {
-      // Pick highest power player
+      // execCard needs the chosen player at Power 13+ WITH a Paint Bonus.
+      const cand = starters.findIndex((p, i) => rolls[i] == null && p.power >= 13 && (p.paintBoost || 0) > 0);
+      if (cand >= 0) return { playerIdx: cand };
+      const any = starters.findIndex(p => p.power >= 13 && (p.paintBoost || 0) > 0);
+      return { playerIdx: any >= 0 ? any : 0 };
+    }
+
+    case 'power_move': {
+      // Pure buff, no exec gate — highest power still waiting to roll.
       const best = starters.reduce((b, p, i) => {
         if (rolls[i] != null) return b;
         return p.power > (b.pwr || 0) ? { idx: i, pwr: p.power } : b;

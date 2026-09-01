@@ -1,5 +1,6 @@
 import { useReducer, useCallback, useState, useEffect } from 'react';
-import { newGame, doRoll, endSection, spendAssist, spendReboundBonus } from '../game/engine.js';
+import { newGame, doRoll, endSection, spendAssist, spendReboundBonus, applyMatchups } from '../game/engine.js';
+import { aiTurn, aiScoringDecision, aiRollDecision, aiSpendDecision, aiReactionDecision } from '../game/ai.js';
 import { execCard, resolvePendingShotCheck } from '../game/execCard.js';
 import { CARDS } from '../game/cards.js';
 import { useAuth } from '../firebase/AuthProvider.jsx';
@@ -19,17 +20,17 @@ function gameReducer(state, action) {
     case 'END_SECTION': return endSection(state);
     case 'EXEC_CARD': {
       const { game, ok, msg } = execCard(state, action.teamKey, action.cardId, action.opts || {});
-      if (!ok) { alert(msg); return state; }
+      if (!ok) { if (!action.silent) alert(msg); return state; }
       return game;
     }
     case 'SPEND_ASSIST': {
       const { game, ok, msg } = spendAssist(state, action.teamKey, action.spendType, action.playerIdx);
-      if (!ok) { alert(msg); return state; }
+      if (!ok) { if (!action.silent) alert(msg); return state; }
       return game;
     }
     case 'SPEND_REBOUND': {
       const { game, ok, msg } = spendReboundBonus(state, action.teamKey, action.rebType, action.playerIdx);
-      if (!ok) { alert(msg); return state; }
+      if (!ok) { if (!action.silent) alert(msg); return state; }
       return game;
     }
     case 'RESOLVE_CHECK': return resolvePendingShotCheck(state);
@@ -38,8 +39,115 @@ function gameReducer(state, action) {
   }
 }
 
+const AI_DELAY = 700;
+
 export default function PlayTab({ teamA: rosterA, teamB: rosterB }) {
   const [game, dispatch] = useReducer(gameReducer, null);
+
+  // ── The AI opponent's turn driver ─────────────────────────────────────────
+  //
+  // PlayTab has always LOOKED like a solo mode — the blind pick has the AI
+  // choose Team B's five — but nothing ever drove B's turns, so every game
+  // was secretly hotseat. This effect is the missing coach: matchup plays,
+  // scoring plays, rolls, conversion spends (aiSpendDecision — the channel
+  // the audit proved is ~10% of all scoring), and the shot-check reaction
+  // window. The human keeps the same window through PendingBanner, which
+  // pauses on the AI's checks with Close Out on offer — the MTG-style pause,
+  // already built.
+  useEffect(() => {
+    if (!game || game.done) return undefined;
+    const timer = setTimeout(() => {
+      const phase = game.phase;
+
+      // Validate every AI play against the pure engine BEFORE it reaches the
+      // reducer. A dispatch that fails inside the reducer returns the same
+      // state object, React bails out of the re-render, and this effect never
+      // fires again — the game freezes on the AI's turn. Running execCard here
+      // and dispatching the RESULT means a bad play simply becomes a pass.
+      const tryCard = (cardId, opts) => {
+        const res = execCard(game, 'B', cardId, opts || {});
+        if (res.ok) { dispatch({ type: 'UPDATE', game: res.game }); return true; }
+        return false;
+      };
+
+      // A pending check on the HUMAN's shooter: the AI takes its reaction
+      // window, then lets the die fly. The AI's own checks wait for the human.
+      if (game.pendingShotCheck) {
+        const psc = game.pendingShotCheck;
+        if (psc.teamKey === 'A') {
+          if (!psc.closeOutBonus) {
+            const react = aiReactionDecision(game, 'B', 'shot_check');
+            if (react?.type === 'play_card' && tryCard(react.cardId, react.opts)) return;
+          }
+          dispatch({ type: 'RESOLVE_CHECK' });
+        }
+        return;
+      }
+
+      if (phase === 'matchup_strats' && (game.placementStep ?? 10) >= 10 && game.matchupTurn === 'B') {
+        const action = aiTurn(game, 'B');
+        if (action?.type === 'set_matchups') {
+          dispatch({ type: 'UPDATE', game: applyMatchups(game, 'B', action.matchups) });
+          return;
+        }
+        if (action?.type === 'play_card' && tryCard(action.cardId, action.opts)) return;
+        const g = JSON.parse(JSON.stringify(game));
+        g.matchupPasses = (g.matchupPasses || 0) + 1;
+        if (g.matchupPasses >= 2) {
+          g.phase = 'scoring';
+          g.rollResults = { A: [], B: [] };
+          g.log = [...g.log, { team: null, msg: 'Both passed — Scoring Phase!' }];
+        } else {
+          g.matchupTurn = 'A';
+          g.log = [...g.log, { team: 'B', msg: 'Passed.' }];
+        }
+        dispatch({ type: 'UPDATE', game: g });
+        return;
+      }
+
+      if (phase === 'scoring') {
+        const rollingOpen = (game.scoringPasses || 0) >= 99;
+        if (!rollingOpen && game.scoringTurn === 'B') {
+          const action = aiScoringDecision(game, 'B');
+          if (action?.type === 'play_card' && tryCard(action.cardId, action.opts)) return;
+          const g = JSON.parse(JSON.stringify(game));
+          g.scoringPasses = (g.scoringPasses || 0) + 1;
+          if (g.scoringPasses >= 2) {
+            g.scoringPasses = 99;
+            g.log = [...g.log, { team: null, msg: 'Both passed — rolling begins!' }];
+          } else {
+            g.scoringTurn = 'A';
+            g.log = [...g.log, { team: 'B', msg: 'Passed scoring turn.' }];
+          }
+          dispatch({ type: 'UPDATE', game: g });
+          return;
+        }
+        if (rollingOpen) {
+          const rollsB = game.rollResults?.B || [];
+          const blockedB = game.blockedRolls?.B || {};
+          const needsRoll = [0, 1, 2, 3, 4].some(i => rollsB[i] == null && !blockedB[i]);
+          if (needsRoll) {
+            const action = aiRollDecision(game, 'B');
+            if (action?.playerIdx != null) {
+              dispatch({ type: 'ROLL', teamKey: 'B', idx: action.playerIdx });
+              return;
+            }
+            // No rollable player despite open slots — fall through to spends.
+          }
+          const spend = aiSpendDecision(game, 'B');
+          if (spend?.type === 'spend_assist') {
+            const res = spendAssist(game, 'B', spend.spendType, spend.playerIdx);
+            if (res.ok) { dispatch({ type: 'UPDATE', game: res.game }); return; }
+          }
+          if (spend?.type === 'spend_rebound') {
+            const res = spendReboundBonus(game, 'B', spend.rebType, spend.playerIdx);
+            if (res.ok) { dispatch({ type: 'UPDATE', game: res.game }); return; }
+          }
+        }
+      }
+    }, AI_DELAY);
+    return () => clearTimeout(timer);
+  }, [game]);
 
   const startGame = useCallback((rA, rB, deckA, deckB) => {
     dispatch({ type: 'SET', game: newGame(rA, rB, deckA, deckB) });

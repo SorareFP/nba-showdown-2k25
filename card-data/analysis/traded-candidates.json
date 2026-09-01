@@ -1,8 +1,8 @@
 {
  "what": "Candidates for the TRADED set: 30+ game stints on teams a player is not known for. Mined from the 2000-2026 full-league tables; known-for = most games in that window.",
- "caveat": "The window truncates pre-2000 careers, so a 1990s star's true home team can be under-counted — the starStints section lists famous late-career stints caught regardless; legends whose home fell before 2000 (Ewing ORL, Hakeem TOR) need the 1990s tables to measure honestly.",
+ "caveat": "The window truncates pre-2000 careers, so a 1990s star's true home team can be under-counted \u2014 the starStints section lists famous late-career stints caught regardless; legends whose home fell before 2000 (Ewing ORL, Hakeem TOR) need the 1990s tables to measure honestly.",
  "funExceptions": {
-  "Rasheed Wallace ATL 2004": "1 game, 42 minutes, 20 points on .395 TS, -3.3 BPM. Buildable and plausible: a mid-tier volume-scoring chart, modest S+P. The user asked for it if not stupid — it is not."
+  "Rasheed Wallace ATL 2004": "1 game, 42 minutes, 20 points on .395 TS, -3.3 BPM. Buildable and plausible: a mid-tier volume-scoring chart, modest S+P. The user asked for it if not stupid \u2014 it is not."
  },
  "candidates": [
   {
@@ -104,7 +104,7 @@
    ]
   },
   {
-   "name": "Jonas Valančiūnas",
+   "name": "Jonas Valan\u010di\u016bnas",
    "team": "SAC",
    "games": 32,
    "share": 0.032,
@@ -118,7 +118,7 @@
    ]
   },
   {
-   "name": "Dennis Schröder",
+   "name": "Dennis Schr\u00f6der",
    "team": "CLE",
    "games": 30,
    "share": 0.033,
@@ -560,7 +560,7 @@
    ]
   },
   {
-   "name": "Vladimir Radmanović",
+   "name": "Vladimir Radmanovi\u0107",
    "team": "LAC",
    "games": 30,
    "share": 0.041,

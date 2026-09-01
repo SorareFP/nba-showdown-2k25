@@ -14,6 +14,17 @@
  * the cached tables and their seasons were fetched for this (1976, 1977, 1985,
  * 1988, 1990, 1993, 1994, 1997).
  *
+ * A LEGEND IS ONLY REBUILT WHERE THERE IS DATA TO REBUILD IT FROM. EPM begins
+ * in 2002 and the Speed+Power composite runs on it, so a 1988 season has no
+ * budget to spend and the generator prices it at replacement -- Michael Jordan
+ * came out at Speed+Power 14. Rather than print that, the nine pre-2002 cards
+ * are PORTED: their hand-made attributes and chart carry over untouched.
+ *
+ * They are still REPRICED, and that is not a contradiction. Play value reads
+ * the finished card -- its Speed+Power, its chart, its boosts -- and never
+ * touches EPM, which is only needed to GENERATE a budget. So a ported card
+ * lands on the same salary scale as everything else.
+ *
  * NOT WRITTEN TO A SET FILE. The 25-26 cards are printed and physical; this
  * reports what they WOULD be so the comparison can be judged before anything
  * is committed to.
@@ -87,15 +98,30 @@ for (const row of archiveRows) {
 const poolIds = new Set(resolvePlayerIds(pool, archiveRows).ids.values());
 const currentRows = [...currentByName.values()].filter(r => poolIds.has(r.playerId));
 
+/** rawCards.js's short keys, widened to the shape every other tool reads. */
+function widen(r, label) {
+  return {
+    id: r.id, name: label, team: r.t,
+    speed: r.s, power: r.p, shotLine: r.l,
+    paintBoost: r.pb, threePtBoost: r.tb, defBoost: r.db,
+    chart: r.c.map(([lo, hi, pts, reb, ast]) => ({ lo, hi, pts, reb, ast })),
+  };
+}
+
 const selections = [];
 const meta = [];
-const missing = [];
+const ported = [];
 for (const L of legends) {
   const key = `${normalizeName(L.name)}|${L.season}`;
   const adv = advanced.get(key);
   const pp = perPoss.get(key);
-  if (!adv || !pp) { missing.push(`${L.label} (${!adv ? 'no advanced' : 'no perPoss'})`); continue; }
-  const e = epm.get(key) ?? { epm: null, ewinsPerGame: null };
+  const e = epm.get(key);
+  // No EPM means no Speed+Power budget, and no season row means no chart. Both
+  // are the same answer: keep the card that exists.
+  if (!adv || !pp || !Number.isFinite(e?.epm)) {
+    ported.push(L);
+    continue;
+  }
   selections.push({
     player: { name: L.name, pos: adv.pos },
     season: { ...adv, ...pp, season: L.season, playerId: adv.playerId, ...e },
@@ -103,7 +129,10 @@ for (const L of legends) {
   meta.push(L);
 }
 
-const cards = buildSet({ selections, currentRows, calibration, biometrics: indexBiometrics(loadBiometrics()), positionShares: indexPositionShares(loadPositionShares()) });
+const rebuilt = buildSet({ selections, currentRows, calibration, biometrics: indexBiometrics(loadBiometrics()), positionShares: indexPositionShares(loadPositionShares()) });
+const portedCards = ported.map(L => widen(raw.find(r => r.n === L.label), L.label));
+const cards = [...rebuilt, ...portedCards];
+const all = [...meta.map(m => ({ ...m, rebuilt: true })), ...ported.map(m => ({ ...m, rebuilt: false }))];
 
 const field = JSON.parse(
   fs.readFileSync(path.join(REPO_ROOT, 'card-data', 'generated', 'cards-2026-27.json'), 'utf8')
@@ -128,24 +157,25 @@ const evOld = c => {
 };
 
 const rows = cards.map((c, i) => ({
-  label: meta[i].label,
-  oldSP: meta[i].old.speed + meta[i].old.power,
+  label: all[i].label,
+  rebuilt: all[i].rebuilt,
+  oldSP: all[i].old.speed + all[i].old.power,
   newSP: c.speed + c.power,
-  oldSal: meta[i].old.salary,
+  oldSal: all[i].old.salary,
   newSal: salaries[i],
-  oldEV: evOld(meta[i].old.chart),
+  oldEV: evOld(all[i].old.chart),
   newEV: ev(c.chart),
-  oldTop: Math.max(...meta[i].old.chart.map(t => t[2])),
+  oldTop: Math.max(...all[i].old.chart.map(t => t[2])),
   newTop: c.chart[c.chart.length - 1].pts,
   opens: c.chart[c.chart.length - 1].lo,
-  hadEpm: Number.isFinite(selections[i].season.epm),
+
 }));
 rows.sort((a, b) => b.newSal - a.newSal);
 
 const pad = (s, w) => String(s).padEnd(w);
 const num = (s, w) => String(s).padStart(w);
-console.log(`\n${rows.length} legend cards rebuilt on the section model` + (missing.length ? `, ${missing.length} skipped` : ''));
-if (missing.length) console.log(`  skipped: ${missing.join(', ')}`);
+console.log(`
+${rows.length} legend cards: ${rebuilt.length} rebuilt on the section model, ${portedCards.length} ported unchanged (no EPM before 2002)`);
 console.log(`\n  ${pad('card', 26)}${num('S+P', 9)}${num('chart EV', 13)}${num('top tier', 12)}${num('salary', 14)}`);
 console.log(`  ${pad('', 26)}${num('old  new', 9)}${num('old   new', 13)}${num('old  new', 12)}${num('old   new', 14)}`);
 for (const r of rows) {
@@ -153,7 +183,7 @@ for (const r of rows) {
     `  ${pad(r.label, 26)}${num(`${r.oldSP}`, 4)}${num(`${r.newSP}`, 5)}` +
     `${num(r.oldEV.toFixed(2), 7)}${num(r.newEV.toFixed(2), 6)}` +
     `${num(r.oldTop, 6)}${num(`${r.newTop}@${r.opens}`, 6)}` +
-    `${num(r.oldSal, 8)}${num(r.newSal, 6)}${r.hadEpm ? '' : '   no EPM'}`
+    `${num(r.oldSal, 8)}${num(r.newSal, 6)}${r.rebuilt ? '' : '   PORTED'}`
   );
 }
 const mean = xs => xs.reduce((s, x) => s + x, 0) / xs.length;
@@ -163,5 +193,5 @@ console.log(`  salary     old ${mean(rows.map(r => r.oldSal)).toFixed(0)} -> new
 
 fs.writeFileSync(
   path.join(REPO_ROOT, 'card-data', 'generated', 'legend-charts-rebuilt.json'),
-  `${JSON.stringify({ generatedAt: new Date().toISOString(), note: 'PROPOSED, not shipped — the 25-26 legend cards are printed.', cards: cards.map((c, i) => ({ ...c, label: meta[i].label, salary: salaries[i] })) }, null, 1)}\n`
+  `${JSON.stringify({ generatedAt: new Date().toISOString(), note: 'PROPOSED, not shipped — the 25-26 legend cards are printed.', cards: cards.map((c, i) => ({ ...c, label: all[i].label, rebuilt: all[i].rebuilt, salary: salaries[i] })) }, null, 1)}\n`
 );

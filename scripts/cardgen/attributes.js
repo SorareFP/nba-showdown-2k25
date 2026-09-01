@@ -570,11 +570,27 @@ export const SHOT_LINE_MAX = 18;
  */
 export const SALARY_STEP = 10;
 export const SALARY_MIN = 10;
-export const SALARY_MAX = 1500;
+
+/**
+ * NO CEILING. Salary is meant to be wholly representative of what a card can
+ * do, and a ceiling makes it stop being that exactly where the differences
+ * matter most: the six best cards in the game all printed 1500 and became
+ * indistinguishable on price, so a roster could take the most valuable card in
+ * the set for the same outlay as the sixth.
+ *
+ * The 5500 ROSTER cap is untouched and is the real constraint. Nothing breaks
+ * by letting a single card cost more than 1500 -- the nine cheapest cards cost
+ * about 290 together, so even a 3000-point card leaves a legal ten-man roster.
+ *
+ * Kept as a named export rather than deleted because a dozen call sites pass it
+ * and several report "cards at the cap", which should now correctly read zero.
+ */
+export const SALARY_MAX = Infinity;
 
 export function roundSalary(value) {
   if (!Number.isFinite(value)) return SALARY_MIN;
   const stepped = Math.round(value / SALARY_STEP) * SALARY_STEP;
+  // Math.min against an infinite SALARY_MAX is a no-op, which is the point.
   return Math.min(Math.max(stepped, SALARY_MIN), SALARY_MAX);
 }
 

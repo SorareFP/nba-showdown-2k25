@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-31T22:43:11.551Z",
+ "generatedAt": "2026-09-01T11:40:58.526Z",
  "provisional": true,
  "set": "wnba",
  "league": "WNBA",
@@ -51,7 +51,7 @@
    "paintBoost": 0,
    "threePtBoost": 1,
    "defBoost": 2,
-   "salary": 1500,
+   "salary": 1540,
    "chart": [
     {
      "lo": 1,
@@ -6675,13 +6675,6 @@
     },
     {
      "lo": 18,
-     "hi": 23,
-     "pts": 1,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 24,
      "hi": 99,
      "pts": 1,
      "reb": 1,
@@ -7768,13 +7761,6 @@
     },
     {
      "lo": 17,
-     "hi": 24,
-     "pts": 4,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 25,
      "hi": 99,
      "pts": 4,
      "reb": 1,

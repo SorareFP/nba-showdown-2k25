@@ -412,10 +412,16 @@ describe('roundSalary', () => {
     expect(A.roundSalary(826)).toBe(830);
   });
 
-  it('clamps rather than emitting a negative or absurd salary', () => {
+  it('floors a negative or unusable salary, and no longer caps a large one', () => {
     expect(A.roundSalary(-500)).toBe(A.SALARY_MIN);
-    expect(A.roundSalary(99999)).toBe(A.SALARY_MAX);
     expect(A.roundSalary(NaN)).toBe(A.SALARY_MIN);
+    // NO CEILING. Salary is meant to represent what a card can do, and a cap
+    // makes it stop doing that exactly where the differences matter -- the six
+    // best cards all printed 1500 and became indistinguishable on price. The
+    // 5500 ROSTER cap is the real constraint and is untouched.
+    expect(A.SALARY_MAX).toBe(Infinity);
+    expect(A.roundSalary(99999)).toBe(100000);
+    expect(A.roundSalary(1930)).toBe(1930);
   });
 });
 

@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-01T11:31:37.878Z",
+ "generatedAt": "2026-09-01T11:38:22.690Z",
  "note": "PROPOSED, not shipped — the 25-26 legend cards are printed.",
  "cards": [
   {
@@ -73,226 +73,8 @@
     "per": 31.7
    },
    "provisional": true,
-   "label": "08-09 LeBron James"
-  },
-  {
-   "id": "Michael_Jordan",
-   "name": "Michael Jordan",
-   "team": "CHI",
-   "pos": "SG",
-   "speed": 8,
-   "power": 6,
-   "shotLine": 15,
-   "paintBoost": 0,
-   "threePtBoost": -4,
-   "defBoost": 4,
-   "salary": 780,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 3,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 4,
-     "hi": 10,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 11,
-     "hi": 14,
-     "pts": 3,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 15,
-     "hi": 21,
-     "pts": 5,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 22,
-     "hi": 99,
-     "pts": 7,
-     "reb": 1,
-     "ast": 2
-    }
-   ],
-   "season": 1988,
-   "seasonLabel": "1987-88",
-   "age": 24,
-   "games": 82,
-   "mpg": 40.4,
-   "bbrefId": "jordami01",
-   "traded": false,
-   "metrics": {
-    "bpm": 13,
-    "vorp": 12.5,
-    "ws": 21.2,
-    "ws48": 0.308,
-    "per": 31.7
-   },
-   "provisional": true,
-   "label": "87-88 Michael Jordan"
-  },
-  {
-   "id": "David_Robinson",
-   "name": "David Robinson",
-   "team": "SAS",
-   "pos": "C",
-   "speed": 5,
-   "power": 9,
-   "shotLine": 16,
-   "paintBoost": 0,
-   "threePtBoost": 0,
-   "defBoost": 4,
-   "salary": 760,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 4,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 5,
-     "hi": 12,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 13,
-     "hi": 15,
-     "pts": 3,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 16,
-     "hi": 22,
-     "pts": 5,
-     "reb": 2,
-     "ast": 1
-    },
-    {
-     "lo": 23,
-     "hi": 99,
-     "pts": 7,
-     "reb": 3,
-     "ast": 1
-    }
-   ],
-   "season": 1994,
-   "seasonLabel": "1993-94",
-   "age": 28,
-   "games": 80,
-   "mpg": 40.5,
-   "bbrefId": "robinda01",
-   "traded": false,
-   "metrics": {
-    "bpm": 11.9,
-    "vorp": 11.4,
-    "ws": 20,
-    "ws48": 0.296,
-    "per": 30.7
-   },
-   "provisional": true,
-   "label": "93-94 David Robinson"
-  },
-  {
-   "id": "Larry_Bird",
-   "name": "Larry Bird",
-   "team": "BOS",
-   "pos": "SF",
-   "speed": 7,
-   "power": 7,
-   "shotLine": 16,
-   "paintBoost": 0,
-   "threePtBoost": 2,
-   "defBoost": 2,
-   "salary": 640,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 4,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 5,
-     "hi": 13,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 14,
-     "hi": 15,
-     "pts": 3,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 16,
-     "hi": 23,
-     "pts": 4,
-     "reb": 2,
-     "ast": 1
-    },
-    {
-     "lo": 24,
-     "hi": 99,
-     "pts": 6,
-     "reb": 3,
-     "ast": 2
-    }
-   ],
-   "season": 1985,
-   "seasonLabel": "1984-85",
-   "age": 28,
-   "games": 80,
-   "mpg": 39.5,
-   "bbrefId": "birdla01",
-   "traded": false,
-   "metrics": {
-    "bpm": 8.8,
-    "vorp": 8.7,
-    "ws": 15.7,
-    "ws48": 0.238,
-    "per": 26.5
-   },
-   "provisional": true,
-   "label": "84-85 Larry Bird"
+   "label": "08-09 LeBron James",
+   "rebuilt": true
   },
   {
    "id": "Dwyane_Wade",
@@ -303,7 +85,7 @@
    "power": 12,
    "shotLine": 16,
    "paintBoost": 0,
-   "threePtBoost": 0,
+   "threePtBoost": -2,
    "defBoost": 2,
    "salary": 1480,
    "chart": [
@@ -365,20 +147,21 @@
     "per": 30.4
    },
    "provisional": true,
-   "label": "08-09 Dwyane Wade"
+   "label": "08-09 Dwyane Wade",
+   "rebuilt": true
   },
   {
-   "id": "Shaquille_O_Neal",
-   "name": "Shaquille O'Neal",
-   "team": "LAL",
-   "pos": "C",
-   "speed": 4,
-   "power": 10,
-   "shotLine": 16,
-   "paintBoost": 2,
+   "id": "Kevin_Durant",
+   "name": "Kevin Durant",
+   "team": "OKC",
+   "pos": "SF",
+   "speed": 14,
+   "power": 16,
+   "shotLine": 13,
+   "paintBoost": 0,
    "threePtBoost": 0,
-   "defBoost": 2,
-   "salary": 770,
+   "defBoost": 1,
+   "salary": 1450,
    "chart": [
     {
      "lo": 1,
@@ -403,79 +186,6 @@
     },
     {
      "lo": 13,
-     "hi": 15,
-     "pts": 3,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 16,
-     "hi": 22,
-     "pts": 5,
-     "reb": 2,
-     "ast": 1
-    },
-    {
-     "lo": 23,
-     "hi": 99,
-     "pts": 6,
-     "reb": 4,
-     "ast": 1
-    }
-   ],
-   "season": 2000,
-   "seasonLabel": "1999-00",
-   "age": 27,
-   "games": 79,
-   "mpg": 40,
-   "bbrefId": "onealsh01",
-   "traded": false,
-   "metrics": {
-    "bpm": 9.3,
-    "vorp": 9,
-    "ws": 18.6,
-    "ws48": 0.283,
-    "per": 30.6
-   },
-   "provisional": true,
-   "label": "99-00 Shaquille O'Neal"
-  },
-  {
-   "id": "Kevin_Durant",
-   "name": "Kevin Durant",
-   "team": "OKC",
-   "pos": "SF",
-   "speed": 14,
-   "power": 16,
-   "shotLine": 14,
-   "paintBoost": 0,
-   "threePtBoost": 0,
-   "defBoost": 1,
-   "salary": 1430,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 4,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 5,
-     "hi": 13,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 14,
      "hi": 15,
      "pts": 3,
      "reb": 1,
@@ -511,7 +221,8 @@
     "per": 29.8
    },
    "provisional": true,
-   "label": "13-14 Kevin Durant"
+   "label": "13-14 Kevin Durant",
+   "rebuilt": true
   },
   {
    "id": "Stephen_Curry",
@@ -522,7 +233,7 @@
    "power": 11,
    "shotLine": 12,
    "paintBoost": -1,
-   "threePtBoost": 3,
+   "threePtBoost": 4,
    "defBoost": 2,
    "salary": 1500,
    "chart": [
@@ -584,7 +295,8 @@
     "per": 31.5
    },
    "provisional": true,
-   "label": "15-16 Stephen Curry"
+   "label": "15-16 Stephen Curry",
+   "rebuilt": true
   },
   {
    "id": "Russell_Westbrook",
@@ -657,7 +369,8 @@
     "per": 30.6
    },
    "provisional": true,
-   "label": "16-17 Russell Westbrook"
+   "label": "16-17 Russell Westbrook",
+   "rebuilt": true
   },
   {
    "id": "Chris_Paul",
@@ -723,7 +436,8 @@
     "per": 30
    },
    "provisional": true,
-   "label": "08-09 Chris Paul"
+   "label": "08-09 Chris Paul",
+   "rebuilt": true
   },
   {
    "id": "Dirk_Nowitzki",
@@ -734,9 +448,9 @@
    "power": 18,
    "shotLine": 15,
    "paintBoost": 0,
-   "threePtBoost": 2,
+   "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 1490,
+   "salary": 1420,
    "chart": [
     {
      "lo": 1,
@@ -796,7 +510,8 @@
     "per": 28.1
    },
    "provisional": true,
-   "label": "05-06 Dirk Nowitzki"
+   "label": "05-06 Dirk Nowitzki",
+   "rebuilt": true
   },
   {
    "id": "Kevin_Garnett",
@@ -806,10 +521,10 @@
    "speed": 13,
    "power": 17,
    "shotLine": 17,
-   "paintBoost": 0,
-   "threePtBoost": -1,
+   "paintBoost": 1,
+   "threePtBoost": 0,
    "defBoost": 3,
-   "salary": 1280,
+   "salary": 1250,
    "chart": [
     {
      "lo": 1,
@@ -869,7 +584,8 @@
     "per": 29.4
    },
    "provisional": true,
-   "label": "03-04 Kevin Garnett"
+   "label": "03-04 Kevin Garnett",
+   "rebuilt": true
   },
   {
    "id": "Tracy_McGrady",
@@ -942,73 +658,8 @@
     "per": 30.3
    },
    "provisional": true,
-   "label": "02-03 Tracy McGrady"
-  },
-  {
-   "id": "Hakeem_Olajuwon",
-   "name": "Hakeem Olajuwon",
-   "team": "HOU",
-   "pos": "C",
-   "speed": 5,
-   "power": 9,
-   "shotLine": 16,
-   "paintBoost": 0,
-   "threePtBoost": 0,
-   "defBoost": 4,
-   "salary": 660,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 4,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 5,
-     "hi": 15,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 16,
-     "hi": 23,
-     "pts": 4,
-     "reb": 2,
-     "ast": 1
-    },
-    {
-     "lo": 24,
-     "hi": 99,
-     "pts": 6,
-     "reb": 4,
-     "ast": 1
-    }
-   ],
-   "season": 1993,
-   "seasonLabel": "1992-93",
-   "age": 30,
-   "games": 82,
-   "mpg": 39.5,
-   "bbrefId": "olajuha01",
-   "traded": false,
-   "metrics": {
-    "bpm": 7.5,
-    "vorp": 7.8,
-    "ws": 15.8,
-    "ws48": 0.234,
-    "per": 27.3
-   },
-   "provisional": true,
-   "label": "92-93 Hakeem Olajuwon"
+   "label": "02-03 Tracy McGrady",
+   "rebuilt": true
   },
   {
    "id": "Kevin_Love",
@@ -1081,139 +732,8 @@
     "per": 26.9
    },
    "provisional": true,
-   "label": "13-14 Kevin Love"
-  },
-  {
-   "id": "Grant_Hill",
-   "name": "Grant Hill",
-   "team": "DET",
-   "pos": "SF",
-   "speed": 7,
-   "power": 7,
-   "shotLine": 17,
-   "paintBoost": 0,
-   "threePtBoost": 0,
-   "defBoost": 3,
-   "salary": 550,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 4,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 5,
-     "hi": 16,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 17,
-     "hi": 21,
-     "pts": 3,
-     "reb": 2,
-     "ast": 1
-    },
-    {
-     "lo": 22,
-     "hi": 99,
-     "pts": 5,
-     "reb": 3,
-     "ast": 2
-    }
-   ],
-   "season": 1997,
-   "seasonLabel": "1996-97",
-   "age": 24,
-   "games": 80,
-   "mpg": 39.3,
-   "bbrefId": "hillgr01",
-   "traded": false,
-   "metrics": {
-    "bpm": 8.2,
-    "vorp": 8,
-    "ws": 14.6,
-    "ws48": 0.223,
-    "per": 25.5
-   },
-   "provisional": true,
-   "label": "96-97 Grant Hill"
-  },
-  {
-   "id": "Magic_Johnson",
-   "name": "Magic Johnson",
-   "team": "LAL",
-   "pos": "PG",
-   "speed": 9,
-   "power": 5,
-   "shotLine": 14,
-   "paintBoost": -1,
-   "threePtBoost": 0,
-   "defBoost": 2,
-   "salary": 580,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 4,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 5,
-     "hi": 13,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 14,
-     "hi": 21,
-     "pts": 3,
-     "reb": 1,
-     "ast": 2
-    },
-    {
-     "lo": 22,
-     "hi": 99,
-     "pts": 6,
-     "reb": 2,
-     "ast": 4
-    }
-   ],
-   "season": 1990,
-   "seasonLabel": "1989-90",
-   "age": 30,
-   "games": 79,
-   "mpg": 37.2,
-   "bbrefId": "johnsma02",
-   "traded": false,
-   "metrics": {
-    "bpm": 10.1,
-    "vorp": 8.9,
-    "ws": 16.5,
-    "ws48": 0.27,
-    "per": 26.6
-   },
-   "provisional": true,
-   "label": "89-90 Magic Johnson"
+   "label": "13-14 Kevin Love",
+   "rebuilt": true
   },
   {
    "id": "Kobe_Bryant",
@@ -1222,11 +742,11 @@
    "pos": "SG",
    "speed": 17,
    "power": 12,
-   "shotLine": 17,
+   "shotLine": 16,
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 1480,
+   "salary": 1500,
    "chart": [
     {
      "lo": 1,
@@ -1251,13 +771,13 @@
     },
     {
      "lo": 11,
-     "hi": 16,
+     "hi": 15,
      "pts": 3,
      "reb": 1,
      "ast": 1
     },
     {
-     "lo": 17,
+     "lo": 16,
      "hi": 23,
      "pts": 6,
      "reb": 1,
@@ -1286,7 +806,8 @@
     "per": 28
    },
    "provisional": true,
-   "label": "05-06 Kobe Bryant"
+   "label": "05-06 Kobe Bryant",
+   "rebuilt": true
   },
   {
    "id": "James_Harden",
@@ -1359,153 +880,8 @@
     "per": 30.6
    },
    "provisional": true,
-   "label": "18-19 James Harden"
-  },
-  {
-   "id": "Kareem_Abdul_Jabbar",
-   "name": "Kareem Abdul-Jabbar",
-   "team": "LAL",
-   "pos": "C",
-   "speed": 5,
-   "power": 9,
-   "shotLine": 15,
-   "paintBoost": 0,
-   "threePtBoost": 0,
-   "defBoost": 3,
-   "salary": 680,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 4,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 5,
-     "hi": 14,
-     "pts": 3,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 15,
-     "hi": 20,
-     "pts": 3,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 21,
-     "hi": 23,
-     "pts": 3,
-     "reb": 2,
-     "ast": 1
-    },
-    {
-     "lo": 24,
-     "hi": 99,
-     "pts": 5,
-     "reb": 4,
-     "ast": 1
-    }
-   ],
-   "season": 1977,
-   "seasonLabel": "1976-77",
-   "age": 29,
-   "games": 82,
-   "mpg": 36.8,
-   "bbrefId": "abdulka01",
-   "traded": false,
-   "metrics": {
-    "bpm": 9.4,
-    "vorp": 8.7,
-    "ws": 17.8,
-    "ws48": 0.283,
-    "per": 27.8
-   },
-   "provisional": true,
-   "label": "76-77 Kareem Abdul-Jabbar"
-  },
-  {
-   "id": "Charles_Barkley",
-   "name": "Charles Barkley",
-   "team": "PHI",
-   "pos": "SF",
-   "speed": 7,
-   "power": 7,
-   "shotLine": 12,
-   "paintBoost": 0,
-   "threePtBoost": -3,
-   "defBoost": 1,
-   "salary": 540,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 4,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 5,
-     "hi": 11,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 12,
-     "hi": 14,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 15,
-     "hi": 20,
-     "pts": 3,
-     "reb": 2,
-     "ast": 1
-    },
-    {
-     "lo": 21,
-     "hi": 99,
-     "pts": 6,
-     "reb": 3,
-     "ast": 1
-    }
-   ],
-   "season": 1990,
-   "seasonLabel": "1989-90",
-   "age": 26,
-   "games": 79,
-   "mpg": 39.1,
-   "bbrefId": "barklch01",
-   "traded": false,
-   "metrics": {
-    "bpm": 8.2,
-    "vorp": 8,
-    "ws": 17.3,
-    "ws48": 0.269,
-    "per": 27.1
-   },
-   "provisional": true,
-   "label": "89-90 Charles Barkley"
+   "label": "18-19 James Harden",
+   "rebuilt": true
   },
   {
    "id": "Tim_Duncan",
@@ -1516,7 +892,7 @@
    "power": 17,
    "shotLine": 16,
    "paintBoost": 0,
-   "threePtBoost": -2,
+   "threePtBoost": 0,
    "defBoost": 2,
    "salary": 1350,
    "chart": [
@@ -1571,7 +947,448 @@
     "per": 27
    },
    "provisional": true,
-   "label": "01-02 Tim Duncan"
+   "label": "01-02 Tim Duncan",
+   "rebuilt": true
+  },
+  {
+   "id": "87_88_Michael_Jordan",
+   "name": "87-88 Michael Jordan",
+   "team": "RTR",
+   "speed": 20,
+   "power": 13,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": -4,
+   "defBoost": 0,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 3,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 13,
+     "pts": 3,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 15,
+     "pts": 3,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 99,
+     "pts": 4,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "label": "87-88 Michael Jordan",
+   "rebuilt": false,
+   "salary": 1190
+  },
+  {
+   "id": "93_94_David_Robinson",
+   "name": "93-94 David Robinson",
+   "team": "RTR",
+   "speed": 12,
+   "power": 20,
+   "shotLine": 13,
+   "paintBoost": 0,
+   "threePtBoost": -6,
+   "defBoost": 2,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 12,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 13,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 20,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 4,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "label": "93-94 David Robinson",
+   "rebuilt": false,
+   "salary": 1070
+  },
+  {
+   "id": "84_85_Larry_Bird",
+   "name": "84-85 Larry Bird",
+   "team": "RTR",
+   "speed": 13,
+   "power": 14,
+   "shotLine": 11,
+   "paintBoost": -1,
+   "threePtBoost": 0,
+   "defBoost": 0,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 11,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 12,
+     "hi": 20,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 4,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "label": "84-85 Larry Bird",
+   "rebuilt": false,
+   "salary": 1000
+  },
+  {
+   "id": "99_00_Shaquille_ONeal",
+   "name": "99-00 Shaquille O'Neal",
+   "team": "RTR",
+   "speed": 9,
+   "power": 20,
+   "shotLine": 19,
+   "paintBoost": 8,
+   "threePtBoost": 0,
+   "defBoost": 0,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 9,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 16,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 17,
+     "hi": 20,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 4,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "label": "99-00 Shaquille O'Neal",
+   "rebuilt": false,
+   "salary": 1190
+  },
+  {
+   "id": "75_76_Julius_Erving",
+   "name": "75-76 Julius Erving",
+   "team": "RTR",
+   "speed": 17,
+   "power": 13,
+   "shotLine": 13,
+   "paintBoost": 0,
+   "threePtBoost": -4,
+   "defBoost": 0,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 9,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 12,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 13,
+     "hi": 20,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 4,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "label": "75-76 Julius Erving",
+   "rebuilt": false,
+   "salary": 1110
+  },
+  {
+   "id": "92_93_Hakeem_Olajuwon",
+   "name": "92-93 Hakeem Olajuwon",
+   "team": "RTR",
+   "speed": 10,
+   "power": 15,
+   "shotLine": 12,
+   "paintBoost": 1,
+   "threePtBoost": -7,
+   "defBoost": 5,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 3,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 11,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 12,
+     "hi": 15,
+     "pts": 2,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 20,
+     "pts": 3,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 4,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "label": "92-93 Hakeem Olajuwon",
+   "rebuilt": false,
+   "salary": 1070
+  },
+  {
+   "id": "96_97_Grant_Hill",
+   "name": "96-97 Grant Hill",
+   "team": "RTR",
+   "speed": 13,
+   "power": 13,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": -3,
+   "defBoost": 3,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 14,
+     "hi": 21,
+     "pts": 2,
+     "reb": 1,
+     "ast": 2
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 2
+    }
+   ],
+   "label": "96-97 Grant Hill",
+   "rebuilt": false,
+   "salary": 830
+  },
+  {
+   "id": "89_90_Magic_Johnson",
+   "name": "89-90 Magic Johnson",
+   "team": "RTR",
+   "speed": 14,
+   "power": 14,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 0,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 3,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 4,
+     "hi": 9,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 10,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 20,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 2
+    }
+   ],
+   "label": "89-90 Magic Johnson",
+   "rebuilt": false,
+   "salary": 910
+  },
+  {
+   "id": "76_77_Kareem_Abdul_Jabbar",
+   "name": "76-77 Kareem Abdul-Jabbar",
+   "team": "RTR",
+   "speed": 10,
+   "power": 18,
+   "shotLine": 14,
+   "paintBoost": 2,
+   "threePtBoost": -7,
+   "defBoost": 0,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 9,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 13,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 20,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 4,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "label": "76-77 Kareem Abdul-Jabbar",
+   "rebuilt": false,
+   "salary": 1120
+  },
+  {
+   "id": "89_90_Charles_Barkley",
+   "name": "89-90 Charles Barkley",
+   "team": "RTR",
+   "speed": 10,
+   "power": 16,
+   "shotLine": 15,
+   "paintBoost": 4,
+   "threePtBoost": -5,
+   "defBoost": -2,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 20,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "label": "89-90 Charles Barkley",
+   "rebuilt": false,
+   "salary": 970
   }
  ]
 }

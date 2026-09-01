@@ -53,5 +53,15 @@
     "x": -7.12,
     "y": 0,
     "zoom": 1
+  },
+  "Shaquille_O_Neal_CLE": {
+    "x": -8.78,
+    "y": 3.76,
+    "zoom": 1.2
+  },
+  "Shaquille_O_Neal_PHO": {
+    "x": -4.45,
+    "y": 0,
+    "zoom": 1
   }
 }

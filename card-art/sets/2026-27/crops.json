@@ -513,5 +513,40 @@
     "x": 25.81,
     "y": -2.5,
     "zoom": 1.05
+  },
+  "Dylan_Cardwell": {
+    "x": -1.33,
+    "y": -5.5,
+    "zoom": 1.11
+  },
+  "Dylan_Harper": {
+    "x": -5.93,
+    "y": 0,
+    "zoom": 1
+  },
+  "Dyson_Daniels": {
+    "x": -0.44,
+    "y": 0,
+    "zoom": 1
+  },
+  "Egor_Demin": {
+    "x": 0.44,
+    "y": 21.44,
+    "zoom": 1.28
+  },
+  "Evan_Mobley": {
+    "x": -3.56,
+    "y": 0,
+    "zoom": 1
+  },
+  "Franz_Wagner": {
+    "x": -7.71,
+    "y": 0,
+    "zoom": 1
+  },
+  "Giannis_Antetokounmpo": {
+    "x": -1.19,
+    "y": 9.75,
+    "zoom": 1.21
   }
 }

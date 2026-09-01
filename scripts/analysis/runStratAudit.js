@@ -183,7 +183,28 @@ for (let n = 0; n < GAMES; n += 1) {
   for (let s = 0; s < SECTIONS && !g.done; s += 1) {
     tallyHands(g, heldThisGame);
 
+    // endSection clears starters; every section after the first re-picks five
+    // by rest-then-salary, exactly as runChannelSplit rotates. Without this,
+    // sections two through twelve rolled nobody — the first cut of this
+    // harness measured one-section games without noticing.
+    if (s > 0) {
+      for (const key of ['A', 'B']) {
+        const team = key === 'A' ? g.teamA : g.teamB;
+        const byId = new Map(team.stats.map(p => [p.id, p]));
+        team.starters = team.roster
+          .map(c => ({ c, min: byId.get(c.id)?.minutes ?? 0, sal: c.salary ?? 0 }))
+          .sort((x, y) => x.min - y.min || y.sal - x.sal)
+          .slice(0, STARTERS)
+          .map(o => o.c);
+      }
+    }
+
     // ── Matchup phase: alternate aiTurn until both pass ──
+    // endSection resets the phase to 'draft' for the next lineup pick; the
+    // harness re-picks starters itself, so it must restore the phase too —
+    // without this, every section after the first had NO matchup phase and
+    // the matchup-only cards could exist for one section per game.
+    g.phase = 'matchup_strats';
     g.matchupTurn = 'A'; g.matchupPasses = 0;
     for (let guard = 0; guard < 24 && g.matchupPasses < 2; guard += 1) {
       const key = g.matchupTurn;
@@ -233,6 +254,14 @@ for (let n = 0; n < GAMES; n += 1) {
           g = doRoll(g, key, i);
           if (g.pendingShotCheck) g = safeResolve(g);
         }
+      }
+    }
+    // Post-roll card window — heat checks and momentum plays live here.
+    for (const key of ['B', 'A']) {
+      const action = aiScoringDecision(g, key);
+      if (action?.type === 'play_card') {
+        const res = tryPlay(g, key, action, playedThisGame);
+        g = res.g;
       }
     }
     for (const key of ['A', 'B']) g = spendAll(g, key);

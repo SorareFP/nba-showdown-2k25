@@ -182,7 +182,18 @@ function evaluateCard(game, teamKey, cardId, strat) {
   if (strat.phase === 'scoring' && phase !== 'scoring') return 0;
   if (strat.phase === 'pre_roll' && phase !== 'scoring') return 0;
   if (strat.phase === 'post_roll' && phase !== 'scoring') return 0;
-  if (strat.phase === 'reaction') return 0; // AI reactions handled separately
+  if (strat.phase === 'reaction') {
+    // Reactions are ordinary plays on your own turn when their state
+    // condition holds (canPlayCard already said yes before this runs) — the
+    // old hard zero here is why the audit found the entire canceller economy
+    // dead even after switch cards came alive.
+    const reactionValues = {
+      go_under: 7, fight_over: 6, veer_switch: 6, burned_switch: 5,
+      offensive_foul: 5, cold_spell: 6, anticipate_pass: 5, overhelp: 4,
+      offensive_board: 5, rebound_tap_out: 5, coaches_challenge: 6, close_out: 6,
+    };
+    return reactionValues[cardId] ?? 4;
+  }
 
   // Base values by card type
   const values = {
@@ -246,14 +257,29 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
 
   switch (cardId) {
     case 'high_screen_roll': {
-      // Swap the two players with worst matchups
-      const advs = starters.map((p, i) => {
-        const di = (game.offMatchups[teamKey] || [])[i] ?? i;
-        const dp = oppT.starters[di];
-        const adv = dp ? calcAdv(p, dp, game.tempEff?.[teamKey] || {}, i) : { rollBonus: 0 };
-        return { idx: i, bonus: adv.rollBonus };
-      }).sort((a, b) => a.bonus - b.bonus);
-      return { playerIdx: advs[0].idx, player2Idx: advs.length > 1 ? advs[1].idx : 0 };
+      // THE OPTS CONTRACT IS swapSlot1/swapSlot2 — playerIdx was a drift that
+      // made every AI attempt fail at execCard, which is why the audit found
+      // the game's flagship switch card at zero plays and the whole
+      // canceller economy dead behind it. And rather than blindly swapping
+      // the two worst matchups, evaluate every pair: the swap that gains the
+      // most total roll bonus is the one a coach would call.
+      const bonusFor = (offIdx, defIdx) => {
+        const p = starters[offIdx];
+        const dp = oppT.starters[defIdx];
+        return p && dp ? calcAdv(p, dp, game.tempEff?.[teamKey] || {}, offIdx).rollBonus : 0;
+      };
+      const mu = game.offMatchups?.[teamKey] || [0, 1, 2, 3, 4];
+      let best = null;
+      for (let i = 0; i < starters.length; i += 1) {
+        for (let j = i + 1; j < starters.length; j += 1) {
+          const now = bonusFor(i, mu[i] ?? i) + bonusFor(j, mu[j] ?? j);
+          const swapped = bonusFor(i, mu[j] ?? j) + bonusFor(j, mu[i] ?? i);
+          const delta = swapped - now;
+          if (!best || delta > best.delta) best = { i, j, delta };
+        }
+      }
+      if (!best || best.delta <= 0) return { swapSlot1: 0, swapSlot2: 1 };
+      return { swapSlot1: best.i, swapSlot2: best.j };
     }
 
     case 'stagger_action': {

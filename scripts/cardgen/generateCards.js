@@ -75,7 +75,7 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { readCache, REPO_ROOT } from './cache.js';
 import { normalizeName } from './resolveTeams.js';
-import { computeStatBands, effectiveRollCdf, placeBandsOnCdf } from './bands.js';
+import { computeStatBands, delayUpperBands, effectiveRollCdf, placeBandsOnCdf, usageAccessShift } from './bands.js';
 import { reconcileBands, shapeChart, MAX_CHART_TIERS, MAX_PRINTED_ROWS } from './generate.js';
 import { isBlankTier } from './zeroFloor.js';
 import { applyOverrides } from './overrides.js';
@@ -229,9 +229,12 @@ export function buildCard({
           }
         : null,
     });
-    bands[stat] = rollCdf
-      ? placeBandsOnCdf(computeStatBands(games, stat), rollCdf)
-      : computeStatBands(games, stat);
+    bands[stat] = delayUpperBands(
+      rollCdf
+        ? placeBandsOnCdf(computeStatBands(games, stat), rollCdf)
+        : computeStatBands(games, stat),
+      usageAccessShift(rate?.usage)
+    );
   }
   // The shot line is an INPUT to the chart's shape, not just a number printed
   // beside it: the chart is made to break exactly there so the card's one arrow

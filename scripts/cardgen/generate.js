@@ -120,7 +120,18 @@ export function forceBandBoundary(chart, roll, { firstMovable = 1 } = {}) {
   }
   if (reachable.length === 0) return { chart, moved: null, from: null };
 
-  reachable.sort((a, b) => Math.abs(next[a].lo - roll) - Math.abs(next[b].lo - roll));
+  // Moving tier i's lo UP to the roll hands every row between the old lo and
+  // the roll to the tier below -- and when that tier is a blank, the card's
+  // scoring floor is hollowed out. Jakob Poeltl found the seam: shot line 12
+  // deep inside a wide flat tier, two boundaries equidistant at 7, and the
+  // stable sort picked the one that turned rolls 5-11 into blanks. A move that
+  // grows a zero tier loses to ANY other candidate, distance second.
+  const extendsBlank = i =>
+    next[i].lo < roll &&
+    next[i - 1].pts === 0 && next[i - 1].reb === 0 && next[i - 1].ast === 0;
+  reachable.sort((a, b) =>
+    (extendsBlank(a) - extendsBlank(b)) ||
+    (Math.abs(next[a].lo - roll) - Math.abs(next[b].lo - roll)));
   const i = reachable[0];
   const from = next[i].lo;
   next[i].lo = roll;

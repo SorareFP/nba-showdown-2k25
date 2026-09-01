@@ -77,7 +77,7 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { readCache, REPO_ROOT } from '../cache.js';
 import { normalizeName } from '../resolveTeams.js';
-import { computeStatBands } from '../bands.js';
+import { computeStatBands, delayUpperBands, usageAccessShift } from '../bands.js';
 import { reconcileBands, shapeChart, MAX_CHART_TIERS } from '../generate.js';
 import * as V from '../variance.js';
 import * as A from '../attributes.js';
@@ -318,7 +318,7 @@ export function buildLegendCard({ row, shooting, speedPowerTotal, calibration })
   const bands = {};
   for (const stat of V.CHART_STATS) {
     const fit = { level: calibration.chart.levels[stat], shape: calibration.chart.shape };
-    bands[stat] = computeStatBands(
+    bands[stat] = delayUpperBands(computeStatBands(
       V.synthesizeGames({
         per100: { [stat]: per100[stat] },
         mpg,
@@ -337,7 +337,7 @@ export function buildLegendCard({ row, shooting, speedPowerTotal, calibration })
       mix: mixNbaConvention(row),
       }),
       stat
-    );
+    ), usageAccessShift(row.usgPct));
   }
   const chart = shapeChart(reconcileBands(bands), { shotLine });
 

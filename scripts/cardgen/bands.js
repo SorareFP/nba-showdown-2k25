@@ -216,3 +216,64 @@ export function placeBandsOnCdf(bands, cdf, { maxRoll = 60 } = {}) {
   out[n - 1].hi = Math.max(bands[n - 1].hi, prevHi + 1);
   return out;
 }
+
+/**
+ * USAGE GATES THE UPPER TIERS. The founding per-36 normalization stays true to
+ * efficiency -- a 14-minute player who produces at an elite per-minute rate
+ * keeps that rate on his card. But a chart tier is an ACCESS question, not an
+ * efficiency question: reaching the 3-2-1-and-up rows every other roll implies
+ * having the ball, and a 15%-usage screener did not have it. The original
+ * hand-built game bucketed everyone by USG% to distribute how easy the scoring
+ * marks were to reach; this is that rule, rebuilt. Deliberately NOT a function
+ * of minutes or games -- muting a player for playing less was considered and
+ * rejected, because it punishes efficiency instead of ball-dominance.
+ *
+ * Buckets sit against the pool's own usage distribution (median ~19%, p25 ~15%,
+ * floor ~9%). Usage above the norm shifts nothing: a star's access is already
+ * priced by the effective-roll placement, and letting high usage ACCELERATE
+ * access would refight the ceiling suppression from the other side.
+ *
+ * Accepts either convention -- dunksandthrees hands a fraction (0.202) and
+ * Basketball-Reference a percent (20.2) -- so every generator can pass its row straight in.
+ */
+export function usageAccessShift(usage) {
+  if (usage == null || !(usage > 0)) return 0;
+  const u = usage > 1 ? usage / 100 : usage;
+  if (u >= 0.19) return 0;
+  if (u >= 0.16) return 1;
+  if (u >= 0.13) return 2;
+  if (u >= 0.10) return 3;
+  return 4;
+}
+
+/**
+ * Push the upper band boundaries out by `shift` rolls, ramped exactly like the
+ * CDF blend: the bottom boundary does not move (scoring still starts where it
+ * always did -- the floor is efficiency, which usage does not gate), and the
+ * top boundary takes the full shift. Composes with either layout, which is why
+ * it is a separate pass instead of an option on the placers.
+ *
+ * ONE KNOWN CONSEQUENCE, on purpose until it proves wrong: the PTS bands are
+ * the chart's spine, so delaying a low-usage player's upper tiers also delays
+ * the REB/AST that ride on them. A 10%-usage rebound specialist gets his
+ * biggest board rows pushed out even though boards need no usage.
+ */
+export function delayUpperBands(bands, shift, { maxRoll = 60 } = {}) {
+  if (!shift || bands.length < 2) return bands;
+  const n = bands.length;
+  const out = bands.map(b => ({ ...b }));
+  let prevHi = 0;
+  for (let i = 0; i < n - 1; i += 1) {
+    const w = n === 2 ? 1 : i / (n - 2);
+    let hi = out[i].hi + Math.round(w * shift);
+    if (hi <= prevHi) hi = prevHi + 1;
+    const roomForRest = maxRoll - (n - 1 - i);
+    if (hi > roomForRest) hi = roomForRest;
+    out[i].lo = prevHi + 1;
+    out[i].hi = hi;
+    prevHi = hi;
+  }
+  out[n - 1].lo = prevHi + 1;
+  out[n - 1].hi = Math.max(out[n - 1].hi, prevHi + 1);
+  return out;
+}

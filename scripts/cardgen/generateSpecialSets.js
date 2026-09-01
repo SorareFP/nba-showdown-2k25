@@ -503,10 +503,29 @@ export function buildHistoricalCard({
 }) {
   const games = season.games ?? 0;
   const mpg = games > 0 ? (season.minutes ?? 0) / games : 0;
+  // ── THE STAT LINE IS TRUSTED THE WAY THE SKILL IS ─────────────────────────
+  //
+  // A 115-minute rookie year (Danny Green's) or an 11-minute fallback Super
+  // Season (Quenton Jackson's, priced 400 before this) carries a per-100 line
+  // made of garbage time, and the chart synthesized from it prints noise at
+  // full price. So the chart inputs shrink toward a MEASURED fringe prior by
+  // the same trust curve Speed+Power already rides: minutes over the full-
+  // season bar (or the playoff bar on a playoff run). A full season is
+  // untouched; Green's 115 minutes keep 7.7% of their own rate.
+  //
+  // The prior is the median per-100 line of the 2,025 player-seasons between
+  // 100 and 600 minutes across 2015-2026 — what a fringe player's rate
+  // actually looks like — not a number anyone liked.
+  const CHART_PRIOR_PER100 = { pts: 17.4, reb: 8.1, ast: 3.3 };
+  const chartTrust = Math.min(
+    Math.max((season.minutes ?? 0) / (season.playoffRun ? FULL_PLAYOFF_MINUTES : FULL_SEASON_MINUTES), 0),
+    1
+  );
+  const shrink = (own, prior) => chartTrust * (own ?? 0) + (1 - chartTrust) * prior;
   const per100 = {
-    pts: season.pts100 ?? 0,
-    reb: season.trb100 ?? 0,
-    ast: season.ast100 ?? 0,
+    pts: shrink(season.pts100, CHART_PRIOR_PER100.pts),
+    reb: shrink(season.trb100, CHART_PRIOR_PER100.reb),
+    ast: shrink(season.ast100, CHART_PRIOR_PER100.ast),
   };
   // The positional MIX sets the centre and SIZE bends it, exactly as in
   // generateCards.js. Both tables reach back past 2004 — biometrics to 2002,

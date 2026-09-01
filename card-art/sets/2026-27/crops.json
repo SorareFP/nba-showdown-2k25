@@ -475,9 +475,9 @@
     "zoom": 1
   },
   "Donte_DiVincenzo": {
-    "x": 17.42,
-    "y": 1.35,
-    "zoom": 1.14
+    "x": 16.23,
+    "y": 3.76,
+    "zoom": 1.12
   },
   "Nae_Qwan_Tomlin": {
     "x": -0.14,
@@ -488,5 +488,30 @@
     "x": -5.89,
     "y": 0,
     "zoom": 1.21
+  },
+  "Duncan_Robinson": {
+    "x": -1.48,
+    "y": 0,
+    "zoom": 1
+  },
+  "Dru_Smith": {
+    "x": -12.46,
+    "y": 0,
+    "zoom": 1
+  },
+  "Drew_Eubanks": {
+    "x": 8.45,
+    "y": 0,
+    "zoom": 1
+  },
+  "Draymond_Green": {
+    "x": -9.14,
+    "y": 0,
+    "zoom": 1
+  },
+  "Drake_Powell": {
+    "x": 25.81,
+    "y": -2.5,
+    "zoom": 1.05
   }
 }

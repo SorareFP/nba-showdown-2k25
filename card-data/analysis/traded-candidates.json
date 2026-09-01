@@ -1,0 +1,2071 @@
+{
+ "what": "Candidates for the TRADED set: 30+ game stints on teams a player is not known for. Mined from the 2000-2026 full-league tables; known-for = most games in that window.",
+ "caveat": "The window truncates pre-2000 careers, so a 1990s star's true home team can be under-counted — the starStints section lists famous late-career stints caught regardless; legends whose home fell before 2000 (Ewing ORL, Hakeem TOR) need the 1990s tables to measure honestly.",
+ "funExceptions": {
+  "Rasheed Wallace ATL 2004": "1 game, 42 minutes, 20 points on .395 TS, -3.3 BPM. Buildable and plausible: a mid-tier volume-scoring chart, modest S+P. The user asked for it if not stupid — it is not."
+ },
+ "candidates": [
+  {
+   "name": "Andre Miller",
+   "team": "SAC",
+   "games": 30,
+   "share": 0.023,
+   "careerGames": 1304,
+   "knownFor": "DEN",
+   "seasons": [
+    2015
+   ],
+   "bpm": [
+    -3.6
+   ]
+  },
+  {
+   "name": "Jeff Green",
+   "team": "UTA",
+   "games": 30,
+   "share": 0.024,
+   "careerGames": 1247,
+   "knownFor": "BOS",
+   "seasons": [
+    2020
+   ],
+   "bpm": [
+    -2.1
+   ]
+  },
+  {
+   "name": "Jason Terry",
+   "team": "BRK",
+   "games": 35,
+   "share": 0.025,
+   "careerGames": 1410,
+   "knownFor": "DAL",
+   "seasons": [
+    2014
+   ],
+   "bpm": [
+    -3.5
+   ]
+  },
+  {
+   "name": "Trevor Ariza",
+   "team": "MIA",
+   "games": 30,
+   "share": 0.027,
+   "careerGames": 1118,
+   "knownFor": "HOU",
+   "seasons": [
+    2021
+   ],
+   "bpm": [
+    -1.1
+   ]
+  },
+  {
+   "name": "DeAndre Jordan",
+   "team": "LAL",
+   "games": 32,
+   "share": 0.028,
+   "careerGames": 1123,
+   "knownFor": "LAC",
+   "seasons": [
+    2022
+   ],
+   "bpm": [
+    -0.6
+   ]
+  },
+  {
+   "name": "Trevor Ariza",
+   "team": "SAC",
+   "games": 32,
+   "share": 0.029,
+   "careerGames": 1118,
+   "knownFor": "HOU",
+   "seasons": [
+    2020
+   ],
+   "bpm": [
+    -0.6
+   ]
+  },
+  {
+   "name": "Mike Dunleavy",
+   "team": "ATL",
+   "games": 30,
+   "share": 0.03,
+   "careerGames": 986,
+   "knownFor": "GSW",
+   "seasons": [
+    2017
+   ],
+   "bpm": [
+    -0.1
+   ]
+  },
+  {
+   "name": "Jonas Valančiūnas",
+   "team": "SAC",
+   "games": 32,
+   "share": 0.032,
+   "careerGames": 1002,
+   "knownFor": "TOR",
+   "seasons": [
+    2025
+   ],
+   "bpm": [
+    1.1
+   ]
+  },
+  {
+   "name": "Dennis Schröder",
+   "team": "CLE",
+   "games": 30,
+   "share": 0.033,
+   "careerGames": 912,
+   "knownFor": "ATL",
+   "seasons": [
+    2026
+   ],
+   "bpm": [
+    -2.8
+   ]
+  },
+  {
+   "name": "Vince Carter",
+   "team": "PHO",
+   "games": 51,
+   "share": 0.034,
+   "careerGames": 1491,
+   "knownFor": "NJN",
+   "seasons": [
+    2011
+   ],
+   "bpm": [
+    -0.4
+   ]
+  },
+  {
+   "name": "Bismack Biyombo",
+   "team": "MEM",
+   "games": 30,
+   "share": 0.034,
+   "careerGames": 892,
+   "knownFor": "CHO",
+   "seasons": [
+    2024
+   ],
+   "bpm": [
+    -3.2
+   ]
+  },
+  {
+   "name": "Andre Drummond",
+   "team": "CLE",
+   "games": 33,
+   "share": 0.034,
+   "careerGames": 967,
+   "knownFor": "DET",
+   "seasons": [
+    2020,
+    2021
+   ],
+   "bpm": [
+    -0.4,
+    -0.8
+   ]
+  },
+  {
+   "name": "Al Harrington",
+   "team": "WAS",
+   "games": 34,
+   "share": 0.035,
+   "careerGames": 960,
+   "knownFor": "IND",
+   "seasons": [
+    2014
+   ],
+   "bpm": [
+    -4.2
+   ]
+  },
+  {
+   "name": "Zach Randolph",
+   "team": "LAC",
+   "games": 39,
+   "share": 0.035,
+   "careerGames": 1116,
+   "knownFor": "MEM",
+   "seasons": [
+    2009
+   ],
+   "bpm": [
+    0.1
+   ]
+  },
+  {
+   "name": "Reggie Jackson",
+   "team": "PHI",
+   "games": 31,
+   "share": 0.035,
+   "careerGames": 884,
+   "knownFor": "DET",
+   "seasons": [
+    2025
+   ],
+   "bpm": [
+    -4
+   ]
+  },
+  {
+   "name": "Samuel Dalembert",
+   "team": "NYK",
+   "games": 32,
+   "share": 0.036,
+   "careerGames": 886,
+   "knownFor": "PHI",
+   "seasons": [
+    2015
+   ],
+   "bpm": [
+    -3.1
+   ]
+  },
+  {
+   "name": "Josh Smith",
+   "team": "LAC",
+   "games": 32,
+   "share": 0.036,
+   "careerGames": 894,
+   "knownFor": "ATL",
+   "seasons": [
+    2016
+   ],
+   "bpm": [
+    -0.5
+   ]
+  },
+  {
+   "name": "David Lee",
+   "team": "BOS",
+   "games": 30,
+   "share": 0.036,
+   "careerGames": 829,
+   "knownFor": "NYK",
+   "seasons": [
+    2016
+   ],
+   "bpm": [
+    0
+   ]
+  },
+  {
+   "name": "JaVale McGee",
+   "team": "CLE",
+   "games": 33,
+   "share": 0.036,
+   "careerGames": 909,
+   "knownFor": "WAS",
+   "seasons": [
+    2021
+   ],
+   "bpm": [
+    -1.1
+   ]
+  },
+  {
+   "name": "Robin Lopez",
+   "team": "ORL",
+   "games": 36,
+   "share": 0.036,
+   "careerGames": 992,
+   "knownFor": "PHO",
+   "seasons": [
+    2022
+   ],
+   "bpm": [
+    -3.8
+   ]
+  },
+  {
+   "name": "Beno Udrih",
+   "team": "NYK",
+   "games": 31,
+   "share": 0.037,
+   "careerGames": 831,
+   "knownFor": "SAC",
+   "seasons": [
+    2014
+   ],
+   "bpm": [
+    -2
+   ]
+  },
+  {
+   "name": "Kevin Love",
+   "team": "UTA",
+   "games": 37,
+   "share": 0.037,
+   "careerGames": 989,
+   "knownFor": "CLE",
+   "seasons": [
+    2026
+   ],
+   "bpm": [
+    0.2
+   ]
+  },
+  {
+   "name": "Robin Lopez",
+   "team": "CLE",
+   "games": 37,
+   "share": 0.037,
+   "careerGames": 992,
+   "knownFor": "PHO",
+   "seasons": [
+    2023
+   ],
+   "bpm": [
+    -3
+   ]
+  },
+  {
+   "name": "Taj Gibson",
+   "team": "CHO",
+   "games": 37,
+   "share": 0.037,
+   "careerGames": 1012,
+   "knownFor": "CHI",
+   "seasons": [
+    2025
+   ],
+   "bpm": [
+    -5.3
+   ]
+  },
+  {
+   "name": "Wesley Matthews",
+   "team": "ATL",
+   "games": 36,
+   "share": 0.037,
+   "careerGames": 986,
+   "knownFor": "POR",
+   "seasons": [
+    2024
+   ],
+   "bpm": [
+    -2.8
+   ]
+  },
+  {
+   "name": "Ish Smith",
+   "team": "OKC",
+   "games": 30,
+   "share": 0.037,
+   "careerGames": 805,
+   "knownFor": "DET",
+   "seasons": [
+    2015
+   ],
+   "bpm": [
+    -3.1
+   ]
+  },
+  {
+   "name": "Tristan Thompson",
+   "team": "SAC",
+   "games": 30,
+   "share": 0.037,
+   "careerGames": 819,
+   "knownFor": "CLE",
+   "seasons": [
+    2022
+   ],
+   "bpm": [
+    -3.7
+   ]
+  },
+  {
+   "name": "Joe Johnson",
+   "team": "BOS",
+   "games": 49,
+   "share": 0.038,
+   "careerGames": 1277,
+   "knownFor": "ATL",
+   "seasons": [
+    2002,
+    2022
+   ],
+   "bpm": [
+    -0.4,
+    15
+   ]
+  },
+  {
+   "name": "Steve Blake",
+   "team": "MIL",
+   "games": 33,
+   "share": 0.038,
+   "careerGames": 870,
+   "knownFor": "POR",
+   "seasons": [
+    2007
+   ],
+   "bpm": [
+    -4.2
+   ]
+  },
+  {
+   "name": "Al Horford",
+   "team": "GSW",
+   "games": 45,
+   "share": 0.038,
+   "careerGames": 1183,
+   "knownFor": "ATL",
+   "seasons": [
+    2026
+   ],
+   "bpm": [
+    1.6
+   ]
+  },
+  {
+   "name": "D.J. Augustin",
+   "team": "MIL",
+   "games": 37,
+   "share": 0.038,
+   "careerGames": 976,
+   "knownFor": "ORL",
+   "seasons": [
+    2021
+   ],
+   "bpm": [
+    -2.2
+   ]
+  },
+  {
+   "name": "Serge Ibaka",
+   "team": "MIL",
+   "games": 35,
+   "share": 0.038,
+   "careerGames": 919,
+   "knownFor": "OKC",
+   "seasons": [
+    2022,
+    2023
+   ],
+   "bpm": [
+    -2.4,
+    -4.5
+   ]
+  },
+  {
+   "name": "Vince Carter",
+   "team": "SAC",
+   "games": 58,
+   "share": 0.039,
+   "careerGames": 1491,
+   "knownFor": "NJN",
+   "seasons": [
+    2018
+   ],
+   "bpm": [
+    -1.2
+   ]
+  },
+  {
+   "name": "Corey Maggette",
+   "team": "CHA",
+   "games": 32,
+   "share": 0.039,
+   "careerGames": 827,
+   "knownFor": "LAC",
+   "seasons": [
+    2012
+   ],
+   "bpm": [
+    -3.9
+   ]
+  },
+  {
+   "name": "Caron Butler",
+   "team": "MIL",
+   "games": 34,
+   "share": 0.039,
+   "careerGames": 881,
+   "knownFor": "WAS",
+   "seasons": [
+    2014
+   ],
+   "bpm": [
+    -2.9
+   ]
+  },
+  {
+   "name": "George Hill",
+   "team": "CLE",
+   "games": 37,
+   "share": 0.04,
+   "careerGames": 915,
+   "knownFor": "IND",
+   "seasons": [
+    2018,
+    2019
+   ],
+   "bpm": [
+    -1.2,
+    -2
+   ]
+  },
+  {
+   "name": "Mike Bibby",
+   "team": "NYK",
+   "games": 39,
+   "share": 0.041,
+   "careerGames": 951,
+   "knownFor": "SAC",
+   "seasons": [
+    2012
+   ],
+   "bpm": [
+    -1.9
+   ]
+  },
+  {
+   "name": "Jamal Crawford",
+   "team": "GSW",
+   "games": 54,
+   "share": 0.041,
+   "careerGames": 1327,
+   "knownFor": "LAC",
+   "seasons": [
+    2009
+   ],
+   "bpm": [
+    -1.6
+   ]
+  },
+  {
+   "name": "Tyson Chandler",
+   "team": "LAL",
+   "games": 48,
+   "share": 0.041,
+   "careerGames": 1160,
+   "knownFor": "CHI",
+   "seasons": [
+    2019
+   ],
+   "bpm": [
+    -1.8
+   ]
+  },
+  {
+   "name": "Vladimir Radmanović",
+   "team": "LAC",
+   "games": 30,
+   "share": 0.041,
+   "careerGames": 737,
+   "knownFor": "SEA",
+   "seasons": [
+    2006
+   ],
+   "bpm": [
+    2.5
+   ]
+  },
+  {
+   "name": "Thaddeus Young",
+   "team": "MIN",
+   "games": 48,
+   "share": 0.041,
+   "careerGames": 1172,
+   "knownFor": "PHI",
+   "seasons": [
+    2015
+   ],
+   "bpm": [
+    -0.5
+   ]
+  },
+  {
+   "name": "Jeff Teague",
+   "team": "BOS",
+   "games": 34,
+   "share": 0.041,
+   "careerGames": 826,
+   "knownFor": "ATL",
+   "seasons": [
+    2021
+   ],
+   "bpm": [
+    -2.7
+   ]
+  },
+  {
+   "name": "CJ McCollum",
+   "team": "WAS",
+   "games": 35,
+   "share": 0.041,
+   "careerGames": 863,
+   "knownFor": "POR",
+   "seasons": [
+    2026
+   ],
+   "bpm": [
+    -1.5
+   ]
+  },
+  {
+   "name": "Jason Collins",
+   "team": "MEM",
+   "games": 31,
+   "share": 0.042,
+   "careerGames": 735,
+   "knownFor": "NJN",
+   "seasons": [
+    2008
+   ],
+   "bpm": [
+    -6.2
+   ]
+  },
+  {
+   "name": "Jason Collins",
+   "team": "MIN",
+   "games": 31,
+   "share": 0.042,
+   "careerGames": 735,
+   "knownFor": "NJN",
+   "seasons": [
+    2009
+   ],
+   "bpm": [
+    -7.2
+   ]
+  },
+  {
+   "name": "Rasual Butler",
+   "team": "TOR",
+   "games": 34,
+   "share": 0.042,
+   "careerGames": 809,
+   "knownFor": "MIA",
+   "seasons": [
+    2012
+   ],
+   "bpm": [
+    -4.6
+   ]
+  },
+  {
+   "name": "Chris Paul",
+   "team": "GSW",
+   "games": 58,
+   "share": 0.042,
+   "careerGames": 1370,
+   "knownFor": "LAC",
+   "seasons": [
+    2024
+   ],
+   "bpm": [
+    1
+   ]
+  },
+  {
+   "name": "Buddy Hield",
+   "team": "PHI",
+   "games": 32,
+   "share": 0.042,
+   "careerGames": 765,
+   "knownFor": "SAC",
+   "seasons": [
+    2024
+   ],
+   "bpm": [
+    0.8
+   ]
+  },
+  {
+   "name": "Jerry Stackhouse",
+   "team": "ATL",
+   "games": 30,
+   "share": 0.043,
+   "careerGames": 696,
+   "knownFor": "DAL",
+   "seasons": [
+    2012
+   ],
+   "bpm": [
+    -1.3
+   ]
+  },
+  {
+   "name": "Beno Udrih",
+   "team": "MIA",
+   "games": 36,
+   "share": 0.043,
+   "careerGames": 831,
+   "knownFor": "SAC",
+   "seasons": [
+    2016
+   ],
+   "bpm": [
+    -4
+   ]
+  },
+  {
+   "name": "Ed Davis",
+   "team": "CLE",
+   "games": 31,
+   "share": 0.043,
+   "careerGames": 722,
+   "knownFor": "POR",
+   "seasons": [
+    2022
+   ],
+   "bpm": [
+    -1.8
+   ]
+  },
+  {
+   "name": "Alec Burks",
+   "team": "CLE",
+   "games": 34,
+   "share": 0.043,
+   "careerGames": 791,
+   "knownFor": "UTA",
+   "seasons": [
+    2019
+   ],
+   "bpm": [
+    -1.4
+   ]
+  },
+  {
+   "name": "Juwan Howard",
+   "team": "CHA",
+   "games": 39,
+   "share": 0.044,
+   "careerGames": 880,
+   "knownFor": "HOU",
+   "seasons": [
+    2009
+   ],
+   "bpm": [
+    -3.8
+   ]
+  },
+  {
+   "name": "Kurt Thomas",
+   "team": "SEA",
+   "games": 42,
+   "share": 0.044,
+   "careerGames": 963,
+   "knownFor": "NYK",
+   "seasons": [
+    2008
+   ],
+   "bpm": [
+    0.8
+   ]
+  },
+  {
+   "name": "Jason Collins",
+   "team": "BOS",
+   "games": 32,
+   "share": 0.044,
+   "careerGames": 735,
+   "knownFor": "NJN",
+   "seasons": [
+    2013
+   ],
+   "bpm": [
+    -7
+   ]
+  },
+  {
+   "name": "Tyson Chandler",
+   "team": "CHA",
+   "games": 51,
+   "share": 0.044,
+   "careerGames": 1160,
+   "knownFor": "CHI",
+   "seasons": [
+    2010
+   ],
+   "bpm": [
+    -2
+   ]
+  },
+  {
+   "name": "Dwyane Wade",
+   "team": "CLE",
+   "games": 46,
+   "share": 0.044,
+   "careerGames": 1054,
+   "knownFor": "MIA",
+   "seasons": [
+    2018
+   ],
+   "bpm": [
+    -0.2
+   ]
+  },
+  {
+   "name": "Luol Deng",
+   "team": "CLE",
+   "games": 40,
+   "share": 0.044,
+   "careerGames": 902,
+   "knownFor": "CHI",
+   "seasons": [
+    2014
+   ],
+   "bpm": [
+    -0.9
+   ]
+  },
+  {
+   "name": "Russell Westbrook",
+   "team": "HOU",
+   "games": 57,
+   "share": 0.044,
+   "careerGames": 1301,
+   "knownFor": "OKC",
+   "seasons": [
+    2020
+   ],
+   "bpm": [
+    1.5
+   ]
+  },
+  {
+   "name": "Marcus Morris",
+   "team": "PHI",
+   "games": 37,
+   "share": 0.044,
+   "careerGames": 832,
+   "knownFor": "LAC",
+   "seasons": [
+    2024
+   ],
+   "bpm": [
+    -3.4
+   ]
+  }
+ ],
+ "starStints": [
+  {
+   "name": "Al Horford",
+   "team": "BOS",
+   "games": 465,
+   "share": 0.393,
+   "careerGames": 1183,
+   "knownFor": "ATL",
+   "seasons": [
+    2017,
+    2018,
+    2019,
+    2022,
+    2023,
+    2024,
+    2025
+   ],
+   "bpm": [
+    3.4,
+    4.4,
+    5.1,
+    4.3,
+    3.3,
+    3.6,
+    1.2
+   ]
+  },
+  {
+   "name": "Al Horford",
+   "team": "PHI",
+   "games": 67,
+   "share": 0.057,
+   "careerGames": 1183,
+   "knownFor": "ATL",
+   "seasons": [
+    2020
+   ],
+   "bpm": [
+    2.2
+   ]
+  },
+  {
+   "name": "Al Horford",
+   "team": "OKC",
+   "games": 28,
+   "share": 0.024,
+   "careerGames": 1183,
+   "knownFor": "ATL",
+   "seasons": [
+    2021
+   ],
+   "bpm": [
+    3.4
+   ]
+  },
+  {
+   "name": "Al Horford",
+   "team": "GSW",
+   "games": 45,
+   "share": 0.038,
+   "careerGames": 1183,
+   "knownFor": "ATL",
+   "seasons": [
+    2026
+   ],
+   "bpm": [
+    1.6
+   ]
+  },
+  {
+   "name": "Allen Iverson",
+   "team": "DEN",
+   "games": 135,
+   "share": 0.19,
+   "careerGames": 710,
+   "knownFor": "PHI",
+   "seasons": [
+    2007,
+    2008,
+    2009
+   ],
+   "bpm": [
+    1.1,
+    2.7,
+    0.3
+   ]
+  },
+  {
+   "name": "Allen Iverson",
+   "team": "DET",
+   "games": 54,
+   "share": 0.076,
+   "careerGames": 710,
+   "knownFor": "PHI",
+   "seasons": [
+    2009
+   ],
+   "bpm": [
+    0.2
+   ]
+  },
+  {
+   "name": "Blake Griffin",
+   "team": "DET",
+   "games": 138,
+   "share": 0.18,
+   "careerGames": 765,
+   "knownFor": "LAC",
+   "seasons": [
+    2018,
+    2019,
+    2020,
+    2021
+   ],
+   "bpm": [
+    3.4,
+    5.1,
+    -4.3,
+    -2.2
+   ]
+  },
+  {
+   "name": "Blake Griffin",
+   "team": "BRK",
+   "games": 82,
+   "share": 0.107,
+   "careerGames": 765,
+   "knownFor": "LAC",
+   "seasons": [
+    2021,
+    2022
+   ],
+   "bpm": [
+    0.8,
+    -0.5
+   ]
+  },
+  {
+   "name": "Blake Griffin",
+   "team": "BOS",
+   "games": 41,
+   "share": 0.054,
+   "careerGames": 765,
+   "knownFor": "LAC",
+   "seasons": [
+    2023
+   ],
+   "bpm": [
+    0.1
+   ]
+  },
+  {
+   "name": "Carmelo Anthony",
+   "team": "NYK",
+   "games": 412,
+   "share": 0.327,
+   "careerGames": 1260,
+   "knownFor": "DEN",
+   "seasons": [
+    2011,
+    2012,
+    2013,
+    2014,
+    2015,
+    2016,
+    2017
+   ],
+   "bpm": [
+    2.9,
+    3.6,
+    4.3,
+    5,
+    3,
+    3.3,
+    0.7
+   ]
+  },
+  {
+   "name": "Carmelo Anthony",
+   "team": "OKC",
+   "games": 78,
+   "share": 0.062,
+   "careerGames": 1260,
+   "knownFor": "DEN",
+   "seasons": [
+    2018
+   ],
+   "bpm": [
+    -1.9
+   ]
+  },
+  {
+   "name": "Carmelo Anthony",
+   "team": "POR",
+   "games": 127,
+   "share": 0.101,
+   "careerGames": 1260,
+   "knownFor": "DEN",
+   "seasons": [
+    2020,
+    2021
+   ],
+   "bpm": [
+    -3.6,
+    -1.1
+   ]
+  },
+  {
+   "name": "Carmelo Anthony",
+   "team": "LAL",
+   "games": 69,
+   "share": 0.055,
+   "careerGames": 1260,
+   "knownFor": "DEN",
+   "seasons": [
+    2022
+   ],
+   "bpm": [
+    -0.5
+   ]
+  },
+  {
+   "name": "Chris Paul",
+   "team": "NOK",
+   "games": 142,
+   "share": 0.104,
+   "careerGames": 1370,
+   "knownFor": "LAC",
+   "seasons": [
+    2006,
+    2007
+   ],
+   "bpm": [
+    5.2,
+    5
+   ]
+  },
+  {
+   "name": "Chris Paul",
+   "team": "NOH",
+   "games": 283,
+   "share": 0.207,
+   "careerGames": 1370,
+   "knownFor": "LAC",
+   "seasons": [
+    2008,
+    2009,
+    2010,
+    2011
+   ],
+   "bpm": [
+    10.4,
+    11,
+    6.2,
+    7.1
+   ]
+  },
+  {
+   "name": "Chris Paul",
+   "team": "HOU",
+   "games": 116,
+   "share": 0.085,
+   "careerGames": 1370,
+   "knownFor": "LAC",
+   "seasons": [
+    2018,
+    2019
+   ],
+   "bpm": [
+    7.1,
+    3.9
+   ]
+  },
+  {
+   "name": "Chris Paul",
+   "team": "OKC",
+   "games": 70,
+   "share": 0.051,
+   "careerGames": 1370,
+   "knownFor": "LAC",
+   "seasons": [
+    2020
+   ],
+   "bpm": [
+    4.4
+   ]
+  },
+  {
+   "name": "Chris Paul",
+   "team": "PHO",
+   "games": 194,
+   "share": 0.142,
+   "careerGames": 1370,
+   "knownFor": "LAC",
+   "seasons": [
+    2021,
+    2022,
+    2023
+   ],
+   "bpm": [
+    4.6,
+    5.4,
+    3.2
+   ]
+  },
+  {
+   "name": "Chris Paul",
+   "team": "GSW",
+   "games": 58,
+   "share": 0.042,
+   "careerGames": 1370,
+   "knownFor": "LAC",
+   "seasons": [
+    2024
+   ],
+   "bpm": [
+    1
+   ]
+  },
+  {
+   "name": "Chris Paul",
+   "team": "SAS",
+   "games": 82,
+   "share": 0.06,
+   "careerGames": 1370,
+   "knownFor": "LAC",
+   "seasons": [
+    2025
+   ],
+   "bpm": [
+    0.8
+   ]
+  },
+  {
+   "name": "DeMar DeRozan",
+   "team": "SAS",
+   "games": 206,
+   "share": 0.163,
+   "careerGames": 1264,
+   "knownFor": "TOR",
+   "seasons": [
+    2019,
+    2020,
+    2021
+   ],
+   "bpm": [
+    1.1,
+    1.9,
+    3.1
+   ]
+  },
+  {
+   "name": "DeMar DeRozan",
+   "team": "CHI",
+   "games": 229,
+   "share": 0.181,
+   "careerGames": 1264,
+   "knownFor": "TOR",
+   "seasons": [
+    2022,
+    2023,
+    2024
+   ],
+   "bpm": [
+    2.5,
+    2,
+    1.8
+   ]
+  },
+  {
+   "name": "DeMar DeRozan",
+   "team": "SAC",
+   "games": 154,
+   "share": 0.122,
+   "careerGames": 1264,
+   "knownFor": "TOR",
+   "seasons": [
+    2025,
+    2026
+   ],
+   "bpm": [
+    -0.1,
+    -0.1
+   ]
+  },
+  {
+   "name": "Dikembe Mutombo",
+   "team": "ATL",
+   "games": 131,
+   "share": 0.221,
+   "careerGames": 593,
+   "knownFor": "HOU",
+   "seasons": [
+    2000,
+    2001
+   ],
+   "bpm": [
+    2.4,
+    1.4
+   ]
+  },
+  {
+   "name": "Dikembe Mutombo",
+   "team": "PHI",
+   "games": 106,
+   "share": 0.179,
+   "careerGames": 593,
+   "knownFor": "HOU",
+   "seasons": [
+    2001,
+    2002
+   ],
+   "bpm": [
+    2.3,
+    0.7
+   ]
+  },
+  {
+   "name": "Dikembe Mutombo",
+   "team": "NYK",
+   "games": 65,
+   "share": 0.11,
+   "careerGames": 593,
+   "knownFor": "HOU",
+   "seasons": [
+    2004
+   ],
+   "bpm": [
+    0.1
+   ]
+  },
+  {
+   "name": "Dwight Howard",
+   "team": "LAL",
+   "games": 205,
+   "share": 0.165,
+   "careerGames": 1242,
+   "knownFor": "ORL",
+   "seasons": [
+    2013,
+    2020,
+    2022
+   ],
+   "bpm": [
+    0.6,
+    0.2,
+    -0.2
+   ]
+  },
+  {
+   "name": "Dwight Howard",
+   "team": "HOU",
+   "games": 183,
+   "share": 0.147,
+   "careerGames": 1242,
+   "knownFor": "ORL",
+   "seasons": [
+    2014,
+    2015,
+    2016
+   ],
+   "bpm": [
+    1.8,
+    -0.4,
+    0.1
+   ]
+  },
+  {
+   "name": "Dwight Howard",
+   "team": "ATL",
+   "games": 74,
+   "share": 0.06,
+   "careerGames": 1242,
+   "knownFor": "ORL",
+   "seasons": [
+    2017
+   ],
+   "bpm": [
+    1.4
+   ]
+  },
+  {
+   "name": "Dwight Howard",
+   "team": "CHO",
+   "games": 81,
+   "share": 0.065,
+   "careerGames": 1242,
+   "knownFor": "ORL",
+   "seasons": [
+    2018
+   ],
+   "bpm": [
+    -0.1
+   ]
+  },
+  {
+   "name": "Dwight Howard",
+   "team": "PHI",
+   "games": 69,
+   "share": 0.056,
+   "careerGames": 1242,
+   "knownFor": "ORL",
+   "seasons": [
+    2021
+   ],
+   "bpm": [
+    -1.5
+   ]
+  },
+  {
+   "name": "Dwyane Wade",
+   "team": "CHI",
+   "games": 60,
+   "share": 0.057,
+   "careerGames": 1054,
+   "knownFor": "MIA",
+   "seasons": [
+    2017
+   ],
+   "bpm": [
+    2.5
+   ]
+  },
+  {
+   "name": "Dwyane Wade",
+   "team": "CLE",
+   "games": 46,
+   "share": 0.044,
+   "careerGames": 1054,
+   "knownFor": "MIA",
+   "seasons": [
+    2018
+   ],
+   "bpm": [
+    -0.2
+   ]
+  },
+  {
+   "name": "Gary Payton",
+   "team": "MIL",
+   "games": 28,
+   "share": 0.044,
+   "careerGames": 631,
+   "knownFor": "SEA",
+   "seasons": [
+    2003
+   ],
+   "bpm": [
+    1.3
+   ]
+  },
+  {
+   "name": "Gary Payton",
+   "team": "LAL",
+   "games": 82,
+   "share": 0.13,
+   "careerGames": 631,
+   "knownFor": "SEA",
+   "seasons": [
+    2004
+   ],
+   "bpm": [
+    2
+   ]
+  },
+  {
+   "name": "Gary Payton",
+   "team": "BOS",
+   "games": 77,
+   "share": 0.122,
+   "careerGames": 631,
+   "knownFor": "SEA",
+   "seasons": [
+    2005
+   ],
+   "bpm": [
+    0.4
+   ]
+  },
+  {
+   "name": "Gary Payton",
+   "team": "MIA",
+   "games": 149,
+   "share": 0.236,
+   "careerGames": 631,
+   "knownFor": "SEA",
+   "seasons": [
+    2006,
+    2007
+   ],
+   "bpm": [
+    -0.9,
+    -3.2
+   ]
+  },
+  {
+   "name": "Gary Payton II",
+   "team": "WAS",
+   "games": 32,
+   "share": 0.093,
+   "careerGames": 343,
+   "knownFor": "GSW",
+   "seasons": [
+    2019,
+    2020
+   ],
+   "bpm": [
+    18.9,
+    -1.6
+   ]
+  },
+  {
+   "name": "Hakeem Olajuwon",
+   "team": "TOR",
+   "games": 61,
+   "share": 0.374,
+   "careerGames": 163,
+   "knownFor": "HOU",
+   "seasons": [
+    2002
+   ],
+   "bpm": [
+    -0.4
+   ]
+  },
+  {
+   "name": "Isaiah Thomas",
+   "team": "PHO",
+   "games": 52,
+   "share": 0.094,
+   "careerGames": 556,
+   "knownFor": "SAC",
+   "seasons": [
+    2015,
+    2024
+   ],
+   "bpm": [
+    2.5,
+    -6.9
+   ]
+  },
+  {
+   "name": "Isaiah Thomas",
+   "team": "BOS",
+   "games": 179,
+   "share": 0.322,
+   "careerGames": 556,
+   "knownFor": "SAC",
+   "seasons": [
+    2015,
+    2016,
+    2017
+   ],
+   "bpm": [
+    4.6,
+    4.3,
+    6.7
+   ]
+  },
+  {
+   "name": "Isaiah Thomas",
+   "team": "WAS",
+   "games": 40,
+   "share": 0.072,
+   "careerGames": 556,
+   "knownFor": "SAC",
+   "seasons": [
+    2020
+   ],
+   "bpm": [
+    -4.4
+   ]
+  },
+  {
+   "name": "John Wall",
+   "team": "HOU",
+   "games": 40,
+   "share": 0.062,
+   "careerGames": 647,
+   "knownFor": "WAS",
+   "seasons": [
+    2021
+   ],
+   "bpm": [
+    -0.7
+   ]
+  },
+  {
+   "name": "John Wall",
+   "team": "LAC",
+   "games": 34,
+   "share": 0.053,
+   "careerGames": 647,
+   "knownFor": "WAS",
+   "seasons": [
+    2023
+   ],
+   "bpm": [
+    -1.2
+   ]
+  },
+  {
+   "name": "John Wallace",
+   "team": "DET",
+   "games": 40,
+   "share": 0.219,
+   "careerGames": 183,
+   "knownFor": "NYK",
+   "seasons": [
+    2001
+   ],
+   "bpm": [
+    -3.6
+   ]
+  },
+  {
+   "name": "John Wallace",
+   "team": "PHO",
+   "games": 46,
+   "share": 0.251,
+   "careerGames": 183,
+   "knownFor": "NYK",
+   "seasons": [
+    2002
+   ],
+   "bpm": [
+    -2.6
+   ]
+  },
+  {
+   "name": "John Wallace",
+   "team": "MIA",
+   "games": 37,
+   "share": 0.202,
+   "careerGames": 183,
+   "knownFor": "NYK",
+   "seasons": [
+    2004
+   ],
+   "bpm": [
+    -2.6
+   ]
+  },
+  {
+   "name": "Karl Malone",
+   "team": "LAL",
+   "games": 42,
+   "share": 0.115,
+   "careerGames": 366,
+   "knownFor": "UTA",
+   "seasons": [
+    2004
+   ],
+   "bpm": [
+    2.8
+   ]
+  },
+  {
+   "name": "Kevin Love",
+   "team": "MIN",
+   "games": 364,
+   "share": 0.368,
+   "careerGames": 989,
+   "knownFor": "CLE",
+   "seasons": [
+    2009,
+    2010,
+    2011,
+    2012,
+    2013,
+    2014
+   ],
+   "bpm": [
+    -1.1,
+    1.5,
+    4.4,
+    5.2,
+    0.4,
+    8.9
+   ]
+  },
+  {
+   "name": "Kevin Love",
+   "team": "MIA",
+   "games": 99,
+   "share": 0.1,
+   "careerGames": 989,
+   "knownFor": "CLE",
+   "seasons": [
+    2023,
+    2024,
+    2025
+   ],
+   "bpm": [
+    -1.1,
+    3.6,
+    0.4
+   ]
+  },
+  {
+   "name": "Kevin Love",
+   "team": "UTA",
+   "games": 37,
+   "share": 0.037,
+   "careerGames": 989,
+   "knownFor": "CLE",
+   "seasons": [
+    2026
+   ],
+   "bpm": [
+    0.2
+   ]
+  },
+  {
+   "name": "Patrick Ewing",
+   "team": "NYK",
+   "games": 62,
+   "share": 0.301,
+   "careerGames": 206,
+   "knownFor": "SEA",
+   "seasons": [
+    2000
+   ],
+   "bpm": [
+    -0.2
+   ]
+  },
+  {
+   "name": "Patrick Ewing",
+   "team": "ORL",
+   "games": 65,
+   "share": 0.316,
+   "careerGames": 206,
+   "knownFor": "SEA",
+   "seasons": [
+    2002
+   ],
+   "bpm": [
+    -3.1
+   ]
+  },
+  {
+   "name": "Russell Westbrook",
+   "team": "HOU",
+   "games": 57,
+   "share": 0.044,
+   "careerGames": 1301,
+   "knownFor": "OKC",
+   "seasons": [
+    2020
+   ],
+   "bpm": [
+    1.5
+   ]
+  },
+  {
+   "name": "Russell Westbrook",
+   "team": "WAS",
+   "games": 65,
+   "share": 0.05,
+   "careerGames": 1301,
+   "knownFor": "OKC",
+   "seasons": [
+    2021
+   ],
+   "bpm": [
+    3.7
+   ]
+  },
+  {
+   "name": "Russell Westbrook",
+   "team": "LAL",
+   "games": 130,
+   "share": 0.1,
+   "careerGames": 1301,
+   "knownFor": "OKC",
+   "seasons": [
+    2022,
+    2023
+   ],
+   "bpm": [
+    -1.6,
+    -0.1
+   ]
+  },
+  {
+   "name": "Russell Westbrook",
+   "team": "LAC",
+   "games": 89,
+   "share": 0.068,
+   "careerGames": 1301,
+   "knownFor": "OKC",
+   "seasons": [
+    2023,
+    2024
+   ],
+   "bpm": [
+    0.8,
+    0.5
+   ]
+  },
+  {
+   "name": "Russell Westbrook",
+   "team": "DEN",
+   "games": 75,
+   "share": 0.058,
+   "careerGames": 1301,
+   "knownFor": "OKC",
+   "seasons": [
+    2025
+   ],
+   "bpm": [
+    -1.1
+   ]
+  },
+  {
+   "name": "Russell Westbrook",
+   "team": "SAC",
+   "games": 64,
+   "share": 0.049,
+   "careerGames": 1301,
+   "knownFor": "OKC",
+   "seasons": [
+    2026
+   ],
+   "bpm": [
+    -0.4
+   ]
+  },
+  {
+   "name": "Shaquille O'Neal",
+   "team": "MIA",
+   "games": 205,
+   "share": 0.273,
+   "careerGames": 752,
+   "knownFor": "LAL",
+   "seasons": [
+    2005,
+    2006,
+    2007,
+    2008
+   ],
+   "bpm": [
+    5.3,
+    2.7,
+    1.7,
+    -1.5
+   ]
+  },
+  {
+   "name": "Shaquille O'Neal",
+   "team": "PHO",
+   "games": 103,
+   "share": 0.137,
+   "careerGames": 752,
+   "knownFor": "LAL",
+   "seasons": [
+    2008,
+    2009
+   ],
+   "bpm": [
+    -0.6,
+    1.7
+   ]
+  },
+  {
+   "name": "Shaquille O'Neal",
+   "team": "CLE",
+   "games": 53,
+   "share": 0.07,
+   "careerGames": 752,
+   "knownFor": "LAL",
+   "seasons": [
+    2010
+   ],
+   "bpm": [
+    -0.2
+   ]
+  },
+  {
+   "name": "Shaquille O'Neal",
+   "team": "BOS",
+   "games": 37,
+   "share": 0.049,
+   "careerGames": 752,
+   "knownFor": "LAL",
+   "seasons": [
+    2011
+   ],
+   "bpm": [
+    0.3
+   ]
+  },
+  {
+   "name": "Steve Nash",
+   "team": "DAL",
+   "games": 368,
+   "share": 0.355,
+   "careerGames": 1036,
+   "knownFor": "PHO",
+   "seasons": [
+    2000,
+    2001,
+    2002,
+    2003,
+    2004
+   ],
+   "bpm": [
+    -0.9,
+    2.8,
+    3.1,
+    4.6,
+    2.5
+   ]
+  },
+  {
+   "name": "Steve Nash",
+   "team": "LAL",
+   "games": 65,
+   "share": 0.063,
+   "careerGames": 1036,
+   "knownFor": "PHO",
+   "seasons": [
+    2013,
+    2014
+   ],
+   "bpm": [
+    0.4,
+    -3.6
+   ]
+  },
+  {
+   "name": "Tracy McGrady",
+   "team": "TOR",
+   "games": 79,
+   "share": 0.096,
+   "careerGames": 825,
+   "knownFor": "HOU",
+   "seasons": [
+    2000
+   ],
+   "bpm": [
+    3.5
+   ]
+  },
+  {
+   "name": "Tracy McGrady",
+   "team": "ORL",
+   "games": 295,
+   "share": 0.358,
+   "careerGames": 825,
+   "knownFor": "HOU",
+   "seasons": [
+    2001,
+    2002,
+    2003,
+    2004
+   ],
+   "bpm": [
+    7,
+    6.8,
+    10.5,
+    6.4
+   ]
+  },
+  {
+   "name": "Tracy McGrady",
+   "team": "DET",
+   "games": 72,
+   "share": 0.087,
+   "careerGames": 825,
+   "knownFor": "HOU",
+   "seasons": [
+    2011
+   ],
+   "bpm": [
+    0.6
+   ]
+  },
+  {
+   "name": "Tracy McGrady",
+   "team": "ATL",
+   "games": 52,
+   "share": 0.063,
+   "careerGames": 825,
+   "knownFor": "HOU",
+   "seasons": [
+    2012
+   ],
+   "bpm": [
+    0.6
+   ]
+  },
+  {
+   "name": "Vince Carter",
+   "team": "TOR",
+   "games": 353,
+   "share": 0.237,
+   "careerGames": 1491,
+   "knownFor": "NJN",
+   "seasons": [
+    2000,
+    2001,
+    2002,
+    2003,
+    2004,
+    2005
+   ],
+   "bpm": [
+    5.5,
+    7.6,
+    4.4,
+    4.5,
+    3.6,
+    2.3
+   ]
+  },
+  {
+   "name": "Vince Carter",
+   "team": "ORL",
+   "games": 97,
+   "share": 0.065,
+   "careerGames": 1491,
+   "knownFor": "NJN",
+   "seasons": [
+    2010,
+    2011
+   ],
+   "bpm": [
+    2,
+    1.8
+   ]
+  },
+  {
+   "name": "Vince Carter",
+   "team": "PHO",
+   "games": 51,
+   "share": 0.034,
+   "careerGames": 1491,
+   "knownFor": "NJN",
+   "seasons": [
+    2011
+   ],
+   "bpm": [
+    -0.4
+   ]
+  },
+  {
+   "name": "Vince Carter",
+   "team": "DAL",
+   "games": 223,
+   "share": 0.15,
+   "careerGames": 1491,
+   "knownFor": "NJN",
+   "seasons": [
+    2012,
+    2013,
+    2014
+   ],
+   "bpm": [
+    0.1,
+    3.1,
+    1.2
+   ]
+  },
+  {
+   "name": "Vince Carter",
+   "team": "MEM",
+   "games": 199,
+   "share": 0.133,
+   "careerGames": 1491,
+   "knownFor": "NJN",
+   "seasons": [
+    2015,
+    2016,
+    2017
+   ],
+   "bpm": [
+    -1.7,
+    -1,
+    0.8
+   ]
+  },
+  {
+   "name": "Vince Carter",
+   "team": "SAC",
+   "games": 58,
+   "share": 0.039,
+   "careerGames": 1491,
+   "knownFor": "NJN",
+   "seasons": [
+    2018
+   ],
+   "bpm": [
+    -1.2
+   ]
+  },
+  {
+   "name": "Vince Carter",
+   "team": "ATL",
+   "games": 136,
+   "share": 0.091,
+   "careerGames": 1491,
+   "knownFor": "NJN",
+   "seasons": [
+    2019,
+    2020
+   ],
+   "bpm": [
+    -0.7,
+    -4.3
+   ]
+  }
+ ]
+}

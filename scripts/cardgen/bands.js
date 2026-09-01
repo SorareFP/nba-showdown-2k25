@@ -277,3 +277,36 @@ export function delayUpperBands(bands, shift, { maxRoll = 60 } = {}) {
   out[n - 1].hi = Math.max(out[n - 1].hi, prevHi + 1);
   return out;
 }
+
+/**
+ * MORE ZEROES FOR THE UNTRUSTED. The fringe-prior shrink keeps a tiny
+ * sample's RATES honest, but it converges on the fringe average — which
+ * RAISED Danny Green's 115-minute rookie card, and the user's correction
+ * stands: uncertainty is supposed to hurt. "He needs more zeroes somehow."
+ *
+ * So it gets them literally: a low-trust card's blank range grows, delaying
+ * where scoring starts on the die by up to MAX_FLOOR_DELAY rolls at zero
+ * trust. The mirror image of delayUpperBands — that one pushes the big marks
+ * away from low-usage players, this one pushes ANY production away from
+ * low-evidence seasons. A full-trust card is untouched.
+ */
+export const MAX_FLOOR_DELAY = 6;
+
+export function delayFloor(bands, trust, { maxDelay = MAX_FLOOR_DELAY, maxRoll = 60 } = {}) {
+  const extra = Math.round(Math.max(0, 1 - Math.max(0, Math.min(trust, 1))) * maxDelay);
+  if (!extra || bands.length < 2) return bands;
+  const out = bands.map(b => ({ ...b }));
+  // The first band is the blank region: its hi moves up, and every later
+  // boundary is pushed just enough to stay one roll wide.
+  let prevHi = Math.min(out[0].hi + extra, maxRoll - (out.length - 1));
+  out[0].hi = prevHi;
+  for (let i = 1; i < out.length; i += 1) {
+    out[i].lo = prevHi + 1;
+    const roomForRest = maxRoll - (out.length - 1 - i);
+    out[i].hi = i === out.length - 1
+      ? Math.max(out[i].hi, out[i].lo)
+      : Math.min(Math.max(out[i].hi, out[i].lo), roomForRest);
+    prevHi = out[i].hi;
+  }
+  return out;
+}

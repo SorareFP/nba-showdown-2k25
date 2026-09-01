@@ -105,7 +105,7 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { readCache, REPO_ROOT } from './cache.js';
 import { normalizeName } from './resolveTeams.js';
-import { computeStatBands, delayUpperBands, usageAccessShift } from './bands.js';
+import { computeStatBands, delayFloor, delayUpperBands, usageAccessShift } from './bands.js';
 import { reconcileBandsByRoll, shapeChart } from './generate.js';
 import * as V from './variance.js';
 import * as A from './attributes.js';
@@ -569,10 +569,13 @@ export function buildHistoricalCard({
       stat
     );
     // The usage gate touches the SCORING spine only; boards and assists are
-    // read from their own ungated layouts by reconcileBandsByRoll.
+    // read from their own ungated layouts by reconcileBandsByRoll — and every
+    // stat's floor is delayed by the evidence the season lacks (delayFloor):
+    // a 115-minute rookie prints zeroes where a full season prints points.
+    const floored = delayFloor(placedBands, chartTrust);
     bands[stat] = stat === 'pts'
-      ? delayUpperBands(placedBands, usageAccessShift(season.usgPct))
-      : placedBands;
+      ? delayUpperBands(floored, usageAccessShift(season.usgPct))
+      : floored;
   }
   const chart = shapeChart(reconcileBandsByRoll(bands), { shotLine });
 

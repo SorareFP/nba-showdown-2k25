@@ -78,7 +78,7 @@ import { pathToFileURL } from 'node:url';
 import { readCache, REPO_ROOT } from '../cache.js';
 import { normalizeName } from '../resolveTeams.js';
 import { computeStatBands, delayUpperBands, usageAccessShift } from '../bands.js';
-import { reconcileBands, shapeChart, MAX_CHART_TIERS } from '../generate.js';
+import { reconcileBandsByRoll, shapeChart, MAX_CHART_TIERS } from '../generate.js';
 import * as V from '../variance.js';
 import * as A from '../attributes.js';
 import * as PV from '../playValue.js';
@@ -318,7 +318,7 @@ export function buildLegendCard({ row, shooting, speedPowerTotal, calibration })
   const bands = {};
   for (const stat of V.CHART_STATS) {
     const fit = { level: calibration.chart.levels[stat], shape: calibration.chart.shape };
-    bands[stat] = delayUpperBands(computeStatBands(
+    const placedBands = computeStatBands(
       V.synthesizeGames({
         per100: { [stat]: per100[stat] },
         mpg,
@@ -337,9 +337,14 @@ export function buildLegendCard({ row, shooting, speedPowerTotal, calibration })
       mix: mixNbaConvention(row),
       }),
       stat
-    ), usageAccessShift(row.usgPct));
+    );
+    // The usage gate touches the SCORING spine only; boards and assists are
+    // read from their own ungated layouts by reconcileBandsByRoll.
+    bands[stat] = stat === 'pts'
+      ? delayUpperBands(placedBands, usageAccessShift(row.usgPct))
+      : placedBands;
   }
-  const chart = shapeChart(reconcileBands(bands), { shotLine });
+  const chart = shapeChart(reconcileBandsByRoll(bands), { shotLine });
 
   const card = {
     id: playerIdFromName(row.name),

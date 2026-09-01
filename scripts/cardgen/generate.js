@@ -272,6 +272,44 @@ export function reconcileBands({ pts, reb, ast }) {
   }));
 }
 
+/**
+ * Positional reconcile: REB and AST are read at the ROLLS each PTS tier
+ * covers, not at the tier's index.
+ *
+ * WHY THE INDEX STOPPED BEING RIGHT. The usage gate delays the PTS spine's
+ * upper boundaries and nothing else -- a 10%-usage rebound specialist did not
+ * have the ball, but his boards never needed it. Index mapping dragged REB and
+ * AST behind the delayed scoring marks anyway, flattening exactly the variance
+ * the design wants kept. Reading each stat's own (ungated) layout at the roll
+ * the tier actually covers -- the midpoint, the lo for the open-ended top tier
+ * -- lets a big board value arrive in a MIDDLE tier while the six-point rows
+ * stay gated. Flatten the scoring curve, keep the rebound and assist variance.
+ *
+ * `reconcileBands` above stays as-is: the Jokic calibration fixture was
+ * verified 15/15 against the real published card through it, and the
+ * calibration path has no usage gate to correct for.
+ */
+export function reconcileBandsByRoll({ pts, reb, ast }) {
+  const at = (bands, roll) => {
+    for (const b of bands) if (roll <= b.hi) return b.value;
+    return bands[bands.length - 1].value;
+  };
+  return pts.map((tier, i) => {
+    // The top tier is open-ended -- it covers every roll to 99, so it owns each
+    // stat's ceiling value by construction. Probing it at its lo read BELOW the
+    // reb/ast ceilings and erased them (Giannis lost his 4-reb/2-ast row).
+    const last = i === pts.length - 1;
+    const probe = Math.floor((tier.lo + tier.hi) / 2);
+    return {
+      lo: tier.lo,
+      hi: tier.hi,
+      pts: tier.value,
+      reb: last ? reb[reb.length - 1].value : at(reb, probe),
+      ast: last ? ast[ast.length - 1].value : at(ast, probe),
+    };
+  });
+}
+
 export function toRawCardFormat(chart) {
   return chart.map((t, i) =>
     i === chart.length - 1 ? [t.lo, 99, t.pts, t.reb, t.ast] : [t.lo, t.hi, t.pts, t.reb, t.ast]

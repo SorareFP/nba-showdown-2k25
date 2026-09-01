@@ -106,7 +106,7 @@ import { pathToFileURL } from 'node:url';
 import { readCache, REPO_ROOT } from './cache.js';
 import { normalizeName } from './resolveTeams.js';
 import { computeStatBands, delayUpperBands, usageAccessShift } from './bands.js';
-import { reconcileBands, shapeChart } from './generate.js';
+import { reconcileBandsByRoll, shapeChart } from './generate.js';
 import * as V from './variance.js';
 import * as A from './attributes.js';
 import * as PV from './playValue.js';
@@ -493,7 +493,7 @@ export function buildHistoricalCard({
   const bands = {};
   for (const stat of V.CHART_STATS) {
     const fit = { level: calibration.chart.levels[stat], shape: calibration.chart.shape };
-    bands[stat] = delayUpperBands(computeStatBands(
+    const placedBands = computeStatBands(
       V.synthesizeGames({
         per100: { [stat]: per100[stat] },
         mpg,
@@ -514,9 +514,14 @@ export function buildHistoricalCard({
         },
       }),
       stat
-    ), usageAccessShift(season.usgPct));
+    );
+    // The usage gate touches the SCORING spine only; boards and assists are
+    // read from their own ungated layouts by reconcileBandsByRoll.
+    bands[stat] = stat === 'pts'
+      ? delayUpperBands(placedBands, usageAccessShift(season.usgPct))
+      : placedBands;
   }
-  const chart = shapeChart(reconcileBands(bands), { shotLine });
+  const chart = shapeChart(reconcileBandsByRoll(bands), { shotLine });
 
   const card = {
     id: playerIdFromName(player.name),

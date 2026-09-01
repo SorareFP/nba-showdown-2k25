@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-01T13:19:13.091Z",
+ "generatedAt": "2026-09-01T13:26:30.071Z",
  "provisional": true,
  "set": "wnba-super-season",
  "league": "WNBA",
@@ -1649,7 +1649,7 @@
    "paintBoost": 0,
    "threePtBoost": -3,
    "defBoost": 3,
-   "salary": 1180,
+   "salary": 1190,
    "chart": [
     {
      "lo": 1,
@@ -1676,7 +1676,7 @@
      "lo": 14,
      "hi": 16,
      "pts": 2,
-     "reb": 1,
+     "reb": 2,
      "ast": 1
     },
     {
@@ -2032,7 +2032,7 @@
    "paintBoost": 0,
    "threePtBoost": -2,
    "defBoost": 1,
-   "salary": 1350,
+   "salary": 1330,
    "chart": [
     {
      "lo": 1,
@@ -2066,7 +2066,7 @@
      "lo": 15,
      "hi": 20,
      "pts": 4,
-     "reb": 2,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -2110,7 +2110,7 @@
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 2,
-   "salary": 950,
+   "salary": 940,
    "chart": [
     {
      "lo": 1,
@@ -2578,7 +2578,7 @@
    "paintBoost": -1,
    "threePtBoost": 2,
    "defBoost": 3,
-   "salary": 1220,
+   "salary": 1190,
    "chart": [
     {
      "lo": 1,
@@ -2612,7 +2612,7 @@
      "lo": 14,
      "hi": 21,
      "pts": 3,
-     "reb": 2,
+     "reb": 1,
      "ast": 1
     },
     {

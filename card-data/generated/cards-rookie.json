@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-01T14:47:36.405Z",
+ "generatedAt": "2026-09-01T15:08:46.596Z",
  "set": "rookie",
  "provisional": true,
  "sources": {
@@ -1089,7 +1089,7 @@
   {
    "id": "Andre_Iguodala",
    "name": "Andre Iguodala",
-   "team": "PHI",
+   "team": "PHI97",
    "pos": "SG",
    "speed": 14,
    "power": 9,
@@ -1233,7 +1233,7 @@
   {
    "id": "Andrew_Wiggins",
    "name": "Andrew Wiggins",
-   "team": "MIN",
+   "team": "MIN97",
    "pos": "SF",
    "speed": 7,
    "power": 6,
@@ -5490,7 +5490,7 @@
   {
    "id": "DeMar_DeRozan",
    "name": "DeMar DeRozan",
-   "team": "TOR",
+   "team": "TOR09",
    "pos": "SG",
    "speed": 7,
    "power": 6,
@@ -6860,7 +6860,7 @@
   {
    "id": "Dwight_Howard",
    "name": "Dwight Howard",
-   "team": "ORL",
+   "team": "ORL01",
    "pos": "PF",
    "speed": 8,
    "power": 12,
@@ -7480,7 +7480,7 @@
   {
    "id": "Gary_Harris",
    "name": "Gary Harris",
-   "team": "DEN04",
+   "team": "DEN13",
    "pos": "SG",
    "speed": 7,
    "power": 4,
@@ -10233,7 +10233,7 @@
   {
    "id": "Jamal_Murray",
    "name": "Jamal Murray",
-   "team": "DEN04",
+   "team": "DEN13",
    "pos": "SG",
    "speed": 8,
    "power": 6,
@@ -10442,7 +10442,7 @@
   {
    "id": "Jameer_Nelson",
    "name": "Jameer Nelson",
-   "team": "ORL",
+   "team": "ORL01",
    "pos": "PG",
    "speed": 10,
    "power": 6,
@@ -11076,7 +11076,7 @@
   {
    "id": "Jason_Kidd",
    "name": "Jason Kidd",
-   "team": "DAL",
+   "team": "DAL80",
    "pos": "PG",
    "speed": 13,
    "power": 8,
@@ -11148,7 +11148,7 @@
   {
    "id": "Jason_Richardson",
    "name": "Jason Richardson",
-   "team": "GSW",
+   "team": "GSW98",
    "pos": "SG",
    "speed": 9,
    "power": 7,
@@ -12585,7 +12585,7 @@
   {
    "id": "Jonas_Valanciunas",
    "name": "Jonas Valančiūnas",
-   "team": "TOR",
+   "team": "TOR09",
    "pos": "C",
    "speed": 6,
    "power": 11,
@@ -13926,7 +13926,7 @@
   {
    "id": "Jusuf_Nurkic",
    "name": "Jusuf Nurkić",
-   "team": "DEN04",
+   "team": "DEN13",
    "pos": "C",
    "speed": 5,
    "power": 11,
@@ -13991,7 +13991,7 @@
   {
    "id": "Karl_Anthony_Towns",
    "name": "Karl-Anthony Towns",
-   "team": "MIN",
+   "team": "MIN97",
    "pos": "C",
    "speed": 8,
    "power": 15,
@@ -14765,7 +14765,7 @@
   {
    "id": "Kevin_Durant",
    "name": "Kevin Durant",
-   "team": "SEA",
+   "team": "SEA06",
    "pos": "SG",
    "speed": 8,
    "power": 6,
@@ -14830,7 +14830,7 @@
   {
    "id": "Kevin_Garnett",
    "name": "Kevin Garnett",
-   "team": "MIN",
+   "team": "MIN89",
    "pos": "SF",
    "speed": 9,
    "power": 11,
@@ -14960,7 +14960,7 @@
   {
    "id": "Kevin_Love",
    "name": "Kevin Love",
-   "team": "MIN",
+   "team": "MIN97",
    "pos": "C",
    "speed": 6,
    "power": 9,
@@ -15313,7 +15313,7 @@
   {
    "id": "Kris_Dunn",
    "name": "Kris Dunn",
-   "team": "MIN",
+   "team": "MIN97",
    "pos": "PG",
    "speed": 8,
    "power": 5,
@@ -15717,7 +15717,7 @@
   {
    "id": "Kyrie_Irving",
    "name": "Kyrie Irving",
-   "team": "CLE",
+   "team": "CLE04",
    "pos": "PG",
    "speed": 14,
    "power": 8,
@@ -15850,7 +15850,7 @@
   {
    "id": "Lamar_Odom",
    "name": "Lamar Odom",
-   "team": "LAC",
+   "team": "LAC84",
    "pos": "SF",
    "speed": 10,
    "power": 10,
@@ -17202,7 +17202,7 @@
   {
    "id": "Michael_Finley",
    "name": "Michael Finley",
-   "team": "PHX",
+   "team": "PHX93",
    "pos": "SF",
    "speed": 9,
    "power": 9,
@@ -17346,7 +17346,7 @@
   {
    "id": "Mickael_Pietrus",
    "name": "Mickaël Piétrus",
-   "team": "GSW",
+   "team": "GSW98",
    "pos": "PG",
    "speed": 10,
    "power": 7,
@@ -18658,7 +18658,7 @@
   {
    "id": "Nikola_Jokic",
    "name": "Nikola Jokić",
-   "team": "DEN04",
+   "team": "DEN13",
    "pos": "C",
    "speed": 9,
    "power": 16,
@@ -19726,7 +19726,7 @@
   {
    "id": "Pau_Gasol",
    "name": "Pau Gasol",
-   "team": "MEM",
+   "team": "MEM01",
    "pos": "PF",
    "speed": 8,
    "power": 12,
@@ -20267,7 +20267,7 @@
   {
    "id": "PJ_Tucker",
    "name": "PJ Tucker",
-   "team": "TOR",
+   "team": "TOR07",
    "pos": "SF",
    "speed": 7,
    "power": 7,
@@ -20678,7 +20678,7 @@
   {
    "id": "Ray_Allen",
    "name": "Ray Allen",
-   "team": "MIL",
+   "team": "MIL94",
    "pos": "SG",
    "speed": 11,
    "power": 7,
@@ -21085,7 +21085,7 @@
   {
    "id": "Robert_Horry",
    "name": "Robert Horry",
-   "team": "HOU",
+   "team": "HOU72",
    "pos": "SF",
    "speed": 8,
    "power": 9,
@@ -22325,7 +22325,7 @@
   {
    "id": "Shaquille_O_Neal",
    "name": "Shaquille O'Neal",
-   "team": "ORL",
+   "team": "ORL89",
    "pos": "C",
    "speed": 7,
    "power": 18,
@@ -22657,7 +22657,7 @@
   {
    "id": "Stephen_Curry",
    "name": "Stephen Curry",
-   "team": "GSW",
+   "team": "GSW98",
    "pos": "PG",
    "speed": 14,
    "power": 8,
@@ -22866,7 +22866,7 @@
   {
    "id": "Steve_Nash",
    "name": "Steve Nash",
-   "team": "PHX",
+   "team": "PHX93",
    "pos": "PG",
    "speed": 9,
    "power": 5,
@@ -23489,7 +23489,7 @@
   {
    "id": "Tim_Thomas",
    "name": "Tim Thomas",
-   "team": "PHI",
+   "team": "PHI97",
    "pos": "SF",
    "speed": 8,
    "power": 9,
@@ -24520,7 +24520,7 @@
   {
    "id": "Tyus_Jones",
    "name": "Tyus Jones",
-   "team": "MIN",
+   "team": "MIN97",
    "pos": "PG",
    "speed": 9,
    "power": 5,
@@ -25071,7 +25071,7 @@
   {
    "id": "Zach_LaVine",
    "name": "Zach LaVine",
-   "team": "MIN",
+   "team": "MIN97",
    "pos": "PG",
    "speed": 5,
    "power": 4,

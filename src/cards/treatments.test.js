@@ -550,7 +550,13 @@ describe('the badge model', () => {
       const green = applyTreatment(base, 'green-accent');
       const { fill } = badgeColors(base, getBadge(ROOKIE_BADGE));
       expect(fill, `${abbr} badge is the team accent`).toBe(base.accentOnField);
-      expect(fill, `${abbr} badge is not the set green`).not.toBe(green.accentOnField);
+      // Unless the TEAM's own colour resolves to the same hex — the 1989-96
+      // Timberwolves' green does. A green pill is fine when it is the team's
+      // green; the assertion only forbids the SET green sneaking in where the
+      // team's accent is something else.
+      if (base.accentOnField !== green) {
+        expect(fill, `${abbr} badge is not the set green`).not.toBe(green);
+      }
     }
   });
 });

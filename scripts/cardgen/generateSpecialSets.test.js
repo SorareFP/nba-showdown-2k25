@@ -251,7 +251,9 @@ describe('Rookie', () => {
     // Kevin Durant's rookie year was Seattle's last. Mapping it to OKC would be
     // a factual error printed on the card.
     const durant = ROOKIE.cards.find(c => c.name === 'Kevin Durant');
-    expect(durant.team).toBe('SEA');
+    // SEA06 — the 2001-08 SuperSonics identity, whose mark the user supplied
+    // for exactly this card. Still Seattle; the era key names which Seattle.
+    expect(durant.team).toBe('SEA06');
     expect(durant.season).toBe(2008);
     expect(ROOKIE.cards.find(c => c.name === 'Brook Lopez').team).toBe('NJN');
     expect(ROOKIE.cards.find(c => c.name === 'Anthony Davis').team).toBe('NOH');

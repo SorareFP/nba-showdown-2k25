@@ -136,14 +136,30 @@ export const HISTORICAL_TEAMS = {
   // (sword C), DET02 (horsepower), LAC16 (2015 script), TOR96 (dino-ball),
   // ATL96 (hawk head), ATL08 (navy), WSB (Bullets), and the relocated
   // franchises above. Colours are from general knowledge, marked unverified.
-  DEN04: { name: 'Nuggets',  city: 'Denver',      abbr: 'DEN', primary: '#418FDE', secondary: '#FFC72C', logo: '/logos/DEN04.png', era: '2004-2018', unverifiedColors: true },
+  DEN04: { name: 'Nuggets',  city: 'Denver',      abbr: 'DEN', primary: '#418FDE', secondary: '#FFC72C', logo: '/logos/DEN04.png', era: '2004-2012', unverifiedColors: true },
   SAC95: { name: 'Kings',    city: 'Sacramento',  abbr: 'SAC', primary: '#5A2D81', secondary: '#000000', logo: '/logos/SAC95.png', era: '1995-2016', unverifiedColors: true },
-  CLE04: { name: 'Cavaliers', city: 'Cleveland',  abbr: 'CLE', primary: '#860038', secondary: '#04225C', logo: '/logos/CLE04.png', era: '2004-2010', unverifiedColors: true },
+  CLE04: { name: 'Cavaliers', city: 'Cleveland',  abbr: 'CLE', primary: '#860038', secondary: '#FDBB30', logo: '/logos/CLE04.png', era: '2004-2017', unverifiedColors: true },
   DET02: { name: 'Pistons',  city: 'Detroit',     abbr: 'DET', primary: '#C8102E', secondary: '#1D42BA', logo: '/logos/DET02.png', era: '2002-2005', unverifiedColors: true },
   LAC16: { name: 'Clippers', city: 'Los Angeles', abbr: 'LAC', primary: '#C8102E', secondary: '#1D428A', logo: '/logos/LAC16.png', era: '2016-2024', unverifiedColors: true },
   TOR96: { name: 'Raptors',  city: 'Toronto',     abbr: 'TOR', primary: '#753BBD', secondary: '#CE1141', logo: '/logos/TOR96.png', era: '1996-2006', unverifiedColors: true },
+  TOR07: { name: 'Raptors',  city: 'Toronto',     abbr: 'TOR', primary: '#CE1141', secondary: '#000000', logo: '/logos/TOR07.png', era: '2007-2008', unverifiedColors: true },
+  TOR09: { name: 'Raptors',  city: 'Toronto',     abbr: 'TOR', primary: '#CE1141', secondary: '#A1A1A4', logo: '/logos/TOR09.png', era: '2009-2015', unverifiedColors: true },
   ATL96: { name: 'Hawks',    city: 'Atlanta',     abbr: 'ATL', primary: '#E03A3E', secondary: '#FDB927', logo: '/logos/ATL96.png', era: '1996-2007', unverifiedColors: true },
   ATL08: { name: 'Hawks',    city: 'Atlanta',     abbr: 'ATL', primary: '#002B5C', secondary: '#E03A3E', logo: '/logos/ATL08.png', era: '2008-2015', unverifiedColors: true },
+  DAL80: { name: 'Mavericks', city: 'Dallas',     abbr: 'DAL', primary: '#00843D', secondary: '#0064B1', logo: '/logos/DAL80.png', era: '1981-2001', unverifiedColors: true },
+  HOU72: { name: 'Rockets',  city: 'Houston',     abbr: 'HOU', primary: '#CE1141', secondary: '#FDB927', logo: '/logos/HOU72.png', era: '1972-1995', unverifiedColors: true },
+  MIL94: { name: 'Bucks',    city: 'Milwaukee',   abbr: 'MIL', primary: '#5C2F83', secondary: '#00471B', logo: '/logos/MIL94.png', era: '1994-2006', unverifiedColors: true },
+  MIN89: { name: 'Timberwolves', city: 'Minnesota', abbr: 'MIN', primary: '#005084', secondary: '#00A94F', logo: '/logos/MIN89.png', era: '1989-1996', unverifiedColors: true },
+  MIN97: { name: 'Timberwolves', city: 'Minnesota', abbr: 'MIN', primary: '#0C2340', secondary: '#78BE20', logo: '/logos/MIN97.png', era: '1997-2017', unverifiedColors: true },
+  MEM01: { name: 'Grizzlies', city: 'Memphis',    abbr: 'MEM', primary: '#00285E', secondary: '#6CACE4', logo: '/logos/MEM01.png', era: '2001-2004', unverifiedColors: true },
+  PHI97: { name: '76ers',    city: 'Philadelphia', abbr: 'PHI', primary: '#000000', secondary: '#C8102E', logo: '/logos/PHI97.png', era: '1998-2009', unverifiedColors: true },
+  ORL89: { name: 'Magic',    city: 'Orlando',     abbr: 'ORL', primary: '#0077C0', secondary: '#000000', logo: '/logos/ORL89.png', era: '1989-2000', unverifiedColors: true },
+  ORL01: { name: 'Magic',    city: 'Orlando',     abbr: 'ORL', primary: '#0077C0', secondary: '#C4CED4', logo: '/logos/ORL01.png', era: '2001-2010', unverifiedColors: true },
+  GSW98: { name: 'Warriors', city: 'Golden State', abbr: 'GSW', primary: '#04529C', secondary: '#FFCC33', logo: '/logos/GSW98.png', era: '1998-2010', unverifiedColors: true },
+  LAC84: { name: 'Clippers', city: 'Los Angeles', abbr: 'LAC', primary: '#ED174C', secondary: '#006BB6', logo: '/logos/LAC84.png', era: '1985-2015', unverifiedColors: true },
+  PHX93: { name: 'Suns',     city: 'Phoenix',     abbr: 'PHX', primary: '#1D1160', secondary: '#E56020', logo: '/logos/PHX93.png', era: '1993-2013', unverifiedColors: true },
+  SEA06: { name: 'SuperSonics', city: 'Seattle',  abbr: 'SEA', primary: '#00653A', secondary: '#FFC72C', logo: '/logos/SEA06.png', era: '2002-2008', unverifiedColors: true },
+  DEN13: { name: 'Nuggets',  city: 'Denver',      abbr: 'DEN', primary: '#0E2240', secondary: '#FEC524', logo: '/logos/DEN13.png', era: '2013-2018', unverifiedColors: true },
 };
 
 /**
@@ -157,16 +173,42 @@ export const HISTORICAL_TEAMS = {
  * wearing it.
  */
 export const FRANCHISE_ERAS = {
-  DEN: [{ from: 2004, to: 2018, key: 'DEN04' }],
+  DEN: [
+    { from: 2004, to: 2012, key: 'DEN04' },
+    { from: 2013, to: 2018, key: 'DEN13' },
+  ],
   SAC: [{ from: 1995, to: 2016, key: 'SAC95' }],
-  CLE: [{ from: 2004, to: 2010, key: 'CLE04' }],
+  CLE: [{ from: 2004, to: 2017, key: 'CLE04' }],
   DET: [{ from: 2002, to: 2005, key: 'DET02' }],
-  LAC: [{ from: 2016, to: 2024, key: 'LAC16' }],
-  TOR: [{ from: 1996, to: 2006, key: 'TOR96' }],
+  LAC: [
+    { from: 1985, to: 2015, key: 'LAC84' },
+    { from: 2016, to: 2024, key: 'LAC16' },
+  ],
+  TOR: [
+    { from: 1996, to: 2006, key: 'TOR96' },
+    { from: 2007, to: 2008, key: 'TOR07' },
+    { from: 2009, to: 2015, key: 'TOR09' },
+  ],
   ATL: [
     { from: 1996, to: 2007, key: 'ATL96' },
     { from: 2008, to: 2015, key: 'ATL08' },
   ],
+  DAL: [{ from: 1981, to: 2001, key: 'DAL80' }],
+  HOU: [{ from: 1972, to: 1995, key: 'HOU72' }],
+  MIL: [{ from: 1994, to: 2006, key: 'MIL94' }],
+  MIN: [
+    { from: 1989, to: 1996, key: 'MIN89' },
+    { from: 1997, to: 2017, key: 'MIN97' },
+  ],
+  MEM: [{ from: 2001, to: 2004, key: 'MEM01' }],
+  PHI: [{ from: 1998, to: 2009, key: 'PHI97' }],
+  ORL: [
+    { from: 1989, to: 2000, key: 'ORL89' },
+    { from: 2001, to: 2010, key: 'ORL01' },
+  ],
+  GSW: [{ from: 1998, to: 2010, key: 'GSW98' }],
+  PHX: [{ from: 1993, to: 2013, key: 'PHX93' }],
+  SEA: [{ from: 2002, to: 2008, key: 'SEA06' }],
 };
 
 /**

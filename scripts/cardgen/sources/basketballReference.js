@@ -216,6 +216,14 @@ export const SEASON_TABLES = {
   // Shot profile by distance — share of attempts and FG% per band. Kept back
   // to 1996-97, which is as far as Basketball-Reference tracks it.
   shooting: { slug: 'shooting', tableId: 'shooting' },
+  // The PLAYOFF editions of the same tables, at /playoffs/ instead of
+  // /leagues/. Same table ids, same cell names, so the same trims apply —
+  // these exist for the runs dunksandthrees' playoff table (2002+) predates.
+  // The playoff pages comment-wrap their tables for lazy loading and suffix
+  // the ids with _stats; `uncomment` below unwraps them before parsing.
+  playoffPerPoss: { slug: 'per_poss', tableId: 'per_poss_stats', path: 'playoffs', uncomment: true },
+  playoffAdvanced: { slug: 'advanced', tableId: 'advanced_stats', path: 'playoffs', uncomment: true },
+  playoffShooting: { slug: 'shooting', tableId: 'shooting_stats', path: 'playoffs', uncomment: true },
 };
 
 /**
@@ -240,11 +248,15 @@ function isolateTableBody(html, tableId) {
     throw new Error(`parseSeasonTableHtml: no ${idAttr} in the input HTML`);
   }
   const tbodyStart = html.indexOf('<tbody', idIndex);
-  const tbodyEnd = html.indexOf('</tbody>', tbodyStart);
+  // The playoff pages never close their <tbody> — valid HTML5, and the reason
+  // the first playoff fetch died with this very error. </table> bounds the
+  // same rows when the closing tag is absent.
+  let tbodyEnd = html.indexOf('</tbody>', tbodyStart);
+  if (tbodyEnd === -1) tbodyEnd = html.indexOf('</table>', tbodyStart);
   if (tbodyStart === -1 || tbodyEnd === -1) {
     throw new Error(`parseSeasonTableHtml: no <tbody> for ${idAttr}`);
   }
-  return html.slice(tbodyStart, tbodyEnd + '</tbody>'.length);
+  return html.slice(tbodyStart, tbodyEnd);
 }
 
 /**
@@ -292,11 +304,13 @@ export async function fetchSeasonTable(season, kind, { fetchImpl = fetch } = {})
   const table = SEASON_TABLES[kind];
   if (!table) throw new Error(`fetchSeasonTable: unknown table kind ${JSON.stringify(kind)}`);
   const res = await fetchImpl(
-    `https://www.basketball-reference.com/leagues/NBA_${season}_${table.slug}.html`,
+    `https://www.basketball-reference.com/${table.path ?? 'leagues'}/NBA_${season}_${table.slug}.html`,
     { headers: { 'User-Agent': 'Mozilla/5.0' } }
   );
   if (!res.ok) throw new Error(`Basketball-Reference fetch failed: ${res.status}`);
-  return parseSeasonTableHtml(await res.text(), table.tableId);
+  let html = await res.text();
+  if (table.uncomment) html = html.replace(/<!--|-->/g, '');
+  return parseSeasonTableHtml(html, table.tableId);
 }
 
 // ---------------------------------------------------------------------------

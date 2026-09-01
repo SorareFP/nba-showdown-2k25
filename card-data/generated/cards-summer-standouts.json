@@ -1,14 +1,14 @@
 {
- "generatedAt": "2026-09-01T15:23:06.015Z",
+ "generatedAt": "2026-09-01T16:21:26.290Z",
  "set": "summer-standouts",
  "provisional": true,
  "sources": {
   "roster": "card-data/summer-standouts.json — hand-picked; conflict calls in card-data/standout-conflict-decisions.json",
   "statLine": "dunksandthrees season-epm seasonType st4 (playoffs), per-75 restated per-100",
-  "defBoost": "real playoff DEF EPM — no DBPM substitute on this set",
+  "defBoost": "real playoff DEF EPM (2002+) or real playoff DBPM (the BBRef runs) — no regular-season substitute on this set",
   "pricing": "play value against the base set, like every special set"
  },
- "firstSeason": 2002,
+ "firstSeason": 1996,
  "lastSeason": 2025,
  "cards": [
   {
@@ -462,7 +462,7 @@
   {
    "id": "Tim_Thomas",
    "name": "Tim Thomas",
-   "team": "PHX93",
+   "team": "PHX01",
    "pos": "C",
    "speed": 9,
    "power": 14,
@@ -1150,7 +1150,7 @@
   {
    "id": "Jared_Dudley",
    "name": "Jared Dudley",
-   "team": "PHX93",
+   "team": "PHX01",
    "pos": "SF",
    "speed": 10,
    "power": 10,
@@ -1217,7 +1217,7 @@
   {
    "id": "Jason_Richardson",
    "name": "Jason Richardson",
-   "team": "PHX93",
+   "team": "PHX01",
    "pos": "SG",
    "speed": 14,
    "power": 9,
@@ -1344,7 +1344,7 @@
   {
    "id": "Steve_Nash",
    "name": "Steve Nash",
-   "team": "PHX93",
+   "team": "PHX01",
    "pos": "PG",
    "speed": 14,
    "power": 8,
@@ -3155,6 +3155,152 @@
    "bbrefId": "halibty01",
    "traded": false,
    "metrics": {},
+   "provisional": true,
+   "playoffRun": true
+  },
+  {
+   "id": "Dennis_Rodman",
+   "name": "Dennis Rodman",
+   "team": "CHI",
+   "pos": "PF",
+   "speed": 8,
+   "power": 11,
+   "shotLine": 17,
+   "paintBoost": 0,
+   "threePtBoost": -3,
+   "defBoost": 1,
+   "salary": 310,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 16,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 17,
+     "hi": 23,
+     "pts": 1,
+     "reb": 3,
+     "ast": 0
+    },
+    {
+     "lo": 24,
+     "hi": 27,
+     "pts": 1,
+     "reb": 5,
+     "ast": 0
+    },
+    {
+     "lo": 28,
+     "hi": 99,
+     "pts": 2,
+     "reb": 5,
+     "ast": 1
+    }
+   ],
+   "season": 1996,
+   "seasonLabel": "1995-96",
+   "age": 34,
+   "games": 18,
+   "mpg": 34.4,
+   "bbrefId": "rodmade01",
+   "traded": false,
+   "metrics": {
+    "bpm": 0.7,
+    "vorp": 0.4,
+    "ws": 1.9,
+    "ws48": 0.149,
+    "per": 14.1
+   },
+   "provisional": true,
+   "playoffRun": true
+  },
+  {
+   "id": "Scottie_Pippen",
+   "name": "Scottie Pippen",
+   "team": "POR",
+   "pos": "SF",
+   "speed": 12,
+   "power": 13,
+   "shotLine": 17,
+   "paintBoost": 2,
+   "threePtBoost": 2,
+   "defBoost": 3,
+   "salary": 830,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 9,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 10,
+     "hi": 16,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 17,
+     "hi": 22,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 3,
+     "reb": 3,
+     "ast": 1
+    }
+   ],
+   "season": 2000,
+   "seasonLabel": "1999-00",
+   "age": 34,
+   "games": 16,
+   "mpg": 38.4,
+   "bbrefId": "pippesc01",
+   "traded": false,
+   "metrics": {
+    "bpm": 5.3,
+    "vorp": 1.1,
+    "ws": 1.8,
+    "ws48": 0.14,
+    "per": 17.5
+   },
    "provisional": true,
    "playoffRun": true
   }

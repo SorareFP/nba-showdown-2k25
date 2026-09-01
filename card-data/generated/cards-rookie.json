@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-01T16:04:03.777Z",
+ "generatedAt": "2026-09-01T16:26:03.847Z",
  "set": "rookie",
  "provisional": true,
  "sources": {
@@ -197,7 +197,7 @@
    "speed": 8,
    "power": 6,
    "shotLine": 14,
-   "paintBoost": 0,
+   "paintBoost": -1,
    "threePtBoost": 2,
    "defBoost": -1,
    "salary": 630,
@@ -5625,6 +5625,78 @@
    "provisional": true
   },
   {
+   "id": "Dennis_Rodman",
+   "name": "Dennis Rodman",
+   "team": "DET",
+   "pos": "SF",
+   "speed": 9,
+   "power": 9,
+   "shotLine": 15,
+   "paintBoost": -1,
+   "threePtBoost": -5,
+   "defBoost": 1,
+   "salary": 550,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 5,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 6,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 19,
+     "pts": 2,
+     "reb": 3,
+     "ast": 0
+    },
+    {
+     "lo": 20,
+     "hi": 22,
+     "pts": 3,
+     "reb": 3,
+     "ast": 0
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 4,
+     "reb": 4,
+     "ast": 0
+    }
+   ],
+   "season": 1987,
+   "seasonLabel": "1986-87",
+   "age": 25,
+   "games": 77,
+   "mpg": 15,
+   "bbrefId": "rodmade01",
+   "traded": false,
+   "metrics": {
+    "bpm": 0.5,
+    "vorp": 0.7,
+    "ws": 2.9,
+    "ws48": 0.12,
+    "per": 15.5
+   },
+   "provisional": true
+  },
+  {
    "id": "Dennis_Schroder",
    "name": "Dennis Schröder",
    "team": "ATL08",
@@ -7961,10 +8033,10 @@
    "speed": 5,
    "power": 9,
    "shotLine": 16,
-   "paintBoost": 1,
+   "paintBoost": 2,
    "threePtBoost": -1,
    "defBoost": 2,
-   "salary": 390,
+   "salary": 410,
    "chart": [
     {
      "lo": 1,
@@ -10651,7 +10723,7 @@
   {
    "id": "Jared_Dudley",
    "name": "Jared Dudley",
-   "team": "CHB",
+   "team": "CHB04",
    "pos": "PF",
    "speed": 7,
    "power": 9,
@@ -14491,7 +14563,7 @@
   {
    "id": "Kemba_Walker",
    "name": "Kemba Walker",
-   "team": "CHB",
+   "team": "CHB08",
    "pos": "PG",
    "speed": 8,
    "power": 4,
@@ -22121,6 +22193,71 @@
    "provisional": true
   },
   {
+   "id": "Scottie_Pippen",
+   "name": "Scottie Pippen",
+   "team": "CHI",
+   "pos": "SF",
+   "speed": 8,
+   "power": 9,
+   "shotLine": 17,
+   "paintBoost": -1,
+   "threePtBoost": -3,
+   "defBoost": 1,
+   "salary": 500,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 16,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 17,
+     "hi": 21,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "season": 1988,
+   "seasonLabel": "1987-88",
+   "age": 22,
+   "games": 79,
+   "mpg": 20.9,
+   "bbrefId": "pippesc01",
+   "traded": false,
+   "metrics": {
+    "bpm": -0.6,
+    "vorp": 0.6,
+    "ws": 2.3,
+    "ws48": 0.066,
+    "per": 12.9
+   },
+   "provisional": true
+  },
+  {
    "id": "Serge_Ibaka",
    "name": "Serge Ibaka",
    "team": "OKC",
@@ -23776,7 +23913,7 @@
    "power": 5,
    "shotLine": 16,
    "paintBoost": 0,
-   "threePtBoost": -1,
+   "threePtBoost": -4,
    "defBoost": -1,
    "salary": 320,
    "chart": [

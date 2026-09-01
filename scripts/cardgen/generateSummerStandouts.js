@@ -34,8 +34,10 @@ import { indexPositionShares, loadPositionShares } from './positionShares.js';
 import * as PV from './playValue.js';
 import * as A from './attributes.js';
 import {
-  readSummerStandouts, playoffRow, playoffSeason,
+  readSummerStandouts, playoffRow, playoffSeason, buildBpmBridge,
 } from './summerStandouts.js';
+import { readCache as readCacheFile } from './cache.js';
+import { archiveBasis, requireArchive } from './epmArchive.js';
 
 export const SET_ID = 'summer-standouts';
 const GEN_DIR = path.join(REPO_ROOT, 'card-data', 'generated');
@@ -73,11 +75,57 @@ export function main({ log = console.log } = {}) {
   // BBRef id, and without one every trophy join comes back empty.
   const league = loadLeagueRows();
 
+  // The BBRef playoff path, for runs before dunksandthrees' table begins
+  // (2002): the playoff editions of the per-100/advanced/shooting tables, with
+  // the BPM bridge in EPM's place — exactly how the pre-EPM Super Seasons and
+  // rookie years cross. VORP exists on the playoff pages, so the refinement
+  // slot bridges from VORP per game the same way.
+  let bridge = null;
+  const bbrefBridge = () => {
+    if (!bridge) bridge = buildBpmBridge(archiveBasis(requireArchive()));
+    return bridge;
+  };
+  const bbrefPlayoffSeason = (name, pick) => {
+    const load = kind => {
+      let c;
+      try { c = readCacheFile(`bbref-${pick.season}-${kind}-full`); } catch { return []; }
+      return Array.isArray(c) ? c : c?.rows ?? c?.data ?? [];
+    };
+    const find = rows => rows.find(
+      r => normalizeName(r.name) === normalizeName(name) && r.team === pick.team
+    ) ?? null;
+    const adv = find(load('playoffAdvanced'));
+    const pp = find(load('playoffPerPoss'));
+    if (!adv || !pp) return null;
+    const rim = find(load('playoffShooting'));
+    const b = bbrefBridge();
+    return {
+      ...adv, ...pp,
+      playerId: adv.playerId,
+      season: pick.season,
+      playoffRun: true,
+      pos: adv.pos,
+      rimPct: rim?.rimPct ?? null,
+      rimShare: rim?.rimShare ?? null,
+      // Real playoff DBPM in the Def Boost slot, as the SS convention has it.
+      dbpm: adv.dbpm,
+      epm: b.epmFromBpm(adv.bpm),
+      ewinsPerGame: b.ewinsPerGameFromVorp(adv.vorp, adv.games),
+    };
+  };
+
   const selections = [];
   const meta = [];
   const missing = [];
   for (const name of names) {
     const pick = playoffCards[name];
+    if (pick.source === 'bbref') {
+      const season = bbrefPlayoffSeason(name, pick);
+      if (!season) { missing.push(`${name} (no ${pick.season} playoff tables — fetch playoffAdvanced/playoffPerPoss)`); continue; }
+      selections.push({ player: { name, pos: season.pos ?? 'SF' }, season });
+      meta.push({ name, ...pick });
+      continue;
+    }
     const row = playoffRow(name, pick.season);
     if (!row) { missing.push(`${name} (no ${pick.season} playoff row)`); continue; }
     const careerRows = pickCareer(league.get(normalizeName(name)), { referenceSeason: pick.season });
@@ -122,7 +170,7 @@ export function main({ log = console.log } = {}) {
     sources: {
       roster: 'card-data/summer-standouts.json — hand-picked; conflict calls in card-data/standout-conflict-decisions.json',
       statLine: 'dunksandthrees season-epm seasonType st4 (playoffs), per-75 restated per-100',
-      defBoost: 'real playoff DEF EPM — no DBPM substitute on this set',
+      defBoost: 'real playoff DEF EPM (2002+) or real playoff DBPM (the BBRef runs) — no regular-season substitute on this set',
       pricing: 'play value against the base set, like every special set',
     },
     firstSeason: Math.min(...meta.map(m => m.season)),

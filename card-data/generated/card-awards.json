@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-01T16:04:04.012Z",
+ "generatedAt": "2026-09-01T16:26:04.033Z",
  "source": "Basketball-Reference's season `advanced` tables, awards column — a voted award's suffix is its finishing position, so only -1 is a win — plus the same pages' `advanced_post` table, whose awards column holds one cell a season and that cell is always `Finals MVP-1`, plus each season index page's League Champion row and that team's roster, which is where the ring comes from and which is in no column at all",
  "declared": [
   "MVP",
@@ -13,7 +13,11 @@
   "AS"
  ],
  "seasons": [
+  1987,
+  1988,
+  1992,
   1993,
+  1994,
   1995,
   1996,
   1997,
@@ -49,10 +53,34 @@
  ],
  "champions": [
   {
+   "season": 1987,
+   "abbr": "LAL",
+   "name": "Los Angeles Lakers",
+   "roster": 13
+  },
+  {
+   "season": 1988,
+   "abbr": "LAL",
+   "name": "Los Angeles Lakers",
+   "roster": 15
+  },
+  {
+   "season": 1992,
+   "abbr": "CHI",
+   "name": "Chicago Bulls",
+   "roster": 16
+  },
+  {
    "season": 1993,
    "abbr": "CHI",
    "name": "Chicago Bulls",
    "roster": 17
+  },
+  {
+   "season": 1994,
+   "abbr": "HOU",
+   "name": "Houston Rockets",
+   "roster": 15
   },
   {
    "season": 1995,
@@ -249,10 +277,34 @@
  ],
  "finalsMvps": [
   {
+   "season": 1987,
+   "code": "FMVP",
+   "name": "Magic Johnson",
+   "playerId": "johnsma02"
+  },
+  {
+   "season": 1988,
+   "code": "FMVP",
+   "name": "James Worthy",
+   "playerId": "worthja01"
+  },
+  {
+   "season": 1992,
+   "code": "FMVP",
+   "name": "Michael Jordan",
+   "playerId": "jordami01"
+  },
+  {
    "season": 1993,
    "code": "FMVP",
    "name": "Michael Jordan",
    "playerId": "jordami01"
+  },
+  {
+   "season": 1994,
+   "code": "FMVP",
+   "name": "Hakeem Olajuwon",
+   "playerId": "olajuha01"
   },
   {
    "season": 1995,
@@ -468,12 +520,12 @@
    }
   },
   "super-season": {
-   "cards": 88,
-   "marked": 61,
+   "cards": 90,
+   "marked": 63,
    "multiple": 15,
    "capped": 0,
    "mostHeld": 4,
-   "ifSelectionsCounted": 74,
+   "ifSelectionsCounted": 76,
    "byCode": {
     "MVP": 7,
     "FMVP": 2,
@@ -483,7 +535,7 @@
     "6MOY": 3,
     "CPOY": 0,
     "CHAMP": 11,
-    "AS": 49
+    "AS": 51
    }
   },
   "rookie": {
@@ -506,12 +558,12 @@
    }
   },
   "summer-standouts": {
-   "cards": 30,
-   "marked": 22,
+   "cards": 32,
+   "marked": 23,
    "multiple": 5,
    "capped": 0,
    "mostHeld": 3,
-   "ifSelectionsCounted": 26,
+   "ifSelectionsCounted": 28,
    "byCode": {
     "MVP": 0,
     "FMVP": 2,
@@ -520,7 +572,7 @@
     "MIP": 0,
     "6MOY": 0,
     "CPOY": 0,
-    "CHAMP": 16,
+    "CHAMP": 17,
     "AS": 11
    }
   },
@@ -1469,6 +1521,18 @@
     ]
    },
    {
+    "id": "Dennis_Rodman",
+    "name": "Dennis Rodman",
+    "season": 1992,
+    "bbrefId": "rodmade01",
+    "raw": "MVP-10,DPOY-2,AS,NBA3,DEF1",
+    "rawPost": null,
+    "champion": null,
+    "awards": [
+     "AS"
+    ]
+   },
+   {
     "id": "Derrick_White",
     "name": "Derrick White",
     "season": 2025,
@@ -2110,6 +2174,18 @@
     "champion": "BOS",
     "awards": [
      "CHAMP"
+    ]
+   },
+   {
+    "id": "Scottie_Pippen",
+    "name": "Scottie Pippen",
+    "season": 1994,
+    "bbrefId": "pippesc01",
+    "raw": "MVP-3,DPOY-4,AS,NBA1,DEF1",
+    "rawPost": null,
+    "champion": null,
+    "awards": [
+     "AS"
     ]
    },
    {
@@ -3627,6 +3703,28 @@
     "season": 2025,
     "bbrefId": "halibty01",
     "raw": "NBA3",
+    "rawPost": null,
+    "champion": null,
+    "awards": []
+   },
+   {
+    "id": "Dennis_Rodman",
+    "name": "Dennis Rodman",
+    "season": 1996,
+    "bbrefId": "rodmade01",
+    "raw": "MVP-15,DPOY-7,DEF1",
+    "rawPost": null,
+    "champion": "CHI",
+    "awards": [
+     "CHAMP"
+    ]
+   },
+   {
+    "id": "Scottie_Pippen",
+    "name": "Scottie Pippen",
+    "season": 2000,
+    "bbrefId": "pippesc01",
+    "raw": "DPOY-8,DEF2",
     "rawPost": null,
     "champion": null,
     "awards": []

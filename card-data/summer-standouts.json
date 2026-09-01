@@ -319,6 +319,18 @@
    "season": 2025,
    "team": "IND",
    "from": "conflict decision: Your call, against the rule — the Super Season clears the line at 1070. The 2025"
+  },
+  "Dennis Rodman": {
+   "season": 1996,
+   "team": "CHI",
+   "source": "bbref",
+   "from": "the missing legend the set was asked for at the start — the 72-10 Bulls' title run, 18 playoff games of 22 boards per 100"
+  },
+  "Scottie Pippen": {
+   "season": 2000,
+   "team": "POR",
+   "source": "bbref",
+   "from": "the missing legend the set was asked for at the start — the Game-7 WCF Blazers run, +5.3 playoff BPM off the team he is known for"
   }
  },
  "superSeasons": {
@@ -366,6 +378,18 @@
    "season": 2000,
    "team": "LAL",
    "displaces": "2002 LAL (890)"
+  },
+  "Dennis Rodman": {
+   "season": 1992,
+   "team": "DET",
+   "displaces": null,
+   "note": "technical best by BPM and VORP over the cached 1986-2000 tables: 82 games, 3,301 minutes, the 18.7-rpg season"
+  },
+  "Scottie Pippen": {
+   "season": 1994,
+   "team": "CHI",
+   "displaces": null,
+   "note": "technical best by BPM (7.7) and VORP (6.8): the MVP-3 season with Jordan retired"
   }
  }
 }

@@ -91,7 +91,7 @@ export function trimSeasonTable(rows, kind) {
     const c = r.cells;
     const base = { playerId: r.playerId, name: r.name, team: c.team_name_abbr ?? c.team_id ?? null };
     if (kind === 'perGame') {
-      return { ...base, pos: c.pos ?? null, games: num(c.games), mpg: num(c.mp_per_g) };
+      return { ...base, pos: c.pos ?? null, games: num(c.games ?? c.g), mpg: num(c.mp_per_g) };
     }
     if (kind === 'shooting') {
       // The rim profile the Paint Boost wants: share of attempts at the rim
@@ -99,7 +99,7 @@ export function trimSeasonTable(rows, kind) {
       // for context. This is the data 2P% was standing in for.
       return {
         ...base,
-        games: num(c.games),
+        games: num(c.games ?? c.g),
         minutes: num(c.mp),
         rimShare: num(c.pct_fga_00_03),
         rimPct: num(c.fg_pct_00_03),
@@ -121,7 +121,7 @@ export function trimSeasonTable(rows, kind) {
       return {
         ...base,
         pos: c.pos ?? null,
-        games: num(c.games),
+        games: num(c.games ?? c.g),
         minutes: num(c.mp),
         pct: Object.fromEntries(
           Object.entries(bbref.POSITION_ESTIMATE_STATS).map(([p, stat]) => [p, num(c[stat]) ?? 0])
@@ -136,7 +136,7 @@ export function trimSeasonTable(rows, kind) {
       return {
         ...base,
         pos: c.pos ?? null,
-        games: num(c.games),
+        games: num(c.games ?? c.g),
         minutes: num(c.mp),
         pts100: num(c.pts_per_poss),
         trb100: num(c.trb_per_poss),
@@ -162,7 +162,7 @@ export function trimSeasonTable(rows, kind) {
       // calibration snapshot, which simply ignores them.
       pos: c.pos ?? null,
       age: num(c.age),
-      games: num(c.games),
+      games: num(c.games ?? c.g),
       minutes: num(c.mp),
       per: num(c.per),
       tsPct: num(c.ts_pct),

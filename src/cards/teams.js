@@ -115,6 +115,9 @@ export const HISTORICAL_TEAMS = {
   NOK: { name: 'Hornets',     city: 'New Orleans/Oklahoma City', primary: '#002B5C', secondary: '#B4975A', logo: '/logos/NOK.png', era: '2005-2007', unverifiedColors: true },
   CHH: { name: 'Hornets',     city: 'Charlotte',   primary: '#00778B', secondary: '#280071', logo: '/logos/CHH.png', era: '1988-2002', unverifiedColors: true },
   CHB: { name: 'Bobcats',     city: 'Charlotte',   primary: '#F9423A', secondary: '#004071', logo: '/logos/CHB.png', era: '2004-2014', unverifiedColors: true },
+  CHB04: { name: 'Bobcats',   city: 'Charlotte',   abbr: 'CHB', primary: '#F9423A', secondary: '#004071', logo: '/logos/CHB04.png', era: '2005-2008', unverifiedColors: true },
+  CHB08: { name: 'Bobcats',   city: 'Charlotte',   abbr: 'CHB', primary: '#F9423A', secondary: '#004071', logo: '/logos/CHB08.png', era: '2009-2012', unverifiedColors: true },
+  CHB13: { name: 'Bobcats',   city: 'Charlotte',   abbr: 'CHB', primary: '#F9423A', secondary: '#004071', logo: '/logos/CHB13.png', era: '2013-2014', unverifiedColors: true },
   VAN: { name: 'Grizzlies',   city: 'Vancouver',   primary: '#00B2A9', secondary: '#BC7844', logo: '/logos/VAN.png', era: '1995-2001', unverifiedColors: true },
   WSB: { name: 'Bullets',     city: 'Washington',  primary: '#002B5C', secondary: '#E03A3E', logo: '/logos/WSB.png', era: '1974-1997', unverifiedColors: true },
 
@@ -201,6 +204,11 @@ export const FRANCHISE_ERAS = {
   ATL: [
     { from: 1996, to: 2007, key: 'ATL96' },
     { from: 2008, to: 2015, key: 'ATL08' },
+  ],
+  CHB: [
+    { from: 2005, to: 2008, key: 'CHB04' },
+    { from: 2009, to: 2012, key: 'CHB08' },
+    { from: 2013, to: 2014, key: 'CHB13' },
   ],
   DAL: [{ from: 1981, to: 2001, key: 'DAL80' }],
   HOU: [{ from: 1972, to: 1995, key: 'HOU72' }],
@@ -547,8 +555,12 @@ const LAST_BOBCATS_SEASON = 2014;
  */
 export function franchiseForSeason(abbr, season) {
   const raw = String(abbr ?? '').toUpperCase();
-  if (raw === 'CHA' && Number.isFinite(season) && season <= LAST_BOBCATS_SEASON) return 'CHB';
-  const key = canonicalTeam(raw);
+  // The Bobcats rule feeds INTO the era table now instead of returning early:
+  // the user supplied all three cat marks, so a 2008 Bobcat and a 2012 Bobcat
+  // wear different ones.
+  const key = raw === 'CHA' && Number.isFinite(season) && season <= LAST_BOBCATS_SEASON
+    ? 'CHB'
+    : canonicalTeam(raw);
   // A live franchise's dated identity — the 2009 Nuggets are powder blue, not
   // today's navy. See FRANCHISE_ERAS.
   if (Number.isFinite(season) && Object.hasOwn(FRANCHISE_ERAS, key)) {

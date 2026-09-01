@@ -1002,7 +1002,9 @@ export function main({ log = console.log } = {}) {
   };
   const standoutNames = Object.keys(standouts.superSeasons);
   if (standoutNames.length) {
-    const tables = loadFullSeasonTables();
+    // From 1986: Rodman's 1991-92 and Pippen's 1993-94 live well before the
+    // old 2000 default, and the 1980s tables are cached to carry them.
+    const tables = loadFullSeasonTables({ first: 1986 });
     const league = loadLeagueRows();
     const apiEpm = buildApiEpmIndex();
     const displaced = [];
@@ -1073,10 +1075,10 @@ export function main({ log = console.log } = {}) {
       ...Object.keys(standoutBlocks.superSeasons ?? {}),
     ])].filter(n => !poolNames.has(normalizeName(n)));
     if (rookieNames.length) {
-      // From 1992: the tables now reach the earliest standout rookie year
-      // (1993 — Horry, Shaq, Christie) with 1992 cached as the SENTINEL that
-      // proves a 1993 first appearance is a debut and not the window's edge.
-      const tables = loadFullSeasonTables({ first: 1992 });
+      // From 1986: the tables reach Rodman's 1986-87 and Pippen's 1987-88
+      // debuts, with 1986 cached as the SENTINEL that proves a 1987 first
+      // appearance is a debut and not the window's edge.
+      const tables = loadFullSeasonTables({ first: 1986 });
       const league = loadLeagueRows();
       const apiEpm = buildApiEpmIndex();
       const added = [];
@@ -1095,7 +1097,7 @@ export function main({ log = console.log } = {}) {
           if (firstSeason == null || season < firstSeason) firstSeason = season;
         }
         if (firstSeason == null) { skipped.push(`${name} (no full-table rows)`); continue; }
-        if (firstSeason <= 1992) {
+        if (firstSeason <= 1986) {
           skipped.push(`${name} (first cached season ${firstSeason} — at the window's edge, possibly truncated)`);
           continue;
         }

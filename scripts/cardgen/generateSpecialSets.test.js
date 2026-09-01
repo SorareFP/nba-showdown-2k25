@@ -108,10 +108,10 @@ describe.each([
   it('gives every card a season the card can print', () => {
     for (const card of file.cards) {
       expect(card.season, card.name).toBeGreaterThanOrEqual(
-        // 1993, not FIRST_SEASON: the standout newcomers' rookie years reach
-        // back to the 1992-93 debuts (Shaq, Horry, Christie), and the 1990s
-        // tables are cached to carry them.
-        1993
+        // 1987, not FIRST_SEASON: the standout newcomers' seasons reach back
+        // to Dennis Rodman's 1986-87 debut, and the 1980s tables are cached
+        // to carry them.
+        1987
       );
       expect(card.season, card.name).toBeLessThan(LAST_SEASON);
       expect(card.seasonLabel).toBe(seasonLabel(card.season));
@@ -368,7 +368,9 @@ describe('the base set\'s badges', () => {
     // AND 221 -> 206 WHEN THE SAME-SEASON TWINS COLLAPSED: fifteen players
     // whose best season IS their rookie season keep ONE card of it, on the
     // rookie side under the gold line, wearing the best-season badge too.
-    expect(SUPER.cards.length).toBe(206);
+    // AND 206 -> 208 when Rodman's 1991-92 and Pippen's 1993-94 arrived — the
+    // missing legends the standout work was asked for at the very start.
+    expect(SUPER.cards.length).toBe(208);
     //
     // AND 321 -> 348 WHEN THE STANDOUT NEWCOMERS' ROOKIE YEARS ARRIVED — every
     // standout outside the pool whose career begins inside the cache-and-EPM
@@ -376,7 +378,7 @@ describe('the base set\'s badges', () => {
     // fetched (1992 as the sentinel that proves a 1993 first appearance is a
     // debut), that window reaches Shaq's, Kidd's and Garnett's actual rookie
     // years. 348 -> 367 when the pre-2000 nineteen arrived over the BPM bridge.
-    expect(ROOKIE.cards.length).toBe(367);
+    expect(ROOKIE.cards.length).toBe(369);
     const poolNames = new Set(POOL.map(p => p.name));
     const bothBlocks = [...new Set([
       ...Object.keys(STANDOUTS.superSeasons ?? {}),

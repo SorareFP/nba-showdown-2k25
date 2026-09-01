@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-01T16:04:03.492Z",
+ "generatedAt": "2026-09-01T16:26:03.519Z",
  "set": "super-season",
  "provisional": true,
  "sources": {
@@ -3979,6 +3979,71 @@
    "provisional": true
   },
   {
+   "id": "Dennis_Rodman",
+   "name": "Dennis Rodman",
+   "team": "DET",
+   "pos": "PF",
+   "speed": 11,
+   "power": 13,
+   "shotLine": 16,
+   "paintBoost": -1,
+   "threePtBoost": -2,
+   "defBoost": 1,
+   "salary": 610,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 15,
+     "pts": 1,
+     "reb": 3,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 25,
+     "pts": 1,
+     "reb": 5,
+     "ast": 0
+    },
+    {
+     "lo": 26,
+     "hi": 99,
+     "pts": 1,
+     "reb": 5,
+     "ast": 1
+    }
+   ],
+   "season": 1992,
+   "seasonLabel": "1991-92",
+   "age": 30,
+   "games": 82,
+   "mpg": 40.3,
+   "bbrefId": "rodmade01",
+   "traded": false,
+   "metrics": {
+    "bpm": 2.8,
+    "vorp": 4,
+    "ws": 12.6,
+    "ws48": 0.183,
+    "per": 17
+   },
+   "provisional": true
+  },
+  {
    "id": "Dennis_Schroder",
    "name": "Dennis Schröder",
    "team": "ATL",
@@ -6534,7 +6599,7 @@
    "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": 0,
-   "salary": 1580,
+   "salary": 1570,
    "chart": [
     {
      "lo": 1,
@@ -11125,7 +11190,7 @@
    "paintBoost": 0,
    "threePtBoost": 4,
    "defBoost": 1,
-   "salary": 810,
+   "salary": 800,
    "chart": [
     {
      "lo": 1,
@@ -13338,6 +13403,71 @@
     "ws": 5,
     "ws48": 0.144,
     "per": 16.8
+   },
+   "provisional": true
+  },
+  {
+   "id": "Scottie_Pippen",
+   "name": "Scottie Pippen",
+   "team": "CHI",
+   "pos": "SF",
+   "speed": 15,
+   "power": 15,
+   "shotLine": 16,
+   "paintBoost": -1,
+   "threePtBoost": 1,
+   "defBoost": 3,
+   "salary": 1260,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 20,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 5,
+     "reb": 3,
+     "ast": 2
+    }
+   ],
+   "season": 1994,
+   "seasonLabel": "1993-94",
+   "age": 28,
+   "games": 72,
+   "mpg": 38.3,
+   "bbrefId": "pippesc01",
+   "traded": false,
+   "metrics": {
+    "bpm": 7.7,
+    "vorp": 6.8,
+    "ws": 11.2,
+    "ws48": 0.194,
+    "per": 23.2
    },
    "provisional": true
   },

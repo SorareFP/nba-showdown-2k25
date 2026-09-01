@@ -372,14 +372,13 @@ describe('the committed file', () => {
     expect(AWARDS.declared).toEqual(AWARD_CODES);
   });
 
-  it('reads the thirty-three seasons the four sets between them need', () => {
-    // 1993-2026 with the 1994 and 2001 gaps of the rosters themselves: the
-    // rookie set now reaches the standout newcomers' true rookie years (Shaq,
-    // Horry and Christie debut in 1992-93), the base set sits furthest
-    // forward, and every other set lands inside.
-    expect(AWARDS.seasons[0]).toBe(1993);
+  it('reads the thirty-seven seasons the five sets between them need', () => {
+    // 1987-2026 with the gaps of the rosters themselves: the rookie set now
+    // reaches Rodman's 1986-87 debut, the base set sits furthest forward, and
+    // every other set lands inside.
+    expect(AWARDS.seasons[0]).toBe(1987);
     expect(AWARDS.seasons.at(-1)).toBe(2026);
-    expect(AWARDS.seasons).toHaveLength(33);
+    expect(AWARDS.seasons).toHaveLength(37);
   });
 
   it('agrees with its own counts', () => {
@@ -411,14 +410,15 @@ describe('the committed file', () => {
     // Super Seasons added marked retirees to that set, and the newly cached
     // 2000-2007 pages resolved two more rookie-year marks.
     expect(AWARDS.counts[CURRENT_SET].marked).toBe(40);
-    expect(AWARDS.counts[SUPER_SEASON_SET].marked).toBe(61);
+    expect(AWARDS.counts[SUPER_SEASON_SET].marked).toBe(63);
     // The rookie set moves at last, and only on the ring: no player in that
     // pool was an All-Star as a rookie, but six of them won a title as one.
     expect(AWARDS.counts[ROOKIE_SET].marked).toBe(25);
     // The standouts themselves: a playoff-run card is the season a ring was
     // actually won in, so the ring is the mark that carries the set.
-    expect(AWARDS.counts[SUMMER_STANDOUTS_SET].marked).toBe(22);
-    expect(AWARDS.counts[SUMMER_STANDOUTS_SET].byCode.CHAMP).toBe(16);
+    // 23 with Rodman's 1996 title run — his ring is the mark.
+    expect(AWARDS.counts[SUMMER_STANDOUTS_SET].marked).toBe(23);
+    expect(AWARDS.counts[SUMMER_STANDOUTS_SET].byCode.CHAMP).toBe(17);
     // Shaq is the one rookie All-Star; Blake Griffin's case finally has its
     // twin, and it arrived from 1993 rather than from a pool change.
     expect(AWARDS.counts[ROOKIE_SET].byCode.AS).toBe(1);
@@ -432,7 +432,7 @@ describe('the committed file', () => {
     // (Unchanged by the ring: ifSelectionsCounted asks about the awards column,
     // and the ring is not in it.)
     expect(AWARDS.counts[CURRENT_SET].ifSelectionsCounted).toBe(46);
-    expect(AWARDS.counts[SUPER_SEASON_SET].ifSelectionsCounted).toBe(74);
+    expect(AWARDS.counts[SUPER_SEASON_SET].ifSelectionsCounted).toBe(76);
     expect(AWARDS.counts[ROOKIE_SET].ifSelectionsCounted).toBe(25);
   });
 

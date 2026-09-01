@@ -36,6 +36,7 @@ import {
   ROOKIE_SET,
   SET_IDS,
   SUPER_SEASON_SET,
+  SUMMER_STANDOUTS_SET,
   WNBA_SET,
   WNBA_SUPER_SEASON_SET,
   getSet,
@@ -467,6 +468,9 @@ describe('the base set\'s card-type badges', () => {
       [ROOKIE_BADGE]: 33,
       [SUPER_SEASON_BADGE]: 13,
       [BEST_SEASON_BADGE]: 94,
+      // In the id list, never on a base-set record: the STANDOUT pill is a SET
+      // badge, worn by every summer-standouts card and no one else's.
+      'summer-standout': 0,
     });
   });
 
@@ -577,14 +581,15 @@ describe('stepSelection', () => {
 describe('the special sets in the source list', () => {
   const SPECIAL = [SUPER_SEASON_SET, ROOKIE_SET, WNBA_SET, WNBA_SUPER_SEASON_SET];
 
-  it('offers all six sets, in the order the model declares them', () => {
+  it('offers all seven sets, in the order the model declares them', () => {
     // THE MODEL, not the row of buttons. Every set is still a source and still
     // reachable; one of them (`cards`) is now folded behind the selector's
     // disclosure, which is a rendering rule and is pinned separately against
     // visibleSources below. Nothing may fall out of SOURCES to achieve that —
     // a set removed from here is a set the studio cannot open at all.
     expect(Object.keys(SOURCES)).toEqual([
-      'pool', 'cards', SUPER_SEASON_SET, ROOKIE_SET, WNBA_SET, WNBA_SUPER_SEASON_SET,
+      'pool', 'cards', SUPER_SEASON_SET, ROOKIE_SET, SUMMER_STANDOUTS_SET,
+      WNBA_SET, WNBA_SUPER_SEASON_SET,
     ]);
     expect(Object.values(SOURCES).map(s => s.set)).toEqual(SET_IDS);
   });
@@ -691,7 +696,8 @@ describe('the selector\'s reference group', () => {
       expect(source.secondary, source.key).not.toBe(true);
     }
     expect(PRIMARY_SOURCES.map(s => s.key)).toEqual([
-      'pool', SUPER_SEASON_SET, ROOKIE_SET, WNBA_SET, WNBA_SUPER_SEASON_SET,
+      'pool', SUPER_SEASON_SET, ROOKIE_SET, SUMMER_STANDOUTS_SET,
+      WNBA_SET, WNBA_SUPER_SEASON_SET,
     ]);
   });
 

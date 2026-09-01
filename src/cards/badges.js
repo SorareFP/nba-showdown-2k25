@@ -114,6 +114,7 @@ import { GOLD } from './treatments.js';
 export const SUPER_SEASON_BADGE = 'super-season';
 export const BEST_SEASON_BADGE = 'best-season';
 export const ROOKIE_BADGE = 'rookie';
+export const SUMMER_STANDOUT_BADGE = 'summer-standout';
 
 /**
  * The salary at which a best season is a SUPER season.
@@ -292,6 +293,19 @@ export const BADGES = [
     // Super Season tiers a legible PAIR: a gold pill means a gold card, a
     // team-coloured pill means a team-coloured card. The colour says which tier
     // this is before the word has been read, which is what the split is for.
+    fill: theme => theme.accentOnField,
+  },
+  {
+    // The Summer Standouts set's pill — a deep playoff run, carded. Worn by
+    // every card in that set (a SET badge, like Rookie's role on its set),
+    // never by a base-set record, so its position here decides nothing today.
+    // 'STANDOUT' rather than 'SUMMER STANDOUT': the card prints its season one
+    // row below, and the pill's width budget has no room for fifteen
+    // characters of label where eight say the same thing.
+    id: SUMMER_STANDOUT_BADGE,
+    text: 'STANDOUT',
+    // The team's accent, like Rookie and Best Season: a fourth colour invented
+    // for one pill would be measurable against nothing.
     fill: theme => theme.accentOnField,
   },
 ];

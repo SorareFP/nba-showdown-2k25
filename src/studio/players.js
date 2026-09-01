@@ -40,6 +40,7 @@ import {
   FINISHED_SET,
   FINISHED_STATS_SEASON,
   SUPER_SEASON_SET,
+  SUMMER_STANDOUTS_SET,
   ROOKIE_SET,
   WNBA_SET,
   WNBA_SUPER_SEASON_SET,
@@ -297,7 +298,7 @@ export const CARD_PLAYERS = CARDS;
  * here the way the pool does.
  */
 const specialModules = import.meta.glob(
-  '../../card-data/generated/cards-{super-season,rookie,wnba,wnba-super-season}.json',
+  '../../card-data/generated/cards-{super-season,rookie,summer-standouts,wnba,wnba-super-season}.json',
   { eager: true }
 );
 
@@ -311,6 +312,7 @@ function loadSpecialSet(id) {
 
 export const SUPER_SEASON_FILE = loadSpecialSet(SUPER_SEASON_SET);
 export const ROOKIE_FILE = loadSpecialSet(ROOKIE_SET);
+export const SUMMER_STANDOUTS_FILE = loadSpecialSet(SUMMER_STANDOUTS_SET);
 export const WNBA_FILE = loadSpecialSet(WNBA_SET);
 export const WNBA_SUPER_SEASON_FILE = loadSpecialSet(WNBA_SUPER_SEASON_SET);
 
@@ -474,6 +476,19 @@ export const SOURCES = {
   // A different LEAGUE, which is the third kind of thing a set can be. It is
   // listed here rather than in a second selector because everything the studio
   // does to it — photos, crops, team colours, the card preview — is identical.
+  [SUMMER_STANDOUTS_SET]: specialSource(SUMMER_STANDOUTS_SET, SUMMER_STANDOUTS_FILE, {
+    sub: 'deep playoff runs · hand-picked roster',
+    missingHint: '`node scripts/cardgen/generateSummerStandouts.js`',
+    hint:
+      'DEEP PLAYOFF RUNS, CARDED — Game 6 of the Conference Finals or later, hand-picked: ' +
+      'players off the team they are known for (Kawhi in Toronto), role players (Horry, Oberto), ' +
+      'and legends the other sets do not cover. The stat line is the PLAYOFF run itself — ' +
+      'dunksandthrees\' playoff EPM table, per-75 restated per-100 — so unlike the Super Seasons ' +
+      'nothing here borrows DBPM: the Def Boost is real playoff DEF EPM. No playoff card shares ' +
+      'a team with the same player\'s Super Season; card-data/standout-conflict-decisions.json ' +
+      'records each call, and the Super Seasons that WON those calls were added to that set. ' +
+      'Re-run `node scripts/cardgen/generateSummerStandouts.js`.',
+  }),
   [WNBA_SET]: specialSource(WNBA_SET, WNBA_FILE, {
     // The force-include COUNT is read off the payload rather than written out.
     // It was a literal "plus 6 named", and the first time the user added a

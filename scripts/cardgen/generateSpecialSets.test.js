@@ -57,6 +57,9 @@ const BADGES = readGenerated('card-badges.json');
  */
 const BASE = readGenerated(`cards-${CURRENT_SET}.json`);
 const SALARIES = new Map(BASE.cards.map(c => [c.id, c.salary]));
+const STANDOUTS = JSON.parse(
+  readFileSync(path.join(REPO_ROOT, 'card-data', 'summer-standouts.json'), 'utf8')
+);
 const POOL = loadPool();
 
 /** The scraped archive, when this checkout has one. See the runIf below. */
@@ -154,9 +157,16 @@ describe.each([
     expect(names).toEqual([...names].sort((a, b) => a.localeCompare(b)));
   });
 
-  it('draws only from the card pool', () => {
+  it('draws only from the card pool, plus the named standout Super Seasons', () => {
+    // The one sanctioned exception: card-data/summer-standouts.json names the
+    // Super Seasons the conflict rule kept instead of a playoff card, and most
+    // of those players are retirees no pool has ever held. Named list, not a
+    // loophole — anyone else from outside the pool still fails the test.
     const pool = new Set(POOL.map(p => p.name));
-    for (const card of file.cards) expect(pool.has(card.name), card.name).toBe(true);
+    const standouts = new Set(Object.keys(STANDOUTS.superSeasons ?? {}));
+    for (const card of file.cards) {
+      expect(pool.has(card.name) || standouts.has(card.name), card.name).toBe(true);
+    }
   });
 
   it('accounts for every pool player exactly once, carded or excluded', () => {
@@ -164,7 +174,13 @@ describe.each([
     // player is either in the set or on the excluded list with a reason.
     const carded = new Set(file.cards.map(c => c.name));
     const excluded = new Set(file.excluded.map(e => e.name));
-    expect(carded.size + excluded.size).toBe(POOL.length);
+    // Standout Super Seasons from outside the pool sit on top of the
+    // one-per-pool-player accounting; the displaced picks were pool members
+    // and stay counted through their replacements.
+    const pool = new Set(POOL.map(p => p.name));
+    const offPool = Object.keys(STANDOUTS.superSeasons ?? {})
+      .filter(name => carded.has(name) && !pool.has(name)).length;
+    expect(carded.size + excluded.size).toBe(POOL.length + offPool);
     for (const name of carded) expect(excluded.has(name)).toBe(false);
     for (const e of file.excluded) expect(e.reason).toBeTruthy();
     expect(file.excludedCount).toBe(file.excluded.length);
@@ -325,9 +341,17 @@ describe('the base set\'s badges', () => {
     // year carded, and two (Jamal Murray, Moses Moody) go the other way. The
     // rookie set is untouched by the metric set entirely — WHICH season a
     // rookie card is cannot depend on how seasons are scored.
-    expect(SUPER.cards.length).toBe(214);
+    //
+    // AND 214 -> 221 WHEN THE STANDOUT SUPER SEASONS ARRIVED — the nine calls
+    // in card-data/standout-conflict-decisions.json where the Super Season
+    // beat the playoff card. Seven are retirees new to the set; Jokic and
+    // Doncic displaced their own algorithmic picks in place.
+    expect(SUPER.cards.length).toBe(221);
     expect(ROOKIE.cards.length).toBe(321);
-    expect(SUPER.cards.length + SUPER.excluded.length).toBe(POOL.length);
+    const offPool = Object.keys(STANDOUTS.superSeasons ?? {}).filter(
+      name => !new Set(POOL.map(p => p.name)).has(name)
+    ).length;
+    expect(SUPER.cards.length + SUPER.excluded.length).toBe(POOL.length + offPool);
     expect(ROOKIE.cards.length + ROOKIE.excluded.length).toBe(POOL.length);
   });
 

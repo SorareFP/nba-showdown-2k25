@@ -1,0 +1,378 @@
+{
+ "what": "The Summer Standouts roster: deep-playoff-run cards (Game 6 of the Conference Finals or later), plus the Super Seasons the conflict rule kept instead. Curated by hand from the candidate list; the conflict decisions live in standout-conflict-decisions.json.",
+ "rules": [
+  "A playoff card is the shipped card builder fed the PLAYOFF stat line (dunksandthrees st4, per-75 -> per-100).",
+  "No playoff card for the same team a player has a Super Season card for; standout-conflict-decisions.json records each call.",
+  "The superSeasons block DISPLACES that player's existing Super Season pick: same set, better season, one card per player."
+ ],
+ "playoffCards": {
+  "Doug Christie": {
+   "season": 2002,
+   "team": "SAC",
+   "from": "conflict decision: Super Season 570, under the line."
+  },
+  "Eric Williams": {
+   "season": 2002,
+   "team": "BOS",
+   "from": "conflict decision: Super Season 360, under the line."
+  },
+  "Mike Bibby": {
+   "season": 2002,
+   "team": "SAC",
+   "from": "conflict decision: Super Season 880, under the line."
+  },
+  "Jason Collins": {
+   "season": 2003,
+   "team": "NJN",
+   "from": "conflict decision: Your call. Tied at 340 either way."
+  },
+  "Ben Wallace": {
+   "season": 2004,
+   "team": "DET",
+   "from": "conflict decision: Your call. Tied at 590 either way."
+  },
+  "Robert Horry": {
+   "season": 2005,
+   "team": "SAS",
+   "pos": "PF",
+   "playoffEpm": 3.29,
+   "from": "non-conflict list"
+  },
+  "Josh Howard": {
+   "season": 2006,
+   "team": "DAL",
+   "from": "conflict decision: Super Season 890 misses the gold line by 10."
+  },
+  "Tim Thomas": {
+   "season": 2006,
+   "team": "PHX",
+   "pos": "C",
+   "playoffEpm": 2.66,
+   "from": "non-conflict list"
+  },
+  "Daniel Gibson": {
+   "season": 2007,
+   "team": "CLE",
+   "from": "conflict decision: Your call, and the rule agrees — 2007 Cleveland is his actual peak, +3.15 playof"
+  },
+  "Fabricio Oberto": {
+   "season": 2007,
+   "team": "SAS",
+   "from": "conflict decision: Super Season 400, under the line."
+  },
+  "Michael Finley": {
+   "season": 2007,
+   "team": "SAS",
+   "pos": "SF",
+   "playoffEpm": 2.05,
+   "from": "non-conflict list"
+  },
+  "Rasheed Wallace": {
+   "season": 2007,
+   "team": "DET",
+   "pos": "PF",
+   "playoffEpm": 4.28,
+   "from": "non-conflict list"
+  },
+  "Derek Fisher": {
+   "season": 2008,
+   "team": "LAL",
+   "from": "conflict decision: Super Season 600, under the line."
+  },
+  "Carmelo Anthony": {
+   "season": 2009,
+   "team": "DEN",
+   "pos": "SF",
+   "playoffEpm": 3.97,
+   "from": "non-conflict list"
+  },
+  "Chauncey Billups": {
+   "season": 2009,
+   "team": "DEN",
+   "pos": "PG",
+   "playoffEpm": 5.99,
+   "from": "non-conflict list"
+  },
+  "Lamar Odom": {
+   "season": 2009,
+   "team": "LAL",
+   "pos": "PF",
+   "playoffEpm": 3.11,
+   "from": "non-conflict list"
+  },
+  "Glen Davis": {
+   "season": 2010,
+   "team": "BOS",
+   "from": "conflict decision: Your call. Tied at 440 either way."
+  },
+  "Jameer Nelson": {
+   "season": 2010,
+   "team": "ORL",
+   "from": "conflict decision: Super Season 860, under the line."
+  },
+  "Jared Dudley": {
+   "season": 2010,
+   "team": "PHX",
+   "from": "conflict decision: Super Season 660, under the line."
+  },
+  "Jason Richardson": {
+   "season": 2010,
+   "team": "PHX",
+   "pos": "SG",
+   "playoffEpm": 3.54,
+   "from": "non-conflict list"
+  },
+  "Mickaël Piétrus": {
+   "season": 2010,
+   "team": "ORL",
+   "from": "conflict decision: Your call, and the rule agrees. Same archetype as Gibson."
+  },
+  "Steve Nash": {
+   "season": 2010,
+   "team": "PHX",
+   "pos": "PG",
+   "playoffEpm": 3.29,
+   "from": "non-conflict list"
+  },
+  "Jason Kidd": {
+   "season": 2011,
+   "team": "DAL",
+   "pos": "SG",
+   "playoffEpm": 4.62,
+   "from": "non-conflict list"
+  },
+  "Joel Anthony": {
+   "season": 2011,
+   "team": "MIA",
+   "from": "conflict decision: Super Season 360, under the line."
+  },
+  "Boris Diaw": {
+   "season": 2012,
+   "team": "SAS",
+   "pos": "PF",
+   "playoffEpm": 2.31,
+   "from": "non-conflict list"
+  },
+  "Kevin Garnett": {
+   "season": 2012,
+   "team": "BOS",
+   "pos": "C",
+   "playoffEpm": 5.19,
+   "from": "non-conflict list"
+  },
+  "Stephen Jackson": {
+   "season": 2012,
+   "team": "SAS",
+   "pos": "SF",
+   "playoffEpm": 1.06,
+   "from": "non-conflict list"
+  },
+  "Ray Allen": {
+   "season": 2013,
+   "team": "MIA",
+   "pos": "SG",
+   "playoffEpm": 1.75,
+   "from": "non-conflict list"
+  },
+  "Danny Green": {
+   "season": 2014,
+   "team": "SAS",
+   "from": "conflict decision: Super Season 800, under the line."
+  },
+  "Paul George": {
+   "season": 2014,
+   "team": "IND",
+   "pos": "SF",
+   "playoffEpm": 4.13,
+   "from": "non-conflict list"
+  },
+  "JR Smith": {
+   "season": 2016,
+   "team": "CLE",
+   "pos": "SG",
+   "playoffEpm": 2.96,
+   "from": "non-conflict list"
+  },
+  "Kyrie Irving": {
+   "season": 2016,
+   "team": "CLE",
+   "pos": "PG",
+   "playoffEpm": 3.51,
+   "from": "non-conflict list"
+  },
+  "Serge Ibaka": {
+   "season": 2016,
+   "team": "OKC",
+   "from": "conflict decision: Super Season 700, under the line."
+  },
+  "Kevin Durant": {
+   "season": 2017,
+   "team": "GSW",
+   "pos": "PF",
+   "playoffEpm": 6.72,
+   "from": "non-conflict list"
+  },
+  "Kevin Love": {
+   "season": 2017,
+   "team": "CLE",
+   "pos": "PF",
+   "playoffEpm": 4.09,
+   "from": "non-conflict list"
+  },
+  "Chris Paul": {
+   "season": 2018,
+   "team": "HOU",
+   "pos": "PG",
+   "playoffEpm": 5.05,
+   "from": "non-conflict list"
+  },
+  "PJ Tucker": {
+   "season": 2018,
+   "team": "HOU",
+   "pos": "PF",
+   "playoffEpm": 1.41,
+   "from": "non-conflict list"
+  },
+  "Andre Iguodala": {
+   "season": 2019,
+   "team": "GSW",
+   "pos": "SF",
+   "playoffEpm": 2.33,
+   "from": "non-conflict list"
+  },
+  "George Hill": {
+   "season": 2019,
+   "team": "MIL",
+   "pos": "PG",
+   "playoffEpm": 2.65,
+   "from": "non-conflict list"
+  },
+  "Kawhi Leonard": {
+   "season": 2019,
+   "team": "TOR",
+   "pos": "SF",
+   "playoffEpm": 6.87,
+   "from": "non-conflict list"
+  },
+  "Anthony Davis": {
+   "season": 2020,
+   "team": "LAL",
+   "pos": "C",
+   "playoffEpm": 7.34,
+   "from": "non-conflict list"
+  },
+  "Kemba Walker": {
+   "season": 2020,
+   "team": "BOS",
+   "pos": "PG",
+   "playoffEpm": 2.82,
+   "from": "non-conflict list"
+  },
+  "Clint Capela": {
+   "season": 2021,
+   "team": "ATL",
+   "pos": "C",
+   "playoffEpm": 3.02,
+   "from": "non-conflict list"
+  },
+  "Reggie Jackson": {
+   "season": 2021,
+   "team": "LAC",
+   "pos": "PG",
+   "playoffEpm": 5.09,
+   "from": "non-conflict list"
+  },
+  "Andrew Wiggins": {
+   "season": 2022,
+   "team": "GSW",
+   "pos": "SF",
+   "playoffEpm": 2.76,
+   "from": "non-conflict list"
+  },
+  "Max Strus": {
+   "season": 2022,
+   "team": "MIA",
+   "from": "conflict decision: Super Season 740, under the line."
+  },
+  "Bruce Brown": {
+   "season": 2023,
+   "team": "DEN",
+   "pos": "SG",
+   "playoffEpm": 1.19,
+   "from": "non-conflict list"
+  },
+  "Jamal Murray": {
+   "season": 2023,
+   "team": "DEN",
+   "pos": "PG",
+   "playoffEpm": 4.78,
+   "from": "non-conflict list"
+  },
+  "Chet Holmgren": {
+   "season": 2025,
+   "team": "OKC",
+   "pos": "C",
+   "playoffEpm": 3.53,
+   "from": "non-conflict list"
+  },
+  "Pascal Siakam": {
+   "season": 2025,
+   "team": "IND",
+   "pos": "PF",
+   "playoffEpm": 3.87,
+   "from": "non-conflict list"
+  },
+  "Tyrese Haliburton": {
+   "season": 2025,
+   "team": "IND",
+   "from": "conflict decision: Your call, against the rule — the Super Season clears the line at 1070. The 2025"
+  }
+ },
+ "superSeasons": {
+  "Nikola Jokić": {
+   "season": 2022,
+   "team": "DEN",
+   "displaces": "2023 DEN (1370)"
+  },
+  "Luka Dončić": {
+   "season": 2024,
+   "team": "DAL",
+   "displaces": "2024 DAL (1080)"
+  },
+  "Dwight Howard": {
+   "season": 2011,
+   "team": "ORL",
+   "displaces": "2009 ORL (890)"
+  },
+  "Manu Ginóbili": {
+   "season": 2008,
+   "team": "SAS",
+   "displaces": "2005 SAS (980)"
+  },
+  "Kyle Lowry": {
+   "season": 2016,
+   "team": "TOR",
+   "displaces": "2019 TOR (680)"
+  },
+  "Paul Pierce": {
+   "season": 2002,
+   "team": "BOS",
+   "displaces": "2008 BOS (800)"
+  },
+  "Pau Gasol": {
+   "season": 2011,
+   "team": "LAL",
+   "displaces": "2010 LAL (810)"
+  },
+  "Jason Terry": {
+   "season": 2007,
+   "team": "DAL",
+   "displaces": "2011 DAL (740)"
+  },
+  "Shaquille O'Neal": {
+   "season": 2000,
+   "team": "LAL",
+   "displaces": "2002 LAL (890)"
+  }
+ }
+}

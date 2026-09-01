@@ -114,6 +114,8 @@ import * as S from './shooting.js';
 import { CALIBRATION_FILE } from './calibrateAttributes.js';
 import { indexBiometrics, loadBiometrics } from './biometrics.js';
 import { indexPositionShares, loadPositionShares } from './positionShares.js';
+import { loadLeagueRows, pickCareer } from './standoutSuperSeasons.js';
+import { readSummerStandouts, buildApiEpmIndex, loadFullSeasonTables } from './summerStandouts.js';
 import { PRINTED_SCALE, REFINEMENT_WEIGHT, mapToReferenceScale } from './speedPower.js';
 import { archiveBasis, collectRows, requireArchive } from './epmArchive.js';
 import {
@@ -946,6 +948,59 @@ export function main({ log = console.log } = {}) {
         ? `  ${key}: no EPM row for ${joined.unmatched.length} — ${joined.unmatched.join(', ')} ` +
             '(priced at replacement level)'
         : `  ${key}: EPM for all ${joined.selections.length}`
+    );
+  }
+
+  // ── The standout Super Seasons, DISPLACING the algorithmic picks ──────────
+  //
+  // card-data/summer-standouts.json names the Super Seasons the conflict rule
+  // kept instead of a playoff card (the calls live in
+  // standout-conflict-decisions.json). Each one replaces that player's
+  // algorithmic best-season pick — same set, decided season, one card per
+  // player. Runs AFTER attachEpm on purpose: most of these are retirees the
+  // pool-scoped EPM index has never heard of, so their EPM comes from the API
+  // caches here and a later join would blank it back to replacement level.
+  const standouts = readSummerStandouts();
+  const standoutNames = Object.keys(standouts.superSeasons);
+  if (standoutNames.length) {
+    const tables = loadFullSeasonTables();
+    const league = loadLeagueRows();
+    const apiEpm = buildApiEpmIndex();
+    const displaced = [];
+    const failed = [];
+    for (const name of standoutNames) {
+      const pick = standouts.superSeasons[name];
+      const careers = league.get(normalizeName(name));
+      const careerRows = pickCareer(careers, { referenceSeason: pick.season });
+      const id = careerRows?.[0]?.playerId;
+      const adv = tables.advanced.get(`${id}|${pick.season}`);
+      const pp = tables.perPoss.get(`${id}|${pick.season}`);
+      if (!adv || !pp) { failed.push(`${name} (no ${pick.season} full-table row)`); continue; }
+      const epm = apiEpm.get(`${normalizeName(name)}|${pick.season}`);
+      const before = selection.superSeason.length;
+      selection.superSeason = selection.superSeason.filter(
+        sel => normalizeName(sel.player.name) !== normalizeName(name)
+      );
+      if (selection.superSeason.length < before) displaced.push(name);
+      selection.superSeason.push({
+        player: { name, pos: adv.pos },
+        season: {
+          ...adv, ...pp,
+          playerId: id,
+          season: pick.season,
+          epm: epm?.epm ?? null,
+          ewinsPerGame: epm?.ewinsPerGame ?? null,
+        },
+      });
+    }
+    if (failed.length) {
+      // The list is hand-picked; an unresolvable name is a data problem to
+      // fix, not a player to drop silently.
+      throw new Error(['Standout Super Seasons missing rows:', ...failed].join('\n  '));
+    }
+    log(
+      `  standout Super Seasons: ${standoutNames.length} added ` +
+        `(${displaced.length} displaced an algorithmic pick: ${displaced.join(', ') || 'none'})`
     );
   }
 

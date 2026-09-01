@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-01T13:26:28.721Z",
+ "generatedAt": "2026-09-01T13:37:28.147Z",
  "set": "super-season",
  "provisional": true,
  "sources": {
@@ -3645,7 +3645,7 @@
    "paintBoost": 0,
    "threePtBoost": 2,
    "defBoost": -1,
-   "salary": 770,
+   "salary": 780,
    "chart": [
     {
      "lo": 1,
@@ -3708,9 +3708,9 @@
    "power": 8,
    "shotLine": 17,
    "paintBoost": 0,
-   "threePtBoost": 2,
+   "threePtBoost": 5,
    "defBoost": 2,
-   "salary": 860,
+   "salary": 950,
    "chart": [
     {
      "lo": 1,
@@ -4532,7 +4532,7 @@
    "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": 1,
-   "salary": 1310,
+   "salary": 1320,
    "chart": [
     {
      "lo": 1,
@@ -4792,6 +4792,78 @@
     "ws": 4.4,
     "ws48": 0.134,
     "per": 16.2
+   },
+   "provisional": true
+  },
+  {
+   "id": "Dwight_Howard",
+   "name": "Dwight Howard",
+   "team": "ORL",
+   "pos": "C",
+   "speed": 11,
+   "power": 19,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": -5,
+   "defBoost": 2,
+   "salary": 1330,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 14,
+     "pts": 2,
+     "reb": 3,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 20,
+     "pts": 3,
+     "reb": 3,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 5,
+     "reb": 4,
+     "ast": 0
+    }
+   ],
+   "season": 2011,
+   "seasonLabel": "2010-11",
+   "age": 25,
+   "games": 78,
+   "mpg": 37.6,
+   "bbrefId": "howardw01",
+   "traded": false,
+   "metrics": {
+    "bpm": 5.3,
+    "vorp": 5.4,
+    "ws": 14.4,
+    "ws48": 0.235,
+    "per": 26.1
    },
    "provisional": true
   },
@@ -7506,6 +7578,78 @@
    "provisional": true
   },
   {
+   "id": "Jason_Terry",
+   "name": "Jason Terry",
+   "team": "DAL",
+   "pos": "SG",
+   "speed": 17,
+   "power": 9,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 3,
+   "defBoost": 0,
+   "salary": 960,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 14,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 15,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 22,
+     "pts": 3,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 4,
+     "reb": 1,
+     "ast": 2
+    }
+   ],
+   "season": 2007,
+   "seasonLabel": "2006-07",
+   "age": 29,
+   "games": 81,
+   "mpg": 35.1,
+   "bbrefId": "terryja01",
+   "traded": false,
+   "metrics": {
+    "bpm": 4,
+    "vorp": 4.3,
+    "ws": 10.8,
+    "ws48": 0.182,
+    "per": 18.9
+   },
+   "provisional": true
+  },
+  {
    "id": "Jaylen_Clark",
    "name": "Jaylen Clark",
    "team": "MIN",
@@ -10000,10 +10144,10 @@
    "speed": 13,
    "power": 9,
    "shotLine": 17,
-   "paintBoost": 0,
+   "paintBoost": 1,
    "threePtBoost": 2,
    "defBoost": 3,
-   "salary": 530,
+   "salary": 510,
    "chart": [
     {
      "lo": 1,
@@ -10263,6 +10407,71 @@
     "ws": 2,
     "ws48": 0.044,
     "per": 15.2
+   },
+   "provisional": true
+  },
+  {
+   "id": "Kyle_Lowry",
+   "name": "Kyle Lowry",
+   "team": "TOR",
+   "pos": "PG",
+   "speed": 18,
+   "power": 11,
+   "shotLine": 16,
+   "paintBoost": -1,
+   "threePtBoost": 4,
+   "defBoost": 1,
+   "salary": 1250,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 21,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 5,
+     "reb": 1,
+     "ast": 2
+    }
+   ],
+   "season": 2016,
+   "seasonLabel": "2015-16",
+   "age": 29,
+   "games": 77,
+   "mpg": 37,
+   "bbrefId": "lowryky01",
+   "traded": false,
+   "metrics": {
+    "bpm": 5.8,
+    "vorp": 5.7,
+    "ws": 11.6,
+    "ws48": 0.196,
+    "per": 22.2
    },
    "provisional": true
   },
@@ -10962,6 +11171,78 @@
     "ws": 3.5,
     "ws48": 0.09,
     "per": 16
+   },
+   "provisional": true
+  },
+  {
+   "id": "Manu_Ginobili",
+   "name": "Manu Ginóbili",
+   "team": "SAS",
+   "pos": "SG",
+   "speed": 18,
+   "power": 11,
+   "shotLine": 15,
+   "paintBoost": -1,
+   "threePtBoost": 3,
+   "defBoost": 3,
+   "salary": 1400,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 17,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 18,
+     "hi": 23,
+     "pts": 5,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 24,
+     "hi": 99,
+     "pts": 5,
+     "reb": 2,
+     "ast": 2
+    }
+   ],
+   "season": 2008,
+   "seasonLabel": "2007-08",
+   "age": 30,
+   "games": 74,
+   "mpg": 31.1,
+   "bbrefId": "ginobma01",
+   "traded": false,
+   "metrics": {
+    "bpm": 8.3,
+    "vorp": 6,
+    "ws": 11.1,
+    "ws48": 0.232,
+    "per": 24.3
    },
    "provisional": true
   },
@@ -12580,6 +12861,78 @@
    "provisional": true
   },
   {
+   "id": "Pau_Gasol",
+   "name": "Pau Gasol",
+   "team": "LAL",
+   "pos": "C",
+   "speed": 10,
+   "power": 17,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": -5,
+   "defBoost": 1,
+   "salary": 1010,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 16,
+     "pts": 2,
+     "reb": 2,
+     "ast": 1
+    },
+    {
+     "lo": 17,
+     "hi": 22,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 4,
+     "reb": 3,
+     "ast": 1
+    }
+   ],
+   "season": 2011,
+   "seasonLabel": "2010-11",
+   "age": 30,
+   "games": 82,
+   "mpg": 37,
+   "bbrefId": "gasolpa01",
+   "traded": false,
+   "metrics": {
+    "bpm": 4.8,
+    "vorp": 5.2,
+    "ws": 14.7,
+    "ws48": 0.232,
+    "per": 23.3
+   },
+   "provisional": true
+  },
+  {
    "id": "Paul_George",
    "name": "Paul George",
    "team": "OKC",
@@ -12648,6 +13001,78 @@
     "ws": 11.9,
     "ws48": 0.201,
     "per": 23.3
+   },
+   "provisional": true
+  },
+  {
+   "id": "Paul_Pierce",
+   "name": "Paul Pierce",
+   "team": "BOS",
+   "pos": "SG",
+   "speed": 16,
+   "power": 12,
+   "shotLine": 16,
+   "paintBoost": -1,
+   "threePtBoost": 4,
+   "defBoost": 1,
+   "salary": 1150,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 17,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 18,
+     "hi": 23,
+     "pts": 4,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 24,
+     "hi": 99,
+     "pts": 5,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "season": 2002,
+   "seasonLabel": "2001-02",
+   "age": 24,
+   "games": 82,
+   "mpg": 40.3,
+   "bbrefId": "piercpa01",
+   "traded": false,
+   "metrics": {
+    "bpm": 5.9,
+    "vorp": 6.6,
+    "ws": 12.9,
+    "ws48": 0.187,
+    "per": 22.3
    },
    "provisional": true
   },
@@ -13467,7 +13892,7 @@
    "speed": 18,
    "power": 12,
    "shotLine": 16,
-   "paintBoost": -1,
+   "paintBoost": 0,
    "threePtBoost": 1,
    "defBoost": 2,
    "salary": 1770,
@@ -13878,6 +14303,78 @@
    "provisional": true
   },
   {
+   "id": "Shaquille_O_Neal",
+   "name": "Shaquille O'Neal",
+   "team": "LAL",
+   "pos": "C",
+   "speed": 4,
+   "power": 10,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": -4,
+   "defBoost": 2,
+   "salary": 720,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 12,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 13,
+     "hi": 15,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 22,
+     "pts": 5,
+     "reb": 2,
+     "ast": 1
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 5,
+     "reb": 4,
+     "ast": 1
+    }
+   ],
+   "season": 2000,
+   "seasonLabel": "1999-00",
+   "age": 27,
+   "games": 79,
+   "mpg": 40,
+   "bbrefId": "onealsh01",
+   "traded": false,
+   "metrics": {
+    "bpm": 9.3,
+    "vorp": 9,
+    "ws": 18.6,
+    "ws48": 0.283,
+    "per": 30.6
+   },
+   "provisional": true
+  },
+  {
    "id": "Stephen_Curry",
    "name": "Stephen Curry",
    "team": "GSW",
@@ -13888,7 +14385,7 @@
    "paintBoost": -1,
    "threePtBoost": 1,
    "defBoost": 2,
-   "salary": 1730,
+   "salary": 1740,
    "chart": [
     {
      "lo": 1,

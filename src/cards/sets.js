@@ -38,7 +38,7 @@
 //                   or null — see src/cards/badges.js
 //   treatment       the set-level visual treatment, or null — see treatments.js
 
-import { ROOKIE_BADGE, SUPER_SEASON_BADGE, tierBadge } from './badges.js';
+import { ROOKIE_BADGE, SUMMER_STANDOUT_BADGE, SUPER_SEASON_BADGE, tierBadge } from './badges.js';
 
 /** The set currently being built. Every studio write goes under this. */
 export const CURRENT_SET = '2026-27';
@@ -60,6 +60,14 @@ export const ROOKIE_SET = 'rookie';
  * HISTORICAL_TEAMS rather than mapping Kevin Durant's rookie card to OKC.
  */
 export const WNBA_SET = 'wnba';
+
+/**
+ * The Summer Standouts — deep playoff runs, carded. A CARD TYPE like
+ * `super-season`, and like `wnba-super-season` its roster is a NAMED LIST
+ * rather than a rule: card-data/summer-standouts.json holds the picks and
+ * card-data/standout-conflict-decisions.json the calls that shaped them.
+ */
+export const SUMMER_STANDOUTS_SET = 'summer-standouts';
 
 /**
  * The WNBA legends set — sixteen retired greats, each on her best season.
@@ -200,6 +208,22 @@ export const SETS = [
     showsSeason: true,
     badge: ROOKIE_BADGE,
     treatment: 'green-accent',
+  },
+  {
+    id: SUMMER_STANDOUTS_SET,
+    name: 'Summer Standouts',
+    statsSeason: 'playoff run',
+    kind: 'special',
+    editable: true,
+    // Same zero-floored chart path as every generated set.
+    hidesEmptyRows: true,
+    // WHICH run this is IS the card — Kawhi in Toronto means 2019 and nothing
+    // else. Same sentence as the Super Season row.
+    showsSeason: true,
+    badge: SUMMER_STANDOUT_BADGE,
+    // No treatment: the run is marked by the pill and the season line. Gold
+    // stays the Super Season tier's.
+    treatment: null,
   },
   {
     id: WNBA_SET,

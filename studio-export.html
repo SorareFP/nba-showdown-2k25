@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--
+      Third Vite entry point, dev-only exactly like studio.html: `vite build`
+      bundles only index.html, so this page never ships. It exists for
+      scripts/studio/export.js, which drives a headless browser through it one
+      card at a time — see src/studio/ExportFrame.jsx.
+    -->
+    <title>Card Export — NBA Showdown</title>
+    <style>
+      /* The screenshot clips the card element; the page just has to not add
+         anything around it. */
+      body { margin: 0; background: transparent; }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/studio/exportMain.jsx"></script>
+  </body>
+</html>

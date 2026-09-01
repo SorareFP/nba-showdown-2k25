@@ -548,5 +548,100 @@
     "x": -1.19,
     "y": 9.75,
     "zoom": 1.21
+  },
+  "Gabe_Vincent": {
+    "x": -35.59,
+    "y": -13.92,
+    "zoom": 1.3
+  },
+  "Gary_Harris": {
+    "x": -9.14,
+    "y": 0,
+    "zoom": 1
+  },
+  "Gary_Payton_II": {
+    "x": 1.63,
+    "y": 0,
+    "zoom": 1
+  },
+  "Gary_Trent_Jr": {
+    "x": -24.32,
+    "y": -4,
+    "zoom": 1.08
+  },
+  "GG_Jackson_II": {
+    "x": -8.9,
+    "y": 0,
+    "zoom": 1.16
+  },
+  "Goga_Bitadze": {
+    "x": 8.54,
+    "y": 0,
+    "zoom": 1
+  },
+  "Gradey_Dick": {
+    "x": 8.01,
+    "y": 0,
+    "zoom": 1
+  },
+  "Grayson_Allen": {
+    "x": -26.69,
+    "y": 0,
+    "zoom": 1
+  },
+  "Guerschon_Yabusele": {
+    "x": -9.5,
+    "y": 0,
+    "zoom": 1
+  },
+  "Gui_Santos": {
+    "x": 0.74,
+    "y": -3.51,
+    "zoom": 1.09
+  },
+  "Harrison_Barnes": {
+    "x": -19.57,
+    "y": 0,
+    "zoom": 1
+  },
+  "Immanuel_Quickley": {
+    "x": -17,
+    "y": -5.26,
+    "zoom": 1.45
+  },
+  "Isaac_Okoro": {
+    "x": -1.48,
+    "y": -7.9,
+    "zoom": 1.19
+  },
+  "Isaiah_Collier": {
+    "x": -9.07,
+    "y": 18.43,
+    "zoom": 1.41
+  },
+  "Isaiah_Hartenstein": {
+    "x": -9.05,
+    "y": 0,
+    "zoom": 1
+  },
+  "Isaiah_Jackson": {
+    "x": -21.06,
+    "y": -8,
+    "zoom": 1.16
+  },
+  "Isaiah_Joe": {
+    "x": -23.28,
+    "y": 0,
+    "zoom": 1
+  },
+  "Ivica_Zubac": {
+    "x": 5.49,
+    "y": 0,
+    "zoom": 1
+  },
+  "Ja_Morant": {
+    "x": 12.16,
+    "y": 0,
+    "zoom": 1
   }
 }

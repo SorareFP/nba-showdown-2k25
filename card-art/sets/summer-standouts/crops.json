@@ -8,5 +8,25 @@
     "x": 5.93,
     "y": 7.9,
     "zoom": 1.65
+  },
+  "Ben_Wallace": {
+    "x": 1.19,
+    "y": 0,
+    "zoom": 1
+  },
+  "Danny_Green": {
+    "x": -21.06,
+    "y": 0,
+    "zoom": 1
+  },
+  "Kyrie_Irving": {
+    "x": -8.9,
+    "y": 0,
+    "zoom": 1
+  },
+  "Rasheed_Wallace": {
+    "x": 1.19,
+    "y": 0,
+    "zoom": 1
   }
 }

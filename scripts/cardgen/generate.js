@@ -226,7 +226,7 @@ export function suppressCeiling(chart, { delay = TOP_TIER_DELAY, shave = TOP_TIE
   return out;
 }
 
-export function shapeChart(chart, { shotLine = null } = {}) {
+export function shapeChart(chart, { shotLine = null, ceilingDelay = TOP_TIER_DELAY } = {}) {
   const floored = enforceZeroTiers(chart);
   // firstMovable = 2: tier 0 is the blank tier and tier 1 is where the
   // statistics resume, so the lowest boundary a shot line may move is tier 2's.
@@ -235,7 +235,10 @@ export function shapeChart(chart, { shotLine = null } = {}) {
   // the tier beneath it, and only mergeIdenticalTiers collapses that -- running
   // suppression last printed Toumani Camara with two identical bottom-of-chart
   // rows. The merge protects the shot-line boundary, so the break survives.
-  const suppressed = suppressCeiling(broken);
+  // `ceilingDelay: 0` when bands were placed on the card's own roll CDF -- the
+  // placement already prices the ceiling at its earned frequency, and a fixed
+  // +2 on top of that would punish it twice. The magnitude shave still runs.
+  const suppressed = suppressCeiling(broken, { delay: ceilingDelay });
   return mergeIdenticalTiers(suppressed, { fixedTiers: 1, keepBoundaryAt: shotLine });
 }
 

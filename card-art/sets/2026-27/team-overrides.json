@@ -1,1 +1,10 @@
-{}
+{
+  "MIA": {
+    "secondary": "#862633",
+    "accent": "#E6ECF8"
+  },
+  "UTA": {
+    "primary": "#000000",
+    "secondary": "#330072"
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "Becky_Hammon": {
+    "x": -10.43,
+    "y": 26.66,
+    "zoom": 1.37
+  },
+  "Diana_Taurasi": {
+    "x": -8.67,
+    "y": 0,
+    "zoom": 1
+  },
+  "Katie_Smith": {
+    "x": 0,
+    "y": 8.51,
+    "zoom": 1
+  },
+  "Lauren_Jackson": {
+    "x": -0.84,
+    "y": 0,
+    "zoom": 1
+  },
+  "Lisa_Leslie": {
+    "x": 2.38,
+    "y": 0.83,
+    "zoom": 1.36
+  },
+  "Maya_Moore": {
+    "x": -4.5,
+    "y": 0.47,
+    "zoom": 1.09
+  },
+  "Sheryl_Swoopes": {
+    "x": -19,
+    "y": 4.01,
+    "zoom": 1.38
+  },
+  "Sue_Bird": {
+    "x": -4,
+    "y": 7.07,
+    "zoom": 1.08
+  },
+  "Sylvia_Fowles": {
+    "x": -9.65,
+    "y": 0,
+    "zoom": 1
+  },
+  "Tina_Charles": {
+    "x": 8.25,
+    "y": 0,
+    "zoom": 1
+  },
+  "Tina_Thompson": {
+    "x": -4,
+    "y": 1.77,
+    "zoom": 1.08
+  }
+}

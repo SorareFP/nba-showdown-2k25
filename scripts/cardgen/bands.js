@@ -125,3 +125,94 @@ export function computeStatBands(games, statKey) {
 
   return bands;
 }
+
+/**
+ * The distribution of rolls a card ACTUALLY experiences, as a CDF.
+ *
+ * `field` is every card it can face, each needing only `{ speed, power,
+ * defBoost }` — the roll bonus is a function of those three and nothing else,
+ * which is what makes this computable BEFORE the chart exists. That ordering is
+ * the whole reason this approach is possible: Speed+Power is settled first, so
+ * a card's matchup profile is known while its bands are still being cut.
+ *
+ * Returns `roll -> P(effective roll <= roll)`, with the engine's own clamp
+ * applied so a huge penalty piles onto 1 exactly as it does in play.
+ */
+export function effectiveRollCdf(card, field, calcAdv, { faces = 20, maxRoll = 60 } = {}) {
+  const counts = new Map();
+  let n = 0;
+  for (const opp of field) {
+    if (opp === card) continue;
+    const bonus = calcAdv(card, opp).rollBonus;
+    for (let die = 1; die <= faces; die += 1) {
+      const roll = Math.max(1, Math.min(die + bonus, maxRoll));
+      counts.set(roll, (counts.get(roll) ?? 0) + 1);
+      n += 1;
+    }
+  }
+  const cdf = new Map();
+  let cum = 0;
+  for (let r = 1; r <= maxRoll; r += 1) {
+    cum += (counts.get(r) ?? 0) / (n || 1);
+    cdf.set(r, cum);
+  }
+  return cdf;
+}
+
+/**
+ * Anchor the floor, ramp the ceiling: place band boundaries on this card's OWN
+ * roll distribution, but only as far up the chart as the boundary sits.
+ *
+ * THE BUG THE CDF HALF FIXES. The linear layout above apportions slots by real
+ * frequency and then walks them out from roll 1, which is only correct if every
+ * roll is equally likely. It is not: the chart is read at `die + rollBonus`,
+ * and that bonus has mean +1.92 across the field and +10.89 for Nikola Jokic.
+ * So a top tier cut as a 5% event is reached 5% of the time by the median card
+ * and 45% of the time by Giannis Antetokounmpo.
+ *
+ * THE BUG A PURE CDF PLACEMENT CREATES, and why the blend exists. Placing EVERY
+ * boundary at the CDF made Giannis blank on any roll under 14 -- statistically
+ * true across the whole field, but in the one matchup where his bonus is small
+ * he would brick more than half his rolls, which no one would read as the best
+ * card in the set. The floor is a per-matchup experience; the ceiling is a
+ * per-season frequency. So each boundary moves toward its CDF position by a
+ * weight that ramps 0 -> 1 from the first boundary to the last: the bottom
+ * stays exactly linear (scoring still starts where it always did), the TOP
+ * boundary lands exactly where this card's own distribution says its earned
+ * frequency lives, and the stretch lands in the middle bands -- which is where
+ * the extra width was wanted anyway.
+ *
+ * Symmetric on purpose: a penalty card's ceiling slides DOWN below the linear
+ * position, because a card that mostly rolls 1-16 has also earned the right to
+ * reach its (small) top tier as often as it did in real life.
+ *
+ * The magnitudes do not move -- those are the player's own production and stay
+ * exactly where the percentile cuts put them. Only the boundaries move.
+ */
+export function placeBandsOnCdf(bands, cdf, { maxRoll = 60 } = {}) {
+  const n = bands.length;
+  if (n < 2) return bands.map(b => ({ ...b }));
+  const total = bands.reduce((s, b) => s + b.slots, 0) || TOTAL_SLOTS;
+  const out = bands.map(b => ({ ...b }));
+  let cum = 0;
+  let prevHi = 0;
+  for (let i = 0; i < n - 1; i += 1) {
+    cum += bands[i].slots / total;
+    // The lowest roll at which this card has already seen `cum` of its rolls.
+    let cdfHi = maxRoll;
+    for (let r = 1; r <= maxRoll; r += 1) {
+      if ((cdf.get(r) ?? 1) >= cum) { cdfHi = r; break; }
+    }
+    const w = n === 2 ? 1 : i / (n - 2);
+    let hi = Math.round(bands[i].hi + w * (cdfHi - bands[i].hi));
+    if (hi <= prevHi) hi = prevHi + 1;                     // every band keeps a roll
+    const roomForRest = maxRoll - (n - 1 - i);
+    if (hi > roomForRest) hi = roomForRest;                // and so does every band above
+    out[i].lo = prevHi + 1;
+    out[i].hi = hi;
+    prevHi = hi;
+  }
+  out[n - 1].lo = prevHi + 1;
+  out[n - 1].hi = Math.max(bands[n - 1].hi, prevHi + 1);
+  return out;
+}

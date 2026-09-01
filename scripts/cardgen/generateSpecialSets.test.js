@@ -386,8 +386,8 @@ describe('the base set\'s badges', () => {
     // 15/92 after the progressive ceiling shave and the four carried-forward
     // players joined the pool: both move play value, which moves salary, which
     // moves cards across SUPER_SEASON_MIN_SALARY. The split is a MEASUREMENT.
-    expect(counts.printed[BEST_SEASON_BADGE]).toBe(92);
-    expect(counts.printed[SUPER_SEASON_BADGE]).toBe(15);
+    expect(counts.printed[BEST_SEASON_BADGE]).toBe(94);
+    expect(counts.printed[SUPER_SEASON_BADGE]).toBe(13);
     // Nobody loses their pill entirely in the resolution.
     expect(BADGE_IDS.reduce((n, id) => n + counts.printed[id], 0)).toBe(counts.players);
     expect(counts.multiple).toBe(ROOKIE.excluded.length);

@@ -75,7 +75,7 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { readCache, REPO_ROOT } from './cache.js';
 import { normalizeName } from './resolveTeams.js';
-import { computeStatBands } from './bands.js';
+import { computeStatBands, effectiveRollCdf, placeBandsOnCdf } from './bands.js';
 import { reconcileBands, shapeChart, MAX_CHART_TIERS, MAX_PRINTED_ROWS } from './generate.js';
 import { isBlankTier } from './zeroFloor.js';
 import { applyOverrides } from './overrides.js';
@@ -93,11 +93,19 @@ import { indexPositionShares, loadPositionShares } from './positionShares.js';
 import { readCarryForward, resolveCarryForward, buildCarryForwardCards } from './carryForward.js';
 import { buildSet, resolvePlayerIds } from './generateSpecialSets.js';
 import { playerIdFromName } from '../../src/cards/playerId.js';
+import { calcAdv } from '../../src/game/engine.js';
 
 const GEN_DIR = path.join(REPO_ROOT, 'card-data', 'generated');
 export const OUTPUT_FILE = path.join(GEN_DIR, 'cards-2026-27.json');
 
 const readJson = file => JSON.parse(fs.readFileSync(file, 'utf8'));
+
+/**
+ * Cut chart bands on each card's own EFFECTIVE roll distribution rather than on
+ * a bare d20. Measured, built, and not yet finished — see the note at the call
+ * site for the two steps that still fight it.
+ */
+export const CDF_BANDS = process.env.CDF_BANDS !== '0';
 
 /**
  * Names the stat source spells differently from the pool.
@@ -171,6 +179,7 @@ export function buildCard({
   size,
   positionShares,
   calibration,
+  rollCdf = null,
 }) {
   const per100 = {
     pts: rate?.pts100 ?? 0,
@@ -194,6 +203,11 @@ export function buildCard({
 
   // Each stat gets its own corrected level (see fitChartLevel), so the three
   // columns are synthesized separately and then reconciled onto one spine.
+  //
+  // `rollCdf` is this card's OWN distribution of effective rolls, and it is
+  // what stops a band cut as a 5% event being reached 45% of the time. It can
+  // be computed here because the roll bonus depends only on Speed, Power and
+  // Def Boost, all of which are settled before a chart is cut.
   const bands = {};
   for (const stat of V.CHART_STATS) {
     const fit = { level: calibration.chart.levels[stat], shape: calibration.chart.shape };
@@ -215,12 +229,19 @@ export function buildCard({
           }
         : null,
     });
-    bands[stat] = computeStatBands(games, stat);
+    bands[stat] = rollCdf
+      ? placeBandsOnCdf(computeStatBands(games, stat), rollCdf)
+      : computeStatBands(games, stat);
   }
   // The shot line is an INPUT to the chart's shape, not just a number printed
   // beside it: the chart is made to break exactly there so the card's one arrow
   // has a real dividing line to sit on. See forceBandBoundary.
-  const chart = shapeChart(reconcileBands(bands), { shotLine });
+  const chart = shapeChart(reconcileBands(bands), {
+    shotLine,
+    // CDF placement already prices the ceiling at its earned frequency; the
+    // fixed +2 delay on top of that would punish it twice.
+    ceilingDelay: rollCdf ? 0 : undefined,
+  });
 
   const card = {
     id: playerIdFromName(player.name),
@@ -323,6 +344,31 @@ export function generateCards({
   // Per-4-minute production, per card, in card order. Carried out of the build
   // because it is what a chart is SUPPOSED to integrate to, and the run report
   // cannot check that without it. See reportChartFit.
+  // THE FIELD, BEFORE ANY CHART EXISTS. The roll bonus is a function of Speed,
+  // Power and Def Boost only, and all three are settled before a chart is cut —
+  // Speed+Power arrives from speedPower.js and Def Boost from the actual row. So
+  // every card's own distribution of EFFECTIVE rolls is knowable here, which is
+  // what lets a band be placed where the player actually reaches it instead of
+  // where a bare d20 would.
+  const fieldStubs = resolved.map((player, i) => {
+    const spTotal = lookup(spIndex, player.name)?.speedPowerTotal ?? 0;
+    const shares = positionShares?.forName(player.name, CURRENT_STATS_SEASON) ?? null;
+    const { speed, power } = A.splitFromCalibration(spTotal, {
+      pos: player.pos,
+      size: biometrics.get(normalizeName(player.name)) ?? null,
+      positionShares: shares,
+      calibration,
+    });
+    return { speed, power, defBoost: A.defBoostFromEpm(actualRows[i]?.epmDef) };
+  });
+  // The blend in placeBandsOnCdf anchors the floor (a pure-CDF placement made
+  // Giannis Antetokounmpo blank on anything under 14, which no one would read
+  // as the best card in the set) and ramps to the CDF at the ceiling. See
+  // scripts/analysis/runRollDistribution.js for the measurement behind it.
+  const rollCdfs = CDF_BANDS
+    ? fieldStubs.map(c => effectiveRollCdf(c, fieldStubs, calcAdv))
+    : fieldStubs.map(() => null);
+
   const targets = [];
   resolved.forEach((player, i) => {
     const rate = lookup(rateIndex, player.name);
@@ -348,6 +394,7 @@ export function generateCards({
         size,
         positionShares: shares,
         calibration,
+        rollCdf: rollCdfs[i],
       })
     );
   });

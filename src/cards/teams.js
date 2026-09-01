@@ -109,14 +109,14 @@ export const TEAMS = {
  * the same source when the set is finalised.
  */
 export const HISTORICAL_TEAMS = {
-  SEA: { name: 'SuperSonics', city: 'Seattle',     primary: '#00653A', secondary: '#FFC72C', logo: null, era: '1967-2008', unverifiedColors: true },
-  NJN: { name: 'Nets',        city: 'New Jersey',  primary: '#002A60', secondary: '#CE1141', logo: null, era: '1977-2012', unverifiedColors: true },
-  NOH: { name: 'Hornets',     city: 'New Orleans', primary: '#002B5C', secondary: '#B4975A', logo: null, era: '2002-2013', unverifiedColors: true },
-  NOK: { name: 'Hornets',     city: 'New Orleans/Oklahoma City', primary: '#002B5C', secondary: '#B4975A', logo: null, era: '2005-2007', unverifiedColors: true },
-  CHH: { name: 'Hornets',     city: 'Charlotte',   primary: '#00778B', secondary: '#280071', logo: null, era: '1988-2002', unverifiedColors: true },
-  CHB: { name: 'Bobcats',     city: 'Charlotte',   primary: '#F9423A', secondary: '#004071', logo: null, era: '2004-2014', unverifiedColors: true },
-  VAN: { name: 'Grizzlies',   city: 'Vancouver',   primary: '#00B2A9', secondary: '#BC7844', logo: null, era: '1995-2001', unverifiedColors: true },
-  WSB: { name: 'Bullets',     city: 'Washington',  primary: '#002B5C', secondary: '#E03A3E', logo: null, era: '1974-1997', unverifiedColors: true },
+  SEA: { name: 'SuperSonics', city: 'Seattle',     primary: '#00653A', secondary: '#FFC72C', logo: '/logos/SEA.png', era: '1967-2008', unverifiedColors: true },
+  NJN: { name: 'Nets',        city: 'New Jersey',  primary: '#002A60', secondary: '#CE1141', logo: '/logos/NJN.png', era: '1977-2012', unverifiedColors: true },
+  NOH: { name: 'Hornets',     city: 'New Orleans', primary: '#002B5C', secondary: '#B4975A', logo: '/logos/NOH.png', era: '2002-2013', unverifiedColors: true },
+  NOK: { name: 'Hornets',     city: 'New Orleans/Oklahoma City', primary: '#002B5C', secondary: '#B4975A', logo: '/logos/NOK.png', era: '2005-2007', unverifiedColors: true },
+  CHH: { name: 'Hornets',     city: 'Charlotte',   primary: '#00778B', secondary: '#280071', logo: '/logos/CHH.png', era: '1988-2002', unverifiedColors: true },
+  CHB: { name: 'Bobcats',     city: 'Charlotte',   primary: '#F9423A', secondary: '#004071', logo: '/logos/CHB.png', era: '2004-2014', unverifiedColors: true },
+  VAN: { name: 'Grizzlies',   city: 'Vancouver',   primary: '#00B2A9', secondary: '#BC7844', logo: '/logos/VAN.png', era: '1995-2001', unverifiedColors: true },
+  WSB: { name: 'Bullets',     city: 'Washington',  primary: '#002B5C', secondary: '#E03A3E', logo: '/logos/WSB.png', era: '1974-1997', unverifiedColors: true },
 
   // ── ERA IDENTITIES OF LIVE FRANCHISES ─────────────────────────────────────
   //
@@ -129,19 +129,21 @@ export const HISTORICAL_TEAMS = {
   // and any code-shaped surface should print — the key is an internal season
   // qualifier, not a thing a card should say.
   //
-  // Logos are null until era marks are supplied (the WNBA retro logos set the
-  // pattern): wanted files, flat in public/logos/ — DEN04.png (rainbow-skyline
-  // era pickaxe), SAC95.png (1994 crown), CLE04.png (sword C), DET02.png
-  // (horsepower), LAC16.png (2015 script). Colours are from general knowledge,
-  // marked unverified, same convention as the rows above.
-  DEN04: { name: 'Nuggets',  city: 'Denver',      abbr: 'DEN', primary: '#418FDE', secondary: '#FFC72C', logo: null, era: '2004-2018', unverifiedColors: true },
-  SAC95: { name: 'Kings',    city: 'Sacramento',  abbr: 'SAC', primary: '#5A2D81', secondary: '#000000', logo: null, era: '1995-2016', unverifiedColors: true },
-  CLE04: { name: 'Cavaliers', city: 'Cleveland',  abbr: 'CLE', primary: '#860038', secondary: '#04225C', logo: null, era: '2004-2010', unverifiedColors: true },
-  DET02: { name: 'Pistons',  city: 'Detroit',     abbr: 'DET', primary: '#C8102E', secondary: '#1D42BA', logo: null, era: '2002-2005', unverifiedColors: true },
-  LAC16: { name: 'Clippers', city: 'Los Angeles', abbr: 'LAC', primary: '#C8102E', secondary: '#1D428A', logo: null, era: '2016-2024', unverifiedColors: true },
-  TOR96: { name: 'Raptors',  city: 'Toronto',     abbr: 'TOR', primary: '#753BBD', secondary: '#CE1141', logo: null, era: '1996-2006', unverifiedColors: true },
-  ATL96: { name: 'Hawks',    city: 'Atlanta',     abbr: 'ATL', primary: '#E03A3E', secondary: '#FDB927', logo: null, era: '1996-2007', unverifiedColors: true },
-  ATL08: { name: 'Hawks',    city: 'Atlanta',     abbr: 'ATL', primary: '#002B5C', secondary: '#E03A3E', logo: null, era: '2008-2015', unverifiedColors: true },
+  // Logo paths are PRE-WIRED to each key's own stem — drop a file at
+  // public/logos/{KEY}.png (webp/jpg probe too) and it lights up with no code
+  // edit; until then AssetImage 404s to the lettered circle showing `abbr`.
+  // Wanted marks: DEN04 (rainbow-skyline pickaxe), SAC95 (1994 crown), CLE04
+  // (sword C), DET02 (horsepower), LAC16 (2015 script), TOR96 (dino-ball),
+  // ATL96 (hawk head), ATL08 (navy), WSB (Bullets), and the relocated
+  // franchises above. Colours are from general knowledge, marked unverified.
+  DEN04: { name: 'Nuggets',  city: 'Denver',      abbr: 'DEN', primary: '#418FDE', secondary: '#FFC72C', logo: '/logos/DEN04.png', era: '2004-2018', unverifiedColors: true },
+  SAC95: { name: 'Kings',    city: 'Sacramento',  abbr: 'SAC', primary: '#5A2D81', secondary: '#000000', logo: '/logos/SAC95.png', era: '1995-2016', unverifiedColors: true },
+  CLE04: { name: 'Cavaliers', city: 'Cleveland',  abbr: 'CLE', primary: '#860038', secondary: '#04225C', logo: '/logos/CLE04.png', era: '2004-2010', unverifiedColors: true },
+  DET02: { name: 'Pistons',  city: 'Detroit',     abbr: 'DET', primary: '#C8102E', secondary: '#1D42BA', logo: '/logos/DET02.png', era: '2002-2005', unverifiedColors: true },
+  LAC16: { name: 'Clippers', city: 'Los Angeles', abbr: 'LAC', primary: '#C8102E', secondary: '#1D428A', logo: '/logos/LAC16.png', era: '2016-2024', unverifiedColors: true },
+  TOR96: { name: 'Raptors',  city: 'Toronto',     abbr: 'TOR', primary: '#753BBD', secondary: '#CE1141', logo: '/logos/TOR96.png', era: '1996-2006', unverifiedColors: true },
+  ATL96: { name: 'Hawks',    city: 'Atlanta',     abbr: 'ATL', primary: '#E03A3E', secondary: '#FDB927', logo: '/logos/ATL96.png', era: '1996-2007', unverifiedColors: true },
+  ATL08: { name: 'Hawks',    city: 'Atlanta',     abbr: 'ATL', primary: '#002B5C', secondary: '#E03A3E', logo: '/logos/ATL08.png', era: '2008-2015', unverifiedColors: true },
 };
 
 /**

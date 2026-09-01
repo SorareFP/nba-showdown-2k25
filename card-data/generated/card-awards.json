@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-01T14:47:36.602Z",
+ "generatedAt": "2026-09-01T14:57:04.430Z",
  "source": "Basketball-Reference's season `advanced` tables, awards column — a voted award's suffix is its finishing position, so only -1 is a win — plus the same pages' `advanced_post` table, whose awards column holds one cell a season and that cell is always `Finals MVP-1`, plus each season index page's League Champion row and that team's roster, which is where the ring comes from and which is in no column at all",
  "declared": [
   "MVP",
@@ -449,12 +449,12 @@
  ],
  "counts": {
   "2026-27": {
-   "cards": 60,
-   "marked": 38,
+   "cards": 61,
+   "marked": 40,
    "multiple": 4,
    "capped": 0,
    "mostHeld": 3,
-   "ifSelectionsCounted": 44,
+   "ifSelectionsCounted": 46,
    "byCode": {
     "MVP": 1,
     "FMVP": 1,
@@ -463,7 +463,7 @@
     "MIP": 1,
     "6MOY": 1,
     "CPOY": 1,
-    "CHAMP": 9,
+    "CHAMP": 11,
     "AS": 28
    }
   },
@@ -1213,14 +1213,28 @@
     "bbrefId": "robinmi01",
     "raw": "6MOY-8",
     "rawPost": null,
-    "champion": null,
-    "awards": []
+    "champion": "NYK",
+    "awards": [
+     "CHAMP"
+    ]
    },
    {
     "id": "Jordan_Clarkson",
     "name": "Jordan Clarkson",
     "season": 2026,
     "bbrefId": "clarkjo01",
+    "raw": null,
+    "rawPost": null,
+    "champion": "NYK",
+    "awards": [
+     "CHAMP"
+    ]
+   },
+   {
+    "id": "Guerschon_Yabusele",
+    "name": "Guerschon Yabusele",
+    "season": 2026,
+    "bbrefId": "yabusgu01",
     "raw": null,
     "rawPost": null,
     "champion": "NYK",

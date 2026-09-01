@@ -277,15 +277,21 @@ export function statsSeasonEndYear(set) {
  * quotes the result.
  */
 function awardRecord(card, row, season, championEntry = null, postRow = null) {
-  // THE RING IS A JERSEY FACT, NOT JUST A ROSTER FACT. The champion join finds
-  // a player on the winning roster by id — which was always enough while every
-  // card showed the team its whole season was played for. The TRADED set broke
-  // that: Rasheed Wallace's one game as a 2003-04 Hawk is the same season as
-  // his Pistons ring, and the roster join hung Detroit's ring on an Atlanta
-  // card. So the ring only prints when the CARD wears the champion's jersey —
-  // era keys included, which is what franchiseForSeason resolves. A card with
-  // no team (the base set's records carry one) simply keeps the old behaviour.
-  if (championEntry && card.team) {
+  // THE RING IS A JERSEY FACT ON A SEASON CARD, AND A CHAMPION FACT ON A BASE
+  // CARD. The champion join finds a player on the winning roster by id — which
+  // was always enough while every card showed the team its whole season was
+  // played for. The TRADED set broke that: Rasheed Wallace's one game as a
+  // 2003-04 Hawk is the same season as his Pistons ring, and the roster join
+  // hung Detroit's ring on an Atlanta card. So on a card that IS a specific
+  // season-with-a-team (every special set carries `season`), the ring only
+  // prints when the card wears the champion's jersey — era keys included,
+  // which is what franchiseForSeason resolves.
+  //
+  // The BASE set keeps the roster join whole, by the user's call: a base card
+  // carries no `season` field and shows where the man plays NOW, and a
+  // reigning champion who changed teams over the summer is still a reigning
+  // champion — Yabusele and Mitchell Robinson keep their rings.
+  if (championEntry && card.team && Number.isFinite(card.season)) {
     const champKey = franchiseForSeason(canonicalTeam(championEntry.team), card.season);
     if (champKey !== card.team) championEntry = null;
   }

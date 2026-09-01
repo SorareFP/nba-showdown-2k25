@@ -791,9 +791,9 @@ describe('the award marks the studio joins on', () => {
     // the middle number in front of him; all three are pinned here, in
     // awards.js and in the generated file's own counts, so they cannot drift.
     const marked = POOL_PLAYERS.filter(p => p.awards.length > 0);
-    expect(marked.length).toBe(38);
+    expect(marked.length).toBe(40);
     expect(marked.filter(p => p.awards.includes('AS')).length).toBe(28);
-    expect(marked.filter(p => p.awards.includes('CHAMP')).length).toBe(9);
+    expect(marked.filter(p => p.awards.includes('CHAMP')).length).toBe(11);
   });
 
   it('gives the ring to the champion ROSTER, not only to its stars', () => {
@@ -802,14 +802,14 @@ describe('the award marks the studio joins on', () => {
     // nothing else, which is exactly what a roster join should produce and what
     // a join gated on "has an awards row" would have missed.
     //
-    // NINE NOW, NOT ELEVEN: the ring became a JERSEY fact when the TRADED set
-    // arrived (Rasheed Wallace's one game as a 2003-04 Hawk is the same season
-    // as his Pistons ring, and the roster join hung Detroit's ring on an
-    // Atlanta card). Yabusele and Mitchell Robinson won it as Knicks and open
-    // 2026-27 on other teams, so their base cards — which wear the NEW jersey
-    // — no longer print it.
+    // The ring is a JERSEY fact on the SEASON cards (Rasheed's one game as a
+    // 2003-04 Hawk does not wear Detroit's ring) — but on a BASE card it is a
+    // CHAMPION fact, by the user's call: Yabusele and Mitchell Robinson open
+    // 2026-27 in other uniforms and keep their rings anyway, because a
+    // reigning champion who changed teams is still a reigning champion.
     const ringed = POOL_PLAYERS.filter(p => p.awards.includes('CHAMP'));
     expect(ringed.map(p => p.name).sort()).toEqual([
+      'Guerschon Yabusele',
       'Jalen Brunson',
       'Jordan Clarkson',
       'Jose Alvarado',
@@ -818,13 +818,14 @@ describe('the award marks the studio joins on', () => {
       'Landry Shamet',
       'Mikal Bridges',
       'Miles McBride',
+      'Mitchell Robinson',
       'OG Anunoby',
     ]);
-    // SEVEN OF THE NINE CARRY THE RING AND NOTHING ELSE, which is the measure
+    // NINE OF THE ELEVEN CARRY THE RING AND NOTHING ELSE, which is the measure
     // of what a roster join adds over the awards column: only Brunson and Towns
     // were All-Stars, and OG Anunoby's `DPOY-10,DEF2` earns him nothing at all
     // under the -1 rule, so without the ring he would have no mark either.
-    expect(ringed.filter(p => p.awards.length === 1)).toHaveLength(7);
+    expect(ringed.filter(p => p.awards.length === 1)).toHaveLength(9);
     expect(ringed.filter(p => p.awards.length > 1).map(p => p.name).sort()).toEqual([
       'Jalen Brunson',
       'Karl-Anthony Towns',

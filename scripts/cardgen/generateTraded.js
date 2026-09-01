@@ -158,9 +158,18 @@ export function main({ log = console.log } = {}) {
     throw new Error(`TRADED stints missing:\n  ${missing.join('\n  ')}`);
   }
 
+  // A player can hold several strange jerseys (Shaq is here twice), and the
+  // studio keys everything — rows, crops, the photo store — on the card id,
+  // so twins collapsed into one card. Repeat names get the stint's team code
+  // in the id: Shaquille_O_Neal_PHO and Shaquille_O_Neal_CLE are two cards
+  // with two photo slots.
+  const nameCount = new Map();
+  for (const m of meta) nameCount.set(m.name, (nameCount.get(m.name) ?? 0) + 1);
+
   const cards = buildSet({ selections, currentRows, calibration, biometrics, positionShares })
     .map((card, i) => ({
       ...card,
+      id: (nameCount.get(meta[i].name) ?? 1) > 1 ? `${card.id}_${meta[i].team}` : card.id,
       team: franchiseForSeason(canonicalTeam(meta[i].team), meta[i].season),
       season: meta[i].season,
       seasonLabel: seasonLabel(meta[i].season),

@@ -410,7 +410,7 @@ describe('the committed file', () => {
     // Re-measured when the Summer Standouts joined the plan: the standout
     // Super Seasons added marked retirees to that set, and the newly cached
     // 2000-2007 pages resolved two more rookie-year marks.
-    expect(AWARDS.counts[CURRENT_SET].marked).toBe(38);
+    expect(AWARDS.counts[CURRENT_SET].marked).toBe(40);
     expect(AWARDS.counts[SUPER_SEASON_SET].marked).toBe(61);
     // The rookie set moves at last, and only on the ring: no player in that
     // pool was an All-Star as a rookie, but six of them won a title as one.
@@ -425,16 +425,13 @@ describe('the committed file', () => {
     expect(AWARDS.counts[ROOKIE_SET].byCode.CHAMP).toBe(8);
     // The ring is a TEAM fact, so it marks a whole roster's worth at once and
     // still leaves each set a minority.
-    // Nine, not eleven, since the ring became a jersey fact: two champion
-    // Knicks open 2026-27 in other uniforms. See the roster test in
-    // players.test.js.
-    expect(AWARDS.counts[CURRENT_SET].byCode.CHAMP).toBe(9);
+    expect(AWARDS.counts[CURRENT_SET].byCode.CHAMP).toBe(11);
     expect(AWARDS.counts[SUPER_SEASON_SET].byCode.CHAMP).toBe(11);
     // …against what admitting All-NBA and All-Defensive as well would mark.
     // Still a step up on every set, which is the case for stopping here.
     // (Unchanged by the ring: ifSelectionsCounted asks about the awards column,
     // and the ring is not in it.)
-    expect(AWARDS.counts[CURRENT_SET].ifSelectionsCounted).toBe(44);
+    expect(AWARDS.counts[CURRENT_SET].ifSelectionsCounted).toBe(46);
     expect(AWARDS.counts[SUPER_SEASON_SET].ifSelectionsCounted).toBe(74);
     expect(AWARDS.counts[ROOKIE_SET].ifSelectionsCounted).toBe(25);
   });

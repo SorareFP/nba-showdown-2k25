@@ -116,6 +116,46 @@ export const HISTORICAL_TEAMS = {
   CHH: { name: 'Hornets',     city: 'Charlotte',   primary: '#00778B', secondary: '#280071', logo: null, era: '1988-2002', unverifiedColors: true },
   CHB: { name: 'Bobcats',     city: 'Charlotte',   primary: '#F9423A', secondary: '#004071', logo: null, era: '2004-2014', unverifiedColors: true },
   VAN: { name: 'Grizzlies',   city: 'Vancouver',   primary: '#00B2A9', secondary: '#BC7844', logo: null, era: '1995-2001', unverifiedColors: true },
+
+  // ── ERA IDENTITIES OF LIVE FRANCHISES ─────────────────────────────────────
+  //
+  // Same franchise, different clothes. The Summer Standouts set put 2009
+  // Chauncey Billups on a card wearing today's navy-and-red Nuggets, which is
+  // as wrong on its face as Durant's rookie card saying OKC — the 2009 Nuggets
+  // wore POWDER BLUE. These keys are what franchiseForSeason returns for a
+  // season inside the era (see FRANCHISE_ERAS), so the card carries the era
+  // key and this table dresses it. `abbr` is what the lettered-circle fallback
+  // and any code-shaped surface should print — the key is an internal season
+  // qualifier, not a thing a card should say.
+  //
+  // Logos are null until era marks are supplied (the WNBA retro logos set the
+  // pattern): wanted files, flat in public/logos/ — DEN04.png (rainbow-skyline
+  // era pickaxe), SAC95.png (1994 crown), CLE04.png (sword C), DET02.png
+  // (horsepower), LAC16.png (2015 script). Colours are from general knowledge,
+  // marked unverified, same convention as the rows above.
+  DEN04: { name: 'Nuggets',  city: 'Denver',      abbr: 'DEN', primary: '#418FDE', secondary: '#FFC72C', logo: null, era: '2004-2018', unverifiedColors: true },
+  SAC95: { name: 'Kings',    city: 'Sacramento',  abbr: 'SAC', primary: '#5A2D81', secondary: '#000000', logo: null, era: '1995-2016', unverifiedColors: true },
+  CLE04: { name: 'Cavaliers', city: 'Cleveland',  abbr: 'CLE', primary: '#860038', secondary: '#04225C', logo: null, era: '2004-2010', unverifiedColors: true },
+  DET02: { name: 'Pistons',  city: 'Detroit',     abbr: 'DET', primary: '#C8102E', secondary: '#1D42BA', logo: null, era: '2002-2005', unverifiedColors: true },
+  LAC16: { name: 'Clippers', city: 'Los Angeles', abbr: 'LAC', primary: '#C8102E', secondary: '#1D428A', logo: null, era: '2016-2024', unverifiedColors: true },
+};
+
+/**
+ * Seasons in which a LIVE franchise wore an identity today's row does not.
+ *
+ * Consulted by franchiseForSeason after the Bobcats rule. `to` and `from` are
+ * Basketball-Reference season numbers (2004 means 2003-04). A franchise absent
+ * here has worn one identity for every season this app cards, which is true of
+ * most of them and the reason this is a short list rather than a registry of
+ * every rebrand in league history — a row earns its place by a card actually
+ * wearing it.
+ */
+export const FRANCHISE_ERAS = {
+  DEN: [{ from: 2004, to: 2018, key: 'DEN04' }],
+  SAC: [{ from: 1995, to: 2016, key: 'SAC95' }],
+  CLE: [{ from: 2004, to: 2010, key: 'CLE04' }],
+  DET: [{ from: 2002, to: 2005, key: 'DET02' }],
+  LAC: [{ from: 2016, to: 2024, key: 'LAC16' }],
 };
 
 /**
@@ -443,7 +483,15 @@ const LAST_BOBCATS_SEASON = 2014;
 export function franchiseForSeason(abbr, season) {
   const raw = String(abbr ?? '').toUpperCase();
   if (raw === 'CHA' && Number.isFinite(season) && season <= LAST_BOBCATS_SEASON) return 'CHB';
-  return canonicalTeam(raw);
+  const key = canonicalTeam(raw);
+  // A live franchise's dated identity — the 2009 Nuggets are powder blue, not
+  // today's navy. See FRANCHISE_ERAS.
+  if (Number.isFinite(season) && Object.hasOwn(FRANCHISE_ERAS, key)) {
+    for (const era of FRANCHISE_ERAS[key]) {
+      if (season >= era.from && season <= era.to) return era.key;
+    }
+  }
+  return key;
 }
 
 /**

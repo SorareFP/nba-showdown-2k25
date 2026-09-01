@@ -299,11 +299,10 @@ export const BADGES = [
     // The Summer Standouts set's pill — a deep playoff run, carded. Worn by
     // every card in that set (a SET badge, like Rookie's role on its set),
     // never by a base-set record, so its position here decides nothing today.
-    // 'STANDOUT' rather than 'SUMMER STANDOUT': the card prints its season one
-    // row below, and the pill's width budget has no room for fifteen
-    // characters of label where eight say the same thing.
+    // 'SUMMER' rather than 'SUMMER STANDOUT' — the user's word for the set,
+    // and the pill's width budget has no room for fifteen characters anyway.
     id: SUMMER_STANDOUT_BADGE,
-    text: 'STANDOUT',
+    text: 'SUMMER',
     // The team's accent, like Rookie and Best Season: a fourth colour invented
     // for one pill would be measurable against nothing.
     fill: theme => theme.accentOnField,

@@ -251,6 +251,21 @@ const perGame = (total, games) => (games > 0 ? (total ?? 0) / games : null);
 export const FULL_SEASON_MINUTES = 1500;
 
 /**
+ * The same bar, for a PLAYOFF-ONLY sample.
+ *
+ * A playoff run maxes out around 28 possible games — a third of a season — so
+ * holding it to 1500 minutes shrinks every run toward replacement no matter
+ * how deep it went: Kevin Durant's 2017 (533 minutes of +6.72 EPM through a
+ * 16-1 postseason) came out 64% replacement and the whole Summer Standouts
+ * set printed low Speed+Power. 750 is 20 games at hard starter minutes — a
+ * sample only a deep run can produce, which is the only kind the set cards —
+ * and the roster rule (Game 6 of the Conference Finals or later) already
+ * guarantees the games are there. Short benches still shrink: 415 bench
+ * minutes is 55% trust, not full.
+ */
+export const FULL_PLAYOFF_MINUTES = 750;
+
+/**
  * ── THE SPEED+POWER COMPOSITE IS THE BASE SET'S, ON THE BASE SET'S DATA ─────
  *
  * It used to be a BPM STAND-IN, and the reason it was is now gone. The header
@@ -349,7 +364,10 @@ export function historicalComposite(season, basis, weights = COMPOSITE_WEIGHTS) 
   // priced at replacement outright rather than at whatever a z-score of a null
   // rounds to. One rookie season in 317 is in this state — see EPM_JOIN below.
   const rated = Number.isFinite(COMPOSITE_INPUTS.epm(season));
-  const trust = rated ? Math.min(Math.max((season.minutes ?? 0) / FULL_SEASON_MINUTES, 0), 1) : 0;
+  // A playoff-only stat line is measured against what a playoff sample CAN be,
+  // not against an 82-game season — see FULL_PLAYOFF_MINUTES.
+  const fullMinutes = season.playoffRun ? FULL_PLAYOFF_MINUTES : FULL_SEASON_MINUTES;
+  const trust = rated ? Math.min(Math.max((season.minutes ?? 0) / fullMinutes, 0), 1) : 0;
   return trust * raw + (1 - trust) * replacement;
 }
 

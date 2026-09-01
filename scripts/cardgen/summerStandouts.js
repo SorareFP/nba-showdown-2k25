@@ -55,6 +55,9 @@ export function playoffSeason(row, fallbackPos) {
   return {
     season: row.season,
     playerId: null,
+    // historicalComposite reads this: a playoff-only sample is trusted against
+    // FULL_PLAYOFF_MINUTES, not a regular season's 1500.
+    playoffRun: true,
     team: row.team,
     pos: row.position ?? fallbackPos ?? 'SF',
     games: row.games,

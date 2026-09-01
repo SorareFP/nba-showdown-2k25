@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-01T13:37:28.147Z",
+ "generatedAt": "2026-09-01T13:46:12.088Z",
  "set": "super-season",
  "provisional": true,
  "sources": {
@@ -5288,7 +5288,7 @@
   {
    "id": "Gary_Harris",
    "name": "Gary Harris",
-   "team": "DEN",
+   "team": "DEN04",
    "pos": "SG",
    "speed": 14,
    "power": 9,
@@ -5966,7 +5966,7 @@
   {
    "id": "Isaiah_Hartenstein",
    "name": "Isaiah Hartenstein",
-   "team": "LAC",
+   "team": "LAC16",
    "pos": "C",
    "speed": 7,
    "power": 12,
@@ -10752,7 +10752,7 @@
   {
    "id": "LeBron_James",
    "name": "LeBron James",
-   "team": "CLE",
+   "team": "CLE04",
    "pos": "SF",
    "speed": 14,
    "power": 16,
@@ -14579,7 +14579,7 @@
   {
    "id": "Terance_Mann",
    "name": "Terance Mann",
-   "team": "LAC",
+   "team": "LAC16",
    "pos": "SG",
    "speed": 9,
    "power": 7,

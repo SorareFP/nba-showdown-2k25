@@ -26,6 +26,9 @@ import {
   buildSet, resolvePlayerIds,
 } from './generateSpecialSets.js';
 import { CALIBRATION_FILE } from './calibrateAttributes.js';
+import { franchiseForSeason } from '../../src/cards/teams.js';
+import { loadLeagueRows, pickCareer } from './standoutSuperSeasons.js';
+import { normalizeName } from './resolveTeams.js';
 import { indexBiometrics, loadBiometrics } from './biometrics.js';
 import { indexPositionShares, loadPositionShares } from './positionShares.js';
 import * as PV from './playValue.js';
@@ -65,6 +68,11 @@ export function main({ log = console.log } = {}) {
   const poolIds = new Set(resolvePlayerIds(pool, archiveRows).ids.values());
   const currentRows = [...currentByName.values()].filter(r => poolIds.has(r.playerId));
 
+  // Basketball-Reference ids, so the awards generator can join a champion's
+  // roster and a Finals MVP onto these cards — the API's playoff rows carry no
+  // BBRef id, and without one every trophy join comes back empty.
+  const league = loadLeagueRows();
+
   const selections = [];
   const meta = [];
   const missing = [];
@@ -72,11 +80,15 @@ export function main({ log = console.log } = {}) {
     const pick = playoffCards[name];
     const row = playoffRow(name, pick.season);
     if (!row) { missing.push(`${name} (no ${pick.season} playoff row)`); continue; }
+    const careerRows = pickCareer(league.get(normalizeName(name)), { referenceSeason: pick.season });
+    const season = playoffSeason(row, pick.pos);
+    season.playerId = careerRows?.[0]?.playerId ?? null;
+    if (!season.playerId) { missing.push(`${name} (no Basketball-Reference id)`); continue; }
     selections.push({
       player: { name, pos: row.position ?? pick.pos ?? 'SF' },
       // A playoff row carries its own EPM and DEF EPM, so no attachEpm join —
       // that helper looks the REGULAR season up and would blank both.
-      season: playoffSeason(row, pick.pos),
+      season,
     });
     meta.push({ name, ...pick });
   }
@@ -88,8 +100,10 @@ export function main({ log = console.log } = {}) {
     .map((card, i) => ({
       ...card,
       // The roster's team is the DECIDED one; the API row agrees today, but the
-      // decision file is what the conflict rule was applied to, so it wins.
-      team: meta[i].team ?? card.team,
+      // decision file is what the conflict rule was applied to, so it wins —
+      // routed through franchiseForSeason so a 2009 Nugget wears powder blue
+      // and a 2003 Net is a NEW JERSEY Net.
+      team: franchiseForSeason(meta[i].team ?? card.team, meta[i].season),
       season: meta[i].season,
       seasonLabel: seasonLabel(meta[i].season),
       playoffRun: true,

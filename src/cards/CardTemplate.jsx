@@ -419,6 +419,7 @@ export default function CardTemplate({
         * it has to paint above the one and below the other. */}
       <div className={styles.sidebarScrim} />
 
+
       <div className={styles.sidebar}>
         {/* The card-type badge and the season, in that order, directly above
           * the team mark — which is where the finished set's legend cards put
@@ -433,16 +434,10 @@ export default function CardTemplate({
           * The badge FIRST because it says what kind of card this is and the
           * season answers "which one" — and because the pill is the louder of
           * the two, so it belongs further from the type it would crowd. */}
-        {/* ABOVE THE BADGE, which is where the user put them: "I'd like to add
-          * them to the sidebar above the badges if a player won them." The
-          * column is bottom-anchored, so this row pushes the stack upward and
-          * moves nothing below it — a card that wins nothing is byte-identical
-          * to what it was before this row existed, exactly as a card with no
-          * badge is.
-          *
-          * And the order reads downward as it should: what he WON, then what
-          * KIND of card this is, then WHICH season, then the team. Each line is
-          * more general than the one above it. */}
+        {/* THE STACK'S TOP ROW, bottom-anchored like everything under it —
+          * "stacking awards starting bottom up, so like above the logo or
+          * year/badge." The box top sits at the chevron's foot (y=150), so
+          * the marks push up the bar's free stretch; see .awards. */}
         {awards.length > 0 && (
           <div className={styles.awards}>
             {awards.map(award => (
@@ -452,7 +447,7 @@ export default function CardTemplate({
         )}
         {badge && <div className={styles.badge}>{label}</div>}
         {season && <div className={styles.season}>{card.seasonLabel ?? MISSING}</div>}
-        <TeamLogo key={card.team ?? 'none'} team={team} abbr={card.team} />
+        <TeamLogo key={card.team ?? 'none'} team={team} abbr={team.abbr ?? card.team} />
         <div className={styles.pos}>{card.pos ?? MISSING}</div>
         <Boost label="PAINT" value={card.paintBoost} />
         <Boost label="3PT" value={card.threePtBoost} />
@@ -775,7 +770,7 @@ function TeamLogo({ team, abbr }) {
  */
 export function AwardMark({ award, count = 1 }) {
   const slot = `${styles.awardSlot}${awardSizeClass(count, 'awardSlot')}`;
-  const chip = `${styles.awardFallback}${awardSizeClass(count, 'awardFallback')}`;
+  const chip = styles.awardFallback;
   return (
     <div className={slot}>
       <AssetImage
@@ -814,6 +809,7 @@ export function AwardMark({ award, count = 1 }) {
 export function awardSizeClass(count, base, sheet = styles) {
   if (count === 1) return ` ${sheet[`${base}One`]}`;
   if (count === 2) return ` ${sheet[`${base}Two`]}`;
+  if (count === 3) return ` ${sheet[`${base}Three`]}`;
   return '';
 }
 

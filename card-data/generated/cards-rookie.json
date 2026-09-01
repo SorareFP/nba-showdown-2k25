@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-01T13:37:28.458Z",
+ "generatedAt": "2026-09-01T13:46:12.402Z",
  "set": "rookie",
  "provisional": true,
  "sources": {
@@ -6564,7 +6564,7 @@
   {
    "id": "Gary_Harris",
    "name": "Gary Harris",
-   "team": "DEN",
+   "team": "DEN04",
    "pos": "SG",
    "speed": 7,
    "power": 4,
@@ -9167,7 +9167,7 @@
   {
    "id": "Jamal_Murray",
    "name": "Jamal Murray",
-   "team": "DEN",
+   "team": "DEN04",
    "pos": "SG",
    "speed": 8,
    "power": 6,
@@ -11294,7 +11294,7 @@
   {
    "id": "Jordan_Miller",
    "name": "Jordan Miller",
-   "team": "LAC",
+   "team": "LAC16",
    "pos": "SF",
    "speed": 8,
    "power": 6,
@@ -12239,7 +12239,7 @@
   {
    "id": "Jusuf_Nurkic",
    "name": "Jusuf Nurkić",
-   "team": "DEN",
+   "team": "DEN04",
    "pos": "C",
    "speed": 5,
    "power": 11,
@@ -13349,7 +13349,7 @@
   {
    "id": "Kobe_Brown",
    "name": "Kobe Brown",
-   "team": "LAC",
+   "team": "LAC16",
    "pos": "PF",
    "speed": 6,
    "power": 7,
@@ -14078,7 +14078,7 @@
   {
    "id": "LeBron_James",
    "name": "LeBron James",
-   "team": "CLE",
+   "team": "CLE04",
    "pos": "SG",
    "speed": 10,
    "power": 8,
@@ -15571,7 +15571,7 @@
   {
    "id": "Moussa_Diabate",
    "name": "Moussa Diabaté",
-   "team": "LAC",
+   "team": "LAC16",
    "pos": "C",
    "speed": 6,
    "power": 8,
@@ -16256,7 +16256,7 @@
   {
    "id": "Nikola_Jokic",
    "name": "Nikola Jokić",
-   "team": "DEN",
+   "team": "DEN04",
    "pos": "C",
    "speed": 9,
    "power": 16,
@@ -19314,7 +19314,7 @@
   {
    "id": "Shai_Gilgeous_Alexander",
    "name": "Shai Gilgeous-Alexander",
-   "team": "LAC",
+   "team": "LAC16",
    "pos": "PG",
    "speed": 10,
    "power": 6,
@@ -20064,7 +20064,7 @@
   {
    "id": "Terance_Mann",
    "name": "Terance Mann",
-   "team": "LAC",
+   "team": "LAC16",
    "pos": "SF",
    "speed": 8,
    "power": 6,

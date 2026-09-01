@@ -16,7 +16,8 @@ import {
 import { SEASON_TABLES } from './sources/basketballReference.js';
 import { normalizeName } from './resolveTeams.js';
 import { AWARD_CODES, MAX_CARD_AWARDS } from '../../src/cards/awards.js';
-import { CURRENT_SET, ROOKIE_SET, SUPER_SEASON_SET, WNBA_SET } from '../../src/cards/sets.js';
+import { CURRENT_SET, ROOKIE_SET, SUPER_SEASON_SET,
+  SUMMER_STANDOUTS_SET, WNBA_SET } from '../../src/cards/sets.js';
 
 const generated = name =>
   JSON.parse(readFileSync(new URL(`../../card-data/generated/${name}`, import.meta.url), 'utf8'));
@@ -371,12 +372,13 @@ describe('the committed file', () => {
     expect(AWARDS.declared).toEqual(AWARD_CODES);
   });
 
-  it('reads the twenty seasons the three sets between them need', () => {
-    // 2004 and 2008-2026: the rookie set reaches furthest back, the base set
-    // furthest forward, and the Super Season set sits inside both.
-    expect(AWARDS.seasons[0]).toBe(2004);
+  it('reads the twenty-six seasons the four sets between them need', () => {
+    // 2000 and 2002-2026: the Summer Standouts reach furthest back (Shaquille
+    // O'Neal's displaced 1999-00 Super Season and the 2001-02 Kings runs), the
+    // base set furthest forward, and the other sets sit inside both.
+    expect(AWARDS.seasons[0]).toBe(2000);
     expect(AWARDS.seasons.at(-1)).toBe(2026);
-    expect(AWARDS.seasons).toHaveLength(20);
+    expect(AWARDS.seasons).toHaveLength(26);
   });
 
   it('agrees with its own counts', () => {
@@ -404,28 +406,31 @@ describe('the committed file', () => {
     // src/cards/awards.js and pinned here so the file and the comment cannot
     // drift apart.
     //
-    //                  bare   +All-Star   +ring        of
-    //   2026-27           5 ->      31 ->    40   350 cards   (1% -> 11%)
-    //   super-season     15 ->      44 ->    51   210 cards   (7% -> 24%)
-    //   rookie           11 ->      11 ->    17   317 cards   (3% ->  5%)
+    // Re-measured when the Summer Standouts joined the plan: the standout
+    // Super Seasons added marked retirees to that set, and the newly cached
+    // 2000-2007 pages resolved two more rookie-year marks.
     expect(AWARDS.counts[CURRENT_SET].marked).toBe(40);
-    expect(AWARDS.counts[SUPER_SEASON_SET].marked).toBe(51);
+    expect(AWARDS.counts[SUPER_SEASON_SET].marked).toBe(61);
     // The rookie set moves at last, and only on the ring: no player in that
     // pool was an All-Star as a rookie, but six of them won a title as one.
-    expect(AWARDS.counts[ROOKIE_SET].marked).toBe(17);
+    expect(AWARDS.counts[ROOKIE_SET].marked).toBe(19);
+    // The standouts themselves: a playoff-run card is the season a ring was
+    // actually won in, so the ring is the mark that carries the set.
+    expect(AWARDS.counts[SUMMER_STANDOUTS_SET].marked).toBe(22);
+    expect(AWARDS.counts[SUMMER_STANDOUTS_SET].byCode.CHAMP).toBe(16);
     expect(AWARDS.counts[ROOKIE_SET].byCode.AS).toBe(0);
     expect(AWARDS.counts[ROOKIE_SET].byCode.CHAMP).toBe(6);
     // The ring is a TEAM fact, so it marks a whole roster's worth at once and
     // still leaves each set a minority.
     expect(AWARDS.counts[CURRENT_SET].byCode.CHAMP).toBe(11);
-    expect(AWARDS.counts[SUPER_SEASON_SET].byCode.CHAMP).toBe(10);
+    expect(AWARDS.counts[SUPER_SEASON_SET].byCode.CHAMP).toBe(11);
     // …against what admitting All-NBA and All-Defensive as well would mark.
     // Still a step up on every set, which is the case for stopping here.
     // (Unchanged by the ring: ifSelectionsCounted asks about the awards column,
     // and the ring is not in it.)
     expect(AWARDS.counts[CURRENT_SET].ifSelectionsCounted).toBe(46);
-    expect(AWARDS.counts[SUPER_SEASON_SET].ifSelectionsCounted).toBe(64);
-    expect(AWARDS.counts[ROOKIE_SET].ifSelectionsCounted).toBe(17);
+    expect(AWARDS.counts[SUPER_SEASON_SET].ifSelectionsCounted).toBe(74);
+    expect(AWARDS.counts[ROOKIE_SET].ifSelectionsCounted).toBe(19);
   });
 
   it('names every champion it marked, and gets them right', () => {
@@ -468,7 +473,10 @@ describe('the committed file', () => {
     expect(crowded.sort()).toEqual([
       '2026-27 Jalen Brunson 2026 FMVP+CHAMP+AS',
       '2026-27 Shai Gilgeous-Alexander 2026 MVP+CPOY+AS',
+      'summer-standouts Kawhi Leonard 2019 FMVP+CHAMP+AS',
+      'summer-standouts Kevin Durant 2017 FMVP+CHAMP+AS',
       'super-season Shai Gilgeous-Alexander 2025 MVP+FMVP+CHAMP+AS',
+      "super-season Shaquille O'Neal 2000 MVP+FMVP+CHAMP+AS",
     ]);
   });
 
@@ -495,7 +503,7 @@ describe('the committed file', () => {
     }
     // And no card carries a Finals MVP its own season did not produce.
     expect(AWARDS.counts[CURRENT_SET].byCode.FMVP).toBe(1);
-    expect(AWARDS.counts[SUPER_SEASON_SET].byCode.FMVP).toBe(1);
+    expect(AWARDS.counts[SUPER_SEASON_SET].byCode.FMVP).toBe(2);
     // ZERO IN THE ROOKIE SET, and that is a fact about the award rather than a
     // miss: no rookie has won a Finals MVP in the 2004..2026 range, and only
     // Magic Johnson ever has.

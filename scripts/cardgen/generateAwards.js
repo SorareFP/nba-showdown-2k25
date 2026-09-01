@@ -70,6 +70,7 @@ import {
 import {
   CURRENT_SET,
   ROOKIE_SET,
+  SUMMER_STANDOUTS_SET,
   SUPER_SEASON_SET,
   setStatsSeason,
 } from '../../src/cards/sets.js';
@@ -582,6 +583,7 @@ async function main() {
   const base = readJson(path.join(GEN_DIR, `cards-${CURRENT_SET}.json`));
   const superSeason = readJson(path.join(GEN_DIR, `cards-${SUPER_SEASON_SET}.json`));
   const rookie = readJson(path.join(GEN_DIR, `cards-${ROOKIE_SET}.json`));
+  const standouts = readJson(path.join(GEN_DIR, `cards-${SUMMER_STANDOUTS_SET}.json`));
 
   const baseSeason = statsSeasonEndYear(CURRENT_SET);
   if (baseSeason == null) {
@@ -592,6 +594,9 @@ async function main() {
     { set: CURRENT_SET, season: baseSeason, cards: base.cards },
     { set: SUPER_SEASON_SET, cards: superSeason.cards },
     { set: ROOKIE_SET, cards: rookie.cards },
+    // A playoff-run card is the season a ring or a Finals MVP was actually won
+    // in — the set where the champion join earns its keep most literally.
+    { set: SUMMER_STANDOUTS_SET, cards: standouts.cards },
   ];
   const seasons = seasonsNeeded(plan);
 
@@ -660,6 +665,7 @@ async function main() {
     [CURRENT_SET]: baseJoin.records,
     [SUPER_SEASON_SET]: joinById(superSeason.cards, bySeason, championsBySeason, postBySeason),
     [ROOKIE_SET]: joinById(rookie.cards, bySeason, championsBySeason, postBySeason),
+    [SUMMER_STANDOUTS_SET]: joinById(standouts.cards, bySeason, championsBySeason, postBySeason),
   };
 
   const counts = Object.fromEntries(

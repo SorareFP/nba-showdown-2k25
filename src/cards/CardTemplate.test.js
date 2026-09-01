@@ -51,6 +51,7 @@ import {
   SETS,
   SET_IDS,
   SUPER_SEASON_SET,
+  SUMMER_STANDOUTS_SET,
   WNBA_SET,
   WNBA_SUPER_SEASON_SET,
   photoUrlPath,
@@ -1853,20 +1854,15 @@ describe('the award marks', () => {
     // The box does not change size when art arrives, so the column will not
     // shift under the user as they add files. The SLOT is what holds the size
     // now — `.award` is fitted into it with max-width/max-height rather than
-    // sized — and the chip takes the slot's HEIGHT on both axes, because a chip
-    // stretched to a 127px box would read as a banner rather than as a mark.
+    // sized — and the chip keeps a fixed near-square of its own, because a chip
+    // stretched to a flexing 127px slot would read as a banner rather than as
+    // a mark. One chip, one size: the count variants left with the wrap layout.
     expect(cssBlock('.award')).toMatch(/max-width:\s*100%/);
     expect(cssBlock('.award')).toMatch(/max-height:\s*100%/);
     expect(cssBlock('.award')).toMatch(/object-fit:\s*contain/);
-    for (const [slot, chip] of [
-      ['.awardSlot', '.awardFallback'],
-      ['.awardSlotOne', '.awardFallbackOne'],
-      ['.awardSlotTwo', '.awardFallbackTwo'],
-    ]) {
-      const box = pxIn(cssBlock(slot), 'height');
-      expect(pxIn(cssBlock(chip), 'width'), chip).toBe(box);
-      expect(pxIn(cssBlock(chip), 'height'), chip).toBe(box);
-    }
+    const chipBlock = cssBlock('.awardFallback');
+    expect(pxIn(chipBlock, 'width')).toBeLessThanOrEqual(pxIn(cssBlock('.awardSlot'), 'width'));
+    expect(pxIn(chipBlock, 'height')).toBeLessThanOrEqual(pxIn(cssBlock('.awardSlot'), 'height'));
   });
 
   it('points at public/awards/{CODE}.png through the app base path', () => {
@@ -1884,45 +1880,55 @@ describe('the award marks', () => {
     expect(logoSrc(awardImagePath('CHAMP')).endsWith('/awards/LarryOBrien.png')).toBe(true);
   });
 
-  it('fits the capped row inside the bar, and the longest code inside one slot', () => {
-    // BOTH HALVES OF MAX_CARD_AWARDS, redone here from the stylesheet so that
-    // raising a slot or the gap fails HERE rather than pushing a mark off the
-    // bar at export time.
-    //
-    // THE ROW WRAPS AT TWO NOW, which is what made the marks 59px wide instead
-    // of 38 — so the constraint is no longer "N across" but "two across, and
-    // the block no taller than the sidebar was grown to pay for".
-    const row = cssBlock('.awards');
-    const gap = pxIn(row, 'gap');
-    const width = pxIn(row, 'width');
-    expect(row).toMatch(/flex-wrap:\s*wrap/);
+  it('stacks the marks bottom-up above the badge, and every count fits the box', () => {
+    // "stacking awards starting bottom up, so like above the logo or
+    // year/badge" — the marks are the bottom-anchored sidebar stack's TOP row,
+    // and the room to grow is the box top moving to the chevron's foot. Both
+    // bounds re-derived from the stylesheet so a move fails here rather than
+    // overlapping at export time.
+    const bar = cssBlock('.sidebar');
+    const chev = cssBlock('.chevronTop');
+    expect(pxIn(bar, 'top')).toBeGreaterThanOrEqual(pxIn(chev, 'top') + pxIn(chev, 'height'));
+    // The box still ends at y=1152, where the printed art puts the last row.
+    expect(pxIn(bar, 'top') + pxIn(bar, 'height')).toBe(1152);
 
-    // Two per line at both wrapped sizes, with the gap between them.
-    for (const slot of ['.awardSlot', '.awardSlotTwo']) {
-      expect(2 * pxIn(cssBlock(slot), 'width') + gap, slot).toBeLessThanOrEqual(width);
-      // And a THIRD does not fit on the line, which is what makes the wrap a
-      // measurement rather than a hope.
-      expect(3 * pxIn(cssBlock(slot), 'width') + 2 * gap, slot).toBeGreaterThan(width);
+    // ONE PER ROW: a column, not a wrap — the wrap was what shrank the
+    // All-Star to seat the MVP and the Clutch trophy beside each other.
+    const block = cssBlock('.awards');
+    expect(block).toMatch(/flex-direction:\s*column/);
+    expect(block).not.toMatch(/flex-wrap/);
+
+    // Fewer marks, bigger marks — and the four-mark slot no smaller than the
+    // ONE-mark slot of the wrap era (82px).
+    const heights = [
+      pxIn(cssBlock('.awardSlotOne'), 'height'),
+      pxIn(cssBlock('.awardSlotTwo'), 'height'),
+      pxIn(cssBlock('.awardSlotThree'), 'height'),
+      pxIn(cssBlock('.awardSlot'), 'height'),
+    ];
+    for (let i = 1; i < heights.length; i += 1) expect(heights[i]).toBeLessThan(heights[i - 1]);
+    expect(heights[3]).toBeGreaterThanOrEqual(82);
+    // Every slot takes the full usable width of the bar.
+    for (const slot of ['.awardSlot', '.awardSlotOne', '.awardSlotTwo', '.awardSlotThree']) {
+      expect(pxIn(cssBlock(slot), 'width')).toBe(pxIn(block, 'width'));
     }
-    // One mark takes the whole column, because there is nothing to share it with.
-    expect(pxIn(cssBlock('.awardSlotOne'), 'width')).toBe(width);
 
-    // MAX_CARD_AWARDS is what two columns hold in two rows.
+    // WORST CASE FITS BY ARITHMETIC: the tallest awards block over the
+    // tallest stack, inside the box. The stack below the marks needs at most
+    // 488px: the pre-move box was 640px and held it PLUS a 152px wrap-era
+    // awards block — 640 - 152 = 488, gap included, measured by that layout
+    // shipping. So the marks may use everything above that line.
     expect(MAX_CARD_AWARDS).toBe(4);
-    const lines = Math.ceil(MAX_CARD_AWARDS / 2);
-    expect(lines).toBe(2);
-    // The block's height at the cap, which is what .sidebar was grown by.
-    const block = lines * pxIn(cssBlock('.awardSlot'), 'height') + (lines - 1) * gap;
-    expect(block).toBe(152);
-    // And the row takes the badge's column exactly, so the two line up.
-    expect(width).toBe(pxIn(cssBlock('.badge'), 'width'));
+    const gap = pxIn(cssBlock('.awards'), 'gap');
+    const worstAwards = MAX_CARD_AWARDS * pxIn(cssBlock('.awardSlot'), 'height') + (MAX_CARD_AWARDS - 1) * gap;
+    expect(worstAwards).toBeLessThanOrEqual(pxIn(bar, 'height') - 488);
 
     // The longest declared code, on the same conservative 0.7em average advance
-    // the name budget and the badge budget use, against the SMALLEST chip.
+    // the name budget and the badge budget use, against the chip.
     const size = pxIn(cssBlock('.awardFallback'), 'font-size');
-    const smallest = pxIn(cssBlock('.awardFallback'), 'width');
+    const chipWidth = pxIn(cssBlock('.awardFallback'), 'width');
     for (const code of AWARD_CODES) {
-      expect(code.length * 0.7 * size, `${code} at ${size}px`).toBeLessThanOrEqual(smallest);
+      expect(code.length * 0.7 * size, `${code} at ${size}px`).toBeLessThanOrEqual(chipWidth);
     }
   });
 
@@ -1945,10 +1951,10 @@ describe('the generated award file, on the cards it belongs to', () => {
 
   const marked = set => (AWARDS_FILE?.sets?.[set] ?? []).filter(r => r.awards.length > 0);
 
-  it('was generated, and covers the three sets with Basketball-Reference seasons', () => {
+  it('was generated, and covers the four sets with Basketball-Reference seasons', () => {
     expect(AWARDS_FILE).not.toBeNull();
     expect(Object.keys(AWARDS_FILE.sets).sort()).toEqual(
-      [CURRENT_SET, ROOKIE_SET, SUPER_SEASON_SET].sort()
+      [CURRENT_SET, ROOKIE_SET, SUMMER_STANDOUTS_SET, SUPER_SEASON_SET].sort()
     );
     // The WNBA sets are absent, and that is a data gap rather than a decision:
     // Basketball-Reference serves that league under a different path and the
@@ -2079,9 +2085,11 @@ describe('the generated award file, on the cards it belongs to', () => {
   it('puts every rookie set mark on a Rookie of the Year and nothing else', () => {
     // A season-selection sanity check that no amount of string parsing gives
     // you: the rookie set reads each card's ROOKIE season, so ROY is the only
-    // trophy that can land there — and eleven of them do.
+    // trophy that can land there. The count moved 17 -> 19 when the Summer
+    // Standouts joined the awards plan: their seasons pulled 2002-2007 into
+    // the cache, and two rookie-year marks from those seasons resolve now.
     const rookies = marked(ROOKIE_SET);
-    expect(rookies.length).toBe(17);
+    expect(rookies.length).toBe(19);
     // ALL-STAR DID NOT MOVE THIS SET AT ALL — no player in the rookie pool was
     // an All-Star in his rookie year. Blake Griffin (`MVP-10,ROY-1,AS`,
     // 2010-11) is the case that would have, and he is retired and out of the
@@ -2094,7 +2102,7 @@ describe('the generated award file, on the cards it belongs to', () => {
     for (const r of rookies) {
       expect(r.awards, r.name).toEqual(r.champion ? ['CHAMP'] : ['ROY']);
     }
-    expect(rookies.filter(r => r.awards.includes('ROY'))).toHaveLength(11);
+    expect(rookies.filter(r => r.awards.includes('ROY'))).toHaveLength(13);
     expect(rookies.filter(r => r.awards.includes('CHAMP'))).toHaveLength(6);
     // And no Rookie of the Year is on a Super Season card, for the same reason
     // from the other side: a player whose best season is his rookie one is

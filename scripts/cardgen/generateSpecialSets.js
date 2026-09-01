@@ -115,7 +115,7 @@ import { CALIBRATION_FILE } from './calibrateAttributes.js';
 import { indexBiometrics, loadBiometrics } from './biometrics.js';
 import { indexPositionShares, loadPositionShares } from './positionShares.js';
 import { loadLeagueRows, pickCareer } from './standoutSuperSeasons.js';
-import { readSummerStandouts, buildApiEpmIndex, buildBpmBridge, loadFullSeasonTables, loadRimProfiles } from './summerStandouts.js';
+import { readSummerStandouts, buildApiEpmIndex, buildBpmBridge, buildFtLineBridge, loadFullSeasonTables, loadRimProfiles } from './summerStandouts.js';
 import { PRINTED_SCALE, REFINEMENT_WEIGHT, mapToReferenceScale } from './speedPower.js';
 import { archiveBasis, collectRows, requireArchive } from './epmArchive.js';
 import {
@@ -442,6 +442,19 @@ export function attachEpm(selections, index) {
   return { selections: attached, unmatched };
 }
 
+/**
+ * Lazily built FT->TS bridge for the pre-dunksandthrees seasons — see
+ * buildFtLineBridge in summerStandouts.js and the user's rule it encodes.
+ */
+let ftLineBridge = null;
+const ftBridge = () => {
+  if (!ftLineBridge) ftLineBridge = buildFtLineBridge();
+  return ftLineBridge;
+};
+
+/** The season dunksandthrees' tables begin; earlier lines ride FT% touch. */
+export const FIRST_DNT_SEASON = 2002;
+
 /** The shooting inputs one archived season contributes. */
 export function historicalShootingInput(season) {
   // THE WEAKEST SUBSTITUTION IN THE FILE, RETIRED WHERE THE DATA EXISTS.
@@ -452,8 +465,15 @@ export function historicalShootingInput(season) {
   // onto every selection as `rimPct`/`rimShare`. 2P% remains only for seasons
   // the table predates (1993-1996) and the WNBA, whose page has no split.
   const rimBased = Number.isFinite(season.rimPct) && Number.isFinite(season.rimShare);
+  // PRE-DUNKSANDTHREES SEASONS TAKE THEIR LINE FROM FREE-THROW TOUCH — the
+  // user's rule for the players the modern data never saw. The bridge keeps
+  // the scale honest; TS% still carries every 2002+ season.
+  const preDnt = (season.season ?? FIRST_DNT_SEASON) < FIRST_DNT_SEASON;
+  const lineSignal = preDnt && Number.isFinite(season.ftPct)
+    ? ftBridge().tsFromFt(season.ftPct)
+    : season.tsPct ?? null;
   return {
-    tsPct: season.tsPct ?? null,
+    tsPct: lineSignal,
     paintPct: rimBased ? season.rimPct : season.fgPct2 ?? null,
     threePct: season.fgPct3 ?? null,
     paintAttempts: rimBased

@@ -198,3 +198,46 @@ export function loadRimProfiles({ first = 1997, last = 2026 } = {}) {
   }
   return map;
 }
+
+/**
+ * FT% -> TS%-scale bridge, for the seasons dunksandthrees does not reach.
+ *
+ * The user's rule: pre-D&T players take their shot line from FREE-THROW
+ * touch, not from TS% — but the shooting layer's line comes off a TS%-scale
+ * distribution, and raw FT% (~.75 average) would float every old-timer to
+ * the top of it. So a season's FT% is scored against the cardable FT%
+ * distribution of the EPM era and re-expressed at the same percentile of the
+ * cardable TS% distribution — the exact rank-preserving move the BPM bridge
+ * makes, on the shooting axis. Shaq's .527 lands where a .527 free-throw
+ * shooter belongs; rookie Ray Allen's .823 lands where touch belongs.
+ */
+export function buildFtLineBridge({ first = 2002, last = 2026 } = {}) {
+  const fts = [];
+  const tss = [];
+  for (let season = first; season <= last; season += 1) {
+    let pp, adv;
+    try { pp = readCache(`bbref-${season}-perPoss-full`); } catch { continue; }
+    try { adv = readCache(`bbref-${season}-advanced-full`); } catch { continue; }
+    const ppRows = Array.isArray(pp) ? pp : pp?.rows ?? pp?.data ?? [];
+    const advRows = Array.isArray(adv) ? adv : adv?.rows ?? adv?.data ?? [];
+    const advById = new Map(advRows.map(r => [`${r.playerId}|${r.team}`, r]));
+    for (const r of ppRows) {
+      const a = advById.get(`${r.playerId}|${r.team}`);
+      const games = r.games ?? 0;
+      if (games < 40 || (r.minutes ?? 0) / games < 12) continue;
+      if (Number.isFinite(r.ftPct)) fts.push(r.ftPct);
+      if (Number.isFinite(a?.tsPct)) tss.push(a.tsPct);
+    }
+  }
+  const meanSd = xs => {
+    const mean = xs.reduce((a, b) => a + b, 0) / (xs.length || 1);
+    const sd = Math.sqrt(xs.reduce((a, b) => a + (b - mean) ** 2, 0) / (xs.length || 1)) || 1;
+    return { mean, sd };
+  };
+  const f = meanSd(fts);
+  const t = meanSd(tss);
+  return {
+    sampled: fts.length,
+    tsFromFt: ft => Number.isFinite(ft) ? t.mean + ((ft - f.mean) / f.sd) * t.sd : null,
+  };
+}

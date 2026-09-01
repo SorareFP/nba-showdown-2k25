@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { calcAdv, getTeam, getOpp, getPS, getFatigue, SNAKE } from '../../game/engine.js';
 import { canPlayCard } from '../../game/canPlay.js';
 import { getStrat } from '../../game/strats.js';
-import { aiDraftPick } from '../../game/ai.js';
+import { aiDraftPick, aiPlacementPick } from '../../game/ai.js';
 import styles from './CourtBoard.module.css';
 import { getPlayerImageUrl, getStratImagePath } from '../../game/cardImages.js';
 import { useLightbox } from '../CardLightbox.jsx';
@@ -16,6 +16,47 @@ function HelpBtn({ section }) {
 }
 
 export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExecCard, onResolve, onSpendAssist, onSpendRebound, onDraftSubmit, onPlacePlayer, pvpMode = false, myTeamKey = null, isMyTurn = true }) {
+  // ── Solo placement ─────────────────────────────────────────────────────────
+  //
+  // PvP passes a Firebase-backed onPlacePlayer; solo places locally with the
+  // same rules. The AI takes its own steps a beat after the human, through
+  // aiPlacementPick — counter-picking whatever just took the floor.
+  const soloPlace = (playerId) => {
+    const g = JSON.parse(JSON.stringify(game));
+    const step = g.placementStep ?? 10;
+    if (step >= 10) return;
+    const order = g.placementOrder || ['A','B','B','A','A','B','B','A','A','B'];
+    const teamKey = order[step];
+    const team = teamKey === 'A' ? g.teamA : g.teamB;
+    const picks = teamKey === 'A' ? g.draft?.aPicks ?? [] : g.draft?.bPicks ?? [];
+    if (!picks.includes(playerId) || team.starters.find(pl => pl.id === playerId)) return;
+    const player = (team.roster || []).find(r => r.id === playerId);
+    if (!player) return;
+    team.starters.push(player);
+    g.placementStep = step + 1;
+    g.log = [...g.log, { team: teamKey, msg: `${player.name} takes the floor.` }];
+    if (g.placementStep === 10) {
+      g.matchupTurn = 'A';
+      g.matchupPasses = 0;
+      g.log = [...g.log, { team: null, msg: 'Placement complete — Matchup Strategy Phase.' }];
+    }
+    setGame(g);
+  };
+  const placeHandler = onPlacePlayer ?? soloPlace;
+
+  useEffect(() => {
+    if (pvpMode) return;
+    const step = game.placementStep ?? 10;
+    if (game.phase !== 'matchup_strats' || step >= 10) return;
+    const order = game.placementOrder || ['A','B','B','A','A','B','B','A','A','B'];
+    if (order[step] !== 'B') return;
+    const t = setTimeout(() => {
+      const action = aiPlacementPick(game, 'B');
+      if (action) soloPlace(action.playerId);
+    }, 650);
+    return () => clearTimeout(t);
+  }, [pvpMode, game]);
+
   const [modal, setModal] = useState(null);
   const [draftSelected, setDraftSelected] = useState([]);
 
@@ -51,7 +92,7 @@ export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExec
               {[0,1,2,3,4].map(i => (
                 <MatchupRow key={i} idx={i} game={game} setGame={setGame}
                   onRoll={onRoll} onExecCard={handleExecCard} onSpendAssist={onSpendAssist} onSpendRebound={onSpendRebound}
-                  onPlacePlayer={onPlacePlayer}
+                  onPlacePlayer={placeHandler}
                   pvpMode={pvpMode} myTeamKey={myTeamKey} isMyTurn={isMyTurn} />
               ))}
             </div>
@@ -714,7 +755,9 @@ function MatchupRow({ idx, game, setGame, onRoll, onExecCard, onSpendAssist, onS
               teamKey="A" idx={idx} phase={game.phase} game={game}
               defPlayer={null} defSelect={[]} defIdx={0}
               onDefChange={()=>{}} onRoll={()=>{}} pvpDisabled={true} />
-          ) : isActiveSlotA && pvpMode && myTeamKey === 'A' ? (
+          ) : isActiveSlotA && (!pvpMode || myTeamKey === 'A') ? (
+            /* Solo's human coaches Team A, so the affordance opens for them
+               too; Team B stays hands-off — the AI places via its effect. */
             <PlacementAffordance game={game} teamKey="A" onPlacePlayer={onPlacePlayer} />
           ) : (
             <div className={styles.placementWaiting}>
@@ -907,8 +950,21 @@ function BlindPickPhase({ game, setGame, pvpMode = false, myTeamKey = null, onDr
     });
 
     g.offMatchups = { A: [0, 1, 2, 3, 4], B: [0, 1, 2, 3, 4] };
+
+    // ── SOLO GETS THE PLACEMENT SNAKE TOO ─────────────────────────────────
+    //
+    // The chosen fives move to pick lists and the starters empty back out, so
+    // the same snake PvP runs decides who lines up opposite whom — the row a
+    // player lands in IS his starting matchup. Before this, solo rows paired
+    // by pick order and neither side ever chose an assignment.
+    g.draft.aPicks = g.teamA.starters.map(pl => pl.id);
+    g.draft.bPicks = g.teamB.starters.map(pl => pl.id);
+    g.teamA.starters = [];
+    g.teamB.starters = [];
+    g.placementStep = 0;
+    g.placementOrder = g.placementOrder || ['A','B','B','A','A','B','B','A','A','B'];
     g.phase = 'matchup_strats';
-    g.log = [...g.log, { team: null, msg: 'Lineups locked — Matchup Strategy Phase.' }];
+    g.log = [...g.log, { team: null, msg: 'Lineups locked — begin placement.' }];
 
     setSelected([]);
     setGame(g);

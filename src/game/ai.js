@@ -104,6 +104,40 @@ export function aiSetMatchups(game, teamKey) {
   return { type: 'set_matchups', matchups };
 }
 
+// ── Placement: which player takes the floor next ────────────────────────────
+//
+// The snake places one player at a time, and the row a player lands in is the
+// matchup he starts with. When the opponent has already placed someone in the
+// AI's next row, counter-pick: the remaining player who defends them best, by
+// the same score aiSetMatchups ranks defenders with. When the AI leads the
+// row, spend threat early — the human counter-picks everything placed late.
+export function aiPlacementPick(game, teamKey) {
+  const myT = getTeam(game, teamKey);
+  const oppKey = teamKey === 'A' ? 'B' : 'A';
+  const oppT = getTeam(game, oppKey);
+  const pickIds = teamKey === 'A' ? game.draft?.aPicks ?? [] : game.draft?.bPicks ?? [];
+  const placed = new Set(myT.starters.map(pl => pl.id));
+  const remainingIds = pickIds.filter(id => !placed.has(id));
+  if (!remainingIds.length) return null;
+  const roster = myT.roster || [];
+  const remaining = remainingIds.map(id => roster.find(r => r.id === id)).filter(Boolean);
+  if (!remaining.length) return null;
+
+  const row = myT.starters.length;
+  const oppPlayer = oppT.starters[row] || null;
+  let best = remaining[0];
+  let bestScore = -Infinity;
+  for (const cand of remaining) {
+    const score = oppPlayer
+      ? (cand.speed + (cand.defBoost || 0) - oppPlayer.speed) +
+        (cand.power + (cand.defBoost || 0) - oppPlayer.power) +
+        (cand.defBoost || 0) * 2
+      : cand.speed + cand.power + (cand.threePtBoost || 0) * 3 + (cand.paintBoost || 0) * 2;
+    if (score > bestScore) { bestScore = score; best = cand; }
+  }
+  return { type: 'place_player', playerId: best.id };
+}
+
 // ── Scoring Phase: Card or Pass ─────────────────────────────────────────────
 // Evaluate all playable cards in hand, score them, play the best one or pass.
 export function aiScoringDecision(game, teamKey) {

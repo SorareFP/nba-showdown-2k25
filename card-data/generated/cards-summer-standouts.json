@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-01T18:28:56.859Z",
+ "generatedAt": "2026-09-01T18:30:30.071Z",
  "set": "summer-standouts",
  "provisional": true,
  "sources": {
@@ -3158,11 +3158,11 @@
    "pos": "PF",
    "speed": 8,
    "power": 11,
-   "shotLine": 17,
-   "paintBoost": 0,
-   "threePtBoost": -3,
+   "shotLine": 18,
+   "paintBoost": 2,
+   "threePtBoost": -2,
    "defBoost": 1,
-   "salary": 300,
+   "salary": 270,
    "chart": [
     {
      "lo": 1,
@@ -3180,13 +3180,13 @@
     },
     {
      "lo": 6,
-     "hi": 16,
+     "hi": 17,
      "pts": 1,
      "reb": 1,
      "ast": 0
     },
     {
-     "lo": 17,
+     "lo": 18,
      "hi": 23,
      "pts": 1,
      "reb": 3,
@@ -3231,11 +3231,11 @@
    "pos": "SF",
    "speed": 12,
    "power": 13,
-   "shotLine": 17,
+   "shotLine": 16,
    "paintBoost": 2,
-   "threePtBoost": 2,
+   "threePtBoost": 1,
    "defBoost": 3,
-   "salary": 820,
+   "salary": 860,
    "chart": [
     {
      "lo": 1,
@@ -3260,13 +3260,13 @@
     },
     {
      "lo": 10,
-     "hi": 16,
+     "hi": 15,
      "pts": 2,
      "reb": 1,
      "ast": 1
     },
     {
-     "lo": 17,
+     "lo": 16,
      "hi": 22,
      "pts": 3,
      "reb": 1,

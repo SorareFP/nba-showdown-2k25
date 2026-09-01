@@ -185,6 +185,31 @@ export const TOP_TIER_DELAY = 2;
 export const TOP_TIER_SHAVE = 1;
 
 /**
+ * Above this, the shave grows. The tail compresses; the body does not.
+ *
+ * A FLAT shave treats a 4-point ceiling and an 8-point one as the same problem,
+ * and they are not. The top tier is thin at the top -- 187 of 354 cards cap at
+ * 4 or less, 18 reach 7 and 4 reach 8 -- and it is only that last handful that
+ * produces a scoreline nobody should see. Giannis Antetokounmpo prints 8 points
+ * with 4 rebounds and 2 assists at roll 21, so eight sections at his ceiling is
+ * 64 points, 32 rebounds and 16 assists from the chart ALONE, off a 36-game
+ * season.
+ *
+ * So the shave grows by one for every two points above the cap, which leaves
+ * everything at 5 or under exactly where it was and pulls the four extreme
+ * cards in without flattening them into the pack. The upside they lose is meant
+ * to come back through paint checks and assist spends -- a thing a player
+ * chooses and pays for, rather than a number the chart hands out.
+ */
+export const TOP_TIER_SOFT_CAP = 5;
+
+/** How much the top tier loses, given what it pays. */
+export function topTierShave(topPts, { shave = TOP_TIER_SHAVE, softCap = TOP_TIER_SOFT_CAP } = {}) {
+  if (!Number.isFinite(topPts)) return shave;
+  return shave + Math.floor(Math.max(0, topPts - softCap) / 2);
+}
+
+/**
  * Pull in the top tier. Never below the tier beneath it -- a ceiling that sinks
  * under its own floor is not a suppressed chart, it is a broken one.
  */
@@ -196,7 +221,8 @@ export function suppressCeiling(chart, { delay = TOP_TIER_DELAY, shave = TOP_TIE
     out[k].lo += delay;
     out[k - 1].hi = out[k].lo - 1;
   }
-  if (shave) out[k].pts = Math.max(out[k].pts - shave, out[k - 1].pts);
+  const cut = shave ? topTierShave(out[k].pts, { shave }) : 0;
+  if (cut) out[k].pts = Math.max(out[k].pts - cut, out[k - 1].pts);
   return out;
 }
 

@@ -76,7 +76,10 @@ describe('generatePlayerChart', () => {
     expect(result).toEqual([
       [1, 2, 0, 0, 0], // blank: a natural 1 or 2, and nothing else
       [3, 5, 0, 5, 2], // no scoring, but the REB/AST the statistics produced
-      [6, 99, 7, 6, 3], // ceiling suppressed: opens TOP_TIER_DELAY later, pays TOP_TIER_SHAVE less
+      // Ceiling suppressed: opens TOP_TIER_DELAY later, and pays TWO less rather
+      // than one because the shave GROWS above TOP_TIER_SOFT_CAP — this tier was
+      // an 8, which is the band that produced 64-point sections.
+      [6, 99, 6, 6, 3],
     ]);
     for (const tuple of result) {
       expect(tuple).toHaveLength(5);

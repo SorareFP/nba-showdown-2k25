@@ -439,8 +439,11 @@ describe('the base set\'s card-type badges', () => {
     // top tier in lowers play value, which lowers salary, which moves cards
     // across SUPER_SEASON_MIN_SALARY. The split is a MEASUREMENT of the price,
     // so it moves whenever the price does.
-    expect(printed.filter(id => id === SUPER_SEASON_BADGE).length).toBe(12);
-    expect(printed.filter(id => id === BEST_SEASON_BADGE).length).toBe(95);
+    // 15/92 after the progressive ceiling shave and the four carried-forward
+    // players joined the pool: both move play value, which moves salary, which
+    // moves cards across SUPER_SEASON_MIN_SALARY. The split is a MEASUREMENT.
+    expect(printed.filter(id => id === SUPER_SEASON_BADGE).length).toBe(15);
+    expect(printed.filter(id => id === BEST_SEASON_BADGE).length).toBe(92);
     // Everyone who prints ROOKIE is someone the SUPER SEASON fact is also true
     // of — the nesting is what makes this a priority question and not a rule.
     // The tier does not touch it: a rookie card is cheap, its Super Season
@@ -462,8 +465,8 @@ describe('the base set\'s card-type badges', () => {
     // and the salary file having been generated from different pools.
     expect(BADGE_FILE.counts.printed).toEqual({
       [ROOKIE_BADGE]: 33,
-      [SUPER_SEASON_BADGE]: 12,
-      [BEST_SEASON_BADGE]: 95,
+      [SUPER_SEASON_BADGE]: 15,
+      [BEST_SEASON_BADGE]: 92,
     });
   });
 

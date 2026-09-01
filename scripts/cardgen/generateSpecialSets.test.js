@@ -107,7 +107,12 @@ describe.each([
 
   it('gives every card a season the card can print', () => {
     for (const card of file.cards) {
-      expect(card.season, card.name).toBeGreaterThanOrEqual(FIRST_SEASON);
+      expect(card.season, card.name).toBeGreaterThanOrEqual(
+        // 1993, not FIRST_SEASON: the standout newcomers' rookie years reach
+        // back to the 1992-93 debuts (Shaq, Horry, Christie), and the 1990s
+        // tables are cached to carry them.
+        1993
+      );
       expect(card.season, card.name).toBeLessThan(LAST_SEASON);
       expect(card.seasonLabel).toBe(seasonLabel(card.season));
     }
@@ -187,7 +192,8 @@ describe.each([
       ...Object.keys(STANDOUTS.superSeasons ?? {}),
       ...Object.keys(STANDOUTS.playoffCards ?? {}),
     ])].filter(name => carded.has(name) && !pool.has(name)).length;
-    expect(carded.size + excluded.size).toBe(POOL.length + offPool);
+    const ceded = (file.mergedIntoTwin ?? []).length;
+    expect(carded.size + excluded.size + ceded).toBe(POOL.length + offPool);
     for (const name of carded) expect(excluded.has(name)).toBe(false);
     for (const e of file.excluded) expect(e.reason).toBeTruthy();
     expect(file.excludedCount).toBe(file.excluded.length);
@@ -356,13 +362,19 @@ describe('the base set\'s badges', () => {
     // in card-data/standout-conflict-decisions.json where the Super Season
     // beat the playoff card. Seven are retirees new to the set; Jokic and
     // Doncic displaced their own algorithmic picks in place.
-    expect(SUPER.cards.length).toBe(221);
+    //
+    // AND 221 -> 206 WHEN THE SAME-SEASON TWINS COLLAPSED: fifteen players
+    // whose best season IS their rookie season keep ONE card of it, on the
+    // rookie side under the gold line, wearing the best-season badge too.
+    expect(SUPER.cards.length).toBe(206);
     //
     // AND 321 -> 348 WHEN THE STANDOUT NEWCOMERS' ROOKIE YEARS ARRIVED — every
     // standout outside the pool whose career begins inside the cache-and-EPM
-    // window (2002+) gets his rookie season carded; 19 pre-2000 careers are
-    // skipped and reported until the 1990s tables are fetched.
-    expect(ROOKIE.cards.length).toBe(348);
+    // window gets his rookie season carded — and since the 1990s tables were
+    // fetched (1992 as the sentinel that proves a 1993 first appearance is a
+    // debut), that window reaches Shaq's, Kidd's and Garnett's actual rookie
+    // years. 348 -> 367 when the pre-2000 nineteen arrived over the BPM bridge.
+    expect(ROOKIE.cards.length).toBe(367);
     const poolNames = new Set(POOL.map(p => p.name));
     const bothBlocks = [...new Set([
       ...Object.keys(STANDOUTS.superSeasons ?? {}),
@@ -372,8 +384,10 @@ describe('the base set\'s badges', () => {
       .filter(name => !poolNames.has(name)).length;
     const rookieOffPool = bothBlocks
       .filter(name => ROOKIE.cards.some(c => c.name === name) && !poolNames.has(name)).length;
-    expect(SUPER.cards.length + SUPER.excluded.length).toBe(POOL.length + ssOffPool);
-    expect(ROOKIE.cards.length + ROOKIE.excluded.length).toBe(POOL.length + rookieOffPool);
+    expect(SUPER.cards.length + SUPER.excluded.length + (SUPER.mergedIntoTwin ?? []).length)
+      .toBe(POOL.length + ssOffPool);
+    expect(ROOKIE.cards.length + ROOKIE.excluded.length + (ROOKIE.mergedIntoTwin ?? []).length)
+      .toBe(POOL.length + rookieOffPool);
   });
 
   it('has NESTED lists, which is why the rookie badge is the one that prints', () => {

@@ -23,7 +23,7 @@ import {
   setStatsSeason,
   showsSeason,
 } from './sets.js';
-import { badgeLabel, badgeVars, pickBadge } from './badges.js';
+import { badgeColors, badgeLabel, badgeVars, pickBadge } from './badges.js';
 import { awardImagePath, awardVars, pickAwards } from './awards.js';
 import { deriveFieldTheme, fieldThemeVars } from './fieldTheme.js';
 import { applyTreatment, treatmentVars } from './treatments.js';
@@ -306,10 +306,25 @@ export default function CardTemplate({
   // back as `best-season` — a plainer label in the team's accent instead of the
   // gold — which is why the salary is passed here and to `cardTreatment` above
   // and nowhere else: one comparison, in badges.js, asked twice.
-  const badge = pickBadge(
-    [setBadge(set), ...(Array.isArray(card.badges) ? card.badges : [])],
-    card.salary
-  );
+  // ── ONE PRIMARY PILL, AND THE CARRIED FACTS UNDER IT ──────────────────────
+  //
+  // On a set with a badge of its own, the SET'S identity leads — a gold Super
+  // Season stays a gold Super Season even when the season was also the rookie
+  // year — and whatever the record carries in `card.badges` prints as extra
+  // pills below. The base set keeps the priority pick over its record's list,
+  // exactly as before (its setBadge is null, so the first branch never fires
+  // there). The extras exist for the same-season twins: "make it a rookie
+  // card with an additional best season badge."
+  const declared = setBadge(set);
+  const carried = Array.isArray(card.badges) ? card.badges : [];
+  const badge = declared
+    ? pickBadge([declared], card.salary)
+    : pickBadge(carried, card.salary);
+  const extraBadges = declared
+    ? carried
+        .map(id => pickBadge([id], card.salary))
+        .filter(b => b && b.id !== badge?.id)
+    : [];
   // The season, by contrast, IS purely a set question. A base-set record
   // carries no seasonLabel at all, and a 2025-26 legend card has its season
   // drawn into the hand-made art, so gating on the data instead of the set
@@ -446,6 +461,18 @@ export default function CardTemplate({
           </div>
         )}
         {badge && <div className={styles.badge}>{label}</div>}
+        {extraBadges.map(b => {
+          const colors = badgeColors(base, b);
+          return (
+            <div
+              key={b.id}
+              className={styles.badge}
+              style={colors ? { background: colors.fill, color: colors.ink } : undefined}
+            >
+              {badgeLabel(b, null)}
+            </div>
+          );
+        })}
         {season && <div className={styles.season}>{card.seasonLabel ?? MISSING}</div>}
         <TeamLogo key={card.team ?? 'none'} team={team} abbr={team.abbr ?? card.team} />
         <div className={styles.pos}>{card.pos ?? MISSING}</div>

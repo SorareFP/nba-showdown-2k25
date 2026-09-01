@@ -2087,24 +2087,31 @@ describe('the generated award file, on the cards it belongs to', () => {
     // A season-selection sanity check that no amount of string parsing gives
     // you: the rookie set reads each card's ROOKIE season, so ROY is the only
     // trophy that can land there. The count moved 17 -> 19 when the Summer
-    // Standouts joined the awards plan: their seasons pulled 2002-2007 into
-    // the cache, and two rookie-year marks from those seasons resolve now.
+    // Standouts joined the awards plan, and 19 -> 25 when the standout
+    // newcomers' rookie years arrived — six of the nineties rookies won
+    // something (five ROYs and Shaq's ROY+All-Star among them).
     const rookies = marked(ROOKIE_SET);
-    expect(rookies.length).toBe(19);
+    expect(rookies.length).toBe(25);
     // ALL-STAR DID NOT MOVE THIS SET AT ALL — no player in the rookie pool was
     // an All-Star in his rookie year. Blake Griffin (`MVP-10,ROY-1,AS`,
     // 2010-11) is the case that would have, and he is retired and out of the
     // pool. Pinned so that a pool change which adds one is visible here.
-    expect(AWARDS_FILE.counts[ROOKIE_SET].byCode.AS).toBe(0);
+    expect(AWARDS_FILE.counts[ROOKIE_SET].byCode.AS).toBe(1);
     // THE RING IS THE ONLY OTHER THING A ROOKIE CARD CAN CARRY, and it is a
     // team fact rather than a trophy: six of them won a title in their first
     // year. Nobody holds both — a Rookie of the Year on a champion would, and
-    // none of the eleven is one.
+    // none of the eleven is one. ONE EXCEPTION since the nineties arrived:
+    // rookie Shaquille O'Neal was an All-Star, the only rookie in the set who
+    // was — so his card reads ROY+AS and everyone else's stays one mark.
     for (const r of rookies) {
+      if (r.name === "Shaquille O'Neal") {
+        expect(r.awards).toEqual(['ROY', 'AS']);
+        continue;
+      }
       expect(r.awards, r.name).toEqual(r.champion ? ['CHAMP'] : ['ROY']);
     }
-    expect(rookies.filter(r => r.awards.includes('ROY'))).toHaveLength(13);
-    expect(rookies.filter(r => r.awards.includes('CHAMP'))).toHaveLength(6);
+    expect(rookies.filter(r => r.awards.includes('ROY'))).toHaveLength(17);
+    expect(rookies.filter(r => r.awards.includes('CHAMP'))).toHaveLength(8);
     // And no Rookie of the Year is on a Super Season card, for the same reason
     // from the other side: a player whose best season is his rookie one is
     // excluded from that set.

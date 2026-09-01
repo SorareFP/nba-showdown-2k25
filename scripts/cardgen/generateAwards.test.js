@@ -372,13 +372,14 @@ describe('the committed file', () => {
     expect(AWARDS.declared).toEqual(AWARD_CODES);
   });
 
-  it('reads the twenty-six seasons the four sets between them need', () => {
-    // 2000 and 2002-2026: the Summer Standouts reach furthest back (Shaquille
-    // O'Neal's displaced 1999-00 Super Season and the 2001-02 Kings runs), the
-    // base set furthest forward, and the other sets sit inside both.
-    expect(AWARDS.seasons[0]).toBe(2000);
+  it('reads the thirty-three seasons the four sets between them need', () => {
+    // 1993-2026 with the 1994 and 2001 gaps of the rosters themselves: the
+    // rookie set now reaches the standout newcomers' true rookie years (Shaq,
+    // Horry and Christie debut in 1992-93), the base set sits furthest
+    // forward, and every other set lands inside.
+    expect(AWARDS.seasons[0]).toBe(1993);
     expect(AWARDS.seasons.at(-1)).toBe(2026);
-    expect(AWARDS.seasons).toHaveLength(26);
+    expect(AWARDS.seasons).toHaveLength(33);
   });
 
   it('agrees with its own counts', () => {
@@ -413,13 +414,15 @@ describe('the committed file', () => {
     expect(AWARDS.counts[SUPER_SEASON_SET].marked).toBe(61);
     // The rookie set moves at last, and only on the ring: no player in that
     // pool was an All-Star as a rookie, but six of them won a title as one.
-    expect(AWARDS.counts[ROOKIE_SET].marked).toBe(19);
+    expect(AWARDS.counts[ROOKIE_SET].marked).toBe(25);
     // The standouts themselves: a playoff-run card is the season a ring was
     // actually won in, so the ring is the mark that carries the set.
     expect(AWARDS.counts[SUMMER_STANDOUTS_SET].marked).toBe(22);
     expect(AWARDS.counts[SUMMER_STANDOUTS_SET].byCode.CHAMP).toBe(16);
-    expect(AWARDS.counts[ROOKIE_SET].byCode.AS).toBe(0);
-    expect(AWARDS.counts[ROOKIE_SET].byCode.CHAMP).toBe(6);
+    // Shaq is the one rookie All-Star; Blake Griffin's case finally has its
+    // twin, and it arrived from 1993 rather than from a pool change.
+    expect(AWARDS.counts[ROOKIE_SET].byCode.AS).toBe(1);
+    expect(AWARDS.counts[ROOKIE_SET].byCode.CHAMP).toBe(8);
     // The ring is a TEAM fact, so it marks a whole roster's worth at once and
     // still leaves each set a minority.
     expect(AWARDS.counts[CURRENT_SET].byCode.CHAMP).toBe(11);
@@ -430,7 +433,7 @@ describe('the committed file', () => {
     // and the ring is not in it.)
     expect(AWARDS.counts[CURRENT_SET].ifSelectionsCounted).toBe(46);
     expect(AWARDS.counts[SUPER_SEASON_SET].ifSelectionsCounted).toBe(74);
-    expect(AWARDS.counts[ROOKIE_SET].ifSelectionsCounted).toBe(19);
+    expect(AWARDS.counts[ROOKIE_SET].ifSelectionsCounted).toBe(25);
   });
 
   it('names every champion it marked, and gets them right', () => {

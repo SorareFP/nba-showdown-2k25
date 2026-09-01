@@ -116,6 +116,7 @@ export const HISTORICAL_TEAMS = {
   CHH: { name: 'Hornets',     city: 'Charlotte',   primary: '#00778B', secondary: '#280071', logo: null, era: '1988-2002', unverifiedColors: true },
   CHB: { name: 'Bobcats',     city: 'Charlotte',   primary: '#F9423A', secondary: '#004071', logo: null, era: '2004-2014', unverifiedColors: true },
   VAN: { name: 'Grizzlies',   city: 'Vancouver',   primary: '#00B2A9', secondary: '#BC7844', logo: null, era: '1995-2001', unverifiedColors: true },
+  WSB: { name: 'Bullets',     city: 'Washington',  primary: '#002B5C', secondary: '#E03A3E', logo: null, era: '1974-1997', unverifiedColors: true },
 
   // ── ERA IDENTITIES OF LIVE FRANCHISES ─────────────────────────────────────
   //

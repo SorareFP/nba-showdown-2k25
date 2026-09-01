@@ -323,6 +323,13 @@ function greenAccent(theme) {
     ...theme,
     frame: readableOn(GREEN, theme.field, MIN_DECOR_CONTRAST),
     accentOnField: readableOn(GREEN, theme.field, MIN_ACCENT_CONTRAST),
+    // THE NAME KEEPS THE TEAM'S ACCENT. The green stays on the keyline, the
+    // stripe and the ornaments; the player's name is not a set decoration —
+    // "make sure the names on rookie cards aren't green unless that's within
+    // the team color code." A team whose own accent IS green (Boston,
+    // Milwaukee) still prints a green name, because that is the team's colour
+    // doing it, not the set's.
+    nameAccent: theme.accentOnField,
     stripeSecondary: readableOn(GREEN, theme.bandTop, MIN_DECOR_CONTRAST),
     treatment: {
       id: 'green-accent',

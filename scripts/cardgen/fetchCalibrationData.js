@@ -93,6 +93,21 @@ export function trimSeasonTable(rows, kind) {
     if (kind === 'perGame') {
       return { ...base, pos: c.pos ?? null, games: num(c.games), mpg: num(c.mp_per_g) };
     }
+    if (kind === 'shooting') {
+      // The rim profile the Paint Boost wants: share of attempts at the rim
+      // and conversion there, with the 3-10ft band and average distance kept
+      // for context. This is the data 2P% was standing in for.
+      return {
+        ...base,
+        games: num(c.games),
+        minutes: num(c.mp),
+        rimShare: num(c.pct_fga_00_03),
+        rimPct: num(c.fg_pct_00_03),
+        shortShare: num(c.pct_fga_03_10),
+        shortPct: num(c.fg_pct_03_10),
+        avgDist: num(c.avg_dist),
+      };
+    }
     if (kind === 'playByPlay') {
       // The five Position Estimate columns, kept as the INTEGER percentages the
       // page prints. Basketball-Reference also carries a full-precision copy in

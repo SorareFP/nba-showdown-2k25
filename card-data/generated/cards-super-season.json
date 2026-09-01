@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-01T14:02:30.788Z",
+ "generatedAt": "2026-09-01T14:34:52.147Z",
  "set": "super-season",
  "provisional": true,
  "sources": {
@@ -721,6 +721,69 @@
   }
  ],
  "excludedCount": 140,
+ "mergedIntoTwin": [
+  {
+   "name": "Keegan Murray",
+   "reason": "best season is his rookie season — one 2022-23 card in the Rookie set, wearing the best-season badge too"
+  },
+  {
+   "name": "Kyshawn George",
+   "reason": "best season is his rookie season — one 2024-25 card in the Rookie set, wearing the best-season badge too"
+  },
+  {
+   "name": "Alex Sarr",
+   "reason": "best season is his rookie season — one 2024-25 card in the Rookie set, wearing the best-season badge too"
+  },
+  {
+   "name": "Jaylen Wells",
+   "reason": "best season is his rookie season — one 2024-25 card in the Rookie set, wearing the best-season badge too"
+  },
+  {
+   "name": "Zach Edey",
+   "reason": "best season is his rookie season — one 2024-25 card in the Rookie set, wearing the best-season badge too"
+  },
+  {
+   "name": "Anthony Gill",
+   "reason": "best season is his rookie season — one 2020-21 card in the Rookie set, wearing the best-season badge too"
+  },
+  {
+   "name": "Jaden Hardy",
+   "reason": "best season is his rookie season — one 2022-23 card in the Rookie set, wearing the best-season badge too"
+  },
+  {
+   "name": "Leonard Miller",
+   "reason": "best season is his rookie season — one 2023-24 card in the Rookie set, wearing the best-season badge too"
+  },
+  {
+   "name": "Justin Edwards",
+   "reason": "best season is his rookie season — one 2024-25 card in the Rookie set, wearing the best-season badge too"
+  },
+  {
+   "name": "Rob Dillingham",
+   "reason": "best season is his rookie season — one 2024-25 card in the Rookie set, wearing the best-season badge too"
+  },
+  {
+   "name": "Jordan Hawkins",
+   "reason": "best season is his rookie season — one 2023-24 card in the Rookie set, wearing the best-season badge too"
+  },
+  {
+   "name": "Jaylen Clark",
+   "reason": "best season is his rookie season — one 2024-25 card in the Rookie set, wearing the best-season badge too"
+  },
+  {
+   "name": "Jett Howard",
+   "reason": "best season is his rookie season — one 2023-24 card in the Rookie set, wearing the best-season badge too"
+  },
+  {
+   "name": "Terrence Shannon Jr.",
+   "reason": "best season is his rookie season — one 2024-25 card in the Rookie set, wearing the best-season badge too"
+  },
+  {
+   "name": "Jamal Cain",
+   "reason": "best season is his rookie season — one 2022-23 card in the Rookie set, wearing the best-season badge too"
+  }
+ ],
+ "mergedIntoTwinCount": 15,
  "cards": [
   {
    "id": "A_J_Green",
@@ -730,7 +793,7 @@
    "speed": 11,
    "power": 6,
    "shotLine": 14,
-   "paintBoost": -1,
+   "paintBoost": 0,
    "threePtBoost": 2,
    "defBoost": 0,
    "salary": 460,
@@ -1209,71 +1272,6 @@
     "ws": 4.9,
     "ws48": 0.115,
     "per": 14.5
-   },
-   "provisional": true
-  },
-  {
-   "id": "Alex_Sarr",
-   "name": "Alex Sarr",
-   "team": "WAS",
-   "pos": "C",
-   "speed": 4,
-   "power": 6,
-   "shotLine": 18,
-   "paintBoost": 0,
-   "threePtBoost": 3,
-   "defBoost": -1,
-   "salary": 240,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 4,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 5,
-     "hi": 17,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 18,
-     "hi": 22,
-     "pts": 3,
-     "reb": 3,
-     "ast": 1
-    },
-    {
-     "lo": 23,
-     "hi": 99,
-     "pts": 4,
-     "reb": 3,
-     "ast": 1
-    }
-   ],
-   "season": 2025,
-   "seasonLabel": "2024-25",
-   "age": 19,
-   "games": 67,
-   "mpg": 27.1,
-   "bbrefId": "sarral01",
-   "traded": false,
-   "metrics": {
-    "bpm": -3.3,
-    "vorp": -0.6,
-    "ws": -0.3,
-    "ws48": -0.007,
-    "per": 12.9
    },
    "provisional": true
   },
@@ -1768,71 +1766,6 @@
    "provisional": true
   },
   {
-   "id": "Anthony_Gill",
-   "name": "Anthony Gill",
-   "team": "WAS",
-   "pos": "PF",
-   "speed": 6,
-   "power": 8,
-   "shotLine": 15,
-   "paintBoost": 0,
-   "threePtBoost": 0,
-   "defBoost": 0,
-   "salary": 390,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 4,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 5,
-     "hi": 14,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 15,
-     "hi": 21,
-     "pts": 3,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 22,
-     "hi": 99,
-     "pts": 4,
-     "reb": 3,
-     "ast": 1
-    }
-   ],
-   "season": 2021,
-   "seasonLabel": "2020-21",
-   "age": 28,
-   "games": 26,
-   "mpg": 8.4,
-   "bbrefId": "gillan01",
-   "traded": false,
-   "metrics": {
-    "bpm": -1.3,
-    "vorp": 0,
-    "ws": 0.6,
-    "ws48": 0.123,
-    "per": 13.7
-   },
-   "provisional": true
-  },
-  {
    "id": "Austin_Reaves",
    "name": "Austin Reaves",
    "team": "LAL",
@@ -1843,7 +1776,7 @@
    "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": -1,
-   "salary": 1020,
+   "salary": 1030,
    "chart": [
     {
      "lo": 1,
@@ -2121,10 +2054,10 @@
    "speed": 7,
    "power": 7,
    "shotLine": 17,
-   "paintBoost": 0,
+   "paintBoost": 3,
    "threePtBoost": -1,
    "defBoost": -1,
-   "salary": 290,
+   "salary": 310,
    "chart": [
     {
      "lo": 1,
@@ -2604,7 +2537,7 @@
    "speed": 13,
    "power": 9,
    "shotLine": 15,
-   "paintBoost": -1,
+   "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": -1,
    "salary": 910,
@@ -2813,7 +2746,7 @@
    "speed": 10,
    "power": 11,
    "shotLine": 14,
-   "paintBoost": -1,
+   "paintBoost": 0,
    "threePtBoost": 2,
    "defBoost": 1,
    "salary": 790,
@@ -3642,7 +3575,7 @@
    "speed": 10,
    "power": 10,
    "shotLine": 14,
-   "paintBoost": 0,
+   "paintBoost": -1,
    "threePtBoost": 2,
    "defBoost": -1,
    "salary": 780,
@@ -3779,10 +3712,10 @@
    "speed": 8,
    "power": 9,
    "shotLine": 16,
-   "paintBoost": 2,
+   "paintBoost": 0,
    "threePtBoost": 1,
    "defBoost": 1,
-   "salary": 320,
+   "salary": 300,
    "chart": [
     {
      "lo": 1,
@@ -4053,7 +3986,7 @@
    "speed": 10,
    "power": 6,
    "shotLine": 17,
-   "paintBoost": 0,
+   "paintBoost": -1,
    "threePtBoost": 2,
    "defBoost": -1,
    "salary": 530,
@@ -4118,10 +4051,10 @@
    "speed": 9,
    "power": 9,
    "shotLine": 14,
-   "paintBoost": 2,
+   "paintBoost": 0,
    "threePtBoost": -4,
    "defBoost": 1,
-   "salary": 490,
+   "salary": 410,
    "chart": [
     {
      "lo": 1,
@@ -4193,7 +4126,7 @@
    "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": 1,
-   "salary": 930,
+   "salary": 940,
    "chart": [
     {
      "lo": 1,
@@ -4258,7 +4191,7 @@
    "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": 1,
-   "salary": 1000,
+   "salary": 1010,
    "chart": [
     {
      "lo": 1,
@@ -4323,7 +4256,7 @@
    "paintBoost": 0,
    "threePtBoost": 4,
    "defBoost": 0,
-   "salary": 1260,
+   "salary": 1270,
    "chart": [
     {
      "lo": 1,
@@ -4392,7 +4325,7 @@
    "speed": 11,
    "power": 9,
    "shotLine": 16,
-   "paintBoost": 0,
+   "paintBoost": -1,
    "threePtBoost": 4,
    "defBoost": 0,
    "salary": 580,
@@ -4601,7 +4534,7 @@
    "speed": 13,
    "power": 9,
    "shotLine": 15,
-   "paintBoost": 0,
+   "paintBoost": -1,
    "threePtBoost": 3,
    "defBoost": 1,
    "salary": 900,
@@ -4666,7 +4599,7 @@
    "speed": 13,
    "power": 16,
    "shotLine": 15,
-   "paintBoost": 0,
+   "paintBoost": -1,
    "threePtBoost": 0,
    "defBoost": 3,
    "salary": 920,
@@ -5156,7 +5089,7 @@
    "speed": 16,
    "power": 9,
    "shotLine": 16,
-   "paintBoost": -1,
+   "paintBoost": 0,
    "threePtBoost": 4,
    "defBoost": 1,
    "salary": 1010,
@@ -5358,10 +5291,10 @@
    "speed": 15,
    "power": 8,
    "shotLine": 13,
-   "paintBoost": 2,
+   "paintBoost": 0,
    "threePtBoost": -2,
    "defBoost": 3,
-   "salary": 900,
+   "salary": 770,
    "chart": [
     {
      "lo": 1,
@@ -5769,7 +5702,7 @@
    "speed": 9,
    "power": 9,
    "shotLine": 14,
-   "paintBoost": -1,
+   "paintBoost": 0,
    "threePtBoost": 2,
    "defBoost": -1,
    "salary": 470,
@@ -6382,78 +6315,6 @@
    "provisional": true
   },
   {
-   "id": "Jaden_Hardy",
-   "name": "Jaden Hardy",
-   "team": "DAL",
-   "pos": "SG",
-   "speed": 9,
-   "power": 5,
-   "shotLine": 16,
-   "paintBoost": 0,
-   "threePtBoost": 4,
-   "defBoost": -2,
-   "salary": 680,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 4,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 5,
-     "hi": 12,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 13,
-     "hi": 15,
-     "pts": 4,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 16,
-     "hi": 20,
-     "pts": 4,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 21,
-     "hi": 99,
-     "pts": 6,
-     "reb": 2,
-     "ast": 1
-    }
-   ],
-   "season": 2023,
-   "seasonLabel": "2022-23",
-   "age": 20,
-   "games": 48,
-   "mpg": 14.8,
-   "bbrefId": "hardyja02",
-   "traded": false,
-   "metrics": {
-    "bpm": -2.3,
-    "vorp": 0,
-    "ws": 0.7,
-    "ws48": 0.048,
-    "per": 14.6
-   },
-   "provisional": true
-  },
-  {
    "id": "Jaden_McDaniels",
    "name": "Jaden McDaniels",
    "team": "MIN",
@@ -6673,7 +6534,7 @@
    "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": 0,
-   "salary": 1570,
+   "salary": 1580,
    "chart": [
     {
      "lo": 1,
@@ -7160,78 +7021,6 @@
    "provisional": true
   },
   {
-   "id": "Jamal_Cain",
-   "name": "Jamal Cain",
-   "team": "MIA",
-   "pos": "PF",
-   "speed": 8,
-   "power": 7,
-   "shotLine": 14,
-   "paintBoost": 0,
-   "threePtBoost": -1,
-   "defBoost": 1,
-   "salary": 400,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 5,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 6,
-     "hi": 13,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 14,
-     "hi": 18,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 19,
-     "hi": 25,
-     "pts": 3,
-     "reb": 4,
-     "ast": 0
-    },
-    {
-     "lo": 26,
-     "hi": 99,
-     "pts": 4,
-     "reb": 4,
-     "ast": 1
-    }
-   ],
-   "season": 2023,
-   "seasonLabel": "2022-23",
-   "age": 23,
-   "games": 18,
-   "mpg": 13.3,
-   "bbrefId": "cainja01",
-   "traded": false,
-   "metrics": {
-    "bpm": 0.8,
-    "vorp": 0.2,
-    "ws": 0.8,
-    "ws48": 0.169,
-    "per": 16.5
-   },
-   "provisional": true
-  },
-  {
    "id": "James_Harden",
    "name": "James Harden",
    "team": "HOU",
@@ -7239,7 +7028,7 @@
    "speed": 18,
    "power": 12,
    "shotLine": 15,
-   "paintBoost": 0,
+   "paintBoost": -1,
    "threePtBoost": 0,
    "defBoost": 2,
    "salary": 1770,
@@ -7585,7 +7374,7 @@
    "speed": 17,
    "power": 9,
    "shotLine": 15,
-   "paintBoost": 0,
+   "paintBoost": -1,
    "threePtBoost": 3,
    "defBoost": 0,
    "salary": 960,
@@ -7646,136 +7435,6 @@
     "ws": 10.8,
     "ws48": 0.182,
     "per": 18.9
-   },
-   "provisional": true
-  },
-  {
-   "id": "Jaylen_Clark",
-   "name": "Jaylen Clark",
-   "team": "MIN",
-   "pos": "SG",
-   "speed": 9,
-   "power": 6,
-   "shotLine": 15,
-   "paintBoost": 0,
-   "threePtBoost": 0,
-   "defBoost": 3,
-   "salary": 320,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 4,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 5,
-     "hi": 14,
-     "pts": 1,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 15,
-     "hi": 19,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 20,
-     "hi": 99,
-     "pts": 3,
-     "reb": 1,
-     "ast": 0
-    }
-   ],
-   "season": 2025,
-   "seasonLabel": "2024-25",
-   "age": 23,
-   "games": 40,
-   "mpg": 13.1,
-   "bbrefId": "clarkja02",
-   "traded": false,
-   "metrics": {
-    "bpm": -0.2,
-    "vorp": 0.2,
-    "ws": 1.6,
-    "ws48": 0.147,
-    "per": 12
-   },
-   "provisional": true
-  },
-  {
-   "id": "Jaylen_Wells",
-   "name": "Jaylen Wells",
-   "team": "MEM",
-   "pos": "SG",
-   "speed": 11,
-   "power": 9,
-   "shotLine": 16,
-   "paintBoost": 0,
-   "threePtBoost": 1,
-   "defBoost": -1,
-   "salary": 510,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 4,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 5,
-     "hi": 15,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 16,
-     "hi": 25,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 26,
-     "hi": 99,
-     "pts": 3,
-     "reb": 1,
-     "ast": 1
-    }
-   ],
-   "season": 2025,
-   "seasonLabel": "2024-25",
-   "age": 21,
-   "games": 79,
-   "mpg": 25.9,
-   "bbrefId": "wellsja01",
-   "traded": false,
-   "metrics": {
-    "bpm": -2.2,
-    "vorp": -0.1,
-    "ws": 3.5,
-    "ws48": 0.083,
-    "per": 10.5
    },
    "provisional": true
   },
@@ -7917,78 +7576,6 @@
    "provisional": true
   },
   {
-   "id": "Jett_Howard",
-   "name": "Jett Howard",
-   "team": "ORL",
-   "pos": "SF",
-   "speed": 6,
-   "power": 8,
-   "shotLine": 18,
-   "paintBoost": 3,
-   "threePtBoost": 5,
-   "defBoost": 0,
-   "salary": 540,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 4,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 5,
-     "hi": 10,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 11,
-     "hi": 17,
-     "pts": 3,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 18,
-     "hi": 22,
-     "pts": 3,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 23,
-     "hi": 99,
-     "pts": 5,
-     "reb": 2,
-     "ast": 1
-    }
-   ],
-   "season": 2024,
-   "seasonLabel": "2023-24",
-   "age": 20,
-   "games": 18,
-   "mpg": 3.7,
-   "bbrefId": "howarje01",
-   "traded": false,
-   "metrics": {
-    "bpm": -1.8,
-    "vorp": 0,
-    "ws": 0,
-    "ws48": 0.005,
-    "per": 8.6
-   },
-   "provisional": true
-  },
-  {
    "id": "Jevon_Carter",
    "name": "Jevon Carter",
    "team": "MIL",
@@ -7996,7 +7583,7 @@
    "speed": 11,
    "power": 6,
    "shotLine": 16,
-   "paintBoost": -1,
+   "paintBoost": 0,
    "threePtBoost": 4,
    "defBoost": 1,
    "salary": 430,
@@ -8061,7 +7648,7 @@
    "speed": 12,
    "power": 15,
    "shotLine": 14,
-   "paintBoost": 0,
+   "paintBoost": -1,
    "threePtBoost": -1,
    "defBoost": 2,
    "salary": 1300,
@@ -8342,7 +7929,7 @@
    "speed": 9,
    "power": 15,
    "shotLine": 14,
-   "paintBoost": 0,
+   "paintBoost": -1,
    "threePtBoost": -4,
    "defBoost": 0,
    "salary": 1070,
@@ -8479,78 +8066,6 @@
    "provisional": true
   },
   {
-   "id": "Jordan_Hawkins",
-   "name": "Jordan Hawkins",
-   "team": "NOP",
-   "pos": "SG",
-   "speed": 8,
-   "power": 5,
-   "shotLine": 17,
-   "paintBoost": 0,
-   "threePtBoost": 2,
-   "defBoost": -2,
-   "salary": 370,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 4,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 5,
-     "hi": 12,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 13,
-     "hi": 16,
-     "pts": 3,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 17,
-     "hi": 22,
-     "pts": 3,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 23,
-     "hi": 99,
-     "pts": 5,
-     "reb": 2,
-     "ast": 1
-    }
-   ],
-   "season": 2024,
-   "seasonLabel": "2023-24",
-   "age": 21,
-   "games": 67,
-   "mpg": 17.3,
-   "bbrefId": "hawkijo01",
-   "traded": false,
-   "metrics": {
-    "bpm": -3.1,
-    "vorp": -0.3,
-    "ws": 1.3,
-    "ws48": 0.053,
-    "per": 10.2
-   },
-   "provisional": true
-  },
-  {
    "id": "Josh_Giddey",
    "name": "Josh Giddey",
    "team": "CHI",
@@ -8558,7 +8073,7 @@
    "speed": 12,
    "power": 9,
    "shotLine": 16,
-   "paintBoost": 0,
+   "paintBoost": -1,
    "threePtBoost": 1,
    "defBoost": 1,
    "salary": 790,
@@ -8623,7 +8138,7 @@
    "speed": 8,
    "power": 6,
    "shotLine": 16,
-   "paintBoost": 0,
+   "paintBoost": 1,
    "threePtBoost": 1,
    "defBoost": 1,
    "salary": 380,
@@ -9099,71 +8614,6 @@
    "provisional": true
   },
   {
-   "id": "Justin_Edwards",
-   "name": "Justin Edwards",
-   "team": "PHI",
-   "pos": "SF",
-   "speed": 7,
-   "power": 6,
-   "shotLine": 16,
-   "paintBoost": 0,
-   "threePtBoost": 1,
-   "defBoost": -2,
-   "salary": 240,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 5,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 6,
-     "hi": 15,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 16,
-     "hi": 24,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 25,
-     "hi": 99,
-     "pts": 3,
-     "reb": 1,
-     "ast": 1
-    }
-   ],
-   "season": 2025,
-   "seasonLabel": "2024-25",
-   "age": 21,
-   "games": 44,
-   "mpg": 26.3,
-   "bbrefId": "edwarju01",
-   "traded": false,
-   "metrics": {
-    "bpm": -3.7,
-    "vorp": -0.5,
-    "ws": 0.9,
-    "ws48": 0.039,
-    "per": 11.3
-   },
-   "provisional": true
-  },
-  {
    "id": "Jusuf_Nurkic",
    "name": "Jusuf Nurkić",
    "team": "POR",
@@ -9171,7 +8621,7 @@
    "speed": 9,
    "power": 18,
    "shotLine": 16,
-   "paintBoost": 0,
+   "paintBoost": -1,
    "threePtBoost": -4,
    "defBoost": 2,
    "salary": 1210,
@@ -9376,78 +8826,6 @@
     "ws": 13.7,
     "ws48": 0.277,
     "per": 26
-   },
-   "provisional": true
-  },
-  {
-   "id": "Keegan_Murray",
-   "name": "Keegan Murray",
-   "team": "SAC",
-   "pos": "SF",
-   "speed": 8,
-   "power": 9,
-   "shotLine": 15,
-   "paintBoost": 0,
-   "threePtBoost": 3,
-   "defBoost": -1,
-   "salary": 340,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 4,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 5,
-     "hi": 14,
-     "pts": 1,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 15,
-     "hi": 21,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 22,
-     "hi": 25,
-     "pts": 2,
-     "reb": 2,
-     "ast": 0
-    },
-    {
-     "lo": 26,
-     "hi": 99,
-     "pts": 3,
-     "reb": 2,
-     "ast": 0
-    }
-   ],
-   "season": 2023,
-   "seasonLabel": "2022-23",
-   "age": 22,
-   "games": 80,
-   "mpg": 29.8,
-   "bbrefId": "murrake02",
-   "traded": false,
-   "metrics": {
-    "bpm": -0.6,
-    "vorp": 0.8,
-    "ws": 4.3,
-    "ws48": 0.087,
-    "per": 12.3
    },
    "provisional": true
   },
@@ -10007,7 +9385,7 @@
    "speed": 15,
    "power": 11,
    "shotLine": 15,
-   "paintBoost": -1,
+   "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": 0,
    "salary": 1140,
@@ -10144,10 +9522,10 @@
    "speed": 13,
    "power": 9,
    "shotLine": 17,
-   "paintBoost": 1,
+   "paintBoost": 2,
    "threePtBoost": 2,
    "defBoost": 3,
-   "salary": 510,
+   "salary": 530,
    "chart": [
     {
      "lo": 1,
@@ -10209,10 +9587,10 @@
    "speed": 7,
    "power": 6,
    "shotLine": 18,
-   "paintBoost": 3,
+   "paintBoost": 2,
    "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 80,
+   "salary": 70,
    "chart": [
     {
      "lo": 1,
@@ -10353,10 +9731,10 @@
    "speed": 8,
    "power": 10,
    "shotLine": 16,
-   "paintBoost": 0,
+   "paintBoost": 2,
    "threePtBoost": 1,
    "defBoost": 0,
-   "salary": 650,
+   "salary": 680,
    "chart": [
     {
      "lo": 1,
@@ -10421,7 +9799,7 @@
    "paintBoost": -1,
    "threePtBoost": 4,
    "defBoost": 1,
-   "salary": 1250,
+   "salary": 1260,
    "chart": [
     {
      "lo": 1,
@@ -10483,7 +9861,7 @@
    "speed": 17,
    "power": 10,
    "shotLine": 15,
-   "paintBoost": 0,
+   "paintBoost": -1,
    "threePtBoost": 3,
    "defBoost": 1,
    "salary": 1310,
@@ -10544,71 +9922,6 @@
     "ws": 9.1,
     "ws48": 0.197,
     "per": 24.3
-   },
-   "provisional": true
-  },
-  {
-   "id": "Kyshawn_George",
-   "name": "Kyshawn George",
-   "team": "WAS",
-   "pos": "SG",
-   "speed": 8,
-   "power": 6,
-   "shotLine": 17,
-   "paintBoost": 0,
-   "threePtBoost": 2,
-   "defBoost": 0,
-   "salary": 190,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 4,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 5,
-     "hi": 16,
-     "pts": 1,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 17,
-     "hi": 25,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 26,
-     "hi": 99,
-     "pts": 2,
-     "reb": 2,
-     "ast": 1
-    }
-   ],
-   "season": 2025,
-   "seasonLabel": "2024-25",
-   "age": 21,
-   "games": 68,
-   "mpg": 26.5,
-   "bbrefId": "georgky01",
-   "traded": false,
-   "metrics": {
-    "bpm": -4.1,
-    "vorp": -0.9,
-    "ws": 0.1,
-    "ws48": 0.003,
-    "per": 8.8
    },
    "provisional": true
   },
@@ -10822,78 +10135,6 @@
    "provisional": true
   },
   {
-   "id": "Leonard_Miller",
-   "name": "Leonard Miller",
-   "team": "MIN",
-   "pos": "SF",
-   "speed": 6,
-   "power": 9,
-   "shotLine": 13,
-   "paintBoost": -1,
-   "threePtBoost": -2,
-   "defBoost": 4,
-   "salary": 960,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 4,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 5,
-     "hi": 12,
-     "pts": 3,
-     "reb": 2,
-     "ast": 1
-    },
-    {
-     "lo": 13,
-     "hi": 16,
-     "pts": 3,
-     "reb": 3,
-     "ast": 1
-    },
-    {
-     "lo": 17,
-     "hi": 21,
-     "pts": 5,
-     "reb": 3,
-     "ast": 1
-    },
-    {
-     "lo": 22,
-     "hi": 99,
-     "pts": 6,
-     "reb": 7,
-     "ast": 2
-    }
-   ],
-   "season": 2024,
-   "seasonLabel": "2023-24",
-   "age": 20,
-   "games": 17,
-   "mpg": 3.1,
-   "bbrefId": "millele01",
-   "traded": false,
-   "metrics": {
-    "bpm": 9.6,
-    "vorp": 0.2,
-    "ws": 0.3,
-    "ws48": 0.323,
-    "per": 27
-   },
-   "provisional": true
-  },
-  {
    "id": "Luguentz_Dort",
    "name": "Luguentz Dort",
    "team": "OKC",
@@ -10966,10 +10207,10 @@
    "speed": 17,
    "power": 13,
    "shotLine": 15,
-   "paintBoost": 0,
+   "paintBoost": 2,
    "threePtBoost": 3,
    "defBoost": 2,
-   "salary": 1720,
+   "salary": 1770,
    "chart": [
     {
      "lo": 1,
@@ -11473,7 +10714,7 @@
    "paintBoost": 0,
    "threePtBoost": 1,
    "defBoost": 1,
-   "salary": 690,
+   "salary": 700,
    "chart": [
     {
      "lo": 1,
@@ -11744,7 +10985,7 @@
    "speed": 7,
    "power": 11,
    "shotLine": 12,
-   "paintBoost": 0,
+   "paintBoost": -1,
    "threePtBoost": -8,
    "defBoost": 1,
    "salary": 570,
@@ -11884,7 +11125,7 @@
    "paintBoost": 0,
    "threePtBoost": 4,
    "defBoost": 1,
-   "salary": 800,
+   "salary": 810,
    "chart": [
     {
      "lo": 1,
@@ -12018,7 +11259,7 @@
    "speed": 5,
    "power": 9,
    "shotLine": 13,
-   "paintBoost": 0,
+   "paintBoost": -1,
    "threePtBoost": -7,
    "defBoost": 0,
    "salary": 250,
@@ -12940,7 +12181,7 @@
    "speed": 15,
    "power": 15,
    "shotLine": 15,
-   "paintBoost": -1,
+   "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": 2,
    "salary": 1470,
@@ -13546,71 +12787,6 @@
    "provisional": true
   },
   {
-   "id": "Rob_Dillingham",
-   "name": "Rob Dillingham",
-   "team": "MIN",
-   "pos": "PG",
-   "speed": 8,
-   "power": 5,
-   "shotLine": 17,
-   "paintBoost": 0,
-   "threePtBoost": 2,
-   "defBoost": -1,
-   "salary": 360,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 4,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 5,
-     "hi": 16,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 17,
-     "hi": 22,
-     "pts": 3,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 23,
-     "hi": 99,
-     "pts": 4,
-     "reb": 1,
-     "ast": 3
-    }
-   ],
-   "season": 2025,
-   "seasonLabel": "2024-25",
-   "age": 20,
-   "games": 49,
-   "mpg": 10.5,
-   "bbrefId": "dilliro01",
-   "traded": false,
-   "metrics": {
-    "bpm": -4.2,
-    "vorp": -0.3,
-    "ws": 0.1,
-    "ws48": 0.012,
-    "per": 10.2
-   },
-   "provisional": true
-  },
-  {
    "id": "Robert_Williams",
    "name": "Robert Williams",
    "team": "BOS",
@@ -13618,7 +12794,7 @@
    "speed": 10,
    "power": 15,
    "shotLine": 12,
-   "paintBoost": 0,
+   "paintBoost": -1,
    "threePtBoost": -8,
    "defBoost": 3,
    "salary": 780,
@@ -13755,7 +12931,7 @@
    "speed": 10,
    "power": 19,
    "shotLine": 13,
-   "paintBoost": 0,
+   "paintBoost": -1,
    "threePtBoost": -7,
    "defBoost": 3,
    "salary": 1110,
@@ -13830,7 +13006,7 @@
    "paintBoost": 0,
    "threePtBoost": 2,
    "defBoost": -1,
-   "salary": 530,
+   "salary": 540,
    "chart": [
     {
      "lo": 1,
@@ -13892,7 +13068,7 @@
    "speed": 18,
    "power": 12,
    "shotLine": 16,
-   "paintBoost": 0,
+   "paintBoost": -1,
    "threePtBoost": 1,
    "defBoost": 2,
    "salary": 1770,
@@ -14036,7 +13212,7 @@
    "speed": 12,
    "power": 7,
    "shotLine": 15,
-   "paintBoost": -1,
+   "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": -1,
    "salary": 860,
@@ -14173,10 +13349,10 @@
    "speed": 10,
    "power": 7,
    "shotLine": 16,
-   "paintBoost": 0,
+   "paintBoost": 2,
    "threePtBoost": 1,
    "defBoost": -1,
-   "salary": 560,
+   "salary": 590,
    "chart": [
     {
      "lo": 1,
@@ -14307,13 +13483,13 @@
    "name": "Shaquille O'Neal",
    "team": "LAL",
    "pos": "C",
-   "speed": 4,
-   "power": 10,
+   "speed": 9,
+   "power": 21,
    "shotLine": 16,
-   "paintBoost": 0,
+   "paintBoost": 2,
    "threePtBoost": -4,
    "defBoost": 2,
-   "salary": 720,
+   "salary": 1560,
    "chart": [
     {
      "lo": 1,
@@ -14649,78 +13825,6 @@
    "provisional": true
   },
   {
-   "id": "Terrence_Shannon_Jr",
-   "name": "Terrence Shannon Jr.",
-   "team": "MIN",
-   "pos": "SG",
-   "speed": 7,
-   "power": 7,
-   "shotLine": 16,
-   "paintBoost": 0,
-   "threePtBoost": 1,
-   "defBoost": 0,
-   "salary": 390,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 4,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 5,
-     "hi": 15,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 16,
-     "hi": 17,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 18,
-     "hi": 23,
-     "pts": 3,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 24,
-     "hi": 99,
-     "pts": 5,
-     "reb": 2,
-     "ast": 2
-    }
-   ],
-   "season": 2025,
-   "seasonLabel": "2024-25",
-   "age": 24,
-   "games": 32,
-   "mpg": 10.6,
-   "bbrefId": "shannte01",
-   "traded": false,
-   "metrics": {
-    "bpm": -2.1,
-    "vorp": 0,
-    "ws": 0.6,
-    "ws48": 0.091,
-    "per": 11.9
-   },
-   "provisional": true
-  },
-  {
    "id": "Thomas_Bryant",
    "name": "Thomas Bryant",
    "team": "WAS",
@@ -15002,10 +14106,10 @@
    "speed": 17,
    "power": 9,
    "shotLine": 15,
-   "paintBoost": 0,
+   "paintBoost": -1,
    "threePtBoost": 3,
    "defBoost": -2,
-   "salary": 1530,
+   "salary": 1540,
    "chart": [
     {
      "lo": 1,
@@ -15074,10 +14178,10 @@
    "speed": 8,
    "power": 5,
    "shotLine": 18,
-   "paintBoost": 0,
+   "paintBoost": 2,
    "threePtBoost": 3,
    "defBoost": -1,
-   "salary": 350,
+   "salary": 340,
    "chart": [
     {
      "lo": 1,
@@ -15204,7 +14308,7 @@
    "speed": 14,
    "power": 10,
    "shotLine": 14,
-   "paintBoost": 0,
+   "paintBoost": -1,
    "threePtBoost": 2,
    "defBoost": 1,
    "salary": 1210,
@@ -15279,7 +14383,7 @@
    "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": -1,
-   "salary": 1200,
+   "salary": 1210,
    "chart": [
     {
      "lo": 1,
@@ -15420,7 +14524,7 @@
    "speed": 7,
    "power": 6,
    "shotLine": 17,
-   "paintBoost": 0,
+   "paintBoost": 2,
    "threePtBoost": 2,
    "defBoost": -1,
    "salary": 320,
@@ -15694,78 +14798,6 @@
    "provisional": true
   },
   {
-   "id": "Zach_Edey",
-   "name": "Zach Edey",
-   "team": "MEM",
-   "pos": "C",
-   "speed": 6,
-   "power": 13,
-   "shotLine": 14,
-   "paintBoost": 0,
-   "threePtBoost": -4,
-   "defBoost": 0,
-   "salary": 600,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 4,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 5,
-     "hi": 13,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 14,
-     "hi": 18,
-     "pts": 2,
-     "reb": 3,
-     "ast": 0
-    },
-    {
-     "lo": 19,
-     "hi": 24,
-     "pts": 3,
-     "reb": 3,
-     "ast": 0
-    },
-    {
-     "lo": 25,
-     "hi": 99,
-     "pts": 4,
-     "reb": 4,
-     "ast": 0
-    }
-   ],
-   "season": 2025,
-   "seasonLabel": "2024-25",
-   "age": 22,
-   "games": 66,
-   "mpg": 21.5,
-   "bbrefId": "edeyza01",
-   "traded": false,
-   "metrics": {
-    "bpm": -0.1,
-    "vorp": 0.7,
-    "ws": 4.9,
-    "ws48": 0.165,
-    "per": 18.2
-   },
-   "provisional": true
-  },
-  {
    "id": "Zach_LaVine",
    "name": "Zach LaVine",
    "team": "CHI",
@@ -15989,7 +15021,7 @@
    "speed": 11,
    "power": 15,
    "shotLine": 14,
-   "paintBoost": 0,
+   "paintBoost": -1,
    "threePtBoost": -4,
    "defBoost": 0,
    "salary": 1260,

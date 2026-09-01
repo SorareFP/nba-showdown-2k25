@@ -213,6 +213,9 @@ export const SEASON_TABLES = {
   advanced: { slug: 'advanced', tableId: 'advanced' },
   advancedPost: { slug: 'advanced', tableId: 'advanced_post' },
   playByPlay: { slug: 'play-by-play', tableId: 'pbp_stats' },
+  // Shot profile by distance — share of attempts and FG% per band. Kept back
+  // to 1996-97, which is as far as Basketball-Reference tracks it.
+  shooting: { slug: 'shooting', tableId: 'shooting' },
 };
 
 /**

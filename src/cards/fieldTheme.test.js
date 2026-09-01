@@ -520,7 +520,10 @@ describe('fieldThemeVars', () => {
   it('names every value the theme carries', () => {
     const theme = deriveFieldTheme('#BA0C2F', '#010101', '#E6ECF8');
     const vars = fieldThemeVars(theme);
-    expect(Object.keys(vars)).toHaveLength(Object.keys(theme).length);
+    // Plus one: --name-accent is emitted for every theme but stored on none of
+    // the untreated ones — it defaults to the accent and only a treatment that
+    // repaints the accent (green-accent) sets it apart. See treatments.js.
+    expect(Object.keys(vars)).toHaveLength(Object.keys(theme).length + 1);
     for (const [name, value] of Object.entries(vars)) {
       expect(name, name).toMatch(/^--[a-z-]+$/);
       expect(value, name).toBeTruthy();

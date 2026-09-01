@@ -115,7 +115,7 @@ import { CALIBRATION_FILE } from './calibrateAttributes.js';
 import { indexBiometrics, loadBiometrics } from './biometrics.js';
 import { indexPositionShares, loadPositionShares } from './positionShares.js';
 import { loadLeagueRows, pickCareer } from './standoutSuperSeasons.js';
-import { readSummerStandouts, buildApiEpmIndex, loadFullSeasonTables } from './summerStandouts.js';
+import { readSummerStandouts, buildApiEpmIndex, buildBpmBridge, loadFullSeasonTables, loadRimProfiles } from './summerStandouts.js';
 import { PRINTED_SCALE, REFINEMENT_WEIGHT, mapToReferenceScale } from './speedPower.js';
 import { archiveBasis, collectRows, requireArchive } from './epmArchive.js';
 import {
@@ -439,12 +439,21 @@ export function attachEpm(selections, index) {
 
 /** The shooting inputs one archived season contributes. */
 export function historicalShootingInput(season) {
+  // THE WEAKEST SUBSTITUTION IN THE FILE, RETIRED WHERE THE DATA EXISTS.
+  // 2P% blends the rim with the midrange, understating exactly the
+  // rim-finishing bigs the Paint Boost exists to mark. Basketball-Reference's
+  // shooting tables carry the real thing back to 1996-97 — share of attempts
+  // at 0-3 feet and FG% there — and the enrichment pass in main() joins them
+  // onto every selection as `rimPct`/`rimShare`. 2P% remains only for seasons
+  // the table predates (1993-1996) and the WNBA, whose page has no split.
+  const rimBased = Number.isFinite(season.rimPct) && Number.isFinite(season.rimShare);
   return {
     tsPct: season.tsPct ?? null,
-    // 2P% stands in for rim FG%, which Basketball-Reference does not carry.
-    paintPct: season.fgPct2 ?? null,
+    paintPct: rimBased ? season.rimPct : season.fgPct2 ?? null,
     threePct: season.fgPct3 ?? null,
-    paintAttempts: S.attemptsFromPer100(season.fg2a100, season.minutes),
+    paintAttempts: rimBased
+      ? S.attemptsFromPer100((season.fga100 ?? 0) * season.rimShare, season.minutes)
+      : S.attemptsFromPer100(season.fg2a100, season.minutes),
     threeAttempts: S.attemptsFromPer100(season.fg3a100, season.minutes),
     // Attempts per 100 — the signal for whether he shoots threes at all.
     threeRate: season.fg3a100 ?? 0,
@@ -979,6 +988,13 @@ export function main({ log = console.log } = {}) {
   // pool-scoped EPM index has never heard of, so their EPM comes from the API
   // caches here and a later join would blank it back to replacement level.
   const standouts = readSummerStandouts();
+  // One bridge for both standout blocks, built only if a pre-EPM season needs
+  // it — the basis is the same absolute EPM archive everything is scored on.
+  let bridgeInstance = null;
+  const standoutBridge = () => {
+    if (!bridgeInstance) bridgeInstance = buildBpmBridge(archiveBasis(requireArchive()));
+    return bridgeInstance;
+  };
   const standoutNames = Object.keys(standouts.superSeasons);
   if (standoutNames.length) {
     const tables = loadFullSeasonTables();
@@ -994,7 +1010,17 @@ export function main({ log = console.log } = {}) {
       const adv = tables.advanced.get(`${id}|${pick.season}`);
       const pp = tables.perPoss.get(`${id}|${pick.season}`);
       if (!adv || !pp) { failed.push(`${name} (no ${pick.season} full-table row)`); continue; }
-      const epm = apiEpm.get(`${normalizeName(name)}|${pick.season}`);
+      let epm = apiEpm.get(`${normalizeName(name)}|${pick.season}`);
+      // EPM begins in 2002; Shaquille O'Neal's 1999-00 pick lands before it
+      // and was being priced at replacement (Speed+Power 14 on the 2000 MVP).
+      // The BPM bridge re-expresses the season in EPM units instead.
+      if (!epm && Number.isFinite(adv.bpm)) {
+        const bridge = standoutBridge();
+        epm = {
+          epm: bridge.epmFromBpm(adv.bpm),
+          ewinsPerGame: bridge.ewinsPerGameFromVorp(adv.vorp, adv.games),
+        };
+      }
       const before = selection.superSeason.length;
       selection.superSeason = selection.superSeason.filter(
         sel => normalizeName(sel.player.name) !== normalizeName(name)
@@ -1042,35 +1068,56 @@ export function main({ log = console.log } = {}) {
       ...Object.keys(standoutBlocks.superSeasons ?? {}),
     ])].filter(n => !poolNames.has(normalizeName(n)));
     if (rookieNames.length) {
-      const tables = loadFullSeasonTables();
+      // From 1992: the tables now reach the earliest standout rookie year
+      // (1993 — Horry, Shaq, Christie) with 1992 cached as the SENTINEL that
+      // proves a 1993 first appearance is a debut and not the window's edge.
+      const tables = loadFullSeasonTables({ first: 1992 });
       const league = loadLeagueRows();
       const apiEpm = buildApiEpmIndex();
       const added = [];
       const skipped = [];
       for (const name of rookieNames) {
+        // The id comes from the 2000+ league rows (every standout played into
+        // them); the FIRST season comes from the full tables, which reach 1992.
         const careerRows = pickCareer(league.get(normalizeName(name)), {});
-        const first = careerRows?.slice().sort((a, b) => a.season - b.season)[0];
-        if (!first) { skipped.push(`${name} (no career rows)`); continue; }
-        if (first.season < 2002) {
-          skipped.push(`${name} (first cached season ${first.season} — pre-EPM, possibly truncated)`);
+        const id = careerRows?.[0]?.playerId;
+        if (!id) { skipped.push(`${name} (no career rows)`); continue; }
+        let firstSeason = null;
+        for (const key of tables.advanced.keys()) {
+          const [rowId, seasonStr] = key.split('|');
+          if (rowId !== id) continue;
+          const season = Number(seasonStr);
+          if (firstSeason == null || season < firstSeason) firstSeason = season;
+        }
+        if (firstSeason == null) { skipped.push(`${name} (no full-table rows)`); continue; }
+        if (firstSeason <= 1992) {
+          skipped.push(`${name} (first cached season ${firstSeason} — at the window's edge, possibly truncated)`);
           continue;
         }
-        const id = first.playerId;
-        const adv = tables.advanced.get(`${id}|${first.season}`);
-        const pp = tables.perPoss.get(`${id}|${first.season}`);
-        if (!adv || !pp) { skipped.push(`${name} (no ${first.season} full-table row)`); continue; }
-        const epm = apiEpm.get(`${normalizeName(name)}|${first.season}`);
+        const adv = tables.advanced.get(`${id}|${firstSeason}`);
+        const pp = tables.perPoss.get(`${id}|${firstSeason}`);
+        if (!adv || !pp) { skipped.push(`${name} (no ${firstSeason} full-table row)`); continue; }
+        // EPM where it exists (2002+); the BPM bridge in EPM units where it
+        // does not — the same bridge the pre-EPM Super Seasons cross on.
+        let epm = apiEpm.get(`${normalizeName(name)}|${firstSeason}`);
+        if (!epm && Number.isFinite(adv.bpm)) {
+          const bridge = standoutBridge();
+          epm = {
+            epm: bridge.epmFromBpm(adv.bpm),
+            ewinsPerGame: bridge.ewinsPerGameFromVorp(adv.vorp, adv.games),
+          };
+        }
         selection.rookie.push({
           player: { name, pos: adv.pos },
           season: {
             ...adv, ...pp,
             playerId: id,
-            season: first.season,
+            season: firstSeason,
             epm: epm?.epm ?? null,
             ewinsPerGame: epm?.ewinsPerGame ?? null,
           },
         });
-        added.push(`${name} ${first.season}`);
+        added.push(`${name} ${firstSeason}`);
       }
       log(`  standout rookies: ${added.length} added (${added.join(', ') || 'none'})`);
       if (skipped.length) {
@@ -1102,12 +1149,110 @@ export function main({ log = console.log } = {}) {
   // The five positional shares of the season each card actually shows.
   const positionShares = indexPositionShares(loadPositionShares());
   log(`Split rule: ${A.SPLIT_RULE.name} (see SPLIT_RULE in scripts/cardgen/attributes.js).`);
+  // ── The rim profiles, joined onto every selection ─────────────────────────
+  //
+  // One map, both sets: paintPct/paintAttempts prefer the real 0-3ft numbers
+  // over the 2P% substitute wherever the shooting table reaches (1997+). See
+  // historicalShootingInput.
+  {
+    const rims = loadRimProfiles();
+    let joined = 0;
+    let total = 0;
+    for (const key of ['superSeason', 'rookie']) {
+      for (const sel of selection[key]) {
+        total += 1;
+        const rim = rims.get(`${sel.season.playerId}|${sel.season.season}`);
+        if (!rim || !Number.isFinite(rim.rimPct)) continue;
+        sel.season.rimPct = rim.rimPct;
+        sel.season.rimShare = rim.rimShare;
+        joined += 1;
+      }
+    }
+    // THE CALIBRATION ROWS TOO, or the whole join mis-centres: the layer's
+    // scale is built over [pool, ...selections], and rim FG% runs ~15 points
+    // above the 2P% it replaces. Enriching only the selections put every
+    // historical card atop a 2P%-centred pool — sixty Super Seasons printed
+    // +3 while Rudy Gobert's read 0.
+    let poolJoined = 0;
+    for (const row of currentRows) {
+      const rim = rims.get(`${row.playerId}|${row.season}`);
+      if (!rim || !Number.isFinite(rim.rimPct)) continue;
+      row.rimPct = rim.rimPct;
+      row.rimShare = rim.rimShare;
+      poolJoined += 1;
+    }
+    log(`  rim profiles: ${joined} of ${total} selections and ${poolJoined} of ${currentRows.length} calibration rows carry the 0-3ft split.`);
+  }
+
   const files = {};
+  const builtSets = new Map();
+  for (const [set, selections] of [
+    [SUPER_SEASON_SET, selection.superSeason],
+    [ROOKIE_SET, selection.rookie],
+  ]) {
+    const cards = buildSet({ selections, currentRows, calibration, biometrics, positionShares });
+    // Priced NOW rather than in writeSet alone, because the same-season rule
+    // below decides on the salary: writeSet re-prices identically, so nothing
+    // double-counts.
+    PV.priceAgainstBase(cards, { roundSalary: A.roundSalary, min: A.SALARY_MIN, max: A.SALARY_MAX });
+    builtSets.set(set, cards);
+  }
+
+  // ── ONE CARD PER PLAYER-SEASON, ACROSS THE TWO SETS ───────────────────────
+  //
+  // Jaylen Wells' best season IS his rookie season (2024-25), which printed
+  // the same year twice — once per set. The user's rule: "If it qualifies as
+  // a super season, leave it a super season and give it that formatting. If
+  // it's just a best season like Wells, make it a rookie card with an
+  // additional best season badge." The gold line decides, as it decides the
+  // pill; the losing set records the card on its excluded list, and the
+  // surviving card carries the other set's fact as a second badge.
+  // NOT the exclusion lists: those mean "the fact is printed on the BASE
+  // card" and feed card-badges.json. A twin's fact moves to the other SPECIAL
+  // card instead, so each set records its side in `mergedIntoTwin` and the
+  // base badges stay exactly what they were.
+  const mergedIntoTwin = { [SUPER_SEASON_SET]: [], [ROOKIE_SET]: [] };
+  {
+    const ss = builtSets.get(SUPER_SEASON_SET);
+    const rk = builtSets.get(ROOKIE_SET);
+    const rkByKey = new Map(rk.map(c => [`${c.bbrefId}|${c.season}`, c]));
+    const merged = [];
+    for (const card of [...ss]) {
+      const twin = rkByKey.get(`${card.bbrefId}|${card.season}`);
+      if (!twin) continue;
+      // Gold also demands a season the floors actually trust: Leonard
+      // Miller's 53-minute rookie year priced at 960 through sheer small-
+      // sample noise, and a fallback-eligible season must not claim the gold
+      // form on the strength of an artifact.
+      const trusted =
+        (card.games ?? 0) >= BEST_SEASON_MIN_GAMES &&
+        (card.games ?? 0) * (card.mpg ?? 0) >= BEST_SEASON_MIN_MINUTES;
+      if (trusted && (card.salary ?? 0) >= SUPER_SEASON_MIN_SALARY) {
+        rk.splice(rk.indexOf(twin), 1);
+        mergedIntoTwin[ROOKIE_SET].push({
+          name: card.name,
+          reason: `rookie season is his Super Season — one ${card.seasonLabel} card, gold, in the Super Season set, wearing the rookie badge too`,
+        });
+        card.badges = ['rookie'];
+        merged.push(`${card.name} (super season keeps it)`);
+      } else {
+        ss.splice(ss.indexOf(card), 1);
+        mergedIntoTwin[SUPER_SEASON_SET].push({
+          name: card.name,
+          reason: `best season is his rookie season — one ${card.seasonLabel} card in the Rookie set, wearing the best-season badge too`,
+        });
+        twin.badges = ['best-season'];
+        merged.push(`${card.name} (rookie keeps it)`);
+      }
+    }
+    log(`  same-season twins: ${merged.length} collapsed — ${merged.join('; ') || 'none'}`);
+  }
+
   for (const [set, selections, file] of [
     [SUPER_SEASON_SET, selection.superSeason, OUTPUT_FILES[SUPER_SEASON_SET]],
     [ROOKIE_SET, selection.rookie, OUTPUT_FILES[ROOKIE_SET]],
   ]) {
-    const cards = buildSet({ selections, currentRows, calibration, biometrics, positionShares });
+    const cards = builtSets.get(set);
     const noSize = selections.filter(
       sel => !biometrics.get(normalizeName(sel.player.name))
     ).length;
@@ -1136,6 +1281,11 @@ export function main({ log = console.log } = {}) {
         poolPlayers: pool.length,
         excluded,
         excludedCount: excluded.length,
+        // The same-season twins this set ceded to the other one — a third
+        // category beside carded and excluded, so the one-card-per-pool-player
+        // accounting still closes. See the twin rule above.
+        mergedIntoTwin: mergedIntoTwin[set],
+        mergedIntoTwinCount: mergedIntoTwin[set].length,
       },
     });
     log(

@@ -339,7 +339,7 @@
   font-weight: 700;
   letter-spacing: 0;
   text-transform: uppercase;
-  color: var(--accent-on-field);
+  color: var(--name-accent, var(--accent-on-field));
   text-shadow: 0 3px 6px var(--field-ink-shadow);
 }
 

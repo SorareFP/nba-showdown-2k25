@@ -428,6 +428,12 @@ export function fieldThemeVars(theme) {
     '--field-band-ink': theme.bandInk,
     '--field-band-shadow': theme.bandShadow,
     '--accent-on-field': theme.accentOnField,
+    // The vertical name's own colour. Identical to the accent everywhere
+    // except under a treatment that repaints the accent and is told not to
+    // take the name with it — see greenAccent in treatments.js: "make sure
+    // the names on rookie cards aren't green unless that's within the team
+    // color code."
+    '--name-accent': theme.nameAccent ?? theme.accentOnField,
     '--stripe-tonal': theme.stripeTonal,
     '--stripe-secondary': theme.stripeSecondary,
   };

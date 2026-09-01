@@ -259,6 +259,7 @@ export function legendShootingInput(row, seasonBasis, referenceBasis) {
     threePct: shift('fgPct3'),
     paintAttempts: row.fg2aTotal ?? 0,
     threeAttempts: row.fg3aTotal ?? 0,
+    threeRate: row.fg3a100 ?? 0,
   };
 }
 
@@ -566,6 +567,7 @@ export function main({ log = console.log } = {}) {
       threePct: r.fgPct3,
       paintAttempts: r.fg2aTotal ?? 0,
       threeAttempts: r.fg3aTotal ?? 0,
+      threeRate: r.fg3a100 ?? 0,
     })),
     ...selections.map(s =>
       legendShootingInput(s.best, seasons.get(s.best.season).shooting, reference.shooting)

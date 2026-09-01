@@ -100,8 +100,12 @@ describe('the 2025-26 pool', () => {
   // 2025-26 season was cut short by injury, plus Ty Jerome by name). Update
   // this number, deliberately, when the list changes — and see
   // scripts/cardgen/generatePool.test.js, which checks the composition itself.
-  it('loads the whole 350-player pool', () => {
-    expect(POOL_PLAYERS).toHaveLength(350);
+  it('loads the whole 354-player pool', () => {
+    // 354, not 350: four players who appear in NO 2025-26 table at all are
+    // carded from their last healthy season and join the pool for their
+    // IDENTITY, because the studio takes a player's identity from here and a
+    // card nobody can find cannot be given a photo. See carryForward.js.
+    expect(POOL_PLAYERS).toHaveLength(354);
   });
 
   it('gives every player a unique id', () => {
@@ -199,6 +203,7 @@ describe('resolved teams overlaid on the pool', () => {
     expect(stuck).toEqual([
       'Cam Thomas',
       'Vince Williams Jr.',
+      'John Konchar',
       'Ochai Agbaji',
       'Guerschon Yabusele',
     ]);
@@ -206,10 +211,16 @@ describe('resolved teams overlaid on the pool', () => {
 
   it('keeps every pool player, including the ones it could not resolve', async () => {
     // The resolved file is SHORTER than the pool — the generator emits only
-    // players it could give a real team, and 4 have none from any source.
-    // Reading it as the list rather than as an overlay would silently drop them.
+    // players it could give a real team. Reading it as the list rather than as
+    // an overlay would silently drop the rest.
+    //
+    // Tied to the UNTHEMED SET rather than to a number: who is unresolvable
+    // moves whenever a roster does, and a magic constant here just breaks on
+    // somebody signing a contract. What must hold is that the gap is exactly
+    // the players nothing could place.
     const resolved = (await import('../../card-data/generated/player-teams-2026.json')).default;
-    expect(POOL_PLAYERS.length - resolved.length).toBe(4);
+    const stuck = POOL_PLAYERS.filter(p => MULTI_TEAM.test(p.team));
+    expect(POOL_PLAYERS.length - resolved.length).toBe(stuck.length);
   });
 
   it('gives resolved players the personId the headshot fallback needs', () => {
@@ -226,10 +237,13 @@ describe('resolved teams overlaid on the pool', () => {
   });
 
   it('names every team in a form the card theming knows', () => {
-    // A team abbreviation getTeam() cannot find renders grey with no logo. The
-    // four unresolved players are the only ones allowed to look like that.
+    // A team abbreviation getTeam() cannot find renders grey with no logo. Only
+    // the players carrying a multi-team aggregate code are allowed to look like
+    // that — stated as a set rather than a count, so a signing moves it without
+    // breaking it.
     const unthemed = POOL_PLAYERS.filter(p => getTeam(p.team).name === 'Unknown').map(p => p.name);
-    expect(unthemed).toHaveLength(4);
+    const stuck = POOL_PLAYERS.filter(p => MULTI_TEAM.test(p.team)).map(p => p.name);
+    expect(unthemed).toEqual(stuck);
   });
 });
 

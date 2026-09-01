@@ -189,16 +189,27 @@ const readJson = file => JSON.parse(fs.readFileSync(file, 'utf8'));
  */
 export function resolvePlayerIds(pool, rows, season = LAST_SEASON) {
   const current = new Map();
+  // FALLS BACK TO THE MOST RECENT SEASON A PLAYER HAS, because the pool now
+  // contains men with no current-season row at all: the carried-forward
+  // players (Haliburton, Irving, Lillard, VanVleet) sat out entirely and are
+  // carded from their last healthy year. They have full careers in the archive,
+  // so the id is there — just not under this season. Without the fallback they
+  // resolve to nothing and every downstream set reports them as unaccounted.
+  const latest = new Map();
   for (const row of rows) {
-    if (row.season !== season) continue;
     const key = normalizeName(row.name);
-    const prev = current.get(key);
-    if (!prev || (row.games ?? 0) > (prev.games ?? 0)) current.set(key, row);
+    if (row.season === season) {
+      const prev = current.get(key);
+      if (!prev || (row.games ?? 0) > (prev.games ?? 0)) current.set(key, row);
+    }
+    const seen = latest.get(key);
+    if (!seen || row.season > seen.season) latest.set(key, row);
   }
   const ids = new Map();
   const missing = [];
   for (const p of pool) {
-    const hit = current.get(normalizeName(p.name));
+    const key = normalizeName(p.name);
+    const hit = current.get(key) ?? latest.get(key);
     if (hit) ids.set(p.name, hit.playerId);
     else missing.push(p.name);
   }
@@ -415,6 +426,8 @@ export function historicalShootingInput(season) {
     threePct: season.fgPct3 ?? null,
     paintAttempts: S.attemptsFromPer100(season.fg2a100, season.minutes),
     threeAttempts: S.attemptsFromPer100(season.fg3a100, season.minutes),
+    // Attempts per 100 — the signal for whether he shoots threes at all.
+    threeRate: season.fg3a100 ?? 0,
   };
 }
 

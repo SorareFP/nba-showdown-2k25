@@ -314,14 +314,19 @@ describe('the base set\'s badges', () => {
     // a card. The rookie set cannot move at all — a rookie year carries no
     // floor, because it is whatever it was.
     //
+    // AND 210 -> 214 WHEN THE CARRIED-FORWARD PLAYERS JOINED THE POOL, which is
+    // not the badge either: Haliburton, Irving, Lillard and VanVleet are carded
+    // from their last healthy season and are pool members like anyone else, so
+    // each has a best season to card. See carryForward.js.
+    //
     // AND 209 -> 210 WHEN VORP JOINED THE RULE, which is the same mechanism a
     // second time: three players (Josh Hart, Mitchell Robinson, Norman Powell)
     // whose 2026 outscored an earlier year on RATE now have that longer earlier
     // year carded, and two (Jamal Murray, Moses Moody) go the other way. The
     // rookie set is untouched by the metric set entirely — WHICH season a
     // rookie card is cannot depend on how seasons are scored.
-    expect(SUPER.cards.length).toBe(210);
-    expect(ROOKIE.cards.length).toBe(317);
+    expect(SUPER.cards.length).toBe(214);
+    expect(ROOKIE.cards.length).toBe(321);
     expect(SUPER.cards.length + SUPER.excluded.length).toBe(POOL.length);
     expect(ROOKIE.cards.length + ROOKIE.excluded.length).toBe(POOL.length);
   });

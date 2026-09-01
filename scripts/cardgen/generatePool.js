@@ -28,6 +28,8 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { REPO_ROOT } from './cache.js';
 import { readForceInclude } from './forceInclude.js';
+import { readCarryForward, resolveCarryForward } from './carryForward.js';
+import { normalizeName } from './resolveTeams.js';
 import {
   fetchPerGameStats,
   filterPlayerPool,
@@ -68,6 +70,24 @@ export async function main({ log = console.log } = {}) {
   const forceInclude = readForceInclude();
   const all = await fetchPerGameStats(POOL_SEASON);
   const { pool, byRule, forced, unmatched } = buildPool(all, { forceInclude });
+
+  // CARRIED-FORWARD PLAYERS join the pool even though no 2025-26 row exists for
+  // them, because the pool is what the studio takes a player's IDENTITY from —
+  // a card nobody can find in the studio cannot be given a photo. Their STATS
+  // come from their last healthy season instead; generateCards skips them in
+  // the normal build for exactly that reason. See carryForward.js.
+  const carried = resolveCarryForward(readCarryForward());
+  for (const c of carried.resolved) {
+    if (pool.some(p => normalizeName(p.name) === normalizeName(c.name))) continue;
+    pool.push({
+      name: c.name,
+      team: c.team,
+      pos: c.row.position ?? 'SF',
+      games: c.row.games ?? 0,
+      mpg: Number((c.row.mpg ?? 0).toFixed(1)),
+      carriedFrom: c.season,
+    });
+  }
 
   // Two-space indent, matching the file as it was first committed. Not
   // cosmetic: re-indenting rewrites all 2,450 lines, and a diff that touches

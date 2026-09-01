@@ -2448,5 +2448,37 @@
     "pos": "PF",
     "games": 52,
     "mpg": 12
+  },
+  {
+    "name": "Tyrese Haliburton",
+    "team": "IND",
+    "pos": "PG",
+    "games": 73,
+    "mpg": 33.5,
+    "carriedFrom": 2025
+  },
+  {
+    "name": "Kyrie Irving",
+    "team": "DAL",
+    "pos": "PG",
+    "games": 50,
+    "mpg": 36.1,
+    "carriedFrom": 2025
+  },
+  {
+    "name": "Damian Lillard",
+    "team": "POR",
+    "pos": "PG",
+    "games": 58,
+    "mpg": 36.1,
+    "carriedFrom": 2025
+  },
+  {
+    "name": "Fred VanVleet",
+    "team": "HOU",
+    "pos": "PG",
+    "games": 60,
+    "mpg": 35.2,
+    "carriedFrom": 2025
   }
 ]

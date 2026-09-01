@@ -188,6 +188,21 @@ export const attemptsFromPer100 = (per100, minutes, pace) =>
 export const SHRINKAGE_QUALIFYING_ATTEMPTS = 50;
 
 /**
+ * The hardest three-point line a card can print, and how much wider the
+ * three-point spread is than the Shot Line's.
+ *
+ * 20 means a natural 20, which is what a player who cannot shoot should need.
+ * The Shot Line stops at 18 because it gates every shot; a three is one shot
+ * type and the league is far more unequal at it.
+ */
+export const THREE_LINE_MAX = 20;
+export const THREE_LINE_SPREAD = 1.9;
+
+/** What a Shot Line of 12 against a three line of 20 implies, and its mirror. */
+export const THREE_BOOST_MIN = -8;
+export const THREE_BOOST_MAX = 5;
+
+/**
  * Empirical-Bayes shrinkage of a shooting percentage toward the league mean.
  *
  *     adjusted = (made + mean * k) / (attempts + k)
@@ -224,16 +239,74 @@ export function fitShrinkage(samples) {
   const trueVar = Math.max(observed.sd ** 2 - sampling, 1e-6);
   const k = (mean * (1 - mean)) / trueVar;
 
+  // THE PRIOR IS A FUNCTION OF VOLUME, NOT A FLAT LEAGUE MEAN, and on three-point
+  // shooting that is not a refinement — a flat mean is provably wrong. Measured
+  // on the 2025-26 pool:
+  //
+  //     3PA per 100    n    mean 3P%
+  //     0-1           47      .247
+  //     1-3           43      .305
+  //     3-6          127      .330
+  //     6-10         271      .346
+  //     10-15        107      .361
+  //
+  // against a league mean of .335. A player who takes under one three per
+  // hundred possessions shoots .247, nine points below the mean he was being
+  // shrunk toward. LOW VOLUME IS EVIDENCE, not an absence of it: coaches do not
+  // let bad shooters shoot, so shooting rarely is itself a strong signal.
+  //
+  // The visible damage was Jakob Poeltl. His TS% is .644 -- the best of any name
+  // in this comment, because he only takes dunks -- so he earned a Shot Line of
+  // 12, and his 3P% of .329 on 0.4 attempts per 100 shrank to the league mean
+  // and earned a 3PT Boost of 0. Effective three-point line 12, exactly Stephen
+  // Curry's, while Donovan Mitchell sat at 15 and converted 15 points less
+  // often.
+  //
+  // Fitted rather than assumed: a volume-weighted least squares of the rate on
+  // log(1 + attempts), which is the shape the table above has.
+  //
+  // CONDITIONED ON THE RATE, NOT THE ATTEMPT COUNT. Those are different
+  // questions and only one of them is about the player. A man who takes 0.3
+  // threes per 100 across a full season and one who takes 9 per 100 in a
+  // handful of games can arrive with the same ~10 attempts, and only the first
+  // is a non-shooter. Fitting on the count treated Daniel Gafford -- .106 on
+  // 0.3 per 100 -- as a .29 shooter and left him converting threes as often as
+  // Donovan Mitchell.
+  const priorFit = (() => {
+    const pts = usable
+      .filter(s => Number.isFinite(s.rate))
+      .map(s => ({ x: Math.log1p(s.rate), y: s.pct, w: Math.min(s.n, 200) }));
+    const sw = pts.reduce((a, q) => a + q.w, 0);
+    if (!(sw > 0)) return null;
+    const mx = pts.reduce((a, q) => a + q.w * q.x, 0) / sw;
+    const my = pts.reduce((a, q) => a + q.w * q.y, 0) / sw;
+    const vx = pts.reduce((a, q) => a + q.w * (q.x - mx) ** 2, 0) / sw;
+    if (!(vx > 1e-9)) return null;
+    const cov = pts.reduce((a, q) => a + q.w * (q.x - mx) * (q.y - my), 0) / sw;
+    return { slope: cov / vx, intercept: my - (cov / vx) * mx };
+  })();
+
+  /** The rate a player of this VOLUME is expected to shoot, before his own data. */
+  const priorAt = rate => {
+    if (!priorFit || !Number.isFinite(rate) || rate < 0) return mean;
+    const raw = priorFit.intercept + priorFit.slope * Math.log1p(rate);
+    // Never outside what the league actually produces.
+    return Math.min(Math.max(raw, 0.01), 0.99);
+  };
+
   return {
     mean,
     k,
     trueSd: Math.sqrt(trueVar),
     observedSd: observed.sd,
     qualified: qualified.length,
-    apply(pct, n) {
-      if (!Number.isFinite(n) || n <= 0) return mean;
+    priorFit,
+    priorAt,
+    apply(pct, n, rate) {
+      const prior = priorAt(rate);
+      if (!Number.isFinite(n) || n <= 0) return prior;
       const p = Number.isFinite(pct) ? Math.min(Math.max(pct, 0), 1) : mean;
-      return (p * n + mean * k) / (n + k);
+      return (p * n + prior * k) / (n + k);
     },
   };
 }
@@ -262,6 +335,25 @@ export function fitLinearMap(rawValues, target) {
 export function compressShotLine(raw, map) {
   const v = Math.round(map.apply(raw));
   return Math.min(Math.max(v, map.target.min), map.target.max);
+}
+
+
+/**
+ * The 3PT Boost that puts a card's effective three-point line where its 3P%
+ * says it belongs.
+ *
+ * `shotLine` is already compressed; `threeLine` is raw, so it goes through the
+ * same affine map before the two can be subtracted. Clamped to the range the
+ * finished set actually prints.
+ */
+export function threePtBoostFor(shotLine, threeLine, shape) {
+  if (!Number.isFinite(shotLine) || !Number.isFinite(threeLine)) return 0;
+  const target = compressShotLine(threeLine, shape.lineMap ?? shape);
+  const boost = shotLine - target;
+  if (!Number.isFinite(boost)) return 0;
+  // Clamped to what the two line ranges can actually produce, not to the
+  // finished set's old +/-5: a 12 Shot Line against a 20 three line is -8.
+  return Math.min(Math.max(Math.round(boost), THREE_BOOST_MIN), THREE_BOOST_MAX);
 }
 
 /**
@@ -334,19 +426,23 @@ export function rawLines({ tsPct, paintPct, threePct }) {
  * percentages are a different matter: a center can finish a season with nine
  * three-point attempts, and that is the case the gate exists for.
  *
- * `players` need `{ tsPct, paintPct, threePct, paintAttempts, threeAttempts }`.
+ * `players` need `{ tsPct, paintPct, threePct, paintAttempts, threeAttempts, threeRate }`.
+ * `threeRate` is attempts per 100 possessions — the thing that says whether a
+ * player is a shooter at all, which the attempt COUNT does not.
  */
 export function buildShootingLayer(players, { shotLineTarget, paint = {}, three = {} }) {
   const shrink = {
     paint: fitShrinkage(players.map(p => ({ pct: p.paintPct, n: p.paintAttempts }))),
-    three: fitShrinkage(players.map(p => ({ pct: p.threePct, n: p.threeAttempts }))),
+    three: fitShrinkage(
+      players.map(p => ({ pct: p.threePct, n: p.threeAttempts, rate: p.threeRate }))
+    ),
   };
 
   const raw = players.map(p =>
     rawLines({
       tsPct: p.tsPct,
       paintPct: shrink.paint.apply(p.paintPct, p.paintAttempts),
-      threePct: shrink.three.apply(p.threePct, p.threeAttempts),
+      threePct: shrink.three.apply(p.threePct, p.threeAttempts, p.threeRate),
     })
   );
   // The literal rule, ungated and uncompressed — reported so the compression can
@@ -356,6 +452,29 @@ export function buildShootingLayer(players, { shotLineTarget, paint = {}, three 
   );
 
   const map = fitLinearMap(raw.map(r => r.exactShotLine), shotLineTarget);
+  // The three line gets its OWN map onto the SAME printed range. Its raw scale
+  // is not the Shot Line's -- raw shot lines run about 5-12 off TS% and raw
+  // three lines about 13-15 off 3P%, because 3P% is a much lower percentage --
+  // so putting a three line through the Shot Line's map penalises the entire
+  // league by five rolls. Same target, own spread: a three is made as hard as a
+  // shot, and the ORDERING is three-point ability.
+  // A WIDER RANGE THAN THE SHOT LINE, deliberately. Three-point ability varies
+  // far more than overall shooting does -- the pool runs from Daniel Gafford at
+  // .106 to Luke Kennard at .440 -- and squeezing that into the Shot Line's
+  // 12-18 makes the worst shooter in the league only six rolls worse than the
+  // best. Extending the top to 20 lets a non-shooter need a natural 20, which
+  // is what he should need, at the cost of a boost that prints as -8 on his
+  // card. The BOTTOM is unchanged: nobody makes a three more easily than the
+  // best shot in the game.
+  const threeLineTarget = {
+    ...shotLineTarget,
+    max: THREE_LINE_MAX,
+    sd: shotLineTarget.sd * THREE_LINE_SPREAD,
+  };
+  const threeLineMap = fitLinearMap(
+    raw.map(r => r.threeLine).filter(Number.isFinite),
+    threeLineTarget
+  );
   const threeStrength = meanSd(raw.map(r => r.exactThreeStrength));
   const poolMean = {
     paintGap: meanSd(raw.map(r => r.exactPaintGap)).mean,
@@ -382,6 +501,9 @@ export function buildShootingLayer(players, { shotLineTarget, paint = {}, three 
     deadband: three.deadband ?? 0,
     min: three.min ?? -5,
     max: three.max ?? 5,
+    // The three line's own map onto the printed range, so the two lines are
+    // comparable before they are subtracted.
+    lineMap: threeLineMap,
   };
 
   return {
@@ -391,12 +513,36 @@ export function buildShootingLayer(players, { shotLineTarget, paint = {}, three 
     threeStrengthSd: threeStrength.sd,
     paintShape,
     threeShape,
-    players: players.map((p, i) => ({
-      raw: raw[i],
-      literal: literal[i],
-      shotLine: compressShotLine(raw[i].exactShotLine, map),
-      paintBoost: compressBoost(raw[i].exactPaintGap, paintShape),
-      threePtBoost: compressBoost(raw[i].exactThreeStrength, threeShape),
-    })),
+    players: players.map((p, i) => {
+      const shotLine = compressShotLine(raw[i].exactShotLine, map);
+      return {
+        raw: raw[i],
+        literal: literal[i],
+        shotLine,
+        paintBoost: compressBoost(raw[i].exactPaintGap, paintShape),
+        // THE BOOST IS AN OFFSET TO AN ABSOLUTE LINE, not a skill score.
+        //
+        // It was `compressBoost(exactThreeStrength)` -- three-point ability
+        // measured against the league and applied on top of whatever Shot Line
+        // the player earned. The flaw is in that last clause. A Shot Line comes
+        // from TS%, and TS% CONTAINS DUNKS: Jakob Poeltl shoots .644 because he
+        // only takes shots at the rim, so he EARNED a Shot Line of 12 and, with
+        // his 0.4 threes per 100 shrinking to a neutral boost, converted threes
+        // exactly as often as Stephen Curry while Donovan Mitchell sat 15 points
+        // worse.
+        //
+        // So the boost is now sized to land the EFFECTIVE line where the
+        // player's three-point shooting says it belongs: `shotLine - boost`
+        // equals the line his 3P% earns on its own. That is what
+        // memory/shooting_attributes_methodology.md records the finished set as
+        // doing -- "the boost is sized to hit a target probability".
+        //
+        // This is NOT the `threeGap` rule the header rejected. That one fed the
+        // gap into compressBoost as a raw SIGNAL, which re-centred and rescaled
+        // it and let a specialist's own threes inside TS% cancel his boost. Here
+        // the gap is an OFFSET between two lines that are each already absolute.
+        threePtBoost: threePtBoostFor(shotLine, raw[i].threeLine, threeShape),
+      };
+    }),
   };
 }

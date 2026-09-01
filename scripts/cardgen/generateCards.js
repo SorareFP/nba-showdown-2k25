@@ -90,6 +90,8 @@ import { trb100 } from './sources/dunksAndThrees.js';
 import { CALIBRATION_FILE } from './calibrateAttributes.js';
 import { CURRENT_STATS_SEASON } from './fetchCalibrationData.js';
 import { indexPositionShares, loadPositionShares } from './positionShares.js';
+import { readCarryForward, resolveCarryForward, buildCarryForwardCards } from './carryForward.js';
+import { buildSet, resolvePlayerIds } from './generateSpecialSets.js';
 import { playerIdFromName } from '../../src/cards/playerId.js';
 
 const GEN_DIR = path.join(REPO_ROOT, 'card-data', 'generated');
@@ -144,6 +146,9 @@ export function actualShootingInput(rate) {
     threePct: rate?.fgPct3 ?? null,
     paintAttempts: S.attemptsFromPer75(rate?.fgaRimPer75, rate?.minutes),
     threeAttempts: S.attemptsFromPer75(rate?.fga3Per75, rate?.minutes),
+    // Per 100 possessions, the signal for WHETHER HE SHOOTS AT ALL — see the
+    // volume prior in fitShrinkage. per-75 to per-100 is * 100/75.
+    threeRate: (rate?.fga3Per75 ?? 0) * (100 / 75),
   };
 }
 
@@ -276,16 +281,28 @@ export function generateCards({
   // every split falls back to the position label.
   positionShares = null,
   overrides = {},
+  // Built by the caller, which owns the Basketball-Reference season tables the
+  // historical builder needs. Absent in tests, which exercise the pool path.
+  carryForwardCards = null,
 }) {
+  // The carried-forward players are IN THE POOL, because the studio takes its
+  // identity from the pool and a card nobody can find has no use. But their
+  // stats do not exist for this season, so the normal build must skip them —
+  // they are built from their last healthy season instead. See carryForward.js.
+  const carriedNames = new Set(
+    (carryForwardCards?.cards ?? []).map(c => normalizeName(c.name))
+  );
   const teamIndex = indexByName(teams);
   const spIndex = indexByName(speedPower);
   const rateIndex = indexByName(rates);
   const actualIndex = indexByName(actual);
 
-  const resolved = poolPlayers.map(p => {
-    const team = teamIndex.get(normalizeName(p.name));
-    return { ...p, team: team?.team ?? p.team, pos: team?.pos ?? p.pos };
-  });
+  const resolved = poolPlayers
+    .filter(p => !carriedNames.has(normalizeName(p.name)))
+    .map(p => {
+      const team = teamIndex.get(normalizeName(p.name));
+      return { ...p, team: team?.team ?? p.team, pos: team?.pos ?? p.pos };
+    });
 
   // The shooting layer is a POOL operation, not a per-player one: the
   // compression scale, the shrinkage strength and the centre of each boost are
@@ -335,13 +352,20 @@ export function generateCards({
     );
   });
 
+  // CARRIED-FORWARD PLAYERS, appended before pricing so they are valued against
+  // the same field as everyone else. These are men who appear in NO 2025-26
+  // table at all — Haliburton, Irving, Lillard, VanVleet — so the pool rule and
+  // the force-include list both have nothing to match. See carryForward.js.
+  const carried = carryForwardCards ?? { cards: [], missing: [] };
+  const cards2 = [...cards, ...carried.cards];
+
   // Salary is a POST-PASS, and has to be: play value is measured against a
   // field, so it does not exist until every card in that field has its
   // attributes. Overrides are applied FIRST so that a hand-tuned chart is
   // priced as the card actually prints, not as the generator first drew it.
-  const byId = Object.fromEntries(cards.map(c => [c.id, c]));
+  const byId = Object.fromEntries(cards2.map(c => [c.id, c]));
   const overridden = applyOverrides(byId, overrides);
-  const priced = cards.map(c => overridden[c.id]);
+  const priced = cards2.map(c => overridden[c.id]);
   const salaries = PV.priceSet(priced, {
     roundSalary: A.roundSalary,
     min: A.SALARY_MIN,
@@ -552,6 +576,58 @@ export function reportChartFit({ cards, targets, log }) {
   }
 }
 
+
+/**
+ * Cards for players with no 2025-26 row at all, built from their last healthy
+ * season. See carryForward.js for why this is not the force-include list.
+ */
+function buildCarried({ calibration, log }) {
+  const entries = readCarryForward();
+  if (entries.length === 0) return { cards: [], missing: [] };
+  const { resolved, missing: unresolved } = resolveCarryForward(entries);
+
+  // Basketball-Reference season rows, for the seasons actually named.
+  const advanced = new Map();
+  const perPoss = new Map();
+  for (const season of [...new Set(resolved.map(r => r.season))]) {
+    for (const [kind, target] of [['advanced', advanced], ['perPoss', perPoss]]) {
+      const rows = readCache(`bbref-${season}-${kind}-full`) ?? [];
+      for (const row of rows) target.set(`${normalizeName(row.name)}|${season}`, { ...row, season });
+    }
+  }
+
+  // The current pool's own season, the shooting layer's calibration basis —
+  // assembled the way generateSpecialSets does.
+  const history = readCache('bbref-history');
+  const archiveRows = history?.data?.rows ?? history?.rows ?? [];
+  const byId = new Map();
+  for (const row of archiveRows) {
+    if (row.season !== Number(String(CURRENT_STATS_SEASON).slice(-4))) continue;
+    const prev = byId.get(row.playerId);
+    if (!prev || (row.games ?? 0) > (prev.games ?? 0)) byId.set(row.playerId, row);
+  }
+  const pool = readJson(path.join(GEN_DIR, 'player-pool-2026.json'));
+  const poolIds = new Set(resolvePlayerIds(pool, archiveRows).ids.values());
+  const currentRows = [...byId.values()].filter(r => poolIds.has(r.playerId));
+
+  const built = buildCarryForwardCards(resolved, {
+    buildSet,
+    currentRows,
+    calibration,
+    biometrics: indexBiometrics(loadBiometrics()),
+    positionShares: indexPositionShares(loadPositionShares()),
+    advanced,
+    perPoss,
+  });
+  const bad = [...unresolved, ...built.missing];
+  log(
+    `Carried forward: ${built.cards.length} of ${entries.length} — ` +
+      built.cards.map(c => `${c.name} (${c.carriedFrom}, ${c.team})`).join(', ') +
+      (bad.length ? ` | UNRESOLVED: ${bad.join(', ')}` : '')
+  );
+  return built;
+}
+
 export function main({ log = console.log } = {}) {
   const calibration = readJson(CALIBRATION_FILE);
   const rates = readCache(`dunksandthrees-epm-${CURRENT_STATS_SEASON}`);
@@ -585,6 +661,7 @@ export function main({ log = console.log } = {}) {
     names,
     targets,
   } = generateCards({
+    carryForwardCards: buildCarried({ calibration, log }),
     pool: readJson(path.join(GEN_DIR, 'player-pool-2026.json')),
     teams: readJson(path.join(GEN_DIR, 'player-teams-2026.json')),
     speedPower: readJson(path.join(GEN_DIR, 'speed-power-totals-2026.json')),

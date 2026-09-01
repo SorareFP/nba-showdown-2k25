@@ -206,6 +206,7 @@ export function wnbaShootingInput(row) {
     threePct: row.fgPct3 ?? null,
     paintAttempts: row.fg2aTotal ?? 0,
     threeAttempts: row.fg3aTotal ?? 0,
+    threeRate: row.fg3a100 ?? 0,
   };
 }
 

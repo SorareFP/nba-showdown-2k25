@@ -165,8 +165,21 @@ describe('the committed table', () => {
       readFileSync(new URL('../../card-data/generated/player-pool-2026.json', import.meta.url), 'utf8')
     );
     const index = indexPositionShares(records);
-    const missing = pool.filter(p => !index.forName(p.name, 2026));
+    // The CARRIED-FORWARD players are exempt, and necessarily: they played no
+    // 2025-26 minutes, so there is no play-by-play row for them in the season
+    // this checks. Their card reads the shares of the season it is BUILT from
+    // instead, which the assertion below holds. See carryForward.js.
+    const carried = pool.filter(p => p.carriedFrom != null);
+    const missing = pool
+      .filter(p => p.carriedFrom == null)
+      .filter(p => !index.forName(p.name, 2026));
     expect(missing.map(p => p.name)).toEqual([]);
+    // They have no row in ANY season here, and that is the generator's own
+    // stated behaviour rather than a gap: it reports "no 2026 play-by-play row"
+    // for them and says they keep the position-LABEL split. Asserted so the
+    // fallback is a decision on the record and not an accident nobody noticed.
+    expect(carried.length).toBeGreaterThan(0);
+    for (const p of carried) expect(index.forName(p.name, p.carriedFrom)).toBeFalsy();
   });
 
   it('reaches back far enough for the Rookie set s oldest card', () => {

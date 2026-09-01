@@ -142,6 +142,7 @@ describe('wnbaShootingInput', () => {
       threePct: 0.35,
       paintAttempts: 300,
       threeAttempts: 120,
+      threeRate: 0,
     });
   });
 

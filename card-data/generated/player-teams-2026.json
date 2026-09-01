@@ -2032,14 +2032,6 @@
     "personId": 1642920
   },
   {
-    "name": "John Konchar",
-    "team": "MIN",
-    "pos": "SG",
-    "games": 56,
-    "mpg": 19.9,
-    "personId": 1629723
-  },
-  {
     "name": "Kyle Anderson",
     "team": "TOR",
     "pos": "SF",
@@ -2766,5 +2758,41 @@
     "games": 52,
     "mpg": 12,
     "personId": 1630192
+  },
+  {
+    "name": "Tyrese Haliburton",
+    "team": "IND",
+    "pos": "PG",
+    "games": 73,
+    "mpg": 33.5,
+    "carriedFrom": 2025,
+    "personId": 1630169
+  },
+  {
+    "name": "Kyrie Irving",
+    "team": "DAL",
+    "pos": "PG",
+    "games": 50,
+    "mpg": 36.1,
+    "carriedFrom": 2025,
+    "personId": 202681
+  },
+  {
+    "name": "Damian Lillard",
+    "team": "POR",
+    "pos": "PG",
+    "games": 58,
+    "mpg": 36.1,
+    "carriedFrom": 2025,
+    "personId": 203081
+  },
+  {
+    "name": "Fred VanVleet",
+    "team": "HOU",
+    "pos": "PG",
+    "games": 60,
+    "mpg": 35.2,
+    "carriedFrom": 2025,
+    "personId": 1627832
   }
 ]

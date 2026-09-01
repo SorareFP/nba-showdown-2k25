@@ -91,7 +91,16 @@ describe('the committed pool honours the committed force-include list', () => {
     const forcedInPool = committedPool.filter(
       p => !(p.mpg >= POOL_RULE.minMpg && p.games >= POOL_RULE.minGames)
     );
-    expect(committedPool).toHaveLength(331 + forcedInPool.length);
+    // The CARRIED-FORWARD players are in the pool too and pass no rule at all —
+    // they have no 2025-26 row to test. They are identified by the field the
+    // generator stamps on them rather than by name, so adding one to
+    // card-data/carry-forward-2026.json does not break this test.
+    // Counted SEPARATELY, because they pass the rule on their carried season's
+    // games and minutes and so never appear in `forcedInPool` — they are in the
+    // pool for a third reason entirely.
+    const carried = committedPool.filter(p => p.carriedFrom != null);
+    expect(carried.length).toBeGreaterThan(0);
+    expect(committedPool).toHaveLength(331 + forcedInPool.length + carried.length);
   });
 
   it('would lose a player if his name were removed from the list', () => {

@@ -1,0 +1,27 @@
+{
+  "what": "Players who appear in NO 2025-26 table at all and are carded from their last healthy season instead.",
+  "whyNotForceInclude": "force-include-2026.json adds a player who PLAYED but missed the MPG/games bar — it matches a name against Basketball-Reference's 2025-26 per-game table and exits non-zero when the name is absent. These four have no row to match: zero games, so no row anywhere. Every stat layer would find nothing.",
+  "rule": "Named here, carded from `season`, wearing the team the current roster says they are on now. A player who returns to the floor should be removed from this file and left to the normal pool rule.",
+  "players": {
+    "Tyrese Haliburton": {
+      "season": 2025,
+      "reason": "Achilles. 73 games at 33.5 mpg and a 4.17 EPM in 2024-25, then nothing in 2025-26."
+    },
+    "Kyrie Irving": {
+      "season": 2025,
+      "reason": "ACL. 50 games at 36.1 mpg and a 3.40 EPM in 2024-25."
+    },
+    "Damian Lillard": {
+      "season": 2025,
+      "reason": "Achilles. 58 games at 36.1 mpg and a 3.16 EPM in 2024-25 — for MILWAUKEE. He signs in Portland, so the card is a Blazer while the stat line is a Buck."
+    },
+    "Fred VanVleet": {
+      "season": 2025,
+      "reason": "ACL. 60 games at 35.2 mpg and a 2.83 EPM in 2024-25."
+    }
+  },
+  "consideredAndExcluded": {
+    "Georges Niang": "-1.58 EPM in 2024-25. Below any bar the pool applies to a healthy player.",
+    "Terry Rozier": "-3.28 EPM in 2024-25."
+  }
+}

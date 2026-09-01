@@ -287,16 +287,26 @@ describe('buildShootingLayer — the 3PT boost', () => {
     expect(klay).toBeGreaterThan(jones);
   });
 
-  it('does not let a high TS% eat a shooter’s own boost', () => {
-    // Same 3P%, wildly different overall efficiency: the boost must not move.
+  it('gives the same 3P% the same EFFECTIVE three-point line, whatever the TS%', () => {
+    // THE INVARIANT MOVED, and it moved to the right quantity. It used to be
+    // "same 3P% -> same boost", which sounds like independence and is not: the
+    // number that decides a three-point check is `shotLine - boost`, and
+    // holding the BOOST equal while the Shot Lines differ makes the better
+    // finisher the better three-point shooter. That is exactly how Jakob
+    // Poeltl -- .644 TS% on dunks, 0.4 threes per 100 -- ended up converting
+    // threes as often as Stephen Curry.
+    //
+    // So the boost is now sized to land the effective line where 3P% says it
+    // belongs, and these two must differ in BOOST by exactly what they differ
+    // in Shot Line.
     const twins = [shooter(0.68, 0.4), shooter(0.47, 0.4), ...pool];
     const built = buildShootingLayer(twins, {
       shotLineTarget,
       three: { targetSd: 1.5118, deadband: 1.35 },
     });
-    expect(built.players[0].threePtBoost).toBe(built.players[1].threePtBoost);
-    // The Shot Lines still differ — only the boost is independent of them.
-    expect(built.players[0].shotLine).toBeLessThan(built.players[1].shotLine);
+    const [a, b] = built.players;
+    expect(a.shotLine).toBeLessThan(b.shotLine); // still a better overall shooter
+    expect(a.shotLine - a.threePtBoost).toBe(b.shotLine - b.threePtBoost);
   });
 
   it('scales the boost to the finished set’s own spread, not the Shot Line’s', () => {

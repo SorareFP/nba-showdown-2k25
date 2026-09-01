@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-01T15:20:31.257Z",
+ "generatedAt": "2026-09-01T15:23:05.549Z",
  "set": "rookie",
  "provisional": true,
  "sources": {
@@ -15717,7 +15717,7 @@
   {
    "id": "Kyrie_Irving",
    "name": "Kyrie Irving",
-   "team": "CLE04",
+   "team": "CLE16",
    "pos": "PG",
    "speed": 14,
    "power": 8,

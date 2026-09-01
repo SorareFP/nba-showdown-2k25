@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-01T15:20:31.844Z",
+ "generatedAt": "2026-09-01T15:23:06.015Z",
  "set": "summer-standouts",
  "provisional": true,
  "sources": {
@@ -1891,7 +1891,7 @@
   {
    "id": "JR_Smith",
    "name": "JR Smith",
-   "team": "CLE04",
+   "team": "CLE16",
    "pos": "SG",
    "speed": 14,
    "power": 10,
@@ -1944,7 +1944,7 @@
   {
    "id": "Kyrie_Irving",
    "name": "Kyrie Irving",
-   "team": "CLE04",
+   "team": "CLE16",
    "pos": "PG",
    "speed": 16,
    "power": 10,
@@ -2138,7 +2138,7 @@
   {
    "id": "Kevin_Love",
    "name": "Kevin Love",
-   "team": "CLE04",
+   "team": "CLE16",
    "pos": "PF",
    "speed": 10,
    "power": 14,

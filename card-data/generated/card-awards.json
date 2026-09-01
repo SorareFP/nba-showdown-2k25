@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-01T15:20:32.531Z",
+ "generatedAt": "2026-09-01T15:23:06.604Z",
  "source": "Basketball-Reference's season `advanced` tables, awards column — a voted award's suffix is its finishing position, so only -1 is a win — plus the same pages' `advanced_post` table, whose awards column holds one cell a season and that cell is always `Finals MVP-1`, plus each season index page's League Champion row and that team's roster, which is where the ring comes from and which is in no column at all",
  "declared": [
   "MVP",

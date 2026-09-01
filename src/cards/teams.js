@@ -138,7 +138,8 @@ export const HISTORICAL_TEAMS = {
   // franchises above. Colours are from general knowledge, marked unverified.
   DEN04: { name: 'Nuggets',  city: 'Denver',      abbr: 'DEN', primary: '#418FDE', secondary: '#FFC72C', logo: '/logos/DEN04.png', era: '2004-2012', unverifiedColors: true },
   SAC95: { name: 'Kings',    city: 'Sacramento',  abbr: 'SAC', primary: '#5A2D81', secondary: '#000000', logo: '/logos/SAC95.png', era: '1995-2016', unverifiedColors: true },
-  CLE04: { name: 'Cavaliers', city: 'Cleveland',  abbr: 'CLE', primary: '#860038', secondary: '#FDBB30', logo: '/logos/CLE04.png', era: '2004-2017', unverifiedColors: true },
+  CLE04: { name: 'Cavaliers', city: 'Cleveland',  abbr: 'CLE', primary: '#860038', secondary: '#FDBB30', logo: '/logos/CLE04.png', era: '2004-2010', unverifiedColors: true },
+  CLE16: { name: 'Cavaliers', city: 'Cleveland',  abbr: 'CLE', primary: '#860038', secondary: '#FDBB30', logo: '/logos/CLE16.png', era: '2011-2017', unverifiedColors: true },
   DET02: { name: 'Pistons',  city: 'Detroit',     abbr: 'DET', primary: '#C8102E', secondary: '#1D42BA', logo: '/logos/DET02.png', era: '2002-2005', unverifiedColors: true },
   LAC16: { name: 'Clippers', city: 'Los Angeles', abbr: 'LAC', primary: '#C8102E', secondary: '#1D428A', logo: '/logos/LAC16.png', era: '2016-2024', unverifiedColors: true },
   TOR96: { name: 'Raptors',  city: 'Toronto',     abbr: 'TOR', primary: '#753BBD', secondary: '#CE1141', logo: '/logos/TOR96.png', era: '1996-2006', unverifiedColors: true },
@@ -179,7 +180,10 @@ export const FRANCHISE_ERAS = {
     { from: 2013, to: 2018, key: 'DEN13' },
   ],
   SAC: [{ from: 1995, to: 2016, key: 'SAC95' }],
-  CLE: [{ from: 2004, to: 2017, key: 'CLE04' }],
+  CLE: [
+    { from: 2004, to: 2010, key: 'CLE04' },
+    { from: 2011, to: 2017, key: 'CLE16' },
+  ],
   DET: [
     { from: 2002, to: 2005, key: 'DET02' },
     { from: 2006, to: 2017, key: 'DET06' },

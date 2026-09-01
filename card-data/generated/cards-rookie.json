@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-01T15:08:46.596Z",
+ "generatedAt": "2026-09-01T15:20:31.257Z",
  "set": "rookie",
  "provisional": true,
  "sources": {
@@ -1024,7 +1024,7 @@
   {
    "id": "Andre_Drummond",
    "name": "Andre Drummond",
-   "team": "DET",
+   "team": "DET06",
    "pos": "C",
    "speed": 8,
    "power": 15,
@@ -14621,7 +14621,7 @@
   {
    "id": "Kentavious_Caldwell_Pope",
    "name": "Kentavious Caldwell-Pope",
-   "team": "DET",
+   "team": "DET06",
    "pos": "SG",
    "speed": 10,
    "power": 6,
@@ -15104,7 +15104,7 @@
   {
    "id": "Khris_Middleton",
    "name": "Khris Middleton",
-   "team": "DET",
+   "team": "DET06",
    "pos": "SG",
    "speed": 8,
    "power": 7,

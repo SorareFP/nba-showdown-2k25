@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-01T15:08:47.582Z",
+ "generatedAt": "2026-09-01T15:20:32.330Z",
  "set": "traded",
  "provisional": true,
  "sources": {
@@ -378,7 +378,7 @@
   {
    "id": "Allen_Iverson",
    "name": "Allen Iverson",
-   "team": "DET",
+   "team": "DET06",
    "pos": "PG",
    "speed": 11,
    "power": 6,

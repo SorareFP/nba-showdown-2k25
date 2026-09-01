@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-01T15:08:47.146Z",
+ "generatedAt": "2026-09-01T15:20:31.844Z",
  "set": "summer-standouts",
  "provisional": true,
  "sources": {
@@ -709,7 +709,7 @@
   {
    "id": "Rasheed_Wallace",
    "name": "Rasheed Wallace",
-   "team": "DET",
+   "team": "DET06",
    "pos": "PF",
    "speed": 10,
    "power": 14,

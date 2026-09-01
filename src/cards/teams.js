@@ -160,6 +160,7 @@ export const HISTORICAL_TEAMS = {
   PHX93: { name: 'Suns',     city: 'Phoenix',     abbr: 'PHX', primary: '#1D1160', secondary: '#E56020', logo: '/logos/PHX93.png', era: '1993-2013', unverifiedColors: true },
   SEA06: { name: 'SuperSonics', city: 'Seattle',  abbr: 'SEA', primary: '#00653A', secondary: '#FFC72C', logo: '/logos/SEA06.png', era: '2002-2008', unverifiedColors: true },
   DEN13: { name: 'Nuggets',  city: 'Denver',      abbr: 'DEN', primary: '#0E2240', secondary: '#FEC524', logo: '/logos/DEN13.png', era: '2013-2018', unverifiedColors: true },
+  DET06: { name: 'Pistons',  city: 'Detroit',     abbr: 'DET', primary: '#ED174C', secondary: '#0058A6', logo: '/logos/DET06.png', era: '2006-2017', unverifiedColors: true },
 };
 
 /**
@@ -179,7 +180,10 @@ export const FRANCHISE_ERAS = {
   ],
   SAC: [{ from: 1995, to: 2016, key: 'SAC95' }],
   CLE: [{ from: 2004, to: 2017, key: 'CLE04' }],
-  DET: [{ from: 2002, to: 2005, key: 'DET02' }],
+  DET: [
+    { from: 2002, to: 2005, key: 'DET02' },
+    { from: 2006, to: 2017, key: 'DET06' },
+  ],
   LAC: [
     { from: 1985, to: 2015, key: 'LAC84' },
     { from: 2016, to: 2024, key: 'LAC16' },

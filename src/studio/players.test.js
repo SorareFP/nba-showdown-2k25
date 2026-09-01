@@ -872,17 +872,18 @@ describe('the award marks the studio joins on', () => {
   });
 
   it('gives every card in every set an array, WNBA included', () => {
-    // The WNBA sets are not covered by the generator — Basketball-Reference
-    // serves that league under a different path — and "not covered" has to look
-    // exactly like "won nothing" rather than like a crash.
+    // Every set answers with an array — and since generateWnbaAwards.js
+    // closed the data gap, the WNBA sets carry real marks too: the voting
+    // pages' five awards plus the Finals ring. The base WNBA set stays empty
+    // only because its season is in progress and has no voting page yet.
     for (const set of [SUPER_SEASON_SET, ROOKIE_SET, WNBA_SET, WNBA_SUPER_SEASON_SET]) {
       for (const card of SOURCES[set].players) {
         expect(Array.isArray(card.awards), `${set} ${card.name}`).toBe(true);
       }
     }
-    for (const set of [WNBA_SET, WNBA_SUPER_SEASON_SET]) {
-      expect(SOURCES[set].players.every(c => c.awards.length === 0), set).toBe(true);
-    }
+    const legendsMarked = SOURCES[WNBA_SUPER_SEASON_SET].players.filter(c => c.awards.length > 0);
+    expect(legendsMarked.length).toBeGreaterThanOrEqual(8);
+    expect(SOURCES[WNBA_SET].players.every(c => c.awards.length === 0)).toBe(true);
   });
 
   it('never records a code the template cannot draw', () => {

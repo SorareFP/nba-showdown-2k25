@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-01T14:03:54.589Z",
+ "generatedAt": "2026-09-01T16:45:02.198Z",
  "set": "wnba-rookie",
  "provisional": true,
  "referenceSeason": 2026,
@@ -11,66 +11,82 @@
  },
  "excluded": [
   {
+   "id": "Awa_Fam",
    "name": "Awa Fam",
    "reason": "rookie season is the current one — her base card already is that season"
   },
   {
+   "id": "Azzi_Fudd",
    "name": "Azzi Fudd",
    "reason": "rookie season is the current one — her base card already is that season"
   },
   {
+   "id": "Charlisse_Leger_Walker",
    "name": "Charlisse Leger-Walker",
    "reason": "rookie season is the current one — her base card already is that season"
   },
   {
+   "id": "Cotie_McMahon",
    "name": "Cotie McMahon",
    "reason": "rookie season is the current one — her base card already is that season"
   },
   {
+   "id": "Flau_jae_Johnson",
    "name": "Flau'jae Johnson",
    "reason": "rookie season is the current one — her base card already is that season"
   },
   {
+   "id": "Gabriela_Jaquez",
    "name": "Gabriela Jaquez",
    "reason": "rookie season is the current one — her base card already is that season"
   },
   {
+   "id": "Georgia_Amoore",
    "name": "Georgia Amoore",
    "reason": "rookie season is the current one — her base card already is that season"
   },
   {
+   "id": "Kiki_Rice",
    "name": "Kiki Rice",
    "reason": "rookie season is the current one — her base card already is that season"
   },
   {
+   "id": "Laura_Juskaite",
    "name": "Laura Juškaitė",
    "reason": "rookie season is the current one — her base card already is that season"
   },
   {
+   "id": "Lauren_Betts",
    "name": "Lauren Betts",
    "reason": "rookie season is the current one — her base card already is that season"
   },
   {
+   "id": "Maria_Conde",
    "name": "Maria Conde",
    "reason": "rookie season is the current one — her base card already is that season"
   },
   {
+   "id": "Noemie_Brochant",
    "name": "Noémie Brochant",
    "reason": "rookie season is the current one — her base card already is that season"
   },
   {
+   "id": "Nyadiew_Puoch",
    "name": "Nyadiew Puoch",
    "reason": "rookie season is the current one — her base card already is that season"
   },
   {
+   "id": "Olivia_Miles",
    "name": "Olivia Miles",
    "reason": "rookie season is the current one — her base card already is that season"
   },
   {
+   "id": "Pauline_Astier",
    "name": "Pauline Astier",
    "reason": "rookie season is the current one — her base card already is that season"
   },
   {
+   "id": "Sydney_Taylor",
    "name": "Sydney Taylor",
    "reason": "rookie season is the current one — her base card already is that season"
   }

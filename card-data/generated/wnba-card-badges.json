@@ -1,0 +1,119 @@
+{
+ "generatedAt": "2026-09-01T16:45:02.200Z",
+ "set": "wnba",
+ "source": "the WNBA Rookie exclusion list: a player whose rookie season is the current one gets no card there, so the fact prints on her base card",
+ "badges": [
+  {
+   "id": "Awa_Fam",
+   "name": "Awa Fam",
+   "badges": [
+    "rookie"
+   ]
+  },
+  {
+   "id": "Azzi_Fudd",
+   "name": "Azzi Fudd",
+   "badges": [
+    "rookie"
+   ]
+  },
+  {
+   "id": "Charlisse_Leger_Walker",
+   "name": "Charlisse Leger-Walker",
+   "badges": [
+    "rookie"
+   ]
+  },
+  {
+   "id": "Cotie_McMahon",
+   "name": "Cotie McMahon",
+   "badges": [
+    "rookie"
+   ]
+  },
+  {
+   "id": "Flau_jae_Johnson",
+   "name": "Flau'jae Johnson",
+   "badges": [
+    "rookie"
+   ]
+  },
+  {
+   "id": "Gabriela_Jaquez",
+   "name": "Gabriela Jaquez",
+   "badges": [
+    "rookie"
+   ]
+  },
+  {
+   "id": "Georgia_Amoore",
+   "name": "Georgia Amoore",
+   "badges": [
+    "rookie"
+   ]
+  },
+  {
+   "id": "Kiki_Rice",
+   "name": "Kiki Rice",
+   "badges": [
+    "rookie"
+   ]
+  },
+  {
+   "id": "Laura_Juskaite",
+   "name": "Laura Juškaitė",
+   "badges": [
+    "rookie"
+   ]
+  },
+  {
+   "id": "Lauren_Betts",
+   "name": "Lauren Betts",
+   "badges": [
+    "rookie"
+   ]
+  },
+  {
+   "id": "Maria_Conde",
+   "name": "Maria Conde",
+   "badges": [
+    "rookie"
+   ]
+  },
+  {
+   "id": "Noemie_Brochant",
+   "name": "Noémie Brochant",
+   "badges": [
+    "rookie"
+   ]
+  },
+  {
+   "id": "Nyadiew_Puoch",
+   "name": "Nyadiew Puoch",
+   "badges": [
+    "rookie"
+   ]
+  },
+  {
+   "id": "Olivia_Miles",
+   "name": "Olivia Miles",
+   "badges": [
+    "rookie"
+   ]
+  },
+  {
+   "id": "Pauline_Astier",
+   "name": "Pauline Astier",
+   "badges": [
+    "rookie"
+   ]
+  },
+  {
+   "id": "Sydney_Taylor",
+   "name": "Sydney Taylor",
+   "badges": [
+    "rookie"
+   ]
+  }
+ ]
+}

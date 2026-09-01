@@ -92,7 +92,7 @@ export function main({ log = console.log } = {}) {
     if (career.length === 0) { unmatched.push(card.name); continue; }
     const first = career.slice().sort((a, b) => a.season - b.season)[0];
     if (first.season === WNBA_SEASON) {
-      excluded.push({ name: card.name, reason: 'rookie season is the current one — her base card already is that season' });
+      excluded.push({ id: card.id, name: card.name, reason: 'rookie season is the current one — her base card already is that season' });
       continue;
     }
     selections.push({ name: card.name, playerId: card.bbrefId, best: first });
@@ -163,7 +163,18 @@ export function main({ log = console.log } = {}) {
     cards,
   };
   fs.writeFileSync(OUTPUT_FILE, `${JSON.stringify(payload, null, 1)}\n`);
-  log(`WNBA Rookie: ${cards.length} cards (${excluded.length} excluded — rookie season is the current one).`);
+
+  // The NBA rule, mirrored: an excluded current rookie's fact lands on her
+  // BASE card as a badge instead of vanishing into a list. Joined by the
+  // studio (players.js) exactly as the NBA's card-badges.json is.
+  const badgeFile = path.join(GEN_DIR, 'wnba-card-badges.json');
+  fs.writeFileSync(badgeFile, `${JSON.stringify({
+    generatedAt: new Date().toISOString(),
+    set: 'wnba',
+    source: 'the WNBA Rookie exclusion list: a player whose rookie season is the current one gets no card there, so the fact prints on her base card',
+    badges: excluded.map(e => ({ id: e.id, name: e.name, badges: ['rookie'] })),
+  }, null, 1)}\n`);
+  log(`WNBA Rookie: ${cards.length} cards (${excluded.length} excluded — each badged on her base card instead).`);
   log(`  ${OUTPUT_FILE}`);
   return payload;
 }

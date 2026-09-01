@@ -239,6 +239,36 @@ export function awardsFor(set, id) {
   return awardsBySet.get(set)?.get(id) ?? [];
 }
 
+// ── The WNBA marks, merged in beside the NBA file ───────────────────────────
+//
+// A separate file from a separate generator (scripts/cardgen/wnba/
+// generateWnbaAwards.js) because the data comes from entirely different pages
+// — per-season voting tables and Finals brackets rather than an awards column.
+// Merged into the same lookup so awardsFor() answers for every set alike.
+const wnbaAwardModules = import.meta.glob('../../card-data/generated/wnba-card-awards.json', {
+  eager: true,
+});
+export const WNBA_AWARDS_FILE = Object.values(wnbaAwardModules)[0]?.default ?? null;
+for (const [set, records] of Object.entries(WNBA_AWARDS_FILE?.sets ?? {})) {
+  const m = awardsBySet.get(set) ?? new Map();
+  for (const r of Array.isArray(records) ? records : []) {
+    if (Array.isArray(r.awards) && r.awards.length > 0) m.set(r.id, r.awards);
+  }
+  awardsBySet.set(set, m);
+}
+
+// The WNBA's base-card badges — the 16 current rookies the wnba-rookie set
+// excluded, printed as pills exactly as the NBA base set prints its own.
+const wnbaBadgeModules = import.meta.glob('../../card-data/generated/wnba-card-badges.json', {
+  eager: true,
+});
+export const WNBA_BADGE_FILE = Object.values(wnbaBadgeModules)[0]?.default ?? null;
+const wnbaBadgesById = new Map(
+  WNBA_BADGE_FILE?.set === WNBA_SET && Array.isArray(WNBA_BADGE_FILE.badges)
+    ? WNBA_BADGE_FILE.badges.map(b => [b.id, b.badges])
+    : []
+);
+
 /** True when the studio is showing award marks on at least one set. */
 export const AWARDS_GENERATED = [...awardsBySet.values()].some(m => m.size > 0);
 
@@ -349,7 +379,15 @@ function specialSource(id, file, { sub, hint, missingHint = HISTORY_MISSING_HINT
   // would make the two order-dependent and lose the awards the next time that
   // one ran. A separate file joined by set and id has neither problem.
   const players = [...(file?.cards ?? [])]
-    .map(card => ({ ...card, awards: awardsFor(id, card.id) }))
+    .map(card => ({
+      ...card,
+      awards: awardsFor(id, card.id),
+      // Base-card badges, where a badge file names this set (the WNBA's
+      // excluded rookies today; every other set's map is empty).
+      ...(id === WNBA_SET && wnbaBadgesById.has(card.id)
+        ? { badges: wnbaBadgesById.get(card.id) }
+        : {}),
+    }))
     .sort(byName);
   return {
     key: id,

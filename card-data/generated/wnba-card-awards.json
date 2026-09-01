@@ -1,0 +1,319 @@
+{
+ "generatedAt": "2026-09-01T16:44:05.926Z",
+ "source": "Basketball-Reference's WNBA award voting pages (rank-1 rows) and each season page's Finals result. All-Star selections are the remaining gap: they live on per-season All-Star pages this does not fetch yet.",
+ "declared": [
+  "MVP",
+  "ROY",
+  "DPOY",
+  "6MOY",
+  "MIP",
+  "CHAMP"
+ ],
+ "seasons": [
+  2000,
+  2002,
+  2004,
+  2006,
+  2008,
+  2009,
+  2011,
+  2012,
+  2013,
+  2014,
+  2015,
+  2016,
+  2017,
+  2018,
+  2019,
+  2020,
+  2021,
+  2022,
+  2023,
+  2024,
+  2025,
+  2026
+ ],
+ "sets": {
+  "wnba": [],
+  "wnba-rookie": [
+   {
+    "id": "A_ja_Wilson",
+    "name": "A'ja Wilson",
+    "season": 2018,
+    "bbrefId": "wilsoa01w",
+    "awards": [
+     "ROY"
+    ],
+    "champion": null
+   },
+   {
+    "id": "Aliyah_Boston",
+    "name": "Aliyah Boston",
+    "season": 2023,
+    "bbrefId": "bostoal01w",
+    "awards": [
+     "ROY"
+    ],
+    "champion": null
+   },
+   {
+    "id": "Allisha_Gray",
+    "name": "Allisha Gray",
+    "season": 2017,
+    "bbrefId": "grayal01w",
+    "awards": [
+     "ROY"
+    ],
+    "champion": null
+   },
+   {
+    "id": "Breanna_Stewart",
+    "name": "Breanna Stewart",
+    "season": 2016,
+    "bbrefId": "stewabr01w",
+    "awards": [
+     "ROY"
+    ],
+    "champion": null
+   },
+   {
+    "id": "Caitlin_Clark",
+    "name": "Caitlin Clark",
+    "season": 2024,
+    "bbrefId": "clarkca02w",
+    "awards": [
+     "ROY"
+    ],
+    "champion": null
+   },
+   {
+    "id": "Cecilia_Zandalasini",
+    "name": "Cecilia Zandalasini",
+    "season": 2017,
+    "bbrefId": "zandace01w",
+    "awards": [
+     "CHAMP"
+    ],
+    "champion": "MIN"
+   },
+   {
+    "id": "DeWanna_Bonner",
+    "name": "DeWanna Bonner",
+    "season": 2009,
+    "bbrefId": "bonnede01w",
+    "awards": [
+     "6MOY",
+     "CHAMP"
+    ],
+    "champion": "PHO"
+   },
+   {
+    "id": "Jewell_Loyd",
+    "name": "Jewell Loyd",
+    "season": 2015,
+    "bbrefId": "loydje01w",
+    "awards": [
+     "ROY"
+    ],
+    "champion": null
+   },
+   {
+    "id": "Jordin_Canada",
+    "name": "Jordin Canada",
+    "season": 2018,
+    "bbrefId": "canadjo01w",
+    "awards": [
+     "CHAMP"
+    ],
+    "champion": "SEA"
+   },
+   {
+    "id": "Leonie_Fiebich",
+    "name": "Leonie Fiebich",
+    "season": 2024,
+    "bbrefId": "fiebile01w",
+    "awards": [
+     "CHAMP"
+    ],
+    "champion": "NYL"
+   },
+   {
+    "id": "Michaela_Onyenwere",
+    "name": "Michaela Onyenwere",
+    "season": 2021,
+    "bbrefId": "onyenmi01w",
+    "awards": [
+     "ROY"
+    ],
+    "champion": null
+   },
+   {
+    "id": "Napheesa_Collier",
+    "name": "Napheesa Collier",
+    "season": 2019,
+    "bbrefId": "collina01w",
+    "awards": [
+     "ROY"
+    ],
+    "champion": null
+   },
+   {
+    "id": "Natasha_Mack",
+    "name": "Natasha Mack",
+    "season": 2021,
+    "bbrefId": "mackna01w",
+    "awards": [
+     "CHAMP"
+    ],
+    "champion": "CHI"
+   },
+   {
+    "id": "Nneka_Ogwumike",
+    "name": "Nneka Ogwumike",
+    "season": 2012,
+    "bbrefId": "ogwumnn01w",
+    "awards": [
+     "ROY"
+    ],
+    "champion": null
+   },
+   {
+    "id": "Paige_Bueckers",
+    "name": "Paige Bueckers",
+    "season": 2025,
+    "bbrefId": "bueckpa01w",
+    "awards": [
+     "ROY"
+    ],
+    "champion": null
+   },
+   {
+    "id": "Rhyne_Howard",
+    "name": "Rhyne Howard",
+    "season": 2022,
+    "bbrefId": "howarrh01w",
+    "awards": [
+     "ROY"
+    ],
+    "champion": null
+   },
+   {
+    "id": "Temi_Fagbenle",
+    "name": "Temi Fagbenle",
+    "season": 2017,
+    "bbrefId": "fagbete01w",
+    "awards": [
+     "CHAMP"
+    ],
+    "champion": "MIN"
+   }
+  ],
+  "wnba-super-season": [
+   {
+    "id": "Candace_Parker",
+    "name": "Candace Parker",
+    "season": 2008,
+    "bbrefId": "parkeca01w",
+    "awards": [
+     "MVP",
+     "ROY"
+    ],
+    "champion": null
+   },
+   {
+    "id": "Candice_Dupree",
+    "name": "Candice Dupree",
+    "season": 2014,
+    "bbrefId": "dupreca01w",
+    "awards": [
+     "CHAMP"
+    ],
+    "champion": "PHO"
+   },
+   {
+    "id": "Elena_Delle_Donne",
+    "name": "Elena Delle Donne",
+    "season": 2015,
+    "bbrefId": "delleel01w",
+    "awards": [
+     "MVP"
+    ],
+    "champion": null
+   },
+   {
+    "id": "Lisa_Leslie",
+    "name": "Lisa Leslie",
+    "season": 2004,
+    "bbrefId": "leslili01w",
+    "awards": [
+     "MVP",
+     "DPOY"
+    ],
+    "champion": null
+   },
+   {
+    "id": "Maya_Moore",
+    "name": "Maya Moore",
+    "season": 2014,
+    "bbrefId": "moorema01w",
+    "awards": [
+     "MVP"
+    ],
+    "champion": null
+   },
+   {
+    "id": "Sheryl_Swoopes",
+    "name": "Sheryl Swoopes",
+    "season": 2000,
+    "bbrefId": "swoopsh01w",
+    "awards": [
+     "MVP",
+     "DPOY",
+     "CHAMP"
+    ],
+    "champion": "HOU"
+   },
+   {
+    "id": "Sue_Bird",
+    "name": "Sue Bird",
+    "season": 2004,
+    "bbrefId": "birdsu01w",
+    "awards": [
+     "CHAMP"
+    ],
+    "champion": "SEA"
+   },
+   {
+    "id": "Sylvia_Fowles",
+    "name": "Sylvia Fowles",
+    "season": 2017,
+    "bbrefId": "fowlesy01w",
+    "awards": [
+     "MVP",
+     "CHAMP"
+    ],
+    "champion": "MIN"
+   },
+   {
+    "id": "Tamika_Catchings",
+    "name": "Tamika Catchings",
+    "season": 2002,
+    "bbrefId": "catchta01w",
+    "awards": [
+     "ROY"
+    ],
+    "champion": null
+   },
+   {
+    "id": "Tina_Thompson",
+    "name": "Tina Thompson",
+    "season": 2000,
+    "bbrefId": "thompti01w",
+    "awards": [
+     "CHAMP"
+    ],
+    "champion": "HOU"
+   }
+  ]
+ }
+}

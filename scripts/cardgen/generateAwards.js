@@ -67,10 +67,12 @@ import {
   postSeasonAwardsEarned,
   selectionsIn,
 } from '../../src/cards/awards.js';
+import { canonicalTeam, franchiseForSeason } from '../../src/cards/teams.js';
 import {
   CURRENT_SET,
   ROOKIE_SET,
   SUMMER_STANDOUTS_SET,
+  TRADED_SET,
   SUPER_SEASON_SET,
   setStatsSeason,
 } from '../../src/cards/sets.js';
@@ -275,6 +277,18 @@ export function statsSeasonEndYear(set) {
  * quotes the result.
  */
 function awardRecord(card, row, season, championEntry = null, postRow = null) {
+  // THE RING IS A JERSEY FACT, NOT JUST A ROSTER FACT. The champion join finds
+  // a player on the winning roster by id — which was always enough while every
+  // card showed the team its whole season was played for. The TRADED set broke
+  // that: Rasheed Wallace's one game as a 2003-04 Hawk is the same season as
+  // his Pistons ring, and the roster join hung Detroit's ring on an Atlanta
+  // card. So the ring only prints when the CARD wears the champion's jersey —
+  // era keys included, which is what franchiseForSeason resolves. A card with
+  // no team (the base set's records carry one) simply keeps the old behaviour.
+  if (championEntry && card.team) {
+    const champKey = franchiseForSeason(canonicalTeam(championEntry.team), card.season);
+    if (champKey !== card.team) championEntry = null;
+  }
   // THREE SOURCES, ANY OF WHICH IS ENOUGH. The regular-season awards column is
   // one; the champion's roster is the second, and it is the reason this does
   // not return early on a missing `row` — most of a title-winning roster wins
@@ -584,6 +598,7 @@ async function main() {
   const superSeason = readJson(path.join(GEN_DIR, `cards-${SUPER_SEASON_SET}.json`));
   const rookie = readJson(path.join(GEN_DIR, `cards-${ROOKIE_SET}.json`));
   const standouts = readJson(path.join(GEN_DIR, `cards-${SUMMER_STANDOUTS_SET}.json`));
+  const traded = readJson(path.join(GEN_DIR, `cards-${TRADED_SET}.json`));
 
   const baseSeason = statsSeasonEndYear(CURRENT_SET);
   if (baseSeason == null) {
@@ -597,6 +612,9 @@ async function main() {
     // A playoff-run card is the season a ring or a Finals MVP was actually won
     // in — the set where the champion join earns its keep most literally.
     { set: SUMMER_STANDOUTS_SET, cards: standouts.cards },
+    // The strange-jersey season is still a season: Iverson made the 2009
+    // All-Star team as the Piston this set cards him as.
+    { set: TRADED_SET, cards: traded.cards },
   ];
   const seasons = seasonsNeeded(plan);
 
@@ -666,6 +684,7 @@ async function main() {
     [SUPER_SEASON_SET]: joinById(superSeason.cards, bySeason, championsBySeason, postBySeason),
     [ROOKIE_SET]: joinById(rookie.cards, bySeason, championsBySeason, postBySeason),
     [SUMMER_STANDOUTS_SET]: joinById(standouts.cards, bySeason, championsBySeason, postBySeason),
+    [TRADED_SET]: joinById(traded.cards, bySeason, championsBySeason, postBySeason),
   };
 
   const counts = Object.fromEntries(

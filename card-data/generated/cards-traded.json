@@ -1,0 +1,938 @@
+{
+ "generatedAt": "2026-09-01T14:44:58.929Z",
+ "set": "traded",
+ "provisional": true,
+ "sources": {
+  "roster": "card-data/traded.json — hand-picked off the Weird Jersey List",
+  "statLine": "the STINT's own rows from the full-league tables — that team only",
+  "skill": "season-wide: EPM from the season table, Speed+Power trust from the season's minutes",
+  "pricing": "play value against the base set, like every special set"
+ },
+ "cards": [
+  {
+   "id": "Rasheed_Wallace",
+   "name": "Rasheed Wallace",
+   "team": "ATL96",
+   "pos": "PF",
+   "speed": 10,
+   "power": 14,
+   "shotLine": 18,
+   "paintBoost": 3,
+   "threePtBoost": 0,
+   "defBoost": -1,
+   "salary": 770,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 17,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 18,
+     "hi": 21,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 4,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2004,
+   "seasonLabel": "2003-04",
+   "age": 29,
+   "games": 1,
+   "mpg": 42,
+   "bbrefId": "wallara01",
+   "traded": false,
+   "metrics": {
+    "bpm": -3.3,
+    "vorp": 0,
+    "ws": -0.1,
+    "ws48": -0.068,
+    "per": 13.7
+   },
+   "provisional": true,
+   "stint": {
+    "games": 1,
+    "note": "the one game — 42 minutes, 20 points"
+   }
+  },
+  {
+   "id": "Karl_Malone",
+   "name": "Karl Malone",
+   "team": "LAL",
+   "pos": "PF",
+   "speed": 9,
+   "power": 12,
+   "shotLine": 16,
+   "paintBoost": 3,
+   "threePtBoost": -4,
+   "defBoost": 2,
+   "salary": 690,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 10,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 11,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 21,
+     "pts": 2,
+     "reb": 2,
+     "ast": 1
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 3,
+     "reb": 3,
+     "ast": 1
+    }
+   ],
+   "season": 2004,
+   "seasonLabel": "2003-04",
+   "age": 40,
+   "games": 42,
+   "mpg": 32.7,
+   "bbrefId": "malonka01",
+   "traded": false,
+   "metrics": {
+    "bpm": 2.8,
+    "vorp": 1.7,
+    "ws": 4.3,
+    "ws48": 0.151,
+    "per": 17.8
+   },
+   "provisional": true,
+   "stint": {
+    "games": 42,
+    "note": null
+   }
+  },
+  {
+   "id": "Tracy_McGrady",
+   "name": "Tracy McGrady",
+   "team": "ATL08",
+   "pos": "SF",
+   "speed": 8,
+   "power": 8,
+   "shotLine": 17,
+   "paintBoost": 3,
+   "threePtBoost": -1,
+   "defBoost": 1,
+   "salary": 410,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 5,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 6,
+     "hi": 10,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 11,
+     "hi": 16,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 17,
+     "hi": 22,
+     "pts": 2,
+     "reb": 2,
+     "ast": 1
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 4,
+     "reb": 2,
+     "ast": 2
+    }
+   ],
+   "season": 2012,
+   "seasonLabel": "2011-12",
+   "age": 32,
+   "games": 52,
+   "mpg": 16.1,
+   "bbrefId": "mcgratr01",
+   "traded": false,
+   "metrics": {
+    "bpm": 0.6,
+    "vorp": 0.5,
+    "ws": 1.6,
+    "ws48": 0.094,
+    "per": 13.6
+   },
+   "provisional": true,
+   "stint": {
+    "games": 52,
+    "note": null
+   }
+  },
+  {
+   "id": "Shaquille_O_Neal",
+   "name": "Shaquille O'Neal",
+   "team": "CLE04",
+   "pos": "C",
+   "speed": 5,
+   "power": 13,
+   "shotLine": 16,
+   "paintBoost": 3,
+   "threePtBoost": -4,
+   "defBoost": 1,
+   "salary": 770,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 16,
+     "pts": 2,
+     "reb": 3,
+     "ast": 0
+    },
+    {
+     "lo": 17,
+     "hi": 21,
+     "pts": 3,
+     "reb": 3,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 5,
+     "reb": 4,
+     "ast": 1
+    }
+   ],
+   "season": 2010,
+   "seasonLabel": "2009-10",
+   "age": 37,
+   "games": 53,
+   "mpg": 23.4,
+   "bbrefId": "onealsh01",
+   "traded": false,
+   "metrics": {
+    "bpm": -0.2,
+    "vorp": 0.6,
+    "ws": 3.1,
+    "ws48": 0.119,
+    "per": 17.9
+   },
+   "provisional": true,
+   "stint": {
+    "games": 53,
+    "note": null
+   }
+  },
+  {
+   "id": "Shaquille_O_Neal",
+   "name": "Shaquille O'Neal",
+   "team": "PHX",
+   "pos": "C",
+   "speed": 6,
+   "power": 15,
+   "shotLine": 15,
+   "paintBoost": 3,
+   "threePtBoost": -5,
+   "defBoost": 0,
+   "salary": 900,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 22,
+     "pts": 3,
+     "reb": 3,
+     "ast": 0
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 4,
+     "reb": 4,
+     "ast": 1
+    }
+   ],
+   "season": 2008,
+   "seasonLabel": "2007-08",
+   "age": 35,
+   "games": 28,
+   "mpg": 28.7,
+   "bbrefId": "onealsh01",
+   "traded": false,
+   "metrics": {
+    "bpm": -0.6,
+    "vorp": 0.3,
+    "ws": 1.7,
+    "ws48": 0.1,
+    "per": 16.5
+   },
+   "provisional": true,
+   "stint": {
+    "games": 28,
+    "note": null
+   }
+  },
+  {
+   "id": "Allen_Iverson",
+   "name": "Allen Iverson",
+   "team": "DET",
+   "pos": "PG",
+   "speed": 11,
+   "power": 6,
+   "shotLine": 17,
+   "paintBoost": 0,
+   "threePtBoost": -1,
+   "defBoost": 0,
+   "salary": 540,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 16,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 17,
+     "hi": 22,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 4,
+     "reb": 1,
+     "ast": 2
+    }
+   ],
+   "season": 2009,
+   "seasonLabel": "2008-09",
+   "age": 33,
+   "games": 54,
+   "mpg": 36.5,
+   "bbrefId": "iversal01",
+   "traded": false,
+   "metrics": {
+    "bpm": 0.2,
+    "vorp": 1.1,
+    "ws": 2.7,
+    "ws48": 0.065,
+    "per": 15.9
+   },
+   "provisional": true,
+   "stint": {
+    "games": 54,
+    "note": null
+   }
+  },
+  {
+   "id": "Gary_Payton",
+   "name": "Gary Payton",
+   "team": "LAL",
+   "pos": "PG",
+   "speed": 14,
+   "power": 8,
+   "shotLine": 17,
+   "paintBoost": 2,
+   "threePtBoost": -1,
+   "defBoost": 0,
+   "salary": 710,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 16,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 17,
+     "hi": 22,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 2
+    }
+   ],
+   "season": 2004,
+   "seasonLabel": "2003-04",
+   "age": 35,
+   "games": 82,
+   "mpg": 34.5,
+   "bbrefId": "paytoga01",
+   "traded": false,
+   "metrics": {
+    "bpm": 2,
+    "vorp": 2.9,
+    "ws": 8.1,
+    "ws48": 0.137,
+    "per": 17.3
+   },
+   "provisional": true,
+   "stint": {
+    "games": 82,
+    "note": null
+   }
+  },
+  {
+   "id": "Dwight_Howard",
+   "name": "Dwight Howard",
+   "team": "CHA",
+   "pos": "C",
+   "speed": 8,
+   "power": 14,
+   "shotLine": 15,
+   "paintBoost": 3,
+   "threePtBoost": -5,
+   "defBoost": 0,
+   "salary": 900,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 16,
+     "pts": 2,
+     "reb": 3,
+     "ast": 0
+    },
+    {
+     "lo": 17,
+     "hi": 22,
+     "pts": 3,
+     "reb": 3,
+     "ast": 0
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 4,
+     "reb": 4,
+     "ast": 0
+    }
+   ],
+   "season": 2018,
+   "seasonLabel": "2017-18",
+   "age": 32,
+   "games": 81,
+   "mpg": 30.4,
+   "bbrefId": "howardw01",
+   "traded": false,
+   "metrics": {
+    "bpm": -0.1,
+    "vorp": 1.2,
+    "ws": 6.8,
+    "ws48": 0.132,
+    "per": 20.5
+   },
+   "provisional": true,
+   "stint": {
+    "games": 81,
+    "note": null
+   }
+  },
+  {
+   "id": "Carmelo_Anthony",
+   "name": "Carmelo Anthony",
+   "team": "OKC",
+   "pos": "PF",
+   "speed": 8,
+   "power": 11,
+   "shotLine": 17,
+   "paintBoost": 2,
+   "threePtBoost": 2,
+   "defBoost": -1,
+   "salary": 580,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 16,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 17,
+     "hi": 21,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 4,
+     "reb": 2,
+     "ast": 0
+    }
+   ],
+   "season": 2018,
+   "seasonLabel": "2017-18",
+   "age": 33,
+   "games": 78,
+   "mpg": 32.1,
+   "bbrefId": "anthoca01",
+   "traded": false,
+   "metrics": {
+    "bpm": -1.9,
+    "vorp": 0,
+    "ws": 3.7,
+    "ws48": 0.071,
+    "per": 12.7
+   },
+   "provisional": true,
+   "stint": {
+    "games": 78,
+    "note": null
+   }
+  },
+  {
+   "id": "Steve_Nash",
+   "name": "Steve Nash",
+   "team": "LAL",
+   "pos": "PG",
+   "speed": 13,
+   "power": 7,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": -1,
+   "salary": 600,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 5,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 6,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 18,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 19,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 2
+    }
+   ],
+   "season": 2013,
+   "seasonLabel": "2012-13",
+   "age": 38,
+   "games": 50,
+   "mpg": 32.5,
+   "bbrefId": "nashst01",
+   "traded": false,
+   "metrics": {
+    "bpm": 0.4,
+    "vorp": 1,
+    "ws": 4.3,
+    "ws48": 0.127,
+    "per": 16
+   },
+   "provisional": true,
+   "stint": {
+    "games": 50,
+    "note": null
+   }
+  },
+  {
+   "id": "Patrick_Ewing",
+   "name": "Patrick Ewing",
+   "team": "ORL",
+   "pos": "C",
+   "speed": 5,
+   "power": 9,
+   "shotLine": 17,
+   "paintBoost": 3,
+   "threePtBoost": -3,
+   "defBoost": 0,
+   "salary": 470,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 16,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 17,
+     "hi": 23,
+     "pts": 4,
+     "reb": 3,
+     "ast": 0
+    },
+    {
+     "lo": 24,
+     "hi": 99,
+     "pts": 5,
+     "reb": 4,
+     "ast": 0
+    }
+   ],
+   "season": 2002,
+   "seasonLabel": "2001-02",
+   "age": 39,
+   "games": 65,
+   "mpg": 13.9,
+   "bbrefId": "ewingpa01",
+   "traded": false,
+   "metrics": {
+    "bpm": -3.1,
+    "vorp": -0.3,
+    "ws": 1.4,
+    "ws48": 0.073,
+    "per": 14.4
+   },
+   "provisional": true,
+   "stint": {
+    "games": 65,
+    "note": null
+   }
+  },
+  {
+   "id": "Hakeem_Olajuwon",
+   "name": "Hakeem Olajuwon",
+   "team": "TOR96",
+   "pos": "C",
+   "speed": 7,
+   "power": 12,
+   "shotLine": 18,
+   "paintBoost": 3,
+   "threePtBoost": -2,
+   "defBoost": 2,
+   "salary": 550,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 17,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 18,
+     "hi": 22,
+     "pts": 2,
+     "reb": 3,
+     "ast": 0
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 2,
+     "reb": 4,
+     "ast": 0
+    }
+   ],
+   "season": 2002,
+   "seasonLabel": "2001-02",
+   "age": 39,
+   "games": 61,
+   "mpg": 22.6,
+   "bbrefId": "olajuha01",
+   "traded": false,
+   "metrics": {
+    "bpm": -0.4,
+    "vorp": 0.6,
+    "ws": 2.1,
+    "ws48": 0.074,
+    "per": 14.4
+   },
+   "provisional": true,
+   "stint": {
+    "games": 61,
+    "note": null
+   }
+  },
+  {
+   "id": "Dwyane_Wade",
+   "name": "Dwyane Wade",
+   "team": "CHI",
+   "pos": "SG",
+   "speed": 11,
+   "power": 8,
+   "shotLine": 17,
+   "paintBoost": 2,
+   "threePtBoost": -1,
+   "defBoost": 1,
+   "salary": 750,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 16,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 17,
+     "hi": 20,
+     "pts": 4,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 5,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "season": 2017,
+   "seasonLabel": "2016-17",
+   "age": 35,
+   "games": 60,
+   "mpg": 29.9,
+   "bbrefId": "wadedw01",
+   "traded": false,
+   "metrics": {
+    "bpm": 2.5,
+    "vorp": 2.1,
+    "ws": 3.4,
+    "ws48": 0.09,
+    "per": 18.5
+   },
+   "provisional": true,
+   "stint": {
+    "games": 60,
+    "note": null
+   }
+  }
+ ]
+}

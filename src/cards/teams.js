@@ -139,6 +139,9 @@ export const HISTORICAL_TEAMS = {
   CLE04: { name: 'Cavaliers', city: 'Cleveland',  abbr: 'CLE', primary: '#860038', secondary: '#04225C', logo: null, era: '2004-2010', unverifiedColors: true },
   DET02: { name: 'Pistons',  city: 'Detroit',     abbr: 'DET', primary: '#C8102E', secondary: '#1D42BA', logo: null, era: '2002-2005', unverifiedColors: true },
   LAC16: { name: 'Clippers', city: 'Los Angeles', abbr: 'LAC', primary: '#C8102E', secondary: '#1D428A', logo: null, era: '2016-2024', unverifiedColors: true },
+  TOR96: { name: 'Raptors',  city: 'Toronto',     abbr: 'TOR', primary: '#753BBD', secondary: '#CE1141', logo: null, era: '1996-2006', unverifiedColors: true },
+  ATL96: { name: 'Hawks',    city: 'Atlanta',     abbr: 'ATL', primary: '#E03A3E', secondary: '#FDB927', logo: null, era: '1996-2007', unverifiedColors: true },
+  ATL08: { name: 'Hawks',    city: 'Atlanta',     abbr: 'ATL', primary: '#002B5C', secondary: '#E03A3E', logo: null, era: '2008-2015', unverifiedColors: true },
 };
 
 /**
@@ -157,6 +160,11 @@ export const FRANCHISE_ERAS = {
   CLE: [{ from: 2004, to: 2010, key: 'CLE04' }],
   DET: [{ from: 2002, to: 2005, key: 'DET02' }],
   LAC: [{ from: 2016, to: 2024, key: 'LAC16' }],
+  TOR: [{ from: 1996, to: 2006, key: 'TOR96' }],
+  ATL: [
+    { from: 1996, to: 2007, key: 'ATL96' },
+    { from: 2008, to: 2015, key: 'ATL08' },
+  ],
 };
 
 /**

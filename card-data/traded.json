@@ -1,0 +1,61 @@
+{
+ "what": "The TRADED set: short or strange stays on teams a player is not known for, hand-picked from the Weird Jersey List.",
+ "rule": "The stat line is the STINT'S — that team's rows only. The skill (Speed+Power, trust) is the player's season-wide evidence: a one-game Hawk is still the 2004 Rasheed Wallace.",
+ "picks": {
+  "Rasheed Wallace": {
+   "season": 2004,
+   "team": "ATL",
+   "note": "the one game — 42 minutes, 20 points"
+  },
+  "Karl Malone": {
+   "season": 2004,
+   "team": "LAL"
+  },
+  "Tracy McGrady": {
+   "season": 2012,
+   "team": "ATL"
+  },
+  "Shaquille O'Neal": [
+   {
+    "season": 2010,
+    "team": "CLE"
+   },
+   {
+    "season": 2008,
+    "team": "PHO"
+   }
+  ],
+  "Allen Iverson": {
+   "season": 2009,
+   "team": "DET"
+  },
+  "Gary Payton": {
+   "season": 2004,
+   "team": "LAL"
+  },
+  "Dwight Howard": {
+   "season": 2018,
+   "team": "CHO"
+  },
+  "Carmelo Anthony": {
+   "season": 2018,
+   "team": "OKC"
+  },
+  "Steve Nash": {
+   "season": 2013,
+   "team": "LAL"
+  },
+  "Patrick Ewing": {
+   "season": 2002,
+   "team": "ORL"
+  },
+  "Hakeem Olajuwon": {
+   "season": 2002,
+   "team": "TOR"
+  },
+  "Dwyane Wade": {
+   "season": 2017,
+   "team": "CHI"
+  }
+ }
+}

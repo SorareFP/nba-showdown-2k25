@@ -37,6 +37,7 @@ import {
   SET_IDS,
   SUPER_SEASON_SET,
   SUMMER_STANDOUTS_SET,
+  TRADED_SET,
   WNBA_SET,
   WNBA_ROOKIE_SET,
   WNBA_SUPER_SEASON_SET,
@@ -469,9 +470,10 @@ describe('the base set\'s card-type badges', () => {
       [ROOKIE_BADGE]: 33,
       [SUPER_SEASON_BADGE]: 13,
       [BEST_SEASON_BADGE]: 94,
-      // In the id list, never on a base-set record: the STANDOUT pill is a SET
-      // badge, worn by every summer-standouts card and no one else's.
+      // In the id list, never on a base-set record: the STANDOUT and TRADED
+      // pills are SET badges, worn by their whole sets and no one else.
       'summer-standout': 0,
+      traded: 0,
     });
   });
 
@@ -582,7 +584,7 @@ describe('stepSelection', () => {
 describe('the special sets in the source list', () => {
   const SPECIAL = [SUPER_SEASON_SET, ROOKIE_SET, WNBA_SET, WNBA_SUPER_SEASON_SET];
 
-  it('offers all eight sets, in the order the model declares them', () => {
+  it('offers all nine sets, in the order the model declares them', () => {
     // THE MODEL, not the row of buttons. Every set is still a source and still
     // reachable; one of them (`cards`) is now folded behind the selector's
     // disclosure, which is a rendering rule and is pinned separately against
@@ -590,7 +592,7 @@ describe('the special sets in the source list', () => {
     // a set removed from here is a set the studio cannot open at all.
     expect(Object.keys(SOURCES)).toEqual([
       'pool', 'cards', SUPER_SEASON_SET, ROOKIE_SET, SUMMER_STANDOUTS_SET,
-      WNBA_SET, WNBA_SUPER_SEASON_SET, WNBA_ROOKIE_SET,
+      TRADED_SET, WNBA_SET, WNBA_SUPER_SEASON_SET, WNBA_ROOKIE_SET,
     ]);
     expect(Object.values(SOURCES).map(s => s.set)).toEqual(SET_IDS);
   });
@@ -698,7 +700,7 @@ describe('the selector\'s reference group', () => {
     }
     expect(PRIMARY_SOURCES.map(s => s.key)).toEqual([
       'pool', SUPER_SEASON_SET, ROOKIE_SET, SUMMER_STANDOUTS_SET,
-      WNBA_SET, WNBA_SUPER_SEASON_SET, WNBA_ROOKIE_SET,
+      TRADED_SET, WNBA_SET, WNBA_SUPER_SEASON_SET, WNBA_ROOKIE_SET,
     ]);
   });
 
@@ -789,9 +791,9 @@ describe('the award marks the studio joins on', () => {
     // the middle number in front of him; all three are pinned here, in
     // awards.js and in the generated file's own counts, so they cannot drift.
     const marked = POOL_PLAYERS.filter(p => p.awards.length > 0);
-    expect(marked.length).toBe(40);
+    expect(marked.length).toBe(38);
     expect(marked.filter(p => p.awards.includes('AS')).length).toBe(28);
-    expect(marked.filter(p => p.awards.includes('CHAMP')).length).toBe(11);
+    expect(marked.filter(p => p.awards.includes('CHAMP')).length).toBe(9);
   });
 
   it('gives the ring to the champion ROSTER, not only to its stars', () => {
@@ -799,9 +801,15 @@ describe('the award marks the studio joins on', () => {
     // won, and eleven of that roster are in the pool — most of them holding
     // nothing else, which is exactly what a roster join should produce and what
     // a join gated on "has an awards row" would have missed.
+    //
+    // NINE NOW, NOT ELEVEN: the ring became a JERSEY fact when the TRADED set
+    // arrived (Rasheed Wallace's one game as a 2003-04 Hawk is the same season
+    // as his Pistons ring, and the roster join hung Detroit's ring on an
+    // Atlanta card). Yabusele and Mitchell Robinson won it as Knicks and open
+    // 2026-27 on other teams, so their base cards — which wear the NEW jersey
+    // — no longer print it.
     const ringed = POOL_PLAYERS.filter(p => p.awards.includes('CHAMP'));
     expect(ringed.map(p => p.name).sort()).toEqual([
-      'Guerschon Yabusele',
       'Jalen Brunson',
       'Jordan Clarkson',
       'Jose Alvarado',
@@ -810,14 +818,13 @@ describe('the award marks the studio joins on', () => {
       'Landry Shamet',
       'Mikal Bridges',
       'Miles McBride',
-      'Mitchell Robinson',
       'OG Anunoby',
     ]);
-    // NINE OF THE ELEVEN CARRY THE RING AND NOTHING ELSE, which is the measure
+    // SEVEN OF THE NINE CARRY THE RING AND NOTHING ELSE, which is the measure
     // of what a roster join adds over the awards column: only Brunson and Towns
     // were All-Stars, and OG Anunoby's `DPOY-10,DEF2` earns him nothing at all
     // under the -1 rule, so without the ring he would have no mark either.
-    expect(ringed.filter(p => p.awards.length === 1)).toHaveLength(9);
+    expect(ringed.filter(p => p.awards.length === 1)).toHaveLength(7);
     expect(ringed.filter(p => p.awards.length > 1).map(p => p.name).sort()).toEqual([
       'Jalen Brunson',
       'Karl-Anthony Towns',

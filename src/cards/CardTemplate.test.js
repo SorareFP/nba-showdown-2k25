@@ -1952,10 +1952,10 @@ describe('the generated award file, on the cards it belongs to', () => {
 
   const marked = set => (AWARDS_FILE?.sets?.[set] ?? []).filter(r => r.awards.length > 0);
 
-  it('was generated, and covers the four sets with Basketball-Reference seasons', () => {
+  it('was generated, and covers the five sets with Basketball-Reference seasons', () => {
     expect(AWARDS_FILE).not.toBeNull();
     expect(Object.keys(AWARDS_FILE.sets).sort()).toEqual(
-      [CURRENT_SET, ROOKIE_SET, SUMMER_STANDOUTS_SET, SUPER_SEASON_SET].sort()
+      [CURRENT_SET, ROOKIE_SET, SUMMER_STANDOUTS_SET, SUPER_SEASON_SET, 'traded'].sort()
     );
     // The WNBA sets are absent, and that is a data gap rather than a decision:
     // Basketball-Reference serves that league under a different path and the

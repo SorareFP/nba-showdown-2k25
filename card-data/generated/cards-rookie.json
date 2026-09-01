@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-01T14:34:52.488Z",
+ "generatedAt": "2026-09-01T14:47:36.405Z",
  "set": "rookie",
  "provisional": true,
  "sources": {
@@ -675,7 +675,7 @@
   {
    "id": "Al_Horford",
    "name": "Al Horford",
-   "team": "ATL",
+   "team": "ATL08",
    "pos": "C",
    "speed": 7,
    "power": 10,
@@ -2404,7 +2404,7 @@
   {
    "id": "Boris_Diaw",
    "name": "Boris Diaw",
-   "team": "ATL",
+   "team": "ATL96",
    "pos": "SG",
    "speed": 7,
    "power": 6,
@@ -3709,7 +3709,7 @@
   {
    "id": "Chauncey_Billups",
    "name": "Chauncey Billups",
-   "team": "TOR",
+   "team": "TOR96",
    "pos": "PG",
    "speed": 7,
    "power": 5,
@@ -5627,7 +5627,7 @@
   {
    "id": "Dennis_Schroder",
    "name": "Dennis Schröder",
-   "team": "ATL",
+   "team": "ATL08",
    "pos": "PG",
    "speed": 7,
    "power": 4,
@@ -11206,7 +11206,7 @@
   {
    "id": "Jason_Terry",
    "name": "Jason Terry",
-   "team": "ATL",
+   "team": "ATL96",
    "pos": "PG",
    "speed": 10,
    "power": 6,

@@ -38,7 +38,7 @@
 //                   or null — see src/cards/badges.js
 //   treatment       the set-level visual treatment, or null — see treatments.js
 
-import { ROOKIE_BADGE, SUMMER_STANDOUT_BADGE, SUPER_SEASON_BADGE, tierBadge } from './badges.js';
+import { ROOKIE_BADGE, SUMMER_STANDOUT_BADGE, SUPER_SEASON_BADGE, TRADED_BADGE, tierBadge } from './badges.js';
 
 /** The set currently being built. Every studio write goes under this. */
 export const CURRENT_SET = '2026-27';
@@ -68,6 +68,13 @@ export const WNBA_SET = 'wnba';
  * card-data/standout-conflict-decisions.json the calls that shaped them.
  */
 export const SUMMER_STANDOUTS_SET = 'summer-standouts';
+
+/**
+ * The TRADED set — short or strange stays on teams a player is not known for.
+ * A card type with a NAMED-LIST roster like the standouts: card-data/traded.json
+ * holds the picks, made by hand off the Weird Jersey List.
+ */
+export const TRADED_SET = 'traded';
 
 /**
  * The WNBA legends set — sixteen retired greats, each on her best season.
@@ -232,6 +239,19 @@ export const SETS = [
     badge: SUMMER_STANDOUT_BADGE,
     // No treatment: the run is marked by the pill and the season line. Gold
     // stays the Super Season tier's.
+    treatment: null,
+  },
+  {
+    id: TRADED_SET,
+    name: 'Traded',
+    statsSeason: 'the stint',
+    kind: 'special',
+    editable: true,
+    hidesEmptyRows: true,
+    // WHICH stop this is IS the card — Hakeem means 2001-02 Toronto and
+    // nothing else.
+    showsSeason: true,
+    badge: TRADED_BADGE,
     treatment: null,
   },
   {

@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-01T14:34:52.774Z",
+ "generatedAt": "2026-09-01T14:47:36.602Z",
  "source": "Basketball-Reference's season `advanced` tables, awards column — a voted award's suffix is its finishing position, so only -1 is a win — plus the same pages' `advanced_post` table, whose awards column holds one cell a season and that cell is always `Finals MVP-1`, plus each season index page's League Champion row and that team's roster, which is where the ring comes from and which is in no column at all",
  "declared": [
   "MVP",
@@ -449,12 +449,12 @@
  ],
  "counts": {
   "2026-27": {
-   "cards": 61,
-   "marked": 40,
+   "cards": 60,
+   "marked": 38,
    "multiple": 4,
    "capped": 0,
    "mostHeld": 3,
-   "ifSelectionsCounted": 46,
+   "ifSelectionsCounted": 44,
    "byCode": {
     "MVP": 1,
     "FMVP": 1,
@@ -463,7 +463,7 @@
     "MIP": 1,
     "6MOY": 1,
     "CPOY": 1,
-    "CHAMP": 11,
+    "CHAMP": 9,
     "AS": 28
    }
   },
@@ -522,6 +522,25 @@
     "CPOY": 0,
     "CHAMP": 16,
     "AS": 11
+   }
+  },
+  "traded": {
+   "cards": 1,
+   "marked": 1,
+   "multiple": 0,
+   "capped": 0,
+   "mostHeld": 1,
+   "ifSelectionsCounted": 1,
+   "byCode": {
+    "MVP": 0,
+    "FMVP": 0,
+    "DPOY": 0,
+    "ROY": 0,
+    "MIP": 0,
+    "6MOY": 0,
+    "CPOY": 0,
+    "CHAMP": 0,
+    "AS": 1
    }
   }
  },
@@ -1194,28 +1213,14 @@
     "bbrefId": "robinmi01",
     "raw": "6MOY-8",
     "rawPost": null,
-    "champion": "NYK",
-    "awards": [
-     "CHAMP"
-    ]
+    "champion": null,
+    "awards": []
    },
    {
     "id": "Jordan_Clarkson",
     "name": "Jordan Clarkson",
     "season": 2026,
     "bbrefId": "clarkjo01",
-    "raw": null,
-    "rawPost": null,
-    "champion": "NYK",
-    "awards": [
-     "CHAMP"
-    ]
-   },
-   {
-    "id": "Guerschon_Yabusele",
-    "name": "Guerschon Yabusele",
-    "season": 2026,
-    "bbrefId": "yabusgu01",
     "raw": null,
     "rawPost": null,
     "champion": "NYK",
@@ -3611,6 +3616,20 @@
     "rawPost": null,
     "champion": null,
     "awards": []
+   }
+  ],
+  "traded": [
+   {
+    "id": "Allen_Iverson",
+    "name": "Allen Iverson",
+    "season": 2009,
+    "bbrefId": "iversal01",
+    "raw": "AS",
+    "rawPost": null,
+    "champion": null,
+    "awards": [
+     "AS"
+    ]
    }
   ]
  }

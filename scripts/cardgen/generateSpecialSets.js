@@ -367,7 +367,12 @@ export function historicalComposite(season, basis, weights = COMPOSITE_WEIGHTS) 
   // A playoff-only stat line is measured against what a playoff sample CAN be,
   // not against an 82-game season — see FULL_PLAYOFF_MINUTES.
   const fullMinutes = season.playoffRun ? FULL_PLAYOFF_MINUTES : FULL_SEASON_MINUTES;
-  const trust = rated ? Math.min(Math.max((season.minutes ?? 0) / fullMinutes, 0), 1) : 0;
+  // `trustMinutes` when the stat line is a SLICE of a larger body of evidence:
+  // a TRADED card's chart is the stint's, but the skill estimate behind its
+  // Speed+Power is the player's whole season — Rasheed Wallace's one game as
+  // a Hawk is still played by the 2003-04 Rasheed Wallace.
+  const evidence = season.trustMinutes ?? season.minutes ?? 0;
+  const trust = rated ? Math.min(Math.max(evidence / fullMinutes, 0), 1) : 0;
   return trust * raw + (1 - trust) * replacement;
 }
 

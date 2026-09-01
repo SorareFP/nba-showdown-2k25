@@ -1,0 +1,57 @@
+{
+  "Allen_Iverson": {
+    "x": -7.86,
+    "y": 0,
+    "zoom": 1
+  },
+  "Carmelo_Anthony": {
+    "x": -3.71,
+    "y": 0,
+    "zoom": 1
+  },
+  "Dwight_Howard": {
+    "x": 0.14,
+    "y": -4.89,
+    "zoom": 1.15
+  },
+  "Gary_Payton": {
+    "x": -52.76,
+    "y": 19.76,
+    "zoom": 1.44
+  },
+  "Hakeem_Olajuwon": {
+    "x": 0,
+    "y": 11.91,
+    "zoom": 1
+  },
+  "Karl_Malone": {
+    "x": -5.78,
+    "y": 0,
+    "zoom": 1
+  },
+  "Patrick_Ewing": {
+    "x": 0,
+    "y": 1.5,
+    "zoom": 1
+  },
+  "Rasheed_Wallace": {
+    "x": -25.36,
+    "y": 0,
+    "zoom": 1
+  },
+  "Steve_Nash": {
+    "x": -15.72,
+    "y": 0,
+    "zoom": 1
+  },
+  "Tracy_McGrady": {
+    "x": -13.64,
+    "y": -5.5,
+    "zoom": 1.11
+  },
+  "Dwyane_Wade": {
+    "x": -7.12,
+    "y": 0,
+    "zoom": 1
+  }
+}

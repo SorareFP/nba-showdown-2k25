@@ -1,9 +1,9 @@
 {
- "generatedAt": "2026-09-01T15:23:06.457Z",
- "set": "traded",
+ "generatedAt": "2026-09-01T16:04:01.525Z",
+ "set": "dissonance",
  "provisional": true,
  "sources": {
-  "roster": "card-data/traded.json — hand-picked off the Weird Jersey List",
+  "roster": "card-data/dissonance.json — hand-picked off the Weird Jersey List",
   "statLine": "the STINT's own rows from the full-league tables — that team only",
   "skill": "season-wide: EPM from the season table, Speed+Power trust from the season's minutes",
   "pricing": "play value against the base set, like every special set"
@@ -309,7 +309,7 @@
   {
    "id": "Shaquille_O_Neal_PHO",
    "name": "Shaquille O'Neal",
-   "team": "PHX93",
+   "team": "PHX01",
    "pos": "C",
    "speed": 6,
    "power": 15,

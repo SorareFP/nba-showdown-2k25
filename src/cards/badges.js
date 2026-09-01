@@ -115,7 +115,7 @@ export const SUPER_SEASON_BADGE = 'super-season';
 export const BEST_SEASON_BADGE = 'best-season';
 export const ROOKIE_BADGE = 'rookie';
 export const SUMMER_STANDOUT_BADGE = 'summer-standout';
-export const TRADED_BADGE = 'traded';
+export const DISSONANCE_BADGE = 'dissonance';
 
 /**
  * The salary at which a best season is a SUPER season.
@@ -309,10 +309,10 @@ export const BADGES = [
     fill: theme => theme.accentOnField,
   },
   {
-    // The TRADED set's pill — a strange jersey, worn briefly. A set badge like
-    // SUMMER's, never on a base-set record.
-    id: TRADED_BADGE,
-    text: 'TRADED',
+    // The DISSONANCE set's pill — the wrong jersey, however it got there. A
+    // set badge like SUMMER's, never on a base-set record.
+    id: DISSONANCE_BADGE,
+    text: 'DISSONANCE',
     fill: theme => theme.accentOnField,
   },
 ];

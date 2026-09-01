@@ -158,7 +158,8 @@ export const HISTORICAL_TEAMS = {
   ORL01: { name: 'Magic',    city: 'Orlando',     abbr: 'ORL', primary: '#0077C0', secondary: '#C4CED4', logo: '/logos/ORL01.png', era: '2001-2010', unverifiedColors: true },
   GSW98: { name: 'Warriors', city: 'Golden State', abbr: 'GSW', primary: '#04529C', secondary: '#FFCC33', logo: '/logos/GSW98.png', era: '1998-2010', unverifiedColors: true },
   LAC84: { name: 'Clippers', city: 'Los Angeles', abbr: 'LAC', primary: '#ED174C', secondary: '#006BB6', logo: '/logos/LAC84.png', era: '1985-2015', unverifiedColors: true },
-  PHX93: { name: 'Suns',     city: 'Phoenix',     abbr: 'PHX', primary: '#1D1160', secondary: '#E56020', logo: '/logos/PHX93.png', era: '1993-2013', unverifiedColors: true },
+  PHX93: { name: 'Suns',     city: 'Phoenix',     abbr: 'PHX', primary: '#1D1160', secondary: '#E56020', logo: '/logos/PHX93.png', era: '1993-2000', unverifiedColors: true },
+  PHX01: { name: 'Suns',     city: 'Phoenix',     abbr: 'PHX', primary: '#1D1160', secondary: '#E56020', logo: '/logos/PHX01.png', era: '2001-2013', unverifiedColors: true },
   SEA06: { name: 'SuperSonics', city: 'Seattle',  abbr: 'SEA', primary: '#00653A', secondary: '#FFC72C', logo: '/logos/SEA06.png', era: '2002-2008', unverifiedColors: true },
   DEN13: { name: 'Nuggets',  city: 'Denver',      abbr: 'DEN', primary: '#0E2240', secondary: '#FEC524', logo: '/logos/DEN13.png', era: '2013-2018', unverifiedColors: true },
   DET06: { name: 'Pistons',  city: 'Detroit',     abbr: 'DET', primary: '#ED174C', secondary: '#0058A6', logo: '/logos/DET06.png', era: '2006-2017', unverifiedColors: true },
@@ -215,7 +216,10 @@ export const FRANCHISE_ERAS = {
     { from: 2001, to: 2010, key: 'ORL01' },
   ],
   GSW: [{ from: 1998, to: 2010, key: 'GSW98' }],
-  PHX: [{ from: 1993, to: 2013, key: 'PHX93' }],
+  PHX: [
+    { from: 1993, to: 2000, key: 'PHX93' },
+    { from: 2001, to: 2013, key: 'PHX01' },
+  ],
   SEA: [{ from: 2002, to: 2008, key: 'SEA06' }],
 };
 

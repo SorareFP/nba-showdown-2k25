@@ -72,7 +72,7 @@ import {
   CURRENT_SET,
   ROOKIE_SET,
   SUMMER_STANDOUTS_SET,
-  TRADED_SET,
+  DISSONANCE_SET,
   SUPER_SEASON_SET,
   setStatsSeason,
 } from '../../src/cards/sets.js';
@@ -604,7 +604,7 @@ async function main() {
   const superSeason = readJson(path.join(GEN_DIR, `cards-${SUPER_SEASON_SET}.json`));
   const rookie = readJson(path.join(GEN_DIR, `cards-${ROOKIE_SET}.json`));
   const standouts = readJson(path.join(GEN_DIR, `cards-${SUMMER_STANDOUTS_SET}.json`));
-  const traded = readJson(path.join(GEN_DIR, `cards-${TRADED_SET}.json`));
+  const dissonance = readJson(path.join(GEN_DIR, `cards-${DISSONANCE_SET}.json`));
 
   const baseSeason = statsSeasonEndYear(CURRENT_SET);
   if (baseSeason == null) {
@@ -620,7 +620,7 @@ async function main() {
     { set: SUMMER_STANDOUTS_SET, cards: standouts.cards },
     // The strange-jersey season is still a season: Iverson made the 2009
     // All-Star team as the Piston this set cards him as.
-    { set: TRADED_SET, cards: traded.cards },
+    { set: DISSONANCE_SET, cards: dissonance.cards },
   ];
   const seasons = seasonsNeeded(plan);
 
@@ -690,7 +690,7 @@ async function main() {
     [SUPER_SEASON_SET]: joinById(superSeason.cards, bySeason, championsBySeason, postBySeason),
     [ROOKIE_SET]: joinById(rookie.cards, bySeason, championsBySeason, postBySeason),
     [SUMMER_STANDOUTS_SET]: joinById(standouts.cards, bySeason, championsBySeason, postBySeason),
-    [TRADED_SET]: joinById(traded.cards, bySeason, championsBySeason, postBySeason),
+    [DISSONANCE_SET]: joinById(dissonance.cards, bySeason, championsBySeason, postBySeason),
   };
 
   const counts = Object.fromEntries(

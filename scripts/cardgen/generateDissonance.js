@@ -1,11 +1,14 @@
 /**
- * The TRADED set: short or strange stays on teams a player is not known for.
+ * The DISSONANCE set: the wrong jersey, however it got there.
  *
- *   node scripts/cardgen/generateTraded.js
+ *   node scripts/cardgen/generateDissonance.js
  *
  * Karl Malone as a Laker, Hakeem as a Raptor, Rasheed Wallace's one game as a
- * Hawk. The roster is a NAMED LIST (card-data/traded.json), picked by hand off
- * the Weird Jersey List; this file only builds what was picked.
+ * Hawk. It was briefly called TRADED, but Malone and Payton SIGNED in Los
+ * Angeles — what these cards share is not the transaction, it is the
+ * dissonance of the uniform. The roster is a NAMED LIST
+ * (card-data/dissonance.json), picked by hand off the Weird Jersey List; this
+ * file only builds what was picked.
  *
  * ── THE SPLIT THAT MAKES THE SET WORK ───────────────────────────────────────
  *
@@ -39,10 +42,10 @@ import * as PV from './playValue.js';
 import * as A from './attributes.js';
 import { buildApiEpmIndex } from './summerStandouts.js';
 
-export const SET_ID = 'traded';
+export const SET_ID = 'dissonance';
 const GEN_DIR = path.join(REPO_ROOT, 'card-data', 'generated');
 export const OUTPUT_FILE = path.join(GEN_DIR, `cards-${SET_ID}.json`);
-export const TRADED_FILE = path.join(REPO_ROOT, 'card-data', 'traded.json');
+export const DISSONANCE_FILE = path.join(REPO_ROOT, 'card-data', 'dissonance.json');
 const LAST_SEASON = 2026;
 
 /** The chart synthesis needs a distribution; one game is a point. */
@@ -53,7 +56,7 @@ const CAP_SYNTH_MPG = 38;
 const seasonLabel = season => `${season - 1}-${String(season).slice(2)}`;
 
 /** Every pick, flattened — one player may hold several strange jerseys. */
-export function readTraded(file = TRADED_FILE) {
+export function readDissonance(file = DISSONANCE_FILE) {
   if (!fs.existsSync(file)) return [];
   const body = JSON.parse(fs.readFileSync(file, 'utf8'));
   const picks = [];
@@ -90,8 +93,8 @@ function seasonMinutes(rows, name) {
 }
 
 export function main({ log = console.log } = {}) {
-  const picks = readTraded();
-  if (picks.length === 0) throw new Error('card-data/traded.json names no picks.');
+  const picks = readDissonance();
+  if (picks.length === 0) throw new Error('card-data/dissonance.json names no picks.');
 
   const calibration = JSON.parse(fs.readFileSync(CALIBRATION_FILE, 'utf8'));
   const archiveRows = readCache('bbref-history')?.data?.rows ?? readCache('bbref-history')?.rows ?? [];
@@ -155,7 +158,7 @@ export function main({ log = console.log } = {}) {
     meta.push({ ...pick, realGames, realMpg });
   }
   if (missing.length) {
-    throw new Error(`TRADED stints missing:\n  ${missing.join('\n  ')}`);
+    throw new Error(`Dissonance stints missing:\n  ${missing.join('\n  ')}`);
   }
 
   // A player can hold several strange jerseys (Shaq is here twice), and the
@@ -187,7 +190,7 @@ export function main({ log = console.log } = {}) {
     set: SET_ID,
     provisional: true,
     sources: {
-      roster: 'card-data/traded.json — hand-picked off the Weird Jersey List',
+      roster: 'card-data/dissonance.json — hand-picked off the Weird Jersey List',
       statLine: "the STINT's own rows from the full-league tables — that team only",
       skill: "season-wide: EPM from the season table, Speed+Power trust from the season's minutes",
       pricing: 'play value against the base set, like every special set',
@@ -195,7 +198,7 @@ export function main({ log = console.log } = {}) {
     cards,
   };
   fs.writeFileSync(OUTPUT_FILE, `${JSON.stringify(body, null, 1)}\n`);
-  log(`TRADED: ${cards.length} cards.`);
+  log(`Dissonance: ${cards.length} cards.`);
   log(`  ${OUTPUT_FILE}`);
   return body;
 }

@@ -37,7 +37,7 @@ import {
   SET_IDS,
   SUPER_SEASON_SET,
   SUMMER_STANDOUTS_SET,
-  TRADED_SET,
+  DISSONANCE_SET,
   WNBA_SET,
   WNBA_ROOKIE_SET,
   WNBA_SUPER_SEASON_SET,
@@ -473,7 +473,7 @@ describe('the base set\'s card-type badges', () => {
       // In the id list, never on a base-set record: the STANDOUT and TRADED
       // pills are SET badges, worn by their whole sets and no one else.
       'summer-standout': 0,
-      traded: 0,
+      dissonance: 0,
     });
   });
 
@@ -592,7 +592,7 @@ describe('the special sets in the source list', () => {
     // a set removed from here is a set the studio cannot open at all.
     expect(Object.keys(SOURCES)).toEqual([
       'pool', 'cards', SUPER_SEASON_SET, ROOKIE_SET, SUMMER_STANDOUTS_SET,
-      TRADED_SET, WNBA_SET, WNBA_SUPER_SEASON_SET, WNBA_ROOKIE_SET,
+      DISSONANCE_SET, WNBA_SET, WNBA_SUPER_SEASON_SET, WNBA_ROOKIE_SET,
     ]);
     expect(Object.values(SOURCES).map(s => s.set)).toEqual(SET_IDS);
   });
@@ -700,7 +700,7 @@ describe('the selector\'s reference group', () => {
     }
     expect(PRIMARY_SOURCES.map(s => s.key)).toEqual([
       'pool', SUPER_SEASON_SET, ROOKIE_SET, SUMMER_STANDOUTS_SET,
-      TRADED_SET, WNBA_SET, WNBA_SUPER_SEASON_SET, WNBA_ROOKIE_SET,
+      DISSONANCE_SET, WNBA_SET, WNBA_SUPER_SEASON_SET, WNBA_ROOKIE_SET,
     ]);
   });
 

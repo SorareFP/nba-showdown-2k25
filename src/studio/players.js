@@ -41,7 +41,7 @@ import {
   FINISHED_STATS_SEASON,
   SUPER_SEASON_SET,
   SUMMER_STANDOUTS_SET,
-  TRADED_SET,
+  DISSONANCE_SET,
   ROOKIE_SET,
   WNBA_SET,
   WNBA_ROOKIE_SET,
@@ -300,7 +300,7 @@ export const CARD_PLAYERS = CARDS;
  * here the way the pool does.
  */
 const specialModules = import.meta.glob(
-  '../../card-data/generated/cards-{super-season,rookie,summer-standouts,traded,wnba,wnba-rookie,wnba-super-season}.json',
+  '../../card-data/generated/cards-{super-season,rookie,summer-standouts,dissonance,wnba,wnba-rookie,wnba-super-season}.json',
   { eager: true }
 );
 
@@ -315,7 +315,7 @@ function loadSpecialSet(id) {
 export const SUPER_SEASON_FILE = loadSpecialSet(SUPER_SEASON_SET);
 export const ROOKIE_FILE = loadSpecialSet(ROOKIE_SET);
 export const SUMMER_STANDOUTS_FILE = loadSpecialSet(SUMMER_STANDOUTS_SET);
-export const TRADED_FILE = loadSpecialSet(TRADED_SET);
+export const DISSONANCE_FILE = loadSpecialSet(DISSONANCE_SET);
 export const WNBA_FILE = loadSpecialSet(WNBA_SET);
 export const WNBA_SUPER_SEASON_FILE = loadSpecialSet(WNBA_SUPER_SEASON_SET);
 export const WNBA_ROOKIE_FILE = loadSpecialSet(WNBA_ROOKIE_SET);
@@ -493,9 +493,9 @@ export const SOURCES = {
       'records each call, and the Super Seasons that WON those calls were added to that set. ' +
       'Re-run `node scripts/cardgen/generateSummerStandouts.js`.',
   }),
-  [TRADED_SET]: specialSource(TRADED_SET, TRADED_FILE, {
+  [DISSONANCE_SET]: specialSource(DISSONANCE_SET, DISSONANCE_FILE, {
     sub: 'strange jerseys, short stays',
-    missingHint: '`node scripts/cardgen/generateTraded.js`',
+    missingHint: '`node scripts/cardgen/generateDissonance.js`',
     hint:
       'SHORT OR STRANGE STAYS on teams a player is not known for, hand-picked off the Weird ' +
       'Jersey List: Karl Malone as a Laker, Hakeem as a Raptor, Rasheed Wallace' +
@@ -504,7 +504,7 @@ export const SOURCES = {
       String.fromCharCode(39) + 's own rows — but the skill is the SEASON' +
       String.fromCharCode(39) + 's: Speed+Power trusts the whole year' +
       String.fromCharCode(39) + 's minutes, so a one-game stint carries a real stat line without ' +
-      'pricing the man at replacement. Re-run `node scripts/cardgen/generateTraded.js`.',
+      'pricing the man at replacement. Re-run `node scripts/cardgen/generateDissonance.js`.',
   }),
   [WNBA_SET]: specialSource(WNBA_SET, WNBA_FILE, {
     // The force-include COUNT is read off the payload rather than written out.

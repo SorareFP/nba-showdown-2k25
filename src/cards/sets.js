@@ -38,7 +38,7 @@
 //                   or null — see src/cards/badges.js
 //   treatment       the set-level visual treatment, or null — see treatments.js
 
-import { ROOKIE_BADGE, SUMMER_STANDOUT_BADGE, SUPER_SEASON_BADGE, TRADED_BADGE, tierBadge } from './badges.js';
+import { DISSONANCE_BADGE, ROOKIE_BADGE, SUMMER_STANDOUT_BADGE, SUPER_SEASON_BADGE, tierBadge } from './badges.js';
 
 /** The set currently being built. Every studio write goes under this. */
 export const CURRENT_SET = '2026-27';
@@ -70,11 +70,14 @@ export const WNBA_SET = 'wnba';
 export const SUMMER_STANDOUTS_SET = 'summer-standouts';
 
 /**
- * The TRADED set — short or strange stays on teams a player is not known for.
- * A card type with a NAMED-LIST roster like the standouts: card-data/traded.json
- * holds the picks, made by hand off the Weird Jersey List.
+ * The DISSONANCE set — the wrong jersey, however it got there. Karl Malone
+ * signed in Los Angeles and Rasheed Wallace was traded through Atlanta; what
+ * the cards share is not the transaction but the cognitive dissonance of the
+ * uniform, which is why the user renamed it. A card type with a NAMED-LIST
+ * roster like the standouts: card-data/dissonance.json holds the picks, made
+ * by hand off the Weird Jersey List.
  */
-export const TRADED_SET = 'traded';
+export const DISSONANCE_SET = 'dissonance';
 
 /**
  * The WNBA legends set — sixteen retired greats, each on her best season.
@@ -242,8 +245,8 @@ export const SETS = [
     treatment: null,
   },
   {
-    id: TRADED_SET,
-    name: 'Traded',
+    id: DISSONANCE_SET,
+    name: 'Dissonance',
     statsSeason: 'the stint',
     kind: 'special',
     editable: true,
@@ -251,7 +254,7 @@ export const SETS = [
     // WHICH stop this is IS the card — Hakeem means 2001-02 Toronto and
     // nothing else.
     showsSeason: true,
-    badge: TRADED_BADGE,
+    badge: DISSONANCE_BADGE,
     treatment: null,
   },
   {

@@ -41,7 +41,7 @@ describe('the declared set list', () => {
   it('holds the nine sets the studio offers', () => {
     expect(SET_IDS).toEqual([
       '2026-27', '2025-26', 'super-season', 'rookie', 'summer-standouts',
-      'traded', 'wnba', 'wnba-super-season', 'wnba-rookie',
+      'dissonance', 'wnba', 'wnba-super-season', 'wnba-rookie',
     ]);
   });
 

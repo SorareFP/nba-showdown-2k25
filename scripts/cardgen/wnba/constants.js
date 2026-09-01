@@ -199,3 +199,24 @@ export function possessionsFromMinutes(minutes, season = WNBA_SEASON) {
 
 /** Where the generated WNBA files live, relative to card-data/. */
 export const WNBA_SET = 'wnba';
+
+/**
+ * The shot profile in NBA-convention per-100, for the points event model.
+ *
+ * `synthesizeGames` multiplies its rates by the NBA's 8.333 possessions per
+ * four-minute section, and a WNBA rate is per 100 WNBA possessions across a
+ * 7.92-possession section. So the attempt VOLUMES go through the same unit
+ * change the points, rebounds and assists rates already use. The make rates are
+ * PROBABILITIES and are deliberately not rescaled -- a 38% three is 38% in
+ * either league.
+ */
+export function mixNbaConvention(row, season = WNBA_SEASON) {
+  return {
+    fga2: toNbaConventionPer100(row.fg2a100 ?? 0, season),
+    fga3: toNbaConventionPer100(row.fg3a100 ?? 0, season),
+    fta: toNbaConventionPer100(row.fta100 ?? 0, season),
+    pct2: row.fgPct2,
+    pct3: row.fgPct3,
+    pctFt: row.ftPct,
+  };
+}

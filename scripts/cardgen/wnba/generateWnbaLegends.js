@@ -98,6 +98,7 @@ import {
   WNBA_GAME_MINUTES,
   WNBA_FIRST_SEASON,
   WNBA_LAST_ARCHIVED_SEASON,
+  mixNbaConvention,
 } from './constants.js';
 import { joinWnbaSeason, per4MinFromTotals, wnbaFeatureRow } from './pool.js';
 import { vorpPerGame, COMPOSITE_WEIGHTS, composite } from './generateWnbaCards.js';
@@ -317,7 +318,23 @@ export function buildLegendCard({ row, shooting, speedPowerTotal, calibration })
   for (const stat of V.CHART_STATS) {
     const fit = { level: calibration.chart.levels[stat], shape: calibration.chart.shape };
     bands[stat] = computeStatBands(
-      V.synthesizeGames({ per100: { [stat]: per100[stat] }, mpg, games, fit }),
+      V.synthesizeGames({
+        per100: { [stat]: per100[stat] },
+        mpg,
+        games,
+        fit,
+      // The shot profile, for the points event model. WITHOUT IT points fall back
+      // to a single Poisson on a league-typical two-point event, which is what
+      // the WNBA sets were silently getting while the NBA sets had the real
+      // 2s / 3s / free-throw convolution.
+      //
+      // RESTATED INTO NBA CONVENTION, exactly like the per-100 rates above and
+      // for the same reason: synthesizeGames scales its input by the NBA's
+      // 8.333 possessions per four-minute section, and these rates are per 100
+      // WNBA possessions. Passing them raw would inflate every attempt count by
+      // the ratio of the two paces.
+      mix: mixNbaConvention(row),
+      }),
       stat
     );
   }

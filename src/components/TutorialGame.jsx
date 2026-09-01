@@ -1,5 +1,5 @@
 import { useReducer, useCallback, useEffect, useRef, useState } from 'react';
-import { newGame, doRoll, endSection, spendAssist, spendReboundBonus, getTeam, SNAKE } from '../game/engine.js';
+import { newGame, doRoll, endSection, spendAssist, spendReboundBonus, getTeam, SNAKE, applyMatchups } from '../game/engine.js';
 import { execCard, resolvePendingShotCheck } from '../game/execCard.js';
 import { CARD_MAP } from '../game/cards.js';
 import { aiDraftPick, aiScoringDecision, aiRollDecision, aiTurn } from '../game/ai.js';
@@ -145,7 +145,10 @@ export default function TutorialGame({ onExit }) {
       const timer = setTimeout(() => {
         if (!mounted.current) { aiRunning.current = false; return; }
         const action = aiTurn(game, 'B');
-        if (action && action.type === 'play_card') {
+        if (action && action.type === 'set_matchups') {
+          // Defence, which the AI previously never assigned — see aiTurn.
+          dispatch({ type: 'UPDATE', game: applyMatchups(game, 'B', action.matchups) });
+        } else if (action && action.type === 'play_card') {
           dispatch({ type: 'EXEC_CARD', teamKey: 'B', cardId: action.cardId, opts: action.opts || {} });
         } else {
           // Pass in matchup phase

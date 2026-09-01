@@ -546,7 +546,22 @@ export function aiTurn(game, teamKey) {
   }
 
   if (phase === 'matchup_strats') {
-    // Try to play a matchup card first, otherwise pass
+    // ASSIGN DEFENCE FIRST, which the AI never used to do. aiSetMatchups has
+    // existed all along and was reachable only from the `switch_everything`
+    // card, so an AI team left `offMatchups` at the identity mapping every
+    // section and guarded whoever happened to share its slot index. Simulated
+    // against the card set, competent assignment is worth about 13 points per
+    // team per game -- more than the entire assist and rebound economy -- so
+    // this was the single largest thing the AI was giving away.
+    //
+    // Only once per section: `matchupsSet` is cleared by endSection along with
+    // the rest of the section state, so a second pass through this phase does
+    // not re-shuffle a defence the opponent has already played cards against.
+    if (!game.matchupsSet?.[teamKey]) {
+      const assignment = aiSetMatchups(game, teamKey);
+      if (assignment) return assignment;
+    }
+    // Then try a matchup card, otherwise pass
     const cardDecision = aiScoringDecision(game, teamKey);
     return cardDecision;
   }

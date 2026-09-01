@@ -103,6 +103,7 @@ export function newGame(rosterA, rosterB, deckConfigA, deckConfigB) {
       bReady: false,
     },
     offMatchups: { A: [0, 1, 2, 3, 4], B: [0, 1, 2, 3, 4] },
+    matchupsSet: {},
     matchupTurn: 'A',
     matchupPasses: 0,
     placementStep: 10,                    // 10 = all placed (solo default). PvP overrides to 0.
@@ -327,6 +328,31 @@ export function spendReboundBonus(g, teamKey, type, playerIdx) {
   return { game: ng, ok: false, msg: 'Unknown rebound bonus type' };
 }
 
+/**
+ * Assign who guards whom.
+ *
+ * `defendingKey` is the team CHOOSING its defensive assignments, and the array
+ * it writes is THE OPPONENT'S. That inversion is the whole reason this is a
+ * function rather than a line at the call site: `doRoll` reads
+ * `offMatchups[teamKey][attackerIdx]` as an index into the OPPOSING bench, so
+ * team B deciding how to guard team A must write `offMatchups.A`. Setting
+ * `offMatchups.B` instead silently rearranges B's own attackers' opposition and
+ * looks like it worked.
+ *
+ * `matchups[i]` is the defender index assigned to the attacker in slot i, which
+ * is the shape `aiSetMatchups` returns.
+ */
+export function applyMatchups(g, defendingKey, matchups) {
+  if (!Array.isArray(matchups) || matchups.length === 0) return g;
+  const attackingKey = defendingKey === 'A' ? 'B' : 'A';
+  const ng = deepClone(g);
+  ng.offMatchups = { ...ng.offMatchups, [attackingKey]: matchups.slice() };
+  // Marks the DEFENDER as having chosen, so an AI does not re-shuffle a defence
+  // its opponent has already played cards against. Cleared by endSection.
+  ng.matchupsSet = { ...(ng.matchupsSet || {}), [defendingKey]: true };
+  return ng;
+}
+
 // ── Scoring Roll ───────────────────────────────────────────────────────────
 export function doRoll(g, teamKey, idx) {
   const myT = getTeam(g, teamKey);
@@ -460,6 +486,7 @@ export function endSection(g) {
 
   // Reset section state
   ng.tempEff = {}; ng.tempDefEff = {}; ng.ghosted = {}; ng.ignFatigue = {};
+  ng.matchupsSet = {};
   ng.rollResults = { A: [], B: [] }; ng.pendingShotCheck = null; ng.lastShotCheck = null;
   // reboundBonuses were set earlier in this function — they persist to the next section's scoring phase
 

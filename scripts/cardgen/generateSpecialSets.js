@@ -106,6 +106,7 @@ import { pathToFileURL } from 'node:url';
 import { readCache, REPO_ROOT } from './cache.js';
 import { normalizeName } from './resolveTeams.js';
 import { computeStatBands, delayFloor, delayUpperBands, usageAccessShift } from './bands.js';
+import { historicalTeamDefense, loadSeasonRealGames } from './realGames.js';
 import { reconcileBandsByRoll, shapeChart } from './generate.js';
 import * as V from './variance.js';
 import * as A from './attributes.js';
@@ -520,6 +521,10 @@ export function buildHistoricalCard({
   size,
   positionShares,
   calibration,
+  // The season's real game-log rows (realGames.js), already adjusted. When
+  // present they replace the synthetic distribution; the trust floor and
+  // usage gate downstream apply to both paths alike.
+  realGames = null,
 }) {
   const games = season.games ?? 0;
   const mpg = games > 0 ? (season.minutes ?? 0) / games : 0;
@@ -567,7 +572,7 @@ export function buildHistoricalCard({
   for (const stat of V.CHART_STATS) {
     const fit = { level: calibration.chart.levels[stat], shape: calibration.chart.shape };
     const placedBands = computeStatBands(
-      V.synthesizeGames({
+      realGames ?? V.synthesizeGames({
         per100: { [stat]: per100[stat] },
         mpg,
         games,
@@ -636,7 +641,10 @@ export function buildHistoricalCard({
       ws48: season.ws48,
       per: season.per,
     },
-    provisional: true,
+    // Since the real-log rebuild, per-card `provisional` means exactly what
+    // it means on the base set: the chart is synthetic. The SET-level flag
+    // stays true regardless — rim FG% is still absent from the shooting layer.
+    provisional: !realGames,
   };
 
   // Salary is NOT set here. Play value is measured against a FIELD, so it is
@@ -662,6 +670,12 @@ export function buildSet({
   weights = COMPOSITE_WEIGHTS,
   biometrics = new Map(),
   positionShares = null,
+  // Real game logs, on by default: every selection whose (playerId, season)
+  // page is cached gets its chart cut from the ACTUAL games of that season —
+  // the playoff run alone when the season is a playoffRun selection. The
+  // Dissonance set opts out: its cards are STINTS, and a full-season log
+  // would contradict the stat line the stint rows define.
+  useRealGames = true,
 }) {
   const seasons = selections.map(s => s.season);
   const all = [...currentRows, ...seasons];
@@ -678,6 +692,8 @@ export function buildSet({
     ...speedPowerTotals(seasons, { archive, weights }),
   ];
 
+  const defense = useRealGames ? historicalTeamDefense() : null;
+
   return selections.map((selection, i) =>
     buildHistoricalCard({
       player: selection.player,
@@ -690,6 +706,11 @@ export function buildSet({
       positionShares:
         positionShares?.forId(selection.season.playerId, selection.season.season) ?? null,
       calibration,
+      realGames: useRealGames
+        ? loadSeasonRealGames(selection.season.playerId, selection.season.season, defense, {
+            playoffOnly: Boolean(selection.season.playoffRun),
+          })
+        : null,
     })
   );
 }

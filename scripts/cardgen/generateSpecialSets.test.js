@@ -91,7 +91,13 @@ describe.each([
     expect(file.sources.missing).toEqual(['rim FG%']);
     expect(file.sources.speedPower).toMatch(/z\(EPM\)/);
     expect(file.sources.speedPower).toMatch(/2002-2026 archive/);
-    for (const card of file.cards) expect(card.provisional).toBe(true);
+    // Since the real-log rebuild the per-card flag means "synthetic chart",
+    // and most of these cards now carry their season's actual games — the
+    // flag survives only where no log page could serve.
+    const synthetic = file.cards.filter(c => c.provisional === true);
+    const real = file.cards.filter(c => c.provisional === false);
+    expect(synthetic.length + real.length).toBe(file.cards.length);
+    expect(real.length).toBeGreaterThan(synthetic.length);
   });
 
   it('gives every card a photo id no other card in the set shares', () => {
@@ -451,8 +457,8 @@ describe('the base set\'s badges', () => {
     // moves cards across SUPER_SEASON_MIN_SALARY. The split is a MEASUREMENT.
     // 15/92 after the defBoost contest reprice — defence value now includes
     // conversion denial, and two badged defenders crossed the gilded line.
-    expect(counts.printed[BEST_SEASON_BADGE]).toBe(94);
-    expect(counts.printed[SUPER_SEASON_BADGE]).toBe(13);
+    expect(counts.printed[BEST_SEASON_BADGE]).toBe(93);
+    expect(counts.printed[SUPER_SEASON_BADGE]).toBe(14);
     // Nobody loses their pill entirely in the resolution.
     expect(BADGE_IDS.reduce((n, id) => n + counts.printed[id], 0)).toBe(counts.players);
     expect(counts.multiple).toBe(ROOKIE.excluded.length);

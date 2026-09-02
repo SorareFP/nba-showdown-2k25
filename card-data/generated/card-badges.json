@@ -1,1046 +1,1046 @@
 {
-  "generatedAt": "2026-09-01T18:30:29.509Z",
-  "set": "2026-27",
-  "provisional": true,
-  "source": "the Super Season and Rookie exclusion lists: a player whose best or rookie season is 2026 gets no card in that set, because his base card already IS that season — so the fact is printed on the base card as a badge instead",
-  "priority": [
-    "rookie",
-    "super-season",
-    "best-season",
-    "summer-standout",
-    "dissonance"
-  ],
-  "counts": {
-    "players": 140,
-    "applies": {
-      "rookie": 33,
-      "super-season": 140,
-      "best-season": 0,
-      "summer-standout": 0,
-      "dissonance": 0
-    },
-    "printed": {
-      "rookie": 33,
-      "super-season": 13,
-      "best-season": 94,
-      "summer-standout": 0,
-      "dissonance": 0
-    },
-    "multiple": 33
+ "generatedAt": "2026-09-02T21:47:16.613Z",
+ "set": "2026-27",
+ "provisional": true,
+ "source": "the Super Season and Rookie exclusion lists: a player whose best or rookie season is 2026 gets no card in that set, because his base card already IS that season — so the fact is printed on the base card as a badge instead",
+ "priority": [
+  "rookie",
+  "super-season",
+  "best-season",
+  "summer-standout",
+  "dissonance"
+ ],
+ "counts": {
+  "players": 140,
+  "applies": {
+   "rookie": 33,
+   "super-season": 140,
+   "best-season": 0,
+   "summer-standout": 0,
+   "dissonance": 0
   },
-  "badges": [
-    {
-      "id": "Ace_Bailey",
-      "name": "Ace Bailey",
-      "badges": [
-        "rookie",
-        "super-season"
-      ]
-    },
-    {
-      "id": "Adem_Bona",
-      "name": "Adem Bona",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Ajay_Mitchell",
-      "name": "Ajay Mitchell",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Andrew_Wiggins",
-      "name": "Andrew Wiggins",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Anthony_Black",
-      "name": "Anthony Black",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Ausar_Thompson",
-      "name": "Ausar Thompson",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Ayo_Dosunmu",
-      "name": "Ayo Dosunmu",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Baylor_Scheierman",
-      "name": "Baylor Scheierman",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Ben_Saraf",
-      "name": "Ben Saraf",
-      "badges": [
-        "rookie",
-        "super-season"
-      ]
-    },
-    {
-      "id": "Bones_Hyland",
-      "name": "Bones Hyland",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Brandon_Miller",
-      "name": "Brandon Miller",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Brandon_Williams",
-      "name": "Brandon Williams",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Bryce_McGowens",
-      "name": "Bryce McGowens",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Bub_Carrington",
-      "name": "Bub Carrington",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Cade_Cunningham",
-      "name": "Cade Cunningham",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Caleb_Love",
-      "name": "Caleb Love",
-      "badges": [
-        "rookie",
-        "super-season"
-      ]
-    },
-    {
-      "id": "Cam_Spencer",
-      "name": "Cam Spencer",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Cason_Wallace",
-      "name": "Cason Wallace",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Cedric_Coward",
-      "name": "Cedric Coward",
-      "badges": [
-        "rookie",
-        "super-season"
-      ]
-    },
-    {
-      "id": "Chet_Holmgren",
-      "name": "Chet Holmgren",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Cody_Williams",
-      "name": "Cody Williams",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Collin_Gillespie",
-      "name": "Collin Gillespie",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Collin_Murray_Boyles",
-      "name": "Collin Murray-Boyles",
-      "badges": [
-        "rookie",
-        "super-season"
-      ]
-    },
-    {
-      "id": "Cooper_Flagg",
-      "name": "Cooper Flagg",
-      "badges": [
-        "rookie",
-        "super-season"
-      ]
-    },
-    {
-      "id": "Craig_Porter_Jr",
-      "name": "Craig Porter Jr.",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Daniss_Jenkins",
-      "name": "Daniss Jenkins",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Danny_Wolf",
-      "name": "Danny Wolf",
-      "badges": [
-        "rookie",
-        "super-season"
-      ]
-    },
-    {
-      "id": "Davion_Mitchell",
-      "name": "Davion Mitchell",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Day_Ron_Sharpe",
-      "name": "Day'Ron Sharpe",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Deni_Avdija",
-      "name": "Deni Avdija",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Derik_Queen",
-      "name": "Derik Queen",
-      "badges": [
-        "rookie",
-        "super-season"
-      ]
-    },
-    {
-      "id": "Devin_Vassell",
-      "name": "Devin Vassell",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Dominick_Barlow",
-      "name": "Dominick Barlow",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Donovan_Clingan",
-      "name": "Donovan Clingan",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Drake_Powell",
-      "name": "Drake Powell",
-      "badges": [
-        "rookie",
-        "super-season"
-      ]
-    },
-    {
-      "id": "Dru_Smith",
-      "name": "Dru Smith",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Duncan_Robinson",
-      "name": "Duncan Robinson",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Dylan_Cardwell",
-      "name": "Dylan Cardwell",
-      "badges": [
-        "rookie",
-        "super-season"
-      ]
-    },
-    {
-      "id": "Dylan_Harper",
-      "name": "Dylan Harper",
-      "badges": [
-        "rookie",
-        "super-season"
-      ]
-    },
-    {
-      "id": "Egor_Demin",
-      "name": "Egor Dëmin",
-      "badges": [
-        "rookie",
-        "super-season"
-      ]
-    },
-    {
-      "id": "GG_Jackson_II",
-      "name": "GG Jackson II",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Gradey_Dick",
-      "name": "Gradey Dick",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Gui_Santos",
-      "name": "Gui Santos",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Hugo_Gonzalez",
-      "name": "Hugo González",
-      "badges": [
-        "rookie",
-        "super-season"
-      ]
-    },
-    {
-      "id": "Immanuel_Quickley",
-      "name": "Immanuel Quickley",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Isaiah_Collier",
-      "name": "Isaiah Collier",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Isaiah_Joe",
-      "name": "Isaiah Joe",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Ja_Kobe_Walter",
-      "name": "Ja'Kobe Walter",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Jaime_Jaquez_Jr",
-      "name": "Jaime Jaquez Jr.",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Jalen_Duren",
-      "name": "Jalen Duren",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Jalen_Johnson",
-      "name": "Jalen Johnson",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Jamal_Murray",
-      "name": "Jamal Murray",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Jamal_Shead",
-      "name": "Jamal Shead",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Jamaree_Bouyea",
-      "name": "Jamaree Bouyea",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Jamir_Watkins",
-      "name": "Jamir Watkins",
-      "badges": [
-        "rookie",
-        "super-season"
-      ]
-    },
-    {
-      "id": "Jared_McCain",
-      "name": "Jared McCain",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Javon_Small",
-      "name": "Javon Small",
-      "badges": [
-        "rookie",
-        "super-season"
-      ]
-    },
-    {
-      "id": "Javonte_Green",
-      "name": "Javonte Green",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Jaxson_Hayes",
-      "name": "Jaxson Hayes",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Jay_Huff",
-      "name": "Jay Huff",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Jaylen_Brown",
-      "name": "Jaylen Brown",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Jaylin_Williams",
-      "name": "Jaylin Williams",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Jaylon_Tyson",
-      "name": "Jaylon Tyson",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Jeremiah_Fears",
-      "name": "Jeremiah Fears",
-      "badges": [
-        "rookie",
-        "super-season"
-      ]
-    },
-    {
-      "id": "Jericho_Sims",
-      "name": "Jericho Sims",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Jock_Landale",
-      "name": "Jock Landale",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Jordan_Goodwin",
-      "name": "Jordan Goodwin",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Jordan_Miller",
-      "name": "Jordan Miller",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Jordan_Walsh",
-      "name": "Jordan Walsh",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Jose_Alvarado",
-      "name": "Jose Alvarado",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Julian_Champagnie",
-      "name": "Julian Champagnie",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Justin_Champagnie",
-      "name": "Justin Champagnie",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Karlo_Matkovic",
-      "name": "Karlo Matković",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Kasparas_Jakucionis",
-      "name": "Kasparas Jakučionis",
-      "badges": [
-        "rookie",
-        "super-season"
-      ]
-    },
-    {
-      "id": "Kel_el_Ware",
-      "name": "Kel'el Ware",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Keldon_Johnson",
-      "name": "Keldon Johnson",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Kobe_Sanders",
-      "name": "Kobe Sanders",
-      "badges": [
-        "rookie",
-        "super-season"
-      ]
-    },
-    {
-      "id": "Kon_Knueppel",
-      "name": "Kon Knueppel",
-      "badges": [
-        "rookie",
-        "super-season"
-      ]
-    },
-    {
-      "id": "Kyle_Filipowski",
-      "name": "Kyle Filipowski",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "LaMelo_Ball",
-      "name": "LaMelo Ball",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Luka_Garza",
-      "name": "Luka Garza",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Luke_Kornet",
-      "name": "Luke Kornet",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Mark_Williams",
-      "name": "Mark Williams",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Marvin_Bagley_III",
-      "name": "Marvin Bagley III",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Matas_Buzelis",
-      "name": "Matas Buzelis",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Max_Christie",
-      "name": "Max Christie",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Maxime_Raynaud",
-      "name": "Maxime Raynaud",
-      "badges": [
-        "rookie",
-        "super-season"
-      ]
-    },
-    {
-      "id": "Micah_Peavy",
-      "name": "Micah Peavy",
-      "badges": [
-        "rookie",
-        "super-season"
-      ]
-    },
-    {
-      "id": "Moses_Moody",
-      "name": "Moses Moody",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Mouhamed_Gueye",
-      "name": "Mouhamed Gueye",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Moussa_Diabate",
-      "name": "Moussa Diabaté",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Nae_Qwan_Tomlin",
-      "name": "Nae'Qwan Tomlin",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Naji_Marshall",
-      "name": "Naji Marshall",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Neemias_Queta",
-      "name": "Neemias Queta",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Nickeil_Alexander_Walker",
-      "name": "Nickeil Alexander-Walker",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Nique_Clifford",
-      "name": "Nique Clifford",
-      "badges": [
-        "rookie",
-        "super-season"
-      ]
-    },
-    {
-      "id": "Noah_Clowney",
-      "name": "Noah Clowney",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Noah_Penda",
-      "name": "Noah Penda",
-      "badges": [
-        "rookie",
-        "super-season"
-      ]
-    },
-    {
-      "id": "Nolan_Traore",
-      "name": "Nolan Traoré",
-      "badges": [
-        "rookie",
-        "super-season"
-      ]
-    },
-    {
-      "id": "OG_Anunoby",
-      "name": "OG Anunoby",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Olivier_Maxence_Prosper",
-      "name": "Olivier-Maxence Prosper",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Oso_Ighodaro",
-      "name": "Oso Ighodaro",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Ousmane_Dieng",
-      "name": "Ousmane Dieng",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Pat_Spencer",
-      "name": "Pat Spencer",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Pelle_Larsson",
-      "name": "Pelle Larsson",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Pete_Nance",
-      "name": "Pete Nance",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Quinten_Post",
-      "name": "Quinten Post",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Rasheer_Fleming",
-      "name": "Rasheer Fleming",
-      "badges": [
-        "rookie",
-        "super-season"
-      ]
-    },
-    {
-      "id": "Rayan_Rupert",
-      "name": "Rayan Rupert",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Reed_Sheppard",
-      "name": "Reed Sheppard",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Ron_Holland",
-      "name": "Ron Holland",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Ryan_Dunn",
-      "name": "Ryan Dunn",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Ryan_Kalkbrenner",
-      "name": "Ryan Kalkbrenner",
-      "badges": [
-        "rookie",
-        "super-season"
-      ]
-    },
-    {
-      "id": "Ryan_Nembhard",
-      "name": "Ryan Nembhard",
-      "badges": [
-        "rookie",
-        "super-season"
-      ]
-    },
-    {
-      "id": "Ryan_Rollins",
-      "name": "Ryan Rollins",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Saddiq_Bey",
-      "name": "Saddiq Bey",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Sandro_Mamukelashvili",
-      "name": "Sandro Mamukelashvili",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Scottie_Barnes",
-      "name": "Scottie Barnes",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Sharife_Cooper",
-      "name": "Sharife Cooper",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Sidy_Cissoko",
-      "name": "Sidy Cissoko",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Simone_Fontecchio",
-      "name": "Simone Fontecchio",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Sion_James",
-      "name": "Sion James",
-      "badges": [
-        "rookie",
-        "super-season"
-      ]
-    },
-    {
-      "id": "Spencer_Jones",
-      "name": "Spencer Jones",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Stephon_Castle",
-      "name": "Stephon Castle",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Tari_Eason",
-      "name": "Tari Eason",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Taylor_Hendricks",
-      "name": "Taylor Hendricks",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Tre_Johnson",
-      "name": "Tre Johnson",
-      "badges": [
-        "rookie",
-        "super-season"
-      ]
-    },
-    {
-      "id": "Tre_Jones",
-      "name": "Tre Jones",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Trey_Murphy_III",
-      "name": "Trey Murphy III",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Tristan_Da_Silva",
-      "name": "Tristan Da Silva",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Tristan_Vukcevic",
-      "name": "Tristan Vukcevic",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Tyrese_Maxey",
-      "name": "Tyrese Maxey",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Victor_Wembanyama",
-      "name": "Victor Wembanyama",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Vit_Krejci",
-      "name": "Vít Krejčí",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "VJ_Edgecombe",
-      "name": "VJ Edgecombe",
-      "badges": [
-        "rookie",
-        "super-season"
-      ]
-    },
-    {
-      "id": "Walter_Clayton",
-      "name": "Walter Clayton",
-      "badges": [
-        "rookie",
-        "super-season"
-      ]
-    },
-    {
-      "id": "Will_Richard",
-      "name": "Will Richard",
-      "badges": [
-        "rookie",
-        "super-season"
-      ]
-    },
-    {
-      "id": "Will_Riley",
-      "name": "Will Riley",
-      "badges": [
-        "rookie",
-        "super-season"
-      ]
-    },
-    {
-      "id": "Yves_Missi",
-      "name": "Yves Missi",
-      "badges": [
-        "super-season"
-      ]
-    },
-    {
-      "id": "Zaccharie_Risacher",
-      "name": "Zaccharie Risacher",
-      "badges": [
-        "super-season"
-      ]
-    }
-  ]
+  "printed": {
+   "rookie": 33,
+   "super-season": 14,
+   "best-season": 93,
+   "summer-standout": 0,
+   "dissonance": 0
+  },
+  "multiple": 33
+ },
+ "badges": [
+  {
+   "id": "Ace_Bailey",
+   "name": "Ace Bailey",
+   "badges": [
+    "rookie",
+    "super-season"
+   ]
+  },
+  {
+   "id": "Adem_Bona",
+   "name": "Adem Bona",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Ajay_Mitchell",
+   "name": "Ajay Mitchell",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Andrew_Wiggins",
+   "name": "Andrew Wiggins",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Anthony_Black",
+   "name": "Anthony Black",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Ausar_Thompson",
+   "name": "Ausar Thompson",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Ayo_Dosunmu",
+   "name": "Ayo Dosunmu",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Baylor_Scheierman",
+   "name": "Baylor Scheierman",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Ben_Saraf",
+   "name": "Ben Saraf",
+   "badges": [
+    "rookie",
+    "super-season"
+   ]
+  },
+  {
+   "id": "Bones_Hyland",
+   "name": "Bones Hyland",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Brandon_Miller",
+   "name": "Brandon Miller",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Brandon_Williams",
+   "name": "Brandon Williams",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Bryce_McGowens",
+   "name": "Bryce McGowens",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Bub_Carrington",
+   "name": "Bub Carrington",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Cade_Cunningham",
+   "name": "Cade Cunningham",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Caleb_Love",
+   "name": "Caleb Love",
+   "badges": [
+    "rookie",
+    "super-season"
+   ]
+  },
+  {
+   "id": "Cam_Spencer",
+   "name": "Cam Spencer",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Cason_Wallace",
+   "name": "Cason Wallace",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Cedric_Coward",
+   "name": "Cedric Coward",
+   "badges": [
+    "rookie",
+    "super-season"
+   ]
+  },
+  {
+   "id": "Chet_Holmgren",
+   "name": "Chet Holmgren",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Cody_Williams",
+   "name": "Cody Williams",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Collin_Gillespie",
+   "name": "Collin Gillespie",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Collin_Murray_Boyles",
+   "name": "Collin Murray-Boyles",
+   "badges": [
+    "rookie",
+    "super-season"
+   ]
+  },
+  {
+   "id": "Cooper_Flagg",
+   "name": "Cooper Flagg",
+   "badges": [
+    "rookie",
+    "super-season"
+   ]
+  },
+  {
+   "id": "Craig_Porter_Jr",
+   "name": "Craig Porter Jr.",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Daniss_Jenkins",
+   "name": "Daniss Jenkins",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Danny_Wolf",
+   "name": "Danny Wolf",
+   "badges": [
+    "rookie",
+    "super-season"
+   ]
+  },
+  {
+   "id": "Davion_Mitchell",
+   "name": "Davion Mitchell",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Day_Ron_Sharpe",
+   "name": "Day'Ron Sharpe",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Deni_Avdija",
+   "name": "Deni Avdija",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Derik_Queen",
+   "name": "Derik Queen",
+   "badges": [
+    "rookie",
+    "super-season"
+   ]
+  },
+  {
+   "id": "Devin_Vassell",
+   "name": "Devin Vassell",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Dominick_Barlow",
+   "name": "Dominick Barlow",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Donovan_Clingan",
+   "name": "Donovan Clingan",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Drake_Powell",
+   "name": "Drake Powell",
+   "badges": [
+    "rookie",
+    "super-season"
+   ]
+  },
+  {
+   "id": "Dru_Smith",
+   "name": "Dru Smith",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Duncan_Robinson",
+   "name": "Duncan Robinson",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Dylan_Cardwell",
+   "name": "Dylan Cardwell",
+   "badges": [
+    "rookie",
+    "super-season"
+   ]
+  },
+  {
+   "id": "Dylan_Harper",
+   "name": "Dylan Harper",
+   "badges": [
+    "rookie",
+    "super-season"
+   ]
+  },
+  {
+   "id": "Egor_Demin",
+   "name": "Egor Dëmin",
+   "badges": [
+    "rookie",
+    "super-season"
+   ]
+  },
+  {
+   "id": "GG_Jackson_II",
+   "name": "GG Jackson II",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Gradey_Dick",
+   "name": "Gradey Dick",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Gui_Santos",
+   "name": "Gui Santos",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Hugo_Gonzalez",
+   "name": "Hugo González",
+   "badges": [
+    "rookie",
+    "super-season"
+   ]
+  },
+  {
+   "id": "Immanuel_Quickley",
+   "name": "Immanuel Quickley",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Isaiah_Collier",
+   "name": "Isaiah Collier",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Isaiah_Joe",
+   "name": "Isaiah Joe",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Ja_Kobe_Walter",
+   "name": "Ja'Kobe Walter",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Jaime_Jaquez_Jr",
+   "name": "Jaime Jaquez Jr.",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Jalen_Duren",
+   "name": "Jalen Duren",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Jalen_Johnson",
+   "name": "Jalen Johnson",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Jamal_Murray",
+   "name": "Jamal Murray",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Jamal_Shead",
+   "name": "Jamal Shead",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Jamaree_Bouyea",
+   "name": "Jamaree Bouyea",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Jamir_Watkins",
+   "name": "Jamir Watkins",
+   "badges": [
+    "rookie",
+    "super-season"
+   ]
+  },
+  {
+   "id": "Jared_McCain",
+   "name": "Jared McCain",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Javon_Small",
+   "name": "Javon Small",
+   "badges": [
+    "rookie",
+    "super-season"
+   ]
+  },
+  {
+   "id": "Javonte_Green",
+   "name": "Javonte Green",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Jaxson_Hayes",
+   "name": "Jaxson Hayes",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Jay_Huff",
+   "name": "Jay Huff",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Jaylen_Brown",
+   "name": "Jaylen Brown",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Jaylin_Williams",
+   "name": "Jaylin Williams",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Jaylon_Tyson",
+   "name": "Jaylon Tyson",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Jeremiah_Fears",
+   "name": "Jeremiah Fears",
+   "badges": [
+    "rookie",
+    "super-season"
+   ]
+  },
+  {
+   "id": "Jericho_Sims",
+   "name": "Jericho Sims",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Jock_Landale",
+   "name": "Jock Landale",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Jordan_Goodwin",
+   "name": "Jordan Goodwin",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Jordan_Miller",
+   "name": "Jordan Miller",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Jordan_Walsh",
+   "name": "Jordan Walsh",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Jose_Alvarado",
+   "name": "Jose Alvarado",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Julian_Champagnie",
+   "name": "Julian Champagnie",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Justin_Champagnie",
+   "name": "Justin Champagnie",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Karlo_Matkovic",
+   "name": "Karlo Matković",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Kasparas_Jakucionis",
+   "name": "Kasparas Jakučionis",
+   "badges": [
+    "rookie",
+    "super-season"
+   ]
+  },
+  {
+   "id": "Kel_el_Ware",
+   "name": "Kel'el Ware",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Keldon_Johnson",
+   "name": "Keldon Johnson",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Kobe_Sanders",
+   "name": "Kobe Sanders",
+   "badges": [
+    "rookie",
+    "super-season"
+   ]
+  },
+  {
+   "id": "Kon_Knueppel",
+   "name": "Kon Knueppel",
+   "badges": [
+    "rookie",
+    "super-season"
+   ]
+  },
+  {
+   "id": "Kyle_Filipowski",
+   "name": "Kyle Filipowski",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "LaMelo_Ball",
+   "name": "LaMelo Ball",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Luka_Garza",
+   "name": "Luka Garza",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Luke_Kornet",
+   "name": "Luke Kornet",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Mark_Williams",
+   "name": "Mark Williams",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Marvin_Bagley_III",
+   "name": "Marvin Bagley III",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Matas_Buzelis",
+   "name": "Matas Buzelis",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Max_Christie",
+   "name": "Max Christie",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Maxime_Raynaud",
+   "name": "Maxime Raynaud",
+   "badges": [
+    "rookie",
+    "super-season"
+   ]
+  },
+  {
+   "id": "Micah_Peavy",
+   "name": "Micah Peavy",
+   "badges": [
+    "rookie",
+    "super-season"
+   ]
+  },
+  {
+   "id": "Moses_Moody",
+   "name": "Moses Moody",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Mouhamed_Gueye",
+   "name": "Mouhamed Gueye",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Moussa_Diabate",
+   "name": "Moussa Diabaté",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Nae_Qwan_Tomlin",
+   "name": "Nae'Qwan Tomlin",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Naji_Marshall",
+   "name": "Naji Marshall",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Neemias_Queta",
+   "name": "Neemias Queta",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Nickeil_Alexander_Walker",
+   "name": "Nickeil Alexander-Walker",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Nique_Clifford",
+   "name": "Nique Clifford",
+   "badges": [
+    "rookie",
+    "super-season"
+   ]
+  },
+  {
+   "id": "Noah_Clowney",
+   "name": "Noah Clowney",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Noah_Penda",
+   "name": "Noah Penda",
+   "badges": [
+    "rookie",
+    "super-season"
+   ]
+  },
+  {
+   "id": "Nolan_Traore",
+   "name": "Nolan Traoré",
+   "badges": [
+    "rookie",
+    "super-season"
+   ]
+  },
+  {
+   "id": "OG_Anunoby",
+   "name": "OG Anunoby",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Olivier_Maxence_Prosper",
+   "name": "Olivier-Maxence Prosper",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Oso_Ighodaro",
+   "name": "Oso Ighodaro",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Ousmane_Dieng",
+   "name": "Ousmane Dieng",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Pat_Spencer",
+   "name": "Pat Spencer",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Pelle_Larsson",
+   "name": "Pelle Larsson",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Pete_Nance",
+   "name": "Pete Nance",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Quinten_Post",
+   "name": "Quinten Post",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Rasheer_Fleming",
+   "name": "Rasheer Fleming",
+   "badges": [
+    "rookie",
+    "super-season"
+   ]
+  },
+  {
+   "id": "Rayan_Rupert",
+   "name": "Rayan Rupert",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Reed_Sheppard",
+   "name": "Reed Sheppard",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Ron_Holland",
+   "name": "Ron Holland",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Ryan_Dunn",
+   "name": "Ryan Dunn",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Ryan_Kalkbrenner",
+   "name": "Ryan Kalkbrenner",
+   "badges": [
+    "rookie",
+    "super-season"
+   ]
+  },
+  {
+   "id": "Ryan_Nembhard",
+   "name": "Ryan Nembhard",
+   "badges": [
+    "rookie",
+    "super-season"
+   ]
+  },
+  {
+   "id": "Ryan_Rollins",
+   "name": "Ryan Rollins",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Saddiq_Bey",
+   "name": "Saddiq Bey",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Sandro_Mamukelashvili",
+   "name": "Sandro Mamukelashvili",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Scottie_Barnes",
+   "name": "Scottie Barnes",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Sharife_Cooper",
+   "name": "Sharife Cooper",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Sidy_Cissoko",
+   "name": "Sidy Cissoko",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Simone_Fontecchio",
+   "name": "Simone Fontecchio",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Sion_James",
+   "name": "Sion James",
+   "badges": [
+    "rookie",
+    "super-season"
+   ]
+  },
+  {
+   "id": "Spencer_Jones",
+   "name": "Spencer Jones",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Stephon_Castle",
+   "name": "Stephon Castle",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Tari_Eason",
+   "name": "Tari Eason",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Taylor_Hendricks",
+   "name": "Taylor Hendricks",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Tre_Johnson",
+   "name": "Tre Johnson",
+   "badges": [
+    "rookie",
+    "super-season"
+   ]
+  },
+  {
+   "id": "Tre_Jones",
+   "name": "Tre Jones",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Trey_Murphy_III",
+   "name": "Trey Murphy III",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Tristan_Da_Silva",
+   "name": "Tristan Da Silva",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Tristan_Vukcevic",
+   "name": "Tristan Vukcevic",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Tyrese_Maxey",
+   "name": "Tyrese Maxey",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Victor_Wembanyama",
+   "name": "Victor Wembanyama",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Vit_Krejci",
+   "name": "Vít Krejčí",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "VJ_Edgecombe",
+   "name": "VJ Edgecombe",
+   "badges": [
+    "rookie",
+    "super-season"
+   ]
+  },
+  {
+   "id": "Walter_Clayton",
+   "name": "Walter Clayton",
+   "badges": [
+    "rookie",
+    "super-season"
+   ]
+  },
+  {
+   "id": "Will_Richard",
+   "name": "Will Richard",
+   "badges": [
+    "rookie",
+    "super-season"
+   ]
+  },
+  {
+   "id": "Will_Riley",
+   "name": "Will Riley",
+   "badges": [
+    "rookie",
+    "super-season"
+   ]
+  },
+  {
+   "id": "Yves_Missi",
+   "name": "Yves Missi",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Zaccharie_Risacher",
+   "name": "Zaccharie Risacher",
+   "badges": [
+    "super-season"
+   ]
+  }
+ ]
 }

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-01T18:30:30.071Z",
+  "generatedAt": "2026-09-02T21:47:18.193Z",
   "set": "summer-standouts",
   "provisional": true,
   "sources": {
@@ -22,7 +22,7 @@
       "paintBoost": 2,
       "threePtBoost": -2,
       "defBoost": 3,
-      "salary": 610,
+      "salary": 600,
       "chart": [
         {
           "lo": 1,
@@ -33,29 +33,29 @@
         },
         {
           "lo": 3,
-          "hi": 5,
+          "hi": 4,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 6,
+          "lo": 5,
+          "hi": 10,
+          "pts": 1,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 11,
           "hi": 15,
           "pts": 1,
           "reb": 1,
-          "ast": 1
+          "ast": 0
         },
         {
           "lo": 16,
-          "hi": 18,
-          "pts": 1,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 19,
           "hi": 99,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 1
         }
@@ -68,7 +68,7 @@
       "bbrefId": "chrisdo01",
       "traded": false,
       "metrics": {},
-      "provisional": true,
+      "provisional": false,
       "playoffRun": true
     },
     {
@@ -82,7 +82,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 2,
-      "salary": 340,
+      "salary": 360,
       "chart": [
         {
           "lo": 1,
@@ -93,13 +93,20 @@
         },
         {
           "lo": 3,
-          "hi": 6,
+          "hi": 8,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 7,
+          "lo": 9,
+          "hi": 10,
+          "pts": 1,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 11,
           "hi": 14,
           "pts": 1,
           "reb": 1,
@@ -107,23 +114,16 @@
         },
         {
           "lo": 15,
-          "hi": 19,
+          "hi": 24,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 20,
-          "hi": 23,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 24,
+          "lo": 25,
           "hi": 99,
-          "pts": 2,
-          "reb": 2,
+          "pts": 1,
+          "reb": 1,
           "ast": 1
         }
       ],
@@ -135,7 +135,7 @@
       "bbrefId": "willier01",
       "traded": false,
       "metrics": {},
-      "provisional": true,
+      "provisional": false,
       "playoffRun": true
     },
     {
@@ -149,7 +149,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 760,
+      "salary": 730,
       "chart": [
         {
           "lo": 1,
@@ -160,29 +160,36 @@
         },
         {
           "lo": 3,
-          "hi": 5,
+          "hi": 4,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 6,
+          "lo": 5,
+          "hi": 9,
+          "pts": 1,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 10,
           "hi": 15,
           "pts": 2,
-          "reb": 1,
-          "ast": 1
+          "reb": 0,
+          "ast": 0
         },
         {
           "lo": 16,
-          "hi": 16,
+          "hi": 21,
           "pts": 2,
-          "reb": 1,
-          "ast": 1
+          "reb": 0,
+          "ast": 0
         },
         {
-          "lo": 17,
+          "lo": 22,
           "hi": 99,
-          "pts": 3,
+          "pts": 2,
           "reb": 1,
           "ast": 1
         }
@@ -195,7 +202,7 @@
       "bbrefId": "bibbymi01",
       "traded": false,
       "metrics": {},
-      "provisional": true,
+      "provisional": false,
       "playoffRun": true
     },
     {
@@ -209,7 +216,7 @@
       "paintBoost": 0,
       "threePtBoost": -2,
       "defBoost": 2,
-      "salary": 370,
+      "salary": 470,
       "chart": [
         {
           "lo": 1,
@@ -220,13 +227,13 @@
         },
         {
           "lo": 3,
-          "hi": 6,
+          "hi": 5,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 7,
+          "lo": 6,
           "hi": 17,
           "pts": 1,
           "reb": 1,
@@ -234,16 +241,9 @@
         },
         {
           "lo": 18,
-          "hi": 29,
-          "pts": 1,
-          "reb": 3,
-          "ast": 0
-        },
-        {
-          "lo": 30,
           "hi": 99,
-          "pts": 2,
-          "reb": 3,
+          "pts": 1,
+          "reb": 2,
           "ast": 0
         }
       ],
@@ -255,7 +255,7 @@
       "bbrefId": "collija04",
       "traded": false,
       "metrics": {},
-      "provisional": true,
+      "provisional": false,
       "playoffRun": true
     },
     {
@@ -269,7 +269,7 @@
       "paintBoost": 3,
       "threePtBoost": -2,
       "defBoost": 5,
-      "salary": 680,
+      "salary": 660,
       "chart": [
         {
           "lo": 1,
@@ -280,13 +280,13 @@
         },
         {
           "lo": 3,
-          "hi": 4,
+          "hi": 3,
           "pts": 0,
-          "reb": 0,
+          "reb": 1,
           "ast": 0
         },
         {
-          "lo": 5,
+          "lo": 4,
           "hi": 17,
           "pts": 1,
           "reb": 1,
@@ -294,24 +294,17 @@
         },
         {
           "lo": 18,
-          "hi": 21,
+          "hi": 23,
+          "pts": 1,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 24,
+          "hi": 99,
           "pts": 1,
           "reb": 2,
           "ast": 0
-        },
-        {
-          "lo": 22,
-          "hi": 25,
-          "pts": 1,
-          "reb": 5,
-          "ast": 0
-        },
-        {
-          "lo": 26,
-          "hi": 99,
-          "pts": 1,
-          "reb": 5,
-          "ast": 1
         }
       ],
       "season": 2004,
@@ -322,7 +315,7 @@
       "bbrefId": "wallabe01",
       "traded": false,
       "metrics": {},
-      "provisional": true,
+      "provisional": false,
       "playoffRun": true
     },
     {
@@ -336,74 +329,7 @@
       "paintBoost": 0,
       "threePtBoost": 3,
       "defBoost": 1,
-      "salary": 700,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 5,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 6,
-          "hi": 14,
-          "pts": 1,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 15,
-          "hi": 21,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 22,
-          "hi": 25,
-          "pts": 2,
-          "reb": 3,
-          "ast": 1
-        },
-        {
-          "lo": 26,
-          "hi": 99,
-          "pts": 3,
-          "reb": 3,
-          "ast": 1
-        }
-      ],
-      "season": 2005,
-      "seasonLabel": "2004-05",
-      "age": null,
-      "games": 23,
-      "mpg": 27.1,
-      "bbrefId": "horryro01",
-      "traded": false,
-      "metrics": {},
-      "provisional": true,
-      "playoffRun": true
-    },
-    {
-      "id": "Josh_Howard",
-      "name": "Josh Howard",
-      "team": "DAL",
-      "pos": "SF",
-      "speed": 13,
-      "power": 12,
-      "shotLine": 16,
-      "paintBoost": 2,
-      "threePtBoost": 1,
-      "defBoost": 2,
-      "salary": 950,
+      "salary": 790,
       "chart": [
         {
           "lo": 1,
@@ -421,6 +347,66 @@
         },
         {
           "lo": 5,
+          "hi": 14,
+          "pts": 1,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 15,
+          "hi": 23,
+          "pts": 2,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 24,
+          "hi": 99,
+          "pts": 2,
+          "reb": 2,
+          "ast": 1
+        }
+      ],
+      "season": 2005,
+      "seasonLabel": "2004-05",
+      "age": null,
+      "games": 23,
+      "mpg": 27.1,
+      "bbrefId": "horryro01",
+      "traded": false,
+      "metrics": {},
+      "provisional": false,
+      "playoffRun": true
+    },
+    {
+      "id": "Josh_Howard",
+      "name": "Josh Howard",
+      "team": "DAL",
+      "pos": "SF",
+      "speed": 13,
+      "power": 12,
+      "shotLine": 16,
+      "paintBoost": 2,
+      "threePtBoost": 1,
+      "defBoost": 2,
+      "salary": 910,
+      "chart": [
+        {
+          "lo": 1,
+          "hi": 2,
+          "pts": 0,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 3,
+          "hi": 3,
+          "pts": 0,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 4,
           "hi": 15,
           "pts": 2,
           "reb": 1,
@@ -428,23 +414,9 @@
         },
         {
           "lo": 16,
-          "hi": 16,
+          "hi": 99,
           "pts": 2,
           "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 17,
-          "hi": 21,
-          "pts": 3,
-          "reb": 2,
-          "ast": 0
-        },
-        {
-          "lo": 22,
-          "hi": 99,
-          "pts": 4,
-          "reb": 3,
           "ast": 0
         }
       ],
@@ -456,7 +428,7 @@
       "bbrefId": "howarjo01",
       "traded": false,
       "metrics": {},
-      "provisional": true,
+      "provisional": false,
       "playoffRun": true
     },
     {
@@ -470,7 +442,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 0,
-      "salary": 740,
+      "salary": 1180,
       "chart": [
         {
           "lo": 1,
@@ -481,13 +453,20 @@
         },
         {
           "lo": 3,
-          "hi": 5,
+          "hi": 4,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 6,
+          "lo": 5,
+          "hi": 9,
+          "pts": 1,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 10,
           "hi": 13,
           "pts": 2,
           "reb": 1,
@@ -495,23 +474,16 @@
         },
         {
           "lo": 14,
-          "hi": 19,
+          "hi": 20,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 20,
-          "hi": 22,
-          "pts": 2,
-          "reb": 3,
-          "ast": 0
-        },
-        {
-          "lo": 23,
+          "lo": 21,
           "hi": 99,
-          "pts": 4,
-          "reb": 3,
+          "pts": 5,
+          "reb": 2,
           "ast": 1
         }
       ],
@@ -523,7 +495,7 @@
       "bbrefId": "thomati01",
       "traded": false,
       "metrics": {},
-      "provisional": true,
+      "provisional": false,
       "playoffRun": true
     },
     {
@@ -537,127 +509,7 @@
       "paintBoost": -1,
       "threePtBoost": 2,
       "defBoost": 0,
-      "salary": 440,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 7,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 8,
-          "hi": 13,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 14,
-          "hi": 25,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 26,
-          "hi": 99,
-          "pts": 4,
-          "reb": 1,
-          "ast": 1
-        }
-      ],
-      "season": 2007,
-      "seasonLabel": "2006-07",
-      "age": null,
-      "games": 20,
-      "mpg": 20.1,
-      "bbrefId": "gibsoda01",
-      "traded": false,
-      "metrics": {},
-      "provisional": true,
-      "playoffRun": true
-    },
-    {
-      "id": "Fabricio_Oberto",
-      "name": "Fabricio Oberto",
-      "team": "SAS",
-      "pos": "PF",
-      "speed": 8,
-      "power": 10,
-      "shotLine": 14,
-      "paintBoost": 0,
-      "threePtBoost": -6,
-      "defBoost": 0,
-      "salary": 430,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 7,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 8,
-          "hi": 13,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 14,
-          "hi": 26,
-          "pts": 2,
-          "reb": 3,
-          "ast": 0
-        },
-        {
-          "lo": 27,
-          "hi": 99,
-          "pts": 2,
-          "reb": 3,
-          "ast": 1
-        }
-      ],
-      "season": 2007,
-      "seasonLabel": "2006-07",
-      "age": null,
-      "games": 20,
-      "mpg": 20.8,
-      "bbrefId": "obertfa01",
-      "traded": false,
-      "metrics": {},
-      "provisional": true,
-      "playoffRun": true
-    },
-    {
-      "id": "Michael_Finley",
-      "name": "Michael Finley",
-      "team": "SAS",
-      "pos": "SF",
-      "speed": 11,
-      "power": 10,
-      "shotLine": 15,
-      "paintBoost": 0,
-      "threePtBoost": 3,
-      "defBoost": -1,
-      "salary": 560,
+      "salary": 810,
       "chart": [
         {
           "lo": 1,
@@ -675,22 +527,163 @@
         },
         {
           "lo": 7,
+          "hi": 9,
+          "pts": 1,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 10,
+          "hi": 13,
+          "pts": 2,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 14,
+          "hi": 21,
+          "pts": 2,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 22,
+          "hi": 99,
+          "pts": 5,
+          "reb": 4,
+          "ast": 2
+        }
+      ],
+      "season": 2007,
+      "seasonLabel": "2006-07",
+      "age": null,
+      "games": 20,
+      "mpg": 20.1,
+      "bbrefId": "gibsoda01",
+      "traded": false,
+      "metrics": {},
+      "provisional": false,
+      "playoffRun": true
+    },
+    {
+      "id": "Fabricio_Oberto",
+      "name": "Fabricio Oberto",
+      "team": "SAS",
+      "pos": "PF",
+      "speed": 8,
+      "power": 10,
+      "shotLine": 14,
+      "paintBoost": 0,
+      "threePtBoost": -6,
+      "defBoost": 0,
+      "salary": 420,
+      "chart": [
+        {
+          "lo": 1,
+          "hi": 2,
+          "pts": 0,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 3,
+          "hi": 6,
+          "pts": 0,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 7,
+          "hi": 13,
+          "pts": 1,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 14,
+          "hi": 16,
+          "pts": 1,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 17,
+          "hi": 23,
+          "pts": 1,
+          "reb": 2,
+          "ast": 1
+        },
+        {
+          "lo": 24,
+          "hi": 99,
+          "pts": 2,
+          "reb": 2,
+          "ast": 1
+        }
+      ],
+      "season": 2007,
+      "seasonLabel": "2006-07",
+      "age": null,
+      "games": 20,
+      "mpg": 20.8,
+      "bbrefId": "obertfa01",
+      "traded": false,
+      "metrics": {},
+      "provisional": false,
+      "playoffRun": true
+    },
+    {
+      "id": "Michael_Finley",
+      "name": "Michael Finley",
+      "team": "SAS",
+      "pos": "SF",
+      "speed": 11,
+      "power": 10,
+      "shotLine": 15,
+      "paintBoost": 0,
+      "threePtBoost": 3,
+      "defBoost": -1,
+      "salary": 710,
+      "chart": [
+        {
+          "lo": 1,
+          "hi": 2,
+          "pts": 0,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 3,
+          "hi": 5,
+          "pts": 0,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 6,
+          "hi": 9,
+          "pts": 1,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 10,
           "hi": 14,
           "pts": 2,
-          "reb": 1,
+          "reb": 0,
           "ast": 0
         },
         {
           "lo": 15,
-          "hi": 24,
+          "hi": 21,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 25,
+          "lo": 22,
           "hi": 99,
-          "pts": 3,
+          "pts": 2,
           "reb": 1,
           "ast": 1
         }
@@ -703,7 +696,7 @@
       "bbrefId": "finlemi01",
       "traded": false,
       "metrics": {},
-      "provisional": true,
+      "provisional": false,
       "playoffRun": true
     },
     {
@@ -717,7 +710,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 2,
-      "salary": 750,
+      "salary": 860,
       "chart": [
         {
           "lo": 1,
@@ -728,13 +721,13 @@
         },
         {
           "lo": 3,
-          "hi": 5,
+          "hi": 4,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 6,
+          "lo": 5,
           "hi": 15,
           "pts": 2,
           "reb": 1,
@@ -742,17 +735,17 @@
         },
         {
           "lo": 16,
-          "hi": 22,
+          "hi": 21,
           "pts": 2,
-          "reb": 2,
+          "reb": 1,
           "ast": 0
         },
         {
-          "lo": 23,
+          "lo": 22,
           "hi": 99,
-          "pts": 3,
-          "reb": 3,
-          "ast": 1
+          "pts": 2,
+          "reb": 2,
+          "ast": 0
         }
       ],
       "season": 2007,
@@ -763,7 +756,7 @@
       "bbrefId": "wallara01",
       "traded": false,
       "metrics": {},
-      "provisional": true,
+      "provisional": false,
       "playoffRun": true
     },
     {
@@ -777,7 +770,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 2,
-      "salary": 430,
+      "salary": 750,
       "chart": [
         {
           "lo": 1,
@@ -788,13 +781,13 @@
         },
         {
           "lo": 3,
-          "hi": 5,
+          "hi": 4,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 6,
+          "lo": 5,
           "hi": 14,
           "pts": 1,
           "reb": 0,
@@ -802,20 +795,6 @@
         },
         {
           "lo": 15,
-          "hi": 18,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 19,
-          "hi": 26,
-          "pts": 2,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 27,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -830,7 +809,7 @@
       "bbrefId": "fishede01",
       "traded": false,
       "metrics": {},
-      "provisional": true,
+      "provisional": false,
       "playoffRun": true
     },
     {
@@ -844,134 +823,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -1,
-      "salary": 1000,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 5,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 6,
-          "hi": 15,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 16,
-          "hi": 20,
-          "pts": 4,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 21,
-          "hi": 99,
-          "pts": 5,
-          "reb": 2,
-          "ast": 1
-        }
-      ],
-      "season": 2009,
-      "seasonLabel": "2008-09",
-      "age": null,
-      "games": 16,
-      "mpg": 38.2,
-      "bbrefId": "anthoca01",
-      "traded": false,
-      "metrics": {},
-      "provisional": true,
-      "playoffRun": true
-    },
-    {
-      "id": "Chauncey_Billups",
-      "name": "Chauncey Billups",
-      "team": "DEN04",
-      "pos": "PG",
-      "speed": 16,
-      "power": 11,
-      "shotLine": 13,
-      "paintBoost": -1,
-      "threePtBoost": 1,
-      "defBoost": 0,
-      "salary": 1070,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 5,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 6,
-          "hi": 12,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 13,
-          "hi": 20,
-          "pts": 3,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 21,
-          "hi": 23,
-          "pts": 3,
-          "reb": 1,
-          "ast": 2
-        },
-        {
-          "lo": 24,
-          "hi": 99,
-          "pts": 4,
-          "reb": 1,
-          "ast": 2
-        }
-      ],
-      "season": 2009,
-      "seasonLabel": "2008-09",
-      "age": null,
-      "games": 16,
-      "mpg": 38.7,
-      "bbrefId": "billuch01",
-      "traded": false,
-      "metrics": {},
-      "provisional": true,
-      "playoffRun": true
-    },
-    {
-      "id": "Lamar_Odom",
-      "name": "Lamar Odom",
-      "team": "LAL",
-      "pos": "PF",
-      "speed": 11,
-      "power": 14,
-      "shotLine": 15,
-      "paintBoost": 0,
-      "threePtBoost": 0,
-      "defBoost": 2,
-      "salary": 820,
+      "salary": 1130,
       "chart": [
         {
           "lo": 1,
@@ -989,23 +841,150 @@
         },
         {
           "lo": 5,
-          "hi": 14,
+          "hi": 9,
           "pts": 2,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 10,
+          "hi": 15,
+          "pts": 3,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 21,
-          "pts": 2,
-          "reb": 2,
+          "pts": 3,
+          "reb": 1,
           "ast": 0
         },
         {
           "lo": 22,
           "hi": 99,
           "pts": 3,
-          "reb": 3,
+          "reb": 1,
+          "ast": 1
+        }
+      ],
+      "season": 2009,
+      "seasonLabel": "2008-09",
+      "age": null,
+      "games": 16,
+      "mpg": 38.2,
+      "bbrefId": "anthoca01",
+      "traded": false,
+      "metrics": {},
+      "provisional": false,
+      "playoffRun": true
+    },
+    {
+      "id": "Chauncey_Billups",
+      "name": "Chauncey Billups",
+      "team": "DEN04",
+      "pos": "PG",
+      "speed": 16,
+      "power": 11,
+      "shotLine": 13,
+      "paintBoost": -1,
+      "threePtBoost": 1,
+      "defBoost": 0,
+      "salary": 1100,
+      "chart": [
+        {
+          "lo": 1,
+          "hi": 2,
+          "pts": 0,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 3,
+          "hi": 4,
+          "pts": 0,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 5,
+          "hi": 12,
+          "pts": 2,
+          "reb": 0,
+          "ast": 1
+        },
+        {
+          "lo": 13,
+          "hi": 21,
+          "pts": 2,
+          "reb": 0,
+          "ast": 1
+        },
+        {
+          "lo": 22,
+          "hi": 99,
+          "pts": 3,
+          "reb": 1,
+          "ast": 1
+        }
+      ],
+      "season": 2009,
+      "seasonLabel": "2008-09",
+      "age": null,
+      "games": 16,
+      "mpg": 38.7,
+      "bbrefId": "billuch01",
+      "traded": false,
+      "metrics": {},
+      "provisional": false,
+      "playoffRun": true
+    },
+    {
+      "id": "Lamar_Odom",
+      "name": "Lamar Odom",
+      "team": "LAL",
+      "pos": "PF",
+      "speed": 11,
+      "power": 14,
+      "shotLine": 15,
+      "paintBoost": 0,
+      "threePtBoost": 0,
+      "defBoost": 2,
+      "salary": 800,
+      "chart": [
+        {
+          "lo": 1,
+          "hi": 2,
+          "pts": 0,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 3,
+          "hi": 3,
+          "pts": 0,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 4,
+          "hi": 14,
+          "pts": 1,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 15,
+          "hi": 22,
+          "pts": 2,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 23,
+          "hi": 99,
+          "pts": 2,
+          "reb": 2,
           "ast": 1
         }
       ],
@@ -1017,7 +996,7 @@
       "bbrefId": "odomla01",
       "traded": false,
       "metrics": {},
-      "provisional": true,
+      "provisional": false,
       "playoffRun": true
     },
     {
@@ -1031,7 +1010,7 @@
       "paintBoost": 0,
       "threePtBoost": -4,
       "defBoost": 1,
-      "salary": 330,
+      "salary": 410,
       "chart": [
         {
           "lo": 1,
@@ -1042,31 +1021,31 @@
         },
         {
           "lo": 3,
-          "hi": 7,
+          "hi": 5,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 8,
+          "lo": 6,
           "hi": 15,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
           "lo": 16,
-          "hi": 24,
+          "hi": 22,
           "pts": 2,
-          "reb": 3,
+          "reb": 1,
           "ast": 0
         },
         {
-          "lo": 25,
+          "lo": 23,
           "hi": 99,
-          "pts": 3,
-          "reb": 3,
-          "ast": 0
+          "pts": 2,
+          "reb": 2,
+          "ast": 1
         }
       ],
       "season": 2010,
@@ -1077,7 +1056,7 @@
       "bbrefId": "davisgl01",
       "traded": false,
       "metrics": {},
-      "provisional": true,
+      "provisional": false,
       "playoffRun": true
     },
     {
@@ -1091,7 +1070,7 @@
       "paintBoost": 0,
       "threePtBoost": 3,
       "defBoost": 0,
-      "salary": 750,
+      "salary": 920,
       "chart": [
         {
           "lo": 1,
@@ -1102,29 +1081,36 @@
         },
         {
           "lo": 3,
-          "hi": 6,
+          "hi": 4,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 7,
+          "lo": 5,
+          "hi": 8,
+          "pts": 2,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 9,
           "hi": 14,
+          "pts": 2,
+          "reb": 0,
+          "ast": 1
+        },
+        {
+          "lo": 15,
+          "hi": 20,
           "pts": 2,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 15,
-          "hi": 22,
-          "pts": 3,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 23,
+          "lo": 21,
           "hi": 99,
-          "pts": 4,
+          "pts": 3,
           "reb": 1,
           "ast": 1
         }
@@ -1137,7 +1123,7 @@
       "bbrefId": "nelsoja01",
       "traded": false,
       "metrics": {},
-      "provisional": true,
+      "provisional": false,
       "playoffRun": true
     },
     {
@@ -1151,7 +1137,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 1,
-      "salary": 510,
+      "salary": 720,
       "chart": [
         {
           "lo": 1,
@@ -1218,7 +1204,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 880,
+      "salary": 1040,
       "chart": [
         {
           "lo": 1,
@@ -1229,13 +1215,13 @@
         },
         {
           "lo": 3,
-          "hi": 6,
+          "hi": 5,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 7,
+          "lo": 6,
           "hi": 13,
           "pts": 2,
           "reb": 1,
@@ -1243,16 +1229,9 @@
         },
         {
           "lo": 14,
-          "hi": 20,
+          "hi": 99,
           "pts": 3,
           "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 21,
-          "hi": 99,
-          "pts": 5,
-          "reb": 2,
           "ast": 0
         }
       ],
@@ -1264,7 +1243,7 @@
       "bbrefId": "richaja01",
       "traded": false,
       "metrics": {},
-      "provisional": true,
+      "provisional": false,
       "playoffRun": true
     },
     {
@@ -1278,7 +1257,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 1,
-      "salary": 390,
+      "salary": 580,
       "chart": [
         {
           "lo": 1,
@@ -1338,134 +1317,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": -1,
-      "salary": 750,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 6,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 7,
-          "hi": 13,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 14,
-          "hi": 16,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 17,
-          "hi": 21,
-          "pts": 3,
-          "reb": 1,
-          "ast": 2
-        },
-        {
-          "lo": 22,
-          "hi": 99,
-          "pts": 4,
-          "reb": 1,
-          "ast": 3
-        }
-      ],
-      "season": 2010,
-      "seasonLabel": "2009-10",
-      "age": null,
-      "games": 16,
-      "mpg": 33.7,
-      "bbrefId": "nashst01",
-      "traded": false,
-      "metrics": {},
-      "provisional": true,
-      "playoffRun": true
-    },
-    {
-      "id": "Jason_Kidd",
-      "name": "Jason Kidd",
-      "team": "DAL",
-      "pos": "SG",
-      "speed": 17,
-      "power": 10,
-      "shotLine": 16,
-      "paintBoost": 0,
-      "threePtBoost": 1,
-      "defBoost": 3,
-      "salary": 690,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 4,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 5,
-          "hi": 15,
-          "pts": 1,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 16,
-          "hi": 23,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 24,
-          "hi": 99,
-          "pts": 2,
-          "reb": 1,
-          "ast": 3
-        }
-      ],
-      "season": 2011,
-      "seasonLabel": "2010-11",
-      "age": null,
-      "games": 21,
-      "mpg": 35.4,
-      "bbrefId": "kiddja01",
-      "traded": false,
-      "metrics": {},
-      "provisional": true,
-      "playoffRun": true
-    },
-    {
-      "id": "Joel_Anthony",
-      "name": "Joel Anthony",
-      "team": "MIA",
-      "pos": "PF",
-      "speed": 7,
-      "power": 10,
-      "shotLine": 18,
-      "paintBoost": 2,
-      "threePtBoost": -2,
-      "defBoost": 1,
-      "salary": 220,
+      "salary": 770,
       "chart": [
         {
           "lo": 1,
@@ -1479,20 +1331,140 @@
           "hi": 5,
           "pts": 0,
           "reb": 0,
-          "ast": 0
+          "ast": 1
         },
         {
           "lo": 6,
-          "hi": 17,
+          "hi": 13,
+          "pts": 2,
+          "reb": 0,
+          "ast": 1
+        },
+        {
+          "lo": 14,
+          "hi": 21,
+          "pts": 2,
+          "reb": 0,
+          "ast": 1
+        },
+        {
+          "lo": 22,
+          "hi": 99,
+          "pts": 2,
+          "reb": 1,
+          "ast": 2
+        }
+      ],
+      "season": 2010,
+      "seasonLabel": "2009-10",
+      "age": null,
+      "games": 16,
+      "mpg": 33.7,
+      "bbrefId": "nashst01",
+      "traded": false,
+      "metrics": {},
+      "provisional": false,
+      "playoffRun": true
+    },
+    {
+      "id": "Jason_Kidd",
+      "name": "Jason Kidd",
+      "team": "DAL",
+      "pos": "SG",
+      "speed": 17,
+      "power": 10,
+      "shotLine": 16,
+      "paintBoost": 0,
+      "threePtBoost": 1,
+      "defBoost": 3,
+      "salary": 640,
+      "chart": [
+        {
+          "lo": 1,
+          "hi": 2,
+          "pts": 0,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 3,
+          "hi": 3,
+          "pts": 0,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 4,
+          "hi": 11,
           "pts": 1,
+          "reb": 0,
+          "ast": 1
+        },
+        {
+          "lo": 12,
+          "hi": 15,
+          "pts": 1,
+          "reb": 1,
+          "ast": 1
+        },
+        {
+          "lo": 16,
+          "hi": 99,
+          "pts": 1,
+          "reb": 1,
+          "ast": 1
+        }
+      ],
+      "season": 2011,
+      "seasonLabel": "2010-11",
+      "age": null,
+      "games": 21,
+      "mpg": 35.4,
+      "bbrefId": "kiddja01",
+      "traded": false,
+      "metrics": {},
+      "provisional": false,
+      "playoffRun": true
+    },
+    {
+      "id": "Joel_Anthony",
+      "name": "Joel Anthony",
+      "team": "MIA",
+      "pos": "PF",
+      "speed": 7,
+      "power": 10,
+      "shotLine": 18,
+      "paintBoost": 2,
+      "threePtBoost": -2,
+      "defBoost": 1,
+      "salary": 10,
+      "chart": [
+        {
+          "lo": 1,
+          "hi": 2,
+          "pts": 0,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 3,
+          "hi": 8,
+          "pts": 0,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 9,
+          "hi": 17,
+          "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
           "lo": 18,
           "hi": 99,
-          "pts": 1,
-          "reb": 2,
+          "pts": 0,
+          "reb": 1,
           "ast": 0
         }
       ],
@@ -1504,7 +1476,7 @@
       "bbrefId": "anthojo01",
       "traded": false,
       "metrics": {},
-      "provisional": true,
+      "provisional": false,
       "playoffRun": true
     },
     {
@@ -1518,7 +1490,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 1,
-      "salary": 310,
+      "salary": 490,
       "chart": [
         {
           "lo": 1,
@@ -1589,13 +1561,13 @@
         },
         {
           "lo": 3,
-          "hi": 4,
+          "hi": 3,
           "pts": 0,
-          "reb": 0,
+          "reb": 1,
           "ast": 0
         },
         {
-          "lo": 5,
+          "lo": 4,
           "hi": 15,
           "pts": 2,
           "reb": 1,
@@ -1603,24 +1575,17 @@
         },
         {
           "lo": 16,
-          "hi": 17,
-          "pts": 2,
-          "reb": 2,
-          "ast": 0
-        },
-        {
-          "lo": 18,
           "hi": 20,
-          "pts": 4,
-          "reb": 2,
+          "pts": 3,
+          "reb": 1,
           "ast": 0
         },
         {
           "lo": 21,
           "hi": 99,
-          "pts": 5,
-          "reb": 3,
-          "ast": 1
+          "pts": 3,
+          "reb": 2,
+          "ast": 0
         }
       ],
       "season": 2012,
@@ -1631,7 +1596,7 @@
       "bbrefId": "garneke01",
       "traded": false,
       "metrics": {},
-      "provisional": true,
+      "provisional": false,
       "playoffRun": true
     },
     {
@@ -1645,7 +1610,7 @@
       "paintBoost": -1,
       "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 300,
+      "salary": 510,
       "chart": [
         {
           "lo": 1,
@@ -1712,7 +1677,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 540,
+      "salary": 600,
       "chart": [
         {
           "lo": 1,
@@ -1723,29 +1688,29 @@
         },
         {
           "lo": 3,
-          "hi": 5,
+          "hi": 4,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 6,
+          "lo": 5,
           "hi": 13,
-          "pts": 2,
-          "reb": 1,
+          "pts": 1,
+          "reb": 0,
           "ast": 0
         },
         {
           "lo": 14,
-          "hi": 24,
+          "hi": 22,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 25,
+          "lo": 23,
           "hi": 99,
-          "pts": 3,
+          "pts": 2,
           "reb": 1,
           "ast": 1
         }
@@ -1758,7 +1723,7 @@
       "bbrefId": "allenra02",
       "traded": false,
       "metrics": {},
-      "provisional": true,
+      "provisional": false,
       "playoffRun": true
     },
     {
@@ -1772,7 +1737,7 @@
       "paintBoost": -1,
       "threePtBoost": 2,
       "defBoost": 3,
-      "salary": 660,
+      "salary": 810,
       "chart": [
         {
           "lo": 1,
@@ -1792,21 +1757,21 @@
           "lo": 7,
           "hi": 13,
           "pts": 1,
-          "reb": 1,
+          "reb": 0,
           "ast": 0
         },
         {
           "lo": 14,
-          "hi": 23,
+          "hi": 16,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 24,
+          "lo": 17,
           "hi": 99,
-          "pts": 3,
-          "reb": 2,
+          "pts": 2,
+          "reb": 1,
           "ast": 1
         }
       ],
@@ -1818,7 +1783,7 @@
       "bbrefId": "greenda02",
       "traded": false,
       "metrics": {},
-      "provisional": true,
+      "provisional": false,
       "playoffRun": true
     },
     {
@@ -1832,7 +1797,7 @@
       "paintBoost": 2,
       "threePtBoost": 3,
       "defBoost": 2,
-      "salary": 1180,
+      "salary": 1020,
       "chart": [
         {
           "lo": 1,
@@ -1843,30 +1808,37 @@
         },
         {
           "lo": 3,
-          "hi": 4,
+          "hi": 3,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 5,
+          "lo": 4,
+          "hi": 9,
+          "pts": 2,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 10,
           "hi": 14,
           "pts": 2,
           "reb": 1,
-          "ast": 1
+          "ast": 0
         },
         {
           "lo": 15,
-          "hi": 22,
-          "pts": 3,
+          "hi": 20,
+          "pts": 2,
           "reb": 1,
-          "ast": 1
+          "ast": 0
         },
         {
-          "lo": 23,
+          "lo": 21,
           "hi": 99,
-          "pts": 5,
-          "reb": 3,
+          "pts": 2,
+          "reb": 1,
           "ast": 1
         }
       ],
@@ -1878,7 +1850,7 @@
       "bbrefId": "georgpa01",
       "traded": false,
       "metrics": {},
-      "provisional": true,
+      "provisional": false,
       "playoffRun": true
     },
     {
@@ -1892,7 +1864,7 @@
       "paintBoost": 0,
       "threePtBoost": 3,
       "defBoost": 0,
-      "salary": 680,
+      "salary": 640,
       "chart": [
         {
           "lo": 1,
@@ -1903,20 +1875,27 @@
         },
         {
           "lo": 3,
-          "hi": 4,
+          "hi": 3,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 5,
+          "lo": 4,
           "hi": 14,
-          "pts": 2,
-          "reb": 1,
+          "pts": 1,
+          "reb": 0,
           "ast": 0
         },
         {
           "lo": 15,
+          "hi": 17,
+          "pts": 1,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 18,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -1931,7 +1910,7 @@
       "bbrefId": "smithjr01",
       "traded": false,
       "metrics": {},
-      "provisional": true,
+      "provisional": false,
       "playoffRun": true
     },
     {
@@ -1945,7 +1924,134 @@
       "paintBoost": 0,
       "threePtBoost": 3,
       "defBoost": -1,
-      "salary": 1040,
+      "salary": 1230,
+      "chart": [
+        {
+          "lo": 1,
+          "hi": 2,
+          "pts": 0,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 3,
+          "hi": 3,
+          "pts": 0,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 4,
+          "hi": 10,
+          "pts": 2,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 11,
+          "hi": 14,
+          "pts": 3,
+          "reb": 0,
+          "ast": 1
+        },
+        {
+          "lo": 15,
+          "hi": 21,
+          "pts": 3,
+          "reb": 0,
+          "ast": 1
+        },
+        {
+          "lo": 22,
+          "hi": 99,
+          "pts": 3,
+          "reb": 1,
+          "ast": 1
+        }
+      ],
+      "season": 2016,
+      "seasonLabel": "2015-16",
+      "age": null,
+      "games": 21,
+      "mpg": 36.8,
+      "bbrefId": "irvinky01",
+      "traded": false,
+      "metrics": {},
+      "provisional": false,
+      "playoffRun": true
+    },
+    {
+      "id": "Serge_Ibaka",
+      "name": "Serge Ibaka",
+      "team": "OKC",
+      "pos": "PF",
+      "speed": 10,
+      "power": 14,
+      "shotLine": 14,
+      "paintBoost": 0,
+      "threePtBoost": -1,
+      "defBoost": 1,
+      "salary": 680,
+      "chart": [
+        {
+          "lo": 1,
+          "hi": 2,
+          "pts": 0,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 3,
+          "hi": 3,
+          "pts": 0,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 4,
+          "hi": 13,
+          "pts": 1,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 14,
+          "hi": 16,
+          "pts": 1,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 17,
+          "hi": 99,
+          "pts": 2,
+          "reb": 1,
+          "ast": 0
+        }
+      ],
+      "season": 2016,
+      "seasonLabel": "2015-16",
+      "age": null,
+      "games": 18,
+      "mpg": 33.5,
+      "bbrefId": "ibakase01",
+      "traded": false,
+      "metrics": {},
+      "provisional": false,
+      "playoffRun": true
+    },
+    {
+      "id": "Kevin_Durant",
+      "name": "Kevin Durant",
+      "team": "GSW",
+      "pos": "PF",
+      "speed": 11,
+      "power": 16,
+      "shotLine": 13,
+      "paintBoost": 0,
+      "threePtBoost": 1,
+      "defBoost": 0,
+      "salary": 1320,
       "chart": [
         {
           "lo": 1,
@@ -1963,157 +2069,16 @@
         },
         {
           "lo": 5,
-          "hi": 14,
-          "pts": 2,
-          "reb": 0,
-          "ast": 1
-        },
-        {
-          "lo": 15,
-          "hi": 17,
-          "pts": 3,
-          "reb": 0,
-          "ast": 1
-        },
-        {
-          "lo": 18,
-          "hi": 23,
-          "pts": 4,
-          "reb": 0,
-          "ast": 1
-        },
-        {
-          "lo": 24,
-          "hi": 99,
-          "pts": 5,
-          "reb": 1,
-          "ast": 1
-        }
-      ],
-      "season": 2016,
-      "seasonLabel": "2015-16",
-      "age": null,
-      "games": 21,
-      "mpg": 36.8,
-      "bbrefId": "irvinky01",
-      "traded": false,
-      "metrics": {},
-      "provisional": true,
-      "playoffRun": true
-    },
-    {
-      "id": "Serge_Ibaka",
-      "name": "Serge Ibaka",
-      "team": "OKC",
-      "pos": "PF",
-      "speed": 10,
-      "power": 14,
-      "shotLine": 14,
-      "paintBoost": 0,
-      "threePtBoost": -1,
-      "defBoost": 1,
-      "salary": 530,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 5,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 6,
-          "hi": 13,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 14,
-          "hi": 17,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 18,
-          "hi": 99,
-          "pts": 2,
-          "reb": 2,
-          "ast": 0
-        }
-      ],
-      "season": 2016,
-      "seasonLabel": "2015-16",
-      "age": null,
-      "games": 18,
-      "mpg": 33.5,
-      "bbrefId": "ibakase01",
-      "traded": false,
-      "metrics": {},
-      "provisional": true,
-      "playoffRun": true
-    },
-    {
-      "id": "Kevin_Durant",
-      "name": "Kevin Durant",
-      "team": "GSW",
-      "pos": "PF",
-      "speed": 11,
-      "power": 16,
-      "shotLine": 13,
-      "paintBoost": 0,
-      "threePtBoost": 1,
-      "defBoost": 0,
-      "salary": 1220,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 6,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 7,
           "hi": 12,
-          "pts": 2,
+          "pts": 3,
           "reb": 1,
-          "ast": 1
+          "ast": 0
         },
         {
           "lo": 13,
-          "hi": 14,
+          "hi": 99,
           "pts": 3,
           "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 15,
-          "hi": 23,
-          "pts": 4,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 24,
-          "hi": 99,
-          "pts": 5,
-          "reb": 3,
           "ast": 1
         }
       ],
@@ -2125,7 +2090,7 @@
       "bbrefId": "duranke01",
       "traded": false,
       "metrics": {},
-      "provisional": true,
+      "provisional": false,
       "playoffRun": true
     },
     {
@@ -2139,7 +2104,7 @@
       "paintBoost": -1,
       "threePtBoost": 3,
       "defBoost": 2,
-      "salary": 910,
+      "salary": 1160,
       "chart": [
         {
           "lo": 1,
@@ -2150,13 +2115,13 @@
         },
         {
           "lo": 3,
-          "hi": 5,
+          "hi": 3,
           "pts": 0,
-          "reb": 0,
+          "reb": 1,
           "ast": 0
         },
         {
-          "lo": 6,
+          "lo": 4,
           "hi": 14,
           "pts": 2,
           "reb": 1,
@@ -2164,24 +2129,10 @@
         },
         {
           "lo": 15,
-          "hi": 20,
-          "pts": 3,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 21,
-          "hi": 23,
+          "hi": 99,
           "pts": 3,
           "reb": 2,
           "ast": 0
-        },
-        {
-          "lo": 24,
-          "hi": 99,
-          "pts": 4,
-          "reb": 4,
-          "ast": 1
         }
       ],
       "season": 2017,
@@ -2192,7 +2143,7 @@
       "bbrefId": "loveke01",
       "traded": false,
       "metrics": {},
-      "provisional": true,
+      "provisional": false,
       "playoffRun": true
     },
     {
@@ -2206,7 +2157,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 2,
-      "salary": 910,
+      "salary": 1110,
       "chart": [
         {
           "lo": 1,
@@ -2217,13 +2168,13 @@
         },
         {
           "lo": 3,
-          "hi": 6,
+          "hi": 4,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 7,
+          "lo": 5,
           "hi": 15,
           "pts": 2,
           "reb": 1,
@@ -2231,17 +2182,10 @@
         },
         {
           "lo": 16,
-          "hi": 20,
+          "hi": 99,
           "pts": 3,
           "reb": 1,
           "ast": 1
-        },
-        {
-          "lo": 21,
-          "hi": 99,
-          "pts": 4,
-          "reb": 2,
-          "ast": 2
         }
       ],
       "season": 2018,
@@ -2252,7 +2196,7 @@
       "bbrefId": "paulch01",
       "traded": false,
       "metrics": {},
-      "provisional": true,
+      "provisional": false,
       "playoffRun": true
     },
     {
@@ -2266,7 +2210,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 0,
-      "salary": 440,
+      "salary": 630,
       "chart": [
         {
           "lo": 1,
@@ -2277,13 +2221,13 @@
         },
         {
           "lo": 3,
-          "hi": 5,
+          "hi": 3,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 6,
+          "lo": 4,
           "hi": 13,
           "pts": 1,
           "reb": 1,
@@ -2291,17 +2235,10 @@
         },
         {
           "lo": 14,
-          "hi": 24,
+          "hi": 99,
           "pts": 2,
           "reb": 1,
           "ast": 0
-        },
-        {
-          "lo": 25,
-          "hi": 99,
-          "pts": 2,
-          "reb": 2,
-          "ast": 1
         }
       ],
       "season": 2018,
@@ -2312,7 +2249,7 @@
       "bbrefId": "tuckepj01",
       "traded": false,
       "metrics": {},
-      "provisional": true,
+      "provisional": false,
       "playoffRun": true
     },
     {
@@ -2326,7 +2263,7 @@
       "paintBoost": 3,
       "threePtBoost": 1,
       "defBoost": 1,
-      "salary": 560,
+      "salary": 720,
       "chart": [
         {
           "lo": 1,
@@ -2337,13 +2274,20 @@
         },
         {
           "lo": 3,
-          "hi": 5,
+          "hi": 4,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 6,
+          "lo": 5,
+          "hi": 11,
+          "pts": 1,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 12,
           "hi": 15,
           "pts": 1,
           "reb": 1,
@@ -2351,23 +2295,9 @@
         },
         {
           "lo": 16,
-          "hi": 16,
-          "pts": 1,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 17,
-          "hi": 25,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 26,
           "hi": 99,
           "pts": 2,
-          "reb": 2,
+          "reb": 1,
           "ast": 1
         }
       ],
@@ -2379,7 +2309,7 @@
       "bbrefId": "iguodan01",
       "traded": false,
       "metrics": {},
-      "provisional": true,
+      "provisional": false,
       "playoffRun": true
     },
     {
@@ -2393,7 +2323,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": 0,
-      "salary": 440,
+      "salary": 690,
       "chart": [
         {
           "lo": 1,
@@ -2453,7 +2383,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": 1,
-      "salary": 1460,
+      "salary": 1340,
       "chart": [
         {
           "lo": 1,
@@ -2464,37 +2394,30 @@
         },
         {
           "lo": 3,
-          "hi": 5,
+          "hi": 3,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 6,
+          "lo": 4,
           "hi": 13,
-          "pts": 2,
+          "pts": 3,
           "reb": 1,
-          "ast": 1
+          "ast": 0
         },
         {
           "lo": 14,
-          "hi": 14,
+          "hi": 21,
           "pts": 3,
           "reb": 1,
-          "ast": 1
+          "ast": 0
         },
         {
-          "lo": 15,
-          "hi": 23,
-          "pts": 5,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 24,
+          "lo": 22,
           "hi": 99,
-          "pts": 6,
-          "reb": 3,
+          "pts": 3,
+          "reb": 1,
           "ast": 1
         }
       ],
@@ -2506,7 +2429,7 @@
       "bbrefId": "leonaka01",
       "traded": false,
       "metrics": {},
-      "provisional": true,
+      "provisional": false,
       "playoffRun": true
     },
     {
@@ -2520,7 +2443,7 @@
       "paintBoost": 2,
       "threePtBoost": -2,
       "defBoost": 3,
-      "salary": 1550,
+      "salary": 1610,
       "chart": [
         {
           "lo": 1,
@@ -2531,37 +2454,30 @@
         },
         {
           "lo": 3,
-          "hi": 4,
+          "hi": 3,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 5,
+          "lo": 4,
           "hi": 12,
           "pts": 2,
           "reb": 1,
-          "ast": 1
+          "ast": 0
         },
         {
           "lo": 13,
-          "hi": 15,
-          "pts": 2,
+          "hi": 21,
+          "pts": 3,
           "reb": 1,
-          "ast": 1
+          "ast": 0
         },
         {
-          "lo": 16,
-          "hi": 23,
-          "pts": 5,
-          "reb": 2,
-          "ast": 1
-        },
-        {
-          "lo": 24,
+          "lo": 22,
           "hi": 99,
-          "pts": 5,
-          "reb": 3,
+          "pts": 4,
+          "reb": 2,
           "ast": 1
         }
       ],
@@ -2573,7 +2489,7 @@
       "bbrefId": "davisan02",
       "traded": false,
       "metrics": {},
-      "provisional": true,
+      "provisional": false,
       "playoffRun": true
     },
     {
@@ -2587,7 +2503,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 780,
+      "salary": 980,
       "chart": [
         {
           "lo": 1,
@@ -2598,29 +2514,29 @@
         },
         {
           "lo": 3,
-          "hi": 5,
+          "hi": 3,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 6,
+          "lo": 4,
           "hi": 14,
           "pts": 2,
-          "reb": 1,
-          "ast": 1
+          "reb": 0,
+          "ast": 0
         },
         {
           "lo": 15,
-          "hi": 22,
+          "hi": 20,
           "pts": 3,
-          "reb": 1,
+          "reb": 0,
           "ast": 1
         },
         {
-          "lo": 23,
+          "lo": 21,
           "hi": 99,
-          "pts": 4,
+          "pts": 3,
           "reb": 1,
           "ast": 1
         }
@@ -2633,7 +2549,7 @@
       "bbrefId": "walkeke02",
       "traded": false,
       "metrics": {},
-      "provisional": true,
+      "provisional": false,
       "playoffRun": true
     },
     {
@@ -2647,7 +2563,7 @@
       "paintBoost": 0,
       "threePtBoost": -5,
       "defBoost": 4,
-      "salary": 480,
+      "salary": 780,
       "chart": [
         {
           "lo": 1,
@@ -2658,13 +2574,13 @@
         },
         {
           "lo": 3,
-          "hi": 5,
+          "hi": 3,
           "pts": 0,
-          "reb": 0,
+          "reb": 1,
           "ast": 0
         },
         {
-          "lo": 6,
+          "lo": 4,
           "hi": 14,
           "pts": 1,
           "reb": 1,
@@ -2672,16 +2588,9 @@
         },
         {
           "lo": 15,
-          "hi": 24,
-          "pts": 1,
-          "reb": 2,
-          "ast": 0
-        },
-        {
-          "lo": 25,
           "hi": 99,
           "pts": 2,
-          "reb": 4,
+          "reb": 2,
           "ast": 0
         }
       ],
@@ -2693,7 +2602,7 @@
       "bbrefId": "capelca01",
       "traded": false,
       "metrics": {},
-      "provisional": true,
+      "provisional": false,
       "playoffRun": true
     },
     {
@@ -2707,7 +2616,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 1,
-      "salary": 1030,
+      "salary": 1180,
       "chart": [
         {
           "lo": 1,
@@ -2718,29 +2627,29 @@
         },
         {
           "lo": 3,
-          "hi": 5,
+          "hi": 4,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 6,
+          "lo": 5,
           "hi": 13,
           "pts": 2,
-          "reb": 1,
-          "ast": 1
+          "reb": 0,
+          "ast": 0
         },
         {
           "lo": 14,
-          "hi": 21,
+          "hi": 20,
           "pts": 3,
-          "reb": 1,
+          "reb": 0,
           "ast": 1
         },
         {
-          "lo": 22,
+          "lo": 21,
           "hi": 99,
-          "pts": 4,
+          "pts": 3,
           "reb": 1,
           "ast": 1
         }
@@ -2753,7 +2662,7 @@
       "bbrefId": "jacksre01",
       "traded": false,
       "metrics": {},
-      "provisional": true,
+      "provisional": false,
       "playoffRun": true
     },
     {
@@ -2767,7 +2676,7 @@
       "paintBoost": 3,
       "threePtBoost": 1,
       "defBoost": 2,
-      "salary": 900,
+      "salary": 910,
       "chart": [
         {
           "lo": 1,
@@ -2778,13 +2687,13 @@
         },
         {
           "lo": 3,
-          "hi": 4,
+          "hi": 3,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 5,
+          "lo": 4,
           "hi": 15,
           "pts": 2,
           "reb": 1,
@@ -2792,24 +2701,10 @@
         },
         {
           "lo": 16,
-          "hi": 16,
+          "hi": 99,
           "pts": 2,
           "reb": 1,
           "ast": 0
-        },
-        {
-          "lo": 17,
-          "hi": 22,
-          "pts": 3,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 23,
-          "hi": 99,
-          "pts": 4,
-          "reb": 3,
-          "ast": 1
         }
       ],
       "season": 2022,
@@ -2820,7 +2715,7 @@
       "bbrefId": "wiggian01",
       "traded": false,
       "metrics": {},
-      "provisional": true,
+      "provisional": false,
       "playoffRun": true
     },
     {
@@ -2834,7 +2729,7 @@
       "paintBoost": 2,
       "threePtBoost": 2,
       "defBoost": 3,
-      "salary": 500,
+      "salary": 620,
       "chart": [
         {
           "lo": 1,
@@ -2845,37 +2740,30 @@
         },
         {
           "lo": 3,
-          "hi": 6,
+          "hi": 4,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 7,
+          "lo": 5,
           "hi": 16,
           "pts": 1,
-          "reb": 1,
+          "reb": 0,
           "ast": 0
         },
         {
           "lo": 17,
-          "hi": 22,
+          "hi": 21,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 23,
-          "hi": 25,
-          "pts": 2,
-          "reb": 2,
-          "ast": 0
-        },
-        {
-          "lo": 26,
+          "lo": 22,
           "hi": 99,
-          "pts": 3,
-          "reb": 2,
+          "pts": 2,
+          "reb": 1,
           "ast": 1
         }
       ],
@@ -2887,7 +2775,7 @@
       "bbrefId": "strusma01",
       "traded": false,
       "metrics": {},
-      "provisional": true,
+      "provisional": false,
       "playoffRun": true
     },
     {
@@ -2901,268 +2789,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 2,
-      "salary": 560,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 6,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 7,
-          "hi": 14,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 15,
-          "hi": 17,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 18,
-          "hi": 23,
-          "pts": 3,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 24,
-          "hi": 99,
-          "pts": 3,
-          "reb": 2,
-          "ast": 1
-        }
-      ],
-      "season": 2023,
-      "seasonLabel": "2022-23",
-      "age": null,
-      "games": 20,
-      "mpg": 26.6,
-      "bbrefId": "brownbr01",
-      "traded": false,
-      "metrics": {},
-      "provisional": true,
-      "playoffRun": true
-    },
-    {
-      "id": "Jamal_Murray",
-      "name": "Jamal Murray",
-      "team": "DEN",
-      "pos": "PG",
-      "speed": 17,
-      "power": 11,
-      "shotLine": 15,
-      "paintBoost": 0,
-      "threePtBoost": 3,
-      "defBoost": 1,
-      "salary": 1320,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 4,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 5,
-          "hi": 13,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 14,
-          "hi": 14,
-          "pts": 3,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 15,
-          "hi": 20,
-          "pts": 4,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 21,
-          "hi": 99,
-          "pts": 5,
-          "reb": 1,
-          "ast": 2
-        }
-      ],
-      "season": 2023,
-      "seasonLabel": "2022-23",
-      "age": null,
-      "games": 20,
-      "mpg": 39.9,
-      "bbrefId": "murraja01",
-      "traded": false,
-      "metrics": {},
-      "provisional": true,
-      "playoffRun": true
-    },
-    {
-      "id": "Pascal_Siakam",
-      "name": "Pascal Siakam",
-      "team": "IND",
-      "pos": "PF",
-      "speed": 11,
-      "power": 15,
-      "shotLine": 15,
-      "paintBoost": 2,
-      "threePtBoost": 0,
-      "defBoost": 2,
-      "salary": 1190,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 4,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 5,
-          "hi": 14,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 15,
-          "hi": 15,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 16,
-          "hi": 20,
-          "pts": 4,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 21,
-          "hi": 99,
-          "pts": 5,
-          "reb": 2,
-          "ast": 1
-        }
-      ],
-      "season": 2025,
-      "seasonLabel": "2024-25",
-      "age": null,
-      "games": 23,
-      "mpg": 33.4,
-      "bbrefId": "siakapa01",
-      "traded": false,
-      "metrics": {},
-      "provisional": true,
-      "playoffRun": true
-    },
-    {
-      "id": "Tyrese_Haliburton",
-      "name": "Tyrese Haliburton",
-      "team": "IND",
-      "pos": "PG",
-      "speed": 16,
-      "power": 10,
-      "shotLine": 15,
-      "paintBoost": 2,
-      "threePtBoost": 0,
-      "defBoost": 0,
-      "salary": 1040,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 4,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 5,
-          "hi": 14,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 15,
-          "hi": 21,
-          "pts": 3,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 22,
-          "hi": 99,
-          "pts": 4,
-          "reb": 2,
-          "ast": 3
-        }
-      ],
-      "season": 2025,
-      "seasonLabel": "2024-25",
-      "age": null,
-      "games": 23,
-      "mpg": 33.5,
-      "bbrefId": "halibty01",
-      "traded": false,
-      "metrics": {},
-      "provisional": true,
-      "playoffRun": true
-    },
-    {
-      "id": "Dennis_Rodman",
-      "name": "Dennis Rodman",
-      "team": "CHI",
-      "pos": "PF",
-      "speed": 8,
-      "power": 11,
-      "shotLine": 18,
-      "paintBoost": 2,
-      "threePtBoost": -2,
-      "defBoost": 1,
-      "salary": 300,
+      "salary": 730,
       "chart": [
         {
           "lo": 1,
@@ -3180,30 +2807,270 @@
         },
         {
           "lo": 6,
-          "hi": 17,
+          "hi": 14,
+          "pts": 2,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 15,
+          "hi": 21,
+          "pts": 2,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 22,
+          "hi": 99,
+          "pts": 2,
+          "reb": 1,
+          "ast": 1
+        }
+      ],
+      "season": 2023,
+      "seasonLabel": "2022-23",
+      "age": null,
+      "games": 20,
+      "mpg": 26.6,
+      "bbrefId": "brownbr01",
+      "traded": false,
+      "metrics": {},
+      "provisional": false,
+      "playoffRun": true
+    },
+    {
+      "id": "Jamal_Murray",
+      "name": "Jamal Murray",
+      "team": "DEN",
+      "pos": "PG",
+      "speed": 17,
+      "power": 11,
+      "shotLine": 15,
+      "paintBoost": 0,
+      "threePtBoost": 3,
+      "defBoost": 1,
+      "salary": 1300,
+      "chart": [
+        {
+          "lo": 1,
+          "hi": 2,
+          "pts": 0,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 3,
+          "hi": 3,
+          "pts": 0,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 4,
+          "hi": 9,
+          "pts": 2,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 10,
+          "hi": 14,
+          "pts": 2,
+          "reb": 1,
+          "ast": 1
+        },
+        {
+          "lo": 15,
+          "hi": 99,
+          "pts": 3,
+          "reb": 1,
+          "ast": 1
+        }
+      ],
+      "season": 2023,
+      "seasonLabel": "2022-23",
+      "age": null,
+      "games": 20,
+      "mpg": 39.9,
+      "bbrefId": "murraja01",
+      "traded": false,
+      "metrics": {},
+      "provisional": false,
+      "playoffRun": true
+    },
+    {
+      "id": "Pascal_Siakam",
+      "name": "Pascal Siakam",
+      "team": "IND",
+      "pos": "PF",
+      "speed": 11,
+      "power": 15,
+      "shotLine": 15,
+      "paintBoost": 2,
+      "threePtBoost": 0,
+      "defBoost": 2,
+      "salary": 1330,
+      "chart": [
+        {
+          "lo": 1,
+          "hi": 2,
+          "pts": 0,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 3,
+          "hi": 3,
+          "pts": 0,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 4,
+          "hi": 14,
+          "pts": 2,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 15,
+          "hi": 21,
+          "pts": 3,
+          "reb": 1,
+          "ast": 1
+        },
+        {
+          "lo": 22,
+          "hi": 99,
+          "pts": 4,
+          "reb": 1,
+          "ast": 1
+        }
+      ],
+      "season": 2025,
+      "seasonLabel": "2024-25",
+      "age": null,
+      "games": 23,
+      "mpg": 33.4,
+      "bbrefId": "siakapa01",
+      "traded": false,
+      "metrics": {},
+      "provisional": false,
+      "playoffRun": true
+    },
+    {
+      "id": "Tyrese_Haliburton",
+      "name": "Tyrese Haliburton",
+      "team": "IND",
+      "pos": "PG",
+      "speed": 16,
+      "power": 10,
+      "shotLine": 15,
+      "paintBoost": 2,
+      "threePtBoost": 0,
+      "defBoost": 0,
+      "salary": 1090,
+      "chart": [
+        {
+          "lo": 1,
+          "hi": 2,
+          "pts": 0,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 3,
+          "hi": 3,
+          "pts": 0,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 4,
+          "hi": 9,
+          "pts": 2,
+          "reb": 0,
+          "ast": 1
+        },
+        {
+          "lo": 10,
+          "hi": 14,
+          "pts": 2,
+          "reb": 1,
+          "ast": 1
+        },
+        {
+          "lo": 15,
+          "hi": 21,
+          "pts": 2,
+          "reb": 1,
+          "ast": 1
+        },
+        {
+          "lo": 22,
+          "hi": 99,
+          "pts": 3,
+          "reb": 1,
+          "ast": 1
+        }
+      ],
+      "season": 2025,
+      "seasonLabel": "2024-25",
+      "age": null,
+      "games": 23,
+      "mpg": 33.5,
+      "bbrefId": "halibty01",
+      "traded": false,
+      "metrics": {},
+      "provisional": false,
+      "playoffRun": true
+    },
+    {
+      "id": "Dennis_Rodman",
+      "name": "Dennis Rodman",
+      "team": "CHI",
+      "pos": "PF",
+      "speed": 8,
+      "power": 11,
+      "shotLine": 18,
+      "paintBoost": 2,
+      "threePtBoost": -2,
+      "defBoost": 1,
+      "salary": 500,
+      "chart": [
+        {
+          "lo": 1,
+          "hi": 2,
+          "pts": 0,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 3,
+          "hi": 3,
+          "pts": 0,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 4,
+          "hi": 10,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
+          "lo": 11,
+          "hi": 17,
+          "pts": 1,
+          "reb": 2,
+          "ast": 0
+        },
+        {
           "lo": 18,
-          "hi": 23,
+          "hi": 99,
           "pts": 1,
           "reb": 3,
-          "ast": 0
-        },
-        {
-          "lo": 24,
-          "hi": 27,
-          "pts": 1,
-          "reb": 5,
-          "ast": 0
-        },
-        {
-          "lo": 28,
-          "hi": 99,
-          "pts": 2,
-          "reb": 5,
           "ast": 1
         }
       ],
@@ -3221,7 +3088,7 @@
         "ws48": 0.149,
         "per": 14.1
       },
-      "provisional": true,
+      "provisional": false,
       "playoffRun": true
     },
     {
@@ -3235,7 +3102,7 @@
       "paintBoost": 2,
       "threePtBoost": 1,
       "defBoost": 3,
-      "salary": 890,
+      "salary": 800,
       "chart": [
         {
           "lo": 1,
@@ -3246,37 +3113,30 @@
         },
         {
           "lo": 3,
-          "hi": 5,
+          "hi": 4,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 6,
+          "lo": 5,
           "hi": 9,
           "pts": 1,
-          "reb": 1,
-          "ast": 1
+          "reb": 0,
+          "ast": 0
         },
         {
           "lo": 10,
           "hi": 15,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
-          "ast": 1
+          "ast": 0
         },
         {
           "lo": 16,
-          "hi": 22,
-          "pts": 3,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 23,
           "hi": 99,
-          "pts": 3,
-          "reb": 3,
+          "pts": 2,
+          "reb": 1,
           "ast": 1
         }
       ],
@@ -3294,7 +3154,7 @@
         "ws48": 0.14,
         "per": 17.5
       },
-      "provisional": true,
+      "provisional": false,
       "playoffRun": true
     }
   ]

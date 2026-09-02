@@ -169,7 +169,10 @@ export function main({ log = console.log } = {}) {
   const nameCount = new Map();
   for (const m of meta) nameCount.set(m.name, (nameCount.get(m.name) ?? 0) + 1);
 
-  const cards = buildSet({ selections, currentRows, calibration, biometrics, positionShares })
+  // STINT cards keep the synthetic path: the stat line is the stint's rows,
+  // and a full-season game log would contradict it (the one-game stints could
+  // not band at all).
+  const cards = buildSet({ selections, currentRows, calibration, biometrics, positionShares, useRealGames: false })
     .map((card, i) => ({
       ...card,
       id: (nameCount.get(meta[i].name) ?? 1) > 1 ? `${card.id}_${meta[i].team}` : card.id,

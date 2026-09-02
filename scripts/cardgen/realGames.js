@@ -25,7 +25,7 @@
 // and the ties integers create are what give band widths their variety.
 import fs from 'node:fs';
 import path from 'node:path';
-import { REPO_ROOT, readCache } from './cache.js';
+import { CACHE_DIR, REPO_ROOT, readCache } from './cache.js';
 
 export const LEAGUE_ORTG = 115;
 export const MINUTES_DAMP = 0.9; // softened from 1.06: integer rounding turned full damping into variance-death for role players (box-score sim)
@@ -65,6 +65,91 @@ export function minutesToDecimal(mp) {
 }
 
 /**
+ * The shared tail of every window: 2-minute floor, opponent adjustment,
+ * minutes damp, spike winsorization, integer rounding. `defenseKey` maps a
+ * row to its opponent-table key.
+ */
+function finishWindow(rows, defense, defenseKey) {
+  const played = rows.filter(g => minutesToDecimal(g.minutes) >= 2);
+  if (!played.length) return null;
+
+  const totalMin = played.reduce((s, g) => s + minutesToDecimal(g.minutes), 0);
+  const mpg = totalMin / played.length;
+  const damp = Math.pow(Math.min(mpg, 36) / 36, MINUTES_DAMP);
+  const dampReb = Math.pow(Math.min(mpg, 36) / 36, rebDampExponent(mpg));
+
+  const adjusted = played.map(g => {
+    const depm = defense.get(defenseKey(g)) ?? 0;
+    const oppFactor = LEAGUE_ORTG / Math.max(90, LEAGUE_ORTG - depm);
+    return {
+      minutes: minutesToDecimal(g.minutes),
+      pts: g.pts * oppFactor * damp,
+      reb: g.reb * dampReb,
+      ast: g.ast * oppFactor * damp,
+    };
+  });
+
+  // Winsorize single-game spikes — see loadRealGames' comment.
+  const cap = {};
+  for (const stat of ['pts', 'reb', 'ast']) {
+    const m = adjusted.reduce((s, g) => s + g[stat], 0) / adjusted.length;
+    cap[stat] = Math.max(2, 3 * m);
+  }
+  return adjusted.map(g => ({
+    minutes: g.minutes,
+    pts: Math.round(Math.min(g.pts, cap.pts)),
+    reb: Math.round(Math.min(g.reb, cap.reb)),
+    ast: Math.round(Math.min(g.ast, cap.ast)),
+  }));
+}
+
+/**
+ * Every cached team-defense season at once, for the historical sets — the
+ * team-epm archive runs 2002-2026. A season with no cache (pre-2002) simply
+ * misses every lookup and its games go unadjusted (factor 1).
+ */
+export function historicalTeamDefense() {
+  const out = new Map();
+  for (const f of fs.readdirSync(CACHE_DIR)) {
+    const m = f.match(/^dunksandthrees-api-team-epm-(\d{4})\.json$/);
+    if (!m) continue;
+    const season = Number(m[1]);
+    const rows = readCache(`dunksandthrees-api-team-epm-${season}`) ?? [];
+    const latest = new Map();
+    for (const r of rows) {
+      const prev = latest.get(r.team_alias);
+      if (!prev || r.game_dt > prev.game_dt) latest.set(r.team_alias, r);
+    }
+    for (const [alias, r] of latest) out.set(`${season}|${alias}`, r.team_depm ?? 0);
+  }
+  return out;
+}
+
+/**
+ * One SPECIFIC season's games for a historical card — the special sets'
+ * window. Regular season plus playoffs, or the playoff run alone for a
+ * Summer Standout, whose card celebrates exactly those games.
+ */
+export function loadSeasonRealGames(playerId, season, defense, { playoffOnly = false } = {}) {
+  const log = readCache(`gamelog-full-${playerId}-${season}`);
+  if (!log) return null;
+  const phases = playoffOnly ? ['post'] : ['reg', 'post'];
+  const rows = phases.flatMap(phase => log[phase] ?? []);
+  // Ten real games AND four hundred real minutes, or the card goes to the
+  // synthetic path. The game floor is PERCENTILE.EXC's p=0.1 needing n >= 9
+  // (a 7-game rookie year threw #NUM). The minutes floor is the quadratic
+  // 36/m² normalization: a garbage-time season of 3-minute stints explodes
+  // per-game v no matter what the raw stats are — Josh Minott's 150-minute
+  // 2023-24 printed a chart of zeros with one 7-point tier at 32+ — and the
+  // fringe-prior shrink over there was measured on exactly these seasons.
+  const played = rows.filter(g => minutesToDecimal(g.minutes) >= 2);
+  const totalMin = played.reduce((s, g) => s + minutesToDecimal(g.minutes), 0);
+  if (played.length < 10 || totalMin < 400) return null;
+  const alias = g => `${season}|${TEAM_ALIAS[g.opp] ?? g.opp}`;
+  return finishWindow(played, defense, alias);
+}
+
+/**
  * The adjusted last-82 window for one player, or null when no logs exist.
  * `indexEntry` is this player's row from pool-gamelogs-index.json.
  */
@@ -85,46 +170,12 @@ export function loadRealGames(indexEntry, defense) {
   // Token appearances are not evidence: a 0:00 game divides bands.js's
   // 36/m² normalization by zero (one such game NaN-poisoned an entire
   // pricing run), and a 90-second garbage-time stint would top the chart
-  // through the same formula. Under two minutes, the row is noise.
-  const played = rows.filter(g => minutesToDecimal(g.minutes) >= 2);
-  if (!played.length) return null;
-  played.sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''));
-  const window = played.slice(0, WINDOW_GAMES);
-
-  const totalMin = window.reduce((s, g) => s + minutesToDecimal(g.minutes), 0);
-  const mpg = totalMin / window.length;
-  const damp = Math.pow(Math.min(mpg, 36) / 36, MINUTES_DAMP);
-  const dampReb = Math.pow(Math.min(mpg, 36) / 36, rebDampExponent(mpg));
-
-  const adjusted = window.map(g => {
-    const alias = TEAM_ALIAS[g.opp] ?? g.opp;
-    const depm = defense.get(`${g.season}|${alias}`) ?? 0;
-    const oppFactor = LEAGUE_ORTG / Math.max(90, LEAGUE_ORTG - depm);
-    return {
-      minutes: minutesToDecimal(g.minutes),
-      pts: g.pts * oppFactor * damp,
-      reb: g.reb * dampReb,
-      ast: g.ast * oppFactor * damp,
-    };
-  });
-
-  // Winsorize single-game spikes: a fringe player's one garbage-time
-  // explosion is his window's p90 and prints his top chart tier (the user
-  // caught Nae'Qwan Tomlin's ceiling doing exactly this). Capping each stat
-  // at 3× the player's own window mean trims the fluke game while never
-  // touching a star — a consistent scorer's mean sits far above the cap's
-  // bite point. Floor of 2 so near-zero means don't zero out real games.
-  const cap = {};
-  for (const stat of ['pts', 'reb', 'ast']) {
-    const m = adjusted.reduce((s, g) => s + g[stat], 0) / adjusted.length;
-    cap[stat] = Math.max(2, 3 * m);
-  }
-  return adjusted.map(g => ({
-    minutes: g.minutes,
-    pts: Math.round(Math.min(g.pts, cap.pts)),
-    reb: Math.round(Math.min(g.reb, cap.reb)),
-    ast: Math.round(Math.min(g.ast, cap.ast)),
-  }));
+  // through the same formula. finishWindow floors rows at two minutes,
+  // damps by minutes share, and winsorizes single-game spikes at 3× the
+  // window mean (the Nae'Qwan Tomlin catch).
+  const sorted = [...rows].sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''));
+  const window = sorted.filter(g => minutesToDecimal(g.minutes) >= 2).slice(0, WINDOW_GAMES);
+  return finishWindow(window, defense, g => `${g.season}|${TEAM_ALIAS[g.opp] ?? g.opp}`);
 }
 
 /** The whole pool's real-game windows, keyed by card id. */

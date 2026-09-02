@@ -1721,10 +1721,12 @@ describe('the season and the card-type badge', () => {
       p => p.badges.includes(SUPER_SEASON_BADGE) && !p.badges.includes(ROOKIE_BADGE)
     );
     const gilded = superSeason.filter(p => p.salary >= SUPER_SEASON_MIN_SALARY);
-    expect(gilded.length).toBe(13);
-    expect(superSeason.length - gilded.length).toBe(94);
-    expect(BADGE_FILE.counts.printed[SUPER_SEASON_BADGE]).toBe(13);
-    expect(BADGE_FILE.counts.printed[BEST_SEASON_BADGE]).toBe(94);
+    // 15/92 after the defBoost contest reprice — defence value now includes
+    // conversion denial, and two badged defenders crossed the gilded line.
+    expect(gilded.length).toBe(15);
+    expect(superSeason.length - gilded.length).toBe(92);
+    expect(BADGE_FILE.counts.printed[SUPER_SEASON_BADGE]).toBe(15);
+    expect(BADGE_FILE.counts.printed[BEST_SEASON_BADGE]).toBe(92);
     expect(BADGE_FILE.counts.printed[ROOKIE_BADGE]).toBe(33);
   });
 

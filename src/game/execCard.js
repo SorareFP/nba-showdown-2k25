@@ -122,10 +122,10 @@ export function execCard(game, teamKey, cardId, opts = {}) {
     case 'chip_on_shoulder': {
       if ((player?.salary || 0) > 250) return fail(player?.name + ' salary must be ≤$250');
       if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
-      g.tempEff[teamKey]['s' + idx] = (g.tempEff[teamKey]['s' + idx] || 0) + 2;
-      g.tempEff[teamKey]['p' + idx] = (g.tempEff[teamKey]['p' + idx] || 0) + 2;
+      g.tempEff[teamKey]['s' + idx] = (g.tempEff[teamKey]['s' + idx] || 0) + 3;
+      g.tempEff[teamKey]['p' + idx] = (g.tempEff[teamKey]['p' + idx] || 0) + 3;
       const dp = oppT.starters[(g.offMatchups[teamKey] || [])[idx] ?? idx];
-      let msg = `Chip on the Shoulder: ${player?.name} +2 Spd/Pwr`;
+      let msg = `Chip on the Shoulder: ${player?.name} +3 Spd/Pwr`;
       if (dp) {
         const newAdv = calcAdv(player, dp, g.tempEff[teamKey], idx);
         if (newAdv.rollBonus > 0) {
@@ -143,6 +143,43 @@ export function execCard(game, teamKey, cardId, opts = {}) {
       if (!g.tempDefEff[teamKey]) g.tempDefEff[teamKey] = {};
       g.tempDefEff[teamKey][idx] = { speedBoost: 5, powerBoost: 5 };
       addLog(g, teamKey, `Defensive Stopper: ${player?.name} +5 Spd/Pwr on defense this segment`);
+      break;
+    }
+
+    case 'full_court_press': {
+      const fcpOpp = teamKey === 'A' ? 'B' : 'A';
+      const pressed = [];
+      (oppT.starters || []).forEach((p, i) => {
+        if (p && (p.speed || 0) <= 8) pressed.push({ i, name: p.name });
+      });
+      if (!pressed.length) return fail('No opposing player with Speed 8 or less');
+      if (!g.tempEff[fcpOpp]) g.tempEff[fcpOpp] = {};
+      pressed.forEach(({ i }) => {
+        g.tempEff[fcpOpp]['r' + i] = (g.tempEff[fcpOpp]['r' + i] || 0) - 1;
+      });
+      addLog(g, teamKey, `Full-Court Press: ${pressed.map(p => p.name).join(', ')} −1 to scoring roll`);
+      break;
+    }
+
+    case 'double_team': {
+      const dtOpp = teamKey === 'A' ? 'B' : 'A';
+      const tIdx = opts.targetIdx, oIdx = opts.leftOpenIdx;
+      const target = oppT.starters[tIdx];
+      const open = oppT.starters[oIdx];
+      if (!target || !open || tIdx === oIdx) return fail('Choose two different opposing players');
+      const oppRolls = g.rollResults[dtOpp] || [];
+      if (oppRolls[tIdx] != null) return fail(target.name + ' has already rolled');
+      if (oppRolls[oIdx] != null) return fail(open.name + ' has already rolled');
+      // The trap: the target's assigned defender doubles with help.
+      const dIdx = (g.offMatchups[dtOpp] || [])[tIdx] ?? tIdx;
+      if (!g.tempDefEff) g.tempDefEff = {};
+      if (!g.tempDefEff[teamKey]) g.tempDefEff[teamKey] = {};
+      const cur = g.tempDefEff[teamKey][dIdx] || { speedBoost: 0, powerBoost: 0 };
+      g.tempDefEff[teamKey][dIdx] = { speedBoost: cur.speedBoost + 6, powerBoost: cur.powerBoost + 6 };
+      // The cost: the man you helped off is open.
+      if (!g.tempEff[dtOpp]) g.tempEff[dtOpp] = {};
+      g.tempEff[dtOpp]['r' + oIdx] = (g.tempEff[dtOpp]['r' + oIdx] || 0) + 2;
+      addLog(g, teamKey, `Double Team: ${target.name} trapped (+6/+6 defense) — ${open.name} left open (+2 roll)`);
       break;
     }
 
@@ -240,8 +277,23 @@ export function execCard(game, teamKey, cardId, opts = {}) {
 
     case 'overhelp': {
       if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
+      g.tempEff[teamKey]['r' + idx] = (g.tempEff[teamKey]['r' + idx] || 0) + 3;
+      addLog(g, teamKey, `Overhelp: ${player?.name} +3 to scoring roll (found the mismatch)`);
+      break;
+    }
+
+    case 'fast_break': {
+      // Off a stop — an opponent came up empty this segment, and the outlet
+      // is already gone. The gate re-checks state because canPlay only says
+      // that SOME window exists; the chosen runner must still qualify.
+      const fbOppKey = teamKey === 'A' ? 'B' : 'A';
+      const stopped = (g.rollResults[fbOppKey] || []).some(r => r && r.pts === 0);
+      if (!stopped) return fail('No opposing player has scored 0 on a roll this segment');
+      if ((player?.speed || 0) < 12) return fail('Need Speed 12+');
+      if ((g.rollResults[teamKey] || [])[idx] != null) return fail(player?.name + ' has already rolled');
+      if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
       g.tempEff[teamKey]['r' + idx] = (g.tempEff[teamKey]['r' + idx] || 0) + 2;
-      addLog(g, teamKey, `Overhelp: ${player?.name} +2 to scoring roll (found the mismatch)`);
+      addLog(g, teamKey, `Fast Break: off the stop, ${player?.name} +2 to scoring roll`);
       break;
     }
 
@@ -551,8 +603,8 @@ export function execCard(game, teamKey, cardId, opts = {}) {
         const p = myT.starters[i];
         if (!p || p.salary >= 400) return;
         if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
-        g.tempEff[teamKey]['r' + i] = (g.tempEff[teamKey]['r' + i] || 0) + 1;
-        addLog(g, teamKey, `Energy Injection: ${p.name} +1 roll bonus`);
+        g.tempEff[teamKey]['r' + i] = (g.tempEff[teamKey]['r' + i] || 0) + 2;
+        addLog(g, teamKey, `Energy Injection: ${p.name} +2 roll bonus`);
         found++;
       });
       if (!found) return fail('No players with salary <$400 in selected slots');

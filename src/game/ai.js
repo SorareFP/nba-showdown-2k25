@@ -228,8 +228,9 @@ function evaluateCard(game, teamKey, cardId, strat) {
     // dead even after switch cards came alive.
     const reactionValues = {
       go_under: 7, fight_over: 6, veer_switch: 6, burned_switch: 5,
-      offensive_foul: 5, cold_spell: 6, anticipate_pass: 5, overhelp: 4,
+      offensive_foul: 5, cold_spell: 6, anticipate_pass: 5, overhelp: 5,
       offensive_board: 5, rebound_tap_out: 5, coaches_challenge: 6, close_out: 6,
+      fast_break: 6,
     };
     return reactionValues[cardId] ?? 4;
   }
@@ -242,6 +243,7 @@ function evaluateCard(game, teamKey, cardId, strat) {
     second_wind: 5,
     chip_on_shoulder: 6,
     defensive_stopper: 7,
+    full_court_press: 5,
 
     // Pre-roll
     ghost_screen: 5,
@@ -263,11 +265,12 @@ function evaluateCard(game, teamKey, cardId, strat) {
     uncontested_layup: 8,
     back_to_basket: 5,
     cross_court_dime: 7,
-    energy_injection: 3,
+    energy_injection: 4,
     crowd_favorite: 3,
     switch_everything: 6,
     this_is_my_house: 8,
     delayed_slip: 4,
+    double_team: 6,
 
     // Post-roll
     heat_check: 7,
@@ -555,6 +558,41 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
 
     case 'turnover': {
       // Just needs to be played — targets cold opponent automatically
+      return {};
+    }
+
+    case 'fast_break': {
+      // The runner: best un-rolled Speed 12+ player by current roll bonus.
+      const best = starters.reduce((b, p, i) => {
+        if (rolls[i] != null || (p.speed || 0) < 12) return b;
+        const di = (game.offMatchups?.[teamKey] || [])[i] ?? i;
+        const dp = oppT.starters[di];
+        const rb = dp ? calcAdv(p, dp, game.tempEff?.[teamKey] || {}, i).rollBonus : 0;
+        return (b.idx < 0 || rb > b.rb) ? { idx: i, rb } : b;
+      }, { idx: -1, rb: -99 });
+      return { playerIdx: best.idx >= 0 ? best.idx : 0 };
+    }
+
+    case 'double_team': {
+      // Trap the biggest remaining threat, leave the weakest hand open.
+      // Threat = chart ceiling plus the roll bonus they carry right now.
+      const oppRolls = game.rollResults[oppKey] || [];
+      const myMu = game.offMatchups?.[oppKey] || [];
+      const threats = [];
+      (oppT.starters || []).forEach((p, i) => {
+        if (!p || oppRolls[i] != null) return;
+        const dIdx = myMu[i] ?? i;
+        const myDef = (getTeam(game, teamKey).starters || [])[dIdx];
+        const rb = myDef ? calcAdv(p, myDef, game.tempEff?.[oppKey] || {}, i).rollBonus : 0;
+        const top = p.chart?.length ? p.chart[p.chart.length - 1].pts : 0;
+        threats.push({ i, threat: top + rb });
+      });
+      if (threats.length < 2) return { targetIdx: 0, leftOpenIdx: 1 };
+      threats.sort((a, b) => b.threat - a.threat);
+      return { targetIdx: threats[0].i, leftOpenIdx: threats[threats.length - 1].i };
+    }
+
+    case 'full_court_press': {
       return {};
     }
 

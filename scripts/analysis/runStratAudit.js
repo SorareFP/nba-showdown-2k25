@@ -224,8 +224,17 @@ for (let n = 0; n < GAMES; n += 1) {
     }
 
     // ── Rolls (AI order), then conversions ──
+    // Before each roll the rolling team gets a one-card window — this is
+    // where mid-roll reactions live (Fast Break off an opponent's zero,
+    // a Heat Check the moment the tier hits) instead of arriving after
+    // every die is already down.
     for (let r = 0; r < STARTERS * 2; r += 1) {
       const key = r % 2 === 0 ? 'A' : 'B';
+      const cardAction = aiScoringDecision(g, key);
+      if (cardAction?.type === 'play_card') {
+        const res = tryPlay(g, key, cardAction, playedThisGame);
+        g = res.g;
+      }
       const action = aiRollDecision(g, key);
       if (action?.playerIdx != null) {
         g = doRoll(g, key, action.playerIdx);

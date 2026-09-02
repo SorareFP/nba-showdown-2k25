@@ -127,6 +127,11 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB }) {
           const blockedB = game.blockedRolls?.B || {};
           const needsRoll = [0, 1, 2, 3, 4].some(i => rollsB[i] == null && !blockedB[i]);
           if (needsRoll) {
+            // Mid-roll card window before the next die — Fast Break off a
+            // stop, a Heat Check on a fresh top-tier roll. One play per tick;
+            // a rejected play falls through to the roll.
+            const cardAction = aiScoringDecision(game, 'B');
+            if (cardAction?.type === 'play_card' && tryCard(cardAction.cardId, cardAction.opts)) return;
             const action = aiRollDecision(game, 'B');
             if (action?.playerIdx != null) {
               dispatch({ type: 'ROLL', teamKey: 'B', idx: action.playerIdx });

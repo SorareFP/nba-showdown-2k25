@@ -17,11 +17,17 @@ export function canPlayCard(g, teamKey, cardId) {
   if (g.pendingShotCheck && cardId !== 'close_out') return no('Resolve pending shot check first');
 
   // ── MATCHUP PHASE ──────────────────────────────────────────────────────
-  if (['high_screen_roll','stagger_action','second_wind','chip_on_shoulder','defensive_stopper'].includes(cardId)) {
+  if (['high_screen_roll','stagger_action','second_wind','chip_on_shoulder','defensive_stopper','full_court_press'].includes(cardId)) {
     if (phase !== 'matchup_strats') return no('Only playable during Matchup Strategy Phase');
     if (g.matchupTurn !== teamKey) return no("It's not your turn");
 
     if (cardId === 'high_screen_roll') return ok('Swap which defenders guard your players');
+
+    if (cardId === 'full_court_press') {
+      const slow = oppT.starters.filter(p => (p.speed || 0) <= 8).length;
+      if (!slow) return no('No opposing player with Speed 8 or less');
+      return ok(`Press the ball — ${slow} opposing player${slow > 1 ? 's' : ''} at −1 roll`);
+    }
 
     if (cardId === 'stagger_action') {
       const has13 = myT.starters.some(p => p.speed >= 13);
@@ -99,7 +105,29 @@ export function canPlayCard(g, teamKey, cardId) {
     if (phase !== 'matchup_strats' && phase !== 'scoring') return no('Only playable during Matchup or Scoring Phase');
     if (!g.lastMatchupCard) return no('Opponent must play a switch card first (e.g. High Screen & Roll)');
     if (g.lastMatchupCard.teamKey === teamKey) return no('Cannot react to your own switch card');
-    return ok('Opponent played a switch card — pick a player for +2 roll');
+    return ok('Opponent played a switch card — pick a player for +3 roll');
+  }
+
+  // Fast Break: an opponent came up empty this segment and a runner is ready
+  if (cardId === 'fast_break') {
+    if (phase !== 'scoring') return no('Only playable during Scoring Phase');
+    const fbOpp = teamKey === 'A' ? 'B' : 'A';
+    const stopped = (g.rollResults[fbOpp] || []).some(r => r && r.pts === 0);
+    if (!stopped) return no('An opposing player must score 0 on a scoring roll first');
+    const rolls = g.rollResults[teamKey] || [];
+    const runner = myT.starters.some((p, i) => rolls[i] == null && (p.speed || 0) >= 12);
+    if (!runner) return no('Need a Speed 12+ player who hasn\'t rolled');
+    return ok('Off the stop — a runner gets +2 to their scoring roll');
+  }
+
+  // Double Team: two opposing players must still be waiting to roll
+  if (cardId === 'double_team') {
+    if (phase !== 'scoring') return no('Only playable during Scoring Phase');
+    const dtOpp = teamKey === 'A' ? 'B' : 'A';
+    const oppRolls = g.rollResults[dtOpp] || [];
+    const waiting = oppT.starters.filter((p, i) => p && oppRolls[i] == null).length;
+    if (waiting < 2) return no('Need two opposing players who haven\'t rolled');
+    return ok('Trap one opposing player (+6/+6 defense) — another is left open (+2 roll)');
   }
 
   // Burned on the Switch: only after opponent forces a matchup switch (lastMatchupCard set by opponent)

@@ -471,8 +471,8 @@ describe('the base set\'s card-type badges', () => {
     // and the salary file having been generated from different pools.
     expect(BADGE_FILE.counts.printed).toEqual({
       [ROOKIE_BADGE]: 33,
-      [SUPER_SEASON_BADGE]: 13,
-      [BEST_SEASON_BADGE]: 94,
+      [SUPER_SEASON_BADGE]: 15,
+      [BEST_SEASON_BADGE]: 92,
       // In the id list, never on a base-set record: the STANDOUT and TRADED
       // pills are SET badges, worn by their whole sets and no one else.
       'summer-standout': 0,

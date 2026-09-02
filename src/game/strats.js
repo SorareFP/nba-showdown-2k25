@@ -11,6 +11,8 @@ export const STRATS = [
     desc:'Player with salary ≤$250 gets +3 Speed and +3 Power this segment. If they now have a positive roll bonus, draw a card.' },
   { id:'defensive_stopper',   name:'Defensive Stopper',  phase:'matchup',  side:'def', copies:2, locked:false, color:'#1D4ED8', rarity:'uncommon',
     desc:'Choose a player who was benched last segment. They gain +5 Speed and +5 Power on defense this segment.' },
+  { id:'pick_up_full_court',  name:'Pick Up Full Court', phase:'matchup',  side:'def', copies:2, locked:false, color:'#475569', rarity:'uncommon',
+    desc:'Hound one opposing player the length of the floor: −1 to their scoring roll this segment, and they gain 4 minutes of fatigue.' },
 
   // ── PRE-ROLL ──
   { id:'ghost_screen',        name:'Ghost Screen',       phase:'pre_roll', side:'off', copies:2, locked:false, color:'#6366F1', rarity:'common',

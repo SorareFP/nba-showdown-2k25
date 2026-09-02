@@ -513,6 +513,17 @@ async function buildOpts(game, teamKey, cardId, base, openModal) {
     opts.offSlot = eligible[pick].origIdx;
   }
 
+  // ── Pick Up Full Court: choose which opposing player to hound ──────────
+  if (cardId === 'pick_up_full_court') {
+    const minsInfo = oppT.starters.map(p => {
+      const ps = getPS(game, oppKey, p.id);
+      return `${ps?.minutes || 0} min on the fatigue tracker`;
+    });
+    const pick = await openModal({ teamKey: oppKey, cardId, players: oppT.starters, label: 'Hound which opponent? (−1 roll + 4 min fatigue)', extraInfo: minsInfo });
+    if (pick === null) return null;
+    opts.targetIdx = pick;
+  }
+
   // ── Double Team: pick the opposing player to trap ──────────────────────
   if (cardId === 'double_team') {
     const oppRolls = game.rollResults[oppKey] || [];

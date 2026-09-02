@@ -242,6 +242,7 @@ function evaluateCard(game, teamKey, cardId, strat) {
     second_wind: 5,
     chip_on_shoulder: 6,
     defensive_stopper: 7,
+    pick_up_full_court: 5,
 
     // Pre-roll
     ghost_screen: 5,
@@ -557,6 +558,21 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
     case 'turnover': {
       // Just needs to be played — targets cold opponent automatically
       return {};
+    }
+
+    case 'pick_up_full_court': {
+      // Hound the star with the most tired legs: minutes weigh double so the
+      // press pushes someone over a fatigue threshold, chart ceiling breaks ties.
+      let best = { i: 0, score: -1 };
+      (oppT.starters || []).forEach((p, i) => {
+        if (!p) return;
+        const ps = getPS(game, oppKey, p.id);
+        const min = ps?.minutes || 0;
+        const top = p.chart?.length ? p.chart[p.chart.length - 1].pts : 0;
+        const score = min * 2 + top;
+        if (score > best.score) best = { i, score };
+      });
+      return { targetIdx: best.i };
     }
 
     case 'double_team': {

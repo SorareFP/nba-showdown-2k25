@@ -146,6 +146,20 @@ export function execCard(game, teamKey, cardId, opts = {}) {
       break;
     }
 
+    case 'pick_up_full_court': {
+      const pufcOpp = teamKey === 'A' ? 'B' : 'A';
+      const hounded = oppT.starters[opts.targetIdx];
+      if (!hounded) return fail('Choose an opposing player to pressure');
+      if (!g.tempEff[pufcOpp]) g.tempEff[pufcOpp] = {};
+      g.tempEff[pufcOpp]['r' + opts.targetIdx] = (g.tempEff[pufcOpp]['r' + opts.targetIdx] || 0) - 1;
+      // The press taxes the legs in the same currency Second Wind's penalty
+      // uses: 4 extra minutes on the fatigue tracker. Rest still clears it.
+      const houndedPs = getPS(g, pufcOpp, hounded.id);
+      if (houndedPs) houndedPs.minutes = (houndedPs.minutes || 0) + 4;
+      addLog(g, teamKey, `Pick Up Full Court: ${hounded.name} hounded — −1 roll this segment, +4 min fatigue`);
+      break;
+    }
+
     case 'double_team': {
       const dtOpp = teamKey === 'A' ? 'B' : 'A';
       const tIdx = opts.targetIdx;

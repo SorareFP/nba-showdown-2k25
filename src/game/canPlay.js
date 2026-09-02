@@ -17,11 +17,13 @@ export function canPlayCard(g, teamKey, cardId) {
   if (g.pendingShotCheck && cardId !== 'close_out') return no('Resolve pending shot check first');
 
   // ── MATCHUP PHASE ──────────────────────────────────────────────────────
-  if (['high_screen_roll','stagger_action','second_wind','chip_on_shoulder','defensive_stopper'].includes(cardId)) {
+  if (['high_screen_roll','stagger_action','second_wind','chip_on_shoulder','defensive_stopper','pick_up_full_court'].includes(cardId)) {
     if (phase !== 'matchup_strats') return no('Only playable during Matchup Strategy Phase');
     if (g.matchupTurn !== teamKey) return no("It's not your turn");
 
     if (cardId === 'high_screen_roll') return ok('Swap which defenders guard your players');
+
+    if (cardId === 'pick_up_full_court') return ok('Hound one opposing player: −1 roll + 4 minutes of fatigue');
 
     if (cardId === 'stagger_action') {
       const has13 = myT.starters.some(p => p.speed >= 13);

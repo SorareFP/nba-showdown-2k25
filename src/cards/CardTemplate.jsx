@@ -267,7 +267,7 @@ export default function CardTemplate({
   // withheld by the same comparison that turns its pill from SUPER SEASON into
   // BEST SEASON, so the two can never disagree about whether this card is gold.
   const base = deriveFieldTheme(team.primary, team.secondary, accent);
-  const field = applyTreatment(base, cardTreatment(set, card.salary));
+  const field = applyTreatment(base, cardTreatment(set, card.salary, card.badges ?? []));
   const treatment = field.treatment ?? null;
 
   // THE SET IS PART OF THE PHOTO'S PATH, and leaving it out was a real bug:

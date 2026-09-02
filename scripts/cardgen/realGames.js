@@ -96,17 +96,35 @@ export function loadRealGames(indexEntry, defense) {
   const damp = Math.pow(Math.min(mpg, 36) / 36, MINUTES_DAMP);
   const dampReb = Math.pow(Math.min(mpg, 36) / 36, rebDampExponent(mpg));
 
-  return window.map(g => {
+  const adjusted = window.map(g => {
     const alias = TEAM_ALIAS[g.opp] ?? g.opp;
     const depm = defense.get(`${g.season}|${alias}`) ?? 0;
     const oppFactor = LEAGUE_ORTG / Math.max(90, LEAGUE_ORTG - depm);
     return {
       minutes: minutesToDecimal(g.minutes),
-      pts: Math.round(g.pts * oppFactor * damp),
-      reb: Math.round(g.reb * dampReb),
-      ast: Math.round(g.ast * oppFactor * damp),
+      pts: g.pts * oppFactor * damp,
+      reb: g.reb * dampReb,
+      ast: g.ast * oppFactor * damp,
     };
   });
+
+  // Winsorize single-game spikes: a fringe player's one garbage-time
+  // explosion is his window's p90 and prints his top chart tier (the user
+  // caught Nae'Qwan Tomlin's ceiling doing exactly this). Capping each stat
+  // at 3× the player's own window mean trims the fluke game while never
+  // touching a star — a consistent scorer's mean sits far above the cap's
+  // bite point. Floor of 2 so near-zero means don't zero out real games.
+  const cap = {};
+  for (const stat of ['pts', 'reb', 'ast']) {
+    const m = adjusted.reduce((s, g) => s + g[stat], 0) / adjusted.length;
+    cap[stat] = Math.max(2, 3 * m);
+  }
+  return adjusted.map(g => ({
+    minutes: g.minutes,
+    pts: Math.round(Math.min(g.pts, cap.pts)),
+    reb: Math.round(Math.min(g.reb, cap.reb)),
+    ast: Math.round(Math.min(g.ast, cap.ast)),
+  }));
 }
 
 /** The whole pool's real-game windows, keyed by card id. */

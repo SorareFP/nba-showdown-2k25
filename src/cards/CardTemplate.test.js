@@ -1636,20 +1636,20 @@ describe('the season and the card-type badge', () => {
       .not.toBe(themeFor('GSW', 'green-accent').accentOnField);
   });
 
-  it('badges a 2026-27 card from its OWN record, keeping the 26-27 design', () => {
-    // THE CHANGE, stated as one test. "If last year was their super season,
-    // keep the 26-27 design and just add the badge." So: the pill prints, the
-    // season does NOT (the card is this season by definition), and the card
-    // carries no treatment — no gold foil, no green, nothing but the base set's
-    // own palette with one pill in it.
+  it('badges a 2026-27 card from its OWN record, and gilds it in foil', () => {
+    // REVISED 2026-09-02 (the Brandon Miller decision): a base-set card whose
+    // best season IS the stats season now takes the GOLD FOIL along with the
+    // gilded pill — "add the gold foil to him and just have his badge indicate
+    // it was a 25-26 Super Season." The season still does not print (the card
+    // is this season by definition); the foil rides the same salary tier the
+    // pill does, so a demoted BEST SEASON card stays untreated.
     const html = render({
       card: { ...SPECIAL, badges: [SUPER_SEASON_BADGE] },
       set: CURRENT_SET,
     });
     expect(html).toContain('SUPER SEASON');
     expect(html).not.toContain('2015-16');
-    expect(html).not.toContain('data-treatment');
-    expect(html).not.toContain('--treatment-');
+    expect(html).toContain('data-treatment="gold-foil"');
   });
 
   it('prints the HIGHEST-PRIORITY badge only, never two pills', () => {
@@ -1700,10 +1700,15 @@ describe('the season and the card-type badge', () => {
       const gilded = player.salary >= SUPER_SEASON_MIN_SALARY;
       expect(html, player.name).toContain(gilded ? 'SUPER SEASON' : 'BEST SEASON');
       expect(html, player.name).not.toContain(gilded ? 'BEST SEASON' : 'SUPER SEASON');
-      // The base set is untreated at BOTH tiers — "keep the 26-27 design and
-      // just add the badge" was never about the foil. What the tier changes on
-      // a base card is the pill and nothing else.
-      expect(html, player.name).not.toContain('--treatment-');
+      // REVISED 2026-09-02: the gilded tier now carries the gold foil on the
+      // base set too (the Brandon Miller decision) — pill and foil move on the
+      // same salary line, so they can never disagree about whether the card is
+      // gold. The demoted tier stays untreated.
+      if (gilded) {
+        expect(html, player.name).toContain('data-treatment="gold-foil"');
+      } else {
+        expect(html, player.name).not.toContain('--treatment-');
+      }
     }
   });
 

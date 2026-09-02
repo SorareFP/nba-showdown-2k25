@@ -402,10 +402,24 @@ export function setTreatment(id) {
  * shape of a card record — the same reason `pickBadge` takes a list of ids.
  * Omitting it means gold, exactly as it does there.
  */
-export function cardTreatment(set, salary) {
+export function cardTreatment(set, salary, cardBadges = []) {
   const badge = setBadge(set);
   if (badge !== null && tierBadge(badge, salary) !== badge) return null;
-  return setTreatment(set);
+  const declared = setTreatment(set);
+  if (declared !== null) return declared;
+  // A base-set card wearing the GILDED Super Season pill gets the gold foil
+  // too (user decision 2026-09-02, the Brandon Miller case): a player whose
+  // best season IS the stats season stays out of the special set, and the
+  // foil plus the season-dated pill is how his base card says so. The same
+  // tier rule applies — below the salary line the pill demotes to BEST
+  // SEASON and the foil goes with it.
+  if (Array.isArray(cardBadges)
+    && cardBadges.includes(SUPER_SEASON_BADGE)
+    && tierBadge(SUPER_SEASON_BADGE, salary) === SUPER_SEASON_BADGE
+    && !cardBadges.includes(ROOKIE_BADGE)) {
+    return 'gold-foil';
+  }
+  return null;
 }
 
 /**

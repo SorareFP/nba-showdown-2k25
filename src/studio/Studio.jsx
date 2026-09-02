@@ -142,7 +142,7 @@ export default function Studio() {
   // BEST SEASON and keeps its team's own palette. The chip below reads this,
   // not `activeTreatment`, because a header reading "gold-foil" over a card
   // with no gold on it is the studio lying about its own preview.
-  const shownTreatment = cardTreatment(activeSet, selected?.salary);
+  const shownTreatment = cardTreatment(activeSet, selected?.salary, selected?.badges ?? []);
   const scale = useFitScale(previewEl);
 
   // ── Load persisted state, per SET ─────────────────────────────────────────

@@ -97,8 +97,20 @@ function emptyAnalytics() {
   };
 }
 
-export function newGame(rosterA, rosterB, deckConfigA, deckConfigB) {
+/** Crunch Time arms in Q4's final section only when the margin is this close. */
+export const CRUNCH_MARGIN = 10;
+
+export function newGame(rosterA, rosterB, deckConfigA, deckConfigB, opts = {}) {
   return {
+    // Card id -> extra Clutch Possession dice (MVP and CPOY each add one —
+    // the MLB Showdown icon system reborn). Injected rather than imported so
+    // the engine stays pure; src/game/clutchAwards.js carries the data.
+    clutchDice: opts.clutchDice ?? {},
+    // Set by endSection when the final section begins within the margin —
+    // { active, margin, used: {A,B}, extra: {A,B}, timeoutUsed: {A,B} }.
+    crunch: null,
+    timeoutActive: null,
+    pressArmed: {},
     teamA: makeTeam(rosterA, 'Team A', deckConfigA),
     teamB: makeTeam(rosterB, 'Team B', deckConfigB),
     quarter: 1,
@@ -551,6 +563,23 @@ export function endSection(g) {
   } else {
     ng.done = true;
     return ng;
+  }
+
+  // ── CRUNCH TIME ──────────────────────────────────────────────────────────
+  // The final 4-minute section of Q4, and only when the game is close enough
+  // to deserve the theatrics: the margin gate is checked HERE, once, as the
+  // section begins — the engine decides silently and the UI shows a banner.
+  // Recovered original rules (rules doc Section 9) + 2026-09-02 decisions.
+  if (ng.quarter === 4 && ng.section === 3) {
+    const margin = Math.abs(ng.teamA.score - ng.teamB.score);
+    const active = margin <= CRUNCH_MARGIN;
+    ng.crunch = { active, margin, used: {}, extra: {}, timeoutUsed: {} };
+    ng.log = [...ng.log, {
+      team: null,
+      msg: active
+        ? `🚨 CRUNCH TIME — final section, margin ${margin}. Clutch Possessions and Timeouts are live.`
+        : `Final section — margin ${margin}, no crunch (needs ≤${CRUNCH_MARGIN}).`,
+    }];
   }
 
   // Auto draw to 7

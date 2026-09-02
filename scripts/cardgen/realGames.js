@@ -28,7 +28,14 @@ import path from 'node:path';
 import { REPO_ROOT, readCache } from './cache.js';
 
 export const LEAGUE_ORTG = 115;
-export const MINUTES_DAMP = 1.06; // (1.33 raw inflation) − (0.267 published slope)
+export const MINUTES_DAMP = 0.9; // softened from 1.06: integer rounding turned full damping into variance-death for role players (box-score sim)
+// Rebounds damp on an MPG-DEPENDENT exponent, fitted by the box-score sim:
+// low-MPG bigs' per-minute boards are the cheapest stat in basketball
+// (Valančiūnas at 13 MPG simmed 23.5 reb/36 against a real 14.4 under the
+// flat 0.9), but a flat harder exponent crushed mid-minute players who were
+// already right (Caruso, perfect at 0.9, fell to 2.8 vs 5.1 under a flat
+// 1.35). 0.9 at 22+ MPG, ramping to 1.4 at 12.
+export const rebDampExponent = mpg => Math.min(1.4, 0.9 + 0.5 * Math.max(0, (22 - mpg) / 10));
 export const WINDOW_GAMES = 82;
 
 const SEASONS = [2026, 2025];
@@ -87,6 +94,7 @@ export function loadRealGames(indexEntry, defense) {
   const totalMin = window.reduce((s, g) => s + minutesToDecimal(g.minutes), 0);
   const mpg = totalMin / window.length;
   const damp = Math.pow(Math.min(mpg, 36) / 36, MINUTES_DAMP);
+  const dampReb = Math.pow(Math.min(mpg, 36) / 36, rebDampExponent(mpg));
 
   return window.map(g => {
     const alias = TEAM_ALIAS[g.opp] ?? g.opp;
@@ -95,7 +103,7 @@ export function loadRealGames(indexEntry, defense) {
     return {
       minutes: minutesToDecimal(g.minutes),
       pts: Math.round(g.pts * oppFactor * damp),
-      reb: Math.round(g.reb * damp),
+      reb: Math.round(g.reb * dampReb),
       ast: Math.round(g.ast * oppFactor * damp),
     };
   });

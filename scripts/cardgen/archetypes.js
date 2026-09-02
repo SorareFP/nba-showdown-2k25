@@ -29,8 +29,14 @@
 const TIER_SHARES = { elite: 0.058, great: 0.061, good: 0.122, avg: 0.55, slneg: 0.067, bad: 0.075 };
 const OFF_SHARES = { elite: 0.05, veryGood: 0.15, aboveAvg: 0.35 };
 
-export const OVERRIDE_SPLIT_RATIO = 0.72;
 export const OVERRIDE_OFF_WEIGHT = 0.35;
+// The off-axis keeps this share of its unshaped value (floor 1). Measured by
+// the box-score realism sim: cutting the TOTAL (the first cut of this rule)
+// starved shaped scorers' charts through roll penalties — Cam Thomas landed
+// at S4/P2 and produced 16/36 against a real 25. The hole opens on one axis;
+// the lean axis keeps its full value so the offense still functions, exactly
+// as the original system kept Kyrie's S18.
+export const OFF_AXIS_KEEP = 0.45;
 
 function quantileCuts(sorted, shares) {
   const cuts = {};
@@ -101,9 +107,8 @@ export function overrideBudget({ epmOff, epmDef }, poolBlends, poolTotals) {
  * far the hole opens. Totals are preserved.
  */
 export function exaggerateSplit(speed, power) {
-  const total = speed + power;
   const speedLean = speed >= power;
-  const hi = Math.round(total * OVERRIDE_SPLIT_RATIO);
-  const lo = total - hi;
-  return speedLean ? { speed: hi, power: lo } : { speed: lo, power: hi };
+  const lean = Math.max(speed, power);
+  const hole = Math.max(1, Math.round(Math.min(speed, power) * OFF_AXIS_KEEP));
+  return speedLean ? { speed: lean, power: hole } : { speed: hole, power: lean };
 }

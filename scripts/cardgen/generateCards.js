@@ -386,22 +386,15 @@ export function generateCards({
     })
     .filter(Boolean);
   const archetypes = ARCH.assignArchetypes(archRows);
-  const poolBlends = archRows
-    .map(r => r.epmDef + ARCH.OVERRIDE_OFF_WEIGHT * r.epmOff)
-    .sort((a, b) => a - b);
-  const poolTotals = resolved
-    .map(p => spIndex.get(normalizeName(p.name))?.speedPowerTotal ?? 0)
-    .filter(t => t > 0)
-    .sort((a, b) => a - b);
   let shapedCount = 0;
+  // The budget is NOT cut for shaped players — the box-score sim showed a
+  // def-led budget starving their charts through roll penalties. The hole
+  // comes from the split alone (exaggerateSplit keeps the lean axis whole).
   const shapingFor = (player, i) => {
     const arch = archetypes.get(normalizeName(player.name));
     const a = actualRows[i];
     const shaped = Boolean(arch?.override && a?.epmDef != null);
-    const total = shaped
-      ? ARCH.overrideBudget({ epmOff: a.epmOff, epmDef: a.epmDef }, poolBlends, poolTotals)
-      : (lookup(spIndex, player.name)?.speedPowerTotal ?? 0);
-    return { shaped, total };
+    return { shaped, total: lookup(spIndex, player.name)?.speedPowerTotal ?? 0 };
   };
 
   const fieldStubs = resolved.map((player, i) => {

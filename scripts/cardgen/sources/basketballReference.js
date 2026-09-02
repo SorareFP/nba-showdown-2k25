@@ -129,6 +129,64 @@ export function parseGameLogHtml(html) {
   return games;
 }
 
+/**
+ * The FULL game-log parse: regular season AND playoffs, with the date and
+ * opponent each row needs for opponent-quality weighting. The playoff table
+ * (`player_game_log_post`) only exists on pages of players whose team made
+ * the playoffs, so its absence is a result, not an error.
+ *
+ * Kept separate from parseGameLogHtml above rather than replacing it: the
+ * calibration pipeline consumes that exact shape and its cache keys.
+ */
+export function parseGameLogFull(html) {
+  const cellText = (rowHtml, stat) => {
+    const re = new RegExp(`<td[^>]*data-stat="${stat}"[^>]*>([\\s\\S]*?)</td>`);
+    const m = rowHtml.match(re);
+    return m ? m[1].replace(/<[^>]+>/g, '').trim() : null;
+  };
+  const parseTable = (tableId, required) => {
+    let body;
+    try {
+      body = isolateTableBody(html, tableId);
+    } catch (e) {
+      if (required) throw e;
+      return [];
+    }
+    const games = [];
+    for (const row of extractRows(body)) {
+      const minutes = cellText(row, MINUTES_STAT);
+      if (!minutes) continue; // header, DNP, or footer row
+      const pts = cellText(row, STAT_MAP.pts);
+      const reb = cellText(row, STAT_MAP.reb);
+      const ast = cellText(row, STAT_MAP.ast);
+      if (pts === null || reb === null || ast === null) continue;
+      games.push({
+        date: cellText(row, 'date'),
+        opp: cellText(row, 'opp_name_abbr'),
+        minutes,
+        pts: Number(pts),
+        reb: Number(reb),
+        ast: Number(ast),
+      });
+    }
+    return games;
+  };
+  return {
+    reg: parseTable(REG_SEASON_TABLE_ID, true),
+    post: parseTable('player_game_log_post', false),
+  };
+}
+
+/** Full-page fetch for parseGameLogFull — one request serves both tables. */
+export async function fetchGameLogFull(playerId, season, { fetchImpl = fetch } = {}) {
+  const res = await fetchImpl(
+    `https://www.basketball-reference.com/players/${playerId[0]}/${playerId}/gamelog/${season}`,
+    { headers: { 'User-Agent': 'Mozilla/5.0' } }
+  );
+  if (!res.ok) throw new Error(`Basketball-Reference fetch failed: ${res.status} (${playerId} ${season})`);
+  return parseGameLogFull(await res.text());
+}
+
 /** Fetches and parses a player's game log for a given end-year season (e.g. 2024 = 2023-24). */
 export async function fetchGameLog(playerId, season) {
   const res = await fetch(

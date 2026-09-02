@@ -85,6 +85,8 @@ import * as PV from './playValue.js';
 import * as S from './shooting.js';
 import { poolingSummary } from './poolSeasons.js';
 import { indexBiometrics, loadBiometrics } from './biometrics.js';
+import { loadAllRealGames } from './realGames.js';
+import * as ARCH from './archetypes.js';
 import { readBlendedActual, reportBlend, PRIOR_STATS_SEASON } from './priorSeasonBlend.js';
 import { trb100 } from './sources/dunksAndThrees.js';
 import { CALIBRATION_FILE } from './calibrateAttributes.js';
@@ -180,6 +182,16 @@ export function buildCard({
   positionShares,
   calibration,
   rollCdf = null,
+  // Real last-82 game-log rows ({minutes, pts, reb, ast}, already opponent-
+  // adjusted and minutes-damped by realGames.js). When present they replace
+  // the synthetic distribution entirely; everything downstream — band cuts,
+  // CDF placement, usage gate, spine reconciliation, shot-line shaping — is
+  // identical. Null falls back to the provisional synthesis.
+  realGames = null,
+  // Archetype shaping (archetypes.js): when true, the speed/power split
+  // exaggerates away from balance along its existing lean — the override
+  // group's attackable hole. The budget change arrives via speedPowerTotal.
+  exaggerateSplit = false,
 }) {
   const per100 = {
     pts: rate?.pts100 ?? 0,
@@ -191,12 +203,15 @@ export function buildCard({
   // is active, and why it is not the best-fitting one. Both inputs are optional
   // and independent: a player the biometric table or the play-by-play table does
   // not carry falls back a step rather than being dropped.
-  const { speed, power } = A.splitFromCalibration(speedPowerTotal, {
+  let { speed, power } = A.splitFromCalibration(speedPowerTotal, {
     pos: player.pos,
     size,
     positionShares,
     calibration,
   });
+  if (exaggerateSplit) {
+    ({ speed, power } = ARCH.exaggerateSplit(speed, power));
+  }
 
   const { shotLine, paintBoost, threePtBoost } = shooting;
   const defBoost = A.defBoostFromEpm(actual?.epmDef);
@@ -211,7 +226,7 @@ export function buildCard({
   const bands = {};
   for (const stat of V.CHART_STATS) {
     const fit = { level: calibration.chart.levels[stat], shape: calibration.chart.shape };
-    const games = V.synthesizeGames({
+    const games = realGames ?? V.synthesizeGames({
       per100: { [stat]: per100[stat] },
       mpg: player.mpg,
       games: player.games,
@@ -268,7 +283,9 @@ export function buildCard({
       reb: t.reb,
       ast: t.ast,
     })),
-    provisional: true,
+    // A chart cut from real game logs is no longer provisional — that flag
+    // has always meant "synthetic distribution stands in for real games".
+    provisional: !realGames,
   };
 
   // Salary is deliberately NOT set here. It used to be, and could be, while the
@@ -354,15 +371,49 @@ export function generateCards({
   // every card's own distribution of EFFECTIVE rolls is knowable here, which is
   // what lets a band be placed where the player actually reaches it instead of
   // where a bare d20 would.
+  // ── Archetype shaping (archetypes.js) ────────────────────────────────────
+  // Assigned BEFORE the field stubs so the shaped bodies are what the
+  // effective-roll CDFs see: the override group — real offensive engines
+  // without positive defense — gets a def-led budget and an exaggerated
+  // split, so their defensive value in the matchup game deflates to what
+  // DEF EPM says it should be.
+  const archRows = resolved
+    .map((p, i) => {
+      const a = actualRows[i];
+      return a && a.epmDef != null && a.epmOff != null
+        ? { name: normalizeName(p.name), epmOff: a.epmOff, epmDef: a.epmDef }
+        : null;
+    })
+    .filter(Boolean);
+  const archetypes = ARCH.assignArchetypes(archRows);
+  const poolBlends = archRows
+    .map(r => r.epmDef + ARCH.OVERRIDE_OFF_WEIGHT * r.epmOff)
+    .sort((a, b) => a - b);
+  const poolTotals = resolved
+    .map(p => spIndex.get(normalizeName(p.name))?.speedPowerTotal ?? 0)
+    .filter(t => t > 0)
+    .sort((a, b) => a - b);
+  let shapedCount = 0;
+  const shapingFor = (player, i) => {
+    const arch = archetypes.get(normalizeName(player.name));
+    const a = actualRows[i];
+    const shaped = Boolean(arch?.override && a?.epmDef != null);
+    const total = shaped
+      ? ARCH.overrideBudget({ epmOff: a.epmOff, epmDef: a.epmDef }, poolBlends, poolTotals)
+      : (lookup(spIndex, player.name)?.speedPowerTotal ?? 0);
+    return { shaped, total };
+  };
+
   const fieldStubs = resolved.map((player, i) => {
-    const spTotal = lookup(spIndex, player.name)?.speedPowerTotal ?? 0;
+    const { shaped, total } = shapingFor(player, i);
     const shares = positionShares?.forName(player.name, CURRENT_STATS_SEASON) ?? null;
-    const { speed, power } = A.splitFromCalibration(spTotal, {
+    let { speed, power } = A.splitFromCalibration(total, {
       pos: player.pos,
       size: biometrics.get(normalizeName(player.name)) ?? null,
       positionShares: shares,
       calibration,
     });
+    if (shaped) ({ speed, power } = ARCH.exaggerateSplit(speed, power));
     return { speed, power, defBoost: A.defBoostFromEpm(actualRows[i]?.epmDef) };
   });
   // The blend in placeBandsOnCdf anchors the floor (a pure-CDF placement made
@@ -372,6 +423,12 @@ export function generateCards({
   const rollCdfs = CDF_BANDS
     ? fieldStubs.map(c => effectiveRollCdf(c, fieldStubs, calcAdv))
     : fieldStubs.map(() => null);
+
+  // Real last-82 game logs (opponent-adjusted, minutes-damped), keyed by card
+  // id. Empty map when the fetch job hasn't run — every card then falls back
+  // to the provisional synthesis, exactly as before.
+  const realGamesById = loadAllRealGames();
+  let realCount = 0;
 
   const targets = [];
   resolved.forEach((player, i) => {
@@ -388,20 +445,28 @@ export function generateCards({
       reb: V.per4MinFromPer100(rate ? trb100(rate) : 0),
       ast: V.per4MinFromPer100(rate?.ast100 ?? 0),
     });
+    const realGames = realGamesById.get(playerIdFromName(player.name)) ?? null;
+    if (realGames) realCount += 1;
+    const { shaped, total } = shapingFor(player, i);
+    if (shaped) shapedCount += 1;
     cards.push(
       buildCard({
         player,
         rate,
         actual: actualRows[i],
         shooting: shooting.players[i],
-        speedPowerTotal: sp?.speedPowerTotal ?? 0,
+        speedPowerTotal: total,
         size,
         positionShares: shares,
         calibration,
         rollCdf: rollCdfs[i],
+        realGames,
+        exaggerateSplit: shaped,
       })
     );
   });
+  console.log(`Charts from real game logs: ${realCount} of ${resolved.length}`);
+  console.log(`Archetype-shaped physical profiles: ${shapedCount}`);
 
   // CARRIED-FORWARD PLAYERS, appended before pricing so they are valued against
   // the same field as everyone else. These are men who appear in NO 2025-26

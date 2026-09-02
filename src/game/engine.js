@@ -230,7 +230,15 @@ export const SPEND_COSTS = {
  * This is the single seam Crunch Time's Extra Defensive Intensity will add its
  * +1 through.
  */
+/**
+ * Sim-only escape hatch: analysis scripts flip this off to run the exact same
+ * games without the passive contest, isolating its effect. The app never
+ * touches it.
+ */
+export const contestConfig = { enabled: true };
+
 export function matchupContest(g, teamKey, idx, type) {
+  if (!contestConfig.enabled) return 0;
   if (type === 'ft') return 0;
   const defIdx = (g.offMatchups?.[teamKey] || [])[idx] ?? idx;
   const def = getOpp(g, teamKey).starters?.[defIdx];
@@ -430,7 +438,8 @@ export function doRoll(g, teamKey, idx) {
   const isTop = result.pts >= topPts && result.pts > 0;
 
   if (!ng.rollResults[teamKey]) ng.rollResults[teamKey] = [];
-  ng.rollResults[teamKey][idx] = { die, bonus: totalBonus, finalRoll, pts: result.pts, reb: result.reb, ast: result.ast, isTop };
+  // defId/defDb: who was guarding this roll, for matchup plus-minus analysis.
+  ng.rollResults[teamKey][idx] = { die, bonus: totalBonus, finalRoll, pts: result.pts, reb: result.reb, ast: result.ast, isTop, defIdx, defId: nDefPlayer.id, defDb: nDefPlayer.defBoost || 0 };
 
   nMyT.score += result.pts;
   nMyT.assists += result.ast;

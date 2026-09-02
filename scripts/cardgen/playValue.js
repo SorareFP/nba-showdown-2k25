@@ -72,11 +72,19 @@ export function expectedChartValue(card, bonus, stat = 'pts', faces = 20) {
   return total / faces;
 }
 
-/** P(a shot check clears the line), given the boost that applies to it. */
-export function hitProb(card, boostKey) {
-  const need = (card.shotLine ?? 20) - (card[boostKey] ?? 0);
+/**
+ * P(a shot check clears the line), given the boost that applies to it and the
+ * CONTEST against it. Since the engine's matchupContest change, every 3PT and
+ * paint check is contested by the shooter's matchup defender's Defensive
+ * Bonus — a check priced uncontested no longer matches the game being played.
+ */
+export function hitProb(card, boostKey, contest = 0) {
+  const need = (card.shotLine ?? 20) - (card[boostKey] ?? 0) + contest;
   return Math.max(0, Math.min(1, (21 - Math.max(1, need)) / 20));
 }
+
+/** A defender's standing contest, exactly as matchupContest floors it. */
+export const contestOf = card => Math.max(0, card.defBoost ?? 0);
 
 /**
  * Play value for every card in `cards`, measured against `field`.
@@ -109,8 +117,11 @@ export function computePlayValue(cards, { field = cards } = {}) {
   };
 
   const medianOf = xs => xs.slice().sort((a, b) => a - b)[Math.floor(xs.length / 2)];
-  const fieldHit3 = medianOf(field.map(c => hitProb(c, 'threePtBoost')));
-  const fieldHitPaint = medianOf(field.map(c => hitProb(c, 'paintBoost')));
+  // Conversions live in a contested world now: measure every hit rate against
+  // the field's median standing contest.
+  const fieldContest = medianOf(field.map(contestOf));
+  const fieldHit3 = medianOf(field.map(c => hitProb(c, 'threePtBoost', fieldContest)));
+  const fieldHitPaint = medianOf(field.map(c => hitProb(c, 'paintBoost', fieldContest)));
 
   // Currency is pooled at TEAM level and spent by whoever converts best, so a
   // card's own generation is valued at its own rate when it holds the boost
@@ -118,10 +129,10 @@ export function computePlayValue(cards, { field = cards } = {}) {
   // currency is still spent, just by a team-mate.
   const convert = (card, stat) => {
     if (stat === 'ast') {
-      const p = (card.threePtBoost ?? 0) > 0 ? hitProb(card, 'threePtBoost') : fieldHit3;
+      const p = (card.threePtBoost ?? 0) > 0 ? hitProb(card, 'threePtBoost', fieldContest) : fieldHit3;
       return (3 / 4) * p;
     }
-    return (card.paintBoost ?? 0) > 0 ? hitProb(card, 'paintBoost') : fieldHitPaint;
+    return (card.paintBoost ?? 0) > 0 ? hitProb(card, 'paintBoost', fieldContest) : fieldHitPaint;
   };
 
   const chart = new Array(n);
@@ -144,8 +155,8 @@ export function computePlayValue(cards, { field = cards } = {}) {
 
   const meanAst = mean(cards.map((_, i) => evAt(i, 0, 'ast')));
   const target = cards.map(c => {
-    const e3 = ((c.threePtBoost ?? 0) > 0 ? hitProb(c, 'threePtBoost') : 0) - fieldHit3;
-    const ep = ((c.paintBoost ?? 0) > 0 ? hitProb(c, 'paintBoost') : 0) - fieldHitPaint;
+    const e3 = ((c.threePtBoost ?? 0) > 0 ? hitProb(c, 'threePtBoost', fieldContest) : 0) - fieldHit3;
+    const ep = ((c.paintBoost ?? 0) > 0 ? hitProb(c, 'paintBoost', fieldContest) : 0) - fieldHitPaint;
     return meanAst * Math.max(0, Math.max(e3 * 3, ep * 2));
   });
 
@@ -156,6 +167,21 @@ export function computePlayValue(cards, { field = cards } = {}) {
     .sort((a, b) => a[0] - b[0]);
   const medianDef = field[byDef[Math.floor(byDef.length / 2)][1]];
 
+  // A defender's conversion denial: what an attacker's rebounds and assists
+  // are worth converted THROUGH this defender's contest. Volumes come off the
+  // chart at the attacker's roll bonus against that defender, rates from the
+  // attacker's own boosts under the defender's standing contest — so defBoost
+  // is finally paid for both of its jobs: shaving advantages AND contesting
+  // the checks those currencies buy.
+  const convThrough = (attacker, def) => {
+    const b = calcAdv(attacker, def).rollBonus;
+    const c = contestOf(def);
+    const p3 = (attacker.threePtBoost ?? 0) > 0 ? hitProb(attacker, 'threePtBoost', c) : fieldHit3;
+    const pp = (attacker.paintBoost ?? 0) > 0 ? hitProb(attacker, 'paintBoost', c) : fieldHitPaint;
+    return expectedChartValue(attacker, b, 'ast') * (3 / 4) * p3
+         + expectedChartValue(attacker, b, 'reb') * pp;
+  };
+
   const defence = cards.map(card => {
     let t = 0;
     let seen = 0;
@@ -164,6 +190,7 @@ export function computePlayValue(cards, { field = cards } = {}) {
       if (attacker.id === card.id) continue;
       const base = expectedChartValue(attacker, calcAdv(attacker, medianDef).rollBonus, 'pts');
       t += base - expectedChartValue(attacker, calcAdv(attacker, card).rollBonus, 'pts');
+      t += convThrough(attacker, medianDef) - convThrough(attacker, card);
       seen += 1;
     }
     return t / (seen || 1);

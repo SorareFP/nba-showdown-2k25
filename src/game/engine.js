@@ -217,6 +217,26 @@ export const SPEND_COSTS = {
 
 // ── Shot Check ─────────────────────────────────────────────────────────────
 // No speed/power advantage — only player's own boost + hot/cold + card bonus
+
+/**
+ * The passive contest: the ORIGINAL rules give Defensive Bonus "increased
+ * contest effectiveness", and the recovered Crunch Time rules assume contests
+ * exist as a standing mechanic ("+1 to all defensive contests"). Every 3PT and
+ * paint shot check is contested by the shooter's assigned matchup defender for
+ * that defender's Defensive Bonus. Free throws are never contested — nobody
+ * guards the line. Negative defBoost never HELPS a shooter (floor at 0),
+ * matching calcAdv's treatment.
+ *
+ * This is the single seam Crunch Time's Extra Defensive Intensity will add its
+ * +1 through.
+ */
+export function matchupContest(g, teamKey, idx, type) {
+  if (type === 'ft') return 0;
+  const defIdx = (g.offMatchups?.[teamKey] || [])[idx] ?? idx;
+  const def = getOpp(g, teamKey).starters?.[defIdx];
+  return Math.max(0, def?.defBoost || 0);
+}
+
 export function shotCheck(player, type, extra, ps) {
   const die = roll20();
   let bonus = extra || 0;
@@ -254,7 +274,7 @@ export function spendAssist(g, teamKey, type, playerIdx) {
     if (!(player.threePtBoost > 0)) return { game: ng, ok: false, msg: `${player.name} needs a 3PT Bonus` };
     myT.assists -= SPEND_COSTS.assistThree;
     const astBonus = ng.tempEff?.[teamKey]?.['astBoost_' + playerIdx] || 0;
-    const r = shotCheck(player, '3pt', astBonus, ps);
+    const r = shotCheck(player, '3pt', astBonus - matchupContest(ng, teamKey, playerIdx, '3pt'), ps);
     if (r.hit) {
       myT.score += r.pts;
       const ps2 = myT.stats.find(s => s.id === player.id);
@@ -276,7 +296,7 @@ export function spendAssist(g, teamKey, type, playerIdx) {
     if (!(player.paintBoost > 0)) return { game: ng, ok: false, msg: `${player.name} needs a Paint Bonus` };
     myT.assists -= SPEND_COSTS.assistPaint;
     const astBonus = ng.tempEff?.[teamKey]?.['astBoost_' + playerIdx] || 0;
-    const r = shotCheck(player, 'paint', astBonus, ps);
+    const r = shotCheck(player, 'paint', astBonus - matchupContest(ng, teamKey, playerIdx, 'paint'), ps);
     if (r.hit) {
       myT.score += r.pts;
       const ps2 = myT.stats.find(s => s.id === player.id);
@@ -306,7 +326,7 @@ export function spendReboundBonus(g, teamKey, type, playerIdx) {
     // Second-chance paint shot check (from +3 reb advantage) — costs 3 REB
     if (myT.rebounds < SPEND_COSTS.reboundPaint) return { game: ng, ok: false, msg: `Need ${SPEND_COSTS.reboundPaint} rebounds (have ${myT.rebounds})` };
     myT.rebounds -= SPEND_COSTS.reboundPaint;
-    const r = shotCheck(player, 'paint', 0, ps);
+    const r = shotCheck(player, 'paint', -matchupContest(ng, teamKey, playerIdx, 'paint'), ps);
     if (r.hit) {
       myT.score += r.pts;
       const ps2 = myT.stats.find(s => s.id === player.id);

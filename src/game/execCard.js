@@ -2,7 +2,7 @@
 // Pure function: takes game state + card + opts, returns new state
 // Never mutates — always returns a new object via deepClone
 
-import { getTeam, getOpp, getPS, calcAdv, shotCheck, drawCards, deepClone, getFatigue } from './engine.js';
+import { getTeam, getOpp, getPS, calcAdv, shotCheck, matchupContest, drawCards, deepClone, getFatigue } from './engine.js';
 import { lookupChart } from './cards.js';
 import { getStrat } from './strats.js';
 
@@ -66,8 +66,12 @@ export function execCard(game, teamKey, cardId, opts = {}) {
     myT.assists -= 1;
     addLog(g, teamKey, 'Spent 1 AST → +1 to shot check');
   }
-  // Wrap shotCheck to automatically include assist bonus
-  const _shotCheck = (p, type, extra, pStats) => shotCheck(p, type, (extra || 0) + _assistShotBonus, pStats);
+  // Wrap shotCheck to automatically include the assist bonus AND the passive
+  // matchup contest: every card-initiated 3PT/paint check here shoots with the
+  // card's chosen player (idx), so their assigned defender's Defensive Bonus
+  // contests it in one place.
+  const _shotCheck = (p, type, extra, pStats) =>
+    shotCheck(p, type, (extra || 0) + _assistShotBonus - matchupContest(g, teamKey, idx, type), pStats);
 
   const player    = myT.starters[idx];
   const ps        = getPS(g, teamKey, player?.id) || {};
@@ -193,7 +197,7 @@ export function execCard(game, teamKey, cardId, opts = {}) {
       const offPlayer = getTeam(g, lc.teamKey).starters[targetSlot];
       const offPs = getPS(g, lc.teamKey, offPlayer?.id) || {};
       if (offPlayer) {
-        const r = shotCheck(offPlayer, '3pt', 2, offPs);
+        const r = shotCheck(offPlayer, '3pt', 2 - matchupContest(g, lc.teamKey, targetSlot, '3pt'), offPs);
         trackShotCheck(g, lc.teamKey, r, '3pt');
         if (r.hit) getTeam(g, lc.teamKey).score += r.pts;
         if (offPs && r.die <= 2)  offPs.cold = (offPs.cold || 0) + 1;
@@ -791,6 +795,8 @@ export function resolvePendingShotCheck(game) {
 
   let bonus = psc.bonus || 0;
   if (psc.closeOutBonus) bonus += psc.closeOutBonus;
+  // The passive matchup contest applies on top of any Close Out.
+  bonus -= matchupContest(g, psc.teamKey, psc.playerIdx, psc.type);
 
   const r = shotCheck(player, psc.type, bonus, ps);
   recordShot(g, psc.teamKey, player?.id, psc.type, r.hit);

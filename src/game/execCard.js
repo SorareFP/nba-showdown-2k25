@@ -146,40 +146,24 @@ export function execCard(game, teamKey, cardId, opts = {}) {
       break;
     }
 
-    case 'full_court_press': {
-      const fcpOpp = teamKey === 'A' ? 'B' : 'A';
-      const pressed = [];
-      (oppT.starters || []).forEach((p, i) => {
-        if (p && (p.speed || 0) <= 8) pressed.push({ i, name: p.name });
-      });
-      if (!pressed.length) return fail('No opposing player with Speed 8 or less');
-      if (!g.tempEff[fcpOpp]) g.tempEff[fcpOpp] = {};
-      pressed.forEach(({ i }) => {
-        g.tempEff[fcpOpp]['r' + i] = (g.tempEff[fcpOpp]['r' + i] || 0) - 1;
-      });
-      addLog(g, teamKey, `Full-Court Press: ${pressed.map(p => p.name).join(', ')} −1 to scoring roll`);
-      break;
-    }
-
     case 'double_team': {
       const dtOpp = teamKey === 'A' ? 'B' : 'A';
-      const tIdx = opts.targetIdx, oIdx = opts.leftOpenIdx;
+      const tIdx = opts.targetIdx;
       const target = oppT.starters[tIdx];
-      const open = oppT.starters[oIdx];
-      if (!target || !open || tIdx === oIdx) return fail('Choose two different opposing players');
+      if (!target) return fail('Choose an opposing player to trap');
       const oppRolls = g.rollResults[dtOpp] || [];
       if (oppRolls[tIdx] != null) return fail(target.name + ' has already rolled');
-      if (oppRolls[oIdx] != null) return fail(open.name + ' has already rolled');
       // The trap: the target's assigned defender doubles with help.
       const dIdx = (g.offMatchups[dtOpp] || [])[tIdx] ?? tIdx;
       if (!g.tempDefEff) g.tempDefEff = {};
       if (!g.tempDefEff[teamKey]) g.tempDefEff[teamKey] = {};
       const cur = g.tempDefEff[teamKey][dIdx] || { speedBoost: 0, powerBoost: 0 };
       g.tempDefEff[teamKey][dIdx] = { speedBoost: cur.speedBoost + 6, powerBoost: cur.powerBoost + 6 };
-      // The cost: the man you helped off is open.
-      if (!g.tempEff[dtOpp]) g.tempEff[dtOpp] = {};
-      g.tempEff[dtOpp]['r' + oIdx] = (g.tempEff[dtOpp]['r' + oIdx] || 0) + 2;
-      addLog(g, teamKey, `Double Team: ${target.name} trapped (+6/+6 defense) — ${open.name} left open (+2 roll)`);
+      // The cost: somebody's open, and the OFFENSE finds him — the +3 rides
+      // on the next roll the opponent chooses to make (roll order is theirs).
+      if (!g.openMan) g.openMan = {};
+      g.openMan[dtOpp] = (g.openMan[dtOpp] || 0) + 3;
+      addLog(g, teamKey, `Double Team: ${target.name} trapped (+6/+6 defense) — someone's open, Team ${dtOpp} gets +3 on their next roll`);
       break;
     }
 
@@ -279,21 +263,6 @@ export function execCard(game, teamKey, cardId, opts = {}) {
       if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
       g.tempEff[teamKey]['r' + idx] = (g.tempEff[teamKey]['r' + idx] || 0) + 3;
       addLog(g, teamKey, `Overhelp: ${player?.name} +3 to scoring roll (found the mismatch)`);
-      break;
-    }
-
-    case 'fast_break': {
-      // Off a stop — an opponent came up empty this segment, and the outlet
-      // is already gone. The gate re-checks state because canPlay only says
-      // that SOME window exists; the chosen runner must still qualify.
-      const fbOppKey = teamKey === 'A' ? 'B' : 'A';
-      const stopped = (g.rollResults[fbOppKey] || []).some(r => r && r.pts === 0);
-      if (!stopped) return fail('No opposing player has scored 0 on a roll this segment');
-      if ((player?.speed || 0) < 12) return fail('Need Speed 12+');
-      if ((g.rollResults[teamKey] || [])[idx] != null) return fail(player?.name + ' has already rolled');
-      if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
-      g.tempEff[teamKey]['r' + idx] = (g.tempEff[teamKey]['r' + idx] || 0) + 2;
-      addLog(g, teamKey, `Fast Break: off the stop, ${player?.name} +2 to scoring roll`);
       break;
     }
 

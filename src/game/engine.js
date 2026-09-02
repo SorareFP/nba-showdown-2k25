@@ -391,6 +391,14 @@ export function doRoll(g, teamKey, idx) {
   const te = ng.tempEff[teamKey] || {};
   if (te['r' + idx]) bonus += te['r' + idx];
 
+  // Open-man bonus (Double Team's cost): rides on the next roll this team
+  // chooses to make, then it's gone — the offense picks its beneficiary
+  // through roll order.
+  if (ng.openMan?.[teamKey]) {
+    bonus += ng.openMan[teamKey];
+    delete ng.openMan[teamKey];
+  }
+
   const fat = getFatigue(ng, teamKey, idx);
   const ps = getPS(ng, teamKey, nPlayer.id) || {};
   const mrkB = ((ps.hot || 0) - (ps.cold || 0)) * 2;
@@ -492,7 +500,7 @@ export function endSection(g) {
   // No putback detection: the rule was removed (see spendReboundBonus).
 
   // Reset section state
-  ng.tempEff = {}; ng.tempDefEff = {}; ng.ghosted = {}; ng.ignFatigue = {};
+  ng.tempEff = {}; ng.tempDefEff = {}; ng.ghosted = {}; ng.ignFatigue = {}; ng.openMan = {};
   ng.matchupsSet = {};
   ng.rollResults = { A: [], B: [] }; ng.pendingShotCheck = null; ng.lastShotCheck = null;
   // reboundBonuses were set earlier in this function — they persist to the next section's scoring phase

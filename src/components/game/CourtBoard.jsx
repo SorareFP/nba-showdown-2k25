@@ -513,6 +513,22 @@ async function buildOpts(game, teamKey, cardId, base, openModal) {
     opts.offSlot = eligible[pick].origIdx;
   }
 
+  // ── Double Team: pick the opposing player to trap ──────────────────────
+  if (cardId === 'double_team') {
+    const oppRolls = game.rollResults[oppKey] || [];
+    const eligible = oppT.starters
+      .map((p, i) => ({ p, origIdx: i }))
+      .filter(({ origIdx }) => oppRolls[origIdx] == null);
+    if (eligible.length < 2) {
+      alert('Need two opposing players who haven\'t rolled.');
+      return null;
+    }
+    const display = eligible.map(({ p }) => p);
+    const pick = await openModal({ teamKey: oppKey, cardId, players: display, label: 'Trap which opponent? (+6/+6 to their defender — but they get +3 on their next roll)' });
+    if (pick === null) return null;
+    opts.targetIdx = eligible[pick].origIdx;
+  }
+
   // ── Offensive Board Mastery: pick which player gets a second roll ───────
   if (cardId === 'offensive_board') {
     const idx = await openModal({ teamKey, cardId, players: myT.starters, label: 'Select player for second scoring roll (−2)' });
@@ -702,6 +718,9 @@ function PhaseBar({ game, setGame, onEndSection, pvpMode = false, myTeamKey = nu
           {!rollingOpen
             ? <span className={styles.phaseSub} style={{color:col}}>Team {scoringTurn} strategy turn · {Math.min(scoringPasses,2)}/2 passes</span>
             : <span className={styles.phaseSub} style={{color:'var(--green)'}}>All players may roll</span>}
+          {(game.openMan?.A > 0 || game.openMan?.B > 0) && ['A','B'].map(k => (game.openMan?.[k] > 0
+            ? <span key={k} className={styles.phaseSub} style={{color: k==='A'?'var(--orange)':'var(--blue)'}}>🎯 Team {k} has an open man: +{game.openMan[k]} on their next roll</span>
+            : null))}
         </div>
         <div className={styles.phaseCtrls}>
           {(segA>0||segB>0) && <span className={styles.segScore}><span style={{color:'var(--orange)'}}>A {segA}</span>–<span style={{color:'var(--blue)'}}>{segB} B</span></span>}

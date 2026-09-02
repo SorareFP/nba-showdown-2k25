@@ -1,6 +1,7 @@
 import { useReducer, useCallback, useState, useEffect } from 'react';
-import { newGame, doRoll, endSection, spendAssist, spendReboundBonus, applyMatchups } from '../game/engine.js';
-import { aiTurn, aiScoringDecision, aiRollDecision, aiSpendDecision, aiReactionDecision } from '../game/ai.js';
+import { newGame, doRoll, endSection, spendAssist, spendReboundBonus, applyMatchups, spendTimeout, endTimeout, clutchAvailable } from '../game/engine.js';
+import { aiTurn, aiScoringDecision, aiRollDecision, aiSpendDecision, aiReactionDecision, aiCrunchDecision, aiSetMatchups } from '../game/ai.js';
+import { CLUTCH_DICE } from '../game/clutchAwards.js';
 import { execCard, resolvePendingShotCheck } from '../game/execCard.js';
 import { CARDS } from '../game/cards.js';
 import { useAuth } from '../firebase/AuthProvider.jsx';
@@ -16,7 +17,16 @@ function gameReducer(state, action) {
   if (!state && action.type !== 'SET') return state;
   switch (action.type) {
     case 'SET':         return action.game;
-    case 'ROLL':        return doRoll(state, action.teamKey, action.idx);
+    case 'ROLL':        return doRoll(state, action.teamKey, action.idx, action.opts || {});
+    case 'TIMEOUT': {
+      const { game, ok, msg } = spendTimeout(state, action.teamKey);
+      if (!ok) { if (!action.silent) alert(msg); return state; }
+      // The coach draws it up: the timeout's defensive re-set, computed by
+      // the same matchup brain the AI uses — for either team.
+      const reset = aiSetMatchups(game, action.teamKey);
+      return reset?.matchups ? applyMatchups(game, action.teamKey, reset.matchups) : game;
+    }
+    case 'END_TIMEOUT': return endTimeout(state);
     case 'END_SECTION': return endSection(state);
     case 'EXEC_CARD': {
       const { game, ok, msg } = execCard(state, action.teamKey, action.cardId, action.opts || {});
@@ -127,14 +137,27 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB }) {
           const blockedB = game.blockedRolls?.B || {};
           const needsRoll = [0, 1, 2, 3, 4].some(i => rollsB[i] == null && !blockedB[i]);
           if (needsRoll) {
-            // Mid-roll card window before the next die — Fast Break off a
-            // stop, a Heat Check on a fresh top-tier roll. One play per tick;
-            // a rejected play falls through to the roll.
+            // Crunch Time: the AI calls its timeout (defensive re-set via the
+            // reducer), then next tick plays its best rider from the open
+            // window, then resumes.
+            if (game.timeoutActive === 'B') {
+              const rider = aiScoringDecision(game, 'B');
+              if (rider?.type === 'play_card' && tryCard(rider.cardId, rider.opts)) return;
+              dispatch({ type: 'END_TIMEOUT' });
+              return;
+            }
+            if (!game.timeoutActive && aiCrunchDecision(game, 'B')?.type === 'timeout') {
+              dispatch({ type: 'TIMEOUT', teamKey: 'B', silent: true });
+              return;
+            }
+            // Mid-roll card window before the next die — a Heat Check on a
+            // fresh top-tier roll. One play per tick; a rejected play falls
+            // through to the roll.
             const cardAction = aiScoringDecision(game, 'B');
             if (cardAction?.type === 'play_card' && tryCard(cardAction.cardId, cardAction.opts)) return;
             const action = aiRollDecision(game, 'B');
             if (action?.playerIdx != null) {
-              dispatch({ type: 'ROLL', teamKey: 'B', idx: action.playerIdx });
+              dispatch({ type: 'ROLL', teamKey: 'B', idx: action.playerIdx, opts: { clutch: action.clutch } });
               return;
             }
             // No rollable player despite open slots — fall through to spends.
@@ -155,12 +178,14 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB }) {
   }, [game]);
 
   const startGame = useCallback((rA, rB, deckA, deckB) => {
-    dispatch({ type: 'SET', game: newGame(rA, rB, deckA, deckB) });
+    dispatch({ type: 'SET', game: newGame(rA, rB, deckA, deckB, { clutchDice: CLUTCH_DICE }) });
   }, []);
 
   const handlers = {
     setGame:      (g)                     => dispatch({ type: 'UPDATE', game: g }),
-    onRoll:       (teamKey, idx)          => dispatch({ type: 'ROLL', teamKey, idx }),
+    onRoll:       (teamKey, idx, opts)    => dispatch({ type: 'ROLL', teamKey, idx, opts }),
+    onTimeout:    (teamKey)               => dispatch({ type: 'TIMEOUT', teamKey }),
+    onEndTimeout: ()                      => dispatch({ type: 'END_TIMEOUT' }),
     onSpendAssist:(teamKey, spendType, playerIdx) => dispatch({ type: 'SPEND_ASSIST', teamKey, spendType, playerIdx }),
     onSpendRebound:(teamKey, rebType, playerIdx) => dispatch({ type: 'SPEND_REBOUND', teamKey, rebType, playerIdx }),
     onEndSection: ()                      => dispatch({ type: 'END_SECTION' }),
@@ -193,6 +218,8 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB }) {
         onResolve={handlers.onResolve}
         onSpendAssist={handlers.onSpendAssist}
         onSpendRebound={handlers.onSpendRebound}
+        onTimeout={handlers.onTimeout}
+        onEndTimeout={handlers.onEndTimeout}
       />
     </div>
   );

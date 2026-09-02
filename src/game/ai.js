@@ -3,7 +3,7 @@
 // Pure functions: takes game state + team key, returns an action object.
 // No React, no side effects. Used by tutorial, solo mode, sim-to-end.
 
-import { getTeam, getOpp, getPS, calcAdv, getFatigue, SPEND_COSTS } from './engine.js';
+import { getTeam, getOpp, getPS, calcAdv, getFatigue, SPEND_COSTS, clutchAvailable, clutchEligible } from './engine.js';
 import { canPlayCard } from './canPlay.js';
 import { getStrat, STRATS } from './strats.js';
 
@@ -271,6 +271,14 @@ function evaluateCard(game, teamKey, cardId, strat) {
     delayed_slip: 4,
     double_team: 6,
 
+    // Crunch Time (canPlay gates them to the window; riders to the timeout)
+    desperation_press: 8,
+    second_closer: 7,
+    ato_masterpiece: 8,
+    fresh_legs: 6,
+    ice_the_hot_hand: 7,
+    reset: 6,
+
     // Post-roll
     heat_check: 7,
     burst_of_momentum: 6,
@@ -282,6 +290,12 @@ function evaluateCard(game, teamKey, cardId, strat) {
     rebound_tap_out: 5,
   };
 
+  // A called timeout exists FOR its riders: while your own window is open
+  // they outrank everything else in hand, or the window closes unspent.
+  if (game.timeoutActive === teamKey
+    && ['ato_masterpiece', 'fresh_legs', 'ice_the_hot_hand', 'reset'].includes(cardId)) {
+    return (values[cardId] || 3) + 4;
+  }
   return values[cardId] || 3;
 }
 
@@ -560,6 +574,48 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
       return {};
     }
 
+    case 'ato_masterpiece': {
+      // Best converter, best channel: 3PT beats paint when both boosts exist.
+      let bestAto = { i: 0, v: -99, type: '3pt' };
+      starters.forEach((p, i) => {
+        const t3 = (p.threePtBoost || 0) * 3;
+        const tp = (p.paintBoost || 0) * 2;
+        const v = Math.max(t3, tp);
+        if (v > bestAto.v) bestAto = { i, v, type: t3 >= tp ? '3pt' : 'paint' };
+      });
+      return { playerIdx: bestAto.i, checkType: bestAto.type };
+    }
+
+    case 'fresh_legs': {
+      const byMin = starters
+        .map((p, i) => ({ i, min: getPS(game, teamKey, p.id)?.minutes || 0 }))
+        .sort((a, b) => b.min - a.min);
+      return { playerIdx: byMin[0]?.i ?? 0, player2Idx: byMin[1]?.i };
+    }
+
+    case 'ice_the_hot_hand': {
+      let bestIce = { i: 0, hot: -1 };
+      (oppT.starters || []).forEach((p, i) => {
+        const hot = getPS(game, oppKey, p.id)?.hot || 0;
+        if (hot > bestIce.hot) bestIce = { i, hot };
+      });
+      return { targetIdx: bestIce.i };
+    }
+
+    case 'reset': {
+      let bestReset = { i: 0, cold: -1 };
+      starters.forEach((p, i) => {
+        const cold = getPS(game, teamKey, p.id)?.cold || 0;
+        if (cold > bestReset.cold) bestReset = { i, cold };
+      });
+      return { playerIdx: bestReset.i };
+    }
+
+    case 'desperation_press':
+    case 'second_closer': {
+      return {};
+    }
+
     case 'pick_up_full_court': {
       // Hound the star with the most tired legs: minutes weigh double so the
       // press pushes someone over a fatigue threshold, chart ceiling breaks ties.
@@ -641,7 +697,39 @@ export function aiRollDecision(game, teamKey) {
 
   // Roll best matchups first
   candidates.sort((a, b) => b.bonus - a.bonus);
-  return { type: 'roll', playerIdx: candidates[0].idx };
+  const pick = candidates[0];
+
+  // CLUTCH POSSESSION: in crunch, spend it on the best remaining chart —
+  // extra dice are worth most where the top tiers are worth most — as long
+  // as that player is the one rolling now and his legs allow it.
+  if (clutchAvailable(game, teamKey) > 0) {
+    const ceiling = i => {
+      const ch = myT.starters[i]?.chart;
+      return ch?.length ? ch[ch.length - 1].pts + (game.clutchDice?.[myT.starters[i].id] || 0) * 2 : 0;
+    };
+    const bestCeiling = Math.max(...candidates.map(c => ceiling(c.idx)));
+    if (ceiling(pick.idx) >= bestCeiling && clutchEligible(game, teamKey, pick.idx)) {
+      return { type: 'roll', playerIdx: pick.idx, clutch: true };
+    }
+  }
+  return { type: 'roll', playerIdx: pick.idx };
+}
+
+/**
+ * The Crunch Time timeout brain: call the one timeout when the moment is
+ * right — trailing, or a rider in hand worth the stoppage — then the caller
+ * re-sets the defense, plays the best rider, and resumes.
+ */
+export function aiCrunchDecision(game, teamKey) {
+  if (!game.crunch?.active || game.phase !== 'scoring') return null;
+  if (game.crunch.timeoutUsed?.[teamKey] || game.timeoutActive) return null;
+  const team = getTeam(game, teamKey);
+  const opp = getOpp(game, teamKey);
+  const riders = ['ato_masterpiece', 'fresh_legs', 'ice_the_hot_hand', 'reset'];
+  const holdsRider = (team.hand || []).some(id => riders.includes(id));
+  const trailing = team.score < opp.score;
+  if (trailing || holdsRider) return { type: 'timeout' };
+  return null;
 }
 
 // ── Reaction Card Decision ──────────────────────────────────────────────────

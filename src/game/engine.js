@@ -254,7 +254,59 @@ export function matchupContest(g, teamKey, idx, type) {
   if (type === 'ft') return 0;
   const defIdx = (g.offMatchups?.[teamKey] || [])[idx] ?? idx;
   const def = getOpp(g, teamKey).starters?.[defIdx];
-  return Math.max(0, def?.defBoost || 0);
+  const base = Math.max(0, def?.defBoost || 0);
+  // Extra Defensive Intensity (recovered original rules, Section 9): in
+  // Crunch Time, a defender WITH a Defensive Bonus contests one harder.
+  if (base > 0 && g.crunch?.active) return base + 1;
+  return base;
+}
+
+// ── Crunch Time ────────────────────────────────────────────────────────────
+
+/** Clutch Possessions this team still holds (1 base + Second Closer extras). */
+export function clutchAvailable(g, teamKey) {
+  if (!g.crunch?.active) return 0;
+  const allowed = 1 + (g.crunch.extra?.[teamKey] || 0);
+  return Math.max(0, allowed - (g.crunch.used?.[teamKey] || 0));
+}
+
+/**
+ * The dice a player rolls on a Clutch Possession: two for everyone (roll
+ * twice, keep the better — the recovered original rule), plus one per MVP or
+ * CPOY on his card — the MLB Showdown icon system reborn. 25-26 Shai: four.
+ */
+export function clutchDiceFor(g, player) {
+  return 2 + (g.clutchDice?.[player?.id] || 0);
+}
+
+/** The original fatigue gate: a gassed player cannot go clutch. */
+export function clutchEligible(g, teamKey, idx) {
+  return getFatigue(g, teamKey, idx) > -6;
+}
+
+/**
+ * The Timeout: one per team per game, Crunch Time only. Spending it lets the
+ * team fully re-set its defensive matchups mid-section (the caller follows
+ * with applyMatchups) and opens the window the timeout-rider cards play in.
+ */
+export function spendTimeout(g, teamKey) {
+  if (!g.crunch?.active) return { game: g, ok: false, msg: 'Timeouts are a Crunch Time resource' };
+  if (g.phase !== 'scoring') return { game: g, ok: false, msg: 'Timeouts are called during the Scoring Phase' };
+  if (g.crunch.timeoutUsed?.[teamKey]) return { game: g, ok: false, msg: 'Timeout already used' };
+  if (g.timeoutActive) return { game: g, ok: false, msg: 'A timeout is already in progress' };
+  const ng = deepClone(g);
+  ng.crunch.timeoutUsed[teamKey] = true;
+  ng.timeoutActive = teamKey;
+  ng.log = [...ng.log, { team: teamKey, msg: '⏸ TIMEOUT — the defense re-sets, and the clipboard comes out.' }];
+  return { game: ng, ok: true };
+}
+
+export function endTimeout(g) {
+  if (!g.timeoutActive) return g;
+  const ng = deepClone(g);
+  ng.log = [...ng.log, { team: ng.timeoutActive, msg: 'Play resumes.' }];
+  ng.timeoutActive = null;
+  return ng;
 }
 
 export function shotCheck(player, type, extra, ps) {
@@ -401,7 +453,7 @@ export function applyMatchups(g, defendingKey, matchups) {
 }
 
 // ── Scoring Roll ───────────────────────────────────────────────────────────
-export function doRoll(g, teamKey, idx) {
+export function doRoll(g, teamKey, idx, opts = {}) {
   const myT = getTeam(g, teamKey);
   const oppT = getOpp(g, teamKey);
   const player = myT.starters[idx];
@@ -442,12 +494,38 @@ export function doRoll(g, teamKey, idx) {
   const fat = getFatigue(ng, teamKey, idx);
   const ps = getPS(ng, teamKey, nPlayer.id) || {};
   const mrkB = ((ps.hot || 0) - (ps.cold || 0)) * 2;
-  const die = roll20();
+
+  // ── CLUTCH POSSESSION ────────────────────────────────────────────────────
+  // Roll N dice, keep the best — 2 for anyone, +1 per MVP/CPOY on the card.
+  // Validated here so a stray flag can never mint free rerolls: crunch must
+  // be live, the team must hold a possession, and the player must have legs
+  // (the original −4-fatigue gate, −6 on this scale).
+  let clutchDice = 0;
+  if (opts.clutch && clutchAvailable(ng, teamKey) > 0 && clutchEligible(ng, teamKey, idx)) {
+    clutchDice = clutchDiceFor(ng, nPlayer);
+    ng.crunch.used[teamKey] = (ng.crunch.used[teamKey] || 0) + 1;
+  }
+  let die = roll20();
+  for (let extra = 1; extra < clutchDice; extra += 1) die = Math.max(die, roll20());
+
   const totalBonus = bonus + fat + mrkB;
-  const finalRoll = Math.max(1, Math.min(die + totalBonus, 99));
-  const result = lookupChart(nPlayer, finalRoll);
+  let finalRoll = Math.max(1, Math.min(die + totalBonus, 99));
+  let result = lookupChart(nPlayer, finalRoll);
   const topPts = nPlayer.chart[nPlayer.chart.length - 1].pts;
-  const isTop = result.pts >= topPts && result.pts > 0;
+  let isTop = result.pts >= topPts && result.pts > 0;
+
+  // ── DESPERATION PRESS ────────────────────────────────────────────────────
+  // The trailing team's armed press forces a re-roll of this team's next
+  // TOP-TIER roll — second result stands, better or worse.
+  let pressed = false;
+  if (isTop && (ng.pressArmed?.[teamKey] || 0) > 0) {
+    ng.pressArmed[teamKey] -= 1;
+    pressed = true;
+    die = roll20();
+    finalRoll = Math.max(1, Math.min(die + totalBonus, 99));
+    result = lookupChart(nPlayer, finalRoll);
+    isTop = result.pts >= topPts && result.pts > 0;
+  }
 
   if (!ng.rollResults[teamKey]) ng.rollResults[teamKey] = [];
   // defId/defDb: who was guarding this roll, for matchup plus-minus analysis.
@@ -473,7 +551,7 @@ export function doRoll(g, teamKey, idx) {
 
   ng.log = [...ng.log, {
     team: teamKey,
-    msg: `${nPlayer.name} 🎲${die}${totalBonus !== 0 ? (totalBonus > 0 ? '+' : '') + totalBonus : ''}=${finalRoll} → ${result.pts}pts ${result.reb}reb ${result.ast}ast${adv.hasPenalty && !ghosted ? ' ⚠️ penalty' : ''}${isTop ? ' ⭐' : ''}${die === 20 ? ' 🎯' : ''}`,
+    msg: `${clutchDice ? `⭐ CLUTCH (${clutchDice} dice) ` : ''}${pressed ? '🛑 PRESSED — re-roll! ' : ''}${nPlayer.name} 🎲${die}${totalBonus !== 0 ? (totalBonus > 0 ? '+' : '') + totalBonus : ''}=${finalRoll} → ${result.pts}pts ${result.reb}reb ${result.ast}ast${adv.hasPenalty && !ghosted ? ' ⚠️ penalty' : ''}${isTop ? ' ⭐' : ''}${die === 20 ? ' 🎯' : ''}`,
   }];
 
   // Check assist bonus draw

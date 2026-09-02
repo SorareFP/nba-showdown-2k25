@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { calcAdv, getTeam, getOpp, getPS, getFatigue, SNAKE, SPEND_COSTS } from '../../game/engine.js';
+import { calcAdv, getTeam, getOpp, getPS, getFatigue, SNAKE, SPEND_COSTS, clutchAvailable } from '../../game/engine.js';
 import { canPlayCard } from '../../game/canPlay.js';
 import { getStrat } from '../../game/strats.js';
 import { aiDraftPick, aiPlacementPick } from '../../game/ai.js';
@@ -15,7 +15,7 @@ function HelpBtn({ section }) {
   return <button className={styles.helpBtn} onClick={handleClick} title="How to Play">?</button>;
 }
 
-export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExecCard, onResolve, onSpendAssist, onSpendRebound, onDraftSubmit, onPlacePlayer, pvpMode = false, myTeamKey = null, isMyTurn = true }) {
+export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExecCard, onResolve, onSpendAssist, onSpendRebound, onDraftSubmit, onPlacePlayer, onTimeout = null, onEndTimeout = null, pvpMode = false, myTeamKey = null, isMyTurn = true }) {
   // ── Solo placement ─────────────────────────────────────────────────────────
   //
   // PvP passes a Firebase-backed onPlacePlayer; solo places locally with the
@@ -71,7 +71,7 @@ export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExec
 
   return (
     <div className={styles.wrap}>
-      <PhaseBar game={game} setGame={setGame} onEndSection={onEndSection} pvpMode={pvpMode} myTeamKey={myTeamKey} isMyTurn={isMyTurn} draftSelectedCount={draftSelected.length} />
+      <PhaseBar game={game} setGame={setGame} onEndSection={onEndSection} onTimeout={onTimeout} onEndTimeout={onEndTimeout} pvpMode={pvpMode} myTeamKey={myTeamKey} isMyTurn={isMyTurn} draftSelectedCount={draftSelected.length} />
 
       {game.phase === 'draft' ? (
         <BlindPickPhase game={game} setGame={setGame} pvpMode={pvpMode} myTeamKey={myTeamKey}
@@ -650,7 +650,7 @@ function SelectModal({ modal, game, onClose }) {
   );
 }
 
-function PhaseBar({ game, setGame, onEndSection, pvpMode = false, myTeamKey = null, isMyTurn = true, draftSelectedCount = 0 }) {
+function PhaseBar({ game, setGame, onEndSection, onTimeout = null, onEndTimeout = null, pvpMode = false, myTeamKey = null, isMyTurn = true, draftSelectedCount = 0 }) {
   const { phase, quarter, section, matchupTurn, matchupPasses, scoringTurn, scoringPasses } = game;
   const rA = game.rollResults.A || [], rB = game.rollResults.B || [];
   // A player is "done" if they have a roll result OR they are blocked
@@ -732,10 +732,16 @@ function PhaseBar({ game, setGame, onEndSection, pvpMode = false, myTeamKey = nu
           {(game.openMan?.A > 0 || game.openMan?.B > 0) && ['A','B'].map(k => (game.openMan?.[k] > 0
             ? <span key={k} className={styles.phaseSub} style={{color: k==='A'?'var(--orange)':'var(--blue)'}}>🎯 Team {k} has an open man: +{game.openMan[k]} on their next roll</span>
             : null))}
+          {game.crunch?.active && <span className={styles.phaseSub} style={{color:'#F87171',fontWeight:700}}>🚨 CRUNCH TIME · margin {game.crunch.margin} · clutch, timeouts & crunch cards live</span>}
+          {game.timeoutActive && <span className={styles.phaseSub} style={{color:'#FBBF24'}}>⏸ Team {game.timeoutActive} timeout — defense re-set, timeout cards playable</span>}
         </div>
         <div className={styles.phaseCtrls}>
           {(segA>0||segB>0) && <span className={styles.segScore}><span style={{color:'var(--orange)'}}>A {segA}</span>–<span style={{color:'var(--blue)'}}>{segB} B</span></span>}
           {!rollingOpen && <button className={styles.passBtn} onClick={pass} disabled={pvpMode && !isMyTurn}>Pass →</button>}
+          {onTimeout && game.crunch?.active && rollingOpen && !game.timeoutActive && !game.crunch.timeoutUsed?.[pvpMode ? myTeamKey : 'A'] && (!pvpMode || isMyTurn) &&
+            <button className={styles.passBtn} onClick={() => onTimeout(pvpMode ? myTeamKey : 'A')}>⏸ Timeout</button>}
+          {onEndTimeout && game.timeoutActive === (pvpMode ? myTeamKey : 'A') &&
+            <button className={styles.ctaBtn} onClick={onEndTimeout}>▶ Resume play</button>}
           {allRolled && !game.pendingShotCheck && (() => {
             const votes = game.endSectionVotes || {};
             const myVoted = pvpMode && myTeamKey ? votes[myTeamKey] : false;
@@ -825,7 +831,7 @@ function MatchupRow({ idx, game, setGame, onRoll, onExecCard, onSpendAssist, onS
         teamKey="A" idx={idx} phase={game.phase} game={game}
         defPlayer={aDef} defSelect={game.teamB.starters} defIdx={aDefIdx}
         onDefChange={di=>{const g=JSON.parse(JSON.stringify(game));g.offMatchups.A[idx]=di;setGame(g);}}
-        onRoll={()=>onRoll('A',idx)} onSpendAssist={onSpendAssist} onSpendRebound={onSpendRebound}
+        onRoll={()=>onRoll('A',idx)} onClutch={()=>onRoll('A',idx,{clutch:true})} onSpendAssist={onSpendAssist} onSpendRebound={onSpendRebound}
         pvpDisabled={pvpMode && myTeamKey !== 'A'} />
       <div className={styles.connector}>
         <div className={styles.connLine}/><div className={styles.slotNum}>{idx+1}</div><div className={styles.connLine}/>
@@ -835,7 +841,7 @@ function MatchupRow({ idx, game, setGame, onRoll, onExecCard, onSpendAssist, onS
         teamKey="B" idx={idx} phase={game.phase} game={game}
         defPlayer={bDef} defSelect={game.teamA.starters} defIdx={bDefIdx}
         onDefChange={di=>{const g=JSON.parse(JSON.stringify(game));g.offMatchups.B[idx]=di;setGame(g);}}
-        onRoll={()=>onRoll('B',idx)} onSpendAssist={onSpendAssist} onSpendRebound={onSpendRebound}
+        onRoll={()=>onRoll('B',idx)} onClutch={()=>onRoll('B',idx,{clutch:true})} onSpendAssist={onSpendAssist} onSpendRebound={onSpendRebound}
         pvpDisabled={pvpMode && myTeamKey !== 'B'} />
     </div>
   );
@@ -1206,7 +1212,7 @@ function EmptySlot({ idx, col }) {
   return <div className={styles.emptySlot} style={{borderColor:col+'30'}}><span style={{color:col+'50',fontSize:11}}>Slot {idx+1}</span></div>;
 }
 
-function PlayerSlot({ player, ps, adv, fat, result, blocked, teamKey, idx, phase, game, defPlayer, defSelect, defIdx, onDefChange, onRoll, onSpendAssist, onSpendRebound, pvpDisabled = false }) {
+function PlayerSlot({ player, ps, adv, fat, result, blocked, teamKey, idx, phase, game, defPlayer, defSelect, defIdx, onDefChange, onRoll, onClutch = null, onSpendAssist, onSpendRebound, pvpDisabled = false }) {
   const { open } = useLightbox();
   const col=teamKey==='A'?'var(--orange)':'var(--blue)';
   const rollCol=adv?(adv.rollBonus>0?'#4ADE80':adv.hasPenalty?'#F87171':'#94A3B8'):'#94A3B8';
@@ -1270,7 +1276,11 @@ function PlayerSlot({ player, ps, adv, fat, result, blocked, teamKey, idx, phase
               <div className={styles.ptsLg} style={{color:col}}>{result.pts}<span className={styles.ptsUnit}>pts</span></div>
               <div className={styles.statLine}>{result.reb}r {result.ast}a</div>
             </div>
-            :<button className={styles.rollBtn} style={{background:col}} onClick={onRoll} disabled={pvpDisabled}>🎲 Roll</button>}
+            :<>
+              <button className={styles.rollBtn} style={{background:col}} onClick={onRoll} disabled={pvpDisabled}>🎲 Roll</button>
+              {onClutch && !pvpDisabled && game.crunch?.active && clutchAvailable(game, teamKey) > 0 && fat > -6 &&
+                <button className={styles.rollBtn} style={{background:'#B45309'}} title={`Clutch Possession: roll ${2 + (game.clutchDice?.[player.id] || 0)} dice, keep the best`} onClick={onClutch}>⭐ Clutch ({2 + (game.clutchDice?.[player.id] || 0)})</button>}
+            </>}
             {/* Assist spending buttons — costs come from SPEND_COSTS so the
                 buttons can never show at a count the engine will refuse */}
             {onSpendAssist && !pvpDisabled && (() => {

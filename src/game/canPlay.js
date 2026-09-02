@@ -104,6 +104,37 @@ export function canPlayCard(g, teamKey, cardId) {
     return ok('Opponent played a switch card — pick a player for +3 roll');
   }
 
+  // ── CRUNCH TIME cards ───────────────────────────────────────────────────
+  if (['desperation_press', 'ato_masterpiece', 'fresh_legs', 'ice_the_hot_hand', 'reset', 'second_closer'].includes(cardId)) {
+    if (!g.crunch?.active) return no('Crunch Time only — final section, close game');
+    if (cardId === 'desperation_press') {
+      if (myT.score >= oppT.score) return no('Only playable while trailing');
+      return ok('Their next top-tier roll must be re-rolled');
+    }
+    if (cardId === 'second_closer') {
+      if ((g.crunch.extra?.[teamKey] || 0) >= 1) return no('One Second Closer per game');
+      return ok('A second Clutch Possession, for a different player');
+    }
+    // The four timeout riders: only during YOUR called timeout.
+    if (g.timeoutActive !== teamKey) return no('Play during your Timeout');
+    if (cardId === 'ice_the_hot_hand') {
+      const hasHot = oppT.starters.some(p => (getPS(g, teamKey === 'A' ? 'B' : 'A', p.id)?.hot || 0) > 0);
+      if (!hasHot) return no('No opposing player holds a hot marker');
+      return ok('Strip all hot markers from one opposing player');
+    }
+    if (cardId === 'reset') {
+      const hasCold = myT.starters.some(p => (getPS(g, teamKey, p.id)?.cold || 0) > 0);
+      if (!hasCold) return no('None of your players holds a cold marker');
+      return ok('Clear all cold markers from one of your players');
+    }
+    if (cardId === 'fresh_legs') {
+      const tired = myT.starters.some(p => (getPS(g, teamKey, p.id)?.minutes || 0) > 0);
+      if (!tired) return no('Nobody has minutes to shed');
+      return ok('Up to two players shed 4 minutes of fatigue');
+    }
+    return ok('Out of the huddle: a chosen player shoots at +2'); // ato_masterpiece
+  }
+
   // Double Team: two opposing players must still be waiting to roll — one to
   // trap, and at least one other to be the open man they find.
   if (cardId === 'double_team') {

@@ -26,12 +26,13 @@ import path from 'node:path';
 import { REPO_ROOT } from '../cardgen/cache.js';
 import {
   newGame, doRoll, endSection, applyMatchups, spendAssist, spendReboundBonus, STARTERS,
+  spendTimeout, endTimeout,
 } from '../../src/game/engine.js';
 import { execCard, resolvePendingShotCheck } from '../../src/game/execCard.js';
 import { STRATS, getStrat } from '../../src/game/strats.js';
 import {
   aiDraftPick, aiPlacementPick, aiTurn, aiScoringDecision, aiRollDecision, aiReactionDecision,
-  aiSpendDecision,
+  aiSpendDecision, aiCrunchDecision, aiSetMatchups,
 } from '../../src/game/ai.js';
 
 const GAMES = Number(process.argv[2] ?? 400);
@@ -230,6 +231,26 @@ for (let n = 0; n < GAMES; n += 1) {
     // every die is already down.
     for (let r = 0; r < STARTERS * 2; r += 1) {
       const key = r % 2 === 0 ? 'A' : 'B';
+      // Crunch Time: the timeout brain fires before the card window —
+      // stoppage, defensive re-set, best rider, play on.
+      if (aiCrunchDecision(g, key)?.type === 'timeout') {
+        const to = spendTimeout(g, key);
+        if (to.ok) {
+          g = to.game;
+          const reset = aiSetMatchups(g, key);
+          if (reset?.matchups) g = applyMatchups(g, key, reset.matchups);
+          // Play every rider the window allows, best first — the live driver
+          // loops the same way, one card per tick.
+          for (let played = 0; played < 4; played += 1) {
+            const rider = aiScoringDecision(g, key);
+            if (rider?.type !== 'play_card') break;
+            const res = tryPlay(g, key, rider, playedThisGame);
+            g = res.g;
+            if (!res.played) break;
+          }
+          g = endTimeout(g);
+        }
+      }
       const cardAction = aiScoringDecision(g, key);
       if (cardAction?.type === 'play_card') {
         const res = tryPlay(g, key, cardAction, playedThisGame);
@@ -237,7 +258,7 @@ for (let n = 0; n < GAMES; n += 1) {
       }
       const action = aiRollDecision(g, key);
       if (action?.playerIdx != null) {
-        g = doRoll(g, key, action.playerIdx);
+        g = doRoll(g, key, action.playerIdx, { clutch: action.clutch });
         if (g.pendingShotCheck) g = safeResolve(g);
       }
     }

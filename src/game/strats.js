@@ -99,6 +99,22 @@ export const STRATS = [
   // ── SPECIAL ──
   { id:'coaches_challenge',   name:"Coach's Challenge",  phase:'reaction', side:'def', copies:2, locked:false, color:'#B91C1C', rarity:'rare',
     desc:'Re-roll any opponent shot check (not a scoring roll). They must accept the new result. Limit: 2 per game per team.' },
+
+  // ── CRUNCH TIME ── powerful but rare, playable only when the final section
+  // arms within the margin. The four timeout riders play only during YOUR
+  // called timeout — the momentum-control family.
+  { id:'desperation_press',   name:'Desperation Press',  phase:'scoring',  side:'def', copies:1, locked:false, color:'#7F1D1D', rarity:'rare',
+    desc:'CRUNCH TIME, and you are trailing: the next opposing scoring roll that lands in its top tier must be re-rolled. The second result stands.' },
+  { id:'ato_masterpiece',     name:'ATO Masterpiece',    phase:'scoring',  side:'off', copies:1, locked:false, color:'#B45309', rarity:'rare',
+    desc:'Play during your Timeout: coming out of the huddle, a chosen player takes a 3PT or Paint shot check at +2.' },
+  { id:'fresh_legs',          name:'Fresh Legs',         phase:'scoring',  side:'off', copies:1, locked:false, color:'#15803D', rarity:'rare',
+    desc:'Play during your Timeout: up to two chosen players each shed 4 minutes of fatigue.' },
+  { id:'ice_the_hot_hand',    name:'Ice the Hot Hand',   phase:'scoring',  side:'def', copies:1, locked:false, color:'#0E7490', rarity:'rare',
+    desc:'Play during your Timeout: strip all hot markers from one opposing player. The run stops here.' },
+  { id:'reset',               name:'Reset',              phase:'scoring',  side:'off', copies:1, locked:false, color:'#4338CA', rarity:'rare',
+    desc:'Play during your Timeout: clear all cold markers from one of your players. Deep breath.' },
+  { id:'second_closer',       name:'Second Closer',      phase:'scoring',  side:'off', copies:1, locked:false, color:'#A21CAF', rarity:'rare',
+    desc:'CRUNCH TIME: your team gains a second Clutch Possession this game, for a different player.' },
   { id:'delayed_slip',        name:'Delayed Slip',       phase:'scoring',  side:'off', copies:2, locked:false, color:'#7C3AED', rarity:'common',
     desc:'Choose a player with Speed ≥12 and Power ≥10. If they have no matchup advantage, give them +2 to scoring roll and +1 Rebound.' },
 ];

@@ -150,6 +150,72 @@ export function execCard(game, teamKey, cardId, opts = {}) {
       break;
     }
 
+    // ── CRUNCH TIME ─────────────────────────────────────────────────────────
+    case 'desperation_press': {
+      if (!g.crunch?.active) return fail('Crunch Time only');
+      if (myT.score >= oppT.score) return fail('Only playable while trailing');
+      const dpOpp = teamKey === 'A' ? 'B' : 'A';
+      if (!g.pressArmed) g.pressArmed = {};
+      g.pressArmed[dpOpp] = (g.pressArmed[dpOpp] || 0) + 1;
+      addLog(g, teamKey, 'Desperation Press: their next top-tier roll gets re-rolled. The second result stands.');
+      break;
+    }
+
+    case 'second_closer': {
+      if (!g.crunch?.active) return fail('Crunch Time only');
+      if ((g.crunch.extra?.[teamKey] || 0) >= 1) return fail('One Second Closer per game');
+      g.crunch.extra[teamKey] = (g.crunch.extra[teamKey] || 0) + 1;
+      addLog(g, teamKey, 'Second Closer: a second Clutch Possession is live.');
+      break;
+    }
+
+    case 'ato_masterpiece': {
+      if (g.timeoutActive !== teamKey) return fail('Play during your Timeout');
+      const atoType = opts.checkType === 'paint' ? 'paint' : '3pt';
+      const r = _shotCheck(player, atoType, 2, ps);
+      recordShot(g, teamKey, player?.id, atoType, r.hit);
+      trackShotCheck(g, teamKey, r, atoType);
+      if (r.hit) myT.score += r.pts;
+      addLog(g, teamKey, `ATO Masterpiece: out of the huddle, ${scStr(r)}`);
+      break;
+    }
+
+    case 'fresh_legs': {
+      if (g.timeoutActive !== teamKey) return fail('Play during your Timeout');
+      const legs = [idx, opts.player2Idx].filter(i => i != null && myT.starters[i]);
+      if (!legs.length) return fail('Choose up to two players');
+      for (const i of new Set(legs)) {
+        const p = myT.starters[i];
+        const pps = getPS(g, teamKey, p.id);
+        if (pps) pps.minutes = Math.max(0, (pps.minutes || 0) - 4);
+      }
+      addLog(g, teamKey, `Fresh Legs: ${[...new Set(legs)].map(i => myT.starters[i].name).join(' & ')} shed 4 minutes of fatigue`);
+      break;
+    }
+
+    case 'ice_the_hot_hand': {
+      if (g.timeoutActive !== teamKey) return fail('Play during your Timeout');
+      const iceOpp = teamKey === 'A' ? 'B' : 'A';
+      const target = oppT.starters[opts.targetIdx ?? 0];
+      if (!target) return fail('Choose an opposing player');
+      const tps = getPS(g, iceOpp, target.id);
+      const had = tps?.hot || 0;
+      if (!had) return fail(`${target.name} holds no hot markers`);
+      tps.hot = 0;
+      addLog(g, teamKey, `Ice the Hot Hand: ${target.name} loses ${had} hot marker${had > 1 ? 's' : ''}. The run stops here.`);
+      break;
+    }
+
+    case 'reset': {
+      if (g.timeoutActive !== teamKey) return fail('Play during your Timeout');
+      const rps = getPS(g, teamKey, player?.id);
+      const hadCold = rps?.cold || 0;
+      if (!hadCold) return fail(`${player?.name} holds no cold markers`);
+      rps.cold = 0;
+      addLog(g, teamKey, `Reset: ${player?.name} clears ${hadCold} cold marker${hadCold > 1 ? 's' : ''}. Deep breath.`);
+      break;
+    }
+
     case 'pick_up_full_court': {
       const pufcOpp = teamKey === 'A' ? 'B' : 'A';
       const hounded = oppT.starters[opts.targetIdx];

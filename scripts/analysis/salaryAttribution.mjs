@@ -19,13 +19,13 @@ const scale = PV.REFERENCE_SALARY.sd / sV;
 
 // Chart split: the chart channel is EV(pts per roll) averaged over every
 // matchup's roll bonus. Its two real parts are the chart ITSELF (EV at
-// bonus 0 — what the card produces on neutral footing) and the MATCHUP LIFT
+// bonus 0 — what the card produces on neutral footing) and the MATCHUP BONUS
 // (what Speed/Power bonuses add on top, averaged over the field). They sum
 // to the chart channel exactly.
 const neutral = cards.map(c => PV.expectedChartValue(c, 0, 'pts'));
-const lift = chart.map((v, i) => v - neutral[i]);
+const bonus = chart.map((v, i) => v - neutral[i]);
 
-const ch = { chart, neutral, lift, conv, target, defence };
+const ch = { chart, neutral, bonus, conv, target, defence };
 const chMean = Object.fromEntries(Object.entries(ch).map(([k, xs]) => [k, PV.mean(xs)]));
 
 const rows = cards.map((c, i) => ({
@@ -35,16 +35,16 @@ const rows = cards.map((c, i) => ({
   defBoost: c.defBoost ?? 0,
   chart$: (chart[i] - chMean.chart) * scale,
   chartNeutral$: (neutral[i] - chMean.neutral) * scale,
-  chartLift$: (lift[i] - chMean.lift) * scale,
+  chartBonus$: (bonus[i] - chMean.bonus) * scale,
   conv$: (conv[i] - chMean.conv) * scale,
   target$: (target[i] - chMean.target) * scale,
   targetRaw: target[i],
   defence$: (defence[i] - chMean.defence) * scale,
 }));
 
-const csv = ['name,team,salary,defBoost,chart$,chartNeutral$,chartLift$,conv$,target$,defence$']
+const csv = ['name,team,salary,defBoost,chart$,chartNeutral$,chartBonus$,conv$,target$,defence$']
   .concat(rows.map(r =>
-    `"${r.name}",${r.team},${r.salary},${r.defBoost},${r.chart$.toFixed(0)},${r.chartNeutral$.toFixed(0)},${r.chartLift$.toFixed(0)},${r.conv$.toFixed(0)},${r.target$.toFixed(0)},${r.defence$.toFixed(0)}`))
+    `"${r.name}",${r.team},${r.salary},${r.defBoost},${r.chart$.toFixed(0)},${r.chartNeutral$.toFixed(0)},${r.chartBonus$.toFixed(0)},${r.conv$.toFixed(0)},${r.target$.toFixed(0)},${r.defence$.toFixed(0)}`))
   .join('\n');
 const out = path.join(REPO_ROOT, 'card-data', 'generated', 'salary-attribution-v2.csv');
 fs.writeFileSync(out, csv + '\n');
@@ -77,8 +77,8 @@ const targeted = rows.filter(r => r.targetRaw > 0).sort((a, b) => b.target$ - a.
 console.log(`\ncards with a real targeting edge (${targeted.length}):`);
 for (const r of targeted.slice(0, 12)) console.log(`  ${r.name.padEnd(24)} target$ ${r.target$.toFixed(0)}`);
 
-console.log('\nchart split for the earlier suspects (neutral = chart at bonus 0, lift = Speed/Power matchup bonuses):');
+console.log('\nchart split for the earlier suspects (neutral = chart at bonus 0, bonus = Speed/Power matchup bonuses):');
 for (const name of ['Paul Reed', 'Jonas Valan', 'Nikola Joki', 'Giannis', 'Shai', 'Luka']) {
   const r = rows.find(x => x.name.startsWith(name));
-  if (r) console.log(`  ${r.name.padEnd(24)} chart$ ${String(r.chart$.toFixed(0)).padStart(5)} = neutral ${String(r.chartNeutral$.toFixed(0)).padStart(5)} + lift ${String(r.chartLift$.toFixed(0)).padStart(5)}`);
+  if (r) console.log(`  ${r.name.padEnd(24)} chart$ ${String(r.chart$.toFixed(0)).padStart(5)} = neutral ${String(r.chartNeutral$.toFixed(0)).padStart(5)} + bonus ${String(r.chartBonus$.toFixed(0)).padStart(5)}`);
 }

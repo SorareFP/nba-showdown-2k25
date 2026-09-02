@@ -482,6 +482,17 @@ export function generateCards({
   const byId = Object.fromEntries(cards2.map(c => [c.id, c]));
   const overridden = applyOverrides(byId, overrides);
   const priced = cards2.map(c => overridden[c.id]);
+  // One non-finite chart cell NaN-poisons the whole field's pricing (it
+  // spreads through every card's defence term), and JSON serialization
+  // launders NaN to null so the written file looks innocent. Fail loudly
+  // instead — a 0:00 game slipping past realGames' minutes floor did exactly
+  // this once.
+  const dirty = priced.filter(c => c?.chart?.some(t => ![t.pts, t.reb, t.ast, t.lo, t.hi].every(Number.isFinite)));
+  if (dirty.length) {
+    throw new Error(
+      `non-finite chart cells on ${dirty.length} card(s): ${dirty.slice(0, 5).map(c => c.name).join(', ')}`
+    );
+  }
   const salaries = PV.priceSet(priced, {
     roundSalary: A.roundSalary,
     min: A.SALARY_MIN,
@@ -791,25 +802,23 @@ export function main({ log = console.log } = {}) {
 
   const payload = {
     generatedAt: new Date().toISOString(),
-    provisional: true,
+    provisional: false,
     set: '2026-27',
     statsSeason: CURRENT_STATS_SEASON,
     calibratedAgainst: calibration.referenceSeason,
     note:
-      'PROVISIONAL. Shot Line, Paint Boost, 3PT Boost, Def Boost and the Speed/Power budget come ' +
-      "from dunksandthrees' ACTUAL 2025-26 season page, REGULAR SEASON AND PLAYOFFS POOLED — " +
-      'playoff games are folded in as additional data, each stat volume-weighted by the ' +
-      'denominator it is a rate over (possessions for EPM/OFF/DEF, true shooting attempts for ' +
-      'TS%, the relevant attempts for each location percentage, games for EW/GP); a player whose ' +
-      `team missed the playoffs is unchanged. The ${blend.blended.length} force-included players ` +
-      `ALSO have their ${PRIOR_STATS_SEASON - 1}-${String(PRIOR_STATS_SEASON % 100).padStart(2, '0')} ` +
-      'season folded in by the same volume weighting, because they are in the pool despite failing ' +
-      'the G>=40 rule and several of them played under twenty games; no other player is blended. ' +
-      'The shooting three are the stated probability rule ' +
-      "(a player misses at his real miss rate) compressed onto the finished set's own " +
-      'distribution. Charts are still synthesized from the PREDICTED per-100 rates, because the ' +
-      'actual page carries no per-100 rebound or assist counts. See scripts/cardgen/shooting.js, ' +
-      'scripts/cardgen/poolSeasons.js and card-data/generated/card-calibration.json.',
+      'REAL-LOG REBUILD. Charts are cut from each player’s LAST 82 GAMES ' +
+      '(Basketball-Reference logs, regular season AND playoffs), opponent-adjusted by the ' +
+      "opposing team's dated DEF EPM and minutes-damped to the published sizing convention " +
+      '(scripts/cardgen/realGames.js); the per-card provisional flag survives only where a log ' +
+      'could not serve (carried-forward players). Shot Line, Paint Boost, 3PT Boost, Def Boost ' +
+      "and the Speed/Power budget come from dunksandthrees' ACTUAL 2025-26 season page, regular " +
+      `season and playoffs pooled by volume; the ${blend.blended.length} force-included players ` +
+      `also fold in ${PRIOR_STATS_SEASON - 1}-${String(PRIOR_STATS_SEASON % 100).padStart(2, '0')}. ` +
+      'ARCHETYPE SHAPING (scripts/cardgen/archetypes.js): players below the Good-defender tier ' +
+      'with a real offensive engine carry a def-led Speed+Power budget and an exaggerated split ' +
+      '— their offense lives in the chart, their defense in Def Boost (round(DEF EPM), ' +
+      'neutralize-only). See card-data/generated/card-calibration.json.',
     cards,
   };
   fs.writeFileSync(OUTPUT_FILE, `${JSON.stringify(payload, null, 1)}\n`);

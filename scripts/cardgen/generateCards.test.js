@@ -450,9 +450,17 @@ describe('the committed cards-2026-27.json', () => {
     for (const p of pool) expect(ids.has(playerIdFromName(p.name))).toBe(true);
   });
 
-  it.runIf(exists)('says provisional at the top and on every record', () => {
-    expect(file.provisional).toBe(true);
-    expect(file.cards.every(c => c.provisional === true)).toBe(true);
+  it.runIf(exists)('marks provisional honestly: only synthetic-chart cards', () => {
+    // Since the real-log rebuild, `provisional` on a card means exactly one
+    // thing: its chart came from the synthesized distribution instead of the
+    // player's own last-82 game log. The bulk of the set is real; the flag
+    // survives for whoever the fetch could not serve (and the four
+    // carried-forward players, whose seasons do not exist to fetch).
+    expect(typeof file.provisional).toBe('boolean');
+    const synthetic = file.cards.filter(c => c.provisional === true);
+    const real = file.cards.filter(c => c.provisional === false);
+    expect(real.length).toBeGreaterThan(synthetic.length);
+    expect(synthetic.length + real.length).toBe(file.cards.length);
   });
 
   it.runIf(exists)('holds a complete, in-range stat line on every card', () => {

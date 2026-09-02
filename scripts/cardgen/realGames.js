@@ -75,8 +75,14 @@ export function loadRealGames(indexEntry, defense) {
     }
   }
   if (!rows.length) return null;
-  rows.sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''));
-  const window = rows.slice(0, WINDOW_GAMES);
+  // Token appearances are not evidence: a 0:00 game divides bands.js's
+  // 36/m² normalization by zero (one such game NaN-poisoned an entire
+  // pricing run), and a 90-second garbage-time stint would top the chart
+  // through the same formula. Under two minutes, the row is noise.
+  const played = rows.filter(g => minutesToDecimal(g.minutes) >= 2);
+  if (!played.length) return null;
+  played.sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''));
+  const window = played.slice(0, WINDOW_GAMES);
 
   const totalMin = window.reduce((s, g) => s + minutesToDecimal(g.minutes), 0);
   const mpg = totalMin / window.length;

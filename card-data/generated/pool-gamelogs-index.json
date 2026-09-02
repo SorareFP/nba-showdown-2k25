@@ -1,0 +1,4889 @@
+{
+  "generatedAt": "2026-09-02T17:13:13.844Z",
+  "window": 82,
+  "missing": [],
+  "players": {
+    "Tyrese_Maxey": {
+      "name": "Tyrese Maxey",
+      "playerId": "maxeyty01",
+      "seasons": {
+        "2025": {
+          "reg": 52,
+          "post": 0
+        },
+        "2026": {
+          "reg": 70,
+          "post": 11
+        }
+      },
+      "games": 133
+    },
+    "Amen_Thompson": {
+      "name": "Amen Thompson",
+      "playerId": "thompam01",
+      "seasons": {
+        "2026": {
+          "reg": 79,
+          "post": 6
+        }
+      },
+      "games": 85
+    },
+    "Kevin_Durant": {
+      "name": "Kevin Durant",
+      "playerId": "duranke01",
+      "seasons": {
+        "2025": {
+          "reg": 62,
+          "post": 0
+        },
+        "2026": {
+          "reg": 78,
+          "post": 1
+        }
+      },
+      "games": 141
+    },
+    "Luka_Doncic": {
+      "name": "Luka Dončić",
+      "playerId": "doncilu01",
+      "seasons": {
+        "2025": {
+          "reg": 50,
+          "post": 5
+        },
+        "2026": {
+          "reg": 64,
+          "post": 0
+        }
+      },
+      "games": 119
+    },
+    "Trey_Murphy_III": {
+      "name": "Trey Murphy III",
+      "playerId": "murphtr02",
+      "seasons": {
+        "2025": {
+          "reg": 53,
+          "post": 0
+        },
+        "2026": {
+          "reg": 66,
+          "post": 0
+        }
+      },
+      "games": 119
+    },
+    "Jamal_Murray": {
+      "name": "Jamal Murray",
+      "playerId": "murraja01",
+      "seasons": {
+        "2025": {
+          "reg": 67,
+          "post": 14
+        },
+        "2026": {
+          "reg": 75,
+          "post": 6
+        }
+      },
+      "games": 162
+    },
+    "Jalen_Johnson": {
+      "name": "Jalen Johnson",
+      "playerId": "johnsja05",
+      "seasons": {
+        "2025": {
+          "reg": 36,
+          "post": 0
+        },
+        "2026": {
+          "reg": 72,
+          "post": 6
+        }
+      },
+      "games": 114
+    },
+    "Jabari_Smith_Jr": {
+      "name": "Jabari Smith Jr.",
+      "playerId": "smithja05",
+      "seasons": {
+        "2026": {
+          "reg": 77,
+          "post": 6
+        }
+      },
+      "games": 83
+    },
+    "Anthony_Edwards": {
+      "name": "Anthony Edwards",
+      "playerId": "edwaran01",
+      "seasons": {
+        "2025": {
+          "reg": 79,
+          "post": 15
+        },
+        "2026": {
+          "reg": 61,
+          "post": 10
+        }
+      },
+      "games": 165
+    },
+    "Jalen_Brunson": {
+      "name": "Jalen Brunson",
+      "playerId": "brunsja01",
+      "seasons": {
+        "2026": {
+          "reg": 74,
+          "post": 19
+        }
+      },
+      "games": 93
+    },
+    "VJ_Edgecombe": {
+      "name": "VJ Edgecombe",
+      "playerId": "edgecvj01",
+      "seasons": {
+        "2026": {
+          "reg": 75,
+          "post": 11
+        }
+      },
+      "games": 86
+    },
+    "Nikola_Jokic": {
+      "name": "Nikola Jokić",
+      "playerId": "jokicni01",
+      "seasons": {
+        "2025": {
+          "reg": 70,
+          "post": 14
+        },
+        "2026": {
+          "reg": 65,
+          "post": 6
+        }
+      },
+      "games": 155
+    },
+    "James_Harden": {
+      "name": "James Harden",
+      "playerId": "hardeja01",
+      "seasons": {
+        "2026": {
+          "reg": 70,
+          "post": 18
+        }
+      },
+      "games": 88
+    },
+    "Paolo_Banchero": {
+      "name": "Paolo Banchero",
+      "playerId": "banchpa01",
+      "seasons": {
+        "2025": {
+          "reg": 46,
+          "post": 5
+        },
+        "2026": {
+          "reg": 72,
+          "post": 7
+        }
+      },
+      "games": 130
+    },
+    "Austin_Reaves": {
+      "name": "Austin Reaves",
+      "playerId": "reaveau01",
+      "seasons": {
+        "2025": {
+          "reg": 73,
+          "post": 5
+        },
+        "2026": {
+          "reg": 51,
+          "post": 6
+        }
+      },
+      "games": 135
+    },
+    "Keegan_Murray": {
+      "name": "Keegan Murray",
+      "playerId": "murrake02",
+      "seasons": {
+        "2025": {
+          "reg": 76,
+          "post": 0
+        },
+        "2026": {
+          "reg": 23,
+          "post": 0
+        }
+      },
+      "games": 99
+    },
+    "Jaylen_Brown": {
+      "name": "Jaylen Brown",
+      "playerId": "brownja02",
+      "seasons": {
+        "2025": {
+          "reg": 63,
+          "post": 11
+        },
+        "2026": {
+          "reg": 71,
+          "post": 7
+        }
+      },
+      "games": 152
+    },
+    "Lauri_Markkanen": {
+      "name": "Lauri Markkanen",
+      "playerId": "markkla01",
+      "seasons": {
+        "2025": {
+          "reg": 47,
+          "post": 0
+        },
+        "2026": {
+          "reg": 42,
+          "post": 0
+        }
+      },
+      "games": 89
+    },
+    "Derrick_White": {
+      "name": "Derrick White",
+      "playerId": "whitede01",
+      "seasons": {
+        "2026": {
+          "reg": 77,
+          "post": 7
+        }
+      },
+      "games": 84
+    },
+    "Cade_Cunningham": {
+      "name": "Cade Cunningham",
+      "playerId": "cunnica01",
+      "seasons": {
+        "2025": {
+          "reg": 70,
+          "post": 6
+        },
+        "2026": {
+          "reg": 64,
+          "post": 14
+        }
+      },
+      "games": 154
+    },
+    "Brandon_Ingram": {
+      "name": "Brandon Ingram",
+      "playerId": "ingrabr01",
+      "seasons": {
+        "2026": {
+          "reg": 77,
+          "post": 5
+        }
+      },
+      "games": 82
+    },
+    "Desmond_Bane": {
+      "name": "Desmond Bane",
+      "playerId": "banede01",
+      "seasons": {
+        "2026": {
+          "reg": 82,
+          "post": 7
+        }
+      },
+      "games": 89
+    },
+    "Donovan_Mitchell": {
+      "name": "Donovan Mitchell",
+      "playerId": "mitchdo01",
+      "seasons": {
+        "2026": {
+          "reg": 70,
+          "post": 18
+        }
+      },
+      "games": 88
+    },
+    "Devin_Booker": {
+      "name": "Devin Booker",
+      "playerId": "bookede01",
+      "seasons": {
+        "2025": {
+          "reg": 75,
+          "post": 0
+        },
+        "2026": {
+          "reg": 64,
+          "post": 4
+        }
+      },
+      "games": 143
+    },
+    "Cooper_Flagg": {
+      "name": "Cooper Flagg",
+      "playerId": "flaggco01",
+      "seasons": {
+        "2026": {
+          "reg": 70,
+          "post": 0
+        }
+      },
+      "games": 70
+    },
+    "Scottie_Barnes": {
+      "name": "Scottie Barnes",
+      "playerId": "barnesc01",
+      "seasons": {
+        "2026": {
+          "reg": 80,
+          "post": 7
+        }
+      },
+      "games": 87
+    },
+    "Nickeil_Alexander_Walker": {
+      "name": "Nickeil Alexander-Walker",
+      "playerId": "alexani01",
+      "seasons": {
+        "2026": {
+          "reg": 78,
+          "post": 6
+        }
+      },
+      "games": 84
+    },
+    "Deni_Avdija": {
+      "name": "Deni Avdija",
+      "playerId": "avdijde01",
+      "seasons": {
+        "2025": {
+          "reg": 72,
+          "post": 0
+        },
+        "2026": {
+          "reg": 66,
+          "post": 5
+        }
+      },
+      "games": 143
+    },
+    "Alperen_Sengun": {
+      "name": "Alperen Şengün",
+      "playerId": "sengual01",
+      "seasons": {
+        "2025": {
+          "reg": 76,
+          "post": 7
+        },
+        "2026": {
+          "reg": 72,
+          "post": 6
+        }
+      },
+      "games": 161
+    },
+    "Toumani_Camara": {
+      "name": "Toumani Camara",
+      "playerId": "camarto01",
+      "seasons": {
+        "2026": {
+          "reg": 82,
+          "post": 5
+        }
+      },
+      "games": 87
+    },
+    "Shai_Gilgeous_Alexander": {
+      "name": "Shai Gilgeous-Alexander",
+      "playerId": "gilgesh01",
+      "seasons": {
+        "2026": {
+          "reg": 68,
+          "post": 15
+        }
+      },
+      "games": 83
+    },
+    "Pascal_Siakam": {
+      "name": "Pascal Siakam",
+      "playerId": "siakapa01",
+      "seasons": {
+        "2025": {
+          "reg": 78,
+          "post": 23
+        },
+        "2026": {
+          "reg": 62,
+          "post": 0
+        }
+      },
+      "games": 163
+    },
+    "LeBron_James": {
+      "name": "LeBron James",
+      "playerId": "jamesle01",
+      "seasons": {
+        "2025": {
+          "reg": 70,
+          "post": 5
+        },
+        "2026": {
+          "reg": 60,
+          "post": 10
+        }
+      },
+      "games": 145
+    },
+    "OG_Anunoby": {
+      "name": "OG Anunoby",
+      "playerId": "anunoog01",
+      "seasons": {
+        "2026": {
+          "reg": 67,
+          "post": 17
+        }
+      },
+      "games": 84
+    },
+    "Dyson_Daniels": {
+      "name": "Dyson Daniels",
+      "playerId": "daniedy01",
+      "seasons": {
+        "2026": {
+          "reg": 76,
+          "post": 6
+        }
+      },
+      "games": 82
+    },
+    "Keyonte_George": {
+      "name": "Keyonte George",
+      "playerId": "georgke01",
+      "seasons": {
+        "2025": {
+          "reg": 67,
+          "post": 0
+        },
+        "2026": {
+          "reg": 54,
+          "post": 0
+        }
+      },
+      "games": 121
+    },
+    "Julius_Randle": {
+      "name": "Julius Randle",
+      "playerId": "randlju01",
+      "seasons": {
+        "2026": {
+          "reg": 79,
+          "post": 12
+        }
+      },
+      "games": 91
+    },
+    "Mikal_Bridges": {
+      "name": "Mikal Bridges",
+      "playerId": "bridgmi01",
+      "seasons": {
+        "2026": {
+          "reg": 82,
+          "post": 19
+        }
+      },
+      "games": 101
+    },
+    "Jayson_Tatum": {
+      "name": "Jayson Tatum",
+      "playerId": "tatumja01",
+      "seasons": {
+        "2025": {
+          "reg": 72,
+          "post": 8
+        },
+        "2026": {
+          "reg": 16,
+          "post": 6
+        }
+      },
+      "games": 102
+    },
+    "Michael_Porter_Jr": {
+      "name": "Michael Porter Jr.",
+      "playerId": "portemi01",
+      "seasons": {
+        "2025": {
+          "reg": 77,
+          "post": 14
+        },
+        "2026": {
+          "reg": 52,
+          "post": 0
+        }
+      },
+      "games": 143
+    },
+    "Bam_Adebayo": {
+      "name": "Bam Adebayo",
+      "playerId": "adebaba01",
+      "seasons": {
+        "2025": {
+          "reg": 78,
+          "post": 4
+        },
+        "2026": {
+          "reg": 73,
+          "post": 0
+        }
+      },
+      "games": 155
+    },
+    "Payton_Pritchard": {
+      "name": "Payton Pritchard",
+      "playerId": "pritcpa01",
+      "seasons": {
+        "2026": {
+          "reg": 79,
+          "post": 7
+        }
+      },
+      "games": 86
+    },
+    "Kawhi_Leonard": {
+      "name": "Kawhi Leonard",
+      "playerId": "leonaka01",
+      "seasons": {
+        "2025": {
+          "reg": 37,
+          "post": 7
+        },
+        "2026": {
+          "reg": 65,
+          "post": 0
+        }
+      },
+      "games": 109
+    },
+    "Ryan_Rollins": {
+      "name": "Ryan Rollins",
+      "playerId": "rolliry01",
+      "seasons": {
+        "2025": {
+          "reg": 56,
+          "post": 3
+        },
+        "2026": {
+          "reg": 74,
+          "post": 0
+        }
+      },
+      "games": 133
+    },
+    "Josh_Giddey": {
+      "name": "Josh Giddey",
+      "playerId": "giddejo01",
+      "seasons": {
+        "2025": {
+          "reg": 70,
+          "post": 0
+        },
+        "2026": {
+          "reg": 54,
+          "post": 0
+        }
+      },
+      "games": 124
+    },
+    "Evan_Mobley": {
+      "name": "Evan Mobley",
+      "playerId": "mobleev01",
+      "seasons": {
+        "2026": {
+          "reg": 65,
+          "post": 18
+        }
+      },
+      "games": 83
+    },
+    "Immanuel_Quickley": {
+      "name": "Immanuel Quickley",
+      "playerId": "quickim01",
+      "seasons": {
+        "2025": {
+          "reg": 33,
+          "post": 0
+        },
+        "2026": {
+          "reg": 70,
+          "post": 0
+        }
+      },
+      "games": 103
+    },
+    "Christian_Braun": {
+      "name": "Christian Braun",
+      "playerId": "braunch01",
+      "seasons": {
+        "2025": {
+          "reg": 79,
+          "post": 14
+        },
+        "2026": {
+          "reg": 44,
+          "post": 6
+        }
+      },
+      "games": 143
+    },
+    "Jaden_McDaniels": {
+      "name": "Jaden McDaniels",
+      "playerId": "mcdanja02",
+      "seasons": {
+        "2026": {
+          "reg": 73,
+          "post": 12
+        }
+      },
+      "games": 85
+    },
+    "Joel_Embiid": {
+      "name": "Joel Embiid",
+      "playerId": "embiijo01",
+      "seasons": {
+        "2025": {
+          "reg": 19,
+          "post": 0
+        },
+        "2026": {
+          "reg": 38,
+          "post": 7
+        }
+      },
+      "games": 64
+    },
+    "Kon_Knueppel": {
+      "name": "Kon Knueppel",
+      "playerId": "knuepko01",
+      "seasons": {
+        "2026": {
+          "reg": 81,
+          "post": 0
+        }
+      },
+      "games": 81
+    },
+    "Kelly_Oubre_Jr": {
+      "name": "Kelly Oubre Jr.",
+      "playerId": "oubreke01",
+      "seasons": {
+        "2025": {
+          "reg": 60,
+          "post": 0
+        },
+        "2026": {
+          "reg": 50,
+          "post": 11
+        }
+      },
+      "games": 121
+    },
+    "Zach_LaVine": {
+      "name": "Zach LaVine",
+      "playerId": "lavinza01",
+      "seasons": {
+        "2025": {
+          "reg": 74,
+          "post": 0
+        },
+        "2026": {
+          "reg": 39,
+          "post": 0
+        }
+      },
+      "games": 113
+    },
+    "Tyler_Herro": {
+      "name": "Tyler Herro",
+      "playerId": "herroty01",
+      "seasons": {
+        "2025": {
+          "reg": 77,
+          "post": 4
+        },
+        "2026": {
+          "reg": 33,
+          "post": 0
+        }
+      },
+      "games": 114
+    },
+    "Anthony_Davis": {
+      "name": "Anthony Davis",
+      "playerId": "davisan02",
+      "seasons": {
+        "2025": {
+          "reg": 51,
+          "post": 0
+        },
+        "2026": {
+          "reg": 20,
+          "post": 0
+        }
+      },
+      "games": 71
+    },
+    "Andrew_Nembhard": {
+      "name": "Andrew Nembhard",
+      "playerId": "nembhan01",
+      "seasons": {
+        "2025": {
+          "reg": 65,
+          "post": 23
+        },
+        "2026": {
+          "reg": 57,
+          "post": 0
+        }
+      },
+      "games": 145
+    },
+    "Rudy_Gobert": {
+      "name": "Rudy Gobert",
+      "playerId": "goberru01",
+      "seasons": {
+        "2026": {
+          "reg": 76,
+          "post": 12
+        }
+      },
+      "games": 88
+    },
+    "DeMar_DeRozan": {
+      "name": "DeMar DeRozan",
+      "playerId": "derozde01",
+      "seasons": {
+        "2025": {
+          "reg": 77,
+          "post": 0
+        },
+        "2026": {
+          "reg": 77,
+          "post": 0
+        }
+      },
+      "games": 154
+    },
+    "Saddiq_Bey": {
+      "name": "Saddiq Bey",
+      "playerId": "beysa01",
+      "seasons": {
+        "2025": {
+          "reg": 0,
+          "post": 0
+        },
+        "2026": {
+          "reg": 72,
+          "post": 0
+        }
+      },
+      "games": 72
+    },
+    "Jimmy_Butler": {
+      "name": "Jimmy Butler",
+      "playerId": "butleji01",
+      "seasons": {
+        "2025": {
+          "reg": 55,
+          "post": 11
+        },
+        "2026": {
+          "reg": 38,
+          "post": 0
+        }
+      },
+      "games": 104
+    },
+    "Karl_Anthony_Towns": {
+      "name": "Karl-Anthony Towns",
+      "playerId": "townska01",
+      "seasons": {
+        "2026": {
+          "reg": 75,
+          "post": 19
+        }
+      },
+      "games": 94
+    },
+    "De_Aaron_Fox": {
+      "name": "De'Aaron Fox",
+      "playerId": "foxde01",
+      "seasons": {
+        "2026": {
+          "reg": 72,
+          "post": 21
+        }
+      },
+      "games": 93
+    },
+    "Miles_Bridges": {
+      "name": "Miles Bridges",
+      "playerId": "bridgmi02",
+      "seasons": {
+        "2025": {
+          "reg": 64,
+          "post": 0
+        },
+        "2026": {
+          "reg": 77,
+          "post": 0
+        }
+      },
+      "games": 141
+    },
+    "Onyeka_Okongwu": {
+      "name": "Onyeka Okongwu",
+      "playerId": "okongon01",
+      "seasons": {
+        "2025": {
+          "reg": 74,
+          "post": 0
+        },
+        "2026": {
+          "reg": 74,
+          "post": 6
+        }
+      },
+      "games": 154
+    },
+    "P_J_Washington": {
+      "name": "P.J. Washington",
+      "playerId": "washipj01",
+      "seasons": {
+        "2025": {
+          "reg": 57,
+          "post": 0
+        },
+        "2026": {
+          "reg": 56,
+          "post": 0
+        }
+      },
+      "games": 113
+    },
+    "Stephen_Curry": {
+      "name": "Stephen Curry",
+      "playerId": "curryst01",
+      "seasons": {
+        "2025": {
+          "reg": 70,
+          "post": 8
+        },
+        "2026": {
+          "reg": 43,
+          "post": 0
+        }
+      },
+      "games": 121
+    },
+    "Paul_George": {
+      "name": "Paul George",
+      "playerId": "georgpa01",
+      "seasons": {
+        "2025": {
+          "reg": 41,
+          "post": 0
+        },
+        "2026": {
+          "reg": 37,
+          "post": 11
+        }
+      },
+      "games": 89
+    },
+    "Devin_Vassell": {
+      "name": "Devin Vassell",
+      "playerId": "vassede01",
+      "seasons": {
+        "2026": {
+          "reg": 67,
+          "post": 23
+        }
+      },
+      "games": 90
+    },
+    "Cameron_Johnson": {
+      "name": "Cameron Johnson",
+      "playerId": "johnsca02",
+      "seasons": {
+        "2025": {
+          "reg": 57,
+          "post": 0
+        },
+        "2026": {
+          "reg": 54,
+          "post": 6
+        }
+      },
+      "games": 117
+    },
+    "Dillon_Brooks": {
+      "name": "Dillon Brooks",
+      "playerId": "brookdi01",
+      "seasons": {
+        "2025": {
+          "reg": 75,
+          "post": 7
+        },
+        "2026": {
+          "reg": 56,
+          "post": 4
+        }
+      },
+      "games": 142
+    },
+    "Donte_DiVincenzo": {
+      "name": "Donte DiVincenzo",
+      "playerId": "divindo01",
+      "seasons": {
+        "2026": {
+          "reg": 82,
+          "post": 4
+        }
+      },
+      "games": 86
+    },
+    "Brandon_Miller": {
+      "name": "Brandon Miller",
+      "playerId": "millebr02",
+      "seasons": {
+        "2025": {
+          "reg": 27,
+          "post": 0
+        },
+        "2026": {
+          "reg": 65,
+          "post": 0
+        }
+      },
+      "games": 92
+    },
+    "Jaren_Jackson_Jr": {
+      "name": "Jaren Jackson Jr.",
+      "playerId": "jacksja02",
+      "seasons": {
+        "2025": {
+          "reg": 74,
+          "post": 4
+        },
+        "2026": {
+          "reg": 48,
+          "post": 0
+        }
+      },
+      "games": 126
+    },
+    "RJ_Barrett": {
+      "name": "RJ Barrett",
+      "playerId": "barrerj01",
+      "seasons": {
+        "2025": {
+          "reg": 58,
+          "post": 0
+        },
+        "2026": {
+          "reg": 57,
+          "post": 7
+        }
+      },
+      "games": 122
+    },
+    "Andrew_Wiggins": {
+      "name": "Andrew Wiggins",
+      "playerId": "wiggian01",
+      "seasons": {
+        "2025": {
+          "reg": 60,
+          "post": 4
+        },
+        "2026": {
+          "reg": 68,
+          "post": 0
+        }
+      },
+      "games": 132
+    },
+    "Josh_Hart": {
+      "name": "Josh Hart",
+      "playerId": "hartjo01",
+      "seasons": {
+        "2026": {
+          "reg": 66,
+          "post": 19
+        }
+      },
+      "games": 85
+    },
+    "Ivica_Zubac": {
+      "name": "Ivica Zubac",
+      "playerId": "zubaciv01",
+      "seasons": {
+        "2025": {
+          "reg": 80,
+          "post": 7
+        },
+        "2026": {
+          "reg": 48,
+          "post": 0
+        }
+      },
+      "games": 135
+    },
+    "Franz_Wagner": {
+      "name": "Franz Wagner",
+      "playerId": "wagnefr01",
+      "seasons": {
+        "2025": {
+          "reg": 60,
+          "post": 5
+        },
+        "2026": {
+          "reg": 34,
+          "post": 4
+        }
+      },
+      "games": 103
+    },
+    "Bennedict_Mathurin": {
+      "name": "Bennedict Mathurin",
+      "playerId": "mathube01",
+      "seasons": {
+        "2025": {
+          "reg": 72,
+          "post": 22
+        },
+        "2026": {
+          "reg": 54,
+          "post": 0
+        }
+      },
+      "games": 148
+    },
+    "Stephon_Castle": {
+      "name": "Stephon Castle",
+      "playerId": "castlst01",
+      "seasons": {
+        "2026": {
+          "reg": 68,
+          "post": 23
+        }
+      },
+      "games": 91
+    },
+    "Darius_Garland": {
+      "name": "Darius Garland",
+      "playerId": "garlada01",
+      "seasons": {
+        "2025": {
+          "reg": 75,
+          "post": 5
+        },
+        "2026": {
+          "reg": 45,
+          "post": 0
+        }
+      },
+      "games": 125
+    },
+    "CJ_McCollum": {
+      "name": "CJ McCollum",
+      "playerId": "mccolcj01",
+      "seasons": {
+        "2026": {
+          "reg": 76,
+          "post": 6
+        }
+      },
+      "games": 82
+    },
+    "Anthony_Black": {
+      "name": "Anthony Black",
+      "playerId": "blackan01",
+      "seasons": {
+        "2025": {
+          "reg": 78,
+          "post": 5
+        },
+        "2026": {
+          "reg": 64,
+          "post": 7
+        }
+      },
+      "games": 154
+    },
+    "Zion_Williamson": {
+      "name": "Zion Williamson",
+      "playerId": "willizi01",
+      "seasons": {
+        "2025": {
+          "reg": 30,
+          "post": 0
+        },
+        "2026": {
+          "reg": 62,
+          "post": 0
+        }
+      },
+      "games": 92
+    },
+    "Jerami_Grant": {
+      "name": "Jerami Grant",
+      "playerId": "grantje01",
+      "seasons": {
+        "2025": {
+          "reg": 47,
+          "post": 0
+        },
+        "2026": {
+          "reg": 57,
+          "post": 5
+        }
+      },
+      "games": 109
+    },
+    "Domantas_Sabonis": {
+      "name": "Domantas Sabonis",
+      "playerId": "sabondo01",
+      "seasons": {
+        "2025": {
+          "reg": 70,
+          "post": 0
+        },
+        "2026": {
+          "reg": 19,
+          "post": 0
+        }
+      },
+      "games": 89
+    },
+    "Aaron_Nesmith": {
+      "name": "Aaron Nesmith",
+      "playerId": "nesmiaa01",
+      "seasons": {
+        "2025": {
+          "reg": 45,
+          "post": 23
+        },
+        "2026": {
+          "reg": 45,
+          "post": 0
+        }
+      },
+      "games": 113
+    },
+    "Norman_Powell": {
+      "name": "Norman Powell",
+      "playerId": "powelno01",
+      "seasons": {
+        "2025": {
+          "reg": 60,
+          "post": 7
+        },
+        "2026": {
+          "reg": 58,
+          "post": 0
+        }
+      },
+      "games": 125
+    },
+    "Peyton_Watson": {
+      "name": "Peyton Watson",
+      "playerId": "watsope01",
+      "seasons": {
+        "2025": {
+          "reg": 68,
+          "post": 14
+        },
+        "2026": {
+          "reg": 54,
+          "post": 0
+        }
+      },
+      "games": 136
+    },
+    "Naji_Marshall": {
+      "name": "Naji Marshall",
+      "playerId": "marshna01",
+      "seasons": {
+        "2025": {
+          "reg": 69,
+          "post": 0
+        },
+        "2026": {
+          "reg": 74,
+          "post": 0
+        }
+      },
+      "games": 143
+    },
+    "Shaedon_Sharpe": {
+      "name": "Shaedon Sharpe",
+      "playerId": "sharpsh01",
+      "seasons": {
+        "2025": {
+          "reg": 72,
+          "post": 0
+        },
+        "2026": {
+          "reg": 50,
+          "post": 5
+        }
+      },
+      "games": 127
+    },
+    "Jrue_Holiday": {
+      "name": "Jrue Holiday",
+      "playerId": "holidjr01",
+      "seasons": {
+        "2025": {
+          "reg": 62,
+          "post": 8
+        },
+        "2026": {
+          "reg": 53,
+          "post": 5
+        }
+      },
+      "games": 128
+    },
+    "Quentin_Grimes": {
+      "name": "Quentin Grimes",
+      "playerId": "grimequ01",
+      "seasons": {
+        "2026": {
+          "reg": 75,
+          "post": 11
+        }
+      },
+      "games": 86
+    },
+    "Wendell_Carter_Jr": {
+      "name": "Wendell Carter Jr.",
+      "playerId": "cartewe01",
+      "seasons": {
+        "2026": {
+          "reg": 78,
+          "post": 7
+        }
+      },
+      "games": 85
+    },
+    "Victor_Wembanyama": {
+      "name": "Victor Wembanyama",
+      "playerId": "wembavi01",
+      "seasons": {
+        "2026": {
+          "reg": 64,
+          "post": 22
+        }
+      },
+      "games": 86
+    },
+    "Matas_Buzelis": {
+      "name": "Matas Buzelis",
+      "playerId": "buzelma01",
+      "seasons": {
+        "2025": {
+          "reg": 80,
+          "post": 0
+        },
+        "2026": {
+          "reg": 77,
+          "post": 0
+        }
+      },
+      "games": 157
+    },
+    "Max_Christie": {
+      "name": "Max Christie",
+      "playerId": "chrisma02",
+      "seasons": {
+        "2025": {
+          "reg": 78,
+          "post": 0
+        },
+        "2026": {
+          "reg": 77,
+          "post": 0
+        }
+      },
+      "games": 155
+    },
+    "A_J_Green": {
+      "name": "A.J. Green",
+      "playerId": "greenaj01",
+      "seasons": {
+        "2025": {
+          "reg": 73,
+          "post": 5
+        },
+        "2026": {
+          "reg": 78,
+          "post": 0
+        }
+      },
+      "games": 156
+    },
+    "Russell_Westbrook": {
+      "name": "Russell Westbrook",
+      "playerId": "westbru01",
+      "seasons": {
+        "2025": {
+          "reg": 75,
+          "post": 13
+        },
+        "2026": {
+          "reg": 64,
+          "post": 0
+        }
+      },
+      "games": 152
+    },
+    "Kyshawn_George": {
+      "name": "Kyshawn George",
+      "playerId": "georgky01",
+      "seasons": {
+        "2025": {
+          "reg": 68,
+          "post": 0
+        },
+        "2026": {
+          "reg": 48,
+          "post": 0
+        }
+      },
+      "games": 116
+    },
+    "Giannis_Antetokounmpo": {
+      "name": "Giannis Antetokounmpo",
+      "playerId": "antetgi01",
+      "seasons": {
+        "2025": {
+          "reg": 67,
+          "post": 5
+        },
+        "2026": {
+          "reg": 36,
+          "post": 0
+        }
+      },
+      "games": 108
+    },
+    "Chet_Holmgren": {
+      "name": "Chet Holmgren",
+      "playerId": "holmgch01",
+      "seasons": {
+        "2026": {
+          "reg": 69,
+          "post": 15
+        }
+      },
+      "games": 84
+    },
+    "Grayson_Allen": {
+      "name": "Grayson Allen",
+      "playerId": "allengr01",
+      "seasons": {
+        "2025": {
+          "reg": 64,
+          "post": 0
+        },
+        "2026": {
+          "reg": 51,
+          "post": 2
+        }
+      },
+      "games": 117
+    },
+    "Davion_Mitchell": {
+      "name": "Davion Mitchell",
+      "playerId": "mitchda01",
+      "seasons": {
+        "2025": {
+          "reg": 74,
+          "post": 4
+        },
+        "2026": {
+          "reg": 70,
+          "post": 0
+        }
+      },
+      "games": 148
+    },
+    "Ja_Morant": {
+      "name": "Ja Morant",
+      "playerId": "moranja01",
+      "seasons": {
+        "2025": {
+          "reg": 50,
+          "post": 3
+        },
+        "2026": {
+          "reg": 20,
+          "post": 0
+        }
+      },
+      "games": 73
+    },
+    "Brandin_Podziemski": {
+      "name": "Brandin Podziemski",
+      "playerId": "podzibr01",
+      "seasons": {
+        "2026": {
+          "reg": 82,
+          "post": 0
+        }
+      },
+      "games": 82
+    },
+    "Collin_Gillespie": {
+      "name": "Collin Gillespie",
+      "playerId": "gilleco01",
+      "seasons": {
+        "2026": {
+          "reg": 80,
+          "post": 4
+        }
+      },
+      "games": 84
+    },
+    "Marcus_Smart": {
+      "name": "Marcus Smart",
+      "playerId": "smartma01",
+      "seasons": {
+        "2025": {
+          "reg": 34,
+          "post": 0
+        },
+        "2026": {
+          "reg": 62,
+          "post": 10
+        }
+      },
+      "games": 106
+    },
+    "Jalen_Williams": {
+      "name": "Jalen Williams",
+      "playerId": "willija06",
+      "seasons": {
+        "2025": {
+          "reg": 69,
+          "post": 23
+        },
+        "2026": {
+          "reg": 33,
+          "post": 5
+        }
+      },
+      "games": 130
+    },
+    "Nikola_Vucevic": {
+      "name": "Nikola Vučević",
+      "playerId": "vucevni01",
+      "seasons": {
+        "2025": {
+          "reg": 73,
+          "post": 0
+        },
+        "2026": {
+          "reg": 64,
+          "post": 6
+        }
+      },
+      "games": 143
+    },
+    "Royce_O_Neale": {
+      "name": "Royce O'Neale",
+      "playerId": "onealro01",
+      "seasons": {
+        "2026": {
+          "reg": 78,
+          "post": 4
+        }
+      },
+      "games": 82
+    },
+    "Herbert_Jones": {
+      "name": "Herbert Jones",
+      "playerId": "joneshe01",
+      "seasons": {
+        "2025": {
+          "reg": 20,
+          "post": 0
+        },
+        "2026": {
+          "reg": 56,
+          "post": 0
+        }
+      },
+      "games": 76
+    },
+    "Jaime_Jaquez_Jr": {
+      "name": "Jaime Jaquez Jr.",
+      "playerId": "jaqueja01",
+      "seasons": {
+        "2025": {
+          "reg": 66,
+          "post": 3
+        },
+        "2026": {
+          "reg": 75,
+          "post": 0
+        }
+      },
+      "games": 144
+    },
+    "Rui_Hachimura": {
+      "name": "Rui Hachimura",
+      "playerId": "hachiru01",
+      "seasons": {
+        "2025": {
+          "reg": 59,
+          "post": 5
+        },
+        "2026": {
+          "reg": 68,
+          "post": 10
+        }
+      },
+      "games": 142
+    },
+    "Jalen_Duren": {
+      "name": "Jalen Duren",
+      "playerId": "durenja01",
+      "seasons": {
+        "2026": {
+          "reg": 70,
+          "post": 14
+        }
+      },
+      "games": 84
+    },
+    "LaMelo_Ball": {
+      "name": "LaMelo Ball",
+      "playerId": "ballla01",
+      "seasons": {
+        "2025": {
+          "reg": 47,
+          "post": 0
+        },
+        "2026": {
+          "reg": 72,
+          "post": 0
+        }
+      },
+      "games": 119
+    },
+    "Aaron_Gordon": {
+      "name": "Aaron Gordon",
+      "playerId": "gordoaa01",
+      "seasons": {
+        "2025": {
+          "reg": 51,
+          "post": 14
+        },
+        "2026": {
+          "reg": 36,
+          "post": 3
+        }
+      },
+      "games": 104
+    },
+    "Santi_Aldama": {
+      "name": "Santi Aldama",
+      "playerId": "aldamsa01",
+      "seasons": {
+        "2025": {
+          "reg": 65,
+          "post": 4
+        },
+        "2026": {
+          "reg": 43,
+          "post": 0
+        }
+      },
+      "games": 112
+    },
+    "Dejounte_Murray": {
+      "name": "Dejounte Murray",
+      "playerId": "murrade01",
+      "seasons": {
+        "2025": {
+          "reg": 31,
+          "post": 0
+        },
+        "2026": {
+          "reg": 14,
+          "post": 0
+        }
+      },
+      "games": 45
+    },
+    "Nic_Claxton": {
+      "name": "Nic Claxton",
+      "playerId": "claxtni01",
+      "seasons": {
+        "2025": {
+          "reg": 70,
+          "post": 0
+        },
+        "2026": {
+          "reg": 69,
+          "post": 0
+        }
+      },
+      "games": 139
+    },
+    "Tobias_Harris": {
+      "name": "Tobias Harris",
+      "playerId": "harrito02",
+      "seasons": {
+        "2025": {
+          "reg": 73,
+          "post": 6
+        },
+        "2026": {
+          "reg": 63,
+          "post": 14
+        }
+      },
+      "games": 156
+    },
+    "Bub_Carrington": {
+      "name": "Bub Carrington",
+      "playerId": "carrica01",
+      "seasons": {
+        "2026": {
+          "reg": 82,
+          "post": 0
+        }
+      },
+      "games": 82
+    },
+    "Ace_Bailey": {
+      "name": "Ace Bailey",
+      "playerId": "baileac01",
+      "seasons": {
+        "2026": {
+          "reg": 72,
+          "post": 0
+        }
+      },
+      "games": 72
+    },
+    "Jalen_Suggs": {
+      "name": "Jalen Suggs",
+      "playerId": "suggsja01",
+      "seasons": {
+        "2025": {
+          "reg": 35,
+          "post": 0
+        },
+        "2026": {
+          "reg": 57,
+          "post": 7
+        }
+      },
+      "games": 99
+    },
+    "Julian_Champagnie": {
+      "name": "Julian Champagnie",
+      "playerId": "champju02",
+      "seasons": {
+        "2026": {
+          "reg": 82,
+          "post": 23
+        }
+      },
+      "games": 105
+    },
+    "Draymond_Green": {
+      "name": "Draymond Green",
+      "playerId": "greendr01",
+      "seasons": {
+        "2025": {
+          "reg": 68,
+          "post": 12
+        },
+        "2026": {
+          "reg": 68,
+          "post": 0
+        }
+      },
+      "games": 148
+    },
+    "Duncan_Robinson": {
+      "name": "Duncan Robinson",
+      "playerId": "robindu01",
+      "seasons": {
+        "2026": {
+          "reg": 77,
+          "post": 13
+        }
+      },
+      "games": 90
+    },
+    "Ayo_Dosunmu": {
+      "name": "Ayo Dosunmu",
+      "playerId": "dosunay01",
+      "seasons": {
+        "2025": {
+          "reg": 46,
+          "post": 0
+        },
+        "2026": {
+          "reg": 69,
+          "post": 10
+        }
+      },
+      "games": 125
+    },
+    "Alex_Sarr": {
+      "name": "Alex Sarr",
+      "playerId": "sarral01",
+      "seasons": {
+        "2025": {
+          "reg": 67,
+          "post": 0
+        },
+        "2026": {
+          "reg": 48,
+          "post": 0
+        }
+      },
+      "games": 115
+    },
+    "Deandre_Ayton": {
+      "name": "Deandre Ayton",
+      "playerId": "aytonde01",
+      "seasons": {
+        "2026": {
+          "reg": 72,
+          "post": 10
+        }
+      },
+      "games": 82
+    },
+    "Donovan_Clingan": {
+      "name": "Donovan Clingan",
+      "playerId": "clingdo01",
+      "seasons": {
+        "2026": {
+          "reg": 77,
+          "post": 5
+        }
+      },
+      "games": 82
+    },
+    "Kris_Dunn": {
+      "name": "Kris Dunn",
+      "playerId": "dunnkr01",
+      "seasons": {
+        "2026": {
+          "reg": 82,
+          "post": 0
+        }
+      },
+      "games": 82
+    },
+    "Jarrett_Allen": {
+      "name": "Jarrett Allen",
+      "playerId": "allenja01",
+      "seasons": {
+        "2025": {
+          "reg": 82,
+          "post": 9
+        },
+        "2026": {
+          "reg": 56,
+          "post": 18
+        }
+      },
+      "games": 165
+    },
+    "John_Collins": {
+      "name": "John Collins",
+      "playerId": "collijo01",
+      "seasons": {
+        "2025": {
+          "reg": 40,
+          "post": 0
+        },
+        "2026": {
+          "reg": 69,
+          "post": 0
+        }
+      },
+      "games": 109
+    },
+    "Tre_Jones": {
+      "name": "Tre Jones",
+      "playerId": "jonestr01",
+      "seasons": {
+        "2025": {
+          "reg": 46,
+          "post": 0
+        },
+        "2026": {
+          "reg": 65,
+          "post": 0
+        }
+      },
+      "games": 111
+    },
+    "Noah_Clowney": {
+      "name": "Noah Clowney",
+      "playerId": "clownno01",
+      "seasons": {
+        "2025": {
+          "reg": 46,
+          "post": 0
+        },
+        "2026": {
+          "reg": 66,
+          "post": 0
+        }
+      },
+      "games": 112
+    },
+    "Derrick_Jones_Jr": {
+      "name": "Derrick Jones Jr.",
+      "playerId": "jonesde02",
+      "seasons": {
+        "2025": {
+          "reg": 77,
+          "post": 7
+        },
+        "2026": {
+          "reg": 50,
+          "post": 0
+        }
+      },
+      "games": 134
+    },
+    "Jaylon_Tyson": {
+      "name": "Jaylon Tyson",
+      "playerId": "tysonja01",
+      "seasons": {
+        "2026": {
+          "reg": 66,
+          "post": 17
+        }
+      },
+      "games": 83
+    },
+    "Myles_Turner": {
+      "name": "Myles Turner",
+      "playerId": "turnemy01",
+      "seasons": {
+        "2025": {
+          "reg": 72,
+          "post": 23
+        },
+        "2026": {
+          "reg": 71,
+          "post": 0
+        }
+      },
+      "games": 166
+    },
+    "Isaac_Okoro": {
+      "name": "Isaac Okoro",
+      "playerId": "okorois01",
+      "seasons": {
+        "2025": {
+          "reg": 55,
+          "post": 9
+        },
+        "2026": {
+          "reg": 63,
+          "post": 0
+        }
+      },
+      "games": 127
+    },
+    "Luguentz_Dort": {
+      "name": "Luguentz Dort",
+      "playerId": "dortlu01",
+      "seasons": {
+        "2026": {
+          "reg": 69,
+          "post": 15
+        }
+      },
+      "games": 84
+    },
+    "Tim_Hardaway_Jr": {
+      "name": "Tim Hardaway Jr.",
+      "playerId": "hardati02",
+      "seasons": {
+        "2026": {
+          "reg": 80,
+          "post": 6
+        }
+      },
+      "games": 86
+    },
+    "Cason_Wallace": {
+      "name": "Cason Wallace",
+      "playerId": "wallaca01",
+      "seasons": {
+        "2026": {
+          "reg": 77,
+          "post": 15
+        }
+      },
+      "games": 92
+    },
+    "Sam_Merrill": {
+      "name": "Sam Merrill",
+      "playerId": "merrisa01",
+      "seasons": {
+        "2025": {
+          "reg": 71,
+          "post": 8
+        },
+        "2026": {
+          "reg": 52,
+          "post": 17
+        }
+      },
+      "games": 148
+    },
+    "Maxime_Raynaud": {
+      "name": "Maxime Raynaud",
+      "playerId": "raynama01",
+      "seasons": {
+        "2026": {
+          "reg": 74,
+          "post": 0
+        }
+      },
+      "games": 74
+    },
+    "Jaylen_Wells": {
+      "name": "Jaylen Wells",
+      "playerId": "wellsja01",
+      "seasons": {
+        "2025": {
+          "reg": 79,
+          "post": 0
+        },
+        "2026": {
+          "reg": 69,
+          "post": 0
+        }
+      },
+      "games": 148
+    },
+    "Pelle_Larsson": {
+      "name": "Pelle Larsson",
+      "playerId": "larsspe01",
+      "seasons": {
+        "2025": {
+          "reg": 55,
+          "post": 4
+        },
+        "2026": {
+          "reg": 70,
+          "post": 0
+        }
+      },
+      "games": 129
+    },
+    "Jusuf_Nurkic": {
+      "name": "Jusuf Nurkić",
+      "playerId": "nurkiju01",
+      "seasons": {
+        "2025": {
+          "reg": 51,
+          "post": 0
+        },
+        "2026": {
+          "reg": 41,
+          "post": 0
+        }
+      },
+      "games": 92
+    },
+    "Miles_McBride": {
+      "name": "Miles McBride",
+      "playerId": "mcbrimi01",
+      "seasons": {
+        "2025": {
+          "reg": 64,
+          "post": 18
+        },
+        "2026": {
+          "reg": 41,
+          "post": 19
+        }
+      },
+      "games": 142
+    },
+    "Reed_Sheppard": {
+      "name": "Reed Sheppard",
+      "playerId": "sheppre01",
+      "seasons": {
+        "2026": {
+          "reg": 82,
+          "post": 6
+        }
+      },
+      "games": 88
+    },
+    "Kyle_Kuzma": {
+      "name": "Kyle Kuzma",
+      "playerId": "kuzmaky01",
+      "seasons": {
+        "2025": {
+          "reg": 65,
+          "post": 5
+        },
+        "2026": {
+          "reg": 69,
+          "post": 0
+        }
+      },
+      "games": 139
+    },
+    "Bilal_Coulibaly": {
+      "name": "Bilal Coulibaly",
+      "playerId": "coulibi01",
+      "seasons": {
+        "2025": {
+          "reg": 59,
+          "post": 0
+        },
+        "2026": {
+          "reg": 56,
+          "post": 0
+        }
+      },
+      "games": 115
+    },
+    "De_Andre_Hunter": {
+      "name": "De'Andre Hunter",
+      "playerId": "huntede01",
+      "seasons": {
+        "2025": {
+          "reg": 64,
+          "post": 8
+        },
+        "2026": {
+          "reg": 45,
+          "post": 0
+        }
+      },
+      "games": 117
+    },
+    "Naz_Reid": {
+      "name": "Naz Reid",
+      "playerId": "reidna01",
+      "seasons": {
+        "2026": {
+          "reg": 77,
+          "post": 12
+        }
+      },
+      "games": 89
+    },
+    "Ausar_Thompson": {
+      "name": "Ausar Thompson",
+      "playerId": "thompau01",
+      "seasons": {
+        "2026": {
+          "reg": 73,
+          "post": 14
+        }
+      },
+      "games": 87
+    },
+    "Moussa_Diabate": {
+      "name": "Moussa Diabaté",
+      "playerId": "diabamo01",
+      "seasons": {
+        "2025": {
+          "reg": 71,
+          "post": 0
+        },
+        "2026": {
+          "reg": 73,
+          "post": 0
+        }
+      },
+      "games": 144
+    },
+    "Jalen_Green": {
+      "name": "Jalen Green",
+      "playerId": "greenja05",
+      "seasons": {
+        "2025": {
+          "reg": 82,
+          "post": 7
+        },
+        "2026": {
+          "reg": 32,
+          "post": 4
+        }
+      },
+      "games": 125
+    },
+    "Jeremiah_Fears": {
+      "name": "Jeremiah Fears",
+      "playerId": "fearsje01",
+      "seasons": {
+        "2026": {
+          "reg": 82,
+          "post": 0
+        }
+      },
+      "games": 82
+    },
+    "Cedric_Coward": {
+      "name": "Cedric Coward",
+      "playerId": "cowarce01",
+      "seasons": {
+        "2026": {
+          "reg": 62,
+          "post": 0
+        }
+      },
+      "games": 62
+    },
+    "Zach_Edey": {
+      "name": "Zach Edey",
+      "playerId": "edeyza01",
+      "seasons": {
+        "2025": {
+          "reg": 66,
+          "post": 4
+        },
+        "2026": {
+          "reg": 11,
+          "post": 0
+        }
+      },
+      "games": 81
+    },
+    "Ajay_Mitchell": {
+      "name": "Ajay Mitchell",
+      "playerId": "mitchaj01",
+      "seasons": {
+        "2025": {
+          "reg": 36,
+          "post": 12
+        },
+        "2026": {
+          "reg": 57,
+          "post": 11
+        }
+      },
+      "games": 116
+    },
+    "Tari_Eason": {
+      "name": "Tari Eason",
+      "playerId": "easonta01",
+      "seasons": {
+        "2025": {
+          "reg": 57,
+          "post": 7
+        },
+        "2026": {
+          "reg": 60,
+          "post": 6
+        }
+      },
+      "games": 130
+    },
+    "Harrison_Barnes": {
+      "name": "Harrison Barnes",
+      "playerId": "barneha02",
+      "seasons": {
+        "2026": {
+          "reg": 77,
+          "post": 20
+        }
+      },
+      "games": 97
+    },
+    "Moses_Moody": {
+      "name": "Moses Moody",
+      "playerId": "moodymo01",
+      "seasons": {
+        "2025": {
+          "reg": 74,
+          "post": 12
+        },
+        "2026": {
+          "reg": 60,
+          "post": 0
+        }
+      },
+      "games": 146
+    },
+    "Isaiah_Collier": {
+      "name": "Isaiah Collier",
+      "playerId": "colliis01",
+      "seasons": {
+        "2025": {
+          "reg": 71,
+          "post": 0
+        },
+        "2026": {
+          "reg": 59,
+          "post": 0
+        }
+      },
+      "games": 130
+    },
+    "Jarace_Walker": {
+      "name": "Jarace Walker",
+      "playerId": "walkeja02",
+      "seasons": {
+        "2025": {
+          "reg": 75,
+          "post": 12
+        },
+        "2026": {
+          "reg": 76,
+          "post": 0
+        }
+      },
+      "games": 163
+    },
+    "Trae_Young": {
+      "name": "Trae Young",
+      "playerId": "youngtr01",
+      "seasons": {
+        "2025": {
+          "reg": 76,
+          "post": 0
+        },
+        "2026": {
+          "reg": 15,
+          "post": 0
+        }
+      },
+      "games": 91
+    },
+    "Neemias_Queta": {
+      "name": "Neemias Queta",
+      "playerId": "quetane01",
+      "seasons": {
+        "2026": {
+          "reg": 76,
+          "post": 7
+        }
+      },
+      "games": 83
+    },
+    "Egor_Demin": {
+      "name": "Egor Dëmin",
+      "playerId": "demineg01",
+      "seasons": {
+        "2026": {
+          "reg": 52,
+          "post": 0
+        }
+      },
+      "games": 52
+    },
+    "Nique_Clifford": {
+      "name": "Nique Clifford",
+      "playerId": "cliffni01",
+      "seasons": {
+        "2026": {
+          "reg": 75,
+          "post": 0
+        }
+      },
+      "games": 75
+    },
+    "Jake_LaRavia": {
+      "name": "Jake LaRavia",
+      "playerId": "laravja01",
+      "seasons": {
+        "2026": {
+          "reg": 82,
+          "post": 8
+        }
+      },
+      "games": 90
+    },
+    "Coby_White": {
+      "name": "Coby White",
+      "playerId": "whiteco01",
+      "seasons": {
+        "2025": {
+          "reg": 74,
+          "post": 0
+        },
+        "2026": {
+          "reg": 50,
+          "post": 0
+        }
+      },
+      "games": 124
+    },
+    "Derik_Queen": {
+      "name": "Derik Queen",
+      "playerId": "queende01",
+      "seasons": {
+        "2026": {
+          "reg": 81,
+          "post": 0
+        }
+      },
+      "games": 81
+    },
+    "Jakob_Poeltl": {
+      "name": "Jakob Poeltl",
+      "playerId": "poeltja01",
+      "seasons": {
+        "2025": {
+          "reg": 57,
+          "post": 0
+        },
+        "2026": {
+          "reg": 46,
+          "post": 7
+        }
+      },
+      "games": 110
+    },
+    "Anfernee_Simons": {
+      "name": "Anfernee Simons",
+      "playerId": "simonan01",
+      "seasons": {
+        "2025": {
+          "reg": 70,
+          "post": 0
+        },
+        "2026": {
+          "reg": 55,
+          "post": 0
+        }
+      },
+      "games": 125
+    },
+    "Sam_Hauser": {
+      "name": "Sam Hauser",
+      "playerId": "hausesa01",
+      "seasons": {
+        "2026": {
+          "reg": 78,
+          "post": 7
+        }
+      },
+      "games": 85
+    },
+    "Tristan_Da_Silva": {
+      "name": "Tristan Da Silva",
+      "playerId": "dasiltr01",
+      "seasons": {
+        "2026": {
+          "reg": 77,
+          "post": 7
+        }
+      },
+      "games": 84
+    },
+    "Bruce_Brown": {
+      "name": "Bruce Brown",
+      "playerId": "brownbr01",
+      "seasons": {
+        "2026": {
+          "reg": 82,
+          "post": 6
+        }
+      },
+      "games": 88
+    },
+    "Cody_Williams": {
+      "name": "Cody Williams",
+      "playerId": "willico04",
+      "seasons": {
+        "2025": {
+          "reg": 50,
+          "post": 0
+        },
+        "2026": {
+          "reg": 67,
+          "post": 0
+        }
+      },
+      "games": 117
+    },
+    "Terance_Mann": {
+      "name": "Terance Mann",
+      "playerId": "mannte01",
+      "seasons": {
+        "2025": {
+          "reg": 67,
+          "post": 0
+        },
+        "2026": {
+          "reg": 63,
+          "post": 0
+        }
+      },
+      "games": 130
+    },
+    "Bobby_Portis": {
+      "name": "Bobby Portis",
+      "playerId": "portibo01",
+      "seasons": {
+        "2025": {
+          "reg": 49,
+          "post": 5
+        },
+        "2026": {
+          "reg": 67,
+          "post": 0
+        }
+      },
+      "games": 121
+    },
+    "Dennis_Schroder": {
+      "name": "Dennis Schröder",
+      "playerId": "schrode01",
+      "seasons": {
+        "2026": {
+          "reg": 70,
+          "post": 17
+        }
+      },
+      "games": 87
+    },
+    "Isaiah_Hartenstein": {
+      "name": "Isaiah Hartenstein",
+      "playerId": "harteis01",
+      "seasons": {
+        "2025": {
+          "reg": 57,
+          "post": 23
+        },
+        "2026": {
+          "reg": 47,
+          "post": 15
+        }
+      },
+      "games": 142
+    },
+    "Tre_Johnson": {
+      "name": "Tre Johnson",
+      "playerId": "johnstr03",
+      "seasons": {
+        "2026": {
+          "reg": 60,
+          "post": 0
+        }
+      },
+      "games": 60
+    },
+    "Precious_Achiuwa": {
+      "name": "Precious Achiuwa",
+      "playerId": "achiupr01",
+      "seasons": {
+        "2025": {
+          "reg": 57,
+          "post": 8
+        },
+        "2026": {
+          "reg": 73,
+          "post": 0
+        }
+      },
+      "games": 138
+    },
+    "Cam_Spencer": {
+      "name": "Cam Spencer",
+      "playerId": "spencca01",
+      "seasons": {
+        "2025": {
+          "reg": 25,
+          "post": 0
+        },
+        "2026": {
+          "reg": 72,
+          "post": 0
+        }
+      },
+      "games": 97
+    },
+    "Dominick_Barlow": {
+      "name": "Dominick Barlow",
+      "playerId": "barlodo01",
+      "seasons": {
+        "2025": {
+          "reg": 35,
+          "post": 0
+        },
+        "2026": {
+          "reg": 71,
+          "post": 9
+        }
+      },
+      "games": 115
+    },
+    "Collin_Sexton": {
+      "name": "Collin Sexton",
+      "playerId": "sextoco01",
+      "seasons": {
+        "2025": {
+          "reg": 63,
+          "post": 0
+        },
+        "2026": {
+          "reg": 68,
+          "post": 0
+        }
+      },
+      "games": 131
+    },
+    "Mark_Williams": {
+      "name": "Mark Williams",
+      "playerId": "willima07",
+      "seasons": {
+        "2025": {
+          "reg": 44,
+          "post": 0
+        },
+        "2026": {
+          "reg": 60,
+          "post": 0
+        }
+      },
+      "games": 104
+    },
+    "Brice_Sensabaugh": {
+      "name": "Brice Sensabaugh",
+      "playerId": "sensabr01",
+      "seasons": {
+        "2025": {
+          "reg": 71,
+          "post": 0
+        },
+        "2026": {
+          "reg": 75,
+          "post": 0
+        }
+      },
+      "games": 146
+    },
+    "Kyle_Filipowski": {
+      "name": "Kyle Filipowski",
+      "playerId": "filipky01",
+      "seasons": {
+        "2025": {
+          "reg": 72,
+          "post": 0
+        },
+        "2026": {
+          "reg": 77,
+          "post": 0
+        }
+      },
+      "games": 149
+    },
+    "Kris_Murray": {
+      "name": "Kris Murray",
+      "playerId": "murrakr01",
+      "seasons": {
+        "2025": {
+          "reg": 69,
+          "post": 0
+        },
+        "2026": {
+          "reg": 57,
+          "post": 5
+        }
+      },
+      "games": 131
+    },
+    "Keldon_Johnson": {
+      "name": "Keldon Johnson",
+      "playerId": "johnske04",
+      "seasons": {
+        "2026": {
+          "reg": 82,
+          "post": 23
+        }
+      },
+      "games": 105
+    },
+    "Svi_Mykhailiuk": {
+      "name": "Svi Mykhailiuk",
+      "playerId": "mykhasv01",
+      "seasons": {
+        "2025": {
+          "reg": 38,
+          "post": 0
+        },
+        "2026": {
+          "reg": 50,
+          "post": 0
+        }
+      },
+      "games": 88
+    },
+    "De_Anthony_Melton": {
+      "name": "De'Anthony Melton",
+      "playerId": "meltode01",
+      "seasons": {
+        "2025": {
+          "reg": 6,
+          "post": 0
+        },
+        "2026": {
+          "reg": 49,
+          "post": 0
+        }
+      },
+      "games": 55
+    },
+    "Landry_Shamet": {
+      "name": "Landry Shamet",
+      "playerId": "shamela01",
+      "seasons": {
+        "2025": {
+          "reg": 50,
+          "post": 11
+        },
+        "2026": {
+          "reg": 51,
+          "post": 19
+        }
+      },
+      "games": 131
+    },
+    "Ziaire_Williams": {
+      "name": "Ziaire Williams",
+      "playerId": "willizi02",
+      "seasons": {
+        "2025": {
+          "reg": 63,
+          "post": 0
+        },
+        "2026": {
+          "reg": 56,
+          "post": 0
+        }
+      },
+      "games": 119
+    },
+    "Khris_Middleton": {
+      "name": "Khris Middleton",
+      "playerId": "middlkh01",
+      "seasons": {
+        "2025": {
+          "reg": 37,
+          "post": 0
+        },
+        "2026": {
+          "reg": 63,
+          "post": 0
+        }
+      },
+      "games": 100
+    },
+    "Isaiah_Stewart": {
+      "name": "Isaiah Stewart",
+      "playerId": "stewais01",
+      "seasons": {
+        "2025": {
+          "reg": 72,
+          "post": 1
+        },
+        "2026": {
+          "reg": 58,
+          "post": 14
+        }
+      },
+      "games": 145
+    },
+    "Ty_Jerome": {
+      "name": "Ty Jerome",
+      "playerId": "jeromty01",
+      "seasons": {
+        "2025": {
+          "reg": 70,
+          "post": 9
+        },
+        "2026": {
+          "reg": 15,
+          "post": 0
+        }
+      },
+      "games": 94
+    },
+    "Dylan_Harper": {
+      "name": "Dylan Harper",
+      "playerId": "harpedy01",
+      "seasons": {
+        "2026": {
+          "reg": 69,
+          "post": 23
+        }
+      },
+      "games": 92
+    },
+    "Jamal_Shead": {
+      "name": "Jamal Shead",
+      "playerId": "sheadja01",
+      "seasons": {
+        "2026": {
+          "reg": 82,
+          "post": 7
+        }
+      },
+      "games": 89
+    },
+    "Jordan_Goodwin": {
+      "name": "Jordan Goodwin",
+      "playerId": "goodwjo01",
+      "seasons": {
+        "2025": {
+          "reg": 29,
+          "post": 4
+        },
+        "2026": {
+          "reg": 70,
+          "post": 1
+        }
+      },
+      "games": 104
+    },
+    "Sion_James": {
+      "name": "Sion James",
+      "playerId": "jamessi01",
+      "seasons": {
+        "2026": {
+          "reg": 82,
+          "post": 0
+        }
+      },
+      "games": 82
+    },
+    "Kevin_Huerter": {
+      "name": "Kevin Huerter",
+      "playerId": "huertke01",
+      "seasons": {
+        "2025": {
+          "reg": 69,
+          "post": 0
+        },
+        "2026": {
+          "reg": 69,
+          "post": 5
+        }
+      },
+      "games": 143
+    },
+    "Zaccharie_Risacher": {
+      "name": "Zaccharie Risacher",
+      "playerId": "risacza01",
+      "seasons": {
+        "2025": {
+          "reg": 75,
+          "post": 0
+        },
+        "2026": {
+          "reg": 67,
+          "post": 3
+        }
+      },
+      "games": 145
+    },
+    "Dean_Wade": {
+      "name": "Dean Wade",
+      "playerId": "wadede01",
+      "seasons": {
+        "2025": {
+          "reg": 59,
+          "post": 9
+        },
+        "2026": {
+          "reg": 59,
+          "post": 18
+        }
+      },
+      "games": 145
+    },
+    "Brandon_Williams": {
+      "name": "Brandon Williams",
+      "playerId": "willibr03",
+      "seasons": {
+        "2025": {
+          "reg": 33,
+          "post": 0
+        },
+        "2026": {
+          "reg": 66,
+          "post": 0
+        }
+      },
+      "games": 99
+    },
+    "Nolan_Traore": {
+      "name": "Nolan Traoré",
+      "playerId": "traorno01",
+      "seasons": {
+        "2026": {
+          "reg": 56,
+          "post": 0
+        }
+      },
+      "games": 56
+    },
+    "Kel_el_Ware": {
+      "name": "Kel'el Ware",
+      "playerId": "wareke01",
+      "seasons": {
+        "2025": {
+          "reg": 64,
+          "post": 4
+        },
+        "2026": {
+          "reg": 77,
+          "post": 0
+        }
+      },
+      "games": 145
+    },
+    "Jock_Landale": {
+      "name": "Jock Landale",
+      "playerId": "landajo01",
+      "seasons": {
+        "2025": {
+          "reg": 42,
+          "post": 1
+        },
+        "2026": {
+          "reg": 68,
+          "post": 0
+        }
+      },
+      "games": 111
+    },
+    "Will_Riley": {
+      "name": "Will Riley",
+      "playerId": "rileywi01",
+      "seasons": {
+        "2026": {
+          "reg": 74,
+          "post": 0
+        }
+      },
+      "games": 74
+    },
+    "Jordan_Miller": {
+      "name": "Jordan Miller",
+      "playerId": "millejo02",
+      "seasons": {
+        "2025": {
+          "reg": 37,
+          "post": 3
+        },
+        "2026": {
+          "reg": 60,
+          "post": 0
+        }
+      },
+      "games": 100
+    },
+    "Spencer_Jones": {
+      "name": "Spencer Jones",
+      "playerId": "jonessp01",
+      "seasons": {
+        "2025": {
+          "reg": 20,
+          "post": 0
+        },
+        "2026": {
+          "reg": 64,
+          "post": 6
+        }
+      },
+      "games": 90
+    },
+    "Malik_Monk": {
+      "name": "Malik Monk",
+      "playerId": "monkma01",
+      "seasons": {
+        "2025": {
+          "reg": 65,
+          "post": 0
+        },
+        "2026": {
+          "reg": 62,
+          "post": 0
+        }
+      },
+      "games": 127
+    },
+    "Oso_Ighodaro": {
+      "name": "Oso Ighodaro",
+      "playerId": "ighodos01",
+      "seasons": {
+        "2026": {
+          "reg": 82,
+          "post": 4
+        }
+      },
+      "games": 86
+    },
+    "Sandro_Mamukelashvili": {
+      "name": "Sandro Mamukelashvili",
+      "playerId": "mamuksa01",
+      "seasons": {
+        "2026": {
+          "reg": 80,
+          "post": 7
+        }
+      },
+      "games": 87
+    },
+    "Collin_Murray_Boyles": {
+      "name": "Collin Murray-Boyles",
+      "playerId": "murraco01",
+      "seasons": {
+        "2026": {
+          "reg": 57,
+          "post": 7
+        }
+      },
+      "games": 64
+    },
+    "Aaron_Wiggins": {
+      "name": "Aaron Wiggins",
+      "playerId": "wiggiaa01",
+      "seasons": {
+        "2025": {
+          "reg": 76,
+          "post": 22
+        },
+        "2026": {
+          "reg": 65,
+          "post": 13
+        }
+      },
+      "games": 176
+    },
+    "Brook_Lopez": {
+      "name": "Brook Lopez",
+      "playerId": "lopezbr01",
+      "seasons": {
+        "2025": {
+          "reg": 80,
+          "post": 5
+        },
+        "2026": {
+          "reg": 75,
+          "post": 0
+        }
+      },
+      "games": 160
+    },
+    "Klay_Thompson": {
+      "name": "Klay Thompson",
+      "playerId": "thompkl01",
+      "seasons": {
+        "2025": {
+          "reg": 72,
+          "post": 0
+        },
+        "2026": {
+          "reg": 69,
+          "post": 0
+        }
+      },
+      "games": 141
+    },
+    "Daniel_Gafford": {
+      "name": "Daniel Gafford",
+      "playerId": "gaffoda01",
+      "seasons": {
+        "2025": {
+          "reg": 57,
+          "post": 0
+        },
+        "2026": {
+          "reg": 55,
+          "post": 0
+        }
+      },
+      "games": 112
+    },
+    "Luke_Kennard": {
+      "name": "Luke Kennard",
+      "playerId": "kennalu01",
+      "seasons": {
+        "2026": {
+          "reg": 78,
+          "post": 10
+        }
+      },
+      "games": 88
+    },
+    "Al_Horford": {
+      "name": "Al Horford",
+      "playerId": "horfoal01",
+      "seasons": {
+        "2025": {
+          "reg": 60,
+          "post": 11
+        },
+        "2026": {
+          "reg": 45,
+          "post": 0
+        }
+      },
+      "games": 116
+    },
+    "GG_Jackson_II": {
+      "name": "GG Jackson II",
+      "playerId": "jacksgg01",
+      "seasons": {
+        "2025": {
+          "reg": 29,
+          "post": 0
+        },
+        "2026": {
+          "reg": 55,
+          "post": 0
+        }
+      },
+      "games": 84
+    },
+    "Vit_Krejci": {
+      "name": "Vít Krejčí",
+      "playerId": "krejcvi01",
+      "seasons": {
+        "2025": {
+          "reg": 57,
+          "post": 0
+        },
+        "2026": {
+          "reg": 65,
+          "post": 4
+        }
+      },
+      "games": 126
+    },
+    "Ryan_Kalkbrenner": {
+      "name": "Ryan Kalkbrenner",
+      "playerId": "kalkbry01",
+      "seasons": {
+        "2026": {
+          "reg": 69,
+          "post": 0
+        }
+      },
+      "games": 69
+    },
+    "Ben_Sheppard": {
+      "name": "Ben Sheppard",
+      "playerId": "sheppbe01",
+      "seasons": {
+        "2025": {
+          "reg": 63,
+          "post": 21
+        },
+        "2026": {
+          "reg": 65,
+          "post": 0
+        }
+      },
+      "games": 149
+    },
+    "Kentavious_Caldwell_Pope": {
+      "name": "Kentavious Caldwell-Pope",
+      "playerId": "caldwke01",
+      "seasons": {
+        "2025": {
+          "reg": 77,
+          "post": 5
+        },
+        "2026": {
+          "reg": 51,
+          "post": 0
+        }
+      },
+      "games": 133
+    },
+    "Isaiah_Joe": {
+      "name": "Isaiah Joe",
+      "playerId": "joeis01",
+      "seasons": {
+        "2026": {
+          "reg": 71,
+          "post": 13
+        }
+      },
+      "games": 84
+    },
+    "Gary_Trent_Jr": {
+      "name": "Gary Trent Jr.",
+      "playerId": "trentga02",
+      "seasons": {
+        "2025": {
+          "reg": 74,
+          "post": 5
+        },
+        "2026": {
+          "reg": 65,
+          "post": 0
+        }
+      },
+      "games": 144
+    },
+    "Cam_Thomas": {
+      "name": "Cam Thomas",
+      "playerId": "thomaca02",
+      "seasons": {
+        "2025": {
+          "reg": 25,
+          "post": 0
+        },
+        "2026": {
+          "reg": 42,
+          "post": 0
+        }
+      },
+      "games": 67
+    },
+    "Jay_Huff": {
+      "name": "Jay Huff",
+      "playerId": "huffja01",
+      "seasons": {
+        "2026": {
+          "reg": 82,
+          "post": 0
+        }
+      },
+      "games": 82
+    },
+    "Bryce_McGowens": {
+      "name": "Bryce McGowens",
+      "playerId": "mcgowbr01",
+      "seasons": {
+        "2025": {
+          "reg": 13,
+          "post": 0
+        },
+        "2026": {
+          "reg": 42,
+          "post": 0
+        }
+      },
+      "games": 55
+    },
+    "Luke_Kornet": {
+      "name": "Luke Kornet",
+      "playerId": "kornelu01",
+      "seasons": {
+        "2026": {
+          "reg": 68,
+          "post": 23
+        }
+      },
+      "games": 91
+    },
+    "Drake_Powell": {
+      "name": "Drake Powell",
+      "playerId": "poweldr01",
+      "seasons": {
+        "2026": {
+          "reg": 63,
+          "post": 0
+        }
+      },
+      "games": 63
+    },
+    "Danny_Wolf": {
+      "name": "Danny Wolf",
+      "playerId": "wolfda01",
+      "seasons": {
+        "2026": {
+          "reg": 57,
+          "post": 0
+        }
+      },
+      "games": 57
+    },
+    "Ben_Saraf": {
+      "name": "Ben Saraf",
+      "playerId": "sarafbe01",
+      "seasons": {
+        "2026": {
+          "reg": 44,
+          "post": 0
+        }
+      },
+      "games": 44
+    },
+    "Caleb_Love": {
+      "name": "Caleb Love",
+      "playerId": "loveca01",
+      "seasons": {
+        "2026": {
+          "reg": 49,
+          "post": 0
+        }
+      },
+      "games": 49
+    },
+    "Jalen_Smith": {
+      "name": "Jalen Smith",
+      "playerId": "smithja04",
+      "seasons": {
+        "2025": {
+          "reg": 64,
+          "post": 0
+        },
+        "2026": {
+          "reg": 53,
+          "post": 0
+        }
+      },
+      "games": 117
+    },
+    "Jamir_Watkins": {
+      "name": "Jamir Watkins",
+      "playerId": "watkija01",
+      "seasons": {
+        "2026": {
+          "reg": 50,
+          "post": 0
+        }
+      },
+      "games": 50
+    },
+    "Dylan_Cardwell": {
+      "name": "Dylan Cardwell",
+      "playerId": "cardwdy01",
+      "seasons": {
+        "2026": {
+          "reg": 44,
+          "post": 0
+        }
+      },
+      "games": 44
+    },
+    "Gui_Santos": {
+      "name": "Gui Santos",
+      "playerId": "santogu01",
+      "seasons": {
+        "2025": {
+          "reg": 56,
+          "post": 10
+        },
+        "2026": {
+          "reg": 68,
+          "post": 0
+        }
+      },
+      "games": 134
+    },
+    "Vince_Williams_Jr": {
+      "name": "Vince Williams Jr.",
+      "playerId": "willivi01",
+      "seasons": {
+        "2025": {
+          "reg": 27,
+          "post": 3
+        },
+        "2026": {
+          "reg": 40,
+          "post": 0
+        }
+      },
+      "games": 70
+    },
+    "Ja_Kobe_Walter": {
+      "name": "Ja'Kobe Walter",
+      "playerId": "walteja01",
+      "seasons": {
+        "2025": {
+          "reg": 52,
+          "post": 0
+        },
+        "2026": {
+          "reg": 72,
+          "post": 7
+        }
+      },
+      "games": 131
+    },
+    "Patrick_Williams": {
+      "name": "Patrick Williams",
+      "playerId": "willipa01",
+      "seasons": {
+        "2025": {
+          "reg": 63,
+          "post": 0
+        },
+        "2026": {
+          "reg": 72,
+          "post": 0
+        }
+      },
+      "games": 135
+    },
+    "Keon_Ellis": {
+      "name": "Keon Ellis",
+      "playerId": "elliske01",
+      "seasons": {
+        "2026": {
+          "reg": 72,
+          "post": 12
+        }
+      },
+      "games": 84
+    },
+    "Walter_Clayton": {
+      "name": "Walter Clayton",
+      "playerId": "claytwa01",
+      "seasons": {
+        "2026": {
+          "reg": 69,
+          "post": 0
+        }
+      },
+      "games": 69
+    },
+    "Javon_Small": {
+      "name": "Javon Small",
+      "playerId": "smallja01",
+      "seasons": {
+        "2026": {
+          "reg": 41,
+          "post": 0
+        }
+      },
+      "games": 41
+    },
+    "Daniss_Jenkins": {
+      "name": "Daniss Jenkins",
+      "playerId": "jenkida01",
+      "seasons": {
+        "2026": {
+          "reg": 72,
+          "post": 14
+        }
+      },
+      "games": 86
+    },
+    "Marvin_Bagley_III": {
+      "name": "Marvin Bagley III",
+      "playerId": "baglema01",
+      "seasons": {
+        "2025": {
+          "reg": 31,
+          "post": 2
+        },
+        "2026": {
+          "reg": 60,
+          "post": 0
+        }
+      },
+      "games": 93
+    },
+    "Justin_Champagnie": {
+      "name": "Justin Champagnie",
+      "playerId": "champju01",
+      "seasons": {
+        "2025": {
+          "reg": 62,
+          "post": 0
+        },
+        "2026": {
+          "reg": 69,
+          "post": 0
+        }
+      },
+      "games": 131
+    },
+    "Will_Richard": {
+      "name": "Will Richard",
+      "playerId": "richawi02",
+      "seasons": {
+        "2026": {
+          "reg": 69,
+          "post": 0
+        }
+      },
+      "games": 69
+    },
+    "Ron_Holland": {
+      "name": "Ron Holland",
+      "playerId": "hollaro01",
+      "seasons": {
+        "2026": {
+          "reg": 78,
+          "post": 9
+        }
+      },
+      "games": 87
+    },
+    "Jose_Alvarado": {
+      "name": "Jose Alvarado",
+      "playerId": "alvarjo01",
+      "seasons": {
+        "2026": {
+          "reg": 69,
+          "post": 18
+        }
+      },
+      "games": 87
+    },
+    "Kobe_Sanders": {
+      "name": "Kobe Sanders",
+      "playerId": "sandeko01",
+      "seasons": {
+        "2026": {
+          "reg": 68,
+          "post": 0
+        }
+      },
+      "games": 68
+    },
+    "John_Konchar": {
+      "name": "John Konchar",
+      "playerId": "konchjo01",
+      "seasons": {
+        "2025": {
+          "reg": 46,
+          "post": 4
+        },
+        "2026": {
+          "reg": 56,
+          "post": 0
+        }
+      },
+      "games": 106
+    },
+    "Kyle_Anderson": {
+      "name": "Kyle Anderson",
+      "playerId": "anderky01",
+      "seasons": {
+        "2025": {
+          "reg": 61,
+          "post": 2
+        },
+        "2026": {
+          "reg": 43,
+          "post": 8
+        }
+      },
+      "games": 114
+    },
+    "Yves_Missi": {
+      "name": "Yves Missi",
+      "playerId": "missiyv01",
+      "seasons": {
+        "2025": {
+          "reg": 73,
+          "post": 0
+        },
+        "2026": {
+          "reg": 66,
+          "post": 0
+        }
+      },
+      "games": 139
+    },
+    "Jericho_Sims": {
+      "name": "Jericho Sims",
+      "playerId": "simsje01",
+      "seasons": {
+        "2025": {
+          "reg": 53,
+          "post": 5
+        },
+        "2026": {
+          "reg": 67,
+          "post": 0
+        }
+      },
+      "games": 125
+    },
+    "Jaylin_Williams": {
+      "name": "Jaylin Williams",
+      "playerId": "willija07",
+      "seasons": {
+        "2025": {
+          "reg": 47,
+          "post": 17
+        },
+        "2026": {
+          "reg": 65,
+          "post": 15
+        }
+      },
+      "games": 144
+    },
+    "Mitchell_Robinson": {
+      "name": "Mitchell Robinson",
+      "playerId": "robinmi01",
+      "seasons": {
+        "2025": {
+          "reg": 17,
+          "post": 18
+        },
+        "2026": {
+          "reg": 60,
+          "post": 18
+        }
+      },
+      "games": 113
+    },
+    "Ryan_Nembhard": {
+      "name": "Ryan Nembhard",
+      "playerId": "nembhry01",
+      "seasons": {
+        "2026": {
+          "reg": 60,
+          "post": 0
+        }
+      },
+      "games": 60
+    },
+    "Andre_Drummond": {
+      "name": "Andre Drummond",
+      "playerId": "drumman01",
+      "seasons": {
+        "2025": {
+          "reg": 40,
+          "post": 0
+        },
+        "2026": {
+          "reg": 63,
+          "post": 11
+        }
+      },
+      "games": 114
+    },
+    "Ryan_Dunn": {
+      "name": "Ryan Dunn",
+      "playerId": "dunnry01",
+      "seasons": {
+        "2025": {
+          "reg": 74,
+          "post": 0
+        },
+        "2026": {
+          "reg": 70,
+          "post": 4
+        }
+      },
+      "games": 148
+    },
+    "Micah_Potter": {
+      "name": "Micah Potter",
+      "playerId": "pottemi01",
+      "seasons": {
+        "2025": {
+          "reg": 38,
+          "post": 0
+        },
+        "2026": {
+          "reg": 47,
+          "post": 0
+        }
+      },
+      "games": 85
+    },
+    "Ousmane_Dieng": {
+      "name": "Ousmane Dieng",
+      "playerId": "diengou01",
+      "seasons": {
+        "2025": {
+          "reg": 37,
+          "post": 9
+        },
+        "2026": {
+          "reg": 57,
+          "post": 0
+        }
+      },
+      "games": 103
+    },
+    "Caris_LeVert": {
+      "name": "Caris LeVert",
+      "playerId": "leverca01",
+      "seasons": {
+        "2025": {
+          "reg": 64,
+          "post": 0
+        },
+        "2026": {
+          "reg": 60,
+          "post": 13
+        }
+      },
+      "games": 137
+    },
+    "Sidy_Cissoko": {
+      "name": "Sidy Cissoko",
+      "playerId": "cissosi01",
+      "seasons": {
+        "2025": {
+          "reg": 22,
+          "post": 0
+        },
+        "2026": {
+          "reg": 75,
+          "post": 4
+        }
+      },
+      "games": 101
+    },
+    "Taylor_Hendricks": {
+      "name": "Taylor Hendricks",
+      "playerId": "hendrta01",
+      "seasons": {
+        "2025": {
+          "reg": 3,
+          "post": 0
+        },
+        "2026": {
+          "reg": 59,
+          "post": 0
+        }
+      },
+      "games": 62
+    },
+    "Day_Ron_Sharpe": {
+      "name": "Day'Ron Sharpe",
+      "playerId": "sharpda01",
+      "seasons": {
+        "2025": {
+          "reg": 50,
+          "post": 0
+        },
+        "2026": {
+          "reg": 62,
+          "post": 0
+        }
+      },
+      "games": 112
+    },
+    "Olivier_Maxence_Prosper": {
+      "name": "Olivier-Maxence Prosper",
+      "playerId": "prospol01",
+      "seasons": {
+        "2025": {
+          "reg": 52,
+          "post": 0
+        },
+        "2026": {
+          "reg": 53,
+          "post": 0
+        }
+      },
+      "games": 105
+    },
+    "Corey_Kispert": {
+      "name": "Corey Kispert",
+      "playerId": "kispeco01",
+      "seasons": {
+        "2025": {
+          "reg": 61,
+          "post": 0
+        },
+        "2026": {
+          "reg": 58,
+          "post": 5
+        }
+      },
+      "games": 124
+    },
+    "Pat_Spencer": {
+      "name": "Pat Spencer",
+      "playerId": "spencpa01",
+      "seasons": {
+        "2025": {
+          "reg": 39,
+          "post": 8
+        },
+        "2026": {
+          "reg": 66,
+          "post": 0
+        }
+      },
+      "games": 113
+    },
+    "Baylor_Scheierman": {
+      "name": "Baylor Scheierman",
+      "playerId": "scheiba01",
+      "seasons": {
+        "2026": {
+          "reg": 77,
+          "post": 7
+        }
+      },
+      "games": 84
+    },
+    "Mike_Conley": {
+      "name": "Mike Conley",
+      "playerId": "conlemi01",
+      "seasons": {
+        "2025": {
+          "reg": 71,
+          "post": 15
+        },
+        "2026": {
+          "reg": 54,
+          "post": 12
+        }
+      },
+      "games": 152
+    },
+    "Quenton_Jackson": {
+      "name": "Quenton Jackson",
+      "playerId": "jacksqu01",
+      "seasons": {
+        "2025": {
+          "reg": 28,
+          "post": 0
+        },
+        "2026": {
+          "reg": 49,
+          "post": 0
+        }
+      },
+      "games": 77
+    },
+    "Jaxson_Hayes": {
+      "name": "Jaxson Hayes",
+      "playerId": "hayesja02",
+      "seasons": {
+        "2025": {
+          "reg": 56,
+          "post": 4
+        },
+        "2026": {
+          "reg": 66,
+          "post": 10
+        }
+      },
+      "games": 136
+    },
+    "Alex_Caruso": {
+      "name": "Alex Caruso",
+      "playerId": "carusal01",
+      "seasons": {
+        "2025": {
+          "reg": 54,
+          "post": 23
+        },
+        "2026": {
+          "reg": 56,
+          "post": 15
+        }
+      },
+      "games": 148
+    },
+    "Craig_Porter_Jr": {
+      "name": "Craig Porter Jr.",
+      "playerId": "portecr01",
+      "seasons": {
+        "2025": {
+          "reg": 51,
+          "post": 6
+        },
+        "2026": {
+          "reg": 64,
+          "post": 7
+        }
+      },
+      "games": 128
+    },
+    "Jordan_Clarkson": {
+      "name": "Jordan Clarkson",
+      "playerId": "clarkjo01",
+      "seasons": {
+        "2026": {
+          "reg": 72,
+          "post": 18
+        }
+      },
+      "games": 90
+    },
+    "Kasparas_Jakucionis": {
+      "name": "Kasparas Jakučionis",
+      "playerId": "jakucka01",
+      "seasons": {
+        "2026": {
+          "reg": 53,
+          "post": 0
+        }
+      },
+      "games": 53
+    },
+    "Jordan_Walsh": {
+      "name": "Jordan Walsh",
+      "playerId": "walshjo01",
+      "seasons": {
+        "2025": {
+          "reg": 52,
+          "post": 5
+        },
+        "2026": {
+          "reg": 68,
+          "post": 7
+        }
+      },
+      "games": 132
+    },
+    "Javonte_Green": {
+      "name": "Javonte Green",
+      "playerId": "greenja02",
+      "seasons": {
+        "2026": {
+          "reg": 82,
+          "post": 11
+        }
+      },
+      "games": 93
+    },
+    "Nicolas_Batum": {
+      "name": "Nicolas Batum",
+      "playerId": "batumni01",
+      "seasons": {
+        "2025": {
+          "reg": 78,
+          "post": 7
+        },
+        "2026": {
+          "reg": 74,
+          "post": 0
+        }
+      },
+      "games": 159
+    },
+    "Adem_Bona": {
+      "name": "Adem Bona",
+      "playerId": "bonaad01",
+      "seasons": {
+        "2025": {
+          "reg": 58,
+          "post": 0
+        },
+        "2026": {
+          "reg": 71,
+          "post": 10
+        }
+      },
+      "games": 139
+    },
+    "Josh_Okogie": {
+      "name": "Josh Okogie",
+      "playerId": "okogijo01",
+      "seasons": {
+        "2026": {
+          "reg": 78,
+          "post": 6
+        }
+      },
+      "games": 84
+    },
+    "Jarred_Vanderbilt": {
+      "name": "Jarred Vanderbilt",
+      "playerId": "vandeja01",
+      "seasons": {
+        "2025": {
+          "reg": 36,
+          "post": 5
+        },
+        "2026": {
+          "reg": 65,
+          "post": 7
+        }
+      },
+      "games": 113
+    },
+    "Jared_McCain": {
+      "name": "Jared McCain",
+      "playerId": "mccaija01",
+      "seasons": {
+        "2026": {
+          "reg": 67,
+          "post": 15
+        }
+      },
+      "games": 82
+    },
+    "Quinten_Post": {
+      "name": "Quinten Post",
+      "playerId": "postqu01",
+      "seasons": {
+        "2025": {
+          "reg": 42,
+          "post": 12
+        },
+        "2026": {
+          "reg": 67,
+          "post": 0
+        }
+      },
+      "games": 121
+    },
+    "Anthony_Gill": {
+      "name": "Anthony Gill",
+      "playerId": "gillan01",
+      "seasons": {
+        "2025": {
+          "reg": 51,
+          "post": 0
+        },
+        "2026": {
+          "reg": 55,
+          "post": 0
+        }
+      },
+      "games": 106
+    },
+    "T_J_McConnell": {
+      "name": "T.J. McConnell",
+      "playerId": "mccontj01",
+      "seasons": {
+        "2025": {
+          "reg": 79,
+          "post": 23
+        },
+        "2026": {
+          "reg": 56,
+          "post": 0
+        }
+      },
+      "games": 158
+    },
+    "Nikola_Jovic": {
+      "name": "Nikola Jović",
+      "playerId": "jovicni01",
+      "seasons": {
+        "2025": {
+          "reg": 46,
+          "post": 4
+        },
+        "2026": {
+          "reg": 47,
+          "post": 0
+        }
+      },
+      "games": 97
+    },
+    "Sharife_Cooper": {
+      "name": "Sharife Cooper",
+      "playerId": "coopesh01",
+      "seasons": {
+        "2026": {
+          "reg": 41,
+          "post": 0
+        }
+      },
+      "games": 41
+    },
+    "Robert_Williams": {
+      "name": "Robert Williams",
+      "playerId": "williro04",
+      "seasons": {
+        "2025": {
+          "reg": 20,
+          "post": 0
+        },
+        "2026": {
+          "reg": 59,
+          "post": 5
+        }
+      },
+      "games": 84
+    },
+    "Josh_Minott": {
+      "name": "Josh Minott",
+      "playerId": "minotjo01",
+      "seasons": {
+        "2025": {
+          "reg": 46,
+          "post": 5
+        },
+        "2026": {
+          "reg": 49,
+          "post": 0
+        }
+      },
+      "games": 100
+    },
+    "Tyrese_Martin": {
+      "name": "Tyrese Martin",
+      "playerId": "martity01",
+      "seasons": {
+        "2025": {
+          "reg": 60,
+          "post": 0
+        },
+        "2026": {
+          "reg": 46,
+          "post": 0
+        }
+      },
+      "games": 106
+    },
+    "Simone_Fontecchio": {
+      "name": "Simone Fontecchio",
+      "playerId": "fontesi01",
+      "seasons": {
+        "2025": {
+          "reg": 75,
+          "post": 0
+        },
+        "2026": {
+          "reg": 70,
+          "post": 0
+        }
+      },
+      "games": 145
+    },
+    "Rayan_Rupert": {
+      "name": "Rayan Rupert",
+      "playerId": "ruperra01",
+      "seasons": {
+        "2025": {
+          "reg": 52,
+          "post": 0
+        },
+        "2026": {
+          "reg": 64,
+          "post": 0
+        }
+      },
+      "games": 116
+    },
+    "Bones_Hyland": {
+      "name": "Bones Hyland",
+      "playerId": "hylanbo01",
+      "seasons": {
+        "2025": {
+          "reg": 24,
+          "post": 0
+        },
+        "2026": {
+          "reg": 71,
+          "post": 10
+        }
+      },
+      "games": 105
+    },
+    "Gabe_Vincent": {
+      "name": "Gabe Vincent",
+      "playerId": "vincega01",
+      "seasons": {
+        "2025": {
+          "reg": 72,
+          "post": 5
+        },
+        "2026": {
+          "reg": 53,
+          "post": 6
+        }
+      },
+      "games": 136
+    },
+    "Isaiah_Jackson": {
+      "name": "Isaiah Jackson",
+      "playerId": "jacksis01",
+      "seasons": {
+        "2025": {
+          "reg": 5,
+          "post": 0
+        },
+        "2026": {
+          "reg": 55,
+          "post": 0
+        }
+      },
+      "games": 60
+    },
+    "Jevon_Carter": {
+      "name": "Jevon Carter",
+      "playerId": "carteje01",
+      "seasons": {
+        "2025": {
+          "reg": 36,
+          "post": 0
+        },
+        "2026": {
+          "reg": 53,
+          "post": 3
+        }
+      },
+      "games": 92
+    },
+    "Trendon_Watford": {
+      "name": "Trendon Watford",
+      "playerId": "watfotr01",
+      "seasons": {
+        "2025": {
+          "reg": 44,
+          "post": 0
+        },
+        "2026": {
+          "reg": 53,
+          "post": 7
+        }
+      },
+      "games": 104
+    },
+    "Dru_Smith": {
+      "name": "Dru Smith",
+      "playerId": "smithdr01",
+      "seasons": {
+        "2025": {
+          "reg": 14,
+          "post": 0
+        },
+        "2026": {
+          "reg": 70,
+          "post": 0
+        }
+      },
+      "games": 84
+    },
+    "Luka_Garza": {
+      "name": "Luka Garza",
+      "playerId": "garzalu01",
+      "seasons": {
+        "2025": {
+          "reg": 39,
+          "post": 5
+        },
+        "2026": {
+          "reg": 69,
+          "post": 7
+        }
+      },
+      "games": 120
+    },
+    "Buddy_Hield": {
+      "name": "Buddy Hield",
+      "playerId": "hieldbu01",
+      "seasons": {
+        "2025": {
+          "reg": 82,
+          "post": 12
+        },
+        "2026": {
+          "reg": 51,
+          "post": 2
+        }
+      },
+      "games": 147
+    },
+    "Jalen_Pickett": {
+      "name": "Jalen Pickett",
+      "playerId": "pickeja02",
+      "seasons": {
+        "2025": {
+          "reg": 49,
+          "post": 8
+        },
+        "2026": {
+          "reg": 50,
+          "post": 2
+        }
+      },
+      "games": 109
+    },
+    "Jalen_Wilson": {
+      "name": "Jalen Wilson",
+      "playerId": "wilsoja03",
+      "seasons": {
+        "2025": {
+          "reg": 79,
+          "post": 0
+        },
+        "2026": {
+          "reg": 54,
+          "post": 0
+        }
+      },
+      "games": 133
+    },
+    "Jaden_Hardy": {
+      "name": "Jaden Hardy",
+      "playerId": "hardyja02",
+      "seasons": {
+        "2025": {
+          "reg": 57,
+          "post": 0
+        },
+        "2026": {
+          "reg": 57,
+          "post": 0
+        }
+      },
+      "games": 114
+    },
+    "Kobe_Brown": {
+      "name": "Kobe Brown",
+      "playerId": "brownko01",
+      "seasons": {
+        "2025": {
+          "reg": 40,
+          "post": 3
+        },
+        "2026": {
+          "reg": 61,
+          "post": 0
+        }
+      },
+      "games": 104
+    },
+    "Nae_Qwan_Tomlin": {
+      "name": "Nae'Qwan Tomlin",
+      "playerId": "tomlina01",
+      "seasons": {
+        "2025": {
+          "reg": 5,
+          "post": 0
+        },
+        "2026": {
+          "reg": 64,
+          "post": 7
+        }
+      },
+      "games": 76
+    },
+    "Pete_Nance": {
+      "name": "Pete Nance",
+      "playerId": "nancepe01",
+      "seasons": {
+        "2025": {
+          "reg": 13,
+          "post": 0
+        },
+        "2026": {
+          "reg": 47,
+          "post": 0
+        }
+      },
+      "games": 60
+    },
+    "Ochai_Agbaji": {
+      "name": "Ochai Agbaji",
+      "playerId": "agbajoc01",
+      "seasons": {
+        "2025": {
+          "reg": 64,
+          "post": 0
+        },
+        "2026": {
+          "reg": 62,
+          "post": 0
+        }
+      },
+      "games": 126
+    },
+    "Josh_Green": {
+      "name": "Josh Green",
+      "playerId": "greenjo02",
+      "seasons": {
+        "2025": {
+          "reg": 68,
+          "post": 0
+        },
+        "2026": {
+          "reg": 58,
+          "post": 0
+        }
+      },
+      "games": 126
+    },
+    "Leonard_Miller": {
+      "name": "Leonard Miller",
+      "playerId": "millele01",
+      "seasons": {
+        "2025": {
+          "reg": 13,
+          "post": 3
+        },
+        "2026": {
+          "reg": 46,
+          "post": 0
+        }
+      },
+      "games": 62
+    },
+    "Gary_Payton_II": {
+      "name": "Gary Payton II",
+      "playerId": "paytoga02",
+      "seasons": {
+        "2025": {
+          "reg": 62,
+          "post": 11
+        },
+        "2026": {
+          "reg": 73,
+          "post": 0
+        }
+      },
+      "games": 146
+    },
+    "Kenrich_Williams": {
+      "name": "Kenrich Williams",
+      "playerId": "willike04",
+      "seasons": {
+        "2025": {
+          "reg": 69,
+          "post": 16
+        },
+        "2026": {
+          "reg": 56,
+          "post": 11
+        }
+      },
+      "games": 152
+    },
+    "Justin_Edwards": {
+      "name": "Justin Edwards",
+      "playerId": "edwarju01",
+      "seasons": {
+        "2025": {
+          "reg": 44,
+          "post": 0
+        },
+        "2026": {
+          "reg": 64,
+          "post": 9
+        }
+      },
+      "games": 117
+    },
+    "Mouhamed_Gueye": {
+      "name": "Mouhamed Gueye",
+      "playerId": "gueyemo02",
+      "seasons": {
+        "2026": {
+          "reg": 77,
+          "post": 6
+        }
+      },
+      "games": 83
+    },
+    "Goga_Bitadze": {
+      "name": "Goga Bitadze",
+      "playerId": "bitadgo01",
+      "seasons": {
+        "2025": {
+          "reg": 70,
+          "post": 3
+        },
+        "2026": {
+          "reg": 64,
+          "post": 6
+        }
+      },
+      "games": 143
+    },
+    "Julian_Strawther": {
+      "name": "Julian Strawther",
+      "playerId": "strawju01",
+      "seasons": {
+        "2025": {
+          "reg": 65,
+          "post": 9
+        },
+        "2026": {
+          "reg": 57,
+          "post": 2
+        }
+      },
+      "games": 133
+    },
+    "Guerschon_Yabusele": {
+      "name": "Guerschon Yabusele",
+      "playerId": "yabusgu01",
+      "seasons": {
+        "2025": {
+          "reg": 70,
+          "post": 0
+        },
+        "2026": {
+          "reg": 67,
+          "post": 0
+        }
+      },
+      "games": 137
+    },
+    "Micah_Peavy": {
+      "name": "Micah Peavy",
+      "playerId": "peavymi01",
+      "seasons": {
+        "2026": {
+          "reg": 61,
+          "post": 0
+        }
+      },
+      "games": 61
+    },
+    "Rob_Dillingham": {
+      "name": "Rob Dillingham",
+      "playerId": "dilliro01",
+      "seasons": {
+        "2025": {
+          "reg": 49,
+          "post": 3
+        },
+        "2026": {
+          "reg": 65,
+          "post": 0
+        }
+      },
+      "games": 117
+    },
+    "Caleb_Martin": {
+      "name": "Caleb Martin",
+      "playerId": "martica02",
+      "seasons": {
+        "2025": {
+          "reg": 45,
+          "post": 0
+        },
+        "2026": {
+          "reg": 58,
+          "post": 0
+        }
+      },
+      "games": 103
+    },
+    "Karlo_Matkovic": {
+      "name": "Karlo Matković",
+      "playerId": "matkoka01",
+      "seasons": {
+        "2025": {
+          "reg": 42,
+          "post": 0
+        },
+        "2026": {
+          "reg": 62,
+          "post": 0
+        }
+      },
+      "games": 104
+    },
+    "Nick_Richards": {
+      "name": "Nick Richards",
+      "playerId": "richani01",
+      "seasons": {
+        "2025": {
+          "reg": 57,
+          "post": 0
+        },
+        "2026": {
+          "reg": 48,
+          "post": 0
+        }
+      },
+      "games": 105
+    },
+    "Hugo_Gonzalez": {
+      "name": "Hugo González",
+      "playerId": "gonzahu01",
+      "seasons": {
+        "2026": {
+          "reg": 74,
+          "post": 4
+        }
+      },
+      "games": 78
+    },
+    "Tyus_Jones": {
+      "name": "Tyus Jones",
+      "playerId": "jonesty01",
+      "seasons": {
+        "2025": {
+          "reg": 81,
+          "post": 0
+        },
+        "2026": {
+          "reg": 67,
+          "post": 3
+        }
+      },
+      "games": 151
+    },
+    "Dwight_Powell": {
+      "name": "Dwight Powell",
+      "playerId": "poweldw01",
+      "seasons": {
+        "2025": {
+          "reg": 55,
+          "post": 0
+        },
+        "2026": {
+          "reg": 63,
+          "post": 0
+        }
+      },
+      "games": 118
+    },
+    "Gradey_Dick": {
+      "name": "Gradey Dick",
+      "playerId": "dickgr01",
+      "seasons": {
+        "2025": {
+          "reg": 54,
+          "post": 0
+        },
+        "2026": {
+          "reg": 76,
+          "post": 3
+        }
+      },
+      "games": 133
+    },
+    "Jamaree_Bouyea": {
+      "name": "Jamaree Bouyea",
+      "playerId": "bouyeja01",
+      "seasons": {
+        "2025": {
+          "reg": 5,
+          "post": 0
+        },
+        "2026": {
+          "reg": 46,
+          "post": 4
+        }
+      },
+      "games": 55
+    },
+    "Paul_Reed": {
+      "name": "Paul Reed",
+      "playerId": "reedpa01",
+      "seasons": {
+        "2025": {
+          "reg": 45,
+          "post": 5
+        },
+        "2026": {
+          "reg": 65,
+          "post": 9
+        }
+      },
+      "games": 124
+    },
+    "Gary_Harris": {
+      "name": "Gary Harris",
+      "playerId": "harriga01",
+      "seasons": {
+        "2025": {
+          "reg": 48,
+          "post": 5
+        },
+        "2026": {
+          "reg": 48,
+          "post": 0
+        }
+      },
+      "games": 101
+    },
+    "Tristan_Vukcevic": {
+      "name": "Tristan Vukcevic",
+      "playerId": "vukcetr01",
+      "seasons": {
+        "2025": {
+          "reg": 35,
+          "post": 0
+        },
+        "2026": {
+          "reg": 49,
+          "post": 0
+        }
+      },
+      "games": 84
+    },
+    "Aaron_Holiday": {
+      "name": "Aaron Holiday",
+      "playerId": "holidaa01",
+      "seasons": {
+        "2025": {
+          "reg": 62,
+          "post": 3
+        },
+        "2026": {
+          "reg": 57,
+          "post": 6
+        }
+      },
+      "games": 128
+    },
+    "Jordan_Hawkins": {
+      "name": "Jordan Hawkins",
+      "playerId": "hawkijo01",
+      "seasons": {
+        "2025": {
+          "reg": 56,
+          "post": 0
+        },
+        "2026": {
+          "reg": 51,
+          "post": 0
+        }
+      },
+      "games": 107
+    },
+    "Jonas_Valanciunas": {
+      "name": "Jonas Valančiūnas",
+      "playerId": "valanjo01",
+      "seasons": {
+        "2025": {
+          "reg": 81,
+          "post": 0
+        },
+        "2026": {
+          "reg": 65,
+          "post": 4
+        }
+      },
+      "games": 150
+    },
+    "Drew_Eubanks": {
+      "name": "Drew Eubanks",
+      "playerId": "eubandr01",
+      "seasons": {
+        "2025": {
+          "reg": 61,
+          "post": 3
+        },
+        "2026": {
+          "reg": 42,
+          "post": 0
+        }
+      },
+      "games": 106
+    },
+    "Jaylen_Clark": {
+      "name": "Jaylen Clark",
+      "playerId": "clarkja02",
+      "seasons": {
+        "2025": {
+          "reg": 40,
+          "post": 5
+        },
+        "2026": {
+          "reg": 68,
+          "post": 6
+        }
+      },
+      "games": 119
+    },
+    "Noah_Penda": {
+      "name": "Noah Penda",
+      "playerId": "pendano01",
+      "seasons": {
+        "2026": {
+          "reg": 59,
+          "post": 1
+        }
+      },
+      "games": 60
+    },
+    "Jett_Howard": {
+      "name": "Jett Howard",
+      "playerId": "howarje01",
+      "seasons": {
+        "2025": {
+          "reg": 60,
+          "post": 1
+        },
+        "2026": {
+          "reg": 55,
+          "post": 1
+        }
+      },
+      "games": 117
+    },
+    "Tre_Mann": {
+      "name": "Tre Mann",
+      "playerId": "manntr01",
+      "seasons": {
+        "2025": {
+          "reg": 13,
+          "post": 0
+        },
+        "2026": {
+          "reg": 53,
+          "post": 0
+        }
+      },
+      "games": 66
+    },
+    "Terrence_Shannon_Jr": {
+      "name": "Terrence Shannon Jr.",
+      "playerId": "shannte01",
+      "seasons": {
+        "2025": {
+          "reg": 32,
+          "post": 9
+        },
+        "2026": {
+          "reg": 43,
+          "post": 9
+        }
+      },
+      "games": 93
+    },
+    "Clint_Capela": {
+      "name": "Clint Capela",
+      "playerId": "capelca01",
+      "seasons": {
+        "2025": {
+          "reg": 55,
+          "post": 0
+        },
+        "2026": {
+          "reg": 75,
+          "post": 4
+        }
+      },
+      "games": 134
+    },
+    "Thomas_Bryant": {
+      "name": "Thomas Bryant",
+      "playerId": "bryanth01",
+      "seasons": {
+        "2025": {
+          "reg": 66,
+          "post": 20
+        },
+        "2026": {
+          "reg": 60,
+          "post": 9
+        }
+      },
+      "games": 155
+    },
+    "Jamal_Cain": {
+      "name": "Jamal Cain",
+      "playerId": "cainja01",
+      "seasons": {
+        "2025": {
+          "reg": 37,
+          "post": 0
+        },
+        "2026": {
+          "reg": 40,
+          "post": 7
+        }
+      },
+      "games": 84
+    },
+    "Rasheer_Fleming": {
+      "name": "Rasheer Fleming",
+      "playerId": "flemira01",
+      "seasons": {
+        "2026": {
+          "reg": 55,
+          "post": 4
+        }
+      },
+      "games": 59
+    },
+    "Zeke_Nnaji": {
+      "name": "Zeke Nnaji",
+      "playerId": "nnajize01",
+      "seasons": {
+        "2025": {
+          "reg": 57,
+          "post": 6
+        },
+        "2026": {
+          "reg": 52,
+          "post": 2
+        }
+      },
+      "games": 117
+    },
+    "Tyrese_Haliburton": {
+      "name": "Tyrese Haliburton",
+      "playerId": "halibty01",
+      "seasons": {
+        "2025": {
+          "reg": 73,
+          "post": 23
+        },
+        "2026": {
+          "reg": 0,
+          "post": 0
+        }
+      },
+      "games": 96
+    },
+    "Kyrie_Irving": {
+      "name": "Kyrie Irving",
+      "playerId": "irvinky01",
+      "seasons": {
+        "2025": {
+          "reg": 50,
+          "post": 0
+        },
+        "2026": {
+          "reg": 0,
+          "post": 0
+        }
+      },
+      "games": 50
+    },
+    "Damian_Lillard": {
+      "name": "Damian Lillard",
+      "playerId": "lillada01",
+      "seasons": {
+        "2025": {
+          "reg": 58,
+          "post": 3
+        },
+        "2026": {
+          "reg": 0,
+          "post": 0
+        }
+      },
+      "games": 61
+    },
+    "Fred_VanVleet": {
+      "name": "Fred VanVleet",
+      "playerId": "vanvlfr01",
+      "seasons": {
+        "2025": {
+          "reg": 60,
+          "post": 7
+        },
+        "2026": {
+          "reg": 0,
+          "post": 0
+        }
+      },
+      "games": 67
+    }
+  }
+}

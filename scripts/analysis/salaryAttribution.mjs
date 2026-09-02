@@ -46,8 +46,15 @@ const csv = ['name,team,salary,defBoost,chart$,chartNeutral$,chartBonus$,conv$,t
   .concat(rows.map(r =>
     `"${r.name}",${r.team},${r.salary},${r.defBoost},${r.chart$.toFixed(0)},${r.chartNeutral$.toFixed(0)},${r.chartBonus$.toFixed(0)},${r.conv$.toFixed(0)},${r.target$.toFixed(0)},${r.defence$.toFixed(0)}`))
   .join('\n');
-const out = path.join(REPO_ROOT, 'card-data', 'generated', 'salary-attribution-v2.csv');
-fs.writeFileSync(out, csv + '\n');
+// Excel holds an open CSV hostage on Windows (EBUSY) — fall through numbered
+// names until one is writable.
+let out;
+for (let v = 2; v < 12; v += 1) {
+  out = path.join(REPO_ROOT, 'card-data', 'generated', `salary-attribution-v${v}.csv`);
+  try { fs.writeFileSync(out, csv + '\n'); break; }
+  catch (e) { if (e.code !== 'EBUSY') throw e; out = null; }
+}
+if (!out) throw new Error('every salary-attribution-v*.csv candidate is locked');
 console.log(`wrote ${out} (${rows.length} rows)`);
 console.log(`channel $ are deviations from the field mean; they sum to salary − ${PV.REFERENCE_SALARY.mean} (pre-rounding)\n`);
 

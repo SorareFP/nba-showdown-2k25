@@ -23,7 +23,7 @@ import {
   setStatsSeason,
   showsSeason,
 } from './sets.js';
-import { badgeColors, badgeLabel, badgeVars, pickBadge } from './badges.js';
+import { SUPER_SEASON_BADGE, badgeColors, badgeLabel, badgeVars, pickBadge } from './badges.js';
 import { awardImagePath, awardVars, pickAwards } from './awards.js';
 import { deriveFieldTheme, fieldThemeVars } from './fieldTheme.js';
 import { applyTreatment, treatmentVars } from './treatments.js';
@@ -199,10 +199,31 @@ const NAME_MIN_PX = 30;
 const NAME_AVAILABLE_PX = 900;
 /** Tomorrow's average uppercase advance, measured from the loaded font. */
 const NAME_ADVANCE_RATIO = 0.7;
+/**
+ * Per-glyph advances, because the flat average bleeds on wide names: at the
+ * 0.7 estimate ANDRE DRUMMOND fitted 91px and rendered 929px into a 900px
+ * slot — 15px over BOTH edges at export scale, caught by the user on his
+ * Super Season card. M and W run ~0.9em in Tomorrow; the narrow glyphs and
+ * word spaces buy the wide ones back on most names, so only the M-heavy few
+ * shrink a point or two.
+ */
+const WIDE_GLYPHS = /[MW]/;
+const NARROW_GLYPHS = /[IJ1 .'\-]/;
+export function nameAdvanceUnits(name) {
+  const text = String(name ?? '');
+  let units = 0;
+  for (const ch of text.toUpperCase()) {
+    units += WIDE_GLYPHS.test(ch) ? 0.9 : NARROW_GLYPHS.test(ch) ? 0.45 : 0.72;
+  }
+  // SHRINK-ONLY relative to the flat estimate: the per-glyph table exists to
+  // catch wide names the average missed, not to hand narrow names a bigger
+  // font than the shipped set was measured at — an I-heavy name growing past
+  // the old fit would trade one bleed for another on unverified metrics.
+  return Math.max(units, NAME_ADVANCE_RATIO * Math.max(text.length, 1));
+}
 
 export function nameFontSize(name) {
-  const len = Math.max(String(name ?? '').length, 1);
-  const fitted = NAME_AVAILABLE_PX / (NAME_ADVANCE_RATIO * len);
+  const fitted = NAME_AVAILABLE_PX / nameAdvanceUnits(name);
   // Floor, not round: rounding up can push the estimate back over the budget.
   return Math.floor(Math.min(NAME_MAX_PX, Math.max(NAME_MIN_PX, fitted)));
 }
@@ -328,17 +349,23 @@ export default function CardTemplate({
   // The season, by contrast, IS purely a set question. A base-set record
   // carries no seasonLabel at all, and a 2025-26 legend card has its season
   // drawn into the hand-made art, so gating on the data instead of the set
-  // would print a second season over the top of 23 finished cards. A badged
-  // 2026-27 card does NOT gain one: the card is this season by definition, and
-  // "keep the 26-27 design and just add the badge" is what was asked for.
-  const season = showsSeason(set);
-  // AND THAT IS EXACTLY WHEN THE PILL HAS TO CARRY THE YEAR ITSELF. A card with
-  // no season row leaves the badge as the only place a year could appear, so
-  // the badge is handed the set's stats season and dates itself if it can:
-  // "25-26 ROOKIE" here, plain "ROOKIE" on a Rookie-set card whose own season
-  // row sits one line below it. The SUPER SEASON pill has no dated form — see
-  // badges.js — so this changes nothing for the other 107. Passing null when a
-  // season IS printed is what keeps the year from being said twice.
+  // would print a second season over the top of 23 finished cards.
+  //
+  // ONE CARD-LEVEL EXCEPTION (2026-09-02, with the gilded foil): a base-set
+  // card wearing the gilded SUPER SEASON pill prints the stats season under
+  // it — "have his badge indicate it was a 25-26 Super Season". The pill
+  // itself stays undated (18 characters do not fit a 127px pill at any
+  // legible size); the season row one line below is the same slot every
+  // Super Season SET card uses for the same fact.
+  const gildedOnBase = badge?.id === SUPER_SEASON_BADGE && !showsSeason(set);
+  const season = showsSeason(set) || gildedOnBase;
+  const seasonText = gildedOnBase ? setStatsSeason(set) : null;
+  // AND WHEN NO SEASON ROW PRINTS, THE PILL HAS TO CARRY THE YEAR ITSELF. A
+  // card with no season row leaves the badge as the only place a year could
+  // appear, so the badge is handed the set's stats season and dates itself if
+  // it can: "25-26 ROOKIE" here, plain "ROOKIE" on a Rookie-set card whose own
+  // season row sits one line below it. Passing null when a season IS printed
+  // is what keeps the year from being said twice.
   const label = badgeLabel(badge, season ? null : setStatsSeason(set));
 
   // THE AWARDS ARE PURELY A CARD PROPERTY — no set declares one, and no set
@@ -473,7 +500,7 @@ export default function CardTemplate({
             </div>
           );
         })}
-        {season && <div className={styles.season}>{card.seasonLabel ?? MISSING}</div>}
+        {season && <div className={styles.season}>{seasonText ?? card.seasonLabel ?? MISSING}</div>}
         <TeamLogo key={card.team ?? 'none'} team={team} abbr={team.abbr ?? card.team} />
         <div className={styles.pos}>{card.pos ?? MISSING}</div>
         <Boost label="PAINT" value={card.paintBoost} />

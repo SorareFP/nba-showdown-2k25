@@ -588,7 +588,10 @@ export function main({ log = console.log } = {}) {
 
   const payload = {
     generatedAt: new Date().toISOString(),
-    provisional: true,
+    // Charts are real game logs now; the per-card flag marks the thin-season
+    // exceptions that still ride the synthesis. S+P stays fitted-BPM — that
+    // caveat lives in sources.bpm, not in this flag.
+    provisional: false,
     set: WNBA_SET,
     league: 'WNBA',
     statsSeason: String(WNBA_SEASON),
@@ -615,7 +618,10 @@ export function main({ log = console.log } = {}) {
         'WNBA POOL as the compression basis, so a league-wide shooting offset cancels instead ' +
         'of becoming a flat balance change',
       chart:
-        'synthesized from Basketball-Reference WNBA season TOTALS: production per four-minute ' +
+        'real Basketball-Reference game logs (regular season + playoffs, 300-minute floor), ' +
+        'through the same finishWindow pipeline as the NBA sets minus the opponent adjustment ' +
+        '(no WNBA team defensive EPM exists). Cards flagged provisional fall back to the ' +
+        'season-TOTALS synthesis: production per four-minute ' +
         `section is 4 * total / minutes, measured, with no pace in it. For reference, a ` +
         `${WNBA_GAME_MINUTES}-minute WNBA game at the measured ${WNBA_SEASON} league pace of ` +
         `${pace} possessions per ${WNBA_GAME_MINUTES} minutes makes a four-minute section ` +
@@ -625,7 +631,7 @@ export function main({ log = console.log } = {}) {
       missing: ['BPM', 'OBPM', 'DBPM', 'VORP', 'EPM', 'rim FG%', 'DRB%'],
     },
     note:
-      'PROVISIONAL, and league-relative by design. Every cross-league number here says where a ' +
+      'League-relative by design. Every cross-league number here says where a ' +
       'player stands in HER OWN league, placed on the NBA set\'s scale so the cards can share a ' +
       'table. It is not a claim that the leagues are equally strong; no published data could ' +
       'settle that.',

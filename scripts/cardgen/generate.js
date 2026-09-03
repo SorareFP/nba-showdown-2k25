@@ -239,18 +239,23 @@ export function suppressCeiling(chart, { delay = TOP_TIER_DELAY, shave = TOP_TIE
 
 export function shapeChart(chart, { shotLine = null, ceilingDelay = TOP_TIER_DELAY } = {}) {
   const floored = enforceZeroTiers(chart);
-  // firstMovable = 2: tier 0 is the blank tier and tier 1 is where the
-  // statistics resume, so the lowest boundary a shot line may move is tier 2's.
-  const { chart: broken } = forceBandBoundary(floored, shotLine, { firstMovable: 2 });
-  // BEFORE the merge, not after. Shaving the top tier can make it identical to
-  // the tier beneath it, and only mergeIdenticalTiers collapses that -- running
-  // suppression last printed Toumani Camara with two identical bottom-of-chart
-  // rows. The merge protects the shot-line boundary, so the break survives.
+  // Suppression BEFORE the break: the ceiling delay moves the top tier's lo,
+  // and when forceBandBoundary had just placed the shot line there, the delay
+  // shoved the line's one dividing rule off the card (Saniya Rivers, and three
+  // Super Seasons all at line 18). With the break last-but-one, every later
+  // stage protects it: the merge keeps the boundary, the shave moves none.
   // `ceilingDelay: 0` when bands were placed on the card's own roll CDF -- the
   // placement already prices the ceiling at its earned frequency, and a fixed
   // +2 on top of that would punish it twice. The magnitude shave still runs.
-  const suppressed = suppressCeiling(broken, { delay: ceilingDelay });
-  return mergeIdenticalTiers(suppressed, { fixedTiers: 1, keepBoundaryAt: shotLine });
+  const suppressed = suppressCeiling(floored, { delay: ceilingDelay });
+  // firstMovable = 2: tier 0 is the blank tier and tier 1 is where the
+  // statistics resume, so the lowest boundary a shot line may move is tier 2's.
+  const { chart: broken } = forceBandBoundary(suppressed, shotLine, { firstMovable: 2 });
+  // The merge still runs LAST: shaving the top tier can make it identical to
+  // the tier beneath it, and only mergeIdenticalTiers collapses that -- running
+  // suppression after the merge printed Toumani Camara with two identical
+  // bottom-of-chart rows. keepBoundaryAt shields the shot-line break.
+  return mergeIdenticalTiers(broken, { fixedTiers: 1, keepBoundaryAt: shotLine });
 }
 
 /**

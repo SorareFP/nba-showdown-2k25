@@ -674,7 +674,8 @@ export function main({ log = console.log } = {}) {
 
   const payload = {
     generatedAt: new Date().toISOString(),
-    provisional: true,
+    // Real-log charts; per-card provisional flags mark thin-season fallbacks.
+    provisional: false,
     set: WNBA_SUPER_SEASON_SET,
     league: 'WNBA',
     statsSeason: 'career-best season',

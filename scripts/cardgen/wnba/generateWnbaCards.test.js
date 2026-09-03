@@ -239,13 +239,18 @@ describe('the generated WNBA set', () => {
     expect(SET.sources.missing).toEqual(
       expect.arrayContaining(['BPM', 'OBPM', 'DBPM', 'VORP', 'rim FG%'])
     );
-    expect(SET.provisional).toBe(true);
-    for (const c of CARDS) expect(c.provisional).toBe(true);
+    // Charts ride real game logs now, so the set-level flag is down — but the
+    // fitted-BPM caveat above must survive that flip, which is what this test
+    // now guards. Thin seasons still fall back per card.
+    expect(SET.provisional).toBe(false);
+    const fallbacks = CARDS.filter(c => c.provisional === true);
+    expect(fallbacks.length).toBeLessThanOrEqual(5);
+    for (const c of CARDS) expect(typeof c.provisional, c.name).toBe('boolean');
   });
 
   it('says the cross-league comparison is league-relative rather than absolute', () => {
     // The one claim this pipeline must not be read as making.
-    expect(SET.note).toMatch(/league-relative/);
+    expect(SET.note).toMatch(/league-relative/i);
     expect(SET.note).toMatch(/not a claim that the leagues are equally strong/);
   });
 

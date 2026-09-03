@@ -152,7 +152,9 @@ export function main({ log = console.log } = {}) {
   const payload = {
     generatedAt: new Date().toISOString(),
     set: SET_ID,
-    provisional: true,
+    // Real-log charts where a rookie season clears the 10-game/300-minute
+    // floor; the 21 that don't are flagged provisional per card.
+    provisional: false,
     referenceSeason: WNBA_SEASON,
     firstSeason: WNBA_FIRST_SEASON,
     sources: {

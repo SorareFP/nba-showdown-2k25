@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-02T21:47:15.896Z",
+  "generatedAt": "2026-09-03T01:56:23.609Z",
   "set": "super-season",
   "provisional": true,
   "sources": {
@@ -2470,7 +2470,7 @@
       "paintBoost": 0,
       "threePtBoost": 3,
       "defBoost": -1,
-      "salary": 1120,
+      "salary": 1110,
       "chart": [
         {
           "lo": 1,
@@ -12822,7 +12822,7 @@
       "paintBoost": -1,
       "threePtBoost": 3,
       "defBoost": 3,
-      "salary": 1290,
+      "salary": 1230,
       "chart": [
         {
           "lo": 1,
@@ -12840,13 +12840,13 @@
         },
         {
           "lo": 4,
-          "hi": 14,
+          "hi": 17,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 18,
           "hi": 99,
           "pts": 3,
           "reb": 1,
@@ -13017,7 +13017,7 @@
       "paintBoost": 3,
       "threePtBoost": -2,
       "defBoost": 2,
-      "salary": 1300,
+      "salary": 1280,
       "chart": [
         {
           "lo": 1,
@@ -13042,13 +13042,20 @@
         },
         {
           "lo": 10,
-          "hi": 19,
+          "hi": 17,
           "pts": 3,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 20,
+          "lo": 18,
+          "hi": 21,
+          "pts": 3,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 22,
           "hi": 99,
           "pts": 3,
           "reb": 2,
@@ -13681,7 +13688,7 @@
       "paintBoost": 2,
       "threePtBoost": 3,
       "defBoost": -1,
-      "salary": 380,
+      "salary": 340,
       "chart": [
         {
           "lo": 1,
@@ -13706,13 +13713,20 @@
         },
         {
           "lo": 10,
-          "hi": 19,
+          "hi": 17,
           "pts": 2,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 20,
+          "lo": 18,
+          "hi": 21,
+          "pts": 2,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 22,
           "hi": 99,
           "pts": 3,
           "reb": 1,

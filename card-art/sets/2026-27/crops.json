@@ -290,8 +290,8 @@
     "zoom": 1
   },
   "Collin_Gillespie": {
-    "x": 11.28,
-    "y": -6.47,
+    "x": 12.49,
+    "y": -5.57,
     "zoom": 1.15
   },
   "Cody_Williams": {
@@ -330,7 +330,7 @@
     "zoom": 1
   },
   "Corey_Kispert": {
-    "x": -2.15,
+    "x": -6.82,
     "y": 0,
     "zoom": 1
   },
@@ -480,7 +480,7 @@
     "zoom": 1.12
   },
   "Nae_Qwan_Tomlin": {
-    "x": -0.14,
+    "x": -4.29,
     "y": 0,
     "zoom": 1
   },
@@ -641,6 +641,41 @@
   },
   "Ja_Morant": {
     "x": 12.16,
+    "y": 0,
+    "zoom": 1
+  },
+  "Jaime_Jaquez_Jr": {
+    "x": -7.71,
+    "y": -19.91,
+    "zoom": 1.49
+  },
+  "Jaden_McDaniels": {
+    "x": -5.88,
+    "y": -3.26,
+    "zoom": 1.38
+  },
+  "Jaden_Hardy": {
+    "x": -3.56,
+    "y": 0,
+    "zoom": 1
+  },
+  "Jabari_Smith_Jr": {
+    "x": 0,
+    "y": -1,
+    "zoom": 1.07
+  },
+  "Ja_Kobe_Walter": {
+    "x": -9.14,
+    "y": 0,
+    "zoom": 1
+  },
+  "Victor_Wembanyama": {
+    "x": -8.31,
+    "y": 0,
+    "zoom": 1
+  },
+  "Damian_Lillard": {
+    "x": -15.74,
     "y": 0,
     "zoom": 1
   }

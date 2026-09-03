@@ -81,6 +81,17 @@ function evRoundValues(raws, slots) {
     const f = Math.max(0, Math.floor(v));
     return f === v ? [f] : [f, f + 1];
   });
+  // VARIANCE IS EARNED, NOT GRANTED. Rounding can inflate the distance
+  // between two neighbouring bands by at most 1 — the lower value rounds
+  // down while the upper rounds up — so any printed jump wider than the
+  // player's OWN raw gap plus one is an artefact of the search, not a fact
+  // about him. Without this the EV objective bought wild shapes for a
+  // rounding hair: Jarrett Allen's smooth 0.98/1.62/2.09/2.46/3.66 ladder
+  // printed 1,1,3,3,3 (EV error 0.015) instead of 1,2,2,2,4 (0.065), and 72
+  // of 354 cards carried a >=2 jump inside their scoring rows. A genuine
+  // boom-or-bust scorer, whose raw gap at the ceiling IS large, still keeps
+  // his cliff — which is the point.
+  const maxJump = raws.map((v, i) => (i === 0 ? Infinity : Math.max(1, Math.floor(v - raws[i - 1] + 1))));
   let best = null;
   const walk = (i, acc, evAcc, devAcc) => {
     if (i === raws.length) {
@@ -91,14 +102,21 @@ function evRoundValues(raws, slots) {
       return;
     }
     for (const v of options[i]) {
-      if (acc.length && v < acc[acc.length - 1]) continue; // monotone
+      if (acc.length) {
+        const prev = acc[acc.length - 1];
+        if (v < prev) continue;             // monotone
+        if (v - prev > maxJump[i]) continue; // earned-variance ceiling
+      }
       acc.push(v);
       walk(i + 1, acc, evAcc + v * slots[i], devAcc + Math.abs(v - raws[i]) * slots[i]);
       acc.pop();
     }
   };
   walk(0, [], 0, 0);
-  return best.values;
+  // The constraint can in principle exclude every candidate (a raw ladder
+  // that already jumps by more than its own gaps allow). Falling back to
+  // per-band nearest rounding keeps a chart printable rather than throwing.
+  return best?.values ?? raws.map(v => Math.round(roundDown(v, 1)));
 }
 
 /**

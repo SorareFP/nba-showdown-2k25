@@ -210,7 +210,7 @@ export function buildCard({
     calibration,
   });
   if (exaggerateSplit) {
-    ({ speed, power } = ARCH.exaggerateSplit(speed, power));
+    ({ speed, power } = ARCH.exaggerateSplit(speed, power, positionShares));
   }
 
   const { shotLine, paintBoost, threePtBoost } = shooting;
@@ -471,14 +471,14 @@ export function generateCards({
 
   const fieldStubs = resolved.map((player, i) => {
     const { shaped, total } = shapingFor(player, i);
-    const shares = positionShares?.forName(player.name, CURRENT_STATS_SEASON) ?? null;
+    const shares = positionShares?.careerForName(player.name, CURRENT_STATS_SEASON) ?? null;
     let { speed, power } = A.splitFromCalibration(total, {
       pos: player.pos,
       size: biometrics.get(normalizeName(player.name)) ?? null,
       positionShares: shares,
       calibration,
     });
-    if (shaped) ({ speed, power } = ARCH.exaggerateSplit(speed, power));
+    if (shaped) ({ speed, power } = ARCH.exaggerateSplit(speed, power, shares));
     return { speed, power, defBoost: A.defBoostFromEpm(actualRows[i]?.epmDef) };
   });
   // The blend in placeBandsOnCdf anchors the floor (a pure-CDF placement made
@@ -503,7 +503,7 @@ export function generateCards({
     const sp = spIndex.get(normalizeName(player.name));
     const size = lookup(biometrics, player.name);
     if (!size) missingSize.push(player.name);
-    const shares = positionShares?.forName(player.name, CURRENT_STATS_SEASON) ?? null;
+    const shares = positionShares?.careerForName(player.name, CURRENT_STATS_SEASON) ?? null;
     if (!shares) missingShares.push(player.name);
     targets.push({
       pts: V.per4MinFromPer100(rate?.pts100 ?? 0),
@@ -545,7 +545,8 @@ export function generateCards({
   // does — and pricing runs below, on the shaped body.
   const carriedShaped = carried.cards.map(c => {
     if (!archetypes.get(normalizeName(c.name))?.override) return c;
-    return { ...c, ...ARCH.exaggerateSplit(c.speed, c.power) };
+    const shares = positionShares?.careerForName(c.name, c.carriedFrom ?? CURRENT_STATS_SEASON) ?? null;
+    return { ...c, ...ARCH.exaggerateSplit(c.speed, c.power, shares) };
   });
   const carriedShapedCount = carriedShaped.filter((c, i) => c !== carried.cards[i]).length;
   if (carriedShapedCount) console.log(`Archetype-shaped carried-forward bodies: ${carriedShapedCount}`);

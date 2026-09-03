@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-03T16:49:16.686Z",
+  "generatedAt": "2026-09-03T17:10:37.268Z",
   "provisional": false,
   "set": "wnba-super-season",
   "league": "WNBA",
@@ -1578,7 +1578,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 1290,
+      "salary": 1280,
       "chart": [
         {
           "lo": 1,
@@ -1791,7 +1791,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 0,
-      "salary": 1780,
+      "salary": 1760,
       "chart": [
         {
           "lo": 1,
@@ -1855,7 +1855,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 1,
-      "salary": 1500,
+      "salary": 1490,
       "chart": [
         {
           "lo": 1,
@@ -1926,7 +1926,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 970,
+      "salary": 960,
       "chart": [
         {
           "lo": 1,
@@ -1997,7 +1997,7 @@
       "paintBoost": 0,
       "threePtBoost": -2,
       "defBoost": 1,
-      "salary": 1710,
+      "salary": 1690,
       "chart": [
         {
           "lo": 1,
@@ -2068,7 +2068,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 2,
-      "salary": 1100,
+      "salary": 1090,
       "chart": [
         {
           "lo": 1,
@@ -2132,7 +2132,7 @@
       "paintBoost": 0,
       "threePtBoost": -3,
       "defBoost": 4,
-      "salary": 1080,
+      "salary": 1070,
       "chart": [
         {
           "lo": 1,
@@ -2338,7 +2338,7 @@
       "paintBoost": -1,
       "threePtBoost": 1,
       "defBoost": 1,
-      "salary": 1030,
+      "salary": 1020,
       "chart": [
         {
           "lo": 1,
@@ -2409,7 +2409,7 @@
       "paintBoost": 0,
       "threePtBoost": -8,
       "defBoost": 3,
-      "salary": 1620,
+      "salary": 1610,
       "chart": [
         {
           "lo": 1,
@@ -2551,7 +2551,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": 0,
-      "salary": 1210,
+      "salary": 1200,
       "chart": [
         {
           "lo": 1,

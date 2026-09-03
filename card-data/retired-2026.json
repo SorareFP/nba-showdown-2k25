@@ -1,0 +1,4 @@
+{
+  "_comment": "Players the source table still carries a 2025-26 row for, but who have RETIRED and should not appear in the 2026-27 set. Mirrors force-include-2026.json in shape: one \"Name\": \"why\" entry per player. This is the opposite operation — force-include ADDS a player the MPG/games rule would drop, this REMOVES one the rule would keep. A name matching no row is reported rather than silently ignored, because a typo is otherwise invisible.",
+  "Russell Westbrook": "retired after 2025-26"
+}

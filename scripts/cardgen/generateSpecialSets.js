@@ -715,7 +715,7 @@ export function buildSet({
       // BY ID, not by name. These sets span 2004 onwards, where six pool names
       // belong to two different players — see the header of history.js.
       positionShares:
-        positionShares?.forId(selection.season.playerId, selection.season.season) ?? null,
+        positionShares?.careerForId(selection.season.playerId, selection.season.season) ?? null,
       calibration,
       realGames: useRealGames
         ? loadSeasonRealGames(selection.season.playerId, selection.season.season, defense, {

@@ -28,6 +28,7 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { REPO_ROOT } from './cache.js';
 import { readForceInclude } from './forceInclude.js';
+import { readRetired } from './retired.js';
 import { readCarryForward, resolveCarryForward } from './carryForward.js';
 import { normalizeName } from './resolveTeams.js';
 import {
@@ -55,21 +56,34 @@ export const POOL_SEASON = 2026;
  */
 export const byMinutesDescending = players => [...players].sort((a, b) => b.mpg - a.mpg);
 
-export function buildPool(allPlayers, { rule = POOL_RULE, forceInclude = [] } = {}) {
+export function buildPool(allPlayers, { rule = POOL_RULE, forceInclude = [], retired = [] } = {}) {
   const names = forceInclude.map(f => f.name ?? f);
   const opts = { ...rule, forceInclude: names };
+  // RETIRED runs LAST, after both the rule and the force-include list, so a
+  // retired player is removed no matter which admitted him. See retired.js.
+  const retiredNames = retired.map(r => r.name ?? r);
+  const retiredKeys = new Set(retiredNames.map(normalizeName));
+  const admitted = filterPlayerPool(allPlayers, opts);
+  const kept = admitted.filter(p => !retiredKeys.has(normalizeName(p.name)));
+  const matched = new Set(
+    admitted.filter(p => retiredKeys.has(normalizeName(p.name))).map(p => normalizeName(p.name))
+  );
   return {
-    pool: byMinutesDescending(filterPlayerPool(allPlayers, opts)),
+    pool: byMinutesDescending(kept),
     byRule: filterPlayerPool(allPlayers, { ...rule, forceInclude: [] }).length,
-    forced: forcedOnly(allPlayers, opts),
+    forced: forcedOnly(allPlayers, opts).filter(p => !retiredKeys.has(normalizeName(p.name))),
     unmatched: unmatchedForceIncludes(allPlayers, names),
+    removedRetired: retiredNames.filter(n => matched.has(normalizeName(n))),
+    unmatchedRetired: retiredNames.filter(n => !matched.has(normalizeName(n))),
   };
 }
 
 export async function main({ log = console.log } = {}) {
   const forceInclude = readForceInclude();
+  const retired = readRetired();
   const all = await fetchPerGameStats(POOL_SEASON);
-  const { pool, byRule, forced, unmatched } = buildPool(all, { forceInclude });
+  const { pool, byRule, forced, unmatched, removedRetired, unmatchedRetired } =
+    buildPool(all, { forceInclude, retired });
 
   // CARRIED-FORWARD PLAYERS join the pool even though no 2025-26 row exists for
   // them, because the pool is what the studio takes a player's IDENTITY from —

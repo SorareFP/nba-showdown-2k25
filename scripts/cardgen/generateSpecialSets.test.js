@@ -376,7 +376,7 @@ describe('the base set\'s badges', () => {
     // rookie side under the gold line, wearing the best-season badge too.
     // AND 206 -> 208 when Rodman's 1991-92 and Pippen's 1993-94 arrived — the
     // missing legends the standout work was asked for at the very start.
-    expect(SUPER.cards.length).toBe(208);
+    expect(SUPER.cards.length).toBe(207);
     //
     // AND 321 -> 348 WHEN THE STANDOUT NEWCOMERS' ROOKIE YEARS ARRIVED — every
     // standout outside the pool whose career begins inside the cache-and-EPM
@@ -384,7 +384,7 @@ describe('the base set\'s badges', () => {
     // fetched (1992 as the sentinel that proves a 1993 first appearance is a
     // debut), that window reaches Shaq's, Kidd's and Garnett's actual rookie
     // years. 348 -> 367 when the pre-2000 nineteen arrived over the BPM bridge.
-    expect(ROOKIE.cards.length).toBe(369);
+    expect(ROOKIE.cards.length).toBe(368);
     const poolNames = new Set(POOL.map(p => p.name));
     const bothBlocks = [...new Set([
       ...Object.keys(STANDOUTS.superSeasons ?? {}),

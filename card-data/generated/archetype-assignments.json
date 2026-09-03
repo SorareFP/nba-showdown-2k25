@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-03T16:49:09.883Z",
+ "generatedAt": "2026-09-03T17:09:36.517Z",
  "weighting": "each season's EPM weighted by its games in the chart's last-82 window; carried-forward players read their carried season",
  "assignments": [
   {
@@ -883,15 +883,6 @@
    "epmOff": 0.179,
    "epmDef": -1.464,
    "basis": "4g 2025 + 78g 2026"
-  },
-  {
-   "name": "Russell Westbrook",
-   "tier": "Average defender",
-   "offense": "above average offense",
-   "override": true,
-   "epmOff": -0.359,
-   "epmDef": -0.455,
-   "basis": "18g 2025 + 64g 2026"
   },
   {
    "name": "Kyshawn George",
@@ -2489,8 +2480,8 @@
   {
    "name": "Quenton Jackson",
    "tier": "Average defender",
-   "offense": null,
-   "override": false,
+   "offense": "above average offense",
+   "override": true,
    "epmOff": -0.731,
    "epmDef": -0.243,
    "basis": "20g 2025 + 46g 2026"

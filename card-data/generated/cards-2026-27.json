@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-03T16:49:09.883Z",
+  "generatedAt": "2026-09-03T17:09:36.517Z",
   "provisional": false,
   "set": "2026-27",
   "statsSeason": 2026,
@@ -11,8 +11,8 @@
       "name": "Tyrese Maxey",
       "team": "PHI",
       "pos": "PG",
-      "speed": 16,
-      "power": 4,
+      "speed": 15,
+      "power": 5,
       "shotLine": 14,
       "paintBoost": -1,
       "threePtBoost": -1,
@@ -42,13 +42,13 @@
         },
         {
           "lo": 14,
-          "hi": 23,
+          "hi": 22,
           "pts": 3,
           "reb": 0,
           "ast": 1
         },
         {
-          "lo": 24,
+          "lo": 23,
           "hi": 99,
           "pts": 3,
           "reb": 1,
@@ -62,8 +62,8 @@
       "name": "Amen Thompson",
       "team": "HOU",
       "pos": "PG",
-      "speed": 14,
-      "power": 10,
+      "speed": 13,
+      "power": 11,
       "shotLine": 16,
       "paintBoost": 0,
       "threePtBoost": -4,
@@ -106,13 +106,13 @@
       "name": "Kevin Durant",
       "team": "HOU",
       "pos": "SF",
-      "speed": 6,
-      "power": 14,
+      "speed": 8,
+      "power": 12,
       "shotLine": 13,
       "paintBoost": -1,
       "threePtBoost": 1,
       "defBoost": 1,
-      "salary": 1090,
+      "salary": 1140,
       "chart": [
         {
           "lo": 1,
@@ -123,13 +123,13 @@
         },
         {
           "lo": 3,
-          "hi": 8,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 9,
+          "lo": 8,
           "hi": 12,
           "pts": 3,
           "reb": 1,
@@ -150,8 +150,8 @@
       "name": "Luka Dončić",
       "team": "LAL",
       "pos": "PG",
-      "speed": 17,
-      "power": 6,
+      "speed": 15,
+      "power": 8,
       "shotLine": 14,
       "paintBoost": 0,
       "threePtBoost": -1,
@@ -194,13 +194,13 @@
       "name": "Trey Murphy III",
       "team": "NOP",
       "pos": "SF",
-      "speed": 12,
-      "power": 5,
+      "speed": 10,
+      "power": 7,
       "shotLine": 14,
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 850,
+      "salary": 830,
       "chart": [
         {
           "lo": 1,
@@ -238,8 +238,8 @@
       "name": "Jamal Murray",
       "team": "DEN",
       "pos": "PG",
-      "speed": 15,
-      "power": 5,
+      "speed": 14,
+      "power": 6,
       "shotLine": 13,
       "paintBoost": -1,
       "threePtBoost": 1,
@@ -288,7 +288,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 840,
+      "salary": 830,
       "chart": [
         {
           "lo": 1,
@@ -333,13 +333,13 @@
       "name": "Jabari Smith Jr.",
       "team": "HOU",
       "pos": "PF",
-      "speed": 4,
-      "power": 12,
+      "speed": 5,
+      "power": 11,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 500,
+      "salary": 510,
       "chart": [
         {
           "lo": 1,
@@ -377,13 +377,13 @@
       "name": "Anthony Edwards",
       "team": "MIN",
       "pos": "SG",
-      "speed": 14,
-      "power": 5,
+      "speed": 13,
+      "power": 6,
       "shotLine": 14,
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 1000,
+      "salary": 1040,
       "chart": [
         {
           "lo": 1,
@@ -394,13 +394,13 @@
         },
         {
           "lo": 3,
-          "hi": 8,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 9,
+          "lo": 8,
           "hi": 13,
           "pts": 3,
           "reb": 1,
@@ -427,7 +427,7 @@
       "paintBoost": -1,
       "threePtBoost": -1,
       "defBoost": -1,
-      "salary": 910,
+      "salary": 890,
       "chart": [
         {
           "lo": 1,
@@ -472,13 +472,13 @@
       "name": "VJ Edgecombe",
       "team": "PHI",
       "pos": "SG",
-      "speed": 13,
-      "power": 3,
+      "speed": 12,
+      "power": 4,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 510,
+      "salary": 520,
       "chart": [
         {
           "lo": 1,
@@ -503,13 +503,13 @@
         },
         {
           "lo": 15,
-          "hi": 20,
+          "hi": 19,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 21,
+          "lo": 20,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -529,7 +529,7 @@
       "paintBoost": -1,
       "threePtBoost": -2,
       "defBoost": 1,
-      "salary": 1220,
+      "salary": 1210,
       "chart": [
         {
           "lo": 1,
@@ -574,13 +574,13 @@
       "name": "James Harden",
       "team": "CLE",
       "pos": "PG",
-      "speed": 14,
-      "power": 5,
+      "speed": 12,
+      "power": 7,
       "shotLine": 14,
       "paintBoost": -1,
       "threePtBoost": -1,
       "defBoost": -1,
-      "salary": 860,
+      "salary": 880,
       "chart": [
         {
           "lo": 1,
@@ -591,13 +591,13 @@
         },
         {
           "lo": 3,
-          "hi": 8,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 1
         },
         {
-          "lo": 9,
+          "lo": 8,
           "hi": 13,
           "pts": 2,
           "reb": 0,
@@ -624,7 +624,7 @@
       "paintBoost": 0,
       "threePtBoost": -2,
       "defBoost": 0,
-      "salary": 750,
+      "salary": 730,
       "chart": [
         {
           "lo": 1,
@@ -662,13 +662,13 @@
       "name": "Austin Reaves",
       "team": "LAL",
       "pos": "SG",
-      "speed": 14,
-      "power": 5,
+      "speed": 12,
+      "power": 7,
       "shotLine": 14,
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": 0,
-      "salary": 830,
+      "salary": 850,
       "chart": [
         {
           "lo": 1,
@@ -679,13 +679,13 @@
         },
         {
           "lo": 3,
-          "hi": 8,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 9,
+          "lo": 8,
           "hi": 13,
           "pts": 2,
           "reb": 0,
@@ -750,13 +750,13 @@
       "name": "Jaylen Brown",
       "team": "PHI",
       "pos": "SF",
-      "speed": 12,
-      "power": 5,
+      "speed": 10,
+      "power": 7,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 1060,
+      "salary": 1030,
       "chart": [
         {
           "lo": 1,
@@ -794,13 +794,13 @@
       "name": "Lauri Markkanen",
       "team": "UTA",
       "pos": "PF",
-      "speed": 5,
-      "power": 15,
+      "speed": 7,
+      "power": 13,
       "shotLine": 14,
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": 0,
-      "salary": 930,
+      "salary": 970,
       "chart": [
         {
           "lo": 1,
@@ -825,13 +825,13 @@
         },
         {
           "lo": 14,
-          "hi": 23,
+          "hi": 21,
           "pts": 3,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 24,
+          "lo": 22,
           "hi": 99,
           "pts": 3,
           "reb": 1,
@@ -895,7 +895,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 1,
-      "salary": 1330,
+      "salary": 1320,
       "chart": [
         {
           "lo": 1,
@@ -941,12 +941,12 @@
       "team": "TOR",
       "pos": "SF",
       "speed": 9,
-      "power": 4,
+      "power": 5,
       "shotLine": 14,
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": -1,
-      "salary": 610,
+      "salary": 650,
       "chart": [
         {
           "lo": 1,
@@ -984,13 +984,13 @@
       "name": "Desmond Bane",
       "team": "ORL",
       "pos": "SG",
-      "speed": 13,
-      "power": 5,
+      "speed": 12,
+      "power": 6,
       "shotLine": 14,
       "paintBoost": -1,
       "threePtBoost": 2,
       "defBoost": 0,
-      "salary": 870,
+      "salary": 860,
       "chart": [
         {
           "lo": 1,
@@ -1028,13 +1028,13 @@
       "name": "Donovan Mitchell",
       "team": "CLE",
       "pos": "SG",
-      "speed": 15,
-      "power": 5,
+      "speed": 14,
+      "power": 7,
       "shotLine": 14,
       "paintBoost": -1,
       "threePtBoost": -1,
       "defBoost": 0,
-      "salary": 1190,
+      "salary": 1230,
       "chart": [
         {
           "lo": 1,
@@ -1072,13 +1072,13 @@
       "name": "Devin Booker",
       "team": "PHX",
       "pos": "SG",
-      "speed": 14,
-      "power": 5,
+      "speed": 12,
+      "power": 7,
       "shotLine": 14,
       "paintBoost": -1,
       "threePtBoost": -1,
       "defBoost": 0,
-      "salary": 1000,
+      "salary": 1040,
       "chart": [
         {
           "lo": 1,
@@ -1089,13 +1089,13 @@
         },
         {
           "lo": 3,
-          "hi": 8,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 9,
+          "lo": 8,
           "hi": 13,
           "pts": 3,
           "reb": 0,
@@ -1103,13 +1103,13 @@
         },
         {
           "lo": 14,
-          "hi": 21,
+          "hi": 20,
           "pts": 3,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 22,
+          "lo": 21,
           "hi": 99,
           "pts": 4,
           "reb": 1,
@@ -1123,13 +1123,13 @@
       "name": "Cooper Flagg",
       "team": "DAL",
       "pos": "SF",
-      "speed": 4,
-      "power": 10,
+      "speed": 5,
+      "power": 9,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": -3,
       "defBoost": 0,
-      "salary": 600,
+      "salary": 620,
       "chart": [
         {
           "lo": 1,
@@ -1140,13 +1140,13 @@
         },
         {
           "lo": 3,
-          "hi": 8,
+          "hi": 7,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 9,
+          "lo": 8,
           "hi": 14,
           "pts": 2,
           "reb": 1,
@@ -1167,13 +1167,13 @@
       "name": "Scottie Barnes",
       "team": "TOR",
       "pos": "PF",
-      "speed": 10,
-      "power": 14,
+      "speed": 11,
+      "power": 13,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": -3,
       "defBoost": 2,
-      "salary": 930,
+      "salary": 940,
       "chart": [
         {
           "lo": 1,
@@ -1211,8 +1211,8 @@
       "name": "Nickeil Alexander-Walker",
       "team": "ATL",
       "pos": "SG",
-      "speed": 14,
-      "power": 4,
+      "speed": 12,
+      "power": 6,
       "shotLine": 14,
       "paintBoost": -1,
       "threePtBoost": 2,
@@ -1242,13 +1242,13 @@
         },
         {
           "lo": 14,
-          "hi": 21,
+          "hi": 19,
           "pts": 3,
           "reb": 0,
           "ast": 1
         },
         {
-          "lo": 22,
+          "lo": 20,
           "hi": 99,
           "pts": 3,
           "reb": 1,
@@ -1262,13 +1262,13 @@
       "name": "Deni Avdija",
       "team": "POR",
       "pos": "SF",
-      "speed": 12,
-      "power": 5,
+      "speed": 7,
+      "power": 10,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 950,
+      "salary": 940,
       "chart": [
         {
           "lo": 1,
@@ -1319,7 +1319,7 @@
       "paintBoost": 1,
       "threePtBoost": -2,
       "defBoost": -1,
-      "salary": 690,
+      "salary": 680,
       "chart": [
         {
           "lo": 1,
@@ -1370,7 +1370,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 1,
-      "salary": 610,
+      "salary": 600,
       "chart": [
         {
           "lo": 1,
@@ -1421,7 +1421,7 @@
       "paintBoost": -1,
       "threePtBoost": -2,
       "defBoost": 2,
-      "salary": 1510,
+      "salary": 1500,
       "chart": [
         {
           "lo": 1,
@@ -1459,13 +1459,13 @@
       "name": "Pascal Siakam",
       "team": "IND",
       "pos": "PF",
-      "speed": 4,
-      "power": 13,
+      "speed": 5,
+      "power": 12,
       "shotLine": 16,
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 850,
+      "salary": 880,
       "chart": [
         {
           "lo": 1,
@@ -1476,13 +1476,13 @@
         },
         {
           "lo": 3,
-          "hi": 8,
+          "hi": 7,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 9,
+          "lo": 8,
           "hi": 15,
           "pts": 3,
           "reb": 1,
@@ -1503,13 +1503,13 @@
       "name": "LeBron James",
       "team": "PHI",
       "pos": "SF",
-      "speed": 11,
-      "power": 5,
+      "speed": 7,
+      "power": 10,
       "shotLine": 16,
       "paintBoost": 2,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 760,
+      "salary": 800,
       "chart": [
         {
           "lo": 1,
@@ -1547,13 +1547,13 @@
       "name": "OG Anunoby",
       "team": "NYK",
       "pos": "PF",
-      "speed": 11,
-      "power": 14,
+      "speed": 12,
+      "power": 13,
       "shotLine": 14,
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 1,
-      "salary": 950,
+      "salary": 960,
       "chart": [
         {
           "lo": 1,
@@ -1578,13 +1578,13 @@
         },
         {
           "lo": 14,
-          "hi": 23,
+          "hi": 22,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 24,
+          "lo": 23,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -1604,7 +1604,7 @@
       "paintBoost": 0,
       "threePtBoost": -3,
       "defBoost": 3,
-      "salary": 820,
+      "salary": 810,
       "chart": [
         {
           "lo": 1,
@@ -1648,7 +1648,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": -2,
-      "salary": 730,
+      "salary": 720,
       "chart": [
         {
           "lo": 1,
@@ -1692,7 +1692,7 @@
       "paintBoost": 0,
       "threePtBoost": -3,
       "defBoost": 0,
-      "salary": 740,
+      "salary": 720,
       "chart": [
         {
           "lo": 1,
@@ -1736,7 +1736,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": 1,
-      "salary": 760,
+      "salary": 770,
       "chart": [
         {
           "lo": 1,
@@ -1747,13 +1747,13 @@
         },
         {
           "lo": 3,
-          "hi": 8,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 9,
+          "lo": 8,
           "hi": 13,
           "pts": 1,
           "reb": 0,
@@ -1780,7 +1780,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 1,
-      "salary": 1340,
+      "salary": 1330,
       "chart": [
         {
           "lo": 1,
@@ -1825,13 +1825,13 @@
       "name": "Michael Porter Jr.",
       "team": "BKN",
       "pos": "SF",
-      "speed": 12,
-      "power": 5,
+      "speed": 11,
+      "power": 6,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 760,
+      "salary": 750,
       "chart": [
         {
           "lo": 1,
@@ -1882,7 +1882,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 2,
-      "salary": 1190,
+      "salary": 1200,
       "chart": [
         {
           "lo": 1,
@@ -1893,13 +1893,13 @@
         },
         {
           "lo": 3,
-          "hi": 9,
+          "hi": 8,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 10,
+          "lo": 9,
           "hi": 15,
           "pts": 2,
           "reb": 1,
@@ -1933,7 +1933,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": -1,
-      "salary": 620,
+      "salary": 600,
       "chart": [
         {
           "lo": 1,
@@ -1971,13 +1971,13 @@
       "name": "Kawhi Leonard",
       "team": "LAC",
       "pos": "SF",
-      "speed": 15,
-      "power": 7,
+      "speed": 13,
+      "power": 9,
       "shotLine": 13,
       "paintBoost": -1,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 1410,
+      "salary": 1440,
       "chart": [
         {
           "lo": 1,
@@ -1988,13 +1988,13 @@
         },
         {
           "lo": 3,
-          "hi": 8,
+          "hi": 7,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 9,
+          "lo": 8,
           "hi": 12,
           "pts": 3,
           "reb": 1,
@@ -2021,7 +2021,7 @@
       "paintBoost": -1,
       "threePtBoost": 2,
       "defBoost": 0,
-      "salary": 660,
+      "salary": 650,
       "chart": [
         {
           "lo": 1,
@@ -2059,13 +2059,13 @@
       "name": "Josh Giddey",
       "team": "CHI",
       "pos": "PG",
-      "speed": 11,
-      "power": 4,
+      "speed": 9,
+      "power": 6,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 760,
+      "salary": 780,
       "chart": [
         {
           "lo": 1,
@@ -2076,13 +2076,13 @@
         },
         {
           "lo": 3,
-          "hi": 7,
+          "hi": 6,
           "pts": 0,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 8,
+          "lo": 7,
           "hi": 14,
           "pts": 2,
           "reb": 1,
@@ -2090,13 +2090,13 @@
         },
         {
           "lo": 15,
-          "hi": 18,
+          "hi": 17,
           "pts": 3,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 19,
+          "lo": 18,
           "hi": 99,
           "pts": 3,
           "reb": 2,
@@ -2110,13 +2110,13 @@
       "name": "Evan Mobley",
       "team": "CLE",
       "pos": "PF",
-      "speed": 9,
-      "power": 14,
+      "speed": 10,
+      "power": 13,
       "shotLine": 17,
       "paintBoost": 3,
       "threePtBoost": -1,
       "defBoost": 1,
-      "salary": 890,
+      "salary": 910,
       "chart": [
         {
           "lo": 1,
@@ -2141,13 +2141,13 @@
         },
         {
           "lo": 17,
-          "hi": 23,
+          "hi": 22,
           "pts": 2,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 24,
+          "lo": 23,
           "hi": 99,
           "pts": 2,
           "reb": 2,
@@ -2161,8 +2161,8 @@
       "name": "Immanuel Quickley",
       "team": "TOR",
       "pos": "PG",
-      "speed": 15,
-      "power": 4,
+      "speed": 14,
+      "power": 5,
       "shotLine": 14,
       "paintBoost": 0,
       "threePtBoost": -1,
@@ -2205,8 +2205,8 @@
       "name": "Christian Braun",
       "team": "DEN",
       "pos": "SG",
-      "speed": 10,
-      "power": 4,
+      "speed": 9,
+      "power": 5,
       "shotLine": 16,
       "paintBoost": 0,
       "threePtBoost": -2,
@@ -2236,13 +2236,13 @@
         },
         {
           "lo": 16,
-          "hi": 20,
+          "hi": 19,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 21,
+          "lo": 20,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -2262,7 +2262,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": 1,
-      "salary": 760,
+      "salary": 750,
       "chart": [
         {
           "lo": 1,
@@ -2313,7 +2313,7 @@
       "paintBoost": 0,
       "threePtBoost": -4,
       "defBoost": 0,
-      "salary": 1240,
+      "salary": 1230,
       "chart": [
         {
           "lo": 1,
@@ -2358,13 +2358,13 @@
       "name": "Kon Knueppel",
       "team": "CHA",
       "pos": "SF",
-      "speed": 13,
-      "power": 5,
+      "speed": 11,
+      "power": 7,
       "shotLine": 13,
       "paintBoost": -1,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 920,
+      "salary": 910,
       "chart": [
         {
           "lo": 1,
@@ -2408,7 +2408,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 530,
+      "salary": 570,
       "chart": [
         {
           "lo": 1,
@@ -2419,13 +2419,13 @@
         },
         {
           "lo": 3,
-          "hi": 7,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 8,
+          "lo": 7,
           "hi": 14,
           "pts": 2,
           "reb": 1,
@@ -2446,13 +2446,13 @@
       "name": "Zach LaVine",
       "team": "SAC",
       "pos": "SG",
-      "speed": 11,
-      "power": 4,
+      "speed": 10,
+      "power": 5,
       "shotLine": 14,
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -2,
-      "salary": 660,
+      "salary": 670,
       "chart": [
         {
           "lo": 1,
@@ -2463,13 +2463,13 @@
         },
         {
           "lo": 3,
-          "hi": 7,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 8,
+          "lo": 7,
           "hi": 13,
           "pts": 2,
           "reb": 0,
@@ -2497,13 +2497,13 @@
       "name": "Tyler Herro",
       "team": "MIL",
       "pos": "SG",
-      "speed": 14,
-      "power": 5,
+      "speed": 13,
+      "power": 6,
       "shotLine": 13,
       "paintBoost": -1,
       "threePtBoost": -2,
       "defBoost": -1,
-      "salary": 850,
+      "salary": 870,
       "chart": [
         {
           "lo": 1,
@@ -2514,13 +2514,13 @@
         },
         {
           "lo": 3,
-          "hi": 8,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 9,
+          "lo": 8,
           "hi": 12,
           "pts": 2,
           "reb": 0,
@@ -2592,8 +2592,8 @@
       "name": "Andrew Nembhard",
       "team": "IND",
       "pos": "PG",
-      "speed": 12,
-      "power": 3,
+      "speed": 11,
+      "power": 4,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 0,
@@ -2623,13 +2623,13 @@
         },
         {
           "lo": 15,
-          "hi": 19,
+          "hi": 18,
           "pts": 2,
           "reb": 0,
           "ast": 1
         },
         {
-          "lo": 20,
+          "lo": 19,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -2649,7 +2649,7 @@
       "paintBoost": 3,
       "threePtBoost": -2,
       "defBoost": 3,
-      "salary": 710,
+      "salary": 700,
       "chart": [
         {
           "lo": 1,
@@ -2694,13 +2694,13 @@
       "name": "DeMar DeRozan",
       "team": "SAC",
       "pos": "PF",
-      "speed": 8,
-      "power": 4,
+      "speed": 7,
+      "power": 5,
       "shotLine": 13,
       "paintBoost": -1,
       "threePtBoost": -5,
       "defBoost": -2,
-      "salary": 520,
+      "salary": 500,
       "chart": [
         {
           "lo": 1,
@@ -2745,13 +2745,13 @@
       "name": "Saddiq Bey",
       "team": "NOP",
       "pos": "SF",
-      "speed": 10,
-      "power": 5,
+      "speed": 9,
+      "power": 6,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 550,
+      "salary": 560,
       "chart": [
         {
           "lo": 1,
@@ -2776,13 +2776,13 @@
         },
         {
           "lo": 15,
-          "hi": 18,
+          "hi": 17,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 19,
+          "lo": 18,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -2796,13 +2796,13 @@
       "name": "Jimmy Butler",
       "team": "GSW",
       "pos": "SF",
-      "speed": 5,
-      "power": 13,
+      "speed": 7,
+      "power": 11,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": -3,
       "defBoost": 0,
-      "salary": 810,
+      "salary": 840,
       "chart": [
         {
           "lo": 1,
@@ -2813,13 +2813,13 @@
         },
         {
           "lo": 3,
-          "hi": 8,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 9,
+          "lo": 8,
           "hi": 14,
           "pts": 2,
           "reb": 1,
@@ -2846,7 +2846,7 @@
       "paintBoost": -1,
       "threePtBoost": -1,
       "defBoost": 2,
-      "salary": 1170,
+      "salary": 1150,
       "chart": [
         {
           "lo": 1,
@@ -2897,7 +2897,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 840,
+      "salary": 830,
       "chart": [
         {
           "lo": 1,
@@ -2942,13 +2942,13 @@
       "name": "Miles Bridges",
       "team": "PHX",
       "pos": "PF",
-      "speed": 4,
-      "power": 11,
+      "speed": 5,
+      "power": 10,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 680,
+      "salary": 650,
       "chart": [
         {
           "lo": 1,
@@ -2992,7 +2992,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 550,
+      "salary": 540,
       "chart": [
         {
           "lo": 1,
@@ -3043,7 +3043,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 1,
-      "salary": 630,
+      "salary": 620,
       "chart": [
         {
           "lo": 1,
@@ -3094,7 +3094,7 @@
       "paintBoost": -1,
       "threePtBoost": 1,
       "defBoost": -1,
-      "salary": 1420,
+      "salary": 1410,
       "chart": [
         {
           "lo": 1,
@@ -3138,7 +3138,7 @@
       "paintBoost": 0,
       "threePtBoost": 3,
       "defBoost": 1,
-      "salary": 1090,
+      "salary": 1110,
       "chart": [
         {
           "lo": 1,
@@ -3149,13 +3149,13 @@
         },
         {
           "lo": 3,
-          "hi": 8,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 9,
+          "lo": 8,
           "hi": 14,
           "pts": 2,
           "reb": 1,
@@ -3176,8 +3176,8 @@
       "name": "Devin Vassell",
       "team": "SAS",
       "pos": "SG",
-      "speed": 14,
-      "power": 9,
+      "speed": 13,
+      "power": 10,
       "shotLine": 14,
       "paintBoost": 0,
       "threePtBoost": 2,
@@ -3207,13 +3207,13 @@
         },
         {
           "lo": 14,
-          "hi": 24,
+          "hi": 23,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 25,
+          "lo": 24,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -3227,13 +3227,13 @@
       "name": "Cameron Johnson",
       "team": "DEN",
       "pos": "SF",
-      "speed": 10,
-      "power": 5,
+      "speed": 5,
+      "power": 10,
       "shotLine": 14,
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 0,
-      "salary": 550,
+      "salary": 510,
       "chart": [
         {
           "lo": 1,
@@ -3244,13 +3244,13 @@
         },
         {
           "lo": 3,
-          "hi": 6,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 7,
+          "lo": 8,
           "hi": 13,
           "pts": 2,
           "reb": 0,
@@ -3278,13 +3278,13 @@
       "name": "Dillon Brooks",
       "team": "PHX",
       "pos": "SF",
-      "speed": 5,
-      "power": 11,
+      "speed": 9,
+      "power": 7,
       "shotLine": 14,
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": 0,
-      "salary": 660,
+      "salary": 670,
       "chart": [
         {
           "lo": 1,
@@ -3295,13 +3295,13 @@
         },
         {
           "lo": 3,
-          "hi": 7,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 8,
+          "lo": 7,
           "hi": 13,
           "pts": 2,
           "reb": 0,
@@ -3309,13 +3309,13 @@
         },
         {
           "lo": 14,
-          "hi": 19,
+          "hi": 18,
           "pts": 3,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 20,
+          "lo": 19,
           "hi": 99,
           "pts": 3,
           "reb": 1,
@@ -3335,7 +3335,7 @@
       "paintBoost": 0,
       "threePtBoost": 3,
       "defBoost": 1,
-      "salary": 800,
+      "salary": 790,
       "chart": [
         {
           "lo": 1,
@@ -3379,7 +3379,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 1,
-      "salary": 1250,
+      "salary": 1240,
       "chart": [
         {
           "lo": 1,
@@ -3423,7 +3423,7 @@
       "paintBoost": -1,
       "threePtBoost": -1,
       "defBoost": 2,
-      "salary": 980,
+      "salary": 970,
       "chart": [
         {
           "lo": 1,
@@ -3448,13 +3448,13 @@
         },
         {
           "lo": 14,
-          "hi": 22,
+          "hi": 21,
           "pts": 3,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 23,
+          "lo": 22,
           "hi": 99,
           "pts": 3,
           "reb": 1,
@@ -3468,13 +3468,13 @@
       "name": "RJ Barrett",
       "team": "TOR",
       "pos": "SF",
-      "speed": 12,
-      "power": 5,
+      "speed": 10,
+      "power": 7,
       "shotLine": 16,
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -1,
-      "salary": 740,
+      "salary": 730,
       "chart": [
         {
           "lo": 1,
@@ -3512,8 +3512,8 @@
       "name": "Andrew Wiggins",
       "team": "MIA",
       "pos": "SF",
-      "speed": 10,
-      "power": 4,
+      "speed": 9,
+      "power": 5,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 3,
@@ -3543,13 +3543,13 @@
         },
         {
           "lo": 15,
-          "hi": 18,
+          "hi": 17,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 19,
+          "lo": 18,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -3569,7 +3569,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 1,
-      "salary": 760,
+      "salary": 750,
       "chart": [
         {
           "lo": 1,
@@ -3645,13 +3645,13 @@
         },
         {
           "lo": 15,
-          "hi": 22,
+          "hi": 21,
           "pts": 2,
           "reb": 2,
           "ast": 0
         },
         {
-          "lo": 23,
+          "lo": 22,
           "hi": 99,
           "pts": 3,
           "reb": 2,
@@ -3696,13 +3696,13 @@
         },
         {
           "lo": 15,
-          "hi": 23,
+          "hi": 22,
           "pts": 3,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 24,
+          "lo": 23,
           "hi": 99,
           "pts": 4,
           "reb": 1,
@@ -3747,13 +3747,13 @@
         },
         {
           "lo": 15,
-          "hi": 18,
+          "hi": 17,
           "pts": 3,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 19,
+          "lo": 18,
           "hi": 99,
           "pts": 4,
           "reb": 2,
@@ -3773,7 +3773,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 1,
-      "salary": 1140,
+      "salary": 1120,
       "chart": [
         {
           "lo": 1,
@@ -3824,7 +3824,7 @@
       "paintBoost": -1,
       "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 880,
+      "salary": 840,
       "chart": [
         {
           "lo": 1,
@@ -3835,13 +3835,13 @@
         },
         {
           "lo": 3,
-          "hi": 7,
+          "hi": 8,
           "pts": 0,
           "reb": 0,
           "ast": 1
         },
         {
-          "lo": 8,
+          "lo": 9,
           "hi": 13,
           "pts": 2,
           "reb": 0,
@@ -3869,13 +3869,13 @@
       "name": "CJ McCollum",
       "team": "ATL",
       "pos": "PG",
-      "speed": 13,
-      "power": 4,
+      "speed": 12,
+      "power": 5,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 730,
+      "salary": 710,
       "chart": [
         {
           "lo": 1,
@@ -3919,7 +3919,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 1,
-      "salary": 650,
+      "salary": 630,
       "chart": [
         {
           "lo": 1,
@@ -3957,13 +3957,13 @@
       "name": "Zion Williamson",
       "team": "NOP",
       "pos": "PF",
-      "speed": 4,
-      "power": 13,
+      "speed": 5,
+      "power": 12,
       "shotLine": 16,
       "paintBoost": 2,
       "threePtBoost": -4,
       "defBoost": 0,
-      "salary": 960,
+      "salary": 990,
       "chart": [
         {
           "lo": 1,
@@ -3974,13 +3974,13 @@
         },
         {
           "lo": 3,
-          "hi": 8,
+          "hi": 7,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 9,
+          "lo": 8,
           "hi": 15,
           "pts": 3,
           "reb": 1,
@@ -3988,13 +3988,13 @@
         },
         {
           "lo": 16,
-          "hi": 21,
+          "hi": 20,
           "pts": 3,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 22,
+          "lo": 21,
           "hi": 99,
           "pts": 4,
           "reb": 1,
@@ -4008,13 +4008,13 @@
       "name": "Jerami Grant",
       "team": "MEM",
       "pos": "PF",
-      "speed": 9,
-      "power": 4,
+      "speed": 8,
+      "power": 5,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 3,
       "defBoost": -1,
-      "salary": 590,
+      "salary": 660,
       "chart": [
         {
           "lo": 1,
@@ -4032,20 +4032,20 @@
         },
         {
           "lo": 7,
-          "hi": 14,
+          "hi": 11,
           "pts": 2,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 15,
-          "hi": 17,
+          "lo": 12,
+          "hi": 14,
           "pts": 3,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 18,
+          "lo": 15,
           "hi": 99,
           "pts": 3,
           "reb": 1,
@@ -4059,13 +4059,13 @@
       "name": "Domantas Sabonis",
       "team": "SAC",
       "pos": "C",
-      "speed": 4,
-      "power": 15,
+      "speed": 5,
+      "power": 14,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 770,
+      "salary": 780,
       "chart": [
         {
           "lo": 1,
@@ -4090,13 +4090,13 @@
         },
         {
           "lo": 15,
-          "hi": 23,
+          "hi": 22,
           "pts": 2,
           "reb": 2,
           "ast": 1
         },
         {
-          "lo": 24,
+          "lo": 23,
           "hi": 99,
           "pts": 3,
           "reb": 2,
@@ -4110,13 +4110,13 @@
       "name": "Aaron Nesmith",
       "team": "IND",
       "pos": "SF",
-      "speed": 9,
-      "power": 4,
+      "speed": 8,
+      "power": 5,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 410,
+      "salary": 430,
       "chart": [
         {
           "lo": 1,
@@ -4134,20 +4134,20 @@
         },
         {
           "lo": 7,
-          "hi": 14,
+          "hi": 11,
           "pts": 2,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 15,
-          "hi": 17,
+          "lo": 12,
+          "hi": 14,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 18,
+          "lo": 15,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -4161,13 +4161,13 @@
       "name": "Norman Powell",
       "team": "CHI",
       "pos": "SG",
-      "speed": 13,
-      "power": 4,
+      "speed": 12,
+      "power": 5,
       "shotLine": 14,
       "paintBoost": -1,
       "threePtBoost": 2,
       "defBoost": 0,
-      "salary": 780,
+      "salary": 770,
       "chart": [
         {
           "lo": 1,
@@ -4192,13 +4192,13 @@
         },
         {
           "lo": 14,
-          "hi": 20,
+          "hi": 19,
           "pts": 3,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 21,
+          "lo": 20,
           "hi": 99,
           "pts": 3,
           "reb": 1,
@@ -4218,7 +4218,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 670,
+      "salary": 650,
       "chart": [
         {
           "lo": 1,
@@ -4263,8 +4263,8 @@
       "name": "Naji Marshall",
       "team": "DAL",
       "pos": "SF",
-      "speed": 9,
-      "power": 4,
+      "speed": 8,
+      "power": 5,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": -3,
@@ -4287,10 +4287,17 @@
         },
         {
           "lo": 7,
-          "hi": 14,
+          "hi": 11,
           "pts": 2,
           "reb": 1,
           "ast": 0
+        },
+        {
+          "lo": 12,
+          "hi": 14,
+          "pts": 2,
+          "reb": 1,
+          "ast": 1
         },
         {
           "lo": 15,
@@ -4307,13 +4314,13 @@
       "name": "Shaedon Sharpe",
       "team": "POR",
       "pos": "SG",
-      "speed": 10,
-      "power": 3,
+      "speed": 8,
+      "power": 4,
       "shotLine": 16,
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -1,
-      "salary": 630,
+      "salary": 570,
       "chart": [
         {
           "lo": 1,
@@ -4331,13 +4338,13 @@
         },
         {
           "lo": 7,
-          "hi": 12,
+          "hi": 11,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 13,
+          "lo": 12,
           "hi": 15,
           "pts": 3,
           "reb": 1,
@@ -4364,7 +4371,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 1,
-      "salary": 920,
+      "salary": 910,
       "chart": [
         {
           "lo": 1,
@@ -4415,7 +4422,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 410,
+      "salary": 420,
       "chart": [
         {
           "lo": 1,
@@ -4426,13 +4433,13 @@
         },
         {
           "lo": 3,
-          "hi": 7,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 8,
+          "lo": 7,
           "hi": 14,
           "pts": 1,
           "reb": 0,
@@ -4453,8 +4460,8 @@
       "name": "Wendell Carter Jr.",
       "team": "ORL",
       "pos": "C",
-      "speed": 7,
-      "power": 14,
+      "speed": 8,
+      "power": 13,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": -3,
@@ -4484,13 +4491,13 @@
         },
         {
           "lo": 15,
-          "hi": 24,
+          "hi": 23,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 25,
+          "lo": 24,
           "hi": 99,
           "pts": 2,
           "reb": 2,
@@ -4510,7 +4517,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 5,
-      "salary": 1860,
+      "salary": 1850,
       "chart": [
         {
           "lo": 1,
@@ -4555,13 +4562,13 @@
       "name": "Matas Buzelis",
       "team": "CHI",
       "pos": "PF",
-      "speed": 4,
-      "power": 10,
+      "speed": 8,
+      "power": 5,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 470,
+      "salary": 480,
       "chart": [
         {
           "lo": 1,
@@ -4572,13 +4579,13 @@
         },
         {
           "lo": 3,
-          "hi": 7,
+          "hi": 6,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 8,
+          "lo": 7,
           "hi": 14,
           "pts": 2,
           "reb": 1,
@@ -4586,13 +4593,6 @@
         },
         {
           "lo": 15,
-          "hi": 19,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 20,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -4612,7 +4612,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 0,
-      "salary": 460,
+      "salary": 470,
       "chart": [
         {
           "lo": 1,
@@ -4623,13 +4623,13 @@
         },
         {
           "lo": 3,
-          "hi": 7,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 8,
+          "lo": 7,
           "hi": 13,
           "pts": 1,
           "reb": 0,
@@ -4657,8 +4657,8 @@
       "name": "A.J. Green",
       "team": "MIL",
       "pos": "SG",
-      "speed": 10,
-      "power": 3,
+      "speed": 9,
+      "power": 4,
       "shotLine": 14,
       "paintBoost": -1,
       "threePtBoost": 2,
@@ -4704,61 +4704,17 @@
       "provisional": false
     },
     {
-      "id": "Russell_Westbrook",
-      "name": "Russell Westbrook",
-      "team": "SAC",
-      "pos": "SF",
-      "speed": 10,
-      "power": 3,
-      "shotLine": 16,
-      "paintBoost": 0,
-      "threePtBoost": 1,
-      "defBoost": -1,
-      "salary": 500,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 6,
-          "pts": 0,
-          "reb": 0,
-          "ast": 1
-        },
-        {
-          "lo": 7,
-          "hi": 15,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 16,
-          "hi": 99,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        }
-      ],
-      "provisional": false
-    },
-    {
       "id": "Kyshawn_George",
       "name": "Kyshawn George",
       "team": "WAS",
       "pos": "SF",
-      "speed": 8,
-      "power": 9,
+      "speed": 9,
+      "power": 8,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 610,
+      "salary": 600,
       "chart": [
         {
           "lo": 1,
@@ -4802,7 +4758,7 @@
       "paintBoost": 3,
       "threePtBoost": 0,
       "defBoost": 1,
-      "salary": 1770,
+      "salary": 1760,
       "chart": [
         {
           "lo": 1,
@@ -4853,7 +4809,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 3,
-      "salary": 1240,
+      "salary": 1230,
       "chart": [
         {
           "lo": 1,
@@ -4899,12 +4855,12 @@
       "team": "CHA",
       "pos": "SG",
       "speed": 13,
-      "power": 4,
+      "power": 5,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 630,
+      "salary": 660,
       "chart": [
         {
           "lo": 1,
@@ -4955,7 +4911,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": 0,
-      "salary": 410,
+      "salary": 400,
       "chart": [
         {
           "lo": 1,
@@ -5006,7 +4962,7 @@
       "paintBoost": 0,
       "threePtBoost": -3,
       "defBoost": 1,
-      "salary": 1170,
+      "salary": 1160,
       "chart": [
         {
           "lo": 1,
@@ -5051,13 +5007,13 @@
       "name": "Brandin Podziemski",
       "team": "GSW",
       "pos": "SG",
-      "speed": 11,
-      "power": 4,
+      "speed": 10,
+      "power": 5,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 1,
-      "salary": 560,
+      "salary": 590,
       "chart": [
         {
           "lo": 1,
@@ -5068,13 +5024,13 @@
         },
         {
           "lo": 3,
-          "hi": 7,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 8,
+          "lo": 7,
           "hi": 14,
           "pts": 2,
           "reb": 1,
@@ -5101,7 +5057,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 0,
-      "salary": 700,
+      "salary": 680,
       "chart": [
         {
           "lo": 1,
@@ -5145,7 +5101,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 2,
-      "salary": 640,
+      "salary": 630,
       "chart": [
         {
           "lo": 1,
@@ -5196,7 +5152,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 1,
-      "salary": 1260,
+      "salary": 1240,
       "chart": [
         {
           "lo": 1,
@@ -5247,7 +5203,7 @@
       "paintBoost": -1,
       "threePtBoost": -1,
       "defBoost": 0,
-      "salary": 740,
+      "salary": 720,
       "chart": [
         {
           "lo": 1,
@@ -5323,13 +5279,13 @@
         },
         {
           "lo": 14,
-          "hi": 20,
+          "hi": 19,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 21,
+          "lo": 20,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -5343,8 +5299,8 @@
       "name": "Herbert Jones",
       "team": "NOP",
       "pos": "SF",
-      "speed": 10,
-      "power": 7,
+      "speed": 9,
+      "power": 8,
       "shotLine": 16,
       "paintBoost": 0,
       "threePtBoost": 1,
@@ -5387,13 +5343,13 @@
       "name": "Jaime Jaquez Jr.",
       "team": "MIL",
       "pos": "SF",
-      "speed": 7,
-      "power": 8,
+      "speed": 8,
+      "power": 7,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": -3,
       "defBoost": -1,
-      "salary": 750,
+      "salary": 730,
       "chart": [
         {
           "lo": 1,
@@ -5418,13 +5374,13 @@
         },
         {
           "lo": 15,
-          "hi": 18,
+          "hi": 17,
           "pts": 3,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 19,
+          "lo": 18,
           "hi": 99,
           "pts": 3,
           "reb": 2,
@@ -5438,13 +5394,13 @@
       "name": "Rui Hachimura",
       "team": "LAC",
       "pos": "PF",
-      "speed": 3,
-      "power": 8,
+      "speed": 4,
+      "power": 7,
       "shotLine": 13,
       "paintBoost": -1,
       "threePtBoost": 1,
       "defBoost": -1,
-      "salary": 250,
+      "salary": 240,
       "chart": [
         {
           "lo": 1,
@@ -5488,7 +5444,7 @@
       "paintBoost": 2,
       "threePtBoost": -4,
       "defBoost": 1,
-      "salary": 970,
+      "salary": 960,
       "chart": [
         {
           "lo": 1,
@@ -5533,13 +5489,13 @@
       "name": "LaMelo Ball",
       "team": "MIN",
       "pos": "PG",
-      "speed": 17,
-      "power": 5,
+      "speed": 16,
+      "power": 6,
       "shotLine": 15,
       "paintBoost": -1,
       "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 1080,
+      "salary": 1090,
       "chart": [
         {
           "lo": 1,
@@ -5564,13 +5520,13 @@
         },
         {
           "lo": 15,
-          "hi": 24,
+          "hi": 23,
           "pts": 3,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 25,
+          "lo": 24,
           "hi": 99,
           "pts": 3,
           "reb": 1,
@@ -5584,13 +5540,13 @@
       "name": "Aaron Gordon",
       "team": "DEN",
       "pos": "PF",
-      "speed": 4,
-      "power": 13,
+      "speed": 6,
+      "power": 11,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 3,
       "defBoost": 0,
-      "salary": 830,
+      "salary": 850,
       "chart": [
         {
           "lo": 1,
@@ -5601,13 +5557,13 @@
         },
         {
           "lo": 3,
-          "hi": 8,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 9,
+          "lo": 8,
           "hi": 14,
           "pts": 2,
           "reb": 1,
@@ -5615,13 +5571,13 @@
         },
         {
           "lo": 15,
-          "hi": 21,
+          "hi": 19,
           "pts": 3,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 22,
+          "lo": 20,
           "hi": 99,
           "pts": 3,
           "reb": 2,
@@ -5635,13 +5591,13 @@
       "name": "Santi Aldama",
       "team": "DAL",
       "pos": "PF",
-      "speed": 4,
-      "power": 10,
+      "speed": 5,
+      "power": 9,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 500,
+      "salary": 530,
       "chart": [
         {
           "lo": 1,
@@ -5652,13 +5608,13 @@
         },
         {
           "lo": 3,
-          "hi": 7,
+          "hi": 6,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 8,
+          "lo": 7,
           "hi": 14,
           "pts": 2,
           "reb": 1,
@@ -5666,13 +5622,13 @@
         },
         {
           "lo": 15,
-          "hi": 20,
+          "hi": 19,
           "pts": 2,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 21,
+          "lo": 20,
           "hi": 99,
           "pts": 2,
           "reb": 2,
@@ -5692,7 +5648,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 1,
-      "salary": 940,
+      "salary": 920,
       "chart": [
         {
           "lo": 1,
@@ -5743,7 +5699,7 @@
       "paintBoost": 3,
       "threePtBoost": -2,
       "defBoost": 0,
-      "salary": 460,
+      "salary": 450,
       "chart": [
         {
           "lo": 1,
@@ -5788,8 +5744,8 @@
       "name": "Tobias Harris",
       "team": "SAS",
       "pos": "PF",
-      "speed": 4,
-      "power": 11,
+      "speed": 5,
+      "power": 10,
       "shotLine": 14,
       "paintBoost": -1,
       "threePtBoost": -1,
@@ -5819,13 +5775,13 @@
         },
         {
           "lo": 14,
-          "hi": 19,
+          "hi": 18,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 20,
+          "lo": 19,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -5845,7 +5801,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -3,
-      "salary": 280,
+      "salary": 270,
       "chart": [
         {
           "lo": 1,
@@ -5896,7 +5852,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 390,
+      "salary": 380,
       "chart": [
         {
           "lo": 1,
@@ -5947,7 +5903,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 2,
-      "salary": 1070,
+      "salary": 1060,
       "chart": [
         {
           "lo": 1,
@@ -5985,13 +5941,13 @@
       "name": "Julian Champagnie",
       "team": "SAS",
       "pos": "SF",
-      "speed": 11,
-      "power": 5,
+      "speed": 9,
+      "power": 7,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 3,
       "defBoost": 0,
-      "salary": 460,
+      "salary": 490,
       "chart": [
         {
           "lo": 1,
@@ -6002,13 +5958,13 @@
         },
         {
           "lo": 3,
-          "hi": 8,
+          "hi": 7,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 9,
+          "lo": 8,
           "hi": 14,
           "pts": 1,
           "reb": 1,
@@ -6016,13 +5972,13 @@
         },
         {
           "lo": 15,
-          "hi": 21,
+          "hi": 20,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 22,
+          "lo": 21,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -6067,13 +6023,13 @@
         },
         {
           "lo": 16,
-          "hi": 20,
+          "hi": 19,
           "pts": 1,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 21,
+          "lo": 20,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -6087,13 +6043,13 @@
       "name": "Duncan Robinson",
       "team": "DET",
       "pos": "SG",
-      "speed": 12,
-      "power": 5,
+      "speed": 10,
+      "power": 7,
       "shotLine": 14,
       "paintBoost": -1,
       "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 520,
+      "salary": 530,
       "chart": [
         {
           "lo": 1,
@@ -6118,13 +6074,13 @@
         },
         {
           "lo": 14,
-          "hi": 21,
+          "hi": 20,
           "pts": 2,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 22,
+          "lo": 21,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -6138,13 +6094,13 @@
       "name": "Ayo Dosunmu",
       "team": "MIN",
       "pos": "SG",
-      "speed": 11,
-      "power": 3,
+      "speed": 10,
+      "power": 4,
       "shotLine": 14,
       "paintBoost": -1,
       "threePtBoost": 2,
       "defBoost": 0,
-      "salary": 500,
+      "salary": 530,
       "chart": [
         {
           "lo": 1,
@@ -6155,13 +6111,13 @@
         },
         {
           "lo": 3,
-          "hi": 7,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 8,
+          "lo": 7,
           "hi": 13,
           "pts": 2,
           "reb": 0,
@@ -6206,13 +6162,13 @@
         },
         {
           "lo": 8,
-          "hi": 13,
+          "hi": 12,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 14,
+          "lo": 13,
           "hi": 16,
           "pts": 3,
           "reb": 1,
@@ -6239,7 +6195,7 @@
       "paintBoost": 2,
       "threePtBoost": -5,
       "defBoost": 0,
-      "salary": 530,
+      "salary": 510,
       "chart": [
         {
           "lo": 1,
@@ -6341,7 +6297,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 1,
-      "salary": 360,
+      "salary": 350,
       "chart": [
         {
           "lo": 1,
@@ -6430,13 +6386,13 @@
       "name": "John Collins",
       "team": "DET",
       "pos": "PF",
-      "speed": 3,
-      "power": 10,
+      "speed": 5,
+      "power": 8,
       "shotLine": 14,
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": 0,
-      "salary": 520,
+      "salary": 540,
       "chart": [
         {
           "lo": 1,
@@ -6447,13 +6403,13 @@
         },
         {
           "lo": 3,
-          "hi": 7,
+          "hi": 6,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 8,
+          "lo": 7,
           "hi": 13,
           "pts": 2,
           "reb": 1,
@@ -6461,13 +6417,13 @@
         },
         {
           "lo": 14,
-          "hi": 18,
+          "hi": 17,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 19,
+          "lo": 18,
           "hi": 99,
           "pts": 3,
           "reb": 2,
@@ -6487,7 +6443,7 @@
       "paintBoost": 0,
       "threePtBoost": -4,
       "defBoost": -1,
-      "salary": 590,
+      "salary": 580,
       "chart": [
         {
           "lo": 1,
@@ -6538,7 +6494,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 360,
+      "salary": 350,
       "chart": [
         {
           "lo": 1,
@@ -6589,7 +6545,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 1,
-      "salary": 710,
+      "salary": 700,
       "chart": [
         {
           "lo": 1,
@@ -6627,8 +6583,8 @@
       "name": "Jaylon Tyson",
       "team": "CLE",
       "pos": "SG",
-      "speed": 10,
-      "power": 4,
+      "speed": 8,
+      "power": 6,
       "shotLine": 14,
       "paintBoost": -1,
       "threePtBoost": 2,
@@ -6658,13 +6614,13 @@
         },
         {
           "lo": 14,
-          "hi": 18,
+          "hi": 17,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 19,
+          "lo": 18,
           "hi": 99,
           "pts": 2,
           "reb": 2,
@@ -6684,7 +6640,7 @@
       "paintBoost": 0,
       "threePtBoost": 3,
       "defBoost": 0,
-      "salary": 500,
+      "salary": 490,
       "chart": [
         {
           "lo": 1,
@@ -6729,13 +6685,13 @@
       "name": "Isaac Okoro",
       "team": "CHI",
       "pos": "SG",
-      "speed": 8,
-      "power": 3,
+      "speed": 7,
+      "power": 4,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 150,
+      "salary": 140,
       "chart": [
         {
           "lo": 1,
@@ -6760,13 +6716,13 @@
         },
         {
           "lo": 15,
-          "hi": 18,
+          "hi": 17,
           "pts": 2,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 19,
+          "lo": 18,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -6786,7 +6742,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 220,
+      "salary": 240,
       "chart": [
         {
           "lo": 1,
@@ -6797,13 +6753,13 @@
         },
         {
           "lo": 3,
-          "hi": 8,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 9,
+          "lo": 8,
           "hi": 15,
           "pts": 1,
           "reb": 0,
@@ -6831,13 +6787,13 @@
       "name": "Tim Hardaway Jr.",
       "team": "MIA",
       "pos": "SG",
-      "speed": 9,
-      "power": 3,
+      "speed": 8,
+      "power": 4,
       "shotLine": 14,
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -2,
-      "salary": 560,
+      "salary": 540,
       "chart": [
         {
           "lo": 1,
@@ -6862,13 +6818,13 @@
         },
         {
           "lo": 14,
-          "hi": 18,
+          "hi": 17,
           "pts": 3,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 19,
+          "lo": 18,
           "hi": 99,
           "pts": 3,
           "reb": 1,
@@ -6888,7 +6844,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 3,
-      "salary": 540,
+      "salary": 530,
       "chart": [
         {
           "lo": 1,
@@ -6927,12 +6883,12 @@
       "team": "CLE",
       "pos": "SG",
       "speed": 11,
-      "power": 4,
+      "power": 5,
       "shotLine": 14,
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 360,
+      "salary": 380,
       "chart": [
         {
           "lo": 1,
@@ -6957,13 +6913,13 @@
         },
         {
           "lo": 14,
-          "hi": 20,
+          "hi": 21,
           "pts": 2,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 21,
+          "lo": 22,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -6983,7 +6939,7 @@
       "paintBoost": 0,
       "threePtBoost": -5,
       "defBoost": -2,
-      "salary": 350,
+      "salary": 330,
       "chart": [
         {
           "lo": 1,
@@ -7028,13 +6984,13 @@
       "name": "Jaylen Wells",
       "team": "MEM",
       "pos": "SG",
-      "speed": 9,
-      "power": 4,
+      "speed": 8,
+      "power": 5,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 410,
+      "salary": 430,
       "chart": [
         {
           "lo": 1,
@@ -7052,20 +7008,20 @@
         },
         {
           "lo": 7,
-          "hi": 14,
+          "hi": 11,
           "pts": 2,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 15,
-          "hi": 17,
+          "lo": 12,
+          "hi": 14,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 18,
+          "lo": 15,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -7080,12 +7036,12 @@
       "team": "MIA",
       "pos": "SG",
       "speed": 10,
-      "power": 4,
+      "power": 5,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 330,
+      "salary": 360,
       "chart": [
         {
           "lo": 1,
@@ -7129,7 +7085,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": 1,
-      "salary": 680,
+      "salary": 670,
       "chart": [
         {
           "lo": 1,
@@ -7174,13 +7130,13 @@
       "name": "Miles McBride",
       "team": "NYK",
       "pos": "SG",
-      "speed": 13,
-      "power": 4,
+      "speed": 12,
+      "power": 5,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 3,
       "defBoost": 0,
-      "salary": 530,
+      "salary": 540,
       "chart": [
         {
           "lo": 1,
@@ -7205,13 +7161,13 @@
         },
         {
           "lo": 15,
-          "hi": 21,
+          "hi": 20,
           "pts": 2,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 22,
+          "lo": 21,
           "hi": 99,
           "pts": 3,
           "reb": 1,
@@ -7225,8 +7181,8 @@
       "name": "Reed Sheppard",
       "team": "HOU",
       "pos": "SG",
-      "speed": 12,
-      "power": 3,
+      "speed": 11,
+      "power": 4,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 3,
@@ -7269,8 +7225,8 @@
       "name": "Kyle Kuzma",
       "team": "MIL",
       "pos": "PF",
-      "speed": 8,
-      "power": 8,
+      "speed": 7,
+      "power": 9,
       "shotLine": 16,
       "paintBoost": 0,
       "threePtBoost": 1,
@@ -7320,13 +7276,13 @@
       "name": "Bilal Coulibaly",
       "team": "WAS",
       "pos": "SG",
-      "speed": 10,
-      "power": 7,
+      "speed": 9,
+      "power": 8,
       "shotLine": 16,
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 1,
-      "salary": 540,
+      "salary": 520,
       "chart": [
         {
           "lo": 1,
@@ -7371,13 +7327,13 @@
       "name": "De'Andre Hunter",
       "team": "SAC",
       "pos": "SF",
-      "speed": 7,
-      "power": 3,
+      "speed": 6,
+      "power": 4,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 450,
+      "salary": 490,
       "chart": [
         {
           "lo": 1,
@@ -7388,20 +7344,20 @@
         },
         {
           "lo": 3,
-          "hi": 6,
+          "hi": 5,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 7,
-          "hi": 11,
+          "lo": 6,
+          "hi": 10,
           "pts": 2,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 12,
+          "lo": 11,
           "hi": 14,
           "pts": 3,
           "reb": 1,
@@ -7422,8 +7378,8 @@
       "name": "Naz Reid",
       "team": "CHA",
       "pos": "C",
-      "speed": 3,
-      "power": 11,
+      "speed": 4,
+      "power": 10,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 0,
@@ -7453,13 +7409,13 @@
         },
         {
           "lo": 15,
-          "hi": 19,
+          "hi": 18,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 20,
+          "lo": 19,
           "hi": 99,
           "pts": 2,
           "reb": 2,
@@ -7479,7 +7435,7 @@
       "paintBoost": 3,
       "threePtBoost": -2,
       "defBoost": 4,
-      "salary": 810,
+      "salary": 800,
       "chart": [
         {
           "lo": 1,
@@ -7530,7 +7486,7 @@
       "paintBoost": 2,
       "threePtBoost": -3,
       "defBoost": 1,
-      "salary": 690,
+      "salary": 680,
       "chart": [
         {
           "lo": 1,
@@ -7555,13 +7511,13 @@
         },
         {
           "lo": 17,
-          "hi": 25,
+          "hi": 24,
           "pts": 2,
           "reb": 2,
           "ast": 0
         },
         {
-          "lo": 26,
+          "lo": 25,
           "hi": 99,
           "pts": 2,
           "reb": 2,
@@ -7575,13 +7531,13 @@
       "name": "Jalen Green",
       "team": "PHX",
       "pos": "SG",
-      "speed": 12,
-      "power": 3,
+      "speed": 11,
+      "power": 4,
       "shotLine": 16,
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -1,
-      "salary": 600,
+      "salary": 580,
       "chart": [
         {
           "lo": 1,
@@ -7625,7 +7581,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -1,
-      "salary": 620,
+      "salary": 610,
       "chart": [
         {
           "lo": 1,
@@ -7670,13 +7626,13 @@
       "name": "Cedric Coward",
       "team": "MEM",
       "pos": "SG",
-      "speed": 12,
-      "power": 4,
+      "speed": 11,
+      "power": 5,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 740,
+      "salary": 720,
       "chart": [
         {
           "lo": 1,
@@ -7727,7 +7683,7 @@
       "paintBoost": 2,
       "threePtBoost": -2,
       "defBoost": 0,
-      "salary": 610,
+      "salary": 600,
       "chart": [
         {
           "lo": 1,
@@ -7778,7 +7734,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": 2,
-      "salary": 970,
+      "salary": 950,
       "chart": [
         {
           "lo": 1,
@@ -7854,13 +7810,13 @@
         },
         {
           "lo": 17,
-          "hi": 21,
+          "hi": 20,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 22,
+          "lo": 21,
           "hi": 99,
           "pts": 2,
           "reb": 2,
@@ -7874,13 +7830,13 @@
       "name": "Harrison Barnes",
       "team": "SAS",
       "pos": "PF",
-      "speed": 4,
-      "power": 9,
+      "speed": 5,
+      "power": 8,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 250,
+      "salary": 240,
       "chart": [
         {
           "lo": 1,
@@ -7905,13 +7861,13 @@
         },
         {
           "lo": 15,
-          "hi": 20,
+          "hi": 19,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 21,
+          "lo": 20,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -7925,13 +7881,13 @@
       "name": "Moses Moody",
       "team": "GSW",
       "pos": "SG",
-      "speed": 12,
-      "power": 11,
+      "speed": 13,
+      "power": 10,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 3,
       "defBoost": 2,
-      "salary": 770,
+      "salary": 760,
       "chart": [
         {
           "lo": 1,
@@ -7982,7 +7938,7 @@
       "paintBoost": 0,
       "threePtBoost": -2,
       "defBoost": -2,
-      "salary": 300,
+      "salary": 310,
       "chart": [
         {
           "lo": 1,
@@ -7993,13 +7949,13 @@
         },
         {
           "lo": 3,
-          "hi": 6,
+          "hi": 5,
           "pts": 0,
           "reb": 0,
           "ast": 1
         },
         {
-          "lo": 7,
+          "lo": 6,
           "hi": 10,
           "pts": 1,
           "reb": 0,
@@ -8033,7 +7989,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -1,
-      "salary": 330,
+      "salary": 360,
       "chart": [
         {
           "lo": 1,
@@ -8044,13 +8000,13 @@
         },
         {
           "lo": 3,
-          "hi": 6,
+          "hi": 5,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 7,
+          "lo": 6,
           "hi": 15,
           "pts": 2,
           "reb": 1,
@@ -8077,7 +8033,7 @@
       "paintBoost": -1,
       "threePtBoost": -1,
       "defBoost": -2,
-      "salary": 860,
+      "salary": 850,
       "chart": [
         {
           "lo": 1,
@@ -8139,13 +8095,13 @@
         },
         {
           "lo": 3,
-          "hi": 10,
+          "hi": 9,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 11,
+          "lo": 10,
           "hi": 15,
           "pts": 1,
           "reb": 1,
@@ -8173,8 +8129,8 @@
       "name": "Egor Dëmin",
       "team": "BKN",
       "pos": "PG",
-      "speed": 10,
-      "power": 3,
+      "speed": 9,
+      "power": 4,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 3,
@@ -8223,7 +8179,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 290,
+      "salary": 280,
       "chart": [
         {
           "lo": 1,
@@ -8274,7 +8230,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 250,
+      "salary": 260,
       "chart": [
         {
           "lo": 1,
@@ -8299,13 +8255,13 @@
         },
         {
           "lo": 16,
-          "hi": 20,
+          "hi": 19,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 21,
+          "lo": 20,
           "hi": 99,
           "pts": 2,
           "reb": 2,
@@ -8319,13 +8275,13 @@
       "name": "Coby White",
       "team": "CHA",
       "pos": "SG",
-      "speed": 13,
-      "power": 4,
+      "speed": 12,
+      "power": 5,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 800,
+      "salary": 790,
       "chart": [
         {
           "lo": 1,
@@ -8350,13 +8306,13 @@
         },
         {
           "lo": 15,
-          "hi": 20,
+          "hi": 19,
           "pts": 3,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 21,
+          "lo": 20,
           "hi": 99,
           "pts": 4,
           "reb": 1,
@@ -8376,7 +8332,7 @@
       "paintBoost": 0,
       "threePtBoost": -2,
       "defBoost": -1,
-      "salary": 510,
+      "salary": 500,
       "chart": [
         {
           "lo": 1,
@@ -8427,7 +8383,7 @@
       "paintBoost": 3,
       "threePtBoost": -4,
       "defBoost": 0,
-      "salary": 530,
+      "salary": 550,
       "chart": [
         {
           "lo": 1,
@@ -8438,13 +8394,13 @@
         },
         {
           "lo": 3,
-          "hi": 9,
+          "hi": 8,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 10,
+          "lo": 9,
           "hi": 15,
           "pts": 2,
           "reb": 1,
@@ -8472,13 +8428,13 @@
       "name": "Anfernee Simons",
       "team": "PHI",
       "pos": "SG",
-      "speed": 11,
-      "power": 3,
+      "speed": 10,
+      "power": 4,
       "shotLine": 14,
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 640,
+      "salary": 650,
       "chart": [
         {
           "lo": 1,
@@ -8489,13 +8445,13 @@
         },
         {
           "lo": 3,
-          "hi": 7,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 8,
+          "lo": 7,
           "hi": 13,
           "pts": 2,
           "reb": 0,
@@ -8523,13 +8479,13 @@
       "name": "Sam Hauser",
       "team": "BOS",
       "pos": "PF",
-      "speed": 4,
-      "power": 11,
+      "speed": 9,
+      "power": 6,
       "shotLine": 14,
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 0,
-      "salary": 410,
+      "salary": 440,
       "chart": [
         {
           "lo": 1,
@@ -8540,13 +8496,13 @@
         },
         {
           "lo": 3,
-          "hi": 8,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 9,
+          "lo": 8,
           "hi": 13,
           "pts": 1,
           "reb": 1,
@@ -8554,13 +8510,13 @@
         },
         {
           "lo": 14,
-          "hi": 21,
+          "hi": 19,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 22,
+          "lo": 20,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -8642,13 +8598,13 @@
         },
         {
           "lo": 3,
-          "hi": 7,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 8,
+          "lo": 7,
           "hi": 11,
           "pts": 1,
           "reb": 0,
@@ -8682,7 +8638,7 @@
       "paintBoost": 0,
       "threePtBoost": -2,
       "defBoost": -2,
-      "salary": 240,
+      "salary": 230,
       "chart": [
         {
           "lo": 1,
@@ -8771,13 +8727,13 @@
       "name": "Bobby Portis",
       "team": "MIA",
       "pos": "PF",
-      "speed": 3,
-      "power": 8,
+      "speed": 4,
+      "power": 7,
       "shotLine": 14,
       "paintBoost": -1,
       "threePtBoost": 2,
       "defBoost": -2,
-      "salary": 600,
+      "salary": 580,
       "chart": [
         {
           "lo": 1,
@@ -8802,13 +8758,13 @@
         },
         {
           "lo": 14,
-          "hi": 17,
+          "hi": 16,
           "pts": 3,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 18,
+          "lo": 17,
           "hi": 99,
           "pts": 3,
           "reb": 2,
@@ -8890,13 +8846,13 @@
         },
         {
           "lo": 3,
-          "hi": 10,
+          "hi": 9,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 11,
+          "lo": 10,
           "hi": 14,
           "pts": 1,
           "reb": 1,
@@ -8930,7 +8886,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": -2,
-      "salary": 450,
+      "salary": 440,
       "chart": [
         {
           "lo": 1,
@@ -8975,13 +8931,13 @@
       "name": "Precious Achiuwa",
       "team": "SAC",
       "pos": "C",
-      "speed": 8,
-      "power": 10,
+      "speed": 7,
+      "power": 11,
       "shotLine": 17,
       "paintBoost": 2,
       "threePtBoost": -1,
       "defBoost": 0,
-      "salary": 600,
+      "salary": 590,
       "chart": [
         {
           "lo": 1,
@@ -9026,13 +8982,13 @@
       "name": "Cam Spencer",
       "team": "MEM",
       "pos": "SG",
-      "speed": 12,
-      "power": 3,
+      "speed": 11,
+      "power": 4,
       "shotLine": 13,
       "paintBoost": -1,
       "threePtBoost": 1,
       "defBoost": -1,
-      "salary": 820,
+      "salary": 800,
       "chart": [
         {
           "lo": 1,
@@ -9057,13 +9013,13 @@
         },
         {
           "lo": 13,
-          "hi": 20,
+          "hi": 19,
           "pts": 3,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 21,
+          "lo": 20,
           "hi": 99,
           "pts": 3,
           "reb": 1,
@@ -9101,13 +9057,13 @@
         },
         {
           "lo": 4,
-          "hi": 9,
+          "hi": 8,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 10,
+          "lo": 9,
           "hi": 16,
           "pts": 1,
           "reb": 1,
@@ -9135,8 +9091,8 @@
       "name": "Collin Sexton",
       "team": "LAL",
       "pos": "SG",
-      "speed": 11,
-      "power": 3,
+      "speed": 10,
+      "power": 4,
       "shotLine": 14,
       "paintBoost": -1,
       "threePtBoost": 2,
@@ -9152,13 +9108,13 @@
         },
         {
           "lo": 3,
-          "hi": 7,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 8,
+          "lo": 7,
           "hi": 13,
           "pts": 2,
           "reb": 0,
@@ -9192,7 +9148,7 @@
       "paintBoost": 0,
       "threePtBoost": -5,
       "defBoost": 0,
-      "salary": 530,
+      "salary": 520,
       "chart": [
         {
           "lo": 1,
@@ -9230,13 +9186,13 @@
       "name": "Brice Sensabaugh",
       "team": "UTA",
       "pos": "SF",
-      "speed": 7,
-      "power": 3,
+      "speed": 6,
+      "power": 4,
       "shotLine": 14,
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": -2,
-      "salary": 510,
+      "salary": 630,
       "chart": [
         {
           "lo": 1,
@@ -9247,27 +9203,27 @@
         },
         {
           "lo": 3,
-          "hi": 6,
+          "hi": 5,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 7,
-          "hi": 13,
+          "lo": 6,
+          "hi": 10,
           "pts": 2,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 14,
-          "hi": 15,
+          "lo": 11,
+          "hi": 13,
           "pts": 3,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 14,
           "hi": 99,
           "pts": 4,
           "reb": 2,
@@ -9312,13 +9268,13 @@
         },
         {
           "lo": 15,
-          "hi": 18,
+          "hi": 17,
           "pts": 2,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 19,
+          "lo": 18,
           "hi": 99,
           "pts": 3,
           "reb": 2,
@@ -9363,13 +9319,13 @@
         },
         {
           "lo": 17,
-          "hi": 21,
+          "hi": 20,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 22,
+          "lo": 21,
           "hi": 99,
           "pts": 1,
           "reb": 2,
@@ -9383,13 +9339,13 @@
       "name": "Keldon Johnson",
       "team": "SAS",
       "pos": "SF",
-      "speed": 9,
-      "power": 4,
+      "speed": 8,
+      "power": 5,
       "shotLine": 15,
       "paintBoost": -1,
       "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 600,
+      "salary": 660,
       "chart": [
         {
           "lo": 1,
@@ -9407,20 +9363,20 @@
         },
         {
           "lo": 7,
-          "hi": 14,
+          "hi": 11,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 15,
-          "hi": 17,
+          "lo": 12,
+          "hi": 14,
           "pts": 3,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 18,
+          "lo": 15,
           "hi": 99,
           "pts": 3,
           "reb": 2,
@@ -9434,8 +9390,8 @@
       "name": "Svi Mykhailiuk",
       "team": "UTA",
       "pos": "SF",
-      "speed": 10,
-      "power": 4,
+      "speed": 9,
+      "power": 5,
       "shotLine": 14,
       "paintBoost": -1,
       "threePtBoost": 2,
@@ -9465,13 +9421,13 @@
         },
         {
           "lo": 14,
-          "hi": 19,
+          "hi": 18,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 20,
+          "lo": 19,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -9491,7 +9447,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 1,
-      "salary": 790,
+      "salary": 770,
       "chart": [
         {
           "lo": 1,
@@ -9535,7 +9491,7 @@
       "paintBoost": 0,
       "threePtBoost": 3,
       "defBoost": 0,
-      "salary": 490,
+      "salary": 470,
       "chart": [
         {
           "lo": 1,
@@ -9586,7 +9542,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 1,
-      "salary": 550,
+      "salary": 580,
       "chart": [
         {
           "lo": 1,
@@ -9597,13 +9553,13 @@
         },
         {
           "lo": 3,
-          "hi": 7,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 8,
+          "lo": 7,
           "hi": 14,
           "pts": 2,
           "reb": 0,
@@ -9637,7 +9593,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": -1,
-      "salary": 390,
+      "salary": 380,
       "chart": [
         {
           "lo": 1,
@@ -9706,13 +9662,13 @@
         },
         {
           "lo": 16,
-          "hi": 22,
+          "hi": 21,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 23,
+          "lo": 22,
           "hi": 99,
           "pts": 3,
           "reb": 2,
@@ -9726,13 +9682,13 @@
       "name": "Ty Jerome",
       "team": "MEM",
       "pos": "SG",
-      "speed": 15,
-      "power": 5,
+      "speed": 13,
+      "power": 7,
       "shotLine": 13,
       "paintBoost": -1,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 1070,
+      "salary": 1100,
       "chart": [
         {
           "lo": 1,
@@ -9743,13 +9699,13 @@
         },
         {
           "lo": 3,
-          "hi": 8,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 9,
+          "lo": 8,
           "hi": 12,
           "pts": 2,
           "reb": 0,
@@ -9757,13 +9713,13 @@
         },
         {
           "lo": 13,
-          "hi": 22,
+          "hi": 20,
           "pts": 3,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 23,
+          "lo": 21,
           "hi": 99,
           "pts": 4,
           "reb": 1,
@@ -9783,7 +9739,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 1,
-      "salary": 820,
+      "salary": 810,
       "chart": [
         {
           "lo": 1,
@@ -9827,7 +9783,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 1,
-      "salary": 330,
+      "salary": 320,
       "chart": [
         {
           "lo": 1,
@@ -9885,7 +9841,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 2,
-      "salary": 720,
+      "salary": 710,
       "chart": [
         {
           "lo": 1,
@@ -9943,7 +9899,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 1,
-      "salary": 310,
+      "salary": 300,
       "chart": [
         {
           "lo": 1,
@@ -9981,8 +9937,8 @@
       "name": "Kevin Huerter",
       "team": "DET",
       "pos": "SF",
-      "speed": 10,
-      "power": 4,
+      "speed": 9,
+      "power": 5,
       "shotLine": 16,
       "paintBoost": 0,
       "threePtBoost": 1,
@@ -10012,13 +9968,13 @@
         },
         {
           "lo": 16,
-          "hi": 19,
+          "hi": 18,
           "pts": 2,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 20,
+          "lo": 19,
           "hi": 99,
           "pts": 3,
           "reb": 1,
@@ -10038,7 +9994,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -1,
-      "salary": 360,
+      "salary": 350,
       "chart": [
         {
           "lo": 1,
@@ -10140,7 +10096,7 @@
       "paintBoost": 0,
       "threePtBoost": -3,
       "defBoost": -1,
-      "salary": 530,
+      "salary": 520,
       "chart": [
         {
           "lo": 1,
@@ -10184,7 +10140,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -2,
-      "salary": 190,
+      "salary": 180,
       "chart": [
         {
           "lo": 1,
@@ -10242,7 +10198,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 740,
+      "salary": 750,
       "chart": [
         {
           "lo": 1,
@@ -10253,13 +10209,13 @@
         },
         {
           "lo": 3,
-          "hi": 8,
+          "hi": 7,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 9,
+          "lo": 8,
           "hi": 15,
           "pts": 2,
           "reb": 1,
@@ -10293,7 +10249,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 430,
+      "salary": 410,
       "chart": [
         {
           "lo": 1,
@@ -10344,7 +10300,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -3,
-      "salary": 350,
+      "salary": 340,
       "chart": [
         {
           "lo": 1,
@@ -10362,13 +10318,13 @@
         },
         {
           "lo": 6,
-          "hi": 9,
+          "hi": 8,
           "pts": 2,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 10,
+          "lo": 9,
           "hi": 15,
           "pts": 2,
           "reb": 1,
@@ -10395,7 +10351,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 490,
+      "salary": 480,
       "chart": [
         {
           "lo": 1,
@@ -10484,13 +10440,13 @@
       "name": "Malik Monk",
       "team": "SAC",
       "pos": "SG",
-      "speed": 9,
-      "power": 2,
+      "speed": 8,
+      "power": 3,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 3,
       "defBoost": -2,
-      "salary": 500,
+      "salary": 560,
       "chart": [
         {
           "lo": 1,
@@ -10508,20 +10464,20 @@
         },
         {
           "lo": 7,
-          "hi": 14,
+          "hi": 11,
           "pts": 2,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 15,
-          "hi": 17,
+          "lo": 12,
+          "hi": 14,
           "pts": 3,
           "reb": 0,
           "ast": 1
         },
         {
-          "lo": 18,
+          "lo": 15,
           "hi": 99,
           "pts": 3,
           "reb": 1,
@@ -10541,7 +10497,7 @@
       "paintBoost": 3,
       "threePtBoost": -2,
       "defBoost": 1,
-      "salary": 370,
+      "salary": 380,
       "chart": [
         {
           "lo": 1,
@@ -10566,13 +10522,13 @@
         },
         {
           "lo": 18,
-          "hi": 23,
+          "hi": 22,
           "pts": 1,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 24,
+          "lo": 23,
           "hi": 99,
           "pts": 1,
           "reb": 2,
@@ -10617,13 +10573,13 @@
         },
         {
           "lo": 15,
-          "hi": 23,
+          "hi": 22,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 24,
+          "lo": 23,
           "hi": 99,
           "pts": 2,
           "reb": 2,
@@ -10643,7 +10599,7 @@
       "paintBoost": 2,
       "threePtBoost": -1,
       "defBoost": 1,
-      "salary": 590,
+      "salary": 580,
       "chart": [
         {
           "lo": 1,
@@ -10688,13 +10644,13 @@
       "name": "Aaron Wiggins",
       "team": "ATL",
       "pos": "SG",
-      "speed": 8,
-      "power": 7,
+      "speed": 9,
+      "power": 6,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 1,
-      "salary": 450,
+      "salary": 440,
       "chart": [
         {
           "lo": 1,
@@ -10719,13 +10675,13 @@
         },
         {
           "lo": 15,
-          "hi": 19,
+          "hi": 18,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 20,
+          "lo": 19,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -10745,7 +10701,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 2,
-      "salary": 670,
+      "salary": 660,
       "chart": [
         {
           "lo": 1,
@@ -10797,13 +10753,13 @@
       "name": "Klay Thompson",
       "team": "MIA",
       "pos": "SF",
-      "speed": 9,
-      "power": 3,
+      "speed": 8,
+      "power": 4,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 3,
       "defBoost": 0,
-      "salary": 410,
+      "salary": 430,
       "chart": [
         {
           "lo": 1,
@@ -10828,13 +10784,6 @@
         },
         {
           "lo": 15,
-          "hi": 17,
-          "pts": 2,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 18,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -10854,7 +10803,7 @@
       "paintBoost": 2,
       "threePtBoost": -3,
       "defBoost": -1,
-      "salary": 510,
+      "salary": 500,
       "chart": [
         {
           "lo": 1,
@@ -10899,8 +10848,8 @@
       "name": "Luke Kennard",
       "team": "PHX",
       "pos": "SG",
-      "speed": 9,
-      "power": 3,
+      "speed": 8,
+      "power": 4,
       "shotLine": 12,
       "paintBoost": -1,
       "threePtBoost": 0,
@@ -10930,13 +10879,13 @@
         },
         {
           "lo": 12,
-          "hi": 19,
+          "hi": 18,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 20,
+          "lo": 19,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -10950,13 +10899,13 @@
       "name": "Al Horford",
       "team": "GSW",
       "pos": "C",
-      "speed": 3,
-      "power": 10,
+      "speed": 4,
+      "power": 9,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 330,
+      "salary": 340,
       "chart": [
         {
           "lo": 1,
@@ -10967,13 +10916,13 @@
         },
         {
           "lo": 3,
-          "hi": 7,
+          "hi": 6,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 8,
+          "lo": 7,
           "hi": 14,
           "pts": 1,
           "reb": 1,
@@ -10981,13 +10930,13 @@
         },
         {
           "lo": 15,
-          "hi": 19,
+          "hi": 18,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 20,
+          "lo": 19,
           "hi": 99,
           "pts": 2,
           "reb": 2,
@@ -11007,7 +10956,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -1,
-      "salary": 680,
+      "salary": 740,
       "chart": [
         {
           "lo": 1,
@@ -11025,20 +10974,20 @@
         },
         {
           "lo": 7,
-          "hi": 15,
+          "hi": 12,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 16,
-          "hi": 18,
+          "lo": 13,
+          "hi": 15,
           "pts": 3,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 19,
+          "lo": 16,
           "hi": 99,
           "pts": 3,
           "reb": 2,
@@ -11058,7 +11007,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 480,
+      "salary": 470,
       "chart": [
         {
           "lo": 1,
@@ -11134,13 +11083,13 @@
         },
         {
           "lo": 16,
-          "hi": 22,
+          "hi": 21,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 23,
+          "lo": 22,
           "hi": 99,
           "pts": 2,
           "reb": 2,
@@ -11211,7 +11160,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 290,
+      "salary": 280,
       "chart": [
         {
           "lo": 1,
@@ -11249,13 +11198,13 @@
       "name": "Isaiah Joe",
       "team": "DET",
       "pos": "SG",
-      "speed": 13,
-      "power": 3,
+      "speed": 12,
+      "power": 4,
       "shotLine": 13,
       "paintBoost": -1,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 750,
+      "salary": 740,
       "chart": [
         {
           "lo": 1,
@@ -11280,13 +11229,13 @@
         },
         {
           "lo": 13,
-          "hi": 21,
+          "hi": 20,
           "pts": 3,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 22,
+          "lo": 21,
           "hi": 99,
           "pts": 3,
           "reb": 1,
@@ -11351,13 +11300,13 @@
       "name": "Cam Thomas",
       "team": "2TM",
       "pos": "SG",
-      "speed": 6,
-      "power": 2,
+      "speed": 5,
+      "power": 3,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": -3,
-      "salary": 500,
+      "salary": 490,
       "chart": [
         {
           "lo": 1,
@@ -11375,13 +11324,13 @@
         },
         {
           "lo": 6,
-          "hi": 9,
+          "hi": 8,
           "pts": 2,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 10,
+          "lo": 9,
           "hi": 14,
           "pts": 3,
           "reb": 0,
@@ -11402,13 +11351,13 @@
       "name": "Jay Huff",
       "team": "IND",
       "pos": "C",
-      "speed": 5,
-      "power": 10,
+      "speed": 6,
+      "power": 9,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 590,
+      "salary": 620,
       "chart": [
         {
           "lo": 1,
@@ -11419,13 +11368,13 @@
         },
         {
           "lo": 3,
-          "hi": 7,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 8,
+          "lo": 7,
           "hi": 14,
           "pts": 2,
           "reb": 1,
@@ -11433,13 +11382,13 @@
         },
         {
           "lo": 15,
-          "hi": 19,
+          "hi": 18,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 20,
+          "lo": 19,
           "hi": 99,
           "pts": 3,
           "reb": 2,
@@ -11459,7 +11408,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 300,
+      "salary": 290,
       "chart": [
         {
           "lo": 1,
@@ -11505,12 +11454,12 @@
       "team": "SAS",
       "pos": "C",
       "speed": 3,
-      "power": 11,
+      "power": 12,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": -5,
       "defBoost": 0,
-      "salary": 390,
+      "salary": 400,
       "chart": [
         {
           "lo": 1,
@@ -11535,13 +11484,13 @@
         },
         {
           "lo": 15,
-          "hi": 22,
+          "hi": 23,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 23,
+          "lo": 24,
           "hi": 99,
           "pts": 2,
           "reb": 2,
@@ -11561,7 +11510,7 @@
       "paintBoost": 0,
       "threePtBoost": -2,
       "defBoost": -1,
-      "salary": 40,
+      "salary": 30,
       "chart": [
         {
           "lo": 1,
@@ -11605,7 +11554,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 570,
+      "salary": 560,
       "chart": [
         {
           "lo": 1,
@@ -11623,13 +11572,13 @@
         },
         {
           "lo": 7,
-          "hi": 12,
+          "hi": 11,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 13,
+          "lo": 12,
           "hi": 15,
           "pts": 2,
           "reb": 1,
@@ -11656,7 +11605,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": -1,
-      "salary": 150,
+      "salary": 130,
       "chart": [
         {
           "lo": 1,
@@ -11714,7 +11663,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -2,
-      "salary": 500,
+      "salary": 480,
       "chart": [
         {
           "lo": 1,
@@ -11766,13 +11715,13 @@
       "name": "Jalen Smith",
       "team": "CHI",
       "pos": "C",
-      "speed": 4,
-      "power": 13,
+      "speed": 5,
+      "power": 12,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 810,
+      "salary": 820,
       "chart": [
         {
           "lo": 1,
@@ -11783,13 +11732,13 @@
         },
         {
           "lo": 3,
-          "hi": 8,
+          "hi": 7,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 9,
+          "lo": 8,
           "hi": 14,
           "pts": 2,
           "reb": 1,
@@ -11797,13 +11746,13 @@
         },
         {
           "lo": 15,
-          "hi": 22,
+          "hi": 21,
           "pts": 3,
           "reb": 2,
           "ast": 0
         },
         {
-          "lo": 23,
+          "lo": 22,
           "hi": 99,
           "pts": 3,
           "reb": 3,
@@ -11823,7 +11772,7 @@
       "paintBoost": 2,
       "threePtBoost": 2,
       "defBoost": 1,
-      "salary": 450,
+      "salary": 440,
       "chart": [
         {
           "lo": 1,
@@ -11899,13 +11848,13 @@
         },
         {
           "lo": 18,
-          "hi": 22,
+          "hi": 21,
           "pts": 1,
           "reb": 2,
           "ast": 0
         },
         {
-          "lo": 23,
+          "lo": 22,
           "hi": 99,
           "pts": 1,
           "reb": 3,
@@ -11919,13 +11868,13 @@
       "name": "Gui Santos",
       "team": "GSW",
       "pos": "PF",
-      "speed": 9,
-      "power": 4,
+      "speed": 8,
+      "power": 5,
       "shotLine": 16,
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 610,
+      "salary": 580,
       "chart": [
         {
           "lo": 1,
@@ -11983,7 +11932,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 1,
-      "salary": 490,
+      "salary": 480,
       "chart": [
         {
           "lo": 1,
@@ -12078,7 +12027,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 180,
+      "salary": 190,
       "chart": [
         {
           "lo": 1,
@@ -12096,13 +12045,13 @@
         },
         {
           "lo": 4,
-          "hi": 11,
+          "hi": 10,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 12,
+          "lo": 11,
           "hi": 15,
           "pts": 2,
           "reb": 1,
@@ -12180,7 +12129,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": -2,
-      "salary": 320,
+      "salary": 330,
       "chart": [
         {
           "lo": 1,
@@ -12191,13 +12140,13 @@
         },
         {
           "lo": 3,
-          "hi": 6,
+          "hi": 5,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 7,
+          "lo": 6,
           "hi": 10,
           "pts": 1,
           "reb": 0,
@@ -12231,7 +12180,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 0,
-      "salary": 680,
+      "salary": 670,
       "chart": [
         {
           "lo": 1,
@@ -12289,7 +12238,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 630,
+      "salary": 610,
       "chart": [
         {
           "lo": 1,
@@ -12334,13 +12283,13 @@
       "name": "Marvin Bagley III",
       "team": "DEN",
       "pos": "PF",
-      "speed": 3,
-      "power": 10,
+      "speed": 4,
+      "power": 9,
       "shotLine": 16,
       "paintBoost": 0,
       "threePtBoost": -2,
       "defBoost": -1,
-      "salary": 570,
+      "salary": 580,
       "chart": [
         {
           "lo": 1,
@@ -12351,13 +12300,13 @@
         },
         {
           "lo": 3,
-          "hi": 8,
+          "hi": 7,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 9,
+          "lo": 8,
           "hi": 15,
           "pts": 2,
           "reb": 1,
@@ -12365,13 +12314,13 @@
         },
         {
           "lo": 16,
-          "hi": 19,
+          "hi": 18,
           "pts": 3,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 20,
+          "lo": 19,
           "hi": 99,
           "pts": 3,
           "reb": 3,
@@ -12391,7 +12340,7 @@
       "paintBoost": 2,
       "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 430,
+      "salary": 420,
       "chart": [
         {
           "lo": 1,
@@ -12442,7 +12391,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 280,
+      "salary": 270,
       "chart": [
         {
           "lo": 1,
@@ -12493,7 +12442,7 @@
       "paintBoost": 1,
       "threePtBoost": -1,
       "defBoost": 3,
-      "salary": 540,
+      "salary": 530,
       "chart": [
         {
           "lo": 1,
@@ -12518,13 +12467,13 @@
         },
         {
           "lo": 17,
-          "hi": 20,
+          "hi": 19,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 21,
+          "lo": 20,
           "hi": 99,
           "pts": 2,
           "reb": 2,
@@ -12544,7 +12493,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 1,
-      "salary": 680,
+      "salary": 710,
       "chart": [
         {
           "lo": 1,
@@ -12576,13 +12525,13 @@
         },
         {
           "lo": 15,
-          "hi": 21,
+          "hi": 20,
           "pts": 2,
           "reb": 0,
           "ast": 1
         },
         {
-          "lo": 22,
+          "lo": 21,
           "hi": 99,
           "pts": 4,
           "reb": 1,
@@ -12602,7 +12551,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 1,
-      "salary": 530,
+      "salary": 520,
       "chart": [
         {
           "lo": 1,
@@ -12627,13 +12576,13 @@
         },
         {
           "lo": 14,
-          "hi": 18,
+          "hi": 17,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 19,
+          "lo": 18,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -12653,7 +12602,7 @@
       "paintBoost": 0,
       "threePtBoost": -2,
       "defBoost": 1,
-      "salary": 260,
+      "salary": 250,
       "chart": [
         {
           "lo": 1,
@@ -12698,13 +12647,13 @@
       "name": "Kyle Anderson",
       "team": "TOR",
       "pos": "SF",
-      "speed": 6,
-      "power": 6,
+      "speed": 5,
+      "power": 7,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": -5,
       "defBoost": 0,
-      "salary": 300,
+      "salary": 290,
       "chart": [
         {
           "lo": 1,
@@ -12780,13 +12729,13 @@
         },
         {
           "lo": 18,
-          "hi": 21,
+          "hi": 20,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 22,
+          "lo": 21,
           "hi": 99,
           "pts": 2,
           "reb": 2,
@@ -12806,7 +12755,7 @@
       "paintBoost": 3,
       "threePtBoost": -3,
       "defBoost": -2,
-      "salary": 170,
+      "salary": 120,
       "chart": [
         {
           "lo": 1,
@@ -12824,17 +12773,10 @@
         },
         {
           "lo": 8,
-          "hi": 13,
+          "hi": 16,
           "pts": 1,
           "reb": 1,
           "ast": 0
-        },
-        {
-          "lo": 14,
-          "hi": 16,
-          "pts": 1,
-          "reb": 3,
-          "ast": 1
         },
         {
           "lo": 17,
@@ -12857,7 +12799,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": 2,
-      "salary": 770,
+      "salary": 760,
       "chart": [
         {
           "lo": 1,
@@ -12882,13 +12824,13 @@
         },
         {
           "lo": 14,
-          "hi": 23,
+          "hi": 22,
           "pts": 2,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 24,
+          "lo": 23,
           "hi": 99,
           "pts": 2,
           "reb": 3,
@@ -12933,13 +12875,13 @@
         },
         {
           "lo": 18,
-          "hi": 23,
+          "hi": 22,
           "pts": 2,
           "reb": 2,
           "ast": 0
         },
         {
-          "lo": 24,
+          "lo": 23,
           "hi": 99,
           "pts": 2,
           "reb": 3,
@@ -12959,7 +12901,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 370,
+      "salary": 360,
       "chart": [
         {
           "lo": 1,
@@ -13010,7 +12952,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 540,
+      "salary": 550,
       "chart": [
         {
           "lo": 1,
@@ -13035,13 +12977,13 @@
         },
         {
           "lo": 16,
-          "hi": 21,
+          "hi": 20,
           "pts": 2,
           "reb": 2,
           "ast": 0
         },
         {
-          "lo": 22,
+          "lo": 21,
           "hi": 99,
           "pts": 3,
           "reb": 5,
@@ -13061,7 +13003,7 @@
       "paintBoost": 2,
       "threePtBoost": 2,
       "defBoost": 1,
-      "salary": 480,
+      "salary": 470,
       "chart": [
         {
           "lo": 1,
@@ -13086,13 +13028,13 @@
         },
         {
           "lo": 17,
-          "hi": 22,
+          "hi": 21,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 23,
+          "lo": 22,
           "hi": 99,
           "pts": 2,
           "reb": 2,
@@ -13106,13 +13048,13 @@
       "name": "Micah Potter",
       "team": "POR",
       "pos": "C",
-      "speed": 6,
-      "power": 11,
+      "speed": 7,
+      "power": 10,
       "shotLine": 14,
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 590,
+      "salary": 610,
       "chart": [
         {
           "lo": 1,
@@ -13137,13 +13079,13 @@
         },
         {
           "lo": 14,
-          "hi": 21,
+          "hi": 20,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 22,
+          "lo": 21,
           "hi": 99,
           "pts": 2,
           "reb": 2,
@@ -13163,7 +13105,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -2,
-      "salary": 480,
+      "salary": 450,
       "chart": [
         {
           "lo": 1,
@@ -13221,7 +13163,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 260,
+      "salary": 330,
       "chart": [
         {
           "lo": 1,
@@ -13239,10 +13181,17 @@
         },
         {
           "lo": 7,
-          "hi": 15,
+          "hi": 12,
           "pts": 1,
           "reb": 0,
           "ast": 0
+        },
+        {
+          "lo": 13,
+          "hi": 15,
+          "pts": 2,
+          "reb": 1,
+          "ast": 1
         },
         {
           "lo": 16,
@@ -13259,8 +13208,8 @@
       "name": "Sidy Cissoko",
       "team": "POR",
       "pos": "SF",
-      "speed": 7,
-      "power": 5,
+      "speed": 6,
+      "power": 6,
       "shotLine": 17,
       "paintBoost": 2,
       "threePtBoost": 2,
@@ -13316,7 +13265,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 310,
+      "salary": 380,
       "chart": [
         {
           "lo": 1,
@@ -13334,20 +13283,20 @@
         },
         {
           "lo": 7,
-          "hi": 15,
+          "hi": 12,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 16,
-          "hi": 18,
+          "lo": 13,
+          "hi": 15,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 19,
+          "lo": 16,
           "hi": 99,
           "pts": 2,
           "reb": 2,
@@ -13367,7 +13316,7 @@
       "paintBoost": 3,
       "threePtBoost": -1,
       "defBoost": 1,
-      "salary": 950,
+      "salary": 960,
       "chart": [
         {
           "lo": 1,
@@ -13392,13 +13341,13 @@
         },
         {
           "lo": 17,
-          "hi": 22,
+          "hi": 21,
           "pts": 2,
           "reb": 2,
           "ast": 1
         },
         {
-          "lo": 23,
+          "lo": 22,
           "hi": 99,
           "pts": 3,
           "reb": 3,
@@ -13418,7 +13367,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 690,
+      "salary": 660,
       "chart": [
         {
           "lo": 1,
@@ -13469,7 +13418,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": -2,
-      "salary": 320,
+      "salary": 330,
       "chart": [
         {
           "lo": 1,
@@ -13494,13 +13443,13 @@
         },
         {
           "lo": 15,
-          "hi": 18,
+          "hi": 17,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 19,
+          "lo": 18,
           "hi": 99,
           "pts": 3,
           "reb": 1,
@@ -13520,7 +13469,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": -2,
-      "salary": 410,
+      "salary": 390,
       "chart": [
         {
           "lo": 1,
@@ -13578,7 +13527,7 @@
       "paintBoost": -1,
       "threePtBoost": 2,
       "defBoost": 1,
-      "salary": 540,
+      "salary": 530,
       "chart": [
         {
           "lo": 1,
@@ -13629,7 +13578,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 120,
+      "salary": 110,
       "chart": [
         {
           "lo": 1,
@@ -13667,13 +13616,13 @@
       "name": "Quenton Jackson",
       "team": "IND",
       "pos": "PG",
-      "speed": 10,
-      "power": 6,
+      "speed": 9,
+      "power": 4,
       "shotLine": 16,
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 610,
+      "salary": 570,
       "chart": [
         {
           "lo": 1,
@@ -13684,27 +13633,27 @@
         },
         {
           "lo": 3,
-          "hi": 7,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 8,
-          "hi": 15,
+          "lo": 7,
+          "hi": 11,
           "pts": 2,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 16,
-          "hi": 18,
+          "lo": 12,
+          "hi": 15,
           "pts": 2,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 19,
+          "lo": 16,
           "hi": 99,
           "pts": 3,
           "reb": 1,
@@ -13724,7 +13673,7 @@
       "paintBoost": 3,
       "threePtBoost": -3,
       "defBoost": 0,
-      "salary": 400,
+      "salary": 390,
       "chart": [
         {
           "lo": 1,
@@ -13749,13 +13698,13 @@
         },
         {
           "lo": 17,
-          "hi": 21,
+          "hi": 20,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 22,
+          "lo": 21,
           "hi": 99,
           "pts": 2,
           "reb": 2,
@@ -13769,13 +13718,13 @@
       "name": "Alex Caruso",
       "team": "OKC",
       "pos": "SG",
-      "speed": 12,
-      "power": 10,
+      "speed": 13,
+      "power": 9,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 3,
-      "salary": 740,
+      "salary": 730,
       "chart": [
         {
           "lo": 1,
@@ -13826,7 +13775,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 0,
-      "salary": 370,
+      "salary": 390,
       "chart": [
         {
           "lo": 1,
@@ -13837,13 +13786,13 @@
         },
         {
           "lo": 3,
-          "hi": 8,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 9,
+          "lo": 8,
           "hi": 16,
           "pts": 1,
           "reb": 0,
@@ -13877,7 +13826,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 570,
+      "salary": 560,
       "chart": [
         {
           "lo": 1,
@@ -13922,13 +13871,13 @@
       "name": "Kasparas Jakučionis",
       "team": "MIL",
       "pos": "PG",
-      "speed": 10,
-      "power": 3,
+      "speed": 9,
+      "power": 4,
       "shotLine": 14,
       "paintBoost": -1,
       "threePtBoost": 2,
       "defBoost": 0,
-      "salary": 470,
+      "salary": 460,
       "chart": [
         {
           "lo": 1,
@@ -13980,8 +13929,8 @@
       "name": "Jordan Walsh",
       "team": "BOS",
       "pos": "PF",
-      "speed": 9,
-      "power": 10,
+      "speed": 10,
+      "power": 9,
       "shotLine": 16,
       "paintBoost": 0,
       "threePtBoost": 1,
@@ -14011,13 +13960,13 @@
         },
         {
           "lo": 16,
-          "hi": 23,
+          "hi": 22,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 24,
+          "lo": 23,
           "hi": 99,
           "pts": 2,
           "reb": 2,
@@ -14031,13 +13980,13 @@
       "name": "Javonte Green",
       "team": "DET",
       "pos": "SG",
-      "speed": 12,
-      "power": 8,
+      "speed": 11,
+      "power": 9,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 2,
-      "salary": 650,
+      "salary": 640,
       "chart": [
         {
           "lo": 1,
@@ -14062,13 +14011,13 @@
         },
         {
           "lo": 15,
-          "hi": 22,
+          "hi": 21,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 23,
+          "lo": 22,
           "hi": 99,
           "pts": 3,
           "reb": 1,
@@ -14088,7 +14037,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 220,
+      "salary": 210,
       "chart": [
         {
           "lo": 1,
@@ -14183,7 +14132,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 1,
-      "salary": 280,
+      "salary": 270,
       "chart": [
         {
           "lo": 1,
@@ -14278,7 +14227,7 @@
       "paintBoost": -1,
       "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 590,
+      "salary": 600,
       "chart": [
         {
           "lo": 1,
@@ -14310,13 +14259,13 @@
         },
         {
           "lo": 14,
-          "hi": 17,
+          "hi": 16,
           "pts": 2,
           "reb": 0,
           "ast": 1
         },
         {
-          "lo": 18,
+          "lo": 17,
           "hi": 99,
           "pts": 3,
           "reb": 1,
@@ -14336,7 +14285,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 590,
+      "salary": 580,
       "chart": [
         {
           "lo": 1,
@@ -14394,7 +14343,7 @@
       "paintBoost": 0,
       "threePtBoost": -3,
       "defBoost": -2,
-      "salary": 320,
+      "salary": 250,
       "chart": [
         {
           "lo": 1,
@@ -14412,13 +14361,13 @@
         },
         {
           "lo": 5,
-          "hi": 8,
+          "hi": 7,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 9,
+          "lo": 8,
           "hi": 14,
           "pts": 1,
           "reb": 1,
@@ -14428,8 +14377,8 @@
           "lo": 15,
           "hi": 18,
           "pts": 2,
-          "reb": 3,
-          "ast": 1
+          "reb": 1,
+          "ast": 0
         },
         {
           "lo": 19,
@@ -14452,7 +14401,7 @@
       "paintBoost": -1,
       "threePtBoost": -5,
       "defBoost": 0,
-      "salary": 780,
+      "salary": 760,
       "chart": [
         {
           "lo": 1,
@@ -14503,7 +14452,7 @@
       "paintBoost": 2,
       "threePtBoost": 2,
       "defBoost": 1,
-      "salary": 470,
+      "salary": 460,
       "chart": [
         {
           "lo": 1,
@@ -14579,13 +14528,13 @@
         },
         {
           "lo": 14,
-          "hi": 16,
+          "hi": 15,
           "pts": 2,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 17,
+          "lo": 16,
           "hi": 99,
           "pts": 3,
           "reb": 1,
@@ -14630,13 +14579,13 @@
         },
         {
           "lo": 16,
-          "hi": 24,
+          "hi": 23,
           "pts": 2,
           "reb": 2,
           "ast": 0
         },
         {
-          "lo": 25,
+          "lo": 24,
           "hi": 99,
           "pts": 2,
           "reb": 2,
@@ -14681,13 +14630,13 @@
         },
         {
           "lo": 14,
-          "hi": 21,
+          "hi": 20,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 22,
+          "lo": 21,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -14707,7 +14656,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 370,
+      "salary": 350,
       "chart": [
         {
           "lo": 1,
@@ -14752,13 +14701,13 @@
       "name": "Simone Fontecchio",
       "team": "MIA",
       "pos": "SF",
-      "speed": 4,
-      "power": 10,
+      "speed": 8,
+      "power": 5,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 3,
       "defBoost": 0,
-      "salary": 570,
+      "salary": 580,
       "chart": [
         {
           "lo": 1,
@@ -14769,13 +14718,13 @@
         },
         {
           "lo": 3,
-          "hi": 7,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 8,
+          "lo": 7,
           "hi": 14,
           "pts": 2,
           "reb": 0,
@@ -14783,13 +14732,13 @@
         },
         {
           "lo": 15,
-          "hi": 20,
+          "hi": 17,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 21,
+          "lo": 18,
           "hi": 99,
           "pts": 4,
           "reb": 1,
@@ -14860,7 +14809,7 @@
       "paintBoost": 0,
       "threePtBoost": 3,
       "defBoost": 0,
-      "salary": 770,
+      "salary": 760,
       "chart": [
         {
           "lo": 1,
@@ -14911,7 +14860,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -1,
-      "salary": 110,
+      "salary": 100,
       "chart": [
         {
           "lo": 1,
@@ -14962,7 +14911,7 @@
       "paintBoost": 3,
       "threePtBoost": -2,
       "defBoost": -1,
-      "salary": 460,
+      "salary": 470,
       "chart": [
         {
           "lo": 1,
@@ -14980,13 +14929,13 @@
         },
         {
           "lo": 4,
-          "hi": 13,
+          "hi": 12,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 14,
+          "lo": 13,
           "hi": 17,
           "pts": 2,
           "reb": 1,
@@ -15013,7 +14962,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": -1,
-      "salary": 340,
+      "salary": 330,
       "chart": [
         {
           "lo": 1,
@@ -15064,7 +15013,7 @@
       "paintBoost": 0,
       "threePtBoost": -3,
       "defBoost": -2,
-      "salary": 240,
+      "salary": 250,
       "chart": [
         {
           "lo": 1,
@@ -15082,13 +15031,13 @@
         },
         {
           "lo": 6,
-          "hi": 11,
+          "hi": 10,
           "pts": 1,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 12,
+          "lo": 11,
           "hi": 14,
           "pts": 2,
           "reb": 1,
@@ -15115,7 +15064,7 @@
       "paintBoost": 0,
       "threePtBoost": -3,
       "defBoost": 2,
-      "salary": 580,
+      "salary": 570,
       "chart": [
         {
           "lo": 1,
@@ -15166,7 +15115,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": -1,
-      "salary": 770,
+      "salary": 760,
       "chart": [
         {
           "lo": 1,
@@ -15218,13 +15167,13 @@
       "name": "Buddy Hield",
       "team": "ATL",
       "pos": "SG",
-      "speed": 8,
-      "power": 3,
+      "speed": 7,
+      "power": 4,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 400,
+      "salary": 390,
       "chart": [
         {
           "lo": 1,
@@ -15282,7 +15231,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 260,
+      "salary": 250,
       "chart": [
         {
           "lo": 1,
@@ -15333,7 +15282,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -2,
-      "salary": 300,
+      "salary": 280,
       "chart": [
         {
           "lo": 1,
@@ -15384,7 +15333,7 @@
       "paintBoost": 0,
       "threePtBoost": 3,
       "defBoost": -2,
-      "salary": 750,
+      "salary": 730,
       "chart": [
         {
           "lo": 1,
@@ -15442,7 +15391,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": -2,
-      "salary": 450,
+      "salary": 420,
       "chart": [
         {
           "lo": 1,
@@ -15493,7 +15442,7 @@
       "paintBoost": 2,
       "threePtBoost": -1,
       "defBoost": 0,
-      "salary": 490,
+      "salary": 480,
       "chart": [
         {
           "lo": 1,
@@ -15544,7 +15493,7 @@
       "paintBoost": 0,
       "threePtBoost": 3,
       "defBoost": -1,
-      "salary": 430,
+      "salary": 420,
       "chart": [
         {
           "lo": 1,
@@ -15602,7 +15551,7 @@
       "paintBoost": 0,
       "threePtBoost": -2,
       "defBoost": 0,
-      "salary": 150,
+      "salary": 230,
       "chart": [
         {
           "lo": 1,
@@ -15620,20 +15569,20 @@
         },
         {
           "lo": 8,
-          "hi": 15,
+          "hi": 12,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 16,
-          "hi": 18,
+          "lo": 13,
+          "hi": 15,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 19,
+          "lo": 16,
           "hi": 99,
           "pts": 2,
           "reb": 2,
@@ -15647,13 +15596,13 @@
       "name": "Josh Green",
       "team": "UTA",
       "pos": "SG",
-      "speed": 10,
-      "power": 6,
+      "speed": 9,
+      "power": 7,
       "shotLine": 13,
       "paintBoost": -1,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 460,
+      "salary": 450,
       "chart": [
         {
           "lo": 1,
@@ -15698,13 +15647,13 @@
       "name": "Leonard Miller",
       "team": "CHI",
       "pos": "SF",
-      "speed": 8,
-      "power": 4,
+      "speed": 4,
+      "power": 8,
       "shotLine": 16,
       "paintBoost": 1,
       "threePtBoost": 1,
       "defBoost": -1,
-      "salary": 920,
+      "salary": 930,
       "chart": [
         {
           "lo": 1,
@@ -15755,7 +15704,7 @@
       "paintBoost": 2,
       "threePtBoost": -2,
       "defBoost": 1,
-      "salary": 880,
+      "salary": 870,
       "chart": [
         {
           "lo": 1,
@@ -15807,13 +15756,13 @@
       "name": "Kenrich Williams",
       "team": "OKC",
       "pos": "PF",
-      "speed": 6,
-      "power": 8,
+      "speed": 7,
+      "power": 7,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 510,
+      "salary": 480,
       "chart": [
         {
           "lo": 1,
@@ -15864,7 +15813,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 370,
+      "salary": 380,
       "chart": [
         {
           "lo": 1,
@@ -15889,13 +15838,13 @@
         },
         {
           "lo": 15,
-          "hi": 18,
+          "hi": 17,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 19,
+          "lo": 18,
           "hi": 99,
           "pts": 3,
           "reb": 1,
@@ -15915,7 +15864,7 @@
       "paintBoost": 3,
       "threePtBoost": 0,
       "defBoost": 1,
-      "salary": 380,
+      "salary": 390,
       "chart": [
         {
           "lo": 1,
@@ -15926,13 +15875,13 @@
         },
         {
           "lo": 3,
-          "hi": 9,
+          "hi": 8,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 10,
+          "lo": 9,
           "hi": 17,
           "pts": 1,
           "reb": 1,
@@ -15991,13 +15940,13 @@
         },
         {
           "lo": 17,
-          "hi": 23,
+          "hi": 22,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 24,
+          "lo": 23,
           "hi": 99,
           "pts": 2,
           "reb": 2,
@@ -16017,7 +15966,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": -1,
-      "salary": 490,
+      "salary": 470,
       "chart": [
         {
           "lo": 1,
@@ -16062,13 +16011,13 @@
       "name": "Guerschon Yabusele",
       "team": "2TM",
       "pos": "C",
-      "speed": 2,
-      "power": 8,
+      "speed": 3,
+      "power": 7,
       "shotLine": 16,
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -1,
-      "salary": 310,
+      "salary": 400,
       "chart": [
         {
           "lo": 1,
@@ -16093,20 +16042,20 @@
         },
         {
           "lo": 7,
-          "hi": 15,
+          "hi": 12,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 16,
-          "hi": 18,
+          "lo": 13,
+          "hi": 15,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 19,
+          "lo": 16,
           "hi": 99,
           "pts": 3,
           "reb": 3,
@@ -16126,7 +16075,7 @@
       "paintBoost": 2,
       "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 250,
+      "salary": 270,
       "chart": [
         {
           "lo": 1,
@@ -16154,7 +16103,7 @@
           "hi": 17,
           "pts": 2,
           "reb": 0,
-          "ast": 0
+          "ast": 2
         },
         {
           "lo": 18,
@@ -16177,7 +16126,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -1,
-      "salary": 160,
+      "salary": 150,
       "chart": [
         {
           "lo": 1,
@@ -16272,7 +16221,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 460,
+      "salary": 450,
       "chart": [
         {
           "lo": 1,
@@ -16323,7 +16272,7 @@
       "paintBoost": 2,
       "threePtBoost": -1,
       "defBoost": -3,
-      "salary": 210,
+      "salary": 180,
       "chart": [
         {
           "lo": 1,
@@ -16374,7 +16323,7 @@
       "paintBoost": 2,
       "threePtBoost": 2,
       "defBoost": 1,
-      "salary": 290,
+      "salary": 280,
       "chart": [
         {
           "lo": 1,
@@ -16425,7 +16374,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -2,
-      "salary": 50,
+      "salary": 40,
       "chart": [
         {
           "lo": 1,
@@ -16476,7 +16425,7 @@
       "paintBoost": 2,
       "threePtBoost": -3,
       "defBoost": 0,
-      "salary": 240,
+      "salary": 250,
       "chart": [
         {
           "lo": 1,
@@ -16494,13 +16443,13 @@
         },
         {
           "lo": 9,
-          "hi": 11,
+          "hi": 10,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 12,
+          "lo": 11,
           "hi": 16,
           "pts": 1,
           "reb": 1,
@@ -16527,7 +16476,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 410,
+      "salary": 390,
       "chart": [
         {
           "lo": 1,
@@ -16578,7 +16527,7 @@
       "paintBoost": 2,
       "threePtBoost": 2,
       "defBoost": 1,
-      "salary": 690,
+      "salary": 670,
       "chart": [
         {
           "lo": 1,
@@ -16629,7 +16578,7 @@
       "paintBoost": 2,
       "threePtBoost": -2,
       "defBoost": 2,
-      "salary": 1350,
+      "salary": 1360,
       "chart": [
         {
           "lo": 1,
@@ -16654,13 +16603,13 @@
         },
         {
           "lo": 16,
-          "hi": 23,
+          "hi": 22,
           "pts": 3,
           "reb": 2,
           "ast": 0
         },
         {
-          "lo": 24,
+          "lo": 23,
           "hi": 99,
           "pts": 5,
           "reb": 3,
@@ -16698,13 +16647,13 @@
         },
         {
           "lo": 14,
-          "hi": 19,
+          "hi": 18,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 20,
+          "lo": 19,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -16724,7 +16673,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 780,
+      "salary": 800,
       "chart": [
         {
           "lo": 1,
@@ -16749,13 +16698,13 @@
         },
         {
           "lo": 15,
-          "hi": 18,
+          "hi": 17,
           "pts": 3,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 19,
+          "lo": 18,
           "hi": 99,
           "pts": 5,
           "reb": 2,
@@ -16775,7 +16724,7 @@
       "paintBoost": 0,
       "threePtBoost": 3,
       "defBoost": 0,
-      "salary": 420,
+      "salary": 410,
       "chart": [
         {
           "lo": 1,
@@ -16826,7 +16775,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -2,
-      "salary": 120,
+      "salary": 110,
       "chart": [
         {
           "lo": 1,
@@ -16877,7 +16826,7 @@
       "paintBoost": 0,
       "threePtBoost": -4,
       "defBoost": -1,
-      "salary": 790,
+      "salary": 770,
       "chart": [
         {
           "lo": 1,
@@ -16946,20 +16895,20 @@
         },
         {
           "lo": 4,
-          "hi": 6,
+          "hi": 5,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 7,
-          "hi": 12,
+          "lo": 6,
+          "hi": 11,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 13,
+          "lo": 12,
           "hi": 15,
           "pts": 2,
           "reb": 1,
@@ -16986,7 +16935,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 1,
-      "salary": 340,
+      "salary": 350,
       "chart": [
         {
           "lo": 1,
@@ -17011,13 +16960,13 @@
         },
         {
           "lo": 17,
-          "hi": 21,
+          "hi": 20,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 22,
+          "lo": 21,
           "hi": 99,
           "pts": 3,
           "reb": 2,
@@ -17037,7 +16986,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -1,
-      "salary": 130,
+      "salary": 210,
       "chart": [
         {
           "lo": 1,
@@ -17062,13 +17011,6 @@
         },
         {
           "lo": 16,
-          "hi": 18,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 19,
           "hi": 99,
           "pts": 2,
           "reb": 3,
@@ -17082,13 +17024,13 @@
       "name": "Jett Howard",
       "team": "DAL",
       "pos": "SF",
-      "speed": 7,
-      "power": 6,
+      "speed": 6,
+      "power": 7,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": -2,
-      "salary": 300,
+      "salary": 310,
       "chart": [
         {
           "lo": 1,
@@ -17113,13 +17055,13 @@
         },
         {
           "lo": 15,
-          "hi": 18,
+          "hi": 17,
           "pts": 2,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 19,
+          "lo": 18,
           "hi": 99,
           "pts": 3,
           "reb": 1,
@@ -17139,7 +17081,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -2,
-      "salary": 310,
+      "salary": 260,
       "chart": [
         {
           "lo": 1,
@@ -17166,7 +17108,7 @@
           "lo": 10,
           "hi": 15,
           "pts": 2,
-          "reb": 1,
+          "reb": 0,
           "ast": 1
         },
         {
@@ -17190,7 +17132,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 410,
+      "salary": 570,
       "chart": [
         {
           "lo": 1,
@@ -17208,20 +17150,20 @@
         },
         {
           "lo": 6,
-          "hi": 14,
+          "hi": 11,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 15,
-          "hi": 17,
+          "lo": 12,
+          "hi": 14,
           "pts": 2,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 18,
+          "lo": 15,
           "hi": 99,
           "pts": 4,
           "reb": 1,
@@ -17266,13 +17208,13 @@
         },
         {
           "lo": 18,
-          "hi": 24,
+          "hi": 23,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 25,
+          "lo": 24,
           "hi": 99,
           "pts": 2,
           "reb": 3,
@@ -17292,7 +17234,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 660,
+      "salary": 640,
       "chart": [
         {
           "lo": 1,
@@ -17344,13 +17286,13 @@
       "name": "Jamal Cain",
       "team": "ORL",
       "pos": "SF",
-      "speed": 9,
-      "power": 6,
+      "speed": 8,
+      "power": 7,
       "shotLine": 15,
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 440,
+      "salary": 450,
       "chart": [
         {
           "lo": 1,
@@ -17375,13 +17317,13 @@
         },
         {
           "lo": 15,
-          "hi": 20,
+          "hi": 19,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 21,
+          "lo": 20,
           "hi": 99,
           "pts": 3,
           "reb": 1,
@@ -17401,7 +17343,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 360,
+      "salary": 350,
       "chart": [
         {
           "lo": 1,
@@ -17452,7 +17394,7 @@
       "paintBoost": 1,
       "threePtBoost": -1,
       "defBoost": 1,
-      "salary": 330,
+      "salary": 320,
       "chart": [
         {
           "lo": 1,
@@ -17503,7 +17445,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 0,
-      "salary": 990,
+      "salary": 970,
       "chart": [
         {
           "lo": 1,
@@ -17570,7 +17512,7 @@
       "paintBoost": 0,
       "threePtBoost": 3,
       "defBoost": -1,
-      "salary": 990,
+      "salary": 970,
       "chart": [
         {
           "lo": 1,
@@ -17630,7 +17572,7 @@
       "paintBoost": -1,
       "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 1010,
+      "salary": 1000,
       "chart": [
         {
           "lo": 1,
@@ -17690,7 +17632,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 1,
-      "salary": 770,
+      "salary": 760,
       "chart": [
         {
           "lo": 1,

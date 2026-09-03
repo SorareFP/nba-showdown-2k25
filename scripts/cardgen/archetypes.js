@@ -102,13 +102,67 @@ export function overrideBudget({ epmOff, epmDef }, poolBlends, poolTotals) {
 }
 
 /**
+ * How concentrated a player's minutes are across the five positions, as a
+ * Herfindahl index: 1.0 for someone who plays exactly one spot, ~0.2 for
+ * someone spread evenly over all five. Null shares read as fully concentrated,
+ * which is the pre-2026-09-03 behaviour.
+ */
+export function positionConcentration(shares) {
+  if (!shares) return 1;
+  const vals = Object.values(shares).filter(Number.isFinite);
+  const total = vals.reduce((a, b) => a + b, 0);
+  if (total <= 0) return 1;
+  return vals.reduce((sum, v) => sum + (v / total) ** 2, 0);
+}
+
+/**
  * Exaggerates a split away from balance along its existing lean: the
  * positional/biometric center decides WHICH axis is natural; this decides how
- * far the hole opens. Totals are preserved.
+ * far the hole opens.
+ *
+ * VERSATILITY SHALLOWS THE HOLE. A player who genuinely logs minutes at three
+ * positions does not HAVE one glaring physical weakness — that is what
+ * versatility means — so opening a full hole on him describes someone else.
+ * Kawhi Leonard is the case the user raised: a career blend of SG 12 / SF 51 /
+ * PF 35 produces a naturally balanced S15/P15, and a flat 0.45 keep then cut
+ * it to S15/P7, a card that gets bullied by every four despite his having
+ * played a third of his minutes there.
+ *
+ * The keep fraction therefore interpolates on positional CONCENTRATION: a
+ * one-position player (Jokic, 100% centre) keeps OFF_AXIS_KEEP exactly and
+ * gets the full hole the archetype system intends, while a spread-out player
+ * keeps proportionally more of his off-axis. Nothing about the archetype
+ * assignment changes — this only sizes the hole it opens.
  */
-export function exaggerateSplit(speed, power) {
+export function exaggerateSplit(speed, power, shares = null) {
   const speedLean = speed >= power;
   const lean = Math.max(speed, power);
-  const hole = Math.max(1, Math.round(Math.min(speed, power) * OFF_AXIS_KEEP));
-  return speedLean ? { speed: lean, power: hole } : { speed: hole, power: lean };
+  const off = Math.min(speed, power);
+
+  // The hole, and therefore the TOTAL, is unchanged from the concentration-
+  // blind rule: lean whole, off-axis cut to OFF_AXIS_KEEP. Versatility must
+  // not become a budget buff — it only decides how the SAME total is shared.
+  const hole = Math.max(1, Math.round(off * OFF_AXIS_KEEP));
+  const total = lean + hole;
+
+  // Ratio interpolates between the fully-exaggerated split and the natural
+  // balance the positional/biometric layer produced, on concentration: a
+  // one-position player lands exactly where the old rule put him, a player
+  // spread over three positions keeps most of his natural balance. Kawhi
+  // Leonard (SG 12 / SF 51 / PF 35) is the case — a naturally balanced
+  // S15/P15 was being cut to S15/P7, a card bullied by every four despite a
+  // third of his minutes there.
+  const conc = positionConcentration(shares);
+  const exagRatio = lean / total;
+  const natRatio = speed + power > 0 ? lean / (speed + power) : 0.5;
+  const ratio = natRatio + (exagRatio - natRatio) * conc;
+
+  let leanOut = Math.round(total * ratio);
+  // The lean axis is the lean axis: never let the hole out-grow it, and never
+  // let either side vanish.
+  leanOut = Math.min(total - 1, Math.max(Math.ceil(total / 2), leanOut));
+  const holeOut = Math.max(1, total - leanOut);
+  return speedLean
+    ? { speed: leanOut, power: holeOut }
+    : { speed: holeOut, power: leanOut };
 }

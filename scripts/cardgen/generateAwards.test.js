@@ -410,7 +410,8 @@ describe('the committed file', () => {
     // Super Seasons added marked retirees to that set, and the newly cached
     // 2000-2007 pages resolved two more rookie-year marks.
     expect(AWARDS.counts[CURRENT_SET].marked).toBe(40);
-    expect(AWARDS.counts[SUPER_SEASON_SET].marked).toBe(63);
+    // 62 since Westbrook retired out of the pool, taking his Super Season with him.
+    expect(AWARDS.counts[SUPER_SEASON_SET].marked).toBe(62);
     // The rookie set moves at last, and only on the ring: no player in that
     // pool was an All-Star as a rookie, but six of them won a title as one.
     expect(AWARDS.counts[ROOKIE_SET].marked).toBe(25);
@@ -432,7 +433,7 @@ describe('the committed file', () => {
     // (Unchanged by the ring: ifSelectionsCounted asks about the awards column,
     // and the ring is not in it.)
     expect(AWARDS.counts[CURRENT_SET].ifSelectionsCounted).toBe(46);
-    expect(AWARDS.counts[SUPER_SEASON_SET].ifSelectionsCounted).toBe(76);
+    expect(AWARDS.counts[SUPER_SEASON_SET].ifSelectionsCounted).toBe(75);
     expect(AWARDS.counts[ROOKIE_SET].ifSelectionsCounted).toBe(25);
   });
 

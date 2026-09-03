@@ -184,20 +184,81 @@ export function loadPositionShares(file = POSITION_SHARES_FILE) {
  * can always pass the result straight to `speedShare` and get the label-only
  * split for a player the table does not carry.
  */
+/**
+ * How fast a season's weight decays into the past, per year, for the CAREER
+ * blend. 0.7 gives the current season weight 1.00, last year 0.70, two back
+ * 0.49, five back 0.17 — recent role dominates while the whole career still
+ * informs, which is the balance the user asked for.
+ */
+export const CAREER_DECAY = 0.7;
+
+/**
+ * A player's positional identity as a RECENCY-WEIGHTED CAREER BLEND.
+ *
+ * Reading one season is what a positional role is not: it moves, and a single
+ * year can be an outlier in either direction. Kawhi Leonard's 2026 row is 66%
+ * SF / 30% PF, but 2025 was 80% PF and 2024 was 32% PF — a card built on any
+ * one of those describes a different player from the one who actually played
+ * the last few years. The blend weights every season he has by CAREER_DECAY
+ * raised to its age, so the current season leads and the career fills in
+ * behind it.
+ *
+ * Falls back to the exact-season lookup when a player has no history at all
+ * (a rookie, or anyone the play-by-play table does not carry), so nothing that
+ * worked before stops working.
+ */
+export function careerBlend(seasonsByKey, key, season, decay = CAREER_DECAY) {
+  const rows = seasonsByKey.get(key);
+  if (!rows || rows.length === 0) return null;
+  const acc = Object.fromEntries(POSITIONS.map(p => [p, 0]));
+  let totalWeight = 0;
+  for (const { season: s, shares } of rows) {
+    // A season AFTER the card's season is not evidence about it — the Rookie
+    // and Super Season sets ask for historical years, and letting the future
+    // leak in would describe a player his card is not.
+    if (s > season) continue;
+    const w = Math.pow(decay, Math.max(0, season - s));
+    for (const p of POSITIONS) acc[p] += (shares[p] ?? 0) * w;
+    totalWeight += w;
+  }
+  if (totalWeight <= 0) return null;
+  return normalizeShares(Object.fromEntries(POSITIONS.map(p => [p, acc[p] / totalWeight])));
+}
+
 export function indexPositionShares(records) {
   const byId = new Map();
   const byName = new Map();
+  // Every season a player has, for the career blend — keyed the same two ways
+  // the exact-season maps are, so the blend can be looked up by either.
+  const seasonsById = new Map();
+  const seasonsByName = new Map();
+  const push = (map, key, season, shares) => {
+    if (!key) return;
+    if (!map.has(key)) map.set(key, []);
+    map.get(key).push({ season, shares });
+  };
   for (const r of records ?? []) {
     const shares = normalizeShares(Object.fromEntries(POSITIONS.map((p, i) => [p, r.pct?.[i]])));
     if (!shares) continue;
     byId.set(`${r.id}|${r.season}`, shares);
+    push(seasonsById, r.id, r.season, shares);
     const nameKey = normalizeName(r.name);
-    if (nameKey) byName.set(`${nameKey}|${r.season}`, shares);
+    if (nameKey) {
+      byName.set(`${nameKey}|${r.season}`, shares);
+      push(seasonsByName, nameKey, r.season, shares);
+    }
   }
   return {
     size: byId.size,
     forId: (id, season) => byId.get(`${id}|${season}`) ?? null,
     forName: (name, season) => byName.get(`${normalizeName(name)}|${season}`) ?? null,
+    /** Recency-weighted career blend, falling back to the exact season. */
+    careerForId: (id, season) =>
+      careerBlend(seasonsById, id, season) ?? byId.get(`${id}|${season}`) ?? null,
+    careerForName: (name, season) =>
+      careerBlend(seasonsByName, normalizeName(name), season) ??
+      byName.get(`${normalizeName(name)}|${season}`) ??
+      null,
   };
 }
 

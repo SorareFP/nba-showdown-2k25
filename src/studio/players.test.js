@@ -103,12 +103,12 @@ describe('the 2025-26 pool', () => {
   // 2025-26 season was cut short by injury, plus Ty Jerome by name). Update
   // this number, deliberately, when the list changes — and see
   // scripts/cardgen/generatePool.test.js, which checks the composition itself.
-  it('loads the whole 354-player pool', () => {
+  it('loads the whole 353-player pool', () => {
     // 354, not 350: four players who appear in NO 2025-26 table at all are
     // carded from their last healthy season and join the pool for their
     // IDENTITY, because the studio takes a player's identity from here and a
     // card nobody can find cannot be given a photo. See carryForward.js.
-    expect(POOL_PLAYERS).toHaveLength(354);
+    expect(POOL_PLAYERS).toHaveLength(353);
   });
 
   it('gives every player a unique id', () => {

@@ -1109,14 +1109,21 @@ describe('the chart clears the photo frame', () => {
   const cell = cssBlock(/\.chart th,\s*\.chart td/);
   const outer = cssBlock('.photoOuter');
 
-  const CHART_BOTTOM = pxIn(chart, 'bottom');
+  const CHART_MID = pxIn(chart, 'top');
   const CELL_H = pxIn(cell, 'height');
   const CHART_BORDER = Number(chart.match(/border:\s*(\d+)px/)[1]);
   /** Six tiers is the generator's cap; one is the blank tier, which is hidden. */
   const MAX_PRINTED_ROWS = 5;
 
-  /** The chart's top edge, in card pixels, for N printed tiers. */
-  const chartTop = n => CARD_HEIGHT - CHART_BOTTOM - (n + 1) * CELL_H - CHART_BORDER;
+  /** A chart's own height, in card pixels, for N printed tiers (+1 header). */
+  const chartHeight = n => (n + 1) * CELL_H + CHART_BORDER;
+  /**
+   * The chart's top edge. It is CENTRED on CHART_MID via translateY(-50%),
+   * so it grows equally in both directions rather than upward from a pinned
+   * bottom — see the .chart rule's comment.
+   */
+  const chartTop = n => CHART_MID - chartHeight(n) / 2;
+  const chartBottom = n => CHART_MID + chartHeight(n) / 2;
 
   /**
    * The photo frame's PAINTED bottom — the lowest vertex of its clip-path, not
@@ -1134,17 +1141,31 @@ describe('the chart clears the photo frame', () => {
   };
 
   it('reads the geometry out of the stylesheet, not out of this test', () => {
-    expect(CHART_BOTTOM).toBe(21);
+    expect(CHART_MID).toBe(1040);
     expect(CELL_H).toBe(41);
     expect(CHART_BORDER).toBe(3);
   });
 
+  it('centres the chart in the band below the photo', () => {
+    // The whole point of the centring: leftover field is split evenly above
+    // and below at EVERY row count, instead of all of it landing on top.
+    for (const n of [2, 3, 4, 5]) {
+      const above = chartTop(n) - paintedBottom();
+      const below = CARD_HEIGHT - chartBottom(n);
+      expect(Math.abs(above - below), `${n} printed rows`).toBeLessThanOrEqual(1);
+    }
+  });
+
+  it('stays inside the card at the tallest row count', () => {
+    expect(chartBottom(MAX_PRINTED_ROWS)).toBeLessThan(CARD_HEIGHT);
+  });
+
   it('leaves the photo above the TALLEST chart the generator can produce', () => {
-    // The tallest case is the only one that can fail: the chart grows upward,
-    // so every shorter chart clears by more. Measured in the browser at this
-    // exact geometry: photo painted bottom y=900, chart top y=911.
+    // The tallest case is the only one that can fail: it reaches highest
+    // toward the photo, so every shorter chart clears by more. Photo painted
+    // bottom is y=900; a six-row table centred on 1040 tops out at 915.5.
     expect(paintedBottom()).toBe(900);
-    expect(chartTop(MAX_PRINTED_ROWS)).toBe(911);
+    expect(chartTop(MAX_PRINTED_ROWS)).toBe(915.5);
     expect(paintedBottom()).toBeLessThan(chartTop(MAX_PRINTED_ROWS));
   });
 

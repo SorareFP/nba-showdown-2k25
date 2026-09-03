@@ -830,12 +830,30 @@
 
 /* ── Roll chart ──────────────────────────────────────────────────────────── */
 
-/* Bottom-anchored so a 4-tier chart and a 5-tier chart both sit on the same
- * baseline as the printed set, growing upward instead of leaving a hole. */
+/* CENTRED in the band between the photo's painted bottom and the card's
+ * bottom edge, rather than bottom-anchored.
+ *
+ * Bottom-anchoring pinned every chart's LOWER edge to y=1160 and let it grow
+ * upward, so a tall six-row chart sat tight under the photo while a short
+ * three-row one left ~134px of dead field above it and none below. Centring
+ * splits the leftover space evenly on both sides at every row count.
+ *
+ * The band is the photo's painted bottom (y=900 — the lowest vertex of
+ * .photoOuter's clip-path, NOT its layout box) to the card's bottom (1181),
+ * so its midpoint is 1040. translateY(-50%) then pulls the table up by half
+ * its own height, whatever that height turns out to be.
+ *
+ * Clearance is BETTER than the old arrangement at the tallest row count:
+ * a six-row table (249px) now tops out at y=915 against the old 911, and the
+ * printed reference art's 8px minimum still holds. CardTemplate.test.js
+ * recomputes all of this from this stylesheet — if the row height, the cap on
+ * rows, or this midpoint moves, it fails there rather than letting the chart
+ * silently climb into the photo. */
 .chart {
   position: absolute;
   left: 218px;
-  bottom: 21px;
+  top: 1040px;
+  transform: translateY(-50%);
   width: 440px;
   border-collapse: collapse;
   table-layout: fixed;

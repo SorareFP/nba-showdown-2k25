@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-03T01:56:31.478Z",
+  "generatedAt": "2026-09-03T11:34:47.020Z",
   "provisional": false,
   "set": "wnba-super-season",
   "league": "WNBA",
@@ -2302,7 +2302,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 4,
-      "salary": 1280,
+      "salary": 1290,
       "chart": [
         {
           "lo": 1,

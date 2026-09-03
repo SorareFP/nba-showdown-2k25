@@ -1,0 +1,3192 @@
+{
+ "generatedAt": "2026-09-03T11:38:08.128Z",
+ "weighting": "each season's EPM weighted by its games in the chart's last-82 window; carried-forward players read their carried season",
+ "assignments": [
+  {
+   "name": "Tyrese Maxey",
+   "tier": "Average defender",
+   "offense": "very good offense",
+   "override": true,
+   "epmOff": 2.969,
+   "epmDef": 0.11,
+   "basis": "1g 2025 + 81g 2026"
+  },
+  {
+   "name": "Amen Thompson",
+   "tier": "Great defender",
+   "offense": "above average offense",
+   "override": false,
+   "epmOff": 1.111,
+   "epmDef": 1.299,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Kevin Durant",
+   "tier": "Average defender",
+   "offense": "elite offense",
+   "override": true,
+   "epmOff": 3.396,
+   "epmDef": 0.648,
+   "basis": "3g 2025 + 79g 2026"
+  },
+  {
+   "name": "Luka Dončić",
+   "tier": "Average defender",
+   "offense": "elite offense",
+   "override": true,
+   "epmOff": 6.089,
+   "epmDef": 0.437,
+   "basis": "18g 2025 + 64g 2026"
+  },
+  {
+   "name": "Trey Murphy III",
+   "tier": "Average defender",
+   "offense": "very good offense",
+   "override": true,
+   "epmOff": 2.197,
+   "epmDef": -0.705,
+   "basis": "16g 2025 + 66g 2026"
+  },
+  {
+   "name": "Jamal Murray",
+   "tier": "Awful defender",
+   "offense": "elite offense",
+   "override": true,
+   "epmOff": 4.571,
+   "epmDef": -1.695,
+   "basis": "1g 2025 + 81g 2026"
+  },
+  {
+   "name": "Jalen Johnson",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 1.306,
+   "epmDef": 0.077,
+   "basis": "4g 2025 + 78g 2026"
+  },
+  {
+   "name": "Jabari Smith Jr.",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.379,
+   "epmDef": 0.064,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Anthony Edwards",
+   "tier": "Average defender",
+   "offense": "very good offense",
+   "override": true,
+   "epmOff": 3.063,
+   "epmDef": -0.54,
+   "basis": "11g 2025 + 71g 2026"
+  },
+  {
+   "name": "Jalen Brunson",
+   "tier": "Bad defender",
+   "offense": "elite offense",
+   "override": true,
+   "epmOff": 3.986,
+   "epmDef": -1.208,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "VJ Edgecombe",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.201,
+   "epmDef": 0.167,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Nikola Jokić",
+   "tier": "Average defender",
+   "offense": "elite offense",
+   "override": true,
+   "epmOff": 7.029,
+   "epmDef": 0.544,
+   "basis": "11g 2025 + 71g 2026"
+  },
+  {
+   "name": "James Harden",
+   "tier": "Average defender",
+   "offense": "elite offense",
+   "override": true,
+   "epmOff": 3.222,
+   "epmDef": -0.813,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Paolo Banchero",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.516,
+   "epmDef": -0.101,
+   "basis": "3g 2025 + 79g 2026"
+  },
+  {
+   "name": "Austin Reaves",
+   "tier": "Average defender",
+   "offense": "very good offense",
+   "override": true,
+   "epmOff": 2.586,
+   "epmDef": -0.124,
+   "basis": "25g 2025 + 57g 2026"
+  },
+  {
+   "name": "Keegan Murray",
+   "tier": "Good defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -0.755,
+   "epmDef": 1.006,
+   "basis": "59g 2025 + 23g 2026"
+  },
+  {
+   "name": "Jaylen Brown",
+   "tier": "Average defender",
+   "offense": "very good offense",
+   "override": true,
+   "epmOff": 1.968,
+   "epmDef": -0.13,
+   "basis": "4g 2025 + 78g 2026"
+  },
+  {
+   "name": "Lauri Markkanen",
+   "tier": "Average defender",
+   "offense": "very good offense",
+   "override": true,
+   "epmOff": 2.543,
+   "epmDef": -0.003,
+   "basis": "40g 2025 + 42g 2026"
+  },
+  {
+   "name": "Derrick White",
+   "tier": "Elite defender",
+   "offense": "very good offense",
+   "override": false,
+   "epmOff": 1.435,
+   "epmDef": 2.374,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Cade Cunningham",
+   "tier": "Average defender",
+   "offense": "very good offense",
+   "override": true,
+   "epmOff": 3.216,
+   "epmDef": 0.686,
+   "basis": "4g 2025 + 78g 2026"
+  },
+  {
+   "name": "Brandon Ingram",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.237,
+   "epmDef": -0.582,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Desmond Bane",
+   "tier": "Average defender",
+   "offense": "very good offense",
+   "override": true,
+   "epmOff": 1.657,
+   "epmDef": -0.102,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Donovan Mitchell",
+   "tier": "Average defender",
+   "offense": "elite offense",
+   "override": true,
+   "epmOff": 4.276,
+   "epmDef": -0.294,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Devin Booker",
+   "tier": "Average defender",
+   "offense": "very good offense",
+   "override": true,
+   "epmOff": 2.772,
+   "epmDef": -0.659,
+   "basis": "14g 2025 + 68g 2026"
+  },
+  {
+   "name": "Cooper Flagg",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.017,
+   "epmDef": -0.092,
+   "basis": "70g 2026"
+  },
+  {
+   "name": "Scottie Barnes",
+   "tier": "Great defender",
+   "offense": "above average offense",
+   "override": false,
+   "epmOff": 0.999,
+   "epmDef": 1.771,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Nickeil Alexander-Walker",
+   "tier": "Average defender",
+   "offense": "very good offense",
+   "override": true,
+   "epmOff": 1.796,
+   "epmDef": 0.039,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Deni Avdija",
+   "tier": "Slightly negative defender",
+   "offense": "very good offense",
+   "override": true,
+   "epmOff": 2.568,
+   "epmDef": -0.902,
+   "basis": "12g 2025 + 70g 2026"
+  },
+  {
+   "name": "Alperen Şengün",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 1.262,
+   "epmDef": -0.623,
+   "basis": "5g 2025 + 77g 2026"
+  },
+  {
+   "name": "Toumani Camara",
+   "tier": "Good defender",
+   "offense": "above average offense",
+   "override": false,
+   "epmOff": -0.334,
+   "epmDef": 0.853,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Shai Gilgeous-Alexander",
+   "tier": "Great defender",
+   "offense": "elite offense",
+   "override": false,
+   "epmOff": 6.621,
+   "epmDef": 1.516,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Pascal Siakam",
+   "tier": "Average defender",
+   "offense": "very good offense",
+   "override": true,
+   "epmOff": 1.609,
+   "epmDef": 0.227,
+   "basis": "20g 2025 + 62g 2026"
+  },
+  {
+   "name": "LeBron James",
+   "tier": "Average defender",
+   "offense": "very good offense",
+   "override": true,
+   "epmOff": 1.409,
+   "epmDef": 0.011,
+   "basis": "12g 2025 + 70g 2026"
+  },
+  {
+   "name": "OG Anunoby",
+   "tier": "Great defender",
+   "offense": "very good offense",
+   "override": false,
+   "epmOff": 1.814,
+   "epmDef": 1.189,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Dyson Daniels",
+   "tier": "Elite defender",
+   "offense": "above average offense",
+   "override": false,
+   "epmOff": 0.083,
+   "epmDef": 2.507,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Keyonte George",
+   "tier": "Awful defender",
+   "offense": "very good offense",
+   "override": true,
+   "epmOff": 1.787,
+   "epmDef": -2.538,
+   "basis": "28g 2025 + 54g 2026"
+  },
+  {
+   "name": "Julius Randle",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 1.228,
+   "epmDef": -0.113,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Mikal Bridges",
+   "tier": "Good defender",
+   "offense": "above average offense",
+   "override": false,
+   "epmOff": 0.905,
+   "epmDef": 1.023,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Jayson Tatum",
+   "tier": "Good defender",
+   "offense": "elite offense",
+   "override": false,
+   "epmOff": 3.418,
+   "epmDef": 0.773,
+   "basis": "60g 2025 + 22g 2026"
+  },
+  {
+   "name": "Michael Porter Jr.",
+   "tier": "Bad defender",
+   "offense": "very good offense",
+   "override": true,
+   "epmOff": 2.991,
+   "epmDef": -1.323,
+   "basis": "30g 2025 + 52g 2026"
+  },
+  {
+   "name": "Bam Adebayo",
+   "tier": "Elite defender",
+   "offense": "very good offense",
+   "override": false,
+   "epmOff": 1.52,
+   "epmDef": 1.821,
+   "basis": "9g 2025 + 73g 2026"
+  },
+  {
+   "name": "Payton Pritchard",
+   "tier": "Slightly negative defender",
+   "offense": "very good offense",
+   "override": true,
+   "epmOff": 2.638,
+   "epmDef": -0.996,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Kawhi Leonard",
+   "tier": "Average defender",
+   "offense": "elite offense",
+   "override": true,
+   "epmOff": 5.478,
+   "epmDef": 0.596,
+   "basis": "17g 2025 + 65g 2026"
+  },
+  {
+   "name": "Ryan Rollins",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.632,
+   "epmDef": 0.302,
+   "basis": "8g 2025 + 74g 2026"
+  },
+  {
+   "name": "Josh Giddey",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 1.063,
+   "epmDef": -0.802,
+   "basis": "28g 2025 + 54g 2026"
+  },
+  {
+   "name": "Evan Mobley",
+   "tier": "Good defender",
+   "offense": "above average offense",
+   "override": false,
+   "epmOff": 0.735,
+   "epmDef": 0.928,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Immanuel Quickley",
+   "tier": "Average defender",
+   "offense": "very good offense",
+   "override": true,
+   "epmOff": 2.233,
+   "epmDef": 0.002,
+   "basis": "12g 2025 + 70g 2026"
+  },
+  {
+   "name": "Christian Braun",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.329,
+   "epmDef": 0.298,
+   "basis": "32g 2025 + 50g 2026"
+  },
+  {
+   "name": "Jaden McDaniels",
+   "tier": "Good defender",
+   "offense": "above average offense",
+   "override": false,
+   "epmOff": -0.521,
+   "epmDef": 1.122,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Joel Embiid",
+   "tier": "Average defender",
+   "offense": "very good offense",
+   "override": true,
+   "epmOff": 2.502,
+   "epmDef": 0.521,
+   "basis": "19g 2025 + 45g 2026"
+  },
+  {
+   "name": "Kon Knueppel",
+   "tier": "Average defender",
+   "offense": "very good offense",
+   "override": true,
+   "epmOff": 2.864,
+   "epmDef": -0.238,
+   "basis": "81g 2026"
+  },
+  {
+   "name": "Kelly Oubre Jr.",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -0.849,
+   "epmDef": -0.175,
+   "basis": "21g 2025 + 61g 2026"
+  },
+  {
+   "name": "Zach LaVine",
+   "tier": "Bad defender",
+   "offense": "very good offense",
+   "override": true,
+   "epmOff": 2.023,
+   "epmDef": -1.6,
+   "basis": "43g 2025 + 39g 2026"
+  },
+  {
+   "name": "Tyler Herro",
+   "tier": "Average defender",
+   "offense": "elite offense",
+   "override": true,
+   "epmOff": 3.447,
+   "epmDef": -0.737,
+   "basis": "49g 2025 + 33g 2026"
+  },
+  {
+   "name": "Anthony Davis",
+   "tier": "Great defender",
+   "offense": "very good offense",
+   "override": false,
+   "epmOff": 1.957,
+   "epmDef": 1.666,
+   "basis": "51g 2025 + 20g 2026"
+  },
+  {
+   "name": "Andrew Nembhard",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.424,
+   "epmDef": -0.287,
+   "basis": "25g 2025 + 57g 2026"
+  },
+  {
+   "name": "Rudy Gobert",
+   "tier": "Elite defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.052,
+   "epmDef": 2.649,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "DeMar DeRozan",
+   "tier": "Awful defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 1.313,
+   "epmDef": -2.278,
+   "basis": "5g 2025 + 77g 2026"
+  },
+  {
+   "name": "Saddiq Bey",
+   "tier": "Slightly negative defender",
+   "offense": "very good offense",
+   "override": true,
+   "epmOff": 1.504,
+   "epmDef": -0.944,
+   "basis": "72g 2026"
+  },
+  {
+   "name": "Jimmy Butler",
+   "tier": "Average defender",
+   "offense": "very good offense",
+   "override": true,
+   "epmOff": 3.139,
+   "epmDef": 0.434,
+   "basis": "44g 2025 + 38g 2026"
+  },
+  {
+   "name": "Karl-Anthony Towns",
+   "tier": "Great defender",
+   "offense": "very good offense",
+   "override": false,
+   "epmOff": 2.839,
+   "epmDef": 1.529,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "De'Aaron Fox",
+   "tier": "Average defender",
+   "offense": "very good offense",
+   "override": true,
+   "epmOff": 1.837,
+   "epmDef": 0.471,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Miles Bridges",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 1.31,
+   "epmDef": -0.564,
+   "basis": "5g 2025 + 77g 2026"
+  },
+  {
+   "name": "Onyeka Okongwu",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.132,
+   "epmDef": 0.332,
+   "basis": "2g 2025 + 80g 2026"
+  },
+  {
+   "name": "P.J. Washington",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.469,
+   "epmDef": 0.688,
+   "basis": "26g 2025 + 56g 2026"
+  },
+  {
+   "name": "Stephen Curry",
+   "tier": "Average defender",
+   "offense": "elite offense",
+   "override": true,
+   "epmOff": 5.634,
+   "epmDef": -0.695,
+   "basis": "39g 2025 + 43g 2026"
+  },
+  {
+   "name": "Paul George",
+   "tier": "Good defender",
+   "offense": "above average offense",
+   "override": false,
+   "epmOff": -0.216,
+   "epmDef": 1.114,
+   "basis": "34g 2025 + 48g 2026"
+  },
+  {
+   "name": "Devin Vassell",
+   "tier": "Good defender",
+   "offense": "above average offense",
+   "override": false,
+   "epmOff": 1.02,
+   "epmDef": 0.861,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Cameron Johnson",
+   "tier": "Average defender",
+   "offense": "very good offense",
+   "override": true,
+   "epmOff": 1.498,
+   "epmDef": -0.306,
+   "basis": "22g 2025 + 60g 2026"
+  },
+  {
+   "name": "Dillon Brooks",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.368,
+   "epmDef": 0.436,
+   "basis": "22g 2025 + 60g 2026"
+  },
+  {
+   "name": "Donte DiVincenzo",
+   "tier": "Good defender",
+   "offense": "above average offense",
+   "override": false,
+   "epmOff": 1.016,
+   "epmDef": 0.741,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Brandon Miller",
+   "tier": "Good defender",
+   "offense": "very good offense",
+   "override": false,
+   "epmOff": 2.174,
+   "epmDef": 0.842,
+   "basis": "17g 2025 + 65g 2026"
+  },
+  {
+   "name": "Jaren Jackson Jr.",
+   "tier": "Great defender",
+   "offense": "above average offense",
+   "override": false,
+   "epmOff": 0.676,
+   "epmDef": 1.552,
+   "basis": "34g 2025 + 48g 2026"
+  },
+  {
+   "name": "RJ Barrett",
+   "tier": "Average defender",
+   "offense": "very good offense",
+   "override": true,
+   "epmOff": 1.762,
+   "epmDef": -0.524,
+   "basis": "18g 2025 + 64g 2026"
+  },
+  {
+   "name": "Andrew Wiggins",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.218,
+   "epmDef": 0.182,
+   "basis": "14g 2025 + 68g 2026"
+  },
+  {
+   "name": "Josh Hart",
+   "tier": "Good defender",
+   "offense": "above average offense",
+   "override": false,
+   "epmOff": 0.094,
+   "epmDef": 0.875,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Ivica Zubac",
+   "tier": "Good defender",
+   "offense": "above average offense",
+   "override": false,
+   "epmOff": 0.799,
+   "epmDef": 0.917,
+   "basis": "34g 2025 + 48g 2026"
+  },
+  {
+   "name": "Franz Wagner",
+   "tier": "Great defender",
+   "offense": "very good offense",
+   "override": false,
+   "epmOff": 2.176,
+   "epmDef": 1.159,
+   "basis": "44g 2025 + 38g 2026"
+  },
+  {
+   "name": "Bennedict Mathurin",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -0.77,
+   "epmDef": -0.79,
+   "basis": "28g 2025 + 54g 2026"
+  },
+  {
+   "name": "Stephon Castle",
+   "tier": "Great defender",
+   "offense": "above average offense",
+   "override": false,
+   "epmOff": 0.999,
+   "epmDef": 1.346,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Darius Garland",
+   "tier": "Average defender",
+   "offense": "very good offense",
+   "override": true,
+   "epmOff": 3.114,
+   "epmDef": -0.714,
+   "basis": "37g 2025 + 45g 2026"
+  },
+  {
+   "name": "CJ McCollum",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 1.282,
+   "epmDef": -0.09,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Anthony Black",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.27,
+   "epmDef": 0.63,
+   "basis": "11g 2025 + 71g 2026"
+  },
+  {
+   "name": "Zion Williamson",
+   "tier": "Average defender",
+   "offense": "very good offense",
+   "override": true,
+   "epmOff": 1.923,
+   "epmDef": -0.111,
+   "basis": "20g 2025 + 62g 2026"
+  },
+  {
+   "name": "Jerami Grant",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.328,
+   "epmDef": -0.68,
+   "basis": "20g 2025 + 62g 2026"
+  },
+  {
+   "name": "Domantas Sabonis",
+   "tier": "Average defender",
+   "offense": "very good offense",
+   "override": true,
+   "epmOff": 2.226,
+   "epmDef": 0.537,
+   "basis": "63g 2025 + 19g 2026"
+  },
+  {
+   "name": "Aaron Nesmith",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.4,
+   "epmDef": -0.064,
+   "basis": "37g 2025 + 45g 2026"
+  },
+  {
+   "name": "Norman Powell",
+   "tier": "Average defender",
+   "offense": "very good offense",
+   "override": true,
+   "epmOff": 1.922,
+   "epmDef": -0.277,
+   "basis": "24g 2025 + 58g 2026"
+  },
+  {
+   "name": "Peyton Watson",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -0.744,
+   "epmDef": 0.072,
+   "basis": "28g 2025 + 54g 2026"
+  },
+  {
+   "name": "Naji Marshall",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": -0.33,
+   "epmDef": 0.039,
+   "basis": "8g 2025 + 74g 2026"
+  },
+  {
+   "name": "Shaedon Sharpe",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": -0.25,
+   "epmDef": -0.861,
+   "basis": "27g 2025 + 55g 2026"
+  },
+  {
+   "name": "Jrue Holiday",
+   "tier": "Good defender",
+   "offense": "above average offense",
+   "override": false,
+   "epmOff": 0.829,
+   "epmDef": 0.862,
+   "basis": "24g 2025 + 58g 2026"
+  },
+  {
+   "name": "Quentin Grimes",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.017,
+   "epmDef": -0.195,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Wendell Carter Jr.",
+   "tier": "Great defender",
+   "offense": "above average offense",
+   "override": false,
+   "epmOff": -0.125,
+   "epmDef": 1.159,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Victor Wembanyama",
+   "tier": "Elite defender",
+   "offense": "elite offense",
+   "override": false,
+   "epmOff": 4.031,
+   "epmDef": 4.897,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Matas Buzelis",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": -0.238,
+   "epmDef": -0.114,
+   "basis": "5g 2025 + 77g 2026"
+  },
+  {
+   "name": "Max Christie",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -0.803,
+   "epmDef": -0.442,
+   "basis": "5g 2025 + 77g 2026"
+  },
+  {
+   "name": "A.J. Green",
+   "tier": "Bad defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.179,
+   "epmDef": -1.464,
+   "basis": "4g 2025 + 78g 2026"
+  },
+  {
+   "name": "Russell Westbrook",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": -0.359,
+   "epmDef": -0.455,
+   "basis": "18g 2025 + 64g 2026"
+  },
+  {
+   "name": "Kyshawn George",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.202,
+   "epmDef": 0.001,
+   "basis": "34g 2025 + 48g 2026"
+  },
+  {
+   "name": "Giannis Antetokounmpo",
+   "tier": "Great defender",
+   "offense": "elite offense",
+   "override": false,
+   "epmOff": 5.015,
+   "epmDef": 1.248,
+   "basis": "46g 2025 + 36g 2026"
+  },
+  {
+   "name": "Chet Holmgren",
+   "tier": "Elite defender",
+   "offense": "very good offense",
+   "override": false,
+   "epmOff": 2.219,
+   "epmDef": 3.007,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Grayson Allen",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 1.266,
+   "epmDef": -0.579,
+   "basis": "29g 2025 + 53g 2026"
+  },
+  {
+   "name": "Davion Mitchell",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.188,
+   "epmDef": 0.383,
+   "basis": "12g 2025 + 70g 2026"
+  },
+  {
+   "name": "Ja Morant",
+   "tier": "Good defender",
+   "offense": "very good offense",
+   "override": false,
+   "epmOff": 1.866,
+   "epmDef": 0.786,
+   "basis": "53g 2025 + 20g 2026"
+  },
+  {
+   "name": "Brandin Podziemski",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": -0.565,
+   "epmDef": 0.61,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Collin Gillespie",
+   "tier": "Average defender",
+   "offense": "very good offense",
+   "override": true,
+   "epmOff": 1.779,
+   "epmDef": 0.385,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Marcus Smart",
+   "tier": "Elite defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -0.953,
+   "epmDef": 1.926,
+   "basis": "10g 2025 + 72g 2026"
+  },
+  {
+   "name": "Jalen Williams",
+   "tier": "Elite defender",
+   "offense": "very good offense",
+   "override": false,
+   "epmOff": 1.337,
+   "epmDef": 1.927,
+   "basis": "44g 2025 + 38g 2026"
+  },
+  {
+   "name": "Nikola Vučević",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.848,
+   "epmDef": -0.385,
+   "basis": "13g 2025 + 69g 2026"
+  },
+  {
+   "name": "Royce O'Neale",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -0.853,
+   "epmDef": -0.645,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Herbert Jones",
+   "tier": "Good defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.728,
+   "epmDef": 0.957,
+   "basis": "20g 2025 + 56g 2026"
+  },
+  {
+   "name": "Jaime Jaquez Jr.",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -0.854,
+   "epmDef": -0.613,
+   "basis": "7g 2025 + 75g 2026"
+  },
+  {
+   "name": "Rui Hachimura",
+   "tier": "Slightly negative defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": -0.408,
+   "epmDef": -0.891,
+   "basis": "4g 2025 + 78g 2026"
+  },
+  {
+   "name": "Jalen Duren",
+   "tier": "Average defender",
+   "offense": "very good offense",
+   "override": true,
+   "epmOff": 2.677,
+   "epmDef": 0.538,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "LaMelo Ball",
+   "tier": "Average defender",
+   "offense": "elite offense",
+   "override": true,
+   "epmOff": 4.717,
+   "epmDef": -0.443,
+   "basis": "10g 2025 + 72g 2026"
+  },
+  {
+   "name": "Aaron Gordon",
+   "tier": "Average defender",
+   "offense": "very good offense",
+   "override": true,
+   "epmOff": 1.831,
+   "epmDef": -0.678,
+   "basis": "43g 2025 + 39g 2026"
+  },
+  {
+   "name": "Santi Aldama",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.479,
+   "epmDef": -0.017,
+   "basis": "39g 2025 + 43g 2026"
+  },
+  {
+   "name": "Dejounte Murray",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -0.842,
+   "epmDef": 0.466,
+   "basis": "31g 2025 + 14g 2026"
+  },
+  {
+   "name": "Nic Claxton",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -0.786,
+   "epmDef": -0.275,
+   "basis": "13g 2025 + 69g 2026"
+  },
+  {
+   "name": "Tobias Harris",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.484,
+   "epmDef": 0.157,
+   "basis": "5g 2025 + 77g 2026"
+  },
+  {
+   "name": "Bub Carrington",
+   "tier": "Awful defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.86,
+   "epmDef": -2.784,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Ace Bailey",
+   "tier": "Bad defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.287,
+   "epmDef": -1.398,
+   "basis": "72g 2026"
+  },
+  {
+   "name": "Jalen Suggs",
+   "tier": "Great defender",
+   "offense": "above average offense",
+   "override": false,
+   "epmOff": -0.109,
+   "epmDef": 1.771,
+   "basis": "18g 2025 + 64g 2026"
+  },
+  {
+   "name": "Julian Champagnie",
+   "tier": "Average defender",
+   "offense": "very good offense",
+   "override": true,
+   "epmOff": 1.33,
+   "epmDef": 0.117,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Draymond Green",
+   "tier": "Good defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.862,
+   "epmDef": 0.764,
+   "basis": "14g 2025 + 68g 2026"
+  },
+  {
+   "name": "Duncan Robinson",
+   "tier": "Average defender",
+   "offense": "very good offense",
+   "override": true,
+   "epmOff": 1.941,
+   "epmDef": -0.58,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Ayo Dosunmu",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.304,
+   "epmDef": -0.391,
+   "basis": "3g 2025 + 79g 2026"
+  },
+  {
+   "name": "Alex Sarr",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": -0.092,
+   "epmDef": -0.471,
+   "basis": "48g 2026"
+  },
+  {
+   "name": "Deandre Ayton",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": -0.365,
+   "epmDef": -0.372,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Donovan Clingan",
+   "tier": "Average defender",
+   "offense": "very good offense",
+   "override": true,
+   "epmOff": 1.765,
+   "epmDef": 0.631,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Kris Dunn",
+   "tier": "Great defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.408,
+   "epmDef": 1.336,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Jarrett Allen",
+   "tier": "Great defender",
+   "offense": "very good offense",
+   "override": false,
+   "epmOff": 1.692,
+   "epmDef": 1.203,
+   "basis": "8g 2025 + 74g 2026"
+  },
+  {
+   "name": "John Collins",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": -0.028,
+   "epmDef": -0.412,
+   "basis": "13g 2025 + 69g 2026"
+  },
+  {
+   "name": "Tre Jones",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.646,
+   "epmDef": -0.426,
+   "basis": "17g 2025 + 65g 2026"
+  },
+  {
+   "name": "Noah Clowney",
+   "tier": "Slightly negative defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -0.913,
+   "epmDef": -1.09,
+   "basis": "16g 2025 + 66g 2026"
+  },
+  {
+   "name": "Derrick Jones Jr.",
+   "tier": "Good defender",
+   "offense": "above average offense",
+   "override": false,
+   "epmOff": -0.373,
+   "epmDef": 1.098,
+   "basis": "32g 2025 + 50g 2026"
+  },
+  {
+   "name": "Jaylon Tyson",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.225,
+   "epmDef": 0.052,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Myles Turner",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": -0.653,
+   "epmDef": 0.073,
+   "basis": "11g 2025 + 71g 2026"
+  },
+  {
+   "name": "Isaac Okoro",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": -0.675,
+   "epmDef": -0.546,
+   "basis": "19g 2025 + 63g 2026"
+  },
+  {
+   "name": "Luguentz Dort",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.429,
+   "epmDef": 0.23,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Tim Hardaway Jr.",
+   "tier": "Awful defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.69,
+   "epmDef": -1.693,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Cason Wallace",
+   "tier": "Elite defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.007,
+   "epmDef": 2.98,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Sam Merrill",
+   "tier": "Average defender",
+   "offense": "very good offense",
+   "override": true,
+   "epmOff": 1.564,
+   "epmDef": -0.78,
+   "basis": "13g 2025 + 69g 2026"
+  },
+  {
+   "name": "Maxime Raynaud",
+   "tier": "Awful defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -0.757,
+   "epmDef": -2.015,
+   "basis": "74g 2026"
+  },
+  {
+   "name": "Jaylen Wells",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.13,
+   "epmDef": -0.493,
+   "basis": "13g 2025 + 69g 2026"
+  },
+  {
+   "name": "Pelle Larsson",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": -0.352,
+   "epmDef": 0.207,
+   "basis": "12g 2025 + 70g 2026"
+  },
+  {
+   "name": "Jusuf Nurkić",
+   "tier": "Good defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.533,
+   "epmDef": 0.954,
+   "basis": "41g 2025 + 41g 2026"
+  },
+  {
+   "name": "Miles McBride",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.646,
+   "epmDef": 0.615,
+   "basis": "22g 2025 + 60g 2026"
+  },
+  {
+   "name": "Reed Sheppard",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.221,
+   "epmDef": 0.075,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Kyle Kuzma",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.288,
+   "epmDef": -0.312,
+   "basis": "13g 2025 + 69g 2026"
+  },
+  {
+   "name": "Bilal Coulibaly",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.684,
+   "epmDef": 0.436,
+   "basis": "26g 2025 + 56g 2026"
+  },
+  {
+   "name": "De'Andre Hunter",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": -0.289,
+   "epmDef": -0.32,
+   "basis": "37g 2025 + 45g 2026"
+  },
+  {
+   "name": "Naz Reid",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": -0.652,
+   "epmDef": 0.54,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Ausar Thompson",
+   "tier": "Elite defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -0.961,
+   "epmDef": 4.15,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Moussa Diabaté",
+   "tier": "Good defender",
+   "offense": "above average offense",
+   "override": false,
+   "epmOff": 0.532,
+   "epmDef": 0.691,
+   "basis": "9g 2025 + 73g 2026"
+  },
+  {
+   "name": "Jalen Green",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.73,
+   "epmDef": -0.693,
+   "basis": "46g 2025 + 36g 2026"
+  },
+  {
+   "name": "Jeremiah Fears",
+   "tier": "Bad defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.431,
+   "epmDef": -1.16,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Cedric Coward",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.657,
+   "epmDef": 0.083,
+   "basis": "62g 2026"
+  },
+  {
+   "name": "Zach Edey",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.817,
+   "epmDef": -0.139,
+   "basis": "70g 2025 + 11g 2026"
+  },
+  {
+   "name": "Ajay Mitchell",
+   "tier": "Elite defender",
+   "offense": "above average offense",
+   "override": false,
+   "epmOff": 0.132,
+   "epmDef": 1.83,
+   "basis": "14g 2025 + 68g 2026"
+  },
+  {
+   "name": "Tari Eason",
+   "tier": "Great defender",
+   "offense": "above average offense",
+   "override": false,
+   "epmOff": -0.732,
+   "epmDef": 1.189,
+   "basis": "16g 2025 + 66g 2026"
+  },
+  {
+   "name": "Harrison Barnes",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.225,
+   "epmDef": -0.654,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Moses Moody",
+   "tier": "Great defender",
+   "offense": "above average offense",
+   "override": false,
+   "epmOff": 0.26,
+   "epmDef": 1.506,
+   "basis": "22g 2025 + 60g 2026"
+  },
+  {
+   "name": "Isaiah Collier",
+   "tier": "Awful defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.859,
+   "epmDef": -2.148,
+   "basis": "23g 2025 + 59g 2026"
+  },
+  {
+   "name": "Jarace Walker",
+   "tier": "Slightly negative defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -2.433,
+   "epmDef": -1.128,
+   "basis": "6g 2025 + 76g 2026"
+  },
+  {
+   "name": "Trae Young",
+   "tier": "Awful defender",
+   "offense": "elite offense",
+   "override": true,
+   "epmOff": 3.271,
+   "epmDef": -1.867,
+   "basis": "67g 2025 + 15g 2026"
+  },
+  {
+   "name": "Neemias Queta",
+   "tier": "Elite defender",
+   "offense": "above average offense",
+   "override": false,
+   "epmOff": 1.052,
+   "epmDef": 2.101,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Egor Dëmin",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": -0.248,
+   "epmDef": -0.606,
+   "basis": "52g 2026"
+  },
+  {
+   "name": "Nique Clifford",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -2.67,
+   "epmDef": -0.186,
+   "basis": "75g 2026"
+  },
+  {
+   "name": "Jake LaRavia",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.294,
+   "epmDef": -0.003,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Coby White",
+   "tier": "Bad defender",
+   "offense": "very good offense",
+   "override": true,
+   "epmOff": 1.76,
+   "epmDef": -1.194,
+   "basis": "32g 2025 + 50g 2026"
+  },
+  {
+   "name": "Derik Queen",
+   "tier": "Slightly negative defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.669,
+   "epmDef": -1.107,
+   "basis": "81g 2026"
+  },
+  {
+   "name": "Jakob Poeltl",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.433,
+   "epmDef": 0.567,
+   "basis": "29g 2025 + 53g 2026"
+  },
+  {
+   "name": "Anfernee Simons",
+   "tier": "Bad defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 1.054,
+   "epmDef": -1.29,
+   "basis": "27g 2025 + 55g 2026"
+  },
+  {
+   "name": "Sam Hauser",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.932,
+   "epmDef": -0.073,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Tristan Da Silva",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.085,
+   "epmDef": -0.121,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Bruce Brown",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -3.336,
+   "epmDef": -0.374,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Cody Williams",
+   "tier": "Awful defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -3.161,
+   "epmDef": -1.664,
+   "basis": "15g 2025 + 67g 2026"
+  },
+  {
+   "name": "Terance Mann",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.231,
+   "epmDef": -0.682,
+   "basis": "19g 2025 + 63g 2026"
+  },
+  {
+   "name": "Bobby Portis",
+   "tier": "Awful defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.197,
+   "epmDef": -1.613,
+   "basis": "15g 2025 + 67g 2026"
+  },
+  {
+   "name": "Dennis Schröder",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.725,
+   "epmDef": -0.636,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Isaiah Hartenstein",
+   "tier": "Elite defender",
+   "offense": "above average offense",
+   "override": false,
+   "epmOff": 0.768,
+   "epmDef": 2.469,
+   "basis": "20g 2025 + 62g 2026"
+  },
+  {
+   "name": "Tre Johnson",
+   "tier": "Awful defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.167,
+   "epmDef": -1.661,
+   "basis": "60g 2026"
+  },
+  {
+   "name": "Precious Achiuwa",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -0.865,
+   "epmDef": 0.354,
+   "basis": "9g 2025 + 73g 2026"
+  },
+  {
+   "name": "Cam Spencer",
+   "tier": "Bad defender",
+   "offense": "very good offense",
+   "override": true,
+   "epmOff": 1.766,
+   "epmDef": -1.399,
+   "basis": "10g 2025 + 72g 2026"
+  },
+  {
+   "name": "Dominick Barlow",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.602,
+   "epmDef": 0.623,
+   "basis": "2g 2025 + 80g 2026"
+  },
+  {
+   "name": "Collin Sexton",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.483,
+   "epmDef": -0.571,
+   "basis": "14g 2025 + 68g 2026"
+  },
+  {
+   "name": "Mark Williams",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.392,
+   "epmDef": -0.452,
+   "basis": "22g 2025 + 60g 2026"
+  },
+  {
+   "name": "Brice Sensabaugh",
+   "tier": "Awful defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.23,
+   "epmDef": -2.211,
+   "basis": "8g 2025 + 74g 2026"
+  },
+  {
+   "name": "Kyle Filipowski",
+   "tier": "Bad defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.109,
+   "epmDef": -1.529,
+   "basis": "5g 2025 + 77g 2026"
+  },
+  {
+   "name": "Kris Murray",
+   "tier": "Good defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -2.72,
+   "epmDef": 1.024,
+   "basis": "22g 2025 + 60g 2026"
+  },
+  {
+   "name": "Keldon Johnson",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": -0.212,
+   "epmDef": 0.088,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Svi Mykhailiuk",
+   "tier": "Slightly negative defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": -0.111,
+   "epmDef": -0.956,
+   "basis": "32g 2025 + 50g 2026"
+  },
+  {
+   "name": "De'Anthony Melton",
+   "tier": "Good defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -0.861,
+   "epmDef": 0.902,
+   "basis": "6g 2025 + 49g 2026"
+  },
+  {
+   "name": "Landry Shamet",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": -0.714,
+   "epmDef": 0.075,
+   "basis": "12g 2025 + 70g 2026"
+  },
+  {
+   "name": "Ziaire Williams",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.637,
+   "epmDef": 0.6,
+   "basis": "26g 2025 + 56g 2026"
+  },
+  {
+   "name": "Khris Middleton",
+   "tier": "Slightly negative defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -0.946,
+   "epmDef": -0.956,
+   "basis": "19g 2025 + 63g 2026"
+  },
+  {
+   "name": "Isaiah Stewart",
+   "tier": "Good defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.097,
+   "epmDef": 0.744,
+   "basis": "10g 2025 + 72g 2026"
+  },
+  {
+   "name": "Ty Jerome",
+   "tier": "Average defender",
+   "offense": "very good offense",
+   "override": true,
+   "epmOff": 3.046,
+   "epmDef": 0.391,
+   "basis": "67g 2025 + 15g 2026"
+  },
+  {
+   "name": "Dylan Harper",
+   "tier": "Good defender",
+   "offense": "above average offense",
+   "override": false,
+   "epmOff": 0.21,
+   "epmDef": 1.057,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Jamal Shead",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.269,
+   "epmDef": 0.638,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Jordan Goodwin",
+   "tier": "Great defender",
+   "offense": "above average offense",
+   "override": false,
+   "epmOff": -0.555,
+   "epmDef": 1.446,
+   "basis": "11g 2025 + 71g 2026"
+  },
+  {
+   "name": "Sion James",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -2.224,
+   "epmDef": 0.615,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Kevin Huerter",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": -0.519,
+   "epmDef": 0.19,
+   "basis": "8g 2025 + 74g 2026"
+  },
+  {
+   "name": "Zaccharie Risacher",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.243,
+   "epmDef": -0.847,
+   "basis": "12g 2025 + 70g 2026"
+  },
+  {
+   "name": "Dean Wade",
+   "tier": "Good defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -0.747,
+   "epmDef": 0.734,
+   "basis": "6g 2025 + 76g 2026"
+  },
+  {
+   "name": "Brandon Williams",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": -0.316,
+   "epmDef": -0.67,
+   "basis": "16g 2025 + 66g 2026"
+  },
+  {
+   "name": "Nolan Traoré",
+   "tier": "Awful defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -3.163,
+   "epmDef": -1.808,
+   "basis": "55g 2026"
+  },
+  {
+   "name": "Kel'el Ware",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.475,
+   "epmDef": 0.101,
+   "basis": "5g 2025 + 77g 2026"
+  },
+  {
+   "name": "Jock Landale",
+   "tier": "Bad defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.637,
+   "epmDef": -1.455,
+   "basis": "14g 2025 + 68g 2026"
+  },
+  {
+   "name": "Will Riley",
+   "tier": "Awful defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -2.093,
+   "epmDef": -2.566,
+   "basis": "74g 2026"
+  },
+  {
+   "name": "Jordan Miller",
+   "tier": "Bad defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.358,
+   "epmDef": -1.207,
+   "basis": "23g 2025 + 59g 2026"
+  },
+  {
+   "name": "Spencer Jones",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -2.399,
+   "epmDef": 0.269,
+   "basis": "13g 2025 + 69g 2026"
+  },
+  {
+   "name": "Malik Monk",
+   "tier": "Bad defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.042,
+   "epmDef": -1.6,
+   "basis": "20g 2025 + 62g 2026"
+  },
+  {
+   "name": "Oso Ighodaro",
+   "tier": "Great defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.442,
+   "epmDef": 1.451,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Sandro Mamukelashvili",
+   "tier": "Good defender",
+   "offense": "above average offense",
+   "override": false,
+   "epmOff": 0.975,
+   "epmDef": 0.697,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Collin Murray-Boyles",
+   "tier": "Good defender",
+   "offense": "above average offense",
+   "override": false,
+   "epmOff": -0.631,
+   "epmDef": 1.133,
+   "basis": "64g 2026"
+  },
+  {
+   "name": "Aaron Wiggins",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.749,
+   "epmDef": 0.618,
+   "basis": "8g 2025 + 74g 2026"
+  },
+  {
+   "name": "Brook Lopez",
+   "tier": "Elite defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.061,
+   "epmDef": 1.886,
+   "basis": "7g 2025 + 75g 2026"
+  },
+  {
+   "name": "Klay Thompson",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": -0.603,
+   "epmDef": -0.144,
+   "basis": "13g 2025 + 69g 2026"
+  },
+  {
+   "name": "Daniel Gafford",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.222,
+   "epmDef": -0.415,
+   "basis": "27g 2025 + 55g 2026"
+  },
+  {
+   "name": "Luke Kennard",
+   "tier": "Slightly negative defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": -0.349,
+   "epmDef": -1.041,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Al Horford",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": -0.24,
+   "epmDef": 0.485,
+   "basis": "37g 2025 + 45g 2026"
+  },
+  {
+   "name": "GG Jackson II",
+   "tier": "Slightly negative defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.227,
+   "epmDef": -1.127,
+   "basis": "28g 2025 + 51g 2026"
+  },
+  {
+   "name": "Vít Krejčí",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.162,
+   "epmDef": -0.54,
+   "basis": "16g 2025 + 66g 2026"
+  },
+  {
+   "name": "Ryan Kalkbrenner",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.463,
+   "epmDef": 0.36,
+   "basis": "69g 2026"
+  },
+  {
+   "name": "Ben Sheppard",
+   "tier": "Slightly negative defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.964,
+   "epmDef": -0.926,
+   "basis": "17g 2025 + 65g 2026"
+  },
+  {
+   "name": "Kentavious Caldwell-Pope",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.762,
+   "epmDef": -0.101,
+   "basis": "31g 2025 + 51g 2026"
+  },
+  {
+   "name": "Isaiah Joe",
+   "tier": "Average defender",
+   "offense": "very good offense",
+   "override": true,
+   "epmOff": 1.416,
+   "epmDef": -0.324,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Gary Trent Jr.",
+   "tier": "Bad defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.47,
+   "epmDef": -1.604,
+   "basis": "19g 2025 + 63g 2026"
+  },
+  {
+   "name": "Cam Thomas",
+   "tier": "Awful defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.943,
+   "epmDef": -2.751,
+   "basis": "25g 2025 + 42g 2026"
+  },
+  {
+   "name": "Jay Huff",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -0.897,
+   "epmDef": -0.732,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Bryce McGowens",
+   "tier": "Slightly negative defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.366,
+   "epmDef": -1.095,
+   "basis": "9g 2025 + 42g 2026"
+  },
+  {
+   "name": "Luke Kornet",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": -0.233,
+   "epmDef": -0.024,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Drake Powell",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -4.116,
+   "epmDef": -0.747,
+   "basis": "63g 2026"
+  },
+  {
+   "name": "Danny Wolf",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -2.047,
+   "epmDef": 0.009,
+   "basis": "56g 2026"
+  },
+  {
+   "name": "Ben Saraf",
+   "tier": "Bad defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -4.666,
+   "epmDef": -1.452,
+   "basis": "44g 2026"
+  },
+  {
+   "name": "Caleb Love",
+   "tier": "Awful defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.489,
+   "epmDef": -1.947,
+   "basis": "47g 2026"
+  },
+  {
+   "name": "Jalen Smith",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 1.161,
+   "epmDef": 0.045,
+   "basis": "29g 2025 + 53g 2026"
+  },
+  {
+   "name": "Jamir Watkins",
+   "tier": "Good defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.888,
+   "epmDef": 0.887,
+   "basis": "47g 2026"
+  },
+  {
+   "name": "Dylan Cardwell",
+   "tier": "Good defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -2.077,
+   "epmDef": 1.102,
+   "basis": "44g 2026"
+  },
+  {
+   "name": "Gui Santos",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": -0.298,
+   "epmDef": 0.057,
+   "basis": "14g 2025 + 68g 2026"
+  },
+  {
+   "name": "Vince Williams Jr.",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.937,
+   "epmDef": 0.298,
+   "basis": "29g 2025 + 40g 2026"
+  },
+  {
+   "name": "Ja'Kobe Walter",
+   "tier": "Good defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.13,
+   "epmDef": 0.696,
+   "basis": "3g 2025 + 79g 2026"
+  },
+  {
+   "name": "Patrick Williams",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -4.054,
+   "epmDef": -0.455,
+   "basis": "10g 2025 + 72g 2026"
+  },
+  {
+   "name": "Keon Ellis",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -2.498,
+   "epmDef": 0.433,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Walter Clayton",
+   "tier": "Awful defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.683,
+   "epmDef": -2.054,
+   "basis": "69g 2026"
+  },
+  {
+   "name": "Javon Small",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.724,
+   "epmDef": -0.437,
+   "basis": "39g 2026"
+  },
+  {
+   "name": "Daniss Jenkins",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.152,
+   "epmDef": -0.101,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Marvin Bagley III",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": -0.014,
+   "epmDef": -0.724,
+   "basis": "22g 2025 + 60g 2026"
+  },
+  {
+   "name": "Justin Champagnie",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": -0.066,
+   "epmDef": -0.611,
+   "basis": "14g 2025 + 68g 2026"
+  },
+  {
+   "name": "Will Richard",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.71,
+   "epmDef": -0.02,
+   "basis": "69g 2026"
+  },
+  {
+   "name": "Ron Holland",
+   "tier": "Elite defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -3.016,
+   "epmDef": 2.533,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Jose Alvarado",
+   "tier": "Good defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -0.755,
+   "epmDef": 0.788,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Kobe Sanders",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.874,
+   "epmDef": 0.564,
+   "basis": "67g 2026"
+  },
+  {
+   "name": "John Konchar",
+   "tier": "Good defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -2.554,
+   "epmDef": 1.037,
+   "basis": "26g 2025 + 56g 2026"
+  },
+  {
+   "name": "Kyle Anderson",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -2.578,
+   "epmDef": 0.299,
+   "basis": "31g 2025 + 51g 2026"
+  },
+  {
+   "name": "Yves Missi",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.778,
+   "epmDef": 0.162,
+   "basis": "16g 2025 + 66g 2026"
+  },
+  {
+   "name": "Jericho Sims",
+   "tier": "Awful defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -2.067,
+   "epmDef": -1.936,
+   "basis": "17g 2025 + 65g 2026"
+  },
+  {
+   "name": "Jaylin Williams",
+   "tier": "Elite defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -0.957,
+   "epmDef": 1.875,
+   "basis": "2g 2025 + 80g 2026"
+  },
+  {
+   "name": "Mitchell Robinson",
+   "tier": "Great defender",
+   "offense": "above average offense",
+   "override": false,
+   "epmOff": -0.488,
+   "epmDef": 1.6,
+   "basis": "4g 2025 + 78g 2026"
+  },
+  {
+   "name": "Ryan Nembhard",
+   "tier": "Slightly negative defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.012,
+   "epmDef": -0.908,
+   "basis": "60g 2026"
+  },
+  {
+   "name": "Andre Drummond",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.488,
+   "epmDef": 0.055,
+   "basis": "8g 2025 + 74g 2026"
+  },
+  {
+   "name": "Ryan Dunn",
+   "tier": "Good defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.854,
+   "epmDef": 1.115,
+   "basis": "11g 2025 + 71g 2026"
+  },
+  {
+   "name": "Micah Potter",
+   "tier": "Slightly negative defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -0.986,
+   "epmDef": -1.145,
+   "basis": "36g 2025 + 46g 2026"
+  },
+  {
+   "name": "Ousmane Dieng",
+   "tier": "Slightly negative defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -2.5,
+   "epmDef": -1.063,
+   "basis": "26g 2025 + 56g 2026"
+  },
+  {
+   "name": "Caris LeVert",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -2.388,
+   "epmDef": 0.19,
+   "basis": "9g 2025 + 73g 2026"
+  },
+  {
+   "name": "Sidy Cissoko",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -2.943,
+   "epmDef": 0.04,
+   "basis": "8g 2025 + 74g 2026"
+  },
+  {
+   "name": "Taylor Hendricks",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -2.083,
+   "epmDef": -0.473,
+   "basis": "3g 2025 + 58g 2026"
+  },
+  {
+   "name": "Day'Ron Sharpe",
+   "tier": "Good defender",
+   "offense": "above average offense",
+   "override": false,
+   "epmOff": -0.179,
+   "epmDef": 1.106,
+   "basis": "20g 2025 + 62g 2026"
+  },
+  {
+   "name": "Olivier-Maxence Prosper",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.043,
+   "epmDef": -0.022,
+   "basis": "35g 2025 + 47g 2026"
+  },
+  {
+   "name": "Corey Kispert",
+   "tier": "Awful defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -0.8,
+   "epmDef": -1.742,
+   "basis": "19g 2025 + 63g 2026"
+  },
+  {
+   "name": "Pat Spencer",
+   "tier": "Bad defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.617,
+   "epmDef": -1.332,
+   "basis": "18g 2025 + 64g 2026"
+  },
+  {
+   "name": "Baylor Scheierman",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -0.905,
+   "epmDef": 0.526,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Mike Conley",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -0.774,
+   "epmDef": -0.099,
+   "basis": "17g 2025 + 65g 2026"
+  },
+  {
+   "name": "Quenton Jackson",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -0.735,
+   "epmDef": -0.215,
+   "basis": "24g 2025 + 47g 2026"
+  },
+  {
+   "name": "Jaxson Hayes",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -0.742,
+   "epmDef": -0.212,
+   "basis": "6g 2025 + 76g 2026"
+  },
+  {
+   "name": "Alex Caruso",
+   "tier": "Elite defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -0.947,
+   "epmDef": 2.896,
+   "basis": "12g 2025 + 70g 2026"
+  },
+  {
+   "name": "Craig Porter Jr.",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.469,
+   "epmDef": 0.084,
+   "basis": "13g 2025 + 69g 2026"
+  },
+  {
+   "name": "Jordan Clarkson",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.046,
+   "epmDef": -0.716,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Kasparas Jakučionis",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": -0.369,
+   "epmDef": -0.231,
+   "basis": "51g 2026"
+  },
+  {
+   "name": "Jordan Walsh",
+   "tier": "Good defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.133,
+   "epmDef": 0.923,
+   "basis": "10g 2025 + 72g 2026"
+  },
+  {
+   "name": "Javonte Green",
+   "tier": "Elite defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.101,
+   "epmDef": 1.903,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Nicolas Batum",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -2.195,
+   "epmDef": -0.462,
+   "basis": "8g 2025 + 74g 2026"
+  },
+  {
+   "name": "Adem Bona",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -2.302,
+   "epmDef": 0.275,
+   "basis": "4g 2025 + 78g 2026"
+  },
+  {
+   "name": "Josh Okogie",
+   "tier": "Good defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.552,
+   "epmDef": 1.103,
+   "basis": "82g 2026"
+  },
+  {
+   "name": "Jarred Vanderbilt",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -2.324,
+   "epmDef": -0.197,
+   "basis": "10g 2025 + 72g 2026"
+  },
+  {
+   "name": "Jared McCain",
+   "tier": "Bad defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -0.864,
+   "epmDef": -1.242,
+   "basis": "79g 2026"
+  },
+  {
+   "name": "Quinten Post",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": -0.027,
+   "epmDef": 0.054,
+   "basis": "15g 2025 + 67g 2026"
+  },
+  {
+   "name": "Anthony Gill",
+   "tier": "Bad defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -2.314,
+   "epmDef": -1.513,
+   "basis": "36g 2025 + 46g 2026"
+  },
+  {
+   "name": "T.J. McConnell",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.318,
+   "epmDef": 0.089,
+   "basis": "26g 2025 + 56g 2026"
+  },
+  {
+   "name": "Nikola Jović",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -2.084,
+   "epmDef": 0.312,
+   "basis": "37g 2025 + 45g 2026"
+  },
+  {
+   "name": "Sharife Cooper",
+   "tier": "Awful defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.29,
+   "epmDef": -2.073,
+   "basis": "40g 2026"
+  },
+  {
+   "name": "Robert Williams",
+   "tier": "Great defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -0.823,
+   "epmDef": 1.81,
+   "basis": "18g 2025 + 64g 2026"
+  },
+  {
+   "name": "Josh Minott",
+   "tier": "Good defender",
+   "offense": "above average offense",
+   "override": false,
+   "epmOff": -0.673,
+   "epmDef": 0.781,
+   "basis": "34g 2025 + 48g 2026"
+  },
+  {
+   "name": "Tyrese Martin",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.932,
+   "epmDef": -0.755,
+   "basis": "37g 2025 + 45g 2026"
+  },
+  {
+   "name": "Simone Fontecchio",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.265,
+   "epmDef": -0.513,
+   "basis": "14g 2025 + 68g 2026"
+  },
+  {
+   "name": "Rayan Rupert",
+   "tier": "Slightly negative defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -4.287,
+   "epmDef": -0.986,
+   "basis": "20g 2025 + 62g 2026"
+  },
+  {
+   "name": "Bones Hyland",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.506,
+   "epmDef": -0.064,
+   "basis": "3g 2025 + 79g 2026"
+  },
+  {
+   "name": "Gabe Vincent",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.944,
+   "epmDef": -0.649,
+   "basis": "23g 2025 + 59g 2026"
+  },
+  {
+   "name": "Isaiah Jackson",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.204,
+   "epmDef": -0.661,
+   "basis": "5g 2025 + 55g 2026"
+  },
+  {
+   "name": "Jevon Carter",
+   "tier": "Slightly negative defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.182,
+   "epmDef": -1.011,
+   "basis": "28g 2025 + 54g 2026"
+  },
+  {
+   "name": "Trendon Watford",
+   "tier": "Bad defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -2.495,
+   "epmDef": -1.185,
+   "basis": "25g 2025 + 57g 2026"
+  },
+  {
+   "name": "Dru Smith",
+   "tier": "Elite defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -2.124,
+   "epmDef": 2.002,
+   "basis": "12g 2025 + 70g 2026"
+  },
+  {
+   "name": "Luka Garza",
+   "tier": "Bad defender",
+   "offense": "very good offense",
+   "override": true,
+   "epmOff": 1.966,
+   "epmDef": -1.32,
+   "basis": "8g 2025 + 74g 2026"
+  },
+  {
+   "name": "Buddy Hield",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": -0.686,
+   "epmDef": -0.593,
+   "basis": "29g 2025 + 53g 2026"
+  },
+  {
+   "name": "Jalen Pickett",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.299,
+   "epmDef": -0.273,
+   "basis": "37g 2025 + 45g 2026"
+  },
+  {
+   "name": "Jalen Wilson",
+   "tier": "Bad defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -2.161,
+   "epmDef": -1.599,
+   "basis": "29g 2025 + 53g 2026"
+  },
+  {
+   "name": "Jaden Hardy",
+   "tier": "Bad defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -0.981,
+   "epmDef": -1.371,
+   "basis": "26g 2025 + 56g 2026"
+  },
+  {
+   "name": "Kobe Brown",
+   "tier": "Bad defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.785,
+   "epmDef": -1.275,
+   "basis": "25g 2025 + 57g 2026"
+  },
+  {
+   "name": "Nae'Qwan Tomlin",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.584,
+   "epmDef": 0.32,
+   "basis": "5g 2025 + 68g 2026"
+  },
+  {
+   "name": "Pete Nance",
+   "tier": "Slightly negative defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.049,
+   "epmDef": -0.924,
+   "basis": "10g 2025 + 44g 2026"
+  },
+  {
+   "name": "Ochai Agbaji",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -2.597,
+   "epmDef": 0.054,
+   "basis": "21g 2025 + 61g 2026"
+  },
+  {
+   "name": "Josh Green",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.644,
+   "epmDef": 0.439,
+   "basis": "24g 2025 + 58g 2026"
+  },
+  {
+   "name": "Leonard Miller",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": -0.537,
+   "epmDef": -0.666,
+   "basis": "10g 2025 + 42g 2026"
+  },
+  {
+   "name": "Gary Payton II",
+   "tier": "Good defender",
+   "offense": "above average offense",
+   "override": false,
+   "epmOff": -0.148,
+   "epmDef": 1.065,
+   "basis": "9g 2025 + 73g 2026"
+  },
+  {
+   "name": "Kenrich Williams",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -0.843,
+   "epmDef": -0.449,
+   "basis": "20g 2025 + 62g 2026"
+  },
+  {
+   "name": "Justin Edwards",
+   "tier": "Slightly negative defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.491,
+   "epmDef": -1.103,
+   "basis": "14g 2025 + 68g 2026"
+  },
+  {
+   "name": "Mouhamed Gueye",
+   "tier": "Good defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.893,
+   "epmDef": 1.131,
+   "basis": "81g 2026"
+  },
+  {
+   "name": "Goga Bitadze",
+   "tier": "Good defender",
+   "offense": "above average offense",
+   "override": false,
+   "epmOff": -0.234,
+   "epmDef": 1.07,
+   "basis": "12g 2025 + 70g 2026"
+  },
+  {
+   "name": "Julian Strawther",
+   "tier": "Slightly negative defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.283,
+   "epmDef": -1.147,
+   "basis": "25g 2025 + 57g 2026"
+  },
+  {
+   "name": "Guerschon Yabusele",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.073,
+   "epmDef": -0.859,
+   "basis": "16g 2025 + 66g 2026"
+  },
+  {
+   "name": "Micah Peavy",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -2.979,
+   "epmDef": -0.208,
+   "basis": "57g 2026"
+  },
+  {
+   "name": "Rob Dillingham",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -4.426,
+   "epmDef": -0.731,
+   "basis": "18g 2025 + 64g 2026"
+  },
+  {
+   "name": "Caleb Martin",
+   "tier": "Good defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -3.788,
+   "epmDef": 0.76,
+   "basis": "26g 2025 + 56g 2026"
+  },
+  {
+   "name": "Karlo Matković",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.064,
+   "epmDef": -0.406,
+   "basis": "21g 2025 + 61g 2026"
+  },
+  {
+   "name": "Nick Richards",
+   "tier": "Awful defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -2.53,
+   "epmDef": -2.191,
+   "basis": "35g 2025 + 47g 2026"
+  },
+  {
+   "name": "Hugo González",
+   "tier": "Great defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -2.235,
+   "epmDef": 1.451,
+   "basis": "73g 2026"
+  },
+  {
+   "name": "Tyus Jones",
+   "tier": "Awful defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -2.208,
+   "epmDef": -1.652,
+   "basis": "14g 2025 + 68g 2026"
+  },
+  {
+   "name": "Dwight Powell",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.515,
+   "epmDef": -0.03,
+   "basis": "24g 2025 + 58g 2026"
+  },
+  {
+   "name": "Gradey Dick",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -2.145,
+   "epmDef": -0.521,
+   "basis": "7g 2025 + 75g 2026"
+  },
+  {
+   "name": "Jamaree Bouyea",
+   "tier": "Good defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -2.316,
+   "epmDef": 0.823,
+   "basis": "4g 2025 + 45g 2026"
+  },
+  {
+   "name": "Paul Reed",
+   "tier": "Elite defender",
+   "offense": "above average offense",
+   "override": false,
+   "epmOff": 1.044,
+   "epmDef": 2.18,
+   "basis": "9g 2025 + 73g 2026"
+  },
+  {
+   "name": "Gary Harris",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -3.177,
+   "epmDef": 0.283,
+   "basis": "35g 2025 + 47g 2026"
+  },
+  {
+   "name": "Tristan Vukcevic",
+   "tier": "Bad defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": -0.279,
+   "epmDef": -1.439,
+   "basis": "31g 2025 + 48g 2026"
+  },
+  {
+   "name": "Aaron Holiday",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.188,
+   "epmDef": -0.164,
+   "basis": "21g 2025 + 61g 2026"
+  },
+  {
+   "name": "Jordan Hawkins",
+   "tier": "Awful defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -3.062,
+   "epmDef": -2.191,
+   "basis": "36g 2025 + 46g 2026"
+  },
+  {
+   "name": "Jonas Valančiūnas",
+   "tier": "Slightly negative defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.923,
+   "epmDef": -1.057,
+   "basis": "14g 2025 + 68g 2026"
+  },
+  {
+   "name": "Drew Eubanks",
+   "tier": "Bad defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -2.482,
+   "epmDef": -1.481,
+   "basis": "40g 2025 + 42g 2026"
+  },
+  {
+   "name": "Jaylen Clark",
+   "tier": "Good defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -2.23,
+   "epmDef": 1.047,
+   "basis": "9g 2025 + 73g 2026"
+  },
+  {
+   "name": "Noah Penda",
+   "tier": "Slightly negative defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -2.591,
+   "epmDef": -0.904,
+   "basis": "56g 2026"
+  },
+  {
+   "name": "Jett Howard",
+   "tier": "Bad defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.381,
+   "epmDef": -1.541,
+   "basis": "27g 2025 + 55g 2026"
+  },
+  {
+   "name": "Tre Mann",
+   "tier": "Bad defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -2.908,
+   "epmDef": -1.564,
+   "basis": "13g 2025 + 51g 2026"
+  },
+  {
+   "name": "Terrence Shannon Jr.",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.69,
+   "epmDef": -0.799,
+   "basis": "32g 2025 + 50g 2026"
+  },
+  {
+   "name": "Clint Capela",
+   "tier": "Elite defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.739,
+   "epmDef": 3.246,
+   "basis": "3g 2025 + 79g 2026"
+  },
+  {
+   "name": "Thomas Bryant",
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": 0.055,
+   "epmDef": -0.353,
+   "basis": "17g 2025 + 65g 2026"
+  },
+  {
+   "name": "Jamal Cain",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.506,
+   "epmDef": -0.803,
+   "basis": "36g 2025 + 44g 2026"
+  },
+  {
+   "name": "Rasheer Fleming",
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -1.783,
+   "epmDef": 0.436,
+   "basis": "54g 2026"
+  },
+  {
+   "name": "Zeke Nnaji",
+   "tier": "Good defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -3.067,
+   "epmDef": 0.807,
+   "basis": "32g 2025 + 50g 2026"
+  },
+  {
+   "name": "Tyrese Haliburton",
+   "tier": "Average defender",
+   "offense": "elite offense",
+   "override": true,
+   "epmOff": 4.881,
+   "epmDef": -0.716,
+   "basis": "carried 2025"
+  },
+  {
+   "name": "Kyrie Irving",
+   "tier": "Average defender",
+   "offense": "very good offense",
+   "override": true,
+   "epmOff": 3.209,
+   "epmDef": 0.193,
+   "basis": "carried 2025"
+  },
+  {
+   "name": "Damian Lillard",
+   "tier": "Average defender",
+   "offense": "elite offense",
+   "override": true,
+   "epmOff": 3.79,
+   "epmDef": -0.631,
+   "basis": "carried 2025"
+  },
+  {
+   "name": "Fred VanVleet",
+   "tier": "Great defender",
+   "offense": "above average offense",
+   "override": false,
+   "epmOff": 1.068,
+   "epmDef": 1.758,
+   "basis": "carried 2025"
+  }
+ ]
+}

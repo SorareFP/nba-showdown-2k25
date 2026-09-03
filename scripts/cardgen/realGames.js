@@ -167,10 +167,14 @@ export function loadWnbaSeasonRealGames(playerId, season) {
 }
 
 /**
- * The adjusted last-82 window for one player, or null when no logs exist.
- * `indexEntry` is this player's row from pool-gamelogs-index.json.
+ * The exact last-82 window's rows (with season attached), before the
+ * adjustment tail. Token appearances are not evidence: a 0:00 game divides
+ * bands.js's 36/m² normalization by zero (one such game NaN-poisoned an
+ * entire pricing run), and a 90-second garbage-time stint would top the
+ * chart through the same formula — so rows under two minutes never enter
+ * the window at all.
  */
-export function loadRealGames(indexEntry, defense) {
+function selectWindow(indexEntry) {
   if (!indexEntry?.playerId) return null;
   const rows = [];
   for (const season of SEASONS) {
@@ -184,15 +188,47 @@ export function loadRealGames(indexEntry, defense) {
     }
   }
   if (!rows.length) return null;
-  // Token appearances are not evidence: a 0:00 game divides bands.js's
-  // 36/m² normalization by zero (one such game NaN-poisoned an entire
-  // pricing run), and a 90-second garbage-time stint would top the chart
-  // through the same formula. finishWindow floors rows at two minutes,
-  // damps by minutes share, and winsorizes single-game spikes at 3× the
-  // window mean (the Nae'Qwan Tomlin catch).
   const sorted = [...rows].sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''));
-  const window = sorted.filter(g => minutesToDecimal(g.minutes) >= 2).slice(0, WINDOW_GAMES);
+  return sorted.filter(g => minutesToDecimal(g.minutes) >= 2).slice(0, WINDOW_GAMES);
+}
+
+/**
+ * The adjusted last-82 window for one player, or null when no logs exist.
+ * `indexEntry` is this player's row from pool-gamelogs-index.json.
+ * finishWindow damps by minutes share and winsorizes single-game spikes at
+ * 3× the window mean (the Nae'Qwan Tomlin catch).
+ */
+export function loadRealGames(indexEntry, defense) {
+  const window = selectWindow(indexEntry);
+  if (!window?.length) return null;
   return finishWindow(window, defense, g => `${g.season}|${TEAM_ALIAS[g.opp] ?? g.opp}`);
+}
+
+/**
+ * Games per season inside the exact last-82 window — the chart's own season
+ * mix, e.g. { 2025: 70, 2026: 19 } for a player back from injury. This is
+ * the weighting the EPM inputs should follow when they claim to describe the
+ * same player the chart describes.
+ */
+export function windowSeasonCounts(indexEntry) {
+  const window = selectWindow(indexEntry);
+  if (!window?.length) return null;
+  const counts = {};
+  for (const g of window) counts[g.season] = (counts[g.season] ?? 0) + 1;
+  return counts;
+}
+
+/** The whole pool's window season mixes, keyed by card id like loadAllRealGames. */
+export function loadAllWindowSeasonCounts() {
+  const idxPath = path.join(REPO_ROOT, 'card-data', 'generated', 'pool-gamelogs-index.json');
+  if (!fs.existsSync(idxPath)) return new Map();
+  const idx = JSON.parse(fs.readFileSync(idxPath, 'utf8'));
+  const out = new Map();
+  for (const [cardId, entry] of Object.entries(idx.players ?? {})) {
+    const counts = windowSeasonCounts(entry);
+    if (counts) out.set(cardId, counts);
+  }
+  return out;
 }
 
 /** The whole pool's real-game windows, keyed by card id. */

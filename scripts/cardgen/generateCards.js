@@ -85,14 +85,14 @@ import * as PV from './playValue.js';
 import * as S from './shooting.js';
 import { poolingSummary } from './poolSeasons.js';
 import { indexBiometrics, loadBiometrics } from './biometrics.js';
-import { loadAllRealGames } from './realGames.js';
+import { loadAllRealGames, loadAllWindowSeasonCounts } from './realGames.js';
 import * as ARCH from './archetypes.js';
 import { readBlendedActual, reportBlend, PRIOR_STATS_SEASON } from './priorSeasonBlend.js';
 import { trb100 } from './sources/dunksAndThrees.js';
 import { CALIBRATION_FILE } from './calibrateAttributes.js';
 import { CURRENT_STATS_SEASON } from './fetchCalibrationData.js';
 import { indexPositionShares, loadPositionShares } from './positionShares.js';
-import { readCarryForward, resolveCarryForward, buildCarryForwardCards } from './carryForward.js';
+import { readCarryForward, resolveCarryForward, buildCarryForwardCards, seasonRows } from './carryForward.js';
 import { buildSet, resolvePlayerIds } from './generateSpecialSets.js';
 import { playerIdFromName } from '../../src/cards/playerId.js';
 import { calcAdv } from '../../src/game/engine.js';
@@ -377,15 +377,76 @@ export function generateCards({
   // without positive defense — gets a def-led budget and an exaggerated
   // split, so their defensive value in the matchup game deflates to what
   // DEF EPM says it should be.
+  // The archetype's EPM follows the CHART's own window: each season's EPM is
+  // weighted by its share of the last-82 games, so a player back from injury
+  // is judged by the same games his chart is cut from. Sabonis is the case
+  // that demands it — a 19-game 2025-26 crater (epmOff -0.00) in front of a
+  // 70-game healthy 2024-25 (+2.33); reading the current row alone called an
+  // elite offensive engine a zero.
+  const seasonEpmIndexes = new Map();
+  const epmIndexFor = season => {
+    if (!seasonEpmIndexes.has(season)) seasonEpmIndexes.set(season, indexByName(seasonRows(season)));
+    return seasonEpmIndexes.get(season);
+  };
+  const windowCounts = loadAllWindowSeasonCounts();
+  const windowWeightedEpm = (p, a) => {
+    const counts = windowCounts.get(playerIdFromName(p.name));
+    if (!counts) return { epmOff: a.epmOff, epmDef: a.epmDef, basis: 'current season' };
+    let off = 0, def = 0, games = 0;
+    const parts = [];
+    for (const [season, n] of Object.entries(counts)) {
+      // The current season reads from the actuals row — the same source the
+      // rest of the card reads — and only other seasons go to the archive.
+      const row = Number(season) === CURRENT_STATS_SEASON ? a : lookup(epmIndexFor(Number(season)), p.name);
+      if (!row || row.epmOff == null || row.epmDef == null) continue;
+      off += n * row.epmOff;
+      def += n * row.epmDef;
+      games += n;
+      parts.push(`${n}g ${season}`);
+    }
+    return games
+      ? { epmOff: off / games, epmDef: def / games, basis: parts.join(' + ') }
+      : { epmOff: a.epmOff, epmDef: a.epmDef, basis: 'current season' };
+  };
   const archRows = resolved
-    .map((p, i) => {
-      const a = actualRows[i];
-      return a && a.epmDef != null && a.epmOff != null
-        ? { name: normalizeName(p.name), epmOff: a.epmOff, epmDef: a.epmDef }
-        : null;
+    .map(p => {
+      const a = lookup(actualIndex, p.name);
+      if (!a || a.epmDef == null || a.epmOff == null) return null;
+      const w = windowWeightedEpm(p, a);
+      return { name: normalizeName(p.name), display: p.name, epmOff: w.epmOff, epmDef: w.epmDef, basis: w.basis };
     })
     .filter(Boolean);
+  // The carried-forward players join the assignment on their carried season's
+  // EPM — their cards are built fully from that season, so that season is
+  // what their archetype should read. Without this they escaped shaping
+  // entirely, and they are exactly the Kyrie-class the system exists for.
+  for (const c of carryForwardCards?.cards ?? []) {
+    const row = lookup(epmIndexFor(c.carriedFrom), c.name);
+    if (row && row.epmOff != null && row.epmDef != null) {
+      archRows.push({
+        name: normalizeName(c.name),
+        display: c.name,
+        epmOff: row.epmOff,
+        epmDef: row.epmDef,
+        basis: `carried ${c.carriedFrom}`,
+      });
+    }
+  }
   const archetypes = ARCH.assignArchetypes(archRows);
+  // The assignment ON THE RECORD, so a review list reads what the cards were
+  // actually built with instead of recomputing it and drifting.
+  const archetypeAssignments = archRows.map(r => {
+    const a = archetypes.get(r.name);
+    return {
+      name: r.display,
+      tier: a.tier,
+      offense: a.offense,
+      override: a.override,
+      epmOff: Number(r.epmOff.toFixed(3)),
+      epmDef: Number(r.epmDef.toFixed(3)),
+      basis: r.basis,
+    };
+  });
   let shapedCount = 0;
   // The budget is NOT cut for shaped players — the box-score sim showed a
   // def-led budget starving their charts through roll penalties. The hole
@@ -466,7 +527,18 @@ export function generateCards({
   // table at all — Haliburton, Irving, Lillard, VanVleet — so the pool rule and
   // the force-include list both have nothing to match. See carryForward.js.
   const carried = carryForwardCards ?? { cards: [], missing: [] };
-  const cards2 = [...cards, ...carried.cards];
+  // Carried-forward bodies take the same archetype shaping as everyone else's
+  // (their assignment rides the carried season's EPM, joined above). Reshaping
+  // AFTER the historical build is sound here because the special-set chart
+  // machinery never reads Speed/Power — only the base builder's roll-CDF path
+  // does — and pricing runs below, on the shaped body.
+  const carriedShaped = carried.cards.map(c => {
+    if (!archetypes.get(normalizeName(c.name))?.override) return c;
+    return { ...c, ...ARCH.exaggerateSplit(c.speed, c.power) };
+  });
+  const carriedShapedCount = carriedShaped.filter((c, i) => c !== carried.cards[i]).length;
+  if (carriedShapedCount) console.log(`Archetype-shaped carried-forward bodies: ${carriedShapedCount}`);
+  const cards2 = [...cards, ...carriedShaped];
 
   // Salary is a POST-PASS, and has to be: play value is measured against a
   // field, so it does not exist until every card in that field has its
@@ -497,6 +569,7 @@ export function generateCards({
 
   return {
     cards: priced,
+    archetypeAssignments,
     missingRates,
     missingActual,
     missingSize,
@@ -780,6 +853,7 @@ export function main({ log = console.log } = {}) {
     pooling,
     names,
     targets,
+    archetypeAssignments,
   } = generateCards({
     carryForwardCards: buildCarried({ calibration, log }),
     pool: readJson(path.join(GEN_DIR, 'player-pool-2026.json')),
@@ -815,8 +889,18 @@ export function main({ log = console.log } = {}) {
     cards,
   };
   fs.writeFileSync(OUTPUT_FILE, `${JSON.stringify(payload, null, 1)}\n`);
+  // The archetype assignment the cards were built with — tier, offense
+  // qualifier, override flag and the window-weighted EPM behind them — so
+  // review tooling reads the record instead of recomputing and drifting.
+  const archFile = path.join(GEN_DIR, 'archetype-assignments.json');
+  fs.writeFileSync(archFile, `${JSON.stringify({
+    generatedAt: payload.generatedAt,
+    weighting: 'each season\'s EPM weighted by its games in the chart\'s last-82 window; carried-forward players read their carried season',
+    assignments: archetypeAssignments,
+  }, null, 1)}\n`);
 
   log(`${cards.length} cards -> ${path.relative(REPO_ROOT, OUTPUT_FILE)}`);
+  log(`${archetypeAssignments.length} archetype assignments -> ${path.relative(REPO_ROOT, archFile)}`);
   if (missingRates.length) {
     log(`  no predicted stat line for ${missingRates.length}: ${missingRates.join(', ')}`);
   }

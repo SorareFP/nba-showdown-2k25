@@ -95,8 +95,14 @@ function evRoundValues(raws, slots) {
   let best = null;
   const walk = (i, acc, evAcc, devAcc) => {
     if (i === raws.length) {
+      // Per-band deviation is PRIMARY, EV drift is the tiebreak. The old
+      // ordering flattened Tomlin's [0, 1.12, 1.40, 1.88, 2.998] into
+      // [0, 2, 2, 2, 2] because EV [1.76] beat [0, 1, 1, 2, 3] EV [1.60] by
+      // 0.016 — the anti-identity outcome. Ranked by per-band deviation
+      // instead, [0, 1, 1, 2, 3] wins 3.20 vs 15.75, which is what the
+      // smell test wants: the ladder his raw values actually describe.
       const err = Math.abs(evAcc / total - rawEv);
-      if (!best || err < best.err - 1e-12 || (err - best.err <= 1e-12 && devAcc < best.dev)) {
+      if (!best || devAcc < best.dev - 1e-12 || (devAcc - best.dev <= 1e-12 && err < best.err)) {
         best = { err, dev: devAcc, values: [...acc] };
       }
       return;

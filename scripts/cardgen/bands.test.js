@@ -41,18 +41,20 @@ describe('computeStatBands', () => {
     expect(totalSlots).toBe(25);
   });
 
-  it('reproduces the Jokic 2023-24 chart under EV-preserving rounding (pinned regression)', () => {
-    // Task 3's calibrate.js established [2,3,3,4,4]/[1,1,1,2,2]/[1,1,1,1,2]
-    // as the published Final Cards values under per-band nearest rounding.
-    // The 2026-09-03 EV-preserving rounding (approved — the Dyson Daniels
-    // fix) DELIBERATELY departs from the published rounding: bands round
-    // together toward the raw slot-weighted EV, which spreads Jokic's boards
-    // and assists into a wider ladder instead of flat 1s. Points, whose raw
-    // values sat far from the rounding boundary, are untouched — evidence
-    // the change is a rounding policy and not a formula drift.
+  it('reproduces the real published Jokic 2023-24 chart values exactly (pinned regression)', () => {
+    // Task 3's calibrate.js established these as the exact real values from
+    // Final Cards.csv. The 2026-09-03 EV-preserving rounding briefly departed
+    // from them because EV drift was the primary objective; the 2026-09-03
+    // (later same day) fix made per-band DEVIATION primary and EV the
+    // tiebreak, which brings Jokic back to a byte-for-byte match with the
+    // published values. Bands still round together (so a role player's
+    // 3:1.3:1 ratios do not collapse to a flat 1p1r1a row), but the
+    // deviation-first ordering means a chart never drifts from the raw
+    // ladder just to trim EV by a hundredth. See shooting.js? No — see
+    // bands.js's evRoundValues.
     expect(computeStatBands(jokicGames, 'pts').map(b => b.value)).toEqual([2, 3, 3, 4, 4]);
-    expect(computeStatBands(jokicGames, 'reb').map(b => b.value)).toEqual([0, 1, 1, 2, 3]);
-    expect(computeStatBands(jokicGames, 'ast').map(b => b.value)).toEqual([0, 1, 1, 1, 2]);
+    expect(computeStatBands(jokicGames, 'reb').map(b => b.value)).toEqual([1, 1, 1, 2, 2]);
+    expect(computeStatBands(jokicGames, 'ast').map(b => b.value)).toEqual([1, 1, 1, 1, 2]);
   });
 
   it('treats "MM:SS" string minutes the same as the equivalent decimal number', () => {

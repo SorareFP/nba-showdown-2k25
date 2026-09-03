@@ -150,6 +150,23 @@ export function loadSeasonRealGames(playerId, season, defense, { playoffOnly = f
 }
 
 /**
+ * A WNBA season's games — same pipeline, two differences: no opponent
+ * adjustment (no team defensive EPM exists for the league) and a 300-minute
+ * floor, since a full WNBA season is 40-44 games of 40 minutes. The minutes
+ * damp anchors on 36 as it does for the NBA: a WNBA starter's 30-34 of 40
+ * sits in the same absolute range as an NBA starter's share of 48.
+ */
+export function loadWnbaSeasonRealGames(playerId, season) {
+  const log = readCache(`gamelog-wnba-${playerId}-${season}`);
+  if (!log) return null;
+  const rows = [...(log.reg ?? []), ...(log.post ?? [])];
+  const played = rows.filter(g => minutesToDecimal(g.minutes) >= 2);
+  const totalMin = played.reduce((s, g) => s + minutesToDecimal(g.minutes), 0);
+  if (played.length < 10 || totalMin < 300) return null;
+  return finishWindow(played, new Map(), () => '');
+}
+
+/**
  * The adjusted last-82 window for one player, or null when no logs exist.
  * `indexEntry` is this player's row from pool-gamelogs-index.json.
  */

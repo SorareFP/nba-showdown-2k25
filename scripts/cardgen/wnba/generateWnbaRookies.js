@@ -41,6 +41,7 @@ import {
 import { MODEL_FILE } from './fitBpmModel.js';
 import { vorpPerGame, COMPOSITE_WEIGHTS, composite } from './generateWnbaCards.js';
 import { WNBA_SET } from '../../../src/cards/sets.js';
+import { loadWnbaSeasonRealGames } from '../realGames.js';
 
 const WNBA_CARDS_FILE = path.join(REPO_ROOT, 'card-data', 'generated', `cards-${WNBA_SET}.json`);
 
@@ -140,6 +141,7 @@ export function main({ log = console.log } = {}) {
       shooting: shooting.players[poolRows.length + i],
       speedPowerTotal: totals[i],
       calibration,
+      realGames: loadWnbaSeasonRealGames(s.best.playerId, s.best.season),
     })
   );
   cards.sort((a, b) => a.name.localeCompare(b.name));

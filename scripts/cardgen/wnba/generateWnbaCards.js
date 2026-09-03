@@ -63,6 +63,7 @@ import { pathToFileURL } from 'node:url';
 import { readCache, REPO_ROOT } from '../cache.js';
 import { normalizeName } from '../resolveTeams.js';
 import { computeStatBands, delayUpperBands, usageAccessShift } from '../bands.js';
+import { loadWnbaSeasonRealGames } from '../realGames.js';
 import { reconcileBandsByRoll, shapeChart, MAX_CHART_TIERS } from '../generate.js';
 import * as V from '../variance.js';
 import * as A from '../attributes.js';
@@ -227,7 +228,7 @@ export function expectedValuePerRoll(chart, stat, faces = 20) {
  * into `synthesizeGames`, which is what carries the 40-minute correction — see
  * wnba/constants.js. Everything else is the base set's own path, unchanged.
  */
-export function buildWnbaCard({ row, team, shooting, speedPowerTotal, calibration }) {
+export function buildWnbaCard({ row, team, shooting, speedPowerTotal, calibration, realGames = null }) {
   const games = row.games ?? 0;
   const minutes = row.minutes ?? 0;
   const mpg = games > 0 ? minutes / games : 0;
@@ -268,7 +269,7 @@ export function buildWnbaCard({ row, team, shooting, speedPowerTotal, calibratio
   for (const stat of V.CHART_STATS) {
     const fit = { level: calibration.chart.levels[stat], shape: calibration.chart.shape };
     const placedBands = computeStatBands(
-      V.synthesizeGames({
+      realGames ?? V.synthesizeGames({
         per100: { [stat]: per100[stat] },
         mpg,
         games,
@@ -339,7 +340,7 @@ export function buildWnbaCard({ row, team, shooting, speedPowerTotal, calibratio
       tsPct: row.tsPct,
       pts100: row.pts100 == null ? null : Number(row.pts100.toFixed(1)),
     },
-    provisional: true,
+    provisional: !realGames,
   };
 
   // Salary is NOT set here. Play value is measured against a FIELD, so it is
@@ -561,6 +562,7 @@ export function main({ log = console.log } = {}) {
       shooting: shooting.players[i],
       speedPowerTotal: totals[i],
       calibration,
+      realGames: loadWnbaSeasonRealGames(row.playerId, row.season ?? 2026),
     })
   );
   cards.sort((a, b) => a.name.localeCompare(b.name));

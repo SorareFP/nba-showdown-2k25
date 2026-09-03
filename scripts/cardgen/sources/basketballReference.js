@@ -187,6 +187,61 @@ export async function fetchGameLogFull(playerId, season, { fetchImpl = fetch } =
   return parseGameLogFull(await res.text());
 }
 
+/**
+ * The WNBA game log: same site, older table generation. Tables are
+ * `wnba_pgl_basic` (regular season) and `wnba_pgl_basic_p` (playoffs, often
+ * comment-wrapped for lazy loading), and the cells use the older data-stat
+ * names (`date_game`, `opp_id`) the NBA pages have since moved off.
+ */
+export function parseWnbaGameLogFull(html) {
+  const uncommented = html.replace(/<!--|-->/g, '');
+  const cellText = (rowHtml, stat) => {
+    const re = new RegExp(`<td[^>]*data-stat="${stat}"[^>]*>([\\s\\S]*?)</td>`);
+    const m = rowHtml.match(re);
+    return m ? m[1].replace(/<[^>]+>/g, '').trim() : null;
+  };
+  const parseTable = (tableId, required) => {
+    let body;
+    try {
+      body = isolateTableBody(uncommented, tableId);
+    } catch (e) {
+      if (required) throw e;
+      return [];
+    }
+    const games = [];
+    for (const row of extractRows(body)) {
+      const minutes = cellText(row, 'mp');
+      if (!minutes) continue;
+      const pts = cellText(row, 'pts');
+      const reb = cellText(row, 'trb');
+      const ast = cellText(row, 'ast');
+      if (pts === null || reb === null || ast === null) continue;
+      games.push({
+        date: cellText(row, 'date_game'),
+        opp: cellText(row, 'opp_id'),
+        minutes,
+        pts: Number(pts),
+        reb: Number(reb),
+        ast: Number(ast),
+      });
+    }
+    return games;
+  };
+  return {
+    reg: parseTable('wnba_pgl_basic', true),
+    post: parseTable('wnba_pgl_basic_p', false),
+  };
+}
+
+export async function fetchWnbaGameLogFull(playerId, season, { fetchImpl = fetch } = {}) {
+  const res = await fetchImpl(
+    `https://www.basketball-reference.com/wnba/players/${playerId[0]}/${playerId}/gamelog/${season}/`,
+    { headers: { 'User-Agent': 'Mozilla/5.0' } }
+  );
+  if (!res.ok) throw new Error(`Basketball-Reference WNBA fetch failed: ${res.status} (${playerId} ${season})`);
+  return parseWnbaGameLogFull(await res.text());
+}
+
 /** Fetches and parses a player's game log for a given end-year season (e.g. 2024 = 2023-24). */
 export async function fetchGameLog(playerId, season) {
   const res = await fetch(

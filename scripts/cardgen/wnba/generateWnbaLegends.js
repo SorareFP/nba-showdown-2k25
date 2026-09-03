@@ -78,6 +78,7 @@ import { pathToFileURL } from 'node:url';
 import { readCache, REPO_ROOT } from '../cache.js';
 import { normalizeName } from '../resolveTeams.js';
 import { computeStatBands, delayUpperBands, usageAccessShift } from '../bands.js';
+import { loadWnbaSeasonRealGames } from '../realGames.js';
 import { reconcileBandsByRoll, shapeChart, MAX_CHART_TIERS } from '../generate.js';
 import * as V from '../variance.js';
 import * as A from '../attributes.js';
@@ -281,7 +282,7 @@ export function expectedValuePerRoll(chart, stat, faces = 20) {
  * provenance added and the franchise resolved THROUGH THE ERA. That last part
  * is why Lauren Jackson's card is hunter green: see wnbaFranchiseForSeason.
  */
-export function buildLegendCard({ row, shooting, speedPowerTotal, calibration }) {
+export function buildLegendCard({ row, shooting, speedPowerTotal, calibration, realGames = null }) {
   const games = row.games ?? 0;
   const minutes = row.minutes ?? 0;
   const mpg = games > 0 ? minutes / games : 0;
@@ -319,7 +320,7 @@ export function buildLegendCard({ row, shooting, speedPowerTotal, calibration })
   for (const stat of V.CHART_STATS) {
     const fit = { level: calibration.chart.levels[stat], shape: calibration.chart.shape };
     const placedBands = computeStatBands(
-      V.synthesizeGames({
+      realGames ?? V.synthesizeGames({
         per100: { [stat]: per100[stat] },
         mpg,
         games,
@@ -396,7 +397,7 @@ export function buildLegendCard({ row, shooting, speedPowerTotal, calibration })
       tsPct: row.tsPct,
       pts100: row.pts100 == null ? null : Number(row.pts100.toFixed(1)),
     },
-    provisional: true,
+    provisional: !realGames,
   };
 
   // Salary is NOT set here. Play value is measured against a FIELD, so it is
@@ -606,6 +607,7 @@ export function main({ log = console.log } = {}) {
       shooting: shooting.players[poolRows.length + i],
       speedPowerTotal: totals[i],
       calibration,
+      realGames: loadWnbaSeasonRealGames(s.best.playerId, s.best.season),
     })
   );
   cards.sort((a, b) => a.name.localeCompare(b.name));

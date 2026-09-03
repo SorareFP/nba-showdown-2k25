@@ -22,7 +22,12 @@ export default function ExportFrame() {
   const [state, setState] = useState(null);
   const [photoDone, setPhotoDone] = useState(false);
 
-  const card = SOURCES[set]?.players.find(c => c.id === id) ?? null;
+  // SOURCES keys the base set as `pool` and the reference as `cards`, while
+  // the URL (and CardTemplate) speak SET IDS — so resolve by each source's
+  // declared `set` when the key itself doesn't match. Keying directly was the
+  // bug that silently skipped all 354 base cards on the first full export.
+  const source = SOURCES[set] ?? Object.values(SOURCES).find(s => s.set === set) ?? null;
+  const card = source?.players.find(c => c.id === id) ?? null;
 
   useEffect(() => {
     if (!card) return;

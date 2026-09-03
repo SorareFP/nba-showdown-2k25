@@ -117,6 +117,7 @@ import { indexBiometrics, loadBiometrics } from './biometrics.js';
 import { indexPositionShares, loadPositionShares } from './positionShares.js';
 import { loadLeagueRows, pickCareer } from './standoutSuperSeasons.js';
 import { readSummerStandouts, buildApiEpmIndex, buildBpmBridge, buildFtLineBridge, loadFullSeasonTables, loadRimProfiles } from './summerStandouts.js';
+import { readLegends } from './legends.js';
 import { PRINTED_SCALE, REFINEMENT_WEIGHT, mapToReferenceScale } from './speedPower.js';
 import { archiveBasis, collectRows, requireArchive } from './epmArchive.js';
 import {
@@ -1127,6 +1128,86 @@ export function main({ log = console.log } = {}) {
       `  standout Super Seasons: ${standoutNames.length} added ` +
         `(${displaced.length} displaced an algorithmic pick: ${displaced.join(', ') || 'none'})`
     );
+  }
+
+  // ── THE LEGENDS, FORCE-INCLUDED ───────────────────────────────────────────
+  //
+  // Super Season is "each CURRENT-POOL player's best season", so a player who
+  // retired before the 2026-27 pool has no path in at all. Eleven of the
+  // shipped 2025-26 set's twenty-three retro cards were in exactly that
+  // position — Jordan, Kareem, Magic, Bird, Erving, Kobe, Duncan, Nowitzki,
+  // Barkley, Robinson and Hill had no card in ANY generated set. This block
+  // is how they return, alongside the strongest absent players the EPM
+  // archive surfaced (Kirilenko, Aldridge, Stoudemire, Stockton, Yao, Roy).
+  //
+  // Mechanically identical to the standout block above, with two differences:
+  // the season window opens at 1977 rather than 1986 (Kareem's and Erving's
+  // picks predate it), and there is nothing to displace, because none of these
+  // players is in the pool to have an algorithmic pick in the first place.
+  //
+  // Every one of them predates or straddles the EPM archive, so the BPM
+  // bridge carries the skill — the same rank-preserving z-score route the
+  // WNBA sets use to cross leagues. The user accepted these may run hot
+  // against modern competition.
+  const legends = readLegends();
+  if (legends.length) {
+    const tables = loadFullSeasonTables({ first: 1977 });
+    const league = loadLeagueRows();
+    const apiEpm = buildApiEpmIndex();
+    const failedLegends = [];
+    let added = 0;
+    for (const { name, season } of legends) {
+      const careers = league.get(normalizeName(name));
+      const careerRows = pickCareer(careers, { referenceSeason: season });
+      let id = careerRows?.[0]?.playerId;
+      // loadLeagueRows' window does not reach the 1970s and 80s, so Kareem's
+      // 1977, Erving's 1977, Bird's 1985 and Magic's 1990 resolve to no id
+      // there. The season's own advanced table does carry them — it is the
+      // table the pick was chosen from — so fall back to a name match inside
+      // it rather than dropping four of the eleven legends this block exists
+      // for. Scoped to the one season, so it cannot pick up a namesake from
+      // another era.
+      if (!id) {
+        for (const [key, row] of tables.advanced) {
+          if (!key.endsWith(`|${season}`)) continue;
+          if (normalizeName(row.name ?? '') === normalizeName(name)) { id = row.playerId; break; }
+        }
+      }
+      const adv = tables.advanced.get(`${id}|${season}`);
+      const pp = tables.perPoss.get(`${id}|${season}`);
+      if (!adv || !pp) { failedLegends.push(`${name} (no ${season} full-table row)`); continue; }
+      let epm = apiEpm.get(`${normalizeName(name)}|${season}`);
+      if (!epm && Number.isFinite(adv.bpm)) {
+        const bridge = standoutBridge();
+        epm = {
+          epm: bridge.epmFromBpm(adv.bpm),
+          ewinsPerGame: bridge.ewinsPerGameFromVorp(adv.vorp, adv.games),
+        };
+      }
+      // A legend already carded by the algorithm (an active player who somehow
+      // matched) would double up; drop the earlier pick and keep the declared
+      // season, which is the whole point of naming it.
+      selection.superSeason = selection.superSeason.filter(
+        sel => normalizeName(sel.player.name) !== normalizeName(name)
+      );
+      selection.superSeason.push({
+        player: { name, pos: adv.pos },
+        season: {
+          ...adv, ...pp,
+          playerId: id,
+          season,
+          epm: epm?.epm ?? null,
+          ewinsPerGame: epm?.ewinsPerGame ?? null,
+        },
+      });
+      added += 1;
+    }
+    if (failedLegends.length) {
+      // Hand-picked list: an unresolvable name is a data problem to fix, not a
+      // legend to drop silently.
+      throw new Error(['Legend Super Seasons missing rows:', ...failedLegends].join('\n  '));
+    }
+    log(`  legends force-included: ${added} of ${legends.length}`);
   }
 
   // ── Rookie cards for the standout NEWCOMERS ───────────────────────────────

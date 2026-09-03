@@ -6,6 +6,7 @@
 // of the code that made it. A regeneration that changed the rules would show up
 // here as a failing claim about the file on disk.
 import { describe, it, expect } from 'vitest';
+import { readLegends } from './legends.js';
 import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import {
@@ -114,10 +115,11 @@ describe.each([
   it('gives every card a season the card can print', () => {
     for (const card of file.cards) {
       expect(card.season, card.name).toBeGreaterThanOrEqual(
-        // 1987, not FIRST_SEASON: the standout newcomers' seasons reach back
-        // to Dennis Rodman's 1986-87 debut, and the 1980s tables are cached
-        // to carry them.
-        1987
+        // 1977, not 1987: the force-included LEGENDS reach back to Kareem's
+        // and Julius Erving's 1976-77, and the 1970s tables are cached to
+        // carry them. (The standout newcomers alone only reached Rodman's
+        // 1986-87 debut, which is what this floor used to encode.)
+        1977
       );
       expect(card.season, card.name).toBeLessThan(LAST_SEASON);
       expect(card.seasonLabel).toBe(seasonLabel(card.season));
@@ -180,8 +182,15 @@ describe.each([
       ...Object.keys(STANDOUTS.superSeasons ?? {}),
       ...Object.keys(STANDOUTS.playoffCards ?? {}),
     ]);
+    // The SECOND sanctioned exception: card-data/legends-2026.json names the
+    // all-time greats who retired before the pool existed and so had no path
+    // into any generated set. Also a named list, also not a loophole.
+    const legends = new Set(readLegends().map(l => l.name));
     for (const card of file.cards) {
-      expect(pool.has(card.name) || standouts.has(card.name), card.name).toBe(true);
+      expect(
+        pool.has(card.name) || standouts.has(card.name) || legends.has(card.name),
+        card.name
+      ).toBe(true);
     }
   });
 
@@ -194,9 +203,12 @@ describe.each([
     // one-per-pool-player accounting; the displaced picks were pool members
     // and stay counted through their replacements.
     const pool = new Set(POOL.map(p => p.name));
+    // Legends sit on top of that accounting the same way: named, off-pool,
+    // and carded — see card-data/legends-2026.json.
     const offPool = [...new Set([
       ...Object.keys(STANDOUTS.superSeasons ?? {}),
       ...Object.keys(STANDOUTS.playoffCards ?? {}),
+      ...readLegends().map(l => l.name),
     ])].filter(name => carded.has(name) && !pool.has(name)).length;
     const ceded = (file.mergedIntoTwin ?? []).length;
     expect(carded.size + excluded.size + ceded).toBe(POOL.length + offPool);
@@ -376,7 +388,7 @@ describe('the base set\'s badges', () => {
     // rookie side under the gold line, wearing the best-season badge too.
     // AND 206 -> 208 when Rodman's 1991-92 and Pippen's 1993-94 arrived — the
     // missing legends the standout work was asked for at the very start.
-    expect(SUPER.cards.length).toBe(207);
+    expect(SUPER.cards.length).toBe(224);
     //
     // AND 321 -> 348 WHEN THE STANDOUT NEWCOMERS' ROOKIE YEARS ARRIVED — every
     // standout outside the pool whose career begins inside the cache-and-EPM
@@ -390,8 +402,12 @@ describe('the base set\'s badges', () => {
       ...Object.keys(STANDOUTS.superSeasons ?? {}),
       ...Object.keys(STANDOUTS.playoffCards ?? {}),
     ])];
-    const ssOffPool = Object.keys(STANDOUTS.superSeasons ?? {})
-      .filter(name => !poolNames.has(name)).length;
+    // Legends are off-pool by definition — they retired before the pool
+    // existed, which is the whole reason the list exists.
+    const ssOffPool = [...new Set([
+      ...Object.keys(STANDOUTS.superSeasons ?? {}),
+      ...readLegends().map(l => l.name),
+    ])].filter(name => !poolNames.has(name)).length;
     const rookieOffPool = bothBlocks
       .filter(name => ROOKIE.cards.some(c => c.name === name) && !poolNames.has(name)).length;
     expect(SUPER.cards.length + SUPER.excluded.length + (SUPER.mergedIntoTwin ?? []).length)

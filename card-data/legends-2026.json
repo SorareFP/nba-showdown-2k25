@@ -1,0 +1,20 @@
+{
+  "_comment": "Legends force-included into the Super Season set. Super Season is otherwise built as 'each CURRENT-POOL player's best season', which structurally excludes anyone who retired before the 2026-27 pool — 11 of the shipped 2025-26 set's 23 retro cards had no path in at all. Each entry names the season the card celebrates. Skill rides the fitted BPM bridge for seasons dunksandthrees' EPM archive does not reach (pre-2002); charts come from Basketball-Reference game logs either way. The user accepted that legend cards may run hot against modern competition.",
+  "Michael Jordan": { "season": 1988, "reason": "MVP + DPOY, 35.0 ppg, BPM 13.0" },
+  "Kareem Abdul-Jabbar": { "season": 1977, "reason": "26.2 ppg on .579, BPM 9.4" },
+  "Magic Johnson": { "season": 1990, "reason": "MVP, 22.3/6.6/11.5, BPM 10.1" },
+  "Larry Bird": { "season": 1985, "reason": "MVP, 28.7/10.5/6.6, BPM 8.8" },
+  "Julius Erving": { "season": 1977, "reason": "first NBA season after the ABA merger, BPM 4.5" },
+  "Kobe Bryant": { "season": 2006, "reason": "35.4 ppg, the 81-point season, BPM 7.6" },
+  "Tim Duncan": { "season": 2002, "reason": "MVP, 25.5/12.7, BPM 7.6" },
+  "Dirk Nowitzki": { "season": 2006, "reason": "26.6/9.0 on .480, BPM 8.1" },
+  "Charles Barkley": { "season": 1990, "reason": "25.2/11.5, BPM 8.2" },
+  "David Robinson": { "season": 1994, "reason": "29.8/10.7/3.3 blk, BPM 11.9" },
+  "Grant Hill": { "season": 1997, "reason": "21.4/9.0/7.3 before the injuries, BPM 8.2" },
+  "Andrei Kirilenko": { "season": 2005, "reason": "the archive's highest absent-player BPM at 9.2" },
+  "LaMarcus Aldridge": { "season": 2018, "reason": "23.1/8.5, BPM 3.9" },
+  "Amar'e Stoudemire": { "season": 2008, "reason": "25.2/9.1 on .590, BPM 4.8" },
+  "John Stockton": { "season": 2002, "reason": "the last great Stockton year, BPM 5.3" },
+  "Yao Ming": { "season": 2009, "reason": "19.7/9.9 on .548, BPM 3.1" },
+  "Brandon Roy": { "season": 2009, "reason": "22.6/4.7/5.1 before the knees, BPM 6.2" }
+}

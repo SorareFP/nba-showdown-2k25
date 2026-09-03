@@ -372,13 +372,14 @@ describe('the committed file', () => {
     expect(AWARDS.declared).toEqual(AWARD_CODES);
   });
 
-  it('reads the thirty-seven seasons the five sets between them need', () => {
-    // 1987-2026 with the gaps of the rosters themselves: the rookie set now
-    // reaches Rodman's 1986-87 debut, the base set sits furthest forward, and
-    // every other set lands inside.
-    expect(AWARDS.seasons[0]).toBe(1987);
+  it('reads the forty seasons the five sets between them need', () => {
+    // 1977-2026 with the gaps of the rosters themselves: the force-included
+    // LEGENDS reach back to Kareem's and Erving's 1976-77, the base set sits
+    // furthest forward, and every other set lands inside. (Before the legends
+    // the floor was Rodman's 1986-87 debut, at 37 seasons.)
+    expect(AWARDS.seasons[0]).toBe(1977);
     expect(AWARDS.seasons.at(-1)).toBe(2026);
-    expect(AWARDS.seasons).toHaveLength(37);
+    expect(AWARDS.seasons).toHaveLength(40);
   });
 
   it('agrees with its own counts', () => {
@@ -410,8 +411,9 @@ describe('the committed file', () => {
     // Super Seasons added marked retirees to that set, and the newly cached
     // 2000-2007 pages resolved two more rookie-year marks.
     expect(AWARDS.counts[CURRENT_SET].marked).toBe(40);
-    // 62 since Westbrook retired out of the pool, taking his Super Season with him.
-    expect(AWARDS.counts[SUPER_SEASON_SET].marked).toBe(62);
+    // 77 after the seventeen legends joined: all-time greats carry MVPs,
+    // rings and All-Star nods at a far higher rate than the pool average.
+    expect(AWARDS.counts[SUPER_SEASON_SET].marked).toBe(77);
     // The rookie set moves at last, and only on the ring: no player in that
     // pool was an All-Star as a rookie, but six of them won a title as one.
     expect(AWARDS.counts[ROOKIE_SET].marked).toBe(25);
@@ -433,7 +435,7 @@ describe('the committed file', () => {
     // (Unchanged by the ring: ifSelectionsCounted asks about the awards column,
     // and the ring is not in it.)
     expect(AWARDS.counts[CURRENT_SET].ifSelectionsCounted).toBe(46);
-    expect(AWARDS.counts[SUPER_SEASON_SET].ifSelectionsCounted).toBe(75);
+    expect(AWARDS.counts[SUPER_SEASON_SET].ifSelectionsCounted).toBe(91);
     expect(AWARDS.counts[ROOKIE_SET].ifSelectionsCounted).toBe(25);
   });
 
@@ -479,6 +481,9 @@ describe('the committed file', () => {
       '2026-27 Shai Gilgeous-Alexander 2026 MVP+CPOY+AS',
       'summer-standouts Kawhi Leonard 2019 FMVP+CHAMP+AS',
       'summer-standouts Kevin Durant 2017 FMVP+CHAMP+AS',
+      // Jordan's 1987-88: MVP and DPOY in the same year, which only he and
+      // Hakeem have ever done. Arrived with the force-included legends.
+      'super-season Michael Jordan 1988 MVP+DPOY+AS',
       'super-season Shai Gilgeous-Alexander 2025 MVP+FMVP+CHAMP+AS',
       "super-season Shaquille O'Neal 2000 MVP+FMVP+CHAMP+AS",
     ]);

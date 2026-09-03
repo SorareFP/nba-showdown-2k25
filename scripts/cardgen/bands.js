@@ -54,8 +54,51 @@ function normalize(stat, minutes) {
 }
 
 // Task 3 finding: Excel ROUNDDOWN to 1 decimal, then round to nearest integer.
+// Kept for reference and for callers that round a single value; the BAND
+// values themselves now round together via evRoundValues below (approved
+// 2026-09-03 — the Dyson Daniels fix).
 function toCardValue(raw) {
   return Math.round(roundDown(raw, 1));
+}
+
+/**
+ * EV-PRESERVING band rounding — the Dyson Daniels fix. Rounding each band
+ * value independently at ×4 granularity flattened role players into identical
+ * 1p1r1a rows: a 3:1.3:1 wing and a true stat-stuffer printed the same line,
+ * and production RATIOS (design pillar 3, player identity) vanished below
+ * ~1.4 per four minutes. Instead the five values round TOGETHER: each may
+ * take its floor or ceiling, the combination stays monotone, and the winner
+ * is the one whose slot-weighted EV over the 25 chart slots lands closest to
+ * the raw EV — which naturally concentrates a wing's assists in his top
+ * tiers instead of smearing equal 1s (or 0s) across the chart. Ties break
+ * toward the smallest total per-band deviation, so the chart never drifts
+ * from the raw shape further than EV requires.
+ */
+function evRoundValues(raws, slots) {
+  const total = slots.reduce((a, b) => a + b, 0);
+  const rawEv = raws.reduce((s, v, i) => s + v * slots[i], 0) / total;
+  const options = raws.map(v => {
+    const f = Math.max(0, Math.floor(v));
+    return f === v ? [f] : [f, f + 1];
+  });
+  let best = null;
+  const walk = (i, acc, evAcc, devAcc) => {
+    if (i === raws.length) {
+      const err = Math.abs(evAcc / total - rawEv);
+      if (!best || err < best.err - 1e-12 || (err - best.err <= 1e-12 && devAcc < best.dev)) {
+        best = { err, dev: devAcc, values: [...acc] };
+      }
+      return;
+    }
+    for (const v of options[i]) {
+      if (acc.length && v < acc[acc.length - 1]) continue; // monotone
+      acc.push(v);
+      walk(i + 1, acc, evAcc + v * slots[i], devAcc + Math.abs(v - raws[i]) * slots[i]);
+      acc.pop();
+    }
+  };
+  walk(0, [], 0, 0);
+  return best.values;
 }
 
 /**
@@ -100,13 +143,15 @@ function allocateSlots(weights, totalSlots = TOTAL_SLOTS, minPerBand = 1) {
 export function computeStatBands(games, statKey) {
   const normalized = games.map(g => normalize(g[statKey], minutesToDecimal(g.minutes)));
   const thresholds = CUTS.map(p => percentileExc(normalized, p));
-  const values = thresholds.map(t => toCardValue(t * 4));
 
   const counts = thresholds.map((t, i) => {
     if (i === 0) return normalized.filter(v => v <= t).length;
     return normalized.filter(v => v > thresholds[i - 1] && v <= t).length;
   });
   const slots = allocateSlots(counts);
+  // Values are chosen AFTER the slots so the rounding can weight each band
+  // by the chart width it will actually occupy — see evRoundValues.
+  const values = evRoundValues(thresholds.map(t => t * 4), slots);
 
   let start = 1;
   const bands = values.map((value, i) => {

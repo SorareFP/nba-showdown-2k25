@@ -11,10 +11,17 @@
    "season": 2004,
    "team": "LAL"
   },
-  "Tracy McGrady": {
-   "season": 2012,
-   "team": "ATL"
-  },
+  "Tracy McGrady": [
+   {
+    "season": 2012,
+    "team": "ATL"
+   },
+   {
+    "season": 2010,
+    "team": "NYK",
+    "note": "24 games at the Garden"
+   }
+  ],
   "Shaquille O'Neal": [
    {
     "season": 2010,
@@ -33,14 +40,28 @@
    "season": 2004,
    "team": "LAL"
   },
-  "Dwight Howard": {
-   "season": 2018,
-   "team": "CHO"
-  },
-  "Carmelo Anthony": {
-   "season": 2018,
-   "team": "OKC"
-  },
+  "Dwight Howard": [
+   {
+    "season": 2018,
+    "team": "CHO"
+   },
+   {
+    "season": 2021,
+    "team": "PHI",
+    "note": "a season in Philadelphia"
+   }
+  ],
+  "Carmelo Anthony": [
+   {
+    "season": 2018,
+    "team": "OKC"
+   },
+   {
+    "season": 2022,
+    "team": "LAL",
+    "note": "Melo in purple and gold"
+   }
+  ],
   "Steve Nash": {
    "season": 2013,
    "team": "LAL"
@@ -56,6 +77,43 @@
   "Dwyane Wade": {
    "season": 2017,
    "team": "CHI"
+  },
+  "Vince Carter": [
+   {
+    "season": 2011,
+    "team": "PHO",
+    "note": "34 games in Phoenix between Orlando and Dallas"
+   },
+   {
+    "season": 2020,
+    "team": "ATL",
+    "note": "age 43, the fourth decade, the last shot"
+   }
+  ],
+  "Paul Pierce": {
+   "season": 2016,
+   "team": "LAC",
+   "note": "the Truth as a Clipper reserve"
+  },
+  "Joe Johnson": {
+   "season": 2018,
+   "team": "HOU",
+   "note": "seven-time All-Star, 23 games off Houston's bench"
+  },
+  "Rajon Rondo": {
+   "season": 2022,
+   "team": "CLE",
+   "note": "the last stop, in wine and gold"
+  },
+  "Zach Randolph": {
+   "season": 2018,
+   "team": "SAC",
+   "note": "Z-Bo in Kings purple"
+  },
+  "Isaiah Thomas": {
+   "season": 2018,
+   "team": "LAL",
+   "note": "17 Lakers games after the Cleveland trade"
   }
  }
 }

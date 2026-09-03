@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-03T17:10:35.898Z",
+  "generatedAt": "2026-09-03T17:31:42.840Z",
   "set": "dissonance",
   "provisional": true,
   "sources": {
@@ -16,9 +16,9 @@
       "pos": "PF",
       "speed": 10,
       "power": 14,
-      "shotLine": 16,
+      "shotLine": 17,
       "paintBoost": 0,
-      "threePtBoost": -2,
+      "threePtBoost": -1,
       "defBoost": -1,
       "salary": 1070,
       "chart": [
@@ -45,13 +45,13 @@
         },
         {
           "lo": 9,
-          "hi": 15,
+          "hi": 16,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 17,
           "hi": 21,
           "pts": 2,
           "reb": 1,
@@ -162,7 +162,7 @@
       }
     },
     {
-      "id": "Tracy_McGrady",
+      "id": "Tracy_McGrady_ATL",
       "name": "Tracy McGrady",
       "team": "ATL08",
       "pos": "SF",
@@ -238,17 +238,93 @@
       }
     },
     {
+      "id": "Tracy_McGrady_NYK",
+      "name": "Tracy McGrady",
+      "team": "NYK",
+      "pos": "SG",
+      "speed": 8,
+      "power": 6,
+      "shotLine": 16,
+      "paintBoost": 0,
+      "threePtBoost": -2,
+      "defBoost": -1,
+      "salary": 430,
+      "chart": [
+        {
+          "lo": 1,
+          "hi": 2,
+          "pts": 0,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 3,
+          "hi": 8,
+          "pts": 0,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 9,
+          "hi": 10,
+          "pts": 1,
+          "reb": 1,
+          "ast": 1
+        },
+        {
+          "lo": 11,
+          "hi": 15,
+          "pts": 2,
+          "reb": 1,
+          "ast": 1
+        },
+        {
+          "lo": 16,
+          "hi": 21,
+          "pts": 2,
+          "reb": 1,
+          "ast": 1
+        },
+        {
+          "lo": 22,
+          "hi": 99,
+          "pts": 3,
+          "reb": 2,
+          "ast": 1
+        }
+      ],
+      "season": 2010,
+      "seasonLabel": "2009-10",
+      "age": 30,
+      "games": 24,
+      "mpg": 26.1,
+      "bbrefId": "mcgratr01",
+      "traded": false,
+      "metrics": {
+        "bpm": -2.3,
+        "vorp": -0.1,
+        "ws": 0.2,
+        "ws48": 0.016,
+        "per": 12.2
+      },
+      "provisional": true,
+      "stint": {
+        "games": 24,
+        "note": "24 games at the Garden"
+      }
+    },
+    {
       "id": "Shaquille_O_Neal_CLE",
       "name": "Shaquille O'Neal",
       "team": "CLE04",
       "pos": "C",
       "speed": 5,
       "power": 13,
-      "shotLine": 14,
+      "shotLine": 15,
       "paintBoost": 0,
-      "threePtBoost": -6,
+      "threePtBoost": -5,
       "defBoost": 1,
-      "salary": 1110,
+      "salary": 1080,
       "chart": [
         {
           "lo": 1,
@@ -273,13 +349,13 @@
         },
         {
           "lo": 9,
-          "hi": 13,
+          "hi": 14,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 14,
+          "lo": 15,
           "hi": 21,
           "pts": 3,
           "reb": 2,
@@ -321,10 +397,10 @@
       "speed": 6,
       "power": 15,
       "shotLine": 15,
-      "paintBoost": 2,
+      "paintBoost": 3,
       "threePtBoost": -5,
       "defBoost": 0,
-      "salary": 1160,
+      "salary": 1190,
       "chart": [
         {
           "lo": 1,
@@ -396,11 +472,11 @@
       "pos": "PG",
       "speed": 11,
       "power": 6,
-      "shotLine": 15,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": -3,
+      "threePtBoost": -2,
       "defBoost": 0,
-      "salary": 840,
+      "salary": 820,
       "chart": [
         {
           "lo": 1,
@@ -425,13 +501,13 @@
         },
         {
           "lo": 10,
-          "hi": 14,
+          "hi": 15,
           "pts": 2,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 22,
           "pts": 3,
           "reb": 1,
@@ -542,17 +618,17 @@
       }
     },
     {
-      "id": "Dwight_Howard",
+      "id": "Dwight_Howard_CHO",
       "name": "Dwight Howard",
       "team": "CHA",
       "pos": "C",
       "speed": 8,
       "power": 14,
-      "shotLine": 16,
+      "shotLine": 17,
       "paintBoost": 3,
-      "threePtBoost": -4,
+      "threePtBoost": -3,
       "defBoost": 0,
-      "salary": 1260,
+      "salary": 1180,
       "chart": [
         {
           "lo": 1,
@@ -577,13 +653,13 @@
         },
         {
           "lo": 10,
-          "hi": 15,
+          "hi": 16,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 17,
           "hi": 22,
           "pts": 3,
           "reb": 3,
@@ -618,7 +694,76 @@
       }
     },
     {
-      "id": "Carmelo_Anthony",
+      "id": "Dwight_Howard_PHI",
+      "name": "Dwight Howard",
+      "team": "PHI",
+      "pos": "C",
+      "speed": 5,
+      "power": 10,
+      "shotLine": 13,
+      "paintBoost": 0,
+      "threePtBoost": -7,
+      "defBoost": 1,
+      "salary": 670,
+      "chart": [
+        {
+          "lo": 1,
+          "hi": 2,
+          "pts": 0,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 3,
+          "hi": 5,
+          "pts": 0,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 6,
+          "hi": 12,
+          "pts": 1,
+          "reb": 2,
+          "ast": 0
+        },
+        {
+          "lo": 13,
+          "hi": 22,
+          "pts": 2,
+          "reb": 3,
+          "ast": 0
+        },
+        {
+          "lo": 23,
+          "hi": 99,
+          "pts": 3,
+          "reb": 6,
+          "ast": 0
+        }
+      ],
+      "season": 2021,
+      "seasonLabel": "2020-21",
+      "age": 35,
+      "games": 69,
+      "mpg": 17.3,
+      "bbrefId": "howardw01",
+      "traded": false,
+      "metrics": {
+        "bpm": -1.5,
+        "vorp": 0.1,
+        "ws": 4,
+        "ws48": 0.159,
+        "per": 17.8
+      },
+      "provisional": true,
+      "stint": {
+        "games": 69,
+        "note": "a season in Philadelphia"
+      }
+    },
+    {
+      "id": "Carmelo_Anthony_OKC",
       "name": "Carmelo Anthony",
       "team": "OKC",
       "pos": "PF",
@@ -694,17 +839,93 @@
       }
     },
     {
+      "id": "Carmelo_Anthony_LAL",
+      "name": "Carmelo Anthony",
+      "team": "LAL",
+      "pos": "PF",
+      "speed": 7,
+      "power": 10,
+      "shotLine": 13,
+      "paintBoost": -1,
+      "threePtBoost": -2,
+      "defBoost": -1,
+      "salary": 860,
+      "chart": [
+        {
+          "lo": 1,
+          "hi": 2,
+          "pts": 0,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 3,
+          "hi": 4,
+          "pts": 0,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 5,
+          "hi": 8,
+          "pts": 1,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 9,
+          "hi": 12,
+          "pts": 2,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 13,
+          "hi": 22,
+          "pts": 3,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 23,
+          "hi": 99,
+          "pts": 5,
+          "reb": 2,
+          "ast": 0
+        }
+      ],
+      "season": 2022,
+      "seasonLabel": "2021-22",
+      "age": 37,
+      "games": 69,
+      "mpg": 26,
+      "bbrefId": "anthoca01",
+      "traded": false,
+      "metrics": {
+        "bpm": -0.5,
+        "vorp": 0.7,
+        "ws": 3.6,
+        "ws48": 0.097,
+        "per": 14.8
+      },
+      "provisional": true,
+      "stint": {
+        "games": 69,
+        "note": "Melo in purple and gold"
+      }
+    },
+    {
       "id": "Steve_Nash",
       "name": "Steve Nash",
       "team": "LAL",
       "pos": "PG",
       "speed": 13,
       "power": 7,
-      "shotLine": 12,
+      "shotLine": 13,
       "paintBoost": -1,
-      "threePtBoost": -3,
+      "threePtBoost": -2,
       "defBoost": -1,
-      "salary": 860,
+      "salary": 840,
       "chart": [
         {
           "lo": 1,
@@ -722,13 +943,13 @@
         },
         {
           "lo": 6,
-          "hi": 11,
+          "hi": 12,
           "pts": 1,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 12,
+          "lo": 13,
           "hi": 18,
           "pts": 2,
           "reb": 1,
@@ -845,11 +1066,11 @@
       "pos": "C",
       "speed": 7,
       "power": 12,
-      "shotLine": 15,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": -5,
+      "threePtBoost": -4,
       "defBoost": 2,
-      "salary": 880,
+      "salary": 870,
       "chart": [
         {
           "lo": 1,
@@ -874,13 +1095,13 @@
         },
         {
           "lo": 8,
-          "hi": 14,
+          "hi": 15,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 22,
           "pts": 2,
           "reb": 3,
@@ -921,11 +1142,11 @@
       "pos": "SG",
       "speed": 11,
       "power": 8,
-      "shotLine": 15,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": -3,
+      "threePtBoost": -2,
       "defBoost": 1,
-      "salary": 1200,
+      "salary": 1160,
       "chart": [
         {
           "lo": 1,
@@ -950,13 +1171,13 @@
         },
         {
           "lo": 9,
-          "hi": 14,
+          "hi": 15,
           "pts": 2,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 20,
           "pts": 4,
           "reb": 1,
@@ -988,6 +1209,531 @@
       "stint": {
         "games": 60,
         "note": null
+      }
+    },
+    {
+      "id": "Vince_Carter_PHO",
+      "name": "Vince Carter",
+      "team": "PHX01",
+      "pos": "SG",
+      "speed": 12,
+      "power": 8,
+      "shotLine": 16,
+      "paintBoost": 0,
+      "threePtBoost": 1,
+      "defBoost": 0,
+      "salary": 930,
+      "chart": [
+        {
+          "lo": 1,
+          "hi": 2,
+          "pts": 0,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 3,
+          "hi": 5,
+          "pts": 0,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 6,
+          "hi": 8,
+          "pts": 1,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 9,
+          "hi": 15,
+          "pts": 2,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 16,
+          "hi": 22,
+          "pts": 3,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 23,
+          "hi": 99,
+          "pts": 4,
+          "reb": 2,
+          "ast": 1
+        }
+      ],
+      "season": 2011,
+      "seasonLabel": "2010-11",
+      "age": 34,
+      "games": 51,
+      "mpg": 27.2,
+      "bbrefId": "cartevi01",
+      "traded": false,
+      "metrics": {
+        "bpm": -0.4,
+        "vorp": 0.6,
+        "ws": 1.7,
+        "ws48": 0.06,
+        "per": 14.2
+      },
+      "provisional": true,
+      "stint": {
+        "games": 51,
+        "note": "34 games in Phoenix between Orlando and Dallas"
+      }
+    },
+    {
+      "id": "Vince_Carter_ATL",
+      "name": "Vince Carter",
+      "team": "ATL",
+      "pos": "PF",
+      "speed": 6,
+      "power": 7,
+      "shotLine": 14,
+      "paintBoost": 0,
+      "threePtBoost": -1,
+      "defBoost": -1,
+      "salary": 410,
+      "chart": [
+        {
+          "lo": 1,
+          "hi": 2,
+          "pts": 0,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 3,
+          "hi": 6,
+          "pts": 0,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 7,
+          "hi": 7,
+          "pts": 1,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 8,
+          "hi": 13,
+          "pts": 2,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 14,
+          "hi": 24,
+          "pts": 2,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 25,
+          "hi": 99,
+          "pts": 3,
+          "reb": 2,
+          "ast": 1
+        }
+      ],
+      "season": 2020,
+      "seasonLabel": "2019-20",
+      "age": 43,
+      "games": 60,
+      "mpg": 14.6,
+      "bbrefId": "cartevi01",
+      "traded": false,
+      "metrics": {
+        "bpm": -4.3,
+        "vorp": -0.5,
+        "ws": -0.2,
+        "ws48": -0.011,
+        "per": 7.5
+      },
+      "provisional": true,
+      "stint": {
+        "games": 60,
+        "note": "age 43, the fourth decade, the last shot"
+      }
+    },
+    {
+      "id": "Paul_Pierce",
+      "name": "Paul Pierce",
+      "team": "LAC16",
+      "pos": "SF",
+      "speed": 7,
+      "power": 7,
+      "shotLine": 15,
+      "paintBoost": 0,
+      "threePtBoost": 0,
+      "defBoost": 0,
+      "salary": 460,
+      "chart": [
+        {
+          "lo": 1,
+          "hi": 2,
+          "pts": 0,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 3,
+          "hi": 5,
+          "pts": 0,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 6,
+          "hi": 8,
+          "pts": 1,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 9,
+          "hi": 14,
+          "pts": 2,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 15,
+          "hi": 24,
+          "pts": 2,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 25,
+          "hi": 99,
+          "pts": 3,
+          "reb": 2,
+          "ast": 1
+        }
+      ],
+      "season": 2016,
+      "seasonLabel": "2015-16",
+      "age": 38,
+      "games": 68,
+      "mpg": 18.1,
+      "bbrefId": "piercpa01",
+      "traded": false,
+      "metrics": {
+        "bpm": -3.3,
+        "vorp": -0.4,
+        "ws": 0.9,
+        "ws48": 0.033,
+        "per": 8.2
+      },
+      "provisional": true,
+      "stint": {
+        "games": 68,
+        "note": "the Truth as a Clipper reserve"
+      }
+    },
+    {
+      "id": "Joe_Johnson",
+      "name": "Joe Johnson",
+      "team": "HOU",
+      "pos": "SF",
+      "speed": 5,
+      "power": 6,
+      "shotLine": 14,
+      "paintBoost": 0,
+      "threePtBoost": -1,
+      "defBoost": 0,
+      "salary": 180,
+      "chart": [
+        {
+          "lo": 1,
+          "hi": 2,
+          "pts": 0,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 3,
+          "hi": 8,
+          "pts": 0,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 9,
+          "hi": 13,
+          "pts": 1,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 14,
+          "hi": 22,
+          "pts": 2,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 23,
+          "hi": 99,
+          "pts": 3,
+          "reb": 2,
+          "ast": 1
+        }
+      ],
+      "season": 2018,
+      "seasonLabel": "2017-18",
+      "age": 36,
+      "games": 23,
+      "mpg": 22,
+      "bbrefId": "johnsjo02",
+      "traded": false,
+      "metrics": {
+        "bpm": -3.3,
+        "vorp": -0.2,
+        "ws": 0.4,
+        "ws48": 0.038,
+        "per": 6.8
+      },
+      "provisional": true,
+      "stint": {
+        "games": 23,
+        "note": "seven-time All-Star, 23 games off Houston's bench"
+      }
+    },
+    {
+      "id": "Rajon_Rondo",
+      "name": "Rajon Rondo",
+      "team": "CLE",
+      "pos": "PG",
+      "speed": 8,
+      "power": 5,
+      "shotLine": 16,
+      "paintBoost": 0,
+      "threePtBoost": 1,
+      "defBoost": 1,
+      "salary": 430,
+      "chart": [
+        {
+          "lo": 1,
+          "hi": 2,
+          "pts": 0,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 3,
+          "hi": 8,
+          "pts": 0,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 9,
+          "hi": 9,
+          "pts": 1,
+          "reb": 1,
+          "ast": 1
+        },
+        {
+          "lo": 10,
+          "hi": 15,
+          "pts": 2,
+          "reb": 1,
+          "ast": 1
+        },
+        {
+          "lo": 16,
+          "hi": 24,
+          "pts": 2,
+          "reb": 1,
+          "ast": 1
+        },
+        {
+          "lo": 25,
+          "hi": 99,
+          "pts": 3,
+          "reb": 2,
+          "ast": 2
+        }
+      ],
+      "season": 2022,
+      "seasonLabel": "2021-22",
+      "age": 35,
+      "games": 21,
+      "mpg": 19.5,
+      "bbrefId": "rondora01",
+      "traded": false,
+      "metrics": {
+        "bpm": 0.3,
+        "vorp": 0.2,
+        "ws": 1,
+        "ws48": 0.119,
+        "per": 13.9
+      },
+      "provisional": true,
+      "stint": {
+        "games": 21,
+        "note": "the last stop, in wine and gold"
+      }
+    },
+    {
+      "id": "Zach_Randolph",
+      "name": "Zach Randolph",
+      "team": "SAC",
+      "pos": "PF",
+      "speed": 6,
+      "power": 9,
+      "shotLine": 14,
+      "paintBoost": 0,
+      "threePtBoost": -1,
+      "defBoost": -2,
+      "salary": 1030,
+      "chart": [
+        {
+          "lo": 1,
+          "hi": 2,
+          "pts": 0,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 3,
+          "hi": 4,
+          "pts": 0,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 5,
+          "hi": 7,
+          "pts": 1,
+          "reb": 1,
+          "ast": 1
+        },
+        {
+          "lo": 8,
+          "hi": 13,
+          "pts": 2,
+          "reb": 1,
+          "ast": 1
+        },
+        {
+          "lo": 14,
+          "hi": 20,
+          "pts": 4,
+          "reb": 2,
+          "ast": 1
+        },
+        {
+          "lo": 21,
+          "hi": 99,
+          "pts": 5,
+          "reb": 4,
+          "ast": 1
+        }
+      ],
+      "season": 2018,
+      "seasonLabel": "2017-18",
+      "age": 36,
+      "games": 59,
+      "mpg": 25.6,
+      "bbrefId": "randoza01",
+      "traded": false,
+      "metrics": {
+        "bpm": -1,
+        "vorp": 0.4,
+        "ws": 1.5,
+        "ws48": 0.048,
+        "per": 17.3
+      },
+      "provisional": true,
+      "stint": {
+        "games": 59,
+        "note": "Z-Bo in Kings purple"
+      }
+    },
+    {
+      "id": "Isaiah_Thomas",
+      "name": "Isaiah Thomas",
+      "team": "LAL",
+      "pos": "PG",
+      "speed": 9,
+      "power": 5,
+      "shotLine": 16,
+      "paintBoost": 0,
+      "threePtBoost": 1,
+      "defBoost": -4,
+      "salary": 450,
+      "chart": [
+        {
+          "lo": 1,
+          "hi": 2,
+          "pts": 0,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 3,
+          "hi": 8,
+          "pts": 0,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 9,
+          "hi": 9,
+          "pts": 1,
+          "reb": 1,
+          "ast": 1
+        },
+        {
+          "lo": 10,
+          "hi": 15,
+          "pts": 2,
+          "reb": 1,
+          "ast": 1
+        },
+        {
+          "lo": 16,
+          "hi": 22,
+          "pts": 2,
+          "reb": 1,
+          "ast": 1
+        },
+        {
+          "lo": 23,
+          "hi": 99,
+          "pts": 4,
+          "reb": 1,
+          "ast": 1
+        }
+      ],
+      "season": 2018,
+      "seasonLabel": "2017-18",
+      "age": 28,
+      "games": 17,
+      "mpg": 26.8,
+      "bbrefId": "thomais02",
+      "traded": false,
+      "metrics": {
+        "bpm": -4.9,
+        "vorp": -0.3,
+        "ws": 0.2,
+        "ws48": 0.024,
+        "per": 12.8
+      },
+      "provisional": true,
+      "stint": {
+        "games": 17,
+        "note": "17 Lakers games after the Cleveland trade"
       }
     }
   ]

@@ -23,7 +23,10 @@ import CardTemplate, {
   LEAGUE_LOGOS,
   visibleTiers,
 } from './CardTemplate.jsx';
-import { CARDS } from '../game/cards.js';
+// Every use of CARDS in this file means the FINISHED 2025-26 reference set —
+// the printed cards whose rendering these tests pin — so it stays on the
+// frozen shipped module while the playable set moves with the pipeline.
+import { SHIPPED_CARDS as CARDS } from '../game/shippedCards.js';
 import {
   TEAMS,
   HISTORICAL_TEAMS,
@@ -1728,10 +1731,10 @@ describe('the season and the card-type badge', () => {
     const gilded = superSeason.filter(p => p.salary >= SUPER_SEASON_MIN_SALARY);
     // 15/92 after the defBoost contest reprice — defence value now includes
     // conversion denial, and two badged defenders crossed the gilded line.
-    expect(gilded.length).toBe(14);
-    expect(superSeason.length - gilded.length).toBe(93);
-    expect(BADGE_FILE.counts.printed[SUPER_SEASON_BADGE]).toBe(14);
-    expect(BADGE_FILE.counts.printed[BEST_SEASON_BADGE]).toBe(93);
+    expect(gilded.length).toBe(12);
+    expect(superSeason.length - gilded.length).toBe(95);
+    expect(BADGE_FILE.counts.printed[SUPER_SEASON_BADGE]).toBe(12);
+    expect(BADGE_FILE.counts.printed[BEST_SEASON_BADGE]).toBe(95);
     expect(BADGE_FILE.counts.printed[ROOKIE_BADGE]).toBe(33);
   });
 

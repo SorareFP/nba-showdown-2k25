@@ -1,26 +1,16 @@
-// NBA Showdown 2K25 — Full card data (306 players)
-// Generated from Final Cards spreadsheet
-// Fields: id, name(n), team(t), speed(s), power(p), shotLine(l),
-//         paintBoost(pb), threePtBoost(tb), defBoost(db), salary($), chart(c)
-// chart entries: [lo, hi, pts, reb, ast]
+// NBA Showdown 2K25 — the playable base set, re-exported from cardSets.js.
+//
+// MIGRATED 2026-09-03 off rawCards.js (the shipped 2025-26 "Final Cards"
+// spreadsheet, 306 players) onto the generated 2026-27 real-log set (354).
+// The generated JSON already carries the engine's exact field names, so no
+// mapping layer survives. CARD_MAP spans EVERY set (keyed by cardKey) because
+// packs and collections reach across sets; CARDS stays base-only because the
+// engine, the team builder and the tutorial all mean "the current pool".
+import { CARD_SETS, BASE_SET, ALL_CARDS, cardKey } from './cardSets.js';
 
-import rawCards from './rawCards.js';
+export const CARDS = CARD_SETS[BASE_SET];
 
-export const CARDS = rawCards.map(r => ({
-  id: r.id,
-  name: r.n,
-  team: r.t,
-  speed: r.s,
-  power: r.p,
-  shotLine: r.l,
-  paintBoost: r.pb,
-  threePtBoost: r.tb,
-  defBoost: r.db,
-  salary: r['$'],
-  chart: r.c.map(t => ({ lo: t[0], hi: t[1], pts: t[2], reb: t[3], ast: t[4] })),
-}));
-
-export const CARD_MAP = Object.fromEntries(CARDS.map(c => [c.id, c]));
+export const CARD_MAP = Object.fromEntries(ALL_CARDS.map(c => [cardKey(c), c]));
 
 export const ALL_TEAMS = ['ALL', ...new Set(CARDS.map(c => c.team))].sort();
 

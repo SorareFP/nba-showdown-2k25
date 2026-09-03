@@ -457,8 +457,8 @@ describe('the base set\'s badges', () => {
     // moves cards across SUPER_SEASON_MIN_SALARY. The split is a MEASUREMENT.
     // 15/92 after the defBoost contest reprice — defence value now includes
     // conversion denial, and two badged defenders crossed the gilded line.
-    expect(counts.printed[BEST_SEASON_BADGE]).toBe(93);
-    expect(counts.printed[SUPER_SEASON_BADGE]).toBe(14);
+    expect(counts.printed[BEST_SEASON_BADGE]).toBe(95);
+    expect(counts.printed[SUPER_SEASON_BADGE]).toBe(12);
     // Nobody loses their pill entirely in the resolution.
     expect(BADGE_IDS.reduce((n, id) => n + counts.printed[id], 0)).toBe(counts.players);
     expect(counts.multiple).toBe(ROOKIE.excluded.length);

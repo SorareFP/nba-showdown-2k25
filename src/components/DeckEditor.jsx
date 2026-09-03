@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { useAuth } from '../firebase/AuthProvider.jsx';
 import { saveDeck, updateDeck, validateDeck } from '../firebase/savedDecks.js';
 import { STRATS } from '../game/strats.js';
-import { getStratRarity, RARITY_CONFIG } from '../game/rarity.js';
+import { getStratRarity, RARITY_CONFIG, STRAT_COPY_CAPS } from '../game/rarity.js';
 import { getStratImagePath } from '../game/cardImages.js';
 import styles from './DeckEditor.module.css';
 
@@ -94,6 +94,9 @@ export default function DeckEditor({ deck, onSave, onCancel, collection }) {
                 const atOwnedLimit = enforceOwnership && count >= owned;
                 const rarity = getStratRarity(s);
                 const rcfg = RARITY_CONFIG[rarity];
+                // The 5/3/1 rule: deck copies capped by rarity, replacing the
+                // old flat 8-per-card cap. Rares are one-ofs by design.
+                const copyCap = STRAT_COPY_CAPS[rarity] ?? 5;
                 return (
                   <div key={s.id} className={`${styles.cardRow} ${count > 0 ? styles.cardActive : ''}`}
                     style={notOwned ? { opacity: 0.4 } : undefined}>
@@ -119,7 +122,7 @@ export default function DeckEditor({ deck, onSave, onCancel, collection }) {
                     <div className={styles.qty}>
                       <button className={styles.qtyBtn} onClick={() => setCount(s.id, -1)} disabled={count === 0}>−</button>
                       <span className={styles.qtyVal}>{count}</span>
-                      <button className={styles.qtyBtn} onClick={() => setCount(s.id, 1)} disabled={count >= 8 || total >= 50 || notOwned || atOwnedLimit}>+</button>
+                      <button className={styles.qtyBtn} onClick={() => setCount(s.id, 1)} disabled={count >= copyCap || total >= 50 || notOwned || atOwnedLimit}>+</button>
                     </div>
                   </div>
                 );

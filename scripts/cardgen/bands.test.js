@@ -41,14 +41,18 @@ describe('computeStatBands', () => {
     expect(totalSlots).toBe(25);
   });
 
-  it('reproduces the real published Jokic 2023-24 chart values exactly (pinned regression)', () => {
-    // Task 3's calibrate.js established these as the exact real values from
-    // Final Cards.csv for the "double" normalize variant + nearest rounding.
-    // Pinning them here so a future change to CUTS/normalize/rounding fails
-    // loudly instead of silently drifting from the calibrated formula.
+  it('reproduces the Jokic 2023-24 chart under EV-preserving rounding (pinned regression)', () => {
+    // Task 3's calibrate.js established [2,3,3,4,4]/[1,1,1,2,2]/[1,1,1,1,2]
+    // as the published Final Cards values under per-band nearest rounding.
+    // The 2026-09-03 EV-preserving rounding (approved — the Dyson Daniels
+    // fix) DELIBERATELY departs from the published rounding: bands round
+    // together toward the raw slot-weighted EV, which spreads Jokic's boards
+    // and assists into a wider ladder instead of flat 1s. Points, whose raw
+    // values sat far from the rounding boundary, are untouched — evidence
+    // the change is a rounding policy and not a formula drift.
     expect(computeStatBands(jokicGames, 'pts').map(b => b.value)).toEqual([2, 3, 3, 4, 4]);
-    expect(computeStatBands(jokicGames, 'reb').map(b => b.value)).toEqual([1, 1, 1, 2, 2]);
-    expect(computeStatBands(jokicGames, 'ast').map(b => b.value)).toEqual([1, 1, 1, 1, 2]);
+    expect(computeStatBands(jokicGames, 'reb').map(b => b.value)).toEqual([0, 1, 1, 2, 3]);
+    expect(computeStatBands(jokicGames, 'ast').map(b => b.value)).toEqual([0, 1, 1, 1, 2]);
   });
 
   it('treats "MM:SS" string minutes the same as the equivalent decimal number', () => {

@@ -33,7 +33,7 @@
 // list is present on first paint instead of arriving a round trip later, and a
 // missing/renamed file becomes a build error rather than an empty studio.
 import rawPool from '../../card-data/generated/player-pool-2026.json';
-import { CARDS } from '../game/cards.js';
+import { SHIPPED_CARDS } from '../game/shippedCards.js';
 import {
   CURRENT_SET,
   STATS_SEASON,
@@ -310,8 +310,10 @@ export const POOL_PLAYERS = pool.map(p => ({
   // pretending to be a rating.
 })).map(withGeneratedStats);
 
-/** The shipped 306-card set, already in card shape. */
-export const CARD_PLAYERS = CARDS;
+/** The shipped 306-card set, already in card shape — frozen in
+ * shippedCards.js, deliberately NOT the playable set, which moved onto the
+ * generated 2026-27 data (see src/game/cards.js). */
+export const CARD_PLAYERS = SHIPPED_CARDS;
 
 /**
  * The two computable SPECIAL sets — Super Season and Rookie.

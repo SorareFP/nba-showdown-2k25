@@ -1,0 +1,139 @@
+/* The strategy-card face — proportions taken from the 43 hand-made 825x1238
+ * faces in public/cards/strats/. House navy ground with a white header; the
+ * art window's bottom edge is cut by a white diagonal wedge with chevron
+ * dot-work riding it, and the footer carries the side in heavy caps. */
+
+.card {
+  position: relative;
+  box-sizing: border-box;
+  background: #16305e;
+  border: 16px solid #16305e;
+  font-family: 'Tomorrow', 'Arial Narrow', Arial, 'Segoe UI', Helvetica, sans-serif;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.header {
+  background: #fff;
+  padding: 14px 24px 10px;
+  text-align: center;
+  flex: 0 0 auto;
+}
+
+.title {
+  color: #16305e;
+  font-size: 64px;
+  font-weight: 800;
+  font-style: italic;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  line-height: 1.02;
+  white-space: nowrap;
+}
+
+.titleRule {
+  height: 8px;
+  margin: 8px auto 0;
+  width: 38%;
+}
+
+.artWindow {
+  position: relative;
+  margin: 0 26px;
+  height: 560px;
+  flex: 0 0 auto;
+  background: #0d1f3d;
+  overflow: hidden;
+}
+
+.art {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.noArt {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 54px;
+  font-weight: 700;
+  letter-spacing: 6px;
+}
+
+/* The white wedge cutting the art's bottom-right corner, as on every
+ * hand-made face — a right triangle rising from the bottom edge. */
+.wedge {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 46%;
+  height: 120px;
+  background: #fff;
+  clip-path: polygon(0 100%, 100% 0, 100% 100%);
+}
+
+.artChevrons {
+  position: absolute;
+  right: 26px;
+  bottom: 12px;
+  width: 128px;
+  height: 96px;
+  fill: #16305e;
+}
+
+.body {
+  flex: 1 1 auto;
+  padding: 26px 44px 0;
+  text-align: left;
+}
+
+.phase {
+  font-size: 42px;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 26px;
+}
+
+.rule {
+  font-size: 33px;
+  font-weight: 500;
+  line-height: 1.32;
+  margin: 0 0 22px;
+}
+
+.lock {
+  font-size: 33px;
+  font-weight: 500;
+  line-height: 1.32;
+  margin: 0 0 22px;
+}
+
+.footer {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 0 24px 10px;
+  height: 110px;
+}
+
+.footChevrons {
+  width: 128px;
+  height: 96px;
+  fill: rgba(255, 255, 255, 0.85);
+}
+
+.side {
+  font-size: 72px;
+  font-weight: 800;
+  font-style: italic;
+  letter-spacing: 2px;
+  line-height: 1;
+}

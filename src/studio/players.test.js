@@ -434,7 +434,9 @@ describe('the base set\'s card-type badges', () => {
     const printed = badged.map(p => pickBadge(p.badges, p.salary).id);
     expect(printed.length).toBe(BADGE_FILE.counts.players);
     expect(printed.filter(id => id === ROOKIE_BADGE).length).toBe(33);
-    // 14/93, not the 13/94 the linear salary model produced: pricing a card by
+    // 12/95 after EV-preserving band rounding moved the special sets' own
+    // charts and repriced them; not the 13/94 the linear salary model gave:
+    // pricing a card by
     // what it does in play moved one more base card across
     // SUPER_SEASON_MIN_SALARY. The split is a measurement of the price, so it
     // is expected to move whenever the price does.
@@ -448,8 +450,8 @@ describe('the base set\'s card-type badges', () => {
     // 15/92 again after the defBoost contest reprice: defence value now
     // includes conversion denial, and two more badged defenders cleared the
     // gilded line. The split is a MEASUREMENT.
-    expect(printed.filter(id => id === SUPER_SEASON_BADGE).length).toBe(14);
-    expect(printed.filter(id => id === BEST_SEASON_BADGE).length).toBe(93);
+    expect(printed.filter(id => id === SUPER_SEASON_BADGE).length).toBe(12);
+    expect(printed.filter(id => id === BEST_SEASON_BADGE).length).toBe(95);
     // Everyone who prints ROOKIE is someone the SUPER SEASON fact is also true
     // of — the nesting is what makes this a priority question and not a rule.
     // The tier does not touch it: a rookie card is cheap, its Super Season
@@ -471,8 +473,8 @@ describe('the base set\'s card-type badges', () => {
     // and the salary file having been generated from different pools.
     expect(BADGE_FILE.counts.printed).toEqual({
       [ROOKIE_BADGE]: 33,
-      [SUPER_SEASON_BADGE]: 14,
-      [BEST_SEASON_BADGE]: 93,
+      [SUPER_SEASON_BADGE]: 12,
+      [BEST_SEASON_BADGE]: 95,
       // In the id list, never on a base-set record: the STANDOUT and TRADED
       // pills are SET badges, worn by their whole sets and no one else.
       'summer-standout': 0,

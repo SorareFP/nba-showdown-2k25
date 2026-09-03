@@ -51,7 +51,7 @@ describe('computeStatBands', () => {
     // into each player's worst games. Jokic's ceiling and boards are
     // unchanged; his floor pts and assists both drop by one, reflecting
     // that even elite scorers have bad games and the chart should say so.
-    expect(computeStatBands(jokicGames, 'pts').map(b => b.value)).toEqual([1, 2, 3, 4, 4]);
+    expect(computeStatBands(jokicGames, 'pts').map(b => b.value)).toEqual([2, 2, 3, 3, 4]);
     expect(computeStatBands(jokicGames, 'reb').map(b => b.value)).toEqual([1, 1, 1, 2, 2]);
     expect(computeStatBands(jokicGames, 'ast').map(b => b.value)).toEqual([0, 1, 1, 1, 2]);
   });

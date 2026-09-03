@@ -12,6 +12,7 @@
 // shows, awards and badges already joined.
 import { useEffect, useState } from 'react';
 import CardTemplate from '../cards/CardTemplate.jsx';
+import StratTemplate from '../cards/StratTemplate.jsx';
 import { SOURCES } from './players.js';
 import { fetchStudioState, teamsUrl } from './api.js';
 
@@ -54,15 +55,28 @@ export default function ExportFrame() {
   const ready = state.hasPhoto ? photoDone : true;
   return (
     <div id="export-root" data-export-ready={ready ? '1' : '0'}>
-      <CardTemplate
-        card={card}
-        set={set}
-        crop={state.crop}
-        hasPhoto={state.hasPhoto}
-        photoExt={state.photoExt}
-        teamOverrides={state.teamOverrides}
-        onPhotoLoad={() => setPhotoDone(true)}
-      />
+      {/* Strategy cards render through their own template — same prop names,
+          so the exporter needs no other special case. */}
+      {source?.template === 'strat' ? (
+        <StratTemplate
+          card={card}
+          set={set}
+          crop={state.crop}
+          hasPhoto={state.hasPhoto}
+          photoExt={state.photoExt}
+          onPhotoLoad={() => setPhotoDone(true)}
+        />
+      ) : (
+        <CardTemplate
+          card={card}
+          set={set}
+          crop={state.crop}
+          hasPhoto={state.hasPhoto}
+          photoExt={state.photoExt}
+          teamOverrides={state.teamOverrides}
+          onPhotoLoad={() => setPhotoDone(true)}
+        />
+      )}
     </div>
   );
 }

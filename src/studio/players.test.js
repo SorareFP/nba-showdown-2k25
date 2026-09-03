@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import { STRATS } from '../game/strats.js';
 import {
   playerIdFromName,
   POOL_PLAYERS,
@@ -450,8 +451,8 @@ describe('the base set\'s card-type badges', () => {
     // 15/92 again after the defBoost contest reprice: defence value now
     // includes conversion denial, and two more badged defenders cleared the
     // gilded line. The split is a MEASUREMENT.
-    expect(printed.filter(id => id === SUPER_SEASON_BADGE).length).toBe(15);
-    expect(printed.filter(id => id === BEST_SEASON_BADGE).length).toBe(92);
+    expect(printed.filter(id => id === SUPER_SEASON_BADGE).length).toBe(12);
+    expect(printed.filter(id => id === BEST_SEASON_BADGE).length).toBe(95);
     // Everyone who prints ROOKIE is someone the SUPER SEASON fact is also true
     // of — the nesting is what makes this a priority question and not a rule.
     // The tier does not touch it: a rookie card is cheap, its Super Season
@@ -473,8 +474,8 @@ describe('the base set\'s card-type badges', () => {
     // and the salary file having been generated from different pools.
     expect(BADGE_FILE.counts.printed).toEqual({
       [ROOKIE_BADGE]: 33,
-      [SUPER_SEASON_BADGE]: 15,
-      [BEST_SEASON_BADGE]: 92,
+      [SUPER_SEASON_BADGE]: 12,
+      [BEST_SEASON_BADGE]: 95,
       // In the id list, never on a base-set record: the STANDOUT and TRADED
       // pills are SET badges, worn by their whole sets and no one else.
       'summer-standout': 0,
@@ -598,12 +599,32 @@ describe('the special sets in the source list', () => {
     expect(Object.keys(SOURCES)).toEqual([
       'pool', 'cards', SUPER_SEASON_SET, ROOKIE_SET, SUMMER_STANDOUTS_SET,
       DISSONANCE_SET, WNBA_SET, WNBA_SUPER_SEASON_SET, WNBA_ROOKIE_SET,
+      // The strategy deck is a source but NOT a card set: it has no season, no
+      // badges and no treatment, and sets.js does not carry it. It renders
+      // through StratTemplate instead, which is what `template` selects.
+      'strats',
     ]);
-    expect(Object.values(SOURCES).map(s => s.set)).toEqual(SET_IDS);
+    // The SET_IDS invariant covers the player sets only, for the same reason —
+    // 'strats' is deliberately absent from sets.js.
+    expect(
+      Object.values(SOURCES).filter(s => s.template !== 'strat').map(s => s.set)
+    ).toEqual(SET_IDS);
+    expect(SOURCES.strats.template).toBe('strat');
   });
 
   it('keys each special source by its own set id, so the two cannot drift', () => {
     for (const id of SPECIAL) expect(SOURCES[id].set).toBe(id);
+  });
+
+  it('gives the strategy deck every strat, and a face template of its own', () => {
+    // Nine of them have no art — the eight Crunch Time and matchup cards plus
+    // Cross-Court Dime — which is the gap this source exists to close.
+    expect(SOURCES.strats.players.length).toBe(STRATS.length);
+    expect(SOURCES.strats.editable).toBe(true);
+    for (const s of SOURCES.strats.players) {
+      expect(s.id, s.name).toBeTruthy();
+      expect(['OFF', 'DEF']).toContain(s.pos);
+    }
   });
 
   it('names each one by the set it is, with a count that cannot drift', () => {
@@ -706,6 +727,10 @@ describe('the selector\'s reference group', () => {
     expect(PRIMARY_SOURCES.map(s => s.key)).toEqual([
       'pool', SUPER_SEASON_SET, ROOKIE_SET, SUMMER_STANDOUTS_SET,
       DISSONANCE_SET, WNBA_SET, WNBA_SUPER_SEASON_SET, WNBA_ROOKIE_SET,
+      // The strategy deck is primary for the same reason every special set is:
+      // it is being curated right now (nine cards still have no art), and a
+      // live source folded away is a source the user stops finding.
+      'strats',
     ]);
   });
 
@@ -741,8 +766,10 @@ describe('the selector\'s reference group', () => {
     // Declared order is the model's order (SET_IDS). The reference set sits
     // second there and the selector must not renumber the world to move it —
     // when the group is open, the row reads exactly as the model does.
+    // SET_IDS covers the card sets; the strategy deck is a source without a
+    // set (see the SOURCES test above), and it declares last.
     const open = visibleSources({ showSecondary: true }).map(s => s.set);
-    expect(open).toEqual(SET_IDS);
+    expect(open).toEqual([...SET_IDS, 'strats']);
   });
 
   it('leaves the default source visible and selected in every state', () => {

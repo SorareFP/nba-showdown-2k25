@@ -42,13 +42,16 @@ import { percentileExc, roundDown } from './excelMath.js';
 // Widened the LOWER three cuts (2026-09-03) to add zeros where players' own
 // games say zeros belong. The old [0.10, 0.33, 0.50, 0.66, 0.90] left team
 // scoring at ~128/game across common defensive buckets; the new
-// [0.05, 0.20, 0.40, 0.66, 0.90] pushes it to ~120, matching the rebuild's
-// original target. p66 and p90 are UNTOUCHED so a boom scorer's ceiling row
-// stays where his data earns it — the change asks a rotation player's
-// lowest-scoring games (previously the 10th percentile) to be his lowest 5%
-// instead, and it asks his low-mid band (33rd) to be his low 20th, etc.
-// Verified: sim shows ~6.6% drop in mean chart pts/roll while stars
-// (Jokic, Curry, Giannis, SGA) stay recognizable.
+// [0.05, 0.20, 0.40, 0.66, 0.90] brought it to ~122, with 24.6% of d20 faces
+// paying NOTHING — the empty-possession rate the user signed off on.
+//
+// Minutes-weighting the percentiles then shaved another ~8%, landing ~112.
+// Narrowing the cuts to [0.08, 0.25, 0.45, 0.68, 0.91] recovered ~118 but cost
+// the zero band, dropping empty possessions to 16.7% — trading away the exact
+// thing the widening existed to buy. So the cuts stay wide and scoring sits
+// at ~112, which is where the real league actually scores (about 113 a team
+// in 2024-25). p66 and p90 are near-untouched, so a boom scorer's ceiling row
+// still sits where his own data earns it.
 const CUTS = [0.05, 0.20, 0.40, 0.66, 0.90];
 const TOTAL_SLOTS = 25;
 
@@ -174,18 +177,61 @@ function allocateSlots(weights, totalSlots = TOTAL_SLOTS, minPerBand = 1) {
   return slots;
 }
 
+
+/**
+ * A MINUTES-WEIGHTED percentile.
+ *
+ * The normalization above divides by minutes TWICE, so a short appearance is
+ * enormously amplified: Paul Reed's best 2025-26 "game" is 4 points in 7
+ * minutes, which normalizes to 10.8 per four minutes — higher than any single
+ * night Nikola Jokic had. Read as an unweighted percentile that put Reed's p90
+ * at 5.91 against Jokic's 4.68 and priced a 14.6-mpg reserve at $1,360.
+ *
+ * Weighting each game by the minutes behind it says the obvious thing: a
+ * seven-minute sample is weaker evidence than a thirty-six-minute one. It is
+ * surgical — Reed's p90 falls 5.91 -> 4.08 while Allen (3.66 -> 3.63), Jokic
+ * (4.68 -> 4.52) and Curry (5.03 -> 4.99) barely move, because a starter's
+ * games are all of similar length and the weights come out flat.
+ *
+ * Interpolates between the two straddling values the way PERCENTILE.EXC does,
+ * so the result stays continuous rather than snapping to observed values.
+ */
+export function weightedPercentile(values, weights, p) {
+  const pairs = values
+    .map((v, i) => ({ v, w: weights[i] }))
+    .filter(x => Number.isFinite(x.v) && Number.isFinite(x.w) && x.w > 0)
+    .sort((a, b) => a.v - b.v);
+  if (pairs.length === 0) return 0;
+  if (pairs.length === 1) return pairs[0].v;
+  const total = pairs.reduce((s, x) => s + x.w, 0);
+  // Cumulative weight at the CENTRE of each item's band, which is what makes
+  // this reduce to the ordinary definition when every weight is equal.
+  let acc = 0;
+  const pts = pairs.map(x => {
+    const centre = acc + x.w / 2;
+    acc += x.w;
+    return { v: x.v, q: centre / total };
+  });
+  if (p <= pts[0].q) return pts[0].v;
+  if (p >= pts[pts.length - 1].q) return pts[pts.length - 1].v;
+  for (let i = 1; i < pts.length; i += 1) {
+    if (p <= pts[i].q) {
+      const span = pts[i].q - pts[i - 1].q;
+      const t = span > 0 ? (p - pts[i - 1].q) / span : 0;
+      return pts[i - 1].v + t * (pts[i].v - pts[i - 1].v);
+    }
+  }
+  return pts[pts.length - 1].v;
+}
+
 export function computeStatBands(games, statKey) {
   const normalized = games.map(g => normalize(g[statKey], minutesToDecimal(g.minutes)));
-  // PERCENTILE.EXC is undefined for p <= 1/(n+1) or p >= n/(n+1). A WNBA
-  // rookie with 17 games can't be asked for the 5th percentile (needs n >= 19)
-  // — clamp each cut into the valid range and use the nearest-representable
-  // percentile instead of throwing. The tightening from 0.10 to 0.05 in CUTS
-  // is what surfaced this; small-n callers pass through unchanged.
-  const n = normalized.length;
-  const eps = 1e-6;
-  const pMin = 1 / (n + 1) + eps;
-  const pMax = n / (n + 1) - eps;
-  const thresholds = CUTS.map(p => percentileExc(normalized, Math.min(pMax, Math.max(pMin, p))));
+  // Weighted by the minutes behind each game — see weightedPercentile. This
+  // also removes PERCENTILE.EXC's small-n domain problem (it is undefined for
+  // p <= 1/(n+1)), which the 0.05 cut had run into for WNBA rookies with
+  // seventeen-game windows.
+  const minutes = games.map(g => minutesToDecimal(g.minutes));
+  const thresholds = CUTS.map(p => weightedPercentile(normalized, minutes, p));
 
   const counts = thresholds.map((t, i) => {
     if (i === 0) return normalized.filter(v => v <= t).length;

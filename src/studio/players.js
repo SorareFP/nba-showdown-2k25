@@ -34,6 +34,7 @@
 // missing/renamed file becomes a build error rather than an empty studio.
 import rawPool from '../../card-data/generated/player-pool-2026.json';
 import { SHIPPED_CARDS } from '../game/shippedCards.js';
+import { STRATS } from '../game/strats.js';
 import {
   CURRENT_SET,
   STATS_SEASON,
@@ -423,6 +424,27 @@ function specialSource(id, file, { sub, hint, missingHint = HISTORY_MISSING_HINT
  * id that 2025-26 player happens to share. The reference set exists to be
  * looked at; the studio enforces that.
  */
+/**
+ * The STRATEGY cards, as a studio source.
+ *
+ * They are not players and they do not have a chart, so they render through
+ * StratTemplate rather than CardTemplate — `template: 'strat'` is what tells
+ * CropEditor and ExportFrame which one to mount. Everything else about the
+ * source is the same shape the player sets use, so the photo upload, the crop
+ * editor and the batch export all work on them unmodified.
+ *
+ * Nine of the fifty-one have no art at all: the eight Crunch Time and matchup
+ * cards plus cross_court_dime. That is the gap this source exists to close.
+ */
+const STRAT_PLAYERS = STRATS.map(s => ({
+  ...s,
+  // The studio keys everything by `id` and shows `name`; strats already carry
+  // both. `pos` and `team` are what the player list prints as its meta line —
+  // phase and side are the equivalent facts for a strategy card.
+  pos: s.side === 'def' ? 'DEF' : 'OFF',
+  team: (s.phase ?? '').replace('_', ' ').toUpperCase(),
+}));
+
 export const SOURCES = {
   pool: {
     key: 'pool',
@@ -611,6 +633,28 @@ export const SOURCES = {
       'one gets no card here — her base card already is that season. Re-run ' +
       '`node scripts/cardgen/wnba/generateWnbaRookies.js`.',
   }),
+
+  strats: {
+    key: 'strats',
+    set: 'strats',
+    // `template` is the one field that makes this source different in kind:
+    // CropEditor and ExportFrame mount StratTemplate instead of CardTemplate
+    // when they see it. Everything else — photo upload, crop, batch export —
+    // is the same machinery the player sets use.
+    template: 'strat',
+    label: `Strategy cards · ${STRAT_PLAYERS.length}`,
+    sub: 'composed faces · art needed on 9',
+    editable: true,
+    hint:
+      'THE STRATEGY DECK. Forty-three of these have a hand-made face in ' +
+      'public/cards/strats/; nine do not — the eight Crunch Time and matchup cards plus ' +
+      'Cross-Court Dime. This source composes a face from strats.js in the same design as ' +
+      'the hand-made ones (white title header, art window with the diagonal wedge and ' +
+      'chevron dot-work, navy body, OFFENSE/DEFENSE footer), so a new card needs only a ' +
+      'photo dropped on it and its rules text stays in sync with the engine automatically. ' +
+      'The meta line shows PHASE and side rather than team and position.',
+    players: [...STRAT_PLAYERS].sort(byName),
+  },
 };
 
 export const DEFAULT_SOURCE = 'pool';

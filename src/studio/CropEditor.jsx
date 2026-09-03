@@ -8,6 +8,7 @@
 // turns pointer events into calls on it.
 import { useEffect, useRef, useState } from 'react';
 import CardTemplate, { CARD_WIDTH, CARD_HEIGHT } from '../cards/CardTemplate.jsx';
+import StratTemplate, { STRAT_CARD_WIDTH, STRAT_CARD_HEIGHT } from '../cards/StratTemplate.jsx';
 import {
   normalizeCrop,
   panCrop,
@@ -31,6 +32,9 @@ export default function CropEditor({
   // The set this card belongs to. The editor never reads it; the card does, to
   // decide which rows, badge and treatment it prints (see visibleTiers).
   set,
+  // 'strat' mounts StratTemplate instead of CardTemplate — see the render
+  // below. Anything else (including undefined) is a player card.
+  template,
   teamOverrides,
   scale,
   photoVersion,
@@ -183,16 +187,32 @@ export default function CropEditor({
                 remounting the card was not enough to defeat the browser's
                 image cache, because the reused bytes are not in the React
                 tree. */}
-            <CardTemplate
-              card={card}
-              crop={value}
-              hasPhoto={hasPhoto}
-              photoExt={photoExt}
-              set={set}
-              teamOverrides={teamOverrides}
-              photoVersion={photoVersion}
-              onPhotoLoad={size => setLoaded({ key: photoKey, size })}
-            />
+            {/* Strategy cards are not players and have no chart, so they
+                render through StratTemplate. The prop names are identical on
+                both templates, which is what lets this be one branch rather
+                than a second editor. */}
+            {template === 'strat' ? (
+              <StratTemplate
+                card={card}
+                crop={value}
+                hasPhoto={hasPhoto}
+                photoExt={photoExt}
+                set={set}
+                photoVersion={photoVersion}
+                onPhotoLoad={size => setLoaded({ key: photoKey, size })}
+              />
+            ) : (
+              <CardTemplate
+                card={card}
+                crop={value}
+                hasPhoto={hasPhoto}
+                photoExt={photoExt}
+                set={set}
+                teamOverrides={teamOverrides}
+                photoVersion={photoVersion}
+                onPhotoLoad={size => setLoaded({ key: photoKey, size })}
+              />
+            )}
           </div>
 
           <div

@@ -609,6 +609,7 @@ export default function Studio() {
             hasPhoto={selectedId ? photoIds.has(selectedId) : false}
             photoExt={selectedId ? photoExts[selectedId] : undefined}
             set={source.set}
+            template={source.template}
             teamOverrides={teamOverrides}
             scale={scale}
             photoVersion={selectedId ? photoVersions[selectedId] : undefined}

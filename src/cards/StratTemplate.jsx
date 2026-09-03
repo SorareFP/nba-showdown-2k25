@@ -13,6 +13,7 @@
 // breaking the set's one look.
 import React from 'react';
 import styles from './StratTemplate.module.css';
+import { resolvePhotoUrl } from './photo.js';
 
 export const STRAT_CARD_WIDTH = 825;
 export const STRAT_CARD_HEIGHT = 1238;
@@ -72,39 +73,63 @@ function ChevronDots({ direction = 'left', className }) {
   );
 }
 
+/**
+ * `card`/`hasPhoto`/`photoExt`/`set`/`photoVersion`/`onPhotoLoad` mirror
+ * CardTemplate's prop names EXACTLY, so the studio's CropEditor and the batch
+ * ExportFrame can swap one template for the other without either of them
+ * learning what a strategy card is. `artUrl` stays as a direct override for
+ * callers (and tests) that already have a URL in hand.
+ */
 export default function StratTemplate({
   strat,
+  card = null,
   artUrl = null,
   crop = null,
+  hasPhoto = false,
+  photoExt,
+  set = 'strats',
+  photoVersion,
   onArtLoad = () => {},
+  onPhotoLoad,
 }) {
-  const { paragraphs, locked } = faceParagraphs(strat);
+  const s = strat ?? card;
+  const { paragraphs, locked } = faceParagraphs(s);
+  const resolved =
+    artUrl ??
+    resolvePhotoUrl({
+      playerId: s.id,
+      hasPhoto,
+      version: photoVersion,
+      set,
+      ext: photoExt,
+    });
+  const notify = onPhotoLoad ?? onArtLoad;
   const artStyle = crop
     ? {
         objectPosition: `${crop.x ?? 50}% ${crop.y ?? 50}%`,
-        transform: crop.scale ? `scale(${crop.scale})` : undefined,
+        transform: crop.zoom || crop.scale ? `scale(${crop.zoom ?? crop.scale})` : undefined,
       }
     : undefined;
   return (
     <div
       className={styles.card}
-      data-strat-id={strat.id}
+      data-strat-id={s.id}
       style={{ width: STRAT_CARD_WIDTH, height: STRAT_CARD_HEIGHT }}
     >
       <div className={styles.header}>
-        <div className={styles.title}>{strat.name}</div>
-        <div className={styles.titleRule} style={{ background: strat.color ?? '#16305e' }} />
+        <div className={styles.title}>{s.name}</div>
+        <div className={styles.titleRule} style={{ background: s.color ?? '#16305e' }} />
       </div>
 
       <div className={styles.artWindow}>
-        {artUrl ? (
+        {resolved ? (
           <img
             className={styles.art}
-            src={artUrl}
+            src={resolved}
             style={artStyle}
             alt=""
-            onLoad={onArtLoad}
-            onError={onArtLoad}
+            onLoad={notify}
+            onError={notify}
           />
         ) : (
           <div className={styles.noArt}>NO ART</div>
@@ -114,7 +139,7 @@ export default function StratTemplate({
       </div>
 
       <div className={styles.body}>
-        <div className={styles.phase}>{phaseLine(strat.phase)}</div>
+        <div className={styles.phase}>{phaseLine(s.phase)}</div>
         {paragraphs.map((p, i) => (
           <p key={i} className={styles.rule}>{p}</p>
         ))}
@@ -123,7 +148,7 @@ export default function StratTemplate({
 
       <div className={styles.footer}>
         <ChevronDots direction="right" className={styles.footChevrons} />
-        <div className={styles.side}>{strat.side === 'def' ? 'DEFENSE' : 'OFFENSE'}</div>
+        <div className={styles.side}>{s.side === 'def' ? 'DEFENSE' : 'OFFENSE'}</div>
       </div>
     </div>
   );

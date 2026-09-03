@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-03T13:10:05.920Z",
+  "generatedAt": "2026-09-03T15:32:32.173Z",
   "set": "dissonance",
   "provisional": true,
   "sources": {
@@ -165,7 +165,7 @@
       "paintBoost": 2,
       "threePtBoost": -1,
       "defBoost": 1,
-      "salary": 540,
+      "salary": 520,
       "chart": [
         {
           "lo": 1,
@@ -524,7 +524,7 @@
       "paintBoost": 3,
       "threePtBoost": -4,
       "defBoost": 0,
-      "salary": 1300,
+      "salary": 1310,
       "chart": [
         {
           "lo": 1,
@@ -662,7 +662,7 @@
       "paintBoost": -1,
       "threePtBoost": -3,
       "defBoost": -1,
-      "salary": 780,
+      "salary": 770,
       "chart": [
         {
           "lo": 1,
@@ -731,7 +731,7 @@
       "paintBoost": 3,
       "threePtBoost": -2,
       "defBoost": 0,
-      "salary": 590,
+      "salary": 580,
       "chart": [
         {
           "lo": 1,
@@ -800,7 +800,7 @@
       "paintBoost": 0,
       "threePtBoost": -5,
       "defBoost": 2,
-      "salary": 820,
+      "salary": 810,
       "chart": [
         {
           "lo": 1,

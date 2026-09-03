@@ -38,6 +38,18 @@ export const MINUTES_DAMP = 0.9; // softened from 1.06: integer rounding turned 
 export const rebDampExponent = mpg => Math.min(1.4, 0.9 + 0.5 * Math.max(0, (22 - mpg) / 10));
 export const WINDOW_GAMES = 82;
 
+// Games below this many minutes are excluded from the sample. The bands
+// pipeline normalizes each game as (stat * 36 / minutes) / minutes — a
+// quadratic divide — so a 2-minute cameo with a single bucket extrapolates to
+// 9 per unit and dominates the p90 (Nae'Qwan Tomlin's 21+ tier reached 6 pts,
+// Josh Minott's reached 8). 6 minutes is 1.5 four-minute sections — the
+// minimum honest evidence that a player got real rotation minutes rather than
+// mop-up duty. Verified: raising from 2 to 6 collapses those outliers
+// (Tomlin p90 9.73 -> 2.50, Minott 13.17 -> 3.33) without moving Caruso,
+// Jokic, Pritchard or Allen a hundredth. Row totals for affected players
+// still clear the 10-game / 400-minute season floor comfortably.
+export const MPG_FLOOR = 6;
+
 const SEASONS = [2026, 2025];
 
 // Basketball-Reference team codes → dunksandthrees aliases.
@@ -65,12 +77,13 @@ export function minutesToDecimal(mp) {
 }
 
 /**
- * The shared tail of every window: 2-minute floor, opponent adjustment,
- * minutes damp, spike winsorization, integer rounding. `defenseKey` maps a
- * row to its opponent-table key.
+ * The shared tail of every window: MPG_FLOOR-minute floor, opponent
+ * adjustment, minutes damp, spike winsorization, integer rounding.
+ * `defenseKey` maps a row to its opponent-table key.
  */
 function finishWindow(rows, defense, defenseKey) {
-  const played = rows.filter(g => minutesToDecimal(g.minutes) >= 2);
+  // Games below MPG_FLOOR are cameos, not evidence — see the const's comment.
+  const played = rows.filter(g => minutesToDecimal(g.minutes) >= MPG_FLOOR);
   if (!played.length) return null;
 
   const totalMin = played.reduce((s, g) => s + minutesToDecimal(g.minutes), 0);
@@ -142,7 +155,7 @@ export function loadSeasonRealGames(playerId, season, defense, { playoffOnly = f
   // per-game v no matter what the raw stats are — Josh Minott's 150-minute
   // 2023-24 printed a chart of zeros with one 7-point tier at 32+ — and the
   // fringe-prior shrink over there was measured on exactly these seasons.
-  const played = rows.filter(g => minutesToDecimal(g.minutes) >= 2);
+  const played = rows.filter(g => minutesToDecimal(g.minutes) >= MPG_FLOOR);
   const totalMin = played.reduce((s, g) => s + minutesToDecimal(g.minutes), 0);
   if (played.length < 10 || totalMin < 400) return null;
   const alias = g => `${season}|${TEAM_ALIAS[g.opp] ?? g.opp}`;
@@ -160,7 +173,7 @@ export function loadWnbaSeasonRealGames(playerId, season) {
   const log = readCache(`gamelog-wnba-${playerId}-${season}`);
   if (!log) return null;
   const rows = [...(log.reg ?? []), ...(log.post ?? [])];
-  const played = rows.filter(g => minutesToDecimal(g.minutes) >= 2);
+  const played = rows.filter(g => minutesToDecimal(g.minutes) >= MPG_FLOOR);
   const totalMin = played.reduce((s, g) => s + minutesToDecimal(g.minutes), 0);
   if (played.length < 10 || totalMin < 300) return null;
   return finishWindow(played, new Map(), () => '');
@@ -189,7 +202,7 @@ function selectWindow(indexEntry) {
   }
   if (!rows.length) return null;
   const sorted = [...rows].sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''));
-  return sorted.filter(g => minutesToDecimal(g.minutes) >= 2).slice(0, WINDOW_GAMES);
+  return sorted.filter(g => minutesToDecimal(g.minutes) >= MPG_FLOOR).slice(0, WINDOW_GAMES);
 }
 
 /**

@@ -42,6 +42,11 @@ export const PACK_TYPES = {
   // The bulk play: 36 boosters at a discount PLUS a bonus Super Booster —
   // volume and a kicker, while Mega Deluxe stays the certainty play.
   booster_box:   { name: 'Booster Box (36 + bonus)', players: 0, strats: 0, price: 3000, box: 36, bonus: 'super' },
+  // THE CHASE PACK. Legendary is otherwise reachable only through the 0.3%
+  // base odds — about one apex card every 67 boosters, which is a lottery
+  // rather than a goal. This is the deliberate path: expensive, and the only
+  // pack in the shop whose guarantee reaches the apex band at all.
+  legendary_chase: { name: 'Legendary Chase', players: 3, strats: 1, price: 6000, guaranteedLegendary: 1 },
   // Set-scoped packs.
   wnba_booster:  { name: 'WNBA Booster',        players: 5,  strats: 2,  price: 100,  pool: 'wnba' },
   wnba_super:    { name: 'WNBA Super',          players: 5,  strats: 2,  price: 300,  pool: 'wnba', guaranteedRarePlayer: 1 },
@@ -157,6 +162,16 @@ export function generatePack(packType, options = {}) {
   // Player cards
   let srCount = 0;
   const srCap = def.srCap || 999;
+
+  // Guaranteed LEGENDARY — the one guarantee that reaches the apex band, and
+  // the only reason legendary_chase exists. Counts toward srCount so it can
+  // never stack with a second apex pull in the same pack.
+  if (def.guaranteedLegendary) {
+    for (let i = 0; i < def.guaranteedLegendary; i += 1) {
+      result.push(pulled(pickInBand(playerPool, getPlayerRarity, 'legendary', 'legendary')));
+      srCount += 1;
+    }
+  }
 
   // Guaranteed super-rare players — the band, never legendary.
   if (def.guaranteedSR) {

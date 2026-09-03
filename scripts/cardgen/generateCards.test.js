@@ -388,10 +388,16 @@ describe('generateCards', () => {
   // the compression scale and each boost's centre are measured across everyone.
   it('reads the shooting layer off the whole pool, not one player at a time', () => {
     const { cards } = generateCards({ pool, teams, speedPower, rates, actual: actuals, calibration });
-    // Beta Big is the better finisher and much the worse shooter of the two, so
-    // the two cards have to differ in the direction the stats do.
+    // Beta Big is the better FINISHER and much the worse SHOOTER, and since
+    // 2026-09-03 those land on different attributes: Shot Line reads jump
+    // shooting only, so his rim work can no longer buy him a better line, and
+    // Paint Boost reads rim points added, so it is where his finishing pays.
+    // This test previously asserted the opposite — that the better finisher
+    // took the better Shot Line — which was the TS%-basis bug itself (a .671
+    // Jarrett Allen out-shooting Curry on paper). See shooting.js's header.
     const [alpha, beta] = cards;
-    expect(beta.shotLine).toBeLessThan(alpha.shotLine);
+    expect(beta.shotLine).toBeGreaterThan(alpha.shotLine);
+    expect(beta.paintBoost).toBeGreaterThanOrEqual(alpha.paintBoost);
     expect(beta.threePtBoost).toBeLessThan(alpha.threePtBoost);
   });
 

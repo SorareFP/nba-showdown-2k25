@@ -351,7 +351,18 @@ export function generateCards({
   // all measured across these 350 players, so it has to run once over all of
   // them before any single card can be built.
   const actualRows = resolved.map(p => lookup(actualIndex, p.name));
-  const shooting = S.buildShootingLayer(actualRows.map(actualShootingInput), {
+  // Shot Line reads jump shooting only and Paint Boost reads rim points added
+  // — see the header of shooting.js for why TS% and rim FG% could not carry
+  // those roles. Both come back re-expressed on TS%'s own scale, so the
+  // calibrated compression below is unaffected; a row without the shot-location
+  // splits keeps its TS%/rim-FG% inputs.
+  const basis = S.deriveShootingBasis(actualRows.map(r => r ?? {}));
+  const shootingInputs = actualRows.map(actualShootingInput).map((input, i) => ({
+    ...input,
+    tsPct: basis.shootingPct[i] ?? input.tsPct,
+    paintPct: basis.rimPct[i] ?? input.paintPct,
+  }));
+  const shooting = S.buildShootingLayer(shootingInputs, {
     shotLineTarget: calibration.shotLine.target,
     paint: calibration.paintBoost,
     three: calibration.threePtBoost,

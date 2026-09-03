@@ -681,7 +681,18 @@ export function buildSet({
   const all = [...currentRows, ...seasons];
   const cut = currentRows.length;
 
-  const shooting = S.buildShootingLayer(all.map(historicalShootingInput), {
+  // Same jump-shooting / rim-points basis the base set uses (shooting.js
+  // header). The historical rows carry Basketball-Reference's shape, so rim
+  // and midrange are derived inside deriveShootingBasis; a season too old for
+  // the shooting table returns null here and keeps its existing TS% signal,
+  // including the pre-2002 free-throw bridge.
+  const basis = S.deriveShootingBasis(all);
+  const shootingInputs = all.map(historicalShootingInput).map((input, i) => ({
+    ...input,
+    tsPct: basis.shootingPct[i] ?? input.tsPct,
+    paintPct: basis.rimPct[i] ?? input.paintPct,
+  }));
+  const shooting = S.buildShootingLayer(shootingInputs, {
     shotLineTarget: calibration.shotLine.target,
     paint: calibration.paintBoost,
     three: calibration.threePtBoost,

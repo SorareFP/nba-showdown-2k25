@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-03T12:50:11.494Z",
+  "generatedAt": "2026-09-03T13:09:52.294Z",
   "set": "rookie",
   "provisional": true,
   "sources": {
@@ -196,11 +196,11 @@
       "pos": "SG",
       "speed": 8,
       "power": 6,
-      "shotLine": 14,
+      "shotLine": 15,
       "paintBoost": 0,
-      "threePtBoost": 2,
+      "threePtBoost": 3,
       "defBoost": -1,
-      "salary": 500,
+      "salary": 480,
       "chart": [
         {
           "lo": 1,
@@ -218,13 +218,13 @@
         },
         {
           "lo": 10,
-          "hi": 13,
+          "hi": 14,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 14,
+          "lo": 15,
           "hi": 20,
           "pts": 3,
           "reb": 1,
@@ -272,7 +272,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": 0,
-      "salary": 190,
+      "salary": 180,
       "chart": [
         {
           "lo": 1,
@@ -337,7 +337,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 0,
-      "salary": 570,
+      "salary": 560,
       "chart": [
         {
           "lo": 1,
@@ -409,7 +409,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 50,
+      "salary": 40,
       "chart": [
         {
           "lo": 1,
@@ -470,11 +470,11 @@
       "pos": "SG",
       "speed": 6,
       "power": 5,
-      "shotLine": 15,
+      "shotLine": 14,
       "paintBoost": 0,
-      "threePtBoost": -2,
+      "threePtBoost": -3,
       "defBoost": -1,
-      "salary": 180,
+      "salary": 200,
       "chart": [
         {
           "lo": 1,
@@ -492,13 +492,13 @@
         },
         {
           "lo": 5,
-          "hi": 14,
+          "hi": 13,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 14,
           "hi": 23,
           "pts": 2,
           "reb": 1,
@@ -535,11 +535,11 @@
       "pos": "C",
       "speed": 5,
       "power": 8,
-      "shotLine": 12,
+      "shotLine": 13,
       "paintBoost": -1,
-      "threePtBoost": -8,
+      "threePtBoost": -7,
       "defBoost": 0,
-      "salary": 170,
+      "salary": 160,
       "chart": [
         {
           "lo": 1,
@@ -557,13 +557,13 @@
         },
         {
           "lo": 7,
-          "hi": 11,
+          "hi": 12,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 12,
+          "lo": 13,
           "hi": 22,
           "pts": 1,
           "reb": 1,
@@ -600,11 +600,11 @@
       "pos": "SG",
       "speed": 8,
       "power": 6,
-      "shotLine": 15,
+      "shotLine": 14,
       "paintBoost": 0,
-      "threePtBoost": 1,
+      "threePtBoost": 0,
       "defBoost": 1,
-      "salary": 240,
+      "salary": 250,
       "chart": [
         {
           "lo": 1,
@@ -622,13 +622,13 @@
         },
         {
           "lo": 10,
-          "hi": 14,
+          "hi": 13,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 14,
           "hi": 22,
           "pts": 2,
           "reb": 0,
@@ -802,11 +802,11 @@
       "pos": "C",
       "speed": 4,
       "power": 6,
-      "shotLine": 17,
-      "paintBoost": 2,
-      "threePtBoost": 3,
+      "shotLine": 16,
+      "paintBoost": 0,
+      "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 360,
+      "salary": 380,
       "chart": [
         {
           "lo": 1,
@@ -831,13 +831,13 @@
         },
         {
           "lo": 10,
-          "hi": 16,
+          "hi": 15,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 17,
+          "lo": 16,
           "hi": 99,
           "pts": 3,
           "reb": 2,
@@ -870,11 +870,11 @@
       "pos": "C",
       "speed": 4,
       "power": 8,
-      "shotLine": 15,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": -2,
+      "threePtBoost": -1,
       "defBoost": 1,
-      "salary": 570,
+      "salary": 550,
       "chart": [
         {
           "lo": 1,
@@ -899,13 +899,13 @@
         },
         {
           "lo": 10,
-          "hi": 14,
+          "hi": 15,
           "pts": 2,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 21,
           "pts": 3,
           "reb": 1,
@@ -1014,9 +1014,9 @@
       "pos": "C",
       "speed": 8,
       "power": 15,
-      "shotLine": 15,
-      "paintBoost": 0,
-      "threePtBoost": -5,
+      "shotLine": 18,
+      "paintBoost": 3,
+      "threePtBoost": -2,
       "defBoost": 2,
       "salary": 830,
       "chart": [
@@ -1043,13 +1043,13 @@
         },
         {
           "lo": 10,
-          "hi": 14,
+          "hi": 17,
           "pts": 2,
           "reb": 2,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 18,
           "hi": 22,
           "pts": 2,
           "reb": 2,
@@ -1086,11 +1086,11 @@
       "pos": "SG",
       "speed": 14,
       "power": 9,
-      "shotLine": 15,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": -2,
+      "threePtBoost": -1,
       "defBoost": 2,
-      "salary": 530,
+      "salary": 520,
       "chart": [
         {
           "lo": 1,
@@ -1108,13 +1108,13 @@
         },
         {
           "lo": 4,
-          "hi": 14,
+          "hi": 15,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 24,
           "pts": 1,
           "reb": 1,
@@ -1151,11 +1151,11 @@
       "pos": "SG",
       "speed": 9,
       "power": 5,
-      "shotLine": 16,
+      "shotLine": 15,
       "paintBoost": 0,
-      "threePtBoost": 2,
+      "threePtBoost": 1,
       "defBoost": -1,
-      "salary": 320,
+      "salary": 340,
       "chart": [
         {
           "lo": 1,
@@ -1173,13 +1173,13 @@
         },
         {
           "lo": 4,
-          "hi": 15,
+          "hi": 14,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 15,
           "hi": 22,
           "pts": 2,
           "reb": 1,
@@ -1216,11 +1216,11 @@
       "pos": "SF",
       "speed": 7,
       "power": 6,
-      "shotLine": 16,
-      "paintBoost": 0,
-      "threePtBoost": -1,
+      "shotLine": 17,
+      "paintBoost": 1,
+      "threePtBoost": 0,
       "defBoost": -2,
-      "salary": 350,
+      "salary": 340,
       "chart": [
         {
           "lo": 1,
@@ -1245,13 +1245,13 @@
         },
         {
           "lo": 10,
-          "hi": 15,
+          "hi": 16,
           "pts": 2,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 17,
           "hi": 21,
           "pts": 2,
           "reb": 1,
@@ -1288,11 +1288,11 @@
       "pos": "SG",
       "speed": 9,
       "power": 5,
-      "shotLine": 16,
+      "shotLine": 15,
       "paintBoost": 0,
-      "threePtBoost": 2,
+      "threePtBoost": 1,
       "defBoost": -4,
-      "salary": 400,
+      "salary": 410,
       "chart": [
         {
           "lo": 1,
@@ -1317,13 +1317,13 @@
         },
         {
           "lo": 14,
-          "hi": 15,
+          "hi": 14,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 15,
           "hi": 22,
           "pts": 3,
           "reb": 1,
@@ -1360,11 +1360,11 @@
       "pos": "PG",
       "speed": 8,
       "power": 5,
-      "shotLine": 15,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": 1,
+      "threePtBoost": 2,
       "defBoost": 1,
-      "salary": 180,
+      "salary": 170,
       "chart": [
         {
           "lo": 1,
@@ -1382,13 +1382,13 @@
         },
         {
           "lo": 6,
-          "hi": 14,
+          "hi": 15,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 24,
           "pts": 1,
           "reb": 0,
@@ -1425,11 +1425,11 @@
       "pos": "PF",
       "speed": 9,
       "power": 14,
-      "shotLine": 15,
-      "paintBoost": 0,
-      "threePtBoost": -5,
+      "shotLine": 17,
+      "paintBoost": 2,
+      "threePtBoost": -3,
       "defBoost": 1,
-      "salary": 1020,
+      "salary": 980,
       "chart": [
         {
           "lo": 1,
@@ -1454,13 +1454,13 @@
         },
         {
           "lo": 10,
-          "hi": 14,
+          "hi": 16,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 17,
           "hi": 20,
           "pts": 3,
           "reb": 2,
@@ -1562,11 +1562,11 @@
       "pos": "PF",
       "speed": 6,
       "power": 8,
-      "shotLine": 15,
-      "paintBoost": 0,
-      "threePtBoost": 1,
+      "shotLine": 14,
+      "paintBoost": -1,
+      "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 450,
+      "salary": 440,
       "chart": [
         {
           "lo": 1,
@@ -1584,13 +1584,13 @@
         },
         {
           "lo": 10,
-          "hi": 14,
+          "hi": 13,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 14,
           "hi": 17,
           "pts": 2,
           "reb": 1,
@@ -1637,11 +1637,11 @@
       "pos": "SF",
       "speed": 8,
       "power": 8,
-      "shotLine": 16,
+      "shotLine": 14,
       "paintBoost": 0,
-      "threePtBoost": -4,
+      "threePtBoost": -6,
       "defBoost": 1,
-      "salary": 510,
+      "salary": 560,
       "chart": [
         {
           "lo": 1,
@@ -1659,13 +1659,13 @@
         },
         {
           "lo": 4,
-          "hi": 15,
+          "hi": 13,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 14,
           "hi": 99,
           "pts": 2,
           "reb": 2,
@@ -1696,7 +1696,7 @@
       "speed": 9,
       "power": 7,
       "shotLine": 14,
-      "paintBoost": 0,
+      "paintBoost": -1,
       "threePtBoost": 0,
       "defBoost": -1,
       "salary": 280,
@@ -1760,9 +1760,9 @@
       "pos": "SG",
       "speed": 7,
       "power": 4,
-      "shotLine": 15,
+      "shotLine": 14,
       "paintBoost": 0,
-      "threePtBoost": 1,
+      "threePtBoost": 0,
       "defBoost": 0,
       "salary": 230,
       "chart": [
@@ -1782,13 +1782,13 @@
         },
         {
           "lo": 4,
-          "hi": 14,
+          "hi": 13,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 14,
           "hi": 23,
           "pts": 2,
           "reb": 1,
@@ -1825,11 +1825,11 @@
       "pos": "C",
       "speed": 7,
       "power": 11,
-      "shotLine": 15,
-      "paintBoost": 0,
-      "threePtBoost": -5,
+      "shotLine": 17,
+      "paintBoost": 2,
+      "threePtBoost": -3,
       "defBoost": 1,
-      "salary": 510,
+      "salary": 470,
       "chart": [
         {
           "lo": 1,
@@ -1854,13 +1854,13 @@
         },
         {
           "lo": 11,
-          "hi": 14,
+          "hi": 16,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 17,
           "hi": 22,
           "pts": 2,
           "reb": 1,
@@ -1897,9 +1897,9 @@
       "pos": "SG",
       "speed": 9,
       "power": 6,
-      "shotLine": 16,
+      "shotLine": 15,
       "paintBoost": 0,
-      "threePtBoost": 2,
+      "threePtBoost": 1,
       "defBoost": 1,
       "salary": 30,
       "chart": [
@@ -1912,13 +1912,13 @@
         },
         {
           "lo": 3,
-          "hi": 15,
+          "hi": 14,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 15,
           "hi": 18,
           "pts": 0,
           "reb": 0,
@@ -1962,11 +1962,11 @@
       "pos": "SG",
       "speed": 8,
       "power": 6,
-      "shotLine": 16,
+      "shotLine": 14,
       "paintBoost": 0,
-      "threePtBoost": 2,
+      "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 140,
+      "salary": 160,
       "chart": [
         {
           "lo": 1,
@@ -1984,13 +1984,13 @@
         },
         {
           "lo": 12,
-          "hi": 15,
+          "hi": 13,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 14,
           "hi": 23,
           "pts": 2,
           "reb": 0,
@@ -2092,11 +2092,11 @@
       "pos": "SG",
       "speed": 8,
       "power": 5,
-      "shotLine": 15,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": 1,
+      "threePtBoost": 2,
       "defBoost": -3,
-      "salary": 590,
+      "salary": 570,
       "chart": [
         {
           "lo": 1,
@@ -2121,13 +2121,13 @@
         },
         {
           "lo": 10,
-          "hi": 14,
+          "hi": 15,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 21,
           "pts": 3,
           "reb": 1,
@@ -2240,7 +2240,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": -2,
-      "salary": 270,
+      "salary": 260,
       "chart": [
         {
           "lo": 1,
@@ -2308,11 +2308,11 @@
       "pos": "SG",
       "speed": 12,
       "power": 6,
-      "shotLine": 15,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": 1,
+      "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 780,
+      "salary": 750,
       "chart": [
         {
           "lo": 1,
@@ -2337,13 +2337,13 @@
         },
         {
           "lo": 10,
-          "hi": 14,
+          "hi": 15,
           "pts": 2,
           "reb": 0,
           "ast": 1
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 20,
           "pts": 3,
           "reb": 1,
@@ -2380,9 +2380,9 @@
       "pos": "SG",
       "speed": 7,
       "power": 6,
-      "shotLine": 17,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": -3,
+      "threePtBoost": -4,
       "defBoost": 0,
       "salary": 210,
       "chart": [
@@ -2402,13 +2402,13 @@
         },
         {
           "lo": 5,
-          "hi": 16,
+          "hi": 15,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 17,
+          "lo": 16,
           "hi": 99,
           "pts": 1,
           "reb": 1,
@@ -2438,11 +2438,11 @@
       "pos": "SG",
       "speed": 11,
       "power": 8,
-      "shotLine": 16,
+      "shotLine": 15,
       "paintBoost": 0,
-      "threePtBoost": 2,
+      "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 680,
+      "salary": 690,
       "chart": [
         {
           "lo": 1,
@@ -2467,13 +2467,13 @@
         },
         {
           "lo": 11,
-          "hi": 15,
+          "hi": 14,
           "pts": 2,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 16,
+          "lo": 15,
           "hi": 99,
           "pts": 2,
           "reb": 2,
@@ -2503,11 +2503,11 @@
       "pos": "SF",
       "speed": 5,
       "power": 5,
-      "shotLine": 17,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": 0,
+      "threePtBoost": -1,
       "defBoost": -1,
-      "salary": 150,
+      "salary": 160,
       "chart": [
         {
           "lo": 1,
@@ -2532,13 +2532,13 @@
         },
         {
           "lo": 10,
-          "hi": 16,
+          "hi": 15,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 17,
+          "lo": 16,
           "hi": 21,
           "pts": 2,
           "reb": 1,
@@ -2579,7 +2579,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -2,
-      "salary": 670,
+      "salary": 660,
       "chart": [
         {
           "lo": 1,
@@ -2640,11 +2640,11 @@
       "pos": "PG",
       "speed": 8,
       "power": 5,
-      "shotLine": 17,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": 3,
+      "threePtBoost": 2,
       "defBoost": -3,
-      "salary": 470,
+      "salary": 480,
       "chart": [
         {
           "lo": 1,
@@ -2669,13 +2669,13 @@
         },
         {
           "lo": 10,
-          "hi": 16,
+          "hi": 15,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 17,
+          "lo": 16,
           "hi": 21,
           "pts": 3,
           "reb": 1,
@@ -2712,11 +2712,11 @@
       "pos": "SF",
       "speed": 6,
       "power": 6,
-      "shotLine": 16,
+      "shotLine": 15,
       "paintBoost": 0,
-      "threePtBoost": 2,
+      "threePtBoost": 1,
       "defBoost": -2,
-      "salary": 170,
+      "salary": 190,
       "chart": [
         {
           "lo": 1,
@@ -2734,13 +2734,13 @@
         },
         {
           "lo": 10,
-          "hi": 15,
+          "hi": 14,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 15,
           "hi": 20,
           "pts": 2,
           "reb": 1,
@@ -2777,9 +2777,9 @@
       "pos": "C",
       "speed": 6,
       "power": 12,
-      "shotLine": 15,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": -5,
+      "threePtBoost": -4,
       "defBoost": 0,
       "salary": 580,
       "chart": [
@@ -2806,13 +2806,13 @@
         },
         {
           "lo": 10,
-          "hi": 14,
+          "hi": 15,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 21,
           "pts": 2,
           "reb": 1,
@@ -2849,11 +2849,11 @@
       "pos": "SG",
       "speed": 8,
       "power": 6,
-      "shotLine": 17,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": 0,
+      "threePtBoost": -1,
       "defBoost": 1,
-      "salary": 20,
+      "salary": 30,
       "chart": [
         {
           "lo": 1,
@@ -2864,13 +2864,13 @@
         },
         {
           "lo": 3,
-          "hi": 16,
+          "hi": 15,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 17,
+          "lo": 16,
           "hi": 24,
           "pts": 1,
           "reb": 1,
@@ -2907,11 +2907,11 @@
       "pos": "SG",
       "speed": 6,
       "power": 5,
-      "shotLine": 16,
+      "shotLine": 17,
       "paintBoost": 0,
-      "threePtBoost": 2,
+      "threePtBoost": 3,
       "defBoost": -1,
-      "salary": 100,
+      "salary": 70,
       "chart": [
         {
           "lo": 1,
@@ -2929,13 +2929,13 @@
         },
         {
           "lo": 8,
-          "hi": 15,
+          "hi": 16,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 17,
           "hi": 23,
           "pts": 2,
           "reb": 0,
@@ -2972,11 +2972,11 @@
       "pos": "PG",
       "speed": 5,
       "power": 3,
-      "shotLine": 16,
+      "shotLine": 15,
       "paintBoost": 0,
-      "threePtBoost": 2,
+      "threePtBoost": 1,
       "defBoost": -1,
-      "salary": 130,
+      "salary": 140,
       "chart": [
         {
           "lo": 1,
@@ -3001,13 +3001,13 @@
         },
         {
           "lo": 11,
-          "hi": 15,
+          "hi": 14,
           "pts": 1,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 16,
+          "lo": 15,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -3041,7 +3041,7 @@
       "paintBoost": 0,
       "threePtBoost": 4,
       "defBoost": -1,
-      "salary": 500,
+      "salary": 490,
       "chart": [
         {
           "lo": 1,
@@ -3113,7 +3113,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 650,
+      "salary": 640,
       "chart": [
         {
           "lo": 1,
@@ -3174,11 +3174,11 @@
       "pos": "SF",
       "speed": 8,
       "power": 6,
-      "shotLine": 15,
-      "paintBoost": -1,
-      "threePtBoost": 1,
+      "shotLine": 17,
+      "paintBoost": 2,
+      "threePtBoost": 3,
       "defBoost": 1,
-      "salary": 390,
+      "salary": 380,
       "chart": [
         {
           "lo": 1,
@@ -3203,13 +3203,13 @@
         },
         {
           "lo": 12,
-          "hi": 14,
+          "hi": 16,
           "pts": 2,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 15,
+          "lo": 17,
           "hi": 25,
           "pts": 2,
           "reb": 1,
@@ -3318,11 +3318,11 @@
       "pos": "SG",
       "speed": 6,
       "power": 4,
-      "shotLine": 16,
+      "shotLine": 15,
       "paintBoost": 0,
-      "threePtBoost": -1,
+      "threePtBoost": -2,
       "defBoost": -1,
-      "salary": 110,
+      "salary": 130,
       "chart": [
         {
           "lo": 1,
@@ -3340,13 +3340,13 @@
         },
         {
           "lo": 6,
-          "hi": 15,
+          "hi": 14,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 15,
           "hi": 21,
           "pts": 2,
           "reb": 1,
@@ -3387,7 +3387,7 @@
       "paintBoost": 0,
       "threePtBoost": 3,
       "defBoost": 0,
-      "salary": 420,
+      "salary": 410,
       "chart": [
         {
           "lo": 1,
@@ -3448,11 +3448,11 @@
       "pos": "SF",
       "speed": 9,
       "power": 7,
-      "shotLine": 15,
+      "shotLine": 14,
       "paintBoost": 0,
-      "threePtBoost": 1,
+      "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 500,
+      "salary": 490,
       "chart": [
         {
           "lo": 1,
@@ -3477,13 +3477,13 @@
         },
         {
           "lo": 10,
-          "hi": 14,
+          "hi": 13,
           "pts": 2,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 14,
           "hi": 22,
           "pts": 2,
           "reb": 1,
@@ -3520,11 +3520,11 @@
       "pos": "SF",
       "speed": 8,
       "power": 8,
-      "shotLine": 16,
-      "paintBoost": 0,
-      "threePtBoost": -1,
+      "shotLine": 17,
+      "paintBoost": -1,
+      "threePtBoost": 0,
       "defBoost": -2,
-      "salary": 680,
+      "salary": 660,
       "chart": [
         {
           "lo": 1,
@@ -3542,13 +3542,13 @@
         },
         {
           "lo": 4,
-          "hi": 15,
+          "hi": 16,
           "pts": 2,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 17,
           "hi": 21,
           "pts": 3,
           "reb": 1,
@@ -3585,11 +3585,11 @@
       "pos": "SG",
       "speed": 10,
       "power": 7,
-      "shotLine": 14,
+      "shotLine": 15,
       "paintBoost": 0,
-      "threePtBoost": 2,
+      "threePtBoost": 3,
       "defBoost": 1,
-      "salary": 470,
+      "salary": 520,
       "chart": [
         {
           "lo": 1,
@@ -3607,20 +3607,13 @@
         },
         {
           "lo": 4,
-          "hi": 13,
+          "hi": 14,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 14,
-          "hi": 16,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 17,
+          "lo": 15,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -3650,11 +3643,11 @@
       "pos": "PG",
       "speed": 7,
       "power": 5,
-      "shotLine": 14,
-      "paintBoost": -1,
-      "threePtBoost": 0,
+      "shotLine": 17,
+      "paintBoost": 1,
+      "threePtBoost": 3,
       "defBoost": -3,
-      "salary": 260,
+      "salary": 180,
       "chart": [
         {
           "lo": 1,
@@ -3672,13 +3665,13 @@
         },
         {
           "lo": 6,
-          "hi": 13,
+          "hi": 16,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 14,
+          "lo": 17,
           "hi": 22,
           "pts": 2,
           "reb": 1,
@@ -3780,9 +3773,9 @@
       "pos": "PG",
       "speed": 18,
       "power": 9,
-      "shotLine": 15,
-      "paintBoost": -1,
-      "threePtBoost": -2,
+      "shotLine": 16,
+      "paintBoost": 0,
+      "threePtBoost": -1,
       "defBoost": 2,
       "salary": 910,
       "chart": [
@@ -3809,13 +3802,13 @@
         },
         {
           "lo": 10,
-          "hi": 14,
+          "hi": 15,
           "pts": 2,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -3849,7 +3842,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 130,
+      "salary": 120,
       "chart": [
         {
           "lo": 1,
@@ -3910,11 +3903,11 @@
       "pos": "SG",
       "speed": 9,
       "power": 5,
-      "shotLine": 16,
+      "shotLine": 15,
       "paintBoost": 0,
-      "threePtBoost": 2,
+      "threePtBoost": 1,
       "defBoost": -1,
-      "salary": 160,
+      "salary": 170,
       "chart": [
         {
           "lo": 1,
@@ -3932,13 +3925,13 @@
         },
         {
           "lo": 12,
-          "hi": 15,
+          "hi": 14,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 15,
           "hi": 21,
           "pts": 2,
           "reb": 0,
@@ -4105,9 +4098,9 @@
       "pos": "SG",
       "speed": 4,
       "power": 3,
-      "shotLine": 18,
-      "paintBoost": 2,
-      "threePtBoost": 1,
+      "shotLine": 17,
+      "paintBoost": 0,
+      "threePtBoost": 0,
       "defBoost": -1,
       "salary": 10,
       "chart": [
@@ -4127,13 +4120,13 @@
         },
         {
           "lo": 11,
-          "hi": 17,
+          "hi": 16,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 18,
+          "lo": 17,
           "hi": 24,
           "pts": 1,
           "reb": 1,
@@ -4170,9 +4163,9 @@
       "pos": "PG",
       "speed": 9,
       "power": 5,
-      "shotLine": 15,
+      "shotLine": 14,
       "paintBoost": 0,
-      "threePtBoost": 1,
+      "threePtBoost": 0,
       "defBoost": 1,
       "salary": 500,
       "chart": [
@@ -4192,13 +4185,13 @@
         },
         {
           "lo": 11,
-          "hi": 14,
+          "hi": 13,
           "pts": 2,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 15,
+          "lo": 14,
           "hi": 23,
           "pts": 3,
           "reb": 1,
@@ -4239,7 +4232,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -3,
-      "salary": 240,
+      "salary": 230,
       "chart": [
         {
           "lo": 1,
@@ -4293,11 +4286,11 @@
       "pos": "SF",
       "speed": 8,
       "power": 7,
-      "shotLine": 15,
-      "paintBoost": 0,
-      "threePtBoost": 1,
+      "shotLine": 13,
+      "paintBoost": -1,
+      "threePtBoost": -1,
       "defBoost": -2,
-      "salary": 360,
+      "salary": 330,
       "chart": [
         {
           "lo": 1,
@@ -4315,13 +4308,20 @@
         },
         {
           "lo": 4,
-          "hi": 14,
+          "hi": 12,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 13,
+          "hi": 15,
+          "pts": 1,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 16,
           "hi": 23,
           "pts": 2,
           "reb": 1,
@@ -4423,9 +4423,9 @@
       "pos": "PG",
       "speed": 12,
       "power": 8,
-      "shotLine": 15,
-      "paintBoost": -1,
-      "threePtBoost": 1,
+      "shotLine": 16,
+      "paintBoost": 0,
+      "threePtBoost": 2,
       "defBoost": -2,
       "salary": 710,
       "chart": [
@@ -4452,13 +4452,13 @@
         },
         {
           "lo": 10,
-          "hi": 14,
+          "hi": 15,
           "pts": 2,
           "reb": 0,
           "ast": 1
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 21,
           "pts": 2,
           "reb": 0,
@@ -4495,11 +4495,11 @@
       "pos": "C",
       "speed": 5,
       "power": 9,
-      "shotLine": 13,
-      "paintBoost": 0,
-      "threePtBoost": -7,
+      "shotLine": 16,
+      "paintBoost": 2,
+      "threePtBoost": -4,
       "defBoost": 2,
-      "salary": 300,
+      "salary": 250,
       "chart": [
         {
           "lo": 1,
@@ -4517,13 +4517,13 @@
         },
         {
           "lo": 12,
-          "hi": 12,
+          "hi": 15,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 13,
+          "lo": 16,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -4553,11 +4553,11 @@
       "pos": "PG",
       "speed": 9,
       "power": 6,
-      "shotLine": 15,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": 1,
+      "threePtBoost": 2,
       "defBoost": 1,
-      "salary": 310,
+      "salary": 290,
       "chart": [
         {
           "lo": 1,
@@ -4575,13 +4575,13 @@
         },
         {
           "lo": 9,
-          "hi": 14,
+          "hi": 15,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 23,
           "pts": 2,
           "reb": 0,
@@ -4618,9 +4618,9 @@
       "pos": "PG",
       "speed": 9,
       "power": 5,
-      "shotLine": 18,
-      "paintBoost": 3,
-      "threePtBoost": 5,
+      "shotLine": 12,
+      "paintBoost": -1,
+      "threePtBoost": 0,
       "defBoost": -6,
       "salary": 400,
       "chart": [
@@ -4640,13 +4640,20 @@
         },
         {
           "lo": 11,
-          "hi": 17,
+          "hi": 11,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 18,
+          "lo": 12,
+          "hi": 16,
+          "pts": 2,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 17,
           "hi": 23,
           "pts": 3,
           "reb": 2,
@@ -4683,11 +4690,11 @@
       "pos": "SG",
       "speed": 8,
       "power": 6,
-      "shotLine": 17,
+      "shotLine": 14,
       "paintBoost": 0,
-      "threePtBoost": 3,
+      "threePtBoost": 0,
       "defBoost": 1,
-      "salary": 440,
+      "salary": 430,
       "chart": [
         {
           "lo": 1,
@@ -4705,6 +4712,13 @@
         },
         {
           "lo": 11,
+          "hi": 13,
+          "pts": 2,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 14,
           "hi": 16,
           "pts": 2,
           "reb": 1,
@@ -4749,10 +4763,10 @@
       "speed": 6,
       "power": 3,
       "shotLine": 16,
-      "paintBoost": -1,
+      "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -3,
-      "salary": 130,
+      "salary": 120,
       "chart": [
         {
           "lo": 1,
@@ -4820,11 +4834,11 @@
       "pos": "PG",
       "speed": 9,
       "power": 5,
-      "shotLine": 17,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": 3,
+      "threePtBoost": 2,
       "defBoost": -2,
-      "salary": 430,
+      "salary": 440,
       "chart": [
         {
           "lo": 1,
@@ -4849,13 +4863,13 @@
         },
         {
           "lo": 10,
-          "hi": 16,
+          "hi": 15,
           "pts": 2,
           "reb": 0,
           "ast": 1
         },
         {
-          "lo": 17,
+          "lo": 16,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -4885,11 +4899,11 @@
       "pos": "PF",
       "speed": 6,
       "power": 10,
-      "shotLine": 15,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": -5,
+      "threePtBoost": -4,
       "defBoost": -3,
-      "salary": 660,
+      "salary": 650,
       "chart": [
         {
           "lo": 1,
@@ -4907,13 +4921,13 @@
         },
         {
           "lo": 10,
-          "hi": 14,
+          "hi": 15,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 17,
           "pts": 2,
           "reb": 2,
@@ -5033,7 +5047,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -2,
-      "salary": 350,
+      "salary": 340,
       "chart": [
         {
           "lo": 1,
@@ -5101,9 +5115,9 @@
       "pos": "PG",
       "speed": 7,
       "power": 5,
-      "shotLine": 17,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": 0,
+      "threePtBoost": -1,
       "defBoost": 1,
       "salary": 130,
       "chart": [
@@ -5130,13 +5144,13 @@
         },
         {
           "lo": 11,
-          "hi": 16,
+          "hi": 15,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 17,
+          "lo": 16,
           "hi": 23,
           "pts": 1,
           "reb": 1,
@@ -5245,11 +5259,11 @@
       "pos": "C",
       "speed": 8,
       "power": 13,
-      "shotLine": 14,
+      "shotLine": 15,
       "paintBoost": 0,
-      "threePtBoost": -6,
+      "threePtBoost": -5,
       "defBoost": -1,
-      "salary": 780,
+      "salary": 770,
       "chart": [
         {
           "lo": 1,
@@ -5267,13 +5281,13 @@
         },
         {
           "lo": 4,
-          "hi": 13,
+          "hi": 14,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 14,
+          "lo": 15,
           "hi": 21,
           "pts": 2,
           "reb": 2,
@@ -5314,7 +5328,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": -1,
-      "salary": 310,
+      "salary": 300,
       "chart": [
         {
           "lo": 1,
@@ -5382,11 +5396,11 @@
       "pos": "SG",
       "speed": 7,
       "power": 6,
-      "shotLine": 15,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": -5,
+      "threePtBoost": -4,
       "defBoost": -1,
-      "salary": 300,
+      "salary": 280,
       "chart": [
         {
           "lo": 1,
@@ -5411,13 +5425,13 @@
         },
         {
           "lo": 10,
-          "hi": 14,
+          "hi": 15,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 22,
           "pts": 2,
           "reb": 1,
@@ -5454,9 +5468,9 @@
       "pos": "SF",
       "speed": 6,
       "power": 7,
-      "shotLine": 16,
+      "shotLine": 15,
       "paintBoost": 0,
-      "threePtBoost": 2,
+      "threePtBoost": 1,
       "defBoost": 0,
       "salary": 190,
       "chart": [
@@ -5476,13 +5490,13 @@
         },
         {
           "lo": 6,
-          "hi": 15,
+          "hi": 14,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 15,
           "hi": 24,
           "pts": 1,
           "reb": 1,
@@ -5520,7 +5534,7 @@
       "speed": 9,
       "power": 9,
       "shotLine": 17,
-      "paintBoost": 0,
+      "paintBoost": 2,
       "threePtBoost": -3,
       "defBoost": 1,
       "salary": 520,
@@ -5649,11 +5663,11 @@
       "pos": "PG",
       "speed": 9,
       "power": 5,
-      "shotLine": 16,
-      "paintBoost": -1,
-      "threePtBoost": -1,
+      "shotLine": 15,
+      "paintBoost": 0,
+      "threePtBoost": -2,
       "defBoost": 0,
-      "salary": 120,
+      "salary": 130,
       "chart": [
         {
           "lo": 1,
@@ -5671,13 +5685,13 @@
         },
         {
           "lo": 13,
-          "hi": 15,
+          "hi": 14,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 15,
           "hi": 22,
           "pts": 2,
           "reb": 0,
@@ -5714,9 +5728,9 @@
       "pos": "SF",
       "speed": 8,
       "power": 7,
-      "shotLine": 14,
-      "paintBoost": 0,
-      "threePtBoost": -6,
+      "shotLine": 17,
+      "paintBoost": 2,
+      "threePtBoost": -3,
       "defBoost": -1,
       "salary": 120,
       "chart": [
@@ -5736,20 +5750,13 @@
         },
         {
           "lo": 10,
-          "hi": 13,
+          "hi": 16,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 14,
-          "hi": 17,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 18,
+          "lo": 17,
           "hi": 24,
           "pts": 1,
           "reb": 1,
@@ -5786,11 +5793,11 @@
       "pos": "PG",
       "speed": 9,
       "power": 6,
-      "shotLine": 14,
-      "paintBoost": -1,
-      "threePtBoost": 0,
+      "shotLine": 16,
+      "paintBoost": 0,
+      "threePtBoost": 2,
       "defBoost": 2,
-      "salary": 440,
+      "salary": 420,
       "chart": [
         {
           "lo": 1,
@@ -5808,13 +5815,13 @@
         },
         {
           "lo": 10,
-          "hi": 13,
+          "hi": 15,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 14,
+          "lo": 16,
           "hi": 18,
           "pts": 2,
           "reb": 1,
@@ -5858,11 +5865,11 @@
       "pos": "SG",
       "speed": 9,
       "power": 7,
-      "shotLine": 14,
+      "shotLine": 15,
       "paintBoost": 0,
-      "threePtBoost": 2,
+      "threePtBoost": 3,
       "defBoost": 0,
-      "salary": 640,
+      "salary": 620,
       "chart": [
         {
           "lo": 1,
@@ -5880,13 +5887,13 @@
         },
         {
           "lo": 4,
-          "hi": 13,
+          "hi": 14,
           "pts": 2,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 14,
+          "lo": 15,
           "hi": 21,
           "pts": 2,
           "reb": 1,
@@ -6057,7 +6064,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 340,
+      "salary": 330,
       "chart": [
         {
           "lo": 1,
@@ -6118,11 +6125,11 @@
       "pos": "PF",
       "speed": 5,
       "power": 7,
-      "shotLine": 17,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": 3,
+      "threePtBoost": 2,
       "defBoost": 0,
-      "salary": 230,
+      "salary": 240,
       "chart": [
         {
           "lo": 1,
@@ -6147,13 +6154,13 @@
         },
         {
           "lo": 11,
-          "hi": 16,
+          "hi": 15,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 17,
+          "lo": 16,
           "hi": 23,
           "pts": 2,
           "reb": 1,
@@ -6190,9 +6197,9 @@
       "pos": "PF",
       "speed": 6,
       "power": 7,
-      "shotLine": 15,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": -5,
+      "threePtBoost": -4,
       "defBoost": -1,
       "salary": 50,
       "chart": [
@@ -6212,13 +6219,20 @@
         },
         {
           "lo": 11,
-          "hi": 14,
+          "hi": 12,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 13,
+          "hi": 15,
+          "pts": 1,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 16,
           "hi": 24,
           "pts": 1,
           "reb": 1,
@@ -6255,11 +6269,11 @@
       "pos": "C",
       "speed": 6,
       "power": 11,
-      "shotLine": 15,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": -2,
+      "threePtBoost": -1,
       "defBoost": 1,
-      "salary": 530,
+      "salary": 510,
       "chart": [
         {
           "lo": 1,
@@ -6284,13 +6298,13 @@
         },
         {
           "lo": 11,
-          "hi": 14,
+          "hi": 15,
           "pts": 1,
           "reb": 2,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 22,
           "pts": 2,
           "reb": 2,
@@ -6327,11 +6341,11 @@
       "pos": "SG",
       "speed": 14,
       "power": 9,
-      "shotLine": 16,
+      "shotLine": 15,
       "paintBoost": 0,
-      "threePtBoost": 2,
+      "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 1000,
+      "salary": 1020,
       "chart": [
         {
           "lo": 1,
@@ -6356,13 +6370,13 @@
         },
         {
           "lo": 10,
-          "hi": 15,
+          "hi": 14,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 15,
           "hi": 99,
           "pts": 3,
           "reb": 1,
@@ -6392,11 +6406,11 @@
       "pos": "SG",
       "speed": 9,
       "power": 5,
-      "shotLine": 16,
-      "paintBoost": 2,
-      "threePtBoost": 2,
+      "shotLine": 13,
+      "paintBoost": -1,
+      "threePtBoost": -1,
       "defBoost": 1,
-      "salary": 120,
+      "salary": 100,
       "chart": [
         {
           "lo": 1,
@@ -6458,10 +6472,10 @@
       "speed": 8,
       "power": 6,
       "shotLine": 15,
-      "paintBoost": -1,
+      "paintBoost": 0,
       "threePtBoost": -2,
       "defBoost": 0,
-      "salary": 410,
+      "salary": 400,
       "chart": [
         {
           "lo": 1,
@@ -6666,9 +6680,9 @@
       "pos": "SG",
       "speed": 9,
       "power": 5,
-      "shotLine": 17,
+      "shotLine": 15,
       "paintBoost": 0,
-      "threePtBoost": 3,
+      "threePtBoost": 1,
       "defBoost": 3,
       "salary": 570,
       "chart": [
@@ -6688,13 +6702,13 @@
         },
         {
           "lo": 10,
-          "hi": 16,
+          "hi": 14,
           "pts": 2,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 17,
+          "lo": 15,
           "hi": 18,
           "pts": 2,
           "reb": 1,
@@ -6738,11 +6752,11 @@
       "pos": "SF",
       "speed": 7,
       "power": 7,
-      "shotLine": 16,
-      "paintBoost": 0,
-      "threePtBoost": 2,
+      "shotLine": 12,
+      "paintBoost": -1,
+      "threePtBoost": -2,
       "defBoost": 0,
-      "salary": 460,
+      "salary": 450,
       "chart": [
         {
           "lo": 1,
@@ -6760,6 +6774,13 @@
         },
         {
           "lo": 10,
+          "hi": 11,
+          "pts": 2,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 12,
           "hi": 15,
           "pts": 2,
           "reb": 1,
@@ -6803,11 +6824,11 @@
       "pos": "PF",
       "speed": 8,
       "power": 12,
-      "shotLine": 15,
+      "shotLine": 17,
       "paintBoost": 0,
-      "threePtBoost": -5,
+      "threePtBoost": -3,
       "defBoost": 0,
-      "salary": 600,
+      "salary": 560,
       "chart": [
         {
           "lo": 1,
@@ -6825,13 +6846,13 @@
         },
         {
           "lo": 4,
-          "hi": 14,
+          "hi": 16,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 17,
           "hi": 99,
           "pts": 2,
           "reb": 2,
@@ -6861,11 +6882,11 @@
       "pos": "PF",
       "speed": 6,
       "power": 9,
-      "shotLine": 15,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": -2,
+      "threePtBoost": -1,
       "defBoost": 1,
-      "salary": 570,
+      "salary": 630,
       "chart": [
         {
           "lo": 1,
@@ -6883,20 +6904,13 @@
         },
         {
           "lo": 10,
-          "hi": 14,
+          "hi": 15,
           "pts": 2,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 15,
-          "hi": 18,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 19,
+          "lo": 16,
           "hi": 21,
           "pts": 3,
           "reb": 2,
@@ -6999,10 +7013,10 @@
       "speed": 7,
       "power": 6,
       "shotLine": 16,
-      "paintBoost": -1,
+      "paintBoost": 0,
       "threePtBoost": -4,
       "defBoost": -1,
-      "salary": 480,
+      "salary": 470,
       "chart": [
         {
           "lo": 1,
@@ -7070,11 +7084,11 @@
       "pos": "PF",
       "speed": 9,
       "power": 11,
-      "shotLine": 15,
+      "shotLine": 16,
       "paintBoost": 2,
-      "threePtBoost": -2,
+      "threePtBoost": -1,
       "defBoost": 2,
-      "salary": 810,
+      "salary": 770,
       "chart": [
         {
           "lo": 1,
@@ -7099,13 +7113,13 @@
         },
         {
           "lo": 10,
-          "hi": 14,
+          "hi": 15,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 99,
           "pts": 2,
           "reb": 2,
@@ -7135,9 +7149,9 @@
       "pos": "C",
       "speed": 5,
       "power": 8,
-      "shotLine": 16,
-      "paintBoost": 0,
-      "threePtBoost": -4,
+      "shotLine": 18,
+      "paintBoost": 2,
+      "threePtBoost": -2,
       "defBoost": 1,
       "salary": 10,
       "chart": [
@@ -7150,20 +7164,13 @@
         },
         {
           "lo": 3,
-          "hi": 15,
+          "hi": 17,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 16,
-          "hi": 18,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 19,
+          "lo": 18,
           "hi": 24,
           "pts": 1,
           "reb": 0,
@@ -7265,11 +7272,11 @@
       "pos": "PG",
       "speed": 9,
       "power": 5,
-      "shotLine": 17,
-      "paintBoost": 0,
-      "threePtBoost": 3,
+      "shotLine": 18,
+      "paintBoost": 2,
+      "threePtBoost": 4,
       "defBoost": 2,
-      "salary": 600,
+      "salary": 550,
       "chart": [
         {
           "lo": 1,
@@ -7294,13 +7301,13 @@
         },
         {
           "lo": 12,
-          "hi": 16,
+          "hi": 17,
           "pts": 2,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 17,
+          "lo": 18,
           "hi": 99,
           "pts": 4,
           "reb": 2,
@@ -7402,9 +7409,9 @@
       "pos": "SG",
       "speed": 7,
       "power": 4,
-      "shotLine": 18,
+      "shotLine": 17,
       "paintBoost": 0,
-      "threePtBoost": 1,
+      "threePtBoost": 0,
       "defBoost": 0,
       "salary": 10,
       "chart": [
@@ -7424,13 +7431,13 @@
         },
         {
           "lo": 12,
-          "hi": 17,
+          "hi": 16,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 18,
+          "lo": 17,
           "hi": 22,
           "pts": 1,
           "reb": 0,
@@ -7467,11 +7474,11 @@
       "pos": "PG",
       "speed": 9,
       "power": 5,
-      "shotLine": 18,
-      "paintBoost": 3,
-      "threePtBoost": 1,
+      "shotLine": 16,
+      "paintBoost": 0,
+      "threePtBoost": -1,
       "defBoost": 0,
-      "salary": 350,
+      "salary": 220,
       "chart": [
         {
           "lo": 1,
@@ -7489,20 +7496,20 @@
         },
         {
           "lo": 11,
-          "hi": 12,
+          "hi": 15,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 13,
-          "hi": 17,
+          "lo": 16,
+          "hi": 21,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 18,
+          "lo": 22,
           "hi": 25,
           "pts": 3,
           "reb": 2,
@@ -7539,11 +7546,11 @@
       "pos": "SG",
       "speed": 8,
       "power": 6,
-      "shotLine": 18,
-      "paintBoost": 3,
-      "threePtBoost": 4,
+      "shotLine": 17,
+      "paintBoost": 1,
+      "threePtBoost": 3,
       "defBoost": -4,
-      "salary": 380,
+      "salary": 390,
       "chart": [
         {
           "lo": 1,
@@ -7561,13 +7568,13 @@
         },
         {
           "lo": 11,
-          "hi": 17,
+          "hi": 16,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 18,
+          "lo": 17,
           "hi": 23,
           "pts": 3,
           "reb": 2,
@@ -7604,11 +7611,11 @@
       "pos": "PG",
       "speed": 9,
       "power": 6,
-      "shotLine": 16,
-      "paintBoost": 0,
-      "threePtBoost": -1,
+      "shotLine": 17,
+      "paintBoost": 1,
+      "threePtBoost": 0,
       "defBoost": 2,
-      "salary": 370,
+      "salary": 340,
       "chart": [
         {
           "lo": 1,
@@ -7626,13 +7633,13 @@
         },
         {
           "lo": 7,
-          "hi": 15,
+          "hi": 16,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 17,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -7662,11 +7669,11 @@
       "pos": "PF",
       "speed": 7,
       "power": 9,
-      "shotLine": 15,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": 1,
+      "threePtBoost": 2,
       "defBoost": -2,
-      "salary": 620,
+      "salary": 590,
       "chart": [
         {
           "lo": 1,
@@ -7691,13 +7698,13 @@
         },
         {
           "lo": 10,
-          "hi": 14,
+          "hi": 15,
           "pts": 2,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 21,
           "pts": 3,
           "reb": 1,
@@ -7734,11 +7741,11 @@
       "pos": "SF",
       "speed": 7,
       "power": 9,
-      "shotLine": 16,
-      "paintBoost": 0,
-      "threePtBoost": -1,
+      "shotLine": 17,
+      "paintBoost": 2,
+      "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 240,
+      "salary": 230,
       "chart": [
         {
           "lo": 1,
@@ -7756,13 +7763,13 @@
         },
         {
           "lo": 4,
-          "hi": 15,
+          "hi": 16,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 17,
           "hi": 23,
           "pts": 1,
           "reb": 1,
@@ -7799,11 +7806,11 @@
       "pos": "C",
       "speed": 5,
       "power": 9,
-      "shotLine": 15,
+      "shotLine": 17,
       "paintBoost": 0,
-      "threePtBoost": -5,
+      "threePtBoost": -3,
       "defBoost": 1,
-      "salary": 330,
+      "salary": 300,
       "chart": [
         {
           "lo": 1,
@@ -7821,13 +7828,13 @@
         },
         {
           "lo": 8,
-          "hi": 14,
+          "hi": 16,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 17,
           "hi": 22,
           "pts": 2,
           "reb": 0,
@@ -7864,11 +7871,11 @@
       "pos": "C",
       "speed": 5,
       "power": 9,
-      "shotLine": 16,
-      "paintBoost": 1,
-      "threePtBoost": -1,
+      "shotLine": 15,
+      "paintBoost": 0,
+      "threePtBoost": -2,
       "defBoost": 2,
-      "salary": 360,
+      "salary": 380,
       "chart": [
         {
           "lo": 1,
@@ -7886,13 +7893,13 @@
         },
         {
           "lo": 12,
-          "hi": 15,
+          "hi": 14,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 15,
           "hi": 21,
           "pts": 2,
           "reb": 0,
@@ -8059,11 +8066,11 @@
       "pos": "PF",
       "speed": 6,
       "power": 8,
-      "shotLine": 15,
+      "shotLine": 14,
       "paintBoost": 0,
-      "threePtBoost": 1,
+      "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 450,
+      "salary": 370,
       "chart": [
         {
           "lo": 1,
@@ -8081,20 +8088,20 @@
         },
         {
           "lo": 10,
-          "hi": 11,
+          "hi": 13,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 12,
-          "hi": 14,
+          "lo": 14,
+          "hi": 16,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 17,
           "hi": 25,
           "pts": 3,
           "reb": 2,
@@ -8135,7 +8142,7 @@
       "paintBoost": -1,
       "threePtBoost": -1,
       "defBoost": -1,
-      "salary": 420,
+      "salary": 410,
       "chart": [
         {
           "lo": 1,
@@ -8203,11 +8210,11 @@
       "pos": "SF",
       "speed": 8,
       "power": 8,
-      "shotLine": 16,
-      "paintBoost": 0,
-      "threePtBoost": 2,
+      "shotLine": 17,
+      "paintBoost": 2,
+      "threePtBoost": 3,
       "defBoost": 0,
-      "salary": 380,
+      "salary": 360,
       "chart": [
         {
           "lo": 1,
@@ -8225,13 +8232,13 @@
         },
         {
           "lo": 4,
-          "hi": 15,
+          "hi": 16,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 17,
           "hi": 22,
           "pts": 2,
           "reb": 1,
@@ -8268,11 +8275,11 @@
       "pos": "PF",
       "speed": 9,
       "power": 9,
-      "shotLine": 15,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": 1,
+      "threePtBoost": 2,
       "defBoost": 2,
-      "salary": 540,
+      "salary": 530,
       "chart": [
         {
           "lo": 1,
@@ -8297,13 +8304,13 @@
         },
         {
           "lo": 11,
-          "hi": 14,
+          "hi": 15,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 23,
           "pts": 2,
           "reb": 1,
@@ -8340,11 +8347,11 @@
       "pos": "PG",
       "speed": 12,
       "power": 7,
-      "shotLine": 15,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": 3,
+      "threePtBoost": 4,
       "defBoost": -1,
-      "salary": 850,
+      "salary": 820,
       "chart": [
         {
           "lo": 1,
@@ -8369,13 +8376,13 @@
         },
         {
           "lo": 10,
-          "hi": 14,
+          "hi": 15,
           "pts": 2,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 21,
           "pts": 3,
           "reb": 1,
@@ -8416,7 +8423,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": -1,
-      "salary": 100,
+      "salary": 90,
       "chart": [
         {
           "lo": 1,
@@ -8478,10 +8485,10 @@
       "speed": 5,
       "power": 3,
       "shotLine": 16,
-      "paintBoost": 2,
+      "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": -2,
-      "salary": 110,
+      "salary": 90,
       "chart": [
         {
           "lo": 1,
@@ -8542,11 +8549,11 @@
       "pos": "PF",
       "speed": 5,
       "power": 9,
-      "shotLine": 15,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": -2,
+      "threePtBoost": -1,
       "defBoost": 1,
-      "salary": 410,
+      "salary": 400,
       "chart": [
         {
           "lo": 1,
@@ -8564,13 +8571,13 @@
         },
         {
           "lo": 10,
-          "hi": 14,
+          "hi": 15,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 21,
           "pts": 2,
           "reb": 1,
@@ -8614,11 +8621,11 @@
       "pos": "C",
       "speed": 6,
       "power": 8,
-      "shotLine": 14,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": -3,
+      "threePtBoost": -1,
       "defBoost": 0,
-      "salary": 580,
+      "salary": 530,
       "chart": [
         {
           "lo": 1,
@@ -8643,13 +8650,13 @@
         },
         {
           "lo": 10,
-          "hi": 13,
+          "hi": 15,
           "pts": 2,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 14,
+          "lo": 16,
           "hi": 20,
           "pts": 3,
           "reb": 1,
@@ -8686,11 +8693,11 @@
       "pos": "SG",
       "speed": 10,
       "power": 5,
-      "shotLine": 16,
-      "paintBoost": 0,
-      "threePtBoost": 4,
+      "shotLine": 17,
+      "paintBoost": 2,
+      "threePtBoost": 5,
       "defBoost": -1,
-      "salary": 440,
+      "salary": 650,
       "chart": [
         {
           "lo": 1,
@@ -8708,20 +8715,20 @@
         },
         {
           "lo": 9,
-          "hi": 15,
+          "hi": 9,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 16,
-          "hi": 21,
+          "lo": 10,
+          "hi": 16,
           "pts": 3,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 22,
+          "lo": 17,
           "hi": 24,
           "pts": 3,
           "reb": 2,
@@ -8758,9 +8765,9 @@
       "pos": "C",
       "speed": 6,
       "power": 10,
-      "shotLine": 15,
+      "shotLine": 14,
       "paintBoost": 0,
-      "threePtBoost": -2,
+      "threePtBoost": -3,
       "defBoost": 1,
       "salary": 570,
       "chart": [
@@ -8787,13 +8794,13 @@
         },
         {
           "lo": 11,
-          "hi": 14,
+          "hi": 13,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 14,
           "hi": 23,
           "pts": 2,
           "reb": 2,
@@ -8902,11 +8909,11 @@
       "pos": "PG",
       "speed": 12,
       "power": 6,
-      "shotLine": 15,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": 1,
+      "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 920,
+      "salary": 910,
       "chart": [
         {
           "lo": 1,
@@ -8931,13 +8938,13 @@
         },
         {
           "lo": 10,
-          "hi": 14,
+          "hi": 15,
           "pts": 3,
           "reb": 0,
           "ast": 1
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 99,
           "pts": 3,
           "reb": 1,
@@ -9040,10 +9047,10 @@
       "speed": 5,
       "power": 7,
       "shotLine": 16,
-      "paintBoost": 2,
+      "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": -1,
-      "salary": 290,
+      "salary": 270,
       "chart": [
         {
           "lo": 1,
@@ -9104,11 +9111,11 @@
       "pos": "SG",
       "speed": 9,
       "power": 5,
-      "shotLine": 15,
-      "paintBoost": -1,
-      "threePtBoost": 3,
+      "shotLine": 16,
+      "paintBoost": 0,
+      "threePtBoost": 4,
       "defBoost": -2,
-      "salary": 530,
+      "salary": 510,
       "chart": [
         {
           "lo": 1,
@@ -9133,13 +9140,13 @@
         },
         {
           "lo": 10,
-          "hi": 14,
+          "hi": 15,
           "pts": 2,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 21,
           "pts": 3,
           "reb": 1,
@@ -9183,7 +9190,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 280,
+      "salary": 270,
       "chart": [
         {
           "lo": 1,
@@ -9248,7 +9255,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 620,
+      "salary": 610,
       "chart": [
         {
           "lo": 1,
@@ -9309,9 +9316,9 @@
       "pos": "PF",
       "speed": 6,
       "power": 7,
-      "shotLine": 16,
+      "shotLine": 14,
       "paintBoost": 0,
-      "threePtBoost": 2,
+      "threePtBoost": 0,
       "defBoost": 0,
       "salary": 10,
       "chart": [
@@ -9324,13 +9331,13 @@
         },
         {
           "lo": 3,
-          "hi": 15,
+          "hi": 13,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 14,
           "hi": 18,
           "pts": 0,
           "reb": 0,
@@ -9443,7 +9450,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -1,
-      "salary": 470,
+      "salary": 460,
       "chart": [
         {
           "lo": 1,
@@ -9504,11 +9511,11 @@
       "pos": "C",
       "speed": 6,
       "power": 9,
-      "shotLine": 13,
+      "shotLine": 15,
       "paintBoost": 0,
-      "threePtBoost": -7,
+      "threePtBoost": -5,
       "defBoost": 0,
-      "salary": 470,
+      "salary": 500,
       "chart": [
         {
           "lo": 1,
@@ -9526,20 +9533,20 @@
         },
         {
           "lo": 4,
-          "hi": 12,
+          "hi": 10,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 13,
-          "hi": 15,
+          "lo": 11,
+          "hi": 14,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 15,
           "hi": 22,
           "pts": 2,
           "reb": 2,
@@ -9576,11 +9583,11 @@
       "pos": "SG",
       "speed": 7,
       "power": 4,
-      "shotLine": 15,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": 1,
+      "threePtBoost": 2,
       "defBoost": -2,
-      "salary": 400,
+      "salary": 370,
       "chart": [
         {
           "lo": 1,
@@ -9605,13 +9612,13 @@
         },
         {
           "lo": 10,
-          "hi": 14,
+          "hi": 15,
           "pts": 2,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 99,
           "pts": 3,
           "reb": 1,
@@ -9641,9 +9648,9 @@
       "pos": "PF",
       "speed": 6,
       "power": 8,
-      "shotLine": 15,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": 1,
+      "threePtBoost": 2,
       "defBoost": -1,
       "salary": 450,
       "chart": [
@@ -9663,13 +9670,13 @@
         },
         {
           "lo": 11,
-          "hi": 14,
+          "hi": 15,
           "pts": 2,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 17,
           "pts": 2,
           "reb": 1,
@@ -9713,11 +9720,11 @@
       "pos": "SG",
       "speed": 9,
       "power": 5,
-      "shotLine": 15,
-      "paintBoost": 0,
-      "threePtBoost": 1,
+      "shotLine": 14,
+      "paintBoost": -1,
+      "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 370,
+      "salary": 350,
       "chart": [
         {
           "lo": 1,
@@ -9735,13 +9742,13 @@
         },
         {
           "lo": 11,
-          "hi": 14,
+          "hi": 13,
           "pts": 2,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 15,
+          "lo": 14,
           "hi": 21,
           "pts": 2,
           "reb": 1,
@@ -9785,11 +9792,11 @@
       "pos": "PF",
       "speed": 6,
       "power": 8,
-      "shotLine": 16,
+      "shotLine": 15,
       "paintBoost": 0,
-      "threePtBoost": 2,
+      "threePtBoost": 1,
       "defBoost": -1,
-      "salary": 400,
+      "salary": 390,
       "chart": [
         {
           "lo": 1,
@@ -9807,13 +9814,13 @@
         },
         {
           "lo": 10,
-          "hi": 15,
+          "hi": 14,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 15,
           "hi": 21,
           "pts": 2,
           "reb": 1,
@@ -9850,9 +9857,9 @@
       "pos": "PG",
       "speed": 8,
       "power": 5,
-      "shotLine": 17,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": 0,
+      "threePtBoost": -1,
       "defBoost": 0,
       "salary": 380,
       "chart": [
@@ -9879,13 +9886,13 @@
         },
         {
           "lo": 10,
-          "hi": 16,
+          "hi": 15,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 17,
+          "lo": 16,
           "hi": 21,
           "pts": 2,
           "reb": 1,
@@ -9922,11 +9929,11 @@
       "pos": "SG",
       "speed": 10,
       "power": 7,
-      "shotLine": 14,
+      "shotLine": 15,
       "paintBoost": 0,
-      "threePtBoost": 0,
+      "threePtBoost": 1,
       "defBoost": 1,
-      "salary": 750,
+      "salary": 740,
       "chart": [
         {
           "lo": 1,
@@ -9951,13 +9958,13 @@
         },
         {
           "lo": 10,
-          "hi": 13,
+          "hi": 14,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 14,
+          "lo": 15,
           "hi": 99,
           "pts": 3,
           "reb": 1,
@@ -9991,7 +9998,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 420,
+      "salary": 410,
       "chart": [
         {
           "lo": 1,
@@ -10059,9 +10066,9 @@
       "pos": "PF",
       "speed": 8,
       "power": 7,
-      "shotLine": 14,
-      "paintBoost": 0,
-      "threePtBoost": 0,
+      "shotLine": 13,
+      "paintBoost": -1,
+      "threePtBoost": -1,
       "defBoost": 1,
       "salary": 480,
       "chart": [
@@ -10081,13 +10088,13 @@
         },
         {
           "lo": 11,
-          "hi": 13,
+          "hi": 12,
           "pts": 2,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 14,
+          "lo": 13,
           "hi": 18,
           "pts": 2,
           "reb": 1,
@@ -10131,7 +10138,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 470,
+      "salary": 460,
       "chart": [
         {
           "lo": 1,
@@ -10329,11 +10336,11 @@
       "pos": "PG",
       "speed": 10,
       "power": 6,
-      "shotLine": 16,
+      "shotLine": 15,
       "paintBoost": 0,
-      "threePtBoost": -1,
+      "threePtBoost": -2,
       "defBoost": 0,
-      "salary": 540,
+      "salary": 550,
       "chart": [
         {
           "lo": 1,
@@ -10358,13 +10365,13 @@
         },
         {
           "lo": 10,
-          "hi": 15,
+          "hi": 14,
           "pts": 1,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 16,
+          "lo": 15,
           "hi": 20,
           "pts": 2,
           "reb": 1,
@@ -10401,11 +10408,11 @@
       "pos": "SG",
       "speed": 12,
       "power": 8,
-      "shotLine": 15,
-      "paintBoost": -1,
-      "threePtBoost": 1,
+      "shotLine": 16,
+      "paintBoost": 0,
+      "threePtBoost": 2,
       "defBoost": 1,
-      "salary": 710,
+      "salary": 700,
       "chart": [
         {
           "lo": 1,
@@ -10430,13 +10437,13 @@
         },
         {
           "lo": 10,
-          "hi": 14,
+          "hi": 15,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -10470,7 +10477,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 1,
-      "salary": 500,
+      "salary": 490,
       "chart": [
         {
           "lo": 1,
@@ -10754,11 +10761,11 @@
       "pos": "PF",
       "speed": 7,
       "power": 7,
-      "shotLine": 16,
-      "paintBoost": 0,
-      "threePtBoost": -4,
+      "shotLine": 18,
+      "paintBoost": 3,
+      "threePtBoost": -2,
       "defBoost": 1,
-      "salary": 380,
+      "salary": 370,
       "chart": [
         {
           "lo": 1,
@@ -10783,13 +10790,13 @@
         },
         {
           "lo": 12,
-          "hi": 15,
+          "hi": 17,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 18,
           "hi": 21,
           "pts": 2,
           "reb": 2,
@@ -10826,11 +10833,11 @@
       "pos": "C",
       "speed": 7,
       "power": 10,
-      "shotLine": 14,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": -6,
+      "threePtBoost": -4,
       "defBoost": 0,
-      "salary": 560,
+      "salary": 550,
       "chart": [
         {
           "lo": 1,
@@ -10855,13 +10862,13 @@
         },
         {
           "lo": 10,
-          "hi": 13,
+          "hi": 15,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 14,
+          "lo": 16,
           "hi": 22,
           "pts": 2,
           "reb": 1,
@@ -10898,11 +10905,11 @@
       "pos": "C",
       "speed": 5,
       "power": 10,
-      "shotLine": 16,
+      "shotLine": 17,
       "paintBoost": 0,
-      "threePtBoost": -4,
+      "threePtBoost": -3,
       "defBoost": 1,
-      "salary": 80,
+      "salary": 50,
       "chart": [
         {
           "lo": 1,
@@ -10913,13 +10920,13 @@
         },
         {
           "lo": 3,
-          "hi": 15,
+          "hi": 16,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 17,
           "hi": 23,
           "pts": 1,
           "reb": 1,
@@ -10957,10 +10964,10 @@
       "speed": 13,
       "power": 8,
       "shotLine": 16,
-      "paintBoost": -1,
+      "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": 1,
-      "salary": 660,
+      "salary": 650,
       "chart": [
         {
           "lo": 1,
@@ -11025,7 +11032,7 @@
       "paintBoost": 0,
       "threePtBoost": 3,
       "defBoost": -1,
-      "salary": 500,
+      "salary": 490,
       "chart": [
         {
           "lo": 1,
@@ -11093,11 +11100,11 @@
       "pos": "PG",
       "speed": 10,
       "power": 6,
-      "shotLine": 15,
-      "paintBoost": -1,
-      "threePtBoost": -2,
+      "shotLine": 16,
+      "paintBoost": 0,
+      "threePtBoost": -1,
       "defBoost": -1,
-      "salary": 450,
+      "salary": 420,
       "chart": [
         {
           "lo": 1,
@@ -11115,13 +11122,13 @@
         },
         {
           "lo": 4,
-          "hi": 14,
+          "hi": 15,
           "pts": 1,
           "reb": 0,
           "ast": 1
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -11223,11 +11230,11 @@
       "pos": "C",
       "speed": 6,
       "power": 9,
-      "shotLine": 13,
-      "paintBoost": 0,
-      "threePtBoost": -7,
+      "shotLine": 18,
+      "paintBoost": 3,
+      "threePtBoost": -2,
       "defBoost": 1,
-      "salary": 550,
+      "salary": 560,
       "chart": [
         {
           "lo": 1,
@@ -11245,20 +11252,20 @@
         },
         {
           "lo": 6,
-          "hi": 12,
+          "hi": 10,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 13,
-          "hi": 15,
+          "lo": 11,
+          "hi": 17,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 18,
           "hi": 22,
           "pts": 3,
           "reb": 1,
@@ -11350,7 +11357,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 290,
+      "salary": 280,
       "chart": [
         {
           "lo": 1,
@@ -11419,10 +11426,10 @@
       "speed": 9,
       "power": 6,
       "shotLine": 15,
-      "paintBoost": -1,
+      "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 3,
-      "salary": 260,
+      "salary": 250,
       "chart": [
         {
           "lo": 1,
@@ -11561,11 +11568,11 @@
       "pos": "C",
       "speed": 5,
       "power": 9,
-      "shotLine": 15,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": 1,
+      "threePtBoost": 2,
       "defBoost": 1,
-      "salary": 470,
+      "salary": 460,
       "chart": [
         {
           "lo": 1,
@@ -11590,13 +11597,13 @@
         },
         {
           "lo": 11,
-          "hi": 14,
+          "hi": 15,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 99,
           "pts": 2,
           "reb": 2,
@@ -11626,11 +11633,11 @@
       "pos": "SG",
       "speed": 7,
       "power": 6,
-      "shotLine": 16,
+      "shotLine": 15,
       "paintBoost": 0,
-      "threePtBoost": 2,
+      "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 80,
+      "salary": 60,
       "chart": [
         {
           "lo": 1,
@@ -11648,13 +11655,13 @@
         },
         {
           "lo": 15,
-          "hi": 15,
+          "hi": 16,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 17,
           "hi": 22,
           "pts": 2,
           "reb": 0,
@@ -11691,11 +11698,11 @@
       "pos": "SF",
       "speed": 11,
       "power": 10,
-      "shotLine": 15,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": 3,
+      "threePtBoost": 4,
       "defBoost": 1,
-      "salary": 790,
+      "salary": 780,
       "chart": [
         {
           "lo": 1,
@@ -11713,13 +11720,13 @@
         },
         {
           "lo": 4,
-          "hi": 14,
+          "hi": 15,
           "pts": 2,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 21,
           "pts": 2,
           "reb": 1,
@@ -11756,11 +11763,11 @@
       "pos": "SF",
       "speed": 6,
       "power": 7,
-      "shotLine": 17,
-      "paintBoost": 0,
-      "threePtBoost": 3,
+      "shotLine": 18,
+      "paintBoost": 2,
+      "threePtBoost": 4,
       "defBoost": 1,
-      "salary": 250,
+      "salary": 220,
       "chart": [
         {
           "lo": 1,
@@ -11785,13 +11792,13 @@
         },
         {
           "lo": 10,
-          "hi": 16,
+          "hi": 17,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 17,
+          "lo": 18,
           "hi": 21,
           "pts": 2,
           "reb": 1,
@@ -11828,9 +11835,9 @@
       "pos": "PF",
       "speed": 5,
       "power": 9,
-      "shotLine": 13,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": -7,
+      "threePtBoost": -4,
       "defBoost": 1,
       "salary": 10,
       "chart": [
@@ -11843,13 +11850,13 @@
         },
         {
           "lo": 3,
-          "hi": 12,
+          "hi": 15,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 13,
+          "lo": 16,
           "hi": 18,
           "pts": 0,
           "reb": 1,
@@ -11886,11 +11893,11 @@
       "pos": "SF",
       "speed": 6,
       "power": 8,
-      "shotLine": 17,
-      "paintBoost": 2,
-      "threePtBoost": 5,
+      "shotLine": 13,
+      "paintBoost": -1,
+      "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 440,
+      "salary": 380,
       "chart": [
         {
           "lo": 1,
@@ -11908,13 +11915,20 @@
         },
         {
           "lo": 11,
-          "hi": 16,
+          "hi": 12,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 17,
+          "lo": 13,
+          "hi": 19,
+          "pts": 2,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 20,
           "hi": 22,
           "pts": 3,
           "reb": 2,
@@ -11955,7 +11969,7 @@
       "speed": 8,
       "power": 5,
       "shotLine": 18,
-      "paintBoost": 0,
+      "paintBoost": 3,
       "threePtBoost": 4,
       "defBoost": 0,
       "salary": 30,
@@ -12084,11 +12098,11 @@
       "pos": "C",
       "speed": 5,
       "power": 10,
-      "shotLine": 15,
-      "paintBoost": 0,
-      "threePtBoost": 1,
+      "shotLine": 14,
+      "paintBoost": -1,
+      "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 460,
+      "salary": 380,
       "chart": [
         {
           "lo": 1,
@@ -12106,13 +12120,20 @@
         },
         {
           "lo": 10,
-          "hi": 14,
+          "hi": 13,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 14,
+          "hi": 16,
+          "pts": 1,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 17,
           "hi": 22,
           "pts": 3,
           "reb": 0,
@@ -12149,11 +12170,11 @@
       "pos": "PF",
       "speed": 6,
       "power": 8,
-      "shotLine": 16,
-      "paintBoost": 0,
-      "threePtBoost": -4,
+      "shotLine": 18,
+      "paintBoost": 3,
+      "threePtBoost": -2,
       "defBoost": 0,
-      "salary": 70,
+      "salary": 80,
       "chart": [
         {
           "lo": 1,
@@ -12171,13 +12192,13 @@
         },
         {
           "lo": 13,
-          "hi": 15,
+          "hi": 14,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 15,
           "hi": 17,
           "pts": 1,
           "reb": 1,
@@ -12214,11 +12235,11 @@
       "pos": "C",
       "speed": 7,
       "power": 14,
-      "shotLine": 15,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": 1,
+      "threePtBoost": 2,
       "defBoost": 3,
-      "salary": 1330,
+      "salary": 1300,
       "chart": [
         {
           "lo": 1,
@@ -12236,13 +12257,13 @@
         },
         {
           "lo": 7,
-          "hi": 14,
+          "hi": 15,
           "pts": 3,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 99,
           "pts": 4,
           "reb": 2,
@@ -12272,11 +12293,11 @@
       "pos": "PF",
       "speed": 8,
       "power": 10,
-      "shotLine": 14,
-      "paintBoost": 0,
-      "threePtBoost": -3,
+      "shotLine": 16,
+      "paintBoost": 2,
+      "threePtBoost": -1,
       "defBoost": 0,
-      "salary": 810,
+      "salary": 790,
       "chart": [
         {
           "lo": 1,
@@ -12301,13 +12322,13 @@
         },
         {
           "lo": 10,
-          "hi": 13,
+          "hi": 15,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 14,
+          "lo": 16,
           "hi": 22,
           "pts": 3,
           "reb": 2,
@@ -12344,11 +12365,11 @@
       "pos": "SG",
       "speed": 9,
       "power": 6,
-      "shotLine": 12,
+      "shotLine": 13,
       "paintBoost": -1,
-      "threePtBoost": -5,
+      "threePtBoost": -4,
       "defBoost": 2,
-      "salary": 540,
+      "salary": 530,
       "chart": [
         {
           "lo": 1,
@@ -12366,13 +12387,13 @@
         },
         {
           "lo": 10,
-          "hi": 11,
+          "hi": 12,
           "pts": 2,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 12,
+          "lo": 13,
           "hi": 19,
           "pts": 2,
           "reb": 1,
@@ -12409,9 +12430,9 @@
       "pos": "C",
       "speed": 6,
       "power": 11,
-      "shotLine": 14,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": -6,
+      "threePtBoost": -4,
       "defBoost": 0,
       "salary": 550,
       "chart": [
@@ -12438,13 +12459,13 @@
         },
         {
           "lo": 10,
-          "hi": 13,
+          "hi": 15,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 14,
+          "lo": 16,
           "hi": 21,
           "pts": 2,
           "reb": 1,
@@ -12672,11 +12693,11 @@
       "pos": "SF",
       "speed": 8,
       "power": 6,
-      "shotLine": 13,
-      "paintBoost": -1,
-      "threePtBoost": -4,
+      "shotLine": 18,
+      "paintBoost": 3,
+      "threePtBoost": 1,
       "defBoost": -4,
-      "salary": 320,
+      "salary": 340,
       "chart": [
         {
           "lo": 1,
@@ -12694,20 +12715,13 @@
         },
         {
           "lo": 12,
-          "hi": 12,
+          "hi": 17,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 13,
-          "hi": 18,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 19,
+          "lo": 18,
           "hi": 24,
           "pts": 3,
           "reb": 2,
@@ -12744,11 +12758,11 @@
       "pos": "SF",
       "speed": 7,
       "power": 7,
-      "shotLine": 17,
-      "paintBoost": 2,
-      "threePtBoost": 3,
+      "shotLine": 13,
+      "paintBoost": -1,
+      "threePtBoost": -1,
       "defBoost": 2,
-      "salary": 510,
+      "salary": 580,
       "chart": [
         {
           "lo": 1,
@@ -12766,13 +12780,13 @@
         },
         {
           "lo": 11,
-          "hi": 16,
+          "hi": 12,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 17,
+          "lo": 13,
           "hi": 20,
           "pts": 3,
           "reb": 2,
@@ -12816,9 +12830,9 @@
       "pos": "PG",
       "speed": 12,
       "power": 6,
-      "shotLine": 16,
+      "shotLine": 15,
       "paintBoost": 0,
-      "threePtBoost": 2,
+      "threePtBoost": 1,
       "defBoost": 2,
       "salary": 590,
       "chart": [
@@ -12845,13 +12859,13 @@
         },
         {
           "lo": 10,
-          "hi": 15,
+          "hi": 14,
           "pts": 2,
           "reb": 0,
           "ast": 1
         },
         {
-          "lo": 16,
+          "lo": 15,
           "hi": 21,
           "pts": 2,
           "reb": 0,
@@ -12888,9 +12902,9 @@
       "pos": "SF",
       "speed": 8,
       "power": 7,
-      "shotLine": 17,
+      "shotLine": 15,
       "paintBoost": 0,
-      "threePtBoost": 0,
+      "threePtBoost": -2,
       "defBoost": 0,
       "salary": 550,
       "chart": [
@@ -12917,13 +12931,13 @@
         },
         {
           "lo": 10,
-          "hi": 16,
+          "hi": 14,
           "pts": 2,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 17,
+          "lo": 15,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -12953,9 +12967,9 @@
       "pos": "SG",
       "speed": 7,
       "power": 6,
-      "shotLine": 16,
+      "shotLine": 15,
       "paintBoost": 0,
-      "threePtBoost": -1,
+      "threePtBoost": -2,
       "defBoost": 0,
       "salary": 10,
       "chart": [
@@ -12968,13 +12982,13 @@
         },
         {
           "lo": 3,
-          "hi": 15,
+          "hi": 14,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 15,
           "hi": 17,
           "pts": 0,
           "reb": 0,
@@ -13091,10 +13105,10 @@
       "speed": 10,
       "power": 9,
       "shotLine": 17,
-      "paintBoost": 0,
+      "paintBoost": 2,
       "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 550,
+      "salary": 540,
       "chart": [
         {
           "lo": 1,
@@ -13155,11 +13169,11 @@
       "pos": "SF",
       "speed": 8,
       "power": 7,
-      "shotLine": 15,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": -2,
+      "threePtBoost": -1,
       "defBoost": 0,
-      "salary": 370,
+      "salary": 450,
       "chart": [
         {
           "lo": 1,
@@ -13177,20 +13191,20 @@
         },
         {
           "lo": 11,
-          "hi": 14,
+          "hi": 11,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 15,
-          "hi": 17,
+          "lo": 12,
+          "hi": 15,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 18,
+          "lo": 16,
           "hi": 23,
           "pts": 3,
           "reb": 2,
@@ -13299,11 +13313,11 @@
       "pos": "SG",
       "speed": 7,
       "power": 5,
-      "shotLine": 17,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": 0,
+      "threePtBoost": -1,
       "defBoost": -1,
-      "salary": 180,
+      "salary": 200,
       "chart": [
         {
           "lo": 1,
@@ -13321,13 +13335,13 @@
         },
         {
           "lo": 5,
-          "hi": 16,
+          "hi": 15,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 17,
+          "lo": 16,
           "hi": 20,
           "pts": 2,
           "reb": 1,
@@ -13368,7 +13382,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 390,
+      "salary": 380,
       "chart": [
         {
           "lo": 1,
@@ -13508,11 +13522,11 @@
       "pos": "SF",
       "speed": 7,
       "power": 6,
-      "shotLine": 17,
+      "shotLine": 15,
       "paintBoost": 0,
-      "threePtBoost": 3,
+      "threePtBoost": 1,
       "defBoost": -1,
-      "salary": 130,
+      "salary": 150,
       "chart": [
         {
           "lo": 1,
@@ -13530,13 +13544,13 @@
         },
         {
           "lo": 13,
-          "hi": 16,
+          "hi": 14,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 17,
+          "lo": 15,
           "hi": 21,
           "pts": 2,
           "reb": 0,
@@ -13573,11 +13587,11 @@
       "pos": "PF",
       "speed": 5,
       "power": 9,
-      "shotLine": 18,
-      "paintBoost": 3,
-      "threePtBoost": -2,
+      "shotLine": 15,
+      "paintBoost": 0,
+      "threePtBoost": -5,
       "defBoost": -6,
-      "salary": 410,
+      "salary": 470,
       "chart": [
         {
           "lo": 1,
@@ -13595,13 +13609,13 @@
         },
         {
           "lo": 11,
-          "hi": 17,
+          "hi": 14,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 18,
+          "lo": 15,
           "hi": 24,
           "pts": 3,
           "reb": 2,
@@ -13649,7 +13663,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -1,
-      "salary": 450,
+      "salary": 440,
       "chart": [
         {
           "lo": 1,
@@ -13796,7 +13810,7 @@
       "paintBoost": 0,
       "threePtBoost": -3,
       "defBoost": 1,
-      "salary": 530,
+      "salary": 520,
       "chart": [
         {
           "lo": 1,
@@ -13861,7 +13875,7 @@
       "paintBoost": 0,
       "threePtBoost": -2,
       "defBoost": 0,
-      "salary": 1030,
+      "salary": 1020,
       "chart": [
         {
           "lo": 1,
@@ -13922,11 +13936,11 @@
       "pos": "PF",
       "speed": 5,
       "power": 8,
-      "shotLine": 14,
-      "paintBoost": 0,
-      "threePtBoost": -3,
+      "shotLine": 13,
+      "paintBoost": -1,
+      "threePtBoost": -4,
       "defBoost": 0,
-      "salary": 300,
+      "salary": 260,
       "chart": [
         {
           "lo": 1,
@@ -13944,13 +13958,20 @@
         },
         {
           "lo": 8,
-          "hi": 13,
+          "hi": 12,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 14,
+          "lo": 13,
+          "hi": 15,
+          "pts": 1,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 16,
           "hi": 22,
           "pts": 2,
           "reb": 1,
@@ -13987,11 +14008,11 @@
       "pos": "SF",
       "speed": 11,
       "power": 11,
-      "shotLine": 15,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": 1,
+      "threePtBoost": 2,
       "defBoost": 2,
-      "salary": 590,
+      "salary": 580,
       "chart": [
         {
           "lo": 1,
@@ -14016,13 +14037,13 @@
         },
         {
           "lo": 11,
-          "hi": 14,
+          "hi": 15,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 23,
           "pts": 1,
           "reb": 2,
@@ -14199,11 +14220,11 @@
       "pos": "SF",
       "speed": 8,
       "power": 7,
-      "shotLine": 12,
-      "paintBoost": -1,
-      "threePtBoost": -2,
+      "shotLine": 15,
+      "paintBoost": 0,
+      "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 330,
+      "salary": 350,
       "chart": [
         {
           "lo": 1,
@@ -14221,13 +14242,20 @@
         },
         {
           "lo": 10,
-          "hi": 11,
+          "hi": 10,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 12,
+          "lo": 11,
+          "hi": 14,
+          "pts": 2,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 15,
           "hi": 24,
           "pts": 2,
           "reb": 1,
@@ -14268,7 +14296,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 220,
+      "salary": 210,
       "chart": [
         {
           "lo": 1,
@@ -14333,7 +14361,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 470,
+      "salary": 460,
       "chart": [
         {
           "lo": 1,
@@ -14394,11 +14422,11 @@
       "pos": "SF",
       "speed": 7,
       "power": 7,
-      "shotLine": 17,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": 3,
+      "threePtBoost": 2,
       "defBoost": 0,
-      "salary": 110,
+      "salary": 100,
       "chart": [
         {
           "lo": 1,
@@ -14416,13 +14444,13 @@
         },
         {
           "lo": 11,
-          "hi": 16,
+          "hi": 15,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 17,
+          "lo": 16,
           "hi": 24,
           "pts": 1,
           "reb": 1,
@@ -14459,9 +14487,9 @@
       "pos": "SG",
       "speed": 10,
       "power": 6,
-      "shotLine": 17,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": 3,
+      "threePtBoost": 2,
       "defBoost": 1,
       "salary": 250,
       "chart": [
@@ -14481,13 +14509,13 @@
         },
         {
           "lo": 7,
-          "hi": 16,
+          "hi": 15,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 17,
+          "lo": 16,
           "hi": 23,
           "pts": 1,
           "reb": 1,
@@ -14524,11 +14552,11 @@
       "pos": "SG",
       "speed": 9,
       "power": 5,
-      "shotLine": 14,
-      "paintBoost": 0,
-      "threePtBoost": 0,
+      "shotLine": 18,
+      "paintBoost": 3,
+      "threePtBoost": 4,
       "defBoost": 1,
-      "salary": 410,
+      "salary": 290,
       "chart": [
         {
           "lo": 1,
@@ -14546,13 +14574,13 @@
         },
         {
           "lo": 11,
-          "hi": 13,
+          "hi": 17,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 14,
+          "lo": 18,
           "hi": 23,
           "pts": 3,
           "reb": 1,
@@ -14669,7 +14697,7 @@
       "speed": 9,
       "power": 11,
       "shotLine": 16,
-      "paintBoost": -1,
+      "paintBoost": 0,
       "threePtBoost": -4,
       "defBoost": 1,
       "salary": 580,
@@ -14798,9 +14826,9 @@
       "pos": "C",
       "speed": 6,
       "power": 9,
-      "shotLine": 16,
-      "paintBoost": -1,
-      "threePtBoost": -4,
+      "shotLine": 17,
+      "paintBoost": 0,
+      "threePtBoost": -3,
       "defBoost": -2,
       "salary": 540,
       "chart": [
@@ -14827,13 +14855,13 @@
         },
         {
           "lo": 10,
-          "hi": 15,
+          "hi": 16,
           "pts": 2,
           "reb": 2,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 17,
           "hi": 21,
           "pts": 2,
           "reb": 2,
@@ -14874,7 +14902,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -3,
-      "salary": 380,
+      "salary": 370,
       "chart": [
         {
           "lo": 1,
@@ -14942,11 +14970,11 @@
       "pos": "SG",
       "speed": 8,
       "power": 7,
-      "shotLine": 16,
+      "shotLine": 15,
       "paintBoost": 0,
-      "threePtBoost": 2,
+      "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 300,
+      "salary": 320,
       "chart": [
         {
           "lo": 1,
@@ -14971,13 +14999,13 @@
         },
         {
           "lo": 11,
-          "hi": 15,
+          "hi": 14,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 15,
           "hi": 23,
           "pts": 2,
           "reb": 1,
@@ -15014,11 +15042,11 @@
       "pos": "SG",
       "speed": 9,
       "power": 7,
-      "shotLine": 15,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": 3,
+      "threePtBoost": 4,
       "defBoost": -2,
-      "salary": 690,
+      "salary": 660,
       "chart": [
         {
           "lo": 1,
@@ -15043,13 +15071,13 @@
         },
         {
           "lo": 10,
-          "hi": 14,
+          "hi": 15,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 99,
           "pts": 3,
           "reb": 1,
@@ -15079,11 +15107,11 @@
       "pos": "PF",
       "speed": 6,
       "power": 7,
-      "shotLine": 16,
+      "shotLine": 15,
       "paintBoost": 0,
-      "threePtBoost": 2,
+      "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 320,
+      "salary": 310,
       "chart": [
         {
           "lo": 1,
@@ -15101,13 +15129,13 @@
         },
         {
           "lo": 10,
-          "hi": 15,
+          "hi": 14,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 15,
           "hi": 19,
           "pts": 2,
           "reb": 1,
@@ -15151,11 +15179,11 @@
       "pos": "PG",
       "speed": 8,
       "power": 5,
-      "shotLine": 18,
+      "shotLine": 17,
       "paintBoost": 0,
-      "threePtBoost": 1,
+      "threePtBoost": 0,
       "defBoost": 2,
-      "salary": 20,
+      "salary": 50,
       "chart": [
         {
           "lo": 1,
@@ -15173,13 +15201,13 @@
         },
         {
           "lo": 8,
-          "hi": 17,
+          "hi": 16,
           "pts": 0,
           "reb": 0,
           "ast": 1
         },
         {
-          "lo": 18,
+          "lo": 17,
           "hi": 23,
           "pts": 1,
           "reb": 0,
@@ -15216,9 +15244,9 @@
       "pos": "SF",
       "speed": 7,
       "power": 7,
-      "shotLine": 17,
+      "shotLine": 15,
       "paintBoost": 0,
-      "threePtBoost": 0,
+      "threePtBoost": -2,
       "defBoost": 0,
       "salary": 130,
       "chart": [
@@ -15238,13 +15266,13 @@
         },
         {
           "lo": 8,
-          "hi": 16,
+          "hi": 14,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 17,
+          "lo": 15,
           "hi": 23,
           "pts": 1,
           "reb": 1,
@@ -15353,11 +15381,11 @@
       "pos": "C",
       "speed": 4,
       "power": 8,
-      "shotLine": 15,
-      "paintBoost": 0,
-      "threePtBoost": 1,
+      "shotLine": 14,
+      "paintBoost": -1,
+      "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 410,
+      "salary": 400,
       "chart": [
         {
           "lo": 1,
@@ -15382,13 +15410,13 @@
         },
         {
           "lo": 10,
-          "hi": 14,
+          "hi": 13,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 14,
           "hi": 22,
           "pts": 2,
           "reb": 1,
@@ -15497,11 +15525,11 @@
       "pos": "PG",
       "speed": 10,
       "power": 5,
-      "shotLine": 15,
-      "paintBoost": 0,
-      "threePtBoost": -2,
+      "shotLine": 18,
+      "paintBoost": 3,
+      "threePtBoost": 1,
       "defBoost": 4,
-      "salary": 430,
+      "salary": 400,
       "chart": [
         {
           "lo": 1,
@@ -15519,20 +15547,13 @@
         },
         {
           "lo": 10,
-          "hi": 14,
+          "hi": 17,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 15,
-          "hi": 15,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 16,
+          "lo": 18,
           "hi": 22,
           "pts": 2,
           "reb": 1,
@@ -15569,11 +15590,11 @@
       "pos": "PG",
       "speed": 14,
       "power": 8,
-      "shotLine": 15,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": 1,
+      "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 1020,
+      "salary": 1000,
       "chart": [
         {
           "lo": 1,
@@ -15598,13 +15619,13 @@
         },
         {
           "lo": 10,
-          "hi": 14,
+          "hi": 15,
           "pts": 2,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 99,
           "pts": 3,
           "reb": 1,
@@ -15638,7 +15659,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 0,
-      "salary": 330,
+      "salary": 320,
       "chart": [
         {
           "lo": 1,
@@ -15706,7 +15727,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 0,
-      "salary": 770,
+      "salary": 760,
       "chart": [
         {
           "lo": 1,
@@ -15774,11 +15795,11 @@
       "pos": "PG",
       "speed": 10,
       "power": 7,
-      "shotLine": 16,
+      "shotLine": 15,
       "paintBoost": 0,
-      "threePtBoost": 2,
+      "threePtBoost": 1,
       "defBoost": 1,
-      "salary": 870,
+      "salary": 890,
       "chart": [
         {
           "lo": 1,
@@ -15796,13 +15817,13 @@
         },
         {
           "lo": 4,
-          "hi": 15,
+          "hi": 14,
           "pts": 2,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 16,
+          "lo": 15,
           "hi": 99,
           "pts": 3,
           "reb": 1,
@@ -15832,11 +15853,11 @@
       "pos": "SG",
       "speed": 9,
       "power": 7,
-      "shotLine": 14,
-      "paintBoost": -1,
-      "threePtBoost": 2,
+      "shotLine": 16,
+      "paintBoost": 0,
+      "threePtBoost": 4,
       "defBoost": -1,
-      "salary": 430,
+      "salary": 390,
       "chart": [
         {
           "lo": 1,
@@ -15854,13 +15875,13 @@
         },
         {
           "lo": 4,
-          "hi": 13,
+          "hi": 15,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 14,
+          "lo": 16,
           "hi": 22,
           "pts": 2,
           "reb": 0,
@@ -15897,11 +15918,11 @@
       "pos": "PF",
       "speed": 8,
       "power": 12,
-      "shotLine": 15,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": 1,
+      "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 750,
+      "salary": 740,
       "chart": [
         {
           "lo": 1,
@@ -15926,13 +15947,13 @@
         },
         {
           "lo": 10,
-          "hi": 14,
+          "hi": 15,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 21,
           "pts": 2,
           "reb": 2,
@@ -16034,9 +16055,9 @@
       "pos": "SF",
       "speed": 6,
       "power": 9,
-      "shotLine": 13,
+      "shotLine": 12,
       "paintBoost": -1,
-      "threePtBoost": -1,
+      "threePtBoost": -2,
       "defBoost": 4,
       "salary": 680,
       "chart": [
@@ -16056,13 +16077,13 @@
         },
         {
           "lo": 11,
-          "hi": 12,
+          "hi": 11,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 13,
+          "lo": 12,
           "hi": 16,
           "pts": 2,
           "reb": 1,
@@ -16304,11 +16325,11 @@
       "pos": "SG",
       "speed": 9,
       "power": 6,
-      "shotLine": 15,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": 3,
+      "threePtBoost": 4,
       "defBoost": 0,
-      "salary": 390,
+      "salary": 360,
       "chart": [
         {
           "lo": 1,
@@ -16326,13 +16347,13 @@
         },
         {
           "lo": 4,
-          "hi": 14,
+          "hi": 15,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 22,
           "pts": 2,
           "reb": 1,
@@ -16373,7 +16394,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 0,
-      "salary": 430,
+      "salary": 420,
       "chart": [
         {
           "lo": 1,
@@ -16442,7 +16463,7 @@
       "speed": 7,
       "power": 5,
       "shotLine": 17,
-      "paintBoost": 0,
+      "paintBoost": 1,
       "threePtBoost": 3,
       "defBoost": -2,
       "salary": 300,
@@ -16506,11 +16527,11 @@
       "pos": "SG",
       "speed": 13,
       "power": 8,
-      "shotLine": 15,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": 1,
+      "threePtBoost": 2,
       "defBoost": 3,
-      "salary": 690,
+      "salary": 670,
       "chart": [
         {
           "lo": 1,
@@ -16535,13 +16556,13 @@
         },
         {
           "lo": 10,
-          "hi": 14,
+          "hi": 15,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -16571,11 +16592,11 @@
       "pos": "PG",
       "speed": 13,
       "power": 8,
-      "shotLine": 16,
+      "shotLine": 17,
       "paintBoost": 0,
-      "threePtBoost": 2,
+      "threePtBoost": 3,
       "defBoost": 2,
-      "salary": 520,
+      "salary": 510,
       "chart": [
         {
           "lo": 1,
@@ -16600,13 +16621,13 @@
         },
         {
           "lo": 11,
-          "hi": 15,
+          "hi": 16,
           "pts": 1,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 16,
+          "lo": 17,
           "hi": 99,
           "pts": 1,
           "reb": 1,
@@ -16636,11 +16657,11 @@
       "pos": "C",
       "speed": 5,
       "power": 10,
-      "shotLine": 13,
-      "paintBoost": 0,
-      "threePtBoost": -7,
+      "shotLine": 16,
+      "paintBoost": 2,
+      "threePtBoost": -4,
       "defBoost": 1,
-      "salary": 600,
+      "salary": 690,
       "chart": [
         {
           "lo": 1,
@@ -16658,13 +16679,13 @@
         },
         {
           "lo": 7,
-          "hi": 12,
+          "hi": 9,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 13,
+          "lo": 10,
           "hi": 15,
           "pts": 2,
           "reb": 2,
@@ -16708,11 +16729,11 @@
       "pos": "PF",
       "speed": 6,
       "power": 10,
-      "shotLine": 15,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": -2,
+      "threePtBoost": -1,
       "defBoost": -2,
-      "salary": 770,
+      "salary": 750,
       "chart": [
         {
           "lo": 1,
@@ -16730,13 +16751,13 @@
         },
         {
           "lo": 4,
-          "hi": 14,
+          "hi": 15,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 21,
           "pts": 3,
           "reb": 2,
@@ -16777,7 +16798,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -1,
-      "salary": 350,
+      "salary": 340,
       "chart": [
         {
           "lo": 1,
@@ -16845,11 +16866,11 @@
       "pos": "SG",
       "speed": 7,
       "power": 6,
-      "shotLine": 15,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": 1,
+      "threePtBoost": 2,
       "defBoost": 0,
-      "salary": 130,
+      "salary": 100,
       "chart": [
         {
           "lo": 1,
@@ -16867,13 +16888,13 @@
         },
         {
           "lo": 14,
-          "hi": 14,
+          "hi": 15,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 23,
           "pts": 2,
           "reb": 1,
@@ -16982,11 +17003,11 @@
       "pos": "C",
       "speed": 5,
       "power": 9,
-      "shotLine": 16,
-      "paintBoost": 0,
-      "threePtBoost": -1,
+      "shotLine": 14,
+      "paintBoost": -1,
+      "threePtBoost": -3,
       "defBoost": -3,
-      "salary": 380,
+      "salary": 370,
       "chart": [
         {
           "lo": 1,
@@ -17004,13 +17025,13 @@
         },
         {
           "lo": 11,
-          "hi": 15,
+          "hi": 13,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 14,
           "hi": 19,
           "pts": 2,
           "reb": 1,
@@ -17055,7 +17076,7 @@
       "speed": 9,
       "power": 9,
       "shotLine": 16,
-      "paintBoost": -1,
+      "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": -1,
       "salary": 540,
@@ -17126,9 +17147,9 @@
       "pos": "SF",
       "speed": 8,
       "power": 9,
-      "shotLine": 14,
+      "shotLine": 15,
       "paintBoost": 0,
-      "threePtBoost": 2,
+      "threePtBoost": 3,
       "defBoost": -1,
       "salary": 720,
       "chart": [
@@ -17155,13 +17176,13 @@
         },
         {
           "lo": 10,
-          "hi": 13,
+          "hi": 14,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 14,
+          "lo": 15,
           "hi": 21,
           "pts": 2,
           "reb": 1,
@@ -17260,7 +17281,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 360,
+      "salary": 350,
       "chart": [
         {
           "lo": 1,
@@ -17325,7 +17346,7 @@
       "paintBoost": 0,
       "threePtBoost": -4,
       "defBoost": -2,
-      "salary": 490,
+      "salary": 480,
       "chart": [
         {
           "lo": 1,
@@ -17455,7 +17476,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 330,
+      "salary": 320,
       "chart": [
         {
           "lo": 1,
@@ -17523,11 +17544,11 @@
       "pos": "PG",
       "speed": 9,
       "power": 5,
-      "shotLine": 18,
-      "paintBoost": 3,
-      "threePtBoost": 4,
+      "shotLine": 17,
+      "paintBoost": 2,
+      "threePtBoost": 3,
       "defBoost": 1,
-      "salary": 510,
+      "salary": 530,
       "chart": [
         {
           "lo": 1,
@@ -17545,13 +17566,13 @@
         },
         {
           "lo": 10,
-          "hi": 17,
+          "hi": 16,
           "pts": 2,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 18,
+          "lo": 17,
           "hi": 99,
           "pts": 3,
           "reb": 2,
@@ -17581,11 +17602,11 @@
       "pos": "C",
       "speed": 6,
       "power": 10,
-      "shotLine": 13,
-      "paintBoost": -1,
-      "threePtBoost": -7,
+      "shotLine": 17,
+      "paintBoost": 3,
+      "threePtBoost": -3,
       "defBoost": 2,
-      "salary": 490,
+      "salary": 510,
       "chart": [
         {
           "lo": 1,
@@ -17603,13 +17624,6 @@
         },
         {
           "lo": 5,
-          "hi": 12,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 13,
           "hi": 16,
           "pts": 1,
           "reb": 1,
@@ -17653,11 +17667,11 @@
       "pos": "SG",
       "speed": 8,
       "power": 6,
-      "shotLine": 15,
+      "shotLine": 14,
       "paintBoost": 0,
-      "threePtBoost": 1,
+      "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 150,
+      "salary": 120,
       "chart": [
         {
           "lo": 1,
@@ -17675,13 +17689,13 @@
         },
         {
           "lo": 14,
-          "hi": 14,
+          "hi": 15,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 22,
           "pts": 2,
           "reb": 0,
@@ -17718,11 +17732,11 @@
       "pos": "PF",
       "speed": 6,
       "power": 8,
-      "shotLine": 17,
-      "paintBoost": 0,
-      "threePtBoost": 3,
+      "shotLine": 18,
+      "paintBoost": 3,
+      "threePtBoost": 4,
       "defBoost": 1,
-      "salary": 440,
+      "salary": 410,
       "chart": [
         {
           "lo": 1,
@@ -17747,13 +17761,13 @@
         },
         {
           "lo": 13,
-          "hi": 16,
+          "hi": 17,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 17,
+          "lo": 18,
           "hi": 22,
           "pts": 3,
           "reb": 2,
@@ -17794,7 +17808,7 @@
       "paintBoost": 0,
       "threePtBoost": -5,
       "defBoost": -1,
-      "salary": 310,
+      "salary": 300,
       "chart": [
         {
           "lo": 1,
@@ -17934,9 +17948,9 @@
       "pos": "PF",
       "speed": 6,
       "power": 8,
-      "shotLine": 17,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": 3,
+      "threePtBoost": 2,
       "defBoost": -2,
       "salary": 350,
       "chart": [
@@ -17956,13 +17970,13 @@
         },
         {
           "lo": 11,
-          "hi": 16,
+          "hi": 15,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 17,
+          "lo": 16,
           "hi": 21,
           "pts": 2,
           "reb": 1,
@@ -17999,11 +18013,11 @@
       "pos": "SF",
       "speed": 7,
       "power": 7,
-      "shotLine": 16,
+      "shotLine": 17,
       "paintBoost": 0,
-      "threePtBoost": 2,
+      "threePtBoost": 3,
       "defBoost": 1,
-      "salary": 290,
+      "salary": 260,
       "chart": [
         {
           "lo": 1,
@@ -18021,13 +18035,13 @@
         },
         {
           "lo": 9,
-          "hi": 15,
+          "hi": 16,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 17,
           "hi": 22,
           "pts": 2,
           "reb": 1,
@@ -18280,11 +18294,11 @@
       "pos": "PF",
       "speed": 5,
       "power": 9,
-      "shotLine": 16,
+      "shotLine": 15,
       "paintBoost": 0,
-      "threePtBoost": -4,
+      "threePtBoost": -5,
       "defBoost": -2,
-      "salary": 330,
+      "salary": 340,
       "chart": [
         {
           "lo": 1,
@@ -18302,13 +18316,13 @@
         },
         {
           "lo": 11,
-          "hi": 15,
+          "hi": 14,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 15,
           "hi": 16,
           "pts": 2,
           "reb": 1,
@@ -18353,10 +18367,10 @@
       "speed": 7,
       "power": 6,
       "shotLine": 17,
-      "paintBoost": 0,
+      "paintBoost": 1,
       "threePtBoost": 3,
       "defBoost": -1,
-      "salary": 120,
+      "salary": 110,
       "chart": [
         {
           "lo": 1,
@@ -18417,11 +18431,11 @@
       "pos": "SF",
       "speed": 11,
       "power": 10,
-      "shotLine": 15,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": 1,
+      "threePtBoost": 2,
       "defBoost": 1,
-      "salary": 590,
+      "salary": 570,
       "chart": [
         {
           "lo": 1,
@@ -18439,13 +18453,13 @@
         },
         {
           "lo": 6,
-          "hi": 14,
+          "hi": 15,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 23,
           "pts": 2,
           "reb": 1,
@@ -18547,11 +18561,11 @@
       "pos": "PF",
       "speed": 6,
       "power": 8,
-      "shotLine": 16,
+      "shotLine": 14,
       "paintBoost": 0,
-      "threePtBoost": 2,
+      "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 470,
+      "salary": 370,
       "chart": [
         {
           "lo": 1,
@@ -18569,20 +18583,20 @@
         },
         {
           "lo": 10,
-          "hi": 10,
+          "hi": 13,
           "pts": 1,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 11,
-          "hi": 15,
+          "lo": 14,
+          "hi": 17,
           "pts": 2,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 16,
+          "lo": 18,
           "hi": 24,
           "pts": 3,
           "reb": 1,
@@ -18620,10 +18634,10 @@
       "speed": 5,
       "power": 9,
       "shotLine": 17,
-      "paintBoost": 2,
+      "paintBoost": 1,
       "threePtBoost": -3,
       "defBoost": 0,
-      "salary": 250,
+      "salary": 230,
       "chart": [
         {
           "lo": 1,
@@ -18684,9 +18698,9 @@
       "pos": "PF",
       "speed": 6,
       "power": 8,
-      "shotLine": 14,
+      "shotLine": 15,
       "paintBoost": 0,
-      "threePtBoost": 0,
+      "threePtBoost": 1,
       "defBoost": 0,
       "salary": 340,
       "chart": [
@@ -18706,13 +18720,13 @@
         },
         {
           "lo": 10,
-          "hi": 13,
+          "hi": 14,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 14,
+          "lo": 15,
           "hi": 22,
           "pts": 2,
           "reb": 1,
@@ -18749,11 +18763,11 @@
       "pos": "SG",
       "speed": 10,
       "power": 6,
-      "shotLine": 16,
+      "shotLine": 17,
       "paintBoost": 0,
-      "threePtBoost": 2,
+      "threePtBoost": 3,
       "defBoost": 0,
-      "salary": 250,
+      "salary": 780,
       "chart": [
         {
           "lo": 1,
@@ -18771,13 +18785,13 @@
         },
         {
           "lo": 16,
-          "hi": 21,
+          "hi": 16,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 22,
+          "lo": 17,
           "hi": 99,
           "pts": 8,
           "reb": 1,
@@ -18879,11 +18893,11 @@
       "pos": "SF",
       "speed": 9,
       "power": 10,
-      "shotLine": 15,
+      "shotLine": 14,
       "paintBoost": 0,
-      "threePtBoost": 1,
+      "threePtBoost": 0,
       "defBoost": 1,
-      "salary": 550,
+      "salary": 490,
       "chart": [
         {
           "lo": 1,
@@ -18901,20 +18915,20 @@
         },
         {
           "lo": 4,
-          "hi": 10,
+          "hi": 13,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 11,
-          "hi": 14,
+          "lo": 14,
+          "hi": 16,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 17,
           "hi": 24,
           "pts": 2,
           "reb": 1,
@@ -18955,7 +18969,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 560,
+      "salary": 550,
       "chart": [
         {
           "lo": 1,
@@ -19023,9 +19037,9 @@
       "pos": "C",
       "speed": 5,
       "power": 8,
-      "shotLine": 13,
+      "shotLine": 15,
       "paintBoost": 0,
-      "threePtBoost": -7,
+      "threePtBoost": -5,
       "defBoost": 1,
       "salary": 140,
       "chart": [
@@ -19045,13 +19059,13 @@
         },
         {
           "lo": 12,
-          "hi": 12,
+          "hi": 14,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 13,
+          "lo": 15,
           "hi": 15,
           "pts": 1,
           "reb": 0,
@@ -19095,11 +19109,11 @@
       "pos": "PF",
       "speed": 5,
       "power": 8,
-      "shotLine": 14,
+      "shotLine": 15,
       "paintBoost": 0,
-      "threePtBoost": -6,
+      "threePtBoost": -5,
       "defBoost": 0,
-      "salary": 120,
+      "salary": 130,
       "chart": [
         {
           "lo": 1,
@@ -19117,20 +19131,20 @@
         },
         {
           "lo": 8,
-          "hi": 13,
+          "hi": 10,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 14,
-          "hi": 16,
+          "lo": 11,
+          "hi": 14,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 17,
+          "lo": 15,
           "hi": 24,
           "pts": 1,
           "reb": 1,
@@ -19167,11 +19181,11 @@
       "pos": "PF",
       "speed": 7,
       "power": 7,
-      "shotLine": 16,
-      "paintBoost": 2,
-      "threePtBoost": 2,
+      "shotLine": 14,
+      "paintBoost": 0,
+      "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 160,
+      "salary": 180,
       "chart": [
         {
           "lo": 1,
@@ -19189,13 +19203,13 @@
         },
         {
           "lo": 13,
-          "hi": 15,
+          "hi": 13,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 14,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -19225,11 +19239,11 @@
       "pos": "PF",
       "speed": 7,
       "power": 9,
-      "shotLine": 15,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": 1,
+      "threePtBoost": 2,
       "defBoost": 0,
-      "salary": 550,
+      "salary": 540,
       "chart": [
         {
           "lo": 1,
@@ -19254,13 +19268,13 @@
         },
         {
           "lo": 10,
-          "hi": 14,
+          "hi": 15,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -19352,7 +19366,7 @@
       "paintBoost": 0,
       "threePtBoost": -4,
       "defBoost": 1,
-      "salary": 170,
+      "salary": 160,
       "chart": [
         {
           "lo": 1,
@@ -19413,11 +19427,11 @@
       "pos": "PG",
       "speed": 9,
       "power": 5,
-      "shotLine": 16,
-      "paintBoost": 0,
-      "threePtBoost": -1,
+      "shotLine": 12,
+      "paintBoost": -1,
+      "threePtBoost": -5,
       "defBoost": -3,
-      "salary": 460,
+      "salary": 570,
       "chart": [
         {
           "lo": 1,
@@ -19435,13 +19449,13 @@
         },
         {
           "lo": 11,
-          "hi": 15,
+          "hi": 11,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 12,
           "hi": 30,
           "pts": 3,
           "reb": 2,
@@ -19482,7 +19496,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 230,
+      "salary": 220,
       "chart": [
         {
           "lo": 1,
@@ -19550,11 +19564,11 @@
       "pos": "PF",
       "speed": 8,
       "power": 12,
-      "shotLine": 15,
-      "paintBoost": 0,
-      "threePtBoost": -5,
+      "shotLine": 17,
+      "paintBoost": 2,
+      "threePtBoost": -3,
       "defBoost": 0,
-      "salary": 740,
+      "salary": 730,
       "chart": [
         {
           "lo": 1,
@@ -19579,13 +19593,13 @@
         },
         {
           "lo": 10,
-          "hi": 14,
+          "hi": 16,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 17,
           "hi": 21,
           "pts": 2,
           "reb": 2,
@@ -19622,11 +19636,11 @@
       "pos": "SG",
       "speed": 9,
       "power": 8,
-      "shotLine": 16,
+      "shotLine": 15,
       "paintBoost": 0,
-      "threePtBoost": -1,
+      "threePtBoost": -2,
       "defBoost": 1,
-      "salary": 490,
+      "salary": 500,
       "chart": [
         {
           "lo": 1,
@@ -19651,13 +19665,13 @@
         },
         {
           "lo": 10,
-          "hi": 15,
+          "hi": 14,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 15,
           "hi": 22,
           "pts": 2,
           "reb": 1,
@@ -19770,7 +19784,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": 1,
-      "salary": 480,
+      "salary": 470,
       "chart": [
         {
           "lo": 1,
@@ -19900,7 +19914,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 1,
-      "salary": 250,
+      "salary": 240,
       "chart": [
         {
           "lo": 1,
@@ -20026,11 +20040,11 @@
       "pos": "SG",
       "speed": 8,
       "power": 6,
-      "shotLine": 15,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": -2,
+      "threePtBoost": -1,
       "defBoost": 0,
-      "salary": 480,
+      "salary": 450,
       "chart": [
         {
           "lo": 1,
@@ -20048,13 +20062,13 @@
         },
         {
           "lo": 10,
-          "hi": 14,
+          "hi": 15,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 24,
           "pts": 3,
           "reb": 2,
@@ -20156,11 +20170,11 @@
       "pos": "PF",
       "speed": 5,
       "power": 8,
-      "shotLine": 15,
+      "shotLine": 17,
       "paintBoost": 0,
-      "threePtBoost": -5,
+      "threePtBoost": -3,
       "defBoost": -1,
-      "salary": 380,
+      "salary": 370,
       "chart": [
         {
           "lo": 1,
@@ -20185,13 +20199,13 @@
         },
         {
           "lo": 10,
-          "hi": 14,
+          "hi": 16,
           "pts": 2,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 17,
           "hi": 20,
           "pts": 2,
           "reb": 1,
@@ -20300,11 +20314,11 @@
       "pos": "PG",
       "speed": 9,
       "power": 5,
-      "shotLine": 16,
-      "paintBoost": 0,
-      "threePtBoost": -1,
+      "shotLine": 13,
+      "paintBoost": -1,
+      "threePtBoost": -4,
       "defBoost": -2,
-      "salary": 440,
+      "salary": 360,
       "chart": [
         {
           "lo": 1,
@@ -20322,20 +20336,20 @@
         },
         {
           "lo": 10,
-          "hi": 10,
+          "hi": 12,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 11,
-          "hi": 15,
+          "lo": 13,
+          "hi": 18,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 19,
           "hi": 21,
           "pts": 3,
           "reb": 1,
@@ -20372,11 +20386,11 @@
       "pos": "PF",
       "speed": 6,
       "power": 10,
-      "shotLine": 15,
-      "paintBoost": -1,
-      "threePtBoost": 3,
+      "shotLine": 14,
+      "paintBoost": 0,
+      "threePtBoost": 2,
       "defBoost": 0,
-      "salary": 420,
+      "salary": 430,
       "chart": [
         {
           "lo": 1,
@@ -20394,13 +20408,13 @@
         },
         {
           "lo": 8,
-          "hi": 14,
+          "hi": 13,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 14,
           "hi": 20,
           "pts": 2,
           "reb": 1,
@@ -20509,11 +20523,11 @@
       "pos": "SG",
       "speed": 11,
       "power": 7,
-      "shotLine": 15,
-      "paintBoost": -1,
-      "threePtBoost": 1,
+      "shotLine": 16,
+      "paintBoost": 0,
+      "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 650,
+      "salary": 640,
       "chart": [
         {
           "lo": 1,
@@ -20538,13 +20552,13 @@
         },
         {
           "lo": 10,
-          "hi": 14,
+          "hi": 15,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 21,
           "pts": 2,
           "reb": 1,
@@ -20581,11 +20595,11 @@
       "pos": "SG",
       "speed": 7,
       "power": 5,
-      "shotLine": 17,
-      "paintBoost": 0,
-      "threePtBoost": 3,
+      "shotLine": 18,
+      "paintBoost": 3,
+      "threePtBoost": 4,
       "defBoost": -1,
-      "salary": 70,
+      "salary": 50,
       "chart": [
         {
           "lo": 1,
@@ -20603,13 +20617,13 @@
         },
         {
           "lo": 12,
-          "hi": 16,
+          "hi": 17,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 17,
+          "lo": 18,
           "hi": 23,
           "pts": 2,
           "reb": 0,
@@ -20650,7 +20664,7 @@
       "paintBoost": 2,
       "threePtBoost": 3,
       "defBoost": 1,
-      "salary": 70,
+      "salary": 60,
       "chart": [
         {
           "lo": 1,
@@ -20711,11 +20725,11 @@
       "pos": "PG",
       "speed": 9,
       "power": 5,
-      "shotLine": 18,
+      "shotLine": 17,
       "paintBoost": 0,
-      "threePtBoost": 1,
+      "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 70,
+      "salary": 80,
       "chart": [
         {
           "lo": 1,
@@ -20733,13 +20747,13 @@
         },
         {
           "lo": 14,
-          "hi": 17,
+          "hi": 16,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 18,
+          "lo": 17,
           "hi": 22,
           "pts": 2,
           "reb": 0,
@@ -20849,10 +20863,10 @@
       "speed": 8,
       "power": 5,
       "shotLine": 16,
-      "paintBoost": 2,
+      "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 120,
+      "salary": 110,
       "chart": [
         {
           "lo": 1,
@@ -20917,10 +20931,10 @@
       "speed": 8,
       "power": 9,
       "shotLine": 16,
-      "paintBoost": -1,
+      "paintBoost": 0,
       "threePtBoost": -4,
       "defBoost": 1,
-      "salary": 500,
+      "salary": 490,
       "chart": [
         {
           "lo": 1,
@@ -20988,9 +21002,9 @@
       "pos": "C",
       "speed": 5,
       "power": 9,
-      "shotLine": 13,
-      "paintBoost": -1,
-      "threePtBoost": -7,
+      "shotLine": 17,
+      "paintBoost": 2,
+      "threePtBoost": -3,
       "defBoost": 3,
       "salary": 470,
       "chart": [
@@ -21010,13 +21024,13 @@
         },
         {
           "lo": 10,
-          "hi": 12,
+          "hi": 16,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 13,
+          "lo": 17,
           "hi": 20,
           "pts": 2,
           "reb": 1,
@@ -21060,11 +21074,11 @@
       "pos": "SF",
       "speed": 7,
       "power": 6,
-      "shotLine": 15,
-      "paintBoost": 0,
-      "threePtBoost": -2,
+      "shotLine": 14,
+      "paintBoost": -1,
+      "threePtBoost": -3,
       "defBoost": 0,
-      "salary": 370,
+      "salary": 360,
       "chart": [
         {
           "lo": 1,
@@ -21089,13 +21103,13 @@
         },
         {
           "lo": 10,
-          "hi": 14,
+          "hi": 13,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 14,
           "hi": 22,
           "pts": 2,
           "reb": 1,
@@ -21197,11 +21211,11 @@
       "pos": "C",
       "speed": 5,
       "power": 9,
-      "shotLine": 16,
-      "paintBoost": 0,
-      "threePtBoost": -4,
+      "shotLine": 18,
+      "paintBoost": 3,
+      "threePtBoost": -2,
       "defBoost": 1,
-      "salary": 180,
+      "salary": 150,
       "chart": [
         {
           "lo": 1,
@@ -21219,13 +21233,13 @@
         },
         {
           "lo": 16,
-          "hi": 16,
+          "hi": 17,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 17,
+          "lo": 18,
           "hi": 22,
           "pts": 2,
           "reb": 1,
@@ -21338,7 +21352,7 @@
       "paintBoost": -1,
       "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 540,
+      "salary": 530,
       "chart": [
         {
           "lo": 1,
@@ -21399,11 +21413,11 @@
       "pos": "SF",
       "speed": 8,
       "power": 8,
-      "shotLine": 16,
-      "paintBoost": 2,
-      "threePtBoost": 2,
+      "shotLine": 14,
+      "paintBoost": 0,
+      "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 360,
+      "salary": 370,
       "chart": [
         {
           "lo": 1,
@@ -21428,13 +21442,13 @@
         },
         {
           "lo": 10,
-          "hi": 15,
+          "hi": 13,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 14,
           "hi": 22,
           "pts": 2,
           "reb": 1,
@@ -21471,11 +21485,11 @@
       "pos": "PG",
       "speed": 9,
       "power": 5,
-      "shotLine": 16,
-      "paintBoost": 0,
-      "threePtBoost": 2,
+      "shotLine": 17,
+      "paintBoost": 2,
+      "threePtBoost": 3,
       "defBoost": -4,
-      "salary": 420,
+      "salary": 390,
       "chart": [
         {
           "lo": 1,
@@ -21500,13 +21514,13 @@
         },
         {
           "lo": 12,
-          "hi": 15,
+          "hi": 16,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 17,
           "hi": 24,
           "pts": 3,
           "reb": 2,
@@ -21543,9 +21557,9 @@
       "pos": "SF",
       "speed": 9,
       "power": 9,
-      "shotLine": 15,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": 3,
+      "threePtBoost": 4,
       "defBoost": -1,
       "salary": 630,
       "chart": [
@@ -21572,13 +21586,13 @@
         },
         {
           "lo": 10,
-          "hi": 14,
+          "hi": 15,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 22,
           "pts": 2,
           "reb": 1,
@@ -21615,9 +21629,9 @@
       "pos": "SF",
       "speed": 7,
       "power": 8,
-      "shotLine": 14,
+      "shotLine": 13,
       "paintBoost": -1,
-      "threePtBoost": 2,
+      "threePtBoost": 1,
       "defBoost": 0,
       "salary": 480,
       "chart": [
@@ -21637,13 +21651,13 @@
         },
         {
           "lo": 10,
-          "hi": 13,
+          "hi": 12,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 14,
+          "lo": 13,
           "hi": 20,
           "pts": 2,
           "reb": 2,
@@ -21687,9 +21701,9 @@
       "pos": "SG",
       "speed": 8,
       "power": 6,
-      "shotLine": 14,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": 2,
+      "threePtBoost": 4,
       "defBoost": 0,
       "salary": 320,
       "chart": [
@@ -21709,13 +21723,13 @@
         },
         {
           "lo": 11,
-          "hi": 13,
+          "hi": 15,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 14,
+          "lo": 16,
           "hi": 22,
           "pts": 2,
           "reb": 1,
@@ -21759,9 +21773,9 @@
       "pos": "PF",
       "speed": 5,
       "power": 8,
-      "shotLine": 14,
+      "shotLine": 15,
       "paintBoost": 0,
-      "threePtBoost": 0,
+      "threePtBoost": 1,
       "defBoost": -1,
       "salary": 90,
       "chart": [
@@ -21774,13 +21788,13 @@
         },
         {
           "lo": 3,
-          "hi": 13,
+          "hi": 14,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 14,
+          "lo": 15,
           "hi": 15,
           "pts": 0,
           "reb": 0,
@@ -21824,11 +21838,11 @@
       "pos": "PF",
       "speed": 6,
       "power": 8,
-      "shotLine": 17,
-      "paintBoost": 2,
-      "threePtBoost": 0,
+      "shotLine": 15,
+      "paintBoost": 0,
+      "threePtBoost": -2,
       "defBoost": -2,
-      "salary": 460,
+      "salary": 390,
       "chart": [
         {
           "lo": 1,
@@ -21846,13 +21860,20 @@
         },
         {
           "lo": 11,
-          "hi": 16,
+          "hi": 14,
           "pts": 2,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 17,
+          "lo": 15,
+          "hi": 19,
+          "pts": 2,
+          "reb": 1,
+          "ast": 1
+        },
+        {
+          "lo": 20,
           "hi": 22,
           "pts": 3,
           "reb": 2,
@@ -22102,7 +22123,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -2,
-      "salary": 250,
+      "salary": 240,
       "chart": [
         {
           "lo": 1,
@@ -22170,9 +22191,9 @@
       "pos": "PG",
       "speed": 10,
       "power": 6,
-      "shotLine": 15,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": 1,
+      "threePtBoost": 2,
       "defBoost": 0,
       "salary": 520,
       "chart": [
@@ -22199,13 +22220,13 @@
         },
         {
           "lo": 10,
-          "hi": 14,
+          "hi": 15,
           "pts": 2,
           "reb": 0,
           "ast": 1
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -22236,7 +22257,7 @@
       "speed": 7,
       "power": 18,
       "shotLine": 17,
-      "paintBoost": 0,
+      "paintBoost": 2,
       "threePtBoost": -3,
       "defBoost": 2,
       "salary": 1140,
@@ -22307,9 +22328,9 @@
       "pos": "PG",
       "speed": 9,
       "power": 5,
-      "shotLine": 18,
-      "paintBoost": 3,
-      "threePtBoost": 4,
+      "shotLine": 17,
+      "paintBoost": 0,
+      "threePtBoost": 3,
       "defBoost": -5,
       "salary": 370,
       "chart": [
@@ -22329,13 +22350,13 @@
         },
         {
           "lo": 11,
-          "hi": 17,
+          "hi": 16,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 18,
+          "lo": 17,
           "hi": 20,
           "pts": 2,
           "reb": 1,
@@ -22372,11 +22393,11 @@
       "pos": "SF",
       "speed": 7,
       "power": 7,
-      "shotLine": 15,
-      "paintBoost": 0,
-      "threePtBoost": -2,
+      "shotLine": 13,
+      "paintBoost": -1,
+      "threePtBoost": -4,
       "defBoost": 1,
-      "salary": 390,
+      "salary": 380,
       "chart": [
         {
           "lo": 1,
@@ -22394,13 +22415,13 @@
         },
         {
           "lo": 10,
-          "hi": 14,
+          "hi": 12,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 13,
           "hi": 21,
           "pts": 2,
           "reb": 1,
@@ -22448,7 +22469,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -2,
-      "salary": 50,
+      "salary": 40,
       "chart": [
         {
           "lo": 1,
@@ -22509,11 +22530,11 @@
       "pos": "SF",
       "speed": 7,
       "power": 7,
-      "shotLine": 18,
-      "paintBoost": 3,
-      "threePtBoost": 4,
+      "shotLine": 13,
+      "paintBoost": -1,
+      "threePtBoost": -1,
       "defBoost": -1,
-      "salary": 270,
+      "salary": 260,
       "chart": [
         {
           "lo": 1,
@@ -22531,13 +22552,13 @@
         },
         {
           "lo": 12,
-          "hi": 17,
+          "hi": 12,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 18,
+          "lo": 13,
           "hi": 22,
           "pts": 2,
           "reb": 1,
@@ -22581,11 +22602,11 @@
       "pos": "PG",
       "speed": 14,
       "power": 8,
-      "shotLine": 15,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": 3,
+      "threePtBoost": 4,
       "defBoost": -1,
-      "salary": 780,
+      "salary": 760,
       "chart": [
         {
           "lo": 1,
@@ -22610,13 +22631,13 @@
         },
         {
           "lo": 10,
-          "hi": 14,
+          "hi": 15,
           "pts": 2,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 21,
           "pts": 2,
           "reb": 1,
@@ -22791,10 +22812,10 @@
       "speed": 9,
       "power": 5,
       "shotLine": 15,
-      "paintBoost": -1,
+      "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -1,
-      "salary": 80,
+      "salary": 70,
       "chart": [
         {
           "lo": 1,
@@ -22856,7 +22877,7 @@
       "speed": 7,
       "power": 6,
       "shotLine": 17,
-      "paintBoost": 0,
+      "paintBoost": 2,
       "threePtBoost": 3,
       "defBoost": -1,
       "salary": 10,
@@ -22920,11 +22941,11 @@
       "pos": "PG",
       "speed": 10,
       "power": 6,
-      "shotLine": 16,
+      "shotLine": 15,
       "paintBoost": 0,
-      "threePtBoost": -1,
+      "threePtBoost": -2,
       "defBoost": 0,
-      "salary": 440,
+      "salary": 460,
       "chart": [
         {
           "lo": 1,
@@ -22949,13 +22970,13 @@
         },
         {
           "lo": 10,
-          "hi": 15,
+          "hi": 14,
           "pts": 1,
           "reb": 0,
           "ast": 1
         },
         {
-          "lo": 16,
+          "lo": 15,
           "hi": 22,
           "pts": 2,
           "reb": 1,
@@ -23122,11 +23143,11 @@
       "pos": "SF",
       "speed": 8,
       "power": 6,
-      "shotLine": 15,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": -2,
+      "threePtBoost": -1,
       "defBoost": 1,
-      "salary": 360,
+      "salary": 340,
       "chart": [
         {
           "lo": 1,
@@ -23144,13 +23165,13 @@
         },
         {
           "lo": 10,
-          "hi": 14,
+          "hi": 15,
           "pts": 1,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 20,
           "pts": 2,
           "reb": 1,
@@ -23187,11 +23208,11 @@
       "pos": "SG",
       "speed": 7,
       "power": 7,
-      "shotLine": 15,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": 1,
+      "threePtBoost": 2,
       "defBoost": 0,
-      "salary": 460,
+      "salary": 450,
       "chart": [
         {
           "lo": 1,
@@ -23209,13 +23230,13 @@
         },
         {
           "lo": 10,
-          "hi": 14,
+          "hi": 15,
           "pts": 2,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 17,
           "pts": 2,
           "reb": 1,
@@ -23262,11 +23283,11 @@
       "pos": "C",
       "speed": 6,
       "power": 8,
-      "shotLine": 17,
-      "paintBoost": 2,
-      "threePtBoost": 3,
+      "shotLine": 14,
+      "paintBoost": 0,
+      "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 300,
+      "salary": 260,
       "chart": [
         {
           "lo": 1,
@@ -23284,20 +23305,20 @@
         },
         {
           "lo": 11,
-          "hi": 12,
+          "hi": 13,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 13,
-          "hi": 16,
+          "lo": 14,
+          "hi": 19,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 17,
+          "lo": 20,
           "hi": 23,
           "pts": 2,
           "reb": 2,
@@ -23540,7 +23561,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 290,
+      "salary": 280,
       "chart": [
         {
           "lo": 1,
@@ -23673,11 +23694,11 @@
       "pos": "PG",
       "speed": 9,
       "power": 5,
-      "shotLine": 16,
-      "paintBoost": 0,
-      "threePtBoost": -4,
+      "shotLine": 18,
+      "paintBoost": 3,
+      "threePtBoost": -2,
       "defBoost": -1,
-      "salary": 300,
+      "salary": 390,
       "chart": [
         {
           "lo": 1,
@@ -23695,20 +23716,20 @@
         },
         {
           "lo": 11,
-          "hi": 15,
+          "hi": 11,
           "pts": 1,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 16,
-          "hi": 19,
+          "lo": 12,
+          "hi": 17,
           "pts": 2,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 20,
+          "lo": 18,
           "hi": 22,
           "pts": 3,
           "reb": 1,
@@ -23749,7 +23770,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 260,
+      "salary": 250,
       "chart": [
         {
           "lo": 1,
@@ -23889,11 +23910,11 @@
       "pos": "SF",
       "speed": 7,
       "power": 8,
-      "shotLine": 15,
+      "shotLine": 17,
       "paintBoost": 0,
-      "threePtBoost": 1,
+      "threePtBoost": 3,
       "defBoost": -1,
-      "salary": 250,
+      "salary": 210,
       "chart": [
         {
           "lo": 1,
@@ -23911,13 +23932,13 @@
         },
         {
           "lo": 12,
-          "hi": 14,
+          "hi": 16,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 17,
           "hi": 23,
           "pts": 2,
           "reb": 1,
@@ -23954,11 +23975,11 @@
       "pos": "SF",
       "speed": 6,
       "power": 7,
-      "shotLine": 16,
+      "shotLine": 15,
       "paintBoost": 0,
-      "threePtBoost": 2,
+      "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 250,
+      "salary": 260,
       "chart": [
         {
           "lo": 1,
@@ -23983,13 +24004,13 @@
         },
         {
           "lo": 12,
-          "hi": 15,
+          "hi": 14,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 15,
           "hi": 23,
           "pts": 2,
           "reb": 1,
@@ -24026,11 +24047,11 @@
       "pos": "C",
       "speed": 6,
       "power": 9,
-      "shotLine": 15,
+      "shotLine": 14,
       "paintBoost": 0,
-      "threePtBoost": 1,
+      "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 520,
+      "salary": 530,
       "chart": [
         {
           "lo": 1,
@@ -24048,13 +24069,13 @@
         },
         {
           "lo": 10,
-          "hi": 14,
+          "hi": 13,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 14,
           "hi": 21,
           "pts": 3,
           "reb": 1,
@@ -24091,11 +24112,11 @@
       "pos": "SG",
       "speed": 8,
       "power": 5,
-      "shotLine": 18,
+      "shotLine": 17,
       "paintBoost": 2,
-      "threePtBoost": 4,
+      "threePtBoost": 3,
       "defBoost": 0,
-      "salary": 350,
+      "salary": 360,
       "chart": [
         {
           "lo": 1,
@@ -24113,13 +24134,13 @@
         },
         {
           "lo": 11,
-          "hi": 17,
+          "hi": 16,
           "pts": 2,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 18,
+          "lo": 17,
           "hi": 18,
           "pts": 2,
           "reb": 1,
@@ -24163,11 +24184,11 @@
       "pos": "SG",
       "speed": 8,
       "power": 5,
-      "shotLine": 15,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": 3,
+      "threePtBoost": 4,
       "defBoost": -1,
-      "salary": 530,
+      "salary": 520,
       "chart": [
         {
           "lo": 1,
@@ -24192,13 +24213,13 @@
         },
         {
           "lo": 10,
-          "hi": 14,
+          "hi": 15,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -24232,7 +24253,7 @@
       "paintBoost": 0,
       "threePtBoost": 3,
       "defBoost": -1,
-      "salary": 580,
+      "salary": 570,
       "chart": [
         {
           "lo": 1,
@@ -24300,11 +24321,11 @@
       "pos": "SG",
       "speed": 7,
       "power": 7,
-      "shotLine": 17,
-      "paintBoost": 2,
-      "threePtBoost": 3,
+      "shotLine": 16,
+      "paintBoost": 0,
+      "threePtBoost": 2,
       "defBoost": -3,
-      "salary": 410,
+      "salary": 420,
       "chart": [
         {
           "lo": 1,
@@ -24322,13 +24343,13 @@
         },
         {
           "lo": 11,
-          "hi": 16,
+          "hi": 15,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 17,
+          "lo": 16,
           "hi": 19,
           "pts": 3,
           "reb": 1,
@@ -24372,11 +24393,11 @@
       "pos": "SG",
       "speed": 8,
       "power": 5,
-      "shotLine": 16,
+      "shotLine": 15,
       "paintBoost": 0,
-      "threePtBoost": -1,
+      "threePtBoost": -2,
       "defBoost": -1,
-      "salary": 410,
+      "salary": 420,
       "chart": [
         {
           "lo": 1,
@@ -24401,13 +24422,13 @@
         },
         {
           "lo": 10,
-          "hi": 15,
+          "hi": 14,
           "pts": 2,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 15,
           "hi": 21,
           "pts": 3,
           "reb": 0,
@@ -24445,7 +24466,7 @@
       "speed": 9,
       "power": 5,
       "shotLine": 17,
-      "paintBoost": 0,
+      "paintBoost": 2,
       "threePtBoost": 0,
       "defBoost": -1,
       "salary": 190,
@@ -24520,7 +24541,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 3,
-      "salary": 1510,
+      "salary": 1520,
       "chart": [
         {
           "lo": 1,
@@ -24581,11 +24602,11 @@
       "pos": "SG",
       "speed": 9,
       "power": 5,
-      "shotLine": 18,
-      "paintBoost": 3,
-      "threePtBoost": 4,
+      "shotLine": 13,
+      "paintBoost": -1,
+      "threePtBoost": -1,
       "defBoost": 0,
-      "salary": 380,
+      "salary": 370,
       "chart": [
         {
           "lo": 1,
@@ -24603,6 +24624,13 @@
         },
         {
           "lo": 11,
+          "hi": 12,
+          "pts": 2,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 13,
           "hi": 17,
           "pts": 2,
           "reb": 1,
@@ -24646,11 +24674,11 @@
       "pos": "SG",
       "speed": 6,
       "power": 6,
-      "shotLine": 16,
+      "shotLine": 15,
       "paintBoost": 0,
-      "threePtBoost": 2,
+      "threePtBoost": 1,
       "defBoost": -1,
-      "salary": 220,
+      "salary": 250,
       "chart": [
         {
           "lo": 1,
@@ -24675,13 +24703,13 @@
         },
         {
           "lo": 12,
-          "hi": 15,
+          "hi": 14,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 15,
           "hi": 23,
           "pts": 2,
           "reb": 4,
@@ -24790,11 +24818,11 @@
       "pos": "C",
       "speed": 4,
       "power": 6,
-      "shotLine": 15,
+      "shotLine": 16,
       "paintBoost": 0,
-      "threePtBoost": -5,
+      "threePtBoost": -4,
       "defBoost": -1,
-      "salary": 200,
+      "salary": 180,
       "chart": [
         {
           "lo": 1,
@@ -24819,13 +24847,13 @@
         },
         {
           "lo": 11,
-          "hi": 14,
+          "hi": 15,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 16,
           "hi": 22,
           "pts": 2,
           "reb": 2,
@@ -24927,9 +24955,9 @@
       "pos": "C",
       "speed": 6,
       "power": 13,
-      "shotLine": 14,
+      "shotLine": 15,
       "paintBoost": 0,
-      "threePtBoost": -3,
+      "threePtBoost": -2,
       "defBoost": 0,
       "salary": 720,
       "chart": [
@@ -24956,13 +24984,13 @@
         },
         {
           "lo": 10,
-          "hi": 13,
+          "hi": 14,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 14,
+          "lo": 15,
           "hi": 22,
           "pts": 2,
           "reb": 2,
@@ -25002,11 +25030,11 @@
       "pos": "PG",
       "speed": 5,
       "power": 4,
-      "shotLine": 16,
+      "shotLine": 17,
       "paintBoost": 0,
-      "threePtBoost": 2,
+      "threePtBoost": 3,
       "defBoost": -3,
-      "salary": 220,
+      "salary": 210,
       "chart": [
         {
           "lo": 1,
@@ -25031,13 +25059,13 @@
         },
         {
           "lo": 10,
-          "hi": 15,
+          "hi": 16,
           "pts": 2,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 17,
           "hi": 21,
           "pts": 2,
           "reb": 1,
@@ -25074,9 +25102,9 @@
       "pos": "PF",
       "speed": 6,
       "power": 8,
-      "shotLine": 14,
+      "shotLine": 15,
       "paintBoost": 0,
-      "threePtBoost": 0,
+      "threePtBoost": 1,
       "defBoost": -1,
       "salary": 10,
       "chart": [
@@ -25089,13 +25117,13 @@
         },
         {
           "lo": 3,
-          "hi": 13,
+          "hi": 14,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 14,
+          "lo": 15,
           "hi": 17,
           "pts": 0,
           "reb": 0,
@@ -25139,11 +25167,11 @@
       "pos": "SF",
       "speed": 8,
       "power": 7,
-      "shotLine": 15,
-      "paintBoost": 2,
-      "threePtBoost": 1,
+      "shotLine": 14,
+      "paintBoost": -1,
+      "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 420,
+      "salary": 400,
       "chart": [
         {
           "lo": 1,
@@ -25168,13 +25196,13 @@
         },
         {
           "lo": 11,
-          "hi": 14,
+          "hi": 13,
           "pts": 2,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 15,
+          "lo": 14,
           "hi": 23,
           "pts": 2,
           "reb": 1,
@@ -25211,11 +25239,11 @@
       "pos": "PF",
       "speed": 7,
       "power": 11,
-      "shotLine": 14,
+      "shotLine": 17,
       "paintBoost": 0,
-      "threePtBoost": -3,
+      "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 1140,
+      "salary": 1080,
       "chart": [
         {
           "lo": 1,
@@ -25233,13 +25261,13 @@
         },
         {
           "lo": 7,
-          "hi": 13,
+          "hi": 16,
           "pts": 3,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 14,
+          "lo": 17,
           "hi": 21,
           "pts": 4,
           "reb": 1,

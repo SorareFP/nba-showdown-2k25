@@ -129,6 +129,186 @@
 
 import { meanSd } from './attributes.js';
 
+// ── THE SHOT LINE'S BASIS, AND WHY IT IS NOT TS% ───────────────────────────
+//
+// TS% measures SHOT SELECTION, not shooting skill, and for a big man those are
+// opposite things: a rim-runner posts elite efficiency precisely by never
+// attempting a hard shot. Built on TS%, the Shot Line rewarded him for the
+// shots he declined to take. The 2026-27 set made the failure unarguable —
+// Jarrett Allen printed a .671 TS%, higher than Jokić (.648) and Curry (.622),
+// on a .690 free-throw percentage and a .206 three; Jericho Sims printed Shot
+// Line 12 with a 3PT Boost of -8 while Stephen Curry printed 14; and bigs
+// averaged 14.76 against guards' 15.64, a full point of advantage handed to
+// the players who cannot shoot.
+//
+// SHOT LINE now reads only the shots that require shooting — midrange, threes,
+// free throws — and rim attempts are excluded entirely. Raw make rates are NOT
+// comparable across those types (a .394 three is elite, a .690 free throw is
+// poor), so each is z-scored against the pool's own distribution for that shot
+// type FIRST, then volume-weighted by the player's attempts in each. Skipping
+// the per-type normalisation leaves Allen ahead of Curry on a plain weighted
+// average, because free throws are made far more often than field goals and he
+// takes a great many of them.
+//
+// PAINT BOOST takes what Shot Line gave up. It was rim FG% alone, whose league
+// spread is narrow enough that the compression flattened 295 of 354 cards to
+// exactly 0 — the attribute did no work. It is now rim POINTS ADDED, volume
+// times efficiency over the league rate, so a high-volume elite finisher
+// separates from a center who dunks four times a game.
+//
+// Both are re-expressed on the pool's own TS% location and scale before they
+// leave here, so every downstream stage — the linear map, the compression, the
+// calibration targets — keeps working against numbers in the range it expects.
+// The ORDERING changes; the arithmetic around it does not.
+
+// Attempt volumes reach this module BOTH ways: dunksandthrees' actual season
+// page reports per 75 possessions, its EPM archive per 100. Only relative
+// weight matters here, so either is read as-is rather than converted — but
+// both names must be tried, because reading one when the caller supplies the
+// other yields null for every row and the whole basis silently falls back to
+// TS%, which is exactly the no-op this comment exists to prevent recurring.
+const attOf = (per75, per100) => r => {
+  const a = r?.[per75];
+  if (Number.isFinite(a)) return a;
+  const b = r?.[per100];
+  return Number.isFinite(b) ? b : null;
+};
+const midAttDirect = attOf('fgaMidPer75', 'fgaMidPer100');
+const threeAtt = attOf('fga3Per75', 'fga3Per100');
+const ftAtt = attOf('ftaPer75', 'ftaPer100');
+const rimAttDirect = attOf('fgaRimPer75', 'fgaRimPer100');
+
+// The historical sets carry Basketball-Reference's shape instead — total
+// two-point attempts, the SHARE of them at the rim, and the two percentages —
+// so rim and midrange are derived rather than read. Same quantities, so the
+// basis is identical across sets; without this the special sets would keep
+// TS%-derived Shot Lines and become the place to farm an unearned line on a
+// centre who cannot shoot.
+const rimAtt = r => {
+  const direct = rimAttDirect(r);
+  if (Number.isFinite(direct)) return direct;
+  const two = r?.fg2a100;
+  const share = r?.rimShare;
+  return Number.isFinite(two) && Number.isFinite(share) ? two * share : null;
+};
+const midAtt = r => {
+  const direct = midAttDirect(r);
+  if (Number.isFinite(direct)) return direct;
+  const two = r?.fg2a100;
+  const share = r?.rimShare;
+  return Number.isFinite(two) && Number.isFinite(share) ? two * (1 - share) : null;
+};
+/** Midrange FG%, backed out of overall 2P% once the rim is removed. */
+const midPct = r => {
+  if (Number.isFinite(r?.fgPctMid)) return r.fgPctMid;
+  const two = r?.fg2a100;
+  const share = r?.rimShare;
+  const rimP = r?.rimPct;
+  const twoP = r?.fgPct2;
+  if (![two, share, rimP, twoP].every(Number.isFinite)) return null;
+  const midA = two * (1 - share);
+  if (midA <= 0.01) return null;
+  const made = twoP * two - rimP * (two * share);
+  const pct = made / midA;
+  return pct >= 0 && pct <= 1 ? pct : null;
+};
+/** Rim FG% under either shape. */
+const rimPctOf = r =>
+  Number.isFinite(r?.fgPctRim) ? r.fgPctRim : Number.isFinite(r?.rimPct) ? r.rimPct : null;
+
+/** Volume-weighted mean of `pick` over rows that have it, weighted by `wt`. */
+function weightedMean(rows, pick, wt) {
+  let num = 0;
+  let den = 0;
+  for (const r of rows) {
+    const v = pick(r);
+    const w = wt(r);
+    if (!Number.isFinite(v) || !Number.isFinite(w) || w <= 0) continue;
+    num += v * w;
+    den += w;
+  }
+  return den > 0 ? num / den : null;
+}
+
+/**
+ * The per-shot-type league distributions this pool implies. Each percentage is
+ * weighted by that type's attempts, so a center's nine-attempt three-point
+ * season cannot drag the three-point mean around.
+ */
+function shotTypeNorms(rows) {
+  const types = [
+    ['mid', midPct, midAtt],
+    ['three', r => r.fgPct3, threeAtt],
+    ['ft', r => r.ftPct, ftAtt],
+  ];
+  const out = {};
+  for (const [key, pct, att] of types) {
+    const mean = weightedMean(rows, pct, att);
+    const vals = rows.map(pct).filter(Number.isFinite);
+    const { sd } = meanSd(vals);
+    out[key] = { mean: mean ?? 0, sd: sd > 1e-6 ? sd : 1 };
+  }
+  const rimVals = rows.map(rimPctOf).filter(Number.isFinite);
+  out.rim = {
+    mean: weightedMean(rows, rimPctOf, rimAtt) ?? 0,
+    sd: meanSd(rimVals).sd || 1,
+  };
+  return out;
+}
+
+/**
+ * Re-express `values` on the location and scale of `anchor`, so a new basis
+ * can be swapped in under machinery calibrated against the old one.
+ */
+function onScaleOf(values, anchor) {
+  const v = meanSd(values.filter(Number.isFinite));
+  const a = meanSd(anchor.filter(Number.isFinite));
+  const sd = v.sd > 1e-6 ? v.sd : 1;
+  return values.map(x =>
+    Number.isFinite(x) ? a.mean + ((x - v.mean) / sd) * (a.sd || 0.03) : null
+  );
+}
+
+/**
+ * Shot Line and Paint Boost bases for a pool, from full shot-location rows.
+ *
+ * `rows` need `{ tsPct, fgPctMid, fgaMidPer100, fgPct3, fga3Per100, ftPct,
+ * ftaPer100, fgPctRim, fgaRimPer100 }`. Returns `{ shootingPct, rimPct }`
+ * arrays aligned to `rows` — drop-in replacements for `tsPct` and `paintPct`.
+ * A row missing the location splits (a historical season, a WNBA page) yields
+ * null and the caller falls back to its own TS%.
+ */
+export function deriveShootingBasis(rows) {
+  const norms = shotTypeNorms(rows);
+  const z = (v, n) => (Number.isFinite(v) ? (v - n.mean) / n.sd : null);
+
+  const rawShooting = rows.map(r => {
+    const parts = [
+      [z(midPct(r), norms.mid), midAtt(r)],
+      [z(r.fgPct3, norms.three), threeAtt(r)],
+      [z(r.ftPct, norms.ft), ftAtt(r)],
+    ].filter(([s, w]) => Number.isFinite(s) && Number.isFinite(w) && w > 0);
+    if (!parts.length) return null;
+    const den = parts.reduce((s, [, w]) => s + w, 0);
+    return parts.reduce((s, [zz, w]) => s + zz * w, 0) / den;
+  });
+
+  // Points added at the rim per 100 possessions, against the league rate.
+  const rawRim = rows.map(r => {
+    const att = rimAtt(r);
+    const pct = rimPctOf(r);
+    return Number.isFinite(pct) && Number.isFinite(att)
+      ? att * (pct - norms.rim.mean) * 2
+      : null;
+  });
+
+  const anchor = rows.map(r => r.tsPct).filter(Number.isFinite);
+  return {
+    shootingPct: onScaleOf(rawShooting, anchor),
+    rimPct: onScaleOf(rawRim, anchor),
+  };
+}
+
 /** A line is a d20 face, so 1 always hits and 21 never does. */
 export const LINE_FLOOR = 1;
 export const LINE_CEIL = 21;

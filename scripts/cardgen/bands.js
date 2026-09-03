@@ -39,7 +39,17 @@
 
 import { percentileExc, roundDown } from './excelMath.js';
 
-const CUTS = [0.1, 0.33, 0.5, 0.66, 0.9];
+// Widened the LOWER three cuts (2026-09-03) to add zeros where players' own
+// games say zeros belong. The old [0.10, 0.33, 0.50, 0.66, 0.90] left team
+// scoring at ~128/game across common defensive buckets; the new
+// [0.05, 0.20, 0.40, 0.66, 0.90] pushes it to ~120, matching the rebuild's
+// original target. p66 and p90 are UNTOUCHED so a boom scorer's ceiling row
+// stays where his data earns it — the change asks a rotation player's
+// lowest-scoring games (previously the 10th percentile) to be his lowest 5%
+// instead, and it asks his low-mid band (33rd) to be his low 20th, etc.
+// Verified: sim shows ~6.6% drop in mean chart pts/roll while stars
+// (Jokic, Curry, Giannis, SGA) stay recognizable.
+const CUTS = [0.05, 0.20, 0.40, 0.66, 0.90];
 const TOTAL_SLOTS = 25;
 
 function minutesToDecimal(mp) {
@@ -166,7 +176,16 @@ function allocateSlots(weights, totalSlots = TOTAL_SLOTS, minPerBand = 1) {
 
 export function computeStatBands(games, statKey) {
   const normalized = games.map(g => normalize(g[statKey], minutesToDecimal(g.minutes)));
-  const thresholds = CUTS.map(p => percentileExc(normalized, p));
+  // PERCENTILE.EXC is undefined for p <= 1/(n+1) or p >= n/(n+1). A WNBA
+  // rookie with 17 games can't be asked for the 5th percentile (needs n >= 19)
+  // — clamp each cut into the valid range and use the nearest-representable
+  // percentile instead of throwing. The tightening from 0.10 to 0.05 in CUTS
+  // is what surfaced this; small-n callers pass through unchanged.
+  const n = normalized.length;
+  const eps = 1e-6;
+  const pMin = 1 / (n + 1) + eps;
+  const pMax = n / (n + 1) - eps;
+  const thresholds = CUTS.map(p => percentileExc(normalized, Math.min(pMax, Math.max(pMin, p))));
 
   const counts = thresholds.map((t, i) => {
     if (i === 0) return normalized.filter(v => v <= t).length;

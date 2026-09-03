@@ -41,20 +41,19 @@ describe('computeStatBands', () => {
     expect(totalSlots).toBe(25);
   });
 
-  it('reproduces the real published Jokic 2023-24 chart values exactly (pinned regression)', () => {
-    // Task 3's calibrate.js established these as the exact real values from
-    // Final Cards.csv. The 2026-09-03 EV-preserving rounding briefly departed
-    // from them because EV drift was the primary objective; the 2026-09-03
-    // (later same day) fix made per-band DEVIATION primary and EV the
-    // tiebreak, which brings Jokic back to a byte-for-byte match with the
-    // published values. Bands still round together (so a role player's
-    // 3:1.3:1 ratios do not collapse to a flat 1p1r1a row), but the
-    // deviation-first ordering means a chart never drifts from the raw
-    // ladder just to trim EV by a hundredth. See shooting.js? No — see
-    // bands.js's evRoundValues.
-    expect(computeStatBands(jokicGames, 'pts').map(b => b.value)).toEqual([2, 3, 3, 4, 4]);
+  it('produces Jokic 2023-24 chart values under the widened lower cuts', () => {
+    // Task 3's calibrate.js established the published Final Cards.csv values
+    // as [2,3,3,4,4]/[1,1,1,2,2]/[1,1,1,1,2] under cuts [0.10,0.33,0.50,0.66,
+    // 0.90]. Cuts widened 2026-09-03 to [0.05,0.20,0.40,0.66,0.90] to bring
+    // team scoring from ~128 back to the rebuild's original ~120 target —
+    // the ceilings (p66, p90) are untouched, so a boom scorer's top row
+    // stays where his data earns it, but the lower bands now sample deeper
+    // into each player's worst games. Jokic's ceiling and boards are
+    // unchanged; his floor pts and assists both drop by one, reflecting
+    // that even elite scorers have bad games and the chart should say so.
+    expect(computeStatBands(jokicGames, 'pts').map(b => b.value)).toEqual([1, 2, 3, 4, 4]);
     expect(computeStatBands(jokicGames, 'reb').map(b => b.value)).toEqual([1, 1, 1, 2, 2]);
-    expect(computeStatBands(jokicGames, 'ast').map(b => b.value)).toEqual([1, 1, 1, 1, 2]);
+    expect(computeStatBands(jokicGames, 'ast').map(b => b.value)).toEqual([0, 1, 1, 1, 2]);
   });
 
   it('treats "MM:SS" string minutes the same as the equivalent decimal number', () => {

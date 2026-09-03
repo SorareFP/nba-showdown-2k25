@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-03T16:40:20.584Z",
+  "generatedAt": "2026-09-03T16:49:15.275Z",
   "set": "rookie",
   "provisional": true,
   "sources": {
@@ -200,7 +200,7 @@
       "paintBoost": 0,
       "threePtBoost": 3,
       "defBoost": -1,
-      "salary": 440,
+      "salary": 400,
       "chart": [
         {
           "lo": 1,
@@ -219,7 +219,7 @@
         {
           "lo": 10,
           "hi": 14,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 1
         },
@@ -272,7 +272,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": 0,
-      "salary": 240,
+      "salary": 260,
       "chart": [
         {
           "lo": 1,
@@ -283,20 +283,13 @@
         },
         {
           "lo": 3,
-          "hi": 7,
+          "hi": 9,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 8,
-          "hi": 10,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 11,
+          "lo": 10,
           "hi": 15,
           "pts": 1,
           "reb": 1,
@@ -304,13 +297,13 @@
         },
         {
           "lo": 16,
-          "hi": 22,
+          "hi": 23,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 23,
+          "lo": 24,
           "hi": 99,
           "pts": 2,
           "reb": 2,
@@ -344,7 +337,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 0,
-      "salary": 410,
+      "salary": 500,
       "chart": [
         {
           "lo": 1,
@@ -362,13 +355,13 @@
         },
         {
           "lo": 7,
-          "hi": 9,
+          "hi": 7,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 10,
+          "lo": 8,
           "hi": 15,
           "pts": 2,
           "reb": 0,
@@ -416,7 +409,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 30,
+      "salary": 70,
       "chart": [
         {
           "lo": 1,
@@ -436,7 +429,7 @@
           "lo": 12,
           "hi": 14,
           "pts": 1,
-          "reb": 1,
+          "reb": 0,
           "ast": 0
         },
         {
@@ -481,7 +474,7 @@
       "paintBoost": 0,
       "threePtBoost": -3,
       "defBoost": -1,
-      "salary": 210,
+      "salary": 250,
       "chart": [
         {
           "lo": 1,
@@ -492,23 +485,16 @@
         },
         {
           "lo": 3,
-          "hi": 4,
+          "hi": 3,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 5,
-          "hi": 10,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 11,
+          "lo": 4,
           "hi": 13,
           "pts": 1,
-          "reb": 1,
+          "reb": 0,
           "ast": 0
         },
         {
@@ -553,7 +539,7 @@
       "paintBoost": -1,
       "threePtBoost": -7,
       "defBoost": 0,
-      "salary": 270,
+      "salary": 360,
       "chart": [
         {
           "lo": 1,
@@ -578,20 +564,13 @@
         },
         {
           "lo": 13,
-          "hi": 15,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 16,
-          "hi": 22,
+          "hi": 23,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 23,
+          "lo": 24,
           "hi": 99,
           "pts": 2,
           "reb": 3,
@@ -625,7 +604,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 1,
-      "salary": 250,
+      "salary": 320,
       "chart": [
         {
           "lo": 1,
@@ -690,7 +669,7 @@
       "paintBoost": 0,
       "threePtBoost": -4,
       "defBoost": 0,
-      "salary": 440,
+      "salary": 480,
       "chart": [
         {
           "lo": 1,
@@ -701,13 +680,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 7,
           "hi": 15,
           "pts": 1,
           "reb": 1,
@@ -755,7 +734,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": 1,
-      "salary": 20,
+      "salary": 90,
       "chart": [
         {
           "lo": 1,
@@ -820,7 +799,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 420,
+      "salary": 350,
       "chart": [
         {
           "lo": 1,
@@ -831,13 +810,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
-          "reb": 0,
+          "reb": 1,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 7,
           "hi": 15,
           "pts": 2,
           "reb": 1,
@@ -845,13 +824,13 @@
         },
         {
           "lo": 16,
-          "hi": 20,
+          "hi": 21,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 21,
+          "lo": 22,
           "hi": 99,
           "pts": 2,
           "reb": 2,
@@ -899,24 +878,17 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 10,
+          "lo": 8,
           "hi": 15,
           "pts": 2,
           "reb": 1,
-          "ast": 1
+          "ast": 0
         },
         {
           "lo": 16,
@@ -960,7 +932,7 @@
       "paintBoost": 0,
       "threePtBoost": -5,
       "defBoost": 2,
-      "salary": 780,
+      "salary": 750,
       "chart": [
         {
           "lo": 1,
@@ -971,22 +943,15 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 7,
           "hi": 14,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 0
         },
@@ -1032,7 +997,7 @@
       "paintBoost": 3,
       "threePtBoost": -2,
       "defBoost": 2,
-      "salary": 870,
+      "salary": 1130,
       "chart": [
         {
           "lo": 1,
@@ -1043,34 +1008,27 @@
         },
         {
           "lo": 3,
-          "hi": 4,
+          "hi": 3,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 5,
-          "hi": 9,
+          "lo": 4,
+          "hi": 12,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 10,
+          "lo": 13,
           "hi": 17,
-          "pts": 1,
-          "reb": 2,
-          "ast": 0
-        },
-        {
-          "lo": 18,
-          "hi": 21,
           "pts": 2,
           "reb": 2,
           "ast": 0
         },
         {
-          "lo": 22,
+          "lo": 18,
           "hi": 99,
           "pts": 3,
           "reb": 3,
@@ -1104,7 +1062,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": 2,
-      "salary": 490,
+      "salary": 550,
       "chart": [
         {
           "lo": 1,
@@ -1115,13 +1073,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 8,
           "hi": 15,
           "pts": 1,
           "reb": 1,
@@ -1180,20 +1138,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 8,
           "hi": 14,
           "pts": 1,
           "reb": 0,
@@ -1241,7 +1192,7 @@
       "paintBoost": 1,
       "threePtBoost": 0,
       "defBoost": -2,
-      "salary": 440,
+      "salary": 380,
       "chart": [
         {
           "lo": 1,
@@ -1252,13 +1203,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 7,
           "hi": 16,
           "pts": 2,
           "reb": 0,
@@ -1299,7 +1250,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -4,
-      "salary": 530,
+      "salary": 560,
       "chart": [
         {
           "lo": 1,
@@ -1317,6 +1268,13 @@
         },
         {
           "lo": 10,
+          "hi": 10,
+          "pts": 1,
+          "reb": 1,
+          "ast": 1
+        },
+        {
+          "lo": 11,
           "hi": 14,
           "pts": 2,
           "reb": 1,
@@ -1364,7 +1322,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 1,
-      "salary": 200,
+      "salary": 180,
       "chart": [
         {
           "lo": 1,
@@ -1375,13 +1333,13 @@
         },
         {
           "lo": 3,
-          "hi": 4,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 5,
+          "lo": 8,
           "hi": 15,
           "pts": 1,
           "reb": 0,
@@ -1392,7 +1350,7 @@
           "hi": 23,
           "pts": 1,
           "reb": 1,
-          "ast": 1
+          "ast": 0
         },
         {
           "lo": 24,
@@ -1429,7 +1387,7 @@
       "paintBoost": 2,
       "threePtBoost": -3,
       "defBoost": 1,
-      "salary": 820,
+      "salary": 890,
       "chart": [
         {
           "lo": 1,
@@ -1440,13 +1398,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 7,
           "hi": 16,
           "pts": 2,
           "reb": 1,
@@ -1454,13 +1412,6 @@
         },
         {
           "lo": 17,
-          "hi": 20,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 21,
           "hi": 99,
           "pts": 2,
           "reb": 2,
@@ -1494,7 +1445,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -2,
-      "salary": 730,
+      "salary": 720,
       "chart": [
         {
           "lo": 1,
@@ -1505,20 +1456,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 2,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 7,
           "hi": 15,
           "pts": 2,
           "reb": 1,
@@ -1566,7 +1510,7 @@
       "paintBoost": -1,
       "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 480,
+      "salary": 460,
       "chart": [
         {
           "lo": 1,
@@ -1585,7 +1529,7 @@
         {
           "lo": 10,
           "hi": 13,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 1
         },
@@ -1641,7 +1585,7 @@
       "paintBoost": 0,
       "threePtBoost": -6,
       "defBoost": 1,
-      "salary": 490,
+      "salary": 530,
       "chart": [
         {
           "lo": 1,
@@ -1652,13 +1596,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
-          "reb": 0,
+          "reb": 1,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 7,
           "hi": 13,
           "pts": 1,
           "reb": 1,
@@ -1706,7 +1650,7 @@
       "paintBoost": -1,
       "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 250,
+      "salary": 240,
       "chart": [
         {
           "lo": 1,
@@ -1717,13 +1661,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 8,
           "hi": 13,
           "pts": 1,
           "reb": 0,
@@ -1731,13 +1675,13 @@
         },
         {
           "lo": 14,
-          "hi": 16,
+          "hi": 23,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 17,
+          "lo": 24,
           "hi": 99,
           "pts": 1,
           "reb": 1,
@@ -1771,7 +1715,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 230,
+      "salary": 200,
       "chart": [
         {
           "lo": 1,
@@ -1782,13 +1726,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 8,
           "hi": 13,
           "pts": 1,
           "reb": 0,
@@ -1829,7 +1773,7 @@
       "paintBoost": 2,
       "threePtBoost": -3,
       "defBoost": 1,
-      "salary": 480,
+      "salary": 560,
       "chart": [
         {
           "lo": 1,
@@ -1840,13 +1784,13 @@
         },
         {
           "lo": 3,
-          "hi": 4,
+          "hi": 3,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 5,
+          "lo": 4,
           "hi": 16,
           "pts": 1,
           "reb": 1,
@@ -1894,7 +1838,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 1,
-      "salary": 650,
+      "salary": 660,
       "chart": [
         {
           "lo": 1,
@@ -1912,6 +1856,13 @@
         },
         {
           "lo": 9,
+          "hi": 10,
+          "pts": 1,
+          "reb": 0,
+          "ast": 1
+        },
+        {
+          "lo": 11,
           "hi": 14,
           "pts": 2,
           "reb": 1,
@@ -1919,13 +1870,13 @@
         },
         {
           "lo": 15,
-          "hi": 21,
+          "hi": 25,
           "pts": 3,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 22,
+          "lo": 26,
           "hi": 99,
           "pts": 3,
           "reb": 2,
@@ -1959,7 +1910,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 90,
+      "salary": 150,
       "chart": [
         {
           "lo": 1,
@@ -2024,7 +1975,7 @@
       "paintBoost": 2,
       "threePtBoost": -2,
       "defBoost": -1,
-      "salary": 330,
+      "salary": 350,
       "chart": [
         {
           "lo": 1,
@@ -2042,6 +1993,13 @@
         },
         {
           "lo": 10,
+          "hi": 10,
+          "pts": 1,
+          "reb": 1,
+          "ast": 1
+        },
+        {
+          "lo": 11,
           "hi": 17,
           "pts": 2,
           "reb": 1,
@@ -2089,7 +2047,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -3,
-      "salary": 590,
+      "salary": 510,
       "chart": [
         {
           "lo": 1,
@@ -2100,23 +2058,16 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 2,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 7,
           "hi": 15,
           "pts": 2,
-          "reb": 1,
+          "reb": 0,
           "ast": 0
         },
         {
@@ -2154,7 +2105,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 30,
+      "salary": 10,
       "chart": [
         {
           "lo": 1,
@@ -2165,20 +2116,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 10,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 11,
+          "lo": 8,
           "hi": 15,
           "pts": 1,
           "reb": 1,
@@ -2226,7 +2170,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": -2,
-      "salary": 190,
+      "salary": 210,
       "chart": [
         {
           "lo": 1,
@@ -2239,7 +2183,7 @@
           "lo": 3,
           "hi": 5,
           "pts": 0,
-          "reb": 1,
+          "reb": 0,
           "ast": 0
         },
         {
@@ -2291,7 +2235,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 840,
+      "salary": 850,
       "chart": [
         {
           "lo": 1,
@@ -2302,23 +2246,23 @@
         },
         {
           "lo": 3,
-          "hi": 4,
+          "hi": 3,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 5,
-          "hi": 9,
-          "pts": 2,
+          "lo": 4,
+          "hi": 7,
+          "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 10,
+          "lo": 8,
           "hi": 15,
           "pts": 2,
-          "reb": 1,
+          "reb": 0,
           "ast": 1
         },
         {
@@ -2356,7 +2300,7 @@
       "paintBoost": 0,
       "threePtBoost": -4,
       "defBoost": 0,
-      "salary": 120,
+      "salary": 40,
       "chart": [
         {
           "lo": 1,
@@ -2367,27 +2311,27 @@
         },
         {
           "lo": 3,
-          "hi": 4,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 5,
-          "hi": 10,
+          "lo": 8,
+          "hi": 15,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 11,
-          "hi": 15,
+          "lo": 16,
+          "hi": 23,
           "pts": 1,
           "reb": 1,
-          "ast": 0
+          "ast": 1
         },
         {
-          "lo": 16,
+          "lo": 24,
           "hi": 99,
           "pts": 1,
           "reb": 2,
@@ -2421,7 +2365,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 610,
+      "salary": 620,
       "chart": [
         {
           "lo": 1,
@@ -2432,24 +2376,17 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 4,
-          "hi": 10,
-          "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 11,
+          "lo": 8,
           "hi": 14,
           "pts": 1,
           "reb": 1,
-          "ast": 1
+          "ast": 0
         },
         {
           "lo": 15,
@@ -2493,7 +2430,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": -1,
-      "salary": 160,
+      "salary": 110,
       "chart": [
         {
           "lo": 1,
@@ -2504,23 +2441,16 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 7,
           "hi": 15,
           "pts": 1,
-          "reb": 1,
+          "reb": 0,
           "ast": 0
         },
         {
@@ -2565,7 +2495,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -2,
-      "salary": 530,
+      "salary": 420,
       "chart": [
         {
           "lo": 1,
@@ -2576,23 +2506,16 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 2,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 8,
           "hi": 14,
           "pts": 2,
-          "reb": 1,
+          "reb": 0,
           "ast": 0
         },
         {
@@ -2637,7 +2560,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -3,
-      "salary": 430,
+      "salary": 490,
       "chart": [
         {
           "lo": 1,
@@ -2648,8 +2571,15 @@
         },
         {
           "lo": 3,
-          "hi": 6,
+          "hi": 5,
           "pts": 0,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 6,
+          "hi": 6,
+          "pts": 1,
           "reb": 0,
           "ast": 0
         },
@@ -2702,7 +2632,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -2,
-      "salary": 350,
+      "salary": 320,
       "chart": [
         {
           "lo": 1,
@@ -2713,22 +2643,22 @@
         },
         {
           "lo": 3,
-          "hi": 7,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 8,
-          "hi": 9,
+          "lo": 7,
+          "hi": 7,
           "pts": 1,
-          "reb": 1,
+          "reb": 0,
           "ast": 0
         },
         {
-          "lo": 10,
+          "lo": 8,
           "hi": 14,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 0
         },
@@ -2774,7 +2704,7 @@
       "paintBoost": 0,
       "threePtBoost": -4,
       "defBoost": 0,
-      "salary": 580,
+      "salary": 500,
       "chart": [
         {
           "lo": 1,
@@ -2785,22 +2715,15 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 7,
           "hi": 15,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 0
         },
@@ -2846,7 +2769,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": 1,
-      "salary": 210,
+      "salary": 180,
       "chart": [
         {
           "lo": 1,
@@ -2857,27 +2780,27 @@
         },
         {
           "lo": 3,
-          "hi": 5,
+          "hi": 8,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 6,
-          "hi": 11,
+          "lo": 9,
+          "hi": 15,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 12,
-          "hi": 15,
+          "lo": 16,
+          "hi": 24,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 16,
+          "lo": 25,
           "hi": 99,
           "pts": 1,
           "reb": 1,
@@ -2911,7 +2834,7 @@
       "paintBoost": 0,
       "threePtBoost": 3,
       "defBoost": -1,
-      "salary": 30,
+      "salary": 90,
       "chart": [
         {
           "lo": 1,
@@ -2922,13 +2845,13 @@
         },
         {
           "lo": 3,
-          "hi": 6,
+          "hi": 5,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 7,
+          "lo": 6,
           "hi": 16,
           "pts": 1,
           "reb": 0,
@@ -2976,7 +2899,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -1,
-      "salary": 180,
+      "salary": 90,
       "chart": [
         {
           "lo": 1,
@@ -2987,23 +2910,16 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 10,
-          "pts": 1,
-          "reb": 0,
-          "ast": 1
-        },
-        {
-          "lo": 11,
+          "lo": 8,
           "hi": 14,
           "pts": 1,
-          "reb": 1,
+          "reb": 0,
           "ast": 1
         },
         {
@@ -3041,7 +2957,7 @@
       "paintBoost": 0,
       "threePtBoost": 4,
       "defBoost": -1,
-      "salary": 420,
+      "salary": 440,
       "chart": [
         {
           "lo": 1,
@@ -3052,23 +2968,16 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 7,
           "hi": 15,
           "pts": 2,
-          "reb": 1,
+          "reb": 0,
           "ast": 0
         },
         {
@@ -3124,20 +3033,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 2,
-          "reb": 0,
-          "ast": 1
-        },
-        {
-          "lo": 10,
+          "lo": 7,
           "hi": 15,
           "pts": 2,
           "reb": 1,
@@ -3178,7 +3080,7 @@
       "paintBoost": 2,
       "threePtBoost": 3,
       "defBoost": 1,
-      "salary": 470,
+      "salary": 540,
       "chart": [
         {
           "lo": 1,
@@ -3250,7 +3152,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 410,
+      "salary": 470,
       "chart": [
         {
           "lo": 1,
@@ -3322,7 +3224,7 @@
       "paintBoost": 0,
       "threePtBoost": -2,
       "defBoost": -1,
-      "salary": 310,
+      "salary": 330,
       "chart": [
         {
           "lo": 1,
@@ -3333,13 +3235,20 @@
         },
         {
           "lo": 3,
-          "hi": 4,
+          "hi": 3,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 5,
+          "lo": 4,
+          "hi": 6,
+          "pts": 1,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 7,
           "hi": 14,
           "pts": 2,
           "reb": 0,
@@ -3387,7 +3296,7 @@
       "paintBoost": 0,
       "threePtBoost": 3,
       "defBoost": 0,
-      "salary": 500,
+      "salary": 470,
       "chart": [
         {
           "lo": 1,
@@ -3398,23 +3307,16 @@
         },
         {
           "lo": 3,
-          "hi": 4,
+          "hi": 3,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 5,
-          "hi": 10,
+          "lo": 4,
+          "hi": 14,
           "pts": 1,
           "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 11,
-          "hi": 14,
-          "pts": 2,
-          "reb": 1,
           "ast": 0
         },
         {
@@ -3459,7 +3361,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 410,
+      "salary": 500,
       "chart": [
         {
           "lo": 1,
@@ -3470,20 +3372,20 @@
         },
         {
           "lo": 3,
-          "hi": 4,
+          "hi": 3,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 5,
-          "hi": 9,
+          "lo": 4,
+          "hi": 6,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 10,
+          "lo": 7,
           "hi": 13,
           "pts": 1,
           "reb": 1,
@@ -3531,7 +3433,7 @@
       "paintBoost": -1,
       "threePtBoost": 0,
       "defBoost": -2,
-      "salary": 590,
+      "salary": 600,
       "chart": [
         {
           "lo": 1,
@@ -3542,20 +3444,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 2,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 7,
           "hi": 16,
           "pts": 2,
           "reb": 1,
@@ -3563,13 +3458,6 @@
         },
         {
           "lo": 17,
-          "hi": 21,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 22,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -3603,7 +3491,7 @@
       "paintBoost": 0,
       "threePtBoost": 3,
       "defBoost": 1,
-      "salary": 480,
+      "salary": 500,
       "chart": [
         {
           "lo": 1,
@@ -3614,13 +3502,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 8,
           "hi": 14,
           "pts": 1,
           "reb": 0,
@@ -3668,7 +3556,7 @@
       "paintBoost": 1,
       "threePtBoost": 3,
       "defBoost": -3,
-      "salary": 190,
+      "salary": 220,
       "chart": [
         {
           "lo": 1,
@@ -3679,24 +3567,17 @@
         },
         {
           "lo": 3,
-          "hi": 5,
+          "hi": 4,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 6,
-          "hi": 9,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 5,
           "hi": 16,
           "pts": 1,
           "reb": 0,
-          "ast": 1
+          "ast": 0
         },
         {
           "lo": 17,
@@ -3740,7 +3621,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 2,
-      "salary": 1130,
+      "salary": 1180,
       "chart": [
         {
           "lo": 1,
@@ -3751,13 +3632,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 7,
           "hi": 13,
           "pts": 2,
           "reb": 1,
@@ -3805,7 +3686,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": 2,
-      "salary": 920,
+      "salary": 990,
       "chart": [
         {
           "lo": 1,
@@ -3816,23 +3697,16 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 1
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
-          "reb": 0,
-          "ast": 1
-        },
-        {
-          "lo": 10,
+          "lo": 7,
           "hi": 15,
           "pts": 2,
-          "reb": 1,
+          "reb": 0,
           "ast": 1
         },
         {
@@ -3870,7 +3744,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 200,
+      "salary": 240,
       "chart": [
         {
           "lo": 1,
@@ -3935,7 +3809,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -1,
-      "salary": 180,
+      "salary": 220,
       "chart": [
         {
           "lo": 1,
@@ -3946,13 +3820,13 @@
         },
         {
           "lo": 3,
-          "hi": 10,
+          "hi": 11,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 11,
+          "lo": 12,
           "hi": 14,
           "pts": 1,
           "reb": 0,
@@ -4000,7 +3874,7 @@
       "paintBoost": 3,
       "threePtBoost": -2,
       "defBoost": 0,
-      "salary": 400,
+      "salary": 440,
       "chart": [
         {
           "lo": 1,
@@ -4018,6 +3892,13 @@
         },
         {
           "lo": 11,
+          "hi": 11,
+          "pts": 1,
+          "reb": 1,
+          "ast": 1
+        },
+        {
+          "lo": 12,
           "hi": 17,
           "pts": 2,
           "reb": 1,
@@ -4065,7 +3946,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -2,
-      "salary": 390,
+      "salary": 320,
       "chart": [
         {
           "lo": 1,
@@ -4076,13 +3957,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 7,
           "hi": 15,
           "pts": 2,
           "reb": 0,
@@ -4141,13 +4022,13 @@
         },
         {
           "lo": 3,
-          "hi": 10,
+          "hi": 8,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 11,
+          "lo": 9,
           "hi": 16,
           "pts": 1,
           "reb": 0,
@@ -4195,7 +4076,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 1,
-      "salary": 470,
+      "salary": 480,
       "chart": [
         {
           "lo": 1,
@@ -4214,7 +4095,7 @@
         {
           "lo": 11,
           "hi": 13,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 1
         },
@@ -4267,7 +4148,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -3,
-      "salary": 240,
+      "salary": 150,
       "chart": [
         {
           "lo": 1,
@@ -4278,13 +4159,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 7,
           "hi": 15,
           "pts": 2,
           "reb": 0,
@@ -4332,7 +4213,7 @@
       "paintBoost": -1,
       "threePtBoost": -1,
       "defBoost": -2,
-      "salary": 310,
+      "salary": 360,
       "chart": [
         {
           "lo": 1,
@@ -4343,13 +4224,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 8,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 9,
           "hi": 12,
           "pts": 1,
           "reb": 0,
@@ -4357,13 +4238,6 @@
         },
         {
           "lo": 13,
-          "hi": 15,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 16,
           "hi": 23,
           "pts": 2,
           "reb": 1,
@@ -4404,7 +4278,7 @@
       "paintBoost": 0,
       "threePtBoost": -2,
       "defBoost": 1,
-      "salary": 520,
+      "salary": 490,
       "chart": [
         {
           "lo": 1,
@@ -4422,27 +4296,27 @@
         },
         {
           "lo": 7,
-          "hi": 9,
+          "hi": 7,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 10,
+          "lo": 8,
           "hi": 14,
-          "pts": 2,
+          "pts": 1,
           "reb": 0,
           "ast": 1
         },
         {
           "lo": 15,
-          "hi": 20,
+          "hi": 21,
           "pts": 3,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 21,
+          "lo": 22,
           "hi": 99,
           "pts": 3,
           "reb": 2,
@@ -4476,7 +4350,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -2,
-      "salary": 740,
+      "salary": 750,
       "chart": [
         {
           "lo": 1,
@@ -4487,13 +4361,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 7,
           "hi": 15,
           "pts": 2,
           "reb": 0,
@@ -4541,7 +4415,7 @@
       "paintBoost": 2,
       "threePtBoost": -4,
       "defBoost": 2,
-      "salary": 420,
+      "salary": 370,
       "chart": [
         {
           "lo": 1,
@@ -4559,27 +4433,20 @@
         },
         {
           "lo": 8,
-          "hi": 10,
+          "hi": 15,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 11,
-          "hi": 15,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
           "lo": 16,
-          "hi": 23,
+          "hi": 22,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 24,
+          "lo": 23,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -4613,7 +4480,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 1,
-      "salary": 310,
+      "salary": 350,
       "chart": [
         {
           "lo": 1,
@@ -4624,13 +4491,13 @@
         },
         {
           "lo": 3,
-          "hi": 6,
+          "hi": 8,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 7,
+          "lo": 9,
           "hi": 15,
           "pts": 1,
           "reb": 0,
@@ -4638,13 +4505,13 @@
         },
         {
           "lo": 16,
-          "hi": 22,
+          "hi": 23,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 23,
+          "lo": 24,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -4678,7 +4545,7 @@
       "paintBoost": -1,
       "threePtBoost": 0,
       "defBoost": -6,
-      "salary": 420,
+      "salary": 470,
       "chart": [
         {
           "lo": 1,
@@ -4750,7 +4617,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 1,
-      "salary": 440,
+      "salary": 460,
       "chart": [
         {
           "lo": 1,
@@ -4769,7 +4636,7 @@
         {
           "lo": 11,
           "hi": 13,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 1
         },
@@ -4822,7 +4689,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -3,
-      "salary": 130,
+      "salary": 80,
       "chart": [
         {
           "lo": 1,
@@ -4833,24 +4700,17 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 7,
           "hi": 15,
           "pts": 1,
           "reb": 0,
-          "ast": 1
+          "ast": 0
         },
         {
           "lo": 16,
@@ -4894,7 +4754,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -2,
-      "salary": 420,
+      "salary": 280,
       "chart": [
         {
           "lo": 1,
@@ -4905,24 +4765,17 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
+          "lo": 8,
+          "hi": 15,
           "pts": 1,
           "reb": 0,
           "ast": 0
-        },
-        {
-          "lo": 10,
-          "hi": 15,
-          "pts": 2,
-          "reb": 0,
-          "ast": 1
         },
         {
           "lo": 16,
@@ -4966,7 +4819,7 @@
       "paintBoost": 0,
       "threePtBoost": -4,
       "defBoost": -3,
-      "salary": 680,
+      "salary": 770,
       "chart": [
         {
           "lo": 1,
@@ -4984,6 +4837,13 @@
         },
         {
           "lo": 10,
+          "hi": 10,
+          "pts": 1,
+          "reb": 1,
+          "ast": 1
+        },
+        {
+          "lo": 11,
           "hi": 15,
           "pts": 2,
           "reb": 1,
@@ -4991,13 +4851,6 @@
         },
         {
           "lo": 16,
-          "hi": 17,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 18,
           "hi": 22,
           "pts": 3,
           "reb": 3,
@@ -5038,7 +4891,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": -2,
-      "salary": 280,
+      "salary": 170,
       "chart": [
         {
           "lo": 1,
@@ -5049,22 +4902,15 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 7,
           "hi": 16,
-          "pts": 2,
+          "pts": 1,
           "reb": 0,
           "ast": 1
         },
@@ -5110,7 +4956,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -2,
-      "salary": 240,
+      "salary": 200,
       "chart": [
         {
           "lo": 1,
@@ -5121,23 +4967,16 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 7,
           "hi": 15,
           "pts": 1,
-          "reb": 1,
+          "reb": 0,
           "ast": 0
         },
         {
@@ -5182,7 +5021,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": 1,
-      "salary": 140,
+      "salary": 120,
       "chart": [
         {
           "lo": 1,
@@ -5193,34 +5032,27 @@
         },
         {
           "lo": 3,
-          "hi": 7,
+          "hi": 9,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 8,
-          "hi": 10,
+          "lo": 10,
+          "hi": 15,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 11,
-          "hi": 15,
-          "pts": 1,
-          "reb": 1,
-          "ast": 1
-        },
-        {
           "lo": 16,
-          "hi": 22,
+          "hi": 23,
           "pts": 1,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 23,
+          "lo": 24,
           "hi": 99,
           "pts": 1,
           "reb": 2,
@@ -5254,7 +5086,7 @@
       "paintBoost": -1,
       "threePtBoost": -5,
       "defBoost": 1,
-      "salary": 400,
+      "salary": 460,
       "chart": [
         {
           "lo": 1,
@@ -5326,7 +5158,7 @@
       "paintBoost": 0,
       "threePtBoost": -5,
       "defBoost": -1,
-      "salary": 1000,
+      "salary": 1010,
       "chart": [
         {
           "lo": 1,
@@ -5337,13 +5169,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 8,
           "hi": 14,
           "pts": 2,
           "reb": 1,
@@ -5391,7 +5223,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": -1,
-      "salary": 450,
+      "salary": 390,
       "chart": [
         {
           "lo": 1,
@@ -5409,15 +5241,8 @@
         },
         {
           "lo": 9,
-          "hi": 9,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
           "hi": 15,
-          "pts": 2,
+          "pts": 1,
           "reb": 0,
           "ast": 0
         },
@@ -5463,7 +5288,7 @@
       "paintBoost": 0,
       "threePtBoost": -4,
       "defBoost": -1,
-      "salary": 270,
+      "salary": 240,
       "chart": [
         {
           "lo": 1,
@@ -5474,23 +5299,16 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 7,
           "hi": 15,
           "pts": 1,
-          "reb": 1,
+          "reb": 0,
           "ast": 0
         },
         {
@@ -5546,6 +5364,13 @@
         },
         {
           "lo": 6,
+          "hi": 8,
+          "pts": 0,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 9,
           "hi": 14,
           "pts": 1,
           "reb": 1,
@@ -5593,7 +5418,7 @@
       "paintBoost": 2,
       "threePtBoost": -3,
       "defBoost": 1,
-      "salary": 660,
+      "salary": 620,
       "chart": [
         {
           "lo": 1,
@@ -5611,15 +5436,8 @@
         },
         {
           "lo": 5,
-          "hi": 9,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 10,
           "hi": 16,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 0
         },
@@ -5665,7 +5483,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": -2,
-      "salary": 40,
+      "salary": 50,
       "chart": [
         {
           "lo": 1,
@@ -5676,13 +5494,13 @@
         },
         {
           "lo": 3,
-          "hi": 8,
+          "hi": 10,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 9,
+          "lo": 11,
           "hi": 16,
           "pts": 1,
           "reb": 0,
@@ -5730,7 +5548,7 @@
       "paintBoost": 0,
       "threePtBoost": -2,
       "defBoost": 0,
-      "salary": 400,
+      "salary": 370,
       "chart": [
         {
           "lo": 1,
@@ -5741,22 +5559,15 @@
         },
         {
           "lo": 3,
-          "hi": 7,
+          "hi": 8,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 8,
-          "hi": 10,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 11,
+          "lo": 9,
           "hi": 14,
-          "pts": 2,
+          "pts": 1,
           "reb": 0,
           "ast": 0
         },
@@ -5802,7 +5613,7 @@
       "paintBoost": 2,
       "threePtBoost": -3,
       "defBoost": -1,
-      "salary": 260,
+      "salary": 270,
       "chart": [
         {
           "lo": 1,
@@ -5813,23 +5624,16 @@
         },
         {
           "lo": 3,
-          "hi": 7,
+          "hi": 8,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 8,
-          "hi": 10,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 11,
+          "lo": 9,
           "hi": 16,
           "pts": 1,
-          "reb": 1,
+          "reb": 0,
           "ast": 0
         },
         {
@@ -5874,7 +5678,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 2,
-      "salary": 470,
+      "salary": 580,
       "chart": [
         {
           "lo": 1,
@@ -5899,16 +5703,9 @@
         },
         {
           "lo": 16,
-          "hi": 18,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 19,
           "hi": 26,
           "pts": 3,
-          "reb": 2,
+          "reb": 1,
           "ast": 1
         },
         {
@@ -5946,7 +5743,7 @@
       "paintBoost": 0,
       "threePtBoost": 3,
       "defBoost": 0,
-      "salary": 530,
+      "salary": 430,
       "chart": [
         {
           "lo": 1,
@@ -5957,34 +5754,27 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
+          "lo": 7,
+          "hi": 14,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 10,
-          "hi": 14,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
           "lo": 15,
-          "hi": 21,
+          "hi": 22,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 22,
+          "lo": 23,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -6018,7 +5808,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -2,
-      "salary": 300,
+      "salary": 190,
       "chart": [
         {
           "lo": 1,
@@ -6029,22 +5819,15 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 7,
           "hi": 15,
-          "pts": 2,
+          "pts": 1,
           "reb": 0,
           "ast": 0
         },
@@ -6090,7 +5873,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 1,
-      "salary": 250,
+      "salary": 310,
       "chart": [
         {
           "lo": 1,
@@ -6155,7 +5938,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 320,
+      "salary": 340,
       "chart": [
         {
           "lo": 1,
@@ -6166,13 +5949,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 7,
           "hi": 15,
           "pts": 1,
           "reb": 0,
@@ -6213,7 +5996,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 0,
-      "salary": 180,
+      "salary": 200,
       "chart": [
         {
           "lo": 1,
@@ -6231,6 +6014,13 @@
         },
         {
           "lo": 4,
+          "hi": 7,
+          "pts": 1,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 8,
           "hi": 15,
           "pts": 1,
           "reb": 1,
@@ -6278,7 +6068,7 @@
       "paintBoost": 0,
       "threePtBoost": -4,
       "defBoost": -1,
-      "salary": 370,
+      "salary": 290,
       "chart": [
         {
           "lo": 1,
@@ -6297,7 +6087,7 @@
         {
           "lo": 9,
           "hi": 15,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 1
         },
@@ -6350,7 +6140,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": 1,
-      "salary": 580,
+      "salary": 620,
       "chart": [
         {
           "lo": 1,
@@ -6368,16 +6158,9 @@
         },
         {
           "lo": 5,
-          "hi": 10,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 11,
           "hi": 15,
           "pts": 1,
-          "reb": 2,
+          "reb": 1,
           "ast": 0
         },
         {
@@ -6422,7 +6205,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 1030,
+      "salary": 1050,
       "chart": [
         {
           "lo": 1,
@@ -6433,13 +6216,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 8,
           "hi": 14,
           "pts": 2,
           "reb": 0,
@@ -6480,7 +6263,7 @@
       "paintBoost": -1,
       "threePtBoost": -1,
       "defBoost": 1,
-      "salary": 110,
+      "salary": 190,
       "chart": [
         {
           "lo": 1,
@@ -6505,13 +6288,13 @@
         },
         {
           "lo": 13,
-          "hi": 16,
+          "hi": 14,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 17,
+          "lo": 15,
           "hi": 23,
           "pts": 1,
           "reb": 1,
@@ -6552,7 +6335,7 @@
       "paintBoost": 0,
       "threePtBoost": -2,
       "defBoost": 0,
-      "salary": 350,
+      "salary": 530,
       "chart": [
         {
           "lo": 1,
@@ -6570,20 +6353,20 @@
         },
         {
           "lo": 10,
-          "hi": 14,
+          "hi": 11,
           "pts": 1,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 15,
-          "hi": 18,
+          "lo": 12,
+          "hi": 14,
           "pts": 2,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 19,
+          "lo": 15,
           "hi": 21,
           "pts": 3,
           "reb": 1,
@@ -6624,7 +6407,7 @@
       "paintBoost": 2,
       "threePtBoost": 1,
       "defBoost": 1,
-      "salary": 60,
+      "salary": 130,
       "chart": [
         {
           "lo": 1,
@@ -6696,7 +6479,7 @@
       "paintBoost": -1,
       "threePtBoost": -6,
       "defBoost": 1,
-      "salary": 320,
+      "salary": 380,
       "chart": [
         {
           "lo": 1,
@@ -6761,7 +6544,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 3,
-      "salary": 560,
+      "salary": 550,
       "chart": [
         {
           "lo": 1,
@@ -6780,7 +6563,7 @@
         {
           "lo": 10,
           "hi": 14,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 1
         },
@@ -6833,7 +6616,7 @@
       "paintBoost": -1,
       "threePtBoost": -2,
       "defBoost": 0,
-      "salary": 470,
+      "salary": 500,
       "chart": [
         {
           "lo": 1,
@@ -6852,19 +6635,19 @@
         {
           "lo": 10,
           "hi": 11,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 1
         },
         {
           "lo": 12,
-          "hi": 15,
+          "hi": 14,
           "pts": 2,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 16,
+          "lo": 15,
           "hi": 25,
           "pts": 3,
           "reb": 1,
@@ -6905,7 +6688,7 @@
       "paintBoost": 0,
       "threePtBoost": -3,
       "defBoost": 0,
-      "salary": 560,
+      "salary": 610,
       "chart": [
         {
           "lo": 1,
@@ -6916,13 +6699,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 7,
           "hi": 16,
           "pts": 1,
           "reb": 1,
@@ -6963,7 +6746,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": 1,
-      "salary": 600,
+      "salary": 660,
       "chart": [
         {
           "lo": 1,
@@ -7035,7 +6818,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": 2,
-      "salary": 180,
+      "salary": 250,
       "chart": [
         {
           "lo": 1,
@@ -7046,13 +6829,13 @@
         },
         {
           "lo": 3,
-          "hi": 7,
+          "hi": 8,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 8,
+          "lo": 9,
           "hi": 10,
           "pts": 0,
           "reb": 1,
@@ -7107,7 +6890,7 @@
       "paintBoost": 0,
       "threePtBoost": -4,
       "defBoost": -1,
-      "salary": 400,
+      "salary": 420,
       "chart": [
         {
           "lo": 1,
@@ -7118,23 +6901,16 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 7,
           "hi": 15,
           "pts": 2,
-          "reb": 1,
+          "reb": 0,
           "ast": 0
         },
         {
@@ -7179,7 +6955,7 @@
       "paintBoost": 2,
       "threePtBoost": -1,
       "defBoost": 2,
-      "salary": 750,
+      "salary": 700,
       "chart": [
         {
           "lo": 1,
@@ -7190,22 +6966,15 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 8,
           "hi": 15,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 0
         },
@@ -7251,7 +7020,7 @@
       "paintBoost": 2,
       "threePtBoost": -2,
       "defBoost": 1,
-      "salary": 10,
+      "salary": 40,
       "chart": [
         {
           "lo": 1,
@@ -7283,13 +7052,13 @@
         },
         {
           "lo": 18,
-          "hi": 23,
+          "hi": 24,
           "pts": 1,
-          "reb": 2,
+          "reb": 1,
           "ast": 0
         },
         {
-          "lo": 24,
+          "lo": 25,
           "hi": 99,
           "pts": 2,
           "reb": 2,
@@ -7323,7 +7092,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 700,
+      "salary": 730,
       "chart": [
         {
           "lo": 1,
@@ -7334,20 +7103,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 2,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 7,
           "hi": 14,
           "pts": 2,
           "reb": 1,
@@ -7395,7 +7157,7 @@
       "paintBoost": 2,
       "threePtBoost": 4,
       "defBoost": 2,
-      "salary": 480,
+      "salary": 540,
       "chart": [
         {
           "lo": 1,
@@ -7413,6 +7175,13 @@
         },
         {
           "lo": 11,
+          "hi": 11,
+          "pts": 1,
+          "reb": 1,
+          "ast": 1
+        },
+        {
+          "lo": 12,
           "hi": 17,
           "pts": 2,
           "reb": 1,
@@ -7460,7 +7229,7 @@
       "paintBoost": 3,
       "threePtBoost": 4,
       "defBoost": -2,
-      "salary": 290,
+      "salary": 350,
       "chart": [
         {
           "lo": 1,
@@ -7543,13 +7312,13 @@
         },
         {
           "lo": 3,
-          "hi": 9,
+          "hi": 10,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 10,
+          "lo": 11,
           "hi": 16,
           "pts": 1,
           "reb": 0,
@@ -7597,7 +7366,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": 0,
-      "salary": 230,
+      "salary": 290,
       "chart": [
         {
           "lo": 1,
@@ -7669,7 +7438,7 @@
       "paintBoost": 1,
       "threePtBoost": 3,
       "defBoost": -4,
-      "salary": 420,
+      "salary": 460,
       "chart": [
         {
           "lo": 1,
@@ -7687,6 +7456,13 @@
         },
         {
           "lo": 11,
+          "hi": 11,
+          "pts": 1,
+          "reb": 1,
+          "ast": 1
+        },
+        {
+          "lo": 12,
           "hi": 16,
           "pts": 2,
           "reb": 1,
@@ -7734,7 +7510,7 @@
       "paintBoost": 1,
       "threePtBoost": 0,
       "defBoost": 2,
-      "salary": 240,
+      "salary": 320,
       "chart": [
         {
           "lo": 1,
@@ -7799,7 +7575,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -2,
-      "salary": 710,
+      "salary": 700,
       "chart": [
         {
           "lo": 1,
@@ -7810,23 +7586,23 @@
         },
         {
           "lo": 3,
-          "hi": 4,
+          "hi": 3,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 5,
-          "hi": 9,
-          "pts": 2,
+          "lo": 4,
+          "hi": 7,
+          "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 10,
+          "lo": 8,
           "hi": 15,
           "pts": 2,
-          "reb": 1,
+          "reb": 0,
           "ast": 0
         },
         {
@@ -7882,13 +7658,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 8,
           "hi": 16,
           "pts": 1,
           "reb": 1,
@@ -7936,7 +7712,7 @@
       "paintBoost": 0,
       "threePtBoost": -3,
       "defBoost": 1,
-      "salary": 310,
+      "salary": 330,
       "chart": [
         {
           "lo": 1,
@@ -7954,16 +7730,9 @@
         },
         {
           "lo": 6,
-          "hi": 9,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
           "hi": 16,
           "pts": 1,
-          "reb": 1,
+          "reb": 0,
           "ast": 0
         },
         {
@@ -8008,7 +7777,7 @@
       "paintBoost": 0,
       "threePtBoost": -2,
       "defBoost": 2,
-      "salary": 540,
+      "salary": 600,
       "chart": [
         {
           "lo": 1,
@@ -8026,6 +7795,13 @@
         },
         {
           "lo": 9,
+          "hi": 9,
+          "pts": 1,
+          "reb": 1,
+          "ast": 1
+        },
+        {
+          "lo": 10,
           "hi": 14,
           "pts": 2,
           "reb": 1,
@@ -8033,13 +7809,13 @@
         },
         {
           "lo": 15,
-          "hi": 22,
+          "hi": 21,
           "pts": 2,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 23,
+          "lo": 22,
           "hi": 99,
           "pts": 4,
           "reb": 2,
@@ -8073,7 +7849,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -2,
-      "salary": 50,
+      "salary": 80,
       "chart": [
         {
           "lo": 1,
@@ -8138,7 +7914,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -2,
-      "salary": 490,
+      "salary": 530,
       "chart": [
         {
           "lo": 1,
@@ -8210,7 +7986,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 420,
+      "salary": 470,
       "chart": [
         {
           "lo": 1,
@@ -8282,7 +8058,7 @@
       "paintBoost": -1,
       "threePtBoost": -1,
       "defBoost": -1,
-      "salary": 430,
+      "salary": 490,
       "chart": [
         {
           "lo": 1,
@@ -8354,7 +8130,7 @@
       "paintBoost": 2,
       "threePtBoost": 3,
       "defBoost": 0,
-      "salary": 410,
+      "salary": 420,
       "chart": [
         {
           "lo": 1,
@@ -8365,13 +8141,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 7,
           "hi": 16,
           "pts": 1,
           "reb": 1,
@@ -8419,7 +8195,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 2,
-      "salary": 350,
+      "salary": 370,
       "chart": [
         {
           "lo": 1,
@@ -8430,13 +8206,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 8,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 9,
           "hi": 15,
           "pts": 1,
           "reb": 0,
@@ -8484,7 +8260,7 @@
       "paintBoost": 0,
       "threePtBoost": 4,
       "defBoost": -1,
-      "salary": 940,
+      "salary": 970,
       "chart": [
         {
           "lo": 1,
@@ -8495,13 +8271,20 @@
         },
         {
           "lo": 3,
-          "hi": 4,
+          "hi": 3,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 5,
+          "lo": 4,
+          "hi": 6,
+          "pts": 1,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 7,
           "hi": 15,
           "pts": 2,
           "reb": 0,
@@ -8509,13 +8292,13 @@
         },
         {
           "lo": 16,
-          "hi": 20,
+          "hi": 21,
           "pts": 3,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 21,
+          "lo": 22,
           "hi": 99,
           "pts": 4,
           "reb": 1,
@@ -8549,7 +8332,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": -1,
-      "salary": 50,
+      "salary": 20,
       "chart": [
         {
           "lo": 1,
@@ -8560,13 +8343,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 8,
           "hi": 15,
           "pts": 1,
           "reb": 0,
@@ -8574,13 +8357,13 @@
         },
         {
           "lo": 16,
-          "hi": 22,
+          "hi": 23,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 23,
+          "lo": 24,
           "hi": 99,
           "pts": 1,
           "reb": 1,
@@ -8614,7 +8397,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": -2,
-      "salary": 90,
+      "salary": 80,
       "chart": [
         {
           "lo": 1,
@@ -8628,20 +8411,13 @@
           "hi": 3,
           "pts": 0,
           "reb": 0,
-          "ast": 1
+          "ast": 0
         },
         {
           "lo": 4,
-          "hi": 9,
-          "pts": 1,
-          "reb": 0,
-          "ast": 1
-        },
-        {
-          "lo": 10,
           "hi": 15,
           "pts": 1,
-          "reb": 1,
+          "reb": 0,
           "ast": 1
         },
         {
@@ -8686,7 +8462,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": 1,
-      "salary": 310,
+      "salary": 370,
       "chart": [
         {
           "lo": 1,
@@ -8758,7 +8534,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": 0,
-      "salary": 600,
+      "salary": 630,
       "chart": [
         {
           "lo": 1,
@@ -8776,6 +8552,13 @@
         },
         {
           "lo": 7,
+          "hi": 7,
+          "pts": 1,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 8,
           "hi": 15,
           "pts": 2,
           "reb": 1,
@@ -8783,13 +8566,13 @@
         },
         {
           "lo": 16,
-          "hi": 20,
+          "hi": 21,
           "pts": 3,
           "reb": 2,
           "ast": 0
         },
         {
-          "lo": 21,
+          "lo": 22,
           "hi": 99,
           "pts": 3,
           "reb": 3,
@@ -8823,7 +8606,7 @@
       "paintBoost": 2,
       "threePtBoost": 5,
       "defBoost": -1,
-      "salary": 780,
+      "salary": 660,
       "chart": [
         {
           "lo": 1,
@@ -8842,14 +8625,14 @@
         {
           "lo": 9,
           "hi": 9,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 1
         },
         {
           "lo": 10,
           "hi": 16,
-          "pts": 3,
+          "pts": 2,
           "reb": 1,
           "ast": 1
         },
@@ -8857,7 +8640,7 @@
           "lo": 17,
           "hi": 24,
           "pts": 3,
-          "reb": 2,
+          "reb": 1,
           "ast": 1
         },
         {
@@ -8895,7 +8678,7 @@
       "paintBoost": 0,
       "threePtBoost": -3,
       "defBoost": 1,
-      "salary": 530,
+      "salary": 540,
       "chart": [
         {
           "lo": 1,
@@ -8906,13 +8689,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 8,
           "hi": 13,
           "pts": 1,
           "reb": 1,
@@ -8920,13 +8703,13 @@
         },
         {
           "lo": 14,
-          "hi": 22,
+          "hi": 23,
           "pts": 2,
           "reb": 2,
           "ast": 0
         },
         {
-          "lo": 23,
+          "lo": 24,
           "hi": 99,
           "pts": 2,
           "reb": 2,
@@ -8960,7 +8743,7 @@
       "paintBoost": 0,
       "threePtBoost": -5,
       "defBoost": -1,
-      "salary": 530,
+      "salary": 510,
       "chart": [
         {
           "lo": 1,
@@ -8971,22 +8754,15 @@
         },
         {
           "lo": 3,
-          "hi": 7,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 8,
-          "hi": 9,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 7,
           "hi": 14,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 0
         },
@@ -9043,13 +8819,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
-          "ast": 0
+          "ast": 1
         },
         {
-          "lo": 4,
+          "lo": 7,
           "hi": 15,
           "pts": 2,
           "reb": 0,
@@ -9090,7 +8866,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 410,
+      "salary": 340,
       "chart": [
         {
           "lo": 1,
@@ -9101,23 +8877,16 @@
         },
         {
           "lo": 3,
-          "hi": 5,
+          "hi": 4,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 6,
-          "hi": 9,
+          "lo": 5,
+          "hi": 15,
           "pts": 1,
           "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
-          "hi": 15,
-          "pts": 2,
-          "reb": 1,
           "ast": 0
         },
         {
@@ -9162,7 +8931,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": -1,
-      "salary": 370,
+      "salary": 260,
       "chart": [
         {
           "lo": 1,
@@ -9173,22 +8942,15 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 10,
+          "lo": 7,
           "hi": 15,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 0
         },
@@ -9227,7 +8989,7 @@
       "paintBoost": 0,
       "threePtBoost": 4,
       "defBoost": -2,
-      "salary": 530,
+      "salary": 630,
       "chart": [
         {
           "lo": 1,
@@ -9238,20 +9000,20 @@
         },
         {
           "lo": 3,
-          "hi": 6,
+          "hi": 5,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 7,
-          "hi": 9,
+          "lo": 6,
+          "hi": 7,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 10,
+          "lo": 8,
           "hi": 15,
           "pts": 2,
           "reb": 0,
@@ -9313,20 +9075,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 10,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 11,
+          "lo": 8,
           "hi": 14,
           "pts": 1,
           "reb": 1,
@@ -9374,7 +9129,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 510,
+      "salary": 410,
       "chart": [
         {
           "lo": 1,
@@ -9385,23 +9140,16 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
+          "lo": 7,
+          "hi": 14,
           "pts": 1,
           "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
-          "hi": 14,
-          "pts": 2,
-          "reb": 1,
           "ast": 0
         },
         {
@@ -9464,6 +9212,13 @@
         },
         {
           "lo": 9,
+          "hi": 10,
+          "pts": 1,
+          "reb": 1,
+          "ast": 1
+        },
+        {
+          "lo": 11,
           "hi": 13,
           "pts": 2,
           "reb": 1,
@@ -9471,13 +9226,13 @@
         },
         {
           "lo": 14,
-          "hi": 23,
+          "hi": 27,
           "pts": 3,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 24,
+          "lo": 28,
           "hi": 99,
           "pts": 3,
           "reb": 2,
@@ -9511,7 +9266,7 @@
       "paintBoost": 0,
       "threePtBoost": -5,
       "defBoost": 0,
-      "salary": 230,
+      "salary": 250,
       "chart": [
         {
           "lo": 1,
@@ -9529,6 +9284,13 @@
         },
         {
           "lo": 10,
+          "hi": 11,
+          "pts": 0,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 12,
           "hi": 14,
           "pts": 1,
           "reb": 1,
@@ -9576,7 +9338,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -1,
-      "salary": 490,
+      "salary": 420,
       "chart": [
         {
           "lo": 1,
@@ -9587,22 +9349,15 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 7,
           "hi": 14,
-          "pts": 2,
+          "pts": 1,
           "reb": 0,
           "ast": 0
         },
@@ -9648,7 +9403,7 @@
       "paintBoost": 0,
       "threePtBoost": -5,
       "defBoost": 0,
-      "salary": 500,
+      "salary": 430,
       "chart": [
         {
           "lo": 1,
@@ -9659,22 +9414,15 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 10,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 11,
+          "lo": 8,
           "hi": 14,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 0
         },
@@ -9713,7 +9461,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -2,
-      "salary": 390,
+      "salary": 320,
       "chart": [
         {
           "lo": 1,
@@ -9724,13 +9472,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 7,
           "hi": 15,
           "pts": 2,
           "reb": 0,
@@ -9738,13 +9486,13 @@
         },
         {
           "lo": 16,
-          "hi": 20,
+          "hi": 21,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 21,
+          "lo": 22,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -9778,7 +9526,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 440,
+      "salary": 500,
       "chart": [
         {
           "lo": 1,
@@ -9796,6 +9544,13 @@
         },
         {
           "lo": 11,
+          "hi": 11,
+          "pts": 1,
+          "reb": 1,
+          "ast": 1
+        },
+        {
+          "lo": 12,
           "hi": 15,
           "pts": 2,
           "reb": 1,
@@ -9803,13 +9558,6 @@
         },
         {
           "lo": 16,
-          "hi": 17,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 18,
           "hi": 22,
           "pts": 3,
           "reb": 1,
@@ -9850,7 +9598,7 @@
       "paintBoost": -1,
       "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 470,
+      "salary": 500,
       "chart": [
         {
           "lo": 1,
@@ -9868,6 +9616,13 @@
         },
         {
           "lo": 11,
+          "hi": 11,
+          "pts": 1,
+          "reb": 1,
+          "ast": 1
+        },
+        {
+          "lo": 12,
           "hi": 13,
           "pts": 2,
           "reb": 1,
@@ -9875,16 +9630,9 @@
         },
         {
           "lo": 14,
-          "hi": 21,
-          "pts": 3,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 22,
           "hi": 24,
           "pts": 3,
-          "reb": 2,
+          "reb": 1,
           "ast": 1
         },
         {
@@ -9922,7 +9670,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -1,
-      "salary": 440,
+      "salary": 400,
       "chart": [
         {
           "lo": 1,
@@ -9941,7 +9689,7 @@
         {
           "lo": 10,
           "hi": 14,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 1
         },
@@ -9987,7 +9735,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": 0,
-      "salary": 370,
+      "salary": 500,
       "chart": [
         {
           "lo": 1,
@@ -9998,20 +9746,20 @@
         },
         {
           "lo": 3,
-          "hi": 4,
+          "hi": 3,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 5,
-          "hi": 9,
+          "lo": 4,
+          "hi": 6,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 10,
+          "lo": 7,
           "hi": 15,
           "pts": 2,
           "reb": 0,
@@ -10052,7 +9800,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 1,
-      "salary": 700,
+      "salary": 630,
       "chart": [
         {
           "lo": 1,
@@ -10063,23 +9811,16 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 2,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 8,
           "hi": 14,
           "pts": 2,
-          "reb": 1,
+          "reb": 0,
           "ast": 0
         },
         {
@@ -10117,7 +9858,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 230,
+      "salary": 270,
       "chart": [
         {
           "lo": 1,
@@ -10128,23 +9869,16 @@
         },
         {
           "lo": 3,
-          "hi": 6,
+          "hi": 5,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 7,
-          "hi": 10,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 11,
+          "lo": 6,
           "hi": 15,
           "pts": 1,
-          "reb": 1,
+          "reb": 0,
           "ast": 0
         },
         {
@@ -10189,7 +9923,7 @@
       "paintBoost": -1,
       "threePtBoost": -1,
       "defBoost": 1,
-      "salary": 480,
+      "salary": 510,
       "chart": [
         {
           "lo": 1,
@@ -10208,7 +9942,7 @@
         {
           "lo": 11,
           "hi": 12,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 1
         },
@@ -10264,7 +9998,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 470,
+      "salary": 340,
       "chart": [
         {
           "lo": 1,
@@ -10275,23 +10009,16 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
+          "lo": 7,
+          "hi": 15,
           "pts": 1,
           "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
-          "hi": 15,
-          "pts": 2,
-          "reb": 1,
           "ast": 0
         },
         {
@@ -10336,7 +10063,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 270,
+      "salary": 300,
       "chart": [
         {
           "lo": 1,
@@ -10354,6 +10081,13 @@
         },
         {
           "lo": 4,
+          "hi": 6,
+          "pts": 1,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 7,
           "hi": 15,
           "pts": 1,
           "reb": 0,
@@ -10361,13 +10095,13 @@
         },
         {
           "lo": 16,
-          "hi": 21,
+          "hi": 22,
           "pts": 2,
           "reb": 0,
           "ast": 1
         },
         {
-          "lo": 22,
+          "lo": 23,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -10401,7 +10135,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": 2,
-      "salary": 440,
+      "salary": 420,
       "chart": [
         {
           "lo": 1,
@@ -10420,7 +10154,7 @@
         {
           "lo": 11,
           "hi": 15,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 1
         },
@@ -10473,7 +10207,7 @@
       "paintBoost": 0,
       "threePtBoost": -2,
       "defBoost": 0,
-      "salary": 640,
+      "salary": 550,
       "chart": [
         {
           "lo": 1,
@@ -10484,24 +10218,17 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
+          "lo": 7,
+          "hi": 14,
           "pts": 1,
           "reb": 0,
           "ast": 0
-        },
-        {
-          "lo": 10,
-          "hi": 14,
-          "pts": 2,
-          "reb": 0,
-          "ast": 1
         },
         {
           "lo": 15,
@@ -10545,7 +10272,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 1,
-      "salary": 680,
+      "salary": 600,
       "chart": [
         {
           "lo": 1,
@@ -10556,23 +10283,16 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
+          "lo": 7,
+          "hi": 15,
           "pts": 1,
           "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
-          "hi": 15,
-          "pts": 2,
-          "reb": 1,
           "ast": 0
         },
         {
@@ -10617,7 +10337,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 1,
-      "salary": 540,
+      "salary": 580,
       "chart": [
         {
           "lo": 1,
@@ -10635,6 +10355,13 @@
         },
         {
           "lo": 10,
+          "hi": 10,
+          "pts": 1,
+          "reb": 1,
+          "ast": 1
+        },
+        {
+          "lo": 11,
           "hi": 15,
           "pts": 2,
           "reb": 1,
@@ -10682,7 +10409,7 @@
       "paintBoost": 0,
       "threePtBoost": -4,
       "defBoost": 0,
-      "salary": 450,
+      "salary": 470,
       "chart": [
         {
           "lo": 1,
@@ -10700,6 +10427,13 @@
         },
         {
           "lo": 4,
+          "hi": 8,
+          "pts": 1,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 9,
           "hi": 15,
           "pts": 1,
           "reb": 1,
@@ -10707,13 +10441,13 @@
         },
         {
           "lo": 16,
-          "hi": 22,
+          "hi": 23,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 23,
+          "lo": 24,
           "hi": 99,
           "pts": 3,
           "reb": 3,
@@ -10747,7 +10481,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -2,
-      "salary": 600,
+      "salary": 680,
       "chart": [
         {
           "lo": 1,
@@ -10758,8 +10492,15 @@
         },
         {
           "lo": 3,
-          "hi": 7,
+          "hi": 6,
           "pts": 0,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 7,
+          "hi": 7,
+          "pts": 1,
           "reb": 0,
           "ast": 0
         },
@@ -10812,7 +10553,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 1,
-      "salary": 820,
+      "salary": 840,
       "chart": [
         {
           "lo": 1,
@@ -10823,13 +10564,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 7,
           "hi": 14,
           "pts": 2,
           "reb": 1,
@@ -10877,7 +10618,7 @@
       "paintBoost": 3,
       "threePtBoost": -2,
       "defBoost": 1,
-      "salary": 380,
+      "salary": 440,
       "chart": [
         {
           "lo": 1,
@@ -10949,7 +10690,7 @@
       "paintBoost": 0,
       "threePtBoost": -4,
       "defBoost": 0,
-      "salary": 560,
+      "salary": 480,
       "chart": [
         {
           "lo": 1,
@@ -10960,22 +10701,15 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 7,
           "hi": 15,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 0
         },
@@ -11021,7 +10755,7 @@
       "paintBoost": 0,
       "threePtBoost": -3,
       "defBoost": 1,
-      "salary": 210,
+      "salary": 190,
       "chart": [
         {
           "lo": 1,
@@ -11032,23 +10766,16 @@
         },
         {
           "lo": 3,
-          "hi": 4,
+          "hi": 8,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 5,
-          "hi": 11,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 12,
+          "lo": 9,
           "hi": 16,
           "pts": 1,
-          "reb": 1,
+          "reb": 0,
           "ast": 0
         },
         {
@@ -11093,7 +10820,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": 1,
-      "salary": 680,
+      "salary": 730,
       "chart": [
         {
           "lo": 1,
@@ -11104,20 +10831,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
           "reb": 0,
           "ast": 1
         },
         {
-          "lo": 10,
+          "lo": 8,
           "hi": 15,
           "pts": 1,
           "reb": 1,
@@ -11125,13 +10845,13 @@
         },
         {
           "lo": 16,
-          "hi": 20,
+          "hi": 21,
           "pts": 2,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 21,
+          "lo": 22,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -11165,7 +10885,7 @@
       "paintBoost": 0,
       "threePtBoost": 3,
       "defBoost": -1,
-      "salary": 510,
+      "salary": 370,
       "chart": [
         {
           "lo": 1,
@@ -11176,23 +10896,16 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
+          "lo": 7,
+          "hi": 16,
           "pts": 1,
           "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
-          "hi": 16,
-          "pts": 2,
-          "reb": 1,
           "ast": 0
         },
         {
@@ -11237,7 +10950,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": -1,
-      "salary": 420,
+      "salary": 430,
       "chart": [
         {
           "lo": 1,
@@ -11248,13 +10961,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 7,
           "hi": 15,
           "pts": 1,
           "reb": 0,
@@ -11295,7 +11008,7 @@
       "paintBoost": 0,
       "threePtBoost": -2,
       "defBoost": 1,
-      "salary": 420,
+      "salary": 390,
       "chart": [
         {
           "lo": 1,
@@ -11306,22 +11019,15 @@
         },
         {
           "lo": 3,
-          "hi": 9,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
           "hi": 11,
-          "pts": 1,
+          "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
           "lo": 12,
           "hi": 14,
-          "pts": 2,
+          "pts": 1,
           "reb": 0,
           "ast": 0
         },
@@ -11367,7 +11073,7 @@
       "paintBoost": 3,
       "threePtBoost": -2,
       "defBoost": 1,
-      "salary": 520,
+      "salary": 630,
       "chart": [
         {
           "lo": 1,
@@ -11378,20 +11084,20 @@
         },
         {
           "lo": 3,
-          "hi": 5,
+          "hi": 4,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 6,
-          "hi": 10,
+          "lo": 5,
+          "hi": 7,
           "pts": 1,
-          "reb": 1,
+          "reb": 0,
           "ast": 0
         },
         {
-          "lo": 11,
+          "lo": 8,
           "hi": 17,
           "pts": 2,
           "reb": 1,
@@ -11439,7 +11145,7 @@
       "paintBoost": 3,
       "threePtBoost": 4,
       "defBoost": 1,
-      "salary": 230,
+      "salary": 290,
       "chart": [
         {
           "lo": 1,
@@ -11490,7 +11196,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 310,
+      "salary": 240,
       "chart": [
         {
           "lo": 1,
@@ -11508,15 +11214,8 @@
         },
         {
           "lo": 5,
-          "hi": 9,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
           "hi": 15,
-          "pts": 2,
+          "pts": 1,
           "reb": 0,
           "ast": 0
         },
@@ -11562,7 +11261,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 3,
-      "salary": 320,
+      "salary": 370,
       "chart": [
         {
           "lo": 1,
@@ -11573,13 +11272,13 @@
         },
         {
           "lo": 3,
-          "hi": 8,
+          "hi": 10,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 9,
+          "lo": 11,
           "hi": 14,
           "pts": 1,
           "reb": 0,
@@ -11630,7 +11329,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -1,
-      "salary": 610,
+      "salary": 580,
       "chart": [
         {
           "lo": 1,
@@ -11641,22 +11340,15 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 10,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 11,
+          "lo": 8,
           "hi": 14,
-          "pts": 2,
+          "pts": 1,
           "reb": 0,
           "ast": 0
         },
@@ -11705,7 +11397,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 1,
-      "salary": 330,
+      "salary": 360,
       "chart": [
         {
           "lo": 1,
@@ -11723,6 +11415,13 @@
         },
         {
           "lo": 7,
+          "hi": 8,
+          "pts": 0,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 9,
           "hi": 15,
           "pts": 1,
           "reb": 1,
@@ -11770,7 +11469,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 330,
+      "salary": 350,
       "chart": [
         {
           "lo": 1,
@@ -11781,13 +11480,13 @@
         },
         {
           "lo": 3,
-          "hi": 8,
+          "hi": 9,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 9,
+          "lo": 10,
           "hi": 14,
           "pts": 1,
           "reb": 0,
@@ -11795,13 +11494,13 @@
         },
         {
           "lo": 15,
-          "hi": 21,
+          "hi": 22,
           "pts": 3,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 22,
+          "lo": 23,
           "hi": 99,
           "pts": 4,
           "reb": 2,
@@ -11835,7 +11534,7 @@
       "paintBoost": 0,
       "threePtBoost": 4,
       "defBoost": 1,
-      "salary": 820,
+      "salary": 870,
       "chart": [
         {
           "lo": 1,
@@ -11846,20 +11545,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 2,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 7,
           "hi": 15,
           "pts": 2,
           "reb": 1,
@@ -11907,7 +11599,7 @@
       "paintBoost": 2,
       "threePtBoost": 4,
       "defBoost": 1,
-      "salary": 220,
+      "salary": 190,
       "chart": [
         {
           "lo": 1,
@@ -11918,23 +11610,16 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 7,
           "hi": 17,
           "pts": 1,
-          "reb": 1,
+          "reb": 0,
           "ast": 0
         },
         {
@@ -11979,7 +11664,7 @@
       "paintBoost": 0,
       "threePtBoost": -4,
       "defBoost": 1,
-      "salary": 110,
+      "salary": 190,
       "chart": [
         {
           "lo": 1,
@@ -11990,20 +11675,20 @@
         },
         {
           "lo": 3,
-          "hi": 15,
+          "hi": 13,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 16,
-          "hi": 17,
-          "pts": 1,
+          "lo": 14,
+          "hi": 15,
+          "pts": 0,
           "reb": 2,
           "ast": 0
         },
         {
-          "lo": 18,
+          "lo": 16,
           "hi": 24,
           "pts": 1,
           "reb": 3,
@@ -12044,7 +11729,7 @@
       "paintBoost": -1,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 410,
+      "salary": 440,
       "chart": [
         {
           "lo": 1,
@@ -12062,6 +11747,13 @@
         },
         {
           "lo": 11,
+          "hi": 11,
+          "pts": 1,
+          "reb": 1,
+          "ast": 1
+        },
+        {
+          "lo": 12,
           "hi": 12,
           "pts": 2,
           "reb": 1,
@@ -12112,7 +11804,7 @@
       "paintBoost": 3,
       "threePtBoost": 4,
       "defBoost": 0,
-      "salary": 40,
+      "salary": 60,
       "chart": [
         {
           "lo": 1,
@@ -12123,13 +11815,13 @@
         },
         {
           "lo": 3,
-          "hi": 11,
+          "hi": 12,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 12,
+          "lo": 13,
           "hi": 17,
           "pts": 1,
           "reb": 0,
@@ -12137,13 +11829,13 @@
         },
         {
           "lo": 18,
-          "hi": 21,
+          "hi": 22,
           "pts": 1,
           "reb": 0,
           "ast": 1
         },
         {
-          "lo": 22,
+          "lo": 23,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -12177,7 +11869,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": 1,
-      "salary": 340,
+      "salary": 400,
       "chart": [
         {
           "lo": 1,
@@ -12202,16 +11894,9 @@
         },
         {
           "lo": 16,
-          "hi": 20,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 21,
           "hi": 24,
           "pts": 2,
-          "reb": 2,
+          "reb": 1,
           "ast": 1
         },
         {
@@ -12249,7 +11934,7 @@
       "paintBoost": -1,
       "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 590,
+      "salary": 550,
       "chart": [
         {
           "lo": 1,
@@ -12267,27 +11952,20 @@
         },
         {
           "lo": 8,
-          "hi": 9,
+          "hi": 13,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 10,
-          "hi": 13,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
           "lo": 14,
-          "hi": 22,
+          "hi": 21,
           "pts": 3,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 23,
+          "lo": 22,
           "hi": 99,
           "pts": 3,
           "reb": 3,
@@ -12321,7 +11999,7 @@
       "paintBoost": 3,
       "threePtBoost": -2,
       "defBoost": 0,
-      "salary": 30,
+      "salary": 10,
       "chart": [
         {
           "lo": 1,
@@ -12332,27 +12010,27 @@
         },
         {
           "lo": 3,
-          "hi": 11,
+          "hi": 10,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 12,
-          "hi": 13,
+          "lo": 11,
+          "hi": 17,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 14,
-          "hi": 17,
+          "lo": 18,
+          "hi": 25,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 18,
+          "lo": 26,
           "hi": 99,
           "pts": 1,
           "reb": 2,
@@ -12386,7 +12064,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 3,
-      "salary": 1320,
+      "salary": 1390,
       "chart": [
         {
           "lo": 1,
@@ -12397,13 +12075,20 @@
         },
         {
           "lo": 3,
-          "hi": 6,
+          "hi": 5,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 7,
+          "lo": 6,
+          "hi": 7,
+          "pts": 2,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 8,
           "hi": 15,
           "pts": 3,
           "reb": 1,
@@ -12451,7 +12136,7 @@
       "paintBoost": 2,
       "threePtBoost": -1,
       "defBoost": 0,
-      "salary": 640,
+      "salary": 690,
       "chart": [
         {
           "lo": 1,
@@ -12462,20 +12147,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 8,
           "hi": 15,
           "pts": 2,
           "reb": 1,
@@ -12523,7 +12201,7 @@
       "paintBoost": -1,
       "threePtBoost": -4,
       "defBoost": 2,
-      "salary": 530,
+      "salary": 600,
       "chart": [
         {
           "lo": 1,
@@ -12595,7 +12273,7 @@
       "paintBoost": 0,
       "threePtBoost": -4,
       "defBoost": 0,
-      "salary": 440,
+      "salary": 470,
       "chart": [
         {
           "lo": 1,
@@ -12606,13 +12284,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
-          "reb": 0,
+          "reb": 1,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 7,
           "hi": 15,
           "pts": 1,
           "reb": 1,
@@ -12660,7 +12338,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": -1,
-      "salary": 720,
+      "salary": 630,
       "chart": [
         {
           "lo": 1,
@@ -12671,34 +12349,27 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
+          "lo": 7,
+          "hi": 15,
           "pts": 2,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 10,
-          "hi": 15,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        },
-        {
           "lo": 16,
-          "hi": 20,
+          "hi": 21,
           "pts": 2,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 21,
+          "lo": 22,
           "hi": 99,
           "pts": 3,
           "reb": 1,
@@ -12732,7 +12403,7 @@
       "paintBoost": 3,
       "threePtBoost": 4,
       "defBoost": -9,
-      "salary": 180,
+      "salary": 240,
       "chart": [
         {
           "lo": 1,
@@ -12783,7 +12454,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -2,
-      "salary": 390,
+      "salary": 300,
       "chart": [
         {
           "lo": 1,
@@ -12801,16 +12472,9 @@
         },
         {
           "lo": 5,
-          "hi": 9,
+          "hi": 15,
           "pts": 1,
           "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
-          "hi": 15,
-          "pts": 2,
-          "reb": 1,
           "ast": 0
         },
         {
@@ -12858,7 +12522,7 @@
       "paintBoost": 3,
       "threePtBoost": 1,
       "defBoost": -4,
-      "salary": 340,
+      "salary": 370,
       "chart": [
         {
           "lo": 1,
@@ -12876,6 +12540,13 @@
         },
         {
           "lo": 12,
+          "hi": 12,
+          "pts": 1,
+          "reb": 1,
+          "ast": 1
+        },
+        {
+          "lo": 13,
           "hi": 17,
           "pts": 2,
           "reb": 1,
@@ -12923,7 +12594,7 @@
       "paintBoost": -1,
       "threePtBoost": -1,
       "defBoost": 2,
-      "salary": 430,
+      "salary": 460,
       "chart": [
         {
           "lo": 1,
@@ -12942,7 +12613,7 @@
         {
           "lo": 11,
           "hi": 12,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 1
         },
@@ -12988,7 +12659,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 2,
-      "salary": 520,
+      "salary": 590,
       "chart": [
         {
           "lo": 1,
@@ -13006,6 +12677,13 @@
         },
         {
           "lo": 7,
+          "hi": 7,
+          "pts": 1,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 8,
           "hi": 14,
           "pts": 1,
           "reb": 0,
@@ -13013,13 +12691,13 @@
         },
         {
           "lo": 15,
-          "hi": 21,
+          "hi": 22,
           "pts": 2,
           "reb": 0,
           "ast": 1
         },
         {
-          "lo": 22,
+          "lo": 23,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -13053,7 +12731,7 @@
       "paintBoost": 0,
       "threePtBoost": -2,
       "defBoost": 0,
-      "salary": 560,
+      "salary": 470,
       "chart": [
         {
           "lo": 1,
@@ -13064,22 +12742,15 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 10,
+          "lo": 8,
           "hi": 14,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 1
         },
@@ -13125,7 +12796,7 @@
       "paintBoost": 0,
       "threePtBoost": -2,
       "defBoost": 0,
-      "salary": 40,
+      "salary": 80,
       "chart": [
         {
           "lo": 1,
@@ -13136,13 +12807,13 @@
         },
         {
           "lo": 3,
-          "hi": 9,
+          "hi": 10,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 10,
+          "lo": 11,
           "hi": 14,
           "pts": 1,
           "reb": 0,
@@ -13190,7 +12861,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 1,
-      "salary": 290,
+      "salary": 410,
       "chart": [
         {
           "lo": 1,
@@ -13201,20 +12872,20 @@
         },
         {
           "lo": 3,
-          "hi": 5,
+          "hi": 4,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 6,
-          "hi": 11,
+          "lo": 5,
+          "hi": 7,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 12,
+          "lo": 8,
           "hi": 14,
           "pts": 1,
           "reb": 1,
@@ -13262,7 +12933,7 @@
       "paintBoost": 2,
       "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 510,
+      "salary": 560,
       "chart": [
         {
           "lo": 1,
@@ -13273,13 +12944,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
-          "reb": 0,
+          "reb": 1,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 7,
           "hi": 16,
           "pts": 1,
           "reb": 1,
@@ -13327,7 +12998,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": 0,
-      "salary": 480,
+      "salary": 520,
       "chart": [
         {
           "lo": 1,
@@ -13345,6 +13016,13 @@
         },
         {
           "lo": 11,
+          "hi": 11,
+          "pts": 1,
+          "reb": 1,
+          "ast": 1
+        },
+        {
+          "lo": 12,
           "hi": 15,
           "pts": 2,
           "reb": 1,
@@ -13403,13 +13081,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 8,
           "hi": 15,
           "pts": 1,
           "reb": 0,
@@ -13457,7 +13135,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": -1,
-      "salary": 290,
+      "salary": 220,
       "chart": [
         {
           "lo": 1,
@@ -13475,27 +13153,20 @@
         },
         {
           "lo": 4,
-          "hi": 9,
+          "hi": 15,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 10,
-          "hi": 15,
-          "pts": 2,
-          "reb": 0,
-          "ast": 0
-        },
-        {
           "lo": 16,
-          "hi": 20,
+          "hi": 21,
           "pts": 2,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 21,
+          "lo": 22,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -13529,7 +13200,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 420,
+      "salary": 460,
       "chart": [
         {
           "lo": 1,
@@ -13540,20 +13211,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 7,
           "hi": 15,
           "pts": 1,
           "reb": 0,
@@ -13601,7 +13265,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -3,
-      "salary": 450,
+      "salary": 490,
       "chart": [
         {
           "lo": 1,
@@ -13619,6 +13283,13 @@
         },
         {
           "lo": 10,
+          "hi": 10,
+          "pts": 1,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 11,
           "hi": 13,
           "pts": 2,
           "reb": 1,
@@ -13666,7 +13337,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -1,
-      "salary": 240,
+      "salary": 200,
       "chart": [
         {
           "lo": 1,
@@ -13677,22 +13348,15 @@
         },
         {
           "lo": 3,
-          "hi": 9,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
           "hi": 10,
-          "pts": 1,
+          "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
           "lo": 11,
           "hi": 14,
-          "pts": 2,
+          "pts": 1,
           "reb": 0,
           "ast": 0
         },
@@ -13738,7 +13402,7 @@
       "paintBoost": 0,
       "threePtBoost": -5,
       "defBoost": -6,
-      "salary": 360,
+      "salary": 410,
       "chart": [
         {
           "lo": 1,
@@ -13803,7 +13467,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -1,
-      "salary": 440,
+      "salary": 400,
       "chart": [
         {
           "lo": 1,
@@ -13822,7 +13486,7 @@
         {
           "lo": 10,
           "hi": 14,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 1
         },
@@ -13875,7 +13539,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -2,
-      "salary": 370,
+      "salary": 320,
       "chart": [
         {
           "lo": 1,
@@ -13886,23 +13550,16 @@
         },
         {
           "lo": 3,
-          "hi": 4,
+          "hi": 3,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 5,
-          "hi": 9,
+          "lo": 4,
+          "hi": 14,
           "pts": 1,
           "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
-          "hi": 14,
-          "pts": 2,
-          "reb": 1,
           "ast": 0
         },
         {
@@ -13950,7 +13607,7 @@
       "paintBoost": 0,
       "threePtBoost": -3,
       "defBoost": 1,
-      "salary": 600,
+      "salary": 530,
       "chart": [
         {
           "lo": 1,
@@ -13961,22 +13618,15 @@
         },
         {
           "lo": 3,
-          "hi": 5,
+          "hi": 4,
           "pts": 0,
-          "reb": 1,
+          "reb": 0,
           "ast": 0
         },
         {
-          "lo": 6,
-          "hi": 9,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 5,
           "hi": 16,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 0
         },
@@ -14022,7 +13672,7 @@
       "paintBoost": 0,
       "threePtBoost": -2,
       "defBoost": 0,
-      "salary": 1040,
+      "salary": 1080,
       "chart": [
         {
           "lo": 1,
@@ -14033,13 +13683,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 7,
           "hi": 14,
           "pts": 2,
           "reb": 1,
@@ -14080,7 +13730,7 @@
       "paintBoost": -1,
       "threePtBoost": -4,
       "defBoost": 0,
-      "salary": 290,
+      "salary": 340,
       "chart": [
         {
           "lo": 1,
@@ -14145,7 +13795,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 2,
-      "salary": 540,
+      "salary": 600,
       "chart": [
         {
           "lo": 1,
@@ -14156,13 +13806,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
-          "reb": 0,
+          "reb": 1,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 8,
           "hi": 15,
           "pts": 1,
           "reb": 1,
@@ -14210,7 +13860,7 @@
       "paintBoost": 0,
       "threePtBoost": 3,
       "defBoost": -1,
-      "salary": 460,
+      "salary": 490,
       "chart": [
         {
           "lo": 1,
@@ -14221,20 +13871,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 10,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 11,
+          "lo": 8,
           "hi": 14,
           "pts": 1,
           "reb": 1,
@@ -14278,7 +13921,7 @@
       "paintBoost": 0,
       "threePtBoost": -3,
       "defBoost": 1,
-      "salary": 660,
+      "salary": 620,
       "chart": [
         {
           "lo": 1,
@@ -14289,22 +13932,15 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 7,
           "hi": 13,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 0
         },
@@ -14350,7 +13986,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 480,
+      "salary": 540,
       "chart": [
         {
           "lo": 1,
@@ -14422,7 +14058,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 180,
+      "salary": 210,
       "chart": [
         {
           "lo": 1,
@@ -14433,13 +14069,13 @@
         },
         {
           "lo": 3,
-          "hi": 8,
+          "hi": 9,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 9,
+          "lo": 10,
           "hi": 15,
           "pts": 1,
           "reb": 0,
@@ -14487,7 +14123,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 360,
+      "salary": 230,
       "chart": [
         {
           "lo": 1,
@@ -14498,22 +14134,15 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
-          "reb": 0,
-          "ast": 1
-        },
-        {
-          "lo": 10,
+          "lo": 7,
           "hi": 16,
-          "pts": 2,
+          "pts": 1,
           "reb": 0,
           "ast": 1
         },
@@ -14552,7 +14181,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 0,
-      "salary": 230,
+      "salary": 250,
       "chart": [
         {
           "lo": 1,
@@ -14577,13 +14206,13 @@
         },
         {
           "lo": 16,
-          "hi": 23,
+          "hi": 24,
           "pts": 1,
-          "reb": 2,
+          "reb": 1,
           "ast": 0
         },
         {
-          "lo": 24,
+          "lo": 25,
           "hi": 99,
           "pts": 1,
           "reb": 2,
@@ -14617,7 +14246,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 1,
-      "salary": 210,
+      "salary": 260,
       "chart": [
         {
           "lo": 1,
@@ -14628,13 +14257,13 @@
         },
         {
           "lo": 3,
-          "hi": 5,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 6,
+          "lo": 8,
           "hi": 15,
           "pts": 1,
           "reb": 0,
@@ -14682,7 +14311,7 @@
       "paintBoost": 3,
       "threePtBoost": 4,
       "defBoost": 1,
-      "salary": 330,
+      "salary": 480,
       "chart": [
         {
           "lo": 1,
@@ -14700,23 +14329,23 @@
         },
         {
           "lo": 11,
-          "hi": 17,
+          "hi": 12,
           "pts": 1,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 18,
-          "hi": 23,
-          "pts": 3,
+          "lo": 13,
+          "hi": 17,
+          "pts": 2,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 24,
+          "lo": 18,
           "hi": 27,
           "pts": 3,
-          "reb": 2,
+          "reb": 1,
           "ast": 1
         },
         {
@@ -14754,7 +14383,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": -1,
-      "salary": 630,
+      "salary": 550,
       "chart": [
         {
           "lo": 1,
@@ -14765,23 +14394,16 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 2,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 7,
           "hi": 15,
           "pts": 2,
-          "reb": 1,
+          "reb": 0,
           "ast": 0
         },
         {
@@ -14826,7 +14448,7 @@
       "paintBoost": 0,
       "threePtBoost": -4,
       "defBoost": 1,
-      "salary": 600,
+      "salary": 640,
       "chart": [
         {
           "lo": 1,
@@ -14837,13 +14459,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
-          "reb": 0,
+          "reb": 1,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 8,
           "hi": 15,
           "pts": 1,
           "reb": 1,
@@ -14902,13 +14524,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 8,
           "hi": 15,
           "pts": 1,
           "reb": 0,
@@ -14916,13 +14538,13 @@
         },
         {
           "lo": 16,
-          "hi": 22,
+          "hi": 23,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 23,
+          "lo": 24,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -14956,7 +14578,7 @@
       "paintBoost": 0,
       "threePtBoost": -3,
       "defBoost": -2,
-      "salary": 520,
+      "salary": 410,
       "chart": [
         {
           "lo": 1,
@@ -14967,22 +14589,15 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 7,
           "hi": 16,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 0
         },
@@ -15028,7 +14643,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -3,
-      "salary": 360,
+      "salary": 380,
       "chart": [
         {
           "lo": 1,
@@ -15039,20 +14654,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
-          "reb": 0,
-          "ast": 1
-        },
-        {
-          "lo": 10,
+          "lo": 7,
           "hi": 15,
           "pts": 2,
           "reb": 0,
@@ -15093,7 +14701,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 250,
+      "salary": 320,
       "chart": [
         {
           "lo": 1,
@@ -15158,7 +14766,7 @@
       "paintBoost": 0,
       "threePtBoost": 4,
       "defBoost": -2,
-      "salary": 630,
+      "salary": 600,
       "chart": [
         {
           "lo": 1,
@@ -15169,13 +14777,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 7,
           "hi": 15,
           "pts": 2,
           "reb": 0,
@@ -15223,7 +14831,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 390,
+      "salary": 440,
       "chart": [
         {
           "lo": 1,
@@ -15288,7 +14896,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 2,
-      "salary": 100,
+      "salary": 170,
       "chart": [
         {
           "lo": 1,
@@ -15299,17 +14907,17 @@
         },
         {
           "lo": 3,
-          "hi": 10,
+          "hi": 9,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 11,
+          "lo": 10,
           "hi": 16,
           "pts": 1,
           "reb": 0,
-          "ast": 1
+          "ast": 0
         },
         {
           "lo": 17,
@@ -15364,34 +14972,27 @@
         },
         {
           "lo": 3,
-          "hi": 5,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 6,
-          "hi": 10,
+          "lo": 8,
+          "hi": 14,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 11,
-          "hi": 14,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
           "lo": 15,
-          "hi": 22,
+          "hi": 23,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 23,
+          "lo": 24,
           "hi": 99,
           "pts": 2,
           "reb": 2,
@@ -15425,7 +15026,7 @@
       "paintBoost": 2,
       "threePtBoost": 1,
       "defBoost": 2,
-      "salary": 420,
+      "salary": 460,
       "chart": [
         {
           "lo": 1,
@@ -15443,6 +15044,13 @@
         },
         {
           "lo": 10,
+          "hi": 11,
+          "pts": 1,
+          "reb": 1,
+          "ast": 1
+        },
+        {
+          "lo": 12,
           "hi": 17,
           "pts": 2,
           "reb": 1,
@@ -15490,7 +15098,7 @@
       "paintBoost": -1,
       "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 390,
+      "salary": 310,
       "chart": [
         {
           "lo": 1,
@@ -15501,22 +15109,15 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 7,
           "hi": 13,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 0
         },
@@ -15562,7 +15163,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -1,
-      "salary": 700,
+      "salary": 690,
       "chart": [
         {
           "lo": 1,
@@ -15573,13 +15174,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 7,
           "hi": 14,
           "pts": 2,
           "reb": 1,
@@ -15627,7 +15228,7 @@
       "paintBoost": 3,
       "threePtBoost": 1,
       "defBoost": 4,
-      "salary": 450,
+      "salary": 470,
       "chart": [
         {
           "lo": 1,
@@ -15645,15 +15246,8 @@
         },
         {
           "lo": 10,
-          "hi": 13,
-          "pts": 1,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 14,
           "hi": 17,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 1
         },
@@ -15699,7 +15293,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 1040,
+      "salary": 1020,
       "chart": [
         {
           "lo": 1,
@@ -15710,23 +15304,16 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 4,
-          "hi": 9,
-          "pts": 2,
           "reb": 0,
           "ast": 1
         },
         {
-          "lo": 10,
+          "lo": 8,
           "hi": 15,
           "pts": 2,
-          "reb": 1,
+          "reb": 0,
           "ast": 1
         },
         {
@@ -15764,7 +15351,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 0,
-      "salary": 340,
+      "salary": 350,
       "chart": [
         {
           "lo": 1,
@@ -15775,20 +15362,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 10,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 11,
+          "lo": 8,
           "hi": 15,
           "pts": 1,
           "reb": 1,
@@ -15832,7 +15412,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 0,
-      "salary": 730,
+      "salary": 830,
       "chart": [
         {
           "lo": 1,
@@ -15843,20 +15423,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 10,
+          "lo": 7,
           "hi": 15,
           "pts": 2,
           "reb": 1,
@@ -15904,7 +15477,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 1,
-      "salary": 930,
+      "salary": 890,
       "chart": [
         {
           "lo": 1,
@@ -15915,13 +15488,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
-          "reb": 0,
+          "reb": 1,
           "ast": 1
         },
         {
-          "lo": 4,
+          "lo": 8,
           "hi": 14,
           "pts": 2,
           "reb": 1,
@@ -15962,7 +15535,7 @@
       "paintBoost": 0,
       "threePtBoost": 4,
       "defBoost": -1,
-      "salary": 470,
+      "salary": 380,
       "chart": [
         {
           "lo": 1,
@@ -15973,22 +15546,15 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 10,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 11,
+          "lo": 8,
           "hi": 15,
-          "pts": 2,
+          "pts": 1,
           "reb": 0,
           "ast": 0
         },
@@ -16034,7 +15600,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 710,
+      "salary": 730,
       "chart": [
         {
           "lo": 1,
@@ -16045,13 +15611,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 7,
           "hi": 15,
           "pts": 2,
           "reb": 1,
@@ -16092,7 +15658,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 660,
+      "salary": 680,
       "chart": [
         {
           "lo": 1,
@@ -16103,23 +15669,23 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
+          "lo": 7,
+          "hi": 11,
           "pts": 2,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 10,
+          "lo": 12,
           "hi": 16,
           "pts": 2,
-          "reb": 0,
+          "reb": 1,
           "ast": 1
         },
         {
@@ -16157,7 +15723,7 @@
       "paintBoost": -1,
       "threePtBoost": -2,
       "defBoost": 4,
-      "salary": 640,
+      "salary": 700,
       "chart": [
         {
           "lo": 1,
@@ -16176,7 +15742,7 @@
         {
           "lo": 11,
           "hi": 11,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 1
         },
@@ -16232,7 +15798,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 0,
-      "salary": 200,
+      "salary": 280,
       "chart": [
         {
           "lo": 1,
@@ -16243,13 +15809,13 @@
         },
         {
           "lo": 3,
-          "hi": 6,
+          "hi": 5,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 7,
+          "lo": 6,
           "hi": 15,
           "pts": 1,
           "reb": 0,
@@ -16297,7 +15863,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 1230,
+      "salary": 1300,
       "chart": [
         {
           "lo": 1,
@@ -16308,20 +15874,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 10,
+          "lo": 7,
           "hi": 14,
           "pts": 3,
           "reb": 1,
@@ -16369,7 +15928,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -2,
-      "salary": 580,
+      "salary": 620,
       "chart": [
         {
           "lo": 1,
@@ -16387,6 +15946,13 @@
         },
         {
           "lo": 10,
+          "hi": 10,
+          "pts": 1,
+          "reb": 1,
+          "ast": 1
+        },
+        {
+          "lo": 11,
           "hi": 15,
           "pts": 2,
           "reb": 1,
@@ -16434,7 +16000,7 @@
       "paintBoost": 0,
       "threePtBoost": 4,
       "defBoost": 0,
-      "salary": 350,
+      "salary": 360,
       "chart": [
         {
           "lo": 1,
@@ -16445,13 +16011,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 7,
           "hi": 15,
           "pts": 1,
           "reb": 0,
@@ -16499,7 +16065,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 0,
-      "salary": 470,
+      "salary": 490,
       "chart": [
         {
           "lo": 1,
@@ -16517,6 +16083,13 @@
         },
         {
           "lo": 10,
+          "hi": 10,
+          "pts": 1,
+          "reb": 1,
+          "ast": 1
+        },
+        {
+          "lo": 11,
           "hi": 15,
           "pts": 2,
           "reb": 1,
@@ -16524,16 +16097,9 @@
         },
         {
           "lo": 16,
-          "hi": 20,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 21,
           "hi": 23,
           "pts": 2,
-          "reb": 2,
+          "reb": 1,
           "ast": 1
         },
         {
@@ -16571,7 +16137,7 @@
       "paintBoost": 1,
       "threePtBoost": 3,
       "defBoost": -2,
-      "salary": 320,
+      "salary": 430,
       "chart": [
         {
           "lo": 1,
@@ -16582,20 +16148,20 @@
         },
         {
           "lo": 3,
-          "hi": 6,
+          "hi": 5,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 7,
-          "hi": 9,
+          "lo": 6,
+          "hi": 6,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 10,
+          "lo": 7,
           "hi": 16,
           "pts": 2,
           "reb": 0,
@@ -16603,13 +16169,13 @@
         },
         {
           "lo": 17,
-          "hi": 20,
+          "hi": 21,
           "pts": 3,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 21,
+          "lo": 22,
           "hi": 99,
           "pts": 3,
           "reb": 1,
@@ -16643,7 +16209,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 3,
-      "salary": 640,
+      "salary": 700,
       "chart": [
         {
           "lo": 1,
@@ -16654,13 +16220,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 7,
           "hi": 15,
           "pts": 1,
           "reb": 0,
@@ -16701,7 +16267,7 @@
       "paintBoost": 0,
       "threePtBoost": 3,
       "defBoost": 2,
-      "salary": 440,
+      "salary": 480,
       "chart": [
         {
           "lo": 1,
@@ -16712,13 +16278,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 8,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 9,
           "hi": 16,
           "pts": 1,
           "reb": 0,
@@ -16759,7 +16325,7 @@
       "paintBoost": 2,
       "threePtBoost": -4,
       "defBoost": 1,
-      "salary": 650,
+      "salary": 720,
       "chart": [
         {
           "lo": 1,
@@ -16770,23 +16336,23 @@
         },
         {
           "lo": 3,
-          "hi": 6,
+          "hi": 5,
           "pts": 0,
-          "reb": 1,
+          "reb": 0,
           "ast": 0
         },
         {
-          "lo": 7,
-          "hi": 9,
+          "lo": 6,
+          "hi": 6,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 10,
+          "lo": 7,
           "hi": 15,
           "pts": 2,
-          "reb": 2,
+          "reb": 1,
           "ast": 0
         },
         {
@@ -16831,7 +16397,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": -2,
-      "salary": 740,
+      "salary": 730,
       "chart": [
         {
           "lo": 1,
@@ -16842,13 +16408,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
-          "reb": 0,
+          "reb": 1,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 7,
           "hi": 15,
           "pts": 2,
           "reb": 1,
@@ -16896,7 +16462,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -1,
-      "salary": 420,
+      "salary": 410,
       "chart": [
         {
           "lo": 1,
@@ -16907,20 +16473,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 8,
           "hi": 14,
           "pts": 2,
           "reb": 1,
@@ -16968,7 +16527,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 0,
-      "salary": 150,
+      "salary": 160,
       "chart": [
         {
           "lo": 1,
@@ -16979,13 +16538,13 @@
         },
         {
           "lo": 3,
-          "hi": 9,
+          "hi": 11,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 10,
+          "lo": 12,
           "hi": 15,
           "pts": 1,
           "reb": 0,
@@ -17033,7 +16592,7 @@
       "paintBoost": -1,
       "threePtBoost": -2,
       "defBoost": -2,
-      "salary": 440,
+      "salary": 470,
       "chart": [
         {
           "lo": 1,
@@ -17058,20 +16617,20 @@
         },
         {
           "lo": 12,
-          "hi": 15,
-          "pts": 2,
+          "hi": 13,
+          "pts": 1,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 16,
-          "hi": 21,
+          "lo": 14,
+          "hi": 22,
           "pts": 3,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 22,
+          "lo": 23,
           "hi": 99,
           "pts": 4,
           "reb": 2,
@@ -17105,7 +16664,7 @@
       "paintBoost": -1,
       "threePtBoost": -3,
       "defBoost": -3,
-      "salary": 370,
+      "salary": 360,
       "chart": [
         {
           "lo": 1,
@@ -17124,7 +16683,7 @@
         {
           "lo": 11,
           "hi": 13,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 1
         },
@@ -17170,7 +16729,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": -1,
-      "salary": 430,
+      "salary": 450,
       "chart": [
         {
           "lo": 1,
@@ -17181,13 +16740,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 8,
           "hi": 15,
           "pts": 1,
           "reb": 0,
@@ -17235,7 +16794,7 @@
       "paintBoost": 0,
       "threePtBoost": 3,
       "defBoost": -1,
-      "salary": 870,
+      "salary": 930,
       "chart": [
         {
           "lo": 1,
@@ -17246,13 +16805,20 @@
         },
         {
           "lo": 3,
-          "hi": 5,
+          "hi": 4,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 6,
+          "lo": 5,
+          "hi": 6,
+          "pts": 1,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 7,
           "hi": 14,
           "pts": 2,
           "reb": 1,
@@ -17300,7 +16866,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 0,
-      "salary": 510,
+      "salary": 440,
       "chart": [
         {
           "lo": 1,
@@ -17318,16 +16884,9 @@
         },
         {
           "lo": 7,
-          "hi": 9,
+          "hi": 15,
           "pts": 1,
           "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
-          "hi": 15,
-          "pts": 2,
-          "reb": 1,
           "ast": 0
         },
         {
@@ -17383,13 +16942,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 8,
           "hi": 14,
           "pts": 1,
           "reb": 0,
@@ -17437,7 +16996,7 @@
       "paintBoost": 0,
       "threePtBoost": -4,
       "defBoost": -2,
-      "salary": 350,
+      "salary": 340,
       "chart": [
         {
           "lo": 1,
@@ -17448,13 +17007,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 8,
           "hi": 15,
           "pts": 1,
           "reb": 0,
@@ -17502,7 +17061,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": -1,
-      "salary": 320,
+      "salary": 340,
       "chart": [
         {
           "lo": 1,
@@ -17513,20 +17072,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 7,
           "hi": 15,
           "pts": 1,
           "reb": 0,
@@ -17567,7 +17119,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 290,
+      "salary": 250,
       "chart": [
         {
           "lo": 1,
@@ -17578,13 +17130,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 8,
           "hi": 14,
           "pts": 1,
           "reb": 1,
@@ -17632,7 +17184,7 @@
       "paintBoost": 2,
       "threePtBoost": 3,
       "defBoost": 1,
-      "salary": 540,
+      "salary": 570,
       "chart": [
         {
           "lo": 1,
@@ -17650,6 +17202,13 @@
         },
         {
           "lo": 10,
+          "hi": 11,
+          "pts": 1,
+          "reb": 1,
+          "ast": 1
+        },
+        {
+          "lo": 12,
           "hi": 16,
           "pts": 2,
           "reb": 1,
@@ -17690,7 +17249,7 @@
       "paintBoost": 3,
       "threePtBoost": -3,
       "defBoost": 2,
-      "salary": 510,
+      "salary": 580,
       "chart": [
         {
           "lo": 1,
@@ -17703,7 +17262,7 @@
           "lo": 3,
           "hi": 4,
           "pts": 0,
-          "reb": 1,
+          "reb": 0,
           "ast": 0
         },
         {
@@ -17755,7 +17314,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 360,
+      "salary": 410,
       "chart": [
         {
           "lo": 1,
@@ -17820,7 +17379,7 @@
       "paintBoost": 3,
       "threePtBoost": 4,
       "defBoost": 1,
-      "salary": 440,
+      "salary": 500,
       "chart": [
         {
           "lo": 1,
@@ -17892,7 +17451,7 @@
       "paintBoost": 0,
       "threePtBoost": -5,
       "defBoost": -1,
-      "salary": 380,
+      "salary": 350,
       "chart": [
         {
           "lo": 1,
@@ -17911,7 +17470,7 @@
         {
           "lo": 10,
           "hi": 14,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 1
         },
@@ -17964,7 +17523,7 @@
       "paintBoost": 0,
       "threePtBoost": -4,
       "defBoost": 1,
-      "salary": 530,
+      "salary": 490,
       "chart": [
         {
           "lo": 1,
@@ -17975,22 +17534,15 @@
         },
         {
           "lo": 3,
-          "hi": 4,
+          "hi": 3,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 5,
-          "hi": 9,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 4,
           "hi": 15,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 0
         },
@@ -18036,7 +17588,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -2,
-      "salary": 490,
+      "salary": 510,
       "chart": [
         {
           "lo": 1,
@@ -18054,6 +17606,13 @@
         },
         {
           "lo": 11,
+          "hi": 11,
+          "pts": 1,
+          "reb": 1,
+          "ast": 1
+        },
+        {
+          "lo": 12,
           "hi": 15,
           "pts": 2,
           "reb": 1,
@@ -18101,7 +17660,7 @@
       "paintBoost": 0,
       "threePtBoost": 3,
       "defBoost": 1,
-      "salary": 370,
+      "salary": 420,
       "chart": [
         {
           "lo": 1,
@@ -18112,24 +17671,17 @@
         },
         {
           "lo": 3,
-          "hi": 6,
+          "hi": 5,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 7,
-          "hi": 9,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 6,
           "hi": 16,
           "pts": 1,
           "reb": 1,
-          "ast": 1
+          "ast": 0
         },
         {
           "lo": 17,
@@ -18173,7 +17725,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 0,
-      "salary": 720,
+      "salary": 770,
       "chart": [
         {
           "lo": 1,
@@ -18184,8 +17736,15 @@
         },
         {
           "lo": 3,
-          "hi": 7,
+          "hi": 6,
           "pts": 0,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 7,
+          "hi": 7,
+          "pts": 1,
           "reb": 0,
           "ast": 0
         },
@@ -18238,7 +17797,7 @@
       "paintBoost": 0,
       "threePtBoost": -4,
       "defBoost": -1,
-      "salary": 260,
+      "salary": 310,
       "chart": [
         {
           "lo": 1,
@@ -18303,7 +17862,7 @@
       "paintBoost": 0,
       "threePtBoost": -2,
       "defBoost": 0,
-      "salary": 370,
+      "salary": 330,
       "chart": [
         {
           "lo": 1,
@@ -18322,7 +17881,7 @@
         {
           "lo": 10,
           "hi": 14,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 1
         },
@@ -18368,7 +17927,7 @@
       "paintBoost": 0,
       "threePtBoost": -5,
       "defBoost": -2,
-      "salary": 350,
+      "salary": 370,
       "chart": [
         {
           "lo": 1,
@@ -18394,7 +17953,7 @@
         {
           "lo": 15,
           "hi": 16,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 1
         },
@@ -18440,7 +17999,7 @@
       "paintBoost": 1,
       "threePtBoost": 3,
       "defBoost": -1,
-      "salary": 200,
+      "salary": 250,
       "chart": [
         {
           "lo": 1,
@@ -18451,13 +18010,13 @@
         },
         {
           "lo": 3,
-          "hi": 7,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 8,
+          "lo": 7,
           "hi": 16,
           "pts": 1,
           "reb": 0,
@@ -18467,7 +18026,7 @@
           "lo": 17,
           "hi": 21,
           "pts": 2,
-          "reb": 1,
+          "reb": 0,
           "ast": 1
         },
         {
@@ -18505,7 +18064,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 1,
-      "salary": 390,
+      "salary": 460,
       "chart": [
         {
           "lo": 1,
@@ -18516,13 +18075,13 @@
         },
         {
           "lo": 3,
-          "hi": 5,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 6,
+          "lo": 8,
           "hi": 15,
           "pts": 1,
           "reb": 0,
@@ -18570,7 +18129,7 @@
       "paintBoost": 0,
       "threePtBoost": -2,
       "defBoost": 1,
-      "salary": 1050,
+      "salary": 1120,
       "chart": [
         {
           "lo": 1,
@@ -18581,20 +18140,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 8,
           "hi": 14,
           "pts": 2,
           "reb": 1,
@@ -18642,7 +18194,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 370,
+      "salary": 420,
       "chart": [
         {
           "lo": 1,
@@ -18714,7 +18266,7 @@
       "paintBoost": 1,
       "threePtBoost": -3,
       "defBoost": 0,
-      "salary": 160,
+      "salary": 190,
       "chart": [
         {
           "lo": 1,
@@ -18725,13 +18277,13 @@
         },
         {
           "lo": 3,
-          "hi": 7,
+          "hi": 8,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 8,
+          "lo": 9,
           "hi": 16,
           "pts": 1,
           "reb": 1,
@@ -18779,7 +18331,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 400,
+      "salary": 360,
       "chart": [
         {
           "lo": 1,
@@ -18798,7 +18350,7 @@
         {
           "lo": 10,
           "hi": 14,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 0
         },
@@ -18851,7 +18403,7 @@
       "paintBoost": 0,
       "threePtBoost": 3,
       "defBoost": 0,
-      "salary": 410,
+      "salary": 460,
       "chart": [
         {
           "lo": 1,
@@ -18869,13 +18421,6 @@
         },
         {
           "lo": 7,
-          "hi": 9,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
           "hi": 16,
           "pts": 1,
           "reb": 1,
@@ -18883,13 +18428,13 @@
         },
         {
           "lo": 17,
-          "hi": 21,
+          "hi": 22,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 22,
+          "lo": 23,
           "hi": 99,
           "pts": 4,
           "reb": 2,
@@ -18923,7 +18468,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -1,
-      "salary": 240,
+      "salary": 290,
       "chart": [
         {
           "lo": 1,
@@ -18988,7 +18533,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 1,
-      "salary": 460,
+      "salary": 610,
       "chart": [
         {
           "lo": 1,
@@ -19013,13 +18558,6 @@
         },
         {
           "lo": 14,
-          "hi": 16,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 17,
           "hi": 24,
           "pts": 2,
           "reb": 1,
@@ -19060,7 +18598,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 520,
+      "salary": 560,
       "chart": [
         {
           "lo": 1,
@@ -19132,7 +18670,7 @@
       "paintBoost": 0,
       "threePtBoost": -5,
       "defBoost": 1,
-      "salary": 330,
+      "salary": 300,
       "chart": [
         {
           "lo": 1,
@@ -19152,25 +18690,25 @@
           "lo": 9,
           "hi": 10,
           "pts": 1,
-          "reb": 1,
+          "reb": 0,
           "ast": 0
         },
         {
           "lo": 11,
           "hi": 14,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
           "lo": 15,
-          "hi": 22,
+          "hi": 23,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 23,
+          "lo": 24,
           "hi": 99,
           "pts": 3,
           "reb": 2,
@@ -19204,7 +18742,7 @@
       "paintBoost": 0,
       "threePtBoost": -5,
       "defBoost": 0,
-      "salary": 120,
+      "salary": 130,
       "chart": [
         {
           "lo": 1,
@@ -19215,13 +18753,13 @@
         },
         {
           "lo": 3,
-          "hi": 6,
+          "hi": 8,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 7,
+          "lo": 9,
           "hi": 14,
           "pts": 1,
           "reb": 1,
@@ -19269,7 +18807,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 150,
+      "salary": 220,
       "chart": [
         {
           "lo": 1,
@@ -19280,13 +18818,13 @@
         },
         {
           "lo": 3,
-          "hi": 10,
+          "hi": 12,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 11,
+          "lo": 13,
           "hi": 13,
           "pts": 1,
           "reb": 0,
@@ -19294,13 +18832,6 @@
         },
         {
           "lo": 14,
-          "hi": 15,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 16,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -19334,7 +18865,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 0,
-      "salary": 530,
+      "salary": 440,
       "chart": [
         {
           "lo": 1,
@@ -19345,22 +18876,15 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 7,
           "hi": 15,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 0
         },
@@ -19406,7 +18930,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": -1,
-      "salary": 770,
+      "salary": 740,
       "chart": [
         {
           "lo": 1,
@@ -19417,13 +18941,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
-          "reb": 0,
+          "reb": 1,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 7,
           "hi": 15,
           "pts": 2,
           "reb": 1,
@@ -19475,23 +18999,16 @@
         },
         {
           "lo": 3,
-          "hi": 6,
+          "hi": 8,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 7,
-          "hi": 10,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 11,
+          "lo": 9,
           "hi": 15,
           "pts": 1,
-          "reb": 1,
+          "reb": 0,
           "ast": 0
         },
         {
@@ -19536,7 +19053,7 @@
       "paintBoost": -1,
       "threePtBoost": -5,
       "defBoost": -3,
-      "salary": 370,
+      "salary": 420,
       "chart": [
         {
           "lo": 1,
@@ -19601,7 +19118,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 180,
+      "salary": 140,
       "chart": [
         {
           "lo": 1,
@@ -19612,20 +19129,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 8,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 10,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 11,
+          "lo": 9,
           "hi": 14,
           "pts": 1,
           "reb": 1,
@@ -19673,7 +19183,7 @@
       "paintBoost": 2,
       "threePtBoost": -3,
       "defBoost": 0,
-      "salary": 730,
+      "salary": 760,
       "chart": [
         {
           "lo": 1,
@@ -19684,13 +19194,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
-          "reb": 0,
+          "reb": 1,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 7,
           "hi": 16,
           "pts": 2,
           "reb": 1,
@@ -19738,7 +19248,7 @@
       "paintBoost": 0,
       "threePtBoost": -2,
       "defBoost": 1,
-      "salary": 520,
+      "salary": 600,
       "chart": [
         {
           "lo": 1,
@@ -19749,13 +19259,20 @@
         },
         {
           "lo": 3,
-          "hi": 4,
+          "hi": 3,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 5,
+          "lo": 4,
+          "hi": 6,
+          "pts": 1,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 7,
           "hi": 14,
           "pts": 1,
           "reb": 1,
@@ -19803,7 +19320,7 @@
       "paintBoost": 0,
       "threePtBoost": 4,
       "defBoost": 0,
-      "salary": 920,
+      "salary": 980,
       "chart": [
         {
           "lo": 1,
@@ -19814,13 +19331,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
-          "reb": 0,
+          "reb": 1,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 7,
           "hi": 15,
           "pts": 2,
           "reb": 1,
@@ -19868,7 +19385,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": 1,
-      "salary": 590,
+      "salary": 650,
       "chart": [
         {
           "lo": 1,
@@ -19886,6 +19403,13 @@
         },
         {
           "lo": 10,
+          "hi": 10,
+          "pts": 1,
+          "reb": 1,
+          "ast": 1
+        },
+        {
+          "lo": 11,
           "hi": 15,
           "pts": 2,
           "reb": 1,
@@ -19893,13 +19417,6 @@
         },
         {
           "lo": 16,
-          "hi": 16,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 17,
           "hi": 21,
           "pts": 3,
           "reb": 1,
@@ -19940,7 +19457,7 @@
       "paintBoost": 0,
       "threePtBoost": 3,
       "defBoost": 0,
-      "salary": 360,
+      "salary": 410,
       "chart": [
         {
           "lo": 1,
@@ -19998,7 +19515,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 1,
-      "salary": 330,
+      "salary": 420,
       "chart": [
         {
           "lo": 1,
@@ -20009,13 +19526,13 @@
         },
         {
           "lo": 3,
-          "hi": 6,
+          "hi": 5,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 7,
+          "lo": 6,
           "hi": 14,
           "pts": 1,
           "reb": 0,
@@ -20063,7 +19580,7 @@
       "paintBoost": 3,
       "threePtBoost": 1,
       "defBoost": -3,
-      "salary": 530,
+      "salary": 580,
       "chart": [
         {
           "lo": 1,
@@ -20121,7 +19638,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": 0,
-      "salary": 470,
+      "salary": 510,
       "chart": [
         {
           "lo": 1,
@@ -20139,6 +19656,13 @@
         },
         {
           "lo": 10,
+          "hi": 10,
+          "pts": 1,
+          "reb": 1,
+          "ast": 1
+        },
+        {
+          "lo": 11,
           "hi": 15,
           "pts": 2,
           "reb": 1,
@@ -20186,7 +19710,7 @@
       "paintBoost": 0,
       "threePtBoost": -4,
       "defBoost": -1,
-      "salary": 320,
+      "salary": 380,
       "chart": [
         {
           "lo": 1,
@@ -20258,7 +19782,7 @@
       "paintBoost": 0,
       "threePtBoost": -3,
       "defBoost": -1,
-      "salary": 350,
+      "salary": 270,
       "chart": [
         {
           "lo": 1,
@@ -20276,15 +19800,15 @@
         },
         {
           "lo": 8,
-          "hi": 9,
+          "hi": 8,
           "pts": 1,
-          "reb": 1,
+          "reb": 0,
           "ast": 0
         },
         {
-          "lo": 10,
+          "lo": 9,
           "hi": 16,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 0
         },
@@ -20330,7 +19854,7 @@
       "paintBoost": 0,
       "threePtBoost": 3,
       "defBoost": 1,
-      "salary": 380,
+      "salary": 430,
       "chart": [
         {
           "lo": 1,
@@ -20348,27 +19872,20 @@
         },
         {
           "lo": 7,
-          "hi": 10,
+          "hi": 14,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 11,
-          "hi": 14,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
           "lo": 15,
-          "hi": 23,
+          "hi": 22,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 24,
+          "lo": 23,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -20402,7 +19919,7 @@
       "paintBoost": -1,
       "threePtBoost": -4,
       "defBoost": -2,
-      "salary": 400,
+      "salary": 450,
       "chart": [
         {
           "lo": 1,
@@ -20474,7 +19991,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 0,
-      "salary": 670,
+      "salary": 730,
       "chart": [
         {
           "lo": 1,
@@ -20492,16 +20009,16 @@
         },
         {
           "lo": 7,
-          "hi": 9,
+          "hi": 7,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 10,
+          "lo": 8,
           "hi": 13,
           "pts": 2,
-          "reb": 1,
+          "reb": 0,
           "ast": 0
         },
         {
@@ -20546,7 +20063,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": 0,
-      "salary": 380,
+      "salary": 420,
       "chart": [
         {
           "lo": 1,
@@ -20557,20 +20074,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 7,
           "hi": 15,
           "pts": 1,
           "reb": 1,
@@ -20618,7 +20128,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 550,
+      "salary": 480,
       "chart": [
         {
           "lo": 1,
@@ -20629,22 +20139,15 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 7,
           "hi": 15,
-          "pts": 2,
+          "pts": 1,
           "reb": 0,
           "ast": 0
         },
@@ -20690,7 +20193,7 @@
       "paintBoost": 3,
       "threePtBoost": 4,
       "defBoost": -1,
-      "salary": 190,
+      "salary": 160,
       "chart": [
         {
           "lo": 1,
@@ -20701,23 +20204,16 @@
         },
         {
           "lo": 3,
-          "hi": 6,
+          "hi": 8,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 7,
-          "hi": 10,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 11,
+          "lo": 9,
           "hi": 17,
           "pts": 1,
-          "reb": 1,
+          "reb": 0,
           "ast": 0
         },
         {
@@ -20762,7 +20258,7 @@
       "paintBoost": 2,
       "threePtBoost": 3,
       "defBoost": 1,
-      "salary": 160,
+      "salary": 210,
       "chart": [
         {
           "lo": 1,
@@ -20773,13 +20269,13 @@
         },
         {
           "lo": 3,
-          "hi": 8,
+          "hi": 9,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 9,
+          "lo": 10,
           "hi": 16,
           "pts": 1,
           "reb": 0,
@@ -20827,7 +20323,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 110,
+      "salary": 150,
       "chart": [
         {
           "lo": 1,
@@ -20838,13 +20334,13 @@
         },
         {
           "lo": 3,
-          "hi": 10,
+          "hi": 11,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 11,
+          "lo": 12,
           "hi": 16,
           "pts": 1,
           "reb": 0,
@@ -20892,7 +20388,7 @@
       "paintBoost": 0,
       "threePtBoost": 3,
       "defBoost": -2,
-      "salary": 270,
+      "salary": 240,
       "chart": [
         {
           "lo": 1,
@@ -20903,20 +20399,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 8,
           "hi": 16,
           "pts": 2,
           "reb": 1,
@@ -20964,7 +20453,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 320,
+      "salary": 280,
       "chart": [
         {
           "lo": 1,
@@ -20982,15 +20471,8 @@
         },
         {
           "lo": 8,
-          "hi": 10,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 11,
           "hi": 15,
-          "pts": 2,
+          "pts": 1,
           "reb": 0,
           "ast": 0
         },
@@ -21039,7 +20521,7 @@
       "paintBoost": 0,
       "threePtBoost": -4,
       "defBoost": 1,
-      "salary": 480,
+      "salary": 510,
       "chart": [
         {
           "lo": 1,
@@ -21050,13 +20532,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 7,
           "hi": 15,
           "pts": 1,
           "reb": 1,
@@ -21104,7 +20586,7 @@
       "paintBoost": 2,
       "threePtBoost": -3,
       "defBoost": 3,
-      "salary": 490,
+      "salary": 430,
       "chart": [
         {
           "lo": 1,
@@ -21123,26 +20605,26 @@
         {
           "lo": 10,
           "hi": 16,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 1
         },
         {
           "lo": 17,
-          "hi": 20,
+          "hi": 21,
           "pts": 2,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 21,
-          "hi": 24,
+          "lo": 22,
+          "hi": 25,
           "pts": 2,
           "reb": 2,
           "ast": 1
         },
         {
-          "lo": 25,
+          "lo": 26,
           "hi": 99,
           "pts": 3,
           "reb": 2,
@@ -21176,7 +20658,7 @@
       "paintBoost": -1,
       "threePtBoost": -3,
       "defBoost": 0,
-      "salary": 370,
+      "salary": 330,
       "chart": [
         {
           "lo": 1,
@@ -21194,16 +20676,9 @@
         },
         {
           "lo": 5,
-          "hi": 9,
+          "hi": 13,
           "pts": 1,
           "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
-          "hi": 13,
-          "pts": 2,
-          "reb": 1,
           "ast": 0
         },
         {
@@ -21248,7 +20723,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 2,
-      "salary": 310,
+      "salary": 340,
       "chart": [
         {
           "lo": 1,
@@ -21259,13 +20734,13 @@
         },
         {
           "lo": 3,
-          "hi": 5,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 6,
+          "lo": 8,
           "hi": 15,
           "pts": 1,
           "reb": 1,
@@ -21313,7 +20788,7 @@
       "paintBoost": 3,
       "threePtBoost": -2,
       "defBoost": 1,
-      "salary": 390,
+      "salary": 310,
       "chart": [
         {
           "lo": 1,
@@ -21331,15 +20806,8 @@
         },
         {
           "lo": 9,
-          "hi": 12,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 13,
           "hi": 17,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 0
         },
@@ -21347,7 +20815,7 @@
           "lo": 18,
           "hi": 24,
           "pts": 2,
-          "reb": 3,
+          "reb": 1,
           "ast": 0
         },
         {
@@ -21385,7 +20853,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": -2,
-      "salary": 520,
+      "salary": 460,
       "chart": [
         {
           "lo": 1,
@@ -21396,13 +20864,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
-          "reb": 0,
+          "reb": 1,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 7,
           "hi": 15,
           "pts": 2,
           "reb": 1,
@@ -21450,7 +20918,7 @@
       "paintBoost": -1,
       "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 520,
+      "salary": 540,
       "chart": [
         {
           "lo": 1,
@@ -21461,23 +20929,16 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
-          "reb": 0,
-          "ast": 1
-        },
-        {
-          "lo": 10,
+          "lo": 7,
           "hi": 16,
           "pts": 2,
-          "reb": 1,
+          "reb": 0,
           "ast": 1
         },
         {
@@ -21515,7 +20976,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 390,
+      "salary": 440,
       "chart": [
         {
           "lo": 1,
@@ -21526,13 +20987,13 @@
         },
         {
           "lo": 3,
-          "hi": 4,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 5,
+          "lo": 8,
           "hi": 13,
           "pts": 1,
           "reb": 1,
@@ -21540,13 +21001,6 @@
         },
         {
           "lo": 14,
-          "hi": 16,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 17,
           "hi": 22,
           "pts": 2,
           "reb": 1,
@@ -21587,7 +21041,7 @@
       "paintBoost": 2,
       "threePtBoost": 3,
       "defBoost": -4,
-      "salary": 420,
+      "salary": 470,
       "chart": [
         {
           "lo": 1,
@@ -21659,7 +21113,7 @@
       "paintBoost": 0,
       "threePtBoost": 4,
       "defBoost": -1,
-      "salary": 640,
+      "salary": 580,
       "chart": [
         {
           "lo": 1,
@@ -21670,22 +21124,15 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 7,
           "hi": 15,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 0
         },
@@ -21731,7 +21178,7 @@
       "paintBoost": -1,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 520,
+      "salary": 530,
       "chart": [
         {
           "lo": 1,
@@ -21756,6 +21203,13 @@
         },
         {
           "lo": 13,
+          "hi": 20,
+          "pts": 2,
+          "reb": 1,
+          "ast": 1
+        },
+        {
+          "lo": 21,
           "hi": 24,
           "pts": 2,
           "reb": 2,
@@ -21796,7 +21250,7 @@
       "paintBoost": 0,
       "threePtBoost": 4,
       "defBoost": 0,
-      "salary": 490,
+      "salary": 500,
       "chart": [
         {
           "lo": 1,
@@ -21814,6 +21268,13 @@
         },
         {
           "lo": 11,
+          "hi": 12,
+          "pts": 1,
+          "reb": 1,
+          "ast": 1
+        },
+        {
+          "lo": 13,
           "hi": 15,
           "pts": 2,
           "reb": 1,
@@ -21821,16 +21282,9 @@
         },
         {
           "lo": 16,
-          "hi": 22,
-          "pts": 3,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 23,
           "hi": 26,
           "pts": 3,
-          "reb": 2,
+          "reb": 1,
           "ast": 1
         },
         {
@@ -21868,7 +21322,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -1,
-      "salary": 510,
+      "salary": 560,
       "chart": [
         {
           "lo": 1,
@@ -21886,6 +21340,13 @@
         },
         {
           "lo": 9,
+          "hi": 10,
+          "pts": 1,
+          "reb": 1,
+          "ast": 1
+        },
+        {
+          "lo": 11,
           "hi": 14,
           "pts": 2,
           "reb": 1,
@@ -21893,13 +21354,6 @@
         },
         {
           "lo": 15,
-          "hi": 16,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 17,
           "hi": 25,
           "pts": 3,
           "reb": 2,
@@ -21940,7 +21394,7 @@
       "paintBoost": 0,
       "threePtBoost": -2,
       "defBoost": -2,
-      "salary": 360,
+      "salary": 340,
       "chart": [
         {
           "lo": 1,
@@ -21959,7 +21413,7 @@
         {
           "lo": 11,
           "hi": 14,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 1
         },
@@ -22012,7 +21466,7 @@
       "paintBoost": 0,
       "threePtBoost": -2,
       "defBoost": 0,
-      "salary": 630,
+      "salary": 720,
       "chart": [
         {
           "lo": 1,
@@ -22023,20 +21477,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 7,
           "hi": 14,
           "pts": 2,
           "reb": 1,
@@ -22084,7 +21531,7 @@
       "paintBoost": 0,
       "threePtBoost": -3,
       "defBoost": 1,
-      "salary": 490,
+      "salary": 560,
       "chart": [
         {
           "lo": 1,
@@ -22102,6 +21549,13 @@
         },
         {
           "lo": 4,
+          "hi": 6,
+          "pts": 1,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 7,
           "hi": 16,
           "pts": 1,
           "reb": 1,
@@ -22149,7 +21603,7 @@
       "paintBoost": 0,
       "threePtBoost": -5,
       "defBoost": 1,
-      "salary": 420,
+      "salary": 480,
       "chart": [
         {
           "lo": 1,
@@ -22214,7 +21668,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -2,
-      "salary": 270,
+      "salary": 140,
       "chart": [
         {
           "lo": 1,
@@ -22225,23 +21679,16 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
+          "lo": 7,
+          "hi": 14,
           "pts": 1,
           "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
-          "hi": 14,
-          "pts": 2,
-          "reb": 1,
           "ast": 0
         },
         {
@@ -22286,7 +21733,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 0,
-      "salary": 520,
+      "salary": 410,
       "chart": [
         {
           "lo": 1,
@@ -22297,24 +21744,17 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
+          "lo": 7,
+          "hi": 15,
           "pts": 1,
           "reb": 0,
           "ast": 0
-        },
-        {
-          "lo": 10,
-          "hi": 15,
-          "pts": 2,
-          "reb": 0,
-          "ast": 1
         },
         {
           "lo": 16,
@@ -22351,7 +21791,7 @@
       "paintBoost": 2,
       "threePtBoost": -3,
       "defBoost": 2,
-      "salary": 1080,
+      "salary": 1140,
       "chart": [
         {
           "lo": 1,
@@ -22362,13 +21802,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 7,
           "hi": 16,
           "pts": 2,
           "reb": 1,
@@ -22409,7 +21849,7 @@
       "paintBoost": 0,
       "threePtBoost": 3,
       "defBoost": -5,
-      "salary": 450,
+      "salary": 510,
       "chart": [
         {
           "lo": 1,
@@ -22481,7 +21921,7 @@
       "paintBoost": -1,
       "threePtBoost": -4,
       "defBoost": 1,
-      "salary": 350,
+      "salary": 410,
       "chart": [
         {
           "lo": 1,
@@ -22506,16 +21946,9 @@
         },
         {
           "lo": 13,
-          "hi": 21,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 22,
           "hi": 25,
           "pts": 2,
-          "reb": 2,
+          "reb": 1,
           "ast": 1
         },
         {
@@ -22553,7 +21986,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -2,
-      "salary": 180,
+      "salary": 100,
       "chart": [
         {
           "lo": 1,
@@ -22571,27 +22004,20 @@
         },
         {
           "lo": 7,
-          "hi": 9,
+          "hi": 15,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 10,
-          "hi": 15,
-          "pts": 2,
-          "reb": 0,
-          "ast": 0
-        },
-        {
           "lo": 16,
-          "hi": 20,
+          "hi": 21,
           "pts": 2,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 21,
+          "lo": 22,
           "hi": 99,
           "pts": 3,
           "reb": 1,
@@ -22625,7 +22051,7 @@
       "paintBoost": -1,
       "threePtBoost": -1,
       "defBoost": -1,
-      "salary": 270,
+      "salary": 310,
       "chart": [
         {
           "lo": 1,
@@ -22644,7 +22070,7 @@
         {
           "lo": 12,
           "hi": 12,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 1
         },
@@ -22697,7 +22123,7 @@
       "paintBoost": 0,
       "threePtBoost": 4,
       "defBoost": -1,
-      "salary": 810,
+      "salary": 890,
       "chart": [
         {
           "lo": 1,
@@ -22708,20 +22134,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
-          "reb": 0,
-          "ast": 1
-        },
-        {
-          "lo": 10,
+          "lo": 7,
           "hi": 15,
           "pts": 2,
           "reb": 0,
@@ -22762,7 +22181,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 0,
-      "salary": 360,
+      "salary": 330,
       "chart": [
         {
           "lo": 1,
@@ -22773,23 +22192,16 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 8,
           "hi": 15,
           "pts": 1,
-          "reb": 1,
+          "reb": 0,
           "ast": 0
         },
         {
@@ -22834,7 +22246,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": -2,
-      "salary": 680,
+      "salary": 630,
       "chart": [
         {
           "lo": 1,
@@ -22845,24 +22257,17 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 2,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 7,
           "hi": 15,
           "pts": 2,
           "reb": 0,
-          "ast": 1
+          "ast": 0
         },
         {
           "lo": 16,
@@ -22899,7 +22304,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -1,
-      "salary": 50,
+      "salary": 100,
       "chart": [
         {
           "lo": 1,
@@ -22920,7 +22325,7 @@
           "hi": 14,
           "pts": 1,
           "reb": 0,
-          "ast": 1
+          "ast": 0
         },
         {
           "lo": 15,
@@ -22964,7 +22369,7 @@
       "paintBoost": 2,
       "threePtBoost": 3,
       "defBoost": -1,
-      "salary": 470,
+      "salary": 500,
       "chart": [
         {
           "lo": 1,
@@ -22982,6 +22387,13 @@
         },
         {
           "lo": 9,
+          "hi": 9,
+          "pts": 1,
+          "reb": 1,
+          "ast": 1
+        },
+        {
+          "lo": 10,
           "hi": 16,
           "pts": 2,
           "reb": 1,
@@ -22989,13 +22401,13 @@
         },
         {
           "lo": 17,
-          "hi": 22,
+          "hi": 25,
           "pts": 3,
           "reb": 1,
           "ast": 1
         },
         {
-          "lo": 23,
+          "lo": 26,
           "hi": 99,
           "pts": 3,
           "reb": 2,
@@ -23029,7 +22441,7 @@
       "paintBoost": 0,
       "threePtBoost": -2,
       "defBoost": 0,
-      "salary": 480,
+      "salary": 510,
       "chart": [
         {
           "lo": 1,
@@ -23040,20 +22452,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
-          "reb": 0,
-          "ast": 1
-        },
-        {
-          "lo": 10,
+          "lo": 7,
           "hi": 14,
           "pts": 1,
           "reb": 1,
@@ -23101,7 +22506,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 0,
-      "salary": 540,
+      "salary": 620,
       "chart": [
         {
           "lo": 1,
@@ -23112,20 +22517,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 7,
           "hi": 15,
           "pts": 2,
           "reb": 1,
@@ -23173,7 +22571,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 140,
+      "salary": 190,
       "chart": [
         {
           "lo": 1,
@@ -23191,6 +22589,13 @@
         },
         {
           "lo": 7,
+          "hi": 8,
+          "pts": 1,
+          "reb": 0,
+          "ast": 0
+        },
+        {
+          "lo": 9,
           "hi": 14,
           "pts": 1,
           "reb": 1,
@@ -23198,13 +22603,13 @@
         },
         {
           "lo": 15,
-          "hi": 23,
+          "hi": 22,
           "pts": 1,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 24,
+          "lo": 23,
           "hi": 99,
           "pts": 2,
           "reb": 2,
@@ -23238,7 +22643,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": 1,
-      "salary": 300,
+      "salary": 360,
       "chart": [
         {
           "lo": 1,
@@ -23310,7 +22715,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": 0,
-      "salary": 460,
+      "salary": 530,
       "chart": [
         {
           "lo": 1,
@@ -23328,6 +22733,13 @@
         },
         {
           "lo": 10,
+          "hi": 10,
+          "pts": 1,
+          "reb": 1,
+          "ast": 1
+        },
+        {
+          "lo": 11,
           "hi": 15,
           "pts": 2,
           "reb": 1,
@@ -23335,13 +22747,6 @@
         },
         {
           "lo": 16,
-          "hi": 17,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 18,
           "hi": 23,
           "pts": 3,
           "reb": 1,
@@ -23385,7 +22790,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 280,
+      "salary": 330,
       "chart": [
         {
           "lo": 1,
@@ -23450,7 +22855,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -2,
-      "salary": 290,
+      "salary": 200,
       "chart": [
         {
           "lo": 1,
@@ -23461,22 +22866,15 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 7,
           "hi": 14,
-          "pts": 2,
+          "pts": 1,
           "reb": 0,
           "ast": 0
         },
@@ -23522,7 +22920,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 580,
+      "salary": 640,
       "chart": [
         {
           "lo": 1,
@@ -23533,20 +22931,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 8,
           "hi": 15,
           "pts": 2,
           "reb": 1,
@@ -23594,7 +22985,7 @@
       "paintBoost": 0,
       "threePtBoost": -1,
       "defBoost": -1,
-      "salary": 340,
+      "salary": 280,
       "chart": [
         {
           "lo": 1,
@@ -23612,16 +23003,9 @@
         },
         {
           "lo": 10,
-          "hi": 10,
+          "hi": 15,
           "pts": 1,
           "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 11,
-          "hi": 15,
-          "pts": 2,
-          "reb": 1,
           "ast": 0
         },
         {
@@ -23666,7 +23050,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 290,
+      "salary": 280,
       "chart": [
         {
           "lo": 1,
@@ -23677,13 +23061,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 8,
           "hi": 14,
           "pts": 1,
           "reb": 1,
@@ -23731,7 +23115,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -3,
-      "salary": 780,
+      "salary": 760,
       "chart": [
         {
           "lo": 1,
@@ -23742,13 +23126,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 1
         },
         {
-          "lo": 4,
+          "lo": 7,
           "hi": 15,
           "pts": 2,
           "reb": 0,
@@ -23796,7 +23180,7 @@
       "paintBoost": 3,
       "threePtBoost": -2,
       "defBoost": -1,
-      "salary": 340,
+      "salary": 380,
       "chart": [
         {
           "lo": 1,
@@ -23814,6 +23198,13 @@
         },
         {
           "lo": 11,
+          "hi": 11,
+          "pts": 1,
+          "reb": 1,
+          "ast": 1
+        },
+        {
+          "lo": 12,
           "hi": 17,
           "pts": 2,
           "reb": 1,
@@ -23861,7 +23252,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -1,
-      "salary": 230,
+      "salary": 180,
       "chart": [
         {
           "lo": 1,
@@ -23872,22 +23263,15 @@
         },
         {
           "lo": 3,
-          "hi": 4,
+          "hi": 3,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 5,
-          "hi": 9,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 4,
           "hi": 15,
-          "pts": 2,
+          "pts": 1,
           "reb": 0,
           "ast": 0
         },
@@ -23933,7 +23317,7 @@
       "paintBoost": 0,
       "threePtBoost": -2,
       "defBoost": 0,
-      "salary": 310,
+      "salary": 300,
       "chart": [
         {
           "lo": 1,
@@ -23944,22 +23328,22 @@
         },
         {
           "lo": 3,
-          "hi": 6,
+          "hi": 5,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 7,
-          "hi": 9,
+          "lo": 6,
+          "hi": 6,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 10,
+          "lo": 7,
           "hi": 14,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 0
         },
@@ -24005,7 +23389,7 @@
       "paintBoost": 0,
       "threePtBoost": 3,
       "defBoost": -1,
-      "salary": 220,
+      "salary": 280,
       "chart": [
         {
           "lo": 1,
@@ -24070,7 +23454,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 0,
-      "salary": 280,
+      "salary": 300,
       "chart": [
         {
           "lo": 1,
@@ -24088,16 +23472,9 @@
         },
         {
           "lo": 5,
-          "hi": 10,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 11,
           "hi": 14,
           "pts": 1,
-          "reb": 1,
+          "reb": 0,
           "ast": 0
         },
         {
@@ -24142,7 +23519,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": 0,
-      "salary": 480,
+      "salary": 520,
       "chart": [
         {
           "lo": 1,
@@ -24160,6 +23537,13 @@
         },
         {
           "lo": 10,
+          "hi": 10,
+          "pts": 1,
+          "reb": 1,
+          "ast": 1
+        },
+        {
+          "lo": 11,
           "hi": 13,
           "pts": 2,
           "reb": 1,
@@ -24207,7 +23591,7 @@
       "paintBoost": 2,
       "threePtBoost": 3,
       "defBoost": 0,
-      "salary": 360,
+      "salary": 430,
       "chart": [
         {
           "lo": 1,
@@ -24225,6 +23609,13 @@
         },
         {
           "lo": 11,
+          "hi": 11,
+          "pts": 1,
+          "reb": 1,
+          "ast": 1
+        },
+        {
+          "lo": 12,
           "hi": 16,
           "pts": 2,
           "reb": 1,
@@ -24232,13 +23623,6 @@
         },
         {
           "lo": 17,
-          "hi": 18,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 19,
           "hi": 26,
           "pts": 3,
           "reb": 2,
@@ -24279,7 +23663,7 @@
       "paintBoost": 0,
       "threePtBoost": 4,
       "defBoost": -1,
-      "salary": 490,
+      "salary": 440,
       "chart": [
         {
           "lo": 1,
@@ -24290,13 +23674,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 7,
           "hi": 15,
           "pts": 2,
           "reb": 0,
@@ -24344,7 +23728,7 @@
       "paintBoost": 0,
       "threePtBoost": 3,
       "defBoost": -1,
-      "salary": 570,
+      "salary": 660,
       "chart": [
         {
           "lo": 1,
@@ -24355,20 +23739,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 6,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 7,
           "hi": 14,
           "pts": 2,
           "reb": 0,
@@ -24416,7 +23793,7 @@
       "paintBoost": 0,
       "threePtBoost": 2,
       "defBoost": -3,
-      "salary": 360,
+      "salary": 320,
       "chart": [
         {
           "lo": 1,
@@ -24435,7 +23812,7 @@
         {
           "lo": 11,
           "hi": 15,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 1
         },
@@ -24481,7 +23858,7 @@
       "paintBoost": 0,
       "threePtBoost": -2,
       "defBoost": -1,
-      "salary": 460,
+      "salary": 580,
       "chart": [
         {
           "lo": 1,
@@ -24492,20 +23869,20 @@
         },
         {
           "lo": 3,
-          "hi": 5,
+          "hi": 4,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 6,
-          "hi": 9,
+          "lo": 5,
+          "hi": 6,
           "pts": 1,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 10,
+          "lo": 7,
           "hi": 14,
           "pts": 2,
           "reb": 0,
@@ -24553,7 +23930,7 @@
       "paintBoost": 2,
       "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 200,
+      "salary": 230,
       "chart": [
         {
           "lo": 1,
@@ -24564,13 +23941,13 @@
         },
         {
           "lo": 3,
-          "hi": 8,
+          "hi": 9,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 9,
+          "lo": 10,
           "hi": 16,
           "pts": 1,
           "reb": 0,
@@ -24618,7 +23995,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": 3,
-      "salary": 1440,
+      "salary": 1500,
       "chart": [
         {
           "lo": 1,
@@ -24629,20 +24006,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 8,
           "hi": 14,
           "pts": 3,
           "reb": 1,
@@ -24690,7 +24060,7 @@
       "paintBoost": -1,
       "threePtBoost": -1,
       "defBoost": 0,
-      "salary": 420,
+      "salary": 430,
       "chart": [
         {
           "lo": 1,
@@ -24709,7 +24079,7 @@
         {
           "lo": 11,
           "hi": 12,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 1
         },
@@ -24762,7 +24132,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -1,
-      "salary": 180,
+      "salary": 170,
       "chart": [
         {
           "lo": 1,
@@ -24773,13 +24143,13 @@
         },
         {
           "lo": 3,
-          "hi": 8,
+          "hi": 9,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 9,
+          "lo": 10,
           "hi": 14,
           "pts": 1,
           "reb": 0,
@@ -24787,6 +24157,13 @@
         },
         {
           "lo": 15,
+          "hi": 23,
+          "pts": 2,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 24,
           "hi": 99,
           "pts": 2,
           "reb": 1,
@@ -24820,7 +24197,7 @@
       "paintBoost": 0,
       "threePtBoost": -4,
       "defBoost": 1,
-      "salary": 540,
+      "salary": 510,
       "chart": [
         {
           "lo": 1,
@@ -24831,22 +24208,15 @@
         },
         {
           "lo": 3,
-          "hi": 5,
+          "hi": 4,
           "pts": 0,
-          "reb": 1,
+          "reb": 0,
           "ast": 0
         },
         {
-          "lo": 6,
-          "hi": 9,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 5,
           "hi": 15,
-          "pts": 2,
+          "pts": 1,
           "reb": 1,
           "ast": 0
         },
@@ -24892,7 +24262,7 @@
       "paintBoost": 0,
       "threePtBoost": -4,
       "defBoost": -1,
-      "salary": 200,
+      "salary": 160,
       "chart": [
         {
           "lo": 1,
@@ -24903,13 +24273,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 8,
           "hi": 15,
           "pts": 1,
           "reb": 1,
@@ -24917,13 +24287,13 @@
         },
         {
           "lo": 16,
-          "hi": 22,
+          "hi": 23,
           "pts": 2,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 23,
+          "lo": 24,
           "hi": 99,
           "pts": 2,
           "reb": 2,
@@ -24957,7 +24327,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -2,
-      "salary": 500,
+      "salary": 420,
       "chart": [
         {
           "lo": 1,
@@ -24968,13 +24338,13 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
+          "lo": 8,
           "hi": 14,
           "pts": 2,
           "reb": 0,
@@ -25015,7 +24385,7 @@
       "paintBoost": 0,
       "threePtBoost": -2,
       "defBoost": 0,
-      "salary": 700,
+      "salary": 720,
       "chart": [
         {
           "lo": 1,
@@ -25026,23 +24396,16 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
           "reb": 1,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 8,
           "hi": 14,
           "pts": 2,
-          "reb": 2,
+          "reb": 1,
           "ast": 0
         },
         {
@@ -25090,7 +24453,7 @@
       "paintBoost": 0,
       "threePtBoost": 3,
       "defBoost": -3,
-      "salary": 130,
+      "salary": 60,
       "chart": [
         {
           "lo": 1,
@@ -25101,24 +24464,17 @@
         },
         {
           "lo": 3,
-          "hi": 3,
+          "hi": 7,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 4,
-          "hi": 9,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
+          "lo": 8,
           "hi": 16,
           "pts": 1,
           "reb": 0,
-          "ast": 1
+          "ast": 0
         },
         {
           "lo": 17,
@@ -25162,7 +24518,7 @@
       "paintBoost": 0,
       "threePtBoost": 1,
       "defBoost": -1,
-      "salary": 460,
+      "salary": 510,
       "chart": [
         {
           "lo": 1,
@@ -25180,6 +24536,13 @@
         },
         {
           "lo": 9,
+          "hi": 10,
+          "pts": 1,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 11,
           "hi": 14,
           "pts": 2,
           "reb": 1,
@@ -25187,13 +24550,6 @@
         },
         {
           "lo": 15,
-          "hi": 16,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 17,
           "hi": 26,
           "pts": 3,
           "reb": 1,
@@ -25234,7 +24590,7 @@
       "paintBoost": -1,
       "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 400,
+      "salary": 420,
       "chart": [
         {
           "lo": 1,
@@ -25245,22 +24601,15 @@
         },
         {
           "lo": 3,
-          "hi": 4,
+          "hi": 3,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 5,
-          "hi": 10,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 11,
+          "lo": 4,
           "hi": 13,
-          "pts": 2,
+          "pts": 1,
           "reb": 0,
           "ast": 0
         },
@@ -25306,7 +24655,7 @@
       "paintBoost": 0,
       "threePtBoost": 0,
       "defBoost": -1,
-      "salary": 1120,
+      "salary": 1180,
       "chart": [
         {
           "lo": 1,
@@ -25317,13 +24666,20 @@
         },
         {
           "lo": 3,
-          "hi": 6,
+          "hi": 5,
           "pts": 0,
           "reb": 0,
           "ast": 0
         },
         {
-          "lo": 7,
+          "lo": 6,
+          "hi": 7,
+          "pts": 2,
+          "reb": 1,
+          "ast": 0
+        },
+        {
+          "lo": 8,
           "hi": 16,
           "pts": 3,
           "reb": 1,

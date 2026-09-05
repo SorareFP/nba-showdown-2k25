@@ -12,6 +12,7 @@
 // shows, awards and badges already joined.
 import { useEffect, useState } from 'react';
 import CardTemplate from '../cards/CardTemplate.jsx';
+import CardBack from '../cards/CardBack.jsx';
 import StratTemplate from '../cards/StratTemplate.jsx';
 import { SOURCES } from './players.js';
 import { fetchStudioState, teamsUrl } from './api.js';
@@ -45,6 +46,21 @@ export default function ExportFrame() {
       });
     })();
   }, [set, id]);
+
+  // ?back=1 — THE CARD BACK, not a card. It exports through this same page so
+  // it lands at exactly the 843x1181 the faces do; a back rasterised any other
+  // way would not sit flush behind them in the pack stack. It needs no studio
+  // state and no photo, so it is ready the moment it mounts.
+  if (params.get('back')) {
+    // ?league=wnba — the same back with the two-tone ball and the league's own
+    // name. One page rather than two, so the two backs cannot drift apart.
+    const league = (params.get('league') ?? 'NBA').toUpperCase();
+    return (
+      <div id="export-root" data-export-ready="1">
+        <CardBack league={league} title={league === 'WNBA' ? 'WNBA SHOWDOWN' : 'NBA SHOWDOWN'} />
+      </div>
+    );
+  }
 
   if (!set || !id) return <div id="export-error">missing ?set= or ?id=</div>;
   if (!card) return <div id="export-error">no card {id} in set {set}</div>;

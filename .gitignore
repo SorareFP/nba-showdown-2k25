@@ -16,3 +16,6 @@ card-art/sets/*/photos
 # leaderboard) and this repo is public; the DERIVED outputs in
 # card-data/generated/ are committed, so the studio and the game need no network.
 card-data/cache
+
+# Safety copies exportCardBack.mjs keeps of the previous back. Never ship them.
+public/*.bak

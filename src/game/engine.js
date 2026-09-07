@@ -1,6 +1,7 @@
 // NBA Showdown 2026 — Core Game Engine
 // Pure functions — no React, no side effects. State is a plain object.
 
+import { CRUNCH_CARDS } from './strats.js';
 import { lookupChart } from './cards.js';
 import { getStrat } from './strats.js';
 
@@ -855,6 +856,14 @@ function checkAssistDraw(g) {
   return ng;
 }
 
+/**
+ * CROWD FAVORITE'S BAR. Was five, and nobody cleared it: the card is for
+ * players at $350 or under, whose charts top out at three on a roll, so the
+ * flag it set was never read — there was no reader at all. The user,
+ * 2026-09-07: "2+ is fine and can include shot checks."
+ */
+export const CROWD_FAVORITE_PTS = 2;
+
 // ── Section End ────────────────────────────────────────────────────────────
 export function endSection(g) {
   let ng = deepClone(g);
@@ -899,6 +908,28 @@ export function endSection(g) {
   // No putback detection: the rule was removed (see spendReboundBonus).
 
   // Reset section state
+  // CROWD FAVORITE pays now, from the snapshot the card took when it was
+  // played (execCard) against the player's points at the buzzer. A flag from
+  // a game saved before the snapshot existed is `true`; it counts the whole
+  // game, which is generous once and then gone.
+  for (const k of ['A', 'B']) {
+    const te = ng.tempEff?.[k] || {};
+    for (const key of Object.keys(te)) {
+      if (!key.startsWith('crowd_')) continue;
+      const idx = Number(key.slice('crowd_'.length));
+      const p = getTeam(ng, k).starters[idx];
+      const ps = p && getPS(ng, k, p.id);
+      if (!ps) continue;
+      const at = typeof te[key] === 'object' ? (te[key].at || 0) : 0;
+      const got = (ps.pts || 0) - at;
+      if (got >= CROWD_FAVORITE_PTS) {
+        ps.hot = (ps.hot || 0) + 1;
+        ng.log = [...ng.log, { team: k, msg: `Crowd Favorite: ${p.name} scored ${got} this section → hot marker` }];
+      } else {
+        ng.log = [...ng.log, { team: k, msg: `Crowd Favorite: ${p.name} scored ${got} this section — no marker` }];
+      }
+    }
+  }
   ng.tempEff = {}; ng.tempDefEff = {}; ng.ghosted = {}; ng.ignFatigue = {}; ng.openMan = {};
   ng.lastDoubleTeam = null; ng.lastRoll = null; ng.lastCheckMiss = null; ng.lastPaintScore = null;
   ng.matchupsSet = {};
@@ -933,6 +964,23 @@ export function endSection(g) {
     const margin = Math.abs(ng.teamA.score - ng.teamB.score);
     const active = margin <= CRUNCH_MARGIN;
     ng.crunch = { active, margin, used: {}, extra: {}, timeoutUsed: {} };
+    // THE CRUNCH TUTOR. A crunch-only card in a fifty-card deck was in hand
+    // for the one section it exists for about one time in seven; the user
+    // asked that a player who runs one "be able to use it reasonably". So
+    // when crunch time arms, every crunch card still in the deck comes to
+    // hand — over the seven-card draw cap, which is a rule about DRAWING —
+    // and both sides get the same treatment. Nothing happens on a blowout:
+    // the section is not crunch, and the cards stay where they were.
+    if (active) {
+      for (const k of ['A', 'B']) {
+        const t = getTeam(ng, k);
+        const came = (t.deck || []).filter(id => CRUNCH_CARDS.includes(id));
+        if (!came.length) continue;
+        t.deck = t.deck.filter(id => !CRUNCH_CARDS.includes(id));
+        t.hand = [...(t.hand || []), ...came];
+        ng.log = [...ng.log, { team: k, msg: `Crunch Time: ${t.name} draws ${came.map(id => id.replace(/_/g, ' ')).join(', ')} from the deck` }];
+      }
+    }
     ng.log = [...ng.log, {
       team: null,
       msg: active

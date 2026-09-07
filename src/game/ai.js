@@ -386,7 +386,7 @@ function evaluateCard(game, teamKey, cardId, strat) {
     back_to_basket: 5,
     cross_court_dime: 7,
     energy_injection: 4,
-    crowd_favorite: 3,
+    crowd_favorite: 4,   // fires now (was 5+ with no reader)
     switch_everything: 6,
     this_is_my_house: 8,
     delayed_slip: 4,
@@ -414,6 +414,8 @@ function evaluateCard(game, teamKey, cardId, strat) {
     // The standing pair are worth more than one play, because they are not one
     // play — they come back every period until a big sits down.
     run_the_floor: 9, twin_towers: 9,
+    // Two near-certain points in the section that decides the game.
+    unethical_hoops: 8,
     // Post-roll
     heat_check: 7,
     burst_of_momentum: 6,
@@ -945,6 +947,14 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
         .map(({ i }) => ({ i, gap: (who.p.speed || 0) - (oppT.starters[mu[i] ?? i]?.speed || 0) }))
         .sort((u, v) => v.gap - u.gap);
       return { playerIdx: who.i, player2Idx: mate[0]?.i ?? (who.i === 0 ? 1 : 0) };
+    }
+    case 'unethical_hoops': {
+      // The biggest edge on the floor takes the free throws.
+      const mu = game.offMatchups?.[teamKey] || [];
+      const best = starters.map((p, i) => ({ p, i })).filter(({ p }) => p)
+        .map(({ p, i }) => { const dp = oppT.starters[mu[i] ?? i]; const a = dp ? calcAdv(p, dp, game.tempEff?.[teamKey] || {}, i) : null; return { i, edge: a ? Math.max(a.speedAdv, a.powerAdv) : -99 }; })
+        .sort((u, v) => v.edge - u.edge)[0];
+      return { playerIdx: best?.i ?? 0 };
     }
     case 'inside_out': {
       // Anyone but the man who just scored inside; the best shooter of them.

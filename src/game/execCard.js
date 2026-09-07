@@ -2,7 +2,7 @@
 // Pure function: takes game state + card + opts, returns new state
 // Never mutates — always returns a new object via deepClone
 
-import { handOverPriority, getTeam, getOpp, getPS, calcAdv, shotCheck, matchupContest, drawCards, deepClone, getFatigue, recordDefSwitch, burnedSlots, roll20, checkAssistDraw, standingEntry } from './engine.js';
+import { handOverPriority, getTeam, getOpp, getPS, calcAdv, shotCheck, matchupContest, drawCards, deepClone, getFatigue, recordDefSwitch, burnedSlots, roll20, checkAssistDraw, standingEntry, CROWD_FAVORITE_PTS } from './engine.js';
 import { helpTargets, canAnswerCheck } from './canPlay.js';
 import { lookupChart } from './cards.js';
 import { getStrat } from './strats.js';
@@ -710,8 +710,11 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
     case 'crowd_favorite': {
       if ((player?.salary || 0) > 350) return fail(player?.name + ' salary must be ≤$350');
       if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
-      g.tempEff[teamKey]['crowd_' + idx] = true;
-      addLog(g, teamKey, `Crowd Favorite: if ${player?.name} scores 5+ pts this segment → hot marker`);
+      // The snapshot. endSection compares the player's points then against
+      // now: rolls, assist-spends and announced shot checks all land in
+      // ps.pts, so all of them count. The threshold is CROWD_FAVORITE_PTS.
+      g.tempEff[teamKey]['crowd_' + idx] = { at: pss()?.pts || 0 };
+      addLog(g, teamKey, `Crowd Favorite: if ${player?.name} scores ${CROWD_FAVORITE_PTS}+ pts this section (rolls or shot checks) → hot marker`);
       break;
     }
 
@@ -1069,6 +1072,18 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       break;
     }
 
+    case 'unethical_hoops': {
+      if (!adv || (adv.speedAdv <= 0 && adv.powerAdv <= 0)) return fail(`${player?.name} needs a Speed or Power advantage`);
+      // A foul drawn is two shots. Free throws are never contested, so both
+      // resolve on the spot — announceCheck knows.
+      announceCheck(g, {
+        teamKey, playerIdx: idx, type: 'ft', bonus: 4,
+        cardLabel: `Unethical Hoops: ${player?.name} draws the foul — first free throw`,
+        then: [{ playerIdx: idx, type: 'ft', bonus: 4, cardLabel: 'Unethical Hoops: second free throw' }],
+      });
+      break;
+    }
+
     // ── WAVE TWO ────────────────────────────────────────────────────────
     case 'outside_pick': {
       const others = myT.hand.filter(id => id !== 'outside_pick');
@@ -1411,6 +1426,11 @@ export function applyShotCheck(g, psc) {
 
   if (r.hit) {
     myT.score += r.pts;
+    // The player's own line too. Rolls and assist-spends credited the
+    // scorer; the announced shot check credited only the team, so a card
+    // bucket never reached the box score — and Crowd Favorite, which counts
+    // a player's section points off this number, could not see it.
+    ps.pts = (ps.pts || 0) + r.pts;
     // A PAINT SCORE IS AN EVENT. Inside-Out reacts to it and Short-Roll
     // Playmaker pays on it, and neither could see it before: `lastRoll` is a
     // scoring ROLL and a paint bucket is a shot check, which is a different

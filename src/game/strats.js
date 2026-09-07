@@ -56,7 +56,7 @@ export const STRATS = [
   { id:'double_team',         name:'Double Team',        phase:'scoring',  side:'def', copies:2, locked:false, color:'#1E40AF', rarity:'uncommon',
     desc:'Send two at the ball: choose an opposing player who hasn\'t rolled — their defender gets +6 Speed/+6 Power this segment. But someone is open: your opponent gets +3 on the next scoring roll they choose to make.' },
   { id:'crowd_favorite',      name:'Crowd Favorite',     phase:'scoring',  side:'off', copies:2, locked:false, color:'#F97316', rarity:'common',
-    desc:'Player with salary ≤$350: if they score 5+ pts this segment, they gain a hot marker.' },
+    desc:'Player with salary ≤$350: if they score 2+ pts this section (rolls or shot checks), they gain a hot marker.' },
   { id:'switch_everything',   name:'Switch Everything',  phase:'scoring',  side:'def', copies:2, locked:true,  color:'#1D4ED8', rarity:'rare',
     desc:'Fully reassign your defense: choose who guards each of the opponent\'s players. All opponent offensive advantages are doubled. 🔒 Uncancelable.' },
   { id:'this_is_my_house',    name:'This Is My House!',  phase:'scoring',  side:'def', copies:2, locked:true,  color:'#991B1B', rarity:'legendary',
@@ -153,6 +153,15 @@ export const STRATS = [
   // docs/strategy-cards-backlog-recovered.md. Run the Floor and Twin Towers
   // are NOT here: they persist across sections and the allocation is the
   // opponent's, which is an interaction this game has never had.
+  // ── THE SIGN-UP CARD ───────────────────────────────────────────────────
+  // Every new account's starter carries one (packEngine: bonusStrats), and
+  // `promo` keeps it out of every pack pool — it is a gift, not a pull. The
+  // user, 2026-09-07: "a picture of Shai getting fouled, an Underdog logo
+  // somewhere on it, and it should just award +4 FT checks to any player with
+  // an offensive power or speed advantage of their choosing during
+  // Crunch-Time." Read as a foul drawn: TWO free throws, each at +4.
+  { id:'unethical_hoops',     name:'Unethical Hoops',    phase:'scoring',  side:'off', copies:1, locked:false, color:'#B91C1C', rarity:'rare', promo:true,
+    desc:'CRUNCH TIME: a player of yours with a Speed or Power advantage draws the foul — two free-throw checks at +4.' },
   { id:'run_the_floor',       name:'Run the Floor',      phase:'scoring',  side:'off', copies:1, locked:false, color:'#0D9488', rarity:'legendary',
     desc:'With three players at Speed 12+ on the floor: two Paint Shot Checks at +2, allocated by the defence, +1 Assist each. Stays in play until one of them is benched.' },
   { id:'twin_towers',         name:'Twin Towers',        phase:'scoring',  side:'off', copies:1, locked:false, color:'#7C2D12', rarity:'legendary',
@@ -204,3 +213,19 @@ export const STRAT_MAP = Object.fromEntries(STRATS.map(s => [s.id, s]));
 export function getStrat(id) {
   return STRAT_MAP[id];
 }
+
+/**
+ * THE CARDS THAT ONLY EXIST IN CRUNCH TIME.
+ *
+ * One list, here with the data, because it had two copies — canPlay's gate and
+ * the audit's CRUNCH_RIDERS — and a third reader arrived: the crunch tutor in
+ * endSection, which pulls these out of the deck the moment the last section
+ * arms. The user, 2026-09-07: "In a 50-card deck, the odds of that card
+ * occurring in that one section of the game seems unlikely." They were: a
+ * one-copy card has roughly a one-in-seven chance of being in hand for the
+ * section it is for. Now it is there if it is anywhere in the deck.
+ */
+export const CRUNCH_CARDS = [
+  'desperation_press', 'ato_masterpiece', 'fresh_legs', 'ice_the_hot_hand', 'reset', 'second_closer',
+  'unethical_hoops',
+];

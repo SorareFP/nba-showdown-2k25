@@ -33,7 +33,7 @@ export const PACK_TYPES = {
   // `favoriteCore` is the franchise a new player names on the way in — see
   // favoriteCorePicks. Three commons and an uncommon of their team, guaranteed
   // among the twenty, so the first cards anybody owns mean something to them.
-  starter:       { name: 'Starter Pack',       players: 20, strats: 30, price: 0,    guaranteedSR: 1, srCap: 2, once: true, favoriteCore: { common: 3, uncommon: 1 } },
+  starter:       { name: 'Starter Pack',       players: 20, strats: 30, price: 0,    guaranteedSR: 1, srCap: 2, once: true, favoriteCore: { common: 3, uncommon: 1 }, bonusStrats: ['unethical_hoops'] },
   booster:       { name: 'Booster Pack',        players: 5,  strats: 2,  price: 100, mixesSpecials: true },
   deluxe:        { name: 'Deluxe Booster',      players: 5,  strats: 2,  price: 200,  guaranteedRare: 1, mixesSpecials: true },
   super:         { name: 'Super Booster',       players: 5,  strats: 2,  price: 300,  guaranteedRarePlayer: 1, mixesSpecials: true },
@@ -214,6 +214,17 @@ export const leagueBases = () => LEAGUE_SETS.flatMap(id => CARD_SETS[id] ?? []);
  * legendary at all — only which legendary it is.
  */
 export const SPECIAL_BAND_SHARE = 0.25;
+
+/**
+ * The strategy cards a PACK may deal. A `promo` card — today only the sign-up
+ * gift, Unethical Hoops — is in the registry so it can be owned, shown and
+ * played, and in no pool so it cannot be pulled, burned for its band value
+ * over and over, or land in a paying pack. It reaches a collection one way:
+ * the starter's bonusStrats.
+ */
+function packableStrats() {
+  return STRATS.filter(s => !s.promo);
+}
 
 /**
  * HOW FAST A CARD GETS SCARCE AS COPIES ENTER THE WORLD.
@@ -409,13 +420,13 @@ function pickPhaseBalancedStrats(count) {
   const result = [];
   const perPhase = Math.floor(count / phases.length);
   phases.forEach(phase => {
-    const pool = STRATS.filter(s => s.phase === phase);
+    const pool = packableStrats().filter(s => s.phase === phase);
     for (let i = 0; i < perPhase && result.length < count; i++) {
       result.push(weightedPick(pool, getStratRarity));
     }
   });
   while (result.length < count) {
-    result.push(weightedPick(STRATS, getStratRarity));
+    result.push(weightedPick(packableStrats(), getStratRarity));
   }
   return result;
 }
@@ -457,7 +468,7 @@ export function generatePack(packType, options = {}) {
   // moving part to solve a problem that is not there.
   const supply = options.supply ?? NO_SUPPLY;
   let playerPool = poolFor(def);
-  let stratPool = [...STRATS];
+  let stratPool = packableStrats();
 
   // Apply team/conference/division filters (meaningful for NBA pools only).
   if (options.conference) {
@@ -657,6 +668,9 @@ export function generatePack(packType, options = {}) {
   if (packType === 'starter') {
     const strats = pickPhaseBalancedStrats(def.strats);
     strats.forEach(s => result.push({ id: s.id, type: 'strat' }));
+    // THE SIGN-UP GIFT, on top of the thirty rather than instead of one of
+    // them. A promo card is reachable only here — see packableStrats.
+    for (const id of def.bonusStrats ?? []) result.push({ id, type: 'strat' });
   } else {
     const stratsFilled = result.filter(c => c.type === 'strat').length;
     for (let i = stratsFilled; i < def.strats; i++) {

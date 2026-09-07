@@ -3,5 +3,20 @@
     "x": -36.9,
     "y": 0,
     "zoom": 1
+  },
+  "Dwyane_Wade": {
+    "x": 0,
+    "y": 9.75,
+    "zoom": 1
+  },
+  "Russell_Westbrook_2017": {
+    "x": 0.16,
+    "y": 0,
+    "zoom": 1
+  },
+  "Russell_Westbrook_2020": {
+    "x": 12.97,
+    "y": 0,
+    "zoom": 1
   }
 }

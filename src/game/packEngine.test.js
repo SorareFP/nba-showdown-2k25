@@ -329,7 +329,9 @@ describe('the starter pack\'s favourite-team core', () => {
   it('still deals a full starter — the core is INSIDE the twenty, not instead of it', () => {
     const pack = generatePack('starter', { favoriteTeam: 'nba:MIL' });
     expect(pack.filter(c => c.type === 'player')).toHaveLength(20);
-    expect(pack.filter(c => c.type === 'strat')).toHaveLength(30);
+    // Thirty dealt plus the sign-up gift (bonusStrats) — see packableStrats.
+    expect(pack.filter(c => c.type === 'strat')).toHaveLength(31);
+    expect(pack.some(c => c.type === 'strat' && c.id === 'unethical_hoops')).toBe(true);
   });
 
   it('guarantees the named franchise, and the right league of it', () => {

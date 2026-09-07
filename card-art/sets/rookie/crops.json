@@ -238,5 +238,980 @@
     "x": -14,
     "y": 15.47,
     "zoom": 1.28
+  },
+  "Coby_White": {
+    "x": -7.94,
+    "y": 0,
+    "zoom": 1
+  },
+  "Cody_Williams": {
+    "x": -9.22,
+    "y": 0,
+    "zoom": 1
+  },
+  "Collin_Sexton": {
+    "x": -6.66,
+    "y": 0,
+    "zoom": 1
+  },
+  "Corey_Kispert": {
+    "x": -29.21,
+    "y": 0,
+    "zoom": 1
+  },
+  "Craig_Porter_Jr": {
+    "x": -35.3,
+    "y": 0,
+    "zoom": 1
+  },
+  "Daniel_Gafford": {
+    "x": -3.97,
+    "y": 0,
+    "zoom": 1
+  },
+  "Darius_Garland": {
+    "x": 10.78,
+    "y": 0,
+    "zoom": 1
+  },
+  "Davion_Mitchell": {
+    "x": -38,
+    "y": -0.96,
+    "zoom": 1.28
+  },
+  "De_Aaron_Fox": {
+    "x": -2.13,
+    "y": 0,
+    "zoom": 1
+  },
+  "De_Andre_Hunter": {
+    "x": -12.9,
+    "y": 0,
+    "zoom": 1
+  },
+  "De_Anthony_Melton": {
+    "x": -26.23,
+    "y": 0,
+    "zoom": 1
+  },
+  "DeMar_DeRozan": {
+    "x": 2.27,
+    "y": -11.87,
+    "zoom": 1.17
+  },
+  "Deandre_Ayton": {
+    "x": 6.1,
+    "y": 0,
+    "zoom": 1
+  },
+  "Deni_Avdija": {
+    "x": -11.06,
+    "y": 0,
+    "zoom": 1
+  },
+  "Dennis_Rodman": {
+    "x": -22.97,
+    "y": 0,
+    "zoom": 1
+  },
+  "Dennis_Schroder": {
+    "x": -4.96,
+    "y": 0,
+    "zoom": 1
+  },
+  "Derek_Fisher": {
+    "x": 0,
+    "y": 5.03,
+    "zoom": 1
+  },
+  "Desmond_Bane": {
+    "x": -10.92,
+    "y": 0,
+    "zoom": 1
+  },
+  "Devin_Booker": {
+    "x": 0,
+    "y": 5.15,
+    "zoom": 1
+  },
+  "Devin_Vassell": {
+    "x": -16.45,
+    "y": 0,
+    "zoom": 1
+  },
+  "Dillon_Brooks": {
+    "x": 20.84,
+    "y": 0,
+    "zoom": 1
+  },
+  "Domantas_Sabonis": {
+    "x": -10.35,
+    "y": 0,
+    "zoom": 1
+  },
+  "Donovan_Clingan": {
+    "x": -2.69,
+    "y": 0,
+    "zoom": 1
+  },
+  "Donovan_Mitchell": {
+    "x": -52.88,
+    "y": 0,
+    "zoom": 1
+  },
+  "Dwyane_Wade": {
+    "x": -20.35,
+    "y": 24.35,
+    "zoom": 1.65
+  },
+  "Dyson_Daniels": {
+    "x": -24.24,
+    "y": 0,
+    "zoom": 1
+  },
+  "Eric_Williams": {
+    "x": 0,
+    "y": 3.08,
+    "zoom": 1
+  },
+  "Evan_Mobley": {
+    "x": -4.54,
+    "y": 0,
+    "zoom": 1
+  },
+  "Franz_Wagner": {
+    "x": -3.4,
+    "y": -5.27,
+    "zoom": 1.44
+  },
+  "Gary_Harris": {
+    "x": -11.49,
+    "y": -2.76,
+    "zoom": 1.11
+  },
+  "George_Hill": {
+    "x": 1.42,
+    "y": -1.44,
+    "zoom": 1.21
+  },
+  "GG_Jackson_II": {
+    "x": -1.84,
+    "y": 0,
+    "zoom": 1
+  },
+  "Giannis_Antetokounmpo": {
+    "x": 12.19,
+    "y": 0,
+    "zoom": 1
+  },
+  "Glen_Davis": {
+    "x": 0,
+    "y": 9.59,
+    "zoom": 1
+  },
+  "Gradey_Dick": {
+    "x": -12.62,
+    "y": 0,
+    "zoom": 1
+  },
+  "Harrison_Barnes": {
+    "x": 0,
+    "y": 1.32,
+    "zoom": 1
+  },
+  "Herbert_Jones": {
+    "x": -11.34,
+    "y": 0,
+    "zoom": 1
+  },
+  "Immanuel_Quickley": {
+    "x": 0.85,
+    "y": 0,
+    "zoom": 1
+  },
+  "Isaac_Okoro": {
+    "x": -7.09,
+    "y": 0,
+    "zoom": 1
+  },
+  "Isaiah_Collier": {
+    "x": -22.74,
+    "y": 1.08,
+    "zoom": 1.23
+  },
+  "Isaiah_Stewart": {
+    "x": 13.33,
+    "y": 14.98,
+    "zoom": 1.31
+  },
+  "Ivica_Zubac": {
+    "x": -4.25,
+    "y": 0,
+    "zoom": 1
+  },
+  "Ja_Morant": {
+    "x": -9.07,
+    "y": 0,
+    "zoom": 1
+  },
+  "Ja_Kobe_Walter": {
+    "x": -9.14,
+    "y": 0,
+    "zoom": 1
+  },
+  "Jabari_Smith_Jr": {
+    "x": 1.7,
+    "y": 0,
+    "zoom": 1
+  },
+  "Jaden_Hardy": {
+    "x": -12.05,
+    "y": 0,
+    "zoom": 1
+  },
+  "Jaime_Jaquez_Jr": {
+    "x": 19.99,
+    "y": 0,
+    "zoom": 1
+  },
+  "Jakob_Poeltl": {
+    "x": -6.38,
+    "y": 0,
+    "zoom": 1
+  },
+  "Jalen_Brunson": {
+    "x": -7.09,
+    "y": 0,
+    "zoom": 1
+  },
+  "Jalen_Duren": {
+    "x": -50.19,
+    "y": 0,
+    "zoom": 1
+  },
+  "Jalen_Green": {
+    "x": 1.56,
+    "y": 0,
+    "zoom": 1
+  },
+  "Jalen_Suggs": {
+    "x": -2.98,
+    "y": 0,
+    "zoom": 1
+  },
+  "Jalen_Williams": {
+    "x": -1.84,
+    "y": 0,
+    "zoom": 1
+  },
+  "Jalen_Wilson": {
+    "x": -5.39,
+    "y": 0,
+    "zoom": 1
+  },
+  "Jamal_Murray": {
+    "x": -3.83,
+    "y": 0,
+    "zoom": 1
+  },
+  "Jamal_Shead": {
+    "x": 19.42,
+    "y": 0,
+    "zoom": 1
+  },
+  "Jameer_Nelson": {
+    "x": 0,
+    "y": 0.12,
+    "zoom": 1
+  },
+  "James_Harden": {
+    "x": -7.5,
+    "y": 22.54,
+    "zoom": 1.15
+  },
+  "Jared_Dudley": {
+    "x": 1.42,
+    "y": 0,
+    "zoom": 1
+  },
+  "Jaren_Jackson_Jr": {
+    "x": 8.51,
+    "y": 0,
+    "zoom": 1
+  },
+  "Jarrett_Allen": {
+    "x": -1.84,
+    "y": 0,
+    "zoom": 1
+  },
+  "Jason_Collins": {
+    "x": -7,
+    "y": 13.78,
+    "zoom": 1.14
+  },
+  "Jason_Richardson": {
+    "x": -13.61,
+    "y": 0,
+    "zoom": 1
+  },
+  "Jason_Terry": {
+    "x": 0,
+    "y": 11.27,
+    "zoom": 1
+  },
+  "Jaxson_Hayes": {
+    "x": -15.03,
+    "y": 15,
+    "zoom": 1.3
+  },
+  "Jaylen_Wells": {
+    "x": -5.39,
+    "y": 0,
+    "zoom": 1
+  },
+  "Jaylen_Brown": {
+    "x": -27.93,
+    "y": 0,
+    "zoom": 1
+  },
+  "Jaylin_Williams": {
+    "x": -9.14,
+    "y": 0,
+    "zoom": 1
+  },
+  "Jayson_Tatum": {
+    "x": -13.47,
+    "y": 0,
+    "zoom": 1
+  },
+  "Joel_Embiid": {
+    "x": 3.26,
+    "y": -18,
+    "zoom": 1.36
+  },
+  "John_Collins": {
+    "x": 10.78,
+    "y": 0,
+    "zoom": 1
+  },
+  "Jordan_Clarkson": {
+    "x": 26.08,
+    "y": 0,
+    "zoom": 1
+  },
+  "Jordan_Hawkins": {
+    "x": -5.53,
+    "y": 0,
+    "zoom": 1
+  },
+  "Jose_Alvarado": {
+    "x": -23.39,
+    "y": 0,
+    "zoom": 1
+  },
+  "Josh_Giddey": {
+    "x": 2.41,
+    "y": 0,
+    "zoom": 1
+  },
+  "Josh_Hart": {
+    "x": 15.74,
+    "y": 0,
+    "zoom": 1
+  },
+  "Josh_Okogie": {
+    "x": -0.71,
+    "y": 0,
+    "zoom": 1
+  },
+  "Josh_Howard": {
+    "x": -4.65,
+    "y": 0,
+    "zoom": 1
+  },
+  "Jusuf_Nurkic": {
+    "x": 16.31,
+    "y": 0,
+    "zoom": 1
+  },
+  "Jrue_Holiday": {
+    "x": 0,
+    "y": 9.35,
+    "zoom": 1
+  },
+  "Karl_Anthony_Towns": {
+    "x": -1.13,
+    "y": 0,
+    "zoom": 1
+  },
+  "Karlo_Matkovic": {
+    "x": 11.63,
+    "y": 0,
+    "zoom": 1
+  },
+  "Kawhi_Leonard": {
+    "x": -12.19,
+    "y": -7.31,
+    "zoom": 1.15
+  },
+  "Keegan_Murray": {
+    "x": -16.31,
+    "y": 0,
+    "zoom": 1
+  },
+  "Kemba_Walker": {
+    "x": 0,
+    "y": 17.38,
+    "zoom": 1
+  },
+  "Kenrich_Williams": {
+    "x": -3.69,
+    "y": 6,
+    "zoom": 1.39
+  },
+  "Kentavious_Caldwell_Pope": {
+    "x": -9.14,
+    "y": 0,
+    "zoom": 1
+  },
+  "Kevin_Garnett": {
+    "x": 5.1,
+    "y": 0,
+    "zoom": 1
+  },
+  "Kevin_Love": {
+    "x": 7.5,
+    "y": -1.92,
+    "zoom": 1.15
+  },
+  "Keyonte_George": {
+    "x": -11.34,
+    "y": 0,
+    "zoom": 1
+  },
+  "Klay_Thompson": {
+    "x": -8.08,
+    "y": -2.5,
+    "zoom": 1.05
+  },
+  "Kris_Dunn": {
+    "x": 0.15,
+    "y": -10.43,
+    "zoom": 1.22
+  },
+  "Kris_Murray": {
+    "x": 5.1,
+    "y": 0,
+    "zoom": 1
+  },
+  "Kyle_Filipowski": {
+    "x": 9.36,
+    "y": 0,
+    "zoom": 1
+  },
+  "Kyle_Kuzma": {
+    "x": -9.78,
+    "y": 0,
+    "zoom": 1
+  },
+  "Kyrie_Irving": {
+    "x": -6.94,
+    "y": 0,
+    "zoom": 1
+  },
+  "Kyshawn_George": {
+    "x": -8.65,
+    "y": 0,
+    "zoom": 1
+  },
+  "Lamar_Odom": {
+    "x": 5.11,
+    "y": 4.2,
+    "zoom": 1.14
+  },
+  "LaMelo_Ball": {
+    "x": -5.81,
+    "y": 0,
+    "zoom": 1
+  },
+  "Landry_Shamet": {
+    "x": 0,
+    "y": 2.84,
+    "zoom": 1
+  },
+  "Lauri_Markkanen": {
+    "x": 25.95,
+    "y": 0,
+    "zoom": 1
+  },
+  "LeBron_James": {
+    "x": 5.39,
+    "y": -6.5,
+    "zoom": 1.13
+  },
+  "Luguentz_Dort": {
+    "x": 5.1,
+    "y": 0,
+    "zoom": 1
+  },
+  "Luka_Doncic": {
+    "x": 2.13,
+    "y": 0,
+    "zoom": 1
+  },
+  "Malik_Monk": {
+    "x": 19.71,
+    "y": 0,
+    "zoom": 1
+  },
+  "Manu_Ginobili": {
+    "x": -29.07,
+    "y": 0,
+    "zoom": 1
+  },
+  "Marcus_Smart": {
+    "x": 3.69,
+    "y": 0,
+    "zoom": 1
+  },
+  "Mark_Jackson": {
+    "x": 4.96,
+    "y": 0,
+    "zoom": 1
+  },
+  "Mark_Williams": {
+    "x": 14.6,
+    "y": 0,
+    "zoom": 1
+  },
+  "Marvin_Bagley_III": {
+    "x": -12.48,
+    "y": 0,
+    "zoom": 1
+  },
+  "Matas_Buzelis": {
+    "x": -10.92,
+    "y": 0,
+    "zoom": 1
+  },
+  "Michael_Finley": {
+    "x": -9.14,
+    "y": 0,
+    "zoom": 1
+  },
+  "Michael_Porter_Jr": {
+    "x": -25.66,
+    "y": 0,
+    "zoom": 1
+  },
+  "Mickael_Pietrus": {
+    "x": -27.79,
+    "y": 24.21,
+    "zoom": 1.52
+  },
+  "Mikal_Bridges": {
+    "x": -12.62,
+    "y": 0,
+    "zoom": 1
+  },
+  "Mike_Bibby": {
+    "x": 1.84,
+    "y": 0,
+    "zoom": 1
+  },
+  "Mike_Conley": {
+    "x": 0,
+    "y": 6.71,
+    "zoom": 1
+  },
+  "Miles_Bridges": {
+    "x": -8.22,
+    "y": 0,
+    "zoom": 1
+  },
+  "Mitchell_Robinson": {
+    "x": -7.23,
+    "y": 0,
+    "zoom": 1
+  },
+  "Moses_Moody": {
+    "x": -16.45,
+    "y": 0,
+    "zoom": 1
+  },
+  "Oso_Ighodaro": {
+    "x": -14.18,
+    "y": 0,
+    "zoom": 1
+  },
+  "Onyeka_Okongwu": {
+    "x": -4.11,
+    "y": 0,
+    "zoom": 1
+  },
+  "OG_Anunoby": {
+    "x": 2.55,
+    "y": 0,
+    "zoom": 1
+  },
+  "Norman_Powell": {
+    "x": -8.37,
+    "y": 0,
+    "zoom": 1
+  },
+  "Nikola_Vucevic": {
+    "x": -3.26,
+    "y": 0,
+    "zoom": 1
+  },
+  "Nicolas_Batum": {
+    "x": -4.96,
+    "y": 0,
+    "zoom": 1
+  },
+  "Naji_Marshall": {
+    "x": -11.06,
+    "y": 0,
+    "zoom": 1
+  },
+  "P_J_Washington": {
+    "x": -1.56,
+    "y": 0,
+    "zoom": 1
+  },
+  "Paolo_Banchero": {
+    "x": -2.41,
+    "y": 0,
+    "zoom": 1
+  },
+  "Pascal_Siakam": {
+    "x": -7.24,
+    "y": 0,
+    "zoom": 1
+  },
+  "Patrick_Williams": {
+    "x": 0,
+    "y": 2.52,
+    "zoom": 1
+  },
+  "Pau_Gasol": {
+    "x": -21.84,
+    "y": -7.5,
+    "zoom": 1.15
+  },
+  "Paul_Pierce": {
+    "x": -23.82,
+    "y": 0,
+    "zoom": 1
+  },
+  "Payton_Pritchard": {
+    "x": -15.31,
+    "y": 0,
+    "zoom": 1
+  },
+  "Pelle_Larsson": {
+    "x": -5.25,
+    "y": 0,
+    "zoom": 1
+  },
+  "Quentin_Grimes": {
+    "x": -1.56,
+    "y": 0,
+    "zoom": 1
+  },
+  "Quinten_Post": {
+    "x": -9.64,
+    "y": 0,
+    "zoom": 1
+  },
+  "Ray_Allen": {
+    "x": 0,
+    "y": 5.51,
+    "zoom": 1
+  },
+  "Rayan_Rupert": {
+    "x": -8.22,
+    "y": 0,
+    "zoom": 1
+  },
+  "Reed_Sheppard": {
+    "x": 2.84,
+    "y": 0,
+    "zoom": 1
+  },
+  "RJ_Barrett": {
+    "x": -52.03,
+    "y": 0,
+    "zoom": 1
+  },
+  "Robert_Horry": {
+    "x": 0,
+    "y": 9.35,
+    "zoom": 1
+  },
+  "Ron_Holland": {
+    "x": 0.14,
+    "y": 0,
+    "zoom": 1
+  },
+  "Royce_O_Neale": {
+    "x": -23.11,
+    "y": 0,
+    "zoom": 1
+  },
+  "Ryan_Dunn": {
+    "x": -0.57,
+    "y": 0,
+    "zoom": 1
+  },
+  "Saddiq_Bey": {
+    "x": -11.48,
+    "y": 0,
+    "zoom": 1
+  },
+  "Scottie_Barnes": {
+    "x": -14.04,
+    "y": 0,
+    "zoom": 1
+  },
+  "Serge_Ibaka": {
+    "x": -36.65,
+    "y": 0,
+    "zoom": 1
+  },
+  "Shaedon_Sharpe": {
+    "x": 2.84,
+    "y": 0,
+    "zoom": 1.27
+  },
+  "Stephen_Curry": {
+    "x": -15.03,
+    "y": 0,
+    "zoom": 1
+  },
+  "Stephen_Jackson": {
+    "x": 19.99,
+    "y": 0,
+    "zoom": 1
+  },
+  "Stephon_Castle": {
+    "x": -7.51,
+    "y": 0,
+    "zoom": 1
+  },
+  "T_J_McConnell": {
+    "x": -17.3,
+    "y": 0,
+    "zoom": 1
+  },
+  "Tari_Eason": {
+    "x": 4.68,
+    "y": 0,
+    "zoom": 1
+  },
+  "Taylor_Hendricks": {
+    "x": 22.69,
+    "y": 0,
+    "zoom": 1
+  },
+  "Tim_Thomas": {
+    "x": -6.38,
+    "y": 0,
+    "zoom": 1
+  },
+  "Tim_Hardaway_Jr": {
+    "x": -7.09,
+    "y": 0,
+    "zoom": 1
+  },
+  "Toumani_Camara": {
+    "x": -4.96,
+    "y": 0,
+    "zoom": 1
+  },
+  "Trae_Young": {
+    "x": 2.55,
+    "y": 0,
+    "zoom": 1
+  },
+  "Tre_Mann": {
+    "x": -28.92,
+    "y": 0,
+    "zoom": 1
+  },
+  "Trendon_Watford": {
+    "x": 4.68,
+    "y": 0,
+    "zoom": 1
+  },
+  "Trey_Murphy_III": {
+    "x": 1.13,
+    "y": -8.27,
+    "zoom": 1.18
+  },
+  "Tristan_Da_Silva": {
+    "x": -7.09,
+    "y": 0,
+    "zoom": 1
+  },
+  "Tyler_Herro": {
+    "x": 0,
+    "y": -0.12,
+    "zoom": 1
+  },
+  "Tyrese_Haliburton": {
+    "x": 2.56,
+    "y": 0,
+    "zoom": 1
+  },
+  "Tyrese_Maxey": {
+    "x": -9.93,
+    "y": 0,
+    "zoom": 1
+  },
+  "Victor_Wembanyama": {
+    "x": -8.97,
+    "y": 0,
+    "zoom": 1
+  },
+  "Vince_Carter": {
+    "x": -9.14,
+    "y": 0,
+    "zoom": 1
+  },
+  "Wendell_Carter_Jr": {
+    "x": -55.13,
+    "y": 0,
+    "zoom": 1
+  },
+  "Zaccharie_Risacher": {
+    "x": -7.69,
+    "y": 0,
+    "zoom": 1
+  },
+  "Zach_Edey": {
+    "x": -5.92,
+    "y": 0,
+    "zoom": 1
+  },
+  "Zach_LaVine": {
+    "x": -15.53,
+    "y": 0,
+    "zoom": 1
+  },
+  "Ziaire_Williams": {
+    "x": 3.2,
+    "y": 0,
+    "zoom": 1
+  },
+  "Zion_Williamson": {
+    "x": -18.89,
+    "y": -4.06,
+    "zoom": 1.14
+  },
+  "Allan_Houston": {
+    "x": 7.09,
+    "y": 0,
+    "zoom": 1
+  },
+  "Allen_Iverson": {
+    "x": -27.58,
+    "y": 0,
+    "zoom": 1
+  },
+  "Alonzo_Mourning": {
+    "x": -3.48,
+    "y": 0,
+    "zoom": 1
+  },
+  "Brandon_Roy": {
+    "x": 12.18,
+    "y": 0,
+    "zoom": 1
+  },
+  "David_Robinson": {
+    "x": -9.14,
+    "y": 0,
+    "zoom": 1
+  },
+  "Dirk_Nowitzki": {
+    "x": 0,
+    "y": -1.81,
+    "zoom": 1
+  },
+  "Gary_Payton": {
+    "x": -33.32,
+    "y": -8.5,
+    "zoom": 1.17
+  },
+  "Hakeem_Olajuwon": {
+    "x": 32.66,
+    "y": 0,
+    "zoom": 1
+  },
+  "Joe_Johnson": {
+    "x": -9.14,
+    "y": 0,
+    "zoom": 1
+  },
+  "John_Wall": {
+    "x": 0,
+    "y": -0.68,
+    "zoom": 1
+  },
+  "Josh_Smith": {
+    "x": 0.4,
+    "y": 0,
+    "zoom": 1
+  },
+  "Kobe_Bryant": {
+    "x": -7.09,
+    "y": 0,
+    "zoom": 1
+  },
+  "LaMarcus_Aldridge": {
+    "x": -19.85,
+    "y": 0,
+    "zoom": 1
+  },
+  "Luis_Scola": {
+    "x": 15.37,
+    "y": 0,
+    "zoom": 1
+  },
+  "Luol_Deng": {
+    "x": 0,
+    "y": 11.51,
+    "zoom": 1
+  },
+  "Patrick_Ewing": {
+    "x": -21.78,
+    "y": 0,
+    "zoom": 1
+  },
+  "Rajon_Rondo": {
+    "x": 35.71,
+    "y": 0,
+    "zoom": 1
+  },
+  "Russell_Westbrook": {
+    "x": 28.34,
+    "y": 0,
+    "zoom": 1
+  },
+  "Sam_Cassell": {
+    "x": -23,
+    "y": -27.89,
+    "zoom": 1.46
+  },
+  "Tracy_McGrady": {
+    "x": 0,
+    "y": 1.9,
+    "zoom": 1
+  },
+  "Yao_Ming": {
+    "x": 6.24,
+    "y": 0,
+    "zoom": 1
   }
 }

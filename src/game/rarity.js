@@ -149,10 +149,13 @@ export const STRAT_BURN_VALUES = {
 
 // Deck copy caps for STRATEGY cards, by rarity — the 5/3/1 rule. Enforced by
 // the deck editor in place of the old flat 8-per-card cap.
+// 5/4/3/1 (the user, 2026-09-07). Enforced by validateDeck on every save —
+// until then this table governed only the generated default deck, and a
+// player could run eight of anything.
 export const STRAT_COPY_CAPS = {
   'common': 5,
-  'uncommon': 3,
-  'rare': 1,
+  'uncommon': 4,
+  'rare': 3,
   // THE APEX BAND NEEDED A ROW OR IT INHERITED THE FALLBACK. `capOf` in
   // runStratAudit.js reads `STRAT_COPY_CAPS[band] ?? 5`, so before this line a
   // legendary strategy card capped at FIVE copies — more than a common. One,

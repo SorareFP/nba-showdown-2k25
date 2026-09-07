@@ -128,6 +128,9 @@ function rowsFor(setId, league) {
 // the same folder the studio writes. The search is the card's idea, not a
 // player: "NBA double team" finds a trap, not a person.
 const COMPOSED_STRATS = new Set([
+  // The sign-up promo: the user wants a photo of Shai getting fouled here
+  // (and an Underdog logo somewhere on the face), 2026-09-07.
+  'unethical_hoops',
   'double_team', 'pick_up_full_court', 'cross_court_dime',
   'desperation_press', 'second_closer', 'ato_masterpiece', 'fresh_legs', 'ice_the_hot_hand', 'reset',
   // Wave one of the docx backlog (2026-09-06).

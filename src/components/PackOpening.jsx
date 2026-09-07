@@ -191,7 +191,12 @@ export default function PackOpening({ cards, coins = null, onDone, onSaveRest = 
       setTimeout(() => playReveal(rarity, set), 280);
       // 👑 LEBROOOOON JAMES — the one sampled sound, because it is a joke and a
       // joke cannot be synthesized. Guarded: a missing file must not stop a pull.
-      if (currentCard && (currentCard.id === 'LeBron_James' || currentCard.id === '08_09_LeBron_James')) {
+      // Every LeBron, not just the base one. `currentCard.id` is the COLLECTION
+      // KEY — `super-season:LeBron_James`, `rookie:LeBron_James` — so matching
+      // on it caught only the base card, and '08_09_LeBron_James' is a name
+      // from before the sets were keyed at all. The card object underneath
+      // carries the bare id whichever set it came from.
+      if (currentCard?.card?.id === 'LeBron_James') {
         try { new Audio('/nba-showdown-2k25/lebron.mp3').play().catch(() => {}); } catch { /* no sound */ }
       }
     } else {

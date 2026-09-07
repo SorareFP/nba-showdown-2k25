@@ -10,9 +10,9 @@
     "zoom": 1
   },
   "Lauren_Jackson": {
-    "x": -0.84,
-    "y": 0,
-    "zoom": 1
+    "x": -1.77,
+    "y": -3.85,
+    "zoom": 1.14
   },
   "Lisa_Leslie": {
     "x": 2.38,
@@ -77,6 +77,61 @@
   "Suzie_McConnell_Serio": {
     "x": 4.03,
     "y": 0,
+    "zoom": 1
+  },
+  "Andrea_Stinson": {
+    "x": -10,
+    "y": 13.52,
+    "zoom": 1.2
+  },
+  "Brandy_Reed": {
+    "x": 6.43,
+    "y": 0,
+    "zoom": 1
+  },
+  "Cynthia_Cooper": {
+    "x": -28.85,
+    "y": 0,
+    "zoom": 1
+  },
+  "Elena_Baranova": {
+    "x": 0,
+    "y": 4.07,
+    "zoom": 1
+  },
+  "Janeth_Arcain": {
+    "x": -12.72,
+    "y": 0,
+    "zoom": 1
+  },
+  "Michelle_Snow": {
+    "x": -1.28,
+    "y": 45.81,
+    "zoom": 1.56
+  },
+  "Natalie_Williams": {
+    "x": -35.23,
+    "y": 0,
+    "zoom": 1
+  },
+  "Sophia_Young_Malcolm": {
+    "x": -12.17,
+    "y": 0,
+    "zoom": 1
+  },
+  "Swin_Cash": {
+    "x": -1.92,
+    "y": 0,
+    "zoom": 1
+  },
+  "Teresa_Weatherspoon": {
+    "x": -3.85,
+    "y": 0,
+    "zoom": 1
+  },
+  "Yolanda_Griffith": {
+    "x": 0,
+    "y": -6.48,
     "zoom": 1
   }
 }

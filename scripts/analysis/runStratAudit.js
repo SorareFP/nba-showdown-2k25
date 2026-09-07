@@ -29,7 +29,7 @@ import {
   spendTimeout, endTimeout,
 } from '../../src/game/engine.js';
 import { execCard, resolvePendingShotCheck } from '../../src/game/execCard.js';
-import { STRATS, getStrat } from '../../src/game/strats.js';
+import { STRATS, getStrat, CRUNCH_CARDS } from '../../src/game/strats.js';
 import { getStratRarity, STRAT_COPY_CAPS } from '../../src/game/rarity.js';
 import {
   aiDraftPick, aiPlacementPick, aiTurn, aiScoringDecision, aiRollDecision, aiReactionDecision,
@@ -439,7 +439,9 @@ if (process.argv.includes('--emit-deck')) {
   // floored card and never a crunch rider (those are the crunch package, and
   // they are only ever held until the last section). The dropped list is
   // written into the generated file so it is a decision on the record.
-  const CRUNCH_RIDERS = ['desperation_press', 'ato_masterpiece', 'fresh_legs', 'ice_the_hot_hand', 'reset', 'second_closer'];
+  // From the registry, not a copy — a duplicated list is what let the WNBA
+  // specials slip past packSupply.test.js.
+  const CRUNCH_RIDERS = CRUNCH_CARDS;
   // Proven value is protected too: a card the AI plays 100+ times and wins
   // 55%+ with is a staple, whatever its raw play count ranks against.
   const winOf = r => (r.gamesPlayed ? r.winsWhenPlayed / r.gamesPlayed : 0);

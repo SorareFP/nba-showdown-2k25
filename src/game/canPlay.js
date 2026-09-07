@@ -1,6 +1,7 @@
 // NBA Showdown 2026 — Card playability rules
 // Returns { canPlay: bool, reason: string }
 
+import { CRUNCH_CARDS } from './strats.js';
 import { getTeam, getOpp, getPS, getFatigue, calcAdv, burnedSlots } from './engine.js';
 
 const ok = (r = '') => ({ canPlay: true, reason: r });
@@ -311,8 +312,17 @@ export function canPlayCard(g, teamKey, cardId) {
   }
 
   // ── CRUNCH TIME cards ───────────────────────────────────────────────────
-  if (['desperation_press', 'ato_masterpiece', 'fresh_legs', 'ice_the_hot_hand', 'reset', 'second_closer'].includes(cardId)) {
+  if (CRUNCH_CARDS.includes(cardId)) {
     if (!g.crunch?.active) return no('Crunch Time only — final section, close game');
+    if (cardId === 'unethical_hoops') {
+      const some = myT.starters.some((p, i) => {
+        const dp = oppT.starters[(g.offMatchups[teamKey] || [])[i] ?? i];
+        const a = p && dp && calcAdv(p, dp, g.tempEff?.[teamKey] || {}, i);
+        return a && (a.speedAdv > 0 || a.powerAdv > 0);
+      });
+      if (!some) return no('Need a player with a Speed or Power advantage');
+      return ok('Draw the foul — two free throws at +4');
+    }
     if (cardId === 'desperation_press') {
       if (myT.score >= oppT.score) return no('Only playable while trailing');
       return ok('Their next top-tier roll must be re-rolled');
@@ -667,7 +677,7 @@ export function canPlayCard(g, teamKey, cardId) {
     }
     case 'crowd_favorite':
       if (!myT.starters.some(p => p.salary <= 350)) return no('Need a player with salary ≤$350 in lineup');
-      return ok();
+      return ok('2+ pts this section, rolls or shot checks → hot marker');
     case 'switch_everything': return ok('Reassign your entire defense — all opponent advantages doubled');
     case 'this_is_my_house': {
       const targets = myHouseTargets(g, teamKey);

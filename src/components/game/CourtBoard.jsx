@@ -593,6 +593,20 @@ async function buildOpts(game, teamKey, cardId, base, openModal, ui = {}) {
     }
   }
 
+  // ── Unethical Hoops: who draws the foul ────────────────────────────────
+  if (cardId === 'unethical_hoops') {
+    const eligible = filterStarters(myT.starters, (p, i) => {
+      const d = defenders[offMatchups[i] ?? i];
+      const a = p && d ? calcAdv(p, d, game.tempEff?.[teamKey] || {}, i) : null;
+      return a && (a.speedAdv > 0 || a.powerAdv > 0);
+    });
+    if (eligible.length === 0) { toast('Nobody has a Speed or Power advantage to draw the foul with.'); return null; }
+    const pick = await pickFiltered(eligible, 'Who draws the foul? (two free throws at +4)', teamKey,
+      (p, i) => { const d = defenders[offMatchups[i] ?? i]; const a = calcAdv(p, d, game.tempEff?.[teamKey] || {}, i); return `S${a.speedAdv > 0 ? '+' : ''}${a.speedAdv} P${a.powerAdv > 0 ? '+' : ''}${a.powerAdv}`; });
+    if (pick === null) return null;
+    opts.playerIdx = pick;
+  }
+
   // ── Short-Roll Playmaker: the 8/8 facilitator ──────────────────────────
   if (cardId === 'short_roll_playmaker') {
     const eligible = filterStarters(myT.starters, p => p && (p.speed || 0) >= 8 && (p.power || 0) >= 8);
@@ -1492,6 +1506,7 @@ function LiveEffects({ game, teamKey, idx }) {
   if (te['reb2' + idx]) push('reb2', styles.liveGood, 'REB ×2', 'Rebounds from scoring rolls are doubled');
   if (te['astOnScore' + idx]) push('ast',  styles.liveGood, '+AST on score', 'A score adds an assist');
   if (te['paintAst' + idx])   push('past', styles.liveGood, '+AST inside', 'A paint score adds an assist (Short-Roll Playmaker)');
+  if (te['crowd_' + idx])     push('crowd', styles.liveGood, '2+ pts → 🔥', 'Crowd Favorite: two points this section, rolls or shot checks, earns a hot marker');
   if (de && (de.speedBoost || de.powerBoost)) {
     push('def', styles.liveDef, 'D +' + (de.speedBoost || 0) + '/+' + (de.powerBoost || 0),
       'Defensive Speed/Power boost this segment (Double Team, Energizer, Defensive Identity, Defensive Stopper)');

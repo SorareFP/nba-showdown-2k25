@@ -1,0 +1,123 @@
+rules_version = '2';
+
+// THE RULES ARE THE ENFORCEMENT. The Cloud Functions are just where the logic
+// lives; what makes them the ONLY way to mint a card is that this file refuses
+// every other way.
+//
+// ── DO NOT DEPLOY THIS BEFORE THE FUNCTIONS ─────────────────────────────────
+//
+// These rules lock the client out of `copies`, `supply` and `currency`. Deployed
+// while the app is still writing those directly — which it does today, see
+// USE_CLOUD_FUNCTIONS in src/firebase/serverWrites.js — every pack open and
+// every burn fails instantly. The order is: deploy functions, flip the flag,
+// verify, then deploy these. See functions/README.md.
+//
+// ── WHAT AN ADMIN SDK WRITE LOOKS LIKE HERE ─────────────────────────────────
+//
+// Nothing. The Admin SDK bypasses rules entirely, so every `allow write: if
+// false` below still lets a Cloud Function through. That is the whole mechanism:
+// the client is refused, the server is not, and there is no third party.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSelf(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    // Only the fields a player is allowed to change about themselves. CURRENCY
+    // IS NOT ONE OF THEM: coins are minted by claiming goals and burning spares
+    // and spent on packs and listings, all of which are server work now. A
+    // client that can write its own currency can buy every card in the game.
+    function safeUserFields() {
+      return request.resource.data.diff(resource.data).affectedKeys()
+        .hasOnly(['displayName', 'settings', 'lastSeen']);
+    }
+
+    // NOT IN THAT LIST, and it matters: `starterPackOpened` and the three daily
+    // counters used to be here. A client that can set starterPackOpened back to
+    // false opens the starter again for free; one that can zero its daily
+    // milestone coins has no daily cap. Both are written by the server now
+    // (openPack and claimGameReward) and by nothing else.
+
+    // A NEW ACCOUNT STARTS WITH NOTHING. `create` has no diff to check, so the
+    // values themselves are: a first sign-in that wrote itself a balance, a
+    // used starter or a spent cap would otherwise be a legal create.
+    function startsEmpty() {
+      let d = request.resource.data;
+      return d.get('currency', 0) == 0
+        && d.get('starterPackOpened', false) == false
+        && d.get('dailyMilestoneCoins', 0) == 0
+        && d.get('dailyFirstWin', false) == false
+        && !('packWindow' in d)
+        && !('gameWindow' in d);
+    }
+
+    match /users/{uid} {
+      allow read: if isSelf(uid);
+      allow create: if isSelf(uid) && startsEmpty();
+      allow update: if isSelf(uid) && safeUserFields();
+      allow delete: if false;
+
+      // THE LEDGER. One document per physical card in the game. A client that
+      // can write here can mint, which is the thing every scarcity number in
+      // docs/plans/2026-09-04-card-economy-design.md depends on not happening.
+      match /copies/{copyId} {
+        allow read: if isSelf(uid);
+        allow write: if false;
+      }
+
+      // Derived from `copies` and rebuilt by the server. Readable so the
+      // collection screen stays one read per card rather than one per copy.
+      match /collection/{cardKey} {
+        allow read: if isSelf(uid);
+        allow write: if false;
+      }
+
+      match /packHistory/{entry} {
+        allow read: if isSelf(uid);
+        allow write: if false;
+      }
+
+      // Claims are the record of which goals have paid out. Server-written for
+      // the same reason as currency: writing one by hand is free money.
+      match /claims/{goalId} {
+        allow read: if isSelf(uid);
+        allow write: if false;
+      }
+
+      // Teams and decks are the player's own arrangement of cards they already
+      // own. Nothing here creates value, so the client keeps them.
+      // The lifetime tracker: one document per card, written only by
+      // claimGameReward with the box score of a finished game.
+      match /cardStats/{cardKey} {
+        allow read: if isSelf(uid);
+        allow write: if false;
+      }
+
+      match /teams/{teamId} { allow read, write: if isSelf(uid); }
+      match /decks/{deckId} { allow read, write: if isSelf(uid); }
+    }
+
+    // Global circulating supply. WORLD-READABLE because every client needs it
+    // to weight its pack preview, and world-unwritable because it is the number
+    // those weights are derived from.
+    match /supply/{doc} {
+      allow read: if request.auth != null;
+      allow write: if false;
+    }
+
+    // The market. Readable by anyone signed in — it is a shop window — and
+    // written only by the server, so a listing cannot be conjured, repriced
+    // after somebody commits to it, or deleted out from under a buyer.
+    match /listings/{listingId} {
+      allow read: if request.auth != null;
+      allow write: if false;
+    }
+
+    // Anything not named above is closed. New collections have to be considered
+    // rather than inheriting a default.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

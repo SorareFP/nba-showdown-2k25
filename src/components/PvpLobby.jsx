@@ -3,6 +3,7 @@ import { useAuth } from '../firebase/AuthProvider.jsx';
 import { createRoom, joinRoom, onRoomMeta, setTeamSelection, loadMyGames, removeFromMyGames } from '../firebase/pvpRoom.js';
 import { loadTeams } from '../firebase/savedTeams.js';
 import { loadDecks } from '../firebase/savedDecks.js';
+import { ownedRoster, MIN_TO_PLAY } from '../game/teamRules.js';
 import s from './PvpLobby.module.css';
 
 // -------- helpers --------
@@ -32,7 +33,7 @@ function statusBadge(status) {
 // Component
 // ================================================================
 
-export default function PvpLobby({ onGameStart }) {
+export default function PvpLobby({ onGameStart, collection = {} }) {
   const { user } = useAuth();
 
   // view: 'landing' | 'waiting' | 'team_select'
@@ -142,10 +143,17 @@ export default function PvpLobby({ onGameStart }) {
       const team = teams.find((t) => t.id === selectedTeamId);
       const deck = selectedDeckId ? decks.find((d) => d.id === selectedDeckId) : null;
 
+      // ONLY THE CARDS STILL OWNED go to the room. A team saved before a sale
+      // or a burn is not a licence to keep playing the card.
+      const { roster, dropped } = ownedRoster(team.players, collection);
+      if (roster.length < MIN_TO_PLAY) {
+        throw new Error(`${dropped.length} of this team's players are no longer in your collection — edit it in My Teams first.`);
+      }
+
       await setTeamSelection(
         roomCode,
         myRole,
-        team.players,
+        roster,
         deck ? deck.cards : null,
         team.name,
       );

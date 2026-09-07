@@ -1,6 +1,13 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { getPlayerImageUrl, getStratImagePath } from '../game/cardImages.js';
+import { cardKey } from '../game/cardSets.js';
+import { useCardStats } from '../firebase/CardStatsProvider.jsx';
+import { getPlayerRarity } from '../game/rarity.js';
+import Holo from './HoloSheen.jsx';
 import styles from './CardLightbox.module.css';
+
+// The legendary tier wears a holographic sheen wherever its face is drawn.
+const isLegendary = (type, data) => type === 'player' && getPlayerRarity(data) === 'legendary';
 
 const LightboxCtx = createContext(null);
 
@@ -35,8 +42,12 @@ export function LightboxProvider({ children }) {
 
 function LightboxModal({ item, onClose, onFullRes }) {
   const { type, data } = item;
+  // THE SET GOES WITH THE ID. A card object's `id` is the bare player id even
+  // for a special set — the set lives in `card.set` — and by id alone the
+  // lookup lands on the BASE set's face. So a Super Season or WNBA card showed
+  // the 2026-27 picture beside its own numbers: "some players mismatch".
   const imgSrc = type === 'player'
-    ? getPlayerImageUrl(data.id)
+    ? getPlayerImageUrl(data.id, data.set)
     : getStratImagePath(data.id);
 
   return (
@@ -46,7 +57,7 @@ function LightboxModal({ item, onClose, onFullRes }) {
 
         <div className={styles.content}>
           {/* Left: image */}
-          <div className={styles.imgSide}>
+          <Holo className={styles.imgSide} active={!!imgSrc && isLegendary(type, data)}>
             {imgSrc
               ? <img src={imgSrc} alt={data.name || data.n} className={styles.img}
                   onError={e => { e.target.style.display = 'none'; }} />
@@ -56,7 +67,7 @@ function LightboxModal({ item, onClose, onFullRes }) {
                 {'\uD83D\uDD0D'}
               </button>
             )}
-          </div>
+          </Holo>
 
           {/* Right: stats */}
           <div className={styles.statsSide}>
@@ -71,19 +82,48 @@ function LightboxModal({ item, onClose, onFullRes }) {
 function FullResOverlay({ item, onClose }) {
   const { type, data } = item;
   const imgSrc = type === 'player'
-    ? getPlayerImageUrl(data.id)
+    ? getPlayerImageUrl(data.id, data.set)
     : getStratImagePath(data.id);
 
   return (
     <div className={styles.backdrop} onClick={onClose}>
-      <img src={imgSrc} alt={data.name || data.n} className={styles.fullResImg}
-        onClick={e => e.stopPropagation()} />
+      <Holo as="span" className={styles.fullResHolo} active={isLegendary(type, data)} onClick={e => e.stopPropagation()}>
+        <img src={imgSrc} alt={data.name || data.n} className={styles.fullResImg} />
+      </Holo>
       <button className={styles.closeBtnFull} onClick={onClose}>{'\u00D7'}</button>
     </div>
   );
 }
 
+/** The player's lifetime line with this card — games, record, averages, totals. */
+export function careerLine(rec) {
+  const g = rec?.games || 0;
+  if (!g) return null;
+  const wins = rec.wins || 0;
+  const avg = v => ((v || 0) / g).toFixed(1);
+  return {
+    games: g,
+    record: `${wins}–${g - wins}`,
+    averages: `${avg(rec.pts)} pts · ${avg(rec.reb)} reb · ${avg(rec.ast)} ast`,
+    totals: `${rec.pts || 0} pts · ${rec.reb || 0} reb · ${rec.ast || 0} ast · ${rec.tpm || 0}/${rec.tpa || 0} 3PT`,
+  };
+}
+
+function CareerBlock({ rec }) {
+  const line = careerLine(rec);
+  if (!line) return null;
+  return (
+    <div className={styles.lbCareer}>
+      <div className={styles.lbChartHeader}>Your record with this card</div>
+      <div className={styles.lbCareerRow}><span>{line.games} {line.games === 1 ? 'game' : 'games'} · {line.record}</span><span>{line.averages}</span></div>
+      <div className={styles.lbCareerRow}><span>Totals</span><span>{line.totals}</span></div>
+    </div>
+  );
+}
+
 function PlayerStats({ card }) {
+  const { stats } = useCardStats();
+  const rec = stats?.[cardKey(card)];
   const boosts = [
     card.threePtBoost !== 0 && `3PT ${card.threePtBoost > 0 ? '+' : ''}${card.threePtBoost}`,
     card.paintBoost !== 0 && `Paint ${card.paintBoost > 0 ? '+' : ''}${card.paintBoost}`,
@@ -100,6 +140,7 @@ function PlayerStats({ card }) {
         <div className={styles.lbStat}><span>LINE</span><strong>{card.shotLine}</strong></div>
       </div>
       {boosts.length > 0 && <div className={styles.lbBoosts}>{boosts.join(' · ')}</div>}
+      <CareerBlock rec={rec} />
       <div className={styles.lbChart}>
         <div className={styles.lbChartHeader}>Scoring Chart</div>
         {card.chart.map((t, i) => (

@@ -2,23 +2,35 @@ import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../firebase/AuthProvider.jsx';
 import { loadTeams, deleteTeam, updateTeam } from '../firebase/savedTeams.js';
 import { loadDecks, deleteDeck } from '../firebase/savedDecks.js';
-import { loadCollection, addCardsToCollection, burnCard, getUserData, updateUserFields } from '../firebase/collection.js';
-import { collection as fbCollection, getDocs, writeBatch, doc } from 'firebase/firestore';
-import { db } from '../firebase/config.js';
+import { loadCollection, getUserData, loadClaims, addCoins, readSupply, updateUserFields } from '../firebase/collection.js';
+// EVERY VALUE-MOVING CALL COMES THROUGH THE SWITCH. Importing them from
+// collection.js or market.js directly would bypass USE_CLOUD_FUNCTIONS, which
+// is exactly how the first version of the server rollout was wired to nothing.
+import {
+  openPack, listCard, burnCard, claimGoal, devResetAccount, USE_CLOUD_FUNCTIONS, collectCard } from '../firebase/serverWrites.js';
 import { CARD_MAP } from '../game/cards.js';
 import { STRAT_MAP } from '../game/strats.js';
-import { generatePack, PACK_TYPES } from '../game/packEngine.js';
+import { PACK_TYPES } from '../game/packEngine.js';
 import DeckEditor from './DeckEditor.jsx';
+import TeamEditor from './TeamEditor.jsx';
 import PackShop from './PackShop.jsx';
 import PackOpening from './PackOpening.jsx';
 import MyCollection from './MyCollection.jsx';
+import Market from './Market.jsx';
+import CollectionGoals from './CollectionGoals.jsx';
+import { collectableKeys } from '../game/collections.js';
 import styles from './CollectionTab.module.css';
 
 const VIEWS = [
   { key: 'teams', label: 'My Teams' },
   { key: 'decks', label: 'My Decks' },
   { key: 'collection', label: 'My Collection' },
+  { key: 'goals', label: 'Collections' },
   { key: 'shop', label: 'Pack Shop' },
+  // THE MARKET IS NOT THE SHOP. The shop sells packs, which mint; the market is
+  // players selling copies that already exist. Keeping them as separate views
+  // is the clearest way to stop the second reading as the first.
+  { key: 'market', label: 'Market' },
 ];
 
 export default function CollectionTab({ onLoadTeam, onCollectionChange }) {
@@ -32,28 +44,50 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange }) {
   const [expandedTeam, setExpandedTeam] = useState(null);
   const [expandedDeck, setExpandedDeck] = useState(null);
   const [editingDeck, setEditingDeck] = useState(null);
+  const [editingTeam, setEditingTeam] = useState(null); // null | 'new' | team
   const [openingPack, setOpeningPack] = useState(null);
+  const [claims, setClaims] = useState({});
+  const [busyGoal, setBusyGoal] = useState(null);
+  const [busyCard, setBusyCard] = useState(null);
+  const [toast, setToast] = useState(null);
+  // HOW MANY OF EACH CARD ARE IN CIRCULATION, read once with everything else
+  // rather than at the moment a pack is bought. Two reasons: opening a pack has
+  // to be instant, and supply is designed to move over a SEASON — a count that
+  // is a few minutes stale changes a pull weight by nothing anyone could feel.
+  // Empty until it loads, and an empty map is exactly the uniform behaviour the
+  // engine had before supply existed, so a slow or failed read costs fairness,
+  // never a broken pack.
+  const [supply, setSupply] = useState({});
 
   const refresh = useCallback(async () => {
     if (!user) return;
     setLoading(true);
-    const [t, d, c, u] = await Promise.all([
+    const [t, d, c, u, cl, sup] = await Promise.all([
       loadTeams(user.uid),
       loadDecks(user.uid),
       loadCollection(user.uid),
       getUserData(user.uid),
+      loadClaims(user.uid),
+      // Supply is global rather than per-user and is the one read here that
+      // nothing breaks without, so a failure degrades to uniform pulls instead
+      // of taking the whole tab down with it.
+      readSupply().catch(() => ({})),
     ]);
     setTeams(t);
     setDecks(d);
     setCollection(c);
     setUserData(u);
+    setClaims(cl);
+    setSupply(sup);
     setLoading(false);
   }, [user]);
 
   useEffect(() => { refresh(); }, [refresh]);
 
   // Show starter pack prompt if not opened
-  const showStarterPrompt = userData && userData.starterPackOpened === false;
+  // `undefined` counts as not opened: older accounts have no field and are
+  // no longer migrated (the rules refuse that write from here).
+  const showStarterPrompt = userData && !userData.starterPackOpened;
 
   const handleDeleteTeam = async (teamId) => {
     if (!confirm('Delete this team?')) return;
@@ -83,63 +117,178 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange }) {
     return d?.name || null;
   };
 
-  const handleBuyPack = (packType, options) => {
-    const cards = generatePack(packType, options);
-    setOpeningPack({ cards, packType, options });
-  };
-
-  const handleOpenStarter = () => {
-    const cards = generatePack('starter');
-    setOpeningPack({ cards, packType: 'starter', options: {} });
-  };
-
-  const handlePackDone = async () => {
-    if (!openingPack) return;
-    // Grab and clear immediately to prevent double-saves
-    const pack = openingPack;
-    setOpeningPack(null);
+  // THE SERVER ROLLS THE DICE, so it is asked BEFORE the reveal: the cards it
+  // returns are the player's the moment the call returns, and the animation is
+  // a replay. Saving after the animation — the old order — cannot work when the
+  // server chooses the cards, and was never safe anyway: a pack shown and then
+  // not saved. The direct route saves first too now, so there is one flow.
+  const handleBuyPack = async (packType, options) => {
     try {
-      const { cards, packType } = pack;
-      const cost = PACK_TYPES[packType].price;
-      await addCardsToCollection(user.uid, cards, packType, cost);
-      if (packType === 'starter') {
-        await updateUserFields(user.uid, { starterPackOpened: true });
-      }
-      setView('collection');
-      refresh();
-      onCollectionChange?.();
+      const { cards, spent } = await openPack(user.uid, packType, options, supply);
+      // The server has already taken the coins; show it now rather than after
+      // the reveal, so the balance on the reveal screen is the real one.
+      setUserData(u => (u ? { ...u, currency: (u.currency ?? 0) - (spent ?? 0) } : u));
+      setOpeningPack({ cards, packType, options });
     } catch (e) {
-      console.error('Pack save error:', e);
-      alert('Error saving pack: ' + e.message);
+      setToast(e.message);
     }
   };
 
-  const handleBurn = async (cardId, burnValue) => {
-    await burnCard(user.uid, cardId, burnValue);
+  // The starter pack does NOT get supply. It is every player's first twenty
+  // cards and it should be the same draw for everybody — weighting it by what
+  // the existing playerbase already owns would hand later arrivals a different
+  // starter than early ones, which is the opposite of what a starter is for.
+  // Both routes honour that (`once` packs skip the supply weighting).
+  const handleOpenStarter = async () => {
+    try {
+      const { cards, spent } = await openPack(user.uid, 'starter', {});
+      setUserData(u => (u ? { ...u, currency: (u.currency ?? 0) - (spent ?? 0) } : u));
+      setOpeningPack({ cards, packType: 'starter', options: {} });
+    } catch (e) {
+      setToast(e.message);
+    }
+  };
+
+  // Nothing to save here any more — the pack was recorded before it was shown.
+  // A resumed box that has now been opened to the end clears its saved reveal.
+  const handlePackDone = async () => {
+    if (!openingPack) return;
+    const wasResumed = openingPack.resumed;
+    setOpeningPack(null);
+    if (wasResumed) {
+      try { await updateUserFields(user.uid, { 'settings.pendingReveals': [] }); } catch { /* cosmetic */ }
+    }
+    setView('collection');
     refresh();
     onCollectionChange?.();
   };
 
-  // DEV: Reset account for testing
-  const handleResetAccount = async () => {
-    if (!confirm('DEV: Reset your collection, currency, and starter pack status? This cannot be undone.')) return;
-    // Delete all collection docs
-    const collSnap = await getDocs(fbCollection(db, 'users', user.uid, 'collection'));
-    const histSnap = await getDocs(fbCollection(db, 'users', user.uid, 'packHistory'));
-    const batch = writeBatch(db);
-    collSnap.forEach(d => batch.delete(d.ref));
-    histSnap.forEach(d => batch.delete(d.ref));
-    batch.update(doc(db, 'users', user.uid), {
-      currency: 0,
-      starterPackOpened: false,
-      dailyMilestoneCoins: 0,
-      dailyMilestoneDate: '',
-      dailyFirstWin: false,
-    });
-    await batch.commit();
+  // THE REST OF THE BOX, PUT DOWN. `settings` is the one field on the user
+  // record the rules let the browser write, and this is presentation, not
+  // value: every card in `rest` is already in the ledger. Losing this list
+  // would lose a reveal, never a card.
+  const handleSaveRest = async rest => {
+    try {
+      await updateUserFields(user.uid, { 'settings.pendingReveals': rest });
+      setToast(`${new Set(rest.map(r => r.packIndex)).size} packs saved — open them from the shop whenever.`);
+    } catch (e) {
+      setToast(`Could not save the rest: ${e.message}`);
+    }
+    setOpeningPack(null);
+    setView('collection');
     refresh();
     onCollectionChange?.();
-    alert('Account reset! Refresh the page to see the starter pack prompt.');
+  };
+
+  const pendingReveals = userData?.settings?.pendingReveals ?? [];
+  const handleResume = () => {
+    if (!pendingReveals.length) return;
+    setOpeningPack({ cards: pendingReveals, packType: 'booster_box', options: {}, resumed: true });
+  };
+
+  const handleList = async (cardId, price) => {
+    try {
+      await listCard(user.uid, cardId, price);
+    } catch (e) {
+      // listCard is the authority on what may be sold — the UI hides the button
+      // for a protected copy, but a refusal still has to be shown rather than
+      // swallowed, because the button is a request and not a permission.
+      setToast(e.message);
+      return;
+    }
+    setToast('Listed on the market');
+    refresh();
+    onCollectionChange?.();
+  };
+
+  // The value is not passed: both routes price a burn from the card's rarity.
+  // MyCollection still hands it over for display and it is simply ignored.
+  const handleBurn = async cardId => {
+    try {
+      await burnCard(user.uid, cardId);
+    } catch (e) {
+      // The lock is enforced in burnCard, so this is the path a locked card
+      // takes even though the UI hides its burn button — surface it rather
+      // than swallowing it.
+      setToast(e.message);
+      return;
+    }
+    refresh();
+    onCollectionChange?.();
+  };
+
+  /**
+   * Claim one completed goal.
+   *
+   * Eligibility is re-derived server-side inside claimGoal, so the button is a
+   * request rather than an authority — which is why a failure here is shown and
+   * not treated as impossible.
+   */
+  const handleCollect = async (cardKey) => {
+    setBusyCard(cardKey);
+    try {
+      await collectCard(user.uid, cardKey);
+      setToast(`${CARD_MAP[cardKey]?.name ?? cardKey} is in your collection.`);
+      await refresh();
+      onCollectionChange?.();
+    } catch (e) {
+      setToast(e.message);
+    } finally {
+      setBusyCard(null);
+    }
+  };
+
+  const handleClaim = async (goalId) => {
+    setBusyGoal(goalId);
+    try {
+      const res = await claimGoal(user.uid, goalId);
+      const card = res.card ? CARD_MAP[res.card]?.name ?? res.card : null;
+      setToast(
+        card
+          ? `Claimed! ${card}${res.coins ? ` and ${res.coins.toLocaleString()} coins` : ''}.`
+          : `Claimed ${res.coins.toLocaleString()} coins.`
+      );
+      await refresh();
+      onCollectionChange?.();
+    } catch (e) {
+      setToast(e.message);
+    } finally {
+      setBusyGoal(null);
+    }
+  };
+
+  /**
+   * DEV: top the balance up so packs can be opened without grinding.
+   *
+   * A BUTTON RATHER THAN A SCRIPT, because the account is the signed-in user's
+   * and nothing outside the browser holds their credentials. Gated by the same
+   * check the reset button uses, and it ADDS rather than sets — so pressing it
+   * twice is not a surprise, and it cannot silently wipe a real balance.
+   */
+  const DEV_COIN_GRANT = 1000000;
+  const handleGrantCoins = async () => {
+    await addCoins(user.uid, DEV_COIN_GRANT);
+    await refresh();
+    onCollectionChange?.();
+    setToast(`DEV: added ${DEV_COIN_GRANT.toLocaleString()} coins.`);
+  };
+
+  // DEV: Reset account for testing
+  // DEV: reset this account to a fresh one. Through the switch, so it is the
+  // server doing it once the flag is on — the old direct writes stop working
+  // the moment the rules land, localhost or not, because localhost talks to
+  // the real Firestore. The server hands every deleted copy back to supply,
+  // which the old version never did.
+  const handleResetAccount = async () => {
+    if (!confirm('DEV: Reset your collection, ledger, currency and starter pack status? This cannot be undone.')) return;
+    try {
+      const r = await devResetAccount(user.uid);
+      setToast(`DEV: reset — ${r.copies} copies, ${r.teams} teams, ${r.decks} decks, ${r.claims} claims, ${r.listings} listings cleared. Refresh for the starter pack.`);
+    } catch (e) {
+      setToast(`DEV reset failed: ${e.message}`);
+    }
+    await refresh();
+    onCollectionChange?.();
   };
 
   // Pack opening screen takes over
@@ -147,7 +296,23 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange }) {
     return (
       <PackOpening
         cards={openingPack.cards}
+        coins={userData?.currency ?? 0}
         onDone={handlePackDone}
+        onSaveRest={openingPack.packType === 'booster_box' ? handleSaveRest : null}
+      />
+    );
+  }
+
+  // The collection-only team editor takes over the tab the way the deck
+  // editor does — one thing on screen — and the collection it draws from is
+  // the one this tab has already loaded.
+  if (editingTeam) {
+    return (
+      <TeamEditor
+        team={editingTeam === 'new' ? null : editingTeam}
+        collection={collection}
+        onSaved={() => { setEditingTeam(null); refresh(); }}
+        onCancel={() => setEditingTeam(null)}
       />
     );
   }
@@ -162,6 +327,9 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange }) {
       />
     );
   }
+
+  // Cards in the box that are not in the binder yet — the dot on the tab.
+  const collectable = collectableKeys(collection).size;
 
   return (
     <div className={styles.wrap}>
@@ -184,6 +352,11 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange }) {
             onClick={() => setView(v.key)}
           >
             {v.label}
+            {v.key === 'collection' && collectable > 0 && (
+              <span className={styles.navDot} title={`${collectable} card${collectable === 1 ? '' : 's'} waiting to be collected`}>
+                {collectable}
+              </span>
+            )}
           </button>
         ))}
         {userData && (
@@ -196,10 +369,13 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange }) {
       {/* ── My Teams ── */}
       {view === 'teams' && (
         <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>My Teams</h2>
+          <div className={styles.sectionHeader}>
+            <h2 className={styles.sectionTitle}>My Teams</h2>
+            <button className={styles.newBtn} onClick={() => setEditingTeam('new')}>+ New Team</button>
+          </div>
           {loading && <div className={styles.loading}>Loading...</div>}
           {!loading && teams.length === 0 && (
-            <div className={styles.empty}>No saved teams yet. Build a team and save it from the Team Builder.</div>
+            <div className={styles.empty}>No saved teams yet. Build one from your collection.</div>
           )}
           <div className={styles.list}>
             {teams.map(t => (
@@ -246,6 +422,7 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange }) {
                     <div className={styles.itemActions}>
                       <button className={styles.loadBtn} onClick={() => onLoadTeam(t, 'A')}>Load as Team A</button>
                       <button className={styles.loadBtnB} onClick={() => onLoadTeam(t, 'B')}>Load as Team B</button>
+                      <button className={styles.editBtn} onClick={() => setEditingTeam(t)}>Edit</button>
                       <button className={styles.deleteBtn} onClick={() => handleDeleteTeam(t.id)}>Delete</button>
                     </div>
                   </div>
@@ -309,17 +486,69 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange }) {
 
       {/* ── My Collection ── */}
       {view === 'collection' && (
-        <MyCollection collection={collection} onBurn={handleBurn} />
+        <MyCollection collection={collection} onBurn={handleBurn} onList={handleList} onCollect={handleCollect} />
+      )}
+
+      {/* ── Collections (the goal ladder) ── */}
+      {view === 'goals' && (
+        <CollectionGoals
+          collection={collection}
+          claims={claims}
+          coins={userData?.currency ?? 0}
+          onClaim={handleClaim}
+          onCollect={handleCollect}
+          busyGoal={busyGoal}
+          busyCard={busyCard}
+        />
       )}
 
       {/* ── Pack Shop ── */}
+      {view === 'market' && (
+        <Market
+          uid={user.uid}
+          coins={userData?.currency ?? 0}
+          onTraded={() => { refresh(); onCollectionChange?.(); }}
+        />
+      )}
+
       {view === 'shop' && (
-        <PackShop currency={userData?.currency ?? 0} onBuyPack={handleBuyPack} />
+        <>
+          {pendingReveals.length > 0 && (
+            <div style={{ margin: '0 0 16px', padding: '12px 16px', border: '1px solid var(--orange)', borderRadius: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
+              <div>
+                <strong>{new Set(pendingReveals.map(r => r.packIndex)).size} packs still to open</strong>
+                <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>From a booster box you put down. The cards are already yours.</div>
+              </div>
+              <button className={styles.loadBtn} onClick={handleResume}>Open them</button>
+            </div>
+          )}
+          <PackShop currency={userData?.currency ?? 0} onBuyPack={handleBuyPack} />
+        </>
+      )}
+
+      {toast && (
+        <div className={styles.toast} role="status" onClick={() => setToast(null)}>
+          {toast}
+          <button className={styles.toastClose} aria-label="Dismiss">×</button>
+        </div>
       )}
 
       {/* DEV: Reset button — localhost or admin only */}
-      {(window.location.hostname === 'localhost' || user?.email === 'hoopsonhoops@gmail.com') && (
+      {/* DEV TOOLS. Dev builds only — `import.meta.env.DEV` is false under
+          `npm run build`, so nothing here ships — and only for the game's own
+          account. The reset goes through the switch and keeps working after
+          the rules land. Granting coins has no server route (there is no
+          honest one), so it shows only while the direct path is live. */}
+      {import.meta.env.DEV && (window.location.hostname === 'localhost' || user?.email === 'hoopsonhoops@gmail.com') && (
         <div style={{ marginTop: 32, paddingTop: 16, borderTop: '1px solid var(--border)' }}>
+          {!USE_CLOUD_FUNCTIONS && (
+          <button
+            onClick={handleGrantCoins}
+            style={{ background: 'none', color: 'var(--gold)', fontSize: 11, padding: '4px 10px', border: '1px solid rgba(245,158,11,0.35)', borderRadius: 4, marginRight: 8 }}
+          >
+            DEV: +1,000,000 coins
+          </button>
+          )}
           <button
             onClick={handleResetAccount}
             style={{ background: 'none', color: 'var(--red)', fontSize: 11, padding: '4px 10px', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 4 }}

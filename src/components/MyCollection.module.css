@@ -74,6 +74,29 @@
   font-size: 10px; color: var(--text-dim); font-style: italic; margin-top: 4px;
 }
 
+/* Two actions on a spare now: burn it for coins, or sell it to another player.
+   They share a row so neither becomes the default by being bigger. */
+.spareActions { display: flex; gap: 4px; margin-top: 4px; }
+.spareActions > button { flex: 1; }
+.sellRow { display: flex; gap: 3px; align-items: center; margin-top: 4px; }
+.sellInput {
+  flex: 1; min-width: 0; width: 100%;
+  background: rgba(0,0,0,0.3); border: 1px solid var(--border);
+  border-radius: 4px; padding: 3px 5px; color: var(--text);
+  font-size: 11px; font-variant-numeric: tabular-nums;
+}
+.sellYes {
+  background: var(--gold); color: #1a1a1a;
+  padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; border: none;
+}
+.sellBtn {
+  background: rgba(245,158,11,0.14); color: var(--gold);
+  border: 1px solid rgba(245,158,11,0.35);
+  padding: 4px 6px; border-radius: var(--radius-sm);
+  font-size: 10px; font-weight: 700; cursor: pointer;
+}
+.sellBtn:hover { background: rgba(245,158,11,0.24); }
+
 .burnBtn {
   margin-top: auto;
   background: none; color: var(--red);
@@ -106,3 +129,40 @@
   .filters { gap: 6px; }
   .cardArt { height: 90px; }
 }
+
+/* ── Set tag, lock and earned marks ──────────────────────────────────────── */
+
+.setTag {
+  font-size: 9px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.lockBtn {
+  position: absolute; top: 8px; left: 8px;
+  width: 24px; height: 24px; padding: 0;
+  display: grid; place-items: center;
+  background: rgba(0,0,0,0.6); border: 1px solid var(--border);
+  border-radius: 50%; font-size: 11px; line-height: 1; cursor: pointer;
+  opacity: .55; transition: opacity .12s;
+}
+.card:hover .lockBtn { opacity: 1; }
+.lockOn { opacity: 1; border-color: var(--gold); background: rgba(245,158,11,0.22); }
+
+.lockedNote {
+  font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--gold); text-align: center; padding: 4px 0;
+}
+
+.earnedTag {
+  font-size: 9px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+  color: #1a1206; background: var(--gold);
+  border-radius: 8px; padding: 1px 7px; width: fit-content;
+}
+
+/* Collect — the act that used to happen by itself at the pack. */
+.collectBtn {
+  width: 100%; margin: 4px 0 2px; padding: 6px 8px;
+  border: none; border-radius: 6px; cursor: pointer;
+  background: var(--green); color: #08131f; font-weight: 700; font-size: 12px;
+}
+.collectBtn:hover { filter: brightness(1.1); }

@@ -1,63 +1,119 @@
+/* PACK OPENING.
+ *
+ * Two things drive every rule below: the layout splits on desktop instead of
+ * staying a narrow column, and EVERY rarity effect has a legendary row. See the
+ * comment at the top of PackOpening.jsx for what was missing and why it mattered.
+ *
+ * Rarity colours are the ones in src/game/rarity.js, repeated here because CSS
+ * cannot import them. If those change, these change:
+ *   common #94A3B8 · uncommon #4ADE80 · rare #60A5FA · super-rare #F59E0B
+ *   legendary #A855F7
+ */
+
 .wrap {
-  display: flex; flex-direction: column; gap: 16px;
-  max-width: 700px; margin: 0 auto;
-}
-
-.header { display: flex; justify-content: space-between; align-items: center; }
-.title { font-size: 20px; font-weight: 700; }
-.counter { font-size: 14px; color: var(--text-muted); font-weight: 600; }
-
-/* Stack area — bigger cards */
-.stackArea {
+  display: flex; flex-direction: column; gap: 14px;
+  max-width: 1180px; margin: 0 auto;
   position: relative;
-  width: 320px; height: 450px;
+  border-radius: var(--radius-lg);
+  transition: background 0.5s ease;
+}
+
+/* The whole stage takes a colour wash on a good pull. Nothing below super-rare
+   gets one — a wash that fires on every card is wallpaper, not an event. */
+.lit_super_rare { background: radial-gradient(ellipse at 32% 42%, rgba(245,158,11,0.10), transparent 62%); }
+.lit_legendary  { background: radial-gradient(ellipse at 32% 42%, rgba(168,85,247,0.16), transparent 68%); }
+
+.header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.title { font-size: 20px; font-weight: 700; margin: 0; }
+.bestHint { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.headRight { display: flex; align-items: center; gap: 10px; }
+.counter { font-size: 14px; color: var(--text-muted); font-weight: 600; font-variant-numeric: tabular-nums; }
+.soundBtn {
+  background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 5px 9px;
+  font-size: 14px; line-height: 1; cursor: pointer;
+}
+.soundBtn:hover { background: var(--card-hover); }
+
+/* ── LAYOUT ───────────────────────────────────────────────────────────────
+   Desktop: stage and rail side by side, the rail a fixed 260px so the stage
+   never moves as cards accumulate. Below 900px the grid collapses to one
+   column and the rail becomes a horizontal strip. */
+.body {
+  /* THE CARD IS SIZED BY THE VIEWPORT, not fixed at 340x478. A pack reveal is
+     the one screen where the card is the whole point, and at 478px tall it
+     was under half the height of a desktop window. Two thirds of the viewport,
+     clamped so a phone still gets the old size and a big monitor does not get
+     a poster, and the width follows the print aspect (843x1181) so nothing is
+     ever stretched. Declared here rather than on the stage so the rail can
+     match its height. */
+  /* Viewport MINUS the chrome around the card — app header, banner, this
+     screen's header, nameplate, actions — rather than a fraction of it. A
+     fraction looked right on one screen and overflowed on the next, because
+     the chrome is a fixed height and the fraction was not. */
+  --card-h: clamp(478px, calc(100vh - 340px), 720px);
+  --card-w: calc(var(--card-h) * 843 / 1181);
+  /* Strategy faces are 825x1238 — taller and narrower than a player's
+     843x1181. The stage takes whichever aspect the card it is showing has. */
+  --strat-w: calc(var(--card-h) * 825 / 1238);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 260px;
+  gap: 24px;
+  align-items: start;
+}
+.stageCol { display: flex; flex-direction: column; align-items: center; gap: 12px; min-width: 0; }
+
+.stageArea {
+  position: relative;
+  width: var(--card-w); height: var(--card-h);
+  transition: width 0.2s ease;
+}
+.stratStage { width: var(--strat-w);
   cursor: pointer;
-  margin: 12px auto;
-  align-self: center;
+  margin: 8px auto 0;
 }
+.stageArea:focus-visible { outline: 2px solid var(--orange); outline-offset: 8px; border-radius: var(--radius-lg); }
 
-/* Peek cards behind */
-.peekCard {
-  position: absolute; inset: 0;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
+/* The glow BEHIND the card. Separate element so it can scale past the card's
+   own bounds without the card's overflow:hidden clipping it. */
+.aura {
+  position: absolute; inset: -18%;
+  border-radius: 50%;
+  pointer-events: none; z-index: 0;
+  animation: auraIn 0.75s ease-out forwards;
 }
+@keyframes auraIn {
+  0% { opacity: 0; transform: scale(0.55); }
+  55% { opacity: 1; }
+  100% { opacity: 0.85; transform: scale(1); }
+}
+.aura_common { background: radial-gradient(circle, rgba(148,163,184,0.16), transparent 62%); }
+.aura_uncommon { background: radial-gradient(circle, rgba(74,222,128,0.22), transparent 64%); }
+.aura_rare { background: radial-gradient(circle, rgba(96,165,250,0.30), transparent 66%); }
+.aura_super_rare { background: radial-gradient(circle, rgba(245,158,11,0.40), transparent 70%); }
+.aura_legendary { background: radial-gradient(circle, rgba(168,85,247,0.52), transparent 74%); }
 
-/* Card back face (shared) */
-.cardBackFace {
-  width: 100%; height: 100%;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-}
-.cardBackImg {
-  width: 100%; height: 100%;
-  object-fit: cover;
-  display: block;
-}
+.peekCard { position: absolute; inset: 0; border-radius: var(--radius-lg); overflow: hidden; }
+.cardBackFace { width: 100%; height: 100%; border-radius: var(--radius-lg); overflow: hidden; }
+.cardBackImg { width: 100%; height: 100%; object-fit: cover; display: block; }
 .backHint {
-  position: absolute; bottom: 20px;
-  font-size: 12px; color: rgba(255,255,255,0.25);
+  position: absolute; bottom: 20px; left: 0; right: 0; text-align: center;
+  font-size: 12px; color: rgba(255,255,255,0.28);
   animation: hintPulse 2s ease-in-out infinite;
 }
-@keyframes hintPulse {
-  0%, 100% { opacity: 0.25; }
-  50% { opacity: 0.6; }
-}
+@keyframes hintPulse { 0%, 100% { opacity: 0.28; } 50% { opacity: 0.65; } }
 
-/* Main card (flip) */
-.mainCard {
-  position: absolute; inset: 0;
-  perspective: 1200px;
-}
+/* ── THE FLIP ─────────────────────────────────────────────────────────────
+   The turn itself is the same for every card; what escalates is the settle.
+   A rarer card lands slightly larger and holds a pulse, so the difference is
+   read in the body of the card rather than only at its edge. */
+.mainCard { position: absolute; inset: 0; perspective: 1400px; z-index: 10; }
 .mainInner {
-  position: relative;
-  width: 100%; height: 100%;
-  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative; width: 100%; height: 100%;
+  transition: transform 0.55s cubic-bezier(0.34, 1.3, 0.5, 1);
   transform-style: preserve-3d;
 }
-.mainFlipped .mainInner {
-  transform: rotateY(180deg);
-}
+.mainFlipped .mainInner { transform: rotateY(180deg); }
 
 .mainBack, .mainFront {
   position: absolute; inset: 0;
@@ -65,74 +121,141 @@
   border-radius: var(--radius-lg);
   overflow: hidden;
 }
+.mainBack { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.mainFront { transform: rotateY(180deg); border: 3px solid var(--border); background: var(--navy-light); }
 
-.mainBack {
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  overflow: hidden;
+/* `contain`, never `cover`: the stage already matches the face's aspect, and
+   if it ever does not, a face with a sliver of frame beats a face with its
+   edges cut off. */
+.faceImg { width: 100%; height: 100%; object-fit: contain; display: block; position: relative; z-index: 1; }
+/* Sits behind the art, so a card with no face yet still reads as that player
+   rather than as an empty frame. */
+.faceFallback {
+  position: absolute; inset: 0; z-index: 0;
+  display: flex; align-items: center; justify-content: center;
+  padding: 16px; text-align: center;
+  font-size: 20px; font-weight: 700; color: var(--text-dim);
 }
 
-/* Front = full card art, no padding */
-.mainFront {
-  transform: rotateY(180deg);
-  border: 3px solid var(--border);
-}
-
-.faceImg {
-  width: 100%; height: 100%; object-fit: cover;
-  display: block;
-}
-
-/* Rarity-specific front borders */
+/* Rarity borders — five rows, not four. */
 .front_common { border-color: #94A3B8; }
-.front_uncommon { border-color: #4ADE80; box-shadow: 0 0 14px rgba(74,222,128,0.25); }
-.front_rare { border-color: #60A5FA; box-shadow: 0 0 22px rgba(96,165,250,0.35); animation: rareBorderGlow 2s ease-in-out infinite; }
-.front_super_rare { border-color: #F59E0B; box-shadow: 0 0 35px rgba(245,158,11,0.45); animation: srBorderGlow 1.5s ease-in-out infinite; }
+.front_uncommon {
+  border-color: #4ADE80;
+  box-shadow: 0 0 16px rgba(74,222,128,0.30);
+}
+.front_rare {
+  border-color: #60A5FA;
+  box-shadow: 0 0 26px rgba(96,165,250,0.40);
+  animation: glowRare 2s ease-in-out infinite;
+}
+.front_super_rare {
+  border-color: #F59E0B;
+  box-shadow: 0 0 40px rgba(245,158,11,0.55);
+  animation: glowSuper 1.5s ease-in-out infinite;
+}
+.front_legendary {
+  border-color: #A855F7;
+  box-shadow: 0 0 60px rgba(168,85,247,0.75), 0 0 120px rgba(168,85,247,0.35);
+  animation: glowLegendary 1.15s ease-in-out infinite;
+}
+@keyframes glowRare {
+  0%, 100% { box-shadow: 0 0 26px rgba(96,165,250,0.40); }
+  50% { box-shadow: 0 0 44px rgba(96,165,250,0.60); }
+}
+@keyframes glowSuper {
+  0%, 100% { box-shadow: 0 0 40px rgba(245,158,11,0.55); }
+  50% { box-shadow: 0 0 68px rgba(245,158,11,0.85); }
+}
+@keyframes glowLegendary {
+  0%, 100% { box-shadow: 0 0 60px rgba(168,85,247,0.75), 0 0 120px rgba(168,85,247,0.35); border-color: #A855F7; }
+  50% { box-shadow: 0 0 96px rgba(168,85,247,1), 0 0 180px rgba(168,85,247,0.55); border-color: #D8B4FE; }
+}
 
-@keyframes rareBorderGlow {
-  0%, 100% { box-shadow: 0 0 22px rgba(96,165,250,0.35); }
-  50% { box-shadow: 0 0 40px rgba(96,165,250,0.55); }
+/* The settle. Only the top two tiers get one — see the note on .lit_*. */
+.mainFlipped .front_super_rare { animation: glowSuper 1.5s ease-in-out infinite, settle 0.7s cubic-bezier(0.3,1.4,0.5,1); }
+.mainFlipped .front_legendary { animation: glowLegendary 1.15s ease-in-out infinite, settleBig 0.9s cubic-bezier(0.3,1.5,0.45,1); }
+@keyframes settle {
+  0% { transform: rotateY(180deg) scale(1); }
+  45% { transform: rotateY(180deg) scale(1.055); }
+  100% { transform: rotateY(180deg) scale(1); }
 }
-@keyframes srBorderGlow {
-  0%, 100% { box-shadow: 0 0 35px rgba(245,158,11,0.45); }
-  50% { box-shadow: 0 0 60px rgba(245,158,11,0.75); }
+@keyframes settleBig {
+  0% { transform: rotateY(180deg) scale(1); }
+  40% { transform: rotateY(180deg) scale(1.1); }
+  70% { transform: rotateY(180deg) scale(0.985); }
+  100% { transform: rotateY(180deg) scale(1); }
 }
 
-/* Spark particles */
-.sparks {
-  position: absolute;
-  top: 50%; left: 50%;
-  width: 0; height: 0;
-  z-index: 20;
-  pointer-events: none;
-}
+/* ── PARTICLES ────────────────────────────────────────────────────────────
+   Count, distance and size come from burstFor() in the JSX; this only says
+   how one particle behaves. */
+.sparks { position: absolute; top: 50%; left: 50%; width: 0; height: 0; z-index: 20; pointer-events: none; }
 .spark {
   position: absolute;
   width: var(--size); height: var(--size);
+  margin: calc(var(--size) / -2) 0 0 calc(var(--size) / -2);
   background: var(--color);
   border-radius: 50%;
-  animation: sparkFly 0.7s ease-out var(--delay) forwards;
+  box-shadow: 0 0 6px var(--color);
+  animation: sparkFly 0.85s ease-out var(--delay) forwards;
   opacity: 0;
 }
 @keyframes sparkFly {
   0% { transform: translate(0, 0) scale(1); opacity: 1; }
-  80% { opacity: 0.8; }
-  100% { transform: translate(var(--tx), var(--ty)) scale(0.3); opacity: 0; }
+  75% { opacity: 0.9; }
+  100% { transform: translate(var(--tx), var(--ty)) scale(0.25); opacity: 0; }
 }
 
-/* Tap hint */
-.tapHint {
-  font-size: 12px; color: var(--text-dim); text-align: center;
-  animation: hintPulse 2s ease-in-out infinite;
+/* The ray fan, super-rare and above only. A thin blade rotated into place and
+   scaled outward, which reads as light rather than as more confetti. */
+.ray {
+  position: absolute;
+  width: 3px; height: 190px;
+  margin-left: -1.5px;
+  transform-origin: 50% 0;
+  background: linear-gradient(to bottom, var(--color), transparent 78%);
+  opacity: 0;
+  animation: rayOut 0.95s ease-out var(--delay) forwards;
+}
+@keyframes rayOut {
+  0% { transform: rotate(var(--angle)) scaleY(0); opacity: 0.95; }
+  60% { opacity: 0.55; }
+  100% { transform: rotate(var(--angle)) scaleY(1); opacity: 0; }
 }
 
-/* Actions */
-.actions { display: flex; gap: 12px; justify-content: center; padding: 8px 0; }
+/* ── NAMEPLATE ────────────────────────────────────────────────────────────
+   Fixed height so the actions below never jump when the text changes length. */
+.nameplate {
+  text-align: center; min-height: 74px;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+}
+.plateRarity {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 999px;
+  transition: color 0.25s ease, background 0.25s ease;
+}
+.platePills { display: flex; gap: 6px; align-items: center; justify-content: center; }
+.plateSet {
+  color: var(--text-muted); background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.14);
+}
+.plateName { font-size: 17px; font-weight: 700; }
+.plateSub { font-size: 12px; color: var(--text-muted); }
+
+.finale {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 6px; width: var(--card-w); height: var(--card-h);
+  border: 1px dashed var(--border); border-radius: var(--radius-lg);
+}
+.finaleMark { font-size: 44px; color: var(--green); }
+.finaleTitle { font-size: 20px; font-weight: 700; }
+.finaleSub { font-size: 13px; color: var(--text-muted); }
+
+.actions { display: flex; gap: 12px; justify-content: center; padding: 4px 0 8px; }
 .skipBtn {
   background: rgba(255,255,255,0.08); color: var(--text-muted);
   padding: 8px 20px; border-radius: var(--radius-sm);
-  font-size: 12px; font-weight: 600;
-  border: 1px solid var(--border);
+  font-size: 12px; font-weight: 600; border: 1px solid var(--border);
 }
 .skipBtn:hover { background: rgba(255,255,255,0.14); }
 .doneBtn {
@@ -143,28 +266,79 @@
 .doneBtn:hover { background: #15803D; }
 .doneBtn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-/* Dismissed cards — below button */
-.dismissedStrip {
-  display: flex; gap: 6px; flex-wrap: wrap; justify-content: center;
-  max-width: 100%; padding: 8px 0;
-}
-.miniCard {
-  width: 52px; height: 68px;
-  border: 2px solid;
-  border-radius: 6px;
+/* ── THE RAIL ─────────────────────────────────────────────────────────────
+   Desktop: a column beside the stage. It scrolls rather than growing, so a
+   36-card booster box does not push the page to twice its height. */
+.rail {
+  border: 1px solid var(--border); border-radius: var(--radius);
   background: var(--card-bg);
-  overflow: hidden;
-  display: flex; flex-direction: column; align-items: center;
-  padding: 2px;
-  transition: transform 0.2s;
+  padding: 10px; display: flex; flex-direction: column; gap: 8px;
+  /* As tall as the stage column, so the two read as one panel. */
+  max-height: calc(var(--card-h) + 140px);
 }
-.miniCard:hover { transform: scale(1.15); z-index: 5; }
-.miniImg { width: 100%; height: 42px; object-fit: cover; border-radius: 3px; }
-.miniName { font-size: 7px; font-weight: 600; text-align: center; line-height: 1.1; margin-top: 2px; overflow: hidden; }
+.railHead {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--text-dim);
+}
+.railList { display: flex; flex-direction: column; gap: 6px; overflow-y: auto; }
+.railEmpty { font-size: 12px; color: var(--text-dim); padding: 6px 2px; }
+/* Every pulled card is a control: hover previews it on the stage, click pins
+   it. The active one is lifted so it is obvious which card the stage shows. */
+.railItem {
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+  display: flex; align-items: center; gap: 8px;
+  border-left: 3px solid; border-radius: 4px;
+  background: rgba(255,255,255,0.04);
+  padding: 5px 8px;
+  animation: railIn 0.3s ease-out;
+}
+@keyframes railIn {
+  from { opacity: 0; transform: translateX(10px); }
+  to { opacity: 1; transform: none; }
+}
+.railItem:hover, .railItem:focus-visible { background: rgba(255,255,255,0.10); transform: translateX(-2px); outline: none; }
+.railItemActive, .railItemActive:hover { background: rgba(255,255,255,0.15); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.2); }
+
+/* ── INSPECT ──────────────────────────────────────────────────────────────
+   A pulled card shown on the stage at full size. Same box as the stack, no
+   flip — it has already been revealed. The cursor says "this closes". */
+.inspectArea { cursor: zoom-out; }
+.inspectCard {
+  position: absolute; inset: 0; z-index: 10;
+  border-radius: var(--radius-lg); overflow: hidden;
+  border: 3px solid var(--border); background: var(--navy-light);
+  animation: inspectIn 0.18s ease-out;
+}
+@keyframes inspectIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+
+.railImg { width: 30px; height: 40px; object-fit: cover; border-radius: 3px; flex: none; }
+.railText { min-width: 0; }
+.railName { font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.railTag { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+
+@media (max-width: 900px) {
+  .body { grid-template-columns: minmax(0, 1fr); }
+  .rail { max-height: none; }
+  .railList { flex-direction: row; flex-wrap: wrap; }
+  .railItem { flex: 0 0 auto; }
+  .railName { max-width: 96px; }
+}
 
 @media (max-width: 600px) {
-  .stackArea { width: 260px; height: 370px; }
-  .miniCard { width: 42px; height: 56px; }
-  .miniImg { height: 34px; }
-  .miniName { font-size: 6px; }
+  .body { --card-h: clamp(377px, calc(100vh - 300px), 478px); }
+  .ray { height: 130px; }
+}
+
+/* Somebody who has asked for less motion gets the colour and the sound and
+   none of the throwing-about. The information is in the palette either way. */
+@media (prefers-reduced-motion: reduce) {
+  .mainInner { transition-duration: 0.01ms; }
+  .spark, .ray, .aura { display: none; }
+  .front_rare, .front_super_rare, .front_legendary,
+  .mainFlipped .front_super_rare, .mainFlipped .front_legendary { animation: none; }
+  .railItem, .backHint, .tapHint { animation: none; }
 }

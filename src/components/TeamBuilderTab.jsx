@@ -1,76 +1,21 @@
 import { useState, useMemo } from 'react';
 import { CARDS, CARD_MAP } from '../game/cards.js';
 import { getPlayerRarity, RARITY_CONFIG } from '../game/rarity.js';
+// Shared with the collection-only editor in My Teams, so the two cannot drift.
+import { CAP, MAX, capSal, randomizeTeam, ownedRoster, DEFAULT_FILTERS, filterPool, sortPool } from '../game/teamRules.js';
+import PoolFilters from './PoolFilters.jsx';
 import PlayerCard from './PlayerCard.jsx';
 import { useLightbox } from './CardLightbox.jsx';
 import { useAuth } from '../firebase/AuthProvider.jsx';
 import { saveTeam, loadTeams } from '../firebase/savedTeams.js';
 import styles from './TeamBuilderTab.module.css';
 
-const CAP = 5500;
-const MAX = 10;
-const capSal = roster => roster.reduce((s, c) => s + c.salary, 0);
-
-function randomizeTeam(other, ownedOnly, collection) {
-  let available = [...CARDS];
-  if (ownedOnly && collection) {
-    available = available.filter(c => (collection[c.id]?.count || 0) > 0);
-  }
-  const MIN_SAL = 4800;
-  const MAX_SAL = 5500;
-
-  // Pick a random target salary within range for each attempt
-  // This ensures true spread across the 4800-5500 range
-  let best = null;
-  let bestDist = Infinity;
-
-  for (let attempt = 0; attempt < 500; attempt++) {
-    const target = MIN_SAL + Math.floor(Math.random() * (MAX_SAL - MIN_SAL + 1));
-    const shuffled = [...available].sort(() => Math.random() - 0.5);
-    const roster = []; let sal = 0;
-    const remaining = () => 10 - roster.length;
-
-    for (const card of shuffled) {
-      if (roster.length >= 10) break;
-      if (sal + card.salary > MAX_SAL) continue;
-      // Skip if adding this card would make it impossible to fill remaining slots
-      // (each remaining player needs at least ~100 salary minimum)
-      const spotsAfter = remaining() - 1;
-      if (spotsAfter > 0 && sal + card.salary + spotsAfter * 80 > MAX_SAL) continue;
-      roster.push(card); sal += card.salary;
-    }
-
-    if (roster.length === 10 && sal >= MIN_SAL && sal <= MAX_SAL) {
-      const dist = Math.abs(sal - target);
-      if (dist < bestDist) {
-        best = roster;
-        bestDist = dist;
-        // If we're within 50 of our random target, good enough
-        if (dist <= 50) break;
-      }
-    }
-  }
-
-  if (best) return best;
-
-  // Fallback: just fill under cap
-  const shuffled = [...available].sort(() => Math.random() - 0.5);
-  const roster = []; let sal = 0;
-  for (const card of shuffled) {
-    if (roster.length >= 10) break;
-    if (sal + card.salary <= CAP) { roster.push(card); sal += card.salary; }
-  }
-  return roster;
-}
 
 export default function TeamBuilderTab({ teamA, setTeamA, teamB, setTeamB, onStartGame, collection }) {
   const { open } = useLightbox();
   const { user } = useAuth();
   const enforceOwnership = !!user && Object.keys(collection || {}).length > 0;
-  const [search, setSearch] = useState('');
-  const [filterTeam, setFilterTeam] = useState('');
-  const [maxSal, setMaxSal] = useState(9999);
-  const [sort, setSort] = useState('salary-desc');
+  const [filters, setFilters] = useState(DEFAULT_FILTERS);
   const [loadModal, setLoadModal] = useState(null); // null | { slot: 'A'|'B', teams: [] }
 
   const allTeams = useMemo(() => [...new Set(CARDS.map(c => c.team))].sort(), []);
@@ -89,27 +34,19 @@ export default function TeamBuilderTab({ teamA, setTeamA, teamB, setTeamB, onSta
   };
 
   const handleLoadSelect = (savedTeam) => {
-    const roster = savedTeam.players.map(id => CARD_MAP[id]).filter(Boolean);
+    // Only the cards still owned — see ownedRoster in teamRules.js.
+    const { roster: ids, dropped } = ownedRoster(savedTeam.players, enforceOwnership ? collection : null);
+    if (dropped.length) alert(`${dropped.length} player${dropped.length === 1 ? '' : 's'} no longer in your collection left out.`);
+    const roster = ids.map(id => CARD_MAP[id]).filter(Boolean);
     if (loadModal.slot === 'A') setTeamA(roster);
     else setTeamB(roster);
     setLoadModal(null);
   };
 
   const pool = useMemo(() => {
-    const q = search.toLowerCase();
-    let cards = CARDS.filter(c =>
-      (!q || c.name.toLowerCase().includes(q) || c.team.toLowerCase().includes(q)) &&
-      (!filterTeam || c.team === filterTeam) &&
-      c.salary <= maxSal &&
-      (!enforceOwnership || (collection[c.id]?.count || 0) > 0)
-    );
-    if (sort === 'salary-desc') cards.sort((a, b) => b.salary - a.salary);
-    else if (sort === 'salary-asc') cards.sort((a, b) => a.salary - b.salary);
-    else if (sort === 'speed') cards.sort((a, b) => b.speed - a.speed);
-    else if (sort === 'power') cards.sort((a, b) => b.power - a.power);
-    else cards.sort((a, b) => a.name.localeCompare(b.name));
-    return cards;
-  }, [search, filterTeam, maxSal, sort, teamA, teamB]);
+    const owned = enforceOwnership ? CARDS.filter(c => (collection[c.id]?.count || 0) > 0) : CARDS;
+    return sortPool(filterPool(owned, filters), filters.sort);
+  }, [filters, enforceOwnership, collection]);
 
   const addTo = (team, setTeam, card) => {
     if (team.length >= MAX) return alert('Team full (max 10)');
@@ -164,26 +101,7 @@ export default function TeamBuilderTab({ teamA, setTeamA, teamB, setTeamB, onSta
         <h3>Player Pool</h3>
         <span className={styles.poolCount}>{pool.length} players</span>
       </div>
-      <div className={styles.filters}>
-        <input type="text" placeholder="Search…" value={search} onChange={e => setSearch(e.target.value)} style={{ width: 180 }} />
-        <select value={filterTeam} onChange={e => setFilterTeam(e.target.value)} style={{ width: 100 }}>
-          <option value="">All Teams</option>
-          {allTeams.map(t => <option key={t} value={t}>{t}</option>)}
-        </select>
-        <select value={maxSal} onChange={e => setMaxSal(Number(e.target.value))} style={{ width: 145 }}>
-          <option value={9999}>All salaries</option>
-          {[1500,1200,1000,800,600,400,200].map(v => (
-            <option key={v} value={v}>≤ ${v}</option>
-          ))}
-        </select>
-        <select value={sort} onChange={e => setSort(e.target.value)} style={{ width: 130 }}>
-          <option value="salary-desc">Salary ↓</option>
-          <option value="salary-asc">Salary ↑</option>
-          <option value="speed">Speed ↓</option>
-          <option value="power">Power ↓</option>
-          <option value="name">Name A-Z</option>
-        </select>
-      </div>
+      <PoolFilters value={filters} onChange={setFilters} teams={allTeams} />
       <div className={styles.pool}>
         {pool.map(card => {
           const rarity = getPlayerRarity(card);

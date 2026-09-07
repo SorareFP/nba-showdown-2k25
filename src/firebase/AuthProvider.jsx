@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { onAuthStateChanged, signInWithPopup, signOut as fbSignOut } from 'firebase/auth';
-import { doc, setDoc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, googleProvider, db } from './config.js';
 
 const AuthContext = createContext(null);
@@ -29,18 +29,11 @@ export function AuthProvider({ children }) {
               dailyFirstWin: false,
               createdAt: serverTimestamp(),
             });
-          } else {
-            // Migrate pre-collection accounts
-            const data = snap.data();
-            if (data.starterPackOpened === undefined) {
-              await updateDoc(ref, {
-                starterPackOpened: false,
-                dailyMilestoneCoins: 0,
-                dailyMilestoneDate: '',
-                dailyFirstWin: false,
-              });
-            }
           }
+          // No migration for older accounts: starterPackOpened and the daily
+          // counters are server-owned now and the rules refuse them from here.
+          // Every reader treats a missing value as false/zero, which is what
+          // the migration used to write.
         } catch (e) {
           console.warn('Firestore user doc error (check security rules):', e.message);
         }

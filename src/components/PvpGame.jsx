@@ -453,7 +453,7 @@ export default function PvpGame({ roomCode, myRole, onLeave }) {
   if (localGame.done) {
     return (
       <div className={styles.gameOverWrap}>
-        <GameOver game={localGame} onPlayAgain={onLeave} />
+        <GameOver game={localGame} onPlayAgain={onLeave} isPvp myTeamKey={myTeamKey} />
       </div>
     );
   }

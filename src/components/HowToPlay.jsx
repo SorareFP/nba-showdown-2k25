@@ -58,7 +58,7 @@ export default function HowToPlay({ scrollToSection, onStartTutorial }) {
       {/* Hero: Tutorial Launcher */}
       <div className={s.hero}>
         <h1 className={s.heroTitle}>How to Play</h1>
-        <p className={s.heroSub}>NBA Showdown 2K25 — D20 Basketball Card Game</p>
+        <p className={s.heroSub}>NBA Showdown 2026 — D20 Basketball Card Game</p>
         <div className={s.tutorialCard}>
           <div className={s.tutorialInfo}>
             <h2>Interactive Tutorial</h2>
@@ -74,7 +74,7 @@ export default function HowToPlay({ scrollToSection, onStartTutorial }) {
       {/* Accordion Rules */}
       <div className={s.rules}>
         <AccordionSection id="overview" title="Overview & Winning" open={openSections.has('overview')} onToggle={() => toggle('overview')}>
-          <p>NBA Showdown 2K25 pits two managers against each other in a game of basketball strategy. Build a 10-player roster under a $5,500 salary cap, then compete across <strong>4 quarters</strong>, each divided into <strong>3 four-minute sections</strong> (12 total).</p>
+          <p>NBA Showdown 2026 pits two managers against each other in a game of basketball strategy. Build a 10-player roster under a $5,500 salary cap, then compete across <strong>4 quarters</strong>, each divided into <strong>3 four-minute sections</strong> (12 total).</p>
           <p>Each section follows three phases: <strong>Draft</strong> your starting five, set <strong>Matchups</strong> with strategy cards, then <strong>Score</strong> by rolling a D20 modified by matchup advantages, fatigue, and card effects.</p>
           <p>The team with the most points after 12 sections wins.</p>
         </AccordionSection>

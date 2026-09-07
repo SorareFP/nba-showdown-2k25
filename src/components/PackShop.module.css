@@ -12,9 +12,12 @@
 .coinAmt { font-size: 20px; font-weight: 700; color: #F59E0B; }
 .coinLabel { font-size: 12px; color: var(--text-muted); }
 
-.themedSelectors { display: flex; gap: 16px; flex-wrap: wrap; }
-.selectorLabel { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted); font-weight: 600; }
+/* The picker sits INSIDE the tile it belongs to. It used to be one shared row
+   of dropdowns above the grid, which meant a Division Pack and a Conference
+   Pack were configured somewhere other than where they were bought — and the
+   team pack, which needs a thirty-item picker, had nowhere to live at all. */
 .selector {
+  width: 100%;
   background: rgba(255,255,255,0.08);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
@@ -56,6 +59,26 @@
 }
 .buyBtn:hover:not(:disabled) { background: #C2410C; }
 .buyBtn:disabled { background: var(--border); color: var(--text-dim); cursor: not-allowed; }
+
+/* ── Groups ──────────────────────────────────────────────────────────────── */
+
+.group { display: flex; flex-direction: column; gap: 10px; }
+.groupHead {
+  margin: 0; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+  font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: .12em;
+  color: var(--text);
+}
+.groupBlurb {
+  font-size: 11px; font-weight: 500; letter-spacing: 0; text-transform: none;
+  color: var(--text-dim);
+}
+
+/* The one pack that reaches the apex band gets to look like it. */
+.tileApex {
+  border-color: rgba(168,85,247,0.55);
+  background: linear-gradient(160deg, rgba(168,85,247,0.13), var(--card-bg) 60%);
+}
+.tileApex:hover { border-color: #A855F7; }
 
 @media (max-width: 600px) {
   .grid { grid-template-columns: 1fr; }

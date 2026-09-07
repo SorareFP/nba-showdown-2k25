@@ -1,0 +1,96 @@
+.wrap { display: flex; flex-direction: column; gap: 14px; }
+
+.head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+.title { font-size: 18px; font-weight: 700; margin: 0; }
+.sub { font-size: 12px; color: var(--text-muted); margin-top: 3px; max-width: 62ch; }
+.coins {
+  font-size: 14px; font-weight: 700; color: var(--gold);
+  white-space: nowrap; font-variant-numeric: tabular-nums;
+}
+
+.filters { display: flex; gap: 8px; flex-wrap: wrap; }
+.search {
+  flex: 1 1 220px; min-width: 0;
+  background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 7px 11px; color: var(--text); font-size: 13px;
+}
+.select {
+  background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 7px 11px; color: var(--text); font-size: 13px;
+}
+.toggle {
+  background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 7px 13px;
+  color: var(--text-muted); font-size: 12px; font-weight: 600; cursor: pointer;
+}
+.toggle:hover { background: var(--card-hover); }
+.toggleOn { background: rgba(234,88,12,0.16); border-color: var(--orange); color: var(--orange-light); }
+
+.toast {
+  background: rgba(234,88,12,0.14); border: 1px solid rgba(234,88,12,0.4);
+  border-radius: var(--radius-sm); padding: 9px 13px;
+  font-size: 13px; cursor: pointer;
+}
+
+.empty {
+  padding: 34px 12px; text-align: center;
+  font-size: 13px; color: var(--text-dim);
+  border: 1px dashed var(--border); border-radius: var(--radius);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(158px, 1fr));
+  gap: 10px;
+}
+
+.card {
+  border: 2px solid; border-radius: var(--radius);
+  background: var(--card-bg);
+  padding: 8px;
+  display: flex; flex-direction: column; gap: 3px;
+}
+
+.art { position: relative; border-radius: var(--radius-sm); overflow: hidden; aspect-ratio: 5 / 7; }
+.artImg { width: 100%; height: 100%; object-fit: cover; display: block; }
+.rarity {
+  position: absolute; top: 5px; left: 5px;
+  font-size: 9px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase;
+  padding: 2px 6px; border-radius: 999px;
+}
+
+.name { font-size: 13px; font-weight: 700; margin-top: 4px; }
+.meta { font-size: 11px; color: var(--text-muted); }
+/* "3 listed" — the count of OPEN LISTINGS, not of copies in existence. It is
+   the only honest scarcity signal this screen has: how many people are selling
+   one right now. */
+.open { color: var(--text-dim); }
+
+.price {
+  font-size: 16px; font-weight: 700; color: var(--gold);
+  margin-top: 3px; font-variant-numeric: tabular-nums;
+}
+.priceUnit { font-size: 11px; font-weight: 600; color: var(--text-dim); }
+/* The demoted suggestion from the old fixed-price shop. Shown only when it
+   disagrees with the ask by more than 15% — see the note in Market.jsx. */
+.anchor { font-size: 10px; color: var(--text-dim); }
+
+.buy, .delist {
+  margin-top: 6px; padding: 7px 0; width: 100%;
+  border-radius: var(--radius-sm); font-size: 12px; font-weight: 700; cursor: pointer;
+  border: none;
+}
+.buy { background: var(--green); color: #fff; }
+.buy:hover:not(:disabled) { background: #15803D; }
+.buy:disabled { background: rgba(255,255,255,0.07); color: var(--text-dim); cursor: not-allowed; }
+.delist { background: rgba(255,255,255,0.08); color: var(--text-muted); border: 1px solid var(--border); }
+.delist:hover:not(:disabled) { background: rgba(255,255,255,0.14); }
+.delist:disabled { opacity: 0.5; cursor: not-allowed; }
+
+@media (max-width: 520px) {
+  .grid { grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); }
+  .head { flex-direction: column; gap: 6px; }
+}
+
+/* Above the legendary foil (HoloSheen paints its layers at z-index 2). */
+.rarity { z-index: 3; }

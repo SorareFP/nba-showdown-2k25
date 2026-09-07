@@ -1,4 +1,4 @@
-// NBA Showdown 2K25 — PvP Game Initialization & Turn Logic
+// NBA Showdown 2026 — PvP Game Initialization & Turn Logic
 
 import { rtdb } from './config.js';
 import { ref, get } from 'firebase/database';

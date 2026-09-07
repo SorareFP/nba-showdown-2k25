@@ -138,3 +138,35 @@
   .loadBtn, .loadBtnB, .editBtn { flex: 1; text-align: center; }
   .deleteBtn { margin-left: 0; flex: 1; text-align: center; }
 }
+
+/* ── Toast ───────────────────────────────────────────────────────────────────
+   One shared line for claim results, purchases and refusals. Deliberately a
+   click-to-dismiss banner rather than a timed one: a claim result names a card
+   the player just earned, and a message that vanishes on its own is one they
+   might never read. */
+.toast {
+  position: sticky; bottom: 12px; z-index: 20;
+  margin-top: 16px;
+  display: flex; align-items: center; gap: 10px;
+  background: var(--navy-light);
+  border: 1px solid var(--gold);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 10px 14px;
+  font-size: 13px; font-weight: 600; color: var(--text);
+  cursor: pointer;
+}
+.toastClose {
+  margin-left: auto; background: none; border: none;
+  color: var(--text-muted); font-size: 18px; line-height: 1;
+  cursor: pointer; padding: 0 4px;
+}
+.toastClose:hover { color: var(--text); }
+
+/* The "you have cards waiting to be collected" dot on the My Collection tab. */
+.navDot {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 16px; height: 16px; padding: 0 4px; margin-left: 6px;
+  border-radius: 999px; background: var(--orange); color: #08131f;
+  font-size: 10px; font-weight: 800; line-height: 1; vertical-align: middle;
+}

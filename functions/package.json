@@ -1,0 +1,16 @@
+{
+  "name": "showdown-functions",
+  "description": "Server-side pack opening, buying and claiming — the three writes that create value.",
+  "type": "module",
+  "private": true,
+  "engines": { "node": "22" },
+  "main": "index.js",
+  "scripts": {
+    "prepare-shared": "node prepare.mjs",
+    "serve": "npm run prepare-shared && firebase emulators:start --only functions,firestore"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.6.0",
+    "firebase-functions": "^6.1.0"
+  }
+}

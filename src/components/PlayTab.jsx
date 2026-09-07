@@ -9,6 +9,7 @@ import { resultFromPlayed } from '../game/modes/season.js';
 // rejected play reports through the module-level sink rather than through
 // useDialogs(). See notify() in ui/dialogs.jsx.
 import { useDialogs, notify } from '../ui/dialogs.jsx';
+import { playCrunch, playBuzzer } from '../game/gameAudio.js';
 import { useAuth } from '../firebase/AuthProvider.jsx';
 import { loadDecks } from '../firebase/savedDecks.js';
 import CourtBoard from './game/CourtBoard.jsx';
@@ -176,6 +177,25 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
     }, AI_DELAY);
     return () => clearTimeout(timer);
   }, [game, opponent]);
+
+  // ── The two moments the game announces about itself ───────────────────────
+  //
+  // Both fire on a FLIP, guarded by a ref rather than by the effect alone:
+  // StrictMode runs effects twice in development, and a double buzzer is the
+  // kind of thing you hear.
+  const crunchArmed = Boolean(game?.crunch?.active);
+  const lastCrunch = useRef(false);
+  useEffect(() => {
+    if (crunchArmed && !lastCrunch.current) playCrunch();
+    lastCrunch.current = crunchArmed;
+  }, [crunchArmed]);
+
+  const over = Boolean(game?.done);
+  const lastOver = useRef(false);
+  useEffect(() => {
+    if (over && !lastOver.current) playBuzzer();
+    lastOver.current = over;
+  }, [over]);
 
   const startGame = useCallback((rA, rB, deckA, deckB) => {
     dispatch({ type: 'SET', game: newGame(rA, rB, deckA, deckB, { clutchDice: CLUTCH_DICE }) });

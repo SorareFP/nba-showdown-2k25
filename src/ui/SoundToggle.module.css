@@ -1,0 +1,15 @@
+/* Quiet enough to ignore, present enough to find. */
+.btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1;
+  padding: 7px 10px;
+  cursor: pointer;
+  transition: background var(--dur-quick) var(--ease-out),
+              border-color var(--dur-quick) var(--ease-out);
+}
+.btn:hover { background: var(--card-hover); border-color: var(--text-dim); }
+.btn[aria-pressed='true'] { opacity: 0.6; }

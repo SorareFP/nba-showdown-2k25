@@ -25,6 +25,7 @@
 // player's number actually changes.
 import { useEffect, useState } from 'react';
 import { usePrefersReducedMotion } from '../../ui/motion.js';
+import { playRoll, playLanding } from '../../game/gameAudio.js';
 import styles from './RollResult.module.css';
 
 /** How long the die tumbles, and how fast the faces swap while it does. */
@@ -69,12 +70,26 @@ export default function RollResult({ result, col }) {
     // a result without a die being cast, and `die` is a dash, so tumbling to a
     // number nobody rolled would misreport what happened — or a player who has
     // asked for less motion: show the landed result with no theatre.
-    if (!sig || reduced || replaced || typeof die !== 'number') { setFace(null); return undefined; }
+    if (!sig || reduced || replaced || typeof die !== 'number') {
+      setFace(null);
+      // A roll still HAPPENED with the motion turned down, so the landing still
+      // sounds — it is the tumble that is skipped, not the result.
+      if (sig && !replaced) playLanding(bandOf(result), result?.pts ?? 0);
+      return undefined;
+    }
 
+    playRoll();
     setFace(1 + Math.floor(Math.random() * 20));
     const spin = setInterval(() => setFace(1 + Math.floor(Math.random() * 20)), FACE_MS);
-    const stop = setTimeout(() => { clearInterval(spin); setFace(null); }, TUMBLE_MS);
+    const stop = setTimeout(() => {
+      clearInterval(spin);
+      setFace(null);
+      playLanding(bandOf(result), result?.pts ?? 0);
+    }, TUMBLE_MS);
     return () => { clearInterval(spin); clearTimeout(stop); };
+    // `result` is read inside these callbacks but is deliberately NOT a
+    // dependency: see the note above — its identity churns, and the effect has
+    // to fire once per roll. `sig` changing is what keeps the read current.
   }, [sig, reduced, die, replaced]);
 
   // A slot with no roll yet renders nothing — the caller shows its Roll button.

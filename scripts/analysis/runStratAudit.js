@@ -38,6 +38,38 @@ import {
 
 const GAMES = Number(process.argv[2] ?? 400);
 const SHIFT_A = Number((process.argv.find(a => a.startsWith('--shift-a=')) ?? '--shift-a=0').split('=')[1]) || 0;
+
+/**
+ * ── ABLATION: --ablate=card_id[,card_id] ────────────────────────────────────
+ *
+ * The lift column cannot tell a strong CARD from a favourable CONDITION.
+ * Desperation Press proves it: its own text is "CRUNCH TIME, and you are
+ * trailing", so it is only ever played from behind and reads -60. Every
+ * conditional card is contaminated the same way, upward or downward — the
+ * column measures how good a card's SITUATION is, not how good the card is.
+ *
+ * The only clean answer is a paired experiment, and the seeded draft above
+ * already makes one possible: this run and a run without the flag deal exactly
+ * the same rosters, the same decks and the same hands, because `seed` is fixed
+ * and consumed in the same order. Ablating makes the named cards UNPLAYABLE —
+ * the holder plays their next-best card instead — so the delta between the two
+ * runs is what the card is worth OVER ITS ALTERNATIVE, which is the question
+ * rarity is actually asking.
+ *
+ * `win% when held` is the column to compare; it counts every game a side had
+ * the card, played or not, so both arms measure the same population.
+ *
+ *   node scripts/analysis/runStratAudit.js 1500 --full
+ *   node scripts/analysis/runStratAudit.js 1500 --full --ablate=twin_towers
+ *
+ * ONE CAVEAT THAT CANNOT BE ENGINEERED AWAY: the two runs diverge the moment
+ * a different card is played, because the engine draws from the same stream.
+ * Pairing controls the setup, not the whole game, so treat a few points as
+ * noise and read only the large deltas.
+ */
+const ABLATE = new Set(
+  (process.argv.find(a => a.startsWith('--ablate=')) ?? '').split('=')[1]?.split(',').map(x => x.trim()).filter(Boolean) ?? []
+);
 const SECTIONS = 12;
 const SET = path.join(REPO_ROOT, 'card-data', 'generated', 'cards-2026-27.json');
 const CARDS = JSON.parse(fs.readFileSync(SET, 'utf8')).cards;
@@ -51,6 +83,13 @@ const rng = () => {
 
 const stats = new Map(STRATS.map(s => [s.id, {
   id: s.id, name: s.name, phase: s.phase, held: 0, plays: 0, winsWhenPlayed: 0, gamesPlayed: 0,
+  // THE CONTROL GROUP. "Win% when played" cannot tell a strong CARD from a
+  // strong CONDITION: a card that only qualifies on a stacked roster will look
+  // brilliant because stacked rosters win. These count the games where a side
+  // HELD the card and did not play it — same card, same deck, and for a
+  // conditional card usually the same kind of roster that failed the gate. The
+  // gap between the two columns is the part that is about the card.
+  gamesHeldUnplayed: 0, winsWhenHeldUnplayed: 0, winsWhenHeld: 0,
 }]));
 
 function draftRoster(taken = new Set()) {
@@ -84,6 +123,10 @@ function safeResolve(g) {
 }
 
 function tryPlay(g, teamKey, action, playedThisGame) {
+  // An ablated card is simply not there to be played. Everything else about
+  // the game — the roster, the deck, the hand, the draw order — is identical
+  // to the un-ablated run.
+  if (ABLATE.has(action.cardId)) return { g, played: false };
   let r;
   try { r = execCard(g, teamKey, action.cardId, action.opts || {}); }
   catch { return { g, played: false }; }
@@ -299,9 +342,14 @@ for (let n = 0; n < GAMES; n += 1) {
   margins.push(Math.abs(g.teamA.score - g.teamB.score));
   signedMargins.push(g.teamA.score - g.teamB.score);
   for (const entry of heldThisGame) {
-    const [, id] = entry.split('|');
+    const [key, id] = entry.split('|');
     const st = stats.get(id);
-    if (st) st.held += 1;
+    if (!st) continue;
+    st.held += 1;
+    if ((key === 'A') === aWon) st.winsWhenHeld += 1;
+    if (playedThisGame.has(entry)) continue;
+    st.gamesHeldUnplayed += 1;
+    if ((key === 'A') === aWon) st.winsWhenHeldUnplayed += 1;
   }
   for (const entry of playedThisGame) {
     const [key, id] = entry.split('|');
@@ -317,11 +365,24 @@ for (let n = 0; n < GAMES; n += 1) {
 
 const rows = [...stats.values()].sort((a, b) => b.plays - a.plays);
 console.log(`\n${simmed} AI-vs-AI games on the base set (team A wins ${(100 * aWins / simmed).toFixed(1)}%, median margin ${margins.sort((a, b) => a - b)[Math.floor(margins.length / 2)]}, mean A-minus-B ${(signedMargins.reduce((x, y) => x + y, 0) / signedMargins.length).toFixed(2)}${SHIFT_A ? `, Team A shot lines shifted ${SHIFT_A}` : ''})\n`);
-console.log('  card                        phase      held  played  play%   win% when played');
+if (ABLATE.size) {
+  console.log(`  ABLATED (unplayable this run): ${[...ABLATE].join(', ')}`);
+  console.log('  Compare the "win% held" column against a run without --ablate; that delta is the card.');
+  console.log('');
+}
+console.log('  card                        phase      held  played  play%   win% held  win% played  win% held-unplayed    lift');
 for (const r of rows) {
   const playPct = r.held ? (100 * r.plays / r.held).toFixed(0) : '—';
   const winPct = r.gamesPlayed ? (100 * r.winsWhenPlayed / r.gamesPlayed).toFixed(0) : '—';
-  console.log(`  ${r.name.padEnd(26)}${r.phase.padEnd(10)}${String(r.held).padStart(5)}${String(r.plays).padStart(7)}${String(playPct).padStart(7)}%${String(winPct).padStart(8)}%`);
+  // The number that is actually about the card: played minus held-unplayed.
+  const ctrl = r.gamesHeldUnplayed ? (100 * r.winsWhenHeldUnplayed / r.gamesHeldUnplayed) : null;
+  const ctrlStr = ctrl === null ? '—' : ctrl.toFixed(0);
+  const lift = (ctrl !== null && r.gamesPlayed)
+    ? (100 * r.winsWhenPlayed / r.gamesPlayed - ctrl)
+    : null;
+  const liftStr = lift === null ? '—' : `${lift >= 0 ? '+' : ''}${lift.toFixed(0)}`;
+  const heldPct = r.held ? (100 * r.winsWhenHeld / r.held).toFixed(0) : '—';
+  console.log(`  ${r.name.padEnd(26)}${r.phase.padEnd(10)}${String(r.held).padStart(5)}${String(r.plays).padStart(7)}${String(playPct).padStart(7)}%${String(heldPct).padStart(10)}%${String(winPct).padStart(12)}%${String(ctrlStr).padStart(14)}%${String(liftStr).padStart(8)}`);
 }
 const dead = rows.filter(r => r.held > simmed * 0.2 && r.plays === 0);
 console.log(`\nDEAD IN AI HANDS (held often, never played): ${dead.map(r => r.id).join(', ') || 'none'}`);

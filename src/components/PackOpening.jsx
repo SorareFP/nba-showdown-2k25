@@ -43,6 +43,7 @@ import { BASE_SET } from '../game/cardSets.js';
 import { getPlayerImageUrl, getStratImagePath } from '../game/cardImages.js';
 import { playFlip, playReveal, playComplete, isMuted, toggleMute } from '../game/packAudio.js';
 import Holo from './HoloSheen.jsx';
+import { holoRegionsFor } from '../cards/faceRegions.js';
 import styles from './PackOpening.module.css';
 
 /**
@@ -297,6 +298,7 @@ export default function PackOpening({ cards, coins = null, onDone, onSaveRest = 
               <Holo
                 className={`${styles.inspectCard} ${styles[`front_${cssRarity(inspected.rarity)}`]}`}
                 active={inspected.rarity === 'legendary'}
+                regions={holoRegionsFor(inspected.card)}
               >
                 <img
                   src={inspected.imgUrl}
@@ -349,6 +351,7 @@ export default function PackOpening({ cards, coins = null, onDone, onSaveRest = 
                     <Holo
                       className={`${styles.mainFront} ${styles[`front_${cssRarity(currentCard.rarity)}`]}`}
                       active={flipped && currentCard.rarity === 'legendary'}
+                      regions={holoRegionsFor(currentCard.card)}
                     >
                       <img
                         src={currentCard.imgUrl}

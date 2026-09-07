@@ -22,6 +22,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { getCardByKey, cardKey } from '../game/cardSets.js';
 import { getPlayerRarity, RARITY_CONFIG, getMarketPrice } from '../game/rarity.js';
 import Holo from './HoloSheen.jsx';
+import { holoRegionsFor } from '../cards/faceRegions.js';
 import { getPlayerImageUrl } from '../game/cardImages.js';
 import { loadListings } from '../firebase/market.js';
 import { buyListing, delistCard } from '../firebase/serverWrites.js';
@@ -166,7 +167,7 @@ export default function Market({ uid, coins, onTraded }) {
           const open = openFor[l.cardKey] ?? 1;
           return (
             <div key={l.id} className={styles.card} style={{ borderColor: cfg.color }}>
-              <Holo className={styles.art} active={rarity === 'legendary'}>
+              <Holo className={styles.art} active={rarity === 'legendary'} regions={holoRegionsFor(l.card)}>
                 <img
                   src={getPlayerImageUrl(cardKey(l.card))}
                   alt=""

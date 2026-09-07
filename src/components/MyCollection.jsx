@@ -34,6 +34,7 @@ import {
 import { ALL_CARDS as CARDS_FOR_PRICE } from '../game/cardSets.js';
 import { getPlayerImageUrl, getStratImagePath } from '../game/cardImages.js';
 import Holo from './HoloSheen.jsx';
+import { holoRegionsFor } from '../cards/faceRegions.js';
 import styles from './MyCollection.module.css';
 
 const RARITIES = ['all', ...RARITY_ORDER];
@@ -178,7 +179,7 @@ export default function MyCollection({ collection, onBurn, onList, onCollect }) 
             : (BURN_VALUES[c.rarity] ?? 0);
           return (
             <div key={c.key} className={styles.card} style={{ borderColor: cfg.color }}>
-              <Holo className={styles.cardArt} active={c.rarity === 'legendary'}>
+              <Holo className={styles.cardArt} active={c.rarity === 'legendary'} regions={holoRegionsFor(c)}>
                 <img
                   src={c.imgUrl}
                   alt={c.name}

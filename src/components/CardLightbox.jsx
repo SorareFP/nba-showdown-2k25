@@ -4,6 +4,7 @@ import { cardKey } from '../game/cardSets.js';
 import { useCardStats } from '../firebase/CardStatsProvider.jsx';
 import { getPlayerRarity } from '../game/rarity.js';
 import Holo from './HoloSheen.jsx';
+import { holoRegionsFor } from '../cards/faceRegions.js';
 import styles from './CardLightbox.module.css';
 
 // The legendary tier wears a holographic sheen wherever its face is drawn.
@@ -57,7 +58,7 @@ function LightboxModal({ item, onClose, onFullRes }) {
 
         <div className={styles.content}>
           {/* Left: image */}
-          <Holo className={styles.imgSide} active={!!imgSrc && isLegendary(type, data)}>
+          <Holo className={styles.imgSide} active={!!imgSrc && isLegendary(type, data)} regions={holoRegionsFor(data)}>
             {imgSrc
               ? <img src={imgSrc} alt={data.name || data.n} className={styles.img}
                   onError={e => { e.target.style.display = 'none'; }} />
@@ -87,7 +88,7 @@ function FullResOverlay({ item, onClose }) {
 
   return (
     <div className={styles.backdrop} onClick={onClose}>
-      <Holo as="span" className={styles.fullResHolo} active={isLegendary(type, data)} onClick={e => e.stopPropagation()}>
+      <Holo as="span" className={styles.fullResHolo} active={isLegendary(type, data)} regions={holoRegionsFor(data)} onClick={e => e.stopPropagation()}>
         <img src={imgSrc} alt={data.name || data.n} className={styles.fullResImg} />
       </Holo>
       <button className={styles.closeBtnFull} onClick={onClose}>{'\u00D7'}</button>

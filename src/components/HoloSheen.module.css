@@ -1,25 +1,43 @@
 /* The legendary foil. See HoloSheen.jsx for why the element is the card's own
-   box and why the pointer drives CSS variables rather than React state. */
+   box, why the layers are fitted to the drawn image, and why the pointer
+   drives CSS variables rather than React state. */
 .holo {
-  position: relative;
   isolation: isolate;
   --mx: 50%;
   --my: 50%;
+  --fx: 0px;
+  --fy: 0px;
+  --fw: 100%;
+  --fh: 100%;
+}
+
+/* The rectangle the face is actually drawn in (set by the component). Every
+   region is clipped inside it, so the photo polygon lands on the photo. */
+.face {
+  position: absolute;
+  left: var(--fx);
+  top: var(--fy);
+  width: var(--fw);
+  height: var(--fh);
+  pointer-events: none;
+  z-index: 2;
+}
+.region {
+  position: absolute;
+  inset: 0;
 }
 
 .foil,
 .glare {
   position: absolute;
   inset: 0;
-  border-radius: inherit;
   pointer-events: none;
-  z-index: 2;
 }
 
 /* The rainbow: a broad spectral band that slides with the pointer, over a
    fine diagonal grating that reads as the diffraction lines of real foil.
    Colour-dodge lifts the print's own highlights into the hue under them, so
-   the sheen belongs to the photo rather than sitting on top of it. */
+   the sheen belongs to the photo (or the gold) rather than sitting on it. */
 .foil {
   background:
     repeating-linear-gradient(115deg, rgba(255,255,255,0) 0 5px, rgba(255,255,255,0.07) 5px 6px),
@@ -41,7 +59,7 @@
   animation: holoDrift 7s ease-in-out infinite;
   transition: opacity 0.25s;
 }
-.holo[data-lit] > .foil {
+.holo[data-lit] .foil {
   animation: none;
   opacity: 0.62;
 }
@@ -54,7 +72,7 @@
   opacity: 0;
   transition: opacity 0.25s;
 }
-.holo[data-lit] > .glare { opacity: 1; }
+.holo[data-lit] .glare { opacity: 1; }
 
 /* Left alone, the card turns slowly in the light. The drift animates the
    spectral layer's position only; the grating stays put. */

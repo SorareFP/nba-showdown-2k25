@@ -88,3 +88,26 @@
 @media (prefers-reduced-motion: reduce) {
   .foil { animation: none; }
 }
+
+/* ── The reveal sweep ─────────────────────────────────────────────────────
+   One band across the card as it lands. Overrides the drift for its duration
+   (`data-idle` is usually set at the same time) and then hands back: the
+   animation is one-shot, so what is left afterwards is the ordinary foil.
+   Brighter than the drift on purpose — this is the moment the card arrives. */
+.holo[data-sweep] .foil {
+  animation: holoSweep 900ms cubic-bezier(0.22, 0.61, 0.36, 1) 1 both;
+  opacity: 0.7;
+}
+@keyframes holoSweep {
+  0%   { background-position: 0 0, -60% 120%; opacity: 0.30; }
+  45%  { opacity: 0.92; }
+  100% { background-position: 0 0, 160% -20%; opacity: 0.42; }
+}
+
+/* A sweep is a single flash across the card, so it is the one piece of this
+   sheet that stays put under reduced motion rather than being slowed: the
+   rule above already zeroes the drift, and this keeps the foil visible at
+   its resting brightness instead of frozen mid-sweep. */
+@media (prefers-reduced-motion: reduce) {
+  .holo[data-sweep] .foil { animation: none; opacity: 0.5; }
+}

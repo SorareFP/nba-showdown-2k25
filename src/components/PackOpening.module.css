@@ -342,3 +342,30 @@
   .mainFlipped .front_super_rare, .mainFlipped .front_legendary { animation: none; }
   .railItem, .backHint, .tapHint { animation: none; }
 }
+
+/* ── The box's progress, as a shape ───────────────────────────────────────
+   Thirty-seven pips across the top: opened behind you, the one you are on,
+   the ones still sealed. Wraps, because thirty-seven of anything does not
+   fit on a phone. */
+.boxRail {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  padding: 0 14px 10px;
+  justify-content: center;
+}
+.pip {
+  width: 14px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.13);
+  transition: background var(--dur-beat) var(--ease-out),
+              transform var(--dur-beat) var(--ease-punch);
+}
+.pipDone { background: rgba(245, 158, 11, 0.55); }
+/* The one you are on is taller and lit — the only pip you should be able to
+   find without counting. */
+.pipNow {
+  background: var(--gold);
+  transform: scaleY(1.9);
+}

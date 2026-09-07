@@ -41,6 +41,21 @@ describe('HoloSheen', () => {
     expect(out).toContain('data-region="badge"');
   });
 
+  it('marks the reveal sweep only while the caller asks for it', () => {
+    // A BEAT, NOT A STATE. The pack turns it on as the card lands and off on
+    // the way to the next one, and the attribute genuinely leaving is what
+    // restarts the one-shot animation next time. An always-on sweep would be
+    // a faster, worse drift.
+    expect(html({ active: true })).not.toContain('data-sweep');
+    const swept = html({ active: true, sweep: true });
+    expect(swept).toContain('data-sweep=""');
+    // It rides on top of the ordinary foil rather than replacing it: the
+    // regions and their layers are unchanged.
+    expect(count(swept, /class="[^"]*foil[^"]*"/g)).toBe(count(html({ active: true }), /class="[^"]*foil[^"]*"/g));
+    // And an inactive card is still nothing at all, sweep or no sweep.
+    expect(html({ active: false, sweep: true })).not.toContain('data-sweep');
+  });
+
   it('renders the plain element for anything that is not legendary', () => {
     expect(html({ active: false, className: 'art' })).toBe('<div class="art"><img src="x.png" alt=""/></div>');
   });

@@ -85,7 +85,13 @@ export function drawnRect(img, box) {
 // On in the lightbox and the pack reveal, where one card fills the stage; off
 // in the collection, market and browser grids, where every Super Season tile
 // would otherwise animate at once. A tile still lights up under the pointer.
-export default function Holo({ active = true, regions = DEFAULT_REGIONS, idle = true, as: Tag = 'div', className = '', children, ...rest }) {
+//
+// `sweep` — ONE bright band crossing the card, right now, over the top of the
+// ambient drift. This is a reveal beat, not a state: the pack turns it on as a
+// legendary lands and off again on the way to the next card, and the animation
+// restarts because the attribute is genuinely removed and re-added. Left on
+// permanently it would just be a faster, worse drift.
+export default function Holo({ active = true, regions = DEFAULT_REGIONS, idle = true, sweep = false, as: Tag = 'div', className = '', children, ...rest }) {
   const frame = useRef(0);
   const ref = useRef(null);
   const face = useRef({ x: 0, y: 0, w: 0, h: 0 });
@@ -163,6 +169,7 @@ export default function Holo({ active = true, regions = DEFAULT_REGIONS, idle = 
       onPointerLeave={onPointerLeave}
       data-holo=""
       data-idle={idle ? '' : undefined}
+      data-sweep={sweep ? '' : undefined}
       {...rest}
     >
       {children}

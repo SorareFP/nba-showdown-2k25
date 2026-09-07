@@ -64,6 +64,9 @@ const revealRank = rarity => RARITY_ORDER.indexOf(rarity);
 const cssRarity = rarity => String(rarity).replace(/-/g, '_');
 
 /** Particle count and burst size, scaled off the tier rather than tabulated. */
+/** The pulls big enough to earn the one-shot foil sweep. */
+const SWEEP_RARITIES = new Set(['legendary', 'super-rare']);
+
 function burstFor(rarity) {
   const t = TIER[rarity] ?? 0;
   return {
@@ -283,6 +286,21 @@ export default function PackOpening({ cards, coins = null, onDone, onSaveRest = 
         </div>
       </div>
 
+      {/* A BOX IS THIRTY-SEVEN PACKS and "Pack 3/37" is a number you have to
+          read. The pips are the same fact as a shape: how much is behind you,
+          which one you are on, how much is left. Only for a box — a single
+          pack has nothing to show. */}
+      {isBox && (
+        <div className={styles.boxRail} role="img" aria-label={`Pack ${packNo + 1} of ${groups.length}`}>
+          {groups.map((_, i) => (
+            <span
+              key={i}
+              className={`${styles.pip} ${i < packNo ? styles.pipDone : ''} ${i === packNo ? styles.pipNow : ''}`}
+            />
+          ))}
+        </div>
+      )}
+
       <div className={styles.body}>
         <div className={styles.stageCol}>
           {inspected && (
@@ -352,6 +370,10 @@ export default function PackOpening({ cards, coins = null, onDone, onSaveRest = 
                       className={`${styles.mainFront} ${styles[`front_${cssRarity(currentCard.rarity)}`]}`}
                       active={flipped && currentCard.type === 'player' && holoRegionsFor(currentCard.card).length > 0}
                       regions={holoRegionsFor(currentCard.card)}
+                      // The band crosses the card as it lands, and only for the
+                      // two bands that already earn an aura — a sweep on every
+                      // common would spend the effect before it means anything.
+                      sweep={flipped && SWEEP_RARITIES.has(currentCard.rarity)}
                     >
                       <img
                         src={currentCard.imgUrl}

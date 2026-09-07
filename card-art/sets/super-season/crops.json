@@ -60,7 +60,7 @@
     "zoom": 1
   },
   "Jrue_Holiday": {
-    "x": -1.08,
+    "x": -2.05,
     "y": 0,
     "zoom": 1
   },
@@ -661,6 +661,56 @@
   },
   "Jett_Howard": {
     "x": -3.1,
+    "y": 0,
+    "zoom": 1
+  },
+  "Jevon_Carter": {
+    "x": -9.31,
+    "y": 0,
+    "zoom": 1.36
+  },
+  "John_Collins": {
+    "x": 0,
+    "y": -0.16,
+    "zoom": 1
+  },
+  "Jonas_Valanciunas": {
+    "x": 0.58,
+    "y": 0,
+    "zoom": 1
+  },
+  "Jordan_Clarkson": {
+    "x": -6.01,
+    "y": 0,
+    "zoom": 1
+  },
+  "Josh_Giddey": {
+    "x": 2.32,
+    "y": 0,
+    "zoom": 1
+  },
+  "Josh_Green": {
+    "x": -20.7,
+    "y": -4.42,
+    "zoom": 1.19
+  },
+  "Josh_Hart": {
+    "x": -1.74,
+    "y": 0,
+    "zoom": 1
+  },
+  "Josh_Minott": {
+    "x": -14.71,
+    "y": 5.4,
+    "zoom": 1.36
+  },
+  "Josh_Okogie": {
+    "x": -1.16,
+    "y": 0,
+    "zoom": 1
+  },
+  "Jusuf_Nurkic": {
+    "x": -5.43,
     "y": 0,
     "zoom": 1
   }

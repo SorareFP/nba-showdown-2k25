@@ -58,6 +58,11 @@ const SET_FILES = {
   'wnba-rookie': 'cards-wnba-rookie.json',
   'wnba-super-season': 'cards-wnba-super-season.json',
   'wnba-team-rewards': 'cards-wnba-team-rewards.json',
+  // The two capstone sets (2026-09-06). Their cards are MIGRATED from the
+  // special sets, whose exports skip a migrated id, so these are the only
+  // place those faces are ever rendered.
+  'set-rewards': 'cards-set-rewards.json',
+  'wnba-set-rewards': 'cards-wnba-set-rewards.json',
   // THE STRATEGY DECK IS NOT A GENERATED FILE. Its cards are declared in
   // src/game/strats.js rather than built by a generator, so it names no JSON —
   // `null` marks a set whose list comes from code. It exports like any other

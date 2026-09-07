@@ -50,7 +50,7 @@ export const PACK_TYPES = {
   // base odds — about one apex card every 67 boosters, which is a lottery
   // rather than a goal. This is the deliberate path: expensive, and the only
   // pack in the shop whose guarantee reaches the apex band at all.
-  legendary_chase: { name: 'Legendary Chase', players: 3, strats: 1, price: 6000, guaranteedLegendary: 1, mixesSpecials: true },
+  legendary_chase: { name: 'Legendary Chase', players: 3, strats: 1, price: 6000, guaranteedLegendary: 1, apexStrat: true, mixesSpecials: true },
   // Set-scoped packs.
   // TEAM PACK — priced at 250 against a booster's 100. The premium buys a ~30x
   // narrower pool, and it has to be a premium: at booster price it would strictly
@@ -559,6 +559,23 @@ export function generatePack(packType, options = {}) {
       result.push({ id: pickInBand(stratPool, getStratRarity, 'rare', 'rare').id, type: 'strat' });
     }
     return result;
+  }
+
+  // THE ONE PATH TO AN APEX STRATEGY CARD.
+  //
+  // The 2026-09-07 reband gave four cards the legendary band, and the three
+  // guaranteed-strat slots below are all bounded 'rare','rare' — each mirrors
+  // its own pack's PLAYER band, and Deluxe and Rare Deluxe cap players at
+  // super-rare, so widening them would have made an apex strat cheaper than an
+  // apex player. That left the four reachable only through the 0.3% base odds:
+  // about one every 667 boosters, a lottery rather than a goal.
+  //
+  // So the pack that exists to reach the apex reaches it for strats too, which
+  // is the reasoning already written above legendary_chase, applied twice.
+  if (def.apexStrat) {
+    for (let i = 0; i < def.strats; i += 1) {
+      result.push({ id: pickInBand(stratPool, getStratRarity, 'rare', 'legendary').id, type: 'strat' });
+    }
   }
 
   // All super-rare packs — the band exactly.

@@ -141,6 +141,10 @@ export const STRAT_BURN_VALUES = {
   'common': 1,
   'uncommon': 2,
   'rare': 8,
+  // The apex band arrived with the 2026-09-07 reband. Priced at the same
+  // multiple over rare that rare sits over uncommon, so the ladder keeps its
+  // shape rather than acquiring a cliff at the top.
+  'legendary': 30,
 };
 
 // Deck copy caps for STRATEGY cards, by rarity — the 5/3/1 rule. Enforced by

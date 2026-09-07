@@ -11,8 +11,10 @@ const count = (s, re) => (s.match(re) || []).length;
 describe('HoloSheen', () => {
   it('paints the photo region only, by default', () => {
     const out = html({ active: true, className: 'art' });
-    expect(out).toMatch(/^<div class="[^"]*holo[^"]* art" data-holo="">/);
+    expect(out).toMatch(/^<div class="[^"]*holo[^"]* art" data-holo="" data-idle="">/);
     expect(out).toContain('<img src="x.png" alt=""/>');
+    // A grid tile asks for no idle drift and gets no attribute to animate on.
+    expect(html({ active: true, className: 'art', idle: false })).toMatch(/^<div class="[^"]*holo[^"]* art" data-holo="">/);
     expect(count(out, /data-region="/g)).toBe(1);
     expect(out).toContain('data-region="photo"');
     expect(out).toMatch(/clip-path:polygon\(17\.79% 13\.04%/);

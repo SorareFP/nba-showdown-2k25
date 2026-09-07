@@ -2,13 +2,12 @@ import { createContext, useContext, useState, useEffect, useCallback } from 'rea
 import { getPlayerImageUrl, getStratImagePath } from '../game/cardImages.js';
 import { cardKey } from '../game/cardSets.js';
 import { useCardStats } from '../firebase/CardStatsProvider.jsx';
-import { getPlayerRarity } from '../game/rarity.js';
 import Holo from './HoloSheen.jsx';
 import { holoRegionsFor } from '../cards/faceRegions.js';
 import styles from './CardLightbox.module.css';
 
-// The legendary tier wears a holographic sheen wherever its face is drawn.
-const isLegendary = (type, data) => type === 'player' && getPlayerRarity(data) === 'legendary';
+// The holographic sheen: the photo on a legendary, the gold on a gilded face
+// — holoRegionsFor says which, and an empty answer is no sheen.
 
 const LightboxCtx = createContext(null);
 
@@ -58,7 +57,7 @@ function LightboxModal({ item, onClose, onFullRes }) {
 
         <div className={styles.content}>
           {/* Left: image */}
-          <Holo className={styles.imgSide} active={!!imgSrc && isLegendary(type, data)} regions={holoRegionsFor(data)}>
+          <Holo className={styles.imgSide} active={!!imgSrc && type === 'player' && holoRegionsFor(data).length > 0} regions={holoRegionsFor(data)}>
             {imgSrc
               ? <img src={imgSrc} alt={data.name || data.n} className={styles.img}
                   onError={e => { e.target.style.display = 'none'; }} />
@@ -88,7 +87,7 @@ function FullResOverlay({ item, onClose }) {
 
   return (
     <div className={styles.backdrop} onClick={onClose}>
-      <Holo as="span" className={styles.fullResHolo} active={isLegendary(type, data)} regions={holoRegionsFor(data)} onClick={e => e.stopPropagation()}>
+      <Holo as="span" className={styles.fullResHolo} active={type === 'player' && holoRegionsFor(data).length > 0} regions={holoRegionsFor(data)} onClick={e => e.stopPropagation()}>
         <img src={imgSrc} alt={data.name || data.n} className={styles.fullResImg} />
       </Holo>
       <button className={styles.closeBtnFull} onClick={onClose}>{'\u00D7'}</button>

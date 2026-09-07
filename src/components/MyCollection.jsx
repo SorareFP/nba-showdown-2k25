@@ -69,6 +69,7 @@ export default function MyCollection({ collection, onBurn, onList, onCollect }) 
   const allCards = useMemo(() => {
     const players = ALL_CARDS.map(c => ({
       key: cardKey(c),
+      id: c.id, // the badge lookup behind the sheen keys base cards by id
       name: c.name,
       type: 'player',
       set: c.set,
@@ -179,7 +180,7 @@ export default function MyCollection({ collection, onBurn, onList, onCollect }) 
             : (BURN_VALUES[c.rarity] ?? 0);
           return (
             <div key={c.key} className={styles.card} style={{ borderColor: cfg.color }}>
-              <Holo className={styles.cardArt} active={c.rarity === 'legendary'} regions={holoRegionsFor(c)}>
+              <Holo className={styles.cardArt} active={c.type === 'player' && holoRegionsFor(c).length > 0} regions={holoRegionsFor(c)} idle={false}>
                 <img
                   src={c.imgUrl}
                   alt={c.name}

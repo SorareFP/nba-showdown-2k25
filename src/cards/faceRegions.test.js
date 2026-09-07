@@ -49,13 +49,18 @@ describe('faceRegions', () => {
     expect(clipPathFor('nope')).toBe('none');
   });
 
-  it('gives the gold to exactly the faces the print gilds', () => {
-    // The two Super Season sets declare the foil.
+  it('gives the photo to a legendary and the gold to every gilded face', () => {
+    // A legendary Super Season gets all three; a super-rare one only the gold.
     expect(holoRegionsFor({ set: SUPER_SEASON_SET, salary: 1200 })).toEqual(['photo', 'band', 'frame']);
     expect(holoRegionsFor({ set: WNBA_SUPER_SEASON_SET, salary: 1200 })).toEqual(['photo', 'band', 'frame']);
-    // A plain base card and a rookie card do not.
+    expect(holoRegionsFor({ set: SUPER_SEASON_SET, salary: 950 })).toEqual(['band', 'frame']);
+    // A plain legendary gets the photo; a plain rookie or common gets nothing.
     expect(holoRegionsFor({ set: BASE_SET, id: 'Nobody', salary: 1300 })).toEqual(['photo']);
     expect(holoRegionsFor({ set: ROOKIE_SET, salary: 1300 })).toEqual(['photo']);
+    expect(holoRegionsFor({ set: BASE_SET, id: 'Nobody', salary: 400 })).toEqual([]);
+    expect(holoRegionsFor(null)).toEqual([]);
+    // The user's three: gilded base cards under the legendary line get the gold.
+    expect(holoRegionsFor({ set: BASE_SET, salary: 1170, badges: ['super-season'] })).toEqual(['band', 'frame']);
     // A base card wearing the Super Season pill is gilded at $900 and up (the
     // badge is on the card here; base cards in the app get it from the file).
     expect(wearsGold({ set: BASE_SET, salary: 1200, badges: ['super-season'] })).toBe(true);

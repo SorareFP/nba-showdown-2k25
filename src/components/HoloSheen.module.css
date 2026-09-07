@@ -56,8 +56,12 @@
   background-position: 0 0, var(--mx) var(--my);
   mix-blend-mode: color-dodge;
   opacity: 0.42;
-  animation: holoDrift 7s ease-in-out infinite;
   transition: opacity 0.25s;
+}
+/* The drift runs only where the component asked for it (`idle`): one card on
+   a stage, not a grid of Super Season tiles all turning at once. */
+.holo[data-idle] .foil {
+  animation: holoDrift 7s ease-in-out infinite;
 }
 .holo[data-lit] .foil {
   animation: none;

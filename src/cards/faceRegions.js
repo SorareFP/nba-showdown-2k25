@@ -15,6 +15,7 @@
 // a gold part, and is left alone.
 import { cardTreatment } from './sets.js';
 import { badgesFor } from './badgeLookup.js';
+import { getPlayerRarity } from '../game/rarity.js';
 
 export const FACE_W = 843;
 export const FACE_H = 1181;
@@ -69,7 +70,25 @@ export function wearsGold(card) {
   return cardTreatment(card.set, card.salary, badgesFor(card)) === 'gold-foil';
 }
 
-/** The regions the sheen covers on this card: the photo, plus the gold on a Super Season. */
+/**
+ * The regions the sheen covers on this card — and, by being empty, whether it
+ * gets one at all. Two triggers, two places:
+ *
+ *   legendary  → the PHOTO (the original ask: "a holographic sheen on
+ *                legendary cards")
+ *   gilded     → the gold BAND and FRAME, at any rarity. The user, seeing
+ *                LaMelo Ball, Jaylen Brown and Stephon Castle — gilded base
+ *                cards at $1,030-1,170, super-rare — with nothing: "I still
+ *                don't see any sheen on some base set super seasons". The
+ *                foil IS the Super Season styling, so every face that prints
+ *                it shimmers on it.
+ *
+ * A legendary Super Season gets all three; a plain common gets none.
+ */
 export function holoRegionsFor(card) {
-  return wearsGold(card) ? ['photo', 'band', 'frame'] : ['photo'];
+  if (!card) return [];
+  const regions = [];
+  if (getPlayerRarity(card) === 'legendary') regions.push('photo');
+  if (wearsGold(card)) regions.push('band', 'frame');
+  return regions;
 }

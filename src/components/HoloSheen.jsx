@@ -78,7 +78,11 @@ export function drawnRect(img, box) {
   };
 }
 
-export default function Holo({ active = true, regions = DEFAULT_REGIONS, as: Tag = 'div', className = '', children, ...rest }) {
+// `idle` — whether the foil drifts on its own when no pointer is on the card.
+// On in the lightbox and the pack reveal, where one card fills the stage; off
+// in the collection, market and browser grids, where every Super Season tile
+// would otherwise animate at once. A tile still lights up under the pointer.
+export default function Holo({ active = true, regions = DEFAULT_REGIONS, idle = true, as: Tag = 'div', className = '', children, ...rest }) {
   const frame = useRef(0);
   const ref = useRef(null);
   const face = useRef({ x: 0, y: 0, w: 0, h: 0 });
@@ -155,6 +159,7 @@ export default function Holo({ active = true, regions = DEFAULT_REGIONS, as: Tag
       onPointerMove={onPointerMove}
       onPointerLeave={onPointerLeave}
       data-holo=""
+      data-idle={idle ? '' : undefined}
       {...rest}
     >
       {children}

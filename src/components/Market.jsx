@@ -167,7 +167,7 @@ export default function Market({ uid, coins, onTraded }) {
           const open = openFor[l.cardKey] ?? 1;
           return (
             <div key={l.id} className={styles.card} style={{ borderColor: cfg.color }}>
-              <Holo className={styles.art} active={rarity === 'legendary'} regions={holoRegionsFor(l.card)}>
+              <Holo className={styles.art} active={holoRegionsFor(l.card).length > 0} regions={holoRegionsFor(l.card)} idle={false}>
                 <img
                   src={getPlayerImageUrl(cardKey(l.card))}
                   alt=""

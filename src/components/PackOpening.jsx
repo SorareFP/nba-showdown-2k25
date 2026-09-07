@@ -297,7 +297,7 @@ export default function PackOpening({ cards, coins = null, onDone, onSaveRest = 
               <div className={`${styles.aura} ${styles[`aura_${cssRarity(inspected.rarity)}`]}`} />
               <Holo
                 className={`${styles.inspectCard} ${styles[`front_${cssRarity(inspected.rarity)}`]}`}
-                active={inspected.rarity === 'legendary'}
+                active={inspected.type === 'player' && holoRegionsFor(inspected.card).length > 0}
                 regions={holoRegionsFor(inspected.card)}
               >
                 <img
@@ -350,7 +350,7 @@ export default function PackOpening({ cards, coins = null, onDone, onSaveRest = 
                     </div>
                     <Holo
                       className={`${styles.mainFront} ${styles[`front_${cssRarity(currentCard.rarity)}`]}`}
-                      active={flipped && currentCard.rarity === 'legendary'}
+                      active={flipped && currentCard.type === 'player' && holoRegionsFor(currentCard.card).length > 0}
                       regions={holoRegionsFor(currentCard.card)}
                     >
                       <img

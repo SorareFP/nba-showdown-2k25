@@ -22,6 +22,7 @@ import CollectionGoals from './CollectionGoals.jsx';
 import FavoriteTeamPicker, { teamForOption, favoriteTeamName } from './FavoriteTeamPicker.jsx';
 import { logoSrc } from '../cards/CardTemplate.jsx';
 import { useDialogs } from '../ui/dialogs.jsx';
+import Skeleton from '../ui/Skeleton.jsx';
 import { collectableKeys } from '../game/collections.js';
 import styles from './CollectionTab.module.css';
 
@@ -449,7 +450,7 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange }) {
             <h2 className={styles.sectionTitle}>My Teams</h2>
             <button className={styles.newBtn} onClick={() => setEditingTeam('new')}>+ New Team</button>
           </div>
-          {loading && <div className={styles.loading}>Loading...</div>}
+          {loading && <Skeleton rows={3} height={52} label="Loading your teams" />}
           {!loading && teams.length === 0 && (
             <div className={styles.empty}>No saved teams yet. Build one from your collection.</div>
           )}
@@ -516,7 +517,7 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange }) {
             <h2 className={styles.sectionTitle}>My Decks</h2>
             <button className={styles.newBtn} onClick={() => setEditingDeck('new')}>+ New Deck</button>
           </div>
-          {loading && <div className={styles.loading}>Loading...</div>}
+          {loading && <Skeleton rows={3} height={52} label="Loading your decks" />}
           {!loading && decks.length === 0 && (
             <div className={styles.empty}>No saved decks yet. Create one to build your strategy card deck.</div>
           )}

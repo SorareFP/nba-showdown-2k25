@@ -24,7 +24,21 @@
 .logoTitle { font-size: 16px; font-weight: 700; letter-spacing: -0.3px; }
 .logoSub { font-size: 11px; color: var(--text-muted); }
 
-.nav { display: flex; gap: 4px; }
+.nav { display: flex; gap: 4px; position: relative; padding-bottom: 6px; }
+
+/* The active tab's underline, slid rather than redrawn. Position and width
+   come from the measured button (see App.jsx) — the tabs are different widths
+   and the list changes on sign-in, so there is nothing to hard-code. */
+.navMarker {
+  position: absolute;
+  left: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--orange);
+  transition: transform var(--dur-beat) var(--ease-out),
+              width var(--dur-beat) var(--ease-out);
+  pointer-events: none;
+}
 
 .navBtn {
   background: transparent;
@@ -34,7 +48,9 @@
   font-size: 13px;
   font-weight: 500;
   border: 1px solid transparent;
-  transition: all 0.15s;
+  transition: color var(--dur-quick) var(--ease-out),
+              background var(--dur-quick) var(--ease-out),
+              border-color var(--dur-quick) var(--ease-out);
 }
 .navBtn:hover { color: var(--text); background: var(--card-hover); }
 .navBtn.active {
@@ -89,3 +105,12 @@
 
 /* Sound and sign-in, together at the end of the header bar. */
 .headerActions { display: flex; align-items: center; gap: 8px; }
+
+/* One beat of arrival when the tab's contents change. Opacity and a two-pixel
+   lift — enough to register as "this is new", not enough to be a transition
+   anybody has to wait through. */
+.tabFade { animation: tabIn var(--dur-beat) var(--ease-out) both; }
+@keyframes tabIn {
+  from { opacity: 0; transform: translateY(2px); }
+  to   { opacity: 1; transform: none; }
+}

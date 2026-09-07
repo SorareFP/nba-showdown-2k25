@@ -19,6 +19,7 @@
 // what anything actually costs. What a card costs is what the cheapest open
 // listing says.
 import { useState, useEffect, useMemo, useCallback } from 'react';
+import Skeleton from '../ui/Skeleton.jsx';
 import { getCardByKey, cardKey } from '../game/cardSets.js';
 import { getPlayerRarity, RARITY_CONFIG, getMarketPrice } from '../game/rarity.js';
 import Holo from './HoloSheen.jsx';
@@ -149,7 +150,7 @@ export default function Market({ uid, coins, onTraded }) {
 
       {toast && <div className={styles.toast} onClick={() => setToast(null)}>{toast}</div>}
 
-      {shown === null && <div className={styles.empty}>Loading…</div>}
+      {shown === null && <Skeleton rows={4} height={58} label="Loading the market" />}
       {shown?.length === 0 && (
         <div className={styles.empty}>
           {mineOnly

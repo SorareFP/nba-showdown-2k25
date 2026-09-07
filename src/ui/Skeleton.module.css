@@ -1,0 +1,28 @@
+.stack { display: flex; flex-direction: column; gap: 8px; }
+
+/* The sweep is a moving highlight over a flat block, not a pulsing opacity:
+   a pulse reads as something blinking at you, a sweep reads as something
+   still arriving. Slow — 1.4s — because a fast shimmer is a fidget. */
+.row {
+  border-radius: var(--radius-sm);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0.10) 45%,
+    rgba(255, 255, 255, 0.05) 90%
+  );
+  background-size: 220% 100%;
+  animation: sweep 1.4s var(--ease-out) infinite;
+}
+
+@keyframes sweep {
+  from { background-position: 130% 0; }
+  to   { background-position: -30% 0; }
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}

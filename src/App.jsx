@@ -65,6 +65,17 @@ function AppInner() {
   const [seasonPreset, setSeasonPreset] = useState(null);
   const [seasonResult, setSeasonResult] = useState(null);
 
+  // THE SLIDING UNDERLINE.
+  //
+  // Measured rather than styled, because the tabs are different widths and the
+  // set of them changes on sign-in — a CSS-only version would need a fixed
+  // width per tab and would then lie about which one is active.
+  //
+  // Re-measured on tab change, on the tab LIST changing, and on resize, since
+  // the header wraps to two rows under 700px and every offset moves with it.
+  const navRef = useRef(null);
+  const [marker, setMarker] = useState(null);
+
   const refreshCollection = useCallback(async () => {
     if (!user) { setCollection({}); return; }
     const c = await loadCollection(user.uid);
@@ -83,6 +94,18 @@ function AppInner() {
   }, []);
 
   const tabs = user ? AUTH_TABS : GUEST_TABS;
+
+  useEffect(() => {
+    const measure = () => {
+      const el = navRef.current?.querySelector(`[data-tab="${tab}"]`);
+      if (!el) { setMarker(null); return; }
+      // Just under the button, in the padding the nav reserves for it.
+      setMarker({ left: el.offsetLeft, width: el.offsetWidth, top: el.offsetTop + el.offsetHeight + 2 });
+    };
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, [tab, tabs]);
 
   const handleLoadTeam = (savedTeam, slot) => {
     // Only the cards still owned — see ownedRoster in teamRules.js.
@@ -110,10 +133,18 @@ function AppInner() {
             <div className={styles.logoSub}>D20 Basketball Card Game · 306 Players</div>
           </div>
         </div>
-        <nav className={styles.nav}>
+        <nav className={styles.nav} ref={navRef}>
+          {marker && (
+            <span
+              className={styles.navMarker}
+              aria-hidden="true"
+              style={{ transform: `translateX(${marker.left}px)`, width: marker.width, top: marker.top }}
+            />
+          )}
           {tabs.map(t => (
             <button
               key={t.id}
+              data-tab={t.id}
               className={`${styles.navBtn} ${tab === t.id ? styles.active : ''}`}
               onClick={() => setTab(t.id)}
             >
@@ -139,6 +170,12 @@ function AppInner() {
           <TutorialGame onExit={() => { setTutorialMode(false); setTab('howtoplay'); }} />
         ) : (
           <>
+            {/* Keyed on `tab`, so switching replays the fade. THE PLAY TAB IS
+                NOT IN HERE: it is kept mounted behind a display toggle so a
+                game survives you looking at your collection, and a key change
+                would remount it and throw the game away. It is the one tab
+                that does not cross-fade, and that is the trade. */}
+            <div key={tab} className={styles.tabFade}>
             {tab === 'cards'   && <CardsTab />}
             {tab === 'strats'  && <StratsTab />}
             {tab === 'howtoplay' && (
@@ -175,6 +212,7 @@ function AppInner() {
                 onLeave={() => setPvpGame(null)}
               />
             )}
+            </div>
             {playMounted.current && (
               <div style={{ display: tab === 'play' ? 'block' : 'none' }}>
                 <PlayTab

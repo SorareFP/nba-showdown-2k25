@@ -3,12 +3,20 @@
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 12px;
-  transition: border-color 0.15s, transform 0.1s;
+  transition: border-color var(--dur-quick) var(--ease-out),
+              transform var(--dur-quick) var(--ease-out),
+              box-shadow var(--dur-quick) var(--ease-out);
   display: flex;
   flex-direction: column;
   height: 100%;
 }
-.card:hover { border-color: rgba(255,255,255,0.25); }
+.card:hover {
+  border-color: rgba(255, 255, 255, 0.25);
+  /* Two pixels. The grid is dense and a bigger lift makes the neighbours look
+     like they sank. */
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
 .card.highlighted { border-color: var(--orange); box-shadow: 0 0 0 1px var(--orange); }
 .card.compact { padding: 8px 10px; }
 

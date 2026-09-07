@@ -75,9 +75,9 @@ export { widenReference };
  *
  * READ OFF THE ENGINE, not assumed. `endSection` in src/game/engine.js advances
  * `section` 1..3 and then `quarter` 1..4, so a game is 12 sections; and
- * `rollResults[teamKey][idx]` is indexed by STARTER, with ScoringPhase's
- * auto-roll looping `for (let i = 0; i < 5; i++)` per team. Five starters roll
- * once each per section.
+ * `rollResults[teamKey][idx]` is indexed by STARTER, with CourtBoard rendering
+ * one MatchupRow per starter (idx 0..4), each rolling via `onRoll(teamKey, idx)`.
+ * Five starters roll once each per section.
  *
  * This counts CHART rolls only. Shot checks bought with assists and rebounds add
  * more points on top and are not modelled here — they take no roll bonus (see

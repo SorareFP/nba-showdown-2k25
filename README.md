@@ -65,11 +65,11 @@ src/
     TeamBuilderTab.jsx
     PlayTab.jsx      # Game controller
     game/
+      CourtBoard.jsx   # Draft, matchup and scoring phases
       Scoreboard.jsx
-      DraftPhase.jsx
-      MatchupPhase.jsx
-      ScoringPhase.jsx
+      RollResult.jsx
       GameLog.jsx
-      FatigueLegend.jsx
+      AnalyticsPanel.jsx
+      TutorialOverlay.jsx
       GameOver.jsx
 ```

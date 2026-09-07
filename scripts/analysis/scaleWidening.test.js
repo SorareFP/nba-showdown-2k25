@@ -43,7 +43,7 @@ const card = (over = {}) => ({
 });
 
 describe('the game shape the points estimate is built on', () => {
-  // endSection advances section 1..3 then quarter 1..4, and ScoringPhase rolls
+  // endSection advances section 1..3 then quarter 1..4, and CourtBoard rolls
   // one per starter per team per section.
   it('is 12 sections of 5 starters — 60 chart rolls per team per game', () => {
     expect(SECTIONS_PER_GAME).toBe(12);

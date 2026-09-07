@@ -212,7 +212,8 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
     presetRef.current = preset.key;
     const deal = () => {
       setOpponent('ai');
-      dispatch({ type: 'SET', game: newGame(preset.rosterA, preset.rosterB, null, null, { clutchDice: CLUTCH_DICE }) });
+      // The season's own deck for your side; the opponent plays the default.
+      dispatch({ type: 'SET', game: newGame(preset.rosterA, preset.rosterB, preset.deckA ?? null, null, { clutchDice: CLUTCH_DICE }) });
     };
     // A sandbox game in progress is somebody's evening. Dealing a fixture over
     // the top of it would discard it with no warning and no way back, so the

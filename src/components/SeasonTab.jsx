@@ -32,7 +32,7 @@ import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useAuth } from '../firebase/AuthProvider.jsx';
 import { useDialogs } from '../ui/dialogs.jsx';
 import {
-  createSeason, standings, roundFixtures, recordResult, rostersOf,
+  createSeason, standings, roundFixtures, recordResult, rostersOf, decksOf, setDeck,
   simulateRound, simulatePlayoffRound, roundComplete, advance, totalRounds,
   teamsById, earningsFor, PHASE,
 } from '../game/modes/season.js';
@@ -41,6 +41,7 @@ import { LENGTHS, LEAGUE_SIZES, playoffCount, gamesPerTeam } from '../game/modes
 import { SEASON_REWARDS } from '../game/modes/prizes.js';
 import { randomizeTeam, MIN_TO_PLAY, MAX, capSal, ownedRoster } from '../game/teamRules.js';
 import { loadTeams } from '../firebase/savedTeams.js';
+import { loadDecks } from '../firebase/savedDecks.js';
 import { CARD_MAP } from '../game/cards.js';
 import { logoSrc } from '../cards/CardTemplate.jsx';
 import { listSeasons, saveSeason, deleteSeason } from '../firebase/seasons.js';
@@ -133,7 +134,7 @@ export default function SeasonTab({
     setError(null);
     try {
       const season = createSeason({
-        humans: [{ id: MY_ID, name: draft.name, uid, roster: draft.roster }],
+        humans: [{ id: MY_ID, name: draft.name, uid, roster: draft.roster, deck: draft.deck, deckName: draft.deckName }],
         size: draft.size,
         length: draft.length,
       });
@@ -256,6 +257,8 @@ function Setup({ teamA, collection, uid, onStart, onCancel }) {
   const [source, setSource] = useState(teamA.length >= MIN_TO_PLAY ? 'builder' : 'random');
   const [savedId, setSavedId] = useState('');
   const [saved, setSaved] = useState([]);
+  const [decks, setDecks] = useState([]);
+  const [deckId, setDeckId] = useState('default');
   const [size, setSize] = useState(8);
   const [length, setLength] = useState('regular');
   const [rolled, setRolled] = useState(null);
@@ -263,6 +266,7 @@ function Setup({ teamA, collection, uid, onStart, onCancel }) {
   useEffect(() => {
     if (!uid) return;
     loadTeams(uid).then(setSaved).catch(() => setSaved([]));
+    loadDecks(uid).then(setDecks).catch(() => setDecks([]));
   }, [uid]);
 
   const ownedOnly = Object.keys(collection ?? {}).length > 0;
@@ -337,6 +341,19 @@ function Setup({ teamA, collection, uid, onStart, onCancel }) {
           </div>
         </div>
 
+        {decks.length > 0 && (
+          <label className={styles.field}>
+            <span className={styles.label}>Strategy deck</span>
+            <select className={styles.input} value={deckId} onChange={e => setDeckId(e.target.value)}>
+              <option value="default">The default fifty</option>
+              {decks.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
+            </select>
+            <span className={styles.hint}>
+              You can change this between rounds — a season is long enough to change your mind.
+            </span>
+          </label>
+        )}
+
         <div className={styles.field}>
           <span className={styles.label}>League size</span>
           <div className={styles.choices}>
@@ -372,7 +389,14 @@ function Setup({ teamA, collection, uid, onStart, onCancel }) {
         <button
           className={styles.primary}
           disabled={!ok}
-          onClick={() => onStart({ name: name.trim() || 'My Team', roster, size, length })}
+          onClick={() => {
+            const chosen = decks.find(d => d.id === deckId);
+            onStart({
+              name: name.trim() || 'My Team', roster, size, length,
+              deck: chosen?.cards ?? null,
+              deckName: chosen?.name ?? null,
+            });
+          }}
         >
           {ok ? `Start ${gamesPerTeam(size, length)}-game season` : `Pick at least ${MIN_TO_PLAY} cards`}
         </button>
@@ -398,8 +422,12 @@ function Choice({ on, onClick, title, sub, disabled = false }) {
 // ── The season itself ───────────────────────────────────────────────────────
 
 function Dashboard({ season, uid, commit, onPlayFixture, onBack, onAbandon }) {
-  const { ask } = useDialogs();
-  const [note, setNote] = useState(null);
+  const { ask, toast } = useDialogs();
+  const [decks, setDecks] = useState([]);
+  useEffect(() => {
+    if (!uid) return;
+    loadDecks(uid).then(setDecks).catch(() => setDecks([]));
+  }, [uid]);
   const [claiming, setClaiming] = useState(false);
   const by = useMemo(() => teamsById(season), [season]);
   const me = by.get(MY_ID);
@@ -441,7 +469,7 @@ function Dashboard({ season, uid, commit, onPlayFixture, onBack, onAbandon }) {
     // A set regenerated under a running season can take cards out from under a
     // roster (hydrate drops what no longer exists). Five is a team.
     if (me.roster.length < MIN_TO_PLAY || opp.roster.length < MIN_TO_PLAY) {
-      setNote('A team in this fixture is short of five cards — it can only be simmed.');
+      toast('A team in this fixture is short of five cards — it can only be simmed.', { tone: 'error' });
       return;
     }
     onPlayFixture?.({
@@ -453,13 +481,23 @@ function Dashboard({ season, uid, commit, onPlayFixture, onBack, onAbandon }) {
       humanIsHome: homeIsMine,
       rosterA: me.roster,
       rosterB: opp.roster,
+      // Your deck for your side; the AI plays the default fifty, as it does in
+      // every simulated fixture in the league.
+      deckA: me.deck ?? null,
       nameA: me.name,
       nameB: opp.name,
       label: isPlayoffs
         ? `${playoffRoundName(season.round, bracketRounds)} · ${homeIsMine ? 'vs' : 'at'} ${opp.name}`
         : `Round ${season.round} · ${homeIsMine ? 'vs' : 'at'} ${opp.name}`,
     });
-  }, [mine, me, by, season, isPlayoffs, bracketRounds, onPlayFixture]);
+  }, [mine, me, by, season, isPlayoffs, bracketRounds, onPlayFixture, toast]);
+
+  /** Swap decks between rounds. Games already in the book are not re-run. */
+  const changeDeck = useCallback(id => {
+    const chosen = decks.find(d => d.id === id);
+    commit(setDeck(season, MY_ID, chosen?.cards ?? null, chosen?.name ?? null));
+    toast(chosen ? `Playing ${chosen.name} from here on.` : 'Back to the default fifty.', { tone: 'success' });
+  }, [decks, season, commit, toast]);
 
   // Commissioner tools, the user's own list: force-sim your own game, or run
   // the rest of the round without waiting on anyone.
@@ -479,9 +517,14 @@ function Dashboard({ season, uid, commit, onPlayFixture, onBack, onAbandon }) {
     commit(isPlayoffs ? simulatePlayoffRound(season, { skip }) : simulateRound(season, { skip }));
   }, [season, isPlayoffs, myGameLeft, mine, commit]);
 
-  const next = useCallback(() => {
-    commit(isPlayoffs ? { ...season, round: season.round + 1 } : advance(season));
-  }, [season, isPlayoffs, commit]);
+  // THE PLAYOFFS ADVANCE THEMSELVES and this button must not offer to help.
+  //
+  // `recordResult` already sets `round = currentRound(bracket)` after every
+  // playoff match, so the moment a round's last game resolves the bracket is
+  // on the next one. The button was reachable only through a bye — and it
+  // incremented a round that had already incremented, skipping one. Regular
+  // season only now; `advance` is the only thing that moves a season on.
+  const next = useCallback(() => commit(advance(season)), [season, commit]);
 
   const earnings = isDone ? earningsFor(season, MY_ID) : { coins: 0, label: null };
   const claim = useCallback(async () => {
@@ -489,16 +532,16 @@ function Dashboard({ season, uid, commit, onPlayFixture, onBack, onAbandon }) {
     try {
       const res = await claimSeasonReward(uid, season.id);
       await commit({ ...season, paid: true });
-      setNote(`+${res.coins} coins — ${res.label}`);
+      toast(`+${res.coins} coins — ${res.label}`, { tone: 'success' });
     } catch (e) {
       const msg = e?.message ?? 'Could not claim';
-      setNote(msg);
+      toast(msg, { tone: 'error' });
       // An already-claimed season is a claimed season: stop offering the button.
       if (/already claimed/i.test(msg)) commit({ ...season, paid: true });
     } finally {
       setClaiming(false);
     }
-  }, [uid, season, commit]);
+  }, [uid, season, commit, toast]);
 
   return (
     <>
@@ -519,8 +562,6 @@ function Dashboard({ season, uid, commit, onPlayFixture, onBack, onAbandon }) {
           <button className={styles.ghost} onClick={onAbandon}>Abandon</button>
         </div>
       </header>
-
-      {note && <div className={styles.note} onClick={() => setNote(null)}>{note}</div>}
 
       {isDone && (
         <div className={styles.finale}>
@@ -581,11 +622,25 @@ function Dashboard({ season, uid, commit, onPlayFixture, onBack, onAbandon }) {
             {games.filter(g => g !== mine).map(g => <FixtureRow key={g.id} game={g} by={by} />)}
           </div>
 
+          {decks.length > 0 && (
+            <label className={styles.deckRow}>
+              <span className={styles.label}>Your deck</span>
+              <select
+                className={styles.deckSelect}
+                value={decks.find(d => d.name === me?.deckName)?.id ?? 'default'}
+                onChange={e => changeDeck(e.target.value)}
+              >
+                <option value="default">The default fifty</option>
+                {decks.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
+              </select>
+            </label>
+          )}
+
           <div className={styles.rowActions}>
             {othersLeft && <button className={styles.ghost} onClick={simRest}>Sim the rest of the round</button>}
-            {complete && (
+            {complete && !isPlayoffs && (
               <button className={styles.primary} onClick={next}>
-                {isPlayoffs || season.round < rounds ? 'Next round →' : 'Start the playoffs →'}
+                {season.round < rounds ? 'Next round →' : 'Start the playoffs →'}
               </button>
             )}
           </div>

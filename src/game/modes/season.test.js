@@ -6,6 +6,7 @@ import {
   createSeason, PHASE, standings, recordResult, roundFixtures, roundComplete, advance,
   totalRounds, nextFixtureFor, fixtureFor, isHumanVsHuman, simulateRound, simulatePlayoffRound,
   startPlayoffs, earningsFor, summarize, teamsById, rostersOf, resultFromPlayed,
+  decksOf, setDeck,
 } from './season.js';
 import { buildAiLeague } from './aiTeams.js';
 
@@ -217,5 +218,60 @@ describe('resultFromPlayed', () => {
     ));
     expect(s.fixtures.find(f => f.id === mine.id).result.winner).toBe('me1');
     expect(standings(s).find(t => t.id === 'me1')).toMatchObject({ w: 1, l: 0, pf: 101, pa: 97 });
+  });
+});
+
+// ── The strategy deck a human carries through a season ──────────────────────
+//
+// It rides on the TEAM, not on the season, because two humans in one league
+// bring their own and a simulated fixture has to know which side's is which.
+describe('season decks', () => {
+  const deck = { close_out: 2, rim_protector: 1 };
+
+  it('carries the deck a human brought and leaves the AI teams on the default', () => {
+    const pool = buildAiLeague(1, { rng: seeded(11) });
+    const s = createSeason({
+      id: 'd', size: 4, length: 'short', rng: seeded(12),
+      humans: [{ id: 'me1', name: 'Me', roster: pool[0].roster, deck, deckName: 'Wall' }],
+    });
+    expect(decksOf(s)).toEqual({ me1: deck });
+    expect(s.teams.find(t => t.id === 'me1').deckName).toBe('Wall');
+    // Every AI team is absent from the map, which is what "the default" means.
+    for (const t of s.teams.filter(x => !x.human)) expect(decksOf(s)[t.id]).toBeUndefined();
+  });
+
+  it('defaults to no deck at all when none is brought', () => {
+    expect(decksOf(makeSeason())).toEqual({});
+  });
+
+  it('swaps a deck between rounds without touching the games already played', () => {
+    let s = makeSeason({ size: 4 });
+    s = feedRound(s);
+    const playedBefore = s.results.length;
+    s = setDeck(s, 'me1', deck, 'Wall');
+    expect(decksOf(s)).toEqual({ me1: deck });
+    expect(s.results).toHaveLength(playedBefore);
+    // And back to the default, which clears the name with it rather than
+    // leaving a label pointing at nothing.
+    s = setDeck(s, 'me1', null);
+    expect(decksOf(s)).toEqual({});
+    expect(s.teams.find(t => t.id === 'me1').deckName).toBeNull();
+  });
+
+  it('hands the simulator the deck for the right side of the fixture', () => {
+    // A season the human is IN, simulated end to end: the point is only that
+    // nothing throws and every game resolves once decks are in play, since the
+    // deck reaches the engine through simulateGame's own arguments.
+    const pool = buildAiLeague(1, { rng: seeded(3) });
+    let s = createSeason({
+      id: 'd2', size: 4, length: 'short', rng: seeded(4),
+      humans: [{ id: 'me1', name: 'Me', roster: pool[0].roster, deck, deckName: 'Wall' }],
+    });
+    for (let r = 0; r < totalRounds(s); r += 1) {
+      s = simulateRound(s, { rng: seeded(100 + r) });
+      s = advance(s);
+    }
+    expect(s.phase).toBe(PHASE.playoffs);
+    expect(s.fixtures.every(f => f.result)).toBe(true);
   });
 });

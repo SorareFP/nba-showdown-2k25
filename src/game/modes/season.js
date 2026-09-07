@@ -55,7 +55,16 @@ export function createSeason({
   const taken = new Set(humans.flatMap(h => h.roster.map(c => c.id)));
   const ai = buildAiLeague(size - humans.length, { taken, rng, ...(cards ? { cards } : {}) });
   const teams = [
-    ...humans.map(h => ({ id: h.id, name: h.name, human: true, uid: h.uid ?? null, roster: h.roster, abbr: h.abbr ?? null, logo: h.logo ?? null })),
+    // `deck` is the strategy deck this human brings — the shape savedDecks
+    // stores, a { cardId: count } map, or null for the engine's default fifty.
+    // It rides on the TEAM rather than on the season because two humans in one
+    // league bring their own, and because a simulated fixture has to know
+    // which side's deck is which.
+    ...humans.map(h => ({
+      id: h.id, name: h.name, human: true, uid: h.uid ?? null, roster: h.roster,
+      abbr: h.abbr ?? null, logo: h.logo ?? null,
+      deck: h.deck ?? null, deckName: h.deckName ?? null,
+    })),
     ...ai,
   ];
   const meetings = LENGTHS[length]?.meetings ?? LENGTHS.regular.meetings;
@@ -84,6 +93,32 @@ export function teamsById(season) {
 /** Rosters, by team id — what simulate.js needs. */
 export function rostersOf(season) {
   return Object.fromEntries(season.teams.map(t => [t.id, t.roster]));
+}
+
+/**
+ * Strategy decks by team id. Only the teams that brought one appear; a missing
+ * entry is the engine's default fifty, which is what every AI team plays.
+ */
+export function decksOf(season) {
+  return Object.fromEntries(season.teams.filter(t => t.deck).map(t => [t.id, t.deck]));
+}
+
+/**
+ * Change the deck a team carries. Applies to games not yet played — a season
+ * is long enough that a coach should be able to change their mind, and the
+ * games already in the book are not re-litigated by it.
+ */
+export function setDeck(season, teamId, deck, deckName = null) {
+  return {
+    ...season,
+    teams: season.teams.map(t => (t.id === teamId ? { ...t, deck: deck ?? null, deckName: deck ? deckName : null } : t)),
+  };
+}
+
+/** The deck options a fixture is played with, from whoever is on each side. */
+function deckOpts(season, fixture) {
+  const decks = decksOf(season);
+  return { deckA: decks[fixture.home] ?? null, deckB: decks[fixture.away] ?? null };
 }
 
 /** How many rounds the regular season has. */
@@ -162,7 +197,7 @@ export function simulateRound(season, { skip = [], rng = undefined } = {}) {
   for (const f of roundFixtures(s)) {
     if (f.result || hold.has(f.id)) continue;
     if (isHumanVsHuman(s, f)) continue; // two humans: their game, not the simulator's
-    s = recordResult(s, simulateFixture(f, rosters, rng ? { rng } : {}));
+    s = recordResult(s, simulateFixture(f, rosters, { ...deckOpts(s, f), ...(rng ? { rng } : {}) }));
   }
   return s;
 }
@@ -201,7 +236,8 @@ export function simulatePlayoffRound(season, { skip = [], rng = undefined } = {}
     if (hold.has(m.id)) continue;
     const by = teamsById(s);
     if (by.get(m.a)?.human && by.get(m.b)?.human) continue;
-    const r = simulateFixture({ id: m.id, home: m.a, away: m.b }, rosters, rng ? { rng } : {});
+    const fixture = { id: m.id, home: m.a, away: m.b };
+    const r = simulateFixture(fixture, rosters, { ...deckOpts(s, fixture), ...(rng ? { rng } : {}) });
     s = recordResult(s, r);
   }
   return s;

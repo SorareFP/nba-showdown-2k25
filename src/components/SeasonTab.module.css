@@ -304,3 +304,21 @@
 /* A control that belongs to one field rather than to the row — "Roll another"
    under the roster picker — should be its own width, not the column's. */
 .field > .ghost { align-self: flex-start; }
+
+/* A one-line aside under a field — smaller than the label, quieter than the
+   control it explains. */
+.hint { font-size: 11px; color: var(--text-dim); line-height: 1.5; }
+
+/* The deck you are carrying, changeable between rounds. Sits with the round's
+   controls rather than in the header: it is a decision about the games ahead. */
+.deckRow { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.deckSelect {
+  background: var(--navy);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+  padding: 7px 10px;
+  max-width: 260px;
+}

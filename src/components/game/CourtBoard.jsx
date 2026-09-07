@@ -972,9 +972,22 @@ function PhaseBar({ game, setGame, onEndSection, onTimeout = null, onEndTimeout 
           {!rollingOpen
             ? <span className={styles.phaseSub} style={{color:col}}>Team {scoringTurn} strategy turn · {Math.min(scoringPasses,2)}/2 passes</span>
             : <span className={styles.phaseSub} style={{color:'var(--green)'}}>All players may roll</span>}
-          {(game.openMan?.A > 0 || game.openMan?.B > 0) && ['A','B'].map(k => (game.openMan?.[k] > 0
-            ? <span key={k} className={styles.phaseSub} style={{color: k==='A'?'var(--orange)':'var(--blue)'}}>🎯 Team {k} has an open man: +{game.openMan[k]} on their next roll</span>
-            : null))}
+          {['A', 'B'].map(k => {
+            // `openMan` carries its exclusions now — the trapped man cannot be
+            // the open man. Reads the old bare-number shape too.
+            const om = game.openMan?.[k];
+            const pts = typeof om === 'number' ? om : (om?.pts ?? 0);
+            if (!pts) return null;
+            const team = k === 'A' ? game.teamA : game.teamB;
+            const barred = (typeof om === 'object' ? om.except ?? [] : [])
+              .map(i => team.starters[i]?.name).filter(Boolean);
+            return (
+              <span key={k} className={styles.phaseSub} style={{ color: k === 'A' ? 'var(--orange)' : 'var(--blue)' }}>
+                🎯 Team {k} has an open man: +{pts} on their next roll
+                {barred.length ? ` — anyone but ${barred.join(' or ')}` : ''}
+              </span>
+            );
+          })}
           {game.crunch?.active && <span className={styles.phaseSub} style={{color:'#F87171',fontWeight:700}}>🚨 CRUNCH TIME · margin {game.crunch.margin} · clutch, timeouts & crunch cards live</span>}
           {game.timeoutActive && <span className={styles.phaseSub} style={{color:'#FBBF24'}}>⏸ Team {game.timeoutActive} timeout — defense re-set, timeout cards playable</span>}
         </div>

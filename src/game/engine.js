@@ -380,15 +380,27 @@ export function endTimeout(g) {
 
 export function shotCheck(player, type, extra, ps) {
   const die = roll20();
+  // WHERE THE BONUS CAME FROM, not just how big it is.
+  //
+  // The log printed a lump — "8+4=12 vs 13" — and a player reading it sees a
+  // shot line of 13 and their own printed 3PT bonus of +1 and concludes the
+  // card should have made it. The +1 is already INSIDE the +4, which the line
+  // gave no way to know (the user, 2026-09-07). `parts` is that breakdown; the
+  // arithmetic is untouched.
+  const parts = [];
   let bonus = extra || 0;
-  if (type === '3pt')   bonus += (player.threePtBoost || 0);
-  if (type === 'paint') bonus += (player.paintBoost || 0);
-  if (type === 'ft')    bonus += 10;
-  bonus += ((ps?.hot || 0) - (ps?.cold || 0)) * 2;
+  if (extra) parts.push({ label: 'card', n: extra });
+  const boost = type === '3pt' ? (player.threePtBoost || 0)
+    : type === 'paint' ? (player.paintBoost || 0)
+      : 0;
+  if (boost) { bonus += boost; parts.push({ label: type === '3pt' ? '3PT' : 'Paint', n: boost }); }
+  if (type === 'ft') { bonus += 10; parts.push({ label: 'FT', n: 10 }); }
+  const marker = ((ps?.hot || 0) - (ps?.cold || 0)) * 2;
+  if (marker) { bonus += marker; parts.push({ label: marker > 0 ? '🔥' : '🧊', n: marker }); }
   const total = die + bonus;
   const hit = total >= player.shotLine;
   const pts = hit ? (type === '3pt' ? 3 : type === 'paint' ? 2 : 1) : 0;
-  return { die, bonus, total, line: player.shotLine, hit, pts, type };
+  return { die, bonus, total, line: player.shotLine, hit, pts, type, parts };
 }
 
 // ── Assist Spending ────────────────────────────────────────────────────────
@@ -738,8 +750,13 @@ export function doRoll(g, teamKey, idx, opts = {}) {
   // Open-man bonus (Double Team's cost): rides on the next roll this team
   // chooses to make, then it's gone — the offense picks its beneficiary
   // through roll order.
-  if (ng.openMan?.[teamKey]) {
-    bonus += ng.openMan[teamKey];
+  // A bare number is the OLD shape and still readable, so a game saved
+  // mid-segment before this change does not throw.
+  const open = ng.openMan?.[teamKey];
+  const openPts = typeof open === 'number' ? open : (open?.pts ?? 0);
+  const openExcept = typeof open === 'object' ? (open?.except ?? []) : [];
+  if (openPts && !openExcept.includes(idx)) {
+    bonus += openPts;
     delete ng.openMan[teamKey];
   }
 

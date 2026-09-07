@@ -26,7 +26,14 @@ function trackShotCheck(g, teamKey, r, type, playerIdx) {
 function scStr(r, ps) {
   const hotCold = ps ? ((ps.hot || 0) - (ps.cold || 0)) : 0;
   const hcTag = hotCold > 0 ? ` 🔥×${ps.hot}` : hotCold < 0 ? ` 🧊×${ps.cold}` : '';
-  return `🎲${r.die}${r.bonus !== 0 ? (r.bonus > 0 ? '+' : '') + r.bonus : ''}=${r.total} vs ${r.line} → ${r.hit ? r.pts + 'pts ✓' : 'MISS'}${hcTag}`;
+  // The bonus, ITEMISED. "8+4=12 vs 13" reads as though a printed 3PT bonus
+  // was ignored; "8 +1 card +1 3PT +2 🔥 = 12 vs 13" shows it was not. See the
+  // `parts` note in shotCheck.
+  const sign = n => `${n > 0 ? '+' : ''}${n}`;
+  const detail = r.parts?.length
+    ? ` ${r.parts.map(p => `${sign(p.n)} ${p.label}`).join(' ')}`
+    : (r.bonus !== 0 ? sign(r.bonus) : '');
+  return `🎲${r.die}${detail} = ${r.total} vs ${r.line} → ${r.hit ? r.pts + 'pts ✓' : 'MISS'}${hcTag}`;
 }
 
 function recordShot(g, teamKey, playerId, type, hit) {
@@ -265,8 +272,17 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       g.tempDefEff[teamKey][dIdx] = { speedBoost: cur.speedBoost + 6, powerBoost: cur.powerBoost + 6 };
       // The cost: somebody's open, and the OFFENSE finds him — the +3 rides
       // on the next roll the opponent chooses to make (roll order is theirs).
+      // THE OPEN MAN IS NOT THE MAN YOU JUST DOUBLED. This used to be a bare
+      // number, and the offence could spend it on the trapped player himself —
+      // so doubling Jrue Holiday handed Jrue +3, which is the opposite of what
+      // "someone is open" means (the user, 2026-09-07). The exclusion travels
+      // with the bonus, so a second Double Team in the same segment adds its
+      // own trapped man to the list rather than replacing it.
       if (!g.openMan) g.openMan = {};
-      g.openMan[dtOpp] = (g.openMan[dtOpp] || 0) + 3;
+      const prevOpen = g.openMan[dtOpp];
+      const prevPts = typeof prevOpen === 'number' ? prevOpen : (prevOpen?.pts ?? 0);
+      const prevExcept = typeof prevOpen === 'object' ? (prevOpen?.except ?? []) : [];
+      g.openMan[dtOpp] = { pts: prevPts + 3, except: [...new Set([...prevExcept, tIdx])] };
       g.lastDoubleTeam = { teamKey, targetIdx: tIdx };
       addLog(g, teamKey, `Double Team: ${target.name} trapped (+6/+6 defense) — someone's open, Team ${dtOpp} gets +3 on their next roll`);
       break;

@@ -5,7 +5,7 @@ import { describe, it, expect } from 'vitest';
 import {
   createSeason, PHASE, standings, recordResult, roundFixtures, roundComplete, advance,
   totalRounds, nextFixtureFor, fixtureFor, isHumanVsHuman, simulateRound, simulatePlayoffRound,
-  startPlayoffs, earningsFor, summarize, teamsById, rostersOf,
+  startPlayoffs, earningsFor, summarize, teamsById, rostersOf, resultFromPlayed,
 } from './season.js';
 import { buildAiLeague } from './aiTeams.js';
 
@@ -185,5 +185,37 @@ describe('simulating the rest of the league', () => {
     expect(s.phase).toBe(PHASE.done);
     expect(s.champion).toBeTruthy();
     expect(s.results.filter(r => r.playoff)).toHaveLength(1);
+  });
+});
+
+// ── The result of a game you actually played ────────────────────────────────
+//
+// You always coach team A, so the fixture's home score is your score only
+// half the time. Getting this backwards inverts a season's standings without
+// throwing anything, which is exactly the failure a test is for.
+describe('resultFromPlayed', () => {
+  const home = { fixtureId: 'r1g1', home: 'me1', away: 'ai:BOS', humanIsHome: true };
+  const away = { fixtureId: 'r1g2', home: 'ai:BOS', away: 'me1', humanIsHome: false };
+
+  it('reads your score as the home score at home, and as the away score on the road', () => {
+    expect(resultFromPlayed(home, 101, 97)).toEqual({
+      fixtureId: 'r1g1', home: 'me1', away: 'ai:BOS', homeScore: 101, awayScore: 97,
+    });
+    expect(resultFromPlayed(away, 101, 97)).toEqual({
+      fixtureId: 'r1g2', home: 'ai:BOS', away: 'me1', homeScore: 97, awayScore: 101,
+    });
+  });
+
+  it('gives the win to the same team either way round', () => {
+    let s = makeSeason({ size: 4 });
+    const mine = roundFixtures(s).find(f => f.home === 'me1' || f.away === 'me1');
+    const iAmHome = mine.home === 'me1';
+    // 101-97 in MY favour, whichever side of the fixture I was drawn on.
+    s = recordResult(s, resultFromPlayed(
+      { fixtureId: mine.id, home: mine.home, away: mine.away, humanIsHome: iAmHome },
+      101, 97
+    ));
+    expect(s.fixtures.find(f => f.id === mine.id).result.winner).toBe('me1');
+    expect(standings(s).find(t => t.id === 'me1')).toMatchObject({ w: 1, l: 0, pf: 101, pa: 97 });
   });
 });

@@ -46,6 +46,7 @@ import { getCardByKey } from './shared/src/game/cardSets.js';
 import { getPlayerRarity, BURN_VALUES, getStratRarity, STRAT_BURN_VALUES } from './shared/src/game/rarity.js';
 import { getStrat } from './shared/src/game/strats.js';
 import { settleGameReward, todayKey, sanitizeBox } from './shared/src/game/coinRewards.js';
+import { seasonEarnings, dynastyCoinFactor } from './shared/src/game/modes/prizes.js';
 
 initializeApp();
 const db = getFirestore();
@@ -709,5 +710,55 @@ export const collectCard = onCall({ region: 'us-central1' }, async request => {
     if (!already) tx.update(spare.ref, { state: COLLECTED, collectedAt: FieldValue.serverTimestamp() });
     tx.set(indexRef, { collected: true, collectedAt: FieldValue.serverTimestamp() }, { merge: true });
     return { cardKey, copyId: (already ?? spare).id };
+  });
+});
+
+/**
+ * THE TITLE MONEY. What a finished season pays once, on top of what its
+ * individual games already paid through claimGameReward.
+ *
+ * ── WHY THE SERVER READS THE SEASON RATHER THAN BEING TOLD THE PRIZE ────────
+ *
+ * The client could just send "I won, pay me 400". It sends a season id
+ * instead, and the price comes from SEASON_REWARDS keyed by the season's own
+ * length. A client that lies still has to lie in the document — and the
+ * document is the thing it plays a whole schedule to fill in.
+ *
+ * That is the same trust model as claimGameReward, which believes the browser
+ * about who won a game, and for the same reason: the dice are rolled on the
+ * client. What is NOT trusted is the double claim, and that is why the receipt
+ * goes in `claims` — the server-only collection the goal ladder already uses —
+ * rather than as a `paid` flag on the client-writable season.
+ */
+export const claimSeasonReward = onCall({ region: 'us-central1' }, async request => {
+  const uid = requireAuth(request);
+  const seasonId = String(request.data?.seasonId ?? '').trim();
+  if (!seasonId || seasonId.includes('/')) throw new HttpsError('invalid-argument', 'No season given');
+
+  const seasonSnap = await db.doc(`users/${uid}/seasons/${seasonId}`).get();
+  if (!seasonSnap.exists) throw new HttpsError('not-found', 'No such season');
+  const season = seasonSnap.data();
+  if (season.phase !== 'done') throw new HttpsError('failed-precondition', 'That season is not over');
+
+  // The human team is the one this account played. A season with none of them
+  // is a document that was not written by this mode.
+  const mine = (season.teams ?? []).find(t => t.human);
+  if (!mine) throw new HttpsError('failed-precondition', 'That season has no team of yours');
+
+  const factor = dynastyCoinFactor(season.startMode);
+  const { coins, label } = seasonEarnings(season.length, {
+    champion: season.champion === mine.id,
+    runnerUp: season.runnerUp === mine.id,
+    madePlayoffs: (season.playoffSeeds ?? []).includes(mine.id),
+  }, factor);
+  if (!coins) throw new HttpsError('failed-precondition', 'That season finished out of the money');
+
+  const claimRef = db.doc(`users/${uid}/claims/season:${seasonId}`);
+  return db.runTransaction(async tx => {
+    const claim = await tx.get(claimRef);
+    if (claim.exists) throw new HttpsError('already-exists', 'Already claimed');
+    tx.set(claimRef, { claimedAt: FieldValue.serverTimestamp(), coins, reward: null, season: seasonId, label });
+    tx.set(db.doc(`users/${uid}`), { currency: FieldValue.increment(coins) }, { merge: true });
+    return { seasonId, coins, label };
   });
 });

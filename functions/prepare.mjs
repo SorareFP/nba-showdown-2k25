@@ -43,6 +43,7 @@ const COPY = [
   'src/game/collections.js',
   'src/game/collectionDifficulty.js',
   'src/game/coinRewards.js',
+  'src/game/modes/prizes.js',
   'src/cards/teams.js',
   'src/cards/sets.js',
   'src/cards/playerId.js',

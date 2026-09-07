@@ -39,7 +39,8 @@
 // one regardless of the flag.
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import {
-  collection, doc, getDocs, query, where, writeBatch, increment, deleteField,
+  collection, doc, getDoc, getDocs, query, where, writeBatch, increment, deleteField,
+  runTransaction, serverTimestamp,
 } from 'firebase/firestore';
 import { app, db } from './config.js';
 import {
@@ -59,6 +60,7 @@ import { getStrat } from '../game/strats.js';
 import { getCardByKey } from '../game/cardSets.js';
 import { getPlayerRarity, BURN_VALUES, getStratRarity, STRAT_BURN_VALUES } from '../game/rarity.js';
 import { settleGameReward, todayKey, sanitizeBox } from '../game/coinRewards.js';
+import { seasonEarnings, dynastyCoinFactor } from '../game/modes/prizes.js';
 
 /**
  * FLIP THIS AFTER `firebase deploy --only functions`.
@@ -115,6 +117,7 @@ const server = {
   delistCard: (uid, listingId) => call('delistCard', { listingId }),
   burnCard: (uid, cardKey) => call('burnCard', { cardKey }),
   claimGameReward: (uid, claim) => call('claimGameReward', claim),
+  claimSeasonReward: (uid, seasonId) => call('claimSeasonReward', { seasonId }),
   collectCard: (uid, cardKey) => call('collectCard', { cardKey }),
   devResetAccount: () => call('devResetAccount', {}),
 };
@@ -133,6 +136,33 @@ const direct = {
   },
   buyListing: (uid, listingId) => buyListingDirect(uid, listingId),
   claimGoal: (uid, goalId) => claimGoalDirect(uid, goalId),
+  /**
+   * A finished season's title money, paid in the browser. The receipt is the
+   * same `claims/season:{id}` document the server writes, so a client that
+   * pays itself here and a server that pays it later cannot both succeed.
+   */
+  async claimSeasonReward(uid, seasonId) {
+    const seasonSnap = await getDoc(doc(db, 'users', uid, 'seasons', String(seasonId)));
+    if (!seasonSnap.exists()) throw new Error('No such season');
+    const season = seasonSnap.data();
+    if (season.phase !== 'done') throw new Error('That season is not over');
+    const mine = (season.teams ?? []).find(t => t.human);
+    if (!mine) throw new Error('That season has no team of yours');
+    const { coins, label } = seasonEarnings(season.length, {
+      champion: season.champion === mine.id,
+      runnerUp: season.runnerUp === mine.id,
+      madePlayoffs: (season.playoffSeeds ?? []).includes(mine.id),
+    }, dynastyCoinFactor(season.startMode));
+    if (!coins) throw new Error('That season finished out of the money');
+    const claimRef = doc(db, 'users', uid, 'claims', `season:${seasonId}`);
+    await runTransaction(db, async tx => {
+      const claim = await tx.get(claimRef);
+      if (claim.exists()) throw new Error('Already claimed');
+      tx.set(claimRef, { claimedAt: serverTimestamp(), coins, reward: null, season: seasonId, label });
+      tx.set(doc(db, 'users', uid), { currency: increment(coins) }, { merge: true });
+    });
+    return { seasonId, coins, label };
+  },
   collectCard: (uid, cardKey) => collectCardDirect(uid, cardKey),
   listCard: (uid, cardKey, price) => listCardDirect(uid, cardKey, price),
   delistCard: (uid, listingId) => delistCardDirect(uid, listingId),
@@ -235,6 +265,8 @@ export const delistCard = (uid, listingId) => impl.delistCard(uid, listingId);
 export const burnCard = (uid, cardKey) => impl.burnCard(uid, cardKey);
 /** Settle a finished game. `claim` is `{ won, pvp, milestoneIds, bam }`. */
 export const claimGameReward = (uid, claim) => impl.claimGameReward(uid, claim);
+/** Pay a finished season's title money, once. Returns `{ coins, label }`. */
+export const claimSeasonReward = (uid, seasonId) => impl.claimSeasonReward(uid, seasonId);
 /** Put one owned copy into the collection. Returns `{ cardKey, copyId }`. */
 export const collectCard = (uid, cardKey) => impl.collectCard(uid, cardKey);
 /** DEV ONLY. Wipes the caller's collection, ledger and wallet. */

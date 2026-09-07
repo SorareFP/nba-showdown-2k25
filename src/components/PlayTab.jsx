@@ -1,9 +1,10 @@
-import { useReducer, useCallback, useState, useEffect } from 'react';
+import { useReducer, useCallback, useState, useEffect, useRef } from 'react';
 import { newGame, doRoll, endSection, spendAssist, spendReboundBonus, applyMatchups, spendTimeout, endTimeout, clutchAvailable, passTurn } from '../game/engine.js';
 import { aiTurn, aiScoringDecision, aiRollDecision, aiSpendDecision, aiReactionDecision, aiCrunchDecision, aiSetMatchups } from '../game/ai.js';
 import { CLUTCH_DICE } from '../game/clutchAwards.js';
 import { execCard, resolvePendingShotCheck } from '../game/execCard.js';
 import { randomizeTeam, MIN_TO_PLAY } from '../game/teamRules.js';
+import { resultFromPlayed } from '../game/modes/season.js';
 import { useAuth } from '../firebase/AuthProvider.jsx';
 import { loadDecks } from '../firebase/savedDecks.js';
 import CourtBoard from './game/CourtBoard.jsx';
@@ -51,7 +52,14 @@ function gameReducer(state, action) {
 
 const AI_DELAY = 700;
 
-export default function PlayTab({ teamA: rosterA, teamB: rosterB }) {
+/**
+ * `preset` is a game somebody else decided on: a season fixture, handed down
+ * from App. It carries the two rosters, which side of the fixture you are, and
+ * the ids needed to report the score back. When one is set the pre-game screen
+ * is skipped entirely and the results screen leaves to the season instead of
+ * offering Play Again — the schedule decides what comes next, not this tab.
+ */
+export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null, onPresetFinish = null }) {
   const [game, dispatch] = useReducer(gameReducer, null);
 
   // WHO PLAYS TEAM B. 'ai' hands B to the coach below; 'human' switches the
@@ -168,6 +176,29 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB }) {
     dispatch({ type: 'SET', game: newGame(rA, rB, deckA, deckB, { clutchDice: CLUTCH_DICE }) });
   }, []);
 
+  // A FIXTURE STARTS ITSELF. The ref is the "which one" — without it every
+  // re-render while a season game is in progress would deal a fresh game over
+  // the top of it. Clearing it when the preset goes away is what lets the same
+  // fixture be started again after you abandon one.
+  const presetRef = useRef(null);
+  useEffect(() => {
+    if (!preset) { presetRef.current = null; return; }
+    if (presetRef.current === preset.key) return;
+    // A sandbox game in progress is somebody's evening. Dealing a fixture over
+    // the top of it would discard it with no warning and no way back, so the
+    // fixture asks first and bounces to the season if the answer is no.
+    if (game && !game.done && !confirm('Start this season fixture? The game you have going will be discarded.')) {
+      onPresetFinish?.(null);
+      return;
+    }
+    presetRef.current = preset.key;
+    setOpponent('ai');
+    dispatch({ type: 'SET', game: newGame(preset.rosterA, preset.rosterB, null, null, { clutchDice: CLUTCH_DICE }) });
+    // `preset` alone, deliberately: `game` is read once, when a preset first
+    // arrives, and listing it would re-run this on every roll of the game it
+    // just dealt.
+  }, [preset]);
+
   const handlers = {
     setGame:      (g)                     => dispatch({ type: 'UPDATE', game: g }),
     onRoll:       (teamKey, idx, opts)    => dispatch({ type: 'ROLL', teamKey, idx, opts }),
@@ -181,7 +212,9 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB }) {
     onPlayAgain:  ()                      => dispatch({ type: 'SET', game: null }),
   };
 
-  if (!game) return (
+  // One frame of the pre-game screen before the effect above deals the fixture
+  // would read as a flicker, so a pending preset shows nothing at all.
+  if (!game) return preset ? null : (
     <NoGame
       canUseBuilt={rosterA.length >= 5 && rosterB.length >= 5}
       rosterA={rosterA} rosterB={rosterB}
@@ -190,22 +223,42 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB }) {
     />
   );
 
-  if (game.done) return <GameOver game={game} onPlayAgain={handlers.onPlayAgain} />;
+  if (game.done) {
+    if (!preset) return <GameOver game={game} onPlayAgain={handlers.onPlayAgain} />;
+    // The score as the FIXTURE sees it — see resultFromPlayed for why the
+    // home/away mapping is not written out here.
+    const result = { seasonId: preset.seasonId, ...resultFromPlayed(preset, game.teamA.score, game.teamB.score) };
+    return (
+      <GameOver
+        game={game}
+        onLeave={() => { dispatch({ type: 'SET', game: null }); onPresetFinish?.(result); }}
+        leaveLabel="Back to the season →"
+      />
+    );
+  }
 
   // THE WAY OUT. A game used to hold the tab until it finished: start a
   // random one, decide you wanted your built rosters instead, and the first
   // game sat there with no exit but playing it through. Same reset the
   // results screen uses, behind a confirm because it discards the game.
   const abandon = () => {
-    if (!confirm('Abandon this game? Nothing about it is saved.')) return;
+    const msg = preset
+      ? 'Leave this fixture? It stays unplayed and you can come back to it.'
+      : 'Abandon this game? Nothing about it is saved.';
+    if (!confirm(msg)) return;
     dispatch({ type: 'SET', game: null });
+    // No result: the season clears the preset and leaves the fixture open.
+    if (preset) onPresetFinish?.(null);
   };
 
   return (
     <div className={styles.layout}>
-      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
+        <div style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 600 }}>
+          {preset ? preset.label : ''}
+        </div>
         <button className={styles.btnSec} onClick={abandon} style={{ fontSize: 12, padding: '4px 12px' }}>
-          ✕ Abandon game
+          {preset ? '✕ Leave fixture' : '✕ Abandon game'}
         </button>
       </div>
       <Scoreboard game={game} />

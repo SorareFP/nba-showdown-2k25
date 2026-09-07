@@ -7,7 +7,7 @@ import { boxScoreFor } from '../../game/boxScore.js';
 import { useCardStats } from '../../firebase/CardStatsProvider.jsx';
 import styles from './GameOver.module.css';
 
-export default function GameOver({ game, onPlayAgain, isPvp = false, myTeamKey = null, onLeave = null }) {
+export default function GameOver({ game, onPlayAgain, isPvp = false, myTeamKey = null, onLeave = null, leaveLabel = 'Leave Game' }) {
   const { user } = useAuth();
   const { refresh: refreshCardStats } = useCardStats();
   const { teamA, teamB } = game;
@@ -113,7 +113,7 @@ export default function GameOver({ game, onPlayAgain, isPvp = false, myTeamKey =
 
       <div className={styles.footer}>
         {onPlayAgain && <button className={styles.playAgain} onClick={onPlayAgain}>Play Again</button>}
-        {onLeave && <button className={styles.playAgain} onClick={onLeave}>Leave Game</button>}
+        {onLeave && <button className={styles.playAgain} onClick={onLeave}>{leaveLabel}</button>}
       </div>
     </div>
   );

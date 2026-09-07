@@ -218,6 +218,26 @@ export function earningsFor(season, teamId, factor = 1) {
   }, factor);
 }
 
+/**
+ * The result of a fixture you PLAYED, from the game you coached.
+ *
+ * You always coach team A — the rewards path, the box score the lifetime
+ * tracker keeps, and the AI driver all assume it — so which of the two scores
+ * is the home score depends on which side of the fixture you were drawn on,
+ * and nothing else does. Getting this backwards silently inverts a season's
+ * standings, which is why it is one named function rather than a ternary in a
+ * component.
+ */
+export function resultFromPlayed({ fixtureId, home, away, humanIsHome }, scoreA, scoreB) {
+  return {
+    fixtureId,
+    home,
+    away,
+    homeScore: humanIsHome ? scoreA : scoreB,
+    awayScore: humanIsHome ? scoreB : scoreA,
+  };
+}
+
 /** A one-line summary for a list of saved seasons. */
 export function summarize(season) {
   const table = standings(season);

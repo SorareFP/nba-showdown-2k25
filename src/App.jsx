@@ -3,6 +3,7 @@ import CardsTab from './components/CardsTab.jsx';
 import StratsTab from './components/StratsTab.jsx';
 import TeamBuilderTab from './components/TeamBuilderTab.jsx';
 import PlayTab from './components/PlayTab.jsx';
+import SeasonTab from './components/SeasonTab.jsx';
 import HowToPlay from './components/HowToPlay.jsx';
 import CollectionTab from './components/CollectionTab.jsx';
 import PvpLobby from './components/PvpLobby.jsx';
@@ -24,12 +25,14 @@ const GUEST_TABS = [
   { id: 'strats',  label: '🃏 Strategy Cards' },
   { id: 'builder', label: '🏗 Team Builder' },
   { id: 'play',    label: '🏀 Play' },
+  { id: 'season',  label: '📅 Season' },
   { id: 'howtoplay', label: '📖 How to Play' },
 ];
 // Tabs visible to logged-in users (cards/strats hidden to preserve pack surprise)
 const AUTH_TABS = [
   { id: 'builder', label: '🏗 Team Builder' },
   { id: 'play',    label: '🏀 Play' },
+  { id: 'season',  label: '📅 Season' },
   { id: 'pvp',     label: '⚔️ PvP' },
   { id: 'collection', label: '💾 Collection' },
   { id: 'howtoplay', label: '📖 How to Play' },
@@ -46,6 +49,19 @@ function AppInner() {
   const [helpSection, setHelpSection] = useState(null);
   const playMounted = useRef(false);
   if (tab === 'play') playMounted.current = true;
+
+  // THE SEASON'S HANDOFF TO THE PLAY TAB, in two pieces of state.
+  //
+  //   seasonPreset  a fixture going OUT — the rosters and the ids PlayTab
+  //                 needs to deal the game and to report the score
+  //   seasonResult  a final score coming BACK, held here until SeasonTab
+  //                 records it
+  //
+  // It lives in App rather than in either tab because the season screen is
+  // unmounted for the whole game and the play screen knows nothing about
+  // schedules. See the header comment in SeasonTab.jsx.
+  const [seasonPreset, setSeasonPreset] = useState(null);
+  const [seasonResult, setSeasonResult] = useState(null);
 
   const refreshCollection = useCallback(async () => {
     if (!user) { setCollection({}); return; }
@@ -135,6 +151,15 @@ function AppInner() {
               />
             )}
             {tab === 'collection' && <CollectionTab onLoadTeam={handleLoadTeam} onCollectionChange={refreshCollection} />}
+            {tab === 'season' && (
+              <SeasonTab
+                teamA={teamA}
+                collection={collection}
+                pendingResult={seasonResult}
+                onResultConsumed={() => setSeasonResult(null)}
+                onPlayFixture={fixture => { setSeasonPreset(fixture); setTab('play'); }}
+              />
+            )}
             {tab === 'pvp' && !pvpGame && (
               <PvpLobby collection={collection} onGameStart={(roomCode, myRole) => setPvpGame({ roomCode, myRole })} />
             )}
@@ -147,7 +172,17 @@ function AppInner() {
             )}
             {playMounted.current && (
               <div style={{ display: tab === 'play' ? 'block' : 'none' }}>
-                <PlayTab teamA={teamA} teamB={teamB} />
+                <PlayTab
+                  teamA={teamA}
+                  teamB={teamB}
+                  preset={seasonPreset}
+                  onPresetFinish={result => {
+                    setSeasonPreset(null);
+                    // A null result is a fixture left unplayed, not a 0-0.
+                    if (result) setSeasonResult(result);
+                    setTab('season');
+                  }}
+                />
               </div>
             )}
           </>

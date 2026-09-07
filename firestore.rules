@@ -96,6 +96,16 @@ service cloud.firestore {
 
       match /teams/{teamId} { allow read, write: if isSelf(uid); }
       match /decks/{deckId} { allow read, write: if isSelf(uid); }
+
+      // A SEASON IS A SCHEDULE, NOT A PRIZE. Fixtures, standings and rosters
+      // of cards the player already owns — nothing here mints or pays, so the
+      // client keeps it, the way it keeps teams and decks.
+      //
+      // The title money a finished season is worth is NOT recorded here. It
+      // goes in `claims/season:{seasonId}` above, which is server-only, so a
+      // client that rewrites its own season into a championship still cannot
+      // claim the same one twice. See claimSeasonReward in functions/index.js.
+      match /seasons/{seasonId} { allow read, write: if isSelf(uid); }
     }
 
     // Global circulating supply. WORLD-READABLE because every client needs it

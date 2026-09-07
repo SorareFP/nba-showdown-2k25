@@ -83,16 +83,39 @@ describe('evaluateMatchup agrees with the engine', () => {
     }
   });
 
-  it('treats a NEGATIVE Def Boost as inert, exactly as the engine does', () => {
-    // engine.js clamps with Math.max(0, def.defBoost || 0), so -2 and 0 are the
-    // same defender. This is a fact about the rule, asserted so that a change to
-    // it breaks this test loudly.
+  it('makes a NEGATIVE Def Boost bite, exactly as the engine does', () => {
+    // THIS TEST ONCE ASSERTED THE OPPOSITE — that -2 and 0 were the same
+    // defender, because engine.js clamped with Math.max(0, def.defBoost || 0)
+    // and a negative was therefore inert. That clamp sat on the BOOST; it now
+    // sits on the defender's STATS instead, so a weak defender guards at lower
+    // effective Speed and Power and the attacker really does get more.
     const att = card('Att', 14, 9);
     const nerfed = evaluateMatchup(att, card('Def', 10, 10, -2));
     const plain = evaluateMatchup(att, card('Def', 10, 10, 0));
-    expect(nerfed.rollBonus).toBe(plain.rollBonus);
-    expect(nerfed.rollBonus).toBe(4);
-    expect(nerfed.axis).toBe('speed');
+    expect(plain.rollBonus).toBe(4);
+    // Def 10 / Pow 10 at -2 guards as 8 / 8, so the 14-Speed attacker gains 2.
+    expect(nerfed.rollBonus).toBe(6);
+    // And the nerf OPENS A SECOND AXIS. At full strength this attacker beat the
+    // defender on Speed alone (9 Power against 10 was a losing axis); against
+    // the same defender at 8 Power it is a winning one. A Def Boost is not only
+    // worth roll-bonus points, it decides how many ways in there are.
+    expect(plain.axis).toBe('speed');
+    expect(nerfed.axis).toBe('both');
+    // Signed: the weakness HANDED OVER two points rather than removing any.
+    expect(nerfed.blunted).toBe(-2);
+    expect(plain.blunted).toBe(0);
+  });
+
+  it('floors a nerfed defender at zero rather than at less than nothing', () => {
+    // Nick Richards by the numbers on his own card: Speed 2, Power 4, Def -3.
+    // Speed floors at 0 instead of going to -1; Power lands on 1.
+    const att = card('Att', 10, 10);
+    const richards = evaluateMatchup(att, card('Richards', 2, 4, -3));
+    expect(richards.rawSpeedDiff).toBe(10);
+    expect(richards.rawPowerDiff).toBe(9);
+    // A deeper nerf cannot take him below zero, so it cannot keep paying out.
+    const deeper = evaluateMatchup(att, card('Deeper', 2, 4, -9));
+    expect(deeper.rawSpeedDiff).toBe(10);
   });
 
   it('agrees with calcAdv across an exhaustive sweep of the printed range', () => {
@@ -107,7 +130,11 @@ describe('evaluateMatchup agrees with the engine', () => {
               expect(m.rollBonus).toBe(engine.rollBonus);
               // rawBonus must equal what the engine returns with no Def Boost
               expect(m.rawBonus).toBe(calcAdv(off, card('d', ds, dp, 0)).rollBonus);
-              expect(m.blunted).toBeGreaterThanOrEqual(0);
+              // Signed now: a real Def Boost removes points, a negative one
+              // hands them over, and 0 moves nothing.
+              if (db > 0) expect(m.blunted).toBeGreaterThanOrEqual(0);
+              else if (db === 0) expect(m.blunted).toBe(0);
+              else expect(m.blunted).toBeLessThanOrEqual(0);
             }
           }
         }

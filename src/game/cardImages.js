@@ -1,4 +1,4 @@
-// NBA Showdown 2K25 — Card Image Mapping
+// NBA Showdown 2026 — Card Image Mapping
 
 import { BASE_SET, getCardByKey } from './cardSets.js';
 
@@ -19,11 +19,15 @@ export function getPlayerImageUrl(playerKey, set) {
 }
 
 /**
- * Get strategy card image path from /public/cards/strats/.
- * Files are named strat_{cardId}.png
+ * A strategy card's face, from /public/cards/strats/{id}.png.
+ *
+ * NAMED LIKE EVERY OTHER SET NOW. These were `strat_{id}.png` — a prefix from
+ * the hand-made faces of the old set, which predated the batch exporter and the
+ * one-directory-per-set rule it established. Those 42 legacy faces were cleared
+ * when the deck was rebuilt; the exporter writes all 51 here under the same
+ * `{id}.png` convention the player sets use, so nothing has to remember that
+ * this one directory is spelled differently.
  */
 export function getStratImagePath(cardId) {
-  // These files live in public/cards/strats/strat_{cardId}.png
-  // Vite serves public/ at the base URL
-  return `/nba-showdown-2k25/cards/strats/strat_${cardId}.png`;
+  return `/nba-showdown-2k25/cards/strats/${cardId}.png`;
 }

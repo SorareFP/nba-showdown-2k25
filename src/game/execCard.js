@@ -1,13 +1,17 @@
-// NBA Showdown 2K25 — Card Execution Engine
+// NBA Showdown 2026 — Card Execution Engine
 // Pure function: takes game state + card + opts, returns new state
 // Never mutates — always returns a new object via deepClone
 
-import { getTeam, getOpp, getPS, calcAdv, shotCheck, matchupContest, drawCards, deepClone, getFatigue } from './engine.js';
+import { handOverPriority, getTeam, getOpp, getPS, calcAdv, shotCheck, matchupContest, drawCards, deepClone, getFatigue, recordDefSwitch, burnedSlots, roll20 } from './engine.js';
 import { lookupChart } from './cards.js';
 import { getStrat } from './strats.js';
 
 // ── Analytics helper ────────────────────────────────────────────────────────
-function trackShotCheck(g, teamKey, r, type) {
+function trackShotCheck(g, teamKey, r, type, playerIdx) {
+  // Every check leaves the record Glass Cleaner and Putback Specialist read:
+  // the latest miss (a hit clears it), gone at section end. Free throws are
+  // not a shot anyone crashes for.
+  if (type !== 'ft') g.lastCheckMiss = r.hit ? null : { teamKey, type, playerIdx: playerIdx ?? null, claimed: false };
   if (!g.analytics?.[teamKey]) return;
   g.analytics[teamKey].totalShotChecks++;
   if (r.hit) {
@@ -48,7 +52,19 @@ function drawN(team, deck, n) {
 
 // ── Main execCard ─────────────────────────────────────────────────────────────
 // Returns { game, ok, msg } — game is new state, ok=false means validation failed
+/**
+ * Play a card. The body below resolves what the card DOES; this wrapper is the
+ * one place that resolves what playing a card COSTS in the card windows — the
+ * turn. See handOverPriority in engine.js. Every caller (the board, the AI
+ * driver, PvP) comes through here, so none of them can forget it.
+ */
 export function execCard(game, teamKey, cardId, opts = {}) {
+  const res = resolveCard(game, teamKey, cardId, opts);
+  if (!res.ok) return res;
+  return { ...res, game: handOverPriority(game, res.game, teamKey) };
+}
+
+function resolveCard(game, teamKey, cardId, opts = {}) {
   const s = getStrat(cardId);
   if (!s) return { game, ok: false, msg: 'Unknown card: ' + cardId };
 
@@ -103,6 +119,7 @@ export function execCard(game, teamKey, cardId, opts = {}) {
     }
 
     case 'stagger_action': {
+      if (idx === idx2) return fail('Pick two different players');
       const p1 = myT.starters[idx], p2 = myT.starters[idx2];
       if ((p1?.speed || 0) < 13 && (p2?.speed || 0) < 13)
         return fail('Need one player with Speed 13+');
@@ -247,6 +264,7 @@ export function execCard(game, teamKey, cardId, opts = {}) {
       // on the next roll the opponent chooses to make (roll order is theirs).
       if (!g.openMan) g.openMan = {};
       g.openMan[dtOpp] = (g.openMan[dtOpp] || 0) + 3;
+      g.lastDoubleTeam = { teamKey, targetIdx: tIdx };
       addLog(g, teamKey, `Double Team: ${target.name} trapped (+6/+6 defense) — someone's open, Team ${dtOpp} gets +3 on their next roll`);
       break;
     }
@@ -296,15 +314,36 @@ export function execCard(game, teamKey, cardId, opts = {}) {
       if (!g.lastMatchupCard) return fail('No switch card to react to');
       const lc = g.lastMatchupCard;
       const mu = g.offMatchups[lc.teamKey];
+      // The matchups as the offence had them after its screen — what the veer
+      // switches AWAY from, and what Burned on the Switch compares against.
+      const veerBefore = [...mu];
       mu[lc.opts.swapSlot1] = lc.opts.origD1;
       mu[lc.opts.swapSlot2] = lc.opts.origD2;
-      if (opts.newDefender1 !== undefined) mu[lc.opts.swapSlot1] = opts.newDefender1;
-      if (opts.newDefender2 !== undefined) mu[lc.opts.swapSlot2] = opts.newDefender2;
+      // ONLY THE TWO DEFENDERS IN THE SCREEN CAN SWITCH. A veer is the late
+      // switch between the two men the screen involved: the defence either
+      // keeps them where they were or trades them — it does not get to pull a
+      // third defender across the floor (the user, 2026-09-06: "a lot of
+      // times, there are only two players who can switch"). `veerSwap` is the
+      // short form; explicit defenders are accepted only as that same pair.
+      const pair = [lc.opts.origD1, lc.opts.origD2];
+      let swap = opts.veerSwap === true;
+      if (opts.newDefender1 !== undefined || opts.newDefender2 !== undefined) {
+        const d1 = opts.newDefender1;
+        const d2 = opts.newDefender2;
+        const legal = (d1 === pair[0] && d2 === pair[1]) || (d1 === pair[1] && d2 === pair[0]);
+        if (!legal) return fail('Veer Switch only reassigns the two defenders in the screen');
+        swap = d1 === pair[1];
+      }
+      if (swap) {
+        mu[lc.opts.swapSlot1] = pair[1];
+        mu[lc.opts.swapSlot2] = pair[0];
+      }
       const offT = getTeam(g, lc.teamKey);
       const vp1 = offT.starters[lc.opts.swapSlot1], vp2 = offT.starters[lc.opts.swapSlot2];
       const nd1 = myT.starters[mu[lc.opts.swapSlot1]], nd2 = myT.starters[mu[lc.opts.swapSlot2]];
       addLog(g, teamKey, `Veer Switch: canceled HSR — ${vp1?.name} now guarded by ${nd1?.name}, ${vp2?.name} by ${nd2?.name}`);
       g.lastMatchupCard = null;
+      g.lastDefSwitch = recordDefSwitch(teamKey, 'veer_switch', veerBefore, mu);
       break;
     }
 
@@ -313,6 +352,7 @@ export function execCard(game, teamKey, cardId, opts = {}) {
       if (!g.pendingShotCheck) return fail('No shot check in progress to close out');
       g.pendingShotCheck.closeOutBonus = -3;
       g.pendingShotCheck.closeOutTeam = teamKey;
+      g.pendingShotCheck.reacted = teamKey;
       const target = getTeam(g, g.pendingShotCheck.teamKey).starters[g.pendingShotCheck.playerIdx];
       addLog(g, teamKey, `Close Out: ${target?.name}'s ${g.pendingShotCheck.type.toUpperCase()} check reduced by −3. Miss = cold marker!`);
       break;
@@ -344,21 +384,31 @@ export function execCard(game, teamKey, cardId, opts = {}) {
     }
 
     case 'overhelp': {
+      const sw = g.lastDefSwitch;
+      if (!sw || sw.teamKey === teamKey) return fail('Opponent must play a defensive switch first');
       if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
       g.tempEff[teamKey]['r' + idx] = (g.tempEff[teamKey]['r' + idx] || 0) + 3;
       addLog(g, teamKey, `Overhelp: ${player?.name} +3 to scoring roll (found the mismatch)`);
+      g.lastDefSwitch = null;
       break;
     }
 
     case 'burned_switch': {
-      const origDef = oppT.starters[opts.originalDefIdx];
-      const newDef  = oppT.starters[opts.newDefIdx];
-      if (!origDef || !newDef) return fail('Invalid defender indices');
-      if (newDef.speed >= origDef.speed && newDef.power >= origDef.power)
-        return fail('New defender is not worse in Speed or Power than original');
+      // The engine knows which switch happened and who got the worse of it —
+      // it used to ask the caller for defender indices, which the AI never
+      // supplied, so the card failed every time it was tried.
+      const sw = g.lastDefSwitch;
+      if (!sw || sw.teamKey === teamKey) return fail('Opponent must force a matchup switch first');
+      const burned = burnedSlots(g, sw);
+      if (!burned.length) return fail('No defender got worse on that switch');
+      const slot = opts.playerIdx !== undefined && burned.includes(opts.playerIdx) ? opts.playerIdx : burned[0];
+      const change = sw.changes.find(c => c.slot === slot);
+      const def = oppT.starters;
+      const attacker = myT.starters[slot];
       if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
-      g.tempEff[teamKey]['r' + idx] = (g.tempEff[teamKey]['r' + idx] || 0) + 3;
-      addLog(g, teamKey, `Burned on the Switch: ${newDef.name} weaker than ${origDef.name} → ${player?.name} +3 roll`);
+      g.tempEff[teamKey]['r' + slot] = (g.tempEff[teamKey]['r' + slot] || 0) + 3;
+      addLog(g, teamKey, `Burned on the Switch: ${def[change.newD]?.name} weaker than ${def[change.origD]?.name} → ${attacker?.name} +3 roll`);
+      g.lastDefSwitch = null;
       break;
     }
 
@@ -390,7 +440,9 @@ export function execCard(game, teamKey, cardId, opts = {}) {
     case 'switch_everything': {
       const oppTeam = teamKey === 'A' ? 'B' : 'A';
       if (opts.assignments && opts.assignments.length === 5) {
+        const seBefore = [...(g.offMatchups[oppTeam] || [0, 1, 2, 3, 4])];
         g.offMatchups[oppTeam] = [...opts.assignments];
+        g.lastDefSwitch = recordDefSwitch(teamKey, 'switch_everything', seBefore, g.offMatchups[oppTeam]);
         addLog(g, teamKey, `Switch Everything: ${myT.name} reassigned their entire defense`);
       }
       if (!g.tempEff[oppTeam]) g.tempEff[oppTeam] = {};
@@ -513,11 +565,16 @@ export function execCard(game, teamKey, cardId, opts = {}) {
     }
 
     case 'and_one': {
+      // SPEED OR POWER, whichever is larger — never the two added together.
+      // The log names the stat and shows both, because "advantage 6" on a
+      // Speed +2 / Power +4 matchup read as a sum when it was a +2 Power boost
+      // (the user, 2026-09-06).
       const maxA = Math.max(adv.speedAdv, adv.powerAdv);
       if (maxA < 3) return fail(`Need Spd/Pwr advantage ≥3 (has ${maxA})`);
+      const stat = adv.powerAdv >= adv.speedAdv ? 'Power' : 'Speed';
       myT.score += 1;
       if (g.analytics?.[teamKey]) g.analytics[teamKey].shotCheckPts += 1;
-      addLog(g, teamKey, `And One!!! +1pt (advantage ${maxA})`);
+      addLog(g, teamKey, `And One!!! +1pt (${stat} advantage +${maxA} — Speed +${adv.speedAdv}, Power +${adv.powerAdv})`);
       if (maxA >= 5) {
         const r = _shotCheck(player, 'ft', 0, ps);
         recordShot(g, teamKey, player?.id, 'ft', r.hit);
@@ -578,12 +635,10 @@ export function execCard(game, teamKey, cardId, opts = {}) {
     case 'back_to_basket': {
       if ((player?.power || 0) < 13) return fail('Need Power 13+');
       if (!((player?.paintBoost || 0) > 0)) return fail(player?.name + ' needs a Paint Bonus');
-      const r = _shotCheck(player, 'paint', 0, ps);
-      trackShotCheck(g, teamKey, r, 'paint');
-      if (r.die <= 2)  pss().cold = (pss().cold || 0) + 1;
-      if (r.die >= 19) pss().hot  = (pss().hot  || 0) + 1;
-      if (r.hit) myT.score += r.pts;
-      addLog(g, teamKey, `Back to the Basket: ${scStr(r)}`);
+      // Announced, not instant: the paint check the defence can answer with
+      // Rim Protector or Drop Coverage (resolvePendingShotCheck rolls it).
+      g.pendingShotCheck = { teamKey, playerIdx: idx, type: 'paint', bonus: _assistShotBonus, cardLabel: 'Back to the Basket' };
+      addLog(g, teamKey, `Back to the Basket: ${player?.name} announces a Paint check. Opponent may react.`);
       break;
     }
 
@@ -823,6 +878,326 @@ export function execCard(game, teamKey, cardId, opts = {}) {
       break;
     }
 
+    // ═══ WAVE ONE OF THE DOCX BACKLOG (2026-09-06) ═══════════════════════════
+    // An announced check (g.pendingShotCheck) is the only kind the defence can
+    // answer; the multi-check plays roll on the spot, as Green Light does.
+    case 'spain_pick_roll': {
+      if (!defPlayer) return fail('No defender on that player');
+      if ((player?.speed || 0) <= (defPlayer.speed || 0)) return fail(`${player?.name} is not faster than ${defPlayer.name}`);
+      if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
+      g.tempEff[teamKey]['r' + idx] = (g.tempEff[teamKey]['r' + idx] || 0) + 2;
+      g.tempEff[teamKey]['astOnScore' + idx] = 1;
+      addLog(g, teamKey, `Spain Pick & Roll: ${player?.name} +2 roll this period — a score adds +1 AST`);
+      break;
+    }
+    case 'mismatch_hunter': {
+      if (Math.max(adv.speedAdv, adv.powerAdv) < 4) return fail(`${player?.name} needs a Speed or Power advantage of +4`);
+      if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
+      g.tempEff[teamKey]['r' + idx] = (g.tempEff[teamKey]['r' + idx] || 0) + 2;
+      addLog(g, teamKey, `Mismatch Hunter: ${player?.name} (advantage +${Math.max(adv.speedAdv, adv.powerAdv)}) +2 roll this period`);
+      break;
+    }
+    case 'strength_in_numbers': {
+      const allEdge = myT.starters.every((p, i) => {
+        const dp = oppT.starters[(g.offMatchups[teamKey] || [])[i] ?? i];
+        if (!p || !dp) return false;
+        const a = calcAdv(p, dp, g.tempEff[teamKey] || {}, i);
+        return Math.max(a.speedAdv, a.powerAdv) >= 1;
+      });
+      if (!allEdge) return fail('All five of your players need at least a +1 advantage');
+      myT.assists += 3;
+      addLog(g, teamKey, `Strength in Numbers: every matchup has an edge — +3 AST (${myT.assists})`);
+      break; // the wrapper below removes the card and runs the 5-assist draw
+    }
+    case 'energizer': {
+      if ((player?.salary || 0) >= 250) return fail(`${player?.name} must be under $250`);
+      if (!g.tempDefEff) g.tempDefEff = {};
+      if (!g.tempDefEff[teamKey]) g.tempDefEff[teamKey] = {};
+      const cur = g.tempDefEff[teamKey][idx] || { speedBoost: 0, powerBoost: 0 };
+      g.tempDefEff[teamKey][idx] = { ...cur, speedBoost: cur.speedBoost + 3, powerBoost: cur.powerBoost + 3 };
+      addLog(g, teamKey, `Energizer: ${player?.name} +3/+3 on defense this period`);
+      break;
+    }
+    case 'defensive_identity': {
+      const withDb = myT.starters.filter(p => (p?.defBoost || 0) > 0).length;
+      if (withDb < 3) return fail(`Need three players with a Defensive Bonus (have ${withDb})`);
+      if (!g.tempDefEff) g.tempDefEff = {};
+      if (!g.tempDefEff[teamKey]) g.tempDefEff[teamKey] = {};
+      myT.starters.forEach((p, i) => {
+        if (!p) return;
+        const cur = g.tempDefEff[teamKey][i] || { speedBoost: 0, powerBoost: 0 };
+        g.tempDefEff[teamKey][i] = { ...cur, speedBoost: cur.speedBoost + 2, powerBoost: cur.powerBoost + 2 };
+      });
+      addLog(g, teamKey, `Defensive Identity: ${withDb} defenders with a bonus — all five +2/+2 on defense this period`);
+      break;
+    }
+    case 'defensive_anchor': {
+      if ((player?.defBoost || 0) < 3) return fail(`${player?.name} needs a Defensive Bonus of +3`);
+      if (!g.tempDefEff) g.tempDefEff = {};
+      if (!g.tempDefEff[teamKey]) g.tempDefEff[teamKey] = {};
+      const cur = g.tempDefEff[teamKey][idx] || { speedBoost: 0, powerBoost: 0 };
+      g.tempDefEff[teamKey][idx] = { ...cur, anchor: true };
+      const oppKeyA = teamKey === 'A' ? 'B' : 'A';
+      const guarded = (g.offMatchups[oppKeyA] || []).indexOf(idx);
+      const who = guarded >= 0 ? oppT.starters[guarded]?.name : 'his man';
+      addLog(g, teamKey, `Defensive Anchor: ${player?.name} anchors — ${who} gets no positive matchup bonus this period`);
+      break;
+    }
+    case 'swarming_defense': {
+      const oppKeyS = teamKey === 'A' ? 'B' : 'A';
+      let tIdx = 0;
+      oppT.starters.forEach((p, i) => { if ((p?.salary || 0) > (oppT.starters[tIdx]?.salary || 0)) tIdx = i; });
+      const target = oppT.starters[tIdx];
+      if (!target) return fail('No opposing player to swarm');
+      const d = roll20();
+      if (d >= 11) {
+        if (!g.tempEff[oppKeyS]) g.tempEff[oppKeyS] = {};
+        g.tempEff[oppKeyS]['dis' + tIdx] = 1;
+        addLog(g, teamKey, `Swarming Defense: 🎲${d} — ${target.name} rolls twice and keeps the lower this period`);
+      } else {
+        addLog(g, teamKey, `Swarming Defense: 🎲${d} — ${target.name} shakes it off (needed 11+)`);
+      }
+      break;
+    }
+    case 'five_out': {
+      if (!((player?.threePtBoost || 0) > 0)) return fail(`${player?.name} needs a 3PT Bonus`);
+      const existing = (g.rollResults[teamKey] || [])[idx];
+      if (existing && !existing.isReplaced) return fail(`${player?.name} has already rolled this segment.`);
+      let tot = 0;
+      for (let i = 0; i < 2; i++) {
+        const r = _shotCheck(player, '3pt', 1, ps);
+        recordShot(g, teamKey, player?.id, '3pt', r.hit);
+        trackShotCheck(g, teamKey, r, '3pt', idx);
+        if (r.die <= 2)  pss().cold = (pss().cold || 0) + 1;
+        if (r.die >= 19) pss().hot  = (pss().hot  || 0) + 1;
+        tot += r.pts;
+        addLog(g, teamKey, `Five-Out Offense #${i + 1}: ${scStr(r)}`);
+      }
+      myT.score += tot;
+      if (!g.rollResults[teamKey]) g.rollResults[teamKey] = [];
+      g.rollResults[teamKey][idx] = { die: 0, bonus: 0, finalRoll: 0, pts: tot, reb: 0, ast: 0, isTop: false, isReplaced: true, replacedBy: 'five_out' };
+      break;
+    }
+    case 'hammer_set': {
+      if ((player?.threePtBoost || 0) > 0) return fail(`${player?.name} has a 3PT Bonus — Hammer Set is for the non-shooter`);
+      if (adv.speedAdv <= 0) return fail(`${player?.name} needs a Speed advantage`);
+      g.pendingShotCheck = { teamKey, playerIdx: idx, type: '3pt', bonus: 0 + _assistShotBonus, cardLabel: 'Hammer Set', onHitAst: 2 };
+      addLog(g, teamKey, `Hammer Set: ${player?.name} announces a 3PT check (hit = +2 AST). Opponent may react.`);
+      break;
+    }
+    case 'iso_heavy': {
+      if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
+      g.tempEff[teamKey]['r' + idx] = (g.tempEff[teamKey]['r' + idx] || 0) + 3;
+      myT.starters.forEach((p, i) => { if (p && i !== idx) g.tempEff[teamKey]['r' + i] = (g.tempEff[teamKey]['r' + i] || 0) - 2; });
+      addLog(g, teamKey, `Iso-Heavy Offense: ${player?.name} takes over (+3 roll); teammates −2 this period`);
+      break;
+    }
+    case 'three_point_barrage': {
+      const shooters = myT.starters.map((p, i) => ({ p, i })).filter(({ p }) => p && (p.threePtBoost || 0) > 0);
+      if (shooters.length < 3) return fail(`Need three players with a 3PT Bonus (have ${shooters.length})`);
+      let tot = 0;
+      const fire = (p, i, tag) => {
+        const pst = getPS(g, teamKey, p.id) || {};
+        const r = shotCheck(p, '3pt', -matchupContest(g, teamKey, i, '3pt'), pst);
+        recordShot(g, teamKey, p.id, '3pt', r.hit);
+        trackShotCheck(g, teamKey, r, '3pt', i);
+        if (r.die <= 2)  pst.cold = (pst.cold || 0) + 1;
+        if (r.die >= 19) pst.hot  = (pst.hot  || 0) + 1;
+        tot += r.pts;
+        addLog(g, teamKey, `Three-Point Barrage${tag}: ${p.name} ${scStr(r)}`);
+      };
+      shooters.forEach(({ p, i }) => fire(p, i, ''));
+      if (opts.extraShooterIdx !== undefined && opts.extraShooterIdx !== null) {
+        const ex = myT.starters[opts.extraShooterIdx];
+        if (!ex) return fail('No such player for the extra check');
+        if (myT.assists < 1) return fail('Need 1 assist for the extra check');
+        myT.assists -= 1;
+        fire(ex, opts.extraShooterIdx, ' (extra, −1 AST)');
+      }
+      myT.score += tot;
+      break;
+    }
+    case 'crash_and_kick': {
+      if (myT.rebounds < 3) return fail(`Need 3 rebounds (have ${myT.rebounds})`);
+      if (myT.assists < 1) return fail(`Need 1 assist (have ${myT.assists})`);
+      myT.rebounds -= 3; myT.assists -= 1;
+      g.pendingShotCheck = { teamKey, playerIdx: idx, type: '3pt', bonus: 2 + _assistShotBonus, cardLabel: 'Crash and Kick' };
+      addLog(g, teamKey, `Crash and Kick: −3 REB −1 AST → ${player?.name} announces a 3PT check at +2. Opponent may react.`);
+      break;
+    }
+    case 'pick_and_pop': {
+      if (!((player?.threePtBoost || 0) > 0)) return fail(`${player?.name} needs a 3PT Bonus`);
+      if (myT.assists < 2) return fail(`Need 2 assists (have ${myT.assists})`);
+      myT.assists -= 2;
+      g.pendingShotCheck = { teamKey, playerIdx: idx, type: '3pt', bonus: 1 + _assistShotBonus, cardLabel: 'Pick-and-Pop', onHitAst: 2 };
+      addLog(g, teamKey, `Pick-and-Pop: −2 AST → ${player?.name} announces a 3PT check at +1 (hit = +2 AST back). Opponent may react.`);
+      break;
+    }
+    case 'extra_pass': {
+      if (myT.assists < 2) return fail(`Need 2 assists (have ${myT.assists})`);
+      const kind = opts.checkType === 'paint' ? 'paint' : '3pt';
+      myT.assists -= 2;
+      // "Shot check bonuses from other strategy cards are negated": the
+      // assist-boost option is not offered and the bonus is exactly 0.
+      g.pendingShotCheck = { teamKey, playerIdx: idx, type: kind, bonus: 0, cardLabel: 'Extra Pass', noCardBonus: true };
+      addLog(g, teamKey, `Extra Pass: −2 AST → ${player?.name} announces a ${kind === 'paint' ? 'Paint' : '3PT'} check (no card bonuses). Opponent may react.`);
+      break;
+    }
+    case 'lob_city': {
+      const has15 = myT.starters.some(p => p && ((p.speed || 0) >= 15 || (p.power || 0) >= 15));
+      if (!has15) return fail('Need a player with Speed or Power 15+');
+      const others = myT.hand.filter(id => id !== 'lob_city');
+      if (others.length === 0) return fail('No card to discard');
+      const discard = opts.discardId && others.includes(opts.discardId) ? opts.discardId : others[others.length - 1];
+      removeFromHand(myT, discard);
+      let ast = 0, pts = 0;
+      myT.starters.forEach(p => {
+        if (!p) return;
+        if ((p.speed || 0) >= 15) ast += 1;
+        if ((p.power || 0) >= 15) pts += 2;
+      });
+      myT.assists += ast; myT.score += pts;
+      addLog(g, teamKey, `Lob City: discards ${discard.replace(/_/g, ' ')} — +${ast} AST (Speed 15+), +${pts} pts (Power 15+)`);
+      break; // the wrapper below removes the card and runs the 5-assist draw
+    }
+    case 'stretch_five': {
+      const isBig = String(player?.pos || '').split(/[-/]/).some(t => t === 'C' || t === 'PF');
+      if (!isBig) return fail(`${player?.name} is not a C or PF`);
+      const line = (player?.shotLine ?? 18) - (player?.threePtBoost || 0);
+      if (line > 14) return fail(`${player?.name} converts threes at ${line}, not 14 or lower`);
+      const mate = opts.player2Idx;
+      const mateP = myT.starters[mate];
+      if (mateP === undefined || mate === idx) return fail('Choose a teammate for the paint check');
+      const r1 = _shotCheck(player, '3pt', 0, ps);
+      recordShot(g, teamKey, player?.id, '3pt', r1.hit);
+      trackShotCheck(g, teamKey, r1, '3pt', idx);
+      const ps2 = getPS(g, teamKey, mateP.id) || {};
+      const r2 = shotCheck(mateP, 'paint', 2 - matchupContest(g, teamKey, mate, 'paint'), ps2);
+      trackShotCheck(g, teamKey, r2, 'paint', mate);
+      myT.score += r1.pts + r2.pts;
+      addLog(g, teamKey, `Stretch Five: ${player?.name} 3PT ${scStr(r1)}; ${mateP.name} paint at +2 ${scStr(r2)}`);
+      break;
+    }
+    case 'post_domination': {
+      const bigs = myT.starters.filter(p => p && (p.power || 0) >= 15).length;
+      if (bigs < 2) return fail(`Need two players at Power 15+ (have ${bigs})`);
+      if ((player?.power || 0) < 15) return fail(`${player?.name} is not Power 15+`);
+      if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
+      g.tempEff[teamKey]['reb2' + idx] = 1;
+      addLog(g, teamKey, `Post Domination: ${player?.name}'s rebounds are doubled this period`);
+      break;
+    }
+    case 'unsung_hero': {
+      if ((player?.salary || 0) > 400) return fail(`${player?.name} must be $400 or less`);
+      if ((g.rollResults[teamKey] || [])[idx] != null) return fail(`${player?.name} has already rolled this segment.`);
+      if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
+      g.tempEff[teamKey]['adv' + idx] = 1;
+      addLog(g, teamKey, `Unsung Hero: ${player?.name} rolls two dice and keeps the higher this period`);
+      break;
+    }
+    case 'transition_outlet': {
+      if (myT.rebounds < 1 || myT.assists < 1) return fail('Need 1 rebound and 1 assist to spend');
+      if (adv.speedAdv <= 0) return fail(`${player?.name} needs a Speed advantage`);
+      const kind = opts.checkType === 'paint' ? 'paint' : '3pt';
+      myT.rebounds -= 1; myT.assists -= 1;
+      g.pendingShotCheck = { teamKey, playerIdx: idx, type: kind, bonus: 2 + _assistShotBonus, cardLabel: 'Transition Outlet', onHitAst: 1 };
+      addLog(g, teamKey, `Transition Outlet: −1 REB −1 AST → ${player?.name} announces a ${kind === 'paint' ? 'Paint' : '3PT'} check at +2 (hit = +1 AST). Opponent may react.`);
+      break;
+    }
+    case 'find_the_open_man': {
+      const dt = g.lastDoubleTeam;
+      if (!dt || dt.teamKey === teamKey) return fail('The opponent has no Double Team on the floor');
+      if (idx === dt.targetIdx) return fail(`${player?.name} is the one being trapped — pick the open man`);
+      if ((g.rollResults[teamKey] || [])[idx] != null) return fail(`${player?.name} has already rolled this segment.`);
+      if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
+      g.tempEff[teamKey]['r' + idx] = (g.tempEff[teamKey]['r' + idx] || 0) + 4;
+      g.lastDoubleTeam = null;
+      addLog(g, teamKey, `Find the Open Man: ${oppT.starters[dt.targetIdx]?.name} is trapped — ${player?.name} +4 roll`);
+      break;
+    }
+    case 'putback_specialist': {
+      const miss = g.lastCheckMiss;
+      if (!miss || miss.teamKey !== teamKey || miss.claimed) return fail('Your player must have just missed a shot check');
+      if (myT.rebounds < 2) return fail(`Need 2 rebounds (have ${myT.rebounds})`);
+      myT.rebounds -= 2;
+      miss.claimed = true;
+      g.pendingShotCheck = { teamKey, playerIdx: idx, type: 'paint', bonus: 3 + _assistShotBonus, cardLabel: 'Putback Specialist' };
+      addLog(g, teamKey, `Putback Specialist: −2 REB → ${player?.name} announces a Paint check at +3. Opponent may react.`);
+      break;
+    }
+    case 'rim_protector': case 'drop_coverage': case 'smothering_defense': case 'denial': case 'hustle_play': {
+      const psc = g.pendingShotCheck;
+      if (!psc) return fail('No shot check in progress');
+      if (psc.teamKey === teamKey) return fail('Can only answer the opponent\'s shot checks');
+      if (psc.reacted) return fail('This shot check has already been answered');
+      if (psc.type === 'ft') return fail('A free throw cannot be contested');
+      const shooter = oppT.starters[psc.playerIdx];
+      const guardIdx = (g.offMatchups[psc.teamKey] || [])[psc.playerIdx];
+      const guard = myT.starters[guardIdx];
+      const shooterName = shooter?.name || 'the shooter';
+      if (cardId === 'rim_protector') {
+        if (psc.type !== 'paint') return fail('Rim Protector answers a Paint check');
+        if (!guard || (guard.power || 0) + (guard.defBoost || 0) < 15) return fail('Your defender on the shooter needs Power + Defensive Bonus of 15');
+        psc.contest = (psc.contest || 0) - 4;
+        psc.rimProtector = teamKey;
+        addLog(g, teamKey, `Rim Protector: ${guard.name} meets ${shooterName} at the rim — check −4, a miss is +2 REB`);
+      } else if (cardId === 'drop_coverage') {
+        if (psc.type !== 'paint') return fail('Drop Coverage answers a Paint check');
+        if (!guard || (guard.defBoost || 0) <= 0) return fail('Your defender on the shooter needs a Defensive Bonus');
+        psc.contest = (psc.contest || 0) - 2;
+        addLog(g, teamKey, `Drop Coverage: ${guard.name} drops on ${shooterName} — check −2`);
+      } else if (cardId === 'smothering_defense') {
+        if (!guard || (guard.defBoost || 0) <= 0) return fail('Your defender on the shooter needs a Defensive Bonus');
+        psc.smother = 3;
+        addLog(g, teamKey, `Smothering Defense: ${guard.name} smothers ${shooterName} — the check's card bonus −3 (min 0)`);
+      } else if (cardId === 'denial') {
+        const others = myT.hand.filter(id => id !== 'denial');
+        if (others.length === 0) return fail('No card to discard');
+        const discard = opts.discardId && others.includes(opts.discardId) ? opts.discardId : others[others.length - 1];
+        removeFromHand(myT, discard);
+        psc.denial = true;
+        addLog(g, teamKey, `Denial: discards ${discard.replace(/_/g, ' ')} — ${shooterName}'s team loses 2 AST, or the check is at −3`);
+      } else {
+        if ((shooter?.salary || 0) <= 800) return fail('Hustle Play answers a shooter paid above $800');
+        const cheap = myT.starters
+          .map((p, i) => ({ p, i }))
+          .filter(({ p }) => p && (p.salary || 0) < 400 && (p.defBoost || 0) > 0);
+        if (cheap.length === 0) return fail('Need a player under $400 with a Defensive Bonus');
+        const pick = (opts.playerIdx !== undefined && cheap.some(c => c.i === opts.playerIdx))
+          ? cheap.find(c => c.i === opts.playerIdx)
+          : cheap.reduce((b, c) => ((c.p.defBoost || 0) > (b.p.defBoost || 0) ? c : b), cheap[0]);
+        psc.contest = (psc.contest || 0) - (pick.p.defBoost || 0);
+        addLog(g, teamKey, `Hustle Play: ${pick.p.name} ($${pick.p.salary}) contests ${shooterName} — check −${pick.p.defBoost}`);
+      }
+      psc.reacted = teamKey;
+      break;
+    }
+    case 'glass_cleaner': {
+      const miss = g.lastCheckMiss;
+      if (!miss || miss.teamKey === teamKey || miss.claimed) return fail('The opponent must have just missed a shot check');
+      miss.claimed = true;
+      let gain = 2;
+      const shooter = miss.playerIdx != null ? oppT.starters[miss.playerIdx] : null;
+      const guard = shooter ? myT.starters[(g.offMatchups[miss.teamKey] || [])[miss.playerIdx]] : null;
+      if (shooter && guard && (guard.power || 0) > (shooter.power || 0)) gain += 1;
+      myT.rebounds += gain;
+      addLog(g, teamKey, `Glass Cleaner: ${shooter ? shooter.name + ' misses — ' : ''}+${gain} REB${gain === 3 ? ` (${guard.name} out-muscles him)` : ''}`);
+      break;
+    }
+    case 'box_out': {
+      const lr = g.lastRoll;
+      if (!lr || lr.teamKey === teamKey || lr.boxed || !(lr.reb > 0)) return fail('The opponent must have just won rebounds on a scoring roll');
+      const roller = oppT.starters[lr.idx];
+      const guard = myT.starters[(g.offMatchups[lr.teamKey] || [])[lr.idx]];
+      let take = lr.reb;
+      if (roller && guard && (guard.power || 0) > (roller.power || 0)) take += 1;
+      const before = oppT.rebounds;
+      oppT.rebounds = Math.max(0, oppT.rebounds - take);
+      lr.boxed = true;
+      addLog(g, teamKey, `Box Out: ${guard?.name || 'your defender'} boxes out ${roller?.name || 'the roller'} — ${before - oppT.rebounds} REB cancelled`);
+      break;
+    }
+
     default:
       addLog(g, teamKey, `${s?.name || cardId}: played — see card text`);
       break;
@@ -859,14 +1234,22 @@ export function resolvePendingShotCheck(game) {
   const player = myT.starters[psc.playerIdx];
   const ps = getPS(g, psc.teamKey, player?.id) || {};
 
+  // The card's own bonus first (Smothering Defense trims it, never below 0),
+  // then the defence's answers, then the passive matchup contest.
   let bonus = psc.bonus || 0;
+  if (psc.smother) bonus = Math.max(0, bonus - psc.smother);
   if (psc.closeOutBonus) bonus += psc.closeOutBonus;
-  // The passive matchup contest applies on top of any Close Out.
+  if (psc.contest) bonus += psc.contest;
+  if (psc.denial) {
+    if (myT.assists >= 2) { myT.assists -= 2; g.log = [...g.log, { team: psc.teamKey, msg: `Denial: ${myT.name} loses 2 AST` }]; }
+    else { bonus -= 3; g.log = [...g.log, { team: psc.teamKey, msg: `Denial: fewer than 2 AST to lose — the check is at −3` }]; }
+  }
   bonus -= matchupContest(g, psc.teamKey, psc.playerIdx, psc.type);
+  const hitAst = psc.onHitAst ?? (psc.onHit === 'ast' ? 1 : 0);
 
   const r = shotCheck(player, psc.type, bonus, ps);
   recordShot(g, psc.teamKey, player?.id, psc.type, r.hit);
-  trackShotCheck(g, psc.teamKey, r, psc.type);
+  trackShotCheck(g, psc.teamKey, r, psc.type, psc.playerIdx);
 
   // Auto hot/cold from natural roll
   // FWD uses wider range (1-3 cold, 18-20 hot) instead of standard (1-2, 19-20)
@@ -880,10 +1263,12 @@ export function resolvePendingShotCheck(game) {
 
   if (r.hit) {
     myT.score += r.pts;
-    if (psc.onHit === 'ast') {
-      myT.assists++;
-      if (g.analytics?.[psc.teamKey]) g.analytics[psc.teamKey].assistsFromCards++;
+    if (hitAst) {
+      myT.assists += hitAst;
+      if (g.analytics?.[psc.teamKey]) g.analytics[psc.teamKey].assistsFromCards += hitAst;
     }
+  } else if (psc.rimProtector) {
+    getTeam(g, psc.rimProtector).rebounds += 2;
   }
 
   const label = psc.cardLabel || psc.type.toUpperCase();
@@ -892,7 +1277,8 @@ export function resolvePendingShotCheck(game) {
     ps.cold = (ps.cold || 0) + 1;
     msg += ' — Close Out! Miss → ❄️ cold marker';
   }
-  if (r.hit && psc.onHit === 'ast') msg += ' +1 AST';
+  if (r.hit && hitAst) msg += ` +${hitAst} AST`;
+  if (!r.hit && psc.rimProtector) msg += ' — Rim Protector! +2 REB for the defence';
 
   g.log = [...g.log, { team: psc.teamKey, msg }];
 

@@ -30,12 +30,14 @@ import {
 } from '../../src/game/engine.js';
 import { execCard, resolvePendingShotCheck } from '../../src/game/execCard.js';
 import { STRATS, getStrat } from '../../src/game/strats.js';
+import { getStratRarity, STRAT_COPY_CAPS } from '../../src/game/rarity.js';
 import {
   aiDraftPick, aiPlacementPick, aiTurn, aiScoringDecision, aiRollDecision, aiReactionDecision,
   aiSpendDecision, aiCrunchDecision, aiSetMatchups,
 } from '../../src/game/ai.js';
 
 const GAMES = Number(process.argv[2] ?? 400);
+const SHIFT_A = Number((process.argv.find(a => a.startsWith('--shift-a=')) ?? '--shift-a=0').split('=')[1]) || 0;
 const SECTIONS = 12;
 const SET = path.join(REPO_ROOT, 'card-data', 'generated', 'cards-2026-27.json');
 const CARDS = JSON.parse(fs.readFileSync(SET, 'utf8')).cards;
@@ -122,9 +124,17 @@ function spendAll(g, key) {
 let simmed = 0;
 let aWins = 0;
 const margins = [];
+const signedMargins = []; // Team A minus Team B, for the --shift-a comparison
 for (let n = 0; n < GAMES; n += 1) {
   const taken = new Set();
-  const rosterA = draftRoster(taken);
+  // --shift-a=N moves every Team A Shot Line by N (clamped 12-20) AFTER the
+  // draft, so a run with the shift drafts exactly the rosters the run without
+  // it drafted; the two are then a paired measurement of what a Shot Line step
+  // is worth in the full card game (scripts/analysis/shotLineValue.mjs is the
+  // model half of that question).
+  const rosterA = draftRoster(taken).map(c => SHIFT_A
+    ? { ...c, shotLine: Math.max(12, Math.min(20, (c.shotLine ?? 18) + SHIFT_A)) }
+    : c);
   const rosterB = draftRoster(taken);
   if (rosterA.length < 10 || rosterB.length < 10) continue;
 
@@ -287,6 +297,7 @@ for (let n = 0; n < GAMES; n += 1) {
   const aWon = g.teamA.score > g.teamB.score;
   if (aWon) aWins += 1;
   margins.push(Math.abs(g.teamA.score - g.teamB.score));
+  signedMargins.push(g.teamA.score - g.teamB.score);
   for (const entry of heldThisGame) {
     const [, id] = entry.split('|');
     const st = stats.get(id);
@@ -305,7 +316,7 @@ for (let n = 0; n < GAMES; n += 1) {
 }
 
 const rows = [...stats.values()].sort((a, b) => b.plays - a.plays);
-console.log(`\n${simmed} AI-vs-AI games on the base set (team A wins ${(100 * aWins / simmed).toFixed(1)}%, median margin ${margins.sort((a, b) => a - b)[Math.floor(margins.length / 2)]})\n`);
+console.log(`\n${simmed} AI-vs-AI games on the base set (team A wins ${(100 * aWins / simmed).toFixed(1)}%, median margin ${margins.sort((a, b) => a - b)[Math.floor(margins.length / 2)]}, mean A-minus-B ${(signedMargins.reduce((x, y) => x + y, 0) / signedMargins.length).toFixed(2)}${SHIFT_A ? `, Team A shot lines shifted ${SHIFT_A}` : ''})\n`);
 console.log('  card                        phase      held  played  play%   win% when played');
 for (const r of rows) {
   const playPct = r.held ? (100 * r.plays / r.held).toFixed(0) : '—';
@@ -320,36 +331,90 @@ console.log(`\nDEAD IN AI HANDS (held often, never played): ${dead.map(r => r.id
 // increase usage." Every card keeps one copy (nothing is ever unreachable
 // again); proven value earns extras; the fill goes to the most-played
 // staples. Deterministic from the seeded run.
+// THE USER'S STEER (2026-09-05): "the default strategy deck should have WAY
+// more switching cards." Decks being switch-heavy is a feature, so the
+// switching family gets a FLOOR the learning cannot trim below, and every
+// copy count stays under the canon caps (5 common / 3 uncommon / 1 rare —
+// Switch Everything is rare, so it stays at one). The room comes from the
+// staples the fill used to pile up (Putback Dunk, Rimshaker), not from
+// dropping any card to zero: nothing is ever unreachable again.
+const DESIGN_FLOORS = {
+  high_screen_roll: 4,
+  veer_switch: 3,
+  burned_switch: 2,
+  go_under: 2,
+  fight_over: 2,
+  overhelp: 2,
+  switch_everything: 1, // rare: one is the cap, and it is never dropped
+};
+const capOf = id => STRAT_COPY_CAPS[getStratRarity(getStrat(id))] ?? 5;
+const floorOf = id => Math.min(capOf(id), DESIGN_FLOORS[id] ?? 1);
+
 if (process.argv.includes('--emit-deck')) {
-  const copies = Object.fromEntries(rows.map(r => [r.id, 1]));
+  const copies = Object.fromEntries(rows.map(r => [r.id, floorOf(r.id)]));
   for (const r of rows) {
     const win = r.gamesPlayed ? r.winsWhenPlayed / r.gamesPlayed : 0;
-    if (r.plays >= 100 && win >= 0.55) copies[r.id] += 1;
-    if (r.plays >= 100 && win >= 0.62) copies[r.id] += 1;
+    if (r.plays >= 100 && win >= 0.55) copies[r.id] = Math.min(capOf(r.id), copies[r.id] + 1);
+    if (r.plays >= 100 && win >= 0.62) copies[r.id] = Math.min(capOf(r.id), copies[r.id] + 1);
   }
   let total = Object.values(copies).reduce((a, b) => a + b, 0);
   const byPlays = [...rows].sort((a, b) => b.plays - a.plays);
   for (const r of byPlays) {
     if (total >= 50) break;
+    if (copies[r.id] >= capOf(r.id)) continue;
     copies[r.id] += 1; total += 1;
   }
   while (total > 50) {
     const trim = [...rows]
-      .filter(r => copies[r.id] > 1)
+      .filter(r => copies[r.id] > floorOf(r.id))
       .sort((a, b) => (a.winsWhenPlayed / (a.gamesPlayed || 1)) - (b.winsWhenPlayed / (b.gamesPlayed || 1)))[0];
+    if (!trim) break;
     copies[trim.id] -= 1; total -= 1;
+  }
+  // FIFTY-ONE CARDS DO NOT FIT IN FIFTY. With the crunch package the card
+  // pool outgrew the deck, so "every card keeps a copy" cannot hold any more,
+  // floors or no floors. The last resort drops SINGLETONS the AI gets the
+  // least out of — fewest plays, then lowest win rate when played — never a
+  // floored card and never a crunch rider (those are the crunch package, and
+  // they are only ever held until the last section). The dropped list is
+  // written into the generated file so it is a decision on the record.
+  const CRUNCH_RIDERS = ['desperation_press', 'ato_masterpiece', 'fresh_legs', 'ice_the_hot_hand', 'reset', 'second_closer'];
+  // Proven value is protected too: a card the AI plays 100+ times and wins
+  // 55%+ with is a staple, whatever its raw play count ranks against.
+  const winOf = r => (r.gamesPlayed ? r.winsWhenPlayed / r.gamesPlayed : 0);
+  const proven = r => r.plays >= 100 && winOf(r) >= 0.55;
+  // And so is every REACTION: the user's counter-coverage principle — a
+  // reaction card to every playable strategy card — is what a default deck
+  // without Close Out would break, whatever the AI's play count says.
+  const reaction = r => getStrat(r.id)?.phase === 'reaction';
+  // Cards the user asked for by name (2026-09-02: the pressing card and the
+  // trap) stay in the default deck whatever the AI makes of them.
+  const DESIGN_KEEP = ['pick_up_full_court', 'double_team'];
+  const dropped = [];
+  while (total > 50) {
+    const drop = [...rows]
+      .filter(r => copies[r.id] === 1 && !DESIGN_FLOORS[r.id] && !CRUNCH_RIDERS.includes(r.id)
+        && !proven(r) && !reaction(r) && !DESIGN_KEEP.includes(r.id))
+      .sort((a, b) => a.plays - b.plays
+        || (a.winsWhenPlayed / (a.gamesPlayed || 1)) - (b.winsWhenPlayed / (b.gamesPlayed || 1)))[0];
+    if (!drop) break;
+    delete copies[drop.id]; dropped.push(drop.id); total -= 1;
   }
   const NL = String.fromCharCode(10);
   const genBody = [
     '// GENERATED by scripts/analysis/runStratAudit.js --emit-deck - do not edit.',
     '//',
     '// The default 50-card deck, learned from ' + simmed + ' seeded AI-vs-AI games:',
-    '// every card keeps at least one copy, proven win rates earn extras, and the',
-    '// fill goes to the most-played staples. Regenerate after AI or card changes:',
+    '// every card keeps at least one copy, the SWITCHING FAMILY keeps its design',
+    '// floor (High Screen & Roll 4, Veer Switch 3, Burned on the Switch 3, Go Under,',
+    '// Fight Over, Overhelp 2 - the user\'s steer), proven win rates earn extras',
+    '// under the 5/3/1 copy caps, and the fill goes to the most-played staples.',
+    '// Regenerate after AI or card changes:',
+    '//   dropped to fit fifty (fewest AI plays first): ' + (dropped.join(', ') || 'none'),
     '//   node scripts/analysis/runStratAudit.js 600 --full --emit-deck',
     'export const DEFAULT_DECK_COPIES = ' + JSON.stringify(copies, null, 2) + ';',
     '',
   ].join(NL);
   fs.writeFileSync(path.join(REPO_ROOT, 'src', 'game', 'defaultDeckWeights.js'), genBody);
-  console.log('emitted src/game/defaultDeckWeights.js (' + total + ' cards, ' + Object.keys(copies).length + ' distinct)');
+  console.log('emitted src/game/defaultDeckWeights.js (' + total + ' cards, ' + Object.keys(copies).length + ' distinct)' + (dropped.length ? '; dropped: ' + dropped.join(', ') : ''));
 }

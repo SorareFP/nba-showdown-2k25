@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { calcAdv, getTeam, getOpp, getPS, getFatigue, SNAKE, SPEND_COSTS, clutchAvailable } from '../../game/engine.js';
-import { canPlayCard } from '../../game/canPlay.js';
+import { calcAdv, getTeam, getOpp, getPS, getFatigue, SNAKE, SPEND_COSTS, clutchAvailable, burnedSlots } from '../../game/engine.js';
+import { canPlayCard, myHouseTargets, fwdTargets, preRollTargets } from '../../game/canPlay.js';
+import { benchRest, passTurn } from '../../game/engine.js';
 import { getStrat } from '../../game/strats.js';
 import { aiDraftPick, aiPlacementPick } from '../../game/ai.js';
 import styles from './CourtBoard.module.css';
@@ -153,6 +154,13 @@ async function buildOpts(game, teamKey, cardId, base, openModal) {
     // Roll-replacing / roll-modifying cards — must be pre-roll only.
     'cross_court_dime', 'you_stand_over_there', 'elevator_doors',
     'pin_down_screen', 'from_way_downtown', 'power_move',
+    // The answers to a defensive switch — see lastDefSwitch in engine.js.
+    'overhelp', 'burned_switch',
+    // Wave one of the docx backlog (2026-09-06).
+    'spain_pick_roll', 'mismatch_hunter', 'energizer', 'defensive_anchor',
+    'five_out', 'hammer_set', 'iso_heavy', 'crash_and_kick', 'pick_and_pop', 'extra_pass',
+    'stretch_five', 'post_domination', 'unsung_hero', 'transition_outlet',
+    'find_the_open_man', 'putback_specialist', 'hustle_play',
   ];
 
   // Cards that show ALL my starters (no filtering — additive, safe post-roll)
@@ -194,6 +202,17 @@ async function buildOpts(game, teamKey, cardId, base, openModal) {
         label = 'Select player with Speed advantage';
         break;
       }
+      case 'overhelp': {
+        eligible = filterStarters(myT.starters, (p, i) => rolls[i] == null);
+        label = 'Select player for +3 (must not have rolled yet)';
+        break;
+      }
+      case 'burned_switch': {
+        const burned = burnedSlots(game, game.lastDefSwitch);
+        eligible = filterStarters(myT.starters, (p, i) => burned.includes(i) && rolls[i] == null);
+        label = 'Select the player whose new defender is weaker';
+        break;
+      }
       case 'ghost_screen': {
         eligible = filterStarters(myT.starters, (p, i) => {
           if (rolls[i] != null) return false; // already rolled
@@ -204,6 +223,86 @@ async function buildOpts(game, teamKey, cardId, base, openModal) {
           return a.hasPenalty && p.speed >= 12;
         });
         label = 'Select Speed 12+ player with penalty (not yet rolled)';
+        break;
+      }
+      case 'spain_pick_roll': {
+        eligible = filterStarters(myT.starters, (p, i) => { const dp = defenders[offMatchups[i] ?? i]; return dp && p.speed > dp.speed; });
+        label = 'Select a player faster than their defender';
+        break;
+      }
+      case 'mismatch_hunter': {
+        eligible = filterStarters(myT.starters, (p, i) => {
+          const dp = defenders[offMatchups[i] ?? i];
+          if (!dp) return false;
+          const a = calcAdv(p, dp, game.tempEff?.[teamKey] || {}, i);
+          return Math.max(a.speedAdv, a.powerAdv) >= 4;
+        });
+        label = 'Select the mismatch (+4 Speed or Power advantage)';
+        break;
+      }
+      case 'energizer': {
+        eligible = filterStarters(myT.starters, p => (p.salary || 0) < 250);
+        label = 'Select a player under $250 (+3/+3 on defense)';
+        break;
+      }
+      case 'defensive_anchor': {
+        eligible = filterStarters(myT.starters, p => (p.defBoost || 0) >= 3);
+        label = 'Select your anchor (Defensive Bonus +3 or more)';
+        break;
+      }
+      case 'five_out': {
+        eligible = preRollTargets(game, teamKey, p => (p.threePtBoost || 0) > 0).map(({ p, idx }) => ({ p, origIdx: idx }));
+        label = 'Select a 3PT shooter — two checks at +1 instead of the roll';
+        break;
+      }
+      case 'hammer_set': {
+        eligible = filterStarters(myT.starters, (p, i) => {
+          if ((p.threePtBoost || 0) > 0) return false;
+          const dp = defenders[offMatchups[i] ?? i];
+          return dp && calcAdv(p, dp, game.tempEff?.[teamKey] || {}, i).speedAdv > 0;
+        });
+        label = 'Select a non-shooter with a Speed advantage';
+        break;
+      }
+      case 'iso_heavy': case 'unsung_hero': {
+        eligible = preRollTargets(game, teamKey, cardId === 'unsung_hero' ? (p => (p.salary || 0) <= 400) : undefined).map(({ p, idx }) => ({ p, origIdx: idx }));
+        label = cardId === 'iso_heavy' ? 'Who takes over? (+3, teammates −2)' : 'Select a $400-or-less player (two dice, keep higher)';
+        break;
+      }
+      case 'crash_and_kick': case 'extra_pass': case 'putback_specialist': {
+        eligible = filterStarters(myT.starters, () => true);
+        label = cardId === 'putback_specialist' ? 'Who takes the paint check at +3?' : 'Who takes the shot check?';
+        break;
+      }
+      case 'pick_and_pop': {
+        eligible = filterStarters(myT.starters, p => (p.threePtBoost || 0) > 0);
+        label = 'Select a 3PT shooter (check at +1; hit = +2 AST back)';
+        break;
+      }
+      case 'stretch_five': {
+        eligible = filterStarters(myT.starters, p => String(p.pos || '').split(/[-/]/).some(t => t === 'C' || t === 'PF') && ((p.shotLine ?? 18) - (p.threePtBoost || 0)) <= 14);
+        label = 'Select the stretch big (3PT check)';
+        break;
+      }
+      case 'post_domination': {
+        eligible = filterStarters(myT.starters, p => (p.power || 0) >= 15);
+        label = 'Whose rebounds are doubled this period?';
+        break;
+      }
+      case 'transition_outlet': {
+        eligible = filterStarters(myT.starters, (p, i) => { const dp = defenders[offMatchups[i] ?? i]; return dp && calcAdv(p, dp, game.tempEff?.[teamKey] || {}, i).speedAdv > 0; });
+        label = 'Select a player with a Speed advantage (check at +2)';
+        break;
+      }
+      case 'find_the_open_man': {
+        const trapped = game.lastDoubleTeam?.targetIdx;
+        eligible = preRollTargets(game, teamKey, (p, i) => i !== trapped).map(({ p, idx }) => ({ p, origIdx: idx }));
+        label = 'Who is open? (+4 roll)';
+        break;
+      }
+      case 'hustle_play': {
+        eligible = filterStarters(myT.starters, p => (p.salary || 0) < 400 && (p.defBoost || 0) > 0);
+        label = 'Select the hustler (under $400, subtracts their Defensive Bonus)';
         break;
       }
       case 'bully_ball': {
@@ -306,17 +405,24 @@ async function buildOpts(game, teamKey, cardId, base, openModal) {
         break;
       }
       // Roll-replacing / roll-modifying cards — must be pre-roll only.
+      // A shot check, not a roll: playable on a player whose roll was skipped
+      // by their own card. See fwdTargets in canPlay.js.
+      case 'from_way_downtown': {
+        eligible = fwdTargets(game, teamKey).map(({ p, idx }) => ({ p, origIdx: idx }));
+        label = 'Select shooter (not rolled yet, or roll skipped)';
+        break;
+      }
+      // The same list playability checked — see preRollTargets in canPlay.js.
       case 'cross_court_dime':
       case 'you_stand_over_there':
       case 'pin_down_screen':
-      case 'from_way_downtown':
       case 'power_move': {
-        eligible = filterStarters(myT.starters, (_, i) => rolls[i] == null);
+        eligible = preRollTargets(game, teamKey).map(({ p, idx }) => ({ p, origIdx: idx }));
         label = 'Select player (must not have rolled yet)';
         break;
       }
       case 'elevator_doors': {
-        eligible = filterStarters(myT.starters, (p, i) => rolls[i] == null && (p.threePtBoost || 0) > 0);
+        eligible = preRollTargets(game, teamKey, p => (p.threePtBoost || 0) > 0).map(({ p, idx }) => ({ p, origIdx: idx }));
         label = 'Select 3PT player (must not have rolled yet)';
         break;
       }
@@ -359,13 +465,32 @@ async function buildOpts(game, teamKey, cardId, base, openModal) {
     }
   }
 
-  // ── Pin Down Screen: discard a card from hand ───────────────────────────
-  if (cardId === 'pin_down_screen') {
-    const handWithoutThis = myT.hand.filter(id => id !== 'pin_down_screen');
+  // ── Stretch Five: the teammate who takes the paint check ───────────────
+  if (cardId === 'stretch_five') {
+    const mates = myT.starters.map((p, i) => ({ p, origIdx: i })).filter(({ origIdx }) => origIdx !== opts.playerIdx);
+    const m = await pickFiltered(mates, 'Select the teammate for the paint check at +2', teamKey);
+    if (m === null) return null;
+    opts.player2Idx = m;
+  }
+  // ── Extra Pass / Transition Outlet: which check ────────────────────────
+  if (cardId === 'extra_pass' || cardId === 'transition_outlet') {
+    opts.checkType = confirm('Take a 3PT check? (Cancel = Paint check)') ? '3pt' : 'paint';
+  }
+  // ── Three-Point Barrage: spend 1 AST for one more check ────────────────
+  if (cardId === 'three_point_barrage' && myT.assists >= 1) {
+    if (confirm(`Spend 1 Assist for one extra 3PT check? (${myT.assists} AST available)`)) {
+      const shooters = myT.starters.map((p, i) => ({ p, origIdx: i }));
+      const s = await pickFiltered(shooters, 'Who takes the extra 3PT check?', teamKey);
+      if (s !== null) opts.extraShooterIdx = s;
+    }
+  }
+  // ── Pin Down Screen, Lob City, Denial: discard a card from hand ─────────
+  if (cardId === 'pin_down_screen' || cardId === 'lob_city' || cardId === 'denial') {
+    const handWithoutThis = myT.hand.filter(id => id !== cardId);
     if (handWithoutThis.length === 0) { alert('No cards to discard.'); return null; }
     const discardPlayers = handWithoutThis.map((id, i) => ({ id, name: id.replace(/_/g, ' '), origIdx: i }));
     const discardDisplay = discardPlayers.map(d => ({ ...d, name: d.name }));
-    const pick = await openModal({ teamKey, cardId, players: discardDisplay, label: 'Discard a card for Pin-Down Screen' });
+    const pick = await openModal({ teamKey, cardId, players: discardDisplay, label: `Discard a card for ${cardId.replace(/_/g, ' ')}` });
     if (pick === null) return null;
     opts.discardId = handWithoutThis[pick];
   }
@@ -497,20 +622,23 @@ async function buildOpts(game, teamKey, cardId, base, openModal) {
   }
 
   // ── This Is My House ───────────────────────────────────────────────────
-  // Must be played BEFORE the opponent rolls (it skips their scoring roll).
+  // Only the opponents the engine would accept — myHouseTargets is the same
+  // list the playability check uses, so a card that is lit in the hand always
+  // has at least one, and nothing offered here can be refused afterwards. The
+  // old list was "anyone who has not rolled", which put targets the defender
+  // could not beat in front of the player and then rejected the pick.
   if (cardId === 'this_is_my_house') {
-    const oppRolls = game.rollResults[oppKey] || [];
-    const eligible = oppT.starters
-      .map((p, i) => ({ p, origIdx: i }))
-      .filter(({ origIdx }) => oppRolls[origIdx] == null);
-    if (eligible.length === 0) {
-      alert('No eligible opponents — all have already rolled.');
-      return null;
-    }
-    const display = eligible.map(({ p }) => p);
-    const pick = await openModal({ teamKey: oppKey, cardId, players: display, label: 'Block which opponent? (must not have rolled yet)' });
+    const targets = myHouseTargets(game, teamKey);
+    if (targets.length === 0) return null; // greyed in the hand; nothing to say
+    const display = targets.map(({ off }) => off);
+    const extraInfo = targets.map(
+      ({ off, def }) => `S${off.speed}/P${off.power} — guarded by your ${def.name} (S${def.speed}/P${def.power})`
+    );
+    const pick = await openModal({
+      teamKey: oppKey, cardId, players: display, label: 'Shut out which opponent?', extraInfo,
+    });
     if (pick === null) return null;
-    opts.offSlot = eligible[pick].origIdx;
+    opts.offSlot = targets[pick].offSlot;
   }
 
   // ── Pick Up Full Court: choose which opposing player to hound ──────────
@@ -551,32 +679,30 @@ async function buildOpts(game, teamKey, cardId, base, openModal) {
   if (cardId === 'veer_switch') {
     const lc = game.lastMatchupCard;
     if (!lc) { alert('No switch card to react to.'); return null; }
+    // The two defenders in the screen are the only ones who can switch: the
+    // choice is who guards the first screened attacker, and the other takes
+    // the second. (It used to offer all five for each slot, which is not a veer.)
     const offT = getTeam(game, lc.teamKey);
     const p1 = offT.starters[lc.opts.swapSlot1];
     const p2 = offT.starters[lc.opts.swapSlot2];
-    // Pick new defender for slot 1
+    const pair = [lc.opts.origD1, lc.opts.origD2];
     const fmtVeer = (a) => {
       const sA = a.speedAdv > 0 ? `+${a.speedAdv}` : `${a.speedAdv}`;
       const pA = a.powerAdv > 0 ? `+${a.powerAdv}` : `${a.powerAdv}`;
       const rollStr = a.rollBonus > 0 ? `+${a.rollBonus}` : a.hasPenalty ? `${a.rollBonus}` : '0';
-      return `Opp: Spd ${sA} · Pwr ${pA} → Roll ${rollStr}`;
+      return `${sA} spd · ${pA} pwr → roll ${rollStr}`;
     };
-    const defInfo1 = myT.starters.map((def, di) => {
-      const a = calcAdv(p1, def, game.tempEff?.[lc.teamKey] || {}, lc.opts.swapSlot1);
-      return fmtVeer(a);
+    const eff = game.tempEff?.[lc.teamKey] || {};
+    const info = pair.map((di, k) => {
+      const other = pair[1 - k];
+      const on1 = fmtVeer(calcAdv(p1, myT.starters[di], eff, lc.opts.swapSlot1));
+      const on2 = fmtVeer(calcAdv(p2, myT.starters[other], eff, lc.opts.swapSlot2));
+      return `${p1?.name} gets ${on1}; ${p2?.name} vs ${myT.starters[other]?.name} gets ${on2}`;
     });
-    const nd1 = await openModal({ teamKey, cardId, players: myT.starters, label: `🛡 Veer Switch — Who guards ${p1?.name}?`, extraInfo: defInfo1 });
-    if (nd1 === null) return null;
-    // Pick new defender for slot 2
-    const defInfo2 = myT.starters.map((def, di) => {
-      if (di === nd1) return '(already assigned above)';
-      const a = calcAdv(p2, def, game.tempEff?.[lc.teamKey] || {}, lc.opts.swapSlot2);
-      return fmtVeer(a);
-    });
-    const nd2 = await openModal({ teamKey, cardId, players: myT.starters, label: `🛡 Veer Switch — Who guards ${p2?.name}?`, extraInfo: defInfo2 });
-    if (nd2 === null) return null;
-    opts.newDefender1 = nd1;
-    opts.newDefender2 = nd2;
+    const pick = await openModal({ teamKey, cardId, players: pair.map(di => myT.starters[di]), label: `🛡 Veer Switch — who guards ${p1?.name}? (${p2?.name} takes the other)`, extraInfo: info });
+    if (pick === null) return null;
+    opts.newDefender1 = pair[pick];
+    opts.newDefender2 = pair[1 - pick];
   }
 
   // ── Switch Everything: show roll effects for each assignment ────────────
@@ -659,19 +785,8 @@ function PhaseBar({ game, setGame, onEndSection, onTimeout = null, onEndTimeout 
   const allRolled = [0,1,2,3,4].every(i => isDone(rA,bA,i)) && [0,1,2,3,4].every(i => isDone(rB,bB,i));
   const rollingOpen = scoringPasses >= 99;
 
-  const pass = () => {
-    const g = JSON.parse(JSON.stringify(game));
-    if (phase === 'matchup_strats') {
-      g.matchupPasses++;
-      if (g.matchupPasses >= 2) { g.phase='scoring'; g.rollResults={A:[],B:[]}; g.log=[...g.log,{team:null,msg:'Both passed — Scoring Phase!'}]; }
-      else { const p=g.matchupTurn; g.matchupTurn=p==='A'?'B':'A'; g.log=[...g.log,{team:p,msg:'Passed.'}]; }
-    } else {
-      g.scoringPasses++;
-      if (g.scoringPasses >= 2) { g.scoringPasses=99; g.log=[...g.log,{team:null,msg:'Both passed — rolling begins!'}]; }
-      else { const p=g.scoringTurn; g.scoringTurn=p==='A'?'B':'A'; g.log=[...g.log,{team:p,msg:'Passed scoring turn.'}]; }
-    }
-    setGame(g);
-  };
+  // Whoever holds the turn passes — the engine owns the rule (passTurn).
+  const pass = () => setGame(passTurn(game, phase === 'matchup_strats' ? matchupTurn : scoringTurn));
   const lock = () => {
     const g=JSON.parse(JSON.stringify(game));
     g.phase='scoring';g.rollResults={A:[],B:[]};
@@ -1051,7 +1166,7 @@ function BlindPickPhase({ game, setGame, pvpMode = false, myTeamKey = null, onDr
             p.paintBoost ? `Paint+${p.paintBoost}` : '',
             p.defBoost ? `Def+${p.defBoost}` : '',
           ].filter(Boolean);
-          const imgUrl = getPlayerImageUrl(p.id);
+          const imgUrl = getPlayerImageUrl(p.id, p.set);
 
           return (
             <button
@@ -1110,7 +1225,7 @@ function DraftRow({ idx, game, setGame, pvpMode = false, myTeamKey = null, isMyT
     d.step++;
     if(g.teamA.starters.length===5&&g.teamB.starters.length===5){
       g.offMatchups={A:[0,1,2,3,4],B:[0,1,2,3,4]};
-      ['A','B'].forEach(k=>{const t=k==='A'?g.teamA:g.teamB;t.stats.forEach(ps=>{if(!t.starters.find(p=>p.id===ps.id)){ps.hot=0;ps.cold=0;const m=ps.minutes||0;ps.minutes=m<=8?0:Math.max(0,m-8);}});});
+      ['A','B'].forEach(k=>{const t=k==='A'?g.teamA:g.teamB;t.stats.forEach(ps=>{if(!t.starters.find(p=>p.id===ps.id))benchRest(ps);});});
       g.phase='matchup_strats';
       g.log=[...g.log,{team:null,msg:'Draft complete — Matchup Strategy Phase.'}];
     }
@@ -1150,7 +1265,7 @@ function PlacedCard({ player, stats, col }) {
     player.paintBoost?`Paint${player.paintBoost>0?'+':''}${player.paintBoost}`:'',
     player.defBoost?`Def${player.defBoost>0?'+':''}${player.defBoost}`:'',
   ].filter(Boolean);
-  const pImgUrl = getPlayerImageUrl(player.id);
+  const pImgUrl = getPlayerImageUrl(player.id, player.set);
   return (
     <div className={styles.placedCard} style={{borderColor:col}}>
       {pImgUrl && <img src={pImgUrl} alt={player.name} className={styles.placedArt} onError={e=>e.target.style.display='none'} />}
@@ -1222,7 +1337,7 @@ function PlayerSlot({ player, ps, adv, fat, result, blocked, teamKey, idx, phase
   const glowCheap=(myHand.some(id=>['chip_on_shoulder'].includes(id))&&player.salary<=250)||
                   (myHand.some(id=>['crowd_favorite'].includes(id))&&player.salary<=350);
 
-  const imgUrl = getPlayerImageUrl(player.id);
+  const imgUrl = getPlayerImageUrl(player.id, player.set);
   const boosts = [
     player.threePtBoost && player.threePtBoost!==0 ? <span key="3pt" className={styles.b3pt}>3PT{player.threePtBoost>0?'+':''}{player.threePtBoost}</span> : null,
     player.paintBoost && player.paintBoost!==0 ? <span key="pnt" className={styles.bpnt}>Paint{player.paintBoost>0?'+':''}{player.paintBoost}</span> : null,

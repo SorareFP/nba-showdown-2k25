@@ -1,4 +1,4 @@
-// NBA Showdown 2K25 — Strategy card definitions
+// NBA Showdown 2026 — Strategy card definitions
 export const STRATS = [
   // ── MATCHUP PHASE ──
   { id:'high_screen_roll',    name:'High Screen & Roll', phase:'matchup',  side:'off', copies:2, locked:false, color:'#0369A1', rarity:'common',
@@ -117,6 +117,67 @@ export const STRATS = [
     desc:'CRUNCH TIME: your team gains a second Clutch Possession this game, for a different player.' },
   { id:'delayed_slip',        name:'Delayed Slip',       phase:'scoring',  side:'off', copies:2, locked:false, color:'#7C3AED', rarity:'common',
     desc:'Choose a player with Speed ≥12 and Power ≥10. If they have no matchup advantage, give them +2 to scoring roll and +1 Rebound.' },
+  // ── Wave one of the docx backlog (the user's own designs, 2026-09-06) ────
+  // Matchup phase
+  { id:'spain_pick_roll',     name:'Spain Pick & Roll',  phase:'matchup',  side:'off', copies:2, locked:false, color:'#B45309', rarity:'uncommon',
+    desc:'Choose a player faster than their defender: +2 to their scoring roll this period. If they score on that roll, +1 Assist.' },
+  { id:'mismatch_hunter',     name:'Mismatch Hunter',    phase:'matchup',  side:'off', copies:3, locked:false, color:'#9A3412', rarity:'common',
+    desc:'Choose a player with a Speed or Power advantage of +4 or more: their scoring roll gains an additional +2.' },
+  { id:'strength_in_numbers', name:'Strength in Numbers',phase:'matchup',  side:'off', copies:1, locked:false, color:'#7C2D12', rarity:'rare',
+    desc:'If all five of your players hold at least a +1 advantage (Speed or Power) on offense, your team gains +3 Assists immediately.' },
+  { id:'energizer',           name:'Energizer',          phase:'matchup',  side:'def', copies:2, locked:false, color:'#166534', rarity:'common',
+    desc:'Choose a player with salary below $250: +3 Speed and +3 Power on defense this period.' },
+  { id:'defensive_identity',  name:'Defensive Identity', phase:'matchup',  side:'def', copies:2, locked:false, color:'#14532D', rarity:'uncommon',
+    desc:'If three or more of your players have a Defensive Bonus, all five get +2 Speed and +2 Power on defense this period.' },
+  { id:'defensive_anchor',    name:'Defensive Anchor',   phase:'matchup',  side:'def', copies:2, locked:false, color:'#1E3A8A', rarity:'uncommon',
+    desc:'Choose a defender with a Defensive Bonus of +3 or more: the player they guard gets no positive roll bonus from Speed or Power this period.' },
+  { id:'swarming_defense',    name:'Swarming Defense',   phase:'matchup',  side:'def', copies:1, locked:false, color:'#1E40AF', rarity:'rare',
+    desc:'Target the opposing player with the highest salary and roll a D20: on 11+ they roll their scoring twice this period and keep the lower.' },
+  // Scoring phase — offense
+  { id:'five_out',            name:'Five-Out Offense',   phase:'pre_roll', side:'off', copies:2, locked:false, color:'#C2410C', rarity:'uncommon',
+    desc:'Choose a player with a 3PT Bonus who has not rolled: they take two 3PT Shot Checks at +1 instead of their scoring roll.' },
+  { id:'hammer_set',          name:'Hammer Set',         phase:'scoring',  side:'off', copies:2, locked:false, color:'#D97706', rarity:'common',
+    desc:'A player WITHOUT a 3PT Bonus who holds a Speed advantage announces a 3PT Shot Check at normal difficulty. Hit: +2 Assists.' },
+  { id:'iso_heavy',           name:'Iso-Heavy Offense',  phase:'pre_roll', side:'off', copies:2, locked:false, color:'#B91C1C', rarity:'common',
+    desc:'One player takes over: +3 to their scoring roll this period. Every teammate rolls at −2.' },
+  { id:'three_point_barrage', name:'Three-Point Barrage',phase:'scoring',  side:'off', copies:1, locked:false, color:'#DC2626', rarity:'rare',
+    desc:'If three or more of your players have a 3PT Bonus, each of them takes a 3PT Shot Check. You may spend 1 Assist for one more check.' },
+  { id:'crash_and_kick',      name:'Crash and Kick',     phase:'scoring',  side:'off', copies:2, locked:false, color:'#A16207', rarity:'uncommon',
+    desc:'Spend 3 Rebounds and 1 Assist: a player of your choice announces a 3PT Shot Check at +2.' },
+  { id:'pick_and_pop',        name:'Pick-and-Pop',       phase:'scoring',  side:'off', copies:2, locked:false, color:'#CA8A04', rarity:'uncommon',
+    desc:'Spend 2 Assists: a player with a 3PT Bonus announces a 3PT Shot Check at +1. Hit: gain 2 Assists back.' },
+  { id:'extra_pass',          name:'Extra Pass',         phase:'scoring',  side:'off', copies:3, locked:false, color:'#EAB308', rarity:'common',
+    desc:'Spend 2 Assists: any player announces a 3PT or Paint Shot Check. No card bonuses apply to this check.' },
+  { id:'lob_city',            name:'Lob City',           phase:'scoring',  side:'off', copies:1, locked:false, color:'#7E22CE', rarity:'rare',
+    desc:'Needs a player with Speed or Power 15+. Discard a card: every player with Speed 15+ adds an Assist, every player with Power 15+ scores 2.' },
+  { id:'stretch_five',        name:'Stretch Five',       phase:'scoring',  side:'off', copies:2, locked:false, color:'#6D28D9', rarity:'uncommon',
+    desc:'A C or PF whose 3PT line is 14 or lower takes a 3PT Shot Check; then a teammate of your choice takes a Paint Shot Check at +2.' },
+  { id:'post_domination',     name:'Post Domination',    phase:'pre_roll', side:'off', copies:1, locked:false, color:'#5B21B6', rarity:'rare',
+    desc:'With two players at Power 15+ on the floor, choose one: their rebounds from scoring rolls are doubled this period.' },
+  { id:'unsung_hero',         name:'Unsung Hero',        phase:'pre_roll', side:'off', copies:2, locked:false, color:'#0F766E', rarity:'uncommon',
+    desc:'Choose a player with salary $400 or less who has not rolled: they roll two D20 and keep the higher this period.' },
+  { id:'transition_outlet',   name:'Transition Outlet',  phase:'scoring',  side:'off', copies:2, locked:false, color:'#0E7490', rarity:'uncommon',
+    desc:'Spend 1 Rebound and 1 Assist: a player with a Speed advantage announces a 3PT or Paint Shot Check at +2. Hit: +1 Assist.' },
+  // Reactions — offense
+  { id:'find_the_open_man',   name:'Find the Open Man',  phase:'reaction', side:'off', copies:2, locked:false, color:'#0369A1', rarity:'uncommon',
+    desc:'The opponent has a Double Team on the floor: a player of yours they are NOT trapping gets +4 to their scoring roll.' },
+  { id:'putback_specialist',  name:'Putback Specialist', phase:'reaction', side:'off', copies:2, locked:false, color:'#0284C7', rarity:'uncommon',
+    desc:'After your player misses a shot check, spend 2 Rebounds: any player of yours announces a Paint Shot Check at +3.' },
+  // Reactions — defense
+  { id:'rim_protector',       name:'Rim Protector',      phase:'reaction', side:'def', copies:2, locked:false, color:'#1D4ED8', rarity:'uncommon',
+    desc:'Opponent announces a Paint Shot Check and your defender on them has Power + Defensive Bonus of 15+: −4 to the check. Miss: +2 Rebounds for you.' },
+  { id:'drop_coverage',       name:'Drop Coverage',      phase:'reaction', side:'def', copies:3, locked:false, color:'#2563EB', rarity:'common',
+    desc:'Opponent announces a Paint Shot Check and your defender on them has a Defensive Bonus: −2 to the check.' },
+  { id:'smothering_defense',  name:'Smothering Defense', phase:'reaction', side:'def', copies:2, locked:false, color:'#3730A3', rarity:'common',
+    desc:'Opponent announces any shot check and your defender on them has a Defensive Bonus: the check\'s card bonus is reduced by 3, to a minimum of 0.' },
+  { id:'denial',              name:'Denial',             phase:'reaction', side:'def', copies:2, locked:false, color:'#4338CA', rarity:'uncommon',
+    desc:'Discard a card. Opponent announces a shot check: they lose 2 Assists — if they have fewer than 2, the check is at −3 instead.' },
+  { id:'hustle_play',         name:'Hustle Play',        phase:'reaction', side:'def', copies:2, locked:false, color:'#15803D', rarity:'common',
+    desc:'An opponent with salary above $800 announces a shot check: a player of yours under $400 contests it, subtracting their Defensive Bonus.' },
+  { id:'glass_cleaner',       name:'Glass Cleaner',      phase:'reaction', side:'def', copies:3, locked:false, color:'#047857', rarity:'common',
+    desc:'After an opponent misses any shot check: +2 Rebounds. +1 more if your defender on the shooter has more Power than them.' },
+  { id:'box_out',             name:'Box Out',            phase:'reaction', side:'def', copies:2, locked:false, color:'#065F46', rarity:'common',
+    desc:'Right after an opponent\'s scoring roll wins rebounds: cancel them. −1 more from their track if your defender on them has more Power.' },
 ];
 
 export const STRAT_MAP = Object.fromEntries(STRATS.map(s => [s.id, s]));

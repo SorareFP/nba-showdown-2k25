@@ -1,4 +1,4 @@
-// NBA Showdown 2K25 — the playable base set, re-exported from cardSets.js.
+// NBA Showdown 2026 — the playable base set, re-exported from cardSets.js.
 //
 // MIGRATED 2026-09-03 off rawCards.js (the shipped 2025-26 "Final Cards"
 // spreadsheet, 306 players) onto the generated 2026-27 real-log set (354).

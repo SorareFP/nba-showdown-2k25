@@ -1,4 +1,4 @@
-// NBA Showdown 2K25 — Core Game Engine
+// NBA Showdown 2026 — Core Game Engine
 // Pure functions — no React, no side effects. State is a plain object.
 
 import { lookupChart } from './cards.js';
@@ -98,7 +98,18 @@ function emptyAnalytics() {
 }
 
 /** Crunch Time arms in Q4's final section only when the margin is this close. */
-export const CRUNCH_MARGIN = 10;
+export const CRUNCH_MARGIN = 20; // was 10; the user raised it 2026-09-06 after a full game never armed
+
+/**
+ * WHEN THIS FILE LAST CHANGED, baked in by vite.config.js at transform time.
+ *
+ * A copied game log carries it, so a report can say which engine produced
+ * it. It exists because of one evening's confusion: a game kept running on
+ * the engine it had loaded while hot reload swapped in a newer log panel, and
+ * the log looked like proof the new code did nothing.
+ */
+/* global __ENGINE_STAMP__ */
+export const ENGINE_STAMP = typeof __ENGINE_STAMP__ !== 'undefined' ? __ENGINE_STAMP__ : 'unstamped';
 
 export function newGame(rosterA, rosterB, deckConfigA, deckConfigB, opts = {}) {
   return {
@@ -129,6 +140,7 @@ export function newGame(rosterA, rosterB, deckConfigA, deckConfigB, opts = {}) {
     placementStep: 10,                    // 10 = all placed (solo default). PvP overrides to 0.
     placementOrder: ['A','B','B','A','A','B','B','A','A','B'],
     lastMatchupCard: null,
+    lastDefSwitch: null,    // the opponent's last defensive switch — what Overhelp / Burned on the Switch answer
     scoringTurn: 'B',
     scoringPasses: 0,
     pendingShotCheck: null,
@@ -165,7 +177,9 @@ export function roll20() {
 // ── Advantage Calculation ──────────────────────────────────────────────────
 // Rules:
 //   - Both Speed AND Power negative → penalty = max(rawSpeed, rawPower) (least negative)
-//   - DefBoost only reduces POSITIVE advantages, never creates negatives
+//   - A POSITIVE DefBoost only reduces advantages, never creates negatives
+//   - A NEGATIVE DefBoost is carried by the DEFENDER: he guards at lower
+//     effective Speed and Power, each floored at 0
 //   - Hot/cold: ±2 per marker
 //   - tempDefEff: { [defSlot]: { speedBoost, powerBoost } } from Defensive Stopper etc.
 export function calcAdv(off, def, tempEff = {}, idx = 0, tempDefEff = null, defIdx = null) {
@@ -176,8 +190,23 @@ export function calcAdv(off, def, tempEff = {}, idx = 0, tempDefEff = null, defI
     defPowerExtra = tempDefEff[defIdx].powerBoost || 0;
   }
 
-  const rawSpeed = off.speed - (def.speed + defSpeedExtra) + (tempEff['s' + idx] || 0);
-  const rawPower = off.power - (def.power + defPowerExtra) + (tempEff['p' + idx] || 0);
+  // A NEGATIVE Def Boost is worn by the DEFENDER rather than handed to the
+  // attacker as a bonus: a poor defender simply guards at lower effective Speed
+  // and Power. Those bottom out at 0 — he can be reduced to nothing, but never
+  // to less than nothing — so Nick Richards (Speed 2, Power 4, Def -3) defends
+  // as Speed 0, Power 1.
+  //
+  // The floor sits on the STAT, not on the boost, and that is the whole point:
+  // flooring the boost instead (the old rule) made every negative cosmetic, so
+  // a third of the set advertised a weakness it never actually had.
+  const defPenalty = Math.min(0, def.defBoost || 0);
+  const defSpeed = Math.max(0, def.speed + defSpeedExtra + defPenalty);
+  const defPower = Math.max(0, def.power + defPowerExtra + defPenalty);
+
+  const rawSpeed = off.speed - defSpeed + (tempEff['s' + idx] || 0);
+  const rawPower = off.power - defPower + (tempEff['p' + idx] || 0);
+  // A POSITIVE Def Boost keeps its original job: it eats into an advantage the
+  // attacker already has and never manufactures a penalty out of a standoff.
   const db = Math.max(0, def.defBoost || 0);
 
   if (rawSpeed <= 0 && rawPower <= 0) {
@@ -196,16 +225,49 @@ export function calcAdv(off, def, tempEff = {}, idx = 0, tempDefEff = null, defI
 //   9-12 min: -2
 //   13-16 min: -6
 //   16+ min: -12 (should be benched)
+/**
+ * The fatigue roll penalty for a minutes total. Exported so the AI values a
+ * bench player by the same table the roll uses — it used to keep a private
+ * copy of the thresholds with made-up weights attached.
+ */
+export function fatigueForMinutes(min) {
+  if (min >= 16) return -12;
+  if (min >= 12) return -6;
+  if (min >= 8) return -2;
+  return 0;
+}
+
+/**
+ * Minutes a section on the bench takes off the tracker.
+ *
+ * FOUR, NOT EIGHT (2026-09-05). Eight meant three straight sections then one
+ * rest came back fully fresh — 12 to 4, under the first threshold — so the
+ * fatigue a star built up over a whole quarter vanished in one sitting. The
+ * user's call: "he only should have recovered a little bit." Four is what a
+ * section of play adds, so rest and play are symmetric: 12 rests to 8 (−2),
+ * and it takes three sections off to get back to zero. Halftime still resets
+ * everything.
+ */
+export const REST_RECOVERY = 4;
+
+/** Minutes left on the tracker after one section on the bench, floored at zero. */
+export function restMinutes(min) {
+  return Math.max(0, (min || 0) - REST_RECOVERY);
+}
+
+/** A section on the bench: markers go cold, minutes recover. Mutates `ps`. */
+export function benchRest(ps) {
+  ps.hot = 0;
+  ps.cold = 0;
+  ps.minutes = restMinutes(ps.minutes);
+}
+
 export function getFatigue(g, key, idx) {
   const player = getTeam(g, key).starters[idx];
   if (!player) return 0;
   const ps = getPS(g, key, player.id);
   if (g.ignFatigue?.[`${key}_${idx}`]) return 0;
-  const min = ps?.minutes || 0;
-  if (min >= 16) return -12;
-  if (min >= 12) return -6;
-  if (min >= 8) return -2;
-  return 0;
+  return fatigueForMinutes(ps?.minutes || 0);
 }
 
 /**
@@ -449,7 +511,146 @@ export function applyMatchups(g, defendingKey, matchups) {
   // Marks the DEFENDER as having chosen, so an AI does not re-shuffle a defence
   // its opponent has already played cards against. Cleared by endSection.
   ng.matchupsSet = { ...(ng.matchupsSet || {}), [defendingKey]: true };
+
+  // SHOW THE WORK. Every assignment — the AI's or a human's — writes what it
+  // did and what it costs to the log, so a "the AI put Smith on Holiday for
+  // +9" report can be checked against the alternatives rather than argued
+  // about, and a MISSING line means the defence was never set at all.
+  const def = getTeam(ng, defendingKey);
+  const att = getTeam(ng, attackingKey);
+  const parts = matchups.map((d, i) => {
+    const a = att?.starters?.[i];
+    const dp = def?.starters?.[d];
+    if (!a || !dp) return null;
+    const adv = calcAdv(a, dp, ng.tempEff?.[attackingKey] || {}, i, ng.tempDefEff?.[defendingKey], d).rollBonus;
+    return `${dp.name} on ${a.name} (${adv > 0 ? '+' : ''}${adv})`;
+  }).filter(Boolean);
+  if (parts.length) ng.log = [...(ng.log || []), { team: defendingKey, msg: `Sets the defence — ${parts.join(' · ')}` }];
   return ng;
+}
+
+// ── Priority in the card windows ───────────────────────────────────────────
+//
+// THE CADENCE (2026-09-05, from play-testing): "if I play a strat, the other
+// team can play or pass, repeat until I hit the pass button." The two card
+// windows — the matchup phase, and the scoring phase before rolling opens —
+// used to leave the turn where it was after a card, so whoever held it could
+// keep playing, and the AI, which acts the instant it holds the turn, chained
+// its whole hand. Nothing the AI decided was wrong; the window was.
+//
+// So it is priority, as in every card game with a stack: a card HANDS THE TURN
+// OVER and resets the count of consecutive passes; a pass hands it over and
+// counts; the second pass in a row closes the window. Passing and then seeing
+// the opponent play gets you the turn back, which is what "repeat until I hit
+// pass" means in practice. The AI plays at most one card per turn as a
+// consequence, with no AI-specific rule anywhere.
+//
+// Both functions live here because the pass used to be written out three
+// times — the board, the AI driver, and by implication PvP — and a card play
+// touched the turn nowhere at all.
+
+const other = k => (k === 'A' ? 'B' : 'A');
+
+/** Is `g` inside a card window, and whose turn is it there? */
+export function cardWindow(g) {
+  if (g.phase === 'matchup_strats' && (g.placementStep ?? 10) >= 10) return { key: 'matchupTurn', passes: 'matchupPasses' };
+  if (g.phase === 'scoring' && (g.scoringPasses || 0) < 99) return { key: 'scoringTurn', passes: 'scoringPasses' };
+  return null;
+}
+
+/**
+ * After `teamKey` has played a card: the turn goes to the other side and the
+ * pass count resets. Only when the card was played IN a card window, ON the
+ * player's own turn, and did not itself close the window — a reaction during a
+ * roll, or a card that moved the phase on, leaves the turn alone.
+ */
+export function handOverPriority(before, after, teamKey) {
+  const w = cardWindow(before);
+  if (!w) return after;
+  if (before[w.key] !== teamKey) return after;
+  if (after.phase !== before.phase) return after;
+  const ng = deepClone(after);
+  ng[w.key] = other(teamKey);
+  ng[w.passes] = 0;
+  return ng;
+}
+
+/**
+ * A DEFENSIVE SWITCH, recorded so the offence can answer it.
+ *
+ * `lastMatchupCard` records an offensive switch (High Screen & Roll) for the
+ * three cancelers. Nothing recorded a DEFENSIVE one, so Overhelp and Burned
+ * on the Switch — whose printed text is "opponent plays a defensive switching
+ * card" / "opponent forces a matchup switch" — could only ever fire off the
+ * opponent's High Screen & Roll, and Burned was dead in the AI's hands
+ * outright (the audit's word). Veer Switch and Switch Everything now leave
+ * this record: which attacking slots changed defender, from whom to whom, as
+ * indices into the defence's starters. Consumed by the first reaction played
+ * against it; cleared by endSection.
+ */
+export function recordDefSwitch(teamKey, cardId, before, after) {
+  const changes = [];
+  for (let slot = 0; slot < after.length; slot += 1) {
+    if (before[slot] !== after[slot]) changes.push({ slot, origD: before[slot], newD: after[slot] });
+  }
+  return changes.length ? { teamKey, cardId, changes } : null;
+}
+
+/** The attacking slots a recorded switch handed a WEAKER defender — lower Speed OR lower Power. */
+export function burnedSlots(g, sw) {
+  if (!sw) return [];
+  const def = getTeam(g, sw.teamKey)?.starters || [];
+  return sw.changes
+    .filter(c => {
+      const o = def[c.origD];
+      const n = def[c.newD];
+      return o && n && ((n.speed || 0) < (o.speed || 0) || (n.power || 0) < (o.power || 0));
+    })
+    .map(c => c.slot);
+}
+
+/** `teamKey` passes. Hands the turn over, or closes the window on the second pass. */
+export function passTurn(g, teamKey) {
+  const ng = deepClone(g);
+  if (ng.phase === 'matchup_strats') {
+    ng.matchupPasses = (ng.matchupPasses || 0) + 1;
+    if (ng.matchupPasses >= 2) {
+      ng.phase = 'scoring';
+      ng.rollResults = { A: [], B: [] };
+      ng.log = [...ng.log, { team: null, msg: 'Both passed — Scoring Phase!' }];
+    } else {
+      ng.matchupTurn = other(teamKey);
+      ng.log = [...ng.log, { team: teamKey, msg: 'Passed.' }];
+    }
+    return ng;
+  }
+  ng.scoringPasses = (ng.scoringPasses || 0) + 1;
+  if (ng.scoringPasses >= 2) {
+    ng.scoringPasses = 99;
+    ng.log = [...ng.log, { team: null, msg: 'Both passed — rolling begins!' }];
+  } else {
+    ng.scoringTurn = other(teamKey);
+    ng.log = [...ng.log, { team: teamKey, msg: 'Passed scoring turn.' }];
+  }
+  return ng;
+}
+
+/**
+ * Did this roll reach the player's TOP TIER — the last row of the chart?
+ *
+ * It used to mean "scored the chart's maximum points", and on a chart whose
+ * top three rows all pay one point (Oso Ighodaro: 9-17, 18-23 and 24+ each
+ * pay 1) a nine counted as top tier and lit Heat Check. The user's rule
+ * (2026-09-05): the tier, not the points — "his highest tier is 24+, so he'd
+ * have to hit a 24 or higher after bonuses." The one guard kept is that the
+ * row pays something at all, so a chart of nothing cannot "hit top tier".
+ */
+export function hitsTopTier(card, finalRoll) {
+  const chart = card?.chart;
+  if (!Array.isArray(chart) || chart.length === 0) return false;
+  const top = chart[chart.length - 1];
+  const pays = (top.pts || 0) + (top.reb || 0) + (top.ast || 0) > 0;
+  return pays && finalRoll >= top.lo;
 }
 
 // ── Scoring Roll ───────────────────────────────────────────────────────────
@@ -481,6 +682,9 @@ export function doRoll(g, teamKey, idx, opts = {}) {
 
   let bonus = adv.rollBonus;
   const te = ng.tempEff[teamKey] || {};
+  // Defensive Anchor: whoever the anchored defender guards gets no POSITIVE
+  // matchup bonus this period (a penalty still bites).
+  if (bonus > 0 && ng.tempDefEff?.[teamKey === 'A' ? 'B' : 'A']?.[defIdx]?.anchor) bonus = 0;
   if (te['r' + idx]) bonus += te['r' + idx];
 
   // Open-man bonus (Double Team's cost): rides on the next roll this team
@@ -507,12 +711,15 @@ export function doRoll(g, teamKey, idx, opts = {}) {
   }
   let die = roll20();
   for (let extra = 1; extra < clutchDice; extra += 1) die = Math.max(die, roll20());
+  // Unsung Hero (two dice, keep the higher) and Swarming Defense (two dice,
+  // keep the lower) — both set by a card this section on this roller's slot.
+  if (te['adv' + idx]) die = Math.max(die, roll20());
+  if (te['dis' + idx]) die = Math.min(die, roll20());
 
   const totalBonus = bonus + fat + mrkB;
   let finalRoll = Math.max(1, Math.min(die + totalBonus, 99));
   let result = lookupChart(nPlayer, finalRoll);
-  const topPts = nPlayer.chart[nPlayer.chart.length - 1].pts;
-  let isTop = result.pts >= topPts && result.pts > 0;
+  let isTop = hitsTopTier(nPlayer, finalRoll);
 
   // ── DESPERATION PRESS ────────────────────────────────────────────────────
   // The trailing team's armed press forces a re-roll of this team's next
@@ -524,9 +731,11 @@ export function doRoll(g, teamKey, idx, opts = {}) {
     die = roll20();
     finalRoll = Math.max(1, Math.min(die + totalBonus, 99));
     result = lookupChart(nPlayer, finalRoll);
-    isTop = result.pts >= topPts && result.pts > 0;
+    isTop = hitsTopTier(nPlayer, finalRoll);
   }
 
+  // Post Domination: this player's rebounds from scoring rolls are doubled.
+  if (te['reb2' + idx] && result.reb) result = { ...result, reb: result.reb * 2 };
   if (!ng.rollResults[teamKey]) ng.rollResults[teamKey] = [];
   // defId/defDb: who was guarding this roll, for matchup plus-minus analysis.
   ng.rollResults[teamKey][idx] = { die, bonus: totalBonus, finalRoll, pts: result.pts, reb: result.reb, ast: result.ast, isTop, defIdx, defId: nDefPlayer.id, defDb: nDefPlayer.defBoost || 0 };
@@ -554,6 +763,12 @@ export function doRoll(g, teamKey, idx, opts = {}) {
     msg: `${clutchDice ? `⭐ CLUTCH (${clutchDice} dice) ` : ''}${pressed ? '🛑 PRESSED — re-roll! ' : ''}${nPlayer.name} 🎲${die}${totalBonus !== 0 ? (totalBonus > 0 ? '+' : '') + totalBonus : ''}=${finalRoll} → ${result.pts}pts ${result.reb}reb ${result.ast}ast${adv.hasPenalty && !ghosted ? ' ⚠️ penalty' : ''}${isTop ? ' ⭐' : ''}${die === 20 ? ' 🎯' : ''}`,
   }];
 
+  // The roll Box Out can answer, and Spain Pick & Roll's assist for a score.
+  ng.lastRoll = { teamKey, idx, reb: result.reb, pts: result.pts, boxed: false };
+  if (te['astOnScore' + idx] && result.pts > 0) {
+    nMyT.assists += 1;
+    ng.log = [...ng.log, { team: teamKey, msg: `Spain Pick & Roll: ${nPlayer.name} scores — +1 AST` }];
+  }
   // Check assist bonus draw
   const after = checkAssistDraw(ng);
   return after;
@@ -620,6 +835,7 @@ export function endSection(g) {
 
   // Reset section state
   ng.tempEff = {}; ng.tempDefEff = {}; ng.ghosted = {}; ng.ignFatigue = {}; ng.openMan = {};
+  ng.lastDoubleTeam = null; ng.lastRoll = null; ng.lastCheckMiss = null;
   ng.matchupsSet = {};
   ng.rollResults = { A: [], B: [] }; ng.pendingShotCheck = null; ng.lastShotCheck = null;
   // reboundBonuses were set earlier in this function — they persist to the next section's scoring phase
@@ -681,7 +897,7 @@ export function endSection(g) {
   };
   ng.teamA.starters = []; ng.teamB.starters = [];
   ng.offMatchups = { A: [0, 1, 2, 3, 4], B: [0, 1, 2, 3, 4] };
-  ng.matchupTurn = 'A'; ng.matchupPasses = 0; ng.lastMatchupCard = null;
+  ng.matchupTurn = 'A'; ng.matchupPasses = 0; ng.lastMatchupCard = null; ng.lastDefSwitch = null;
   ng.scoringTurn = 'B'; ng.scoringPasses = 0;
   ng.blockedRolls = {};
   ng.endSectionVotes = { A: false, B: false };

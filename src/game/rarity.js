@@ -64,6 +64,78 @@ export const BURN_VALUES = {
   'legendary': 250,
 };
 
+/**
+ * MARKET PRICES — what a SPECIFIC card costs in coins.
+ *
+ * ── WHY A MARKET EXISTS AT ALL ──────────────────────────────────────────────
+ *
+ * Packs were the only source of cards, which made every card a lottery, and the
+ * odds are per-card: a specific legendary is 0.3% spread over fourteen cards,
+ * or one per ~933 boosters. Chasing one costs ~53,000 net coins — around seven
+ * hundred games. That is fine for a card you stumble into and impossible for a
+ * card you NEED, and team collections need thirty specific cards at a time.
+ *
+ * Note this is not a duplicate-protection problem: even with perfect dupe
+ * protection the 0.3% rate over fourteen cards still means ~933 boosters to see
+ * them all. The missing thing was never better luck, it was a way to CHOOSE.
+ *
+ * ── HOW THE NUMBERS WERE SET ────────────────────────────────────────────────
+ *
+ * Anchored so the hardest roster in the game is a season's goal rather than a
+ * second job. Oklahoma City is the worst case — two legendaries and two
+ * super-rares — and comes to ~15,500 coins, roughly 175 games. Brooklyn, the
+ * easiest, is ~2,300, roughly 26. That 6.7x spread tracks the real difficulty
+ * spread (264 to 1,595 boosters), so buying preserves the ordering that makes
+ * some teams worth more to complete than others.
+ *
+ * EVERY PRICE IS 20x ITS BURN VALUE, deliberately and uniformly. The margin is
+ * what stops the obvious exploit — buy a card, burn it, repeat — and holding
+ * the ratio constant means burning a duplicate always funds the same fraction
+ * of the card you actually wanted, whatever band it came from.
+ */
+export const MARKET_PRICES = {
+  'common': 40,
+  'uncommon': 100,
+  'rare': 600,
+  'super-rare': 2000,
+  'legendary': 5000,
+};
+
+/**
+ * Sets the market will not sell, at any price.
+ *
+ * EARNED CARDS MUST STAY EARNED. Team rewards are the payoff for completing a
+ * roster and Dissonance is reward territory too — neither is in any pack. If
+ * the market priced them off salary like everything else, the hardest
+ * collection in the game would be purchasable for 5,000 coins and the entire
+ * ladder would be decorative. `getMarketPrice` returning null is the whole
+ * enforcement: `buyCard` refuses anything without a price.
+ */
+export const NOT_FOR_SALE = new Set(['team-rewards', 'wnba-team-rewards', 'set-rewards', 'wnba-set-rewards', 'dissonance']);
+
+/**
+ * What this specific card costs to buy outright.
+ *
+ * Null means "no price", which covers three different things on purpose: it is
+ * not a player card, or its set is not for sale, or its salary is outside every
+ * band. Every caller treats all three the same way — refuse the sale.
+ */
+export function getMarketPrice(card) {
+  if (!card || NOT_FOR_SALE.has(card.set)) return null;
+  return MARKET_PRICES[getPlayerRarity(card)] ?? null;
+}
+
+/**
+ * What a card is WORTH by its rarity, whether or not it can be sold. The
+ * market price is null for an untradable set (Dissonance), which is right for
+ * the market and wrong for a collection goal: the goal's coins are a share of
+ * the set's buy-out, and a set nobody can sell is not worth nothing to finish.
+ */
+export function notionalPrice(card) {
+  if (!card) return null;
+  return MARKET_PRICES[getPlayerRarity(card)] ?? null;
+}
+
 // Burn values — strategy cards (nerfed: capped per deck so players have lots of extras)
 export const STRAT_BURN_VALUES = {
   'common': 1,

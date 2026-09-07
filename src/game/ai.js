@@ -1,9 +1,10 @@
 // src/game/ai.js
-// NBA Showdown 2K25 — AI Decision Engine
+// NBA Showdown 2026 — AI Decision Engine
 // Pure functions: takes game state + team key, returns an action object.
 // No React, no side effects. Used by tutorial, solo mode, sim-to-end.
 
-import { getTeam, getOpp, getPS, calcAdv, getFatigue, SPEND_COSTS, clutchAvailable, clutchEligible } from './engine.js';
+import { getTeam, getOpp, getPS, calcAdv, getFatigue, fatigueForMinutes, restMinutes, SPEND_COSTS, clutchAvailable, clutchEligible, burnedSlots } from './engine.js';
+import { lookupChart } from './cards.js';
 import { canPlayCard } from './canPlay.js';
 import { getStrat, STRATS } from './strats.js';
 
@@ -20,88 +21,150 @@ import { getStrat, STRATS } from './strats.js';
  */
 
 // ── Draft Decision ──────────────────────────────────────────────────────────
-// Evaluate available pool and pick the best player based on:
-//   - Balance: don't overload one attribute type
-//   - Fatigue: prefer rested players over fatigued ones
-//   - Value: high stats relative to salary
+//
+// ── WHAT A LINEUP PICK IS WORTH ─────────────────────────────────────────────
+//
+// The old score was raw attributes with a flat fatigue deduction. A star's
+// attributes run to forty-odd, so a star at −6 still beat a fresh bench player
+// on paper and the AI played Kawhi through it. A −6 on a d20 is a third of the
+// die; on most charts it is a whole tier.
+//
+// So a pick is valued by what the CHART pays at the roll the player would
+// carry — fatigue and markers summed exactly as doRoll sums them, so three hot
+// markers cancel a −6 here as they do there. Output alone is not enough,
+// though: calibrated against real cards, a star at −6 still out-produces a
+// $350 bench player THIS section. What a coach weighs is the next one too.
+// Play him now and he is at −12 next section; rest him now and he is fresh —
+// but resting clears his hot markers, which the engine does on the bench. So
+// the score carries half of that difference. Against real cards that lands the
+// cadence the minute maths was built for: a star plays at 0, 4 and (barely) 8
+// minutes, rests at 12, and plays at 12 if he is carrying three hot markers.
+//
+// Attributes still count, at a small fraction: speed and power decide matchup
+// advantage, which is a roll bonus the chart cannot see because the opponent's
+// lineup is not known yet.
+
+/** Average points a card pays over a d20 carrying `mod`; rebounds and assists at half. */
+export function expectedOutput(card, mod = 0) {
+  if (!Array.isArray(card?.chart) || card.chart.length === 0) return 0;
+  let total = 0;
+  for (let die = 1; die <= 20; die += 1) {
+    const t = lookupChart(card, die + mod);
+    total += (t.pts || 0) + 0.5 * (t.reb || 0) + 0.5 * (t.ast || 0);
+  }
+  return total / 20;
+}
+
+const SECTION_MINUTES = 4;
+const HORIZON = 0.5;
+
+/** The pick's score: this section's output, half of next section's swing, a little body. */
+export function lineupValue(player, ps) {
+  const min = ps?.minutes || 0;
+  const markers = ps ? ((ps.hot || 0) - (ps.cold || 0)) * 2 : 0;
+
+  const now = expectedOutput(player, fatigueForMinutes(min) + markers);
+  const nextIfPlayed = expectedOutput(player, fatigueForMinutes(min + SECTION_MINUTES) + markers);
+  const nextIfRested = expectedOutput(player, fatigueForMinutes(restMinutes(min))); // markers gone
+
+  const body = 0.05 * (player.speed + player.power + (player.defBoost || 0));
+  const shoot = 0.1 * ((player.threePtBoost || 0) + (player.paintBoost || 0));
+
+  return now + HORIZON * (nextIfPlayed - nextIfRested) + body + shoot;
+}
+
 export function aiDraftPick(game, teamKey) {
-  const team = getTeam(game, teamKey);
   const pool = teamKey === 'A' ? game.draft.aPool : game.draft.bPool;
   if (!pool || pool.length === 0) return null;
 
-  const currentStarters = team.starters || [];
-
-  // Score each available player
-  const scored = pool.map(player => {
-    const ps = getPS(game, teamKey, player.id);
-    const fatigue = ps?.minutes || 0;
-    const fatPenalty = fatigue >= 16 ? -40 : fatigue >= 12 ? -20 : fatigue >= 8 ? -8 : 0;
-
-    // Base value: combined attributes
-    const baseVal = player.speed + player.power + (player.threePtBoost || 0) * 2 + (player.paintBoost || 0) * 2 + (player.defBoost || 0);
-
-    // Shooting versatility bonus
-    const shootBonus = (player.shotLine <= 13 ? 3 : player.shotLine <= 15 ? 1 : 0);
-
-    // Hot/cold bonus
-    const hotCold = ps ? ((ps.hot || 0) * 3 - (ps.cold || 0) * 3) : 0;
-
-    return {
-      player,
-      score: baseVal + shootBonus + hotCold + fatPenalty,
-    };
-  });
-
-  // Sort descending by score
+  const scored = pool.map(player => ({
+    player,
+    score: lineupValue(player, getPS(game, teamKey, player.id)),
+  }));
   scored.sort((a, b) => b.score - a.score);
-
   return { type: 'draft_pick', playerId: scored[0].player.id };
 }
 
 // ── Matchup Assignment ──────────────────────────────────────────────────────
 // Assign defenders to minimize opponent's total roll bonus.
 // Greedy: for each opponent starter, assign the best available defender.
+/**
+ * ASSIGN THE DEFENCE — every assignment scored by what it actually does.
+ *
+ * ── WHAT WAS WRONG ──────────────────────────────────────────────────────────
+ *
+ * The old version ranked the opponent by threat and, for each, took the
+ * defender with the best `speed + power + 3·defBoost`. The opponent's own
+ * numbers were subtracted in the score but were the same for every candidate
+ * defender, so they never changed the choice: it was a sorted pairing, best
+ * remaining body onto biggest remaining threat, blind to FIT. A fast guard and
+ * a slow centre with the same total were interchangeable to it. And when a
+ * draft leaves both rosters in rough strength order, sorted pairing IS the
+ * identity — which is why the AI looked like it never moved anyone.
+ *
+ * ── WHAT THIS DOES ──────────────────────────────────────────────────────────
+ *
+ * `calcAdv` is the engine's own verdict on one attacker against one defender:
+ * the die modifier that roll will carry, temporary boosts on both sides
+ * included. Five against five is 120 assignments, cheap enough to score every
+ * one and keep the best — the one that gives the opponent the smallest total
+ * modifier, weighted by salary so a +2 handed to their star costs more than a
+ * +2 handed to their twelfth man. A penalty (negative modifier) is a gain.
+ * Ties break toward the smaller worst case, so two equal totals prefer the
+ * one without a blowout.
+ *
+ * Returns `matchups[i]` = index of MY starter guarding THEIR attacker in slot
+ * i, the shape applyMatchups writes and doRoll reads.
+ */
 export function aiSetMatchups(game, teamKey) {
   const myT = getTeam(game, teamKey);
   const oppKey = teamKey === 'A' ? 'B' : 'A';
   const oppT = getTeam(game, oppKey);
 
-  if (!myT.starters.length || !oppT.starters.length) return null;
+  const attackers = oppT?.starters || [];
+  const defenders = myT?.starters || [];
+  const n = Math.min(attackers.length, defenders.length);
+  if (n === 0) return null;
 
-  const available = new Set([0, 1, 2, 3, 4]);
-  const matchups = new Array(5).fill(0);
+  const tempEff = game.tempEff?.[oppKey] || {};
+  const tempDefEff = game.tempDefEff?.[teamKey] ?? null;
+  const meanSal = attackers.reduce((t, p) => t + (p?.salary || 0), 0) / n || 1;
 
-  // Rank opponent starters by threat level (highest combined attributes first)
-  const threats = oppT.starters.map((p, i) => ({
-    idx: i,
-    threat: p.speed + p.power + (p.threePtBoost || 0) * 3 + (p.paintBoost || 0) * 2,
-  })).sort((a, b) => b.threat - a.threat);
+  // cost[a][d]: what attacker a gets against defender d, star-weighted.
+  const cost = attackers.slice(0, n).map((att, a) =>
+    defenders.slice(0, n).map((def, d) => {
+      if (!att || !def) return 0;
+      const adv = calcAdv(att, def, tempEff, a, tempDefEff, d);
+      const weight = 0.5 + 0.5 * ((att.salary || meanSal) / meanSal);
+      return adv.rollBonus * weight;
+    })
+  );
 
-  for (const { idx: oppIdx } of threats) {
-    const opp = oppT.starters[oppIdx];
-    let bestDef = null;
-    let bestScore = -Infinity;
-
-    for (const defIdx of available) {
-      const def = myT.starters[defIdx];
-      if (!def) continue;
-      // Score = how well this defender matches up (higher = better defense)
-      const spdDiff = def.speed + (def.defBoost || 0) - opp.speed;
-      const pwrDiff = def.power + (def.defBoost || 0) - opp.power;
-      const score = spdDiff + pwrDiff + (def.defBoost || 0) * 2;
-      if (score > bestScore) {
-        bestScore = score;
-        bestDef = defIdx;
+  let best = null;
+  let bestTotal = Infinity;
+  let bestWorst = Infinity;
+  const perm = new Array(n);
+  const used = new Array(n).fill(false);
+  const walk = (a, total, worst) => {
+    if (a === n) {
+      if (total < bestTotal - 1e-9 || (Math.abs(total - bestTotal) < 1e-9 && worst < bestWorst)) {
+        best = perm.slice();
+        bestTotal = total;
+        bestWorst = worst;
       }
+      return;
     }
-
-    if (bestDef !== null) {
-      matchups[oppIdx] = bestDef;
-      available.delete(bestDef);
+    for (let d = 0; d < n; d += 1) {
+      if (used[d]) continue;
+      used[d] = true;
+      perm[a] = d;
+      walk(a + 1, total + cost[a][d], Math.max(worst, cost[a][d]));
+      used[d] = false;
     }
-  }
+  };
+  walk(0, 0, -Infinity);
 
-  return { type: 'set_matchups', matchups };
+  return { type: 'set_matchups', matchups: best };
 }
 
 // ── Placement: which player takes the floor next ────────────────────────────
@@ -213,8 +276,26 @@ export function aiScoringDecision(game, teamKey) {
 }
 
 // ── Card Value Evaluation ───────────────────────────────────────────────────
+/**
+ * Would Switch Everything actually MOVE anybody? The AI sets its defence at
+ * the start of every section (aiSetMatchups), so the "best" assignment the
+ * card would apply is usually the one already on the floor — and the card's
+ * cost, doubling every opponent advantage, is paid either way. The 600-game
+ * audit had it played 400 times, nearly all for nothing. It is worth playing
+ * only when the opponent's screen or a mid-section boost has left the current
+ * assignment behind.
+ */
+export function switchEverythingChanges(game, teamKey) {
+  const oppKey = teamKey === 'A' ? 'B' : 'A';
+  const best = aiSetMatchups(game, teamKey)?.matchups;
+  if (!best) return false;
+  const now = game.offMatchups?.[oppKey] || [0, 1, 2, 3, 4];
+  return best.some((d, i) => d !== now[i]);
+}
+
 function evaluateCard(game, teamKey, cardId, strat) {
   const phase = game.phase;
+  if (cardId === 'switch_everything' && !switchEverythingChanges(game, teamKey)) return 0;
 
   // Phase gating — matchup cards only in matchup phase, etc.
   if (strat.phase === 'matchup' && phase !== 'matchup_strats') return 0;
@@ -230,6 +311,9 @@ function evaluateCard(game, teamKey, cardId, strat) {
       go_under: 7, fight_over: 6, veer_switch: 6, burned_switch: 5,
       offensive_foul: 5, cold_spell: 6, anticipate_pass: 5, overhelp: 5,
       offensive_board: 5, rebound_tap_out: 5, coaches_challenge: 6, close_out: 6,
+      // Wave one (2026-09-06)
+      find_the_open_man: 7, putback_specialist: 6, rim_protector: 7, drop_coverage: 5,
+      smothering_defense: 5, denial: 4, hustle_play: 5, glass_cleaner: 6, box_out: 6,
     };
     return reactionValues[cardId] ?? 4;
   }
@@ -279,6 +363,12 @@ function evaluateCard(game, teamKey, cardId, strat) {
     ice_the_hot_hand: 7,
     reset: 6,
 
+    // Wave one (2026-09-06)
+    spain_pick_roll: 6, mismatch_hunter: 6, strength_in_numbers: 8, energizer: 5,
+    defensive_identity: 6, defensive_anchor: 6, swarming_defense: 5,
+    five_out: 6, hammer_set: 4, iso_heavy: 5, three_point_barrage: 8, crash_and_kick: 5,
+    pick_and_pop: 5, extra_pass: 4, lob_city: 8, stretch_five: 6, post_domination: 6,
+    unsung_hero: 6, transition_outlet: 5,
     // Post-roll
     heat_check: 7,
     burst_of_momentum: 6,
@@ -338,9 +428,48 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
     }
 
     case 'stagger_action': {
+      // Two DIFFERENT players. The fallback used to be slot 1 — which is the
+      // Speed-13 player himself whenever he sits in slot 1, and the card went
+      // down as "Jamal Murray & Jamal Murray". Seen in the browser 2026-09-05.
       const spd13 = starters.findIndex(p => p.speed >= 13);
-      const three = starters.findIndex((p, i) => i !== spd13 && (p.threePtBoost || 0) > 0);
-      return { playerIdx: spd13 >= 0 ? spd13 : 0, player2Idx: three >= 0 ? three : 1 };
+      const first = spd13 >= 0 ? spd13 : 0;
+      const three = starters.findIndex((p, i) => i !== first && (p.threePtBoost || 0) > 0);
+      const other = three >= 0 ? three : starters.findIndex((_, i) => i !== first);
+      return { playerIdx: first, player2Idx: other >= 0 ? other : first };
+    }
+
+    case 'veer_switch': {
+      // Keep the pair or trade it — the only two arrangements the card allows.
+      // Trade when it lowers what the two screened attackers get, in total.
+      const lc = game.lastMatchupCard;
+      if (!lc?.opts) return {};
+      const offT = getOpp(game, teamKey);
+      const a1 = offT.starters[lc.opts.swapSlot1];
+      const a2 = offT.starters[lc.opts.swapSlot2];
+      const d1 = starters[lc.opts.origD1];
+      const d2 = starters[lc.opts.origD2];
+      if (!a1 || !a2 || !d1 || !d2) return {};
+      const eff = game.tempEff?.[lc.teamKey] || {};
+      const keep = calcAdv(a1, d1, eff, lc.opts.swapSlot1).rollBonus + calcAdv(a2, d2, eff, lc.opts.swapSlot2).rollBonus;
+      const trade = calcAdv(a1, d2, eff, lc.opts.swapSlot1).rollBonus + calcAdv(a2, d1, eff, lc.opts.swapSlot2).rollBonus;
+      return { veerSwap: trade < keep };
+    }
+
+    case 'overhelp': {
+      // The +3 goes to the best attacker still to roll; salary is the price
+      // the game puts on a chart, so it is the ranking used here.
+      const rolled = game.rollResults?.[teamKey] || [];
+      let best = -1;
+      let bestSal = -1;
+      starters.forEach((p, i) => {
+        if (rolled[i] == null && (p?.salary || 0) > bestSal) { best = i; bestSal = p?.salary || 0; }
+      });
+      return { playerIdx: best >= 0 ? best : 0 };
+    }
+
+    case 'burned_switch': {
+      // The slot the switch actually burned — the engine refuses any other.
+      return { playerIdx: burnedSlots(game, game.lastDefSwitch)[0] ?? 0 };
     }
 
     case 'second_wind': {
@@ -507,7 +636,7 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
     case 'switch_everything': {
       // Use the matchup AI to figure out best defense
       const result = aiSetMatchups(game, teamKey);
-      return result ? { matchups: result.matchups } : {};
+      return result ? { assignments: result.matchups } : {};
     }
 
     case 'this_is_my_house': {
@@ -668,6 +797,121 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
       return { playerIdx: target >= 0 ? target : 0 };
     }
 
+    // ═══ WAVE ONE (2026-09-06) — pick the player the engine will accept ═══════
+    case 'spain_pick_roll': {
+      const cand = starters.map((p, i) => ({ p, i })).filter(({ p, i }) => {
+        const dp = oppT.starters[(game.offMatchups?.[teamKey] || [])[i] ?? i];
+        return p && dp && p.speed > dp.speed;
+      }).sort((u, v) => v.p.speed - u.p.speed);
+      return { playerIdx: cand[0]?.i ?? 0 };
+    }
+    case 'mismatch_hunter': {
+      const best = starters.reduce((b, p, i) => {
+        const dp = oppT.starters[(game.offMatchups?.[teamKey] || [])[i] ?? i];
+        if (!p || !dp) return b;
+        const a = calcAdv(p, dp, game.tempEff?.[teamKey] || {}, i);
+        const m = Math.max(a.speedAdv, a.powerAdv);
+        return m > b.m ? { idx: i, m } : b;
+      }, { idx: 0, m: -99 });
+      return { playerIdx: best.idx };
+    }
+    case 'energizer': {
+      const cand = starters.map((p, i) => ({ p, i })).filter(({ p }) => p && (p.salary || 0) < 250)
+        .sort((u, v) => ((v.p.defBoost || 0) - (u.p.defBoost || 0)));
+      return { playerIdx: cand[0]?.i ?? 0 };
+    }
+    case 'defensive_anchor': {
+      // The anchor with the biggest bonus, guarding the attacker with the
+      // largest positive matchup bonus if there is one.
+      const guards = game.offMatchups?.[oppKey] || [];
+      const cand = starters.map((p, i) => ({ p, i })).filter(({ p }) => (p?.defBoost || 0) >= 3);
+      const scored = cand.map(({ p, i }) => {
+        const offSlot = guards.indexOf(i);
+        const off = oppT.starters[offSlot];
+        const rb = off ? calcAdv(off, p, game.tempEff?.[oppKey] || {}, offSlot).rollBonus : 0;
+        return { i, rb };
+      }).sort((u, v) => v.rb - u.rb);
+      return { playerIdx: scored[0]?.i ?? cand[0]?.i ?? 0 };
+    }
+    case 'five_out': {
+      const cand = starters.map((p, i) => ({ p, i }))
+        .filter(({ p, i }) => p && rolls[i] == null && (p.threePtBoost || 0) > 0)
+        .sort((u, v) => ((u.p.shotLine ?? 18) - (u.p.threePtBoost || 0)) - ((v.p.shotLine ?? 18) - (v.p.threePtBoost || 0)));
+      return { playerIdx: cand[0]?.i ?? 0 };
+    }
+    case 'hammer_set': {
+      const cand = starters.map((p, i) => ({ p, i })).filter(({ p, i }) => {
+        if (!p || (p.threePtBoost || 0) > 0) return false;
+        const dp = oppT.starters[(game.offMatchups?.[teamKey] || [])[i] ?? i];
+        return dp && calcAdv(p, dp, game.tempEff?.[teamKey] || {}, i).speedAdv > 0;
+      }).sort((u, v) => (u.p.shotLine ?? 18) - (v.p.shotLine ?? 18));
+      return { playerIdx: cand[0]?.i ?? 0 };
+    }
+    case 'iso_heavy': {
+      const cand = starters.map((p, i) => ({ p, i })).filter(({ p, i }) => p && rolls[i] == null)
+        .sort((u, v) => expectedOutput(v.p) - expectedOutput(u.p));
+      return { playerIdx: cand[0]?.i ?? 0 };
+    }
+    case 'three_point_barrage': {
+      // The extra check goes to the best shooter if an assist is spare.
+      const shooters = starters.map((p, i) => ({ p, i })).filter(({ p }) => p && (p.threePtBoost || 0) > 0)
+        .sort((u, v) => ((u.p.shotLine ?? 18) - (u.p.threePtBoost || 0)) - ((v.p.shotLine ?? 18) - (v.p.threePtBoost || 0)));
+      return myT.assists >= 2 && shooters[0] ? { extraShooterIdx: shooters[0].i } : {};
+    }
+    case 'crash_and_kick': case 'extra_pass': {
+      const cand = starters.map((p, i) => ({ p, i })).filter(({ p }) => p)
+        .sort((u, v) => ((u.p.shotLine ?? 18) - (u.p.threePtBoost || 0)) - ((v.p.shotLine ?? 18) - (v.p.threePtBoost || 0)));
+      return { playerIdx: cand[0]?.i ?? 0, checkType: '3pt' };
+    }
+    case 'pick_and_pop': {
+      const cand = starters.map((p, i) => ({ p, i })).filter(({ p }) => p && (p.threePtBoost || 0) > 0)
+        .sort((u, v) => ((u.p.shotLine ?? 18) - (u.p.threePtBoost || 0)) - ((v.p.shotLine ?? 18) - (v.p.threePtBoost || 0)));
+      return { playerIdx: cand[0]?.i ?? 0 };
+    }
+    case 'lob_city': case 'denial': {
+      const others = (myT.hand || []).filter(id => id !== cardId);
+      return { discardId: others[others.length - 1] };
+    }
+    case 'stretch_five': {
+      const big = starters.map((p, i) => ({ p, i })).find(({ p }) => p && String(p.pos || '').split(/[-/]/).some(t => t === 'C' || t === 'PF') && ((p.shotLine ?? 18) - (p.threePtBoost || 0)) <= 14);
+      const mate = starters.map((p, i) => ({ p, i })).filter(({ p, i }) => p && i !== big?.i)
+        .sort((u, v) => ((u.p.shotLine ?? 18) - (u.p.paintBoost || 0)) - ((v.p.shotLine ?? 18) - (v.p.paintBoost || 0)));
+      return { playerIdx: big?.i ?? 0, player2Idx: mate[0]?.i ?? 1 };
+    }
+    case 'post_domination': {
+      const cand = starters.map((p, i) => ({ p, i })).filter(({ p }) => (p?.power || 0) >= 15)
+        .sort((u, v) => expectedOutput(v.p) - expectedOutput(u.p));
+      return { playerIdx: cand[0]?.i ?? 0 };
+    }
+    case 'unsung_hero': {
+      const cand = starters.map((p, i) => ({ p, i })).filter(({ p, i }) => p && rolls[i] == null && (p.salary || 0) <= 400)
+        .sort((u, v) => expectedOutput(v.p) - expectedOutput(u.p));
+      return { playerIdx: cand[0]?.i ?? 0 };
+    }
+    case 'transition_outlet': {
+      const cand = starters.map((p, i) => ({ p, i })).filter(({ p, i }) => {
+        const dp = oppT.starters[(game.offMatchups?.[teamKey] || [])[i] ?? i];
+        return p && dp && calcAdv(p, dp, game.tempEff?.[teamKey] || {}, i).speedAdv > 0;
+      }).sort((u, v) => ((u.p.shotLine ?? 18) - (u.p.threePtBoost || 0)) - ((v.p.shotLine ?? 18) - (v.p.threePtBoost || 0)));
+      return { playerIdx: cand[0]?.i ?? 0, checkType: '3pt' };
+    }
+    case 'find_the_open_man': {
+      const dt = game.lastDoubleTeam;
+      const cand = starters.map((p, i) => ({ p, i })).filter(({ p, i }) => p && rolls[i] == null && i !== dt?.targetIdx)
+        .sort((u, v) => expectedOutput(v.p) - expectedOutput(u.p));
+      return { playerIdx: cand[0]?.i ?? 0 };
+    }
+    case 'putback_specialist': {
+      const cand = starters.map((p, i) => ({ p, i })).filter(({ p }) => p)
+        .sort((u, v) => ((u.p.shotLine ?? 18) - (u.p.paintBoost || 0)) - ((v.p.shotLine ?? 18) - (v.p.paintBoost || 0)));
+      return { playerIdx: cand[0]?.i ?? 0 };
+    }
+    case 'hustle_play': {
+      const cand = starters.map((p, i) => ({ p, i })).filter(({ p }) => p && (p.salary || 0) < 400 && (p.defBoost || 0) > 0)
+        .sort((u, v) => (v.p.defBoost || 0) - (u.p.defBoost || 0));
+      return { playerIdx: cand[0]?.i ?? 0 };
+    }
+
     default:
       return {};
   }
@@ -738,10 +982,21 @@ export function aiReactionDecision(game, teamKey, trigger) {
   const team = getTeam(game, teamKey);
   const hand = team.hand || [];
 
-  // Close Out: always play if available and beneficial
-  if (trigger === 'shot_check' && hand.includes('close_out')) {
-    const check = canPlayCard(game, teamKey, 'close_out');
-    if (check.canPlay) return { type: 'play_card', cardId: 'close_out', opts: {} };
+  // An announced shot check: one answer, the strongest legal one. Paint
+  // checks have their own answers (Rim Protector, Drop Coverage); Close Out
+  // is the three-point one; the rest answer either.
+  if (trigger === 'shot_check') {
+    const psc = game.pendingShotCheck;
+    if (!psc || psc.reacted) return null;
+    const order = psc.type === 'paint'
+      ? ['rim_protector', 'drop_coverage', 'smothering_defense', 'hustle_play', 'denial']
+      : ['close_out', 'smothering_defense', 'hustle_play', 'denial'];
+    for (const cardId of order) {
+      if (!hand.includes(cardId)) continue;
+      if (canPlayCard(game, teamKey, cardId).canPlay) {
+        return { type: 'play_card', cardId, opts: aiBuildCardOpts(game, teamKey, cardId) };
+      }
+    }
   }
 
   // Cold Spell: always play on natural 1-2
@@ -759,7 +1014,7 @@ export function aiReactionDecision(game, teamKey, trigger) {
     for (const cardId of reactions) {
       if (hand.includes(cardId)) {
         const check = canPlayCard(game, teamKey, cardId);
-        if (check.canPlay) return { type: 'play_card', cardId, opts: {} };
+        if (check.canPlay) return { type: 'play_card', cardId, opts: aiBuildCardOpts(game, teamKey, cardId) };
       }
     }
   }
@@ -787,22 +1042,17 @@ export function aiTurn(game, teamKey) {
   }
 
   if (phase === 'matchup_strats') {
-    // ASSIGN DEFENCE FIRST, which the AI never used to do. aiSetMatchups has
-    // existed all along and was reachable only from the `switch_everything`
-    // card, so an AI team left `offMatchups` at the identity mapping every
-    // section and guarded whoever happened to share its slot index. Simulated
-    // against the card set, competent assignment is worth about 13 points per
-    // team per game -- more than the entire assist and rebound economy -- so
-    // this was the single largest thing the AI was giving away.
+    // THE PLACEMENT SNAKE IS THE MATCHUP ASSIGNMENT. Row by row, A places and
+    // B answers in the same row (or the other way round), and the pairing
+    // that leaves is the matchup — the AI's defensive choice is made in
+    // aiPlacementPick, when it counters what just took the floor. Only a
+    // switching card (or the crunch-time timeout re-set) moves anyone after
+    // that. For four days the AI also re-dealt every pairing here through
+    // aiSetMatchups; the user, reading the log on 2026-09-06: "the AI is just
+    // setting the defense after the matchups have been laid down... Only
+    // switching cards can change that." aiSetMatchups stays for the cards.
     //
-    // Only once per section: `matchupsSet` is cleared by endSection along with
-    // the rest of the section state, so a second pass through this phase does
-    // not re-shuffle a defence the opponent has already played cards against.
-    if (!game.matchupsSet?.[teamKey]) {
-      const assignment = aiSetMatchups(game, teamKey);
-      if (assignment) return assignment;
-    }
-    // Then try a matchup card, otherwise pass
+    // A matchup card, otherwise pass.
     const cardDecision = aiScoringDecision(game, teamKey);
     return cardDecision;
   }

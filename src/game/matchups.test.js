@@ -54,21 +54,33 @@ describe('applyMatchups', () => {
   });
 });
 
-describe('the AI assigns defence', () => {
-  it('returns a matchup assignment before it considers cards', () => {
-    // The regression this guards: aiSetMatchups existed from the start and was
-    // reachable only from the `switch_everything` card, so an AI team left the
-    // identity mapping in place every section and guarded whoever shared its
-    // slot index. Worth ~13 points per team per game.
-    const action = aiTurn(started(), 'B');
-    expect(action?.type).toBe('set_matchups');
-    expect(action.matchups).toHaveLength(5);
-    expect([...action.matchups].sort()).toEqual([0, 1, 2, 3, 4]); // a permutation
+describe('the placement pairing stands', () => {
+  it('never re-deals the defence on its matchup turn — a card or a pass, nothing else', () => {
+    // The user's rule (2026-09-06): the placement snake IS the matchup
+    // assignment; only switching cards move anyone afterwards. The AI's
+    // defensive choice lives in aiPlacementPick, not here.
+    const g = started();
+    const before = [...(g.offMatchups.A || [0, 1, 2, 3, 4])];
+    const action = aiTurn(g, 'B');
+    expect(action?.type).not.toBe('set_matchups');
+    expect(['play_card', 'pass', undefined]).toContain(action?.type);
+    expect(g.offMatchups.A).toEqual(before);
   });
 
-  it('does not assign twice in one section', () => {
-    const g = applyMatchups(started(), 'B', aiSetMatchups(started(), 'B').matchups);
-    const next = aiTurn(g, 'B');
-    expect(next?.type).not.toBe('set_matchups');
+  it('still knows how to assign — for Switch Everything, Veer Switch and the timeout', () => {
+    const { matchups } = aiSetMatchups(started(), 'B');
+    expect([...matchups].sort()).toEqual([0, 1, 2, 3, 4]);
+  });
+});
+
+describe('the assignment shows its work', () => {
+  it('logs every matchup with the modifier the attacker gets', () => {
+    const g = applyMatchups(started(), 'B', [0, 1, 2, 3, 4]);
+    const line = g.log[g.log.length - 1];
+    expect(line.team).toBe('B');
+    expect(line.msg).toMatch(/^Sets the defence — /);
+    // Five matchups, each "<defender> on <attacker> (<signed number>)".
+    expect(line.msg.split(' · ')).toHaveLength(5);
+    expect(line.msg).toMatch(/\((\+|-)?\d+\)/);
   });
 });

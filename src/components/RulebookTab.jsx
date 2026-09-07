@@ -24,7 +24,7 @@ export default function RulebookTab() {
 
   return (
     <div className={s.rulebook}>
-      <div className={s.title}>NBA Showdown 2K25 Rulebook</div>
+      <div className={s.title}>NBA Showdown 2026 Rulebook</div>
       <div className={s.subtitle}>Official rules for the D20 Basketball Card Game</div>
 
       {/* Table of Contents */}
@@ -47,7 +47,7 @@ export default function RulebookTab() {
         <div className={s.sectionTitle}>Introduction</div>
         <div className={s.body}>
           <p>
-            NBA Showdown 2K25 is a competitive basketball strategy card game where players
+            NBA Showdown 2026 is a competitive basketball strategy card game where players
             construct teams, manage matchups, and utilize strategy cards to outplay their opponents.
             The game is designed to reflect modern NBA playstyles, including positionless basketball,
             three-point shooting, and tactical decision-making.
@@ -85,7 +85,7 @@ export default function RulebookTab() {
           <ul>
             <li><strong>Speed:</strong> Determines quickness, transition plays, and perimeter defense.</li>
             <li><strong>Power:</strong> Represents strength, rebounding, and paint scoring ability.</li>
-            <li><strong>Shot Line:</strong> The threshold a player must beat on shot checks (3PT, Paint, Free Throw).</li>
+            <li><strong>Shot Line:</strong> The number a shot check has to reach — roll plus bonuses equal to or above the Shot Line scores (3PT, Paint, Free Throw).</li>
             <li><strong>Scoring Chart:</strong> Maps D20 roll results to points, rebounds, and assists.</li>
           </ul>
 
@@ -145,7 +145,7 @@ export default function RulebookTab() {
           <ul>
             <li>All temporary effects (boosts, ghosts, blocks) are cleared.</li>
             <li>Each starter accumulates <strong>+4 minutes</strong> of play time.</li>
-            <li>Benched players recover <strong>8 minutes</strong> of fatigue.</li>
+            <li>Benched players recover <strong>4 minutes</strong> of fatigue per section on the bench.</li>
             <li>Both managers draw back up to <strong>7 strategy cards</strong>.</li>
             <li>At halftime (start of Q3), <strong>all fatigue resets</strong>.</li>
           </ul>
@@ -195,9 +195,9 @@ export default function RulebookTab() {
 
           <div className={s.sub}>Shot Checks</div>
           <ul>
-            <li><strong>3PT Shot Check:</strong> Roll D20 + 3PT Bonus. Beat the player's Shot Line to score 3 points.</li>
-            <li><strong>Paint Shot Check:</strong> Roll D20 + Paint Bonus. Beat the Shot Line to score 2 points.</li>
-            <li><strong>Free Throw:</strong> Roll D20 + 10. Beat the Shot Line to score 1 point.</li>
+            <li><strong>3PT Shot Check:</strong> Roll D20 + 3PT Bonus. Reach the player's Shot Line (tie or better) to score 3 points.</li>
+            <li><strong>Paint Shot Check:</strong> Roll D20 + Paint Bonus. Reach the Shot Line (tie or better) to score 2 points.</li>
+            <li><strong>Free Throw:</strong> Roll D20 + 10. Reach the Shot Line (tie or better) to score 1 point.</li>
           </ul>
 
           <div className={s.sub}>Hot & Cold Markers</div>
@@ -235,7 +235,7 @@ export default function RulebookTab() {
 
           <div className={s.highlight}>
             <strong>8+ minutes played:</strong> -2 to all scoring rolls and shot checks<br/>
-            <strong>12+ minutes played:</strong> -4 to all scoring rolls and shot checks
+            <strong>12+ minutes played:</strong> -6 to all scoring rolls and shot checks
           </div>
 
           <ul>
@@ -279,7 +279,7 @@ export default function RulebookTab() {
             <div className={s.glossaryDef}>Player strength. Affects matchup advantage and paint-oriented cards.</div>
 
             <div className={s.glossaryTerm}>Shot Line</div>
-            <div className={s.glossaryDef}>The D20 threshold a player must beat on shot checks (3PT, Paint, FT).</div>
+            <div className={s.glossaryDef}>The D20 total a shot check must reach, tie or better (3PT, Paint, FT). The arrow on the card marks the row.</div>
 
             <div className={s.glossaryTerm}>Roll Bonus</div>
             <div className={s.glossaryDef}>The modifier applied to a D20 roll based on matchup advantage, fatigue, hot/cold, and card effects.</div>
@@ -312,7 +312,7 @@ export default function RulebookTab() {
             <div className={s.glossaryDef}>One of 3 segments per quarter (12 total). Each section: draft → matchups → scoring.</div>
 
             <div className={s.glossaryTerm}>Shot Check</div>
-            <div className={s.glossaryDef}>A bonus roll triggered by cards/mechanics. Roll D20 + bonus, beat Shot Line to score.</div>
+            <div className={s.glossaryDef}>A bonus roll triggered by cards/mechanics. Roll D20 + bonus; reaching the Shot Line (tie or better) scores.</div>
 
             <div className={s.glossaryTerm}>Reaction Card</div>
             <div className={s.glossaryDef}>A strategy card played in response to an opponent's action, before it resolves.</div>

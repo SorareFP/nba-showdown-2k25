@@ -1,11 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../firebase/AuthProvider.jsx';
-import { calculateRewards } from '../../game/coinRewards.js';
-import { addCoins, getUserData, updateUserFields, addCardsToCollection } from '../../firebase/collection.js';
+import { detectMilestones, settleGameReward, todayKey } from '../../game/coinRewards.js';
+import { getUserData } from '../../firebase/collection.js';
+import { claimGameReward } from '../../firebase/serverWrites.js';
+import { boxScoreFor } from '../../game/boxScore.js';
+import { useCardStats } from '../../firebase/CardStatsProvider.jsx';
 import styles from './GameOver.module.css';
 
 export default function GameOver({ game, onPlayAgain, isPvp = false, myTeamKey = null, onLeave = null }) {
   const { user } = useAuth();
+  const { refresh: refreshCardStats } = useCardStats();
   const { teamA, teamB } = game;
   const w = teamA.score > teamB.score ? teamA : teamA.score < teamB.score ? teamB : null;
   const winCol = w === teamA ? 'var(--orange)' : 'var(--blue)';
@@ -26,47 +30,44 @@ export default function GameOver({ game, onPlayAgain, isPvp = false, myTeamKey =
       const userData = await getUserData(user.uid);
       if (!userData) return;
 
-      // Daily reset check
-      const today = new Date().toISOString().split('T')[0];
-      let dailyCoins = userData.dailyMilestoneCoins || 0;
-      let dailyFirstWin = userData.dailyFirstWin || false;
-      if (userData.dailyMilestoneDate !== today) {
-        dailyCoins = 0;
-        dailyFirstWin = false;
-      }
-
+      // THE CLAIM. What the client asserts about the game: won or not, PvP or
+      // not, which milestones the box score hit. It is priced by
+      // settleGameReward — here for the breakdown, and again on the server for
+      // the actual coins, against the server's own copy of the daily counters.
       const isWinner = isPvp ? pvpIsWinner : w !== null; // self-play always has a winner
-      const result = calculateRewards(game, isWinner, dailyCoins, isPvp);
+      // The box goes with the claim: the lifetime tracker's lines for MY team —
+      // A in a solo game, my side in PvP.
+      const myKey = isPvp ? myTeamKey : 'A';
+      const claim = { won: isWinner, pvp: isPvp, ...detectMilestones(game), box: myKey ? boxScoreFor(game, myKey) : [] };
+      const today = todayKey();
+      const preview = settleGameReward(
+        claim,
+        { date: userData.dailyMilestoneDate, coins: userData.dailyMilestoneCoins, firstWin: userData.dailyFirstWin },
+        today
+      );
+      setRewards(preview);
 
-      // Daily first win bonus
-      if (isWinner && !dailyFirstWin) {
-        result.coins += 50;
-        result.breakdown.push({ label: 'Daily First Win', coins: 50 });
-      }
-
-      setRewards(result);
-
-      // Apply rewards to Firestore
-      if (result.coins > 0) {
-        await addCoins(user.uid, result.coins);
-      }
-
-      // Update daily tracking
-      const updates = {
-        dailyMilestoneDate: today,
-        dailyMilestoneCoins: dailyCoins + result.milestoneCoins,
-      };
-      if (isWinner && !dailyFirstWin) updates.dailyFirstWin = true;
-      await updateUserFields(user.uid, updates);
-
-      // Bam reward
-      if (result.bamReward) {
-        await addCardsToCollection(user.uid, [{ id: result.bamCardId, type: 'player' }], 'milestone', 0);
+      // The server's totals replace the preview's. They differ only if this
+      // client's view of the counters was stale — a game finished on another
+      // device a moment ago — and then the server is the one that is right.
+      try {
+        const paid = await claimGameReward(user.uid, claim);
+        refreshCardStats();
+        setRewards(r => ({
+          ...r,
+          coins: paid.coins,
+          milestoneCoins: paid.milestoneCoins,
+          firstWin: paid.firstWin,
+          bamReward: paid.bam,
+        }));
+      } catch (e) {
+        console.error('Reward claim failed:', e);
+        setRewards(r => ({ ...r, coins: 0, error: e.message }));
       }
 
       setRewardsApplied(true);
     })();
-  }, [user, game, w, isPvp, pvpIsWinner]);
+  }, [user, game, w, isPvp, pvpIsWinner, myTeamKey, refreshCardStats]);
 
   return (
     <div className={styles.wrap}>
@@ -100,7 +101,7 @@ export default function GameOver({ game, onPlayAgain, isPvp = false, myTeamKey =
             <span className={styles.totalCoins}>+{rewards.coins}</span>
           </div>
           {rewards.bamReward && (
-            <div className={styles.bamReward}>Bam Adebayo card added to your collection!</div>
+            <div className={styles.bamReward}>Bam Adebayo card added to your cards — collect it in the Collection tab!</div>
           )}
         </div>
       )}

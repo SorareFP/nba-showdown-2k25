@@ -46,21 +46,25 @@ export const DISADVANTAGE = 'disadvantage';
  * Returns calcAdv's own numbers plus the classification this module adds.
  *
  * `rawBonus` is the roll bonus the attacker would have received against the
- * same defender with no Def Boost. It is `Math.max(rawSpeedDiff, rawPowerDiff)`
- * in BOTH of calcAdv's branches:
- *   - penalty branch (both diffs <= 0): Def Boost never applies, so calcAdv
- *     already returns exactly that max;
- *   - advantage branch: at least one diff is positive, so clamping each at zero
- *     before taking the max cannot change which value wins.
- * `blunted = rawBonus - rollBonus` is then the roll-bonus points the defender's
- * Def Boost actually removed, which is the only direct measure of what a Def
- * Boost is mechanically worth.
+ * same defender with no Def Boost, and it is obtained by ASKING calcAdv for
+ * exactly that — the same defender with defBoost 0.
+ *
+ * It used to be derived as `Math.max(rawSpeedDiff, rawPowerDiff)`, which was
+ * sound while a negative Def Boost was inert: the raw diffs were then a genuine
+ * no-boost baseline. They are not any more. A negative Def Boost is now worn by
+ * the defender as lower effective Speed and Power, so it is already baked into
+ * both raw diffs, and that shortcut would report the nerf as part of the
+ * baseline and hide it from `blunted` entirely.
+ *
+ * `blunted = rawBonus - rollBonus` is the roll-bonus points the defender's Def
+ * Boost actually moved, and it is SIGNED: positive when a real Def Boost ate an
+ * advantage, negative when a weak defender handed one over.
  */
 export function evaluateMatchup(off, def) {
   const adv = calcAdv(off, def);
   const { speedAdv, powerAdv, rawSpeedDiff, rawPowerDiff, db, rollBonus, hasPenalty } = adv;
 
-  const rawBonus = Math.max(rawSpeedDiff, rawPowerDiff);
+  const rawBonus = calcAdv(off, { ...def, defBoost: 0 }).rollBonus;
   const blunted = rawBonus - rollBonus;
 
   let outcome;

@@ -14,7 +14,11 @@ const load = f => {
   const body = JSON.parse(fs.readFileSync(path.join(GEN, f), 'utf8'));
   return { body, cards: Array.isArray(body) ? body : body.cards };
 };
-const save = (f, body) => fs.writeFileSync(path.join(GEN, f), JSON.stringify(body, null, 2) + '\n');
+// INDENT 1, matching every set generator. This used to write indent 2, which
+// meant a set file's whole 20-30k lines changed depending on whether a
+// generator or a reprice touched it last — a formatting churn that buried real
+// edits, because four cards moving looked exactly like nothing moving.
+const save = (f, body) => fs.writeFileSync(path.join(GEN, f), JSON.stringify(body, null, 1) + '\n');
 const stats = (name, before, cards) => {
   const ds = cards.map((c, i) => c.salary - before[i]);
   const moved = ds.filter(d => d !== 0);
@@ -38,6 +42,10 @@ const SPECIALS = [
   'cards-rookie.json',
   'cards-summer-standouts.json',
   'cards-dissonance.json',
+  // Added when the team-completion set shipped. Leaving it out did not fail
+  // loudly — the loop simply priced seven sets and reported seven — which is
+  // exactly why a new set must be added HERE and not only to its generator.
+  'cards-team-rewards.json',
   'cards-wnba.json',
   'cards-wnba-rookie.json',
   'cards-wnba-super-season.json',

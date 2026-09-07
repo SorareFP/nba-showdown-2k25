@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 // The two generated rosters, checked against the rules that define them.
 //
 // These read the COMMITTED output files rather than regenerating, deliberately:
@@ -185,7 +186,7 @@ describe.each([
     // The SECOND sanctioned exception: card-data/legends-2026.json names the
     // all-time greats who retired before the pool existed and so had no path
     // into any generated set. Also a named list, also not a loophole.
-    const legends = new Set(readLegends().map(l => l.name));
+    const legends = new Set([...readLegends().map(l => l.name), ...ROOKIE_LEGEND_NAMES]);
     for (const card of file.cards) {
       expect(
         pool.has(card.name) || standouts.has(card.name) || legends.has(card.name),
@@ -209,9 +210,14 @@ describe.each([
       ...Object.keys(STANDOUTS.superSeasons ?? {}),
       ...Object.keys(STANDOUTS.playoffCards ?? {}),
       ...readLegends().map(l => l.name),
+      ...ROOKIE_LEGEND_NAMES,
     ])].filter(name => carded.has(name) && !pool.has(name)).length;
     const ceded = (file.mergedIntoTwin ?? []).length;
-    expect(carded.size + excluded.size + ceded).toBe(POOL.length + offPool);
+    // The playing-time cut is a THIRD way out of the rookie set, and it has to
+    // be counted here or the rule stops being "everyone is accounted for" and
+    // becomes "everyone we happened to look at".
+    const thin = (file.excludedThin ?? []).length;
+    expect(carded.size + excluded.size + ceded + thin).toBe(POOL.length + offPool);
     for (const name of carded) expect(excluded.has(name)).toBe(false);
     for (const e of file.excluded) expect(e.reason).toBeTruthy();
     expect(file.excludedCount).toBe(file.excluded.length);
@@ -225,6 +231,12 @@ describe.each([
     expect(file.excluded.length).toBeGreaterThan(0);
   });
 });
+
+// The forced rookie seasons (card-data/rookie-legends-2026.json) are off-pool
+// by definition — that file exists for players with no base card.
+const ROOKIE_LEGEND_NAMES = Object.keys(
+  JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'card-data', 'rookie-legends-2026.json'), 'utf8'))
+).filter(k => !k.startsWith('_'));
 
 describe('Super Season', () => {
   it('excludes the players having their best season right now', () => {
@@ -277,14 +289,22 @@ describe('Rookie', () => {
     expect(ROOKIE.cards.find(c => c.name === 'Anthony Davis').team).toBe('NOH');
   });
 
-  it('does not let a 50-minute rookie year outrank a real one', () => {
+  it('does not card a 50-minute rookie year at all any more', () => {
     // Unshrunk, Leonard Miller's 17-game, 53-minute rookie season carried a BPM
     // of +9.6 — the single highest composite in the set — and his card came out
-    // a step above Victor Wembanyama's. See FULL_SEASON_MINUTES.
-    const miller = ROOKIE.cards.find(c => c.name === 'Leonard Miller');
-    const wemby = ROOKIE.cards.find(c => c.name === 'Victor Wembanyama');
-    expect(miller.games * miller.mpg).toBeLessThan(100);
-    expect(miller.speed + miller.power).toBeLessThan(wemby.speed + wemby.power);
+    // a step above Victor Wembanyama's. Shrinking it fixed the ORDERING, which
+    // is what this test used to assert.
+    //
+    // The playing-time bar now answers the question one level up: 17 games at
+    // 3.1 MPG is not a rookie season, so there is no card to rank. Asserting
+    // his ABSENCE is the stronger claim, and it is checked against the reason
+    // rather than just the gap, so a card vanishing for some unrelated bug
+    // could not pass this by accident.
+    expect(ROOKIE.cards.find(c => c.name === 'Leonard Miller')).toBeUndefined();
+    const cut = (ROOKIE.excludedThin ?? []).find(e => e.name === 'Leonard Miller');
+    expect(cut, 'Leonard Miller should be on the thin list').toBeTruthy();
+    expect(cut.games).toBeLessThan(20);
+    expect(ROOKIE.cards.find(c => c.name === 'Victor Wembanyama')).toBeTruthy();
   });
 
   it('has the top of the set look like the rookie classes people remember', () => {
@@ -293,9 +313,11 @@ describe('Rookie', () => {
     // ones people remember — the window widens rather than evicting anyone.
     const top = [...ROOKIE.cards]
       .sort((a, b) => b.speed + b.power - (a.speed + a.power))
-      .slice(0, 12)
+      // Twenty since 2026-09-06: seven forced rookie seasons (Jordan first among
+      // them) sit above some of these — Dončić is 18th of 271.
+      .slice(0, 20)
       .map(c => c.name);
-    for (const name of ['Victor Wembanyama', 'Luka Dončić', 'Nikola Jokić']) {
+    for (const name of ['Victor Wembanyama', 'Luka Dončić', 'Nikola Jokić', 'Michael Jordan']) {
       expect(top, `${name} missing from the top of the rookie set`).toContain(name);
     }
   });
@@ -388,7 +410,13 @@ describe('the base set\'s badges', () => {
     // rookie side under the gold line, wearing the best-season badge too.
     // AND 206 -> 208 when Rodman's 1991-92 and Pippen's 1993-94 arrived — the
     // missing legends the standout work was asked for at the very start.
-    expect(SUPER.cards.length).toBe(224);
+    // 219, not 224: the five players on no current NBA roster were cut with him (card-data/retired-2026.json), and each had a Super Season card.
+    // 225: the rookie playing-time bar removed 91 rookie cards, and six of them
+    // were TWINS a super-season card had been merged into. No twin, no merge,
+    // so those six stay in this set — mergedIntoTwin fell from 15 to 9.
+    // 233 since 2026-09-06: eight capstone legends joined (the file keeps the
+    // one moved into set-rewards; cardSets filters it at load).
+    expect(SUPER.cards.length).toBe(233);
     //
     // AND 321 -> 348 WHEN THE STANDOUT NEWCOMERS' ROOKIE YEARS ARRIVED — every
     // standout outside the pool whose career begins inside the cache-and-EPM
@@ -396,11 +424,24 @@ describe('the base set\'s badges', () => {
     // fetched (1992 as the sentinel that proves a 1993 first appearance is a
     // debut), that window reaches Shaq's, Kidd's and Garnett's actual rookie
     // years. 348 -> 367 when the pre-2000 nineteen arrived over the BPM bridge.
-    expect(ROOKIE.cards.length).toBe(368);
+    // 363, not 368: the five players on no current NBA roster were cut
+    // (card-data/retired-2026.json), and each had a Rookie card too.
+    //
+    // AND 363 -> 263 WHEN THE PLAYING-TIME BAR ARRIVED. The comment above says
+    // "a rookie year carries no floor, because it is whatever it was" — that is
+    // no longer true and was the thing worth changing. The set carded every
+    // first season including 1-game, 3-MPG call-ups; 91 of those are gone, on
+    // MPG >= 12 and G >= 20. The games floor is HALF the pool rule's so that a
+    // rookie year ended by injury still counts — Embiid on 31 games, Zion on
+    // 24 — while Julius Randle's single game does not.
+    // 271 since 2026-09-06: seven forced rookie seasons (rookie-legends-2026.json).
+    expect(ROOKIE.cards.length).toBe(271);
     const poolNames = new Set(POOL.map(p => p.name));
     const bothBlocks = [...new Set([
       ...Object.keys(STANDOUTS.superSeasons ?? {}),
       ...Object.keys(STANDOUTS.playoffCards ?? {}),
+      // The forced rookie seasons are off-pool by construction.
+      ...ROOKIE_LEGEND_NAMES,
     ])];
     // Legends are off-pool by definition — they retired before the pool
     // existed, which is the whole reason the list exists.
@@ -412,8 +453,16 @@ describe('the base set\'s badges', () => {
       .filter(name => ROOKIE.cards.some(c => c.name === name) && !poolNames.has(name)).length;
     expect(SUPER.cards.length + SUPER.excluded.length + (SUPER.mergedIntoTwin ?? []).length)
       .toBe(POOL.length + ssOffPool);
-    expect(ROOKIE.cards.length + ROOKIE.excluded.length + (ROOKIE.mergedIntoTwin ?? []).length)
-      .toBe(POOL.length + rookieOffPool);
+    // The playing-time bar is the third exit from the rookie set, alongside the
+    // badge exclusion and the twin merge. Counted here for the same reason the
+    // other two are: this assertion is the one that would notice a player
+    // disappearing for no recorded reason.
+    expect(
+      ROOKIE.cards.length +
+        ROOKIE.excluded.length +
+        (ROOKIE.mergedIntoTwin ?? []).length +
+        (ROOKIE.excludedThin ?? []).length
+    ).toBe(POOL.length + rookieOffPool);
   });
 
   it('has NESTED lists, which is why the rookie badge is the one that prints', () => {
@@ -473,8 +522,12 @@ describe('the base set\'s badges', () => {
     // moves cards across SUPER_SEASON_MIN_SALARY. The split is a MEASUREMENT.
     // 15/92 after the defBoost contest reprice — defence value now includes
     // conversion denial, and two badged defenders crossed the gilded line.
-    expect(counts.printed[BEST_SEASON_BADGE]).toBe(95);
-    expect(counts.printed[SUPER_SEASON_BADGE]).toBe(12);
+    // 16/91 after the LAST-82 WINDOW landed (windowEpm.js): Speed+Power now
+    // pools each season by its share of the player's last 82 games, 173 of 353
+    // budgets moved, and four more cards cleared SUPER_SEASON_MIN_SALARY.
+    // 14/93 after the five players on no current NBA roster were cut (card-data/retired-2026.json), taking the pool 353 -> 348.
+    expect(counts.printed[BEST_SEASON_BADGE]).toBe(93);
+    expect(counts.printed[SUPER_SEASON_BADGE]).toBe(14);
     // Nobody loses their pill entirely in the resolution.
     expect(BADGE_IDS.reduce((n, id) => n + counts.printed[id], 0)).toBe(counts.players);
     expect(counts.multiple).toBe(ROOKIE.excluded.length);

@@ -1,6 +1,6 @@
 {
   "Damian_Lillard": {
-    "x": -7.71,
+    "x": -6.97,
     "y": 0,
     "zoom": 1
   },
@@ -13,5 +13,20 @@
     "x": -2.5,
     "y": 16.55,
     "zoom": 1.05
+  },
+  "Scottie_Pippen": {
+    "x": 0,
+    "y": -8.79,
+    "zoom": 1
+  },
+  "Shaquille_O_Neal": {
+    "x": -31.91,
+    "y": 0,
+    "zoom": 1
+  },
+  "Kevin_Durant": {
+    "x": -52.9,
+    "y": 0.16,
+    "zoom": 1.16
   }
 }

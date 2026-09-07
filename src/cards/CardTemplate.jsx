@@ -23,7 +23,7 @@ import {
   setStatsSeason,
   showsSeason,
 } from './sets.js';
-import { SUPER_SEASON_BADGE, badgeColors, badgeLabel, badgeVars, pickBadge } from './badges.js';
+import { SUPER_SEASON_BADGE, BEST_SEASON_BADGE, badgeColors, badgeLabel, badgeVars, pickBadge } from './badges.js';
 import { awardImagePath, awardVars, pickAwards } from './awards.js';
 import { deriveFieldTheme, fieldThemeVars } from './fieldTheme.js';
 import { applyTreatment, treatmentVars } from './treatments.js';
@@ -336,7 +336,18 @@ export default function CardTemplate({
   // exactly as before (its setBadge is null, so the first branch never fires
   // there). The extras exist for the same-season twins: "make it a rookie
   // card with an additional best season badge."
-  const declared = setBadge(set);
+  //
+  // ── A CARD MAY DECLINE ITS SET'S BADGE ────────────────────────────────────
+  //
+  // `notBestSeason` is the one thing that overrides the set. The user's rule:
+  // "make sure anything with a Super Season badge was that player's best
+  // season. We can still use non-best seasons, but just lose the badge." Some
+  // seasons were picked before the pre-2000 distributions were cached, so the
+  // card is on a defensible season that is not the BEST one — and the honest
+  // answer is to keep the card and drop the claim, not to silently keep
+  // claiming it. See scripts/cardgen/auditSuperSeasonBadges.js, which stamps
+  // the flag.
+  const declared = card.notBestSeason ? null : setBadge(set);
   const carried = Array.isArray(card.badges) ? card.badges : [];
   const badge = declared
     ? pickBadge([declared], card.salary)
@@ -357,9 +368,15 @@ export default function CardTemplate({
   // itself stays undated (18 characters do not fit a 127px pill at any
   // legible size); the season row one line below is the same slot every
   // Super Season SET card uses for the same fact.
+  //
+  // AND THE DEMOTED PILL TOO (2026-09-05, Pete Nance): a base-set card under the
+  // foil tier prints plain BEST SEASON, and until now printed no season with it
+  // — the one card in the game whose badge named no year. "It's hard to know
+  // what set it is from." Same row, same slot, same stats season.
   const gildedOnBase = badge?.id === SUPER_SEASON_BADGE && !showsSeason(set);
-  const season = showsSeason(set) || gildedOnBase;
-  const seasonText = gildedOnBase ? setStatsSeason(set) : null;
+  const datedOnBase = gildedOnBase || (badge?.id === BEST_SEASON_BADGE && !showsSeason(set));
+  const season = showsSeason(set) || datedOnBase;
+  const seasonText = datedOnBase ? setStatsSeason(set) : null;
   // AND WHEN NO SEASON ROW PRINTS, THE PILL HAS TO CARRY THE YEAR ITSELF. A
   // card with no season row leaves the badge as the only place a year could
   // appear, so the badge is handed the set's stats season and dates itself if
@@ -483,7 +500,12 @@ export default function CardTemplate({
         {awards.length > 0 && (
           <div className={styles.awards}>
             {awards.map(award => (
-              <AwardMark key={award.code} award={award} count={awards.length} />
+              <AwardMark
+                key={award.code}
+                award={award}
+                count={awards.length}
+                league={league}
+              />
             ))}
           </div>
         )}
@@ -646,6 +668,12 @@ export function logoSrc(path) {
  * has nothing to vary and comes back alone.
  */
 export function assetCandidates(path) {
+  // AN ARRAY IS A PREFERENCE ORDER, not a new concept: each entry is expanded
+  // into its own format variants and the lists are laid end to end, so a caller
+  // that wants "the WNBA's trophy, else the shared one" says exactly that and
+  // still gets every spelling of both. awardImagePath is the one caller that
+  // needs it; everything else keeps passing a single string.
+  if (Array.isArray(path)) return path.flatMap(p => assetCandidates(p));
   if (typeof path !== 'string' || path === '') return [];
   const dot = path.lastIndexOf('.');
   if (dot <= path.lastIndexOf('/')) return [path];
@@ -676,9 +704,13 @@ export function assetCandidates(path) {
  * draw a lettered circle over a file that exists.
  */
 function AssetImage({ path, alt, className, fallback }) {
-  const [tried, setTried] = useState({ path, index: 0 });
-  const index = tried.path === path ? tried.index : 0;
-  if (tried.path !== path) setTried({ path, index: 0 });
+  // The retry cursor is keyed by the path so a NEW path restarts the walk. An
+  // array would compare by identity and restart on every render, so key on its
+  // joined value instead.
+  const key = Array.isArray(path) ? path.join('|') : path;
+  const [tried, setTried] = useState({ key, index: 0 });
+  const index = tried.key === key ? tried.index : 0;
+  if (tried.key !== key) setTried({ key, index: 0 });
 
   const src = logoSrc(assetCandidates(path)[index]);
   if (!src) return fallback;
@@ -687,7 +719,7 @@ function AssetImage({ path, alt, className, fallback }) {
       src={src}
       alt={alt}
       className={className}
-      onError={() => setTried({ path, index: index + 1 })}
+      onError={() => setTried({ key, index: index + 1 })}
     />
   );
 }
@@ -822,13 +854,13 @@ function TeamLogo({ team, abbr }) {
  * thing the user is actually looking at today is to render this component with
  * an award that has no path at all. See CardTemplate.test.js.
  */
-export function AwardMark({ award, count = 1 }) {
+export function AwardMark({ award, count = 1, league = 'NBA' }) {
   const slot = `${styles.awardSlot}${awardSizeClass(count, 'awardSlot')}`;
   const chip = styles.awardFallback;
   return (
     <div className={slot}>
       <AssetImage
-        path={awardImagePath(award.code)}
+        path={awardImagePath(award.code, league)}
         alt={award.name}
         className={styles.award}
         fallback={

@@ -663,6 +663,70 @@ export function buildHistoricalCard({
  * LONGER USES IT: it calibrates on the 2002-2026 archive, which is a property of
  * no pool at all. See speedPowerTotals.
  */
+// ── Era: a season's three-point percentage in the base season's terms ───────
+//
+// A special set's three line is measured on the BASE set's scale (see
+// `three.referenceCount` in shooting.js), and that scale was fitted on 2025-26
+// shooting. A 1998 season's .340 was a league-average three in a .344 league
+// and would read as below average in a .359 one, so each season's 3P% is
+// shifted by the gap between its league's attempt-weighted mean and the base
+// season's, both read from the cached Basketball-Reference per-100 tables. The
+// shift is zero for a season whose table is not cached — and for the base
+// season itself, which is where it should be.
+const leagueThreeCache = new Map();
+
+export function leagueThreePct(season) {
+  if (leagueThreeCache.has(season)) return leagueThreeCache.get(season);
+  const rows = readCache(`bbref-${season}-perPoss-full`) ?? readCache(`bbref-${season}-perPoss`);
+  let num = 0;
+  let den = 0;
+  for (const r of rows ?? []) {
+    const attempts = (r.fg3a100 ?? 0) * (r.minutes ?? 0);
+    if (!(attempts > 0) || !Number.isFinite(r.fgPct3)) continue;
+    num += r.fgPct3 * attempts;
+    den += attempts;
+  }
+  const mean = den > 0 ? num / den : null;
+  leagueThreeCache.set(season, mean);
+  return mean;
+}
+
+// The same idea for overall efficiency. League TS% moved from .52-.53 in the
+// 1990s-2000s to .58 in 2025-26 (mostly the three), so a season's TS% is
+// shifted by the gap between its league's mean and the base season's before
+// it meets the base set's Shot Line map. The shift is applied to the paint
+// percentage too, so a player's own paint-versus-overall GAP — which is what
+// the Paint Boost reads — is exactly what it was.
+const leagueTsCache = new Map();
+
+export function leagueTsPct(season) {
+  if (leagueTsCache.has(season)) return leagueTsCache.get(season);
+  const rows = readCache(`bbref-${season}-perPoss-full`) ?? readCache(`bbref-${season}-perPoss`);
+  let pts = 0;
+  let tsa = 0;
+  for (const r of rows ?? []) {
+    const w = r.minutes || 0;
+    if (!(w > 0)) continue;
+    pts += (r.pts100 || 0) * w;
+    tsa += ((r.fga100 || 0) + 0.44 * (r.fta100 || 0)) * w;
+  }
+  const mean = tsa > 0 ? pts / (2 * tsa) : null;
+  leagueTsCache.set(season, mean);
+  return mean;
+}
+
+export function eraTsOffset(season, base = LAST_SEASON) {
+  const to = leagueTsPct(base);
+  const from = leagueTsPct(season);
+  return Number.isFinite(to) && Number.isFinite(from) ? to - from : 0;
+}
+
+export function eraThreeOffset(season, base = LAST_SEASON) {
+  const to = leagueThreePct(base);
+  const from = leagueThreePct(season);
+  return Number.isFinite(to) && Number.isFinite(from) ? to - from : 0;
+}
+
 export function buildSet({
   selections,
   currentRows,
@@ -677,6 +741,10 @@ export function buildSet({
   // Dissonance set opts out: its cards are STINTS, and a full-season log
   // would contradict the stat line the stint rows define.
   useRealGames = true,
+  // How a season's 3P% is moved onto the base season's league. A caller whose
+  // seasons are another league's passes its own, or `() => 0`.
+  eraThreeOffset: eraOffset = eraThreeOffset,
+  eraTsOffset: tsOffset = eraTsOffset,
 }) {
   const seasons = selections.map(s => s.season);
   const all = [...currentRows, ...seasons];
@@ -688,15 +756,27 @@ export function buildSet({
   // the shooting table returns null here and keeps its existing TS% signal,
   // including the pre-2002 free-throw bridge.
   const basis = S.deriveShootingBasis(all);
-  const shootingInputs = all.map(historicalShootingInput).map((input, i) => ({
-    ...input,
-    tsPct: basis.shootingPct[i] ?? input.tsPct,
-    paintPct: basis.rimPct[i] ?? input.paintPct,
-  }));
+  const shift = (v, d) => (Number.isFinite(v) ? v + d : v);
+  const shootingInputs = all.map(historicalShootingInput).map((input, i) => {
+    // The seasons' percentages in the base season's terms; the base rows are
+    // already there. TS% and the paint percentage move together so the paint
+    // GAP is preserved; 3P% moves by its own league gap.
+    const season = i >= cut ? seasons[i - cut].season : null;
+    const ts = season != null ? tsOffset(season) : 0;
+    return {
+      ...input,
+      tsPct: shift(basis.shootingPct[i] ?? input.tsPct, ts),
+      paintPct: shift(basis.rimPct[i] ?? input.paintPct, ts),
+      threePct: season != null ? shift(input.threePct, eraOffset(season)) : input.threePct,
+    };
+  });
   const shooting = S.buildShootingLayer(shootingInputs, {
     shotLineTarget: calibration.shotLine.target,
     paint: calibration.paintBoost,
     three: calibration.threePtBoost,
+    // The Shot Line and three line on the BASE rows' scale — the seasons do
+    // not get to move it (see referenceCount in shooting.js).
+    referenceCount: cut,
   });
 
   const totals = [
@@ -768,7 +848,11 @@ export function selectSets({
 
   const superSeason = [];
   const rookie = [];
-  const excluded = { superSeason: [], rookie: [] };
+  // `rookie` holds the BADGE-BEARING exclusion — a player whose rookie season is
+  // the current one, whose base card already IS that season. `rookieThin` holds
+  // the playing-time cut, which is not a fact about the player worth printing
+  // and must stay out of the badge counts.
+  const excluded = { superSeason: [], rookie: [], rookieThin: [] };
   /** The base set's badges: one record per player who earned at least one. */
   const baseBadges = [];
   const metricSetSplits = [];
@@ -847,6 +931,14 @@ export function selectSets({
         badge: EXCLUSION_BADGES.rookie,
       });
       earned.push(EXCLUSION_BADGES.rookie);
+    } else if (!rookieSeasonCounts(first)) {
+      excluded.rookieThin.push({
+        name: player.name,
+        season: first.season,
+        games: first.games ?? 0,
+        mpg: first.games ? +((first.minutes ?? 0) / first.games).toFixed(1) : 0,
+        reason: 'rookie season below the playing-time bar',
+      });
     } else {
       rookie.push({ player, season: first });
     }
@@ -900,6 +992,41 @@ export function selectSets({
  * and `tierBadge` treats an unknown salary as gilded, so `printed` degrades to
  * exactly the distribution it reported before the tier existed.
  */
+/**
+ * Does this rookie season deserve a card?
+ *
+ * ── THE BAR ─────────────────────────────────────────────────────────────────
+ *
+ * MPG >= 12, the minutes half of the 2026-27 pool rule, AND at least 20 games —
+ * half that rule's games half.
+ *
+ * The set previously carded EVERY active player's first season with no floor at
+ * all, which reached 1-game, 3-minute seasons: Max Strus on two games at 3.0
+ * MPG, Jordan Goodwin the same. Those are not rookie seasons, they are
+ * call-ups, and 86 of the 363 cards were of that kind.
+ *
+ * ── WHY THE GAMES FLOOR IS HALVED RATHER THAN FULL ──────────────────────────
+ *
+ * At the full 40 the set loses Joel Embiid (31 G at 25.4 MPG), Zion Williamson
+ * (24 at 27.8) and Chauncey Billups (29 at 31.7) — real rookie seasons ended by
+ * injury, which is exactly the case the pool's own force-include list exists to
+ * rescue. Halving the games floor keeps those thirty while still refusing the
+ * cameo: Julius Randle's rookie year is ONE GAME, and a minutes bar alone would
+ * have kept it, because he averaged 14 minutes in it.
+ *
+ * So the two halves do different work. Minutes ask whether he was playing;
+ * games ask whether there was a season. A card needs both to be true.
+ */
+export const ROOKIE_MIN_MPG = 12;
+export const ROOKIE_MIN_GAMES = 20;
+
+export function rookieSeasonCounts(season) {
+  const games = season?.games ?? 0;
+  const minutes = season?.minutes ?? 0;
+  if (games < ROOKIE_MIN_GAMES) return false;
+  return minutes / games >= ROOKIE_MIN_MPG;
+}
+
 export function badgeCounts(baseBadges, salaries = new Map()) {
   const applies = Object.fromEntries(BADGE_IDS.map(id => [id, 0]));
   const printed = Object.fromEntries(BADGE_IDS.map(id => [id, 0]));
@@ -1225,15 +1352,24 @@ export function main({ log = console.log } = {}) {
   {
     const standoutBlocks = readSummerStandouts();
     const poolNames = new Set(pool.map(pl => normalizeName(pl.name)));
+    // FORCED ROOKIE SEASONS (card-data/rookie-legends-2026.json): players with
+    // no base card, each with the rookie season named outright — which is what
+    // gets Jordan's 1984-85 past the window guard below.
+    const rookieLegendsFile = path.join(REPO_ROOT, 'card-data', 'rookie-legends-2026.json');
+    const rookieLegends = fs.existsSync(rookieLegendsFile)
+      ? Object.entries(readJson(rookieLegendsFile)).filter(([k, v]) => !k.startsWith('_') && Number.isFinite(v?.season))
+      : [];
+    const forcedRookies = new Map(rookieLegends.map(([k, v]) => [normalizeName(k), v.season]));
     const rookieNames = [...new Set([
       ...Object.keys(standoutBlocks.playoffCards ?? {}),
       ...Object.keys(standoutBlocks.superSeasons ?? {}),
+      ...rookieLegends.map(([k]) => k),
     ])].filter(n => !poolNames.has(normalizeName(n)));
     if (rookieNames.length) {
       // From 1986: the tables reach Rodman's 1986-87 and Pippen's 1987-88
       // debuts, with 1986 cached as the SENTINEL that proves a 1987 first
       // appearance is a debut and not the window's edge.
-      const tables = loadFullSeasonTables({ first: 1986 });
+      const tables = loadFullSeasonTables({ first: 1977 });
       const league = loadLeagueRows();
       const apiEpm = buildApiEpmIndex();
       const added = [];
@@ -1242,23 +1378,42 @@ export function main({ log = console.log } = {}) {
         // The id comes from the 2000+ league rows (every standout played into
         // them); the FIRST season comes from the full tables, which reach 1992.
         const careerRows = pickCareer(league.get(normalizeName(name)), {});
-        const id = careerRows?.[0]?.playerId;
+        let id = careerRows?.[0]?.playerId;
+        if (!id && forcedRookies.has(normalizeName(name))) {
+          const yr = forcedRookies.get(normalizeName(name));
+          for (const [key, row] of tables.advanced) {
+            if (key.endsWith(`|${yr}`) && normalizeName(row.name ?? '') === normalizeName(name)) { id = row.playerId; break; }
+          }
+        }
         if (!id) { skipped.push(`${name} (no career rows)`); continue; }
-        let firstSeason = null;
-        for (const key of tables.advanced.keys()) {
+        let firstSeason = forcedRookies.get(normalizeName(name)) ?? null;
+        const forced = firstSeason != null;
+        for (const key of forced ? [] : tables.advanced.keys()) {
           const [rowId, seasonStr] = key.split('|');
           if (rowId !== id) continue;
           const season = Number(seasonStr);
           if (firstSeason == null || season < firstSeason) firstSeason = season;
         }
         if (firstSeason == null) { skipped.push(`${name} (no full-table rows)`); continue; }
-        if (firstSeason <= 1986) {
+        if (!forced && firstSeason <= 1986) {
           skipped.push(`${name} (first cached season ${firstSeason} — at the window's edge, possibly truncated)`);
           continue;
         }
         const adv = tables.advanced.get(`${id}|${firstSeason}`);
         const pp = tables.perPoss.get(`${id}|${firstSeason}`);
         if (!adv || !pp) { skipped.push(`${name} (no ${firstSeason} full-table row)`); continue; }
+        // THE SAME PLAYING-TIME BAR the pool players face. This path adds the
+        // Summer Standouts roster, and without the check it walked straight past
+        // it — nine cards survived the first cut here, Max Strus's two-game
+        // rookie year among them. A rule that applies to one door and not the
+        // other is not the rule, it is a coincidence.
+        if (!rookieSeasonCounts(adv)) {
+          skipped.push(
+            `${name} (${firstSeason} rookie season below the playing-time bar: ` +
+            `${adv.games ?? 0} G, ${(adv.games ? (adv.minutes ?? 0) / adv.games : 0).toFixed(1)} MPG)`
+          );
+          continue;
+        }
         // EPM where it exists (2002+); the BPM bridge in EPM units where it
         // does not — the same bridge the pre-EPM Super Seasons cross on.
         let epm = apiEpm.get(`${normalizeName(name)}|${firstSeason}`);
@@ -1433,6 +1588,12 @@ export function main({ log = console.log } = {}) {
     );
     cards.sort((a, b) => a.name.localeCompare(b.name));
     const excluded = set === SUPER_SEASON_SET ? selection.excluded.superSeason : selection.excluded.rookie;
+    // The playing-time cut rides alongside rather than inside `excluded`: that
+    // list means "the fact prints on the BASE card" and feeds card-badges.json,
+    // which a thin rookie season has no business doing. Written out all the
+    // same, because a player who silently vanishes from a set is the thing the
+    // accounting test exists to catch.
+    const excludedThin = set === ROOKIE_SET ? selection.excluded.rookieThin : [];
     files[set] = writeSet(file, {
       set,
       cards,
@@ -1443,6 +1604,8 @@ export function main({ log = console.log } = {}) {
         poolPlayers: pool.length,
         excluded,
         excludedCount: excluded.length,
+        excludedThin,
+        excludedThinCount: excludedThin.length,
         // The same-season twins this set ceded to the other one — a third
         // category beside carded and excluded, so the one-card-per-pool-player
         // accounting still closes. See the twin rule above.

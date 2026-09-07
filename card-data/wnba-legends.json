@@ -1,6 +1,5 @@
 {
   "_comment": "THE WNBA SUPER SEASON ROSTER — a NAMED list, not a rule, and that is what makes it different from every other set in this repo. The 2026-27 pool is MPG>=12 & G>=40, the WNBA set is MPG>=16 & G>=20; both answer 'who is good enough to card this year'. This set answers a question no threshold can: which retired players are LEGENDS. The user named these sixteen, and scripts/cardgen/wnba/generateWnbaLegends.js cards exactly them — no rule adds anyone and none of them can be dropped by one. A name matching no row in the archive is reported and the run exits non-zero rather than leaving the set quietly one player short. Keyed by the player name exactly as Basketball-Reference's WNBA tables spell it; the value is the era, which is documentation and is never read. NOTE ON SPELLING: the user's list read 'Lisa Lesia', which is Lisa Leslie — corrected here because the join is by name and a typo would silently cost her a card. Every other name was already Basketball-Reference's spelling.",
-
   "Sheryl Swoopes": "1997-2011 — Houston Comets, Seattle Storm, Tulsa Shock",
   "Lisa Leslie": "1997-2009 — Los Angeles Sparks",
   "Tina Thompson": "1997-2013 — Houston Comets, Los Angeles Sparks, Seattle Storm",
@@ -16,5 +15,25 @@
   "Sylvia Fowles": "2008-2022 — Chicago Sky, Minnesota Lynx",
   "Tina Charles": "2010-2024 — Connecticut Sun, New York Liberty, Washington Mystics, Phoenix Mercury, Seattle Storm, Atlanta Dream",
   "Maya Moore": "2011-2018 — Minnesota Lynx",
-  "Elena Delle Donne": "2013-2023 — Chicago Sky, Washington Mystics"
+  "Elena Delle Donne": "2013-2023 — Chicago Sky, Washington Mystics",
+  "Cynthia Cooper": "1997-2003 — Houston Comets; capstone pick 2026-09-06 (rule A)",
+  "Yolanda Griffith": "1999-2009 — Sacramento Monarchs, Seattle Storm, Indiana Fever; capstone pick 2026-09-06 (rule A)",
+  "Brandy Reed": "1998-2002 — Phoenix Mercury; capstone pick 2026-09-06 (rule A)",
+  "Jonquel Jones": "2016- — Connecticut Sun, New York Liberty; capstone pick 2026-09-06 (rule A: no card as a Sun)",
+  "Chelsea Gray": "2014- — Connecticut Sun, Los Angeles Sparks, Las Vegas Aces; capstone pick 2026-09-06 (rule A: no card as an Ace)",
+  "Dawn Staley": "1999-2006 — Charlotte Sting, Houston Comets; Hall of Fame, no card (added 2026-09-06)",
+  "Teresa Weatherspoon": "1997-2004 — New York Liberty, Los Angeles Sparks; Hall of Fame, no card (added 2026-09-06)",
+  "Ticha Penicheiro": "1998-2012 — Sacramento Monarchs, Los Angeles Sparks, Chicago Sky; Hall of Fame, no card (added 2026-09-06)",
+  "Swin Cash": "2002-2016 — Detroit Shock, Seattle Storm, Chicago Sky, Atlanta Dream, New York Liberty; Hall of Fame, no card (added 2026-09-06)",
+  "Rebecca Lobo": "1997-2003 — New York Liberty, Houston Comets, Connecticut Sun; Hall of Fame, no card (added 2026-09-06)",
+  "Natalie Williams": "1999-2005 — Utah Starzz, Indiana Fever; a defunct-franchise great (added 2026-09-06)",
+  "Janeth Arcain": "1997-2005 — Houston Comets; a defunct-franchise great (added 2026-09-06)",
+  "Sophia Young-Malcolm": "2006-2015 — San Antonio Silver Stars; a defunct-franchise great (added 2026-09-06)",
+  "Andrea Stinson": "1997-2004 — Charlotte Sting, Detroit Shock; a defunct-franchise great (added 2026-09-06)",
+  "Deanna Nolan": "2001-2009 — Detroit Shock; a defunct-franchise great (added 2026-09-06)",
+  "Elena Baranova": "1997-2006 — Utah Starzz, Miami Sol, New York Liberty; a defunct-franchise great (added 2026-09-06)",
+  "Chasity Melvin": "1999-2010 — Cleveland Rockers, Washington Mystics, Chicago Sky; a defunct-franchise great (added 2026-09-06)",
+  "Michelle Snow": "2002-2013 — Houston Comets, San Antonio, Chicago Sky; a defunct-franchise great (added 2026-09-06)",
+  "Michelle Edwards": "1997-2001 — Cleveland Rockers, Seattle Storm; first-generation Rockers star, named by the user (added 2026-09-06)",
+  "Suzie McConnell-Serio": "1998-2000 — Cleveland Rockers; Olympian turned Rocker at 32, named by the user (added 2026-09-06)"
 }

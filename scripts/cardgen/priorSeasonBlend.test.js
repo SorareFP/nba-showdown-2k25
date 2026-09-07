@@ -264,12 +264,19 @@ describe('the generated budgets', () => {
   // rather than 10-28, so both numbers rose without either player moving
   // relative to anybody. A future rescaling should expect to edit the two
   // `toBe`s and should NOT expect to edit the rank.
+  //
+  // EDEY MOVED 20 -> 21 when windowEpm.js landed, and the reason is not a
+  // rescaling: the LAST-82 WINDOW now sets his sample instead of this blend.
+  // The blend pooled his whole prior season onto his current one (11g + 70g);
+  // the window takes exactly 82 games (10g 2026 + 72g 2025), which weights the
+  // eleven good games slightly differently. The rank is untouched, which is the
+  // claim this test is actually making.
   it('no longer prices a fifteen-game season into the top of the set', () => {
     const ranked = [...totals].sort((a, b) => b.speedPowerTotal - a.speedPowerTotal);
     const rank = name => ranked.findIndex(r => r.name === name) + 1;
     expect(rank('Ty Jerome')).toBeGreaterThan(20);
     expect(rank('Zach Edey')).toBeGreaterThan(60);
     expect(byName.get('Ty Jerome').speedPowerTotal).toBe(25);
-    expect(byName.get('Zach Edey').speedPowerTotal).toBe(20);
+    expect(byName.get('Zach Edey').speedPowerTotal).toBe(21);
   });
 });

@@ -610,11 +610,32 @@ export function rawLines({ tsPct, paintPct, threePct }) {
  * `threeRate` is attempts per 100 possessions — the thing that says whether a
  * player is a shooter at all, which the attempt COUNT does not.
  */
-export function buildShootingLayer(players, { shotLineTarget, paint = {}, three = {} }) {
+export function buildShootingLayer(players, { shotLineTarget, paint = {}, three = {}, referenceCount = null }) {
+  // The three-point SHRINKAGE and the three-line MAP are both fitted on the
+  // reference rows alone when `three.referenceCount` says how many lead the
+  // pool — see the map below for why. Shrinkage is the smaller effect, but a
+  // prior fitted on a union of base and rookies is still a prior the rookies
+  // moved, and the base rows would come out a hair different from the base
+  // set's own run. Fitting both on the reference makes a season's line exactly
+  // what the same numbers earn in the base set.
+  // `referenceCount` says how many rows at the head of the pool are the
+  // REFERENCE — the base set — when a caller builds a special set over the
+  // base rows plus its own seasons. Both the Shot Line map and the three-point
+  // layer are fitted on those rows alone (three.referenceCount can still
+  // narrow the three layer on its own). The seasons are compressed onto the
+  // base set's scale; they do not get to move it. Paint stays on the union,
+  // deliberately: its input is rim FG% where the shooting table reaches and
+  // 2P% before it, two different scales, and a base-only fit would hand every
+  // pre-table season a paint line measured against the wrong one.
+  const refCount = Number.isInteger(referenceCount) && referenceCount > 0 ? referenceCount : players.length;
+  const threeRefCount = Number.isInteger(three.referenceCount) && three.referenceCount > 0
+    ? three.referenceCount
+    : refCount;
+  const threeReferencePlayers = players.slice(0, threeRefCount);
   const shrink = {
     paint: fitShrinkage(players.map(p => ({ pct: p.paintPct, n: p.paintAttempts }))),
     three: fitShrinkage(
-      players.map(p => ({ pct: p.threePct, n: p.threeAttempts, rate: p.threeRate }))
+      threeReferencePlayers.map(p => ({ pct: p.threePct, n: p.threeAttempts, rate: p.threeRate }))
     ),
   };
 
@@ -631,7 +652,7 @@ export function buildShootingLayer(players, { shotLineTarget, paint = {}, three 
     rawLines({ tsPct: p.tsPct, paintPct: p.paintPct, threePct: p.threePct })
   );
 
-  const map = fitLinearMap(raw.map(r => r.exactShotLine), shotLineTarget);
+  const map = fitLinearMap(raw.slice(0, refCount).map(r => r.exactShotLine), shotLineTarget);
   // The three line gets its OWN map onto the SAME printed range. Its raw scale
   // is not the Shot Line's -- raw shot lines run about 5-12 off TS% and raw
   // three lines about 13-15 off 3P%, because 3P% is a much lower percentage --
@@ -651,8 +672,17 @@ export function buildShootingLayer(players, { shotLineTarget, paint = {}, three 
     max: THREE_LINE_MAX,
     sd: shotLineTarget.sd * THREE_LINE_SPREAD,
   };
+  // FITTED ON THE REFERENCE ROWS ONLY when the caller says how many lead the
+  // pool. A special set is built over the base rows PLUS its own seasons, and
+  // fitting the map over that union let the seasons move the map: 263 rookies
+  // — worse shooters, as rookies are — pulled the pool mean down, so every
+  // rookie's raw three line landed a step better than the same percentage
+  // earns in the base set. Half the Rookie set printed an effective three line
+  // of 14 against the base set's 15, and rookie Giannis (.347 on 1.5 a game)
+  // shot threes like a league-average starter.
+  const threeReference = raw.slice(0, threeReferencePlayers.length);
   const threeLineMap = fitLinearMap(
-    raw.map(r => r.threeLine).filter(Number.isFinite),
+    threeReference.map(r => r.threeLine).filter(Number.isFinite),
     threeLineTarget
   );
   const threeStrength = meanSd(raw.map(r => r.exactThreeStrength));

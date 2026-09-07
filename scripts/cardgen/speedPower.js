@@ -96,6 +96,7 @@ import { pathToFileURL } from 'node:url';
 import { REPO_ROOT } from './cache.js';
 import { poolingSummary } from './poolSeasons.js';
 import { readBlendedActual, reportBlend } from './priorSeasonBlend.js';
+import { applyWindowEpm, buildWindowEpmIndex } from './windowEpm.js';
 import { normalizeName } from './resolveTeams.js';
 import { loadReferenceCards } from './referenceCards.js';
 import { meanSd } from './attributes.js';
@@ -479,11 +480,20 @@ export function main({ log = console.log } = {}) {
   // volume-weighted pooling — EPM, OFF and DEF by possessions, EW/GP by games.
   // See scripts/cardgen/poolSeasons.js.
   //
-  // ...and then the PRIOR SEASON folded into the same row for the nineteen
-  // force-included players, by the same arithmetic. Those nineteen are in the
-  // pool despite failing the G>=40 rule, so several of them arrive here on ten
-  // to twenty games — a sample that produced a top-ten budget for Ty Jerome off
-  // fifteen. See scripts/cardgen/priorSeasonBlend.js.
+  // ...and then the LAST 82 GAMES applied on top, for EVERYONE. Each season's
+  // rates are weighted by how many of the player's last 82 came from it, using
+  // realGames.js's own window selection — so the budget and the chart are
+  // measuring the same 82 games rather than two different samples.
+  //
+  // THIS REPLACES THE FORCE-INCLUDE BLEND as the sample-size fix.
+  // priorSeasonBlend.js folded a prior season in for nineteen names chosen by
+  // the G>=40 rule, which is a GAMES-shaped gate around a MINUTES-shaped
+  // problem: Ty Jerome's 15 games were caught, Nick Richards' 48 games at 14.6
+  // mpg were not. The window has no gate at all — a player with a full current
+  // season is 100% current season and does not move — so it fixes both without
+  // anyone having to be on a list. It still runs FIRST, because the four
+  // carried-forward men have no game logs and so no window, and they should
+  // keep the blend rather than fall back to nothing.
   const blend = readBlendedActual(CURRENT_STATS_SEASON);
   if (!blend) {
     throw new Error(
@@ -491,7 +501,9 @@ export function main({ log = console.log } = {}) {
         'scripts/cardgen/fetchCalibrationData.js first.'
     );
   }
-  const actual = blend.rows;
+  const windowed = applyWindowEpm(blend.rows, buildWindowEpmIndex({ log }));
+  const actual = windowed.rows;
+  log(`  window applied to ${windowed.applied} rows; ${windowed.moved.length} rate values moved`);
   const pool = JSON.parse(fs.readFileSync(path.join(GEN_DIR, 'player-pool-2026.json'), 'utf8'));
   // The reference distribution is measured when the gitignored CSV is present
   // and falls back to the committed constants when it is not, so a public
@@ -523,6 +535,10 @@ export function main({ log = console.log } = {}) {
       `(${fold.playoffGames} playoff games total, median ${fold.medianPlayoffGames}, ` +
       `max ${fold.maxPlayoffGames}); the other ${fold.players - fold.gained} are unchanged`
   );
+  // SUPERSEDED WHERE A WINDOW EXISTS. Printed anyway because it is the
+  // fallback for anyone the window could not cover, and a silent fallback
+  // is the kind that goes wrong unnoticed.
+  log('  prior-season fold (superseded by the last-82 window wherever one exists):');
   reportBlend(blend, log);
   log(
     `  finished set (${measured ? `measured, n=${measured.n}` : 'committed fallback'}): ` +

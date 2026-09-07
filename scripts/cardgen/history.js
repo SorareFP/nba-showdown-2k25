@@ -145,10 +145,15 @@ export function seasonScore(season, distribution, weights = BEST_SEASON_WEIGHTS)
  *   one row              he played for one team. Trivially both the stat line
  *                        and the team.
  *   aggregate + splits   traded. The aggregate is the season; the team is the
- *                        split he played the most MINUTES for, not the most
- *                        games — a player can appear in more games after a
- *                        deadline trade while having spent the season
- *                        elsewhere.
+ *                        LAST split — the team he finished the season with.
+ *                        The user's rule (2026-09-06): "make sure that the
+ *                        player winds up on the LAST team they played for --
+ *                        like De'Andre Hunter 2024-25 ended up with the Cavs."
+ *                        Until then the card wore the most-MINUTES split, which
+ *                        put Hunter in Atlanta (37 games) rather than Cleveland
+ *                        (27). Basketball-Reference lists a traded player's
+ *                        stints in the order he played them, so the last row
+ *                        is the last jersey.
  *   splits only          the archive is missing the aggregate. Falls back to
  *                        the biggest split rather than dropping the season, and
  *                        marks it, because half a season's counting stats
@@ -162,12 +167,14 @@ export function seasonFromRows(rows) {
     (best, r) => (!best || (r.minutes ?? 0) > (best.minutes ?? 0) ? r : best),
     null
   );
+  const lastSplit = splits.length ? splits[splits.length - 1] : null;
   const line = aggregate ?? biggestSplit ?? rows[0] ?? null;
   if (!line) return null;
   return {
     ...line,
-    // The jersey. A split always wins over "2TM", which is not a team.
-    team: biggestSplit?.team ?? line.team,
+    // The jersey: the team he FINISHED with. A split always wins over "2TM",
+    // which is not a team.
+    team: lastSplit?.team ?? line.team,
     teams: splits.map(s => s.team),
     traded: splits.length > 1,
     partialSeason: !aggregate && splits.length > 1,

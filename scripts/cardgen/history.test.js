@@ -100,18 +100,21 @@ describe('seasonFromRows', () => {
     expect(season.games).toBe(70);
   });
 
-  it('takes the TEAM from the split he played the most minutes for', () => {
-    // Not the most games: a deadline trade can leave a player with more
-    // appearances for the team he finished with while the season was spent
-    // somewhere else.
+  it('takes the TEAM from the LAST split — the one he finished the season with', () => {
+    // The user's rule (2026-09-06), De'Andre Hunter 2024-25: 37 games and more
+    // minutes in Atlanta, 27 in Cleveland after the deadline — the card is a
+    // Cav. Basketball-Reference lists stints in the order they were played,
+    // so the last row is the last jersey, whatever its minutes.
     const season = seasonFromRows([
-      row({ team: '2TM', games: 70, minutes: 2000 }),
-      row({ team: 'BOS', games: 30, minutes: 1400 }),
-      row({ team: 'MIA', games: 40, minutes: 600 }),
+      row({ team: '2TM', games: 64, minutes: 1900 }),
+      row({ team: 'ATL', games: 37, minutes: 1200 }),
+      row({ team: 'CLE', games: 27, minutes: 700 }),
     ]);
-    expect(season.team).toBe('BOS');
+    expect(season.team).toBe('CLE');
     expect(season.traded).toBe(true);
-    expect(season.teams.sort()).toEqual(['BOS', 'MIA']);
+    expect(season.teams).toEqual(['ATL', 'CLE']);
+    // The stat line is still the whole season.
+    expect(season.games).toBe(64);
   });
 
   it('never puts an aggregate code on a card', () => {
@@ -140,7 +143,9 @@ describe('seasonFromRows', () => {
       row({ team: 'MIA', minutes: 900 }),
     ]);
     expect(season.partialSeason).toBe(true);
-    expect(season.team).toBe('BOS');
+    // The stat line is the bigger split, the jersey is still the last one.
+    expect(season.minutes).toBe(1100);
+    expect(season.team).toBe('MIA');
   });
 });
 

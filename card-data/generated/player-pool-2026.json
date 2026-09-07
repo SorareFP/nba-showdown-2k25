@@ -1610,13 +1610,6 @@
     "mpg": 21.2
   },
   {
-    "name": "Cam Thomas",
-    "team": "2TM",
-    "pos": "SG",
-    "games": 42,
-    "mpg": 21
-  },
-  {
     "name": "Jay Huff",
     "team": "IND",
     "pos": "C",
@@ -1691,13 +1684,6 @@
     "team": "GSW",
     "pos": "PF",
     "games": 68,
-    "mpg": 20.5
-  },
-  {
-    "name": "Vince Williams Jr.",
-    "team": "2TM",
-    "pos": "SG",
-    "games": 40,
     "mpg": 20.5
   },
   {
@@ -1782,13 +1768,6 @@
     "team": "LAC",
     "pos": "SG",
     "games": 68,
-    "mpg": 19.9
-  },
-  {
-    "name": "John Konchar",
-    "team": "2TM",
-    "pos": "SG",
-    "games": 56,
     "mpg": 19.9
   },
   {
@@ -2184,13 +2163,6 @@
     "mpg": 15.7
   },
   {
-    "name": "Ochai Agbaji",
-    "team": "2TM",
-    "pos": "SG",
-    "games": 62,
-    "mpg": 15.7
-  },
-  {
     "name": "Josh Green",
     "team": "CHO",
     "pos": "SG",
@@ -2245,13 +2217,6 @@
     "pos": "SG",
     "games": 57,
     "mpg": 15.1
-  },
-  {
-    "name": "Guerschon Yabusele",
-    "team": "2TM",
-    "pos": "C",
-    "games": 67,
-    "mpg": 15
   },
   {
     "name": "Micah Peavy",

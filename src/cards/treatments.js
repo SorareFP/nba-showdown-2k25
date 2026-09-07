@@ -66,6 +66,12 @@ export const GOLD_LO = '#7A5C16';
 /** The rookie green. One tone — "plain and simple", in the user's words. */
 export const GREEN = '#00A94F';
 export const GREEN_LO = '#03502A';
+// BRONZE — the team-completion rewards. Deliberately NOT gold: gold is the
+// Super Season tier and means "one of the best seasons ever played". A reward
+// card means "you finished a roster" — an achievement of collecting rather
+// than of basketball — and it should read as its own thing at a glance.
+export const BRONZE = '#A4682F';
+export const BRONZE_LO = '#6B4220';
 
 /**
  * How far the FIELD's sheen is allowed to travel toward the highlight.
@@ -348,10 +354,46 @@ function greenAccent(theme) {
   };
 }
 
+/**
+ * BRONZE ACCENT — the team-completion rewards.
+ *
+ * Same quiet shape as green-accent (it re-colours the keyline, the ornaments
+ * and one band stripe, and leaves the field, band and chart to the team), for
+ * the same reason: the card is about a franchise, so the franchise's colours
+ * should still be doing the work. The bronze says HOW it was obtained — a
+ * completed roster, not a pack pull — which is the whole point of giving this
+ * set a treatment at all.
+ *
+ * The name keeps the TEAM's accent, exactly as on a rookie card: a player's
+ * name is not a set decoration.
+ */
+function bronzeAccent(theme) {
+  return {
+    ...theme,
+    frame: readableOn(BRONZE, theme.field, MIN_DECOR_CONTRAST),
+    accentOnField: readableOn(BRONZE, theme.field, MIN_ACCENT_CONTRAST),
+    nameAccent: theme.accentOnField,
+    stripeSecondary: readableOn(BRONZE, theme.bandTop, MIN_DECOR_CONTRAST),
+    treatment: {
+      id: 'bronze-accent',
+      fieldStops: [theme.field],
+      bandStops: [theme.bandTop, theme.bandBottom],
+      sheen: null,
+      band: null,
+      // Flat, like green: a reward is earned, not minted.
+      frameImage: null,
+      bandEdge: readableOn(BRONZE, theme.field, MIN_DECOR_CONTRAST),
+      source: BRONZE,
+      sourceLow: BRONZE_LO,
+    },
+  };
+}
+
 /** Every treatment, by the id a set declares in src/cards/sets.js. */
 export const TREATMENTS = {
   'gold-foil': goldFoil,
   'green-accent': greenAccent,
+  'bronze-accent': bronzeAccent,
 };
 
 /** The ids a set is allowed to declare. */

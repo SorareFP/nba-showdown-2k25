@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-01T16:44:05.926Z",
+ "generatedAt": "2026-09-05T02:23:01.711Z",
  "source": "Basketball-Reference's WNBA award voting pages (rank-1 rows) and each season page's Finals result. All-Star selections are the remaining gap: they live on per-season All-Star pages this does not fetch yet.",
  "declared": [
   "MVP",
@@ -10,12 +10,15 @@
   "CHAMP"
  ],
  "seasons": [
+  1997,
   2000,
   2002,
   2004,
   2006,
+  2007,
   2008,
   2009,
+  2010,
   2011,
   2012,
   2013,
@@ -87,16 +90,6 @@
     "champion": null
    },
    {
-    "id": "Cecilia_Zandalasini",
-    "name": "Cecilia Zandalasini",
-    "season": 2017,
-    "bbrefId": "zandace01w",
-    "awards": [
-     "CHAMP"
-    ],
-    "champion": "MIN"
-   },
-   {
     "id": "DeWanna_Bonner",
     "name": "DeWanna Bonner",
     "season": 2009,
@@ -128,16 +121,6 @@
     "champion": "SEA"
    },
    {
-    "id": "Leonie_Fiebich",
-    "name": "Leonie Fiebich",
-    "season": 2024,
-    "bbrefId": "fiebile01w",
-    "awards": [
-     "CHAMP"
-    ],
-    "champion": "NYL"
-   },
-   {
     "id": "Michaela_Onyenwere",
     "name": "Michaela Onyenwere",
     "season": 2021,
@@ -156,16 +139,6 @@
      "ROY"
     ],
     "champion": null
-   },
-   {
-    "id": "Natasha_Mack",
-    "name": "Natasha Mack",
-    "season": 2021,
-    "bbrefId": "mackna01w",
-    "awards": [
-     "CHAMP"
-    ],
-    "champion": "CHI"
    },
    {
     "id": "Nneka_Ogwumike",
@@ -196,16 +169,6 @@
      "ROY"
     ],
     "champion": null
-   },
-   {
-    "id": "Temi_Fagbenle",
-    "name": "Temi Fagbenle",
-    "season": 2017,
-    "bbrefId": "fagbete01w",
-    "awards": [
-     "CHAMP"
-    ],
-    "champion": "MIN"
    }
   ],
   "wnba-super-season": [
@@ -313,6 +276,39 @@
      "CHAMP"
     ],
     "champion": "HOU"
+   }
+  ],
+  "wnba-team-rewards": [
+   {
+    "id": "Tamika_Catchings",
+    "name": "Tamika Catchings",
+    "season": 2012,
+    "bbrefId": "catchta01w",
+    "awards": [
+     "DPOY",
+     "CHAMP"
+    ],
+    "champion": "IND"
+   },
+   {
+    "id": "Cheryl_Ford",
+    "name": "Cheryl Ford",
+    "season": 2006,
+    "bbrefId": "fordch01w",
+    "awards": [
+     "CHAMP"
+    ],
+    "champion": "DET"
+   },
+   {
+    "id": "DeWanna_Bonner",
+    "name": "DeWanna Bonner",
+    "season": 2014,
+    "bbrefId": "bonnede01w",
+    "awards": [
+     "CHAMP"
+    ],
+    "champion": "PHO"
    }
   ]
  }

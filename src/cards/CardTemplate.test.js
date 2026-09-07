@@ -57,11 +57,11 @@ import {
   SUMMER_STANDOUTS_SET,
   WNBA_SET,
   WNBA_ROOKIE_SET,
+  WNBA_TEAM_REWARDS_SET,
   WNBA_SUPER_SEASON_SET,
   photoUrlPath,
   setLeague,
-  showsSeason,
-} from './sets.js';
+  showsSeason, WNBA_SET_REWARDS_SET } from './sets.js';
 import { AWARD_CODES, MAX_CARD_AWARDS, awardImagePath, getAward } from './awards.js';
 import { AWARDS_FILE, BADGE_FILE, POOL_PLAYERS, SOURCES } from '../studio/players.js';
 
@@ -548,8 +548,11 @@ describe('the sidebar', () => {
     const lineHeight = Number(cssBlock('.card').match(/line-height:\s*([\d.]+)/)[1]);
     const line = block => pxIn(block, 'font-size') * lineHeight;
     const badge = cssBlock('.badge');
+    // The chip is a PILL now, not a square — same shape as the badge, so it is
+    // measured the same way: one line of type plus its own vertical padding.
+    const chip = cssBlock('.awardFallback');
     const rows =
-      pxIn(cssBlock('.awardFallback'), 'height') +
+      line(chip) + 2 * pxIn(chip, 'padding') +
       line(badge) + 2 * pxIn(badge, 'padding') +
       line(cssBlock('.season')) +
       line(cssBlock('.pos')) +
@@ -744,7 +747,9 @@ describe('league mark', () => {
     // when the WNBA legends set did — it is a second WNBA set, and a card type
     // rather than a season, so it declares its league for the same reason.
     const wnbaSets = SET_IDS.filter(i => setLeague(i) === 'WNBA');
-    expect(wnbaSets).toEqual([WNBA_SET, WNBA_SUPER_SEASON_SET, WNBA_ROOKIE_SET]);
+    expect(wnbaSets).toEqual([
+      WNBA_SET, WNBA_SUPER_SEASON_SET, WNBA_ROOKIE_SET, WNBA_TEAM_REWARDS_SET, WNBA_SET_REWARDS_SET,
+    ]);
     for (const id of SET_IDS.filter(i => !wnbaSets.includes(i))) {
       expect(setLeague(id), id).toBe('NBA');
       expect(LEAGUE_LOGOS[setLeague(id)], id).toBe(LEAGUE_LOGO);
@@ -1676,6 +1681,20 @@ describe('the season and the card-type badge', () => {
     expect(html).toContain('data-treatment="gold-foil"');
   });
 
+  it('dates a demoted BEST SEASON on a base card with the stats season', () => {
+    // Pete Nance (2026-09-05): a base-set card under the foil tier printed a
+    // plain BEST SEASON and no year anywhere — the only badge on any card that
+    // named no season. It now prints the stats season in the same row the
+    // gilded pill uses, so the card can be told from a Super Season set card.
+    const html = render({
+      card: { ...SPECIAL, badges: [SUPER_SEASON_BADGE], salary: 100 },
+      set: CURRENT_SET,
+    });
+    expect(html).toContain('BEST SEASON');
+    expect(html).not.toContain('SUPER SEASON');
+    expect(html).toContain('2025-26');
+  });
+
   it('prints the HIGHEST-PRIORITY badge only, never two pills', () => {
     // THE 33 WHO ARE BOTH, and the one case the priority is ever asked about.
     // Their rookie season is the current one, so it is also their best one —
@@ -1752,10 +1771,14 @@ describe('the season and the card-type badge', () => {
     const gilded = superSeason.filter(p => p.salary >= SUPER_SEASON_MIN_SALARY);
     // 15/92 after the defBoost contest reprice — defence value now includes
     // conversion denial, and two badged defenders crossed the gilded line.
-    expect(gilded.length).toBe(12);
-    expect(superSeason.length - gilded.length).toBe(95);
-    expect(BADGE_FILE.counts.printed[SUPER_SEASON_BADGE]).toBe(12);
-    expect(BADGE_FILE.counts.printed[BEST_SEASON_BADGE]).toBe(95);
+    // 16/91 after the LAST-82 WINDOW landed (windowEpm.js): Speed+Power now
+    // pools each season by its share of the player's last 82 games, 173 of 353
+    // budgets moved, and four more cards cleared SUPER_SEASON_MIN_SALARY.
+    // 14/93 after the five players on no current NBA roster were cut (card-data/retired-2026.json), taking the pool 353 -> 348.
+    expect(gilded.length).toBe(14);
+    expect(superSeason.length - gilded.length).toBe(93);
+    expect(BADGE_FILE.counts.printed[SUPER_SEASON_BADGE]).toBe(14);
+    expect(BADGE_FILE.counts.printed[BEST_SEASON_BADGE]).toBe(93);
     expect(BADGE_FILE.counts.printed[ROOKIE_BADGE]).toBe(33);
   });
 
@@ -1883,18 +1906,29 @@ describe('the award marks', () => {
     // No browser broken-image glyph can reach the batch export, which is the
     // whole reason the fallback is a rendered element rather than a bare <img>.
     expect(chip).toContain('Not A Real Award');
-    // The box does not change size when art arrives, so the column will not
-    // shift under the user as they add files. The SLOT is what holds the size
-    // now — `.award` is fitted into it with max-width/max-height rather than
-    // sized — and the chip keeps a fixed near-square of its own, because a chip
-    // stretched to a flexing 127px slot would read as a banner rather than as
-    // a mark. One chip, one size: the count variants left with the wrap layout.
+    // THE CHIP IS A BADGE-SHAPED PILL, and matches `.badge` on every dimension
+    // that makes it one. It stopped being a square when the WNBA stopped
+    // borrowing NBA hardware: the chip is the permanent form for every code
+    // with no WNBA art, so a card can carry four at once, and four 80px squares
+    // is a wall of colour where four pills is a list.
     expect(cssBlock('.award')).toMatch(/max-width:\s*100%/);
     expect(cssBlock('.award')).toMatch(/max-height:\s*100%/);
     expect(cssBlock('.award')).toMatch(/object-fit:\s*contain/);
     const chipBlock = cssBlock('.awardFallback');
-    expect(pxIn(chipBlock, 'width')).toBeLessThanOrEqual(pxIn(cssBlock('.awardSlot'), 'width'));
-    expect(pxIn(chipBlock, 'height')).toBeLessThanOrEqual(pxIn(cssBlock('.awardSlot'), 'height'));
+    const badgeBlock = cssBlock('.badge');
+    for (const prop of ['width', 'padding', 'font-size', 'border-radius']) {
+      expect(pxIn(chipBlock, prop), prop).toBe(pxIn(badgeBlock, prop));
+    }
+    expect(pxIn(chipBlock, 'width')).toBe(pxIn(cssBlock('.awardSlot'), 'width'));
+    // No fixed height any more: the slot collapses to the pill so a chip does
+    // not reserve a trophy's box for art that has not arrived.
+    expect(chipBlock).not.toMatch(/(^|;)\s*height:/);
+    // AND IT SITS ABOVE THE TROPHIES. Whether a mark is a chip is only known
+    // when an image fails to load, so no sorting in the component can answer
+    // it — the slot pulls itself up with `:has`.
+    const hasBlock = cssBlock('.awardSlot:has(.awardFallback)');
+    expect(hasBlock).toMatch(/order:\s*-1/);
+    expect(hasBlock).toMatch(/height:\s*auto/);
   });
 
   it('points at public/awards/{CODE}.png through the app base path', () => {
@@ -1983,10 +2017,14 @@ describe('the generated award file, on the cards it belongs to', () => {
 
   const marked = set => (AWARDS_FILE?.sets?.[set] ?? []).filter(r => r.awards.length > 0);
 
-  it('was generated, and covers the five sets with Basketball-Reference seasons', () => {
+  it('was generated, and covers the six sets with Basketball-Reference seasons', () => {
     expect(AWARDS_FILE).not.toBeNull();
+    // TEAM REWARDS JOINED THE PLAN when the set stopped being built from scratch
+    // and started being cards MOVED out of the other three. A moved card takes
+    // its season with it, so it has to take its awards too — Jokić's MVP would
+    // otherwise be stranded on a set that no longer holds his card.
     expect(Object.keys(AWARDS_FILE.sets).sort()).toEqual(
-      [CURRENT_SET, ROOKIE_SET, SUMMER_STANDOUTS_SET, SUPER_SEASON_SET, 'dissonance'].sort()
+      [CURRENT_SET, ROOKIE_SET, SUMMER_STANDOUTS_SET, SUPER_SEASON_SET, 'dissonance', 'team-rewards'].sort()
     );
     // The WNBA sets are absent, and that is a data gap rather than a decision:
     // Basketball-Reference serves that league under a different path and the
@@ -2014,6 +2052,11 @@ describe('the generated award file, on the cards it belongs to', () => {
     // four marks, exactly MAX_CARD_AWARDS, nothing dropped. The Finals MVP is
     // the mark the base card cannot have and this one must, off a column the
     // base card's season has its own row in.
+    // His 2024-25 card briefly became Oklahoma City's reward and went back:
+    // dropping the Thunder to Paul George lowered the franchise ceiling enough
+    // for the conference tiers to clear it, and the marquee card stayed in
+    // Super Season as a result. The ring is still read PER CARD, which is what
+    // this pair proves — one on his 2024-25 season, none on his 2025-26 one.
     const ss = marked(SUPER_SEASON_SET).find(r => r.id === 'Shai_Gilgeous_Alexander');
     expect(ss.season).toBe(2025);
     expect(ss.awards).toEqual(['MVP', 'FMVP', 'CHAMP', 'AS']);
@@ -2121,8 +2164,24 @@ describe('the generated award file, on the cards it belongs to', () => {
     // Standouts joined the awards plan, and 19 -> 25 when the standout
     // newcomers' rookie years arrived — six of the nineties rookies won
     // something (five ROYs and Shaq's ROY+All-Star among them).
+    // AND 25 -> 21 WHEN THE ROOKIE PLAYING-TIME BAR ARRIVED. All four losses
+    // are CHAMP marks on bench players from title teams — Jordan Walsh on nine
+    // games, Sam Merrill on thirty at 7.8 MPG — and NOT ONE ROY was touched:
+    // seventeen before, seventeen after. That is the reassuring shape, because
+    // winning Rookie of the Year and failing a rookie playing-time bar are
+    // close to contradictory, whereas riding a champion's bench and failing it
+    // are not.
+    // AND 21 -> 16 WHEN SEVEN ROOKIE CARDS BECAME TEAM REWARDS. Five of them
+    // were Rookies of the Year — Embiid, Towns, Davis, Ball, Morant, Barnes,
+    // Kidd between them — so this count fell with them. They did not lose the
+    // mark; it moved to the reward set with the card, which is checked below.
     const rookies = marked(ROOKIE_SET);
-    expect(rookies.length).toBe(25);
+    expect(rookies.length).toBe(19);
+    expect(rookies.filter(r => r.awards.includes('ROY')).length).toBe(15);
+    // Two ROYs live on reward cards now — Chris Paul's 2005-06 Hornets rookie
+    // year is New Orleans's, and LaMelo's went back to the rookie set when the
+    // downgrade rule replaced him.
+    expect(AWARDS_FILE.counts['team-rewards'].byCode.ROY).toBe(2);
     // ALL-STAR DID NOT MOVE THIS SET AT ALL — no player in the rookie pool was
     // an All-Star in his rookie year. Blake Griffin (`MVP-10,ROY-1,AS`,
     // 2010-11) is the case that would have, and he is retired and out of the
@@ -2141,8 +2200,10 @@ describe('the generated award file, on the cards it belongs to', () => {
       }
       expect(r.awards, r.name).toEqual(r.champion ? ['CHAMP'] : ['ROY']);
     }
-    expect(rookies.filter(r => r.awards.includes('ROY'))).toHaveLength(17);
-    expect(rookies.filter(r => r.awards.includes('CHAMP'))).toHaveLength(8);
+    expect(rookies.filter(r => r.awards.includes('ROY'))).toHaveLength(15);
+    // 4, not 8: the rookie playing-time bar removed exactly the profile a ring
+    // reaches without a rookie ever earning minutes — a title team's bench.
+    expect(rookies.filter(r => r.awards.includes('CHAMP'))).toHaveLength(4);
     // And no Rookie of the Year is on a Super Season card, for the same reason
     // from the other side: a player whose best season is his rookie one is
     // excluded from that set.

@@ -1,0 +1,196 @@
+{
+ "_comment": "TEAM COMPLETION REWARDS: collect a franchise’s entire 2026-27 roster, earn that team’s reward card. THREE SECTIONS. `migrated` MOVES a card out of Super Season / Rookie / Summer Standouts into this set — it leaves its old set entirely, keeps its original badge, and gains the TEAM REWARD pill above it. `picks` builds a card from scratch for the three franchises nothing sensible could be moved to. `tiers` is the conference and full-set rewards, which are not franchise-bound. WHY MIGRATION. The ladder could not be built any other way: a franchise is hard to collect because its current roster is stacked, and those same franchises have had their history most thoroughly mined by the special sets, so the hardest rosters had the THINNEST fresh candidate pools. Only 3 of the 10 hardest could reach the legendary band from scratch; eight of the ten easiest could offer a better card than the median of the ten hardest. Moving the mined history back into rewards fixes supply without duplicating a single card.",
+ "picks": {
+  "DET": {
+   "name": "Blake Griffin",
+   "season": 2019,
+   "team": "DET",
+   "epm": 3.15,
+   "goal": "nba-team-DET"
+  },
+  "WAS": {
+   "name": "John Wall",
+   "season": 2016,
+   "team": "WAS",
+   "epm": 2.34,
+   "goal": "nba-team-WAS"
+  },
+  "NYK": {
+   "name": "Allan Houston",
+   "season": 2003,
+   "team": "NYK",
+   "epm": 1.06,
+   "goal": "nba-team-NYK"
+  },
+  "MIN": {
+   "name": "Sam Cassell",
+   "season": 2004,
+   "team": "MIN",
+   "goal": "nba-team-MIN"
+  },
+  "MIA": {
+   "name": "Alonzo Mourning",
+   "season": 2006,
+   "team": "MIA",
+   "goal": "nba-team-MIA"
+  },
+  "CHA": {
+   "name": "Gerald Wallace",
+   "season": 2007,
+   "team": "CHA",
+   "goal": "nba-team-CHA"
+  },
+  "MEM": {
+   "name": "Marc Gasol",
+   "season": 2014,
+   "team": "MEM",
+   "goal": "nba-team-MEM"
+  },
+  "ATL": {
+   "name": "Josh Smith",
+   "season": 2009,
+   "team": "ATL",
+   "goal": "nba-team-ATL"
+  },
+  "TOR": {
+   "name": "Anthony Parker",
+   "season": 2007,
+   "team": "TOR",
+   "goal": "nba-team-TOR"
+  },
+  "HOU": {
+   "name": "Luis Scola",
+   "season": 2011,
+   "team": "HOU",
+   "goal": "nba-team-HOU"
+  },
+  "CHI": {
+   "name": "Luol Deng",
+   "season": 2011,
+   "team": "CHI",
+   "goal": "nba-team-CHI"
+  }
+ },
+ "_excluded": {
+  "Enes Kanter / Enes Freedom": "excluded from this game permanently, by the owner's decision. Do not re-add under either name."
+ },
+ "_tierComment": "PICKS TARGET THE LOW END OF THEIR BAND, which is what keeps each source set’s marquee card where it is: Curry’s 2015-16, LeBron’s 2008-09, Embiid’s 2021-22 and Gilgeous-Alexander’s 2024-25 all stay in Super Season. THE CONFERENCE ODDITY IS FIXED. The East reward was a Houston card because only Giannis cleared the franchise ceiling from an Eastern team, and he was the capstone. Two moves solved it: Oklahoma City dropped from Gilgeous-Alexander ($1,680) to Paul George ($1,500), lowering the ceiling, and the three tiers are now BUILT from seasons no set holds rather than moved from ones that do. Every tier is conference-correct and above every franchise reward: LeBron’s 2009-10 MVP year for the East, Curry’s 2020-21 for the West, and Giannis’ 2019-20 MVP+DPOY season — $2,030, the best card in the game — for all 348 cards.",
+ "tiers": {
+  "nba-conference-East": {
+   "name": "Joel Embiid",
+   "season": 2023,
+   "team": "PHI",
+   "goal": "nba-conference-East"
+  },
+  "nba-conference-West": {
+   "name": "Stephen Curry",
+   "season": 2021,
+   "team": "GSW",
+   "goal": "nba-conference-West"
+  },
+  "nba-set": {
+   "name": "Giannis Antetokounmpo",
+   "season": 2020,
+   "team": "MIL",
+   "goal": "nba-set"
+  }
+ },
+ "migrated": {
+  "OKC": {
+   "set": "super-season",
+   "id": "Paul_George",
+   "goal": "nba-team-OKC"
+  },
+  "POR": {
+   "set": "super-season",
+   "id": "Damian_Lillard",
+   "goal": "nba-team-POR"
+  },
+  "CLE": {
+   "set": "summer-standouts",
+   "id": "Kyrie_Irving",
+   "goal": "nba-team-CLE"
+  },
+  "BOS": {
+   "set": "summer-standouts",
+   "id": "Kevin_Garnett",
+   "goal": "nba-team-BOS"
+  },
+  "PHI": {
+   "set": "super-season",
+   "id": "Julius_Erving",
+   "goal": "nba-team-PHI",
+   "bandException": "Dr. J's 1976-77 prices $1,180, twenty dollars under the legendary floor. Philadelphia has no off-roster Philly-jersey card above it: Barkley's 1989-90 is $1,160 and everything higher is Joel Embiid, who is ON the 2026-27 roster this reward is for. Twenty dollars is not worth rewarding a roster with a better copy of a player already in it."
+  },
+  "SAS": {
+   "set": "super-season",
+   "id": "David_Robinson",
+   "goal": "nba-team-SAS"
+  },
+  "GSW": {
+   "set": "summer-standouts",
+   "id": "Kevin_Durant",
+   "goal": "nba-team-GSW"
+  },
+  "DEN": {
+   "set": "summer-standouts",
+   "id": "Jamal_Murray",
+   "goal": "nba-team-DEN"
+  },
+  "LAL": {
+   "set": "super-season",
+   "id": "Kobe_Bryant",
+   "goal": "nba-team-LAL"
+  },
+  "LAC": {
+   "set": "super-season",
+   "id": "Ivica_Zubac",
+   "goal": "nba-team-LAC"
+  },
+  "ORL": {
+   "set": "summer-standouts",
+   "id": "Jameer_Nelson",
+   "goal": "nba-team-ORL"
+  },
+  "IND": {
+   "set": "super-season",
+   "id": "Myles_Turner",
+   "goal": "nba-team-IND"
+  },
+  "NOP": {
+   "set": "rookie",
+   "id": "Chris_Paul",
+   "goal": "nba-team-NOP"
+  },
+  "UTA": {
+   "set": "super-season",
+   "id": "John_Stockton",
+   "goal": "nba-team-UTA"
+  },
+  "PHX": {
+   "set": "summer-standouts",
+   "id": "Steve_Nash",
+   "goal": "nba-team-PHX"
+  },
+  "DAL": {
+   "set": "rookie",
+   "id": "Jason_Kidd",
+   "goal": "nba-team-DAL"
+  },
+  "SAC": {
+   "set": "summer-standouts",
+   "id": "Mike_Bibby",
+   "goal": "nba-team-SAC"
+  },
+  "BKN": {
+   "set": "super-season",
+   "id": "Nic_Claxton",
+   "goal": "nba-team-BKN"
+  },
+  "MIL": {
+   "set": "super-season",
+   "id": "Bobby_Portis",
+   "goal": "nba-team-MIL"
+  }
+ }
+}

@@ -38,10 +38,11 @@ import {
 } from './sets.js';
 
 describe('the declared set list', () => {
-  it('holds the nine sets the studio offers', () => {
+  it('holds the eleven sets the studio offers', () => {
     expect(SET_IDS).toEqual([
       '2026-27', '2025-26', 'super-season', 'rookie', 'summer-standouts',
-      'dissonance', 'wnba', 'wnba-super-season', 'wnba-rookie',
+      'dissonance', 'team-rewards', 'set-rewards', 'wnba', 'wnba-super-season', 'wnba-rookie',
+      'wnba-team-rewards', 'wnba-set-rewards',
     ]);
   });
 

@@ -1,3161 +1,3193 @@
 {
-  "generatedAt": "2026-09-02T21:47:18.193Z",
-  "set": "summer-standouts",
-  "provisional": true,
-  "sources": {
-    "roster": "card-data/summer-standouts.json — hand-picked; conflict calls in card-data/standout-conflict-decisions.json",
-    "statLine": "dunksandthrees season-epm seasonType st4 (playoffs), per-75 restated per-100",
-    "defBoost": "real playoff DEF EPM (2002+) or real playoff DBPM (the BBRef runs) — no regular-season substitute on this set",
-    "pricing": "play value against the base set, like every special set"
-  },
-  "firstSeason": 1996,
-  "lastSeason": 2025,
-  "cards": [
+ "generatedAt": "2026-09-06T13:54:27.757Z",
+ "set": "summer-standouts",
+ "provisional": true,
+ "sources": {
+  "roster": "card-data/summer-standouts.json — hand-picked; conflict calls in card-data/standout-conflict-decisions.json",
+  "statLine": "dunksandthrees season-epm seasonType st4 (playoffs), per-75 restated per-100",
+  "defBoost": "real playoff DEF EPM (2002+) or real playoff DBPM (the BBRef runs) — no regular-season substitute on this set",
+  "pricing": "play value against the base set, like every special set"
+ },
+ "firstSeason": 1996,
+ "lastSeason": 2025,
+ "cards": [
+  {
+   "id": "Doug_Christie",
+   "name": "Doug Christie",
+   "team": "SAC95",
+   "pos": "SG",
+   "speed": 15,
+   "power": 10,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": -4,
+   "defBoost": 3,
+   "salary": 620,
+   "chart": [
     {
-      "id": "Doug_Christie",
-      "name": "Doug Christie",
-      "team": "SAC95",
-      "pos": "SG",
-      "speed": 15,
-      "power": 10,
-      "shotLine": 16,
-      "paintBoost": 2,
-      "threePtBoost": -2,
-      "defBoost": 3,
-      "salary": 680,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 4,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 5,
-          "hi": 10,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 11,
-          "hi": 15,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 16,
-          "hi": 99,
-          "pts": 1,
-          "reb": 1,
-          "ast": 1
-        }
-      ],
-      "season": 2002,
-      "seasonLabel": "2001-02",
-      "age": null,
-      "games": 16,
-      "mpg": 40.3,
-      "bbrefId": "chrisdo01",
-      "traded": false,
-      "metrics": {},
-      "provisional": false,
-      "playoffRun": true
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
     },
     {
-      "id": "Eric_Williams",
-      "name": "Eric Williams",
-      "team": "BOS",
-      "pos": "SG",
-      "speed": 11,
-      "power": 8,
-      "shotLine": 15,
-      "paintBoost": 0,
-      "threePtBoost": 0,
-      "defBoost": 2,
-      "salary": 420,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 8,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 9,
-          "hi": 10,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 11,
-          "hi": 14,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 15,
-          "hi": 24,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 25,
-          "hi": 99,
-          "pts": 1,
-          "reb": 1,
-          "ast": 1
-        }
-      ],
-      "season": 2002,
-      "seasonLabel": "2001-02",
-      "age": null,
-      "games": 16,
-      "mpg": 30.5,
-      "bbrefId": "willier01",
-      "traded": false,
-      "metrics": {},
-      "provisional": false,
-      "playoffRun": true
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
     },
     {
-      "id": "Mike_Bibby",
-      "name": "Mike Bibby",
-      "team": "SAC95",
-      "pos": "PG",
-      "speed": 15,
-      "power": 9,
-      "shotLine": 16,
-      "paintBoost": 0,
-      "threePtBoost": 1,
-      "defBoost": 0,
-      "salary": 800,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 4,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 5,
-          "hi": 9,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
-          "hi": 15,
-          "pts": 2,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 16,
-          "hi": 21,
-          "pts": 2,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 22,
-          "hi": 99,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        }
-      ],
-      "season": 2002,
-      "seasonLabel": "2001-02",
-      "age": null,
-      "games": 16,
-      "mpg": 41.3,
-      "bbrefId": "bibbymi01",
-      "traded": false,
-      "metrics": {},
-      "provisional": false,
-      "playoffRun": true
+     "lo": 4,
+     "hi": 13,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
     },
     {
-      "id": "Jason_Collins",
-      "name": "Jason Collins",
-      "team": "NJN",
-      "pos": "C",
-      "speed": 8,
-      "power": 13,
-      "shotLine": 18,
-      "paintBoost": 0,
-      "threePtBoost": -2,
-      "defBoost": 2,
-      "salary": 540,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 5,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 6,
-          "hi": 17,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 18,
-          "hi": 99,
-          "pts": 1,
-          "reb": 2,
-          "ast": 0
-        }
-      ],
-      "season": 2003,
-      "seasonLabel": "2002-03",
-      "age": null,
-      "games": 20,
-      "mpg": 26.4,
-      "bbrefId": "collija04",
-      "traded": false,
-      "metrics": {},
-      "provisional": false,
-      "playoffRun": true
+     "lo": 14,
+     "hi": 22,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
     },
     {
-      "id": "Ben_Wallace",
-      "name": "Ben Wallace",
-      "team": "DET02",
-      "pos": "PF",
-      "speed": 13,
-      "power": 17,
-      "shotLine": 18,
-      "paintBoost": 3,
-      "threePtBoost": -2,
-      "defBoost": 5,
-      "salary": 740,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 3,
-          "pts": 0,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 4,
-          "hi": 17,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 18,
-          "hi": 23,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 24,
-          "hi": 99,
-          "pts": 1,
-          "reb": 2,
-          "ast": 0
-        }
-      ],
-      "season": 2004,
-      "seasonLabel": "2003-04",
-      "age": null,
-      "games": 23,
-      "mpg": 40.3,
-      "bbrefId": "wallabe01",
-      "traded": false,
-      "metrics": {},
-      "provisional": false,
-      "playoffRun": true
-    },
-    {
-      "id": "Robert_Horry",
-      "name": "Robert Horry",
-      "team": "SAS",
-      "pos": "PF",
-      "speed": 10,
-      "power": 14,
-      "shotLine": 15,
-      "paintBoost": 0,
-      "threePtBoost": 3,
-      "defBoost": 1,
-      "salary": 860,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 4,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 5,
-          "hi": 14,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 15,
-          "hi": 23,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 24,
-          "hi": 99,
-          "pts": 2,
-          "reb": 2,
-          "ast": 1
-        }
-      ],
-      "season": 2005,
-      "seasonLabel": "2004-05",
-      "age": null,
-      "games": 23,
-      "mpg": 27.1,
-      "bbrefId": "horryro01",
-      "traded": false,
-      "metrics": {},
-      "provisional": false,
-      "playoffRun": true
-    },
-    {
-      "id": "Josh_Howard",
-      "name": "Josh Howard",
-      "team": "DAL",
-      "pos": "SF",
-      "speed": 13,
-      "power": 12,
-      "shotLine": 16,
-      "paintBoost": 2,
-      "threePtBoost": 1,
-      "defBoost": 2,
-      "salary": 1000,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 3,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 4,
-          "hi": 15,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 16,
-          "hi": 99,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        }
-      ],
-      "season": 2006,
-      "seasonLabel": "2005-06",
-      "age": null,
-      "games": 23,
-      "mpg": 35.8,
-      "bbrefId": "howarjo01",
-      "traded": false,
-      "metrics": {},
-      "provisional": false,
-      "playoffRun": true
-    },
-    {
-      "id": "Tim_Thomas",
-      "name": "Tim Thomas",
-      "team": "PHX01",
-      "pos": "C",
-      "speed": 9,
-      "power": 14,
-      "shotLine": 14,
-      "paintBoost": 0,
-      "threePtBoost": 2,
-      "defBoost": 0,
-      "salary": 1240,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 4,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 5,
-          "hi": 9,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 10,
-          "hi": 13,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 14,
-          "hi": 20,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 21,
-          "hi": 99,
-          "pts": 5,
-          "reb": 2,
-          "ast": 1
-        }
-      ],
-      "season": 2006,
-      "seasonLabel": "2005-06",
-      "age": null,
-      "games": 20,
-      "mpg": 31.8,
-      "bbrefId": "thomati01",
-      "traded": false,
-      "metrics": {},
-      "provisional": false,
-      "playoffRun": true
-    },
-    {
-      "id": "Daniel_Gibson",
-      "name": "Daniel Gibson",
-      "team": "CLE04",
-      "pos": "PG",
-      "speed": 12,
-      "power": 7,
-      "shotLine": 14,
-      "paintBoost": -1,
-      "threePtBoost": 2,
-      "defBoost": 0,
-      "salary": 860,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 6,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 7,
-          "hi": 9,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
-          "hi": 13,
-          "pts": 2,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 14,
-          "hi": 21,
-          "pts": 2,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 22,
-          "hi": 99,
-          "pts": 5,
-          "reb": 4,
-          "ast": 2
-        }
-      ],
-      "season": 2007,
-      "seasonLabel": "2006-07",
-      "age": null,
-      "games": 20,
-      "mpg": 20.1,
-      "bbrefId": "gibsoda01",
-      "traded": false,
-      "metrics": {},
-      "provisional": false,
-      "playoffRun": true
-    },
-    {
-      "id": "Fabricio_Oberto",
-      "name": "Fabricio Oberto",
-      "team": "SAS",
-      "pos": "PF",
-      "speed": 8,
-      "power": 10,
-      "shotLine": 14,
-      "paintBoost": 0,
-      "threePtBoost": -6,
-      "defBoost": 0,
-      "salary": 470,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 6,
-          "pts": 0,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 7,
-          "hi": 13,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 14,
-          "hi": 16,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 17,
-          "hi": 23,
-          "pts": 1,
-          "reb": 2,
-          "ast": 1
-        },
-        {
-          "lo": 24,
-          "hi": 99,
-          "pts": 2,
-          "reb": 2,
-          "ast": 1
-        }
-      ],
-      "season": 2007,
-      "seasonLabel": "2006-07",
-      "age": null,
-      "games": 20,
-      "mpg": 20.8,
-      "bbrefId": "obertfa01",
-      "traded": false,
-      "metrics": {},
-      "provisional": false,
-      "playoffRun": true
-    },
-    {
-      "id": "Michael_Finley",
-      "name": "Michael Finley",
-      "team": "SAS",
-      "pos": "SF",
-      "speed": 11,
-      "power": 10,
-      "shotLine": 15,
-      "paintBoost": 0,
-      "threePtBoost": 3,
-      "defBoost": -1,
-      "salary": 770,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 5,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 6,
-          "hi": 9,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
-          "hi": 14,
-          "pts": 2,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 15,
-          "hi": 21,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 22,
-          "hi": 99,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        }
-      ],
-      "season": 2007,
-      "seasonLabel": "2006-07",
-      "age": null,
-      "games": 20,
-      "mpg": 26.9,
-      "bbrefId": "finlemi01",
-      "traded": false,
-      "metrics": {},
-      "provisional": false,
-      "playoffRun": true
-    },
-    {
-      "id": "Rasheed_Wallace",
-      "name": "Rasheed Wallace",
-      "team": "DET06",
-      "pos": "PF",
-      "speed": 10,
-      "power": 14,
-      "shotLine": 16,
-      "paintBoost": 0,
-      "threePtBoost": 1,
-      "defBoost": 2,
-      "salary": 950,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 4,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 5,
-          "hi": 15,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 16,
-          "hi": 21,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 22,
-          "hi": 99,
-          "pts": 2,
-          "reb": 2,
-          "ast": 0
-        }
-      ],
-      "season": 2007,
-      "seasonLabel": "2006-07",
-      "age": null,
-      "games": 16,
-      "mpg": 35.8,
-      "bbrefId": "wallara01",
-      "traded": false,
-      "metrics": {},
-      "provisional": false,
-      "playoffRun": true
-    },
-    {
-      "id": "Derek_Fisher",
-      "name": "Derek Fisher",
-      "team": "LAL",
-      "pos": "PG",
-      "speed": 15,
-      "power": 9,
-      "shotLine": 15,
-      "paintBoost": 0,
-      "threePtBoost": 0,
-      "defBoost": 2,
-      "salary": 810,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 4,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 5,
-          "hi": 14,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 15,
-          "hi": 99,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        }
-      ],
-      "season": 2008,
-      "seasonLabel": "2007-08",
-      "age": null,
-      "games": 21,
-      "mpg": 31.6,
-      "bbrefId": "fishede01",
-      "traded": false,
-      "metrics": {},
-      "provisional": false,
-      "playoffRun": true
-    },
-    {
-      "id": "Carmelo_Anthony",
-      "name": "Carmelo Anthony",
-      "team": "DEN04",
-      "pos": "SF",
-      "speed": 12,
-      "power": 12,
-      "shotLine": 16,
-      "paintBoost": 0,
-      "threePtBoost": 1,
-      "defBoost": -1,
-      "salary": 1210,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 4,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 5,
-          "hi": 9,
-          "pts": 2,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
-          "hi": 15,
-          "pts": 3,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 16,
-          "hi": 21,
-          "pts": 3,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 22,
-          "hi": 99,
-          "pts": 3,
-          "reb": 1,
-          "ast": 1
-        }
-      ],
-      "season": 2009,
-      "seasonLabel": "2008-09",
-      "age": null,
-      "games": 16,
-      "mpg": 38.2,
-      "bbrefId": "anthoca01",
-      "traded": false,
-      "metrics": {},
-      "provisional": false,
-      "playoffRun": true
-    },
-    {
-      "id": "Chauncey_Billups",
-      "name": "Chauncey Billups",
-      "team": "DEN04",
-      "pos": "PG",
-      "speed": 16,
-      "power": 11,
-      "shotLine": 13,
-      "paintBoost": -1,
-      "threePtBoost": 1,
-      "defBoost": 0,
-      "salary": 1180,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 4,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 5,
-          "hi": 12,
-          "pts": 2,
-          "reb": 0,
-          "ast": 1
-        },
-        {
-          "lo": 13,
-          "hi": 21,
-          "pts": 2,
-          "reb": 0,
-          "ast": 1
-        },
-        {
-          "lo": 22,
-          "hi": 99,
-          "pts": 3,
-          "reb": 1,
-          "ast": 1
-        }
-      ],
-      "season": 2009,
-      "seasonLabel": "2008-09",
-      "age": null,
-      "games": 16,
-      "mpg": 38.7,
-      "bbrefId": "billuch01",
-      "traded": false,
-      "metrics": {},
-      "provisional": false,
-      "playoffRun": true
-    },
-    {
-      "id": "Lamar_Odom",
-      "name": "Lamar Odom",
-      "team": "LAL",
-      "pos": "PF",
-      "speed": 11,
-      "power": 14,
-      "shotLine": 15,
-      "paintBoost": 0,
-      "threePtBoost": 0,
-      "defBoost": 2,
-      "salary": 880,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 3,
-          "pts": 0,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 4,
-          "hi": 14,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 15,
-          "hi": 22,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 23,
-          "hi": 99,
-          "pts": 2,
-          "reb": 2,
-          "ast": 1
-        }
-      ],
-      "season": 2009,
-      "seasonLabel": "2008-09",
-      "age": null,
-      "games": 23,
-      "mpg": 31.9,
-      "bbrefId": "odomla01",
-      "traded": false,
-      "metrics": {},
-      "provisional": false,
-      "playoffRun": true
-    },
-    {
-      "id": "Glen_Davis",
-      "name": "Glen Davis",
-      "team": "BOS",
-      "pos": "C",
-      "speed": 5,
-      "power": 10,
-      "shotLine": 16,
-      "paintBoost": 0,
-      "threePtBoost": -4,
-      "defBoost": 1,
-      "salary": 470,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 5,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 6,
-          "hi": 15,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 16,
-          "hi": 22,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 23,
-          "hi": 99,
-          "pts": 2,
-          "reb": 2,
-          "ast": 1
-        }
-      ],
-      "season": 2010,
-      "seasonLabel": "2009-10",
-      "age": null,
-      "games": 24,
-      "mpg": 20.1,
-      "bbrefId": "davisgl01",
-      "traded": false,
-      "metrics": {},
-      "provisional": false,
-      "playoffRun": true
-    },
-    {
-      "id": "Jameer_Nelson",
-      "name": "Jameer Nelson",
-      "team": "ORL01",
-      "pos": "PG",
-      "speed": 13,
-      "power": 8,
-      "shotLine": 15,
-      "paintBoost": 0,
-      "threePtBoost": 3,
-      "defBoost": 0,
-      "salary": 990,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 4,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 5,
-          "hi": 8,
-          "pts": 2,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 9,
-          "hi": 14,
-          "pts": 2,
-          "reb": 0,
-          "ast": 1
-        },
-        {
-          "lo": 15,
-          "hi": 20,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 21,
-          "hi": 99,
-          "pts": 3,
-          "reb": 1,
-          "ast": 1
-        }
-      ],
-      "season": 2010,
-      "seasonLabel": "2009-10",
-      "age": null,
-      "games": 14,
-      "mpg": 34.2,
-      "bbrefId": "nelsoja01",
-      "traded": false,
-      "metrics": {},
-      "provisional": false,
-      "playoffRun": true
-    },
-    {
-      "id": "Jared_Dudley",
-      "name": "Jared Dudley",
-      "team": "PHX01",
-      "pos": "SF",
-      "speed": 10,
-      "power": 10,
-      "shotLine": 14,
-      "paintBoost": 0,
-      "threePtBoost": 2,
-      "defBoost": 1,
-      "salary": 780,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 7,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 8,
-          "hi": 13,
-          "pts": 1,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 14,
-          "hi": 23,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 24,
-          "hi": 27,
-          "pts": 2,
-          "reb": 2,
-          "ast": 1
-        },
-        {
-          "lo": 28,
-          "hi": 99,
-          "pts": 3,
-          "reb": 2,
-          "ast": 1
-        }
-      ],
-      "season": 2010,
-      "seasonLabel": "2009-10",
-      "age": null,
-      "games": 16,
-      "mpg": 23.6,
-      "bbrefId": "dudleja01",
-      "traded": false,
-      "metrics": {},
-      "provisional": true,
-      "playoffRun": true
-    },
-    {
-      "id": "Jason_Richardson",
-      "name": "Jason Richardson",
-      "team": "PHX01",
-      "pos": "SG",
-      "speed": 14,
-      "power": 9,
-      "shotLine": 14,
-      "paintBoost": 0,
-      "threePtBoost": 2,
-      "defBoost": -1,
-      "salary": 1120,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 5,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 6,
-          "hi": 13,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 14,
-          "hi": 99,
-          "pts": 3,
-          "reb": 1,
-          "ast": 0
-        }
-      ],
-      "season": 2010,
-      "seasonLabel": "2009-10",
-      "age": null,
-      "games": 16,
-      "mpg": 33.3,
-      "bbrefId": "richaja01",
-      "traded": false,
-      "metrics": {},
-      "provisional": false,
-      "playoffRun": true
-    },
-    {
-      "id": "Mickael_Pietrus",
-      "name": "Mickaël Piétrus",
-      "team": "ORL01",
-      "pos": "SF",
-      "speed": 9,
-      "power": 8,
-      "shotLine": 14,
-      "paintBoost": 0,
-      "threePtBoost": 2,
-      "defBoost": 1,
-      "salary": 640,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 8,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 9,
-          "hi": 13,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 14,
-          "hi": 23,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 24,
-          "hi": 99,
-          "pts": 3,
-          "reb": 2,
-          "ast": 1
-        }
-      ],
-      "season": 2010,
-      "seasonLabel": "2009-10",
-      "age": null,
-      "games": 14,
-      "mpg": 20.1,
-      "bbrefId": "pietrmi01",
-      "traded": false,
-      "metrics": {},
-      "provisional": true,
-      "playoffRun": true
-    },
-    {
-      "id": "Steve_Nash",
-      "name": "Steve Nash",
-      "team": "PHX01",
-      "pos": "PG",
-      "speed": 14,
-      "power": 8,
-      "shotLine": 14,
-      "paintBoost": 0,
-      "threePtBoost": -1,
-      "defBoost": -1,
-      "salary": 840,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 5,
-          "pts": 0,
-          "reb": 0,
-          "ast": 1
-        },
-        {
-          "lo": 6,
-          "hi": 13,
-          "pts": 2,
-          "reb": 0,
-          "ast": 1
-        },
-        {
-          "lo": 14,
-          "hi": 21,
-          "pts": 2,
-          "reb": 0,
-          "ast": 1
-        },
-        {
-          "lo": 22,
-          "hi": 99,
-          "pts": 2,
-          "reb": 1,
-          "ast": 2
-        }
-      ],
-      "season": 2010,
-      "seasonLabel": "2009-10",
-      "age": null,
-      "games": 16,
-      "mpg": 33.7,
-      "bbrefId": "nashst01",
-      "traded": false,
-      "metrics": {},
-      "provisional": false,
-      "playoffRun": true
-    },
-    {
-      "id": "Jason_Kidd",
-      "name": "Jason Kidd",
-      "team": "DAL",
-      "pos": "SG",
-      "speed": 17,
-      "power": 10,
-      "shotLine": 16,
-      "paintBoost": 0,
-      "threePtBoost": 1,
-      "defBoost": 3,
-      "salary": 700,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 3,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 4,
-          "hi": 11,
-          "pts": 1,
-          "reb": 0,
-          "ast": 1
-        },
-        {
-          "lo": 12,
-          "hi": 15,
-          "pts": 1,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 16,
-          "hi": 99,
-          "pts": 1,
-          "reb": 1,
-          "ast": 1
-        }
-      ],
-      "season": 2011,
-      "seasonLabel": "2010-11",
-      "age": null,
-      "games": 21,
-      "mpg": 35.4,
-      "bbrefId": "kiddja01",
-      "traded": false,
-      "metrics": {},
-      "provisional": false,
-      "playoffRun": true
-    },
-    {
-      "id": "Joel_Anthony",
-      "name": "Joel Anthony",
-      "team": "MIA",
-      "pos": "PF",
-      "speed": 7,
-      "power": 10,
-      "shotLine": 18,
-      "paintBoost": 2,
-      "threePtBoost": -2,
-      "defBoost": 1,
-      "salary": 60,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 8,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 9,
-          "hi": 17,
-          "pts": 0,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 18,
-          "hi": 99,
-          "pts": 0,
-          "reb": 1,
-          "ast": 0
-        }
-      ],
-      "season": 2011,
-      "seasonLabel": "2010-11",
-      "age": null,
-      "games": 21,
-      "mpg": 27.4,
-      "bbrefId": "anthojo01",
-      "traded": false,
-      "metrics": {},
-      "provisional": false,
-      "playoffRun": true
-    },
-    {
-      "id": "Boris_Diaw",
-      "name": "Boris Diaw",
-      "team": "SAS",
-      "pos": "PF",
-      "speed": 8,
-      "power": 10,
-      "shotLine": 15,
-      "paintBoost": 0,
-      "threePtBoost": 0,
-      "defBoost": 1,
-      "salary": 550,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 7,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 8,
-          "hi": 14,
-          "pts": 1,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 15,
-          "hi": 19,
-          "pts": 1,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 20,
-          "hi": 99,
-          "pts": 2,
-          "reb": 2,
-          "ast": 1
-        }
-      ],
-      "season": 2012,
-      "seasonLabel": "2011-12",
-      "age": null,
-      "games": 14,
-      "mpg": 24.7,
-      "bbrefId": "diawbo01",
-      "traded": false,
-      "metrics": {},
-      "provisional": true,
-      "playoffRun": true
-    },
-    {
-      "id": "Kevin_Garnett",
-      "name": "Kevin Garnett",
-      "team": "BOS",
-      "pos": "C",
-      "speed": 11,
-      "power": 17,
-      "shotLine": 16,
-      "paintBoost": 2,
-      "threePtBoost": -4,
-      "defBoost": 4,
-      "salary": 1320,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 3,
-          "pts": 0,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 4,
-          "hi": 15,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 16,
-          "hi": 20,
-          "pts": 3,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 21,
-          "hi": 99,
-          "pts": 3,
-          "reb": 2,
-          "ast": 0
-        }
-      ],
-      "season": 2012,
-      "seasonLabel": "2011-12",
-      "age": null,
-      "games": 20,
-      "mpg": 36.9,
-      "bbrefId": "garneke01",
-      "traded": false,
-      "metrics": {},
-      "provisional": false,
-      "playoffRun": true
-    },
-    {
-      "id": "Stephen_Jackson",
-      "name": "Stephen Jackson",
-      "team": "SAS",
-      "pos": "SF",
-      "speed": 9,
-      "power": 8,
-      "shotLine": 12,
-      "paintBoost": -1,
-      "threePtBoost": 0,
-      "defBoost": -1,
-      "salary": 560,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 8,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 9,
-          "hi": 11,
-          "pts": 1,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 12,
-          "hi": 22,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 23,
-          "hi": 26,
-          "pts": 2,
-          "reb": 2,
-          "ast": 1
-        },
-        {
-          "lo": 27,
-          "hi": 99,
-          "pts": 3,
-          "reb": 2,
-          "ast": 1
-        }
-      ],
-      "season": 2012,
-      "seasonLabel": "2011-12",
-      "age": null,
-      "games": 14,
-      "mpg": 21.3,
-      "bbrefId": "jacksst02",
-      "traded": false,
-      "metrics": {},
-      "provisional": true,
-      "playoffRun": true
-    },
-    {
-      "id": "Ray_Allen",
-      "name": "Ray Allen",
-      "team": "MIA",
-      "pos": "SG",
-      "speed": 12,
-      "power": 8,
-      "shotLine": 14,
-      "paintBoost": 0,
-      "threePtBoost": 2,
-      "defBoost": -1,
-      "salary": 670,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 4,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 5,
-          "hi": 13,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 14,
-          "hi": 22,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 23,
-          "hi": 99,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        }
-      ],
-      "season": 2013,
-      "seasonLabel": "2012-13",
-      "age": null,
-      "games": 23,
-      "mpg": 24.9,
-      "bbrefId": "allenra02",
-      "traded": false,
-      "metrics": {},
-      "provisional": false,
-      "playoffRun": true
-    },
-    {
-      "id": "Danny_Green",
-      "name": "Danny Green",
-      "team": "SAS",
-      "pos": "SG",
-      "speed": 14,
-      "power": 10,
-      "shotLine": 14,
-      "paintBoost": -1,
-      "threePtBoost": 2,
-      "defBoost": 3,
-      "salary": 880,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 6,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 7,
-          "hi": 13,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 14,
-          "hi": 16,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 17,
-          "hi": 99,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        }
-      ],
-      "season": 2014,
-      "seasonLabel": "2013-14",
-      "age": null,
-      "games": 23,
-      "mpg": 23,
-      "bbrefId": "greenda02",
-      "traded": false,
-      "metrics": {},
-      "provisional": false,
-      "playoffRun": true
-    },
-    {
-      "id": "Paul_George",
-      "name": "Paul George",
-      "team": "IND",
-      "pos": "SF",
-      "speed": 14,
-      "power": 13,
-      "shotLine": 15,
-      "paintBoost": 2,
-      "threePtBoost": 3,
-      "defBoost": 2,
-      "salary": 1120,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 3,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 4,
-          "hi": 9,
-          "pts": 2,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
-          "hi": 14,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 15,
-          "hi": 20,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 21,
-          "hi": 99,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        }
-      ],
-      "season": 2014,
-      "seasonLabel": "2013-14",
-      "age": null,
-      "games": 19,
-      "mpg": 41.1,
-      "bbrefId": "georgpa01",
-      "traded": false,
-      "metrics": {},
-      "provisional": false,
-      "playoffRun": true
-    },
-    {
-      "id": "JR_Smith",
-      "name": "JR Smith",
-      "team": "CLE16",
-      "pos": "SG",
-      "speed": 14,
-      "power": 10,
-      "shotLine": 15,
-      "paintBoost": 0,
-      "threePtBoost": 3,
-      "defBoost": 0,
-      "salary": 710,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 3,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 4,
-          "hi": 14,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 15,
-          "hi": 17,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 18,
-          "hi": 99,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        }
-      ],
-      "season": 2016,
-      "seasonLabel": "2015-16",
-      "age": null,
-      "games": 21,
-      "mpg": 34.8,
-      "bbrefId": "smithjr01",
-      "traded": false,
-      "metrics": {},
-      "provisional": false,
-      "playoffRun": true
-    },
-    {
-      "id": "Kyrie_Irving",
-      "name": "Kyrie Irving",
-      "team": "CLE16",
-      "pos": "PG",
-      "speed": 16,
-      "power": 10,
-      "shotLine": 15,
-      "paintBoost": 0,
-      "threePtBoost": 3,
-      "defBoost": -1,
-      "salary": 1310,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 3,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 4,
-          "hi": 10,
-          "pts": 2,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 11,
-          "hi": 14,
-          "pts": 3,
-          "reb": 0,
-          "ast": 1
-        },
-        {
-          "lo": 15,
-          "hi": 21,
-          "pts": 3,
-          "reb": 0,
-          "ast": 1
-        },
-        {
-          "lo": 22,
-          "hi": 99,
-          "pts": 3,
-          "reb": 1,
-          "ast": 1
-        }
-      ],
-      "season": 2016,
-      "seasonLabel": "2015-16",
-      "age": null,
-      "games": 21,
-      "mpg": 36.8,
-      "bbrefId": "irvinky01",
-      "traded": false,
-      "metrics": {},
-      "provisional": false,
-      "playoffRun": true
-    },
-    {
-      "id": "Serge_Ibaka",
-      "name": "Serge Ibaka",
-      "team": "OKC",
-      "pos": "PF",
-      "speed": 10,
-      "power": 14,
-      "shotLine": 14,
-      "paintBoost": 0,
-      "threePtBoost": -1,
-      "defBoost": 1,
-      "salary": 750,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 3,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 4,
-          "hi": 13,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 14,
-          "hi": 16,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 17,
-          "hi": 99,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        }
-      ],
-      "season": 2016,
-      "seasonLabel": "2015-16",
-      "age": null,
-      "games": 18,
-      "mpg": 33.5,
-      "bbrefId": "ibakase01",
-      "traded": false,
-      "metrics": {},
-      "provisional": false,
-      "playoffRun": true
-    },
-    {
-      "id": "Kevin_Durant",
-      "name": "Kevin Durant",
-      "team": "GSW",
-      "pos": "PF",
-      "speed": 11,
-      "power": 16,
-      "shotLine": 13,
-      "paintBoost": 0,
-      "threePtBoost": 1,
-      "defBoost": 0,
-      "salary": 1420,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 4,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 5,
-          "hi": 12,
-          "pts": 3,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 13,
-          "hi": 99,
-          "pts": 3,
-          "reb": 1,
-          "ast": 1
-        }
-      ],
-      "season": 2017,
-      "seasonLabel": "2016-17",
-      "age": null,
-      "games": 15,
-      "mpg": 35.5,
-      "bbrefId": "duranke01",
-      "traded": false,
-      "metrics": {},
-      "provisional": false,
-      "playoffRun": true
-    },
-    {
-      "id": "Kevin_Love",
-      "name": "Kevin Love",
-      "team": "CLE16",
-      "pos": "PF",
-      "speed": 10,
-      "power": 14,
-      "shotLine": 15,
-      "paintBoost": -1,
-      "threePtBoost": 3,
-      "defBoost": 2,
-      "salary": 1240,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 3,
-          "pts": 0,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 4,
-          "hi": 14,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 15,
-          "hi": 99,
-          "pts": 3,
-          "reb": 2,
-          "ast": 0
-        }
-      ],
-      "season": 2017,
-      "seasonLabel": "2016-17",
-      "age": null,
-      "games": 18,
-      "mpg": 32.1,
-      "bbrefId": "loveke01",
-      "traded": false,
-      "metrics": {},
-      "provisional": false,
-      "playoffRun": true
-    },
-    {
-      "id": "Chris_Paul",
-      "name": "Chris Paul",
-      "team": "HOU",
-      "pos": "PG",
-      "speed": 16,
-      "power": 8,
-      "shotLine": 16,
-      "paintBoost": 0,
-      "threePtBoost": 1,
-      "defBoost": 2,
-      "salary": 1190,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 4,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 5,
-          "hi": 15,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 16,
-          "hi": 99,
-          "pts": 3,
-          "reb": 1,
-          "ast": 1
-        }
-      ],
-      "season": 2018,
-      "seasonLabel": "2017-18",
-      "age": null,
-      "games": 15,
-      "mpg": 34.4,
-      "bbrefId": "paulch01",
-      "traded": false,
-      "metrics": {},
-      "provisional": false,
-      "playoffRun": true
-    },
-    {
-      "id": "PJ_Tucker",
-      "name": "PJ Tucker",
-      "team": "HOU",
-      "pos": "PF",
-      "speed": 9,
-      "power": 11,
-      "shotLine": 14,
-      "paintBoost": 0,
-      "threePtBoost": 2,
-      "defBoost": 0,
-      "salary": 700,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 3,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 4,
-          "hi": 13,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 14,
-          "hi": 99,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        }
-      ],
-      "season": 2018,
-      "seasonLabel": "2017-18",
-      "age": null,
-      "games": 17,
-      "mpg": 33.5,
-      "bbrefId": "tuckepj01",
-      "traded": false,
-      "metrics": {},
-      "provisional": false,
-      "playoffRun": true
-    },
-    {
-      "id": "Andre_Iguodala",
-      "name": "Andre Iguodala",
-      "team": "GSW",
-      "pos": "SF",
-      "speed": 11,
-      "power": 11,
-      "shotLine": 16,
-      "paintBoost": 3,
-      "threePtBoost": 1,
-      "defBoost": 1,
-      "salary": 790,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 4,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 5,
-          "hi": 11,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 12,
-          "hi": 15,
-          "pts": 1,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 16,
-          "hi": 99,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        }
-      ],
-      "season": 2019,
-      "seasonLabel": "2018-19",
-      "age": null,
-      "games": 21,
-      "mpg": 30,
-      "bbrefId": "iguodan01",
-      "traded": false,
-      "metrics": {},
-      "provisional": false,
-      "playoffRun": true
-    },
-    {
-      "id": "George_Hill",
-      "name": "George Hill",
-      "team": "MIL",
-      "pos": "PG",
-      "speed": 12,
-      "power": 7,
-      "shotLine": 14,
-      "paintBoost": 0,
-      "threePtBoost": -1,
-      "defBoost": 0,
-      "salary": 760,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 7,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 8,
-          "hi": 13,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 14,
-          "hi": 24,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 25,
-          "hi": 99,
-          "pts": 3,
-          "reb": 2,
-          "ast": 1
-        }
-      ],
-      "season": 2019,
-      "seasonLabel": "2018-19",
-      "age": null,
-      "games": 15,
-      "mpg": 26.3,
-      "bbrefId": "hillge01",
-      "traded": false,
-      "metrics": {},
-      "provisional": true,
-      "playoffRun": true
-    },
-    {
-      "id": "Kawhi_Leonard",
-      "name": "Kawhi Leonard",
-      "team": "TOR",
-      "pos": "SF",
-      "speed": 15,
-      "power": 15,
-      "shotLine": 14,
-      "paintBoost": 0,
-      "threePtBoost": -1,
-      "defBoost": 1,
-      "salary": 1450,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 3,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 4,
-          "hi": 13,
-          "pts": 3,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 14,
-          "hi": 21,
-          "pts": 3,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 22,
-          "hi": 99,
-          "pts": 3,
-          "reb": 1,
-          "ast": 1
-        }
-      ],
-      "season": 2019,
-      "seasonLabel": "2018-19",
-      "age": null,
-      "games": 24,
-      "mpg": 39.1,
-      "bbrefId": "leonaka01",
-      "traded": false,
-      "metrics": {},
-      "provisional": false,
-      "playoffRun": true
-    },
-    {
-      "id": "Anthony_Davis",
-      "name": "Anthony Davis",
-      "team": "LAL",
-      "pos": "C",
-      "speed": 12,
-      "power": 18,
-      "shotLine": 13,
-      "paintBoost": 2,
-      "threePtBoost": -2,
-      "defBoost": 3,
-      "salary": 1710,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 3,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 4,
-          "hi": 12,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 13,
-          "hi": 21,
-          "pts": 3,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 22,
-          "hi": 99,
-          "pts": 4,
-          "reb": 2,
-          "ast": 1
-        }
-      ],
-      "season": 2020,
-      "seasonLabel": "2019-20",
-      "age": null,
-      "games": 21,
-      "mpg": 36.6,
-      "bbrefId": "davisan02",
-      "traded": false,
-      "metrics": {},
-      "provisional": false,
-      "playoffRun": true
-    },
-    {
-      "id": "Kemba_Walker",
-      "name": "Kemba Walker",
-      "team": "BOS",
-      "pos": "PG",
-      "speed": 15,
-      "power": 8,
-      "shotLine": 15,
-      "paintBoost": 0,
-      "threePtBoost": 0,
-      "defBoost": 0,
-      "salary": 1050,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 3,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 4,
-          "hi": 14,
-          "pts": 2,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 15,
-          "hi": 20,
-          "pts": 3,
-          "reb": 0,
-          "ast": 1
-        },
-        {
-          "lo": 21,
-          "hi": 99,
-          "pts": 3,
-          "reb": 1,
-          "ast": 1
-        }
-      ],
-      "season": 2020,
-      "seasonLabel": "2019-20",
-      "age": null,
-      "games": 17,
-      "mpg": 36.9,
-      "bbrefId": "walkeke02",
-      "traded": false,
-      "metrics": {},
-      "provisional": false,
-      "playoffRun": true
-    },
-    {
-      "id": "Clint_Capela",
-      "name": "Clint Capela",
-      "team": "ATL",
-      "pos": "C",
-      "speed": 8,
-      "power": 15,
-      "shotLine": 15,
-      "paintBoost": 0,
-      "threePtBoost": -5,
-      "defBoost": 4,
-      "salary": 850,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 3,
-          "pts": 0,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 4,
-          "hi": 14,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 15,
-          "hi": 99,
-          "pts": 2,
-          "reb": 2,
-          "ast": 0
-        }
-      ],
-      "season": 2021,
-      "seasonLabel": "2020-21",
-      "age": null,
-      "games": 18,
-      "mpg": 31.6,
-      "bbrefId": "capelca01",
-      "traded": false,
-      "metrics": {},
-      "provisional": false,
-      "playoffRun": true
-    },
-    {
-      "id": "Reggie_Jackson",
-      "name": "Reggie Jackson",
-      "team": "LAC16",
-      "pos": "PG",
-      "speed": 16,
-      "power": 10,
-      "shotLine": 14,
-      "paintBoost": 0,
-      "threePtBoost": 2,
-      "defBoost": 1,
-      "salary": 1260,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 4,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 5,
-          "hi": 13,
-          "pts": 2,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 14,
-          "hi": 20,
-          "pts": 3,
-          "reb": 0,
-          "ast": 1
-        },
-        {
-          "lo": 21,
-          "hi": 99,
-          "pts": 3,
-          "reb": 1,
-          "ast": 1
-        }
-      ],
-      "season": 2021,
-      "seasonLabel": "2020-21",
-      "age": null,
-      "games": 19,
-      "mpg": 32.7,
-      "bbrefId": "jacksre01",
-      "traded": false,
-      "metrics": {},
-      "provisional": false,
-      "playoffRun": true
-    },
-    {
-      "id": "Andrew_Wiggins",
-      "name": "Andrew Wiggins",
-      "team": "GSW",
-      "pos": "SF",
-      "speed": 12,
-      "power": 12,
-      "shotLine": 16,
-      "paintBoost": 3,
-      "threePtBoost": 1,
-      "defBoost": 2,
-      "salary": 1000,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 3,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 4,
-          "hi": 15,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 16,
-          "hi": 99,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        }
-      ],
-      "season": 2022,
-      "seasonLabel": "2021-22",
-      "age": null,
-      "games": 22,
-      "mpg": 34.9,
-      "bbrefId": "wiggian01",
-      "traded": false,
-      "metrics": {},
-      "provisional": false,
-      "playoffRun": true
-    },
-    {
-      "id": "Max_Strus",
-      "name": "Max Strus",
-      "team": "MIA",
-      "pos": "SF",
-      "speed": 12,
-      "power": 10,
-      "shotLine": 17,
-      "paintBoost": 2,
-      "threePtBoost": 2,
-      "defBoost": 3,
-      "salary": 690,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 4,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 5,
-          "hi": 16,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 17,
-          "hi": 21,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 22,
-          "hi": 99,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        }
-      ],
-      "season": 2022,
-      "seasonLabel": "2021-22",
-      "age": null,
-      "games": 18,
-      "mpg": 29,
-      "bbrefId": "strusma01",
-      "traded": false,
-      "metrics": {},
-      "provisional": false,
-      "playoffRun": true
-    },
-    {
-      "id": "Bruce_Brown",
-      "name": "Bruce Brown",
-      "team": "DEN",
-      "pos": "SG",
-      "speed": 11,
-      "power": 8,
-      "shotLine": 15,
-      "paintBoost": 0,
-      "threePtBoost": 0,
-      "defBoost": 2,
-      "salary": 800,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 5,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 6,
-          "hi": 14,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 15,
-          "hi": 21,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 22,
-          "hi": 99,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        }
-      ],
-      "season": 2023,
-      "seasonLabel": "2022-23",
-      "age": null,
-      "games": 20,
-      "mpg": 26.6,
-      "bbrefId": "brownbr01",
-      "traded": false,
-      "metrics": {},
-      "provisional": false,
-      "playoffRun": true
-    },
-    {
-      "id": "Jamal_Murray",
-      "name": "Jamal Murray",
-      "team": "DEN",
-      "pos": "PG",
-      "speed": 17,
-      "power": 11,
-      "shotLine": 15,
-      "paintBoost": 0,
-      "threePtBoost": 3,
-      "defBoost": 1,
-      "salary": 1390,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 3,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 4,
-          "hi": 9,
-          "pts": 2,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
-          "hi": 14,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 15,
-          "hi": 99,
-          "pts": 3,
-          "reb": 1,
-          "ast": 1
-        }
-      ],
-      "season": 2023,
-      "seasonLabel": "2022-23",
-      "age": null,
-      "games": 20,
-      "mpg": 39.9,
-      "bbrefId": "murraja01",
-      "traded": false,
-      "metrics": {},
-      "provisional": false,
-      "playoffRun": true
-    },
-    {
-      "id": "Pascal_Siakam",
-      "name": "Pascal Siakam",
-      "team": "IND",
-      "pos": "PF",
-      "speed": 11,
-      "power": 15,
-      "shotLine": 15,
-      "paintBoost": 2,
-      "threePtBoost": 0,
-      "defBoost": 2,
-      "salary": 1420,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 3,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 4,
-          "hi": 14,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 15,
-          "hi": 21,
-          "pts": 3,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 22,
-          "hi": 99,
-          "pts": 4,
-          "reb": 1,
-          "ast": 1
-        }
-      ],
-      "season": 2025,
-      "seasonLabel": "2024-25",
-      "age": null,
-      "games": 23,
-      "mpg": 33.4,
-      "bbrefId": "siakapa01",
-      "traded": false,
-      "metrics": {},
-      "provisional": false,
-      "playoffRun": true
-    },
-    {
-      "id": "Tyrese_Haliburton",
-      "name": "Tyrese Haliburton",
-      "team": "IND",
-      "pos": "PG",
-      "speed": 16,
-      "power": 10,
-      "shotLine": 15,
-      "paintBoost": 2,
-      "threePtBoost": 0,
-      "defBoost": 0,
-      "salary": 1170,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 3,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 4,
-          "hi": 9,
-          "pts": 2,
-          "reb": 0,
-          "ast": 1
-        },
-        {
-          "lo": 10,
-          "hi": 14,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 15,
-          "hi": 21,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 22,
-          "hi": 99,
-          "pts": 3,
-          "reb": 1,
-          "ast": 1
-        }
-      ],
-      "season": 2025,
-      "seasonLabel": "2024-25",
-      "age": null,
-      "games": 23,
-      "mpg": 33.5,
-      "bbrefId": "halibty01",
-      "traded": false,
-      "metrics": {},
-      "provisional": false,
-      "playoffRun": true
-    },
-    {
-      "id": "Dennis_Rodman",
-      "name": "Dennis Rodman",
-      "team": "CHI",
-      "pos": "PF",
-      "speed": 8,
-      "power": 11,
-      "shotLine": 18,
-      "paintBoost": 2,
-      "threePtBoost": -2,
-      "defBoost": 1,
-      "salary": 570,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 3,
-          "pts": 0,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 4,
-          "hi": 10,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 11,
-          "hi": 17,
-          "pts": 1,
-          "reb": 2,
-          "ast": 0
-        },
-        {
-          "lo": 18,
-          "hi": 99,
-          "pts": 1,
-          "reb": 3,
-          "ast": 1
-        }
-      ],
-      "season": 1996,
-      "seasonLabel": "1995-96",
-      "age": 34,
-      "games": 18,
-      "mpg": 34.4,
-      "bbrefId": "rodmade01",
-      "traded": false,
-      "metrics": {
-        "bpm": 0.7,
-        "vorp": 0.4,
-        "ws": 1.9,
-        "ws48": 0.149,
-        "per": 14.1
-      },
-      "provisional": false,
-      "playoffRun": true
-    },
-    {
-      "id": "Scottie_Pippen",
-      "name": "Scottie Pippen",
-      "team": "POR",
-      "pos": "SF",
-      "speed": 12,
-      "power": 13,
-      "shotLine": 16,
-      "paintBoost": 2,
-      "threePtBoost": 1,
-      "defBoost": 3,
-      "salary": 880,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 4,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 5,
-          "hi": 9,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 10,
-          "hi": 15,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 16,
-          "hi": 99,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        }
-      ],
-      "season": 2000,
-      "seasonLabel": "1999-00",
-      "age": 34,
-      "games": 16,
-      "mpg": 38.4,
-      "bbrefId": "pippesc01",
-      "traded": false,
-      "metrics": {
-        "bpm": 5.3,
-        "vorp": 1.1,
-        "ws": 1.8,
-        "ws48": 0.14,
-        "per": 17.5
-      },
-      "provisional": false,
-      "playoffRun": true
+     "lo": 23,
+     "hi": 99,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
     }
-  ]
+   ],
+   "season": 2002,
+   "seasonLabel": "2001-02",
+   "age": null,
+   "games": 16,
+   "mpg": 40.3,
+   "bbrefId": "chrisdo01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true
+  },
+  {
+   "id": "Eric_Williams",
+   "name": "Eric Williams",
+   "team": "BOS",
+   "pos": "SG",
+   "speed": 11,
+   "power": 8,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": -1,
+   "defBoost": 2,
+   "salary": 360,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 11,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 12,
+     "hi": 13,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 99,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    }
+   ],
+   "season": 2002,
+   "seasonLabel": "2001-02",
+   "age": null,
+   "games": 16,
+   "mpg": 30.5,
+   "bbrefId": "willier01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true
+  },
+  {
+   "id": "Mike_Bibby",
+   "name": "Mike Bibby",
+   "team": "SAC95",
+   "pos": "PG",
+   "speed": 15,
+   "power": 9,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": -1,
+   "defBoost": 0,
+   "salary": 770,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 8,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 9,
+     "hi": 13,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 22,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    }
+   ],
+   "season": 2002,
+   "seasonLabel": "2001-02",
+   "age": null,
+   "games": 16,
+   "mpg": 41.3,
+   "bbrefId": "bibbymi01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true
+  },
+  {
+   "id": "Jason_Collins",
+   "name": "Jason Collins",
+   "team": "NJN",
+   "pos": "C",
+   "speed": 8,
+   "power": 13,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": -4,
+   "defBoost": 2,
+   "salary": 510,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 5,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 6,
+     "hi": 8,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 9,
+     "hi": 15,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 23,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 24,
+     "hi": 99,
+     "pts": 1,
+     "reb": 2,
+     "ast": 0
+    }
+   ],
+   "season": 2003,
+   "seasonLabel": "2002-03",
+   "age": null,
+   "games": 20,
+   "mpg": 26.4,
+   "bbrefId": "collija04",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true
+  },
+  {
+   "id": "Ben_Wallace",
+   "name": "Ben Wallace",
+   "team": "DET02",
+   "pos": "PF",
+   "speed": 13,
+   "power": 17,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": -5,
+   "defBoost": 5,
+   "salary": 740,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 7,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 14,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 23,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 24,
+     "hi": 99,
+     "pts": 1,
+     "reb": 2,
+     "ast": 0
+    }
+   ],
+   "season": 2004,
+   "seasonLabel": "2003-04",
+   "age": null,
+   "games": 23,
+   "mpg": 40.3,
+   "bbrefId": "wallabe01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true
+  },
+  {
+   "id": "Robert_Horry",
+   "name": "Robert Horry",
+   "team": "SAS",
+   "pos": "PF",
+   "speed": 10,
+   "power": 14,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 3,
+   "defBoost": 1,
+   "salary": 830,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 8,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 9,
+     "hi": 14,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 23,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 24,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2005,
+   "seasonLabel": "2004-05",
+   "age": null,
+   "games": 23,
+   "mpg": 27.1,
+   "bbrefId": "horryro01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true
+  },
+  {
+   "id": "Josh_Howard",
+   "name": "Josh Howard",
+   "team": "DAL",
+   "pos": "SF",
+   "speed": 13,
+   "power": 12,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 2,
+   "salary": 940,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    }
+   ],
+   "season": 2006,
+   "seasonLabel": "2005-06",
+   "age": null,
+   "games": 23,
+   "mpg": 35.8,
+   "bbrefId": "howarjo01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true
+  },
+  {
+   "id": "Tim_Thomas",
+   "name": "Tim Thomas",
+   "team": "PHX01",
+   "pos": "C",
+   "speed": 9,
+   "power": 14,
+   "shotLine": 13,
+   "paintBoost": 0,
+   "threePtBoost": 1,
+   "defBoost": 0,
+   "salary": 850,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 7,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 12,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 13,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    }
+   ],
+   "season": 2006,
+   "seasonLabel": "2005-06",
+   "age": null,
+   "games": 20,
+   "mpg": 31.8,
+   "bbrefId": "thomati01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true
+  },
+  {
+   "id": "Daniel_Gibson",
+   "name": "Daniel Gibson",
+   "team": "CLE04",
+   "pos": "PG",
+   "speed": 12,
+   "power": 7,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": -1,
+   "defBoost": 0,
+   "salary": 710,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 7,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 25,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 26,
+     "hi": 99,
+     "pts": 4,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2007,
+   "seasonLabel": "2006-07",
+   "age": null,
+   "games": 20,
+   "mpg": 20.1,
+   "bbrefId": "gibsoda01",
+   "traded": false,
+   "metrics": {},
+   "provisional": true,
+   "playoffRun": true
+  },
+  {
+   "id": "Fabricio_Oberto",
+   "name": "Fabricio Oberto",
+   "team": "SAS",
+   "pos": "PF",
+   "speed": 8,
+   "power": 10,
+   "shotLine": 13,
+   "paintBoost": 0,
+   "threePtBoost": -7,
+   "defBoost": 0,
+   "salary": 400,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 12,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 13,
+     "hi": 22,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2007,
+   "seasonLabel": "2006-07",
+   "age": null,
+   "games": 20,
+   "mpg": 20.8,
+   "bbrefId": "obertfa01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true
+  },
+  {
+   "id": "Michael_Finley",
+   "name": "Michael Finley",
+   "team": "SAS",
+   "pos": "SF",
+   "speed": 11,
+   "power": 10,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": 4,
+   "defBoost": -1,
+   "salary": 750,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 6,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 15,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    }
+   ],
+   "season": 2007,
+   "seasonLabel": "2006-07",
+   "age": null,
+   "games": 20,
+   "mpg": 26.9,
+   "bbrefId": "finlemi01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true
+  },
+  {
+   "id": "Rasheed_Wallace",
+   "name": "Rasheed Wallace",
+   "team": "DET06",
+   "pos": "PF",
+   "speed": 10,
+   "power": 14,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": -1,
+   "defBoost": 2,
+   "salary": 910,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 6,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    }
+   ],
+   "season": 2007,
+   "seasonLabel": "2006-07",
+   "age": null,
+   "games": 16,
+   "mpg": 35.8,
+   "bbrefId": "wallara01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true
+  },
+  {
+   "id": "Derek_Fisher",
+   "name": "Derek Fisher",
+   "team": "LAL",
+   "pos": "PG",
+   "speed": 15,
+   "power": 9,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": -1,
+   "defBoost": 2,
+   "salary": 770,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 13,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 22,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2008,
+   "seasonLabel": "2007-08",
+   "age": null,
+   "games": 21,
+   "mpg": 31.6,
+   "bbrefId": "fishede01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true
+  },
+  {
+   "id": "Carmelo_Anthony",
+   "name": "Carmelo Anthony",
+   "team": "DEN04",
+   "pos": "SF",
+   "speed": 12,
+   "power": 12,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": -1,
+   "salary": 1150,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 7,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 14,
+     "pts": 3,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 22,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2009,
+   "seasonLabel": "2008-09",
+   "age": null,
+   "games": 16,
+   "mpg": 38.2,
+   "bbrefId": "anthoca01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true
+  },
+  {
+   "id": "Chauncey_Billups",
+   "name": "Chauncey Billups",
+   "team": "DEN04",
+   "pos": "PG",
+   "speed": 16,
+   "power": 11,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 3,
+   "defBoost": 0,
+   "salary": 1050,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 6,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 20,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2009,
+   "seasonLabel": "2008-09",
+   "age": null,
+   "games": 16,
+   "mpg": 38.7,
+   "bbrefId": "billuch01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true
+  },
+  {
+   "id": "Lamar_Odom",
+   "name": "Lamar Odom",
+   "team": "LAL",
+   "pos": "PF",
+   "speed": 11,
+   "power": 14,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 2,
+   "salary": 870,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 22,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 2,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "season": 2009,
+   "seasonLabel": "2008-09",
+   "age": null,
+   "games": 23,
+   "mpg": 31.9,
+   "bbrefId": "odomla01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true
+  },
+  {
+   "id": "Glen_Davis",
+   "name": "Glen Davis",
+   "team": "BOS",
+   "pos": "C",
+   "speed": 5,
+   "power": 10,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": -4,
+   "defBoost": 1,
+   "salary": 480,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 5,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 6,
+     "hi": 15,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 22,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 2,
+     "reb": 2,
+     "ast": 0
+    }
+   ],
+   "season": 2010,
+   "seasonLabel": "2009-10",
+   "age": null,
+   "games": 24,
+   "mpg": 20.1,
+   "bbrefId": "davisgl01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true
+  },
+  {
+   "id": "Jameer_Nelson",
+   "name": "Jameer Nelson",
+   "team": "ORL01",
+   "pos": "PG",
+   "speed": 13,
+   "power": 8,
+   "shotLine": 13,
+   "paintBoost": -1,
+   "threePtBoost": 1,
+   "defBoost": 0,
+   "salary": 930,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 5,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 6,
+     "hi": 7,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 12,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 13,
+     "hi": 21,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2010,
+   "seasonLabel": "2009-10",
+   "age": null,
+   "games": 14,
+   "mpg": 34.2,
+   "bbrefId": "nelsoja01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true
+  },
+  {
+   "id": "Jared_Dudley",
+   "name": "Jared Dudley",
+   "team": "PHX01",
+   "pos": "SF",
+   "speed": 10,
+   "power": 10,
+   "shotLine": 13,
+   "paintBoost": -1,
+   "threePtBoost": -2,
+   "defBoost": 1,
+   "salary": 740,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 7,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 12,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 13,
+     "hi": 27,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 28,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "season": 2010,
+   "seasonLabel": "2009-10",
+   "age": null,
+   "games": 16,
+   "mpg": 23.6,
+   "bbrefId": "dudleja01",
+   "traded": false,
+   "metrics": {},
+   "provisional": true,
+   "playoffRun": true
+  },
+  {
+   "id": "Jason_Richardson",
+   "name": "Jason Richardson",
+   "team": "PHX01",
+   "pos": "SG",
+   "speed": 14,
+   "power": 9,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": 2,
+   "defBoost": -1,
+   "salary": 1040,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 5,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 6,
+     "hi": 7,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    }
+   ],
+   "season": 2010,
+   "seasonLabel": "2009-10",
+   "age": null,
+   "games": 16,
+   "mpg": 33.3,
+   "bbrefId": "richaja01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true
+  },
+  {
+   "id": "Mickael_Pietrus",
+   "name": "Mickaël Piétrus",
+   "team": "ORL01",
+   "pos": "SF",
+   "speed": 9,
+   "power": 8,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": 4,
+   "defBoost": 1,
+   "salary": 640,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 8,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 9,
+     "hi": 9,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 23,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 24,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "season": 2010,
+   "seasonLabel": "2009-10",
+   "age": null,
+   "games": 14,
+   "mpg": 20.1,
+   "bbrefId": "pietrmi01",
+   "traded": false,
+   "metrics": {},
+   "provisional": true,
+   "playoffRun": true
+  },
+  {
+   "id": "Steve_Nash",
+   "name": "Steve Nash",
+   "team": "PHX01",
+   "pos": "PG",
+   "speed": 14,
+   "power": 8,
+   "shotLine": 13,
+   "paintBoost": -1,
+   "threePtBoost": -2,
+   "defBoost": -1,
+   "salary": 810,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 5,
+     "hi": 6,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 7,
+     "hi": 12,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 13,
+     "hi": 19,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 2
+    }
+   ],
+   "season": 2010,
+   "seasonLabel": "2009-10",
+   "age": null,
+   "games": 16,
+   "mpg": 33.7,
+   "bbrefId": "nashst01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true
+  },
+  {
+   "id": "Jason_Kidd",
+   "name": "Jason Kidd",
+   "team": "DAL",
+   "pos": "SG",
+   "speed": 17,
+   "power": 10,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": -1,
+   "defBoost": 3,
+   "salary": 680,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 7,
+     "pts": 0,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 8,
+     "hi": 13,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 14,
+     "hi": 99,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2011,
+   "seasonLabel": "2010-11",
+   "age": null,
+   "games": 21,
+   "mpg": 35.4,
+   "bbrefId": "kiddja01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true
+  },
+  {
+   "id": "Joel_Anthony",
+   "name": "Joel Anthony",
+   "team": "MIA",
+   "pos": "PF",
+   "speed": 7,
+   "power": 10,
+   "shotLine": 18,
+   "paintBoost": 3,
+   "threePtBoost": -2,
+   "defBoost": 1,
+   "salary": 90,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 8,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 9,
+     "hi": 17,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 18,
+     "hi": 99,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    }
+   ],
+   "season": 2011,
+   "seasonLabel": "2010-11",
+   "age": null,
+   "games": 21,
+   "mpg": 27.4,
+   "bbrefId": "anthojo01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true
+  },
+  {
+   "id": "Boris_Diaw",
+   "name": "Boris Diaw",
+   "team": "SAS",
+   "pos": "PF",
+   "speed": 8,
+   "power": 10,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": -3,
+   "defBoost": 1,
+   "salary": 560,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 7,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 14,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 19,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 2,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "season": 2012,
+   "seasonLabel": "2011-12",
+   "age": null,
+   "games": 14,
+   "mpg": 24.7,
+   "bbrefId": "diawbo01",
+   "traded": false,
+   "metrics": {},
+   "provisional": true,
+   "playoffRun": true
+  },
+  {
+   "id": "Kevin_Garnett",
+   "name": "Kevin Garnett",
+   "team": "BOS",
+   "pos": "C",
+   "speed": 11,
+   "power": 17,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": -6,
+   "defBoost": 4,
+   "salary": 1250,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    }
+   ],
+   "season": 2012,
+   "seasonLabel": "2011-12",
+   "age": null,
+   "games": 20,
+   "mpg": 36.9,
+   "bbrefId": "garneke01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true
+  },
+  {
+   "id": "Stephen_Jackson",
+   "name": "Stephen Jackson",
+   "team": "SAS",
+   "pos": "SF",
+   "speed": 9,
+   "power": 8,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 3,
+   "defBoost": -1,
+   "salary": 550,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 8,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 9,
+     "hi": 14,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 22,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 23,
+     "hi": 26,
+     "pts": 2,
+     "reb": 2,
+     "ast": 1
+    },
+    {
+     "lo": 27,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "season": 2012,
+   "seasonLabel": "2011-12",
+   "age": null,
+   "games": 14,
+   "mpg": 21.3,
+   "bbrefId": "jacksst02",
+   "traded": false,
+   "metrics": {},
+   "provisional": true,
+   "playoffRun": true
+  },
+  {
+   "id": "Ray_Allen",
+   "name": "Ray Allen",
+   "team": "MIA",
+   "pos": "SG",
+   "speed": 12,
+   "power": 8,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 3,
+   "defBoost": -1,
+   "salary": 610,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 14,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 22,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2013,
+   "seasonLabel": "2012-13",
+   "age": null,
+   "games": 23,
+   "mpg": 24.9,
+   "bbrefId": "allenra02",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true
+  },
+  {
+   "id": "Danny_Green",
+   "name": "Danny Green",
+   "team": "SAS",
+   "pos": "SG",
+   "speed": 14,
+   "power": 10,
+   "shotLine": 13,
+   "paintBoost": -1,
+   "threePtBoost": 1,
+   "defBoost": 3,
+   "salary": 870,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 12,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 13,
+     "hi": 23,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 24,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2014,
+   "seasonLabel": "2013-14",
+   "age": null,
+   "games": 23,
+   "mpg": 23,
+   "bbrefId": "greenda02",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true
+  },
+  {
+   "id": "Paul_George",
+   "name": "Paul George",
+   "team": "IND",
+   "pos": "SF",
+   "speed": 14,
+   "power": 13,
+   "shotLine": 15,
+   "paintBoost": 2,
+   "threePtBoost": 3,
+   "defBoost": 2,
+   "salary": 1090,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 20,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2014,
+   "seasonLabel": "2013-14",
+   "age": null,
+   "games": 19,
+   "mpg": 41.1,
+   "bbrefId": "georgpa01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true
+  },
+  {
+   "id": "JR_Smith",
+   "name": "JR Smith",
+   "team": "CLE16",
+   "pos": "SG",
+   "speed": 14,
+   "power": 10,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 3,
+   "defBoost": 0,
+   "salary": 710,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 7,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 14,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 24,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 25,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    }
+   ],
+   "season": 2016,
+   "seasonLabel": "2015-16",
+   "age": null,
+   "games": 21,
+   "mpg": 34.8,
+   "bbrefId": "smithjr01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true
+  },
+  {
+   "id": "Kyrie_Irving",
+   "name": "Kyrie Irving",
+   "team": "CLE16",
+   "pos": "PG",
+   "speed": 16,
+   "power": 10,
+   "shotLine": 14,
+   "paintBoost": -1,
+   "threePtBoost": 2,
+   "defBoost": -1,
+   "salary": 1250,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 3,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 20,
+     "pts": 3,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2016,
+   "seasonLabel": "2015-16",
+   "age": null,
+   "games": 21,
+   "mpg": 36.8,
+   "bbrefId": "irvinky01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true
+  },
+  {
+   "id": "Serge_Ibaka",
+   "name": "Serge Ibaka",
+   "team": "OKC",
+   "pos": "PF",
+   "speed": 10,
+   "power": 14,
+   "shotLine": 13,
+   "paintBoost": 0,
+   "threePtBoost": -2,
+   "defBoost": 1,
+   "salary": 810,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 8,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 9,
+     "hi": 12,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 13,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    }
+   ],
+   "season": 2016,
+   "seasonLabel": "2015-16",
+   "age": null,
+   "games": 18,
+   "mpg": 33.5,
+   "bbrefId": "ibakase01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true
+  },
+  {
+   "id": "Kevin_Durant",
+   "name": "Kevin Durant",
+   "team": "GSW",
+   "pos": "PF",
+   "speed": 12,
+   "power": 15,
+   "shotLine": 12,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 0,
+   "salary": 1360,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 11,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 12,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2017,
+   "seasonLabel": "2016-17",
+   "age": null,
+   "games": 15,
+   "mpg": 35.5,
+   "bbrefId": "duranke01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true
+  },
+  {
+   "id": "Kevin_Love",
+   "name": "Kevin Love",
+   "team": "CLE16",
+   "pos": "PF",
+   "speed": 10,
+   "power": 14,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 3,
+   "defBoost": 2,
+   "salary": 1190,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 6,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 20,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 0
+    }
+   ],
+   "season": 2017,
+   "seasonLabel": "2016-17",
+   "age": null,
+   "games": 18,
+   "mpg": 32.1,
+   "bbrefId": "loveke01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true
+  },
+  {
+   "id": "Chris_Paul",
+   "name": "Chris Paul",
+   "team": "HOU03",
+   "pos": "PG",
+   "speed": 16,
+   "power": 8,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": -1,
+   "defBoost": 2,
+   "salary": 1200,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 6,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 14,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2018,
+   "seasonLabel": "2017-18",
+   "age": null,
+   "games": 15,
+   "mpg": 34.4,
+   "bbrefId": "paulch01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true
+  },
+  {
+   "id": "PJ_Tucker",
+   "name": "PJ Tucker",
+   "team": "HOU03",
+   "pos": "PF",
+   "speed": 9,
+   "power": 11,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": 2,
+   "defBoost": 0,
+   "salary": 510,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 13,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 99,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    }
+   ],
+   "season": 2018,
+   "seasonLabel": "2017-18",
+   "age": null,
+   "games": 17,
+   "mpg": 33.5,
+   "bbrefId": "tuckepj01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true
+  },
+  {
+   "id": "Andre_Iguodala",
+   "name": "Andre Iguodala",
+   "team": "GSW",
+   "pos": "SF",
+   "speed": 11,
+   "power": 11,
+   "shotLine": 13,
+   "paintBoost": 0,
+   "threePtBoost": -2,
+   "defBoost": 1,
+   "salary": 580,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 12,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 13,
+     "hi": 99,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2019,
+   "seasonLabel": "2018-19",
+   "age": null,
+   "games": 21,
+   "mpg": 30,
+   "bbrefId": "iguodan01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true
+  },
+  {
+   "id": "George_Hill",
+   "name": "George Hill",
+   "team": "MIL",
+   "pos": "PG",
+   "speed": 12,
+   "power": 7,
+   "shotLine": 13,
+   "paintBoost": -1,
+   "threePtBoost": -2,
+   "defBoost": 0,
+   "salary": 770,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 7,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 12,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 13,
+     "hi": 24,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 25,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "season": 2019,
+   "seasonLabel": "2018-19",
+   "age": null,
+   "games": 15,
+   "mpg": 26.3,
+   "bbrefId": "hillge01",
+   "traded": false,
+   "metrics": {},
+   "provisional": true,
+   "playoffRun": true
+  },
+  {
+   "id": "Kawhi_Leonard",
+   "name": "Kawhi Leonard",
+   "team": "TOR",
+   "pos": "SF",
+   "speed": 15,
+   "power": 15,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": -1,
+   "defBoost": 1,
+   "salary": 1410,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 21,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2019,
+   "seasonLabel": "2018-19",
+   "age": null,
+   "games": 24,
+   "mpg": 39.1,
+   "bbrefId": "leonaka01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true
+  },
+  {
+   "id": "Anthony_Davis",
+   "name": "Anthony Davis",
+   "team": "LAL",
+   "pos": "C",
+   "speed": 12,
+   "power": 18,
+   "shotLine": 14,
+   "paintBoost": 3,
+   "threePtBoost": -1,
+   "defBoost": 3,
+   "salary": 1740,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 20,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 4,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "season": 2020,
+   "seasonLabel": "2019-20",
+   "age": null,
+   "games": 21,
+   "mpg": 36.6,
+   "bbrefId": "davisan02",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true
+  },
+  {
+   "id": "Kemba_Walker",
+   "name": "Kemba Walker",
+   "team": "BOS",
+   "pos": "PG",
+   "speed": 15,
+   "power": 8,
+   "shotLine": 13,
+   "paintBoost": -1,
+   "threePtBoost": -2,
+   "defBoost": 0,
+   "salary": 1070,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 6,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 12,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 13,
+     "hi": 21,
+     "pts": 3,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2020,
+   "seasonLabel": "2019-20",
+   "age": null,
+   "games": 17,
+   "mpg": 36.9,
+   "bbrefId": "walkeke02",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true
+  },
+  {
+   "id": "Clint_Capela",
+   "name": "Clint Capela",
+   "team": "ATL",
+   "pos": "C",
+   "speed": 8,
+   "power": 15,
+   "shotLine": 16,
+   "paintBoost": 2,
+   "threePtBoost": -4,
+   "defBoost": 4,
+   "salary": 620,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 15,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 22,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 1,
+     "reb": 2,
+     "ast": 0
+    }
+   ],
+   "season": 2021,
+   "seasonLabel": "2020-21",
+   "age": null,
+   "games": 18,
+   "mpg": 31.6,
+   "bbrefId": "capelca01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true
+  },
+  {
+   "id": "Reggie_Jackson",
+   "name": "Reggie Jackson",
+   "team": "LAC16",
+   "pos": "PG",
+   "speed": 16,
+   "power": 10,
+   "shotLine": 13,
+   "paintBoost": -1,
+   "threePtBoost": 1,
+   "defBoost": 1,
+   "salary": 1010,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 12,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 13,
+     "hi": 20,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2021,
+   "seasonLabel": "2020-21",
+   "age": null,
+   "games": 19,
+   "mpg": 32.7,
+   "bbrefId": "jacksre01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true
+  },
+  {
+   "id": "Andrew_Wiggins",
+   "name": "Andrew Wiggins",
+   "team": "GSW",
+   "pos": "SF",
+   "speed": 12,
+   "power": 12,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 2,
+   "salary": 920,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    }
+   ],
+   "season": 2022,
+   "seasonLabel": "2021-22",
+   "age": null,
+   "games": 22,
+   "mpg": 34.9,
+   "bbrefId": "wiggian01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true
+  },
+  {
+   "id": "Max_Strus",
+   "name": "Max Strus",
+   "team": "MIA",
+   "pos": "SF",
+   "speed": 12,
+   "power": 10,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": -1,
+   "defBoost": 3,
+   "salary": 750,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 13,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    }
+   ],
+   "season": 2022,
+   "seasonLabel": "2021-22",
+   "age": null,
+   "games": 18,
+   "mpg": 29,
+   "bbrefId": "strusma01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true
+  },
+  {
+   "id": "Bruce_Brown",
+   "name": "Bruce Brown",
+   "team": "DEN",
+   "pos": "SG",
+   "speed": 11,
+   "power": 8,
+   "shotLine": 13,
+   "paintBoost": 0,
+   "threePtBoost": -2,
+   "defBoost": 2,
+   "salary": 800,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 6,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 12,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 13,
+     "hi": 21,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2023,
+   "seasonLabel": "2022-23",
+   "age": null,
+   "games": 20,
+   "mpg": 26.6,
+   "bbrefId": "brownbr01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true
+  },
+  {
+   "id": "Jamal_Murray",
+   "name": "Jamal Murray",
+   "team": "DEN",
+   "pos": "PG",
+   "speed": 17,
+   "power": 11,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 3,
+   "defBoost": 1,
+   "salary": 1340,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2023,
+   "seasonLabel": "2022-23",
+   "age": null,
+   "games": 20,
+   "mpg": 39.9,
+   "bbrefId": "murraja01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true
+  },
+  {
+   "id": "Pascal_Siakam",
+   "name": "Pascal Siakam",
+   "team": "IND",
+   "pos": "PF",
+   "speed": 11,
+   "power": 15,
+   "shotLine": 15,
+   "paintBoost": 2,
+   "threePtBoost": 0,
+   "defBoost": 2,
+   "salary": 1260,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2025,
+   "seasonLabel": "2024-25",
+   "age": null,
+   "games": 23,
+   "mpg": 33.4,
+   "bbrefId": "siakapa01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true
+  },
+  {
+   "id": "Tyrese_Haliburton",
+   "name": "Tyrese Haliburton",
+   "team": "IND",
+   "pos": "PG",
+   "speed": 16,
+   "power": 10,
+   "shotLine": 13,
+   "paintBoost": 0,
+   "threePtBoost": -2,
+   "defBoost": 0,
+   "salary": 960,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 7,
+     "pts": 0,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 8,
+     "hi": 12,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 13,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2025,
+   "seasonLabel": "2024-25",
+   "age": null,
+   "games": 23,
+   "mpg": 33.5,
+   "bbrefId": "halibty01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true
+  },
+  {
+   "id": "Dennis_Rodman",
+   "name": "Dennis Rodman",
+   "team": "CHI",
+   "pos": "PF",
+   "speed": 8,
+   "power": 11,
+   "shotLine": 17,
+   "paintBoost": 2,
+   "threePtBoost": -3,
+   "defBoost": 1,
+   "salary": 530,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 16,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 17,
+     "hi": 23,
+     "pts": 1,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 24,
+     "hi": 99,
+     "pts": 1,
+     "reb": 3,
+     "ast": 0
+    }
+   ],
+   "season": 1996,
+   "seasonLabel": "1995-96",
+   "age": 34,
+   "games": 18,
+   "mpg": 34.4,
+   "bbrefId": "rodmade01",
+   "traded": false,
+   "metrics": {
+    "bpm": 0.7,
+    "vorp": 0.4,
+    "ws": 1.9,
+    "ws48": 0.149,
+    "per": 14.1
+   },
+   "provisional": false,
+   "playoffRun": true
+  },
+  {
+   "id": "Scottie_Pippen",
+   "name": "Scottie Pippen",
+   "team": "POR",
+   "pos": "SF",
+   "speed": 12,
+   "power": 13,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": -1,
+   "defBoost": 3,
+   "salary": 910,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 7,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 13,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2000,
+   "seasonLabel": "1999-00",
+   "age": 34,
+   "games": 16,
+   "mpg": 38.4,
+   "bbrefId": "pippesc01",
+   "traded": false,
+   "metrics": {
+    "bpm": 5.3,
+    "vorp": 1.1,
+    "ws": 1.8,
+    "ws48": 0.14,
+    "per": 17.5
+   },
+   "provisional": false,
+   "playoffRun": true
+  },
+  {
+   "id": "Dwyane_Wade",
+   "name": "Dwyane Wade",
+   "team": "MIA",
+   "pos": "SG",
+   "speed": 18,
+   "power": 12,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": -4,
+   "defBoost": 3,
+   "salary": 1360,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2006,
+   "seasonLabel": "2005-06",
+   "age": null,
+   "games": 23,
+   "mpg": 41.7,
+   "bbrefId": "wadedw01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true
+  }
+ ]
 }

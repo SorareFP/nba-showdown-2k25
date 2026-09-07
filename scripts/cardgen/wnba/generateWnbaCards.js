@@ -67,6 +67,8 @@ import { loadWnbaSeasonRealGames } from '../realGames.js';
 import { reconcileBandsByRoll, shapeChart, MAX_CHART_TIERS } from '../generate.js';
 import * as V from '../variance.js';
 import * as A from '../attributes.js';
+import * as B from './bigness.js';
+import * as Z from './wnbaSize.js';
 import * as PV from '../playValue.js';
 import * as S from '../shooting.js';
 import { CALIBRATION_FILE } from '../calibrateAttributes.js';
@@ -228,7 +230,7 @@ export function expectedValuePerRoll(chart, stat, faces = 20) {
  * into `synthesizeGames`, which is what carries the 40-minute correction — see
  * wnba/constants.js. Everything else is the base set's own path, unchanged.
  */
-export function buildWnbaCard({ row, team, shooting, speedPowerTotal, calibration, realGames = null }) {
+export function buildWnbaCard({ row, team, shooting, speedPowerTotal, calibration, realGames = null, sizeCtx = null }) {
   const games = row.games ?? 0;
   const minutes = row.minutes ?? 0;
   const mpg = games > 0 ? minutes / games : 0;
@@ -253,15 +255,23 @@ export function buildWnbaCard({ row, team, shooting, speedPowerTotal, calibratio
   // both answer 404 (verified 2026-08-31), and no WNBA table on the site carries
   // a Position Estimate group at all.
   //
-  // Basketball-Reference is the only source this set has, and that is the reason
-  // every WNBA card is provisional. Omitting both arguments gives exactly the
-  // rule this file has always used rather than dropping players who cannot be
-  // measured, which is what `splitSpeedPower` makes the default.
-  const { speed, power } = A.splitSpeedPower(
-    speedPowerTotal,
-    row.pos,
-    calibration.positionSpeedShare
-  );
+  // ── THE SPLIT USED TO BE POSITION AND NOTHING ELSE ────────────────────────
+  //
+  // Basketball-Reference publishes no height or weight, so this called
+  // `splitSpeedPower` with the positional centre alone while the NBA sets bent
+  // theirs by real biometrics. Every player at a position therefore collapsed
+  // onto that position's centre: 40.9% of WNBA cards landed within a point of a
+  // perfectly even split against the NBA's 21.3%, and six Super Season legends
+  // printed the identical S15/P15.
+  //
+  // That is a DEFENSIVE bug. An attacker beats a defender through their weaker
+  // stat, so a defender's wall is `min(speed, power) + defBoost` — maximised
+  // exactly when the two are equal. See wnba/bigness.js, which recovers the
+  // missing per-player term from the box score. A null basis falls back to the
+  // old behaviour rather than guessing.
+  const { speed, power } = sizeCtx
+    ? Z.splitWnbaBySize(speedPowerTotal, row, { ...sizeCtx, shares: calibration.positionSpeedShare })
+    : A.splitSpeedPower(speedPowerTotal, row.pos, calibration.positionSpeedShare);
   const { shotLine, paintBoost, threePtBoost } = shooting;
   const defBoost = A.defBoostFromEpm(row.dbpmHat);
 
@@ -554,6 +564,11 @@ export function main({ log = console.log } = {}) {
   const spArchive = bpmArchive.requireArchive();
   const { totals } = speedPowerTotals(rated, { archive: spArchive });
   const shooting = runShooting(rated, calibration);
+  // The same league-wide size context the legend sets use, so a 2026 card and a
+  // 2006 card are measured against the same yardstick.
+  const bigness = Z.wnbaSizeContext(
+    [...B.leagueRows()].length ? B.leagueRows() : rated
+  );
 
   const cards = rated.map((row, i) =>
     buildWnbaCard({
@@ -563,6 +578,7 @@ export function main({ log = console.log } = {}) {
       speedPowerTotal: totals[i],
       calibration,
       realGames: loadWnbaSeasonRealGames(row.playerId, row.season ?? 2026),
+      sizeCtx: bigness,
     })
   );
   cards.sort((a, b) => a.name.localeCompare(b.name));

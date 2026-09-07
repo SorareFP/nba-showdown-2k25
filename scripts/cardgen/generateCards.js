@@ -88,6 +88,7 @@ import { indexBiometrics, loadBiometrics } from './biometrics.js';
 import { loadAllRealGames, loadAllWindowSeasonCounts } from './realGames.js';
 import * as ARCH from './archetypes.js';
 import { readBlendedActual, reportBlend, PRIOR_STATS_SEASON } from './priorSeasonBlend.js';
+import { applyWindowEpm, buildWindowEpmIndex } from './windowEpm.js';
 import { trb100 } from './sources/dunksAndThrees.js';
 import { CALIBRATION_FILE } from './calibrateAttributes.js';
 import { CURRENT_STATS_SEASON } from './fetchCalibrationData.js';
@@ -844,8 +845,15 @@ export function main({ log = console.log } = {}) {
   }
   // Regular season and playoffs folded into one sample per player — see
   // scripts/cardgen/poolSeasons.js for which volume each stat pools on — and
-  // then the PRIOR SEASON folded in on top for the nineteen force-included
-  // players, by the same arithmetic. See scripts/cardgen/priorSeasonBlend.js.
+  // then the LAST 82 GAMES applied on top, for everyone, by scripts/cardgen/
+  // windowEpm.js. The window supersedes priorSeasonBlend's nineteen-name fold
+  // wherever a player has game logs; the blend still runs first so the four
+  // carried-forward men, who have no logs and therefore no window, keep it.
+  //
+  // Def Boost reads epmDef straight off these rows, so applying the window HERE
+  // rather than at the Def Boost line is what keeps every layer that reads an
+  // `actual` row — Def Boost, the archetype split, the run reports — measuring
+  // the same 82 games the chart is built from.
   const blend = readBlendedActual(CURRENT_STATS_SEASON);
   if (!blend) {
     throw new Error(
@@ -853,7 +861,9 @@ export function main({ log = console.log } = {}) {
         'scripts/cardgen/fetchCalibrationData.js first.'
     );
   }
-  const actual = blend.rows;
+  const windowed = applyWindowEpm(blend.rows, buildWindowEpmIndex({ log }));
+  log(`  window applied to ${windowed.applied} rows; ${windowed.moved.length} rate values moved`);
+  const actual = windowed.rows;
   const overridesFile = path.join(REPO_ROOT, 'scripts', 'cardgen', 'overrides.json');
   const {
     cards,
@@ -935,6 +945,10 @@ export function main({ log = console.log } = {}) {
       `(${pooling.playoffGames} playoff games total, median ${pooling.medianPlayoffGames}, ` +
       `max ${pooling.maxPlayoffGames}); the other ${pooling.players - pooling.gained} are unchanged`
   );
+  // SUPERSEDED WHERE A WINDOW EXISTS. Printed anyway because it is the
+  // fallback for anyone the window could not cover, and a silent fallback
+  // is the kind that goes wrong unnoticed.
+  log('  prior-season fold (superseded by the last-82 window wherever one exists):');
   reportBlend(blend, log);
   log('');
   const fields = ['speed', 'power', 'shotLine', 'paintBoost', 'threePtBoost', 'defBoost', 'salary'];

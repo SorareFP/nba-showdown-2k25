@@ -1,0 +1,43 @@
+{
+ "_comment": "WNBA FRANCHISE COMPLETION REWARDS. Same three rules as the NBA set: the card wears that franchise's jersey (hard), it is an upgrade on that player's own base card (hard), and it is absent from THAT TEAM'S 2026 roster (preferred, exceptions declared). The band each franchise earns comes from collectionDifficulty.rewardBandFor, so a harder roster pays a better card. Salaries in the notes are from the shortlist batch; buildShootingLayer is batch-relative, so the built number moves a little and assertEarnedBands is what actually enforces the band.\n\nRELOCATION AND LINEAGE. A relocated franchise's old seasons reward the team that carries them today -- Detroit and Tulsa Shock seasons reward Dallas, Utah Starzz and San Antonio Silver Stars reward Las Vegas, the Orlando Miracle rewards Connecticut. PORTLAND IS A NAME REVIVAL, NOT A RELOCATION, and it is here anyway: the 2026 Fire took the 2000-2002 Fire's name and city, the archive files both under POR, and the user's rule is that lineage counts. The Comets, Sting, Monarchs, Rockers and Sol are still excluded -- not out of rigidity but because Houston, Charlotte, Sacramento, Cleveland and Miami have no team for those seasons to be a reward FOR.",
+
+ "picks": {
+  "IND": { "name": "Tamika Catchings", "season": 2012, "team": "IND", "goal": "wnba-team-IND",
+           "note": "Hardest collection in the league, so the top of the ladder. 2012 is the Fever's only title and her Finals MVP. ~$1810." },
+  "MIN": { "name": "Seimone Augustus", "season": 2007, "team": "MIN", "goal": "wnba-team-MIN",
+           "note": "Lynx franchise player, low in band so MIN sits under LVA. ~$1290." },
+  "NYL": { "name": "Cappie Pondexter", "season": 2010, "team": "NYL", "goal": "wnba-team-NYL",
+           "note": "Her first Liberty season. Tina Charles 2015 was the first pick and priced $1270 on SMOOTHED per-100 rates; her real game log put her at $880, well under the legendary floor. ~$1320." },
+
+  "ATL": { "name": "Angel McCoughtry", "season": 2018, "team": "ATL", "goal": "wnba-team-ATL",
+           "note": "The Dream's defining player. ATLANTA HAS CROSSED THE BAND LINE TWICE as WNBA attributes changed -- roster rarities move collection difficulty, which moves the earned band -- so this pick has swung between her 2010 ($1270, legendary) and this one. Expect to re-check it after any WNBA rebuild. ~$1100." },
+  "DAL": { "name": "Cheryl Ford", "season": 2006, "team": "DET", "goal": "wnba-team-DAL",
+           "note": "The Shock's 2006 championship season. Rookie of the Year 2003, four-time All-Star, Detroit through and through. Katie Smith 2008 was the first pick and priced $1120 on smoothed rates; her real log put her at $800. ~$1060." },
+  "WAS": { "name": "Chamique Holdsclaw", "season": 2004, "team": "WAS", "goal": "wnba-team-WAS",
+           "note": "The Mystics' franchise player. ~$1090." },
+  "CHI": { "name": "Epiphanny Prince", "season": 2013, "team": "CHI", "goal": "wnba-team-CHI",
+           "note": "Bottom of the super-rare band, so the cheapest of the four. ~$970." },
+
+  "PHO": { "name": "DeWanna Bonner", "season": 2014, "team": "PHO", "goal": "wnba-team-PHO",
+           "note": "Two Mercury titles and back-to-back Sixth Woman awards. Michele Timms 1997 was the first pick here and built to $900, one dollar over the rare ceiling. ~$820." },
+  "SEA": { "name": "Sue Bird", "season": 2009, "team": "SEA", "goal": "wnba-team-SEA",
+           "note": "She is the Storm. Low in band because Seattle is an easy collection. ~$810." },
+  "POR": { "name": "Sophia Witherspoon", "season": 2000, "team": "POR", "goal": "wnba-team-POR",
+           "note": "An original 2000 Fire player for the revived Fire -- and the only legal option Portland has. ~$750." },
+  "LAS": { "name": "Tamecka Dixon", "season": 1997, "team": "LAS", "goal": "wnba-team-LAS",
+           "note": "An inaugural 1997 Spark who was still there for both titles. Nikki Teasley 2003 was the first pick and rebuilt to $690, ten dollars under the rare floor. ~$810." },
+  "CON": { "name": "Nykesha Sales", "season": 2006, "team": "CON", "goal": "wnba-team-CON",
+           "note": "The Sun's defining early player, carried over from the Orlando Miracle. ~$840." }
+ },
+
+ "migrated": {
+  "LVA": { "set": "wnba-super-season", "id": "Becky_Hammon", "goal": "wnba-team-LVA",
+           "bandException": "Ten dollars under the legendary floor at $1190. A migrated card is NOT repriced -- it keeps the salary its own set gave it -- so the alternative is un-migrating her and printing a second Becky Hammon a year apart, which is the duplicate the migration exists to prevent. The same size of exception Philadelphia gets for Erving.",
+           "note": "Her 2009 Silver Stars season, moved rather than reprinted. Keeps its SUPER SEASON badge and gains TEAM REWARD. The WNBA Super Season set drops to 15." }
+ },
+
+ "_excluded": {
+  "GSV": "Golden State has ONE season of history (2025) and every in-band player from it is on the 2026 Valkyries roster. The ceiling is Veronica Burton at ~$1160 against a $1200 floor, and she is on the roster anyway. Stays a coins-only goal.",
+  "TOR": "The Tempo have no history at all. Every player on the roster is already in the base set. Stays a coins-only goal."
+ }
+}

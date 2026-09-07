@@ -410,33 +410,52 @@ describe('the committed file', () => {
     // Re-measured when the Summer Standouts joined the plan: the standout
     // Super Seasons added marked retirees to that set, and the newly cached
     // 2000-2007 pages resolved two more rookie-year marks.
-    expect(AWARDS.counts[CURRENT_SET].marked).toBe(40);
+    // 39, not 40: Guerschon Yabusele was cut with the four other players on no
+    // current NBA roster, and his was one of the eleven Knicks rings in the pool.
+    expect(AWARDS.counts[CURRENT_SET].marked).toBe(39);
+    // AND EVERY SET MOVED AGAIN when the team rewards stopped being built and
+    // started being cards MOVED out of these three. A migrated card takes its
+    // awards with it, so the losses here are gains under `team-rewards` and
+    // nothing was dropped: super-season 77 -> 68, rookie 21 -> 16, standouts
+    // 23 -> 19, with 20 marked on the reward set that did not exist before.
     // 77 after the seventeen legends joined: all-time greats carry MVPs,
     // rings and All-Star nods at a far higher rate than the pool average.
-    expect(AWARDS.counts[SUPER_SEASON_SET].marked).toBe(77);
+    expect(AWARDS.counts[SUPER_SEASON_SET].marked).toBe(71);
     // The rookie set moves at last, and only on the ring: no player in that
     // pool was an All-Star as a rookie, but six of them won a title as one.
-    expect(AWARDS.counts[ROOKIE_SET].marked).toBe(25);
+    //
+    // 25 -> 21 WITH THE ROOKIE PLAYING-TIME BAR, and every one of the four is a
+    // RING rather than a ROY — bench players on title teams, which is exactly
+    // the profile a minutes bar removes. The ROY count is unmoved at 17.
+    expect(AWARDS.counts[ROOKIE_SET].marked).toBe(19);
+    // 17 -> 12: five Rookies of the Year became team rewards. Their ROY marks
+    // moved with them, which is the assertion two lines down.
+    expect(AWARDS.counts[ROOKIE_SET].byCode.ROY).toBe(15);
+    expect(AWARDS.counts['team-rewards'].byCode.ROY).toBe(2);
+    expect(AWARDS.counts['team-rewards'].marked).toBe(19);
     // The standouts themselves: a playoff-run card is the season a ring was
     // actually won in, so the ring is the mark that carries the set.
     // 23 with Rodman's 1996 title run — his ring is the mark.
-    expect(AWARDS.counts[SUMMER_STANDOUTS_SET].marked).toBe(23);
-    expect(AWARDS.counts[SUMMER_STANDOUTS_SET].byCode.CHAMP).toBe(17);
+    expect(AWARDS.counts[SUMMER_STANDOUTS_SET].marked).toBe(19);
+    expect(AWARDS.counts[SUMMER_STANDOUTS_SET].byCode.CHAMP).toBe(14);
     // Shaq is the one rookie All-Star; Blake Griffin's case finally has its
     // twin, and it arrived from 1993 rather than from a pool change.
     expect(AWARDS.counts[ROOKIE_SET].byCode.AS).toBe(1);
-    expect(AWARDS.counts[ROOKIE_SET].byCode.CHAMP).toBe(8);
+    expect(AWARDS.counts[ROOKIE_SET].byCode.CHAMP).toBe(4);
     // The ring is a TEAM fact, so it marks a whole roster's worth at once and
     // still leaves each set a minority.
-    expect(AWARDS.counts[CURRENT_SET].byCode.CHAMP).toBe(11);
-    expect(AWARDS.counts[SUPER_SEASON_SET].byCode.CHAMP).toBe(11);
+    // 10, not 11: Yabusele's ring left the base set with him.
+    expect(AWARDS.counts[CURRENT_SET].byCode.CHAMP).toBe(10);
+    expect(AWARDS.counts[SUPER_SEASON_SET].byCode.CHAMP).toBe(10);
     // …against what admitting All-NBA and All-Defensive as well would mark.
     // Still a step up on every set, which is the case for stopping here.
     // (Unchanged by the ring: ifSelectionsCounted asks about the awards column,
     // and the ring is not in it.)
-    expect(AWARDS.counts[CURRENT_SET].ifSelectionsCounted).toBe(46);
-    expect(AWARDS.counts[SUPER_SEASON_SET].ifSelectionsCounted).toBe(91);
-    expect(AWARDS.counts[ROOKIE_SET].ifSelectionsCounted).toBe(25);
+    // 45, not 46: one fewer base-set player after the five-player cut.
+    expect(AWARDS.counts[CURRENT_SET].ifSelectionsCounted).toBe(45);
+    expect(AWARDS.counts[SUPER_SEASON_SET].ifSelectionsCounted).toBe(84);
+    // 21, not 25: the rookie playing-time bar, same four bench rings.
+    expect(AWARDS.counts[ROOKIE_SET].ifSelectionsCounted).toBe(19);
   });
 
   it('names every champion it marked, and gets them right', () => {
@@ -460,8 +479,9 @@ describe('the committed file', () => {
 
   it('never exceeds the row the card can draw, now that the fourth mark is spent', () => {
     // MAX_CARD_AWARDS is 4 since .awards started wrapping, and one card now
-    // holds exactly four: Shai Gilgeous-Alexander's 2024-25 Super Season, MVP +
-    // FMVP + CHAMP + AS. It is the card the cap was raised past three FOR, and
+    // holds exactly four: Shai Gilgeous-Alexander's 2024-25, MVP + FMVP +
+    // CHAMP + AS — which is a TEAM REWARD now rather than a Super Season card,
+    // Oklahoma City's, and carries the same four marks across the move. It is the card the cap was raised past three FOR, and
     // admitting Finals MVP is what filled it. NOTHING IS DROPPED — `capped` is
     // still zero in every set — but the ceiling and the cap are level again, so
     // this assertion is the early warning if a fifth ever appears.
@@ -480,12 +500,17 @@ describe('the committed file', () => {
       '2026-27 Jalen Brunson 2026 FMVP+CHAMP+AS',
       '2026-27 Shai Gilgeous-Alexander 2026 MVP+CPOY+AS',
       'summer-standouts Kawhi Leonard 2019 FMVP+CHAMP+AS',
-      'summer-standouts Kevin Durant 2017 FMVP+CHAMP+AS',
       // Jordan's 1987-88: MVP and DPOY in the same year, which only he and
       // Hakeem have ever done. Arrived with the force-included legends.
       'super-season Michael Jordan 1988 MVP+DPOY+AS',
       'super-season Shai Gilgeous-Alexander 2025 MVP+FMVP+CHAMP+AS',
       "super-season Shaquille O'Neal 2000 MVP+FMVP+CHAMP+AS",
+      // Durant's 2017 standout card is Golden State's reward now. Giannis'
+      // 2019-20 is the FULL-SET capstone and is BUILT rather than moved — the
+      // one MVP+DPOY season since Jordan's, which is why it sits beside his in
+      // this list.
+      'team-rewards Giannis Antetokounmpo 2020 MVP+DPOY+AS',
+      'team-rewards Kevin Durant 2017 FMVP+CHAMP+AS',
     ]);
   });
 
@@ -512,6 +537,8 @@ describe('the committed file', () => {
     }
     // And no card carries a Finals MVP its own season did not produce.
     expect(AWARDS.counts[CURRENT_SET].byCode.FMVP).toBe(1);
+    // One on the reward set: Durant's 2017, moved in with his card.
+    expect(AWARDS.counts['team-rewards'].byCode.FMVP).toBe(1);
     expect(AWARDS.counts[SUPER_SEASON_SET].byCode.FMVP).toBe(2);
     // ZERO IN THE ROOKIE SET, and that is a fact about the award rather than a
     // miss: no rookie has won a Finals MVP in the 2004..2026 range, and only

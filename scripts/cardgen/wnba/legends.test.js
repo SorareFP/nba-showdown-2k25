@@ -171,18 +171,17 @@ describe('seasonTeam', () => {
     expect(seasonTeam('SEA', [])).toBe('SEA');
   });
 
-  it('resolves TOT to the split she played the most MINUTES for', () => {
-    // MINUTES, not games, and deliberately not the LAST stint the current WNBA
-    // set uses: a card that represents a whole season should wear the jersey
-    // she wore for most of it, and every player here retired years ago so
-    // "where she is now" is not a question.
+  it('resolves TOT to the LAST split — the team she finished the season with', () => {
+    // The user's rule (2026-09-06), one rule for every set: the last stint is
+    // the jersey, whatever its minutes. Until then this set alone took the
+    // most-minutes split.
     expect(
       seasonTeam('TOT', [
         { team: 'TOT', minutes: 900 },
         { team: 'CHI', minutes: 600 },
         { team: 'MIN', minutes: 300 },
       ])
-    ).toBe('CHI');
+    ).toBe('MIN');
   });
 
   it('keeps TOT rather than inventing a team when there are no splits', () => {
@@ -301,7 +300,8 @@ describe.runIf(has)('the generated WNBA Super Season set', () => {
     // The whole point of a NAMED roster: this is the one set in the repo where
     // the right answer is a list somebody wrote down, so it is checked against
     // that list rather than against a count.
-    expect(NAMED).toHaveLength(16);
+    // 21 since 2026-09-06: five capstone picks (Cooper, Griffith, Reed, Jonquel Jones, Chelsea Gray).
+    expect(NAMED).toHaveLength(36); // 36 since 2026-09-06 evening: fifteen Hall-of-Fame and defunct-franchise names joined the five capstone picks
     expect(SET.cards.map(c => c.name).sort()).toEqual(NAMED.map(l => l.name).sort());
     expect(ROSTER.map(r => r.name).sort()).toEqual(NAMED.map(l => l.name).sort());
   });

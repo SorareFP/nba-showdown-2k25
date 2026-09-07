@@ -1,14 +1,24 @@
 // Game logs for the special sets: every card in Super Season, Rookie,
-// Summer Standouts and Dissonance names its own bbrefId + season, so the
-// fetch list is just the distinct pairs. Cached under the same
+// Summer Standouts, Dissonance and Team Rewards names its own bbrefId +
+// season, so the fetch list is just the distinct pairs. Cached under the same
 // `gamelog-full-{id}-{season}` keys the base-set fetch uses; resumable.
+//
+// TEAM REWARDS WERE ADDED LATE and the omission had a price. Without a log the
+// generator falls back to per-100 season rates, which smooth a chart toward the
+// mean instead of cutting it from real games — and assists are a CURRENCY in
+// the pricing model, so the smoothing showed up as money. The reward set's
+// median assist row sat at 0.75 against 0.00-0.25 everywhere else, and
+// DeMarcus Cousins priced above Wembanyama on the strength of it.
 import fs from 'node:fs';
 import path from 'node:path';
 import { REPO_ROOT, readCache, writeCache, politeDelay, DEFAULT_REQUEST_SPACING_MS } from './cache.js';
 import { fetchGameLogFull } from './sources/basketballReference.js';
 
 const GEN = path.join(REPO_ROOT, 'card-data', 'generated');
-const SETS = ['cards-super-season.json', 'cards-rookie.json', 'cards-summer-standouts.json', 'cards-dissonance.json'];
+const SETS = [
+  'cards-super-season.json', 'cards-rookie.json', 'cards-summer-standouts.json',
+  'cards-dissonance.json', 'cards-team-rewards.json',
+];
 
 const pairs = new Map(); // "id|season" -> {id, season, names:Set}
 for (const f of SETS) {

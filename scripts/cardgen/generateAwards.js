@@ -68,11 +68,13 @@ import {
   selectionsIn,
 } from '../../src/cards/awards.js';
 import { canonicalTeam, franchiseForSeason } from '../../src/cards/teams.js';
+import { hasMigratedOut } from '../../src/game/cardSets.js';
 import {
   CURRENT_SET,
   ROOKIE_SET,
   SUMMER_STANDOUTS_SET,
   DISSONANCE_SET,
+  TEAM_REWARDS_SET,
   SUPER_SEASON_SET,
   setStatsSeason,
 } from '../../src/cards/sets.js';
@@ -605,22 +607,36 @@ async function main() {
   const rookie = readJson(path.join(GEN_DIR, `cards-${ROOKIE_SET}.json`));
   const standouts = readJson(path.join(GEN_DIR, `cards-${SUMMER_STANDOUTS_SET}.json`));
   const dissonance = readJson(path.join(GEN_DIR, `cards-${DISSONANCE_SET}.json`));
+  const teamRewards = readJson(path.join(GEN_DIR, `cards-${TEAM_REWARDS_SET}.json`));
 
   const baseSeason = statsSeasonEndYear(CURRENT_SET);
   if (baseSeason == null) {
     throw new Error(`generateAwards: ${CURRENT_SET} declares no season-shaped statsSeason`);
   }
 
+  // A card that MOVED into the reward set is no longer in the set it came from,
+  // so its awards must not be written under the old id as well — that would
+  // mark a card the set no longer holds, and the studio would join it to
+  // nothing. Asked of cardSets.js so there is one answer to "is this still
+  // yours".
+  const stillIn = (set, cards) => cards.filter(c => !hasMigratedOut(set, c.id));
+
   const plan = [
     { set: CURRENT_SET, season: baseSeason, cards: base.cards },
-    { set: SUPER_SEASON_SET, cards: superSeason.cards },
-    { set: ROOKIE_SET, cards: rookie.cards },
+    { set: SUPER_SEASON_SET, cards: stillIn(SUPER_SEASON_SET, superSeason.cards) },
+    { set: ROOKIE_SET, cards: stillIn(ROOKIE_SET, rookie.cards) },
     // A playoff-run card is the season a ring or a Finals MVP was actually won
     // in — the set where the champion join earns its keep most literally.
-    { set: SUMMER_STANDOUTS_SET, cards: standouts.cards },
+    { set: SUMMER_STANDOUTS_SET, cards: stillIn(SUMMER_STANDOUTS_SET, standouts.cards) },
     // The strange-jersey season is still a season: Iverson made the 2009
     // All-Star team as the Piston this set cards him as.
     { set: DISSONANCE_SET, cards: dissonance.cards },
+    // THE REWARDS ARE MOSTLY MOVED CARDS, and a card that moves takes its
+    // season with it — so it has to take its awards too. Thirty of the
+    // thirty-three came out of Super Season, Rookie or Summer Standouts, where
+    // their awards were already joined under the OLD set id; leaving them there
+    // would strand Jokić's MVP on a set that no longer holds his card.
+    { set: TEAM_REWARDS_SET, cards: teamRewards.cards },
   ];
   const seasons = seasonsNeeded(plan);
 
@@ -685,13 +701,19 @@ async function main() {
     championsBySeason.get(baseSeason),
     [...(postBySeason.get(baseSeason)?.values() ?? [])]
   );
-  const sets = {
-    [CURRENT_SET]: baseJoin.records,
-    [SUPER_SEASON_SET]: joinById(superSeason.cards, bySeason, championsBySeason, postBySeason),
-    [ROOKIE_SET]: joinById(rookie.cards, bySeason, championsBySeason, postBySeason),
-    [SUMMER_STANDOUTS_SET]: joinById(standouts.cards, bySeason, championsBySeason, postBySeason),
-    [DISSONANCE_SET]: joinById(dissonance.cards, bySeason, championsBySeason, postBySeason),
-  };
+  // THE SETS ARE JOINED FROM `plan`, not from a second list beside it. This was
+  // a hand-written literal that had to be kept in step with `plan` above, and it
+  // was not: `plan` gained the reward set and the migration filter while this
+  // quietly went on joining the raw files, so the run reported a change it had
+  // not made. One list, read twice.
+  const sets = Object.fromEntries(
+    plan.map(({ set, cards }) => [
+      set,
+      set === CURRENT_SET
+        ? baseJoin.records
+        : joinById(cards, bySeason, championsBySeason, postBySeason),
+    ])
+  );
 
   const counts = Object.fromEntries(
     Object.entries(sets).map(([set, records]) => [set, countAwards(records)])

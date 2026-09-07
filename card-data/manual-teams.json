@@ -1,7 +1,3 @@
 {
-  "_comment": "Teams for players neither nba.com's active roster nor their own pool record can resolve (absent from the roster AND carrying a 2TM/3TM aggregate code). Keyed by the player name exactly as it appears in player-pool-2026.json. null means unresolved — the resolver reports these rather than guessing, since a wrong team puts the wrong logo and colors on a card.",
-  "Cam Thomas": null,
-  "Vince Williams Jr.": null,
-  "Ochai Agbaji": null,
-  "Guerschon Yabusele": null
+  "_comment": "Teams for players neither nba.com's active roster nor their own pool record can resolve (absent from the roster AND carrying a 2TM/3TM aggregate code). Keyed by the player name exactly as it appears in player-pool-2026.json. null means unresolved — the resolver reports these rather than guessing, since a wrong team puts the wrong logo and colors on a card. EMPTY ON PURPOSE: the five names that used to sit here are now excluded from the set entirely (card-data/retired-2026.json), under the rule that a player with no current team gets no card. If generateTeams.js reports a new unresolvable name, the choice is to add it here with a CURRENT team or to exclude it there — not to fall back on last season's."
 }

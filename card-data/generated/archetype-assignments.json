@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-03T17:44:36.382Z",
+ "generatedAt": "2026-09-06T12:00:17.202Z",
  "weighting": "each season's EPM weighted by its games in the chart's last-82 window; carried-forward players read their carried season",
  "assignments": [
   {
@@ -7,8 +7,8 @@
    "tier": "Average defender",
    "offense": "very good offense",
    "override": true,
-   "epmOff": 2.969,
-   "epmDef": 0.11,
+   "epmOff": 3.167,
+   "epmDef": 0.402,
    "basis": "1g 2025 + 81g 2026"
   },
   {
@@ -16,17 +16,17 @@
    "tier": "Great defender",
    "offense": "above average offense",
    "override": false,
-   "epmOff": 1.111,
-   "epmDef": 1.299,
+   "epmOff": 1.291,
+   "epmDef": 1.418,
    "basis": "82g 2026"
   },
   {
    "name": "Kevin Durant",
    "tier": "Average defender",
-   "offense": "elite offense",
+   "offense": "very good offense",
    "override": true,
-   "epmOff": 3.396,
-   "epmDef": 0.648,
+   "epmOff": 3.382,
+   "epmDef": 0.627,
    "basis": "3g 2025 + 79g 2026"
   },
   {
@@ -34,8 +34,8 @@
    "tier": "Average defender",
    "offense": "elite offense",
    "override": true,
-   "epmOff": 6.089,
-   "epmDef": 0.437,
+   "epmOff": 5.815,
+   "epmDef": 0.637,
    "basis": "18g 2025 + 64g 2026"
   },
   {
@@ -43,8 +43,8 @@
    "tier": "Average defender",
    "offense": "very good offense",
    "override": true,
-   "epmOff": 2.197,
-   "epmDef": -0.705,
+   "epmOff": 2.001,
+   "epmDef": -0.809,
    "basis": "16g 2025 + 66g 2026"
   },
   {
@@ -52,8 +52,8 @@
    "tier": "Awful defender",
    "offense": "elite offense",
    "override": true,
-   "epmOff": 4.571,
-   "epmDef": -1.695,
+   "epmOff": 5.052,
+   "epmDef": -1.688,
    "basis": "1g 2025 + 81g 2026"
   },
   {
@@ -61,8 +61,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 1.286,
-   "epmDef": 0.089,
+   "epmOff": 1.239,
+   "epmDef": 0.207,
    "basis": "5g 2025 + 77g 2026"
   },
   {
@@ -70,17 +70,17 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 0.379,
-   "epmDef": 0.064,
+   "epmOff": 0.423,
+   "epmDef": 0.112,
    "basis": "82g 2026"
   },
   {
    "name": "Anthony Edwards",
    "tier": "Average defender",
-   "offense": "very good offense",
+   "offense": "elite offense",
    "override": true,
-   "epmOff": 3.067,
-   "epmDef": -0.531,
+   "epmOff": 3.511,
+   "epmDef": -0.349,
    "basis": "12g 2025 + 70g 2026"
   },
   {
@@ -88,8 +88,8 @@
    "tier": "Bad defender",
    "offense": "elite offense",
    "override": true,
-   "epmOff": 3.986,
-   "epmDef": -1.208,
+   "epmOff": 3.978,
+   "epmDef": -1.312,
    "basis": "82g 2026"
   },
   {
@@ -97,8 +97,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 0.201,
-   "epmDef": 0.167,
+   "epmOff": 0.232,
+   "epmDef": 0.118,
    "basis": "82g 2026"
   },
   {
@@ -106,17 +106,17 @@
    "tier": "Average defender",
    "offense": "elite offense",
    "override": true,
-   "epmOff": 7.029,
-   "epmDef": 0.544,
+   "epmOff": 7.544,
+   "epmDef": 0.62,
    "basis": "11g 2025 + 71g 2026"
   },
   {
    "name": "James Harden",
-   "tier": "Average defender",
+   "tier": "Slightly negative defender",
    "offense": "elite offense",
    "override": true,
-   "epmOff": 3.222,
-   "epmDef": -0.813,
+   "epmOff": 3.858,
+   "epmDef": -1.085,
    "basis": "82g 2026"
   },
   {
@@ -124,8 +124,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 0.516,
-   "epmDef": -0.101,
+   "epmOff": 0.538,
+   "epmDef": -0.149,
    "basis": "3g 2025 + 79g 2026"
   },
   {
@@ -133,8 +133,8 @@
    "tier": "Average defender",
    "offense": "very good offense",
    "override": true,
-   "epmOff": 2.586,
-   "epmDef": -0.124,
+   "epmOff": 2.922,
+   "epmDef": -0.052,
    "basis": "25g 2025 + 57g 2026"
   },
   {
@@ -142,8 +142,8 @@
    "tier": "Good defender",
    "offense": null,
    "override": false,
-   "epmOff": -0.755,
-   "epmDef": 1.006,
+   "epmOff": -0.774,
+   "epmDef": 0.983,
    "basis": "59g 2025 + 23g 2026"
   },
   {
@@ -151,7 +151,7 @@
    "tier": "Average defender",
    "offense": "very good offense",
    "override": true,
-   "epmOff": 1.968,
+   "epmOff": 2.23,
    "epmDef": -0.13,
    "basis": "4g 2025 + 78g 2026"
   },
@@ -160,8 +160,8 @@
    "tier": "Average defender",
    "offense": "very good offense",
    "override": true,
-   "epmOff": 2.543,
-   "epmDef": -0.003,
+   "epmOff": 2.121,
+   "epmDef": -0.215,
    "basis": "40g 2025 + 42g 2026"
   },
   {
@@ -169,17 +169,17 @@
    "tier": "Elite defender",
    "offense": "very good offense",
    "override": false,
-   "epmOff": 1.435,
-   "epmDef": 2.374,
+   "epmOff": 1.813,
+   "epmDef": 2.578,
    "basis": "82g 2026"
   },
   {
    "name": "Cade Cunningham",
    "tier": "Good defender",
-   "offense": "very good offense",
+   "offense": "elite offense",
    "override": false,
-   "epmOff": 3.207,
-   "epmDef": 0.689,
+   "epmOff": 3.552,
+   "epmDef": 0.822,
    "basis": "5g 2025 + 77g 2026"
   },
   {
@@ -187,8 +187,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 0.237,
-   "epmDef": -0.582,
+   "epmOff": 0.448,
+   "epmDef": -0.64,
    "basis": "82g 2026"
   },
   {
@@ -196,8 +196,8 @@
    "tier": "Average defender",
    "offense": "very good offense",
    "override": true,
-   "epmOff": 1.657,
-   "epmDef": -0.102,
+   "epmOff": 1.842,
+   "epmDef": -0.046,
    "basis": "82g 2026"
   },
   {
@@ -205,8 +205,8 @@
    "tier": "Average defender",
    "offense": "elite offense",
    "override": true,
-   "epmOff": 4.276,
-   "epmDef": -0.294,
+   "epmOff": 5.214,
+   "epmDef": -0.172,
    "basis": "82g 2026"
   },
   {
@@ -214,8 +214,8 @@
    "tier": "Average defender",
    "offense": "very good offense",
    "override": true,
-   "epmOff": 2.772,
-   "epmDef": -0.659,
+   "epmOff": 3.007,
+   "epmDef": -0.688,
    "basis": "14g 2025 + 68g 2026"
   },
   {
@@ -232,8 +232,8 @@
    "tier": "Great defender",
    "offense": "above average offense",
    "override": false,
-   "epmOff": 0.999,
-   "epmDef": 1.771,
+   "epmOff": 0.841,
+   "epmDef": 1.884,
    "basis": "82g 2026"
   },
   {
@@ -241,8 +241,8 @@
    "tier": "Average defender",
    "offense": "very good offense",
    "override": true,
-   "epmOff": 1.796,
-   "epmDef": 0.039,
+   "epmOff": 2.072,
+   "epmDef": 0.189,
    "basis": "82g 2026"
   },
   {
@@ -250,17 +250,17 @@
    "tier": "Slightly negative defender",
    "offense": "very good offense",
    "override": true,
-   "epmOff": 2.568,
-   "epmDef": -0.902,
+   "epmOff": 2.562,
+   "epmDef": -0.843,
    "basis": "12g 2025 + 70g 2026"
   },
   {
    "name": "Alperen Şengün",
    "tier": "Average defender",
-   "offense": "above average offense",
+   "offense": "very good offense",
    "override": true,
-   "epmOff": 1.262,
-   "epmDef": -0.623,
+   "epmOff": 1.502,
+   "epmDef": -0.569,
    "basis": "5g 2025 + 77g 2026"
   },
   {
@@ -268,17 +268,17 @@
    "tier": "Good defender",
    "offense": "above average offense",
    "override": false,
-   "epmOff": -0.334,
-   "epmDef": 0.853,
+   "epmOff": -0.218,
+   "epmDef": 0.917,
    "basis": "82g 2026"
   },
   {
    "name": "Shai Gilgeous-Alexander",
-   "tier": "Great defender",
+   "tier": "Elite defender",
    "offense": "elite offense",
    "override": false,
-   "epmOff": 6.621,
-   "epmDef": 1.516,
+   "epmOff": 7.334,
+   "epmDef": 2.013,
    "basis": "82g 2026"
   },
   {
@@ -286,8 +286,8 @@
    "tier": "Average defender",
    "offense": "very good offense",
    "override": true,
-   "epmOff": 1.609,
-   "epmDef": 0.227,
+   "epmOff": 1.686,
+   "epmDef": 0.513,
    "basis": "20g 2025 + 62g 2026"
   },
   {
@@ -295,17 +295,17 @@
    "tier": "Average defender",
    "offense": "very good offense",
    "override": true,
-   "epmOff": 1.409,
-   "epmDef": 0.011,
+   "epmOff": 1.66,
+   "epmDef": -0.025,
    "basis": "12g 2025 + 70g 2026"
   },
   {
    "name": "OG Anunoby",
    "tier": "Great defender",
-   "offense": "very good offense",
+   "offense": "above average offense",
    "override": false,
-   "epmOff": 1.814,
-   "epmDef": 1.189,
+   "epmOff": 1.388,
+   "epmDef": 1.422,
    "basis": "82g 2026"
   },
   {
@@ -313,26 +313,26 @@
    "tier": "Elite defender",
    "offense": "above average offense",
    "override": false,
-   "epmOff": 0.083,
-   "epmDef": 2.507,
+   "epmOff": 0.178,
+   "epmDef": 2.68,
    "basis": "82g 2026"
   },
   {
    "name": "Keyonte George",
    "tier": "Awful defender",
-   "offense": "very good offense",
+   "offense": "above average offense",
    "override": true,
-   "epmOff": 1.787,
-   "epmDef": -2.538,
+   "epmOff": 1.168,
+   "epmDef": -2.608,
    "basis": "28g 2025 + 54g 2026"
   },
   {
    "name": "Julius Randle",
    "tier": "Average defender",
-   "offense": "above average offense",
+   "offense": "very good offense",
    "override": true,
-   "epmOff": 1.228,
-   "epmDef": -0.113,
+   "epmOff": 1.857,
+   "epmDef": -0.092,
    "basis": "82g 2026"
   },
   {
@@ -340,17 +340,17 @@
    "tier": "Good defender",
    "offense": "above average offense",
    "override": false,
-   "epmOff": 0.905,
-   "epmDef": 1.023,
+   "epmOff": 0.868,
+   "epmDef": 0.9,
    "basis": "82g 2026"
   },
   {
    "name": "Jayson Tatum",
    "tier": "Good defender",
-   "offense": "elite offense",
+   "offense": "very good offense",
    "override": false,
-   "epmOff": 3.418,
-   "epmDef": 0.773,
+   "epmOff": 3.389,
+   "epmDef": 0.77,
    "basis": "60g 2025 + 22g 2026"
   },
   {
@@ -358,17 +358,17 @@
    "tier": "Bad defender",
    "offense": "very good offense",
    "override": true,
-   "epmOff": 2.991,
-   "epmDef": -1.323,
+   "epmOff": 2.554,
+   "epmDef": -1.316,
    "basis": "30g 2025 + 52g 2026"
   },
   {
    "name": "Bam Adebayo",
-   "tier": "Elite defender",
-   "offense": "very good offense",
+   "tier": "Great defender",
+   "offense": "above average offense",
    "override": false,
-   "epmOff": 1.52,
-   "epmDef": 1.821,
+   "epmOff": 1.379,
+   "epmDef": 1.799,
    "basis": "9g 2025 + 73g 2026"
   },
   {
@@ -376,17 +376,17 @@
    "tier": "Slightly negative defender",
    "offense": "very good offense",
    "override": true,
-   "epmOff": 2.638,
-   "epmDef": -0.996,
+   "epmOff": 2.716,
+   "epmDef": -0.979,
    "basis": "82g 2026"
   },
   {
    "name": "Kawhi Leonard",
-   "tier": "Average defender",
+   "tier": "Good defender",
    "offense": "elite offense",
-   "override": true,
-   "epmOff": 5.478,
-   "epmDef": 0.596,
+   "override": false,
+   "epmOff": 4.871,
+   "epmDef": 0.766,
    "basis": "17g 2025 + 65g 2026"
   },
   {
@@ -394,8 +394,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 0.632,
-   "epmDef": 0.302,
+   "epmOff": 0.496,
+   "epmDef": 0.303,
    "basis": "8g 2025 + 74g 2026"
   },
   {
@@ -403,8 +403,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 1.063,
-   "epmDef": -0.802,
+   "epmOff": 1.07,
+   "epmDef": -0.634,
    "basis": "28g 2025 + 54g 2026"
   },
   {
@@ -412,8 +412,8 @@
    "tier": "Good defender",
    "offense": "above average offense",
    "override": false,
-   "epmOff": 0.735,
-   "epmDef": 0.928,
+   "epmOff": 1.162,
+   "epmDef": 0.954,
    "basis": "82g 2026"
   },
   {
@@ -421,8 +421,8 @@
    "tier": "Average defender",
    "offense": "very good offense",
    "override": true,
-   "epmOff": 2.233,
-   "epmDef": 0.002,
+   "epmOff": 2.289,
+   "epmDef": -0.072,
    "basis": "12g 2025 + 70g 2026"
   },
   {
@@ -430,26 +430,26 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 0.329,
-   "epmDef": 0.298,
+   "epmOff": 0.93,
+   "epmDef": 0.427,
    "basis": "32g 2025 + 50g 2026"
   },
   {
    "name": "Jaden McDaniels",
-   "tier": "Good defender",
+   "tier": "Great defender",
    "offense": "above average offense",
    "override": false,
-   "epmOff": -0.521,
-   "epmDef": 1.122,
+   "epmOff": -0.414,
+   "epmDef": 1.364,
    "basis": "82g 2026"
   },
   {
    "name": "Joel Embiid",
-   "tier": "Average defender",
+   "tier": "Good defender",
    "offense": "very good offense",
-   "override": true,
-   "epmOff": 2.502,
-   "epmDef": 0.521,
+   "override": false,
+   "epmOff": 2.618,
+   "epmDef": 0.761,
    "basis": "19g 2025 + 45g 2026"
   },
   {
@@ -466,26 +466,26 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -0.849,
-   "epmDef": -0.175,
+   "epmOff": -0.836,
+   "epmDef": 0.149,
    "basis": "21g 2025 + 61g 2026"
   },
   {
    "name": "Zach LaVine",
-   "tier": "Bad defender",
+   "tier": "Awful defender",
    "offense": "very good offense",
    "override": true,
-   "epmOff": 2.023,
-   "epmDef": -1.6,
+   "epmOff": 1.914,
+   "epmDef": -1.61,
    "basis": "43g 2025 + 39g 2026"
   },
   {
    "name": "Tyler Herro",
    "tier": "Average defender",
-   "offense": "elite offense",
+   "offense": "very good offense",
    "override": true,
-   "epmOff": 3.447,
-   "epmDef": -0.737,
+   "epmOff": 3.422,
+   "epmDef": -0.724,
    "basis": "49g 2025 + 33g 2026"
   },
   {
@@ -493,7 +493,7 @@
    "tier": "Great defender",
    "offense": "very good offense",
    "override": false,
-   "epmOff": 1.957,
+   "epmOff": 1.95,
    "epmDef": 1.666,
    "basis": "51g 2025 + 20g 2026"
   },
@@ -502,8 +502,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 0.424,
-   "epmDef": -0.287,
+   "epmOff": -0.057,
+   "epmDef": 0.327,
    "basis": "25g 2025 + 57g 2026"
   },
   {
@@ -511,8 +511,8 @@
    "tier": "Elite defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.052,
-   "epmDef": 2.649,
+   "epmOff": -0.9,
+   "epmDef": 2.867,
    "basis": "82g 2026"
   },
   {
@@ -520,8 +520,8 @@
    "tier": "Awful defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 1.313,
-   "epmDef": -2.278,
+   "epmOff": 1.345,
+   "epmDef": -2.224,
    "basis": "5g 2025 + 77g 2026"
   },
   {
@@ -538,17 +538,17 @@
    "tier": "Average defender",
    "offense": "very good offense",
    "override": true,
-   "epmOff": 3.139,
-   "epmDef": 0.434,
+   "epmOff": 3.255,
+   "epmDef": 0.545,
    "basis": "44g 2025 + 38g 2026"
   },
   {
    "name": "Karl-Anthony Towns",
-   "tier": "Great defender",
+   "tier": "Good defender",
    "offense": "very good offense",
    "override": false,
-   "epmOff": 2.839,
-   "epmDef": 1.529,
+   "epmOff": 2.584,
+   "epmDef": 0.873,
    "basis": "82g 2026"
   },
   {
@@ -556,8 +556,8 @@
    "tier": "Average defender",
    "offense": "very good offense",
    "override": true,
-   "epmOff": 1.837,
-   "epmDef": 0.471,
+   "epmOff": 2.392,
+   "epmDef": 0.531,
    "basis": "82g 2026"
   },
   {
@@ -565,8 +565,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 1.31,
-   "epmDef": -0.564,
+   "epmOff": 1.285,
+   "epmDef": -0.512,
    "basis": "5g 2025 + 77g 2026"
   },
   {
@@ -574,8 +574,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 0.132,
-   "epmDef": 0.332,
+   "epmOff": 0.072,
+   "epmDef": 0.462,
    "basis": "2g 2025 + 80g 2026"
   },
   {
@@ -583,8 +583,8 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.456,
-   "epmDef": 0.685,
+   "epmOff": -1.219,
+   "epmDef": 0.648,
    "basis": "27g 2025 + 55g 2026"
   },
   {
@@ -592,8 +592,8 @@
    "tier": "Average defender",
    "offense": "elite offense",
    "override": true,
-   "epmOff": 5.634,
-   "epmDef": -0.695,
+   "epmOff": 5.642,
+   "epmDef": -0.738,
    "basis": "39g 2025 + 43g 2026"
   },
   {
@@ -601,17 +601,17 @@
    "tier": "Good defender",
    "offense": "above average offense",
    "override": false,
-   "epmOff": -0.216,
-   "epmDef": 1.114,
+   "epmOff": -0.095,
+   "epmDef": 1.228,
    "basis": "34g 2025 + 48g 2026"
   },
   {
    "name": "Devin Vassell",
-   "tier": "Good defender",
-   "offense": "above average offense",
-   "override": false,
-   "epmOff": 1.02,
-   "epmDef": 0.861,
+   "tier": "Average defender",
+   "offense": "very good offense",
+   "override": true,
+   "epmOff": 1.401,
+   "epmDef": 0.309,
    "basis": "82g 2026"
   },
   {
@@ -619,8 +619,8 @@
    "tier": "Average defender",
    "offense": "very good offense",
    "override": true,
-   "epmOff": 1.498,
-   "epmDef": -0.306,
+   "epmOff": 1.969,
+   "epmDef": -0.358,
    "basis": "22g 2025 + 60g 2026"
   },
   {
@@ -628,8 +628,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 0.368,
-   "epmDef": 0.436,
+   "epmOff": 0.157,
+   "epmDef": 0.637,
    "basis": "22g 2025 + 60g 2026"
   },
   {
@@ -637,17 +637,17 @@
    "tier": "Good defender",
    "offense": "above average offense",
    "override": false,
-   "epmOff": 1.016,
-   "epmDef": 0.741,
+   "epmOff": 0.984,
+   "epmDef": 0.749,
    "basis": "82g 2026"
   },
   {
    "name": "Brandon Miller",
-   "tier": "Good defender",
+   "tier": "Average defender",
    "offense": "very good offense",
-   "override": false,
-   "epmOff": 2.174,
-   "epmDef": 0.842,
+   "override": true,
+   "epmOff": 1.938,
+   "epmDef": 0.708,
    "basis": "17g 2025 + 65g 2026"
   },
   {
@@ -655,8 +655,8 @@
    "tier": "Great defender",
    "offense": "above average offense",
    "override": false,
-   "epmOff": 0.676,
-   "epmDef": 1.552,
+   "epmOff": 1.255,
+   "epmDef": 1.573,
    "basis": "34g 2025 + 48g 2026"
   },
   {
@@ -664,8 +664,8 @@
    "tier": "Average defender",
    "offense": "very good offense",
    "override": true,
-   "epmOff": 1.762,
-   "epmDef": -0.524,
+   "epmOff": 1.612,
+   "epmDef": -0.533,
    "basis": "18g 2025 + 64g 2026"
   },
   {
@@ -673,44 +673,44 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 0.218,
-   "epmDef": 0.182,
+   "epmOff": 0.209,
+   "epmDef": 0.263,
    "basis": "14g 2025 + 68g 2026"
   },
   {
    "name": "Josh Hart",
-   "tier": "Good defender",
+   "tier": "Average defender",
    "offense": "above average offense",
-   "override": false,
-   "epmOff": 0.094,
-   "epmDef": 0.875,
+   "override": true,
+   "epmOff": 0.243,
+   "epmDef": 0.441,
    "basis": "82g 2026"
   },
   {
    "name": "Ivica Zubac",
-   "tier": "Good defender",
+   "tier": "Great defender",
    "offense": "above average offense",
    "override": false,
-   "epmOff": 0.799,
-   "epmDef": 0.917,
+   "epmOff": 1.164,
+   "epmDef": 1.543,
    "basis": "34g 2025 + 48g 2026"
   },
   {
    "name": "Franz Wagner",
-   "tier": "Great defender",
+   "tier": "Good defender",
    "offense": "very good offense",
    "override": false,
-   "epmOff": 2.176,
-   "epmDef": 1.159,
+   "epmOff": 2.225,
+   "epmDef": 1.183,
    "basis": "44g 2025 + 38g 2026"
   },
   {
    "name": "Bennedict Mathurin",
-   "tier": "Average defender",
-   "offense": null,
-   "override": false,
-   "epmOff": -0.767,
-   "epmDef": -0.791,
+   "tier": "Slightly negative defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": -0.721,
+   "epmDef": -0.813,
    "basis": "29g 2025 + 53g 2026"
   },
   {
@@ -718,26 +718,26 @@
    "tier": "Great defender",
    "offense": "above average offense",
    "override": false,
-   "epmOff": 0.999,
-   "epmDef": 1.346,
+   "epmOff": 1.179,
+   "epmDef": 1.633,
    "basis": "82g 2026"
   },
   {
    "name": "Darius Garland",
    "tier": "Average defender",
-   "offense": "very good offense",
+   "offense": "elite offense",
    "override": true,
-   "epmOff": 3.114,
-   "epmDef": -0.714,
+   "epmOff": 3.65,
+   "epmDef": -0.729,
    "basis": "37g 2025 + 45g 2026"
   },
   {
    "name": "CJ McCollum",
    "tier": "Average defender",
-   "offense": "above average offense",
+   "offense": "very good offense",
    "override": true,
-   "epmOff": 1.282,
-   "epmDef": -0.09,
+   "epmOff": 1.485,
+   "epmDef": -0.151,
    "basis": "82g 2026"
   },
   {
@@ -745,8 +745,8 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.293,
-   "epmDef": 0.632,
+   "epmOff": -1.281,
+   "epmDef": 0.57,
    "basis": "12g 2025 + 70g 2026"
   },
   {
@@ -754,8 +754,8 @@
    "tier": "Average defender",
    "offense": "very good offense",
    "override": true,
-   "epmOff": 1.923,
-   "epmDef": -0.111,
+   "epmOff": 2.209,
+   "epmDef": -0.046,
    "basis": "20g 2025 + 62g 2026"
   },
   {
@@ -763,8 +763,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 0.328,
-   "epmDef": -0.68,
+   "epmOff": 0.02,
+   "epmDef": -0.371,
    "basis": "20g 2025 + 62g 2026"
   },
   {
@@ -772,8 +772,8 @@
    "tier": "Average defender",
    "offense": "very good offense",
    "override": true,
-   "epmOff": 2.226,
-   "epmDef": 0.537,
+   "epmOff": 2.202,
+   "epmDef": 0.52,
    "basis": "63g 2025 + 19g 2026"
   },
   {
@@ -781,8 +781,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 0.4,
-   "epmDef": -0.064,
+   "epmOff": 0.77,
+   "epmDef": 0.155,
    "basis": "37g 2025 + 45g 2026"
   },
   {
@@ -790,8 +790,8 @@
    "tier": "Average defender",
    "offense": "very good offense",
    "override": true,
-   "epmOff": 1.922,
-   "epmDef": -0.277,
+   "epmOff": 1.947,
+   "epmDef": -0.229,
    "basis": "24g 2025 + 58g 2026"
   },
   {
@@ -799,8 +799,8 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -0.779,
-   "epmDef": 0.083,
+   "epmOff": -1.436,
+   "epmDef": 0.299,
    "basis": "29g 2025 + 53g 2026"
   },
   {
@@ -808,17 +808,17 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": -0.33,
-   "epmDef": 0.039,
+   "epmOff": -0.357,
+   "epmDef": 0.022,
    "basis": "8g 2025 + 74g 2026"
   },
   {
    "name": "Shaedon Sharpe",
-   "tier": "Average defender",
+   "tier": "Slightly negative defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": -0.25,
-   "epmDef": -0.861,
+   "epmOff": -0.099,
+   "epmDef": -0.914,
    "basis": "27g 2025 + 55g 2026"
   },
   {
@@ -826,8 +826,8 @@
    "tier": "Good defender",
    "offense": "above average offense",
    "override": false,
-   "epmOff": 0.829,
-   "epmDef": 0.862,
+   "epmOff": 0.579,
+   "epmDef": 1.104,
    "basis": "24g 2025 + 58g 2026"
   },
   {
@@ -835,17 +835,17 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.017,
-   "epmDef": -0.195,
+   "epmOff": -0.97,
+   "epmDef": 0.059,
    "basis": "82g 2026"
   },
   {
    "name": "Wendell Carter Jr.",
-   "tier": "Great defender",
+   "tier": "Good defender",
    "offense": "above average offense",
    "override": false,
-   "epmOff": -0.125,
-   "epmDef": 1.159,
+   "epmOff": -0.192,
+   "epmDef": 1.244,
    "basis": "82g 2026"
   },
   {
@@ -853,8 +853,8 @@
    "tier": "Elite defender",
    "offense": "elite offense",
    "override": false,
-   "epmOff": 4.031,
-   "epmDef": 4.897,
+   "epmOff": 4.297,
+   "epmDef": 4.446,
    "basis": "82g 2026"
   },
   {
@@ -862,8 +862,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": -0.238,
-   "epmDef": -0.114,
+   "epmOff": -0.33,
+   "epmDef": -0.153,
    "basis": "5g 2025 + 77g 2026"
   },
   {
@@ -871,8 +871,8 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -0.803,
-   "epmDef": -0.442,
+   "epmOff": -0.855,
+   "epmDef": -0.457,
    "basis": "5g 2025 + 77g 2026"
   },
   {
@@ -880,8 +880,8 @@
    "tier": "Bad defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 0.179,
-   "epmDef": -1.464,
+   "epmOff": 0.133,
+   "epmDef": -1.383,
    "basis": "4g 2025 + 78g 2026"
   },
   {
@@ -889,8 +889,8 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.202,
-   "epmDef": 0.001,
+   "epmOff": -1.701,
+   "epmDef": 0.171,
    "basis": "34g 2025 + 48g 2026"
   },
   {
@@ -898,8 +898,8 @@
    "tier": "Great defender",
    "offense": "elite offense",
    "override": false,
-   "epmOff": 5.012,
-   "epmDef": 1.248,
+   "epmOff": 5.078,
+   "epmDef": 1.29,
    "basis": "47g 2025 + 35g 2026"
   },
   {
@@ -907,8 +907,8 @@
    "tier": "Elite defender",
    "offense": "very good offense",
    "override": false,
-   "epmOff": 2.219,
-   "epmDef": 3.007,
+   "epmOff": 2.205,
+   "epmDef": 3.757,
    "basis": "82g 2026"
   },
   {
@@ -916,8 +916,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 1.266,
-   "epmDef": -0.579,
+   "epmOff": 0.917,
+   "epmDef": -0.79,
    "basis": "29g 2025 + 53g 2026"
   },
   {
@@ -925,8 +925,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 0.188,
-   "epmDef": 0.383,
+   "epmOff": -0.035,
+   "epmDef": 0.543,
    "basis": "12g 2025 + 70g 2026"
   },
   {
@@ -934,8 +934,8 @@
    "tier": "Good defender",
    "offense": "very good offense",
    "override": false,
-   "epmOff": 1.872,
-   "epmDef": 0.79,
+   "epmOff": 1.895,
+   "epmDef": 0.802,
    "basis": "53g 2025 + 19g 2026"
   },
   {
@@ -952,8 +952,8 @@
    "tier": "Average defender",
    "offense": "very good offense",
    "override": true,
-   "epmOff": 1.779,
-   "epmDef": 0.385,
+   "epmOff": 1.875,
+   "epmDef": 0.491,
    "basis": "82g 2026"
   },
   {
@@ -961,17 +961,17 @@
    "tier": "Elite defender",
    "offense": null,
    "override": false,
-   "epmOff": -0.953,
-   "epmDef": 1.926,
+   "epmOff": -1.042,
+   "epmDef": 2.023,
    "basis": "10g 2025 + 72g 2026"
   },
   {
    "name": "Jalen Williams",
    "tier": "Elite defender",
-   "offense": "very good offense",
+   "offense": "above average offense",
    "override": false,
-   "epmOff": 1.337,
-   "epmDef": 1.927,
+   "epmOff": 1.242,
+   "epmDef": 2.123,
    "basis": "44g 2025 + 38g 2026"
   },
   {
@@ -979,8 +979,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 0.848,
-   "epmDef": -0.385,
+   "epmOff": 1.166,
+   "epmDef": -0.301,
    "basis": "13g 2025 + 69g 2026"
   },
   {
@@ -988,8 +988,8 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -0.853,
-   "epmDef": -0.645,
+   "epmOff": -0.864,
+   "epmDef": -0.648,
    "basis": "82g 2026"
   },
   {
@@ -997,8 +997,8 @@
    "tier": "Good defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.728,
-   "epmDef": 0.957,
+   "epmOff": -1.703,
+   "epmDef": 0.972,
    "basis": "20g 2025 + 56g 2026"
   },
   {
@@ -1006,26 +1006,26 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -0.854,
-   "epmDef": -0.613,
+   "epmOff": -0.971,
+   "epmDef": -0.595,
    "basis": "7g 2025 + 75g 2026"
   },
   {
    "name": "Rui Hachimura",
-   "tier": "Slightly negative defender",
-   "offense": "above average offense",
-   "override": true,
-   "epmOff": -0.408,
-   "epmDef": -0.891,
+   "tier": "Average defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -0.738,
+   "epmDef": -0.783,
    "basis": "4g 2025 + 78g 2026"
   },
   {
    "name": "Jalen Duren",
-   "tier": "Average defender",
-   "offense": "very good offense",
-   "override": true,
-   "epmOff": 2.677,
-   "epmDef": 0.538,
+   "tier": "Good defender",
+   "offense": "elite offense",
+   "override": false,
+   "epmOff": 3.428,
+   "epmDef": 1.124,
    "basis": "82g 2026"
   },
   {
@@ -1033,8 +1033,8 @@
    "tier": "Average defender",
    "offense": "elite offense",
    "override": true,
-   "epmOff": 4.717,
-   "epmDef": -0.443,
+   "epmOff": 4.61,
+   "epmDef": -0.544,
    "basis": "10g 2025 + 72g 2026"
   },
   {
@@ -1042,8 +1042,8 @@
    "tier": "Average defender",
    "offense": "very good offense",
    "override": true,
-   "epmOff": 1.828,
-   "epmDef": -0.683,
+   "epmOff": 1.89,
+   "epmDef": -0.693,
    "basis": "44g 2025 + 38g 2026"
   },
   {
@@ -1051,8 +1051,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 0.479,
-   "epmDef": -0.017,
+   "epmOff": 0.682,
+   "epmDef": 0.05,
    "basis": "39g 2025 + 43g 2026"
   },
   {
@@ -1060,8 +1060,8 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -0.842,
-   "epmDef": 0.466,
+   "epmOff": -0.823,
+   "epmDef": 0.469,
    "basis": "31g 2025 + 14g 2026"
   },
   {
@@ -1069,8 +1069,8 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -0.786,
-   "epmDef": -0.275,
+   "epmOff": -1.026,
+   "epmDef": -0.257,
    "basis": "13g 2025 + 69g 2026"
   },
   {
@@ -1078,8 +1078,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 0.469,
-   "epmDef": 0.167,
+   "epmOff": 0.35,
+   "epmDef": 0.625,
    "basis": "6g 2025 + 76g 2026"
   },
   {
@@ -1102,20 +1102,20 @@
   },
   {
    "name": "Jalen Suggs",
-   "tier": "Great defender",
+   "tier": "Elite defender",
    "offense": "above average offense",
    "override": false,
-   "epmOff": -0.109,
-   "epmDef": 1.771,
+   "epmOff": 0.11,
+   "epmDef": 2.02,
    "basis": "18g 2025 + 64g 2026"
   },
   {
    "name": "Julian Champagnie",
    "tier": "Average defender",
-   "offense": "very good offense",
+   "offense": "above average offense",
    "override": true,
-   "epmOff": 1.33,
-   "epmDef": 0.117,
+   "epmOff": 1.233,
+   "epmDef": 0.291,
    "basis": "82g 2026"
   },
   {
@@ -1123,8 +1123,8 @@
    "tier": "Good defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.862,
-   "epmDef": 0.764,
+   "epmOff": -1.708,
+   "epmDef": 1.05,
    "basis": "14g 2025 + 68g 2026"
   },
   {
@@ -1132,8 +1132,8 @@
    "tier": "Average defender",
    "offense": "very good offense",
    "override": true,
-   "epmOff": 1.941,
-   "epmDef": -0.58,
+   "epmOff": 2.093,
+   "epmDef": -0.302,
    "basis": "82g 2026"
   },
   {
@@ -1141,8 +1141,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 0.304,
-   "epmDef": -0.391,
+   "epmOff": 0.122,
+   "epmDef": -0.244,
    "basis": "3g 2025 + 79g 2026"
   },
   {
@@ -1159,8 +1159,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": -0.365,
-   "epmDef": -0.372,
+   "epmOff": -0.261,
+   "epmDef": -0.316,
    "basis": "81g 2026"
   },
   {
@@ -1168,8 +1168,8 @@
    "tier": "Average defender",
    "offense": "very good offense",
    "override": true,
-   "epmOff": 1.765,
-   "epmDef": 0.631,
+   "epmOff": 1.892,
+   "epmDef": 0.715,
    "basis": "82g 2026"
   },
   {
@@ -1186,8 +1186,8 @@
    "tier": "Great defender",
    "offense": "very good offense",
    "override": false,
-   "epmOff": 1.692,
-   "epmDef": 1.203,
+   "epmOff": 1.629,
+   "epmDef": 1.494,
    "basis": "8g 2025 + 74g 2026"
   },
   {
@@ -1195,8 +1195,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": -0.028,
-   "epmDef": -0.412,
+   "epmOff": 0.122,
+   "epmDef": -0.352,
    "basis": "13g 2025 + 69g 2026"
   },
   {
@@ -1204,8 +1204,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 0.646,
-   "epmDef": -0.426,
+   "epmOff": 0.472,
+   "epmDef": -0.366,
    "basis": "17g 2025 + 65g 2026"
   },
   {
@@ -1213,8 +1213,8 @@
    "tier": "Slightly negative defender",
    "offense": null,
    "override": false,
-   "epmOff": -0.913,
-   "epmDef": -1.09,
+   "epmOff": -1.088,
+   "epmDef": -0.99,
    "basis": "16g 2025 + 66g 2026"
   },
   {
@@ -1222,8 +1222,8 @@
    "tier": "Good defender",
    "offense": "above average offense",
    "override": false,
-   "epmOff": -0.373,
-   "epmDef": 1.098,
+   "epmOff": -0.436,
+   "epmDef": 1.053,
    "basis": "32g 2025 + 50g 2026"
   },
   {
@@ -1231,8 +1231,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 0.225,
-   "epmDef": 0.052,
+   "epmOff": 0.562,
+   "epmDef": 0.19,
    "basis": "80g 2026"
   },
   {
@@ -1240,8 +1240,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": -0.653,
-   "epmDef": 0.073,
+   "epmOff": -0.496,
+   "epmDef": 0.085,
    "basis": "11g 2025 + 71g 2026"
   },
   {
@@ -1249,8 +1249,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": -0.675,
-   "epmDef": -0.546,
+   "epmOff": -0.565,
+   "epmDef": -0.264,
    "basis": "19g 2025 + 63g 2026"
   },
   {
@@ -1258,8 +1258,8 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.429,
-   "epmDef": 0.23,
+   "epmOff": -1.464,
+   "epmDef": 0.701,
    "basis": "82g 2026"
   },
   {
@@ -1267,8 +1267,8 @@
    "tier": "Awful defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 0.69,
-   "epmDef": -1.693,
+   "epmOff": 0.814,
+   "epmDef": -1.743,
    "basis": "82g 2026"
   },
   {
@@ -1276,8 +1276,8 @@
    "tier": "Elite defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.007,
-   "epmDef": 2.98,
+   "epmOff": -1.289,
+   "epmDef": 3.063,
    "basis": "82g 2026"
   },
   {
@@ -1285,8 +1285,8 @@
    "tier": "Average defender",
    "offense": "very good offense",
    "override": true,
-   "epmOff": 1.564,
-   "epmDef": -0.78,
+   "epmOff": 1.465,
+   "epmDef": -0.212,
    "basis": "13g 2025 + 69g 2026"
   },
   {
@@ -1303,8 +1303,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 0.13,
-   "epmDef": -0.493,
+   "epmOff": 0.149,
+   "epmDef": -0.324,
    "basis": "13g 2025 + 69g 2026"
   },
   {
@@ -1312,8 +1312,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": -0.391,
-   "epmDef": 0.198,
+   "epmOff": -0.613,
+   "epmDef": 0.142,
    "basis": "14g 2025 + 68g 2026"
   },
   {
@@ -1321,17 +1321,17 @@
    "tier": "Good defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.533,
-   "epmDef": 0.954,
+   "epmOff": -1.706,
+   "epmDef": 0.882,
    "basis": "41g 2025 + 41g 2026"
   },
   {
    "name": "Miles McBride",
-   "tier": "Average defender",
+   "tier": "Good defender",
    "offense": "above average offense",
-   "override": true,
-   "epmOff": 0.646,
-   "epmDef": 0.615,
+   "override": false,
+   "epmOff": 0.615,
+   "epmDef": 0.987,
    "basis": "22g 2025 + 60g 2026"
   },
   {
@@ -1339,8 +1339,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 0.221,
-   "epmDef": 0.075,
+   "epmOff": 0.465,
+   "epmDef": 0.071,
    "basis": "82g 2026"
   },
   {
@@ -1348,8 +1348,8 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.288,
-   "epmDef": -0.312,
+   "epmOff": -1.515,
+   "epmDef": -0.35,
    "basis": "13g 2025 + 69g 2026"
   },
   {
@@ -1357,8 +1357,8 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.684,
-   "epmDef": 0.436,
+   "epmOff": -1.936,
+   "epmDef": 0.389,
    "basis": "26g 2025 + 56g 2026"
   },
   {
@@ -1366,17 +1366,17 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": -0.289,
-   "epmDef": -0.32,
+   "epmOff": 0.211,
+   "epmDef": -0.105,
    "basis": "37g 2025 + 45g 2026"
   },
   {
    "name": "Naz Reid",
-   "tier": "Average defender",
-   "offense": "above average offense",
-   "override": true,
-   "epmOff": -0.652,
-   "epmDef": 0.54,
+   "tier": "Good defender",
+   "offense": null,
+   "override": false,
+   "epmOff": -0.862,
+   "epmDef": 0.86,
    "basis": "82g 2026"
   },
   {
@@ -1384,17 +1384,17 @@
    "tier": "Elite defender",
    "offense": null,
    "override": false,
-   "epmOff": -0.961,
-   "epmDef": 4.15,
+   "epmOff": -0.836,
+   "epmDef": 4.169,
    "basis": "82g 2026"
   },
   {
    "name": "Moussa Diabaté",
-   "tier": "Good defender",
+   "tier": "Average defender",
    "offense": "above average offense",
-   "override": false,
-   "epmOff": 0.532,
-   "epmDef": 0.691,
+   "override": true,
+   "epmOff": 0.302,
+   "epmDef": 0.697,
    "basis": "9g 2025 + 73g 2026"
   },
   {
@@ -1402,13 +1402,13 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 0.739,
-   "epmDef": -0.701,
+   "epmOff": 0.724,
+   "epmDef": -0.639,
    "basis": "48g 2025 + 34g 2026"
   },
   {
    "name": "Jeremiah Fears",
-   "tier": "Slightly negative defender",
+   "tier": "Bad defender",
    "offense": null,
    "override": false,
    "epmOff": -1.431,
@@ -1429,26 +1429,26 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 0.819,
-   "epmDef": -0.145,
+   "epmOff": 0.842,
+   "epmDef": -0.149,
    "basis": "70g 2025 + 10g 2026"
   },
   {
    "name": "Ajay Mitchell",
-   "tier": "Elite defender",
+   "tier": "Great defender",
    "offense": "above average offense",
    "override": false,
-   "epmOff": 0.101,
-   "epmDef": 1.806,
+   "epmOff": -0.566,
+   "epmDef": 1.507,
    "basis": "15g 2025 + 67g 2026"
   },
   {
    "name": "Tari Eason",
-   "tier": "Great defender",
-   "offense": null,
+   "tier": "Good defender",
+   "offense": "above average offense",
    "override": false,
-   "epmOff": -0.732,
-   "epmDef": 1.189,
+   "epmOff": -0.694,
+   "epmDef": 1.259,
    "basis": "16g 2025 + 66g 2026"
   },
   {
@@ -1456,8 +1456,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 0.225,
-   "epmDef": -0.654,
+   "epmOff": 0.411,
+   "epmDef": -0.658,
    "basis": "82g 2026"
   },
   {
@@ -1465,8 +1465,8 @@
    "tier": "Great defender",
    "offense": "above average offense",
    "override": false,
-   "epmOff": 0.26,
-   "epmDef": 1.506,
+   "epmOff": 0.094,
+   "epmDef": 1.343,
    "basis": "22g 2025 + 60g 2026"
   },
   {
@@ -1474,8 +1474,8 @@
    "tier": "Awful defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.859,
-   "epmDef": -2.148,
+   "epmOff": -2.089,
+   "epmDef": -2.115,
    "basis": "23g 2025 + 59g 2026"
   },
   {
@@ -1483,17 +1483,17 @@
    "tier": "Slightly negative defender",
    "offense": null,
    "override": false,
-   "epmOff": -2.438,
-   "epmDef": -1.12,
+   "epmOff": -2.471,
+   "epmDef": -1.068,
    "basis": "7g 2025 + 75g 2026"
   },
   {
    "name": "Trae Young",
    "tier": "Awful defender",
-   "offense": "elite offense",
+   "offense": "very good offense",
    "override": true,
-   "epmOff": 3.271,
-   "epmDef": -1.867,
+   "epmOff": 3.277,
+   "epmDef": -1.864,
    "basis": "67g 2025 + 15g 2026"
   },
   {
@@ -1501,8 +1501,8 @@
    "tier": "Elite defender",
    "offense": "above average offense",
    "override": false,
-   "epmOff": 1.052,
-   "epmDef": 2.101,
+   "epmOff": 1.161,
+   "epmDef": 2.293,
    "basis": "82g 2026"
   },
   {
@@ -1528,17 +1528,17 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.294,
-   "epmDef": -0.003,
+   "epmOff": -1.102,
+   "epmDef": -0.047,
    "basis": "82g 2026"
   },
   {
    "name": "Coby White",
-   "tier": "Slightly negative defender",
+   "tier": "Bad defender",
    "offense": "very good offense",
    "override": true,
-   "epmOff": 1.76,
-   "epmDef": -1.194,
+   "epmOff": 1.554,
+   "epmDef": -1.29,
    "basis": "32g 2025 + 50g 2026"
   },
   {
@@ -1552,11 +1552,11 @@
   },
   {
    "name": "Jakob Poeltl",
-   "tier": "Average defender",
+   "tier": "Good defender",
    "offense": "above average offense",
-   "override": true,
-   "epmOff": 0.433,
-   "epmDef": 0.567,
+   "override": false,
+   "epmOff": 0.558,
+   "epmDef": 0.755,
    "basis": "29g 2025 + 53g 2026"
   },
   {
@@ -1564,8 +1564,8 @@
    "tier": "Bad defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 1.054,
-   "epmDef": -1.29,
+   "epmOff": 1.049,
+   "epmDef": -1.286,
    "basis": "27g 2025 + 55g 2026"
   },
   {
@@ -1573,8 +1573,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 0.932,
-   "epmDef": -0.073,
+   "epmOff": 1.074,
+   "epmDef": -0.011,
    "basis": "82g 2026"
   },
   {
@@ -1582,8 +1582,8 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.085,
-   "epmDef": -0.121,
+   "epmOff": -0.946,
+   "epmDef": -0.065,
    "basis": "82g 2026"
   },
   {
@@ -1591,8 +1591,8 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -3.336,
-   "epmDef": -0.374,
+   "epmOff": -3.324,
+   "epmDef": -0.362,
    "basis": "82g 2026"
   },
   {
@@ -1600,7 +1600,7 @@
    "tier": "Awful defender",
    "offense": null,
    "override": false,
-   "epmOff": -3.219,
+   "epmOff": -3.611,
    "epmDef": -1.664,
    "basis": "17g 2025 + 65g 2026"
   },
@@ -1609,17 +1609,17 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.231,
-   "epmDef": -0.682,
+   "epmOff": -1.188,
+   "epmDef": -0.795,
    "basis": "19g 2025 + 63g 2026"
   },
   {
    "name": "Bobby Portis",
-   "tier": "Awful defender",
+   "tier": "Bad defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 0.197,
-   "epmDef": -1.613,
+   "epmOff": 0.101,
+   "epmDef": -1.222,
    "basis": "15g 2025 + 67g 2026"
   },
   {
@@ -1627,8 +1627,8 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.725,
-   "epmDef": -0.636,
+   "epmOff": -1.438,
+   "epmDef": -0.734,
    "basis": "82g 2026"
   },
   {
@@ -1636,8 +1636,8 @@
    "tier": "Elite defender",
    "offense": "above average offense",
    "override": false,
-   "epmOff": 0.768,
-   "epmDef": 2.469,
+   "epmOff": 0.497,
+   "epmDef": 2.705,
    "basis": "20g 2025 + 62g 2026"
   },
   {
@@ -1654,8 +1654,8 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -0.937,
-   "epmDef": 0.372,
+   "epmOff": -1.278,
+   "epmDef": 0.461,
    "basis": "11g 2025 + 71g 2026"
   },
   {
@@ -1663,8 +1663,8 @@
    "tier": "Bad defender",
    "offense": "very good offense",
    "override": true,
-   "epmOff": 1.766,
-   "epmDef": -1.399,
+   "epmOff": 1.626,
+   "epmDef": -1.374,
    "basis": "10g 2025 + 72g 2026"
   },
   {
@@ -1672,8 +1672,8 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.588,
-   "epmDef": 0.579,
+   "epmOff": -1.474,
+   "epmDef": 0.607,
    "basis": "5g 2025 + 77g 2026"
   },
   {
@@ -1681,8 +1681,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 0.483,
-   "epmDef": -0.571,
+   "epmOff": 0.657,
+   "epmDef": -0.705,
    "basis": "14g 2025 + 68g 2026"
   },
   {
@@ -1690,8 +1690,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 0.392,
-   "epmDef": -0.452,
+   "epmOff": 0.5,
+   "epmDef": -0.757,
    "basis": "22g 2025 + 60g 2026"
   },
   {
@@ -1699,17 +1699,17 @@
    "tier": "Awful defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 0.227,
-   "epmDef": -2.204,
+   "epmOff": 0.204,
+   "epmDef": -2.155,
    "basis": "9g 2025 + 73g 2026"
   },
   {
    "name": "Kyle Filipowski",
-   "tier": "Bad defender",
+   "tier": "Awful defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 0.097,
-   "epmDef": -1.535,
+   "epmOff": 0.029,
+   "epmDef": -1.569,
    "basis": "6g 2025 + 76g 2026"
   },
   {
@@ -1717,8 +1717,8 @@
    "tier": "Good defender",
    "offense": null,
    "override": false,
-   "epmOff": -2.742,
-   "epmDef": 1.017,
+   "epmOff": -2.933,
+   "epmDef": 0.958,
    "basis": "24g 2025 + 58g 2026"
   },
   {
@@ -1726,8 +1726,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": -0.212,
-   "epmDef": 0.088,
+   "epmOff": 0.277,
+   "epmDef": 0.263,
    "basis": "82g 2026"
   },
   {
@@ -1735,8 +1735,8 @@
    "tier": "Slightly negative defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": -0.111,
-   "epmDef": -0.956,
+   "epmOff": -0.456,
+   "epmDef": -1.097,
    "basis": "32g 2025 + 50g 2026"
   },
   {
@@ -1744,8 +1744,8 @@
    "tier": "Good defender",
    "offense": null,
    "override": false,
-   "epmOff": -0.861,
-   "epmDef": 0.902,
+   "epmOff": -0.792,
+   "epmDef": 0.872,
    "basis": "6g 2025 + 49g 2026"
   },
   {
@@ -1753,8 +1753,8 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -0.766,
-   "epmDef": 0.023,
+   "epmOff": -0.892,
+   "epmDef": -0.135,
    "basis": "16g 2025 + 66g 2026"
   },
   {
@@ -1762,17 +1762,17 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.637,
-   "epmDef": 0.6,
+   "epmOff": -1.393,
+   "epmDef": 0.351,
    "basis": "26g 2025 + 56g 2026"
   },
   {
    "name": "Khris Middleton",
-   "tier": "Slightly negative defender",
-   "offense": null,
-   "override": false,
-   "epmOff": -0.919,
-   "epmDef": -0.943,
+   "tier": "Average defender",
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": -0.509,
+   "epmDef": -0.75,
    "basis": "20g 2025 + 62g 2026"
   },
   {
@@ -1780,8 +1780,8 @@
    "tier": "Good defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.112,
-   "epmDef": 0.746,
+   "epmOff": -1.136,
+   "epmDef": 0.823,
    "basis": "11g 2025 + 71g 2026"
   },
   {
@@ -1789,17 +1789,17 @@
    "tier": "Average defender",
    "offense": "very good offense",
    "override": true,
-   "epmOff": 3.046,
-   "epmDef": 0.391,
+   "epmOff": 3.1,
+   "epmDef": 0.385,
    "basis": "67g 2025 + 15g 2026"
   },
   {
    "name": "Dylan Harper",
-   "tier": "Good defender",
+   "tier": "Average defender",
    "offense": "above average offense",
-   "override": false,
-   "epmOff": 0.21,
-   "epmDef": 1.057,
+   "override": true,
+   "epmOff": -0.054,
+   "epmDef": 0.689,
    "basis": "82g 2026"
   },
   {
@@ -1807,17 +1807,17 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.269,
-   "epmDef": 0.638,
+   "epmOff": -1.248,
+   "epmDef": 0.696,
    "basis": "82g 2026"
   },
   {
    "name": "Jordan Goodwin",
-   "tier": "Great defender",
-   "offense": "above average offense",
+   "tier": "Good defender",
+   "offense": null,
    "override": false,
-   "epmOff": -0.607,
-   "epmDef": 1.402,
+   "epmOff": -0.891,
+   "epmDef": 1.163,
    "basis": "13g 2025 + 69g 2026"
   },
   {
@@ -1834,17 +1834,17 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": -0.519,
-   "epmDef": 0.189,
+   "epmOff": -0.521,
+   "epmDef": 0.185,
    "basis": "12g 2025 + 70g 2026"
   },
   {
    "name": "Zaccharie Risacher",
-   "tier": "Average defender",
+   "tier": "Slightly negative defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.223,
-   "epmDef": -0.859,
+   "epmOff": -1.107,
+   "epmDef": -0.928,
    "basis": "14g 2025 + 68g 2026"
   },
   {
@@ -1852,8 +1852,8 @@
    "tier": "Good defender",
    "offense": null,
    "override": false,
-   "epmOff": -0.747,
-   "epmDef": 0.734,
+   "epmOff": -0.927,
+   "epmDef": 0.903,
    "basis": "6g 2025 + 76g 2026"
   },
   {
@@ -1861,8 +1861,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": -0.305,
-   "epmDef": -0.656,
+   "epmOff": -0.158,
+   "epmDef": -0.479,
    "basis": "17g 2025 + 65g 2026"
   },
   {
@@ -1879,8 +1879,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 0.444,
-   "epmDef": 0.098,
+   "epmOff": 0.344,
+   "epmDef": 0.086,
    "basis": "7g 2025 + 75g 2026"
   },
   {
@@ -1888,8 +1888,8 @@
    "tier": "Bad defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 0.611,
-   "epmDef": -1.457,
+   "epmOff": 0.294,
+   "epmDef": -1.484,
    "basis": "15g 2025 + 67g 2026"
   },
   {
@@ -1906,8 +1906,8 @@
    "tier": "Bad defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.454,
-   "epmDef": -1.21,
+   "epmOff": -2.095,
+   "epmDef": -1.225,
    "basis": "25g 2025 + 55g 2026"
   },
   {
@@ -1915,8 +1915,8 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -2.146,
-   "epmDef": 0.257,
+   "epmOff": -2.482,
+   "epmDef": 0.331,
    "basis": "5g 2025 + 63g 2026"
   },
   {
@@ -1924,8 +1924,8 @@
    "tier": "Bad defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 0.052,
-   "epmDef": -1.586,
+   "epmOff": 0.206,
+   "epmDef": -1.374,
    "basis": "21g 2025 + 61g 2026"
   },
   {
@@ -1933,8 +1933,8 @@
    "tier": "Great defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.442,
-   "epmDef": 1.451,
+   "epmOff": -1.469,
+   "epmDef": 1.686,
    "basis": "82g 2026"
   },
   {
@@ -1942,17 +1942,17 @@
    "tier": "Good defender",
    "offense": "above average offense",
    "override": false,
-   "epmOff": 0.975,
-   "epmDef": 0.697,
+   "epmOff": 1.143,
+   "epmDef": 0.78,
    "basis": "82g 2026"
   },
   {
    "name": "Collin Murray-Boyles",
-   "tier": "Good defender",
-   "offense": "above average offense",
+   "tier": "Great defender",
+   "offense": null,
    "override": false,
-   "epmOff": -0.631,
-   "epmDef": 1.133,
+   "epmOff": -0.805,
+   "epmDef": 1.526,
    "basis": "64g 2026"
   },
   {
@@ -1960,17 +1960,17 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.48,
-   "epmDef": 0.516,
+   "epmOff": -0.882,
+   "epmDef": 0.366,
    "basis": "14g 2025 + 68g 2026"
   },
   {
    "name": "Brook Lopez",
-   "tier": "Elite defender",
+   "tier": "Great defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.044,
-   "epmDef": 1.868,
+   "epmOff": -0.922,
+   "epmDef": 1.737,
    "basis": "8g 2025 + 74g 2026"
   },
   {
@@ -1978,8 +1978,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": -0.603,
-   "epmDef": -0.144,
+   "epmOff": -0.383,
+   "epmDef": -0.179,
    "basis": "13g 2025 + 69g 2026"
   },
   {
@@ -1987,8 +1987,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 0.222,
-   "epmDef": -0.415,
+   "epmOff": 0.771,
+   "epmDef": -0.309,
    "basis": "27g 2025 + 55g 2026"
   },
   {
@@ -1996,26 +1996,26 @@
    "tier": "Slightly negative defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": -0.349,
-   "epmDef": -1.041,
+   "epmOff": -0.226,
+   "epmDef": -1.08,
    "basis": "82g 2026"
   },
   {
    "name": "Al Horford",
-   "tier": "Average defender",
+   "tier": "Good defender",
    "offense": "above average offense",
-   "override": true,
-   "epmOff": -0.232,
-   "epmDef": 0.498,
+   "override": false,
+   "epmOff": -0.069,
+   "epmDef": 0.764,
    "basis": "38g 2025 + 44g 2026"
   },
   {
    "name": "GG Jackson II",
-   "tier": "Slightly negative defender",
+   "tier": "Bad defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.185,
-   "epmDef": -1.119,
+   "epmOff": -1.755,
+   "epmDef": -1.232,
    "basis": "26g 2025 + 51g 2026"
   },
   {
@@ -2023,8 +2023,8 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.156,
-   "epmDef": -0.531,
+   "epmOff": -1.114,
+   "epmDef": -0.467,
    "basis": "18g 2025 + 64g 2026"
   },
   {
@@ -2038,11 +2038,11 @@
   },
   {
    "name": "Ben Sheppard",
-   "tier": "Slightly negative defender",
+   "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.965,
-   "epmDef": -0.918,
+   "epmOff": -1.975,
+   "epmDef": -0.81,
    "basis": "18g 2025 + 64g 2026"
   },
   {
@@ -2050,8 +2050,8 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.762,
-   "epmDef": -0.101,
+   "epmOff": -1.684,
+   "epmDef": 0.29,
    "basis": "31g 2025 + 51g 2026"
   },
   {
@@ -2059,8 +2059,8 @@
    "tier": "Average defender",
    "offense": "very good offense",
    "override": true,
-   "epmOff": 1.416,
-   "epmDef": -0.324,
+   "epmOff": 1.651,
+   "epmDef": -0.308,
    "basis": "81g 2026"
   },
   {
@@ -2068,18 +2068,9 @@
    "tier": "Bad defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.319,
-   "epmDef": -1.49,
+   "epmOff": -0.882,
+   "epmDef": -1.16,
    "basis": "25g 2025 + 57g 2026"
-  },
-  {
-   "name": "Cam Thomas",
-   "tier": "Awful defender",
-   "offense": "above average offense",
-   "override": true,
-   "epmOff": 0.989,
-   "epmDef": -2.736,
-   "basis": "25g 2025 + 40g 2026"
   },
   {
    "name": "Jay Huff",
@@ -2104,8 +2095,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": -0.233,
-   "epmDef": -0.024,
+   "epmOff": 0.224,
+   "epmDef": 0.082,
    "basis": "82g 2026"
   },
   {
@@ -2149,8 +2140,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 1.161,
-   "epmDef": 0.045,
+   "epmOff": 1.046,
+   "epmDef": -0.06,
    "basis": "29g 2025 + 53g 2026"
   },
   {
@@ -2176,26 +2167,17 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": -0.363,
-   "epmDef": 0.134,
+   "epmOff": -0.493,
+   "epmDef": 0.289,
    "basis": "22g 2025 + 60g 2026"
-  },
-  {
-   "name": "Vince Williams Jr.",
-   "tier": "Average defender",
-   "offense": null,
-   "override": false,
-   "epmOff": -1.937,
-   "epmDef": 0.298,
-   "basis": "29g 2025 + 40g 2026"
   },
   {
    "name": "Ja'Kobe Walter",
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.147,
-   "epmDef": 0.658,
+   "epmOff": -1.058,
+   "epmDef": 0.673,
    "basis": "6g 2025 + 76g 2026"
   },
   {
@@ -2203,8 +2185,8 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -4.015,
-   "epmDef": -0.451,
+   "epmOff": -3.876,
+   "epmDef": -0.436,
    "basis": "13g 2025 + 69g 2026"
   },
   {
@@ -2212,8 +2194,8 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -2.498,
-   "epmDef": 0.433,
+   "epmOff": -2.428,
+   "epmDef": 0.497,
    "basis": "73g 2026"
   },
   {
@@ -2239,8 +2221,8 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.152,
-   "epmDef": -0.101,
+   "epmOff": -0.998,
+   "epmDef": 0.078,
    "basis": "78g 2026"
   },
   {
@@ -2248,8 +2230,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 0.085,
-   "epmDef": -0.831,
+   "epmOff": -0.146,
+   "epmDef": -0.579,
    "basis": "15g 2025 + 60g 2026"
   },
   {
@@ -2257,8 +2239,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": -0.104,
-   "epmDef": -0.522,
+   "epmOff": -0.2,
+   "epmDef": -0.297,
    "basis": "20g 2025 + 62g 2026"
   },
   {
@@ -2281,11 +2263,11 @@
   },
   {
    "name": "Jose Alvarado",
-   "tier": "Good defender",
+   "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -0.755,
-   "epmDef": 0.788,
+   "epmOff": -0.802,
+   "epmDef": 0.632,
    "basis": "82g 2026"
   },
   {
@@ -2298,21 +2280,12 @@
    "basis": "64g 2026"
   },
   {
-   "name": "John Konchar",
-   "tier": "Good defender",
-   "offense": null,
-   "override": false,
-   "epmOff": -2.512,
-   "epmDef": 1.035,
-   "basis": "29g 2025 + 53g 2026"
-  },
-  {
    "name": "Kyle Anderson",
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -2.539,
-   "epmDef": 0.354,
+   "epmOff": -2.327,
+   "epmDef": 0.629,
    "basis": "35g 2025 + 47g 2026"
   },
   {
@@ -2320,17 +2293,17 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.775,
-   "epmDef": 0.06,
+   "epmOff": -1.759,
+   "epmDef": -0.438,
    "basis": "19g 2025 + 63g 2026"
   },
   {
    "name": "Jericho Sims",
-   "tier": "Awful defender",
+   "tier": "Bad defender",
    "offense": null,
    "override": false,
-   "epmOff": -2.213,
-   "epmDef": -1.73,
+   "epmOff": -2.565,
+   "epmDef": -1.228,
    "basis": "24g 2025 + 58g 2026"
   },
   {
@@ -2338,17 +2311,17 @@
    "tier": "Elite defender",
    "offense": null,
    "override": false,
-   "epmOff": -0.957,
-   "epmDef": 1.875,
+   "epmOff": -0.9,
+   "epmDef": 2.063,
    "basis": "2g 2025 + 80g 2026"
   },
   {
    "name": "Mitchell Robinson",
-   "tier": "Great defender",
+   "tier": "Elite defender",
    "offense": "above average offense",
    "override": false,
-   "epmOff": -0.488,
-   "epmDef": 1.6,
+   "epmOff": -0.594,
+   "epmDef": 1.909,
    "basis": "4g 2025 + 78g 2026"
   },
   {
@@ -2365,8 +2338,8 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.576,
-   "epmDef": 0.117,
+   "epmOff": -1.71,
+   "epmDef": 0.387,
    "basis": "15g 2025 + 67g 2026"
   },
   {
@@ -2374,26 +2347,26 @@
    "tier": "Good defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.841,
-   "epmDef": 1.091,
+   "epmOff": -1.771,
+   "epmDef": 0.957,
    "basis": "13g 2025 + 69g 2026"
   },
   {
    "name": "Micah Potter",
-   "tier": "Slightly negative defender",
+   "tier": "Bad defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.046,
-   "epmDef": -1.148,
+   "epmOff": -1.893,
+   "epmDef": -1.191,
    "basis": "37g 2025 + 44g 2026"
   },
   {
    "name": "Ousmane Dieng",
-   "tier": "Slightly negative defender",
+   "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -2.5,
-   "epmDef": -0.934,
+   "epmOff": -2.498,
+   "epmDef": -0.44,
    "basis": "28g 2025 + 46g 2026"
   },
   {
@@ -2401,8 +2374,8 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -2.274,
-   "epmDef": 0.191,
+   "epmOff": -2.117,
+   "epmDef": 0.211,
    "basis": "12g 2025 + 70g 2026"
   },
   {
@@ -2410,8 +2383,8 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -2.906,
-   "epmDef": 0.071,
+   "epmOff": -2.931,
+   "epmDef": 0.05,
    "basis": "3g 2025 + 71g 2026"
   },
   {
@@ -2419,8 +2392,8 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -2.084,
-   "epmDef": -0.473,
+   "epmOff": -2.101,
+   "epmDef": -0.466,
    "basis": "3g 2025 + 54g 2026"
   },
   {
@@ -2428,8 +2401,8 @@
    "tier": "Good defender",
    "offense": "above average offense",
    "override": false,
-   "epmOff": -0.179,
-   "epmDef": 1.106,
+   "epmOff": -0.255,
+   "epmDef": 0.919,
    "basis": "20g 2025 + 62g 2026"
   },
   {
@@ -2437,8 +2410,8 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.062,
-   "epmDef": -0.014,
+   "epmOff": -1.962,
+   "epmDef": 0.367,
    "basis": "35g 2025 + 46g 2026"
   },
   {
@@ -2446,17 +2419,17 @@
    "tier": "Awful defender",
    "offense": null,
    "override": false,
-   "epmOff": -0.809,
-   "epmDef": -1.749,
+   "epmOff": -0.797,
+   "epmDef": -1.845,
    "basis": "21g 2025 + 61g 2026"
   },
   {
    "name": "Pat Spencer",
-   "tier": "Bad defender",
+   "tier": "Slightly negative defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.72,
-   "epmDef": -1.233,
+   "epmOff": -2.068,
+   "epmDef": -0.895,
    "basis": "22g 2025 + 57g 2026"
   },
   {
@@ -2464,8 +2437,8 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -0.905,
-   "epmDef": 0.526,
+   "epmOff": -0.892,
+   "epmDef": 0.588,
    "basis": "75g 2026"
   },
   {
@@ -2473,26 +2446,26 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": -0.695,
-   "epmDef": -0.076,
+   "epmOff": -0.493,
+   "epmDef": -0.019,
    "basis": "20g 2025 + 62g 2026"
   },
   {
    "name": "Quenton Jackson",
    "tier": "Average defender",
-   "offense": "above average offense",
-   "override": true,
-   "epmOff": -0.731,
-   "epmDef": -0.243,
+   "offense": null,
+   "override": false,
+   "epmOff": -0.754,
+   "epmDef": -0.078,
    "basis": "20g 2025 + 46g 2026"
   },
   {
    "name": "Jaxson Hayes",
    "tier": "Average defender",
-   "offense": null,
-   "override": false,
-   "epmOff": -0.753,
-   "epmDef": -0.169,
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": -0.591,
+   "epmDef": -0.144,
    "basis": "8g 2025 + 74g 2026"
   },
   {
@@ -2500,8 +2473,8 @@
    "tier": "Elite defender",
    "offense": null,
    "override": false,
-   "epmOff": -0.945,
-   "epmDef": 2.91,
+   "epmOff": -1.669,
+   "epmDef": 3.309,
    "basis": "13g 2025 + 69g 2026"
   },
   {
@@ -2509,8 +2482,8 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.567,
-   "epmDef": -0.057,
+   "epmOff": -1.729,
+   "epmDef": -0.29,
    "basis": "23g 2025 + 59g 2026"
   },
   {
@@ -2518,8 +2491,8 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.046,
-   "epmDef": -0.716,
+   "epmOff": -0.953,
+   "epmDef": -0.769,
    "basis": "82g 2026"
   },
   {
@@ -2533,11 +2506,11 @@
   },
   {
    "name": "Jordan Walsh",
-   "tier": "Good defender",
+   "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.34,
-   "epmDef": 0.845,
+   "epmOff": -1.775,
+   "epmDef": 0.68,
    "basis": "15g 2025 + 67g 2026"
   },
   {
@@ -2545,8 +2518,8 @@
    "tier": "Elite defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.101,
-   "epmDef": 1.903,
+   "epmOff": -0.811,
+   "epmDef": 1.959,
    "basis": "82g 2026"
   },
   {
@@ -2554,8 +2527,8 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -2.161,
-   "epmDef": -0.288,
+   "epmOff": -2.101,
+   "epmDef": 0.016,
    "basis": "15g 2025 + 67g 2026"
   },
   {
@@ -2563,8 +2536,8 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -2.317,
-   "epmDef": 0.234,
+   "epmOff": -2.256,
+   "epmDef": 0.189,
    "basis": "9g 2025 + 73g 2026"
   },
   {
@@ -2572,8 +2545,8 @@
    "tier": "Good defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.552,
-   "epmDef": 1.103,
+   "epmOff": -1.573,
+   "epmDef": 1.247,
    "basis": "78g 2026"
   },
   {
@@ -2581,17 +2554,17 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -2.312,
-   "epmDef": -0.102,
+   "epmOff": -2.273,
+   "epmDef": 0.098,
    "basis": "16g 2025 + 66g 2026"
   },
   {
    "name": "Jared McCain",
-   "tier": "Bad defender",
+   "tier": "Slightly negative defender",
    "offense": null,
    "override": false,
-   "epmOff": -0.864,
-   "epmDef": -1.242,
+   "epmOff": -1.153,
+   "epmDef": -1.085,
    "basis": "75g 2026"
   },
   {
@@ -2599,8 +2572,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 0.034,
-   "epmDef": 0.003,
+   "epmOff": 0.158,
+   "epmDef": -0.101,
    "basis": "23g 2025 + 59g 2026"
   },
   {
@@ -2608,8 +2581,8 @@
    "tier": "Bad defender",
    "offense": null,
    "override": false,
-   "epmOff": -2.274,
-   "epmDef": -1.537,
+   "epmOff": -2.48,
+   "epmDef": -1.412,
    "basis": "24g 2025 + 37g 2026"
   },
   {
@@ -2617,8 +2590,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 0.298,
-   "epmDef": 0.088,
+   "epmOff": -0.055,
+   "epmDef": 0.06,
    "basis": "27g 2025 + 55g 2026"
   },
   {
@@ -2626,8 +2599,8 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.973,
-   "epmDef": 0.283,
+   "epmOff": -1.402,
+   "epmDef": 0.133,
    "basis": "41g 2025 + 41g 2026"
   },
   {
@@ -2644,17 +2617,17 @@
    "tier": "Great defender",
    "offense": null,
    "override": false,
-   "epmOff": -0.835,
-   "epmDef": 1.801,
+   "epmOff": -1.125,
+   "epmDef": 1.751,
    "basis": "19g 2025 + 63g 2026"
   },
   {
    "name": "Josh Minott",
-   "tier": "Good defender",
-   "offense": "above average offense",
+   "tier": "Average defender",
+   "offense": null,
    "override": false,
-   "epmOff": -0.539,
-   "epmDef": 0.887,
+   "epmOff": -0.933,
+   "epmDef": 0.576,
    "basis": "22g 2025 + 43g 2026"
   },
   {
@@ -2662,8 +2635,8 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.924,
-   "epmDef": -0.751,
+   "epmOff": -1.891,
+   "epmDef": -0.735,
    "basis": "42g 2025 + 40g 2026"
   },
   {
@@ -2671,8 +2644,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 0.012,
-   "epmDef": -0.522,
+   "epmOff": -0.551,
+   "epmDef": -0.54,
    "basis": "21g 2025 + 61g 2026"
   },
   {
@@ -2680,8 +2653,8 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -4.271,
-   "epmDef": -0.855,
+   "epmOff": -4.223,
+   "epmDef": -0.47,
    "basis": "26g 2025 + 56g 2026"
   },
   {
@@ -2689,8 +2662,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 0.5,
-   "epmDef": -0.068,
+   "epmOff": 0.719,
+   "epmDef": 0.003,
    "basis": "9g 2025 + 73g 2026"
   },
   {
@@ -2698,8 +2671,8 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.954,
-   "epmDef": -0.612,
+   "epmOff": -2.038,
+   "epmDef": -0.295,
    "basis": "25g 2025 + 57g 2026"
   },
   {
@@ -2707,8 +2680,8 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.202,
-   "epmDef": -0.667,
+   "epmOff": -1.217,
+   "epmDef": -0.625,
    "basis": "4g 2025 + 50g 2026"
   },
   {
@@ -2716,17 +2689,17 @@
    "tier": "Slightly negative defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.284,
-   "epmDef": -1.053,
+   "epmOff": -1.049,
+   "epmDef": -0.956,
    "basis": "16g 2025 + 46g 2026"
   },
   {
    "name": "Trendon Watford",
-   "tier": "Slightly negative defender",
+   "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -2.448,
-   "epmDef": -0.896,
+   "epmOff": -2.331,
+   "epmDef": -0.182,
    "basis": "33g 2025 + 49g 2026"
   },
   {
@@ -2734,8 +2707,8 @@
    "tier": "Elite defender",
    "offense": null,
    "override": false,
-   "epmOff": -2.12,
-   "epmDef": 1.998,
+   "epmOff": -2.067,
+   "epmDef": 1.94,
    "basis": "12g 2025 + 65g 2026"
   },
   {
@@ -2743,8 +2716,8 @@
    "tier": "Bad defender",
    "offense": "very good offense",
    "override": true,
-   "epmOff": 1.765,
-   "epmDef": -1.266,
+   "epmOff": 1.472,
+   "epmDef": -1.195,
    "basis": "16g 2025 + 66g 2026"
   },
   {
@@ -2752,8 +2725,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": -0.632,
-   "epmDef": -0.604,
+   "epmOff": -0.496,
+   "epmDef": -0.633,
    "basis": "37g 2025 + 45g 2026"
   },
   {
@@ -2761,8 +2734,8 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.3,
-   "epmDef": -0.237,
+   "epmOff": -1.302,
+   "epmDef": -0.074,
    "basis": "39g 2025 + 38g 2026"
   },
   {
@@ -2770,26 +2743,26 @@
    "tier": "Bad defender",
    "offense": null,
    "override": false,
-   "epmOff": -2.055,
-   "epmDef": -1.524,
+   "epmOff": -1.749,
+   "epmDef": -1.308,
    "basis": "36g 2025 + 46g 2026"
   },
   {
    "name": "Jaden Hardy",
-   "tier": "Bad defender",
+   "tier": "Slightly negative defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.13,
-   "epmDef": -1.288,
+   "epmOff": -1.615,
+   "epmDef": -1.021,
    "basis": "32g 2025 + 50g 2026"
   },
   {
    "name": "Kobe Brown",
-   "tier": "Bad defender",
+   "tier": "Slightly negative defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.798,
-   "epmDef": -1.268,
+   "epmOff": -2.151,
+   "epmDef": -1.084,
    "basis": "20g 2025 + 44g 2026"
   },
   {
@@ -2797,8 +2770,8 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.594,
-   "epmDef": 0.335,
+   "epmOff": -1.584,
+   "epmDef": 0.32,
    "basis": "2g 2025 + 56g 2026"
   },
   {
@@ -2806,26 +2779,17 @@
    "tier": "Slightly negative defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.053,
-   "epmDef": -0.926,
+   "epmOff": -1.177,
+   "epmDef": -1.005,
    "basis": "8g 2025 + 34g 2026"
-  },
-  {
-   "name": "Ochai Agbaji",
-   "tier": "Average defender",
-   "offense": null,
-   "override": false,
-   "epmOff": -2.412,
-   "epmDef": 0.093,
-   "basis": "29g 2025 + 53g 2026"
   },
   {
    "name": "Josh Green",
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.673,
-   "epmDef": 0.44,
+   "epmOff": -1.931,
+   "epmDef": 0.447,
    "basis": "26g 2025 + 56g 2026"
   },
   {
@@ -2833,8 +2797,8 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": -0.232,
-   "epmDef": -0.759,
+   "epmOff": -0.296,
+   "epmDef": -0.739,
    "basis": "1g 2025 + 28g 2026"
   },
   {
@@ -2842,17 +2806,17 @@
    "tier": "Good defender",
    "offense": "above average offense",
    "override": false,
-   "epmOff": -0.145,
-   "epmDef": 1.122,
+   "epmOff": -0.14,
+   "epmDef": 1.217,
    "basis": "17g 2025 + 65g 2026"
   },
   {
    "name": "Kenrich Williams",
    "tier": "Average defender",
-   "offense": null,
-   "override": false,
-   "epmOff": -0.782,
-   "epmDef": -0.166,
+   "offense": "above average offense",
+   "override": true,
+   "epmOff": -0.689,
+   "epmDef": 0.31,
    "basis": "31g 2025 + 51g 2026"
   },
   {
@@ -2860,8 +2824,8 @@
    "tier": "Slightly negative defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.47,
-   "epmDef": -1.134,
+   "epmOff": -1.246,
+   "epmDef": -1.154,
    "basis": "23g 2025 + 59g 2026"
   },
   {
@@ -2869,17 +2833,17 @@
    "tier": "Good defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.893,
-   "epmDef": 1.131,
+   "epmOff": -1.865,
+   "epmDef": 1.222,
    "basis": "73g 2026"
   },
   {
    "name": "Goga Bitadze",
-   "tier": "Good defender",
+   "tier": "Great defender",
    "offense": "above average offense",
    "override": false,
-   "epmOff": -0.214,
-   "epmDef": 1.112,
+   "epmOff": 0.016,
+   "epmDef": 1.279,
    "basis": "17g 2025 + 65g 2026"
   },
   {
@@ -2887,18 +2851,9 @@
    "tier": "Bad defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.409,
-   "epmDef": -1.246,
+   "epmOff": -1.662,
+   "epmDef": -1.445,
    "basis": "35g 2025 + 47g 2026"
-  },
-  {
-   "name": "Guerschon Yabusele",
-   "tier": "Slightly negative defender",
-   "offense": "above average offense",
-   "override": true,
-   "epmOff": -0.718,
-   "epmDef": -0.914,
-   "basis": "27g 2025 + 55g 2026"
   },
   {
    "name": "Micah Peavy",
@@ -2914,26 +2869,26 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -4.209,
-   "epmDef": -0.67,
+   "epmOff": -3.771,
+   "epmDef": -0.546,
    "basis": "27g 2025 + 55g 2026"
   },
   {
    "name": "Caleb Martin",
-   "tier": "Good defender",
+   "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -3.713,
-   "epmDef": 0.688,
+   "epmOff": -3.546,
+   "epmDef": 0.529,
    "basis": "35g 2025 + 47g 2026"
   },
   {
    "name": "Karlo Matković",
-   "tier": "Average defender",
+   "tier": "Slightly negative defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.1,
-   "epmDef": -0.526,
+   "epmOff": -1.226,
+   "epmDef": -0.949,
    "basis": "26g 2025 + 56g 2026"
   },
   {
@@ -2941,8 +2896,8 @@
    "tier": "Awful defender",
    "offense": null,
    "override": false,
-   "epmOff": -2.302,
-   "epmDef": -2.121,
+   "epmOff": -1.636,
+   "epmDef": -1.916,
    "basis": "42g 2025 + 40g 2026"
   },
   {
@@ -2956,11 +2911,11 @@
   },
   {
    "name": "Tyus Jones",
-   "tier": "Awful defender",
+   "tier": "Bad defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.796,
-   "epmDef": -1.614,
+   "epmOff": -1.038,
+   "epmDef": -1.544,
    "basis": "23g 2025 + 59g 2026"
   },
   {
@@ -2968,8 +2923,8 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.554,
-   "epmDef": -0.293,
+   "epmOff": -1.617,
+   "epmDef": -0.704,
    "basis": "37g 2025 + 45g 2026"
   },
   {
@@ -2977,8 +2932,8 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.915,
-   "epmDef": -0.643,
+   "epmOff": -1.605,
+   "epmDef": -0.808,
    "basis": "17g 2025 + 65g 2026"
   },
   {
@@ -2986,8 +2941,8 @@
    "tier": "Good defender",
    "offense": null,
    "override": false,
-   "epmOff": -2.29,
-   "epmDef": 0.862,
+   "epmOff": -2.331,
+   "epmDef": 0.799,
    "basis": "2g 2025 + 37g 2026"
   },
   {
@@ -2995,26 +2950,26 @@
    "tier": "Elite defender",
    "offense": "above average offense",
    "override": false,
-   "epmOff": 0.52,
-   "epmDef": 2.128,
+   "epmOff": -0.151,
+   "epmDef": 2.166,
    "basis": "24g 2025 + 58g 2026"
   },
   {
    "name": "Gary Harris",
-   "tier": "Average defender",
+   "tier": "Good defender",
    "offense": null,
    "override": false,
-   "epmOff": -3.146,
-   "epmDef": 0.463,
+   "epmOff": -3.041,
+   "epmDef": 1.076,
    "basis": "41g 2025 + 41g 2026"
   },
   {
    "name": "Tristan Vukcevic",
-   "tier": "Bad defender",
+   "tier": "Awful defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": -0.279,
-   "epmDef": -1.436,
+   "epmOff": -0.29,
+   "epmDef": -1.849,
    "basis": "25g 2025 + 39g 2026"
   },
   {
@@ -3022,8 +2977,8 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.086,
-   "epmDef": -0.111,
+   "epmOff": -0.808,
+   "epmDef": -0.005,
    "basis": "31g 2025 + 51g 2026"
   },
   {
@@ -3031,8 +2986,8 @@
    "tier": "Awful defender",
    "offense": null,
    "override": false,
-   "epmOff": -2.965,
-   "epmDef": -2.175,
+   "epmOff": -2.716,
+   "epmDef": -2.135,
    "basis": "44g 2025 + 38g 2026"
   },
   {
@@ -3040,17 +2995,17 @@
    "tier": "Bad defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": 0.822,
-   "epmDef": -1.221,
+   "epmOff": 0.619,
+   "epmDef": -1.552,
    "basis": "22g 2025 + 60g 2026"
   },
   {
    "name": "Drew Eubanks",
-   "tier": "Bad defender",
+   "tier": "Awful defender",
    "offense": null,
    "override": false,
-   "epmOff": -2.437,
-   "epmDef": -1.503,
+   "epmOff": -2.288,
+   "epmDef": -1.578,
    "basis": "46g 2025 + 36g 2026"
   },
   {
@@ -3058,8 +3013,8 @@
    "tier": "Good defender",
    "offense": null,
    "override": false,
-   "epmOff": -2.182,
-   "epmDef": 1.109,
+   "epmOff": -2.11,
+   "epmDef": 1.266,
    "basis": "18g 2025 + 64g 2026"
   },
   {
@@ -3076,8 +3031,8 @@
    "tier": "Bad defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.827,
-   "epmDef": -1.504,
+   "epmOff": -2.396,
+   "epmDef": -1.457,
    "basis": "43g 2025 + 39g 2026"
   },
   {
@@ -3085,8 +3040,8 @@
    "tier": "Bad defender",
    "offense": null,
    "override": false,
-   "epmOff": -2.772,
-   "epmDef": -1.521,
+   "epmOff": -2.276,
+   "epmDef": -1.365,
    "basis": "13g 2025 + 38g 2026"
   },
   {
@@ -3094,8 +3049,8 @@
    "tier": "Average defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.66,
-   "epmDef": -0.829,
+   "epmOff": -2.026,
+   "epmDef": -0.586,
    "basis": "23g 2025 + 40g 2026"
   },
   {
@@ -3103,8 +3058,8 @@
    "tier": "Elite defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.666,
-   "epmDef": 2.895,
+   "epmOff": -1.589,
+   "epmDef": 2.524,
    "basis": "14g 2025 + 68g 2026"
   },
   {
@@ -3112,17 +3067,17 @@
    "tier": "Average defender",
    "offense": "above average offense",
    "override": true,
-   "epmOff": -0.048,
-   "epmDef": -0.503,
+   "epmOff": -0.181,
+   "epmDef": -0.698,
    "basis": "32g 2025 + 50g 2026"
   },
   {
    "name": "Jamal Cain",
-   "tier": "Average defender",
+   "tier": "Slightly negative defender",
    "offense": null,
    "override": false,
-   "epmOff": -1.517,
-   "epmDef": -0.812,
+   "epmOff": -1.589,
+   "epmDef": -1.068,
    "basis": "28g 2025 + 33g 2026"
   },
   {
@@ -3139,8 +3094,8 @@
    "tier": "Good defender",
    "offense": null,
    "override": false,
-   "epmOff": -3.038,
-   "epmDef": 0.814,
+   "epmOff": -2.958,
+   "epmDef": 0.832,
    "basis": "35g 2025 + 38g 2026"
   },
   {

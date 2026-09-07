@@ -1,0 +1,23 @@
+{
+  "_comment": "Rookie seasons force-included into the WNBA Rookie set for players with no base card — the WNBA counterpart of rookie-legends-2026.json. Picked 2026-09-06 under the capstone rule (a pairing with no card anywhere); the strongest by salary becomes the WNBA Rookie set's completion reward.",
+  "Yolanda Griffith": {
+    "season": 1999,
+    "reason": "MVP and DPOY as a rookie; WS 8.1"
+  },
+  "Tina Charles": {
+    "season": 2010,
+    "reason": "ROY; WS 5.2 — Connecticut, her reward card is a Liberty"
+  },
+  "Chiney Ogwumike": {
+    "season": 2014,
+    "reason": "ROY; WS 4.9"
+  },
+  "Cappie Pondexter": {
+    "season": 2006,
+    "reason": "WS 4.8 in Phoenix"
+  },
+  "Candice Wiggins": {
+    "season": 2008,
+    "reason": "Sixth Woman of the Year as a rookie; WS 4.5"
+  }
+}

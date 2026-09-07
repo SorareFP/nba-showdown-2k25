@@ -1,6 +1,6 @@
 {
   "Marina_Mabrey": {
-    "x": -22.39,
+    "x": -3.03,
     "y": 0,
     "zoom": 1
   },
@@ -290,8 +290,8 @@
     "zoom": 1.11
   },
   "Naz_Hillmon": {
-    "x": -16.76,
-    "y": -8,
+    "x": -14.25,
+    "y": -7.85,
     "zoom": 1.16
   },
   "Nneka_Ogwumike": {
@@ -305,7 +305,7 @@
     "zoom": 1.18
   },
   "Rhyne_Howard": {
-    "x": 5.49,
+    "x": 6.93,
     "y": 0,
     "zoom": 1
   },
@@ -333,5 +333,165 @@
     "x": -26.1,
     "y": 0,
     "zoom": 1
+  },
+  "Kaila_Charles": {
+    "x": -2.69,
+    "y": 0,
+    "zoom": 1
+  },
+  "Kiki_Iriafen": {
+    "x": 0,
+    "y": 1.97,
+    "zoom": 1
+  },
+  "Kiki_Rice": {
+    "x": 0.54,
+    "y": 0,
+    "zoom": 1
+  },
+  "Laura_Juskaite": {
+    "x": 7.53,
+    "y": 0,
+    "zoom": 1
+  },
+  "Leila_Lacan": {
+    "x": 1.79,
+    "y": 0,
+    "zoom": 1
+  },
+  "Leonie_Fiebich": {
+    "x": 0,
+    "y": 0.91,
+    "zoom": 1.14
+  },
+  "Lexie_Hull": {
+    "x": 29.4,
+    "y": 0,
+    "zoom": 1
+  },
+  "Luisa_Geiselsoder": {
+    "x": 11.47,
+    "y": 0,
+    "zoom": 1
+  },
+  "Makayla_Timpson": {
+    "x": -18.64,
+    "y": 0,
+    "zoom": 1
+  },
+  "Maria_Conde": {
+    "x": -22.58,
+    "y": 0,
+    "zoom": 1
+  },
+  "Marine_Johannes": {
+    "x": -4.48,
+    "y": -3.03,
+    "zoom": 1.14
+  },
+  "Megan_DiLeo": {
+    "x": 2.69,
+    "y": -1.36,
+    "zoom": 1.06
+  },
+  "Michaela_Onyenwere": {
+    "x": -8.96,
+    "y": 0,
+    "zoom": 1
+  },
+  "Monique_Akoa_Makani": {
+    "x": 1.25,
+    "y": -7.27,
+    "zoom": 1.26
+  },
+  "Monique_Billings": {
+    "x": -12.91,
+    "y": -5.3,
+    "zoom": 1.22
+  },
+  "Natisha_Hiedeman": {
+    "x": -8.78,
+    "y": 0,
+    "zoom": 1
+  },
+  "Nia_Coffey": {
+    "x": 0,
+    "y": 2.12,
+    "zoom": 1
+  },
+  "Noemie_Brochant": {
+    "x": -22.94,
+    "y": 0,
+    "zoom": 1
+  },
+  "Nyadiew_Puoch": {
+    "x": -18.64,
+    "y": 1.82,
+    "zoom": 1.39
+  },
+  "Nyara_Sabally": {
+    "x": 13.44,
+    "y": 0,
+    "zoom": 1
+  },
+  "Olivia_Nelson_Ododa": {
+    "x": 8.78,
+    "y": 0,
+    "zoom": 1
+  },
+  "Pauline_Astier": {
+    "x": 0.9,
+    "y": 0,
+    "zoom": 1
+  },
+  "Rebecca_Allen": {
+    "x": -11.47,
+    "y": 0,
+    "zoom": 1.08
+  },
+  "Sarah_Ashlee_Barker": {
+    "x": -13.44,
+    "y": 0,
+    "zoom": 1
+  },
+  "Stephanie_Talbot": {
+    "x": 5.38,
+    "y": 0,
+    "zoom": 1
+  },
+  "Sydney_Taylor": {
+    "x": -18.46,
+    "y": 0,
+    "zoom": 1
+  },
+  "Tiffany_Hayes": {
+    "x": -6.81,
+    "y": 0,
+    "zoom": 1
+  },
+  "Valeriane_Ayayi": {
+    "x": 1.08,
+    "y": 0,
+    "zoom": 1.08
+  },
+  "Rickea_Jackson": {
+    "x": -2.15,
+    "y": -5,
+    "zoom": 1.1
+  },
+  "Satou_Sabally": {
+    "x": -1.08,
+    "y": 0,
+    "zoom": 1
+  },
+  "Sonia_Citron": {
+    "x": -4.84,
+    "y": 0,
+    "zoom": 1
+  },
+  "Temi_Fagbenle": {
+    "x": 2.33,
+    "y": -31.37,
+    "zoom": 1.33
   }
 }

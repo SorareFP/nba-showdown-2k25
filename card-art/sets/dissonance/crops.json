@@ -63,5 +63,70 @@
     "x": -4.45,
     "y": 0,
     "zoom": 1
+  },
+  "Tracy_McGrady_ATL": {
+    "x": -8.24,
+    "y": 0,
+    "zoom": 1
+  },
+  "Dwight_Howard_CHO": {
+    "x": 4.12,
+    "y": -5.3,
+    "zoom": 1.21
+  },
+  "Carmelo_Anthony_LAL": {
+    "x": 30.83,
+    "y": 3,
+    "zoom": 1.06
+  },
+  "Dwight_Howard_PHI": {
+    "x": -19.89,
+    "y": 0,
+    "zoom": 1
+  },
+  "Isaiah_Thomas": {
+    "x": 8.07,
+    "y": 0,
+    "zoom": 1
+  },
+  "Joe_Johnson": {
+    "x": -22.95,
+    "y": 0,
+    "zoom": 1
+  },
+  "Paul_Pierce": {
+    "x": 5.02,
+    "y": 0,
+    "zoom": 1
+  },
+  "Rajon_Rondo": {
+    "x": -1.97,
+    "y": 0,
+    "zoom": 1
+  },
+  "Tracy_McGrady_NYK": {
+    "x": -4.3,
+    "y": 0,
+    "zoom": 1
+  },
+  "Vince_Carter_PHO": {
+    "x": -4.5,
+    "y": 1.82,
+    "zoom": 1.09
+  },
+  "Vince_Carter_ATL": {
+    "x": 1.25,
+    "y": 0,
+    "zoom": 1
+  },
+  "Zach_Randolph": {
+    "x": -4.12,
+    "y": 0,
+    "zoom": 1
+  },
+  "Michael_Jordan": {
+    "x": 0,
+    "y": 0.47,
+    "zoom": 1
   }
 }

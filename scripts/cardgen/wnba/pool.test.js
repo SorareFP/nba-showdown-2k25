@@ -142,7 +142,7 @@ describe('buildPool', () => {
 describe('the committed force-include list', () => {
   const list = readForceInclude();
 
-  it('names exactly the seven the user chose, each with its reason', () => {
+  it('names exactly the nine the user chose, each with its reason', () => {
     expect(list.map(f => f.name).sort()).toEqual([
       'Brittney Griner',
       'Brittney Sykes',
@@ -150,25 +150,37 @@ describe('the committed force-include list', () => {
       'Kelsey Plum',
       'Leonie Fiebich',
       'Napheesa Collier',
+      'Rickea Jackson',
+      'Satou Sabally',
       'Skylar Diggins',
     ]);
     for (const entry of list) expect(entry.reason).toMatch(/\d+ G at \d/);
   });
 
   it('says which of them is not an injury case', () => {
-    // Six are injury exceptions chosen against a stated standard (25+ MPG when
-    // healthy). Carrington is a direct user pick who does not meet it, and the
-    // file is required to SAY so rather than quietly widening what "injury-
-    // shortened" is allowed to mean — otherwise the next person reads seven
+    // Seven are injury exceptions chosen against a stated standard (25+ MPG
+    // when healthy). Two are direct user picks who do not meet it, and the file
+    // is required to SAY so rather than quietly widening what "injury-
+    // shortened" is allowed to mean — otherwise the next person reads nine
     // injuries and takes the standard to be looser than it is.
+    //
+    // SATOU SABALLY IS COUNTED AS AN INJURY EXCEPTION even though she, like the
+    // two user picks, was asked for by name. Being requested is not what the
+    // marker records; meeting the standard is, and she does — 26.6 MPG across a
+    // full 2025. Filing her with the picks would have made the standard look
+    // like something a request can bypass, which is the confusion this whole
+    // test exists to prevent.
     const byName = Object.fromEntries(list.map(f => [f.name, f.reason]));
     expect(byName['DiJonai Carrington']).toMatch(/user pick/i);
+    expect(byName['Rickea Jackson']).toMatch(/user pick/i);
     // `injury-shortened` is the marker the six carry, and it is what this
     // asserts on — not the bare word "injury", which her reason legitimately
     // contains in the phrase that says she is NOT one.
     const injuries = list.filter(f => /injury-shortened/.test(f.reason));
     expect(injuries.map(f => f.name)).not.toContain('DiJonai Carrington');
-    expect(injuries).toHaveLength(6);
+    expect(injuries.map(f => f.name)).not.toContain('Rickea Jackson');
+    expect(injuries.map(f => f.name)).toContain('Satou Sabally');
+    expect(injuries).toHaveLength(7);
   });
 
   it('drops the _comment, which is documentation and not a player', () => {

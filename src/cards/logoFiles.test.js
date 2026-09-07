@@ -414,7 +414,20 @@ const wnbaPresent = existsSync(WNBA_LOGO_DIR)
  *                absent on a fresh clone, so the assertion has to tolerate
  *                both. Safe to delete.
  */
-const UNREFERENCED = new Set(['CLE.png', 'TOR.png', 'WNBA.png', 'CON.png']);
+// Files that exist on purpose and that nothing points at.
+//
+// The first four are league and franchise marks kept for the lettered-circle
+// fallback and for CON's Windows-device-name problem. The rest are RETRO AND
+// ALTERNATE marks — throwback jerseys and secondary logos, not eras. They
+// arrived with the era logos and were installed alongside them; assigning one
+// to an era key would be a guess (NYLRetro1 is the Liberty torch shield, which
+// could be the 1997 mark or the 2003 one, and both keys are empty), and a
+// wrong mark on a card is worse than a lettered circle.
+const UNREFERENCED = new Set([
+  'CLE.png', 'TOR.png', 'WNBA.png', 'CON.png',
+  'ConnRetro1.png', 'MINRetro1.png', 'MinRetro2.png', 'NYLRetro1.png',
+  'PHORetro1.png', 'PHORetro2.png', 'SEARetro1.png', 'TOR_ALT.png',
+]);
 
 /**
  * Every logo path the app can build, live and historical.
@@ -549,14 +562,16 @@ describe('WNBA historical logo files', () => {
   });
 
   it('lets a defunct franchise have no mark at all, and draws a circle instead', () => {
-    // A FEATURE, not a gap: eleven of these franchises folded or moved and
-    // nobody has supplied their marks. The generator reports the shopping list
-    // on every run; until it is filled the cards degrade to three letters.
+    // A FEATURE, not a gap: a row with `logo: null` degrades to three letters
+    // rather than borrowing the wrong mark, and the generator reports the
+    // shopping list on every run. As of 2026-09-06 the list is EMPTY — the
+    // user supplied every historical mark (Sol was the last) — so the check is
+    // that any row without a file says so honestly, not that one exists.
     const withoutLogos = Object.entries(WNBA_HISTORICAL_TEAMS).filter(([, t]) => !t.logo);
-    expect(withoutLogos.length).toBeGreaterThan(0);
     for (const [key, team] of withoutLogos) {
       expect(team.logo, key).toBeNull();
     }
+    expect(withoutLogos.map(([k]) => k)).toEqual([]);
   });
 
   it('carries logoEra exactly when the mark is borrowed from the live team', () => {
@@ -593,7 +608,9 @@ describe('WNBA historical logo files', () => {
     // city, so wiring the row to it would print the wrong team's mark on a
     // twenty-five-year-old card and look entirely plausible.
     expect(WNBA_HISTORICAL_TEAMS.CLE.name).toBe('Rockers');
-    expect(WNBA_HISTORICAL_TEAMS.CLE.logo).toBeNull();
+    // Since 2026-09-06 the row carries the 1997 Rockers mark the user dropped in
+    // (logo-originals/WNBA/CLE97.gif → CLE97.png); the Sirens file stays unreferenced.
+    expect(WNBA_HISTORICAL_TEAMS.CLE.logo).toBe('/logos/WNBA/CLE97.png');
     expect(UNREFERENCED.has('CLE.png')).toBe(true);
   });
 

@@ -1,0 +1,575 @@
+{
+ "generatedAt": "2026-09-06T16:52:15.685Z",
+ "source": "basketball-reference.com",
+ "count": 142,
+ "bios": {
+  "wilsoa01w": {
+   "inches": 76,
+   "weight": 194
+  },
+  "edwaraa01w": {
+   "inches": 74.8,
+   "weight": 205
+  },
+  "smithal01w": {
+   "inches": 76,
+   "weight": 176.4
+  },
+  "bostoal01w": {
+   "inches": 77.2,
+   "weight": 216.1
+  },
+  "grayal01w": {
+   "inches": 72,
+   "weight": 165.3
+  },
+  "thomaal01w": {
+   "inches": 74,
+   "weight": 202.8
+  },
+  "morroan02w": {
+   "inches": 72.8,
+   "weight": 176.4
+  },
+  "reesean01w": {
+   "inches": 76,
+   "weight": 163.1
+  },
+  "atkinar01w": {
+   "inches": 70.1,
+   "weight": 165.3
+  },
+  "ogunbar01w": {
+   "inches": 68.1,
+   "weight": 163.1
+  },
+  "kuieraw01w": {
+   "inches": 78,
+   "weight": 167.6
+  },
+  "steveaz01w": {
+   "inches": 78,
+   "weight": 178.6
+  },
+  "fuddaz01w": {
+   "inches": 70.9,
+   "weight": 163.1
+  },
+  "laneybe01w": {
+   "inches": 72,
+   "weight": 165.3
+  },
+  "stewabr01w": {
+   "inches": 76,
+   "weight": 169.8
+  },
+  "carlebr01w": {
+   "inches": 74,
+   "weight": 189.6
+  },
+  "grinebr01w": {
+   "inches": 81.1,
+   "weight": 218.3
+  },
+  "sykesbr01w": {
+   "inches": 70.9,
+   "weight": 149.9
+  },
+  "clarkca02w": {
+   "inches": 72,
+   "weight": 156.5
+  },
+  "brinkca01w": {
+   "inches": 76,
+   "weight": 169.8
+  },
+  "leiteca01w": {
+   "inches": 68.9,
+   "weight": 149.9
+  },
+  "zandace01w": {
+   "inches": 74,
+   "weight": 174.2
+  },
+  "legerch01w": {
+   "inches": 70.1,
+   "weight": 189.6
+  },
+  "graych01w": {
+   "inches": 70.9,
+   "weight": 169.8
+  },
+  "mcmahco01w": {
+   "inches": 72,
+   "weight": 202.8
+  },
+  "vandeco01w": {
+   "inches": 68.1,
+   "weight": 136.7
+  },
+  "willico01w": {
+   "inches": 68.1,
+   "weight": 145.5
+  },
+  "hambyde01w": {
+   "inches": 74.8,
+   "weight": 187.4
+  },
+  "bonnede01w": {
+   "inches": 76,
+   "weight": 138.9
+  },
+  "milledi03w": {
+   "inches": 72.8,
+   "weight": 176.4
+  },
+  "carridi01w": {
+   "inches": 70.9,
+   "weight": 174.2
+  },
+  "williel01w": {
+   "inches": 74.8,
+   "weight": 198.4
+  },
+  "engstem01w": {
+   "inches": 72.8,
+   "weight": 183
+  },
+  "wheeler01w": {
+   "inches": 66.9,
+   "weight": 141.1
+  },
+  "johnsfl03w": {
+   "inches": 70.1,
+   "weight": 169.8
+  },
+  "williga01w": {
+   "inches": 70.9,
+   "weight": 172
+  },
+  "amoorge01w": {
+   "inches": 66.1,
+   "weight": 154.3
+  },
+  "harriis01w": {
+   "inches": 77.2,
+   "weight": 191.8
+  },
+  "youngja01w": {
+   "inches": 72,
+   "weight": 163.1
+  },
+  "sheldja01w": {
+   "inches": 70.1,
+   "weight": 138.9
+  },
+  "melboja01w": {
+   "inches": 70.1,
+   "weight": 143.3
+  },
+  "shepaje01w": {
+   "inches": 76,
+   "weight": 174.2
+  },
+  "loydje01w": {
+   "inches": 70.9,
+   "weight": 174.2
+  },
+  "jonesjo01w": {
+   "inches": 78,
+   "weight": 213.8
+  },
+  "horstjo02w": {
+   "inches": 74,
+   "weight": 163.1
+  },
+  "canadjo01w": {
+   "inches": 66.1,
+   "weight": 134.5
+  },
+  "allemju01w": {
+   "inches": 70.1,
+   "weight": 149.9
+  },
+  "coppeka01w": {
+   "inches": 72.8,
+   "weight": 163.1
+  },
+  "charlka01w": {
+   "inches": 72.8,
+   "weight": 167.6
+  },
+  "cardoka01w": {
+   "inches": 79.1,
+   "weight": 213.8
+  },
+  "mcbrika01w": {
+   "inches": 70.9,
+   "weight": 178.6
+  },
+  "thornka01w": {
+   "inches": 72.8,
+   "weight": 189.6
+  },
+  "mitchke01w": {
+   "inches": 68.1,
+   "weight": 152.1
+  },
+  "plumke01w": {
+   "inches": 68.1,
+   "weight": 143.3
+  },
+  "burkeke01w": {
+   "inches": 72.8,
+   "weight": 198.4
+  },
+  "stokeki01w": {
+   "inches": 74.8,
+   "weight": 189.6
+  },
+  "iriafki01w": {
+   "inches": 74.8,
+   "weight": 200.6
+  },
+  "riceki01w": {
+   "inches": 70.9,
+   "weight": 165.3
+  },
+  "juskala01w": {
+   "inches": 76,
+   "weight": 187.4
+  },
+  "bettsla01w": {
+   "inches": 79.1,
+   "weight": 229.3
+  },
+  "hullle01w": {
+   "inches": 74,
+   "weight": 154.3
+  },
+  "geiselu01w": {
+   "inches": 76,
+   "weight": 202.8
+  },
+  "timpsma01w": {
+   "inches": 74,
+   "weight": 176.4
+  },
+  "condema01w": {
+   "inches": 74.8,
+   "weight": 167.6
+  },
+  "mabrema01w": {
+   "inches": 72.8,
+   "weight": 185.2
+  },
+  "johanma01w": {
+   "inches": 70.1,
+   "weight": 132.3
+  },
+  "gustame01w": {
+   "inches": 76,
+   "weight": 207.2
+  },
+  "onyenmi01w": {
+   "inches": 72,
+   "weight": 200.6
+  },
+  "billimo01w": {
+   "inches": 76,
+   "weight": 189.6
+  },
+  "smithna01w": {
+   "inches": 76,
+   "weight": 183
+  },
+  "collina01w": {
+   "inches": 72.8,
+   "weight": 180.8
+  },
+  "cloudna01w": {
+   "inches": 70.1,
+   "weight": 158.7
+  },
+  "howarna01w": {
+   "inches": 74,
+   "weight": 169.8
+  },
+  "mackna01w": {
+   "inches": 76,
+   "weight": 180.8
+  },
+  "hiedena01w": {
+   "inches": 68.1,
+   "weight": 130.1
+  },
+  "hillmna01w": {
+   "inches": 74,
+   "weight": 189.6
+  },
+  "coffeni01w": {
+   "inches": 72.8,
+   "weight": 176.4
+  },
+  "ogwumnn01w": {
+   "inches": 74,
+   "weight": 189.6
+  },
+  "puochny01w": {
+   "inches": 74.8,
+   "weight": 165.3
+  },
+  "sabalny01w": {
+   "inches": 77.2,
+   "weight": 213.8
+  },
+  "milesol01w": {
+   "inches": 70.1,
+   "weight": 167.6
+  },
+  "nelsool01w": {
+   "inches": 77.2,
+   "weight": 178.6
+  },
+  "burrera01w": {
+   "inches": 74,
+   "weight": 167.6
+  },
+  "allenre01w": {
+   "inches": 74,
+   "weight": 160.9
+  },
+  "howarrh01w": {
+   "inches": 74,
+   "weight": 174.2
+  },
+  "jacksri02w": {
+   "inches": 74,
+   "weight": 174.2
+  },
+  "ionessa01w": {
+   "inches": 70.9,
+   "weight": 163.1
+  },
+  "riversa01w": {
+   "inches": 72.8,
+   "weight": 158.7
+  },
+  "barkesa01w": {
+   "inches": 72,
+   "weight": 172
+  },
+  "sabalsa01w": {
+   "inches": 76,
+   "weight": 174.2
+  },
+  "austish01w": {
+   "inches": 77.2,
+   "weight": 198.4
+  },
+  "diggisk01w": {
+   "inches": 68.9,
+   "weight": 138.9
+  },
+  "citroso01w": {
+   "inches": 72.8,
+   "weight": 174.2
+  },
+  "cunniso01w": {
+   "inches": 72.8,
+   "weight": 154.3
+  },
+  "talbost01w": {
+   "inches": 74,
+   "weight": 191.8
+  },
+  "fagbete01w": {
+   "inches": 77.2,
+   "weight": 178.6
+  },
+  "hayesti01w": {
+   "inches": 70.1,
+   "weight": 154.3
+  },
+  "ayayiva01w": {
+   "inches": 72.8,
+   "weight": 149.9
+  },
+  "burtove01w": {
+   "inches": 68.9,
+   "weight": 154.3
+  },
+  "stinsan01w": {
+   "inches": 70.1,
+   "weight": 156.5
+  },
+  "reedbr01w": {
+   "inches": 72.8,
+   "weight": 167.6
+  },
+  "parkeca01w": {
+   "inches": 76,
+   "weight": 183
+  },
+  "dupreca01w": {
+   "inches": 74,
+   "weight": 176.4
+  },
+  "melvich01w": {
+   "inches": 74.8,
+   "weight": 183
+  },
+  "coopecy01w": {
+   "inches": 70.1,
+   "weight": 149.9
+  },
+  "staleda01w": {
+   "inches": 66.1,
+   "weight": 132.3
+  },
+  "nolande01w": {
+   "inches": 68.9,
+   "weight": 145.5
+  },
+  "tauradi01w": {
+   "inches": 72,
+   "weight": 160.9
+  },
+  "baranel01w": {
+   "inches": 77.2,
+   "weight": 180.8
+  },
+  "delleel01w": {
+   "inches": 77.2,
+   "weight": 185.2
+  },
+  "arcaija01w": {
+   "inches": 70.9,
+   "weight": 145.5
+  },
+  "smithka01w": {
+   "inches": 70.9,
+   "weight": 174.2
+  },
+  "jacksla01w": {
+   "inches": 78,
+   "weight": 185.2
+  },
+  "whaleli01w": {
+   "inches": 68.9,
+   "weight": 169.8
+  },
+  "leslili01w": {
+   "inches": 77.2,
+   "weight": 169.8
+  },
+  "moorema01w": {
+   "inches": 72,
+   "weight": 174.2
+  },
+  "edwarmi01w": {
+   "inches": 68.9,
+   "weight": 149.9
+  },
+  "snowmi01w": {
+   "inches": 77.2,
+   "weight": 143.3
+  },
+  "willina01w": {
+   "inches": 74,
+   "weight": 209.4
+  },
+  "lobore01w": {
+   "inches": 76,
+   "weight": 183
+  },
+  "swoopsh01w": {
+   "inches": 72,
+   "weight": 143.3
+  },
+  "youngso01w": {
+   "inches": 72.8,
+   "weight": 163.1
+  },
+  "birdsu01w": {
+   "inches": 68.9,
+   "weight": 149.9
+  },
+  "cashsw01w": {
+   "inches": 72.8,
+   "weight": 169.8
+  },
+  "fowlesy01w": {
+   "inches": 78,
+   "weight": 218.3
+  },
+  "catchta01w": {
+   "inches": 72.8,
+   "weight": 165.3
+  },
+  "weathte01w": {
+   "inches": 68.1,
+   "weight": 160.9
+  },
+  "penicti01w": {
+   "inches": 70.9,
+   "weight": 145.5
+  },
+  "charlti01w": {
+   "inches": 76,
+   "weight": 191.8
+  },
+  "thompti01w": {
+   "inches": 74,
+   "weight": 176.4
+  },
+  "griffyo01w": {
+   "inches": 76,
+   "weight": 174.2
+  },
+  "pondeca01w": {
+   "inches": 68.9,
+   "weight": 158.7
+  },
+  "ogwumch01w": {
+   "inches": 74.8,
+   "weight": 183
+  },
+  "augusse01w": {
+   "inches": 72,
+   "weight": 172
+  },
+  "hammobe01w": {
+   "inches": 66.1,
+   "weight": 134.5
+  },
+  "mccouan01w": {
+   "inches": 72.8,
+   "weight": 172
+  },
+  "holdsch01w": {
+   "inches": 74,
+   "weight": 172
+  },
+  "fordch01w": {
+   "inches": 74.8,
+   "weight": 194
+  },
+  "princep01w": {
+   "inches": 68.9,
+   "weight": 178.6
+  },
+  "salesny01w": {
+   "inches": 72,
+   "weight": 183
+  },
+  "dixonta01w": {
+   "inches": 68.9,
+   "weight": 147.7
+  },
+  "witheso01w": {
+   "inches": 70.1,
+   "weight": 143.3
+  }
+ }
+}

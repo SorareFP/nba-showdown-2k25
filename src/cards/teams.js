@@ -110,6 +110,19 @@ export const TEAMS = {
  */
 export const HISTORICAL_TEAMS = {
   SEA: { name: 'SuperSonics', city: 'Seattle',     primary: '#00653A', secondary: '#FFC72C', logo: '/logos/SEA.png', era: '1967-2008', unverifiedColors: true },
+  // ── EIGHT MARKS ADDED 2026-09-04 ───────────────────────────────────────
+  // Every colour below is SAMPLED from the installed PNG rather than recalled:
+  // the two most-covered non-outline bins, which is what auditEraColors checks
+  // a declared palette against. That is why none is flagged unverifiedColors —
+  // the logo IS the source.
+  UTA96: { name: 'Jazz',    city: 'Utah',         primary: '#8033C4', secondary: '#00B7E9', logo: '/logos/UTA96.png', era: '1996-2004' },
+  UTA04: { name: 'Jazz',    city: 'Utah',         primary: '#00275D', secondary: '#6CAEDF', logo: '/logos/UTA04.png', era: '2004-2010' },
+  UTA16: { name: 'Jazz',    city: 'Utah',         primary: '#002144', secondary: '#FFA200', logo: '/logos/UTA16.png', era: '2016-2022' },
+  PHI77: { name: '76ers',   city: 'Philadelphia', primary: '#243E7C', secondary: '#EC1A34', logo: '/logos/PHI77.png', era: '1977-1997' },
+  PHI09: { name: '76ers',   city: 'Philadelphia', primary: '#0046AD', secondary: '#D7083B', logo: '/logos/PHI09.png', era: '2009-2015' },
+  DET79: { name: 'Pistons', city: 'Detroit',      primary: '#EC0028', secondary: '#003CAB', logo: '/logos/DET79.png', era: '1979-1996' },
+  DET96: { name: 'Pistons', city: 'Detroit',      primary: '#006271', secondary: '#9D2235', logo: '/logos/DET96.png', era: '1996-2001' },
+  MIL06: { name: 'Bucks',   city: 'Milwaukee',    primary: '#195331', secondary: '#B80028', logo: '/logos/MIL06.png', era: '2006-2015' },
   NJN: { name: 'Nets',        city: 'New Jersey',  primary: '#002A60', secondary: '#CE1141', logo: '/logos/NJN.png', era: '1977-2012', unverifiedColors: true },
   NOH: { name: 'Hornets',     city: 'New Orleans', primary: '#002B5C', secondary: '#B4975A', logo: '/logos/NOH.png', era: '2002-2013', unverifiedColors: true },
   NOK: { name: 'Hornets',     city: 'New Orleans/Oklahoma City', primary: '#002B5C', secondary: '#B4975A', logo: '/logos/NOK.png', era: '2005-2007', unverifiedColors: true },
@@ -152,9 +165,38 @@ export const HISTORICAL_TEAMS = {
   ATL08: { name: 'Hawks',    city: 'Atlanta',     abbr: 'ATL', primary: '#002B5C', secondary: '#E03A3E', logo: '/logos/ATL08.png', era: '2008-2015', unverifiedColors: true },
   DAL80: { name: 'Mavericks', city: 'Dallas',     abbr: 'DAL', primary: '#00843D', secondary: '#0064B1', logo: '/logos/DAL80.png', era: '1981-2001', unverifiedColors: true },
   HOU72: { name: 'Rockets',  city: 'Houston',     abbr: 'HOU', primary: '#CE1141', secondary: '#FDB927', logo: '/logos/HOU72.png', era: '1972-1995', unverifiedColors: true },
+  // THE SILVER ERA, 2003-04 through 2018-19. Added because two Summer Standouts
+  // cards sit inside it — Chris Paul and PJ Tucker, both 2018 — and were
+  // rendering in the CURRENT palette, whose Championship Yellow the Rockets did
+  // not wear until the 2019-20 rebrand. Red carried across that rebrand; silver
+  // did not, so the yellow was the visible error rather than the red.
+  //
+  // Neither hex is invented: #CE1141 is already this file's Rockets red (HOU72)
+  // and #C4CED4 is already its silver (ORL01). Still flagged unverified like
+  // every other era row, to be checked against the same authority as the live
+  // table when the set is finalised.
+  //
+  // The mark is the era's own: the R-rocket with the orbit ring, supplied and
+  // installed as public/logos/HOU03.png. It briefly borrowed the current mark
+  // with a logoEra flag, which is why that field is absent now rather than
+  // never having been here — logoFiles.test.js asserts the two states are
+  // exclusive, so a row with its own era art must not claim one.
+  HOU03: { name: 'Rockets',  city: 'Houston',     abbr: 'HOU', primary: '#CE1141', secondary: '#C4CED4', logo: '/logos/HOU03.png', era: '2003-2019', unverifiedColors: true },
+  // THE 2019 MARK, FROZEN. Every Rockets card outside the base set is a
+  // 2022-2025 season, and until now they all read the CURRENT HOU.png — which
+  // is about to become the 2026 rebrand. A copy of today's file, so the
+  // pre-26-27 cards keep the mark they were played under when HOU.png changes.
+  // The 1995-2003 pinstripe era has no file yet and stays unmapped.
+  // The 2019-20 rebrand mark, installed by the user as HOU20 (card-art/logo-originals/HOU20.png, 2026-09-06).
+  HOU20: { name: 'Rockets',  city: 'Houston',     abbr: 'HOU', primary: '#CE1141', secondary: '#C4CED4', logo: '/logos/HOU20.png', era: '2019-2026' },
   MIL94: { name: 'Bucks',    city: 'Milwaukee',   abbr: 'MIL', primary: '#5C2F83', secondary: '#00471B', logo: '/logos/MIL94.png', era: '1994-2006', unverifiedColors: true },
   MIN89: { name: 'Timberwolves', city: 'Minnesota', abbr: 'MIN', primary: '#005084', secondary: '#00A94F', logo: '/logos/MIN89.png', era: '1989-1996', unverifiedColors: true },
-  MIN97: { name: 'Timberwolves', city: 'Minnesota', abbr: 'MIN', primary: '#0C2340', secondary: '#78BE20', logo: '/logos/MIN97.png', era: '1997-2017', unverifiedColors: true },
+  // SAMPLED FROM MIN97.png ITSELF, which is the only authority this row has:
+  // the mark is 26% #236192 blue, 21% #8D9093 silver, 21% #00843D green, and
+  // those three are the Timberwolves' documented 1996-2008 palette. It had
+  // been carrying #0C2340 / #78BE20 — today's navy and today's lime — which
+  // matched neither the art it sits beside nor the era it names.
+  MIN97: { name: 'Timberwolves', city: 'Minnesota', abbr: 'MIN', primary: '#236192', secondary: '#00843D', logo: '/logos/MIN97.png', era: '1997-2017', unverifiedColors: true },
   MEM01: { name: 'Grizzlies', city: 'Memphis',    abbr: 'MEM', primary: '#00285E', secondary: '#6CACE4', logo: '/logos/MEM01.png', era: '2001-2004', unverifiedColors: true },
   PHI97: { name: '76ers',    city: 'Philadelphia', abbr: 'PHI', primary: '#000000', secondary: '#C8102E', logo: '/logos/PHI97.png', era: '1998-2009', unverifiedColors: true },
   ORL89: { name: 'Magic',    city: 'Orlando',     abbr: 'ORL', primary: '#0077C0', secondary: '#000000', logo: '/logos/ORL89.png', era: '1989-2000', unverifiedColors: true },
@@ -166,6 +208,15 @@ export const HISTORICAL_TEAMS = {
   SEA06: { name: 'SuperSonics', city: 'Seattle',  abbr: 'SEA', primary: '#00653A', secondary: '#FFC72C', logo: '/logos/SEA06.png', era: '2002-2008', unverifiedColors: true },
   DEN13: { name: 'Nuggets',  city: 'Denver',      abbr: 'DEN', primary: '#0E2240', secondary: '#FEC524', logo: '/logos/DEN13.png', era: '2013-2018', unverifiedColors: true },
   DET06: { name: 'Pistons',  city: 'Detroit',     abbr: 'DET', primary: '#ED174C', secondary: '#0058A6', logo: '/logos/DET06.png', era: '2006-2017', unverifiedColors: true },
+
+  // THE FIRST NBA ROW TO BORROW A LIVE MARK, on the WNBA table's convention:
+  // `logoEra` says the art is right as to franchise and WRONG AS TO YEAR, and
+  // is what keeps it on the shopping list until era art arrives. Washington had
+  // no era row at all, so Antawn Jamison's 2005-06 card wore today's red and
+  // navy — a scheme the franchise did not adopt until 2011-12. The colours are
+  // the blue-black-bronze the Wizards actually wore from 1997-98; the mark is
+  // still the modern one, and the era file is wanted.
+  WAS97: { name: 'Wizards',  city: 'Washington',  abbr: 'WAS', primary: '#246394', secondary: '#8F664E', logo: '/logos/WAS97.png', era: '1997-2011' }, // Blue, Bronze — sampled from the mark
 };
 
 /**
@@ -179,6 +230,17 @@ export const HISTORICAL_TEAMS = {
  * wearing it.
  */
 export const FRANCHISE_ERAS = {
+  WAS: [{ from: 1998, to: 2011, key: 'WAS97' }],
+  // UTAH HAD NO ERA LIST AT ALL until 2026-09-04, so every Jazz card printed
+  // the 2023 mark whatever season it was. The 2011-2016 navy-and-gold note era
+  // is deliberately absent rather than guessed: no card sits in it, and a range
+  // with no logo behind it would print a lettered circle where the current mark
+  // at least prints a Jazz.
+  UTA: [
+    { from: 1997, to: 2004, key: 'UTA96' },
+    { from: 2005, to: 2010, key: 'UTA04' },
+    { from: 2017, to: 2022, key: 'UTA16' },
+  ],
   DEN: [
     { from: 2004, to: 2012, key: 'DEN04' },
     { from: 2013, to: 2018, key: 'DEN13' },
@@ -189,6 +251,8 @@ export const FRANCHISE_ERAS = {
     { from: 2011, to: 2017, key: 'CLE16' },
   ],
   DET: [
+    { from: 1979, to: 1996, key: 'DET79' },
+    { from: 1997, to: 2001, key: 'DET96' },
     { from: 2002, to: 2005, key: 'DET02' },
     { from: 2006, to: 2017, key: 'DET06' },
   ],
@@ -211,14 +275,21 @@ export const FRANCHISE_ERAS = {
     { from: 2013, to: 2014, key: 'CHB13' },
   ],
   DAL: [{ from: 1981, to: 2001, key: 'DAL80' }],
-  HOU: [{ from: 1972, to: 1995, key: 'HOU72' }],
-  MIL: [{ from: 1994, to: 2006, key: 'MIL94' }],
+  HOU: [{ from: 1972, to: 1995, key: 'HOU72' }, { from: 2004, to: 2019, key: 'HOU03' }, { from: 2020, to: 2026, key: 'HOU20' }],
+  MIL: [
+    { from: 1994, to: 2006, key: 'MIL94' },
+    { from: 2007, to: 2015, key: 'MIL06' },
+  ],
   MIN: [
     { from: 1989, to: 1996, key: 'MIN89' },
     { from: 1997, to: 2017, key: 'MIN97' },
   ],
   MEM: [{ from: 2001, to: 2004, key: 'MEM01' }],
-  PHI: [{ from: 1998, to: 2009, key: 'PHI97' }],
+  PHI: [
+    { from: 1977, to: 1997, key: 'PHI77' },
+    { from: 1998, to: 2009, key: 'PHI97' },
+    { from: 2010, to: 2015, key: 'PHI09' },
+  ],
   ORL: [
     { from: 1989, to: 2000, key: 'ORL89' },
     { from: 2001, to: 2010, key: 'ORL01' },
@@ -353,7 +424,7 @@ export const WNBA_TEAMS = {
   MIN: { name: 'Lynx',      city: 'Minnesota',    primary: '#236192', secondary: '#0C2340', logo: '/logos/WNBA/MIN.png', league: 'WNBA' }, // Lake Blue, Midnight Blue
   NYL: { name: 'Liberty',   city: 'New York',     primary: '#010101', secondary: '#6ECEB2', logo: '/logos/WNBA/NYL.png', league: 'WNBA' }, // Black, Seafoam Green
   PHO: { name: 'Mercury',   city: 'Phoenix',      primary: '#582C83', secondary: '#FC4C02', logo: '/logos/WNBA/PHO.png', league: 'WNBA' }, // Purple, Orange (2026 rebrand)
-  POR: { name: 'Fire',      city: 'Portland',     primary: '#E93CAC', secondary: '#C8102E', logo: '/logos/WNBA/POR.png', league: 'WNBA' }, // Pink, Red
+  POR: { name: 'Fire',      city: 'Portland',     primary: '#C8102E', secondary: '#E93CAC', logo: '/logos/WNBA/POR.png', league: 'WNBA' }, // Red, Pink — TruColor's PAIR, its ORDER deliberately reversed; see ORDER_REVERSED in teams.test.js
   SEA: { name: 'Storm',     city: 'Seattle',      primary: '#2C5234', secondary: '#FBE122', logo: '/logos/WNBA/SEA.png', league: 'WNBA' }, // Storm Green, Lightning Yellow
   TOR: { name: 'Tempo',     city: 'Toronto',      primary: '#612C51', secondary: '#B8CCEA', logo: '/logos/WNBA/TOR_ALT.png', league: 'WNBA' }, // Bordeaux, Hydrogen Blue — ALT mark: the primary is bordeaux-on-bordeaux
   WAS: { name: 'Mystics',   city: 'Washington',   primary: '#C8102E', secondary: '#0C2340', logo: '/logos/WNBA/WAS.png', league: 'WNBA' }, // Red, Navy
@@ -426,24 +497,25 @@ export const WNBA_HISTORICAL_TEAMS = {
   // CLEVELAND SIRENS — the incoming expansion team — and not the Rockers, who
   // folded in 2003. Pointing this row at it would print the wrong franchise's
   // mark on a card from twenty-five years earlier.
-  CLE:  { name: 'Rockers',      city: 'Cleveland',    primary: '#010101', secondary: '#009FDF', logo: null, league: 'WNBA', era: '1997-2003', folded: true }, // Black, Blue
-  CHA:  { name: 'Sting',        city: 'Charlotte',    primary: '#00778B', secondary: '#280071', logo: null, league: 'WNBA', era: '1997-2003', folded: true }, // Teal, Purple
-  CHA2: { name: 'Sting',        city: 'Charlotte',    primary: '#F9423A', secondary: '#1B365D', logo: null, league: 'WNBA', era: '2004-2006', folded: true }, // Orange, Blue
-  SAC:  { name: 'Monarchs',     city: 'Sacramento',   primary: '#753BBD', secondary: '#010101', logo: null, league: 'WNBA', era: '1997-2009', folded: true }, // Purple, Black
-  UTA:  { name: 'Starzz',       city: 'Utah',         primary: '#006271', secondary: '#753BBD', logo: null, league: 'WNBA', era: '1997-2002', folded: false }, // Green, Purple — became San Antonio
-  DET:  { name: 'Shock',        city: 'Detroit',      primary: '#010101', secondary: '#FFA400', logo: null, league: 'WNBA', era: '1998-2001', folded: false }, // Black, Yellow
-  DET2: { name: 'Shock',        city: 'Detroit',      primary: '#003DA5', secondary: '#041E42', logo: null, league: 'WNBA', era: '2002-2009', folded: false }, // Blue, Dark Blue — became Tulsa
-  ORL:  { name: 'Miracle',      city: 'Orlando',      primary: '#0057B7', secondary: '#010101', logo: null, league: 'WNBA', era: '1999-2002', folded: false }, // Miracle Blue, Black — became Connecticut
+  CLE:  { name: 'Rockers',      city: 'Cleveland',    primary: '#010101', secondary: '#009FDF', logo: '/logos/WNBA/CLE97.png', league: 'WNBA', era: '1997-2003', folded: true }, // Black, Blue — the 1997 mark (the user, 2026-09-06); CLE.png is still the Sirens
+  CHA:  { name: 'Sting',        city: 'Charlotte',    primary: '#00778B', secondary: '#280071', logo: '/logos/WNBA/CHA97.png', league: 'WNBA', era: '1997-2003', folded: true }, // Teal, Purple — 1997 mark (the user, 2026-09-06)
+  CHA2: { name: 'Sting',        city: 'Charlotte',    primary: '#F9423A', secondary: '#1B365D', logo: '/logos/WNBA/CHA04.png', league: 'WNBA', era: '2004-2006', folded: true }, // Orange, Blue — 2004 mark (the user, 2026-09-06)
+  SAC:  { name: 'Monarchs',     city: 'Sacramento',   primary: '#753BBD', secondary: '#010101', logo: '/logos/WNBA/SAC97.png', league: 'WNBA', era: '1997-2009', folded: true }, // Purple, Black — 1997 mark (the user, 2026-09-06)
+  UTA:  { name: 'Starzz',       city: 'Utah',         primary: '#006271', secondary: '#753BBD', logo: '/logos/WNBA/UTA97.png', league: 'WNBA', era: '1997-2002', folded: false }, // Green, Purple — became San Antonio; 1997 mark (the user, 2026-09-06)
+  DET:  { name: 'Shock',        city: 'Detroit',      primary: '#F8A10F', secondary: '#126D6C', logo: '/logos/WNBA/DET97.png', league: 'WNBA', era: '1998-2001', folded: false }, // Gold, Teal — sampled
+  DET2: { name: 'Shock',        city: 'Detroit',      primary: '#00265D', secondary: '#ED154B', logo: '/logos/WNBA/DET03.png', league: 'WNBA', era: '2002-2009', folded: false }, // Navy, Red — sampled; became Tulsa
+  ORL:  { name: 'Miracle',      city: 'Orlando',      primary: '#0057B7', secondary: '#010101', logo: '/logos/WNBA/ORL99.png', league: 'WNBA', era: '1999-2002', folded: false }, // Miracle Blue, Black — became Connecticut; 1999 mark (the user, 2026-09-06)
   // ⚠ PORTLAND FIRE, TWICE. This is the 2000-2002 franchise, which folded; the
   // POR row in WNBA_TEAMS is the 2026 EXPANSION team of the same name in the
   // same city, and it is pink. One abbreviation, two franchises, twenty-four
   // years apart — the WNBA's version of the NBA's CHA/CHB collision, and the
   // reason wnbaFranchiseForSeason exists rather than a flat merge of the two
   // tables. Keyed PORF so it can never shadow the live row.
-  PORF: { name: 'Fire',         city: 'Portland',     primary: '#C8102E', secondary: '#010101', logo: null, league: 'WNBA', era: '2000-2002', folded: true }, // Red, Black
-  MIA:  { name: 'Sol',          city: 'Miami',        primary: '#A6192E', secondary: '#010101', logo: null, league: 'WNBA', era: '2000-2002', folded: true }, // Fiery Red, Black
-  SAS:  { name: 'Silver Stars', city: 'San Antonio',  primary: '#010101', secondary: '#8D9093', logo: '/logos/WNBA/SAS.png', league: 'WNBA', era: '2003-2017', folded: false }, // Black, Silver — became Las Vegas
-  TUL:  { name: 'Shock',        city: 'Tulsa',        primary: '#FFB81C', secondary: '#010101', logo: null, league: 'WNBA', era: '2010-2015', folded: false }, // Yellow, Black — became Dallas
+  PORF: { name: 'Fire',         city: 'Portland',     primary: '#C8102E', secondary: '#010101', logo: '/logos/WNBA/PORF.png', league: 'WNBA', era: '2000-2002', folded: true }, // Red, Black
+  MIA:  { name: 'Sol',          city: 'Miami',        primary: '#A6192E', secondary: '#010101', logo: '/logos/WNBA/MIA00.png', league: 'WNBA', era: '2000-2002', folded: true }, // Fiery Red, Black — 2000 mark (the user, 2026-09-06); the last WNBA franchise to get one
+  SAS:  { name: 'Silver Stars', city: 'San Antonio',  primary: '#010101', secondary: '#8D9093', logo: '/logos/WNBA/SAS.png', league: 'WNBA', era: '2003-2013', folded: false }, // Black, Silver — renamed Stars in 2014
+  SAS14: { name: 'Stars',       city: 'San Antonio',  primary: '#010101', secondary: '#8D9093', logo: '/logos/WNBA/SAS14.png', league: 'WNBA', era: '2014-2017', folded: false, unverifiedColors: true }, // Black, Silver carried over from the Silver Stars row — the 2014 mark (the user, 2026-09-06); became Las Vegas
+  TUL:  { name: 'Shock',        city: 'Tulsa',        primary: '#FFB81C', secondary: '#010101', logo: '/logos/WNBA/TUL.png', league: 'WNBA', era: '2010-2015', folded: false }, // Yellow, Black — became Dallas
 
   // ── Live franchises, in the colours they actually wore ─────────────────────
   SEA00:  { name: 'Storm',   city: 'Seattle',      primary: '#00573F', secondary: '#9E2B2F', logo: '/logos/WNBA/SEA00.png', league: 'WNBA', era: '2000-2015' }, // Hunter Green, Maroon
@@ -451,16 +523,30 @@ export const WNBA_HISTORICAL_TEAMS = {
   MIN11:  { name: 'Lynx',    city: 'Minnesota',    primary: '#236192', secondary: '#010101', logo: '/logos/WNBA/MIN11.png', league: 'WNBA', era: '2011-2017' }, // Slate Blue, Black
   PHO97:  { name: 'Mercury', city: 'Phoenix',      primary: '#EF3340', secondary: '#5F249F', logo: '/logos/WNBA/PHO97.png', league: 'WNBA', era: '1997-2010' }, // Planet Red, Purple
   PHO11:  { name: 'Mercury', city: 'Phoenix',      primary: '#582C83', secondary: '#CB6015', logo: '/logos/WNBA/PHO11.png', league: 'WNBA', era: '2011-2014' }, // Purple, Orange
-  PHO15:  { name: 'Mercury', city: 'Phoenix',      primary: '#211747', secondary: '#CB6015', logo: '/logos/WNBA/PHO.png', logoEra: '2026-present', league: 'WNBA', era: '2015-2025' }, // Dark Purple, Burnt Orange
-  NYL97:  { name: 'Liberty', city: 'New York',     primary: '#010101', secondary: '#0057B7', logo: '/logos/WNBA/NYL.png', logoEra: '2020-present', league: 'WNBA', era: '1997-2002' }, // Gotham Black, Harbor Blue
-  NYL03:  { name: 'Liberty', city: 'New York',     primary: '#0057B7', secondary: '#6ECEB2', logo: '/logos/WNBA/NYL.png', logoEra: '2020-present', league: 'WNBA', era: '2003-2011' }, // Harbor Blue, Liberty Green
+  PHO15:  { name: 'Mercury', city: 'Phoenix',      primary: '#DD5800', secondary: '#22164A', logo: '/logos/WNBA/PHO15.png', league: 'WNBA', era: '2015-2025' }, // Dark Purple, Burnt Orange
+  // BOTH HISTORIC LIBERTY ERAS WEAR THE 1997 MARK, and that is the user's call
+  // from the source rather than a shortcut: "I only see the 97 liberty and the
+  // present liberty as all that have existed." Both rows used to borrow the
+  // MODERN logo — their own `logoEra: '2020-present'` said so — which put a
+  // 2024 mark and a black-and-mint palette on Cappie Pondexter's 2010 card.
+  // Colours sampled from the file: orange #FF6418, harbor blue #0046AE.
+  NYL97:  { name: 'Liberty', city: 'New York',     primary: '#FF6418', secondary: '#0046AE', logo: '/logos/WNBA/NYLRetro1.png', league: 'WNBA', era: '1997-2002' }, // Torch Orange, Harbor Blue
+  NYL03:  { name: 'Liberty', city: 'New York',     primary: '#FF6418', secondary: '#0046AE', logo: '/logos/WNBA/NYLRetro1.png', league: 'WNBA', era: '2003-2011' }, // Torch Orange, Harbor Blue
   NYL12:  { name: 'Liberty', city: 'New York',     primary: '#010101', secondary: '#003DA5', logo: '/logos/WNBA/NYL12.png', league: 'WNBA', era: '2012-2019' }, // Black, Blue
-  WAS98:  { name: 'Mystics', city: 'Washington',   primary: '#236192', secondary: '#8F654D', logo: '/logos/WNBA/WAS.png', logoEra: '2011-present', league: 'WNBA', era: '1998-2010' }, // Slate Blue, Bronze
+  WAS98:  { name: 'Mystics', city: 'Washington',   primary: '#004F82', secondary: '#B97745', logo: '/logos/WNBA/WAS98.png', league: 'WNBA', era: '1998-2010' }, // Slate Blue, Bronze
   CON03:  { name: 'Sun',     city: 'Connecticut',  primary: '#041E42', secondary: '#A6192E', logo: '/logos/WNBA/CON03.png', league: 'WNBA', era: '2003-2015' }, // Navy, Dark Red
-  CON16:  { name: 'Sun',     city: 'Connecticut',  primary: '#DC4405', secondary: '#041E42', logo: '/logos/WNBA/CONN.png', logoEra: '2021-present', league: 'WNBA', era: '2016-2020' }, // Orange, Navy
-  ATL08:  { name: 'Dream',   city: 'Atlanta',      primary: '#418FDE', secondary: '#C8102E', logo: '/logos/WNBA/ATL.png', logoEra: '2020-present', league: 'WNBA', era: '2008-2015' }, // Sky Blue, Red
-  ATL16:  { name: 'Dream',   city: 'Atlanta',      primary: '#0C2340', secondary: '#C8102E', logo: '/logos/WNBA/ATL.png', logoEra: '2020-present', league: 'WNBA', era: '2016-2019' }, // Navy, Red
-  LVA18:  { name: 'Aces',    city: 'Las Vegas',    primary: '#010101', secondary: '#BA0C2F', logo: '/logos/WNBA/LVA.png', logoEra: '2024-present', league: 'WNBA', era: '2018-2023' }, // Black, Red
+  CON16:  { name: 'Sun',     city: 'Connecticut',  primary: '#E34912', secondary: '#AC1A2F', logo: '/logos/WNBA/CON16.png', league: 'WNBA', era: '2016-2020' }, // Orange, Navy
+  ATL08:  { name: 'Dream',   city: 'Atlanta',      primary: '#4891DC', secondary: '#CC092F', logo: '/logos/WNBA/ATL08.png', league: 'WNBA', era: '2008-2019' }, // Sky Blue, Red
+  LVA18:  { name: 'Aces',    city: 'Las Vegas',    primary: '#BA0C2F', secondary: '#B9975B', logo: '/logos/WNBA/LVA18.png', league: 'WNBA', era: '2018-2023' }, // Red, Gold — sampled
+  // TWO NEW ERAS, both supplied for a team reward and both covering more than
+  // that one card — an era is a span, not a card. LAS97 carries Tamecka Dixon's
+  // 1997 (the Sparks reward) and Lisa Leslie's 2004; CHI06 carries Epiphanny
+  // Prince's 2013 (the Sky reward) plus Vandersloot 2011, Delle Donne 2015 and
+  // Gabby Williams 2018. Both run to a 2020 rebrand — the Sparks' end date was
+  // first guessed at 2005 and corrected by the user to 2020, which moved Lisa
+  // Leslie's 2004, Candace Parker's 2008 and Nneka Ogwumike's 2012 onto it too.
+  LAS97:  { name: 'Sparks',  city: 'Los Angeles',  primary: '#682E86', secondary: '#FFC82E', logo: '/logos/WNBA/LAS97.png', league: 'WNBA', era: '1997-2020' }, // Purple, Gold — sampled
+  CHI06:  { name: 'Sky',     city: 'Chicago',      primary: '#4891DC', secondary: '#FFCC00', logo: '/logos/WNBA/CHI06.png', league: 'WNBA', era: '2006-2019' }, // Sky Blue, Yellow — sampled
 };
 
 /**
@@ -494,9 +580,17 @@ export const WNBA_TEAM_ERAS = [
   { abbr: 'WAS', through: 2010, key: 'WAS98' },
   { abbr: 'CON', through: 2015, key: 'CON03' },
   { abbr: 'CON', through: 2020, key: 'CON16' },
-  { abbr: 'ATL', through: 2015, key: 'ATL08' },
-  { abbr: 'ATL', through: 2019, key: 'ATL16' },
+  // ONE DREAM ERA, NOT TWO. The original mark ran 2008-2019, so the split at
+  // 2015 was a distinction the logo never made — ATL16 existed only because
+  // nobody had the file and it was borrowing the 2020 mark. Its row is gone
+  // rather than kept: a row nothing can resolve to is a colour nobody will
+  // ever see, which is exactly what the era test refuses.
+  { abbr: 'ATL', through: 2019, key: 'ATL08' },
   { abbr: 'LVA', through: 2023, key: 'LVA18' },
+  { abbr: 'LAS', through: 2020, key: 'LAS97' },
+  { abbr: 'CHI', through: 2019, key: 'CHI06' },
+  { abbr: 'SAS', through: 2013, key: 'SAS' },
+  { abbr: 'SAS', through: 2017, key: 'SAS14' },
 ];
 
 /**
@@ -609,6 +703,60 @@ export function canonicalTeam(abbr) {
  * read. Two copies of this rule drifting apart is an override that silently
  * does nothing.
  */
+/**
+ * Franchises that MOVED OR WERE RENAMED, and where they went.
+ *
+ * FRANCHISE_ERAS already covers a club that restyled in place — TOR09 is listed
+ * under TOR, SEA06 under OKC — because an era is a season range belonging to a
+ * franchise. These four are not eras of anybody: they are the club's own old
+ * identity in another city, so nothing lists them and they resolve to nothing.
+ *
+ * It matters because a targeted pack asks "is this card THIS franchise's?", and
+ * without these a New Jersey Nets card is nobody's. See `currentFranchise`.
+ */
+export const RELOCATED_TO = {
+  NJN: 'BKN',  // New Jersey Nets -> Brooklyn, 2012
+  NOH: 'NOP',  // New Orleans Hornets -> Pelicans, 2013
+  VAN: 'MEM',  // Vancouver Grizzlies -> Memphis, 2001
+  WSB: 'WAS',  // Washington Bullets -> Wizards, 1997
+  SEA: 'OKC',  // Seattle SuperSonics -> Oklahoma City, 2008
+  CHB: 'CHA',  // Charlotte Bobcats -> renamed Hornets, 2014
+};
+
+/** Era key -> the franchise that owns it, inverted from FRANCHISE_ERAS once. */
+const ERA_OWNER = (() => {
+  const out = {};
+  for (const [franchise, eras] of Object.entries(FRANCHISE_ERAS)) {
+    for (const era of eras) out[era.key] = franchise;
+  }
+  return out;
+})();
+
+/**
+ * WHICH LIVE FRANCHISE A CARD BELONGS TO, whatever era it prints.
+ *
+ * Three cases in order, and the order is the whole function: an era key belongs
+ * to the franchise that declared it, a relocation belongs to where it went, and
+ * anything else is already a current code (possibly under a Basketball-Reference
+ * spelling, which is what canonicalTeam is for).
+ *
+ * THE ERA LOOKUP FEEDS THE RELOCATION LOOKUP, and it has to. FRANCHISE_ERAS is
+ * keyed by the franchise as it was NAMED at the time, so SEA06 is listed under
+ * SEA and CHB04 under CHB — both of which have since moved. Resolving the era
+ * and stopping would hand back a franchise that no longer exists.
+ *
+ * NBA ONLY. The WNBA has its own era table and its own relocations, resolved by
+ * `franchiseOf` in scripts/cardgen/wnba/wnbaRewardCandidates.js — and the two
+ * leagues share codes (ATL, CHI, MIN, PHO, WAS all exist in both), so one
+ * resolver across both would silently mix them.
+ */
+export function currentFranchise(team) {
+  const code = String(team ?? '').toUpperCase();
+  if (!code) return null;
+  const owner = Object.hasOwn(ERA_OWNER, code) ? ERA_OWNER[code] : canonicalTeam(code);
+  return Object.hasOwn(RELOCATED_TO, owner) ? RELOCATED_TO[owner] : owner;
+}
+
 export function canonicalTeamFor(abbr, { league } = {}) {
   if (league === 'WNBA') return String(abbr ?? '').toUpperCase();
   return canonicalTeam(abbr);

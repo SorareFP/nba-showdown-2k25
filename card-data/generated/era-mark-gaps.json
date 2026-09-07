@@ -1,0 +1,176 @@
+{
+ "generatedAt": "2026-09-04T18:22:04.760Z",
+ "total": 16,
+ "gaps": [
+  {
+   "code": "UTA",
+   "since": 2023,
+   "seasons": [
+    2002,
+    2005,
+    2018,
+    2019,
+    2021
+   ],
+   "cards": [
+    {
+     "set": "super-season",
+     "name": "Andrei Kirilenko",
+     "season": 2005,
+     "label": "2004-05"
+    },
+    {
+     "set": "super-season",
+     "name": "Jordan Clarkson",
+     "season": 2021,
+     "label": "2020-21"
+    },
+    {
+     "set": "super-season",
+     "name": "Royce O'Neale",
+     "season": 2021,
+     "label": "2020-21"
+    },
+    {
+     "set": "super-season",
+     "name": "Rudy Gobert",
+     "season": 2019,
+     "label": "2018-19"
+    },
+    {
+     "set": "rookie",
+     "name": "Donovan Mitchell",
+     "season": 2018,
+     "label": "2017-18"
+    },
+    {
+     "set": "rookie",
+     "name": "Royce O'Neale",
+     "season": 2018,
+     "label": "2017-18"
+    },
+    {
+     "set": "team-rewards",
+     "name": "John Stockton",
+     "season": 2002,
+     "label": "2001-02"
+    }
+   ],
+   "team": {
+    "name": "Jazz",
+    "city": "Utah",
+    "primary": "#330072",
+    "secondary": "#010101",
+    "logo": "/logos/UTA.png"
+   }
+  },
+  {
+   "code": "PHI",
+   "since": 2016,
+   "seasons": [
+    1977,
+    1990,
+    2010,
+    2012,
+    2015
+   ],
+   "cards": [
+    {
+     "set": "super-season",
+     "name": "Charles Barkley",
+     "season": 1990,
+     "label": "1989-90"
+    },
+    {
+     "set": "rookie",
+     "name": "Jerami Grant",
+     "season": 2015,
+     "label": "2014-15"
+    },
+    {
+     "set": "rookie",
+     "name": "Jrue Holiday",
+     "season": 2010,
+     "label": "2009-10"
+    },
+    {
+     "set": "rookie",
+     "name": "Nikola Vučević",
+     "season": 2012,
+     "label": "2011-12"
+    },
+    {
+     "set": "team-rewards",
+     "name": "Julius Erving",
+     "season": 1977,
+     "label": "1976-77"
+    }
+   ],
+   "team": {
+    "name": "76ers",
+    "city": "Philadelphia",
+    "primary": "#1D4289",
+    "secondary": "#C8102E",
+    "logo": "/logos/PHI.png"
+   }
+  },
+  {
+   "code": "DET",
+   "since": 2018,
+   "seasons": [
+    1987,
+    1992,
+    1997
+   ],
+   "cards": [
+    {
+     "set": "super-season",
+     "name": "Dennis Rodman",
+     "season": 1992,
+     "label": "1991-92"
+    },
+    {
+     "set": "super-season",
+     "name": "Grant Hill",
+     "season": 1997,
+     "label": "1996-97"
+    },
+    {
+     "set": "rookie",
+     "name": "Dennis Rodman",
+     "season": 1987,
+     "label": "1986-87"
+    }
+   ],
+   "team": {
+    "name": "Pistons",
+    "city": "Detroit",
+    "primary": "#1D4289",
+    "secondary": "#C8102E",
+    "logo": "/logos/DET.png"
+   }
+  },
+  {
+   "code": "MIL",
+   "since": 2016,
+   "seasons": [
+    2014
+   ],
+   "cards": [
+    {
+     "set": "rookie",
+     "name": "Giannis Antetokounmpo",
+     "season": 2014,
+     "label": "2013-14"
+    }
+   ],
+   "team": {
+    "name": "Bucks",
+    "city": "Milwaukee",
+    "primary": "#2C5234",
+    "secondary": "#DDCBA4",
+    "logo": "/logos/MIL.png"
+   }
+  }
+ ]
+}

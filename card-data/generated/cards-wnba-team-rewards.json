@@ -1,0 +1,960 @@
+{
+ "generatedAt": "2026-09-05T02:29:59.164Z",
+ "set": "wnba-team-rewards",
+ "provisional": true,
+ "sources": {
+  "roster": "card-data/wnba-team-rewards-2026.json — 13 franchises; Golden State and Toronto stay coins-only",
+  "statLine": "that season's own row for that team, from the cached full-league tables",
+  "skill": "the fitted BPM equivalent, same model as the WNBA Super Season set",
+  "pricing": "play value against the base set, like every special set",
+  "unlock": "collect the franchise named by rewardGoal"
+ },
+ "cards": [
+  {
+   "id": "Tamika_Catchings",
+   "name": "Tamika Catchings",
+   "team": "IND",
+   "statRowTeam": "IND",
+   "pos": "F",
+   "speed": 15,
+   "power": 15,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 1,
+   "defBoost": 3,
+   "salary": 1400,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 20,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2012,
+   "seasonLabel": "2012",
+   "games": 34,
+   "mpg": 30.5,
+   "minutes": 1036,
+   "bbrefId": "catchta01w",
+   "metrics": {
+    "bpmHat": 9.47,
+    "obpmHat": 6.46,
+    "dbpmHat": 3.01,
+    "seasonZ": 0,
+    "per": 27.3,
+    "ws": 7.8,
+    "wsPer40": 0.301,
+    "tsPct": 0.552,
+    "pts100": 30.6
+   },
+   "provisional": false,
+   "rewardFor": "IND",
+   "rewardGoal": "wnba-team-IND"
+  },
+  {
+   "id": "Cappie_Pondexter",
+   "name": "Cappie Pondexter",
+   "team": "NYL03",
+   "statRowTeam": "NYL",
+   "pos": "G",
+   "speed": 18,
+   "power": 10,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": 2,
+   "defBoost": 0,
+   "salary": 1320,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 7,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 13,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 14,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2010,
+   "seasonLabel": "2010",
+   "games": 34,
+   "mpg": 34.3,
+   "minutes": 1167,
+   "bbrefId": "pondeca01w",
+   "metrics": {
+    "bpmHat": 6.31,
+    "obpmHat": 6.53,
+    "dbpmHat": -0.21,
+    "seasonZ": 0,
+    "per": 24.6,
+    "ws": 7.3,
+    "wsPer40": 0.252,
+    "tsPct": 0.604,
+    "pts100": 33.4
+   },
+   "provisional": false,
+   "rewardFor": "NYL",
+   "rewardGoal": "wnba-team-NYL"
+  },
+  {
+   "id": "Seimone_Augustus",
+   "name": "Seimone Augustus",
+   "team": "MIN99",
+   "statRowTeam": "MIN",
+   "pos": "G-F",
+   "speed": 16,
+   "power": 11,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": -1,
+   "salary": 1250,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 7,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 13,
+     "pts": 3,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 21,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2007,
+   "seasonLabel": "2007",
+   "games": 34,
+   "mpg": 32.1,
+   "minutes": 1093,
+   "bbrefId": "augusse01w",
+   "metrics": {
+    "bpmHat": 5.56,
+    "obpmHat": 6.59,
+    "dbpmHat": -1.03,
+    "seasonZ": 0,
+    "per": 27.4,
+    "ws": 6.1,
+    "wsPer40": 0.224,
+    "tsPct": 0.583,
+    "pts100": 36.1
+   },
+   "provisional": false,
+   "rewardFor": "MIN",
+   "rewardGoal": "wnba-team-MIN"
+  },
+  {
+   "id": "Becky_Hammon",
+   "name": "Becky Hammon",
+   "team": "SAS",
+   "statRowTeam": "SAS",
+   "pos": "G",
+   "speed": 19,
+   "power": 8,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": 2,
+   "defBoost": -1,
+   "salary": 1190,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 14,
+     "hi": 21,
+     "pts": 3,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2009,
+   "seasonLabel": "2009",
+   "games": 31,
+   "mpg": 33.8,
+   "minutes": 1049,
+   "schedule": 34,
+   "bbrefId": "hammobe01w",
+   "metrics": {
+    "bpmHat": 5.48,
+    "obpmHat": 6.01,
+    "dbpmHat": -0.53,
+    "seasonZ": 1.69,
+    "per": 23.5,
+    "ws": 4.5,
+    "wsPer40": 0.171,
+    "tsPct": 0.593,
+    "pts100": 30.8
+   },
+   "provisional": false,
+   "set": "wnba-team-rewards",
+   "badges": [
+    "super-season"
+   ],
+   "migratedFrom": {
+    "set": "wnba-super-season",
+    "id": "Becky_Hammon"
+   },
+   "rewardFor": "LVA",
+   "rewardGoal": "wnba-team-LVA",
+   "bandException": "Ten dollars under the legendary floor at $1190. A migrated card is NOT repriced -- it keeps the salary its own set gave it -- so the alternative is un-migrating her and printing a second Becky Hammon a year apart, which is the duplicate the migration exists to prevent. The same size of exception Philadelphia gets for Erving."
+  },
+  {
+   "id": "Angel_McCoughtry",
+   "name": "Angel McCoughtry",
+   "team": "ATL08",
+   "statRowTeam": "ATL",
+   "pos": "F-G",
+   "speed": 12,
+   "power": 11,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": -1,
+   "defBoost": 1,
+   "salary": 1110,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 21,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2018,
+   "seasonLabel": "2018",
+   "games": 29,
+   "mpg": 27.6,
+   "minutes": 799,
+   "bbrefId": "mccouan01w",
+   "metrics": {
+    "bpmHat": 2.55,
+    "obpmHat": 1.59,
+    "dbpmHat": 0.97,
+    "seasonZ": 0,
+    "per": 19.1,
+    "ws": 2.4,
+    "wsPer40": 0.121,
+    "tsPct": 0.512,
+    "pts100": 30.1
+   },
+   "provisional": false,
+   "rewardFor": "ATL",
+   "rewardGoal": "wnba-team-ATL"
+  },
+  {
+   "id": "Chamique_Holdsclaw",
+   "name": "Chamique Holdsclaw",
+   "team": "WAS98",
+   "statRowTeam": "WAS",
+   "pos": "F",
+   "speed": 11,
+   "power": 14,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": -1,
+   "defBoost": 0,
+   "salary": 1100,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    }
+   ],
+   "league": "WNBA",
+   "season": 2004,
+   "seasonLabel": "2004",
+   "games": 23,
+   "mpg": 34.8,
+   "minutes": 801,
+   "bbrefId": "holdsch01w",
+   "metrics": {
+    "bpmHat": 3.95,
+    "obpmHat": 3.74,
+    "dbpmHat": 0.21,
+    "seasonZ": 0,
+    "per": 24,
+    "ws": 3,
+    "wsPer40": 0.151,
+    "tsPct": 0.474,
+    "pts100": 31.3
+   },
+   "provisional": false,
+   "rewardFor": "WAS",
+   "rewardGoal": "wnba-team-WAS"
+  },
+  {
+   "id": "Cheryl_Ford",
+   "name": "Cheryl Ford",
+   "team": "DET2",
+   "statRowTeam": "DET",
+   "pos": "F",
+   "speed": 10,
+   "power": 17,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": -6,
+   "defBoost": 2,
+   "salary": 1010,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 7,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 99,
+     "pts": 2,
+     "reb": 2,
+     "ast": 0
+    }
+   ],
+   "league": "WNBA",
+   "season": 2006,
+   "seasonLabel": "2006",
+   "games": 32,
+   "mpg": 28.7,
+   "minutes": 919,
+   "bbrefId": "fordch01w",
+   "metrics": {
+    "bpmHat": 5.92,
+    "obpmHat": 3.76,
+    "dbpmHat": 2.16,
+    "seasonZ": 0,
+    "per": 24.9,
+    "ws": 6.6,
+    "wsPer40": 0.287,
+    "tsPct": 0.55,
+    "pts100": 25.6
+   },
+   "provisional": false,
+   "rewardFor": "DAL",
+   "rewardGoal": "wnba-team-DAL"
+  },
+  {
+   "id": "Epiphanny_Prince",
+   "name": "Epiphanny Prince",
+   "team": "CHI06",
+   "statRowTeam": "CHI",
+   "pos": "G",
+   "speed": 17,
+   "power": 10,
+   "shotLine": 15,
+   "paintBoost": -1,
+   "threePtBoost": 3,
+   "defBoost": 1,
+   "salary": 940,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 21,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2013,
+   "seasonLabel": "2013",
+   "games": 31,
+   "mpg": 30,
+   "minutes": 930,
+   "bbrefId": "princep01w",
+   "metrics": {
+    "bpmHat": 5.31,
+    "obpmHat": 4.33,
+    "dbpmHat": 0.98,
+    "seasonZ": 0,
+    "per": 20.3,
+    "ws": 4.7,
+    "wsPer40": 0.204,
+    "tsPct": 0.52,
+    "pts100": 26.1
+   },
+   "provisional": false,
+   "rewardFor": "CHI",
+   "rewardGoal": "wnba-team-CHI"
+  },
+  {
+   "id": "Nykesha_Sales",
+   "name": "Nykesha Sales",
+   "team": "CON03",
+   "statRowTeam": "CON",
+   "pos": "F-G",
+   "speed": 13,
+   "power": 12,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 3,
+   "defBoost": 1,
+   "salary": 850,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 14,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 20,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2006,
+   "seasonLabel": "2006",
+   "games": 22,
+   "mpg": 27.7,
+   "minutes": 609,
+   "bbrefId": "salesny01w",
+   "metrics": {
+    "bpmHat": 4.41,
+    "obpmHat": 3.46,
+    "dbpmHat": 0.95,
+    "seasonZ": 0,
+    "per": 19.2,
+    "ws": 2.9,
+    "wsPer40": 0.192,
+    "tsPct": 0.518,
+    "pts100": 24.6
+   },
+   "provisional": false,
+   "rewardFor": "CON",
+   "rewardGoal": "wnba-team-CON"
+  },
+  {
+   "id": "DeWanna_Bonner",
+   "name": "DeWanna Bonner",
+   "team": "PHO11",
+   "statRowTeam": "PHO",
+   "pos": "F-G",
+   "speed": 13,
+   "power": 11,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": -2,
+   "defBoost": 1,
+   "salary": 810,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 21,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2014,
+   "seasonLabel": "2014",
+   "games": 34,
+   "mpg": 29.2,
+   "minutes": 994,
+   "bbrefId": "bonnede01w",
+   "metrics": {
+    "bpmHat": 3.21,
+    "obpmHat": 1.71,
+    "dbpmHat": 1.5,
+    "seasonZ": 0,
+    "per": 16.4,
+    "ws": 3.9,
+    "wsPer40": 0.159,
+    "tsPct": 0.55,
+    "pts100": 18.5
+   },
+   "provisional": false,
+   "rewardFor": "PHO",
+   "rewardGoal": "wnba-team-PHO"
+  },
+  {
+   "id": "Tamecka_Dixon",
+   "name": "Tamecka Dixon",
+   "team": "LAS97",
+   "statRowTeam": "LAS",
+   "pos": "G",
+   "speed": 15,
+   "power": 9,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 1,
+   "salary": 780,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 7,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 13,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 21,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 1997,
+   "seasonLabel": "1997",
+   "games": 27,
+   "mpg": 26.5,
+   "minutes": 715,
+   "bbrefId": "dixonta01w",
+   "metrics": {
+    "bpmHat": 3.42,
+    "obpmHat": 2.42,
+    "dbpmHat": 1,
+    "seasonZ": 0,
+    "per": 19.2,
+    "ws": 3.3,
+    "wsPer40": 0.183,
+    "tsPct": 0.55,
+    "pts100": 23.2
+   },
+   "provisional": false,
+   "rewardFor": "LAS",
+   "rewardGoal": "wnba-team-LAS"
+  },
+  {
+   "id": "Sue_Bird",
+   "name": "Sue Bird",
+   "team": "SEA00",
+   "statRowTeam": "SEA",
+   "pos": "G",
+   "speed": 17,
+   "power": 7,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": 2,
+   "defBoost": 0,
+   "salary": 740,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 7,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 15,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 21,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2009,
+   "seasonLabel": "2009",
+   "games": 31,
+   "mpg": 35.5,
+   "minutes": 1101,
+   "bbrefId": "birdsu01w",
+   "metrics": {
+    "bpmHat": 2.64,
+    "obpmHat": 2.22,
+    "dbpmHat": 0.42,
+    "seasonZ": 0,
+    "per": 15.6,
+    "ws": 3.1,
+    "wsPer40": 0.112,
+    "tsPct": 0.502,
+    "pts100": 19.7
+   },
+   "provisional": false,
+   "rewardFor": "SEA",
+   "rewardGoal": "wnba-team-SEA"
+  },
+  {
+   "id": "Sophia_Witherspoon",
+   "name": "Sophia Witherspoon",
+   "team": "PORF",
+   "statRowTeam": "POR",
+   "pos": "G",
+   "speed": 14,
+   "power": 8,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 3,
+   "defBoost": -1,
+   "salary": 730,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 21,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2000,
+   "seasonLabel": "2000",
+   "games": 32,
+   "mpg": 33.2,
+   "minutes": 1061,
+   "bbrefId": "witheso01w",
+   "metrics": {
+    "bpmHat": 1.67,
+    "obpmHat": 2.99,
+    "dbpmHat": -1.32,
+    "seasonZ": 0,
+    "per": 17.3,
+    "ws": 3,
+    "wsPer40": 0.112,
+    "tsPct": 0.517,
+    "pts100": 28.5
+   },
+   "provisional": false,
+   "rewardFor": "POR",
+   "rewardGoal": "wnba-team-POR"
+  }
+ ]
+}

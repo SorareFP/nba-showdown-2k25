@@ -1,2790 +1,2790 @@
 [
- {
-  "name": "Tyrese Maxey",
-  "team": "PHI",
-  "pos": "PG",
-  "games": 70,
-  "mpg": 38,
-  "personId": 1630178
- },
- {
-  "name": "Amen Thompson",
-  "team": "HOU",
-  "pos": "PG",
-  "games": 79,
-  "mpg": 37.4,
-  "personId": 1641708
- },
- {
-  "name": "Kevin Durant",
-  "team": "HOU",
-  "pos": "SF",
-  "games": 78,
-  "mpg": 36.4,
-  "personId": 201142
- },
- {
-  "name": "Luka Dončić",
-  "team": "LAL",
-  "pos": "PG",
-  "games": 64,
-  "mpg": 35.8,
-  "personId": 1629029
- },
- {
-  "name": "Trey Murphy III",
-  "team": "NOP",
-  "pos": "SF",
-  "games": 66,
-  "mpg": 35.5,
-  "personId": 1630530
- },
- {
-  "name": "Jamal Murray",
-  "team": "DEN",
-  "pos": "PG",
-  "games": 75,
-  "mpg": 35.4,
-  "personId": 1627750
- },
- {
-  "name": "Jalen Johnson",
-  "team": "ATL",
-  "pos": "SF",
-  "games": 72,
-  "mpg": 35.2,
-  "personId": 1630552
- },
- {
-  "name": "Jabari Smith Jr.",
-  "team": "HOU",
-  "pos": "PF",
-  "games": 77,
-  "mpg": 35.1,
-  "personId": 1631095
- },
- {
-  "name": "Anthony Edwards",
-  "team": "MIN",
-  "pos": "SG",
-  "games": 61,
-  "mpg": 35,
-  "personId": 1630162
- },
- {
-  "name": "Jalen Brunson",
-  "team": "NYK",
-  "pos": "PG",
-  "games": 74,
-  "mpg": 35,
-  "personId": 1628973
- },
- {
-  "name": "VJ Edgecombe",
-  "team": "PHI",
-  "pos": "SG",
-  "games": 75,
-  "mpg": 35,
-  "personId": 1642845
- },
- {
-  "name": "Nikola Jokić",
-  "team": "DEN",
-  "pos": "C",
-  "games": 65,
-  "mpg": 34.8,
-  "personId": 203999
- },
- {
-  "name": "James Harden",
-  "team": "CLE",
-  "pos": "PG",
-  "games": 70,
-  "mpg": 34.8,
-  "personId": 201935
- },
- {
-  "name": "Paolo Banchero",
-  "team": "ORL",
-  "pos": "PF",
-  "games": 72,
-  "mpg": 34.8,
-  "personId": 1631094
- },
- {
-  "name": "Austin Reaves",
-  "team": "LAL",
-  "pos": "SG",
-  "games": 51,
-  "mpg": 34.5,
-  "personId": 1630559
- },
- {
-  "name": "Keegan Murray",
-  "team": "SAC",
-  "pos": "PF",
-  "games": 23,
-  "mpg": 34.5,
-  "personId": 1631099
- },
- {
-  "name": "Jaylen Brown",
-  "team": "PHI",
-  "pos": "SF",
-  "games": 71,
-  "mpg": 34.4,
-  "personId": 1627759
- },
- {
-  "name": "Lauri Markkanen",
-  "team": "UTA",
-  "pos": "PF",
-  "games": 42,
-  "mpg": 34.4,
-  "personId": 1628374
- },
- {
-  "name": "Derrick White",
-  "team": "BOS",
-  "pos": "SG",
-  "games": 77,
-  "mpg": 34.1,
-  "personId": 1628401
- },
- {
-  "name": "Cade Cunningham",
-  "team": "DET",
-  "pos": "PG",
-  "games": 64,
-  "mpg": 33.9,
-  "personId": 1630595
- },
- {
-  "name": "Brandon Ingram",
-  "team": "TOR",
-  "pos": "SF",
-  "games": 77,
-  "mpg": 33.8,
-  "personId": 1627742
- },
- {
-  "name": "Desmond Bane",
-  "team": "ORL",
-  "pos": "SG",
-  "games": 82,
-  "mpg": 33.6,
-  "personId": 1630217
- },
- {
-  "name": "Donovan Mitchell",
-  "team": "CLE",
-  "pos": "SG",
-  "games": 70,
-  "mpg": 33.5,
-  "personId": 1628378
- },
- {
-  "name": "Devin Booker",
-  "team": "PHX",
-  "pos": "SG",
-  "games": 64,
-  "mpg": 33.5,
-  "personId": 1626164
- },
- {
-  "name": "Cooper Flagg",
-  "team": "DAL",
-  "pos": "SF",
-  "games": 70,
-  "mpg": 33.5,
-  "personId": 1642843
- },
- {
-  "name": "Scottie Barnes",
-  "team": "TOR",
-  "pos": "PF",
-  "games": 80,
-  "mpg": 33.5,
-  "personId": 1630567
- },
- {
-  "name": "Nickeil Alexander-Walker",
-  "team": "ATL",
-  "pos": "SG",
-  "games": 78,
-  "mpg": 33.4,
-  "personId": 1629638
- },
- {
-  "name": "Deni Avdija",
-  "team": "POR",
-  "pos": "SF",
-  "games": 66,
-  "mpg": 33.3,
-  "personId": 1630166
- },
- {
-  "name": "Alperen Şengün",
-  "team": "HOU",
-  "pos": "C",
-  "games": 72,
-  "mpg": 33.3,
-  "personId": 1630578
- },
- {
-  "name": "Toumani Camara",
-  "team": "POR",
-  "pos": "PF",
-  "games": 82,
-  "mpg": 33.3,
-  "personId": 1641739
- },
- {
-  "name": "Shai Gilgeous-Alexander",
-  "team": "OKC",
-  "pos": "PG",
-  "games": 68,
-  "mpg": 33.2,
-  "personId": 1628983
- },
- {
-  "name": "Pascal Siakam",
-  "team": "IND",
-  "pos": "PF",
-  "games": 62,
-  "mpg": 33.2,
-  "personId": 1627783
- },
- {
-  "name": "LeBron James",
-  "team": "PHI",
-  "pos": "SF",
-  "games": 60,
-  "mpg": 33.2,
-  "personId": 2544
- },
- {
-  "name": "OG Anunoby",
-  "team": "NYK",
-  "pos": "PF",
-  "games": 67,
-  "mpg": 33.2,
-  "personId": 1628384
- },
- {
-  "name": "Dyson Daniels",
-  "team": "ATL",
-  "pos": "SG",
-  "games": 76,
-  "mpg": 33.2,
-  "personId": 1630700
- },
- {
-  "name": "Keyonte George",
-  "team": "UTA",
-  "pos": "PG",
-  "games": 54,
-  "mpg": 33.1,
-  "personId": 1641718
- },
- {
-  "name": "Julius Randle",
-  "team": "BKN",
-  "pos": "PF",
-  "games": 79,
-  "mpg": 33,
-  "personId": 203944
- },
- {
-  "name": "Mikal Bridges",
-  "team": "NYK",
-  "pos": "SF",
-  "games": 82,
-  "mpg": 32.8,
-  "personId": 1628969
- },
- {
-  "name": "Jayson Tatum",
-  "team": "BOS",
-  "pos": "PF",
-  "games": 16,
-  "mpg": 32.6,
-  "personId": 1628369
- },
- {
-  "name": "Michael Porter Jr.",
-  "team": "BKN",
-  "pos": "SF",
-  "games": 52,
-  "mpg": 32.5,
-  "personId": 1629008
- },
- {
-  "name": "Bam Adebayo",
-  "team": "MIA",
-  "pos": "C",
-  "games": 73,
-  "mpg": 32.4,
-  "personId": 1628389
- },
- {
-  "name": "Payton Pritchard",
-  "team": "BOS",
-  "pos": "PG",
-  "games": 79,
-  "mpg": 32.4,
-  "personId": 1630202
- },
- {
-  "name": "Kawhi Leonard",
-  "team": "LAC",
-  "pos": "SF",
-  "games": 65,
-  "mpg": 32.1,
-  "personId": 202695
- },
- {
-  "name": "Ryan Rollins",
-  "team": "MIL",
-  "pos": "PG",
-  "games": 74,
-  "mpg": 32.1,
-  "personId": 1631157
- },
- {
-  "name": "Josh Giddey",
-  "team": "CHI",
-  "pos": "PG",
-  "games": 54,
-  "mpg": 32.1,
-  "personId": 1630581
- },
- {
-  "name": "Evan Mobley",
-  "team": "CLE",
-  "pos": "PF",
-  "games": 65,
-  "mpg": 31.9,
-  "personId": 1630596
- },
- {
-  "name": "Immanuel Quickley",
-  "team": "TOR",
-  "pos": "PG",
-  "games": 70,
-  "mpg": 31.9,
-  "personId": 1630193
- },
- {
-  "name": "Christian Braun",
-  "team": "DEN",
-  "pos": "SG",
-  "games": 44,
-  "mpg": 31.8,
-  "personId": 1631128
- },
- {
-  "name": "Jaden McDaniels",
-  "team": "MIN",
-  "pos": "PF",
-  "games": 73,
-  "mpg": 31.7,
-  "personId": 1630183
- },
- {
-  "name": "Joel Embiid",
-  "team": "PHI",
-  "pos": "C",
-  "games": 38,
-  "mpg": 31.6,
-  "personId": 203954
- },
- {
-  "name": "Kon Knueppel",
-  "team": "CHA",
-  "pos": "SF",
-  "games": 81,
-  "mpg": 31.5,
-  "personId": 1642851
- },
- {
-  "name": "Kelly Oubre Jr.",
-  "team": "IND",
-  "pos": "SF",
-  "games": 50,
-  "mpg": 31.5,
-  "personId": 1626162
- },
- {
-  "name": "Zach LaVine",
-  "team": "SAC",
-  "pos": "SG",
-  "games": 39,
-  "mpg": 31.4,
-  "personId": 203897
- },
- {
-  "name": "Tyler Herro",
-  "team": "MIL",
-  "pos": "SG",
-  "games": 33,
-  "mpg": 31.3,
-  "personId": 1629639
- },
- {
-  "name": "Anthony Davis",
-  "team": "WAS",
-  "pos": "PF",
-  "games": 20,
-  "mpg": 31.3,
-  "personId": 203076
- },
- {
-  "name": "Andrew Nembhard",
-  "team": "IND",
-  "pos": "PG",
-  "games": 57,
-  "mpg": 31.3,
-  "personId": 1629614
- },
- {
-  "name": "Rudy Gobert",
-  "team": "MIN",
-  "pos": "C",
-  "games": 76,
-  "mpg": 31.3,
-  "personId": 203497
- },
- {
-  "name": "DeMar DeRozan",
-  "team": "SAC",
-  "pos": "PF",
-  "games": 77,
-  "mpg": 31.2,
-  "personId": 201942
- },
- {
-  "name": "Saddiq Bey",
-  "team": "NOP",
-  "pos": "SF",
-  "games": 72,
-  "mpg": 31.2,
-  "personId": 1630180
- },
- {
-  "name": "Jimmy Butler",
-  "team": "GSW",
-  "pos": "SF",
-  "games": 38,
-  "mpg": 31.1,
-  "personId": 202710
- },
- {
-  "name": "Karl-Anthony Towns",
-  "team": "NYK",
-  "pos": "C",
-  "games": 75,
-  "mpg": 31,
-  "personId": 1626157
- },
- {
-  "name": "De'Aaron Fox",
-  "team": "SAS",
-  "pos": "PG",
-  "games": 72,
-  "mpg": 31,
-  "personId": 1628368
- },
- {
-  "name": "Miles Bridges",
-  "team": "PHX",
-  "pos": "PF",
-  "games": 77,
-  "mpg": 31,
-  "personId": 1628970
- },
- {
-  "name": "Onyeka Okongwu",
-  "team": "ATL",
-  "pos": "C",
-  "games": 74,
-  "mpg": 31,
-  "personId": 1630168
- },
- {
-  "name": "P.J. Washington",
-  "team": "DAL",
-  "pos": "PF",
-  "games": 56,
-  "mpg": 31,
-  "personId": 1629023
- },
- {
-  "name": "Stephen Curry",
-  "team": "GSW",
-  "pos": "PG",
-  "games": 43,
-  "mpg": 30.9,
-  "personId": 201939
- },
- {
-  "name": "Paul George",
-  "team": "BOS",
-  "pos": "PF",
-  "games": 37,
-  "mpg": 30.7,
-  "personId": 202331
- },
- {
-  "name": "Devin Vassell",
-  "team": "SAS",
-  "pos": "SG",
-  "games": 67,
-  "mpg": 30.5,
-  "personId": 1630170
- },
- {
-  "name": "Cameron Johnson",
-  "team": "DEN",
-  "pos": "SF",
-  "games": 54,
-  "mpg": 30.5,
-  "personId": 1629661
- },
- {
-  "name": "Dillon Brooks",
-  "team": "PHX",
-  "pos": "SF",
-  "games": 56,
-  "mpg": 30.4,
-  "personId": 1628415
- },
- {
-  "name": "Donte DiVincenzo",
-  "team": "MIN",
-  "pos": "SG",
-  "games": 82,
-  "mpg": 30.4,
-  "personId": 1628978
- },
- {
-  "name": "Brandon Miller",
-  "team": "CHA",
-  "pos": "SF",
-  "games": 65,
-  "mpg": 30.3,
-  "personId": 1641706
- },
- {
-  "name": "Jaren Jackson Jr.",
-  "team": "UTA",
-  "pos": "C",
-  "games": 48,
-  "mpg": 30.3,
-  "personId": 1628991
- },
- {
-  "name": "RJ Barrett",
-  "team": "TOR",
-  "pos": "SF",
-  "games": 57,
-  "mpg": 30.3,
-  "personId": 1629628
- },
- {
-  "name": "Andrew Wiggins",
-  "team": "MIA",
-  "pos": "SF",
-  "games": 68,
-  "mpg": 30.3,
-  "personId": 203952
- },
- {
-  "name": "Josh Hart",
-  "team": "NYK",
-  "pos": "SF",
-  "games": 66,
-  "mpg": 30.2,
-  "personId": 1628404
- },
- {
-  "name": "Ivica Zubac",
-  "team": "IND",
-  "pos": "C",
-  "games": 48,
-  "mpg": 30.1,
-  "personId": 1627826
- },
- {
-  "name": "Franz Wagner",
-  "team": "ORL",
-  "pos": "SF",
-  "games": 34,
-  "mpg": 30,
-  "personId": 1630532
- },
- {
-  "name": "Bennedict Mathurin",
-  "team": "LAC",
-  "pos": "SF",
-  "games": 54,
-  "mpg": 30,
-  "personId": 1631097
- },
- {
-  "name": "Stephon Castle",
-  "team": "SAS",
-  "pos": "PG",
-  "games": 68,
-  "mpg": 30,
-  "personId": 1642264
- },
- {
-  "name": "Darius Garland",
-  "team": "LAC",
-  "pos": "PG",
-  "games": 45,
-  "mpg": 29.9,
-  "personId": 1629636
- },
- {
-  "name": "CJ McCollum",
-  "team": "ATL",
-  "pos": "PG",
-  "games": 76,
-  "mpg": 29.8,
-  "personId": 203468
- },
- {
-  "name": "Anthony Black",
-  "team": "ORL",
-  "pos": "PG",
-  "games": 64,
-  "mpg": 29.8,
-  "personId": 1641710
- },
- {
-  "name": "Zion Williamson",
-  "team": "NOP",
-  "pos": "PF",
-  "games": 62,
-  "mpg": 29.7,
-  "personId": 1629627
- },
- {
-  "name": "Jerami Grant",
-  "team": "MEM",
-  "pos": "PF",
-  "games": 57,
-  "mpg": 29.7,
-  "personId": 203924
- },
- {
-  "name": "Domantas Sabonis",
-  "team": "SAC",
-  "pos": "C",
-  "games": 19,
-  "mpg": 29.7,
-  "personId": 1627734
- },
- {
-  "name": "Aaron Nesmith",
-  "team": "IND",
-  "pos": "SF",
-  "games": 45,
-  "mpg": 29.7,
-  "personId": 1630174
- },
- {
-  "name": "Norman Powell",
-  "team": "CHI",
-  "pos": "SG",
-  "games": 58,
-  "mpg": 29.6,
-  "personId": 1626181
- },
- {
-  "name": "Peyton Watson",
-  "team": "CLE",
-  "pos": "SF",
-  "games": 54,
-  "mpg": 29.6,
-  "personId": 1631212
- },
- {
-  "name": "Naji Marshall",
-  "team": "DAL",
-  "pos": "SF",
-  "games": 74,
-  "mpg": 29.5,
-  "personId": 1630230
- },
- {
-  "name": "Shaedon Sharpe",
-  "team": "POR",
-  "pos": "SG",
-  "games": 50,
-  "mpg": 29.4,
-  "personId": 1631101
- },
- {
-  "name": "Jrue Holiday",
-  "team": "POR",
-  "pos": "PG",
-  "games": 53,
-  "mpg": 29.4,
-  "personId": 201950
- },
- {
-  "name": "Quentin Grimes",
-  "team": "LAL",
-  "pos": "SG",
-  "games": 75,
-  "mpg": 29.4,
-  "personId": 1629656
- },
- {
-  "name": "Wendell Carter Jr.",
-  "team": "ORL",
-  "pos": "C",
-  "games": 78,
-  "mpg": 29.3,
-  "personId": 1628976
- },
- {
-  "name": "Victor Wembanyama",
-  "team": "SAS",
-  "pos": "C",
-  "games": 64,
-  "mpg": 29.2,
-  "personId": 1641705
- },
- {
-  "name": "Matas Buzelis",
-  "team": "CHI",
-  "pos": "PF",
-  "games": 77,
-  "mpg": 29.2,
-  "personId": 1641824
- },
- {
-  "name": "Max Christie",
-  "team": "DAL",
-  "pos": "SG",
-  "games": 77,
-  "mpg": 29.1,
-  "personId": 1631108
- },
- {
-  "name": "A.J. Green",
-  "team": "MIL",
-  "pos": "SG",
-  "games": 78,
-  "mpg": 29.1,
-  "personId": 1631260
- },
- {
-  "name": "Kyshawn George",
-  "team": "WAS",
-  "pos": "SF",
-  "games": 48,
-  "mpg": 29,
-  "personId": 1642273
- },
- {
-  "name": "Giannis Antetokounmpo",
-  "team": "MIA",
-  "pos": "PF",
-  "games": 36,
-  "mpg": 28.9,
-  "personId": 203507
- },
- {
-  "name": "Chet Holmgren",
-  "team": "OKC",
-  "pos": "PF",
-  "games": 69,
-  "mpg": 28.9,
-  "personId": 1631096
- },
- {
-  "name": "Grayson Allen",
-  "team": "CHA",
-  "pos": "SG",
-  "games": 51,
-  "mpg": 28.8,
-  "personId": 1628960
- },
- {
-  "name": "Davion Mitchell",
-  "team": "MIA",
-  "pos": "PG",
-  "games": 70,
-  "mpg": 28.6,
-  "personId": 1630558
- },
- {
-  "name": "Ja Morant",
-  "team": "POR",
-  "pos": "PG",
-  "games": 20,
-  "mpg": 28.5,
-  "personId": 1629630
- },
- {
-  "name": "Brandin Podziemski",
-  "team": "GSW",
-  "pos": "SG",
-  "games": 82,
-  "mpg": 28.5,
-  "personId": 1641764
- },
- {
-  "name": "Collin Gillespie",
-  "team": "PHX",
-  "pos": "PG",
-  "games": 80,
-  "mpg": 28.5,
-  "personId": 1631221
- },
- {
-  "name": "Marcus Smart",
-  "team": "HOU",
-  "pos": "SG",
-  "games": 62,
-  "mpg": 28.5,
-  "personId": 203935
- },
- {
-  "name": "Jalen Williams",
-  "team": "OKC",
-  "pos": "SG",
-  "games": 33,
-  "mpg": 28.4,
-  "personId": 1631114
- },
- {
-  "name": "Nikola Vučević",
-  "team": "ORL",
-  "pos": "C",
-  "games": 64,
-  "mpg": 28.4,
-  "personId": 202696
- },
- {
-  "name": "Royce O'Neale",
-  "team": "CHA",
-  "pos": "SF",
-  "games": 78,
-  "mpg": 28.4,
-  "personId": 1626220
- },
- {
-  "name": "Herbert Jones",
-  "team": "NOP",
-  "pos": "SF",
-  "games": 56,
-  "mpg": 28.4,
-  "personId": 1630529
- },
- {
-  "name": "Jaime Jaquez Jr.",
-  "team": "MIL",
-  "pos": "SF",
-  "games": 75,
-  "mpg": 28.3,
-  "personId": 1631170
- },
- {
-  "name": "Rui Hachimura",
-  "team": "LAC",
-  "pos": "PF",
-  "games": 68,
-  "mpg": 28.3,
-  "personId": 1629060
- },
- {
-  "name": "Jalen Duren",
-  "team": "DET",
-  "pos": "C",
-  "games": 70,
-  "mpg": 28.2,
-  "personId": 1631105
- },
- {
-  "name": "LaMelo Ball",
-  "team": "MIN",
-  "pos": "PG",
-  "games": 72,
-  "mpg": 28,
-  "personId": 1630163
- },
- {
-  "name": "Aaron Gordon",
-  "team": "DEN",
-  "pos": "PF",
-  "games": 36,
-  "mpg": 27.9,
-  "personId": 203932
- },
- {
-  "name": "Santi Aldama",
-  "team": "DAL",
-  "pos": "PF",
-  "games": 43,
-  "mpg": 27.9,
-  "personId": 1630583
- },
- {
-  "name": "Dejounte Murray",
-  "team": "NOP",
-  "pos": "PG",
-  "games": 14,
-  "mpg": 27.8,
-  "personId": 1627749
- },
- {
-  "name": "Nic Claxton",
-  "team": "CHI",
-  "pos": "C",
-  "games": 69,
-  "mpg": 27.8,
-  "personId": 1629651
- },
- {
-  "name": "Tobias Harris",
-  "team": "SAS",
-  "pos": "PF",
-  "games": 63,
-  "mpg": 27.7,
-  "personId": 202699
- },
- {
-  "name": "Bub Carrington",
-  "team": "WAS",
-  "pos": "PG",
-  "games": 82,
-  "mpg": 27.7,
-  "personId": 1642267
- },
- {
-  "name": "Ace Bailey",
-  "team": "UTA",
-  "pos": "SF",
-  "games": 72,
-  "mpg": 27.6,
-  "personId": 1642846
- },
- {
-  "name": "Jalen Suggs",
-  "team": "ORL",
-  "pos": "PG",
-  "games": 57,
-  "mpg": 27.6,
-  "personId": 1630591
- },
- {
-  "name": "Julian Champagnie",
-  "team": "SAS",
-  "pos": "SF",
-  "games": 82,
-  "mpg": 27.6,
-  "personId": 1630577
- },
- {
-  "name": "Draymond Green",
-  "team": "GSW",
-  "pos": "PF",
-  "games": 68,
-  "mpg": 27.5,
-  "personId": 203110
- },
- {
-  "name": "Duncan Robinson",
-  "team": "DET",
-  "pos": "SG",
-  "games": 77,
-  "mpg": 27.4,
-  "personId": 1629130
- },
- {
-  "name": "Ayo Dosunmu",
-  "team": "MIN",
-  "pos": "SG",
-  "games": 69,
-  "mpg": 27.3,
-  "personId": 1630245
- },
- {
-  "name": "Alex Sarr",
-  "team": "WAS",
-  "pos": "C",
-  "games": 48,
-  "mpg": 27.2,
-  "personId": 1642259
- },
- {
-  "name": "Deandre Ayton",
-  "team": "WAS",
-  "pos": "C",
-  "games": 72,
-  "mpg": 27.2,
-  "personId": 1629028
- },
- {
-  "name": "Donovan Clingan",
-  "team": "POR",
-  "pos": "C",
-  "games": 77,
-  "mpg": 27.2,
-  "personId": 1642270
- },
- {
-  "name": "Kris Dunn",
-  "team": "LAC",
-  "pos": "PG",
-  "games": 82,
-  "mpg": 27.2,
-  "personId": 1627739
- },
- {
-  "name": "Jarrett Allen",
-  "team": "CLE",
-  "pos": "C",
-  "games": 56,
-  "mpg": 27.1,
-  "personId": 1628386
- },
- {
-  "name": "John Collins",
-  "team": "DET",
-  "pos": "PF",
-  "games": 69,
-  "mpg": 27.1,
-  "personId": 1628381
- },
- {
-  "name": "Tre Jones",
-  "team": "CHI",
-  "pos": "PG",
-  "games": 65,
-  "mpg": 27,
-  "personId": 1630200
- },
- {
-  "name": "Noah Clowney",
-  "team": "BKN",
-  "pos": "PF",
-  "games": 66,
-  "mpg": 27,
-  "personId": 1641730
- },
- {
-  "name": "Derrick Jones Jr.",
-  "team": "LAC",
-  "pos": "SF",
-  "games": 50,
-  "mpg": 27,
-  "personId": 1627884
- },
- {
-  "name": "Jaylon Tyson",
-  "team": "CLE",
-  "pos": "SG",
-  "games": 66,
-  "mpg": 26.9,
-  "personId": 1642281
- },
- {
-  "name": "Myles Turner",
-  "team": "MIL",
-  "pos": "C",
-  "games": 71,
-  "mpg": 26.9,
-  "personId": 1626167
- },
- {
-  "name": "Isaac Okoro",
-  "team": "CHI",
-  "pos": "SG",
-  "games": 63,
-  "mpg": 26.9,
-  "personId": 1630171
- },
- {
-  "name": "Luguentz Dort",
-  "team": "ATL",
-  "pos": "SF",
-  "games": 69,
-  "mpg": 26.8,
-  "personId": 1629652
- },
- {
-  "name": "Tim Hardaway Jr.",
-  "team": "MIA",
-  "pos": "SG",
-  "games": 80,
-  "mpg": 26.6,
-  "personId": 203501
- },
- {
-  "name": "Cason Wallace",
-  "team": "OKC",
-  "pos": "SG",
-  "games": 77,
-  "mpg": 26.6,
-  "personId": 1641717
- },
- {
-  "name": "Sam Merrill",
-  "team": "CLE",
-  "pos": "SG",
-  "games": 52,
-  "mpg": 26.5,
-  "personId": 1630241
- },
- {
-  "name": "Maxime Raynaud",
-  "team": "SAC",
-  "pos": "C",
-  "games": 74,
-  "mpg": 26.5,
-  "personId": 1642875
- },
- {
-  "name": "Jaylen Wells",
-  "team": "MEM",
-  "pos": "SG",
-  "games": 69,
-  "mpg": 26.4,
-  "personId": 1642377
- },
- {
-  "name": "Pelle Larsson",
-  "team": "MIA",
-  "pos": "SG",
-  "games": 70,
-  "mpg": 26.4,
-  "personId": 1641796
- },
- {
-  "name": "Jusuf Nurkić",
-  "team": "UTA",
-  "pos": "C",
-  "games": 41,
-  "mpg": 26.4,
-  "personId": 203994
- },
- {
-  "name": "Miles McBride",
-  "team": "NYK",
-  "pos": "SG",
-  "games": 41,
-  "mpg": 26.3,
-  "personId": 1630540
- },
- {
-  "name": "Reed Sheppard",
-  "team": "HOU",
-  "pos": "SG",
-  "games": 82,
-  "mpg": 26.2,
-  "personId": 1642263
- },
- {
-  "name": "Kyle Kuzma",
-  "team": "MIL",
-  "pos": "PF",
-  "games": 69,
-  "mpg": 26.2,
-  "personId": 1628398
- },
- {
-  "name": "Bilal Coulibaly",
-  "team": "WAS",
-  "pos": "SG",
-  "games": 56,
-  "mpg": 26.2,
-  "personId": 1641731
- },
- {
-  "name": "De'Andre Hunter",
-  "team": "SAC",
-  "pos": "SF",
-  "games": 45,
-  "mpg": 26.1,
-  "personId": 1629631
- },
- {
-  "name": "Naz Reid",
-  "team": "CHA",
-  "pos": "C",
-  "games": 77,
-  "mpg": 26.1,
-  "personId": 1629675
- },
- {
-  "name": "Ausar Thompson",
-  "team": "DET",
-  "pos": "SF",
-  "games": 73,
-  "mpg": 26,
-  "personId": 1641709
- },
- {
-  "name": "Moussa Diabaté",
-  "team": "CHA",
-  "pos": "C",
-  "games": 73,
-  "mpg": 26,
-  "personId": 1631217
- },
- {
-  "name": "Jalen Green",
-  "team": "PHX",
-  "pos": "SG",
-  "games": 32,
-  "mpg": 25.9,
-  "personId": 1630224
- },
- {
-  "name": "Jeremiah Fears",
-  "team": "NOP",
-  "pos": "PG",
-  "games": 82,
-  "mpg": 25.8,
-  "personId": 1642847
- },
- {
-  "name": "Cedric Coward",
-  "team": "MEM",
-  "pos": "SG",
-  "games": 62,
-  "mpg": 25.8,
-  "personId": 1642907
- },
- {
-  "name": "Zach Edey",
-  "team": "MEM",
-  "pos": "C",
-  "games": 11,
-  "mpg": 25.8,
-  "personId": 1641744
- },
- {
-  "name": "Ajay Mitchell",
-  "team": "OKC",
-  "pos": "SG",
-  "games": 57,
-  "mpg": 25.8,
-  "personId": 1642349
- },
- {
-  "name": "Tari Eason",
-  "team": "HOU",
-  "pos": "PF",
-  "games": 60,
-  "mpg": 25.8,
-  "personId": 1631106
- },
- {
-  "name": "Harrison Barnes",
-  "team": "SAS",
-  "pos": "PF",
-  "games": 77,
-  "mpg": 25.8,
-  "personId": 203084
- },
- {
-  "name": "Moses Moody",
-  "team": "GSW",
-  "pos": "SG",
-  "games": 60,
-  "mpg": 25.7,
-  "personId": 1630541
- },
- {
-  "name": "Isaiah Collier",
-  "team": "UTA",
-  "pos": "PG",
-  "games": 59,
-  "mpg": 25.7,
-  "personId": 1642268
- },
- {
-  "name": "Jarace Walker",
-  "team": "IND",
-  "pos": "PF",
-  "games": 76,
-  "mpg": 25.7,
-  "personId": 1641716
- },
- {
-  "name": "Trae Young",
-  "team": "WAS",
-  "pos": "PG",
-  "games": 15,
-  "mpg": 25.6,
-  "personId": 1629027
- },
- {
-  "name": "Neemias Queta",
-  "team": "BOS",
-  "pos": "C",
-  "games": 76,
-  "mpg": 25.3,
-  "personId": 1629674
- },
- {
-  "name": "Egor Dëmin",
-  "team": "BKN",
-  "pos": "PG",
-  "games": 52,
-  "mpg": 25.2,
-  "personId": 1642856
- },
- {
-  "name": "Nique Clifford",
-  "team": "SAC",
-  "pos": "SG",
-  "games": 75,
-  "mpg": 25.1,
-  "personId": 1642363
- },
- {
-  "name": "Jake LaRavia",
-  "team": "LAL",
-  "pos": "PF",
-  "games": 82,
-  "mpg": 25.1,
-  "personId": 1631222
- },
- {
-  "name": "Coby White",
-  "team": "CHA",
-  "pos": "SG",
-  "games": 50,
-  "mpg": 25,
-  "personId": 1629632
- },
- {
-  "name": "Derik Queen",
-  "team": "NOP",
-  "pos": "C",
-  "games": 81,
-  "mpg": 25,
-  "personId": 1642852
- },
- {
-  "name": "Jakob Poeltl",
-  "team": "TOR",
-  "pos": "C",
-  "games": 46,
-  "mpg": 25,
-  "personId": 1627751
- },
- {
-  "name": "Anfernee Simons",
-  "team": "PHI",
-  "pos": "SG",
-  "games": 55,
-  "mpg": 24.9,
-  "personId": 1629014
- },
- {
-  "name": "Sam Hauser",
-  "team": "BOS",
-  "pos": "PF",
-  "games": 78,
-  "mpg": 24.8,
-  "personId": 1630573
- },
- {
-  "name": "Tristan Da Silva",
-  "team": "ORL",
-  "pos": "SF",
-  "games": 77,
-  "mpg": 24.7,
-  "personId": 1641783
- },
- {
-  "name": "Bruce Brown",
-  "team": "DEN",
-  "pos": "SG",
-  "games": 82,
-  "mpg": 24.4,
-  "personId": 1628971
- },
- {
-  "name": "Cody Williams",
-  "team": "MIN",
-  "pos": "SG",
-  "games": 67,
-  "mpg": 24.3,
-  "personId": 1642262
- },
- {
-  "name": "Terance Mann",
-  "team": "BKN",
-  "pos": "SG",
-  "games": 63,
-  "mpg": 24.3,
-  "personId": 1629611
- },
- {
-  "name": "Bobby Portis",
-  "team": "MIA",
-  "pos": "PF",
-  "games": 67,
-  "mpg": 24.2,
-  "personId": 1626171
- },
- {
-  "name": "Dennis Schröder",
-  "team": "CHA",
-  "pos": "PG",
-  "games": 70,
-  "mpg": 24.2,
-  "personId": 203471
- },
- {
-  "name": "Isaiah Hartenstein",
-  "team": "OKC",
-  "pos": "C",
-  "games": 47,
-  "mpg": 24.2,
-  "personId": 1628392
- },
- {
-  "name": "Tre Johnson",
-  "team": "WAS",
-  "pos": "SG",
-  "games": 60,
-  "mpg": 24.1,
-  "personId": 1642848
- },
- {
-  "name": "Precious Achiuwa",
-  "team": "SAC",
-  "pos": "C",
-  "games": 73,
-  "mpg": 23.9,
-  "personId": 1630173
- },
- {
-  "name": "Cam Spencer",
-  "team": "MEM",
-  "pos": "SG",
-  "games": 72,
-  "mpg": 23.8,
-  "personId": 1642285
- },
- {
-  "name": "Dominick Barlow",
-  "team": "PHI",
-  "pos": "PF",
-  "games": 71,
-  "mpg": 23.8,
-  "personId": 1631230
- },
- {
-  "name": "Collin Sexton",
-  "team": "LAL",
-  "pos": "SG",
-  "games": 68,
-  "mpg": 23.7,
-  "personId": 1629012
- },
- {
-  "name": "Mark Williams",
-  "team": "PHX",
-  "pos": "C",
-  "games": 60,
-  "mpg": 23.6,
-  "personId": 1631109
- },
- {
-  "name": "Brice Sensabaugh",
-  "team": "UTA",
-  "pos": "SF",
-  "games": 75,
-  "mpg": 23.5,
-  "personId": 1641729
- },
- {
-  "name": "Kyle Filipowski",
-  "team": "UTA",
-  "pos": "C",
-  "games": 77,
-  "mpg": 23.4,
-  "personId": 1642271
- },
- {
-  "name": "Kris Murray",
-  "team": "MEM",
-  "pos": "SF",
-  "games": 57,
-  "mpg": 23.4,
-  "personId": 1631200
- },
- {
-  "name": "Keldon Johnson",
-  "team": "SAS",
-  "pos": "SF",
-  "games": 82,
-  "mpg": 23.3,
-  "personId": 1629640
- },
- {
-  "name": "Svi Mykhailiuk",
-  "team": "UTA",
-  "pos": "SF",
-  "games": 50,
-  "mpg": 23.1,
-  "personId": 1629004
- },
- {
-  "name": "De'Anthony Melton",
-  "team": "GSW",
-  "pos": "PG",
-  "games": 49,
-  "mpg": 23,
-  "personId": 1629001
- },
- {
-  "name": "Landry Shamet",
-  "team": "NYK",
-  "pos": "SG",
-  "games": 51,
-  "mpg": 23,
-  "personId": 1629013
- },
- {
-  "name": "Ziaire Williams",
-  "team": "LAL",
-  "pos": "SF",
-  "games": 56,
-  "mpg": 22.9,
-  "personId": 1630533
- },
- {
-  "name": "Khris Middleton",
-  "team": "WAS",
-  "pos": "SF",
-  "games": 63,
-  "mpg": 22.8,
-  "personId": 203114
- },
- {
-  "name": "Isaiah Stewart",
-  "team": "MEM",
-  "pos": "C",
-  "games": 58,
-  "mpg": 22.7,
-  "personId": 1630191
- },
- {
-  "name": "Ty Jerome",
-  "team": "MEM",
-  "pos": "SG",
-  "games": 15,
-  "mpg": 22.6,
-  "personId": 1629660
- },
- {
-  "name": "Dylan Harper",
-  "team": "SAS",
-  "pos": "SG",
-  "games": 69,
-  "mpg": 22.6,
-  "personId": 1642844
- },
- {
-  "name": "Jamal Shead",
-  "team": "TOR",
-  "pos": "PG",
-  "games": 82,
-  "mpg": 22.6,
-  "personId": 1642347
- },
- {
-  "name": "Jordan Goodwin",
-  "team": "PHX",
-  "pos": "PG",
-  "games": 70,
-  "mpg": 22.5,
-  "personId": 1630692
- },
- {
-  "name": "Sion James",
-  "team": "CHA",
-  "pos": "SG",
-  "games": 82,
-  "mpg": 22.5,
-  "personId": 1642883
- },
- {
-  "name": "Kevin Huerter",
-  "team": "DET",
-  "pos": "SF",
-  "games": 69,
-  "mpg": 22.4,
-  "personId": 1628989
- },
- {
-  "name": "Zaccharie Risacher",
-  "team": "DAL",
-  "pos": "SF",
-  "games": 67,
-  "mpg": 22.4,
-  "personId": 1642258
- },
- {
-  "name": "Dean Wade",
-  "team": "PHI",
-  "pos": "PF",
-  "games": 59,
-  "mpg": 22.3,
-  "personId": 1629731
- },
- {
-  "name": "Brandon Williams",
-  "team": "GSW",
-  "pos": "PG",
-  "games": 66,
-  "mpg": 22.2,
-  "personId": 1630314
- },
- {
-  "name": "Nolan Traoré",
-  "team": "BKN",
-  "pos": "PG",
-  "games": 56,
-  "mpg": 22.2,
-  "personId": 1642849
- },
- {
-  "name": "Kel'el Ware",
-  "team": "MIL",
-  "pos": "C",
-  "games": 77,
-  "mpg": 22.1,
-  "personId": 1642276
- },
- {
-  "name": "Jock Landale",
-  "team": "ATL",
-  "pos": "C",
-  "games": 68,
-  "mpg": 22.1,
-  "personId": 1629111
- },
- {
-  "name": "Will Riley",
-  "team": "WAS",
-  "pos": "SF",
-  "games": 74,
-  "mpg": 22.1,
-  "personId": 1642860
- },
- {
-  "name": "Jordan Miller",
-  "team": "LAC",
-  "pos": "SF",
-  "games": 60,
-  "mpg": 22.1,
-  "personId": 1641757
- },
- {
-  "name": "Spencer Jones",
-  "team": "DEN",
-  "pos": "SF",
-  "games": 64,
-  "mpg": 22.1,
-  "personId": 1642461
- },
- {
-  "name": "Malik Monk",
-  "team": "SAC",
-  "pos": "SG",
-  "games": 62,
-  "mpg": 22,
-  "personId": 1628370
- },
- {
-  "name": "Oso Ighodaro",
-  "team": "PHX",
-  "pos": "PF",
-  "games": 82,
-  "mpg": 22,
-  "personId": 1642345
- },
- {
-  "name": "Sandro Mamukelashvili",
-  "team": "LAL",
-  "pos": "C",
-  "games": 80,
-  "mpg": 21.9,
-  "personId": 1630572
- },
- {
-  "name": "Collin Murray-Boyles",
-  "team": "TOR",
-  "pos": "PF",
-  "games": 57,
-  "mpg": 21.9,
-  "personId": 1642867
- },
- {
-  "name": "Aaron Wiggins",
-  "team": "ATL",
-  "pos": "SG",
-  "games": 65,
-  "mpg": 21.8,
-  "personId": 1630598
- },
- {
-  "name": "Brook Lopez",
-  "team": "LAC",
-  "pos": "C",
-  "games": 75,
-  "mpg": 21.8,
-  "personId": 201572
- },
- {
-  "name": "Klay Thompson",
-  "team": "MIA",
-  "pos": "SF",
-  "games": 69,
-  "mpg": 21.7,
-  "personId": 202691
- },
- {
-  "name": "Daniel Gafford",
-  "team": "DAL",
-  "pos": "C",
-  "games": 55,
-  "mpg": 21.7,
-  "personId": 1629655
- },
- {
-  "name": "Luke Kennard",
-  "team": "PHX",
-  "pos": "SG",
-  "games": 78,
-  "mpg": 21.6,
-  "personId": 1628379
- },
- {
-  "name": "Al Horford",
-  "team": "GSW",
-  "pos": "C",
-  "games": 45,
-  "mpg": 21.5,
-  "personId": 201143
- },
- {
-  "name": "GG Jackson II",
-  "team": "MEM",
-  "pos": "PF",
-  "games": 55,
-  "mpg": 21.4,
-  "personId": 1641713
- },
- {
-  "name": "Vít Krejčí",
-  "team": "POR",
-  "pos": "PG",
-  "games": 65,
-  "mpg": 21.4,
-  "personId": 1630249
- },
- {
-  "name": "Ryan Kalkbrenner",
-  "team": "CHA",
-  "pos": "C",
-  "games": 69,
-  "mpg": 21.4,
-  "personId": 1641750
- },
- {
-  "name": "Ben Sheppard",
-  "team": "IND",
-  "pos": "SG",
-  "games": 65,
-  "mpg": 21.4,
-  "personId": 1641767
- },
- {
-  "name": "Kentavious Caldwell-Pope",
-  "team": "PHI",
-  "pos": "SG",
-  "games": 51,
-  "mpg": 21.3,
-  "personId": 203484
- },
- {
-  "name": "Isaiah Joe",
-  "team": "DET",
-  "pos": "SG",
-  "games": 71,
-  "mpg": 21.2,
-  "personId": 1630198
- },
- {
-  "name": "Gary Trent Jr.",
-  "team": "MIL",
-  "pos": "SG",
-  "games": 65,
-  "mpg": 21.2,
-  "personId": 1629018
- },
- {
-  "name": "Jay Huff",
-  "team": "IND",
-  "pos": "C",
-  "games": 82,
-  "mpg": 21,
-  "personId": 1630643
- },
- {
-  "name": "Bryce McGowens",
-  "team": "NOP",
-  "pos": "SG",
-  "games": 42,
-  "mpg": 21,
-  "personId": 1631121
- },
- {
-  "name": "Luke Kornet",
-  "team": "SAS",
-  "pos": "C",
-  "games": 68,
-  "mpg": 21,
-  "personId": 1628436
- },
- {
-  "name": "Drake Powell",
-  "team": "BKN",
-  "pos": "SG",
-  "games": 63,
-  "mpg": 21,
-  "personId": 1642962
- },
- {
-  "name": "Danny Wolf",
-  "team": "BKN",
-  "pos": "PF",
-  "games": 57,
-  "mpg": 20.8,
-  "personId": 1642874
- },
- {
-  "name": "Ben Saraf",
-  "team": "BKN",
-  "pos": "SG",
-  "games": 44,
-  "mpg": 20.8,
-  "personId": 1642879
- },
- {
-  "name": "Caleb Love",
-  "team": "PHI",
-  "pos": "SG",
-  "games": 49,
-  "mpg": 20.7,
-  "personId": 1631126
- },
- {
-  "name": "Jalen Smith",
-  "team": "CHI",
-  "pos": "C",
-  "games": 53,
-  "mpg": 20.7,
-  "personId": 1630188
- },
- {
-  "name": "Jamir Watkins",
-  "team": "WAS",
-  "pos": "SG",
-  "games": 50,
-  "mpg": 20.6,
-  "personId": 1642364
- },
- {
-  "name": "Dylan Cardwell",
-  "team": "SAC",
-  "pos": "C",
-  "games": 44,
-  "mpg": 20.6,
-  "personId": 1642928
- },
- {
-  "name": "Gui Santos",
-  "team": "GSW",
-  "pos": "PF",
-  "games": 68,
-  "mpg": 20.5,
-  "personId": 1630611
- },
- {
-  "name": "Ja'Kobe Walter",
-  "team": "TOR",
-  "pos": "SG",
-  "games": 72,
-  "mpg": 20.5,
-  "personId": 1642266
- },
- {
-  "name": "Patrick Williams",
-  "team": "CHI",
-  "pos": "PF",
-  "games": 72,
-  "mpg": 20.5,
-  "personId": 1630172
- },
- {
-  "name": "Keon Ellis",
-  "team": "BKN",
-  "pos": "SG",
-  "games": 72,
-  "mpg": 20.5,
-  "personId": 1631165
- },
- {
-  "name": "Walter Clayton",
-  "team": "MEM",
-  "pos": "PG",
-  "games": 69,
-  "mpg": 20.4,
-  "personId": 1642383
- },
- {
-  "name": "Javon Small",
-  "team": "MEM",
-  "pos": "PG",
-  "games": 41,
-  "mpg": 20.2,
-  "personId": 1642914
- },
- {
-  "name": "Daniss Jenkins",
-  "team": "DET",
-  "pos": "PG",
-  "games": 72,
-  "mpg": 20.2,
-  "personId": 1642450
- },
- {
-  "name": "Marvin Bagley III",
-  "team": "DEN",
-  "pos": "PF",
-  "games": 60,
-  "mpg": 20,
-  "personId": 1628963
- },
- {
-  "name": "Justin Champagnie",
-  "team": "WAS",
-  "pos": "SF",
-  "games": 69,
-  "mpg": 20,
-  "personId": 1630551
- },
- {
-  "name": "Will Richard",
-  "team": "GSW",
-  "pos": "SG",
-  "games": 69,
-  "mpg": 20,
-  "personId": 1642954
- },
- {
-  "name": "Ron Holland",
-  "team": "DET",
-  "pos": "SF",
-  "games": 78,
-  "mpg": 19.9,
-  "personId": null
- },
- {
-  "name": "Jose Alvarado",
-  "team": "NYK",
-  "pos": "PG",
-  "games": 69,
-  "mpg": 19.9,
-  "personId": 1630631
- },
- {
-  "name": "Kobe Sanders",
-  "team": "LAC",
-  "pos": "SG",
-  "games": 68,
-  "mpg": 19.9,
-  "personId": 1642920
- },
- {
-  "name": "Kyle Anderson",
-  "team": "TOR",
-  "pos": "SF",
-  "games": 43,
-  "mpg": 19.8,
-  "personId": 203937
- },
- {
-  "name": "Yves Missi",
-  "team": "NOP",
-  "pos": "C",
-  "games": 66,
-  "mpg": 19.7,
-  "personId": 1642274
- },
- {
-  "name": "Jericho Sims",
-  "team": "MIL",
-  "pos": "C",
-  "games": 67,
-  "mpg": 19.7,
-  "personId": 1630579
- },
- {
-  "name": "Jaylin Williams",
-  "team": "OKC",
-  "pos": "PF",
-  "games": 65,
-  "mpg": 19.6,
-  "personId": 1631119
- },
- {
-  "name": "Mitchell Robinson",
-  "team": "BOS",
-  "pos": "C",
-  "games": 60,
-  "mpg": 19.6,
-  "personId": 1629011
- },
- {
-  "name": "Ryan Nembhard",
-  "team": "ATL",
-  "pos": "PG",
-  "games": 60,
-  "mpg": 19.5,
-  "personId": 1642948
- },
- {
-  "name": "Andre Drummond",
-  "team": "NYK",
-  "pos": "C",
-  "games": 63,
-  "mpg": 19.5,
-  "personId": 203083
- },
- {
-  "name": "Ryan Dunn",
-  "team": "PHX",
-  "pos": "SF",
-  "games": 70,
-  "mpg": 19.4,
-  "personId": 1642346
- },
- {
-  "name": "Micah Potter",
-  "team": "POR",
-  "pos": "C",
-  "games": 47,
-  "mpg": 19.3,
-  "personId": 1630695
- },
- {
-  "name": "Ousmane Dieng",
-  "team": "MIL",
-  "pos": "C",
-  "games": 57,
-  "mpg": 19.3,
-  "personId": 1631172
- },
- {
-  "name": "Caris LeVert",
-  "team": "MIL",
-  "pos": "SG",
-  "games": 60,
-  "mpg": 19.2,
-  "personId": 1627747
- },
- {
-  "name": "Sidy Cissoko",
-  "team": "POR",
-  "pos": "SF",
-  "games": 75,
-  "mpg": 19.1,
-  "personId": 1631321
- },
- {
-  "name": "Taylor Hendricks",
-  "team": "MEM",
-  "pos": "PF",
-  "games": 59,
-  "mpg": 18.9,
-  "personId": 1641707
- },
- {
-  "name": "Day'Ron Sharpe",
-  "team": "BKN",
-  "pos": "C",
-  "games": 62,
-  "mpg": 18.7,
-  "personId": 1630549
- },
- {
-  "name": "Olivier-Maxence Prosper",
-  "team": "MEM",
-  "pos": "PF",
-  "games": 53,
-  "mpg": 18.6,
-  "personId": 1641765
- },
- {
-  "name": "Corey Kispert",
-  "team": "ATL",
-  "pos": "SF",
-  "games": 58,
-  "mpg": 18.6,
-  "personId": 1630557
- },
- {
-  "name": "Pat Spencer",
-  "team": "PHX",
-  "pos": "PG",
-  "games": 66,
-  "mpg": 18.6,
-  "personId": 1630311
- },
- {
-  "name": "Baylor Scheierman",
-  "team": "BOS",
-  "pos": "SG",
-  "games": 77,
-  "mpg": 18.6,
-  "personId": 1631248
- },
- {
-  "name": "Mike Conley",
-  "team": "BOS",
-  "pos": "PG",
-  "games": 54,
-  "mpg": 18.4,
-  "personId": 201144
- },
- {
-  "name": "Quenton Jackson",
-  "team": "IND",
-  "pos": "PG",
-  "games": 49,
-  "mpg": 18.3,
-  "personId": 1631245
- },
- {
-  "name": "Jaxson Hayes",
-  "team": "UTA",
-  "pos": "C",
-  "games": 66,
-  "mpg": 18.3,
-  "personId": 1629637
- },
- {
-  "name": "Alex Caruso",
-  "team": "OKC",
-  "pos": "SG",
-  "games": 56,
-  "mpg": 18.2,
-  "personId": 1627936
- },
- {
-  "name": "Craig Porter Jr.",
-  "team": "CLE",
-  "pos": "PG",
-  "games": 64,
-  "mpg": 17.9,
-  "personId": 1641854
- },
- {
-  "name": "Jordan Clarkson",
-  "team": "NYK",
-  "pos": "SG",
-  "games": 72,
-  "mpg": 17.8,
-  "personId": 203903
- },
- {
-  "name": "Kasparas Jakučionis",
-  "team": "MIL",
-  "pos": "PG",
-  "games": 53,
-  "mpg": 17.8,
-  "personId": 1642857
- },
- {
-  "name": "Jordan Walsh",
-  "team": "BOS",
-  "pos": "PF",
-  "games": 68,
-  "mpg": 17.8,
-  "personId": 1641775
- },
- {
-  "name": "Javonte Green",
-  "team": "DET",
-  "pos": "SG",
-  "games": 82,
-  "mpg": 17.6,
-  "personId": 1629750
- },
- {
-  "name": "Nicolas Batum",
-  "team": "LAC",
-  "pos": "PF",
-  "games": 74,
-  "mpg": 17.5,
-  "personId": 201587
- },
- {
-  "name": "Adem Bona",
-  "team": "PHI",
-  "pos": "C",
-  "games": 71,
-  "mpg": 17.4,
-  "personId": 1641737
- },
- {
-  "name": "Josh Okogie",
-  "team": "UTA",
-  "pos": "SG",
-  "games": 78,
-  "mpg": 17.4,
-  "personId": 1629006
- },
- {
-  "name": "Jarred Vanderbilt",
-  "team": "LAL",
-  "pos": "PF",
-  "games": 65,
-  "mpg": 17.4,
-  "personId": 1629020
- },
- {
-  "name": "Jared McCain",
-  "team": "OKC",
-  "pos": "SG",
-  "games": 67,
-  "mpg": 17.3,
-  "personId": 1642272
- },
- {
-  "name": "Quinten Post",
-  "team": "MEM",
-  "pos": "PF",
-  "games": 67,
-  "mpg": 17.3,
-  "personId": 1642366
- },
- {
-  "name": "Anthony Gill",
-  "team": "WAS",
-  "pos": "PF",
-  "games": 55,
-  "mpg": 17.3,
-  "personId": 1630264
- },
- {
-  "name": "T.J. McConnell",
-  "team": "IND",
-  "pos": "PG",
-  "games": 56,
-  "mpg": 17.2,
-  "personId": 204456
- },
- {
-  "name": "Nikola Jović",
-  "team": "MIA",
-  "pos": "PF",
-  "games": 47,
-  "mpg": 17.2,
-  "personId": 1631107
- },
- {
-  "name": "Sharife Cooper",
-  "team": "WAS",
-  "pos": "PG",
-  "games": 41,
-  "mpg": 17.1,
-  "personId": 1630536
- },
- {
-  "name": "Robert Williams",
-  "team": "POR",
-  "pos": "C",
-  "games": 59,
-  "mpg": 17.1,
-  "personId": 1629057
- },
- {
-  "name": "Josh Minott",
-  "team": "BKN",
-  "pos": "PF",
-  "games": 49,
-  "mpg": 17,
-  "personId": 1631169
- },
- {
-  "name": "Tyrese Martin",
-  "team": "PHI",
-  "pos": "SG",
-  "games": 46,
-  "mpg": 16.9,
-  "personId": 1631213
- },
- {
-  "name": "Simone Fontecchio",
-  "team": "MIA",
-  "pos": "SF",
-  "games": 70,
-  "mpg": 16.8,
-  "personId": 1631323
- },
- {
-  "name": "Rayan Rupert",
-  "team": "PHI",
-  "pos": "SG",
-  "games": 64,
-  "mpg": 16.8,
-  "personId": 1641712
- },
- {
-  "name": "Bones Hyland",
-  "team": "MIN",
-  "pos": "PG",
-  "games": 71,
-  "mpg": 16.6,
-  "personId": 1630538
- },
- {
-  "name": "Gabe Vincent",
-  "team": "ATL",
-  "pos": "PG",
-  "games": 53,
-  "mpg": 16.6,
-  "personId": 1629216
- },
- {
-  "name": "Isaiah Jackson",
-  "team": "LAC",
-  "pos": "C",
-  "games": 55,
-  "mpg": 16.5,
-  "personId": 1630543
- },
- {
-  "name": "Jevon Carter",
-  "team": "ORL",
-  "pos": "PG",
-  "games": 53,
-  "mpg": 16.4,
-  "personId": 1628975
- },
- {
-  "name": "Trendon Watford",
-  "team": "NOP",
-  "pos": "PF",
-  "games": 53,
-  "mpg": 16.3,
-  "personId": 1630570
- },
- {
-  "name": "Dru Smith",
-  "team": "MIA",
-  "pos": "SG",
-  "games": 70,
-  "mpg": 16.3,
-  "personId": 1630696
- },
- {
-  "name": "Luka Garza",
-  "team": "BOS",
-  "pos": "C",
-  "games": 69,
-  "mpg": 16.2,
-  "personId": 1630568
- },
- {
-  "name": "Buddy Hield",
-  "team": "ATL",
-  "pos": "SG",
-  "games": 51,
-  "mpg": 16.1,
-  "personId": 1627741
- },
- {
-  "name": "Jalen Pickett",
-  "team": "LAC",
-  "pos": "SG",
-  "games": 50,
-  "mpg": 16.1,
-  "personId": 1629618
- },
- {
-  "name": "Jalen Wilson",
-  "team": "ATL",
-  "pos": "PF",
-  "games": 54,
-  "mpg": 15.9,
-  "personId": 1630592
- },
- {
-  "name": "Jaden Hardy",
-  "team": "LAL",
-  "pos": "SG",
-  "games": 57,
-  "mpg": 15.8,
-  "personId": 1630702
- },
- {
-  "name": "Kobe Brown",
-  "team": "IND",
-  "pos": "PF",
-  "games": 61,
-  "mpg": 15.8,
-  "personId": 1641738
- },
- {
-  "name": "Nae'Qwan Tomlin",
-  "team": "CLE",
-  "pos": "PF",
-  "games": 64,
-  "mpg": 15.7,
-  "personId": 1641772
- },
- {
-  "name": "Pete Nance",
-  "team": "MIL",
-  "pos": "PF",
-  "games": 47,
-  "mpg": 15.7,
-  "personId": 1631250
- },
- {
-  "name": "Josh Green",
-  "team": "UTA",
-  "pos": "SG",
-  "games": 58,
-  "mpg": 15.7,
-  "personId": 1630182
- },
- {
-  "name": "Leonard Miller",
-  "team": "CHI",
-  "pos": "SF",
-  "games": 46,
-  "mpg": 15.6,
-  "personId": 1631159
- },
- {
-  "name": "Gary Payton II",
-  "team": "GSW",
-  "pos": "SG",
-  "games": 73,
-  "mpg": 15.6,
-  "personId": 1627780
- },
- {
-  "name": "Kenrich Williams",
-  "team": "OKC",
-  "pos": "PF",
-  "games": 56,
-  "mpg": 15.3,
-  "personId": 1629026
- },
- {
-  "name": "Justin Edwards",
-  "team": "PHI",
-  "pos": "SF",
-  "games": 64,
-  "mpg": 15.3,
-  "personId": 1642348
- },
- {
-  "name": "Mouhamed Gueye",
-  "team": "ATL",
-  "pos": "PF",
-  "games": 77,
-  "mpg": 15.3,
-  "personId": 1631243
- },
- {
-  "name": "Goga Bitadze",
-  "team": "ORL",
-  "pos": "C",
-  "games": 64,
-  "mpg": 15.2,
-  "personId": 1629048
- },
- {
-  "name": "Julian Strawther",
-  "team": "DEN",
-  "pos": "SG",
-  "games": 57,
-  "mpg": 15.1,
-  "personId": 1631124
- },
- {
-  "name": "Micah Peavy",
-  "team": "NOP",
-  "pos": "SG",
-  "games": 61,
-  "mpg": 15,
-  "personId": 1642877
- },
- {
-  "name": "Rob Dillingham",
-  "team": "CHI",
-  "pos": "PG",
-  "games": 65,
-  "mpg": 14.9,
-  "personId": 1642265
- },
- {
-  "name": "Caleb Martin",
-  "team": "DAL",
-  "pos": "SF",
-  "games": 58,
-  "mpg": 14.8,
-  "personId": 1628997
- },
- {
-  "name": "Karlo Matković",
-  "team": "NOP",
-  "pos": "PF",
-  "games": 62,
-  "mpg": 14.7,
-  "personId": 1631255
- },
- {
-  "name": "Nick Richards",
-  "team": "MIA",
-  "pos": "C",
-  "games": 48,
-  "mpg": 14.6,
-  "personId": 1630208
- },
- {
-  "name": "Hugo González",
-  "team": "BOS",
-  "pos": "SF",
-  "games": 74,
-  "mpg": 14.6,
-  "personId": 1642864
- },
- {
-  "name": "Tyus Jones",
-  "team": "DEN",
-  "pos": "PG",
-  "games": 67,
-  "mpg": 14.6,
-  "personId": 1626145
- },
- {
-  "name": "Dwight Powell",
-  "team": "DAL",
-  "pos": "C",
-  "games": 63,
-  "mpg": 14.3,
-  "personId": 203939
- },
- {
-  "name": "Gradey Dick",
-  "team": "TOR",
-  "pos": "SG",
-  "games": 76,
-  "mpg": 14,
-  "personId": 1641711
- },
- {
-  "name": "Jamaree Bouyea",
-  "team": "PHX",
-  "pos": "PG",
-  "games": 46,
-  "mpg": 14,
-  "personId": 1631123
- },
- {
-  "name": "Paul Reed",
-  "team": "DET",
-  "pos": "C",
-  "games": 65,
-  "mpg": 13.9,
-  "personId": 1630194
- },
- {
-  "name": "Gary Harris",
-  "team": "DET",
-  "pos": "SG",
-  "games": 48,
-  "mpg": 13.8,
-  "personId": 203914
- },
- {
-  "name": "Tristan Vukcevic",
-  "team": "WAS",
-  "pos": "C",
-  "games": 49,
-  "mpg": 13.7,
-  "personId": 1641774
- },
- {
-  "name": "Aaron Holiday",
-  "team": "HOU",
-  "pos": "PG",
-  "games": 57,
-  "mpg": 13.7,
-  "personId": 1628988
- },
- {
-  "name": "Jordan Hawkins",
-  "team": "NOP",
-  "pos": "SG",
-  "games": 51,
-  "mpg": 13.6,
-  "personId": 1641722
- },
- {
-  "name": "Jonas Valančiūnas",
-  "team": "DEN",
-  "pos": "C",
-  "games": 65,
-  "mpg": 13.4,
-  "personId": null
- },
- {
-  "name": "Drew Eubanks",
-  "team": "SAC",
-  "pos": "C",
-  "games": 42,
-  "mpg": 13.1,
-  "personId": null
- },
- {
-  "name": "Jaylen Clark",
-  "team": "MIN",
-  "pos": "SG",
-  "games": 68,
-  "mpg": 13.1,
-  "personId": 1641740
- },
- {
-  "name": "Noah Penda",
-  "team": "ORL",
-  "pos": "SF",
-  "games": 59,
-  "mpg": 12.8,
-  "personId": 1642869
- },
- {
-  "name": "Jett Howard",
-  "team": "DAL",
-  "pos": "SF",
-  "games": 55,
-  "mpg": 12.6,
-  "personId": 1641724
- },
- {
-  "name": "Tre Mann",
-  "team": "WAS",
-  "pos": "PG",
-  "games": 53,
-  "mpg": 12.6,
-  "personId": 1630544
- },
- {
-  "name": "Terrence Shannon Jr.",
-  "team": "MIN",
-  "pos": "SG",
-  "games": 43,
-  "mpg": 12.5,
-  "personId": 1630545
- },
- {
-  "name": "Clint Capela",
-  "team": "HOU",
-  "pos": "C",
-  "games": 75,
-  "mpg": 12.3,
-  "personId": 203991
- },
- {
-  "name": "Thomas Bryant",
-  "team": "CLE",
-  "pos": "C",
-  "games": 60,
-  "mpg": 12.2,
-  "personId": 1628418
- },
- {
-  "name": "Jamal Cain",
-  "team": "ORL",
-  "pos": "SF",
-  "games": 40,
-  "mpg": 12.2,
-  "personId": 1631288
- },
- {
-  "name": "Rasheer Fleming",
-  "team": "PHX",
-  "pos": "PF",
-  "games": 55,
-  "mpg": 12.2,
-  "personId": 1642853
- },
- {
-  "name": "Zeke Nnaji",
-  "team": "DEN",
-  "pos": "PF",
-  "games": 52,
-  "mpg": 12,
-  "personId": 1630192
- },
- {
-  "name": "Tyrese Haliburton",
-  "team": "IND",
-  "pos": "PG",
-  "games": 73,
-  "mpg": 33.5,
-  "carriedFrom": 2025,
-  "personId": 1630169
- },
- {
-  "name": "Kyrie Irving",
-  "team": "DAL",
-  "pos": "PG",
-  "games": 50,
-  "mpg": 36.1,
-  "carriedFrom": 2025,
-  "personId": 202681
- },
- {
-  "name": "Damian Lillard",
-  "team": "POR",
-  "pos": "PG",
-  "games": 58,
-  "mpg": 36.1,
-  "carriedFrom": 2025,
-  "personId": 203081
- },
- {
-  "name": "Fred VanVleet",
-  "team": "HOU",
-  "pos": "PG",
-  "games": 60,
-  "mpg": 35.2,
-  "carriedFrom": 2025,
-  "personId": 1627832
- }
+  {
+    "name": "Tyrese Maxey",
+    "team": "PHI",
+    "pos": "PG",
+    "games": 70,
+    "mpg": 38,
+    "personId": 1630178
+  },
+  {
+    "name": "Amen Thompson",
+    "team": "HOU",
+    "pos": "PG",
+    "games": 79,
+    "mpg": 37.4,
+    "personId": 1641708
+  },
+  {
+    "name": "Kevin Durant",
+    "team": "HOU",
+    "pos": "SF",
+    "games": 78,
+    "mpg": 36.4,
+    "personId": 201142
+  },
+  {
+    "name": "Luka Dončić",
+    "team": "LAL",
+    "pos": "PG",
+    "games": 64,
+    "mpg": 35.8,
+    "personId": 1629029
+  },
+  {
+    "name": "Trey Murphy III",
+    "team": "NOP",
+    "pos": "SF",
+    "games": 66,
+    "mpg": 35.5,
+    "personId": 1630530
+  },
+  {
+    "name": "Jamal Murray",
+    "team": "DEN",
+    "pos": "PG",
+    "games": 75,
+    "mpg": 35.4,
+    "personId": 1627750
+  },
+  {
+    "name": "Jalen Johnson",
+    "team": "ATL",
+    "pos": "SF",
+    "games": 72,
+    "mpg": 35.2,
+    "personId": 1630552
+  },
+  {
+    "name": "Jabari Smith Jr.",
+    "team": "HOU",
+    "pos": "PF",
+    "games": 77,
+    "mpg": 35.1,
+    "personId": 1631095
+  },
+  {
+    "name": "Anthony Edwards",
+    "team": "MIN",
+    "pos": "SG",
+    "games": 61,
+    "mpg": 35,
+    "personId": 1630162
+  },
+  {
+    "name": "Jalen Brunson",
+    "team": "NYK",
+    "pos": "PG",
+    "games": 74,
+    "mpg": 35,
+    "personId": 1628973
+  },
+  {
+    "name": "VJ Edgecombe",
+    "team": "PHI",
+    "pos": "SG",
+    "games": 75,
+    "mpg": 35,
+    "personId": 1642845
+  },
+  {
+    "name": "Nikola Jokić",
+    "team": "DEN",
+    "pos": "C",
+    "games": 65,
+    "mpg": 34.8,
+    "personId": 203999
+  },
+  {
+    "name": "James Harden",
+    "team": "CLE",
+    "pos": "PG",
+    "games": 70,
+    "mpg": 34.8,
+    "personId": 201935
+  },
+  {
+    "name": "Paolo Banchero",
+    "team": "ORL",
+    "pos": "PF",
+    "games": 72,
+    "mpg": 34.8,
+    "personId": 1631094
+  },
+  {
+    "name": "Austin Reaves",
+    "team": "LAL",
+    "pos": "SG",
+    "games": 51,
+    "mpg": 34.5,
+    "personId": 1630559
+  },
+  {
+    "name": "Keegan Murray",
+    "team": "SAC",
+    "pos": "PF",
+    "games": 23,
+    "mpg": 34.5,
+    "personId": 1631099
+  },
+  {
+    "name": "Jaylen Brown",
+    "team": "PHI",
+    "pos": "SF",
+    "games": 71,
+    "mpg": 34.4,
+    "personId": 1627759
+  },
+  {
+    "name": "Lauri Markkanen",
+    "team": "UTA",
+    "pos": "PF",
+    "games": 42,
+    "mpg": 34.4,
+    "personId": 1628374
+  },
+  {
+    "name": "Derrick White",
+    "team": "BOS",
+    "pos": "SG",
+    "games": 77,
+    "mpg": 34.1,
+    "personId": 1628401
+  },
+  {
+    "name": "Cade Cunningham",
+    "team": "DET",
+    "pos": "PG",
+    "games": 64,
+    "mpg": 33.9,
+    "personId": 1630595
+  },
+  {
+    "name": "Brandon Ingram",
+    "team": "TOR",
+    "pos": "SF",
+    "games": 77,
+    "mpg": 33.8,
+    "personId": 1627742
+  },
+  {
+    "name": "Desmond Bane",
+    "team": "ORL",
+    "pos": "SG",
+    "games": 82,
+    "mpg": 33.6,
+    "personId": 1630217
+  },
+  {
+    "name": "Donovan Mitchell",
+    "team": "CLE",
+    "pos": "SG",
+    "games": 70,
+    "mpg": 33.5,
+    "personId": 1628378
+  },
+  {
+    "name": "Devin Booker",
+    "team": "PHX",
+    "pos": "SG",
+    "games": 64,
+    "mpg": 33.5,
+    "personId": 1626164
+  },
+  {
+    "name": "Cooper Flagg",
+    "team": "DAL",
+    "pos": "SF",
+    "games": 70,
+    "mpg": 33.5,
+    "personId": 1642843
+  },
+  {
+    "name": "Scottie Barnes",
+    "team": "TOR",
+    "pos": "PF",
+    "games": 80,
+    "mpg": 33.5,
+    "personId": 1630567
+  },
+  {
+    "name": "Nickeil Alexander-Walker",
+    "team": "ATL",
+    "pos": "SG",
+    "games": 78,
+    "mpg": 33.4,
+    "personId": 1629638
+  },
+  {
+    "name": "Deni Avdija",
+    "team": "POR",
+    "pos": "SF",
+    "games": 66,
+    "mpg": 33.3,
+    "personId": 1630166
+  },
+  {
+    "name": "Alperen Şengün",
+    "team": "HOU",
+    "pos": "C",
+    "games": 72,
+    "mpg": 33.3,
+    "personId": 1630578
+  },
+  {
+    "name": "Toumani Camara",
+    "team": "POR",
+    "pos": "PF",
+    "games": 82,
+    "mpg": 33.3,
+    "personId": 1641739
+  },
+  {
+    "name": "Shai Gilgeous-Alexander",
+    "team": "OKC",
+    "pos": "PG",
+    "games": 68,
+    "mpg": 33.2,
+    "personId": 1628983
+  },
+  {
+    "name": "Pascal Siakam",
+    "team": "IND",
+    "pos": "PF",
+    "games": 62,
+    "mpg": 33.2,
+    "personId": 1627783
+  },
+  {
+    "name": "LeBron James",
+    "team": "PHI",
+    "pos": "SF",
+    "games": 60,
+    "mpg": 33.2,
+    "personId": 2544
+  },
+  {
+    "name": "OG Anunoby",
+    "team": "NYK",
+    "pos": "PF",
+    "games": 67,
+    "mpg": 33.2,
+    "personId": 1628384
+  },
+  {
+    "name": "Dyson Daniels",
+    "team": "ATL",
+    "pos": "SG",
+    "games": 76,
+    "mpg": 33.2,
+    "personId": 1630700
+  },
+  {
+    "name": "Keyonte George",
+    "team": "UTA",
+    "pos": "PG",
+    "games": 54,
+    "mpg": 33.1,
+    "personId": 1641718
+  },
+  {
+    "name": "Julius Randle",
+    "team": "BKN",
+    "pos": "PF",
+    "games": 79,
+    "mpg": 33,
+    "personId": 203944
+  },
+  {
+    "name": "Mikal Bridges",
+    "team": "NYK",
+    "pos": "SF",
+    "games": 82,
+    "mpg": 32.8,
+    "personId": 1628969
+  },
+  {
+    "name": "Jayson Tatum",
+    "team": "BOS",
+    "pos": "PF",
+    "games": 16,
+    "mpg": 32.6,
+    "personId": 1628369
+  },
+  {
+    "name": "Michael Porter Jr.",
+    "team": "BKN",
+    "pos": "SF",
+    "games": 52,
+    "mpg": 32.5,
+    "personId": 1629008
+  },
+  {
+    "name": "Bam Adebayo",
+    "team": "MIA",
+    "pos": "C",
+    "games": 73,
+    "mpg": 32.4,
+    "personId": 1628389
+  },
+  {
+    "name": "Payton Pritchard",
+    "team": "BOS",
+    "pos": "PG",
+    "games": 79,
+    "mpg": 32.4,
+    "personId": 1630202
+  },
+  {
+    "name": "Kawhi Leonard",
+    "team": "LAC",
+    "pos": "SF",
+    "games": 65,
+    "mpg": 32.1,
+    "personId": 202695
+  },
+  {
+    "name": "Ryan Rollins",
+    "team": "MIL",
+    "pos": "PG",
+    "games": 74,
+    "mpg": 32.1,
+    "personId": 1631157
+  },
+  {
+    "name": "Josh Giddey",
+    "team": "CHI",
+    "pos": "PG",
+    "games": 54,
+    "mpg": 32.1,
+    "personId": 1630581
+  },
+  {
+    "name": "Evan Mobley",
+    "team": "CLE",
+    "pos": "PF",
+    "games": 65,
+    "mpg": 31.9,
+    "personId": 1630596
+  },
+  {
+    "name": "Immanuel Quickley",
+    "team": "TOR",
+    "pos": "PG",
+    "games": 70,
+    "mpg": 31.9,
+    "personId": 1630193
+  },
+  {
+    "name": "Christian Braun",
+    "team": "DEN",
+    "pos": "SG",
+    "games": 44,
+    "mpg": 31.8,
+    "personId": 1631128
+  },
+  {
+    "name": "Jaden McDaniels",
+    "team": "MIN",
+    "pos": "PF",
+    "games": 73,
+    "mpg": 31.7,
+    "personId": 1630183
+  },
+  {
+    "name": "Joel Embiid",
+    "team": "PHI",
+    "pos": "C",
+    "games": 38,
+    "mpg": 31.6,
+    "personId": 203954
+  },
+  {
+    "name": "Kon Knueppel",
+    "team": "CHA",
+    "pos": "SF",
+    "games": 81,
+    "mpg": 31.5,
+    "personId": 1642851
+  },
+  {
+    "name": "Kelly Oubre Jr.",
+    "team": "IND",
+    "pos": "SF",
+    "games": 50,
+    "mpg": 31.5,
+    "personId": 1626162
+  },
+  {
+    "name": "Zach LaVine",
+    "team": "SAC",
+    "pos": "SG",
+    "games": 39,
+    "mpg": 31.4,
+    "personId": 203897
+  },
+  {
+    "name": "Tyler Herro",
+    "team": "MIL",
+    "pos": "SG",
+    "games": 33,
+    "mpg": 31.3,
+    "personId": 1629639
+  },
+  {
+    "name": "Anthony Davis",
+    "team": "WAS",
+    "pos": "PF",
+    "games": 20,
+    "mpg": 31.3,
+    "personId": 203076
+  },
+  {
+    "name": "Andrew Nembhard",
+    "team": "IND",
+    "pos": "PG",
+    "games": 57,
+    "mpg": 31.3,
+    "personId": 1629614
+  },
+  {
+    "name": "Rudy Gobert",
+    "team": "MIN",
+    "pos": "C",
+    "games": 76,
+    "mpg": 31.3,
+    "personId": 203497
+  },
+  {
+    "name": "DeMar DeRozan",
+    "team": "SAC",
+    "pos": "PF",
+    "games": 77,
+    "mpg": 31.2,
+    "personId": 201942
+  },
+  {
+    "name": "Saddiq Bey",
+    "team": "NOP",
+    "pos": "SF",
+    "games": 72,
+    "mpg": 31.2,
+    "personId": 1630180
+  },
+  {
+    "name": "Jimmy Butler",
+    "team": "GSW",
+    "pos": "SF",
+    "games": 38,
+    "mpg": 31.1,
+    "personId": 202710
+  },
+  {
+    "name": "Karl-Anthony Towns",
+    "team": "NYK",
+    "pos": "C",
+    "games": 75,
+    "mpg": 31,
+    "personId": 1626157
+  },
+  {
+    "name": "De'Aaron Fox",
+    "team": "SAS",
+    "pos": "PG",
+    "games": 72,
+    "mpg": 31,
+    "personId": 1628368
+  },
+  {
+    "name": "Miles Bridges",
+    "team": "PHX",
+    "pos": "PF",
+    "games": 77,
+    "mpg": 31,
+    "personId": 1628970
+  },
+  {
+    "name": "Onyeka Okongwu",
+    "team": "ATL",
+    "pos": "C",
+    "games": 74,
+    "mpg": 31,
+    "personId": 1630168
+  },
+  {
+    "name": "P.J. Washington",
+    "team": "DAL",
+    "pos": "PF",
+    "games": 56,
+    "mpg": 31,
+    "personId": 1629023
+  },
+  {
+    "name": "Stephen Curry",
+    "team": "GSW",
+    "pos": "PG",
+    "games": 43,
+    "mpg": 30.9,
+    "personId": 201939
+  },
+  {
+    "name": "Paul George",
+    "team": "BOS",
+    "pos": "PF",
+    "games": 37,
+    "mpg": 30.7,
+    "personId": 202331
+  },
+  {
+    "name": "Devin Vassell",
+    "team": "SAS",
+    "pos": "SG",
+    "games": 67,
+    "mpg": 30.5,
+    "personId": 1630170
+  },
+  {
+    "name": "Cameron Johnson",
+    "team": "DEN",
+    "pos": "SF",
+    "games": 54,
+    "mpg": 30.5,
+    "personId": 1629661
+  },
+  {
+    "name": "Dillon Brooks",
+    "team": "PHX",
+    "pos": "SF",
+    "games": 56,
+    "mpg": 30.4,
+    "personId": 1628415
+  },
+  {
+    "name": "Donte DiVincenzo",
+    "team": "MIN",
+    "pos": "SG",
+    "games": 82,
+    "mpg": 30.4,
+    "personId": 1628978
+  },
+  {
+    "name": "Brandon Miller",
+    "team": "CHA",
+    "pos": "SF",
+    "games": 65,
+    "mpg": 30.3,
+    "personId": 1641706
+  },
+  {
+    "name": "Jaren Jackson Jr.",
+    "team": "UTA",
+    "pos": "C",
+    "games": 48,
+    "mpg": 30.3,
+    "personId": 1628991
+  },
+  {
+    "name": "RJ Barrett",
+    "team": "TOR",
+    "pos": "SF",
+    "games": 57,
+    "mpg": 30.3,
+    "personId": 1629628
+  },
+  {
+    "name": "Andrew Wiggins",
+    "team": "MIA",
+    "pos": "SF",
+    "games": 68,
+    "mpg": 30.3,
+    "personId": 203952
+  },
+  {
+    "name": "Josh Hart",
+    "team": "NYK",
+    "pos": "SF",
+    "games": 66,
+    "mpg": 30.2,
+    "personId": 1628404
+  },
+  {
+    "name": "Ivica Zubac",
+    "team": "IND",
+    "pos": "C",
+    "games": 48,
+    "mpg": 30.1,
+    "personId": 1627826
+  },
+  {
+    "name": "Franz Wagner",
+    "team": "ORL",
+    "pos": "SF",
+    "games": 34,
+    "mpg": 30,
+    "personId": 1630532
+  },
+  {
+    "name": "Bennedict Mathurin",
+    "team": "LAC",
+    "pos": "SF",
+    "games": 54,
+    "mpg": 30,
+    "personId": 1631097
+  },
+  {
+    "name": "Stephon Castle",
+    "team": "SAS",
+    "pos": "PG",
+    "games": 68,
+    "mpg": 30,
+    "personId": 1642264
+  },
+  {
+    "name": "Darius Garland",
+    "team": "LAC",
+    "pos": "PG",
+    "games": 45,
+    "mpg": 29.9,
+    "personId": 1629636
+  },
+  {
+    "name": "CJ McCollum",
+    "team": "ATL",
+    "pos": "PG",
+    "games": 76,
+    "mpg": 29.8,
+    "personId": 203468
+  },
+  {
+    "name": "Anthony Black",
+    "team": "ORL",
+    "pos": "PG",
+    "games": 64,
+    "mpg": 29.8,
+    "personId": 1641710
+  },
+  {
+    "name": "Zion Williamson",
+    "team": "NOP",
+    "pos": "PF",
+    "games": 62,
+    "mpg": 29.7,
+    "personId": 1629627
+  },
+  {
+    "name": "Jerami Grant",
+    "team": "MEM",
+    "pos": "PF",
+    "games": 57,
+    "mpg": 29.7,
+    "personId": 203924
+  },
+  {
+    "name": "Domantas Sabonis",
+    "team": "SAC",
+    "pos": "C",
+    "games": 19,
+    "mpg": 29.7,
+    "personId": 1627734
+  },
+  {
+    "name": "Aaron Nesmith",
+    "team": "IND",
+    "pos": "SF",
+    "games": 45,
+    "mpg": 29.7,
+    "personId": 1630174
+  },
+  {
+    "name": "Norman Powell",
+    "team": "CHI",
+    "pos": "SG",
+    "games": 58,
+    "mpg": 29.6,
+    "personId": 1626181
+  },
+  {
+    "name": "Peyton Watson",
+    "team": "CLE",
+    "pos": "SF",
+    "games": 54,
+    "mpg": 29.6,
+    "personId": 1631212
+  },
+  {
+    "name": "Naji Marshall",
+    "team": "DAL",
+    "pos": "SF",
+    "games": 74,
+    "mpg": 29.5,
+    "personId": 1630230
+  },
+  {
+    "name": "Shaedon Sharpe",
+    "team": "POR",
+    "pos": "SG",
+    "games": 50,
+    "mpg": 29.4,
+    "personId": 1631101
+  },
+  {
+    "name": "Jrue Holiday",
+    "team": "POR",
+    "pos": "PG",
+    "games": 53,
+    "mpg": 29.4,
+    "personId": 201950
+  },
+  {
+    "name": "Quentin Grimes",
+    "team": "LAL",
+    "pos": "SG",
+    "games": 75,
+    "mpg": 29.4,
+    "personId": 1629656
+  },
+  {
+    "name": "Wendell Carter Jr.",
+    "team": "ORL",
+    "pos": "C",
+    "games": 78,
+    "mpg": 29.3,
+    "personId": 1628976
+  },
+  {
+    "name": "Victor Wembanyama",
+    "team": "SAS",
+    "pos": "C",
+    "games": 64,
+    "mpg": 29.2,
+    "personId": 1641705
+  },
+  {
+    "name": "Matas Buzelis",
+    "team": "CHI",
+    "pos": "PF",
+    "games": 77,
+    "mpg": 29.2,
+    "personId": 1641824
+  },
+  {
+    "name": "Max Christie",
+    "team": "DAL",
+    "pos": "SG",
+    "games": 77,
+    "mpg": 29.1,
+    "personId": 1631108
+  },
+  {
+    "name": "A.J. Green",
+    "team": "MIL",
+    "pos": "SG",
+    "games": 78,
+    "mpg": 29.1,
+    "personId": 1631260
+  },
+  {
+    "name": "Kyshawn George",
+    "team": "WAS",
+    "pos": "SF",
+    "games": 48,
+    "mpg": 29,
+    "personId": 1642273
+  },
+  {
+    "name": "Giannis Antetokounmpo",
+    "team": "MIA",
+    "pos": "PF",
+    "games": 36,
+    "mpg": 28.9,
+    "personId": 203507
+  },
+  {
+    "name": "Chet Holmgren",
+    "team": "OKC",
+    "pos": "PF",
+    "games": 69,
+    "mpg": 28.9,
+    "personId": 1631096
+  },
+  {
+    "name": "Grayson Allen",
+    "team": "CHA",
+    "pos": "SG",
+    "games": 51,
+    "mpg": 28.8,
+    "personId": 1628960
+  },
+  {
+    "name": "Davion Mitchell",
+    "team": "MIA",
+    "pos": "PG",
+    "games": 70,
+    "mpg": 28.6,
+    "personId": 1630558
+  },
+  {
+    "name": "Ja Morant",
+    "team": "POR",
+    "pos": "PG",
+    "games": 20,
+    "mpg": 28.5,
+    "personId": 1629630
+  },
+  {
+    "name": "Brandin Podziemski",
+    "team": "GSW",
+    "pos": "SG",
+    "games": 82,
+    "mpg": 28.5,
+    "personId": 1641764
+  },
+  {
+    "name": "Collin Gillespie",
+    "team": "PHX",
+    "pos": "PG",
+    "games": 80,
+    "mpg": 28.5,
+    "personId": 1631221
+  },
+  {
+    "name": "Marcus Smart",
+    "team": "HOU",
+    "pos": "SG",
+    "games": 62,
+    "mpg": 28.5,
+    "personId": 203935
+  },
+  {
+    "name": "Jalen Williams",
+    "team": "OKC",
+    "pos": "SG",
+    "games": 33,
+    "mpg": 28.4,
+    "personId": 1631114
+  },
+  {
+    "name": "Nikola Vučević",
+    "team": "ORL",
+    "pos": "C",
+    "games": 64,
+    "mpg": 28.4,
+    "personId": 202696
+  },
+  {
+    "name": "Royce O'Neale",
+    "team": "CHA",
+    "pos": "SF",
+    "games": 78,
+    "mpg": 28.4,
+    "personId": 1626220
+  },
+  {
+    "name": "Herbert Jones",
+    "team": "NOP",
+    "pos": "SF",
+    "games": 56,
+    "mpg": 28.4,
+    "personId": 1630529
+  },
+  {
+    "name": "Jaime Jaquez Jr.",
+    "team": "MIL",
+    "pos": "SF",
+    "games": 75,
+    "mpg": 28.3,
+    "personId": 1631170
+  },
+  {
+    "name": "Rui Hachimura",
+    "team": "LAC",
+    "pos": "PF",
+    "games": 68,
+    "mpg": 28.3,
+    "personId": 1629060
+  },
+  {
+    "name": "Jalen Duren",
+    "team": "DET",
+    "pos": "C",
+    "games": 70,
+    "mpg": 28.2,
+    "personId": 1631105
+  },
+  {
+    "name": "LaMelo Ball",
+    "team": "MIN",
+    "pos": "PG",
+    "games": 72,
+    "mpg": 28,
+    "personId": 1630163
+  },
+  {
+    "name": "Aaron Gordon",
+    "team": "DEN",
+    "pos": "PF",
+    "games": 36,
+    "mpg": 27.9,
+    "personId": 203932
+  },
+  {
+    "name": "Santi Aldama",
+    "team": "DAL",
+    "pos": "PF",
+    "games": 43,
+    "mpg": 27.9,
+    "personId": 1630583
+  },
+  {
+    "name": "Dejounte Murray",
+    "team": "NOP",
+    "pos": "PG",
+    "games": 14,
+    "mpg": 27.8,
+    "personId": 1627749
+  },
+  {
+    "name": "Nic Claxton",
+    "team": "CHI",
+    "pos": "C",
+    "games": 69,
+    "mpg": 27.8,
+    "personId": 1629651
+  },
+  {
+    "name": "Tobias Harris",
+    "team": "SAS",
+    "pos": "PF",
+    "games": 63,
+    "mpg": 27.7,
+    "personId": 202699
+  },
+  {
+    "name": "Bub Carrington",
+    "team": "WAS",
+    "pos": "PG",
+    "games": 82,
+    "mpg": 27.7,
+    "personId": 1642267
+  },
+  {
+    "name": "Ace Bailey",
+    "team": "UTA",
+    "pos": "SF",
+    "games": 72,
+    "mpg": 27.6,
+    "personId": 1642846
+  },
+  {
+    "name": "Jalen Suggs",
+    "team": "ORL",
+    "pos": "PG",
+    "games": 57,
+    "mpg": 27.6,
+    "personId": 1630591
+  },
+  {
+    "name": "Julian Champagnie",
+    "team": "SAS",
+    "pos": "SF",
+    "games": 82,
+    "mpg": 27.6,
+    "personId": 1630577
+  },
+  {
+    "name": "Draymond Green",
+    "team": "GSW",
+    "pos": "PF",
+    "games": 68,
+    "mpg": 27.5,
+    "personId": 203110
+  },
+  {
+    "name": "Duncan Robinson",
+    "team": "DET",
+    "pos": "SG",
+    "games": 77,
+    "mpg": 27.4,
+    "personId": 1629130
+  },
+  {
+    "name": "Ayo Dosunmu",
+    "team": "MIN",
+    "pos": "SG",
+    "games": 69,
+    "mpg": 27.3,
+    "personId": 1630245
+  },
+  {
+    "name": "Alex Sarr",
+    "team": "WAS",
+    "pos": "C",
+    "games": 48,
+    "mpg": 27.2,
+    "personId": 1642259
+  },
+  {
+    "name": "Deandre Ayton",
+    "team": "WAS",
+    "pos": "C",
+    "games": 72,
+    "mpg": 27.2,
+    "personId": 1629028
+  },
+  {
+    "name": "Donovan Clingan",
+    "team": "POR",
+    "pos": "C",
+    "games": 77,
+    "mpg": 27.2,
+    "personId": 1642270
+  },
+  {
+    "name": "Kris Dunn",
+    "team": "LAC",
+    "pos": "PG",
+    "games": 82,
+    "mpg": 27.2,
+    "personId": 1627739
+  },
+  {
+    "name": "Jarrett Allen",
+    "team": "CLE",
+    "pos": "C",
+    "games": 56,
+    "mpg": 27.1,
+    "personId": 1628386
+  },
+  {
+    "name": "John Collins",
+    "team": "DET",
+    "pos": "PF",
+    "games": 69,
+    "mpg": 27.1,
+    "personId": 1628381
+  },
+  {
+    "name": "Tre Jones",
+    "team": "CHI",
+    "pos": "PG",
+    "games": 65,
+    "mpg": 27,
+    "personId": 1630200
+  },
+  {
+    "name": "Noah Clowney",
+    "team": "BKN",
+    "pos": "PF",
+    "games": 66,
+    "mpg": 27,
+    "personId": 1641730
+  },
+  {
+    "name": "Derrick Jones Jr.",
+    "team": "LAC",
+    "pos": "SF",
+    "games": 50,
+    "mpg": 27,
+    "personId": 1627884
+  },
+  {
+    "name": "Jaylon Tyson",
+    "team": "CLE",
+    "pos": "SG",
+    "games": 66,
+    "mpg": 26.9,
+    "personId": 1642281
+  },
+  {
+    "name": "Myles Turner",
+    "team": "MIL",
+    "pos": "C",
+    "games": 71,
+    "mpg": 26.9,
+    "personId": 1626167
+  },
+  {
+    "name": "Isaac Okoro",
+    "team": "CHI",
+    "pos": "SG",
+    "games": 63,
+    "mpg": 26.9,
+    "personId": 1630171
+  },
+  {
+    "name": "Luguentz Dort",
+    "team": "ATL",
+    "pos": "SF",
+    "games": 69,
+    "mpg": 26.8,
+    "personId": 1629652
+  },
+  {
+    "name": "Tim Hardaway Jr.",
+    "team": "MIA",
+    "pos": "SG",
+    "games": 80,
+    "mpg": 26.6,
+    "personId": 203501
+  },
+  {
+    "name": "Cason Wallace",
+    "team": "OKC",
+    "pos": "SG",
+    "games": 77,
+    "mpg": 26.6,
+    "personId": 1641717
+  },
+  {
+    "name": "Sam Merrill",
+    "team": "CLE",
+    "pos": "SG",
+    "games": 52,
+    "mpg": 26.5,
+    "personId": 1630241
+  },
+  {
+    "name": "Maxime Raynaud",
+    "team": "SAC",
+    "pos": "C",
+    "games": 74,
+    "mpg": 26.5,
+    "personId": 1642875
+  },
+  {
+    "name": "Jaylen Wells",
+    "team": "MEM",
+    "pos": "SG",
+    "games": 69,
+    "mpg": 26.4,
+    "personId": 1642377
+  },
+  {
+    "name": "Pelle Larsson",
+    "team": "MIA",
+    "pos": "SG",
+    "games": 70,
+    "mpg": 26.4,
+    "personId": 1641796
+  },
+  {
+    "name": "Jusuf Nurkić",
+    "team": "UTA",
+    "pos": "C",
+    "games": 41,
+    "mpg": 26.4,
+    "personId": 203994
+  },
+  {
+    "name": "Miles McBride",
+    "team": "NYK",
+    "pos": "SG",
+    "games": 41,
+    "mpg": 26.3,
+    "personId": 1630540
+  },
+  {
+    "name": "Reed Sheppard",
+    "team": "HOU",
+    "pos": "SG",
+    "games": 82,
+    "mpg": 26.2,
+    "personId": 1642263
+  },
+  {
+    "name": "Kyle Kuzma",
+    "team": "MIL",
+    "pos": "PF",
+    "games": 69,
+    "mpg": 26.2,
+    "personId": 1628398
+  },
+  {
+    "name": "Bilal Coulibaly",
+    "team": "WAS",
+    "pos": "SG",
+    "games": 56,
+    "mpg": 26.2,
+    "personId": 1641731
+  },
+  {
+    "name": "De'Andre Hunter",
+    "team": "SAC",
+    "pos": "SF",
+    "games": 45,
+    "mpg": 26.1,
+    "personId": 1629631
+  },
+  {
+    "name": "Naz Reid",
+    "team": "CHA",
+    "pos": "C",
+    "games": 77,
+    "mpg": 26.1,
+    "personId": 1629675
+  },
+  {
+    "name": "Ausar Thompson",
+    "team": "DET",
+    "pos": "SF",
+    "games": 73,
+    "mpg": 26,
+    "personId": 1641709
+  },
+  {
+    "name": "Moussa Diabaté",
+    "team": "CHA",
+    "pos": "C",
+    "games": 73,
+    "mpg": 26,
+    "personId": 1631217
+  },
+  {
+    "name": "Jalen Green",
+    "team": "PHX",
+    "pos": "SG",
+    "games": 32,
+    "mpg": 25.9,
+    "personId": 1630224
+  },
+  {
+    "name": "Jeremiah Fears",
+    "team": "NOP",
+    "pos": "PG",
+    "games": 82,
+    "mpg": 25.8,
+    "personId": 1642847
+  },
+  {
+    "name": "Cedric Coward",
+    "team": "MEM",
+    "pos": "SG",
+    "games": 62,
+    "mpg": 25.8,
+    "personId": 1642907
+  },
+  {
+    "name": "Zach Edey",
+    "team": "MEM",
+    "pos": "C",
+    "games": 11,
+    "mpg": 25.8,
+    "personId": 1641744
+  },
+  {
+    "name": "Ajay Mitchell",
+    "team": "OKC",
+    "pos": "SG",
+    "games": 57,
+    "mpg": 25.8,
+    "personId": 1642349
+  },
+  {
+    "name": "Tari Eason",
+    "team": "HOU",
+    "pos": "PF",
+    "games": 60,
+    "mpg": 25.8,
+    "personId": 1631106
+  },
+  {
+    "name": "Harrison Barnes",
+    "team": "SAS",
+    "pos": "PF",
+    "games": 77,
+    "mpg": 25.8,
+    "personId": 203084
+  },
+  {
+    "name": "Moses Moody",
+    "team": "GSW",
+    "pos": "SG",
+    "games": 60,
+    "mpg": 25.7,
+    "personId": 1630541
+  },
+  {
+    "name": "Isaiah Collier",
+    "team": "UTA",
+    "pos": "PG",
+    "games": 59,
+    "mpg": 25.7,
+    "personId": 1642268
+  },
+  {
+    "name": "Jarace Walker",
+    "team": "IND",
+    "pos": "PF",
+    "games": 76,
+    "mpg": 25.7,
+    "personId": 1641716
+  },
+  {
+    "name": "Trae Young",
+    "team": "WAS",
+    "pos": "PG",
+    "games": 15,
+    "mpg": 25.6,
+    "personId": 1629027
+  },
+  {
+    "name": "Neemias Queta",
+    "team": "BOS",
+    "pos": "C",
+    "games": 76,
+    "mpg": 25.3,
+    "personId": 1629674
+  },
+  {
+    "name": "Egor Dëmin",
+    "team": "BKN",
+    "pos": "PG",
+    "games": 52,
+    "mpg": 25.2,
+    "personId": 1642856
+  },
+  {
+    "name": "Nique Clifford",
+    "team": "SAC",
+    "pos": "SG",
+    "games": 75,
+    "mpg": 25.1,
+    "personId": 1642363
+  },
+  {
+    "name": "Jake LaRavia",
+    "team": "LAL",
+    "pos": "PF",
+    "games": 82,
+    "mpg": 25.1,
+    "personId": 1631222
+  },
+  {
+    "name": "Coby White",
+    "team": "CHA",
+    "pos": "SG",
+    "games": 50,
+    "mpg": 25,
+    "personId": 1629632
+  },
+  {
+    "name": "Derik Queen",
+    "team": "NOP",
+    "pos": "C",
+    "games": 81,
+    "mpg": 25,
+    "personId": 1642852
+  },
+  {
+    "name": "Jakob Poeltl",
+    "team": "TOR",
+    "pos": "C",
+    "games": 46,
+    "mpg": 25,
+    "personId": 1627751
+  },
+  {
+    "name": "Anfernee Simons",
+    "team": "PHI",
+    "pos": "SG",
+    "games": 55,
+    "mpg": 24.9,
+    "personId": 1629014
+  },
+  {
+    "name": "Sam Hauser",
+    "team": "BOS",
+    "pos": "PF",
+    "games": 78,
+    "mpg": 24.8,
+    "personId": 1630573
+  },
+  {
+    "name": "Tristan Da Silva",
+    "team": "ORL",
+    "pos": "SF",
+    "games": 77,
+    "mpg": 24.7,
+    "personId": 1641783
+  },
+  {
+    "name": "Bruce Brown",
+    "team": "DEN",
+    "pos": "SG",
+    "games": 82,
+    "mpg": 24.4,
+    "personId": 1628971
+  },
+  {
+    "name": "Cody Williams",
+    "team": "MIN",
+    "pos": "SG",
+    "games": 67,
+    "mpg": 24.3,
+    "personId": 1642262
+  },
+  {
+    "name": "Terance Mann",
+    "team": "BKN",
+    "pos": "SG",
+    "games": 63,
+    "mpg": 24.3,
+    "personId": 1629611
+  },
+  {
+    "name": "Bobby Portis",
+    "team": "MIA",
+    "pos": "PF",
+    "games": 67,
+    "mpg": 24.2,
+    "personId": 1626171
+  },
+  {
+    "name": "Dennis Schröder",
+    "team": "CHA",
+    "pos": "PG",
+    "games": 70,
+    "mpg": 24.2,
+    "personId": 203471
+  },
+  {
+    "name": "Isaiah Hartenstein",
+    "team": "OKC",
+    "pos": "C",
+    "games": 47,
+    "mpg": 24.2,
+    "personId": 1628392
+  },
+  {
+    "name": "Tre Johnson",
+    "team": "WAS",
+    "pos": "SG",
+    "games": 60,
+    "mpg": 24.1,
+    "personId": 1642848
+  },
+  {
+    "name": "Precious Achiuwa",
+    "team": "SAC",
+    "pos": "C",
+    "games": 73,
+    "mpg": 23.9,
+    "personId": 1630173
+  },
+  {
+    "name": "Cam Spencer",
+    "team": "MEM",
+    "pos": "SG",
+    "games": 72,
+    "mpg": 23.8,
+    "personId": 1642285
+  },
+  {
+    "name": "Dominick Barlow",
+    "team": "PHI",
+    "pos": "PF",
+    "games": 71,
+    "mpg": 23.8,
+    "personId": 1631230
+  },
+  {
+    "name": "Collin Sexton",
+    "team": "LAL",
+    "pos": "SG",
+    "games": 68,
+    "mpg": 23.7,
+    "personId": 1629012
+  },
+  {
+    "name": "Mark Williams",
+    "team": "PHX",
+    "pos": "C",
+    "games": 60,
+    "mpg": 23.6,
+    "personId": 1631109
+  },
+  {
+    "name": "Brice Sensabaugh",
+    "team": "UTA",
+    "pos": "SF",
+    "games": 75,
+    "mpg": 23.5,
+    "personId": 1641729
+  },
+  {
+    "name": "Kyle Filipowski",
+    "team": "UTA",
+    "pos": "C",
+    "games": 77,
+    "mpg": 23.4,
+    "personId": 1642271
+  },
+  {
+    "name": "Kris Murray",
+    "team": "MEM",
+    "pos": "SF",
+    "games": 57,
+    "mpg": 23.4,
+    "personId": 1631200
+  },
+  {
+    "name": "Keldon Johnson",
+    "team": "SAS",
+    "pos": "SF",
+    "games": 82,
+    "mpg": 23.3,
+    "personId": 1629640
+  },
+  {
+    "name": "Svi Mykhailiuk",
+    "team": "UTA",
+    "pos": "SF",
+    "games": 50,
+    "mpg": 23.1,
+    "personId": 1629004
+  },
+  {
+    "name": "De'Anthony Melton",
+    "team": "GSW",
+    "pos": "PG",
+    "games": 49,
+    "mpg": 23,
+    "personId": 1629001
+  },
+  {
+    "name": "Landry Shamet",
+    "team": "NYK",
+    "pos": "SG",
+    "games": 51,
+    "mpg": 23,
+    "personId": 1629013
+  },
+  {
+    "name": "Ziaire Williams",
+    "team": "LAL",
+    "pos": "SF",
+    "games": 56,
+    "mpg": 22.9,
+    "personId": 1630533
+  },
+  {
+    "name": "Khris Middleton",
+    "team": "WAS",
+    "pos": "SF",
+    "games": 63,
+    "mpg": 22.8,
+    "personId": 203114
+  },
+  {
+    "name": "Isaiah Stewart",
+    "team": "MEM",
+    "pos": "C",
+    "games": 58,
+    "mpg": 22.7,
+    "personId": 1630191
+  },
+  {
+    "name": "Ty Jerome",
+    "team": "MEM",
+    "pos": "SG",
+    "games": 15,
+    "mpg": 22.6,
+    "personId": 1629660
+  },
+  {
+    "name": "Dylan Harper",
+    "team": "SAS",
+    "pos": "SG",
+    "games": 69,
+    "mpg": 22.6,
+    "personId": 1642844
+  },
+  {
+    "name": "Jamal Shead",
+    "team": "TOR",
+    "pos": "PG",
+    "games": 82,
+    "mpg": 22.6,
+    "personId": 1642347
+  },
+  {
+    "name": "Jordan Goodwin",
+    "team": "PHX",
+    "pos": "PG",
+    "games": 70,
+    "mpg": 22.5,
+    "personId": 1630692
+  },
+  {
+    "name": "Sion James",
+    "team": "CHA",
+    "pos": "SG",
+    "games": 82,
+    "mpg": 22.5,
+    "personId": 1642883
+  },
+  {
+    "name": "Kevin Huerter",
+    "team": "DET",
+    "pos": "SF",
+    "games": 69,
+    "mpg": 22.4,
+    "personId": 1628989
+  },
+  {
+    "name": "Zaccharie Risacher",
+    "team": "DAL",
+    "pos": "SF",
+    "games": 67,
+    "mpg": 22.4,
+    "personId": 1642258
+  },
+  {
+    "name": "Dean Wade",
+    "team": "PHI",
+    "pos": "PF",
+    "games": 59,
+    "mpg": 22.3,
+    "personId": 1629731
+  },
+  {
+    "name": "Brandon Williams",
+    "team": "GSW",
+    "pos": "PG",
+    "games": 66,
+    "mpg": 22.2,
+    "personId": 1630314
+  },
+  {
+    "name": "Nolan Traoré",
+    "team": "BKN",
+    "pos": "PG",
+    "games": 56,
+    "mpg": 22.2,
+    "personId": 1642849
+  },
+  {
+    "name": "Kel'el Ware",
+    "team": "MIL",
+    "pos": "C",
+    "games": 77,
+    "mpg": 22.1,
+    "personId": 1642276
+  },
+  {
+    "name": "Jock Landale",
+    "team": "ATL",
+    "pos": "C",
+    "games": 68,
+    "mpg": 22.1,
+    "personId": 1629111
+  },
+  {
+    "name": "Will Riley",
+    "team": "WAS",
+    "pos": "SF",
+    "games": 74,
+    "mpg": 22.1,
+    "personId": 1642860
+  },
+  {
+    "name": "Jordan Miller",
+    "team": "LAC",
+    "pos": "SF",
+    "games": 60,
+    "mpg": 22.1,
+    "personId": 1641757
+  },
+  {
+    "name": "Spencer Jones",
+    "team": "DEN",
+    "pos": "SF",
+    "games": 64,
+    "mpg": 22.1,
+    "personId": 1642461
+  },
+  {
+    "name": "Malik Monk",
+    "team": "SAC",
+    "pos": "SG",
+    "games": 62,
+    "mpg": 22,
+    "personId": 1628370
+  },
+  {
+    "name": "Oso Ighodaro",
+    "team": "PHX",
+    "pos": "PF",
+    "games": 82,
+    "mpg": 22,
+    "personId": 1642345
+  },
+  {
+    "name": "Sandro Mamukelashvili",
+    "team": "LAL",
+    "pos": "C",
+    "games": 80,
+    "mpg": 21.9,
+    "personId": 1630572
+  },
+  {
+    "name": "Collin Murray-Boyles",
+    "team": "TOR",
+    "pos": "PF",
+    "games": 57,
+    "mpg": 21.9,
+    "personId": 1642867
+  },
+  {
+    "name": "Aaron Wiggins",
+    "team": "ATL",
+    "pos": "SG",
+    "games": 65,
+    "mpg": 21.8,
+    "personId": 1630598
+  },
+  {
+    "name": "Brook Lopez",
+    "team": "LAC",
+    "pos": "C",
+    "games": 75,
+    "mpg": 21.8,
+    "personId": 201572
+  },
+  {
+    "name": "Klay Thompson",
+    "team": "MIA",
+    "pos": "SF",
+    "games": 69,
+    "mpg": 21.7,
+    "personId": 202691
+  },
+  {
+    "name": "Daniel Gafford",
+    "team": "DAL",
+    "pos": "C",
+    "games": 55,
+    "mpg": 21.7,
+    "personId": 1629655
+  },
+  {
+    "name": "Luke Kennard",
+    "team": "PHX",
+    "pos": "SG",
+    "games": 78,
+    "mpg": 21.6,
+    "personId": 1628379
+  },
+  {
+    "name": "Al Horford",
+    "team": "GSW",
+    "pos": "C",
+    "games": 45,
+    "mpg": 21.5,
+    "personId": 201143
+  },
+  {
+    "name": "GG Jackson II",
+    "team": "MEM",
+    "pos": "PF",
+    "games": 55,
+    "mpg": 21.4,
+    "personId": 1641713
+  },
+  {
+    "name": "Vít Krejčí",
+    "team": "POR",
+    "pos": "PG",
+    "games": 65,
+    "mpg": 21.4,
+    "personId": 1630249
+  },
+  {
+    "name": "Ryan Kalkbrenner",
+    "team": "CHA",
+    "pos": "C",
+    "games": 69,
+    "mpg": 21.4,
+    "personId": 1641750
+  },
+  {
+    "name": "Ben Sheppard",
+    "team": "IND",
+    "pos": "SG",
+    "games": 65,
+    "mpg": 21.4,
+    "personId": 1641767
+  },
+  {
+    "name": "Kentavious Caldwell-Pope",
+    "team": "PHI",
+    "pos": "SG",
+    "games": 51,
+    "mpg": 21.3,
+    "personId": 203484
+  },
+  {
+    "name": "Isaiah Joe",
+    "team": "DET",
+    "pos": "SG",
+    "games": 71,
+    "mpg": 21.2,
+    "personId": 1630198
+  },
+  {
+    "name": "Gary Trent Jr.",
+    "team": "MIL",
+    "pos": "SG",
+    "games": 65,
+    "mpg": 21.2,
+    "personId": 1629018
+  },
+  {
+    "name": "Jay Huff",
+    "team": "IND",
+    "pos": "C",
+    "games": 82,
+    "mpg": 21,
+    "personId": 1630643
+  },
+  {
+    "name": "Bryce McGowens",
+    "team": "NOP",
+    "pos": "SG",
+    "games": 42,
+    "mpg": 21,
+    "personId": 1631121
+  },
+  {
+    "name": "Luke Kornet",
+    "team": "SAS",
+    "pos": "C",
+    "games": 68,
+    "mpg": 21,
+    "personId": 1628436
+  },
+  {
+    "name": "Drake Powell",
+    "team": "BKN",
+    "pos": "SG",
+    "games": 63,
+    "mpg": 21,
+    "personId": 1642962
+  },
+  {
+    "name": "Danny Wolf",
+    "team": "BKN",
+    "pos": "PF",
+    "games": 57,
+    "mpg": 20.8,
+    "personId": 1642874
+  },
+  {
+    "name": "Ben Saraf",
+    "team": "BKN",
+    "pos": "SG",
+    "games": 44,
+    "mpg": 20.8,
+    "personId": 1642879
+  },
+  {
+    "name": "Caleb Love",
+    "team": "PHI",
+    "pos": "SG",
+    "games": 49,
+    "mpg": 20.7,
+    "personId": 1631126
+  },
+  {
+    "name": "Jalen Smith",
+    "team": "CHI",
+    "pos": "C",
+    "games": 53,
+    "mpg": 20.7,
+    "personId": 1630188
+  },
+  {
+    "name": "Jamir Watkins",
+    "team": "WAS",
+    "pos": "SG",
+    "games": 50,
+    "mpg": 20.6,
+    "personId": 1642364
+  },
+  {
+    "name": "Dylan Cardwell",
+    "team": "SAC",
+    "pos": "C",
+    "games": 44,
+    "mpg": 20.6,
+    "personId": 1642928
+  },
+  {
+    "name": "Gui Santos",
+    "team": "GSW",
+    "pos": "PF",
+    "games": 68,
+    "mpg": 20.5,
+    "personId": 1630611
+  },
+  {
+    "name": "Ja'Kobe Walter",
+    "team": "TOR",
+    "pos": "SG",
+    "games": 72,
+    "mpg": 20.5,
+    "personId": 1642266
+  },
+  {
+    "name": "Patrick Williams",
+    "team": "CHI",
+    "pos": "PF",
+    "games": 72,
+    "mpg": 20.5,
+    "personId": 1630172
+  },
+  {
+    "name": "Keon Ellis",
+    "team": "BKN",
+    "pos": "SG",
+    "games": 72,
+    "mpg": 20.5,
+    "personId": 1631165
+  },
+  {
+    "name": "Walter Clayton",
+    "team": "MEM",
+    "pos": "PG",
+    "games": 69,
+    "mpg": 20.4,
+    "personId": 1642383
+  },
+  {
+    "name": "Javon Small",
+    "team": "MEM",
+    "pos": "PG",
+    "games": 41,
+    "mpg": 20.2,
+    "personId": 1642914
+  },
+  {
+    "name": "Daniss Jenkins",
+    "team": "DET",
+    "pos": "PG",
+    "games": 72,
+    "mpg": 20.2,
+    "personId": 1642450
+  },
+  {
+    "name": "Marvin Bagley III",
+    "team": "DEN",
+    "pos": "PF",
+    "games": 60,
+    "mpg": 20,
+    "personId": 1628963
+  },
+  {
+    "name": "Justin Champagnie",
+    "team": "WAS",
+    "pos": "SF",
+    "games": 69,
+    "mpg": 20,
+    "personId": 1630551
+  },
+  {
+    "name": "Will Richard",
+    "team": "GSW",
+    "pos": "SG",
+    "games": 69,
+    "mpg": 20,
+    "personId": 1642954
+  },
+  {
+    "name": "Ron Holland",
+    "team": "DET",
+    "pos": "SF",
+    "games": 78,
+    "mpg": 19.9,
+    "personId": null
+  },
+  {
+    "name": "Jose Alvarado",
+    "team": "NYK",
+    "pos": "PG",
+    "games": 69,
+    "mpg": 19.9,
+    "personId": 1630631
+  },
+  {
+    "name": "Kobe Sanders",
+    "team": "LAC",
+    "pos": "SG",
+    "games": 68,
+    "mpg": 19.9,
+    "personId": 1642920
+  },
+  {
+    "name": "Kyle Anderson",
+    "team": "TOR",
+    "pos": "SF",
+    "games": 43,
+    "mpg": 19.8,
+    "personId": 203937
+  },
+  {
+    "name": "Yves Missi",
+    "team": "NOP",
+    "pos": "C",
+    "games": 66,
+    "mpg": 19.7,
+    "personId": 1642274
+  },
+  {
+    "name": "Jericho Sims",
+    "team": "MIL",
+    "pos": "C",
+    "games": 67,
+    "mpg": 19.7,
+    "personId": 1630579
+  },
+  {
+    "name": "Jaylin Williams",
+    "team": "OKC",
+    "pos": "PF",
+    "games": 65,
+    "mpg": 19.6,
+    "personId": 1631119
+  },
+  {
+    "name": "Mitchell Robinson",
+    "team": "BOS",
+    "pos": "C",
+    "games": 60,
+    "mpg": 19.6,
+    "personId": 1629011
+  },
+  {
+    "name": "Ryan Nembhard",
+    "team": "ATL",
+    "pos": "PG",
+    "games": 60,
+    "mpg": 19.5,
+    "personId": 1642948
+  },
+  {
+    "name": "Andre Drummond",
+    "team": "NYK",
+    "pos": "C",
+    "games": 63,
+    "mpg": 19.5,
+    "personId": 203083
+  },
+  {
+    "name": "Ryan Dunn",
+    "team": "PHX",
+    "pos": "SF",
+    "games": 70,
+    "mpg": 19.4,
+    "personId": 1642346
+  },
+  {
+    "name": "Micah Potter",
+    "team": "POR",
+    "pos": "C",
+    "games": 47,
+    "mpg": 19.3,
+    "personId": 1630695
+  },
+  {
+    "name": "Ousmane Dieng",
+    "team": "MIL",
+    "pos": "C",
+    "games": 57,
+    "mpg": 19.3,
+    "personId": 1631172
+  },
+  {
+    "name": "Caris LeVert",
+    "team": "MIL",
+    "pos": "SG",
+    "games": 60,
+    "mpg": 19.2,
+    "personId": 1627747
+  },
+  {
+    "name": "Sidy Cissoko",
+    "team": "POR",
+    "pos": "SF",
+    "games": 75,
+    "mpg": 19.1,
+    "personId": 1631321
+  },
+  {
+    "name": "Taylor Hendricks",
+    "team": "MEM",
+    "pos": "PF",
+    "games": 59,
+    "mpg": 18.9,
+    "personId": 1641707
+  },
+  {
+    "name": "Day'Ron Sharpe",
+    "team": "BKN",
+    "pos": "C",
+    "games": 62,
+    "mpg": 18.7,
+    "personId": 1630549
+  },
+  {
+    "name": "Olivier-Maxence Prosper",
+    "team": "MEM",
+    "pos": "PF",
+    "games": 53,
+    "mpg": 18.6,
+    "personId": 1641765
+  },
+  {
+    "name": "Corey Kispert",
+    "team": "ATL",
+    "pos": "SF",
+    "games": 58,
+    "mpg": 18.6,
+    "personId": 1630557
+  },
+  {
+    "name": "Pat Spencer",
+    "team": "PHX",
+    "pos": "PG",
+    "games": 66,
+    "mpg": 18.6,
+    "personId": 1630311
+  },
+  {
+    "name": "Baylor Scheierman",
+    "team": "BOS",
+    "pos": "SG",
+    "games": 77,
+    "mpg": 18.6,
+    "personId": 1631248
+  },
+  {
+    "name": "Mike Conley",
+    "team": "BOS",
+    "pos": "PG",
+    "games": 54,
+    "mpg": 18.4,
+    "personId": 201144
+  },
+  {
+    "name": "Quenton Jackson",
+    "team": "IND",
+    "pos": "PG",
+    "games": 49,
+    "mpg": 18.3,
+    "personId": 1631245
+  },
+  {
+    "name": "Jaxson Hayes",
+    "team": "UTA",
+    "pos": "C",
+    "games": 66,
+    "mpg": 18.3,
+    "personId": 1629637
+  },
+  {
+    "name": "Alex Caruso",
+    "team": "OKC",
+    "pos": "SG",
+    "games": 56,
+    "mpg": 18.2,
+    "personId": 1627936
+  },
+  {
+    "name": "Craig Porter Jr.",
+    "team": "CLE",
+    "pos": "PG",
+    "games": 64,
+    "mpg": 17.9,
+    "personId": 1641854
+  },
+  {
+    "name": "Jordan Clarkson",
+    "team": "NYK",
+    "pos": "SG",
+    "games": 72,
+    "mpg": 17.8,
+    "personId": 203903
+  },
+  {
+    "name": "Kasparas Jakučionis",
+    "team": "MIL",
+    "pos": "PG",
+    "games": 53,
+    "mpg": 17.8,
+    "personId": 1642857
+  },
+  {
+    "name": "Jordan Walsh",
+    "team": "BOS",
+    "pos": "PF",
+    "games": 68,
+    "mpg": 17.8,
+    "personId": 1641775
+  },
+  {
+    "name": "Javonte Green",
+    "team": "DET",
+    "pos": "SG",
+    "games": 82,
+    "mpg": 17.6,
+    "personId": 1629750
+  },
+  {
+    "name": "Nicolas Batum",
+    "team": "LAC",
+    "pos": "PF",
+    "games": 74,
+    "mpg": 17.5,
+    "personId": 201587
+  },
+  {
+    "name": "Adem Bona",
+    "team": "PHI",
+    "pos": "C",
+    "games": 71,
+    "mpg": 17.4,
+    "personId": 1641737
+  },
+  {
+    "name": "Josh Okogie",
+    "team": "UTA",
+    "pos": "SG",
+    "games": 78,
+    "mpg": 17.4,
+    "personId": 1629006
+  },
+  {
+    "name": "Jarred Vanderbilt",
+    "team": "LAL",
+    "pos": "PF",
+    "games": 65,
+    "mpg": 17.4,
+    "personId": 1629020
+  },
+  {
+    "name": "Jared McCain",
+    "team": "OKC",
+    "pos": "SG",
+    "games": 67,
+    "mpg": 17.3,
+    "personId": 1642272
+  },
+  {
+    "name": "Quinten Post",
+    "team": "MEM",
+    "pos": "PF",
+    "games": 67,
+    "mpg": 17.3,
+    "personId": 1642366
+  },
+  {
+    "name": "Anthony Gill",
+    "team": "WAS",
+    "pos": "PF",
+    "games": 55,
+    "mpg": 17.3,
+    "personId": 1630264
+  },
+  {
+    "name": "T.J. McConnell",
+    "team": "IND",
+    "pos": "PG",
+    "games": 56,
+    "mpg": 17.2,
+    "personId": 204456
+  },
+  {
+    "name": "Nikola Jović",
+    "team": "MIA",
+    "pos": "PF",
+    "games": 47,
+    "mpg": 17.2,
+    "personId": 1631107
+  },
+  {
+    "name": "Sharife Cooper",
+    "team": "WAS",
+    "pos": "PG",
+    "games": 41,
+    "mpg": 17.1,
+    "personId": 1630536
+  },
+  {
+    "name": "Robert Williams",
+    "team": "POR",
+    "pos": "C",
+    "games": 59,
+    "mpg": 17.1,
+    "personId": 1629057
+  },
+  {
+    "name": "Josh Minott",
+    "team": "BKN",
+    "pos": "PF",
+    "games": 49,
+    "mpg": 17,
+    "personId": 1631169
+  },
+  {
+    "name": "Tyrese Martin",
+    "team": "PHI",
+    "pos": "SG",
+    "games": 46,
+    "mpg": 16.9,
+    "personId": 1631213
+  },
+  {
+    "name": "Simone Fontecchio",
+    "team": "MIA",
+    "pos": "SF",
+    "games": 70,
+    "mpg": 16.8,
+    "personId": 1631323
+  },
+  {
+    "name": "Rayan Rupert",
+    "team": "PHI",
+    "pos": "SG",
+    "games": 64,
+    "mpg": 16.8,
+    "personId": 1641712
+  },
+  {
+    "name": "Bones Hyland",
+    "team": "MIN",
+    "pos": "PG",
+    "games": 71,
+    "mpg": 16.6,
+    "personId": 1630538
+  },
+  {
+    "name": "Gabe Vincent",
+    "team": "ATL",
+    "pos": "PG",
+    "games": 53,
+    "mpg": 16.6,
+    "personId": 1629216
+  },
+  {
+    "name": "Isaiah Jackson",
+    "team": "LAC",
+    "pos": "C",
+    "games": 55,
+    "mpg": 16.5,
+    "personId": 1630543
+  },
+  {
+    "name": "Jevon Carter",
+    "team": "ORL",
+    "pos": "PG",
+    "games": 53,
+    "mpg": 16.4,
+    "personId": 1628975
+  },
+  {
+    "name": "Trendon Watford",
+    "team": "NOP",
+    "pos": "PF",
+    "games": 53,
+    "mpg": 16.3,
+    "personId": 1630570
+  },
+  {
+    "name": "Dru Smith",
+    "team": "MIA",
+    "pos": "SG",
+    "games": 70,
+    "mpg": 16.3,
+    "personId": 1630696
+  },
+  {
+    "name": "Luka Garza",
+    "team": "BOS",
+    "pos": "C",
+    "games": 69,
+    "mpg": 16.2,
+    "personId": 1630568
+  },
+  {
+    "name": "Buddy Hield",
+    "team": "ATL",
+    "pos": "SG",
+    "games": 51,
+    "mpg": 16.1,
+    "personId": 1627741
+  },
+  {
+    "name": "Jalen Pickett",
+    "team": "LAC",
+    "pos": "SG",
+    "games": 50,
+    "mpg": 16.1,
+    "personId": 1629618
+  },
+  {
+    "name": "Jalen Wilson",
+    "team": "ATL",
+    "pos": "PF",
+    "games": 54,
+    "mpg": 15.9,
+    "personId": 1630592
+  },
+  {
+    "name": "Jaden Hardy",
+    "team": "LAL",
+    "pos": "SG",
+    "games": 57,
+    "mpg": 15.8,
+    "personId": 1630702
+  },
+  {
+    "name": "Kobe Brown",
+    "team": "IND",
+    "pos": "PF",
+    "games": 61,
+    "mpg": 15.8,
+    "personId": 1641738
+  },
+  {
+    "name": "Nae'Qwan Tomlin",
+    "team": "CLE",
+    "pos": "PF",
+    "games": 64,
+    "mpg": 15.7,
+    "personId": 1641772
+  },
+  {
+    "name": "Pete Nance",
+    "team": "MIL",
+    "pos": "PF",
+    "games": 47,
+    "mpg": 15.7,
+    "personId": 1631250
+  },
+  {
+    "name": "Josh Green",
+    "team": "UTA",
+    "pos": "SG",
+    "games": 58,
+    "mpg": 15.7,
+    "personId": 1630182
+  },
+  {
+    "name": "Leonard Miller",
+    "team": "CHI",
+    "pos": "SF",
+    "games": 46,
+    "mpg": 15.6,
+    "personId": 1631159
+  },
+  {
+    "name": "Gary Payton II",
+    "team": "GSW",
+    "pos": "SG",
+    "games": 73,
+    "mpg": 15.6,
+    "personId": 1627780
+  },
+  {
+    "name": "Kenrich Williams",
+    "team": "OKC",
+    "pos": "PF",
+    "games": 56,
+    "mpg": 15.3,
+    "personId": 1629026
+  },
+  {
+    "name": "Justin Edwards",
+    "team": "PHI",
+    "pos": "SF",
+    "games": 64,
+    "mpg": 15.3,
+    "personId": 1642348
+  },
+  {
+    "name": "Mouhamed Gueye",
+    "team": "ATL",
+    "pos": "PF",
+    "games": 77,
+    "mpg": 15.3,
+    "personId": 1631243
+  },
+  {
+    "name": "Goga Bitadze",
+    "team": "ORL",
+    "pos": "C",
+    "games": 64,
+    "mpg": 15.2,
+    "personId": 1629048
+  },
+  {
+    "name": "Julian Strawther",
+    "team": "DEN",
+    "pos": "SG",
+    "games": 57,
+    "mpg": 15.1,
+    "personId": 1631124
+  },
+  {
+    "name": "Micah Peavy",
+    "team": "NOP",
+    "pos": "SG",
+    "games": 61,
+    "mpg": 15,
+    "personId": 1642877
+  },
+  {
+    "name": "Rob Dillingham",
+    "team": "CHI",
+    "pos": "PG",
+    "games": 65,
+    "mpg": 14.9,
+    "personId": 1642265
+  },
+  {
+    "name": "Caleb Martin",
+    "team": "DAL",
+    "pos": "SF",
+    "games": 58,
+    "mpg": 14.8,
+    "personId": 1628997
+  },
+  {
+    "name": "Karlo Matković",
+    "team": "NOP",
+    "pos": "PF",
+    "games": 62,
+    "mpg": 14.7,
+    "personId": 1631255
+  },
+  {
+    "name": "Nick Richards",
+    "team": "MIA",
+    "pos": "C",
+    "games": 48,
+    "mpg": 14.6,
+    "personId": 1630208
+  },
+  {
+    "name": "Hugo González",
+    "team": "BOS",
+    "pos": "SF",
+    "games": 74,
+    "mpg": 14.6,
+    "personId": 1642864
+  },
+  {
+    "name": "Tyus Jones",
+    "team": "DEN",
+    "pos": "PG",
+    "games": 67,
+    "mpg": 14.6,
+    "personId": 1626145
+  },
+  {
+    "name": "Dwight Powell",
+    "team": "DAL",
+    "pos": "C",
+    "games": 63,
+    "mpg": 14.3,
+    "personId": 203939
+  },
+  {
+    "name": "Gradey Dick",
+    "team": "TOR",
+    "pos": "SG",
+    "games": 76,
+    "mpg": 14,
+    "personId": 1641711
+  },
+  {
+    "name": "Jamaree Bouyea",
+    "team": "PHX",
+    "pos": "PG",
+    "games": 46,
+    "mpg": 14,
+    "personId": 1631123
+  },
+  {
+    "name": "Paul Reed",
+    "team": "DET",
+    "pos": "C",
+    "games": 65,
+    "mpg": 13.9,
+    "personId": 1630194
+  },
+  {
+    "name": "Gary Harris",
+    "team": "DET",
+    "pos": "SG",
+    "games": 48,
+    "mpg": 13.8,
+    "personId": 203914
+  },
+  {
+    "name": "Tristan Vukcevic",
+    "team": "WAS",
+    "pos": "C",
+    "games": 49,
+    "mpg": 13.7,
+    "personId": 1641774
+  },
+  {
+    "name": "Aaron Holiday",
+    "team": "HOU",
+    "pos": "PG",
+    "games": 57,
+    "mpg": 13.7,
+    "personId": 1628988
+  },
+  {
+    "name": "Jordan Hawkins",
+    "team": "NOP",
+    "pos": "SG",
+    "games": 51,
+    "mpg": 13.6,
+    "personId": 1641722
+  },
+  {
+    "name": "Jonas Valančiūnas",
+    "team": "DEN",
+    "pos": "C",
+    "games": 65,
+    "mpg": 13.4,
+    "personId": null
+  },
+  {
+    "name": "Drew Eubanks",
+    "team": "SAC",
+    "pos": "C",
+    "games": 42,
+    "mpg": 13.1,
+    "personId": null
+  },
+  {
+    "name": "Jaylen Clark",
+    "team": "MIN",
+    "pos": "SG",
+    "games": 68,
+    "mpg": 13.1,
+    "personId": 1641740
+  },
+  {
+    "name": "Noah Penda",
+    "team": "ORL",
+    "pos": "SF",
+    "games": 59,
+    "mpg": 12.8,
+    "personId": 1642869
+  },
+  {
+    "name": "Jett Howard",
+    "team": "DAL",
+    "pos": "SF",
+    "games": 55,
+    "mpg": 12.6,
+    "personId": 1641724
+  },
+  {
+    "name": "Tre Mann",
+    "team": "WAS",
+    "pos": "PG",
+    "games": 53,
+    "mpg": 12.6,
+    "personId": 1630544
+  },
+  {
+    "name": "Terrence Shannon Jr.",
+    "team": "MIN",
+    "pos": "SG",
+    "games": 43,
+    "mpg": 12.5,
+    "personId": 1630545
+  },
+  {
+    "name": "Clint Capela",
+    "team": "HOU",
+    "pos": "C",
+    "games": 75,
+    "mpg": 12.3,
+    "personId": 203991
+  },
+  {
+    "name": "Thomas Bryant",
+    "team": "CLE",
+    "pos": "C",
+    "games": 60,
+    "mpg": 12.2,
+    "personId": 1628418
+  },
+  {
+    "name": "Jamal Cain",
+    "team": "ORL",
+    "pos": "SF",
+    "games": 40,
+    "mpg": 12.2,
+    "personId": 1631288
+  },
+  {
+    "name": "Rasheer Fleming",
+    "team": "PHX",
+    "pos": "PF",
+    "games": 55,
+    "mpg": 12.2,
+    "personId": 1642853
+  },
+  {
+    "name": "Zeke Nnaji",
+    "team": "DEN",
+    "pos": "PF",
+    "games": 52,
+    "mpg": 12,
+    "personId": 1630192
+  },
+  {
+    "name": "Tyrese Haliburton",
+    "team": "IND",
+    "pos": "PG",
+    "games": 73,
+    "mpg": 33.5,
+    "carriedFrom": 2025,
+    "personId": 1630169
+  },
+  {
+    "name": "Kyrie Irving",
+    "team": "DAL",
+    "pos": "PG",
+    "games": 50,
+    "mpg": 36.1,
+    "carriedFrom": 2025,
+    "personId": 202681
+  },
+  {
+    "name": "Damian Lillard",
+    "team": "POR",
+    "pos": "PG",
+    "games": 58,
+    "mpg": 36.1,
+    "carriedFrom": 2025,
+    "personId": 203081
+  },
+  {
+    "name": "Fred VanVleet",
+    "team": "HOU",
+    "pos": "PG",
+    "games": 60,
+    "mpg": 35.2,
+    "carriedFrom": 2025,
+    "personId": 1627832
+  }
 ]

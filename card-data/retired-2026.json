@@ -1,4 +1,9 @@
 {
-  "_comment": "Players the source table still carries a 2025-26 row for, but who have RETIRED and should not appear in the 2026-27 set. Mirrors force-include-2026.json in shape: one \"Name\": \"why\" entry per player. This is the opposite operation — force-include ADDS a player the MPG/games rule would drop, this REMOVES one the rule would keep. A name matching no row is reported rather than silently ignored, because a typo is otherwise invisible.",
-  "Russell Westbrook": "retired after 2025-26"
+  "_comment": "Players the source table still carries a 2025-26 row for, but who should NOT appear in the 2026-27 set. Mirrors force-include-2026.json in shape: one \"Name\": \"why\" entry per player. This is the opposite operation — force-include ADDS a player the MPG/games rule would drop, this REMOVES one the rule would keep. A name matching no row is reported rather than silently ignored, because a typo is otherwise invisible. TWO REASONS QUALIFY, and the second was added 2026-09-03. RETIRED is the original. NOT ON ANY CURRENT ROSTER is the new one: every other card takes its team from nba.com's active roster, so a player absent from it can only be given the team he FINISHED LAST SEASON with — a different question, silently answered in the same field. That was tolerable while a team was decoration; it stopped being tolerable when team-collection completion started counting a franchise's roster, because a stale team puts a real card on the wrong roster and makes that franchise uncompletable. The five below are the players nba.com's 583-man roster does not carry. The rule is now simply CURRENT TEAMS ONLY: if no current team exists, there is no card.",
+  "Russell Westbrook": "retired after 2025-26",
+  "Cam Thomas": "on no current NBA roster; finished 2025-26 with MIL after BRK",
+  "Vince Williams Jr.": "on no current NBA roster; finished 2025-26 with UTA after MEM",
+  "John Konchar": "on no current NBA roster; finished 2025-26 with UTA after MEM",
+  "Ochai Agbaji": "on no current NBA roster; finished 2025-26 with BKN after TOR",
+  "Guerschon Yabusele": "on no current NBA roster; finished 2025-26 with CHI after NYK"
 }

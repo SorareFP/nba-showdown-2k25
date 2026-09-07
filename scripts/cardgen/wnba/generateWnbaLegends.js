@@ -82,6 +82,8 @@ import { loadWnbaSeasonRealGames } from '../realGames.js';
 import { reconcileBandsByRoll, shapeChart, MAX_CHART_TIERS } from '../generate.js';
 import * as V from '../variance.js';
 import * as A from '../attributes.js';
+import * as B from './bigness.js';
+import * as Z from './wnbaSize.js';
 import * as PV from '../playValue.js';
 import * as S from '../shooting.js';
 import { CALIBRATION_FILE } from '../calibrateAttributes.js';
@@ -282,7 +284,11 @@ export function expectedValuePerRoll(chart, stat, faces = 20) {
  * provenance added and the franchise resolved THROUGH THE ERA. That last part
  * is why Lauren Jackson's card is hunter green: see wnbaFranchiseForSeason.
  */
-export function buildLegendCard({ row, shooting, speedPowerTotal, calibration, realGames = null }) {
+export function buildLegendCard({ row, shooting, speedPowerTotal, calibration, realGames = null, sizeCtx = null, legendName = null }) {
+  // The card prints the name the user LISTED ("Suzie McConnell-Serio"), not
+  // the archive's spelling of it ("Suzie McConnell Serio"); the two are matched
+  // by normalizeName in resolveLegendIds, so either spelling finds the rows.
+  const shownName = legendName ?? row.name;
   const games = row.games ?? 0;
   const minutes = row.minutes ?? 0;
   const mpg = games > 0 ? minutes / games : 0;
@@ -312,7 +318,12 @@ export function buildLegendCard({ row, shooting, speedPowerTotal, calibration, r
   // every WNBA card is provisional. Omitting both arguments gives exactly the
   // rule this file has always used rather than dropping players who cannot be
   // measured, which is what `splitSpeedPower` makes the default.
-  const { speed, power } = A.splitSpeedPower(speedPowerTotal, row.pos, calibration.positionSpeedShare);
+  // Position alone collapsed every player at a position onto one split — see
+  // the long note in generateWnbaCards.js and wnba/bigness.js. A null basis
+  // keeps the old behaviour so a caller that has not supplied one is unchanged.
+  const { speed, power } = sizeCtx
+    ? Z.splitWnbaBySize(speedPowerTotal, row, { ...sizeCtx, shares: calibration.positionSpeedShare })
+    : A.splitSpeedPower(speedPowerTotal, row.pos, calibration.positionSpeedShare);
   const { shotLine, paintBoost, threePtBoost } = shooting;
   const defBoost = A.defBoostFromEpm(row.dbpmHat);
 
@@ -348,8 +359,8 @@ export function buildLegendCard({ row, shooting, speedPowerTotal, calibration, r
   const chart = shapeChart(reconcileBandsByRoll(bands), { shotLine });
 
   const card = {
-    id: playerIdFromName(row.name),
-    name: row.name,
+    id: playerIdFromName(shownName),
+    name: shownName,
     // THE FRANCHISE AS IT WAS. `wnbaFranchiseForSeason` turns a 2010 "SEA" into
     // the Storm's hunter-green era and a 2009 "PHO" into the Mercury's Planet
     // Red one — the WNBA counterpart of the NBA set putting Kevin Durant's
@@ -493,6 +504,97 @@ function nbaEnvelope(model) {
   return rows.length ? L.featureEnvelope(rows, model.features) : null;
 }
 
+/**
+ * Build and shape a set of WNBA cards from chosen seasons.
+ *
+ * ── LIFTED OUT OF main() SO A SECOND SET CAN USE IT ─────────────────────────
+ *
+ * This was the middle of the Super Season generator, and it is the whole
+ * WNBA card-building pipeline: the shooting layer measured against the current
+ * WNBA pool, Speed+Power off the NBA BPM-equivalent archive, and a chart cut
+ * from the season's real game log. Every WNBA card in the game goes through it.
+ *
+ * The WNBA collection rewards need exactly this and cannot use the set that
+ * owns it: a reward is a NAMED season for a named franchise, where a Super
+ * Season card is whatever season scored highest. Copying fifty lines to get a
+ * second caller would be two pipelines drifting apart from the day it was done,
+ * so the function moved instead and the set that used to own it now calls it
+ * like anybody else.
+ *
+ * `selections` is `[{ best }]` where `best` is the rated career row to card.
+ * Nothing here reads any other field, which is what lets a reward pick a season
+ * the Super Season rule would not have chosen.
+ */
+export function buildWnbaCards({ selections, seasons, reference, calibration }) {
+  const wnbaSet = fs.existsSync(WNBA_CARDS_FILE) ? readJson(WNBA_CARDS_FILE) : null;
+  const cardedIds = new Set((wnbaSet?.cards ?? []).map(c => c.bbrefId));
+  const poolRows = cardedIds.size
+    ? reference.rows.filter(r => cardedIds.has(r.playerId))
+    : reference.rows.filter(r => (r.mpg ?? 0) >= 16);
+
+  const shootingRows = [
+    ...poolRows.map(r => ({
+      tsPct: r.tsPct,
+      paintPct: r.fgPct2,
+      threePct: r.fgPct3,
+      paintAttempts: r.fg2aTotal ?? 0,
+      threeAttempts: r.fg3aTotal ?? 0,
+      threeRate: r.fg3a100 ?? 0,
+    })),
+    ...selections.map(s =>
+      legendShootingInput(s.best, seasons.get(s.best.season).shooting, reference.shooting)
+    ),
+  ];
+  const shooting = S.buildShootingLayer(shootingRows, {
+    shotLineTarget: calibration.shotLine.target,
+    paint: calibration.paintBoost,
+    three: calibration.threePtBoost,
+  });
+
+  // The Speed+Power basis is the NBA BPM-EQUIVALENT ARCHIVE — 4,780 cardable NBA
+  // player-seasons, 2012-2026, rated by this same fitted model — not the 2026-27
+  // NBA pool it used to be. See scripts/cardgen/wnba/nbaBpmArchive.js, which
+  // also states the cross-league assumption plainly.
+  const spArchive = bpmArchive.requireArchive();
+  const withVorp = r => ({
+    bpmHat: r.bpmHat,
+    vorpPerGameHat: vorpPerGame(r.bpmHat, r, WNBA_GAME_MINUTES),
+  });
+  const spRows = selections.map(s => withVorp(s.best));
+  const basis = bpmArchive.archiveBasis(spArchive);
+  const composites = spRows.map(r => composite(r, basis, COMPOSITE_WEIGHTS));
+  const totals = mapToReferenceScale(composites, PRINTED_SCALE, {
+    calibrateOn: spArchive.composites,
+  });
+
+  // SIZE, MEASURED AND INFERRED — see wnbaSize.js. Built from every rated
+  // season so the positional baselines are the league's, not this selection's:
+  // sixteen legends would make the least tall of them a guard.
+  const sizeBasis = Z.wnbaSizeContext([...seasons.values()].flatMap(e => e.rows ?? []));
+
+  const cards = selections.map((s, i) => {
+    const card = buildLegendCard({
+      row: s.best,
+      legendName: s.name,
+      shooting: shooting.players[poolRows.length + i],
+      speedPowerTotal: totals[i],
+      calibration,
+      realGames: loadWnbaSeasonRealGames(s.best.playerId, s.best.season),
+      sizeCtx: sizeBasis,
+    });
+    // SUPER SEASON SUPERSEDES ROOKIE (the user's rule, 2026-09-06, same as
+    // the NBA twin collapse): a legend whose best season was her FIRST is one
+    // gold card wearing the rookie pill too — Yolanda Griffith's 1999 MVP year
+    // — and generateWnbaRookies leaves that season alone.
+    const firstSeason = Math.min(...(s.career ?? []).map(c => c.season).filter(Number.isFinite));
+    if (Number.isFinite(firstSeason) && firstSeason === s.best.season) {
+      card.badges = [...new Set([...(card.badges ?? []), 'rookie'])];
+    }
+    return card;
+  });
+  return cards;
+}
+
 export function main({ log = console.log } = {}) {
   const calibration = readJson(CALIBRATION_FILE);
   const model = readJson(MODEL_FILE);
@@ -560,56 +662,7 @@ export function main({ log = console.log } = {}) {
   // legend's line means the same thing as a 2026 player's. A checkout that has
   // not generated it falls back to the pool rule, which is the same population
   // to within the force-included seven.
-  const wnbaSet = fs.existsSync(WNBA_CARDS_FILE) ? readJson(WNBA_CARDS_FILE) : null;
-  const cardedIds = new Set((wnbaSet?.cards ?? []).map(c => c.bbrefId));
-  const poolRows = cardedIds.size
-    ? reference.rows.filter(r => cardedIds.has(r.playerId))
-    : reference.rows.filter(r => (r.mpg ?? 0) >= 16);
-
-  const shootingRows = [
-    ...poolRows.map(r => ({
-      tsPct: r.tsPct,
-      paintPct: r.fgPct2,
-      threePct: r.fgPct3,
-      paintAttempts: r.fg2aTotal ?? 0,
-      threeAttempts: r.fg3aTotal ?? 0,
-      threeRate: r.fg3a100 ?? 0,
-    })),
-    ...selections.map(s =>
-      legendShootingInput(s.best, seasons.get(s.best.season).shooting, reference.shooting)
-    ),
-  ];
-  const shooting = S.buildShootingLayer(shootingRows, {
-    shotLineTarget: calibration.shotLine.target,
-    paint: calibration.paintBoost,
-    three: calibration.threePtBoost,
-  });
-
-  // The Speed+Power basis is the NBA BPM-EQUIVALENT ARCHIVE — 4,780 cardable NBA
-  // player-seasons, 2012-2026, rated by this same fitted model — not the 2026-27
-  // NBA pool it used to be. See scripts/cardgen/wnba/nbaBpmArchive.js, which
-  // also states the cross-league assumption plainly.
-  const spArchive = bpmArchive.requireArchive();
-  const withVorp = r => ({
-    bpmHat: r.bpmHat,
-    vorpPerGameHat: vorpPerGame(r.bpmHat, r, WNBA_GAME_MINUTES),
-  });
-  const spRows = selections.map(s => withVorp(s.best));
-  const basis = bpmArchive.archiveBasis(spArchive);
-  const composites = spRows.map(r => composite(r, basis, COMPOSITE_WEIGHTS));
-  const totals = mapToReferenceScale(composites, PRINTED_SCALE, {
-    calibrateOn: spArchive.composites,
-  });
-
-  const cards = selections.map((s, i) =>
-    buildLegendCard({
-      row: s.best,
-      shooting: shooting.players[poolRows.length + i],
-      speedPowerTotal: totals[i],
-      calibration,
-      realGames: loadWnbaSeasonRealGames(s.best.playerId, s.best.season),
-    })
-  );
+  const cards = buildWnbaCards({ selections, seasons, reference, calibration });
   cards.sort((a, b) => a.name.localeCompare(b.name));
 
   // ── The trust audit ───────────────────────────────────────────────────────

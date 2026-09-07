@@ -1,9 +1,4 @@
 {
-  "Becky_Hammon": {
-    "x": -10.43,
-    "y": 26.66,
-    "zoom": 1.37
-  },
   "Diana_Taurasi": {
     "x": -8.67,
     "y": 0,
@@ -53,5 +48,35 @@
     "x": -4,
     "y": 1.77,
     "zoom": 1.08
+  },
+  "Candace_Parker": {
+    "x": 0.05,
+    "y": 16.12,
+    "zoom": 1.25
+  },
+  "Tamika_Catchings": {
+    "x": 0,
+    "y": -0.63,
+    "zoom": 1
+  },
+  "Chasity_Melvin": {
+    "x": 0,
+    "y": -1.5,
+    "zoom": 1
+  },
+  "Dawn_Staley": {
+    "x": -20.79,
+    "y": 0,
+    "zoom": 1
+  },
+  "Michelle_Edwards": {
+    "x": -8.91,
+    "y": 0,
+    "zoom": 1
+  },
+  "Suzie_McConnell_Serio": {
+    "x": 4.03,
+    "y": 0,
+    "zoom": 1
   }
 }

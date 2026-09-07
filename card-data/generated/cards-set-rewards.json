@@ -1,0 +1,295 @@
+{
+ "generatedAt": "2026-09-06T21:52:29.044Z",
+ "set": "set-rewards",
+ "note": "SET COMPLETION REWARDS — cards MOVED out of their home special set (see migratedFrom) and earned by completing that set (rewardGoal). Built by scripts/cardgen/generateSetRewards.js from card-data/set-rewards-2026.json; the strongest card by salary of each group is the reward.",
+ "cards": [
+  {
+   "id": "Russell_Westbrook_2017",
+   "name": "Russell Westbrook",
+   "team": "OKC",
+   "pos": "PG",
+   "speed": 18,
+   "power": 12,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": 1,
+   "defBoost": 2,
+   "salary": 1760,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 7,
+     "hi": 15,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 21,
+     "pts": 4,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 4,
+     "reb": 2,
+     "ast": 2
+    }
+   ],
+   "season": 2017,
+   "seasonLabel": "2016-17",
+   "age": 28,
+   "games": 81,
+   "mpg": 34.6,
+   "bbrefId": "westbru01",
+   "traded": false,
+   "metrics": {
+    "bpm": 11.1,
+    "vorp": 9.3,
+    "ws": 13.1,
+    "ws48": 0.224,
+    "per": 30.6
+   },
+   "provisional": false,
+   "set": "set-rewards",
+   "badges": [
+    "super-season"
+   ],
+   "migratedFrom": {
+    "set": "super-season",
+    "id": "Russell_Westbrook"
+   },
+   "rewardGoal": "set-super-season"
+  },
+  {
+   "id": "Michael_Jordan",
+   "name": "Michael Jordan",
+   "team": "CHI",
+   "pos": "SG",
+   "speed": 18,
+   "power": 12,
+   "shotLine": 14,
+   "paintBoost": -1,
+   "threePtBoost": -6,
+   "defBoost": 2,
+   "salary": 1420,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 1985,
+   "seasonLabel": "1984-85",
+   "age": 21,
+   "games": 82,
+   "mpg": 38.3,
+   "bbrefId": "jordami01",
+   "traded": false,
+   "metrics": {
+    "bpm": 7.3,
+    "vorp": 7.4,
+    "ws": 14,
+    "ws48": 0.213,
+    "per": 25.8
+   },
+   "provisional": false,
+   "set": "set-rewards",
+   "badges": [
+    "rookie"
+   ],
+   "migratedFrom": {
+    "set": "rookie",
+    "id": "Michael_Jordan"
+   },
+   "rewardGoal": "set-rookie"
+  },
+  {
+   "id": "Dwyane_Wade",
+   "name": "Dwyane Wade",
+   "team": "MIA",
+   "pos": "SG",
+   "speed": 18,
+   "power": 12,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": -4,
+   "defBoost": 3,
+   "salary": 1360,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2006,
+   "seasonLabel": "2005-06",
+   "age": null,
+   "games": 23,
+   "mpg": 41.7,
+   "bbrefId": "wadedw01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true,
+   "set": "set-rewards",
+   "badges": [
+    "summer-standout"
+   ],
+   "migratedFrom": {
+    "set": "summer-standouts",
+    "id": "Dwyane_Wade"
+   },
+   "rewardGoal": "set-summer-standouts"
+  },
+  {
+   "id": "Russell_Westbrook_2020",
+   "name": "Russell Westbrook",
+   "team": "HOU20",
+   "pos": "PG",
+   "speed": 13,
+   "power": 8,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": -3,
+   "defBoost": 0,
+   "salary": 1420,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 5,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 6,
+     "hi": 8,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 9,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 23,
+     "pts": 5,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 24,
+     "hi": 99,
+     "pts": 5,
+     "reb": 2,
+     "ast": 2
+    }
+   ],
+   "season": 2020,
+   "seasonLabel": "2019-20",
+   "age": 31,
+   "games": 57,
+   "mpg": 35.9,
+   "bbrefId": "westbru01",
+   "traded": false,
+   "metrics": {
+    "bpm": 1.5,
+    "vorp": 1.8,
+    "ws": 4.2,
+    "ws48": 0.098,
+    "per": 21
+   },
+   "provisional": true,
+   "stint": {
+    "games": 57,
+    "note": "the user's pick for the Dissonance completion reward (2026-09-06): one season as a Rocket beside Harden, 57 games at 27.2 ppg, a pairing with no card anywhere"
+   },
+   "set": "set-rewards",
+   "badges": [
+    "dissonance"
+   ],
+   "migratedFrom": {
+    "set": "dissonance",
+    "id": "Russell_Westbrook"
+   },
+   "rewardGoal": "set-dissonance"
+  }
+ ]
+}

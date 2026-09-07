@@ -198,6 +198,15 @@
     "blended": false
   },
   {
+    "name": "Rickea Jackson",
+    "team": "CHI",
+    "pos": "F",
+    "games": 42,
+    "mpg": 30.7,
+    "bbrefId": "jacksri02w",
+    "blended": true
+  },
+  {
     "name": "Courtney Williams",
     "team": "MIN",
     "pos": "G",
@@ -547,6 +556,15 @@
     "mpg": 24.3,
     "bbrefId": "smithna01w",
     "blended": false
+  },
+  {
+    "name": "Satou Sabally",
+    "team": "NYL",
+    "pos": "F",
+    "games": 52,
+    "mpg": 24.2,
+    "bbrefId": "sabalsa01w",
+    "blended": true
   },
   {
     "name": "Kayla Thornton",

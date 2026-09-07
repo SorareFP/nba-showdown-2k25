@@ -116,6 +116,9 @@ export const BEST_SEASON_BADGE = 'best-season';
 export const ROOKIE_BADGE = 'rookie';
 export const SUMMER_STANDOUT_BADGE = 'summer-standout';
 export const DISSONANCE_BADGE = 'dissonance';
+/** The team-completion reward sets' own mark — see TEAM_REWARDS_SET. */
+export const TEAM_REWARD_BADGE = 'team-reward';
+export const SET_REWARD_BADGE = 'set-reward';
 
 /**
  * The salary at which a best season is a SUPER season.
@@ -313,6 +316,22 @@ export const BADGES = [
     // set badge like SUMMER's, never on a base-set record.
     id: DISSONANCE_BADGE,
     text: 'DISSONANCE',
+    fill: theme => theme.accentOnField,
+  },
+  {
+    // The TEAM REWARDS pill. Set badge, never on a base-set record. Takes the
+    // team's accent like the others — the bronze that marks this set lives in
+    // the treatment (see treatments.js), and a pill in a fifth invented colour
+    // would be measurable against nothing.
+    id: TEAM_REWARD_BADGE,
+    text: 'TEAM REWARD',
+    fill: theme => theme.accentOnField,
+  },
+  {
+    // The SET REWARD pill: the capstone for completing a special set. Same
+    // reasoning as TEAM REWARD — the origin set's badge prints underneath it.
+    id: SET_REWARD_BADGE,
+    text: 'SET REWARD',
     fill: theme => theme.accentOnField,
   },
 ];

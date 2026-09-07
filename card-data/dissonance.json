@@ -1,119 +1,129 @@
 {
- "what": "The DISSONANCE set: the wrong jersey, however it got there — trades, twilight signings, one-game cameos. Hand-picked from the Weird Jersey List.",
- "rule": "The stat line is the STINT'S — that team's rows only. The skill (Speed+Power, trust) is the player's season-wide evidence: a one-game Hawk is still the 2004 Rasheed Wallace.",
- "picks": {
-  "Rasheed Wallace": {
-   "season": 2004,
-   "team": "ATL",
-   "note": "the one game — 42 minutes, 20 points"
-  },
-  "Karl Malone": {
-   "season": 2004,
-   "team": "LAL"
-  },
-  "Tracy McGrady": [
-   {
-    "season": 2012,
-    "team": "ATL"
-   },
-   {
-    "season": 2010,
-    "team": "NYK",
-    "note": "24 games at the Garden"
-   }
-  ],
-  "Shaquille O'Neal": [
-   {
-    "season": 2010,
-    "team": "CLE"
-   },
-   {
-    "season": 2008,
-    "team": "PHO"
-   }
-  ],
-  "Allen Iverson": {
-   "season": 2009,
-   "team": "DET"
-  },
-  "Gary Payton": {
-   "season": 2004,
-   "team": "LAL"
-  },
-  "Dwight Howard": [
-   {
-    "season": 2018,
-    "team": "CHO"
-   },
-   {
-    "season": 2021,
-    "team": "PHI",
-    "note": "a season in Philadelphia"
-   }
-  ],
-  "Carmelo Anthony": [
-   {
-    "season": 2018,
-    "team": "OKC"
-   },
-   {
-    "season": 2022,
-    "team": "LAL",
-    "note": "Melo in purple and gold"
-   }
-  ],
-  "Steve Nash": {
-   "season": 2013,
-   "team": "LAL"
-  },
-  "Patrick Ewing": {
-   "season": 2002,
-   "team": "ORL"
-  },
-  "Hakeem Olajuwon": {
-   "season": 2002,
-   "team": "TOR"
-  },
-  "Dwyane Wade": {
-   "season": 2017,
-   "team": "CHI"
-  },
-  "Vince Carter": [
-   {
-    "season": 2011,
-    "team": "PHO",
-    "note": "34 games in Phoenix between Orlando and Dallas"
-   },
-   {
-    "season": 2020,
-    "team": "ATL",
-    "note": "age 43, the fourth decade, the last shot"
-   }
-  ],
-  "Paul Pierce": {
-   "season": 2016,
-   "team": "LAC",
-   "note": "the Truth as a Clipper reserve"
-  },
-  "Joe Johnson": {
-   "season": 2018,
-   "team": "HOU",
-   "note": "seven-time All-Star, 23 games off Houston's bench"
-  },
-  "Rajon Rondo": {
-   "season": 2022,
-   "team": "CLE",
-   "note": "the last stop, in wine and gold"
-  },
-  "Zach Randolph": {
-   "season": 2018,
-   "team": "SAC",
-   "note": "Z-Bo in Kings purple"
-  },
-  "Isaiah Thomas": {
-   "season": 2018,
-   "team": "LAL",
-   "note": "17 Lakers games after the Cleveland trade"
+  "what": "The DISSONANCE set: the wrong jersey, however it got there — trades, twilight signings, one-game cameos. Hand-picked from the Weird Jersey List.",
+  "rule": "The stat line is the STINT'S — that team's rows only. The skill (Speed+Power, trust) is the player's season-wide evidence: a one-game Hawk is still the 2004 Rasheed Wallace.",
+  "picks": {
+    "Michael Jordan": {
+      "season": 2002,
+      "team": "WAS",
+      "note": "the twilight signing the whole set is named for — 38 years old, two seasons in Washington after retiring a Bull. 2002 over 2003 because it is the better of the two (BPM 3.1 against 1.7, PER 20.7 against 19.3); the WAS97 mark covers 1997-2011, so the card wears the Wizards logo he actually played in."
+    },
+    "Rasheed Wallace": {
+      "season": 2004,
+      "team": "ATL",
+      "note": "the one game — 42 minutes, 20 points"
+    },
+    "Karl Malone": {
+      "season": 2004,
+      "team": "LAL"
+    },
+    "Tracy McGrady": [
+      {
+        "season": 2012,
+        "team": "ATL"
+      },
+      {
+        "season": 2010,
+        "team": "NYK",
+        "note": "24 games at the Garden"
+      }
+    ],
+    "Shaquille O'Neal": [
+      {
+        "season": 2010,
+        "team": "CLE"
+      },
+      {
+        "season": 2008,
+        "team": "PHO"
+      }
+    ],
+    "Allen Iverson": {
+      "season": 2009,
+      "team": "DET"
+    },
+    "Gary Payton": {
+      "season": 2004,
+      "team": "LAL"
+    },
+    "Dwight Howard": [
+      {
+        "season": 2018,
+        "team": "CHO"
+      },
+      {
+        "season": 2021,
+        "team": "PHI",
+        "note": "a season in Philadelphia"
+      }
+    ],
+    "Carmelo Anthony": [
+      {
+        "season": 2018,
+        "team": "OKC"
+      },
+      {
+        "season": 2022,
+        "team": "LAL",
+        "note": "Melo in purple and gold"
+      }
+    ],
+    "Steve Nash": {
+      "season": 2013,
+      "team": "LAL"
+    },
+    "Patrick Ewing": {
+      "season": 2002,
+      "team": "ORL"
+    },
+    "Hakeem Olajuwon": {
+      "season": 2002,
+      "team": "TOR"
+    },
+    "Dwyane Wade": {
+      "season": 2017,
+      "team": "CHI"
+    },
+    "Vince Carter": [
+      {
+        "season": 2011,
+        "team": "PHO",
+        "note": "34 games in Phoenix between Orlando and Dallas"
+      },
+      {
+        "season": 2020,
+        "team": "ATL",
+        "note": "age 43, the fourth decade, the last shot"
+      }
+    ],
+    "Paul Pierce": {
+      "season": 2016,
+      "team": "LAC",
+      "note": "the Truth as a Clipper reserve"
+    },
+    "Joe Johnson": {
+      "season": 2018,
+      "team": "HOU",
+      "note": "seven-time All-Star, 23 games off Houston's bench"
+    },
+    "Rajon Rondo": {
+      "season": 2022,
+      "team": "CLE",
+      "note": "the last stop, in wine and gold"
+    },
+    "Zach Randolph": {
+      "season": 2018,
+      "team": "SAC",
+      "note": "Z-Bo in Kings purple"
+    },
+    "Isaiah Thomas": {
+      "season": 2018,
+      "team": "LAL",
+      "note": "17 Lakers games after the Cleveland trade"
+    },
+    "Russell Westbrook": {
+      "season": 2020,
+      "team": "HOU",
+      "note": "the user's pick for the Dissonance completion reward (2026-09-06): one season as a Rocket beside Harden, 57 games at 27.2 ppg, a pairing with no card anywhere"
+    }
   }
- }
 }

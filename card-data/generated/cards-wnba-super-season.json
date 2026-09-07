@@ -1,2685 +1,4094 @@
 {
-  "generatedAt": "2026-09-03T17:44:44.467Z",
-  "provisional": false,
-  "set": "wnba-super-season",
-  "league": "WNBA",
-  "statsSeason": "career-best season",
-  "firstSeason": 1997,
-  "lastSeason": 2024,
-  "referenceSeason": 2026,
-  "rosterSize": 16,
-  "named": 16,
-  "rule": {
-    "bestSeason": "the fitted BPM, scored against its OWN season's WNBA — the same question the NBA Super Season set asks of real BPM",
-    "minGamesShare": 0.7,
-    "minMpg": 20,
-    "eligibility": "a season must be at least 70% of its own schedule and at least 20 minutes a game. Stated as a SHARE because a WNBA season has run 28, 30, 32, 34, 36, 40 and 44 games, so no flat number means the same thing twice; stated per game because a 40-minute game makes a season-minutes floor carry the schedule length inside it. Falls back one floor at a time, games first"
-  },
-  "sources": {
-    "origin": "basketball-reference.com/wnba season tables, 1997-2024",
-    "bpm": "FITTED — the WNBA publishes no BPM, OBPM, DBPM or VORP in any season. Every season is rated with its OWN league as the centring basis, which is what makes a 1997 rating and a 2019 rating the same claim about two different leagues. See the `audit` block for how far back that can honestly be applied",
-    "speedPower": "z(fitted BPM) + 0.35 * z(fitted VORP per game), mapped onto the finished set's distribution with the current NBA pool as the calibration basis — the same map the current WNBA set uses, so the two sets share a yardstick",
-    "shotLine": "real TS%, ERA-SHIFTED onto the reference season's league mean before compression. The NBA Super Season set does not do this and does not need to; this set spans the league's whole history, over which its shooting moved far more",
-    "paintBoost": "2P%, era-shifted, standing in for rim FG% which Basketball-Reference does not carry",
-    "defBoost": "the fitted DBPM, rounded",
-    "chart": "synthesized from season TOTALS: production per four-minute section is 4 * total / minutes, measured, with no pace in it. NOT era-shifted — the chart is what she did, the same treatment the NBA Super Season set gives its charts. The `audit` block carries each season's league scoring rate so an older card's smaller chart can be read",
-    "missing": [
-      "BPM",
-      "OBPM",
-      "DBPM",
-      "VORP",
-      "EPM",
-      "rim FG%",
-      "DRB%"
-    ]
-  },
-  "note": "PROVISIONAL, and league-and-era-relative by design. Every rating here says where a player stood in the league SHE played in, placed on the current sets' scale so the cards can share a table. It is not a claim that the 1997 and 2024 WNBA were equally strong, nor that either is comparable in absolute terms with the NBA.",
-  "logosNeeded": {
-    "missing": [],
-    "anachronistic": [],
-    "poor": [
-      {
-        "key": "HOU",
-        "team": "Houston Comets",
-        "era": "1997-2008",
-        "cards": [
-          "Sheryl Swoopes 2000",
-          "Tina Thompson 2000"
-        ],
-        "file": "public/logos/WNBA/HOU.png",
-        "have": "/logos/WNBA/HOU.gif",
-        "haveEra": null,
-        "note": "a 545x251 wordmark lockup (2.17:1) — era-correct, but past what logoFiles.test.js allows a live team, so it draws about half the slot. A mark-only file would draw twice the size."
-      }
-    ]
-  },
-  "audit": [
-    {
-      "season": 1997,
-      "players": 97,
-      "schedule": 28,
-      "coverage": {
-        "rows": 97,
-        "missing": {
-          "tsPct": {
-            "absent": 2,
-            "of": 97
-          },
-          "efg": {
-            "absent": 2,
-            "of": 97
-          },
-          "fg3aRate": {
-            "absent": 2,
-            "of": 97
-          },
-          "ftRate": {
-            "absent": 2,
-            "of": 97
-          }
-        },
-        "complete": false
-      },
-      "gapsAreZeroAttempt": true,
-      "extrapolation": {
-        "cells": 2813,
-        "outside": 458,
-        "share": 0.16281549946676147,
-        "byFeature": {
-          "minShare": 39,
-          "stlPct": 31,
-          "stl100": 31,
-          "tovPct": 30,
-          "wsRate": 25,
-          "offRtg": 24
-        }
-      },
-      "fittedBpm": {
-        "mean": -0.837,
-        "sd": 4.134,
-        "n": 76
-      },
-      "scoringPer4Min": 1.368,
-      "shooting": {
-        "tsPct": 0.4883,
-        "fgPct2": 0.4344,
-        "fgPct3": 0.2676
-      }
-    },
-    {
-      "season": 1998,
-      "players": 127,
-      "schedule": 30,
-      "coverage": {
-        "rows": 127,
-        "missing": {},
-        "complete": true
-      },
-      "gapsAreZeroAttempt": true,
-      "extrapolation": {
-        "cells": 3683,
-        "outside": 536,
-        "share": 0.14553353244637524,
-        "byFeature": {
-          "minShare": 50,
-          "stlPct": 44,
-          "stl100": 44,
-          "dwsRate": 34,
-          "wsRate": 33,
-          "tovPct": 33
-        }
-      },
-      "fittedBpm": {
-        "mean": -0.731,
-        "sd": 4.342,
-        "n": 94
-      },
-      "scoringPer4Min": 1.397,
-      "shooting": {
-        "tsPct": 0.4983,
-        "fgPct2": 0.4417,
-        "fgPct3": 0.2795
-      }
-    },
-    {
-      "season": 1999,
-      "players": 150,
-      "schedule": 32,
-      "coverage": {
-        "rows": 150,
-        "missing": {
-          "tsPct": {
-            "absent": 3,
-            "of": 150
-          },
-          "efg": {
-            "absent": 3,
-            "of": 150
-          },
-          "fg3aRate": {
-            "absent": 3,
-            "of": 150
-          },
-          "ftRate": {
-            "absent": 3,
-            "of": 150
-          },
-          "tovPct": {
-            "absent": 1,
-            "of": 150
-          },
-          "offRtg": {
-            "absent": 1,
-            "of": 150
-          }
-        },
-        "complete": false
-      },
-      "gapsAreZeroAttempt": true,
-      "extrapolation": {
-        "cells": 4350,
-        "outside": 625,
-        "share": 0.14367816091954022,
-        "byFeature": {
-          "minShare": 60,
-          "owsRate": 42,
-          "wsRate": 37,
-          "per": 36,
-          "stlPct": 36,
-          "stl100": 36
-        }
-      },
-      "fittedBpm": {
-        "mean": -0.343,
-        "sd": 3.578,
-        "n": 103
-      },
-      "scoringPer4Min": 1.375,
-      "shooting": {
-        "tsPct": 0.5016,
-        "fgPct2": 0.4443,
-        "fgPct3": 0.29
-      }
-    },
-    {
-      "season": 2000,
-      "players": 204,
-      "schedule": 32,
-      "coverage": {
-        "rows": 204,
-        "missing": {
-          "tsPct": {
-            "absent": 1,
-            "of": 204
-          },
-          "efg": {
-            "absent": 1,
-            "of": 204
-          },
-          "fg3aRate": {
-            "absent": 1,
-            "of": 204
-          },
-          "ftRate": {
-            "absent": 1,
-            "of": 204
-          },
-          "tovPct": {
-            "absent": 1,
-            "of": 204
-          },
-          "offRtg": {
-            "absent": 1,
-            "of": 204
-          }
-        },
-        "complete": false
-      },
-      "gapsAreZeroAttempt": true,
-      "extrapolation": {
-        "cells": 5916,
-        "outside": 815,
-        "share": 0.13776200135226505,
-        "byFeature": {
-          "minShare": 78,
-          "stlPct": 58,
-          "stl100": 58,
-          "tovPct": 49,
-          "dwsRate": 49,
-          "pf100": 46
-        }
-      },
-      "fittedBpm": {
-        "mean": -0.542,
-        "sd": 3.663,
-        "n": 149
-      },
-      "scoringPer4Min": 1.37,
-      "shooting": {
-        "tsPct": 0.5137,
-        "fgPct2": 0.4532,
-        "fgPct3": 0.2956
-      }
-    },
-    {
-      "season": 2001,
-      "players": 207,
-      "schedule": 32,
-      "coverage": {
-        "rows": 207,
-        "missing": {
-          "tsPct": {
-            "absent": 1,
-            "of": 207
-          },
-          "efg": {
-            "absent": 4,
-            "of": 207
-          },
-          "fg3aRate": {
-            "absent": 4,
-            "of": 207
-          },
-          "ftRate": {
-            "absent": 4,
-            "of": 207
-          }
-        },
-        "complete": false
-      },
-      "gapsAreZeroAttempt": true,
-      "extrapolation": {
-        "cells": 6003,
-        "outside": 966,
-        "share": 0.16091954022988506,
-        "byFeature": {
-          "minShare": 77,
-          "stlPct": 71,
-          "stl100": 71,
-          "blk100": 58,
-          "pf100": 49,
-          "blkPct": 47
-        }
-      },
-      "fittedBpm": {
-        "mean": -0.514,
-        "sd": 3.476,
-        "n": 154
-      },
-      "scoringPer4Min": 1.296,
-      "shooting": {
-        "tsPct": 0.4915,
-        "fgPct2": 0.4222,
-        "fgPct3": 0.3003
-      }
-    },
-    {
-      "season": 2002,
-      "players": 206,
-      "schedule": 32,
-      "coverage": {
-        "rows": 206,
-        "missing": {
-          "tsPct": {
-            "absent": 2,
-            "of": 206
-          },
-          "efg": {
-            "absent": 3,
-            "of": 206
-          },
-          "fg3aRate": {
-            "absent": 3,
-            "of": 206
-          },
-          "ftRate": {
-            "absent": 3,
-            "of": 206
-          },
-          "tovPct": {
-            "absent": 2,
-            "of": 206
-          },
-          "offRtg": {
-            "absent": 2,
-            "of": 206
-          }
-        },
-        "complete": false
-      },
-      "gapsAreZeroAttempt": true,
-      "extrapolation": {
-        "cells": 5974,
-        "outside": 891,
-        "share": 0.14914630063608972,
-        "byFeature": {
-          "minShare": 89,
-          "stlPct": 58,
-          "stl100": 58,
-          "owsRate": 48,
-          "pf100": 47,
-          "blk100": 46
-        }
-      },
-      "fittedBpm": {
-        "mean": -0.439,
-        "sd": 3.552,
-        "n": 146
-      },
-      "scoringPer4Min": 1.338,
-      "shooting": {
-        "tsPct": 0.5046,
-        "fgPct2": 0.4379,
-        "fgPct3": 0.2903
-      }
-    },
-    {
-      "season": 2003,
-      "players": 177,
-      "schedule": 34,
-      "coverage": {
-        "rows": 177,
-        "missing": {
-          "tsPct": {
-            "absent": 2,
-            "of": 177
-          },
-          "efg": {
-            "absent": 2,
-            "of": 177
-          },
-          "fg3aRate": {
-            "absent": 2,
-            "of": 177
-          },
-          "ftRate": {
-            "absent": 2,
-            "of": 177
-          },
-          "tovPct": {
-            "absent": 1,
-            "of": 177
-          },
-          "offRtg": {
-            "absent": 1,
-            "of": 177
-          }
-        },
-        "complete": false
-      },
-      "gapsAreZeroAttempt": true,
-      "extrapolation": {
-        "cells": 5133,
-        "outside": 693,
-        "share": 0.13500876680303917,
-        "byFeature": {
-          "minShare": 77,
-          "stlPct": 39,
-          "stl100": 39,
-          "owsRate": 37,
-          "wsRate": 36,
-          "pf100": 36
-        }
-      },
-      "fittedBpm": {
-        "mean": -0.465,
-        "sd": 3.872,
-        "n": 123
-      },
-      "scoringPer4Min": 1.35,
-      "shooting": {
-        "tsPct": 0.4985,
-        "fgPct2": 0.4376,
-        "fgPct3": 0.2687
-      }
-    },
-    {
-      "season": 2004,
-      "players": 164,
-      "schedule": 34,
-      "coverage": {
-        "rows": 164,
-        "missing": {
-          "tsPct": {
-            "absent": 2,
-            "of": 164
-          },
-          "efg": {
-            "absent": 3,
-            "of": 164
-          },
-          "fg3aRate": {
-            "absent": 3,
-            "of": 164
-          },
-          "ftRate": {
-            "absent": 3,
-            "of": 164
-          },
-          "tovPct": {
-            "absent": 1,
-            "of": 164
-          },
-          "offRtg": {
-            "absent": 1,
-            "of": 164
-          }
-        },
-        "complete": false
-      },
-      "gapsAreZeroAttempt": true,
-      "extrapolation": {
-        "cells": 4756,
-        "outside": 616,
-        "share": 0.1295206055508831,
-        "byFeature": {
-          "minShare": 65,
-          "stlPct": 44,
-          "stl100": 44,
-          "blk100": 36,
-          "owsRate": 33,
-          "pf100": 32
-        }
-      },
-      "fittedBpm": {
-        "mean": -0.512,
-        "sd": 3.315,
-        "n": 121
-      },
-      "scoringPer4Min": 1.327,
-      "shooting": {
-        "tsPct": 0.501,
-        "fgPct2": 0.4337,
-        "fgPct3": 0.3062
-      }
-    },
-    {
-      "season": 2005,
-      "players": 168,
-      "schedule": 34,
-      "coverage": {
-        "rows": 168,
-        "missing": {},
-        "complete": true
-      },
-      "gapsAreZeroAttempt": true,
-      "extrapolation": {
-        "cells": 4872,
-        "outside": 703,
-        "share": 0.14429392446633826,
-        "byFeature": {
-          "minShare": 69,
-          "blk100": 40,
-          "pf100": 39,
-          "stlPct": 37,
-          "tovPct": 37,
-          "stl100": 37
-        }
-      },
-      "fittedBpm": {
-        "mean": -0.534,
-        "sd": 3.475,
-        "n": 122
-      },
-      "scoringPer4Min": 1.334,
-      "shooting": {
-        "tsPct": 0.5059,
-        "fgPct2": 0.4408,
-        "fgPct3": 0.3089
-      }
-    },
-    {
-      "season": 2006,
-      "players": 182,
-      "schedule": 34,
-      "coverage": {
-        "rows": 182,
-        "missing": {
-          "tsPct": {
-            "absent": 1,
-            "of": 182
-          },
-          "efg": {
-            "absent": 2,
-            "of": 182
-          },
-          "fg3aRate": {
-            "absent": 2,
-            "of": 182
-          },
-          "ftRate": {
-            "absent": 2,
-            "of": 182
-          }
-        },
-        "complete": false
-      },
-      "gapsAreZeroAttempt": true,
-      "extrapolation": {
-        "cells": 5278,
-        "outside": 630,
-        "share": 0.11936339522546419,
-        "byFeature": {
-          "minShare": 61,
-          "owsRate": 37,
-          "stlPct": 36,
-          "stl100": 36,
-          "offRtg": 35,
-          "tovPct": 32
-        }
-      },
-      "fittedBpm": {
-        "mean": -0.547,
-        "sd": 3.636,
-        "n": 138
-      },
-      "scoringPer4Min": 1.495,
-      "shooting": {
-        "tsPct": 0.5073,
-        "fgPct2": 0.4448,
-        "fgPct3": 0.2727
-      }
-    },
-    {
-      "season": 2007,
-      "players": 173,
-      "schedule": 34,
-      "coverage": {
-        "rows": 173,
-        "missing": {
-          "tsPct": {
-            "absent": 2,
-            "of": 173
-          },
-          "efg": {
-            "absent": 3,
-            "of": 173
-          },
-          "fg3aRate": {
-            "absent": 3,
-            "of": 173
-          },
-          "ftRate": {
-            "absent": 3,
-            "of": 173
-          }
-        },
-        "complete": false
-      },
-      "gapsAreZeroAttempt": true,
-      "extrapolation": {
-        "cells": 5017,
-        "outside": 630,
-        "share": 0.12557305162447677,
-        "byFeature": {
-          "minShare": 61,
-          "per": 39,
-          "owsRate": 38,
-          "stlPct": 37,
-          "stl100": 37,
-          "offRtg": 36
-        }
-      },
-      "fittedBpm": {
-        "mean": -0.519,
-        "sd": 3.679,
-        "n": 128
-      },
-      "scoringPer4Min": 1.514,
-      "shooting": {
-        "tsPct": 0.5079,
-        "fgPct2": 0.4357,
-        "fgPct3": 0.2946
-      }
-    },
-    {
-      "season": 2008,
-      "players": 192,
-      "schedule": 34,
-      "coverage": {
-        "rows": 190,
-        "missing": {},
-        "complete": true
-      },
-      "gapsAreZeroAttempt": true,
-      "extrapolation": {
-        "cells": 5568,
-        "outside": 771,
-        "share": 0.1384698275862069,
-        "byFeature": {
-          "minShare": 71,
-          "tovPct": 45,
-          "stlPct": 43,
-          "stl100": 43,
-          "owsRate": 41,
-          "dwsRate": 41
-        }
-      },
-      "fittedBpm": {
-        "mean": -0.456,
-        "sd": 3.546,
-        "n": 141
-      },
-      "scoringPer4Min": 1.509,
-      "shooting": {
-        "tsPct": 0.5052,
-        "fgPct2": 0.434,
-        "fgPct3": 0.2927
-      }
-    },
-    {
-      "season": 2009,
-      "players": 164,
-      "schedule": 34,
-      "coverage": {
-        "rows": 164,
-        "missing": {
-          "tsPct": {
-            "absent": 1,
-            "of": 164
-          },
-          "efg": {
-            "absent": 1,
-            "of": 164
-          },
-          "fg3aRate": {
-            "absent": 1,
-            "of": 164
-          },
-          "ftRate": {
-            "absent": 1,
-            "of": 164
-          },
-          "tovPct": {
-            "absent": 1,
-            "of": 164
-          },
-          "offRtg": {
-            "absent": 1,
-            "of": 164
-          }
-        },
-        "complete": false
-      },
-      "gapsAreZeroAttempt": true,
-      "extrapolation": {
-        "cells": 4756,
-        "outside": 493,
-        "share": 0.10365853658536585,
-        "byFeature": {
-          "minShare": 50,
-          "stlPct": 33,
-          "stl100": 33,
-          "tovPct": 31,
-          "ftRate": 30,
-          "fta100": 24
-        }
-      },
-      "fittedBpm": {
-        "mean": -0.383,
-        "sd": 3.475,
-        "n": 135
-      },
-      "scoringPer4Min": 1.54,
-      "shooting": {
-        "tsPct": 0.515,
-        "fgPct2": 0.445,
-        "fgPct3": 0.2883
-      }
-    },
-    {
-      "season": 2010,
-      "players": 143,
-      "schedule": 34,
-      "coverage": {
-        "rows": 143,
-        "missing": {},
-        "complete": true
-      },
-      "gapsAreZeroAttempt": true,
-      "extrapolation": {
-        "cells": 4147,
-        "outside": 420,
-        "share": 0.10127803231251507,
-        "byFeature": {
-          "minShare": 44,
-          "dwsRate": 31,
-          "stlPct": 29,
-          "stl100": 29,
-          "wsRate": 23,
-          "owsRate": 23
-        }
-      },
-      "fittedBpm": {
-        "mean": -0.259,
-        "sd": 3.174,
-        "n": 111
-      },
-      "scoringPer4Min": 1.59,
-      "shooting": {
-        "tsPct": 0.5293,
-        "fgPct2": 0.4622,
-        "fgPct3": 0.3145
-      }
-    },
-    {
-      "season": 2011,
-      "players": 142,
-      "schedule": 34,
-      "coverage": {
-        "rows": 142,
-        "missing": {},
-        "complete": true
-      },
-      "gapsAreZeroAttempt": true,
-      "extrapolation": {
-        "cells": 4118,
-        "outside": 402,
-        "share": 0.09762020398251578,
-        "byFeature": {
-          "minShare": 40,
-          "stlPct": 27,
-          "stl100": 27,
-          "tovPct": 26,
-          "wsRate": 24,
-          "owsRate": 24
-        }
-      },
-      "fittedBpm": {
-        "mean": -0.323,
-        "sd": 3.447,
-        "n": 111
-      },
-      "scoringPer4Min": 1.534,
-      "shooting": {
-        "tsPct": 0.5202,
-        "fgPct2": 0.454,
-        "fgPct3": 0.2862
-      }
-    },
-    {
-      "season": 2012,
-      "players": 146,
-      "schedule": 34,
-      "coverage": {
-        "rows": 146,
-        "missing": {},
-        "complete": true
-      },
-      "gapsAreZeroAttempt": true,
-      "extrapolation": {
-        "cells": 4234,
-        "outside": 451,
-        "share": 0.10651865847897969,
-        "byFeature": {
-          "minShare": 31,
-          "owsRate": 29,
-          "wsRate": 28,
-          "offRtg": 26,
-          "stlPct": 26,
-          "stl100": 26
-        }
-      },
-      "fittedBpm": {
-        "mean": -0.651,
-        "sd": 3.964,
-        "n": 122
-      },
-      "scoringPer4Min": 1.536,
-      "shooting": {
-        "tsPct": 0.5153,
-        "fgPct2": 0.4479,
-        "fgPct3": 0.2989
-      }
-    },
-    {
-      "season": 2013,
-      "players": 146,
-      "schedule": 34,
-      "coverage": {
-        "rows": 146,
-        "missing": {},
-        "complete": true
-      },
-      "gapsAreZeroAttempt": true,
-      "extrapolation": {
-        "cells": 4234,
-        "outside": 449,
-        "share": 0.10604629192253189,
-        "byFeature": {
-          "minShare": 38,
-          "per": 31,
-          "wsRate": 31,
-          "owsRate": 30,
-          "stlPct": 28,
-          "stl100": 28
-        }
-      },
-      "fittedBpm": {
-        "mean": -0.595,
-        "sd": 4.39,
-        "n": 118
-      },
-      "scoringPer4Min": 1.501,
-      "shooting": {
-        "tsPct": 0.5027,
-        "fgPct2": 0.4441,
-        "fgPct3": 0.2801
-      }
-    },
-    {
-      "season": 2014,
-      "players": 154,
-      "schedule": 34,
-      "coverage": {
-        "rows": 154,
-        "missing": {
-          "tsPct": {
-            "absent": 1,
-            "of": 154
-          },
-          "efg": {
-            "absent": 1,
-            "of": 154
-          },
-          "fg3aRate": {
-            "absent": 1,
-            "of": 154
-          },
-          "ftRate": {
-            "absent": 1,
-            "of": 154
-          },
-          "tovPct": {
-            "absent": 1,
-            "of": 154
-          },
-          "offRtg": {
-            "absent": 1,
-            "of": 154
-          }
-        },
-        "complete": false
-      },
-      "gapsAreZeroAttempt": true,
-      "extrapolation": {
-        "cells": 4466,
-        "outside": 489,
-        "share": 0.10949395432154053,
-        "byFeature": {
-          "minShare": 54,
-          "pf100": 30,
-          "per": 28,
-          "stlPct": 28,
-          "stl100": 28,
-          "wsRate": 26
-        }
-      },
-      "fittedBpm": {
-        "mean": -0.464,
-        "sd": 3.485,
-        "n": 117
-      },
-      "scoringPer4Min": 1.52,
-      "shooting": {
-        "tsPct": 0.5145,
-        "fgPct2": 0.459,
-        "fgPct3": 0.2901
-      }
-    },
-    {
-      "season": 2015,
-      "players": 159,
-      "schedule": 34,
-      "coverage": {
-        "rows": 159,
-        "missing": {},
-        "complete": true
-      },
-      "gapsAreZeroAttempt": true,
-      "extrapolation": {
-        "cells": 4611,
-        "outside": 406,
-        "share": 0.0880503144654088,
-        "byFeature": {
-          "minShare": 33,
-          "stlPct": 25,
-          "stl100": 25,
-          "pf100": 25,
-          "wsRate": 23,
-          "owsRate": 23
-        }
-      },
-      "fittedBpm": {
-        "mean": -0.514,
-        "sd": 3.583,
-        "n": 133
-      },
-      "scoringPer4Min": 1.49,
-      "shooting": {
-        "tsPct": 0.508,
-        "fgPct2": 0.4463,
-        "fgPct3": 0.2687
-      }
-    },
-    {
-      "season": 2016,
-      "players": 158,
-      "schedule": 34,
-      "coverage": {
-        "rows": 157,
-        "missing": {},
-        "complete": true
-      },
-      "gapsAreZeroAttempt": true,
-      "extrapolation": {
-        "cells": 4582,
-        "outside": 446,
-        "share": 0.09733740724574422,
-        "byFeature": {
-          "minShare": 48,
-          "tsPct": 25,
-          "pf100": 25,
-          "stlPct": 25,
-          "stl100": 25,
-          "per": 24
-        }
-      },
-      "fittedBpm": {
-        "mean": -0.25,
-        "sd": 3.092,
-        "n": 121
-      },
-      "scoringPer4Min": 1.613,
-      "shooting": {
-        "tsPct": 0.5326,
-        "fgPct2": 0.4706,
-        "fgPct3": 0.2979
-      }
-    },
-    {
-      "season": 2017,
-      "players": 157,
-      "schedule": 34,
-      "coverage": {
-        "rows": 157,
-        "missing": {},
-        "complete": true
-      },
-      "gapsAreZeroAttempt": true,
-      "extrapolation": {
-        "cells": 4553,
-        "outside": 484,
-        "share": 0.10630353613002416,
-        "byFeature": {
-          "minShare": 49,
-          "wsRate": 32,
-          "per": 27,
-          "owsRate": 26,
-          "efg": 26,
-          "tsPct": 24
-        }
-      },
-      "fittedBpm": {
-        "mean": -0.314,
-        "sd": 3.715,
-        "n": 116
-      },
-      "scoringPer4Min": 1.615,
-      "shooting": {
-        "tsPct": 0.5303,
-        "fgPct2": 0.4704,
-        "fgPct3": 0.3031
-      }
-    },
-    {
-      "season": 2018,
-      "players": 157,
-      "schedule": 34,
-      "coverage": {
-        "rows": 157,
-        "missing": {
-          "tsPct": {
-            "absent": 2,
-            "of": 157
-          },
-          "efg": {
-            "absent": 2,
-            "of": 157
-          },
-          "fg3aRate": {
-            "absent": 2,
-            "of": 157
-          },
-          "ftRate": {
-            "absent": 2,
-            "of": 157
-          },
-          "tovPct": {
-            "absent": 2,
-            "of": 157
-          },
-          "offRtg": {
-            "absent": 2,
-            "of": 157
-          }
-        },
-        "complete": false
-      },
-      "gapsAreZeroAttempt": true,
-      "extrapolation": {
-        "cells": 4553,
-        "outside": 478,
-        "share": 0.10498572369866023,
-        "byFeature": {
-          "minShare": 49,
-          "per": 34,
-          "wsRate": 29,
-          "offRtg": 26,
-          "dwsRate": 26,
-          "owsRate": 25
-        }
-      },
-      "fittedBpm": {
-        "mean": -0.654,
-        "sd": 3.665,
-        "n": 120
-      },
-      "scoringPer4Min": 1.649,
-      "shooting": {
-        "tsPct": 0.5335,
-        "fgPct2": 0.477,
-        "fgPct3": 0.3131
-      }
-    },
-    {
-      "season": 2019,
-      "players": 157,
-      "schedule": 34,
-      "coverage": {
-        "rows": 156,
-        "missing": {
-          "tsPct": {
-            "absent": 1,
-            "of": 156
-          },
-          "efg": {
-            "absent": 1,
-            "of": 156
-          },
-          "fg3aRate": {
-            "absent": 1,
-            "of": 156
-          },
-          "ftRate": {
-            "absent": 1,
-            "of": 156
-          },
-          "tovPct": {
-            "absent": 1,
-            "of": 156
-          },
-          "offRtg": {
-            "absent": 1,
-            "of": 156
-          }
-        },
-        "complete": false
-      },
-      "gapsAreZeroAttempt": true,
-      "extrapolation": {
-        "cells": 4553,
-        "outside": 455,
-        "share": 0.0999341093784318,
-        "byFeature": {
-          "minShare": 38,
-          "tsPct": 24,
-          "per": 24,
-          "wsRate": 23,
-          "efg": 23,
-          "owsRate": 22
-        }
-      },
-      "fittedBpm": {
-        "mean": -0.498,
-        "sd": 3.531,
-        "n": 123
-      },
-      "scoringPer4Min": 1.569,
-      "shooting": {
-        "tsPct": 0.5152,
-        "fgPct2": 0.4549,
-        "fgPct3": 0.312
-      }
-    },
-    {
-      "season": 2020,
-      "players": 145,
-      "schedule": 22,
-      "coverage": {
-        "rows": 144,
-        "missing": {
-          "tsPct": {
-            "absent": 1,
-            "of": 144
-          },
-          "efg": {
-            "absent": 1,
-            "of": 144
-          },
-          "fg3aRate": {
-            "absent": 1,
-            "of": 144
-          },
-          "ftRate": {
-            "absent": 1,
-            "of": 144
-          },
-          "tovPct": {
-            "absent": 1,
-            "of": 144
-          },
-          "offRtg": {
-            "absent": 1,
-            "of": 144
-          }
-        },
-        "complete": false
-      },
-      "gapsAreZeroAttempt": true,
-      "extrapolation": {
-        "cells": 4205,
-        "outside": 411,
-        "share": 0.09774078478002378,
-        "byFeature": {
-          "minShare": 34,
-          "stlPct": 30,
-          "stl100": 30,
-          "efg": 24,
-          "per": 22,
-          "owsRate": 22
-        }
-      },
-      "fittedBpm": {
-        "mean": -0.3,
-        "sd": 3.609,
-        "n": 120
-      },
-      "scoringPer4Min": 1.653,
-      "shooting": {
-        "tsPct": 0.5429,
-        "fgPct2": 0.4879,
-        "fgPct3": 0.3277
-      }
-    },
-    {
-      "season": 2021,
-      "players": 155,
-      "schedule": 32,
-      "coverage": {
-        "rows": 154,
-        "missing": {
-          "tsPct": {
-            "absent": 3,
-            "of": 154
-          },
-          "efg": {
-            "absent": 3,
-            "of": 154
-          },
-          "fg3aRate": {
-            "absent": 3,
-            "of": 154
-          },
-          "ftRate": {
-            "absent": 3,
-            "of": 154
-          },
-          "tovPct": {
-            "absent": 3,
-            "of": 154
-          },
-          "offRtg": {
-            "absent": 2,
-            "of": 154
-          }
-        },
-        "complete": false
-      },
-      "gapsAreZeroAttempt": true,
-      "extrapolation": {
-        "cells": 4495,
-        "outside": 511,
-        "share": 0.11368186874304784,
-        "byFeature": {
-          "minShare": 41,
-          "wsRate": 28,
-          "per": 28,
-          "tsPct": 27,
-          "efg": 25,
-          "stlPct": 25
-        }
-      },
-      "fittedBpm": {
-        "mean": -0.619,
-        "sd": 3.595,
-        "n": 124
-      },
-      "scoringPer4Min": 1.6,
-      "shooting": {
-        "tsPct": 0.5294,
-        "fgPct2": 0.4678,
-        "fgPct3": 0.3193
-      }
-    },
-    {
-      "season": 2022,
-      "players": 166,
-      "schedule": 36,
-      "coverage": {
-        "rows": 166,
-        "missing": {
-          "tsPct": {
-            "absent": 2,
-            "of": 166
-          },
-          "efg": {
-            "absent": 2,
-            "of": 166
-          },
-          "fg3aRate": {
-            "absent": 2,
-            "of": 166
-          },
-          "ftRate": {
-            "absent": 2,
-            "of": 166
-          },
-          "tovPct": {
-            "absent": 2,
-            "of": 166
-          },
-          "offRtg": {
-            "absent": 1,
-            "of": 166
-          }
-        },
-        "complete": false
-      },
-      "gapsAreZeroAttempt": true,
-      "extrapolation": {
-        "cells": 4814,
-        "outside": 578,
-        "share": 0.12006647278770254,
-        "byFeature": {
-          "minShare": 45,
-          "dwsRate": 36,
-          "per": 33,
-          "tovPct": 31,
-          "stlPct": 31,
-          "stl100": 31
-        }
-      },
-      "fittedBpm": {
-        "mean": -0.634,
-        "sd": 3.454,
-        "n": 133
-      },
-      "scoringPer4Min": 1.634,
-      "shooting": {
-        "tsPct": 0.5395,
-        "fgPct2": 0.4853,
-        "fgPct3": 0.3225
-      }
-    },
-    {
-      "season": 2023,
-      "players": 156,
-      "schedule": 40,
-      "coverage": {
-        "rows": 155,
-        "missing": {
-          "tsPct": {
-            "absent": 1,
-            "of": 155
-          },
-          "efg": {
-            "absent": 1,
-            "of": 155
-          },
-          "fg3aRate": {
-            "absent": 1,
-            "of": 155
-          },
-          "ftRate": {
-            "absent": 1,
-            "of": 155
-          },
-          "tovPct": {
-            "absent": 1,
-            "of": 155
-          },
-          "offRtg": {
-            "absent": 1,
-            "of": 155
-          }
-        },
-        "complete": false
-      },
-      "gapsAreZeroAttempt": true,
-      "extrapolation": {
-        "cells": 4524,
-        "outside": 463,
-        "share": 0.10234305923961097,
-        "byFeature": {
-          "minShare": 55,
-          "owsRate": 32,
-          "wsRate": 29,
-          "tsPct": 28,
-          "per": 28,
-          "efg": 26
-        }
-      },
-      "fittedBpm": {
-        "mean": -0.888,
-        "sd": 4.196,
-        "n": 120
-      },
-      "scoringPer4Min": 1.646,
-      "shooting": {
-        "tsPct": 0.5374,
-        "fgPct2": 0.4807,
-        "fgPct3": 0.313
-      }
-    },
-    {
-      "season": 2024,
-      "players": 157,
-      "schedule": 40,
-      "coverage": {
-        "rows": 157,
-        "missing": {
-          "tsPct": {
-            "absent": 1,
-            "of": 157
-          },
-          "efg": {
-            "absent": 1,
-            "of": 157
-          },
-          "fg3aRate": {
-            "absent": 1,
-            "of": 157
-          },
-          "ftRate": {
-            "absent": 1,
-            "of": 157
-          }
-        },
-        "complete": false
-      },
-      "gapsAreZeroAttempt": true,
-      "extrapolation": {
-        "cells": 4553,
-        "outside": 558,
-        "share": 0.12255655611684603,
-        "byFeature": {
-          "minShare": 47,
-          "dwsRate": 43,
-          "wsRate": 31,
-          "per": 27,
-          "owsRate": 27,
-          "defRtg": 26
-        }
-      },
-      "fittedBpm": {
-        "mean": -0.626,
-        "sd": 3.429,
-        "n": 123
-      },
-      "scoringPer4Min": 1.625,
-      "shooting": {
-        "tsPct": 0.5341,
-        "fgPct2": 0.4821,
-        "fgPct3": 0.3108
-      }
-    },
-    {
-      "season": 2025,
-      "players": 182,
-      "schedule": 44,
-      "coverage": {
-        "rows": 181,
-        "missing": {
-          "tsPct": {
-            "absent": 2,
-            "of": 181
-          },
-          "efg": {
-            "absent": 2,
-            "of": 181
-          },
-          "fg3aRate": {
-            "absent": 2,
-            "of": 181
-          },
-          "ftRate": {
-            "absent": 2,
-            "of": 181
-          },
-          "tovPct": {
-            "absent": 2,
-            "of": 181
-          },
-          "offRtg": {
-            "absent": 2,
-            "of": 181
-          }
-        },
-        "complete": false
-      },
-      "gapsAreZeroAttempt": true,
-      "extrapolation": {
-        "cells": 5278,
-        "outside": 622,
-        "share": 0.1178476695718075,
-        "byFeature": {
-          "minShare": 49,
-          "dwsRate": 45,
-          "per": 34,
-          "blkPct": 31,
-          "stlPct": 31,
-          "stl100": 31
-        }
-      },
-      "fittedBpm": {
-        "mean": -0.657,
-        "sd": 3.641,
-        "n": 150
-      },
-      "scoringPer4Min": 1.63,
-      "shooting": {
-        "tsPct": 0.5386,
-        "fgPct2": 0.4911,
-        "fgPct3": 0.316
-      }
-    },
-    {
-      "season": 2026,
-      "players": 230,
-      "schedule": 40,
-      "coverage": {
-        "rows": 230,
-        "missing": {
-          "tsPct": {
-            "absent": 2,
-            "of": 230
-          },
-          "efg": {
-            "absent": 2,
-            "of": 230
-          },
-          "fg3aRate": {
-            "absent": 2,
-            "of": 230
-          },
-          "ftRate": {
-            "absent": 2,
-            "of": 230
-          },
-          "tovPct": {
-            "absent": 2,
-            "of": 230
-          },
-          "offRtg": {
-            "absent": 2,
-            "of": 230
-          }
-        },
-        "complete": false
-      },
-      "gapsAreZeroAttempt": true,
-      "extrapolation": {
-        "cells": 6670,
-        "outside": 858,
-        "share": 0.12863568215892054,
-        "byFeature": {
-          "minShare": 73,
-          "blkPct": 53,
-          "blk100": 48,
-          "tsPct": 42,
-          "tov100": 40,
-          "tovPct": 39
-        }
-      },
-      "fittedBpm": {
-        "mean": -0.744,
-        "sd": 3.341,
-        "n": 176
-      },
-      "scoringPer4Min": 1.734,
-      "shooting": {
-        "tsPct": 0.5582,
-        "fgPct2": 0.5151,
-        "fgPct3": 0.3268
-      }
-    }
-  ],
-  "cards": [
-    {
-      "id": "Becky_Hammon",
-      "name": "Becky Hammon",
-      "team": "SAS",
-      "statRowTeam": "SAS",
-      "pos": "G",
-      "speed": 16,
-      "power": 11,
-      "shotLine": 14,
-      "paintBoost": 0,
-      "threePtBoost": 2,
-      "defBoost": -1,
-      "salary": 1290,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 6,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 7,
-          "hi": 13,
-          "pts": 2,
-          "reb": 0,
-          "ast": 1
-        },
-        {
-          "lo": 14,
-          "hi": 21,
-          "pts": 3,
-          "reb": 0,
-          "ast": 1
-        },
-        {
-          "lo": 22,
-          "hi": 99,
-          "pts": 3,
-          "reb": 1,
-          "ast": 1
-        }
-      ],
-      "league": "WNBA",
-      "season": 2009,
-      "seasonLabel": "2009",
-      "games": 31,
-      "mpg": 33.8,
-      "minutes": 1049,
-      "schedule": 34,
-      "bbrefId": "hammobe01w",
-      "metrics": {
-        "bpmHat": 5.48,
-        "obpmHat": 6.01,
-        "dbpmHat": -0.53,
-        "seasonZ": 1.69,
-        "per": 23.5,
-        "ws": 4.5,
-        "wsPer40": 0.171,
-        "tsPct": 0.593,
-        "pts100": 30.8
-      },
-      "provisional": false
-    },
-    {
-      "id": "Candace_Parker",
-      "name": "Candace Parker",
-      "team": "LAS",
-      "statRowTeam": "LAS",
-      "pos": "F-C",
-      "speed": 15,
-      "power": 15,
-      "shotLine": 14,
-      "paintBoost": 0,
-      "threePtBoost": -3,
-      "defBoost": 3,
-      "salary": 1140,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 6,
-          "pts": 0,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 7,
-          "hi": 13,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 14,
-          "hi": 21,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 22,
-          "hi": 99,
-          "pts": 2,
-          "reb": 2,
-          "ast": 1
-        }
-      ],
-      "league": "WNBA",
-      "season": 2008,
-      "seasonLabel": "2008",
-      "games": 33,
-      "mpg": 33.6,
-      "minutes": 1109,
-      "schedule": 34,
-      "bbrefId": "parkeca01w",
-      "metrics": {
-        "bpmHat": 8.4,
-        "obpmHat": 5.78,
-        "dbpmHat": 2.62,
-        "seasonZ": 2.5,
-        "per": 27.4,
-        "ws": 7.7,
-        "wsPer40": 0.278,
-        "tsPct": 0.582,
-        "pts100": 28.6
-      },
-      "provisional": false
-    },
-    {
-      "id": "Candice_Dupree",
-      "name": "Candice Dupree",
-      "team": "PHO11",
-      "statRowTeam": "PHO",
-      "pos": "F",
-      "speed": 13,
-      "power": 13,
-      "shotLine": 14,
-      "paintBoost": 0,
-      "threePtBoost": -6,
-      "defBoost": 1,
-      "salary": 990,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 6,
-          "pts": 0,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 7,
-          "hi": 13,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 14,
-          "hi": 20,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 21,
-          "hi": 99,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        }
-      ],
-      "league": "WNBA",
-      "season": 2014,
-      "seasonLabel": "2014",
-      "games": 34,
-      "mpg": 31.2,
-      "minutes": 1062,
-      "schedule": 34,
-      "bbrefId": "dupreca01w",
-      "metrics": {
-        "bpmHat": 4.5,
-        "obpmHat": 3.35,
-        "dbpmHat": 1.16,
-        "seasonZ": 1.43,
-        "per": 21,
-        "ws": 5.5,
-        "wsPer40": 0.209,
-        "tsPct": 0.571,
-        "pts100": 24.2
-      },
-      "provisional": false
-    },
-    {
-      "id": "Diana_Taurasi",
-      "name": "Diana Taurasi",
-      "team": "PHO97",
-      "statRowTeam": "PHO",
-      "pos": "G",
-      "speed": 18,
-      "power": 12,
-      "shotLine": 14,
-      "paintBoost": 0,
-      "threePtBoost": 2,
-      "defBoost": 0,
-      "salary": 1770,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 6,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 7,
-          "hi": 13,
-          "pts": 3,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 14,
-          "hi": 99,
-          "pts": 4,
-          "reb": 1,
-          "ast": 1
-        }
-      ],
-      "league": "WNBA",
-      "season": 2008,
-      "seasonLabel": "2008",
-      "games": 34,
-      "mpg": 31.9,
-      "minutes": 1083,
-      "schedule": 34,
-      "bbrefId": "tauradi01w",
-      "metrics": {
-        "bpmHat": 8.15,
-        "obpmHat": 8.61,
-        "dbpmHat": -0.46,
-        "seasonZ": 2.43,
-        "per": 29.7,
-        "ws": 7.4,
-        "wsPer40": 0.273,
-        "tsPct": 0.596,
-        "pts100": 36.7
-      },
-      "provisional": false
-    },
-    {
-      "id": "Elena_Delle_Donne",
-      "name": "Elena Delle Donne",
-      "team": "CHI",
-      "statRowTeam": "CHI",
-      "pos": "F-G",
-      "speed": 15,
-      "power": 15,
-      "shotLine": 14,
-      "paintBoost": 0,
-      "threePtBoost": 0,
-      "defBoost": 1,
-      "salary": 1500,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 6,
-          "pts": 0,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 7,
-          "hi": 13,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 14,
-          "hi": 21,
-          "pts": 3,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 22,
-          "hi": 99,
-          "pts": 4,
-          "reb": 2,
-          "ast": 0
-        }
-      ],
-      "league": "WNBA",
-      "season": 2015,
-      "seasonLabel": "2015",
-      "games": 31,
-      "mpg": 33.3,
-      "minutes": 1032,
-      "schedule": 34,
-      "bbrefId": "delleel01w",
-      "metrics": {
-        "bpmHat": 10.49,
-        "obpmHat": 9.47,
-        "dbpmHat": 1.02,
-        "seasonZ": 3.07,
-        "per": 32.8,
-        "ws": 8.9,
-        "wsPer40": 0.346,
-        "tsPct": 0.591,
-        "pts100": 36.1
-      },
-      "provisional": false
-    },
-    {
-      "id": "Katie_Smith",
-      "name": "Katie Smith",
-      "team": "MIN99",
-      "statRowTeam": "MIN",
-      "pos": "G",
-      "speed": 16,
-      "power": 11,
-      "shotLine": 14,
-      "paintBoost": 0,
-      "threePtBoost": 2,
-      "defBoost": -1,
-      "salary": 920,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 6,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 7,
-          "hi": 13,
-          "pts": 2,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 14,
-          "hi": 21,
-          "pts": 2,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 22,
-          "hi": 99,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        }
-      ],
-      "league": "WNBA",
-      "season": 2000,
-      "seasonLabel": "2000",
-      "games": 32,
-      "mpg": 37.3,
-      "minutes": 1193,
-      "schedule": 32,
-      "bbrefId": "smithka01w",
-      "metrics": {
-        "bpmHat": 5.6,
-        "obpmHat": 6.15,
-        "dbpmHat": -0.55,
-        "seasonZ": 1.68,
-        "per": 22.3,
-        "ws": 6.4,
-        "wsPer40": 0.213,
-        "tsPct": 0.578,
-        "pts100": 31
-      },
-      "provisional": false
-    },
-    {
-      "id": "Lauren_Jackson",
-      "name": "Lauren Jackson",
-      "team": "SEA00",
-      "statRowTeam": "SEA",
-      "pos": "F-C",
-      "speed": 15,
-      "power": 15,
-      "shotLine": 12,
-      "paintBoost": 0,
-      "threePtBoost": -2,
-      "defBoost": 1,
-      "salary": 1540,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 6,
-          "pts": 0,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 7,
-          "hi": 11,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 12,
-          "hi": 21,
-          "pts": 3,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 22,
-          "hi": 99,
-          "pts": 4,
-          "reb": 2,
-          "ast": 0
-        }
-      ],
-      "league": "WNBA",
-      "season": 2006,
-      "seasonLabel": "2006",
-      "games": 30,
-      "mpg": 28.4,
-      "minutes": 853,
-      "schedule": 34,
-      "bbrefId": "jacksla01w",
-      "metrics": {
-        "bpmHat": 11.42,
-        "obpmHat": 10.1,
-        "dbpmHat": 1.32,
-        "seasonZ": 3.29,
-        "per": 34.5,
-        "ws": 8.8,
-        "wsPer40": 0.414,
-        "tsPct": 0.659,
-        "pts100": 35.8
-      },
-      "provisional": false
-    },
-    {
-      "id": "Lindsay_Whalen",
-      "name": "Lindsay Whalen",
-      "team": "CON03",
-      "statRowTeam": "CON",
-      "pos": "G",
-      "speed": 17,
-      "power": 12,
-      "shotLine": 14,
-      "paintBoost": 0,
-      "threePtBoost": 0,
-      "defBoost": 2,
-      "salary": 1100,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 3,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 4,
-          "hi": 8,
-          "pts": 1,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 9,
-          "hi": 13,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        },
-        {
-          "lo": 14,
-          "hi": 99,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        }
-      ],
-      "league": "WNBA",
-      "season": 2008,
-      "seasonLabel": "2008",
-      "games": 31,
-      "mpg": 29.3,
-      "minutes": 908,
-      "schedule": 34,
-      "bbrefId": "whaleli01w",
-      "metrics": {
-        "bpmHat": 7.67,
-        "obpmHat": 5.8,
-        "dbpmHat": 1.88,
-        "seasonZ": 2.29,
-        "per": 24.8,
-        "ws": 6.4,
-        "wsPer40": 0.283,
-        "tsPct": 0.58,
-        "pts100": 25
-      },
-      "provisional": false
-    },
-    {
-      "id": "Lisa_Leslie",
-      "name": "Lisa Leslie",
-      "team": "LAS",
-      "statRowTeam": "LAS",
-      "pos": "C",
-      "speed": 11,
-      "power": 18,
-      "shotLine": 14,
-      "paintBoost": 0,
-      "threePtBoost": -3,
-      "defBoost": 4,
-      "salary": 1080,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 6,
-          "pts": 0,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 7,
-          "hi": 13,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 14,
-          "hi": 20,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 21,
-          "hi": 99,
-          "pts": 2,
-          "reb": 2,
-          "ast": 1
-        }
-      ],
-      "league": "WNBA",
-      "season": 2004,
-      "seasonLabel": "2004",
-      "games": 34,
-      "mpg": 33.8,
-      "minutes": 1150,
-      "schedule": 34,
-      "bbrefId": "leslili01w",
-      "metrics": {
-        "bpmHat": 7.31,
-        "obpmHat": 3.68,
-        "dbpmHat": 3.64,
-        "seasonZ": 2.36,
-        "per": 25.3,
-        "ws": 6.8,
-        "wsPer40": 0.236,
-        "tsPct": 0.552,
-        "pts100": 28.8
-      },
-      "provisional": false
-    },
-    {
-      "id": "Maya_Moore",
-      "name": "Maya Moore",
-      "team": "MIN11",
-      "statRowTeam": "MIN",
-      "pos": "F",
-      "speed": 15,
-      "power": 15,
-      "shotLine": 14,
-      "paintBoost": 0,
-      "threePtBoost": 0,
-      "defBoost": 1,
-      "salary": 1390,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 7,
-          "pts": 0,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 8,
-          "hi": 13,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 14,
-          "hi": 99,
-          "pts": 3,
-          "reb": 1,
-          "ast": 1
-        }
-      ],
-      "league": "WNBA",
-      "season": 2014,
-      "seasonLabel": "2014",
-      "games": 34,
-      "mpg": 34.7,
-      "minutes": 1181,
-      "schedule": 34,
-      "bbrefId": "moorema01w",
-      "metrics": {
-        "bpmHat": 9.1,
-        "obpmHat": 7.89,
-        "dbpmHat": 1.21,
-        "seasonZ": 2.75,
-        "per": 29.4,
-        "ws": 8.3,
-        "wsPer40": 0.283,
-        "tsPct": 0.586,
-        "pts100": 36
-      },
-      "provisional": false
-    },
-    {
-      "id": "Sheryl_Swoopes",
-      "name": "Sheryl Swoopes",
-      "team": "HOU",
-      "statRowTeam": "HOU",
-      "pos": "F-G",
-      "speed": 15,
-      "power": 15,
-      "shotLine": 14,
-      "paintBoost": 0,
-      "threePtBoost": 0,
-      "defBoost": 4,
-      "salary": 1370,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 6,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 7,
-          "hi": 13,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 14,
-          "hi": 20,
-          "pts": 3,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 21,
-          "hi": 99,
-          "pts": 3,
-          "reb": 1,
-          "ast": 1
-        }
-      ],
-      "league": "WNBA",
-      "season": 2000,
-      "seasonLabel": "2000",
-      "games": 31,
-      "mpg": 35.2,
-      "minutes": 1090,
-      "schedule": 32,
-      "bbrefId": "swoopsh01w",
-      "metrics": {
-        "bpmHat": 13.07,
-        "obpmHat": 8.6,
-        "dbpmHat": 4.46,
-        "seasonZ": 3.72,
-        "per": 32,
-        "ws": 9.8,
-        "wsPer40": 0.361,
-        "tsPct": 0.587,
-        "pts100": 33.8
-      },
-      "provisional": false
-    },
-    {
-      "id": "Sue_Bird",
-      "name": "Sue Bird",
-      "team": "SEA00",
-      "statRowTeam": "SEA",
-      "pos": "G",
-      "speed": 17,
-      "power": 11,
-      "shotLine": 13,
-      "paintBoost": -1,
-      "threePtBoost": 1,
-      "defBoost": 1,
-      "salary": 1020,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 6,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 7,
-          "hi": 12,
-          "pts": 1,
-          "reb": 0,
-          "ast": 1
-        },
-        {
-          "lo": 13,
-          "hi": 20,
-          "pts": 2,
-          "reb": 0,
-          "ast": 1
-        },
-        {
-          "lo": 21,
-          "hi": 99,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        }
-      ],
-      "league": "WNBA",
-      "season": 2004,
-      "seasonLabel": "2004",
-      "games": 34,
-      "mpg": 33.4,
-      "minutes": 1136,
-      "schedule": 34,
-      "bbrefId": "birdsu01w",
-      "metrics": {
-        "bpmHat": 6.32,
-        "obpmHat": 5.54,
-        "dbpmHat": 0.78,
-        "seasonZ": 2.06,
-        "per": 21.2,
-        "ws": 6,
-        "wsPer40": 0.212,
-        "tsPct": 0.604,
-        "pts100": 22.2
-      },
-      "provisional": false
-    },
-    {
-      "id": "Sylvia_Fowles",
-      "name": "Sylvia Fowles",
-      "team": "MIN11",
-      "statRowTeam": "MIN",
-      "pos": "C",
-      "speed": 11,
-      "power": 19,
-      "shotLine": 12,
-      "paintBoost": 0,
-      "threePtBoost": -8,
-      "defBoost": 3,
-      "salary": 1320,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 6,
-          "pts": 0,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 7,
-          "hi": 11,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 12,
-          "hi": 20,
-          "pts": 2,
-          "reb": 2,
-          "ast": 0
-        },
-        {
-          "lo": 21,
-          "hi": 99,
-          "pts": 3,
-          "reb": 2,
-          "ast": 1
-        }
-      ],
-      "league": "WNBA",
-      "season": 2017,
-      "seasonLabel": "2017",
-      "games": 34,
-      "mpg": 30.8,
-      "minutes": 1048,
-      "schedule": 34,
-      "bbrefId": "fowlesy01w",
-      "metrics": {
-        "bpmHat": 9.63,
-        "obpmHat": 6.49,
-        "dbpmHat": 3.14,
-        "seasonZ": 2.68,
-        "per": 30.8,
-        "ws": 9.2,
-        "wsPer40": 0.35,
-        "tsPct": 0.691,
-        "pts100": 31.5
-      },
-      "provisional": false
-    },
-    {
-      "id": "Tamika_Catchings",
-      "name": "Tamika Catchings",
-      "team": "IND",
-      "statRowTeam": "IND",
-      "pos": "F",
-      "speed": 15,
-      "power": 15,
-      "shotLine": 14,
-      "paintBoost": -1,
-      "threePtBoost": 2,
-      "defBoost": 3,
-      "salary": 1140,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 6,
-          "pts": 0,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 7,
-          "hi": 13,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 14,
-          "hi": 21,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 22,
-          "hi": 99,
-          "pts": 2,
-          "reb": 1,
-          "ast": 1
-        }
-      ],
-      "league": "WNBA",
-      "season": 2002,
-      "seasonLabel": "2002",
-      "games": 32,
-      "mpg": 36.5,
-      "minutes": 1167,
-      "schedule": 32,
-      "bbrefId": "catchta01w",
-      "metrics": {
-        "bpmHat": 11.77,
-        "obpmHat": 8.49,
-        "dbpmHat": 3.28,
-        "seasonZ": 3.44,
-        "per": 30.9,
-        "ws": 9.2,
-        "wsPer40": 0.315,
-        "tsPct": 0.572,
-        "pts100": 30.7
-      },
-      "provisional": false
-    },
-    {
-      "id": "Tina_Charles",
-      "name": "Tina Charles",
-      "team": "NYL12",
-      "statRowTeam": "NYL",
-      "pos": "C",
-      "speed": 10,
-      "power": 16,
-      "shotLine": 16,
-      "paintBoost": 0,
-      "threePtBoost": -1,
-      "defBoost": 0,
-      "salary": 1190,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 6,
-          "pts": 0,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 7,
-          "hi": 15,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 16,
-          "hi": 21,
-          "pts": 3,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 22,
-          "hi": 99,
-          "pts": 3,
-          "reb": 2,
-          "ast": 1
-        }
-      ],
-      "league": "WNBA",
-      "season": 2016,
-      "seasonLabel": "2016",
-      "games": 32,
-      "mpg": 33.7,
-      "minutes": 1077,
-      "schedule": 34,
-      "bbrefId": "charlti01w",
-      "metrics": {
-        "bpmHat": 4.82,
-        "obpmHat": 4.67,
-        "dbpmHat": 0.15,
-        "seasonZ": 1.64,
-        "per": 23.8,
-        "ws": 4.7,
-        "wsPer40": 0.176,
-        "tsPct": 0.499,
-        "pts100": 32.6
-      },
-      "provisional": false
-    },
-    {
-      "id": "Tina_Thompson",
-      "name": "Tina Thompson",
-      "team": "HOU",
-      "statRowTeam": "HOU",
-      "pos": "F",
-      "speed": 14,
-      "power": 15,
-      "shotLine": 14,
-      "paintBoost": 0,
-      "threePtBoost": 2,
-      "defBoost": 2,
-      "salary": 990,
-      "chart": [
-        {
-          "lo": 1,
-          "hi": 2,
-          "pts": 0,
-          "reb": 0,
-          "ast": 0
-        },
-        {
-          "lo": 3,
-          "hi": 6,
-          "pts": 0,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 7,
-          "hi": 13,
-          "pts": 1,
-          "reb": 1,
-          "ast": 0
-        },
-        {
-          "lo": 14,
-          "hi": 99,
-          "pts": 2,
-          "reb": 1,
-          "ast": 0
-        }
-      ],
-      "league": "WNBA",
-      "season": 2000,
-      "seasonLabel": "2000",
-      "games": 32,
-      "mpg": 34,
-      "minutes": 1087,
-      "schedule": 32,
-      "bbrefId": "thompti01w",
-      "metrics": {
-        "bpmHat": 7.18,
-        "obpmHat": 5.33,
-        "dbpmHat": 1.85,
-        "seasonZ": 2.11,
-        "per": 23.9,
-        "ws": 7.2,
-        "wsPer40": 0.264,
-        "tsPct": 0.586,
-        "pts100": 28.4
-      },
-      "provisional": false
-    }
+ "generatedAt": "2026-09-07T01:51:29.621Z",
+ "provisional": false,
+ "set": "wnba-super-season",
+ "league": "WNBA",
+ "statsSeason": "career-best season",
+ "firstSeason": 1997,
+ "lastSeason": 2024,
+ "referenceSeason": 2026,
+ "rosterSize": 36,
+ "named": 36,
+ "rule": {
+  "bestSeason": "the fitted BPM, scored against its OWN season's WNBA — the same question the NBA Super Season set asks of real BPM",
+  "minGamesShare": 0.7,
+  "minMpg": 20,
+  "eligibility": "a season must be at least 70% of its own schedule and at least 20 minutes a game. Stated as a SHARE because a WNBA season has run 28, 30, 32, 34, 36, 40 and 44 games, so no flat number means the same thing twice; stated per game because a 40-minute game makes a season-minutes floor carry the schedule length inside it. Falls back one floor at a time, games first"
+ },
+ "sources": {
+  "origin": "basketball-reference.com/wnba season tables, 1997-2024",
+  "bpm": "FITTED — the WNBA publishes no BPM, OBPM, DBPM or VORP in any season. Every season is rated with its OWN league as the centring basis, which is what makes a 1997 rating and a 2019 rating the same claim about two different leagues. See the `audit` block for how far back that can honestly be applied",
+  "speedPower": "z(fitted BPM) + 0.35 * z(fitted VORP per game), mapped onto the finished set's distribution with the current NBA pool as the calibration basis — the same map the current WNBA set uses, so the two sets share a yardstick",
+  "shotLine": "real TS%, ERA-SHIFTED onto the reference season's league mean before compression. The NBA Super Season set does not do this and does not need to; this set spans the league's whole history, over which its shooting moved far more",
+  "paintBoost": "2P%, era-shifted, standing in for rim FG% which Basketball-Reference does not carry",
+  "defBoost": "the fitted DBPM, rounded",
+  "chart": "synthesized from season TOTALS: production per four-minute section is 4 * total / minutes, measured, with no pace in it. NOT era-shifted — the chart is what she did, the same treatment the NBA Super Season set gives its charts. The `audit` block carries each season's league scoring rate so an older card's smaller chart can be read",
+  "missing": [
+   "BPM",
+   "OBPM",
+   "DBPM",
+   "VORP",
+   "EPM",
+   "rim FG%",
+   "DRB%"
   ]
+ },
+ "note": "PROVISIONAL, and league-and-era-relative by design. Every rating here says where a player stood in the league SHE played in, placed on the current sets' scale so the cards can share a table. It is not a claim that the 1997 and 2024 WNBA were equally strong, nor that either is comparable in absolute terms with the NBA.",
+ "logosNeeded": {
+  "missing": [],
+  "anachronistic": [],
+  "poor": [
+   {
+    "key": "HOU",
+    "team": "Houston Comets",
+    "era": "1997-2008",
+    "cards": [
+     "Cynthia Cooper 1997",
+     "Janeth Arcain 2001",
+     "Michelle Snow 2005",
+     "Sheryl Swoopes 2000",
+     "Tina Thompson 2000"
+    ],
+    "file": "public/logos/WNBA/HOU.png",
+    "have": "/logos/WNBA/HOU.gif",
+    "haveEra": null,
+    "note": "a 545x251 wordmark lockup (2.17:1) — era-correct, but past what logoFiles.test.js allows a live team, so it draws about half the slot. A mark-only file would draw twice the size."
+   }
+  ]
+ },
+ "audit": [
+  {
+   "season": 1997,
+   "players": 97,
+   "schedule": 28,
+   "coverage": {
+    "rows": 97,
+    "missing": {
+     "tsPct": {
+      "absent": 2,
+      "of": 97
+     },
+     "efg": {
+      "absent": 2,
+      "of": 97
+     },
+     "fg3aRate": {
+      "absent": 2,
+      "of": 97
+     },
+     "ftRate": {
+      "absent": 2,
+      "of": 97
+     }
+    },
+    "complete": false
+   },
+   "gapsAreZeroAttempt": true,
+   "extrapolation": {
+    "cells": 2813,
+    "outside": 458,
+    "share": 0.16281549946676147,
+    "byFeature": {
+     "minShare": 39,
+     "stlPct": 31,
+     "stl100": 31,
+     "tovPct": 30,
+     "wsRate": 25,
+     "offRtg": 24
+    }
+   },
+   "fittedBpm": {
+    "mean": -0.837,
+    "sd": 4.134,
+    "n": 76
+   },
+   "scoringPer4Min": 1.368,
+   "shooting": {
+    "tsPct": 0.4883,
+    "fgPct2": 0.4344,
+    "fgPct3": 0.2676
+   }
+  },
+  {
+   "season": 1998,
+   "players": 127,
+   "schedule": 30,
+   "coverage": {
+    "rows": 127,
+    "missing": {},
+    "complete": true
+   },
+   "gapsAreZeroAttempt": true,
+   "extrapolation": {
+    "cells": 3683,
+    "outside": 536,
+    "share": 0.14553353244637524,
+    "byFeature": {
+     "minShare": 50,
+     "stlPct": 44,
+     "stl100": 44,
+     "dwsRate": 34,
+     "wsRate": 33,
+     "tovPct": 33
+    }
+   },
+   "fittedBpm": {
+    "mean": -0.731,
+    "sd": 4.342,
+    "n": 94
+   },
+   "scoringPer4Min": 1.397,
+   "shooting": {
+    "tsPct": 0.4983,
+    "fgPct2": 0.4417,
+    "fgPct3": 0.2795
+   }
+  },
+  {
+   "season": 1999,
+   "players": 150,
+   "schedule": 32,
+   "coverage": {
+    "rows": 150,
+    "missing": {
+     "tsPct": {
+      "absent": 3,
+      "of": 150
+     },
+     "efg": {
+      "absent": 3,
+      "of": 150
+     },
+     "fg3aRate": {
+      "absent": 3,
+      "of": 150
+     },
+     "ftRate": {
+      "absent": 3,
+      "of": 150
+     },
+     "tovPct": {
+      "absent": 1,
+      "of": 150
+     },
+     "offRtg": {
+      "absent": 1,
+      "of": 150
+     }
+    },
+    "complete": false
+   },
+   "gapsAreZeroAttempt": true,
+   "extrapolation": {
+    "cells": 4350,
+    "outside": 625,
+    "share": 0.14367816091954022,
+    "byFeature": {
+     "minShare": 60,
+     "owsRate": 42,
+     "wsRate": 37,
+     "per": 36,
+     "stlPct": 36,
+     "stl100": 36
+    }
+   },
+   "fittedBpm": {
+    "mean": -0.343,
+    "sd": 3.578,
+    "n": 103
+   },
+   "scoringPer4Min": 1.375,
+   "shooting": {
+    "tsPct": 0.5016,
+    "fgPct2": 0.4443,
+    "fgPct3": 0.29
+   }
+  },
+  {
+   "season": 2000,
+   "players": 204,
+   "schedule": 32,
+   "coverage": {
+    "rows": 204,
+    "missing": {
+     "tsPct": {
+      "absent": 1,
+      "of": 204
+     },
+     "efg": {
+      "absent": 1,
+      "of": 204
+     },
+     "fg3aRate": {
+      "absent": 1,
+      "of": 204
+     },
+     "ftRate": {
+      "absent": 1,
+      "of": 204
+     },
+     "tovPct": {
+      "absent": 1,
+      "of": 204
+     },
+     "offRtg": {
+      "absent": 1,
+      "of": 204
+     }
+    },
+    "complete": false
+   },
+   "gapsAreZeroAttempt": true,
+   "extrapolation": {
+    "cells": 5916,
+    "outside": 815,
+    "share": 0.13776200135226505,
+    "byFeature": {
+     "minShare": 78,
+     "stlPct": 58,
+     "stl100": 58,
+     "tovPct": 49,
+     "dwsRate": 49,
+     "pf100": 46
+    }
+   },
+   "fittedBpm": {
+    "mean": -0.542,
+    "sd": 3.663,
+    "n": 149
+   },
+   "scoringPer4Min": 1.37,
+   "shooting": {
+    "tsPct": 0.5137,
+    "fgPct2": 0.4532,
+    "fgPct3": 0.2956
+   }
+  },
+  {
+   "season": 2001,
+   "players": 207,
+   "schedule": 32,
+   "coverage": {
+    "rows": 207,
+    "missing": {
+     "tsPct": {
+      "absent": 1,
+      "of": 207
+     },
+     "efg": {
+      "absent": 4,
+      "of": 207
+     },
+     "fg3aRate": {
+      "absent": 4,
+      "of": 207
+     },
+     "ftRate": {
+      "absent": 4,
+      "of": 207
+     }
+    },
+    "complete": false
+   },
+   "gapsAreZeroAttempt": true,
+   "extrapolation": {
+    "cells": 6003,
+    "outside": 966,
+    "share": 0.16091954022988506,
+    "byFeature": {
+     "minShare": 77,
+     "stlPct": 71,
+     "stl100": 71,
+     "blk100": 58,
+     "pf100": 49,
+     "blkPct": 47
+    }
+   },
+   "fittedBpm": {
+    "mean": -0.514,
+    "sd": 3.476,
+    "n": 154
+   },
+   "scoringPer4Min": 1.296,
+   "shooting": {
+    "tsPct": 0.4915,
+    "fgPct2": 0.4222,
+    "fgPct3": 0.3003
+   }
+  },
+  {
+   "season": 2002,
+   "players": 206,
+   "schedule": 32,
+   "coverage": {
+    "rows": 206,
+    "missing": {
+     "tsPct": {
+      "absent": 2,
+      "of": 206
+     },
+     "efg": {
+      "absent": 3,
+      "of": 206
+     },
+     "fg3aRate": {
+      "absent": 3,
+      "of": 206
+     },
+     "ftRate": {
+      "absent": 3,
+      "of": 206
+     },
+     "tovPct": {
+      "absent": 2,
+      "of": 206
+     },
+     "offRtg": {
+      "absent": 2,
+      "of": 206
+     }
+    },
+    "complete": false
+   },
+   "gapsAreZeroAttempt": true,
+   "extrapolation": {
+    "cells": 5974,
+    "outside": 891,
+    "share": 0.14914630063608972,
+    "byFeature": {
+     "minShare": 89,
+     "stlPct": 58,
+     "stl100": 58,
+     "owsRate": 48,
+     "pf100": 47,
+     "blk100": 46
+    }
+   },
+   "fittedBpm": {
+    "mean": -0.439,
+    "sd": 3.552,
+    "n": 146
+   },
+   "scoringPer4Min": 1.338,
+   "shooting": {
+    "tsPct": 0.5046,
+    "fgPct2": 0.4379,
+    "fgPct3": 0.2903
+   }
+  },
+  {
+   "season": 2003,
+   "players": 177,
+   "schedule": 34,
+   "coverage": {
+    "rows": 177,
+    "missing": {
+     "tsPct": {
+      "absent": 2,
+      "of": 177
+     },
+     "efg": {
+      "absent": 2,
+      "of": 177
+     },
+     "fg3aRate": {
+      "absent": 2,
+      "of": 177
+     },
+     "ftRate": {
+      "absent": 2,
+      "of": 177
+     },
+     "tovPct": {
+      "absent": 1,
+      "of": 177
+     },
+     "offRtg": {
+      "absent": 1,
+      "of": 177
+     }
+    },
+    "complete": false
+   },
+   "gapsAreZeroAttempt": true,
+   "extrapolation": {
+    "cells": 5133,
+    "outside": 693,
+    "share": 0.13500876680303917,
+    "byFeature": {
+     "minShare": 77,
+     "stlPct": 39,
+     "stl100": 39,
+     "owsRate": 37,
+     "wsRate": 36,
+     "pf100": 36
+    }
+   },
+   "fittedBpm": {
+    "mean": -0.465,
+    "sd": 3.872,
+    "n": 123
+   },
+   "scoringPer4Min": 1.35,
+   "shooting": {
+    "tsPct": 0.4985,
+    "fgPct2": 0.4376,
+    "fgPct3": 0.2687
+   }
+  },
+  {
+   "season": 2004,
+   "players": 164,
+   "schedule": 34,
+   "coverage": {
+    "rows": 164,
+    "missing": {
+     "tsPct": {
+      "absent": 2,
+      "of": 164
+     },
+     "efg": {
+      "absent": 3,
+      "of": 164
+     },
+     "fg3aRate": {
+      "absent": 3,
+      "of": 164
+     },
+     "ftRate": {
+      "absent": 3,
+      "of": 164
+     },
+     "tovPct": {
+      "absent": 1,
+      "of": 164
+     },
+     "offRtg": {
+      "absent": 1,
+      "of": 164
+     }
+    },
+    "complete": false
+   },
+   "gapsAreZeroAttempt": true,
+   "extrapolation": {
+    "cells": 4756,
+    "outside": 616,
+    "share": 0.1295206055508831,
+    "byFeature": {
+     "minShare": 65,
+     "stlPct": 44,
+     "stl100": 44,
+     "blk100": 36,
+     "owsRate": 33,
+     "pf100": 32
+    }
+   },
+   "fittedBpm": {
+    "mean": -0.512,
+    "sd": 3.315,
+    "n": 121
+   },
+   "scoringPer4Min": 1.327,
+   "shooting": {
+    "tsPct": 0.501,
+    "fgPct2": 0.4337,
+    "fgPct3": 0.3062
+   }
+  },
+  {
+   "season": 2005,
+   "players": 168,
+   "schedule": 34,
+   "coverage": {
+    "rows": 168,
+    "missing": {},
+    "complete": true
+   },
+   "gapsAreZeroAttempt": true,
+   "extrapolation": {
+    "cells": 4872,
+    "outside": 703,
+    "share": 0.14429392446633826,
+    "byFeature": {
+     "minShare": 69,
+     "blk100": 40,
+     "pf100": 39,
+     "stlPct": 37,
+     "tovPct": 37,
+     "stl100": 37
+    }
+   },
+   "fittedBpm": {
+    "mean": -0.534,
+    "sd": 3.475,
+    "n": 122
+   },
+   "scoringPer4Min": 1.334,
+   "shooting": {
+    "tsPct": 0.5059,
+    "fgPct2": 0.4408,
+    "fgPct3": 0.3089
+   }
+  },
+  {
+   "season": 2006,
+   "players": 182,
+   "schedule": 34,
+   "coverage": {
+    "rows": 182,
+    "missing": {
+     "tsPct": {
+      "absent": 1,
+      "of": 182
+     },
+     "efg": {
+      "absent": 2,
+      "of": 182
+     },
+     "fg3aRate": {
+      "absent": 2,
+      "of": 182
+     },
+     "ftRate": {
+      "absent": 2,
+      "of": 182
+     }
+    },
+    "complete": false
+   },
+   "gapsAreZeroAttempt": true,
+   "extrapolation": {
+    "cells": 5278,
+    "outside": 630,
+    "share": 0.11936339522546419,
+    "byFeature": {
+     "minShare": 61,
+     "owsRate": 37,
+     "stlPct": 36,
+     "stl100": 36,
+     "offRtg": 35,
+     "tovPct": 32
+    }
+   },
+   "fittedBpm": {
+    "mean": -0.547,
+    "sd": 3.636,
+    "n": 138
+   },
+   "scoringPer4Min": 1.495,
+   "shooting": {
+    "tsPct": 0.5073,
+    "fgPct2": 0.4448,
+    "fgPct3": 0.2727
+   }
+  },
+  {
+   "season": 2007,
+   "players": 173,
+   "schedule": 34,
+   "coverage": {
+    "rows": 173,
+    "missing": {
+     "tsPct": {
+      "absent": 2,
+      "of": 173
+     },
+     "efg": {
+      "absent": 3,
+      "of": 173
+     },
+     "fg3aRate": {
+      "absent": 3,
+      "of": 173
+     },
+     "ftRate": {
+      "absent": 3,
+      "of": 173
+     }
+    },
+    "complete": false
+   },
+   "gapsAreZeroAttempt": true,
+   "extrapolation": {
+    "cells": 5017,
+    "outside": 630,
+    "share": 0.12557305162447677,
+    "byFeature": {
+     "minShare": 61,
+     "per": 39,
+     "owsRate": 38,
+     "stlPct": 37,
+     "stl100": 37,
+     "offRtg": 36
+    }
+   },
+   "fittedBpm": {
+    "mean": -0.519,
+    "sd": 3.679,
+    "n": 128
+   },
+   "scoringPer4Min": 1.514,
+   "shooting": {
+    "tsPct": 0.5079,
+    "fgPct2": 0.4357,
+    "fgPct3": 0.2946
+   }
+  },
+  {
+   "season": 2008,
+   "players": 192,
+   "schedule": 34,
+   "coverage": {
+    "rows": 190,
+    "missing": {},
+    "complete": true
+   },
+   "gapsAreZeroAttempt": true,
+   "extrapolation": {
+    "cells": 5568,
+    "outside": 771,
+    "share": 0.1384698275862069,
+    "byFeature": {
+     "minShare": 71,
+     "tovPct": 45,
+     "stlPct": 43,
+     "stl100": 43,
+     "owsRate": 41,
+     "dwsRate": 41
+    }
+   },
+   "fittedBpm": {
+    "mean": -0.456,
+    "sd": 3.546,
+    "n": 141
+   },
+   "scoringPer4Min": 1.509,
+   "shooting": {
+    "tsPct": 0.5052,
+    "fgPct2": 0.434,
+    "fgPct3": 0.2927
+   }
+  },
+  {
+   "season": 2009,
+   "players": 164,
+   "schedule": 34,
+   "coverage": {
+    "rows": 164,
+    "missing": {
+     "tsPct": {
+      "absent": 1,
+      "of": 164
+     },
+     "efg": {
+      "absent": 1,
+      "of": 164
+     },
+     "fg3aRate": {
+      "absent": 1,
+      "of": 164
+     },
+     "ftRate": {
+      "absent": 1,
+      "of": 164
+     },
+     "tovPct": {
+      "absent": 1,
+      "of": 164
+     },
+     "offRtg": {
+      "absent": 1,
+      "of": 164
+     }
+    },
+    "complete": false
+   },
+   "gapsAreZeroAttempt": true,
+   "extrapolation": {
+    "cells": 4756,
+    "outside": 493,
+    "share": 0.10365853658536585,
+    "byFeature": {
+     "minShare": 50,
+     "stlPct": 33,
+     "stl100": 33,
+     "tovPct": 31,
+     "ftRate": 30,
+     "fta100": 24
+    }
+   },
+   "fittedBpm": {
+    "mean": -0.383,
+    "sd": 3.475,
+    "n": 135
+   },
+   "scoringPer4Min": 1.54,
+   "shooting": {
+    "tsPct": 0.515,
+    "fgPct2": 0.445,
+    "fgPct3": 0.2883
+   }
+  },
+  {
+   "season": 2010,
+   "players": 143,
+   "schedule": 34,
+   "coverage": {
+    "rows": 143,
+    "missing": {},
+    "complete": true
+   },
+   "gapsAreZeroAttempt": true,
+   "extrapolation": {
+    "cells": 4147,
+    "outside": 420,
+    "share": 0.10127803231251507,
+    "byFeature": {
+     "minShare": 44,
+     "dwsRate": 31,
+     "stlPct": 29,
+     "stl100": 29,
+     "wsRate": 23,
+     "owsRate": 23
+    }
+   },
+   "fittedBpm": {
+    "mean": -0.259,
+    "sd": 3.174,
+    "n": 111
+   },
+   "scoringPer4Min": 1.59,
+   "shooting": {
+    "tsPct": 0.5293,
+    "fgPct2": 0.4622,
+    "fgPct3": 0.3145
+   }
+  },
+  {
+   "season": 2011,
+   "players": 142,
+   "schedule": 34,
+   "coverage": {
+    "rows": 142,
+    "missing": {},
+    "complete": true
+   },
+   "gapsAreZeroAttempt": true,
+   "extrapolation": {
+    "cells": 4118,
+    "outside": 402,
+    "share": 0.09762020398251578,
+    "byFeature": {
+     "minShare": 40,
+     "stlPct": 27,
+     "stl100": 27,
+     "tovPct": 26,
+     "wsRate": 24,
+     "owsRate": 24
+    }
+   },
+   "fittedBpm": {
+    "mean": -0.323,
+    "sd": 3.447,
+    "n": 111
+   },
+   "scoringPer4Min": 1.534,
+   "shooting": {
+    "tsPct": 0.5202,
+    "fgPct2": 0.454,
+    "fgPct3": 0.2862
+   }
+  },
+  {
+   "season": 2012,
+   "players": 146,
+   "schedule": 34,
+   "coverage": {
+    "rows": 146,
+    "missing": {},
+    "complete": true
+   },
+   "gapsAreZeroAttempt": true,
+   "extrapolation": {
+    "cells": 4234,
+    "outside": 451,
+    "share": 0.10651865847897969,
+    "byFeature": {
+     "minShare": 31,
+     "owsRate": 29,
+     "wsRate": 28,
+     "offRtg": 26,
+     "stlPct": 26,
+     "stl100": 26
+    }
+   },
+   "fittedBpm": {
+    "mean": -0.651,
+    "sd": 3.964,
+    "n": 122
+   },
+   "scoringPer4Min": 1.536,
+   "shooting": {
+    "tsPct": 0.5153,
+    "fgPct2": 0.4479,
+    "fgPct3": 0.2989
+   }
+  },
+  {
+   "season": 2013,
+   "players": 146,
+   "schedule": 34,
+   "coverage": {
+    "rows": 146,
+    "missing": {},
+    "complete": true
+   },
+   "gapsAreZeroAttempt": true,
+   "extrapolation": {
+    "cells": 4234,
+    "outside": 449,
+    "share": 0.10604629192253189,
+    "byFeature": {
+     "minShare": 38,
+     "per": 31,
+     "wsRate": 31,
+     "owsRate": 30,
+     "stlPct": 28,
+     "stl100": 28
+    }
+   },
+   "fittedBpm": {
+    "mean": -0.595,
+    "sd": 4.39,
+    "n": 118
+   },
+   "scoringPer4Min": 1.501,
+   "shooting": {
+    "tsPct": 0.5027,
+    "fgPct2": 0.4441,
+    "fgPct3": 0.2801
+   }
+  },
+  {
+   "season": 2014,
+   "players": 154,
+   "schedule": 34,
+   "coverage": {
+    "rows": 154,
+    "missing": {
+     "tsPct": {
+      "absent": 1,
+      "of": 154
+     },
+     "efg": {
+      "absent": 1,
+      "of": 154
+     },
+     "fg3aRate": {
+      "absent": 1,
+      "of": 154
+     },
+     "ftRate": {
+      "absent": 1,
+      "of": 154
+     },
+     "tovPct": {
+      "absent": 1,
+      "of": 154
+     },
+     "offRtg": {
+      "absent": 1,
+      "of": 154
+     }
+    },
+    "complete": false
+   },
+   "gapsAreZeroAttempt": true,
+   "extrapolation": {
+    "cells": 4466,
+    "outside": 489,
+    "share": 0.10949395432154053,
+    "byFeature": {
+     "minShare": 54,
+     "pf100": 30,
+     "per": 28,
+     "stlPct": 28,
+     "stl100": 28,
+     "wsRate": 26
+    }
+   },
+   "fittedBpm": {
+    "mean": -0.464,
+    "sd": 3.485,
+    "n": 117
+   },
+   "scoringPer4Min": 1.52,
+   "shooting": {
+    "tsPct": 0.5145,
+    "fgPct2": 0.459,
+    "fgPct3": 0.2901
+   }
+  },
+  {
+   "season": 2015,
+   "players": 159,
+   "schedule": 34,
+   "coverage": {
+    "rows": 159,
+    "missing": {},
+    "complete": true
+   },
+   "gapsAreZeroAttempt": true,
+   "extrapolation": {
+    "cells": 4611,
+    "outside": 406,
+    "share": 0.0880503144654088,
+    "byFeature": {
+     "minShare": 33,
+     "stlPct": 25,
+     "stl100": 25,
+     "pf100": 25,
+     "wsRate": 23,
+     "owsRate": 23
+    }
+   },
+   "fittedBpm": {
+    "mean": -0.514,
+    "sd": 3.583,
+    "n": 133
+   },
+   "scoringPer4Min": 1.49,
+   "shooting": {
+    "tsPct": 0.508,
+    "fgPct2": 0.4463,
+    "fgPct3": 0.2687
+   }
+  },
+  {
+   "season": 2016,
+   "players": 158,
+   "schedule": 34,
+   "coverage": {
+    "rows": 157,
+    "missing": {},
+    "complete": true
+   },
+   "gapsAreZeroAttempt": true,
+   "extrapolation": {
+    "cells": 4582,
+    "outside": 446,
+    "share": 0.09733740724574422,
+    "byFeature": {
+     "minShare": 48,
+     "tsPct": 25,
+     "pf100": 25,
+     "stlPct": 25,
+     "stl100": 25,
+     "per": 24
+    }
+   },
+   "fittedBpm": {
+    "mean": -0.25,
+    "sd": 3.092,
+    "n": 121
+   },
+   "scoringPer4Min": 1.613,
+   "shooting": {
+    "tsPct": 0.5326,
+    "fgPct2": 0.4706,
+    "fgPct3": 0.2979
+   }
+  },
+  {
+   "season": 2017,
+   "players": 157,
+   "schedule": 34,
+   "coverage": {
+    "rows": 157,
+    "missing": {},
+    "complete": true
+   },
+   "gapsAreZeroAttempt": true,
+   "extrapolation": {
+    "cells": 4553,
+    "outside": 484,
+    "share": 0.10630353613002416,
+    "byFeature": {
+     "minShare": 49,
+     "wsRate": 32,
+     "per": 27,
+     "owsRate": 26,
+     "efg": 26,
+     "tsPct": 24
+    }
+   },
+   "fittedBpm": {
+    "mean": -0.314,
+    "sd": 3.715,
+    "n": 116
+   },
+   "scoringPer4Min": 1.615,
+   "shooting": {
+    "tsPct": 0.5303,
+    "fgPct2": 0.4704,
+    "fgPct3": 0.3031
+   }
+  },
+  {
+   "season": 2018,
+   "players": 157,
+   "schedule": 34,
+   "coverage": {
+    "rows": 157,
+    "missing": {
+     "tsPct": {
+      "absent": 2,
+      "of": 157
+     },
+     "efg": {
+      "absent": 2,
+      "of": 157
+     },
+     "fg3aRate": {
+      "absent": 2,
+      "of": 157
+     },
+     "ftRate": {
+      "absent": 2,
+      "of": 157
+     },
+     "tovPct": {
+      "absent": 2,
+      "of": 157
+     },
+     "offRtg": {
+      "absent": 2,
+      "of": 157
+     }
+    },
+    "complete": false
+   },
+   "gapsAreZeroAttempt": true,
+   "extrapolation": {
+    "cells": 4553,
+    "outside": 478,
+    "share": 0.10498572369866023,
+    "byFeature": {
+     "minShare": 49,
+     "per": 34,
+     "wsRate": 29,
+     "offRtg": 26,
+     "dwsRate": 26,
+     "owsRate": 25
+    }
+   },
+   "fittedBpm": {
+    "mean": -0.654,
+    "sd": 3.665,
+    "n": 120
+   },
+   "scoringPer4Min": 1.649,
+   "shooting": {
+    "tsPct": 0.5335,
+    "fgPct2": 0.477,
+    "fgPct3": 0.3131
+   }
+  },
+  {
+   "season": 2019,
+   "players": 157,
+   "schedule": 34,
+   "coverage": {
+    "rows": 156,
+    "missing": {
+     "tsPct": {
+      "absent": 1,
+      "of": 156
+     },
+     "efg": {
+      "absent": 1,
+      "of": 156
+     },
+     "fg3aRate": {
+      "absent": 1,
+      "of": 156
+     },
+     "ftRate": {
+      "absent": 1,
+      "of": 156
+     },
+     "tovPct": {
+      "absent": 1,
+      "of": 156
+     },
+     "offRtg": {
+      "absent": 1,
+      "of": 156
+     }
+    },
+    "complete": false
+   },
+   "gapsAreZeroAttempt": true,
+   "extrapolation": {
+    "cells": 4553,
+    "outside": 455,
+    "share": 0.0999341093784318,
+    "byFeature": {
+     "minShare": 38,
+     "tsPct": 24,
+     "per": 24,
+     "wsRate": 23,
+     "efg": 23,
+     "owsRate": 22
+    }
+   },
+   "fittedBpm": {
+    "mean": -0.498,
+    "sd": 3.531,
+    "n": 123
+   },
+   "scoringPer4Min": 1.569,
+   "shooting": {
+    "tsPct": 0.5152,
+    "fgPct2": 0.4549,
+    "fgPct3": 0.312
+   }
+  },
+  {
+   "season": 2020,
+   "players": 145,
+   "schedule": 22,
+   "coverage": {
+    "rows": 144,
+    "missing": {
+     "tsPct": {
+      "absent": 1,
+      "of": 144
+     },
+     "efg": {
+      "absent": 1,
+      "of": 144
+     },
+     "fg3aRate": {
+      "absent": 1,
+      "of": 144
+     },
+     "ftRate": {
+      "absent": 1,
+      "of": 144
+     },
+     "tovPct": {
+      "absent": 1,
+      "of": 144
+     },
+     "offRtg": {
+      "absent": 1,
+      "of": 144
+     }
+    },
+    "complete": false
+   },
+   "gapsAreZeroAttempt": true,
+   "extrapolation": {
+    "cells": 4205,
+    "outside": 411,
+    "share": 0.09774078478002378,
+    "byFeature": {
+     "minShare": 34,
+     "stlPct": 30,
+     "stl100": 30,
+     "efg": 24,
+     "per": 22,
+     "owsRate": 22
+    }
+   },
+   "fittedBpm": {
+    "mean": -0.3,
+    "sd": 3.609,
+    "n": 120
+   },
+   "scoringPer4Min": 1.653,
+   "shooting": {
+    "tsPct": 0.5429,
+    "fgPct2": 0.4879,
+    "fgPct3": 0.3277
+   }
+  },
+  {
+   "season": 2021,
+   "players": 155,
+   "schedule": 32,
+   "coverage": {
+    "rows": 154,
+    "missing": {
+     "tsPct": {
+      "absent": 3,
+      "of": 154
+     },
+     "efg": {
+      "absent": 3,
+      "of": 154
+     },
+     "fg3aRate": {
+      "absent": 3,
+      "of": 154
+     },
+     "ftRate": {
+      "absent": 3,
+      "of": 154
+     },
+     "tovPct": {
+      "absent": 3,
+      "of": 154
+     },
+     "offRtg": {
+      "absent": 2,
+      "of": 154
+     }
+    },
+    "complete": false
+   },
+   "gapsAreZeroAttempt": true,
+   "extrapolation": {
+    "cells": 4495,
+    "outside": 511,
+    "share": 0.11368186874304784,
+    "byFeature": {
+     "minShare": 41,
+     "wsRate": 28,
+     "per": 28,
+     "tsPct": 27,
+     "efg": 25,
+     "stlPct": 25
+    }
+   },
+   "fittedBpm": {
+    "mean": -0.619,
+    "sd": 3.595,
+    "n": 124
+   },
+   "scoringPer4Min": 1.6,
+   "shooting": {
+    "tsPct": 0.5294,
+    "fgPct2": 0.4678,
+    "fgPct3": 0.3193
+   }
+  },
+  {
+   "season": 2022,
+   "players": 166,
+   "schedule": 36,
+   "coverage": {
+    "rows": 166,
+    "missing": {
+     "tsPct": {
+      "absent": 2,
+      "of": 166
+     },
+     "efg": {
+      "absent": 2,
+      "of": 166
+     },
+     "fg3aRate": {
+      "absent": 2,
+      "of": 166
+     },
+     "ftRate": {
+      "absent": 2,
+      "of": 166
+     },
+     "tovPct": {
+      "absent": 2,
+      "of": 166
+     },
+     "offRtg": {
+      "absent": 1,
+      "of": 166
+     }
+    },
+    "complete": false
+   },
+   "gapsAreZeroAttempt": true,
+   "extrapolation": {
+    "cells": 4814,
+    "outside": 578,
+    "share": 0.12006647278770254,
+    "byFeature": {
+     "minShare": 45,
+     "dwsRate": 36,
+     "per": 33,
+     "tovPct": 31,
+     "stlPct": 31,
+     "stl100": 31
+    }
+   },
+   "fittedBpm": {
+    "mean": -0.634,
+    "sd": 3.454,
+    "n": 133
+   },
+   "scoringPer4Min": 1.634,
+   "shooting": {
+    "tsPct": 0.5395,
+    "fgPct2": 0.4853,
+    "fgPct3": 0.3225
+   }
+  },
+  {
+   "season": 2023,
+   "players": 156,
+   "schedule": 40,
+   "coverage": {
+    "rows": 155,
+    "missing": {
+     "tsPct": {
+      "absent": 1,
+      "of": 155
+     },
+     "efg": {
+      "absent": 1,
+      "of": 155
+     },
+     "fg3aRate": {
+      "absent": 1,
+      "of": 155
+     },
+     "ftRate": {
+      "absent": 1,
+      "of": 155
+     },
+     "tovPct": {
+      "absent": 1,
+      "of": 155
+     },
+     "offRtg": {
+      "absent": 1,
+      "of": 155
+     }
+    },
+    "complete": false
+   },
+   "gapsAreZeroAttempt": true,
+   "extrapolation": {
+    "cells": 4524,
+    "outside": 463,
+    "share": 0.10234305923961097,
+    "byFeature": {
+     "minShare": 55,
+     "owsRate": 32,
+     "wsRate": 29,
+     "tsPct": 28,
+     "per": 28,
+     "efg": 26
+    }
+   },
+   "fittedBpm": {
+    "mean": -0.888,
+    "sd": 4.196,
+    "n": 120
+   },
+   "scoringPer4Min": 1.646,
+   "shooting": {
+    "tsPct": 0.5374,
+    "fgPct2": 0.4807,
+    "fgPct3": 0.313
+   }
+  },
+  {
+   "season": 2024,
+   "players": 157,
+   "schedule": 40,
+   "coverage": {
+    "rows": 157,
+    "missing": {
+     "tsPct": {
+      "absent": 1,
+      "of": 157
+     },
+     "efg": {
+      "absent": 1,
+      "of": 157
+     },
+     "fg3aRate": {
+      "absent": 1,
+      "of": 157
+     },
+     "ftRate": {
+      "absent": 1,
+      "of": 157
+     }
+    },
+    "complete": false
+   },
+   "gapsAreZeroAttempt": true,
+   "extrapolation": {
+    "cells": 4553,
+    "outside": 558,
+    "share": 0.12255655611684603,
+    "byFeature": {
+     "minShare": 47,
+     "dwsRate": 43,
+     "wsRate": 31,
+     "per": 27,
+     "owsRate": 27,
+     "defRtg": 26
+    }
+   },
+   "fittedBpm": {
+    "mean": -0.626,
+    "sd": 3.429,
+    "n": 123
+   },
+   "scoringPer4Min": 1.625,
+   "shooting": {
+    "tsPct": 0.5341,
+    "fgPct2": 0.4821,
+    "fgPct3": 0.3108
+   }
+  },
+  {
+   "season": 2025,
+   "players": 182,
+   "schedule": 44,
+   "coverage": {
+    "rows": 181,
+    "missing": {
+     "tsPct": {
+      "absent": 2,
+      "of": 181
+     },
+     "efg": {
+      "absent": 2,
+      "of": 181
+     },
+     "fg3aRate": {
+      "absent": 2,
+      "of": 181
+     },
+     "ftRate": {
+      "absent": 2,
+      "of": 181
+     },
+     "tovPct": {
+      "absent": 2,
+      "of": 181
+     },
+     "offRtg": {
+      "absent": 2,
+      "of": 181
+     }
+    },
+    "complete": false
+   },
+   "gapsAreZeroAttempt": true,
+   "extrapolation": {
+    "cells": 5278,
+    "outside": 622,
+    "share": 0.1178476695718075,
+    "byFeature": {
+     "minShare": 49,
+     "dwsRate": 45,
+     "per": 34,
+     "blkPct": 31,
+     "stlPct": 31,
+     "stl100": 31
+    }
+   },
+   "fittedBpm": {
+    "mean": -0.657,
+    "sd": 3.641,
+    "n": 150
+   },
+   "scoringPer4Min": 1.63,
+   "shooting": {
+    "tsPct": 0.5386,
+    "fgPct2": 0.4911,
+    "fgPct3": 0.316
+   }
+  },
+  {
+   "season": 2026,
+   "players": 230,
+   "schedule": 40,
+   "coverage": {
+    "rows": 230,
+    "missing": {
+     "tsPct": {
+      "absent": 2,
+      "of": 230
+     },
+     "efg": {
+      "absent": 2,
+      "of": 230
+     },
+     "fg3aRate": {
+      "absent": 2,
+      "of": 230
+     },
+     "ftRate": {
+      "absent": 2,
+      "of": 230
+     },
+     "tovPct": {
+      "absent": 2,
+      "of": 230
+     },
+     "offRtg": {
+      "absent": 2,
+      "of": 230
+     }
+    },
+    "complete": false
+   },
+   "gapsAreZeroAttempt": true,
+   "extrapolation": {
+    "cells": 6670,
+    "outside": 858,
+    "share": 0.12863568215892054,
+    "byFeature": {
+     "minShare": 73,
+     "blkPct": 53,
+     "blk100": 48,
+     "tsPct": 42,
+     "tov100": 40,
+     "tovPct": 39
+    }
+   },
+   "fittedBpm": {
+    "mean": -0.744,
+    "sd": 3.341,
+    "n": 176
+   },
+   "scoringPer4Min": 1.734,
+   "shooting": {
+    "tsPct": 0.5582,
+    "fgPct2": 0.5151,
+    "fgPct3": 0.3268
+   }
+  }
+ ],
+ "cards": [
+  {
+   "id": "Andrea_Stinson",
+   "name": "Andrea Stinson",
+   "team": "CHA",
+   "statRowTeam": "CHA",
+   "pos": "G",
+   "speed": 16,
+   "power": 11,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": 2,
+   "defBoost": 0,
+   "salary": 950,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 21,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2001,
+   "seasonLabel": "2001",
+   "games": 32,
+   "mpg": 31.4,
+   "minutes": 1006,
+   "schedule": 32,
+   "bbrefId": "stinsan01w",
+   "metrics": {
+    "bpmHat": 5.55,
+    "obpmHat": 5.13,
+    "dbpmHat": 0.42,
+    "seasonZ": 1.74,
+    "per": 23.4,
+    "ws": 5.4,
+    "wsPer40": 0.214,
+    "tsPct": 0.556,
+    "pts100": 27.9
+   },
+   "provisional": false
+  },
+  {
+   "id": "Becky_Hammon",
+   "name": "Becky Hammon",
+   "team": "SAS",
+   "statRowTeam": "SAS",
+   "pos": "G",
+   "speed": 19,
+   "power": 8,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": 2,
+   "defBoost": -1,
+   "salary": 1190,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 14,
+     "hi": 21,
+     "pts": 3,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2009,
+   "seasonLabel": "2009",
+   "games": 31,
+   "mpg": 33.8,
+   "minutes": 1049,
+   "schedule": 34,
+   "bbrefId": "hammobe01w",
+   "metrics": {
+    "bpmHat": 5.48,
+    "obpmHat": 6.01,
+    "dbpmHat": -0.53,
+    "seasonZ": 1.69,
+    "per": 23.5,
+    "ws": 4.5,
+    "wsPer40": 0.171,
+    "tsPct": 0.593,
+    "pts100": 30.8
+   },
+   "provisional": false
+  },
+  {
+   "id": "Brandy_Reed",
+   "name": "Brandy Reed",
+   "team": "PHO97",
+   "statRowTeam": "PHO",
+   "pos": "F",
+   "speed": 15,
+   "power": 15,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": -1,
+   "defBoost": 2,
+   "salary": 1080,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 7,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 21,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2000,
+   "seasonLabel": "2000",
+   "games": 32,
+   "mpg": 34.1,
+   "minutes": 1090,
+   "schedule": 32,
+   "bbrefId": "reedbr01w",
+   "metrics": {
+    "bpmHat": 8.65,
+    "obpmHat": 6.93,
+    "dbpmHat": 1.72,
+    "seasonZ": 2.51,
+    "per": 28.8,
+    "ws": 7.3,
+    "wsPer40": 0.27,
+    "tsPct": 0.586,
+    "pts100": 32.8
+   },
+   "provisional": false
+  },
+  {
+   "id": "Candace_Parker",
+   "name": "Candace Parker",
+   "team": "LAS97",
+   "statRowTeam": "LAS",
+   "pos": "F-C",
+   "speed": 12,
+   "power": 18,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": -1,
+   "defBoost": 3,
+   "salary": 1090,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 21,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 2,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2008,
+   "seasonLabel": "2008",
+   "games": 33,
+   "mpg": 33.6,
+   "minutes": 1109,
+   "schedule": 34,
+   "bbrefId": "parkeca01w",
+   "metrics": {
+    "bpmHat": 8.4,
+    "obpmHat": 5.78,
+    "dbpmHat": 2.62,
+    "seasonZ": 2.5,
+    "per": 27.4,
+    "ws": 7.7,
+    "wsPer40": 0.278,
+    "tsPct": 0.582,
+    "pts100": 28.6
+   },
+   "provisional": false,
+   "badges": [
+    "rookie"
+   ]
+  },
+  {
+   "id": "Candice_Dupree",
+   "name": "Candice Dupree",
+   "team": "PHO11",
+   "statRowTeam": "PHO",
+   "pos": "F",
+   "speed": 12,
+   "power": 14,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": -5,
+   "defBoost": 1,
+   "salary": 970,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 20,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2014,
+   "seasonLabel": "2014",
+   "games": 34,
+   "mpg": 31.2,
+   "minutes": 1062,
+   "schedule": 34,
+   "bbrefId": "dupreca01w",
+   "metrics": {
+    "bpmHat": 4.5,
+    "obpmHat": 3.35,
+    "dbpmHat": 1.16,
+    "seasonZ": 1.43,
+    "per": 21,
+    "ws": 5.5,
+    "wsPer40": 0.209,
+    "tsPct": 0.571,
+    "pts100": 24.2
+   },
+   "provisional": false
+  },
+  {
+   "id": "Chasity_Melvin",
+   "name": "Chasity Melvin",
+   "team": "CLE",
+   "statRowTeam": "CLE",
+   "pos": "C-F",
+   "speed": 8,
+   "power": 16,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": -4,
+   "defBoost": 1,
+   "salary": 780,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 20,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2001,
+   "seasonLabel": "2001",
+   "games": 27,
+   "mpg": 27.9,
+   "minutes": 754,
+   "schedule": 32,
+   "bbrefId": "melvich01w",
+   "metrics": {
+    "bpmHat": 3.23,
+    "obpmHat": 1.85,
+    "dbpmHat": 1.38,
+    "seasonZ": 1.08,
+    "per": 19.5,
+    "ws": 4.2,
+    "wsPer40": 0.225,
+    "tsPct": 0.526,
+    "pts100": 22
+   },
+   "provisional": false
+  },
+  {
+   "id": "Chelsea_Gray",
+   "name": "Chelsea Gray",
+   "team": "LVA18",
+   "statRowTeam": "LVA",
+   "pos": "G",
+   "speed": 18,
+   "power": 10,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": 2,
+   "defBoost": 2,
+   "salary": 1090,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 14,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2023,
+   "seasonLabel": "2023",
+   "games": 40,
+   "mpg": 32.2,
+   "minutes": 1288,
+   "schedule": 40,
+   "bbrefId": "graych01w",
+   "metrics": {
+    "bpmHat": 6.19,
+    "obpmHat": 4.34,
+    "dbpmHat": 1.85,
+    "seasonZ": 1.69,
+    "per": 21.8,
+    "ws": 7,
+    "wsPer40": 0.216,
+    "tsPct": 0.603,
+    "pts100": 23.4
+   },
+   "provisional": false
+  },
+  {
+   "id": "Cynthia_Cooper",
+   "name": "Cynthia Cooper",
+   "team": "HOU",
+   "statRowTeam": "HOU",
+   "pos": "G",
+   "speed": 21,
+   "power": 9,
+   "shotLine": 13,
+   "paintBoost": -1,
+   "threePtBoost": 1,
+   "defBoost": 1,
+   "salary": 1340,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 7,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 12,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 13,
+     "hi": 20,
+     "pts": 3,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 1997,
+   "seasonLabel": "1997",
+   "games": 28,
+   "mpg": 35.1,
+   "minutes": 982,
+   "schedule": 28,
+   "bbrefId": "coopecy01w",
+   "metrics": {
+    "bpmHat": 11.87,
+    "obpmHat": 10.69,
+    "dbpmHat": 1.17,
+    "seasonZ": 3.07,
+    "per": 32.2,
+    "ws": 9.4,
+    "wsPer40": 0.385,
+    "tsPct": 0.629,
+    "pts100": 35.3
+   },
+   "provisional": false,
+   "badges": [
+    "rookie"
+   ]
+  },
+  {
+   "id": "Dawn_Staley",
+   "name": "Dawn Staley",
+   "team": "CHA",
+   "statRowTeam": "CHA",
+   "pos": "G",
+   "speed": 17,
+   "power": 6,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 0,
+   "salary": 450,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 20,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 1999,
+   "seasonLabel": "1999",
+   "games": 32,
+   "mpg": 33.3,
+   "minutes": 1065,
+   "schedule": 32,
+   "bbrefId": "staleda01w",
+   "metrics": {
+    "bpmHat": 2.12,
+    "obpmHat": 2.57,
+    "dbpmHat": -0.45,
+    "seasonZ": 0.69,
+    "per": 16.9,
+    "ws": 3,
+    "wsPer40": 0.112,
+    "tsPct": 0.54,
+    "pts100": 20.4
+   },
+   "provisional": false,
+   "badges": [
+    "rookie"
+   ]
+  },
+  {
+   "id": "Deanna_Nolan",
+   "name": "Deanna Nolan",
+   "team": "DET2",
+   "statRowTeam": "DET",
+   "pos": "G-F",
+   "speed": 17,
+   "power": 9,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 0,
+   "salary": 830,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2008,
+   "seasonLabel": "2008",
+   "games": 34,
+   "mpg": 33.6,
+   "minutes": 1144,
+   "schedule": 34,
+   "bbrefId": "nolande01w",
+   "metrics": {
+    "bpmHat": 4.42,
+    "obpmHat": 4.22,
+    "dbpmHat": 0.21,
+    "seasonZ": 1.38,
+    "per": 20,
+    "ws": 5.3,
+    "wsPer40": 0.186,
+    "tsPct": 0.541,
+    "pts100": 24.7
+   },
+   "provisional": false
+  },
+  {
+   "id": "Diana_Taurasi",
+   "name": "Diana Taurasi",
+   "team": "PHO97",
+   "statRowTeam": "PHO",
+   "pos": "G",
+   "speed": 18,
+   "power": 12,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": 2,
+   "defBoost": 0,
+   "salary": 1750,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 99,
+     "pts": 4,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2008,
+   "seasonLabel": "2008",
+   "games": 34,
+   "mpg": 31.9,
+   "minutes": 1083,
+   "schedule": 34,
+   "bbrefId": "tauradi01w",
+   "metrics": {
+    "bpmHat": 8.15,
+    "obpmHat": 8.61,
+    "dbpmHat": -0.46,
+    "seasonZ": 2.43,
+    "per": 29.7,
+    "ws": 7.4,
+    "wsPer40": 0.273,
+    "tsPct": 0.596,
+    "pts100": 36.7
+   },
+   "provisional": false
+  },
+  {
+   "id": "Elena_Baranova",
+   "name": "Elena Baranova",
+   "team": "MIA",
+   "statRowTeam": "MIA",
+   "pos": "F",
+   "speed": 11,
+   "power": 16,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 2,
+   "salary": 900,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 20,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2001,
+   "seasonLabel": "2001",
+   "games": 32,
+   "mpg": 30.8,
+   "minutes": 984,
+   "schedule": 32,
+   "bbrefId": "baranel01w",
+   "metrics": {
+    "bpmHat": 5.56,
+    "obpmHat": 3.13,
+    "dbpmHat": 2.44,
+    "seasonZ": 1.75,
+    "per": 21.3,
+    "ws": 5,
+    "wsPer40": 0.201,
+    "tsPct": 0.523,
+    "pts100": 23.9
+   },
+   "provisional": false
+  },
+  {
+   "id": "Elena_Delle_Donne",
+   "name": "Elena Delle Donne",
+   "team": "CHI06",
+   "statRowTeam": "CHI",
+   "pos": "F-G",
+   "speed": 12,
+   "power": 18,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": -1,
+   "defBoost": 1,
+   "salary": 1490,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 21,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 4,
+     "reb": 2,
+     "ast": 0
+    }
+   ],
+   "league": "WNBA",
+   "season": 2015,
+   "seasonLabel": "2015",
+   "games": 31,
+   "mpg": 33.3,
+   "minutes": 1032,
+   "schedule": 34,
+   "bbrefId": "delleel01w",
+   "metrics": {
+    "bpmHat": 10.49,
+    "obpmHat": 9.47,
+    "dbpmHat": 1.02,
+    "seasonZ": 3.07,
+    "per": 32.8,
+    "ws": 8.9,
+    "wsPer40": 0.346,
+    "tsPct": 0.591,
+    "pts100": 36.1
+   },
+   "provisional": false
+  },
+  {
+   "id": "Janeth_Arcain",
+   "name": "Janeth Arcain",
+   "team": "HOU",
+   "statRowTeam": "HOU",
+   "pos": "G",
+   "speed": 17,
+   "power": 10,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 0,
+   "salary": 950,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 14,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 21,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2001,
+   "seasonLabel": "2001",
+   "games": 32,
+   "mpg": 36.1,
+   "minutes": 1154,
+   "schedule": 32,
+   "bbrefId": "arcaija01w",
+   "metrics": {
+    "bpmHat": 5.15,
+    "obpmHat": 4.74,
+    "dbpmHat": 0.41,
+    "seasonZ": 1.63,
+    "per": 23.2,
+    "ws": 6.2,
+    "wsPer40": 0.216,
+    "tsPct": 0.514,
+    "pts100": 30.7
+   },
+   "provisional": false
+  },
+  {
+   "id": "Jonquel_Jones",
+   "name": "Jonquel Jones",
+   "team": "CON",
+   "statRowTeam": "CON",
+   "pos": "C",
+   "speed": 8,
+   "power": 22,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": -1,
+   "defBoost": 3,
+   "salary": 1360,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 19,
+     "pts": 3,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2021,
+   "seasonLabel": "2021",
+   "games": 27,
+   "mpg": 31.7,
+   "minutes": 856,
+   "schedule": 32,
+   "bbrefId": "jonesjo01w",
+   "metrics": {
+    "bpmHat": 9.28,
+    "obpmHat": 6.22,
+    "dbpmHat": 3.07,
+    "seasonZ": 2.75,
+    "per": 28.3,
+    "ws": 6.6,
+    "wsPer40": 0.307,
+    "tsPct": 0.614,
+    "pts100": 33
+   },
+   "provisional": false
+  },
+  {
+   "id": "Katie_Smith",
+   "name": "Katie Smith",
+   "team": "MIN99",
+   "statRowTeam": "MIN",
+   "pos": "G",
+   "speed": 17,
+   "power": 10,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": 2,
+   "defBoost": -1,
+   "salary": 860,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 21,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    }
+   ],
+   "league": "WNBA",
+   "season": 2000,
+   "seasonLabel": "2000",
+   "games": 32,
+   "mpg": 37.3,
+   "minutes": 1193,
+   "schedule": 32,
+   "bbrefId": "smithka01w",
+   "metrics": {
+    "bpmHat": 5.6,
+    "obpmHat": 6.15,
+    "dbpmHat": -0.55,
+    "seasonZ": 1.68,
+    "per": 22.3,
+    "ws": 6.4,
+    "wsPer40": 0.213,
+    "tsPct": 0.578,
+    "pts100": 31
+   },
+   "provisional": false
+  },
+  {
+   "id": "Lauren_Jackson",
+   "name": "Lauren Jackson",
+   "team": "SEA00",
+   "statRowTeam": "SEA",
+   "pos": "F-C",
+   "speed": 12,
+   "power": 18,
+   "shotLine": 12,
+   "paintBoost": 0,
+   "threePtBoost": -3,
+   "defBoost": 1,
+   "salary": 1510,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 11,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 12,
+     "hi": 21,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 4,
+     "reb": 2,
+     "ast": 0
+    }
+   ],
+   "league": "WNBA",
+   "season": 2006,
+   "seasonLabel": "2006",
+   "games": 30,
+   "mpg": 28.4,
+   "minutes": 853,
+   "schedule": 34,
+   "bbrefId": "jacksla01w",
+   "metrics": {
+    "bpmHat": 11.42,
+    "obpmHat": 10.1,
+    "dbpmHat": 1.32,
+    "seasonZ": 3.29,
+    "per": 34.5,
+    "ws": 8.8,
+    "wsPer40": 0.414,
+    "tsPct": 0.659,
+    "pts100": 35.8
+   },
+   "provisional": false
+  },
+  {
+   "id": "Lindsay_Whalen",
+   "name": "Lindsay Whalen",
+   "team": "CON03",
+   "statRowTeam": "CON",
+   "pos": "G",
+   "speed": 19,
+   "power": 10,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": -1,
+   "defBoost": 2,
+   "salary": 1040,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 8,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 9,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 14,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2008,
+   "seasonLabel": "2008",
+   "games": 31,
+   "mpg": 29.3,
+   "minutes": 908,
+   "schedule": 34,
+   "bbrefId": "whaleli01w",
+   "metrics": {
+    "bpmHat": 7.67,
+    "obpmHat": 5.8,
+    "dbpmHat": 1.88,
+    "seasonZ": 2.29,
+    "per": 24.8,
+    "ws": 6.4,
+    "wsPer40": 0.283,
+    "tsPct": 0.58,
+    "pts100": 25
+   },
+   "provisional": false
+  },
+  {
+   "id": "Lisa_Leslie",
+   "name": "Lisa Leslie",
+   "team": "LAS97",
+   "statRowTeam": "LAS",
+   "pos": "C",
+   "speed": 8,
+   "power": 21,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": -4,
+   "defBoost": 4,
+   "salary": 1020,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 20,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 2,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2004,
+   "seasonLabel": "2004",
+   "games": 34,
+   "mpg": 33.8,
+   "minutes": 1150,
+   "schedule": 34,
+   "bbrefId": "leslili01w",
+   "metrics": {
+    "bpmHat": 7.31,
+    "obpmHat": 3.68,
+    "dbpmHat": 3.64,
+    "seasonZ": 2.36,
+    "per": 25.3,
+    "ws": 6.8,
+    "wsPer40": 0.236,
+    "tsPct": 0.552,
+    "pts100": 28.8
+   },
+   "provisional": false
+  },
+  {
+   "id": "Maya_Moore",
+   "name": "Maya Moore",
+   "team": "MIN11",
+   "statRowTeam": "MIN",
+   "pos": "F",
+   "speed": 15,
+   "power": 15,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": -1,
+   "defBoost": 1,
+   "salary": 1370,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 7,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2014,
+   "seasonLabel": "2014",
+   "games": 34,
+   "mpg": 34.7,
+   "minutes": 1181,
+   "schedule": 34,
+   "bbrefId": "moorema01w",
+   "metrics": {
+    "bpmHat": 9.1,
+    "obpmHat": 7.89,
+    "dbpmHat": 1.21,
+    "seasonZ": 2.75,
+    "per": 29.4,
+    "ws": 8.3,
+    "wsPer40": 0.283,
+    "tsPct": 0.586,
+    "pts100": 36
+   },
+   "provisional": false
+  },
+  {
+   "id": "Michelle_Edwards",
+   "name": "Michelle Edwards",
+   "team": "CLE",
+   "statRowTeam": "CLE",
+   "pos": "G",
+   "speed": 12,
+   "power": 6,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": -3,
+   "defBoost": 0,
+   "salary": 360,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 15,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 99,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 1997,
+   "seasonLabel": "1997",
+   "games": 20,
+   "mpg": 31.1,
+   "minutes": 622,
+   "schedule": 28,
+   "bbrefId": "edwarmi01w",
+   "metrics": {
+    "bpmHat": -0.01,
+    "obpmHat": -0.3,
+    "dbpmHat": 0.3,
+    "seasonZ": 0.2,
+    "per": 14.4,
+    "ws": 0.8,
+    "wsPer40": 0.05,
+    "tsPct": 0.488,
+    "pts100": 17.8
+   },
+   "provisional": false,
+   "badges": [
+    "rookie"
+   ]
+  },
+  {
+   "id": "Michelle_Snow",
+   "name": "Michelle Snow",
+   "team": "HOU",
+   "statRowTeam": "HOU",
+   "pos": "C",
+   "speed": 7,
+   "power": 16,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": -5,
+   "defBoost": 0,
+   "salary": 700,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    }
+   ],
+   "league": "WNBA",
+   "season": 2005,
+   "seasonLabel": "2005",
+   "games": 33,
+   "mpg": 29.3,
+   "minutes": 966,
+   "schedule": 34,
+   "bbrefId": "snowmi01w",
+   "metrics": {
+    "bpmHat": 2.67,
+    "obpmHat": 2.4,
+    "dbpmHat": 0.27,
+    "seasonZ": 0.92,
+    "per": 21.6,
+    "ws": 4.7,
+    "wsPer40": 0.194,
+    "tsPct": 0.594,
+    "pts100": 24.5
+   },
+   "provisional": false
+  },
+  {
+   "id": "Natalie_Williams",
+   "name": "Natalie Williams",
+   "team": "UTA",
+   "statRowTeam": "UTA",
+   "pos": "C",
+   "speed": 7,
+   "power": 19,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": -5,
+   "defBoost": -1,
+   "salary": 790,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 7,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 21,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 2,
+     "reb": 2,
+     "ast": 0
+    }
+   ],
+   "league": "WNBA",
+   "season": 2000,
+   "seasonLabel": "2000",
+   "games": 29,
+   "mpg": 35.8,
+   "minutes": 1039,
+   "schedule": 32,
+   "bbrefId": "willina01w",
+   "metrics": {
+    "bpmHat": 4.36,
+    "obpmHat": 5.24,
+    "dbpmHat": -0.88,
+    "seasonZ": 1.34,
+    "per": 25.7,
+    "ws": 6.4,
+    "wsPer40": 0.246,
+    "tsPct": 0.583,
+    "pts100": 28.6
+   },
+   "provisional": false
+  },
+  {
+   "id": "Rebecca_Lobo",
+   "name": "Rebecca Lobo",
+   "team": "NYL97",
+   "statRowTeam": "NYL",
+   "pos": "C",
+   "speed": 7,
+   "power": 15,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 0,
+   "salary": 720,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 20,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 2,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 1998,
+   "seasonLabel": "1998",
+   "games": 30,
+   "mpg": 29.2,
+   "minutes": 875,
+   "schedule": 30,
+   "bbrefId": "lobore01w",
+   "metrics": {
+    "bpmHat": 2.07,
+    "obpmHat": 1.84,
+    "dbpmHat": 0.24,
+    "seasonZ": 0.65,
+    "per": 18.4,
+    "ws": 3.8,
+    "wsPer40": 0.173,
+    "tsPct": 0.544,
+    "pts100": 22.4
+   },
+   "provisional": false
+  },
+  {
+   "id": "Sheryl_Swoopes",
+   "name": "Sheryl Swoopes",
+   "team": "HOU",
+   "statRowTeam": "HOU",
+   "pos": "F-G",
+   "speed": 16,
+   "power": 14,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": -1,
+   "defBoost": 4,
+   "salary": 1360,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 20,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2000,
+   "seasonLabel": "2000",
+   "games": 31,
+   "mpg": 35.2,
+   "minutes": 1090,
+   "schedule": 32,
+   "bbrefId": "swoopsh01w",
+   "metrics": {
+    "bpmHat": 13.07,
+    "obpmHat": 8.6,
+    "dbpmHat": 4.46,
+    "seasonZ": 3.72,
+    "per": 32,
+    "ws": 9.8,
+    "wsPer40": 0.361,
+    "tsPct": 0.587,
+    "pts100": 33.8
+   },
+   "provisional": false
+  },
+  {
+   "id": "Sophia_Young_Malcolm",
+   "name": "Sophia Young-Malcolm",
+   "team": "SAS",
+   "statRowTeam": "SAS",
+   "pos": "F",
+   "speed": 13,
+   "power": 14,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": -4,
+   "defBoost": 2,
+   "salary": 1010,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 21,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2008,
+   "seasonLabel": "2008",
+   "games": 33,
+   "mpg": 31.9,
+   "minutes": 1054,
+   "schedule": 34,
+   "bbrefId": "youngso01w",
+   "metrics": {
+    "bpmHat": 5.62,
+    "obpmHat": 4.02,
+    "dbpmHat": 1.59,
+    "seasonZ": 1.71,
+    "per": 23.5,
+    "ws": 6.2,
+    "wsPer40": 0.237,
+    "tsPct": 0.55,
+    "pts100": 28.9
+   },
+   "provisional": false
+  },
+  {
+   "id": "Sue_Bird",
+   "name": "Sue Bird",
+   "team": "SEA00",
+   "statRowTeam": "SEA",
+   "pos": "G",
+   "speed": 20,
+   "power": 8,
+   "shotLine": 13,
+   "paintBoost": -1,
+   "threePtBoost": 1,
+   "defBoost": 1,
+   "salary": 960,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 12,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 13,
+     "hi": 20,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2004,
+   "seasonLabel": "2004",
+   "games": 34,
+   "mpg": 33.4,
+   "minutes": 1136,
+   "schedule": 34,
+   "bbrefId": "birdsu01w",
+   "metrics": {
+    "bpmHat": 6.32,
+    "obpmHat": 5.54,
+    "dbpmHat": 0.78,
+    "seasonZ": 2.06,
+    "per": 21.2,
+    "ws": 6,
+    "wsPer40": 0.212,
+    "tsPct": 0.604,
+    "pts100": 22.2
+   },
+   "provisional": false
+  },
+  {
+   "id": "Suzie_McConnell_Serio",
+   "name": "Suzie McConnell-Serio",
+   "team": "CLE",
+   "statRowTeam": "CLE",
+   "pos": "G",
+   "speed": 16,
+   "power": 7,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": 2,
+   "defBoost": 1,
+   "salary": 560,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 7,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 13,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 14,
+     "hi": 21,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 1998,
+   "seasonLabel": "1998",
+   "games": 28,
+   "mpg": 31.5,
+   "minutes": 882,
+   "schedule": 30,
+   "bbrefId": "mcconsu01w",
+   "metrics": {
+    "bpmHat": 2.24,
+    "obpmHat": 1.32,
+    "dbpmHat": 0.93,
+    "seasonZ": 0.68,
+    "per": 15.2,
+    "ws": 2.1,
+    "wsPer40": 0.093,
+    "tsPct": 0.58,
+    "pts100": 14.8
+   },
+   "provisional": false,
+   "badges": [
+    "rookie"
+   ]
+  },
+  {
+   "id": "Swin_Cash",
+   "name": "Swin Cash",
+   "team": "DET2",
+   "statRowTeam": "DET",
+   "pos": "F",
+   "speed": 14,
+   "power": 13,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": -4,
+   "defBoost": 0,
+   "salary": 1030,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2004,
+   "seasonLabel": "2004",
+   "games": 32,
+   "mpg": 34.5,
+   "minutes": 1105,
+   "schedule": 34,
+   "bbrefId": "cashsw01w",
+   "metrics": {
+    "bpmHat": 5.32,
+    "obpmHat": 4.91,
+    "dbpmHat": 0.41,
+    "seasonZ": 1.76,
+    "per": 24,
+    "ws": 5.9,
+    "wsPer40": 0.215,
+    "tsPct": 0.548,
+    "pts100": 26.6
+   },
+   "provisional": false
+  },
+  {
+   "id": "Sylvia_Fowles",
+   "name": "Sylvia Fowles",
+   "team": "MIN11",
+   "statRowTeam": "MIN",
+   "pos": "C",
+   "speed": 6,
+   "power": 24,
+   "shotLine": 12,
+   "paintBoost": 0,
+   "threePtBoost": -7,
+   "defBoost": 3,
+   "salary": 1270,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 11,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 12,
+     "hi": 20,
+     "pts": 2,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2017,
+   "seasonLabel": "2017",
+   "games": 34,
+   "mpg": 30.8,
+   "minutes": 1048,
+   "schedule": 34,
+   "bbrefId": "fowlesy01w",
+   "metrics": {
+    "bpmHat": 9.63,
+    "obpmHat": 6.49,
+    "dbpmHat": 3.14,
+    "seasonZ": 2.68,
+    "per": 30.8,
+    "ws": 9.2,
+    "wsPer40": 0.35,
+    "tsPct": 0.691,
+    "pts100": 31.5
+   },
+   "provisional": false
+  },
+  {
+   "id": "Tamika_Catchings",
+   "name": "Tamika Catchings",
+   "team": "IND",
+   "statRowTeam": "IND",
+   "pos": "F",
+   "speed": 15,
+   "power": 15,
+   "shotLine": 14,
+   "paintBoost": -1,
+   "threePtBoost": 2,
+   "defBoost": 3,
+   "salary": 1130,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 21,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2002,
+   "seasonLabel": "2002",
+   "games": 32,
+   "mpg": 36.5,
+   "minutes": 1167,
+   "schedule": 32,
+   "bbrefId": "catchta01w",
+   "metrics": {
+    "bpmHat": 11.77,
+    "obpmHat": 8.49,
+    "dbpmHat": 3.28,
+    "seasonZ": 3.44,
+    "per": 30.9,
+    "ws": 9.2,
+    "wsPer40": 0.315,
+    "tsPct": 0.572,
+    "pts100": 30.7
+   },
+   "provisional": false,
+   "badges": [
+    "rookie"
+   ]
+  },
+  {
+   "id": "Teresa_Weatherspoon",
+   "name": "Teresa Weatherspoon",
+   "team": "NYL97",
+   "statRowTeam": "NYL",
+   "pos": "G",
+   "speed": 18,
+   "power": 8,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 3,
+   "salary": 620,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 8,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 9,
+     "hi": 14,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 99,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 1999,
+   "seasonLabel": "1999",
+   "games": 32,
+   "mpg": 33.9,
+   "minutes": 1086,
+   "schedule": 32,
+   "bbrefId": "weathte01w",
+   "metrics": {
+    "bpmHat": 4.59,
+    "obpmHat": 1.34,
+    "dbpmHat": 3.25,
+    "seasonZ": 1.38,
+    "per": 16.3,
+    "ws": 4.2,
+    "wsPer40": 0.154,
+    "tsPct": 0.533,
+    "pts100": 12.3
+   },
+   "provisional": false
+  },
+  {
+   "id": "Ticha_Penicheiro",
+   "name": "Ticha Penicheiro",
+   "team": "SAC",
+   "statRowTeam": "SAC",
+   "pos": "G",
+   "speed": 17,
+   "power": 8,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": -3,
+   "defBoost": 3,
+   "salary": 600,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 8,
+     "pts": 0,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 9,
+     "hi": 15,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 99,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2002,
+   "seasonLabel": "2002",
+   "games": 24,
+   "mpg": 35.5,
+   "minutes": 853,
+   "schedule": 32,
+   "bbrefId": "penicti01w",
+   "metrics": {
+    "bpmHat": 3.92,
+    "obpmHat": 1.29,
+    "dbpmHat": 2.63,
+    "seasonZ": 1.23,
+    "per": 18,
+    "ws": 2.4,
+    "wsPer40": 0.114,
+    "tsPct": 0.497,
+    "pts100": 13.7
+   },
+   "provisional": false
+  },
+  {
+   "id": "Tina_Charles",
+   "name": "Tina Charles",
+   "team": "NYL12",
+   "statRowTeam": "NYL",
+   "pos": "C",
+   "speed": 9,
+   "power": 17,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": 1,
+   "defBoost": 0,
+   "salary": 1170,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 21,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2016,
+   "seasonLabel": "2016",
+   "games": 32,
+   "mpg": 33.7,
+   "minutes": 1077,
+   "schedule": 34,
+   "bbrefId": "charlti01w",
+   "metrics": {
+    "bpmHat": 4.82,
+    "obpmHat": 4.67,
+    "dbpmHat": 0.15,
+    "seasonZ": 1.64,
+    "per": 23.8,
+    "ws": 4.7,
+    "wsPer40": 0.176,
+    "tsPct": 0.499,
+    "pts100": 32.6
+   },
+   "provisional": false
+  },
+  {
+   "id": "Tina_Thompson",
+   "name": "Tina Thompson",
+   "team": "HOU",
+   "statRowTeam": "HOU",
+   "pos": "F",
+   "speed": 13,
+   "power": 16,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": 2,
+   "defBoost": 2,
+   "salary": 980,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    }
+   ],
+   "league": "WNBA",
+   "season": 2000,
+   "seasonLabel": "2000",
+   "games": 32,
+   "mpg": 34,
+   "minutes": 1087,
+   "schedule": 32,
+   "bbrefId": "thompti01w",
+   "metrics": {
+    "bpmHat": 7.18,
+    "obpmHat": 5.33,
+    "dbpmHat": 1.85,
+    "seasonZ": 2.11,
+    "per": 23.9,
+    "ws": 7.2,
+    "wsPer40": 0.264,
+    "tsPct": 0.586,
+    "pts100": 28.4
+   },
+   "provisional": false
+  },
+  {
+   "id": "Yolanda_Griffith",
+   "name": "Yolanda Griffith",
+   "team": "SAC",
+   "statRowTeam": "SAC",
+   "pos": "C-F",
+   "speed": 8,
+   "power": 22,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": -5,
+   "defBoost": 3,
+   "salary": 1300,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 7,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 0
+    }
+   ],
+   "league": "WNBA",
+   "season": 1999,
+   "seasonLabel": "1999",
+   "games": 29,
+   "mpg": 33.8,
+   "minutes": 979,
+   "schedule": 32,
+   "bbrefId": "griffyo01w",
+   "metrics": {
+    "bpmHat": 9.86,
+    "obpmHat": 6.8,
+    "dbpmHat": 3.05,
+    "seasonZ": 2.85,
+    "per": 31.9,
+    "ws": 8.1,
+    "wsPer40": 0.33,
+    "tsPct": 0.576,
+    "pts100": 29.8
+   },
+   "provisional": false,
+   "badges": [
+    "rookie"
+   ]
+  }
+ ]
 }

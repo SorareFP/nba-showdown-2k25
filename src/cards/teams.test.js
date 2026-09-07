@@ -335,6 +335,24 @@ describe('WNBA_TEAMS', () => {
     WAS: ['#C8102E', '#0C2340'], // Red, Navy                      (2011-present)
   };
 
+  // THE ONE DOCUMENTED DEVIATION, and it is an ORDER change, not a colour one.
+  //
+  // Portland uses TruColor's pair with the two ENTRIES SWAPPED: red leads and
+  // pink accents. Two reasons, both recorded rather than assumed:
+  //
+  //   THE MARK. public/logos/WNBA/POR.png is measurably 56.6% #C8102E red and
+  //   32.8% pale ice, with no pink anywhere in it. A pink card for a red logo
+  //   is what prompted this.
+  //
+  //   ATLANTA. The Dream are #C8102E red too, so leading Portland with red
+  //   alone would collide; the pink accent is what separates them, where
+  //   Atlanta's accent is dark grey.
+  //
+  // The rule this bends is still worth its weight: no colour is INVENTED here,
+  // both values remain the ones TruColor publishes, and the swap is listed so
+  // it stays visible instead of dissolving into taste.
+  const ORDER_REVERSED = new Set(['POR']);
+
   it('takes every colour off TruColor, the same authority the NBA table uses', () => {
     // The NBA table was read off the authority the user chose; so is this one,
     // off that page's WNBA counterpart. The rule is mechanical on purpose —
@@ -343,8 +361,17 @@ describe('WNBA_TEAMS', () => {
     // somebody's taste.
     expect(Object.keys(TRUCOLOR).sort()).toEqual(Object.keys(WNBA_TEAMS).sort());
     for (const [abbr, [primary, secondary]] of Object.entries(TRUCOLOR)) {
-      expect(WNBA_TEAMS[abbr].primary, abbr).toBe(primary);
-      expect(WNBA_TEAMS[abbr].secondary, abbr).toBe(secondary);
+      const [wantPrimary, wantSecondary] = ORDER_REVERSED.has(abbr)
+        ? [secondary, primary]
+        : [primary, secondary];
+      expect(WNBA_TEAMS[abbr].primary, abbr).toBe(wantPrimary);
+      expect(WNBA_TEAMS[abbr].secondary, abbr).toBe(wantSecondary);
+    }
+    // Whatever the order, the PAIR is TruColor's — that is the half of the rule
+    // the deviation does not get to touch.
+    for (const [abbr, pair] of Object.entries(TRUCOLOR)) {
+      expect([WNBA_TEAMS[abbr].primary, WNBA_TEAMS[abbr].secondary].sort(), abbr)
+        .toEqual([...pair].sort());
     }
   });
 
@@ -509,7 +536,18 @@ describe('WNBA_HISTORICAL_TEAMS', () => {
     }
     expect(WNBA_HISTORICAL_TEAMS.PORF.city).toBe('Portland');
     expect(WNBA_TEAMS.POR.city).toBe('Portland');
-    expect(WNBA_HISTORICAL_TEAMS.PORF.primary).not.toBe(WNBA_TEAMS.POR.primary);
+    // THEY NOW SHARE A PRIMARY, and that is the truth rather than a slip: both
+    // Fires are red teams. This once asserted the primaries differed, which
+    // held only while the live row led with pink — an accident of ordering, not
+    // a fact about either franchise, and a poor thing to hang a guarantee on.
+    // What actually has to hold is that the two rows are TELLABLE APART, so
+    // that is what is asserted: same red, different second colour (black then,
+    // pink now).
+    expect(WNBA_HISTORICAL_TEAMS.PORF.secondary).not.toBe(WNBA_TEAMS.POR.secondary);
+    expect([
+      WNBA_HISTORICAL_TEAMS.PORF.primary,
+      WNBA_HISTORICAL_TEAMS.PORF.secondary,
+    ]).not.toEqual([WNBA_TEAMS.POR.primary, WNBA_TEAMS.POR.secondary]);
   });
 
   it('points every era row at a key the era table can actually produce', () => {
@@ -569,12 +607,32 @@ describe('wnbaFranchiseForSeason', () => {
   });
 
   it('leaves a franchise with one identity alone', () => {
-    // Los Angeles, Indiana, Chicago and Dallas never changed hex, so they have
-    // no era rows and resolve to themselves in any year.
-    for (const abbr of ['LAS', 'IND', 'CHI', 'DAL']) {
+    // Indiana and Dallas have no era rows and resolve to themselves in any year.
+    //
+    // LOS ANGELES AND CHICAGO USED TO BE ON THIS LIST and are not any more:
+    // both got a historical mark (LAS97, CHI06) once the logos arrived, so
+    // their early seasons now resolve to an era rather than to themselves.
+    // That is the whole point of an era row, and a test asserting the absence
+    // of one is a test that has to move when the mark turns up.
+    for (const abbr of ['IND', 'DAL']) {
       expect(wnbaFranchiseForSeason(abbr, 1999)).toBe(abbr);
       expect(wnbaFranchiseForSeason(abbr, 2026)).toBe(abbr);
     }
+  });
+
+  it('puts the Sparks and the Sky on their own early marks', () => {
+    // The two eras added for the team rewards — Tamecka Dixon's 1997 Sparks and
+    // Epiphanny Prince's 2013 Sky — each of which covers a SPAN and so carries
+    // more than the card it arrived for.
+    expect(wnbaFranchiseForSeason('LAS', 1997)).toBe('LAS97');
+    expect(wnbaFranchiseForSeason('LAS', 2004)).toBe('LAS97');
+    // 2012 is the one that pins the corrected end date: the first guess at
+    // `through: 2005` would have sent it to the modern mark.
+    expect(wnbaFranchiseForSeason('LAS', 2012)).toBe('LAS97');
+    expect(wnbaFranchiseForSeason('LAS', 2026)).toBe('LAS');
+    expect(wnbaFranchiseForSeason('CHI', 2013)).toBe('CHI06');
+    expect(wnbaFranchiseForSeason('CHI', 2018)).toBe('CHI06');
+    expect(wnbaFranchiseForSeason('CHI', 2026)).toBe('CHI');
   });
 
   it('finds the folded franchises, which have no live row to fall back to', () => {

@@ -163,11 +163,15 @@ describe('expectedValuePerRoll', () => {
 });
 
 describe('the generated WNBA set', () => {
-  it('holds the 101 who pass the bar plus the seven who were named', () => {
-    expect(CARDS).toHaveLength(108);
+  it('holds the 101 who pass the bar plus the nine who were named', () => {
+    // EIGHT, not seven, since Rickea Jackson was added by user request. The
+    // rule half is untouched at 101 — a force-include can only ever ADD — so a
+    // change to `byRule` here would mean the POOL RULE moved, which is a
+    // different and much larger claim than the roster growing by a name.
+    expect(CARDS).toHaveLength(110);
     expect(SET.byRule).toBe(101);
-    expect(SET.forced).toHaveLength(7);
-    expect(POOL).toHaveLength(108);
+    expect(SET.forced).toHaveLength(9);
+    expect(POOL).toHaveLength(110);
   });
 
   it('gives every card the full stat line', () => {

@@ -225,20 +225,20 @@ export function bestLegendSeason(seasons) {
  * The franchise a season's card prints, from the season's split rows.
  *
  * A `TOT` row is not a team. The NBA history path resolves this by taking the
- * split the player logged the most MINUTES for — the right answer for a card
- * that represents a whole season — and that is what happens here too.
+ * split the player logged the most MINUTES for, and until 2026-09-06 that was
+ * the rule here too.
  *
- * DELIBERATELY NOT the current WNBA set's rule, which takes the LAST split
- * because a card there prints where a player IS. Every player in this set
- * retired years ago; there is no "is". The season is the whole subject of the
- * card, so the jersey she wore for most of it is the right one.
+ * NOW THE LAST SPLIT, the same rule as the NBA sets and the current WNBA set:
+ * the user's instruction (2026-09-06) is that a traded player "winds up on the
+ * LAST team they played for -- like De'Andre Hunter 2024-25 ended up with the
+ * Cavs". One rule for every set beats a per-set argument about what a season
+ * "represents". Basketball-Reference lists stints in the order they were
+ * played, so the last split row is the last jersey.
  */
 export function seasonTeam(statRowTeam, splitRows) {
   if (!isAggregateTeam(statRowTeam)) return statRowTeam;
-  const biggest = (splitRows ?? [])
-    .filter(r => !isAggregateTeam(r.team))
-    .reduce((best, r) => (!best || (r.minutes ?? 0) > (best.minutes ?? 0) ? r : best), null);
-  return biggest?.team ?? statRowTeam;
+  const splits = (splitRows ?? []).filter(r => !isAggregateTeam(r.team));
+  return splits.length ? splits[splits.length - 1].team : statRowTeam;
 }
 
 /**

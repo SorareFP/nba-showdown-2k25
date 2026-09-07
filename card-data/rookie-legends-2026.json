@@ -1,0 +1,31 @@
+{
+  "_comment": "Rookie seasons force-included into the Rookie set for players with no base card (the same role legends-2026.json plays for Super Season). Each entry names the rookie season explicitly, which is what lets Jordan's 1984-85 in past the archive window guard (1985 is the first cached season, so 'first appearance' cannot prove it is a rookie year — but it is). Picked 2026-09-06 under the capstone rule: a pairing with no card anywhere. The strongest by salary becomes the Rookie set's completion reward (set-rewards).",
+  "Michael Jordan": {
+    "season": 1985,
+    "reason": "ROY, 28.2 ppg; the user asked for it by name"
+  },
+  "Ben Simmons": {
+    "season": 2018,
+    "reason": "ROY; BPM 4.5, VORP 4.5"
+  },
+  "Chris Webber": {
+    "season": 1994,
+    "reason": "ROY; BPM 4.0, VORP 3.6 — Golden State, no card there"
+  },
+  "Anfernee Hardaway": {
+    "season": 1994,
+    "reason": "BPM 2.9, VORP 3.8 in 3,015 minutes"
+  },
+  "Mark Jackson": {
+    "season": 1988,
+    "reason": "ROY; 3,249 minutes, VORP 3.9"
+  },
+  "Blake Griffin": {
+    "season": 2011,
+    "reason": "ROY, All-Star as a rookie; his only card is the Pistons reward"
+  },
+  "Vince Carter": {
+    "season": 1999,
+    "reason": "ROY in the lockout year; BPM 2.8"
+  }
+}

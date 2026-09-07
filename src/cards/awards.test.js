@@ -472,6 +472,30 @@ describe('award art', () => {
     expect(awardImagePath('CHAMP')).toBe('/awards/LarryOBrien.png');
   });
 
+  it('never offers a WNBA card an NBA trophy, even as a fallback', () => {
+    // The user's call: "for WNBA awards we don't have trophy photos for, just
+    // add badges as placeholders." The two leagues' hardware is genuinely
+    // different, so a shared file on a WNBA card is a false claim rather than a
+    // stand-in — and it looks finished while making it. One candidate, no
+    // fallback, and AssetImage lands on the lettered chip.
+    for (const code of AWARD_CODES) {
+      const paths = awardImagePath(code, 'WNBA');
+      expect(Array.isArray(paths), code).toBe(true);
+      expect(paths, code).toEqual([`/awards/wnba/${code}.png`]);
+      for (const path of paths) {
+        expect(path.startsWith('/awards/wnba/'), `${code} -> ${path}`).toBe(true);
+      }
+    }
+  });
+
+  it('names WNBA art by CODE, not by the filename the NBA set saved', () => {
+    // `file` exists to honour filenames the user had already saved for the NBA
+    // set. `/awards/wnba/LarryOBrien.png` would be an actively wrong name for a
+    // trophy that is not the Larry O'Brien.
+    expect(awardImagePath('CHAMP', 'WNBA')).toEqual(['/awards/wnba/CHAMP.png']);
+    expect(awardImagePath('FMVP', 'WNBA')).toEqual(['/awards/wnba/FMVP.png']);
+  });
+
   it('resolves an undeclared code to nothing, never to a guessed path', () => {
     // A path is a request. Inventing one for a code this build does not declare
     // would put a 404 on the card in place of a fallback that was designed.

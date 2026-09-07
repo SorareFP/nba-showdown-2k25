@@ -100,9 +100,9 @@ describe('the committed pool honours the committed force-include list', () => {
     // pool for a third reason entirely.
     const carried = committedPool.filter(p => p.carriedFrom != null);
     expect(carried.length).toBeGreaterThan(0);
-    // 330, not 331: Russell Westbrook retired and is on the retired list, which
-    // removes him after the rule admitted him. See retired.js.
-    expect(committedPool).toHaveLength(330 + forcedInPool.length + carried.length);
+    // 325, not 331: Russell Westbrook retired, and the five players on no current NBA roster were cut with him (card-data/retired-2026.json).
+    // All six were admitted by the rule and removed after it. See retired.js.
+    expect(committedPool).toHaveLength(325 + forcedInPool.length + carried.length);
   });
 
   it('would lose a player if his name were removed from the list', () => {

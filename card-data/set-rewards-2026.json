@@ -1,0 +1,61 @@
+{
+  "_comment": "SET COMPLETION REWARDS: collect every card in a special set, earn that set's capstone. Each group names the cards built for it (all of them join the set), and the STRONGEST BY SALARY is moved out into the set-rewards set — it leaves its home set entirely, keeps its origin badge, and gains the SET REWARD pill — so the set is completable without it and the reward is not a duplicate. The user's rule (2026-09-06): a reward's player-and-team pairing should have no card in any set (A), or failing that no base card (B); every candidate here is A. Regenerate: node scripts/cardgen/generateSetRewards.js (after the home sets).",
+  "groups": {
+    "set-super-season": {
+      "set": "super-season",
+      "candidates": [
+        "Chris_Paul",
+        "Russell_Westbrook",
+        "Dwyane_Wade",
+        "Tracy_McGrady",
+        "Clyde_Drexler",
+        "Karl_Malone",
+        "Hakeem_Olajuwon",
+        "Vince_Carter"
+      ]
+    },
+    "set-rookie": {
+      "set": "rookie",
+      "candidates": [
+        "Michael_Jordan",
+        "Ben_Simmons",
+        "Chris_Webber",
+        "Anfernee_Hardaway",
+        "Mark_Jackson",
+        "Blake_Griffin",
+        "Vince_Carter"
+      ]
+    },
+    "set-summer-standouts": {
+      "set": "summer-standouts",
+      "candidates": [
+        "Dwyane_Wade"
+      ]
+    },
+    "set-dissonance": {
+      "set": "dissonance",
+      "candidates": [
+        "Russell_Westbrook"
+      ]
+    },
+    "set-wnba-super-season": {
+      "set": "wnba-super-season",
+      "candidates": [
+        "Cynthia_Cooper",
+        "Yolanda_Griffith",
+        "Brandy_Reed",
+        "Jonquel_Jones",
+        "Chelsea_Gray"
+      ]
+    },
+    "set-wnba-rookie": {
+      "set": "wnba-rookie",
+      "candidates": [
+        "Tina_Charles",
+        "Chiney_Ogwumike",
+        "Cappie_Pondexter",
+        "Candice_Wiggins"
+      ]
+    }
+  }
+}

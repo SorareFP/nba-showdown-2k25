@@ -38,7 +38,7 @@
 //                   or null — see src/cards/badges.js
 //   treatment       the set-level visual treatment, or null — see treatments.js
 
-import { DISSONANCE_BADGE, ROOKIE_BADGE, SUMMER_STANDOUT_BADGE, SUPER_SEASON_BADGE, tierBadge } from './badges.js';
+import { DISSONANCE_BADGE, ROOKIE_BADGE, SUMMER_STANDOUT_BADGE, SUPER_SEASON_BADGE, TEAM_REWARD_BADGE, SET_REWARD_BADGE, tierBadge } from './badges.js';
 
 /** The set currently being built. Every studio write goes under this. */
 export const CURRENT_SET = '2026-27';
@@ -78,6 +78,8 @@ export const SUMMER_STANDOUTS_SET = 'summer-standouts';
  * by hand off the Weird Jersey List.
  */
 export const DISSONANCE_SET = 'dissonance';
+export const TEAM_REWARDS_SET = 'team-rewards';
+export const SET_REWARDS_SET = 'set-rewards';
 
 /**
  * The WNBA legends set — sixteen retired greats, each on her best season.
@@ -103,6 +105,21 @@ export const WNBA_SUPER_SEASON_SET = 'wnba-super-season';
  * rookie year can hide behind.
  */
 export const WNBA_ROOKIE_SET = 'wnba-rookie';
+
+/**
+ * The WNBA franchise completion rewards — the counterpart of TEAM_REWARDS_SET.
+ *
+ * A SEPARATE SET rather than more cards in the NBA one, for the same reason
+ * `wnba-super-season` is separate from `super-season`: the league is what
+ * differs, and a league differs in its team table, its logo, its season labels
+ * and its whole generator. Sharing an id would mean one set whose cards need a
+ * league check before any of those can be resolved.
+ *
+ * Thirteen of fifteen franchises. Golden State and Toronto have no history a
+ * reward could be cut from and stay coins-only goals; see COINS_ONLY_GOALS.
+ */
+export const WNBA_TEAM_REWARDS_SET = 'wnba-team-rewards';
+export const WNBA_SET_REWARDS_SET = 'wnba-set-rewards';
 
 /**
  * The season whose STATS the current set is built from.
@@ -258,6 +275,33 @@ export const SETS = [
     treatment: null,
   },
   {
+    id: TEAM_REWARDS_SET,
+    name: 'Team Rewards',
+    statsSeason: 'the season',
+    kind: 'special',
+    editable: true,
+    hidesEmptyRows: true,
+    // WHICH season it is IS the card, exactly as on a Dissonance stint.
+    showsSeason: true,
+    badge: TEAM_REWARD_BADGE,
+    // Bronze, not gold: gold is the Super Season tier and claims one of the
+    // best seasons ever played. This claims a completed roster — an
+    // achievement of collecting, and it should read as its own thing.
+    treatment: 'bronze-accent',
+  },
+  {
+    id: SET_REWARDS_SET,
+    name: 'Set Rewards',
+    statsSeason: 'the season',
+    kind: 'special',
+    editable: true,
+    hidesEmptyRows: true,
+    showsSeason: true,
+    badge: SET_REWARD_BADGE,
+    // Bronze like the team rewards: earned by collecting, not by playing.
+    treatment: 'bronze-accent',
+  },
+  {
     id: WNBA_SET,
     name: 'WNBA',
     statsSeason: '2026',
@@ -342,6 +386,33 @@ export const SETS = [
     showsSeason: true,
     badge: ROOKIE_BADGE,
     treatment: 'green-accent',
+  },
+  {
+    id: WNBA_TEAM_REWARDS_SET,
+    name: 'WNBA Team Rewards',
+    statsSeason: 'the season',
+    kind: 'special',
+    league: 'WNBA',
+    editable: true,
+    hidesEmptyRows: true,
+    // WHICH season it is IS the card, same as the NBA reward set.
+    showsSeason: true,
+    badge: TEAM_REWARD_BADGE,
+    // Bronze for the same reason the NBA rewards are bronze: this claims a
+    // completed roster, not one of the best seasons ever played.
+    treatment: 'bronze-accent',
+  },
+  {
+    id: WNBA_SET_REWARDS_SET,
+    name: 'WNBA Set Rewards',
+    statsSeason: 'the season',
+    kind: 'special',
+    league: 'WNBA',
+    editable: true,
+    hidesEmptyRows: true,
+    showsSeason: true,
+    badge: SET_REWARD_BADGE,
+    treatment: 'bronze-accent',
   },
 ];
 

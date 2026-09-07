@@ -659,18 +659,41 @@
  * either side of it inside the smallest (72px) box. CardTemplate.test.js
  * measures every declared code against that box. */
 .awardFallback {
-  width: 90px;
-  height: 80px;
+  width: 127px;
+  padding: 6px 0;
   flex: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
+  border-radius: 4px;
   background: var(--award-fill, var(--accent-on-field));
   color: var(--award-ink, var(--field-ink));
   font-size: 13px;
   font-weight: 700;
-  letter-spacing: 0;
+  letter-spacing: 1px;
+}
+
+/* ── A CHIP IS A BADGE, NOT A SHRUNKEN TROPHY ────────────────────────────────
+ *
+ * The chip used to be a 90x80 square sized off the trophy slot, on the argument
+ * that a mark standing in for a trophy should occupy a trophy's box. The user's
+ * call reverses it: "just make them look like the normal, thinner badges, and
+ * place them above the others."
+ *
+ * And that is the better shape, because the chip is not standing in for a
+ * trophy any more — since the WNBA stopped borrowing NBA hardware it is the
+ * PERMANENT form for every code with no WNBA art, so a card can carry four of
+ * them. Four 80px squares is 320px of coloured block in a 1002px column; four
+ * pills is a legible list. It also stops the chip claiming space the art will
+ * want later: the slot collapses to the pill's own height.
+ *
+ * ORDERED ABOVE THE TROPHIES with `:has`, which is the only place that fact is
+ * known — whether a mark is a chip depends on an image FAILING to load, so no
+ * amount of sorting in the component can answer it. The slot that ends up
+ * holding a chip pulls itself up; the trophies keep their order below. */
+.awardSlot:has(.awardFallback) {
+  height: auto;
+  order: -1;
 }
 
 /* ── The card-type badge, on the sets that are a card TYPE ───────────────── */

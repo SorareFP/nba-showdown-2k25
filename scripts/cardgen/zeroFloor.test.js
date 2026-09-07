@@ -111,8 +111,24 @@ describe('enforceZeroTiers', () => {
     // disjoint.
     const chart = enforceZeroTiers([tier(1, 2, 2, 0, 0), tier(3, 25, 3, 1, 1)]);
     expect(chart).toEqual([tier(1, 2, 0, 0, 0), tier(3, 25, 0, 1, 1)]);
+    // THIS LINE USED TO EXPECT [1-2][2-25] — a collision, in the test whose own
+    // name forbids one. The assertion was written from what the code did rather
+    // than from what the paragraph above says, so it pinned the bug in place:
+    // enforceZeroTiers lifted the lo of tier INDEX 0, and when that tier was the
+    // one the carve consumed, the lift landed on a tier that no longer existed.
+    // Nneka Ogwumike's 2012 rookie card shipped as [1-2][2-6] because of it.
     const narrower = enforceZeroTiers([tier(1, 1, 2, 0, 0), tier(2, 25, 3, 1, 1)]);
-    expect(narrower).toEqual([tier(1, 2, 0, 0, 0), tier(2, 25, 0, 1, 1)]);
+    expect(narrower).toEqual([tier(1, 2, 0, 0, 0), tier(3, 25, 0, 1, 1)]);
+    // The invariant the name is actually claiming, asserted directly so a future
+    // edit cannot satisfy the shape while breaking the promise again.
+    for (const chart of [
+      enforceZeroTiers([tier(1, 2, 2, 0, 0), tier(3, 25, 3, 1, 1)]),
+      narrower,
+    ]) {
+      for (let i = 1; i < chart.length; i += 1) {
+        expect(chart[i].lo, JSON.stringify(chart)).toBe(chart[i - 1].hi + 1);
+      }
+    }
   });
 
   it('does not mutate the chart it was given', () => {

@@ -95,11 +95,22 @@ export function enforceZeroTiers(chart) {
   if (!Array.isArray(chart) || chart.length === 0) return chart;
 
   const blank = { lo: BLANK_TIER_LO, hi: BLANK_TIER_HI, pts: 0, reb: 0, ast: 0 };
-  const rest = chart
-    .map((tier, i) => (i === 0 ? { ...tier, lo: Math.max(tier.lo, BLANK_TIER_HI + 1) } : { ...tier }))
-    .filter(tier => tier.hi >= tier.lo);
+  // DROP FIRST, THEN LIFT — and that order is the whole fix.
+  //
+  // This used to lift the lo of tier INDEX 0 and then drop whatever the lift
+  // had emptied. That reads the same and is not: when tier 0 was only one or
+  // two rolls wide it was the tier that got dropped, so the lift landed on a
+  // tier that no longer existed and the SURVIVOR kept its original lo. Nneka
+  // Ogwumike's 2012 card came out `[1-2][2-6]…` — the exact collision the note
+  // above promises cannot happen. It reached the shipped set because an overlap
+  // is invisible downstream: lookupChart returns the first matching tier, so
+  // roll 2 still paid the blank and only the PRINTED rows disagreed.
+  //
+  // Selecting the survivors first and lifting whichever one is now first makes
+  // the promise structural rather than incidental.
+  const rest = chart.filter(tier => tier.hi > BLANK_TIER_HI).map(tier => ({ ...tier }));
 
   if (rest.length === 0) return [blank];
-  rest[0] = { ...rest[0], pts: 0 };
+  rest[0] = { ...rest[0], lo: Math.max(rest[0].lo, BLANK_TIER_HI + 1), pts: 0 };
   return [blank, ...rest];
 }

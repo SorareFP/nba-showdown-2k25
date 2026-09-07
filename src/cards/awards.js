@@ -597,9 +597,32 @@ export function pickAwards(codes) {
  * A card whose art is missing under every accepted format falls back to the
  * lettered chip — see AwardMark in CardTemplate.jsx.
  */
-export function awardImagePath(code) {
+export function awardImagePath(code, league = 'NBA') {
   const award = getAward(code);
-  return award ? `/awards/${award.file ?? award.code}.png` : null;
+  if (!award) return null;
+  // A WNBA CARD NEVER SHOWS NBA HARDWARE. This used to fall back to the shared
+  // file on the argument that "a card showing the wrong league's trophy still
+  // reads better than a lettered chip where a trophy belongs". The user's call
+  // reverses it: "for WNBA awards we don't have trophy photos for, just add
+  // badges as placeholders."
+  //
+  // And that is the better rule, because the two objects are genuinely
+  // different — the WNBA championship trophy is not a recoloured Larry O'Brien
+  // and its MVP trophy is not the Michael Jordan Trophy. A card that shows the
+  // NBA's is not a card waiting for art; it is a card making a false claim,
+  // and it looks finished while doing so. The lettered chip looks unfinished,
+  // which is exactly what it is.
+  //
+  // So the WNBA gets ONE candidate and no fallback. AssetImage's walk exhausts
+  // and lands on the chip, which prints the code the user named the award by.
+  // Dropping a file into public/awards/wnba/ is still the whole job.
+  //
+  // The league folder names by CODE, not by `file`. `file` exists only to
+  // honour the filenames the user had already saved for the NBA set, and there
+  // is no such history here — `/awards/wnba/LarryOBrien.png` would be an
+  // actively wrong name for a trophy that is not the Larry O'Brien.
+  if (league === 'WNBA') return [`/awards/wnba/${award.code}.png`];
+  return `/awards/${award.file ?? award.code}.png`;
 }
 
 /**

@@ -255,7 +255,39 @@ export function shapeChart(chart, { shotLine = null, ceilingDelay = TOP_TIER_DEL
   // the tier beneath it, and only mergeIdenticalTiers collapses that -- running
   // suppression after the merge printed Toumani Camara with two identical
   // bottom-of-chart rows. keepBoundaryAt shields the shot-line break.
-  return mergeIdenticalTiers(broken, { fixedTiers: 1, keepBoundaryAt: shotLine });
+  return assertContiguous(
+    mergeIdenticalTiers(broken, { fixedTiers: 1, keepBoundaryAt: shotLine })
+  );
+}
+
+/**
+ * A chart's tiers must TILE the roll range: ascending, no gap, no overlap.
+ *
+ * This is not defensive noise. `lookupChart` returns the FIRST tier whose range
+ * contains the roll, so an overlap does not throw or even look wrong on the
+ * card — it silently pays out the lower tier and the higher one is unreachable
+ * for those rolls. Nneka Ogwumike's 2012 rookie card shipped with `{lo:1,hi:2}`
+ * followed by `{lo:2,hi:6}`, so a roll of 2 paid 0-0-0 instead of 0-1-0: one
+ * rebound, invisible, on one card out of 1,240. It survived because every stage
+ * here is individually careful and nothing checked the composition of them.
+ *
+ * Throwing is deliberate. A repair would hide which stage produced the overlap,
+ * and the stages run in a load-bearing order that a future edit could disturb
+ * again — this fails the build at the card that broke, naming it.
+ */
+export function assertContiguous(chart) {
+  if (!Array.isArray(chart) || chart.length === 0) return chart;
+  for (let i = 1; i < chart.length; i += 1) {
+    const prev = chart[i - 1];
+    const cur = chart[i];
+    if (cur.lo === prev.hi + 1) continue;
+    const fault = cur.lo <= prev.hi ? 'overlaps' : 'leaves a gap after';
+    throw new Error(
+      `shapeChart: tier ${i} [${cur.lo}-${cur.hi}] ${fault} tier ${i - 1} ` +
+        `[${prev.lo}-${prev.hi}] — chart ${JSON.stringify(chart)}`
+    );
+  }
+  return chart;
 }
 
 /**

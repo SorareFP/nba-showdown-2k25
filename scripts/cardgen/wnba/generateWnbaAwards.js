@@ -115,6 +115,7 @@ export async function main({ log = console.log } = {}) {
     wnba: 'cards-wnba.json',
     'wnba-rookie': 'cards-wnba-rookie.json',
     'wnba-super-season': 'cards-wnba-super-season.json',
+    'wnba-team-rewards': 'cards-wnba-team-rewards.json',
   };
   const sets = {};
   const seasonsNeeded = new Set();

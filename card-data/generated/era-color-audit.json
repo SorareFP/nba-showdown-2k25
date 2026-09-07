@@ -1,0 +1,34 @@
+{
+ "generatedAt": "2026-09-06T12:04:31.367Z",
+ "report": [
+  {
+   "key": "HOU20",
+   "era": "2019-2026",
+   "primary": "#CE1141",
+   "nearestPrimary": "#BA0C2F",
+   "dPrimary": 27,
+   "secondary": "#C4CED4",
+   "nearestSecondary": "#9EA2A2",
+   "dSecondary": 77,
+   "palette": [
+    {
+     "hex": "#373A36",
+     "pct": 55.9
+    },
+    {
+     "hex": "#9EA2A2",
+     "pct": 13.6
+    },
+    {
+     "hex": "#BA0C2F",
+     "pct": 10.4
+    },
+    {
+     "hex": "#707271",
+     "pct": 8.2
+    }
+   ],
+   "monochrome": false
+  }
+ ]
+}

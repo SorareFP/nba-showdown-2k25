@@ -43,13 +43,18 @@ import {
   SUPER_SEASON_SET,
   SUMMER_STANDOUTS_SET,
   DISSONANCE_SET,
+  TEAM_REWARDS_SET,
+  SET_REWARDS_SET,
   ROOKIE_SET,
   WNBA_SET,
   WNBA_ROOKIE_SET,
+  WNBA_TEAM_REWARDS_SET,
+  WNBA_SET_REWARDS_SET,
   WNBA_SUPER_SEASON_SET,
   getSet,
 } from '../cards/sets.js';
 import { playerIdFromName } from '../cards/playerId.js';
+import { hasMigratedOut } from '../game/cardSets.js';
 
 /**
  * The team-resolved pool, when `node scripts/cardgen/generateTeams.js` has been
@@ -333,7 +338,7 @@ export const CARD_PLAYERS = SHIPPED_CARDS;
  * here the way the pool does.
  */
 const specialModules = import.meta.glob(
-  '../../card-data/generated/cards-{super-season,rookie,summer-standouts,dissonance,wnba,wnba-rookie,wnba-super-season}.json',
+  '../../card-data/generated/cards-{super-season,rookie,summer-standouts,dissonance,team-rewards,set-rewards,wnba,wnba-rookie,wnba-super-season,wnba-team-rewards,wnba-set-rewards}.json',
   { eager: true }
 );
 
@@ -349,9 +354,13 @@ export const SUPER_SEASON_FILE = loadSpecialSet(SUPER_SEASON_SET);
 export const ROOKIE_FILE = loadSpecialSet(ROOKIE_SET);
 export const SUMMER_STANDOUTS_FILE = loadSpecialSet(SUMMER_STANDOUTS_SET);
 export const DISSONANCE_FILE = loadSpecialSet(DISSONANCE_SET);
+export const TEAM_REWARDS_FILE = loadSpecialSet(TEAM_REWARDS_SET);
+export const SET_REWARDS_FILE = loadSpecialSet(SET_REWARDS_SET);
 export const WNBA_FILE = loadSpecialSet(WNBA_SET);
 export const WNBA_SUPER_SEASON_FILE = loadSpecialSet(WNBA_SUPER_SEASON_SET);
 export const WNBA_ROOKIE_FILE = loadSpecialSet(WNBA_ROOKIE_SET);
+export const WNBA_TEAM_REWARDS_FILE = loadSpecialSet(WNBA_TEAM_REWARDS_SET);
+export const WNBA_SET_REWARDS_FILE = loadSpecialSet(WNBA_SET_REWARDS_SET);
 
 const byName = (a, b) => a.name.localeCompare(b.name);
 
@@ -382,6 +391,10 @@ function specialSource(id, file, { sub, hint, missingHint = HISTORY_MISSING_HINT
   // would make the two order-dependent and lose the awards the next time that
   // one ran. A separate file joined by set and id has neither problem.
   const players = [...(file?.cards ?? [])]
+    // A card MOVED into the team-rewards set is no longer in this one. Asked of
+    // cardSets.js rather than re-derived, so the studio and the game cannot
+    // disagree about how big a set is.
+    .filter(card => !hasMigratedOut(id, card.id))
     .map(card => ({
       ...card,
       awards: awardsFor(id, card.id),
@@ -568,6 +581,31 @@ export const SOURCES = {
       String.fromCharCode(39) + 's minutes, so a one-game stint carries a real stat line without ' +
       'pricing the man at replacement. Re-run `node scripts/cardgen/generateDissonance.js`.',
   }),
+  [TEAM_REWARDS_SET]: specialSource(TEAM_REWARDS_SET, TEAM_REWARDS_FILE, {
+    sub: 'one per franchise · collection rewards',
+    missingHint: '`node scripts/cardgen/generateTeamRewards.js`',
+    hint:
+      'COLLECT A FRANCHISE' + String.fromCharCode(39) + 'S ENTIRE 2026-27 ROSTER, earn that ' +
+      'team' + String.fromCharCode(39) + 's reward card. Every pick is drawn from the EPM ' +
+      '1.5-3.0 band of players absent from every other set — good-not-legendary seasons by ' +
+      'players nobody already owns, so the reward is desirable without deciding games. ' +
+      'Historical team codes reward the CURRENT franchise (a New Jersey season rewards ' +
+      'Brooklyn, a Seattle season rewards Oklahoma City) while the card still prints the era ' +
+      'team it was played for. Bronze treatment, not gold: gold claims one of the best seasons ' +
+      'ever played, this claims a finished roster. ' +
+      'Re-run `node scripts/cardgen/generateTeamRewards.js`.',
+  }),
+
+  [SET_REWARDS_SET]: specialSource(SET_REWARDS_SET, SET_REWARDS_FILE, {
+    sub: 'one per special set · completion rewards',
+    missingHint: '`node scripts/cardgen/generateSetRewards.js`',
+    hint:
+      'COLLECT EVERY CARD IN A SPECIAL SET, earn its capstone. Each card was built for its home ' +
+      'set with the others the user named (a pairing with no card anywhere, by his rule) and the ' +
+      'strongest by salary was MOVED here — it keeps its numbers, season, era mark and origin ' +
+      'badge under the SET REWARD pill, and leaves the home set so the set is completable ' +
+      'without it. Re-run `node scripts/cardgen/generateSetRewards.js` after the home sets.',
+  }),
   [WNBA_SET]: specialSource(WNBA_SET, WNBA_FILE, {
     // The force-include COUNT is read off the payload rather than written out.
     // It was a literal "plus 6 named", and the first time the user added a
@@ -634,6 +672,29 @@ export const SOURCES = {
       '`node scripts/cardgen/wnba/generateWnbaRookies.js`.',
   }),
 
+  [WNBA_TEAM_REWARDS_SET]: specialSource(WNBA_TEAM_REWARDS_SET, WNBA_TEAM_REWARDS_FILE, {
+    sub: `franchise completion rewards · ${WNBA_TEAM_REWARDS_FILE?.cards?.length ?? 0} of 15 teams`,
+    missingHint: '`node scripts/cardgen/wnba/generateWnbaRewards.js`',
+    hint:
+      'WHAT FINISHING A WNBA ROSTER PAYS. Every card is BUILT rather than moved: the NBA reward ' +
+      'set migrated most of its cards out of Super Season and Rookie, but doing that here would ' +
+      'gut a sixteen-player roster the user named by hand. The band a franchise earns comes from ' +
+      'how many packs its roster takes to complete, so the Fever — the hardest collection in the ' +
+      'league — pay a legendary and the Sparks pay a rare. Teams resolve THROUGH THE ERA, so ' +
+      'Becky Hammon wears San Antonio and Sophia Witherspoon the original Portland Fire. Two ' +
+      'franchises are absent on purpose: Golden State has one season and Toronto none, so both ' +
+      'pay coins instead. Re-run `node scripts/cardgen/wnba/generateWnbaRewards.js`.',
+  }),
+
+  [WNBA_SET_REWARDS_SET]: specialSource(WNBA_SET_REWARDS_SET, WNBA_SET_REWARDS_FILE, {
+    sub: 'one per special set · completion rewards',
+    missingHint: '`node scripts/cardgen/generateSetRewards.js`',
+    hint:
+      'WHAT FINISHING A WNBA SPECIAL SET PAYS: the strongest of the seasons the user named for ' +
+      'that set, moved out of it with its origin badge under the SET REWARD pill. ' +
+      'Re-run `node scripts/cardgen/generateSetRewards.js` after the home sets.',
+  }),
+
   strats: {
     key: 'strats',
     set: 'strats',
@@ -643,12 +704,13 @@ export const SOURCES = {
     // is the same machinery the player sets use.
     template: 'strat',
     label: `Strategy cards · ${STRAT_PLAYERS.length}`,
-    sub: 'composed faces · art needed on 9',
+    sub: 'composed faces · drop a photo on any card',
     editable: true,
     hint:
-      'THE STRATEGY DECK. Forty-three of these have a hand-made face in ' +
-      'public/cards/strats/; nine do not — the eight Crunch Time and matchup cards plus ' +
-      'Cross-Court Dime. This source composes a face from strats.js in the same design as ' +
+      'THE STRATEGY DECK. Fifty-one of these have a hand-made face in ' +
+      'public/cards/strats/; the 2026-09-06 wave of twenty-eight wears MS-Paint placeholder ' +
+      'art (scripts/studio/paintPlaceholders.py) until a real photo replaces the file in ' +
+      'card-art/sets/strats/photos/. This source composes a face from strats.js in the same design as ' +
       'the hand-made ones (white title header, art window with the diagonal wedge and ' +
       'chevron dot-work, navy body, OFFENSE/DEFENSE footer), so a new card needs only a ' +
       'photo dropped on it and its rules text stays in sync with the engine automatically. ' +

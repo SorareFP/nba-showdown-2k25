@@ -27,6 +27,8 @@ import {
   pickBadge,
 } from '../cards/badges.js';
 import { AWARD_CODES } from '../cards/awards.js';
+import { CARD_SETS } from '../game/cardSets.js';
+import { readLegends } from '../../scripts/cardgen/wnba/generateWnbaLegends.js';
 import { isSafePlayerId } from '../../scripts/studio/studioServerPlugin.js';
 import { getTeam } from '../cards/teams.js';
 import {
@@ -41,9 +43,9 @@ import {
   DISSONANCE_SET,
   WNBA_SET,
   WNBA_ROOKIE_SET,
+  WNBA_TEAM_REWARDS_SET,
   WNBA_SUPER_SEASON_SET,
-  getSet,
-} from '../cards/sets.js';
+  getSet, SET_REWARDS_SET, WNBA_SET_REWARDS_SET } from '../cards/sets.js';
 
 const P = (id, name, team, pos) => ({ id, name, team, pos });
 
@@ -104,12 +106,16 @@ describe('the 2025-26 pool', () => {
   // 2025-26 season was cut short by injury, plus Ty Jerome by name). Update
   // this number, deliberately, when the list changes — and see
   // scripts/cardgen/generatePool.test.js, which checks the composition itself.
-  it('loads the whole 353-player pool', () => {
+  it('loads the whole 348-player pool', () => {
     // 354, not 350: four players who appear in NO 2025-26 table at all are
     // carded from their last healthy season and join the pool for their
     // IDENTITY, because the studio takes a player's identity from here and a
     // card nobody can find cannot be given a photo. See carryForward.js.
-    expect(POOL_PLAYERS).toHaveLength(353);
+    // 348, not 353: the five players on no current NBA roster were cut (card-data/retired-2026.json), taking the pool 353 -> 348. A card takes its team from nba.com's
+    // CURRENT roster, so a player absent from it could only be given last
+    // season's team — and a stale team puts a real card on the wrong roster,
+    // which team-collection completion counts.
+    expect(POOL_PLAYERS).toHaveLength(348);
   });
 
   it('gives every player a unique id', () => {
@@ -201,22 +207,29 @@ describe('resolved teams overlaid on the pool', () => {
 
   it('replaces the multi-team aggregate codes with real teams', () => {
     const stuck = POOL_PLAYERS.filter(p => MULTI_TEAM.test(p.team)).map(p => p.name);
-    // Only the players no source can place: on no active roster AND carrying an
-    // aggregate code. They stay in the list and stay visibly unthemed, which is
-    // the point — they need a human decision, recorded in manual-teams.json.
-    expect(stuck).toEqual([
-      'Cam Thomas',
-      'Vince Williams Jr.',
-      'John Konchar',
-      'Ochai Agbaji',
-      'Guerschon Yabusele',
-    ]);
+    // THIS USED TO PIN FIVE NAMES — the players no source could place, left
+    // visibly unthemed because they "need a human decision, recorded in
+    // manual-teams.json". That decision has since been made for all five, so
+    // the list is empty and the assertion is now the RULE rather than a
+    // snapshot of who happened to be unresolved on one day.
+    //
+    // Empty is also the only acceptable state now, which is why this is no
+    // longer a name list to be updated when a roster moves: a card's team stopped
+    // being cosmetic when team-collection completion started counting a
+    // franchise's roster. A player parked on 2TM belongs to no franchise and
+    // silently invents a 31st one, so an aggregate code is a data bug, not an
+    // untidy display. If this fails, run scripts/cardgen/generateTeams.js and
+    // record whoever it reports in card-data/manual-teams.json.
+    expect(stuck).toEqual([]);
+    // And the count is exactly the league, which is the thing completion counts.
+    expect(new Set(POOL_PLAYERS.map(p => p.team)).size).toBe(30);
   });
 
   it('keeps every pool player, including the ones it could not resolve', async () => {
-    // The resolved file is SHORTER than the pool — the generator emits only
-    // players it could give a real team. Reading it as the list rather than as
-    // an overlay would silently drop the rest.
+    // The resolved file MAY BE SHORTER than the pool — the generator emits only
+    // players it could give a real team, so reading it as the list rather than
+    // as an overlay would silently drop the rest. It happens to be complete
+    // today; the overlay is what must hold, not the length matching.
     //
     // Tied to the UNTHEMED SET rather than to a number: who is unresolvable
     // moves whenever a roster does, and a magic constant here just breaks on
@@ -235,9 +248,16 @@ describe('resolved teams overlaid on the pool', () => {
     expect(withId).toBeGreaterThan(300);
   });
 
-  it('leaves the unresolvable few with an explicit null personId', () => {
-    const thomas = POOL_PLAYERS.find(p => p.name === 'Cam Thomas');
-    expect(thomas.personId).toBeNull();
+  it('leaves any unresolvable player an explicit null personId, never undefined', () => {
+    // This used to name Cam Thomas, who has since been cut along with the four
+    // other players on no current roster. There is nobody unresolvable today,
+    // which is the good state and not a reason to delete the guarantee: the
+    // difference between null and undefined is what tells a reader "looked for,
+    // not found" apart from "never asked", and the next unrostered player must
+    // still land on the first.
+    const unresolved = POOL_PLAYERS.filter(p => !p.personId);
+    for (const p of unresolved) expect(p.personId, p.name).toBeNull();
+    expect(POOL_PLAYERS.every(p => 'personId' in p)).toBe(true);
   });
 
   it('names every team in a form the card theming knows', () => {
@@ -451,8 +471,12 @@ describe('the base set\'s card-type badges', () => {
     // 15/92 again after the defBoost contest reprice: defence value now
     // includes conversion denial, and two more badged defenders cleared the
     // gilded line. The split is a MEASUREMENT.
-    expect(printed.filter(id => id === SUPER_SEASON_BADGE).length).toBe(12);
-    expect(printed.filter(id => id === BEST_SEASON_BADGE).length).toBe(95);
+    // 16/91 after the LAST-82 WINDOW landed (windowEpm.js): Speed+Power now
+    // pools each season by its share of the player's last 82 games, 173 of 353
+    // budgets moved, and four more cards cleared SUPER_SEASON_MIN_SALARY.
+    // 14/93 after the five players on no current NBA roster were cut (card-data/retired-2026.json), taking the pool 353 -> 348.
+    expect(printed.filter(id => id === SUPER_SEASON_BADGE).length).toBe(14);
+    expect(printed.filter(id => id === BEST_SEASON_BADGE).length).toBe(93);
     // Everyone who prints ROOKIE is someone the SUPER SEASON fact is also true
     // of — the nesting is what makes this a priority question and not a rule.
     // The tier does not touch it: a rookie card is cheap, its Super Season
@@ -474,12 +498,15 @@ describe('the base set\'s card-type badges', () => {
     // and the salary file having been generated from different pools.
     expect(BADGE_FILE.counts.printed).toEqual({
       [ROOKIE_BADGE]: 33,
-      [SUPER_SEASON_BADGE]: 12,
-      [BEST_SEASON_BADGE]: 95,
-      // In the id list, never on a base-set record: the STANDOUT and TRADED
-      // pills are SET badges, worn by their whole sets and no one else.
+      [SUPER_SEASON_BADGE]: 14,
+      [BEST_SEASON_BADGE]: 93,
+      // In the id list, never on a base-set record: the STANDOUT, TRADED and
+      // TEAM REWARD pills are SET badges, worn by their whole sets and no one
+      // else. A base-set player earning one would mean a special-set card had
+      // leaked into the pool, so the zeroes are the assertion, not padding.
       'summer-standout': 0,
       dissonance: 0,
+      'team-reward': 0, 'set-reward': 0,
     });
   });
 
@@ -589,8 +616,15 @@ describe('stepSelection', () => {
 
 describe('the special sets in the source list', () => {
   const SPECIAL = [SUPER_SEASON_SET, ROOKIE_SET, WNBA_SET, WNBA_SUPER_SEASON_SET];
+  // The named legends, less the ones a reward set has taken. Derived so the
+  // number cannot drift from the decision that moved them.
+  const WNBA_LEGENDS_REMAINING =
+    readLegends().length -
+    [...(CARD_SETS[WNBA_TEAM_REWARDS_SET] ?? []), ...(CARD_SETS[WNBA_SET_REWARDS_SET] ?? [])].filter(
+      c => c.migratedFrom?.set === WNBA_SUPER_SEASON_SET
+    ).length;
 
-  it('offers all nine sets, in the order the model declares them', () => {
+  it('offers all thirteen sets, in the order the model declares them', () => {
     // THE MODEL, not the row of buttons. Every set is still a source and still
     // reachable; one of them (`cards`) is now folded behind the selector's
     // disclosure, which is a rendering rule and is pinned separately against
@@ -598,7 +632,8 @@ describe('the special sets in the source list', () => {
     // a set removed from here is a set the studio cannot open at all.
     expect(Object.keys(SOURCES)).toEqual([
       'pool', 'cards', SUPER_SEASON_SET, ROOKIE_SET, SUMMER_STANDOUTS_SET,
-      DISSONANCE_SET, WNBA_SET, WNBA_SUPER_SEASON_SET, WNBA_ROOKIE_SET,
+      DISSONANCE_SET, 'team-rewards', SET_REWARDS_SET, WNBA_SET, WNBA_SUPER_SEASON_SET, WNBA_ROOKIE_SET,
+      WNBA_TEAM_REWARDS_SET, WNBA_SET_REWARDS_SET,
       // The strategy deck is a source but NOT a card set: it has no season, no
       // badges and no treatment, and sets.js does not carry it. It renders
       // through StratTemplate instead, which is what `template` selects.
@@ -640,12 +675,16 @@ describe('the special sets in the source list', () => {
     // degrades to an empty, clearly-labelled set rather than failing to build —
     // this asserts the committed files are actually there.
     //
-    // THE WNBA LEGENDS SET IS SIXTEEN CARDS AND THAT IS NOT A LOAD FAILURE: it
-    // is the one set here whose roster is a NAMED LIST rather than a rule, so
+    // THE WNBA LEGENDS SET IS A DOZEN-ODD CARDS AND THAT IS NOT A LOAD FAILURE:
+    // it is the one set here whose roster is a NAMED LIST rather than a rule, so
     // "big enough to look loaded" is the wrong test for it. It is checked
     // against the list itself in scripts/cardgen/wnba/legends.test.js.
+    //
+    // Its floor is the named list MINUS whatever has migrated into a reward set,
+    // not a literal: Becky Hammon left for the Aces reward, and hard-coding 16
+    // would make a correct migration look like a missing file.
     for (const id of SPECIAL) {
-      const floor = id === WNBA_SUPER_SEASON_SET ? 16 : 100;
+      const floor = id === WNBA_SUPER_SEASON_SET ? WNBA_LEGENDS_REMAINING : 100;
       expect(SOURCES[id].players.length, id).toBeGreaterThanOrEqual(floor);
     }
   });
@@ -726,7 +765,8 @@ describe('the selector\'s reference group', () => {
     }
     expect(PRIMARY_SOURCES.map(s => s.key)).toEqual([
       'pool', SUPER_SEASON_SET, ROOKIE_SET, SUMMER_STANDOUTS_SET,
-      DISSONANCE_SET, WNBA_SET, WNBA_SUPER_SEASON_SET, WNBA_ROOKIE_SET,
+      DISSONANCE_SET, 'team-rewards', SET_REWARDS_SET, WNBA_SET, WNBA_SUPER_SEASON_SET, WNBA_ROOKIE_SET,
+      WNBA_TEAM_REWARDS_SET, WNBA_SET_REWARDS_SET,
       // The strategy deck is primary for the same reason every special set is:
       // it is being curated right now (nine cards still have no art), and a
       // live source folded away is a source the user stops finding.
@@ -822,10 +862,12 @@ describe('the award marks the studio joins on', () => {
     // 5 -> 31 -> 40 of a 350-card set. The user took the All-Star decision with
     // the middle number in front of him; all three are pinned here, in
     // awards.js and in the generated file's own counts, so they cannot drift.
+    // 39 and 10 since the five players on no current NBA roster were cut with him (card-data/retired-2026.json): Guerschon Yabusele was one of
+    // the eleven Knicks in the pool wearing 2025-26's ring.
     const marked = POOL_PLAYERS.filter(p => p.awards.length > 0);
-    expect(marked.length).toBe(40);
+    expect(marked.length).toBe(39);
     expect(marked.filter(p => p.awards.includes('AS')).length).toBe(28);
-    expect(marked.filter(p => p.awards.includes('CHAMP')).length).toBe(11);
+    expect(marked.filter(p => p.awards.includes('CHAMP')).length).toBe(10);
   });
 
   it('gives the ring to the champion ROSTER, not only to its stars', () => {
@@ -836,12 +878,14 @@ describe('the award marks the studio joins on', () => {
     //
     // The ring is a JERSEY fact on the SEASON cards (Rasheed's one game as a
     // 2003-04 Hawk does not wear Detroit's ring) — but on a BASE card it is a
-    // CHAMPION fact, by the user's call: Yabusele and Mitchell Robinson open
-    // 2026-27 in other uniforms and keep their rings anyway, because a
-    // reigning champion who changed teams is still a reigning champion.
+    // CHAMPION fact, by the user's call: Mitchell Robinson opens 2026-27 in
+    // another uniform and keeps his ring anyway, because a reigning champion
+    // who changed teams is still a reigning champion. Yabusele made the same
+    // point until he was cut for being on no current roster at all — which is
+    // the line the rule actually draws: a different team still gets a card, no
+    // team does not.
     const ringed = POOL_PLAYERS.filter(p => p.awards.includes('CHAMP'));
     expect(ringed.map(p => p.name).sort()).toEqual([
-      'Guerschon Yabusele',
       'Jalen Brunson',
       'Jordan Clarkson',
       'Jose Alvarado',
@@ -853,11 +897,11 @@ describe('the award marks the studio joins on', () => {
       'Mitchell Robinson',
       'OG Anunoby',
     ]);
-    // NINE OF THE ELEVEN CARRY THE RING AND NOTHING ELSE, which is the measure
+    // EIGHT OF THE TEN CARRY THE RING AND NOTHING ELSE, which is the measure
     // of what a roster join adds over the awards column: only Brunson and Towns
     // were All-Stars, and OG Anunoby's `DPOY-10,DEF2` earns him nothing at all
     // under the -1 rule, so without the ring he would have no mark either.
-    expect(ringed.filter(p => p.awards.length === 1)).toHaveLength(9);
+    expect(ringed.filter(p => p.awards.length === 1)).toHaveLength(8);
     expect(ringed.filter(p => p.awards.length > 1).map(p => p.name).sort()).toEqual([
       'Jalen Brunson',
       'Karl-Anthony Towns',

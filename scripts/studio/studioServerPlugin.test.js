@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { photoExtMap, isSafePlayerId, requestedSet } from './studioServerPlugin.js';
+import { photoExtMap, isSafePlayerId, requestedSet, STRATS_SCOPE, STUDIO_SCOPES } from './studioServerPlugin.js';
 import {
   DEFAULT_PHOTO_EXT,
   IMAGE_EXTENSIONS,
@@ -102,6 +102,15 @@ describe('requestedSet — which set a request writes to', () => {
     ]) {
       expect(requestedSet(`/__studio/photo?set=${encodeURIComponent(attack)}`)).toBe(CURRENT_SET);
     }
+  });
+
+  it('allow-lists the strategy deck as a photo scope of its own', () => {
+    // The studio's strats source composes faces and reads its art from
+    // card-art/sets/strats/photos/. Before 2026-09-06 `?set=strats` fell back
+    // to the set being built, so the 28 wave-one placeholders were invisible
+    // and a dropped photo would have landed in the 2026-27 folder.
+    expect(requestedSet(`/__studio/state?set=${STRATS_SCOPE}`)).toBe(STRATS_SCOPE);
+    expect(STUDIO_SCOPES).toEqual([...SET_IDS, STRATS_SCOPE]);
   });
 
   it('falls back to the set being built when none is named', () => {

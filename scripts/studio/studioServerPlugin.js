@@ -103,7 +103,20 @@ function studioPaths(root, set = CURRENT_SET) {
  * An absent or unknown set falls back to the set being built, which is what
  * every request looked like before the studio had more than one.
  */
-export function requestedSet(url, sets = SET_IDS) {
+/**
+ * The strategy deck is not a card SET (it has no players, no rarity bands, no
+ * collection) but it IS a photo scope: the studio's `strats` source composes a
+ * face from strats.js and takes its art from card-art/sets/strats/photos/.
+ * Until 2026-09-06 that scope was never allow-listed here, so `?set=strats`
+ * fell back to the set being built — the studio listed the 2026-27 photos
+ * against strategy-card ids (always "no photo yet"), and a photo dropped on a
+ * strat row would have been written into the 2026-27 folder.
+ */
+export const STRATS_SCOPE = 'strats';
+export const STUDIO_SCOPES = [...SET_IDS, STRATS_SCOPE];
+const scopeIsEditable = id => id === STRATS_SCOPE || isEditableSet(id);
+
+export function requestedSet(url, sets = STUDIO_SCOPES) {
   const asked = new URL(url ?? '/', 'http://studio.local').searchParams.get('set');
   return sets.includes(asked) ? asked : CURRENT_SET;
 }
@@ -172,9 +185,9 @@ export function studioServerPlugin() {
       // would be the thing that had to create a directory, which is the worst
       // moment for it to fail.
       const forSet = Object.fromEntries(
-        SET_IDS.map(id => [id, studioPaths(server.config.root, id)])
+        STUDIO_SCOPES.map(id => [id, studioPaths(server.config.root, id)])
       );
-      for (const id of SET_IDS) ensureDirs(forSet[id]);
+      for (const id of STUDIO_SCOPES) ensureDirs(forSet[id]);
       const pathsFor = req => forSet[requestedSet(req.url)] ?? forSet[CURRENT_SET];
       // The un-scoped card-art/ root, the traversal boundary for static serving.
       const paths = forSet[CURRENT_SET];
@@ -235,7 +248,7 @@ export function studioServerPlugin() {
           // sets overlap by design — every set derives ids with the same rule —
           // so a request that got here for the finished 2025-26 set would write
           // a photo into a set that is not supposed to change.
-          if (!isEditableSet(scope.set)) {
+          if (!scopeIsEditable(scope.set)) {
             return json(res, 403, { error: `the ${scope.set} set is read-only` });
           }
           const body = await readBody(req);
@@ -263,7 +276,7 @@ export function studioServerPlugin() {
         guard(async (req, res) => {
           if (req.method !== 'POST') return json(res, 405, { error: 'POST only' });
           const scope = pathsFor(req);
-          if (editableOnly && !isEditableSet(scope.set)) {
+          if (editableOnly && !scopeIsEditable(scope.set)) {
             return json(res, 403, { error: `the ${scope.set} set is read-only` });
           }
           const raw = (await readBody(req)).toString('utf-8');

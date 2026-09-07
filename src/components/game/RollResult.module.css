@@ -1,0 +1,101 @@
+/* The roll's four hundred milliseconds. Type sizes match the slot they sit in
+   (CourtBoard.module.css .rollArea) — this is a small box, so the moment is
+   made of contrast and timing rather than of size. */
+
+.result { position: relative; }
+
+/* ── The tumble ────────────────────────────────────────────────────────────
+   Takes the height the landed result would, so the slot does not jump when
+   the number arrives. */
+.tumbleWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 34px;
+}
+.tumble {
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  animation: tumbleSpin 160ms linear infinite;
+}
+@keyframes tumbleSpin {
+  0%   { transform: rotate(-7deg) scale(0.94); opacity: 0.75; }
+  50%  { transform: rotate(6deg) scale(1.06); opacity: 1; }
+  100% { transform: rotate(-7deg) scale(0.94); opacity: 0.75; }
+}
+
+/* ── The landing ───────────────────────────────────────────────────────────
+   The die line arrives first, the points a beat behind it — the order the
+   information actually resolves in. */
+.diceStr {
+  font-size: 8px;
+  color: var(--text-muted);
+  font-weight: 500;
+  animation: lineIn var(--dur-quick) var(--ease-out) both;
+}
+.die {
+  font-weight: 800;
+  font-size: 10px;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.pts {
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  animation: ptsPop var(--dur-settle) var(--ease-punch) 60ms both;
+}
+.ptsUnit { font-size: 9px; font-weight: 600; margin-left: 1px; }
+.statLine {
+  font-size: 8px;
+  color: var(--text-muted);
+  animation: lineIn var(--dur-quick) var(--ease-out) 140ms both;
+}
+
+@keyframes lineIn {
+  from { opacity: 0; transform: translateY(-2px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes ptsPop {
+  from { opacity: 0; transform: scale(1.75); }
+  60%  { opacity: 1; }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ── The bands ─────────────────────────────────────────────────────────────
+   The DIE is coloured, not the points: points keep the team colour so the
+   board still reads as orange against blue at a glance. A twenty and a
+   top-tier hit are different things and are marked differently — see bandOf. */
+.crit .die   { color: var(--gold); }
+.top .die    { color: var(--gold); }
+.fumble .die { color: var(--red); }
+.miss .pts   { opacity: 0.55; }
+
+/* A twenty, or the chart's last row: one gold pulse behind the whole result. */
+.crit::after, .top::after {
+  content: '';
+  position: absolute;
+  inset: -3px -5px;
+  border-radius: 8px;
+  pointer-events: none;
+  animation: goldFlash var(--dur-reveal) var(--ease-out) both;
+}
+@keyframes goldFlash {
+  0%   { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.55); background: rgba(245, 158, 11, 0.22); }
+  70%  { box-shadow: 0 0 0 7px rgba(245, 158, 11, 0); background: rgba(245, 158, 11, 0); }
+  100% { box-shadow: 0 0 0 7px rgba(245, 158, 11, 0); background: transparent; }
+}
+
+/* A natural 1. Small — it is a bad roll, not a catastrophe. */
+.fumble { animation: fumbleShake var(--dur-settle) var(--ease-out) both; }
+@keyframes fumbleShake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-3px); }
+  45% { transform: translateX(3px); }
+  70% { transform: translateX(-2px); }
+}

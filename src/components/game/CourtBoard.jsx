@@ -8,6 +8,7 @@ import styles from './CourtBoard.module.css';
 import { getPlayerImageUrl, getStratImagePath } from '../../game/cardImages.js';
 import { useLightbox } from '../CardLightbox.jsx';
 import { useDialogs } from '../../ui/dialogs.jsx';
+import RollResult from './RollResult.jsx';
 
 function HelpBtn({ section }) {
   const handleClick = (e) => {
@@ -1441,11 +1442,7 @@ function PlayerSlot({ player, ps, adv, fat, result, blocked, teamKey, idx, phase
         {phase==='scoring'&&(
           <div className={styles.rollArea}>
             {blocked?<div className={styles.blocked}>🏠 Blocked</div>
-            :result!=null?<div className={styles.result}>
-              <div className={styles.diceStr}>🎲{result.die}{result.bonus!==0?(result.bonus>0?'+':'')+result.bonus:''}={result.finalRoll}{result.isTop?' ⭐':''}</div>
-              <div className={styles.ptsLg} style={{color:col}}>{result.pts}<span className={styles.ptsUnit}>pts</span></div>
-              <div className={styles.statLine}>{result.reb}r {result.ast}a</div>
-            </div>
+            :result!=null?<RollResult result={result} col={col} />
             :<>
               <button className={styles.rollBtn} style={{background:col}} onClick={onRoll} disabled={pvpDisabled}>🎲 Roll</button>
               {onClutch && !pvpDisabled && game.crunch?.active && clutchAvailable(game, teamKey) > 0 && fat > -6 &&

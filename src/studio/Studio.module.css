@@ -641,3 +641,37 @@
   padding: 1px 4px;
   border-radius: 3px;
 }
+
+/* A set chip and its put-away control, which appears on hover so the bar stays
+   as quiet as it was. See hiddenSetKeys in prefs.js for what hiding means. */
+.toggleItem {
+  position: relative;
+  display: inline-flex;
+}
+.hideSet {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  padding: 0 4px;
+  border: none;
+  border-radius: 3px;
+  background: transparent;
+  color: var(--text-dim);
+  font-size: 11px;
+  line-height: 1.4;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.12s;
+}
+.toggleItem:hover .hideSet,
+.hideSet:focus-visible,
+.hideSet[data-hidden] {
+  opacity: 1;
+}
+.hideSet:hover {
+  background: var(--border);
+  color: var(--text);
+}
+.toggleButtonHidden {
+  opacity: 0.55;
+}

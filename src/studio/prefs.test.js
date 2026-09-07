@@ -4,8 +4,7 @@ import {
   readFlag,
   writeFlag,
   readShowReferenceSets,
-  writeShowReferenceSets,
-} from './prefs.js';
+  writeShowReferenceSets, hiddenSetKeys } from './prefs.js';
 
 /** A localStorage stand-in. The real one does not exist in vitest's node env. */
 function fakeStore(initial = {}) {
@@ -104,5 +103,25 @@ describe('the reference-set disclosure preference', () => {
     // The dev server serves the game from this same origin. An unprefixed
     // "showReferenceSets" is one collision away from meaning something else.
     expect(SHOW_REFERENCE_SETS_KEY.startsWith('studio.')).toBe(true);
+  });
+});
+
+describe('hiddenSetKeys — which sets leave the bar', () => {
+  it('hides by hand and by completion, and lets a reveal override both', () => {
+    // Manual only.
+    expect([...hiddenSetKeys({ hidden: ['rookie'], autoHide: false })]).toEqual(['rookie']);
+    // Auto-hide takes the finished ones too.
+    expect([...hiddenSetKeys({ complete: ['wnba'], autoHide: true })]).toEqual(['wnba']);
+    expect([...hiddenSetKeys({ complete: ['wnba'], autoHide: false })]).toEqual([]);
+    // A revealed set comes back out even though it is complete — the override
+    // that makes auto-hide safe when a photo needs re-cropping.
+    expect([...hiddenSetKeys({ complete: ['wnba'], revealed: ['wnba'], autoHide: true })]).toEqual([]);
+    // But a set hidden BY HAND stays hidden: the explicit choice wins.
+    expect([...hiddenSetKeys({ hidden: ['wnba'], revealed: ['wnba'], autoHide: true })]).toEqual(['wnba']);
+  });
+
+  it('is empty by default and never throws on odd input', () => {
+    expect([...hiddenSetKeys()]).toEqual([]);
+    expect([...hiddenSetKeys({})]).toEqual([]);
   });
 });

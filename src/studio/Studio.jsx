@@ -39,7 +39,13 @@ import {
 import { pruneCrops, resetCrop } from './crop.js';
 import { pruneTeamOverrides } from './teamTheme.js';
 import { fetchStudioState, uploadPhoto, saveCrops, saveTeams, isImageFile } from './api.js';
-import { readShowReferenceSets, writeShowReferenceSets } from './prefs.js';
+import {
+  readShowReferenceSets, writeShowReferenceSets,
+  readHiddenSets, writeHiddenSets,
+  readRevealedSets, writeRevealedSets,
+  readAutoHide, writeAutoHide,
+  hiddenSetKeys,
+} from './prefs.js';
 import styles from './Studio.module.css';
 
 /** Long enough that a drag saves once, short enough to feel immediate. */
@@ -70,6 +76,13 @@ export default function Studio() {
   // shut is worse than one that never folded.
   const [showReference, setShowReference] = useState(readShowReferenceSets);
   const [photos, setPhotos] = useState([]);
+  // Every scope's photo ids, for the set bar's auto-hide — see the server's
+  // `allPhotos`. Only the ACTIVE set's list drives the roster view.
+  const [allPhotos, setAllPhotos] = useState({});
+  const [hiddenSets, setHiddenSets] = useState(readHiddenSets);
+  const [revealedSets, setRevealedSets] = useState(readRevealedSets);
+  const [autoHide, setAutoHide] = useState(readAutoHide);
+  const [showHidden, setShowHidden] = useState(false);
   // playerId -> the extension that player's photo is stored under (".jpeg",
   // ".png", ...). Only the server can know it, so it comes down with the rest
   // of the state; see photoExtMap in scripts/studio/studioServerPlugin.js. Kept
@@ -129,7 +142,30 @@ export default function Studio() {
     () => visibleSources({ showSecondary: showReference, activeKey: sourceKey }),
     [showReference, sourceKey]
   );
-  const primaryOffered = offered.filter(s => !s.secondary);
+  /**
+   * A source is COMPLETE when every player it lists has a photo in its set's
+   * folder. Asked per SOURCE rather than per set because two sources can share
+   * one folder, and the question is about this list.
+   */
+  const completeKeys = useMemo(() => {
+    const done = [];
+    for (const src of Object.values(SOURCES)) {
+      const have = new Set(allPhotos[src.set] ?? []);
+      if (!have.size || !src.players.length) continue;
+      if (src.players.every(p => have.has(p.id))) done.push(src.key);
+    }
+    return done;
+  }, [allPhotos]);
+
+  const hidden = useMemo(
+    () => hiddenSetKeys({ hidden: hiddenSets, revealed: revealedSets, complete: completeKeys, autoHide }),
+    [hiddenSets, revealedSets, completeKeys, autoHide]
+  );
+
+  // The set you are working on never disappears from under you.
+  const primaryOffered = offered
+    .filter(s => !s.secondary)
+    .filter(s => showHidden || !hidden.has(s.key) || s.key === sourceKey);
   const secondaryOffered = offered.filter(s => s.secondary);
   const photoIds = useMemo(() => new Set(photos), [photos]);
   const visible = useMemo(
@@ -165,6 +201,8 @@ export default function Studio() {
       .then(state => {
         if (!live) return;
         setPhotos(state.photos ?? []);
+      setAllPhotos(state.allPhotos ?? {});
+        setAllPhotos(state.allPhotos ?? {});
         setPhotoExts(state.photoExt ?? {});
         setCrops(state.crops ?? {});
         setTeamOverrides(state.teamOverrides ?? {});
@@ -354,6 +392,22 @@ export default function Studio() {
     setMissingOnly(false);
   };
 
+  /** Put a set away by hand, or pull it back out — the override auto-hide needs. */
+  const toggleHidden = useCallback(key => {
+    const isHidden = hidden.has(key);
+    const nextHidden = isHidden ? hiddenSets.filter(k => k !== key) : [...hiddenSets, key];
+    const nextRevealed = isHidden ? [...revealedSets, key] : revealedSets.filter(k => k !== key);
+    setHiddenSets(nextHidden); writeHiddenSets(nextHidden);
+    setRevealedSets(nextRevealed); writeRevealedSets(nextRevealed);
+    // Never strand the curator on a set that just vanished.
+    if (!isHidden && key === sourceKey) switchSource(DEFAULT_SOURCE);
+  }, [hidden, hiddenSets, revealedSets, sourceKey, switchSource]);
+
+  const toggleAutoHide = useCallback(() => {
+    const next = !autoHide;
+    setAutoHide(next); writeAutoHide(next);
+  }, [autoHide]);
+
   /**
    * Opens and closes the reference group, and remembers which.
    *
@@ -474,20 +528,37 @@ export default function Studio() {
             really printed. Out of the way, one click deep, is the whole ask. */}
         <div className={styles.toggle} role="group" aria-label="Which set to work on">
           {primaryOffered.map(source => (
-            <button
-              key={source.key}
-              type="button"
-              className={`${styles.toggleButton} ${
-                source.key === sourceKey ? styles.toggleButtonActive : ''
-              }`}
-              aria-pressed={source.key === sourceKey}
-              data-source={source.key}
-              title={source.hint}
-              onClick={() => switchSource(source.key)}
-            >
-              {source.label}
-              <span className={styles.toggleSub}>{source.sub}</span>
-            </button>
+            <span key={source.key} className={styles.toggleItem}>
+              <button
+                type="button"
+                className={`${styles.toggleButton} ${
+                  source.key === sourceKey ? styles.toggleButtonActive : ''
+                } ${hidden.has(source.key) ? styles.toggleButtonHidden : ''}`}
+                aria-pressed={source.key === sourceKey}
+                data-source={source.key}
+                title={source.hint}
+                onClick={() => switchSource(source.key)}
+              >
+                {source.label}
+                <span className={styles.toggleSub}>
+                  {completeKeys.includes(source.key) ? '✓ complete' : source.sub}
+                </span>
+              </button>
+              <button
+                type="button"
+                className={styles.hideSet}
+                data-hidden={hidden.has(source.key) ? '' : undefined}
+                aria-label={hidden.has(source.key) ? `Show ${source.label}` : `Hide ${source.label}`}
+                title={
+                  hidden.has(source.key)
+                    ? 'Put this set back in the bar. Hiding is only a view — its photos and crops are untouched on disk.'
+                    : 'Put this set away. It comes back from "Hidden" whenever a photo needs re-cropping.'
+                }
+                onClick={() => toggleHidden(source.key)}
+              >
+                {hidden.has(source.key) ? '+' : '×'}
+              </button>
+            </span>
           ))}
         </div>
 
@@ -496,6 +567,34 @@ export default function Studio() {
             Rendered only if there is something behind it — `secondary` is a
             declared field, and a build with none of it set should show no
             vestigial control. */}
+        {hidden.size > 0 && (
+          <div className={styles.referenceGroup}>
+            <button
+              type="button"
+              className={`${styles.disclosure} ${showHidden ? styles.disclosureOpen : ''}`}
+              aria-expanded={showHidden}
+              onClick={() => setShowHidden(v => !v)}
+              title={
+                'Sets you have put away, plus any that auto-hid when every card got a photo. ' +
+                'Nothing is lost — open this to pull one back and re-crop.'
+              }
+            >
+              {showHidden ? 'Hide finished' : `Hidden (${hidden.size})`}
+            </button>
+            {showHidden && (
+              <button
+                type="button"
+                className={styles.disclosure}
+                aria-pressed={autoHide}
+                onClick={toggleAutoHide}
+                title="Whether a set disappears from the bar on its own once every card in it has a photo."
+              >
+                {autoHide ? 'Auto-hide: on' : 'Auto-hide: off'}
+              </button>
+            )}
+          </div>
+        )}
+
         {SECONDARY_SOURCES.length > 0 && (
           <div className={styles.referenceGroup}>
             <button

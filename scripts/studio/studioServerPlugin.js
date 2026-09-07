@@ -229,6 +229,22 @@ export function studioServerPlugin() {
             photoExt: photoExtMap(photos),
             crops: readJsonFile(scope.crops, {}),
             teamOverrides: readJsonFile(scope.teams, {}),
+            // EVERY SCOPE'S PHOTO IDS, not just this one's — what the set bar
+            // needs to auto-hide a set that is finished (the user, 2026-09-07).
+            // Ids rather than counts, because two SOURCES can share one set's
+            // folder and "is this source complete" is an intersection with
+            // that source's own player list, not a file count. Fourteen
+            // readdirs on localhost for a dev tool is not a cost worth an
+            // endpoint of its own.
+            allPhotos: Object.fromEntries(
+              STUDIO_SCOPES.map(id => {
+                const dir = forSet[id]?.photos;
+                const files = dir && existsSync(dir)
+                  ? readdirSync(dir).filter(f => ALLOWED_PHOTO_EXT.has(extname(f).toLowerCase()))
+                  : [];
+                return [id, files.map(playerIdFromFile)];
+              })
+            ),
           });
         })
       );

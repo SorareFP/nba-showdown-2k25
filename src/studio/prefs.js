@@ -89,3 +89,67 @@ export function readShowReferenceSets(store) {
 export function writeShowReferenceSets(value, store) {
   return writeFlag(SHOW_REFERENCE_SETS_KEY, value, store);
 }
+
+/**
+ * SETS THE CURATOR HAS PUT AWAY.
+ *
+ * The user, 2026-09-07: "Is there a way I can hide completed sets in card
+ * studio? I might need to unhide in the future to adjust photo placement, but
+ * can you add a manual hide?" — and then "And an auto-hide when complete."
+ *
+ * So there are two ways a set leaves the bar and one way it comes back, which
+ * is why this is three preferences rather than one list:
+ *
+ *   hiddenSets     put away BY HAND, whatever its progress
+ *   autoHide       put away automatically once every card has a photo
+ *   revealedSets   pulled back OUT by hand — the override that makes
+ *                  auto-hide safe, because a finished set is exactly the one
+ *                  you return to when a photo needs re-cropping
+ *
+ * A set is hidden when it is in `hiddenSets`, or when auto-hide is on and it
+ * is complete and NOT in `revealedSets`. Nothing here can lose work: hiding is
+ * a view, the photos and crops stay on disk either way.
+ */
+export const HIDDEN_SETS_KEY = 'studio.hiddenSets';
+export const REVEALED_SETS_KEY = 'studio.revealedSets';
+export const AUTO_HIDE_KEY = 'studio.autoHideComplete';
+
+function readList(key, store) {
+  try {
+    const s = store ?? globalThis.localStorage;
+    const raw = s?.getItem(key);
+    const parsed = raw ? JSON.parse(raw) : null;
+    return Array.isArray(parsed) ? parsed.filter(k => typeof k === 'string') : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeList(key, list, store) {
+  try {
+    const s = store ?? globalThis.localStorage;
+    s?.setItem(key, JSON.stringify([...new Set(list.filter(k => typeof k === 'string'))]));
+  } catch {
+    /* a preference that cannot be written is not an error — see the note above */
+  }
+}
+
+export const readHiddenSets = store => readList(HIDDEN_SETS_KEY, store);
+export const writeHiddenSets = (list, store) => writeList(HIDDEN_SETS_KEY, list, store);
+export const readRevealedSets = store => readList(REVEALED_SETS_KEY, store);
+export const writeRevealedSets = (list, store) => writeList(REVEALED_SETS_KEY, list, store);
+/** Auto-hide defaults ON — the user asked for it as the behaviour, not an opt-in. */
+export const readAutoHide = store => readFlag(AUTO_HIDE_KEY, true, store);
+export const writeAutoHide = (value, store) => writeFlag(AUTO_HIDE_KEY, value, store);
+
+/**
+ * Which sets are out of the bar, given what is hidden by hand, what is
+ * complete, and what has been pulled back out. Pure, so the rule is testable
+ * without a browser.
+ */
+export function hiddenSetKeys({ hidden = [], revealed = [], complete = [], autoHide = true } = {}) {
+  const out = new Set(hidden);
+  if (autoHide) for (const key of complete) if (!revealed.includes(key)) out.add(key);
+  for (const key of revealed) if (!hidden.includes(key)) out.delete(key);
+  return out;
+}

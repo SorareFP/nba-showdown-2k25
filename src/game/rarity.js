@@ -153,4 +153,9 @@ export const STRAT_COPY_CAPS = {
   'common': 5,
   'uncommon': 3,
   'rare': 1,
+  // THE APEX BAND NEEDED A ROW OR IT INHERITED THE FALLBACK. `capOf` in
+  // runStratAudit.js reads `STRAT_COPY_CAPS[band] ?? 5`, so before this line a
+  // legendary strategy card capped at FIVE copies — more than a common. One,
+  // like a rare: it is a card you build a roster toward, not one you stack.
+  'legendary': 1,
 };

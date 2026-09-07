@@ -8,6 +8,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   generatePack, decay, SUPPLY_DECAY_SCALE, SPECIAL_BAND_SHARE, PACK_TYPES,
+  SPECIAL_SETS_IN_PACKS,
 } from './packEngine.js';
 import { CARD_SETS, BASE_SET, cardKey } from './cardSets.js';
 import { CARD_MAP } from './cards.js';
@@ -150,7 +151,12 @@ describe('the special-set share survives supply', () => {
     // Decay applies WITHIN each side of the split, never to the split itself —
     // otherwise a run of Super Season pulls would quietly change how often
     // special cards appear at all, which is the one number the split holds.
-    const specialSets = ['super-season', 'rookie', 'summer-standouts'];
+    // THE LIST COMES FROM THE ENGINE, not from a copy of it. This was three
+    // hard-coded ids, and when the WNBA specials were folded in (2026-09-07)
+    // the test saturated only the NBA three — the fresh WNBA cards then soaked
+    // up the whole specials quarter and the measured share read 3%. The split
+    // was fine; the test was measuring a subset of it.
+    const specialSets = [...SPECIAL_SETS_IN_PACKS];
     const specials = specialSets.flatMap(id => CARD_SETS[id] ?? []);
     const saturated = Object.fromEntries(specials.map(c => [cardKey(c), 300]));
 

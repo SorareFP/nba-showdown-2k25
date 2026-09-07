@@ -111,7 +111,23 @@ export const PACK_TYPES = {
  * either in a booster would make the ladder decorative — the same reason
  * `NOT_FOR_SALE` keeps them out of the market.
  */
-export const SPECIAL_SETS_IN_PACKS = ['super-season', 'rookie', 'summer-standouts'];
+// BOTH LEAGUES' SPECIALS, not just the NBA's (the user, 2026-09-07: "Specials
+// should appear in standard packs across both, but just at that reduced amount
+// within their rarity bands"). WNBA Super Season and WNBA Rookie — eighty cards
+// between them — had NO path into a collection at all: the unscoped packs mixed
+// only the three NBA sets, and wnba_booster/wnba_super deal base WNBA alone.
+//
+// Nothing about the ODDS changes by adding them. SPECIAL_BAND_SHARE still gives
+// specials a quarter of whatever band comes out and base three quarters, so
+// these dilute the other specials rather than the base pool, which is the
+// "reduced amount" the rule already implements.
+//
+// The reward sets stay out on both sides — team-rewards, set-rewards and their
+// WNBA twins are earned, not pulled, and that was already symmetric.
+export const SPECIAL_SETS_IN_PACKS = [
+  'super-season', 'rookie', 'summer-standouts',
+  'wnba-super-season', 'wnba-rookie',
+];
 
 /**
  * THE BASE OF AN UNSCOPED PACK IS BOTH LEAGUES.

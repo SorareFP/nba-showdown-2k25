@@ -12,6 +12,7 @@ import TutorialGame from './components/TutorialGame.jsx';
 import AuthButton from './components/AuthButton.jsx';
 import { AuthProvider, useAuth } from './firebase/AuthProvider.jsx';
 import { LightboxProvider } from './components/CardLightbox.jsx';
+import { DialogProvider } from './ui/dialogs.jsx';
 import { CardStatsProvider } from './firebase/CardStatsProvider.jsx';
 import { collectableKeys } from './game/collections.js';
 import { loadCollection } from './firebase/collection.js';
@@ -197,7 +198,9 @@ export default function App() {
     <AuthProvider>
       <CardStatsProvider>
       <LightboxProvider>
-        <AppInner />
+        <DialogProvider>
+          <AppInner />
+        </DialogProvider>
       </LightboxProvider>
       </CardStatsProvider>
     </AuthProvider>

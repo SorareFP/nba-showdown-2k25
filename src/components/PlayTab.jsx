@@ -5,6 +5,10 @@ import { CLUTCH_DICE } from '../game/clutchAwards.js';
 import { execCard, resolvePendingShotCheck } from '../game/execCard.js';
 import { randomizeTeam, MIN_TO_PLAY } from '../game/teamRules.js';
 import { resultFromPlayed } from '../game/modes/season.js';
+// A REDUCER CANNOT HOLD A HOOK, and must not have side effects at all — so a
+// rejected play reports through the module-level sink rather than through
+// useDialogs(). See notify() in ui/dialogs.jsx.
+import { useDialogs, notify } from '../ui/dialogs.jsx';
 import { useAuth } from '../firebase/AuthProvider.jsx';
 import { loadDecks } from '../firebase/savedDecks.js';
 import CourtBoard from './game/CourtBoard.jsx';
@@ -21,7 +25,7 @@ function gameReducer(state, action) {
     case 'ROLL':        return doRoll(state, action.teamKey, action.idx, action.opts || {});
     case 'TIMEOUT': {
       const { game, ok, msg } = spendTimeout(state, action.teamKey);
-      if (!ok) { if (!action.silent) alert(msg); return state; }
+      if (!ok) { if (!action.silent) notify(msg, { tone: 'error' }); return state; }
       // The coach draws it up: the timeout's defensive re-set, computed by
       // the same matchup brain the AI uses — for either team.
       const reset = aiSetMatchups(game, action.teamKey);
@@ -31,17 +35,17 @@ function gameReducer(state, action) {
     case 'END_SECTION': return endSection(state);
     case 'EXEC_CARD': {
       const { game, ok, msg } = execCard(state, action.teamKey, action.cardId, action.opts || {});
-      if (!ok) { if (!action.silent) alert(msg); return state; }
+      if (!ok) { if (!action.silent) notify(msg, { tone: 'error' }); return state; }
       return game;
     }
     case 'SPEND_ASSIST': {
       const { game, ok, msg } = spendAssist(state, action.teamKey, action.spendType, action.playerIdx);
-      if (!ok) { if (!action.silent) alert(msg); return state; }
+      if (!ok) { if (!action.silent) notify(msg, { tone: 'error' }); return state; }
       return game;
     }
     case 'SPEND_REBOUND': {
       const { game, ok, msg } = spendReboundBonus(state, action.teamKey, action.rebType, action.playerIdx);
-      if (!ok) { if (!action.silent) alert(msg); return state; }
+      if (!ok) { if (!action.silent) notify(msg, { tone: 'error' }); return state; }
       return game;
     }
     case 'RESOLVE_CHECK': return resolvePendingShotCheck(state);
@@ -61,6 +65,7 @@ const AI_DELAY = 700;
  */
 export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null, onPresetFinish = null }) {
   const [game, dispatch] = useReducer(gameReducer, null);
+  const { ask } = useDialogs();
 
   // WHO PLAYS TEAM B. 'ai' hands B to the coach below; 'human' switches the
   // coach off and the game is hotseat — you play both sides, which is what
@@ -184,16 +189,29 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
   useEffect(() => {
     if (!preset) { presetRef.current = null; return; }
     if (presetRef.current === preset.key) return;
+    presetRef.current = preset.key;
+    const deal = () => {
+      setOpponent('ai');
+      dispatch({ type: 'SET', game: newGame(preset.rosterA, preset.rosterB, null, null, { clutchDice: CLUTCH_DICE }) });
+    };
     // A sandbox game in progress is somebody's evening. Dealing a fixture over
     // the top of it would discard it with no warning and no way back, so the
-    // fixture asks first and bounces to the season if the answer is no.
-    if (game && !game.done && !confirm('Start this season fixture? The game you have going will be discarded.')) {
-      onPresetFinish?.(null);
-      return;
-    }
-    presetRef.current = preset.key;
-    setOpponent('ai');
-    dispatch({ type: 'SET', game: newGame(preset.rosterA, preset.rosterB, null, null, { clutchDice: CLUTCH_DICE }) });
+    // fixture asks first and bounces to the season if the answer is no. The
+    // ask is a promise, so the effect sets up and lets the answer arrive.
+    if (!game || game.done) { deal(); return; }
+    let live = true;
+    ask({
+      title: 'Start this season fixture?',
+      body: 'The game you have going will be discarded.',
+      confirmLabel: 'Discard and play the fixture',
+      cancelLabel: 'Keep my game',
+      tone: 'danger',
+    }).then(yes => {
+      if (!live) return;
+      if (yes) deal();
+      else { presetRef.current = null; onPresetFinish?.(null); }
+    });
+    return () => { live = false; };
     // `preset` alone, deliberately: `game` is read once, when a preset first
     // arrives, and listing it would re-run this on every roll of the game it
     // just dealt.
@@ -241,11 +259,11 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
   // random one, decide you wanted your built rosters instead, and the first
   // game sat there with no exit but playing it through. Same reset the
   // results screen uses, behind a confirm because it discards the game.
-  const abandon = () => {
-    const msg = preset
-      ? 'Leave this fixture? It stays unplayed and you can come back to it.'
-      : 'Abandon this game? Nothing about it is saved.';
-    if (!confirm(msg)) return;
+  const abandon = async () => {
+    const yes = await ask(preset
+      ? { title: 'Leave this fixture?', body: 'It stays unplayed and you can come back to it.', confirmLabel: 'Leave it' }
+      : { title: 'Abandon this game?', body: 'Nothing about it is saved.', confirmLabel: 'Abandon', tone: 'danger' });
+    if (!yes) return;
     dispatch({ type: 'SET', game: null });
     // No result: the season clears the preset and leaves the fixture open.
     if (preset) onPresetFinish?.(null);

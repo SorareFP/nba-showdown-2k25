@@ -1,0 +1,71 @@
+/* HOW THINGS MOVE — four numbers, in one place.
+ *
+ * Every transition in this app used to be a hand-typed `0.12s` or `0.15s`, and
+ * about a third of them disagreed with each other by a few milliseconds for no
+ * reason anybody chose. That reads as sloppiness even when nobody can name
+ * why. These are the durations and curves; a component picks one rather than
+ * inventing a number.
+ *
+ * ── THE FOUR ────────────────────────────────────────────────────────────────
+ *
+ *   quick   a hover, a focus ring, a colour change — anything the pointer is
+ *           already on top of, so it must not lag behind the finger
+ *   beat    something ARRIVING or LEAVING: a toast, a panel, a tab's contents.
+ *           Long enough to be seen as movement, short enough not to be waited
+ *           on
+ *   settle  a thing coming to rest after a bigger event — a card landing, a
+ *           die stopping. The only tier allowed to overshoot
+ *   reveal  the pack-opening tier, where the animation IS the content and the
+ *           player is watching it on purpose
+ *
+ * ── THE CURVES ──────────────────────────────────────────────────────────────
+ *
+ *   out     decelerate into place. The default; use it unless you mean punch
+ *   punch   overshoots and comes back. For arrivals that should feel physical
+ *           — a die landing, a score ticking up. Never for hovers, where the
+ *           overshoot reads as a wobble
+ *   in      accelerate away. Exits only
+ */
+:root {
+  --dur-quick: 120ms;
+  --dur-beat: 240ms;
+  --dur-settle: 400ms;
+  --dur-reveal: 900ms;
+
+  --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-in: cubic-bezier(0.55, 0.06, 0.68, 0.19);
+  --ease-punch: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ── WHEN SOMEBODY HAS ASKED THE MOTION TO STOP ─────────────────────────────
+ *
+ * `prefers-reduced-motion` is set by people who get motion sickness or
+ * vestibular symptoms from movement on screen, and by plenty of others who
+ * simply do not want it. This is not a niceties setting: for some players a
+ * tumbling die and a sweeping holo sheen are the difference between playing
+ * and closing the tab.
+ *
+ * Zeroing the tokens handles everything written against them. The `*` rule
+ * underneath catches the rest — the hand-typed durations that still exist and
+ * every @keyframes animation in the app — by collapsing them to a single frame
+ * rather than removing them, so a component that waits for `animationend` (the
+ * pack reveal does) still gets its event and never hangs half-open.
+ *
+ * `scroll-behavior: auto` matters for the same reason: a smooth-scrolled page
+ * is motion the user did not ask for either.
+ */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-quick: 0ms;
+    --dur-beat: 0ms;
+    --dur-settle: 0ms;
+    --dur-reveal: 0ms;
+  }
+
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}

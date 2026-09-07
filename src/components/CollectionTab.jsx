@@ -21,6 +21,7 @@ import Market from './Market.jsx';
 import CollectionGoals from './CollectionGoals.jsx';
 import FavoriteTeamPicker, { teamForOption, favoriteTeamName } from './FavoriteTeamPicker.jsx';
 import { logoSrc } from '../cards/CardTemplate.jsx';
+import { useDialogs } from '../ui/dialogs.jsx';
 import { collectableKeys } from '../game/collections.js';
 import styles from './CollectionTab.module.css';
 
@@ -38,6 +39,7 @@ const VIEWS = [
 
 export default function CollectionTab({ onLoadTeam, onCollectionChange }) {
   const { user } = useAuth();
+  const { ask } = useDialogs();
   const [view, setView] = useState('teams');
   const [teams, setTeams] = useState([]);
   const [decks, setDecks] = useState([]);
@@ -120,13 +122,13 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange }) {
   };
 
   const handleDeleteTeam = async (teamId) => {
-    if (!confirm('Delete this team?')) return;
+    if (!await ask({ title: 'Delete this team?', body: 'The cards stay in your collection.', confirmLabel: 'Delete', tone: 'danger' })) return;
     await deleteTeam(user.uid, teamId);
     refresh();
   };
 
   const handleDeleteDeck = async (deckId) => {
-    if (!confirm('Delete this deck?')) return;
+    if (!await ask({ title: 'Delete this deck?', body: 'The strategy cards stay in your collection.', confirmLabel: 'Delete', tone: 'danger' })) return;
     await deleteDeck(user.uid, deckId);
     refresh();
   };
@@ -310,7 +312,14 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange }) {
   // the real Firestore. The server hands every deleted copy back to supply,
   // which the old version never did.
   const handleResetAccount = async () => {
-    if (!confirm('DEV: Reset your collection, ledger, currency and starter pack status? This cannot be undone.')) return;
+    const yes = await ask({
+      title: 'Reset this account?',
+      body: 'Collection, ledger, currency, teams, decks and starter-pack status — all of it. This cannot be undone.',
+      warn: 'DEV TOOL',
+      confirmLabel: 'Wipe it',
+      tone: 'danger',
+    });
+    if (!yes) return;
     try {
       const r = await devResetAccount(user.uid);
       setToast(`DEV: reset — ${r.copies} copies, ${r.teams} teams, ${r.decks} decks, ${r.claims} claims, ${r.listings} listings cleared. Refresh for the starter pack.`);

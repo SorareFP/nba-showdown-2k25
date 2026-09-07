@@ -7,6 +7,7 @@ import { aiDraftPick, aiPlacementPick } from '../../game/ai.js';
 import styles from './CourtBoard.module.css';
 import { getPlayerImageUrl, getStratImagePath } from '../../game/cardImages.js';
 import { useLightbox } from '../CardLightbox.jsx';
+import { useDialogs } from '../../ui/dialogs.jsx';
 
 function HelpBtn({ section }) {
   const handleClick = (e) => {
@@ -61,11 +62,12 @@ export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExec
   const [modal, setModal] = useState(null);
   const [draftSelected, setDraftSelected] = useState([]);
 
+  const { toast, ask } = useDialogs();
   const openModal = (config) => new Promise(res => setModal({ ...config, resolve: res }));
   const closeModal = (val) => { const r = modal?.resolve; setModal(null); r?.(val); };
 
   const handleExecCard = async (teamKey, cardId, baseOpts = {}) => {
-    const opts = await buildOpts(game, teamKey, cardId, baseOpts, openModal);
+    const opts = await buildOpts(game, teamKey, cardId, baseOpts, openModal, { toast, ask });
     if (opts === null) return;
     onExecCard(teamKey, cardId, opts);
   };
@@ -118,7 +120,18 @@ export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExec
   );
 }
 
-async function buildOpts(game, teamKey, cardId, base, openModal) {
+/**
+ * The options a card needs before it can be played — which player, which
+ * check, whether to spend an assist.
+ *
+ * `ui` is `{ toast, ask }`, passed in rather than hooked because this is a
+ * plain function. Every one of these used to be an alert() or a confirm(),
+ * which BLOCKED THE WHOLE TAB mid-possession: `toast` carries the notes
+ * ("nobody is eligible"), `ask` the two that are genuinely questions.
+ */
+async function buildOpts(game, teamKey, cardId, base, openModal, ui = {}) {
+  const toast = ui.toast ?? (() => {});
+  const ask = ui.ask ?? (async () => false);
   const opts = { ...base };
   const myT = getTeam(game, teamKey);
   const oppT = getOpp(game, teamKey);
@@ -431,7 +444,7 @@ async function buildOpts(game, teamKey, cardId, base, openModal) {
         label = 'Select target player';
     }
 
-    if (eligible.length === 0) { alert('No eligible players for this card.'); return null; }
+    if (eligible.length === 0) { toast('No eligible players for this card.'); return null; }
 
     // Build info function for cards that benefit from showing matchup details
     let infoFn = undefined;
@@ -458,7 +471,12 @@ async function buildOpts(game, teamKey, cardId, base, openModal) {
   if (shotCheckCards.includes(cardId)) {
     const ast = myT.assists;
     if (ast >= 1) {
-      const spend = confirm(`Spend 1 Assist for +1 to ${cardId.replace(/_/g, ' ')} shot check? (${ast} AST available)`);
+      const spend = await ask({
+        title: 'Spend 1 Assist for +1 to this shot check?',
+        body: `${ast} assist${ast === 1 ? '' : 's'} available.`,
+        confirmLabel: 'Spend it',
+        cancelLabel: 'Save it',
+      });
       if (spend) {
         opts.spendAssistBoost = true;
       }
@@ -468,7 +486,7 @@ async function buildOpts(game, teamKey, cardId, base, openModal) {
   // ── Help Defender: which mismatch, and who rotates over ────────────────
   if (cardId === 'help_defender') {
     const targets = helpTargets(game, teamKey);
-    if (targets.length === 0) { alert('No opponent yet to roll is beating his defender by +4.'); return null; }
+    if (targets.length === 0) { toast('No opponent yet to roll is beating his defender by +4.'); return null; }
     const t = targets.length === 1 ? 0 : await pickFiltered(
       targets.map(x => ({ p: x.off, origIdx: x.offSlot })),
       'Who is beating his man?', teamKey
@@ -493,11 +511,24 @@ async function buildOpts(game, teamKey, cardId, base, openModal) {
   }
   // ── Extra Pass / Transition Outlet: which check ────────────────────────
   if (cardId === 'extra_pass' || cardId === 'transition_outlet') {
-    opts.checkType = confirm('Take a 3PT check? (Cancel = Paint check)') ? '3pt' : 'paint';
+    // NOT A CONFIRM — a choice between two things. It only ever wore a
+    // confirm's clothes because confirm() was the only dialog available, and
+    // "Cancel = Paint check" is what that costs you.
+    opts.checkType = await ask({
+      title: 'Which check do you want?',
+      confirmLabel: '3PT check',
+      cancelLabel: 'Paint check',
+    }) ? '3pt' : 'paint';
   }
   // ── Three-Point Barrage: spend 1 AST for one more check ────────────────
   if (cardId === 'three_point_barrage' && myT.assists >= 1) {
-    if (confirm(`Spend 1 Assist for one extra 3PT check? (${myT.assists} AST available)`)) {
+    const extra = await ask({
+      title: 'Spend 1 Assist for one extra 3PT check?',
+      body: `${myT.assists} assist${myT.assists === 1 ? '' : 's'} available.`,
+      confirmLabel: 'Spend it',
+      cancelLabel: 'Save it',
+    });
+    if (extra) {
       const shooters = myT.starters.map((p, i) => ({ p, origIdx: i }));
       const s = await pickFiltered(shooters, 'Who takes the extra 3PT check?', teamKey);
       if (s !== null) opts.extraShooterIdx = s;
@@ -506,7 +537,7 @@ async function buildOpts(game, teamKey, cardId, base, openModal) {
   // ── Pin Down Screen, Lob City, Denial: discard a card from hand ─────────
   if (cardId === 'pin_down_screen' || cardId === 'lob_city' || cardId === 'denial') {
     const handWithoutThis = myT.hand.filter(id => id !== cardId);
-    if (handWithoutThis.length === 0) { alert('No cards to discard.'); return null; }
+    if (handWithoutThis.length === 0) { toast('No cards to discard.'); return null; }
     const discardPlayers = handWithoutThis.map((id, i) => ({ id, name: id.replace(/_/g, ' '), origIdx: i }));
     const discardDisplay = discardPlayers.map(d => ({ ...d, name: d.name }));
     const pick = await openModal({ teamKey, cardId, players: discardDisplay, label: `Discard a card for ${cardId.replace(/_/g, ' ')}` });
@@ -524,7 +555,7 @@ async function buildOpts(game, teamKey, cardId, base, openModal) {
   // ── Burned on the Switch: auto-detect the switched players ─────────────
   if (cardId === 'burned_switch') {
     const lc = game.lastMatchupCard;
-    if (!lc) { alert('No switch to react to.'); return null; }
+    if (!lc) { toast('No switch to react to.'); return null; }
     // The switch was on the opponent's offense — pick which of YOUR players benefited
     // Show your starters and ask who got the weaker defender after the switch
     const idx = await openModal({ teamKey, cardId, players: myT.starters, label: 'Select your player who got a weaker defender' });
@@ -542,7 +573,7 @@ async function buildOpts(game, teamKey, cardId, base, openModal) {
       const r = oppRolls[i];
       return r && (r.die === 1 || r.die === 2) && !r.coldSpellUsed;
     });
-    if (eligible.length === 0) { alert('No opponent rolled a natural 1 or 2.'); return null; }
+    if (eligible.length === 0) { toast('No opponent rolled a natural 1 or 2.'); return null; }
     const idx = await pickFiltered(eligible, 'Apply Cold Spell to:', oppKey,
       (p, oi) => `(rolled ${oppRolls[oi]?.die})`);
     if (idx === null) return null;
@@ -552,7 +583,7 @@ async function buildOpts(game, teamKey, cardId, base, openModal) {
   // ── Dogged: target fatigued OPPONENT ───────────────────────────────────
   if (cardId === 'dogged') {
     const eligible = filterStarters(oppT.starters, (_, i) => getFatigue(game, oppKey, i) < 0);
-    if (eligible.length === 0) { alert('No fatigued opponent players.'); return null; }
+    if (eligible.length === 0) { toast('No fatigued opponent players.'); return null; }
     const idx = await pickFiltered(eligible, 'Target fatigued opponent:', oppKey,
       (p, oi) => `(FAT ${getFatigue(game, oppKey, oi)})`);
     if (idx === null) return null;
@@ -598,7 +629,7 @@ async function buildOpts(game, teamKey, cardId, base, openModal) {
   if (cardId === 'energy_injection') {
     // Both players must have salary < $400 — filter the second pick
     const cheapPlayers = filterStarters(myT.starters, (p, i) => (p.salary || 0) < 400 && i !== opts.playerIdx);
-    if (cheapPlayers.length === 0) { alert('No second player with salary < $400.'); return null; }
+    if (cheapPlayers.length === 0) { toast('No second player with salary under $400.'); return null; }
     const idx2 = await pickFiltered(cheapPlayers, 'Select second player (salary < $400)');
     if (idx2 === null) return null;
     opts.player2Idx = idx2;
@@ -678,7 +709,7 @@ async function buildOpts(game, teamKey, cardId, base, openModal) {
       .map((p, i) => ({ p, origIdx: i }))
       .filter(({ origIdx }) => oppRolls[origIdx] == null);
     if (eligible.length < 2) {
-      alert('Need two opposing players who haven\'t rolled.');
+      toast('Needs two opposing players who have not rolled yet.');
       return null;
     }
     const display = eligible.map(({ p }) => p);
@@ -697,7 +728,7 @@ async function buildOpts(game, teamKey, cardId, base, openModal) {
   // ── Veer Switch: defender reassigns the two swapped slots ─────────────
   if (cardId === 'veer_switch') {
     const lc = game.lastMatchupCard;
-    if (!lc) { alert('No switch card to react to.'); return null; }
+    if (!lc) { toast('No switch card to react to.'); return null; }
     // The two defenders in the screen are the only ones who can switch: the
     // choice is who guards the first screened attacker, and the other takes
     // the second. (It used to offer all five for each slot, which is not a veer.)
@@ -753,7 +784,12 @@ async function buildOpts(game, teamKey, cardId, base, openModal) {
       const rollStr = a.rollBonus > 0 ? `+${a.rollBonus}` : a.hasPenalty ? `${a.rollBonus}` : '0';
       return `${opp?.name} ← ${def?.name} (Opp Roll ${rollStr})`;
     });
-    const ok = confirm(`Switch Everything — Review assignments:\n\n${reviewLines.join('\n')}\n\n⚠️ All opponent advantages will be DOUBLED.\n\nConfirm?`);
+    const ok = await ask({
+      title: 'Switch Everything — review the assignments',
+      lines: reviewLines,
+      warn: 'All opponent advantages will be DOUBLED.',
+      confirmLabel: 'Switch everything',
+    });
     if (!ok) return null;
     opts.assignments = assigns;
   }

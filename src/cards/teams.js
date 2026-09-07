@@ -161,8 +161,12 @@ export const HISTORICAL_TEAMS = {
   // 2021, Mobley 2022, Rondo 2022), all of which read today's CLE.png until
   // now. The colours matter as much as the file here: the 2022 rebrand moved
   // the wine to #6F263D and the gold to #B9975B, so those cards were printing
-  // a palette their season never wore. CLE17.png is WANTED (the user, 2026-09-07);
-  // until it lands these print a lettered circle, the same trade GSW89 is in.
+  // a palette their season never wore. The mark is the black shield with the
+  // C-sword, and it is genuinely a different logo from CLE16's wordmark-and-ball
+  // — the two were checked side by side before this row was given a file of its
+  // own, rather than widening CLE16's range. The user supplied the whole
+  // Cavaliers suite 2026-09-07; CLE71/84/95 and CLE11 are in
+  // card-art/logo-originals/ and stay uninstalled, no card wearing those years.
   CLE17: { name: 'Cavaliers', city: 'Cleveland',  abbr: 'CLE', primary: '#860038', secondary: '#FDBB30', logo: '/logos/CLE17.png', era: '2018-2022', unverifiedColors: true },
   DET02: { name: 'Pistons',  city: 'Detroit',     abbr: 'DET', primary: '#C8102E', secondary: '#1D42BA', logo: '/logos/DET02.png', era: '2002-2005', unverifiedColors: true },
   LAC16: { name: 'Clippers', city: 'Los Angeles', abbr: 'LAC', primary: '#C8102E', secondary: '#1D428A', logo: '/logos/LAC16.png', era: '2016-2024', unverifiedColors: true },
@@ -210,9 +214,11 @@ export const HISTORICAL_TEAMS = {
   ORL89: { name: 'Magic',    city: 'Orlando',     abbr: 'ORL', primary: '#0077C0', secondary: '#000000', logo: '/logos/ORL89.png', era: '1989-2000', unverifiedColors: true },
   ORL01: { name: 'Magic',    city: 'Orlando',     abbr: 'ORL', primary: '#0077C0', secondary: '#C4CED4', logo: '/logos/ORL01.png', era: '2001-2010', unverifiedColors: true },
   // The lightning-bolt wordmark era, worn through Chris Webber's rookie year —
-  // the Warriors' only card before 1998 (the user is supplying the mark,
-  // 2026-09-07). Royal blue and gold, as the GSW row carries today.
-  GSW89: { name: 'Warriors', city: 'Golden State', abbr: 'GSW', primary: '#1D4289', secondary: '#FFC72C', logo: '/logos/GSW89.png', era: '1989-1997', unverifiedColors: true },
+  // the Warriors' only card before 1998. Installed by the user 2026-09-07 as a
+  // GIF (card-art/logo-originals/GSW89.gif) — the EXTENSION IS LOAD-BEARING:
+  // logoFiles.test.js picks its header parser by it. Royal blue and gold, as
+  // the GSW row carries today.
+  GSW89: { name: 'Warriors', city: 'Golden State', abbr: 'GSW', primary: '#1D4289', secondary: '#FFC72C', logo: '/logos/GSW89.gif', era: '1989-1997', unverifiedColors: true },
   GSW98: { name: 'Warriors', city: 'Golden State', abbr: 'GSW', primary: '#04529C', secondary: '#FFCC33', logo: '/logos/GSW98.png', era: '1998-2010', unverifiedColors: true },
   LAC84: { name: 'Clippers', city: 'Los Angeles', abbr: 'LAC', primary: '#ED174C', secondary: '#006BB6', logo: '/logos/LAC84.png', era: '1985-2015', unverifiedColors: true },
   PHX93: { name: 'Suns',     city: 'Phoenix',     abbr: 'PHX', primary: '#1D1160', secondary: '#E56020', logo: '/logos/PHX93.png', era: '1993-2000', unverifiedColors: true },

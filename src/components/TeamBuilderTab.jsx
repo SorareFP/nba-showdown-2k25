@@ -6,6 +6,7 @@ import { CAP, MAX, capSal, randomizeTeam, ownedRoster, DEFAULT_FILTERS, filterPo
 import PoolFilters from './PoolFilters.jsx';
 import PlayerCard from './PlayerCard.jsx';
 import { useLightbox } from './CardLightbox.jsx';
+import { useDialogs } from '../ui/dialogs.jsx';
 import { useAuth } from '../firebase/AuthProvider.jsx';
 import { saveTeam, loadTeams } from '../firebase/savedTeams.js';
 import styles from './TeamBuilderTab.module.css';
@@ -14,6 +15,7 @@ import styles from './TeamBuilderTab.module.css';
 export default function TeamBuilderTab({ teamA, setTeamA, teamB, setTeamB, onStartGame, collection }) {
   const { open } = useLightbox();
   const { user } = useAuth();
+  const { toast, askText } = useDialogs();
   const enforceOwnership = !!user && Object.keys(collection || {}).length > 0;
   const [filters, setFilters] = useState(DEFAULT_FILTERS);
   const [loadModal, setLoadModal] = useState(null); // null | { slot: 'A'|'B', teams: [] }
@@ -21,11 +23,15 @@ export default function TeamBuilderTab({ teamA, setTeamA, teamB, setTeamB, onSta
   const allTeams = useMemo(() => [...new Set(CARDS.map(c => c.team))].sort(), []);
 
   const handleSave = async (roster) => {
-    const name = prompt('Team name:');
-    if (!name?.trim()) return;
+    const name = await askText({
+      title: 'Name this team',
+      placeholder: 'Bench Mob',
+      confirmLabel: 'Save team',
+    });
+    if (!name) return;
     const sal = capSal(roster);
-    await saveTeam(user.uid, { name: name.trim(), players: roster.map(c => c.id), salary: sal });
-    alert('Team saved!');
+    await saveTeam(user.uid, { name, players: roster.map(c => c.id), salary: sal });
+    toast(`Saved “${name}” — $${sal.toLocaleString()}`, { tone: 'success' });
   };
 
   const handleLoadOpen = async (slot) => {
@@ -36,7 +42,9 @@ export default function TeamBuilderTab({ teamA, setTeamA, teamB, setTeamB, onSta
   const handleLoadSelect = (savedTeam) => {
     // Only the cards still owned — see ownedRoster in teamRules.js.
     const { roster: ids, dropped } = ownedRoster(savedTeam.players, enforceOwnership ? collection : null);
-    if (dropped.length) alert(`${dropped.length} player${dropped.length === 1 ? '' : 's'} no longer in your collection left out.`);
+    if (dropped.length) {
+      toast(`${dropped.length} player${dropped.length === 1 ? ' is' : 's are'} no longer in your collection and ${dropped.length === 1 ? 'was' : 'were'} left out.`);
+    }
     const roster = ids.map(id => CARD_MAP[id]).filter(Boolean);
     if (loadModal.slot === 'A') setTeamA(roster);
     else setTeamB(roster);
@@ -49,8 +57,11 @@ export default function TeamBuilderTab({ teamA, setTeamA, teamB, setTeamB, onSta
   }, [filters, enforceOwnership, collection]);
 
   const addTo = (team, setTeam, card) => {
-    if (team.length >= MAX) return alert('Team full (max 10)');
-    if (capSal(team) + card.salary > CAP) return alert(`Over salary cap ($${CAP})`);
+    if (team.length >= MAX) return toast(`Team full — ${MAX} players is the roster.`, { tone: 'error' });
+    if (capSal(team) + card.salary > CAP) {
+      const over = capSal(team) + card.salary - CAP;
+      return toast(`${card.name} puts you $${over.toLocaleString()} over the $${CAP.toLocaleString()} cap.`, { tone: 'error' });
+    }
     if (!team.find(c => c.id === card.id)) setTeam([...team, card]);
   };
 

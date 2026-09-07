@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useAuth } from '../firebase/AuthProvider.jsx';
+import { useDialogs } from '../ui/dialogs.jsx';
 import {
   onGameState, onPrivateData, onRoomMeta,
   writeGameState, writePrivateData, forfeitGame, abandonGame,
@@ -22,6 +23,7 @@ import styles from './PvpGame.module.css';
 
 export default function PvpGame({ roomCode, myRole, onLeave }) {
   const { user } = useAuth();
+  const { toast, ask } = useDialogs();
 
   const [meta, setMeta]             = useState(null);
   const [publicGame, setPublicGame] = useState(null);
@@ -214,7 +216,7 @@ export default function PvpGame({ roomCode, myRole, onLeave }) {
     console.log('[PvP] localGame phase:', clone.phase, 'matchupTurn:', clone.matchupTurn);
     const result = execCard(clone, teamKey, cardId, opts);
     console.log('[PvP] execCard result:', { ok: result.ok, msg: result.msg });
-    if (!result.ok) { alert(result.msg); return; }
+    if (!result.ok) { toast(result.msg, { tone: 'error' }); return; }
     try {
       await syncToFirebase(result.game);
       console.log('[PvP] syncToFirebase succeeded');
@@ -230,13 +232,13 @@ export default function PvpGame({ roomCode, myRole, onLeave }) {
 
   const handleSpendAssist = useCallback(async (teamKey, spendType, playerIdx) => {
     const result = spendAssist(JSON.parse(JSON.stringify(localGame)), teamKey, spendType, playerIdx);
-    if (!result.ok) { alert(result.msg); return; }
+    if (!result.ok) { toast(result.msg, { tone: 'error' }); return; }
     await syncToFirebase(result.game);
   }, [localGame, syncToFirebase]);
 
   const handleSpendRebound = useCallback(async (teamKey, rebType, playerIdx) => {
     const result = spendReboundBonus(JSON.parse(JSON.stringify(localGame)), teamKey, rebType, playerIdx);
-    if (!result.ok) { alert(result.msg); return; }
+    if (!result.ok) { toast(result.msg, { tone: 'error' }); return; }
     await syncToFirebase(result.game);
   }, [localGame, syncToFirebase]);
 
@@ -401,14 +403,26 @@ export default function PvpGame({ roomCode, myRole, onLeave }) {
 
   // ── End-game actions ────────────────────────────────────────────────────
   const handleForfeit = useCallback(async () => {
-    if (!confirm('Are you sure you want to forfeit? Your opponent will be declared the winner.')) return;
+    const yes = await ask({
+      title: 'Forfeit this game?',
+      body: 'Your opponent is declared the winner straight away.',
+      confirmLabel: 'Forfeit',
+      tone: 'danger',
+    });
+    if (!yes) return;
     await forfeitGame(roomCode, myRole);
-  }, [roomCode, myRole]);
+  }, [roomCode, myRole, ask]);
 
   const handleAbandon = useCallback(async () => {
-    if (!confirm('Abandon this game? It will be marked as abandoned for both players.')) return;
+    const yes = await ask({
+      title: 'Abandon this game?',
+      body: 'It is marked abandoned for both players — nobody wins it.',
+      confirmLabel: 'Abandon',
+      tone: 'danger',
+    });
+    if (!yes) return;
     await abandonGame(roomCode);
-  }, [roomCode]);
+  }, [roomCode, ask]);
 
   // ── Terminal states ─────────────────────────────────────────────────────
   if (meta?.status === 'forfeit') {

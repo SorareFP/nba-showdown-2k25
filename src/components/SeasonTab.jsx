@@ -30,6 +30,7 @@
 // lobby to seat them. Until that exists, a season is you against the league.
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useAuth } from '../firebase/AuthProvider.jsx';
+import { useDialogs } from '../ui/dialogs.jsx';
 import {
   createSeason, standings, roundFixtures, recordResult, rostersOf,
   simulateRound, simulatePlayoffRound, roundComplete, advance, totalRounds,
@@ -63,6 +64,7 @@ export default function SeasonTab({
   onResultConsumed,
 }) {
   const { user } = useAuth();
+  const { ask } = useDialogs();
   const uid = user?.uid ?? null;
   const [seasons, setSeasons] = useState([]);
   const [active, setActive] = useState(null);
@@ -145,11 +147,17 @@ export default function SeasonTab({
   }, [uid]);
 
   const remove = useCallback(async id => {
-    if (!confirm('Abandon this season? Its schedule and standings are deleted.')) return;
+    const yes = await ask({
+      title: 'Abandon this season?',
+      body: 'Its schedule, standings and results are deleted. This cannot be undone.',
+      confirmLabel: 'Abandon season',
+      tone: 'danger',
+    });
+    if (!yes) return;
     await deleteSeason(uid, id);
     setSeasons(list => list.filter(s => s.id !== id));
     setActive(prev => (prev?.id === id ? null : prev));
-  }, [uid]);
+  }, [uid, ask]);
 
   if (loading) return <div className={styles.wrap}><div className={styles.muted}>Loading seasons…</div></div>;
 
@@ -390,6 +398,7 @@ function Choice({ on, onClick, title, sub, disabled = false }) {
 // ── The season itself ───────────────────────────────────────────────────────
 
 function Dashboard({ season, uid, commit, onPlayFixture, onBack, onAbandon }) {
+  const { ask } = useDialogs();
   const [note, setNote] = useState(null);
   const [claiming, setClaiming] = useState(false);
   const by = useMemo(() => teamsById(season), [season]);
@@ -454,11 +463,16 @@ function Dashboard({ season, uid, commit, onPlayFixture, onBack, onAbandon }) {
 
   // Commissioner tools, the user's own list: force-sim your own game, or run
   // the rest of the round without waiting on anyone.
-  const simMine = useCallback(() => {
+  const simMine = useCallback(async () => {
     if (!mine) return;
-    if (!confirm('Sim your own game? You will not play it, and a simmed game pays no coins.')) return;
+    const yes = await ask({
+      title: 'Sim your own game?',
+      body: 'The result counts in the standings, but you will not play it — and a simmed game pays no coins.',
+      confirmLabel: 'Sim it',
+    });
+    if (!yes) return;
     commit(recordResult(season, simulateFixture(mine, rostersOf(season))));
-  }, [mine, season, commit]);
+  }, [mine, season, commit, ask]);
 
   const simRest = useCallback(() => {
     const skip = myGameLeft && mine ? [mine.id] : [];

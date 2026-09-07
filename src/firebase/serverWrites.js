@@ -55,7 +55,7 @@ import {
   delistCard as delistCardDirect,
   buyListing as buyListingDirect,
 } from './market.js';
-import { generatePack, PACK_TYPES } from '../game/packEngine.js';
+import { generatePack, PACK_TYPES, favoriteTeamOptions } from '../game/packEngine.js';
 import { getStrat } from '../game/strats.js';
 import { getCardByKey } from '../game/cardSets.js';
 import { getPlayerRarity, BURN_VALUES, getStratRarity, STRAT_BURN_VALUES } from '../game/rarity.js';
@@ -118,6 +118,7 @@ const server = {
   burnCard: (uid, cardKey) => call('burnCard', { cardKey }),
   claimGameReward: (uid, claim) => call('claimGameReward', claim),
   claimSeasonReward: (uid, seasonId) => call('claimSeasonReward', { seasonId }),
+  setFavoriteTeam: (uid, team) => call('setFavoriteTeam', { team }),
   collectCard: (uid, cardKey) => call('collectCard', { cardKey }),
   devResetAccount: () => call('devResetAccount', {}),
 };
@@ -136,6 +137,24 @@ const direct = {
   },
   buyListing: (uid, listingId) => buyListingDirect(uid, listingId),
   claimGoal: (uid, goalId) => claimGoalDirect(uid, goalId),
+  /**
+   * The permanent favourite-team choice, made in the browser. Write-once here
+   * too — the transaction is the whole point of the call, not the round trip.
+   */
+  async setFavoriteTeam(uid, team) {
+    const value = String(team ?? '').trim().toLowerCase();
+    if (!favoriteTeamOptions().includes(value)) throw new Error(`Unknown team ${value}`);
+    const userRef = doc(db, 'users', uid);
+    await runTransaction(db, async tx => {
+      const snap = await tx.get(userRef);
+      if (!snap.exists()) throw new Error('No such player');
+      const existing = snap.data().favoriteTeam;
+      if (existing) throw new Error(`Your team is already ${existing} — that choice is permanent`);
+      tx.update(userRef, { favoriteTeam: value });
+    });
+    return { favoriteTeam: value };
+  },
+
   /**
    * A finished season's title money, paid in the browser. The receipt is the
    * same `claims/season:{id}` document the server writes, so a client that
@@ -267,6 +286,8 @@ export const burnCard = (uid, cardKey) => impl.burnCard(uid, cardKey);
 export const claimGameReward = (uid, claim) => impl.claimGameReward(uid, claim);
 /** Pay a finished season's title money, once. Returns `{ coins, label }`. */
 export const claimSeasonReward = (uid, seasonId) => impl.claimSeasonReward(uid, seasonId);
+/** Name a favourite team, once and for good. `team` is league-qualified: "nba:MIL". */
+export const setFavoriteTeam = (uid, team) => impl.setFavoriteTeam(uid, team);
 /** Put one owned copy into the collection. Returns `{ cardKey, copyId }`. */
 export const collectCard = (uid, cardKey) => impl.collectCard(uid, cardKey);
 /** DEV ONLY. Wipes the caller's collection, ledger and wallet. */

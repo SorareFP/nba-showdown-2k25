@@ -7,7 +7,8 @@ import { loadCollection, getUserData, loadClaims, addCoins, readSupply, updateUs
 // collection.js or market.js directly would bypass USE_CLOUD_FUNCTIONS, which
 // is exactly how the first version of the server rollout was wired to nothing.
 import {
-  openPack, listCard, burnCard, claimGoal, devResetAccount, USE_CLOUD_FUNCTIONS, collectCard } from '../firebase/serverWrites.js';
+  openPack, listCard, burnCard, claimGoal, devResetAccount, USE_CLOUD_FUNCTIONS, collectCard,
+  setFavoriteTeam } from '../firebase/serverWrites.js';
 import { CARD_MAP } from '../game/cards.js';
 import { STRAT_MAP } from '../game/strats.js';
 import { PACK_TYPES } from '../game/packEngine.js';
@@ -18,6 +19,8 @@ import PackOpening from './PackOpening.jsx';
 import MyCollection from './MyCollection.jsx';
 import Market from './Market.jsx';
 import CollectionGoals from './CollectionGoals.jsx';
+import FavoriteTeamPicker, { teamForOption, favoriteTeamName } from './FavoriteTeamPicker.jsx';
+import { logoSrc } from '../cards/CardTemplate.jsx';
 import { collectableKeys } from '../game/collections.js';
 import styles from './CollectionTab.module.css';
 
@@ -58,6 +61,11 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange }) {
   // engine had before supply existed, so a slow or failed read costs fairness,
   // never a broken pack.
   const [supply, setSupply] = useState({});
+  // The permanent choice: null until it is made, and then never null again.
+  // See FavoriteTeamPicker for why it is a screen rather than a dropdown.
+  const [pickingTeam, setPickingTeam] = useState(false);
+  const [teamBusy, setTeamBusy] = useState(false);
+  const [teamError, setTeamError] = useState(null);
 
   const refresh = useCallback(async () => {
     if (!user) return;
@@ -88,6 +96,28 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange }) {
   // `undefined` counts as not opened: older accounts have no field and are
   // no longer migrated (the rules refuse that write from here).
   const showStarterPrompt = userData && !userData.starterPackOpened;
+
+  // THE ORDER MATTERS: the starter's three commons and an uncommon are drawn
+  // from the favourite team on the SERVER, off the user document, so a starter
+  // opened before the choice is made is a starter that never gets the core.
+  // The button waits.
+  const favorite = userData?.favoriteTeam ?? null;
+  const favoriteTeam = favorite ? teamForOption(favorite) : null;
+
+  const handlePickTeam = async option => {
+    setTeamBusy(true);
+    setTeamError(null);
+    try {
+      const { favoriteTeam: chosen } = await setFavoriteTeam(user.uid, option);
+      setUserData(u => (u ? { ...u, favoriteTeam: chosen } : u));
+      setPickingTeam(false);
+      setToast(`${favoriteTeamName(chosen)} it is — that one is for good.`);
+    } catch (e) {
+      setTeamError(e.message);
+    } finally {
+      setTeamBusy(false);
+    }
+  };
 
   const handleDeleteTeam = async (teamId) => {
     if (!confirm('Delete this team?')) return;
@@ -336,11 +366,40 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange }) {
       {/* Starter pack banner */}
       {showStarterPrompt && (
         <div className={styles.starterBanner}>
-          <div className={styles.starterText}>Welcome! Open your Starter Pack to begin collecting.</div>
-          <button className={styles.starterBtn} onClick={handleOpenStarter}>
-            Open Starter Pack
-          </button>
+          <div className={styles.starterText}>
+            {favoriteTeam
+              ? `Welcome! Your Starter Pack has ${favoriteTeam.city} ${favoriteTeam.name} cards in it.`
+              : 'Welcome! Pick the team you support — your Starter Pack is built around them.'}
+          </div>
+          {favoriteTeam ? (
+            <button className={styles.starterBtn} onClick={handleOpenStarter}>
+              Open Starter Pack
+            </button>
+          ) : (
+            <button className={styles.starterBtn} onClick={() => setPickingTeam(true)}>
+              Pick my team
+            </button>
+          )}
         </div>
+      )}
+
+      {/* An account that predates the choice, or one that skipped it. */}
+      {!showStarterPrompt && userData && !favorite && (
+        <div className={styles.favoriteBanner}>
+          <div className={styles.starterText}>
+            Pick a favourite team and packs will lean their way. One choice, and it is permanent.
+          </div>
+          <button className={styles.favoriteBtn} onClick={() => setPickingTeam(true)}>Pick my team</button>
+        </div>
+      )}
+
+      {pickingTeam && (
+        <FavoriteTeamPicker
+          busy={teamBusy}
+          error={teamError}
+          onChoose={handlePickTeam}
+          onCancel={teamBusy ? null : () => { setPickingTeam(false); setTeamError(null); }}
+        />
       )}
 
       {/* Sub-navigation */}
@@ -359,6 +418,14 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange }) {
             )}
           </button>
         ))}
+        {favoriteTeam && (
+          <div className={styles.navFavorite} title={`Your team: ${favoriteTeam.city} ${favoriteTeam.name}. This choice is permanent.`}>
+            {favoriteTeam.logo
+              ? <img className={styles.navCrest} src={logoSrc(favoriteTeam.logo)} alt="" />
+              : <span className={styles.navCrestDot} style={{ background: favoriteTeam.primary }} />}
+            {favoriteTeam.name}
+          </div>
+        )}
         {userData && (
           <div className={styles.navBalance}>
             <span className={styles.coinIcon}>$</span>{userData.currency ?? 0} coins

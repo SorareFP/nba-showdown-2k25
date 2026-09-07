@@ -156,6 +156,14 @@ export const HISTORICAL_TEAMS = {
   SAC95: { name: 'Kings',    city: 'Sacramento',  abbr: 'SAC', primary: '#5A2D81', secondary: '#000000', logo: '/logos/SAC95.png', era: '1995-2016', unverifiedColors: true },
   CLE04: { name: 'Cavaliers', city: 'Cleveland',  abbr: 'CLE', primary: '#860038', secondary: '#FDBB30', logo: '/logos/CLE04.png', era: '2004-2010', unverifiedColors: true },
   CLE16: { name: 'Cavaliers', city: 'Cleveland',  abbr: 'CLE', primary: '#860038', secondary: '#FDBB30', logo: '/logos/CLE16.png', era: '2011-2017', unverifiedColors: true },
+  // THE WINE-AND-GOLD C, AFTER NAVY WAS DROPPED and before the 2022 rebrand —
+  // the mark five cards were played under (Sexton 2019, Garland 2020, Okoro
+  // 2021, Mobley 2022, Rondo 2022), all of which read today's CLE.png until
+  // now. The colours matter as much as the file here: the 2022 rebrand moved
+  // the wine to #6F263D and the gold to #B9975B, so those cards were printing
+  // a palette their season never wore. CLE17.png is WANTED (the user, 2026-09-07);
+  // until it lands these print a lettered circle, the same trade GSW89 is in.
+  CLE17: { name: 'Cavaliers', city: 'Cleveland',  abbr: 'CLE', primary: '#860038', secondary: '#FDBB30', logo: '/logos/CLE17.png', era: '2018-2022', unverifiedColors: true },
   DET02: { name: 'Pistons',  city: 'Detroit',     abbr: 'DET', primary: '#C8102E', secondary: '#1D42BA', logo: '/logos/DET02.png', era: '2002-2005', unverifiedColors: true },
   LAC16: { name: 'Clippers', city: 'Los Angeles', abbr: 'LAC', primary: '#C8102E', secondary: '#1D428A', logo: '/logos/LAC16.png', era: '2016-2024', unverifiedColors: true },
   TOR96: { name: 'Raptors',  city: 'Toronto',     abbr: 'TOR', primary: '#753BBD', secondary: '#CE1141', logo: '/logos/TOR96.png', era: '1996-2006', unverifiedColors: true },
@@ -253,6 +261,7 @@ export const FRANCHISE_ERAS = {
   CLE: [
     { from: 2004, to: 2010, key: 'CLE04' },
     { from: 2011, to: 2017, key: 'CLE16' },
+    { from: 2018, to: 2022, key: 'CLE17' },
   ],
   DET: [
     { from: 1979, to: 1996, key: 'DET79' },
@@ -764,6 +773,28 @@ export function currentFranchise(team) {
 export function canonicalTeamFor(abbr, { league } = {}) {
   if (league === 'WNBA') return String(abbr ?? '').toUpperCase();
   return canonicalTeam(abbr);
+}
+
+/**
+ * The franchise a card's team code belongs to TODAY, in the right league.
+ *
+ * `currentFranchise` reads every code as an NBA one, and two of the NBA's own
+ * franchise moves then land on WNBA teams that never went anywhere: PHO is an
+ * alias for the Suns, so the Phoenix Mercury came out as "PHX"; SEA relocated
+ * to Oklahoma City, so the Seattle Storm came out as "OKC". Both then miss
+ * WNBA_TEAMS entirely and print as Unknown — which is how this was found, two
+ * blank tiles in the favourite-team picker.
+ *
+ * There is nothing to resolve on the WNBA side: that table is keyed by
+ * Basketball-Reference's current codes, with no era keys and no relocations, so
+ * a WNBA code IS its franchise.
+ */
+export function currentFranchiseFor(team, { league } = {}) {
+  if (league === 'WNBA' || league === 'wnba') {
+    const code = String(team ?? '').toUpperCase();
+    return code || null;
+  }
+  return currentFranchise(team);
 }
 
 /** How many franchises a league's table holds — the editor's denominator. */

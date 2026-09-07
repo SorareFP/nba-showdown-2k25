@@ -11,7 +11,7 @@
 // strange-jersey stints are reward territory, like the Bam 83-point card.
 import { STRATS } from './strats.js';
 import { CARD_SETS, BASE_SET, cardKey } from './cardSets.js';
-import { currentFranchise } from '../cards/teams.js';
+import { currentFranchise, currentFranchiseFor } from '../cards/teams.js';
 import { getPlayerRarity, getStratRarity, PACK_WEIGHTS, RARITY_ORDER } from './rarity.js';
 
 // NBA divisions and conferences for themed packs
@@ -157,9 +157,12 @@ export function parseFavoriteTeam(value) {
 export function favoriteTeamOptions() {
   const seen = new Map();
   for (const c of leagueBases()) {
-    const abbr = currentFranchise(c.team);
+    // PER LEAGUE, or the Mercury are the Suns and the Storm are the Thunder —
+    // see currentFranchiseFor.
+    const league = leagueOfCard(c);
+    const abbr = currentFranchiseFor(c.team, { league: league === 'wnba' ? 'WNBA' : 'NBA' });
     if (!abbr) continue;
-    const key = `${leagueOfCard(c)}:${abbr}`;
+    const key = `${league}:${abbr}`;
     seen.set(key, (seen.get(key) ?? 0) + 1);
   }
   return [...seen.entries()]
@@ -493,7 +496,8 @@ export function generatePack(packType, options = {}) {
   if (def.favoriteCore && options.favoriteTeam) {
     const want = parseFavoriteTeam(options.favoriteTeam);
     const mine = want
-      ? playerPool.filter(c => leagueOfCard(c) === want.league && currentFranchise(c.team) === want.abbr)
+      ? playerPool.filter(c => leagueOfCard(c) === want.league
+        && currentFranchiseFor(c.team, { league: want.league === 'wnba' ? 'WNBA' : 'NBA' }) === want.abbr)
       : [];
     const taken = new Set();
     const takeFrom = (band, n) => {

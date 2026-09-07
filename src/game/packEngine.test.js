@@ -9,7 +9,7 @@ import {
 import { CARD_MAP } from './cards.js';
 import { TEAM_ROSTERS } from './collections.js';
 import { CARD_SETS, BASE_SET, cardKey, ALL_CARDS } from './cardSets.js';
-import { currentFranchise } from '../cards/teams.js';
+import { currentFranchise, currentFranchiseFor, getTeam } from '../cards/teams.js';
 import { getPlayerRarity, RARITY_ORDER } from './rarity.js';
 import { shopPacks, PACK_COPY } from '../components/PackShop.jsx';
 
@@ -361,6 +361,40 @@ describe('the starter pack\'s favourite-team core', () => {
     expect(opts.filter(o => o.startsWith('wnba:')).length).toBeGreaterThanOrEqual(12);
     expect(opts).toContain('nba:MIL');
     expect(opts).toContain('wnba:LVA');
+  });
+
+  it('offers nothing the team tables cannot name', () => {
+    // THE PICKER PUTS EVERY ONE OF THESE ON SCREEN. Two used to come out as
+    // "Unknown" behind a grey ball: `favoriteTeamOptions` read WNBA codes
+    // through the NBA's franchise history, so the Phoenix Mercury resolved to
+    // the Suns' PHX and the Seattle Storm to the Thunder's OKC, and neither is
+    // in WNBA_TEAMS. A choice you cannot see the name of is not a choice.
+    const unnamed = [];
+    for (const option of favoriteTeamOptions()) {
+      const { league, abbr } = parseFavoriteTeam(option);
+      const team = getTeam(abbr, league === 'wnba' ? { league: 'WNBA' } : {});
+      if (!team || team.name === 'Unknown') unnamed.push(option);
+    }
+    expect(unnamed).toEqual([]);
+  });
+
+  it('keeps the two WNBA franchises the NBA has a claim on', () => {
+    const opts = favoriteTeamOptions();
+    expect(opts).toContain('wnba:PHO'); // Mercury, not the Suns
+    expect(opts).toContain('wnba:SEA'); // Storm, who did not move to Oklahoma
+    expect(opts).not.toContain('wnba:PHX');
+    expect(opts).not.toContain('wnba:OKC');
+    // And the core still finds them, which is the half a bad option would hide.
+    const byKey = new Map(ALL_CARDS.map(c => [cardKey(c), c]));
+    for (const fav of ['wnba:PHO', 'wnba:SEA']) {
+      const want = parseFavoriteTeam(fav);
+      const mine = generatePack('starter', { favoriteTeam: fav })
+        .filter(c => c.type === 'player')
+        .map(c => byKey.get(c.id))
+        .filter(c => c && leagueOfCard(c) === want.league
+          && currentFranchiseFor(c.team, { league: 'WNBA' }) === want.abbr);
+      expect(mine.length, fav).toBeGreaterThanOrEqual(2);
+    }
   });
 
   it('reads a bare code as NBA, so an older stored value keeps working', () => {

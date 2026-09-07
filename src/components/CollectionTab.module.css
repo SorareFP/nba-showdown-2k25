@@ -170,3 +170,34 @@
   border-radius: 999px; background: var(--orange); color: #08131f;
   font-size: 10px; font-weight: 800; line-height: 1; vertical-align: middle;
 }
+
+/* The favourite-team prompt for an account that already has its starter — the
+   choice still buys a pack bias, so it stays on offer. Quieter than the
+   starter banner, which is somebody's first thirty seconds in the game. */
+.favoriteBanner {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px;
+}
+.favoriteBtn {
+  background: transparent; color: var(--text);
+  border: 1px solid var(--border);
+  padding: 8px 18px; border-radius: var(--radius-sm);
+  font-size: 13px; font-weight: 700;
+  white-space: nowrap;
+}
+.favoriteBtn:hover { background: var(--card-hover); }
+
+/* Who you support, beside the balance. Read-only — it is chosen once. */
+.navFavorite {
+  display: flex; align-items: center; gap: 6px;
+  margin-left: auto;
+  font-size: 13px; font-weight: 700;
+  color: var(--text-muted);
+}
+.navFavorite + .navBalance { margin-left: 12px; }
+.navCrest { width: 20px; height: 20px; object-fit: contain; }
+.navCrestDot { width: 16px; height: 16px; border-radius: 50%; }

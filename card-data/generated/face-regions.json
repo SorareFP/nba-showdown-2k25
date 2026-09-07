@@ -5759,8 +5759,5063 @@
         0.1507,
         0.0223
       ]
+    },
+    "rookie/Aaron_Gordon": {
+      "name": [
+        0.0252,
+        0.1331,
+        0.1253,
+        0.6957
+      ],
+      "badge": null
+    },
+    "rookie/Aaron_Holiday": {
+      "name": [
+        0.0252,
+        0.1319,
+        0.1253,
+        0.6981
+      ],
+      "badge": null
+    },
+    "rookie/Aaron_Nesmith": {
+      "name": [
+        0.0252,
+        0.1229,
+        0.1253,
+        0.7161
+      ],
+      "badge": null
+    },
+    "rookie/Aaron_Wiggins": {
+      "name": [
+        0.0252,
+        0.117,
+        0.1253,
+        0.7279
+      ],
+      "badge": null
+    },
+    "rookie/Adem_Bona": {
+      "name": [
+        0.0252,
+        0.2256,
+        0.1253,
+        0.5107
+      ],
+      "badge": null
+    },
+    "rookie/Al_Horford": {
+      "name": [
+        0.0252,
+        0.2073,
+        0.1253,
+        0.5472
+      ],
+      "badge": null
+    },
+    "rookie/Alex_Sarr": {
+      "name": [
+        0.0252,
+        0.2405,
+        0.1253,
+        0.4809
+      ],
+      "badge": null
+    },
+    "rookie/Allan_Houston": {
+      "name": [
+        0.0252,
+        0.1212,
+        0.1253,
+        0.7195
+      ],
+      "badge": null
+    },
+    "rookie/Allen_Iverson": {
+      "name": [
+        0.0252,
+        0.1384,
+        0.1253,
+        0.6852
+      ],
+      "badge": null
+    },
+    "rookie/Alonzo_Mourning": {
+      "name": [
+        0.0323,
+        0.104,
+        0.1109,
+        0.7539
+      ],
+      "badge": null
+    },
+    "rookie/Alperen_Sengun": {
+      "name": [
+        0.0284,
+        0.1081,
+        0.1187,
+        0.7457
+      ],
+      "badge": null
+    },
+    "rookie/Amar_e_Stoudemire": {
+      "name": [
+        0.0388,
+        0.1228,
+        0.0979,
+        0.7163
+      ],
+      "badge": null
+    },
+    "rookie/Amen_Thompson": {
+      "name": [
+        0.0258,
+        0.1086,
+        0.124,
+        0.7446
+      ],
+      "badge": null
+    },
+    "rookie/Andre_Drummond": {
+      "name": [
+        0.0304,
+        0.1005,
+        0.1148,
+        0.7609
+      ],
+      "badge": null
+    },
+    "rookie/Andre_Iguodala": {
+      "name": [
+        0.0284,
+        0.1146,
+        0.1187,
+        0.7327
+      ],
+      "badge": null
+    },
+    "rookie/Andrei_Kirilenko": {
+      "name": [
+        0.0356,
+        0.1393,
+        0.1044,
+        0.6834
+      ],
+      "badge": null
+    },
+    "rookie/Andrew_Nembhard": {
+      "name": [
+        0.0343,
+        0.0994,
+        0.107,
+        0.763
+      ],
+      "badge": null
+    },
+    "rookie/Andrew_Wiggins": {
+      "name": [
+        0.0284,
+        0.0996,
+        0.1187,
+        0.7627
+      ],
+      "badge": null
+    },
+    "rookie/Anfernee_Hardaway": {
+      "name": [
+        0.0395,
+        0.1069,
+        0.0965,
+        0.7481
+      ],
+      "badge": null
+    },
+    "rookie/Anthony_Black": {
+      "name": [
+        0.0252,
+        0.1238,
+        0.1253,
+        0.7142
+      ],
+      "badge": null
+    },
+    "rookie/Anthony_Davis": {
+      "name": [
+        0.0252,
+        0.1325,
+        0.1253,
+        0.6969
+      ],
+      "badge": null
+    },
+    "rookie/Anthony_Edwards": {
+      "name": [
+        0.033,
+        0.1023,
+        0.1096,
+        0.7574
+      ],
+      "badge": null
+    },
+    "rookie/Ausar_Thompson": {
+      "name": [
+        0.0291,
+        0.1036,
+        0.1174,
+        0.7547
+      ],
+      "badge": null
+    },
+    "rookie/Austin_Reaves": {
+      "name": [
+        0.0252,
+        0.1375,
+        0.1253,
+        0.6869
+      ],
+      "badge": null
+    },
+    "rookie/Ayo_Dosunmu": {
+      "name": [
+        0.0252,
+        0.1673,
+        0.1253,
+        0.6274
+      ],
+      "badge": null
+    },
+    "rookie/Bam_Adebayo": {
+      "name": [
+        0.0252,
+        0.1738,
+        0.1253,
+        0.6143
+      ],
+      "badge": null
+    },
+    "rookie/Ben_Sheppard": {
+      "name": [
+        0.0252,
+        0.1499,
+        0.1253,
+        0.6621
+      ],
+      "badge": null
+    },
+    "rookie/Ben_Simmons": {
+      "name": [
+        0.0252,
+        0.1723,
+        0.1253,
+        0.6172
+      ],
+      "badge": null
+    },
+    "rookie/Bennedict_Mathurin": {
+      "name": [
+        0.0415,
+        0.1217,
+        0.0926,
+        0.7185
+      ],
+      "badge": null
+    },
+    "rookie/Bilal_Coulibaly": {
+      "name": [
+        0.0323,
+        0.1481,
+        0.1109,
+        0.6657
+      ],
+      "badge": null
+    },
+    "rookie/Blake_Griffin": {
+      "name": [
+        0.0252,
+        0.1486,
+        0.1253,
+        0.6647
+      ],
+      "badge": null
+    },
+    "rookie/Bobby_Portis": {
+      "name": [
+        0.0252,
+        0.1653,
+        0.1253,
+        0.6314
+      ],
+      "badge": null
+    },
+    "rookie/Bones_Hyland": {
+      "name": [
+        0.0252,
+        0.1473,
+        0.1253,
+        0.6672
+      ],
+      "badge": null
+    },
+    "rookie/Boris_Diaw": {
+      "name": [
+        0.0252,
+        0.2164,
+        0.1253,
+        0.529
+      ],
+      "badge": null
+    },
+    "rookie/Brandin_Podziemski": {
+      "name": [
+        0.0415,
+        0.1256,
+        0.0926,
+        0.7106
+      ],
+      "badge": null
+    },
+    "rookie/Brandon_Ingram": {
+      "name": [
+        0.0284,
+        0.1016,
+        0.1187,
+        0.7587
+      ],
+      "badge": null
+    },
+    "rookie/Brandon_Miller": {
+      "name": [
+        0.0284,
+        0.1174,
+        0.1187,
+        0.7272
+      ],
+      "badge": null
+    },
+    "rookie/Brandon_Roy": {
+      "name": [
+        0.0252,
+        0.1708,
+        0.1253,
+        0.6203
+      ],
+      "badge": null
+    },
+    "rookie/Brandon_Williams": {
+      "name": [
+        0.0356,
+        0.1117,
+        0.1044,
+        0.7386
+      ],
+      "badge": null
+    },
+    "rookie/Brook_Lopez": {
+      "name": [
+        0.0252,
+        0.1823,
+        0.1253,
+        0.5973
+      ],
+      "badge": null
+    },
+    "rookie/Bruce_Brown": {
+      "name": [
+        0.0252,
+        0.1611,
+        0.1253,
+        0.6397
+      ],
+      "badge": null
+    },
+    "rookie/Bryce_McGowens": {
+      "name": [
+        0.0304,
+        0.1079,
+        0.1148,
+        0.7461
+      ],
+      "badge": null
+    },
+    "rookie/Bub_Carrington": {
+      "name": [
+        0.0284,
+        0.1134,
+        0.1187,
+        0.7351
+      ],
+      "badge": null
+    },
+    "rookie/Buddy_Hield": {
+      "name": [
+        0.0252,
+        0.1919,
+        0.1253,
+        0.578
+      ],
+      "badge": null
+    },
+    "rookie/Cade_Cunningham": {
+      "name": [
+        0.0323,
+        0.1051,
+        0.1109,
+        0.7518
+      ],
+      "badge": null
+    },
+    "rookie/Cameron_Johnson": {
+      "name": [
+        0.0323,
+        0.0964,
+        0.1109,
+        0.7692
+      ],
+      "badge": null
+    },
+    "rookie/Caris_LeVert": {
+      "name": [
+        0.0252,
+        0.1744,
+        0.1253,
+        0.6132
+      ],
+      "badge": null
+    },
+    "rookie/Carmelo_Anthony": {
+      "name": [
+        0.033,
+        0.1112,
+        0.1096,
+        0.7395
+      ],
+      "badge": null
+    },
+    "rookie/Cason_Wallace": {
+      "name": [
+        0.0252,
+        0.1187,
+        0.1253,
+        0.7245
+      ],
+      "badge": null
+    },
+    "rookie/Charles_Barkley": {
+      "name": [
+        0.0323,
+        0.1201,
+        0.1109,
+        0.7218
+      ],
+      "badge": null
+    },
+    "rookie/Chauncey_Billups": {
+      "name": [
+        0.0356,
+        0.1232,
+        0.1044,
+        0.7155
+      ],
+      "badge": null
+    },
+    "rookie/Chet_Holmgren": {
+      "name": [
+        0.0252,
+        0.1156,
+        0.1253,
+        0.7308
+      ],
+      "badge": null
+    },
+    "rookie/Chris_Webber": {
+      "name": [
+        0.0252,
+        0.1488,
+        0.1253,
+        0.6642
+      ],
+      "badge": null
+    },
+    "rookie/Christian_Braun": {
+      "name": [
+        0.0323,
+        0.1272,
+        0.1109,
+        0.7076
+      ],
+      "badge": null
+    },
+    "rookie/Coby_White": {
+      "name": [
+        0.0252,
+        0.2158,
+        0.1253,
+        0.5303
+      ],
+      "badge": null
+    },
+    "rookie/Cody_Williams": {
+      "name": [
+        0.0252,
+        0.1371,
+        0.1253,
+        0.6878
+      ],
+      "badge": null
+    },
+    "rookie/Collin_Sexton": {
+      "name": [
+        0.0252,
+        0.1428,
+        0.1253,
+        0.6763
+      ],
+      "badge": null
+    },
+    "rookie/Corey_Kispert": {
+      "name": [
+        0.0252,
+        0.1435,
+        0.1253,
+        0.6749
+      ],
+      "badge": null
+    },
+    "rookie/Craig_Porter_Jr": {
+      "name": [
+        0.0356,
+        0.1493,
+        0.1044,
+        0.6634
+      ],
+      "badge": null
+    },
+    "rookie/Damian_Lillard": {
+      "name": [
+        0.0284,
+        0.134,
+        0.1187,
+        0.6939
+      ],
+      "badge": null
+    },
+    "rookie/Daniel_Gafford": {
+      "name": [
+        0.0284,
+        0.1245,
+        0.1187,
+        0.7129
+      ],
+      "badge": null
+    },
+    "rookie/Daniel_Gibson": {
+      "name": [
+        0.0252,
+        0.1401,
+        0.1253,
+        0.6816
+      ],
+      "badge": null
+    },
+    "rookie/Darius_Garland": {
+      "name": [
+        0.0284,
+        0.1134,
+        0.1187,
+        0.735
+      ],
+      "badge": null
+    },
+    "rookie/David_Robinson": {
+      "name": [
+        0.0284,
+        0.1268,
+        0.1187,
+        0.7083
+      ],
+      "badge": null
+    },
+    "rookie/Davion_Mitchell": {
+      "name": [
+        0.0323,
+        0.1374,
+        0.1109,
+        0.6871
+      ],
+      "badge": null
+    },
+    "rookie/De_Aaron_Fox": {
+      "name": [
+        0.0252,
+        0.1659,
+        0.1253,
+        0.6301
+      ],
+      "badge": null
+    },
+    "rookie/De_Andre_Hunter": {
+      "name": [
+        0.0323,
+        0.1232,
+        0.1109,
+        0.7155
+      ],
+      "badge": null
+    },
+    "rookie/De_Anthony_Melton": {
+      "name": [
+        0.0388,
+        0.1255,
+        0.0979,
+        0.7109
+      ],
+      "badge": null
+    },
+    "rookie/Deandre_Ayton": {
+      "name": [
+        0.0252,
+        0.1227,
+        0.1253,
+        0.7166
+      ],
+      "badge": null
+    },
+    "rookie/DeMar_DeRozan": {
+      "name": [
+        0.0252,
+        0.1106,
+        0.1253,
+        0.7408
+      ],
+      "badge": null
+    },
+    "rookie/Deni_Avdija": {
+      "name": [
+        0.0252,
+        0.2035,
+        0.1253,
+        0.5549
+      ],
+      "badge": null
+    },
+    "rookie/Dennis_Rodman": {
+      "name": [
+        0.0252,
+        0.1163,
+        0.1253,
+        0.7292
+      ],
+      "badge": null
+    },
+    "rookie/Dennis_Schroder": {
+      "name": [
+        0.0323,
+        0.1152,
+        0.1109,
+        0.7315
+      ],
+      "badge": null
+    },
+    "rookie/Derek_Fisher": {
+      "name": [
+        0.0252,
+        0.1659,
+        0.1253,
+        0.6301
+      ],
+      "badge": null
+    },
+    "rookie/Desmond_Bane": {
+      "name": [
+        0.0252,
+        0.1378,
+        0.1253,
+        0.6862
+      ],
+      "badge": null
+    },
+    "rookie/Devin_Booker": {
+      "name": [
+        0.0252,
+        0.159,
+        0.1253,
+        0.644
+      ],
+      "badge": null
+    },
+    "rookie/Devin_Vassell": {
+      "name": [
+        0.0252,
+        0.1455,
+        0.1253,
+        0.6709
+      ],
+      "badge": null
+    },
+    "rookie/Dillon_Brooks": {
+      "name": [
+        0.0252,
+        0.1339,
+        0.1253,
+        0.6941
+      ],
+      "badge": null
+    },
+    "rookie/Dirk_Nowitzki": {
+      "name": [
+        0.0252,
+        0.1514,
+        0.1253,
+        0.659
+      ],
+      "badge": null
+    },
+    "rookie/Domantas_Sabonis": {
+      "name": [
+        0.0356,
+        0.1099,
+        0.1044,
+        0.7421
+      ],
+      "badge": null
+    },
+    "rookie/Donovan_Clingan": {
+      "name": [
+        0.0323,
+        0.1139,
+        0.1109,
+        0.7341
+      ],
+      "badge": null
+    },
+    "rookie/Donovan_Mitchell": {
+      "name": [
+        0.0356,
+        0.1198,
+        0.1044,
+        0.7222
+      ],
+      "badge": null
+    },
+    "rookie/Draymond_Green": {
+      "name": [
+        0.0291,
+        0.104,
+        0.1174,
+        0.7539
+      ],
+      "badge": null
+    },
+    "rookie/Dwight_Howard": {
+      "name": [
+        0.0252,
+        0.1024,
+        0.1253,
+        0.757
+      ],
+      "badge": null
+    },
+    "rookie/Dwyane_Wade": {
+      "name": [
+        0.0252,
+        0.1584,
+        0.1253,
+        0.6451
+      ],
+      "badge": null
+    },
+    "rookie/Dyson_Daniels": {
+      "name": [
+        0.0252,
+        0.1355,
+        0.1253,
+        0.6909
+      ],
+      "badge": null
+    },
+    "rookie/Eric_Williams": {
+      "name": [
+        0.0252,
+        0.1488,
+        0.1253,
+        0.6642
+      ],
+      "badge": null
+    },
+    "rookie/Evan_Mobley": {
+      "name": [
+        0.0252,
+        0.1788,
+        0.1253,
+        0.6044
+      ],
+      "badge": null
+    },
+    "rookie/Franz_Wagner": {
+      "name": [
+        0.0252,
+        0.1348,
+        0.1253,
+        0.6923
+      ],
+      "badge": null
+    },
+    "rookie/Gary_Harris": {
+      "name": [
+        0.0252,
+        0.1828,
+        0.1253,
+        0.5963
+      ],
+      "badge": null
+    },
+    "rookie/Gary_Payton": {
+      "name": [
+        0.0252,
+        0.1837,
+        0.1253,
+        0.5945
+      ],
+      "badge": null
+    },
+    "rookie/George_Hill": {
+      "name": [
+        0.0252,
+        0.1906,
+        0.1253,
+        0.5806
+      ],
+      "badge": null
+    },
+    "rookie/GG_Jackson_II": {
+      "name": [
+        0.0252,
+        0.1576,
+        0.1253,
+        0.6467
+      ],
+      "badge": null
+    },
+    "rookie/Giannis_Antetokounmpo": {
+      "name": [
+        0.048,
+        0.1105,
+        0.0796,
+        0.7408
+      ],
+      "badge": null
+    },
+    "rookie/Glen_Davis": {
+      "name": [
+        0.0252,
+        0.2219,
+        0.1253,
+        0.518
+      ],
+      "badge": null
+    },
+    "rookie/Gradey_Dick": {
+      "name": [
+        0.0252,
+        0.19,
+        0.1253,
+        0.5819
+      ],
+      "badge": null
+    },
+    "rookie/Grant_Hill": {
+      "name": [
+        0.0252,
+        0.2244,
+        0.1253,
+        0.513
+      ],
+      "badge": null
+    },
+    "rookie/Hakeem_Olajuwon": {
+      "name": [
+        0.033,
+        0.0975,
+        0.1096,
+        0.767
+      ],
+      "badge": null
+    },
+    "rookie/Harrison_Barnes": {
+      "name": [
+        0.0323,
+        0.1118,
+        0.1109,
+        0.7383
+      ],
+      "badge": null
+    },
+    "rookie/Herbert_Jones": {
+      "name": [
+        0.0252,
+        0.1243,
+        0.1253,
+        0.7133
+      ],
+      "badge": null
+    },
+    "rookie/Immanuel_Quickley": {
+      "name": [
+        0.0389,
+        0.1226,
+        0.0979,
+        0.7167
+      ],
+      "badge": null
+    },
+    "rookie/Isaac_Okoro": {
+      "name": [
+        0.0252,
+        0.1886,
+        0.1253,
+        0.5847
+      ],
+      "badge": null
+    },
+    "rookie/Isaiah_Collier": {
+      "name": [
+        0.0284,
+        0.1523,
+        0.1187,
+        0.6573
+      ],
+      "badge": null
+    },
+    "rookie/Isaiah_Stewart": {
+      "name": [
+        0.0284,
+        0.1309,
+        0.1187,
+        0.7002
+      ],
+      "badge": null
+    },
+    "rookie/Isaiah_Thomas": {
+      "name": [
+        0.0252,
+        0.1357,
+        0.1253,
+        0.6905
+      ],
+      "badge": null
+    },
+    "rookie/Ivica_Zubac": {
+      "name": [
+        0.0252,
+        0.2051,
+        0.1253,
+        0.5518
+      ],
+      "badge": null
+    },
+    "rookie/Ja_Morant": {
+      "name": [
+        0.0252,
+        0.2312,
+        0.1253,
+        0.4994
+      ],
+      "badge": null
+    },
+    "rookie/Ja_Kobe_Walter": {
+      "name": [
+        0.0284,
+        0.1332,
+        0.1187,
+        0.6954
+      ],
+      "badge": null
+    },
+    "rookie/Jabari_Smith_Jr": {
+      "name": [
+        0.0356,
+        0.1532,
+        0.1044,
+        0.6555
+      ],
+      "badge": null
+    },
+    "rookie/Jaden_Hardy": {
+      "name": [
+        0.0252,
+        0.1772,
+        0.1253,
+        0.6075
+      ],
+      "badge": null
+    },
+    "rookie/Jaden_McDaniels": {
+      "name": [
+        0.0323,
+        0.1188,
+        0.1109,
+        0.7243
+      ],
+      "badge": null
+    },
+    "rookie/Jaime_Jaquez_Jr": {
+      "name": [
+        0.0356,
+        0.1449,
+        0.1044,
+        0.6722
+      ],
+      "badge": null
+    },
+    "rookie/Jakob_Poeltl": {
+      "name": [
+        0.0252,
+        0.1693,
+        0.1253,
+        0.6233
+      ],
+      "badge": null
+    },
+    "rookie/Jalen_Brunson": {
+      "name": [
+        0.0252,
+        0.1154,
+        0.1253,
+        0.731
+      ],
+      "badge": null
+    },
+    "rookie/Jalen_Duren": {
+      "name": [
+        0.0252,
+        0.179,
+        0.1253,
+        0.6038
+      ],
+      "badge": null
+    },
+    "rookie/Jalen_Green": {
+      "name": [
+        0.0252,
+        0.18,
+        0.1253,
+        0.6019
+      ],
+      "badge": null
+    },
+    "rookie/Jalen_Suggs": {
+      "name": [
+        0.0252,
+        0.173,
+        0.1253,
+        0.6158
+      ],
+      "badge": null
+    },
+    "rookie/Jalen_Williams": {
+      "name": [
+        0.0284,
+        0.1291,
+        0.1187,
+        0.7037
+      ],
+      "badge": null
+    },
+    "rookie/Jalen_Wilson": {
+      "name": [
+        0.0252,
+        0.1558,
+        0.1253,
+        0.6504
+      ],
+      "badge": null
+    },
+    "rookie/Jamal_Murray": {
+      "name": [
+        0.0252,
+        0.1409,
+        0.1253,
+        0.6801
+      ],
+      "badge": null
+    },
+    "rookie/Jamal_Shead": {
+      "name": [
+        0.0252,
+        0.1745,
+        0.1253,
+        0.613
+      ],
+      "badge": null
+    },
+    "rookie/Jameer_Nelson": {
+      "name": [
+        0.0252,
+        0.1173,
+        0.1253,
+        0.7274
+      ],
+      "badge": null
+    },
+    "rookie/James_Harden": {
+      "name": [
+        0.0252,
+        0.1409,
+        0.1253,
+        0.6801
+      ],
+      "badge": null
+    },
+    "rookie/Jared_Dudley": {
+      "name": [
+        0.0252,
+        0.1533,
+        0.1253,
+        0.6553
+      ],
+      "badge": null
+    },
+    "rookie/Jaren_Jackson_Jr": {
+      "name": [
+        0.0388,
+        0.1375,
+        0.0979,
+        0.6869
+      ],
+      "badge": null
+    },
+    "rookie/Jarrett_Allen": {
+      "name": [
+        0.0252,
+        0.1372,
+        0.1253,
+        0.6875
+      ],
+      "badge": null
+    },
+    "rookie/Jason_Collins": {
+      "name": [
+        0.0252,
+        0.1381,
+        0.1253,
+        0.6857
+      ],
+      "badge": null
+    },
+    "rookie/Jason_Richardson": {
+      "name": [
+        0.0356,
+        0.1107,
+        0.1044,
+        0.7406
+      ],
+      "badge": null
+    },
+    "rookie/Jason_Terry": {
+      "name": [
+        0.0252,
+        0.1833,
+        0.1253,
+        0.5953
+      ],
+      "badge": null
+    },
+    "rookie/Jaxson_Hayes": {
+      "name": [
+        0.0252,
+        0.1513,
+        0.1253,
+        0.6593
+      ],
+      "badge": null
+    },
+    "rookie/Jaylen_Brown": {
+      "name": [
+        0.0252,
+        0.1425,
+        0.1253,
+        0.677
+      ],
+      "badge": null
+    },
+    "rookie/Jaylen_Wells": {
+      "name": [
+        0.0252,
+        0.1577,
+        0.1253,
+        0.6464
+      ],
+      "badge": null
+    },
+    "rookie/Jaylin_Williams": {
+      "name": [
+        0.0323,
+        0.14,
+        0.1109,
+        0.6818
+      ],
+      "badge": null
+    },
+    "rookie/Jayson_Tatum": {
+      "name": [
+        0.0252,
+        0.158,
+        0.1253,
+        0.6459
+      ],
+      "badge": null
+    },
+    "rookie/Jerami_Grant": {
+      "name": [
+        0.0252,
+        0.1542,
+        0.1253,
+        0.6535
+      ],
+      "badge": null
+    },
+    "rookie/Joe_Johnson": {
+      "name": [
+        0.0252,
+        0.1733,
+        0.1253,
+        0.6153
+      ],
+      "badge": null
+    },
+    "rookie/Joel_Embiid": {
+      "name": [
+        0.0252,
+        0.2018,
+        0.1253,
+        0.5582
+      ],
+      "badge": null
+    },
+    "rookie/John_Collins": {
+      "name": [
+        0.0252,
+        0.1654,
+        0.1253,
+        0.6311
+      ],
+      "badge": null
+    },
+    "rookie/John_Stockton": {
+      "name": [
+        0.0252,
+        0.1247,
+        0.1253,
+        0.7126
+      ],
+      "badge": null
+    },
+    "rookie/John_Wall": {
+      "name": [
+        0.0252,
+        0.2307,
+        0.1253,
+        0.5004
+      ],
+      "badge": null
+    },
+    "rookie/Jonas_Valanciunas": {
+      "name": [
+        0.0388,
+        0.1166,
+        0.0979,
+        0.7287
+      ],
+      "badge": null
+    },
+    "rookie/Jordan_Clarkson": {
+      "name": [
+        0.0323,
+        0.1089,
+        0.1109,
+        0.7441
+      ],
+      "badge": null
+    },
+    "rookie/Jordan_Hawkins": {
+      "name": [
+        0.0284,
+        0.1058,
+        0.1187,
+        0.7502
+      ],
+      "badge": null
+    },
+    "rookie/Jose_Alvarado": {
+      "name": [
+        0.0252,
+        0.1289,
+        0.1253,
+        0.7041
+      ],
+      "badge": null
+    },
+    "rookie/Josh_Giddey": {
+      "name": [
+        0.0252,
+        0.1866,
+        0.1253,
+        0.5886
+      ],
+      "badge": null
+    },
+    "rookie/Josh_Hart": {
+      "name": [
+        0.0252,
+        0.2376,
+        0.1253,
+        0.4867
+      ],
+      "badge": null
+    },
+    "rookie/Josh_Howard": {
+      "name": [
+        0.0252,
+        0.1609,
+        0.1253,
+        0.6401
+      ],
+      "badge": null
+    },
+    "rookie/Josh_Okogie": {
+      "name": [
+        0.0252,
+        0.1862,
+        0.1253,
+        0.5896
+      ],
+      "badge": null
+    },
+    "rookie/Josh_Smith": {
+      "name": [
+        0.0252,
+        0.2144,
+        0.1253,
+        0.5331
+      ],
+      "badge": null
+    },
+    "rookie/JR_Smith": {
+      "name": [
+        0.0252,
+        0.2749,
+        0.1253,
+        0.4121
+      ],
+      "badge": null
+    },
+    "rookie/Jrue_Holiday": {
+      "name": [
+        0.0252,
+        0.1666,
+        0.1253,
+        0.6287
+      ],
+      "badge": null
+    },
+    "rookie/Justin_Edwards": {
+      "name": [
+        0.0284,
+        0.1139,
+        0.1187,
+        0.7341
+      ],
+      "badge": null
+    },
+    "rookie/Jusuf_Nurkic": {
+      "name": [
+        0.0252,
+        0.1595,
+        0.1253,
+        0.6429
+      ],
+      "badge": null
+    },
+    "rookie/Karl_Malone": {
+      "name": [
+        0.0252,
+        0.1779,
+        0.1253,
+        0.6062
+      ],
+      "badge": null
+    },
+    "rookie/Karl_Anthony_Towns": {
+      "name": [
+        0.0415,
+        0.1079,
+        0.0926,
+        0.7461
+      ],
+      "badge": null
+    },
+    "rookie/Karlo_Matkovic": {
+      "name": [
+        0.0284,
+        0.1285,
+        0.1187,
+        0.705
+      ],
+      "badge": null
+    },
+    "rookie/Kawhi_Leonard": {
+      "name": [
+        0.0252,
+        0.1201,
+        0.1253,
+        0.7218
+      ],
+      "badge": null
+    },
+    "rookie/Keegan_Murray": {
+      "name": [
+        0.0252,
+        0.1115,
+        0.1253,
+        0.7389
+      ],
+      "badge": null
+    },
+    "rookie/Kel_el_Ware": {
+      "name": [
+        0.0252,
+        0.1994,
+        0.1253,
+        0.5632
+      ],
+      "badge": null
+    },
+    "rookie/Kelly_Oubre_Jr": {
+      "name": [
+        0.0323,
+        0.1548,
+        0.1109,
+        0.6522
+      ],
+      "badge": null
+    },
+    "rookie/Kemba_Walker": {
+      "name": [
+        0.0252,
+        0.1386,
+        0.1253,
+        0.6847
+      ],
+      "badge": null
+    },
+    "rookie/Kenrich_Williams": {
+      "name": [
+        0.0356,
+        0.1289,
+        0.1044,
+        0.7041
+      ],
+      "badge": null
+    },
+    "rookie/Kentavious_Caldwell_Pope": {
+      "name": [
+        0.0532,
+        0.1241,
+        0.0692,
+        0.7137
+      ],
+      "badge": null
+    },
+    "rookie/Kevin_Durant": {
+      "name": [
+        0.0252,
+        0.1609,
+        0.1253,
+        0.6401
+      ],
+      "badge": null
+    },
+    "rookie/Kevin_Garnett": {
+      "name": [
+        0.0252,
+        0.1362,
+        0.1253,
+        0.6896
+      ],
+      "badge": null
+    },
+    "rookie/Kevin_Huerter": {
+      "name": [
+        0.0252,
+        0.1361,
+        0.1253,
+        0.6897
+      ],
+      "badge": null
+    },
+    "rookie/Kevin_Love": {
+      "name": [
+        0.0252,
+        0.2266,
+        0.1253,
+        0.5087
+      ],
+      "badge": null
+    },
+    "rookie/Keyonte_George": {
+      "name": [
+        0.0284,
+        0.1125,
+        0.1187,
+        0.7369
+      ],
+      "badge": null
+    },
+    "rookie/Klay_Thompson": {
+      "name": [
+        0.0252,
+        0.1212,
+        0.1253,
+        0.7195
+      ],
+      "badge": null
+    },
+    "rookie/Kobe_Bryant": {
+      "name": [
+        0.0252,
+        0.1839,
+        0.1253,
+        0.5941
+      ],
+      "badge": null
+    },
+    "rookie/Kris_Dunn": {
+      "name": [
+        0.0252,
+        0.2422,
+        0.1253,
+        0.4776
+      ],
+      "badge": null
+    },
+    "rookie/Kris_Murray": {
+      "name": [
+        0.0252,
+        0.1845,
+        0.1253,
+        0.5929
+      ],
+      "badge": null
+    },
+    "rookie/Kyle_Filipowski": {
+      "name": [
+        0.0323,
+        0.1477,
+        0.1109,
+        0.6665
+      ],
+      "badge": null
+    },
+    "rookie/Kyle_Kuzma": {
+      "name": [
+        0.0252,
+        0.2096,
+        0.1253,
+        0.5427
+      ],
+      "badge": null
+    },
+    "rookie/Kyrie_Irving": {
+      "name": [
+        0.0252,
+        0.1834,
+        0.1253,
+        0.5951
+      ],
+      "badge": null
+    },
+    "rookie/Kyshawn_George": {
+      "name": [
+        0.0291,
+        0.0975,
+        0.1174,
+        0.7669
+      ],
+      "badge": null
+    },
+    "rookie/Lamar_Odom": {
+      "name": [
+        0.0252,
+        0.1918,
+        0.1253,
+        0.5783
+      ],
+      "badge": null
+    },
+    "rookie/LaMarcus_Aldridge": {
+      "name": [
+        0.0388,
+        0.1113,
+        0.0979,
+        0.7392
+      ],
+      "badge": null
+    },
+    "rookie/LaMelo_Ball": {
+      "name": [
+        0.0252,
+        0.1869,
+        0.1253,
+        0.5881
+      ],
+      "badge": null
+    },
+    "rookie/Landry_Shamet": {
+      "name": [
+        0.0252,
+        0.118,
+        0.1253,
+        0.7259
+      ],
+      "badge": null
+    },
+    "rookie/Lauri_Markkanen": {
+      "name": [
+        0.0323,
+        0.1122,
+        0.1109,
+        0.7376
+      ],
+      "badge": null
+    },
+    "rookie/LeBron_James": {
+      "name": [
+        0.0252,
+        0.1464,
+        0.1253,
+        0.6692
+      ],
+      "badge": null
+    },
+    "rookie/Luguentz_Dort": {
+      "name": [
+        0.0252,
+        0.1268,
+        0.1253,
+        0.7083
+      ],
+      "badge": null
+    },
+    "rookie/Luis_Scola": {
+      "name": [
+        0.0252,
+        0.2253,
+        0.1253,
+        0.5112
+      ],
+      "badge": null
+    },
+    "rookie/Luka_Doncic": {
+      "name": [
+        0.0252,
+        0.193,
+        0.1253,
+        0.5759
+      ],
+      "badge": null
+    },
+    "rookie/Luke_Kennard": {
+      "name": [
+        0.0252,
+        0.1505,
+        0.1253,
+        0.6609
+      ],
+      "badge": null
+    },
+    "rookie/Luol_Deng": {
+      "name": [
+        0.0252,
+        0.2369,
+        0.1253,
+        0.4881
+      ],
+      "badge": null
+    },
+    "rookie/Malik_Monk": {
+      "name": [
+        0.0252,
+        0.2092,
+        0.1253,
+        0.5435
+      ],
+      "badge": null
+    },
+    "rookie/Manu_Ginobili": {
+      "name": [
+        0.0252,
+        0.141,
+        0.1253,
+        0.68
+      ],
+      "badge": null
+    },
+    "rookie/Marc_Gasol": {
+      "name": [
+        0.0252,
+        0.2006,
+        0.1253,
+        0.5606
+      ],
+      "badge": null
+    },
+    "rookie/Marcus_Smart": {
+      "name": [
+        0.0252,
+        0.1375,
+        0.1253,
+        0.6869
+      ],
+      "badge": null
+    },
+    "rookie/Mark_Jackson": {
+      "name": [
+        0.0252,
+        0.1441,
+        0.1253,
+        0.6738
+      ],
+      "badge": null
+    },
+    "rookie/Mark_Williams": {
+      "name": [
+        0.0252,
+        0.1268,
+        0.1253,
+        0.7083
+      ],
+      "badge": null
+    },
+    "rookie/Marvin_Bagley_III": {
+      "name": [
+        0.0388,
+        0.1556,
+        0.0979,
+        0.6506
+      ],
+      "badge": null
+    },
+    "rookie/Matas_Buzelis": {
+      "name": [
+        0.0252,
+        0.1398,
+        0.1253,
+        0.6823
+      ],
+      "badge": null
+    },
+    "rookie/Michael_Finley": {
+      "name": [
+        0.0284,
+        0.1417,
+        0.1187,
+        0.6785
+      ],
+      "badge": null
+    },
+    "rookie/Michael_Porter_Jr": {
+      "name": [
+        0.0415,
+        0.1448,
+        0.0926,
+        0.6724
+      ],
+      "badge": null
+    },
+    "rookie/Mickael_Pietrus": {
+      "name": [
+        0.0323,
+        0.1363,
+        0.1109,
+        0.6894
+      ],
+      "badge": null
+    },
+    "rookie/Mikal_Bridges": {
+      "name": [
+        0.0252,
+        0.1377,
+        0.1253,
+        0.6865
+      ],
+      "badge": null
+    },
+    "rookie/Mike_Bibby": {
+      "name": [
+        0.0252,
+        0.2287,
+        0.1253,
+        0.5046
+      ],
+      "badge": null
+    },
+    "rookie/Mike_Conley": {
+      "name": [
+        0.0252,
+        0.1931,
+        0.1253,
+        0.5756
+      ],
+      "badge": null
+    },
+    "rookie/Miles_Bridges": {
+      "name": [
+        0.0252,
+        0.1395,
+        0.1253,
+        0.683
+      ],
+      "badge": null
+    },
+    "rookie/Mitchell_Robinson": {
+      "name": [
+        0.0389,
+        0.1264,
+        0.0979,
+        0.7091
+      ],
+      "badge": null
+    },
+    "rookie/Moses_Moody": {
+      "name": [
+        0.0252,
+        0.1659,
+        0.1253,
+        0.6301
+      ],
+      "badge": null
+    },
+    "rookie/Myles_Turner": {
+      "name": [
+        0.0252,
+        0.1509,
+        0.1253,
+        0.6601
+      ],
+      "badge": null
+    },
+    "rookie/Naji_Marshall": {
+      "name": [
+        0.0252,
+        0.1296,
+        0.1253,
+        0.7026
+      ],
+      "badge": null
+    },
+    "rookie/Nicolas_Batum": {
+      "name": [
+        0.0252,
+        0.1318,
+        0.1253,
+        0.6983
+      ],
+      "badge": null
+    },
+    "rookie/Nikola_Jokic": {
+      "name": [
+        0.0252,
+        0.1785,
+        0.1253,
+        0.6049
+      ],
+      "badge": null
+    },
+    "rookie/Nikola_Vucevic": {
+      "name": [
+        0.0284,
+        0.1397,
+        0.1187,
+        0.6825
+      ],
+      "badge": null
+    },
+    "rookie/Norman_Powell": {
+      "name": [
+        0.0258,
+        0.1094,
+        0.124,
+        0.743
+      ],
+      "badge": null
+    },
+    "rookie/OG_Anunoby": {
+      "name": [
+        0.0252,
+        0.197,
+        0.1253,
+        0.568
+      ],
+      "badge": null
+    },
+    "rookie/Onyeka_Okongwu": {
+      "name": [
+        0.0291,
+        0.0961,
+        0.1174,
+        0.7698
+      ],
+      "badge": null
+    },
+    "rookie/Oso_Ighodaro": {
+      "name": [
+        0.0252,
+        0.1486,
+        0.1253,
+        0.6646
+      ],
+      "badge": null
+    },
+    "rookie/P_J_Washington": {
+      "name": [
+        0.0323,
+        0.1371,
+        0.1109,
+        0.6878
+      ],
+      "badge": null
+    },
+    "rookie/Paolo_Banchero": {
+      "name": [
+        0.0284,
+        0.1124,
+        0.1187,
+        0.7371
+      ],
+      "badge": null
+    },
+    "rookie/Pascal_Siakam": {
+      "name": [
+        0.0252,
+        0.1348,
+        0.1253,
+        0.6923
+      ],
+      "badge": null
+    },
+    "rookie/Patrick_Ewing": {
+      "name": [
+        0.0252,
+        0.1412,
+        0.1253,
+        0.6796
+      ],
+      "badge": null
+    },
+    "rookie/Patrick_Williams": {
+      "name": [
+        0.0356,
+        0.1396,
+        0.1044,
+        0.6828
+      ],
+      "badge": null
+    },
+    "rookie/Pau_Gasol": {
+      "name": [
+        0.0252,
+        0.2369,
+        0.1253,
+        0.4881
+      ],
+      "badge": null
+    },
+    "rookie/Paul_George": {
+      "name": [
+        0.0252,
+        0.1766,
+        0.1253,
+        0.6088
+      ],
+      "badge": null
+    },
+    "rookie/Paul_Pierce": {
+      "name": [
+        0.0252,
+        0.2014,
+        0.1253,
+        0.5591
+      ],
+      "badge": null
+    },
+    "rookie/Payton_Pritchard": {
+      "name": [
+        0.0356,
+        0.1264,
+        0.1044,
+        0.7091
+      ],
+      "badge": null
+    },
+    "rookie/Pelle_Larsson": {
+      "name": [
+        0.0252,
+        0.1332,
+        0.1253,
+        0.6955
+      ],
+      "badge": null
+    },
+    "rookie/Precious_Achiuwa": {
+      "name": [
+        0.0356,
+        0.1158,
+        0.1044,
+        0.7303
+      ],
+      "badge": null
+    },
+    "rookie/Quentin_Grimes": {
+      "name": [
+        0.0284,
+        0.1239,
+        0.1187,
+        0.7141
+      ],
+      "badge": null
+    },
+    "rookie/Quinten_Post": {
+      "name": [
+        0.0252,
+        0.1656,
+        0.1253,
+        0.6307
+      ],
+      "badge": null
+    },
+    "rookie/Rajon_Rondo": {
+      "name": [
+        0.0252,
+        0.169,
+        0.1253,
+        0.6238
+      ],
+      "badge": null
+    },
+    "rookie/Rasheed_Wallace": {
+      "name": [
+        0.033,
+        0.1138,
+        0.1096,
+        0.7342
+      ],
+      "badge": null
+    },
+    "rookie/Ray_Allen": {
+      "name": [
+        0.0252,
+        0.2486,
+        0.1253,
+        0.4646
+      ],
+      "badge": null
+    },
+    "rookie/Rayan_Rupert": {
+      "name": [
+        0.0252,
+        0.1567,
+        0.1253,
+        0.6485
+      ],
+      "badge": null
+    },
+    "rookie/Reed_Sheppard": {
+      "name": [
+        0.0252,
+        0.1234,
+        0.1253,
+        0.7152
+      ],
+      "badge": null
+    },
+    "rookie/RJ_Barrett": {
+      "name": [
+        0.0252,
+        0.2172,
+        0.1253,
+        0.5276
+      ],
+      "badge": null
+    },
+    "rookie/Robert_Horry": {
+      "name": [
+        0.0252,
+        0.149,
+        0.1253,
+        0.664
+      ],
+      "badge": null
+    },
+    "rookie/Ron_Holland": {
+      "name": [
+        0.0252,
+        0.1755,
+        0.1253,
+        0.6109
+      ],
+      "badge": null
+    },
+    "rookie/Royce_O_Neale": {
+      "name": [
+        0.0252,
+        0.1479,
+        0.1253,
+        0.6661
+      ],
+      "badge": null
+    },
+    "rookie/Rui_Hachimura": {
+      "name": [
+        0.0252,
+        0.129,
+        0.1253,
+        0.7039
+      ],
+      "badge": null
+    },
+    "rookie/Russell_Westbrook": {
+      "name": [
+        0.0395,
+        0.1126,
+        0.0965,
+        0.7367
+      ],
+      "badge": null
+    },
+    "rookie/Ryan_Dunn": {
+      "name": [
+        0.0252,
+        0.2308,
+        0.1253,
+        0.5003
+      ],
+      "badge": null
+    },
+    "rookie/Saddiq_Bey": {
+      "name": [
+        0.0252,
+        0.2179,
+        0.1253,
+        0.526
+      ],
+      "badge": null
+    },
+    "rookie/Sam_Cassell": {
+      "name": [
+        0.0252,
+        0.1845,
+        0.1253,
+        0.593
+      ],
+      "badge": null
+    },
+    "rookie/Scottie_Barnes": {
+      "name": [
+        0.0284,
+        0.1309,
+        0.1187,
+        0.7001
+      ],
+      "badge": null
+    },
+    "rookie/Scottie_Pippen": {
+      "name": [
+        0.0284,
+        0.1475,
+        0.1187,
+        0.6668
+      ],
+      "badge": null
+    },
+    "rookie/Serge_Ibaka": {
+      "name": [
+        0.0252,
+        0.188,
+        0.1253,
+        0.5859
+      ],
+      "badge": null
+    },
+    "rookie/Shaedon_Sharpe": {
+      "name": [
+        0.0284,
+        0.1054,
+        0.1187,
+        0.751
+      ],
+      "badge": null
+    },
+    "rookie/Shai_Gilgeous_Alexander": {
+      "name": [
+        0.0519,
+        0.123,
+        0.0718,
+        0.7159
+      ],
+      "badge": null
+    },
+    "rookie/Shaquille_O_Neal": {
+      "name": [
+        0.0356,
+        0.1382,
+        0.1044,
+        0.6855
+      ],
+      "badge": null
+    },
+    "rookie/Simone_Fontecchio": {
+      "name": [
+        0.0388,
+        0.1253,
+        0.0979,
+        0.7113
+      ],
+      "badge": null
+    },
+    "rookie/Stephen_Curry": {
+      "name": [
+        0.0252,
+        0.126,
+        0.1253,
+        0.7099
+      ],
+      "badge": null
+    },
+    "rookie/Stephen_Jackson": {
+      "name": [
+        0.0323,
+        0.1167,
+        0.1109,
+        0.7286
+      ],
+      "badge": null
+    },
+    "rookie/Stephon_Castle": {
+      "name": [
+        0.0284,
+        0.1268,
+        0.1187,
+        0.7083
+      ],
+      "badge": null
+    },
+    "rookie/Steve_Nash": {
+      "name": [
+        0.0252,
+        0.2131,
+        0.1253,
+        0.5357
+      ],
+      "badge": null
+    },
+    "rookie/T_J_McConnell": {
+      "name": [
+        0.0284,
+        0.151,
+        0.1187,
+        0.66
+      ],
+      "badge": null
+    },
+    "rookie/Tari_Eason": {
+      "name": [
+        0.0252,
+        0.2244,
+        0.1253,
+        0.5131
+      ],
+      "badge": null
+    },
+    "rookie/Taylor_Hendricks": {
+      "name": [
+        0.0356,
+        0.1287,
+        0.1044,
+        0.7045
+      ],
+      "badge": null
+    },
+    "rookie/Tim_Duncan": {
+      "name": [
+        0.0252,
+        0.2119,
+        0.1253,
+        0.5381
+      ],
+      "badge": null
+    },
+    "rookie/Tim_Hardaway_Jr": {
+      "name": [
+        0.0356,
+        0.1374,
+        0.1044,
+        0.687
+      ],
+      "badge": null
+    },
+    "rookie/Tim_Thomas": {
+      "name": [
+        0.0252,
+        0.2123,
+        0.1253,
+        0.5372
+      ],
+      "badge": null
+    },
+    "rookie/Toumani_Camara": {
+      "name": [
+        0.0291,
+        0.1118,
+        0.1174,
+        0.7382
+      ],
+      "badge": null
+    },
+    "rookie/Tracy_McGrady": {
+      "name": [
+        0.0252,
+        0.1202,
+        0.1253,
+        0.7216
+      ],
+      "badge": null
+    },
+    "rookie/Trae_Young": {
+      "name": [
+        0.0252,
+        0.2061,
+        0.1253,
+        0.5497
+      ],
+      "badge": null
+    },
+    "rookie/Tre_Mann": {
+      "name": [
+        0.0252,
+        0.2603,
+        0.1253,
+        0.4414
+      ],
+      "badge": null
+    },
+    "rookie/Trendon_Watford": {
+      "name": [
+        0.033,
+        0.1096,
+        0.1096,
+        0.7427
+      ],
+      "badge": null
+    },
+    "rookie/Trey_Murphy_III": {
+      "name": [
+        0.0323,
+        0.1572,
+        0.1109,
+        0.6475
+      ],
+      "badge": null
+    },
+    "rookie/Tristan_Da_Silva": {
+      "name": [
+        0.0356,
+        0.1597,
+        0.1044,
+        0.6426
+      ],
+      "badge": null
+    },
+    "rookie/Tyler_Herro": {
+      "name": [
+        0.0252,
+        0.1859,
+        0.1253,
+        0.5901
+      ],
+      "badge": null
+    },
+    "rookie/Tyrese_Haliburton": {
+      "name": [
+        0.0388,
+        0.1236,
+        0.0979,
+        0.7148
+      ],
+      "badge": null
+    },
+    "rookie/Tyrese_Maxey": {
+      "name": [
+        0.0252,
+        0.1534,
+        0.1253,
+        0.6552
+      ],
+      "badge": null
+    },
+    "rookie/Victor_Wembanyama": {
+      "name": [
+        0.0402,
+        0.1119,
+        0.0953,
+        0.7382
+      ],
+      "badge": null
+    },
+    "rookie/Vince_Carter": {
+      "name": [
+        0.0252,
+        0.1701,
+        0.1253,
+        0.6216
+      ],
+      "badge": null
+    },
+    "rookie/Vit_Krejci": {
+      "name": [
+        0.0252,
+        0.2425,
+        0.1253,
+        0.477
+      ],
+      "badge": null
+    },
+    "rookie/Wendell_Carter_Jr": {
+      "name": [
+        0.0415,
+        0.1358,
+        0.0926,
+        0.6902
+      ],
+      "badge": null
+    },
+    "rookie/Yao_Ming": {
+      "name": [
+        0.0252,
+        0.2681,
+        0.1253,
+        0.4257
+      ],
+      "badge": null
+    },
+    "rookie/Yves_Missi": {
+      "name": [
+        0.0252,
+        0.23,
+        0.1253,
+        0.502
+      ],
+      "badge": null
+    },
+    "rookie/Zaccharie_Risacher": {
+      "name": [
+        0.0415,
+        0.1269,
+        0.0926,
+        0.7081
+      ],
+      "badge": null
+    },
+    "rookie/Zach_Edey": {
+      "name": [
+        0.0252,
+        0.2433,
+        0.1253,
+        0.4752
+      ],
+      "badge": null
+    },
+    "rookie/Zach_LaVine": {
+      "name": [
+        0.0252,
+        0.1984,
+        0.1253,
+        0.565
+      ],
+      "badge": null
+    },
+    "rookie/Ziaire_Williams": {
+      "name": [
+        0.0323,
+        0.1449,
+        0.1109,
+        0.672
+      ],
+      "badge": null
+    },
+    "rookie/Zion_Williamson": {
+      "name": [
+        0.0323,
+        0.1283,
+        0.1109,
+        0.7053
+      ],
+      "badge": null
+    },
+    "summer-standouts/Doug_Christie": {
+      "name": [
+        0.0252,
+        0.1418,
+        0.1253,
+        0.6783
+      ],
+      "badge": null
+    },
+    "summer-standouts/Eric_Williams": {
+      "name": [
+        0.0252,
+        0.1488,
+        0.1253,
+        0.6642
+      ],
+      "badge": null
+    },
+    "summer-standouts/Jason_Collins": {
+      "name": [
+        0.0252,
+        0.1381,
+        0.1253,
+        0.6857
+      ],
+      "badge": null
+    },
+    "summer-standouts/Ben_Wallace": {
+      "name": [
+        0.0252,
+        0.1769,
+        0.1253,
+        0.608
+      ],
+      "badge": null
+    },
+    "summer-standouts/Robert_Horry": {
+      "name": [
+        0.0252,
+        0.149,
+        0.1253,
+        0.664
+      ],
+      "badge": null
+    },
+    "summer-standouts/Josh_Howard": {
+      "name": [
+        0.0252,
+        0.1609,
+        0.1253,
+        0.6401
+      ],
+      "badge": null
+    },
+    "summer-standouts/Tim_Thomas": {
+      "name": [
+        0.0252,
+        0.2123,
+        0.1253,
+        0.5372
+      ],
+      "badge": null
+    },
+    "summer-standouts/Daniel_Gibson": {
+      "name": [
+        0.0252,
+        0.1401,
+        0.1253,
+        0.6816
+      ],
+      "badge": null
+    },
+    "summer-standouts/Fabricio_Oberto": {
+      "name": [
+        0.0323,
+        0.1363,
+        0.1109,
+        0.6893
+      ],
+      "badge": null
+    },
+    "summer-standouts/Michael_Finley": {
+      "name": [
+        0.0284,
+        0.1417,
+        0.1187,
+        0.6785
+      ],
+      "badge": null
+    },
+    "summer-standouts/Rasheed_Wallace": {
+      "name": [
+        0.033,
+        0.1138,
+        0.1096,
+        0.7342
+      ],
+      "badge": null
+    },
+    "summer-standouts/Derek_Fisher": {
+      "name": [
+        0.0252,
+        0.1659,
+        0.1253,
+        0.6301
+      ],
+      "badge": null
+    },
+    "summer-standouts/Carmelo_Anthony": {
+      "name": [
+        0.033,
+        0.1112,
+        0.1096,
+        0.7395
+      ],
+      "badge": null
+    },
+    "summer-standouts/Chauncey_Billups": {
+      "name": [
+        0.0356,
+        0.1232,
+        0.1044,
+        0.7155
+      ],
+      "badge": null
+    },
+    "summer-standouts/Lamar_Odom": {
+      "name": [
+        0.0252,
+        0.1918,
+        0.1253,
+        0.5783
+      ],
+      "badge": null
+    },
+    "summer-standouts/Glen_Davis": {
+      "name": [
+        0.0252,
+        0.2219,
+        0.1253,
+        0.518
+      ],
+      "badge": null
+    },
+    "summer-standouts/Jared_Dudley": {
+      "name": [
+        0.0252,
+        0.1533,
+        0.1253,
+        0.6553
+      ],
+      "badge": null
+    },
+    "summer-standouts/Jason_Richardson": {
+      "name": [
+        0.0356,
+        0.1107,
+        0.1044,
+        0.7406
+      ],
+      "badge": null
+    },
+    "summer-standouts/Mickael_Pietrus": {
+      "name": [
+        0.0323,
+        0.1363,
+        0.1109,
+        0.6894
+      ],
+      "badge": null
+    },
+    "summer-standouts/Jason_Kidd": {
+      "name": [
+        0.0252,
+        0.2175,
+        0.1253,
+        0.527
+      ],
+      "badge": null
+    },
+    "summer-standouts/Joel_Anthony": {
+      "name": [
+        0.0252,
+        0.154,
+        0.1253,
+        0.654
+      ],
+      "badge": null
+    },
+    "summer-standouts/Boris_Diaw": {
+      "name": [
+        0.0252,
+        0.2164,
+        0.1253,
+        0.529
+      ],
+      "badge": null
+    },
+    "summer-standouts/Stephen_Jackson": {
+      "name": [
+        0.0323,
+        0.1167,
+        0.1109,
+        0.7286
+      ],
+      "badge": null
+    },
+    "summer-standouts/Ray_Allen": {
+      "name": [
+        0.0252,
+        0.2486,
+        0.1253,
+        0.4646
+      ],
+      "badge": null
+    },
+    "summer-standouts/Danny_Green": {
+      "name": [
+        0.0252,
+        0.1721,
+        0.1253,
+        0.6178
+      ],
+      "badge": null
+    },
+    "summer-standouts/Paul_George": {
+      "name": [
+        0.0252,
+        0.1766,
+        0.1253,
+        0.6088
+      ],
+      "badge": null
+    },
+    "summer-standouts/JR_Smith": {
+      "name": [
+        0.0252,
+        0.2749,
+        0.1253,
+        0.4121
+      ],
+      "badge": null
+    },
+    "summer-standouts/Serge_Ibaka": {
+      "name": [
+        0.0252,
+        0.188,
+        0.1253,
+        0.5859
+      ],
+      "badge": null
+    },
+    "summer-standouts/Kevin_Love": {
+      "name": [
+        0.0252,
+        0.2266,
+        0.1253,
+        0.5087
+      ],
+      "badge": null
+    },
+    "summer-standouts/Chris_Paul": {
+      "name": [
+        0.0252,
+        0.2242,
+        0.1253,
+        0.5134
+      ],
+      "badge": null
+    },
+    "summer-standouts/PJ_Tucker": {
+      "name": [
+        0.0252,
+        0.2468,
+        0.1253,
+        0.4683
+      ],
+      "badge": null
+    },
+    "summer-standouts/Andre_Iguodala": {
+      "name": [
+        0.0284,
+        0.1146,
+        0.1187,
+        0.7327
+      ],
+      "badge": null
+    },
+    "summer-standouts/George_Hill": {
+      "name": [
+        0.0252,
+        0.1906,
+        0.1253,
+        0.5806
+      ],
+      "badge": null
+    },
+    "summer-standouts/Kawhi_Leonard": {
+      "name": [
+        0.0252,
+        0.1201,
+        0.1253,
+        0.7218
+      ],
+      "badge": null
+    },
+    "summer-standouts/Anthony_Davis": {
+      "name": [
+        0.0252,
+        0.1325,
+        0.1253,
+        0.6969
+      ],
+      "badge": null
+    },
+    "summer-standouts/Kemba_Walker": {
+      "name": [
+        0.0252,
+        0.1386,
+        0.1253,
+        0.6847
+      ],
+      "badge": null
+    },
+    "summer-standouts/Clint_Capela": {
+      "name": [
+        0.0252,
+        0.1776,
+        0.1253,
+        0.6067
+      ],
+      "badge": null
+    },
+    "summer-standouts/Reggie_Jackson": {
+      "name": [
+        0.0284,
+        0.1191,
+        0.1187,
+        0.7237
+      ],
+      "badge": null
+    },
+    "summer-standouts/Andrew_Wiggins": {
+      "name": [
+        0.0284,
+        0.0996,
+        0.1187,
+        0.7627
+      ],
+      "badge": null
+    },
+    "summer-standouts/Max_Strus": {
+      "name": [
+        0.0252,
+        0.2311,
+        0.1253,
+        0.4997
+      ],
+      "badge": null
+    },
+    "summer-standouts/Bruce_Brown": {
+      "name": [
+        0.0252,
+        0.1611,
+        0.1253,
+        0.6397
+      ],
+      "badge": null
+    },
+    "summer-standouts/Pascal_Siakam": {
+      "name": [
+        0.0252,
+        0.1348,
+        0.1253,
+        0.6923
+      ],
+      "badge": null
+    },
+    "summer-standouts/Tyrese_Haliburton": {
+      "name": [
+        0.0388,
+        0.1236,
+        0.0979,
+        0.7148
+      ],
+      "badge": null
+    },
+    "summer-standouts/Dennis_Rodman": {
+      "name": [
+        0.0252,
+        0.1163,
+        0.1253,
+        0.7292
+      ],
+      "badge": null
+    },
+    "summer-standouts/Scottie_Pippen": {
+      "name": [
+        0.0284,
+        0.1475,
+        0.1187,
+        0.6668
+      ],
+      "badge": null
+    },
+    "dissonance/Michael_Jordan": {
+      "name": [
+        0.0284,
+        0.1183,
+        0.1187,
+        0.7253
+      ],
+      "badge": null
+    },
+    "dissonance/Rasheed_Wallace": {
+      "name": [
+        0.033,
+        0.1138,
+        0.1096,
+        0.7342
+      ],
+      "badge": null
+    },
+    "dissonance/Karl_Malone": {
+      "name": [
+        0.0252,
+        0.1779,
+        0.1253,
+        0.6062
+      ],
+      "badge": null
+    },
+    "dissonance/Tracy_McGrady_ATL": {
+      "name": [
+        0.0252,
+        0.1202,
+        0.1253,
+        0.7216
+      ],
+      "badge": null
+    },
+    "dissonance/Tracy_McGrady_NYK": {
+      "name": [
+        0.0252,
+        0.1202,
+        0.1253,
+        0.7216
+      ],
+      "badge": null
+    },
+    "dissonance/Shaquille_O_Neal_CLE": {
+      "name": [
+        0.0356,
+        0.1382,
+        0.1044,
+        0.6855
+      ],
+      "badge": null
+    },
+    "dissonance/Shaquille_O_Neal_PHO": {
+      "name": [
+        0.0356,
+        0.1382,
+        0.1044,
+        0.6855
+      ],
+      "badge": null
+    },
+    "dissonance/Allen_Iverson": {
+      "name": [
+        0.0252,
+        0.1384,
+        0.1253,
+        0.6852
+      ],
+      "badge": null
+    },
+    "dissonance/Gary_Payton": {
+      "name": [
+        0.0252,
+        0.1837,
+        0.1253,
+        0.5945
+      ],
+      "badge": null
+    },
+    "dissonance/Dwight_Howard_CHO": {
+      "name": [
+        0.0252,
+        0.1024,
+        0.1253,
+        0.757
+      ],
+      "badge": null
+    },
+    "dissonance/Dwight_Howard_PHI": {
+      "name": [
+        0.0252,
+        0.1024,
+        0.1253,
+        0.757
+      ],
+      "badge": null
+    },
+    "dissonance/Carmelo_Anthony_OKC": {
+      "name": [
+        0.033,
+        0.1112,
+        0.1096,
+        0.7395
+      ],
+      "badge": null
+    },
+    "dissonance/Carmelo_Anthony_LAL": {
+      "name": [
+        0.033,
+        0.1112,
+        0.1096,
+        0.7395
+      ],
+      "badge": null
+    },
+    "dissonance/Steve_Nash": {
+      "name": [
+        0.0252,
+        0.2131,
+        0.1253,
+        0.5357
+      ],
+      "badge": null
+    },
+    "dissonance/Patrick_Ewing": {
+      "name": [
+        0.0252,
+        0.1412,
+        0.1253,
+        0.6796
+      ],
+      "badge": null
+    },
+    "dissonance/Hakeem_Olajuwon": {
+      "name": [
+        0.033,
+        0.0975,
+        0.1096,
+        0.767
+      ],
+      "badge": null
+    },
+    "dissonance/Dwyane_Wade": {
+      "name": [
+        0.0252,
+        0.1584,
+        0.1253,
+        0.6451
+      ],
+      "badge": null
+    },
+    "dissonance/Vince_Carter_PHO": {
+      "name": [
+        0.0252,
+        0.1701,
+        0.1253,
+        0.6216
+      ],
+      "badge": null
+    },
+    "dissonance/Vince_Carter_ATL": {
+      "name": [
+        0.0252,
+        0.1701,
+        0.1253,
+        0.6216
+      ],
+      "badge": null
+    },
+    "dissonance/Paul_Pierce": {
+      "name": [
+        0.0252,
+        0.2014,
+        0.1253,
+        0.5591
+      ],
+      "badge": null
+    },
+    "dissonance/Joe_Johnson": {
+      "name": [
+        0.0252,
+        0.1733,
+        0.1253,
+        0.6153
+      ],
+      "badge": null
+    },
+    "dissonance/Rajon_Rondo": {
+      "name": [
+        0.0252,
+        0.169,
+        0.1253,
+        0.6238
+      ],
+      "badge": null
+    },
+    "dissonance/Zach_Randolph": {
+      "name": [
+        0.0252,
+        0.1209,
+        0.1253,
+        0.7201
+      ],
+      "badge": null
+    },
+    "dissonance/Isaiah_Thomas": {
+      "name": [
+        0.0252,
+        0.1357,
+        0.1253,
+        0.6905
+      ],
+      "badge": null
+    },
+    "team-rewards/Giannis_Antetokounmpo": {
+      "name": [
+        0.048,
+        0.1105,
+        0.0796,
+        0.7408
+      ],
+      "badge": null
+    },
+    "team-rewards/Stephen_Curry": {
+      "name": [
+        0.0252,
+        0.126,
+        0.1253,
+        0.7099
+      ],
+      "badge": null
+    },
+    "team-rewards/Joel_Embiid": {
+      "name": [
+        0.0252,
+        0.2018,
+        0.1253,
+        0.5582
+      ],
+      "badge": null
+    },
+    "team-rewards/Paul_George": {
+      "name": [
+        0.0252,
+        0.1766,
+        0.1253,
+        0.6088
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "team-rewards/Damian_Lillard": {
+      "name": [
+        0.0284,
+        0.134,
+        0.1187,
+        0.6939
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "team-rewards/Kevin_Durant": {
+      "name": [
+        0.0252,
+        0.1609,
+        0.1253,
+        0.6401
+      ],
+      "badge": null
+    },
+    "team-rewards/Jamal_Murray": {
+      "name": [
+        0.0252,
+        0.1409,
+        0.1253,
+        0.6801
+      ],
+      "badge": null
+    },
+    "team-rewards/Kobe_Bryant": {
+      "name": [
+        0.0252,
+        0.1839,
+        0.1253,
+        0.5941
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "team-rewards/David_Robinson": {
+      "name": [
+        0.0284,
+        0.1268,
+        0.1187,
+        0.7083
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "team-rewards/Blake_Griffin": {
+      "name": [
+        0.0252,
+        0.1486,
+        0.1253,
+        0.6647
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "team-rewards/Kyrie_Irving": {
+      "name": [
+        0.0252,
+        0.1834,
+        0.1253,
+        0.5951
+      ],
+      "badge": null
+    },
+    "team-rewards/Kevin_Garnett": {
+      "name": [
+        0.0252,
+        0.1362,
+        0.1253,
+        0.6896
+      ],
+      "badge": null
+    },
+    "team-rewards/Julius_Erving": {
+      "name": [
+        0.0252,
+        0.1413,
+        0.1253,
+        0.6792
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "team-rewards/Ivica_Zubac": {
+      "name": [
+        0.0252,
+        0.2051,
+        0.1253,
+        0.5518
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "team-rewards/Chris_Paul": {
+      "name": [
+        0.0252,
+        0.2242,
+        0.1253,
+        0.5134
+      ],
+      "badge": null
+    },
+    "team-rewards/Allan_Houston": {
+      "name": [
+        0.0252,
+        0.1212,
+        0.1253,
+        0.7195
+      ],
+      "badge": null
+    },
+    "team-rewards/Sam_Cassell": {
+      "name": [
+        0.0252,
+        0.1845,
+        0.1253,
+        0.593
+      ],
+      "badge": null
+    },
+    "team-rewards/John_Stockton": {
+      "name": [
+        0.0252,
+        0.1247,
+        0.1253,
+        0.7126
+      ],
+      "badge": null
+    },
+    "team-rewards/Jameer_Nelson": {
+      "name": [
+        0.0252,
+        0.1173,
+        0.1253,
+        0.7274
+      ],
+      "badge": null
+    },
+    "team-rewards/John_Wall": {
+      "name": [
+        0.0252,
+        0.2307,
+        0.1253,
+        0.5004
+      ],
+      "badge": null
+    },
+    "team-rewards/Myles_Turner": {
+      "name": [
+        0.0252,
+        0.1509,
+        0.1253,
+        0.6601
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "team-rewards/Gerald_Wallace": {
+      "name": [
+        0.0291,
+        0.1149,
+        0.1174,
+        0.732
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "team-rewards/Alonzo_Mourning": {
+      "name": [
+        0.0323,
+        0.104,
+        0.1109,
+        0.7539
+      ],
+      "badge": null
+    },
+    "team-rewards/Marc_Gasol": {
+      "name": [
+        0.0252,
+        0.2006,
+        0.1253,
+        0.5606
+      ],
+      "badge": null
+    },
+    "team-rewards/Bobby_Portis": {
+      "name": [
+        0.0252,
+        0.1653,
+        0.1253,
+        0.6314
+      ],
+      "badge": null
+    },
+    "team-rewards/Nic_Claxton": {
+      "name": [
+        0.0252,
+        0.196,
+        0.1253,
+        0.5698
+      ],
+      "badge": null
+    },
+    "team-rewards/Steve_Nash": {
+      "name": [
+        0.0252,
+        0.2131,
+        0.1253,
+        0.5357
+      ],
+      "badge": null
+    },
+    "team-rewards/Anthony_Parker": {
+      "name": [
+        0.0284,
+        0.1134,
+        0.1187,
+        0.7351
+      ],
+      "badge": null
+    },
+    "team-rewards/Luol_Deng": {
+      "name": [
+        0.0252,
+        0.2369,
+        0.1253,
+        0.4881
+      ],
+      "badge": null
+    },
+    "team-rewards/Mike_Bibby": {
+      "name": [
+        0.0252,
+        0.2287,
+        0.1253,
+        0.5046
+      ],
+      "badge": null
+    },
+    "team-rewards/Josh_Smith": {
+      "name": [
+        0.0252,
+        0.2144,
+        0.1253,
+        0.5331
+      ],
+      "badge": null
+    },
+    "team-rewards/Jason_Kidd": {
+      "name": [
+        0.0252,
+        0.2175,
+        0.1253,
+        0.527
+      ],
+      "badge": null
+    },
+    "team-rewards/Luis_Scola": {
+      "name": [
+        0.0252,
+        0.2253,
+        0.1253,
+        0.5112
+      ],
+      "badge": null
+    },
+    "wnba/A_ja_Wilson": {
+      "name": [
+        0.0252,
+        0.1987,
+        0.1253,
+        0.5646
+      ],
+      "badge": null
+    },
+    "wnba/Aaliyah_Edwards": {
+      "name": [
+        0.0323,
+        0.1139,
+        0.1109,
+        0.7341
+      ],
+      "badge": null
+    },
+    "wnba/Alanna_Smith": {
+      "name": [
+        0.0252,
+        0.155,
+        0.1253,
+        0.6518
+      ],
+      "badge": null
+    },
+    "wnba/Aliyah_Boston": {
+      "name": [
+        0.0252,
+        0.1378,
+        0.1253,
+        0.6864
+      ],
+      "badge": null
+    },
+    "wnba/Allisha_Gray": {
+      "name": [
+        0.0252,
+        0.1667,
+        0.1253,
+        0.6284
+      ],
+      "badge": null
+    },
+    "wnba/Alyssa_Thomas": {
+      "name": [
+        0.0252,
+        0.1264,
+        0.1253,
+        0.7091
+      ],
+      "badge": null
+    },
+    "wnba/Aneesah_Morrow": {
+      "name": [
+        0.0304,
+        0.1013,
+        0.1148,
+        0.7593
+      ],
+      "badge": null
+    },
+    "wnba/Angel_Reese": {
+      "name": [
+        0.0252,
+        0.1825,
+        0.1253,
+        0.5969
+      ],
+      "badge": null
+    },
+    "wnba/Ariel_Atkins": {
+      "name": [
+        0.0252,
+        0.1842,
+        0.1253,
+        0.5936
+      ],
+      "badge": null
+    },
+    "wnba/Arike_Ogunbowale": {
+      "name": [
+        0.0356,
+        0.1042,
+        0.1044,
+        0.7535
+      ],
+      "badge": null
+    },
+    "wnba/Awa_Fam": {
+      "name": [
+        0.0252,
+        0.2825,
+        0.1253,
+        0.3969
+      ],
+      "badge": null
+    },
+    "wnba/Awak_Kuier": {
+      "name": [
+        0.0252,
+        0.2092,
+        0.1253,
+        0.5436
+      ],
+      "badge": null
+    },
+    "wnba/Azura_Stevens": {
+      "name": [
+        0.0252,
+        0.1249,
+        0.1253,
+        0.7121
+      ],
+      "badge": null
+    },
+    "wnba/Azzi_Fudd": {
+      "name": [
+        0.0252,
+        0.2511,
+        0.1253,
+        0.4597
+      ],
+      "badge": null
+    },
+    "wnba/Betnijah_Laney_Hamilton": {
+      "name": [
+        0.0519,
+        0.131,
+        0.0718,
+        0.6999
+      ],
+      "badge": null
+    },
+    "wnba/Breanna_Stewart": {
+      "name": [
+        0.033,
+        0.1089,
+        0.1096,
+        0.7441
+      ],
+      "badge": null
+    },
+    "wnba/Bridget_Carleton": {
+      "name": [
+        0.0356,
+        0.1228,
+        0.1044,
+        0.7162
+      ],
+      "badge": null
+    },
+    "wnba/Brittney_Griner": {
+      "name": [
+        0.0323,
+        0.1327,
+        0.1109,
+        0.6964
+      ],
+      "badge": null
+    },
+    "wnba/Brittney_Sykes": {
+      "name": [
+        0.0284,
+        0.1356,
+        0.1187,
+        0.6906
+      ],
+      "badge": null
+    },
+    "wnba/Caitlin_Clark": {
+      "name": [
+        0.0252,
+        0.1579,
+        0.1253,
+        0.6462
+      ],
+      "badge": null
+    },
+    "wnba/Cameron_Brink": {
+      "name": [
+        0.0252,
+        0.1214,
+        0.1253,
+        0.7191
+      ],
+      "badge": null
+    },
+    "wnba/Carla_Leite": {
+      "name": [
+        0.0252,
+        0.2062,
+        0.1253,
+        0.5496
+      ],
+      "badge": null
+    },
+    "wnba/Cecilia_Zandalasini": {
+      "name": [
+        0.0441,
+        0.1478,
+        0.0874,
+        0.6663
+      ],
+      "badge": null
+    },
+    "wnba/Charlisse_Leger_Walker": {
+      "name": [
+        0.05,
+        0.1193,
+        0.0757,
+        0.7234
+      ],
+      "badge": null
+    },
+    "wnba/Chelsea_Gray": {
+      "name": [
+        0.0252,
+        0.156,
+        0.1253,
+        0.6499
+      ],
+      "badge": null
+    },
+    "wnba/Cotie_McMahon": {
+      "name": [
+        0.0252,
+        0.1217,
+        0.1253,
+        0.7186
+      ],
+      "badge": null
+    },
+    "wnba/Courtney_Vandersloot": {
+      "name": [
+        0.0467,
+        0.1166,
+        0.0822,
+        0.7286
+      ],
+      "badge": null
+    },
+    "wnba/Courtney_Williams": {
+      "name": [
+        0.0389,
+        0.1217,
+        0.0979,
+        0.7184
+      ],
+      "badge": null
+    },
+    "wnba/Dearica_Hamby": {
+      "name": [
+        0.0252,
+        0.1261,
+        0.1253,
+        0.7096
+      ],
+      "badge": null
+    },
+    "wnba/DeWanna_Bonner": {
+      "name": [
+        0.0291,
+        0.0959,
+        0.1174,
+        0.7701
+      ],
+      "badge": null
+    },
+    "wnba/Diamond_Miller": {
+      "name": [
+        0.0284,
+        0.1249,
+        0.1187,
+        0.7121
+      ],
+      "badge": null
+    },
+    "wnba/DiJonai_Carrington": {
+      "name": [
+        0.0415,
+        0.1265,
+        0.0926,
+        0.7088
+      ],
+      "badge": null
+    },
+    "wnba/Dominique_Malonga": {
+      "name": [
+        0.0389,
+        0.1078,
+        0.0979,
+        0.7463
+      ],
+      "badge": null
+    },
+    "wnba/Elizabeth_Williams": {
+      "name": [
+        0.0415,
+        0.1333,
+        0.0926,
+        0.6952
+      ],
+      "badge": null
+    },
+    "wnba/Emily_Engstler": {
+      "name": [
+        0.0284,
+        0.1345,
+        0.1187,
+        0.6929
+      ],
+      "badge": null
+    },
+    "wnba/Erica_Wheeler": {
+      "name": [
+        0.0252,
+        0.1289,
+        0.1253,
+        0.704
+      ],
+      "badge": null
+    },
+    "wnba/Flau_jae_Johnson": {
+      "name": [
+        0.0356,
+        0.122,
+        0.1044,
+        0.718
+      ],
+      "badge": null
+    },
+    "wnba/Gabby_Williams": {
+      "name": [
+        0.0284,
+        0.1215,
+        0.1187,
+        0.7189
+      ],
+      "badge": null
+    },
+    "wnba/Gabriela_Jaquez": {
+      "name": [
+        0.0323,
+        0.1191,
+        0.1109,
+        0.7236
+      ],
+      "badge": null
+    },
+    "wnba/Georgia_Amoore": {
+      "name": [
+        0.0284,
+        0.1047,
+        0.1187,
+        0.7524
+      ],
+      "badge": null
+    },
+    "wnba/Isabelle_Harrison": {
+      "name": [
+        0.0389,
+        0.1286,
+        0.0979,
+        0.7048
+      ],
+      "badge": null
+    },
+    "wnba/Jackie_Young": {
+      "name": [
+        0.0252,
+        0.1609,
+        0.1253,
+        0.6401
+      ],
+      "badge": null
+    },
+    "wnba/Jacy_Sheldon": {
+      "name": [
+        0.0252,
+        0.1541,
+        0.1253,
+        0.6536
+      ],
+      "badge": null
+    },
+    "wnba/Jade_Melbourne": {
+      "name": [
+        0.0284,
+        0.1066,
+        0.1187,
+        0.7487
+      ],
+      "badge": null
+    },
+    "wnba/Janelle_Salaun": {
+      "name": [
+        0.0284,
+        0.1196,
+        0.1187,
+        0.7226
+      ],
+      "badge": null
+    },
+    "wnba/Jessica_Shepard": {
+      "name": [
+        0.0323,
+        0.1263,
+        0.1109,
+        0.7093
+      ],
+      "badge": null
+    },
+    "wnba/Jewell_Loyd": {
+      "name": [
+        0.0252,
+        0.1855,
+        0.1253,
+        0.591
+      ],
+      "badge": null
+    },
+    "wnba/Jonquel_Jones": {
+      "name": [
+        0.0252,
+        0.1211,
+        0.1253,
+        0.7197
+      ],
+      "badge": null
+    },
+    "wnba/Jordan_Horston": {
+      "name": [
+        0.0284,
+        0.1062,
+        0.1187,
+        0.7494
+      ],
+      "badge": null
+    },
+    "wnba/Jordin_Canada": {
+      "name": [
+        0.0252,
+        0.1266,
+        0.1253,
+        0.7087
+      ],
+      "badge": null
+    },
+    "wnba/Julie_Allemand": {
+      "name": [
+        0.0284,
+        0.1272,
+        0.1187,
+        0.7074
+      ],
+      "badge": null
+    },
+    "wnba/Kahleah_Copper": {
+      "name": [
+        0.0284,
+        0.1167,
+        0.1187,
+        0.7285
+      ],
+      "badge": null
+    },
+    "wnba/Kaila_Charles": {
+      "name": [
+        0.0252,
+        0.1408,
+        0.1253,
+        0.6804
+      ],
+      "badge": null
+    },
+    "wnba/Kamilla_Cardoso": {
+      "name": [
+        0.0323,
+        0.1186,
+        0.1109,
+        0.7246
+      ],
+      "badge": null
+    },
+    "wnba/Kayla_McBride": {
+      "name": [
+        0.0252,
+        0.1342,
+        0.1253,
+        0.6935
+      ],
+      "badge": null
+    },
+    "wnba/Kayla_Thornton": {
+      "name": [
+        0.0284,
+        0.1185,
+        0.1187,
+        0.7249
+      ],
+      "badge": null
+    },
+    "wnba/Kelsey_Mitchell": {
+      "name": [
+        0.0323,
+        0.137,
+        0.1109,
+        0.6879
+      ],
+      "badge": null
+    },
+    "wnba/Kelsey_Plum": {
+      "name": [
+        0.0252,
+        0.1855,
+        0.1253,
+        0.5909
+      ],
+      "badge": null
+    },
+    "wnba/Kennedy_Burke": {
+      "name": [
+        0.0252,
+        0.1214,
+        0.1253,
+        0.7191
+      ],
+      "badge": null
+    },
+    "wnba/Kiah_Stokes": {
+      "name": [
+        0.0252,
+        0.1965,
+        0.1253,
+        0.5689
+      ],
+      "badge": null
+    },
+    "wnba/Kiki_Iriafen": {
+      "name": [
+        0.0252,
+        0.2016,
+        0.1253,
+        0.5587
+      ],
+      "badge": null
+    },
+    "wnba/Kiki_Rice": {
+      "name": [
+        0.0252,
+        0.2785,
+        0.1253,
+        0.405
+      ],
+      "badge": null
+    },
+    "wnba/Laura_Juskaite": {
+      "name": [
+        0.0284,
+        0.1275,
+        0.1187,
+        0.707
+      ],
+      "badge": null
+    },
+    "wnba/Lauren_Betts": {
+      "name": [
+        0.0252,
+        0.1584,
+        0.1253,
+        0.645
+      ],
+      "badge": null
+    },
+    "wnba/Leila_Lacan": {
+      "name": [
+        0.0252,
+        0.2024,
+        0.1253,
+        0.5571
+      ],
+      "badge": null
+    },
+    "wnba/Leonie_Fiebich": {
+      "name": [
+        0.0284,
+        0.1536,
+        0.1187,
+        0.6547
+      ],
+      "badge": null
+    },
+    "wnba/Lexie_Hull": {
+      "name": [
+        0.0252,
+        0.233,
+        0.1253,
+        0.4959
+      ],
+      "badge": null
+    },
+    "wnba/Luisa_Geiselsoder": {
+      "name": [
+        0.0389,
+        0.129,
+        0.0979,
+        0.7038
+      ],
+      "badge": null
+    },
+    "wnba/Makayla_Timpson": {
+      "name": [
+        0.033,
+        0.1214,
+        0.1096,
+        0.719
+      ],
+      "badge": null
+    },
+    "wnba/Maria_Conde": {
+      "name": [
+        0.0252,
+        0.181,
+        0.1253,
+        0.5998
+      ],
+      "badge": null
+    },
+    "wnba/Marina_Mabrey": {
+      "name": [
+        0.0252,
+        0.1152,
+        0.1253,
+        0.7315
+      ],
+      "badge": null
+    },
+    "wnba/Marine_Johannes": {
+      "name": [
+        0.0323,
+        0.1093,
+        0.1109,
+        0.7433
+      ],
+      "badge": null
+    },
+    "wnba/Megan_DiLeo": {
+      "name": [
+        0.0252,
+        0.1827,
+        0.1253,
+        0.5966
+      ],
+      "badge": null
+    },
+    "wnba/Michaela_Onyenwere": {
+      "name": [
+        0.0421,
+        0.1097,
+        0.0913,
+        0.7424
+      ],
+      "badge": null
+    },
+    "wnba/Monique_Akoa_Makani": {
+      "name": [
+        0.0441,
+        0.1222,
+        0.0874,
+        0.7175
+      ],
+      "badge": null
+    },
+    "wnba/Monique_Billings": {
+      "name": [
+        0.0356,
+        0.1289,
+        0.1044,
+        0.7042
+      ],
+      "badge": null
+    },
+    "wnba/NaLyssa_Smith": {
+      "name": [
+        0.0252,
+        0.1379,
+        0.1253,
+        0.6862
+      ],
+      "badge": null
+    },
+    "wnba/Napheesa_Collier": {
+      "name": [
+        0.0356,
+        0.1257,
+        0.1044,
+        0.7105
+      ],
+      "badge": null
+    },
+    "wnba/Natasha_Cloud": {
+      "name": [
+        0.0252,
+        0.1275,
+        0.1253,
+        0.7068
+      ],
+      "badge": null
+    },
+    "wnba/Natasha_Howard": {
+      "name": [
+        0.0291,
+        0.1053,
+        0.1174,
+        0.7513
+      ],
+      "badge": null
+    },
+    "wnba/Natasha_Mack": {
+      "name": [
+        0.0252,
+        0.1512,
+        0.1253,
+        0.6594
+      ],
+      "badge": null
+    },
+    "wnba/Natisha_Hiedeman": {
+      "name": [
+        0.0356,
+        0.122,
+        0.1044,
+        0.718
+      ],
+      "badge": null
+    },
+    "wnba/Naz_Hillmon": {
+      "name": [
+        0.0252,
+        0.1872,
+        0.1253,
+        0.5875
+      ],
+      "badge": null
+    },
+    "wnba/Nia_Coffey": {
+      "name": [
+        0.0252,
+        0.2278,
+        0.1253,
+        0.5063
+      ],
+      "badge": null
+    },
+    "wnba/Nneka_Ogwumike": {
+      "name": [
+        0.0291,
+        0.1029,
+        0.1174,
+        0.7561
+      ],
+      "badge": null
+    },
+    "wnba/Noemie_Brochant": {
+      "name": [
+        0.0323,
+        0.1132,
+        0.1109,
+        0.7356
+      ],
+      "badge": null
+    },
+    "wnba/Nyadiew_Puoch": {
+      "name": [
+        0.0252,
+        0.12,
+        0.1253,
+        0.7218
+      ],
+      "badge": null
+    },
+    "wnba/Nyara_Sabally": {
+      "name": [
+        0.0252,
+        0.1341,
+        0.1253,
+        0.6937
+      ],
+      "badge": null
+    },
+    "wnba/Olivia_Miles": {
+      "name": [
+        0.0252,
+        0.1886,
+        0.1253,
+        0.5848
+      ],
+      "badge": null
+    },
+    "wnba/Olivia_Nelson_Ododa": {
+      "name": [
+        0.0441,
+        0.1303,
+        0.0874,
+        0.7013
+      ],
+      "badge": null
+    },
+    "wnba/Paige_Bueckers": {
+      "name": [
+        0.0284,
+        0.1255,
+        0.1187,
+        0.711
+      ],
+      "badge": null
+    },
+    "wnba/Pauline_Astier": {
+      "name": [
+        0.0284,
+        0.1447,
+        0.1187,
+        0.6725
+      ],
+      "badge": null
+    },
+    "wnba/Rae_Burrell": {
+      "name": [
+        0.0252,
+        0.1842,
+        0.1253,
+        0.5935
+      ],
+      "badge": null
+    },
+    "wnba/Rebecca_Allen": {
+      "name": [
+        0.0252,
+        0.1325,
+        0.1253,
+        0.6969
+      ],
+      "badge": null
+    },
+    "wnba/Rhyne_Howard": {
+      "name": [
+        0.0252,
+        0.1316,
+        0.1253,
+        0.6987
+      ],
+      "badge": null
+    },
+    "wnba/Rickea_Jackson": {
+      "name": [
+        0.0284,
+        0.1275,
+        0.1187,
+        0.7069
+      ],
+      "badge": null
+    },
+    "wnba/Sabrina_Ionescu": {
+      "name": [
+        0.0323,
+        0.1251,
+        0.1109,
+        0.7116
+      ],
+      "badge": null
+    },
+    "wnba/Saniya_Rivers": {
+      "name": [
+        0.0252,
+        0.1456,
+        0.1253,
+        0.6708
+      ],
+      "badge": null
+    },
+    "wnba/Sarah_Ashlee_Barker": {
+      "name": [
+        0.0441,
+        0.1212,
+        0.0874,
+        0.7194
+      ],
+      "badge": null
+    },
+    "wnba/Satou_Sabally": {
+      "name": [
+        0.0252,
+        0.137,
+        0.1253,
+        0.6879
+      ],
+      "badge": null
+    },
+    "wnba/Shakira_Austin": {
+      "name": [
+        0.0284,
+        0.132,
+        0.1187,
+        0.6978
+      ],
+      "badge": null
+    },
+    "wnba/Skylar_Diggins": {
+      "name": [
+        0.0284,
+        0.1282,
+        0.1187,
+        0.7055
+      ],
+      "badge": null
+    },
+    "wnba/Sonia_Citron": {
+      "name": [
+        0.0252,
+        0.1718,
+        0.1253,
+        0.6182
+      ],
+      "badge": null
+    },
+    "wnba/Sophie_Cunningham": {
+      "name": [
+        0.0388,
+        0.1112,
+        0.0979,
+        0.7395
+      ],
+      "badge": null
+    },
+    "wnba/Stephanie_Talbot": {
+      "name": [
+        0.0356,
+        0.1332,
+        0.1044,
+        0.6956
+      ],
+      "badge": null
+    },
+    "wnba/Sydney_Taylor": {
+      "name": [
+        0.0252,
+        0.1368,
+        0.1253,
+        0.6883
+      ],
+      "badge": null
+    },
+    "wnba/Temi_Fagbenle": {
+      "name": [
+        0.0252,
+        0.1378,
+        0.1253,
+        0.6864
+      ],
+      "badge": null
+    },
+    "wnba/Tiffany_Hayes": {
+      "name": [
+        0.0252,
+        0.1493,
+        0.1253,
+        0.6632
+      ],
+      "badge": null
+    },
+    "wnba/Valeriane_Ayayi": {
+      "name": [
+        0.0323,
+        0.146,
+        0.1109,
+        0.6699
+      ],
+      "badge": null
+    },
+    "wnba/Veronica_Burton": {
+      "name": [
+        0.0323,
+        0.1177,
+        0.1109,
+        0.7266
+      ],
+      "badge": null
+    },
+    "wnba-rookie/A_ja_Wilson": {
+      "name": [
+        0.0252,
+        0.1987,
+        0.1253,
+        0.5646
+      ],
+      "badge": null
+    },
+    "wnba-rookie/Aliyah_Boston": {
+      "name": [
+        0.0252,
+        0.1378,
+        0.1253,
+        0.6864
+      ],
+      "badge": null
+    },
+    "wnba-rookie/Allisha_Gray": {
+      "name": [
+        0.0252,
+        0.1667,
+        0.1253,
+        0.6284
+      ],
+      "badge": null
+    },
+    "wnba-rookie/Alyssa_Thomas": {
+      "name": [
+        0.0252,
+        0.1264,
+        0.1253,
+        0.7091
+      ],
+      "badge": null
+    },
+    "wnba-rookie/Ariel_Atkins": {
+      "name": [
+        0.0252,
+        0.1842,
+        0.1253,
+        0.5936
+      ],
+      "badge": null
+    },
+    "wnba-rookie/Arike_Ogunbowale": {
+      "name": [
+        0.0356,
+        0.1042,
+        0.1044,
+        0.7535
+      ],
+      "badge": null
+    },
+    "wnba-rookie/Azura_Stevens": {
+      "name": [
+        0.0252,
+        0.1249,
+        0.1253,
+        0.7121
+      ],
+      "badge": null
+    },
+    "wnba-rookie/Breanna_Stewart": {
+      "name": [
+        0.033,
+        0.1089,
+        0.1096,
+        0.7441
+      ],
+      "badge": null
+    },
+    "wnba-rookie/Brittney_Griner": {
+      "name": [
+        0.0323,
+        0.1327,
+        0.1109,
+        0.6964
+      ],
+      "badge": null
+    },
+    "wnba-rookie/Brittney_Sykes": {
+      "name": [
+        0.0284,
+        0.1356,
+        0.1187,
+        0.6906
+      ],
+      "badge": null
+    },
+    "wnba-rookie/Caitlin_Clark": {
+      "name": [
+        0.0252,
+        0.1579,
+        0.1253,
+        0.6462
+      ],
+      "badge": null
+    },
+    "wnba-rookie/Cappie_Pondexter": {
+      "name": [
+        0.0356,
+        0.1251,
+        0.1044,
+        0.7117
+      ],
+      "badge": null
+    },
+    "wnba-rookie/Chiney_Ogwumike": {
+      "name": [
+        0.0323,
+        0.1117,
+        0.1109,
+        0.7385
+      ],
+      "badge": null
+    },
+    "wnba-rookie/Courtney_Vandersloot": {
+      "name": [
+        0.0467,
+        0.1166,
+        0.0822,
+        0.7286
+      ],
+      "badge": null
+    },
+    "wnba-rookie/Dearica_Hamby": {
+      "name": [
+        0.0252,
+        0.1261,
+        0.1253,
+        0.7096
+      ],
+      "badge": null
+    },
+    "wnba-rookie/DeWanna_Bonner": {
+      "name": [
+        0.0291,
+        0.0959,
+        0.1174,
+        0.7701
+      ],
+      "badge": null
+    },
+    "wnba-rookie/Diamond_Miller": {
+      "name": [
+        0.0284,
+        0.1249,
+        0.1187,
+        0.7121
+      ],
+      "badge": null
+    },
+    "wnba-rookie/Emily_Engstler": {
+      "name": [
+        0.0284,
+        0.1345,
+        0.1187,
+        0.6929
+      ],
+      "badge": null
+    },
+    "wnba-rookie/Gabby_Williams": {
+      "name": [
+        0.0284,
+        0.1215,
+        0.1187,
+        0.7189
+      ],
+      "badge": null
+    },
+    "wnba-rookie/Jackie_Young": {
+      "name": [
+        0.0252,
+        0.1609,
+        0.1253,
+        0.6401
+      ],
+      "badge": null
+    },
+    "wnba-rookie/Jewell_Loyd": {
+      "name": [
+        0.0252,
+        0.1855,
+        0.1253,
+        0.591
+      ],
+      "badge": null
+    },
+    "wnba-rookie/Jordan_Horston": {
+      "name": [
+        0.0284,
+        0.1062,
+        0.1187,
+        0.7494
+      ],
+      "badge": null
+    },
+    "wnba-rookie/Jordin_Canada": {
+      "name": [
+        0.0252,
+        0.1266,
+        0.1253,
+        0.7087
+      ],
+      "badge": null
+    },
+    "wnba-rookie/Julie_Allemand": {
+      "name": [
+        0.0284,
+        0.1272,
+        0.1187,
+        0.7074
+      ],
+      "badge": null
+    },
+    "wnba-rookie/Kahleah_Copper": {
+      "name": [
+        0.0284,
+        0.1167,
+        0.1187,
+        0.7285
+      ],
+      "badge": null
+    },
+    "wnba-rookie/Kaila_Charles": {
+      "name": [
+        0.0252,
+        0.1408,
+        0.1253,
+        0.6804
+      ],
+      "badge": null
+    },
+    "wnba-rookie/Kayla_McBride": {
+      "name": [
+        0.0252,
+        0.1342,
+        0.1253,
+        0.6935
+      ],
+      "badge": null
+    },
+    "wnba-rookie/Kelsey_Mitchell": {
+      "name": [
+        0.0323,
+        0.137,
+        0.1109,
+        0.6879
+      ],
+      "badge": null
+    },
+    "wnba-rookie/Kelsey_Plum": {
+      "name": [
+        0.0252,
+        0.1855,
+        0.1253,
+        0.5909
+      ],
+      "badge": null
+    },
+    "wnba-rookie/Kiah_Stokes": {
+      "name": [
+        0.0252,
+        0.1965,
+        0.1253,
+        0.5689
+      ],
+      "badge": null
+    },
+    "wnba-rookie/Marine_Johannes": {
+      "name": [
+        0.0323,
+        0.1093,
+        0.1109,
+        0.7433
+      ],
+      "badge": null
+    },
+    "wnba-rookie/Michaela_Onyenwere": {
+      "name": [
+        0.0421,
+        0.1097,
+        0.0913,
+        0.7424
+      ],
+      "badge": null
+    },
+    "wnba-rookie/NaLyssa_Smith": {
+      "name": [
+        0.0252,
+        0.1379,
+        0.1253,
+        0.6862
+      ],
+      "badge": null
+    },
+    "wnba-rookie/Napheesa_Collier": {
+      "name": [
+        0.0356,
+        0.1257,
+        0.1044,
+        0.7105
+      ],
+      "badge": null
+    },
+    "wnba-rookie/Natasha_Cloud": {
+      "name": [
+        0.0252,
+        0.1275,
+        0.1253,
+        0.7068
+      ],
+      "badge": null
+    },
+    "wnba-rookie/Natasha_Howard": {
+      "name": [
+        0.0291,
+        0.1053,
+        0.1174,
+        0.7513
+      ],
+      "badge": null
+    },
+    "wnba-rookie/Naz_Hillmon": {
+      "name": [
+        0.0252,
+        0.1872,
+        0.1253,
+        0.5875
+      ],
+      "badge": null
+    },
+    "wnba-rookie/Nneka_Ogwumike": {
+      "name": [
+        0.0291,
+        0.1029,
+        0.1174,
+        0.7561
+      ],
+      "badge": null
+    },
+    "wnba-rookie/Paige_Bueckers": {
+      "name": [
+        0.0284,
+        0.1255,
+        0.1187,
+        0.711
+      ],
+      "badge": null
+    },
+    "wnba-rookie/Rhyne_Howard": {
+      "name": [
+        0.0252,
+        0.1316,
+        0.1253,
+        0.6987
+      ],
+      "badge": null
+    },
+    "wnba-rookie/Satou_Sabally": {
+      "name": [
+        0.0252,
+        0.137,
+        0.1253,
+        0.6879
+      ],
+      "badge": null
+    },
+    "wnba-rookie/Shakira_Austin": {
+      "name": [
+        0.0284,
+        0.132,
+        0.1187,
+        0.6978
+      ],
+      "badge": null
+    },
+    "wnba-rookie/Skylar_Diggins": {
+      "name": [
+        0.0284,
+        0.1282,
+        0.1187,
+        0.7055
+      ],
+      "badge": null
+    },
+    "wnba-rookie/Stephanie_Talbot": {
+      "name": [
+        0.0356,
+        0.1332,
+        0.1044,
+        0.6956
+      ],
+      "badge": null
+    },
+    "wnba-rookie/Tiffany_Hayes": {
+      "name": [
+        0.0252,
+        0.1493,
+        0.1253,
+        0.6632
+      ],
+      "badge": null
+    },
+    "wnba-rookie/Tina_Charles": {
+      "name": [
+        0.0252,
+        0.1686,
+        0.1253,
+        0.6247
+      ],
+      "badge": null
+    },
+    "wnba-team-rewards/Angel_McCoughtry": {
+      "name": [
+        0.0369,
+        0.1107,
+        0.1018,
+        0.7406
+      ],
+      "badge": null
+    },
+    "wnba-team-rewards/Tamika_Catchings": {
+      "name": [
+        0.0356,
+        0.1305,
+        0.1044,
+        0.7008
+      ],
+      "badge": null
+    },
+    "wnba-team-rewards/Cappie_Pondexter": {
+      "name": [
+        0.0356,
+        0.1251,
+        0.1044,
+        0.7117
+      ],
+      "badge": null
+    },
+    "wnba-team-rewards/Seimone_Augustus": {
+      "name": [
+        0.0356,
+        0.106,
+        0.1044,
+        0.7498
+      ],
+      "badge": null
+    },
+    "wnba-team-rewards/Becky_Hammon": {
+      "name": [
+        0.0252,
+        0.1353,
+        0.1253,
+        0.6913
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "wnba-team-rewards/Penny_Taylor": {
+      "name": [
+        0.0252,
+        0.1639,
+        0.1253,
+        0.634
+      ],
+      "badge": null
+    },
+    "wnba-team-rewards/Chamique_Holdsclaw": {
+      "name": [
+        0.0421,
+        0.1092,
+        0.0913,
+        0.7435
+      ],
+      "badge": null
+    },
+    "wnba-team-rewards/Epiphanny_Prince": {
+      "name": [
+        0.0356,
+        0.1286,
+        0.1044,
+        0.7046
+      ],
+      "badge": null
+    },
+    "wnba-team-rewards/Alysha_Clark": {
+      "name": [
+        0.0252,
+        0.1635,
+        0.1253,
+        0.6349
+      ],
+      "badge": null
+    },
+    "wnba-team-rewards/Mwadi_Mabika": {
+      "name": [
+        0.0252,
+        0.1462,
+        0.1253,
+        0.6694
+      ],
+      "badge": null
+    },
+    "wnba-team-rewards/Nykesha_Sales": {
+      "name": [
+        0.0252,
+        0.1265,
+        0.1253,
+        0.7089
+      ],
+      "badge": null
+    },
+    "wnba-team-rewards/Cheryl_Ford": {
+      "name": [
+        0.0252,
+        0.1859,
+        0.1253,
+        0.5901
+      ],
+      "badge": null
+    },
+    "wnba-team-rewards/Sophia_Witherspoon": {
+      "name": [
+        0.0415,
+        0.1133,
+        0.0926,
+        0.7354
+      ],
+      "badge": null
+    },
+    "set-rewards/Russell_Westbrook_2017": {
+      "name": [
+        0.0395,
+        0.1126,
+        0.0965,
+        0.7367
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "set-rewards/Michael_Jordan": {
+      "name": [
+        0.0284,
+        0.1183,
+        0.1187,
+        0.7253
+      ],
+      "badge": null
+    },
+    "set-rewards/Dwyane_Wade": {
+      "name": [
+        0.0252,
+        0.1584,
+        0.1253,
+        0.6451
+      ],
+      "badge": null
+    },
+    "set-rewards/Russell_Westbrook_2020": {
+      "name": [
+        0.0395,
+        0.1126,
+        0.0965,
+        0.7367
+      ],
+      "badge": null
+    },
+    "wnba-set-rewards/Jonquel_Jones": {
+      "name": [
+        0.0252,
+        0.1211,
+        0.1253,
+        0.7197
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "wnba-set-rewards/Candice_Wiggins": {
+      "name": [
+        0.0323,
+        0.1245,
+        0.1109,
+        0.713
+      ],
+      "badge": null
     }
   },
-  "generatedAt": "2026-09-07T15:37:40.019Z",
+  "generatedAt": "2026-09-07T21:40:43.640Z",
   "note": "Per-face boxes of the rotated name and the Super Season pill, as fractions of the 843x1181 face, measured by scripts/studio/export.js. Read by src/cards/faceRegions.js for the holographic sheen."
 }

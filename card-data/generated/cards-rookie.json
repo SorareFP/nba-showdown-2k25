@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-07T16:24:34.018Z",
+ "generatedAt": "2026-09-07T18:37:20.384Z",
  "set": "rookie",
  "provisional": true,
  "sources": {
@@ -1428,6 +1428,222 @@
    ]
   },
   {
+   "id": "Allan_Houston",
+   "name": "Allan Houston",
+   "team": "DET79",
+   "pos": "SG",
+   "speed": 5,
+   "power": 3,
+   "shotLine": 14,
+   "paintBoost": -1,
+   "threePtBoost": -4,
+   "defBoost": -2,
+   "salary": 350,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 8,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 9,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 22,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 4,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 1994,
+   "seasonLabel": "1993-94",
+   "age": 22,
+   "games": 79,
+   "mpg": 19.2,
+   "bbrefId": "houstal01",
+   "traded": false,
+   "metrics": {
+    "bpm": -5.8,
+    "vorp": -1.5,
+    "ws": -1.2,
+    "ws48": -0.038,
+    "per": 9
+   },
+   "provisional": true
+  },
+  {
+   "id": "Allen_Iverson",
+   "name": "Allen Iverson",
+   "team": "PHI77",
+   "pos": "PG",
+   "speed": 14,
+   "power": 7,
+   "shotLine": 15,
+   "paintBoost": -1,
+   "threePtBoost": 0,
+   "defBoost": -2,
+   "salary": 1110,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 9,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 10,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 21,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 5,
+     "reb": 1,
+     "ast": 2
+    }
+   ],
+   "season": 1997,
+   "seasonLabel": "1996-97",
+   "age": 21,
+   "games": 76,
+   "mpg": 40.1,
+   "bbrefId": "iversal01",
+   "traded": false,
+   "metrics": {
+    "bpm": 0.9,
+    "vorp": 2.2,
+    "ws": 4.1,
+    "ws48": 0.065,
+    "per": 18
+   },
+   "provisional": true
+  },
+  {
+   "id": "Alonzo_Mourning",
+   "name": "Alonzo Mourning",
+   "team": "CHH",
+   "pos": "C",
+   "speed": 7,
+   "power": 13,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": -5,
+   "defBoost": 0,
+   "salary": 1130,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 5,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 6,
+     "hi": 9,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 21,
+     "pts": 3,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 5,
+     "reb": 3,
+     "ast": 0
+    }
+   ],
+   "season": 1993,
+   "seasonLabel": "1992-93",
+   "age": 22,
+   "games": 78,
+   "mpg": 33.9,
+   "bbrefId": "mournal01",
+   "traded": false,
+   "metrics": {
+    "bpm": 0.9,
+    "vorp": 1.9,
+    "ws": 8.2,
+    "ws48": 0.148,
+    "per": 20.8
+   },
+   "provisional": true
+  },
+  {
    "id": "Alperen_Sengun",
    "name": "Alperen Şengün",
    "team": "HOU20",
@@ -1491,6 +1707,78 @@
     "per": 16
    },
    "provisional": false
+  },
+  {
+   "id": "Amar_e_Stoudemire",
+   "name": "Amar'e Stoudemire",
+   "team": "PHX01",
+   "pos": "PF",
+   "speed": 7,
+   "power": 9,
+   "shotLine": 17,
+   "paintBoost": 0,
+   "threePtBoost": -3,
+   "defBoost": 0,
+   "salary": 740,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 9,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 16,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 17,
+     "hi": 23,
+     "pts": 3,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 24,
+     "hi": 99,
+     "pts": 3,
+     "reb": 4,
+     "ast": 0
+    }
+   ],
+   "season": 2003,
+   "seasonLabel": "2002-03",
+   "age": 20,
+   "games": 82,
+   "mpg": 31.3,
+   "bbrefId": "stoudam01",
+   "traded": false,
+   "metrics": {
+    "bpm": -1.4,
+    "vorp": 0.4,
+    "ws": 6.2,
+    "ws48": 0.116,
+    "per": 16.2
+   },
+   "provisional": true
   },
   {
    "id": "Amen_Thompson",
@@ -1686,6 +1974,78 @@
     "per": 13.5
    },
    "provisional": false
+  },
+  {
+   "id": "Andrei_Kirilenko",
+   "name": "Andrei Kirilenko",
+   "team": "UTA96",
+   "pos": "SF",
+   "speed": 13,
+   "power": 13,
+   "shotLine": 17,
+   "paintBoost": 0,
+   "threePtBoost": -1,
+   "defBoost": 2,
+   "salary": 1140,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 10,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 11,
+     "hi": 16,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 17,
+     "hi": 23,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 24,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 0
+    }
+   ],
+   "season": 2002,
+   "seasonLabel": "2001-02",
+   "age": 20,
+   "games": 82,
+   "mpg": 26.2,
+   "bbrefId": "kirilan01",
+   "traded": false,
+   "metrics": {
+    "bpm": 3.7,
+    "vorp": 3.1,
+    "ws": 7.3,
+    "ws48": 0.164,
+    "per": 18.8
+   },
+   "provisional": true
   },
   {
    "id": "Andrew_Nembhard",
@@ -3025,6 +3385,78 @@
    "provisional": false
   },
   {
+   "id": "Brandon_Roy",
+   "name": "Brandon Roy",
+   "team": "POR",
+   "pos": "SG",
+   "speed": 12,
+   "power": 8,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 0,
+   "salary": 1010,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 5,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 6,
+     "hi": 9,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 10,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 22,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 4,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2007,
+   "seasonLabel": "2006-07",
+   "age": 22,
+   "games": 57,
+   "mpg": 35.4,
+   "bbrefId": "roybr01",
+   "traded": false,
+   "metrics": {
+    "bpm": 2,
+    "vorp": 2,
+    "ws": 4.8,
+    "ws48": 0.114,
+    "per": 18
+   },
+   "provisional": true
+  },
+  {
    "id": "Brandon_Williams",
    "name": "Brandon Williams",
    "team": "POR",
@@ -3678,7 +4110,7 @@
    "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": 1,
-   "salary": 510,
+   "salary": 520,
    "chart": [
     {
      "lo": 1,
@@ -3731,6 +4163,78 @@
     "per": 12
    },
    "provisional": false
+  },
+  {
+   "id": "Charles_Barkley",
+   "name": "Charles Barkley",
+   "team": "PHI77",
+   "pos": "PF",
+   "speed": 10,
+   "power": 12,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": -4,
+   "defBoost": 0,
+   "salary": 1130,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 9,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 22,
+     "pts": 3,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 4,
+     "reb": 4,
+     "ast": 1
+    }
+   ],
+   "season": 1985,
+   "seasonLabel": "1984-85",
+   "age": 21,
+   "games": 82,
+   "mpg": 28.6,
+   "bbrefId": "barklch01",
+   "traded": false,
+   "metrics": {
+    "bpm": 1.7,
+    "vorp": 2.2,
+    "ws": 7.5,
+    "ws48": 0.154,
+    "per": 18.3
+   },
+   "provisional": true
   },
   {
    "id": "Chauncey_Billups",
@@ -4176,7 +4680,7 @@
   {
    "id": "Collin_Sexton",
    "name": "Collin Sexton",
-   "team": "CLE",
+   "team": "CLE17",
    "pos": "PG",
    "speed": 4,
    "power": 3,
@@ -4545,7 +5049,7 @@
   {
    "id": "Darius_Garland",
    "name": "Darius Garland",
-   "team": "CLE",
+   "team": "CLE17",
    "pos": "SG",
    "speed": 6,
    "power": 3,
@@ -4606,6 +5110,78 @@
     "per": 8.5
    },
    "provisional": false
+  },
+  {
+   "id": "David_Robinson",
+   "name": "David Robinson",
+   "team": "SAS",
+   "pos": "C",
+   "speed": 10,
+   "power": 19,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": -5,
+   "defBoost": 3,
+   "salary": 1800,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 8,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 9,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 20,
+     "pts": 3,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 5,
+     "reb": 4,
+     "ast": 0
+    }
+   ],
+   "season": 1990,
+   "seasonLabel": "1989-90",
+   "age": 24,
+   "games": 82,
+   "mpg": 36.6,
+   "bbrefId": "robinda01",
+   "traded": false,
+   "metrics": {
+    "bpm": 6.9,
+    "vorp": 6.8,
+    "ws": 15.1,
+    "ws48": 0.241,
+    "per": 26.3
+   },
+   "provisional": true
   },
   {
    "id": "Davion_Mitchell",
@@ -4861,7 +5437,7 @@
    "speed": 8,
    "power": 13,
    "shotLine": 16,
-   "paintBoost": 0,
+   "paintBoost": 1,
    "threePtBoost": -4,
    "defBoost": -1,
    "salary": 790,
@@ -5483,6 +6059,78 @@
    "provisional": false
   },
   {
+   "id": "Dirk_Nowitzki",
+   "name": "Dirk Nowitzki",
+   "team": "DAL80",
+   "pos": "PF",
+   "speed": 6,
+   "power": 8,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": -3,
+   "defBoost": -1,
+   "salary": 580,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 9,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 23,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 24,
+     "hi": 99,
+     "pts": 4,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "season": 1999,
+   "seasonLabel": "1998-99",
+   "age": 20,
+   "games": 47,
+   "mpg": 20.4,
+   "bbrefId": "nowitdi01",
+   "traded": false,
+   "metrics": {
+    "bpm": -2.5,
+    "vorp": -0.1,
+    "ws": 0.8,
+    "ws48": 0.04,
+    "per": 12.8
+   },
+   "provisional": true
+  },
+  {
    "id": "Domantas_Sabonis",
    "name": "Domantas Sabonis",
    "team": "OKC",
@@ -5626,11 +6274,11 @@
    "pos": "SG",
    "speed": 14,
    "power": 9,
-   "shotLine": 16,
+   "shotLine": 15,
    "paintBoost": 0,
-   "threePtBoost": 1,
+   "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 1060,
+   "salary": 1090,
    "chart": [
     {
      "lo": 1,
@@ -5648,13 +6296,13 @@
     },
     {
      "lo": 4,
-     "hi": 15,
+     "hi": 14,
      "pts": 2,
      "reb": 0,
      "ast": 0
     },
     {
-     "lo": 16,
+     "lo": 15,
      "hi": 99,
      "pts": 3,
      "reb": 1,
@@ -5998,7 +6646,7 @@
   {
    "id": "Evan_Mobley",
    "name": "Evan Mobley",
-   "team": "CLE",
+   "team": "CLE17",
    "pos": "PF",
    "speed": 9,
    "power": 11,
@@ -6189,6 +6837,71 @@
     "per": 4.9
    },
    "provisional": false
+  },
+  {
+   "id": "Gary_Payton",
+   "name": "Gary Payton",
+   "team": "SEA",
+   "pos": "PG",
+   "speed": 13,
+   "power": 7,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": -4,
+   "defBoost": 1,
+   "salary": 630,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 15,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 24,
+     "pts": 1,
+     "reb": 1,
+     "ast": 2
+    },
+    {
+     "lo": 25,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 3
+    }
+   ],
+   "season": 1991,
+   "seasonLabel": "1990-91",
+   "age": 22,
+   "games": 82,
+   "mpg": 27.4,
+   "bbrefId": "paytoga01",
+   "traded": false,
+   "metrics": {
+    "bpm": 0.8,
+    "vorp": 1.6,
+    "ws": 3.4,
+    "ws48": 0.073,
+    "per": 13.2
+   },
+   "provisional": true
   },
   {
    "id": "George_Hill",
@@ -6523,6 +7236,150 @@
    "provisional": false
   },
   {
+   "id": "Grant_Hill",
+   "name": "Grant Hill",
+   "team": "DET79",
+   "pos": "SF",
+   "speed": 12,
+   "power": 11,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": -4,
+   "defBoost": 0,
+   "salary": 1170,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 9,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 10,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 22,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 4,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "season": 1995,
+   "seasonLabel": "1994-95",
+   "age": 22,
+   "games": 70,
+   "mpg": 38.3,
+   "bbrefId": "hillgr01",
+   "traded": false,
+   "metrics": {
+    "bpm": 2,
+    "vorp": 2.7,
+    "ws": 5.4,
+    "ws48": 0.097,
+    "per": 19
+   },
+   "provisional": true
+  },
+  {
+   "id": "Hakeem_Olajuwon",
+   "name": "Hakeem Olajuwon",
+   "team": "HOU72",
+   "pos": "C",
+   "speed": 8,
+   "power": 15,
+   "shotLine": 17,
+   "paintBoost": 2,
+   "threePtBoost": -3,
+   "defBoost": 0,
+   "salary": 1210,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 8,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 9,
+     "hi": 16,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 17,
+     "hi": 21,
+     "pts": 3,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 4,
+     "reb": 4,
+     "ast": 0
+    }
+   ],
+   "season": 1985,
+   "seasonLabel": "1984-85",
+   "age": 22,
+   "games": 82,
+   "mpg": 35.5,
+   "bbrefId": "olajuha01",
+   "traded": false,
+   "metrics": {
+    "bpm": 2.1,
+    "vorp": 3,
+    "ws": 10.2,
+    "ws48": 0.168,
+    "per": 21.1
+   },
+   "provisional": true
+  },
+  {
    "id": "Harrison_Barnes",
    "name": "Harrison Barnes",
    "team": "GSW",
@@ -6720,7 +7577,7 @@
   {
    "id": "Isaac_Okoro",
    "name": "Isaac Okoro",
-   "team": "CLE",
+   "team": "CLE17",
    "pos": "SG",
    "speed": 6,
    "power": 5,
@@ -6904,6 +7761,78 @@
     "per": 16.4
    },
    "provisional": false
+  },
+  {
+   "id": "Isaiah_Thomas",
+   "name": "Isaiah Thomas",
+   "team": "SAC95",
+   "pos": "PG",
+   "speed": 14,
+   "power": 7,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": -2,
+   "salary": 1010,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 9,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 10,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 22,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 4,
+     "reb": 1,
+     "ast": 2
+    }
+   ],
+   "season": 2012,
+   "seasonLabel": "2011-12",
+   "age": 22,
+   "games": 65,
+   "mpg": 25.5,
+   "bbrefId": "thomais02",
+   "traded": false,
+   "metrics": {
+    "bpm": 0.8,
+    "vorp": 1.2,
+    "ws": 4.3,
+    "ws48": 0.124,
+    "per": 17.6
+   },
+   "provisional": true
   },
   {
    "id": "Ivica_Zubac",
@@ -8807,7 +9736,7 @@
    "paintBoost": 0,
    "threePtBoost": 4,
    "defBoost": 1,
-   "salary": 860,
+   "salary": 870,
    "chart": [
     {
      "lo": 1,
@@ -8925,6 +9854,71 @@
     "per": 8.7
    },
    "provisional": false
+  },
+  {
+   "id": "Joe_Johnson",
+   "name": "Joe Johnson",
+   "team": "PHX01",
+   "pos": "SG",
+   "speed": 9,
+   "power": 6,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": -2,
+   "defBoost": 0,
+   "salary": 380,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 15,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 22,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 2,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "season": 2002,
+   "seasonLabel": "2001-02",
+   "age": 20,
+   "games": 29,
+   "mpg": 31.5,
+   "bbrefId": "johnsjo02",
+   "traded": false,
+   "metrics": {
+    "bpm": -1,
+    "vorp": 0.2,
+    "ws": 1,
+    "ws48": 0.054,
+    "per": 11.5
+   },
+   "provisional": true
   },
   {
    "id": "Joel_Embiid",
@@ -9062,6 +10056,143 @@
     "per": 18.3
    },
    "provisional": false
+  },
+  {
+   "id": "John_Stockton",
+   "name": "John Stockton",
+   "team": "UTA",
+   "pos": "PG",
+   "speed": 12,
+   "power": 6,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": -4,
+   "defBoost": 2,
+   "salary": 690,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 15,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 24,
+     "pts": 2,
+     "reb": 0,
+     "ast": 3
+    },
+    {
+     "lo": 25,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 4
+    }
+   ],
+   "season": 1985,
+   "seasonLabel": "1984-85",
+   "age": 22,
+   "games": 82,
+   "mpg": 18.2,
+   "bbrefId": "stockjo01",
+   "traded": false,
+   "metrics": {
+    "bpm": -0.1,
+    "vorp": 0.7,
+    "ws": 3.1,
+    "ws48": 0.1,
+    "per": 13.3
+   },
+   "provisional": true
+  },
+  {
+   "id": "John_Wall",
+   "name": "John Wall",
+   "team": "WAS97",
+   "pos": "PG",
+   "speed": 10,
+   "power": 6,
+   "shotLine": 18,
+   "paintBoost": 2,
+   "threePtBoost": 0,
+   "defBoost": -1,
+   "salary": 710,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 9,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 10,
+     "hi": 17,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 18,
+     "hi": 23,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 24,
+     "hi": 99,
+     "pts": 4,
+     "reb": 1,
+     "ast": 3
+    }
+   ],
+   "season": 2011,
+   "seasonLabel": "2010-11",
+   "age": 20,
+   "games": 69,
+   "mpg": 37.8,
+   "bbrefId": "walljo01",
+   "traded": false,
+   "metrics": {
+    "bpm": -0.8,
+    "vorp": 0.8,
+    "ws": 2.2,
+    "ws48": 0.041,
+    "per": 15.8
+   },
+   "provisional": true
   },
   {
    "id": "Jonas_Valanciunas",
@@ -9529,10 +10660,10 @@
    "speed": 9,
    "power": 6,
    "shotLine": 17,
-   "paintBoost": 0,
+   "paintBoost": 1,
    "threePtBoost": -1,
    "defBoost": 0,
-   "salary": 240,
+   "salary": 230,
    "chart": [
     {
      "lo": 1,
@@ -9578,6 +10709,78 @@
     "per": 9.4
    },
    "provisional": false
+  },
+  {
+   "id": "Josh_Smith",
+   "name": "Josh Smith",
+   "team": "ATL96",
+   "pos": "SF",
+   "speed": 8,
+   "power": 9,
+   "shotLine": 18,
+   "paintBoost": 3,
+   "threePtBoost": -2,
+   "defBoost": 0,
+   "salary": 700,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 9,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 17,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 18,
+     "hi": 22,
+     "pts": 2,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 3,
+     "reb": 3,
+     "ast": 1
+    }
+   ],
+   "season": 2005,
+   "seasonLabel": "2004-05",
+   "age": 19,
+   "games": 74,
+   "mpg": 27.7,
+   "bbrefId": "smithjo03",
+   "traded": false,
+   "metrics": {
+    "bpm": -0.5,
+    "vorp": 0.8,
+    "ws": 2.4,
+    "ws48": 0.055,
+    "per": 15.4
+   },
+   "provisional": true
   },
   {
    "id": "JR_Smith",
@@ -9836,6 +11039,78 @@
    "provisional": false
   },
   {
+   "id": "Karl_Malone",
+   "name": "Karl Malone",
+   "team": "UTA",
+   "pos": "PF",
+   "speed": 6,
+   "power": 9,
+   "shotLine": 18,
+   "paintBoost": 3,
+   "threePtBoost": -2,
+   "defBoost": 1,
+   "salary": 820,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 8,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 9,
+     "hi": 17,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 18,
+     "hi": 22,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 4,
+     "reb": 3,
+     "ast": 1
+    }
+   ],
+   "season": 1986,
+   "seasonLabel": "1985-86",
+   "age": 22,
+   "games": 81,
+   "mpg": 30.6,
+   "bbrefId": "malonka01",
+   "traded": false,
+   "metrics": {
+    "bpm": -1.9,
+    "vorp": 0.1,
+    "ws": 1.9,
+    "ws48": 0.036,
+    "per": 13.7
+   },
+   "provisional": true
+  },
+  {
    "id": "Karl_Anthony_Towns",
    "name": "Karl-Anthony Towns",
    "team": "MIN97",
@@ -10027,7 +11302,7 @@
    "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": -1,
-   "salary": 510,
+   "salary": 520,
    "chart": [
     {
      "lo": 1,
@@ -10738,7 +12013,7 @@
    "paintBoost": 0,
    "threePtBoost": 4,
    "defBoost": -2,
-   "salary": 520,
+   "salary": 530,
    "chart": [
     {
      "lo": 1,
@@ -10798,6 +12073,78 @@
     "per": 14.9
    },
    "provisional": false
+  },
+  {
+   "id": "Kobe_Bryant",
+   "name": "Kobe Bryant",
+   "team": "LAL",
+   "pos": "SF",
+   "speed": 9,
+   "power": 8,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": 1,
+   "defBoost": 0,
+   "salary": 840,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 9,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 10,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 22,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 5,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "season": 1997,
+   "seasonLabel": "1996-97",
+   "age": 18,
+   "games": 71,
+   "mpg": 15.5,
+   "bbrefId": "bryanko01",
+   "traded": false,
+   "metrics": {
+    "bpm": -0.1,
+    "vorp": 0.5,
+    "ws": 1.8,
+    "ws48": 0.079,
+    "per": 14.4
+   },
+   "provisional": true
   },
   {
    "id": "Kris_Dunn",
@@ -11244,6 +12591,78 @@
    "provisional": false
   },
   {
+   "id": "LaMarcus_Aldridge",
+   "name": "LaMarcus Aldridge",
+   "team": "POR",
+   "pos": "C",
+   "speed": 6,
+   "power": 10,
+   "shotLine": 17,
+   "paintBoost": 2,
+   "threePtBoost": -3,
+   "defBoost": -1,
+   "salary": 750,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 8,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 9,
+     "hi": 16,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 17,
+     "hi": 22,
+     "pts": 3,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 4,
+     "reb": 3,
+     "ast": 0
+    }
+   ],
+   "season": 2007,
+   "seasonLabel": "2006-07",
+   "age": 21,
+   "games": 63,
+   "mpg": 22.1,
+   "bbrefId": "aldrila01",
+   "traded": false,
+   "metrics": {
+    "bpm": -1.4,
+    "vorp": 0.2,
+    "ws": 3.4,
+    "ws48": 0.118,
+    "per": 17.1
+   },
+   "provisional": true
+  },
+  {
    "id": "LaMelo_Ball",
    "name": "LaMelo Ball",
    "team": "CHA",
@@ -11548,6 +12967,71 @@
    "provisional": false
   },
   {
+   "id": "Luis_Scola",
+   "name": "Luis Scola",
+   "team": "HOU03",
+   "pos": "PF",
+   "speed": 8,
+   "power": 10,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": -4,
+   "defBoost": 1,
+   "salary": 640,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 15,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 20,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 2,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "season": 2008,
+   "seasonLabel": "2007-08",
+   "age": 27,
+   "games": 82,
+   "mpg": 24.7,
+   "bbrefId": "scolalu01",
+   "traded": false,
+   "metrics": {
+    "bpm": 0,
+    "vorp": 1,
+    "ws": 6.5,
+    "ws48": 0.154,
+    "per": 16.1
+   },
+   "provisional": false
+  },
+  {
    "id": "Luka_Doncic",
    "name": "Luka Dončić",
    "team": "DAL",
@@ -11616,7 +13100,7 @@
    "paintBoost": 0,
    "threePtBoost": 4,
    "defBoost": 0,
-   "salary": 380,
+   "salary": 390,
    "chart": [
     {
      "lo": 1,
@@ -11669,6 +13153,78 @@
     "per": 12.1
    },
    "provisional": false
+  },
+  {
+   "id": "Luol_Deng",
+   "name": "Luol Deng",
+   "team": "CHI",
+   "pos": "SF",
+   "speed": 9,
+   "power": 8,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": -2,
+   "defBoost": 1,
+   "salary": 910,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 8,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 9,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 22,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 4,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "season": 2005,
+   "seasonLabel": "2004-05",
+   "age": 19,
+   "games": 61,
+   "mpg": 27.3,
+   "bbrefId": "denglu01",
+   "traded": false,
+   "metrics": {
+    "bpm": 1.2,
+    "vorp": 1.3,
+    "ws": 3,
+    "ws48": 0.086,
+    "per": 14.2
+   },
+   "provisional": true
   },
   {
    "id": "Malik_Monk",
@@ -11792,6 +13348,78 @@
     "per": 14.7
    },
    "provisional": false
+  },
+  {
+   "id": "Marc_Gasol",
+   "name": "Marc Gasol",
+   "team": "MEM",
+   "pos": "C",
+   "speed": 7,
+   "power": 12,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": -4,
+   "defBoost": 0,
+   "salary": 790,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 10,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 11,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 22,
+     "pts": 2,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 3,
+     "reb": 3,
+     "ast": 1
+    }
+   ],
+   "season": 2009,
+   "seasonLabel": "2008-09",
+   "age": 24,
+   "games": 82,
+   "mpg": 30.7,
+   "bbrefId": "gasolma01",
+   "traded": false,
+   "metrics": {
+    "bpm": -0.1,
+    "vorp": 1.2,
+    "ws": 6.4,
+    "ws48": 0.121,
+    "per": 16.7
+   },
+   "provisional": true
   },
   {
    "id": "Marcus_Smart",
@@ -12245,7 +13873,7 @@
    "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": -1,
-   "salary": 730,
+   "salary": 740,
    "chart": [
     {
      "lo": 1,
@@ -13528,6 +15156,78 @@
    "provisional": false
   },
   {
+   "id": "Patrick_Ewing",
+   "name": "Patrick Ewing",
+   "team": "NYK",
+   "pos": "C",
+   "speed": 8,
+   "power": 13,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": -5,
+   "defBoost": 1,
+   "salary": 1120,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 5,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 6,
+     "hi": 9,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 22,
+     "pts": 3,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 4,
+     "reb": 3,
+     "ast": 1
+    }
+   ],
+   "season": 1986,
+   "seasonLabel": "1985-86",
+   "age": 23,
+   "games": 50,
+   "mpg": 35.4,
+   "bbrefId": "ewingpa01",
+   "traded": false,
+   "metrics": {
+    "bpm": 1.1,
+    "vorp": 1.4,
+    "ws": 3.1,
+    "ws48": 0.084,
+    "per": 17.4
+   },
+   "provisional": true
+  },
+  {
    "id": "Patrick_Williams",
    "name": "Patrick Williams",
    "team": "CHI",
@@ -14127,6 +15827,71 @@
    "provisional": false
   },
   {
+   "id": "Rajon_Rondo",
+   "name": "Rajon Rondo",
+   "team": "BOS",
+   "pos": "PG",
+   "speed": 12,
+   "power": 7,
+   "shotLine": 18,
+   "paintBoost": 0,
+   "threePtBoost": -2,
+   "defBoost": 2,
+   "salary": 860,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 10,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 11,
+     "hi": 17,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 18,
+     "hi": 99,
+     "pts": 2,
+     "reb": 2,
+     "ast": 2
+    }
+   ],
+   "season": 2007,
+   "seasonLabel": "2006-07",
+   "age": 20,
+   "games": 78,
+   "mpg": 23.5,
+   "bbrefId": "rondora01",
+   "traded": false,
+   "metrics": {
+    "bpm": -0.2,
+    "vorp": 0.8,
+    "ws": 2.4,
+    "ws48": 0.064,
+    "per": 13.1
+   },
+   "provisional": true
+  },
+  {
    "id": "Rasheed_Wallace",
    "name": "Rasheed Wallace",
    "team": "WSB",
@@ -14712,6 +16477,71 @@
    "provisional": false
   },
   {
+   "id": "Russell_Westbrook",
+   "name": "Russell Westbrook",
+   "team": "OKC",
+   "pos": "PG",
+   "speed": 9,
+   "power": 6,
+   "shotLine": 17,
+   "paintBoost": -1,
+   "threePtBoost": -1,
+   "defBoost": -1,
+   "salary": 560,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 11,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 12,
+     "hi": 16,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 17,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2009,
+   "seasonLabel": "2008-09",
+   "age": 20,
+   "games": 82,
+   "mpg": 32.5,
+   "bbrefId": "westbru01",
+   "traded": false,
+   "metrics": {
+    "bpm": -1,
+    "vorp": 0.7,
+    "ws": 1.9,
+    "ws48": 0.035,
+    "per": 15.2
+   },
+   "provisional": false
+  },
+  {
    "id": "Ryan_Dunn",
    "name": "Ryan Dunn",
    "team": "PHX",
@@ -14840,6 +16670,78 @@
     "per": 12.6
    },
    "provisional": false
+  },
+  {
+   "id": "Sam_Cassell",
+   "name": "Sam Cassell",
+   "team": "HOU72",
+   "pos": "PG",
+   "speed": 10,
+   "power": 6,
+   "shotLine": 14,
+   "paintBoost": -1,
+   "threePtBoost": -4,
+   "defBoost": 1,
+   "salary": 650,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 7,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 13,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 14,
+     "hi": 18,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 19,
+     "hi": 24,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 25,
+     "hi": 99,
+     "pts": 4,
+     "reb": 2,
+     "ast": 2
+    }
+   ],
+   "season": 1994,
+   "seasonLabel": "1993-94",
+   "age": 24,
+   "games": 66,
+   "mpg": 17,
+   "bbrefId": "cassesa01",
+   "traded": false,
+   "metrics": {
+    "bpm": -0.7,
+    "vorp": 0.4,
+    "ws": 2.2,
+    "ws48": 0.093,
+    "per": 13.1
+   },
+   "provisional": true
   },
   {
    "id": "Scottie_Barnes",
@@ -15232,7 +17134,7 @@
    "speed": 5,
    "power": 5,
    "shotLine": 17,
-   "paintBoost": 1,
+   "paintBoost": 0,
    "threePtBoost": 2,
    "defBoost": -2,
    "salary": 100,
@@ -15300,7 +17202,7 @@
    "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": -1,
-   "salary": 840,
+   "salary": 850,
    "chart": [
     {
      "lo": 1,
@@ -15556,11 +17458,11 @@
    "pos": "PG",
    "speed": 10,
    "power": 6,
-   "shotLine": 15,
+   "shotLine": 14,
    "paintBoost": 0,
-   "threePtBoost": -3,
+   "threePtBoost": -4,
    "defBoost": 0,
-   "salary": 540,
+   "salary": 560,
    "chart": [
     {
      "lo": 1,
@@ -15578,13 +17480,13 @@
     },
     {
      "lo": 7,
-     "hi": 14,
+     "hi": 13,
      "pts": 1,
      "reb": 1,
      "ast": 1
     },
     {
-     "lo": 15,
+     "lo": 14,
      "hi": 21,
      "pts": 2,
      "reb": 1,
@@ -15736,6 +17638,78 @@
     "per": 11.8
    },
    "provisional": false
+  },
+  {
+   "id": "Tim_Duncan",
+   "name": "Tim Duncan",
+   "team": "SAS",
+   "pos": "PF",
+   "speed": 11,
+   "power": 15,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": -6,
+   "defBoost": 2,
+   "salary": 1620,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 8,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 9,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 20,
+     "pts": 3,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 5,
+     "reb": 4,
+     "ast": 1
+    }
+   ],
+   "season": 1998,
+   "seasonLabel": "1997-98",
+   "age": 21,
+   "games": 82,
+   "mpg": 39.1,
+   "bbrefId": "duncati01",
+   "traded": false,
+   "metrics": {
+    "bpm": 4.6,
+    "vorp": 5.3,
+    "ws": 12.8,
+    "ws48": 0.192,
+    "per": 22.6
+   },
+   "provisional": true
   },
   {
    "id": "Tim_Hardaway_Jr",
@@ -15924,6 +17898,78 @@
     "per": 10.6
    },
    "provisional": false
+  },
+  {
+   "id": "Tracy_McGrady",
+   "name": "Tracy McGrady",
+   "team": "TOR96",
+   "pos": "SF",
+   "speed": 9,
+   "power": 9,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": -2,
+   "defBoost": -1,
+   "salary": 850,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 5,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 6,
+     "hi": 8,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 9,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 20,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "season": 1998,
+   "seasonLabel": "1997-98",
+   "age": 18,
+   "games": 64,
+   "mpg": 18.4,
+   "bbrefId": "mcgratr01",
+   "traded": false,
+   "metrics": {
+    "bpm": 0.6,
+    "vorp": 0.8,
+    "ws": 2,
+    "ws48": 0.081,
+    "per": 17.4
+   },
+   "provisional": true
   },
   {
    "id": "Trae_Young",
@@ -16326,7 +18372,7 @@
    "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": -1,
-   "salary": 600,
+   "salary": 610,
    "chart": [
     {
      "lo": 1,
@@ -16704,6 +18750,78 @@
     "per": 15.2
    },
    "provisional": false
+  },
+  {
+   "id": "Yao_Ming",
+   "name": "Yao Ming",
+   "team": "HOU",
+   "pos": "C",
+   "speed": 7,
+   "power": 16,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": -4,
+   "defBoost": 1,
+   "salary": 1260,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 9,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 22,
+     "pts": 3,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 4,
+     "reb": 4,
+     "ast": 1
+    }
+   ],
+   "season": 2003,
+   "seasonLabel": "2002-03",
+   "age": 22,
+   "games": 82,
+   "mpg": 29,
+   "bbrefId": "mingya01",
+   "traded": false,
+   "metrics": {
+    "bpm": 2.2,
+    "vorp": 2.5,
+    "ws": 8.7,
+    "ws48": 0.176,
+    "per": 20.6
+   },
+   "provisional": true
   },
   {
    "id": "Yves_Missi",

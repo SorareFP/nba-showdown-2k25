@@ -9,9 +9,9 @@
 // What is worth testing about a card is its CONDITION and its payout, not that
 // the engine can add. Each of these four has a gate that a real hand will hit.
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { newGame, getTeam } from './engine.js';
+import { newGame, getTeam, pruneStanding, standingEntry, passTurn } from './engine.js';
 import { CARDS } from './cards.js';
-import { execCard, applyShotCheck } from './execCard.js';
+import { execCard, applyShotCheck, allocateStandingChecks } from './execCard.js';
 import { canPlayCard } from './canPlay.js';
 
 const p = (name, speed, power, extra = {}) => ({
@@ -188,5 +188,135 @@ describe('the paint-score event itself', () => {
     const miss = game();
     applyShotCheck(miss, { teamKey: 'A', playerIdx: 1, type: 'paint', bonus: -20, cardLabel: 'test' });
     expect(miss.lastPaintScore ?? null).toBeNull();
+  });
+});
+
+// ── THE STANDING PAIR ───────────────────────────────────────────────────────
+//
+// Run the Floor and Twin Towers are the only cards in the game that outlive a
+// section. Two things are worth guarding: that the defence's allocation is the
+// one a rational opponent would make, and that the card actually LEAVES when a
+// named player sits — a card that stays forever is a different card.
+describe('allocateStandingChecks', () => {
+  const e = (i, line, paintBoost = 0) => ({ i, pl: p(`x${i}`, 12, 14, { shotLine: line, paintBoost }) });
+
+  it('sends both checks at the player least likely to convert inside', () => {
+    // Effective paint line is shotLine minus the paint bonus: 19 is the worst
+    // of these even though another card shows a higher number on its face.
+    const picks = allocateStandingChecks([e(0, 15, 2), e(1, 19, 0), e(2, 18, 3)]);
+    expect(picks).toEqual([1, 1]);
+  });
+
+  it('breaks a tie on the smaller paint bonus, then on the earlier slot', () => {
+    expect(allocateStandingChecks([e(0, 18, 1), e(1, 18, 0)])).toEqual([1, 1]);
+    expect(allocateStandingChecks([e(3, 18, 0), e(1, 18, 0)])).toEqual([1, 1]);
+  });
+
+  it('takes a real allocation when one is given, and ignores a bad one', () => {
+    const list = [e(0, 18), e(1, 15), e(2, 16)];
+    expect(allocateStandingChecks(list, [0, 2])).toEqual([0, 2]);
+    expect(allocateStandingChecks(list, [1, 1])).toEqual([1, 1]);
+    // Off the eligible list, wrong length, not an array — the engine decides,
+    // because a malformed option must never eat somebody's card.
+    expect(allocateStandingChecks(list, [0, 9])).toEqual([0, 0]);
+    expect(allocateStandingChecks(list, [0])).toEqual([0, 0]);
+    expect(allocateStandingChecks(list, 'both')).toEqual([0, 0]);
+  });
+});
+
+describe('Run the Floor', () => {
+  const fast = () => [0, 1, 2].map(i => p(`f${i}`, 12, 9)).concat([3, 4].map(i => p(`s${i}`, 8, 9)));
+
+  it('needs three at Speed 12+', () => {
+    const two = [p('f0', 12, 9), p('f1', 12, 9), ...[2, 3, 4].map(i => p(`s${i}`, 8, 9))];
+    expect(canPlayCard(game({ hand: ['run_the_floor'], A: two }), 'A', 'run_the_floor').canPlay).toBe(false);
+    expect(canPlayCard(game({ hand: ['run_the_floor'], A: fast() }), 'A', 'run_the_floor').canPlay).toBe(true);
+  });
+
+  it('stays in the hand and on the table, and cannot be run twice in a period', () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0.99);
+    const g = game({ hand: ['run_the_floor'], A: fast() });
+    const r = execCard(g, 'A', 'run_the_floor', {});
+    expect(r.ok).toBe(true);
+    expect(getTeam(r.game, 'A').hand).toContain('run_the_floor');
+    expect(standingEntry(r.game, 'A', 'run_the_floor')).toBeTruthy();
+    expect(canPlayCard(r.game, 'A', 'run_the_floor').canPlay).toBe(false);
+    expect(r.game.log.filter(x => /Run the Floor: .* paint at/.test(x.msg))).toHaveLength(2);
+  });
+
+  it('comes back next period', () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0.99);
+    const g = execCard(game({ hand: ['run_the_floor'], A: fast() }), 'A', 'run_the_floor', {}).game;
+    const next = { ...g, section: g.section + 1 };
+    expect(canPlayCard(next, 'A', 'run_the_floor').canPlay).toBe(true);
+  });
+});
+
+describe('Twin Towers', () => {
+  const bigs = () => [p('t0', 9, 14), p('t1', 9, 14), ...[2, 3, 4].map(i => p(`s${i}`, 9, 9))];
+
+  it('needs two at Power 14+ — and 14 counts, per the user', () => {
+    const one = [p('t0', 9, 14), ...[1, 2, 3, 4].map(i => p(`s${i}`, 9, 13))];
+    expect(canPlayCard(game({ hand: ['twin_towers'], A: one }), 'A', 'twin_towers').canPlay).toBe(false);
+    expect(canPlayCard(game({ hand: ['twin_towers'], A: bigs() }), 'A', 'twin_towers').canPlay).toBe(true);
+  });
+
+  it('puts the OPPONENT paint checks at two harder while it stands', () => {
+    // Same die, same nominal bonus, both sides: only the opposing paint check
+    // moves. Compared by the rolled total in the log line rather than by a
+    // flag, so this fails if the penalty is ever applied to the wrong team.
+    vi.spyOn(Math, 'random').mockReturnValue(0.5);
+    const g = execCard(game({ hand: ['twin_towers'], A: bigs() }), 'A', 'twin_towers', {}).game;
+
+    const shoot = (teamKey, type) => {
+      const clone = { ...g, teamA: { ...g.teamA }, teamB: { ...g.teamB }, log: [] };
+      const r = applyShotCheck(clone, { teamKey, playerIdx: 0, type, bonus: 0, cardLabel: 'x' });
+      return r.total ?? r.roll ?? r.finalRoll ?? r.die;
+    };
+    const plain = shoot('A', 'paint');
+    expect(shoot('B', 'paint')).toBe(plain - 2);
+    // The arc is untouched — Twin Towers guards the paint, not the three.
+    expect(shoot('B', '3pt')).toBe(shoot('A', '3pt'));
+  });
+});
+
+describe('leaving play', () => {
+  const fast = () => [0, 1, 2].map(i => p(`f${i}`, 12, 9)).concat([3, 4].map(i => p(`s${i}`, 8, 9)));
+
+  it('drops the card, and takes it out of the hand, when a named player sits', () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0.99);
+    const A = fast();
+    const g = execCard(game({ hand: ['run_the_floor'], A }), 'A', 'run_the_floor', {}).game;
+    expect(getTeam(g, 'A').hand).toContain('run_the_floor');
+
+    const benched = { ...g, teamA: { ...g.teamA, starters: [p('bench', 5, 5), ...A.slice(1)] } };
+    pruneStanding(benched);
+    expect(standingEntry(benched, 'A', 'run_the_floor')).toBeUndefined();
+    expect(getTeam(benched, 'A').hand).not.toContain('run_the_floor');
+    expect(benched.log.some(x => /leaves play/.test(x.msg))).toBe(true);
+  });
+
+  it('survives the same five coming back in a different order', () => {
+    // The entry names PLAYERS, not slots, precisely so a reshuffled lineup
+    // does not read as a substitution.
+    vi.spyOn(Math, 'random').mockReturnValue(0.99);
+    const A = fast();
+    const g = execCard(game({ hand: ['run_the_floor'], A }), 'A', 'run_the_floor', {}).game;
+    const shuffled = { ...g, teamA: { ...g.teamA, starters: [...A].reverse() } };
+    pruneStanding(shuffled);
+    expect(standingEntry(shuffled, 'A', 'run_the_floor')).toBeTruthy();
+  });
+
+  it('is pruned as the scoring phase opens, which is when the lineup is known', () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0.99);
+    const A = fast();
+    const g = execCard(game({ hand: ['run_the_floor'], A }), 'A', 'run_the_floor', {}).game;
+    let next = {
+      ...g, phase: 'matchup_strats', matchupPasses: 1,
+      teamA: { ...g.teamA, starters: [p('bench', 5, 5), ...A.slice(1)] },
+    };
+    next = passTurn(next, 'A');
+    expect(next.phase).toBe('scoring');
+    expect(standingEntry(next, 'A', 'run_the_floor')).toBeUndefined();
   });
 });

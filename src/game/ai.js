@@ -375,6 +375,9 @@ function evaluateCard(game, teamKey, cardId, strat) {
     // check in the game; Inside-Out is a free three off a bucket you already
     // have; Short-Roll is a slow burn that only pays if the big scores inside.
     outside_pick: 6, pick_and_roll_maestro: 8, inside_out: 7, short_roll_playmaker: 5,
+    // The standing pair are worth more than one play, because they are not one
+    // play — they come back every period until a big sits down.
+    run_the_floor: 9, twin_towers: 9,
     // Post-roll
     heat_check: 7,
     burst_of_momentum: 6,

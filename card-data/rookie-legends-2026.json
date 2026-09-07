@@ -27,5 +27,29 @@
   "Vince Carter": {
     "season": 1999,
     "reason": "ROY in the lockout year; BPM 2.8"
+  },
+  "Hakeem Olajuwon": {
+    "season": 1985,
+    "reason": "1984-85 rookie year — 82g, 2914min. The archive gap at 1978-1984 means a 1985 debut cannot be proven, so it is named."
+  },
+  "Charles Barkley": {
+    "season": 1985,
+    "reason": "1984-85 rookie year — 82g, 2347min. Same 1984-85 draft class as Jordan and Olajuwon; the archive cannot prove the debut."
+  },
+  "John Stockton": {
+    "season": 1985,
+    "reason": "1984-85 rookie year — 82g, 1490min. Same class; named for the same reason."
+  },
+  "Karl Malone": {
+    "season": 1986,
+    "reason": "1985-86 rookie year — 81g, 2475min. Sits at the loaded window edge, so the debut cannot be proven and is named."
+  },
+  "Patrick Ewing": {
+    "season": 1986,
+    "reason": "1985-86 rookie year — 50g, 1771min. Same window edge as Malone."
+  },
+  "Gary Payton": {
+    "season": 1991,
+    "reason": "1990-91 rookie year — 82g, 2244min. Forced because the archive lookup folds 'Gary Payton II' onto this name and returns the son's 2017 debut."
   }
 }

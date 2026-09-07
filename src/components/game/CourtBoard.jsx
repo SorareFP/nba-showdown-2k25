@@ -18,7 +18,7 @@ function HelpBtn({ section }) {
   return <button className={styles.helpBtn} onClick={handleClick} title="How to Play">?</button>;
 }
 
-export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExecCard, onResolve, onSpendAssist, onSpendRebound, onDraftSubmit, onPlacePlayer, onTimeout = null, onEndTimeout = null, pvpMode = false, myTeamKey = null, isMyTurn = true }) {
+export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExecCard, onResolve, onSpendAssist, onSpendRebound, onDraftSubmit, onPlacePlayer, onTimeout = null, onEndTimeout = null, pvpMode = false, myTeamKey = null, isMyTurn = true, defenceIsHuman = false }) {
   // ── Solo placement ─────────────────────────────────────────────────────────
   //
   // PvP passes a Firebase-backed onPlacePlayer; solo places locally with the
@@ -68,7 +68,7 @@ export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExec
   const closeModal = (val) => { const r = modal?.resolve; setModal(null); r?.(val); };
 
   const handleExecCard = async (teamKey, cardId, baseOpts = {}) => {
-    const opts = await buildOpts(game, teamKey, cardId, baseOpts, openModal, { toast, ask });
+    const opts = await buildOpts(game, teamKey, cardId, baseOpts, openModal, { toast, ask, defenceIsHuman });
     if (opts === null) return;
     onExecCard(teamKey, cardId, opts);
   };
@@ -567,6 +567,30 @@ async function buildOpts(game, teamKey, cardId, base, openModal, ui = {}) {
     // Track original and new defender from the switch
     opts.originalDefIdx = lc.opts.origD1;
     opts.newDefIdx = lc.opts.origD2;
+  }
+
+  // ── Run the Floor / Twin Towers: the DEFENCE places the two checks ─────
+  //
+  // The only choice in the game that belongs to the player whose turn it is
+  // NOT. It is offered when a person is sitting on the other side (hotseat);
+  // against the coach, and in PvP where the defender is on another machine
+  // and would need a synced decision, the engine allocates the way a rational
+  // opponent would — see allocateStandingChecks.
+  if (cardId === 'run_the_floor' || cardId === 'twin_towers') {
+    const isFloor = cardId === 'run_the_floor';
+    const standing = (game.standing || []).find(e => e.teamKey === teamKey && e.cardId === cardId);
+    const eligible = filterStarters(myT.starters, p => p && (standing
+      ? standing.playerIds.includes(p.id)
+      : (isFloor ? (p.speed || 0) >= 12 : (p.power || 0) >= 14)));
+    if (eligible.length === 0) { toast('None of its players are on the floor.'); return null; }
+    if (ui.defenceIsHuman) {
+      const label = n => `DEFENCE: who takes check ${n} of 2? (paint at +2)`;
+      const first = await pickFiltered(eligible, label(1), teamKey);
+      if (first === null) return null;
+      const second = await pickFiltered(eligible, label(2), teamKey);
+      if (second === null) return null;
+      opts.allocation = [first, second];
+    }
   }
 
   // ── Short-Roll Playmaker: the 8/8 facilitator ──────────────────────────

@@ -120,6 +120,13 @@ export function newGame(rosterA, rosterB, deckConfigA, deckConfigB, opts = {}) {
     // Set by endSection when the final section begins within the margin —
     // { active, margin, used: {A,B}, extra: {A,B}, timeoutUsed: {A,B} }.
     crunch: null,
+    // CARDS THAT OUTLIVE A SECTION. Run the Floor and Twin Towers "stay in
+    // play until at least one of these players goes to the bench", which is
+    // the only thing in the game that survives the section reset below.
+    // Entries are { cardId, teamKey, playerIds, lastSection }; see
+    // pruneStanding, which runs when the next scoring phase opens because
+    // that is the first moment the new lineup is known.
+    standing: [],
     timeoutActive: null,
     pressArmed: {},
     teamA: makeTeam(rosterA, 'Team A', deckConfigA),
@@ -609,6 +616,46 @@ export function burnedSlots(g, sw) {
     .map(c => c.slot);
 }
 
+/**
+ * A player's id, if they are on the floor for `teamKey`.
+ *
+ * Standing cards name PLAYERS, not slots: a lineup can come back in a
+ * different order and the card should not care, but it must notice when
+ * somebody sits.
+ */
+function onFloor(g, teamKey, playerId) {
+  return getTeam(g, teamKey).starters.some(p => p?.id === playerId);
+}
+
+/**
+ * Drop any standing card whose named players are no longer all on the floor,
+ * and take the card out of the hand it was sitting in.
+ *
+ * Called as the scoring phase opens, which is the earliest point the new
+ * lineup exists — endSection clears the starters, so the bench cannot be
+ * checked there.
+ */
+export function pruneStanding(g) {
+  const kept = [];
+  for (const entry of g.standing ?? []) {
+    if ((entry.playerIds ?? []).every(id => onFloor(g, entry.teamKey, id))) { kept.push(entry); continue; }
+    const team = getTeam(g, entry.teamKey);
+    const at = team.hand.indexOf(entry.cardId);
+    if (at >= 0) team.hand = [...team.hand.slice(0, at), ...team.hand.slice(at + 1)];
+    g.log = [...g.log, {
+      team: entry.teamKey,
+      msg: `${entry.cardId.replace(/_/g, ' ')} leaves play — one of its players is on the bench`,
+    }];
+  }
+  g.standing = kept;
+  return g;
+}
+
+/** The standing entry for a team's card, or undefined. */
+export function standingEntry(g, teamKey, cardId) {
+  return (g.standing ?? []).find(e => e.teamKey === teamKey && e.cardId === cardId);
+}
+
 /** `teamKey` passes. Hands the turn over, or closes the window on the second pass. */
 export function passTurn(g, teamKey) {
   const ng = deepClone(g);
@@ -618,6 +665,7 @@ export function passTurn(g, teamKey) {
       ng.phase = 'scoring';
       ng.rollResults = { A: [], B: [] };
       ng.log = [...ng.log, { team: null, msg: 'Both passed — Scoring Phase!' }];
+      pruneStanding(ng);
     } else {
       ng.matchupTurn = other(teamKey);
       ng.log = [...ng.log, { team: teamKey, msg: 'Passed.' }];

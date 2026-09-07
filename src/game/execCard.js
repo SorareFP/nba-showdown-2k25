@@ -2,7 +2,7 @@
 // Pure function: takes game state + card + opts, returns new state
 // Never mutates — always returns a new object via deepClone
 
-import { handOverPriority, getTeam, getOpp, getPS, calcAdv, shotCheck, matchupContest, drawCards, deepClone, getFatigue, recordDefSwitch, burnedSlots, roll20, checkAssistDraw } from './engine.js';
+import { handOverPriority, getTeam, getOpp, getPS, calcAdv, shotCheck, matchupContest, drawCards, deepClone, getFatigue, recordDefSwitch, burnedSlots, roll20, checkAssistDraw, standingEntry } from './engine.js';
 import { helpTargets, canAnswerCheck } from './canPlay.js';
 import { lookupChart } from './cards.js';
 import { getStrat } from './strats.js';
@@ -68,6 +68,9 @@ export function execCard(game, teamKey, cardId, opts = {}) {
 function resolveCard(game, teamKey, cardId, opts = {}) {
   const s = getStrat(cardId);
   if (!s) return { game, ok: false, msg: 'Unknown card: ' + cardId };
+  // Set by a card that stays on the table instead of being spent — see the
+  // note beside removeFromHand at the foot of this function.
+  let keepInHand = false;
 
   // Deep clone so we never mutate
   const g = deepClone(game);
@@ -996,6 +999,60 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       announceCheck(g, { teamKey, playerIdx: idx, type: kind, bonus: 0, cardLabel: 'Extra Pass', noCardBonus: true });
       break;
     }
+    // ── WAVE TWO, THE STANDING PAIR ─────────────────────────────────────
+    //
+    // "Your opponent allocates two paint shot checks among those players at
+    // +2." Both of these come back every scoring phase until one of the named
+    // players sits down — see `standing` in engine.js and pruneStanding.
+    case 'run_the_floor':
+    case 'twin_towers': {
+      const isFloor = cardId === 'run_the_floor';
+      const need = isFloor ? 3 : 2;
+      const bar = isFloor
+        ? { label: 'Speed 12+', ok: pl => (pl.speed || 0) >= 12 }
+        : { label: 'Power 14+', ok: pl => (pl.power || 0) >= 14 };
+      const standing = standingEntry(g, teamKey, cardId);
+      const section = `${g.quarter}-${g.section}`;
+      if (standing?.lastSection === section) return fail('Already run this period');
+
+      // A standing card keeps the players it named. A fresh one qualifies now.
+      const eligible = standing
+        ? myT.starters.map((pl, i) => ({ pl, i })).filter(({ pl }) => pl && standing.playerIds.includes(pl.id))
+        : myT.starters.map((pl, i) => ({ pl, i })).filter(({ pl }) => pl && bar.ok(pl));
+      if (!standing && eligible.length < need) {
+        return fail(`Need ${need} players at ${bar.label} (have ${eligible.length})`);
+      }
+      if (eligible.length === 0) return fail('None of its players are on the floor');
+
+      const picks = allocateStandingChecks(eligible, opts.allocation);
+      const names = picks.map(i => myT.starters[i]?.name);
+      addLog(g, teamKey, `${s?.name || cardId}: the defence sends both checks at ${
+        names[0] === names[1] ? names[0] : names.join(' and ')}`);
+
+      if (!standing) {
+        g.standing = [...(g.standing ?? []), {
+          cardId, teamKey, playerIds: eligible.map(({ pl }) => pl.id), lastSection: section,
+        }];
+        addLog(g, teamKey, `${s?.name || cardId} stays in play until one of those players goes to the bench`);
+      } else {
+        standing.lastSection = section;
+      }
+      // The card is not spent — it is on the table now.
+      keepInHand = true;
+
+      announceCheck(g, {
+        teamKey, playerIdx: picks[0], type: 'paint', bonus: 2 + _assistShotBonus,
+        cardLabel: `${s?.name || cardId}: ${myT.starters[picks[0]]?.name} paint at +2`,
+        ...(isFloor ? { onHitAst: 1 } : {}),
+        then: [{
+          playerIdx: picks[1], type: 'paint', bonus: 2 + _assistShotBonus,
+          cardLabel: `${s?.name || cardId}: ${myT.starters[picks[1]]?.name} paint at +2`,
+          ...(isFloor ? { onHitAst: 1 } : {}),
+        }],
+      });
+      break;
+    }
+
     // ── WAVE TWO ────────────────────────────────────────────────────────
     case 'outside_pick': {
       const others = myT.hand.filter(id => id !== 'outside_pick');
@@ -1263,6 +1320,11 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
 
   // Remove card from hand (cards that return early have already removed)
   removeFromHand(myT, cardId);
+  // A STANDING CARD DOES NOT LEAVE THE TABLE. "Stays in play until at least
+  // one of these players goes to the bench" is, in a game made of hands, a
+  // card that comes back rather than one that is spent. pruneStanding takes
+  // it away when a named player sits.
+  if (keepInHand && !myT.hand.includes(cardId)) myT.hand = [...myT.hand, cardId];
 
   // Analytics: count cards played
   if (g.analytics?.[teamKey]) g.analytics[teamKey].cardsPlayed++;
@@ -1311,6 +1373,11 @@ export function applyShotCheck(g, psc) {
     else { bonus -= 3; g.log = [...g.log, { team: psc.teamKey, msg: `Denial: fewer than 2 AST to lose — the check is at −3` }]; }
   }
   bonus -= matchupContest(g, psc.teamKey, psc.playerIdx, psc.type);
+  // TWIN TOWERS, from the other side of the floor: while it stands, every
+  // paint check the OPPOSING team takes is two harder.
+  if (psc.type === 'paint' && standingEntry(g, psc.teamKey === 'A' ? 'B' : 'A', 'twin_towers')) {
+    bonus -= 2;
+  }
   const hitAst = psc.onHitAst ?? (psc.onHit === 'ast' ? 1 : 0);
 
   const r = shotCheck(player, psc.type, bonus, ps);
@@ -1369,6 +1436,39 @@ export function applyShotCheck(g, psc) {
     closeOutApplied: !!psc.closeOutBonus,
   };
   return r;
+}
+
+/**
+ * WHERE THE OPPONENT PUTS THE TWO CHECKS.
+ *
+ * The user's reading, confirmed 2026-09-07: you take the two paint checks at
+ * +2, and the OPPONENT chooses which of your qualifying players takes each.
+ *
+ * ── WHY THE ENGINE CHOOSES BY DEFAULT ──────────────────────────────────────
+ *
+ * Every picker in this game belongs to the player whose turn it is; a forced
+ * choice by the defender is an interaction the board has never had. So the
+ * engine allocates the way a rational opponent would — both checks onto the
+ * player least likely to convert inside — which is the same answer an opponent
+ * playing well would give, and it is logged so nobody has to guess why.
+ *
+ * `allocation` is the override: a defender's actual choice, two indices into
+ * the eligible list's own slots. Anything malformed falls back to the engine's
+ * pick rather than throwing, because a bad option must not eat a card.
+ */
+export function allocateStandingChecks(eligible, allocation = null) {
+  const legal = new Set(eligible.map(({ i }) => i));
+  if (Array.isArray(allocation) && allocation.length === 2 && allocation.every(i => legal.has(i))) {
+    return [allocation[0], allocation[1]];
+  }
+  // Worst inside first: the highest effective paint line, then the smaller
+  // paint bonus, then the earlier slot so the choice is never random.
+  const worst = [...eligible].sort((u, v) => {
+    const lu = (u.pl.shotLine ?? 18) - (u.pl.paintBoost || 0);
+    const lv = (v.pl.shotLine ?? 18) - (v.pl.paintBoost || 0);
+    return lv - lu || (u.pl.paintBoost || 0) - (v.pl.paintBoost || 0) || u.i - v.i;
+  })[0];
+  return [worst.i, worst.i];
 }
 
 /** A card that replaces its player's scoring roll writes it once the chain ends. */

@@ -153,6 +153,10 @@ export const STRATS = [
   // docs/strategy-cards-backlog-recovered.md. Run the Floor and Twin Towers
   // are NOT here: they persist across sections and the allocation is the
   // opponent's, which is an interaction this game has never had.
+  { id:'run_the_floor',       name:'Run the Floor',      phase:'scoring',  side:'off', copies:1, locked:false, color:'#0D9488', rarity:'rare',
+    desc:'With three players at Speed 12+ on the floor: two Paint Shot Checks at +2, allocated by the defence, +1 Assist each. Stays in play until one of them is benched.' },
+  { id:'twin_towers',         name:'Twin Towers',        phase:'scoring',  side:'off', copies:1, locked:false, color:'#7C2D12', rarity:'rare',
+    desc:'With two players at Power 14+ on the floor: two Paint Shot Checks at +2, allocated by the defence. Your opponent takes every Paint Check at −2. Stays in play until one of them is benched.' },
   { id:'outside_pick',        name:'Outside Pick',       phase:'scoring',  side:'off', copies:2, locked:false, color:'#B45309', rarity:'uncommon',
     desc:'Discard a card: this player takes a 3PT Shot Check at +5. Hit: 3 points and +1 Assist.' },
   { id:'pick_and_roll_maestro', name:'Pick-and-Roll Maestro', phase:'matchup', side:'off', copies:1, locked:true, color:'#9A3412', rarity:'rare',

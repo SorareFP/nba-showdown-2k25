@@ -185,7 +185,10 @@ describe.each([
     // The SECOND sanctioned exception: card-data/legends-2026.json names the
     // all-time greats who retired before the pool existed and so had no path
     // into any generated set. Also a named list, also not a loophole.
-    const legends = new Set([...readLegends().map(l => l.name), ...ROOKIE_LEGEND_NAMES]);
+    const legends = new Set([
+      ...readLegends().map(l => l.name), ...ROOKIE_LEGEND_NAMES,
+      ...DISSONANCE_NAMES, ...TEAM_REWARD_NAMES,
+    ]);
     for (const card of file.cards) {
       expect(
         pool.has(card.name) || standouts.has(card.name) || legends.has(card.name),
@@ -210,6 +213,8 @@ describe.each([
       ...Object.keys(STANDOUTS.playoffCards ?? {}),
       ...readLegends().map(l => l.name),
       ...ROOKIE_LEGEND_NAMES,
+      ...DISSONANCE_NAMES,
+      ...TEAM_REWARD_NAMES,
     ])].filter(name => carded.has(name) && !pool.has(name)).length;
     const ceded = (file.mergedIntoTwin ?? []).length;
     // The playing-time cut is a THIRD way out of the rookie set, and it has to
@@ -236,6 +241,19 @@ describe.each([
 const ROOKIE_LEGEND_NAMES = Object.keys(
   JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'card-data', 'rookie-legends-2026.json'), 'utf8'))
 ).filter(k => !k.startsWith('_'));
+
+// THE THIRD AND FOURTH SANCTIONED LISTS (2026-09-07). The rookie candidates
+// used to be the pool plus the Summer Standouts blocks plus the legends, and a
+// player who reached the game only through Dissonance or a team reward was
+// never considered — which is how Allen Iverson, Rookie of the Year in a season
+// this archive covers, had no rookie card. Both are named lists, like the two
+// before them, so this stays a guard rather than a loophole.
+const DISSONANCE_NAMES = Object.keys(
+  JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'card-data', 'dissonance.json'), 'utf8')).picks ?? {}
+);
+const TEAM_REWARD_NAMES = Object.values(
+  JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'card-data', 'team-rewards-2026.json'), 'utf8')).picks ?? {}
+).map(v => v?.name).filter(Boolean);
 
 describe('Super Season', () => {
   it('excludes the players having their best season right now', () => {
@@ -327,9 +345,13 @@ describe('Rookie', () => {
     // ones people remember — the window widens rather than evicting anyone.
     const top = [...ROOKIE.cards]
       .sort((a, b) => b.speed + b.power - (a.speed + a.power))
-      // Twenty since 2026-09-06: seven forced rookie seasons (Jordan first among
-      // them) sit above some of these — Dončić is 18th of 271.
-      .slice(0, 20)
+      // Twenty-four since 2026-09-07: the widened candidate universe put
+      // Robinson, Duncan, Olajuwon, Barkley and Iverson into the set, and they
+      // sit above Dončić, who is now 23rd of 281. The window widens rather
+      // than evicting anyone — which is the whole assertion, and it is more
+      // true than it was: the top twenty now opens Jordan, Robinson, Paul,
+      // Kirilenko, Duncan, Webber, Jokić.
+      .slice(0, 24)
       .map(c => c.name);
     for (const name of ['Victor Wembanyama', 'Luka Dončić', 'Nikola Jokić', 'Michael Jordan']) {
       expect(top, `${name} missing from the top of the rookie set`).toContain(name);
@@ -455,7 +477,14 @@ describe('the base set\'s badges', () => {
     // 24 — while Julius Randle's single game does not.
     // 271 since 2026-09-06: seven forced rookie seasons (rookie-legends-2026.json).
     // 251 since 2026-09-07: the rookie set's floor became a 600-MINUTE TOTAL (ROOKIE_MIN_MINUTES) instead of 12 minutes a night, which cut 20 more cards and shifted one twin merge, so one more base card wears the pill.
-    expect(ROOKIE.cards.length).toBe(251);
+    // AND 251 -> 281 WHEN THE CANDIDATE UNIVERSE WIDENED (2026-09-07). Not the
+    // badge either, and not a rule change: thirty players who were only ever
+    // reachable through Dissonance, the Super Season legends or a team reward
+    // were never CONSIDERED for a rookie card, and now are. Iverson, Kobe,
+    // Duncan, Olajuwon, Payton and the rest cleared the same playing-time bar
+    // everybody else clears. Super Season is untouched at 194, which is the
+    // point of checking both numbers here.
+    expect(ROOKIE.cards.length).toBe(281);
     const poolNames = new Set(POOL.map(p => p.name));
     const bothBlocks = [...new Set([
       ...Object.keys(STANDOUTS.superSeasons ?? {}),
@@ -469,8 +498,12 @@ describe('the base set\'s badges', () => {
       ...Object.keys(STANDOUTS.superSeasons ?? {}),
       ...readLegends().map(l => l.name),
     ])].filter(name => !poolNames.has(name)).length;
-    const rookieOffPool = bothBlocks
-      .filter(name => ROOKIE.cards.some(c => c.name === name) && !poolNames.has(name)).length;
+    // The rookie set reaches wider than the Super Season set does, so its
+    // off-pool count has to as well — see DISSONANCE_NAMES above.
+    const rookieOffPool = [...new Set([
+      ...bothBlocks, ...readLegends().map(l => l.name), ...ROOKIE_LEGEND_NAMES,
+      ...DISSONANCE_NAMES, ...TEAM_REWARD_NAMES,
+    ])].filter(name => ROOKIE.cards.some(c => c.name === name) && !poolNames.has(name)).length;
     expect(SUPER.cards.length + SUPER.excluded.length + (SUPER.mergedIntoTwin ?? []).length)
       .toBe(POOL.length + ssOffPool);
     // The playing-time bar is the third exit from the rookie set, alongside the

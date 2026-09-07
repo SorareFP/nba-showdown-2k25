@@ -314,6 +314,10 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
         onSpendRebound={handlers.onSpendRebound}
         onTimeout={handlers.onTimeout}
         onEndTimeout={handlers.onEndTimeout}
+        // Hotseat means a real person is sitting on the other side, so the
+        // defence gets to make the choices that are the defence's — see
+        // allocateStandingChecks. Against the coach, the engine allocates.
+        defenceIsHuman={opponent === 'human'}
       />
     </div>
   );

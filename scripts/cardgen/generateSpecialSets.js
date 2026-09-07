@@ -1384,7 +1384,19 @@ export function main({ log = console.log } = {}) {
   // dropped silently: carding them means fetching the 1990s tables first.
   {
     const standoutBlocks = readSummerStandouts();
-    const poolNames = new Set(pool.map(pl => normalizeName(pl.name)));
+    // ── SUFFIXES MATTER FOR THIS ONE TEST ───────────────────────────────────
+    //
+    // `normalizeName` strips Jr/Sr/II/III on purpose — it is built for matching
+    // one source's spelling to another's. Used HERE it says Gary Payton II,
+    // who has a base card, IS Gary Payton, who does not, and the elder was
+    // dropped from the rookie candidates as "already carded". He is the only
+    // collision in the data today, and one is enough: the question this filter
+    // asks is "is this exact person already in the pool", so it keeps the
+    // suffix that distinguishes them.
+    const exactKey = n => String(n ?? '')
+      .normalize('NFD').replace(/[̀-ͯ]/g, '')
+      .toLowerCase().replace(/[^a-z]/g, '');
+    const poolNames = new Set(pool.map(pl => exactKey(pl.name)));
     // FORCED ROOKIE SEASONS (card-data/rookie-legends-2026.json): players with
     // no base card, each with the rookie season named outright — which is what
     // gets Jordan's 1984-85 past the window guard below.
@@ -1393,11 +1405,51 @@ export function main({ log = console.log } = {}) {
       ? Object.entries(readJson(rookieLegendsFile)).filter(([k, v]) => !k.startsWith('_') && Number.isFinite(v?.season))
       : [];
     const forcedRookies = new Map(rookieLegends.map(([k, v]) => [normalizeName(k), v.season]));
+    // ── EVERY CURATED NAME, NOT TWO OF THEM ─────────────────────────────────
+    //
+    // This list used to be the Summer Standouts blocks plus the forced
+    // legends, and nothing else — so a player who reached the game through
+    // legends-2026.json (Super Season), dissonance.json or the team rewards
+    // was never even CONSIDERED for a rookie card. That is how Allen Iverson,
+    // Rookie of the Year in the season this archive covers, had none: he is a
+    // Dissonance pick, and Dissonance was not in the universe (the user,
+    // 2026-09-07: "I see we're missing Allen Iverson. Might be missing T-Mac
+    // too.").
+    //
+    // Everything below is only a CANDIDATE list. The playing-time bar
+    // (rookieSeasonCounts) and the archive-window guard still decide, which is
+    // why adding a name here cannot smuggle in a card that has not earned one.
+    const curatedNames = source => {
+      try {
+        const file = path.join(REPO_ROOT, 'card-data', source);
+        if (!fs.existsSync(file)) return [];
+        const json = readJson(file);
+        // `picks` for the sets that wrap their entries; the object itself for
+        // the ones keyed by name at the top level.
+        const block = json.picks ?? json;
+        return Object.keys(block).filter(k => !k.startsWith('_') && typeof block[k] === 'object');
+      } catch {
+        return [];
+      }
+    };
+    // Team rewards are keyed by FRANCHISE, so the names are one level in.
+    const teamRewardNames = () => {
+      try {
+        const file = path.join(REPO_ROOT, 'card-data', 'team-rewards-2026.json');
+        if (!fs.existsSync(file)) return [];
+        return Object.values(readJson(file).picks ?? {}).map(v => v?.name).filter(Boolean);
+      } catch {
+        return [];
+      }
+    };
     const rookieNames = [...new Set([
       ...Object.keys(standoutBlocks.playoffCards ?? {}),
       ...Object.keys(standoutBlocks.superSeasons ?? {}),
       ...rookieLegends.map(([k]) => k),
-    ])].filter(n => !poolNames.has(normalizeName(n)));
+      ...curatedNames('legends-2026.json'),
+      ...curatedNames('dissonance.json'),
+      ...teamRewardNames(),
+    ])].filter(n => !poolNames.has(exactKey(n)));
     if (rookieNames.length) {
       // From 1986: the tables reach Rodman's 1986-87 and Pippen's 1987-88
       // debuts, with 1986 cached as the SENTINEL that proves a 1987 first
@@ -1412,10 +1464,21 @@ export function main({ log = console.log } = {}) {
         // them); the FIRST season comes from the full tables, which reach 1992.
         const careerRows = pickCareer(league.get(normalizeName(name)), {});
         let id = careerRows?.[0]?.playerId;
-        if (!id && forcedRookies.has(normalizeName(name))) {
-          const yr = forcedRookies.get(normalizeName(name));
+        // A FORCED SEASON TRUSTS THE SEASON, NOT THE CAREER ROW.
+        //
+        // This used to rescue only the case where no id resolved at all. The
+        // worse case is an id that resolves to the WRONG PERSON: normalizeName
+        // folds "Gary Payton II" onto "Gary Payton", the career lookup returns
+        // the son, and the father's 1990-91 is then looked up under the son's
+        // id and missed — reported as "no 1991 full-table row" for a season
+        // that is right there in the archive. So when a season is named and
+        // the resolved id has no row in it, re-resolve from that season's own
+        // rows. Scoped to the one named season, so it cannot reach a namesake
+        // in another era.
+        const forcedYear = forcedRookies.get(normalizeName(name));
+        if (forcedYear != null && (!id || !tables.advanced.has(`${id}|${forcedYear}`))) {
           for (const [key, row] of tables.advanced) {
-            if (key.endsWith(`|${yr}`) && normalizeName(row.name ?? '') === normalizeName(name)) { id = row.playerId; break; }
+            if (key.endsWith(`|${forcedYear}`) && normalizeName(row.name ?? '') === normalizeName(name)) { id = row.playerId; break; }
           }
         }
         if (!id) { skipped.push(`${name} (no career rows)`); continue; }

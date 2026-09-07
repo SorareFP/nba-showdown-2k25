@@ -541,6 +541,23 @@ export function canPlayCard(g, teamKey, cardId) {
       if (myT.assists < 2) return no(`Need 2 assists (have ${myT.assists})`);
       return ok('Any player, any check, no card bonuses');
     // ── WAVE TWO ────────────────────────────────────────────────────────
+    case 'run_the_floor':
+    case 'twin_towers': {
+      const isFloor = cardId === 'run_the_floor';
+      const standing = (g.standing ?? []).find(e => e.teamKey === teamKey && e.cardId === cardId);
+      if (standing?.lastSection === `${g.quarter}-${g.section}`) return no('Already run this period');
+      if (standing) return ok('Still in play — take the two checks again');
+      const qualify = isFloor
+        ? myT.starters.filter(p => p && (p.speed || 0) >= 12)
+        : myT.starters.filter(p => p && (p.power || 0) >= 14);
+      const need = isFloor ? 3 : 2;
+      if (qualify.length < need) {
+        return no(`Need ${need} players at ${isFloor ? 'Speed 12+' : 'Power 14+'} (have ${qualify.length})`);
+      }
+      return ok(isFloor
+        ? 'Two paint checks at +2, an assist each — and it stays in play'
+        : 'Two paint checks at +2, and their paint checks go to −2');
+    }
     case 'outside_pick':
       if (myT.hand.filter(id => id !== 'outside_pick').length === 0) return no('No card to discard');
       return ok('A 3PT check at +5 — hit for 3 and an assist');

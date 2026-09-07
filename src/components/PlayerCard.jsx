@@ -1,9 +1,11 @@
 import { getPlayerImageUrl } from '../game/cardImages.js';
+import { getPlayerRarity } from '../game/rarity.js';
+import Holo from './HoloSheen.jsx';
 import styles from './PlayerCard.module.css';
 
 export default function PlayerCard({ card, compact = false, actions, highlighted = false, onClick }) {
   const hasBoosts = !!(card.paintBoost || card.threePtBoost || card.defBoost);
-  const imgUrl = getPlayerImageUrl(card.id);
+  const imgUrl = getPlayerImageUrl(card.id, card.set);
 
   return (
     <div
@@ -12,10 +14,10 @@ export default function PlayerCard({ card, compact = false, actions, highlighted
       style={onClick ? { cursor: 'pointer' } : undefined}
     >
       {imgUrl && !compact && (
-        <div className={styles.cardArt}>
+        <Holo className={styles.cardArt} active={getPlayerRarity(card) === 'legendary'}>
           <img src={imgUrl} alt={card.name} className={styles.cardArtImg}
             onError={e => { e.target.parentElement.style.display = 'none'; }} />
-        </div>
+        </Holo>
       )}
       <div className={styles.header}>
         <div>

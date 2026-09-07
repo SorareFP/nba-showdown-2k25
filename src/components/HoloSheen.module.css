@@ -1,0 +1,68 @@
+/* The legendary foil. See HoloSheen.jsx for why the element is the card's own
+   box and why the pointer drives CSS variables rather than React state. */
+.holo {
+  position: relative;
+  isolation: isolate;
+  --mx: 50%;
+  --my: 50%;
+}
+
+.foil,
+.glare {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* The rainbow: a broad spectral band that slides with the pointer, over a
+   fine diagonal grating that reads as the diffraction lines of real foil.
+   Colour-dodge lifts the print's own highlights into the hue under them, so
+   the sheen belongs to the photo rather than sitting on top of it. */
+.foil {
+  background:
+    repeating-linear-gradient(115deg, rgba(255,255,255,0) 0 5px, rgba(255,255,255,0.07) 5px 6px),
+    linear-gradient(
+      115deg,
+      rgba(255,255,255,0) 0%,
+      rgba(255, 70, 70, 0.60) 16%,
+      rgba(255, 210, 0, 0.60) 28%,
+      rgba(70, 255, 130, 0.60) 40%,
+      rgba(60, 200, 255, 0.60) 52%,
+      rgba(150, 90, 255, 0.60) 64%,
+      rgba(255, 90, 220, 0.60) 76%,
+      rgba(255,255,255,0) 100%
+    );
+  background-size: 100% 100%, 260% 260%;
+  background-position: 0 0, var(--mx) var(--my);
+  mix-blend-mode: color-dodge;
+  opacity: 0.42;
+  animation: holoDrift 7s ease-in-out infinite;
+  transition: opacity 0.25s;
+}
+.holo[data-lit] > .foil {
+  animation: none;
+  opacity: 0.62;
+}
+
+/* The glare under the cursor: a soft white bloom that only exists while a
+   pointer is on the card. */
+.glare {
+  background: radial-gradient(circle at var(--mx) var(--my), rgba(255,255,255,0.38), rgba(255,255,255,0) 42%);
+  mix-blend-mode: screen;
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+.holo[data-lit] > .glare { opacity: 1; }
+
+/* Left alone, the card turns slowly in the light. The drift animates the
+   spectral layer's position only; the grating stays put. */
+@keyframes holoDrift {
+  0%, 100% { background-position: 0 0, 0% 35%; }
+  50% { background-position: 0 0, 100% 65%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .foil { animation: none; }
+}

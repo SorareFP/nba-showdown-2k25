@@ -19,3 +19,4 @@ card-data/cache
 
 # Safety copies exportCardBack.mjs keeps of the previous back. Never ship them.
 public/*.bak
+card-art/photo-hunt.html

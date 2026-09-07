@@ -11,7 +11,10 @@ import TutorialGame from './components/TutorialGame.jsx';
 import AuthButton from './components/AuthButton.jsx';
 import { AuthProvider, useAuth } from './firebase/AuthProvider.jsx';
 import { LightboxProvider } from './components/CardLightbox.jsx';
+import { CardStatsProvider } from './firebase/CardStatsProvider.jsx';
+import { collectableKeys } from './game/collections.js';
 import { loadCollection } from './firebase/collection.js';
+import { ownedRoster } from './game/teamRules.js';
 import { CARD_MAP } from './game/cards.js';
 import styles from './App.module.css';
 
@@ -64,19 +67,28 @@ function AppInner() {
   const tabs = user ? AUTH_TABS : GUEST_TABS;
 
   const handleLoadTeam = (savedTeam, slot) => {
-    const roster = savedTeam.players.map(id => CARD_MAP[id]).filter(Boolean);
+    // Only the cards still owned — see ownedRoster in teamRules.js.
+    const { roster: ids, dropped } = ownedRoster(savedTeam.players, collection);
+    if (dropped.length) {
+      alert(`${dropped.length} player${dropped.length === 1 ? ' is' : 's are'} no longer in your collection and ${dropped.length === 1 ? 'was' : 'were'} left out. Edit the team in My Teams.`);
+    }
+    const roster = ids.map(id => CARD_MAP[id]).filter(Boolean);
     if (slot === 'A') setTeamA(roster);
     else setTeamB(roster);
     setTab('builder');
   };
 
+  // A dot on the Collection tab while a card is waiting to be collected.
+
+  const collectable = collectableKeys(collection ?? {}).size;
+
   return (
     <div className={styles.app}>
       <header className={styles.header}>
         <div className={styles.logo}>
-          <img src="/nba-showdown-2k25/logo.png" alt="NBA Showdown 2K25" className={styles.logoImg} />
+          <img src="/nba-showdown-2k25/logo.png" alt="NBA Showdown 2026" className={styles.logoImg} />
           <div>
-            <div className={styles.logoTitle}>NBA Showdown 2K25</div>
+            <div className={styles.logoTitle}>NBA Showdown 2026</div>
             <div className={styles.logoSub}>D20 Basketball Card Game · 306 Players</div>
           </div>
         </div>
@@ -88,6 +100,9 @@ function AppInner() {
               onClick={() => setTab(t.id)}
             >
               {t.label}
+              {t.id === 'collection' && collectable > 0 && (
+                <span className={styles.navDot} title={`${collectable} card${collectable === 1 ? '' : 's'} waiting to be collected`} />
+              )}
             </button>
           ))}
         </nav>
@@ -95,7 +110,7 @@ function AppInner() {
       </header>
 
       <div className={styles.betaBanner}>
-        NBA Showdown 2K25 is in beta. Your card collection and coins may be reset in the near future.
+        NBA Showdown 2026 is in beta — cards and collections are still subject to change.
       </div>
 
       <main className={styles.main}>
@@ -121,7 +136,7 @@ function AppInner() {
             )}
             {tab === 'collection' && <CollectionTab onLoadTeam={handleLoadTeam} onCollectionChange={refreshCollection} />}
             {tab === 'pvp' && !pvpGame && (
-              <PvpLobby onGameStart={(roomCode, myRole) => setPvpGame({ roomCode, myRole })} />
+              <PvpLobby collection={collection} onGameStart={(roomCode, myRole) => setPvpGame({ roomCode, myRole })} />
             )}
             {tab === 'pvp' && pvpGame && (
               <PvpGame
@@ -145,9 +160,11 @@ function AppInner() {
 export default function App() {
   return (
     <AuthProvider>
+      <CardStatsProvider>
       <LightboxProvider>
         <AppInner />
       </LightboxProvider>
+      </CardStatsProvider>
     </AuthProvider>
   );
 }

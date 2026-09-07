@@ -79,3 +79,10 @@
   .logoIcon { font-size: 22px; }
   .logoTitle { font-size: 13px; }
 }
+
+/* The Collection tab's "cards waiting" dot. */
+.navDot {
+  display: inline-block; width: 8px; height: 8px; margin-left: 6px;
+  border-radius: 50%; background: var(--orange); vertical-align: middle;
+  box-shadow: 0 0 0 2px rgba(0,0,0,0.35);
+}

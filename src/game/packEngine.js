@@ -30,7 +30,10 @@ const DIVISIONS = {
 
 // Pack type definitions. `pool` defaults to the base set.
 export const PACK_TYPES = {
-  starter:       { name: 'Starter Pack',       players: 20, strats: 30, price: 0,    guaranteedSR: 1, srCap: 2, once: true },
+  // `favoriteCore` is the franchise a new player names on the way in — see
+  // favoriteCorePicks. Three commons and an uncommon of their team, guaranteed
+  // among the twenty, so the first cards anybody owns mean something to them.
+  starter:       { name: 'Starter Pack',       players: 20, strats: 30, price: 0,    guaranteedSR: 1, srCap: 2, once: true, favoriteCore: { common: 3, uncommon: 1 } },
   booster:       { name: 'Booster Pack',        players: 5,  strats: 2,  price: 100, mixesSpecials: true },
   deluxe:        { name: 'Deluxe Booster',      players: 5,  strats: 2,  price: 200,  guaranteedRare: 1, mixesSpecials: true },
   super:         { name: 'Super Booster',       players: 5,  strats: 2,  price: 300,  guaranteedRarePlayer: 1, mixesSpecials: true },
@@ -129,6 +132,41 @@ export const SPECIAL_SETS_IN_PACKS = ['super-season', 'rookie', 'summer-standout
  * still there.
  */
 export const LEAGUE_SETS = [BASE_SET, 'wnba'];
+
+/**
+ * WHICH LEAGUE A CARD IS FROM. Seven franchise codes mean a team in BOTH
+ * leagues — ATL, CHI, DAL, IND, MIN, PHX and WAS — so a favourite team is only
+ * unambiguous with its league attached.
+ */
+export const leagueOfCard = card => (String(card?.set ?? '').startsWith('wnba') ? 'wnba' : 'nba');
+
+/**
+ * A favourite team, as stored: `"nba:MIL"`, `"wnba:LVA"`. A bare code is read
+ * as NBA so an older value keeps working.
+ */
+export function parseFavoriteTeam(value) {
+  const raw = String(value ?? '').trim();
+  if (!raw) return null;
+  const [a, b] = raw.includes(':') ? raw.split(':') : ['nba', raw];
+  const league = a.toLowerCase() === 'wnba' ? 'wnba' : 'nba';
+  const abbr = (b ?? '').toUpperCase();
+  return abbr ? { league, abbr } : null;
+}
+
+/** Every team a player may name, league-qualified, derived from the cards. */
+export function favoriteTeamOptions() {
+  const seen = new Map();
+  for (const c of leagueBases()) {
+    const abbr = currentFranchise(c.team);
+    if (!abbr) continue;
+    const key = `${leagueOfCard(c)}:${abbr}`;
+    seen.set(key, (seen.get(key) ?? 0) + 1);
+  }
+  return [...seen.entries()]
+    .filter(([, n]) => n >= 3)
+    .map(([key]) => key)
+    .sort();
+}
 export const leagueBases = () => LEAGUE_SETS.flatMap(id => CARD_SETS[id] ?? []);
 
 /**
@@ -439,6 +477,39 @@ export function generatePack(packType, options = {}) {
   }
 
   // Player cards
+  // ── THE FAVOURITE TEAM'S CORE ────────────────────────────────────────────
+  //
+  // The user, 2026-09-07: "I just want players to be able to pick their
+  // favorite team, either NBA or WNBA, and get two-to-three commons plus an
+  // uncommon from that team." Guaranteed INSIDE the twenty rather than instead
+  // of them: a roster needs ten cards to take the floor, so a four-card
+  // starter would leave a new player unable to play.
+  //
+  // The starter's pool already spans both leagues (see poolFor), so a WNBA
+  // franchise needs nothing special. A team too thin to fill the core gives
+  // what it has and the rest of the pack fills normally — never an error on
+  // somebody's first action in the game.
+  const favoriteCore = [];
+  if (def.favoriteCore && options.favoriteTeam) {
+    const want = parseFavoriteTeam(options.favoriteTeam);
+    const mine = want
+      ? playerPool.filter(c => leagueOfCard(c) === want.league && currentFranchise(c.team) === want.abbr)
+      : [];
+    const taken = new Set();
+    const takeFrom = (band, n) => {
+      for (let i = 0; i < n; i += 1) {
+        const pool = mine.filter(c => !taken.has(cardKey(c)) && getPlayerRarity(c) === band);
+        if (!pool.length) return;
+        const card = weightedPick(pool, getPlayerRarity);
+        taken.add(cardKey(card));
+        favoriteCore.push(card);
+      }
+    };
+    takeFrom('common', def.favoriteCore.common ?? 0);
+    takeFrom('uncommon', def.favoriteCore.uncommon ?? 0);
+    for (const card of favoriteCore) result.push(pulled(card));
+  }
+
   let srCount = 0;
   const srCap = def.srCap || 999;
 

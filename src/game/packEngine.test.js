@@ -5,11 +5,10 @@
 import { describe, it, expect } from 'vitest';
 import {
   generatePack, PACK_TYPES, CONFERENCES, DIVISIONS, MAX_DUPES_PER_PACK,
-  SPECIAL_SETS_IN_PACKS, SPECIAL_BAND_SHARE,
-} from './packEngine.js';
+  SPECIAL_SETS_IN_PACKS, SPECIAL_BAND_SHARE, parseFavoriteTeam, favoriteTeamOptions, leagueOfCard } from './packEngine.js';
 import { CARD_MAP } from './cards.js';
 import { TEAM_ROSTERS } from './collections.js';
-import { CARD_SETS, BASE_SET, cardKey } from './cardSets.js';
+import { CARD_SETS, BASE_SET, cardKey, ALL_CARDS } from './cardSets.js';
 import { currentFranchise } from '../cards/teams.js';
 import { getPlayerRarity, RARITY_ORDER } from './rarity.js';
 import { shopPacks, PACK_COPY } from '../components/PackShop.jsx';
@@ -316,5 +315,58 @@ describe('a box knows its packs', () => {
 
   it('leaves a single pack untagged, so the reveal treats it as one', () => {
     for (const c of generatePack('booster')) expect(c.packIndex).toBeUndefined();
+  });
+});
+
+describe('the starter pack\'s favourite-team core', () => {
+  const byKey = new Map(ALL_CARDS.map(c => [cardKey(c), c]));
+  const playersOf = pack => pack.filter(c => c.type === 'player').map(c => byKey.get(c.id)).filter(Boolean);
+  const fromTeam = (cards, fav) => {
+    const want = parseFavoriteTeam(fav);
+    return cards.filter(c => leagueOfCard(c) === want.league && currentFranchise(c.team) === want.abbr);
+  };
+
+  it('still deals a full starter — the core is INSIDE the twenty, not instead of it', () => {
+    const pack = generatePack('starter', { favoriteTeam: 'nba:MIL' });
+    expect(pack.filter(c => c.type === 'player')).toHaveLength(20);
+    expect(pack.filter(c => c.type === 'strat')).toHaveLength(30);
+  });
+
+  it('guarantees the named franchise, and the right league of it', () => {
+    // ATL is a Hawk and a Dream — the collision the league qualifier exists for.
+    for (const fav of ['nba:ATL', 'wnba:ATL', 'nba:MIL', 'wnba:LVA']) {
+      const mine = fromTeam(playersOf(generatePack('starter', { favoriteTeam: fav })), fav);
+      expect(mine.length, fav).toBeGreaterThanOrEqual(2);
+      const other = fav.startsWith('wnba') ? 'nba' : 'wnba';
+      expect(fromTeam(playersOf(generatePack('starter', { favoriteTeam: fav })), `${other}:${parseFavoriteTeam(fav).abbr}`).length)
+        .toBeLessThan(mine.length + 3);
+    }
+  });
+
+  it('leans on commons and an uncommon, not on the stars', () => {
+    const mine = fromTeam(playersOf(generatePack('starter', { favoriteTeam: 'nba:LAL' })), 'nba:LAL');
+    for (const c of mine) expect(['common', 'uncommon', 'rare', 'super-rare', 'legendary']).toContain(getPlayerRarity(c));
+    expect(mine.filter(c => ['common', 'uncommon'].includes(getPlayerRarity(c))).length).toBeGreaterThanOrEqual(2);
+  });
+
+  it('deals a normal starter when no team is named, and survives an unknown one', () => {
+    expect(generatePack('starter').filter(c => c.type === 'player')).toHaveLength(20);
+    expect(generatePack('starter', { favoriteTeam: 'nba:ZZZ' }).filter(c => c.type === 'player')).toHaveLength(20);
+    expect(generatePack('starter', { favoriteTeam: '' }).filter(c => c.type === 'player')).toHaveLength(20);
+  });
+
+  it('offers only franchises with enough cards to make a core, both leagues', () => {
+    const opts = favoriteTeamOptions();
+    expect(opts.filter(o => o.startsWith('nba:'))).toHaveLength(30);
+    expect(opts.filter(o => o.startsWith('wnba:')).length).toBeGreaterThanOrEqual(12);
+    expect(opts).toContain('nba:MIL');
+    expect(opts).toContain('wnba:LVA');
+  });
+
+  it('reads a bare code as NBA, so an older stored value keeps working', () => {
+    expect(parseFavoriteTeam('MIL')).toEqual({ league: 'nba', abbr: 'MIL' });
+    expect(parseFavoriteTeam('wnba:lva')).toEqual({ league: 'wnba', abbr: 'LVA' });
+    expect(parseFavoriteTeam('')).toBeNull();
+    expect(parseFavoriteTeam(null)).toBeNull();
   });
 });

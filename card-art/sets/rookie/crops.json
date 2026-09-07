@@ -123,5 +123,85 @@
     "x": -7.25,
     "y": 0,
     "zoom": 1
+  },
+  "Baylor_Scheierman": {
+    "x": 8.22,
+    "y": 0,
+    "zoom": 1
+  },
+  "Ben_Simmons": {
+    "x": -7.94,
+    "y": 0,
+    "zoom": 1
+  },
+  "Bennedict_Mathurin": {
+    "x": -7.23,
+    "y": 0,
+    "zoom": 1
+  },
+  "Bilal_Coulibaly": {
+    "x": -8.22,
+    "y": 0,
+    "zoom": 1
+  },
+  "Blake_Griffin": {
+    "x": 0,
+    "y": -0.12,
+    "zoom": 1
+  },
+  "Bones_Hyland": {
+    "x": -4.82,
+    "y": 0,
+    "zoom": 1
+  },
+  "Boris_Diaw": {
+    "x": -18.29,
+    "y": 0,
+    "zoom": 1
+  },
+  "Brandin_Podziemski": {
+    "x": 5.1,
+    "y": 0,
+    "zoom": 1
+  },
+  "Brandon_Ingram": {
+    "x": 18.86,
+    "y": 0,
+    "zoom": 1
+  },
+  "Brandon_Miller": {
+    "x": 1.98,
+    "y": 0,
+    "zoom": 1
+  },
+  "Brice_Sensabaugh": {
+    "x": -15.6,
+    "y": 0,
+    "zoom": 1
+  },
+  "Brook_Lopez": {
+    "x": 0,
+    "y": 1.8,
+    "zoom": 1
+  },
+  "Bruce_Brown": {
+    "x": 9.07,
+    "y": 0,
+    "zoom": 1
+  },
+  "Bryce_McGowens": {
+    "x": -12.48,
+    "y": 0,
+    "zoom": 1
+  },
+  "Bub_Carrington": {
+    "x": -17.3,
+    "y": 0,
+    "zoom": 1
+  },
+  "Buddy_Hield": {
+    "x": -15.03,
+    "y": 0.36,
+    "zoom": 1.05
   }
 }

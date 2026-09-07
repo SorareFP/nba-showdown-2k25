@@ -40,7 +40,7 @@ import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import { initializeApp } from 'firebase-admin/app';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 
-import { generatePack, PACK_TYPES } from './shared/src/game/packEngine.js';
+import { generatePack, PACK_TYPES, favoriteTeamOptions } from './shared/src/game/packEngine.js';
 import { goalProgress, goalCoinReward, REWARD_BY_GOAL, collectedKeys } from './shared/src/game/collections.js';
 import { getCardByKey } from './shared/src/game/cardSets.js';
 import { getPlayerRarity, BURN_VALUES, getStratRarity, STRAT_BURN_VALUES } from './shared/src/game/rarity.js';
@@ -127,7 +127,16 @@ export const openPack = onCall({ region: 'us-central1' }, async request => {
     // THE DICE, ROLLED SERVER-SIDE, weighted by the supply the server read.
     // A once-only pack is the same draw for everybody, so it is not weighted by
     // supply — the direct route in serverWrites.js does the same.
-    const cards = generatePack(packType, def.once ? { ...options } : { ...options, supply });
+    // THE FAVOURITE TEAM COMES OFF THE USER DOC, never off the request. It is
+    // write-once (see setFavoriteTeam) precisely so the starter's guaranteed
+    // core — and the pack bias that will lean on it later — cannot be steered
+    // by a client that fancies a different franchise this minute.
+    const cards = generatePack(
+      packType,
+      def.once
+        ? { ...options, favoriteTeam: user.favoriteTeam ?? null }
+        : { ...options, supply, favoriteTeam: user.favoriteTeam ?? null }
+    );
 
     // EVERY PULL IS A SPARE. It used to be that the first copy of a card locked
     // itself into the collection on the way out of the pack; since 2026-09-05
@@ -646,6 +655,42 @@ export const devResetAccount = onCall({ region: 'us-central1' }, async request =
  * old rule counts: the index just did not carry the flag yet, so pressing
  * Collect on it writes the flag and changes nothing else. Idempotent.
  */
+/**
+ * The franchises a player may actually name, DERIVED from the cards rather
+ * than listed — so a set that adds or retires a team cannot leave this behind.
+ * Both leagues, because the starter's pool spans both.
+ */
+const KNOWN_FRANCHISES = new Set(favoriteTeamOptions());
+
+/**
+ * NAME YOUR TEAM — once, and only once.
+ *
+ * The user, 2026-09-07: "players [can] pick their favorite team, either NBA or
+ * WNBA ... Then maybe a small packing boost in the future based on that
+ * setting (which cannot be changed in the future)."
+ *
+ * Write-once is the whole point: it guarantees the starter's core and will
+ * later tilt pack odds, so a client that could rewrite it could farm whichever
+ * franchise happened to be worth most. The transaction refuses a second write,
+ * and the franchise must be one the game actually has.
+ */
+export const setFavoriteTeam = onCall({ region: 'us-central1' }, async request => {
+  const uid = requireAuth(request);
+  // Stored league-qualified — "nba:MIL", "wnba:LVA" — because seven codes
+  // mean a team in both leagues.
+  const team = String(request.data?.team ?? '').trim().toLowerCase();
+  if (!KNOWN_FRANCHISES.has(team)) throw new HttpsError('invalid-argument', `Unknown team ${team}`);
+  const userRef = db.doc(`users/${uid}`);
+  return db.runTransaction(async tx => {
+    const snap = await tx.get(userRef);
+    if (!snap.exists) throw new HttpsError('failed-precondition', 'No such player');
+    const existing = snap.data().favoriteTeam;
+    if (existing) throw new HttpsError('failed-precondition', `Your team is already ${existing} — that choice is permanent`);
+    tx.update(userRef, { favoriteTeam: team });
+    return { favoriteTeam: team };
+  });
+});
+
 export const collectCard = onCall({ region: 'us-central1' }, async request => {
   const uid = requireAuth(request);
   const cardKey = String(request.data?.cardKey ?? '');

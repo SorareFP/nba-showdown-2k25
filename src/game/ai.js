@@ -5,7 +5,7 @@
 
 import { getTeam, getOpp, getPS, calcAdv, getFatigue, fatigueForMinutes, restMinutes, SPEND_COSTS, clutchAvailable, clutchEligible, burnedSlots } from './engine.js';
 import { lookupChart } from './cards.js';
-import { canPlayCard } from './canPlay.js';
+import { canPlayCard, helpTargets } from './canPlay.js';
 import { getStrat, STRATS } from './strats.js';
 
 /**
@@ -314,6 +314,7 @@ function evaluateCard(game, teamKey, cardId, strat) {
       // Wave one (2026-09-06)
       find_the_open_man: 7, putback_specialist: 6, rim_protector: 7, drop_coverage: 5,
       smothering_defense: 5, denial: 4, hustle_play: 5, glass_cleaner: 6, box_out: 6,
+      help_defender: 7,
     };
     return reactionValues[cardId] ?? 4;
   }
@@ -895,6 +896,22 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
       }).sort((u, v) => ((u.p.shotLine ?? 18) - (u.p.threePtBoost || 0)) - ((v.p.shotLine ?? 18) - (v.p.threePtBoost || 0)));
       return { playerIdx: cand[0]?.i ?? 0, checkType: '3pt' };
     }
+    case 'help_defender': {
+      // Send help at the worst mismatch, from the defender guarding the
+      // attacker with least to gain — the man you leave open should be the
+      // one who punishes it least.
+      const targets = helpTargets(game, teamKey);
+      if (!targets.length) return {};
+      const worst = targets.reduce((b, t) => (t.adv > b.adv ? t : b), targets[0]);
+      const guards = game.offMatchups?.[oppKey] || [];
+      const cost = starters
+        .map((p, i) => ({ i, slot: guards.indexOf(i) }))
+        .filter(({ i, slot }) => i !== worst.defIdx && slot >= 0)
+        .map(({ i, slot }) => ({ i, value: expectedOutput(oppT.starters[slot]) }))
+        .sort((u, v) => u.value - v.value);
+      return { targetIdx: worst.offSlot, helperIdx: cost[0]?.i ?? starters.findIndex((_, i) => i !== worst.defIdx) };
+    }
+
     case 'find_the_open_man': {
       const dt = game.lastDoubleTeam;
       const cand = starters.map((p, i) => ({ p, i })).filter(({ p, i }) => p && rolls[i] == null && i !== dt?.targetIdx)

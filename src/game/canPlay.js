@@ -60,6 +60,34 @@ export function preRollTargets(g, teamKey, cond = () => true) {
     .filter(({ p, idx }) => p && rolls[idx] == null && !blocked[idx] && cond(p, idx));
 }
 
+/**
+ * HELP DEFENDER — the mismatches worth sending help at.
+ *
+ * An opposing attacker who has not rolled and is beating the defender the
+ * placement snake gave him by +4 or more on Speed or Power. Returned as
+ * `{ offSlot, off, def, defIdx, adv }` so the picker and the engine agree on
+ * who is eligible, the pattern every other conditional card here follows.
+ */
+export function helpTargets(g, teamKey) {
+  const oppKey = teamKey === 'A' ? 'B' : 'A';
+  const myT = getTeam(g, teamKey);
+  const oppT = getOpp(g, teamKey);
+  const rolls = g.rollResults?.[oppKey] || [];
+  const guards = g.offMatchups?.[oppKey] || [];
+  const out = [];
+  (oppT?.starters || []).forEach((off, offSlot) => {
+    if (!off || rolls[offSlot] != null) return;
+    if (g.blockedRolls?.[oppKey]?.[offSlot]) return;
+    const defIdx = guards[offSlot];
+    const def = myT?.starters?.[defIdx];
+    if (!def) return;
+    const a = calcAdv(off, def, g.tempEff?.[oppKey] || {}, offSlot);
+    const adv = Math.max(a.speedAdv, a.powerAdv);
+    if (adv >= 4) out.push({ offSlot, off, def, defIdx, adv });
+  });
+  return out;
+}
+
 export function myHouseTargets(g, teamKey) {
   const myT = getTeam(g, teamKey);
   const oppT = getOpp(g, teamKey);
@@ -416,6 +444,13 @@ export function canPlayCard(g, teamKey, cardId) {
   // ── SCORING PHASE ──────────────────────────────────────────────────────
   if (phase !== 'scoring') return no('Only playable during Scoring Phase');
 
+  if (cardId === 'help_defender') {
+    if (phase !== 'scoring') return no('Only playable during Scoring Phase');
+    if (helpTargets(g, teamKey).length === 0) {
+      return no('No opponent yet to roll is beating his defender by +4');
+    }
+    return ok('Rotate a defender over — he loses his edge, someone else gets +3');
+  }
   if (['find_the_open_man', 'putback_specialist', 'glass_cleaner', 'box_out'].includes(cardId)) {
     if (cardId === 'find_the_open_man') {
       const dt = g.lastDoubleTeam;

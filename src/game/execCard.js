@@ -3,6 +3,7 @@
 // Never mutates — always returns a new object via deepClone
 
 import { handOverPriority, getTeam, getOpp, getPS, calcAdv, shotCheck, matchupContest, drawCards, deepClone, getFatigue, recordDefSwitch, burnedSlots, roll20 } from './engine.js';
+import { helpTargets } from './canPlay.js';
 import { lookupChart } from './cards.js';
 import { getStrat } from './strats.js';
 
@@ -1172,6 +1173,41 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       psc.reacted = teamKey;
       break;
     }
+    case 'help_defender': {
+      // HELP DEFENCE, NOT A SWITCH. Nobody's assignment changes — the snake's
+      // pairing stands (see the placement rule in ai.js). A second defender
+      // rotates over for one possession, and the man he left is open, which
+      // is what help defence actually costs. The user approved this shape
+      // 2026-09-07 over the docx draft, which could never fire: it asked for
+      // "a teammate not yet matched up" and the snake matches all five.
+      const targets = helpTargets(g, teamKey);
+      if (!targets.length) return fail('No opponent yet to roll is beating his defender by +4');
+      const pick = targets.find(t => t.offSlot === opts.targetIdx) ?? targets[0];
+      const helpOppKey = teamKey === 'A' ? 'B' : 'A';
+      const guards = g.offMatchups[helpOppKey] || [];
+      const helper = opts.helperIdx;
+      if (helper === undefined || helper === null) return fail('Choose which defender rotates over');
+      if (helper === pick.defIdx) return fail(`${pick.def?.name} is already guarding him — pick another defender`);
+      const helpMan = myT.starters[helper];
+      if (!helpMan) return fail('No such defender');
+      // The attacker loses his edge: the same flag Defensive Anchor sets.
+      if (!g.tempDefEff) g.tempDefEff = {};
+      if (!g.tempDefEff[teamKey]) g.tempDefEff[teamKey] = {};
+      const cur = g.tempDefEff[teamKey][pick.defIdx] || { speedBoost: 0, powerBoost: 0 };
+      g.tempDefEff[teamKey][pick.defIdx] = { ...cur, anchor: true };
+      // And the helper's own man is open: the same +3 Double Team pays, but
+      // aimed at a player the DEFENCE chose rather than one the offence picks.
+      const openSlot = guards.indexOf(helper);
+      if (!g.tempEff[helpOppKey]) g.tempEff[helpOppKey] = {};
+      let openName = 'nobody';
+      if (openSlot >= 0) {
+        g.tempEff[helpOppKey]['r' + openSlot] = (g.tempEff[helpOppKey]['r' + openSlot] || 0) + 3;
+        openName = oppT.starters[openSlot]?.name ?? 'his man';
+      }
+      addLog(g, teamKey, `Help Defender: ${helpMan.name} rotates onto ${pick.off?.name} (+${pick.adv} edge gone) — ${openName} is open, +3 on his next roll`);
+      break;
+    }
+
     case 'glass_cleaner': {
       const miss = g.lastCheckMiss;
       if (!miss || miss.teamKey === teamKey || miss.claimed) return fail('The opponent must have just missed a shot check');

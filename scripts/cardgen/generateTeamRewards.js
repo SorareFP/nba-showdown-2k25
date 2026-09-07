@@ -410,6 +410,13 @@ export function main({ log = console.log, enforceBands = true } = {}) {
     // and is what collections.js keys on.
     rewardFor: meta[i].franchise,
     rewardGoal: meta[i].goal,
+    // A declared band exception travels from the pick to the card, the way it
+    // already does for a MIGRATED one (moveCard). Without this a BUILT pick
+    // could not carry one at all, which is how Miami sat unbuildable: Alonzo
+    // Mourning's 2005-06 prices $40 under the super-rare floor and the user
+    // wants him anyway ("Mourning is a fun enough card that it seems fine as
+    // a reward", 2026-09-07).
+    ...(meta[i].bandException ? { bandException: meta[i].bandException } : {}),
     badges: builtBadges(meta[i], meta[i].playerId, historyDistributions, log),
   }));
 

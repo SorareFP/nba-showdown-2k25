@@ -178,11 +178,25 @@ dynasty started, as above.
    on PvP rooms.
 4. Dynasty: the off-season screens on top of Season.
 
-## Open questions for the user
+## Answered by the user, 2026-09-07
 
-- Should a human-vs-human season fixture have a deadline, and what happens if
-  it is never played (forfeit, or simulate it)?
-- Tournament seeding: random (built) or by some rating?
-- Dynasty: should AI teams also re-sign and bid in free agency against the
-  humans, or only fill gaps? Built: they fill gaps.
-- Is 0.5 the right nerf for a fantasy-draft dynasty?
+- **A stalled human-vs-human fixture is a COMMISSIONER decision**, not a timer.
+  "I think these will be commissioner tools. Can force forfeit or force sim."
+  So a season has a commissioner — whoever created it — and two powers over any
+  unplayed fixture: force a forfeit (naming the loser) or force a simulation.
+  No deadline, no automatic anything; a league is run by a person.
+- **Tournament seeding comes from a PvP rating.** "Tournament seeding can
+  probably be based on a ranking system from other PVP games." That needs a
+  rating to exist first — a per-user PvP record, Elo or similar, accumulated
+  from PvP results. Random stays the fallback for an unrated field and for the
+  first tournaments.
+- **AI teams bid in dynasty free agency.** "AI teams should make decisions
+  about what would help their teams and bid against you." So an AI team values
+  a free agent by what it needs, spends its own Dynasty Dollars, and can
+  outbid a human. `fillRosters` as built is the floor, not the behaviour.
+- **The fantasy-draft nerf stays at 0.5.** "Halving coins is fine for now."
+
+## Still open
+
+- What the PvP rating actually is (Elo, straight win rate, a ladder), and
+  whether it is visible to players.

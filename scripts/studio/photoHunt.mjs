@@ -122,6 +122,7 @@ const COMPOSED_STRATS = new Set([
   'crash_and_kick', 'pick_and_pop', 'extra_pass', 'lob_city', 'stretch_five', 'post_domination',
   'unsung_hero', 'transition_outlet', 'find_the_open_man', 'putback_specialist', 'rim_protector',
   'drop_coverage', 'smothering_defense', 'denial', 'hustle_play', 'glass_cleaner', 'box_out',
+  'help_defender',
 ]);
 const PHASE_LABEL = { matchup: 'Matchup', pre_roll: 'Pre-roll', scoring: 'Scoring', post_roll: 'Post-roll', reaction: 'Reaction' };
 

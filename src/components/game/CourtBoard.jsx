@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { calcAdv, getTeam, getOpp, getPS, getFatigue, SNAKE, SPEND_COSTS, clutchAvailable, burnedSlots } from '../../game/engine.js';
-import { canPlayCard, myHouseTargets, fwdTargets, preRollTargets } from '../../game/canPlay.js';
+import { canPlayCard, myHouseTargets, fwdTargets, preRollTargets, helpTargets } from '../../game/canPlay.js';
 import { benchRest, passTurn } from '../../game/engine.js';
 import { getStrat } from '../../game/strats.js';
 import { aiDraftPick, aiPlacementPick } from '../../game/ai.js';
@@ -463,6 +463,25 @@ async function buildOpts(game, teamKey, cardId, base, openModal) {
         opts.spendAssistBoost = true;
       }
     }
+  }
+
+  // ── Help Defender: which mismatch, and who rotates over ────────────────
+  if (cardId === 'help_defender') {
+    const targets = helpTargets(game, teamKey);
+    if (targets.length === 0) { alert('No opponent yet to roll is beating his defender by +4.'); return null; }
+    const t = targets.length === 1 ? 0 : await pickFiltered(
+      targets.map(x => ({ p: x.off, origIdx: x.offSlot })),
+      'Who is beating his man?', teamKey
+    );
+    if (t === null) return null;
+    const chosen = targets.find(x => x.offSlot === t) ?? targets[0];
+    opts.targetIdx = chosen.offSlot;
+    const helpers = myT.starters
+      .map((p, i) => ({ p, origIdx: i }))
+      .filter(({ origIdx }) => origIdx !== chosen.defIdx);
+    const h = await pickFiltered(helpers, 'Who rotates over? (his man gets +3)', teamKey);
+    if (h === null) return null;
+    opts.helperIdx = h;
   }
 
   // ── Stretch Five: the teammate who takes the paint check ───────────────

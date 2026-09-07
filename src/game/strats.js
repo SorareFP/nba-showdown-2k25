@@ -176,6 +176,8 @@ export const STRATS = [
     desc:'An opponent with salary above $800 announces a shot check: a player of yours under $400 contests it, subtracting their Defensive Bonus.' },
   { id:'glass_cleaner',       name:'Glass Cleaner',      phase:'reaction', side:'def', copies:3, locked:false, color:'#047857', rarity:'common',
     desc:'After an opponent misses any shot check: +2 Rebounds. +1 more if your defender on the shooter has more Power than them.' },
+  { id:'help_defender',       name:'Help Defender',      phase:'reaction', side:'def', copies:2, locked:false, color:'#1D4ED8', rarity:'uncommon',
+    desc:'An opponent yet to roll has a Speed or Power advantage of +4 or more: one of your other defenders rotates over. He gets no positive matchup bonus this section — and the man your helper left gets +3 on his next roll.' },
   { id:'box_out',             name:'Box Out',            phase:'reaction', side:'def', copies:2, locked:false, color:'#065F46', rarity:'common',
     desc:'Right after an opponent\'s scoring roll wins rebounds: cancel them. −1 more from their track if your defender on them has more Power.' },
 ];

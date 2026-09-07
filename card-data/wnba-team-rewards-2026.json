@@ -24,19 +24,17 @@
     },
     "ATL": {
       "name": "Angel McCoughtry",
-      "season": 2018,
+      "season": 2011,
       "team": "ATL",
       "goal": "wnba-team-ATL",
-      "note": "The Dream's defining player. ATLANTA HAS CROSSED THE BAND LINE TWICE as WNBA attributes changed -- roster rarities move collection difficulty, which moves the earned band -- so this pick has swung between her 2010 ($1270, legendary) and this one. Expect to re-check it after any WNBA rebuild. ~$1100.",
-      "bandException": "PROVISIONAL 2026-09-06: the WNBA league factor (0.88) repriced every WNBA card and moved the earned bands; priced $1010, ATL now earns legendary ($1200+). Re-pick with node scripts/cardgen/wnba/wnbaRewardCandidates.js ATL, fetch the season log, then delete this exception."
+      "note": "The Dream's defining player, in the season she set the Finals scoring record (38 in Game 2). ATL has crossed the band line THREE times as WNBA attributes changed: 2010 ($1270, legendary) -> 2018 ($1100 then $1010, super-rare) -> legendary again after the 0.88 league factor (2026-09-06). Her 2012 clears the new floor by $10, 2011 by $140, so 2011 holds it through a reprice. Expect to re-check after any WNBA rebuild. ~$1340."
     },
     "DAL": {
       "name": "Cheryl Ford",
-      "season": 2006,
+      "season": 2008,
       "team": "DET",
       "goal": "wnba-team-DAL",
-      "note": "The Shock's 2006 championship season. Rookie of the Year 2003, four-time All-Star, Detroit through and through. Katie Smith 2008 was the first pick and priced $1120 on smoothed rates; her real log put her at $800. ~$1060.",
-      "bandException": "PROVISIONAL 2026-09-06: the WNBA league factor (0.88) repriced every WNBA card and moved the earned bands; priced $950, DAL now earns rare ($700-899). Re-pick with node scripts/cardgen/wnba/wnbaRewardCandidates.js DAL, fetch the season log, then delete this exception."
+      "note": "The Shock's 2008 championship season, her third ring, Detroit through and through. Her 2006 title year was the pick until the 0.88 league factor (2026-09-06) dropped DAL's earned band to rare while she still priced $950; 2008 sits in band at $730. Cindy Brown 1998 ($840, the inaugural Shock) is the fallback if the floor moves. Katie Smith 2008 was the first pick here and priced $1120 on smoothed rates; her real log put her at $800. ~$730."
     },
     "WAS": {
       "name": "Chamique Holdsclaw",
@@ -50,40 +48,37 @@
       "season": 2013,
       "team": "CHI",
       "goal": "wnba-team-CHI",
-      "note": "Bottom of the super-rare band, so the cheapest of the four. ~$970.",
-      "bandException": "PROVISIONAL 2026-09-06: the WNBA league factor (0.88) repriced every WNBA card and moved the earned bands; priced $860, CHI now earns super-rare ($900-1199). Re-pick with node scripts/cardgen/wnba/wnbaRewardCandidates.js CHI, fetch the season log, then delete this exception."
+      "note": "Bottom of the super-rare band, so the cheapest of the four -- and since the 0.88 league factor (2026-09-06) thirty dollars under it. ~$870.",
+      "bandException": "Thirty dollars under the super-rare floor at $870 after the 2026-09-06 league factor. Her 2012 ($1270) clears it into LEGENDARY, $70 over; no other eligible Sky season reaches $900 (Meesseman 2022 $830, Quigley 2017 $850; Vandersloot, Fowles and Parker are carded elsewhere). Under by thirty keeps the reward below the harder collections' rewards, which is what the band is for. The same size of exception Las Vegas gets for Hammon."
     },
     "PHO": {
-      "name": "DeWanna Bonner",
-      "season": 2014,
+      "name": "Penny Taylor",
+      "season": 2011,
       "team": "PHO",
       "goal": "wnba-team-PHO",
-      "note": "Two Mercury titles and back-to-back Sixth Woman awards. Michele Timms 1997 was the first pick here and built to $900, one dollar over the rare ceiling. ~$820.",
-      "bandException": "PROVISIONAL 2026-09-06: the WNBA league factor (0.88) repriced every WNBA card and moved the earned bands; priced $700, PHO now earns super-rare ($900-1199). Re-pick with node scripts/cardgen/wnba/wnbaRewardCandidates.js PHO, fetch the season log, then delete this exception."
+      "note": "All-WNBA First Team at her peak, the Mercury's engine across both title eras. PHO's earned band rose to super-rare with the 0.88 league factor (2026-09-06) while Bonner 2014 fell to $700; Taylor's 2007 title season prices $1180, twenty dollars under the legendary line, so 2011 at $1040 holds the band through a reprice. Michele Timms 1997 was the first pick here and built to $900, one dollar over the old rare ceiling. ~$1040."
     },
     "SEA": {
-      "name": "Sue Bird",
-      "season": 2009,
+      "name": "Alysha Clark",
+      "season": 2020,
       "team": "SEA",
       "goal": "wnba-team-SEA",
-      "note": "She is the Storm. Low in band because Seattle is an easy collection. ~$810.",
-      "bandException": "PROVISIONAL 2026-09-06: the WNBA league factor (0.88) repriced every WNBA card and moved the earned bands; priced $650, SEA now earns rare ($700-899). Re-pick with node scripts/cardgen/wnba/wnbaRewardCandidates.js SEA, fetch the season log, then delete this exception."
+      "note": "The bubble title, her second ring with the Storm and the defensive anchor of both. Sue Bird 2009 fell to $650 with the 0.88 league factor (2026-09-06), and Bird is a Super Season legend now. Camille Little 2010 ($700) sits on the floor; Clark holds the band mid-way and is off the roster (Las Vegas). ~$850."
     },
     "POR": {
       "name": "Sophia Witherspoon",
       "season": 2000,
       "team": "POR",
       "goal": "wnba-team-POR",
-      "note": "An original 2000 Fire player for the revived Fire -- and the only legal option Portland has. ~$750.",
-      "bandException": "PROVISIONAL 2026-09-06: the WNBA league factor (0.88) repriced every WNBA card and moved the earned bands; priced $630, POR now earns super-rare ($900-1199). Re-pick with node scripts/cardgen/wnba/wnbaRewardCandidates.js POR, fetch the season log, then delete this exception."
+      "note": "An original 2000 Fire player for the revived Fire -- and the only legal option Portland has. ~$630.",
+      "bandException": "Portland earns super-rare ($900-1199) since the 2026-09-06 league factor, but no Fire season prices above $730 (Tamicha Jackson 2002): the franchise played three seasons, 2000-02, and its best players were journeymen. The cheapest reward in the set, declared rather than hidden -- the same kind of exception Las Vegas gets for Hammon, in the other direction."
     },
     "LAS": {
-      "name": "Tamecka Dixon",
-      "season": 1997,
+      "name": "Mwadi Mabika",
+      "season": 2001,
       "team": "LAS",
       "goal": "wnba-team-LAS",
-      "note": "An inaugural 1997 Spark who was still there for both titles. Nikki Teasley 2003 was the first pick and rebuilt to $690, ten dollars under the rare floor. ~$810.",
-      "bandException": "PROVISIONAL 2026-09-06: the WNBA league factor (0.88) repriced every WNBA card and moved the earned bands; priced $670, LAS now earns rare ($700-899). Re-pick with node scripts/cardgen/wnba/wnbaRewardCandidates.js LAS, fetch the season log, then delete this exception."
+      "note": "The Sparks' first title, from an All-Star who was there from 1997 and won both. Tamecka Dixon 1997 fell to $670 under the rare floor with the 0.88 league factor (2026-09-06); Mabika 2000 prices $890 at the ceiling, 2001 $800 mid-band. Nikki Teasley 2003 was the first pick and rebuilt to $690. ~$800."
     },
     "CON": {
       "name": "Nykesha Sales",

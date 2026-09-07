@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-07T02:09:49.379Z",
+ "generatedAt": "2026-09-07T11:20:53.421Z",
  "set": "wnba-team-rewards",
  "provisional": true,
  "sources": {
@@ -11,6 +11,78 @@
  },
  "cards": [
   {
+   "id": "Angel_McCoughtry",
+   "name": "Angel McCoughtry",
+   "team": "ATL08",
+   "statRowTeam": "ATL",
+   "pos": "F-G",
+   "speed": 12,
+   "power": 12,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": -2,
+   "defBoost": 1,
+   "salary": 1340,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 20,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 4,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2011,
+   "seasonLabel": "2011",
+   "games": 33,
+   "mpg": 27.9,
+   "minutes": 921,
+   "bbrefId": "mccouan01w",
+   "metrics": {
+    "bpmHat": 6.1,
+    "obpmHat": 4.62,
+    "dbpmHat": 1.48,
+    "seasonZ": 0,
+    "per": 26,
+    "ws": 4.7,
+    "wsPer40": 0.206,
+    "tsPct": 0.523,
+    "pts100": 38.1
+   },
+   "provisional": false,
+   "rewardFor": "ATL",
+   "rewardGoal": "wnba-team-ATL"
+  },
+  {
    "id": "Tamika_Catchings",
    "name": "Tamika Catchings",
    "team": "IND",
@@ -20,9 +92,9 @@
    "power": 13,
    "shotLine": 15,
    "paintBoost": 0,
-   "threePtBoost": 1,
+   "threePtBoost": 3,
    "defBoost": 3,
-   "salary": 1260,
+   "salary": 1280,
    "chart": [
     {
      "lo": 1,
@@ -309,18 +381,18 @@
    "bandException": "Ten dollars under the legendary floor at $1190. A migrated card is NOT repriced -- it keeps the salary its own set gave it -- so the alternative is un-migrating her and printing a second Becky Hammon a year apart, which is the duplicate the migration exists to prevent. The same size of exception Philadelphia gets for Erving."
   },
   {
-   "id": "Angel_McCoughtry",
-   "name": "Angel McCoughtry",
-   "team": "ATL08",
-   "statRowTeam": "ATL",
-   "pos": "F-G",
-   "speed": 10,
-   "power": 10,
-   "shotLine": 16,
+   "id": "Penny_Taylor",
+   "name": "Penny Taylor",
+   "team": "PHO11",
+   "statRowTeam": "PHO",
+   "pos": "F",
+   "speed": 14,
+   "power": 12,
+   "shotLine": 13,
    "paintBoost": 0,
-   "threePtBoost": -1,
+   "threePtBoost": 1,
    "defBoost": 1,
-   "salary": 1010,
+   "salary": 1030,
    "chart": [
     {
      "lo": 1,
@@ -331,55 +403,47 @@
     },
     {
      "lo": 3,
-     "hi": 3,
+     "hi": 6,
      "pts": 0,
      "reb": 0,
      "ast": 0
     },
     {
-     "lo": 4,
-     "hi": 15,
+     "lo": 7,
+     "hi": 12,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
-     "lo": 16,
-     "hi": 21,
-     "pts": 3,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 22,
+     "lo": 13,
      "hi": 99,
-     "pts": 3,
+     "pts": 2,
      "reb": 1,
      "ast": 1
     }
    ],
    "league": "WNBA",
-   "season": 2018,
-   "seasonLabel": "2018",
+   "season": 2011,
+   "seasonLabel": "2011",
    "games": 29,
-   "mpg": 27.6,
-   "minutes": 799,
-   "bbrefId": "mccouan01w",
+   "mpg": 29.8,
+   "minutes": 864,
+   "bbrefId": "taylope01w",
    "metrics": {
-    "bpmHat": 2.55,
-    "obpmHat": 1.59,
-    "dbpmHat": 0.97,
+    "bpmHat": 7.41,
+    "obpmHat": 6.66,
+    "dbpmHat": 0.75,
     "seasonZ": 0,
-    "per": 19.1,
-    "ws": 2.4,
-    "wsPer40": 0.121,
-    "tsPct": 0.512,
-    "pts100": 30.1
+    "per": 25.5,
+    "ws": 5.4,
+    "wsPer40": 0.249,
+    "tsPct": 0.642,
+    "pts100": 27.7
    },
    "provisional": false,
-   "rewardFor": "ATL",
-   "rewardGoal": "wnba-team-ATL",
-   "bandException": "PROVISIONAL 2026-09-06: the WNBA league factor (0.88) repriced every WNBA card and moved the earned bands; priced $1010, ATL now earns legendary ($1200+). Re-pick with node scripts/cardgen/wnba/wnbaRewardCandidates.js ATL, fetch the season log, then delete this exception."
+   "rewardFor": "PHO",
+   "rewardGoal": "wnba-team-PHO"
   },
   {
    "id": "Chamique_Holdsclaw",
@@ -445,79 +509,6 @@
    "provisional": false,
    "rewardFor": "WAS",
    "rewardGoal": "wnba-team-WAS"
-  },
-  {
-   "id": "Cheryl_Ford",
-   "name": "Cheryl Ford",
-   "team": "DET2",
-   "statRowTeam": "DET",
-   "pos": "F",
-   "speed": 9,
-   "power": 15,
-   "shotLine": 14,
-   "paintBoost": 0,
-   "threePtBoost": -6,
-   "defBoost": 2,
-   "salary": 950,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 3,
-     "pts": 0,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 4,
-     "hi": 7,
-     "pts": 1,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 8,
-     "hi": 13,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 14,
-     "hi": 99,
-     "pts": 2,
-     "reb": 2,
-     "ast": 0
-    }
-   ],
-   "league": "WNBA",
-   "season": 2006,
-   "seasonLabel": "2006",
-   "games": 32,
-   "mpg": 28.7,
-   "minutes": 919,
-   "bbrefId": "fordch01w",
-   "metrics": {
-    "bpmHat": 5.92,
-    "obpmHat": 3.76,
-    "dbpmHat": 2.16,
-    "seasonZ": 0,
-    "per": 24.9,
-    "ws": 6.6,
-    "wsPer40": 0.287,
-    "tsPct": 0.55,
-    "pts100": 25.6
-   },
-   "provisional": false,
-   "rewardFor": "DAL",
-   "rewardGoal": "wnba-team-DAL",
-   "bandException": "PROVISIONAL 2026-09-06: the WNBA league factor (0.88) repriced every WNBA card and moved the earned bands; priced $950, DAL now earns rare ($700-899). Re-pick with node scripts/cardgen/wnba/wnbaRewardCandidates.js DAL, fetch the season log, then delete this exception."
   },
   {
    "id": "Epiphanny_Prince",
@@ -590,7 +581,151 @@
    "provisional": false,
    "rewardFor": "CHI",
    "rewardGoal": "wnba-team-CHI",
-   "bandException": "PROVISIONAL 2026-09-06: the WNBA league factor (0.88) repriced every WNBA card and moved the earned bands; priced $860, CHI now earns super-rare ($900-1199). Re-pick with node scripts/cardgen/wnba/wnbaRewardCandidates.js CHI, fetch the season log, then delete this exception."
+   "bandException": "Thirty dollars under the super-rare floor at $870 after the 2026-09-06 league factor. Her 2012 ($1270) clears it into LEGENDARY, $70 over; no other eligible Sky season reaches $900 (Meesseman 2022 $830, Quigley 2017 $850; Vandersloot, Fowles and Parker are carded elsewhere). Under by thirty keeps the reward below the harder collections' rewards, which is what the band is for. The same size of exception Las Vegas gets for Hammon."
+  },
+  {
+   "id": "Alysha_Clark",
+   "name": "Alysha Clark",
+   "team": "SEA",
+   "statRowTeam": "SEA",
+   "pos": "F",
+   "speed": 12,
+   "power": 12,
+   "shotLine": 12,
+   "paintBoost": -1,
+   "threePtBoost": 0,
+   "defBoost": 3,
+   "salary": 850,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 7,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 11,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 12,
+     "hi": 24,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 25,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2020,
+   "seasonLabel": "2020",
+   "games": 22,
+   "mpg": 28.8,
+   "minutes": 633,
+   "bbrefId": "clarkal01w",
+   "metrics": {
+    "bpmHat": 6.12,
+    "obpmHat": 3.32,
+    "dbpmHat": 2.8,
+    "seasonZ": 0,
+    "per": 18.2,
+    "ws": 3.6,
+    "wsPer40": 0.229,
+    "tsPct": 0.693,
+    "pts100": 17.5
+   },
+   "provisional": false,
+   "rewardFor": "SEA",
+   "rewardGoal": "wnba-team-SEA"
+  },
+  {
+   "id": "Mwadi_Mabika",
+   "name": "Mwadi Mabika",
+   "team": "LAS97",
+   "statRowTeam": "LAS",
+   "pos": "G",
+   "speed": 15,
+   "power": 8,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": 2,
+   "defBoost": 1,
+   "salary": 780,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 13,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 21,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2001,
+   "seasonLabel": "2001",
+   "games": 28,
+   "mpg": 29.6,
+   "minutes": 828,
+   "bbrefId": "mabikmw01w",
+   "metrics": {
+    "bpmHat": 5.01,
+    "obpmHat": 3.99,
+    "dbpmHat": 1.02,
+    "seasonZ": 0,
+    "per": 19.3,
+    "ws": 4.3,
+    "wsPer40": 0.209,
+    "tsPct": 0.538,
+    "pts100": 21.4
+   },
+   "provisional": false,
+   "rewardFor": "LAS",
+   "rewardGoal": "wnba-team-LAS"
   },
   {
    "id": "Nykesha_Sales",
@@ -665,164 +800,18 @@
    "rewardGoal": "wnba-team-CON"
   },
   {
-   "id": "DeWanna_Bonner",
-   "name": "DeWanna Bonner",
-   "team": "PHO11",
-   "statRowTeam": "PHO",
-   "pos": "F-G",
-   "speed": 11,
-   "power": 10,
+   "id": "Cheryl_Ford",
+   "name": "Cheryl Ford",
+   "team": "DET2",
+   "statRowTeam": "DET",
+   "pos": "F",
+   "speed": 8,
+   "power": 12,
    "shotLine": 15,
    "paintBoost": 0,
-   "threePtBoost": -2,
+   "threePtBoost": -5,
    "defBoost": 1,
-   "salary": 700,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 6,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 7,
-     "hi": 14,
-     "pts": 1,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 15,
-     "hi": 21,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 22,
-     "hi": 99,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    }
-   ],
-   "league": "WNBA",
-   "season": 2014,
-   "seasonLabel": "2014",
-   "games": 34,
-   "mpg": 29.2,
-   "minutes": 994,
-   "bbrefId": "bonnede01w",
-   "metrics": {
-    "bpmHat": 3.21,
-    "obpmHat": 1.71,
-    "dbpmHat": 1.5,
-    "seasonZ": 0,
-    "per": 16.4,
-    "ws": 3.9,
-    "wsPer40": 0.159,
-    "tsPct": 0.55,
-    "pts100": 18.5
-   },
-   "provisional": false,
-   "rewardFor": "PHO",
-   "rewardGoal": "wnba-team-PHO",
-   "bandException": "PROVISIONAL 2026-09-06: the WNBA league factor (0.88) repriced every WNBA card and moved the earned bands; priced $700, PHO now earns super-rare ($900-1199). Re-pick with node scripts/cardgen/wnba/wnbaRewardCandidates.js PHO, fetch the season log, then delete this exception."
-  },
-  {
-   "id": "Tamecka_Dixon",
-   "name": "Tamecka Dixon",
-   "team": "LAS97",
-   "statRowTeam": "LAS",
-   "pos": "G",
-   "speed": 13,
-   "power": 8,
-   "shotLine": 14,
-   "paintBoost": 0,
-   "threePtBoost": 0,
-   "defBoost": 1,
-   "salary": 670,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 7,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 8,
-     "hi": 13,
-     "pts": 1,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 14,
-     "hi": 21,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 22,
-     "hi": 99,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    }
-   ],
-   "league": "WNBA",
-   "season": 1997,
-   "seasonLabel": "1997",
-   "games": 27,
-   "mpg": 26.5,
-   "minutes": 715,
-   "bbrefId": "dixonta01w",
-   "metrics": {
-    "bpmHat": 3.42,
-    "obpmHat": 2.42,
-    "dbpmHat": 1,
-    "seasonZ": 0,
-    "per": 19.2,
-    "ws": 3.3,
-    "wsPer40": 0.183,
-    "tsPct": 0.55,
-    "pts100": 23.2
-   },
-   "provisional": false,
-   "rewardFor": "LAS",
-   "rewardGoal": "wnba-team-LAS",
-   "bandException": "PROVISIONAL 2026-09-06: the WNBA league factor (0.88) repriced every WNBA card and moved the earned bands; priced $670, LAS now earns rare ($700-899). Re-pick with node scripts/cardgen/wnba/wnbaRewardCandidates.js LAS, fetch the season log, then delete this exception."
-  },
-  {
-   "id": "Sue_Bird",
-   "name": "Sue Bird",
-   "team": "SEA00",
-   "statRowTeam": "SEA",
-   "pos": "G",
-   "speed": 15,
-   "power": 6,
-   "shotLine": 16,
-   "paintBoost": 0,
-   "threePtBoost": 2,
-   "defBoost": 0,
-   "salary": 650,
+   "salary": 730,
    "chart": [
     {
      "lo": 1,
@@ -835,60 +824,45 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 4,
-     "hi": 7,
+     "hi": 14,
      "pts": 1,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
-     "lo": 8,
-     "hi": 15,
-     "pts": 1,
-     "reb": 0,
-     "ast": 1
-    },
-    {
-     "lo": 16,
-     "hi": 21,
-     "pts": 2,
-     "reb": 0,
-     "ast": 1
-    },
-    {
-     "lo": 22,
+     "lo": 15,
      "hi": 99,
      "pts": 2,
-     "reb": 1,
-     "ast": 1
+     "reb": 2,
+     "ast": 0
     }
    ],
    "league": "WNBA",
-   "season": 2009,
-   "seasonLabel": "2009",
-   "games": 31,
-   "mpg": 35.5,
-   "minutes": 1101,
-   "bbrefId": "birdsu01w",
+   "season": 2008,
+   "seasonLabel": "2008",
+   "games": 24,
+   "mpg": 26.5,
+   "minutes": 637,
+   "bbrefId": "fordch01w",
    "metrics": {
-    "bpmHat": 2.64,
-    "obpmHat": 2.22,
-    "dbpmHat": 0.42,
+    "bpmHat": 2.44,
+    "obpmHat": 1.72,
+    "dbpmHat": 0.72,
     "seasonZ": 0,
-    "per": 15.6,
-    "ws": 3.1,
-    "wsPer40": 0.112,
-    "tsPct": 0.502,
-    "pts100": 19.7
+    "per": 19.3,
+    "ws": 3.2,
+    "wsPer40": 0.204,
+    "tsPct": 0.515,
+    "pts100": 20
    },
    "provisional": false,
-   "rewardFor": "SEA",
-   "rewardGoal": "wnba-team-SEA",
-   "bandException": "PROVISIONAL 2026-09-06: the WNBA league factor (0.88) repriced every WNBA card and moved the earned bands; priced $650, SEA now earns rare ($700-899). Re-pick with node scripts/cardgen/wnba/wnbaRewardCandidates.js SEA, fetch the season log, then delete this exception."
+   "rewardFor": "DAL",
+   "rewardGoal": "wnba-team-DAL"
   },
   {
    "id": "Sophia_Witherspoon",
@@ -902,7 +876,7 @@
    "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": -1,
-   "salary": 630,
+   "salary": 620,
    "chart": [
     {
      "lo": 1,
@@ -961,7 +935,7 @@
    "provisional": false,
    "rewardFor": "POR",
    "rewardGoal": "wnba-team-POR",
-   "bandException": "PROVISIONAL 2026-09-06: the WNBA league factor (0.88) repriced every WNBA card and moved the earned bands; priced $630, POR now earns super-rare ($900-1199). Re-pick with node scripts/cardgen/wnba/wnbaRewardCandidates.js POR, fetch the season log, then delete this exception."
+   "bandException": "Portland earns super-rare ($900-1199) since the 2026-09-06 league factor, but no Fire season prices above $730 (Tamicha Jackson 2002): the franchise played three seasons, 2000-02, and its best players were journeymen. The cheapest reward in the set, declared rather than hidden -- the same kind of exception Las Vegas gets for Hammon, in the other direction."
   }
  ]
 }

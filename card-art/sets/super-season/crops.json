@@ -848,5 +848,115 @@
     "x": -2.42,
     "y": 0,
     "zoom": 1
+  },
+  "RJ_Barrett": {
+    "x": -7.41,
+    "y": 0,
+    "zoom": 1
+  },
+  "Rob_Dillingham": {
+    "x": -7.57,
+    "y": -6.46,
+    "zoom": 1.26
+  },
+  "Royce_O_Neale": {
+    "x": -4.19,
+    "y": 0,
+    "zoom": 1
+  },
+  "Rudy_Gobert": {
+    "x": -10.16,
+    "y": 0,
+    "zoom": 1
+  },
+  "Rui_Hachimura": {
+    "x": 17.57,
+    "y": 0,
+    "zoom": 1
+  },
+  "Sam_Hauser": {
+    "x": 8.86,
+    "y": 0,
+    "zoom": 1
+  },
+  "Santi_Aldama": {
+    "x": -7.41,
+    "y": 0,
+    "zoom": 1
+  },
+  "Shaedon_Sharpe": {
+    "x": -18.05,
+    "y": 0,
+    "zoom": 1
+  },
+  "T_J_McConnell": {
+    "x": -9.99,
+    "y": 0,
+    "zoom": 1
+  },
+  "Terance_Mann": {
+    "x": -18.69,
+    "y": 0,
+    "zoom": 1
+  },
+  "Thomas_Bryant": {
+    "x": 17.41,
+    "y": 0,
+    "zoom": 1
+  },
+  "Tim_Hardaway_Jr": {
+    "x": 32.88,
+    "y": 0,
+    "zoom": 1
+  },
+  "Tobias_Harris": {
+    "x": -15.63,
+    "y": 0,
+    "zoom": 1
+  },
+  "Toumani_Camara": {
+    "x": -26.11,
+    "y": 0,
+    "zoom": 1
+  },
+  "Tracy_McGrady": {
+    "x": 0,
+    "y": 2.59,
+    "zoom": 1
+  },
+  "Trendon_Watford": {
+    "x": -13.38,
+    "y": 0,
+    "zoom": 1
+  },
+  "Tyrese_Haliburton": {
+    "x": 18.05,
+    "y": 0,
+    "zoom": 1
+  },
+  "Tyrese_Martin": {
+    "x": -23.05,
+    "y": 0,
+    "zoom": 1
+  },
+  "Tyus_Jones": {
+    "x": -4.51,
+    "y": 0,
+    "zoom": 1
+  },
+  "Vince_Carter": {
+    "x": -6.5,
+    "y": 5.59,
+    "zoom": 1.13
+  },
+  "Wendell_Carter_Jr": {
+    "x": -4.67,
+    "y": 0,
+    "zoom": 1
+  },
+  "Zach_LaVine": {
+    "x": -4.03,
+    "y": 0,
+    "zoom": 1
   }
 }

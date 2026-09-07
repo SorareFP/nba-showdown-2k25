@@ -108,6 +108,29 @@ export function myHouseTargets(g, teamKey) {
 // answer per check: the first reaction marks it `reacted`.
 export const SHOT_REACTIONS = ['close_out', 'rim_protector', 'drop_coverage', 'smothering_defense', 'denial', 'hustle_play'];
 
+/**
+ * DOES THE DEFENCE ACTUALLY HOLD AN ANSWER TO THIS CHECK?
+ *
+ * The user's rule (2026-09-07): "Every card that cues a shot check of any sort
+ * would be 'announcing' one. The game should only stop if there's an
+ * oppositional card in the other player's hand that can be played." So every
+ * check is announced, and this is the question that decides whether announcing
+ * it costs anybody a click. A free throw can never be contested and never
+ * pauses.
+ *
+ * Asked of the REAL hand and the REAL check, through canPlayCard itself, so a
+ * card whose own conditions fail (Rim Protector without the power, Denial with
+ * nothing to discard) does not stop the game for a window it cannot use.
+ */
+export function canAnswerCheck(g, check) {
+  if (!check || check.type === 'ft') return false;
+  const defKey = check.teamKey === 'A' ? 'B' : 'A';
+  const hand = getTeam(g, defKey)?.hand ?? [];
+  if (!hand.length) return false;
+  const probe = { ...g, pendingShotCheck: check };
+  return SHOT_REACTIONS.some(id => hand.includes(id) && canPlayCard(probe, defKey, id).canPlay);
+}
+
 function shotReaction(g, teamKey, cardId) {
   const psc = g.pendingShotCheck;
   if (!psc) return no('Wait for the opponent to announce a shot check');

@@ -28,5 +28,35 @@
     "x": -52.9,
     "y": 0.16,
     "zoom": 1.16
+  },
+  "Aaron_Gordon": {
+    "x": -2.9,
+    "y": 0,
+    "zoom": 1
+  },
+  "Adem_Bona": {
+    "x": -7.41,
+    "y": 0,
+    "zoom": 1
+  },
+  "Ajay_Mitchell": {
+    "x": -3.71,
+    "y": 0,
+    "zoom": 1
+  },
+  "Al_Horford": {
+    "x": -10.64,
+    "y": 0,
+    "zoom": 1
+  },
+  "Alex_Caruso": {
+    "x": -4.35,
+    "y": 0,
+    "zoom": 1
+  },
+  "Aaron_Wiggins": {
+    "x": 5.32,
+    "y": 0,
+    "zoom": 1
   }
 }

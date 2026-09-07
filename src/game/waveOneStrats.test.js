@@ -162,12 +162,21 @@ describe('scoring-phase wave-one cards', () => {
     expect(play(g, 'five_out', { playerIdx: 0 }).ok).toBe(false);
   });
 
-  it('Hammer Set: the non-shooter with a Speed edge announces a three (hit = +2 AST)', () => {
+  it('Hammer Set: the non-shooter with a Speed edge takes a three (hit = +2 AST)', () => {
     const A = five('a'); A[0] = p('slasher', 13, 10); A[1] = p('sniper', 13, 10, { threePtBoost: 2 });
     const g = game({ A, hand: ['hammer_set'] });
     const r = play(g, 'hammer_set', { playerIdx: 0 });
     expect(r.ok).toBe(true);
-    expect(r.game.pendingShotCheck).toMatchObject({ teamKey: 'A', playerIdx: 0, type: '3pt', bonus: 0, onHitAst: 2 });
+    // Team B holds nothing, so the check resolves on the spot rather than
+    // stopping the game — the user's rule, 2026-09-07.
+    expect(r.game.pendingShotCheck).toBeNull();
+    // Two lines: the announcement, then the result it resolved straight into.
+    expect(log(r.game, 'Hammer Set')).toHaveLength(2);
+    // Give the defence a Close Out and the same play stops for it.
+    const armed = game({ A, hand: ['hammer_set'] });
+    getTeam(armed, 'B').hand = ['close_out'];
+    expect(play(armed, 'hammer_set', { playerIdx: 0 }).game.pendingShotCheck)
+      .toMatchObject({ teamKey: 'A', playerIdx: 0, type: '3pt', bonus: 0, onHitAst: 2 });
     expect(play(g, 'hammer_set', { playerIdx: 1 }).ok).toBe(false);
   });
 
@@ -191,6 +200,7 @@ describe('scoring-phase wave-one cards', () => {
 
   it('Crash and Kick spends 3 REB + 1 AST for a +2 three', () => {
     const g = game({ hand: ['crash_and_kick'], rebounds: 3, assists: 1 });
+    getTeam(g, 'B').hand = ['close_out']; // an answer exists, so it pauses
     const r = play(g, 'crash_and_kick', { playerIdx: 4 });
     expect(r.ok).toBe(true);
     expect(getTeam(r.game, 'A')).toMatchObject({ rebounds: 0, assists: 0 });
@@ -201,6 +211,7 @@ describe('scoring-phase wave-one cards', () => {
   it('Pick-and-Pop spends 2 AST for a +1 three that pays 2 back on a hit', () => {
     const A = five('a'); A[0] = p('pop', 10, 10, { threePtBoost: 1 });
     const g = game({ A, hand: ['pick_and_pop'], assists: 2 });
+    getTeam(g, 'B').hand = ['close_out']; // an answer exists, so it pauses
     const r = play(g, 'pick_and_pop', { playerIdx: 0 });
     expect(r.ok).toBe(true);
     expect(getTeam(r.game, 'A').assists).toBe(0);
@@ -211,6 +222,8 @@ describe('scoring-phase wave-one cards', () => {
 
   it('Extra Pass: any player, either check, no card bonus', () => {
     const g = game({ hand: ['extra_pass'], assists: 2 });
+    const A = getTeam(g, 'B').starters; A[3] = p('stopper', 10, 10, { defBoost: 2 });
+    getTeam(g, 'B').hand = ['drop_coverage']; // answers a paint check, so it pauses
     const r = play(g, 'extra_pass', { playerIdx: 3, checkType: 'paint' });
     expect(r.ok).toBe(true);
     expect(r.game.pendingShotCheck).toMatchObject({ playerIdx: 3, type: 'paint', bonus: 0, noCardBonus: true });
@@ -235,7 +248,10 @@ describe('scoring-phase wave-one cards', () => {
     expect(play(g, 'stretch_five', { playerIdx: 4 }).ok).toBe(false); // no teammate chosen
     const r = play(g, 'stretch_five', { playerIdx: 4, player2Idx: 0 });
     expect(r.ok).toBe(true);
-    expect(log(r.game, 'Stretch Five')[0].msg).toContain('paint at +2');
+    // Two checks, so two lines: his three, then the teammate's paint check.
+    const lines = log(r.game, 'Stretch Five');
+    expect(lines).toHaveLength(2);
+    expect(lines[1].msg).toContain('paint at +2');
     expect(play(g, 'stretch_five', { playerIdx: 0, player2Idx: 1 }).ok).toBe(false);
   });
 
@@ -255,8 +271,12 @@ describe('scoring-phase wave-one cards', () => {
   });
 
   it('Transition Outlet spends 1 REB + 1 AST for a +2 check with a Speed edge', () => {
-    const A = five('a'); A[0] = p('outlet', 12, 10);
+    const A = five('a'); A[0] = p('outlet', 15, 10);
     const g = game({ A, hand: ['transition_outlet'], rebounds: 1, assists: 1 });
+    // A Defensive Bonus REDUCES the attacker's edge, so the outlet needs a
+    // big enough one to still qualify with a stopper on him.
+    getTeam(g, 'B').starters[0] = p('stopper', 10, 10, { defBoost: 2 });
+    getTeam(g, 'B').hand = ['drop_coverage']; // answers a paint check, so it pauses
     const r = play(g, 'transition_outlet', { playerIdx: 0, checkType: 'paint' });
     expect(r.ok).toBe(true);
     expect(r.game.pendingShotCheck).toMatchObject({ type: 'paint', bonus: 2, onHitAst: 1 });
@@ -264,10 +284,17 @@ describe('scoring-phase wave-one cards', () => {
     expect(play(g, 'transition_outlet', { playerIdx: 1 }).ok).toBe(false);
   });
 
-  it('Back to the Basket is now an announced Paint check', () => {
+  it('Back to the Basket announces a Paint check the defence can answer', () => {
     const A = five('a'); A[0] = p('post', 10, 14, { paintBoost: 1 });
-    const r = play(game({ A, hand: ['back_to_basket'] }), 'back_to_basket', { playerIdx: 0 });
-    expect(r.ok).toBe(true);
+    // Nobody holding an answer: it resolves without stopping the game.
+    const plain = play(game({ A, hand: ['back_to_basket'] }), 'back_to_basket', { playerIdx: 0 });
+    expect(plain.ok).toBe(true);
+    expect(plain.game.pendingShotCheck).toBeNull();
+    // A defender with the power and a Rim Protector: it stops.
+    const g = game({ A, hand: ['back_to_basket'] });
+    getTeam(g, 'B').starters[0] = p('wall', 10, 13, { defBoost: 3 });
+    getTeam(g, 'B').hand = ['rim_protector'];
+    const r = play(g, 'back_to_basket', { playerIdx: 0 });
     expect(r.game.pendingShotCheck).toMatchObject({ teamKey: 'A', playerIdx: 0, type: 'paint' });
   });
 });
@@ -299,6 +326,8 @@ describe('offensive reactions', () => {
     expect(canPlayCard(g, 'A', 'putback_specialist').canPlay).toBe(false);
     g.lastCheckMiss = { teamKey: 'A', type: '3pt', playerIdx: 0, claimed: false };
     expect(canPlayCard(g, 'A', 'putback_specialist').canPlay).toBe(true);
+    getTeam(g, 'B').starters[1] = p('wall', 10, 13, { defBoost: 3 });
+    getTeam(g, 'B').hand = ['rim_protector']; // an answer exists, so it pauses
     const r = play(g, 'putback_specialist', { playerIdx: 1 });
     expect(r.ok).toBe(true);
     expect(r.game.pendingShotCheck).toMatchObject({ playerIdx: 1, type: 'paint', bonus: 3 });

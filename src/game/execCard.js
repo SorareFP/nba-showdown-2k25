@@ -2,8 +2,8 @@
 // Pure function: takes game state + card + opts, returns new state
 // Never mutates — always returns a new object via deepClone
 
-import { handOverPriority, getTeam, getOpp, getPS, calcAdv, shotCheck, matchupContest, drawCards, deepClone, getFatigue, recordDefSwitch, burnedSlots, roll20 } from './engine.js';
-import { helpTargets } from './canPlay.js';
+import { handOverPriority, getTeam, getOpp, getPS, calcAdv, shotCheck, matchupContest, drawCards, deepClone, getFatigue, recordDefSwitch, burnedSlots, roll20, checkAssistDraw } from './engine.js';
+import { helpTargets, canAnswerCheck } from './canPlay.js';
 import { lookupChart } from './cards.js';
 import { getStrat } from './strats.js';
 
@@ -190,11 +190,10 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
     case 'ato_masterpiece': {
       if (g.timeoutActive !== teamKey) return fail('Play during your Timeout');
       const atoType = opts.checkType === 'paint' ? 'paint' : '3pt';
-      const r = _shotCheck(player, atoType, 2, ps);
-      recordShot(g, teamKey, player?.id, atoType, r.hit);
-      trackShotCheck(g, teamKey, r, atoType);
-      if (r.hit) myT.score += r.pts;
-      addLog(g, teamKey, `ATO Masterpiece: out of the huddle, ${scStr(r)}`);
+      announceCheck(g, {
+        teamKey, playerIdx: idx, type: atoType, bonus: 2 + _assistShotBonus,
+        cardLabel: 'ATO Masterpiece: out of the huddle',
+      });
       break;
     }
 
@@ -456,32 +455,21 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
     case 'heat_check': {
       const rr = (g.rollResults[teamKey] || [])[idx];
       if (!rr?.isTop) return fail(player?.name + ' didn\'t hit highest tier.');
-      const r = _shotCheck(player, '3pt', -2, ps);
-      recordShot(g, teamKey, player?.id, '3pt', r.hit);
-      trackShotCheck(g, teamKey, r, '3pt');
-      if (r.die <= 2)  pss().cold = (pss().cold || 0) + 1;
-      if (r.die >= 19) pss().hot  = (pss().hot  || 0) + 1;
-      if (r.hit) { myT.score += r.pts; pss().hot = (pss().hot || 0) + 1; }
-      addLog(g, teamKey, `Heat Check: ${player.name} ${scStr(r, pss())}${r.hit ? ' 🔥' : ''}`);
+      announceCheck(g, {
+        teamKey, playerIdx: idx, type: '3pt', bonus: -2 + _assistShotBonus,
+        cardLabel: `Heat Check: ${player.name}`, onHitHot: true,
+      });
       break;
     }
 
     case 'green_light': {
       const existingRoll = (g.rollResults[teamKey] || [])[idx];
       if (existingRoll && !existingRoll.isReplaced) return fail(player?.name + ' has already rolled this segment.');
-      let tot = 0;
-      for (let i = 0; i < 3; i++) {
-        const r = _shotCheck(player, '3pt', 0, ps);
-        recordShot(g, teamKey, player?.id, '3pt', r.hit);
-        trackShotCheck(g, teamKey, r, '3pt');
-        if (r.die <= 2)  pss().cold = (pss().cold || 0) + 1;
-        if (r.die >= 19) pss().hot  = (pss().hot  || 0) + 1;
-        tot += r.pts;
-        addLog(g, teamKey, `Green Light #${i + 1}: ${scStr(r)}`);
-      }
-      myT.score += tot;
-      if (!g.rollResults[teamKey]) g.rollResults[teamKey] = [];
-      g.rollResults[teamKey][idx] = { die: '-', bonus: 0, finalRoll: '-', pts: tot, reb: 0, ast: 0, isTop: false, isReplaced: true };
+      announceCheck(g, {
+        teamKey, playerIdx: idx, type: '3pt', bonus: _assistShotBonus,
+        cardLabel: 'Green Light #1', replaceRoll: idx, replacedBy: 'green_light',
+        then: [{ cardLabel: 'Green Light #2' }, { cardLabel: 'Green Light #3' }],
+      });
       break;
     }
 
@@ -489,26 +477,18 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       // Sets pendingShotCheck — resolved by resolvePendingShotCheck
       removeFromHand(myT, cardId);
       if (g.analytics?.[teamKey]) g.analytics[teamKey].cardsPlayed++;
-      g.pendingShotCheck = { teamKey, playerIdx: idx, type: '3pt', bonus: 1, cardLabel: 'From Way Downtown', specialRoll: 'fwd' };
-      addLog(g, teamKey, `From Way Downtown: ${player?.name} announces 3PT check at +1. Opponent may play Close Out.`);
+      addLog(g, teamKey, `From Way Downtown: ${player?.name} announces 3PT check at +1.`);
+      announceCheck(g, { teamKey, playerIdx: idx, type: '3pt', bonus: 1, cardLabel: 'From Way Downtown', specialRoll: 'fwd' });
       return { game: g, ok: true };
     }
 
     case 'you_stand_over_there': {
       if (g.rollResults[teamKey]?.[idx] != null) return fail(`${player?.name} has already rolled this segment.`);
-      let tot = 0;
-      for (let i = 0; i < 2; i++) {
-        const r = _shotCheck(player, '3pt', 0, ps);
-        recordShot(g, teamKey, player?.id, '3pt', r.hit);
-        trackShotCheck(g, teamKey, r, '3pt');
-        if (r.die <= 2)  pss().cold = (pss().cold || 0) + 1;
-        if (r.die >= 19) pss().hot  = (pss().hot  || 0) + 1;
-        tot += r.pts;
-        addLog(g, teamKey, `You Stand Over There #${i + 1}: ${scStr(r)}`);
-      }
-      myT.score += tot;
-      if (!g.rollResults[teamKey]) g.rollResults[teamKey] = [];
-      g.rollResults[teamKey][idx] = { die: '-', bonus: 0, finalRoll: '-', pts: tot, reb: 0, ast: 0, isTop: false, isReplaced: true };
+      announceCheck(g, {
+        teamKey, playerIdx: idx, type: '3pt', bonus: _assistShotBonus,
+        cardLabel: 'You Stand Over There #1', replaceRoll: idx, replacedBy: 'you_stand_over_there',
+        then: [{ cardLabel: 'You Stand Over There #2' }],
+      });
       break;
     }
 
@@ -516,8 +496,8 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if ((player?.speed || 0) < 12) return fail(player?.name + ' needs Speed 12+');
       removeFromHand(myT, cardId);
       if (g.analytics?.[teamKey]) g.analytics[teamKey].cardsPlayed++;
-      g.pendingShotCheck = { teamKey, playerIdx: idx, type: '3pt', bonus: 2, cardLabel: 'Catch & Shoot', onHit: 'ast' };
-      addLog(g, teamKey, `Catch & Shoot: ${player?.name} announces 3PT check at +2. Opponent may play Close Out.`);
+      addLog(g, teamKey, `Catch & Shoot: ${player?.name} announces 3PT check at +2.`);
+      announceCheck(g, { teamKey, playerIdx: idx, type: '3pt', bonus: 2, cardLabel: 'Catch & Shoot', onHit: 'ast' });
       return { game: g, ok: true };
     }
 
@@ -525,35 +505,28 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if (!((player?.threePtBoost || 0) > 0)) return fail(player?.name + ' needs a 3PT Bonus');
       removeFromHand(myT, cardId);
       if (g.analytics?.[teamKey]) g.analytics[teamKey].cardsPlayed++;
-      g.pendingShotCheck = { teamKey, playerIdx: idx, type: '3pt', bonus: 3, cardLabel: 'Elevator Doors' };
-      addLog(g, teamKey, `Elevator Doors: ${player?.name} announces 3PT check at +3. Opponent may play Close Out.`);
+      addLog(g, teamKey, `Elevator Doors: ${player?.name} announces 3PT check at +3.`);
+      announceCheck(g, { teamKey, playerIdx: idx, type: '3pt', bonus: 3, cardLabel: 'Elevator Doors' });
       return { game: g, ok: true };
     }
 
     case 'pin_down_screen': {
       if (opts.discardId) removeFromHand(myT, opts.discardId);
-      const r = _shotCheck(player, '3pt', 5, ps);
-      recordShot(g, teamKey, player?.id, '3pt', r.hit);
-      trackShotCheck(g, teamKey, r, '3pt');
-      if (r.die <= 2)  pss().cold = (pss().cold || 0) + 1;
-      if (r.die >= 19) pss().hot  = (pss().hot  || 0) + 1;
-      if (r.hit) { myT.score += r.pts; myT.assists++; if (g.analytics?.[teamKey]) g.analytics[teamKey].assistsFromCards++; }
-      addLog(g, teamKey, `Pin-Down Screen: ${scStr(r)}${r.hit ? ' +1 AST' : ''}`);
+      announceCheck(g, {
+        teamKey, playerIdx: idx, type: '3pt', bonus: 5 + _assistShotBonus,
+        cardLabel: 'Pin-Down Screen', onHitAst: 1,
+      });
       break;
     }
 
     case 'bully_ball': {
       if (adv.powerAdv <= 0) return fail(player?.name + ' needs a Power advantage');
       const pb = adv.powerAdv >= 4 ? 2 : 0;
-      let tot = 0;
-      for (let i = 0; i < 2; i++) {
-        const r = _shotCheck(player, 'paint', pb, ps);
-        recordShot(g, teamKey, player?.id, 'paint', r.hit);
-        trackShotCheck(g, teamKey, r, 'paint');
-        tot += r.pts;
-        addLog(g, teamKey, `Bully Ball paint #${i + 1}: ${scStr(r)}`);
-      }
-      myT.score += tot;
+      announceCheck(g, {
+        teamKey, playerIdx: idx, type: 'paint', bonus: pb + _assistShotBonus,
+        cardLabel: 'Bully Ball paint #1',
+        then: [{ cardLabel: 'Bully Ball paint #2' }],
+      });
       break;
     }
 
@@ -638,8 +611,8 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if (!((player?.paintBoost || 0) > 0)) return fail(player?.name + ' needs a Paint Bonus');
       // Announced, not instant: the paint check the defence can answer with
       // Rim Protector or Drop Coverage (resolvePendingShotCheck rolls it).
-      g.pendingShotCheck = { teamKey, playerIdx: idx, type: 'paint', bonus: _assistShotBonus, cardLabel: 'Back to the Basket' };
-      addLog(g, teamKey, `Back to the Basket: ${player?.name} announces a Paint check. Opponent may react.`);
+      addLog(g, teamKey, `Back to the Basket: ${player?.name} announces a Paint check.`);
+      announceCheck(g, { teamKey, playerIdx: idx, type: 'paint', bonus: _assistShotBonus, cardLabel: 'Back to the Basket' });
       break;
     }
 
@@ -693,16 +666,11 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if (myT.assists < 3) return fail(`Need 3 assists (have ${myT.assists})`);
       if (g.rollResults[teamKey]?.[idx] != null) return fail(`${player?.name} has already rolled this segment.`);
       myT.assists -= 3;
-      const r1 = _shotCheck(player, 'paint', 0, ps);
-      const r2 = _shotCheck(player, '3pt',  0, ps);
-      recordShot(g, teamKey, player?.id, '3pt', r2.hit);
-      trackShotCheck(g, teamKey, r1, 'paint');
-      trackShotCheck(g, teamKey, r2, '3pt');
-      if (r1.hit) myT.score += r1.pts;
-      if (r2.hit) myT.score += r2.pts;
-      addLog(g, teamKey, `Cross-Court Dime (−3 AST): Paint ${scStr(r1)} | 3PT ${scStr(r2)}`);
-      if (!g.rollResults[teamKey]) g.rollResults[teamKey] = [];
-      g.rollResults[teamKey][idx] = { die: '-', bonus: 0, finalRoll: '-', pts: r1.pts + r2.pts, reb: 0, ast: 0, isTop: false, isReplaced: true };
+      announceCheck(g, {
+        teamKey, playerIdx: idx, type: 'paint', bonus: _assistShotBonus,
+        cardLabel: 'Cross-Court Dime (−3 AST): Paint', replaceRoll: idx, replacedBy: 'cross_court_dime',
+        then: [{ type: '3pt', cardLabel: 'Cross-Court Dime: 3PT' }],
+      });
       break;
     }
 
@@ -964,26 +932,18 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if (!((player?.threePtBoost || 0) > 0)) return fail(`${player?.name} needs a 3PT Bonus`);
       const existing = (g.rollResults[teamKey] || [])[idx];
       if (existing && !existing.isReplaced) return fail(`${player?.name} has already rolled this segment.`);
-      let tot = 0;
-      for (let i = 0; i < 2; i++) {
-        const r = _shotCheck(player, '3pt', 1, ps);
-        recordShot(g, teamKey, player?.id, '3pt', r.hit);
-        trackShotCheck(g, teamKey, r, '3pt', idx);
-        if (r.die <= 2)  pss().cold = (pss().cold || 0) + 1;
-        if (r.die >= 19) pss().hot  = (pss().hot  || 0) + 1;
-        tot += r.pts;
-        addLog(g, teamKey, `Five-Out Offense #${i + 1}: ${scStr(r)}`);
-      }
-      myT.score += tot;
-      if (!g.rollResults[teamKey]) g.rollResults[teamKey] = [];
-      g.rollResults[teamKey][idx] = { die: 0, bonus: 0, finalRoll: 0, pts: tot, reb: 0, ast: 0, isTop: false, isReplaced: true, replacedBy: 'five_out' };
+      announceCheck(g, {
+        teamKey, playerIdx: idx, type: '3pt', bonus: 1 + _assistShotBonus,
+        cardLabel: 'Five-Out Offense #1', replaceRoll: idx, replacedBy: 'five_out',
+        then: [{ cardLabel: 'Five-Out Offense #2' }],
+      });
       break;
     }
     case 'hammer_set': {
       if ((player?.threePtBoost || 0) > 0) return fail(`${player?.name} has a 3PT Bonus — Hammer Set is for the non-shooter`);
       if (adv.speedAdv <= 0) return fail(`${player?.name} needs a Speed advantage`);
-      g.pendingShotCheck = { teamKey, playerIdx: idx, type: '3pt', bonus: 0 + _assistShotBonus, cardLabel: 'Hammer Set', onHitAst: 2 };
-      addLog(g, teamKey, `Hammer Set: ${player?.name} announces a 3PT check (hit = +2 AST). Opponent may react.`);
+      addLog(g, teamKey, `Hammer Set: ${player?.name} announces a 3PT check (hit = +2 AST).`);
+      announceCheck(g, { teamKey, playerIdx: idx, type: '3pt', bonus: 0 + _assistShotBonus, cardLabel: 'Hammer Set', onHitAst: 2 });
       break;
     }
     case 'iso_heavy': {
@@ -996,42 +956,34 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
     case 'three_point_barrage': {
       const shooters = myT.starters.map((p, i) => ({ p, i })).filter(({ p }) => p && (p.threePtBoost || 0) > 0);
       if (shooters.length < 3) return fail(`Need three players with a 3PT Bonus (have ${shooters.length})`);
-      let tot = 0;
-      const fire = (p, i, tag) => {
-        const pst = getPS(g, teamKey, p.id) || {};
-        const r = shotCheck(p, '3pt', -matchupContest(g, teamKey, i, '3pt'), pst);
-        recordShot(g, teamKey, p.id, '3pt', r.hit);
-        trackShotCheck(g, teamKey, r, '3pt', i);
-        if (r.die <= 2)  pst.cold = (pst.cold || 0) + 1;
-        if (r.die >= 19) pst.hot  = (pst.hot  || 0) + 1;
-        tot += r.pts;
-        addLog(g, teamKey, `Three-Point Barrage${tag}: ${p.name} ${scStr(r)}`);
-      };
-      shooters.forEach(({ p, i }) => fire(p, i, ''));
+      const queue = shooters.map(({ p, i }) => ({
+        playerIdx: i, cardLabel: `Three-Point Barrage: ${p.name}`,
+      }));
       if (opts.extraShooterIdx !== undefined && opts.extraShooterIdx !== null) {
         const ex = myT.starters[opts.extraShooterIdx];
         if (!ex) return fail('No such player for the extra check');
         if (myT.assists < 1) return fail('Need 1 assist for the extra check');
         myT.assists -= 1;
-        fire(ex, opts.extraShooterIdx, ' (extra, −1 AST)');
+        queue.push({ playerIdx: opts.extraShooterIdx, cardLabel: `Three-Point Barrage (extra, −1 AST): ${ex.name}` });
       }
-      myT.score += tot;
+      const [first, ...more] = queue;
+      announceCheck(g, { teamKey, type: '3pt', bonus: 0, ...first, then: more });
       break;
     }
     case 'crash_and_kick': {
       if (myT.rebounds < 3) return fail(`Need 3 rebounds (have ${myT.rebounds})`);
       if (myT.assists < 1) return fail(`Need 1 assist (have ${myT.assists})`);
       myT.rebounds -= 3; myT.assists -= 1;
-      g.pendingShotCheck = { teamKey, playerIdx: idx, type: '3pt', bonus: 2 + _assistShotBonus, cardLabel: 'Crash and Kick' };
-      addLog(g, teamKey, `Crash and Kick: −3 REB −1 AST → ${player?.name} announces a 3PT check at +2. Opponent may react.`);
+      addLog(g, teamKey, `Crash and Kick: −3 REB −1 AST → ${player?.name} announces a 3PT check at +2.`);
+      announceCheck(g, { teamKey, playerIdx: idx, type: '3pt', bonus: 2 + _assistShotBonus, cardLabel: 'Crash and Kick' });
       break;
     }
     case 'pick_and_pop': {
       if (!((player?.threePtBoost || 0) > 0)) return fail(`${player?.name} needs a 3PT Bonus`);
       if (myT.assists < 2) return fail(`Need 2 assists (have ${myT.assists})`);
       myT.assists -= 2;
-      g.pendingShotCheck = { teamKey, playerIdx: idx, type: '3pt', bonus: 1 + _assistShotBonus, cardLabel: 'Pick-and-Pop', onHitAst: 2 };
-      addLog(g, teamKey, `Pick-and-Pop: −2 AST → ${player?.name} announces a 3PT check at +1 (hit = +2 AST back). Opponent may react.`);
+      addLog(g, teamKey, `Pick-and-Pop: −2 AST → ${player?.name} announces a 3PT check at +1 (hit = +2 AST back).`);
+      announceCheck(g, { teamKey, playerIdx: idx, type: '3pt', bonus: 1 + _assistShotBonus, cardLabel: 'Pick-and-Pop', onHitAst: 2 });
       break;
     }
     case 'extra_pass': {
@@ -1040,8 +992,8 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       myT.assists -= 2;
       // "Shot check bonuses from other strategy cards are negated": the
       // assist-boost option is not offered and the bonus is exactly 0.
-      g.pendingShotCheck = { teamKey, playerIdx: idx, type: kind, bonus: 0, cardLabel: 'Extra Pass', noCardBonus: true };
-      addLog(g, teamKey, `Extra Pass: −2 AST → ${player?.name} announces a ${kind === 'paint' ? 'Paint' : '3PT'} check (no card bonuses). Opponent may react.`);
+      addLog(g, teamKey, `Extra Pass: −2 AST → ${player?.name} announces a ${kind === 'paint' ? 'Paint' : '3PT'} check (no card bonuses).`);
+      announceCheck(g, { teamKey, playerIdx: idx, type: kind, bonus: 0, cardLabel: 'Extra Pass', noCardBonus: true });
       break;
     }
     case 'lob_city': {
@@ -1069,14 +1021,11 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       const mate = opts.player2Idx;
       const mateP = myT.starters[mate];
       if (mateP === undefined || mate === idx) return fail('Choose a teammate for the paint check');
-      const r1 = _shotCheck(player, '3pt', 0, ps);
-      recordShot(g, teamKey, player?.id, '3pt', r1.hit);
-      trackShotCheck(g, teamKey, r1, '3pt', idx);
-      const ps2 = getPS(g, teamKey, mateP.id) || {};
-      const r2 = shotCheck(mateP, 'paint', 2 - matchupContest(g, teamKey, mate, 'paint'), ps2);
-      trackShotCheck(g, teamKey, r2, 'paint', mate);
-      myT.score += r1.pts + r2.pts;
-      addLog(g, teamKey, `Stretch Five: ${player?.name} 3PT ${scStr(r1)}; ${mateP.name} paint at +2 ${scStr(r2)}`);
+      announceCheck(g, {
+        teamKey, playerIdx: idx, type: '3pt', bonus: _assistShotBonus,
+        cardLabel: `Stretch Five: ${player?.name} 3PT`,
+        then: [{ playerIdx: mate, type: 'paint', bonus: 2, cardLabel: `Stretch Five: ${mateP.name} paint at +2` }],
+      });
       break;
     }
     case 'post_domination': {
@@ -1101,8 +1050,8 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if (adv.speedAdv <= 0) return fail(`${player?.name} needs a Speed advantage`);
       const kind = opts.checkType === 'paint' ? 'paint' : '3pt';
       myT.rebounds -= 1; myT.assists -= 1;
-      g.pendingShotCheck = { teamKey, playerIdx: idx, type: kind, bonus: 2 + _assistShotBonus, cardLabel: 'Transition Outlet', onHitAst: 1 };
-      addLog(g, teamKey, `Transition Outlet: −1 REB −1 AST → ${player?.name} announces a ${kind === 'paint' ? 'Paint' : '3PT'} check at +2 (hit = +1 AST). Opponent may react.`);
+      addLog(g, teamKey, `Transition Outlet: −1 REB −1 AST → ${player?.name} announces a ${kind === 'paint' ? 'Paint' : '3PT'} check at +2 (hit = +1 AST).`);
+      announceCheck(g, { teamKey, playerIdx: idx, type: kind, bonus: 2 + _assistShotBonus, cardLabel: 'Transition Outlet', onHitAst: 1 });
       break;
     }
     case 'find_the_open_man': {
@@ -1122,8 +1071,8 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if (myT.rebounds < 2) return fail(`Need 2 rebounds (have ${myT.rebounds})`);
       myT.rebounds -= 2;
       miss.claimed = true;
-      g.pendingShotCheck = { teamKey, playerIdx: idx, type: 'paint', bonus: 3 + _assistShotBonus, cardLabel: 'Putback Specialist' };
-      addLog(g, teamKey, `Putback Specialist: −2 REB → ${player?.name} announces a Paint check at +3. Opponent may react.`);
+      addLog(g, teamKey, `Putback Specialist: −2 REB → ${player?.name} announces a Paint check at +3.`);
+      announceCheck(g, { teamKey, playerIdx: idx, type: 'paint', bonus: 3 + _assistShotBonus, cardLabel: 'Putback Specialist' });
       break;
     }
     case 'rim_protector': case 'drop_coverage': case 'smothering_defense': case 'denial': case 'hustle_play': {
@@ -1261,11 +1210,19 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
 }
 
 // ── Resolve Pending Shot Check (after Close Out window) ───────────────────────
-export function resolvePendingShotCheck(game) {
-  const psc = game.pendingShotCheck;
-  if (!psc) return game;
-
-  const g = deepClone(game);
+/**
+ * ONE SHOT CHECK, RESOLVED — the common body every card-cued check runs
+ * through. Mutates `g`; returns the roll so a chain can total it.
+ *
+ * A check is a plain descriptor:
+ *   { teamKey, playerIdx, type, bonus, cardLabel }
+ * plus optional flags: `onHitAst` (assists on a hit), `onHitHot` (a hot marker
+ * on a hit — Heat Check), `specialRoll: 'fwd'` (the wider 1-3/18-20 range),
+ * `noCardBonus`, and the defence's answers (`smother`, `closeOutBonus`,
+ * `contest`, `denial`, `rimProtector`) which a reaction writes onto it.
+ * `then` carries the rest of its card — see announceCheck.
+ */
+export function applyShotCheck(g, psc) {
   const myT = getTeam(g, psc.teamKey);
   const player = myT.starters[psc.playerIdx];
   const ps = getPS(g, psc.teamKey, player?.id) || {};
@@ -1287,8 +1244,7 @@ export function resolvePendingShotCheck(game) {
   recordShot(g, psc.teamKey, player?.id, psc.type, r.hit);
   trackShotCheck(g, psc.teamKey, r, psc.type, psc.playerIdx);
 
-  // Auto hot/cold from natural roll
-  // FWD uses wider range (1-3 cold, 18-20 hot) instead of standard (1-2, 19-20)
+  // Auto hot/cold from the natural roll. FWD uses the wider range.
   if (psc.specialRoll === 'fwd') {
     if (r.die <= 3)  ps.cold = (ps.cold || 0) + 1;
     if (r.die >= 18) ps.hot  = (ps.hot  || 0) + 1;
@@ -1303,6 +1259,7 @@ export function resolvePendingShotCheck(game) {
       myT.assists += hitAst;
       if (g.analytics?.[psc.teamKey]) g.analytics[psc.teamKey].assistsFromCards += hitAst;
     }
+    if (psc.onHitHot) ps.hot = (ps.hot || 0) + 1;
   } else if (psc.rimProtector) {
     getTeam(g, psc.rimProtector).rebounds += 2;
   }
@@ -1314,28 +1271,77 @@ export function resolvePendingShotCheck(game) {
     msg += ' — Close Out! Miss → ❄️ cold marker';
   }
   if (r.hit && hitAst) msg += ` +${hitAst} AST`;
+  if (r.hit && psc.onHitHot) msg += ' 🔥';
   if (!r.hit && psc.rimProtector) msg += ' — Rim Protector! +2 REB for the defence';
-
   g.log = [...g.log, { team: psc.teamKey, msg }];
 
   // Track for Coach's Challenge
   g.lastShotCheck = {
     teamKey: psc.teamKey, playerIdx: psc.playerIdx, playerId: player?.id,
     type: psc.type, result: r, pts: r.pts, cardLabel: label,
-    bonus: bonus, specialRoll: psc.specialRoll, onHit: psc.onHit,
+    bonus, specialRoll: psc.specialRoll, onHit: psc.onHit,
     closeOutApplied: !!psc.closeOutBonus,
   };
+  return r;
+}
 
-  g.pendingShotCheck = null;
+/** A card that replaces its player's scoring roll writes it once the chain ends. */
+function finishChain(g, psc, total) {
+  if (psc.replaceRoll == null) return;
+  const key = psc.teamKey;
+  if (!g.rollResults[key]) g.rollResults[key] = [];
+  g.rollResults[key][psc.replaceRoll] = {
+    die: '-', bonus: 0, finalRoll: '-', pts: total, reb: 0, ast: 0,
+    isTop: false, isReplaced: true, replacedBy: psc.replacedBy ?? null,
+  };
+}
 
-  // Check assist draw
-  const t = myT;
-  if (t.assists === 5) {
-    const drawn = drawCards(t.hand, t.deck || [], 1);
-    t.hand = drawn.hand;
-    g.log = [...g.log, { team: psc.teamKey, msg: `${t.name} reached 5 assists — bonus card drawn!` }];
-    t.assists = 6;
+/**
+ * ANNOUNCE A CHECK — and stop the game only if the defence can answer it.
+ *
+ * The user's rule, 2026-09-07. Every card-cued check comes through here. If
+ * the other hand holds nothing playable against it (and a free throw never
+ * can be), the check resolves on the spot and the card runs to completion,
+ * exactly as it did before — so the pause is paid for only when it buys the
+ * defence a real decision.
+ *
+ * `check.then` is the rest of the card: a queue of further checks that
+ * survive the pause, which is what lets Green Light's three threes or Bully
+ * Ball's two paint checks be interrupted after the first one.
+ */
+export function announceCheck(g, check, carried = 0) {
+  if (canAnswerCheck(g, check)) {
+    g.pendingShotCheck = { ...check, carried };
+    return true; // paused: the caller stops here and the UI resolves
   }
+  const r = applyShotCheck(g, check);
+  const total = carried + (r.hit ? r.pts : 0);
+  const rest = check.then ?? [];
+  if (rest.length) {
+    const [next, ...after] = rest;
+    return announceCheck(g, { ...check, ...next, then: after }, total);
+  }
+  finishChain(g, check, total);
+  return false;
+}
 
-  return g;
+export function resolvePendingShotCheck(game) {
+  const psc = game.pendingShotCheck;
+  if (!psc) return game;
+  const g = deepClone(game);
+  g.pendingShotCheck = null;
+  const r = applyShotCheck(g, psc);
+  const total = (psc.carried ?? 0) + (r.hit ? r.pts : 0);
+  const rest = psc.then ?? [];
+  if (rest.length) {
+    const [next, ...after] = rest;
+    // The answers the defence just played belong to THAT check, not the next.
+    const clean = { ...psc, ...next, then: after };
+    delete clean.smother; delete clean.closeOutBonus; delete clean.contest;
+    delete clean.denial; delete clean.rimProtector; delete clean.reacted;
+    announceCheck(g, clean, total);
+  } else {
+    finishChain(g, psc, total);
+  }
+  return checkAssistDraw(g);
 }

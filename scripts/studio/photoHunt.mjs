@@ -64,9 +64,15 @@ function photoIds(set) {
  *
  * WNBA labels are already a single year and pass through untouched.
  */
-function searchSeason(label) {
+function searchSeason(label, rookie = false) {
   const span = /^(\d{4})-\d{2}$/.exec(String(label ?? ''));
-  return span ? String(Number(span[1]) + 1) : String(label ?? '');
+  if (!span) return String(label ?? '');
+  // A ROOKIE CARD SEARCHES THE EARLIER YEAR (the user, 2026-09-07). The rule
+  // above holds for a season in general — an agency captions 2006-07 as
+  // "2007" — but a rookie is written about when he ARRIVES: "2024 NBA draft",
+  // "2024 rookie", his summer-league and opening-night photos. Searching 2025
+  // for a 2024-25 rookie finds his second-half and playoff pictures instead.
+  return String(Number(span[1]) + (rookie ? 0 : 1));
 }
 
 /**
@@ -76,9 +82,13 @@ function searchSeason(label) {
  * image search returns trading cards, which is precisely the thing this hunt is
  * trying to make rather than find.
  */
-function searchUrl(name, team, seasonLabel, league) {
-  const parts = [name, team?.city, team?.name, league === 'WNBA' ? 'WNBA' : null, searchSeason(seasonLabel)]
-    .filter(Boolean).join(' ');
+function searchUrl(name, team, seasonLabel, league, rookie = false) {
+  const parts = [
+    name, team?.city, team?.name,
+    league === 'WNBA' ? 'WNBA' : null,
+    searchSeason(seasonLabel, rookie),
+    rookie ? 'rookie' : null,
+  ].filter(Boolean).join(' ');
   const q = encodeURIComponent(`${parts} -card -cards -topps -panini -facebook -instagram -threads`);
   return `https://www.google.com/search?tbm=isch&tbs=isz:l&q=${q}`;
 }
@@ -96,9 +106,13 @@ function rowsFor(setId, league) {
     const team = getTeam(key, { league });
     const label = card.seasonLabel ?? (league === 'WNBA' ? '2026' : '2025-26');
     const era = team?.era ? `<span class="era">${esc(team.era)}</span>` : '';
+    // A rookie card searches differently — see searchSeason. A capstone reward
+    // MIGRATED out of a rookie set is still a rookie card and searches the
+    // same way (Michael Jordan 1984-85 in set-rewards).
+    const rookie = /rookie$/.test(setId) || /rookie$/.test(card.migratedFrom?.set ?? '');
     return `<tr data-k="${esc(setId)}/${esc(card.id)}">` +
       `<td class="pick"><button class="tick" aria-label="done"></button></td>` +
-      `<td class="who"><a href="${esc(searchUrl(card.name, team, label, league))}" target="_blank" rel="noopener">${esc(card.name)}</a></td>` +
+      `<td class="who"><a href="${esc(searchUrl(card.name, team, label, league, rookie))}" target="_blank" rel="noopener">${esc(card.name)}</a></td>` +
       `<td class="season">${esc(label)}</td>` +
       `<td class="jersey"><span class="code">${esc(key)}</span> ${era}</td>` +
       `<td class="fileid">${esc(card.id)}</td></tr>`;

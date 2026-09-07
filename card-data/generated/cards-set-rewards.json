@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-06T21:52:29.044Z",
+ "generatedAt": "2026-09-07T02:08:06.141Z",
  "set": "set-rewards",
  "note": "SET COMPLETION REWARDS — cards MOVED out of their home special set (see migratedFrom) and earned by completing that set (rewardGoal). Built by scripts/cardgen/generateSetRewards.js from card-data/set-rewards-2026.json; the strongest card by salary of each group is the reward.",
  "cards": [

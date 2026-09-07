@@ -8,8 +8,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   loadWnbaBiometrics, wnbaPositionSize, wnbaSizeContext, wnbaSpeedShareFor,
-  splitWnbaBySize, SIZE_STRENGTH, SIZE_MODEL,
-} from './wnbaSize.js';
+  splitWnbaBySize, SIZE_STRENGTH, SIZE_MODEL, capToNbaMaxima, NBA_SPEED_MAX, NBA_POWER_MAX } from './wnbaSize.js';
 import { leagueRows } from './bigness.js';
 import { POSITIONS, SIZE_SPEED_SHARE, SPEED_SHARE_BOUNDS } from '../attributes.js';
 import { CARD_SETS } from '../../../src/game/cardSets.js';
@@ -100,5 +99,21 @@ describe('the split it produces', () => {
       expect(speed).toBeGreaterThan(0);
       expect(power).toBeGreaterThan(0);
     }
+  });
+});
+
+describe('capToNbaMaxima', () => {
+  it('moves excess Power into Speed and keeps the total', () => {
+    // Fowles 2017 before the cap: Speed 6, Power 24.
+    expect(capToNbaMaxima({ speed: 6, power: 24, sizeSource: 'measured' })).toEqual({ speed: 9, power: 21, sizeSource: 'measured' });
+  });
+  it('moves excess Speed into Power', () => {
+    expect(capToNbaMaxima({ speed: 23, power: 3 })).toEqual({ speed: 20, power: 6 });
+  });
+  it('leaves a legal split alone', () => {
+    expect(capToNbaMaxima({ speed: 12, power: 14 })).toEqual({ speed: 12, power: 14 });
+  });
+  it('caps are the NBA maxima', () => {
+    expect([NBA_SPEED_MAX, NBA_POWER_MAX]).toEqual([20, 21]);
   });
 });

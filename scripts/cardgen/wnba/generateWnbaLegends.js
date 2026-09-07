@@ -88,6 +88,7 @@ import * as PV from '../playValue.js';
 import * as S from '../shooting.js';
 import { CALIBRATION_FILE } from '../calibrateAttributes.js';
 import { PRINTED_SCALE, mapToReferenceScale } from '../speedPower.js';
+import { leagueScaleTotals } from './constants.js';
 import * as bpmArchive from './nbaBpmArchive.js';
 import { playerIdFromName } from '../../../src/cards/playerId.js';
 import { WNBA_SET, WNBA_SUPER_SEASON_SET } from '../../../src/cards/sets.js';
@@ -321,9 +322,10 @@ export function buildLegendCard({ row, shooting, speedPowerTotal, calibration, r
   // Position alone collapsed every player at a position onto one split — see
   // the long note in generateWnbaCards.js and wnba/bigness.js. A null basis
   // keeps the old behaviour so a caller that has not supplied one is unchanged.
-  const { speed, power } = sizeCtx
+  // Capped at the NBA maxima either way — see capToNbaMaxima in wnbaSize.js.
+  const { speed, power } = Z.capToNbaMaxima(sizeCtx
     ? Z.splitWnbaBySize(speedPowerTotal, row, { ...sizeCtx, shares: calibration.positionSpeedShare })
-    : A.splitSpeedPower(speedPowerTotal, row.pos, calibration.positionSpeedShare);
+    : A.splitSpeedPower(speedPowerTotal, row.pos, calibration.positionSpeedShare));
   const { shotLine, paintBoost, threePtBoost } = shooting;
   const defBoost = A.defBoostFromEpm(row.dbpmHat);
 
@@ -563,9 +565,10 @@ export function buildWnbaCards({ selections, seasons, reference, calibration }) 
   const spRows = selections.map(s => withVorp(s.best));
   const basis = bpmArchive.archiveBasis(spArchive);
   const composites = spRows.map(r => composite(r, basis, COMPOSITE_WEIGHTS));
-  const totals = mapToReferenceScale(composites, PRINTED_SCALE, {
+  // The league factor (constants.js) sits between the NBA-scale map and the split.
+  const totals = leagueScaleTotals(mapToReferenceScale(composites, PRINTED_SCALE, {
     calibrateOn: spArchive.composites,
-  });
+  }), { min: PRINTED_SCALE.min });
 
   // SIZE, MEASURED AND INFERRED — see wnbaSize.js. Built from every rated
   // season so the positional baselines are the league's, not this selection's:

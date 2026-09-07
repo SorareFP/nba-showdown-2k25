@@ -73,6 +73,7 @@ import * as PV from '../playValue.js';
 import * as S from '../shooting.js';
 import { CALIBRATION_FILE } from '../calibrateAttributes.js';
 import { PRINTED_SCALE, REFINEMENT_WEIGHT, mapToReferenceScale } from '../speedPower.js';
+import { leagueScaleTotals } from './constants.js';
 import * as bpmArchive from './nbaBpmArchive.js';
 import { playerIdFromName } from '../../../src/cards/playerId.js';
 import { WNBA_SET } from '../../../src/cards/sets.js';
@@ -183,7 +184,8 @@ export function speedPowerTotals(
   const composites = rows.map(r => composite(r, basis, weights));
   return {
     composites,
-    totals: mapToReferenceScale(composites, reference, { calibrateOn: archive.composites }),
+    // The league factor (constants.js) sits between the NBA-scale map and the split.
+    totals: leagueScaleTotals(mapToReferenceScale(composites, reference, { calibrateOn: archive.composites }), { min: reference.min }),
   };
 }
 
@@ -269,9 +271,10 @@ export function buildWnbaCard({ row, team, shooting, speedPowerTotal, calibratio
   // exactly when the two are equal. See wnba/bigness.js, which recovers the
   // missing per-player term from the box score. A null basis falls back to the
   // old behaviour rather than guessing.
-  const { speed, power } = sizeCtx
+  // Capped at the NBA maxima either way — see capToNbaMaxima in wnbaSize.js.
+  const { speed, power } = Z.capToNbaMaxima(sizeCtx
     ? Z.splitWnbaBySize(speedPowerTotal, row, { ...sizeCtx, shares: calibration.positionSpeedShare })
-    : A.splitSpeedPower(speedPowerTotal, row.pos, calibration.positionSpeedShare);
+    : A.splitSpeedPower(speedPowerTotal, row.pos, calibration.positionSpeedShare));
   const { shotLine, paintBoost, threePtBoost } = shooting;
   const defBoost = A.defBoostFromEpm(row.dbpmHat);
 

@@ -34,6 +34,7 @@ import * as A from '../attributes.js';
 import * as S from '../shooting.js';
 import * as bpmArchive from './nbaBpmArchive.js';
 import { PRINTED_SCALE, mapToReferenceScale } from '../speedPower.js';
+import { leagueScaleTotals } from './constants.js';
 import { WNBA_SEASON, WNBA_FIRST_SEASON, WNBA_GAME_MINUTES } from './constants.js';
 import {
   loadArchive, rateArchive, careerOf, legendShootingInput, buildLegendCard,
@@ -257,9 +258,10 @@ export function main({ log = console.log } = {}) {
     vorpPerGameHat: vorpPerGame(s.best.bpmHat, s.best, WNBA_GAME_MINUTES),
   }));
   const composites = spRows.map(r => composite(r, basis, COMPOSITE_WEIGHTS));
-  const totals = mapToReferenceScale(composites, PRINTED_SCALE, {
+  // The league factor (constants.js) sits between the NBA-scale map and the split.
+  const totals = leagueScaleTotals(mapToReferenceScale(composites, PRINTED_SCALE, {
     calibrateOn: spArchive.composites,
-  });
+  }), { min: PRINTED_SCALE.min });
 
   const cards = selections.map((s, i) =>
     buildLegendCard({

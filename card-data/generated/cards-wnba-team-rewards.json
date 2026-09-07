@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-05T02:29:59.164Z",
+ "generatedAt": "2026-09-07T02:09:49.379Z",
  "set": "wnba-team-rewards",
  "provisional": true,
  "sources": {
@@ -16,13 +16,13 @@
    "team": "IND",
    "statRowTeam": "IND",
    "pos": "F",
-   "speed": 15,
-   "power": 15,
+   "speed": 13,
+   "power": 13,
    "shotLine": 15,
    "paintBoost": 0,
    "threePtBoost": 1,
    "defBoost": 3,
-   "salary": 1400,
+   "salary": 1260,
    "chart": [
     {
      "lo": 1,
@@ -88,13 +88,13 @@
    "team": "NYL03",
    "statRowTeam": "NYL",
    "pos": "G",
-   "speed": 18,
-   "power": 10,
+   "speed": 16,
+   "power": 9,
    "shotLine": 14,
    "paintBoost": 0,
    "threePtBoost": 2,
    "defBoost": 0,
-   "salary": 1320,
+   "salary": 1210,
    "chart": [
     {
      "lo": 1,
@@ -153,13 +153,13 @@
    "team": "MIN99",
    "statRowTeam": "MIN",
    "pos": "G-F",
-   "speed": 16,
-   "power": 11,
+   "speed": 14,
+   "power": 10,
    "shotLine": 14,
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": -1,
-   "salary": 1250,
+   "salary": 1160,
    "chart": [
     {
      "lo": 1,
@@ -232,13 +232,13 @@
    "team": "SAS",
    "statRowTeam": "SAS",
    "pos": "G",
-   "speed": 19,
-   "power": 8,
+   "speed": 17,
+   "power": 7,
    "shotLine": 14,
    "paintBoost": 0,
    "threePtBoost": 2,
    "defBoost": -1,
-   "salary": 1190,
+   "salary": 1100,
    "chart": [
     {
      "lo": 1,
@@ -314,13 +314,13 @@
    "team": "ATL08",
    "statRowTeam": "ATL",
    "pos": "F-G",
-   "speed": 12,
-   "power": 11,
+   "speed": 10,
+   "power": 10,
    "shotLine": 16,
    "paintBoost": 0,
    "threePtBoost": -1,
    "defBoost": 1,
-   "salary": 1110,
+   "salary": 1010,
    "chart": [
     {
      "lo": 1,
@@ -378,7 +378,8 @@
    },
    "provisional": false,
    "rewardFor": "ATL",
-   "rewardGoal": "wnba-team-ATL"
+   "rewardGoal": "wnba-team-ATL",
+   "bandException": "PROVISIONAL 2026-09-06: the WNBA league factor (0.88) repriced every WNBA card and moved the earned bands; priced $1010, ATL now earns legendary ($1200+). Re-pick with node scripts/cardgen/wnba/wnbaRewardCandidates.js ATL, fetch the season log, then delete this exception."
   },
   {
    "id": "Chamique_Holdsclaw",
@@ -386,13 +387,13 @@
    "team": "WAS98",
    "statRowTeam": "WAS",
    "pos": "F",
-   "speed": 11,
-   "power": 14,
+   "speed": 10,
+   "power": 12,
    "shotLine": 16,
    "paintBoost": 0,
    "threePtBoost": -1,
    "defBoost": 0,
-   "salary": 1100,
+   "salary": 990,
    "chart": [
     {
      "lo": 1,
@@ -451,13 +452,13 @@
    "team": "DET2",
    "statRowTeam": "DET",
    "pos": "F",
-   "speed": 10,
-   "power": 17,
+   "speed": 9,
+   "power": 15,
    "shotLine": 14,
    "paintBoost": 0,
    "threePtBoost": -6,
    "defBoost": 2,
-   "salary": 1010,
+   "salary": 950,
    "chart": [
     {
      "lo": 1,
@@ -515,7 +516,8 @@
    },
    "provisional": false,
    "rewardFor": "DAL",
-   "rewardGoal": "wnba-team-DAL"
+   "rewardGoal": "wnba-team-DAL",
+   "bandException": "PROVISIONAL 2026-09-06: the WNBA league factor (0.88) repriced every WNBA card and moved the earned bands; priced $950, DAL now earns rare ($700-899). Re-pick with node scripts/cardgen/wnba/wnbaRewardCandidates.js DAL, fetch the season log, then delete this exception."
   },
   {
    "id": "Epiphanny_Prince",
@@ -523,13 +525,13 @@
    "team": "CHI06",
    "statRowTeam": "CHI",
    "pos": "G",
-   "speed": 17,
-   "power": 10,
+   "speed": 15,
+   "power": 9,
    "shotLine": 15,
    "paintBoost": -1,
    "threePtBoost": 3,
    "defBoost": 1,
-   "salary": 940,
+   "salary": 860,
    "chart": [
     {
      "lo": 1,
@@ -587,7 +589,8 @@
    },
    "provisional": false,
    "rewardFor": "CHI",
-   "rewardGoal": "wnba-team-CHI"
+   "rewardGoal": "wnba-team-CHI",
+   "bandException": "PROVISIONAL 2026-09-06: the WNBA league factor (0.88) repriced every WNBA card and moved the earned bands; priced $860, CHI now earns super-rare ($900-1199). Re-pick with node scripts/cardgen/wnba/wnbaRewardCandidates.js CHI, fetch the season log, then delete this exception."
   },
   {
    "id": "Nykesha_Sales",
@@ -595,13 +598,13 @@
    "team": "CON03",
    "statRowTeam": "CON",
    "pos": "F-G",
-   "speed": 13,
-   "power": 12,
+   "speed": 12,
+   "power": 10,
    "shotLine": 15,
    "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": 1,
-   "salary": 850,
+   "salary": 750,
    "chart": [
     {
      "lo": 1,
@@ -667,13 +670,13 @@
    "team": "PHO11",
    "statRowTeam": "PHO",
    "pos": "F-G",
-   "speed": 13,
-   "power": 11,
+   "speed": 11,
+   "power": 10,
    "shotLine": 15,
    "paintBoost": 0,
    "threePtBoost": -2,
    "defBoost": 1,
-   "salary": 810,
+   "salary": 700,
    "chart": [
     {
      "lo": 1,
@@ -731,7 +734,8 @@
    },
    "provisional": false,
    "rewardFor": "PHO",
-   "rewardGoal": "wnba-team-PHO"
+   "rewardGoal": "wnba-team-PHO",
+   "bandException": "PROVISIONAL 2026-09-06: the WNBA league factor (0.88) repriced every WNBA card and moved the earned bands; priced $700, PHO now earns super-rare ($900-1199). Re-pick with node scripts/cardgen/wnba/wnbaRewardCandidates.js PHO, fetch the season log, then delete this exception."
   },
   {
    "id": "Tamecka_Dixon",
@@ -739,13 +743,13 @@
    "team": "LAS97",
    "statRowTeam": "LAS",
    "pos": "G",
-   "speed": 15,
-   "power": 9,
+   "speed": 13,
+   "power": 8,
    "shotLine": 14,
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 1,
-   "salary": 780,
+   "salary": 670,
    "chart": [
     {
      "lo": 1,
@@ -803,7 +807,8 @@
    },
    "provisional": false,
    "rewardFor": "LAS",
-   "rewardGoal": "wnba-team-LAS"
+   "rewardGoal": "wnba-team-LAS",
+   "bandException": "PROVISIONAL 2026-09-06: the WNBA league factor (0.88) repriced every WNBA card and moved the earned bands; priced $670, LAS now earns rare ($700-899). Re-pick with node scripts/cardgen/wnba/wnbaRewardCandidates.js LAS, fetch the season log, then delete this exception."
   },
   {
    "id": "Sue_Bird",
@@ -811,13 +816,13 @@
    "team": "SEA00",
    "statRowTeam": "SEA",
    "pos": "G",
-   "speed": 17,
-   "power": 7,
+   "speed": 15,
+   "power": 6,
    "shotLine": 16,
    "paintBoost": 0,
    "threePtBoost": 2,
    "defBoost": 0,
-   "salary": 740,
+   "salary": 650,
    "chart": [
     {
      "lo": 1,
@@ -882,7 +887,8 @@
    },
    "provisional": false,
    "rewardFor": "SEA",
-   "rewardGoal": "wnba-team-SEA"
+   "rewardGoal": "wnba-team-SEA",
+   "bandException": "PROVISIONAL 2026-09-06: the WNBA league factor (0.88) repriced every WNBA card and moved the earned bands; priced $650, SEA now earns rare ($700-899). Re-pick with node scripts/cardgen/wnba/wnbaRewardCandidates.js SEA, fetch the season log, then delete this exception."
   },
   {
    "id": "Sophia_Witherspoon",
@@ -890,13 +896,13 @@
    "team": "PORF",
    "statRowTeam": "POR",
    "pos": "G",
-   "speed": 14,
-   "power": 8,
+   "speed": 12,
+   "power": 7,
    "shotLine": 15,
    "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": -1,
-   "salary": 730,
+   "salary": 630,
    "chart": [
     {
      "lo": 1,
@@ -954,7 +960,8 @@
    },
    "provisional": false,
    "rewardFor": "POR",
-   "rewardGoal": "wnba-team-POR"
+   "rewardGoal": "wnba-team-POR",
+   "bandException": "PROVISIONAL 2026-09-06: the WNBA league factor (0.88) repriced every WNBA card and moved the earned bands; priced $630, POR now earns super-rare ($900-1199). Re-pick with node scripts/cardgen/wnba/wnbaRewardCandidates.js POR, fetch the season log, then delete this exception."
   }
  ]
 }

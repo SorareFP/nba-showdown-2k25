@@ -1,3 +1,4 @@
+import { WNBA_LEAGUE_FACTOR } from './constants.js';
 import { readFileSync } from 'node:fs';
 import { describe, it, expect } from 'vitest';
 import {
@@ -265,7 +266,11 @@ describe('the generated WNBA set', () => {
     // middle and not fill the top.
     const totals = CARDS.map(c => c.speed + c.power).sort((a, b) => a - b);
     expect(totals[0]).toBe(PRINTED_SCALE.min);
-    expect(totals[totals.length - 1]).toBe(PRINTED_SCALE.max);
+    // The CEILING is the printed maximum times the league factor (26, not 30)
+    // since 2026-09-06: the user asked for the WNBA to sit below the NBA
+    // scale, and the floor is clamped so the bottom does not move. See
+    // WNBA_LEAGUE_FACTOR in constants.js and leagueBalance.test.js.
+    expect(totals[totals.length - 1]).toBe(Math.round(PRINTED_SCALE.max * WNBA_LEAGUE_FACTOR));
     const median = totals[Math.floor(totals.length / 2)];
     expect(median).toBeGreaterThan(PRINTED_SCALE.mean - 3);
     expect(median).toBeLessThan(PRINTED_SCALE.mean + 3);

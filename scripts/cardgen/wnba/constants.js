@@ -220,3 +220,38 @@ export function mixNbaConvention(row, season = WNBA_SEASON) {
     pctFt: row.ftPct,
   };
 }
+
+/**
+ * THE LEAGUE FACTOR ON SPEED+POWER — 0.88, the user's call (2026-09-06,
+ * "let's go to about .87-.9").
+ *
+ * The WNBA budget comes off a fitted BPM-equivalent that puts a WNBA season
+ * with NBA-like box-score features on the NBA scale, so a WNBA MVP landed
+ * where an NBA MVP does: the current set's median Speed+Power was 18 against
+ * the NBA base's 16, the legends' median 27 against the NBA Super Season's 22,
+ * and 34 of 36 legends sat at or above the NBA base's 90th percentile. The
+ * user, holding Sylvia Fowles at Power 24 for $1,270 next to Jokić at Power 20
+ * for $1,260: "Some of these WNBA cards are still so overpowered."
+ *
+ * This multiplies every WNBA Speed+Power TOTAL after the map to the printed
+ * scale and before the size split. At 0.88 the best WNBA season prints about
+ * 26 where an NBA MVP prints 30 — an All-NBA-level card, not the top of the
+ * pool — and the legends' median lands near the NBA Super Season's. Salaries
+ * follow on their own: every WNBA set is priced against the base set's own
+ * value distribution (priceAgainstBase), so a smaller card costs less.
+ *
+ * Speed and Power are then CAPPED at the NBA maxima (20 and 21) in
+ * wnbaSize.js — a factor alone still let a 6'6" center's power share print
+ * above anything the NBA scale produces.
+ */
+export const WNBA_LEAGUE_FACTOR = 0.88;
+
+/**
+ * The printed totals with the league factor applied; rounding happens at the
+ * split. Clamped at the printed FLOOR: the factor is about the top of the
+ * pool, and a bench player at the NBA minimum of 6 is already as small as a
+ * card prints — 6 × 0.88 would have been the only 5 in the game.
+ */
+export function leagueScaleTotals(totals, { factor = WNBA_LEAGUE_FACTOR, min = 6 } = {}) {
+  return totals.map(t => (Number.isFinite(t) ? Math.max(min, t * factor) : t));
+}

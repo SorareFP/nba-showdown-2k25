@@ -211,6 +211,23 @@ export function wnbaSizeContext(rows) {
 }
 
 /** The split itself, for a generator to call. */
+/** The most Speed and the most Power any NBA card prints (2026-27 set: 18/20 in the base, 20/21 across the special sets). */
+export const NBA_SPEED_MAX = 20;
+export const NBA_POWER_MAX = 21;
+
+/**
+ * Clamp a split to the NBA maxima, moving the excess to the other stat so the
+ * total survives. With the league factor (constants.js) a WNBA total tops out
+ * near 26, so both caps can never bind at once. Sylvia Fowles 2017 is why this
+ * exists: at Power 24 she printed above anything the NBA scale ever produces.
+ */
+export function capToNbaMaxima(split) {
+  let { speed, power } = split;
+  if (power > NBA_POWER_MAX) { speed += power - NBA_POWER_MAX; power = NBA_POWER_MAX; }
+  if (speed > NBA_SPEED_MAX) { power += speed - NBA_SPEED_MAX; speed = NBA_SPEED_MAX; }
+  return { ...split, speed: Math.min(speed, NBA_SPEED_MAX), power: Math.min(power, NBA_POWER_MAX) };
+}
+
 export function splitWnbaBySize(total, row, ctx) {
   const t = Math.max(Math.round(total ?? 0), 2);
   const { share, source } = wnbaSpeedShareFor(row, ctx);

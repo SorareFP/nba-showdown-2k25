@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-07T14:27:52.742Z",
+ "generatedAt": "2026-09-07T16:25:01.269Z",
  "set": "wnba-set-rewards",
  "note": "SET COMPLETION REWARDS — cards MOVED out of their home special set (see migratedFrom) and earned by completing that set (rewardGoal). Built by scripts/cardgen/generateSetRewards.js from card-data/set-rewards-2026.json; the strongest card by salary of each group is the reward.",
  "cards": [

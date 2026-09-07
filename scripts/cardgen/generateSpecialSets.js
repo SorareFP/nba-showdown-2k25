@@ -1026,14 +1026,38 @@ export function selectSets({
  * So the two halves do different work. Minutes ask whether he was playing;
  * games ask whether there was a season. A card needs both to be true.
  */
-export const ROOKIE_MIN_MPG = 12;
 export const ROOKIE_MIN_GAMES = 20;
+
+/**
+ * ── AND WHY MINUTES ARE NOW A TOTAL RATHER THAN A RATE (2026-09-07) ─────────
+ *
+ * The bar was 12 MINUTES A NIGHT, which a 31-game bench rookie clears without
+ * having played a season: Baylor Scheierman's 384 minutes priced at $650 while
+ * Brandon Ingram's 2,275 priced at $130, and across the set a rookie under 700
+ * minutes beat one over 1,500 in 31% of pairings. The user: "a lot of
+ * low-usage guys like Baylor Scheierman are much better than guys who actually
+ * played like Brandon Ingram ... we might be able to trim some rookies based
+ * on playing time."
+ *
+ * A TOTAL asks the question a rate cannot: how much basketball is this card
+ * actually made of. 600 was chosen off the distribution — it cuts 25 cards,
+ * Scheierman and Day'Ron Sharpe and Luka Garza among them, and keeps the short
+ * seasons that were real, Joel Embiid's 787 minutes and Zion Williamson's 667.
+ * At 700 Zion goes, at 800 Embiid goes too, and those are the cards the halved
+ * games floor above exists to rescue. Jared McCain at 591 is the one honest
+ * casualty.
+ *
+ * The games floor still does its own job — Julius Randle's one-game rookie year
+ * would pass a minutes total if it were somehow long enough, and "was there a
+ * season" is not the same question as "did he play".
+ */
+export const ROOKIE_MIN_MINUTES = 600;
 
 export function rookieSeasonCounts(season) {
   const games = season?.games ?? 0;
   const minutes = season?.minutes ?? 0;
   if (games < ROOKIE_MIN_GAMES) return false;
-  return minutes / games >= ROOKIE_MIN_MPG;
+  return minutes >= ROOKIE_MIN_MINUTES;
 }
 
 export function badgeCounts(baseBadges, salaries = new Map()) {

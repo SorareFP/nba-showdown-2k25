@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-07T14:27:32.144Z",
+ "generatedAt": "2026-09-07T16:24:34.018Z",
  "set": "rookie",
  "provisional": true,
  "sources": {
@@ -202,6 +202,13 @@
    "reason": "rookie season below the playing-time bar"
   },
   {
+   "name": "Nickeil Alexander-Walker",
+   "season": 2020,
+   "games": 47,
+   "mpg": 12.6,
+   "reason": "rookie season below the playing-time bar"
+  },
+  {
    "name": "Julius Randle",
    "season": 2015,
    "games": 1,
@@ -213,13 +220,6 @@
    "season": 2023,
    "games": 12,
    "mpg": 5.2,
-   "reason": "rookie season below the playing-time bar"
-  },
-  {
-   "name": "Kelly Oubre Jr.",
-   "season": 2016,
-   "games": 63,
-   "mpg": 10.7,
    "reason": "rookie season below the playing-time bar"
   },
   {
@@ -237,10 +237,31 @@
    "reason": "rookie season below the playing-time bar"
   },
   {
+   "name": "Donte DiVincenzo",
+   "season": 2019,
+   "games": 27,
+   "mpg": 15.2,
+   "reason": "rookie season below the playing-time bar"
+  },
+  {
+   "name": "CJ McCollum",
+   "season": 2014,
+   "games": 38,
+   "mpg": 12.5,
+   "reason": "rookie season below the playing-time bar"
+  },
+  {
    "name": "Peyton Watson",
    "season": 2023,
    "games": 23,
    "mpg": 8.1,
+   "reason": "rookie season below the playing-time bar"
+  },
+  {
+   "name": "Max Christie",
+   "season": 2023,
+   "games": 41,
+   "mpg": 12.5,
    "reason": "rookie season below the playing-time bar"
   },
   {
@@ -314,6 +335,20 @@
    "reason": "rookie season below the playing-time bar"
   },
   {
+   "name": "Noah Clowney",
+   "season": 2024,
+   "games": 23,
+   "mpg": 16.1,
+   "reason": "rookie season below the playing-time bar"
+  },
+  {
+   "name": "Derrick Jones Jr.",
+   "season": 2017,
+   "games": 32,
+   "mpg": 17,
+   "reason": "rookie season below the playing-time bar"
+  },
+  {
    "name": "Jaylon Tyson",
    "season": 2025,
    "games": 47,
@@ -335,6 +370,13 @@
    "reason": "rookie season below the playing-time bar"
   },
   {
+   "name": "Naz Reid",
+   "season": 2020,
+   "games": 30,
+   "mpg": 16.5,
+   "reason": "rookie season below the playing-time bar"
+  },
+  {
    "name": "Moussa Diabaté",
    "season": 2023,
    "games": 22,
@@ -342,10 +384,10 @@
    "reason": "rookie season below the playing-time bar"
   },
   {
-   "name": "Moses Moody",
-   "season": 2022,
-   "games": 52,
-   "mpg": 11.7,
+   "name": "Ajay Mitchell",
+   "season": 2025,
+   "games": 36,
+   "mpg": 16.6,
    "reason": "rookie season below the playing-time bar"
   },
   {
@@ -367,13 +409,6 @@
    "season": 2023,
    "games": 35,
    "mpg": 11.8,
-   "reason": "rookie season below the playing-time bar"
-  },
-  {
-   "name": "Jakob Poeltl",
-   "season": 2017,
-   "games": 54,
-   "mpg": 11.6,
    "reason": "rookie season below the playing-time bar"
   },
   {
@@ -412,6 +447,20 @@
    "reason": "rookie season below the playing-time bar"
   },
   {
+   "name": "Dominick Barlow",
+   "season": 2023,
+   "games": 28,
+   "mpg": 14.6,
+   "reason": "rookie season below the playing-time bar"
+  },
+  {
+   "name": "Brice Sensabaugh",
+   "season": 2024,
+   "games": 32,
+   "mpg": 18.3,
+   "reason": "rookie season below the playing-time bar"
+  },
+  {
    "name": "Keldon Johnson",
    "season": 2020,
    "games": 17,
@@ -423,6 +472,13 @@
    "season": 2019,
    "games": 42,
    "mpg": 10.5,
+   "reason": "rookie season below the playing-time bar"
+  },
+  {
+   "name": "Khris Middleton",
+   "season": 2013,
+   "games": 27,
+   "mpg": 17.6,
    "reason": "rookie season below the playing-time bar"
   },
   {
@@ -496,6 +552,13 @@
    "reason": "rookie season below the playing-time bar"
   },
   {
+   "name": "Luke Kornet",
+   "season": 2018,
+   "games": 20,
+   "mpg": 16.3,
+   "reason": "rookie season below the playing-time bar"
+  },
+  {
    "name": "Jalen Smith",
    "season": 2021,
    "games": 27,
@@ -538,6 +601,13 @@
    "reason": "rookie season below the playing-time bar"
   },
   {
+   "name": "Jericho Sims",
+   "season": 2022,
+   "games": 41,
+   "mpg": 13.5,
+   "reason": "rookie season below the playing-time bar"
+  },
+  {
    "name": "Micah Potter",
    "season": 2022,
    "games": 3,
@@ -545,10 +615,24 @@
    "reason": "rookie season below the playing-time bar"
   },
   {
+   "name": "Ousmane Dieng",
+   "season": 2023,
+   "games": 39,
+   "mpg": 14.6,
+   "reason": "rookie season below the playing-time bar"
+  },
+  {
    "name": "Sidy Cissoko",
    "season": 2024,
    "games": 12,
    "mpg": 11.8,
+   "reason": "rookie season below the playing-time bar"
+  },
+  {
+   "name": "Day'Ron Sharpe",
+   "season": 2022,
+   "games": 32,
+   "mpg": 12.2,
    "reason": "rookie season below the playing-time bar"
   },
   {
@@ -566,10 +650,24 @@
    "reason": "rookie season below the playing-time bar"
   },
   {
+   "name": "Baylor Scheierman",
+   "season": 2025,
+   "games": 31,
+   "mpg": 12.4,
+   "reason": "rookie season below the playing-time bar"
+  },
+  {
    "name": "Quenton Jackson",
    "season": 2023,
    "games": 9,
    "mpg": 15,
+   "reason": "rookie season below the playing-time bar"
+  },
+  {
+   "name": "Alex Caruso",
+   "season": 2018,
+   "games": 37,
+   "mpg": 15.2,
    "reason": "rookie season below the playing-time bar"
   },
   {
@@ -591,6 +689,13 @@
    "season": 2019,
    "games": 17,
    "mpg": 4.1,
+   "reason": "rookie season below the playing-time bar"
+  },
+  {
+   "name": "Jared McCain",
+   "season": 2025,
+   "games": 23,
+   "mpg": 25.7,
    "reason": "rookie season below the playing-time bar"
   },
   {
@@ -643,10 +748,31 @@
    "reason": "rookie season below the playing-time bar"
   },
   {
+   "name": "Isaiah Jackson",
+   "season": 2022,
+   "games": 36,
+   "mpg": 15,
+   "reason": "rookie season below the playing-time bar"
+  },
+  {
+   "name": "Jevon Carter",
+   "season": 2019,
+   "games": 39,
+   "mpg": 14.8,
+   "reason": "rookie season below the playing-time bar"
+  },
+  {
    "name": "Dru Smith",
    "season": 2023,
    "games": 15,
    "mpg": 10.5,
+   "reason": "rookie season below the playing-time bar"
+  },
+  {
+   "name": "Luka Garza",
+   "season": 2022,
+   "games": 32,
+   "mpg": 12.2,
    "reason": "rookie season below the playing-time bar"
   },
   {
@@ -741,6 +867,13 @@
    "reason": "rookie season below the playing-time bar"
   },
   {
+   "name": "Tyus Jones",
+   "season": 2016,
+   "games": 37,
+   "mpg": 15.5,
+   "reason": "rookie season below the playing-time bar"
+  },
+  {
    "name": "Dwight Powell",
    "season": 2015,
    "games": 29,
@@ -773,6 +906,13 @@
    "season": 2019,
    "games": 23,
    "mpg": 4.9,
+   "reason": "rookie season below the playing-time bar"
+  },
+  {
+   "name": "Jaylen Clark",
+   "season": 2025,
+   "games": 40,
+   "mpg": 13.1,
    "reason": "rookie season below the playing-time bar"
   },
   {
@@ -825,7 +965,7 @@
    "reason": "rookie season below the playing-time bar"
   }
  ],
- "excludedThinCount": 91,
+ "excludedThinCount": 111,
  "mergedIntoTwin": [],
  "mergedIntoTwinCount": 0,
  "cards": [
@@ -1162,71 +1302,6 @@
    "provisional": false
   },
   {
-   "id": "Ajay_Mitchell",
-   "name": "Ajay Mitchell",
-   "team": "OKC",
-   "pos": "SG",
-   "speed": 8,
-   "power": 6,
-   "shotLine": 14,
-   "paintBoost": 0,
-   "threePtBoost": -1,
-   "defBoost": 1,
-   "salary": 360,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 7,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 8,
-     "hi": 13,
-     "pts": 1,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 14,
-     "hi": 23,
-     "pts": 2,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 24,
-     "hi": 99,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    }
-   ],
-   "season": 2025,
-   "seasonLabel": "2024-25",
-   "age": 22,
-   "games": 36,
-   "mpg": 16.6,
-   "bbrefId": "mitchaj01",
-   "traded": false,
-   "metrics": {
-    "bpm": -1.6,
-    "vorp": 0.1,
-    "ws": 1.5,
-    "ws48": 0.122,
-    "per": 12
-   },
-   "provisional": false
-  },
-  {
    "id": "Al_Horford",
    "name": "Al Horford",
    "team": "ATL08",
@@ -1288,71 +1363,6 @@
     "ws": 5.5,
     "ws48": 0.103,
     "per": 14.7
-   },
-   "provisional": false
-  },
-  {
-   "id": "Alex_Caruso",
-   "name": "Alex Caruso",
-   "team": "LAL",
-   "pos": "PG",
-   "speed": 9,
-   "power": 5,
-   "shotLine": 16,
-   "paintBoost": 0,
-   "threePtBoost": -2,
-   "defBoost": 1,
-   "salary": 140,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 13,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 14,
-     "hi": 15,
-     "pts": 1,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 16,
-     "hi": 23,
-     "pts": 1,
-     "reb": 0,
-     "ast": 1
-    },
-    {
-     "lo": 24,
-     "hi": 99,
-     "pts": 1,
-     "reb": 1,
-     "ast": 1
-    }
-   ],
-   "season": 2018,
-   "seasonLabel": "2017-18",
-   "age": 23,
-   "games": 37,
-   "mpg": 15.2,
-   "bbrefId": "carusal01",
-   "traded": false,
-   "metrics": {
-    "bpm": -2.9,
-    "vorp": -0.1,
-    "ws": 0.5,
-    "ws48": 0.041,
-    "per": 8.7
    },
    "provisional": false
   },
@@ -2054,7 +2064,7 @@
    "speed": 8,
    "power": 8,
    "shotLine": 15,
-   "paintBoost": -1,
+   "paintBoost": 0,
    "threePtBoost": -3,
    "defBoost": 1,
    "salary": 540,
@@ -2312,78 +2322,6 @@
     "per": 15.7
    },
    "provisional": false
-  },
-  {
-   "id": "Baylor_Scheierman",
-   "name": "Baylor Scheierman",
-   "team": "BOS",
-   "pos": "SG",
-   "speed": 9,
-   "power": 6,
-   "shotLine": 16,
-   "paintBoost": 0,
-   "threePtBoost": 1,
-   "defBoost": 1,
-   "salary": 650,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 8,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 9,
-     "hi": 10,
-     "pts": 1,
-     "reb": 0,
-     "ast": 1
-    },
-    {
-     "lo": 11,
-     "hi": 15,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 16,
-     "hi": 25,
-     "pts": 3,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 26,
-     "hi": 99,
-     "pts": 3,
-     "reb": 2,
-     "ast": 1
-    }
-   ],
-   "season": 2025,
-   "seasonLabel": "2024-25",
-   "age": 24,
-   "games": 31,
-   "mpg": 12.4,
-   "bbrefId": "scheiba01",
-   "traded": false,
-   "metrics": {
-    "bpm": -1.7,
-    "vorp": 0,
-    "ws": 0.7,
-    "ws48": 0.089,
-    "per": 10.3
-   },
-   "provisional": true
   },
   {
    "id": "Ben_Sheppard",
@@ -3148,78 +3086,6 @@
     "ws": -0.5,
     "ws48": -0.037,
     "per": 11
-   },
-   "provisional": false
-  },
-  {
-   "id": "Brice_Sensabaugh",
-   "name": "Brice Sensabaugh",
-   "team": "UTA",
-   "pos": "SF",
-   "speed": 6,
-   "power": 6,
-   "shotLine": 15,
-   "paintBoost": 0,
-   "threePtBoost": 0,
-   "defBoost": -2,
-   "salary": 240,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 6,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 7,
-     "hi": 7,
-     "pts": 1,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 8,
-     "hi": 14,
-     "pts": 1,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 15,
-     "hi": 21,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 22,
-     "hi": 99,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    }
-   ],
-   "season": 2024,
-   "seasonLabel": "2023-24",
-   "age": 20,
-   "games": 32,
-   "mpg": 18.3,
-   "bbrefId": "sensabr01",
-   "traded": false,
-   "metrics": {
-    "bpm": -5.5,
-    "vorp": -0.5,
-    "ws": -0.3,
-    "ws48": -0.024,
-    "per": 8.6
    },
    "provisional": false
   },
@@ -4004,7 +3870,7 @@
    "speed": 18,
    "power": 9,
    "shotLine": 15,
-   "paintBoost": -1,
+   "paintBoost": 0,
    "threePtBoost": -3,
    "defBoost": 2,
    "salary": 980,
@@ -4057,7 +3923,7 @@
   {
    "id": "Chris_Webber",
    "name": "Chris Webber",
-   "team": "GSW",
+   "team": "GSW89",
    "pos": "C",
    "speed": 9,
    "power": 16,
@@ -4181,71 +4047,6 @@
     "ws": 1.9,
     "ws48": 0.079,
     "per": 10.3
-   },
-   "provisional": false
-  },
-  {
-   "id": "CJ_McCollum",
-   "name": "CJ McCollum",
-   "team": "POR",
-   "pos": "SG",
-   "speed": 9,
-   "power": 5,
-   "shotLine": 15,
-   "paintBoost": 0,
-   "threePtBoost": 0,
-   "defBoost": -1,
-   "salary": 230,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 11,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 12,
-     "hi": 14,
-     "pts": 1,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 15,
-     "hi": 21,
-     "pts": 2,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 22,
-     "hi": 99,
-     "pts": 3,
-     "reb": 1,
-     "ast": 0
-    }
-   ],
-   "season": 2014,
-   "seasonLabel": "2013-14",
-   "age": 22,
-   "games": 38,
-   "mpg": 12.5,
-   "bbrefId": "mccolcj01",
-   "traded": false,
-   "metrics": {
-    "bpm": -3.4,
-    "vorp": -0.2,
-    "ws": 0.2,
-    "ws48": 0.019,
-    "per": 9
    },
    "provisional": false
   },
@@ -4561,7 +4362,7 @@
    "speed": 12,
    "power": 8,
    "shotLine": 15,
-   "paintBoost": -1,
+   "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": -2,
    "salary": 660,
@@ -4626,10 +4427,10 @@
    "speed": 5,
    "power": 9,
    "shotLine": 17,
-   "paintBoost": 3,
+   "paintBoost": 2,
    "threePtBoost": -3,
    "defBoost": 2,
-   "salary": 380,
+   "salary": 370,
    "chart": [
     {
      "lo": 1,
@@ -4872,78 +4673,6 @@
    "provisional": false
   },
   {
-   "id": "Day_Ron_Sharpe",
-   "name": "Day'Ron Sharpe",
-   "team": "BKN",
-   "pos": "PF",
-   "speed": 6,
-   "power": 10,
-   "shotLine": 17,
-   "paintBoost": 0,
-   "threePtBoost": -3,
-   "defBoost": -3,
-   "salary": 630,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 9,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 10,
-     "hi": 10,
-     "pts": 1,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 11,
-     "hi": 16,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 17,
-     "hi": 22,
-     "pts": 3,
-     "reb": 3,
-     "ast": 1
-    },
-    {
-     "lo": 23,
-     "hi": 99,
-     "pts": 4,
-     "reb": 3,
-     "ast": 1
-    }
-   ],
-   "season": 2022,
-   "seasonLabel": "2021-22",
-   "age": 20,
-   "games": 32,
-   "mpg": 12.2,
-   "bbrefId": "sharpda01",
-   "traded": false,
-   "metrics": {
-    "bpm": -2.8,
-    "vorp": -0.1,
-    "ws": 1.2,
-    "ws48": 0.152,
-    "per": 20.7
-   },
-   "provisional": true
-  },
-  {
    "id": "De_Aaron_Fox",
    "name": "De'Aaron Fox",
    "team": "SAC",
@@ -5132,7 +4861,7 @@
    "speed": 8,
    "power": 13,
    "shotLine": 16,
-   "paintBoost": 1,
+   "paintBoost": 0,
    "threePtBoost": -4,
    "defBoost": -1,
    "salary": 790,
@@ -5436,17 +5165,17 @@
    "provisional": false
   },
   {
-   "id": "Derrick_Jones_Jr",
-   "name": "Derrick Jones Jr.",
-   "team": "PHX",
-   "pos": "SF",
-   "speed": 8,
-   "power": 7,
-   "shotLine": 17,
-   "paintBoost": 2,
+   "id": "Derek_Fisher",
+   "name": "Derek Fisher",
+   "team": "LAL",
+   "pos": "PG",
+   "speed": 9,
+   "power": 5,
+   "shotLine": 15,
+   "paintBoost": -1,
    "threePtBoost": -3,
-   "defBoost": -1,
-   "salary": 260,
+   "defBoost": 0,
+   "salary": 300,
    "chart": [
     {
      "lo": 1,
@@ -5457,39 +5186,46 @@
     },
     {
      "lo": 3,
-     "hi": 9,
+     "hi": 8,
      "pts": 0,
      "reb": 0,
      "ast": 0
     },
     {
-     "lo": 10,
-     "hi": 16,
+     "lo": 9,
+     "hi": 14,
      "pts": 1,
      "reb": 0,
      "ast": 0
     },
     {
-     "lo": 17,
+     "lo": 15,
+     "hi": 20,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 21,
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     }
    ],
-   "season": 2017,
-   "seasonLabel": "2016-17",
-   "age": 19,
-   "games": 32,
-   "mpg": 17,
-   "bbrefId": "jonesde02",
+   "season": 1997,
+   "seasonLabel": "1996-97",
+   "age": 22,
+   "games": 80,
+   "mpg": 11.5,
+   "bbrefId": "fishede01",
    "traded": false,
    "metrics": {
-    "bpm": -2.3,
-    "vorp": 0,
+    "bpm": -2.7,
+    "vorp": -0.1,
     "ws": 1.1,
-    "ws48": 0.098,
-    "per": 12
+    "ws48": 0.056,
+    "per": 11
    },
    "provisional": false
   },
@@ -5819,78 +5555,6 @@
    "provisional": false
   },
   {
-   "id": "Dominick_Barlow",
-   "name": "Dominick Barlow",
-   "team": "SAS",
-   "pos": "PF",
-   "speed": 6,
-   "power": 7,
-   "shotLine": 17,
-   "paintBoost": 2,
-   "threePtBoost": -3,
-   "defBoost": -1,
-   "salary": 410,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 8,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 9,
-     "hi": 10,
-     "pts": 1,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 11,
-     "hi": 16,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 17,
-     "hi": 25,
-     "pts": 2,
-     "reb": 2,
-     "ast": 1
-    },
-    {
-     "lo": 26,
-     "hi": 99,
-     "pts": 3,
-     "reb": 2,
-     "ast": 1
-    }
-   ],
-   "season": 2023,
-   "seasonLabel": "2022-23",
-   "age": 19,
-   "games": 28,
-   "mpg": 14.6,
-   "bbrefId": "barlodo01",
-   "traded": false,
-   "metrics": {
-    "bpm": -4.6,
-    "vorp": -0.3,
-    "ws": 0.7,
-    "ws48": 0.082,
-    "per": 12.4
-   },
-   "provisional": true
-  },
-  {
    "id": "Donovan_Clingan",
    "name": "Donovan Clingan",
    "team": "POR",
@@ -6012,150 +5676,6 @@
     "per": 16.7
    },
    "provisional": false
-  },
-  {
-   "id": "Donte_DiVincenzo",
-   "name": "Donte DiVincenzo",
-   "team": "MIL",
-   "pos": "SG",
-   "speed": 9,
-   "power": 5,
-   "shotLine": 12,
-   "paintBoost": -1,
-   "threePtBoost": -3,
-   "defBoost": 1,
-   "salary": 220,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 9,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 10,
-     "hi": 11,
-     "pts": 1,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 12,
-     "hi": 15,
-     "pts": 1,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 16,
-     "hi": 24,
-     "pts": 1,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 25,
-     "hi": 99,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    }
-   ],
-   "season": 2019,
-   "seasonLabel": "2018-19",
-   "age": 22,
-   "games": 27,
-   "mpg": 15.2,
-   "bbrefId": "divindo01",
-   "traded": false,
-   "metrics": {
-    "bpm": -2.2,
-    "vorp": 0,
-    "ws": 0.6,
-    "ws48": 0.069,
-    "per": 9.1
-   },
-   "provisional": false
-  },
-  {
-   "id": "Doug_Christie",
-   "name": "Doug Christie",
-   "team": "LAL",
-   "pos": "SG",
-   "speed": 8,
-   "power": 6,
-   "shotLine": 15,
-   "paintBoost": 0,
-   "threePtBoost": -3,
-   "defBoost": 0,
-   "salary": 550,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 9,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 10,
-     "hi": 11,
-     "pts": 1,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 12,
-     "hi": 14,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 15,
-     "hi": 21,
-     "pts": 3,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 22,
-     "hi": 99,
-     "pts": 3,
-     "reb": 2,
-     "ast": 1
-    }
-   ],
-   "season": 1993,
-   "seasonLabel": "1992-93",
-   "age": 22,
-   "games": 23,
-   "mpg": 14.4,
-   "bbrefId": "chrisdo01",
-   "traded": false,
-   "metrics": {
-    "bpm": -2.5,
-    "vorp": 0,
-    "ws": 0.1,
-    "ws48": 0.012,
-    "per": 12.4
-   },
-   "provisional": true
   },
   {
    "id": "Draymond_Green",
@@ -6880,10 +6400,10 @@
    "speed": 5,
    "power": 9,
    "shotLine": 18,
-   "paintBoost": 0,
+   "paintBoost": 1,
    "threePtBoost": -2,
    "defBoost": 1,
-   "salary": 280,
+   "salary": 270,
    "chart": [
     {
      "lo": 1,
@@ -7317,78 +6837,6 @@
     "ws": -0.8,
     "ws48": -0.021,
     "per": 9.7
-   },
-   "provisional": false
-  },
-  {
-   "id": "Isaiah_Jackson",
-   "name": "Isaiah Jackson",
-   "team": "IND",
-   "pos": "C",
-   "speed": 6,
-   "power": 8,
-   "shotLine": 16,
-   "paintBoost": 0,
-   "threePtBoost": -2,
-   "defBoost": 0,
-   "salary": 530,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 6,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 7,
-     "hi": 7,
-     "pts": 1,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 8,
-     "hi": 15,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 16,
-     "hi": 19,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 20,
-     "hi": 99,
-     "pts": 2,
-     "reb": 2,
-     "ast": 0
-    }
-   ],
-   "season": 2022,
-   "seasonLabel": "2021-22",
-   "age": 20,
-   "games": 36,
-   "mpg": 15,
-   "bbrefId": "jacksis01",
-   "traded": false,
-   "metrics": {
-    "bpm": -1.6,
-    "vorp": 0,
-    "ws": 1.4,
-    "ws48": 0.126,
-    "per": 20.5
    },
    "provisional": false
   },
@@ -7902,6 +7350,71 @@
    "provisional": false
   },
   {
+   "id": "Jakob_Poeltl",
+   "name": "Jakob Poeltl",
+   "team": "TOR",
+   "pos": "C",
+   "speed": 5,
+   "power": 9,
+   "shotLine": 14,
+   "paintBoost": -1,
+   "threePtBoost": -6,
+   "defBoost": 0,
+   "salary": 140,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 10,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 11,
+     "hi": 13,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 23,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 24,
+     "hi": 99,
+     "pts": 2,
+     "reb": 2,
+     "ast": 0
+    }
+   ],
+   "season": 2017,
+   "seasonLabel": "2016-17",
+   "age": 21,
+   "games": 54,
+   "mpg": 11.6,
+   "bbrefId": "poeltja01",
+   "traded": false,
+   "metrics": {
+    "bpm": -3.1,
+    "vorp": -0.2,
+    "ws": 1.6,
+    "ws48": 0.125,
+    "per": 12.2
+   },
+   "provisional": false
+  },
+  {
    "id": "Jalen_Brunson",
    "name": "Jalen Brunson",
    "team": "DAL",
@@ -8097,7 +7610,7 @@
    "speed": 8,
    "power": 5,
    "shotLine": 17,
-   "paintBoost": 0,
+   "paintBoost": 1,
    "threePtBoost": -1,
    "defBoost": 0,
    "salary": 480,
@@ -8624,78 +8137,6 @@
    "provisional": false
   },
   {
-   "id": "Jared_McCain",
-   "name": "Jared McCain",
-   "team": "PHI",
-   "pos": "SG",
-   "speed": 10,
-   "power": 6,
-   "shotLine": 15,
-   "paintBoost": 0,
-   "threePtBoost": 3,
-   "defBoost": -2,
-   "salary": 610,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 6,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 7,
-     "hi": 7,
-     "pts": 1,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 8,
-     "hi": 14,
-     "pts": 2,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 15,
-     "hi": 20,
-     "pts": 3,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 21,
-     "hi": 99,
-     "pts": 3,
-     "reb": 1,
-     "ast": 1
-    }
-   ],
-   "season": 2025,
-   "seasonLabel": "2024-25",
-   "age": 20,
-   "games": 23,
-   "mpg": 25.7,
-   "bbrefId": "mccaija01",
-   "traded": false,
-   "metrics": {
-    "bpm": 0.2,
-    "vorp": 0.3,
-    "ws": 0.7,
-    "ws48": 0.057,
-    "per": 15.2
-   },
-   "provisional": false
-  },
-  {
    "id": "Jaren_Jackson_Jr",
    "name": "Jaren Jackson Jr.",
    "team": "MEM",
@@ -9216,74 +8657,6 @@
    "provisional": false
   },
   {
-   "id": "Jaylen_Clark",
-   "name": "Jaylen Clark",
-   "team": "MIN",
-   "pos": "SG",
-   "speed": 9,
-   "power": 6,
-   "shotLine": 16,
-   "paintBoost": 0,
-   "threePtBoost": 1,
-   "defBoost": 3,
-   "salary": 250,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 11,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 12,
-     "hi": 15,
-     "pts": 1,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 16,
-     "hi": 23,
-     "pts": 1,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 24,
-     "hi": 99,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    }
-   ],
-   "season": 2025,
-   "seasonLabel": "2024-25",
-   "age": 23,
-   "games": 40,
-   "mpg": 13.1,
-   "bbrefId": "clarkja02",
-   "traded": false,
-   "metrics": {
-    "bpm": -0.2,
-    "vorp": 0.2,
-    "ws": 1.6,
-    "ws48": 0.147,
-    "per": 12
-   },
-   "provisional": false,
-   "badges": [
-    "best-season"
-   ]
-  },
-  {
    "id": "Jaylen_Wells",
    "name": "Jaylen Wells",
    "team": "MEM",
@@ -9550,180 +8923,6 @@
     "ws": 0.5,
     "ws48": 0.019,
     "per": 8.7
-   },
-   "provisional": false
-  },
-  {
-   "id": "Jericho_Sims",
-   "name": "Jericho Sims",
-   "team": "NYK",
-   "pos": "PF",
-   "speed": 5,
-   "power": 9,
-   "shotLine": 17,
-   "paintBoost": 2,
-   "threePtBoost": -3,
-   "defBoost": 1,
-   "salary": 180,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 16,
-     "pts": 0,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 17,
-     "hi": 99,
-     "pts": 1,
-     "reb": 2,
-     "ast": 0
-    }
-   ],
-   "season": 2022,
-   "seasonLabel": "2021-22",
-   "age": 23,
-   "games": 41,
-   "mpg": 13.5,
-   "bbrefId": "simsje01",
-   "traded": false,
-   "metrics": {
-    "bpm": -1.7,
-    "vorp": 0,
-    "ws": 1.5,
-    "ws48": 0.128,
-    "per": 11.6
-   },
-   "provisional": false
-  },
-  {
-   "id": "Jevon_Carter",
-   "name": "Jevon Carter",
-   "team": "MEM",
-   "pos": "PG",
-   "speed": 8,
-   "power": 5,
-   "shotLine": 18,
-   "paintBoost": 3,
-   "threePtBoost": 3,
-   "defBoost": 0,
-   "salary": 100,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 12,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 13,
-     "hi": 17,
-     "pts": 1,
-     "reb": 0,
-     "ast": 1
-    },
-    {
-     "lo": 18,
-     "hi": 21,
-     "pts": 1,
-     "reb": 0,
-     "ast": 1
-    },
-    {
-     "lo": 22,
-     "hi": 99,
-     "pts": 1,
-     "reb": 1,
-     "ast": 1
-    }
-   ],
-   "season": 2019,
-   "seasonLabel": "2018-19",
-   "age": 23,
-   "games": 39,
-   "mpg": 14.8,
-   "bbrefId": "carteje01",
-   "traded": false,
-   "metrics": {
-    "bpm": -4,
-    "vorp": -0.3,
-    "ws": 0,
-    "ws48": -0.003,
-    "per": 7.8
-   },
-   "provisional": false
-  },
-  {
-   "id": "Joel_Anthony",
-   "name": "Joel Anthony",
-   "team": "MIA",
-   "pos": "PF",
-   "speed": 6,
-   "power": 8,
-   "shotLine": 18,
-   "paintBoost": 3,
-   "threePtBoost": -2,
-   "defBoost": 0,
-   "salary": 60,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 11,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 12,
-     "hi": 17,
-     "pts": 0,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 18,
-     "hi": 99,
-     "pts": 1,
-     "reb": 1,
-     "ast": 0
-    }
-   ],
-   "season": 2008,
-   "seasonLabel": "2007-08",
-   "age": 25,
-   "games": 24,
-   "mpg": 20.8,
-   "bbrefId": "anthojo01",
-   "traded": false,
-   "metrics": {
-    "bpm": -5.5,
-    "vorp": -0.4,
-    "ws": 0.6,
-    "ws48": 0.054,
-    "per": 8.8
    },
    "provisional": false
   },
@@ -10951,6 +10150,71 @@
    "provisional": false
   },
   {
+   "id": "Kelly_Oubre_Jr",
+   "name": "Kelly Oubre Jr.",
+   "team": "WAS",
+   "pos": "SF",
+   "speed": 7,
+   "power": 6,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": 1,
+   "defBoost": -1,
+   "salary": 130,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 9,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 15,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 21,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 2,
+     "reb": 2,
+     "ast": 0
+    }
+   ],
+   "season": 2016,
+   "seasonLabel": "2015-16",
+   "age": 20,
+   "games": 63,
+   "mpg": 10.7,
+   "bbrefId": "oubreke01",
+   "traded": false,
+   "metrics": {
+    "bpm": -5.1,
+    "vorp": -0.5,
+    "ws": 0.4,
+    "ws48": 0.031,
+    "per": 8.2
+   },
+   "provisional": false
+  },
+  {
    "id": "Kemba_Walker",
    "name": "Kemba Walker",
    "team": "CHB08",
@@ -11348,7 +10612,7 @@
    "speed": 6,
    "power": 9,
    "shotLine": 17,
-   "paintBoost": -1,
+   "paintBoost": 0,
    "threePtBoost": -3,
    "defBoost": -2,
    "salary": 400,
@@ -11464,71 +10728,6 @@
    "provisional": false
   },
   {
-   "id": "Khris_Middleton",
-   "name": "Khris Middleton",
-   "team": "DET06",
-   "pos": "SG",
-   "speed": 8,
-   "power": 7,
-   "shotLine": 15,
-   "paintBoost": 0,
-   "threePtBoost": 0,
-   "defBoost": 0,
-   "salary": 340,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 7,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 8,
-     "hi": 14,
-     "pts": 1,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 15,
-     "hi": 22,
-     "pts": 2,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 23,
-     "hi": 99,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    }
-   ],
-   "season": 2013,
-   "seasonLabel": "2012-13",
-   "age": 21,
-   "games": 27,
-   "mpg": 17.6,
-   "bbrefId": "middlkh01",
-   "traded": false,
-   "metrics": {
-    "bpm": -1.9,
-    "vorp": 0,
-    "ws": 0.9,
-    "ws48": 0.089,
-    "per": 11.4
-   },
-   "provisional": false
-  },
-  {
    "id": "Klay_Thompson",
    "name": "Klay Thompson",
    "team": "GSW",
@@ -11608,7 +10807,7 @@
    "speed": 8,
    "power": 5,
    "shotLine": 17,
-   "paintBoost": 0,
+   "paintBoost": 1,
    "threePtBoost": -1,
    "defBoost": 2,
    "salary": 220,
@@ -12407,78 +11606,6 @@
    "provisional": false
   },
   {
-   "id": "Luka_Garza",
-   "name": "Luka Garza",
-   "team": "DET",
-   "pos": "C",
-   "speed": 6,
-   "power": 9,
-   "shotLine": 16,
-   "paintBoost": 0,
-   "threePtBoost": 1,
-   "defBoost": -2,
-   "salary": 560,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 9,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 10,
-     "hi": 10,
-     "pts": 1,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 11,
-     "hi": 15,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 16,
-     "hi": 22,
-     "pts": 3,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 23,
-     "hi": 99,
-     "pts": 4,
-     "reb": 2,
-     "ast": 1
-    }
-   ],
-   "season": 2022,
-   "seasonLabel": "2021-22",
-   "age": 23,
-   "games": 32,
-   "mpg": 12.2,
-   "bbrefId": "garzalu01",
-   "traded": false,
-   "metrics": {
-    "bpm": -2.5,
-    "vorp": -0.1,
-    "ws": 0.8,
-    "ws48": 0.093,
-    "per": 15.6
-   },
-   "provisional": true
-  },
-  {
    "id": "Luke_Kennard",
    "name": "Luke Kennard",
    "team": "DET",
@@ -12542,78 +11669,6 @@
     "per": 12.1
    },
    "provisional": false
-  },
-  {
-   "id": "Luke_Kornet",
-   "name": "Luke Kornet",
-   "team": "NYK",
-   "pos": "C",
-   "speed": 6,
-   "power": 9,
-   "shotLine": 17,
-   "paintBoost": 0,
-   "threePtBoost": 2,
-   "defBoost": 0,
-   "salary": 500,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 9,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 10,
-     "hi": 10,
-     "pts": 1,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 11,
-     "hi": 16,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 17,
-     "hi": 23,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 24,
-     "hi": 99,
-     "pts": 3,
-     "reb": 2,
-     "ast": 1
-    }
-   ],
-   "season": 2018,
-   "seasonLabel": "2017-18",
-   "age": 22,
-   "games": 20,
-   "mpg": 16.3,
-   "bbrefId": "kornelu01",
-   "traded": false,
-   "metrics": {
-    "bpm": 0.2,
-    "vorp": 0.2,
-    "ws": 0.5,
-    "ws48": 0.077,
-    "per": 13.6
-   },
-   "provisional": true
   },
   {
    "id": "Malik_Monk",
@@ -13053,71 +12108,6 @@
     "ws": 1.9,
     "ws48": 0.06,
     "per": 12.5
-   },
-   "provisional": false
-  },
-  {
-   "id": "Max_Christie",
-   "name": "Max Christie",
-   "team": "LAL",
-   "pos": "SG",
-   "speed": 7,
-   "power": 6,
-   "shotLine": 17,
-   "paintBoost": 2,
-   "threePtBoost": 2,
-   "defBoost": 0,
-   "salary": 110,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 11,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 12,
-     "hi": 16,
-     "pts": 1,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 17,
-     "hi": 23,
-     "pts": 1,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 24,
-     "hi": 99,
-     "pts": 1,
-     "reb": 1,
-     "ast": 1
-    }
-   ],
-   "season": 2023,
-   "seasonLabel": "2022-23",
-   "age": 19,
-   "games": 41,
-   "mpg": 12.5,
-   "bbrefId": "chrisma02",
-   "traded": false,
-   "metrics": {
-    "bpm": -3.1,
-    "vorp": -0.1,
-    "ws": 0.6,
-    "ws48": 0.058,
-    "per": 7.4
    },
    "provisional": false
   },
@@ -13707,6 +12697,71 @@
    "provisional": false
   },
   {
+   "id": "Moses_Moody",
+   "name": "Moses Moody",
+   "team": "GSW",
+   "pos": "SG",
+   "speed": 8,
+   "power": 6,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": -1,
+   "defBoost": -1,
+   "salary": 150,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 8,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 9,
+     "hi": 13,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 21,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    }
+   ],
+   "season": 2022,
+   "seasonLabel": "2021-22",
+   "age": 19,
+   "games": 52,
+   "mpg": 11.7,
+   "bbrefId": "moodymo01",
+   "traded": false,
+   "metrics": {
+    "bpm": -2.5,
+    "vorp": -0.1,
+    "ws": 1.3,
+    "ws48": 0.101,
+    "per": 10.5
+   },
+   "provisional": false
+  },
+  {
    "id": "Myles_Turner",
    "name": "Myles Turner",
    "team": "IND",
@@ -13826,136 +12881,6 @@
     "ws": 0.9,
     "ws48": 0.061,
     "per": 11.4
-   },
-   "provisional": false
-  },
-  {
-   "id": "Naz_Reid",
-   "name": "Naz Reid",
-   "team": "MIN",
-   "pos": "C",
-   "speed": 5,
-   "power": 10,
-   "shotLine": 17,
-   "paintBoost": 0,
-   "threePtBoost": 2,
-   "defBoost": 0,
-   "salary": 830,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 6,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 7,
-     "hi": 7,
-     "pts": 1,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 8,
-     "hi": 16,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 17,
-     "hi": 99,
-     "pts": 4,
-     "reb": 2,
-     "ast": 1
-    }
-   ],
-   "season": 2020,
-   "seasonLabel": "2019-20",
-   "age": 20,
-   "games": 30,
-   "mpg": 16.5,
-   "bbrefId": "reidna01",
-   "traded": false,
-   "metrics": {
-    "bpm": -1.9,
-    "vorp": 0,
-    "ws": 0.8,
-    "ws48": 0.074,
-    "per": 15.3
-   },
-   "provisional": false
-  },
-  {
-   "id": "Nickeil_Alexander_Walker",
-   "name": "Nickeil Alexander-Walker",
-   "team": "NOP",
-   "pos": "SG",
-   "speed": 7,
-   "power": 6,
-   "shotLine": 18,
-   "paintBoost": 2,
-   "threePtBoost": 3,
-   "defBoost": -1,
-   "salary": 390,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 6,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 7,
-     "hi": 11,
-     "pts": 1,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 12,
-     "hi": 17,
-     "pts": 2,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 18,
-     "hi": 99,
-     "pts": 3,
-     "reb": 1,
-     "ast": 1
-    }
-   ],
-   "season": 2020,
-   "seasonLabel": "2019-20",
-   "age": 21,
-   "games": 47,
-   "mpg": 12.6,
-   "bbrefId": "alexani01",
-   "traded": false,
-   "metrics": {
-    "bpm": -4.6,
-    "vorp": -0.4,
-    "ws": -0.2,
-    "ws48": -0.02,
-    "per": 8.9
    },
    "provisional": false
   },
@@ -14153,71 +13078,6 @@
     "per": 14.3
    },
    "provisional": false
-  },
-  {
-   "id": "Noah_Clowney",
-   "name": "Noah Clowney",
-   "team": "BKN",
-   "pos": "PF",
-   "speed": 6,
-   "power": 8,
-   "shotLine": 15,
-   "paintBoost": 0,
-   "threePtBoost": 0,
-   "defBoost": 0,
-   "salary": 350,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 9,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 10,
-     "hi": 14,
-     "pts": 1,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 15,
-     "hi": 22,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 23,
-     "hi": 99,
-     "pts": 3,
-     "reb": 2,
-     "ast": 1
-    }
-   ],
-   "season": 2024,
-   "seasonLabel": "2023-24",
-   "age": 19,
-   "games": 23,
-   "mpg": 16.1,
-   "bbrefId": "clownno01",
-   "traded": false,
-   "metrics": {
-    "bpm": -0.7,
-    "vorp": 0.1,
-    "ws": 0.9,
-    "ws48": 0.111,
-    "per": 14.2
-   },
-   "provisional": true
   },
   {
    "id": "Norman_Powell",
@@ -14490,64 +13350,6 @@
     "ws": 1.6,
     "ws48": 0.075,
     "per": 11.1
-   },
-   "provisional": false
-  },
-  {
-   "id": "Ousmane_Dieng",
-   "name": "Ousmane Dieng",
-   "team": "OKC",
-   "pos": "PF",
-   "speed": 7,
-   "power": 7,
-   "shotLine": 14,
-   "paintBoost": -1,
-   "threePtBoost": -1,
-   "defBoost": -1,
-   "salary": 230,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 12,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 13,
-     "hi": 13,
-     "pts": 1,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 14,
-     "hi": 99,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    }
-   ],
-   "season": 2023,
-   "seasonLabel": "2022-23",
-   "age": 19,
-   "games": 39,
-   "mpg": 14.6,
-   "bbrefId": "diengou01",
-   "traded": false,
-   "metrics": {
-    "bpm": -3.6,
-    "vorp": -0.2,
-    "ws": 0.4,
-    "ws48": 0.038,
-    "per": 9.3
    },
    "provisional": false
   },
@@ -15397,7 +14199,7 @@
    "speed": 11,
    "power": 7,
    "shotLine": 15,
-   "paintBoost": -1,
+   "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": -1,
    "salary": 460,
@@ -16430,7 +15232,7 @@
    "speed": 5,
    "power": 5,
    "shotLine": 17,
-   "paintBoost": 0,
+   "paintBoost": 1,
    "threePtBoost": 2,
    "defBoost": -2,
    "salary": 100,
@@ -16498,7 +15300,7 @@
    "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": -1,
-   "salary": 850,
+   "salary": 840,
    "chart": [
     {
      "lo": 1,
@@ -16683,17 +15485,82 @@
    "provisional": false
   },
   {
+   "id": "Steve_Nash",
+   "name": "Steve Nash",
+   "team": "PHX93",
+   "pos": "PG",
+   "speed": 9,
+   "power": 5,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": -1,
+   "salary": 100,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 13,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 14,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 21,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 2
+    }
+   ],
+   "season": 1997,
+   "seasonLabel": "1996-97",
+   "age": 22,
+   "games": 65,
+   "mpg": 10.5,
+   "bbrefId": "nashst01",
+   "traded": false,
+   "metrics": {
+    "bpm": -3.1,
+    "vorp": -0.2,
+    "ws": 0.7,
+    "ws48": 0.047,
+    "per": 10.8
+   },
+   "provisional": false
+  },
+  {
    "id": "T_J_McConnell",
    "name": "T.J. McConnell",
    "team": "PHI",
    "pos": "PG",
    "speed": 10,
    "power": 6,
-   "shotLine": 14,
+   "shotLine": 15,
    "paintBoost": 0,
-   "threePtBoost": -4,
+   "threePtBoost": -3,
    "defBoost": 0,
-   "salary": 560,
+   "salary": 540,
    "chart": [
     {
      "lo": 1,
@@ -16711,13 +15578,13 @@
     },
     {
      "lo": 7,
-     "hi": 13,
+     "hi": 14,
      "pts": 1,
      "reb": 1,
      "ast": 1
     },
     {
-     "lo": 14,
+     "lo": 15,
      "hi": 21,
      "pts": 2,
      "reb": 1,
@@ -17575,71 +16442,6 @@
     "ws": 1.9,
     "ws48": 0.099,
     "per": 14.5
-   },
-   "provisional": false
-  },
-  {
-   "id": "Tyus_Jones",
-   "name": "Tyus Jones",
-   "team": "MIN97",
-   "pos": "PG",
-   "speed": 9,
-   "power": 5,
-   "shotLine": 17,
-   "paintBoost": 2,
-   "threePtBoost": 2,
-   "defBoost": -1,
-   "salary": 160,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 9,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 10,
-     "hi": 16,
-     "pts": 1,
-     "reb": 0,
-     "ast": 1
-    },
-    {
-     "lo": 17,
-     "hi": 21,
-     "pts": 1,
-     "reb": 0,
-     "ast": 1
-    },
-    {
-     "lo": 22,
-     "hi": 99,
-     "pts": 1,
-     "reb": 1,
-     "ast": 1
-    }
-   ],
-   "season": 2016,
-   "seasonLabel": "2015-16",
-   "age": 19,
-   "games": 37,
-   "mpg": 15.5,
-   "bbrefId": "jonesty01",
-   "traded": false,
-   "metrics": {
-    "bpm": -2.4,
-    "vorp": -0.1,
-    "ws": 0.3,
-    "ws48": 0.027,
-    "per": 11.2
    },
    "provisional": false
   },

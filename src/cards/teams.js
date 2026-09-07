@@ -201,6 +201,10 @@ export const HISTORICAL_TEAMS = {
   PHI97: { name: '76ers',    city: 'Philadelphia', abbr: 'PHI', primary: '#000000', secondary: '#C8102E', logo: '/logos/PHI97.png', era: '1998-2009', unverifiedColors: true },
   ORL89: { name: 'Magic',    city: 'Orlando',     abbr: 'ORL', primary: '#0077C0', secondary: '#000000', logo: '/logos/ORL89.png', era: '1989-2000', unverifiedColors: true },
   ORL01: { name: 'Magic',    city: 'Orlando',     abbr: 'ORL', primary: '#0077C0', secondary: '#C4CED4', logo: '/logos/ORL01.png', era: '2001-2010', unverifiedColors: true },
+  // The lightning-bolt wordmark era, worn through Chris Webber's rookie year —
+  // the Warriors' only card before 1998 (the user is supplying the mark,
+  // 2026-09-07). Royal blue and gold, as the GSW row carries today.
+  GSW89: { name: 'Warriors', city: 'Golden State', abbr: 'GSW', primary: '#1D4289', secondary: '#FFC72C', logo: '/logos/GSW89.png', era: '1989-1997', unverifiedColors: true },
   GSW98: { name: 'Warriors', city: 'Golden State', abbr: 'GSW', primary: '#04529C', secondary: '#FFCC33', logo: '/logos/GSW98.png', era: '1998-2010', unverifiedColors: true },
   LAC84: { name: 'Clippers', city: 'Los Angeles', abbr: 'LAC', primary: '#ED174C', secondary: '#006BB6', logo: '/logos/LAC84.png', era: '1985-2015', unverifiedColors: true },
   PHX93: { name: 'Suns',     city: 'Phoenix',     abbr: 'PHX', primary: '#1D1160', secondary: '#E56020', logo: '/logos/PHX93.png', era: '1993-2000', unverifiedColors: true },
@@ -294,7 +298,7 @@ export const FRANCHISE_ERAS = {
     { from: 1989, to: 2000, key: 'ORL89' },
     { from: 2001, to: 2010, key: 'ORL01' },
   ],
-  GSW: [{ from: 1998, to: 2010, key: 'GSW98' }],
+  GSW: [{ from: 1989, to: 1997, key: 'GSW89' }, { from: 1998, to: 2010, key: 'GSW98' }],
   PHX: [
     { from: 1993, to: 2000, key: 'PHX93' },
     { from: 2001, to: 2013, key: 'PHX01' },

@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-07T14:27:32.153Z",
+ "generatedAt": "2026-09-07T16:24:34.029Z",
  "set": "2026-27",
  "provisional": true,
  "source": "the Super Season and Rookie exclusion lists: a player whose best or rookie season is 2026 gets no card in that set, because his base card already IS that season — so the fact is printed on the base card as a badge instead",
@@ -13,10 +13,10 @@
   "set-reward"
  ],
  "counts": {
-  "players": 179,
+  "players": 180,
   "applies": {
    "rookie": 33,
-   "super-season": 179,
+   "super-season": 180,
    "best-season": 0,
    "summer-standout": 0,
    "dissonance": 0,
@@ -26,7 +26,7 @@
   "printed": {
    "rookie": 33,
    "super-season": 21,
-   "best-season": 125,
+   "best-season": 126,
    "summer-standout": 0,
    "dissonance": 0,
    "team-reward": 0,
@@ -585,6 +585,13 @@
   {
    "id": "Jaylen_Brown",
    "name": "Jaylen Brown",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Jaylen_Clark",
+   "name": "Jaylen Clark",
    "badges": [
     "super-season"
    ]

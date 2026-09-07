@@ -1235,15 +1235,14 @@
    },
    "provisional": false,
    "set": "team-rewards",
-   "badges": [
-    "super-season"
-   ],
+   "badges": [],
    "migratedFrom": {
     "set": "super-season",
     "id": "John_Stockton"
    },
    "rewardFor": "UTA",
-   "rewardGoal": "nba-team-UTA"
+   "rewardGoal": "nba-team-UTA",
+   "notBestSeason": true
   },
   {
    "id": "Jameer_Nelson",

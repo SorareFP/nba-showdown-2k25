@@ -454,7 +454,8 @@ describe('the base set\'s badges', () => {
     // rookie year ended by injury still counts — Embiid on 31 games, Zion on
     // 24 — while Julius Randle's single game does not.
     // 271 since 2026-09-06: seven forced rookie seasons (rookie-legends-2026.json).
-    expect(ROOKIE.cards.length).toBe(271);
+    // 251 since 2026-09-07: the rookie set's floor became a 600-MINUTE TOTAL (ROOKIE_MIN_MINUTES) instead of 12 minutes a night, which cut 20 more cards and shifted one twin merge, so one more base card wears the pill.
+    expect(ROOKIE.cards.length).toBe(251);
     const poolNames = new Set(POOL.map(p => p.name));
     const bothBlocks = [...new Set([
       ...Object.keys(STANDOUTS.superSeasons ?? {}),
@@ -549,7 +550,7 @@ describe('the base set\'s badges', () => {
     // the set and onto the badge, and most of them are the cheap role players
     // the rule exists to catch — so the BEST SEASON side of the split grew far
     // more than the gilded one.
-    expect(counts.printed[BEST_SEASON_BADGE]).toBe(125);
+    expect(counts.printed[BEST_SEASON_BADGE]).toBe(126);
     expect(counts.printed[SUPER_SEASON_BADGE]).toBe(21);
     // Nobody loses their pill entirely in the resolution.
     expect(BADGE_IDS.reduce((n, id) => n + counts.printed[id], 0)).toBe(counts.players);

@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-07T14:30:12.731Z",
+ "generatedAt": "2026-09-07T16:25:01.638Z",
  "source": "Basketball-Reference's season `advanced` tables, awards column — a voted award's suffix is its finishing position, so only -1 is a win — plus the same pages' `advanced_post` table, whose awards column holds one cell a season and that cell is always `Finals MVP-1`, plus each season index page's League Champion row and that team's roster, which is where the ring comes from and which is in no column at all",
  "declared": [
   "MVP",
@@ -578,7 +578,7 @@
    }
   },
   "rookie": {
-   "cards": 96,
+   "cards": 95,
    "marked": 24,
    "multiple": 2,
    "capped": 0,
@@ -2482,18 +2482,6 @@
   ],
   "rookie": [
    {
-    "id": "Ajay_Mitchell",
-    "name": "Ajay Mitchell",
-    "season": 2025,
-    "bbrefId": "mitchaj01",
-    "raw": null,
-    "rawPost": null,
-    "champion": "OKC",
-    "awards": [
-     "CHAMP"
-    ]
-   },
-   {
     "id": "Al_Horford",
     "name": "Al Horford",
     "season": 2008,
@@ -2901,16 +2889,6 @@
     "awards": []
    },
    {
-    "id": "Jared_McCain",
-    "name": "Jared McCain",
-    "season": 2025,
-    "bbrefId": "mccaija01",
-    "raw": "ROY-7",
-    "rawPost": null,
-    "champion": null,
-    "awards": []
-   },
-   {
     "id": "Jaren_Jackson_Jr",
     "name": "Jaren Jackson Jr.",
     "season": 2019,
@@ -3265,6 +3243,18 @@
     "rawPost": null,
     "champion": null,
     "awards": []
+   },
+   {
+    "id": "Moses_Moody",
+    "name": "Moses Moody",
+    "season": 2022,
+    "bbrefId": "moodymo01",
+    "raw": null,
+    "rawPost": null,
+    "champion": "GSW",
+    "awards": [
+     "CHAMP"
+    ]
    },
    {
     "id": "Myles_Turner",
@@ -3888,6 +3878,18 @@
     ]
    },
    {
+    "id": "Damian_Lillard",
+    "name": "Damian Lillard",
+    "season": 2020,
+    "bbrefId": "lillada01",
+    "raw": "MVP-8,AS,NBA2",
+    "rawPost": null,
+    "champion": null,
+    "awards": [
+     "AS"
+    ]
+   },
+   {
     "id": "Kevin_Durant",
     "name": "Kevin Durant",
     "season": 2017,
@@ -3898,18 +3900,6 @@
     "awards": [
      "FMVP",
      "CHAMP",
-     "AS"
-    ]
-   },
-   {
-    "id": "Damian_Lillard",
-    "name": "Damian Lillard",
-    "season": 2020,
-    "bbrefId": "lillada01",
-    "raw": "MVP-8,AS,NBA2",
-    "rawPost": null,
-    "champion": null,
-    "awards": [
      "AS"
     ]
    },
@@ -4042,18 +4032,6 @@
     ]
    },
    {
-    "id": "Alonzo_Mourning",
-    "name": "Alonzo Mourning",
-    "season": 2006,
-    "bbrefId": "mournal01",
-    "raw": "DPOY-8,6MOY-6",
-    "rawPost": null,
-    "champion": "MIA",
-    "awards": [
-     "CHAMP"
-    ]
-   },
-   {
     "id": "Myles_Turner",
     "name": "Myles Turner",
     "season": 2019,
@@ -4069,6 +4047,28 @@
     "season": 2007,
     "bbrefId": "wallage01",
     "raw": "DPOY-7",
+    "rawPost": null,
+    "champion": null,
+    "awards": []
+   },
+   {
+    "id": "Alonzo_Mourning",
+    "name": "Alonzo Mourning",
+    "season": 2006,
+    "bbrefId": "mournal01",
+    "raw": "DPOY-8,6MOY-6",
+    "rawPost": null,
+    "champion": "MIA",
+    "awards": [
+     "CHAMP"
+    ]
+   },
+   {
+    "id": "Marc_Gasol",
+    "name": "Marc Gasol",
+    "season": 2014,
+    "bbrefId": "gasolma01",
+    "raw": "DPOY-15",
     "rawPost": null,
     "champion": null,
     "awards": []
@@ -4096,16 +4096,6 @@
     "awards": []
    },
    {
-    "id": "Marc_Gasol",
-    "name": "Marc Gasol",
-    "season": 2014,
-    "bbrefId": "gasolma01",
-    "raw": "DPOY-15",
-    "rawPost": null,
-    "champion": null,
-    "awards": []
-   },
-   {
     "id": "Steve_Nash",
     "name": "Steve Nash",
     "season": 2010,
@@ -4128,11 +4118,11 @@
     "awards": []
    },
    {
-    "id": "Josh_Smith",
-    "name": "Josh Smith",
-    "season": 2009,
-    "bbrefId": "smithjo03",
-    "raw": "DPOY-16",
+    "id": "Luol_Deng",
+    "name": "Luol Deng",
+    "season": 2011,
+    "bbrefId": "denglu01",
+    "raw": "DPOY-10",
     "rawPost": null,
     "champion": null,
     "awards": []
@@ -4148,11 +4138,11 @@
     "awards": []
    },
    {
-    "id": "Luol_Deng",
-    "name": "Luol Deng",
-    "season": 2011,
-    "bbrefId": "denglu01",
-    "raw": "DPOY-10",
+    "id": "Josh_Smith",
+    "name": "Josh Smith",
+    "season": 2009,
+    "bbrefId": "smithjo03",
+    "raw": "DPOY-16",
     "rawPost": null,
     "champion": null,
     "awards": []

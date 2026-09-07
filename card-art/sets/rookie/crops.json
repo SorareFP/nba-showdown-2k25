@@ -203,5 +203,40 @@
     "x": -15.03,
     "y": 0.36,
     "zoom": 1.05
+  },
+  "Cade_Cunningham": {
+    "x": 22.26,
+    "y": 0,
+    "zoom": 1
+  },
+  "Cameron_Johnson": {
+    "x": -0.71,
+    "y": 0,
+    "zoom": 1
+  },
+  "Caris_LeVert": {
+    "x": 4.54,
+    "y": 0,
+    "zoom": 1
+  },
+  "Carmelo_Anthony": {
+    "x": -2.69,
+    "y": 0,
+    "zoom": 1
+  },
+  "Chauncey_Billups": {
+    "x": 0,
+    "y": 9.21,
+    "zoom": 1
+  },
+  "Chet_Holmgren": {
+    "x": -21.13,
+    "y": 0,
+    "zoom": 1
+  },
+  "Chris_Webber": {
+    "x": -14,
+    "y": 15.47,
+    "zoom": 1.28
   }
 }

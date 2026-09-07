@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-07T14:27:31.245Z",
+ "generatedAt": "2026-09-07T16:24:33.122Z",
  "set": "super-season",
  "provisional": true,
  "sources": {
@@ -905,6 +905,11 @@
    "badge": "super-season"
   },
   {
+   "name": "Jaylen Clark",
+   "reason": "best season is the current one — its card is stronger",
+   "badge": "super-season"
+  },
+  {
    "name": "Tre Mann",
    "reason": "best season is the current one — its card is stronger",
    "badge": "super-season"
@@ -915,7 +920,7 @@
    "badge": "super-season"
   }
  ],
- "excludedCount": 179,
+ "excludedCount": 180,
  "excludedThin": [],
  "excludedThinCount": 0,
  "mergedIntoTwin": [
@@ -950,13 +955,9 @@
   {
    "name": "Jordan Hawkins",
    "reason": "best season is his rookie season — one 2023-24 card in the Rookie set, wearing the best-season badge too"
-  },
-  {
-   "name": "Jaylen Clark",
-   "reason": "best season is his rookie season — one 2024-25 card in the Rookie set, wearing the best-season badge too"
   }
  ],
- "mergedIntoTwinCount": 9,
+ "mergedIntoTwinCount": 8,
  "cards": [
   {
    "id": "A_J_Green",

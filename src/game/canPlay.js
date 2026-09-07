@@ -178,13 +178,23 @@ export function canPlayCard(g, teamKey, cardId) {
 
   // ── MATCHUP PHASE ──────────────────────────────────────────────────────
   if (['high_screen_roll','stagger_action','second_wind','chip_on_shoulder','defensive_stopper','pick_up_full_court',
-    'spain_pick_roll','mismatch_hunter','strength_in_numbers','energizer','defensive_identity','defensive_anchor','swarming_defense'].includes(cardId)) {
+    'spain_pick_roll','mismatch_hunter','strength_in_numbers','energizer','defensive_identity','defensive_anchor','swarming_defense',
+    'short_roll_playmaker','pick_and_roll_maestro'].includes(cardId)) {
     if (phase !== 'matchup_strats') return no('Only playable during Matchup Strategy Phase');
     if (g.matchupTurn !== teamKey) return no("It's not your turn");
     const advOf = (p, i) => {
       const dp = oppT.starters[(g.offMatchups[teamKey] || [])[i] ?? i];
       return dp ? calcAdv(p, dp, g.tempEff[teamKey] || {}, i) : null;
     };
+    if (cardId === 'short_roll_playmaker') {
+      const eligible = myT.starters.filter(p => p && (p.speed || 0) >= 8 && (p.power || 0) >= 8);
+      if (!eligible.length) return no('Need a player with Speed 8+ and Power 8+ on the floor');
+      return ok('One player adds an assist on every paint score this period');
+    }
+    if (cardId === 'pick_and_roll_maestro') {
+      if (!myT.starters.some(p => p && (p.speed || 0) >= 14)) return no('Need a player at Speed 14+ on the floor');
+      return ok('Switch a Speed 14+ player onto a slower defender');
+    }
     if (cardId === 'spain_pick_roll') {
       const some = myT.starters.some((p, i) => { const dp = oppT.starters[(g.offMatchups[teamKey] || [])[i] ?? i]; return p && dp && p.speed > dp.speed; });
       if (!some) return no('Need a player faster than their defender');
@@ -530,6 +540,15 @@ export function canPlayCard(g, teamKey, cardId) {
     case 'extra_pass':
       if (myT.assists < 2) return no(`Need 2 assists (have ${myT.assists})`);
       return ok('Any player, any check, no card bonuses');
+    // ── WAVE TWO ────────────────────────────────────────────────────────
+    case 'outside_pick':
+      if (myT.hand.filter(id => id !== 'outside_pick').length === 0) return no('No card to discard');
+      return ok('A 3PT check at +5 — hit for 3 and an assist');
+    case 'inside_out': {
+      const ps = g.lastPaintScore;
+      if (!ps || ps.teamKey !== teamKey) return no('Play it after one of your players scores in the paint');
+      return ok('Kick it out — a teammate takes a free three');
+    }
     case 'lob_city':
       if (!myT.starters.some(p => p && ((p.speed || 0) >= 15 || (p.power || 0) >= 15))) return no('Need a player with Speed or Power 15+');
       if (myT.hand.filter(id => id !== 'lob_city').length === 0) return no('No card to discard');

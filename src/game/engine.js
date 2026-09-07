@@ -835,7 +835,7 @@ export function endSection(g) {
 
   // Reset section state
   ng.tempEff = {}; ng.tempDefEff = {}; ng.ghosted = {}; ng.ignFatigue = {}; ng.openMan = {};
-  ng.lastDoubleTeam = null; ng.lastRoll = null; ng.lastCheckMiss = null;
+  ng.lastDoubleTeam = null; ng.lastRoll = null; ng.lastCheckMiss = null; ng.lastPaintScore = null;
   ng.matchupsSet = {};
   ng.rollResults = { A: [], B: [] }; ng.pendingShotCheck = null; ng.lastShotCheck = null;
   // reboundBonuses were set earlier in this function — they persist to the next section's scoring phase

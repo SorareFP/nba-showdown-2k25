@@ -996,6 +996,79 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       announceCheck(g, { teamKey, playerIdx: idx, type: kind, bonus: 0, cardLabel: 'Extra Pass', noCardBonus: true });
       break;
     }
+    // ── WAVE TWO ────────────────────────────────────────────────────────
+    case 'outside_pick': {
+      const others = myT.hand.filter(id => id !== 'outside_pick');
+      if (others.length === 0) return fail('No card to discard');
+      const discard = opts.discardId && others.includes(opts.discardId) ? opts.discardId : others[others.length - 1];
+      removeFromHand(myT, discard);
+      addLog(g, teamKey, `Outside Pick: discards ${discard.replace(/_/g, ' ')}`);
+      // The +5 is the screen. The docx's timing warning ("must be played
+      // before a defender plays a contesting strategy") costs nothing to
+      // honour: an announced check opens the defence's window AFTER the card,
+      // so the order it asks for is the only order there is.
+      announceCheck(g, {
+        teamKey, playerIdx: idx, type: '3pt', bonus: 5 + _assistShotBonus,
+        cardLabel: `Outside Pick: ${player?.name} 3PT at +5`, onHitAst: 1,
+      });
+      break;
+    }
+
+    case 'short_roll_playmaker': {
+      if ((player?.speed || 0) < 8 || (player?.power || 0) < 8) {
+        return fail(`${player?.name} needs Speed 8+ and Power 8+`);
+      }
+      if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
+      g.tempEff[teamKey]['paintAst' + idx] = 1;
+      addLog(g, teamKey, `Short-Roll Playmaker: ${player?.name} adds an assist on every paint score this period`);
+      break;
+    }
+
+    case 'pick_and_roll_maestro': {
+      if ((player?.speed || 0) < 14) return fail(`${player?.name} is not Speed 14+`);
+      const mate = opts.player2Idx;
+      if (mate === undefined || mate === idx || !myT.starters[mate]) {
+        return fail('Choose the teammate to swap defenders with');
+      }
+      const mu = g.offMatchups[teamKey];
+      const before = oppT.starters[mu[idx]];
+      [mu[idx], mu[mate]] = [mu[mate], mu[idx]];
+      g.offMatchups = { ...g.offMatchups, [teamKey]: mu.slice() };
+      const now = oppT.starters[mu[idx]];
+      addLog(g, teamKey, `Pick-and-Roll Maestro: ${player?.name} switches off ${before?.name} onto ${now?.name}`);
+      // THE MISMATCH IS MEASURED AGAINST THE ATTACKER, which is how this game
+      // spells a mismatch everywhere else (helpTargets, Mismatch Hunter) — not
+      // against the defender who just left.
+      const gap = (player?.speed || 0) - (now?.speed || 0);
+      if (gap < 5) {
+        addLog(g, teamKey, `Pick-and-Roll Maestro: ${now?.name} is only ${gap} slower — no check`);
+        break;
+      }
+      announceCheck(g, {
+        teamKey, playerIdx: idx, type: 'paint', bonus: _assistShotBonus,
+        cardLabel: `Pick-and-Roll Maestro: ${player?.name} attacks ${now?.name} (${gap} slower)`,
+        onHitAst: 1,
+      });
+      break;
+    }
+
+    case 'inside_out': {
+      const ps2 = g.lastPaintScore;
+      if (!ps2 || ps2.teamKey !== teamKey) return fail('No paint score of yours to play off');
+      const mate = opts.player2Idx ?? idx;
+      if (mate === ps2.playerIdx) return fail('Inside-Out feeds a TEAMMATE, not the scorer');
+      const mateP = myT.starters[mate];
+      if (!mateP) return fail('Choose the teammate taking the three');
+      announceCheck(g, {
+        teamKey, playerIdx: mate, type: '3pt', bonus: _assistShotBonus,
+        cardLabel: `Inside-Out: kicked out to ${mateP.name}`,
+      });
+      // ONE KICK-OUT PER SCORE. Without this a second copy plays off the same
+      // bucket, which is not what "if a player scores in the Paint" says.
+      g.lastPaintScore = null;
+      break;
+    }
+
     case 'lob_city': {
       const has15 = myT.starters.some(p => p && ((p.speed || 0) >= 15 || (p.power || 0) >= 15));
       if (!has15) return fail('Need a player with Speed or Power 15+');
@@ -1255,6 +1328,19 @@ export function applyShotCheck(g, psc) {
 
   if (r.hit) {
     myT.score += r.pts;
+    // A PAINT SCORE IS AN EVENT. Inside-Out reacts to it and Short-Roll
+    // Playmaker pays on it, and neither could see it before: `lastRoll` is a
+    // scoring ROLL and a paint bucket is a shot check, which is a different
+    // thing. Cleared at section end with the rest of the per-section state.
+    if (psc.type === 'paint') {
+      g.lastPaintScore = { teamKey: psc.teamKey, playerIdx: psc.playerIdx, playerId: player?.id };
+      const te = g.tempEff?.[psc.teamKey] || {};
+      if (te['paintAst' + psc.playerIdx]) {
+        myT.assists += 1;
+        if (g.analytics?.[psc.teamKey]) g.analytics[psc.teamKey].assistsFromCards += 1;
+        g.log = [...g.log, { team: psc.teamKey, msg: `Short-Roll Playmaker: ${player?.name} scores inside — +1 AST` }];
+      }
+    }
     if (hitAst) {
       myT.assists += hitAst;
       if (g.analytics?.[psc.teamKey]) g.analytics[psc.teamKey].assistsFromCards += hitAst;

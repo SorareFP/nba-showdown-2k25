@@ -148,6 +148,19 @@ export const STRATS = [
     desc:'Spend 2 Assists: a player with a 3PT Bonus announces a 3PT Shot Check at +1. Hit: gain 2 Assists back.' },
   { id:'extra_pass',          name:'Extra Pass',         phase:'scoring',  side:'off', copies:3, locked:false, color:'#EAB308', rarity:'common',
     desc:'Spend 2 Assists: any player announces a 3PT or Paint Shot Check. No card bonuses apply to this check.' },
+  // ── WAVE TWO (2026-09-07) ────────────────────────────────────────────────
+  // The user's own designs, recovered from the damaged backlog docx — see
+  // docs/strategy-cards-backlog-recovered.md. Run the Floor and Twin Towers
+  // are NOT here: they persist across sections and the allocation is the
+  // opponent's, which is an interaction this game has never had.
+  { id:'outside_pick',        name:'Outside Pick',       phase:'scoring',  side:'off', copies:2, locked:false, color:'#B45309', rarity:'uncommon',
+    desc:'Discard a card: this player takes a 3PT Shot Check at +5. Hit: 3 points and +1 Assist.' },
+  { id:'pick_and_roll_maestro', name:'Pick-and-Roll Maestro', phase:'matchup', side:'off', copies:1, locked:true, color:'#9A3412', rarity:'rare',
+    desc:'A player at Speed 14+ swaps defenders with a teammate. If their new defender is 5+ slower than they are, they take a Paint Shot Check: 2 points and +1 Assist.' },
+  { id:'short_roll_playmaker', name:'Short-Roll Playmaker', phase:'matchup', side:'off', copies:2, locked:false, color:'#155E75', rarity:'uncommon',
+    desc:'Designate a player with Speed 8+ and Power 8+: they add +1 Assist every time they score in the paint this period.' },
+  { id:'inside_out',          name:'Inside-Out',         phase:'reaction', side:'off', copies:2, locked:false, color:'#1D4ED8', rarity:'uncommon',
+    desc:'After one of your players scores in the paint: a teammate takes a free 3PT Shot Check.' },
   { id:'lob_city',            name:'Lob City',           phase:'scoring',  side:'off', copies:1, locked:false, color:'#7E22CE', rarity:'rare',
     desc:'Needs a player with Speed or Power 15+. Discard a card: every player with Speed 15+ adds an Assist, every player with Power 15+ scores 2.' },
   { id:'stretch_five',        name:'Stretch Five',       phase:'scoring',  side:'off', copies:2, locked:false, color:'#6D28D9', rarity:'uncommon',

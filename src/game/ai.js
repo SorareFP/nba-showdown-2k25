@@ -370,6 +370,11 @@ function evaluateCard(game, teamKey, cardId, strat) {
     five_out: 6, hammer_set: 4, iso_heavy: 5, three_point_barrage: 8, crash_and_kick: 5,
     pick_and_pop: 5, extra_pass: 4, lob_city: 8, stretch_five: 6, post_domination: 6,
     unsung_hero: 6, transition_outlet: 5,
+    // Wave two (2026-09-07). Outside Pick costs a card, so it is priced under
+    // the free threes; Maestro is high because a 5+ mismatch is the best paint
+    // check in the game; Inside-Out is a free three off a bucket you already
+    // have; Short-Roll is a slow burn that only pays if the big scores inside.
+    outside_pick: 6, pick_and_roll_maestro: 8, inside_out: 7, short_roll_playmaker: 5,
     // Post-roll
     heat_check: 7,
     burst_of_momentum: 6,
@@ -872,6 +877,42 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
     case 'lob_city': case 'denial': {
       const others = (myT.hand || []).filter(id => id !== cardId);
       return { discardId: others[others.length - 1] };
+    }
+
+    // ═══ WAVE TWO (2026-09-07) ═══════════════════════════════════════════════
+    case 'outside_pick': {
+      // The best shooter takes it; the cheapest card in hand pays for it.
+      const shooters = starters.map((p, i) => ({ p, i })).filter(({ p }) => p)
+        .sort((u, v) => ((u.p.shotLine ?? 18) - (u.p.threePtBoost || 0)) - ((v.p.shotLine ?? 18) - (v.p.threePtBoost || 0)));
+      const others = (myT.hand || []).filter(id => id !== cardId);
+      return { playerIdx: shooters[0]?.i ?? 0, discardId: others[others.length - 1] };
+    }
+    case 'short_roll_playmaker': {
+      // Of the players who clear 8/8, the one most likely to score inside.
+      const cand = starters.map((p, i) => ({ p, i }))
+        .filter(({ p }) => p && (p.speed || 0) >= 8 && (p.power || 0) >= 8)
+        .sort((u, v) => ((v.p.paintBoost || 0) - (u.p.paintBoost || 0)) || (v.p.power - u.p.power));
+      return { playerIdx: cand[0]?.i ?? 0 };
+    }
+    case 'pick_and_roll_maestro': {
+      // The fastest qualifying handler, then the swap that buys the biggest
+      // gap — the card is that choice, so the AI makes it properly.
+      const mu = game.offMatchups?.[teamKey] || [];
+      const fast = starters.map((p, i) => ({ p, i })).filter(({ p }) => p && (p.speed || 0) >= 14)
+        .sort((u, v) => v.p.speed - u.p.speed);
+      const who = fast[0];
+      if (!who) return { playerIdx: 0 };
+      const mate = starters.map((p, i) => ({ p, i })).filter(({ p, i }) => p && i !== who.i)
+        .map(({ i }) => ({ i, gap: (who.p.speed || 0) - (oppT.starters[mu[i] ?? i]?.speed || 0) }))
+        .sort((u, v) => v.gap - u.gap);
+      return { playerIdx: who.i, player2Idx: mate[0]?.i ?? (who.i === 0 ? 1 : 0) };
+    }
+    case 'inside_out': {
+      // Anyone but the man who just scored inside; the best shooter of them.
+      const scorer = game.lastPaintScore?.playerIdx;
+      const mates = starters.map((p, i) => ({ p, i })).filter(({ p, i }) => p && i !== scorer)
+        .sort((u, v) => ((u.p.shotLine ?? 18) - (u.p.threePtBoost || 0)) - ((v.p.shotLine ?? 18) - (v.p.threePtBoost || 0)));
+      return { playerIdx: scorer ?? 0, player2Idx: mates[0]?.i ?? 0 };
     }
     case 'stretch_five': {
       const big = starters.map((p, i) => ({ p, i })).find(({ p }) => p && String(p.pos || '').split(/[-/]/).some(t => t === 'C' || t === 'PF') && ((p.shotLine ?? 18) - (p.threePtBoost || 0)) <= 14);

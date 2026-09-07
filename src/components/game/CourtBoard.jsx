@@ -175,6 +175,8 @@ async function buildOpts(game, teamKey, cardId, base, openModal, ui = {}) {
     'five_out', 'hammer_set', 'iso_heavy', 'crash_and_kick', 'pick_and_pop', 'extra_pass',
     'stretch_five', 'post_domination', 'unsung_hero', 'transition_outlet',
     'find_the_open_man', 'putback_specialist', 'hustle_play',
+    // Wave two (2026-09-07).
+    'outside_pick', 'short_roll_playmaker', 'pick_and_roll_maestro',
   ];
 
   // Cards that show ALL my starters (no filtering — additive, safe post-roll)
@@ -535,8 +537,8 @@ async function buildOpts(game, teamKey, cardId, base, openModal, ui = {}) {
       if (s !== null) opts.extraShooterIdx = s;
     }
   }
-  // ── Pin Down Screen, Lob City, Denial: discard a card from hand ─────────
-  if (cardId === 'pin_down_screen' || cardId === 'lob_city' || cardId === 'denial') {
+  // ── Pin Down Screen, Lob City, Denial, Outside Pick: discard from hand ──
+  if (cardId === 'pin_down_screen' || cardId === 'lob_city' || cardId === 'denial' || cardId === 'outside_pick') {
     const handWithoutThis = myT.hand.filter(id => id !== cardId);
     if (handWithoutThis.length === 0) { toast('No cards to discard.'); return null; }
     const discardPlayers = handWithoutThis.map((id, i) => ({ id, name: id.replace(/_/g, ' '), origIdx: i }));
@@ -565,6 +567,52 @@ async function buildOpts(game, teamKey, cardId, base, openModal, ui = {}) {
     // Track original and new defender from the switch
     opts.originalDefIdx = lc.opts.origD1;
     opts.newDefIdx = lc.opts.origD2;
+  }
+
+  // ── Short-Roll Playmaker: the 8/8 facilitator ──────────────────────────
+  if (cardId === 'short_roll_playmaker') {
+    const eligible = filterStarters(myT.starters, p => p && (p.speed || 0) >= 8 && (p.power || 0) >= 8);
+    if (eligible.length === 0) { toast('Nobody on the floor has Speed 8+ and Power 8+.'); return null; }
+    const pick = await pickFiltered(eligible, 'Who is your short-roll facilitator?', teamKey);
+    if (pick === null) return null;
+    opts.playerIdx = pick;
+  }
+
+  // ── Pick-and-Roll Maestro: the ball-handler, then who he trades with ────
+  if (cardId === 'pick_and_roll_maestro') {
+    const fast = filterStarters(myT.starters, p => p && (p.speed || 0) >= 14);
+    if (fast.length === 0) { toast('Nobody on the floor is Speed 14+.'); return null; }
+    const who = await pickFiltered(fast, 'Who runs the pick-and-roll? (Speed 14+)', teamKey);
+    if (who === null) return null;
+    opts.playerIdx = who;
+    // The mismatch it BUYS, shown before the choice: this is the whole card.
+    const mine = myT.starters[who];
+    const mates = filterStarters(myT.starters, (p, i) => p && i !== who);
+    // THE MISMATCH EACH SWAP WOULD BUY, on the option itself — the whole card
+    // is this choice, and making it blind would be making it a coin flip.
+    const mate = await pickFiltered(
+      mates,
+      `Swap ${mine?.name}'s defender with whose?`,
+      teamKey,
+      (p, origIdx) => {
+        const d = defenders[offMatchups[origIdx]];
+        const gap = (mine?.speed || 0) - (d?.speed || 0);
+        return `→ draws ${d?.name}, ${gap >= 5 ? `${gap} slower — CHECK` : `only ${gap} slower, no check`}`;
+      }
+    );
+    if (mate === null) return null;
+    opts.player2Idx = mate;
+  }
+
+  // ── Inside-Out: who gets the kick-out three ────────────────────────────
+  if (cardId === 'inside_out') {
+    const scorer = game.lastPaintScore;
+    if (!scorer || scorer.teamKey !== teamKey) { toast('No paint score of yours to play off.'); return null; }
+    const mates = filterStarters(myT.starters, (p, i) => p && i !== scorer.playerIdx);
+    if (mates.length === 0) { toast('No teammate to kick out to.'); return null; }
+    const mate = await pickFiltered(mates, 'Kick it out to whom?', teamKey);
+    if (mate === null) return null;
+    opts.player2Idx = mate;
   }
 
   // ── Cold Spell: target OPPONENT who rolled natural 1 or 2 ──────────────

@@ -13,8 +13,8 @@
 // surfaces the gilded treatment paints — the top band and the frame ring.
 // The field's own faint diagonal sheen is a shimmer over the team colour, not
 // a gold part, and is left alone.
-import { SUPER_SEASON_SET, WNBA_SUPER_SEASON_SET } from './sets.js';
-import { SUPER_SEASON_BADGE } from './badges.js';
+import { cardTreatment } from './sets.js';
+import { badgesFor } from './badgeLookup.js';
 
 export const FACE_W = 843;
 export const FACE_H = 1181;
@@ -55,12 +55,18 @@ export function clipPathFor(region) {
   }
 }
 
-/** Whether a card wears the gilded Super Season treatment (by set, badge, or origin). */
+/**
+ * Whether a card's PRINTED face wears the gold foil — asked of the same rule
+ * the template asks (`cardTreatment`): the two Super Season sets declare it,
+ * and a base card with the Super Season pill at $900 and up earns it (the
+ * Brandon Miller case, 2026-09-02). Base cards do not carry their badges, so
+ * the lookup goes through badgeLookup.js, which reads the generator's file
+ * exactly as the studio does before it renders. The user, 2026-09-06: "Not
+ * seeing the sheen on the gold/gilded parts of super seasons in the base set."
+ */
 export function wearsGold(card) {
   if (!card) return false;
-  const sets = [card.set, card.migratedFrom?.set];
-  if (sets.some(s => s === SUPER_SEASON_SET || s === WNBA_SUPER_SEASON_SET)) return true;
-  return Array.isArray(card.badges) && card.badges.includes(SUPER_SEASON_BADGE);
+  return cardTreatment(card.set, card.salary, badgesFor(card)) === 'gold-foil';
 }
 
 /** The regions the sheen covers on this card: the photo, plus the gold on a Super Season. */

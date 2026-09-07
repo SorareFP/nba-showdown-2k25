@@ -49,13 +49,40 @@ describe('faceRegions', () => {
     expect(clipPathFor('nope')).toBe('none');
   });
 
-  it('gives the gold only to Super Season cards, by set, badge or origin', () => {
-    expect(holoRegionsFor({ set: BASE_SET })).toEqual(['photo']);
-    expect(holoRegionsFor({ set: ROOKIE_SET })).toEqual(['photo']);
-    expect(holoRegionsFor({ set: SUPER_SEASON_SET })).toEqual(['photo', 'band', 'frame']);
-    expect(holoRegionsFor({ set: WNBA_SUPER_SEASON_SET })).toEqual(['photo', 'band', 'frame']);
-    expect(wearsGold({ set: 'set-rewards', migratedFrom: { set: SUPER_SEASON_SET } })).toBe(true);
-    expect(wearsGold({ set: 'wnba-team-rewards', badges: ['super-season'] })).toBe(true);
+  it('gives the gold to exactly the faces the print gilds', () => {
+    // The two Super Season sets declare the foil.
+    expect(holoRegionsFor({ set: SUPER_SEASON_SET, salary: 1200 })).toEqual(['photo', 'band', 'frame']);
+    expect(holoRegionsFor({ set: WNBA_SUPER_SEASON_SET, salary: 1200 })).toEqual(['photo', 'band', 'frame']);
+    // A plain base card and a rookie card do not.
+    expect(holoRegionsFor({ set: BASE_SET, id: 'Nobody', salary: 1300 })).toEqual(['photo']);
+    expect(holoRegionsFor({ set: ROOKIE_SET, salary: 1300 })).toEqual(['photo']);
+    // A base card wearing the Super Season pill is gilded at $900 and up (the
+    // badge is on the card here; base cards in the app get it from the file).
+    expect(wearsGold({ set: BASE_SET, salary: 1200, badges: ['super-season'] })).toBe(true);
+    expect(wearsGold({ set: BASE_SET, salary: 850, badges: ['super-season'] })).toBe(false);
+    expect(wearsGold({ set: BASE_SET, salary: 1200, badges: ['super-season', 'rookie'] })).toBe(false);
+    // A capstone migrated from Super Season prints in the reward set's bronze, not gold.
+    expect(wearsGold({ set: 'set-rewards', salary: 1400, badges: ['super-season', 'set-reward'], migratedFrom: { set: SUPER_SEASON_SET } })).toBe(false);
     expect(wearsGold(null)).toBe(false);
+  });
+
+  it('finds a base card\'s badges in the generator\'s file, the way the studio does', async () => {
+    const { badgesFor } = await import('./badgeLookup.js');
+    const { CARD_SETS } = await import('../game/cardSets.js');
+    // The pool the app plays and the badge file describe CURRENT_SET (2026-27);
+    // sets.js's BASE_SET is the shipped 2025-26 set.
+    const { CURRENT_SET } = await import('./sets.js');
+    const base = CARD_SETS[CURRENT_SET];
+    // Every base card whose best season is this one carries the pill in the
+    // file and none of them carries it on the object.
+    const gilded = base.filter(c => wearsGold(c));
+    expect(base.some(c => Array.isArray(c.badges))).toBe(false);
+    expect(gilded.length).toBeGreaterThan(0);
+    for (const c of gilded) {
+      expect(badgesFor(c)).toContain('super-season');
+      expect(c.salary).toBeGreaterThanOrEqual(900);
+    }
+    // And the top of the base set, whose best season is now, is among them.
+    expect(gilded.map(c => c.name)).toContain('Victor Wembanyama');
   });
 });

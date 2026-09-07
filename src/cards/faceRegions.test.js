@@ -6,7 +6,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { CARD_WIDTH, CARD_HEIGHT } from './CardTemplate.jsx';
 import {
-  FACE_W, FACE_H, PHOTO_POLYGON, BAND_POLYGON, FRAME_RING, clipPathFor, wearsGold, holoRegionsFor,
+  FACE_W, FACE_H, PHOTO_POLYGON, BAND_POLYGON, FRAME_RING, NAME_SLOT, clipPathFor, wearsGold, holoRegionsFor,
 } from './faceRegions.js';
 import { SUPER_SEASON_SET, WNBA_SUPER_SEASON_SET, ROOKIE_SET, BASE_SET } from './sets.js';
 
@@ -49,18 +49,22 @@ describe('faceRegions', () => {
     expect(clipPathFor('nope')).toBe('none');
   });
 
-  it('gives the photo to a legendary and the gold to every gilded face', () => {
-    // A legendary Super Season gets all three; a super-rare one only the gold.
-    expect(holoRegionsFor({ set: SUPER_SEASON_SET, salary: 1200 })).toEqual(['photo', 'band', 'frame']);
-    expect(holoRegionsFor({ set: WNBA_SUPER_SEASON_SET, salary: 1200 })).toEqual(['photo', 'band', 'frame']);
-    expect(holoRegionsFor({ set: SUPER_SEASON_SET, salary: 950 })).toEqual(['band', 'frame']);
+  it('gives the photo to a legendary and the four gold surfaces to every gilded face', () => {
+    const keys = card => holoRegionsFor(card).map(r => r.key);
+    // A legendary Super Season gets the photo and the gold; a super-rare one only the gold.
+    // (These synthetic cards have no measurement, so the name falls back to its slot and there is no pill.)
+    expect(keys({ set: SUPER_SEASON_SET, salary: 1200 })).toEqual(['photo', 'band', 'frame', 'name']);
+    expect(keys({ set: WNBA_SUPER_SEASON_SET, salary: 1200 })).toEqual(['photo', 'band', 'frame', 'name']);
+    expect(keys({ set: SUPER_SEASON_SET, salary: 950 })).toEqual(['band', 'frame', 'name']);
     // A plain legendary gets the photo; a plain rookie or common gets nothing.
-    expect(holoRegionsFor({ set: BASE_SET, id: 'Nobody', salary: 1300 })).toEqual(['photo']);
-    expect(holoRegionsFor({ set: ROOKIE_SET, salary: 1300 })).toEqual(['photo']);
-    expect(holoRegionsFor({ set: BASE_SET, id: 'Nobody', salary: 400 })).toEqual([]);
+    expect(keys({ set: BASE_SET, id: 'Nobody', salary: 1300 })).toEqual(['photo']);
+    expect(keys({ set: ROOKIE_SET, salary: 1300 })).toEqual(['photo']);
+    expect(keys({ set: BASE_SET, id: 'Nobody', salary: 400 })).toEqual([]);
     expect(holoRegionsFor(null)).toEqual([]);
     // The user's three: gilded base cards under the legendary line get the gold.
-    expect(holoRegionsFor({ set: BASE_SET, salary: 1170, badges: ['super-season'] })).toEqual(['band', 'frame']);
+    expect(keys({ set: BASE_SET, salary: 1170, badges: ['super-season'] })).toEqual(['band', 'frame', 'name']);
+    // Every region carries its own clip.
+    for (const r of holoRegionsFor({ set: SUPER_SEASON_SET, salary: 1200 })) expect(r.clip).toMatch(/^polygon\(/);
     // A base card wearing the Super Season pill is gilded at $900 and up (the
     // badge is on the card here; base cards in the app get it from the file).
     expect(wearsGold({ set: BASE_SET, salary: 1200, badges: ['super-season'] })).toBe(true);
@@ -69,6 +73,27 @@ describe('faceRegions', () => {
     // A capstone migrated from Super Season prints in the reward set's bronze, not gold.
     expect(wearsGold({ set: 'set-rewards', salary: 1400, badges: ['super-season', 'set-reward'], migratedFrom: { set: SUPER_SEASON_SET } })).toBe(false);
     expect(wearsGold(null)).toBe(false);
+  });
+
+  it('reads the exporter\'s measurements: a name box on every measured face, a pill box on every gilded one', async () => {
+    const { measuredFor } = await import('./faceRegions.js');
+    const { CARD_SETS } = await import('../game/cardSets.js');
+    const { CURRENT_SET } = await import('./sets.js');
+    const base = CARD_SETS[CURRENT_SET];
+    const measured = base.map(c => ({ c, m: measuredFor(c) })).filter(x => x.m);
+    // The measuring pass (export.js --measure) covered the whole base set.
+    expect(measured.length).toBe(base.length);
+    for (const { c, m } of measured) {
+      expect(m.name, c.name).toHaveLength(4);
+      // The name lives in its slot: the left column, above the chart.
+      expect(m.name[0]).toBeGreaterThanOrEqual(0);
+      expect(m.name[0] + m.name[2]).toBeLessThanOrEqual(NAME_SLOT[0] + NAME_SLOT[2] + 0.01);
+      if (wearsGold(c)) expect(m.badge, `${c.name} pill`).toHaveLength(4);
+    }
+    // LaMelo: gilded, super-rare, the card the user pointed at — name, pill, and all five regions but the photo.
+    const lamelo = base.find(c => c.name === 'LaMelo Ball');
+    expect(measuredFor(lamelo).badge).toHaveLength(4);
+    expect(holoRegionsFor(lamelo).map(r => r.key)).toEqual(['band', 'frame', 'name', 'badge']);
   });
 
   it('finds a base card\'s badges in the generator\'s file, the way the studio does', async () => {

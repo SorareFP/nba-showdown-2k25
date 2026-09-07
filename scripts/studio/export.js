@@ -6,6 +6,7 @@
 //   npm run export:cards -- --all --prune  and delete cards the set no longer has
 //   npm run export:cards -- --all --missing            only faces that do not exist yet
 //   npm run export:cards -- --set rookie --only Buddy_Hield,Landry_Shamet
+//   npm run export:cards -- --set super-season --measure    boxes only, no PNGs
 //
 // The dev server must be running (npm run dev): the export drives a headless
 // browser through studio-export.html, which renders the SAME CardTemplate the
@@ -34,7 +35,7 @@
 // cannot reach them.
 import { chromium } from 'playwright';
 import { hasMigratedOut } from '../../src/game/cardSets.js';
-import { mkdirSync, readFileSync, existsSync, readdirSync, rmSync } from 'node:fs';
+import { mkdirSync, readFileSync, existsSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 // The app serves under Vite's base path — the same '/nba-showdown-2k25/' the
@@ -101,6 +102,14 @@ const only = args.includes('--only')
   ? new Set(String(args[args.indexOf('--only') + 1] ?? '').split(',').map(s => s.trim()).filter(Boolean))
   : null;
 const missingOnly = args.includes('--missing');
+// --measure       measure the face's movable gold surfaces (the rotated name,
+//                 the Super Season pill) and write them to face-regions.json
+//                 WITHOUT screenshotting — the fast pass. A normal export
+//                 measures too, so the file stays in step with the faces.
+const measureOnly = args.includes('--measure');
+const REGIONS_FILE = resolve(process.cwd(), 'card-data', 'generated', 'face-regions.json');
+const regions = existsSync(REGIONS_FILE) ? JSON.parse(readFileSync(REGIONS_FILE, 'utf8')) : { faces: {} };
+regions.faces ??= {};
 const sets = all ? Object.keys(SET_FILES) : [setArg ?? '2026-27'];
 
 for (const set of sets) {
@@ -149,7 +158,26 @@ for (const set of sets) {
       console.warn(`SKIP ${set}/${card.id}: card element did not render`);
       continue;
     }
-    await el.screenshot({ path: resolve(out, `${card.id}.png`) });
+    // THE MOVABLE GOLD, measured. The band and the frame sit where the
+    // template puts them (src/cards/faceRegions.js); the rotated name and the
+    // Super Season pill do not — the pill stacks under whatever marks the
+    // sidebar holds — so the app's sheen (HoloSheen.jsx) reads their boxes
+    // from here, as fractions of the card. CSS-module classes are hashed, so
+    // the match is on the `_name_` core of the class.
+    if (set !== 'strats') {
+      const measured = await el.evaluate(root => {
+        const box = root.getBoundingClientRect();
+        const frac = r => [
+          Number(((r.left - box.left) / box.width).toFixed(4)), Number(((r.top - box.top) / box.height).toFixed(4)),
+          Number((r.width / box.width).toFixed(4)), Number((r.height / box.height).toFixed(4)),
+        ];
+        const name = [...root.querySelectorAll('[class*="_nameText_"]')][0];
+        const pill = [...root.querySelectorAll('[class*="_badge_"]')].find(b => /super season/i.test(b.textContent || ''));
+        return { name: name ? frac(name.getBoundingClientRect()) : null, badge: pill ? frac(pill.getBoundingClientRect()) : null };
+      });
+      regions.faces[`${set}/${card.id}`] = measured;
+    }
+    if (!measureOnly) await el.screenshot({ path: resolve(out, `${card.id}.png`) });
     done += 1;
     if (done % 25 === 0) console.log(`  ${set}: ${done}/${wanted.length}…`);
   }
@@ -166,3 +194,7 @@ for (const set of sets) {
 }
 
 await browser.close();
+regions.generatedAt = new Date().toISOString();
+regions.note = 'Per-face boxes of the rotated name and the Super Season pill, as fractions of the 843x1181 face, measured by scripts/studio/export.js. Read by src/cards/faceRegions.js for the holographic sheen.';
+writeFileSync(REGIONS_FILE, `${JSON.stringify(regions, null, 2)}\n`);
+console.log(`face-regions.json: ${Object.keys(regions.faces).length} faces measured`);

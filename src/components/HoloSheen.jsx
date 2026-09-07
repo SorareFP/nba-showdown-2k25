@@ -47,7 +47,10 @@ import { useCallback, useEffect, useRef } from 'react';
 import { clipPathFor } from '../cards/faceRegions.js';
 import styles from './HoloSheen.module.css';
 
+// A region is `{ key, clip }` (holoRegionsFor's shape); a bare string names
+// one of the fixed regions and is resolved through clipPathFor.
 const DEFAULT_REGIONS = ['photo'];
+const asRegion = r => (typeof r === 'string' ? { key: r, clip: clipPathFor(r) } : r);
 
 /** The rectangle (relative to `box`) an <img> paints its picture in, under its object-fit and object-position. */
 export function drawnRect(img, box) {
@@ -164,8 +167,8 @@ export default function Holo({ active = true, regions = DEFAULT_REGIONS, idle = 
     >
       {children}
       <span className={styles.face} aria-hidden="true">
-        {regions.map(region => (
-          <span key={region} className={styles.region} data-region={region} style={{ clipPath: clipPathFor(region) }}>
+        {regions.map(asRegion).map(({ key, clip }) => (
+          <span key={key} className={styles.region} data-region={key} style={{ clipPath: clip }}>
             <span className={styles.foil} />
             <span className={styles.glare} />
           </span>

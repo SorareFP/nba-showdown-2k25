@@ -31,6 +31,16 @@ describe('HoloSheen', () => {
     expect(count(out, /class="[^"]*foil[^"]*"/g)).toBe(3);
   });
 
+  it('takes measured regions as objects with their own clip, the shape holoRegionsFor hands over', () => {
+    const out = html({ active: true, regions: [
+      { key: 'name', clip: 'polygon(1% 2%, 3% 2%, 3% 4%, 1% 4%)' },
+      { key: 'badge', clip: 'polygon(5% 6%, 7% 6%, 7% 8%, 5% 8%)' },
+    ] });
+    expect(count(out, /data-region="/g)).toBe(2);
+    expect(out).toContain('data-region="name" style="clip-path:polygon(1% 2%, 3% 2%, 3% 4%, 1% 4%)"');
+    expect(out).toContain('data-region="badge"');
+  });
+
   it('renders the plain element for anything that is not legendary', () => {
     expect(html({ active: false, className: 'art' })).toBe('<div class="art"><img src="x.png" alt=""/></div>');
   });

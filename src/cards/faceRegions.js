@@ -2,17 +2,28 @@
 //
 // The app shows a card as a flat PNG, so anything that wants to sit on one
 // part of it — the holographic sheen (src/components/HoloSheen.jsx) — needs
-// the template's geometry restated in fractions. These come straight from
-// CardTemplate.module.css and CardTemplate.jsx (CARD_WIDTH / CARD_HEIGHT) and
-// must move with them: a change to `.photoOuter` or `.topBand` is a change
-// here. faceRegions.test.js pins the numbers against the stylesheet's own.
+// the template's geometry restated in fractions. The FIXED surfaces come
+// straight from CardTemplate.module.css and CardTemplate.jsx (CARD_WIDTH /
+// CARD_HEIGHT) and must move with them: a change to `.photoOuter` or
+// `.topBand` is a change here; faceRegions.test.js pins the numbers against
+// the stylesheet's own. The MOVABLE ones — the rotated name, whose length is
+// the player's, and the Super Season pill, which stacks under whatever marks
+// the sidebar holds — are measured per face at export time
+// (scripts/studio/export.js) into card-data/generated/face-regions.json and
+// read here, with the name's slot as the fallback when a face was never
+// measured.
 //
-// The user (2026-09-06): "can it just be added to the photo area of the card,
-// as well as the gold parts of the super season styling?" So: the PHOTO for
-// every card that gets a sheen, and on a Super Season card also the two gold
-// surfaces the gilded treatment paints — the top band and the frame ring.
-// The field's own faint diagonal sheen is a shimmer over the team colour, not
-// a gold part, and is left alone.
+// ── WHAT THE SHEEN COVERS (the user, 2026-09-06) ────────────────────────────
+//
+//   "just the photo area of the card, as well as the gold parts of the super
+//    season styling" — then, on seeing LaMelo, Jaylen Brown and Stephon
+//   Castle bare: "make the gilded sheen (for super seasons only) work for
+//   anyone who isn't legendary, we just won't make the photo box holographic"
+//   — then: "the name and super season badge to be holographic too, because
+//   they are made gold by the super season styling."
+//
+// So: the PHOTO on a legendary; on any face the print gilds, the four gold
+// surfaces — the top band, the frame ring, the name, the Super Season pill.
 import { cardTreatment } from './sets.js';
 import { badgesFor } from './badgeLookup.js';
 import { getPlayerRarity } from '../game/rarity.js';
@@ -43,17 +54,40 @@ export const FRAME_RING = {
   inner: [[fx(7), fy(7)], [1 - fx(7), fy(7)], [1 - fx(7), 1 - fy(7)], [fx(7), 1 - fy(7)]],
 };
 
+/** `.nameSlot`: the column the rotated name is centred in — the fallback when a face has no measurement. */
+export const NAME_SLOT = [fx(0), fy(118), fx(148), fy(900)];
+
 const pct = v => `${(v * 100).toFixed(2)}%`;
 const points = poly => poly.map(([x, y]) => `${pct(x)} ${pct(y)}`).join(', ');
+const rectPolygon = ([x, y, w, h]) => [[x, y], [x + w, y], [x + w, y + h], [x, y + h]];
 
-/** The CSS clip-path for a named region, in percentages of the face box. */
+/** The CSS clip-path for a fixed region, in percentages of the face box. */
 export function clipPathFor(region) {
   switch (region) {
     case 'photo': return `polygon(${points(PHOTO_POLYGON)})`;
     case 'band': return `polygon(${points(BAND_POLYGON)})`;
     case 'frame': return `polygon(evenodd, ${points(FRAME_RING.outer)}, ${points(FRAME_RING.inner)})`;
+    case 'name': return `polygon(${points(rectPolygon(NAME_SLOT))})`;
     default: return 'none';
   }
+}
+
+/** A clip-path for a measured box [x, y, w, h] in face fractions, padded a hair so glyph edges are inside it. */
+export function clipPathForBox(box, pad = 0.004) {
+  const [x, y, w, h] = box;
+  return `polygon(${points(rectPolygon([x - pad, y - pad, w + 2 * pad, h + 2 * pad]))})`;
+}
+
+// ── The measurements ────────────────────────────────────────────────────────
+// Same import.meta.glob treatment as badgeLookup.js: the file is generated,
+// and a checkout without it must still run — with the name's slot and no pill.
+const regionModules = import.meta.glob('../../card-data/generated/face-regions.json', { eager: true });
+const MEASURED = Object.values(regionModules)[0]?.default?.faces ?? {};
+
+/** The measured boxes for a card's face, or null when it was never measured. */
+export function measuredFor(card) {
+  if (!card?.set || !card?.id) return null;
+  return MEASURED[`${card.set}/${card.id}`] ?? null;
 }
 
 /**
@@ -62,8 +96,7 @@ export function clipPathFor(region) {
  * and a base card with the Super Season pill at $900 and up earns it (the
  * Brandon Miller case, 2026-09-02). Base cards do not carry their badges, so
  * the lookup goes through badgeLookup.js, which reads the generator's file
- * exactly as the studio does before it renders. The user, 2026-09-06: "Not
- * seeing the sheen on the gold/gilded parts of super seasons in the base set."
+ * exactly as the studio does before it renders.
  */
 export function wearsGold(card) {
   if (!card) return false;
@@ -71,24 +104,20 @@ export function wearsGold(card) {
 }
 
 /**
- * The regions the sheen covers on this card — and, by being empty, whether it
- * gets one at all. Two triggers, two places:
- *
- *   legendary  → the PHOTO (the original ask: "a holographic sheen on
- *                legendary cards")
- *   gilded     → the gold BAND and FRAME, at any rarity. The user, seeing
- *                LaMelo Ball, Jaylen Brown and Stephon Castle — gilded base
- *                cards at $1,030-1,170, super-rare — with nothing: "I still
- *                don't see any sheen on some base set super seasons". The
- *                foil IS the Super Season styling, so every face that prints
- *                it shimmers on it.
- *
- * A legendary Super Season gets all three; a plain common gets none.
+ * The regions the sheen covers on this card, as `{ key, clip }` — and, by
+ * being empty, whether it gets one at all. A legendary Super Season gets all
+ * five; a plain common gets none.
  */
 export function holoRegionsFor(card) {
   if (!card) return [];
-  const regions = [];
-  if (getPlayerRarity(card) === 'legendary') regions.push('photo');
-  if (wearsGold(card)) regions.push('band', 'frame');
-  return regions;
+  const out = [];
+  if (getPlayerRarity(card) === 'legendary') out.push({ key: 'photo', clip: clipPathFor('photo') });
+  if (wearsGold(card)) {
+    const m = measuredFor(card);
+    out.push({ key: 'band', clip: clipPathFor('band') });
+    out.push({ key: 'frame', clip: clipPathFor('frame') });
+    out.push({ key: 'name', clip: m?.name ? clipPathForBox(m.name) : clipPathFor('name') });
+    if (m?.badge) out.push({ key: 'badge', clip: clipPathForBox(m.badge) });
+  }
+  return out;
 }

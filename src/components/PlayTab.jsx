@@ -58,6 +58,69 @@ function gameReducer(state, action) {
 const AI_DELAY = 700;
 
 /**
+ * A GAME SURVIVES A RELOAD.
+ *
+ * The game lived in a useReducer and nowhere else, so a refresh, a hot reload
+ * from an edit, or a tab the browser decided to discard threw a whole game
+ * away mid-section. The user, 2026-09-07, after an edit of mine reloaded the
+ * dev server under him: "game-states might need to save so that people don't
+ * get booted from their games."
+ *
+ * Saved on every change, restored as the reducer's initial state. The season
+ * preset rides along, because a restored fixture still has to report its score
+ * back — App's copy of the preset is gone after a reload, so PlayTab keeps its
+ * own. Cleared when the game is abandoned or played out and left.
+ *
+ * localStorage can be absent or refuse (a private window, a browser set to
+ * block site data), so every access is guarded and a game that cannot be
+ * saved is still a game that can be played.
+ */
+const SAVE_KEY = 'showdown.game';
+function readSavedGame() {
+  try {
+    const raw = globalThis.localStorage?.getItem(SAVE_KEY);
+    const parsed = raw ? JSON.parse(raw) : null;
+    return parsed && typeof parsed === 'object' && parsed.game ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+function writeSavedGame(game, preset) {
+  try {
+    if (!game) globalThis.localStorage?.removeItem(SAVE_KEY);
+    else globalThis.localStorage?.setItem(SAVE_KEY, JSON.stringify({ game, preset: preset ?? null, at: Date.now() }));
+  } catch {
+    /* unsaved, still playable */
+  }
+}
+
+/**
+ * WHO MAY ROLL NEXT, once both sides have passed and the dice are live.
+ *
+ * Strict alternation with the human leading: the human rolls, the coach rolls,
+ * and the human gets the floor back — to roll again or to play a reaction —
+ * before the coach's next die. A side with nobody left to roll stands aside
+ * and the other finishes. `pending` counts slots that are neither rolled nor
+ * blocked, so a This Is My House block does not stall the rotation.
+ *
+ * Returns { A, B }: whether each side may roll right now. Used by the AI
+ * driver for B and by CourtBoard to enable the human's buttons for A.
+ */
+function rollGate(game) {
+  const pending = key => {
+    const rolls = game.rollResults?.[key] || [];
+    const blocked = game.blockedRolls?.[key] || {};
+    return [0, 1, 2, 3, 4].filter(i => rolls[i] == null && !blocked[i]).length;
+  };
+  const a = pending('A');
+  const b = pending('B');
+  return {
+    A: b === 0 || a >= b,   // the human leads: equal counts means it is A's turn
+    B: a === 0 || b > a,    // the coach follows: it rolls only once it is behind
+  };
+}
+
+/**
  * `preset` is a game somebody else decided on: a season fixture, handed down
  * from App. It carries the two rosters, which side of the fixture you are, and
  * the ids needed to report the score back. When one is set the pre-game screen
@@ -65,8 +128,16 @@ const AI_DELAY = 700;
  * offering Play Again — the schedule decides what comes next, not this tab.
  */
 export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null, onPresetFinish = null }) {
-  const [game, dispatch] = useReducer(gameReducer, null);
+  // The save, read once. Its preset is the one PlayTab uses when App has none
+  // — which after a reload is always.
+  const [saved] = useState(readSavedGame);
+  const [game, dispatch] = useReducer(gameReducer, saved?.game ?? null);
+  const [restoredPreset, setRestoredPreset] = useState(saved?.preset ?? null);
+  const livePreset = preset ?? restoredPreset;
   const { ask } = useDialogs();
+
+  // Every change goes to the save; a null game clears it.
+  useEffect(() => { writeSavedGame(game, livePreset); }, [game, livePreset]);
 
   // WHO PLAYS TEAM B. 'ai' hands B to the coach below; 'human' switches the
   // coach off and the game is hotseat — you play both sides, which is what
@@ -137,7 +208,16 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
           const rollsB = game.rollResults?.B || [];
           const blockedB = game.blockedRolls?.B || {};
           const needsRoll = [0, 1, 2, 3, 4].some(i => rollsB[i] == null && !blockedB[i]);
-          if (needsRoll) {
+          // A-B-A-B, NOT B-B-B-B-B. This effect re-fires on every game change,
+          // so once rolling opened the coach rolled all five of its players
+          // back to back and every reaction window between them was gone
+          // before a human could reach it — Anticipate the Pass most visibly
+          // (the user, 2026-09-07: "the CPU just goes and goes and goes").
+          // Both simulators already alternate; the live driver now does too.
+          // See rollGate below for the rule, which is the same one the
+          // human's Roll buttons obey from the other side.
+          const gate = rollGate(game);
+          if (needsRoll && gate.B) {
             // Crunch Time: the AI calls its timeout (defensive re-set via the
             // reducer), then next tick plays its best rider from the open
             // window, then resumes.
@@ -209,6 +289,8 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
   useEffect(() => {
     if (!preset) { presetRef.current = null; return; }
     if (presetRef.current === preset.key) return;
+    // A fresh preset from App supersedes anything restored.
+    setRestoredPreset(null);
     presetRef.current = preset.key;
     const deal = () => {
       setOpponent('ai');
@@ -253,7 +335,7 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
 
   // One frame of the pre-game screen before the effect above deals the fixture
   // would read as a flicker, so a pending preset shows nothing at all.
-  if (!game) return preset ? null : (
+  if (!game) return livePreset ? null : (
     <NoGame
       canUseBuilt={rosterA.length >= 5 && rosterB.length >= 5}
       rosterA={rosterA} rosterB={rosterB}
@@ -263,14 +345,14 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
   );
 
   if (game.done) {
-    if (!preset) return <GameOver game={game} onPlayAgain={handlers.onPlayAgain} />;
+    if (!livePreset) return <GameOver game={game} onPlayAgain={handlers.onPlayAgain} />;
     // The score as the FIXTURE sees it — see resultFromPlayed for why the
     // home/away mapping is not written out here.
-    const result = { seasonId: preset.seasonId, ...resultFromPlayed(preset, game.teamA.score, game.teamB.score) };
+    const result = { seasonId: livePreset.seasonId, ...resultFromPlayed(livePreset, game.teamA.score, game.teamB.score) };
     return (
       <GameOver
         game={game}
-        onLeave={() => { dispatch({ type: 'SET', game: null }); onPresetFinish?.(result); }}
+        onLeave={() => { dispatch({ type: 'SET', game: null }); setRestoredPreset(null); onPresetFinish?.(result); }}
         leaveLabel="Back to the season →"
       />
     );
@@ -281,23 +363,24 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
   // game sat there with no exit but playing it through. Same reset the
   // results screen uses, behind a confirm because it discards the game.
   const abandon = async () => {
-    const yes = await ask(preset
+    const yes = await ask(livePreset
       ? { title: 'Leave this fixture?', body: 'It stays unplayed and you can come back to it.', confirmLabel: 'Leave it' }
-      : { title: 'Abandon this game?', body: 'Nothing about it is saved.', confirmLabel: 'Abandon', tone: 'danger' });
+      : { title: 'Abandon this game?', body: 'Nothing about it is kept.', confirmLabel: 'Abandon', tone: 'danger' });
     if (!yes) return;
     dispatch({ type: 'SET', game: null });
+    setRestoredPreset(null);
     // No result: the season clears the preset and leaves the fixture open.
-    if (preset) onPresetFinish?.(null);
+    if (livePreset) onPresetFinish?.(null);
   };
 
   return (
     <div className={styles.layout}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
         <div style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 600 }}>
-          {preset ? preset.label : ''}
+          {livePreset ? livePreset.label : ''}
         </div>
         <button className={styles.btnSec} onClick={abandon} style={{ fontSize: 12, padding: '4px 12px' }}>
-          {preset ? '✕ Leave fixture' : '✕ Abandon game'}
+          {livePreset ? '✕ Leave fixture' : '✕ Abandon game'}
         </button>
       </div>
       <Scoreboard game={game} />
@@ -306,6 +389,9 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
       <CourtBoard
         game={game}
         setGame={handlers.setGame}
+        // Only against the coach: hotseat is two humans at one screen and
+        // they alternate by agreement, and PvP has its own turn machinery.
+        rollGate={opponent === 'ai' ? rollGate(game) : null}
         onRoll={handlers.onRoll}
         onEndSection={handlers.onEndSection}
         onExecCard={handlers.onExecCard}

@@ -438,3 +438,19 @@
   border-top: 1px solid var(--border);
   letter-spacing: 0.02em;
 }
+
+/* ── Live effects on a slot ──────────────────────────────────────────────
+   Temporary, card-driven, gone at section end. Distinct from the printed
+   boosts (.b3pt/.bpnt/.bdef) by a dotted edge, so a glance separates what the
+   card says from what is happening to it right now. */
+.liveRow { display:flex; gap:2px; flex-wrap:wrap; margin-top:1px; }
+.live {
+  font-size:7px; padding:0 3px; border-radius:999px; font-weight:700;
+  border:1px dotted currentColor; line-height:1.5;
+}
+.liveGood { color:#86EFAC; background:rgba(22,163,74,0.18); }
+.liveBad  { color:#FCA5A5; background:rgba(220,38,38,0.18); }
+.liveDef  { color:#93C5FD; background:rgba(59,130,246,0.18); }
+
+/* The placement preview's two directions, stacked. */
+.placementBoth { display:flex; flex-direction:column; gap:1px; }

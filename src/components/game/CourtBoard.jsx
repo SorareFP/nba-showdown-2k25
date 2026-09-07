@@ -18,7 +18,7 @@ function HelpBtn({ section }) {
   return <button className={styles.helpBtn} onClick={handleClick} title="How to Play">?</button>;
 }
 
-export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExecCard, onResolve, onSpendAssist, onSpendRebound, onDraftSubmit, onPlacePlayer, onTimeout = null, onEndTimeout = null, pvpMode = false, myTeamKey = null, isMyTurn = true, defenceIsHuman = false }) {
+export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExecCard, onResolve, onSpendAssist, onSpendRebound, onDraftSubmit, onPlacePlayer, onTimeout = null, onEndTimeout = null, pvpMode = false, myTeamKey = null, isMyTurn = true, defenceIsHuman = false, rollGate = null }) {
   // ── Solo placement ─────────────────────────────────────────────────────────
   //
   // PvP passes a Firebase-backed onPlacePlayer; solo places locally with the
@@ -97,7 +97,7 @@ export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExec
                 <MatchupRow key={i} idx={i} game={game} setGame={setGame}
                   onRoll={onRoll} onExecCard={handleExecCard} onSpendAssist={onSpendAssist} onSpendRebound={onSpendRebound}
                   onPlacePlayer={placeHandler}
-                  pvpMode={pvpMode} myTeamKey={myTeamKey} isMyTurn={isMyTurn} />
+                  pvpMode={pvpMode} myTeamKey={myTeamKey} isMyTurn={isMyTurn} rollGate={rollGate} />
               ))}
             </div>
             <TrackPanel game={game} side="left" />
@@ -1019,7 +1019,7 @@ function PhaseBar({ game, setGame, onEndSection, onTimeout = null, onEndTimeout 
   return null;
 }
 
-function MatchupRow({ idx, game, setGame, onRoll, onExecCard, onSpendAssist, onSpendRebound, onPlacePlayer, pvpMode = false, myTeamKey = null, isMyTurn = true }) {
+function MatchupRow({ idx, game, setGame, onRoll, onExecCard, onSpendAssist, onSpendRebound, onPlacePlayer, pvpMode = false, myTeamKey = null, isMyTurn = true, rollGate = null }) {
   if (game.phase === 'draft') return null; // Draft handled by BlindPickPhase
   const ap=game.teamA.starters[idx], bp=game.teamB.starters[idx];
   // During placement phase, empty slots need special handling
@@ -1088,7 +1088,7 @@ function MatchupRow({ idx, game, setGame, onRoll, onExecCard, onSpendAssist, onS
         defPlayer={aDef} defSelect={game.teamB.starters} defIdx={aDefIdx}
         onDefChange={di=>{const g=JSON.parse(JSON.stringify(game));g.offMatchups.A[idx]=di;setGame(g);}}
         onRoll={()=>onRoll('A',idx)} onClutch={()=>onRoll('A',idx,{clutch:true})} onSpendAssist={onSpendAssist} onSpendRebound={onSpendRebound}
-        pvpDisabled={pvpMode && myTeamKey !== 'A'} />
+        pvpDisabled={pvpMode && myTeamKey !== 'A'} rollLocked={rollGate ? !rollGate.A : false} />
       <div className={styles.connector}>
         <div className={styles.connLine}/><div className={styles.slotNum}>{idx+1}</div><div className={styles.connLine}/>
       </div>
@@ -1098,7 +1098,7 @@ function MatchupRow({ idx, game, setGame, onRoll, onExecCard, onSpendAssist, onS
         defPlayer={bDef} defSelect={game.teamA.starters} defIdx={bDefIdx}
         onDefChange={di=>{const g=JSON.parse(JSON.stringify(game));g.offMatchups.B[idx]=di;setGame(g);}}
         onRoll={()=>onRoll('B',idx)} onClutch={()=>onRoll('B',idx,{clutch:true})} onSpendAssist={onSpendAssist} onSpendRebound={onSpendRebound}
-        pvpDisabled={pvpMode && myTeamKey !== 'B'} />
+        pvpDisabled={pvpMode && myTeamKey !== 'B'} rollLocked={rollGate ? !rollGate.B : false} />
     </div>
   );
 }
@@ -1133,28 +1133,35 @@ function PlacementAffordance({ game, teamKey, onPlacePlayer }) {
         <div className={styles.placementPopover}>
           <div className={styles.placementHeader}>
             {oppPlayer
-              ? <>Defending vs <b>{oppPlayer.name}</b> (S{oppPlayer.speed}·P{oppPlayer.power})</>
+              ? <>Slot {mySlot + 1} pairs with <b>{oppPlayer.name}</b> (S{oppPlayer.speed}·P{oppPlayer.power}) — both ways</>
               : 'Choose a player:'}
           </div>
           {remaining.map(id => {
             const p = roster.find(r => r.id === id);
             if (!p) return null;
-            // adv is computed from the OPPONENT's perspective:
-            // high rollBonus = opponent has a big advantage (bad for my defender).
-            const adv = oppPlayer ? calcAdv(oppPlayer, p, {}, 0) : null;
-            const advCol = adv
-              ? (adv.rollBonus > 0 ? '#F87171' : adv.hasPenalty ? '#4ADE80' : '#94A3B8')
-              : '#94A3B8';
+            // A SLOT IS A PAIRING, NOT A POST. Placing here puts my player on
+            // defence against theirs AND on offence against them — offMatchups
+            // starts as the identity both ways. The preview used to show only
+            // the first (the user, 2026-09-07: "I'm not seeing what MY player's
+            // boost would be"). Now: my attack on the left, their attack on the
+            // right, each coloured from my side of the table.
+            const mine = oppPlayer ? calcAdv(p, oppPlayer, {}, 0) : null;   // I attack them
+            const theirs = oppPlayer ? calcAdv(oppPlayer, p, {}, 0) : null; // they attack me
+            const good = '#4ADE80', bad = '#F87171', flat = '#94A3B8';
+            const mineCol = mine ? (mine.rollBonus > 0 ? good : mine.hasPenalty ? bad : flat) : flat;
+            // Their roll bonus is bad for me, so the colours flip.
+            const theirsCol = theirs ? (theirs.rollBonus > 0 ? bad : theirs.hasPenalty ? good : flat) : flat;
+            const sgn = n => (n > 0 ? '+' : '') + n;
+            const fmt = a => 'S' + sgn(a.rawSpeedDiff) + ' P' + sgn(a.rawPowerDiff) + ' · roll ' + sgn(a.rollBonus) + (a.hasPenalty ? ' ⚠' : '');
             return (
               <button key={id} className={styles.placementOption}
                 onClick={() => { setOpen(false); onPlacePlayer(id); }}>
                 <span className={styles.placementName}>{p.name}</span>
                 <span className={styles.placementStats}>S{p.speed}·P{p.power}·D{p.defBoost||0}</span>
-                {adv && (
-                  <span className={styles.placementAdv} style={{color: advCol}}>
-                    S{adv.rawSpeedDiff>0?'+':''}{adv.rawSpeedDiff}
-                    {' '}P{adv.rawPowerDiff>0?'+':''}{adv.rawPowerDiff}
-                    {' '}Roll {adv.rollBonus>0?'+':''}{adv.rollBonus}{adv.hasPenalty?' ⚠':''}
+                {mine && theirs && (
+                  <span className={styles.placementBoth}>
+                    <span className={styles.placementAdv} style={{ color: mineCol }} title="What my player gets attacking them">⚔ {fmt(mine)}</span>
+                    <span className={styles.placementAdv} style={{ color: theirsCol }} title="What their player gets attacking mine">🛡 {fmt(theirs)}</span>
                   </span>
                 )}
               </button>
@@ -1468,7 +1475,35 @@ function EmptySlot({ idx, col }) {
   return <div className={styles.emptySlot} style={{borderColor:col+'30'}}><span style={{color:col+'50',fontSize:11}}>Slot {idx+1}</span></div>;
 }
 
-function PlayerSlot({ player, ps, adv, fat, result, blocked, teamKey, idx, phase, game, defPlayer, defSelect, defIdx, onDefChange, onRoll, onClutch = null, onSpendAssist, onSpendRebound, pvpDisabled = false }) {
+/** The temporary, card-driven effects on one slot — see the note at its call site. */
+function LiveEffects({ game, teamKey, idx }) {
+  const te = game.tempEff?.[teamKey] || {};
+  const de = game.tempDefEff?.[teamKey]?.[idx];
+  const sgn = n => (n > 0 ? '+' : '') + n;
+  const tags = [];
+  const push = (key, cls, text, title) => tags.push(
+    <span key={key} className={styles.live + ' ' + cls} title={title}>{text}</span>
+  );
+  if (te['r' + idx])    push('r',    styles.liveGood, 'roll ' + sgn(te['r' + idx]), 'Temporary scoring-roll bonus this period');
+  if (te['s' + idx])    push('s',    te['s' + idx] > 0 ? styles.liveGood : styles.liveBad, 'SPD ' + sgn(te['s' + idx]), 'Temporary Speed this segment');
+  if (te['p' + idx])    push('p',    te['p' + idx] > 0 ? styles.liveGood : styles.liveBad, 'PWR ' + sgn(te['p' + idx]), 'Temporary Power this segment');
+  if (te['adv' + idx])  push('adv',  styles.liveGood, '2d20 ↑', 'Rolls two dice, keeps the higher');
+  if (te['dis' + idx])  push('dis',  styles.liveBad,  '2d20 ↓', 'Rolls two dice, keeps the lower');
+  if (te['reb2' + idx]) push('reb2', styles.liveGood, 'REB ×2', 'Rebounds from scoring rolls are doubled');
+  if (te['astOnScore' + idx]) push('ast',  styles.liveGood, '+AST on score', 'A score adds an assist');
+  if (te['paintAst' + idx])   push('past', styles.liveGood, '+AST inside', 'A paint score adds an assist (Short-Roll Playmaker)');
+  if (de && (de.speedBoost || de.powerBoost)) {
+    push('def', styles.liveDef, 'D +' + (de.speedBoost || 0) + '/+' + (de.powerBoost || 0),
+      'Defensive Speed/Power boost this segment (Double Team, Energizer, Defensive Identity, Defensive Stopper)');
+  }
+  if (game.ghosted?.[teamKey]?.[idx])    push('ghost', styles.liveGood, '👻 no defender', 'Ghost Screen: treated as unguarded for matchups');
+  if (game.ignFatigue?.[teamKey]?.[idx]) push('wind',  styles.liveGood, 'ignores FAT', 'Second Wind: fatigue penalty ignored this segment');
+  const om = game.openMan?.[teamKey];
+  if (om && typeof om === 'object' && om.except?.includes(idx)) push('trapped', styles.liveBad, 'trapped', 'Doubled — cannot be the open man');
+  return tags.length ? <div className={styles.liveRow}>{tags}</div> : null;
+}
+
+function PlayerSlot({ player, ps, adv, fat, result, blocked, teamKey, idx, phase, game, defPlayer, defSelect, defIdx, onDefChange, onRoll, onClutch = null, onSpendAssist, onSpendRebound, pvpDisabled = false, rollLocked = false }) {
   const { open } = useLightbox();
   const col=teamKey==='A'?'var(--orange)':'var(--blue)';
   const rollCol=adv?(adv.rollBonus>0?'#4ADE80':adv.hasPenalty?'#F87171':'#94A3B8'):'#94A3B8';
@@ -1509,6 +1544,14 @@ function PlayerSlot({ player, ps, adv, fat, result, blocked, teamKey, idx, phase
           <span className={styles.attrItem}><span className={styles.attrLabel}>SHOT</span> <span className={styles.attrVal}>{player.shotLine}</span></span>
         </div>
         {boosts.length>0&&<div className={styles.boostRow}>{boosts}</div>}
+        {/* WHAT IS ACTING ON THIS PLAYER RIGHT NOW. The printed boosts above
+            never change; these come and go with cards, and until now the only
+            place they showed was the log — which is how a +6/+6 on a defender
+            and an itemised shot check both became bug reports on the same
+            night (the user, 2026-09-07: "There should be indications on cards
+            ... when something is boosting one of their traits at the moment").
+            Each badge names its source in the tooltip. */}
+        <LiveEffects game={game} teamKey={teamKey} idx={idx} />
         {adv&&defPlayer&&(
           <div className={styles.advBlock}>
             <div className={styles.advVsRow}>
@@ -1529,8 +1572,11 @@ function PlayerSlot({ player, ps, adv, fat, result, blocked, teamKey, idx, phase
             {blocked?<div className={styles.blocked}>🏠 Blocked</div>
             :result!=null?<RollResult result={result} col={col} />
             :<>
-              <button className={styles.rollBtn} style={{background:col}} onClick={onRoll} disabled={pvpDisabled}>🎲 Roll</button>
-              {onClutch && !pvpDisabled && game.crunch?.active && clutchAvailable(game, teamKey) > 0 && fat > -6 &&
+              <button className={styles.rollBtn} style={{background:col}} onClick={onRoll} disabled={pvpDisabled || rollLocked}
+                title={rollLocked ? 'Their roll — play a reaction now, or wait for the die' : undefined}>
+                {rollLocked ? '🎲 Their roll' : '🎲 Roll'}
+              </button>
+              {onClutch && !pvpDisabled && !rollLocked && game.crunch?.active && clutchAvailable(game, teamKey) > 0 && fat > -6 &&
                 <button className={styles.rollBtn} style={{background:'#B45309'}} title={`Clutch Possession: roll ${2 + (game.clutchDice?.[player.id] || 0)} dice, keep the best`} onClick={onClutch}>⭐ Clutch ({2 + (game.clutchDice?.[player.id] || 0)})</button>}
             </>}
             {/* Assist spending buttons — costs come from SPEND_COSTS so the

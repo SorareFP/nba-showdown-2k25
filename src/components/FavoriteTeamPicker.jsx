@@ -67,8 +67,8 @@ export default function FavoriteTeamPicker({ onChoose, onCancel, busy = false, e
           <div>
             <h2 className={styles.title}>Who do you support?</h2>
             <p className={styles.sub}>
-              Your starter pack comes with three commons and an uncommon from this team, and
-              packs will lean your way later. <strong>You can only choose once.</strong>
+              Your starter pack comes with three commons and an uncommon from this team.
+              <strong>You can only choose once.</strong>
             </p>
           </div>
           {onCancel && (

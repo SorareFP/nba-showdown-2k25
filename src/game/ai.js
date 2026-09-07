@@ -57,6 +57,8 @@ export function expectedOutput(card, mod = 0) {
 
 const SECTION_MINUTES = 4;
 const HORIZON = 0.5;
+/** How far a card's value can wobble before the sort — see aiScoringDecision. */
+const CARD_JITTER = 0.3;
 
 /** The pick's score: this section's output, half of next section's swing, a little body. */
 export function lineupValue(player, ps) {
@@ -70,7 +72,16 @@ export function lineupValue(player, ps) {
   const body = 0.05 * (player.speed + player.power + (player.defBoost || 0));
   const shoot = 0.1 * ((player.threePtBoost || 0) + (player.paintBoost || 0));
 
-  return now + HORIZON * (nextIfPlayed - nextIfRested) + body + shoot;
+  // A COLD MARKER DOES NOT WEAR OFF; ONLY THE BENCH CLEARS IT. Fatigue is a
+  // curve the next section moves along, but a cold player stays cold for
+  // every section he keeps playing, so the swing between "play him" and "rest
+  // him" is not half of one section, it is at least a whole one. Jalen Suggs
+  // took the floor at -2 and cold when a section on the bench would have
+  // cleared both (the user, 2026-09-07: "resting would have ... likely been a
+  // longer-term smart play"). Weighting the lookahead fully when a cold marker
+  // is on him is what makes the pick see that.
+  const horizon = (ps?.cold || 0) > 0 ? 1 : HORIZON;
+  return now + horizon * (nextIfPlayed - nextIfRested) + body + shoot;
 }
 
 export function aiDraftPick(game, teamKey) {
@@ -191,11 +202,28 @@ export function aiPlacementPick(game, teamKey) {
   let best = remaining[0];
   let bestScore = -Infinity;
   for (const cand of remaining) {
-    const score = oppPlayer
-      ? (cand.speed + (cand.defBoost || 0) - oppPlayer.speed) +
-        (cand.power + (cand.defBoost || 0) - oppPlayer.power) +
-        (cand.defBoost || 0) * 2
-      : cand.speed + cand.power + (cand.threePtBoost || 0) * 3 + (cand.paintBoost || 0) * 2;
+    let score;
+    if (oppPlayer) {
+      // A SLOT IS A PAIRING. Placing here puts this player on defence against
+      // theirs AND on offence against them, and the old score only measured
+      // the first — a hand-rolled speed/power difference that ignored what
+      // the candidate could do with the ball (the user, 2026-09-07: "not
+      // taking matchup into consideration"). Both directions now, through
+      // calcAdv itself so the AI's arithmetic is the game's arithmetic.
+      const mine = calcAdv(cand, oppPlayer, {}, 0);   // my roll against them
+      const theirs = calcAdv(oppPlayer, cand, {}, 0); // their roll against me
+      score = mine.rollBonus - theirs.rollBonus + (cand.defBoost || 0);
+    } else {
+      // PLACING FIRST GIVES INFORMATION AWAY: whoever goes here will be
+      // answered by the opponent's best remaining counter. So lead with the
+      // player whose value depends LEAST on the matchup — a shooter scores
+      // off shot checks whoever guards him — and hold the matchup-sensitive
+      // bigs for the rows where this side gets to answer. Speed and Power
+      // still count, at half weight, so a star is not buried behind a
+      // specialist.
+      score = (cand.threePtBoost || 0) * 3 + (cand.paintBoost || 0) * 2
+        + 0.5 * (cand.speed + cand.power) + (cand.defBoost || 0);
+    }
     if (score > bestScore) { bestScore = score; best = cand; }
   }
   return { type: 'place_player', playerId: best.id };
@@ -265,7 +293,15 @@ export function aiScoringDecision(game, teamKey) {
 
   if (playable.length === 0) return { type: 'pass' };
 
-  // Sort by value descending and play the best
+  // A MIXED STRATEGY. evaluateCard is very nearly a fixed table, so with a
+  // straight sort the AI played the same card from the same hand every time
+  // and a player could read its whole sequence after two games (the user,
+  // 2026-09-07: "playing cards in the same order no matter what"). Each value
+  // is jittered by up to ±15% before the sort: cards within a few points of
+  // each other trade places game to game, a clearly better card still wins.
+  // Math.random here is the same stream the sim harness seeds, so audits stay
+  // reproducible.
+  for (const c of playable) c.value *= 1 + (Math.random() - 0.5) * CARD_JITTER;
   playable.sort((a, b) => b.value - a.value);
   const best = playable[0];
 

@@ -24,8 +24,7 @@ import {
   indexEpmSeasons,
   resolvePlayerIds,
   rowsById,
-  seasonLabel,
-} from './generateSpecialSets.js';
+  seasonLabel, BEATEN_BY_BASE } from './generateSpecialSets.js';
 import {
   BADGE_IDS,
   BEST_SEASON_BADGE,
@@ -240,7 +239,22 @@ const ROOKIE_LEGEND_NAMES = Object.keys(
 
 describe('Super Season', () => {
   it('excludes the players having their best season right now', () => {
-    for (const e of SUPER.excluded) expect(e.reason).toBe('best season is the current one');
+    // Two detections, one meaning. The metric finds most of them; the rest are
+    // caught by comparing the finished cards, because a season can win on BPM
+    // and still build the weaker card (see BEATEN_BY_BASE).
+    const reasons = new Set(SUPER.excluded.map(e => e.reason));
+    expect([...reasons].sort()).toEqual([BEATEN_BY_BASE, 'best season is the current one'].sort());
+  });
+
+  it('never prints a card the player\'s own base card beats', () => {
+    // The rule the user set on 2026-09-07. Every remaining Super Season card
+    // is stronger than that player's current card, or he has no current card.
+    const base = new Map(
+      JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'card-data', 'generated', `cards-${CURRENT_SET}.json`), 'utf8'))
+        .cards.map(c => [c.id, c.salary])
+    );
+    const beaten = SUPER.cards.filter(c => base.has(c.id) && base.get(c.id) >= c.salary);
+    expect(beaten.map(c => `${c.name} $${c.salary} vs base $${base.get(c.id)}`)).toEqual([]);
   });
 
   it('chooses on BPM alone, and says so on the file', () => {
@@ -416,7 +430,12 @@ describe('the base set\'s badges', () => {
     // so those six stay in this set — mergedIntoTwin fell from 15 to 9.
     // 233 since 2026-09-06: eight capstone legends joined (the file keeps the
     // one moved into set-rewards; cardSets filters it at load).
-    expect(SUPER.cards.length).toBe(233);
+    // 233 -> 194 on 2026-09-07, and this one IS the badge moving players: the
+    // beaten-by-base rule (BEATEN_BY_BASE) drops a Super Season pick whose own
+    // base card is at least as strong, and hands it the pill instead. So the
+    // title of this test now holds only for the metric-detected exclusion; the
+    // second rule deliberately trades cards for badges, 39 of them.
+    expect(SUPER.cards.length).toBe(194);
     //
     // AND 321 -> 348 WHEN THE STANDOUT NEWCOMERS' ROOKIE YEARS ARRIVED — every
     // standout outside the pool whose career begins inside the cache-and-EPM
@@ -526,8 +545,12 @@ describe('the base set\'s badges', () => {
     // pools each season by its share of the player's last 82 games, 173 of 353
     // budgets moved, and four more cards cleared SUPER_SEASON_MIN_SALARY.
     // 14/93 after the five players on no current NBA roster were cut (card-data/retired-2026.json), taking the pool 353 -> 348.
-    expect(counts.printed[BEST_SEASON_BADGE]).toBe(93);
-    expect(counts.printed[SUPER_SEASON_BADGE]).toBe(14);
+    // 21/125 on 2026-09-07: the beaten-by-base rule moved 39 players out of
+    // the set and onto the badge, and most of them are the cheap role players
+    // the rule exists to catch — so the BEST SEASON side of the split grew far
+    // more than the gilded one.
+    expect(counts.printed[BEST_SEASON_BADGE]).toBe(125);
+    expect(counts.printed[SUPER_SEASON_BADGE]).toBe(21);
     // Nobody loses their pill entirely in the resolution.
     expect(BADGE_IDS.reduce((n, id) => n + counts.printed[id], 0)).toBe(counts.players);
     expect(counts.multiple).toBe(ROOKIE.excluded.length);

@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-04T14:04:24.418Z",
+ "generatedAt": "2026-09-07T14:30:12.731Z",
  "source": "Basketball-Reference's season `advanced` tables, awards column — a voted award's suffix is its finishing position, so only -1 is a win — plus the same pages' `advanced_post` table, whose awards column holds one cell a season and that cell is always `Finals MVP-1`, plus each season index page's League Champion row and that team's roster, which is where the ring comes from and which is in no column at all",
  "declared": [
   "MVP",
@@ -560,40 +560,40 @@
   },
   "super-season": {
    "cards": 96,
-   "marked": 71,
-   "multiple": 19,
+   "marked": 76,
+   "multiple": 20,
    "capped": 0,
    "mostHeld": 4,
-   "ifSelectionsCounted": 84,
+   "ifSelectionsCounted": 85,
    "byCode": {
-    "MVP": 11,
+    "MVP": 12,
     "FMVP": 2,
     "DPOY": 6,
     "ROY": 0,
-    "MIP": 3,
+    "MIP": 2,
     "6MOY": 3,
     "CPOY": 0,
     "CHAMP": 10,
-    "AS": 60
+    "AS": 66
    }
   },
   "rookie": {
-   "cards": 89,
-   "marked": 19,
-   "multiple": 1,
+   "cards": 96,
+   "marked": 24,
+   "multiple": 2,
    "capped": 0,
    "mostHeld": 2,
-   "ifSelectionsCounted": 19,
+   "ifSelectionsCounted": 24,
    "byCode": {
     "MVP": 0,
     "FMVP": 0,
     "DPOY": 0,
-    "ROY": 15,
+    "ROY": 20,
     "MIP": 0,
     "6MOY": 0,
     "CPOY": 0,
     "CHAMP": 4,
-    "AS": 1
+    "AS": 2
    }
   },
   "summer-standouts": {
@@ -616,12 +616,12 @@
    }
   },
   "dissonance": {
-   "cards": 1,
-   "marked": 1,
+   "cards": 3,
+   "marked": 3,
    "multiple": 0,
    "capped": 0,
    "mostHeld": 1,
-   "ifSelectionsCounted": 1,
+   "ifSelectionsCounted": 3,
    "byCode": {
     "MVP": 0,
     "FMVP": 0,
@@ -631,7 +631,7 @@
     "6MOY": 0,
     "CPOY": 0,
     "CHAMP": 0,
-    "AS": 1
+    "AS": 3
    }
   },
   "team-rewards": {
@@ -1457,16 +1457,6 @@
     ]
    },
    {
-    "id": "Bam_Adebayo",
-    "name": "Bam Adebayo",
-    "season": 2021,
-    "bbrefId": "adebaba01",
-    "raw": "DPOY-4,DEF2",
-    "rawPost": null,
-    "champion": null,
-    "awards": []
-   },
-   {
     "id": "Brandon_Roy",
     "name": "Brandon Roy",
     "season": 2009,
@@ -1513,6 +1503,18 @@
     ]
    },
    {
+    "id": "Chris_Paul",
+    "name": "Chris Paul",
+    "season": 2009,
+    "bbrefId": "paulch01",
+    "raw": "MVP-5,DPOY-6,AS,NBA2,DEF1",
+    "rawPost": null,
+    "champion": null,
+    "awards": [
+     "AS"
+    ]
+   },
+   {
     "id": "Clint_Capela",
     "name": "Clint Capela",
     "season": 2018,
@@ -1521,6 +1523,18 @@
     "rawPost": null,
     "champion": null,
     "awards": []
+   },
+   {
+    "id": "Clyde_Drexler",
+    "name": "Clyde Drexler",
+    "season": 1992,
+    "bbrefId": "drexlcl01",
+    "raw": "MVP-2,AS,NBA1",
+    "rawPost": null,
+    "champion": null,
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Darius_Garland",
@@ -1550,16 +1564,6 @@
     "season": 2025,
     "bbrefId": "huntede01",
     "raw": "6MOY-4",
-    "rawPost": null,
-    "champion": null,
-    "awards": []
-   },
-   {
-    "id": "De_Anthony_Melton",
-    "name": "De'Anthony Melton",
-    "season": 2022,
-    "bbrefId": "meltode01",
-    "raw": "6MOY-8",
     "rawPost": null,
     "champion": null,
     "awards": []
@@ -1682,15 +1686,15 @@
     ]
    },
    {
-    "id": "Dyson_Daniels",
-    "name": "Dyson Daniels",
-    "season": 2025,
-    "bbrefId": "daniedy01",
-    "raw": "DPOY-2,MIP-1,DEF1",
+    "id": "Dwyane_Wade",
+    "name": "Dwyane Wade",
+    "season": 2009,
+    "bbrefId": "wadedw01",
+    "raw": "MVP-3,DPOY-3,AS,NBA1,DEF2",
     "rawPost": null,
     "champion": null,
     "awards": [
-     "MIP"
+     "AS"
     ]
    },
    {
@@ -1755,6 +1759,19 @@
     ]
    },
    {
+    "id": "Hakeem_Olajuwon",
+    "name": "Hakeem Olajuwon",
+    "season": 1993,
+    "bbrefId": "olajuha01",
+    "raw": "MVP-2,DPOY-1,AS,NBA1,DEF1",
+    "rawPost": null,
+    "champion": null,
+    "awards": [
+     "DPOY",
+     "AS"
+    ]
+   },
+   {
     "id": "Herbert_Jones",
     "name": "Herbert Jones",
     "season": 2024,
@@ -1787,16 +1804,6 @@
     "awards": [
      "AS"
     ]
-   },
-   {
-    "id": "Jalen_Suggs",
-    "name": "Jalen Suggs",
-    "season": 2024,
-    "bbrefId": "suggsja01",
-    "raw": "DPOY-10,DEF2",
-    "rawPost": null,
-    "champion": null,
-    "awards": []
    },
    {
     "id": "Jalen_Williams",
@@ -1919,6 +1926,19 @@
     ]
    },
    {
+    "id": "Karl_Malone",
+    "name": "Karl Malone",
+    "season": 1997,
+    "bbrefId": "malonka01",
+    "raw": "MVP-1,AS,NBA1,DEF1",
+    "rawPost": null,
+    "champion": null,
+    "awards": [
+     "MVP",
+     "AS"
+    ]
+   },
+   {
     "id": "Karl_Anthony_Towns",
     "name": "Karl-Anthony Towns",
     "season": 2019,
@@ -1927,19 +1947,6 @@
     "rawPost": null,
     "champion": null,
     "awards": [
-     "AS"
-    ]
-   },
-   {
-    "id": "Kawhi_Leonard",
-    "name": "Kawhi Leonard",
-    "season": 2016,
-    "bbrefId": "leonaka01",
-    "raw": "MVP-2,DPOY-1,AS,NBA1,DEF1",
-    "rawPost": null,
-    "champion": null,
-    "awards": [
-     "DPOY",
      "AS"
     ]
    },
@@ -2199,16 +2206,6 @@
     ]
    },
    {
-    "id": "Pascal_Siakam",
-    "name": "Pascal Siakam",
-    "season": 2022,
-    "bbrefId": "siakapa01",
-    "raw": "NBA3",
-    "rawPost": null,
-    "champion": null,
-    "awards": []
-   },
-   {
     "id": "Pau_Gasol",
     "name": "Pau Gasol",
     "season": 2011,
@@ -2243,16 +2240,6 @@
     "awards": [
      "6MOY"
     ]
-   },
-   {
-    "id": "Robert_Williams",
-    "name": "Robert Williams",
-    "season": 2022,
-    "bbrefId": "williro04",
-    "raw": "DPOY-7,DEF2",
-    "rawPost": null,
-    "champion": null,
-    "awards": []
    },
    {
     "id": "Rudy_Gobert",
@@ -2377,6 +2364,18 @@
     "awards": []
    },
    {
+    "id": "Tracy_McGrady",
+    "name": "Tracy McGrady",
+    "season": 2003,
+    "bbrefId": "mcgratr01",
+    "raw": "MVP-4,AS,NBA1",
+    "rawPost": null,
+    "champion": null,
+    "awards": [
+     "AS"
+    ]
+   },
+   {
     "id": "Trae_Young",
     "name": "Trae Young",
     "season": 2022,
@@ -2431,6 +2430,18 @@
     "rawPost": null,
     "champion": null,
     "awards": []
+   },
+   {
+    "id": "Vince_Carter",
+    "name": "Vince Carter",
+    "season": 2001,
+    "bbrefId": "cartevi01",
+    "raw": "MVP-11,AS,NBA2",
+    "rawPost": null,
+    "champion": null,
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Yao_Ming",
@@ -2535,6 +2546,16 @@
     ]
    },
    {
+    "id": "Anfernee_Hardaway",
+    "name": "Anfernee Hardaway",
+    "season": 1994,
+    "bbrefId": "hardaan01",
+    "raw": "ROY-2",
+    "rawPost": null,
+    "champion": null,
+    "awards": []
+   },
+   {
     "id": "Anthony_Davis",
     "name": "Anthony Davis",
     "season": 2013,
@@ -2555,6 +2576,18 @@
     "awards": []
    },
    {
+    "id": "Ben_Simmons",
+    "name": "Ben Simmons",
+    "season": 2018,
+    "bbrefId": "simmobe01",
+    "raw": "ROY-1",
+    "rawPost": null,
+    "champion": null,
+    "awards": [
+     "ROY"
+    ]
+   },
+   {
     "id": "Bennedict_Mathurin",
     "name": "Bennedict Mathurin",
     "season": 2023,
@@ -2563,6 +2596,19 @@
     "rawPost": null,
     "champion": null,
     "awards": []
+   },
+   {
+    "id": "Blake_Griffin",
+    "name": "Blake Griffin",
+    "season": 2011,
+    "bbrefId": "griffbl01",
+    "raw": "MVP-10,ROY-1,AS",
+    "rawPost": null,
+    "champion": null,
+    "awards": [
+     "ROY",
+     "AS"
+    ]
    },
    {
     "id": "Brandin_Podziemski",
@@ -2633,6 +2679,18 @@
     "rawPost": null,
     "champion": null,
     "awards": []
+   },
+   {
+    "id": "Chris_Webber",
+    "name": "Chris Webber",
+    "season": 1994,
+    "bbrefId": "webbech01",
+    "raw": "ROY-1",
+    "rawPost": null,
+    "champion": null,
+    "awards": [
+     "ROY"
+    ]
    },
    {
     "id": "Christian_Braun",
@@ -2714,6 +2772,16 @@
     "season": 2005,
     "bbrefId": "howardw01",
     "raw": "ROY-3,DPOY-21",
+    "rawPost": null,
+    "champion": null,
+    "awards": []
+   },
+   {
+    "id": "Dwyane_Wade",
+    "name": "Dwyane Wade",
+    "season": 2004,
+    "bbrefId": "wadedw01",
+    "raw": "ROY-3",
     "rawPost": null,
     "champion": null,
     "awards": []
@@ -3137,6 +3205,18 @@
     "awards": []
    },
    {
+    "id": "Mark_Jackson",
+    "name": "Mark Jackson",
+    "season": 1988,
+    "bbrefId": "jacksma01",
+    "raw": "MVP-13,ROY-1",
+    "rawPost": null,
+    "champion": null,
+    "awards": [
+     "ROY"
+    ]
+   },
+   {
     "id": "Marvin_Bagley_III",
     "name": "Marvin Bagley III",
     "season": 2019,
@@ -3363,6 +3443,18 @@
     "season": 2024,
     "bbrefId": "wembavi01",
     "raw": "ROY-1,DPOY-2,DEF1",
+    "rawPost": null,
+    "champion": null,
+    "awards": [
+     "ROY"
+    ]
+   },
+   {
+    "id": "Vince_Carter",
+    "name": "Vince Carter",
+    "season": 1999,
+    "bbrefId": "cartevi01",
+    "raw": "MVP-16,ROY-1",
     "rawPost": null,
     "champion": null,
     "awards": [
@@ -3707,11 +3799,35 @@
   ],
   "dissonance": [
    {
+    "id": "Michael_Jordan",
+    "name": "Michael Jordan",
+    "season": 2002,
+    "bbrefId": "jordami01",
+    "raw": "MVP-13,AS",
+    "rawPost": null,
+    "champion": null,
+    "awards": [
+     "AS"
+    ]
+   },
+   {
     "id": "Allen_Iverson",
     "name": "Allen Iverson",
     "season": 2009,
     "bbrefId": "iversal01",
     "raw": "AS",
+    "rawPost": null,
+    "champion": null,
+    "awards": [
+     "AS"
+    ]
+   },
+   {
+    "id": "Russell_Westbrook",
+    "name": "Russell Westbrook",
+    "season": 2020,
+    "bbrefId": "westbru01",
+    "raw": "AS,NBA3",
     "rawPost": null,
     "champion": null,
     "awards": [

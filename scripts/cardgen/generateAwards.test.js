@@ -420,17 +420,26 @@ describe('the committed file', () => {
     // 23 -> 19, with 20 marked on the reward set that did not exist before.
     // 77 after the seventeen legends joined: all-time greats carry MVPs,
     // rings and All-Star nods at a far higher rate than the pool average.
-    expect(AWARDS.counts[SUPER_SEASON_SET].marked).toBe(71);
+    // 76 on 2026-09-07, and the direction is the interesting part: the set
+    // SHRANK by 39 that day (the beaten-by-base rule) and the marked count
+    // still ROSE, because the file had gone stale against the eight capstone
+    // legends added on 2026-09-06 — all-time greats carry trophies, and the
+    // 39 that left were cheap role players carrying none.
+    expect(AWARDS.counts[SUPER_SEASON_SET].marked).toBe(76);
     // The rookie set moves at last, and only on the ring: no player in that
     // pool was an All-Star as a rookie, but six of them won a title as one.
     //
     // 25 -> 21 WITH THE ROOKIE PLAYING-TIME BAR, and every one of the four is a
     // RING rather than a ROY — bench players on title teams, which is exactly
     // the profile a minutes bar removes. The ROY count is unmoved at 17.
-    expect(AWARDS.counts[ROOKIE_SET].marked).toBe(19);
+    // 24 on 2026-09-07: not a rule change, a STALE FILE caught. The forced
+    // rookie seasons added on 2026-09-06 (rookie-legends-2026.json) include
+    // Blake Griffin, Chris Webber, Mark Jackson and Shaq, who won things;
+    // regenerating marked them and took ROY 15 -> 20.
+    expect(AWARDS.counts[ROOKIE_SET].marked).toBe(24);
     // 17 -> 12: five Rookies of the Year became team rewards. Their ROY marks
     // moved with them, which is the assertion two lines down.
-    expect(AWARDS.counts[ROOKIE_SET].byCode.ROY).toBe(15);
+    expect(AWARDS.counts[ROOKIE_SET].byCode.ROY).toBe(20);
     expect(AWARDS.counts['team-rewards'].byCode.ROY).toBe(2);
     expect(AWARDS.counts['team-rewards'].marked).toBe(19);
     // The standouts themselves: a playoff-run card is the season a ring was
@@ -440,7 +449,9 @@ describe('the committed file', () => {
     expect(AWARDS.counts[SUMMER_STANDOUTS_SET].byCode.CHAMP).toBe(14);
     // Shaq is the one rookie All-Star; Blake Griffin's case finally has its
     // twin, and it arrived from 1993 rather than from a pool change.
-    expect(AWARDS.counts[ROOKIE_SET].byCode.AS).toBe(1);
+    // 2 on 2026-09-07: Blake Griffin joined as a forced rookie season and was
+    // an All-Star in that year, so he and Shaq are the set's two.
+    expect(AWARDS.counts[ROOKIE_SET].byCode.AS).toBe(2);
     expect(AWARDS.counts[ROOKIE_SET].byCode.CHAMP).toBe(4);
     // The ring is a TEAM fact, so it marks a whole roster's worth at once and
     // still leaves each set a minority.
@@ -453,9 +464,13 @@ describe('the committed file', () => {
     // and the ring is not in it.)
     // 45, not 46: one fewer base-set player after the five-player cut.
     expect(AWARDS.counts[CURRENT_SET].ifSelectionsCounted).toBe(45);
-    expect(AWARDS.counts[SUPER_SEASON_SET].ifSelectionsCounted).toBe(84);
+    // 85 on 2026-09-07 with the awards file regenerated against the current
+    // Super Season roster — the capstone legends it had gone stale against.
+    expect(AWARDS.counts[SUPER_SEASON_SET].ifSelectionsCounted).toBe(85);
     // 21, not 25: the rookie playing-time bar, same four bench rings.
-    expect(AWARDS.counts[ROOKIE_SET].ifSelectionsCounted).toBe(19);
+    // 24, and equal to `marked`: a rookie card's only trophies are ROY and a
+    // ring, neither of which the selection suffix distinguishes.
+    expect(AWARDS.counts[ROOKIE_SET].ifSelectionsCounted).toBe(24);
   });
 
   it('names every champion it marked, and gets them right', () => {

@@ -321,7 +321,12 @@
         0.1253,
         0.6923
       ],
-      "badge": null
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
     },
     "2026-27/LeBron_James": {
       "name": [
@@ -407,7 +412,12 @@
         0.1253,
         0.6143
       ],
-      "badge": null
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
     },
     "2026-27/Payton_Pritchard": {
       "name": [
@@ -425,7 +435,12 @@
         0.1253,
         0.7218
       ],
-      "badge": null
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
     },
     "2026-27/Ryan_Rollins": {
       "name": [
@@ -1175,7 +1190,12 @@
         0.1253,
         0.6158
       ],
-      "badge": null
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
     },
     "2026-27/Julian_Champagnie": {
       "name": [
@@ -1256,7 +1276,12 @@
         0.1253,
         0.6875
       ],
-      "badge": null
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
     },
     "2026-27/John_Collins": {
       "name": [
@@ -1706,7 +1731,12 @@
         0.0926,
         0.6911
       ],
-      "badge": null
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
     },
     "2026-27/Tre_Johnson": {
       "name": [
@@ -3020,7 +3050,12 @@
         0.1253,
         0.475
       ],
-      "badge": null
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
     },
     "2026-27/Gary_Harris": {
       "name": [
@@ -3225,15 +3260,6 @@
         0.0223
       ]
     },
-    "super-season/Aaron_Holiday": {
-      "name": [
-        0.0252,
-        0.1319,
-        0.1253,
-        0.6981
-      ],
-      "badge": null
-    },
     "super-season/Aaron_Nesmith": {
       "name": [
         0.0252,
@@ -3335,15 +3361,6 @@
       ],
       "badge": null
     },
-    "super-season/Andrew_Nembhard": {
-      "name": [
-        0.0343,
-        0.0994,
-        0.107,
-        0.763
-      ],
-      "badge": null
-    },
     "super-season/Anfernee_Simons": {
       "name": [
         0.0323,
@@ -3404,44 +3421,12 @@
         0.0223
       ]
     },
-    "super-season/Bam_Adebayo": {
-      "name": [
-        0.0252,
-        0.1738,
-        0.1253,
-        0.6143
-      ],
-      "badge": [
-        0.8363,
-        0.5826,
-        0.1507,
-        0.0223
-      ]
-    },
-    "super-season/Ben_Sheppard": {
-      "name": [
-        0.0252,
-        0.1499,
-        0.1253,
-        0.6621
-      ],
-      "badge": null
-    },
     "super-season/Bennedict_Mathurin": {
       "name": [
         0.0415,
         0.1217,
         0.0926,
         0.7185
-      ],
-      "badge": null
-    },
-    "super-season/Bilal_Coulibaly": {
-      "name": [
-        0.0323,
-        0.1481,
-        0.1109,
-        0.6657
       ],
       "badge": null
     },
@@ -3629,15 +3614,6 @@
         0.0223
       ]
     },
-    "super-season/Coby_White": {
-      "name": [
-        0.0252,
-        0.2158,
-        0.1253,
-        0.5303
-      ],
-      "badge": null
-    },
     "super-season/Collin_Sexton": {
       "name": [
         0.0252,
@@ -3706,24 +3682,6 @@
         0.1507,
         0.0223
       ]
-    },
-    "super-season/De_Anthony_Melton": {
-      "name": [
-        0.0388,
-        0.1255,
-        0.0979,
-        0.7109
-      ],
-      "badge": null
-    },
-    "super-season/Dean_Wade": {
-      "name": [
-        0.0252,
-        0.2241,
-        0.1253,
-        0.5137
-      ],
-      "badge": null
     },
     "super-season/Deandre_Ayton": {
       "name": [
@@ -3956,15 +3914,6 @@
         0.0223
       ]
     },
-    "super-season/Dyson_Daniels": {
-      "name": [
-        0.0252,
-        0.1355,
-        0.1253,
-        0.6909
-      ],
-      "badge": null
-    },
     "super-season/Evan_Mobley": {
       "name": [
         0.0252,
@@ -4130,33 +4079,6 @@
       ],
       "badge": null
     },
-    "super-season/Isaiah_Hartenstein": {
-      "name": [
-        0.0415,
-        0.1354,
-        0.0926,
-        0.6911
-      ],
-      "badge": null
-    },
-    "super-season/Isaiah_Jackson": {
-      "name": [
-        0.0284,
-        0.1329,
-        0.1187,
-        0.696
-      ],
-      "badge": null
-    },
-    "super-season/Isaiah_Stewart": {
-      "name": [
-        0.0284,
-        0.1309,
-        0.1187,
-        0.7002
-      ],
-      "badge": null
-    },
     "super-season/Ja_Morant": {
       "name": [
         0.0252,
@@ -4177,15 +4099,6 @@
         0.1532,
         0.1044,
         0.6555
-      ],
-      "badge": null
-    },
-    "super-season/Jaden_McDaniels": {
-      "name": [
-        0.0323,
-        0.1188,
-        0.1109,
-        0.7243
       ],
       "badge": null
     },
@@ -4230,35 +4143,12 @@
       ],
       "badge": null
     },
-    "super-season/Jalen_Pickett": {
-      "name": [
-        0.0252,
-        0.1518,
-        0.1253,
-        0.6584
-      ],
-      "badge": null
-    },
     "super-season/Jalen_Smith": {
       "name": [
         0.0252,
         0.1916,
         0.1253,
         0.5788
-      ],
-      "badge": [
-        0.8363,
-        0.5826,
-        0.1507,
-        0.0223
-      ]
-    },
-    "super-season/Jalen_Suggs": {
-      "name": [
-        0.0252,
-        0.173,
-        0.1253,
-        0.6158
       ],
       "badge": [
         0.8363,
@@ -4345,20 +4235,6 @@
       ],
       "badge": null
     },
-    "super-season/Jarrett_Allen": {
-      "name": [
-        0.0252,
-        0.1372,
-        0.1253,
-        0.6875
-      ],
-      "badge": [
-        0.8363,
-        0.5826,
-        0.1507,
-        0.0223
-      ]
-    },
     "super-season/Jason_Terry": {
       "name": [
         0.0252,
@@ -4386,15 +4262,6 @@
         0.1507,
         0.0223
       ]
-    },
-    "super-season/Jerami_Grant": {
-      "name": [
-        0.0252,
-        0.1542,
-        0.1253,
-        0.6535
-      ],
-      "badge": null
     },
     "super-season/Jett_Howard": {
       "name": [
@@ -4498,30 +4365,12 @@
         0.0223
       ]
     },
-    "super-season/Josh_Green": {
-      "name": [
-        0.0252,
-        0.2028,
-        0.1253,
-        0.5563
-      ],
-      "badge": null
-    },
     "super-season/Josh_Hart": {
       "name": [
         0.0252,
         0.2376,
         0.1253,
         0.4867
-      ],
-      "badge": null
-    },
-    "super-season/Josh_Minott": {
-      "name": [
-        0.0252,
-        0.1879,
-        0.1253,
-        0.5862
       ],
       "badge": null
     },
@@ -4547,15 +4396,6 @@
         0.1507,
         0.0223
       ]
-    },
-    "super-season/Julian_Strawther": {
-      "name": [
-        0.0356,
-        0.1153,
-        0.1044,
-        0.7313
-      ],
-      "badge": null
     },
     "super-season/Julius_Randle": {
       "name": [
@@ -4627,29 +4467,6 @@
         0.0223
       ]
     },
-    "super-season/Kawhi_Leonard": {
-      "name": [
-        0.0252,
-        0.1201,
-        0.1253,
-        0.7218
-      ],
-      "badge": [
-        0.8363,
-        0.5826,
-        0.1507,
-        0.0223
-      ]
-    },
-    "super-season/Kelly_Oubre_Jr": {
-      "name": [
-        0.0323,
-        0.1548,
-        0.1109,
-        0.6522
-      ],
-      "badge": null
-    },
     "super-season/Kenrich_Williams": {
       "name": [
         0.0356,
@@ -4700,15 +4517,6 @@
       ],
       "badge": null
     },
-    "super-season/Keyonte_George": {
-      "name": [
-        0.0284,
-        0.1125,
-        0.1187,
-        0.7369
-      ],
-      "badge": null
-    },
     "super-season/Khris_Middleton": {
       "name": [
         0.0323,
@@ -4752,15 +4560,6 @@
         0.2422,
         0.1253,
         0.4776
-      ],
-      "badge": null
-    },
-    "super-season/Kris_Murray": {
-      "name": [
-        0.0252,
-        0.1845,
-        0.1253,
-        0.5929
       ],
       "badge": null
     },
@@ -4823,15 +4622,6 @@
         0.1507,
         0.0223
       ]
-    },
-    "super-season/Landry_Shamet": {
-      "name": [
-        0.0252,
-        0.118,
-        0.1253,
-        0.7259
-      ],
-      "badge": null
     },
     "super-season/Larry_Bird": {
       "name": [
@@ -4957,15 +4747,6 @@
       ],
       "badge": null
     },
-    "super-season/Micah_Potter": {
-      "name": [
-        0.0252,
-        0.1633,
-        0.1253,
-        0.6353
-      ],
-      "badge": null
-    },
     "super-season/Michael_Jordan": {
       "name": [
         0.0284,
@@ -5030,15 +4811,6 @@
         0.1507,
         0.0223
       ]
-    },
-    "super-season/Miles_McBride": {
-      "name": [
-        0.0252,
-        0.1382,
-        0.1253,
-        0.6856
-      ],
-      "badge": null
     },
     "super-season/Mitchell_Robinson": {
       "name": [
@@ -5136,35 +4908,12 @@
       ],
       "badge": null
     },
-    "super-season/P_J_Washington": {
-      "name": [
-        0.0323,
-        0.1371,
-        0.1109,
-        0.6878
-      ],
-      "badge": null
-    },
     "super-season/Paolo_Banchero": {
       "name": [
         0.0284,
         0.1124,
         0.1187,
         0.7371
-      ],
-      "badge": [
-        0.8363,
-        0.5826,
-        0.1507,
-        0.0223
-      ]
-    },
-    "super-season/Pascal_Siakam": {
-      "name": [
-        0.0252,
-        0.1348,
-        0.1253,
-        0.6923
       ],
       "badge": [
         0.8363,
@@ -5210,15 +4959,6 @@
         0.0223
       ]
     },
-    "super-season/Paul_Reed": {
-      "name": [
-        0.0252,
-        0.2435,
-        0.1253,
-        0.475
-      ],
-      "badge": null
-    },
     "super-season/Payton_Pritchard": {
       "name": [
         0.0356,
@@ -5228,39 +4968,12 @@
       ],
       "badge": null
     },
-    "super-season/Peyton_Watson": {
-      "name": [
-        0.0252,
-        0.1189,
-        0.1253,
-        0.7242
-      ],
-      "badge": null
-    },
-    "super-season/Precious_Achiuwa": {
-      "name": [
-        0.0356,
-        0.1158,
-        0.1044,
-        0.7303
-      ],
-      "badge": null
-    },
     "super-season/Quentin_Grimes": {
       "name": [
         0.0284,
         0.1239,
         0.1187,
         0.7141
-      ],
-      "badge": null
-    },
-    "super-season/Quenton_Jackson": {
-      "name": [
-        0.0323,
-        0.1088,
-        0.1109,
-        0.7442
       ],
       "badge": null
     },
@@ -5284,15 +4997,6 @@
         0.1241,
         0.1187,
         0.7137
-      ],
-      "badge": null
-    },
-    "super-season/Robert_Williams": {
-      "name": [
-        0.0323,
-        0.1243,
-        0.1109,
-        0.7133
       ],
       "badge": null
     },
@@ -5334,15 +5038,6 @@
         0.196,
         0.1253,
         0.5699
-      ],
-      "badge": null
-    },
-    "super-season/Sam_Merrill": {
-      "name": [
-        0.0252,
-        0.1851,
-        0.1253,
-        0.5916
       ],
       "badge": null
     },
@@ -5414,15 +5109,6 @@
         0.1507,
         0.0223
       ]
-    },
-    "super-season/Svi_Mykhailiuk": {
-      "name": [
-        0.0284,
-        0.1439,
-        0.1187,
-        0.6742
-      ],
-      "badge": null
     },
     "super-season/T_J_McConnell": {
       "name": [
@@ -5538,15 +5224,6 @@
         0.1507,
         0.0223
       ]
-    },
-    "super-season/Tre_Mann": {
-      "name": [
-        0.0252,
-        0.2603,
-        0.1253,
-        0.4414
-      ],
-      "badge": null
     },
     "super-season/Trendon_Watford": {
       "name": [
@@ -5672,24 +5349,6 @@
         0.1507,
         0.0223
       ]
-    },
-    "super-season/Zeke_Nnaji": {
-      "name": [
-        0.0252,
-        0.223,
-        0.1253,
-        0.5159
-      ],
-      "badge": null
-    },
-    "super-season/Ziaire_Williams": {
-      "name": [
-        0.0323,
-        0.1449,
-        0.1109,
-        0.672
-      ],
-      "badge": null
     },
     "super-season/Zion_Williamson": {
       "name": [
@@ -6102,6 +5761,6 @@
       ]
     }
   },
-  "generatedAt": "2026-09-07T13:03:39.492Z",
+  "generatedAt": "2026-09-07T14:36:53.486Z",
   "note": "Per-face boxes of the rotated name and the Super Season pill, as fractions of the 843x1181 face, measured by scripts/studio/export.js. Read by src/cards/faceRegions.js for the holographic sheen."
 }

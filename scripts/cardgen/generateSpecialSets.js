@@ -176,6 +176,15 @@ export const BADGE_FILE = path.join(GEN_DIR, 'card-badges.json');
  * second card of it" — so the mapping is one table rather than a branch in each
  * of the two places that used to say it.
  */
+/**
+ * The reason a Super Season pick is dropped because the player's CURRENT card
+ * is at least as strong. Its own string, not the metric-detected one, so the
+ * report and the tests can tell the two apart — but the same badge and the
+ * same list, because the consequence is identical: the fact prints on the
+ * base card.
+ */
+export const BEATEN_BY_BASE = 'best season is the current one — its card is stronger';
+
 export const EXCLUSION_BADGES = {
   superSeason: SUPER_SEASON_BADGE,
   rookie: ROOKIE_BADGE,
@@ -1563,6 +1572,66 @@ export function main({ log = console.log } = {}) {
       }
     }
     log(`  same-season twins: ${merged.length} collapsed — ${merged.join('; ') || 'none'}`);
+  }
+
+  // ── THE CARD HAS TO BEAT THE BASE CARD ────────────────────────────────────
+  //
+  // A best season is chosen by z-scored BPM and VORP. A card's STRENGTH is a
+  // different measure entirely — what the finished chart, speed, power and
+  // shot line are worth in a game — and the two can disagree, most often for
+  // low-minute role players whose rate stats spike in a season that builds a
+  // thin card. When they disagree the set printed a Super Season card weaker
+  // than the same player's base card, which is the one thing this set may
+  // never do: 38 of 233 did, Julian Strawther at $140 against a $310 base
+  // card among them. The user, 2026-09-07: "Do we have Super Season cards
+  // that are lower salary than the corresponding players' other cards?
+  // Because we shouldn't ... thus his 25-26 season was his best season and he
+  // should not have a card in the super season set."
+  //
+  // So the base card has the final say, and a player it beats leaves by the
+  // SAME path as the metric-detected case — onto the exclusion list, with the
+  // badge moving to his base card — because that is precisely what an
+  // exclusion means here: the fact prints on the base card instead.
+  //
+  // ── THIS IS THE ONE PLACE THE TWO GENERATORS ARE ORDERED ──────────────────
+  //
+  // loadBaseSalaries reads generateCards.js's output, and until now nothing
+  // this generator WROTE depended on it (see its note). Now the Super Season
+  // roster does. A missing base file returns an empty map and drops nobody,
+  // which is the old behaviour exactly; a STALE one compares against stale
+  // prices, so run the base set first after any repricing.
+  {
+    const ss = builtSets.get(SUPER_SEASON_SET);
+    const baseSalaries = loadBaseSalaries();
+    const demoted = [];
+    for (const card of [...ss]) {
+      const base = baseSalaries.get(card.id);
+      if (base == null || base < (card.salary ?? 0)) continue;
+      ss.splice(ss.indexOf(card), 1);
+      selection.excluded.superSeason.push({
+        name: card.name,
+        reason: BEATEN_BY_BASE,
+        badge: EXCLUSION_BADGES.superSeason,
+      });
+      const record = selection.baseBadges.find(b => b.name === card.name);
+      if (record) {
+        record.badges = BADGE_IDS.filter(
+          b => record.badges.includes(b) || b === EXCLUSION_BADGES.superSeason
+        );
+      } else {
+        selection.baseBadges.push({
+          id: playerIdFromName(card.name),
+          name: card.name,
+          badges: [EXCLUSION_BADGES.superSeason],
+        });
+      }
+      demoted.push(`${card.name} ${card.seasonLabel} $${card.salary} vs base $${base}`);
+    }
+    selection.baseBadges.sort((a, b) => a.name.localeCompare(b.name));
+    log(
+      `  beaten by the base card: ${demoted.length} dropped` +
+        `${demoted.length ? ` — ${demoted.join('; ')}` : ''}`
+    );
   }
 
   for (const [set, selections, file] of [

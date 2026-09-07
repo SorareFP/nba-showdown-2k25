@@ -1735,7 +1735,10 @@ describe('the season and the card-type badge', () => {
     const superSeason = POOL_PLAYERS.filter(
       p => p.badges.includes(SUPER_SEASON_BADGE) && !p.badges.includes(ROOKIE_BADGE)
     );
-    expect(superSeason.length).toBe(107);
+    // 146 on 2026-09-07: the beaten-by-base rule moved 39 more players out of
+    // the Super Season SET and onto the base-card pill, which is the same
+    // exclusion consequence measured from the badge side.
+    expect(superSeason.length).toBe(146);
     for (const player of superSeason) {
       const html = render({ card: player, set: CURRENT_SET });
       expect(html, player.name).not.toContain('ROOKIE');
@@ -1775,10 +1778,13 @@ describe('the season and the card-type badge', () => {
     // pools each season by its share of the player's last 82 games, 173 of 353
     // budgets moved, and four more cards cleared SUPER_SEASON_MIN_SALARY.
     // 14/93 after the five players on no current NBA roster were cut (card-data/retired-2026.json), taking the pool 353 -> 348.
-    expect(gilded.length).toBe(14);
-    expect(superSeason.length - gilded.length).toBe(93);
-    expect(BADGE_FILE.counts.printed[SUPER_SEASON_BADGE]).toBe(14);
-    expect(BADGE_FILE.counts.printed[BEST_SEASON_BADGE]).toBe(93);
+    // 21 on 2026-09-07 — see the beaten-by-base note above.
+    expect(gilded.length).toBe(21);
+    // 125 on 2026-09-07: the beaten-by-base rule's 39 are mostly cheap role
+    // players, so nearly all of them land on the BEST SEASON side of the line.
+    expect(superSeason.length - gilded.length).toBe(125);
+    expect(BADGE_FILE.counts.printed[SUPER_SEASON_BADGE]).toBe(21);
+    expect(BADGE_FILE.counts.printed[BEST_SEASON_BADGE]).toBe(125);
     expect(BADGE_FILE.counts.printed[ROOKIE_BADGE]).toBe(33);
   });
 
@@ -2175,32 +2181,41 @@ describe('the generated award file, on the cards it belongs to', () => {
     // were Rookies of the Year — Embiid, Towns, Davis, Ball, Morant, Barnes,
     // Kidd between them — so this count fell with them. They did not lose the
     // mark; it moved to the reward set with the card, which is checked below.
+    // AND 19 -> 24 ON 2026-09-07, which is NOT a rule change: the awards file
+    // had gone stale against the forced rookie seasons added on 2026-09-06
+    // (card-data/rookie-legends-2026.json). Regenerating it marked the ones
+    // who had won something — Blake Griffin, Chris Webber, Mark Jackson and
+    // Shaq among them — so ROY moved 15 -> 20. Re-run generateAwards.js after
+    // any change to a set's roster; it reads the cache and costs nothing.
     const rookies = marked(ROOKIE_SET);
-    expect(rookies.length).toBe(19);
-    expect(rookies.filter(r => r.awards.includes('ROY')).length).toBe(15);
+    expect(rookies.length).toBe(24);
+    expect(rookies.filter(r => r.awards.includes('ROY')).length).toBe(20);
     // Two ROYs live on reward cards now — Chris Paul's 2005-06 Hornets rookie
     // year is New Orleans's, and LaMelo's went back to the rookie set when the
     // downgrade rule replaced him.
     expect(AWARDS_FILE.counts['team-rewards'].byCode.ROY).toBe(2);
-    // ALL-STAR DID NOT MOVE THIS SET AT ALL — no player in the rookie pool was
-    // an All-Star in his rookie year. Blake Griffin (`MVP-10,ROY-1,AS`,
-    // 2010-11) is the case that would have, and he is retired and out of the
-    // pool. Pinned so that a pool change which adds one is visible here.
-    expect(AWARDS_FILE.counts[ROOKIE_SET].byCode.AS).toBe(1);
+    // ALL-STAR ONCE DID NOT MOVE THIS SET AT ALL, and this pin existed so that
+    // "a pool change which adds one is visible here". It worked: Blake Griffin
+    // (`MVP-10,ROY-1,AS`, 2010-11) was named as the exact case that would move
+    // it, and he joined as a forced rookie season on 2026-09-06
+    // (card-data/rookie-legends-2026.json). So the count is 2 — Shaq and
+    // Griffin, the only two All-Star rookies in the set.
+    expect(AWARDS_FILE.counts[ROOKIE_SET].byCode.AS).toBe(2);
     // THE RING IS THE ONLY OTHER THING A ROOKIE CARD CAN CARRY, and it is a
     // team fact rather than a trophy: six of them won a title in their first
     // year. Nobody holds both — a Rookie of the Year on a champion would, and
     // none of the eleven is one. ONE EXCEPTION since the nineties arrived:
     // rookie Shaquille O'Neal was an All-Star, the only rookie in the set who
     // was — so his card reads ROY+AS and everyone else's stays one mark.
+    const ROOKIE_ALL_STARS = ["Shaquille O'Neal", 'Blake Griffin'];
     for (const r of rookies) {
-      if (r.name === "Shaquille O'Neal") {
-        expect(r.awards).toEqual(['ROY', 'AS']);
+      if (ROOKIE_ALL_STARS.includes(r.name)) {
+        expect(r.awards, r.name).toEqual(['ROY', 'AS']);
         continue;
       }
       expect(r.awards, r.name).toEqual(r.champion ? ['CHAMP'] : ['ROY']);
     }
-    expect(rookies.filter(r => r.awards.includes('ROY'))).toHaveLength(15);
+    expect(rookies.filter(r => r.awards.includes('ROY'))).toHaveLength(20);
     // 4, not 8: the rookie playing-time bar removed exactly the profile a ring
     // reaches without a rookie ever earning minutes — a title team's bench.
     expect(rookies.filter(r => r.awards.includes('CHAMP'))).toHaveLength(4);

@@ -92,6 +92,36 @@ const stats = new Map(STRATS.map(s => [s.id, {
   gamesHeldUnplayed: 0, winsWhenHeldUnplayed: 0, winsWhenHeld: 0,
 }]));
 
+/**
+ * The placement snake: the five each side picked go down one at a time,
+ * A-B-B-A-A-B-B-A-A-B, each pick answering the row — the matchup assignment
+ * the live game makes. Mirrors runSnake in src/game/modes/simulate.js.
+ */
+function runSnake(g) {
+  g.draft.aPicks = g.teamA.starters.map(p => p.id);
+  g.draft.bPicks = g.teamB.starters.map(p => p.id);
+  g.teamA.starters = []; g.teamB.starters = [];
+  g.placementStep = 0;
+  g.phase = 'matchup_strats';
+  const order = g.placementOrder;
+  for (let step = 0; step < 10; step += 1) {
+    const key = order[step];
+    const pick = aiPlacementPick(g, key);
+    if (!pick) break;
+    const team = key === 'A' ? g.teamA : g.teamB;
+    team.starters.push((team.roster || []).find(r => r.id === pick.playerId));
+    g.placementStep = step + 1;
+  }
+  for (const key of ['A', 'B']) {
+    const team = key === 'A' ? g.teamA : g.teamB;
+    const picks = key === 'A' ? g.draft.aPicks : g.draft.bPicks;
+    const down = new Set(team.starters.map(p => p.id));
+    for (const id of picks) if (!down.has(id)) team.starters.push((team.roster || []).find(r => r.id === id));
+  }
+  g.placementStep = 10;
+  return g;
+}
+
 function draftRoster(taken = new Set()) {
   const pool = CARDS.filter(c => !taken.has(c.id));
   const picks = [];
@@ -204,20 +234,7 @@ for (let n = 0; n < GAMES; n += 1) {
       else g.draft.bPool = pool.filter((_, j) => j !== idx);
     }
   }
-  g.draft.aPicks = g.teamA.starters.map(p => p.id);
-  g.draft.bPicks = g.teamB.starters.map(p => p.id);
-  g.teamA.starters = []; g.teamB.starters = [];
-  g.placementStep = 0;
-  g.phase = 'matchup_strats';
-  const order = g.placementOrder;
-  for (let step = 0; step < 10; step += 1) {
-    const key = order[step];
-    const pick = aiPlacementPick(g, key);
-    if (!pick) break;
-    const team = key === 'A' ? g.teamA : g.teamB;
-    team.starters.push((team.roster || []).find(r => r.id === pick.playerId));
-    g.placementStep = step + 1;
-  }
+  runSnake(g);
 
   for (let s = 0; s < SECTIONS && !g.done; s += 1) {
     tallyHands(g, heldThisGame);
@@ -236,6 +253,12 @@ for (let n = 0; n < GAMES; n += 1) {
           .slice(0, STARTERS)
           .map(o => o.c);
       }
+      // THE SNAKE EVERY SECTION (2026-09-08). Until now the audit placed the
+      // opening five and then paired every later section by rotation order —
+      // arbitrary matchups for eleven sections of twelve, so every card
+      // gated on an advantage was measured against a random table. The
+      // season simulator had the same gap and got the same fix.
+      runSnake(g);
     }
 
     // ── Matchup phase: alternate aiTurn until both pass ──

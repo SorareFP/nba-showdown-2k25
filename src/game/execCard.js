@@ -29,7 +29,7 @@ function scStr(r, ps) {
   // The bonus, ITEMISED. "8+4=12 vs 13" reads as though a printed 3PT bonus
   // was ignored; "8 +1 card +1 3PT +2 🔥 = 12 vs 13" shows it was not. See the
   // `parts` note in shotCheck.
-  const sign = n => `${n > 0 ? '+' : ''}${n}`;
+  const sign = n => `${n > 0 ? '+' : '−'}${Math.abs(n)}`;
   const detail = r.parts?.length
     ? ` ${r.parts.map(p => `${sign(p.n)} ${p.label}`).join(' ')}`
     : (r.bonus !== 0 ? sign(r.bonus) : '');

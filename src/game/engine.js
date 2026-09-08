@@ -420,9 +420,17 @@ export function shotCheck(player, type, extra, ps) {
   // card should have made it. The +1 is already INSIDE the +4, which the line
   // gave no way to know (the user, 2026-09-07). `parts` is that breakdown; the
   // arithmetic is untouched.
+  // `extra` is a number (a card's bonus, labelled as such) or an ARRAY of
+  // { label, n } parts — the spend checks pass the assist boost and the
+  // defender's contest separately so the line can show them.
   const parts = [];
-  let bonus = extra || 0;
-  if (extra) parts.push({ label: 'card', n: extra });
+  let bonus = 0;
+  if (Array.isArray(extra)) {
+    for (const part of extra) if (part && part.n) { bonus += part.n; parts.push({ label: part.label, n: part.n }); }
+  } else {
+    bonus = extra || 0;
+    if (extra) parts.push({ label: 'card', n: extra });
+  }
   const boost = type === '3pt' ? (player.threePtBoost || 0)
     : type === 'paint' ? (player.paintBoost || 0)
       : 0;
@@ -434,6 +442,25 @@ export function shotCheck(player, type, extra, ps) {
   const hit = total >= player.shotLine;
   const pts = hit ? (type === '3pt' ? 3 : type === 'paint' ? 2 : 1) : 0;
   return { die, bonus, total, line: player.shotLine, hit, pts, type, parts };
+}
+
+/**
+ * A shot check as one log line, ITEMISED: "🎲8 −1 Paint +2 🔥 −1 contest = 8
+ * vs 14 → MISS". The spend checks used to print only the net bonus, so a
+ * hot marker that was counted could not be told from one that was not (the
+ * user, 2026-09-08, on Jaren Jackson Jr.'s rebound check reading "🎲8=8").
+ */
+export function checkLine(r) {
+  const sign = n => `${n > 0 ? '+' : '−'}${Math.abs(n)}`;
+  const detail = r.parts?.length
+    ? ` ${r.parts.map(p => `${sign(p.n)} ${p.label}`).join(' ')}`
+    : (r.bonus ? ` ${sign(r.bonus)}` : '');
+  return `🎲${r.die}${detail} = ${r.total} vs ${r.line} → ${r.hit ? `${r.pts}pts!` : 'MISS'}`;
+}
+
+/** The parts of a spend check's bonus: the banked assist boost and the matchup contest. */
+function spendParts(astBonus, contest) {
+  return [{ label: 'AST', n: astBonus || 0 }, { label: 'contest', n: -(contest || 0) }];
 }
 
 // ── Assist Spending ────────────────────────────────────────────────────────
@@ -460,7 +487,7 @@ export function spendAssist(g, teamKey, type, playerIdx) {
     if (!(player.threePtBoost > 0)) return { game: ng, ok: false, msg: `${player.name} needs a 3PT Bonus` };
     myT.assists -= SPEND_COSTS.assistThree;
     const astBonus = ng.tempEff?.[teamKey]?.['astBoost_' + playerIdx] || 0;
-    const r = shotCheck(player, '3pt', astBonus - matchupContest(ng, teamKey, playerIdx, '3pt'), ps);
+    const r = shotCheck(player, '3pt', spendParts(astBonus, matchupContest(ng, teamKey, playerIdx, '3pt')), ps);
     if (r.hit) {
       myT.score += r.pts;
       const ps2 = myT.stats.find(s => s.id === player.id);
@@ -473,7 +500,7 @@ export function spendAssist(g, teamKey, type, playerIdx) {
     if (r.die <= 2) ps.cold = (ps.cold || 0) + 1;
     if (r.die >= 19) ps.hot = (ps.hot || 0) + 1;
     if (ng.tempEff?.[teamKey]) delete ng.tempEff[teamKey]['astBoost_' + playerIdx];
-    ng.log = [...ng.log, { team: teamKey, msg: `Spent 4 AST: ${player.name} 3PT check 🎲${r.die}${r.bonus ? (r.bonus > 0 ? '+' : '') + r.bonus : ''}=${r.total} vs ${r.line} → ${r.hit ? '3pts!' : 'MISS'}` }];
+    ng.log = [...ng.log, { team: teamKey, msg: `Spent ${SPEND_COSTS.assistThree} AST: ${player.name} 3PT check ${checkLine(r)}` }];
     return { game: ng, ok: true };
   }
 
@@ -482,7 +509,7 @@ export function spendAssist(g, teamKey, type, playerIdx) {
     if (!(player.paintBoost > 0)) return { game: ng, ok: false, msg: `${player.name} needs a Paint Bonus` };
     myT.assists -= SPEND_COSTS.assistPaint;
     const astBonus = ng.tempEff?.[teamKey]?.['astBoost_' + playerIdx] || 0;
-    const r = shotCheck(player, 'paint', astBonus - matchupContest(ng, teamKey, playerIdx, 'paint'), ps);
+    const r = shotCheck(player, 'paint', spendParts(astBonus, matchupContest(ng, teamKey, playerIdx, 'paint')), ps);
     if (r.hit) {
       myT.score += r.pts;
       const ps2 = myT.stats.find(s => s.id === player.id);
@@ -492,7 +519,7 @@ export function spendAssist(g, teamKey, type, playerIdx) {
     if (r.die <= 2) ps.cold = (ps.cold || 0) + 1;
     if (r.die >= 19) ps.hot = (ps.hot || 0) + 1;
     if (ng.tempEff?.[teamKey]) delete ng.tempEff[teamKey]['astBoost_' + playerIdx];
-    ng.log = [...ng.log, { team: teamKey, msg: `Spent 3 AST: ${player.name} Paint check 🎲${r.die}${r.bonus ? (r.bonus > 0 ? '+' : '') + r.bonus : ''}=${r.total} vs ${r.line} → ${r.hit ? '2pts!' : 'MISS'}` }];
+    ng.log = [...ng.log, { team: teamKey, msg: `Spent ${SPEND_COSTS.assistPaint} AST: ${player.name} Paint check ${checkLine(r)}` }];
     return { game: ng, ok: true };
   }
 
@@ -512,7 +539,7 @@ export function spendReboundBonus(g, teamKey, type, playerIdx) {
     // Second-chance paint shot check (from +3 reb advantage) — costs 3 REB
     if (myT.rebounds < SPEND_COSTS.reboundPaint) return { game: ng, ok: false, msg: `Need ${SPEND_COSTS.reboundPaint} rebounds (have ${myT.rebounds})` };
     myT.rebounds -= SPEND_COSTS.reboundPaint;
-    const r = shotCheck(player, 'paint', -matchupContest(ng, teamKey, playerIdx, 'paint'), ps);
+    const r = shotCheck(player, 'paint', spendParts(0, matchupContest(ng, teamKey, playerIdx, 'paint')), ps);
     if (r.hit) {
       myT.score += r.pts;
       const ps2 = myT.stats.find(s => s.id === player.id);
@@ -523,7 +550,7 @@ export function spendReboundBonus(g, teamKey, type, playerIdx) {
     if (r.die >= 19) ps.hot = (ps.hot || 0) + 1;
     // Mark as used
     if (ng.reboundBonuses?.[teamKey]) ng.reboundBonuses[teamKey].paintCheck = false;
-    ng.log = [...ng.log, { team: teamKey, msg: `Rebound Paint Check (−3 REB): ${player.name} 🎲${r.die}${r.bonus ? (r.bonus > 0 ? '+' : '') + r.bonus : ''}=${r.total} vs ${r.line} → ${r.hit ? '2pts!' : 'MISS'}` }];
+    ng.log = [...ng.log, { team: teamKey, msg: `Rebound Paint Check (−${SPEND_COSTS.reboundPaint} REB): ${player.name} ${checkLine(r)}` }];
     return { game: ng, ok: true };
   }
 

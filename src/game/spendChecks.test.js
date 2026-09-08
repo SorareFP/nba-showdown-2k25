@@ -1,0 +1,73 @@
+// The spend checks — an assist three, an assist paint check, the rebound
+// paint check — print WHERE their bonus came from, the way the card checks
+// do. The user (2026-09-08) read "Jaren Jackson Jr. 🎲8=8 vs 14 → MISS" on a
+// player with Paint −1 and a hot marker and could not tell whether the marker
+// had been counted. It had: −1 Paint, +2 🔥, −1 contest. Now the line says so.
+import { describe, it, expect, vi } from 'vitest';
+import { newGame, getTeam, getPS, spendAssist, spendReboundBonus, shotCheck, checkLine, SPEND_COSTS } from './engine.js';
+
+const mk = (id, over = {}) => ({
+  id, name: id, team: 'TST', pos: 'C', speed: 10, power: 10, defBoost: 0,
+  shotLine: 14, paintBoost: -1, threePtBoost: 2, salary: 500,
+  chart: [{ lo: 1, hi: 99, pts: 2, reb: 1, ast: 1 }],
+  ...over,
+});
+const roster = (prefix, over) => Array.from({ length: 10 }, (_, i) => mk(`${prefix}${i}`, over));
+
+function game() {
+  const g = newGame(roster('a'), roster('b', { defBoost: 1 }));
+  g.teamA.starters = g.teamA.roster.slice(0, 5);
+  g.teamB.starters = g.teamB.roster.slice(0, 5);
+  g.phase = 'scoring';
+  g.offMatchups = { A: [0, 1, 2, 3, 4], B: [0, 1, 2, 3, 4] };
+  return g;
+}
+
+describe('shotCheck with itemised parts', () => {
+  it('sums an array of parts and keeps each one, dropping zeros', () => {
+    const p = mk('p', { hot: 0 });
+    const spy = vi.spyOn(Math, 'random').mockReturnValue(0.35);   // a 8
+    const r = shotCheck(p, 'paint', [{ label: 'AST', n: 0 }, { label: 'contest', n: -1 }], { hot: 1 });
+    spy.mockRestore();
+    expect(r.die).toBe(8);
+    expect(r.parts).toEqual([{ label: 'contest', n: -1 }, { label: 'Paint', n: -1 }, { label: '🔥', n: 2 }]);
+    expect(r.bonus).toBe(0);
+    expect(r.total).toBe(8);
+    expect(checkLine(r)).toBe('🎲8 −1 contest −1 Paint +2 🔥 = 8 vs 14 → MISS');
+  });
+
+  it('still labels a plain number as a card bonus', () => {
+    const spy = vi.spyOn(Math, 'random').mockReturnValue(0.35);
+    const r = shotCheck(mk('p'), '3pt', 1, {});
+    spy.mockRestore();
+    expect(r.parts).toEqual([{ label: 'card', n: 1 }, { label: '3PT', n: 2 }]);
+  });
+});
+
+describe('the spend lines', () => {
+  it('rebound paint check: Paint −1, 🔥 +2, contest −1 read as parts, net zero', () => {
+    const g = game();
+    g.teamA.rebounds = SPEND_COSTS.reboundPaint;
+    g.reboundBonuses = { A: { paintCheck: true } };
+    getPS(g, 'A', 'a0').hot = 1;
+    const spy = vi.spyOn(Math, 'random').mockReturnValue(0.35);
+    const { game: ng, ok } = spendReboundBonus(g, 'A', 'paint_check', 0);
+    spy.mockRestore();
+    expect(ok).toBe(true);
+    const line = ng.log[ng.log.length - 1].msg;
+    expect(line).toBe(`Rebound Paint Check (−${SPEND_COSTS.reboundPaint} REB): a0 🎲8 −1 contest −1 Paint +2 🔥 = 8 vs 14 → MISS`);
+  });
+
+  it('assist three: the banked +1 boost, the 3PT bonus and the contest, itemised', () => {
+    const g = game();
+    g.teamA.assists = SPEND_COSTS.assistThree;
+    g.tempEff = { A: { astBoost_0: 1 }, B: {} };
+    const spy = vi.spyOn(Math, 'random').mockReturnValue(0.55);   // a 12
+    const { game: ng, ok } = spendAssist(g, 'A', '3pt', 0);
+    spy.mockRestore();
+    expect(ok).toBe(true);
+    const line = ng.log[ng.log.length - 1].msg;
+    expect(line).toBe(`Spent ${SPEND_COSTS.assistThree} AST: a0 3PT check 🎲12 +1 AST −1 contest +2 3PT = 14 vs 14 → 3pts!`);
+    expect(getTeam(ng, 'A').score).toBe(3);
+  });
+});

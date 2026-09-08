@@ -30,6 +30,8 @@
 // lobby to seat them. Until that exists, a season is you against the league.
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useAuth } from '../firebase/AuthProvider.jsx';
+import { loadRemoteGame } from '../firebase/games.js';
+import { readLocalGame } from '../game/gameSave.js';
 import { useDialogs } from '../ui/dialogs.jsx';
 import {
   createSeason, standings, roundFixtures, recordResult, rostersOf, decksOf, setDeck,
@@ -456,6 +458,28 @@ function Dashboard({ season, uid, commit, onPlayFixture, onBack, onAbandon }) {
 
   const mine = games.find(g => g.home === MY_ID || g.away === MY_ID) ?? null;
   const myGameLeft = Boolean(mine && !mine.result && mine.home && mine.away);
+
+  // A FIXTURE ALREADY IN PROGRESS is resumed, not re-dealt — PlayTab checks
+  // this browser's own save (a reload) and the account's roaming save (the
+  // phone it was started on). The screen says which, so the button reads as
+  // what it will do. Read once per round; the saves change only in Play.
+  const [roaming, setRoaming] = useState(null);
+  useEffect(() => {
+    if (!uid) { setRoaming(null); return undefined; }
+    let live = true;
+    loadRemoteGame(uid)
+      .then(s => { if (live) setRoaming(s?.game && !s.game.done ? s : null); })
+      .catch(() => { if (live) setRoaming(null); });
+    return () => { live = false; };
+  }, [uid, season.id, season.round]);
+  const inProgress = useMemo(() => {
+    if (!mine || mine.result) return null;
+    const isMine = s => s?.game && !s.game.done && s.preset?.seasonId === season.id && s.preset?.fixtureId === mine.id;
+    const local = readLocalGame();
+    if (isMine(local)) return 'here';
+    if (isMine(roaming) && (!local?.game || (roaming.at || 0) > (local.at || 0))) return 'account';
+    return null;
+  }, [mine, roaming, season.id]);
   const othersLeft = games.some(g => g !== mine && !g.result && g.home && g.away);
   const complete = isPlayoffs
     ? games.every(g => g.result || !g.home || !g.away)
@@ -599,9 +623,12 @@ function Dashboard({ season, uid, commit, onPlayFixture, onBack, onAbandon }) {
                 </span>
                 <TeamChip team={by.get(mine.away)} right won={mine.result ? mine.result.awayScore > mine.result.homeScore : false} />
               </div>
+              {myGameLeft && inProgress === 'account' && (
+                <div className={styles.hint}>In progress on another device — Resume picks it up where you left off.</div>
+              )}
               {myGameLeft && (
                 <div className={styles.myGameActions}>
-                  <button className={styles.primary} onClick={play}>▶ Play this game</button>
+                  <button className={styles.primary} onClick={play}>{inProgress ? '▶ Resume this game' : '▶ Play this game'}</button>
                   <button
                     className={styles.ghost}
                     onClick={simMine}

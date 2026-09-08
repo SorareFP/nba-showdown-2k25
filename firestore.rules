@@ -96,6 +96,10 @@ service cloud.firestore {
 
       match /teams/{teamId} { allow read, write: if isSelf(uid); }
       match /decks/{deckId} { allow read, write: if isSelf(uid); }
+      // The game in progress, so it can be resumed on another device. One
+      // document (`current`); nothing in it mints or pays — the payout is
+      // claimed separately, by claimGameReward.
+      match /games/{gameId} { allow read, write: if isSelf(uid); }
 
       // A SEASON IS A SCHEDULE, NOT A PRIZE. Fixtures, standings and rosters
       // of cards the player already owns — nothing here mints or pays, so the

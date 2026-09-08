@@ -587,14 +587,18 @@ const ADMIN_EMAILS = new Set(['hoopsonhoops@gmail.com']);
 /** Firestore batches take 500 writes; stay well under with headroom. */
 const BATCH = 400;
 
-export const devResetAccount = onCall({ region: 'us-central1' }, async request => {
-  const uid = requireAuth(request);
-  const email = request.auth?.token?.email ?? '';
-  if (!ADMIN_EMAILS.has(email)) throw new HttpsError('permission-denied', 'Not a dev account');
-
+/**
+ * WIPE ONE ACCOUNT back to a fresh sign-in: every card, the ledger, the
+ * currency, teams, decks, seasons, the roaming game, the lifetime card stats,
+ * the favourite team and the starter-pack status. Deleted copies go back to
+ * supply. Shared by devResetAccount (the caller's own account, or an admin's
+ * chosen target) and the all-accounts wipe the user asked for on 2026-09-08
+ * ("wipe all collections and starterPackOpened from the four users").
+ */
+async function wipeAccount(uid) {
   // Teams and decks too: they name cards, and after a reset they would name
   // cards the account no longer holds. The user noticed (2026-09-05).
-  const [copies, coll, hist, claims, listings, teams, decks] = await Promise.all([
+  const [copies, coll, hist, claims, listings, teams, decks, seasons, games, stats] = await Promise.all([
     db.collection(`users/${uid}/copies`).get(),
     db.collection(`users/${uid}/collection`).get(),
     db.collection(`users/${uid}/packHistory`).get(),
@@ -602,6 +606,9 @@ export const devResetAccount = onCall({ region: 'us-central1' }, async request =
     db.collection('listings').where('seller', '==', uid).get(),
     db.collection(`users/${uid}/teams`).get(),
     db.collection(`users/${uid}/decks`).get(),
+    db.collection(`users/${uid}/seasons`).get(),
+    db.collection(`users/${uid}/games`).get(),
+    db.collection(`users/${uid}/cardStats`).get(),
   ]);
 
   // Every copy that existed leaves circulation, whatever state it was in —
@@ -613,7 +620,7 @@ export const devResetAccount = onCall({ region: 'us-central1' }, async request =
     if (key) returned[key] = (returned[key] ?? 0) - 1;
   });
 
-  const refs = [...copies.docs, ...coll.docs, ...hist.docs, ...claims.docs, ...listings.docs, ...teams.docs, ...decks.docs].map(d => d.ref);
+  const refs = [...copies.docs, ...coll.docs, ...hist.docs, ...claims.docs, ...listings.docs, ...teams.docs, ...decks.docs, ...seasons.docs, ...games.docs, ...stats.docs].map(d => d.ref);
   for (let i = 0; i < refs.length; i += BATCH) {
     const batch = db.batch();
     for (const ref of refs.slice(i, i + BATCH)) batch.delete(ref);
@@ -636,15 +643,55 @@ export const devResetAccount = onCall({ region: 'us-central1' }, async request =
     dailyFirstWin: false,
     packWindow: FieldValue.delete(),
     gameWindow: FieldValue.delete(),
+    // The favourite team is write-once by rule; a wiped account chooses again.
+    favoriteTeam: FieldValue.delete(),
     // A saved reveal names cards that no longer exist in the ledger.
     settings: { pendingReveals: [] },
   }, { merge: true });
   await last.commit();
 
   return {
+    uid,
     copies: copies.size, cards: coll.size, claims: claims.size, listings: listings.size,
-    teams: teams.size, decks: decks.size,
+    teams: teams.size, decks: decks.size, seasons: seasons.size, games: games.size, cardStats: stats.size,
   };
+}
+
+/**
+ * DEV RESET. Admins only. `{}` wipes the caller's own account; `{ targetUid }`
+ * wipes that account; `{ all: true }` wipes every account in `users` and
+ * returns one line per account. Nothing about the supply's opening counts is
+ * touched beyond handing deleted copies back.
+ */
+export const devResetAccount = onCall({ region: 'us-central1' }, async request => {
+  const uid = requireAuth(request);
+  const email = request.auth?.token?.email ?? '';
+  if (!ADMIN_EMAILS.has(email)) throw new HttpsError('permission-denied', 'Not a dev account');
+  const { targetUid, all } = request.data ?? {};
+  if (all === true) {
+    const users = await db.collection('users').get();
+    const results = [];
+    for (const d of users.docs) results.push(await wipeAccount(d.id));
+    return { all: true, accounts: results };
+  }
+  if (targetUid && typeof targetUid !== 'string') throw new HttpsError('invalid-argument', 'targetUid must be a uid');
+  return wipeAccount(targetUid || uid);
+});
+
+/**
+ * DEV COINS. Admins only, adds to the caller's own balance. The direct client
+ * write this replaces stops working the moment the rules land (currency is
+ * not a client-writable field), and a dev tool that only works before the
+ * rules is a dev tool that is about to break.
+ */
+export const devGrantCoins = onCall({ region: 'us-central1' }, async request => {
+  const uid = requireAuth(request);
+  const email = request.auth?.token?.email ?? '';
+  if (!ADMIN_EMAILS.has(email)) throw new HttpsError('permission-denied', 'Not a dev account');
+  const amount = Number(request.data?.amount ?? 0);
+  if (!Number.isFinite(amount) || amount <= 0 || amount > 10_000_000) throw new HttpsError('invalid-argument', 'amount');
+  await db.doc(`users/${uid}`).set({ currency: FieldValue.increment(amount) }, { merge: true });
+  return { added: amount };
 });
 
 /**

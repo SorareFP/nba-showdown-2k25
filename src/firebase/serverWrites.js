@@ -120,7 +120,8 @@ const server = {
   claimSeasonReward: (uid, seasonId) => call('claimSeasonReward', { seasonId }),
   setFavoriteTeam: (uid, team) => call('setFavoriteTeam', { team }),
   collectCard: (uid, cardKey) => call('collectCard', { cardKey }),
-  devResetAccount: () => call('devResetAccount', {}),
+  devResetAccount: (uid, opts = {}) => call('devResetAccount', opts),
+  devGrantCoins: (uid, amount) => call('devGrantCoins', { amount }),
 };
 
 /** The direct route: the browser does it all, as it always did. */
@@ -223,6 +224,11 @@ const direct = {
    * is the live one. Gated in the component to dev builds and the game's own
    * account; the server route is gated again server-side.
    */
+  /** Dev coins on the direct route: the old client write, which the rules will refuse. */
+  async devGrantCoins(uid, amount) {
+    await addCoins(uid, amount);
+    return { added: amount };
+  },
   async devResetAccount(uid) {
     const [copies, coll, hist, claims, listings, teams, decks] = await Promise.all([
       getDocs(collection(db, 'users', uid, 'copies')),
@@ -291,4 +297,6 @@ export const setFavoriteTeam = (uid, team) => impl.setFavoriteTeam(uid, team);
 /** Put one owned copy into the collection. Returns `{ cardKey, copyId }`. */
 export const collectCard = (uid, cardKey) => impl.collectCard(uid, cardKey);
 /** DEV ONLY. Wipes the caller's collection, ledger and wallet. */
-export const devResetAccount = uid => impl.devResetAccount(uid);
+export const devResetAccount = (uid, opts = {}) => impl.devResetAccount(uid, opts);
+/** Server only — there is no honest direct route to coins. */
+export const devGrantCoins = (uid, amount) => impl.devGrantCoins(uid, amount);

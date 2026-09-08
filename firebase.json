@@ -1,5 +1,5 @@
 {
-  "_comment": "Firebase project config. NO HOSTING BLOCK ON PURPOSE — the app deploys to GitHub Pages (`npm run deploy`, gh-pages -d dist) and Vite builds it under base /nba-showdown-2k25/. Adding Firebase Hosting here would give two live copies of the game at two URLs, with only one of them the one anybody uses. NOTHING HERE IS DEPLOYED YET — see functions/README.md for what deploying costs and what it breaks if done out of order. The predeploy hook copies the game modules into functions/shared so the server and the browser run the SAME pack engine; see functions/prepare.mjs for why a copy rather than a symlink or a path import. THE HOOK DELIBERATELY USES A PLAIN RELATIVE PATH: the documented form is `node \"$RESOURCE_DIR/prepare.mjs\"`, and $RESOURCE_DIR is POSIX syntax that cmd.exe does not expand, so on Windows the hook runs literally, node cannot find the module, and the very first deploy aborts. firebase-tools runs hooks from the directory holding this file, and prepare.mjs resolves its own paths from import.meta.url, so a relative path is correct on every platform.",
+  "_comment": "Firebase project config. NO HOSTING BLOCK ON PURPOSE \u2014 the app deploys to GitHub Pages (`npm run deploy`, gh-pages -d dist) and Vite builds it under base /nba-showdown-2k25/. Adding Firebase Hosting here would give two live copies of the game at two URLs, with only one of them the one anybody uses. NOTHING HERE IS DEPLOYED YET \u2014 see functions/README.md for what deploying costs and what it breaks if done out of order. The predeploy hook copies the game modules into functions/shared so the server and the browser run the SAME pack engine; see functions/prepare.mjs for why a copy rather than a symlink or a path import. THE HOOK DELIBERATELY USES A PLAIN RELATIVE PATH: the documented form is `node \"$RESOURCE_DIR/prepare.mjs\"`, and $RESOURCE_DIR is POSIX syntax that cmd.exe does not expand, so on Windows the hook runs literally, node cannot find the module, and the very first deploy aborts. firebase-tools runs hooks from the directory holding this file, and prepare.mjs resolves its own paths from import.meta.url, so a relative path is correct on every platform.",
   "firestore": {
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
@@ -9,8 +9,17 @@
       "source": "functions",
       "codebase": "default",
       "runtime": "nodejs22",
-      "ignore": ["node_modules", ".git", "*.local"],
-      "predeploy": ["node functions/prepare.mjs"]
+      "ignore": [
+        "node_modules",
+        ".git",
+        "*.local"
+      ],
+      "predeploy": [
+        "node functions/prepare.mjs"
+      ]
     }
-  ]
+  ],
+  "database": {
+    "rules": "database.rules.json"
+  }
 }

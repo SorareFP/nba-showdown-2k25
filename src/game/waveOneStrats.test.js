@@ -91,7 +91,7 @@ describe('matchup-phase wave-one cards', () => {
     expect(canPlayCard(game({ A: two, hand: ['defensive_identity'], phase: 'matchup_strats' }), 'A', 'defensive_identity').canPlay).toBe(false);
   });
 
-  it('Defensive Anchor doubles the defender's bonus this section: a +3 wall zeroes a +4 star, a +1 halves him', () => {
+  it("Defensive Anchor doubles the defender's bonus this section: a +3 wall zeroes a +4 star, a +1 halves him", () => {
     const A = five('a'); A[0] = p('anchor', 10, 10, { defBoost: 3 });
     const B = five('b'); B[0] = p('star', 14, 14);
     const g = game({ A, B, hand: ['defensive_anchor'], phase: 'matchup_strats' });

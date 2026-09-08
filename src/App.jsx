@@ -5,6 +5,8 @@ import TeamBuilderTab from './components/TeamBuilderTab.jsx';
 import PlayTab from './components/PlayTab.jsx';
 import SeasonTab from './components/SeasonTab.jsx';
 import HowToPlay from './components/HowToPlay.jsx';
+import WelcomeTab from './components/WelcomeTab.jsx';
+import SignupBonus from './components/SignupBonus.jsx';
 import CollectionTab from './components/CollectionTab.jsx';
 import PvpLobby from './components/PvpLobby.jsx';
 import PvpGame from './components/PvpGame.jsx';
@@ -22,13 +24,14 @@ import { CARD_MAP } from './game/cards.js';
 import styles from './App.module.css';
 import { hasPlayedBefore, markPlayed, PLAYED_EVENT } from './game/firstRun.js';
 
-// Tabs visible to logged-out users (full card browser)
+// Tabs visible to logged-out users: THE FRONT DOOR AND THE RULES, nothing
+// that shows cards. The full card browser and a sandbox builder used to be
+// the guest landing — three hundred faces on first paint, and every card in
+// the game on display to someone who owns none. The user (2026-09-08): "It
+// shouldn't show any cards and should push the user toward sign-up and the
+// starter pack."
 const GUEST_TABS = [
-  { id: 'cards',   label: '📋 Cards' },
-  { id: 'strats',  label: '🃏 Strategy Cards' },
-  { id: 'builder', label: '🏗 Team Builder' },
-  { id: 'play',    label: '🏀 Play' },
-  { id: 'season',  label: '📅 Season' },
+  { id: 'home',      label: '🏀 Welcome' },
   { id: 'howtoplay', label: '📖 How to Play' },
 ];
 // Tabs visible to logged-in users (cards/strats hidden to preserve pack surprise)
@@ -42,8 +45,8 @@ const AUTH_TABS = [
 ];
 
 function AppInner() {
-  const { user, loading: authLoading, signIn } = useAuth();
-  const [tab, setTab] = useState(user ? 'builder' : 'cards');
+  const { user, loading: authLoading, signIn, justSignedUp, clearSignup } = useAuth();
+  const [tab, setTab] = useState(user ? 'builder' : 'home');
   const [teamA, setTeamA] = useState([]);
   const [teamB, setTeamB] = useState([]);
   const [collection, setCollection] = useState({});
@@ -61,6 +64,16 @@ function AppInner() {
   // banner on every page until claimed." Read with the collection, so
   // opening the pack — which refreshes the collection — clears it.
   const [starter, setStarter] = useState(null);   // null = unknown or signed out
+  // A signed-in account with the starter still unopened lands on Collection,
+  // where the pack is — once per sign-in, so it does not fight the player.
+  const landedRef = useRef(null);
+  useEffect(() => {
+    if (!user) { landedRef.current = null; return; }
+    if (starter && !starter.opened && landedRef.current !== user.uid) {
+      landedRef.current = user.uid;
+      setTab('collection');
+    }
+  }, [user, starter]);
   // THE NEWCOMER'S BANNER: until this browser has dealt a game, point at the
   // tutorial. Cleared by the first deal, the tutorial's end, or the ×.
   const [playedBefore, setPlayedBefore] = useState(hasPlayedBefore);
@@ -122,6 +135,10 @@ function AppInner() {
   }, []);
 
   const tabs = user ? AUTH_TABS : GUEST_TABS;
+  // Signing out from a signed-in-only tab lands on the front door.
+  useEffect(() => {
+    if (!user && !authLoading && !tabs.some(t => t.id === tab)) setTab('home');
+  }, [user, authLoading, tabs, tab]);
 
   useEffect(() => {
     const measure = () => {
@@ -197,12 +214,16 @@ function AppInner() {
           and the only way in is Google. The user (2026-09-08): "make sure
           that new players know they have to sign in/up with google in order
           to claim their starter pack." */}
-      {!user && !authLoading && (
-        <div className={styles.signInCta}>
+      {/* THE STARTER BAND, signed in or not (the user, 2026-09-08: "Signed-in
+          or not, it should show that you are ready to open your starter
+          pack"). A guest is told it is ready and offered the sign-in; an
+          account that has not opened it is pointed at Collection. */}
+      {!user && !authLoading && tab !== 'home' && !tutorialMode && (
+        <div className={styles.starterBand}>
           <span>
-            New here? <strong>Sign in with Google</strong> to claim your free <strong>Starter Pack</strong> — 20 players, 30 strategy cards and Unethical Hoops. Everything you see signed out is a sandbox.
+            Your <strong>Starter Pack</strong> is ready — 20 players, 30 strategy cards and Unethical Hoops. <strong>Sign in with Google</strong> to open it.
           </span>
-          <button className={styles.signInCtaBtn} onClick={signIn}>Sign in with Google</button>
+          <button className={styles.starterBandBtn} onClick={signIn}>Sign in with Google</button>
         </div>
       )}
 
@@ -223,6 +244,13 @@ function AppInner() {
           <button className={styles.firstRunDismiss} onClick={() => { markPlayed(); }} aria-label="Dismiss">×</button>
         </div>
       )}
+      {user && justSignedUp && (
+        <SignupBonus
+          name={user.displayName}
+          onClaim={() => { clearSignup(); setTab('collection'); }}
+          onDismiss={clearSignup}
+        />
+      )}
       <main className={styles.main}>
         {tutorialMode && (
           <div style={{ display: rulesOverTutorial ? 'none' : 'block' }}>
@@ -237,6 +265,12 @@ function AppInner() {
                 would remount it and throw the game away. It is the one tab
                 that does not cross-fade, and that is the trade. */}
             <div key={tab} className={styles.tabFade}>
+            {tab === 'home'    && !user && (
+              <WelcomeTab
+                onTutorial={() => { setTutorialMode(true); setRulesOverTutorial(false); }}
+                onHowToPlay={() => setTab('howtoplay')}
+              />
+            )}
             {tab === 'cards'   && <CardsTab />}
             {tab === 'strats'  && <StratsTab />}
             {tab === 'howtoplay' && (

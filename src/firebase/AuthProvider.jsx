@@ -8,6 +8,10 @@ const AuthContext = createContext(null);
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  // TRUE FOR THE SIGN-IN THAT CREATED THE ACCOUNT, until the app has shown
+  // the sign-up bonus once (clearSignup). Nothing is stored: a returning
+  // account on a new device has a user document already and never sees it.
+  const [justSignedUp, setJustSignedUp] = useState(false);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (fbUser) => {
@@ -18,6 +22,7 @@ export function AuthProvider({ children }) {
           const ref = doc(db, 'users', fbUser.uid);
           const snap = await getDoc(ref);
           if (!snap.exists()) {
+            setJustSignedUp(true);
             await setDoc(ref, {
               displayName: fbUser.displayName,
               email: fbUser.email,
@@ -39,6 +44,7 @@ export function AuthProvider({ children }) {
         }
       } else {
         setUser(null);
+        setJustSignedUp(false);
       }
       setLoading(false);
     });
@@ -47,9 +53,10 @@ export function AuthProvider({ children }) {
 
   const signIn = () => signInWithPopup(auth, googleProvider);
   const signOut = () => fbSignOut(auth);
+  const clearSignup = () => setJustSignedUp(false);
 
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signOut }}>
+    <AuthContext.Provider value={{ user, loading, signIn, signOut, justSignedUp, clearSignup }}>
       {children}
     </AuthContext.Provider>
   );

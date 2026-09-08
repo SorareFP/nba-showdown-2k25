@@ -33,6 +33,7 @@ import { makeBracket, reportMatch, champion as bracketChampion, winsFor, readyMa
 import { LEAGUE_SIZES, LENGTHS } from './schedule.js';
 import { TOURNAMENT_SIZES, ENTRY_FEES, tournamentPayouts } from './prizes.js';
 import { PHASE, recordResult, advance, roundComplete, earningsFor, teamsById } from './seasonCore.js';
+import { boxLinesFor } from '../boxScore.js';
 
 export const STATUS = { lobby: 'lobby', live: 'live', done: 'done', cancelled: 'cancelled' };
 export const KINDS = ['tournament', 'season'];
@@ -272,7 +273,13 @@ export function scoresFromRoom(league, fixture, room) {
   const b = Number(game.teamB?.score ?? 0);
   const hostScore = game.hostIs === 'A' ? a : b;
   const guestScore = game.hostIs === 'A' ? b : a;
-  return { homeScore: hostIsHome ? hostScore : guestScore, awayScore: hostIsHome ? guestScore : hostScore, forfeit: false };
+  // The box lines, for the season's player totals, mapped the same way.
+  const hostBox = boxLinesFor(game.hostIs === 'A' ? game.teamA : game.teamB);
+  const guestBox = boxLinesFor(game.hostIs === 'A' ? game.teamB : game.teamA);
+  return {
+    homeScore: hostIsHome ? hostScore : guestScore, awayScore: hostIsHome ? guestScore : hostScore, forfeit: false,
+    homeBox: hostIsHome ? hostBox : guestBox, awayBox: hostIsHome ? guestBox : hostBox,
+  };
 }
 
 /** A commissioner's forfeit, as scores. */
@@ -321,6 +328,7 @@ export function applyResult(league, result, { now = Date.now() } = {}) {
   let state = recordResult(league.state, {
     fixtureId: f.id, home: f.home, away: f.away, homeScore, awayScore,
     simulated: Boolean(result.simulated), forfeit: Boolean(result.forfeit),
+    homeBox: result.homeBox ?? null, awayBox: result.awayBox ?? null,
   });
   while (state.phase === PHASE.regular && roundComplete(state)) {
     const moved = advance(state);

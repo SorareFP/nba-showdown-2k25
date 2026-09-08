@@ -78,6 +78,7 @@ export function createSeason({
     teams,
     fixtures,
     results: [],
+    stats: [],
     round: 1,
     bracket: null,
     champion: null,

@@ -199,10 +199,10 @@ describe('resultFromPlayed', () => {
   const away = { fixtureId: 'r1g2', home: 'ai:BOS', away: 'me1', humanIsHome: false };
 
   it('reads your score as the home score at home, and as the away score on the road', () => {
-    expect(resultFromPlayed(home, 101, 97)).toEqual({
+    expect(resultFromPlayed(home, 101, 97)).toMatchObject({
       fixtureId: 'r1g1', home: 'me1', away: 'ai:BOS', homeScore: 101, awayScore: 97,
     });
-    expect(resultFromPlayed(away, 101, 97)).toEqual({
+    expect(resultFromPlayed(away, 101, 97)).toMatchObject({
       fixtureId: 'r1g2', home: 'ai:BOS', away: 'me1', homeScore: 97, awayScore: 101,
     });
   });

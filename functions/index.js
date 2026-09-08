@@ -1120,7 +1120,10 @@ export const reportLeagueResult = onCall({ region: 'us-central1' }, async reques
     const home = Number(request.data?.homeScore);
     const away = Number(request.data?.awayScore);
     if (![home, away].every(n => Number.isInteger(n) && n >= 0 && n <= 300)) throw new HttpsError('invalid-argument', 'Scores must be whole numbers');
-    scores = { homeScore: home, awayScore: away, forfeit: false };
+    // The box lines are the season's player totals — telemetry, no coins;
+    // sanitised to real cards and capped like a game claim's box.
+    const cleanBox = box => (Array.isArray(box) ? sanitizeBox(box).filter(row => getCardByKey(row.key)) : null);
+    scores = { homeScore: home, awayScore: away, forfeit: false, homeBox: cleanBox(request.data?.homeBox), awayBox: cleanBox(request.data?.awayBox) };
   }
   return db.runTransaction(async tx => {
     const ref = leagueRef(String(leagueId));

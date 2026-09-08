@@ -87,11 +87,18 @@ export function standings(season) {
  * `{ fixtureId, home, away, homeScore, awayScore }` — the shape simulate.js
  * returns and the Play tab can build from a finished game.
  */
-export function recordResult(season, result) {
+export function recordResult(season, rawResult) {
+  // THE BOX LINES ARE FOLDED, NOT KEPT. A result may carry each side's box
+  // score (`homeBox`/`awayBox`, the shape boxScoreFor makes); they go into
+  // the season's running per-player totals and are dropped from the stored
+  // result, so a long season's document stays the size of its teams rather
+  // than of every game ever played in it.
+  const { homeBox, awayBox, ...result } = rawResult;
   const s = { ...season, fixtures: season.fixtures.map(f => ({ ...f })), results: [...season.results] };
+  s.stats = foldBoxes(s.stats, [[result.home, homeBox], [result.away, awayBox]]);
   if (s.phase === PHASE.playoffs) {
     const winner = result.homeScore > result.awayScore ? result.home : result.away;
-    s.bracket = reportMatch(s.bracket, result.fixtureId, winner, result);
+    s.bracket = reportMatch(s.bracket, result.fixtureId, winner, { ...result });
     s.results.push({ ...result, playoff: true, winner });
     const champ = bracketChampion(s.bracket);
     if (champ) {
@@ -110,6 +117,50 @@ export function recordResult(season, result) {
   fixture.result = { homeScore: result.homeScore, awayScore: result.awayScore, winner, simulated: Boolean(result.simulated), forfeit: Boolean(result.forfeit) };
   s.results.push({ ...result, home: fixture.home, away: fixture.away, winner });
   return s;
+}
+
+// ── Player stats across the season ──────────────────────────────────────────
+//
+// `season.stats` is a flat ARRAY of rows { team, key, g, pts, reb, ast, min,
+// tpm, tpa } — an array rather than a map keyed by team and card so a stored
+// season never has a field name Firestore might object to, and so a season
+// saved before stats existed (no `stats` at all) reads as empty rather than
+// breaking. The user, 2026-09-08: "Player stats accumulated in a season
+// should show within the season."
+export const STAT_FIELDS = ['pts', 'reb', 'ast', 'min', 'tpm', 'tpa'];
+
+function foldBoxes(stats, sides) {
+  let out = Array.isArray(stats) ? stats.map(r => ({ ...r })) : [];
+  for (const [team, box] of sides) {
+    if (!team || !Array.isArray(box)) continue;
+    for (const line of box) {
+      if (!line?.key) continue;
+      let row = out.find(r => r.team === team && r.key === line.key);
+      if (!row) { row = { team, key: line.key, g: 0, pts: 0, reb: 0, ast: 0, min: 0, tpm: 0, tpa: 0 }; out.push(row); }
+      row.g += 1;
+      for (const f of STAT_FIELDS) row[f] += Number(line[f]) || 0;
+    }
+  }
+  return out;
+}
+
+/** One team's players this season, totals and per-game, most points first. */
+export function teamSeasonStats(season, teamId) {
+  return (season?.stats ?? [])
+    .filter(r => r.team === teamId)
+    .map(r => ({ ...r, ppg: r.g ? r.pts / r.g : 0, rpg: r.g ? r.reb / r.g : 0, apg: r.g ? r.ast / r.g : 0 }))
+    .sort((a, b) => b.pts - a.pts || b.ppg - a.ppg || a.key.localeCompare(b.key));
+}
+
+/** The league's leaders by a per-game average (`ppg`, `rpg`, `apg`) or a total. */
+export function seasonLeaders(season, { by = 'ppg', limit = 8, minGames = 1 } = {}) {
+  const rows = (season?.stats ?? [])
+    .filter(r => r.g >= minGames)
+    .map(r => ({ ...r, ppg: r.g ? r.pts / r.g : 0, rpg: r.g ? r.reb / r.g : 0, apg: r.g ? r.ast / r.g : 0 }));
+  const total = { ppg: 'pts', rpg: 'reb', apg: 'ast' }[by] ?? by;
+  return rows
+    .sort((a, b) => (b[by] ?? 0) - (a[by] ?? 0) || (b[total] ?? 0) - (a[total] ?? 0) || a.key.localeCompare(b.key))
+    .slice(0, limit);
 }
 
 /** Whether every fixture in the current round has a result. */
@@ -157,13 +208,16 @@ export function earningsFor(season, teamId, factor = 1) {
  * standings, which is why it is one named function rather than a ternary in a
  * component.
  */
-export function resultFromPlayed({ fixtureId, home, away, humanIsHome }, scoreA, scoreB) {
+export function resultFromPlayed({ fixtureId, home, away, humanIsHome }, scoreA, scoreB, boxA = null, boxB = null) {
   return {
     fixtureId,
     home,
     away,
     homeScore: humanIsHome ? scoreA : scoreB,
     awayScore: humanIsHome ? scoreB : scoreA,
+    // The box lines ride the same mapping, for the season's player totals.
+    homeBox: humanIsHome ? boxA : boxB,
+    awayBox: humanIsHome ? boxB : boxA,
   };
 }
 

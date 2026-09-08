@@ -112,9 +112,10 @@ describe('a tournament', () => {
     const homeUid = m1.home.slice(2), awayUid = m1.away.slice(2);
     // The home human hosted the room and coached team B; the guest (away) coached A.
     const room = { meta: { hostUid: homeUid, guestUid: awayUid, status: 'active' }, game: { done: true, hostIs: 'B', teamA: { score: 71 }, teamB: { score: 64 } } };
-    expect(scoresFromRoom(l, m1, room)).toEqual({ homeScore: 64, awayScore: 71, forfeit: false });
+    // The box lines ride along (seasonStats.test.js pins them); the scores are what this checks.
+    expect(scoresFromRoom(l, m1, room)).toMatchObject({ homeScore: 64, awayScore: 71, forfeit: false });
     const flipped = { meta: { hostUid: awayUid, guestUid: homeUid }, game: { done: true, hostIs: 'A', teamA: { score: 71 }, teamB: { score: 64 } } };
-    expect(scoresFromRoom(l, m1, flipped)).toEqual({ homeScore: 64, awayScore: 71, forfeit: false });
+    expect(scoresFromRoom(l, m1, flipped)).toMatchObject({ homeScore: 64, awayScore: 71, forfeit: false });
     expect(() => scoresFromRoom(l, m1, { meta: { hostUid: homeUid, guestUid: 'zzz' }, game: { done: true } })).toThrow(/not this fixture/);
     expect(() => scoresFromRoom(l, m1, { meta: room.meta, game: { done: false } })).toThrow(/not over/);
     const forfeit = { meta: { hostUid: homeUid, guestUid: awayUid, status: 'forfeit', winner: 'guest' } };

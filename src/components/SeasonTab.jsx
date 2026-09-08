@@ -40,8 +40,9 @@ import { useDialogs } from '../ui/dialogs.jsx';
 import {
   createSeason, standings, roundFixtures, recordResult, rostersOf, decksOf, setDeck,
   simulateRound, simulatePlayoffRound, roundComplete, advance, totalRounds,
-  teamsById, earningsFor, PHASE,
+  teamsById, earningsFor, PHASE, teamSeasonStats, seasonLeaders,
 } from '../game/modes/season.js';
+import { getCardByKey } from '../game/cardSets.js';
 import { simulateFixture } from '../game/modes/simulate.js';
 import { LENGTHS, LEAGUE_SIZES, playoffCount, gamesPerTeam } from '../game/modes/schedule.js';
 import { SEASON_REWARDS } from '../game/modes/prizes.js';
@@ -144,6 +145,7 @@ export default function SeasonTab({
       reportLeagueResult(uid, {
         leagueId: lg2.id, fixtureId: pendingResult.fixtureId,
         homeScore: pendingResult.homeScore, awayScore: pendingResult.awayScore,
+        homeBox: pendingResult.homeBox ?? null, awayBox: pendingResult.awayBox ?? null,
       }).catch(e => setError(e?.message ?? 'That result could not be recorded'));
       onResultConsumed?.();
       return;
@@ -552,7 +554,7 @@ function LeagueSeason({ leagueId, uid, onBack, onPlayFixture, onOpenRoom }) {
     for (const f of list) {
       if (by.get(f.home)?.human || by.get(f.away)?.human) continue;
       const r = simulateFixture(f, rosters);
-      await reportLeagueResult(uid, { leagueId: league.id, fixtureId: f.id, homeScore: r.homeScore, awayScore: r.awayScore, simulated: true });
+      await reportLeagueResult(uid, { leagueId: league.id, fixtureId: f.id, homeScore: r.homeScore, awayScore: r.awayScore, homeBox: r.homeBox, awayBox: r.awayBox, simulated: true });
       n += 1;
     }
     if (!n) toast('No AI-vs-AI games left in this round.', { tone: 'success' });
@@ -989,6 +991,8 @@ function Dashboard({
 
       {(isPlayoffs || isDone) && <BracketView season={season} by={by} />}
 
+      <SeasonStatsPanel season={season} by={by} myId={myId} />
+
       <section className={styles.panel}>
         <h3 className={styles.panelTitle}>Standings</h3>
         <div className={styles.tableWrap}>
@@ -1019,6 +1023,58 @@ function Dashboard({
         <div className={styles.legend}>Top {berths} make the playoffs.</div>
       </section>
     </>
+  );
+}
+
+/**
+ * PLAYER STATS ACROSS THE SEASON — your team by default, any team, or the
+ * league's leaders. Totals with the per-game beside them; the season folds
+ * every played and simulated game's box score into `season.stats`.
+ */
+function SeasonStatsPanel({ season, by, myId }) {
+  const [view, setView] = useState(myId);
+  const teamId = view === 'leaders' ? null : view;
+  const rows = useMemo(() => (teamId ? teamSeasonStats(season, teamId) : seasonLeaders(season, { by: 'ppg', limit: 10 })), [season, teamId]);
+  const nameOf = key => getCardByKey(key)?.name ?? key;
+  const f1 = n => (Math.round(n * 10) / 10).toFixed(1);
+  return (
+    <section className={styles.panel}>
+      <div className={styles.deckRow}>
+        <h3 className={styles.panelTitle}>Player stats</h3>
+        <select className={styles.deckSelect} value={view} onChange={e => setView(e.target.value)}>
+          <option value="leaders">League leaders (PPG)</option>
+          {(season.teams ?? []).map(t => <option key={t.id} value={t.id}>{t.name}{t.id === myId ? ' (you)' : ''}</option>)}
+        </select>
+      </div>
+      {rows.length === 0 ? (
+        <div className={styles.muted}>No games in the book yet.</div>
+      ) : (
+        <div className={styles.tableWrap}>
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th>Player</th>{!teamId && <th>Team</th>}<th>G</th><th>PTS</th><th>PPG</th><th>REB</th><th>RPG</th><th>AST</th><th>APG</th><th>3PM</th><th>MIN</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map(r => (
+                <tr key={`${r.team}:${r.key}`} className={r.team === myId && !teamId ? styles.meRow : ''}>
+                  <td>{nameOf(r.key)}</td>
+                  {!teamId && <td><TeamChip team={by.get(r.team)} /></td>}
+                  <td>{r.g}</td>
+                  <td>{r.pts}</td><td>{f1(r.ppg)}</td>
+                  <td>{r.reb}</td><td>{f1(r.rpg)}</td>
+                  <td>{r.ast}</td><td>{f1(r.apg)}</td>
+                  <td>{r.tpm}</td>
+                  <td>{r.min}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+      <div className={styles.legend}>Every game counts, played or simmed. Games recorded before this panel existed have no lines.</div>
+    </section>
   );
 }
 

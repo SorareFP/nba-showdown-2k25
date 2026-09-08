@@ -279,5 +279,7 @@ export function simulateFixture(fixture, rosters, opts = {}) {
     awayScore: r.scoreB,
     winner: r.winner === 'A' ? fixture.home : fixture.away,
     simulated: true,
+    homeBox: r.boxA,
+    awayBox: r.boxB,
   };
 }

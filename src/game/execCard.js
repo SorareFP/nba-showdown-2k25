@@ -7,6 +7,25 @@ import { helpTargets, canAnswerCheck } from './canPlay.js';
 import { lookupChart } from './cards.js';
 import { getStrat } from './strats.js';
 
+/**
+ * POINTS A CARD SCORES GO ON THE SCOREBOARD AND ON THE PLAYER'S LINE, together.
+ *
+ * Ten card paths added to the team's score and never to the scorer's
+ * `ps.pts` — And One, Rimshaker, Uncontested Layup, Putback Dunk, Drive the
+ * Lane's free throws, Rebound Tap-Out, Go Under's consolation three, Lob
+ * City's dunks, and two more — so a team's box score summed to less than
+ * its score, the lifetime tracker under-counted every card scorer, and the
+ * season totals (2026-09-08) would have disagreed with the standings. The
+ * announced checks had the same bug until 2026-09-07 (applyShotCheck).
+ * One helper now, used at every such site.
+ */
+function scorePts(g, teamKey, playerId, pts) {
+  if (!pts) return;
+  getTeam(g, teamKey).score += pts;
+  const ps = playerId ? getPS(g, teamKey, playerId) : null;
+  if (ps) ps.pts = (ps.pts || 0) + pts;
+}
+
 // ── Analytics helper ────────────────────────────────────────────────────────
 function trackShotCheck(g, teamKey, r, type, playerIdx) {
   // Every check leaves the record Glass Cleaner and Putback Specialist read:
@@ -303,7 +322,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if (offPlayer) {
         const r = shotCheck(offPlayer, '3pt', 2 - matchupContest(g, lc.teamKey, targetSlot, '3pt'), offPs);
         trackShotCheck(g, lc.teamKey, r, '3pt');
-        if (r.hit) getTeam(g, lc.teamKey).score += r.pts;
+        if (r.hit) scorePts(g, lc.teamKey, offPlayer.id, r.pts);
         if (offPs && r.die <= 2)  offPs.cold = (offPs.cold || 0) + 1;
         if (offPs && r.die >= 19) offPs.hot  = (offPs.hot  || 0) + 1;
         addLog(g, teamKey, `Go Under: canceled HSR — ${offPlayer.name} 3PT check: ${scStr(r)}`);
@@ -452,7 +471,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       trackShotCheck(g, teamKey, r, '3pt');
       if (r.die <= 2)  pss().cold = (pss().cold || 0) + 1;
       if (r.die >= 19) pss().hot  = (pss().hot  || 0) + 1;
-      if (r.hit) myT.score += r.pts;
+      if (r.hit) scorePts(g, teamKey, player?.id, r.pts);
       addLog(g, teamKey, `Rebound Tap-Out (−2 REB, +1 AST): ${scStr(r)}`);
       break;
     }
@@ -566,7 +585,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       const maxA = Math.max(adv.speedAdv, adv.powerAdv);
       if (maxA < 3) return fail(`Need Spd/Pwr advantage ≥3 (has ${maxA})`);
       const stat = adv.powerAdv >= adv.speedAdv ? 'Power' : 'Speed';
-      myT.score += 1;
+      scorePts(g, teamKey, player?.id, 1);
       if (g.analytics?.[teamKey]) g.analytics[teamKey].shotCheckPts += 1;
       addLog(g, teamKey, `And One!!! +1pt (${stat} advantage +${maxA} — Speed +${adv.speedAdv}, Power +${adv.powerAdv})`);
       if (maxA >= 5) {
@@ -575,7 +594,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
         trackShotCheck(g, teamKey, r, 'ft');
         if (r.die <= 2)  pss().cold = (pss().cold || 0) + 1;
         if (r.die >= 19) pss().hot  = (pss().hot  || 0) + 1;
-        if (r.hit) myT.score += r.pts;
+        if (r.hit) scorePts(g, teamKey, player?.id, r.pts);
         addLog(g, teamKey, `Free throw: ${scStr(r)}`);
       }
       break;
@@ -584,7 +603,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
     case 'rimshaker': {
       if ((player?.power || 0) < 13) return fail('Need Power 13+');
       if (!(ps.hot > 0)) return fail(player?.name + ' needs a hot marker');
-      myT.score += 2;
+      scorePts(g, teamKey, player?.id, 2);
       if (g.analytics?.[teamKey]) g.analytics[teamKey].shotCheckPts += 2;
       pss().hot = (pss().hot || 0) + 1;
       addLog(g, teamKey, `Rimshaker: ${player?.name} +2pts + extra 🔥`);
@@ -603,7 +622,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
         tot += r.pts;
         addLog(g, teamKey, `Drive FT #${i + 1}: ${scStr(r)}`);
       }
-      myT.score += tot;
+      scorePts(g, teamKey, player?.id, tot);
       if (adv.speedAdv >= 5 && defPlayer) {
         const dk = teamKey === 'A' ? 'B' : 'A';
         const dps = getPS(g, dk, defPlayer.id) || {};
@@ -620,7 +639,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       const ucAdv = calcAdv(player, ucDp, g.tempEff[teamKey] || {}, idx);
       if (ucAdv.speedAdv < 2 || ucAdv.powerAdv < 2)
         return fail(`${player?.name} needs +2 Spd AND +2 Pwr advantage (has +${ucAdv.speedAdv} Spd, +${ucAdv.powerAdv} Pwr)`);
-      myT.score += 2;
+      scorePts(g, teamKey, player?.id, 2);
       if (g.analytics?.[teamKey]) g.analytics[teamKey].shotCheckPts += 2;
       addLog(g, teamKey, `Uncontested Layup: ${player?.name} auto 2pts`);
       break;
@@ -639,7 +658,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
     case 'putback_dunk': {
       if (myT.rebounds <= oppT.rebounds) return fail('Team must lead in rebounds');
       if ((player?.power || 0) < 14) return fail('Need Power 14+');
-      myT.score += 2;
+      scorePts(g, teamKey, player?.id, 2);
       if (g.analytics?.[teamKey]) g.analytics[teamKey].shotCheckPts += 2;
       addLog(g, teamKey, `Putback Dunk: ${player?.name} auto 2pts!`);
       break;
@@ -674,7 +693,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if (r.die <= 2)  pss().cold = (pss().cold || 0) + 1;
       if (r.die >= 19) pss().hot  = (pss().hot  || 0) + 1;
       if (r.hit) {
-        myT.score += r.pts;
+        scorePts(g, teamKey, player?.id, r.pts);
         const drawn = drawCards(myT.hand, myT.deck || [], 1);
         myT.hand = drawn.hand;
       }
@@ -1181,9 +1200,9 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       myT.starters.forEach(p => {
         if (!p) return;
         if ((p.speed || 0) >= 15) ast += 1;
-        if ((p.power || 0) >= 15) pts += 2;
+        if ((p.power || 0) >= 15) { pts += 2; scorePts(g, teamKey, p.id, 2); }
       });
-      myT.assists += ast; myT.score += pts;
+      myT.assists += ast;
       addLog(g, teamKey, `Lob City: discards ${discard.replace(/_/g, ' ')} — +${ast} AST (Speed 15+), +${pts} pts (Power 15+)`);
       break; // the wrapper below removes the card and runs the 5-assist draw
     }

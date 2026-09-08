@@ -91,18 +91,27 @@ describe('matchup-phase wave-one cards', () => {
     expect(canPlayCard(game({ A: two, hand: ['defensive_identity'], phase: 'matchup_strats' }), 'A', 'defensive_identity').canPlay).toBe(false);
   });
 
-  it('Defensive Anchor marks the defender and zeroes the attacker\'s positive bonus on the roll', () => {
+  it('Defensive Anchor doubles the defender's bonus this section: a +3 wall zeroes a +4 star, a +1 halves him', () => {
     const A = five('a'); A[0] = p('anchor', 10, 10, { defBoost: 3 });
     const B = five('b'); B[0] = p('star', 14, 14);
     const g = game({ A, B, hand: ['defensive_anchor'], phase: 'matchup_strats' });
     const r = play(g, 'defensive_anchor', { playerIdx: 0 });
     expect(r.ok).toBe(true);
-    expect(r.game.tempDefEff.A[0].anchor).toBe(true);
-    // The star is guarded by slot 0 of A: a +4/+4 attacker rolls with no bonus.
+    expect(r.game.tempDefEff.A[0].dbExtra).toBe(3);
+    // The star is guarded by slot 0 of A: +4/+4 less a doubled +3 rolls with no bonus.
     const g2 = { ...r.game, phase: 'scoring', scoringTurn: 'B' };
     vi.spyOn(Math, 'random').mockReturnValue(0.5);
     const rolled = doRoll(g2, 'B', 0);
     expect(rolled.rollResults.B[0].bonus).toBe(0);
+    vi.restoreAllMocks();
+    // Any positive bonus qualifies now; a +1 anchor takes the +4 edge to +2.
+    const A1 = five('a'); A1[0] = p('lite', 10, 10, { defBoost: 1 });
+    const g1 = game({ A: A1, B, hand: ['defensive_anchor'], phase: 'matchup_strats' });
+    const r1 = play(g1, 'defensive_anchor', { playerIdx: 0 });
+    expect(r1.ok).toBe(true);
+    vi.spyOn(Math, 'random').mockReturnValue(0.5);
+    expect(doRoll({ ...r1.game, phase: 'scoring', scoringTurn: 'B' }, 'B', 0).rollResults.B[0].bonus).toBe(2);
+    // No bonus, no anchor.
     expect(play(g, 'defensive_anchor', { playerIdx: 1 }).ok).toBe(false);
   });
 

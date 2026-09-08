@@ -6,6 +6,7 @@ import { aiDraftPick, aiScoringDecision, aiRollDecision, aiTurn } from '../game/
 import { TUTORIAL_TOOLTIPS, TUTORIAL_ROSTER_A_IDS, TUTORIAL_ROSTER_B_IDS } from '../game/tutorialData.js';
 // The hands are shaped per section so each lesson has its prop — see the file.
 import { teachingHands } from '../game/tutorialHands.js';
+import { markPlayed } from '../game/firstRun.js';
 import TutorialOverlay from './game/TutorialOverlay.jsx';
 import CourtBoard from './game/CourtBoard.jsx';
 import Scoreboard from './game/Scoreboard.jsx';
@@ -81,6 +82,7 @@ export default function TutorialGame({ onExit }) {
     if (!game) return;
     if (game.quarter > 1 && !completed) {
       setCompleted(true);
+      markPlayed();
     }
   }, [game, completed]);
 

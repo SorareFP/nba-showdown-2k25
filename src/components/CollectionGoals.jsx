@@ -20,7 +20,7 @@ import { allGoalProgress, GOALS_BY_ID, COINS_ONLY_GOALS, collectedKeys } from '.
 import { GOAL_DIFFICULTY, rewardBandFor } from '../game/collectionDifficulty.js';
 import { getCardByKey } from '../game/cardSets.js';
 import { RARITY_CONFIG, getPlayerRarity } from '../game/rarity.js';
-import { getPlayerImageUrl } from '../game/cardImages.js';
+import { getPlayerImageUrl, getPlayerThumbUrl, fallbackTo } from '../game/cardImages.js';
 import { getTeam } from '../cards/teams.js';
 // teams.js stores bare root-relative logo paths ('/logos/MIL.png') and the app
 // is served under a base path, so every logo has to go through logoSrc — the
@@ -98,10 +98,10 @@ function RosterCard({ cardKey: key, owned, collected, busy, onCollect }) {
     >
       <img
         className={styles.missingArt}
-        src={getPlayerImageUrl(key)}
+        src={getPlayerThumbUrl(key)}
         alt=""
         loading="lazy"
-        onError={e => { e.currentTarget.style.visibility = 'hidden'; }}
+        onError={fallbackTo(getPlayerImageUrl(key), e => { e.currentTarget.style.visibility = 'hidden'; })}
       />
       <div className={styles.missingText}>
         <span className={styles.missingName}>{card.name}</span>

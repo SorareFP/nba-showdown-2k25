@@ -14,6 +14,7 @@ import { useAuth } from '../firebase/AuthProvider.jsx';
 import { loadDecks } from '../firebase/savedDecks.js';
 import { loadRemoteGame, saveRemoteGame, clearRemoteGame } from '../firebase/games.js';
 import { readLocalGame, writeLocalGame, makeSave, newerSave, saveIsFixture, describeSave, createRemoteSaver } from '../game/gameSave.js';
+import { markPlayed } from '../game/firstRun.js';
 import CourtBoard from './game/CourtBoard.jsx';
 import GameOver from './game/GameOver.jsx';
 import GameLog from './game/GameLog.jsx';
@@ -170,7 +171,7 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
     written.current = { game, preset: livePreset };
     const save = makeSave(game, livePreset);
     writeLocalGame(save);
-    if (save) { hadGame.current = true; remote.current?.push(save); }
+    if (save) { hadGame.current = true; remote.current?.push(save); markPlayed(); }
     else if (hadGame.current) { hadGame.current = false; remote.current?.push(null); }
   }, [game, livePreset]);
 

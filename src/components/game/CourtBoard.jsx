@@ -5,7 +5,7 @@ import { benchRest, passTurn } from '../../game/engine.js';
 import { getStrat } from '../../game/strats.js';
 import { aiDraftPick, aiPlacementPick } from '../../game/ai.js';
 import styles from './CourtBoard.module.css';
-import { getPlayerImageUrl, getStratImagePath } from '../../game/cardImages.js';
+import { getPlayerImageUrl, getPlayerThumbUrl, getStratImagePath, getStratThumbPath, fallbackTo } from '../../game/cardImages.js';
 import { useLightbox } from '../CardLightbox.jsx';
 import { useDialogs } from '../../ui/dialogs.jsx';
 import RollResult from './RollResult.jsx';
@@ -1328,7 +1328,8 @@ function BlindPickPhase({ game, setGame, pvpMode = false, myTeamKey = null, onDr
             p.paintBoost ? `Paint+${p.paintBoost}` : '',
             p.defBoost ? `Def+${p.defBoost}` : '',
           ].filter(Boolean);
-          const imgUrl = getPlayerImageUrl(p.id, p.set);
+          const imgUrl = getPlayerThumbUrl(p.id, p.set);
+          const imgFull = getPlayerImageUrl(p.id, p.set);
 
           return (
             <button
@@ -1339,7 +1340,7 @@ function BlindPickPhase({ game, setGame, pvpMode = false, myTeamKey = null, onDr
               {isSelected && <span className={styles.blindPickCheck}>&#10003;</span>}
               <div className={styles.blindPickArt}>
                 {imgUrl
-                  ? <img src={imgUrl} alt={p.name} className={styles.blindPickImg} onError={e => { e.target.style.display = 'none'; }} />
+                  ? <img src={imgUrl} alt={p.name} className={styles.blindPickImg} onError={fallbackTo(imgFull, e => { e.target.style.display = 'none'; })} />
                   : <div className={styles.blindPickPlaceholder}>{p.name.charAt(0)}</div>
                 }
               </div>
@@ -1427,10 +1428,11 @@ function PlacedCard({ player, stats, col }) {
     player.paintBoost?`Paint${player.paintBoost>0?'+':''}${player.paintBoost}`:'',
     player.defBoost?`Def${player.defBoost>0?'+':''}${player.defBoost}`:'',
   ].filter(Boolean);
-  const pImgUrl = getPlayerImageUrl(player.id, player.set);
+  const pImgUrl = getPlayerThumbUrl(player.id, player.set);
+  const pImgFull = getPlayerImageUrl(player.id, player.set);
   return (
     <div className={styles.placedCard} style={{borderColor:col}}>
-      {pImgUrl && <img src={pImgUrl} alt={player.name} className={styles.placedArt} onError={e=>e.target.style.display='none'} />}
+      {pImgUrl && <img src={pImgUrl} alt={player.name} className={styles.placedArt} onError={fallbackTo(pImgFull, e => { e.target.style.display = 'none'; })} />}
       <div className={styles.placedName} style={{color:col}}>{player.name}{(()=>{const n=(ps.hot||0)-(ps.cold||0);return n>0?' 🔥':n<0?' ❄️':'';})()}{fat<0&&<span className={styles.fatTag}> FAT{fat}</span>}</div>
       <div className={styles.placedMeta}>S{player.speed} · P{player.power} · <span style={{color:'#60A5FA'}}>${player.salary}</span>{boosts.length>0&&' · '+boosts.join(' ')}</div>
     </div>
@@ -1528,7 +1530,8 @@ function PlayerSlot({ player, ps, adv, fat, result, blocked, teamKey, idx, phase
   const glowCheap=(myHand.some(id=>['chip_on_shoulder'].includes(id))&&player.salary<=250)||
                   (myHand.some(id=>['crowd_favorite'].includes(id))&&player.salary<=350);
 
-  const imgUrl = getPlayerImageUrl(player.id, player.set);
+  const imgUrl = getPlayerThumbUrl(player.id, player.set);
+  const imgFull = getPlayerImageUrl(player.id, player.set);
   const boosts = [
     player.threePtBoost && player.threePtBoost!==0 ? <span key="3pt" className={styles.b3pt}>3PT{player.threePtBoost>0?'+':''}{player.threePtBoost}</span> : null,
     player.paintBoost && player.paintBoost!==0 ? <span key="pnt" className={styles.bpnt}>Paint{player.paintBoost>0?'+':''}{player.paintBoost}</span> : null,
@@ -1540,7 +1543,7 @@ function PlayerSlot({ player, ps, adv, fat, result, blocked, teamKey, idx, phase
       {/* Left: card art */}
       <div className={styles.cardArtSide} onClick={() => open('player', player)} style={{cursor:'pointer'}}>
         {imgUrl
-          ? <img src={imgUrl} alt={player.name} className={styles.cardArtSideImg} onError={e=>{e.target.style.display='none';}} />
+          ? <img src={imgUrl} alt={player.name} className={styles.cardArtSideImg} onError={fallbackTo(imgFull, e => { e.target.style.display = 'none'; })} />
           : <div className={styles.cardArtPlaceholder} style={{background:col+'20'}}>{player.name.charAt(0)}</div>
         }
       </div>
@@ -1740,7 +1743,8 @@ function HandPanel({ game, teamKey, onExecCard, pvpMode = false, isMyTurn = true
           const isReaction = s.phase === 'reaction';
           const play = canPlayCard(game, teamKey, id);
           const canClick = play.canPlay && (isReaction || playablePhases.includes(s.phase)) && pvpCanPlay;
-          const sImg = getStratImagePath(id);
+          const sImg = getStratThumbPath(id);
+          const sImgFull = getStratImagePath(id);
           const isStaged = staged === hi;
 
           return (
@@ -1763,7 +1767,7 @@ function HandPanel({ game, teamKey, onExecCard, pvpMode = false, isMyTurn = true
 
               {sImg
                 ? <>
-                    <img src={sImg} alt={s.name} className={styles.hcardImgEl} onError={e => { e.target.style.display = 'none'; }} />
+                    <img src={sImg} alt={s.name} className={styles.hcardImgEl} onError={fallbackTo(sImgFull, e => { e.target.style.display = 'none'; })} />
                     <div className={styles.hcardOverlay}>
                       <div className={styles.hname}>{s.name}</div>
                       {!canClick && <div style={{ fontSize: 9, color: '#F87171', marginTop: 2, padding: '0 4px' }}>

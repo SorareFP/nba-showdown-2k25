@@ -95,6 +95,45 @@
 }
 .signInCtaBtn:hover { filter: brightness(1.08); }
 
+.firstRun {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  background: rgba(22, 163, 74, 0.14);
+  border-bottom: 1px solid rgba(22, 163, 74, 0.35);
+  color: var(--text);
+  font-size: 13px;
+  padding: 8px 40px 8px 16px;
+  text-align: center;
+  position: relative;
+}
+.firstRunBtn {
+  background: var(--green, #16a34a);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.firstRunBtn:hover { filter: brightness(1.08); }
+.firstRunDismiss {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 18px;
+  cursor: pointer;
+  line-height: 1;
+}
+
 .main {
   flex: 1;
   padding: 1.5rem;

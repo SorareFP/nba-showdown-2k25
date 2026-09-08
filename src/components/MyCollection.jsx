@@ -32,7 +32,7 @@ import {
   BURN_VALUES, STRAT_BURN_VALUES, getMarketPrice,
 } from '../game/rarity.js';
 import { ALL_CARDS as CARDS_FOR_PRICE } from '../game/cardSets.js';
-import { getPlayerImageUrl, getStratImagePath } from '../game/cardImages.js';
+import { getPlayerImageUrl, getStratImagePath, getPlayerThumbUrl, getStratThumbPath, fallbackTo } from '../game/cardImages.js';
 import Holo from './HoloSheen.jsx';
 import { holoRegionsFor } from '../cards/faceRegions.js';
 import styles from './MyCollection.module.css';
@@ -80,7 +80,8 @@ export default function MyCollection({ collection, onBurn, onList, onCollect }) 
       // start from. Null means the set is not tradable at all.
       suggested: getMarketPrice(c),
       sub: `${c.team} · S${c.speed} P${c.power} · $${c.salary}`,
-      imgUrl: getPlayerImageUrl(cardKey(c)),
+      imgUrl: getPlayerThumbUrl(cardKey(c)),
+      fullUrl: getPlayerImageUrl(cardKey(c)),
     }));
     const strats = STRATS.map(s => ({
       key: s.id,
@@ -94,7 +95,8 @@ export default function MyCollection({ collection, onBurn, onList, onCollect }) 
       // market for them and offering one would be noise.
       suggested: null,
       sub: `${s.phase} · ${s.side}`,
-      imgUrl: getStratImagePath(s.id),
+      imgUrl: getStratThumbPath(s.id),
+      fullUrl: getStratImagePath(s.id),
     }));
     return [...players, ...strats];
   }, []);
@@ -186,7 +188,7 @@ export default function MyCollection({ collection, onBurn, onList, onCollect }) 
                   alt={c.name}
                   className={styles.cardArtImg}
                   loading="lazy"
-                  onError={e => { e.currentTarget.parentElement.style.display = 'none'; }}
+                  onError={fallbackTo(c.fullUrl, e => { e.currentTarget.parentElement.style.display = 'none'; })}
                 />
               </Holo>
               <div className={styles.rarityBadge} style={{ background: cfg.bg, color: cfg.color }}>

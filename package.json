@@ -10,7 +10,8 @@
     "deploy": "npm run build && gh-pages -d dist --remove \"assets/**\"",
     "test": "vitest run",
     "test:watch": "vitest",
-    "export:cards": "node scripts/studio/export.js"
+    "export:cards": "node scripts/studio/export.js",
+    "thumbs": "python scripts/studio/thumbs.py"
   },
   "dependencies": {
     "firebase": "^12.11.0",

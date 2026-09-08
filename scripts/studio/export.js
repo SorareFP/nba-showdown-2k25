@@ -34,6 +34,7 @@
 // rule that named them. The set id always lands in the path below, so a run
 // cannot reach them.
 import { chromium } from 'playwright';
+import { spawnSync } from 'node:child_process';
 import { hasMigratedOut } from '../../src/game/cardSets.js';
 import { mkdirSync, readFileSync, existsSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
@@ -198,3 +199,11 @@ regions.generatedAt = new Date().toISOString();
 regions.note = 'Per-face boxes of the rotated name and the Super Season pill, as fractions of the 843x1181 face, measured by scripts/studio/export.js. Read by src/cards/faceRegions.js for the holographic sheen.';
 writeFileSync(REGIONS_FILE, `${JSON.stringify(regions, null, 2)}\n`);
 console.log(`face-regions.json: ${Object.keys(regions.faces).length} faces measured`);
+
+// THE THUMBS FOLLOW THE FACES. Up-to-date ones are skipped by mtime, so this
+// costs seconds after a partial export. Python is what the studio's other
+// image steps use (paintPlaceholders.py); a machine without it just skips.
+if (!measureOnly) {
+  const t = spawnSync('python', [resolve('scripts/studio/thumbs.py')], { stdio: 'inherit' });
+  if (t.error || t.status !== 0) console.warn('thumbs: skipped (python scripts/studio/thumbs.py failed to run) — tiles fall back to the full faces');
+}

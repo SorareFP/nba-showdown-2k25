@@ -24,7 +24,7 @@ import { getCardByKey, cardKey } from '../game/cardSets.js';
 import { getPlayerRarity, RARITY_CONFIG, getMarketPrice } from '../game/rarity.js';
 import Holo from './HoloSheen.jsx';
 import { holoRegionsFor } from '../cards/faceRegions.js';
-import { getPlayerImageUrl } from '../game/cardImages.js';
+import { getPlayerImageUrl, getPlayerThumbUrl, fallbackTo } from '../game/cardImages.js';
 import { loadListings } from '../firebase/market.js';
 import { buyListing, delistCard } from '../firebase/serverWrites.js';
 import styles from './Market.module.css';
@@ -170,11 +170,11 @@ export default function Market({ uid, coins, onTraded }) {
             <div key={l.id} className={styles.card} style={{ borderColor: cfg.color }}>
               <Holo className={styles.art} active={holoRegionsFor(l.card).length > 0} regions={holoRegionsFor(l.card)} idle={false}>
                 <img
-                  src={getPlayerImageUrl(cardKey(l.card))}
+                  src={getPlayerThumbUrl(cardKey(l.card))}
                   alt=""
                   className={styles.artImg}
                   loading="lazy"
-                  onError={e => { e.currentTarget.style.visibility = 'hidden'; }}
+                  onError={fallbackTo(getPlayerImageUrl(cardKey(l.card)), e => { e.currentTarget.style.visibility = 'hidden'; })}
                 />
                 <div className={styles.rarity} style={{ background: cfg.bg, color: cfg.color }}>
                   {cfg.label}

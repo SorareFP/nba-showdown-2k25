@@ -20,6 +20,7 @@ import { loadCollection } from './firebase/collection.js';
 import { ownedRoster } from './game/teamRules.js';
 import { CARD_MAP } from './game/cards.js';
 import styles from './App.module.css';
+import { hasPlayedBefore, markPlayed, PLAYED_EVENT } from './game/firstRun.js';
 
 // Tabs visible to logged-out users (full card browser)
 const GUEST_TABS = [
@@ -54,6 +55,14 @@ function AppInner() {
   // when hovering over it or clicking"). While this is set the tutorial stays
   // mounted behind How to Play, game intact, and its button brings you back.
   const [rulesOverTutorial, setRulesOverTutorial] = useState(false);
+  // THE NEWCOMER'S BANNER: until this browser has dealt a game, point at the
+  // tutorial. Cleared by the first deal, the tutorial's end, or the ×.
+  const [playedBefore, setPlayedBefore] = useState(hasPlayedBefore);
+  useEffect(() => {
+    const done = () => setPlayedBefore(true);
+    window.addEventListener(PLAYED_EVENT, done);
+    return () => window.removeEventListener(PLAYED_EVENT, done);
+  }, []);
   const [helpSection, setHelpSection] = useState(null);
   const playMounted = useRef(false);
   if (tab === 'play') playMounted.current = true;
@@ -185,6 +194,15 @@ function AppInner() {
         </div>
       )}
 
+      {!playedBefore && !tutorialMode && (
+        <div className={styles.firstRun}>
+          <span>
+            First time here? <strong>Play the tutorial</strong> — a guided quarter against the coach, about twelve minutes, that teaches placement, the card windows and rolling.
+          </span>
+          <button className={styles.firstRunBtn} onClick={() => { setTutorialMode(true); setRulesOverTutorial(false); }}>Play the tutorial</button>
+          <button className={styles.firstRunDismiss} onClick={() => { markPlayed(); }} aria-label="Dismiss">×</button>
+        </div>
+      )}
       <main className={styles.main}>
         {tutorialMode && (
           <div style={{ display: rulesOverTutorial ? 'none' : 'block' }}>

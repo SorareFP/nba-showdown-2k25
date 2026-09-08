@@ -1,11 +1,12 @@
-import { getPlayerImageUrl } from '../game/cardImages.js';
+import { getPlayerImageUrl, getPlayerThumbUrl, fallbackTo } from '../game/cardImages.js';
 import Holo from './HoloSheen.jsx';
 import { holoRegionsFor } from '../cards/faceRegions.js';
 import styles from './PlayerCard.module.css';
 
 export default function PlayerCard({ card, compact = false, actions, highlighted = false, onClick }) {
   const hasBoosts = !!(card.paintBoost || card.threePtBoost || card.defBoost);
-  const imgUrl = getPlayerImageUrl(card.id, card.set);
+  const imgUrl = getPlayerThumbUrl(card.id, card.set);
+  const imgFull = getPlayerImageUrl(card.id, card.set);
 
   return (
     <div
@@ -16,7 +17,7 @@ export default function PlayerCard({ card, compact = false, actions, highlighted
       {imgUrl && !compact && (
         <Holo className={styles.cardArt} active={holoRegionsFor(card).length > 0} regions={holoRegionsFor(card)} idle={false}>
           <img src={imgUrl} alt={card.name} className={styles.cardArtImg}
-            onError={e => { e.target.parentElement.style.display = 'none'; }} />
+            onError={fallbackTo(imgFull, e => { e.target.parentElement.style.display = 'none'; })} />
         </Holo>
       )}
       <div className={styles.header}>

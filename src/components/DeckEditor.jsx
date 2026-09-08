@@ -3,7 +3,7 @@ import { useAuth } from '../firebase/AuthProvider.jsx';
 import { saveDeck, updateDeck, validateDeck } from '../firebase/savedDecks.js';
 import { STRATS } from '../game/strats.js';
 import { getStratRarity, RARITY_CONFIG, STRAT_COPY_CAPS } from '../game/rarity.js';
-import { getStratImagePath } from '../game/cardImages.js';
+import { getStratImagePath, getStratThumbPath, fallbackTo } from '../game/cardImages.js';
 import styles from './DeckEditor.module.css';
 
 const PHASE_ORDER = ['matchup', 'pre_roll', 'scoring', 'post_roll', 'reaction'];
@@ -88,7 +88,8 @@ export default function DeckEditor({ deck, onSave, onCancel, collection }) {
               <div className={styles.phaseLabel}>{PHASE_LABELS[phase]}</div>
               {grouped[phase].map(s => {
                 const count = cards[s.id] || 0;
-                const imgPath = getStratImagePath(s.id);
+                const imgPath = getStratThumbPath(s.id);
+                const imgFull = getStratImagePath(s.id);
                 const owned = collection?.[s.id]?.count || 0;
                 const notOwned = enforceOwnership && owned === 0;
                 const atOwnedLimit = enforceOwnership && count >= owned;
@@ -100,7 +101,7 @@ export default function DeckEditor({ deck, onSave, onCancel, collection }) {
                 return (
                   <div key={s.id} className={`${styles.cardRow} ${count > 0 ? styles.cardActive : ''}`}
                     style={notOwned ? { opacity: 0.4 } : undefined}>
-                    {imgPath && <img src={imgPath} alt="" className={styles.cardThumb} />}
+                    {imgPath && <img src={imgPath} alt="" className={styles.cardThumb} onError={fallbackTo(imgFull)} />}
                     <div className={styles.cardInfo}>
                       <div className={styles.cardName} style={{ color: s.color }}>
                         {s.name}

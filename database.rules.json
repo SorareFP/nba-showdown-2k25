@@ -18,6 +18,10 @@
           ".read": "auth != null && (root.child('rooms').child($roomCode).child('meta').child('hostUid').val() === auth.uid || root.child('rooms').child($roomCode).child('meta').child('guestUid').val() === auth.uid)",
           ".write": "auth != null && (root.child('rooms').child($roomCode).child('meta').child('hostUid').val() === auth.uid || root.child('rooms').child($roomCode).child('meta').child('guestUid').val() === auth.uid)"
         },
+        "draftPicks": {
+          ".read": "auth != null && (root.child('rooms').child($roomCode).child('meta').child('hostUid').val() === auth.uid || root.child('rooms').child($roomCode).child('meta').child('guestUid').val() === auth.uid)",
+          ".write": "auth != null && (root.child('rooms').child($roomCode).child('meta').child('hostUid').val() === auth.uid || root.child('rooms').child($roomCode).child('meta').child('guestUid').val() === auth.uid)"
+        },
         "private": {
           "host": {
             ".read": "auth != null && root.child('rooms').child($roomCode).child('meta').child('hostUid').val() === auth.uid",

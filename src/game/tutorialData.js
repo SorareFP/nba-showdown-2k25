@@ -10,15 +10,15 @@ export const TUTORIAL_TOOLTIPS = [
   // Draft
   {
     id: 's1_draft_intro',
-    text: "Welcome to the Lineup Phase! Select 5 starters from your 10-player roster. Both teams pick simultaneously — your opponent can't see your choices until you both submit.",
-    detail: "Look at each player's Speed, Power, and Shot Line. High Speed excels at perimeter play; high Power dominates inside. Low Shot Lines mean better shooters.",
+    text: "Welcome to the draft! You and the coach place starters one at a time in the snake A-B-B-A-A-B-B-A-A-B. The row a player lands in is their matchup: the two players in a row guard each other all section.",
+    detail: "Look at each player's Speed, Power, and Shot Line. High Speed excels at perimeter play; high Power dominates inside. Low Shot Lines mean better shooters. When you place into a row the coach has already filled, the preview shows both sides of the pairing.",
     section: 1,
     priority: 100,
     trigger: { phase: 'draft', condition: (g) => g.quarter === 1 && g.section === 1 && g.draft.step === 0 },
   },
   {
     id: 's1_draft_pick1',
-    text: "Think about what your opponent might play. Save your best scorer for a lineup where the opponent has already committed their best defender — they can't counter what they can't see.",
+    text: "The coach answers each row. Lead a row with a player who does fine against anyone, and keep your best scorer to counter-pick a row the coach has already committed to.",
     detail: "Tip: Balance your lineup. Players with Defensive Boosts are valuable because they can neutralize opponent advantages without strategy cards. Budget players keep your stars rested for later.",
     section: 1,
     priority: 90,
@@ -28,8 +28,8 @@ export const TUTORIAL_TOOLTIPS = [
   // Matchup
   {
     id: 's1_matchup_intro',
-    text: "Matchup Strategy Phase! Assign your defenders, then play strategy cards or pass. Two passes from both teams ends the phase.",
-    detail: "Check matchup advantages: green numbers mean your player has the edge. Red numbers mean the defender has the advantage. Try to create favorable matchups before scoring begins.",
+    text: "Matchup card window! Your defence is already set by the placement. Play a matchup card or pass. Playing hands the turn over; two passes in a row close the window.",
+    detail: "Green numbers mean your player has the edge, red means the defender does. Only a switching card (High Screen & Roll, Veer Switch, Switch Everything) can move a defender now.",
     section: 1,
     priority: 100,
     trigger: { phase: 'matchup_strats', condition: (g) => g.quarter === 1 && g.section === 1 && g.matchupPasses === 0 },
@@ -38,7 +38,7 @@ export const TUTORIAL_TOOLTIPS = [
   // Scoring
   {
     id: 's1_scoring_intro',
-    text: "Scoring Phase! Take turns playing strategy cards, then both pass to open rolling. Each player rolls a D20 + their matchup bonus to score.",
+    text: "Scoring card window! Same rule: play a card or pass, and two passes in a row open rolling. Each player then rolls a D20 plus their matchup bonus to score.",
     detail: "Your roll is modified by matchup advantage, fatigue (none yet!), and hot/cold markers. The result is looked up on the player's scoring chart for points, rebounds, and assists.",
     section: 1,
     priority: 100,
@@ -54,7 +54,7 @@ export const TUTORIAL_TOOLTIPS = [
   },
   {
     id: 's1_rolling_open',
-    text: "Rolling is open! Click on any of your players to roll their D20. The roll gets modified by their matchup bonus, then checked against their scoring chart.",
+    text: "Rolling is open! You roll first, then the coach, taking turns. Click one of your players to roll their D20; the modified roll is read off their scoring chart.",
     detail: "Natural 19-20 = Hot marker (+2 to future rolls). Natural 1-2 = Cold marker (-2). Watch for these!",
     section: 1,
     priority: 90,
@@ -63,7 +63,7 @@ export const TUTORIAL_TOOLTIPS = [
   {
     id: 's1_end_section',
     text: "All players have rolled! Review the section results. The team winning the rebound track gets +1 assist. Click 'End Section' to move on.",
-    detail: "At the end of each section, temporary effects clear, starters gain +4 minutes of fatigue, and both teams draw back up to 7 cards.",
+    detail: "At the end of each section, temporary effects clear, starters add 4 minutes of fatigue, benched players shed 4, and both teams draw back up to 7 cards.",
     section: 1,
     priority: 100,
     trigger: {
@@ -88,14 +88,14 @@ export const TUTORIAL_TOOLTIPS = [
   {
     id: 's2_assists_intro',
     text: "Did you notice your assist and rebound tracks? You can spend assists for bonus shot checks! Check the buttons below each player.",
-    detail: "1 AST = +1 to a shot check. 4 AST = free 3PT check. 3 AST = free Paint check. Reaching 5 total assists draws a bonus card!",
+    detail: "1 AST = +1 to a shot check. 5 AST = a 3PT check (needs a 3PT Bonus) or a Paint check (needs a Paint Bonus). The first time you reach 5 assists you draw a bonus card!",
     section: 2,
     priority: 70,
     trigger: { phase: 'scoring', condition: (g) => g.quarter === 1 && g.section === 2 && g.scoringPasses >= 99 },
   },
   {
     id: 's2_reaction_cards',
-    text: "Keep an eye on your reaction cards \u2014 Close Out can reduce opponent 3PT checks by -3, and Cold Spell punishes natural 1-2 rolls. These are played automatically when triggered.",
+    text: "Keep an eye on your reaction cards \u2014 Close Out takes 3 off an opponent's announced 3PT check, and Cold Spell punishes a natural 1 or 2. The game asks you when one can be played.",
     section: 2,
     priority: 60,
     trigger: { phase: 'scoring', condition: (g) => g.quarter === 1 && g.section === 2 && g.scoringPasses < 2 },
@@ -106,7 +106,7 @@ export const TUTORIAL_TOOLTIPS = [
   {
     id: 's3_fatigue_warning',
     text: "Section 3 \u2014 check your players' fatigue! Anyone with 8+ minutes now has a -2 penalty to all rolls. Consider resting tired players this section.",
-    detail: "Fatigue thresholds: 8 min = -2, 12 min = -6, 16 min = -12. Benching a player for 1 section recovers up to 8 minutes. At halftime (Q3), all fatigue resets.",
+    detail: "Fatigue thresholds: 8 min = -2, 12 min = -6, 16 min = -12. A section on the bench takes 4 minutes off and clears hot and cold markers. At halftime (Q3), all fatigue resets.",
     section: 3,
     priority: 100,
     trigger: {
@@ -122,7 +122,7 @@ export const TUTORIAL_TOOLTIPS = [
   },
   {
     id: 's3_sub_strategy',
-    text: "Smart substitution: draft a fresh bench player instead of your tired star. They'll perform better this section, and your star recovers fatigue for next time.",
+    text: "Smart substitution: place a fresh bench player instead of your tired star. They'll perform better this section, and your star sheds 4 minutes and any cold markers for next time.",
     section: 3,
     priority: 90,
     trigger: {

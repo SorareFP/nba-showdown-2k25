@@ -56,9 +56,8 @@ import {
   buyListing as buyListingDirect,
 } from './market.js';
 import { generatePack, PACK_TYPES, favoriteTeamOptions } from '../game/packEngine.js';
-import { getStrat } from '../game/strats.js';
 import { getCardByKey } from '../game/cardSets.js';
-import { getPlayerRarity, BURN_VALUES, getStratRarity, STRAT_BURN_VALUES } from '../game/rarity.js';
+import { burnValueFor, listingFloor, checkListingPrice } from '../game/marketRules.js';
 import { settleGameReward, todayKey, sanitizeBox } from '../game/coinRewards.js';
 import { seasonEarnings, dynastyCoinFactor } from '../game/modes/prizes.js';
 
@@ -97,16 +96,10 @@ async function call(name, payload) {
 /**
  * What a spare of this card is worth when burned — from the card's rarity,
  * never from the caller. The old burnCard took the value as an argument, which
- * meant the browser named its own price.
+ * meant the browser named its own price. It lives in marketRules.js now,
+ * beside the listing floor it also sets; re-exported here for its readers.
  */
-export function burnValueFor(cardKey) {
-  const card = getCardByKey(cardKey);
-  const strat = card ? null : getStrat(cardKey);
-  const value = card
-    ? BURN_VALUES[getPlayerRarity(card)]
-    : strat ? STRAT_BURN_VALUES[getStratRarity(strat)] : undefined;
-  return Number.isFinite(value) ? value : null;
-}
+export { burnValueFor, listingFloor, checkListingPrice };
 
 /** The server route. `uid` is ignored: the server knows who is calling. */
 const server = {
@@ -195,7 +188,12 @@ const direct = {
     return { seasonId, coins, label };
   },
   collectCard: (uid, cardKey) => collectCardDirect(uid, cardKey),
-  listCard: (uid, cardKey, price) => listCardDirect(uid, cardKey, price),
+  listCard: async (uid, cardKey, price) => {
+    // The same floor the server holds: never below the burn value.
+    const floor = checkListingPrice(cardKey, price);
+    if (!floor.ok) throw new Error(floor.msg);
+    return listCardDirect(uid, cardKey, price);
+  },
   delistCard: (uid, listingId) => delistCardDirect(uid, listingId),
   async burnCard(uid, cardKey) {
     const value = burnValueFor(cardKey);

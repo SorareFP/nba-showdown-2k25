@@ -78,7 +78,9 @@
    They share a row so neither becomes the default by being bigger. */
 .spareActions { display: flex; gap: 4px; margin-top: 4px; }
 .spareActions > button { flex: 1; }
-.sellRow { display: flex; gap: 3px; align-items: center; margin-top: 4px; }
+.sellRow { display: flex; gap: 3px; align-items: center; margin-top: 4px; flex-wrap: wrap; }
+/* The floor, shown only while the ask is under it: a listing never goes below the burn value. */
+.sellFloor { font-size: 10px; color: var(--red); white-space: nowrap; }
 .sellInput {
   flex: 1; min-width: 0; width: 100%;
   background: rgba(0,0,0,0.3); border: 1px solid var(--border);

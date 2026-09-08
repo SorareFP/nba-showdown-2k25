@@ -209,7 +209,7 @@ export default function HowToPlay({ scrollToSection, onStartTutorial, tutorialRu
           <h4>Cards, Coins, Packs</h4>
           <ul>
             <li>Playing earns <strong>coins</strong>: wins, milestones and a daily first-win bonus. Coins buy packs, from the 100-coin Booster up to the 6,000-coin Legendary Chase. Special sets — Super Season, Rookie, Summer Standouts and their WNBA counterparts — appear in ordinary packs at reduced odds.</li>
-            <li>A pulled card is a <strong>spare</strong> until you press <strong>Collect</strong>. Collected cards count towards set goals and rewards; spares can be listed on the <strong>market</strong> or <strong>burned</strong> for coins.</li>
+            <li>A pulled card is a <strong>spare</strong> until you press <strong>Collect</strong>. Collected cards count towards set goals and rewards; spares can be listed on the <strong>market</strong> (never below the card's burn value) or <strong>burned</strong> for coins.</li>
             <li>Build teams and decks from what you own. A team carries its own deck.</li>
           </ul>
           <h4>Ways to Play</h4>

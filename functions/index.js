@@ -43,7 +43,8 @@ import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 import { generatePack, PACK_TYPES, favoriteTeamOptions, normalizeFavoriteTeam } from './shared/src/game/packEngine.js';
 import { goalProgress, goalCoinReward, REWARD_BY_GOAL, collectedKeys } from './shared/src/game/collections.js';
 import { getCardByKey } from './shared/src/game/cardSets.js';
-import { getPlayerRarity, BURN_VALUES, getStratRarity, STRAT_BURN_VALUES, STRAT_COPY_CAPS } from './shared/src/game/rarity.js';
+import { getStratRarity, STRAT_COPY_CAPS } from './shared/src/game/rarity.js';
+import { burnValueFor, checkListingPrice } from './shared/src/game/marketRules.js';
 import { getStrat } from './shared/src/game/strats.js';
 import { settleGameReward, todayKey, sanitizeBox } from './shared/src/game/coinRewards.js';
 import { seasonEarnings, dynastyCoinFactor } from './shared/src/game/modes/prizes.js';
@@ -395,6 +396,10 @@ export const listCard = onCall({ region: 'us-central1' }, async request => {
   if (!validPrice(price)) {
     throw new HttpsError('invalid-argument', 'Price must be a whole number of coins above zero');
   }
+  // NEVER BELOW THE BURN VALUE (the user, 2026-09-08). The same check the
+  // sell form and the direct route make, from the same shared module.
+  const floorCheck = checkListingPrice(cardKey, price);
+  if (!floorCheck.ok) throw new HttpsError('failed-precondition', floorCheck.msg);
 
   return db.runTransaction(async tx => {
     const { spare } = await findSpare(tx, uid, cardKey);
@@ -443,14 +448,9 @@ export const burnCard = onCall({ region: 'us-central1' }, async request => {
   const { cardKey } = request.data ?? {};
   if (!cardKey) throw new HttpsError('invalid-argument', 'No card given');
 
-  // A player is valued by its rarity band; a strategy card by its own table.
-  // The strat branch is new with the pack fix above — a strat could not be
-  // burned before because it had never been minted here.
-  const card = getCardByKey(cardKey);
-  const strat = card ? null : getStrat(cardKey);
-  const value = card
-    ? BURN_VALUES[getPlayerRarity(card)]
-    : strat ? STRAT_BURN_VALUES[getStratRarity(strat)] : undefined;
+  // A player is valued by its rarity band; a strategy card by its own table —
+  // in marketRules.js, which the listing floor reads too.
+  const value = burnValueFor(cardKey);
   if (!Number.isFinite(value)) throw new HttpsError('invalid-argument', 'That card cannot be burned');
 
   return db.runTransaction(async tx => {

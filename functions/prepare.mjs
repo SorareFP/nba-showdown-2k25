@@ -40,6 +40,7 @@ const COPY = [
   'src/game/cards.js',
   'src/game/strats.js',
   'src/game/rarity.js',
+  'src/game/marketRules.js',
   'src/game/collections.js',
   'src/game/collectionDifficulty.js',
   'src/game/coinRewards.js',

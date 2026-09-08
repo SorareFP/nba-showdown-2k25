@@ -241,16 +241,17 @@ export default function MyCollection({ collection, onBurn, onList, onCollect, on
                   <input
                     className={styles.sellInput}
                     type="number"
-                    min="1"
+                    min={burnVal}
                     autoFocus
                     value={askPrice}
                     placeholder={String(c.suggested ?? '')}
+                    title={`Never below ${burnVal} — the card's burn value`}
                     onChange={e => setAskPrice(e.target.value)}
                     onKeyDown={e => {
                       if (e.key === 'Escape') setSelling(null);
                       if (e.key === 'Enter') {
                         const p = Number(askPrice || c.suggested);
-                        if (Number.isInteger(p) && p > 0) {
+                        if (Number.isInteger(p) && p >= burnVal) {
                           onList?.(c.key, p);
                           setSelling(null);
                         }
@@ -259,14 +260,19 @@ export default function MyCollection({ collection, onBurn, onList, onCollect, on
                   />
                   <button
                     className={styles.sellYes}
+                    disabled={!(Number.isInteger(Number(askPrice || c.suggested)) && Number(askPrice || c.suggested) >= burnVal)}
+                    title={Number(askPrice || c.suggested) < burnVal ? `At least ${burnVal} — a listing never goes below the burn value` : undefined}
                     onClick={() => {
                       const p = Number(askPrice || c.suggested);
-                      if (!Number.isInteger(p) || p <= 0) return;
+                      if (!Number.isInteger(p) || p < burnVal) return;
                       onList?.(c.key, p);
                       setSelling(null);
                     }}
                   >List</button>
                   <button className={styles.burnNo} onClick={() => setSelling(null)}>✕</button>
+                  {Number(askPrice || c.suggested) < burnVal && (
+                    <span className={styles.sellFloor}>min {burnVal}</span>
+                  )}
                 </div>
               ) : (
                 <div className={styles.spareActions}>

@@ -52,3 +52,13 @@ describe('burnValueFor', () => {
     expect(sw.burnValueFor('no-such-card')).toBeNull();
   });
 });
+
+describe('the listing floor', () => {
+  it('is the burn value, and the direct route refuses a price under it before touching Firestore', async () => {
+    const key = cardKey(ALL_CARDS[0]);
+    const floor = sw.listingFloor(key);
+    expect(floor).toBe(sw.burnValueFor(key));
+    await expect(sw.ROUTES.direct.listCard('someone', key, floor - 1)).rejects.toThrow(/at least/);
+    expect(sw.checkListingPrice(key, floor).ok).toBe(true);
+  });
+});

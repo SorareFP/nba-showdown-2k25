@@ -365,6 +365,32 @@ describe('the starter pack\'s favourite-team core', () => {
     expect(opts).toContain('wnba:LVA');
   });
 
+  it('offers the folded WNBA franchises on the strength of their legends, and deals them a thin core', () => {
+    const opts = favoriteTeamOptions();
+    for (const key of ['wnba:CLE', 'wnba:HOU', 'wnba:SAC', 'wnba:MIA']) expect(opts).toContain(key);
+    expect(opts.filter(o => /^wnba:CHA/.test(o))).toHaveLength(1);   // the Sting's two eras are one team
+    // The pack's own keys: the legends live in the special sets, outside the
+    // starter pool the other helpers resolve against.
+    const keysOf = fav => generatePack('starter', { favoriteTeam: fav }).filter(c => c.type === 'player').map(c => c.id);
+    // The Rockers: a common and two uncommons exist, so the core is two of
+    // them and nothing rarer is needed.
+    for (let n = 0; n < 6; n += 1) {
+      const rockers = keysOf('wnba:CLE').filter(k => /^wnba-super-season:(Michelle_Edwards|Chasity_Melvin|Suzie_McConnell_Serio)$/.test(k));
+      expect(rockers.length).toBeGreaterThanOrEqual(2);
+      expect(rockers.length).toBeLessThanOrEqual(3);
+    }
+    // The Comets: one uncommon among legends, so the top-up adds one rarer
+    // card — the least rare available, Janeth Arcain.
+    for (let n = 0; n < 6; n += 1) {
+      const comets = keysOf('wnba:HOU');
+      expect(comets).toContain('wnba-super-season:Michelle_Snow');
+      expect(comets).toContain('wnba-super-season:Janeth_Arcain');
+      expect(comets.filter(k => /^wnba-super-season:(Michelle_Snow|Janeth_Arcain|Tina_Thompson|Cynthia_Cooper|Sheryl_Swoopes)$/.test(k))).toHaveLength(2);
+    }
+    // The Sol: one legend, a rare. She is the core.
+    expect(keysOf('wnba:MIA')).toContain('wnba-super-season:Elena_Baranova');
+  });
+
   it('offers nothing the team tables cannot name', () => {
     // THE PICKER PUTS EVERY ONE OF THESE ON SCREEN. Two used to come out as
     // "Unknown" behind a grey ball: `favoriteTeamOptions` read WNBA codes

@@ -11,7 +11,7 @@
 // strange-jersey stints are reward territory, like the Bam 83-point card.
 import { STRATS } from './strats.js';
 import { CARD_SETS, BASE_SET, cardKey } from './cardSets.js';
-import { currentFranchise, currentFranchiseFor } from '../cards/teams.js';
+import { currentFranchise, currentFranchiseFor, WNBA_HISTORICAL_TEAMS } from '../cards/teams.js';
 import { getPlayerRarity, getStratRarity, PACK_WEIGHTS, RARITY_ORDER } from './rarity.js';
 
 // NBA divisions and conferences for themed packs
@@ -169,6 +169,39 @@ export function parseFavoriteTeam(value) {
   return abbr ? { league, abbr } : null;
 }
 
+/** Every WNBA card in every WNBA set — where the folded franchises live. */
+export const wnbaCards = () => Object.keys(CARD_SETS).filter(id => id.startsWith('wnba')).flatMap(id => CARD_SETS[id] ?? []);
+
+/**
+ * THE FOLDED WNBA FRANCHISES a player may name: the Rockers, the Comets, the
+ * Sting, the Monarchs, the Sol, the Fire — teams with no 2026 row and no
+ * base-set cards, only legends in the special sets. The user (2026-09-08):
+ * "add the defunct WNBA teams to the favorite choice." One option per
+ * franchise (the Sting's two eras are one team), keyed by the code that
+ * holds the most cards, carrying every code of the franchise that holds any.
+ * Returns { 'wnba:CLE': { codes: ['CLE'], count: 3 }, ... }.
+ */
+export function foldedWnbaFranchises() {
+  const counts = new Map();
+  for (const c of wnbaCards()) {
+    const code = String(c.team ?? '').toUpperCase();
+    if (WNBA_HISTORICAL_TEAMS[code]?.folded) counts.set(code, (counts.get(code) ?? 0) + 1);
+  }
+  const byFranchise = new Map();
+  for (const [code, n] of counts) {
+    const t = WNBA_HISTORICAL_TEAMS[code];
+    const name = `${t.city} ${t.name}`;
+    const entry = byFranchise.get(name) ?? { codes: [], count: 0, primary: null, primaryCount: 0 };
+    entry.codes.push(code);
+    entry.count += n;
+    if (n > entry.primaryCount) { entry.primary = code; entry.primaryCount = n; }
+    byFranchise.set(name, entry);
+  }
+  const out = {};
+  for (const e of byFranchise.values()) out[`wnba:${e.primary}`] = { codes: e.codes.sort(), count: e.count };
+  return out;
+}
+
 /** Every team a player may name, league-qualified, derived from the cards. */
 export function favoriteTeamOptions() {
   const seen = new Map();
@@ -181,10 +214,12 @@ export function favoriteTeamOptions() {
     const key = `${league}:${abbr}`;
     seen.set(key, (seen.get(key) ?? 0) + 1);
   }
-  return [...seen.entries()]
-    .filter(([, n]) => n >= 3)
-    .map(([key]) => key)
-    .sort();
+  const live = [...seen.entries()].filter(([, n]) => n >= 3).map(([key]) => key);
+  // The folded franchises do not reach three commons and never will; they
+  // are offered on the strength of their legends, and their core is dealt
+  // by a different rule (see favoriteCore in generatePack).
+  const folded = Object.keys(foldedWnbaFranchises()).filter(k => !seen.has(k));
+  return [...new Set([...live, ...folded])].sort();
 }
 export const leagueBases = () => LEAGUE_SETS.flatMap(id => CARD_SETS[id] ?? []);
 
@@ -522,10 +557,16 @@ export function generatePack(packType, options = {}) {
   const favoriteCore = [];
   if (def.favoriteCore && options.favoriteTeam) {
     const want = parseFavoriteTeam(options.favoriteTeam);
-    const mine = want
-      ? playerPool.filter(c => leagueOfCard(c) === want.league
-        && currentFranchiseFor(c.team, { league: want.league === 'wnba' ? 'WNBA' : 'NBA' }) === want.abbr)
-      : [];
+    // A FOLDED WNBA FRANCHISE has no base-set cards: its legends are in the
+    // special sets, so the core is drawn from every WNBA set instead of the
+    // starter's pool. Everything else in the pack still comes from the pool.
+    const folded = want?.league === 'wnba' ? foldedWnbaFranchises()[`wnba:${want.abbr}`] : null;
+    const mine = folded
+      ? wnbaCards().filter(c => folded.codes.includes(String(c.team ?? '').toUpperCase()))
+      : want
+        ? playerPool.filter(c => leagueOfCard(c) === want.league
+          && currentFranchiseFor(c.team, { league: want.league === 'wnba' ? 'WNBA' : 'NBA' }) === want.abbr)
+        : [];
     const taken = new Set();
     const takeFrom = (band, n) => {
       for (let i = 0; i < n; i += 1) {
@@ -538,6 +579,19 @@ export function generatePack(packType, options = {}) {
     };
     takeFrom('common', def.favoriteCore.common ?? 0);
     takeFrom('uncommon', def.favoriteCore.uncommon ?? 0);
+    // A THIN TEAM GETS ONE RARER CARD instead of nothing much. The user
+    // (2026-09-08): "If the supply for that team is wonky relatively, like I
+    // bet it is for the Rockers, we can alter what is given. Can just give one
+    // rare like Michelle Edwards or Suzie McConnell-Serio, depending on who
+    // else is available." When commons and uncommons leave fewer than two
+    // cards, one more comes from what remains, the least rare first.
+    if (folded && favoriteCore.length < 2) {
+      const left = mine.filter(c => !taken.has(cardKey(c)));
+      for (const band of ['rare', 'super-rare', 'legendary']) {
+        const pool = left.filter(c => getPlayerRarity(c) === band);
+        if (pool.length) { const card = weightedPick(pool, getPlayerRarity); taken.add(cardKey(card)); favoriteCore.push(card); break; }
+      }
+    }
     for (const card of favoriteCore) result.push(pulled(card));
   }
 

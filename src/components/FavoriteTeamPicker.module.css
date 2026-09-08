@@ -141,3 +141,6 @@
   .foot { flex-wrap: wrap; }
   .confirmText { width: 100%; margin: 0 0 6px; }
 }
+
+/* A folded franchise's years, under its name. */
+.era { display: block; font-size: 10px; color: var(--text-dim); letter-spacing: 0.3px; }

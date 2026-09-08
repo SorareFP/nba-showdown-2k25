@@ -104,6 +104,7 @@ export default function FavoriteTeamPicker({ onChoose, onCancel, busy = false, e
                       <span className={styles.teamName}>
                         <span className={styles.city}>{team.city}</span>
                         <span className={styles.nick}>{team.name}</span>
+                        {team.folded && <span className={styles.era}>{team.era}</span>}
                       </span>
                     </button>
                   );

@@ -223,8 +223,15 @@ export function calcAdv(off, def, tempEff = {}, idx = 0, tempDefEff = null, defI
     return { speedAdv: rawSpeed, powerAdv: rawPower, rawSpeedDiff: rawSpeed, rawPowerDiff: rawPower, db, rollBonus, hasPenalty: true };
   }
 
-  const speedAdv = Math.max(0, rawSpeed - db);
-  const powerAdv = Math.max(0, rawPower - db);
+  let speedAdv = Math.max(0, rawSpeed - db);
+  let powerAdv = Math.max(0, rawPower - db);
+  // SWITCH EVERYTHING'S PRICE: every POSITIVE advantage the offence holds is
+  // doubled for the section. The card set `tempEff.doubleAdv` from the day it
+  // was written and nothing ever read it (the user, 2026-09-08: "Jackson
+  // should have had a +10 here"). It lives here so the roll, the board's
+  // matchup line and the AI's reading all say the same number. A penalty is
+  // handled above and is not doubled — the card doubles advantages.
+  if (tempEff?.doubleAdv) { speedAdv *= 2; powerAdv *= 2; }
   return { speedAdv, powerAdv, rawSpeedDiff: rawSpeed, rawPowerDiff: rawPower, db, rollBonus: Math.max(speedAdv, powerAdv), hasPenalty: false };
 }
 

@@ -33,7 +33,10 @@ export const PACK_TYPES = {
   // `favoriteCore` is the franchise a new player names on the way in — see
   // favoriteCorePicks. Three commons and an uncommon of their team, guaranteed
   // among the twenty, so the first cards anybody owns mean something to them.
-  starter:       { name: 'Starter Pack',       players: 20, strats: 30, price: 0,    guaranteedSR: 1, srCap: 2, once: true, favoriteCore: { common: 3, uncommon: 1 }, bonusStrats: ['unethical_hoops'] },
+  // guaranteedStrats are dealt INSIDE the thirty: a random thirty can miss the
+  // game's one basic switching card entirely (the user, 2026-09-08: "there
+  // needs to be two pick-and-roll cards in each starter pack").
+  starter:       { name: 'Starter Pack',       players: 20, strats: 30, price: 0,    guaranteedSR: 1, srCap: 2, once: true, favoriteCore: { common: 3, uncommon: 1 }, guaranteedStrats: { high_screen_roll: 2 }, bonusStrats: ['unethical_hoops'] },
   booster:       { name: 'Booster Pack',        players: 5,  strats: 2,  price: 100, mixesSpecials: true },
   deluxe:        { name: 'Deluxe Booster',      players: 5,  strats: 2,  price: 200,  guaranteedRare: 1, mixesSpecials: true },
   super:         { name: 'Super Booster',       players: 5,  strats: 2,  price: 300,  guaranteedRarePlayer: 1, mixesSpecials: true },
@@ -731,8 +734,10 @@ export function generatePack(packType, options = {}) {
 
   // Fill strat slots
   if (packType === 'starter') {
-    const strats = pickPhaseBalancedStrats(def.strats);
+    const guaranteed = Object.entries(def.guaranteedStrats ?? {}).flatMap(([id, n]) => Array(n).fill(id));
+    const strats = pickPhaseBalancedStrats(Math.max(0, def.strats - guaranteed.length));
     strats.forEach(s => result.push({ id: s.id, type: 'strat' }));
+    for (const id of guaranteed) result.push({ id, type: 'strat' });
     // THE SIGN-UP GIFT, on top of the thirty rather than instead of one of
     // them. A promo card is reachable only here — see packableStrats.
     for (const id of def.bonusStrats ?? []) result.push({ id, type: 'strat' });

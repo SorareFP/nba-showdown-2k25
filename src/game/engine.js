@@ -775,12 +775,17 @@ export function doRoll(g, teamKey, idx, opts = {}) {
     clutchDice = clutchDiceFor(ng, nPlayer);
     ng.crunch.used[teamKey] = (ng.crunch.used[teamKey] || 0) + 1;
   }
-  let die = roll20();
-  for (let extra = 1; extra < clutchDice; extra += 1) die = Math.max(die, roll20());
+  // EVERY DIE ROLLED IS KEPT for the log. Unsung Hero rolled two and kept
+  // the higher, and printed only the higher — so "Kennard 🎲12" looked like
+  // one die and the card looked broken (the user, 2026-09-08). The line now
+  // reads "🎲[12 7]→12" whenever more than one die was thrown.
+  const dice = [roll20()];
+  for (let extra = 1; extra < clutchDice; extra += 1) dice.push(roll20());
+  let die = Math.max(...dice);
   // Unsung Hero (two dice, keep the higher) and Swarming Defense (two dice,
   // keep the lower) — both set by a card this section on this roller's slot.
-  if (te['adv' + idx]) die = Math.max(die, roll20());
-  if (te['dis' + idx]) die = Math.min(die, roll20());
+  if (te['adv' + idx]) { const d = roll20(); dice.push(d); die = Math.max(die, d); }
+  if (te['dis' + idx]) { const d = roll20(); dice.push(d); die = Math.min(die, d); }
 
   const totalBonus = bonus + fat + mrkB;
   let finalRoll = Math.max(1, Math.min(die + totalBonus, 99));
@@ -795,6 +800,7 @@ export function doRoll(g, teamKey, idx, opts = {}) {
     ng.pressArmed[teamKey] -= 1;
     pressed = true;
     die = roll20();
+    dice.push(die);
     finalRoll = Math.max(1, Math.min(die + totalBonus, 99));
     result = lookupChart(nPlayer, finalRoll);
     isTop = hitsTopTier(nPlayer, finalRoll);
@@ -804,7 +810,7 @@ export function doRoll(g, teamKey, idx, opts = {}) {
   if (te['reb2' + idx] && result.reb) result = { ...result, reb: result.reb * 2 };
   if (!ng.rollResults[teamKey]) ng.rollResults[teamKey] = [];
   // defId/defDb: who was guarding this roll, for matchup plus-minus analysis.
-  ng.rollResults[teamKey][idx] = { die, bonus: totalBonus, finalRoll, pts: result.pts, reb: result.reb, ast: result.ast, isTop, defIdx, defId: nDefPlayer.id, defDb: nDefPlayer.defBoost || 0 };
+  ng.rollResults[teamKey][idx] = { die, dice, bonus: totalBonus, finalRoll, pts: result.pts, reb: result.reb, ast: result.ast, isTop, defIdx, defId: nDefPlayer.id, defDb: nDefPlayer.defBoost || 0 };
 
   nMyT.score += result.pts;
   nMyT.assists += result.ast;
@@ -826,7 +832,7 @@ export function doRoll(g, teamKey, idx, opts = {}) {
 
   ng.log = [...ng.log, {
     team: teamKey,
-    msg: `${clutchDice ? `⭐ CLUTCH (${clutchDice} dice) ` : ''}${pressed ? '🛑 PRESSED — re-roll! ' : ''}${nPlayer.name} 🎲${die}${totalBonus !== 0 ? (totalBonus > 0 ? '+' : '') + totalBonus : ''}=${finalRoll} → ${result.pts}pts ${result.reb}reb ${result.ast}ast${adv.hasPenalty && !ghosted ? ' ⚠️ penalty' : ''}${isTop ? ' ⭐' : ''}${die === 20 ? ' 🎯' : ''}`,
+    msg: `${clutchDice ? `⭐ CLUTCH (${clutchDice} dice) ` : ''}${pressed ? '🛑 PRESSED — re-roll! ' : ''}${nPlayer.name} 🎲${dice.length > 1 ? `[${dice.join(' ')}]→${die}` : die}${totalBonus !== 0 ? (totalBonus > 0 ? '+' : '') + totalBonus : ''}=${finalRoll} → ${result.pts}pts ${result.reb}reb ${result.ast}ast${adv.hasPenalty && !ghosted ? ' ⚠️ penalty' : ''}${isTop ? ' ⭐' : ''}${die === 20 ? ' 🎯' : ''}`,
   }];
 
   // The roll Box Out can answer, and Spain Pick & Roll's assist for a score.

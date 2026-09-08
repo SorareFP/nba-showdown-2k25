@@ -331,6 +331,8 @@ describe('the starter pack\'s favourite-team core', () => {
     expect(pack.filter(c => c.type === 'player')).toHaveLength(20);
     // Thirty dealt plus the sign-up gift (bonusStrats) — see packableStrats.
     expect(pack.filter(c => c.type === 'strat')).toHaveLength(31);
+    // Two High Screen & Roll inside the thirty, every time (guaranteedStrats).
+    expect(pack.filter(c => c.type === 'strat' && c.id === 'high_screen_roll').length).toBeGreaterThanOrEqual(2);
     expect(pack.some(c => c.type === 'strat' && c.id === 'unethical_hoops')).toBe(true);
   });
 

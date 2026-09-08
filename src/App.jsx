@@ -18,7 +18,7 @@ import { DialogProvider } from './ui/dialogs.jsx';
 import SoundToggle from './ui/SoundToggle.jsx';
 import { CardStatsProvider } from './firebase/CardStatsProvider.jsx';
 import { collectableKeys } from './game/collections.js';
-import { loadCollection, getUserData } from './firebase/collection.js';
+import { loadCollection, getUserData, updateUserFields } from './firebase/collection.js';
 import { ownedRoster } from './game/teamRules.js';
 import { CARD_MAP } from './game/cards.js';
 import styles from './App.module.css';
@@ -64,6 +64,11 @@ function AppInner() {
   // banner on every page until claimed." Read with the collection, so
   // opening the pack — which refreshes the collection — clears it.
   const [starter, setStarter] = useState(null);   // null = unknown or signed out
+  const dismissBonus = useCallback(() => {
+    clearSignup();
+    setStarter(s => (s ? { ...s, bonusSeen: true } : s));
+    if (user) updateUserFields(user.uid, { 'settings.bonusSeen': true }).catch(() => {});
+  }, [user, clearSignup]);
   // A signed-in account with the starter still unopened lands on Collection,
   // where the pack is — once per sign-in, so it does not fight the player.
   const landedRef = useRef(null);
@@ -115,7 +120,7 @@ function AppInner() {
     const c = await loadCollection(user.uid);
     try {
       const u = await getUserData(user.uid);
-      setStarter(u ? { opened: Boolean(u.starterPackOpened), favorite: Boolean(u.favoriteTeam) } : null);
+      setStarter(u ? { opened: Boolean(u.starterPackOpened), favorite: Boolean(u.favoriteTeam), bonusSeen: Boolean(u.settings?.bonusSeen) } : null);
     } catch {
       setStarter(null);
     }
@@ -244,11 +249,18 @@ function AppInner() {
           <button className={styles.firstRunDismiss} onClick={() => { markPlayed(); }} aria-label="Dismiss">×</button>
         </div>
       )}
-      {user && justSignedUp && (
+      {/* THE SIGN-UP BONUS keys off the ACCOUNT, not the sign-in: it shows
+          while the Starter Pack is unopened and the pop-up has not been
+          dismissed on this account (settings.bonusSeen, a client-writable
+          field). A flag held only in memory vanished on any reload, and an
+          account that existed before the pop-up did — every account today,
+          reset or not — never saw it. `justSignedUp` still opens it on the
+          very first paint, before the user document has been read back. */}
+      {user && !tutorialMode && (justSignedUp || (starter && !starter.opened && !starter.bonusSeen)) && (
         <SignupBonus
           name={user.displayName}
-          onClaim={() => { clearSignup(); setTab('collection'); }}
-          onDismiss={clearSignup}
+          onClaim={() => { dismissBonus(); setTab('collection'); }}
+          onDismiss={dismissBonus}
         />
       )}
       <main className={styles.main}>

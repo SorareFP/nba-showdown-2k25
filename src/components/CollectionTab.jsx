@@ -115,6 +115,10 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange }) {
       setUserData(u => (u ? { ...u, favoriteTeam: chosen } : u));
       setPickingTeam(false);
       setToast(`${favoriteTeamName(chosen)} it is — that one is for good.`);
+      // STRAIGHT INTO THE PACK. The choice used to swap the banner's button
+      // and wait for a second click, which read as being stuck (reports,
+      // 2026-09-08). The pack is what they came for; open it.
+      if (userData && !userData.starterPackOpened) await handleOpenStarter();
     } catch (e) {
       setTeamError(e.message);
     } finally {

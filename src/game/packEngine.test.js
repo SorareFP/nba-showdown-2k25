@@ -5,7 +5,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   generatePack, PACK_TYPES, CONFERENCES, DIVISIONS, MAX_DUPES_PER_PACK,
-  SPECIAL_SETS_IN_PACKS, SPECIAL_BAND_SHARE, parseFavoriteTeam, favoriteTeamOptions, leagueOfCard } from './packEngine.js';
+  SPECIAL_SETS_IN_PACKS, SPECIAL_BAND_SHARE, parseFavoriteTeam, favoriteTeamOptions, normalizeFavoriteTeam, leagueOfCard } from './packEngine.js';
 import { CARD_MAP } from './cards.js';
 import { TEAM_ROSTERS } from './collections.js';
 import { CARD_SETS, BASE_SET, cardKey, ALL_CARDS } from './cardSets.js';
@@ -363,6 +363,15 @@ describe('the starter pack\'s favourite-team core', () => {
     expect(opts.filter(o => o.startsWith('wnba:')).length).toBeGreaterThanOrEqual(12);
     expect(opts).toContain('nba:MIL');
     expect(opts).toContain('wnba:LVA');
+  });
+
+  it('spells a favourite the way the option list does, whatever case it arrives in', () => {
+    expect(normalizeFavoriteTeam('nba:cle')).toBe('nba:CLE');
+    expect(normalizeFavoriteTeam('NBA:CLE')).toBe('nba:CLE');
+    expect(normalizeFavoriteTeam('wnba:lva')).toBe('wnba:LVA');
+    expect(normalizeFavoriteTeam('mil')).toBe('nba:MIL');
+    expect(normalizeFavoriteTeam('')).toBe(null);
+    for (const option of favoriteTeamOptions()) expect(normalizeFavoriteTeam(option)).toBe(option);
   });
 
   it('offers the folded WNBA franchises on the strength of their legends, and deals them a thin core', () => {

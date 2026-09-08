@@ -40,7 +40,7 @@ import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import { initializeApp } from 'firebase-admin/app';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 
-import { generatePack, PACK_TYPES, favoriteTeamOptions } from './shared/src/game/packEngine.js';
+import { generatePack, PACK_TYPES, favoriteTeamOptions, normalizeFavoriteTeam } from './shared/src/game/packEngine.js';
 import { goalProgress, goalCoinReward, REWARD_BY_GOAL, collectedKeys } from './shared/src/game/collections.js';
 import { getCardByKey } from './shared/src/game/cardSets.js';
 import { getPlayerRarity, BURN_VALUES, getStratRarity, STRAT_BURN_VALUES } from './shared/src/game/rarity.js';
@@ -719,8 +719,10 @@ export const setFavoriteTeam = onCall({ region: 'us-central1' }, async request =
   const uid = requireAuth(request);
   // Stored league-qualified — "nba:MIL", "wnba:LVA" — because seven codes
   // mean a team in both leagues.
-  const team = String(request.data?.team ?? '').trim().toLowerCase();
-  if (!KNOWN_FRANCHISES.has(team)) throw new HttpsError('invalid-argument', `Unknown team ${team}`);
+  // Normalised the same way the option list is spelled ("nba:CLE"); the
+  // old .toLowerCase() here refused every single choice as unknown.
+  const team = normalizeFavoriteTeam(request.data?.team);
+  if (!team || !KNOWN_FRANCHISES.has(team)) throw new HttpsError('invalid-argument', `Unknown team ${request.data?.team ?? ''}`);
   const userRef = db.doc(`users/${uid}`);
   return db.runTransaction(async tx => {
     const snap = await tx.get(userRef);

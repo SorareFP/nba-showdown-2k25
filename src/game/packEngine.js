@@ -202,6 +202,17 @@ export function foldedWnbaFranchises() {
   return out;
 }
 
+/**
+ * A favourite team as the option list spells it: league lowercase, code
+ * uppercase — "nba:CLE". The server compared a fully lowercased value against
+ * this list and refused every choice ("Unknown team nba:cle", 2026-09-08);
+ * both sides normalise here now, so the spelling cannot drift apart again.
+ */
+export function normalizeFavoriteTeam(value) {
+  const parsed = parseFavoriteTeam(value);
+  return parsed ? `${parsed.league}:${parsed.abbr}` : null;
+}
+
 /** Every team a player may name, league-qualified, derived from the cards. */
 export function favoriteTeamOptions() {
   const seen = new Map();

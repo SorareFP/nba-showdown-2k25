@@ -265,10 +265,9 @@ export default function PackOpening({ cards, coins = null, onDone, onSaveRest = 
       <div className={styles.header}>
         <div>
           <h2 className={styles.title}>Pack Opening</h2>
-          <div className={styles.bestHint}>
-            Best in pack:{' '}
-            <span style={{ color: RARITY_CONFIG[best]?.color }}>{RARITY_CONFIG[best]?.label}</span>
-          </div>
+          {/* No "best in pack" here: naming the top rarity before the cards
+              turn over is a spoiler (the user, 2026-09-08: "we don't like
+              spoilers"). The reveal order still saves the rarest for last. */}
         </div>
         <div className={styles.headRight}>
           {/* The balance, because this screen takes over the whole tab and the

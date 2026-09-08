@@ -162,21 +162,24 @@ export default function StratTemplate({
 
       <div className={styles.footer}>
         <ChevronDots direction="right" className={styles.footChevrons} />
-        {s.presentedBy ? (
-          // THE SPONSOR LINE. The user (2026-09-08) dropped the Underdog logo
-          // "for the little 'presented by' part" of Unethical Hoops; the logo
-          // lives in public/logos/ with the team crests and is reached the way
-          // the app reaches those, under Vite's base.
-          <div className={styles.presented}>
-            <div className={styles.presentedLabel}>PRESENTED BY</div>
-            <img
-              className={styles.presentedLogo}
-              src={`${import.meta.env.BASE_URL}logos/${s.presentedBy.logo}`}
-              alt={s.presentedBy.name}
-            />
-          </div>
-        ) : null}
-        <div className={styles.side}>{s.side === 'def' ? 'DEFENSE' : 'OFFENSE'}</div>
+        <div className={styles.footRight}>
+          {s.presentedBy ? (
+            // THE SPONSOR LINE. The user (2026-09-08) dropped the Underdog logo
+            // "for the little 'presented by' part" of Unethical Hoops, then asked
+            // for it "in larger typeface above OFFENSE, running horizontal with
+            // the logo to the right". The logo lives in public/logos/ with the
+            // team crests and is reached the way the app reaches those.
+            <div className={styles.presented}>
+              <span className={styles.presentedLabel}>Presented By</span>
+              <img
+                className={styles.presentedLogo}
+                src={`${import.meta.env.BASE_URL}logos/${s.presentedBy.logo}`}
+                alt={s.presentedBy.name}
+              />
+            </div>
+          ) : null}
+          <div className={styles.side}>{s.side === 'def' ? 'DEFENSE' : 'OFFENSE'}</div>
+        </div>
       </div>
     </div>
   );

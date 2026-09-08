@@ -75,6 +75,49 @@ function bestSwap(g) {
   }
   return best;
 }
+// ── The log, read from this section's start ──────────────────────────────────
+// The board logs "Lineups locked — begin placement." every section, which is
+// the anchor: a lesson about THIS section's switch must not fire off last
+// section's line.
+function sectionLog(g) {
+  const log = g.log || [];
+  let start = 0;
+  for (let i = log.length - 1; i >= 0; i -= 1) if (/Lineups locked/.test(log[i].msg)) { start = i; break; }
+  return log.slice(start);
+}
+const lastIn = (entries, re) => { for (let i = entries.length - 1; i >= 0; i -= 1) if (re.test(entries[i].msg)) return entries[i]; return null; };
+const mySwitch = g => { const e = lastIn(sectionLog(g), /^High Screen & Roll: /); return e && e.team === 'A' ? e : null; };
+const theirCancel = g => lastIn(sectionLog(g), /canceled HSR/);
+
+/** The coach's move after my switch this section: a pass, a card, or nothing yet. */
+function coachReply(g) {
+  const entries = sectionLog(g);
+  const at = entries.indexOf(mySwitch(g));
+  if (at < 0) return null;
+  const reply = entries.slice(at + 1).find(e => e.team === 'B');
+  if (!reply) return null;
+  if (/^Passed/.test(reply.msg)) return { kind: 'pass' };
+  return { kind: 'card', name: reply.msg.split(':')[0] };
+}
+function switchLandedText(g) {
+  const e = mySwitch(g);
+  const what = e ? e.msg.replace(/^High Screen & Roll: /, '') : 'the two defenders traded places';
+  const r = coachReply(g);
+  const coach = r?.kind === 'card'
+    ? `The coach played ${r.name} instead of answering it — it holds no canceller.`
+    : 'The coach passed: it had nothing in hand to answer with.';
+  return `Your switch went through — ${what}. ${coach}`;
+}
+function switchCancelledText(g) {
+  const e = theirCancel(g);
+  if (!e) return 'The coach cancelled your switch.';
+  const [card, rest] = e.msg.split(': canceled HSR — ');
+  const lead = `The coach answered with ${card}: your switch is cancelled and the pairings stay as they were placed.`;
+  if (card === 'Go Under') return `${lead} Go Under's price: the player your switch was called for takes a 3PT check at +2 — ${rest}.`;
+  if (card === 'Fight Over') return `${lead} Fight Over's price: ${rest}.`;
+  return `${lead} Veer Switch's twist: the coach chose the new assignments itself — ${rest}.`;
+}
+
 function screenRollText(g) {
   const A = getTeam(g, 'A');
   const lead = 'Your High Screen & Roll is lit. It swaps the defenders of two of your players, so the pairings the placement handed you are not final.';
@@ -130,6 +173,18 @@ export const TUTORIAL_TOOLTIPS = [
     priority: 90,
     // A's answering turns: step 3 (row 2) and step 7 (row 4).
     trigger: { phase: 'matchup_strats', condition: (g) => g.quarter === 1 && g.section === 1 && (step(g) === 3 || step(g) === 7) },
+  },
+
+  // Section 1's switch LANDS — the coach was dealt no canceller (tutorialHands.js)
+  {
+    id: 's1_switch_landed',
+    text: switchLandedText,
+    detail: "A defence holding Go Under, Fight Over or Veer Switch can cancel a switch, each at a price. Next section the coach will be holding one — watch what it does.",
+    section: 1,
+    priority: 95,
+    // Fires once the coach has replied to the switch — by passing or by playing
+    // any card that is not a canceller — and the turn is back with the player.
+    trigger: { phase: 'matchup_strats', condition: (g) => g.quarter === 1 && g.section === 1 && step(g) >= 10 && Boolean(mySwitch(g)) && !theirCancel(g) && Boolean(coachReply(g)) && g.matchupTurn === 'A' },
   },
 
   // Matchup card window — the switch, and why
@@ -192,6 +247,24 @@ export const TUTORIAL_TOOLTIPS = [
     section: 2,
     priority: 80,
     trigger: { phase: 'draft', condition: (g) => g.quarter === 1 && g.section === 2 && g.draft.step === 0 },
+  },
+  // Section 2: the same switch, and the coach's answer to it
+  {
+    id: 's2_switch_again',
+    text: "Play your High Screen & Roll again. This time the coach is holding a canceller — see what it does with it.",
+    detail: null,
+    highlight: '[data-card-id="high_screen_roll"]',
+    section: 2,
+    priority: 100,
+    trigger: { phase: 'matchup_strats', condition: (g) => g.quarter === 1 && g.section === 2 && step(g) >= 10 && !mySwitch(g) && getTeam(g, 'A').hand.includes('high_screen_roll') },
+  },
+  {
+    id: 's2_switch_cancelled',
+    text: switchCancelledText,
+    detail: "One canceller per switch. When you hold Go Under, Fight Over or Veer Switch yourself, they light up the moment the coach switches.",
+    section: 2,
+    priority: 100,
+    trigger: { condition: (g) => g.quarter === 1 && g.section === 2 && Boolean(theirCancel(g)) },
   },
   {
     id: 's2_assists_intro',

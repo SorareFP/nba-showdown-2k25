@@ -77,6 +77,40 @@ describe('the High Screen & Roll lesson', () => {
     expect(tip('s1_matchup_window').highlight).toBe('[data-card-id="high_screen_roll"]');
   });
 
+  it('narrates the switch that landed, and the switch that was cancelled, from this section\'s log only', () => {
+    const g = midPlacement();
+    g.placementStep = 10; g.matchupTurn = 'A'; g.matchupPasses = 1;
+    g.log = [
+      { team: null, msg: 'Lineups locked — begin placement.' },
+      { team: 'A', msg: 'High Screen & Roll: Tatum now guarded by Giannis, Edwards now guarded by Mobley' },
+      { team: 'B', msg: 'Passed.' },
+    ];
+    const live = () => TUTORIAL_TOOLTIPS.filter(t => (!t.trigger.phase || t.trigger.phase === g.phase) && t.trigger.condition(g)).map(t => t.id);
+    expect(live()).toContain('s1_switch_landed');
+    expect(text('s1_switch_landed', g)).toBe('Your switch went through — Tatum now guarded by Giannis, Edwards now guarded by Mobley. The coach passed: it had nothing in hand to answer with.');
+
+    // The coach may answer with some other card instead of passing — still landed.
+    g.log[2] = { team: 'B', msg: 'Stagger Action: Shai & Luka screen for each other' };
+    g.matchupPasses = 0;
+    expect(live()).toContain('s1_switch_landed');
+    expect(text('s1_switch_landed', g)).toMatch(/The coach played Stagger Action instead of answering it — it holds no canceller\.$/);
+    // Before the coach has replied at all, nothing yet.
+    g.log.pop();
+    expect(live()).not.toContain('s1_switch_landed');
+
+    // Section 2: last section's switch line must not count; the cancel must.
+    g.section = 2; g.matchupPasses = 0;
+    g.log.push({ team: null, msg: 'Lineups locked — begin placement.' });
+    getTeam(g, 'A').hand = ['high_screen_roll', 'extra_pass'];
+    expect(live()).toContain('s2_switch_again');
+    expect(live()).not.toContain('s2_switch_cancelled');
+    g.log.push({ team: 'A', msg: 'High Screen & Roll: Tatum now guarded by Giannis, Edwards now guarded by Mobley' });
+    g.log.push({ team: 'B', msg: 'Go Under: canceled HSR — Tatum 3PT check: 🎲9 +2 card +1 3PT = 12 vs 15 → MISS' });
+    expect(live()).not.toContain('s2_switch_again');
+    expect(live()).toContain('s2_switch_cancelled');
+    expect(text('s2_switch_cancelled', g)).toBe("The coach answered with Go Under: your switch is cancelled and the pairings stay as they were placed. Go Under's price: the player your switch was called for takes a 3PT check at +2 — Tatum 3PT check: 🎲9 +2 card +1 3PT = 12 vs 15 → MISS.");
+  });
+
   it('says to hold it when no swap gains', () => {
     const g = midPlacement();
     const A = getTeam(g, 'A'); const B = getTeam(g, 'B');

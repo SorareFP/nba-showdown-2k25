@@ -138,23 +138,32 @@
   line-height: 1;
 }
 
-/* The sponsor line: a small caption over a logo, sitting between the
-   chevrons and the side word on the footer's baseline. */
-.presented {
+/* The footer's right column: the sponsor line (when there is one) over
+   the side word, both flush right. */
+.footRight {
+  margin-left: auto;
   display: flex;
   flex-direction: column;
+  align-items: flex-end;
+}
+
+/* The sponsor line: "Presented By" running horizontally with the logo to
+   its right, sitting above the side word. */
+.presented {
+  display: flex;
+  flex-direction: row;
   align-items: center;
-  gap: 4px;
-  margin: 0 auto 22px;
+  gap: 16px;
+  margin: 0 6px 8px 0;
 }
 .presentedLabel {
-  font-size: 16px;
-  font-weight: 700;
-  letter-spacing: 3px;
-  opacity: 0.75;
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  line-height: 1;
 }
 .presentedLogo {
-  height: 72px;
+  height: 66px;
   width: auto;
   display: block;
 }

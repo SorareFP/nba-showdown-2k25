@@ -370,28 +370,6 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange }) {
   }
 
   // Cards in the box that are not in the binder yet — the dot on the tab.
-  // DEV: every account at once — the beta wipe the user asked for (2026-09-08).
-  const handleResetAll = async () => {
-    const yes = await ask({
-      title: 'Wipe EVERY account?',
-      body: 'Every player: collection, ledger, currency, teams, decks, seasons, saved game, card stats, favourite team and starter-pack status. Each of them starts over at the starter pack. This cannot be undone.',
-      warn: 'DEV TOOL — ALL ACCOUNTS',
-      confirmLabel: 'Wipe them all',
-      tone: 'danger',
-    });
-    if (!yes) return;
-    try {
-      const r = await devResetAccount(user.uid, { all: true });
-      const n = r.accounts?.length ?? 0;
-      const copies = (r.accounts ?? []).reduce((s, a) => s + (a.copies || 0), 0);
-      setToast(`DEV: wiped ${n} account${n === 1 ? '' : 's'} — ${copies} copies returned to supply. Everyone refreshes for a starter pack.`);
-    } catch (e) {
-      setToast(`DEV wipe failed: ${e.message}`);
-    }
-    await refresh();
-    onCollectionChange?.();
-  };
-
   const collectable = collectableKeys(collection).size;
 
   return (
@@ -653,12 +631,7 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange }) {
           >
             DEV: Reset Collection &amp; Currency
           </button>
-          <button
-            onClick={handleResetAll}
-            style={{ background: 'rgba(239,68,68,0.12)', color: 'var(--red)', fontSize: 11, padding: '4px 10px', border: '1px solid rgba(239,68,68,0.5)', borderRadius: 4 }}
-          >
-            DEV: Wipe ALL accounts
-          </button>
+
         </div>
       )}
     </div>

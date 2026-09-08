@@ -658,24 +658,17 @@ async function wipeAccount(uid) {
 }
 
 /**
- * DEV RESET. Admins only. `{}` wipes the caller's own account; `{ targetUid }`
- * wipes that account; `{ all: true }` wipes every account in `users` and
- * returns one line per account. Nothing about the supply's opening counts is
+ * DEV RESET of the caller's OWN account, admins only. It once took
+ * `{ all: true }` for the beta wipe; the user had that removed the same day
+ * ("I don't want to accidentally use it"), so there is no argument here that
+ * aims it at anyone else. Nothing about the supply's opening counts is
  * touched beyond handing deleted copies back.
  */
 export const devResetAccount = onCall({ region: 'us-central1' }, async request => {
   const uid = requireAuth(request);
   const email = request.auth?.token?.email ?? '';
   if (!ADMIN_EMAILS.has(email)) throw new HttpsError('permission-denied', 'Not a dev account');
-  const { targetUid, all } = request.data ?? {};
-  if (all === true) {
-    const users = await db.collection('users').get();
-    const results = [];
-    for (const d of users.docs) results.push(await wipeAccount(d.id));
-    return { all: true, accounts: results };
-  }
-  if (targetUid && typeof targetUid !== 'string') throw new HttpsError('invalid-argument', 'targetUid must be a uid');
-  return wipeAccount(targetUid || uid);
+  return wipeAccount(uid);
 });
 
 /**

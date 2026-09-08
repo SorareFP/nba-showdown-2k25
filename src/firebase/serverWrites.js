@@ -120,7 +120,7 @@ const server = {
   claimSeasonReward: (uid, seasonId) => call('claimSeasonReward', { seasonId }),
   setFavoriteTeam: (uid, team) => call('setFavoriteTeam', { team }),
   collectCard: (uid, cardKey) => call('collectCard', { cardKey }),
-  devResetAccount: (uid, opts = {}) => call('devResetAccount', opts),
+  devResetAccount: () => call('devResetAccount', {}),
   devGrantCoins: (uid, amount) => call('devGrantCoins', { amount }),
 };
 
@@ -297,6 +297,6 @@ export const setFavoriteTeam = (uid, team) => impl.setFavoriteTeam(uid, team);
 /** Put one owned copy into the collection. Returns `{ cardKey, copyId }`. */
 export const collectCard = (uid, cardKey) => impl.collectCard(uid, cardKey);
 /** DEV ONLY. Wipes the caller's collection, ledger and wallet. */
-export const devResetAccount = (uid, opts = {}) => impl.devResetAccount(uid, opts);
+export const devResetAccount = uid => impl.devResetAccount(uid);
 /** Server only — there is no honest direct route to coins. */
 export const devGrantCoins = (uid, amount) => impl.devGrantCoins(uid, amount);

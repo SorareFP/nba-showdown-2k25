@@ -148,7 +148,9 @@ export default function TutorialGame({ onExit }) {
       aiRunning.current = true;
       const timer = setTimeout(() => {
         if (!mounted.current) { aiRunning.current = false; return; }
-        const action = aiTurn(game, 'B');
+        // `demo`: the coach always answers a switch with the canceller it holds,
+        // so the section-2 lesson lands every time (see evaluateCard).
+        const action = aiTurn(game, 'B', { demo: true });
         if (action && action.type === 'set_matchups') {
           // Defence, which the AI previously never assigned — see aiTurn.
           dispatch({ type: 'UPDATE', game: applyMatchups(game, 'B', action.matchups) });

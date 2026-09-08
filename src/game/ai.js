@@ -180,53 +180,133 @@ export function aiSetMatchups(game, teamKey) {
 
 // ── Placement: which player takes the floor next ────────────────────────────
 //
-// The snake places one player at a time, and the row a player lands in is the
-// matchup he starts with. When the opponent has already placed someone in the
-// AI's next row, counter-pick: the remaining player who defends them best, by
-// the same score aiSetMatchups ranks defenders with. When the AI leads the
-// row, spend threat early — the human counter-picks everything placed late.
-export function aiPlacementPick(game, teamKey) {
-  const myT = getTeam(game, teamKey);
-  const oppKey = teamKey === 'A' ? 'B' : 'A';
-  const oppT = getTeam(game, oppKey);
-  const pickIds = teamKey === 'A' ? game.draft?.aPicks ?? [] : game.draft?.bPicks ?? [];
-  const placed = new Set(myT.starters.map(pl => pl.id));
-  const remainingIds = pickIds.filter(id => !placed.has(id));
-  if (!remainingIds.length) return null;
-  const roster = myT.roster || [];
-  const remaining = remainingIds.map(id => roster.find(r => r.id === id)).filter(Boolean);
-  if (!remaining.length) return null;
+// THE SNAKE IS A SMALL GAME AND THE AI PLAYS IT OUT. Ten placements,
+// A-B-B-A-A-B-B-A-A-B, and the row a player lands in is the pairing he
+// keeps all section. The old pick scored one row at a time — its edge minus
+// theirs in roll bonus — and so answered a scrub with its best defender if
+// that pairing scored highest, leaving the star that came next to whoever was
+// left. It also valued a +3 the same on every chart, when a +3 is worth a
+// point a section to a star and next to nothing to a bench body.
+//
+// Now every remaining way the rows can fall is searched: the AI picks to
+// maximise the sum of pairValue over the five rows, the opponent is assumed
+// to pick to minimise it, and what a pairing is worth is POINTS — each side's
+// chart read at the roll it would carry, fatigue and markers included. At
+// most one row is ever open (the snake alternates lead and answer), so the
+// state is two bitmasks and the open player: a few hundred positions, memoised.
 
-  const row = myT.starters.length;
-  const oppPlayer = oppT.starters[row] || null;
-  let best = remaining[0];
-  let bestScore = -Infinity;
-  for (const cand of remaining) {
-    let score;
-    if (oppPlayer) {
-      // A SLOT IS A PAIRING. Placing here puts this player on defence against
-      // theirs AND on offence against them, and the old score only measured
-      // the first — a hand-rolled speed/power difference that ignored what
-      // the candidate could do with the ball (the user, 2026-09-07: "not
-      // taking matchup into consideration"). Both directions now, through
-      // calcAdv itself so the AI's arithmetic is the game's arithmetic.
-      const mine = calcAdv(cand, oppPlayer, {}, 0);   // my roll against them
-      const theirs = calcAdv(oppPlayer, cand, {}, 0); // their roll against me
-      score = mine.rollBonus - theirs.rollBonus + (cand.defBoost || 0);
+/** The roll a player carries into this section from fatigue and markers, as doRoll adds them. */
+function carriedMod(game, teamKey, player) {
+  const ps = getPS(game, teamKey, player?.id);
+  const min = ps?.minutes || 0;
+  const markers = ps ? ((ps.hot || 0) - (ps.cold || 0)) * 2 : 0;
+  return fatigueForMinutes(min) + markers;
+}
+
+/**
+ * What one row is worth to `myKey`, in points a section: my player's chart at
+ * the bonus he carries against theirs, less their chart at the bonus they
+ * carry against mine. A hair of the raw bonus difference breaks ties between
+ * flat charts — the bonus also gates cards (Mismatch Hunter, Unethical Hoops)
+ * and decides the shot-check contest, which the chart cannot show.
+ */
+export function pairValue(game, myKey, mine, theirs, tempEff = {}, myIdx = 0) {
+  if (!mine || !theirs) return 0;
+  const oppKey = myKey === 'A' ? 'B' : 'A';
+  const myAdv = calcAdv(mine, theirs, tempEff, myIdx);
+  const theirAdv = calcAdv(theirs, mine, {}, 0);
+  const myPts = expectedOutput(mine, myAdv.rollBonus + carriedMod(game, myKey, mine));
+  const theirPts = expectedOutput(theirs, theirAdv.rollBonus + carriedMod(game, oppKey, theirs));
+  return myPts - theirPts + 0.05 * (myAdv.rollBonus - theirAdv.rollBonus);
+}
+
+const DEFAULT_ORDER = ['A', 'B', 'B', 'A', 'A', 'B', 'B', 'A', 'A', 'B'];
+
+/**
+ * Every remaining placement for `teamKey`, scored by the search: the value of
+ * the whole snake from here if this player takes the floor now and both
+ * sides play the rest out. Sorted best first. Exported so the tutorial can
+ * say why the coach chose what it chose.
+ */
+export function placementChoices(game, teamKey) {
+  const oppKey = teamKey === 'A' ? 'B' : 'A';
+  const myT = getTeam(game, teamKey);
+  const oppT = getTeam(game, oppKey);
+  const remainingFor = key => {
+    const t = getTeam(game, key);
+    const picks = key === 'A' ? game.draft?.aPicks ?? [] : game.draft?.bPicks ?? [];
+    const placed = new Set((t.starters || []).map(pl => pl.id));
+    return picks.filter(id => !placed.has(id)).map(id => (t.roster || []).find(r => r.id === id)).filter(Boolean);
+  };
+  const mine = remainingFor(teamKey);
+  if (!mine.length) return [];
+  const theirs = remainingFor(oppKey);
+  const order = game.placementOrder || DEFAULT_ORDER;
+  const step = game.placementStep ?? (myT.starters.length + oppT.starters.length);
+  // The steps after this one. The first must be mine for the scores to mean
+  // "if I place this now"; a caller asking out of turn is scored as if it were.
+  const ahead = order.slice(step);
+  const steps = ahead.length && ahead[0] === teamKey ? ahead.slice(1) : ahead;
+
+  // Pairing values, from my chair, for every remaining pair — and for the
+  // row the opponent has already led, if they are a player ahead of me.
+  const val = mine.map(m => theirs.map(o => pairValue(game, teamKey, m, o)));
+  const openOpp = oppT.starters.length > myT.starters.length ? oppT.starters[myT.starters.length] : null;
+  const openVal = openOpp ? mine.map(m => pairValue(game, teamKey, m, openOpp)) : null;
+
+  const memo = new Map();
+  const bits = mask => { const out = []; for (let i = 0; mask >> i; i += 1) if (mask & (1 << i)) out.push(i); return out; };
+  const solve = (si, mMask, oMask, open) => {
+    if (si >= steps.length) return 0;
+    const key = `${si}|${mMask}|${oMask}|${open ? open.side + open.idx : '-'}`;
+    if (memo.has(key)) return memo.get(key);
+    const mover = steps[si];
+    let best;
+    if (mover === teamKey) {
+      const cands = bits(mMask);
+      if (!cands.length) best = solve(si + 1, mMask, oMask, open);
+      else {
+        best = -Infinity;
+        for (const m of cands) {
+          const answering = open && open.side === 'opp';
+          const gain = answering ? (open.idx === -1 ? openVal[m] : val[m][open.idx]) : 0;
+          const v = gain + solve(si + 1, mMask & ~(1 << m), oMask, answering ? null : { side: 'me', idx: m });
+          if (v > best) best = v;
+        }
+      }
     } else {
-      // PLACING FIRST GIVES INFORMATION AWAY: whoever goes here will be
-      // answered by the opponent's best remaining counter. So lead with the
-      // player whose value depends LEAST on the matchup — a shooter scores
-      // off shot checks whoever guards him — and hold the matchup-sensitive
-      // bigs for the rows where this side gets to answer. Speed and Power
-      // still count, at half weight, so a star is not buried behind a
-      // specialist.
-      score = (cand.threePtBoost || 0) * 3 + (cand.paintBoost || 0) * 2
-        + 0.5 * (cand.speed + cand.power) + (cand.defBoost || 0);
+      const cands = bits(oMask);
+      if (!cands.length) best = solve(si + 1, mMask, oMask, open);
+      else {
+        best = Infinity;
+        for (const o of cands) {
+          const answering = open && open.side === 'me';
+          const gain = answering ? val[open.idx][o] : 0;
+          const v = gain + solve(si + 1, mMask, oMask & ~(1 << o), answering ? null : { side: 'opp', idx: o });
+          if (v < best) best = v;
+        }
+      }
     }
-    if (score > bestScore) { bestScore = score; best = cand; }
-  }
-  return { type: 'place_player', playerId: best.id };
+    memo.set(key, best);
+    return best;
+  };
+
+  const mMask0 = (1 << mine.length) - 1;
+  const oMask0 = (1 << theirs.length) - 1;
+  const answering = Boolean(openOpp);
+  const out = mine.map((player, m) => {
+    const gain = answering ? openVal[m] : 0;
+    const v = gain + solve(0, mMask0 & ~(1 << m), oMask0, answering ? null : { side: 'me', idx: m });
+    return { player, value: v, rowValue: answering ? openVal[m] : null, answering };
+  });
+  out.sort((a, b) => b.value - a.value);
+  return out;
+}
+
+export function aiPlacementPick(game, teamKey) {
+  const choices = placementChoices(game, teamKey);
+  if (!choices.length) return null;
+  return { type: 'place_player', playerId: choices[0].player.id, value: choices[0].value };
 }
 
 // ── Conversion spends ───────────────────────────────────────────────────────
@@ -270,7 +350,7 @@ export function aiSpendDecision(game, teamKey) {
 
 // ── Scoring Phase: Card or Pass ─────────────────────────────────────────────
 // Evaluate all playable cards in hand, score them, play the best one or pass.
-export function aiScoringDecision(game, teamKey) {
+export function aiScoringDecision(game, teamKey, opts = {}) {
   const team = getTeam(game, teamKey);
   const hand = team.hand || [];
 
@@ -285,7 +365,7 @@ export function aiScoringDecision(game, teamKey) {
     if (!strat) continue;
 
     // Only consider cards for the current game context
-    const value = evaluateCard(game, teamKey, cardId, strat);
+    const value = evaluateCard(game, teamKey, cardId, strat, opts);
     if (value > 0) {
       playable.push({ cardId, value, strat });
     }
@@ -306,9 +386,9 @@ export function aiScoringDecision(game, teamKey) {
   const best = playable[0];
 
   // Build opts for the chosen card
-  const opts = aiBuildCardOpts(game, teamKey, best.cardId);
+  const cardOpts = aiBuildCardOpts(game, teamKey, best.cardId);
 
-  return { type: 'play_card', cardId: best.cardId, opts };
+  return { type: 'play_card', cardId: best.cardId, opts: cardOpts };
 }
 
 // ── Card Value Evaluation ───────────────────────────────────────────────────
@@ -329,9 +409,121 @@ export function switchEverythingChanges(game, teamKey) {
   return best.some((d, i) => d !== now[i]);
 }
 
-function evaluateCard(game, teamKey, cardId, strat) {
+/**
+ * THE SCREEN AND ITS CANCELLERS ARE JUDGED IN POINTS, not from a table.
+ *
+ * High Screen & Roll used to be a flat 6 with a fallback swap of slots 0 and
+ * 1 when no swap gained — the AI played a switch against itself. Go Under,
+ * Fight Over and Veer Switch were a flat 7/6/6 whenever the opponent had
+ * switched at all, so the coach cancelled switches that had cost it nothing
+ * and paid Go Under's free three for the privilege. Both now read the
+ * pairings before and after through pairValue's arithmetic:
+ *
+ *   bestScreen        the swap of two of MY attackers' defenders that gains
+ *                     the most points a section; nothing → the card is not
+ *                     worth a turn
+ *   switchCancelValue what THEIR screen bought them, and what each canceller
+ *                     would take back net of its price (Fight Over's +2 to
+ *                     the faster attacker, Go Under's 3PT check at +2,
+ *                     Veer's keep-or-trade)
+ *
+ * `opts.demo` (the tutorial) makes a canceller always worth playing, so the
+ * lesson that shows one lands every time.
+ */
+const CANCELLERS = ['go_under', 'fight_over', 'veer_switch'];
+/** Points a section a switch (or its cancel) must be worth before a card goes on it. */
+const SWITCH_FLOOR = 0.4;
+const pointsFor = (game, offKey, p, slot, def, extra = 0) => {
+  if (!p || !def) return 0;
+  const eff = game.tempEff?.[offKey] || {};
+  return expectedOutput(p, calcAdv(p, def, eff, slot).rollBonus + carriedMod(game, offKey, p) + extra);
+};
+
+/** My best High Screen & Roll: the two of my attackers whose defenders, traded, pay most. */
+export function bestScreen(game, teamKey) {
+  const myT = getTeam(game, teamKey);
+  const oppT = getOpp(game, teamKey);
+  const starters = myT.starters || [];
+  const mu = game.offMatchups?.[teamKey] || [0, 1, 2, 3, 4];
+  let best = null;
+  for (let i = 0; i < starters.length; i += 1) {
+    for (let j = i + 1; j < starters.length; j += 1) {
+      const di = mu[i] ?? i, dj = mu[j] ?? j;
+      const now = pointsFor(game, teamKey, starters[i], i, oppT.starters[di]) + pointsFor(game, teamKey, starters[j], j, oppT.starters[dj]);
+      const swapped = pointsFor(game, teamKey, starters[i], i, oppT.starters[dj]) + pointsFor(game, teamKey, starters[j], j, oppT.starters[di]);
+      const delta = swapped - now;
+      if (!best || delta > best.delta) best = { i, j, delta };
+    }
+  }
+  return best;
+}
+
+/**
+ * The 3PT check Go Under hands the offence: which of the two screened
+ * attackers the defence should give it to (the worse shooter) and what it is
+ * expected to cost. The check is at +2 less the restored defender's contest.
+ */
+export function goUnderPrice(game, offKey, slots, defs) {
+  const offT = getTeam(game, offKey);
+  let best = null;
+  slots.forEach((slot, k) => {
+    const p = offT.starters[slot];
+    if (!p) return;
+    const def = defs[k];
+    const contest = Math.max(0, (def?.defBoost || 0)) + ((def?.defBoost || 0) > 0 && game.crunch?.active ? 1 : 0);
+    const ps = getPS(game, offKey, p.id);
+    const bonus = 2 - contest + (p.threePtBoost || 0) + (ps ? ((ps.hot || 0) - (ps.cold || 0)) * 2 : 0);
+    const need = (p.shotLine || 99) - bonus;             // the die it takes
+    const pHit = Math.min(1, Math.max(0, (21 - need) / 20));
+    const pts = 3 * pHit;
+    if (!best || pts < best.pts) best = { slot, pts };
+  });
+  return best ?? { slot: slots[0], pts: 0 };
+}
+
+/**
+ * From the defence's chair: what the offence's screen bought them (`gain`)
+ * and what this canceller takes back net of its price (`saved`), both in
+ * points a section. Zero when there is nothing to answer.
+ */
+export function switchCancelValue(game, teamKey, cardId) {
+  const lc = game.lastMatchupCard;
+  if (!lc?.opts || lc.teamKey === teamKey) return { gain: 0, saved: 0 };
+  const offKey = lc.teamKey;
+  const offT = getTeam(game, offKey);
+  const myT = getTeam(game, teamKey);
+  const { swapSlot1: s1, swapSlot2: s2, origD1: d1, origD2: d2 } = lc.opts;
+  const p1 = offT.starters[s1], p2 = offT.starters[s2];
+  const D1 = myT.starters[d1], D2 = myT.starters[d2];
+  if (!p1 || !p2 || !D1 || !D2) return { gain: 0, saved: 0 };
+  const before = pointsFor(game, offKey, p1, s1, D1) + pointsFor(game, offKey, p2, s2, D2);   // as placed
+  const after = pointsFor(game, offKey, p1, s1, D2) + pointsFor(game, offKey, p2, s2, D1);    // after their screen
+  const gain = after - before;
+  let left = before;
+  if (cardId === 'fight_over') {
+    const fast = (p1.speed || 0) >= (p2.speed || 0) ? [p1, s1, D1] : [p2, s2, D2];
+    left = before - pointsFor(game, offKey, ...fast) + pointsFor(game, offKey, ...fast, 2);
+  } else if (cardId === 'go_under') {
+    left = before + goUnderPrice(game, offKey, [s1, s2], [D1, D2]).pts;
+  } else if (cardId === 'veer_switch') {
+    left = Math.min(before, after);
+  }
+  return { gain, saved: after - left };
+}
+
+function evaluateCard(game, teamKey, cardId, strat, opts = {}) {
   const phase = game.phase;
   if (cardId === 'switch_everything' && !switchEverythingChanges(game, teamKey)) return 0;
+  if (cardId === 'high_screen_roll') {
+    if (phase !== 'matchup_strats') return 0;
+    const sc = bestScreen(game, teamKey);
+    return sc && sc.delta >= SWITCH_FLOOR ? Math.min(10, 3 + 2 * sc.delta) : 0;
+  }
+  if (CANCELLERS.includes(cardId)) {
+    if (opts.demo) return 7;
+    const { saved } = switchCancelValue(game, teamKey, cardId);
+    return saved >= SWITCH_FLOOR ? Math.min(10, 3 + 2 * saved) : 0;
+  }
 
   // Phase gating — matchup cards only in matchup phase, etc.
   if (strat.phase === 'matchup' && phase !== 'matchup_strats') return 0;
@@ -455,23 +647,21 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
       // canceller economy dead behind it. And rather than blindly swapping
       // the two worst matchups, evaluate every pair: the swap that gains the
       // most total roll bonus is the one a coach would call.
-      const bonusFor = (offIdx, defIdx) => {
-        const p = starters[offIdx];
-        const dp = oppT.starters[defIdx];
-        return p && dp ? calcAdv(p, dp, game.tempEff?.[teamKey] || {}, offIdx).rollBonus : 0;
-      };
-      const mu = game.offMatchups?.[teamKey] || [0, 1, 2, 3, 4];
-      let best = null;
-      for (let i = 0; i < starters.length; i += 1) {
-        for (let j = i + 1; j < starters.length; j += 1) {
-          const now = bonusFor(i, mu[i] ?? i) + bonusFor(j, mu[j] ?? j);
-          const swapped = bonusFor(i, mu[j] ?? j) + bonusFor(j, mu[i] ?? i);
-          const delta = swapped - now;
-          if (!best || delta > best.delta) best = { i, j, delta };
-        }
-      }
+      // The swap is chosen in POINTS (bestScreen) — the same reading that
+      // decided the card was worth playing. If nothing gains, evaluateCard
+      // already priced the card at zero; the fallback here is for a caller
+      // that forces it.
+      const best = bestScreen(game, teamKey);
       if (!best || best.delta <= 0) return { swapSlot1: 0, swapSlot2: 1 };
       return { swapSlot1: best.i, swapSlot2: best.j };
+    }
+
+    case 'go_under': {
+      // The check goes to the worse shooter of the two the screen involved.
+      const lc = game.lastMatchupCard;
+      if (!lc?.opts) return {};
+      const defs = [starters[lc.opts.origD1], starters[lc.opts.origD2]];
+      return { goUnderTarget: goUnderPrice(game, lc.teamKey, [lc.opts.swapSlot1, lc.opts.swapSlot2], defs).slot };
     }
 
     case 'stagger_action': {
@@ -496,9 +686,10 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
       const d1 = starters[lc.opts.origD1];
       const d2 = starters[lc.opts.origD2];
       if (!a1 || !a2 || !d1 || !d2) return {};
-      const eff = game.tempEff?.[lc.teamKey] || {};
-      const keep = calcAdv(a1, d1, eff, lc.opts.swapSlot1).rollBonus + calcAdv(a2, d2, eff, lc.opts.swapSlot2).rollBonus;
-      const trade = calcAdv(a1, d2, eff, lc.opts.swapSlot1).rollBonus + calcAdv(a2, d1, eff, lc.opts.swapSlot2).rollBonus;
+      // In points, not bonus: what the two attackers would score kept as
+      // placed against traded — trade only when it holds them lower.
+      const keep = pointsFor(game, lc.teamKey, a1, lc.opts.swapSlot1, d1) + pointsFor(game, lc.teamKey, a2, lc.opts.swapSlot2, d2);
+      const trade = pointsFor(game, lc.teamKey, a1, lc.opts.swapSlot1, d2) + pointsFor(game, lc.teamKey, a2, lc.opts.swapSlot2, d1);
       return { veerSwap: trade < keep };
     }
 
@@ -1112,15 +1303,15 @@ export function aiReactionDecision(game, teamKey, trigger) {
     }
   }
 
-  // Screen reactions: pick the best one
+  // Screen reactions: the canceller that takes back the most, if any is worth it.
   if (trigger === 'screen_card') {
-    const reactions = ['veer_switch', 'fight_over', 'go_under'];
-    for (const cardId of reactions) {
-      if (hand.includes(cardId)) {
-        const check = canPlayCard(game, teamKey, cardId);
-        if (check.canPlay) return { type: 'play_card', cardId, opts: aiBuildCardOpts(game, teamKey, cardId) };
-      }
+    let best = null;
+    for (const cardId of CANCELLERS) {
+      if (!hand.includes(cardId) || !canPlayCard(game, teamKey, cardId).canPlay) continue;
+      const { saved } = switchCancelValue(game, teamKey, cardId);
+      if (saved >= SWITCH_FLOOR && (!best || saved > best.saved)) best = { cardId, saved };
     }
+    if (best) return { type: 'play_card', cardId: best.cardId, opts: aiBuildCardOpts(game, teamKey, best.cardId) };
   }
 
   // Coach's Challenge: play on high-scoring rolls
@@ -1138,7 +1329,7 @@ export function aiReactionDecision(game, teamKey, trigger) {
 // ── Master AI Turn ──────────────────────────────────────────────────────────
 // Given the current game state, decide what action to take.
 // Returns an action object or null if no action needed.
-export function aiTurn(game, teamKey) {
+export function aiTurn(game, teamKey, opts = {}) {
   const phase = game.phase;
 
   if (phase === 'draft') {
@@ -1157,8 +1348,7 @@ export function aiTurn(game, teamKey) {
     // switching cards can change that." aiSetMatchups stays for the cards.
     //
     // A matchup card, otherwise pass.
-    const cardDecision = aiScoringDecision(game, teamKey);
-    return cardDecision;
+    return aiScoringDecision(game, teamKey, opts);
   }
 
   if (phase === 'scoring') {
@@ -1171,10 +1361,7 @@ export function aiTurn(game, teamKey) {
     }
 
     // In card-play phase — play a card or pass
-    if (game.scoringTurn === teamKey) {
-      const decision = aiScoringDecision(game, teamKey);
-      return decision;
-    }
+    if (game.scoringTurn === teamKey) return aiScoringDecision(game, teamKey, opts);
   }
 
   return null;

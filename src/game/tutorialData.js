@@ -3,6 +3,7 @@
 // Each tooltip has: id, text, detail, section (1-3), trigger, priority
 
 import { getTeam, calcAdv } from './engine.js';
+import { pairValue } from './ai.js';
 
 // ── Lessons that read the board ──────────────────────────────────────────────
 //
@@ -25,7 +26,7 @@ function placementAnswer(g) {
   const mine = calcAdv(a0, b0, {}, 0);    // my roll against them
   const theirs = calcAdv(b0, a0, {}, 0);  // their roll against me
   const soaked = (b0.defBoost || 0) > 0 && (mine.rawSpeedDiff > 0 || mine.rawPowerDiff > 0) && mine.rollBonus < Math.max(mine.rawSpeedDiff, mine.rawPowerDiff);
-  return `The coach answered your ${who(a0)} with ${who(b0)}. Against them your roll is ${sgn(mine.rollBonus)}${soaked ? ' — the Def Boost soaks part of your edge' : ''}, and theirs against you is ${sgn(theirs.rollBonus)}. The coach scores each of its five as its own edge minus yours, plus Def Boost, and puts down the best trade.`;
+  return `The coach answered your ${who(a0)} with ${who(b0)}. Against them your roll is ${sgn(mine.rollBonus)}${soaked ? ' — the Def Boost soaks part of your edge' : ''}, and theirs against you is ${sgn(theirs.rollBonus)}. The coach reads each pairing as points — what its player's chart pays at that bonus, less what yours pays — and plays the rest of the snake out in its head before it answers, so a good defender is not spent on a player who did not need one.`;
 }
 
 /** A's best remaining answer to the row the coach just led, by the coach's own score. */
@@ -40,7 +41,8 @@ function bestAnswer(g) {
   for (const c of picks) {
     const mine = calcAdv(c, opp, {}, 0);
     const theirs = calcAdv(opp, c, {}, 0);
-    const score = mine.rollBonus - theirs.rollBonus + (c.defBoost || 0);
+    // The coach's own reading: the row in points, both charts.
+    const score = pairValue(g, 'A', c, opp);
     if (!best || score > best.score) best = { c, mine, theirs, score };
   }
   return { opp, row: A.starters.length + 1, ...best };
@@ -54,7 +56,7 @@ function placementIndicators(g) {
 function placementIndicatorsDetail(g) {
   const r = bestAnswer(g);
   if (!r?.c) return 'S and P are the raw Speed and Power differences; the roll bonus is the larger one after Def Boost.';
-  return `S and P are the raw Speed and Power differences; the roll bonus is the larger one after Def Boost. Best answer right now by that reading: ${r.c.name} — ⚔ ${sgn(r.mine.rollBonus)}, 🛡 ${sgn(r.theirs.rollBonus)}.`;
+  return `S and P are the raw Speed and Power differences; the roll bonus is the larger one after Def Boost. Best answer right now, read as points on both charts: ${r.c.name} — ⚔ ${sgn(r.mine.rollBonus)}, 🛡 ${sgn(r.theirs.rollBonus)}.`;
 }
 
 /** The swap of two defenders that gains the most roll bonus — the AI's own search. */
@@ -179,7 +181,7 @@ export const TUTORIAL_TOOLTIPS = [
   {
     id: 's1_switch_landed',
     text: switchLandedText,
-    detail: "A defence holding Go Under, Fight Over or Veer Switch can cancel a switch, each at a price. Next section the coach will be holding one — watch what it does.",
+    detail: "A defence holding Go Under, Fight Over or Veer Switch can cancel a switch, each at a price — and a coach spends one only when the switch cost it something. Next section the coach will be holding one — watch what it does.",
     section: 1,
     priority: 95,
     // Fires once the coach has replied to the switch — by passing or by playing

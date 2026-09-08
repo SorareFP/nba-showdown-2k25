@@ -24,10 +24,14 @@ import {
   spendTimeout, endTimeout,
 } from '../engine.js';
 import { execCard, resolvePendingShotCheck } from '../execCard.js';
-import {
-  aiDraftPick, aiPlacementPick, aiTurn, aiScoringDecision, aiRollDecision, aiReactionDecision,
-  aiSpendDecision, aiCrunchDecision, aiSetMatchups,
-} from '../ai.js';
+import * as defaultBrain from '../ai.js';
+
+// ── TWO BRAINS ──────────────────────────────────────────────────────────────
+// Every AI decision goes through `brainFor(key)`, which is the shipped ai.js
+// unless the caller hands in another module for one side (scripts/analysis/
+// runAiDuel.js plays the current AI against the last commit's). A brain is
+// any object with ai.js's exports.
+const brainOf = (brains, key) => brains?.[key] ?? defaultBrain;
 import { CLUTCH_DICE } from '../clutchAwards.js';
 import { boxScoreFor } from '../boxScore.js';
 
@@ -42,7 +46,7 @@ function safeResolve(g) {
   catch { return { ...g, pendingShotCheck: null }; }
 }
 
-function tryPlay(g, teamKey, action) {
+function tryPlay(g, teamKey, action, brains = null) {
   let r;
   try { r = execCard(g, teamKey, action.cardId, action.opts || {}); }
   catch { return { g, played: false }; }
@@ -52,7 +56,7 @@ function tryPlay(g, teamKey, action) {
   // before the die is cast.
   if (ng.pendingShotCheck) {
     const defKey = ng.pendingShotCheck.teamKey === 'A' ? 'B' : 'A';
-    const react = aiReactionDecision(ng, defKey, 'shot_check');
+    const react = brainOf(brains, defKey).aiReactionDecision(ng, defKey, 'shot_check');
     if (react?.type === 'play_card') {
       const rr = execCard(ng, defKey, react.cardId, react.opts || {});
       if (rr.ok) ng = rr.game;
@@ -62,10 +66,10 @@ function tryPlay(g, teamKey, action) {
   return { g: ng, played: true };
 }
 
-function spendAll(g, key) {
+function spendAll(g, key, brains = null) {
   let ng = g;
   for (let guard = 0; guard < 12; guard += 1) {
-    const spend = aiSpendDecision(ng, key);
+    const spend = brainOf(brains, key).aiSpendDecision(ng, key);
     if (!spend) break;
     const r = spend.type === 'spend_assist'
       ? spendAssist(ng, key, spend.spendType, spend.playerIdx)
@@ -77,10 +81,47 @@ function spendAll(g, key) {
 }
 
 /** Draft five starters for each side out of the ten-card rosters. */
-function draftStarters(g) {
+/**
+ * THE PLACEMENT SNAKE IS THE MATCHUP ASSIGNMENT (see the rule in ai.js): the
+ * five each side has picked go down one at a time, A-B-B-A-A-B-B-A-A-B, and
+ * the row a player lands in is his pairing for the section. Run for EVERY
+ * section, as the live game does — the simulator used to run it only for the
+ * opening five and pair the later sections by rotation order, which made a
+ * placement brain worth a twelfth of what it is worth at the table.
+ */
+function runSnake(g, brains) {
+  g.draft.aPicks = g.teamA.starters.map(p => p.id);
+  g.draft.bPicks = g.teamB.starters.map(p => p.id);
+  g.teamA.starters = [];
+  g.teamB.starters = [];
+  g.placementStep = 0;
+  g.phase = 'matchup_strats';
+  const order = g.placementOrder;
+  for (let step = 0; step < 10; step += 1) {
+    const key = order[step];
+    const pick = brainOf(brains, key).aiPlacementPick(g, key);
+    if (!pick) break;
+    const team = key === 'A' ? g.teamA : g.teamB;
+    team.starters.push((team.roster || []).find(r => r.id === pick.playerId));
+    g.placementStep = step + 1;
+  }
+  // A brain that stopped short leaves the picks in pick order, as before.
+  for (const key of ['A', 'B']) {
+    const team = key === 'A' ? g.teamA : g.teamB;
+    const picks = key === 'A' ? g.draft.aPicks : g.draft.bPicks;
+    if (team.starters.length < picks.length) {
+      const down = new Set(team.starters.map(p => p.id));
+      for (const id of picks) if (!down.has(id)) team.starters.push((team.roster || []).find(r => r.id === id));
+    }
+  }
+  g.placementStep = 10;
+  return g;
+}
+
+function draftStarters(g, brains = null) {
   for (const key of ['A', 'B']) {
     for (let i = 0; i < STARTERS; i += 1) {
-      const a = aiDraftPick(g, key);
+      const a = brainOf(brains, key).aiDraftPick(g, key);
       if (!a) break;
       const team = key === 'A' ? g.teamA : g.teamB;
       const pool = key === 'A' ? g.draft.aPool : g.draft.bPool;
@@ -91,27 +132,11 @@ function draftStarters(g) {
       else g.draft.bPool = pool.filter((_, j) => j !== idx);
     }
   }
-  g.draft.aPicks = g.teamA.starters.map(p => p.id);
-  g.draft.bPicks = g.teamB.starters.map(p => p.id);
-  g.teamA.starters = [];
-  g.teamB.starters = [];
-  g.placementStep = 0;
-  g.phase = 'matchup_strats';
-  // THE PLACEMENT SNAKE IS THE MATCHUP ASSIGNMENT (see the rule in ai.js).
-  const order = g.placementOrder;
-  for (let step = 0; step < 10; step += 1) {
-    const key = order[step];
-    const pick = aiPlacementPick(g, key);
-    if (!pick) break;
-    const team = key === 'A' ? g.teamA : g.teamB;
-    team.starters.push((team.roster || []).find(r => r.id === pick.playerId));
-    g.placementStep = step + 1;
-  }
-  return g;
+  return runSnake(g, brains);
 }
 
 /** One section: the matchup window, the scoring window, the rolls, the spends. */
-function playSection(g, sectionIndex) {
+function playSection(g, sectionIndex, brains = null) {
   // Rotate the five least-used players in after the opening section, the way
   // the audit does, so fatigue means something across a whole game.
   if (sectionIndex > 0) {
@@ -124,6 +149,7 @@ function playSection(g, sectionIndex) {
         .slice(0, STARTERS)
         .map(o => o.c);
     }
+    g = runSnake(g, brains);
   }
 
   g.phase = 'matchup_strats';
@@ -131,10 +157,10 @@ function playSection(g, sectionIndex) {
   g.matchupPasses = 0;
   for (let guard = 0; guard < 24 && g.matchupPasses < 2; guard += 1) {
     const key = g.matchupTurn;
-    const action = aiTurn(g, key);
+    const action = brainOf(brains, key).aiTurn(g, key);
     if (action?.type === 'set_matchups') { g = applyMatchups(g, key, action.matchups); continue; }
     if (action?.type === 'play_card') {
-      const res = tryPlay(g, key, action);
+      const res = tryPlay(g, key, action, brains);
       g = res.g;
       if (res.played) { g.matchupPasses = 0; g.matchupTurn = key === 'A' ? 'B' : 'A'; continue; }
     }
@@ -148,9 +174,9 @@ function playSection(g, sectionIndex) {
   g.scoringPasses = 0;
   for (let guard = 0; guard < 24 && g.scoringPasses < 2; guard += 1) {
     const key = g.scoringTurn;
-    const action = aiScoringDecision(g, key);
+    const action = brainOf(brains, key).aiScoringDecision(g, key);
     if (action?.type === 'play_card') {
-      const res = tryPlay(g, key, action);
+      const res = tryPlay(g, key, action, brains);
       g = res.g;
       if (res.played) { g.scoringPasses = 0; g.scoringTurn = key === 'A' ? 'B' : 'A'; continue; }
     }
@@ -160,25 +186,26 @@ function playSection(g, sectionIndex) {
 
   for (let r = 0; r < STARTERS * 2; r += 1) {
     const key = r % 2 === 0 ? 'A' : 'B';
-    if (aiCrunchDecision(g, key)?.type === 'timeout') {
+    const brain = brainOf(brains, key);
+    if (brain.aiCrunchDecision(g, key)?.type === 'timeout') {
       const to = spendTimeout(g, key);
       if (to.ok) {
         g = to.game;
-        const reset = aiSetMatchups(g, key);
+        const reset = brain.aiSetMatchups(g, key);
         if (reset?.matchups) g = applyMatchups(g, key, reset.matchups);
         for (let played = 0; played < 4; played += 1) {
-          const rider = aiScoringDecision(g, key);
+          const rider = brain.aiScoringDecision(g, key);
           if (rider?.type !== 'play_card') break;
-          const res = tryPlay(g, key, rider);
+          const res = tryPlay(g, key, rider, brains);
           g = res.g;
           if (!res.played) break;
         }
         g = endTimeout(g);
       }
     }
-    const cardAction = aiScoringDecision(g, key);
-    if (cardAction?.type === 'play_card') g = tryPlay(g, key, cardAction).g;
-    const action = aiRollDecision(g, key);
+    const cardAction = brain.aiScoringDecision(g, key);
+    if (cardAction?.type === 'play_card') g = tryPlay(g, key, cardAction, brains).g;
+    const action = brain.aiRollDecision(g, key);
     if (action?.playerIdx != null) {
       g = doRoll(g, key, action.playerIdx, { clutch: action.clutch });
       if (g.pendingShotCheck) g = safeResolve(g);
@@ -196,12 +223,12 @@ function playSection(g, sectionIndex) {
   }
 
   for (const key of ['B', 'A']) {
-    const action = aiScoringDecision(g, key);
-    if (action?.type === 'play_card') g = tryPlay(g, key, action).g;
+    const action = brainOf(brains, key).aiScoringDecision(g, key);
+    if (action?.type === 'play_card') g = tryPlay(g, key, action, brains).g;
   }
-  for (const key of ['A', 'B']) g = spendAll(g, key);
+  for (const key of ['A', 'B']) g = spendAll(g, key, brains);
   g = endSection(g);
-  for (const key of ['A', 'B']) g = spendAll(g, key);
+  for (const key of ['A', 'B']) g = spendAll(g, key, brains);
   return g;
 }
 
@@ -212,13 +239,13 @@ function playSection(g, sectionIndex) {
  * (null = the default deck). Returns
  * `{ scoreA, scoreB, winner: 'A'|'B', boxA, boxB, sections, game }`.
  */
-export function simulateGame(rosterA, rosterB, { deckA = null, deckB = null, rng = null, keepGame = false } = {}) {
+export function simulateGame(rosterA, rosterB, { deckA = null, deckB = null, rng = null, keepGame = false, brains = null } = {}) {
   const realRandom = Math.random;
   if (rng) Math.random = rng;
   try {
     let g = newGame(rosterA, rosterB, deckA, deckB, { clutchDice: CLUTCH_DICE });
-    g = draftStarters(g);
-    for (let s = 0; s < SECTIONS && !g.done; s += 1) g = playSection(g, s);
+    g = draftStarters(g, brains);
+    for (let s = 0; s < SECTIONS && !g.done; s += 1) g = playSection(g, s, brains);
     const scoreA = g.teamA.score;
     const scoreB = g.teamB.score;
     return {

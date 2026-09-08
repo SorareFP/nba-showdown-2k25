@@ -57,7 +57,7 @@ describe('the placement lessons', () => {
     // Adebayo (S9 P16 Def+2): Giannis S+3 P+2 → soaked by Def+2 to +1; Bam attacks Giannis at S−3 P−2 → −2 penalty. score −2−1+2 = −1.
     // Haliburton (S17 P5): attacks Giannis S+5 → +5; Giannis attacks him P+13 → 13. score −8.
     // Bridges (S12 P11 Def+1): Giannis S0 P+7 → +6; Bridges attacks S0 P−7 → penalty −7. score −13+1... the best is Adebayo.
-    expect(d).toContain('Best answer right now by that reading: Adebayo');
+    expect(d).toContain('Best answer right now, read as points on both charts: Adebayo');
   });
 });
 

@@ -121,6 +121,16 @@ const server = {
   setFavoriteTeam: (uid, team) => call('setFavoriteTeam', { team }),
   collectCard: (uid, cardKey) => call('collectCard', { cardKey }),
   collectAllCards: () => call('collectAllCards', {}),
+  // Leagues — tournaments and human seasons. Server only: fees, payouts and
+  // room-verified results have no honest direct route.
+  createLeague: (uid, payload) => call('createLeague', payload),
+  joinLeague: (uid, payload) => call('joinLeague', payload),
+  leaveLeague: (uid, leagueId) => call('leaveLeague', { leagueId }),
+  cancelLeague: (uid, leagueId) => call('cancelLeague', { leagueId }),
+  startLeague: (uid, payload) => call('startLeague', payload),
+  attachLeagueRoom: (uid, payload) => call('attachLeagueRoom', payload),
+  reportLeagueResult: (uid, payload) => call('reportLeagueResult', payload),
+  forfeitLeagueFixture: (uid, payload) => call('forfeitLeagueFixture', payload),
   devResetAccount: () => call('devResetAccount', {}),
   devGrantCoins: (uid, amount) => call('devGrantCoins', { amount }),
 };
@@ -225,6 +235,15 @@ const direct = {
    * is the live one. Gated in the component to dev builds and the game's own
    * account; the server route is gated again server-side.
    */
+  /** Leagues have no direct route at all. */
+  async createLeague() { throw new Error('Leagues need the server route'); },
+  async joinLeague() { throw new Error('Leagues need the server route'); },
+  async leaveLeague() { throw new Error('Leagues need the server route'); },
+  async cancelLeague() { throw new Error('Leagues need the server route'); },
+  async startLeague() { throw new Error('Leagues need the server route'); },
+  async attachLeagueRoom() { throw new Error('Leagues need the server route'); },
+  async reportLeagueResult() { throw new Error('Leagues need the server route'); },
+  async forfeitLeagueFixture() { throw new Error('Leagues need the server route'); },
   /** Bulk collect has no direct route: one card at a time, through collectCardDirect. */
   async collectAllCards() { throw new Error('Collect all needs the server route'); },
   /** Dev coins on the direct route: the old client write, which the rules will refuse. */
@@ -302,5 +321,13 @@ export const collectCard = (uid, cardKey) => impl.collectCard(uid, cardKey);
 /** DEV ONLY. Wipes the caller's collection, ledger and wallet. */
 export const devResetAccount = uid => impl.devResetAccount(uid);
 export const collectAllCards = uid => impl.collectAllCards(uid);
+export const createLeague = (uid, payload) => impl.createLeague(uid, payload);
+export const joinLeague = (uid, payload) => impl.joinLeague(uid, payload);
+export const leaveLeague = (uid, leagueId) => impl.leaveLeague(uid, leagueId);
+export const cancelLeague = (uid, leagueId) => impl.cancelLeague(uid, leagueId);
+export const startLeague = (uid, payload) => impl.startLeague(uid, payload);
+export const attachLeagueRoom = (uid, payload) => impl.attachLeagueRoom(uid, payload);
+export const reportLeagueResult = (uid, payload) => impl.reportLeagueResult(uid, payload);
+export const forfeitLeagueFixture = (uid, payload) => impl.forfeitLeagueFixture(uid, payload);
 /** Server only — there is no honest direct route to coins. */
 export const devGrantCoins = (uid, amount) => impl.devGrantCoins(uid, amount);

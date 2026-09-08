@@ -19,9 +19,16 @@ import GameOver from './game/GameOver.jsx';
 import GameLog from './game/GameLog.jsx';
 import AnalyticsPanel from './game/AnalyticsPanel.jsx';
 import Scoreboard from './game/Scoreboard.jsx';
+import { reportLeagueResult } from '../firebase/serverWrites.js';
 import styles from './PvpGame.module.css';
 
 export default function PvpGame({ roomCode, myRole, onLeave }) {
+  // A LEAGUE FIXTURE REPORTS ITSELF. When the room is tagged with a league and
+  // the game is over (played out or forfeited), tell the league. Both players
+  // may; the server records the first and refuses the second as already
+  // played, which is fine — and it reads the scores from this room, not from
+  // us. `onLeagueDone` lets App refresh the league screen.
+  const leagueReported = useRef(false);
   const { user } = useAuth();
   const { toast, ask } = useDialogs();
 
@@ -425,6 +432,18 @@ export default function PvpGame({ roomCode, myRole, onLeave }) {
   }, [roomCode, ask]);
 
   // ── Terminal states ─────────────────────────────────────────────────────
+  useEffect(() => {
+    const tag = meta?.league;
+    if (!tag || leagueReported.current) return;
+    const over = Boolean(localGame?.done) || (meta?.status === 'forfeit' && Boolean(meta?.winner));
+    if (!over) return;
+    leagueReported.current = true;
+    reportLeagueResult(null, { leagueId: tag.id, fixtureId: tag.fixtureId, roomCode }).catch(e => {
+      // "already has a result" is the other player getting there first.
+      if (!/already/i.test(e?.message ?? '')) console.warn('league result:', e?.message ?? e);
+    });
+  }, [meta?.league, meta?.status, meta?.winner, localGame?.done, roomCode]);
+
   if (meta?.status === 'forfeit') {
     const iWon = meta.winner === myRole;
     return (

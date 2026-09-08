@@ -22,12 +22,16 @@
 // from it, and the final score comes back through `pendingResult`. The season
 // never learns how a game is played.
 //
-// ── MULTIPLE HUMANS ARE NOT WIRED YET ───────────────────────────────────────
+// ── SEASONS WITH FRIENDS ────────────────────────────────────────────────────
 //
-// createSeason takes a list of humans and simulateRound already holds a round
-// open for a fixture the simulator refuses to touch, so the domain is ready.
-// What is missing is the room: two humans in one season fixture need the PvP
-// lobby to seat them. Until that exists, a season is you against the league.
+// A shared season is a LEAGUE (modes/league.js): one document the server
+// owns, a lobby with a join code, and the same Dashboard below in `league`
+// mode — every mutation becomes a callable (startLeague, reportLeagueResult,
+// forfeitLeagueFixture) instead of a local save, your id is `h:<uid>` rather
+// than MY_ID, a human-vs-human fixture gets a LeagueMatch seat into a PvP
+// room instead of a Play button, and the host sims only the AI-vs-AI games.
+// The result of your own game against an AI team still comes back through
+// PlayTab and `pendingResult`; it is routed to the league by its season id.
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useAuth } from '../firebase/AuthProvider.jsx';
 import { loadRemoteGame } from '../firebase/games.js';
@@ -41,14 +45,23 @@ import {
 import { simulateFixture } from '../game/modes/simulate.js';
 import { LENGTHS, LEAGUE_SIZES, playoffCount, gamesPerTeam } from '../game/modes/schedule.js';
 import { SEASON_REWARDS } from '../game/modes/prizes.js';
-import { randomizeTeam, MIN_TO_PLAY, MAX, capSal, ownedRoster } from '../game/teamRules.js';
-import { loadTeams } from '../firebase/savedTeams.js';
+import { MIN_TO_PLAY } from '../game/teamRules.js';
 import { loadDecks } from '../firebase/savedDecks.js';
-import { CARD_MAP } from '../game/cards.js';
 import { logoSrc } from '../cards/CardTemplate.jsx';
 import { listSeasons, saveSeason, deleteSeason } from '../firebase/seasons.js';
-import { claimSeasonReward } from '../firebase/serverWrites.js';
+import {
+  claimSeasonReward, createLeague, joinLeague, leaveLeague, cancelLeague, startLeague, reportLeagueResult, forfeitLeagueFixture,
+} from '../firebase/serverWrites.js';
+import {
+  listMyLeagues, watchLeague, seasonOfLeague, seasonForStart, rosterOfEntrant, entrantFromTeam, teamIdFor, earningsByUid,
+  summarizeLeague, LEAGUE_STATUS,
+} from '../firebase/leagues.js';
+import RosterPicker, { Choice } from './league/RosterPicker.jsx';
+import LeagueLobby from './league/LeagueLobby.jsx';
+import LeagueMatch from './league/LeagueMatch.jsx';
+import PvpGame from './PvpGame.jsx';
 import styles from './SeasonTab.module.css';
+import lg from './league/League.module.css';
 
 /** The id your team carries inside every season. */
 export const MY_ID = 'you';
@@ -74,11 +87,22 @@ export default function SeasonTab({
   const [loading, setLoading] = useState(true);
   const [setup, setSetup] = useState(false);
   const [error, setError] = useState(null);
+  // Shared seasons: the leagues of kind 'season' this account is in, which
+  // one is open, the sub-screen for making or joining one, and the PvP room
+  // a human-vs-human fixture is being played in.
+  const [leagues, setLeagues] = useState([]);
+  const [activeLeague, setActiveLeague] = useState(null);
+  const [shared, setShared] = useState(null);   // 'new' | 'join' | null
+  const [room, setRoom] = useState(null);       // { code, role }
 
   const refresh = useCallback(async () => {
     setLoading(true);
     try {
-      const list = await listSeasons(uid);
+      const [list, mine] = await Promise.all([
+        listSeasons(uid),
+        uid ? listMyLeagues(uid).catch(() => []) : Promise.resolve([]),
+      ]);
+      setLeagues(mine.filter(l => l.kind === 'season'));
       setSeasons(list);
       // Drop straight into the one season in progress — the common case is one.
       const live = list.filter(s => s.phase !== PHASE.done);
@@ -112,6 +136,18 @@ export default function SeasonTab({
     if (!pendingResult || loading) return;
     const key = `${pendingResult.seasonId}:${pendingResult.fixtureId}`;
     if (consumedRef.current === key) return;
+    // A shared season's result goes to the league, which records it and
+    // pays nothing until the season ends; the league doc updates the screen.
+    const lg2 = leagues.find(l => l.id === pendingResult.seasonId);
+    if (lg2) {
+      consumedRef.current = key;
+      reportLeagueResult(uid, {
+        leagueId: lg2.id, fixtureId: pendingResult.fixtureId,
+        homeScore: pendingResult.homeScore, awayScore: pendingResult.awayScore,
+      }).catch(e => setError(e?.message ?? 'That result could not be recorded'));
+      onResultConsumed?.();
+      return;
+    }
     const target = active?.id === pendingResult.seasonId
       ? active
       : seasons.find(s => s.id === pendingResult.seasonId);
@@ -130,7 +166,7 @@ export default function SeasonTab({
       setActive(target);
     }
     onResultConsumed?.();
-  }, [pendingResult, loading, active, seasons, commit, onResultConsumed]);
+  }, [pendingResult, loading, active, seasons, leagues, uid, commit, onResultConsumed]);
 
   const start = useCallback(async draft => {
     setError(null);
@@ -164,11 +200,43 @@ export default function SeasonTab({
 
   if (loading) return <div className={styles.wrap}><div className={styles.muted}>Loading seasons…</div></div>;
 
+  if (room) {
+    return (
+      <div className={styles.wrap}>
+        <PvpGame roomCode={room.code} myRole={room.role} onLeave={() => setRoom(null)} />
+      </div>
+    );
+  }
+
   return (
     <div className={styles.wrap}>
       {error && <div className={styles.error} onClick={() => setError(null)}>{error}</div>}
 
-      {setup ? (
+      {shared === 'new' ? (
+        <SharedSetup
+          teamA={teamA}
+          collection={collection}
+          uid={uid}
+          onCancel={() => setShared(null)}
+          onCreated={id => { setShared(null); setActiveLeague(id); refresh(); }}
+        />
+      ) : shared === 'join' ? (
+        <JoinShared
+          teamA={teamA}
+          collection={collection}
+          uid={uid}
+          onCancel={() => setShared(null)}
+          onJoined={id => { setShared(null); setActiveLeague(id); refresh(); }}
+        />
+      ) : activeLeague ? (
+        <LeagueSeason
+          leagueId={activeLeague}
+          uid={uid}
+          onBack={() => { setActiveLeague(null); refresh(); }}
+          onPlayFixture={onPlayFixture}
+          onOpenRoom={(code, role) => setRoom({ code, role })}
+        />
+      ) : setup ? (
         <Setup
           teamA={teamA}
           collection={collection}
@@ -188,9 +256,14 @@ export default function SeasonTab({
       ) : (
         <SeasonList
           seasons={seasons}
+          leagues={leagues}
+          uid={uid}
           onOpen={setActive}
           onNew={() => setSetup(true)}
           onDelete={remove}
+          onOpenLeague={setActiveLeague}
+          onNewShared={() => setShared('new')}
+          onJoinShared={() => setShared('join')}
         />
       )}
     </div>
@@ -199,7 +272,7 @@ export default function SeasonTab({
 
 // ── The list of saved seasons ───────────────────────────────────────────────
 
-function SeasonList({ seasons, onOpen, onNew, onDelete }) {
+function SeasonList({ seasons, leagues = [], uid, onOpen, onNew, onDelete, onOpenLeague, onNewShared, onJoinShared }) {
   return (
     <>
       <header className={styles.head}>
@@ -247,7 +320,284 @@ function SeasonList({ seasons, onOpen, onNew, onDelete }) {
           })}
         </div>
       )}
+
+      {uid && (
+        <>
+          <header className={styles.head}>
+            <div>
+              <h3 className={styles.title} style={{ fontSize: 18 }}>With friends</h3>
+              <p className={styles.sub}>
+                The same schedule with other coaches in the league. Games between two of you are played in a PvP
+                room; AI teams fill the other seats and the host sims their games.
+              </p>
+            </div>
+            <div className={styles.headActions}>
+              <button className={styles.ghost} onClick={onJoinShared}>Join with a code</button>
+              <button className={styles.primary} onClick={onNewShared}>+ New shared season</button>
+            </div>
+          </header>
+          {leagues.length > 0 && (
+            <div className={styles.cards}>
+              {leagues.map(l => {
+                const sm = summarizeLeague(l, uid);
+                return (
+                  <div key={l.id} className={styles.seasonCard}>
+                    <div className={styles.seasonCardTop}>
+                      <span className={styles.badge}>{LENGTHS[l.settings.length]?.label ?? l.settings.length}</span>
+                      <span className={styles.muted}>{l.settings.size} teams · {l.entrants.length} human</span>
+                    </div>
+                    <div className={styles.seasonCardLine}>{l.name}</div>
+                    <div className={styles.muted}>
+                      {sm.status === LEAGUE_STATUS.done
+                        ? (sm.isChampion ? '🏆 Champions' : 'Season complete')
+                        : sm.status === LEAGUE_STATUS.cancelled ? 'Cancelled' : sm.status === LEAGUE_STATUS.lobby ? `Lobby · ${sm.where}` : sm.where}
+                      {sm.earned > 0 ? ` · +${sm.earned} coins` : ''}
+                    </div>
+                    <div className={styles.seasonCardActions}>
+                      <button className={styles.primary} onClick={() => onOpenLeague(l.id)}>Open</button>
+                      {sm.status === LEAGUE_STATUS.lobby && <span className={`${styles.muted} ${lg.mono}`}>{l.joinCode}</span>}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </>
+      )}
     </>
+  );
+}
+
+// ── Shared season: make one, join one, run one ──────────────────────────────
+
+function SharedSetup({ teamA, collection, uid, onCancel, onCreated }) {
+  const { user } = useAuth();
+  const { toast } = useDialogs();
+  const [leagueName, setLeagueName] = useState('Our League');
+  const [name, setName] = useState(() => (user?.displayName ? `${user.displayName.split(' ')[0]}'s Team` : 'My Team'));
+  const [size, setSize] = useState(8);
+  const [length, setLength] = useState('regular');
+  const [pick, setPick] = useState({ roster: [], deck: null, deckName: null });
+  const [busy, setBusy] = useState(false);
+  const ok = pick.roster.length >= MIN_TO_PLAY;
+  const money = SEASON_REWARDS[length] ?? SEASON_REWARDS.regular;
+
+  const create = async () => {
+    setBusy(true);
+    try {
+      const entrant = entrantFromTeam(uid, { name: name.trim() || 'My Team', roster: pick.roster, deck: pick.deck, deckName: pick.deckName });
+      const res = await createLeague(uid, { kind: 'season', name: leagueName.trim() || 'Our League', settings: { size, length, fee: 0 }, entrant });
+      toast(`Lobby open — code ${res.joinCode}`, { tone: 'success' });
+      onCreated(res.leagueId);
+    } catch (e) {
+      toast(e?.message ?? 'Could not open the lobby', { tone: 'error' });
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <>
+      <header className={styles.head}>
+        <div>
+          <h2 className={styles.title}>New shared season</h2>
+          <p className={styles.sub}>You are the commissioner. Friends join with the code; AI teams fill the rest when you start.</p>
+        </div>
+        <button className={styles.ghost} onClick={onCancel}>Cancel</button>
+      </header>
+      <div className={styles.setup}>
+        <label className={styles.field}>
+          <span className={styles.label}>League name</span>
+          <input className={styles.input} value={leagueName} maxLength={40} onChange={e => setLeagueName(e.target.value)} />
+        </label>
+        <label className={styles.field}>
+          <span className={styles.label}>Your team name</span>
+          <input className={styles.input} value={name} maxLength={28} onChange={e => setName(e.target.value)} />
+        </label>
+        <RosterPicker teamA={teamA} collection={collection} uid={uid} onChange={setPick} deckHint="Fixed for the whole season." />
+        <div className={styles.field}>
+          <span className={styles.label}>League size</span>
+          <div className={styles.choices}>
+            {LEAGUE_SIZES.map(n => (
+              <Choice key={n} on={size === n} onClick={() => setSize(n)} title={`${n} teams`} sub={`${playoffCount(n)} make the playoffs`} />
+            ))}
+          </div>
+        </div>
+        <div className={styles.field}>
+          <span className={styles.label}>Season length</span>
+          <div className={styles.choices}>
+            {Object.values(LENGTHS).map(l => (
+              <Choice key={l.id} on={length === l.id} onClick={() => setLength(l.id)} title={l.label} sub={`${gamesPerTeam(size, l.id)} games · ${l.blurb}`} />
+            ))}
+          </div>
+        </div>
+        <div className={styles.prize}>
+          <strong>Title money</strong>
+          <span>🏆 {money.champion} · 🥈 {money.runnerUp} · playoffs {money.playoffs}</span>
+          <span className={styles.muted}>Paid to every human's account when the season ends. Games pay what games always pay.</span>
+        </div>
+        <button className={styles.primary} disabled={!ok || busy} onClick={create}>
+          {busy ? 'Opening…' : ok ? 'Open the lobby' : `Pick at least ${MIN_TO_PLAY} cards`}
+        </button>
+      </div>
+    </>
+  );
+}
+
+function JoinShared({ teamA, collection, uid, onCancel, onJoined }) {
+  const { user } = useAuth();
+  const { toast } = useDialogs();
+  const [code, setCode] = useState('');
+  const [name, setName] = useState(() => (user?.displayName ? `${user.displayName.split(' ')[0]}'s Team` : 'My Team'));
+  const [pick, setPick] = useState({ roster: [], deck: null, deckName: null });
+  const [busy, setBusy] = useState(false);
+  const ok = pick.roster.length >= MIN_TO_PLAY && /^[A-Z0-9]{6}$/.test(code);
+
+  const join = async () => {
+    setBusy(true);
+    try {
+      const entrant = entrantFromTeam(uid, { name: name.trim() || 'My Team', roster: pick.roster, deck: pick.deck, deckName: pick.deckName });
+      const res = await joinLeague(uid, { code, entrant });
+      if (res.kind !== 'season') {
+        toast(`${res.name} is a tournament — it is under the Tournament tab.`, { tone: 'success' });
+        onCancel();
+        return;
+      }
+      toast(`You are in ${res.name}.`, { tone: 'success' });
+      onJoined(res.leagueId);
+    } catch (e) {
+      toast(e?.message ?? 'Could not join', { tone: 'error' });
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <>
+      <header className={styles.head}>
+        <div>
+          <h2 className={styles.title}>Join a shared season</h2>
+          <p className={styles.sub}>The code is six characters. Your team is fixed for the season once you are in.</p>
+        </div>
+        <button className={styles.ghost} onClick={onCancel}>Cancel</button>
+      </header>
+      <div className={styles.setup}>
+        <label className={styles.field}>
+          <span className={styles.label}>Join code</span>
+          <input
+            className={`${styles.input} ${lg.codeInput}`}
+            value={code}
+            maxLength={6}
+            placeholder="ABC123"
+            onChange={e => setCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''))}
+          />
+        </label>
+        <label className={styles.field}>
+          <span className={styles.label}>Your team name</span>
+          <input className={styles.input} value={name} maxLength={28} onChange={e => setName(e.target.value)} />
+        </label>
+        <RosterPicker teamA={teamA} collection={collection} uid={uid} onChange={setPick} deckHint="Fixed for the whole season." />
+        <button className={styles.primary} disabled={!ok || busy} onClick={join}>
+          {busy ? 'Joining…' : ok ? 'Join' : code.length < 6 ? 'Enter the code' : `Pick at least ${MIN_TO_PLAY} cards`}
+        </button>
+      </div>
+    </>
+  );
+}
+
+/** One shared season: its lobby, then the Dashboard in league mode. */
+function LeagueSeason({ leagueId, uid, onBack, onPlayFixture, onOpenRoom }) {
+  const { ask, toast } = useDialogs();
+  const [league, setLeague] = useState(undefined);
+  const [busy, setBusy] = useState(false);
+  useEffect(() => watchLeague(leagueId, setLeague), [leagueId]);
+  const season = useMemo(() => (league?.state ? seasonOfLeague(league) : null), [league]);
+
+  const run = useCallback(async (fn, okMsg) => {
+    setBusy(true);
+    try { await fn(); if (okMsg) toast(okMsg, { tone: 'success' }); }
+    catch (e) { toast(e?.message ?? 'That did not go through', { tone: 'error' }); }
+    finally { setBusy(false); }
+  }, [toast]);
+
+  // THE HOST BUILDS THE SEASON and the server checks it: the human teams must
+  // be exactly the entrants, the size and length the lobby's.
+  const start = () => run(async () => {
+    const humans = league.entrants.map(e => ({
+      id: e.id, name: e.name, uid: e.uid, roster: rosterOfEntrant(e), deck: e.deck ?? null, deckName: e.deckName ?? null,
+    }));
+    const built = createSeason({ id: league.id, humans, size: league.settings.size, length: league.settings.length });
+    await startLeague(uid, { leagueId: league.id, state: seasonForStart(built) });
+  }, 'The season is under way.');
+
+  const cancel = async () => {
+    const yes = await ask({ title: 'Cancel this league?', body: 'The lobby closes and nothing is played.', confirmLabel: 'Cancel it', tone: 'danger' });
+    if (!yes) return;
+    run(async () => { await cancelLeague(uid, league.id); onBack(); });
+  };
+  const leave = async () => {
+    const yes = await ask({ title: 'Leave this league?', body: 'You can join again with the code while it is still in the lobby.', confirmLabel: 'Leave' });
+    if (!yes) return;
+    run(async () => { await leaveLeague(uid, league.id); onBack(); });
+  };
+
+  /** The host runs every AI-vs-AI game left in the round; humans' games wait. */
+  const simAi = () => run(async () => {
+    const rosters = rostersOf(season);
+    const by = teamsById(season);
+    const list = season.phase === PHASE.playoffs
+      ? (season.bracket?.matches ?? []).filter(m => m.round === season.round && m.a && m.b && !m.winner).map(m => ({ id: m.id, home: m.a, away: m.b }))
+      : roundFixtures(season).filter(f => !f.result);
+    let n = 0;
+    for (const f of list) {
+      if (by.get(f.home)?.human || by.get(f.away)?.human) continue;
+      const r = simulateFixture(f, rosters);
+      await reportLeagueResult(uid, { leagueId: league.id, fixtureId: f.id, homeScore: r.homeScore, awayScore: r.awayScore, simulated: true });
+      n += 1;
+    }
+    if (!n) toast('No AI-vs-AI games left in this round.', { tone: 'success' });
+  });
+
+  const forfeit = async (fixtureId, loserTeamId, loserName) => {
+    const yes = await ask({
+      title: `${loserName} forfeits?`,
+      body: 'Commissioner\'s call on a game that is not getting played. It goes in the book as 20–0.',
+      confirmLabel: 'Record the forfeit',
+      tone: 'danger',
+    });
+    if (!yes) return;
+    run(() => forfeitLeagueFixture(uid, { leagueId: league.id, fixtureId, loserTeamId }), 'Forfeit recorded.');
+  };
+
+  if (league === undefined) return <div className={styles.muted}>Loading…</div>;
+  if (league === null) return <div className={styles.empty}>That league is gone. <button className={styles.ghost} onClick={onBack}>Back</button></div>;
+  if (league.status === LEAGUE_STATUS.lobby) {
+    return <LeagueLobby league={league} uid={uid} busy={busy} onStart={start} onCancel={cancel} onLeave={leave} onBack={onBack} />;
+  }
+  if (league.status === LEAGUE_STATUS.cancelled || !season) {
+    return (
+      <>
+        <header className={styles.head}>
+          <div><h2 className={styles.title}>{league.name}</h2><p className={styles.sub}>This league was cancelled before it started.</p></div>
+          <button className={styles.ghost} onClick={onBack}>All seasons</button>
+        </header>
+      </>
+    );
+  }
+  return (
+    <Dashboard
+      season={season}
+      uid={uid}
+      commit={() => {}}
+      onPlayFixture={onPlayFixture}
+      onBack={onBack}
+      onAbandon={null}
+      league={league}
+      busy={busy}
+      onOpenRoom={onOpenRoom}
+      onSimAi={simAi}
+      onForfeit={forfeit}
+    />
   );
 }
 
@@ -256,36 +606,10 @@ function SeasonList({ seasons, onOpen, onNew, onDelete }) {
 function Setup({ teamA, collection, uid, onStart, onCancel }) {
   const { user } = useAuth();
   const [name, setName] = useState(() => (user?.displayName ? `${user.displayName.split(' ')[0]}'s Team` : 'My Team'));
-  const [source, setSource] = useState(teamA.length >= MIN_TO_PLAY ? 'builder' : 'random');
-  const [savedId, setSavedId] = useState('');
-  const [saved, setSaved] = useState([]);
-  const [decks, setDecks] = useState([]);
-  const [deckId, setDeckId] = useState('default');
   const [size, setSize] = useState(8);
   const [length, setLength] = useState('regular');
-  const [rolled, setRolled] = useState(null);
-
-  useEffect(() => {
-    if (!uid) return;
-    loadTeams(uid).then(setSaved).catch(() => setSaved([]));
-    loadDecks(uid).then(setDecks).catch(() => setDecks([]));
-  }, [uid]);
-
-  const ownedOnly = Object.keys(collection ?? {}).length > 0;
-  const reroll = useCallback(() => setRolled(randomizeTeam([], ownedOnly, collection)), [ownedOnly, collection]);
-  useEffect(() => { if (source === 'random' && !rolled) reroll(); }, [source, rolled, reroll]);
-
-  const roster = useMemo(() => {
-    if (source === 'builder') return teamA.slice(0, MAX);
-    if (source === 'saved') {
-      const team = saved.find(t => t.id === savedId);
-      if (!team) return [];
-      // Only the cards still owned — the same filter the Team Builder applies.
-      const { roster: ids } = ownedRoster(team.players, collection);
-      return ids.map(id => CARD_MAP[id]).filter(Boolean).slice(0, MAX);
-    }
-    return (rolled ?? []).slice(0, MAX);
-  }, [source, teamA, saved, savedId, collection, rolled]);
+  const [pick, setPick] = useState({ roster: [], deck: null, deckName: null });
+  const roster = pick.roster;
 
   const ok = roster.length >= MIN_TO_PLAY;
   const money = SEASON_REWARDS[length] ?? SEASON_REWARDS.regular;
@@ -306,55 +630,13 @@ function Setup({ teamA, collection, uid, onStart, onCancel }) {
           <input className={styles.input} value={name} maxLength={28} onChange={e => setName(e.target.value)} />
         </label>
 
-        <div className={styles.field}>
-          <span className={styles.label}>Your roster</span>
-          <div className={styles.choices}>
-            <Choice
-              on={source === 'builder'} onClick={() => setSource('builder')}
-              disabled={teamA.length < MIN_TO_PLAY}
-              title="Team Builder"
-              sub={teamA.length ? `${teamA.length} cards · $${capSal(teamA).toLocaleString()}` : 'Nothing built yet'}
-            />
-            <Choice
-              on={source === 'saved'} onClick={() => setSource('saved')}
-              disabled={!saved.length}
-              title="Saved team"
-              sub={saved.length ? `${saved.length} saved` : (uid ? 'None saved' : 'Sign in to save teams')}
-            />
-            <Choice
-              on={source === 'random'} onClick={() => setSource('random')}
-              title="Random legal team"
-              sub={ownedOnly ? 'Drawn from your collection' : 'Drawn from the whole pool'}
-            />
-          </div>
-          {source === 'saved' && (
-            <select className={styles.input} value={savedId} onChange={e => setSavedId(e.target.value)}>
-              <option value="">Choose a team…</option>
-              {saved.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
-            </select>
-          )}
-          {source === 'random' && (
-            <button className={styles.ghost} onClick={reroll}>🎲 Roll another</button>
-          )}
-          <div className={styles.rosterPeek}>
-            {roster.length
-              ? `${roster.length} cards · $${capSal(roster).toLocaleString()} — ${roster.map(c => c.name).join(', ')}`
-              : 'No roster yet.'}
-          </div>
-        </div>
-
-        {decks.length > 0 && (
-          <label className={styles.field}>
-            <span className={styles.label}>Strategy deck</span>
-            <select className={styles.input} value={deckId} onChange={e => setDeckId(e.target.value)}>
-              <option value="default">The default fifty</option>
-              {decks.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
-            </select>
-            <span className={styles.hint}>
-              You can change this between rounds — a season is long enough to change your mind.
-            </span>
-          </label>
-        )}
+        <RosterPicker
+          teamA={teamA}
+          collection={collection}
+          uid={uid}
+          onChange={setPick}
+          deckHint="You can change this between rounds — a season is long enough to change your mind."
+        />
 
         <div className={styles.field}>
           <span className={styles.label}>League size</span>
@@ -391,14 +673,11 @@ function Setup({ teamA, collection, uid, onStart, onCancel }) {
         <button
           className={styles.primary}
           disabled={!ok}
-          onClick={() => {
-            const chosen = decks.find(d => d.id === deckId);
-            onStart({
-              name: name.trim() || 'My Team', roster, size, length,
-              deck: chosen?.cards ?? null,
-              deckName: chosen?.name ?? null,
-            });
-          }}
+          onClick={() => onStart({
+            name: name.trim() || 'My Team', roster, size, length,
+            deck: pick.deck,
+            deckName: pick.deckName,
+          })}
         >
           {ok ? `Start ${gamesPerTeam(size, length)}-game season` : `Pick at least ${MIN_TO_PLAY} cards`}
         </button>
@@ -407,24 +686,16 @@ function Setup({ teamA, collection, uid, onStart, onCancel }) {
   );
 }
 
-function Choice({ on, onClick, title, sub, disabled = false }) {
-  return (
-    <button
-      type="button"
-      className={`${styles.choice} ${on ? styles.choiceOn : ''}`}
-      disabled={disabled}
-      onClick={onClick}
-    >
-      <span className={styles.choiceTitle}>{title}</span>
-      <span className={styles.choiceSub}>{sub}</span>
-    </button>
-  );
-}
-
 // ── The season itself ───────────────────────────────────────────────────────
 
-function Dashboard({ season, uid, commit, onPlayFixture, onBack, onAbandon }) {
+function Dashboard({
+  season, uid, commit, onPlayFixture, onBack, onAbandon,
+  league = null, busy = false, onOpenRoom = null, onSimAi = null, onForfeit = null,
+}) {
   const { ask, toast } = useDialogs();
+  // In a shared season you are `h:<uid>`; alone, you are myId.
+  const myId = league ? teamIdFor(uid) : MY_ID;
+  const isHost = Boolean(league && league.hostUid === uid);
   const [decks, setDecks] = useState([]);
   useEffect(() => {
     if (!uid) return;
@@ -432,7 +703,7 @@ function Dashboard({ season, uid, commit, onPlayFixture, onBack, onAbandon }) {
   }, [uid]);
   const [claiming, setClaiming] = useState(false);
   const by = useMemo(() => teamsById(season), [season]);
-  const me = by.get(MY_ID);
+  const me = by.get(myId);
   const table = useMemo(() => standings(season), [season]);
   const rounds = totalRounds(season);
   const berths = playoffCount(season.size);
@@ -456,8 +727,14 @@ function Dashboard({ season, uid, commit, onPlayFixture, onBack, onAbandon }) {
       }));
   }, [season, isPlayoffs]);
 
-  const mine = games.find(g => g.home === MY_ID || g.away === MY_ID) ?? null;
+  const mine = games.find(g => g.home === myId || g.away === myId) ?? null;
   const myGameLeft = Boolean(mine && !mine.result && mine.home && mine.away);
+  // Two humans in one fixture play it in a PvP room, seated by LeagueMatch.
+  const isHH = Boolean(league && mine && by.get(mine.home)?.human && by.get(mine.away)?.human);
+  const isAi = g => Boolean(g.home && g.away && !by.get(g.home)?.human && !by.get(g.away)?.human);
+  const aiLeft = Boolean(league) && games.some(g => !g.result && isAi(g));
+  const hhOpen = league ? games.filter(g => g !== mine && !g.result && g.home && g.away && by.get(g.home)?.human && by.get(g.away)?.human) : [];
+  const leagueEarned = league ? (earningsByUid(league)[uid] ?? 0) : 0;
 
   // A FIXTURE ALREADY IN PROGRESS is resumed, not re-dealt — PlayTab checks
   // this browser's own save (a reload) and the account's roaming save (the
@@ -487,7 +764,7 @@ function Dashboard({ season, uid, commit, onPlayFixture, onBack, onAbandon }) {
 
   const play = useCallback(() => {
     if (!mine || !me) return;
-    const homeIsMine = mine.home === MY_ID;
+    const homeIsMine = mine.home === myId;
     const opp = by.get(homeIsMine ? mine.away : mine.home);
     if (!opp) return;
     // A set regenerated under a running season can take cards out from under a
@@ -519,7 +796,7 @@ function Dashboard({ season, uid, commit, onPlayFixture, onBack, onAbandon }) {
   /** Swap decks between rounds. Games already in the book are not re-run. */
   const changeDeck = useCallback(id => {
     const chosen = decks.find(d => d.id === id);
-    commit(setDeck(season, MY_ID, chosen?.cards ?? null, chosen?.name ?? null));
+    commit(setDeck(season, myId, chosen?.cards ?? null, chosen?.name ?? null));
     toast(chosen ? `Playing ${chosen.name} from here on.` : 'Back to the default fifty.', { tone: 'success' });
   }, [decks, season, commit, toast]);
 
@@ -550,7 +827,7 @@ function Dashboard({ season, uid, commit, onPlayFixture, onBack, onAbandon }) {
   // season only now; `advance` is the only thing that moves a season on.
   const next = useCallback(() => commit(advance(season)), [season, commit]);
 
-  const earnings = isDone ? earningsFor(season, MY_ID) : { coins: 0, label: null };
+  const earnings = isDone ? earningsFor(season, myId) : { coins: 0, label: null };
   const claim = useCallback(async () => {
     setClaiming(true);
     try {
@@ -571,8 +848,9 @@ function Dashboard({ season, uid, commit, onPlayFixture, onBack, onAbandon }) {
     <>
       <header className={styles.head}>
         <div>
-          <h2 className={styles.title}>{me?.name ?? 'Season'}</h2>
+          <h2 className={styles.title}>{league ? league.name : (me?.name ?? 'Season')}</h2>
           <p className={styles.sub}>
+            {league ? `${me?.name ?? 'Your team'} · ` : ''}
             {LENGTHS[season.length]?.label ?? season.length} season · {season.size} teams ·{' '}
             {isDone
               ? 'Complete'
@@ -583,18 +861,22 @@ function Dashboard({ season, uid, commit, onPlayFixture, onBack, onAbandon }) {
         </div>
         <div className={styles.headActions}>
           <button className={styles.ghost} onClick={onBack}>All seasons</button>
-          <button className={styles.ghost} onClick={onAbandon}>Abandon</button>
+          {onAbandon && <button className={styles.ghost} onClick={onAbandon}>Abandon</button>}
         </div>
       </header>
 
       {isDone && (
         <div className={styles.finale}>
           <div className={styles.finaleTitle}>
-            {season.champion === MY_ID
+            {season.champion === myId
               ? '🏆 Champions'
               : `${by.get(season.champion)?.name ?? 'Someone else'} won it`}
           </div>
-          {earnings.coins > 0 && (
+          {league ? (
+            <div className={styles.muted}>
+              {leagueEarned > 0 ? `+${leagueEarned} coins · ${earnings.label ?? 'season'} — paid to your account` : 'No title money this time'}
+            </div>
+          ) : earnings.coins > 0 && (
             season.paid ? (
               <div className={styles.muted}>{earnings.label} — paid</div>
             ) : uid ? (
@@ -626,16 +908,21 @@ function Dashboard({ season, uid, commit, onPlayFixture, onBack, onAbandon }) {
               {myGameLeft && inProgress === 'account' && (
                 <div className={styles.hint}>In progress on another device — Resume picks it up where you left off.</div>
               )}
-              {myGameLeft && (
+              {myGameLeft && isHH && (
+                <LeagueMatch league={league} fixture={mine} uid={uid} onOpenRoom={onOpenRoom} />
+              )}
+              {myGameLeft && !isHH && (
                 <div className={styles.myGameActions}>
                   <button className={styles.primary} onClick={play}>{inProgress ? '▶ Resume this game' : '▶ Play this game'}</button>
-                  <button
-                    className={styles.ghost}
-                    onClick={simMine}
-                    title="Commissioner tool: resolve it without playing. A simmed game pays nothing."
-                  >
-                    Sim it
-                  </button>
+                  {!league && (
+                    <button
+                      className={styles.ghost}
+                      onClick={simMine}
+                      title="Commissioner tool: resolve it without playing. A simmed game pays nothing."
+                    >
+                      Sim it
+                    </button>
+                  )}
                 </div>
               )}
             </div>
@@ -649,7 +936,7 @@ function Dashboard({ season, uid, commit, onPlayFixture, onBack, onAbandon }) {
             {games.filter(g => g !== mine).map(g => <FixtureRow key={g.id} game={g} by={by} />)}
           </div>
 
-          {decks.length > 0 && (
+          {!league && decks.length > 0 && (
             <label className={styles.deckRow}>
               <span className={styles.label}>Your deck</span>
               <select
@@ -663,14 +950,40 @@ function Dashboard({ season, uid, commit, onPlayFixture, onBack, onAbandon }) {
             </label>
           )}
 
-          <div className={styles.rowActions}>
-            {othersLeft && <button className={styles.ghost} onClick={simRest}>Sim the rest of the round</button>}
-            {complete && !isPlayoffs && (
-              <button className={styles.primary} onClick={next}>
-                {season.round < rounds ? 'Next round →' : 'Start the playoffs →'}
-              </button>
-            )}
-          </div>
+          {league ? (
+            <>
+              <div className={styles.rowActions}>
+                {isHost && aiLeft && (
+                  <button className={styles.ghost} disabled={busy} onClick={onSimAi}>{busy ? 'Simming…' : 'Sim the AI games'}</button>
+                )}
+                {!isHost && othersLeft && <span className={styles.muted}>The commissioner sims the AI games; the round moves on when every game is in.</span>}
+                {isHost && !aiLeft && othersLeft && <span className={styles.muted}>Waiting on the games between coaches.</span>}
+              </div>
+              {isHost && hhOpen.length > 0 && (
+                <div className={styles.fixtures}>
+                  <div className={styles.legend}>Commissioner · a game between coaches that is not getting played can be forfeited.</div>
+                  {hhOpen.map(g => (
+                    <div key={g.id} className={styles.fixture}>
+                      <span className={styles.chipName}>{by.get(g.home)?.name}</span>
+                      <span className={styles.score}>{league.rooms?.[g.id]?.code ? `room ${league.rooms[g.id].code}` : 'no room'}</span>
+                      <span className={styles.chipName}>{by.get(g.away)?.name}</span>
+                      <button className={styles.ghost} disabled={busy} onClick={() => onForfeit?.(g.id, g.home, by.get(g.home)?.name)}>{by.get(g.home)?.name} forfeits</button>
+                      <button className={styles.ghost} disabled={busy} onClick={() => onForfeit?.(g.id, g.away, by.get(g.away)?.name)}>{by.get(g.away)?.name} forfeits</button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
+          ) : (
+            <div className={styles.rowActions}>
+              {othersLeft && <button className={styles.ghost} onClick={simRest}>Sim the rest of the round</button>}
+              {complete && !isPlayoffs && (
+                <button className={styles.primary} onClick={next}>
+                  {season.round < rounds ? 'Next round →' : 'Start the playoffs →'}
+                </button>
+              )}
+            </div>
+          )}
         </section>
       )}
 
@@ -687,7 +1000,7 @@ function Dashboard({ season, uid, commit, onPlayFixture, onBack, onAbandon }) {
               {table.map(row => (
                 <tr
                   key={row.id}
-                  className={`${row.id === MY_ID ? styles.meRow : ''} ${row.rank === berths ? styles.cutRow : ''}`}
+                  className={`${row.id === myId ? styles.meRow : ''} ${row.rank === berths ? styles.cutRow : ''}`}
                 >
                   <td>{row.rank}</td>
                   <td><TeamChip team={by.get(row.id)} /></td>
@@ -770,3 +1083,6 @@ function BracketSide({ team, won, score }) {
     </div>
   );
 }
+
+// Exported for the render smoke test (league/leagueScreens.test.jsx); the app reaches it through the tab.
+export { Dashboard as SeasonDashboard };

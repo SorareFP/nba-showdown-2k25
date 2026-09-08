@@ -4,6 +4,7 @@ import StratsTab from './components/StratsTab.jsx';
 import TeamBuilderTab from './components/TeamBuilderTab.jsx';
 import PlayTab from './components/PlayTab.jsx';
 import SeasonTab from './components/SeasonTab.jsx';
+import TournamentTab from './components/TournamentTab.jsx';
 import HowToPlay from './components/HowToPlay.jsx';
 import WelcomeTab from './components/WelcomeTab.jsx';
 import SignupBonus from './components/SignupBonus.jsx';
@@ -39,6 +40,7 @@ const AUTH_TABS = [
   { id: 'builder', label: '🏗 Team Builder' },
   { id: 'play',    label: '🏀 Play' },
   { id: 'season',  label: '📅 Season' },
+  { id: 'tournament', label: '🏆 Tournament' },
   { id: 'pvp',     label: '⚔️ PvP' },
   { id: 'collection', label: '💾 Collection' },
   { id: 'howtoplay', label: '📖 How to Play' },
@@ -313,6 +315,7 @@ function AppInner() {
                 onPlayFixture={fixture => { setSeasonPreset(fixture); setTab('play'); }}
               />
             )}
+            {tab === 'tournament' && <TournamentTab teamA={teamA} collection={collection} />}
             {tab === 'pvp' && !pvpGame && (
               <PvpLobby collection={collection} onGameStart={(roomCode, myRole) => setPvpGame({ roomCode, myRole })} />
             )}

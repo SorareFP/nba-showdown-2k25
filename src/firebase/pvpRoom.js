@@ -16,7 +16,7 @@ function generateCode() {
 
 // ---------- room lifecycle ----------
 
-export async function createRoom(uid, displayName) {
+export async function createRoom(uid, displayName, { league = null } = {}) {
   let code;
   let exists = true;
 
@@ -42,6 +42,10 @@ export async function createRoom(uid, displayName) {
     forfeitClockStartedAt: null,
     forfeitClockStartedBy: null,
     winner: null,
+    // A league fixture's room: { id, fixtureId }. PvpGame reports the result
+    // to the league when the game ends; the server reads this room to
+    // verify it. Null for an ordinary PvP game.
+    league: league ? { id: String(league.id), fixtureId: String(league.fixtureId) } : null,
   };
 
   await set(ref(rtdb, `rooms/${code}/meta`), meta);

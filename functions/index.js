@@ -43,10 +43,16 @@ import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 import { generatePack, PACK_TYPES, favoriteTeamOptions, normalizeFavoriteTeam } from './shared/src/game/packEngine.js';
 import { goalProgress, goalCoinReward, REWARD_BY_GOAL, collectedKeys } from './shared/src/game/collections.js';
 import { getCardByKey } from './shared/src/game/cardSets.js';
-import { getPlayerRarity, BURN_VALUES, getStratRarity, STRAT_BURN_VALUES } from './shared/src/game/rarity.js';
+import { getPlayerRarity, BURN_VALUES, getStratRarity, STRAT_BURN_VALUES, STRAT_COPY_CAPS } from './shared/src/game/rarity.js';
 import { getStrat } from './shared/src/game/strats.js';
 import { settleGameReward, todayKey, sanitizeBox } from './shared/src/game/coinRewards.js';
 import { seasonEarnings, dynastyCoinFactor } from './shared/src/game/modes/prizes.js';
+import { getDatabase } from 'firebase-admin/database';
+import {
+  newLeague, entrantFor, addEntrant, removeEntrant, cancelLeague as cancelLeagueState, startTournament, startSeason,
+  canReport, applyResult, scoresFromRoom, forfeitScores, fixtureOf, isHumanVsHumanFixture, humanFor, summarizeLeague,
+  STATUS as LEAGUE_STATUS,
+} from './shared/src/game/modes/league.js';
 
 initializeApp();
 const db = getFirestore();
@@ -839,5 +845,320 @@ export const claimSeasonReward = onCall({ region: 'us-central1' }, async request
     tx.set(claimRef, { claimedAt: FieldValue.serverTimestamp(), coins, reward: null, season: seasonId, label });
     tx.set(db.doc(`users/${uid}`), { currency: FieldValue.increment(coins) }, { merge: true });
     return { seasonId, coins, label };
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
+// LEAGUES — tournaments, and seasons with more than one human.
+//
+// One shared document per competition (leagues/{id}), readable by its members
+// and written only here. Every rule about the league itself lives in the
+// shared modes/league.js; this is the part that needs an identity, a
+// balance, and a look at the PvP room: fees and refunds and payouts move
+// coins, and a human-vs-human result is READ FROM THE ROOM the two of them
+// played in, never taken from the client's word. The design (2026-09-07):
+// "Matches are PvP rooms… When the game ends, either player reports the
+// result; the server reads the room's final state to confirm the winner."
+// ═══════════════════════════════════════════════════════════════════════════
+
+const CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+function newJoinCode() {
+  let out = '';
+  for (let i = 0; i < 6; i += 1) out += CODE_ALPHABET[Math.floor(Math.random() * CODE_ALPHABET.length)];
+  return out;
+}
+const leagueRef = id => db.doc(`leagues/${id}`);
+const joinCodeRef = code => db.doc(`joinCodes/${code}`);
+const leagueIndexRef = (uid, id) => db.doc(`users/${uid}/leagues/${id}`);
+
+/** The one-line index a member's list reads, so a list needs no query over shared docs. */
+function leagueIndexDoc(league) {
+  const sum = summarizeLeague(league);
+  return {
+    kind: league.kind, name: league.name, status: league.status, where: sum.where,
+    size: league.settings.size, fee: league.settings.fee, joinCode: league.joinCode, hostUid: league.hostUid,
+    updatedAt: FieldValue.serverTimestamp(),
+  };
+}
+function writeLeagueIndexes(tx, league, removedUid = null) {
+  const idx = leagueIndexDoc(league);
+  for (const uid of Object.keys(league.members ?? {})) tx.set(leagueIndexRef(uid, league.id), idx, { merge: true });
+  if (removedUid) tx.delete(leagueIndexRef(removedUid, league.id));
+}
+
+/** An entrant as the lobby sends it, checked to the bone. */
+function cleanEntrant(uid, raw) {
+  if (!raw || typeof raw !== 'object') throw new HttpsError('invalid-argument', 'No team given');
+  const roster = Array.isArray(raw.roster) ? raw.roster.map(k => String(k)) : [];
+  if (roster.length < 5 || roster.length > 10) throw new HttpsError('invalid-argument', 'A team is five to ten cards');
+  if (new Set(roster).size !== roster.length) throw new HttpsError('invalid-argument', 'A team cannot carry the same card twice');
+  for (const k of roster) if (!getCardByKey(k)) throw new HttpsError('invalid-argument', `No such card ${k}`);
+  let deck = null;
+  if (raw.deck && typeof raw.deck === 'object') {
+    deck = {};
+    let total = 0;
+    for (const [id, n] of Object.entries(raw.deck)) {
+      const count = Number(n);
+      const strat = getStrat(id);
+      const cap = strat ? (STRAT_COPY_CAPS[getStratRarity(strat)] ?? 5) : 0;
+      if (!strat || !Number.isInteger(count) || count < 0 || count > cap) throw new HttpsError('invalid-argument', `Bad deck entry ${id}`);
+      if (count > 0) { deck[id] = count; total += count; }
+    }
+    if (total > 50) throw new HttpsError('invalid-argument', 'That deck is too big');
+  }
+  return entrantFor(uid, {
+    name: String(raw.name ?? 'My Team').slice(0, 40) || 'My Team',
+    roster,
+    deck,
+    deckName: raw.deckName ? String(raw.deckName).slice(0, 40) : null,
+  });
+}
+
+/** Every card in a roster must be in the caller's collection right now. */
+async function assertOwned(uid, keys) {
+  const snaps = await db.getAll(...keys.map(k => db.doc(`users/${uid}/collection/${k}`)));
+  for (const snap of snaps) {
+    if (!snap.exists || (snap.data()?.count ?? 0) < 1) throw new HttpsError('failed-precondition', `You do not own ${getCardByKey(snap.id)?.name ?? snap.id}`);
+  }
+}
+
+function chargeFee(tx, userSnap, uid, fee) {
+  if (!(fee > 0)) return;
+  const cur = userSnap.data()?.currency ?? 0;
+  if (cur < fee) throw new HttpsError('failed-precondition', `Entry is ${fee} coins; you have ${cur}`);
+  tx.set(db.doc(`users/${uid}`), { currency: FieldValue.increment(-fee) }, { merge: true });
+}
+function creditAll(tx, list) {
+  for (const p of list ?? []) if (p?.uid && p.coins > 0) tx.set(db.doc(`users/${p.uid}`), { currency: FieldValue.increment(p.coins) }, { merge: true });
+}
+
+/** The PvP room, as the admin SDK sees it (rules do not apply here). */
+async function readRoom(code) {
+  const rtdb = getDatabase();
+  const [meta, game] = await Promise.all([rtdb.ref(`rooms/${code}/meta`).get(), rtdb.ref(`rooms/${code}/game`).get()]);
+  return { meta: meta.val(), game: game.val() };
+}
+
+function leagueError(e) {
+  return e instanceof HttpsError ? e : new HttpsError('failed-precondition', String(e?.message ?? e).replace(/^league: /, ''));
+}
+
+export const createLeague = onCall({ region: 'us-central1' }, async request => {
+  const uid = requireAuth(request);
+  const { kind, name, settings, entrant: raw } = request.data ?? {};
+  const entrant = cleanEntrant(uid, raw);
+  await assertOwned(uid, entrant.roster);
+  const id = `${kind === 'tournament' ? 'tour' : 'league'}-${Date.now()}-${Math.floor(Math.random() * 1e6).toString(36)}`;
+  return db.runTransaction(async tx => {
+    let joinCode = newJoinCode();
+    for (let i = 0; i < 6; i += 1) {
+      const taken = await tx.get(joinCodeRef(joinCode));
+      if (!taken.exists) break;
+      joinCode = newJoinCode();
+    }
+    const userSnap = await tx.get(db.doc(`users/${uid}`));
+    if (!userSnap.exists) throw new HttpsError('failed-precondition', 'No such player');
+    let league;
+    try { league = newLeague({ id, kind, name, hostUid: uid, settings, entrant, joinCode, now: Date.now() }); }
+    catch (e) { throw new HttpsError('invalid-argument', String(e.message).replace(/^league: /, '')); }
+    chargeFee(tx, userSnap, uid, league.settings.fee);
+    tx.set(leagueRef(id), league);
+    tx.set(joinCodeRef(joinCode), { leagueId: id, kind: league.kind, status: league.status, createdAt: FieldValue.serverTimestamp() });
+    writeLeagueIndexes(tx, league);
+    return { leagueId: id, joinCode };
+  });
+});
+
+export const joinLeague = onCall({ region: 'us-central1' }, async request => {
+  const uid = requireAuth(request);
+  const { code, entrant: raw } = request.data ?? {};
+  const joinCode = String(code ?? '').trim().toUpperCase();
+  if (!/^[A-Z0-9]{6}$/.test(joinCode)) throw new HttpsError('invalid-argument', 'That is not a join code');
+  const entrant = cleanEntrant(uid, raw);
+  await assertOwned(uid, entrant.roster);
+  return db.runTransaction(async tx => {
+    const codeSnap = await tx.get(joinCodeRef(joinCode));
+    if (!codeSnap.exists) throw new HttpsError('not-found', 'No league with that code');
+    const ref = leagueRef(codeSnap.data().leagueId);
+    const snap = await tx.get(ref);
+    const userSnap = await tx.get(db.doc(`users/${uid}`));
+    if (!snap.exists) throw new HttpsError('not-found', 'That league is gone');
+    let league;
+    try { league = addEntrant(snap.data(), entrant, Date.now()); } catch (e) { throw leagueError(e); }
+    chargeFee(tx, userSnap, uid, league.settings.fee);
+    tx.set(ref, league);
+    writeLeagueIndexes(tx, league);
+    return { leagueId: league.id, joinCode, kind: league.kind, name: league.name };
+  });
+});
+
+export const leaveLeague = onCall({ region: 'us-central1' }, async request => {
+  const uid = requireAuth(request);
+  const { leagueId } = request.data ?? {};
+  if (!leagueId) throw new HttpsError('invalid-argument', 'No league given');
+  return db.runTransaction(async tx => {
+    const ref = leagueRef(String(leagueId));
+    const snap = await tx.get(ref);
+    if (!snap.exists) throw new HttpsError('not-found', 'No such league');
+    let out;
+    try { out = removeEntrant(snap.data(), uid); } catch (e) { throw leagueError(e); }
+    if (out.refund) creditAll(tx, [out.refund]);
+    tx.set(ref, out.league);
+    writeLeagueIndexes(tx, out.league, uid);
+    return { left: true, refunded: out.refund?.coins ?? 0 };
+  });
+});
+
+export const cancelLeague = onCall({ region: 'us-central1' }, async request => {
+  const uid = requireAuth(request);
+  const { leagueId } = request.data ?? {};
+  if (!leagueId) throw new HttpsError('invalid-argument', 'No league given');
+  return db.runTransaction(async tx => {
+    const ref = leagueRef(String(leagueId));
+    const snap = await tx.get(ref);
+    if (!snap.exists) throw new HttpsError('not-found', 'No such league');
+    const league = snap.data();
+    if (league.hostUid !== uid) throw new HttpsError('permission-denied', 'Only the host can cancel');
+    let out;
+    try { out = cancelLeagueState(league, Date.now()); } catch (e) { throw leagueError(e); }
+    creditAll(tx, out.refunds);
+    tx.set(ref, out.league);
+    tx.delete(joinCodeRef(league.joinCode));
+    writeLeagueIndexes(tx, out.league);
+    return { cancelled: true, refunded: out.refunds.length };
+  });
+});
+
+export const startLeague = onCall({ region: 'us-central1' }, async request => {
+  const uid = requireAuth(request);
+  const { leagueId, state } = request.data ?? {};
+  if (!leagueId) throw new HttpsError('invalid-argument', 'No league given');
+  return db.runTransaction(async tx => {
+    const ref = leagueRef(String(leagueId));
+    const snap = await tx.get(ref);
+    if (!snap.exists) throw new HttpsError('not-found', 'No such league');
+    const league = snap.data();
+    if (league.hostUid !== uid) throw new HttpsError('permission-denied', 'Only the host can start it');
+    let next;
+    try {
+      next = league.kind === 'tournament'
+        ? startTournament(league, { rng: Math.random, now: Date.now() })
+        : startSeason(league, state, { now: Date.now() });
+    } catch (e) { throw leagueError(e); }
+    tx.set(ref, next);
+    tx.set(joinCodeRef(league.joinCode), { status: next.status }, { merge: true });
+    writeLeagueIndexes(tx, next);
+    return summarizeLeague(next, uid);
+  });
+});
+
+/**
+ * A human-vs-human fixture's room, recorded on the league so the other side
+ * can find it. The caller must be in the fixture and must be the room's host.
+ */
+export const attachLeagueRoom = onCall({ region: 'us-central1' }, async request => {
+  const uid = requireAuth(request);
+  const { leagueId, fixtureId, code } = request.data ?? {};
+  const roomCode = String(code ?? '').trim().toUpperCase();
+  if (!leagueId || !fixtureId || !roomCode) throw new HttpsError('invalid-argument', 'League, fixture and room are required');
+  const room = await readRoom(roomCode);
+  if (!room.meta) throw new HttpsError('not-found', 'No such room');
+  if (room.meta.hostUid !== uid) throw new HttpsError('permission-denied', 'Only the room\'s host can attach it');
+  // A fixture keeps its first room unless that room was abandoned — then a
+  // fresh one may take its place, so a walked-out game does not stall it.
+  const peek = await leagueRef(String(leagueId)).get();
+  const prior = peek.exists ? peek.data().rooms?.[String(fixtureId)]?.code : null;
+  if (prior && prior !== roomCode) {
+    const old = await readRoom(prior);
+    if (old.meta && old.meta.status !== 'abandoned') throw new HttpsError('failed-precondition', `That fixture already has room ${prior}`);
+  }
+  return db.runTransaction(async tx => {
+    const ref = leagueRef(String(leagueId));
+    const snap = await tx.get(ref);
+    if (!snap.exists) throw new HttpsError('not-found', 'No such league');
+    const league = snap.data();
+    const f = fixtureOf(league, String(fixtureId));
+    if (!f || !f.ready || f.played) throw new HttpsError('failed-precondition', 'That fixture is not open');
+    if (!isHumanVsHumanFixture(league, f)) throw new HttpsError('failed-precondition', 'That fixture is not two humans');
+    const mine = `h:${uid}`;
+    if (f.home !== mine && f.away !== mine) throw new HttpsError('permission-denied', 'Not your fixture');
+    const existing = league.rooms?.[f.id];
+    if (existing?.code && existing.code !== roomCode && existing.code !== prior) throw new HttpsError('failed-precondition', `That fixture already has room ${existing.code}`);
+    const rooms = { ...(league.rooms ?? {}), [f.id]: { code: roomCode, hostUid: uid, at: Date.now() } };
+    tx.set(ref, { rooms }, { merge: true });
+    return { fixtureId: f.id, code: roomCode };
+  });
+});
+
+/**
+ * A RESULT. Three ways in, all checked by canReport in the shared module:
+ *   - a human-vs-human fixture: the room decides; the scores come from it
+ *   - a human's own game against an AI team (seasons): the human's scores
+ *   - an AI-vs-AI fixture the host simulated (seasons): the host's scores
+ * Coins move here: the tournament's per-win share, the champion's half, a
+ * season's title money at the end.
+ */
+export const reportLeagueResult = onCall({ region: 'us-central1' }, async request => {
+  const uid = requireAuth(request);
+  const { leagueId, fixtureId } = request.data ?? {};
+  if (!leagueId || !fixtureId) throw new HttpsError('invalid-argument', 'League and fixture are required');
+  const simulated = request.data?.simulated === true;
+  // Look first (outside the transaction) to learn whether a room decides it.
+  const peek = await leagueRef(String(leagueId)).get();
+  if (!peek.exists) throw new HttpsError('not-found', 'No such league');
+  const peeked = peek.data();
+  const f0 = fixtureOf(peeked, String(fixtureId));
+  if (!f0) throw new HttpsError('not-found', 'No such fixture');
+  const hh = isHumanVsHumanFixture(peeked, f0);
+  const roomCode = String(request.data?.roomCode ?? peeked.rooms?.[f0.id]?.code ?? '').trim().toUpperCase();
+  let scores;
+  if (hh) {
+    if (!roomCode) throw new HttpsError('failed-precondition', 'A human-vs-human result comes from its room');
+    const room = await readRoom(roomCode);
+    try { scores = scoresFromRoom(peeked, f0, room); } catch (e) { throw leagueError(e); }
+  } else {
+    const home = Number(request.data?.homeScore);
+    const away = Number(request.data?.awayScore);
+    if (![home, away].every(n => Number.isInteger(n) && n >= 0 && n <= 300)) throw new HttpsError('invalid-argument', 'Scores must be whole numbers');
+    scores = { homeScore: home, awayScore: away, forfeit: false };
+  }
+  return db.runTransaction(async tx => {
+    const ref = leagueRef(String(leagueId));
+    const snap = await tx.get(ref);
+    const league = snap.data();
+    const why = canReport(league, uid, String(fixtureId), { simulated, roomCode: roomCode || null });
+    if (why) throw new HttpsError('failed-precondition', why);
+    let out;
+    try { out = applyResult(league, { fixtureId: String(fixtureId), ...scores, simulated, roomCode: roomCode || null }, { now: Date.now() }); }
+    catch (e) { throw leagueError(e); }
+    creditAll(tx, out.payouts);
+    tx.set(ref, out.league);
+    writeLeagueIndexes(tx, out.league);
+    if (out.league.status === LEAGUE_STATUS.done) tx.set(joinCodeRef(league.joinCode), { status: LEAGUE_STATUS.done }, { merge: true });
+    return { winner: out.winner, paid: out.payouts, status: out.league.status };
+  });
+});
+
+/** The commissioner's call on a stalled fixture: a forfeit, naming the loser. */
+export const forfeitLeagueFixture = onCall({ region: 'us-central1' }, async request => {
+  const uid = requireAuth(request);
+  const { leagueId, fixtureId, loserTeamId } = request.data ?? {};
+  if (!leagueId || !fixtureId || !loserTeamId) throw new HttpsError('invalid-argument', 'League, fixture and the forfeiting team are required');
+  return db.runTransaction(async tx => {
+    const ref = leagueRef(String(leagueId));
+    const snap = await tx.get(ref);
+    if (!snap.exists) throw new HttpsError('not-found', 'No such league');
+    const league = snap.data();
+    const why = canReport(league, uid, String(fixtureId), { forfeit: true });
+    if (why) throw new HttpsError('failed-precondition', why);
+    const f = fixtureOf(league, String(fixtureId));
+    let out;
+    try { out = applyResult(league, { fixtureId: f.id, ...forfeitScores(f, String(loserTeamId)) }, { now: Date.now() }); }
+    catch (e) { throw leagueError(e); }
+    creditAll(tx, out.payouts);
+    tx.set(ref, out.league);
+    writeLeagueIndexes(tx, out.league);
+    if (out.league.status === LEAGUE_STATUS.done) tx.set(joinCodeRef(league.joinCode), { status: LEAGUE_STATUS.done }, { merge: true });
+    return { winner: out.winner, paid: out.payouts, status: out.league.status };
   });
 });

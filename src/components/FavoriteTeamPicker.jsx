@@ -21,6 +21,7 @@
 // can never disagree about what is choosable. A franchise too thin to fill a
 // starter core is not offered rather than offered and then quietly short.
 import { useState, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { favoriteTeamOptions, parseFavoriteTeam } from '../game/packEngine.js';
 import { getTeam } from '../cards/teams.js';
 import { logoSrc } from '../cards/CardTemplate.jsx';
@@ -60,7 +61,13 @@ export default function FavoriteTeamPicker({ onChoose, onCancel, busy = false, e
 
   const pickedTeam = picked ? teamForOption(picked) : null;
 
-  return (
+  // A PORTAL, NOT A CHILD. The overlay is position:fixed, and a fixed element
+  // inside any ancestor with a transform, filter or containment is confined
+  // to that ancestor's box instead of the viewport — the tab panel's
+  // cross-fade animates a transform, and the picker came out the size of the
+  // content column with its title cut off (the user, 2026-09-08: "tiny
+  // tiny"). On the body it is measured against the viewport, always.
+  return createPortal(
     <div className={styles.backdrop} role="dialog" aria-modal="true" aria-label="Pick your favourite team">
       <div className={styles.sheet}>
         <header className={styles.head}>
@@ -141,6 +148,7 @@ export default function FavoriteTeamPicker({ onChoose, onCancel, busy = false, e
           )}
         </footer>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

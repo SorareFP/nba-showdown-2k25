@@ -16,7 +16,7 @@ import { DialogProvider } from './ui/dialogs.jsx';
 import SoundToggle from './ui/SoundToggle.jsx';
 import { CardStatsProvider } from './firebase/CardStatsProvider.jsx';
 import { collectableKeys } from './game/collections.js';
-import { loadCollection } from './firebase/collection.js';
+import { loadCollection, getUserData } from './firebase/collection.js';
 import { ownedRoster } from './game/teamRules.js';
 import { CARD_MAP } from './game/cards.js';
 import styles from './App.module.css';
@@ -55,6 +55,12 @@ function AppInner() {
   // when hovering over it or clicking"). While this is set the tutorial stays
   // mounted behind How to Play, game intact, and its button brings you back.
   const [rulesOverTutorial, setRulesOverTutorial] = useState(false);
+  // THE STARTER PACK FOLLOWS YOU AROUND until it is claimed. The Collection
+  // tab has the full prompt (team pick, open); every other tab gets this band
+  // pointing there. The user (2026-09-08): "We should have the starter pack
+  // banner on every page until claimed." Read with the collection, so
+  // opening the pack — which refreshes the collection — clears it.
+  const [starter, setStarter] = useState(null);   // null = unknown or signed out
   // THE NEWCOMER'S BANNER: until this browser has dealt a game, point at the
   // tutorial. Cleared by the first deal, the tutorial's end, or the ×.
   const [playedBefore, setPlayedBefore] = useState(hasPlayedBefore);
@@ -92,8 +98,14 @@ function AppInner() {
   const [marker, setMarker] = useState(null);
 
   const refreshCollection = useCallback(async () => {
-    if (!user) { setCollection({}); return; }
+    if (!user) { setCollection({}); setStarter(null); return; }
     const c = await loadCollection(user.uid);
+    try {
+      const u = await getUserData(user.uid);
+      setStarter(u ? { opened: Boolean(u.starterPackOpened), favorite: Boolean(u.favoriteTeam) } : null);
+    } catch {
+      setStarter(null);
+    }
     setCollection(c);
   }, [user]);
 
@@ -194,6 +206,14 @@ function AppInner() {
         </div>
       )}
 
+      {user && starter && !starter.opened && tab !== 'collection' && !tutorialMode && (
+        <div className={styles.starterBand}>
+          <span>
+            Your <strong>Starter Pack</strong> is waiting{starter.favorite ? '' : ' — pick the team you support and open it'}. 20 players, 30 strategy cards and Unethical Hoops.
+          </span>
+          <button className={styles.starterBandBtn} onClick={() => setTab('collection')}>{starter.favorite ? 'Open it' : 'Claim it'}</button>
+        </div>
+      )}
       {!playedBefore && !tutorialMode && (
         <div className={styles.firstRun}>
           <span>

@@ -16,7 +16,13 @@ export default function TeamBuilderTab({ teamA, setTeamA, teamB, setTeamB, onSta
   const { open } = useLightbox();
   const { user } = useAuth();
   const { toast, askText } = useDialogs();
-  const enforceOwnership = !!user && Object.keys(collection || {}).length > 0;
+  // SIGNED IN MEANS OWNED ONLY. This used to relax to the whole pool while the
+  // collection was empty — a fresh account, or one just reset — which is the
+  // one moment a new player is looking hardest, and it showed them every card
+  // in the game. The user (2026-09-08): "they have to find it, whether through
+  // the market or some other organic part of the game." Signed out stays a
+  // sandbox of the full pool, by design (the Cards tab is a guest tab).
+  const enforceOwnership = !!user;
   const [filters, setFilters] = useState(DEFAULT_FILTERS);
   const [loadModal, setLoadModal] = useState(null); // null | { slot: 'A'|'B', teams: [] }
 
@@ -114,6 +120,13 @@ export default function TeamBuilderTab({ teamA, setTeamA, teamB, setTeamB, onSta
       </div>
       <PoolFilters value={filters} onChange={setFilters} teams={allTeams} />
       <div className={styles.pool}>
+        {enforceOwnership && pool.length === 0 && (
+          <div style={{ gridColumn: '1 / -1', padding: '28px 16px', textAlign: 'center', color: 'var(--text-muted)', fontSize: 14, lineHeight: 1.6 }}>
+            {Object.keys(collection || {}).length === 0
+              ? <>No players yet. Your first twenty come in the <strong>Starter Pack</strong> — open it in <strong>Collection</strong>. After that: packs, rewards and the market.</>
+              : <>Nothing you own matches these filters.</>}
+          </div>
+        )}
         {pool.map(card => {
           const rarity = getPlayerRarity(card);
           const cfg = RARITY_CONFIG[rarity];

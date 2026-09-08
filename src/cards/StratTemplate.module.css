@@ -137,3 +137,40 @@
   letter-spacing: 2px;
   line-height: 1;
 }
+
+/* The sponsor line: a small caption over a logo, sitting between the
+   chevrons and the side word on the footer's baseline. */
+.presented {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin: 0 auto 22px;
+}
+.presentedLabel {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  opacity: 0.75;
+}
+.presentedLogo {
+  height: 72px;
+  width: auto;
+  display: block;
+}
+
+/* Crunch-only cards: black, and stamped. */
+.crunch {
+  background: #0a0a0f;
+  border-color: #0a0a0f;
+}
+.crunchStamp {
+  font-size: 58px;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: 4px;
+  text-align: center;
+  color: #ef4444;
+  margin: -6px 0 10px;
+  text-shadow: 0 0 22px rgba(239, 68, 68, 0.45);
+}

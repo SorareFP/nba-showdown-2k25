@@ -11,6 +11,7 @@
 // face keeps the house navy and uses `color` only for the thin accent rule
 // under the title, which is enough to tell cards apart in a spread without
 // breaking the set's one look.
+import { CRUNCH_CARDS } from '../game/strats.js';
 import React from 'react';
 import styles from './StratTemplate.module.css';
 import { resolvePhotoUrl } from './photo.js';
@@ -25,6 +26,17 @@ const PHASE_LINES = {
   post_roll: 'Play after a scoring roll.',
   reaction: 'Play in reaction to an opponent’s card.',
 };
+
+/**
+ * CRUNCH-ONLY CARDS LOOK LIKE IT. Black face, and CRUNCH TIME printed big
+ * above the phase line, so a hand can be read from across the table. The
+ * user (2026-09-08): "all Crunch-Time cards to be Black or say CRUNCH-TIME big
+ * somewhere." Both. The list is the engine's own (strats.js), so a new
+ * crunch card gets the face the moment it is gated.
+ */
+export function isCrunchFace(strat) {
+  return CRUNCH_CARDS.includes(strat?.id);
+}
 
 export function phaseLine(phase) {
   return PHASE_LINES[phase] ?? 'Play during the game.';
@@ -94,6 +106,7 @@ export default function StratTemplate({
 }) {
   const s = strat ?? card;
   const { paragraphs, locked } = faceParagraphs(s);
+  const crunch = isCrunchFace(s);
   const resolved =
     artUrl ??
     resolvePhotoUrl({
@@ -112,7 +125,7 @@ export default function StratTemplate({
     : undefined;
   return (
     <div
-      className={styles.card}
+      className={`${styles.card} ${crunch ? styles.crunch : ''}`}
       data-strat-id={s.id}
       style={{ width: STRAT_CARD_WIDTH, height: STRAT_CARD_HEIGHT }}
     >
@@ -139,6 +152,7 @@ export default function StratTemplate({
       </div>
 
       <div className={styles.body}>
+        {crunch ? <div className={styles.crunchStamp}>CRUNCH TIME</div> : null}
         <div className={styles.phase}>{phaseLine(s.phase)}</div>
         {paragraphs.map((p, i) => (
           <p key={i} className={styles.rule}>{p}</p>
@@ -148,6 +162,20 @@ export default function StratTemplate({
 
       <div className={styles.footer}>
         <ChevronDots direction="right" className={styles.footChevrons} />
+        {s.presentedBy ? (
+          // THE SPONSOR LINE. The user (2026-09-08) dropped the Underdog logo
+          // "for the little 'presented by' part" of Unethical Hoops; the logo
+          // lives in public/logos/ with the team crests and is reached the way
+          // the app reaches those, under Vite's base.
+          <div className={styles.presented}>
+            <div className={styles.presentedLabel}>PRESENTED BY</div>
+            <img
+              className={styles.presentedLogo}
+              src={`${import.meta.env.BASE_URL}logos/${s.presentedBy.logo}`}
+              alt={s.presentedBy.name}
+            />
+          </div>
+        ) : null}
         <div className={styles.side}>{s.side === 'def' ? 'DEFENSE' : 'OFFENSE'}</div>
       </div>
     </div>

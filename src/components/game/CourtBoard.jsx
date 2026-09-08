@@ -1744,7 +1744,7 @@ function HandPanel({ game, teamKey, onExecCard, pvpMode = false, isMyTurn = true
           const isStaged = staged === hi;
 
           return (
-            <div key={`${id}-${hi}`}
+            <div key={`${id}-${hi}`} data-card-id={id}
               className={`${styles.hcard} ${!canClick ? styles.hdim : ''} ${isReaction && play.canPlay ? styles.hreact : ''} ${sImg ? styles.hcardHasImg : ''} ${isStaged ? styles.hcardStaged : ''}`}
               style={{ borderLeftColor: s.color }}>
 

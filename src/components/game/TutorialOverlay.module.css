@@ -64,3 +64,18 @@
   padding: 4px 8px;
 }
 .skip:hover { color: #94A3B8; }
+
+/* The element a tooltip points at: lifted above the dim and pulsing. */
+.highlight {
+  position: relative;
+  z-index: 101 !important;
+  border-radius: 8px;
+  box-shadow: 0 0 0 3px var(--orange), 0 0 28px rgba(234, 88, 12, 0.7) !important;
+  animation: tutPulse 1.2s ease-in-out infinite;
+}
+@keyframes tutPulse {
+  50% { box-shadow: 0 0 0 5px var(--orange), 0 0 36px rgba(234, 88, 12, 0.95); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .highlight { animation: none; }
+}

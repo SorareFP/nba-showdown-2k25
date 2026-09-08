@@ -43,6 +43,27 @@ function resolveRoster(ids) {
   return ids.map(id => CARD_MAP[id]).filter(Boolean);
 }
 
+// ── The lesson needs its prop ───────────────────────────────────────────────
+//
+// The user (2026-09-08): a switching card "should happen in every tutorial,
+// which shows how you can alter matchups". A random seven holds High Screen &
+// Roll about half the time; the tutorial hand always does. One copy comes up
+// from the deck (or is added if the deck has none), and the card it displaces
+// goes to the bottom — drawCards pops from the END, so the bottom is index 0.
+const TEACHING_CARD = 'high_screen_roll';
+function withTeachingHand(g) {
+  const t = g.teamA;
+  if (t.hand.includes(TEACHING_CARD)) return g;
+  const deck = [...t.deck];
+  const at = deck.indexOf(TEACHING_CARD);
+  if (at >= 0) deck.splice(at, 1);
+  const hand = [...t.hand];
+  const displaced = hand.length >= 7 ? hand.pop() : null;
+  hand.push(TEACHING_CARD);
+  if (displaced) deck.unshift(displaced);
+  return { ...g, teamA: { ...t, hand, deck } };
+}
+
 // ── AI delay (ms) ───────────────────────────────────────────────────────────
 const AI_DELAY = 800;
 
@@ -59,7 +80,7 @@ export default function TutorialGame({ onExit }) {
   // Initialize game on mount
   useEffect(() => {
     mounted.current = true;
-    dispatch({ type: 'SET', game: newGame(rosterA, rosterB) });
+    dispatch({ type: 'SET', game: withTeachingHand(newGame(rosterA, rosterB)) });
     return () => { mounted.current = false; };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 

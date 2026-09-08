@@ -2,7 +2,87 @@
 // Tutorial tooltip content — data-driven for easy editing
 // Each tooltip has: id, text, detail, section (1-3), trigger, priority
 
-import { getTeam } from './engine.js';
+import { getTeam, calcAdv } from './engine.js';
+
+// ── Lessons that read the board ──────────────────────────────────────────────
+//
+// The user (2026-09-08): "show why the AI chose the defender to matchup with
+// the first player the user puts down", then "explain the matchup indicators",
+// then "highlight that high screen & roll, and explain why you'd do it". Each
+// of these is computed from the game with the SAME arithmetic the AI and the
+// board use — aiPlacementPick's score, the placement picker's ⚔/🛡, and the
+// High Screen & Roll pair search — so the lesson never disagrees with what the
+// player sees.
+const sgn = n => (n > 0 ? '+' : '') + n;
+const who = p => `${p.name} (S${p.speed} P${p.power}${p.defBoost ? ` Def${sgn(p.defBoost)}` : ''})`;
+const step = g => g.placementStep ?? 10;
+
+/** Why the coach's row-1 answer was that player: aiPlacementPick's score, said out loud. */
+function placementAnswer(g) {
+  const a0 = getTeam(g, 'A').starters[0];
+  const b0 = getTeam(g, 'B').starters[0];
+  if (!a0 || !b0) return 'The coach answers every row you lead.';
+  const mine = calcAdv(a0, b0, {}, 0);    // my roll against them
+  const theirs = calcAdv(b0, a0, {}, 0);  // their roll against me
+  const soaked = (b0.defBoost || 0) > 0 && (mine.rawSpeedDiff > 0 || mine.rawPowerDiff > 0) && mine.rollBonus < Math.max(mine.rawSpeedDiff, mine.rawPowerDiff);
+  return `The coach answered your ${who(a0)} with ${who(b0)}. Against them your roll is ${sgn(mine.rollBonus)}${soaked ? ' — the Def Boost soaks part of your edge' : ''}, and theirs against you is ${sgn(theirs.rollBonus)}. The coach scores each of its five as its own edge minus yours, plus Def Boost, and puts down the best trade.`;
+}
+
+/** A's best remaining answer to the row the coach just led, by the coach's own score. */
+function bestAnswer(g) {
+  const A = getTeam(g, 'A');
+  const B = getTeam(g, 'B');
+  const opp = B.starters[A.starters.length];
+  if (!opp) return null;
+  const placed = new Set(A.starters.map(p => p.id));
+  const picks = (g.draft?.aPicks ?? []).filter(id => !placed.has(id)).map(id => (A.roster || []).find(r => r.id === id)).filter(Boolean);
+  let best = null;
+  for (const c of picks) {
+    const mine = calcAdv(c, opp, {}, 0);
+    const theirs = calcAdv(opp, c, {}, 0);
+    const score = mine.rollBonus - theirs.rollBonus + (c.defBoost || 0);
+    if (!best || score > best.score) best = { c, mine, theirs, score };
+  }
+  return { opp, row: A.starters.length + 1, ...best };
+}
+
+function placementIndicators(g) {
+  const r = bestAnswer(g);
+  if (!r) return 'Now you answer a row the coach led. Open the picker and read the pairing both ways before you choose.';
+  return `Now you answer row ${r.row}, where the coach led with ${who(r.opp)}. In the picker every one of your players shows the pairing both ways: ⚔ is your roll bonus attacking them, 🛡 is theirs attacking you. Green is good for you, red is bad, ⚠ marks a penalty.`;
+}
+function placementIndicatorsDetail(g) {
+  const r = bestAnswer(g);
+  if (!r?.c) return 'S and P are the raw Speed and Power differences; the roll bonus is the larger one after Def Boost.';
+  return `S and P are the raw Speed and Power differences; the roll bonus is the larger one after Def Boost. Best answer right now by that reading: ${r.c.name} — ⚔ ${sgn(r.mine.rollBonus)}, 🛡 ${sgn(r.theirs.rollBonus)}.`;
+}
+
+/** The swap of two defenders that gains the most roll bonus — the AI's own search. */
+function bestSwap(g) {
+  const A = getTeam(g, 'A');
+  const B = getTeam(g, 'B');
+  const mu = g.offMatchups?.A || [0, 1, 2, 3, 4];
+  const bonus = (i, d) => { const p = A.starters[i]; const dp = B.starters[d]; return p && dp ? calcAdv(p, dp, {}, i).rollBonus : 0; };
+  let best = null;
+  for (let i = 0; i < A.starters.length; i += 1) {
+    for (let j = i + 1; j < A.starters.length; j += 1) {
+      const di = mu[i] ?? i, dj = mu[j] ?? j;
+      const now = bonus(i, di) + bonus(j, dj);
+      const swapped = bonus(i, dj) + bonus(j, di);
+      const gain = swapped - now;
+      if (!best || gain > best.gain) best = { i, j, gain, ai: bonus(i, di), aj: bonus(j, dj), bi: bonus(i, dj), bj: bonus(j, di) };
+    }
+  }
+  return best;
+}
+function screenRollText(g) {
+  const A = getTeam(g, 'A');
+  const lead = 'Your High Screen & Roll is lit. It swaps the defenders of two of your players, so the pairings the placement handed you are not final.';
+  const s = bestSwap(g);
+  if (!s || s.gain <= 0) return `${lead} Right now no swap gains anything — hold it for a section where the placement goes against you.`;
+  const x = A.starters[s.i], y = A.starters[s.j];
+  return `${lead} Best swap now: ${x.name} and ${y.name} trade defenders — ${x.name}'s roll goes from ${sgn(s.ai)} to ${sgn(s.bi)}, ${y.name}'s from ${sgn(s.aj)} to ${sgn(s.bj)} (net ${sgn(s.gain)}).`;
+}
 
 export const TUTORIAL_TOOLTIPS = [
   // ── Section 1: Learn the Basics ──────────────────────────────────────────
@@ -25,14 +105,42 @@ export const TUTORIAL_TOOLTIPS = [
     trigger: { phase: 'draft', condition: (g) => g.quarter === 1 && g.section === 1 && g.draft.step <= 1 },
   },
 
-  // Matchup
+  // Placement — the snake, then the coach's answer, then reading the picker
   {
-    id: 's1_matchup_intro',
-    text: "Placement! You and the coach take turns placing your five in the snake A-B-B-A-A-B-B-A-A-B. The row a player lands in is their matchup: the two players in a row guard each other all section. Then the matchup card window: play a card or pass, and two passes in a row close it.",
-    detail: "Lead a row with a player who does fine against anyone; keep your best scorer to counter-pick a row the coach has already filled. Green numbers mean your player has the edge, red means the defender does. Only a switching card (High Screen & Roll, Veer Switch, Switch Everything) can move a defender afterwards.",
+    id: 's1_place_intro',
+    text: "Placement! You and the coach take turns placing your five in the snake A-B-B-A-A-B-B-A-A-B. The row a player lands in is their matchup: the two players in a row guard each other all section.",
+    detail: "Lead a row with a player who does fine against anyone; keep your best scorer to counter-pick a row the coach has already filled. Nothing re-deals the pairings afterwards except a switching card.",
     section: 1,
     priority: 100,
-    trigger: { phase: 'matchup_strats', condition: (g) => g.quarter === 1 && g.section === 1 && g.matchupPasses === 0 },
+    trigger: { phase: 'matchup_strats', condition: (g) => g.quarter === 1 && g.section === 1 && step(g) === 0 },
+  },
+  {
+    id: 's1_place_answer',
+    text: placementAnswer,
+    detail: null,
+    section: 1,
+    priority: 100,
+    trigger: { phase: 'matchup_strats', condition: (g) => g.quarter === 1 && g.section === 1 && step(g) === 3 },
+  },
+  {
+    id: 's1_place_indicators',
+    text: placementIndicators,
+    detail: placementIndicatorsDetail,
+    section: 1,
+    priority: 90,
+    // A's answering turns: step 3 (row 2) and step 7 (row 4).
+    trigger: { phase: 'matchup_strats', condition: (g) => g.quarter === 1 && g.section === 1 && (step(g) === 3 || step(g) === 7) },
+  },
+
+  // Matchup card window — the switch, and why
+  {
+    id: 's1_matchup_window',
+    text: screenRollText,
+    detail: "Play it with ▶ on the card, then pick the two players. The coach can answer with Go Under, Fight Over or Veer Switch — each cancels the switch for a price. Playing a card hands the turn over; two passes in a row close the window.",
+    highlight: '[data-card-id="high_screen_roll"]',
+    section: 1,
+    priority: 100,
+    trigger: { phase: 'matchup_strats', condition: (g) => g.quarter === 1 && g.section === 1 && step(g) >= 10 && (g.matchupPasses || 0) === 0 },
   },
 
   // Scoring

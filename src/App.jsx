@@ -41,13 +41,19 @@ const AUTH_TABS = [
 ];
 
 function AppInner() {
-  const { user } = useAuth();
+  const { user, loading: authLoading, signIn } = useAuth();
   const [tab, setTab] = useState(user ? 'builder' : 'cards');
   const [teamA, setTeamA] = useState([]);
   const [teamB, setTeamB] = useState([]);
   const [collection, setCollection] = useState({});
   const [pvpGame, setPvpGame] = useState(null); // { roomCode, myRole }
   const [tutorialMode, setTutorialMode] = useState(false);
+  // THE RULES OVER A RUNNING TUTORIAL. The "?" on the board raises a help
+  // event that opens How to Play; with the tutorial rendered INSTEAD of the
+  // tabs, that click showed nothing (the user, 2026-09-08: "nothing happens
+  // when hovering over it or clicking"). While this is set the tutorial stays
+  // mounted behind How to Play, game intact, and its button brings you back.
+  const [rulesOverTutorial, setRulesOverTutorial] = useState(false);
   const [helpSection, setHelpSection] = useState(null);
   const playMounted = useRef(false);
   if (tab === 'play') playMounted.current = true;
@@ -88,6 +94,7 @@ function AppInner() {
     const handler = (e) => {
       setHelpSection(e.detail.section);
       setTab('howtoplay');
+      setRulesOverTutorial(true);   // a no-op outside the tutorial
     };
     window.addEventListener('showdown-help', handler);
     return () => window.removeEventListener('showdown-help', handler);
@@ -164,11 +171,27 @@ function AppInner() {
       <div className={styles.betaBanner}>
         NBA Showdown 2026 is in beta — cards and collections are still subject to change.
       </div>
+      {/* THE FIRST THING A GUEST NEEDS TO KNOW. The starter pack, the
+          collection, seasons and the roaming game all live on the account,
+          and the only way in is Google. The user (2026-09-08): "make sure
+          that new players know they have to sign in/up with google in order
+          to claim their starter pack." */}
+      {!user && !authLoading && (
+        <div className={styles.signInCta}>
+          <span>
+            New here? <strong>Sign in with Google</strong> to claim your free <strong>Starter Pack</strong> — 20 players, 30 strategy cards and Unethical Hoops. Everything you see signed out is a sandbox.
+          </span>
+          <button className={styles.signInCtaBtn} onClick={signIn}>Sign in with Google</button>
+        </div>
+      )}
 
       <main className={styles.main}>
-        {tutorialMode ? (
-          <TutorialGame onExit={() => { setTutorialMode(false); setTab('howtoplay'); }} />
-        ) : (
+        {tutorialMode && (
+          <div style={{ display: rulesOverTutorial ? 'none' : 'block' }}>
+            <TutorialGame onExit={() => { setTutorialMode(false); setRulesOverTutorial(false); setTab('howtoplay'); }} />
+          </div>
+        )}
+        {(!tutorialMode || rulesOverTutorial) && (
           <>
             {/* Keyed on `tab`, so switching replays the fade. THE PLAY TAB IS
                 NOT IN HERE: it is kept mounted behind a display toggle so a
@@ -181,7 +204,11 @@ function AppInner() {
             {tab === 'howtoplay' && (
               <HowToPlay
                 scrollToSection={helpSection}
-                onStartTutorial={() => { setTutorialMode(true); }}
+                tutorialRunning={tutorialMode}
+                onStartTutorial={() => {
+                  if (tutorialMode) { setRulesOverTutorial(false); return; }   // back to it
+                  setTutorialMode(true);
+                }}
               />
             )}
             {tab === 'builder' && (

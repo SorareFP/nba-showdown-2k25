@@ -6,8 +6,9 @@ import s from './TutorialOverlay.module.css';
  * Tutorial tooltip data format:
  * {
  *   id: string,              // unique tooltip ID
- *   text: string,            // main message
- *   detail: string|null,     // optional secondary text
+ *   text: string|fn,         // main message — or (game) => string, read every render
+ *   detail: string|fn|null,  // optional secondary text, same
+ *   highlight: string|null,  // CSS selector; matching elements glow above the dim
  *   anchor: string,          // CSS selector or element ID to anchor near
  *   position: 'top'|'bottom'|'left'|'right',
  *   trigger: {               // when to show this tooltip
@@ -38,14 +39,35 @@ export default function TutorialOverlay({ game, tooltips, onDismiss, onSkip }) {
     onDismiss?.(activeTooltip.id);
   };
 
+  // THE THING BEING TALKED ABOUT GLOWS. The dim sits at z-index 100 with
+  // pointer-events off; the class lifts the matched element above it and
+  // pulses its outline. Re-run on every render, since the element may not
+  // exist the moment the tooltip first matches (a card that is still being
+  // dealt), and cleaned up when the tooltip changes or goes.
+  const highlight = activeTooltip?.highlight ?? null;
+  useEffect(() => {
+    if (!highlight) return undefined;
+    const els = [...document.querySelectorAll(highlight)];
+    els.forEach(el => el.classList.add(s.highlight));
+    return () => els.forEach(el => el.classList.remove(s.highlight));
+  });
+
   if (!activeTooltip) return null;
+
+  // Text that reads the board says what the board says.
+  const read = v => {
+    if (typeof v !== 'function') return v;
+    try { return v(game); } catch { return null; }
+  };
+  const text = read(activeTooltip.text);
+  const detail = read(activeTooltip.detail);
 
   return (
     <>
       <div className={s.overlay} />
       <div className={`${s.tooltip} ${s[activeTooltip.position || 'bottom']}`}>
-        <div className={s.tooltipText}>{activeTooltip.text}</div>
-        {activeTooltip.detail && <div className={s.tooltipDetail}>{activeTooltip.detail}</div>}
+        <div className={s.tooltipText}>{text}</div>
+        {detail && <div className={s.tooltipDetail}>{detail}</div>}
         <div className={s.tooltipActions}>
           <button className={s.gotIt} onClick={handleDismiss}>Got it</button>
           <button className={s.skip} onClick={onSkip}>Skip Tutorial</button>

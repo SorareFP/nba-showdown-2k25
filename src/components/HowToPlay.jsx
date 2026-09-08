@@ -39,7 +39,7 @@ function AccordionSection({ id, title, open, onToggle, children }) {
   );
 }
 
-export default function HowToPlay({ scrollToSection, onStartTutorial }) {
+export default function HowToPlay({ scrollToSection, onStartTutorial, tutorialRunning = false }) {
   const [openSections, setOpenSections] = useState(new Set());
 
   // Deep-link: scroll to and open a specific section
@@ -71,12 +71,14 @@ export default function HowToPlay({ scrollToSection, onStartTutorial }) {
         <p className={s.heroSub}>NBA Showdown 2026 — D20 Basketball Card Game</p>
         <div className={s.tutorialCard}>
           <div className={s.tutorialInfo}>
-            <h2>Interactive Tutorial</h2>
-            <p>Learn by playing a guided quarter against the coach. Covers the placement draft, the card windows, rolling, fatigue and substitutions.</p>
-            <span className={s.tutorialTime}>~12–15 minutes</span>
+            <h2>{tutorialRunning ? 'Your tutorial is waiting' : 'Interactive Tutorial'}</h2>
+            <p>{tutorialRunning
+              ? 'The game is paused exactly where you left it. Read what you came for, then head back.'
+              : 'Learn by playing a guided quarter against the coach. Covers the placement draft, the card windows, rolling, fatigue and substitutions.'}</p>
+            {!tutorialRunning && <span className={s.tutorialTime}>~12–15 minutes</span>}
           </div>
           <button className={s.tutorialBtn} onClick={onStartTutorial}>
-            Play Tutorial
+            {tutorialRunning ? '← Back to the tutorial' : 'Play Tutorial'}
           </button>
         </div>
       </div>
@@ -203,7 +205,7 @@ export default function HowToPlay({ scrollToSection, onStartTutorial }) {
 
         <AccordionSection {...sec('collection')}>
           <h4>Starting Out</h4>
-          <p>Your free <strong>Starter Pack</strong> holds 20 players and 30 strategy cards plus Unethical Hoops. Before you open it you pick a <strong>favourite team</strong>, NBA or WNBA, and the pack carries three commons and an uncommon from it. You can only choose once.</p>
+          <p><strong>Sign in with Google first</strong> — the Starter Pack, your collection, your seasons and a game in progress all live on the account; signed out, the game is a sandbox. Your free <strong>Starter Pack</strong> holds 20 players and 30 strategy cards plus Unethical Hoops. Before you open it you pick a <strong>favourite team</strong>, NBA or WNBA, and the pack carries three commons and an uncommon from it. You can only choose once.</p>
           <h4>Cards, Coins, Packs</h4>
           <ul>
             <li>Playing earns <strong>coins</strong>: wins, milestones and a daily first-win bonus. Coins buy packs, from the 100-coin Booster up to the 6,000-coin Legendary Chase. Special sets — Super Season, Rookie, Summer Standouts and their WNBA counterparts — appear in ordinary packs at reduced odds.</li>

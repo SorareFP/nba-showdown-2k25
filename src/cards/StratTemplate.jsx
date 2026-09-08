@@ -38,6 +38,62 @@ export function isCrunchFace(strat) {
   return CRUNCH_CARDS.includes(strat?.id);
 }
 
+/**
+ * THE TITLE FITS THE HEADER. The face is 825 wide with a 16px border and
+ * 24px of header padding a side, so a title has ~745px; at the 64px it was
+ * always set in, "OFFENSIVE BOARD MASTERY" and a dozen others ran off the
+ * card (the user, 2026-09-08: "a lot of strategy names are bleeding off").
+ * The advance is estimated per character for the heavy italic uppercase —
+ * conservative, so a name that fits by the estimate fits on the face — and
+ * the size floors at 36px, which is still the biggest thing on the card.
+ */
+export const TITLE_MAX_PX = 64;
+export const TITLE_MIN_PX = 36;
+const TITLE_AVAILABLE_PX = 745;
+const TITLE_LETTER_SPACING = 1;
+const TITLE_FONT = 'italic 800 64px Tomorrow, "Arial Narrow", Arial, sans-serif';
+
+/**
+ * Per-character width in ems for Tomorrow 800 italic, uppercase — the
+ * fallback where no canvas exists (tests, the server). Calibrated against
+ * the real font on 2026-09-08: the measured "OFFENSIVE BOARD MASTERY" is
+ * 996px at 64px, and this puts it at 1,002.
+ */
+function titleAdvanceUnits(name) {
+  let units = 0;
+  for (const ch of String(name ?? '').toUpperCase()) {
+    if (ch === ' ') units += 0.3;
+    else if ('IJL1!'.includes(ch)) units += 0.37;
+    else if ('MW'.includes(ch)) units += 0.9;
+    else if (ch === '&') units += 0.76;
+    else if (/[A-Z0-9]/.test(ch)) units += 0.7;
+    else units += 0.44;   // hyphens, apostrophes, punctuation
+  }
+  return units;
+}
+
+let measureCtx = null;
+/** The title's width at 64px, measured in the real font when the page has it. */
+function titleWidthAt64(name) {
+  const text = String(name ?? '').toUpperCase();
+  try {
+    if (typeof document !== 'undefined' && document.fonts?.check?.(TITLE_FONT)) {
+      if (!measureCtx) measureCtx = document.createElement('canvas').getContext('2d');
+      measureCtx.font = TITLE_FONT;
+      if ('letterSpacing' in measureCtx) measureCtx.letterSpacing = `${TITLE_LETTER_SPACING}px`;
+      const w = measureCtx.measureText(text).width;
+      if (w > 0) return w;
+    }
+  } catch { /* fall through to the estimate */ }
+  return titleAdvanceUnits(name) * 64 + text.length * TITLE_LETTER_SPACING;
+}
+
+export function titleFontSize(name) {
+  const w64 = titleWidthAt64(name);
+  const fitted = 64 * TITLE_AVAILABLE_PX / Math.max(1, w64);
+  return Math.floor(Math.min(TITLE_MAX_PX, Math.max(TITLE_MIN_PX, fitted)));
+}
+
 export function phaseLine(phase) {
   return PHASE_LINES[phase] ?? 'Play during the game.';
 }
@@ -130,7 +186,7 @@ export default function StratTemplate({
       style={{ width: STRAT_CARD_WIDTH, height: STRAT_CARD_HEIGHT }}
     >
       <div className={styles.header}>
-        <div className={styles.title}>{s.name}</div>
+        <div className={styles.title} style={{ fontSize: titleFontSize(s.name) }}>{s.name}</div>
         <div className={styles.titleRule} style={{ background: s.color ?? '#16305e' }} />
       </div>
 

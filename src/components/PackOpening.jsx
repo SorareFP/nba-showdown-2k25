@@ -136,6 +136,11 @@ export default function PackOpening({ cards, coins = null, onDone, onSaveRest = 
       const pa = a.packIndex ?? 0;
       const pb = b.packIndex ?? 0;
       if (pa !== pb) return pa - pb;
+      // THE SIGN-UP CARD TURNS OVER FIRST. Unethical Hoops is the gift the
+      // welcome pop-up promised; it opens the starter (the user, 2026-09-08).
+      const promoA = a.type === 'strat' && Boolean(a.card?.promo);
+      const promoB = b.type === 'strat' && Boolean(b.card?.promo);
+      if (promoA !== promoB) return promoA ? -1 : 1;
       if (a.type !== b.type) return a.type === 'strat' ? -1 : 1;
       return revealRank(a.rarity) - revealRank(b.rarity);
     });

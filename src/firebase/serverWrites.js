@@ -120,6 +120,7 @@ const server = {
   claimSeasonReward: (uid, seasonId) => call('claimSeasonReward', { seasonId }),
   setFavoriteTeam: (uid, team) => call('setFavoriteTeam', { team }),
   collectCard: (uid, cardKey) => call('collectCard', { cardKey }),
+  collectAllCards: () => call('collectAllCards', {}),
   devResetAccount: () => call('devResetAccount', {}),
   devGrantCoins: (uid, amount) => call('devGrantCoins', { amount }),
 };
@@ -224,6 +225,8 @@ const direct = {
    * is the live one. Gated in the component to dev builds and the game's own
    * account; the server route is gated again server-side.
    */
+  /** Bulk collect has no direct route: one card at a time, through collectCardDirect. */
+  async collectAllCards() { throw new Error('Collect all needs the server route'); },
   /** Dev coins on the direct route: the old client write, which the rules will refuse. */
   async devGrantCoins(uid, amount) {
     await addCoins(uid, amount);
@@ -298,5 +301,6 @@ export const setFavoriteTeam = (uid, team) => impl.setFavoriteTeam(uid, team);
 export const collectCard = (uid, cardKey) => impl.collectCard(uid, cardKey);
 /** DEV ONLY. Wipes the caller's collection, ledger and wallet. */
 export const devResetAccount = uid => impl.devResetAccount(uid);
+export const collectAllCards = uid => impl.collectAllCards(uid);
 /** Server only — there is no honest direct route to coins. */
 export const devGrantCoins = (uid, amount) => impl.devGrantCoins(uid, amount);

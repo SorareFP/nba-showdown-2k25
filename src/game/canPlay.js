@@ -2,7 +2,7 @@
 // Returns { canPlay: bool, reason: string }
 
 import { CRUNCH_CARDS } from './strats.js';
-import { getTeam, getOpp, getPS, getFatigue, calcAdv, burnedSlots } from './engine.js';
+import { getTeam, getOpp, getPS, getFatigue, calcAdv, burnedSlots, satOutLast } from './engine.js';
 
 const ok = (r = '') => ({ canPlay: true, reason: r });
 const no = (r) => ({ canPlay: false, reason: r });
@@ -221,8 +221,8 @@ export function canPlayCard(g, teamKey, cardId) {
       return ok('All five +2/+2 on defense');
     }
     if (cardId === 'defensive_anchor') {
-      if (!myT.starters.some(p => (p?.defBoost || 0) >= 3)) return no('Need a defender with a Defensive Bonus of +3');
-      return ok('His man gets no positive matchup bonus');
+      if (!myT.starters.some(p => (p?.defBoost || 0) >= 1)) return no('Need a defender with a Defensive Bonus');
+      return ok('Their Defensive Bonus counts double this section');
     }
     if (cardId === 'swarming_defense') return ok('Their highest-paid player may roll twice, keep lower');
 
@@ -253,20 +253,9 @@ export function canPlayCard(g, teamKey, cardId) {
 
     if (cardId === 'defensive_stopper') {
       if (g.quarter === 1 && g.section === 1) return no('Cannot play in the first segment — no one has sat out yet');
-      // Must target a player currently in starters who was BENCHED last segment
-      const hasBenchedStarter = myT.starters.some(p => {
-        const ps = getPS(g, teamKey, p.id);
-        // If they played last segment their minutes would be > 0 from prior sections
-        // A player who sat out last segment had their minutes reduced by 8 in clearBenchedMarkers
-        // Simple check: they must be in prevBenched tracking or have low minutes relative to sections played
-        return (ps?.wasBenched);
-      });
-      // Fallback: just check if any starter has 0 minutes (meaning they sat last section)
-      const hasFreshStarter = myT.starters.some(p => {
-        const ps = getPS(g, teamKey, p.id);
-        return (ps?.minutes || 0) === 0 && !(g.quarter === 1 && g.section === 1);
-      });
-      if (!hasFreshStarter) return no('Need a starter who was benched last segment (0 minutes)');
+      // A starter who SAT OUT last segment — the flag the engine writes at
+      // every section end, not "zero minutes", which halftime hands to all.
+      if (!myT.starters.some(p => satOutLast(g, teamKey, p))) return no('Need a starter who was benched last segment');
       return ok();
     }
   }

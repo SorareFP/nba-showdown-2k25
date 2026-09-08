@@ -54,7 +54,7 @@ const SET_LABELS = {
   'wnba-team-rewards': 'WNBA Team Rewards',
 };
 
-export default function MyCollection({ collection, onBurn, onList, onCollect }) {
+export default function MyCollection({ collection, onBurn, onList, onCollect, onCollectAll = null, collectableCount = 0 }) {
   const [typeFilter, setTypeFilter] = useState('all');
   const [rarityFilter, setRarityFilter] = useState('all');
   const [setFilter, setSetFilter] = useState('ALL');
@@ -138,6 +138,15 @@ export default function MyCollection({ collection, onBurn, onList, onCollect }) 
     <div className={styles.wrap}>
       <div className={styles.statsBar}>
         <span>{filtered.length} shown · {totalOwned} cards owned</span>
+        {onCollectAll && collectableCount > 0 && (
+          <button
+            onClick={onCollectAll}
+            style={{ marginLeft: 'auto', background: 'var(--green, #16a34a)', color: '#fff', border: 'none', borderRadius: 6, padding: '5px 12px', fontSize: 12, fontWeight: 700, cursor: 'pointer' }}
+            title="One spare of every uncollected player card goes into your collection"
+          >
+            Collect all ({collectableCount})
+          </button>
+        )}
       </div>
 
       <div className={styles.filters}>

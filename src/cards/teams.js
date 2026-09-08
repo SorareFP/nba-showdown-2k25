@@ -516,7 +516,15 @@ export const WNBA_HISTORICAL_TEAMS = {
   // CLEVELAND SIRENS — the incoming expansion team — and not the Rockers, who
   // folded in 2003. Pointing this row at it would print the wrong franchise's
   // mark on a card from twenty-five years earlier.
-  CLE:  { name: 'Rockers',      city: 'Cleveland',    primary: '#010101', secondary: '#009FDF', logo: '/logos/WNBA/CLE97.png', league: 'WNBA', era: '1997-2003', folded: true }, // Black, Blue — the 1997 mark (the user, 2026-09-06); CLE.png is still the Sirens
+  CLE:  { name: 'Rockers',      city: 'Cleveland',    primary: '#010101', secondary: '#009FDF', logo: '/logos/WNBA/CLE97.png', league: 'WNBA', era: '1997-2003', folded: true,
+          // THE SIRENS — Cleveland's 2028 expansion team, the one CLE.png belongs
+          // to — stand for the Rockers in the favourite-team picker (the user,
+          // 2026-09-08: "swap the Rockers for the Sirens"); the cards behind the
+          // choice are still the Rockers' legends. Inline rather than a row: the
+          // WNBA era table has no Cleveland entry, so a 1998 face resolves
+          // straight to whatever `CLE` names, and every historical row must be
+          // one an era can produce (teams.test.js). Colours unverified.
+          successor: { name: 'Sirens', city: 'Cleveland', primary: '#0B1F3A', secondary: '#7FD1E6', logo: '/logos/WNBA/CLE.png', era: '2028-' } },
   CHA:  { name: 'Sting',        city: 'Charlotte',    primary: '#00778B', secondary: '#280071', logo: '/logos/WNBA/CHA97.png', league: 'WNBA', era: '1997-2003', folded: true }, // Teal, Purple — 1997 mark (the user, 2026-09-06)
   CHA2: { name: 'Sting',        city: 'Charlotte',    primary: '#F9423A', secondary: '#1B365D', logo: '/logos/WNBA/CHA04.png', league: 'WNBA', era: '2004-2006', folded: true }, // Orange, Blue — 2004 mark (the user, 2026-09-06)
   SAC:  { name: 'Monarchs',     city: 'Sacramento',   primary: '#753BBD', secondary: '#010101', logo: '/logos/WNBA/SAC97.png', league: 'WNBA', era: '1997-2009', folded: true }, // Purple, Black — 1997 mark (the user, 2026-09-06)

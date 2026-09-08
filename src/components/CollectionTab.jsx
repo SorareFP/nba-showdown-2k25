@@ -7,7 +7,7 @@ import { loadCollection, getUserData, loadClaims, addCoins, readSupply, updateUs
 // collection.js or market.js directly would bypass USE_CLOUD_FUNCTIONS, which
 // is exactly how the first version of the server rollout was wired to nothing.
 import {
-  openPack, listCard, burnCard, claimGoal, devResetAccount, devGrantCoins, USE_CLOUD_FUNCTIONS, collectCard,
+  openPack, listCard, burnCard, claimGoal, devResetAccount, devGrantCoins, USE_CLOUD_FUNCTIONS, collectCard, collectAllCards,
   setFavoriteTeam } from '../firebase/serverWrites.js';
 import { CARD_MAP } from '../game/cards.js';
 import { STRAT_MAP } from '../game/strats.js';
@@ -266,6 +266,24 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange }) {
     try {
       await collectCard(user.uid, cardKey);
       setToast(`${CARD_MAP[cardKey]?.name ?? cardKey} is in your collection.`);
+      await refresh();
+      onCollectionChange?.();
+    } catch (e) {
+      setToast(e.message);
+    } finally {
+      setBusyCard(null);
+    }
+  };
+
+  // Every collectable card at once — see collectAllCards on the server.
+  const handleCollectAll = async () => {
+    const n = collectableKeys(collection).size;
+    if (!n) return;
+    if (!await ask({ title: `Collect all ${n}?`, body: 'One spare of every uncollected player card goes into your collection. Collected copies cannot be sold or burned.', confirmLabel: `Collect ${n}` })) return;
+    setBusyCard('all');
+    try {
+      const r = await collectAllCards(user.uid);
+      setToast(`${r.collected} card${r.collected === 1 ? '' : 's'} collected.`);
       await refresh();
       onCollectionChange?.();
     } catch (e) {
@@ -568,7 +586,7 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange }) {
 
       {/* ── My Collection ── */}
       {view === 'collection' && (
-        <MyCollection collection={collection} onBurn={handleBurn} onList={handleList} onCollect={handleCollect} />
+        <MyCollection collection={collection} onBurn={handleBurn} onList={handleList} onCollect={handleCollect} onCollectAll={handleCollectAll} collectableCount={collectable} />
       )}
 
       {/* ── Collections (the goal ladder) ── */}

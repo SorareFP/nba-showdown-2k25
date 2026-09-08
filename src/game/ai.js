@@ -3,7 +3,7 @@
 // Pure functions: takes game state + team key, returns an action object.
 // No React, no side effects. Used by tutorial, solo mode, sim-to-end.
 
-import { getTeam, getOpp, getPS, calcAdv, getFatigue, fatigueForMinutes, restMinutes, SPEND_COSTS, clutchAvailable, clutchEligible, burnedSlots } from './engine.js';
+import { getTeam, getOpp, getPS, calcAdv, getFatigue, fatigueForMinutes, restMinutes, SPEND_COSTS, clutchAvailable, clutchEligible, burnedSlots, satOutLast } from './engine.js';
 import { lookupChart } from './cards.js';
 import { canPlayCard, helpTargets } from './canPlay.js';
 import { getStrat, STRATS } from './strats.js';
@@ -533,10 +533,7 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
     }
 
     case 'defensive_stopper': {
-      const freshIdx = starters.findIndex(p => {
-        const ps = getPS(game, teamKey, p.id);
-        return (ps?.minutes || 0) === 0;
-      });
+      const freshIdx = starters.findIndex(p => satOutLast(game, teamKey, p));
       return { playerIdx: freshIdx >= 0 ? freshIdx : 0 };
     }
 
@@ -871,7 +868,7 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
       // The anchor with the biggest bonus, guarding the attacker with the
       // largest positive matchup bonus if there is one.
       const guards = game.offMatchups?.[oppKey] || [];
-      const cand = starters.map((p, i) => ({ p, i })).filter(({ p }) => (p?.defBoost || 0) >= 3);
+      const cand = starters.map((p, i) => ({ p, i })).filter(({ p }) => (p?.defBoost || 0) >= 1);
       const scored = cand.map(({ p, i }) => {
         const offSlot = guards.indexOf(i);
         const off = oppT.starters[offSlot];

@@ -16,6 +16,7 @@ import { useMemo, useState } from 'react';
 import { PACK_TYPES, CONFERENCES, DIVISIONS } from '../game/packEngine.js';
 import { TEAM_CODES } from '../game/collections.js';
 import { getTeam } from '../cards/teams.js';
+import { useDialogs } from '../ui/dialogs.jsx';
 import styles from './PackShop.module.css';
 
 /** Hand-written copy, keyed by pack id. Grouping is the editorial part.
@@ -69,12 +70,25 @@ export default function PackShop({ currency, onBuyPack }) {
 
   const packs = useMemo(shopPacks, []);
   const coins = currency ?? 0;
+  const { ask } = useDialogs();
 
-  const buy = pack => {
+  // A CONFIRM BEFORE THE COINS MOVE (the user, 2026-09-08): the buy is a
+  // server call that debits on the spot, so a slip of the finger was a
+  // pack. Free packs skip it.
+  const buy = async pack => {
     const opts = {};
     if (pack.pick === 'conference') opts.conference = conf;
     if (pack.pick === 'division') opts.division = div;
     if (pack.pick === 'team') opts.team = team;
+    if (pack.def.price > 0) {
+      const detail = pack.pick === 'conference' ? ` (${conf})` : pack.pick === 'division' ? ` (${div})` : pack.pick === 'team' ? ` (${getTeam(team)?.name ?? team})` : '';
+      const yes = await ask({
+        title: `Buy ${pack.def.name}${detail}?`,
+        body: `${pack.def.price.toLocaleString()} coins. You have ${coins.toLocaleString()}.`,
+        confirmLabel: `Buy for ${pack.def.price.toLocaleString()}`,
+      });
+      if (!yes) return;
+    }
     onBuyPack(pack.key, opts);
   };
 

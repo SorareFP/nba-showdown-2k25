@@ -192,10 +192,11 @@ export function roll20() {
 //   - tempDefEff: { [defSlot]: { speedBoost, powerBoost } } from Defensive Stopper etc.
 export function calcAdv(off, def, tempEff = {}, idx = 0, tempDefEff = null, defIdx = null) {
   // Defensive temp boosts (e.g. Defensive Stopper +5/+5)
-  let defSpeedExtra = 0, defPowerExtra = 0;
+  let defSpeedExtra = 0, defPowerExtra = 0, dbExtra = 0;
   if (tempDefEff && defIdx !== null && tempDefEff[defIdx]) {
     defSpeedExtra = tempDefEff[defIdx].speedBoost || 0;
     defPowerExtra = tempDefEff[defIdx].powerBoost || 0;
+    dbExtra = tempDefEff[defIdx].dbExtra || 0;   // Defensive Anchor: the bonus counts double
   }
 
   // A NEGATIVE Def Boost is worn by the DEFENDER rather than handed to the
@@ -215,7 +216,7 @@ export function calcAdv(off, def, tempEff = {}, idx = 0, tempDefEff = null, defI
   const rawPower = off.power - defPower + (tempEff['p' + idx] || 0);
   // A POSITIVE Def Boost keeps its original job: it eats into an advantage the
   // attacker already has and never manufactures a penalty out of a standoff.
-  const db = Math.max(0, def.defBoost || 0);
+  const db = Math.max(0, (def.defBoost || 0) + dbExtra);
 
   if (rawSpeed <= 0 && rawPower <= 0) {
     const rollBonus = Math.max(rawSpeed, rawPower);
@@ -257,6 +258,35 @@ export function fatigueForMinutes(min) {
  * everything.
  */
 export const REST_RECOVERY = 4;
+
+/**
+ * Did this player sit out the previous section? The flag is written at every
+ * section end; a save from before it existed falls back to the old test.
+ */
+export function satOutLast(g, teamKey, player) {
+  const ps = player ? getPS(g, teamKey, player.id) : null;
+  if (!ps) return false;
+  if (ps.wasBenched != null) return Boolean(ps.wasBenched);
+  return (ps.minutes || 0) === 0 && !(g.quarter === 1 && g.section === 1);
+}
+
+/**
+ * PUT A CARD BACK. A hand card goes to the BOTTOM of the deck (index 0 —
+ * drawCards pops from the end), any time, at no cost in turns: the hand
+ * refills to seven at the section end as ever. The user (2026-09-08): "I
+ * should be able to discard strategy cards and return them into my deck at
+ * any point." A played card stays played.
+ */
+export function returnCardToDeck(g, teamKey, handIdx) {
+  const ng = deepClone(g);
+  const t = getTeam(ng, teamKey);
+  if (!t?.hand || handIdx < 0 || handIdx >= t.hand.length) return g;
+  const [id] = t.hand.splice(handIdx, 1);
+  t.deck = [id, ...(t.deck || [])];
+  const name = getStrat(id)?.name ?? id;
+  ng.log = [...ng.log, { team: teamKey, msg: `${t.name} returns ${name} to the bottom of the deck` }];
+  return ng;
+}
 
 /** Minutes left on the tracker after one section on the bench, floored at zero. */
 export function restMinutes(min) {
@@ -324,7 +354,9 @@ export function matchupContest(g, teamKey, idx, type) {
   if (type === 'ft') return 0;
   const defIdx = (g.offMatchups?.[teamKey] || [])[idx] ?? idx;
   const def = getOpp(g, teamKey).starters?.[defIdx];
-  const base = Math.max(0, def?.defBoost || 0);
+  const defKey = teamKey === 'A' ? 'B' : 'A';
+  const extra = g.tempDefEff?.[defKey]?.[defIdx]?.dbExtra || 0;   // Defensive Anchor
+  const base = Math.max(0, (def?.defBoost || 0) + extra);
   // Extra Defensive Intensity (recovered original rules, Section 9): in
   // Crunch Time, a defender WITH a Defensive Bonus contests one harder.
   if (base > 0 && g.crunch?.active) return base + 1;
@@ -745,6 +777,9 @@ export function doRoll(g, teamKey, idx, opts = {}) {
   const te = ng.tempEff[teamKey] || {};
   // Defensive Anchor: whoever the anchored defender guards gets no POSITIVE
   // matchup bonus this period (a penalty still bites).
+  // HELP DEFENDER: the helped defender's man gets no POSITIVE bonus this
+  // roll. (Defensive Anchor set this flag too until 2026-09-08; it doubles the
+  // defender's bonus inside calcAdv now — see execCard.)
   if (bonus > 0 && ng.tempDefEff?.[teamKey === 'A' ? 'B' : 'A']?.[defIdx]?.anchor) bonus = 0;
   if (te['r' + idx]) bonus += te['r' + idx];
 
@@ -1040,6 +1075,11 @@ function clearBenchedMarkers(g, prevStarters) {
     const t = getTeam(ng, k);
     const wasPlaying = prevStarters[k] || [];
     t.stats.forEach(ps => {
+      // WHO SAT OUT, recorded for everyone at every section end. Defensive
+      // Stopper reads it; it used to read "zero minutes", and halftime zeroes
+      // the whole roster (the user, 2026-09-08: the card "treats players who
+      // were refreshed at halftime like they were benched").
+      ps.wasBenched = !wasPlaying.includes(ps.id);
       if (!wasPlaying.includes(ps.id)) {
         // Was on the bench last segment — recover fatigue and reset markers
         ps.hot = 0; ps.cold = 0;

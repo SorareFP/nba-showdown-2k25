@@ -199,7 +199,7 @@ export default function HowToPlay({ scrollToSection, onStartTutorial, tutorialRu
             <li><strong>The Timeout:</strong> one per team per game, Crunch Time only. It pauses play, lets you fully re-set your defensive matchups, and opens the window for the <strong>timeout riders</strong>: ATO Masterpiece (a chosen player takes a check at +2 out of the huddle), Fresh Legs (two players shed 4 minutes), Ice the Hot Hand (strip an opponent's hot markers), Reset (clear your own cold markers).</li>
             <li><strong>Desperation Press:</strong> trailing only — the next opposing top-tier roll must be re-rolled.</li>
             <li><strong>Second Closer:</strong> a second Clutch Possession, for a different player.</li>
-            <li><strong>Unethical Hoops:</strong> the card every new account starts with. A player of yours with a Speed or Power advantage draws the foul: two free-throw checks at +4.</li>
+            <li><strong>Unethical Hoops:</strong> the card every new account starts with. A player of yours with a Speed or Power advantage draws the foul: four free-throw checks at +4.</li>
           </ul>
         </AccordionSection>
 

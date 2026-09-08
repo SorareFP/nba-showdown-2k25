@@ -697,6 +697,43 @@ export const devGrantCoins = onCall({ region: 'us-central1' }, async request => 
  * Collect on it writes the flag and changes nothing else. Idempotent.
  */
 /**
+ * COLLECT EVERYTHING COLLECTABLE in one go: for every player card the caller
+ * owns a spare of and has not collected, one spare becomes `collected` and
+ * the index says so — the same two writes collectCard makes, batched. Cards
+ * on the market are not spares and are left alone; strategy cards are not
+ * collected (the ladder does not count them). The user (2026-09-08): "bulk
+ * collection actions like checkboxes or a 'collect all uncollected' button."
+ */
+export const collectAllCards = onCall({ region: 'us-central1' }, async request => {
+  const uid = requireAuth(request);
+  const [spares, index] = await Promise.all([
+    db.collection(`users/${uid}/copies`).where('state', '==', SPARE).get(),
+    db.collection(`users/${uid}/collection`).get(),
+  ]);
+  const skip = new Set();
+  index.forEach(d => { const x = d.data(); if (x.collected || x.type === 'strat') skip.add(d.id); });
+  const pick = new Map();
+  spares.forEach(d => {
+    const key = d.data()?.cardKey;
+    if (!key || skip.has(key) || pick.has(key)) return;
+    const card = getCardByKey(key);
+    if (!card) return;
+    pick.set(key, d.ref);
+  });
+  const entries = [...pick.entries()];
+  const now = FieldValue.serverTimestamp();
+  for (let i = 0; i < entries.length; i += 200) {
+    const batch = db.batch();
+    for (const [key, ref] of entries.slice(i, i + 200)) {
+      batch.update(ref, { state: COLLECTED, collectedAt: now });
+      batch.set(db.doc(`users/${uid}/collection/${key}`), { collected: true, collectedAt: now }, { merge: true });
+    }
+    await batch.commit();
+  }
+  return { collected: entries.length };
+});
+
+/**
  * The franchises a player may actually name, DERIVED from the cards rather
  * than listed — so a set that adds or retires a team cannot leave this behind.
  * Both leagues, because the starter's pool spans both.

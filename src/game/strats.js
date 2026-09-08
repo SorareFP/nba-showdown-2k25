@@ -130,7 +130,7 @@ export const STRATS = [
   { id:'defensive_identity',  name:'Defensive Identity', phase:'matchup',  side:'def', copies:2, locked:false, color:'#14532D', rarity:'rare',
     desc:'If three or more of your players have a Defensive Bonus, all five get +2 Speed and +2 Power on defense this period.' },
   { id:'defensive_anchor',    name:'Defensive Anchor',   phase:'matchup',  side:'def', copies:2, locked:false, color:'#1E3A8A', rarity:'uncommon',
-    desc:'Choose a defender with a Defensive Bonus of +3 or more: the player they guard gets no positive roll bonus from Speed or Power this period.' },
+    desc:'Choose a defender with a Defensive Bonus: it counts double this section — against the player they guard, and on every shot check they contest.' },
   { id:'swarming_defense',    name:'Swarming Defense',   phase:'matchup',  side:'def', copies:1, locked:false, color:'#1E40AF', rarity:'uncommon',
     desc:'Target the opposing player with the highest salary and roll a D20: on 11+ they roll their scoring twice this period and keep the lower.' },
   // Scoring phase — offense
@@ -164,7 +164,7 @@ export const STRATS = [
     // The sponsor line on the face: a small PRESENTED BY over the logo in
     // public/logos/, beside the team logos. Only this card has one today.
     presentedBy: { name: 'Underdog', logo: 'underdog.png' },
-    desc:'CRUNCH TIME: a player of yours with a Speed or Power advantage draws the foul — two free-throw checks at +4.' },
+    desc:'CRUNCH TIME: a player of yours with a Speed or Power advantage draws the foul — four free-throw checks at +4.' },
   { id:'run_the_floor',       name:'Run the Floor',      phase:'scoring',  side:'off', copies:1, locked:false, color:'#0D9488', rarity:'legendary',
     desc:'With three players at Speed 12+ on the floor: two Paint Shot Checks at +2, allocated by the defence, +1 Assist each. Stays in play until one of them is benched.' },
   { id:'twin_towers',         name:'Twin Towers',        phase:'scoring',  side:'off', copies:1, locked:false, color:'#7C2D12', rarity:'legendary',

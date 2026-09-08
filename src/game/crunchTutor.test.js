@@ -81,18 +81,18 @@ describe('Unethical Hoops', () => {
     expect(canPlayCard(g, 'A', 'unethical_hoops').canPlay).toBe(false);
   });
 
-  it('is two free throws at +4 for the chosen player, and they reach the box score', () => {
+  it('is four free throws at +4 for the chosen player, and they reach the box score', () => {
     const g = crunchGame();
     g.teamA.starters[0].speed = 13;
-    const spy = vi.spyOn(Math, 'random').mockReturnValue(0.99); // a 20, twice
+    const spy = vi.spyOn(Math, 'random').mockReturnValue(0.99); // a 20, four times
     const { game: g2, ok } = execCard(g, 'A', 'unethical_hoops', { playerIdx: 0 });
     spy.mockRestore();
     expect(ok).toBe(true);
-    expect(g2.teamA.score - g.teamA.score).toBe(2);
-    expect(getPS(g2, 'A', 'a0').pts).toBe(2);
+    expect(g2.teamA.score - g.teamA.score).toBe(4);
+    expect(getPS(g2, 'A', 'a0').pts).toBe(4);
     const lines = g2.log.filter(l => /Unethical Hoops/.test(l.msg));
-    expect(lines.length).toBeGreaterThanOrEqual(2);
-    expect(lines.some(l => /second free throw/.test(l.msg))).toBe(true);
+    expect(lines.length).toBeGreaterThanOrEqual(4);
+    expect(lines.some(l => /fourth free throw/.test(l.msg))).toBe(true);
     expect(lines.some(l => /\+4/.test(l.msg))).toBe(true);
   });
 

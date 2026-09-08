@@ -2,7 +2,7 @@
 // Pure function: takes game state + card + opts, returns new state
 // Never mutates — always returns a new object via deepClone
 
-import { handOverPriority, getTeam, getOpp, getPS, calcAdv, shotCheck, matchupContest, drawCards, deepClone, getFatigue, recordDefSwitch, burnedSlots, roll20, checkAssistDraw, standingEntry, CROWD_FAVORITE_PTS } from './engine.js';
+import { handOverPriority, getTeam, getOpp, getPS, calcAdv, shotCheck, matchupContest, drawCards, deepClone, getFatigue, recordDefSwitch, burnedSlots, roll20, checkAssistDraw, standingEntry, CROWD_FAVORITE_PTS, satOutLast } from './engine.js';
 import { helpTargets, canAnswerCheck } from './canPlay.js';
 import { lookupChart } from './cards.js';
 import { getStrat } from './strats.js';
@@ -171,6 +171,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
     }
 
     case 'defensive_stopper': {
+      if (!satOutLast(g, teamKey, player)) return fail(`${player?.name} did not sit out last segment`);
       if (!g.tempDefEff) g.tempDefEff = {};
       if (!g.tempDefEff[teamKey]) g.tempDefEff[teamKey] = {};
       g.tempDefEff[teamKey][idx] = { speedBoost: 5, powerBoost: 5 };
@@ -923,15 +924,22 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       break;
     }
     case 'defensive_anchor': {
-      if ((player?.defBoost || 0) < 3) return fail(`${player?.name} needs a Defensive Bonus of +3`);
+      // REWORKED 2026-09-08. It asked for a Defensive Bonus of +3, which eleven
+      // cards in the base set have, and then zeroed the attacker's bonus —
+      // a near-dead card with a binary payoff. Now any positive Defensive
+      // Bonus qualifies and it COUNTS DOUBLE this section: on the matchup
+      // (calcAdv) and on every shot check the anchor contests
+      // (matchupContest). A +1 becomes +2; a +3 becomes the old wall.
+      const db = player?.defBoost || 0;
+      if (db < 1) return fail(`${player?.name} needs a Defensive Bonus`);
       if (!g.tempDefEff) g.tempDefEff = {};
       if (!g.tempDefEff[teamKey]) g.tempDefEff[teamKey] = {};
       const cur = g.tempDefEff[teamKey][idx] || { speedBoost: 0, powerBoost: 0 };
-      g.tempDefEff[teamKey][idx] = { ...cur, anchor: true };
+      g.tempDefEff[teamKey][idx] = { ...cur, dbExtra: db };
       const oppKeyA = teamKey === 'A' ? 'B' : 'A';
       const guarded = (g.offMatchups[oppKeyA] || []).indexOf(idx);
       const who = guarded >= 0 ? oppT.starters[guarded]?.name : 'his man';
-      addLog(g, teamKey, `Defensive Anchor: ${player?.name} anchors — ${who} gets no positive matchup bonus this period`);
+      addLog(g, teamKey, `Defensive Anchor: ${player?.name} anchors on ${who} — Def +${db} counts double (+${db * 2}) this section`);
       break;
     }
     case 'swarming_defense': {
@@ -1079,7 +1087,12 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       announceCheck(g, {
         teamKey, playerIdx: idx, type: 'ft', bonus: 4,
         cardLabel: `Unethical Hoops: ${player?.name} draws the foul — first free throw`,
-        then: [{ playerIdx: idx, type: 'ft', bonus: 4, cardLabel: 'Unethical Hoops: second free throw' }],
+        // FOUR free throws (the user, 2026-09-08), each at +4.
+        then: [
+          { playerIdx: idx, type: 'ft', bonus: 4, cardLabel: 'Unethical Hoops: second free throw' },
+          { playerIdx: idx, type: 'ft', bonus: 4, cardLabel: 'Unethical Hoops: third free throw' },
+          { playerIdx: idx, type: 'ft', bonus: 4, cardLabel: 'Unethical Hoops: fourth free throw' },
+        ],
       });
       break;
     }

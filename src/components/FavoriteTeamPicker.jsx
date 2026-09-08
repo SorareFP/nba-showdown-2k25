@@ -31,7 +31,13 @@ import styles from './FavoriteTeamPicker.module.css';
 export function teamForOption(option) {
   const parsed = parseFavoriteTeam(option);
   if (!parsed) return null;
-  return getTeam(parsed.abbr, parsed.league === 'wnba' ? { league: 'WNBA' } : {});
+  const league = parsed.league === 'wnba' ? { league: 'WNBA' } : {};
+  const team = getTeam(parsed.abbr, league);
+  // A folded franchise with a successor shows as the successor — the
+  // Rockers' option reads "Cleveland Sirens" — while the cards it deals are
+  // still the folded team's legends (`legendsOf` says so under the name).
+  if (team?.successor) return { ...team, ...team.successor, folded: false, legendsOf: team };
+  return team;
 }
 
 /** The full name of a chosen option, for the places that only need to say it. */
@@ -111,7 +117,9 @@ export default function FavoriteTeamPicker({ onChoose, onCancel, busy = false, e
                       <span className={styles.teamName}>
                         <span className={styles.city}>{team.city}</span>
                         <span className={styles.nick}>{team.name}</span>
-                        {team.folded && <span className={styles.era}>{team.era}</span>}
+                        {team.legendsOf
+                          ? <span className={styles.era}>{team.legendsOf.name} legends · {team.legendsOf.era}</span>
+                          : team.folded && <span className={styles.era}>{team.era}</span>}
                       </span>
                     </button>
                   );

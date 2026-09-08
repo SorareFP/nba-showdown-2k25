@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { calcAdv, getTeam, getOpp, getPS, getFatigue, SNAKE, SPEND_COSTS, clutchAvailable, burnedSlots } from '../../game/engine.js';
+import { calcAdv, getTeam, getOpp, getPS, getFatigue, SNAKE, SPEND_COSTS, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck } from '../../game/engine.js';
 import { canPlayCard, myHouseTargets, fwdTargets, preRollTargets, helpTargets } from '../../game/canPlay.js';
 import { benchRest, passTurn } from '../../game/engine.js';
 import { getStrat } from '../../game/strats.js';
@@ -67,6 +67,9 @@ export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExec
   const openModal = (config) => new Promise(res => setModal({ ...config, resolve: res }));
   const closeModal = (val) => { const r = modal?.resolve; setModal(null); r?.(val); };
 
+  // A hand card back to the bottom of the deck — see returnCardToDeck.
+  const returnCard = (teamKey, handIdx) => setGame(returnCardToDeck(game, teamKey, handIdx));
+
   const handleExecCard = async (teamKey, cardId, baseOpts = {}) => {
     const opts = await buildOpts(game, teamKey, cardId, baseOpts, openModal, { toast, ask, defenceIsHuman });
     if (opts === null) return;
@@ -77,6 +80,14 @@ export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExec
     <div className={styles.wrap}>
       <PhaseBar game={game} setGame={setGame} onEndSection={onEndSection} onTimeout={onTimeout} onEndTimeout={onEndTimeout} pvpMode={pvpMode} myTeamKey={myTeamKey} isMyTurn={isMyTurn} draftSelectedCount={draftSelected.length} />
 
+      {/* THE ANNOUNCED CHECK, AT THE TOP. It sat below the hands and the
+          court, off the bottom of the screen on a laptop, and the other side
+          waited on a Resolve nobody could see (the user, 2026-09-08). Here it
+          is beside the scoreboard, and it sticks while the page scrolls. */}
+      {game.pendingShotCheck && (
+        <PendingBanner game={game} onResolve={onResolve} onExecCard={handleExecCard} />
+      )}
+
       {game.phase === 'draft' ? (
         <BlindPickPhase game={game} setGame={setGame} pvpMode={pvpMode} myTeamKey={myTeamKey}
           onDraftSubmit={onDraftSubmit} selected={draftSelected} setSelected={setDraftSelected} />
@@ -84,7 +95,7 @@ export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExec
         <div className={styles.courtLayout}>
           {/* Left hand panel: Team A's hand (or empty placeholder in PvP if I'm Team B) */}
           {(!pvpMode || myTeamKey === 'A')
-            ? <HandPanel game={game} teamKey="A" onExecCard={handleExecCard} pvpMode={pvpMode} isMyTurn={isMyTurn} />
+            ? <HandPanel game={game} teamKey="A" onExecCard={handleExecCard} onReturnCard={returnCard} pvpMode={pvpMode} isMyTurn={isMyTurn} />
             : <div className={styles.handPlaceholder} />
           }
 
@@ -106,15 +117,12 @@ export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExec
 
           {/* Right hand panel: Team B's hand (or empty placeholder in PvP if I'm Team A) */}
           {(!pvpMode || myTeamKey === 'B')
-            ? <HandPanel game={game} teamKey="B" onExecCard={handleExecCard} pvpMode={pvpMode} isMyTurn={isMyTurn} />
+            ? <HandPanel game={game} teamKey="B" onExecCard={handleExecCard} onReturnCard={returnCard} pvpMode={pvpMode} isMyTurn={isMyTurn} />
             : <div className={styles.handPlaceholder} />
           }
         </div>
       )}
 
-      {game.pendingShotCheck && (
-        <PendingBanner game={game} onResolve={onResolve} onExecCard={handleExecCard} />
-      )}
 
       {modal && <SelectModal modal={modal} game={game} onClose={closeModal} />}
     </div>
@@ -262,8 +270,8 @@ async function buildOpts(game, teamKey, cardId, base, openModal, ui = {}) {
         break;
       }
       case 'defensive_anchor': {
-        eligible = filterStarters(myT.starters, p => (p.defBoost || 0) >= 3);
-        label = 'Select your anchor (Defensive Bonus +3 or more)';
+        eligible = filterStarters(myT.starters, p => (p.defBoost || 0) >= 1);
+        label = 'Select your anchor — a defender with a Defensive Bonus (it counts double)';
         break;
       }
       case 'five_out': {
@@ -376,10 +384,7 @@ async function buildOpts(game, teamKey, cardId, base, openModal, ui = {}) {
         break;
       }
       case 'defensive_stopper': {
-        eligible = filterStarters(myT.starters, (p) => {
-          const ps = getPS(game, teamKey, p.id);
-          return (ps?.minutes || 0) === 0;
-        });
+        eligible = filterStarters(myT.starters, (p) => satOutLast(game, teamKey, p));
         label = 'Select player who was benched last segment';
         break;
       }
@@ -1352,6 +1357,12 @@ function BlindPickPhase({ game, setGame, pvpMode = false, myTeamKey = null, onDr
               <div className={styles.blindPickStats}>
                 S{p.speed} · P{p.power} · Line {p.shotLine}
               </div>
+              {/* Tonight so far — points, boards, dimes and plus-minus — so a
+                  lineup is picked on the game, not just the card (the user,
+                  2026-09-08). */}
+              <div className={styles.blindPickLine}>
+                {ps.pts || 0}p · {ps.reb || 0}r · {ps.ast || 0}a · <span style={{ color: (ps.pm ?? 0) > 0 ? 'var(--green)' : (ps.pm ?? 0) < 0 ? 'var(--red)' : 'inherit' }}>{(ps.pm ?? 0) > 0 ? '+' : ''}{ps.pm ?? 0}</span>
+              </div>
               <div className={styles.blindPickMeta}>
                 <span className={styles.blindPickSalary}>${p.salary}</span>
                 {boosts.length > 0 && <span className={styles.blindPickBoosts}>{boosts.join(' ')}</span>}
@@ -1704,6 +1715,8 @@ function PendingBanner({ game, onResolve, onExecCard }) {
   const defKey=psc.teamKey==='A'?'B':'A';
   const hasCloseOut=getTeam(game,defKey).hand.includes('close_out');
   const coPlay=hasCloseOut?canPlayCard(game,defKey,'close_out'):null;
+  const lsc=game.lastShotCheck;
+  const canChallenge=Boolean(lsc && lsc.teamKey===psc.teamKey && getTeam(game,defKey).hand.includes('coaches_challenge') && canPlayCard(game,defKey,'coaches_challenge').canPlay);
   return (
     <div className={styles.pendingBanner}>
       <div className={styles.pendingInfo}>
@@ -1713,13 +1726,24 @@ function PendingBanner({ game, onResolve, onExecCard }) {
       </div>
       <div className={styles.pendingActions}>
         {hasCloseOut&&coPlay?.canPlay&&<button className={styles.coBtn} onClick={()=>onExecCard(defKey,'close_out',{})}>Close Out −3</button>}
+        {/* COACH'S CHALLENGE ON THE CHECK THAT JUST LANDED. A card that takes
+            several checks in a row (Green Light) announces the next one the
+            moment the last resolves, and the challenge only ever reaches the
+            most recent — so the defence could never pick the one to re-roll
+            (the user, 2026-09-08). While the next check waits here, the
+            previous one is still the "last" and can be challenged. */}
+        {canChallenge && (
+          <button className={styles.coBtn} onClick={()=>onExecCard(defKey,'coaches_challenge',{})}>
+            Challenge {game.lastShotCheck?.cardLabel ?? 'the last check'}
+          </button>
+        )}
         <button className={styles.resolveBtn} onClick={onResolve}>▶ Resolve</button>
       </div>
     </div>
   );
 }
 
-function HandPanel({ game, teamKey, onExecCard, pvpMode = false, isMyTurn = true }) {
+function HandPanel({ game, teamKey, onExecCard, onReturnCard = null, pvpMode = false, isMyTurn = true }) {
   const [staged, setStaged] = useState(null);
   const { open } = useLightbox();
   const t = getTeam(game, teamKey);
@@ -1757,6 +1781,11 @@ function HandPanel({ game, teamKey, onExecCard, pvpMode = false, isMyTurn = true
                 <button className={styles.hcardIconBtn} onClick={() => open('strat', s)} title="View card">
                   👁
                 </button>
+                {onReturnCard && pvpCanPlay && !isStaged && (
+                  <button className={styles.hcardIconBtn} onClick={() => onReturnCard(teamKey, hi)} title="Return this card to the bottom of your deck">
+                    ↩
+                  </button>
+                )}
                 {canClick && !isStaged && (
                   <button className={styles.hcardIconBtn} onClick={() => setStaged(hi)} title="Play card"
                     style={{ color: '#4ADE80' }}>

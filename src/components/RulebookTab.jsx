@@ -274,7 +274,7 @@ export default function RulebookTab() {
           <li><strong>Fresh Legs</strong> (timeout rider): up to two chosen players each shed 4 minutes.</li>
           <li><strong>Ice the Hot Hand</strong> (timeout rider): strip all hot markers from one opposing player.</li>
           <li><strong>Reset</strong> (timeout rider): clear all cold markers from one of your players.</li>
-          <li><strong>Unethical Hoops</strong> (the sign-up card): a player of yours with a Speed or Power advantage draws the foul — two free-throw checks at +4.</li>
+          <li><strong>Unethical Hoops</strong> (the sign-up card): a player of yours with a Speed or Power advantage draws the foul — four free-throw checks at +4.</li>
         </ul>
       </Section>
 

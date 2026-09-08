@@ -163,15 +163,6 @@ export default function PackOpening({ cards, coins = null, onDone, onSaveRest = 
   const boxDone = allDone && lastPack;
   const currentCard = enriched[current];
 
-  // The best thing in the pack, for the header. Known up front — it is not a
-  // spoiler, because it does not say WHICH card, only that one is in there.
-  const best = useMemo(
-    () => enriched.reduce(
-      (top, c) => (revealRank(c.rarity) > revealRank(top) ? c.rarity : top),
-      RARITY_ORDER[0]
-    ),
-    [enriched]
-  );
 
   useEffect(() => {
     if (allDone) playComplete();

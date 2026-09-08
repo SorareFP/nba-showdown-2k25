@@ -110,6 +110,13 @@ service cloud.firestore {
       // client that rewrites its own season into a championship still cannot
       // claim the same one twice. See claimSeasonReward in functions/index.js.
       match /seasons/{seasonId} { allow read, write: if isSelf(uid); }
+
+      // The leagues this account is in — an index the server keeps so a list
+      // needs no query over the shared documents. Read only.
+      match /leagues/{leagueId} {
+        allow read: if isSelf(uid);
+        allow write: if false;
+      }
     }
 
     // Global circulating supply. WORLD-READABLE because every client needs it
@@ -124,6 +131,21 @@ service cloud.firestore {
     // written only by the server, so a listing cannot be conjured, repriced
     // after somebody commits to it, or deleted out from under a buyer.
     match /listings/{listingId} {
+      allow read: if request.auth != null;
+      allow write: if false;
+    }
+
+    // A SHARED LEAGUE — a tournament, or a season with more than one human.
+    // Readable by its members, written only by the server: entry fees and
+    // payouts move coins, results move standings, and both are verified there
+    // (a human-vs-human result is read from the PvP room, not taken from the
+    // client). The join code is a separate, signed-in-readable document so a
+    // player can find a league before being a member of it.
+    match /leagues/{leagueId} {
+      allow read: if request.auth != null && request.auth.uid in resource.data.members;
+      allow write: if false;
+    }
+    match /joinCodes/{code} {
       allow read: if request.auth != null;
       allow write: if false;
     }

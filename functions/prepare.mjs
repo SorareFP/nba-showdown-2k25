@@ -44,6 +44,12 @@ const COPY = [
   'src/game/collectionDifficulty.js',
   'src/game/coinRewards.js',
   'src/game/modes/prizes.js',
+  // A shared league's bookkeeping — the pure season core, the schedule and
+  // the bracket, and the league transitions — none of which touch the engine.
+  'src/game/modes/seasonCore.js',
+  'src/game/modes/schedule.js',
+  'src/game/modes/bracket.js',
+  'src/game/modes/league.js',
   'src/cards/teams.js',
   'src/cards/sets.js',
   'src/cards/playerId.js',

@@ -10,15 +10,15 @@ export const TUTORIAL_TOOLTIPS = [
   // Draft
   {
     id: 's1_draft_intro',
-    text: "Welcome to the draft! You and the coach place starters one at a time in the snake A-B-B-A-A-B-B-A-A-B. The row a player lands in is their matchup: the two players in a row guard each other all section.",
-    detail: "Look at each player's Speed, Power, and Shot Line. High Speed excels at perimeter play; high Power dominates inside. Low Shot Lines mean better shooters. When you place into a row the coach has already filled, the preview shows both sides of the pairing.",
+    text: "Welcome! First, pick your five starters from the ten on your roster and lock them in. The coach picks its five at the same time, and neither side sees the other's until both have locked.",
+    detail: "Look at each player's Speed, Power, and Shot Line. High Speed excels at perimeter play; high Power dominates inside. Low Shot Lines mean better shooters. Five sit out every section, so think about who rests.",
     section: 1,
     priority: 100,
     trigger: { phase: 'draft', condition: (g) => g.quarter === 1 && g.section === 1 && g.draft.step === 0 },
   },
   {
     id: 's1_draft_pick1',
-    text: "The coach answers each row. Lead a row with a player who does fine against anyone, and keep your best scorer to counter-pick a row the coach has already committed to.",
+    text: "Balance the five. Players with a Defensive Boost neutralise an opponent's edge without a card, and cheaper legs now keep your stars fresh for later.",
     detail: "Tip: Balance your lineup. Players with Defensive Boosts are valuable because they can neutralize opponent advantages without strategy cards. Budget players keep your stars rested for later.",
     section: 1,
     priority: 90,
@@ -28,8 +28,8 @@ export const TUTORIAL_TOOLTIPS = [
   // Matchup
   {
     id: 's1_matchup_intro',
-    text: "Matchup card window! Your defence is already set by the placement. Play a matchup card or pass. Playing hands the turn over; two passes in a row close the window.",
-    detail: "Green numbers mean your player has the edge, red means the defender does. Only a switching card (High Screen & Roll, Veer Switch, Switch Everything) can move a defender now.",
+    text: "Placement! You and the coach take turns placing your five in the snake A-B-B-A-A-B-B-A-A-B. The row a player lands in is their matchup: the two players in a row guard each other all section. Then the matchup card window: play a card or pass, and two passes in a row close it.",
+    detail: "Lead a row with a player who does fine against anyone; keep your best scorer to counter-pick a row the coach has already filled. Green numbers mean your player has the edge, red means the defender does. Only a switching card (High Screen & Roll, Veer Switch, Switch Everything) can move a defender afterwards.",
     section: 1,
     priority: 100,
     trigger: { phase: 'matchup_strats', condition: (g) => g.quarter === 1 && g.section === 1 && g.matchupPasses === 0 },

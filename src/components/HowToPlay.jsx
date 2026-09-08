@@ -12,7 +12,7 @@ import s from './HowToPlay.module.css';
 const SECTIONS = [
   { id: 'overview',   title: 'Overview & Winning' },
   { id: 'team',       title: 'Building Your Team' },
-  { id: 'draft',      title: 'The Draft Sets the Matchups' },
+  { id: 'draft',      title: 'Lineups, then Placement' },
   { id: 'matchup',    title: 'Matchup Card Window' },
   { id: 'scoring',    title: 'Scoring Window & Rolling' },
   { id: 'checks',     title: 'Shot Checks' },
@@ -85,7 +85,7 @@ export default function HowToPlay({ scrollToSection, onStartTutorial }) {
       <div className={s.rules}>
         <AccordionSection {...sec('overview')}>
           <p>NBA Showdown 2026 pits two managers against each other. Build a 10-player roster under the salary cap, then play <strong>4 quarters</strong> of <strong>3 four-minute sections</strong> each — 12 sections in all.</p>
-          <p>Every section runs the same way: a <strong>placement draft</strong> that decides who guards whom, a <strong>matchup card window</strong>, a <strong>scoring card window</strong>, then <strong>rolling</strong> — each of your five starters rolls a D20, modified by their matchup, fatigue, markers and cards, and reads the result off their scoring chart.</p>
+          <p>Every section runs the same way: a secret <strong>lineup pick</strong>, a <strong>placement snake</strong> that decides who guards whom, a <strong>matchup card window</strong>, a <strong>scoring card window</strong>, then <strong>rolling</strong> — each of your five starters rolls a D20, modified by their matchup, fatigue, markers and cards, and reads the result off their scoring chart.</p>
           <p>Most points after 12 sections wins. If the final section starts with the score within 20, it is <strong>Crunch Time</strong> and its own rules apply.</p>
         </AccordionSection>
 
@@ -103,15 +103,15 @@ export default function HowToPlay({ scrollToSection, onStartTutorial }) {
         </AccordionSection>
 
         <AccordionSection {...sec('draft')}>
-          <p>Each section opens with a <strong>snake draft</strong> in this order:</p>
+          <p>Each section opens with <strong>Lineup Selection</strong>: both managers pick five of their ten in secret and lock them in. Neither side sees the other's five until both have locked. The five left out sit the section, recover fatigue and lose their hot and cold markers.</p>
+          <p>Then <strong>Placement</strong>, one player at a time, in this order:</p>
           <p className={s.draftOrder}>A &rarr; B &rarr; B &rarr; A &rarr; A &rarr; B &rarr; B &rarr; A &rarr; A &rarr; B</p>
-          <p>Every pick takes the <strong>next open row</strong>, and <strong>the two players in a row are the matchup</strong> — they guard each other for the whole section. There is no separate "assign your defence" step: the draft is the defence. When you place into a row the opponent has already filled, the preview shows both directions of the pairing (your edge and theirs), so a late pick can counter what is already on the floor.</p>
-          <p>Nobody re-deals the pairings afterwards. Only a <strong>switching card</strong> (High Screen &amp; Roll, Veer Switch, Switch Everything) or the Crunch Time <strong>timeout</strong> moves a defender.</p>
-          <p>In online PvP both managers first pick their five in secret, then place them in the same snake. Players left on the bench recover fatigue and lose their hot and cold markers.</p>
+          <p>Each placement takes the <strong>next open row</strong>, and <strong>the two players in a row are the matchup</strong> — they guard each other for the whole section. Placement <em>is</em> the defensive assignment; there is no separate step. When you place into a row the opponent has already filled, the preview shows both directions of the pairing (your edge and theirs), so a late placement can counter what is already on the floor.</p>
+          <p>Nobody re-deals the pairings afterwards. Only a <strong>switching card</strong> (High Screen &amp; Roll, Veer Switch, Switch Everything) or the Crunch Time <strong>timeout</strong> moves a defender. Matchup cards can be played alongside placement, and the matchup window carries on once the tenth player is down. Online PvP follows the same two steps, synchronised across the room.</p>
         </AccordionSection>
 
         <AccordionSection {...sec('matchup')}>
-          <p>With the pairings set, managers take turns in the <strong>matchup card window</strong>. The turn rule is the same in every card window:</p>
+          <p>With the pairings set — during placement and after it — managers take turns in the <strong>matchup card window</strong>. The turn rule is the same in every card window:</p>
           <ul>
             <li><strong>Playing a card</strong> hands the turn to the other side and resets the pass count.</li>
             <li><strong>Passing</strong> hands the turn over and counts. <strong>Two passes in a row</strong> close the window.</li>
@@ -223,7 +223,7 @@ export default function HowToPlay({ scrollToSection, onStartTutorial }) {
         <AccordionSection {...sec('glossary')}>
           <dl className={s.glossary}>
             <dt>Speed / Power</dt><dd>The two attributes a matchup is measured on. The larger advantage is the roll bonus.</dd>
-            <dt>Matchup</dt><dd>The two players in a placement row. Set by the draft; moved only by a switching card or the crunch timeout.</dd>
+            <dt>Matchup</dt><dd>The two players in a placement row. Set by placement; moved only by a switching card or the crunch timeout.</dd>
             <dt>Def Boost</dt><dd>Neutralises an attacker's advantage, never penalises them. Also subtracted from their 3PT and paint checks. Negative values are holes.</dd>
             <dt>Shot Line</dt><dd>What a shot check must reach, tie or better. The arrow on the chart marks it.</dd>
             <dt>Shot Check</dt><dd>A D20 given by a card or a spend: 3PT (3 pts), paint (2), free throw (1, at +10).</dd>
@@ -234,7 +234,7 @@ export default function HowToPlay({ scrollToSection, onStartTutorial }) {
             <dt>Priority</dt><dd>Whose turn it is in a card window. Playing a card gives it away.</dd>
             <dt>Standing Card</dt><dd>A card that stays in effect for the section while its players are on the floor.</dd>
             <dt>Snake</dt><dd>The placement order A-B-B-A-A-B-B-A-A-B.</dd>
-            <dt>Section</dt><dd>One of 3 per quarter, 12 per game: draft, matchup window, scoring window, rolling.</dd>
+            <dt>Section</dt><dd>One of 3 per quarter, 12 per game: lineup pick, placement, matchup window, scoring window, rolling.</dd>
             <dt>Crunch Time</dt><dd>The final section, when the margin is 20 or less as it starts.</dd>
             <dt>Clutch Possession</dt><dd>Roll 2 dice (plus award dice) and keep the best. Once per team in Crunch Time.</dd>
             <dt>Timeout</dt><dd>One per game, Crunch Time only: re-set the defence and play a rider.</dd>

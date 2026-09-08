@@ -69,7 +69,8 @@ export default function RulebookTab() {
         </p>
         <p>
           A game is 4 quarters of 3 four-minute sections — 12 sections. Every section is a
-          placement draft, two card windows and a round of rolling. Most points after 12 wins.
+          secret lineup pick, a placement snake, two card windows and a round of rolling.
+          Most points after 12 wins.
         </p>
       </Section>
 
@@ -77,7 +78,7 @@ export default function RulebookTab() {
         <ul>
           <li><strong>Team:</strong> <strong>10 players</strong> under a <strong>$5,500 salary cap</strong>. Five start each section; five rest.</li>
           <li><strong>Deck:</strong> <strong>50 strategy cards</strong>. Copies per card are capped by rarity — 5 common, 4 uncommon, 3 rare, 1 legendary. Shuffle, draw <strong>7</strong>.</li>
-          <li><strong>Placement:</strong> each section the starters are placed one at a time in the snake <strong>A-B-B-A-A-B-B-A-A-B</strong>, and the row a player lands in is their matchup.</li>
+          <li><strong>Lineups and placement:</strong> each section both managers pick five in secret and lock them, then place them one at a time in the snake <strong>A-B-B-A-A-B-B-A-A-B</strong>; the row a player lands in is their matchup.</li>
           <li><strong>Length:</strong> 4 quarters × 3 sections. Halftime is the start of Q3.</li>
           <li><strong>Bench:</strong> the five not placed recover fatigue and lose their markers.</li>
         </ul>
@@ -118,36 +119,42 @@ export default function RulebookTab() {
       <Section id="turns">
         <p>Each of the 12 sections follows this structure:</p>
 
-        <div className={s.sub}>1. Placement Draft</div>
+        <div className={s.sub}>1. Lineup Selection</div>
         <ul>
-          <li>Managers place starters one at a time: <strong>A → B → B → A → A → B → B → A → A → B</strong>.</li>
+          <li>Both managers choose <strong>five of their ten</strong> and lock the lineup. Neither sees the other's five until both have locked.</li>
+          <li>The five left out sit the section: they shed fatigue and lose their markers.</li>
+        </ul>
+
+        <div className={s.sub}>2. Placement</div>
+        <ul>
+          <li>Managers place their five one at a time: <strong>A → B → B → A → A → B → B → A → A → B</strong>.</li>
           <li>Each placement takes the <strong>next open row</strong>. <strong>The two players in a row guard each other</strong> for the section. This is the defensive assignment; there is no other.</li>
           <li>When placing into a row the opponent has filled, the board previews both directions of the pairing.</li>
           <li>Nothing re-deals the pairings afterwards except a <strong>switching card</strong> or the Crunch Time <strong>timeout</strong>.</li>
-          <li>In online PvP both managers first choose their five in secret, then place them in the same snake.</li>
+          <li>Matchup cards may be played alongside placement; the window below continues once the tenth player is down.</li>
         </ul>
 
-        <div className={s.sub}>2. Matchup Card Window</div>
+        <div className={s.sub}>3. Matchup Card Window</div>
         <ul>
           <li>Managers alternate. <strong>Playing a card</strong> hands the turn to the other side and resets the pass count. <strong>Passing</strong> hands it over and counts.</li>
           <li><strong>Two passes in a row</strong> close the window.</li>
           <li>Matchup-phase cards play here: switches (High Screen &amp; Roll, Switch Everything), and their reactions (Go Under, Fight Over, Veer Switch — one screen-cancelling card per switch).</li>
         </ul>
 
-        <div className={s.sub}>3. Scoring Card Window</div>
+        <div className={s.sub}>4. Scoring Card Window</div>
         <ul>
           <li>The same play-or-pass rule. Scoring-phase cards play here: boosts, shot checks, Double Team, This Is My House, standing cards.</li>
           <li>Two passes in a row open rolling.</li>
         </ul>
 
-        <div className={s.sub}>4. Rolling</div>
+        <div className={s.sub}>5. Rolling</div>
         <ul>
           <li>Rolling <strong>alternates</strong>, one player at a time, the human leading against the coach. A side with nobody left to roll stands aside.</li>
           <li>Between rolls either side may play <strong>pre-roll</strong> cards on a player who has not rolled, and <strong>reactions</strong> to what just happened.</li>
           <li>A player blocked by This Is My House does not roll. A player whose roll a card replaced (You Stand Over There) counts as rolled.</li>
         </ul>
 
-        <div className={s.sub}>5. End of Section</div>
+        <div className={s.sub}>6. End of Section</div>
         <ul>
           <li>All temporary effects clear (boosts, ghosts, blocks, standing cards whose players left the floor).</li>
           <li>Each starter adds <strong>4 minutes</strong>; each benched player sheds <strong>4 minutes</strong>.</li>
@@ -336,7 +343,7 @@ export default function RulebookTab() {
           <div className={s.glossaryDef}>The placement order A-B-B-A-A-B-B-A-A-B.</div>
 
           <div className={s.glossaryTerm}>Section</div>
-          <div className={s.glossaryDef}>One of 3 per quarter, 12 per game: placement, matchup window, scoring window, rolling.</div>
+          <div className={s.glossaryDef}>One of 3 per quarter, 12 per game: lineup pick, placement, matchup window, scoring window, rolling.</div>
 
           <div className={s.glossaryTerm}>Crunch Time</div>
           <div className={s.glossaryDef}>The final section when the margin is 20 or less as it starts.</div>

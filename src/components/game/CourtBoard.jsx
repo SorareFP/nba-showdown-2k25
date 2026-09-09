@@ -817,6 +817,63 @@ async function buildOpts(game, teamKey, cardId, base, openModal, ui = {}) {
     opts.playerIdx = eligible[pick].origIdx;
   }
 
+  // ── Ice the Hot Hand: which opponent loses his hot markers ─────────────
+  // The engine reads opts.targetIdx and used to default it to slot 0, so the
+  // card "auto-settled on one player" (the user, 2026-09-09). The choice is
+  // the card.
+  if (cardId === 'ice_the_hot_hand') {
+    const eligible = oppT.starters
+      .map((p, i) => ({ p, origIdx: i, hot: getPS(game, oppKey, p.id)?.hot || 0 }))
+      .filter(({ hot }) => hot > 0);
+    if (!eligible.length) { toast('No opposing player holds a hot marker.', { tone: 'error' }); return null; }
+    const pick = await openModal({
+      teamKey: oppKey, cardId, players: eligible.map(e => e.p),
+      label: 'Ice which opponent? (strips every hot marker)',
+      extraInfo: eligible.map(e => `${e.hot} hot marker${e.hot > 1 ? 's' : ''}`),
+    });
+    if (pick === null) return null;
+    opts.targetIdx = eligible[pick].origIdx;
+  }
+
+  // ── Fresh Legs: up to two chosen players shed 4 minutes ────────────────
+  if (cardId === 'fresh_legs') {
+    const minsOf = p => getPS(game, teamKey, p.id)?.minutes || 0;
+    const tired = filterStarters(myT.starters, p => minsOf(p) > 0);
+    if (!tired.length) { toast('Nobody on the floor has minutes to shed.', { tone: 'error' }); return null; }
+    const info = p => `${minsOf(p)} min on the tracker`;
+    const first = await pickFiltered(tired, 'Fresh Legs — who rests first? (−4 minutes)', teamKey, info);
+    if (first === null) return null;
+    opts.playerIdx = first;
+    const rest = tired.filter(({ origIdx }) => origIdx !== first);
+    if (rest.length) {
+      const more = await ask({
+        title: 'Rest a second player too?',
+        body: 'Fresh Legs covers up to two. Pick a second, or stop at one.',
+        confirmLabel: 'Pick a second',
+        cancelLabel: 'Just one',
+      });
+      if (more) {
+        const second = await pickFiltered(rest, 'Fresh Legs — and who else? (−4 minutes)', teamKey, info);
+        if (second !== null) opts.player2Idx = second;
+      }
+    }
+  }
+
+  // ── Reset: which of your players clears his cold markers ───────────────
+  if (cardId === 'reset') {
+    const eligible = myT.starters
+      .map((p, i) => ({ p, origIdx: i, cold: getPS(game, teamKey, p.id)?.cold || 0 }))
+      .filter(({ cold }) => cold > 0);
+    if (!eligible.length) { toast('None of your players holds a cold marker.', { tone: 'error' }); return null; }
+    const pick = await openModal({
+      teamKey, cardId, players: eligible.map(e => e.p),
+      label: 'Who takes the deep breath? (clears every cold marker)',
+      extraInfo: eligible.map(e => `${e.cold} cold marker${e.cold > 1 ? 's' : ''}`),
+    });
+    if (pick === null) return null;
+    opts.playerIdx = eligible[pick].origIdx;
+  }
+
   // ── Veer Switch: defender reassigns the two swapped slots ─────────────
   if (cardId === 'veer_switch') {
     const lc = game.lastMatchupCard;

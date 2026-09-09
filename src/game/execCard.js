@@ -298,7 +298,10 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
 
     case 'fresh_legs': {
       if (g.timeoutActive !== teamKey) return fail('Play during your Timeout');
-      const legs = [idx, opts.player2Idx].filter(i => i != null && myT.starters[i]);
+      // `idx` defaults to slot 0 for every card; this card's players are
+      // CHOSEN, so a missing first choice is a refusal, not player one.
+      if (opts.playerIdx == null) return fail('Choose up to two players');
+      const legs = [opts.playerIdx, opts.player2Idx].filter(i => i != null && myT.starters[i]);
       if (!legs.length) return fail('Choose up to two players');
       for (const i of new Set(legs)) {
         const p = myT.starters[i];
@@ -312,7 +315,10 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
     case 'ice_the_hot_hand': {
       if (g.timeoutActive !== teamKey) return fail('Play during your Timeout');
       const iceOpp = teamKey === 'A' ? 'B' : 'A';
-      const target = oppT.starters[opts.targetIdx ?? 0];
+      // No default slot: a missing choice is a refusal, not player one (the
+      // board used to send none and the card iced whoever sat in slot 0).
+      if (opts.targetIdx == null) return fail('Choose an opposing player');
+      const target = oppT.starters[opts.targetIdx];
       if (!target) return fail('Choose an opposing player');
       const tps = getPS(g, iceOpp, target.id);
       const had = tps?.hot || 0;
@@ -324,7 +330,9 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
 
     case 'reset': {
       if (g.timeoutActive !== teamKey) return fail('Play during your Timeout');
-      const rps = getPS(g, teamKey, player?.id);
+      // Same: `idx` would silently be slot 0 without this.
+      if (opts.playerIdx == null || !player) return fail('Choose one of your players');
+      const rps = getPS(g, teamKey, player.id);
       const hadCold = rps?.cold || 0;
       if (!hadCold) return fail(`${player?.name} holds no cold markers`);
       rps.cold = 0;

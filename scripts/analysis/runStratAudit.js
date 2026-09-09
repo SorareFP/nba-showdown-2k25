@@ -317,7 +317,12 @@ for (let n = 0; n < GAMES; n += 1) {
           if (reset?.matchups) g = applyMatchups(g, key, reset.matchups);
           // The timeout search (2026-09-09): one crunch card from the deck.
           const wanted = aiCrunchSearch(g, key);
-          if (wanted) { const sr = searchCrunchCard(g, key, wanted); if (sr.ok) g = sr.game; }
+          if (wanted) {
+            const sr = searchCrunchCard(g, key, wanted);
+            // A searched card is HELD from here: tally it, or the card shows
+            // more plays than holds (ATO Masterpiece read 434% in the first run).
+            if (sr.ok) { g = sr.game; heldThisGame.add(`${key}|${wanted}`); }
+          }
           // Play every rider the window allows, best first — the live driver
           // loops the same way, one card per tick.
           for (let played = 0; played < 4; played += 1) {

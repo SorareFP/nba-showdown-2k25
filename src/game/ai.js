@@ -658,6 +658,8 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
   const oppT = getOpp(game, teamKey);
   const starters = myT.starters || [];
   const rolls = game.rollResults[teamKey] || [];
+  // A shut-out slot (This Is My House) is never a target for a roll-replacer.
+  const blocked = game.blockedRolls?.[teamKey] || {};
 
   if (!starters.length) return {};
 
@@ -770,9 +772,10 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
     case 'from_way_downtown':
     case 'catch_and_shoot':
     case 'elevator_doors': {
-      // Pick best 3PT shooter who hasn't rolled
+      // Pick best 3PT shooter who hasn't rolled — and is not shut out.
       const best = starters.reduce((b, p, i) => {
         if (rolls[i] != null && !rolls[i]?.isReplaced) return b;
+        if (blocked[i]) return b;
         const tpb = p.threePtBoost || 0;
         return tpb > (b.boost || -99) ? { idx: i, boost: tpb } : b;
       }, { idx: 0, boost: -99 });
@@ -795,7 +798,7 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
 
     case 'back_to_basket': {
       // execCard needs the chosen player at Power 13+ WITH a Paint Bonus.
-      const cand = starters.findIndex((p, i) => rolls[i] == null && p.power >= 13 && (p.paintBoost || 0) > 0);
+      const cand = starters.findIndex((p, i) => (rolls[i] == null && !blocked[i]) && p.power >= 13 && (p.paintBoost || 0) > 0);
       if (cand >= 0) return { playerIdx: cand };
       const any = starters.findIndex(p => p.power >= 13 && (p.paintBoost || 0) > 0);
       return { playerIdx: any >= 0 ? any : 0 };
@@ -946,7 +949,7 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
       // against his defender — a steep chart, not the biggest body.
       let best = null;
       starters.forEach((p, i) => {
-        if (!p || rolls[i] == null || extraRollPending(game, teamKey, i)) return;
+        if (!p || (rolls[i] == null && !blocked[i]) || extraRollPending(game, teamKey, i)) return;
         const dp = oppT.starters[(game.offMatchups?.[teamKey] || [])[i] ?? i];
         const bonus = dp ? calcAdv(p, dp, game.tempEff?.[teamKey] || {}, i).rollBonus : 0;
         const v = expectedOutput(p, bonus + carriedMod(game, teamKey, p) - 2);
@@ -1097,7 +1100,7 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
     }
     case 'five_out': {
       const cand = starters.map((p, i) => ({ p, i }))
-        .filter(({ p, i }) => p && rolls[i] == null && (p.threePtBoost || 0) > 0)
+        .filter(({ p, i }) => p && (rolls[i] == null && !blocked[i]) && (p.threePtBoost || 0) > 0)
         .sort((u, v) => ((u.p.shotLine ?? 18) - (u.p.threePtBoost || 0)) - ((v.p.shotLine ?? 18) - (v.p.threePtBoost || 0)));
       return { playerIdx: cand[0]?.i ?? 0 };
     }
@@ -1110,7 +1113,7 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
       return { playerIdx: cand[0]?.i ?? 0 };
     }
     case 'iso_heavy': {
-      const cand = starters.map((p, i) => ({ p, i })).filter(({ p, i }) => p && rolls[i] == null)
+      const cand = starters.map((p, i) => ({ p, i })).filter(({ p, i }) => p && (rolls[i] == null && !blocked[i]))
         .sort((u, v) => expectedOutput(v.p) - expectedOutput(u.p));
       return { playerIdx: cand[0]?.i ?? 0 };
     }
@@ -1190,7 +1193,7 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
       return { playerIdx: cand[0]?.i ?? 0 };
     }
     case 'unsung_hero': {
-      const cand = starters.map((p, i) => ({ p, i })).filter(({ p, i }) => p && rolls[i] == null && (p.salary || 0) <= 400)
+      const cand = starters.map((p, i) => ({ p, i })).filter(({ p, i }) => p && (rolls[i] == null && !blocked[i]) && (p.salary || 0) <= 400)
         .sort((u, v) => expectedOutput(v.p) - expectedOutput(u.p));
       return { playerIdx: cand[0]?.i ?? 0 };
     }
@@ -1219,7 +1222,7 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
 
     case 'find_the_open_man': {
       const dt = game.lastDoubleTeam;
-      const cand = starters.map((p, i) => ({ p, i })).filter(({ p, i }) => p && rolls[i] == null && i !== dt?.targetIdx)
+      const cand = starters.map((p, i) => ({ p, i })).filter(({ p, i }) => p && (rolls[i] == null && !blocked[i]) && i !== dt?.targetIdx)
         .sort((u, v) => expectedOutput(v.p) - expectedOutput(u.p));
       return { playerIdx: cand[0]?.i ?? 0 };
     }

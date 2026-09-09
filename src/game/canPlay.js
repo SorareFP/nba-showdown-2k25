@@ -511,7 +511,9 @@ export function canPlayCard(g, teamKey, cardId) {
     return ok(`Cancel their ${lr.reb} REB`);
   }
   switch (cardId) {
-    case 'green_light': return ok();
+    case 'green_light':
+      if (preRollTargets(g, teamKey).length === 0) return no('Everyone has rolled or is shut out');
+      return ok('Three 3PT checks instead of the roll');
     case 'five_out':
       if (preRollTargets(g, teamKey, p => (p.threePtBoost || 0) > 0).length === 0) return no('Every 3PT shooter has already rolled');
       return ok('Two 3PT checks at +1 instead of the roll');

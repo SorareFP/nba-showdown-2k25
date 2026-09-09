@@ -39,6 +39,19 @@ function restoredLine(g, lc, defT) {
   return `${p1?.name} guarded again by ${d1?.name}, ${p2?.name} by ${d2?.name}`;
 }
 
+/**
+ * THIS IS MY HOUSE CANCELS THE ROLL-REPLACERS TOO. The block took the scoring
+ * roll, but Green Light, You Stand Over There, Cross-Court Dime and Five-Out
+ * take the roll AS checks — and Patrick Williams, shut out, went and hit two
+ * threes off Green Light (the user, 2026-09-09: "THIS IS MY HOUSE should
+ * probably cancel all 'skip scoring roll' cards too"). One guard, in every
+ * card that replaces a roll.
+ */
+function shutOut(g, teamKey, idx, player) {
+  if (!g.blockedRolls?.[teamKey]?.[idx]) return null;
+  return `${player?.name ?? 'That player'} is shut out this segment — This Is My House took the roll`;
+}
+
 // ── Analytics helper ────────────────────────────────────────────────────────
 function trackShotCheck(g, teamKey, r, type, playerIdx) {
   // Every check leaves the record Glass Cleaner and Putback Specialist read:
@@ -522,6 +535,8 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
     }
 
     case 'green_light': {
+      const shut = shutOut(g, teamKey, idx, player);
+      if (shut) return fail(shut);
       const existingRoll = (g.rollResults[teamKey] || [])[idx];
       if (existingRoll && !existingRoll.isReplaced) return fail(player?.name + ' has already rolled this segment.');
       announceCheck(g, {
@@ -542,6 +557,8 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
     }
 
     case 'you_stand_over_there': {
+      const shut = shutOut(g, teamKey, idx, player);
+      if (shut) return fail(shut);
       if (g.rollResults[teamKey]?.[idx] != null) return fail(`${player?.name} has already rolled this segment.`);
       announceCheck(g, {
         teamKey, playerIdx: idx, type: '3pt', bonus: _assistShotBonus,
@@ -723,6 +740,8 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
 
     case 'cross_court_dime': {
       if (myT.assists < 3) return fail(`Need 3 assists (have ${myT.assists})`);
+      const shut = shutOut(g, teamKey, idx, player);
+      if (shut) return fail(shut);
       if (g.rollResults[teamKey]?.[idx] != null) return fail(`${player?.name} has already rolled this segment.`);
       myT.assists -= 3;
       announceCheck(g, {
@@ -999,6 +1018,8 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
     }
     case 'five_out': {
       if (!((player?.threePtBoost || 0) > 0)) return fail(`${player?.name} needs a 3PT Bonus`);
+      const shut = shutOut(g, teamKey, idx, player);
+      if (shut) return fail(shut);
       const existing = (g.rollResults[teamKey] || [])[idx];
       if (existing && !existing.isReplaced) return fail(`${player?.name} has already rolled this segment.`);
       announceCheck(g, {

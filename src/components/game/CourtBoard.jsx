@@ -428,7 +428,8 @@ async function buildOpts(game, teamKey, cardId, base, openModal, ui = {}) {
         break;
       }
       case 'green_light': {
-        eligible = filterStarters(myT.starters, (_, i) => !rolls[i] || rolls[i]?.isReplaced);
+        // Not a shut-out player: This Is My House takes the roll AND the checks that would replace it.
+        eligible = filterStarters(myT.starters, (_, i) => (!rolls[i] || rolls[i]?.isReplaced) && !game.blockedRolls?.[teamKey]?.[i]);
         label = 'Select player who hasn\'t rolled yet';
         break;
       }

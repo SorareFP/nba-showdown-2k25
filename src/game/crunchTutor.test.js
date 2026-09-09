@@ -1,5 +1,6 @@
-// The crunch tutor, the sign-up card, and Crowd Favorite's payout — the three
-// 2026-09-07 rules, asserted at the engine seams the way crunch.test.js does.
+// The sign-up card and Crowd Favorite's payout — 2026-09-07 rules, asserted
+// at the engine seams the way crunch.test.js does. (The crunch tutor that
+// opened this file was replaced by the timeout search on 2026-09-09.)
 import { describe, it, expect, vi } from 'vitest';
 import { newGame, endSection, getPS, CRUNCH_MARGIN, CROWD_FAVORITE_PTS } from './engine.js';
 import { canPlayCard } from './canPlay.js';
@@ -34,36 +35,10 @@ function crunchGame(margin = 4) {
   return g;
 }
 
-describe('the crunch tutor', () => {
-  it('pulls every crunch card from the deck to the hand when crunch arms, over the draw cap', () => {
-    const g = lateGame(CRUNCH_MARGIN);
-    g.teamA.hand = Array(7).fill(filler);   // a full hand
-    g.teamA.deck = [filler, 'fresh_legs', filler, 'reset', 'unethical_hoops', filler];
-    g.teamB.hand = [];
-    g.teamB.deck = ['second_closer', filler];
-
-    const ng = endSection(g);
-    expect(ng.crunch.active).toBe(true);
-    expect(ng.teamA.hand).toEqual(expect.arrayContaining(['fresh_legs', 'reset', 'unethical_hoops']));
-    expect(ng.teamA.hand.filter(id => CRUNCH_CARDS.includes(id))).toHaveLength(3);
-    expect(ng.teamA.deck.some(id => CRUNCH_CARDS.includes(id))).toBe(false);
-    expect(ng.teamB.hand).toContain('second_closer');
-    expect(ng.log.some(l => l.team === 'A' && /Crunch Time: .* draws .*fresh legs/.test(l.msg))).toBe(true);
-  });
-
-  it('leaves them in the deck on a blowout', () => {
-    const g = lateGame(CRUNCH_MARGIN + 1);
-    g.teamA.hand = [filler];
-    // The section's ordinary draw-to-seven pops from the END of the deck, so
-    // the crunch cards sit at the front where only the tutor could reach them.
-    g.teamA.deck = ['fresh_legs', 'reset', ...Array(10).fill(filler)];
-    const ng = endSection(g);
-    expect(ng.crunch.active).toBe(false);
-    expect(ng.teamA.deck).toEqual(expect.arrayContaining(['fresh_legs', 'reset']));
-    expect(ng.teamA.hand).not.toContain('fresh_legs');
-    expect(ng.teamA.hand).not.toContain('reset');
-  });
-
+// The crunch TUTOR (every crunch card to hand when crunch arms) was the rule
+// from 2026-09-07 to 2026-09-09; the timeout SEARCH replaced it — see
+// crunchSearch.test.js. What survives here: the one list every reader shares.
+describe('the crunch list', () => {
   it('is the one list every reader shares', () => {
     expect(CRUNCH_CARDS).toContain('unethical_hoops');
     for (const id of CRUNCH_CARDS) expect(STRATS.some(s => s.id === id)).toBe(true);

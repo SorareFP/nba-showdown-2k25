@@ -21,7 +21,7 @@
 // every engine function, and the engine's purity is worth more than that.
 import {
   newGame, doRoll, endSection, applyMatchups, spendAssist, spendReboundBonus, STARTERS,
-  spendTimeout, endTimeout,
+  spendTimeout, endTimeout, searchCrunchCard,
 } from '../engine.js';
 import { execCard, resolvePendingShotCheck } from '../execCard.js';
 import * as defaultBrain from '../ai.js';
@@ -193,6 +193,9 @@ function playSection(g, sectionIndex, brains = null) {
         g = to.game;
         const reset = brain.aiSetMatchups(g, key);
         if (reset?.matchups) g = applyMatchups(g, key, reset.matchups);
+        // The timeout search (2026-09-09): one crunch card from the deck.
+        const wanted = brain.aiCrunchSearch?.(g, key);
+        if (wanted) { const sr = searchCrunchCard(g, key, wanted); if (sr.ok) g = sr.game; }
         for (let played = 0; played < 4; played += 1) {
           const rider = brain.aiScoringDecision(g, key);
           if (rider?.type !== 'play_card') break;

@@ -2,6 +2,8 @@
 // Pure functions — no React, no side effects. State is a plain object.
 
 import { CRUNCH_CARDS } from './strats.js';
+// STRATS is imported below (the default-deck build); imports hoist, so this is safe here.
+const STRAT_NAMES = Object.fromEntries(STRATS.map(s => [s.id, s.name]));
 import { lookupChart } from './cards.js';
 import { getStrat } from './strats.js';
 
@@ -413,6 +415,43 @@ export function spendTimeout(g, teamKey) {
   ng.crunch.timeoutUsed[teamKey] = true;
   ng.timeoutActive = teamKey;
   ng.log = [...ng.log, { team: teamKey, msg: '⏸ TIMEOUT — the defense re-sets, and the clipboard comes out.' }];
+  return { game: ng, ok: true };
+}
+
+/** The crunch-only cards this team could search its deck for, once each. */
+export function crunchSearchOptions(g, teamKey) {
+  if (g.timeoutActive !== teamKey || g.crunch?.searched?.[teamKey]) return [];
+  const deck = getTeam(g, teamKey)?.deck || [];
+  return [...new Set(deck.filter(id => CRUNCH_CARDS.includes(id)))];
+}
+
+/**
+ * THE TIMEOUT SEARCH (the user, 2026-09-09): during its own timeout a team
+ * takes ONE crunch-only card from its deck into hand — over the seven-card
+ * draw cap, which is a rule about drawing — and the deck is shuffled behind
+ * it. Once per timeout, so once per game.
+ */
+export function searchCrunchCard(g, teamKey, cardId) {
+  if (g.timeoutActive !== teamKey) return { game: g, ok: false, msg: 'Search the deck during your own timeout' };
+  if (g.crunch?.searched?.[teamKey]) return { game: g, ok: false, msg: 'Already searched this timeout' };
+  if (!CRUNCH_CARDS.includes(cardId)) return { game: g, ok: false, msg: 'Only a crunch-time card can be searched for' };
+  const t = getTeam(g, teamKey);
+  const at = (t.deck || []).indexOf(cardId);
+  if (at < 0) return { game: g, ok: false, msg: 'That card is not in your deck' };
+  const ng = deepClone(g);
+  const nt = getTeam(ng, teamKey);
+  const deck = [...nt.deck];
+  deck.splice(at, 1);
+  for (let i = deck.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [deck[i], deck[j]] = [deck[j], deck[i]];
+  }
+  nt.deck = deck;
+  nt.hand = [...(nt.hand || []), cardId];
+  if (!ng.crunch.searched) ng.crunch.searched = {};
+  ng.crunch.searched[teamKey] = true;
+  const name = STRAT_NAMES[cardId] ?? cardId.replace(/_/g, ' ');
+  ng.log = [...ng.log, { team: teamKey, msg: `Timeout: ${nt.name} searched the deck for ${name} — deck shuffled` }];
   return { game: ng, ok: true };
 }
 
@@ -1102,24 +1141,13 @@ export function endSection(g) {
   if (ng.quarter === 4 && ng.section === 3) {
     const margin = Math.abs(ng.teamA.score - ng.teamB.score);
     const active = margin <= CRUNCH_MARGIN;
-    ng.crunch = { active, margin, used: {}, extra: {}, timeoutUsed: {} };
-    // THE CRUNCH TUTOR. A crunch-only card in a fifty-card deck was in hand
-    // for the one section it exists for about one time in seven; the user
-    // asked that a player who runs one "be able to use it reasonably". So
-    // when crunch time arms, every crunch card still in the deck comes to
-    // hand — over the seven-card draw cap, which is a rule about DRAWING —
-    // and both sides get the same treatment. Nothing happens on a blowout:
-    // the section is not crunch, and the cards stay where they were.
-    if (active) {
-      for (const k of ['A', 'B']) {
-        const t = getTeam(ng, k);
-        const came = (t.deck || []).filter(id => CRUNCH_CARDS.includes(id));
-        if (!came.length) continue;
-        t.deck = t.deck.filter(id => !CRUNCH_CARDS.includes(id));
-        t.hand = [...(t.hand || []), ...came];
-        ng.log = [...ng.log, { team: k, msg: `Crunch Time: ${t.name} draws ${came.map(id => id.replace(/_/g, ' ')).join(', ')} from the deck` }];
-      }
-    }
+    ng.crunch = { active, margin, used: {}, extra: {}, timeoutUsed: {}, searched: {} };
+    // NO TUTOR. From 2026-09-07 to 2026-09-09 every crunch-only card still in
+    // the deck came to hand the moment crunch armed; the user's later call:
+    // "I don't think every crunch-time card should go to the player's hand
+    // in crunch-time. I think maybe Timeouts allow you to search for one CT
+    // card (then shuffle your undrawn deck)." That is searchCrunchCard below;
+    // the deck stays as it is here.
     ng.log = [...ng.log, {
       team: null,
       msg: active

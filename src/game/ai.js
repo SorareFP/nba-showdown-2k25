@@ -3,10 +3,10 @@
 // Pure functions: takes game state + team key, returns an action object.
 // No React, no side effects. Used by tutorial, solo mode, sim-to-end.
 
-import { getTeam, getOpp, getPS, calcAdv, getFatigue, fatigueForMinutes, restMinutes, SPEND_COSTS, clutchAvailable, clutchEligible, burnedSlots, satOutLast, canRollSlot, extraRollPending, checkNeed } from './engine.js';
+import { getTeam, getOpp, getPS, calcAdv, getFatigue, fatigueForMinutes, restMinutes, SPEND_COSTS, clutchAvailable, clutchEligible, burnedSlots, satOutLast, canRollSlot, extraRollPending, checkNeed, crunchSearchOptions } from './engine.js';
 import { lookupChart } from './cards.js';
 import { canPlayCard, helpTargets } from './canPlay.js';
-import { getStrat, STRATS } from './strats.js';
+import { getStrat, STRATS, CRUNCH_CARDS } from './strats.js';
 
 /**
  * AI action types:
@@ -1294,8 +1294,28 @@ export function aiCrunchDecision(game, teamKey) {
   const riders = ['ato_masterpiece', 'fresh_legs', 'ice_the_hot_hand', 'reset'];
   const holdsRider = (team.hand || []).some(id => riders.includes(id));
   const trailing = team.score < opp.score;
-  if (trailing || holdsRider) return { type: 'timeout' };
+  // The search (2026-09-09): a crunch card still in the deck is reason enough.
+  const canSearch = (team.deck || []).some(id => CRUNCH_CARDS.includes(id));
+  if (trailing || holdsRider || canSearch) return { type: 'timeout' };
   return null;
+}
+
+/**
+ * What to search the deck for during our timeout: the crunch card the open
+ * window values most (riders carry the timeout's +4), or null when there is
+ * nothing to take.
+ */
+export function aiCrunchSearch(game, teamKey) {
+  const options = crunchSearchOptions(game, teamKey);
+  if (!options.length) return null;
+  let best = null;
+  for (const id of options) {
+    const strat = getStrat(id);
+    if (!strat) continue;
+    const v = evaluateCard(game, teamKey, id, strat);
+    if (!best || v > best.v) best = { id, v };
+  }
+  return best ? best.id : options[0];
 }
 
 // ── Reaction Card Decision ──────────────────────────────────────────────────

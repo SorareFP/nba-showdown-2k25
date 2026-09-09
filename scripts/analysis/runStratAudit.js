@@ -26,14 +26,14 @@ import path from 'node:path';
 import { REPO_ROOT } from '../cardgen/cache.js';
 import {
   newGame, doRoll, endSection, applyMatchups, spendAssist, spendReboundBonus, STARTERS,
-  spendTimeout, endTimeout,
+  spendTimeout, endTimeout, searchCrunchCard,
 } from '../../src/game/engine.js';
 import { execCard, resolvePendingShotCheck } from '../../src/game/execCard.js';
 import { STRATS, getStrat, CRUNCH_CARDS } from '../../src/game/strats.js';
 import { getStratRarity, STRAT_COPY_CAPS } from '../../src/game/rarity.js';
 import {
   aiDraftPick, aiPlacementPick, aiTurn, aiScoringDecision, aiRollDecision, aiReactionDecision,
-  aiSpendDecision, aiCrunchDecision, aiSetMatchups,
+  aiSpendDecision, aiCrunchDecision, aiCrunchSearch, aiSetMatchups,
 } from '../../src/game/ai.js';
 
 const GAMES = Number(process.argv[2] ?? 400);
@@ -315,6 +315,9 @@ for (let n = 0; n < GAMES; n += 1) {
           g = to.game;
           const reset = aiSetMatchups(g, key);
           if (reset?.matchups) g = applyMatchups(g, key, reset.matchups);
+          // The timeout search (2026-09-09): one crunch card from the deck.
+          const wanted = aiCrunchSearch(g, key);
+          if (wanted) { const sr = searchCrunchCard(g, key, wanted); if (sr.ok) g = sr.game; }
           // Play every rider the window allows, best first — the live driver
           // loops the same way, one card per tick.
           for (let played = 0; played < 4; played += 1) {

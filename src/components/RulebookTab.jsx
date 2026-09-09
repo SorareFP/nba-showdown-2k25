@@ -186,7 +186,7 @@ export default function RulebookTab() {
           <li><strong>50 cards.</strong> Per-card copies: <strong>5 common, 4 uncommon, 3 rare, 1 legendary</strong>. The Deck Builder refuses to save a deck over a cap.</li>
           <li>Hand of <strong>7</strong>, refilled to 7 at the end of every section.</li>
           <li>The first time a team's assists reach <strong>5</strong>, it draws one bonus card.</li>
-          <li>When Crunch Time arms, every crunch-only card still in the deck is drawn to hand, even past 7.</li>
+          <li>Crunch-only cards stay in the deck until drawn, or until the timeout search takes one (see Crunch Time).</li>
           <li>A team carries its own deck; the default deck is a designed fifty for players who have not built one.</li>
         </ul>
 
@@ -260,10 +260,10 @@ export default function RulebookTab() {
           either way. In a blowout the section is ordinary.
         </p>
         <ul>
-          <li><strong>Crunch cards to hand:</strong> when it arms, every crunch-only card still in either deck is drawn, even past the seven-card hand.</li>
+          <li><strong>The timeout search:</strong> during your timeout you may take one crunch-only card from your deck into hand, even past the seven-card hand, and the deck is shuffled behind it. Once per timeout.</li>
           <li><strong>Clutch Possession:</strong> once per team, chosen at roll time. The player rolls <strong>2 dice</strong> and keeps the better; each MVP or Clutch Player of the Year award on the card adds a die. Not available at −6 fatigue or worse.</li>
           <li><strong>Extra defensive intensity:</strong> defenders with a positive Def Boost contest shot checks <strong>+1</strong> harder.</li>
-          <li><strong>Timeout:</strong> one per team per game, Crunch Time only. Play pauses, the team <strong>re-sets its defensive matchups</strong>, and the timeout-rider window opens.</li>
+          <li><strong>Timeout:</strong> one per team per game, Crunch Time only. Play pauses, the team <strong>re-sets its defensive matchups</strong>, may <strong>search the deck</strong> for one crunch-only card, and the timeout-rider window opens.</li>
         </ul>
 
         <div className={s.sub}>Crunch-only cards</div>

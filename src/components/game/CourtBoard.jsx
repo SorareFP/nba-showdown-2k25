@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { calcAdv, getTeam, getOpp, getPS, getFatigue, SNAKE, SPEND_COSTS, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, extraRollPending, checkNeed, fatigueForMinutes } from '../../game/engine.js';
+import { calcAdv, getTeam, getOpp, getPS, getFatigue, SNAKE, SPEND_COSTS, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, extraRollPending, checkNeed, fatigueForMinutes, crunchSearchOptions } from '../../game/engine.js';
 import { canPlayCard, myHouseTargets, fwdTargets, preRollTargets, helpTargets } from '../../game/canPlay.js';
 import { benchRest, passTurn } from '../../game/engine.js';
 import { getStrat } from '../../game/strats.js';
@@ -18,7 +18,7 @@ function HelpBtn({ section }) {
   return <button className={styles.helpBtn} onClick={handleClick} title="How to Play">?</button>;
 }
 
-export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExecCard, onResolve, onSpendAssist, onSpendRebound, onDraftSubmit, onPlacePlayer, onTimeout = null, onEndTimeout = null, pvpMode = false, myTeamKey = null, isMyTurn = true, defenceIsHuman = false, rollGate = null }) {
+export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExecCard, onResolve, onSpendAssist, onSpendRebound, onDraftSubmit, onPlacePlayer, onTimeout = null, onEndTimeout = null, onSearchCrunch = null, pvpMode = false, myTeamKey = null, isMyTurn = true, defenceIsHuman = false, rollGate = null }) {
   // ── Solo placement ─────────────────────────────────────────────────────────
   //
   // PvP passes a Firebase-backed onPlacePlayer; solo places locally with the
@@ -78,7 +78,14 @@ export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExec
 
   return (
     <div className={styles.wrap}>
-      <PhaseBar game={game} setGame={setGame} onEndSection={onEndSection} onTimeout={onTimeout} onEndTimeout={onEndTimeout} pvpMode={pvpMode} myTeamKey={myTeamKey} isMyTurn={isMyTurn} draftSelectedCount={draftSelected.length} />
+      <PhaseBar game={game} setGame={setGame} onEndSection={onEndSection} onTimeout={onTimeout} onEndTimeout={onEndTimeout} onSearchCrunch={onSearchCrunch && (async key => {
+        // THE TIMEOUT SEARCH: one crunch-only card out of the deck, then a shuffle.
+        const options = crunchSearchOptions(game, key);
+        if (!options.length) { toast('No crunch-time card left in the deck', { tone: 'error' }); return; }
+        const pick = await openModal({ teamKey: key, cardId: 'timeout_search', players: options.map(id => ({ id, name: getStrat(id)?.name ?? id })), label: 'Search the deck: take one crunch-time card, then shuffle' });
+        if (pick === null) return;
+        onSearchCrunch(key, options[pick]);
+      })} pvpMode={pvpMode} myTeamKey={myTeamKey} isMyTurn={isMyTurn} draftSelectedCount={draftSelected.length} />
 
       {/* THE ANNOUNCED CHECK, AT THE TOP. It sat below the hands and the
           court, off the bottom of the screen on a laptop, and the other side
@@ -928,7 +935,7 @@ function SelectModal({ modal, game, onClose }) {
   );
 }
 
-function PhaseBar({ game, setGame, onEndSection, onTimeout = null, onEndTimeout = null, pvpMode = false, myTeamKey = null, isMyTurn = true, draftSelectedCount = 0 }) {
+function PhaseBar({ game, setGame, onEndSection, onTimeout = null, onEndTimeout = null, onSearchCrunch = null, pvpMode = false, myTeamKey = null, isMyTurn = true, draftSelectedCount = 0 }) {
   const { phase, quarter, section, matchupTurn, matchupPasses, scoringTurn, scoringPasses } = game;
   const rA = game.rollResults.A || [], rB = game.rollResults.B || [];
   // A player is "done" if they have a roll result OR they are blocked
@@ -1013,13 +1020,15 @@ function PhaseBar({ game, setGame, onEndSection, onTimeout = null, onEndTimeout 
             );
           })}
           {game.crunch?.active && <span className={styles.phaseSub} style={{color:'#F87171',fontWeight:700}}>🚨 CRUNCH TIME · margin {game.crunch.margin} · clutch, timeouts & crunch cards live</span>}
-          {game.timeoutActive && <span className={styles.phaseSub} style={{color:'#FBBF24'}}>⏸ Team {game.timeoutActive} timeout — defense re-set, timeout cards playable</span>}
+          {game.timeoutActive && <span className={styles.phaseSub} style={{color:'#FBBF24'}}>⏸ Team {game.timeoutActive} timeout — defense re-set, search the deck for a crunch card, timeout cards playable</span>}
         </div>
         <div className={styles.phaseCtrls}>
           {(segA>0||segB>0) && <span className={styles.segScore}><span style={{color:'var(--orange)'}}>A {segA}</span>–<span style={{color:'var(--blue)'}}>{segB} B</span></span>}
           {!rollingOpen && <button className={styles.passBtn} onClick={pass} disabled={pvpMode && !isMyTurn}>Pass →</button>}
           {onTimeout && game.crunch?.active && rollingOpen && !game.timeoutActive && !game.crunch.timeoutUsed?.[pvpMode ? myTeamKey : 'A'] && (!pvpMode || isMyTurn) &&
             <button className={styles.passBtn} onClick={() => onTimeout(pvpMode ? myTeamKey : 'A')}>⏸ Timeout</button>}
+          {onSearchCrunch && game.timeoutActive === (pvpMode ? myTeamKey : 'A') && crunchSearchOptions(game, pvpMode ? myTeamKey : 'A').length > 0 &&
+            <button className={styles.passBtn} onClick={() => onSearchCrunch(pvpMode ? myTeamKey : 'A')} title="Take one crunch-time card from your deck, then shuffle it">🔍 Search deck</button>}
           {onEndTimeout && game.timeoutActive === (pvpMode ? myTeamKey : 'A') &&
             <button className={styles.ctaBtn} onClick={onEndTimeout}>▶ Resume play</button>}
           {allRolled && !game.pendingShotCheck && (() => {

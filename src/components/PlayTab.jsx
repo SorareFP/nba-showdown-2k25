@@ -1,6 +1,6 @@
 import { useReducer, useCallback, useState, useEffect, useRef } from 'react';
-import { newGame, doRoll, endSection, spendAssist, spendReboundBonus, applyMatchups, spendTimeout, endTimeout, clutchAvailable, passTurn, pendingRolls } from '../game/engine.js';
-import { aiTurn, aiScoringDecision, aiRollDecision, aiSpendDecision, aiReactionDecision, aiCrunchDecision, aiSetMatchups } from '../game/ai.js';
+import { newGame, doRoll, endSection, spendAssist, spendReboundBonus, applyMatchups, spendTimeout, endTimeout, clutchAvailable, passTurn, pendingRolls, searchCrunchCard } from '../game/engine.js';
+import { aiTurn, aiScoringDecision, aiRollDecision, aiSpendDecision, aiReactionDecision, aiCrunchDecision, aiCrunchSearch, aiSetMatchups } from '../game/ai.js';
 import { CLUTCH_DICE } from '../game/clutchAwards.js';
 import { execCard, resolvePendingShotCheck } from '../game/execCard.js';
 import { randomizeTeam, MIN_TO_PLAY } from '../game/teamRules.js';
@@ -35,6 +35,11 @@ function gameReducer(state, action) {
       // the same matchup brain the AI uses — for either team.
       const reset = aiSetMatchups(game, action.teamKey);
       return reset?.matchups ? applyMatchups(game, action.teamKey, reset.matchups) : game;
+    }
+    case 'SEARCH_CRUNCH': {
+      const { game, ok, msg } = searchCrunchCard(state, action.teamKey, action.cardId);
+      if (!ok) { if (!action.silent) notify(msg, { tone: 'error' }); return state; }
+      return game;
     }
     case 'END_TIMEOUT': return endTimeout(state);
     case 'END_SECTION': return endSection(state);
@@ -284,6 +289,9 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
             // reducer), then next tick plays its best rider from the open
             // window, then resumes.
             if (game.timeoutActive === 'B') {
+              // First the search: one crunch card out of the deck, then riders.
+              const wanted = aiCrunchSearch(game, 'B');
+              if (wanted) { dispatch({ type: 'SEARCH_CRUNCH', teamKey: 'B', cardId: wanted, silent: true }); return; }
               const rider = aiScoringDecision(game, 'B');
               if (rider?.type === 'play_card' && tryCard(rider.cardId, rider.opts)) return;
               dispatch({ type: 'END_TIMEOUT' });
@@ -413,6 +421,7 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
     onRoll:       (teamKey, idx, opts)    => dispatch({ type: 'ROLL', teamKey, idx, opts }),
     onTimeout:    (teamKey)               => dispatch({ type: 'TIMEOUT', teamKey }),
     onEndTimeout: ()                      => dispatch({ type: 'END_TIMEOUT' }),
+    onSearchCrunch: (teamKey, cardId)     => dispatch({ type: 'SEARCH_CRUNCH', teamKey, cardId }),
     onSpendAssist:(teamKey, spendType, playerIdx) => dispatch({ type: 'SPEND_ASSIST', teamKey, spendType, playerIdx }),
     onSpendRebound:(teamKey, rebType, playerIdx) => dispatch({ type: 'SPEND_REBOUND', teamKey, rebType, playerIdx }),
     onEndSection: ()                      => dispatch({ type: 'END_SECTION' }),
@@ -487,7 +496,7 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
         onSpendAssist={handlers.onSpendAssist}
         onSpendRebound={handlers.onSpendRebound}
         onTimeout={handlers.onTimeout}
-        onEndTimeout={handlers.onEndTimeout}
+        onEndTimeout={handlers.onEndTimeout} onSearchCrunch={handlers.onSearchCrunch}
         // Hotseat means a real person is sitting on the other side, so the
         // defence gets to make the choices that are the defence's — see
         // allocateStandingChecks. Against the coach, the engine allocates.

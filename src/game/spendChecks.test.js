@@ -4,7 +4,8 @@
 // player with Paint −1 and a hot marker and could not tell whether the marker
 // had been counted. It had: −1 Paint, +2 🔥, −1 contest. Now the line says so.
 import { describe, it, expect, vi } from 'vitest';
-import { newGame, getTeam, getPS, spendAssist, spendReboundBonus, shotCheck, checkLine, SPEND_COSTS } from './engine.js';
+import { newGame, getTeam, getPS, spendAssist, spendReboundBonus, shotCheck, checkLine, checkNeed, SPEND_COSTS } from './engine.js';
+import { aiSpendDecision } from './ai.js';
 
 const mk = (id, over = {}) => ({
   id, name: id, team: 'TST', pos: 'C', speed: 10, power: 10, defBoost: 0,
@@ -41,6 +42,45 @@ describe('shotCheck with itemised parts', () => {
     const r = shotCheck(mk('p'), '3pt', 1, {});
     spy.mockRestore();
     expect(r.parts).toEqual([{ label: 'card', n: 1 }, { label: '3PT', n: 2 }]);
+  });
+});
+
+describe('any player may spend', () => {
+  it('a three or a paint check no longer needs a bonus — the bonus rides on the die either way', () => {
+    const g = game();
+    g.teamA.assists = SPEND_COSTS.assistThree;
+    g.teamA.starters[0].threePtBoost = -2;   // a non-shooter
+    const spy = vi.spyOn(Math, 'random').mockReturnValue(0.85);   // a 18
+    const { game: ng, ok } = spendAssist(g, 'A', '3pt', 0);
+    spy.mockRestore();
+    expect(ok).toBe(true);
+    const line = ng.log[ng.log.length - 1].msg;
+    // 18 −1 contest −2 3PT = 15 vs 14 → in, at a price the bonus made plain
+    expect(line).toContain('🎲18 −1 contest −2 3PT = 15 vs 14 → 3pts!');
+    const g2 = game();
+    g2.teamA.assists = SPEND_COSTS.assistPaint;
+    expect(spendAssist(g2, 'A', 'paint', 0).ok).toBe(true);     // Paint −1, still allowed
+  });
+
+  it('checkNeed says the least die that converts, from the same sum the check makes', () => {
+    const g = game();
+    // a0: Paint −1, 3PT +2, contest 1 (b0 Def+1), Shot Line 14.
+    expect(checkNeed(g, 'A', 0, '3pt')).toEqual({ need: 13, pHit: 0.4, bonus: 1 });
+    expect(checkNeed(g, 'A', 0, 'paint')).toEqual({ need: 16, pHit: 0.25, bonus: -2 });
+    getPS(g, 'A', 'a0').hot = 1;                                  // +2
+    g.tempEff = { A: { astBoost_0: 1 }, B: {} };                  // +1 banked
+    expect(checkNeed(g, 'A', 0, '3pt')).toEqual({ need: 10, pHit: 0.55, bonus: 4 });
+    g.teamA.starters[0].shotLine = 30;
+    expect(checkNeed(g, 'A', 0, '3pt').pHit).toBe(0);
+  });
+
+  it('the AI nominates the best chance on the floor and spends only when it is worth it', () => {
+    const g = game();
+    g.teamA.assists = SPEND_COSTS.assistThree;
+    g.teamA.starters[3].threePtBoost = 5;                         // the shooter: need 8+, 65%
+    expect(aiSpendDecision(g, 'A')).toMatchObject({ type: 'spend_assist', spendType: '3pt', playerIdx: 3 });
+    for (const p of g.teamA.starters) { p.threePtBoost = -6; p.paintBoost = -6; }   // nobody can make anything
+    expect(aiSpendDecision(g, 'A')).toBeNull();
   });
 });
 

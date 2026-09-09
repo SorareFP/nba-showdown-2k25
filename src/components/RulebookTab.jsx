@@ -224,8 +224,8 @@ export default function RulebookTab() {
         <p>Assists accumulate across the game and can be spent:</p>
         <ul>
           <li><strong>1 AST:</strong> +1 to a player's next shot check.</li>
-          <li><strong>5 AST:</strong> a 3PT check (the player needs a 3PT Bonus).</li>
-          <li><strong>5 AST:</strong> a paint check (the player needs a Paint Bonus).</li>
+          <li><strong>5 AST:</strong> a 3PT check for any player; his 3PT Bonus, either sign, applies. The button shows the die he needs.</li>
+          <li><strong>5 AST:</strong> a paint check for any player; his Paint Bonus applies the same way.</li>
           <li><strong>Reaching 5 for the first time</strong> draws a bonus strategy card.</li>
         </ul>
 

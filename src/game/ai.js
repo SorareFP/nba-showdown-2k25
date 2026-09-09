@@ -3,7 +3,7 @@
 // Pure functions: takes game state + team key, returns an action object.
 // No React, no side effects. Used by tutorial, solo mode, sim-to-end.
 
-import { getTeam, getOpp, getPS, calcAdv, getFatigue, fatigueForMinutes, restMinutes, SPEND_COSTS, clutchAvailable, clutchEligible, burnedSlots, satOutLast, canRollSlot, extraRollPending } from './engine.js';
+import { getTeam, getOpp, getPS, calcAdv, getFatigue, fatigueForMinutes, restMinutes, SPEND_COSTS, clutchAvailable, clutchEligible, burnedSlots, satOutLast, canRollSlot, extraRollPending, checkNeed } from './engine.js';
 import { lookupChart } from './cards.js';
 import { canPlayCard, helpTargets } from './canPlay.js';
 import { getStrat, STRATS } from './strats.js';
@@ -319,31 +319,31 @@ export function aiPlacementPick(game, teamKey) {
 export function aiSpendDecision(game, teamKey) {
   const team = getTeam(game, teamKey);
   if (!team?.starters?.length) return null;
-  const best = boost => {
-    let bi = -1, bv = -Infinity;
+  // Any player may take a spend check now (2026-09-09); the AI nominates the
+  // best CHANCE on the floor — checkNeed's reading of bonus, contest and
+  // markers against the Shot Line — and spends only when the check is
+  // worth the currency: about a point of expected scoring per five spent.
+  const bestChance = type => {
+    let out = null;
     team.starters.forEach((p, i) => {
-      const v = p?.[boost] ?? -99;
-      if (p && v > bv) { bv = v; bi = i; }
+      if (!p) return;
+      const n = checkNeed(game, teamKey, i, type);
+      if (!out || n.pHit > out.pHit) out = { idx: i, pHit: n.pHit };
     });
-    return bi;
+    return out;
   };
-  // spendAssist's type strings are '3pt' and 'paint', and it re-checks that
-  // the chosen player actually carries the matching boost — so only nominate
-  // a player whose boost is real, not merely the least-bad on the floor.
-  const three = best('threePtBoost');
-  if ((team.assists ?? 0) >= SPEND_COSTS.assistThree && three >= 0 && (team.starters[three]?.threePtBoost || 0) > 0) {
-    return { type: 'spend_assist', spendType: '3pt', playerIdx: three };
+  const three = bestChance('3pt');
+  if ((team.assists ?? 0) >= SPEND_COSTS.assistThree && three && three.pHit * 3 >= 0.9) {
+    return { type: 'spend_assist', spendType: '3pt', playerIdx: three.idx };
   }
-  const paint = best('paintBoost');
-  const paintOk = paint >= 0 && (team.starters[paint]?.paintBoost || 0) > 0;
-  if ((team.assists ?? 0) >= SPEND_COSTS.assistPaint && paintOk) {
-    return { type: 'spend_assist', spendType: 'paint', playerIdx: paint };
+  const paint = bestChance('paint');
+  if ((team.assists ?? 0) >= SPEND_COSTS.assistPaint && paint && paint.pHit * 2 >= 0.9) {
+    return { type: 'spend_assist', spendType: 'paint', playerIdx: paint.idx };
   }
   const bonuses = game.reboundBonuses?.[teamKey];
-  if ((team.rebounds ?? 0) >= SPEND_COSTS.reboundPaint && bonuses?.paintCheck) {
-    // The rebound paint check has no boost requirement — any finisher works,
-    // so take the best paint hand available even at +0.
-    return { type: 'spend_rebound', rebType: 'paint_check', playerIdx: Math.max(paint, 0) };
+  if ((team.rebounds ?? 0) >= SPEND_COSTS.reboundPaint && bonuses?.paintCheck && paint) {
+    // The rebound check is a reward for winning the glass: always worth taking.
+    return { type: 'spend_rebound', rebType: 'paint_check', playerIdx: paint.idx };
   }
   return null;
 }

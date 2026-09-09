@@ -166,8 +166,8 @@ export default function HowToPlay({ scrollToSection, onStartTutorial, tutorialRu
           <p>Assists accumulate across the game and are a currency:</p>
           <ul>
             <li><strong>1 AST:</strong> +1 to a player's next shot check.</li>
-            <li><strong>5 AST:</strong> a 3PT check for a player with a 3PT Bonus.</li>
-            <li><strong>5 AST:</strong> a paint check for a player with a Paint Bonus.</li>
+            <li><strong>5 AST:</strong> a 3PT check for any player. His 3PT Bonus, plus or minus, rides on the die; the button shows the roll he needs.</li>
+            <li><strong>5 AST:</strong> a paint check for any player, the same way with his Paint Bonus.</li>
           </ul>
           <h4>Rebound Track</h4>
           <p>Rebounds accumulate too, and the <strong>difference</strong> between the teams is what pays:</p>

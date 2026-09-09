@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { calcAdv, getTeam, getOpp, getPS, getFatigue, SNAKE, SPEND_COSTS, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, extraRollPending } from '../../game/engine.js';
+import { calcAdv, getTeam, getOpp, getPS, getFatigue, SNAKE, SPEND_COSTS, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, extraRollPending, checkNeed } from '../../game/engine.js';
 import { canPlayCard, myHouseTargets, fwdTargets, preRollTargets, helpTargets } from '../../game/canPlay.js';
 import { benchRest, passTurn } from '../../game/engine.js';
 import { getStrat } from '../../game/strats.js';
@@ -1536,6 +1536,17 @@ function LiveEffects({ game, teamKey, idx }) {
   return tags.length ? <div className={styles.liveRow}>{tags}</div> : null;
 }
 
+/** "12+" — the least die that converts; "auto" when any die does; "no" when none can. */
+function needLabel(n) {
+  if (n.need <= 1) return '· auto';
+  if (n.need > 20) return '· no';
+  return `· ${n.need}+`;
+}
+function needTitle(kind, n, player, lead = null) {
+  const sign = v => `${v > 0 ? '+' : ''}${v}`;
+  return `${lead ? `${lead}: ` : ''}${kind} check — D20 ${n.bonus ? sign(n.bonus) + ' ' : ''}vs Shot Line ${player.shotLine}: needs ${Math.max(1, Math.min(21, n.need))}+ (${Math.round(n.pHit * 100)}%)`;
+}
+
 function PlayerSlot({ player, ps, adv, fat, result, blocked, teamKey, idx, phase, game, defPlayer, defSelect, defIdx, onDefChange, onRoll, onClutch = null, onSpendAssist, onSpendRebound, pvpDisabled = false, rollLocked = false }) {
   // Offensive Board Mastery owes this slot a second roll: the button comes back.
   const extraRoll = phase === 'scoring' && extraRollPending(game, teamKey, idx);
@@ -1619,17 +1630,17 @@ function PlayerSlot({ player, ps, adv, fat, result, blocked, teamKey, idx, phase
             {/* Assist spending buttons — costs come from SPEND_COSTS so the
                 buttons can never show at a count the engine will refuse */}
             {onSpendAssist && !pvpDisabled && (() => {
+              // ANY PLAYER MAY SPEND; the button says the die he needs.
               const myT = teamKey==='A'?game.teamA:game.teamB;
               const ast = myT.assists;
-              const has3pt = (player.threePtBoost||0) > 0;
-              const hasPaint = (player.paintBoost||0) > 0;
               const c3 = SPEND_COSTS.assistThree, cP = SPEND_COSTS.assistPaint;
-              const anyBtn = (ast>=c3 && has3pt) || (ast>=cP && hasPaint);
-              if (!anyBtn) return null;
+              if (ast < Math.min(c3, cP)) return null;
+              const n3 = checkNeed(game, teamKey, idx, '3pt');
+              const nP = checkNeed(game, teamKey, idx, 'paint');
               return (
                 <div className={styles.assistSpend}>
-                  {ast>=c3 && has3pt && <button className={styles.astBtn} title={`Spend ${c3} AST: 3PT shot check`} onClick={()=>onSpendAssist(teamKey,'3pt',idx)}>3PT ({c3}A)</button>}
-                  {ast>=cP && hasPaint && <button className={styles.astBtn} title={`Spend ${cP} AST: Paint shot check`} onClick={()=>onSpendAssist(teamKey,'paint',idx)}>Paint ({cP}A)</button>}
+                  {ast>=c3 && <button className={styles.astBtn} title={needTitle('3PT', n3, player)} onClick={()=>onSpendAssist(teamKey,'3pt',idx)}>3PT ({c3}A) {needLabel(n3)}</button>}
+                  {ast>=cP && <button className={styles.astBtn} title={needTitle('Paint', nP, player)} onClick={()=>onSpendAssist(teamKey,'paint',idx)}>Paint ({cP}A) {needLabel(nP)}</button>}
                 </div>
               );
             })()}
@@ -1639,12 +1650,13 @@ function PlayerSlot({ player, ps, adv, fat, result, blocked, teamKey, idx, phase
               if (!rb) return null;
               const myT2 = teamKey==='A'?game.teamA:game.teamB;
               const cR = SPEND_COSTS.reboundPaint;
-              const hasPaint = ((player.paintBoost||0) > 0 || player.power >= 10) && myT2.rebounds >= cR;
               // The 2-REB putback was removed — see spendReboundBonus in engine.js.
-              if (!(rb.paintCheck && hasPaint)) return null;
+              // Any player may take the check (the engine never required a bonus).
+              if (!(rb.paintCheck && myT2.rebounds >= cR)) return null;
+              const nR = checkNeed(game, teamKey, idx, 'paint');
               return (
                 <div className={styles.assistSpend}>
-                  <button className={styles.rebBtn} title={`Costs ${cR} REB: Paint shot check`} onClick={()=>onSpendRebound(teamKey,'paint_check',idx)}>Paint (−{cR}R)</button>
+                  <button className={styles.rebBtn} title={needTitle('Paint', nR, player, `Costs ${cR} REB`)} onClick={()=>onSpendRebound(teamKey,'paint_check',idx)}>Paint (−{cR}R) {needLabel(nR)}</button>
                 </div>
               );
             })()}

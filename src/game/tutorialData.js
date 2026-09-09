@@ -271,7 +271,7 @@ export const TUTORIAL_TOOLTIPS = [
   {
     id: 's2_assists_intro',
     text: "Did you notice your assist and rebound tracks? You can spend assists for bonus shot checks! Check the buttons below each player.",
-    detail: "1 AST = +1 to a shot check. 5 AST = a 3PT check (needs a 3PT Bonus) or a Paint check (needs a Paint Bonus). The first time you reach 5 assists you draw a bonus card!",
+    detail: "1 AST = +1 to a shot check. 5 AST = a 3PT check or a Paint check for any player — his bonus rides on the die, and the button shows the roll he needs. The first time you reach 5 assists you draw a bonus card!",
     section: 2,
     priority: 70,
     trigger: { phase: 'scoring', condition: (g) => g.quarter === 1 && g.section === 2 && g.scoringPasses >= 99 },

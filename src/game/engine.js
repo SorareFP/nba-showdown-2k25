@@ -326,9 +326,9 @@ export function getFatigue(g, key, idx) {
 export const SPEND_COSTS = {
   /** 1 AST: +1 to a player's next shot check. */
   assistBoost: 1,
-  /** 5 AST: a 3PT check, 3 points, needs a 3PT boost. */
+  /** 5 AST: a 3PT check, 3 points. Any player; the 3PT Bonus (either sign) rides on it. */
   assistThree: 5,
-  /** 5 AST: a paint check, 2 points, needs a Paint boost. */
+  /** 5 AST: a paint check, 2 points. Any player; the Paint Bonus (either sign) rides on it. */
   assistPaint: 5,
   /** 5 REB: the +3-differential paint check. */
   reboundPaint: 5,
@@ -470,6 +470,27 @@ function spendParts(astBonus, contest) {
   return [{ label: 'AST', n: astBonus || 0 }, { label: 'contest', n: -(contest || 0) }];
 }
 
+/**
+ * THE DIE A SPEND CHECK NEEDS, before it is taken — so the button can say so
+ * (the user, 2026-09-09: "show what roll a player would need to convert a
+ * shot check next to the button"). The same sum shotCheck makes: the banked
+ * assist boost, the defender's contest, the player's 3PT or Paint Bonus,
+ * his hot/cold markers, against his Shot Line. `need` is the least die that
+ * converts; `pHit` its chance on a d20.
+ */
+export function checkNeed(g, teamKey, idx, type) {
+  const player = getTeam(g, teamKey).starters[idx];
+  if (!player) return { need: 21, pHit: 0, bonus: 0 };
+  const ps = getPS(g, teamKey, player.id) || {};
+  const astBonus = g.tempEff?.[teamKey]?.['astBoost_' + idx] || 0;
+  const boost = type === '3pt' ? (player.threePtBoost || 0) : type === 'paint' ? (player.paintBoost || 0) : 0;
+  const marker = ((ps.hot || 0) - (ps.cold || 0)) * 2;
+  const bonus = astBonus - matchupContest(g, teamKey, idx, type) + boost + marker;
+  const need = (player.shotLine || 99) - bonus;
+  const pHit = Math.min(1, Math.max(0, (21 - need) / 20));
+  return { need, pHit, bonus };
+}
+
 // ── Assist Spending ────────────────────────────────────────────────────────
 // Costs live in SPEND_COSTS above — that block is the single source of truth
 // for both the engine checks here and the buttons in CourtBoard.
@@ -491,7 +512,8 @@ export function spendAssist(g, teamKey, type, playerIdx) {
 
   if (type === '3pt') {
     if (myT.assists < SPEND_COSTS.assistThree) return { game: ng, ok: false, msg: `Need ${SPEND_COSTS.assistThree} assists (have ${myT.assists})` };
-    if (!(player.threePtBoost > 0)) return { game: ng, ok: false, msg: `${player.name} needs a 3PT Bonus` };
+    // ANY PLAYER MAY TAKE IT (the user, 2026-09-09: "Players shouldn't need
+    // a bonus to be able to spend"); the bonus, either sign, rides on the die.
     myT.assists -= SPEND_COSTS.assistThree;
     const astBonus = ng.tempEff?.[teamKey]?.['astBoost_' + playerIdx] || 0;
     const r = shotCheck(player, '3pt', spendParts(astBonus, matchupContest(ng, teamKey, playerIdx, '3pt')), ps);
@@ -513,7 +535,6 @@ export function spendAssist(g, teamKey, type, playerIdx) {
 
   if (type === 'paint') {
     if (myT.assists < SPEND_COSTS.assistPaint) return { game: ng, ok: false, msg: `Need ${SPEND_COSTS.assistPaint} assists (have ${myT.assists})` };
-    if (!(player.paintBoost > 0)) return { game: ng, ok: false, msg: `${player.name} needs a Paint Bonus` };
     myT.assists -= SPEND_COSTS.assistPaint;
     const astBonus = ng.tempEff?.[teamKey]?.['astBoost_' + playerIdx] || 0;
     const r = shotCheck(player, 'paint', spendParts(astBonus, matchupContest(ng, teamKey, playerIdx, 'paint')), ps);

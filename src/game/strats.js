@@ -54,7 +54,7 @@ export const STRATS = [
   { id:'energy_injection',    name:'Energy Injection',   phase:'scoring',  side:'off', copies:2, locked:false, color:'#059669', rarity:'common',
     desc:'Two players with salary <$400 each get +2 to their scoring roll. If either scores 4+: +1 assist.' },
   { id:'double_team',         name:'Double Team',        phase:'scoring',  side:'def', copies:2, locked:false, color:'#1E40AF', rarity:'uncommon',
-    desc:'Send two at the ball: choose an opposing player who hasn\'t rolled — their defender gets +6 Speed/+6 Power this segment. But someone is open: your opponent gets +3 on the next scoring roll they choose to make.' },
+    desc:'Send two at the ball: choose an opposing player who hasn\'t rolled — their defender gets +6 Speed/+6 Power this segment. But someone is open: your opponent gets +3 on the next scoring roll they choose to make. Once per section.' },
   { id:'crowd_favorite',      name:'Crowd Favorite',     phase:'scoring',  side:'off', copies:2, locked:false, color:'#F97316', rarity:'common',
     desc:'Player with salary ≤$350: if they score 2+ pts this section (rolls or shot checks), they gain a hot marker.' },
   { id:'switch_everything',   name:'Switch Everything',  phase:'scoring',  side:'def', copies:2, locked:true,  color:'#1D4ED8', rarity:'rare',

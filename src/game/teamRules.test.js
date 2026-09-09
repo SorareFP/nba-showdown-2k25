@@ -5,8 +5,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   ownedPlayers, ownedRoster, capSal, randomizeTeam, filterPool, sortPool, POOL_SORTS, POSITIONS,
-  DEFAULT_FILTERS, CAP, MAX, MIN_TO_PLAY, RANDOM_MIN_SAL,
-} from './teamRules.js';
+  DEFAULT_FILTERS, CAP, MAX, MIN_TO_PLAY, RANDOM_MIN_SAL, salaryOrder } from './teamRules.js';
 import { ALL_CARDS, BASE_SET, cardKey } from './cardSets.js';
 
 const base = ALL_CARDS.find(c => (!c.set || c.set === BASE_SET) && Number.isFinite(c.salary));
@@ -126,5 +125,13 @@ describe('ownedRoster', () => {
 
   it('tolerates a team with no players', () => {
     expect(ownedRoster(undefined, { a: { count: 1 } })).toEqual({ roster: [], dropped: [] });
+  });
+});
+
+describe('salaryOrder', () => {
+  it('lists slots richest first, ties by slot, and copes with a hole', () => {
+    const starters = [{ salary: 300 }, { salary: 950 }, { salary: 300 }, null, { salary: 600 }];
+    expect(salaryOrder(starters)).toEqual([1, 4, 0, 2, 3]);
+    expect(salaryOrder([])).toEqual([]);
   });
 });

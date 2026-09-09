@@ -171,3 +171,15 @@ export function ownedRoster(playerIds, collection) {
   for (const id of ids) ((collection[id]?.count ?? 0) > 0 ? roster : dropped).push(id);
   return { roster, dropped };
 }
+
+/**
+ * Starter slots in salary order, richest first, ties by slot — the order a
+ * coach is asked to assign defenders in Switch Everything, so the star gets
+ * the pick of the defence.
+ */
+export function salaryOrder(starters) {
+  return (starters || [])
+    .map((p, i) => ({ i, sal: p?.salary || 0 }))
+    .sort((a, b) => b.sal - a.sal || a.i - b.i)
+    .map(x => x.i);
+}

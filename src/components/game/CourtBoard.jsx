@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { calcAdv, getTeam, getOpp, getPS, getFatigue, SNAKE, SPEND_COSTS, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, extraRollPending, checkNeed, fatigueForMinutes, crunchSearchOptions } from '../../game/engine.js';
 import { canPlayCard, myHouseTargets, fwdTargets, preRollTargets, helpTargets } from '../../game/canPlay.js';
 import { benchRest, passTurn } from '../../game/engine.js';
+import { salaryOrder } from '../../game/teamRules.js';
 import { getStrat } from '../../game/strats.js';
 import { aiDraftPick, aiPlacementPick } from '../../game/ai.js';
 import styles from './CourtBoard.module.css';
@@ -862,11 +863,19 @@ async function buildOpts(game, teamKey, cardId, base, openModal, ui = {}) {
 
   // ── Switch Everything: show roll effects for each assignment ────────────
   if (cardId === 'switch_everything') {
+    // THE STAR FIRST. The prompts go in salary order, richest attacker first
+    // (the user, 2026-09-09: "prompt the defender for the highest salary
+    // opposing-player on the floor first"), so the best defender is chosen
+    // for the player who matters most while every defender is still free.
+    // `assigns` is still indexed by the attacker's SLOT — that is the engine's
+    // contract — only the order of asking changes.
+    const order = salaryOrder(oppT.starters);
     const assigns = [];
     const usedDefenders = [];
-    for (let i = 0; i < 5; i++) {
+    for (let step = 0; step < order.length; step += 1) {
+      const i = order[step];
       const oppPlayer = oppT.starters[i];
-      const assigned = assigns.map((di, oi) => `${oppT.starters[oi]?.name} ← ${myT.starters[di]?.name}`).join(' | ');
+      const assigned = order.slice(0, step).map(oi => `${oppT.starters[oi]?.name} ← ${myT.starters[assigns[oi]]?.name}`).join(' | ');
       const availInfo = myT.starters.map((def, di) => {
         if (usedDefenders.includes(di)) return '(already assigned)';
         const a = calcAdv(oppPlayer, def, game.tempEff?.[oppKey] || {}, i);
@@ -875,10 +884,14 @@ async function buildOpts(game, teamKey, cardId, base, openModal, ui = {}) {
         const rollStr = a.rollBonus > 0 ? `+${a.rollBonus}` : a.hasPenalty ? `${a.rollBonus}` : '0';
         return `Opp: Spd ${sA} · Pwr ${pA} → Roll ${rollStr}`;
       });
-      const progress = i > 0 ? `\n(${i}/5 assigned: ${assigned})` : '';
-      const di = await openModal({ teamKey, cardId, players: myT.starters, label: `🛡 Switch Everything (${i+1}/5) — Who guards ${oppPlayer?.name}?`, extraInfo: availInfo });
-      if (di === null) return null;
-      assigns.push(di);
+      let di = null;
+      for (;;) {
+        di = await openModal({ teamKey, cardId, players: myT.starters, label: `🛡 Switch Everything (${step + 1}/5) — Who guards ${oppPlayer?.name}${oppPlayer?.salary ? ` ($${oppPlayer.salary})` : ''}?${assigned ? ` (${assigned})` : ''}`, extraInfo: availInfo });
+        if (di === null) return null;
+        if (!usedDefenders.includes(di)) break;
+        toast(`${myT.starters[di]?.name} is already assigned`, { tone: 'error' });
+      }
+      assigns[i] = di;
       usedDefenders.push(di);
     }
     // Review summary before confirming

@@ -442,13 +442,14 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
   );
 
   if (game.done) {
-    if (!livePreset) return <GameOver game={game} onPlayAgain={handlers.onPlayAgain} />;
+    if (!livePreset) return <GameOver game={game} mode={opponent} onPlayAgain={handlers.onPlayAgain} />;
     // The score as the FIXTURE sees it — see resultFromPlayed for why the
     // home/away mapping is not written out here.
     const result = { seasonId: livePreset.seasonId, ...resultFromPlayed(livePreset, game.teamA.score, game.teamB.score, boxScoreFor(game, 'A'), boxScoreFor(game, 'B')) };
     return (
       <GameOver
         game={game}
+        mode="ai"
         onLeave={() => { dispatch({ type: 'SET', game: null }); setRestoredPreset(null); onPresetFinish?.(result); }}
         leaveLabel="Back to the season →"
       />

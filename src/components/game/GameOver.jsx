@@ -3,20 +3,28 @@ import { useAuth } from '../../firebase/AuthProvider.jsx';
 import { detectMilestones, settleGameReward, todayKey } from '../../game/coinRewards.js';
 import { getUserData } from '../../firebase/collection.js';
 import { claimGameReward } from '../../firebase/serverWrites.js';
+import { humanWon, humanTeamKey } from '../../game/outcome.js';
 import { boxScoreFor } from '../../game/boxScore.js';
 import { useCardStats } from '../../firebase/CardStatsProvider.jsx';
 import styles from './GameOver.module.css';
 
-export default function GameOver({ game, onPlayAgain, isPvp = false, myTeamKey = null, onLeave = null, leaveLabel = 'Leave Game' }) {
+/**
+ * `mode` is the game's shape: 'ai' (you on A against the coach), 'hotseat'
+ * (two people at one screen), or PvP via `isPvp` + `myTeamKey`. The claim's
+ * `won` and the headline both come from humanWon — see outcome.js for why.
+ */
+export default function GameOver({ game, onPlayAgain, isPvp = false, myTeamKey = null, mode = 'ai', onLeave = null, leaveLabel = 'Leave Game' }) {
   const { user } = useAuth();
   const { refresh: refreshCardStats } = useCardStats();
   const { teamA, teamB } = game;
   const w = teamA.score > teamB.score ? teamA : teamA.score < teamB.score ? teamB : null;
   const winCol = w === teamA ? 'var(--orange)' : 'var(--blue)';
 
-  // In PvP, determine if this player won
-  const myTeam = myTeamKey === 'A' ? teamA : myTeamKey === 'B' ? teamB : null;
-  const pvpIsWinner = isPvp && myTeam ? w === myTeam : false;
+  const shape = isPvp ? 'pvp' : mode;
+  const youWon = humanWon(game, { mode: shape, myTeamKey });
+  const myKey = humanTeamKey({ mode: shape, myTeamKey });
+  // PvP and solo-vs-coach both have a "you"; hotseat does not.
+  const hasYou = myKey !== null;
 
   const [rewards, setRewards] = useState(null);
   const [rewardsApplied, setRewardsApplied] = useState(false);
@@ -34,11 +42,10 @@ export default function GameOver({ game, onPlayAgain, isPvp = false, myTeamKey =
       // not, which milestones the box score hit. It is priced by
       // settleGameReward — here for the breakdown, and again on the server for
       // the actual coins, against the server's own copy of the daily counters.
-      const isWinner = isPvp ? pvpIsWinner : w !== null; // self-play always has a winner
+      // `won` is the HUMAN's win (outcome.js) — never "somebody won".
       // The box goes with the claim: the lifetime tracker's lines for MY team —
-      // A in a solo game, my side in PvP.
-      const myKey = isPvp ? myTeamKey : 'A';
-      const claim = { won: isWinner, pvp: isPvp, ...detectMilestones(game), box: myKey ? boxScoreFor(game, myKey) : [] };
+      // A against the coach, my side in PvP, nobody's in hotseat.
+      const claim = { won: youWon, pvp: isPvp, ...detectMilestones(game), box: myKey ? boxScoreFor(game, myKey) : [] };
       const today = todayKey();
       const preview = settleGameReward(
         claim,
@@ -67,7 +74,7 @@ export default function GameOver({ game, onPlayAgain, isPvp = false, myTeamKey =
 
       setRewardsApplied(true);
     })();
-  }, [user, game, w, isPvp, pvpIsWinner, myTeamKey, refreshCardStats]);
+  }, [user, game, youWon, myKey, isPvp, refreshCardStats]);
 
   return (
     <div className={styles.wrap}>
@@ -76,8 +83,10 @@ export default function GameOver({ game, onPlayAgain, isPvp = false, myTeamKey =
         <div className={styles.score}>{teamA.score} — {teamB.score}</div>
         <div className={styles.winner} style={{ color: winCol }}>
           {isPvp
-            ? (pvpIsWinner ? 'You win!' : w ? 'You lose!' : 'Tie game!')
-            : (w ? `${w.name} wins!` : 'Tie game!')
+            ? (youWon ? 'You win!' : w ? 'You lose!' : 'Tie game!')
+            : hasYou
+              ? (youWon ? 'You win!' : w ? `You lose — ${w.name} wins.` : 'Tie game!')
+              : (w ? `${w.name} wins!` : 'Tie game!')
           }
         </div>
       </div>

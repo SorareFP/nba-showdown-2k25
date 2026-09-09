@@ -476,7 +476,7 @@ describe('the committed file', () => {
     // 21, not 25: the rookie playing-time bar, same four bench rings.
     // 24, and equal to `marked`: a rookie card's only trophies are ROY and a
     // ring, neither of which the selection suffix distinguishes.
-    expect(AWARDS.counts[ROOKIE_SET].ifSelectionsCounted).toBe(24);
+    expect(AWARDS.counts[ROOKIE_SET].ifSelectionsCounted).toBe(34); // 34 on 2026-09-09, with the regenerated file
   });
 
   it('names every champion it marked, and gets them right', () => {

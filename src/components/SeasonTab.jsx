@@ -907,6 +907,11 @@ function Dashboard({
                 </span>
                 <TeamChip team={by.get(mine.away)} right won={mine.result ? mine.result.awayScore > mine.result.homeScore : false} />
               </div>
+              {myGameLeft && !isHH && (
+                <div className={styles.hint}>
+                  {mine.home === myId ? 'Home court: the visitor places first in the snake and you answer every row.' : 'On the road: you place first in the snake and the home side answers.'}
+                </div>
+              )}
               {myGameLeft && inProgress === 'account' && (
                 <div className={styles.hint}>In progress on another device — Resume picks it up where you left off.</div>
               )}

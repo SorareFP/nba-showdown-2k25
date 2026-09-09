@@ -252,7 +252,8 @@ export function simulateGame(rosterA, rosterB, { deckA = null, deckB = null, rng
   const realRandom = Math.random;
   if (rng) Math.random = rng;
   try {
-    let g = newGame(rosterA, rosterB, deckA, deckB, { clutchDice: CLUTCH_DICE });
+    // A is the fixture's HOME side (simulateFixture), so the visitor, B, leads the snake.
+    let g = newGame(rosterA, rosterB, deckA, deckB, { clutchDice: CLUTCH_DICE, placementFirst: 'B' });
     g = draftStarters(g, brains);
     for (let s = 0; s < SECTIONS && !g.done; s += 1) g = playSection(g, s, brains);
     const scoreA = g.teamA.score;

@@ -188,7 +188,13 @@ export function newGame(rosterA, rosterB, deckConfigA, deckConfigB, opts = {}) {
     matchupTurn: 'A',
     matchupPasses: 0,
     placementStep: 10,                    // 10 = all placed (solo default). PvP overrides to 0.
-    placementOrder: ['A','B','B','A','A','B','B','A','A','B'],
+    // WHO LEADS THE SNAKE. Placing first gives information away (the other
+    // side answers every row you lead), so a season hands the lead to the
+    // VISITOR and the home side answers (the user, 2026-09-09). A sandbox
+    // game keeps A first; PvP sets its own.
+    placementOrder: opts.placementFirst === 'B'
+      ? ['B','A','A','B','B','A','A','B','B','A']
+      : ['A','B','B','A','A','B','B','A','A','B'],
     lastMatchupCard: null,
     lastDefSwitch: null,    // the opponent's last defensive switch — what Overhelp / Burned on the Switch answer
     scoringTurn: 'B',

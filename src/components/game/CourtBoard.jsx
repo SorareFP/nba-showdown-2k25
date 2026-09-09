@@ -20,7 +20,7 @@ function HelpBtn({ section }) {
   return <button className={styles.helpBtn} onClick={handleClick} title="How to Play">?</button>;
 }
 
-export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExecCard, onResolve, onSpendAssist, onSpendRebound, onDraftSubmit, onPlacePlayer, onTimeout = null, onEndTimeout = null, onSearchCrunch = null, pvpMode = false, myTeamKey = null, isMyTurn = true, defenceIsHuman = false, rollGate = null }) {
+export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExecCard, onResolve, onSpendAssist, onSpendRebound, onDraftSubmit, onPlacePlayer, onTimeout = null, onEndTimeout = null, onSearchCrunch = null, pvpMode = false, myTeamKey = null, isMyTurn = true, defenceIsHuman = false, rollGate = null, aiIq = 1 }) {
   // ── Solo placement ─────────────────────────────────────────────────────────
   //
   // PvP passes a Firebase-backed onPlacePlayer; solo places locally with the
@@ -56,11 +56,11 @@ export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExec
     const order = game.placementOrder || ['A','B','B','A','A','B','B','A','A','B'];
     if (order[step] !== 'B') return;
     const t = setTimeout(() => {
-      const action = aiPlacementPick(game, 'B');
+      const action = aiPlacementPick(game, 'B', { iq: aiIq });
       if (action) soloPlace(action.playerId);
     }, 650);
     return () => clearTimeout(t);
-  }, [pvpMode, game]);
+  }, [pvpMode, game, aiIq]);
 
   const [modal, setModal] = useState(null);
   const [draftSelected, setDraftSelected] = useState([]);

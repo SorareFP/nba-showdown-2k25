@@ -5,6 +5,7 @@ import { CLUTCH_DICE } from '../game/clutchAwards.js';
 import { execCard, resolvePendingShotCheck, resolveGoUnder } from '../game/execCard.js';
 import { randomizeTeam, MIN_TO_PLAY } from '../game/teamRules.js';
 import { resultFromPlayed } from '../game/modes/season.js';
+import { AI_LEVELS, iqOf, loadAiLevel, saveAiLevel } from '../game/aiLevels.js';
 import { boxScoreFor } from '../game/boxScore.js';
 // A REDUCER CANNOT HOLD A HOOK, and must not have side effects at all — so a
 // rejected play reports through the module-level sink rather than through
@@ -185,6 +186,10 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
   // a specific outcome: steer both teams to the score you want and see what
   // the results screen pays. Chosen on the pre-game screen, fixed for the game.
   const [opponent, setOpponent] = useState('ai');
+  // COACH DIFFICULTY — the matchup IQ lever (aiLevels.js), remembered per
+  // browser. Applies to every game against the coach, sandbox or season.
+  const [aiLevel, setAiLevelState] = useState(() => loadAiLevel());
+  const setAiLevel = id => { setAiLevelState(id); saveAiLevel(id); };
 
   // THE RESUME PROMPT. On the first look at a signed-in account, a save on
   // the account that is newer than anything here is a game from another
@@ -378,7 +383,10 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
     const deal = () => {
       setOpponent('ai');
       // The season's own deck for your side; the opponent plays the default.
-      dispatch({ type: 'SET', game: newGame(preset.rosterA, preset.rosterB, preset.deckA ?? null, null, { clutchDice: CLUTCH_DICE }) });
+      // THE VISITOR PLACES FIRST. Leading a row gives information away, so
+      // home court is answering the snake: when you are at home the coach
+      // (B) leads; on the road you do (the user, 2026-09-09).
+      dispatch({ type: 'SET', game: newGame(preset.rosterA, preset.rosterB, preset.deckA ?? null, null, { clutchDice: CLUTCH_DICE, placementFirst: preset.humanIsHome ? 'B' : 'A' }) });
     };
     // A sandbox game in progress is somebody's evening. Dealing a fixture over
     // the top of it would discard it with no warning and no way back, so the
@@ -442,7 +450,7 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
     <NoGame
       canUseBuilt={rosterA.length >= 5 && rosterB.length >= 5}
       rosterA={rosterA} rosterB={rosterB}
-      opponent={opponent} setOpponent={setOpponent}
+      opponent={opponent} setOpponent={setOpponent} aiLevel={aiLevel} setAiLevel={setAiLevel}
       onStart={startGame}
     />
   );
@@ -496,6 +504,7 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
         // Only against the coach: hotseat is two humans at one screen and
         // they alternate by agreement, and PvP has its own turn machinery.
         rollGate={opponent === 'ai' ? rollGate(game) : null}
+        aiIq={opponent === 'ai' ? iqOf(aiLevel) : 1}
         onRoll={handlers.onRoll}
         onEndSection={handlers.onEndSection}
         onExecCard={handlers.onExecCard}
@@ -513,7 +522,7 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
   );
 }
 
-function NoGame({ canUseBuilt, rosterA, rosterB, opponent, setOpponent, onStart }) {
+function NoGame({ canUseBuilt, rosterA, rosterB, opponent, setOpponent, aiLevel, setAiLevel, onStart }) {
   const { user } = useAuth();
   const [decks, setDecks] = useState([]);
   const [deckA, setDeckA] = useState('default');
@@ -570,6 +579,14 @@ function NoGame({ canUseBuilt, rosterA, rosterB, opponent, setOpponent, onStart 
               <option value="human">🧑 Me — play both sides</option>
             </select>
           </div>
+          {opponent === 'ai' && (
+            <div className={styles.deckPicker}>
+              <label className={styles.deckLabel} style={{ color: 'var(--blue)' }}>Coach difficulty</label>
+              <select className={styles.deckSelect} value={aiLevel} onChange={e => setAiLevel(e.target.value)} title="How often the coach finds the right matchup in the placement snake">
+                {AI_LEVELS.map(l => <option key={l.id} value={l.id}>{l.label} — {l.blurb}</option>)}
+              </select>
+            </div>
+          )}
         </div>
 
         <div className={styles.noGameBtns}>

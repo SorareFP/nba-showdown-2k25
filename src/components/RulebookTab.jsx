@@ -78,7 +78,7 @@ export default function RulebookTab() {
         <ul>
           <li><strong>Team:</strong> <strong>10 players</strong> under a <strong>$5,500 salary cap</strong>. Five start each section; five rest.</li>
           <li><strong>Deck:</strong> <strong>50 strategy cards</strong>. Copies per card are capped by rarity — 5 common, 4 uncommon, 3 rare, 1 legendary. Shuffle, draw <strong>7</strong>.</li>
-          <li><strong>Lineups and placement:</strong> each section both managers pick five in secret and lock them, then place them one at a time in the snake <strong>A-B-B-A-A-B-B-A-A-B</strong>; the row a player lands in is their matchup.</li>
+          <li><strong>Lineups and placement:</strong> each section both managers pick five in secret and lock them, then place them one at a time in the snake <strong>A-B-B-A-A-B-B-A-A-B</strong>; the row a player lands in is their matchup. Leading a row gives information away, so in a season the <strong>visitor places first</strong> and the home side answers; a sandbox game has Team A lead.</li>
           <li><strong>Length:</strong> 4 quarters × 3 sections. Halftime is the start of Q3.</li>
           <li><strong>Bench:</strong> the five not placed recover fatigue and lose their markers.</li>
         </ul>
@@ -340,7 +340,7 @@ export default function RulebookTab() {
           <div className={s.glossaryDef}>4 minutes per section played. 8+ = −2, 12+ = −6, 16 = −12 and −6 more per section after that. A section on the bench sheds 4.</div>
 
           <div className={s.glossaryTerm}>Snake</div>
-          <div className={s.glossaryDef}>The placement order A-B-B-A-A-B-B-A-A-B.</div>
+          <div className={s.glossaryDef}>The placement order A-B-B-A-A-B-B-A-A-B — the visitor leads in a season, Team A in a sandbox game.</div>
 
           <div className={s.glossaryTerm}>Section</div>
           <div className={s.glossaryDef}>One of 3 per quarter, 12 per game: lineup pick, placement, matchup window, scoring window, rolling.</div>

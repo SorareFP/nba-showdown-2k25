@@ -222,7 +222,8 @@ for (let n = 0; n < GAMES; n += 1) {
   const FULL = process.argv.includes('--full');
   // `locked` marks deck-editor staples, not exclusions — every card deals.
   const cfg = FULL ? Object.fromEntries(STRATS.map(s => [s.id, s.copies || 2])) : null;
-  let g = newGame(rosterA, rosterB, cfg, cfg);
+  // No home side here: alternate who leads the snake so neither chair is favoured.
+  let g = newGame(rosterA, rosterB, cfg, cfg, { placementFirst: n % 2 ? 'B' : 'A' });
   const heldThisGame = new Set();
   const playedThisGame = new Set();
 

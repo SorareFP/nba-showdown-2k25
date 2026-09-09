@@ -321,10 +321,18 @@ export function placementChoices(game, teamKey) {
   return out;
 }
 
-export function aiPlacementPick(game, teamKey) {
+/**
+ * `iq` (0..1, default 1) is the difficulty's first lever (aiLevels.js): the
+ * chance this placement is the search's best answer; otherwise it is any
+ * remaining player. Math.random, so the sims' seeded rng reproduces it.
+ */
+export function aiPlacementPick(game, teamKey, { iq = 1 } = {}) {
   const choices = placementChoices(game, teamKey);
   if (!choices.length) return null;
-  return { type: 'place_player', playerId: choices[0].player.id, value: choices[0].value };
+  const pick = iq >= 1 || Math.random() < iq
+    ? choices[0]
+    : choices[Math.floor(Math.random() * choices.length)];
+  return { type: 'place_player', playerId: pick.player.id, value: pick.value, best: pick === choices[0] };
 }
 
 // ── Conversion spends ───────────────────────────────────────────────────────

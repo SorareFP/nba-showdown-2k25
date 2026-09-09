@@ -235,7 +235,7 @@ export default function HowToPlay({ scrollToSection, onStartTutorial, tutorialRu
             <dt>Card Window</dt><dd>The matchup or scoring phase before rolling. Play hands the turn over; two passes in a row close it.</dd>
             <dt>Priority</dt><dd>Whose turn it is in a card window. Playing a card gives it away.</dd>
             <dt>Standing Card</dt><dd>A card that stays in effect for the section while its players are on the floor.</dd>
-            <dt>Snake</dt><dd>The placement order A-B-B-A-A-B-B-A-A-B.</dd>
+            <dt>Snake</dt><dd>The placement order A-B-B-A-A-B-B-A-A-B. In a season the visitor leads and the home side answers; in a sandbox game Team A leads.</dd>
             <dt>Section</dt><dd>One of 3 per quarter, 12 per game: lineup pick, placement, matchup window, scoring window, rolling.</dd>
             <dt>Crunch Time</dt><dd>The final section, when the margin is 20 or less as it starts.</dd>
             <dt>Clutch Possession</dt><dd>Roll 2 dice (plus award dice) and keep the best. Once per team in Crunch Time.</dd>

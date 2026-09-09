@@ -3,7 +3,7 @@
 // Pure functions: takes game state + team key, returns an action object.
 // No React, no side effects. Used by tutorial, solo mode, sim-to-end.
 
-import { getTeam, getOpp, getPS, calcAdv, getFatigue, fatigueForMinutes, restMinutes, SPEND_COSTS, clutchAvailable, clutchEligible, burnedSlots, satOutLast } from './engine.js';
+import { getTeam, getOpp, getPS, calcAdv, getFatigue, fatigueForMinutes, restMinutes, SPEND_COSTS, clutchAvailable, clutchEligible, burnedSlots, satOutLast, canRollSlot, extraRollPending } from './engine.js';
 import { lookupChart } from './cards.js';
 import { canPlayCard, helpTargets } from './canPlay.js';
 import { getStrat, STRATS } from './strats.js';
@@ -524,6 +524,15 @@ function evaluateCard(game, teamKey, cardId, strat, opts = {}) {
     const { saved } = switchCancelValue(game, teamKey, cardId);
     return saved >= SWITCH_FLOOR ? Math.min(10, 3 + 2 * saved) : 0;
   }
+  // COACH'S CHALLENGE RE-ROLLS THE OTHER SIDE'S LAST CHECK. A re-roll of a
+  // miss can only turn it into a make (the user, 2026-09-09: "AI played
+  // coach's challenge on my miss, which converted into a make"). Only a make
+  // is worth challenging, and a three more than a two.
+  if (cardId === 'coaches_challenge') {
+    const lsc = game.lastShotCheck;
+    if (!lsc || lsc.teamKey === teamKey || !lsc.result?.hit) return 0;
+    return 4 + (lsc.pts || 0);
+  }
 
   // Phase gating — matchup cards only in matchup phase, etc.
   if (strat.phase === 'matchup' && phase !== 'matchup_strats') return 0;
@@ -920,12 +929,17 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
     }
 
     case 'offensive_board': {
-      // Pick highest power player who already rolled
-      const best = starters.reduce((b, p, i) => {
-        if (!rolls[i]) return b;
-        return p.power > (b.pwr || 0) ? { idx: i, pwr: p.power } : b;
-      }, { idx: 0, pwr: 0 });
-      return { playerIdx: best.idx };
+      // The second roll goes to the rolled player whose chart pays most at −2
+      // against his defender — a steep chart, not the biggest body.
+      let best = null;
+      starters.forEach((p, i) => {
+        if (!p || rolls[i] == null || extraRollPending(game, teamKey, i)) return;
+        const dp = oppT.starters[(game.offMatchups?.[teamKey] || [])[i] ?? i];
+        const bonus = dp ? calcAdv(p, dp, game.tempEff?.[teamKey] || {}, i).rollBonus : 0;
+        const v = expectedOutput(p, bonus + carriedMod(game, teamKey, p) - 2);
+        if (!best || v > best.v) best = { idx: i, v };
+      });
+      return { playerIdx: best ? best.idx : 0 };
     }
 
     case 'rebound_tap_out': {
@@ -1221,7 +1235,7 @@ export function aiRollDecision(game, teamKey) {
   const blocked = game.blockedRolls?.[teamKey] || {};
 
   const candidates = (myT.starters || []).map((p, i) => {
-    if (rolls[i] != null || blocked[i]) return null;
+    if (!canRollSlot(game, teamKey, i)) return null;
     const di = (game.offMatchups[teamKey] || [])[i] ?? i;
     const dp = oppT.starters[di];
     if (!dp) return { idx: i, bonus: 0 };
@@ -1314,8 +1328,8 @@ export function aiReactionDecision(game, teamKey, trigger) {
     if (best) return { type: 'play_card', cardId: best.cardId, opts: aiBuildCardOpts(game, teamKey, best.cardId) };
   }
 
-  // Coach's Challenge: play on high-scoring rolls
-  if (trigger === 'opp_scored' && hand.includes('coaches_challenge')) {
+  // Coach's Challenge: only a make is worth re-rolling
+  if (trigger === 'opp_scored' && hand.includes('coaches_challenge') && game.lastShotCheck?.result?.hit && game.lastShotCheck.teamKey !== teamKey) {
     const check = canPlayCard(game, teamKey, 'coaches_challenge');
     if (check.canPlay) {
       const opts = aiBuildCardOpts(game, teamKey, 'coaches_challenge');

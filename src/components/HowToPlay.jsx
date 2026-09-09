@@ -208,7 +208,7 @@ export default function HowToPlay({ scrollToSection, onStartTutorial, tutorialRu
           <p><strong>Sign in with Google first</strong> — the Starter Pack, your collection, your seasons and a game in progress all live on the account; signed out, the game is a sandbox. Your free <strong>Starter Pack</strong> holds 20 players and 30 strategy cards plus Unethical Hoops. Before you open it you pick a <strong>favourite team</strong>, NBA or WNBA, and the pack carries three commons and an uncommon from it. You can only choose once.</p>
           <h4>Cards, Coins, Packs</h4>
           <ul>
-            <li>Playing earns <strong>coins</strong>: wins, milestones and a daily first-win bonus. Coins buy packs, from the 100-coin Booster up to the 6,000-coin Legendary Chase. Special sets — Super Season, Rookie, Summer Standouts and their WNBA counterparts — appear in ordinary packs at reduced odds.</li>
+            <li>Playing earns <strong>coins</strong>: wins, milestones by your own players (a triple-double, a 50-point game) and a daily first-win bonus. Coins buy packs, from the 100-coin Booster up to the 6,000-coin Legendary Chase. Special sets — Super Season, Rookie, Summer Standouts and their WNBA counterparts — appear in ordinary packs at reduced odds.</li>
             <li>A pulled card is a <strong>spare</strong> until you press <strong>Collect</strong>. Collected cards count towards set goals and rewards; spares can be listed on the <strong>market</strong> (never below the card's burn value) or <strong>burned</strong> for coins.</li>
             <li>Build teams and decks from what you own. A team carries its own deck.</li>
           </ul>

@@ -74,10 +74,18 @@ export const todayKey = (d = new Date()) => d.toISOString().split('T')[0];
 
 /**
  * Which milestones a finished game hit. Browser-only: needs the box scores.
- * Checks both teams, because self-play is a valid game.
+ *
+ * `teamKey` is the HUMAN's team ('A' against the coach, my side in PvP):
+ * only that box score counts. It used to read both teams "because self-play
+ * is a valid game", which paid the user for the coach's triple-double
+ * (2026-09-09: "I got coins for giving up a triple double haha") — the same
+ * mistake as the victory bonus in outcome.js. Hotseat passes null: nobody
+ * is "you" there, both benches are the same person, so both boxes count.
  */
-export function detectMilestones(game) {
-  const stats = [game.teamA.stats ?? [], game.teamB.stats ?? []];
+export function detectMilestones(game, teamKey = null) {
+  const stats = teamKey
+    ? [(teamKey === 'A' ? game.teamA : game.teamB)?.stats ?? []]
+    : [game.teamA.stats ?? [], game.teamB.stats ?? []];
   const milestoneIds = MILESTONES.filter(m => stats.some(s => m.check(s))).map(m => m.id);
   const bam = stats.some(s => BAM_MILESTONE.check(s));
   return { milestoneIds, bam };

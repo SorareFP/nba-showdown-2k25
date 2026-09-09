@@ -45,7 +45,8 @@ export default function GameOver({ game, onPlayAgain, isPvp = false, myTeamKey =
       // `won` is the HUMAN's win (outcome.js) — never "somebody won".
       // The box goes with the claim: the lifetime tracker's lines for MY team —
       // A against the coach, my side in PvP, nobody's in hotseat.
-      const claim = { won: youWon, pvp: isPvp, ...detectMilestones(game), box: myKey ? boxScoreFor(game, myKey) : [] };
+      // Milestones are MY players' — the coach's triple-double is not my bonus.
+      const claim = { won: youWon, pvp: isPvp, ...detectMilestones(game, myKey), box: myKey ? boxScoreFor(game, myKey) : [] };
       const today = todayKey();
       const preview = settleGameReward(
         claim,

@@ -88,8 +88,17 @@ describe('settleGameReward', () => {
 describe('detectMilestones', () => {
   const game = (statsA, statsB = []) => ({ teamA: { stats: statsA }, teamB: { stats: statsB } });
 
-  it('reads the box score of either team', () => {
-    expect(detectMilestones(game([{ pts: 10, reb: 10, ast: 10 }])).milestoneIds).toContain('triple_double');
+  it("reads only MY team's box score — the coach's triple-double is not my bonus", () => {
+    // The user, 2026-09-09: "I got coins for giving up a triple double haha".
+    const g = game([{ pts: 20, reb: 4, ast: 3 }], [{ pts: 10, reb: 10, ast: 10 }]);
+    expect(detectMilestones(g, 'A').milestoneIds).toEqual([]);
+    expect(detectMilestones(g, 'B').milestoneIds).toContain('triple_double');
+    expect(detectMilestones(game([{ pts: 10, reb: 10, ast: 10 }]), 'A').milestoneIds).toContain('triple_double');
+    expect(detectMilestones(game([{ pts: 83 }], []), 'B').bam).toBe(false);
+  });
+
+  it('reads both benches in hotseat, where nobody is "you"', () => {
+    expect(detectMilestones(game([{ pts: 10, reb: 10, ast: 10 }]), null).milestoneIds).toContain('triple_double');
     expect(detectMilestones(game([], [{ pts: 50 }])).milestoneIds).toContain('fifty_pts');
   });
 

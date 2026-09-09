@@ -86,7 +86,13 @@ export const PACK_TYPES = {
   // the apex band. Price then drops to match what is actually delivered:
   // 0.138 coins per point of salary, between the team pack's 0.107 and the old
   // 0.386, which is the targeting premium and nothing more.
-  super_season:  { name: 'Super Season Pack',    players: 3,  strats: 1,  price: 250,  pool: 'super-season', guaranteedRarePlayer: 1 },
+  // REPRICED 2026-09-09 (the user: "a bit OP for their price"). Measured over
+  // 3,000 packs each: at 250 this paid 6.9 coins of market value per coin and
+  // 0.63 super-rares a pack, against the Super Booster's 6.3 and 0.55 at 300 —
+  // more of the top band for less money. At 300 it pays 5.8 per coin: a
+  // premium over the Super Booster for a narrower, stronger pool, which is
+  // what the targeting is worth and no more.
+  super_season:  { name: 'Super Season Pack',    players: 3,  strats: 1,  price: 300,  pool: 'super-season', guaranteedRarePlayer: 1 },
   // THE ROOKIE PACK GETS NO GUARANTEE AND STAYS CHEAP, deliberately. Its pool
   // is the weak one — median $400, 13% rare-or-better, three legendaries in 261
   // cards — and at 75 coins it is already the best value in the shop (0.037
@@ -96,7 +102,9 @@ export const PACK_TYPES = {
   // Same treatment and the same reason — 45 cards at a $780 median and 64%
   // rare-or-better, which the band gate was flattening exactly as it flattened
   // Super Season. 0.129 coins per point of salary.
-  standouts:     { name: 'Summer Standouts Pack', players: 3, strats: 1,  price: 225,  pool: 'summer-standouts', guaranteedRarePlayer: 1 },
+  // Same measurement, same reason: 7.0 per coin and 0.51 super-rares at 225;
+  // 5.7 per coin at 275.
+  standouts:     { name: 'Summer Standouts Pack', players: 3, strats: 1,  price: 275,  pool: 'summer-standouts', guaranteedRarePlayer: 1 },
 };
 
 /**

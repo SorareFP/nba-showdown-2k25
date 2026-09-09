@@ -570,6 +570,8 @@ describe('the base set\'s badges', () => {
     // top tier in lowers play value, which lowers salary, which moves cards
     // across SUPER_SEASON_MIN_SALARY. The split is a MEASUREMENT of the price,
     // so it moves whenever the price does.
+    // 20/127 on 2026-09-09: the absolute paint line and the any-player-may-spend
+    // salary rule repriced the set; one more card sits under the line.
     // 15/92 after the progressive ceiling shave and the four carried-forward
     // players joined the pool: both move play value, which moves salary, which
     // moves cards across SUPER_SEASON_MIN_SALARY. The split is a MEASUREMENT.
@@ -583,8 +585,8 @@ describe('the base set\'s badges', () => {
     // the set and onto the badge, and most of them are the cheap role players
     // the rule exists to catch — so the BEST SEASON side of the split grew far
     // more than the gilded one.
-    expect(counts.printed[BEST_SEASON_BADGE]).toBe(126);
-    expect(counts.printed[SUPER_SEASON_BADGE]).toBe(21);
+    expect(counts.printed[BEST_SEASON_BADGE]).toBe(127);
+    expect(counts.printed[SUPER_SEASON_BADGE]).toBe(20);
     // Nobody loses their pill entirely in the resolution.
     expect(BADGE_IDS.reduce((n, id) => n + counts.printed[id], 0)).toBe(counts.players);
     expect(counts.multiple).toBe(ROOKIE.excluded.length);

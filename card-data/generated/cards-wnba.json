@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-07T02:06:49.490Z",
+ "generatedAt": "2026-09-09T21:26:55.058Z",
  "provisional": false,
  "set": "wnba",
  "league": "WNBA",
@@ -123,7 +123,7 @@
    "speed": 5,
    "power": 8,
    "shotLine": 15,
-   "paintBoost": 0,
+   "paintBoost": 1,
    "threePtBoost": -5,
    "defBoost": -1,
    "salary": 600,
@@ -279,7 +279,7 @@
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 2,
-   "salary": 1200,
+   "salary": 1220,
    "chart": [
     {
      "lo": 1,
@@ -349,10 +349,10 @@
    "speed": 13,
    "power": 8,
    "shotLine": 15,
-   "paintBoost": 0,
+   "paintBoost": 1,
    "threePtBoost": 1,
    "defBoost": 0,
-   "salary": 920,
+   "salary": 900,
    "chart": [
     {
      "lo": 1,
@@ -425,7 +425,7 @@
    "paintBoost": 0,
    "threePtBoost": -5,
    "defBoost": 1,
-   "salary": 770,
+   "salary": 760,
    "chart": [
     {
      "lo": 1,
@@ -488,10 +488,10 @@
    "speed": 7,
    "power": 8,
    "shotLine": 17,
-   "paintBoost": 0,
+   "paintBoost": 1,
    "threePtBoost": 0,
    "defBoost": -1,
-   "salary": 660,
+   "salary": 650,
    "chart": [
     {
      "lo": 1,
@@ -561,10 +561,10 @@
    "speed": 8,
    "power": 11,
    "shotLine": 16,
-   "paintBoost": 0,
+   "paintBoost": -1,
    "threePtBoost": -4,
    "defBoost": 1,
-   "salary": 810,
+   "salary": 800,
    "chart": [
     {
      "lo": 1,
@@ -707,10 +707,10 @@
    "speed": 10,
    "power": 6,
    "shotLine": 16,
-   "paintBoost": 0,
+   "paintBoost": -2,
    "threePtBoost": 2,
    "defBoost": -1,
-   "salary": 550,
+   "salary": 540,
    "chart": [
     {
      "lo": 1,
@@ -790,7 +790,7 @@
    "paintBoost": 0,
    "threePtBoost": 1,
    "defBoost": 0,
-   "salary": 440,
+   "salary": 430,
    "chart": [
     {
      "lo": 1,
@@ -853,10 +853,10 @@
    "speed": 7,
    "power": 11,
    "shotLine": 15,
-   "paintBoost": 0,
+   "paintBoost": 1,
    "threePtBoost": 1,
    "defBoost": 2,
-   "salary": 490,
+   "salary": 500,
    "chart": [
     {
      "lo": 1,
@@ -933,10 +933,10 @@
    "speed": 6,
    "power": 8,
    "shotLine": 17,
-   "paintBoost": 0,
+   "paintBoost": 2,
    "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 560,
+   "salary": 540,
    "chart": [
     {
      "lo": 1,
@@ -1006,10 +1006,10 @@
    "speed": 11,
    "power": 7,
    "shotLine": 15,
-   "paintBoost": 0,
+   "paintBoost": -1,
    "threePtBoost": 1,
    "defBoost": 1,
-   "salary": 520,
+   "salary": 510,
    "chart": [
     {
      "lo": 1,
@@ -1079,7 +1079,7 @@
    "speed": 6,
    "power": 4,
    "shotLine": 17,
-   "paintBoost": 0,
+   "paintBoost": 1,
    "threePtBoost": 0,
    "defBoost": -1,
    "salary": 30,
@@ -1148,7 +1148,7 @@
    "paintBoost": 0,
    "threePtBoost": -2,
    "defBoost": 1,
-   "salary": 1130,
+   "salary": 1100,
    "chart": [
     {
      "lo": 1,
@@ -1218,10 +1218,10 @@
    "speed": 10,
    "power": 10,
    "shotLine": 15,
-   "paintBoost": 0,
+   "paintBoost": -2,
    "threePtBoost": 1,
    "defBoost": 0,
-   "salary": 750,
+   "salary": 730,
    "chart": [
     {
      "lo": 1,
@@ -1294,7 +1294,7 @@
    "paintBoost": 0,
    "threePtBoost": -5,
    "defBoost": 0,
-   "salary": 620,
+   "salary": 610,
    "chart": [
     {
      "lo": 1,
@@ -1365,10 +1365,10 @@
    "speed": 9,
    "power": 5,
    "shotLine": 16,
-   "paintBoost": 0,
+   "paintBoost": -2,
    "threePtBoost": -1,
    "defBoost": -1,
-   "salary": 580,
+   "salary": 570,
    "chart": [
     {
      "lo": 1,
@@ -1432,10 +1432,10 @@
    "speed": 16,
    "power": 7,
    "shotLine": 14,
-   "paintBoost": 0,
+   "paintBoost": -1,
    "threePtBoost": 0,
    "defBoost": -1,
-   "salary": 1260,
+   "salary": 1250,
    "chart": [
     {
      "lo": 1,
@@ -1505,10 +1505,10 @@
    "speed": 6,
    "power": 9,
    "shotLine": 14,
-   "paintBoost": 0,
+   "paintBoost": 1,
    "threePtBoost": 0,
    "defBoost": 1,
-   "salary": 710,
+   "salary": 740,
    "chart": [
     {
      "lo": 1,
@@ -1585,7 +1585,7 @@
    "speed": 13,
    "power": 5,
    "shotLine": 14,
-   "paintBoost": -1,
+   "paintBoost": -3,
    "threePtBoost": 0,
    "defBoost": -2,
    "salary": 780,
@@ -1661,7 +1661,7 @@
    "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": 1,
-   "salary": 650,
+   "salary": 640,
    "chart": [
     {
      "lo": 1,
@@ -1731,7 +1731,7 @@
    "speed": 6,
    "power": 4,
    "shotLine": 17,
-   "paintBoost": 0,
+   "paintBoost": -1,
    "threePtBoost": 3,
    "defBoost": 0,
    "salary": 170,
@@ -1804,10 +1804,10 @@
    "speed": 12,
    "power": 6,
    "shotLine": 15,
-   "paintBoost": 0,
+   "paintBoost": -1,
    "threePtBoost": 1,
    "defBoost": 1,
-   "salary": 630,
+   "salary": 620,
    "chart": [
     {
      "lo": 1,
@@ -1873,7 +1873,7 @@
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 200,
+   "salary": 190,
    "chart": [
     {
      "lo": 1,
@@ -1936,10 +1936,10 @@
    "speed": 13,
    "power": 5,
    "shotLine": 16,
-   "paintBoost": 0,
+   "paintBoost": -1,
    "threePtBoost": 2,
    "defBoost": 1,
-   "salary": 630,
+   "salary": 610,
    "chart": [
     {
      "lo": 1,
@@ -2009,10 +2009,10 @@
    "speed": 12,
    "power": 7,
    "shotLine": 16,
-   "paintBoost": 0,
+   "paintBoost": -1,
    "threePtBoost": 2,
    "defBoost": 0,
-   "salary": 730,
+   "salary": 710,
    "chart": [
     {
      "lo": 1,
@@ -2075,10 +2075,10 @@
    "speed": 8,
    "power": 10,
    "shotLine": 14,
-   "paintBoost": 0,
+   "paintBoost": 1,
    "threePtBoost": -3,
    "defBoost": 0,
-   "salary": 720,
+   "salary": 760,
    "chart": [
     {
      "lo": 1,
@@ -2148,10 +2148,10 @@
    "speed": 9,
    "power": 9,
    "shotLine": 16,
-   "paintBoost": 0,
+   "paintBoost": 1,
    "threePtBoost": -1,
    "defBoost": 1,
-   "salary": 590,
+   "salary": 580,
    "chart": [
     {
      "lo": 1,
@@ -2221,10 +2221,10 @@
    "speed": 4,
    "power": 4,
    "shotLine": 17,
-   "paintBoost": 0,
+   "paintBoost": -1,
    "threePtBoost": 3,
    "defBoost": -1,
-   "salary": 260,
+   "salary": 250,
    "chart": [
     {
      "lo": 1,
@@ -2294,10 +2294,10 @@
    "speed": 6,
    "power": 4,
    "shotLine": 17,
-   "paintBoost": 0,
+   "paintBoost": -1,
    "threePtBoost": 0,
    "defBoost": -1,
-   "salary": 400,
+   "salary": 390,
    "chart": [
     {
      "lo": 1,
@@ -2375,10 +2375,10 @@
    "speed": 5,
    "power": 13,
    "shotLine": 16,
-   "paintBoost": 0,
+   "paintBoost": 1,
    "threePtBoost": -1,
    "defBoost": 0,
-   "salary": 900,
+   "salary": 880,
    "chart": [
     {
      "lo": 1,
@@ -2451,7 +2451,7 @@
    "paintBoost": 0,
    "threePtBoost": -3,
    "defBoost": 0,
-   "salary": 240,
+   "salary": 230,
    "chart": [
     {
      "lo": 1,
@@ -2528,10 +2528,10 @@
    "speed": 8,
    "power": 10,
    "shotLine": 15,
-   "paintBoost": 0,
+   "paintBoost": 1,
    "threePtBoost": 1,
    "defBoost": 2,
-   "salary": 640,
+   "salary": 650,
    "chart": [
     {
      "lo": 1,
@@ -2601,7 +2601,7 @@
    "speed": 8,
    "power": 3,
    "shotLine": 17,
-   "paintBoost": 0,
+   "paintBoost": 1,
    "threePtBoost": 3,
    "defBoost": -1,
    "salary": 220,
@@ -2677,7 +2677,7 @@
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 530,
+   "salary": 520,
    "chart": [
     {
      "lo": 1,
@@ -2747,10 +2747,10 @@
    "speed": 12,
    "power": 9,
    "shotLine": 16,
-   "paintBoost": 0,
+   "paintBoost": -2,
    "threePtBoost": 2,
    "defBoost": 2,
-   "salary": 990,
+   "salary": 970,
    "chart": [
     {
      "lo": 1,
@@ -2827,7 +2827,7 @@
    "speed": 5,
    "power": 4,
    "shotLine": 17,
-   "paintBoost": 0,
+   "paintBoost": 1,
    "threePtBoost": 0,
    "defBoost": -1,
    "salary": 70,
@@ -2976,7 +2976,7 @@
    "paintBoost": 0,
    "threePtBoost": -1,
    "defBoost": -1,
-   "salary": 550,
+   "salary": 540,
    "chart": [
     {
      "lo": 1,
@@ -3049,7 +3049,7 @@
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 1100,
+   "salary": 1110,
    "chart": [
     {
      "lo": 1,
@@ -3112,7 +3112,7 @@
    "speed": 7,
    "power": 4,
    "shotLine": 16,
-   "paintBoost": 0,
+   "paintBoost": 1,
    "threePtBoost": 2,
    "defBoost": 0,
    "salary": 170,
@@ -3188,7 +3188,7 @@
    "paintBoost": 0,
    "threePtBoost": -2,
    "defBoost": 0,
-   "salary": 380,
+   "salary": 370,
    "chart": [
     {
      "lo": 1,
@@ -3258,10 +3258,10 @@
    "speed": 12,
    "power": 10,
    "shotLine": 15,
-   "paintBoost": 0,
+   "paintBoost": -2,
    "threePtBoost": 3,
    "defBoost": 0,
-   "salary": 1070,
+   "salary": 1050,
    "chart": [
     {
      "lo": 1,
@@ -3331,10 +3331,10 @@
    "speed": 10,
    "power": 12,
    "shotLine": 14,
-   "paintBoost": 0,
+   "paintBoost": 2,
    "threePtBoost": -6,
    "defBoost": 0,
-   "salary": 890,
+   "salary": 950,
    "chart": [
     {
      "lo": 1,
@@ -3480,7 +3480,7 @@
    "paintBoost": 0,
    "threePtBoost": -1,
    "defBoost": 1,
-   "salary": 850,
+   "salary": 890,
    "chart": [
     {
      "lo": 1,
@@ -3550,10 +3550,10 @@
    "speed": 5,
    "power": 6,
    "shotLine": 18,
-   "paintBoost": 2,
+   "paintBoost": 1,
    "threePtBoost": 1,
    "defBoost": 1,
-   "salary": 190,
+   "salary": 200,
    "chart": [
     {
      "lo": 1,
@@ -3626,7 +3626,7 @@
    "paintBoost": 0,
    "threePtBoost": -1,
    "defBoost": 2,
-   "salary": 720,
+   "salary": 710,
    "chart": [
     {
      "lo": 1,
@@ -3696,10 +3696,10 @@
    "speed": 13,
    "power": 5,
    "shotLine": 12,
-   "paintBoost": -1,
+   "paintBoost": 0,
    "threePtBoost": -2,
    "defBoost": 0,
-   "salary": 380,
+   "salary": 440,
    "chart": [
     {
      "lo": 1,
@@ -3765,7 +3765,7 @@
    "paintBoost": 0,
    "threePtBoost": -2,
    "defBoost": -2,
-   "salary": 540,
+   "salary": 530,
    "chart": [
     {
      "lo": 1,
@@ -3911,7 +3911,7 @@
    "paintBoost": 0,
    "threePtBoost": -6,
    "defBoost": 1,
-   "salary": 930,
+   "salary": 940,
    "chart": [
     {
      "lo": 1,
@@ -3984,7 +3984,7 @@
    "paintBoost": -1,
    "threePtBoost": 2,
    "defBoost": 1,
-   "salary": 860,
+   "salary": 850,
    "chart": [
     {
      "lo": 1,
@@ -4054,10 +4054,10 @@
    "speed": 8,
    "power": 7,
    "shotLine": 16,
-   "paintBoost": 0,
+   "paintBoost": -2,
    "threePtBoost": 2,
    "defBoost": 1,
-   "salary": 490,
+   "salary": 480,
    "chart": [
     {
      "lo": 1,
@@ -4127,10 +4127,10 @@
    "speed": 15,
    "power": 8,
    "shotLine": 13,
-   "paintBoost": 0,
+   "paintBoost": -1,
    "threePtBoost": 1,
    "defBoost": -1,
-   "salary": 1100,
+   "salary": 1080,
    "chart": [
     {
      "lo": 1,
@@ -4200,7 +4200,7 @@
    "speed": 14,
    "power": 6,
    "shotLine": 14,
-   "paintBoost": 0,
+   "paintBoost": -1,
    "threePtBoost": 0,
    "defBoost": -1,
    "salary": 1000,
@@ -4284,7 +4284,7 @@
    "paintBoost": 0,
    "threePtBoost": 2,
    "defBoost": 0,
-   "salary": 330,
+   "salary": 320,
    "chart": [
     {
      "lo": 1,
@@ -4357,7 +4357,7 @@
    "paintBoost": 2,
    "threePtBoost": 0,
    "defBoost": 4,
-   "salary": 420,
+   "salary": 410,
    "chart": [
     {
      "lo": 1,
@@ -4423,7 +4423,7 @@
    "paintBoost": 0,
    "threePtBoost": -2,
    "defBoost": 0,
-   "salary": 730,
+   "salary": 710,
    "chart": [
     {
      "lo": 1,
@@ -4486,10 +4486,10 @@
    "speed": 9,
    "power": 6,
    "shotLine": 14,
-   "paintBoost": 0,
+   "paintBoost": -1,
    "threePtBoost": 0,
    "defBoost": -2,
-   "salary": 510,
+   "salary": 520,
    "chart": [
     {
      "lo": 1,
@@ -4559,7 +4559,7 @@
    "speed": 5,
    "power": 6,
    "shotLine": 15,
-   "paintBoost": 0,
+   "paintBoost": 1,
    "threePtBoost": 1,
    "defBoost": -1,
    "salary": 380,
@@ -4639,10 +4639,10 @@
    "speed": 4,
    "power": 14,
    "shotLine": 15,
-   "paintBoost": 0,
+   "paintBoost": 1,
    "threePtBoost": -5,
    "defBoost": 2,
-   "salary": 630,
+   "salary": 650,
    "chart": [
     {
      "lo": 1,
@@ -4715,7 +4715,7 @@
    "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": 0,
-   "salary": 350,
+   "salary": 340,
    "chart": [
     {
      "lo": 1,
@@ -4785,10 +4785,10 @@
    "speed": 9,
    "power": 7,
    "shotLine": 13,
-   "paintBoost": -1,
+   "paintBoost": -2,
    "threePtBoost": 1,
    "defBoost": 0,
-   "salary": 500,
+   "salary": 490,
    "chart": [
     {
      "lo": 1,
@@ -4932,7 +4932,7 @@
    "speed": 2,
    "power": 4,
    "shotLine": 18,
-   "paintBoost": 2,
+   "paintBoost": 1,
    "threePtBoost": 4,
    "defBoost": -1,
    "salary": 30,
@@ -5005,10 +5005,10 @@
    "speed": 6,
    "power": 9,
    "shotLine": 13,
-   "paintBoost": 0,
+   "paintBoost": 1,
    "threePtBoost": -7,
    "defBoost": 0,
-   "salary": 280,
+   "salary": 340,
    "chart": [
     {
      "lo": 1,
@@ -5085,7 +5085,7 @@
    "speed": 5,
    "power": 4,
    "shotLine": 17,
-   "paintBoost": 0,
+   "paintBoost": -1,
    "threePtBoost": 3,
    "defBoost": -2,
    "salary": 70,
@@ -5151,10 +5151,10 @@
    "speed": 11,
    "power": 7,
    "shotLine": 14,
-   "paintBoost": 0,
+   "paintBoost": -1,
    "threePtBoost": 2,
    "defBoost": -3,
-   "salary": 890,
+   "salary": 870,
    "chart": [
     {
      "lo": 1,
@@ -5220,7 +5220,7 @@
    "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": 0,
-   "salary": 490,
+   "salary": 480,
    "chart": [
     {
      "lo": 1,
@@ -5290,10 +5290,10 @@
    "speed": 6,
    "power": 12,
    "shotLine": 13,
-   "paintBoost": 0,
+   "paintBoost": 1,
    "threePtBoost": -1,
    "defBoost": -2,
-   "salary": 760,
+   "salary": 790,
    "chart": [
     {
      "lo": 1,
@@ -5356,10 +5356,10 @@
    "speed": 6,
    "power": 6,
    "shotLine": 15,
-   "paintBoost": 0,
+   "paintBoost": -1,
    "threePtBoost": 1,
    "defBoost": -1,
-   "salary": 210,
+   "salary": 200,
    "chart": [
     {
      "lo": 1,
@@ -5429,10 +5429,10 @@
    "speed": 7,
    "power": 4,
    "shotLine": 15,
-   "paintBoost": 0,
+   "paintBoost": -2,
    "threePtBoost": 1,
    "defBoost": 0,
-   "salary": 300,
+   "salary": 290,
    "chart": [
     {
      "lo": 1,
@@ -5505,7 +5505,7 @@
    "paintBoost": 0,
    "threePtBoost": -6,
    "defBoost": 1,
-   "salary": 490,
+   "salary": 510,
    "chart": [
     {
      "lo": 1,
@@ -5575,10 +5575,10 @@
    "speed": 7,
    "power": 11,
    "shotLine": 13,
-   "paintBoost": 0,
+   "paintBoost": 1,
    "threePtBoost": -7,
    "defBoost": 0,
-   "salary": 720,
+   "salary": 780,
    "chart": [
     {
      "lo": 1,
@@ -5651,7 +5651,7 @@
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 2,
-   "salary": 1120,
+   "salary": 1130,
    "chart": [
     {
      "lo": 1,
@@ -5722,10 +5722,10 @@
    "speed": 12,
    "power": 6,
    "shotLine": 14,
-   "paintBoost": 0,
+   "paintBoost": 1,
    "threePtBoost": 0,
    "defBoost": 1,
-   "salary": 620,
+   "salary": 650,
    "chart": [
     {
      "lo": 1,
@@ -5788,10 +5788,10 @@
    "speed": 10,
    "power": 12,
    "shotLine": 14,
-   "paintBoost": 0,
+   "paintBoost": 2,
    "threePtBoost": -6,
    "defBoost": 2,
-   "salary": 930,
+   "salary": 990,
    "chart": [
     {
      "lo": 1,
@@ -5861,10 +5861,10 @@
    "speed": 7,
    "power": 13,
    "shotLine": 13,
-   "paintBoost": 0,
+   "paintBoost": 1,
    "threePtBoost": -7,
    "defBoost": 1,
-   "salary": 730,
+   "salary": 790,
    "chart": [
     {
      "lo": 1,
@@ -5937,7 +5937,7 @@
    "paintBoost": 0,
    "threePtBoost": 1,
    "defBoost": -1,
-   "salary": 630,
+   "salary": 610,
    "chart": [
     {
      "lo": 1,
@@ -6007,10 +6007,10 @@
    "speed": 7,
    "power": 7,
    "shotLine": 15,
-   "paintBoost": 0,
+   "paintBoost": 3,
    "threePtBoost": -2,
    "defBoost": 0,
-   "salary": 250,
+   "salary": 300,
    "chart": [
     {
      "lo": 1,
@@ -6149,7 +6149,7 @@
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 830,
+   "salary": 840,
    "chart": [
     {
      "lo": 1,
@@ -6368,7 +6368,7 @@
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": -1,
-   "salary": 620,
+   "salary": 640,
    "chart": [
     {
      "lo": 1,
@@ -6438,10 +6438,10 @@
    "speed": 15,
    "power": 9,
    "shotLine": 14,
-   "paintBoost": 0,
+   "paintBoost": -1,
    "threePtBoost": 0,
    "defBoost": 1,
-   "salary": 1190,
+   "salary": 1180,
    "chart": [
     {
      "lo": 1,
@@ -6504,10 +6504,10 @@
    "speed": 5,
    "power": 12,
    "shotLine": 14,
-   "paintBoost": 0,
+   "paintBoost": 1,
    "threePtBoost": -6,
    "defBoost": 1,
-   "salary": 710,
+   "salary": 740,
    "chart": [
     {
      "lo": 1,
@@ -6587,7 +6587,7 @@
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 1090,
+   "salary": 1100,
    "chart": [
     {
      "lo": 1,
@@ -6650,10 +6650,10 @@
    "speed": 10,
    "power": 6,
    "shotLine": 14,
-   "paintBoost": 0,
+   "paintBoost": 1,
    "threePtBoost": -3,
    "defBoost": 0,
-   "salary": 450,
+   "salary": 460,
    "chart": [
     {
      "lo": 1,
@@ -6726,7 +6726,7 @@
    "paintBoost": 0,
    "threePtBoost": 1,
    "defBoost": -2,
-   "salary": 360,
+   "salary": 350,
    "chart": [
     {
      "lo": 1,
@@ -6796,10 +6796,10 @@
    "speed": 7,
    "power": 6,
    "shotLine": 15,
-   "paintBoost": 0,
+   "paintBoost": -1,
    "threePtBoost": 1,
    "defBoost": 0,
-   "salary": 390,
+   "salary": 380,
    "chart": [
     {
      "lo": 1,
@@ -6862,10 +6862,10 @@
    "speed": 15,
    "power": 10,
    "shotLine": 15,
-   "paintBoost": 0,
+   "paintBoost": -2,
    "threePtBoost": 1,
    "defBoost": 2,
-   "salary": 960,
+   "salary": 940,
    "chart": [
     {
      "lo": 1,
@@ -6928,10 +6928,10 @@
    "speed": 6,
    "power": 5,
    "shotLine": 16,
-   "paintBoost": 0,
+   "paintBoost": -1,
    "threePtBoost": 2,
    "defBoost": -3,
-   "salary": 410,
+   "salary": 400,
    "chart": [
     {
      "lo": 1,
@@ -7009,10 +7009,10 @@
    "speed": 11,
    "power": 6,
    "shotLine": 16,
-   "paintBoost": 0,
+   "paintBoost": 1,
    "threePtBoost": 2,
    "defBoost": -1,
-   "salary": 650,
+   "salary": 640,
    "chart": [
     {
      "lo": 1,
@@ -7082,10 +7082,10 @@
    "speed": 6,
    "power": 4,
    "shotLine": 18,
-   "paintBoost": 2,
+   "paintBoost": 0,
    "threePtBoost": 1,
    "defBoost": 0,
-   "salary": 120,
+   "salary": 130,
    "chart": [
     {
      "lo": 1,
@@ -7158,7 +7158,7 @@
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": -1,
-   "salary": 360,
+   "salary": 370,
    "chart": [
     {
      "lo": 1,
@@ -7228,10 +7228,10 @@
    "speed": 10,
    "power": 10,
    "shotLine": 16,
-   "paintBoost": 0,
+   "paintBoost": -1,
    "threePtBoost": 2,
    "defBoost": 0,
-   "salary": 1130,
+   "salary": 1100,
    "chart": [
     {
      "lo": 1,
@@ -7309,10 +7309,10 @@
    "speed": 6,
    "power": 15,
    "shotLine": 15,
-   "paintBoost": 0,
+   "paintBoost": -1,
    "threePtBoost": -2,
    "defBoost": 1,
-   "salary": 1030,
+   "salary": 1010,
    "chart": [
     {
      "lo": 1,
@@ -7382,10 +7382,10 @@
    "speed": 13,
    "power": 6,
    "shotLine": 16,
-   "paintBoost": 0,
+   "paintBoost": -2,
    "threePtBoost": 2,
    "defBoost": 0,
-   "salary": 670,
+   "salary": 660,
    "chart": [
     {
      "lo": 1,
@@ -7466,7 +7466,7 @@
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 1,
-   "salary": 820,
+   "salary": 840,
    "chart": [
     {
      "lo": 1,
@@ -7529,7 +7529,7 @@
    "speed": 10,
    "power": 6,
    "shotLine": 13,
-   "paintBoost": -1,
+   "paintBoost": -2,
    "threePtBoost": 1,
    "defBoost": -1,
    "salary": 400,
@@ -7602,10 +7602,10 @@
    "speed": 6,
    "power": 5,
    "shotLine": 16,
-   "paintBoost": 2,
+   "paintBoost": 3,
    "threePtBoost": -1,
    "defBoost": 1,
-   "salary": 160,
+   "salary": 170,
    "chart": [
     {
      "lo": 1,
@@ -7675,10 +7675,10 @@
    "speed": 9,
    "power": 5,
    "shotLine": 15,
-   "paintBoost": 0,
+   "paintBoost": 1,
    "threePtBoost": 1,
    "defBoost": -2,
-   "salary": 710,
+   "salary": 690,
    "chart": [
     {
      "lo": 1,
@@ -7755,10 +7755,10 @@
    "speed": 3,
    "power": 5,
    "shotLine": 15,
-   "paintBoost": 0,
+   "paintBoost": 1,
    "threePtBoost": -2,
    "defBoost": -2,
-   "salary": 40,
+   "salary": 50,
    "chart": [
     {
      "lo": 1,
@@ -7831,7 +7831,7 @@
    "paintBoost": 0,
    "threePtBoost": 1,
    "defBoost": 2,
-   "salary": 1030,
+   "salary": 1010,
    "chart": [
     {
      "lo": 1,
@@ -7901,10 +7901,10 @@
    "speed": 6,
    "power": 5,
    "shotLine": 15,
-   "paintBoost": 0,
+   "paintBoost": -2,
    "threePtBoost": 1,
    "defBoost": 0,
-   "salary": 270,
+   "salary": 260,
    "chart": [
     {
      "lo": 1,
@@ -7974,10 +7974,10 @@
    "speed": 16,
    "power": 8,
    "shotLine": 15,
-   "paintBoost": 0,
+   "paintBoost": -2,
    "threePtBoost": 1,
    "defBoost": 2,
-   "salary": 840,
+   "salary": 830,
    "chart": [
     {
      "lo": 1,

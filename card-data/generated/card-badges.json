@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-07T18:37:20.394Z",
+ "generatedAt": "2026-09-09T21:30:44.677Z",
  "set": "2026-27",
  "provisional": true,
  "source": "the Super Season and Rookie exclusion lists: a player whose best or rookie season is 2026 gets no card in that set, because his base card already IS that season — so the fact is printed on the base card as a badge instead",
@@ -25,8 +25,8 @@
   },
   "printed": {
    "rookie": 33,
-   "super-season": 21,
-   "best-season": 126,
+   "super-season": 20,
+   "best-season": 127,
    "summer-standout": 0,
    "dissonance": 0,
    "team-reward": 0,
@@ -288,13 +288,6 @@
    ]
   },
   {
-   "id": "De_Anthony_Melton",
-   "name": "De'Anthony Melton",
-   "badges": [
-    "super-season"
-   ]
-  },
-  {
    "id": "Dean_Wade",
    "name": "Dean Wade",
    "badges": [
@@ -319,6 +312,13 @@
   {
    "id": "Devin_Vassell",
    "name": "Devin Vassell",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Dillon_Brooks",
+   "name": "Dillon Brooks",
    "badges": [
     "super-season"
    ]
@@ -542,13 +542,6 @@
   {
    "id": "Jared_McCain",
    "name": "Jared McCain",
-   "badges": [
-    "super-season"
-   ]
-  },
-  {
-   "id": "Jarrett_Allen",
-   "name": "Jarrett Allen",
    "badges": [
     "super-season"
    ]
@@ -1243,6 +1236,13 @@
   {
    "id": "Tristan_Vukcevic",
    "name": "Tristan Vukcevic",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Tyrese_Martin",
+   "name": "Tyrese Martin",
    "badges": [
     "super-season"
    ]

@@ -71,7 +71,12 @@
         0.1253,
         0.7257
       ],
-      "badge": null
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
     },
     "2026-27/Jabari_Smith_Jr": {
       "name": [
@@ -1596,7 +1601,12 @@
         0.1253,
         0.6984
       ],
-      "badge": null
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
     },
     "2026-27/Egor_Demin": {
       "name": [
@@ -10816,6 +10826,6 @@
       "badge": null
     }
   },
-  "generatedAt": "2026-09-08T17:42:28.439Z",
+  "generatedAt": "2026-09-09T21:40:00.268Z",
   "note": "Per-face boxes of the rotated name and the Super Season pill, as fractions of the 843x1181 face, measured by scripts/studio/export.js. Read by src/cards/faceRegions.js for the holographic sheen."
 }

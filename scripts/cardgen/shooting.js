@@ -50,19 +50,27 @@
 // Affine, so relative spacing survives exactly: if one player's raw line is
 // twice as far above the pool mean as another's, it still is afterwards.
 //
-// --- THE PAINT BOOST USES THE SAME SCALE FACTOR -----------------------------
+// --- THE PAINT BOOST IS AN OFFSET TO AN ABSOLUTE PAINT LINE (2026-09-09) ----
 //
-// `paintBoost = shotLine - rim_line` is a distance in LINE UNITS, and the game
-// spends it in line units — a +2 lowers the line by 2, which is 10% on a d20. So
-// that boost has to be measured on the same compressed scale as the line itself,
-// or a +2 stops meaning 10%. Hence one scale factor, derived from the Shot Line.
+// It used to be a DISTANCE from the Shot Line — the raw rim line minus the raw
+// shot line, compressed on the Shot Line's scale and re-centred on zero, with a
+// deadband that left 90% of cards at 0. That made a paint check inherit the
+// Shot Line: the check needs `shotLine - paintBoost`, so a jump shooter with a
+// 12 and a -1 converted in the paint at 40% while Giannis, .800 at the rim on
+// 61% of his shots, sat on a 15 and converted at 30%. Measured on the 2026-27
+// set, jump shooters (under 20% of shots at the rim) and rim-heavy players
+// (40%+) had the SAME mean paint line, 14.84 against 14.80, and the line
+// correlated with real rim FG% at -0.28. The user (2026-09-09): "the anchor is
+// causing players you don't normally think of (Kennard) to be better at paint
+// scoring than any other paint scorers I have."
 //
-// The boosts are re-centred on zero rather than on the pool mean of the raw
-// signal. The Paint gap has a large systematic offset — everybody finishes
-// better at the rim than at their overall TS% (mean raw gap about +1.2) — and
-// shipping it would hand every player in the league the same +1, which is not a
-// modifier, it is a rule change. Centred, a boost says what it is supposed to
-// say: better or worse THAN THE LEAGUE at that spot.
+// So the paint line is now built the way the three line already is: from rim
+// finishing ALONE (rim points added per 100 against the league, shrunk by
+// volume), mapped onto the printed range with its own spread, and the Paint
+// Boost is whatever offset puts `shotLine - paintBoost` on that line. A boost
+// is still spent in line units — a +2 is still 10% on a d20 — it is just no
+// longer centred on the player's own jump shooting. Nobody gets a modifier for
+// free: a paint line equal to the Shot Line prints 0, as before.
 //
 // --- THE 3PT BOOST IS NOT A DISTANCE FROM THE SHOT LINE ---------------------
 //
@@ -107,13 +115,9 @@
 // what fixes the tail — under the old rule the +3/+4/+5 band held about 1% of
 // the pool against 11% of the finished set.
 //
-// The Paint Boost has the same defect in principle (rim shots are inside TS%
-// too) and measurably: it correlates with the finished set's real Paint Boosts
-// at r = 0.13 against r = 0.31 for an absolute 2P baseline. It is left alone
-// here because it was not in scope, because it is much less broken in practice
-// (90% of real Paint Boosts are 0 and the produced histogram already matches to
-// a distance of 0.08), and because changing both at once would have made
-// neither change measurable. It is a real follow-up, not an oversight.
+// The Paint Boost had the same defect in principle (rim shots are inside TS%
+// too) and was left alone at the time as "a real follow-up, not an oversight".
+// It is done now — see the paint section above.
 //
 // --- THE VOLUME GATE --------------------------------------------------------
 //
@@ -150,16 +154,26 @@ import { meanSd } from './attributes.js';
 // average, because free throws are made far more often than field goals and he
 // takes a great many of them.
 //
-// PAINT BOOST takes what Shot Line gave up. It was rim FG% alone, whose league
-// spread is narrow enough that the compression flattened 295 of 354 cards to
-// exactly 0 — the attribute did no work. It is now rim POINTS ADDED, volume
-// times efficiency over the league rate, so a high-volume elite finisher
-// separates from a center who dunks four times a game.
+// THE PAINT LINE reads rim FG% — a conversion rate, because a paint check IS
+// one attempt at the rim — shrunk toward a VOLUME-CONDITIONED prior the way
+// the three line is (fitShrinkage's rate prior), so a guard's eighty attempts
+// are read against what low-volume rim shooters make and a centre's four
+// hundred against what high-volume ones make.
 //
-// Both are re-expressed on the pool's own TS% location and scale before they
-// leave here, so every downstream stage — the linear map, the compression, the
-// calibration targets — keeps working against numbers in the range it expects.
-// The ORDERING changes; the arithmetic around it does not.
+// Two bases were tried before this one and both are worth remembering. Rim
+// FG% ALONE, compressed as a distance from the Shot Line with a deadband, did
+// no work: 295 of 354 cards printed 0. Rim POINTS ADDED (attempts times
+// efficiency over the league rate) separated a rim-runner from a centre who
+// dunks four times a game, but as a LINE it multiplied a deficit by volume:
+// Karl-Anthony Towns, .600 at the rim on 551 attempts, printed an 18 (15%)
+// while Luke Kennard, .620 on 72 attempts, sat on a 16. A line is a rate, not
+// a production total, so the volume now enters only through the prior.
+//
+// The shooting basis is re-expressed on the pool's own TS% location and scale
+// before it leaves here, so every downstream stage — the linear map, the
+// compression, the calibration targets — keeps working against numbers in
+// the range it expects. The rim percentage is left as a percentage: the paint
+// line gets its own map, so it needs no borrowed scale.
 
 // Attempt volumes reach this module BOTH ways: dunksandthrees' actual season
 // page reports per 75 possessions, its EPM archive per 100. Only relative
@@ -293,19 +307,14 @@ export function deriveShootingBasis(rows) {
     return parts.reduce((s, [zz, w]) => s + zz * w, 0) / den;
   });
 
-  // Points added at the rim per 100 possessions, against the league rate.
-  const rawRim = rows.map(r => {
-    const att = rimAtt(r);
-    const pct = rimPctOf(r);
-    return Number.isFinite(pct) && Number.isFinite(att)
-      ? att * (pct - norms.rim.mean) * 2
-      : null;
-  });
-
   const anchor = rows.map(r => r.tsPct).filter(Number.isFinite);
   return {
     shootingPct: onScaleOf(rawShooting, anchor),
-    rimPct: onScaleOf(rawRim, anchor),
+    // The paint line's inputs: the rate itself, and the attempt volume the
+    // shrinkage prior is conditioned on. Per 75 or per 100 as the source
+    // reports it — only relative volume within one pool matters to the fit.
+    rimPct: rows.map(rimPctOf),
+    rimRate: rows.map(rimAtt),
   };
 }
 
@@ -381,6 +390,21 @@ export const THREE_LINE_SPREAD = 1.9;
 /** What a Shot Line of 12 against a three line of 20 implies, and its mirror. */
 export const THREE_BOOST_MIN = -8;
 export const THREE_BOOST_MAX = 5;
+
+/**
+ * The paint line's own range and spread. The top stays at the Shot Line's 18:
+ * a natural 20 is for a shot type the league is far more unequal at, and
+ * everybody finishes SOMETHING at the rim. The spread is wider than the Shot
+ * Line's because rim finishing, volume-weighted, separates a rim-runner from a
+ * spot-up shooter by more than overall shooting does, and narrower than the
+ * three's because nobody is a .106 finisher.
+ */
+export const PAINT_LINE_MAX = 18;
+export const PAINT_LINE_SPREAD = 1.4;
+
+/** A 12 Shot Line against an 18 paint line, and its mirror. */
+export const PAINT_BOOST_MIN = -6;
+export const PAINT_BOOST_MAX = 6;
 
 /**
  * Empirical-Bayes shrinkage of a shooting percentage toward the league mean.
@@ -537,6 +561,19 @@ export function threePtBoostFor(shotLine, threeLine, shape) {
 }
 
 /**
+ * The Paint Boost that puts a card's effective paint line where its rim
+ * finishing says it belongs — the mirror of threePtBoostFor, on the exact
+ * (unrounded) paint line so the map has resolution to spread.
+ */
+export function paintBoostFor(shotLine, exactPaintLine, shape) {
+  if (!Number.isFinite(shotLine) || !Number.isFinite(exactPaintLine)) return 0;
+  const target = compressShotLine(exactPaintLine, shape.lineMap ?? shape);
+  const boost = shotLine - target;
+  if (!Number.isFinite(boost)) return 0;
+  return Math.min(Math.max(Math.round(boost), PAINT_BOOST_MIN), PAINT_BOOST_MAX);
+}
+
+/**
  * A boost, from a raw line gap: same scale as the Shot Line, re-centred on zero.
  *
  * `deadband` is how close to zero the compressed gap has to be before the card
@@ -580,6 +617,10 @@ export function rawLines({ tsPct, paintPct, threePct }) {
     paintGap: shotLine != null && paintLine != null ? shotLine - paintLine : null,
     threeGap: shotLine != null && threeLine != null ? shotLine - threeLine : null,
     exactShotLine: ts,
+    // The paint line the Paint Boost is now built from: the player's own rim
+    // finishing, unrounded, compared against the pool rather than against his
+    // own Shot Line — the mirror of exactThreeStrength below.
+    exactPaintLine: paint,
     exactPaintGap: ts != null && paint != null ? ts - paint : null,
     exactThreeGap: ts != null && three != null ? ts - three : null,
     // What the 3PT Boost is actually built from: the player's OWN three-point
@@ -606,9 +647,10 @@ export function rawLines({ tsPct, paintPct, threePct }) {
  * percentages are a different matter: a center can finish a season with nine
  * three-point attempts, and that is the case the gate exists for.
  *
- * `players` need `{ tsPct, paintPct, threePct, paintAttempts, threeAttempts, threeRate }`.
- * `threeRate` is attempts per 100 possessions — the thing that says whether a
- * player is a shooter at all, which the attempt COUNT does not.
+ * `players` need `{ tsPct, paintPct, threePct, paintAttempts, threeAttempts, threeRate, paintRate }`.
+ * `threeRate` / `paintRate` are attempts per 100 possessions — the thing that
+ * says whether a player takes that shot at all, which the attempt COUNT does
+ * not. `paintRate` may be absent; the paint prior is then the flat mean.
  */
 export function buildShootingLayer(players, { shotLineTarget, paint = {}, three = {}, referenceCount = null }) {
   // The three-point SHRINKAGE and the three-line MAP are both fitted on the
@@ -620,20 +662,23 @@ export function buildShootingLayer(players, { shotLineTarget, paint = {}, three 
   // what the same numbers earn in the base set.
   // `referenceCount` says how many rows at the head of the pool are the
   // REFERENCE — the base set — when a caller builds a special set over the
-  // base rows plus its own seasons. Both the Shot Line map and the three-point
-  // layer are fitted on those rows alone (three.referenceCount can still
-  // narrow the three layer on its own). The seasons are compressed onto the
-  // base set's scale; they do not get to move it. Paint stays on the union,
-  // deliberately: its input is rim FG% where the shooting table reaches and
-  // 2P% before it, two different scales, and a base-only fit would hand every
-  // pre-table season a paint line measured against the wrong one.
+  // base rows plus its own seasons. The Shot Line map, the three-point layer
+  // and the paint-line map are all fitted on those rows alone
+  // (three.referenceCount can still narrow the three layer on its own). The
+  // seasons are compressed onto the base set's scale; they do not get to move
+  // it. Paint used to stay on the union because its input was rim FG% where
+  // the shooting table reaches and 2P% before it — two scales; the caller now
+  // puts every season on the base season's rim scale before it arrives.
   const refCount = Number.isInteger(referenceCount) && referenceCount > 0 ? referenceCount : players.length;
   const threeRefCount = Number.isInteger(three.referenceCount) && three.referenceCount > 0
     ? three.referenceCount
     : refCount;
   const threeReferencePlayers = players.slice(0, threeRefCount);
   const shrink = {
-    paint: fitShrinkage(players.map(p => ({ pct: p.paintPct, n: p.paintAttempts }))),
+    // Conditioned on rim volume like the three is on three-point volume: a
+    // player who rarely gets to the rim is read against what such players
+    // make there, not against the league's dunk-heavy mean.
+    paint: fitShrinkage(players.map(p => ({ pct: p.paintPct, n: p.paintAttempts, rate: p.paintRate }))),
     three: fitShrinkage(
       threeReferencePlayers.map(p => ({ pct: p.threePct, n: p.threeAttempts, rate: p.threeRate }))
     ),
@@ -642,7 +687,7 @@ export function buildShootingLayer(players, { shotLineTarget, paint = {}, three 
   const raw = players.map(p =>
     rawLines({
       tsPct: p.tsPct,
-      paintPct: shrink.paint.apply(p.paintPct, p.paintAttempts),
+      paintPct: shrink.paint.apply(p.paintPct, p.paintAttempts, p.paintRate),
       threePct: shrink.three.apply(p.threePct, p.threeAttempts, p.threeRate),
     })
   );
@@ -690,12 +735,27 @@ export function buildShootingLayer(players, { shotLineTarget, paint = {}, three 
     paintGap: meanSd(raw.map(r => r.exactPaintGap)).mean,
     threeStrength: threeStrength.mean,
   };
+  // The paint line's own map onto the printed range — same target mean as the
+  // Shot Line (a paint check is made as often as a shot, on average), its own
+  // spread, and fitted on the REFERENCE rows like the three line: a special
+  // set's seasons arrive already expressed on the base season's rim scale
+  // (generateSpecialSets' paintOnBaseScale) and do not get to move the map.
+  const paintLineTarget = {
+    ...shotLineTarget,
+    max: PAINT_LINE_MAX,
+    sd: shotLineTarget.sd * PAINT_LINE_SPREAD,
+  };
+  const paintLineMap = fitLinearMap(
+    raw.slice(0, refCount).map(r => r.exactPaintLine).filter(Number.isFinite),
+    paintLineTarget
+  );
   const paintShape = {
     scale: map.scale,
     poolMean: poolMean.paintGap,
     deadband: paint.deadband ?? 0,
-    min: paint.min ?? -5,
-    max: paint.max ?? 5,
+    min: PAINT_BOOST_MIN,
+    max: PAINT_BOOST_MAX,
+    lineMap: paintLineMap,
   };
   const threeShape = {
     // NOT the Shot Line's scale: see the header. The 3PT Boost is no longer a
@@ -729,7 +789,9 @@ export function buildShootingLayer(players, { shotLineTarget, paint = {}, three 
         raw: raw[i],
         literal: literal[i],
         shotLine,
-        paintBoost: compressBoost(raw[i].exactPaintGap, paintShape),
+        // An offset to an absolute paint line, like the three below; the
+        // distance-from-Shot-Line rule it replaces is described in the header.
+        paintBoost: paintBoostFor(shotLine, raw[i].exactPaintLine, paintShape),
         // THE BOOST IS AN OFFSET TO AN ABSOLUTE LINE, not a skill score.
         //
         // It was `compressBoost(exactThreeStrength)` -- three-point ability

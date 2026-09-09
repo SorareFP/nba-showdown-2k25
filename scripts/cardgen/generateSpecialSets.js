@@ -493,6 +493,8 @@ export function historicalShootingInput(season) {
     threeAttempts: S.attemptsFromPer100(season.fg3a100, season.minutes),
     // Attempts per 100 — the signal for whether he shoots threes at all.
     threeRate: season.fg3a100 ?? 0,
+    // And whether he gets to the rim at all — the paint line's volume prior.
+    paintRate: rimBased ? (season.fga100 ?? 0) * season.rimShare : season.fg2a100 ?? 0,
   };
 }
 
@@ -724,6 +726,163 @@ export function leagueTsPct(season) {
   return mean;
 }
 
+// THE PAINT LINE'S ERA AND SOURCE BRIDGE (2026-09-09). The paint line is
+// absolute now (shooting.js): a rim percentage, not a gap from the Shot Line.
+// That exposes three offsets the gap used to hide. Basketball-Reference's
+// 0-3 ft percentage runs 5.7 points ABOVE dunksandthrees' rim zone on the
+// same 2025-26 players (69.2 against 63.4, r = 0.88); the league's rim
+// percentage moved from .589 in 2004-05 to .698 in 2025-26 on the
+// Basketball-Reference scale; and seasons before the 1996-97 shooting table
+// (and every WNBA row) carry only 2P%, which at .50 is not a rim percentage
+// at all — David Robinson 1993-94 printed an 18 (15%) on it. So every season
+// is expressed as a DEVIATION FROM ITS OWN LEAGUE and re-attached to the base
+// season's rim mean: `base + (rimPct - leagueRimPct(season))`, or
+// `base + (fgPct2 - leagueTwoPct(season))` where there is no split — the
+// 2P%-to-rim slope is about 1 across eras (1.11, 1.17, 0.86, 0.78 for 1998,
+// 2005, 2015, 2026; r 0.64-0.72), so the deviation carries over at face value.
+const leagueRimCache = new Map();
+
+/**
+ * The league's attempt-weighted rim (0-3 ft) FG% that season, from the
+ * shooting table; null before 1996-97. `kind` is 'shooting' or
+ * 'playoffShooting' — a playoff run's rim percentage is read against the
+ * PLAYOFF league, where finishing is harder, or every Summer Standout would
+ * print a step worse than the same finishing earns in a regular season.
+ */
+export function leagueRimPct(season, kind = 'shooting') {
+  const cacheKey = `${season}|${kind}`;
+  if (leagueRimCache.has(cacheKey)) return leagueRimCache.get(cacheKey);
+  const raw = readCache(`bbref-${season}-${kind}-full`) ?? readCache(`bbref-${season}-${kind}`);
+  const rows = Array.isArray(raw) ? raw : raw?.data ?? [];
+  let num = 0;
+  let den = 0;
+  for (const r of rows) {
+    // Stint rows and the player's own total both appear; the total is the one
+    // flagged as a multi-team row, so weight only rows that are not duplicates
+    // of a total. Simpler and close enough: weight every row — a stint's
+    // minutes and its total's minutes both describe the same shots, and the
+    // league mean is a ratio, so double counting a traded player cancels.
+    const w = (r.minutes ?? 0) * (r.rimShare ?? 0);
+    if (!(w > 0) || !Number.isFinite(r.rimPct)) continue;
+    num += r.rimPct * w;
+    den += w;
+  }
+  const mean = den > 0 ? num / den : null;
+  leagueRimCache.set(cacheKey, mean);
+  return mean;
+}
+
+const leagueTwoCache = new Map();
+
+/** The league's attempt-weighted 2P% that season, from the per-100 table ('perPoss' or 'playoffPerPoss'). */
+export function leagueTwoPct(season, kind = 'perPoss') {
+  const cacheKey = `${season}|${kind}`;
+  if (leagueTwoCache.has(cacheKey)) return leagueTwoCache.get(cacheKey);
+  const rows = readCache(`bbref-${season}-${kind}-full`) ?? readCache(`bbref-${season}-${kind}`);
+  let num = 0;
+  let den = 0;
+  for (const r of rows ?? []) {
+    const attempts = (r.fg2a100 ?? 0) * (r.minutes ?? 0);
+    if (!(attempts > 0) || !Number.isFinite(r.fgPct2)) continue;
+    num += r.fgPct2 * attempts;
+    den += attempts;
+  }
+  const mean = den > 0 ? num / den : null;
+  leagueTwoCache.set(cacheKey, mean);
+  return mean;
+}
+
+// ── THE RIM PROFILE JOIN, FOR EVERY CALLER ───────────────────────────────────
+//
+// generateSpecialSets' own main() joined the 0-3 ft split onto its selections
+// AND its calibration rows, and said why: "enriching only the selections put
+// every historical card atop a 2P%-centred pool". The other buildSet callers
+// (Summer Standouts, Dissonance, Team Rewards, the capstones) never did, so
+// their reference rows carried 2P% while their seasons carried rim FG%, and
+// with an absolute paint line that mis-centred every card they built: Dwight
+// Howard's 2020-21 stint, .665 at the rim, printed a 16. The join lives here
+// now and buildSet runs it over both halves of its pool, so no caller can
+// forget it. Rows that already carry the split (a playoff run joined from
+// the playoff table) are left alone.
+const rimProfileCache = new Map();
+
+/** playerId -> { rimPct, rimShare } for one season's regular-season shooting table; the multi-team total wins. */
+export function rimProfilesFor(season) {
+  if (rimProfileCache.has(season)) return rimProfileCache.get(season);
+  const raw = readCache(`bbref-${season}-shooting-full`) ?? readCache(`bbref-${season}-shooting`);
+  const rows = Array.isArray(raw) ? raw : raw?.data ?? [];
+  const out = new Map();
+  for (const r of rows) {
+    if (!r?.playerId || !Number.isFinite(r.rimPct) || !Number.isFinite(r.rimShare)) continue;
+    const have = out.get(r.playerId);
+    const total = /TM$/.test(r.team ?? '');
+    if (!have || total || (!have.total && (r.minutes ?? 0) > (have.minutes ?? 0))) {
+      out.set(r.playerId, { rimPct: r.rimPct, rimShare: r.rimShare, minutes: r.minutes, total });
+    }
+  }
+  rimProfileCache.set(season, out);
+  return out;
+}
+
+/** Fill rimPct/rimShare on rows that lack them, from their own season's table. Mutates, like the original join. */
+export function joinRimProfiles(rows, { season: fallbackSeason = LAST_SEASON } = {}) {
+  let joined = 0;
+  for (const row of rows) {
+    if (!row || row.playoffRun) continue;
+    if (Number.isFinite(row.rimPct) && Number.isFinite(row.rimShare)) continue;
+    const season = row.season ?? fallbackSeason;
+    const rim = rimProfilesFor(season).get(row.playerId);
+    if (!rim) continue;
+    row.rimPct = rim.rimPct;
+    row.rimShare = rim.rimShare;
+    joined += 1;
+  }
+  return joined;
+}
+
+/** The share of a two-point attempt that is a rim attempt, league-wide, where the table exists; a 1990s-shaped default before it. */
+const RIM_SHARE_OF_TWOS_DEFAULT = 0.45;
+
+/**
+ * A season's paint inputs on the base season's rim scale. `baseRimMean` is
+ * the attempt-weighted rim FG% of the base rows in THEIR source. Returns the
+ * input untouched when the season's league mean is unknown.
+ */
+export function paintOnBaseScale(input, seasonRow, seasonYear, baseRimMean) {
+  if (!Number.isFinite(baseRimMean) || !seasonRow) return input;
+  const rimBased = Number.isFinite(seasonRow.rimPct) && Number.isFinite(seasonRow.rimShare);
+  const playoffs = !!seasonRow.playoffRun;
+  const first = (...xs) => xs.find(Number.isFinite);
+  if (rimBased) {
+    // A row that names its own league (a dunksandthrees playoff run) is read
+    // against that; otherwise the Basketball-Reference table of its kind,
+    // falling back to the regular season when the playoff table is not cached.
+    const league = first(
+      seasonRow.rimLeaguePct,
+      playoffs ? leagueRimPct(seasonYear, 'playoffShooting') : null,
+      leagueRimPct(seasonYear)
+    );
+    if (!Number.isFinite(league)) return input;
+    return { ...input, paintPct: baseRimMean + (seasonRow.rimPct - league) };
+  }
+  if (!Number.isFinite(seasonRow.fgPct2)) return input;
+  const league = first(
+    seasonRow.twoLeaguePct,
+    playoffs ? leagueTwoPct(seasonYear, 'playoffPerPoss') : null,
+    leagueTwoPct(seasonYear)
+  );
+  if (!Number.isFinite(league)) return input;
+  // 2P% deviation stands in for rim deviation (slope ~1, see above). The
+  // attempt count and rate are ALL twos, so they are scaled to the rim share
+  // of twos before they feed the shrinkage gate and its volume prior.
+  return {
+    ...input,
+    paintPct: baseRimMean + (seasonRow.fgPct2 - league),
+    paintAttempts: (input.paintAttempts ?? 0) * RIM_SHARE_OF_TWOS_DEFAULT,
+    paintRate: (input.paintRate ?? 0) * RIM_SHARE_OF_TWOS_DEFAULT,
+  };
+}
+
 export function eraTsOffset(season, base = LAST_SEASON) {
   const to = leagueTsPct(base);
   const from = leagueTsPct(season);
@@ -756,6 +915,10 @@ export function buildSet({
   eraTsOffset: tsOffset = eraTsOffset,
 }) {
   const seasons = selections.map(s => s.season);
+  // Every row carries the 0-3 ft split it can have before the shooting layer
+  // sees the pool — see joinRimProfiles for why this cannot be left to callers.
+  joinRimProfiles(currentRows, { season: LAST_SEASON });
+  joinRimProfiles(seasons);
   const all = [...currentRows, ...seasons];
   const cut = currentRows.length;
 
@@ -766,18 +929,37 @@ export function buildSet({
   // including the pre-2002 free-throw bridge.
   const basis = S.deriveShootingBasis(all);
   const shift = (v, d) => (Number.isFinite(v) ? v + d : v);
-  const shootingInputs = all.map(historicalShootingInput).map((input, i) => {
+  const rawInputs = all.map(historicalShootingInput);
+  // The base rows' rim mean in THEIR source (dunksandthrees' zone) — what every
+  // season's finishing is re-attached to. See paintOnBaseScale.
+  const baseRimMean = (() => {
+    let num = 0;
+    let den = 0;
+    for (let i = 0; i < cut; i += 1) {
+      const pct = basis.rimPct[i] ?? rawInputs[i].paintPct;
+      const w = rawInputs[i].paintAttempts ?? 0;
+      if (!Number.isFinite(pct) || !(w > 0)) continue;
+      num += pct * w;
+      den += w;
+    }
+    return den > 0 ? num / den : null;
+  })();
+  const shootingInputs = rawInputs.map((input, i) => {
     // The seasons' percentages in the base season's terms; the base rows are
-    // already there. TS% and the paint percentage move together so the paint
-    // GAP is preserved; 3P% moves by its own league gap.
+    // already there. TS% moves by the league TS gap; 3P% by its own league
+    // gap; the rim percentage is re-attached to the base rows' rim mean as a
+    // deviation from its own league (paintOnBaseScale), which covers the
+    // era, the source and the seasons that only have 2P% in one move.
     const season = i >= cut ? seasons[i - cut].season : null;
     const ts = season != null ? tsOffset(season) : 0;
-    return {
+    const withBasis = {
       ...input,
       tsPct: shift(basis.shootingPct[i] ?? input.tsPct, ts),
-      paintPct: shift(basis.rimPct[i] ?? input.paintPct, ts),
+      paintPct: basis.rimPct[i] ?? input.paintPct,
+      paintRate: basis.rimRate[i] ?? input.paintRate,
       threePct: season != null ? shift(input.threePct, eraOffset(season)) : input.threePct,
     };
+    return season != null ? paintOnBaseScale(withBasis, all[i], season, baseRimMean) : withBasis;
   });
   const shooting = S.buildShootingLayer(shootingInputs, {
     shotLineTarget: calibration.shotLine.target,

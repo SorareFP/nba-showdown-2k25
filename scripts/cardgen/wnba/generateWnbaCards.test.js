@@ -144,6 +144,8 @@ describe('wnbaShootingInput', () => {
       paintAttempts: 300,
       threeAttempts: 120,
       threeRate: 0,
+      // Two-point volume, for the paint line's volume prior (no rim split here).
+      paintRate: 0,
     });
   });
 

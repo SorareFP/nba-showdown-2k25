@@ -1779,12 +1779,16 @@ describe('the season and the card-type badge', () => {
     // budgets moved, and four more cards cleared SUPER_SEASON_MIN_SALARY.
     // 14/93 after the five players on no current NBA roster were cut (card-data/retired-2026.json), taking the pool 353 -> 348.
     // 21 on 2026-09-07 — see the beaten-by-base note above.
-    expect(gilded.length).toBe(21);
+    // 20/127 on 2026-09-09: the ABSOLUTE PAINT LINE (shooting.js) and the
+    // any-player-may-spend salary rule (playValue.js) repriced the set, and
+    // one badged base card slipped under SUPER_SEASON_MIN_SALARY. A
+    // measurement of the price, as every note above says.
+    expect(gilded.length).toBe(20);
     // 125 on 2026-09-07: the beaten-by-base rule's 39 are mostly cheap role
     // players, so nearly all of them land on the BEST SEASON side of the line.
-    expect(superSeason.length - gilded.length).toBe(126);
-    expect(BADGE_FILE.counts.printed[SUPER_SEASON_BADGE]).toBe(21);
-    expect(BADGE_FILE.counts.printed[BEST_SEASON_BADGE]).toBe(126);
+    expect(superSeason.length - gilded.length).toBe(127);
+    expect(BADGE_FILE.counts.printed[SUPER_SEASON_BADGE]).toBe(20);
+    expect(BADGE_FILE.counts.printed[BEST_SEASON_BADGE]).toBe(127);
     expect(BADGE_FILE.counts.printed[ROOKIE_BADGE]).toBe(33);
   });
 

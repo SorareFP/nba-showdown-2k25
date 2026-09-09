@@ -212,6 +212,9 @@ export function wnbaShootingInput(row) {
     paintAttempts: row.fg2aTotal ?? 0,
     threeAttempts: row.fg3aTotal ?? 0,
     threeRate: row.fg3a100 ?? 0,
+    // Two-point volume stands in for rim volume in the paint line's prior,
+    // the way 2P% stands in for rim FG% — this league has no split.
+    paintRate: row.fg2a100 ?? 0,
   };
 }
 

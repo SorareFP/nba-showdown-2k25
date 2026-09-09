@@ -478,8 +478,10 @@ describe('the base set\'s card-type badges', () => {
     // 21/125 on 2026-09-07: the beaten-by-base rule moved 39 Super Season
     // picks onto the base-card pill, and they are mostly the cheap role
     // players it exists to catch, so nearly all land on the BEST SEASON side.
-    expect(printed.filter(id => id === SUPER_SEASON_BADGE).length).toBe(21);
-    expect(printed.filter(id => id === BEST_SEASON_BADGE).length).toBe(126);
+    // 20/127 on 2026-09-09: the absolute paint line and the any-player-may-spend
+    // salary rule repriced the set; one badged card slipped under the line.
+    expect(printed.filter(id => id === SUPER_SEASON_BADGE).length).toBe(20);
+    expect(printed.filter(id => id === BEST_SEASON_BADGE).length).toBe(127);
     // Everyone who prints ROOKIE is someone the SUPER SEASON fact is also true
     // of — the nesting is what makes this a priority question and not a rule.
     // The tier does not touch it: a rookie card is cheap, its Super Season
@@ -501,8 +503,8 @@ describe('the base set\'s card-type badges', () => {
     // and the salary file having been generated from different pools.
     expect(BADGE_FILE.counts.printed).toEqual({
       [ROOKIE_BADGE]: 33,
-      [SUPER_SEASON_BADGE]: 21,
-      [BEST_SEASON_BADGE]: 126,
+      [SUPER_SEASON_BADGE]: 20,
+      [BEST_SEASON_BADGE]: 127,
       // In the id list, never on a base-set record: the STANDOUT, TRADED and
       // TEAM REWARD pills are SET badges, worn by their whole sets and no one
       // else. A base-set player earning one would mean a special-set card had

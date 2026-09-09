@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-07T16:25:01.268Z",
+ "generatedAt": "2026-09-09T21:34:42.146Z",
  "set": "set-rewards",
  "note": "SET COMPLETION REWARDS — cards MOVED out of their home special set (see migratedFrom) and earned by completing that set (rewardGoal). Built by scripts/cardgen/generateSetRewards.js from card-data/set-rewards-2026.json; the strongest card by salary of each group is the reward.",
  "cards": [
@@ -11,10 +11,10 @@
    "speed": 18,
    "power": 12,
    "shotLine": 16,
-   "paintBoost": 0,
+   "paintBoost": -1,
    "threePtBoost": 1,
    "defBoost": 2,
-   "salary": 1760,
+   "salary": 1730,
    "chart": [
     {
      "lo": 1,
@@ -85,10 +85,10 @@
    "speed": 18,
    "power": 12,
    "shotLine": 14,
-   "paintBoost": -1,
+   "paintBoost": 0,
    "threePtBoost": -6,
    "defBoost": 2,
-   "salary": 1420,
+   "salary": 1410,
    "chart": [
     {
      "lo": 1,
@@ -151,11 +151,11 @@
    "pos": "SG",
    "speed": 18,
    "power": 12,
-   "shotLine": 14,
-   "paintBoost": 0,
-   "threePtBoost": -4,
+   "shotLine": 15,
+   "paintBoost": 1,
+   "threePtBoost": -3,
    "defBoost": 3,
-   "salary": 1360,
+   "salary": 1330,
    "chart": [
     {
      "lo": 1,
@@ -173,13 +173,13 @@
     },
     {
      "lo": 7,
-     "hi": 13,
+     "hi": 14,
      "pts": 2,
      "reb": 0,
      "ast": 0
     },
     {
-     "lo": 14,
+     "lo": 15,
      "hi": 99,
      "pts": 3,
      "reb": 1,
@@ -213,11 +213,11 @@
    "pos": "PG",
    "speed": 13,
    "power": 8,
-   "shotLine": 15,
+   "shotLine": 16,
    "paintBoost": 0,
-   "threePtBoost": -3,
+   "threePtBoost": -2,
    "defBoost": 0,
-   "salary": 1420,
+   "salary": 1340,
    "chart": [
     {
      "lo": 1,
@@ -242,13 +242,13 @@
     },
     {
      "lo": 9,
-     "hi": 14,
+     "hi": 15,
      "pts": 2,
      "reb": 1,
      "ast": 1
     },
     {
-     "lo": 15,
+     "lo": 16,
      "hi": 23,
      "pts": 5,
      "reb": 1,

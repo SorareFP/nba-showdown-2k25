@@ -49,6 +49,35 @@ export function playoffRow(name, season) {
  * is there through the same Def Boost rule, and for a playoff run the real
  * DEF EPM exists — it is the regular-season cards that have to substitute.
  */
+/**
+ * The playoff league's attempt-weighted rim FG% that season, over the SAME
+ * dunksandthrees table the run's own rim percentage came from. The paint line
+ * reads a season as a deviation from its own league (generateSpecialSets'
+ * paintOnBaseScale), and the league has to be measured on the same zone and
+ * the same games — the regular-season Basketball-Reference mean is a
+ * different zone (5.7 points higher) and a different sample (finishing is
+ * harder in the playoffs). Without this every 2002+ Standout printed 17-18.
+ */
+const playoffLeagueRimCache = new Map();
+export function playoffLeagueRimPct(season) {
+  if (playoffLeagueRimCache.has(season)) return playoffLeagueRimCache.get(season);
+  let cached;
+  try { cached = readCache(`dunksandthrees-api-season-epm-${season}-st4`); } catch { cached = null; }
+  const raw = cached?.data ?? cached ?? [];
+  const rows = Array.isArray(raw) ? raw : raw.rows ?? [];
+  let num = 0;
+  let den = 0;
+  for (const r of rows) {
+    const w = (r.fgaRimPer75 ?? 0) * (r.minutes ?? 0);
+    if (!(w > 0) || !Number.isFinite(r.fgPctRim)) continue;
+    num += r.fgPctRim * w;
+    den += w;
+  }
+  const mean = den > 0 ? num / den : null;
+  playoffLeagueRimCache.set(season, mean);
+  return mean;
+}
+
 export function playoffSeason(row, fallbackPos) {
   const fga100 = (row.fgaPer75 ?? 0) * P75_TO_P100;
   const fg3a100 = (row.fga3Per75 ?? 0) * P75_TO_P100;
@@ -77,6 +106,8 @@ export function playoffSeason(row, fallbackPos) {
     // the archived seasons. A playoff run's Paint Boost is real rim finishing.
     rimPct: row.fgPctRim,
     rimShare: row.fgaPer75 > 0 ? (row.fgaRimPer75 ?? 0) / row.fgaPer75 : null,
+    // The league this rim percentage is read against — its own table's.
+    rimLeaguePct: playoffLeagueRimPct(row.season),
     fga100: (row.fgaPer75 ?? 0) * P75_TO_P100,
     dbpm: row.epmDef,
     epm: row.epm,

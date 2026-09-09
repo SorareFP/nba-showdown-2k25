@@ -160,6 +160,7 @@ export function actualShootingInput(rate) {
     // Per 100 possessions, the signal for WHETHER HE SHOOTS AT ALL — see the
     // volume prior in fitShrinkage. per-75 to per-100 is * 100/75.
     threeRate: (rate?.fga3Per75 ?? 0) * (100 / 75),
+    paintRate: (rate?.fgaRimPer75 ?? 0) * (100 / 75),
   };
 }
 
@@ -352,16 +353,18 @@ export function generateCards({
   // all measured across these 350 players, so it has to run once over all of
   // them before any single card can be built.
   const actualRows = resolved.map(p => lookup(actualIndex, p.name));
-  // Shot Line reads jump shooting only and Paint Boost reads rim points added
-  // — see the header of shooting.js for why TS% and rim FG% could not carry
-  // those roles. Both come back re-expressed on TS%'s own scale, so the
-  // calibrated compression below is unaffected; a row without the shot-location
-  // splits keeps its TS%/rim-FG% inputs.
+  // Shot Line reads jump shooting only and the paint line reads rim FG% with
+  // a volume prior — see the header of shooting.js for why TS% could not carry
+  // the Shot Line and why rim points added could not carry the paint line.
+  // The shooting basis comes back re-expressed on TS%'s own scale, so the
+  // calibrated compression below is unaffected; a row without the
+  // shot-location splits keeps its TS%/rim-FG% inputs.
   const basis = S.deriveShootingBasis(actualRows.map(r => r ?? {}));
   const shootingInputs = actualRows.map(actualShootingInput).map((input, i) => ({
     ...input,
     tsPct: basis.shootingPct[i] ?? input.tsPct,
     paintPct: basis.rimPct[i] ?? input.paintPct,
+    paintRate: basis.rimRate[i] ?? input.paintRate,
   }));
   const shooting = S.buildShootingLayer(shootingInputs, {
     shotLineTarget: calibration.shotLine.target,

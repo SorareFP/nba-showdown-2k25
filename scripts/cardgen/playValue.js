@@ -123,16 +123,19 @@ export function computePlayValue(cards, { field = cards } = {}) {
   const fieldHit3 = medianOf(field.map(c => hitProb(c, 'threePtBoost', fieldContest)));
   const fieldHitPaint = medianOf(field.map(c => hitProb(c, 'paintBoost', fieldContest)));
 
-  // Currency is pooled at TEAM level and spent by whoever converts best, so a
-  // card's own generation is valued at its own rate when it holds the boost
-  // that unlocks the spend, and at the field's median rate otherwise — the
-  // currency is still spent, just by a team-mate.
+  // Currency is pooled at TEAM level and spent by whoever converts best. ANY
+  // player may take a check now (the user, 2026-09-08: "Players shouldn't need
+  // a bonus to be able to spend"), so a card's own generation is valued at its
+  // own rate whenever that beats the field's median — otherwise a team-mate at
+  // the median spends it. It used to be gated on a POSITIVE boost, the old
+  // spend rule, which priced Luke Kennard's 12 Shot Line (45% from three, 40%
+  // in the paint, boosts 0 and -1) as a 30% shooter.
   const convert = (card, stat) => {
     if (stat === 'ast') {
-      const p = (card.threePtBoost ?? 0) > 0 ? hitProb(card, 'threePtBoost', fieldContest) : fieldHit3;
+      const p = Math.max(hitProb(card, 'threePtBoost', fieldContest), fieldHit3);
       return (3 / 4) * p;
     }
-    return (card.paintBoost ?? 0) > 0 ? hitProb(card, 'paintBoost', fieldContest) : fieldHitPaint;
+    return Math.max(hitProb(card, 'paintBoost', fieldContest), fieldHitPaint);
   };
 
   const chart = new Array(n);
@@ -155,8 +158,8 @@ export function computePlayValue(cards, { field = cards } = {}) {
 
   const meanAst = mean(cards.map((_, i) => evAt(i, 0, 'ast')));
   const target = cards.map(c => {
-    const e3 = ((c.threePtBoost ?? 0) > 0 ? hitProb(c, 'threePtBoost', fieldContest) : 0) - fieldHit3;
-    const ep = ((c.paintBoost ?? 0) > 0 ? hitProb(c, 'paintBoost', fieldContest) : 0) - fieldHitPaint;
+    const e3 = hitProb(c, 'threePtBoost', fieldContest) - fieldHit3;
+    const ep = hitProb(c, 'paintBoost', fieldContest) - fieldHitPaint;
     return meanAst * Math.max(0, Math.max(e3 * 3, ep * 2));
   });
 
@@ -176,8 +179,8 @@ export function computePlayValue(cards, { field = cards } = {}) {
   const convThrough = (attacker, def) => {
     const b = calcAdv(attacker, def).rollBonus;
     const c = contestOf(def);
-    const p3 = (attacker.threePtBoost ?? 0) > 0 ? hitProb(attacker, 'threePtBoost', c) : fieldHit3;
-    const pp = (attacker.paintBoost ?? 0) > 0 ? hitProb(attacker, 'paintBoost', c) : fieldHitPaint;
+    const p3 = Math.max(hitProb(attacker, 'threePtBoost', c), fieldHit3);
+    const pp = Math.max(hitProb(attacker, 'paintBoost', c), fieldHitPaint);
     return expectedChartValue(attacker, b, 'ast') * (3 / 4) * p3
          + expectedChartValue(attacker, b, 'reb') * pp;
   };

@@ -240,6 +240,7 @@ export function main({ log = console.log } = {}) {
       paintAttempts: r.fg2aTotal ?? 0,
       threeAttempts: r.fg3aTotal ?? 0,
       threeRate: r.fg3a100 ?? 0,
+      paintRate: r.fg2a100 ?? 0,
     })),
     ...selections.map(s =>
       legendShootingInput(s.best, seasons.get(s.best.season).shooting, reference.shooting)

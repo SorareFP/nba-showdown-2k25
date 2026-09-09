@@ -57,6 +57,8 @@ export function expectedOutput(card, mod = 0) {
 
 const SECTION_MINUTES = 4;
 const HORIZON = 0.5;
+/** Points a section charged per point of fatigue penalty beyond −6 — see lineupValue. */
+const WORN_PER_POINT = 0.15;
 /** How far a card's value can wobble before the sort — see aiScoringDecision. */
 const CARD_JITTER = 0.3;
 
@@ -80,8 +82,19 @@ export function lineupValue(player, ps) {
   // cleared both (the user, 2026-09-07: "resting would have ... likely been a
   // longer-term smart play"). Weighting the lookahead fully when a cold marker
   // is on him is what makes the pick see that.
-  const horizon = (ps?.cold || 0) > 0 ? 1 : HORIZON;
-  return now + horizon * (nextIfPlayed - nextIfRested) + body + shoot;
+  // DEEP FATIGUE IS A COST THE CHART CANNOT SHOW. Past −12 a d20 lands on
+  // the chart's bottom row almost every time, so `now`, `nextIfPlayed` and
+  // `nextIfRested` all sit on the same floor and the swing reads as nothing
+  // — one more section looked free, and a star's attributes (`body`,
+  // `shoot`) kept him on the floor for a whole half (the user, 2026-09-09:
+  // "Giannis has played the entire 20 minutes … the AI keeps playing him").
+  // Two answers: the lookahead is weighted in full once he is that tired,
+  // as it is for a cold marker, and every point of penalty beyond −6 is
+  // charged directly, so the deeper he goes the more a fresh body wins.
+  const fatNow = fatigueForMinutes(min);
+  const horizon = (ps?.cold || 0) > 0 || fatNow <= -12 ? 1 : HORIZON;
+  const worn = WORN_PER_POINT * Math.max(0, -fatNow - 6);
+  return now + horizon * (nextIfPlayed - nextIfRested) + body + shoot - worn;
 }
 
 export function aiDraftPick(game, teamKey) {

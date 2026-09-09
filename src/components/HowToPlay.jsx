@@ -183,7 +183,7 @@ export default function HowToPlay({ scrollToSection, onStartTutorial, tutorialRu
             <li><strong>Under 8 minutes:</strong> no penalty — two sections are free.</li>
             <li><strong>8 minutes:</strong> &minus;2 to all rolls and checks.</li>
             <li><strong>12 minutes:</strong> &minus;6.</li>
-            <li><strong>16 minutes:</strong> &minus;12.</li>
+            <li><strong>16 minutes:</strong> &minus;12, and &minus;6 more for every section after that (20 minutes &minus;18, 24 minutes &minus;24). It does not stop.</li>
           </ul>
           <p><strong>Rest:</strong> a section on the bench takes <strong>4 minutes</strong> off — the same amount a section of play adds. A star at 12 rests to 8 and is still at &minus;2; it takes three sections off to get back to fresh. Benching also clears hot and cold markers.</p>
           <p><strong>Halftime:</strong> all fatigue and all markers reset at the start of Q3.</p>

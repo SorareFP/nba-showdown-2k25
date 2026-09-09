@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { calcAdv, getTeam, getOpp, getPS, getFatigue, SNAKE, SPEND_COSTS, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, extraRollPending, checkNeed } from '../../game/engine.js';
+import { calcAdv, getTeam, getOpp, getPS, getFatigue, SNAKE, SPEND_COSTS, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, extraRollPending, checkNeed, fatigueForMinutes } from '../../game/engine.js';
 import { canPlayCard, myHouseTargets, fwdTargets, preRollTargets, helpTargets } from '../../game/canPlay.js';
 import { benchRest, passTurn } from '../../game/engine.js';
 import { getStrat } from '../../game/strats.js';
@@ -906,7 +906,7 @@ function SelectModal({ modal, game, onClose }) {
           {players.map((p, i) => {
             const ps = stats?.find(s => s.id === p.id) || {};
             const min = ps.minutes || 0;
-            const fat = min >= 16 ? -12 : min >= 12 ? -6 : min >= 8 ? -2 : 0;
+            const fat = fatigueForMinutes(min);
             const boosts = [
               p.threePtBoost ? `3PT${p.threePtBoost>0?'+':''}${p.threePtBoost}` : '',
               p.paintBoost   ? `Paint${p.paintBoost>0?'+':''}${p.paintBoost}` : '',
@@ -1331,7 +1331,7 @@ function BlindPickPhase({ game, setGame, pvpMode = false, myTeamKey = null, onDr
           const ps = stats?.find(s => s.id === p.id) || {};
           const isSelected = selected.includes(p.id);
           const min = ps.minutes || 0;
-          const fat = min >= 16 ? -12 : min >= 12 ? -6 : min >= 8 ? -2 : 0;
+          const fat = fatigueForMinutes(min);
           const hotCold = (ps.hot || 0) - (ps.cold || 0);
           const boosts = [
             p.threePtBoost ? `3PT+${p.threePtBoost}` : '',
@@ -1438,7 +1438,7 @@ function DraftRow({ idx, game, setGame, pvpMode = false, myTeamKey = null, isMyT
 
 function PlacedCard({ player, stats, col }) {
   const ps=stats?.find(s=>s.id===player.id)||{};
-  const min=ps.minutes||0,fat=min>=16?-12:min>=12?-6:min>=8?-2:0;
+  const min=ps.minutes||0,fat=fatigueForMinutes(min);
   const boosts=[
     player.threePtBoost?`3PT${player.threePtBoost>0?'+':''}${player.threePtBoost}`:'',
     player.paintBoost?`Paint${player.paintBoost>0?'+':''}${player.paintBoost}`:'',
@@ -1478,7 +1478,7 @@ function PickList({ pool, stats, onPick, col, oppStarters = [], myStarters = [],
       <div className={styles.pickScroll}>
         {filtered.map(p=>{
           const ps=stats?.find(s=>s.id===p.id)||{};
-          const min=ps.minutes||0,fat=min>=16?-12:min>=12?-6:min>=8?-2:0;
+          const min=ps.minutes||0,fat=fatigueForMinutes(min);
           const boosts=[
             p.threePtBoost?`3PT${p.threePtBoost>0?'+':''}${p.threePtBoost}`:'',
             p.paintBoost?`Paint${p.paintBoost>0?'+':''}${p.paintBoost}`:'',

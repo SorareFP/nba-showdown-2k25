@@ -242,7 +242,7 @@ export default function RulebookTab() {
         <div className={s.highlight}>
           <strong>8+ minutes:</strong> −2<br/>
           <strong>12+ minutes:</strong> −6<br/>
-          <strong>16+ minutes:</strong> −12
+          <strong>16 minutes:</strong> −12, then −6 more per section (20 → −18, 24 → −24)
         </div>
         <ul>
           <li><strong>Rest:</strong> a section on the bench takes <strong>4 minutes</strong> off. Play and rest are symmetric: 12 rests to 8 (still −2), and three sections off return a player to fresh.</li>
@@ -337,7 +337,7 @@ export default function RulebookTab() {
           <div className={s.glossaryDef}>A card in effect for the whole section while its players are on the floor (Twin Towers, Run the Floor).</div>
 
           <div className={s.glossaryTerm}>Fatigue</div>
-          <div className={s.glossaryDef}>4 minutes per section played. 8+ = −2, 12+ = −6, 16+ = −12. A section on the bench sheds 4.</div>
+          <div className={s.glossaryDef}>4 minutes per section played. 8+ = −2, 12+ = −6, 16 = −12 and −6 more per section after that. A section on the bench sheds 4.</div>
 
           <div className={s.glossaryTerm}>Snake</div>
           <div className={s.glossaryDef}>The placement order A-B-B-A-A-B-B-A-A-B.</div>

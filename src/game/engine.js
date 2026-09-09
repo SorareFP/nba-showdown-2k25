@@ -237,17 +237,23 @@ export function calcAdv(off, def, tempEff = {}, idx = 0, tempDefEff = null, defI
 
 // ── Fatigue ────────────────────────────────────────────────────────────────
 // Progressive fatigue based on consecutive minutes:
-//   0-8 min: no penalty (2 sections free)
-//   9-12 min: -2
-//   13-16 min: -6
-//   16+ min: -12 (should be benched)
+//   0-7 min: no penalty (2 sections free)
+//   8-11 min: -2
+//   12-15 min: -6
+//   16 min: -12, and −6 more for every section after that (20 → −18, 24 → −24)
+//
+// THE LADDER DOES NOT STOP AT SIXTEEN. It used to: −12 was the floor, so a
+// star at 20 minutes was no worse off than at 16, the AI's lookahead saw no
+// cost in one more section, and Giannis played a whole half (the user,
+// 2026-09-09: "Fatigue is not continuing to add up as a game goes on").
 /**
  * The fatigue roll penalty for a minutes total. Exported so the AI values a
  * bench player by the same table the roll uses — it used to keep a private
  * copy of the thresholds with made-up weights attached.
  */
+export const FATIGUE_STEP_PAST_16 = 6;
 export function fatigueForMinutes(min) {
-  if (min >= 16) return -12;
+  if (min >= 16) return -12 - FATIGUE_STEP_PAST_16 * Math.floor((min - 16) / 4);
   if (min >= 12) return -6;
   if (min >= 8) return -2;
   return 0;

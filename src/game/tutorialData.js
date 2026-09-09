@@ -289,7 +289,7 @@ export const TUTORIAL_TOOLTIPS = [
   {
     id: 's3_fatigue_warning',
     text: "Section 3 \u2014 check your players' fatigue! Anyone with 8+ minutes now has a -2 penalty to all rolls. Consider resting tired players this section.",
-    detail: "Fatigue thresholds: 8 min = -2, 12 min = -6, 16 min = -12. A section on the bench takes 4 minutes off and clears hot and cold markers. At halftime (Q3), all fatigue resets.",
+    detail: "Fatigue thresholds: 8 min = -2, 12 min = -6, 16 min = -12, and -6 more for every section after that. A section on the bench takes 4 minutes off and clears hot and cold markers. At halftime (Q3), all fatigue resets.",
     section: 3,
     priority: 100,
     trigger: {

@@ -1,8 +1,8 @@
 import { useReducer, useCallback, useEffect, useRef, useState } from 'react';
 import { newGame, doRoll, endSection, spendAssist, spendReboundBonus, getTeam, SNAKE, applyMatchups } from '../game/engine.js';
-import { execCard, resolvePendingShotCheck } from '../game/execCard.js';
+import { execCard, resolvePendingShotCheck, resolveGoUnder } from '../game/execCard.js';
 import { CARD_MAP } from '../game/cards.js';
-import { aiDraftPick, aiScoringDecision, aiRollDecision, aiTurn } from '../game/ai.js';
+import { aiDraftPick, aiScoringDecision, aiRollDecision, aiTurn, aiGoUnderChoice } from '../game/ai.js';
 import { TUTORIAL_TOOLTIPS, TUTORIAL_ROSTER_A_IDS, TUTORIAL_ROSTER_B_IDS } from '../game/tutorialData.js';
 // The hands are shaped per section so each lesson has its prop — see the file.
 import { teachingHands } from '../game/tutorialHands.js';
@@ -143,6 +143,11 @@ export default function TutorialGame({ onExit }) {
       return () => { clearTimeout(timer); aiRunning.current = false; };
     }
 
+    // A Go Under check waiting on the coach's choice: name the shooter first.
+    if (game.pendingChoice?.teamKey === 'B') {
+      const r = resolveGoUnder(game, aiGoUnderChoice(game, 'B'));
+      if (r.ok) { dispatch({ type: 'UPDATE', game: r.game }); return undefined; }
+    }
     // ── Matchup Strats: AI plays or passes on its turn ───────────────────
     if (phase === 'matchup_strats' && game.matchupTurn === 'B') {
       aiRunning.current = true;

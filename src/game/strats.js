@@ -72,7 +72,7 @@ export const STRATS = [
 
   // ── REACTION ──
   { id:'go_under',            name:'Go Under',           phase:'reaction', side:'def', copies:2, locked:false, color:'#6D28D9', rarity:'common',
-    desc:'Cancel opponent\'s screen-and-roll card. The offensive player involved gets a 3PT Shot Check at +2.' },
+    desc:'Cancel opponent\'s screen-and-roll card. The offence chooses which of the two players involved takes a 3PT Shot Check at +2.' },
   { id:'fight_over',          name:'Fight Over',         phase:'reaction', side:'def', copies:2, locked:false, color:'#B45309', rarity:'common',
     desc:'Cancel opponent\'s screen-and-roll card. The faster of the two involved offensive players gets +2 to their scoring roll.' },
   { id:'veer_switch',         name:'Veer Switch',        phase:'reaction', side:'def', copies:2, locked:false, color:'#7C3AED', rarity:'common',

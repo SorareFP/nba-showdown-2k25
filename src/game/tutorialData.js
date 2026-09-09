@@ -115,7 +115,7 @@ function switchCancelledText(g) {
   if (!e) return 'The coach cancelled your switch.';
   const [card, rest] = e.msg.split(': canceled HSR — ');
   const lead = `The coach answered with ${card}: your switch is cancelled and the pairings stay as they were placed.`;
-  if (card === 'Go Under') return `${lead} Go Under's price: the player your switch was called for takes a 3PT check at +2 — ${rest}.`;
+  if (card === 'Go Under') return `${lead} Go Under's price is yours to spend: pick which of the two players takes a 3PT check at +2 — the banner shows the die each one needs. (${rest}.)`;
   if (card === 'Fight Over') return `${lead} Fight Over's price: ${rest}.`;
   return `${lead} Veer Switch's twist: the coach chose the new assignments itself — ${rest}.`;
 }

@@ -104,6 +104,31 @@ function drawN(team, deck, n) {
 }
 
 /**
+ * GO UNDER'S CHECK, taken by the offence's chosen shooter. `slot` must be one
+ * of the two the screen involved. The check is exactly what the card
+ * always paid — a 3PT check at +2 less the restored defender's contest.
+ */
+export function resolveGoUnder(game, slot) {
+  const pc = game.pendingChoice;
+  if (!pc || pc.kind !== 'go_under') return { game, ok: false, msg: 'No Go Under check is waiting' };
+  if (!pc.slots.includes(slot)) return { game, ok: false, msg: 'Choose one of the two players the screen involved' };
+  const g = deepClone(game);
+  const offT = getTeam(g, pc.teamKey);
+  const offPlayer = offT.starters[slot];
+  if (!offPlayer) return { game, ok: false, msg: 'No such player' };
+  const offPs = getPS(g, pc.teamKey, offPlayer.id) || {};
+  const r = shotCheck(offPlayer, '3pt', pc.extra - matchupContest(g, pc.teamKey, slot, '3pt'), offPs);
+  trackShotCheck(g, pc.teamKey, r, '3pt', slot);
+  recordShot(g, pc.teamKey, offPlayer.id, '3pt', r.hit);
+  if (r.hit) scorePts(g, pc.teamKey, offPlayer.id, r.pts);
+  if (r.die <= 2)  offPs.cold = (offPs.cold || 0) + 1;
+  if (r.die >= 19) offPs.hot  = (offPs.hot  || 0) + 1;
+  addLog(g, pc.teamKey, `Go Under: ${offPlayer.name} takes the 3PT check: ${scStr(r, offPs)}`);
+  g.pendingChoice = null;
+  return { game: g, ok: true };
+}
+
+/**
  * A CARD'S DRAW: past the seven-card cap, deck written back (four call
  * sites drew into the hand and never took the cards out of the deck, so a
  * Turnover duplicated two cards and at a full hand drew nothing while
@@ -363,18 +388,15 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       const mu = g.offMatchups[lc.teamKey];
       mu[lc.opts.swapSlot1] = lc.opts.origD1;
       mu[lc.opts.swapSlot2] = lc.opts.origD2;
-      // Use player-chosen target, default to swapSlot1
-      const targetSlot = opts.goUnderTarget !== undefined ? opts.goUnderTarget : lc.opts.swapSlot1;
-      const offPlayer = getTeam(g, lc.teamKey).starters[targetSlot];
-      const offPs = getPS(g, lc.teamKey, offPlayer?.id) || {};
-      if (offPlayer) {
-        const r = shotCheck(offPlayer, '3pt', 2 - matchupContest(g, lc.teamKey, targetSlot, '3pt'), offPs);
-        trackShotCheck(g, lc.teamKey, r, '3pt');
-        if (r.hit) scorePts(g, lc.teamKey, offPlayer.id, r.pts);
-        if (offPs && r.die <= 2)  offPs.cold = (offPs.cold || 0) + 1;
-        if (offPs && r.die >= 19) offPs.hot  = (offPs.hot  || 0) + 1;
-        addLog(g, teamKey, `Go Under: canceled HSR — ${offPlayer.name} 3PT check: ${scStr(r)} · ${restoredLine(g, lc, myT)}`);
-      }
+      // THE OFFENCE CHOOSES THE SHOOTER (the user, 2026-09-09). The defence
+      // used to name the target — and the coach named the worse shooter —
+      // but the consolation belongs to the side whose screen was cancelled.
+      // The check waits as a pending CHOICE for that side: resolveGoUnder
+      // takes it once they have named one of the two screened players.
+      const offT = getTeam(g, lc.teamKey);
+      const slots = [lc.opts.swapSlot1, lc.opts.swapSlot2].filter(sl => offT.starters[sl]);
+      g.pendingChoice = { kind: 'go_under', teamKey: lc.teamKey, slots, extra: 2, by: teamKey };
+      addLog(g, teamKey, `Go Under: canceled HSR — ${offT.name} chooses which of ${slots.map(sl => offT.starters[sl]?.name).join(' / ')} takes a 3PT check at +2 · ${restoredLine(g, lc, myT)}`);
       g.lastMatchupCard = null;
       break;
     }

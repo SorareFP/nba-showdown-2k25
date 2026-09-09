@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { calcAdv, getTeam, getOpp, getPS, getFatigue, SNAKE, SPEND_COSTS, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, extraRollPending, checkNeed, fatigueForMinutes, crunchSearchOptions } from '../../game/engine.js';
 import { canPlayCard, myHouseTargets, fwdTargets, preRollTargets, helpTargets } from '../../game/canPlay.js';
+import { resolveGoUnder } from '../../game/execCard.js';
 import { benchRest, passTurn } from '../../game/engine.js';
 import { salaryOrder } from '../../game/teamRules.js';
 import { getStrat } from '../../game/strats.js';
@@ -94,6 +95,9 @@ export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExec
           is beside the scoreboard, and it sticks while the page scrolls. */}
       {game.pendingShotCheck && (
         <PendingBanner game={game} onResolve={onResolve} onExecCard={handleExecCard} />
+      )}
+      {!game.pendingShotCheck && game.pendingChoice && (
+        <ChoiceBanner game={game} setGame={setGame} pvpMode={pvpMode} myTeamKey={myTeamKey} />
       )}
 
       {game.phase === 'draft' ? (
@@ -692,26 +696,8 @@ async function buildOpts(game, teamKey, cardId, base, openModal, ui = {}) {
   }
 
   // ── Go Under: let player choose which offensive player gets 3PT check ──
-  if (cardId === 'go_under') {
-    const lc = game.lastMatchupCard;
-    if (lc) {
-      const offT = getTeam(game, lc.teamKey);
-      const p1 = offT.starters[lc.opts.swapSlot1];
-      const p2 = offT.starters[lc.opts.swapSlot2];
-      const choices = [
-        { p: p1, origIdx: lc.opts.swapSlot1 },
-        { p: p2, origIdx: lc.opts.swapSlot2 },
-      ].filter(({ p }) => p != null);
-      if (choices.length > 1) {
-        const display = choices.map(({ p }) => ({ ...p, name: `${p.name} (3PT check)` }));
-        const pick = await openModal({ teamKey: lc.teamKey, cardId, players: display, label: 'Which player takes the 3PT check?' });
-        if (pick === null) return null;
-        opts.goUnderTarget = choices[pick].origIdx;
-      } else if (choices.length === 1) {
-        opts.goUnderTarget = choices[0].origIdx;
-      }
-    }
-  }
+  // Go Under: the OFFENCE names the shooter afterwards (ChoiceBanner); the
+  // defence has nothing to pick.
 
   // ── Two-player cards ───────────────────────────────────────────────────
   if (cardId === 'stagger_action') {
@@ -959,7 +945,7 @@ function PhaseBar({ game, setGame, onEndSection, onTimeout = null, onEndTimeout 
   const rollingOpen = scoringPasses >= 99;
 
   // Whoever holds the turn passes — the engine owns the rule (passTurn).
-  const pass = () => setGame(passTurn(game, phase === 'matchup_strats' ? matchupTurn : scoringTurn));
+  const pass = () => { if (game.pendingChoice) return; setGame(passTurn(game, phase === 'matchup_strats' ? matchupTurn : scoringTurn)); };
   const lock = () => {
     const g=JSON.parse(JSON.stringify(game));
     g.phase='scoring';g.rollResults={A:[],B:[]};
@@ -1002,7 +988,7 @@ function PhaseBar({ game, setGame, onEndSection, onTimeout = null, onEndTimeout 
           <span style={{color:activeCol,fontWeight:600}}>Team {activeTeam}</span>
           {!inPlacement && <span className={styles.passCount}>{matchupPasses}/2 passes</span>}
           <button className={styles.passBtn} onClick={pass} disabled={inPlacement || (pvpMode && !isMyTurn)}>Pass →</button>
-          <button className={styles.ctaBtn} onClick={lock} disabled={inPlacement || (pvpMode && !isMyTurn)}>Lock → Scoring</button>
+          <button className={styles.ctaBtn} onClick={lock} disabled={inPlacement || (pvpMode && !isMyTurn) || Boolean(game.pendingChoice)} title={game.pendingChoice ? 'A Go Under check is waiting to be taken' : undefined}>Lock → Scoring</button>
         </div>
       </div>
     );
@@ -1749,6 +1735,41 @@ function CourtMarkings() {
       <circle cx="50" cy="220" r="18" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="2"/>
       <circle cx="750" cy="220" r="18" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="2"/>
     </svg>
+  );
+}
+
+/**
+ * A CHOICE THE OFFENCE OWES: Go Under's consolation check goes to whichever
+ * of the two screened players the OFFENCE names (the user, 2026-09-09). In
+ * solo the human's side chooses here and the coach's side is chosen by the
+ * driver; in PvP only the offence's client shows the buttons.
+ */
+function ChoiceBanner({ game, setGame, pvpMode = false, myTeamKey = null }) {
+  const pc = game.pendingChoice;
+  const offT = getTeam(game, pc.teamKey);
+  const mine = pvpMode ? myTeamKey === pc.teamKey : pc.teamKey === 'A';
+  const choose = slot => { const r = resolveGoUnder(game, slot); if (r.ok) setGame(r.game); };
+  return (
+    <div className={styles.pendingBanner}>
+      <div className={styles.pendingInfo}>
+        <span className={styles.pendingTitle}>⏸ Go Under — {offT.name} picks who takes the 3PT check at +{pc.extra}</span>
+        {!mine && <span style={{ color: '#94A3B8', fontSize: 12 }}>Waiting for {offT.name} to choose</span>}
+      </div>
+      {mine && (
+        <div className={styles.pendingActions}>
+          {pc.slots.map(slot => {
+            const p = offT.starters[slot];
+            const n = checkNeed(game, pc.teamKey, slot, '3pt');
+            const need = Math.max(1, Math.min(21, n.need - pc.extra));
+            return (
+              <button key={slot} className={styles.resolveBtn} onClick={() => choose(slot)} title={`Needs ${need}+ on the die`}>
+                {p?.name} · {need > 20 ? 'no' : `${need}+`}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
   );
 }
 

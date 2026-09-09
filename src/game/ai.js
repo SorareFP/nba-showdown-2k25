@@ -497,9 +497,10 @@ export function bestScreen(game, teamKey) {
 }
 
 /**
- * The 3PT check Go Under hands the offence: which of the two screened
- * attackers the defence should give it to (the worse shooter) and what it is
- * expected to cost. The check is at +2 less the restored defender's contest.
+ * The 3PT check Go Under hands the offence — and THE OFFENCE CHOOSES who
+ * takes it (2026-09-09), so its price to the defence is the BETTER shooter's
+ * expected points. The check is at +2 less the restored defender's contest.
+ * Returns the offence's best slot and what it is worth.
  */
 export function goUnderPrice(game, offKey, slots, defs) {
   const offT = getTeam(game, offKey);
@@ -514,9 +515,22 @@ export function goUnderPrice(game, offKey, slots, defs) {
     const need = (p.shotLine || 99) - bonus;             // the die it takes
     const pHit = Math.min(1, Math.max(0, (21 - need) / 20));
     const pts = 3 * pHit;
-    if (!best || pts < best.pts) best = { slot, pts };
+    if (!best || pts > best.pts) best = { slot, pts };
   });
   return best ?? { slot: slots[0], pts: 0 };
+}
+
+/** The offence's answer to a waiting Go Under: the shooter with the best chance, by checkNeed. */
+export function aiGoUnderChoice(game, teamKey) {
+  const pc = game.pendingChoice;
+  if (!pc || pc.kind !== 'go_under' || pc.teamKey !== teamKey) return null;
+  let best = null;
+  for (const slot of pc.slots) {
+    const n = checkNeed(game, teamKey, slot, '3pt');
+    const pHit = Math.min(1, Math.max(0, (21 - (n.need - pc.extra)) / 20));
+    if (!best || pHit > best.pHit) best = { slot, pHit };
+  }
+  return best ? best.slot : pc.slots[0];
 }
 
 /**
@@ -705,13 +719,9 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
       return { swapSlot1: best.i, swapSlot2: best.j };
     }
 
-    case 'go_under': {
-      // The check goes to the worse shooter of the two the screen involved.
-      const lc = game.lastMatchupCard;
-      if (!lc?.opts) return {};
-      const defs = [starters[lc.opts.origD1], starters[lc.opts.origD2]];
-      return { goUnderTarget: goUnderPrice(game, lc.teamKey, [lc.opts.swapSlot1, lc.opts.swapSlot2], defs).slot };
-    }
+    case 'go_under':
+      // The offence names the shooter now (resolveGoUnder); nothing to pick here.
+      return {};
 
     case 'stagger_action': {
       // The pair canPlay found: a Speed-13 player and a DIFFERENT positive

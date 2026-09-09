@@ -105,10 +105,10 @@ describe('the High Screen & Roll lesson', () => {
     expect(live()).toContain('s2_switch_again');
     expect(live()).not.toContain('s2_switch_cancelled');
     g.log.push({ team: 'A', msg: 'High Screen & Roll: Tatum now guarded by Giannis, Edwards now guarded by Mobley' });
-    g.log.push({ team: 'B', msg: 'Go Under: canceled HSR — Tatum 3PT check: 🎲9 +2 card +1 3PT = 12 vs 15 → MISS' });
+    g.log.push({ team: 'B', msg: 'Go Under: canceled HSR — Team A chooses which of Tatum / Edwards takes a 3PT check at +2 · Tatum guarded again by Mobley, Edwards by Giannis' });
     expect(live()).not.toContain('s2_switch_again');
     expect(live()).toContain('s2_switch_cancelled');
-    expect(text('s2_switch_cancelled', g)).toBe("The coach answered with Go Under: your switch is cancelled and the pairings stay as they were placed. Go Under's price: the player your switch was called for takes a 3PT check at +2 — Tatum 3PT check: 🎲9 +2 card +1 3PT = 12 vs 15 → MISS.");
+    expect(text('s2_switch_cancelled', g)).toBe("The coach answered with Go Under: your switch is cancelled and the pairings stay as they were placed. Go Under's price is yours to spend: pick which of the two players takes a 3PT check at +2 — the banner shows the die each one needs. (Team A chooses which of Tatum / Edwards takes a 3PT check at +2 · Tatum guarded again by Mobley, Edwards by Giannis.)");
   });
 
   it('says to hold it when no swap gains', () => {

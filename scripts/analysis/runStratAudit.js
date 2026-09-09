@@ -28,12 +28,12 @@ import {
   newGame, doRoll, endSection, applyMatchups, spendAssist, spendReboundBonus, STARTERS,
   spendTimeout, endTimeout, searchCrunchCard,
 } from '../../src/game/engine.js';
-import { execCard, resolvePendingShotCheck } from '../../src/game/execCard.js';
+import { execCard, resolvePendingShotCheck, resolveGoUnder } from '../../src/game/execCard.js';
 import { STRATS, getStrat, CRUNCH_CARDS } from '../../src/game/strats.js';
 import { getStratRarity, STRAT_COPY_CAPS } from '../../src/game/rarity.js';
 import {
   aiDraftPick, aiPlacementPick, aiTurn, aiScoringDecision, aiRollDecision, aiReactionDecision,
-  aiSpendDecision, aiCrunchDecision, aiCrunchSearch, aiSetMatchups,
+  aiSpendDecision, aiCrunchDecision, aiCrunchSearch, aiSetMatchups, aiGoUnderChoice,
 } from '../../src/game/ai.js';
 
 const GAMES = Number(process.argv[2] ?? 400);
@@ -163,6 +163,12 @@ function tryPlay(g, teamKey, action, playedThisGame) {
   if (!r.ok) return { g, played: false };
   playedThisGame.add(`${teamKey}|${action.cardId}`);
   let ng = r.game;
+  // Go Under: the offence names its shooter, then the check is taken.
+  if (ng.pendingChoice?.kind === 'go_under') {
+    const off = ng.pendingChoice.teamKey;
+    const rr = resolveGoUnder(ng, aiGoUnderChoice(ng, off));
+    ng = rr.ok ? rr.game : { ...ng, pendingChoice: null };
+  }
   // A card that opens a shot check hands the DEFENCE its reaction window
   // before the die is cast — the wiring live solo games are missing.
   if (ng.pendingShotCheck) {

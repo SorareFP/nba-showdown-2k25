@@ -1,8 +1,8 @@
 import { useReducer, useCallback, useState, useEffect, useRef } from 'react';
 import { newGame, doRoll, endSection, spendAssist, spendReboundBonus, applyMatchups, spendTimeout, endTimeout, clutchAvailable, passTurn, pendingRolls, searchCrunchCard } from '../game/engine.js';
-import { aiTurn, aiScoringDecision, aiRollDecision, aiSpendDecision, aiReactionDecision, aiCrunchDecision, aiCrunchSearch, aiSetMatchups } from '../game/ai.js';
+import { aiTurn, aiScoringDecision, aiRollDecision, aiSpendDecision, aiReactionDecision, aiCrunchDecision, aiCrunchSearch, aiSetMatchups, aiGoUnderChoice } from '../game/ai.js';
 import { CLUTCH_DICE } from '../game/clutchAwards.js';
-import { execCard, resolvePendingShotCheck } from '../game/execCard.js';
+import { execCard, resolvePendingShotCheck, resolveGoUnder } from '../game/execCard.js';
 import { randomizeTeam, MIN_TO_PLAY } from '../game/teamRules.js';
 import { resultFromPlayed } from '../game/modes/season.js';
 import { boxScoreFor } from '../game/boxScore.js';
@@ -256,6 +256,12 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
         return;
       }
 
+      // A Go Under check waiting on the coach's choice: name the shooter first.
+      if (game.pendingChoice?.teamKey === 'B') {
+        const slot = aiGoUnderChoice(game, 'B');
+        const r = resolveGoUnder(game, slot);
+        if (r.ok) { dispatch({ type: 'UPDATE', game: r.game }); return; }
+      }
       if (phase === 'matchup_strats' && (game.placementStep ?? 10) >= 10 && game.matchupTurn === 'B') {
         const action = aiTurn(game, 'B');
         // One card, then the turn is the human's (handOverPriority); or pass.

@@ -95,21 +95,21 @@ describe('the cancellers', () => {
     expect(aiBuildCardOpts(g, 'B', 'veer_switch')).toEqual({ veerSwap: false });
   });
 
-  it('give Go Under\'s check to the worse shooter', () => {
+  it('price Go Under by the BETTER shooter, because the offence will choose him', () => {
     const g = afterScreen({ gaining: true });
-    // a1 is the worse three-point shooter by a mile.
+    // a1 is the worse three-point shooter by a mile; a0 is the one the offence will send.
     getTeam(g, 'A').starters[1].threePtBoost = -3;
     getTeam(g, 'A').starters[1].shotLine = 19;
-    expect(aiBuildCardOpts(g, 'B', 'go_under')).toEqual({ goUnderTarget: 1 });
+    expect(aiBuildCardOpts(g, 'B', 'go_under')).toEqual({});
     const price = goUnderPrice(g, 'A', [0, 1], [getTeam(g, 'B').starters[0], getTeam(g, 'B').starters[1]]);
-    expect(price.slot).toBe(1);
-    expect(price.pts).toBeLessThan(1);
+    expect(price.slot).toBe(0);
+    expect(price.pts).toBeGreaterThan(0.5);
   });
 
   it('say on the cancel line which pairings came back', () => {
     for (const id of ['fight_over', 'go_under']) {
       const g = afterScreen({ gaining: true });
-      const r = execCard(g, 'B', id, id === 'go_under' ? { goUnderTarget: 0 } : {});
+      const r = execCard(g, 'B', id, {});
       expect(r.ok).toBe(true);
       const line = r.game.log[r.game.log.length - 1].msg;
       expect(line).toMatch(/canceled HSR/);

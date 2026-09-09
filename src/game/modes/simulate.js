@@ -23,7 +23,7 @@ import {
   newGame, doRoll, endSection, applyMatchups, spendAssist, spendReboundBonus, STARTERS,
   spendTimeout, endTimeout, searchCrunchCard,
 } from '../engine.js';
-import { execCard, resolvePendingShotCheck } from '../execCard.js';
+import { execCard, resolvePendingShotCheck, resolveGoUnder } from '../execCard.js';
 import * as defaultBrain from '../ai.js';
 
 // ── TWO BRAINS ──────────────────────────────────────────────────────────────
@@ -52,6 +52,12 @@ function tryPlay(g, teamKey, action, brains = null) {
   catch { return { g, played: false }; }
   if (!r.ok) return { g, played: false };
   let ng = r.game;
+  // Go Under: the offence names its shooter, then the check is taken.
+  if (ng.pendingChoice?.kind === 'go_under') {
+    const off = ng.pendingChoice.teamKey;
+    const rr = resolveGoUnder(ng, brainOf(brains, off).aiGoUnderChoice(ng, off));
+    ng = rr.ok ? rr.game : { ...ng, pendingChoice: null };
+  }
   // A card that opens a shot check hands the DEFENCE its reaction window
   // before the die is cast.
   if (ng.pendingShotCheck) {

@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-07T11:20:53.421Z",
+ "generatedAt": "2026-09-09T22:03:12.944Z",
  "set": "wnba-team-rewards",
  "provisional": true,
  "sources": {
@@ -19,10 +19,10 @@
    "speed": 12,
    "power": 12,
    "shotLine": 15,
-   "paintBoost": 0,
+   "paintBoost": -1,
    "threePtBoost": -2,
    "defBoost": 1,
-   "salary": 1340,
+   "salary": 1310,
    "chart": [
     {
      "lo": 1,
@@ -94,7 +94,7 @@
    "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": 3,
-   "salary": 1280,
+   "salary": 1250,
    "chart": [
     {
      "lo": 1,
@@ -166,7 +166,7 @@
    "paintBoost": 0,
    "threePtBoost": 2,
    "defBoost": 0,
-   "salary": 1210,
+   "salary": 1190,
    "chart": [
     {
      "lo": 1,
@@ -217,7 +217,8 @@
    },
    "provisional": false,
    "rewardFor": "NYL",
-   "rewardGoal": "wnba-team-NYL"
+   "rewardGoal": "wnba-team-NYL",
+   "bandException": "Ten dollars under the legendary floor at $1190 after the 2026-09-09 reprice (absolute paint line + any-player-may-spend salary rule). No eligible Liberty season reaches $1200 on a real log: her 2012 $960, McCarville 2008 $910, Prince 2015 $870; Stewart and Ionescu are on the roster this reward is for, Charles is carded by name. The user, 2026-09-09: keep Pondexter, allow ten under. The same size of exception Las Vegas carries for Hammon and Philadelphia for Erving."
   },
   {
    "id": "Seimone_Augustus",
@@ -228,10 +229,10 @@
    "speed": 14,
    "power": 10,
    "shotLine": 14,
-   "paintBoost": 0,
+   "paintBoost": 2,
    "threePtBoost": 0,
    "defBoost": -1,
-   "salary": 1160,
+   "salary": 1180,
    "chart": [
     {
      "lo": 1,
@@ -310,7 +311,7 @@
    "paintBoost": 0,
    "threePtBoost": 2,
    "defBoost": -1,
-   "salary": 1100,
+   "salary": 1080,
    "chart": [
     {
      "lo": 1,
@@ -389,10 +390,10 @@
    "speed": 14,
    "power": 12,
    "shotLine": 13,
-   "paintBoost": 0,
+   "paintBoost": 1,
    "threePtBoost": 1,
    "defBoost": 1,
-   "salary": 1030,
+   "salary": 1050,
    "chart": [
     {
      "lo": 1,
@@ -454,10 +455,10 @@
    "speed": 10,
    "power": 12,
    "shotLine": 16,
-   "paintBoost": 0,
+   "paintBoost": -1,
    "threePtBoost": -1,
    "defBoost": 0,
-   "salary": 990,
+   "salary": 970,
    "chart": [
     {
      "lo": 1,
@@ -511,6 +512,150 @@
    "rewardGoal": "wnba-team-WAS"
   },
   {
+   "id": "Cheryl_Ford",
+   "name": "Cheryl Ford",
+   "team": "DET2",
+   "statRowTeam": "DET",
+   "pos": "F",
+   "speed": 9,
+   "power": 15,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": -6,
+   "defBoost": 2,
+   "salary": 960,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 7,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 99,
+     "pts": 2,
+     "reb": 2,
+     "ast": 0
+    }
+   ],
+   "league": "WNBA",
+   "season": 2006,
+   "seasonLabel": "2006",
+   "games": 32,
+   "mpg": 28.7,
+   "minutes": 919,
+   "bbrefId": "fordch01w",
+   "metrics": {
+    "bpmHat": 5.92,
+    "obpmHat": 3.76,
+    "dbpmHat": 2.16,
+    "seasonZ": 0,
+    "per": 24.9,
+    "ws": 6.6,
+    "wsPer40": 0.287,
+    "tsPct": 0.55,
+    "pts100": 25.6
+   },
+   "provisional": false,
+   "rewardFor": "DAL",
+   "rewardGoal": "wnba-team-DAL"
+  },
+  {
+   "id": "Alysha_Clark",
+   "name": "Alysha Clark",
+   "team": "SEA",
+   "statRowTeam": "SEA",
+   "pos": "F",
+   "speed": 12,
+   "power": 12,
+   "shotLine": 12,
+   "paintBoost": -1,
+   "threePtBoost": 0,
+   "defBoost": 3,
+   "salary": 890,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 7,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 11,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 12,
+     "hi": 24,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 25,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2020,
+   "seasonLabel": "2020",
+   "games": 22,
+   "mpg": 28.8,
+   "minutes": 633,
+   "bbrefId": "clarkal01w",
+   "metrics": {
+    "bpmHat": 6.12,
+    "obpmHat": 3.32,
+    "dbpmHat": 2.8,
+    "seasonZ": 0,
+    "per": 18.2,
+    "ws": 3.6,
+    "wsPer40": 0.229,
+    "tsPct": 0.693,
+    "pts100": 17.5
+   },
+   "provisional": false,
+   "rewardFor": "SEA",
+   "rewardGoal": "wnba-team-SEA"
+  },
+  {
    "id": "Epiphanny_Prince",
    "name": "Epiphanny Prince",
    "team": "CHI06",
@@ -519,10 +664,10 @@
    "speed": 15,
    "power": 9,
    "shotLine": 15,
-   "paintBoost": -1,
+   "paintBoost": -3,
    "threePtBoost": 3,
    "defBoost": 1,
-   "salary": 860,
+   "salary": 840,
    "chart": [
     {
      "lo": 1,
@@ -584,78 +729,6 @@
    "bandException": "Thirty dollars under the super-rare floor at $870 after the 2026-09-06 league factor. Her 2012 ($1270) clears it into LEGENDARY, $70 over; no other eligible Sky season reaches $900 (Meesseman 2022 $830, Quigley 2017 $850; Vandersloot, Fowles and Parker are carded elsewhere). Under by thirty keeps the reward below the harder collections' rewards, which is what the band is for. The same size of exception Las Vegas gets for Hammon."
   },
   {
-   "id": "Alysha_Clark",
-   "name": "Alysha Clark",
-   "team": "SEA",
-   "statRowTeam": "SEA",
-   "pos": "F",
-   "speed": 12,
-   "power": 12,
-   "shotLine": 12,
-   "paintBoost": -1,
-   "threePtBoost": 0,
-   "defBoost": 3,
-   "salary": 850,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 7,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 8,
-     "hi": 11,
-     "pts": 1,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 12,
-     "hi": 24,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 25,
-     "hi": 99,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    }
-   ],
-   "league": "WNBA",
-   "season": 2020,
-   "seasonLabel": "2020",
-   "games": 22,
-   "mpg": 28.8,
-   "minutes": 633,
-   "bbrefId": "clarkal01w",
-   "metrics": {
-    "bpmHat": 6.12,
-    "obpmHat": 3.32,
-    "dbpmHat": 2.8,
-    "seasonZ": 0,
-    "per": 18.2,
-    "ws": 3.6,
-    "wsPer40": 0.229,
-    "tsPct": 0.693,
-    "pts100": 17.5
-   },
-   "provisional": false,
-   "rewardFor": "SEA",
-   "rewardGoal": "wnba-team-SEA"
-  },
-  {
    "id": "Mwadi_Mabika",
    "name": "Mwadi Mabika",
    "team": "LAS97",
@@ -664,10 +737,10 @@
    "speed": 15,
    "power": 8,
    "shotLine": 14,
-   "paintBoost": 0,
+   "paintBoost": -2,
    "threePtBoost": 2,
    "defBoost": 1,
-   "salary": 780,
+   "salary": 770,
    "chart": [
     {
      "lo": 1,
@@ -739,7 +812,7 @@
    "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": 1,
-   "salary": 750,
+   "salary": 730,
    "chart": [
     {
      "lo": 1,
@@ -800,71 +873,6 @@
    "rewardGoal": "wnba-team-CON"
   },
   {
-   "id": "Cheryl_Ford",
-   "name": "Cheryl Ford",
-   "team": "DET2",
-   "statRowTeam": "DET",
-   "pos": "F",
-   "speed": 8,
-   "power": 12,
-   "shotLine": 15,
-   "paintBoost": 0,
-   "threePtBoost": -5,
-   "defBoost": 1,
-   "salary": 730,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 3,
-     "pts": 0,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 4,
-     "hi": 14,
-     "pts": 1,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 15,
-     "hi": 99,
-     "pts": 2,
-     "reb": 2,
-     "ast": 0
-    }
-   ],
-   "league": "WNBA",
-   "season": 2008,
-   "seasonLabel": "2008",
-   "games": 24,
-   "mpg": 26.5,
-   "minutes": 637,
-   "bbrefId": "fordch01w",
-   "metrics": {
-    "bpmHat": 2.44,
-    "obpmHat": 1.72,
-    "dbpmHat": 0.72,
-    "seasonZ": 0,
-    "per": 19.3,
-    "ws": 3.2,
-    "wsPer40": 0.204,
-    "tsPct": 0.515,
-    "pts100": 20
-   },
-   "provisional": false,
-   "rewardFor": "DAL",
-   "rewardGoal": "wnba-team-DAL"
-  },
-  {
    "id": "Sophia_Witherspoon",
    "name": "Sophia Witherspoon",
    "team": "PORF",
@@ -873,10 +881,10 @@
    "speed": 12,
    "power": 7,
    "shotLine": 15,
-   "paintBoost": 0,
+   "paintBoost": -3,
    "threePtBoost": 3,
    "defBoost": -1,
-   "salary": 620,
+   "salary": 610,
    "chart": [
     {
      "lo": 1,

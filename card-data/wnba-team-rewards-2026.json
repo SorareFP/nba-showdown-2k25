@@ -20,7 +20,8 @@
       "season": 2010,
       "team": "NYL",
       "goal": "wnba-team-NYL",
-      "note": "Her first Liberty season. Tina Charles 2015 was the first pick and priced $1270 on SMOOTHED per-100 rates; her real game log put her at $880, well under the legendary floor. ~$1320."
+      "note": "Her first Liberty season. Tina Charles 2015 was the first pick and priced $1270 on SMOOTHED per-100 rates; her real game log put her at $880, well under the legendary floor. ~$1320. 2026-09-09: reprices $1190, $10 under the legendary floor; kept under the one-step tolerance rule (REWARD_BAND_TOLERANCE) because no eligible Liberty season reaches $1200 — Pondexter 2012 $960, McCarville 2008 $910, Prince 2015 $870.",
+      "bandException": "Ten dollars under the legendary floor at $1190 after the 2026-09-09 reprice (absolute paint line + any-player-may-spend salary rule). No eligible Liberty season reaches $1200 on a real log: her 2012 $960, McCarville 2008 $910, Prince 2015 $870; Stewart and Ionescu are on the roster this reward is for, Charles is carded by name. The user, 2026-09-09: keep Pondexter, allow ten under. The same size of exception Las Vegas carries for Hammon and Philadelphia for Erving."
     },
     "ATL": {
       "name": "Angel McCoughtry",
@@ -31,10 +32,10 @@
     },
     "DAL": {
       "name": "Cheryl Ford",
-      "season": 2008,
+      "season": 2006,
       "team": "DET",
       "goal": "wnba-team-DAL",
-      "note": "The Shock's 2008 championship season, her third ring, Detroit through and through. Her 2006 title year was the pick until the 0.88 league factor (2026-09-06) dropped DAL's earned band to rare while she still priced $950; 2008 sits in band at $730. Cindy Brown 1998 ($840, the inaugural Shock) is the fallback if the floor moves. Katie Smith 2008 was the first pick here and priced $1120 on smoothed rates; her real log put her at $800. ~$730."
+      "note": "The Shock's 2006 title year, her second ring. Back as the pick after DAL returned to super-rare on 2026-09-09: $960 on her real log. Her 2008 ($730) was the pick while DAL earned rare; Cambage 2018 ($1440) and 2013 ($1300) price legendary; Cindy Brown 1998 ($860) sits under the floor."
     },
     "WAS": {
       "name": "Chamique Holdsclaw",

@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-05T02:23:01.711Z",
+ "generatedAt": "2026-09-09T22:03:27.820Z",
  "source": "Basketball-Reference's WNBA award voting pages (rank-1 rows) and each season page's Finals result. All-Star selections are the remaining gap: they live on per-season All-Star pages this does not fetch yet.",
  "declared": [
   "MVP",
@@ -11,9 +11,13 @@
  ],
  "seasons": [
   1997,
+  1998,
+  1999,
   2000,
+  2001,
   2002,
   2004,
+  2005,
   2006,
   2007,
   2008,
@@ -84,6 +88,26 @@
     "name": "Caitlin Clark",
     "season": 2024,
     "bbrefId": "clarkca02w",
+    "awards": [
+     "ROY"
+    ],
+    "champion": null
+   },
+   {
+    "id": "Candice_Wiggins",
+    "name": "Candice Wiggins",
+    "season": 2008,
+    "bbrefId": "wiggica01w",
+    "awards": [
+     "6MOY"
+    ],
+    "champion": null
+   },
+   {
+    "id": "Chiney_Ogwumike",
+    "name": "Chiney Ogwumike",
+    "season": 2014,
+    "bbrefId": "ogwumch01w",
     "awards": [
      "ROY"
     ],
@@ -169,6 +193,16 @@
      "ROY"
     ],
     "champion": null
+   },
+   {
+    "id": "Tina_Charles",
+    "name": "Tina Charles",
+    "season": 2010,
+    "bbrefId": "charlti01w",
+    "awards": [
+     "ROY"
+    ],
+    "champion": null
    }
   ],
   "wnba-super-season": [
@@ -194,10 +228,61 @@
     "champion": "PHO"
    },
    {
+    "id": "Chelsea_Gray",
+    "name": "Chelsea Gray",
+    "season": 2023,
+    "bbrefId": "graych01w",
+    "awards": [
+     "CHAMP"
+    ],
+    "champion": "LVA"
+   },
+   {
+    "id": "Cynthia_Cooper",
+    "name": "Cynthia Cooper",
+    "season": 1997,
+    "bbrefId": "coopecy01w",
+    "awards": [
+     "MVP",
+     "CHAMP"
+    ],
+    "champion": "HOU"
+   },
+   {
+    "id": "Deanna_Nolan",
+    "name": "Deanna Nolan",
+    "season": 2008,
+    "bbrefId": "nolande01w",
+    "awards": [
+     "CHAMP"
+    ],
+    "champion": "DET"
+   },
+   {
     "id": "Elena_Delle_Donne",
     "name": "Elena Delle Donne",
     "season": 2015,
     "bbrefId": "delleel01w",
+    "awards": [
+     "MVP"
+    ],
+    "champion": null
+   },
+   {
+    "id": "Janeth_Arcain",
+    "name": "Janeth Arcain",
+    "season": 2001,
+    "bbrefId": "arcaija01w",
+    "awards": [
+     "MIP"
+    ],
+    "champion": null
+   },
+   {
+    "id": "Jonquel_Jones",
+    "name": "Jonquel Jones",
+    "season": 2021,
+    "bbrefId": "jonesjo01w",
     "awards": [
      "MVP"
     ],
@@ -276,6 +361,17 @@
      "CHAMP"
     ],
     "champion": "HOU"
+   },
+   {
+    "id": "Yolanda_Griffith",
+    "name": "Yolanda Griffith",
+    "season": 1999,
+    "bbrefId": "griffyo01w",
+    "awards": [
+     "MVP",
+     "DPOY"
+    ],
+    "champion": null
    }
   ],
   "wnba-team-rewards": [
@@ -301,14 +397,24 @@
     "champion": "DET"
    },
    {
-    "id": "DeWanna_Bonner",
-    "name": "DeWanna Bonner",
-    "season": 2014,
-    "bbrefId": "bonnede01w",
+    "id": "Alysha_Clark",
+    "name": "Alysha Clark",
+    "season": 2020,
+    "bbrefId": "clarkal01w",
     "awards": [
      "CHAMP"
     ],
-    "champion": "PHO"
+    "champion": "SEA"
+   },
+   {
+    "id": "Mwadi_Mabika",
+    "name": "Mwadi Mabika",
+    "season": 2001,
+    "bbrefId": "mabikmw01w",
+    "awards": [
+     "CHAMP"
+    ],
+    "champion": "LAS"
    }
   ]
  }

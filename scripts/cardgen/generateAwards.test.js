@@ -379,7 +379,9 @@ describe('the committed file', () => {
     // the floor was Rodman's 1986-87 debut, at 37 seasons.)
     expect(AWARDS.seasons[0]).toBe(1977);
     expect(AWARDS.seasons.at(-1)).toBe(2026);
-    expect(AWARDS.seasons).toHaveLength(40);
+    // 42 on 2026-09-09: 1985-86 and 1990-91 joined when the file was
+    // regenerated after the franchise-reward re-pick.
+    expect(AWARDS.seasons).toHaveLength(42);
   });
 
   it('agrees with its own counts', () => {
@@ -425,7 +427,8 @@ describe('the committed file', () => {
     // still ROSE, because the file had gone stale against the eight capstone
     // legends added on 2026-09-06 — all-time greats carry trophies, and the
     // 39 that left were cheap role players carrying none.
-    expect(AWARDS.counts[SUPER_SEASON_SET].marked).toBe(76);
+    // 77 on 2026-09-09: Lillard's 2019-20 came back from the Portland reward.
+    expect(AWARDS.counts[SUPER_SEASON_SET].marked).toBe(77);
     // The rookie set moves at last, and only on the ring: no player in that
     // pool was an All-Star as a rookie, but six of them won a title as one.
     //
@@ -436,10 +439,13 @@ describe('the committed file', () => {
     // rookie seasons added on 2026-09-06 (rookie-legends-2026.json) include
     // Blake Griffin, Chris Webber, Mark Jackson and Shaq, who won things;
     // regenerating marked them and took ROY 15 -> 20.
-    expect(AWARDS.counts[ROOKIE_SET].marked).toBe(24);
+    // 34 on 2026-09-09: regenerated after the reward re-pick, which also
+    // caught the file up with the 2026-09-07 widening (Ewing, Robinson, Hill,
+    // Duncan, Olajuwon, Yao were unmarked). ROY 20 -> 27.
+    expect(AWARDS.counts[ROOKIE_SET].marked).toBe(34);
     // 17 -> 12: five Rookies of the Year became team rewards. Their ROY marks
     // moved with them, which is the assertion two lines down.
-    expect(AWARDS.counts[ROOKIE_SET].byCode.ROY).toBe(20);
+    expect(AWARDS.counts[ROOKIE_SET].byCode.ROY).toBe(27);
     expect(AWARDS.counts['team-rewards'].byCode.ROY).toBe(2);
     expect(AWARDS.counts['team-rewards'].marked).toBe(19);
     // The standouts themselves: a playoff-run card is the season a ring was
@@ -451,8 +457,8 @@ describe('the committed file', () => {
     // twin, and it arrived from 1993 rather than from a pool change.
     // 2 on 2026-09-07: Blake Griffin joined as a forced rookie season and was
     // an All-Star in that year, so he and Shaq are the set's two.
-    expect(AWARDS.counts[ROOKIE_SET].byCode.AS).toBe(2);
-    expect(AWARDS.counts[ROOKIE_SET].byCode.CHAMP).toBe(4);
+    expect(AWARDS.counts[ROOKIE_SET].byCode.AS).toBe(8); // 8 on 2026-09-09 — see CardTemplate.test.js
+    expect(AWARDS.counts[ROOKIE_SET].byCode.CHAMP).toBe(5); // 5 on 2026-09-09, with the regenerated file
     // The ring is a TEAM fact, so it marks a whole roster's worth at once and
     // still leaves each set a minority.
     // 10, not 11: Yabusele's ring left the base set with him.

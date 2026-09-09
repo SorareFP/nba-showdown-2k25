@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-09T21:30:44.667Z",
+ "generatedAt": "2026-09-09T22:03:21.259Z",
  "set": "rookie",
  "provisional": true,
  "sources": {
@@ -3190,6 +3190,78 @@
    "provisional": false
   },
   {
+   "id": "Bradley_Beal",
+   "name": "Bradley Beal",
+   "team": "WAS",
+   "pos": "SG",
+   "speed": 10,
+   "power": 7,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": 1,
+   "defBoost": 0,
+   "salary": 830,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 9,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 10,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 22,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 4,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2013,
+   "seasonLabel": "2012-13",
+   "age": 19,
+   "games": 56,
+   "mpg": 31.2,
+   "bbrefId": "bealbr01",
+   "traded": false,
+   "metrics": {
+    "bpm": 0.2,
+    "vorp": 1,
+    "ws": 3,
+    "ws48": 0.082,
+    "per": 13.6
+   },
+   "provisional": true
+  },
+  {
    "id": "Brandin_Podziemski",
    "name": "Brandin Podziemski",
    "team": "GSW",
@@ -5816,7 +5888,7 @@
    "paintBoost": -2,
    "threePtBoost": 3,
    "defBoost": 0,
-   "salary": 460,
+   "salary": 450,
    "chart": [
     {
      "lo": 1,
@@ -6274,11 +6346,11 @@
    "pos": "SG",
    "speed": 14,
    "power": 9,
-   "shotLine": 15,
-   "paintBoost": 0,
-   "threePtBoost": 0,
+   "shotLine": 16,
+   "paintBoost": 1,
+   "threePtBoost": 1,
    "defBoost": 0,
-   "salary": 1060,
+   "salary": 1040,
    "chart": [
     {
      "lo": 1,
@@ -6296,13 +6368,13 @@
     },
     {
      "lo": 4,
-     "hi": 14,
+     "hi": 15,
      "pts": 2,
      "reb": 0,
      "ast": 0
     },
     {
-     "lo": 15,
+     "lo": 16,
      "hi": 99,
      "pts": 3,
      "reb": 1,
@@ -10119,78 +10191,6 @@
     "ws": 3.1,
     "ws48": 0.1,
     "per": 13.3
-   },
-   "provisional": true
-  },
-  {
-   "id": "John_Wall",
-   "name": "John Wall",
-   "team": "WAS97",
-   "pos": "PG",
-   "speed": 10,
-   "power": 6,
-   "shotLine": 18,
-   "paintBoost": 2,
-   "threePtBoost": 0,
-   "defBoost": -1,
-   "salary": 710,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 4,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 5,
-     "hi": 9,
-     "pts": 1,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 10,
-     "hi": 17,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 18,
-     "hi": 23,
-     "pts": 3,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 24,
-     "hi": 99,
-     "pts": 4,
-     "reb": 1,
-     "ast": 3
-    }
-   ],
-   "season": 2011,
-   "seasonLabel": "2010-11",
-   "age": 20,
-   "games": 69,
-   "mpg": 37.8,
-   "bbrefId": "walljo01",
-   "traded": false,
-   "metrics": {
-    "bpm": -0.8,
-    "vorp": 0.8,
-    "ws": 2.2,
-    "ws48": 0.041,
-    "per": 15.8
    },
    "provisional": true
   },
@@ -17458,11 +17458,11 @@
    "pos": "PG",
    "speed": 10,
    "power": 6,
-   "shotLine": 14,
-   "paintBoost": -2,
-   "threePtBoost": -4,
+   "shotLine": 15,
+   "paintBoost": -1,
+   "threePtBoost": -3,
    "defBoost": 0,
-   "salary": 540,
+   "salary": 530,
    "chart": [
     {
      "lo": 1,
@@ -17480,13 +17480,13 @@
     },
     {
      "lo": 7,
-     "hi": 13,
+     "hi": 14,
      "pts": 1,
      "reb": 1,
      "ast": 1
     },
     {
-     "lo": 14,
+     "lo": 15,
      "hi": 21,
      "pts": 2,
      "reb": 1,
@@ -18750,6 +18750,78 @@
     "per": 15.2
    },
    "provisional": false
+  },
+  {
+   "id": "Wesley_Matthews",
+   "name": "Wesley Matthews",
+   "team": "UTA04",
+   "pos": "SG",
+   "speed": 10,
+   "power": 7,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 0,
+   "salary": 770,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 9,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 24,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 25,
+     "hi": 99,
+     "pts": 4,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2010,
+   "seasonLabel": "2009-10",
+   "age": 23,
+   "games": 82,
+   "mpg": 24.7,
+   "bbrefId": "matthwe02",
+   "traded": false,
+   "metrics": {
+    "bpm": -0.5,
+    "vorp": 0.8,
+    "ws": 4.6,
+    "ws48": 0.108,
+    "per": 12.3
+   },
+   "provisional": true
   },
   {
    "id": "Yao_Ming",

@@ -484,7 +484,10 @@ describe('the base set\'s badges', () => {
     // Duncan, Olajuwon, Payton and the rest cleared the same playing-time bar
     // everybody else clears. Super Season is untouched at 194, which is the
     // point of checking both numbers here.
-    expect(ROOKIE.cards.length).toBe(281);
+    // 282 on 2026-09-09: the franchise-reward re-pick put Beal and Matthews
+    // into the rookie candidate universe (their 2012-13 and 2009-10) and took
+    // Wall out of it with his 2010-11. Super Season holds at 194.
+    expect(ROOKIE.cards.length).toBe(282);
     const poolNames = new Set(POOL.map(p => p.name));
     const bothBlocks = [...new Set([
       ...Object.keys(STANDOUTS.superSeasons ?? {}),

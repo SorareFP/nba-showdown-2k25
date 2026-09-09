@@ -9,11 +9,11 @@
       "goal": "nba-team-DET"
     },
     "WAS": {
-      "name": "John Wall",
-      "season": 2016,
+      "name": "Bradley Beal",
+      "season": 2021,
       "team": "WAS",
-      "epm": 2.34,
-      "goal": "nba-team-WAS"
+      "goal": "nba-team-WAS",
+      "note": "His 31-a-game year. Replaces Wall 2015-16 ($900) after WAS moved up to legendary on 2026-09-09. $1380 on his real log."
     },
     "NYK": {
       "name": "Allan Houston",
@@ -43,9 +43,10 @@
     },
     "MEM": {
       "name": "Marc Gasol",
-      "season": 2014,
+      "season": 2017,
       "team": "MEM",
-      "goal": "nba-team-MEM"
+      "goal": "nba-team-MEM",
+      "note": "His All-NBA year. Replaces his own 2013-14 ($850) after MEM moved up to super-rare on 2026-09-09. $1100 on his real log."
     },
     "ATL": {
       "name": "Josh Smith",
@@ -70,6 +71,13 @@
       "season": 2011,
       "team": "CHI",
       "goal": "nba-team-CHI"
+    },
+    "POR": {
+      "name": "Wesley Matthews",
+      "season": 2015,
+      "team": "POR",
+      "goal": "nba-team-POR",
+      "note": "Replaces the migrated Lillard 2019-20 ($1340, legendary) after the 2026-09-09 reprice dropped POR to super-rare. $930 on his real log; the user chose him over Whiteside 2019-20 ($1080)."
     }
   },
   "_excluded": {
@@ -101,11 +109,6 @@
       "set": "super-season",
       "id": "Paul_George",
       "goal": "nba-team-OKC"
-    },
-    "POR": {
-      "set": "super-season",
-      "id": "Damian_Lillard",
-      "goal": "nba-team-POR"
     },
     "CLE": {
       "set": "summer-standouts",

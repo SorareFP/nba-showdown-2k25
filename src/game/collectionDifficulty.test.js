@@ -231,7 +231,10 @@ describe('a reward is always an upgrade', () => {
       .filter(c => c.rewardFor)
       .filter(c => (TEAM_ROSTERS[c.rewardFor] ?? []).some(k => base.get(c.name)?.id === k))
       .map(c => c.rewardFor);
-    expect(onRoster.sort()).toEqual(['DEN', 'POR']);
+    // ['DEN'] since 2026-09-09: Portland's reward is Wesley Matthews's 2014-15,
+    // off the roster, after the paint-line reprice dropped POR to super-rare
+    // and Lillard's 2019-20 went back to Super Season.
+    expect(onRoster.sort()).toEqual(['DEN']);
   });
 
   it('prints the jersey of the franchise it rewards, with no exceptions', () => {

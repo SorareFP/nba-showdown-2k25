@@ -2191,9 +2191,15 @@ describe('the generated award file, on the cards it belongs to', () => {
     // who had won something — Blake Griffin, Chris Webber, Mark Jackson and
     // Shaq among them — so ROY moved 15 -> 20. Re-run generateAwards.js after
     // any change to a set's roster; it reads the cache and costs nothing.
+    // 24 -> 34 ON 2026-09-09, the same stale-file story: the six franchise
+    // rewards were re-picked after the paint-line reprice and the awards file
+    // regenerated, which also caught up with the 2026-09-07 widening — Ewing,
+    // Robinson, Hill, Duncan, Olajuwon and Yao had their rookie All-Star and
+    // ROY marks missing. Beal's 2012-13 and Matthews's 2009-10 rookie cards
+    // entered through the team-rewards universe; Wall's 2010-11 left with his.
     const rookies = marked(ROOKIE_SET);
-    expect(rookies.length).toBe(24);
-    expect(rookies.filter(r => r.awards.includes('ROY')).length).toBe(20);
+    expect(rookies.length).toBe(34);
+    expect(rookies.filter(r => r.awards.includes('ROY')).length).toBe(27);
     // Two ROYs live on reward cards now — Chris Paul's 2005-06 Hornets rookie
     // year is New Orleans's, and LaMelo's went back to the rookie set when the
     // downgrade rule replaced him.
@@ -2204,25 +2210,34 @@ describe('the generated award file, on the cards it belongs to', () => {
     // it, and he joined as a forced rookie season on 2026-09-06
     // (card-data/rookie-legends-2026.json). So the count is 2 — Shaq and
     // Griffin, the only two All-Star rookies in the set.
-    expect(AWARDS_FILE.counts[ROOKIE_SET].byCode.AS).toBe(2);
+    // 8 on 2026-09-09: Ewing, Robinson, Hill and Duncan were All-Stars AND
+    // Rookies of the Year; Olajuwon (1984-85, Jordan's ROY year) and Yao
+    // (2002-03, Stoudemire's) were All-Stars without the trophy.
+    expect(AWARDS_FILE.counts[ROOKIE_SET].byCode.AS).toBe(8);
     // THE RING IS THE ONLY OTHER THING A ROOKIE CARD CAN CARRY, and it is a
     // team fact rather than a trophy: six of them won a title in their first
     // year. Nobody holds both — a Rookie of the Year on a champion would, and
     // none of the eleven is one. ONE EXCEPTION since the nineties arrived:
     // rookie Shaquille O'Neal was an All-Star, the only rookie in the set who
     // was — so his card reads ROY+AS and everyone else's stays one mark.
-    const ROOKIE_ALL_STARS = ["Shaquille O'Neal", 'Blake Griffin'];
+    const ROOKIE_ALL_STARS = ["Shaquille O'Neal", 'Blake Griffin', 'Patrick Ewing', 'David Robinson', 'Grant Hill', 'Tim Duncan'];
+    const ROOKIE_ALL_STARS_NO_TROPHY = ['Hakeem Olajuwon', 'Yao Ming'];
     for (const r of rookies) {
       if (ROOKIE_ALL_STARS.includes(r.name)) {
         expect(r.awards, r.name).toEqual(['ROY', 'AS']);
         continue;
       }
+      if (ROOKIE_ALL_STARS_NO_TROPHY.includes(r.name)) {
+        expect(r.awards, r.name).toEqual(['AS']);
+        continue;
+      }
       expect(r.awards, r.name).toEqual(r.champion ? ['CHAMP'] : ['ROY']);
     }
-    expect(rookies.filter(r => r.awards.includes('ROY'))).toHaveLength(20);
+    expect(rookies.filter(r => r.awards.includes('ROY'))).toHaveLength(27);
     // 4, not 8: the rookie playing-time bar removed exactly the profile a ring
     // reaches without a rookie ever earning minutes — a title team's bench.
-    expect(rookies.filter(r => r.awards.includes('CHAMP'))).toHaveLength(4);
+    // 5 on 2026-09-09, with the regenerated file.
+    expect(rookies.filter(r => r.awards.includes('CHAMP'))).toHaveLength(5);
     // And no Rookie of the Year is on a Super Season card, for the same reason
     // from the other side: a player whose best season is his rookie one is
     // excluded from that set.

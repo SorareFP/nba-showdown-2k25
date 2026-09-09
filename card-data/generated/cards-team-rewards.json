@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-07T15:36:54.199Z",
+ "generatedAt": "2026-09-09T22:03:09.835Z",
  "set": "team-rewards",
  "provisional": true,
  "sources": {
@@ -17,11 +17,11 @@
    "pos": "PF",
    "speed": 13,
    "power": 17,
-   "shotLine": 14,
-   "paintBoost": 2,
-   "threePtBoost": -1,
+   "shotLine": 15,
+   "paintBoost": 3,
+   "threePtBoost": 0,
    "defBoost": 4,
-   "salary": 2070,
+   "salary": 2020,
    "chart": [
     {
      "lo": 1,
@@ -39,13 +39,13 @@
     },
     {
      "lo": 7,
-     "hi": 13,
+     "hi": 14,
      "pts": 4,
      "reb": 2,
      "ast": 1
     },
     {
-     "lo": 14,
+     "lo": 15,
      "hi": 20,
      "pts": 4,
      "reb": 2,
@@ -79,78 +79,17 @@
    "badges": []
   },
   {
-   "id": "Stephen_Curry",
-   "name": "Stephen Curry",
-   "team": "GSW",
-   "pos": "PG",
-   "speed": 19,
-   "power": 11,
-   "shotLine": 12,
-   "paintBoost": -1,
-   "threePtBoost": 0,
-   "defBoost": 0,
-   "salary": 1720,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 6,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 7,
-     "hi": 11,
-     "pts": 4,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 12,
-     "hi": 99,
-     "pts": 4,
-     "reb": 1,
-     "ast": 1
-    }
-   ],
-   "season": 2021,
-   "seasonLabel": "2020-21",
-   "age": 32,
-   "games": 63,
-   "mpg": 34.2,
-   "bbrefId": "curryst01",
-   "traded": false,
-   "metrics": {
-    "bpm": 8.7,
-    "vorp": 5.8,
-    "ws": 9,
-    "ws48": 0.201,
-    "per": 26.3
-   },
-   "provisional": false,
-   "rewardFor": null,
-   "rewardGoal": "nba-conference-West",
-   "badges": []
-  },
-  {
    "id": "Joel_Embiid",
    "name": "Joel Embiid",
    "team": "PHI",
    "pos": "C",
    "speed": 10,
    "power": 20,
-   "shotLine": 14,
-   "paintBoost": 0,
-   "threePtBoost": -1,
+   "shotLine": 15,
+   "paintBoost": 3,
+   "threePtBoost": 0,
    "defBoost": 2,
-   "salary": 1700,
+   "salary": 1760,
    "chart": [
     {
      "lo": 1,
@@ -168,13 +107,13 @@
     },
     {
      "lo": 7,
-     "hi": 13,
+     "hi": 14,
      "pts": 3,
      "reb": 1,
      "ast": 0
     },
     {
-     "lo": 14,
+     "lo": 15,
      "hi": 21,
      "pts": 4,
      "reb": 1,
@@ -208,6 +147,67 @@
    "badges": []
   },
   {
+   "id": "Stephen_Curry",
+   "name": "Stephen Curry",
+   "team": "GSW",
+   "pos": "PG",
+   "speed": 19,
+   "power": 11,
+   "shotLine": 14,
+   "paintBoost": -1,
+   "threePtBoost": 2,
+   "defBoost": 0,
+   "salary": 1760,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 4,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 14,
+     "hi": 99,
+     "pts": 4,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2021,
+   "seasonLabel": "2020-21",
+   "age": 32,
+   "games": 63,
+   "mpg": 34.2,
+   "bbrefId": "curryst01",
+   "traded": false,
+   "metrics": {
+    "bpm": 8.7,
+    "vorp": 5.8,
+    "ws": 9,
+    "ws48": 0.201,
+    "per": 26.3
+   },
+   "provisional": false,
+   "rewardFor": null,
+   "rewardGoal": "nba-conference-West",
+   "badges": []
+  },
+  {
    "id": "Paul_George",
    "name": "Paul George",
    "team": "OKC",
@@ -218,7 +218,7 @@
    "paintBoost": 0,
    "threePtBoost": 4,
    "defBoost": 2,
-   "salary": 1500,
+   "salary": 1470,
    "chart": [
     {
      "lo": 1,
@@ -276,92 +276,17 @@
    "rewardGoal": "nba-team-OKC"
   },
   {
-   "id": "Damian_Lillard",
-   "name": "Damian Lillard",
-   "team": "POR",
-   "pos": "PG",
-   "speed": 18,
-   "power": 11,
-   "shotLine": 15,
-   "paintBoost": 0,
-   "threePtBoost": 3,
-   "defBoost": -1,
-   "salary": 1370,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 6,
-     "pts": 0,
-     "reb": 0,
-     "ast": 1
-    },
-    {
-     "lo": 7,
-     "hi": 14,
-     "pts": 3,
-     "reb": 0,
-     "ast": 1
-    },
-    {
-     "lo": 15,
-     "hi": 21,
-     "pts": 3,
-     "reb": 0,
-     "ast": 1
-    },
-    {
-     "lo": 22,
-     "hi": 99,
-     "pts": 3,
-     "reb": 1,
-     "ast": 1
-    }
-   ],
-   "season": 2020,
-   "seasonLabel": "2019-20",
-   "age": 29,
-   "games": 66,
-   "mpg": 37.5,
-   "bbrefId": "lillada01",
-   "traded": false,
-   "metrics": {
-    "bpm": 7.5,
-    "vorp": 5.9,
-    "ws": 11.6,
-    "ws48": 0.225,
-    "per": 26.9
-   },
-   "provisional": false,
-   "set": "team-rewards",
-   "badges": [
-    "super-season"
-   ],
-   "migratedFrom": {
-    "set": "super-season",
-    "id": "Damian_Lillard"
-   },
-   "rewardFor": "POR",
-   "rewardGoal": "nba-team-POR"
-  },
-  {
    "id": "Kevin_Durant",
    "name": "Kevin Durant",
    "team": "GSW",
    "pos": "PF",
    "speed": 12,
    "power": 15,
-   "shotLine": 12,
+   "shotLine": 13,
    "paintBoost": 0,
-   "threePtBoost": 0,
+   "threePtBoost": 1,
    "defBoost": 0,
-   "salary": 1360,
+   "salary": 1420,
    "chart": [
     {
      "lo": 1,
@@ -379,13 +304,13 @@
     },
     {
      "lo": 5,
-     "hi": 11,
+     "hi": 12,
      "pts": 3,
      "reb": 1,
      "ast": 0
     },
     {
-     "lo": 12,
+     "lo": 13,
      "hi": 99,
      "pts": 3,
      "reb": 1,
@@ -414,6 +339,67 @@
    "rewardGoal": "nba-team-GSW"
   },
   {
+   "id": "Bradley_Beal",
+   "name": "Bradley Beal",
+   "team": "WAS",
+   "pos": "SG",
+   "speed": 15,
+   "power": 10,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": -1,
+   "salary": 1380,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 3,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 99,
+     "pts": 4,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2021,
+   "seasonLabel": "2020-21",
+   "age": 27,
+   "games": 60,
+   "mpg": 35.8,
+   "bbrefId": "bealbr01",
+   "traded": false,
+   "metrics": {
+    "bpm": 3.4,
+    "vorp": 2.9,
+    "ws": 5.9,
+    "ws48": 0.132,
+    "per": 22.7
+   },
+   "provisional": false,
+   "rewardFor": "WAS",
+   "rewardGoal": "nba-team-WAS",
+   "badges": []
+  },
+  {
    "id": "Jamal_Murray",
    "name": "Jamal Murray",
    "team": "DEN",
@@ -421,10 +407,10 @@
    "speed": 17,
    "power": 11,
    "shotLine": 15,
-   "paintBoost": 0,
+   "paintBoost": -1,
    "threePtBoost": 3,
    "defBoost": 1,
-   "salary": 1340,
+   "salary": 1320,
    "chart": [
     {
      "lo": 1,
@@ -477,81 +463,6 @@
    "rewardGoal": "nba-team-DEN"
   },
   {
-   "id": "Kobe_Bryant",
-   "name": "Kobe Bryant",
-   "team": "LAL",
-   "pos": "SG",
-   "speed": 17,
-   "power": 12,
-   "shotLine": 15,
-   "paintBoost": 0,
-   "threePtBoost": 0,
-   "defBoost": 0,
-   "salary": 1340,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 6,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 7,
-     "hi": 14,
-     "pts": 3,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 15,
-     "hi": 21,
-     "pts": 3,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 22,
-     "hi": 99,
-     "pts": 3,
-     "reb": 1,
-     "ast": 1
-    }
-   ],
-   "season": 2006,
-   "seasonLabel": "2005-06",
-   "age": 27,
-   "games": 80,
-   "mpg": 41,
-   "bbrefId": "bryanko01",
-   "traded": false,
-   "metrics": {
-    "bpm": 7.6,
-    "vorp": 8,
-    "ws": 15.3,
-    "ws48": 0.224,
-    "per": 28
-   },
-   "provisional": false,
-   "set": "team-rewards",
-   "badges": [
-    "super-season"
-   ],
-   "migratedFrom": {
-    "set": "super-season",
-    "id": "Kobe_Bryant"
-   },
-   "rewardFor": "LAL",
-   "rewardGoal": "nba-team-LAL"
-  },
-  {
    "id": "David_Robinson",
    "name": "David Robinson",
    "team": "SAS",
@@ -559,7 +470,7 @@
    "speed": 11,
    "power": 19,
    "shotLine": 15,
-   "paintBoost": 0,
+   "paintBoost": 1,
    "threePtBoost": -5,
    "defBoost": 4,
    "salary": 1310,
@@ -627,15 +538,90 @@
    "rewardGoal": "nba-team-SAS"
   },
   {
+   "id": "Kobe_Bryant",
+   "name": "Kobe Bryant",
+   "team": "LAL",
+   "pos": "SG",
+   "speed": 17,
+   "power": 12,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 0,
+   "salary": 1310,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 3,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 21,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2006,
+   "seasonLabel": "2005-06",
+   "age": 27,
+   "games": 80,
+   "mpg": 41,
+   "bbrefId": "bryanko01",
+   "traded": false,
+   "metrics": {
+    "bpm": 7.6,
+    "vorp": 8,
+    "ws": 15.3,
+    "ws48": 0.224,
+    "per": 28
+   },
+   "provisional": false,
+   "set": "team-rewards",
+   "badges": [
+    "super-season"
+   ],
+   "migratedFrom": {
+    "set": "super-season",
+    "id": "Kobe_Bryant"
+   },
+   "rewardFor": "LAL",
+   "rewardGoal": "nba-team-LAL"
+  },
+  {
    "id": "Blake_Griffin",
    "name": "Blake Griffin",
    "team": "DET",
    "pos": "PF",
    "speed": 10,
    "power": 15,
-   "shotLine": 14,
-   "paintBoost": 0,
-   "threePtBoost": -1,
+   "shotLine": 15,
+   "paintBoost": 1,
+   "threePtBoost": 0,
    "defBoost": 0,
    "salary": 1270,
    "chart": [
@@ -655,13 +641,13 @@
     },
     {
      "lo": 7,
-     "hi": 13,
+     "hi": 14,
      "pts": 3,
      "reb": 1,
      "ast": 1
     },
     {
-     "lo": 14,
+     "lo": 15,
      "hi": 99,
      "pts": 3,
      "reb": 1,
@@ -690,17 +676,80 @@
    ]
   },
   {
+   "id": "Kevin_Garnett",
+   "name": "Kevin Garnett",
+   "team": "BOS",
+   "pos": "C",
+   "speed": 11,
+   "power": 17,
+   "shotLine": 15,
+   "paintBoost": 2,
+   "threePtBoost": -5,
+   "defBoost": 4,
+   "salary": 1250,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    }
+   ],
+   "season": 2012,
+   "seasonLabel": "2011-12",
+   "age": null,
+   "games": 20,
+   "mpg": 36.9,
+   "bbrefId": "garneke01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true,
+   "set": "team-rewards",
+   "badges": [
+    "summer-standout"
+   ],
+   "migratedFrom": {
+    "set": "summer-standouts",
+    "id": "Kevin_Garnett"
+   },
+   "rewardFor": "BOS",
+   "rewardGoal": "nba-team-BOS"
+  },
+  {
    "id": "Kyrie_Irving",
    "name": "Kyrie Irving",
    "team": "CLE16",
    "pos": "PG",
    "speed": 16,
    "power": 10,
-   "shotLine": 14,
+   "shotLine": 15,
    "paintBoost": -1,
-   "threePtBoost": 2,
+   "threePtBoost": 3,
    "defBoost": -1,
-   "salary": 1250,
+   "salary": 1220,
    "chart": [
     {
      "lo": 1,
@@ -718,13 +767,13 @@
     },
     {
      "lo": 7,
-     "hi": 13,
+     "hi": 14,
      "pts": 3,
      "reb": 0,
      "ast": 0
     },
     {
-     "lo": 14,
+     "lo": 15,
      "hi": 20,
      "pts": 3,
      "reb": 0,
@@ -760,69 +809,6 @@
    "rewardGoal": "nba-team-CLE"
   },
   {
-   "id": "Kevin_Garnett",
-   "name": "Kevin Garnett",
-   "team": "BOS",
-   "pos": "C",
-   "speed": 11,
-   "power": 17,
-   "shotLine": 14,
-   "paintBoost": 0,
-   "threePtBoost": -6,
-   "defBoost": 4,
-   "salary": 1250,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 6,
-     "pts": 0,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 7,
-     "hi": 13,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 14,
-     "hi": 99,
-     "pts": 3,
-     "reb": 1,
-     "ast": 0
-    }
-   ],
-   "season": 2012,
-   "seasonLabel": "2011-12",
-   "age": null,
-   "games": 20,
-   "mpg": 36.9,
-   "bbrefId": "garneke01",
-   "traded": false,
-   "metrics": {},
-   "provisional": false,
-   "playoffRun": true,
-   "set": "team-rewards",
-   "badges": [
-    "summer-standout"
-   ],
-   "migratedFrom": {
-    "set": "summer-standouts",
-    "id": "Kevin_Garnett"
-   },
-   "rewardFor": "BOS",
-   "rewardGoal": "nba-team-BOS"
-  },
-  {
    "id": "Julius_Erving",
    "name": "Julius Erving",
    "team": "PHI77",
@@ -830,10 +816,10 @@
    "speed": 13,
    "power": 13,
    "shotLine": 14,
-   "paintBoost": 0,
+   "paintBoost": -3,
    "threePtBoost": -6,
    "defBoost": 1,
-   "salary": 1210,
+   "salary": 1190,
    "chart": [
     {
      "lo": 1,
@@ -899,6 +885,67 @@
    "bandException": "Dr. J's 1976-77 prices $1,180, twenty dollars under the legendary floor. Philadelphia has no off-roster Philly-jersey card above it: Barkley's 1989-90 is $1,160 and everything higher is Joel Embiid, who is ON the 2026-27 roster this reward is for. Twenty dollars is not worth rewarding a roster with a better copy of a player already in it."
   },
   {
+   "id": "Marc_Gasol",
+   "name": "Marc Gasol",
+   "team": "MEM",
+   "pos": "C",
+   "speed": 8,
+   "power": 16,
+   "shotLine": 16,
+   "paintBoost": 2,
+   "threePtBoost": 1,
+   "defBoost": 1,
+   "salary": 1100,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2017,
+   "seasonLabel": "2016-17",
+   "age": 32,
+   "games": 74,
+   "mpg": 34.2,
+   "bbrefId": "gasolma01",
+   "traded": false,
+   "metrics": {
+    "bpm": 5.2,
+    "vorp": 4.6,
+    "ws": 7.7,
+    "ws48": 0.145,
+    "per": 20.3
+   },
+   "provisional": false,
+   "rewardFor": "MEM",
+   "rewardGoal": "nba-team-MEM",
+   "badges": []
+  },
+  {
    "id": "Ivica_Zubac",
    "name": "Ivica Zubac",
    "team": "LAC",
@@ -906,10 +953,10 @@
    "speed": 10,
    "power": 16,
    "shotLine": 14,
-   "paintBoost": -1,
+   "paintBoost": 0,
    "threePtBoost": -6,
    "defBoost": 1,
-   "salary": 1010,
+   "salary": 1030,
    "chart": [
     {
      "lo": 1,
@@ -974,6 +1021,143 @@
    "rewardGoal": "nba-team-LAC"
   },
   {
+   "id": "Sam_Cassell",
+   "name": "Sam Cassell",
+   "team": "MIN97",
+   "pos": "PG",
+   "speed": 18,
+   "power": 10,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": -1,
+   "defBoost": 0,
+   "salary": 960,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 14,
+     "hi": 20,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2004,
+   "seasonLabel": "2003-04",
+   "age": 34,
+   "games": 81,
+   "mpg": 35,
+   "bbrefId": "cassesa01",
+   "traded": false,
+   "metrics": {
+    "bpm": 4.4,
+    "vorp": 4.6,
+    "ws": 12.1,
+    "ws48": 0.205,
+    "per": 22.8
+   },
+   "provisional": false,
+   "rewardFor": "MIN",
+   "rewardGoal": "nba-team-MIN",
+   "badges": []
+  },
+  {
+   "id": "Alonzo_Mourning",
+   "name": "Alonzo Mourning",
+   "team": "MIA",
+   "pos": "C",
+   "speed": 8,
+   "power": 15,
+   "shotLine": 17,
+   "paintBoost": 5,
+   "threePtBoost": -3,
+   "defBoost": 3,
+   "salary": 960,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 11,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 12,
+     "hi": 16,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 17,
+     "hi": 99,
+     "pts": 2,
+     "reb": 2,
+     "ast": 0
+    }
+   ],
+   "season": 2006,
+   "seasonLabel": "2005-06",
+   "age": 35,
+   "games": 65,
+   "mpg": 20,
+   "bbrefId": "mournal01",
+   "traded": false,
+   "metrics": {
+    "bpm": 1.8,
+    "vorp": 1.2,
+    "ws": 4.8,
+    "ws48": 0.176,
+    "per": 19.4
+   },
+   "provisional": false,
+   "rewardFor": "MIA",
+   "rewardGoal": "nba-team-MIA",
+   "bandException": "Forty dollars under the super-rare floor at $860. The user, 2026-09-07, shown the gap: \"Mourning is a fun enough card that it seems fine as a reward.\" His 2005-06 is the Heat's title season and the last real year of a franchise icon; the alternatives price in band but mean nothing to Miami. The same size and kind of exception Chicago's Prince and Portland's Witherspoon carry in the WNBA set, declared rather than hidden.",
+   "badges": []
+  },
+  {
    "id": "Chris_Paul",
    "name": "Chris Paul",
    "team": "NOK",
@@ -981,10 +1165,10 @@
    "speed": 18,
    "power": 9,
    "shotLine": 15,
-   "paintBoost": -1,
+   "paintBoost": -2,
    "threePtBoost": -3,
    "defBoost": 2,
-   "salary": 980,
+   "salary": 960,
    "chart": [
     {
      "lo": 1,
@@ -1042,142 +1226,6 @@
    "rewardGoal": "nba-team-NOP"
   },
   {
-   "id": "Allan_Houston",
-   "name": "Allan Houston",
-   "team": "NYK",
-   "pos": "SG",
-   "speed": 13,
-   "power": 9,
-   "shotLine": 13,
-   "paintBoost": 0,
-   "threePtBoost": 1,
-   "defBoost": -2,
-   "salary": 960,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 6,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 7,
-     "hi": 12,
-     "pts": 2,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 13,
-     "hi": 20,
-     "pts": 3,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 21,
-     "hi": 99,
-     "pts": 3,
-     "reb": 1,
-     "ast": 1
-    }
-   ],
-   "season": 2003,
-   "seasonLabel": "2002-03",
-   "age": 31,
-   "games": 82,
-   "mpg": 37.9,
-   "bbrefId": "houstal01",
-   "traded": false,
-   "metrics": {
-    "bpm": 1,
-    "vorp": 2.4,
-    "ws": 7.2,
-    "ws48": 0.111,
-    "per": 17.7
-   },
-   "provisional": false,
-   "rewardFor": "NYK",
-   "rewardGoal": "nba-team-NYK",
-   "badges": []
-  },
-  {
-   "id": "Sam_Cassell",
-   "name": "Sam Cassell",
-   "team": "MIN97",
-   "pos": "PG",
-   "speed": 18,
-   "power": 10,
-   "shotLine": 13,
-   "paintBoost": 0,
-   "threePtBoost": -2,
-   "defBoost": 0,
-   "salary": 960,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 6,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 7,
-     "hi": 12,
-     "pts": 2,
-     "reb": 0,
-     "ast": 1
-    },
-    {
-     "lo": 13,
-     "hi": 20,
-     "pts": 2,
-     "reb": 0,
-     "ast": 1
-    },
-    {
-     "lo": 21,
-     "hi": 99,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    }
-   ],
-   "season": 2004,
-   "seasonLabel": "2003-04",
-   "age": 34,
-   "games": 81,
-   "mpg": 35,
-   "bbrefId": "cassesa01",
-   "traded": false,
-   "metrics": {
-    "bpm": 4.4,
-    "vorp": 4.6,
-    "ws": 12.1,
-    "ws48": 0.205,
-    "per": 22.8
-   },
-   "provisional": false,
-   "rewardFor": "MIN",
-   "rewardGoal": "nba-team-MIN",
-   "badges": []
-  },
-  {
    "id": "John_Stockton",
    "name": "John Stockton",
    "team": "UTA96",
@@ -1188,7 +1236,7 @@
    "paintBoost": 0,
    "threePtBoost": -4,
    "defBoost": 1,
-   "salary": 950,
+   "salary": 960,
    "chart": [
     {
      "lo": 1,
@@ -1245,6 +1293,219 @@
    "notBestSeason": true
   },
   {
+   "id": "Wesley_Matthews",
+   "name": "Wesley Matthews",
+   "team": "POR",
+   "pos": "SG",
+   "speed": 15,
+   "power": 10,
+   "shotLine": 13,
+   "paintBoost": -3,
+   "threePtBoost": 1,
+   "defBoost": 1,
+   "salary": 950,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 12,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 13,
+     "hi": 20,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2015,
+   "seasonLabel": "2014-15",
+   "age": 28,
+   "games": 60,
+   "mpg": 33.7,
+   "bbrefId": "matthwe02",
+   "traded": false,
+   "metrics": {
+    "bpm": 3.1,
+    "vorp": 2.6,
+    "ws": 6.2,
+    "ws48": 0.147,
+    "per": 16.1
+   },
+   "provisional": false,
+   "rewardFor": "POR",
+   "rewardGoal": "nba-team-POR",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Myles_Turner",
+   "name": "Myles Turner",
+   "team": "IND",
+   "pos": "C",
+   "speed": 9,
+   "power": 15,
+   "shotLine": 15,
+   "paintBoost": 1,
+   "threePtBoost": 0,
+   "defBoost": 2,
+   "salary": 930,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 20,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 2,
+     "reb": 2,
+     "ast": 0
+    }
+   ],
+   "season": 2019,
+   "seasonLabel": "2018-19",
+   "age": 22,
+   "games": 74,
+   "mpg": 28.6,
+   "bbrefId": "turnemy01",
+   "traded": false,
+   "metrics": {
+    "bpm": 2.5,
+    "vorp": 2.4,
+    "ws": 6.3,
+    "ws48": 0.144,
+    "per": 18
+   },
+   "provisional": false,
+   "set": "team-rewards",
+   "badges": [
+    "super-season"
+   ],
+   "migratedFrom": {
+    "set": "super-season",
+    "id": "Myles_Turner"
+   },
+   "rewardFor": "IND",
+   "rewardGoal": "nba-team-IND"
+  },
+  {
+   "id": "Allan_Houston",
+   "name": "Allan Houston",
+   "team": "NYK",
+   "pos": "SG",
+   "speed": 13,
+   "power": 9,
+   "shotLine": 14,
+   "paintBoost": -4,
+   "threePtBoost": 2,
+   "defBoost": -2,
+   "salary": 920,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 20,
+     "pts": 3,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2003,
+   "seasonLabel": "2002-03",
+   "age": 31,
+   "games": 82,
+   "mpg": 37.9,
+   "bbrefId": "houstal01",
+   "traded": false,
+   "metrics": {
+    "bpm": 1,
+    "vorp": 2.4,
+    "ws": 7.2,
+    "ws48": 0.111,
+    "per": 17.7
+   },
+   "provisional": false,
+   "rewardFor": "NYK",
+   "rewardGoal": "nba-team-NYK",
+   "badges": []
+  },
+  {
    "id": "Jameer_Nelson",
    "name": "Jameer Nelson",
    "team": "ORL01",
@@ -1252,10 +1513,10 @@
    "speed": 13,
    "power": 8,
    "shotLine": 13,
-   "paintBoost": -1,
+   "paintBoost": -2,
    "threePtBoost": 1,
    "defBoost": 0,
-   "salary": 930,
+   "salary": 900,
    "chart": [
     {
      "lo": 1,
@@ -1322,85 +1583,17 @@
    "rewardGoal": "nba-team-ORL"
   },
   {
-   "id": "John_Wall",
-   "name": "John Wall",
-   "team": "WAS",
-   "pos": "PG",
-   "speed": 15,
-   "power": 9,
-   "shotLine": 16,
-   "paintBoost": 0,
-   "threePtBoost": 1,
-   "defBoost": 0,
-   "salary": 920,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 6,
-     "pts": 0,
-     "reb": 0,
-     "ast": 1
-    },
-    {
-     "lo": 7,
-     "hi": 15,
-     "pts": 2,
-     "reb": 0,
-     "ast": 1
-    },
-    {
-     "lo": 16,
-     "hi": 20,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 21,
-     "hi": 99,
-     "pts": 2,
-     "reb": 1,
-     "ast": 2
-    }
-   ],
-   "season": 2016,
-   "seasonLabel": "2015-16",
-   "age": 25,
-   "games": 77,
-   "mpg": 36.2,
-   "bbrefId": "walljo01",
-   "traded": false,
-   "metrics": {
-    "bpm": 3.5,
-    "vorp": 3.9,
-    "ws": 5.7,
-    "ws48": 0.098,
-    "per": 19.8
-   },
-   "provisional": false,
-   "rewardFor": "WAS",
-   "rewardGoal": "nba-team-WAS",
-   "badges": []
-  },
-  {
-   "id": "Myles_Turner",
-   "name": "Myles Turner",
-   "team": "IND",
+   "id": "Nic_Claxton",
+   "name": "Nic Claxton",
+   "team": "BKN",
    "pos": "C",
-   "speed": 9,
-   "power": 15,
+   "speed": 10,
+   "power": 14,
    "shotLine": 15,
-   "paintBoost": 0,
-   "threePtBoost": 0,
+   "paintBoost": 3,
+   "threePtBoost": -5,
    "defBoost": 2,
-   "salary": 910,
+   "salary": 890,
    "chart": [
     {
      "lo": 1,
@@ -1411,46 +1604,46 @@
     },
     {
      "lo": 3,
-     "hi": 6,
+     "hi": 8,
      "pts": 0,
      "reb": 1,
      "ast": 0
     },
     {
-     "lo": 7,
+     "lo": 9,
      "hi": 14,
-     "pts": 2,
+     "pts": 1,
      "reb": 1,
      "ast": 0
     },
     {
      "lo": 15,
-     "hi": 20,
+     "hi": 22,
      "pts": 2,
      "reb": 1,
      "ast": 0
     },
     {
-     "lo": 21,
+     "lo": 23,
      "hi": 99,
      "pts": 2,
      "reb": 2,
-     "ast": 0
+     "ast": 1
     }
    ],
-   "season": 2019,
-   "seasonLabel": "2018-19",
-   "age": 22,
-   "games": 74,
-   "mpg": 28.6,
-   "bbrefId": "turnemy01",
+   "season": 2023,
+   "seasonLabel": "2022-23",
+   "age": 23,
+   "games": 76,
+   "mpg": 29.9,
+   "bbrefId": "claxtni01",
    "traded": false,
    "metrics": {
-    "bpm": 2.5,
-    "vorp": 2.4,
-    "ws": 6.3,
-    "ws48": 0.144,
-    "per": 18
+    "bpm": 3.1,
+    "vorp": 2.9,
+    "ws": 9.2,
+    "ws48": 0.195,
+    "per": 20.8
    },
    "provisional": false,
    "set": "team-rewards",
@@ -1459,10 +1652,10 @@
    ],
    "migratedFrom": {
     "set": "super-season",
-    "id": "Myles_Turner"
+    "id": "Nic_Claxton"
    },
-   "rewardFor": "IND",
-   "rewardGoal": "nba-team-IND"
+   "rewardFor": "BKN",
+   "rewardGoal": "nba-team-BKN"
   },
   {
    "id": "Gerald_Wallace",
@@ -1471,11 +1664,11 @@
    "pos": "SF",
    "speed": 12,
    "power": 11,
-   "shotLine": 15,
+   "shotLine": 16,
    "paintBoost": 0,
-   "threePtBoost": -3,
+   "threePtBoost": -2,
    "defBoost": 2,
-   "salary": 900,
+   "salary": 880,
    "chart": [
     {
      "lo": 1,
@@ -1493,13 +1686,13 @@
     },
     {
      "lo": 8,
-     "hi": 14,
+     "hi": 15,
      "pts": 2,
      "reb": 1,
      "ast": 0
     },
     {
-     "lo": 15,
+     "lo": 16,
      "hi": 20,
      "pts": 2,
      "reb": 1,
@@ -1535,143 +1728,6 @@
    ]
   },
   {
-   "id": "Alonzo_Mourning",
-   "name": "Alonzo Mourning",
-   "team": "MIA",
-   "pos": "C",
-   "speed": 8,
-   "power": 15,
-   "shotLine": 16,
-   "paintBoost": 3,
-   "threePtBoost": -4,
-   "defBoost": 3,
-   "salary": 860,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 3,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 4,
-     "hi": 15,
-     "pts": 1,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 16,
-     "hi": 20,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 21,
-     "hi": 99,
-     "pts": 2,
-     "reb": 2,
-     "ast": 0
-    }
-   ],
-   "season": 2006,
-   "seasonLabel": "2005-06",
-   "age": 35,
-   "games": 65,
-   "mpg": 20,
-   "bbrefId": "mournal01",
-   "traded": false,
-   "metrics": {
-    "bpm": 1.8,
-    "vorp": 1.2,
-    "ws": 4.8,
-    "ws48": 0.176,
-    "per": 19.4
-   },
-   "provisional": false,
-   "rewardFor": "MIA",
-   "rewardGoal": "nba-team-MIA",
-   "bandException": "Forty dollars under the super-rare floor at $860. The user, 2026-09-07, shown the gap: \"Mourning is a fun enough card that it seems fine as a reward.\" His 2005-06 is the Heat's title season and the last real year of a franchise icon; the alternatives price in band but mean nothing to Miami. The same size and kind of exception Chicago's Prince and Portland's Witherspoon carry in the WNBA set, declared rather than hidden.",
-   "badges": []
-  },
-  {
-   "id": "Marc_Gasol",
-   "name": "Marc Gasol",
-   "team": "MEM",
-   "pos": "C",
-   "speed": 8,
-   "power": 14,
-   "shotLine": 15,
-   "paintBoost": 2,
-   "threePtBoost": -5,
-   "defBoost": 2,
-   "salary": 860,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 6,
-     "pts": 0,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 7,
-     "hi": 14,
-     "pts": 1,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 15,
-     "hi": 21,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 22,
-     "hi": 99,
-     "pts": 2,
-     "reb": 2,
-     "ast": 1
-    }
-   ],
-   "season": 2014,
-   "seasonLabel": "2013-14",
-   "age": 29,
-   "games": 59,
-   "mpg": 33.4,
-   "bbrefId": "gasolma01",
-   "traded": false,
-   "metrics": {
-    "bpm": 3,
-    "vorp": 2.5,
-    "ws": 5.6,
-    "ws48": 0.137,
-    "per": 18.2
-   },
-   "provisional": false,
-   "rewardFor": "MEM",
-   "rewardGoal": "nba-team-MEM",
-   "badges": []
-  },
-  {
    "id": "Bobby_Portis",
    "name": "Bobby Portis",
    "team": "MIL",
@@ -1682,7 +1738,7 @@
    "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": 0,
-   "salary": 860,
+   "salary": 840,
    "chart": [
     {
      "lo": 1,
@@ -1754,17 +1810,17 @@
    "rewardGoal": "nba-team-MIL"
   },
   {
-   "id": "Nic_Claxton",
-   "name": "Nic Claxton",
-   "team": "BKN",
-   "pos": "C",
-   "speed": 10,
-   "power": 14,
-   "shotLine": 15,
-   "paintBoost": 0,
-   "threePtBoost": -5,
-   "defBoost": 2,
-   "salary": 820,
+   "id": "Josh_Smith",
+   "name": "Josh Smith",
+   "team": "ATL08",
+   "pos": "PF",
+   "speed": 9,
+   "power": 12,
+   "shotLine": 17,
+   "paintBoost": 5,
+   "threePtBoost": -1,
+   "defBoost": 1,
+   "salary": 830,
    "chart": [
     {
      "lo": 1,
@@ -1775,58 +1831,51 @@
     },
     {
      "lo": 3,
-     "hi": 8,
+     "hi": 6,
      "pts": 0,
      "reb": 1,
      "ast": 0
     },
     {
-     "lo": 9,
-     "hi": 14,
+     "lo": 7,
+     "hi": 11,
      "pts": 1,
      "reb": 1,
      "ast": 0
     },
     {
-     "lo": 15,
-     "hi": 22,
+     "lo": 12,
+     "hi": 16,
      "pts": 2,
      "reb": 1,
      "ast": 0
     },
     {
-     "lo": 23,
+     "lo": 17,
      "hi": 99,
      "pts": 2,
-     "reb": 2,
+     "reb": 1,
      "ast": 1
     }
    ],
-   "season": 2023,
-   "seasonLabel": "2022-23",
+   "season": 2009,
+   "seasonLabel": "2008-09",
    "age": 23,
-   "games": 76,
-   "mpg": 29.9,
-   "bbrefId": "claxtni01",
+   "games": 69,
+   "mpg": 35.1,
+   "bbrefId": "smithjo03",
    "traded": false,
    "metrics": {
-    "bpm": 3.1,
-    "vorp": 2.9,
-    "ws": 9.2,
-    "ws48": 0.195,
-    "per": 20.8
+    "bpm": 1.7,
+    "vorp": 2.3,
+    "ws": 4.9,
+    "ws48": 0.097,
+    "per": 17.2
    },
    "provisional": false,
-   "set": "team-rewards",
-   "badges": [
-    "super-season"
-   ],
-   "migratedFrom": {
-    "set": "super-season",
-    "id": "Nic_Claxton"
-   },
-   "rewardFor": "BKN",
-   "rewardGoal": "nba-team-BKN"
+   "rewardFor": "ATL",
+   "rewardGoal": "nba-team-ATL",
+   "badges": []
   },
   {
    "id": "Steve_Nash",
@@ -1836,10 +1885,10 @@
    "speed": 14,
    "power": 8,
    "shotLine": 13,
-   "paintBoost": -1,
+   "paintBoost": 0,
    "threePtBoost": -2,
    "defBoost": -1,
-   "salary": 810,
+   "salary": 820,
    "chart": [
     {
      "lo": 1,
@@ -1912,11 +1961,11 @@
    "pos": "SG",
    "speed": 14,
    "power": 10,
-   "shotLine": 14,
-   "paintBoost": 0,
-   "threePtBoost": 2,
+   "shotLine": 15,
+   "paintBoost": 1,
+   "threePtBoost": 3,
    "defBoost": 0,
-   "salary": 800,
+   "salary": 770,
    "chart": [
     {
      "lo": 1,
@@ -1934,13 +1983,13 @@
     },
     {
      "lo": 9,
-     "hi": 13,
+     "hi": 14,
      "pts": 1,
      "reb": 0,
      "ast": 0
     },
     {
-     "lo": 14,
+     "lo": 15,
      "hi": 23,
      "pts": 2,
      "reb": 1,
@@ -1983,11 +2032,11 @@
    "pos": "SF",
    "speed": 12,
    "power": 12,
-   "shotLine": 14,
-   "paintBoost": 0,
-   "threePtBoost": -1,
+   "shotLine": 15,
+   "paintBoost": 1,
+   "threePtBoost": 0,
    "defBoost": 1,
-   "salary": 770,
+   "salary": 760,
    "chart": [
     {
      "lo": 1,
@@ -2005,13 +2054,13 @@
     },
     {
      "lo": 7,
-     "hi": 13,
+     "hi": 14,
      "pts": 1,
      "reb": 0,
      "ast": 0
     },
     {
-     "lo": 14,
+     "lo": 15,
      "hi": 99,
      "pts": 2,
      "reb": 1,
@@ -2044,11 +2093,11 @@
    "pos": "PG",
    "speed": 15,
    "power": 9,
-   "shotLine": 14,
+   "shotLine": 15,
    "paintBoost": 0,
-   "threePtBoost": -1,
+   "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 770,
+   "salary": 760,
    "chart": [
     {
      "lo": 1,
@@ -2073,13 +2122,13 @@
     },
     {
      "lo": 9,
-     "hi": 13,
+     "hi": 14,
      "pts": 2,
      "reb": 0,
      "ast": 0
     },
     {
-     "lo": 14,
+     "lo": 15,
      "hi": 22,
      "pts": 2,
      "reb": 0,
@@ -2115,17 +2164,17 @@
    "rewardGoal": "nba-team-SAC"
   },
   {
-   "id": "Josh_Smith",
-   "name": "Josh Smith",
-   "team": "ATL08",
+   "id": "Luis_Scola",
+   "name": "Luis Scola",
+   "team": "HOU03",
    "pos": "PF",
-   "speed": 9,
-   "power": 12,
-   "shotLine": 16,
-   "paintBoost": 2,
-   "threePtBoost": -2,
-   "defBoost": 1,
-   "salary": 720,
+   "speed": 8,
+   "power": 11,
+   "shotLine": 15,
+   "paintBoost": 1,
+   "threePtBoost": -5,
+   "defBoost": -1,
+   "salary": 730,
    "chart": [
     {
      "lo": 1,
@@ -2143,13 +2192,13 @@
     },
     {
      "lo": 7,
-     "hi": 15,
-     "pts": 1,
+     "hi": 14,
+     "pts": 2,
      "reb": 1,
      "ast": 0
     },
     {
-     "lo": 16,
+     "lo": 15,
      "hi": 20,
      "pts": 2,
      "reb": 1,
@@ -2159,27 +2208,27 @@
      "lo": 21,
      "hi": 99,
      "pts": 2,
-     "reb": 1,
+     "reb": 2,
      "ast": 1
     }
    ],
-   "season": 2009,
-   "seasonLabel": "2008-09",
-   "age": 23,
-   "games": 69,
-   "mpg": 35.1,
-   "bbrefId": "smithjo03",
+   "season": 2011,
+   "seasonLabel": "2010-11",
+   "age": 30,
+   "games": 74,
+   "mpg": 32.6,
+   "bbrefId": "scolalu01",
    "traded": false,
    "metrics": {
-    "bpm": 1.7,
-    "vorp": 2.3,
-    "ws": 4.9,
-    "ws48": 0.097,
-    "per": 17.2
+    "bpm": -0.4,
+    "vorp": 1,
+    "ws": 5.5,
+    "ws48": 0.11,
+    "per": 18.4
    },
    "provisional": false,
-   "rewardFor": "ATL",
-   "rewardGoal": "nba-team-ATL",
+   "rewardFor": "HOU",
+   "rewardGoal": "nba-team-HOU",
    "badges": []
   },
   {
@@ -2190,10 +2239,10 @@
    "speed": 13,
    "power": 8,
    "shotLine": 16,
-   "paintBoost": 0,
+   "paintBoost": -1,
    "threePtBoost": -2,
    "defBoost": 1,
-   "salary": 720,
+   "salary": 710,
    "chart": [
     {
      "lo": 1,
@@ -2249,74 +2298,6 @@
    },
    "rewardFor": "DAL",
    "rewardGoal": "nba-team-DAL"
-  },
-  {
-   "id": "Luis_Scola",
-   "name": "Luis Scola",
-   "team": "HOU03",
-   "pos": "PF",
-   "speed": 8,
-   "power": 11,
-   "shotLine": 14,
-   "paintBoost": 0,
-   "threePtBoost": -6,
-   "defBoost": -1,
-   "salary": 710,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 6,
-     "pts": 0,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 7,
-     "hi": 13,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 14,
-     "hi": 20,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 21,
-     "hi": 99,
-     "pts": 2,
-     "reb": 2,
-     "ast": 1
-    }
-   ],
-   "season": 2011,
-   "seasonLabel": "2010-11",
-   "age": 30,
-   "games": 74,
-   "mpg": 32.6,
-   "bbrefId": "scolalu01",
-   "traded": false,
-   "metrics": {
-    "bpm": -0.4,
-    "vorp": 1,
-    "ws": 5.5,
-    "ws48": 0.11,
-    "per": 18.4
-   },
-   "provisional": false,
-   "rewardFor": "HOU",
-   "rewardGoal": "nba-team-HOU",
-   "badges": []
   }
  ]
 }

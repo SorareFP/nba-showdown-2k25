@@ -781,11 +781,41 @@ export function hitsTopTier(card, finalRoll) {
 }
 
 // ── Scoring Roll ───────────────────────────────────────────────────────────
+/**
+ * A SECOND SCORING ROLL, owed to a slot by Offensive Board Mastery: the card
+ * wrote `tempEff.extra_roll_<idx>` (the roll's own modifier, −2) and nothing
+ * read it — "Merrill was never given a second scoring roll. There is no
+ * button to do so." (the user, 2026-09-09). The roll, the board's button, the
+ * turn gate and the AI all ask here.
+ */
+export function extraRollPending(g, teamKey, idx) {
+  const v = g?.tempEff?.[teamKey]?.['extra_roll_' + idx];
+  return typeof v === 'number';
+}
+
+/** Whether this slot may roll now: never rolled and not blocked, or owed a second roll. */
+export function canRollSlot(g, teamKey, idx) {
+  const rolls = g.rollResults?.[teamKey] || [];
+  if (g.blockedRolls?.[teamKey]?.[idx]) return false;
+  return rolls[idx] == null || extraRollPending(g, teamKey, idx);
+}
+
+/** How many rolls this side still has to make this section, second rolls included. */
+export function pendingRolls(g, teamKey) {
+  let n = 0;
+  for (let i = 0; i < STARTERS; i += 1) if (canRollSlot(g, teamKey, i)) n += 1;
+  return n;
+}
+
 export function doRoll(g, teamKey, idx, opts = {}) {
   const myT = getTeam(g, teamKey);
   const oppT = getOpp(g, teamKey);
   const player = myT.starters[idx];
   if (!player) return g;
+  // A slot rolls once, unless a card owes it a second roll.
+  const already = (g.rollResults?.[teamKey] || [])[idx];
+  const secondRoll = already != null && extraRollPending(g, teamKey, idx);
+  if (already != null && !secondRoll) return g;
 
   const defIdx = (g.offMatchups[teamKey] || [])[idx] ?? idx;
   const defPlayer = oppT.starters[defIdx] || oppT.starters[0];
@@ -816,6 +846,8 @@ export function doRoll(g, teamKey, idx, opts = {}) {
   // defender's bonus inside calcAdv now — see execCard.)
   if (bonus > 0 && ng.tempDefEff?.[teamKey === 'A' ? 'B' : 'A']?.[defIdx]?.anchor) bonus = 0;
   if (te['r' + idx]) bonus += te['r' + idx];
+  // The second roll carries the card's modifier and spends the card's grant.
+  if (secondRoll) { bonus += te['extra_roll_' + idx]; delete te['extra_roll_' + idx]; }
 
   // Open-man bonus (Double Team's cost): rides on the next roll this team
   // chooses to make, then it's gone — the offense picks its beneficiary
@@ -879,7 +911,12 @@ export function doRoll(g, teamKey, idx, opts = {}) {
   if (te['reb2' + idx] && result.reb) result = { ...result, reb: result.reb * 2 };
   if (!ng.rollResults[teamKey]) ng.rollResults[teamKey] = [];
   // defId/defDb: who was guarding this roll, for matchup plus-minus analysis.
-  ng.rollResults[teamKey][idx] = { die, dice, bonus: totalBonus, finalRoll, pts: result.pts, reb: result.reb, ast: result.ast, isTop, defIdx, defId: nDefPlayer.id, defDb: nDefPlayer.defBoost || 0 };
+  ng.rollResults[teamKey][idx] = {
+    die, dice, bonus: totalBonus, finalRoll, pts: result.pts, reb: result.reb, ast: result.ast, isTop, defIdx, defId: nDefPlayer.id, defDb: nDefPlayer.defBoost || 0,
+    // A second roll keeps the first beside it: the board shows the latest, the
+    // section's totals hold both (each roll credited the score as it landed).
+    ...(secondRoll ? { second: true, prev: already } : {}),
+  };
 
   nMyT.score += result.pts;
   nMyT.assists += result.ast;
@@ -901,7 +938,7 @@ export function doRoll(g, teamKey, idx, opts = {}) {
 
   ng.log = [...ng.log, {
     team: teamKey,
-    msg: `${clutchDice ? `⭐ CLUTCH (${clutchDice} dice) ` : ''}${pressed ? '🛑 PRESSED — re-roll! ' : ''}${nPlayer.name} 🎲${dice.length > 1 ? `[${dice.join(' ')}]→${die}` : die}${totalBonus !== 0 ? (totalBonus > 0 ? '+' : '') + totalBonus : ''}=${finalRoll} → ${result.pts}pts ${result.reb}reb ${result.ast}ast${adv.hasPenalty && !ghosted ? ' ⚠️ penalty' : ''}${isTop ? ' ⭐' : ''}${die === 20 ? ' 🎯' : ''}`,
+    msg: `${clutchDice ? `⭐ CLUTCH (${clutchDice} dice) ` : ''}${pressed ? '🛑 PRESSED — re-roll! ' : ''}${secondRoll ? '2nd roll — ' : ''}${nPlayer.name} 🎲${dice.length > 1 ? `[${dice.join(' ')}]→${die}` : die}${totalBonus !== 0 ? (totalBonus > 0 ? '+' : '') + totalBonus : ''}=${finalRoll} → ${result.pts}pts ${result.reb}reb ${result.ast}ast${adv.hasPenalty && !ghosted ? ' ⚠️ penalty' : ''}${isTop ? ' ⭐' : ''}${die === 20 ? ' 🎯' : ''}`,
   }];
 
   // The roll Box Out can answer, and Spain Pick & Roll's assist for a score.

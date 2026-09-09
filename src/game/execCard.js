@@ -291,6 +291,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
     }
 
     case 'double_team': {
+      if (g.tempEff?.[teamKey]?.doubleTeamUsed) return fail('Double Team is once per section');
       const dtOpp = teamKey === 'A' ? 'B' : 'A';
       const tIdx = opts.targetIdx;
       const target = oppT.starters[tIdx];
@@ -318,6 +319,9 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       g.openMan[dtOpp] = { pts: prevPts + 3, except: [...new Set([...prevExcept, tIdx])] };
       g.lastDoubleTeam = { teamKey, targetIdx: tIdx };
       addLog(g, teamKey, `Double Team: ${target.name} trapped (+6/+6 defense) — someone's open, Team ${dtOpp} gets +3 on their next roll`);
+      // ONCE PER SECTION (the user, 2026-09-09). tempEff clears with the section.
+      if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
+      g.tempEff[teamKey].doubleTeamUsed = true;
       break;
     }
 
@@ -466,6 +470,9 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
 
     case 'offensive_board': {
       if (myT.rebounds < 3) return fail(`Need 3 rebounds (have ${myT.rebounds})`);
+      // A SECOND roll: the player must have taken his first, and cannot be owed two.
+      if ((g.rollResults?.[teamKey] || [])[idx] == null) return fail(`${player?.name} has not rolled yet — the second roll goes to a player who has`);
+      if (typeof g.tempEff?.[teamKey]?.['extra_roll_' + idx] === 'number') return fail(`${player?.name} already has a second roll waiting`);
       myT.rebounds -= 3;
       if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
       g.tempEff[teamKey]['extra_roll_' + idx] = -2;

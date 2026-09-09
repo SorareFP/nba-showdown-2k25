@@ -344,6 +344,7 @@ export function canPlayCard(g, teamKey, cardId) {
   // trap, and at least one other to be the open man they find.
   if (cardId === 'double_team') {
     if (phase !== 'scoring') return no('Only playable during Scoring Phase');
+    if (g.tempEff?.[teamKey]?.doubleTeamUsed) return no('Double Team is once per section');
     const dtOpp = teamKey === 'A' ? 'B' : 'A';
     const oppRolls = g.rollResults[dtOpp] || [];
     const waiting = oppT.starters.filter((p, i) => p && oppRolls[i] == null).length;
@@ -405,7 +406,10 @@ export function canPlayCard(g, teamKey, cardId) {
   if (cardId === 'offensive_board') {
     if (phase !== 'scoring') return no('Only playable during Scoring Phase');
     if (myT.rebounds < 3) return no(`Need 3 rebounds (have ${myT.rebounds})`);
-    return ok();
+    const rolled = (g.rollResults?.[teamKey] || []);
+    const owed = g.tempEff?.[teamKey] || {};
+    if (!myT.starters.some((p, i) => p && rolled[i] != null && typeof owed['extra_roll_' + i] !== 'number')) return no('Wait until one of your players has rolled');
+    return ok('A player who has rolled takes a second scoring roll at −2');
   }
 
   if (cardId === 'rebound_tap_out') {

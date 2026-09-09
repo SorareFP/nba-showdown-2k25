@@ -115,7 +115,7 @@ export default function RollResult({ result, col }) {
       <div className={styles.diceStr}>
         🎲<span className={styles.die}>{result.die}</span>{bonus}
         {bonus && <>={result.finalRoll}</>}
-        {result.isTop ? ' ⭐' : ''}
+        {result.isTop ? ' ⭐' : ''}{result.second ? ' ·2nd' : ''}
       </div>
       <div className={styles.pts} style={{ color: col }}>
         {result.pts}<span className={styles.ptsUnit}>pts</span>

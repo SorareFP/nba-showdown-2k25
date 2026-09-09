@@ -1,5 +1,5 @@
 import { useReducer, useCallback, useState, useEffect, useRef } from 'react';
-import { newGame, doRoll, endSection, spendAssist, spendReboundBonus, applyMatchups, spendTimeout, endTimeout, clutchAvailable, passTurn } from '../game/engine.js';
+import { newGame, doRoll, endSection, spendAssist, spendReboundBonus, applyMatchups, spendTimeout, endTimeout, clutchAvailable, passTurn, pendingRolls } from '../game/engine.js';
 import { aiTurn, aiScoringDecision, aiRollDecision, aiSpendDecision, aiReactionDecision, aiCrunchDecision, aiSetMatchups } from '../game/ai.js';
 import { CLUTCH_DICE } from '../game/clutchAwards.js';
 import { execCard, resolvePendingShotCheck } from '../game/execCard.js';
@@ -101,11 +101,8 @@ const AI_DELAY = 700;
  * driver for B and by CourtBoard to enable the human's buttons for A.
  */
 function rollGate(game) {
-  const pending = key => {
-    const rolls = game.rollResults?.[key] || [];
-    const blocked = game.blockedRolls?.[key] || {};
-    return [0, 1, 2, 3, 4].filter(i => rolls[i] == null && !blocked[i]).length;
-  };
+  // Second rolls (Offensive Board Mastery) count as rolls still to make.
+  const pending = key => pendingRolls(game, key);
   const a = pending('A');
   const b = pending('B');
   return {
@@ -272,9 +269,7 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
           return;
         }
         if (rollingOpen) {
-          const rollsB = game.rollResults?.B || [];
-          const blockedB = game.blockedRolls?.B || {};
-          const needsRoll = [0, 1, 2, 3, 4].some(i => rollsB[i] == null && !blockedB[i]);
+          const needsRoll = pendingRolls(game, 'B') > 0;
           // A-B-A-B, NOT B-B-B-B-B. This effect re-fires on every game change,
           // so once rolling opened the coach rolled all five of its players
           // back to back and every reaction window between them was gone

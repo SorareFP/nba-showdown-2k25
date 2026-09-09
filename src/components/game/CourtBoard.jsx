@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { calcAdv, getTeam, getOpp, getPS, getFatigue, SNAKE, SPEND_COSTS, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck } from '../../game/engine.js';
+import { calcAdv, getTeam, getOpp, getPS, getFatigue, SNAKE, SPEND_COSTS, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, extraRollPending } from '../../game/engine.js';
 import { canPlayCard, myHouseTargets, fwdTargets, preRollTargets, helpTargets } from '../../game/canPlay.js';
 import { benchRest, passTurn } from '../../game/engine.js';
 import { getStrat } from '../../game/strats.js';
@@ -812,9 +812,14 @@ async function buildOpts(game, teamKey, cardId, base, openModal, ui = {}) {
 
   // ── Offensive Board Mastery: pick which player gets a second roll ───────
   if (cardId === 'offensive_board') {
-    const idx = await openModal({ teamKey, cardId, players: myT.starters, label: 'Select player for second scoring roll (−2)' });
-    if (idx === null) return null;
-    opts.playerIdx = idx;
+    // Only a player who has rolled can roll again, and not one already owed.
+    const rolled = game.rollResults?.[teamKey] || [];
+    const owed = game.tempEff?.[teamKey] || {};
+    const eligible = filterStarters(myT.starters, (p, i) => rolled[i] != null && typeof owed['extra_roll_' + i] !== 'number');
+    if (!eligible.length) { toast('Wait until one of your players has rolled', { tone: 'error' }); return null; }
+    const pick = await openModal({ teamKey, cardId, players: eligible.map(e => e.p), label: 'Who takes a second scoring roll at −2?' });
+    if (pick === null) return null;
+    opts.playerIdx = eligible[pick].origIdx;
   }
 
   // ── Veer Switch: defender reassigns the two swapped slots ─────────────
@@ -1532,6 +1537,8 @@ function LiveEffects({ game, teamKey, idx }) {
 }
 
 function PlayerSlot({ player, ps, adv, fat, result, blocked, teamKey, idx, phase, game, defPlayer, defSelect, defIdx, onDefChange, onRoll, onClutch = null, onSpendAssist, onSpendRebound, pvpDisabled = false, rollLocked = false }) {
+  // Offensive Board Mastery owes this slot a second roll: the button comes back.
+  const extraRoll = phase === 'scoring' && extraRollPending(game, teamKey, idx);
   const { open } = useLightbox();
   const col=teamKey==='A'?'var(--orange)':'var(--blue)';
   const rollCol=adv?(adv.rollBonus>0?'#4ADE80':adv.hasPenalty?'#F87171':'#94A3B8'):'#94A3B8';
@@ -1599,11 +1606,12 @@ function PlayerSlot({ player, ps, adv, fat, result, blocked, teamKey, idx, phase
         {phase==='scoring'&&(
           <div className={styles.rollArea}>
             {blocked?<div className={styles.blocked}>🏠 Blocked</div>
-            :result!=null?<RollResult result={result} col={col} />
+            :result!=null&&!extraRoll?<RollResult result={result} col={col} />
             :<>
+              {result!=null&&<RollResult result={result} col={col} />}
               <button className={styles.rollBtn} style={{background:col}} onClick={onRoll} disabled={pvpDisabled || rollLocked}
                 title={rollLocked ? 'Their roll — play a reaction now, or wait for the die' : undefined}>
-                {rollLocked ? '🎲 Their roll' : '🎲 Roll'}
+                {rollLocked ? '🎲 Their roll' : extraRoll ? '🎲 2nd roll −2' : '🎲 Roll'}
               </button>
               {onClutch && !pvpDisabled && !rollLocked && game.crunch?.active && clutchAvailable(game, teamKey) > 0 && fat > -6 &&
                 <button className={styles.rollBtn} style={{background:'#B45309'}} title={`Clutch Possession: roll ${2 + (game.clutchDice?.[player.id] || 0)} dice, keep the best`} onClick={onClutch}>⭐ Clutch ({2 + (game.clutchDice?.[player.id] || 0)})</button>}

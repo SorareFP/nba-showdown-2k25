@@ -26,6 +26,19 @@ function scorePts(g, teamKey, playerId, pts) {
   if (ps) ps.pts = (ps.pts || 0) + pts;
 }
 
+/**
+ * What a cancelled screen put back — said on the cancel line, because a log
+ * that reads "High Screen & Roll: X now guarded by Y" / "Fight Over: canceled
+ * HSR" / "High Screen & Roll: X now guarded by Y" (the second copy of the
+ * card, 2026-09-09) looked like the cancel had not taken.
+ */
+function restoredLine(g, lc, defT) {
+  const offT = getTeam(g, lc.teamKey);
+  const p1 = offT.starters[lc.opts.swapSlot1], p2 = offT.starters[lc.opts.swapSlot2];
+  const d1 = defT.starters[lc.opts.origD1], d2 = defT.starters[lc.opts.origD2];
+  return `${p1?.name} guarded again by ${d1?.name}, ${p2?.name} by ${d2?.name}`;
+}
+
 // ── Analytics helper ────────────────────────────────────────────────────────
 function trackShotCheck(g, teamKey, r, type, playerIdx) {
   // Every check leaves the record Glass Cleaner and Putback Specialist read:
@@ -325,7 +338,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
         if (r.hit) scorePts(g, lc.teamKey, offPlayer.id, r.pts);
         if (offPs && r.die <= 2)  offPs.cold = (offPs.cold || 0) + 1;
         if (offPs && r.die >= 19) offPs.hot  = (offPs.hot  || 0) + 1;
-        addLog(g, teamKey, `Go Under: canceled HSR — ${offPlayer.name} 3PT check: ${scStr(r)}`);
+        addLog(g, teamKey, `Go Under: canceled HSR — ${offPlayer.name} 3PT check: ${scStr(r)} · ${restoredLine(g, lc, myT)}`);
       }
       g.lastMatchupCard = null;
       break;
@@ -344,7 +357,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       const bIdx = offT.starters.indexOf(beneficiary);
       if (!g.tempEff[lc.teamKey]) g.tempEff[lc.teamKey] = {};
       g.tempEff[lc.teamKey]['r' + bIdx] = (g.tempEff[lc.teamKey]['r' + bIdx] || 0) + 2;
-      addLog(g, teamKey, `Fight Over: canceled HSR — ${beneficiary?.name} gets +2 to scoring roll`);
+      addLog(g, teamKey, `Fight Over: canceled HSR — ${beneficiary?.name} gets +2 to scoring roll · ${restoredLine(g, lc, myT)}`);
       g.lastMatchupCard = null;
       break;
     }

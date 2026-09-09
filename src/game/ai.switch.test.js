@@ -106,6 +106,18 @@ describe('the cancellers', () => {
     expect(price.pts).toBeLessThan(1);
   });
 
+  it('say on the cancel line which pairings came back', () => {
+    for (const id of ['fight_over', 'go_under']) {
+      const g = afterScreen({ gaining: true });
+      const r = execCard(g, 'B', id, id === 'go_under' ? { goUnderTarget: 0 } : {});
+      expect(r.ok).toBe(true);
+      const line = r.game.log[r.game.log.length - 1].msg;
+      expect(line).toMatch(/canceled HSR/);
+      expect(line).toContain('a0 guarded again by b0, a1 by b1');
+      expect(r.game.offMatchups.A.slice(0, 2)).toEqual([0, 1]);
+    }
+  });
+
   it('always fire in demo mode, for the tutorial', () => {
     const g = afterScreen({ gaining: false });
     const d = aiScoringDecision(g, 'B', { demo: true });

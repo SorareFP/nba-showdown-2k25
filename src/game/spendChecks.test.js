@@ -21,6 +21,10 @@ function game() {
   g.teamB.starters = g.teamB.roster.slice(0, 5);
   g.phase = 'scoring';
   g.offMatchups = { A: [0, 1, 2, 3, 4], B: [0, 1, 2, 3, 4] };
+  // The dealt hand is random and the coach keeps assists back for the assist
+  // cards it holds; these tests set the hand themselves where it matters.
+  g.teamA.hand = [];
+  g.teamB.hand = [];
   return g;
 }
 
@@ -74,13 +78,34 @@ describe('any player may spend', () => {
     expect(checkNeed(g, 'A', 0, '3pt').pHit).toBe(0);
   });
 
-  it('the AI nominates the best chance on the floor and spends only when it is worth it', () => {
+  it('the AI takes the best check by expected points, keeps what its cards need, and never hoards', () => {
     const g = game();
     g.teamA.assists = SPEND_COSTS.assistThree;
     g.teamA.starters[3].threePtBoost = 5;                         // the shooter: need 8+, 65%
     expect(aiSpendDecision(g, 'A')).toMatchObject({ type: 'spend_assist', spendType: '3pt', playerIdx: 3 });
-    for (const p of g.teamA.starters) { p.threePtBoost = -6; p.paintBoost = -6; }   // nobody can make anything
+    // Cross-Court Dime in hand: three assists are its, so five is not enough to shoot.
+    g.teamA.hand = ['cross_court_dime'];
     expect(aiSpendDecision(g, 'A')).toBeNull();
+    g.teamA.assists = SPEND_COSTS.assistThree + 3;
+    expect(aiSpendDecision(g, 'A')).toMatchObject({ type: 'spend_assist', spendType: '3pt', playerIdx: 3 });
+    // A poor-shooting lineup at the cost: the best check is under the bar → hold.
+    const poor = game();
+    poor.teamA.assists = SPEND_COSTS.assistThree;
+    for (const p of poor.teamA.starters) { p.threePtBoost = -6; p.paintBoost = -6; }
+    expect(aiSpendDecision(poor, 'A')).toBeNull();
+    // Twice the cost: a fair check goes; three times: anything goes — nothing sits forever.
+    for (const p of poor.teamA.starters) { p.threePtBoost = -1; p.paintBoost = -1; }   // a ~25% three
+    poor.teamA.assists = 2 * SPEND_COSTS.assistThree;
+    expect(aiSpendDecision(poor, 'A')).toMatchObject({ type: 'spend_assist', spendType: '3pt' });
+    for (const p of poor.teamA.starters) { p.threePtBoost = -4; p.paintBoost = -4; }   // ~5%
+    expect(aiSpendDecision(poor, 'A')).toBeNull();
+    poor.teamA.assists = 3 * SPEND_COSTS.assistThree;
+    expect(aiSpendDecision(poor, 'A').type).toBe('spend_assist');
+    // Paint over three when its expected points are higher.
+    const inside = game();
+    inside.teamA.assists = SPEND_COSTS.assistPaint;
+    for (const p of inside.teamA.starters) { p.threePtBoost = -4; p.paintBoost = 4; }   // three ~5%, paint ~55%
+    expect(aiSpendDecision(inside, 'A')).toMatchObject({ type: 'spend_assist', spendType: 'paint' });
   });
 });
 

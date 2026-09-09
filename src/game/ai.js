@@ -61,6 +61,11 @@ const HORIZON = 0.5;
 const WORN_PER_POINT = 0.15;
 /** How far a card's value can wobble before the sort — see aiScoringDecision. */
 const CARD_JITTER = 0.3;
+/** Expected points a spend check is worth taking at once (a 30% three), and at a doubled surplus — see aiSpendDecision. */
+const SPEND_GOOD = 0.9;
+const SPEND_FLOOR = 0.45;
+/** What the cards that spend assists need — the coach keeps that much back. */
+const ASSIST_COST = { cross_court_dime: 3, pick_and_pop: 2, anticipate_pass: 1, crash_and_kick: 1, three_point_barrage: 1 };
 
 /** The pick's score: this section's output, half of next section's swing, a little body. */
 export function lineupValue(player, ps) {
@@ -345,13 +350,33 @@ export function aiSpendDecision(game, teamKey) {
     });
     return out;
   };
+  // ASSISTS ARE WORTH NOTHING IN THE BANK. The first cut of this spent only
+  // on a ≥30% three or a ≥45% paint check; against real lineups the paint
+  // bar was never met and a third of lineups never met the three bar, so a
+  // coach with poor shooters sat on eleven assists all game (the user,
+  // 2026-09-09). Now: the best check by expected points, taken whenever it
+  // is worth a modest floor — and at twice the cost, taken regardless. An
+  // assist to spare beyond the cost is banked as a +1 on that player first.
+  // BUT ASSISTS FUND CARDS TOO. Cross-Court Dime costs three, Pick-and-Pop
+  // two, Anticipate the Pass, Crash and Kick and Three-Point Barrage's extra
+  // check one each — and a 600-game duel of a spend-everything policy lost
+  // 45% to the hoarder, because those plays are worth more per assist than
+  // a weak check. So: keep what the cards in hand need, and spend what is
+  // left in tiers — a good check at once, a fair one when the surplus is
+  // twice the cost, anything at three times, so nothing sits forever.
+  const ast = team.assists ?? 0;
+  const reserve = Math.max(0, ...(team.hand || []).map(id => ASSIST_COST[id] || 0));
+  const surplus = ast - reserve;
   const three = bestChance('3pt');
-  if ((team.assists ?? 0) >= SPEND_COSTS.assistThree && three && three.pHit * 3 >= 0.9) {
-    return { type: 'spend_assist', spendType: '3pt', playerIdx: three.idx };
-  }
   const paint = bestChance('paint');
-  if ((team.assists ?? 0) >= SPEND_COSTS.assistPaint && paint && paint.pHit * 2 >= 0.9) {
-    return { type: 'spend_assist', spendType: 'paint', playerIdx: paint.idx };
+  const choices = [];
+  if (three) choices.push({ spendType: '3pt', idx: three.idx, ev: three.pHit * 3, cost: SPEND_COSTS.assistThree });
+  if (paint) choices.push({ spendType: 'paint', idx: paint.idx, ev: paint.pHit * 2, cost: SPEND_COSTS.assistPaint });
+  choices.sort((a, b) => b.ev - a.ev);
+  const best = choices.find(c => ast >= c.cost);
+  if (best) {
+    const floor = surplus >= 3 * best.cost ? 0 : surplus >= 2 * best.cost ? SPEND_FLOOR : SPEND_GOOD;
+    if (surplus >= best.cost && best.ev >= floor) return { type: 'spend_assist', spendType: best.spendType, playerIdx: best.idx };
   }
   const bonuses = game.reboundBonuses?.[teamKey];
   if ((team.rebounds ?? 0) >= SPEND_COSTS.reboundPaint && bonuses?.paintCheck && paint) {

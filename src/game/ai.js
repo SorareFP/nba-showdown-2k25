@@ -5,7 +5,7 @@
 
 import { getTeam, getOpp, getPS, calcAdv, getFatigue, fatigueForMinutes, restMinutes, SPEND_COSTS, clutchAvailable, clutchEligible, burnedSlots, satOutLast, canRollSlot, extraRollPending, checkNeed, crunchSearchOptions } from './engine.js';
 import { lookupChart } from './cards.js';
-import { canPlayCard, helpTargets } from './canPlay.js';
+import { canPlayCard, helpTargets, staggerPair } from './canPlay.js';
 import { getStrat, STRATS, CRUNCH_CARDS } from './strats.js';
 
 /**
@@ -689,14 +689,12 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
     }
 
     case 'stagger_action': {
-      // Two DIFFERENT players. The fallback used to be slot 1 — which is the
-      // Speed-13 player himself whenever he sits in slot 1, and the card went
-      // down as "Jamal Murray & Jamal Murray". Seen in the browser 2026-09-05.
-      const spd13 = starters.findIndex(p => p.speed >= 13);
-      const first = spd13 >= 0 ? spd13 : 0;
-      const three = starters.findIndex((p, i) => i !== first && (p.threePtBoost || 0) > 0);
-      const other = three >= 0 ? three : starters.findIndex((_, i) => i !== first);
-      return { playerIdx: first, player2Idx: other >= 0 ? other : first };
+      // The pair canPlay found: a Speed-13 player and a DIFFERENT positive
+      // shooter (the "Murray & Murray" and the "Brunson as a shooter" cases
+      // both came from fallbacks here). No pair, no play — execCard refuses.
+      const pair = staggerPair(starters);
+      if (!pair) return { playerIdx: 0, player2Idx: 0 };
+      return { playerIdx: pair.fast, player2Idx: pair.shooter };
     }
 
     case 'veer_switch': {

@@ -177,8 +177,11 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
     case 'stagger_action': {
       if (idx === idx2) return fail('Pick two different players');
       const p1 = myT.starters[idx], p2 = myT.starters[idx2];
-      if ((p1?.speed || 0) < 13 && (p2?.speed || 0) < 13)
-        return fail('Need one player with Speed 13+');
+      // One Speed 13+, the OTHER a positive 3PT Bonus — a negative bonus is
+      // not a bonus (the user, 2026-09-09).
+      const fits = (fast, shooter) => (fast?.speed || 0) >= 13 && (shooter?.threePtBoost || 0) > 0;
+      if (!fits(p1, p2) && !fits(p2, p1))
+        return fail('Stagger Action needs a Speed 13+ player and a different player with a positive 3PT Bonus');
       if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
       g.tempEff[teamKey]['s' + idx]  = (g.tempEff[teamKey]['s' + idx]  || 0) + 2;
       g.tempEff[teamKey]['s' + idx2] = (g.tempEff[teamKey]['s' + idx2] || 0) + 2;

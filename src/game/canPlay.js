@@ -53,6 +53,25 @@ export function fwdTargets(g, teamKey) {
  * one the user hit: a 3PT shooter on the floor, all rolls in, "no one is
  * eligible." Playability and the picker now read this list.
  */
+/**
+ * STAGGER ACTION'S PAIR: one player with Speed 13+ and a DIFFERENT player
+ * with a POSITIVE 3PT Bonus. The engine used to check only the speed and
+ * the coach fell back to anyone at all, so Amen Thompson and Jalen Brunson
+ * (negative 3PT) were staggered as "shooters" (the user, 2026-09-09).
+ * Returns `{ fast, shooter }` slot indexes, or null.
+ */
+export function staggerPair(starters) {
+  const list = starters || [];
+  for (let i = 0; i < list.length; i += 1) {
+    if (!list[i] || (list[i].speed || 0) < 13) continue;
+    for (let j = 0; j < list.length; j += 1) {
+      if (j === i || !list[j] || (list[j].threePtBoost || 0) <= 0) continue;
+      return { fast: i, shooter: j };
+    }
+  }
+  return null;
+}
+
 export function preRollTargets(g, teamKey, cond = () => true) {
   const rolls = g.rollResults?.[teamKey] || [];
   const blocked = g.blockedRolls?.[teamKey] || {};
@@ -231,11 +250,8 @@ export function canPlayCard(g, teamKey, cardId) {
     if (cardId === 'pick_up_full_court') return ok('Hound one opposing player: −1 roll + 4 minutes of fatigue');
 
     if (cardId === 'stagger_action') {
-      const has13 = myT.starters.some(p => p.speed >= 13);
-      const has3pt = myT.starters.some(p => (p.threePtBoost || 0) > 0);
-      if (!has13) return no('Need a player with Speed 13+ in lineup');
-      if (!has3pt) return no('Need a player with a 3PT Bonus in lineup');
-      return ok();
+      if (!staggerPair(myT.starters)) return no('Need a Speed 13+ player and a different player with a positive 3PT Bonus');
+      return ok('Both gain +2 Speed this segment');
     }
 
     if (cardId === 'second_wind') {

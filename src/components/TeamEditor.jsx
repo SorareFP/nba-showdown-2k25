@@ -132,22 +132,19 @@ export default function TeamEditor({ team, collection, onSaved, onCancel }) {
           )}
           {error && <div className={styles.empty} style={{ color: 'var(--red)' }}>{error}</div>}
 
-          <div className={styles.rosterList}>
+          {/* One-line chips in an auto-fill grid: the editor's roster spans the
+              full width, so the sandbox's stacked rows left most of it empty
+              (the user, 2026-09-09: "That's a lot of wasted space"). */}
+          <div className={styles.rosterGrid}>
             {roster.map(c => {
               const missing = !ownedByKey[keyOf(c)];
               return (
-                <div key={keyOf(c)} className={styles.rosterItem} style={missing ? { opacity: 0.6 } : undefined}>
-                  <div>
-                    <div
-                      className={styles.rosterName}
-                      style={{ cursor: 'pointer', textDecoration: 'underline dotted' }}
-                      onClick={() => open('player', c)}
-                    >
-                      {c.name}{missing ? ' · not in collection' : ''}
-                    </div>
-                    <div className={styles.rosterSub}>{c.team} · S{c.speed} P{c.power} · ${c.salary}</div>
-                  </div>
-                  <button className={styles.rmBtn} onClick={() => remove(c)}>×</button>
+                <div key={keyOf(c)} className={styles.rosterChip} style={missing ? { opacity: 0.6 } : undefined} title={missing ? `${c.name} is not in your collection` : `${c.name} · ${c.team} · S${c.speed} P${c.power} · $${c.salary}`}>
+                  <span className={styles.chipName} onClick={() => open('player', c)}>
+                    {c.name}{missing ? ' ⚠' : ''}
+                  </span>
+                  <span className={styles.chipMeta}>{c.team} · S{c.speed} P{c.power} · ${c.salary}</span>
+                  <button className={styles.chipX} onClick={() => remove(c)} aria-label={`Remove ${c.name}`}>×</button>
                 </div>
               );
             })}

@@ -46,21 +46,61 @@ export function buildDeck(deckConfig) {
   return d;
 }
 
-export function drawCards(hand, deck, n) {
+/**
+ * DRAW. The deck's end is the next card; index 0 is the bottom.
+ *
+ *   overCap       the section refill stops at seven; a CARD that says "draw"
+ *                 draws past it (the user, 2026-09-09: Turnover at a full
+ *                 hand drew nothing and logged "drew 2")
+ *   crunchActive  false → a crunch-only card drawn goes to the BOTTOM of the
+ *                 deck instead of the hand and the draw continues (the
+ *                 user, 2026-09-09: "send clutch-time cards to the bottom of
+ *                 the deck any time they're drawn outside of crunch-time");
+ *                 true or null → nothing is bottomed
+ *
+ * Returns `{ hand, deck, drawn, bottomed }` — the ids that reached the hand
+ * and the ids sent under, so a caller can say so in the log.
+ */
+export function drawCards(hand, deck, n, { overCap = false, crunchActive = null } = {}) {
   const newHand = [...hand];
   const newDeck = [...deck];
-  for (let i = 0; i < n; i++) {
-    if (newHand.length >= 7) break;
+  const drawn = [];
+  const bottomed = [];
+  // A deck that is nothing but crunch cards must not spin forever.
+  let looks = 0;
+  const maxLooks = newDeck.length + n;
+  for (let i = 0; i < n && looks < maxLooks; looks += 1) {
+    if (!overCap && newHand.length >= 7) break;
     if (!newDeck.length) break; // deck exhausted
-    newHand.push(newDeck.pop());
+    const id = newDeck.pop();
+    if (crunchActive === false && CRUNCH_CARDS.includes(id)) {
+      // Under it goes — and the draw looks again, bounded by maxLooks so a
+      // deck of nothing but crunch cards ends with an empty draw, not a hang.
+      newDeck.unshift(id);
+      if (!bottomed.includes(id)) bottomed.push(id);
+      continue;
+    }
+    newHand.push(id);
+    drawn.push(id);
+    i += 1;
   }
-  return { hand: newHand, deck: newDeck };
+  return { hand: newHand, deck: newDeck, drawn, bottomed };
+}
+
+/** The log lines for cards a draw sent under, in a caller's team voice. */
+export function bottomedLines(teamKey, teamName, bottomed) {
+  return (bottomed || []).map(id => ({
+    team: teamKey,
+    msg: `${teamName} drew ${STRAT_NAMES[id] ?? id.replace(/_/g, ' ')} outside Crunch Time — to the bottom of the deck`,
+  }));
 }
 
 // ── New Game ───────────────────────────────────────────────────────────────
 function makeTeam(roster, name, deckConfig) {
   const builtDeck = buildDeck(deckConfig);
-  const { hand, deck } = drawCards([], builtDeck, 7);
+  // A fresh game is never in Crunch Time: a crunch-only card in the opening
+  // seven goes under.
+  const { hand, deck } = drawCards([], builtDeck, 7, { crunchActive: false });
   return {
     name,
     roster,
@@ -1023,11 +1063,11 @@ function checkAssistDraw(g) {
   ['A', 'B'].forEach(k => {
     const t = getTeam(ng, k);
     if (t.assists === 5) {
-      const drawn = drawCards(t.hand, t.deck, 1);
+      const drawn = drawCards(t.hand, t.deck, 1, { overCap: true, crunchActive: Boolean(ng.crunch?.active) });
       ng = {
         ...ng,
         [k === 'A' ? 'teamA' : 'teamB']: { ...t, hand: drawn.hand, deck: drawn.deck, assists: 6 },
-        log: [...ng.log, { team: k, msg: `${t.name} reached 5 assists — bonus card drawn!` }],
+        log: [...ng.log, { team: k, msg: `${t.name} reached 5 assists — bonus card drawn!` }, ...bottomedLines(k, t.name, drawn.bottomed)],
       };
     }
   });
@@ -1156,12 +1196,15 @@ export function endSection(g) {
     }];
   }
 
-  // Auto draw to 7
+  // Auto draw to 7. `ng.crunch` is already the COMING section's state (set
+  // above), so a crunch card drawn into the crunch section stays in hand and
+  // one drawn into any other section goes under.
   ['A', 'B'].forEach(k => {
     const t = getTeam(ng, k);
-    const drawn = drawCards(t.hand, t.deck, 7 - t.hand.length);
+    const drawn = drawCards(t.hand, t.deck, 7 - t.hand.length, { crunchActive: Boolean(ng.crunch?.active) });
     if (k === 'A') { ng.teamA = { ...ng.teamA, hand: drawn.hand, deck: drawn.deck }; }
     else           { ng.teamB = { ...ng.teamB, hand: drawn.hand, deck: drawn.deck }; }
+    if (drawn.bottomed.length) ng.log = [...ng.log, ...bottomedLines(k, t.name, drawn.bottomed)];
   });
 
   // Save current starters before clearing for bench recovery check

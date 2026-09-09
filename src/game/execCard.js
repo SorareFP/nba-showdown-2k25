@@ -2,7 +2,7 @@
 // Pure function: takes game state + card + opts, returns new state
 // Never mutates — always returns a new object via deepClone
 
-import { handOverPriority, getTeam, getOpp, getPS, calcAdv, shotCheck, matchupContest, drawCards, deepClone, getFatigue, recordDefSwitch, burnedSlots, roll20, checkAssistDraw, standingEntry, CROWD_FAVORITE_PTS, satOutLast } from './engine.js';
+import { handOverPriority, getTeam, getOpp, getPS, calcAdv, shotCheck, matchupContest, drawCards, deepClone, getFatigue, recordDefSwitch, burnedSlots, roll20, checkAssistDraw, standingEntry, CROWD_FAVORITE_PTS, satOutLast, bottomedLines } from './engine.js';
 import { helpTargets, canAnswerCheck } from './canPlay.js';
 import { lookupChart } from './cards.js';
 import { getStrat } from './strats.js';
@@ -98,9 +98,25 @@ function removeFromHand(team, cardId) {
 }
 
 function drawN(team, deck, n) {
-  const result = drawCards(team.hand, deck, n);
+  const result = drawCards(team.hand, deck, n, { overCap: true });
   team.hand = result.hand;
   return result.deck;
+}
+
+/**
+ * A CARD'S DRAW: past the seven-card cap, deck written back (four call
+ * sites drew into the hand and never took the cards out of the deck, so a
+ * Turnover duplicated two cards and at a full hand drew nothing while
+ * logging "drew 2"), and a crunch-only card drawn outside Crunch Time goes
+ * under, with a line saying so. Returns how many reached the hand.
+ */
+function cardDraw(g, teamKey, n) {
+  const t = getTeam(g, teamKey);
+  const r = drawCards(t.hand || [], t.deck || [], n, { overCap: true, crunchActive: Boolean(g.crunch?.active) });
+  t.hand = r.hand;
+  t.deck = r.deck;
+  for (const line of bottomedLines(teamKey, t.name, r.bottomed)) g.log = [...g.log, line];
+  return r.drawn.length;
 }
 
 // ── Main execCard ─────────────────────────────────────────────────────────────
@@ -209,9 +225,8 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if (dp) {
         const newAdv = calcAdv(player, dp, g.tempEff[teamKey], idx);
         if (newAdv.rollBonus > 0) {
-          const drawn = drawCards(myT.hand, myT.deck || [], 1);
-          myT.hand = drawn.hand;
-          msg += ` — now +${newAdv.rollBonus} roll bonus → draw a card!`;
+          const got = cardDraw(g, teamKey, 1);
+          msg += ` — now +${newAdv.rollBonus} roll bonus → ${got ? 'draw a card!' : 'the deck is empty'}`;
         }
       }
       addLog(g, teamKey, msg);
@@ -732,12 +747,12 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       trackShotCheck(g, teamKey, r, '3pt');
       if (r.die <= 2)  pss().cold = (pss().cold || 0) + 1;
       if (r.die >= 19) pss().hot  = (pss().hot  || 0) + 1;
+      let flareDrew = 0;
       if (r.hit) {
         scorePts(g, teamKey, player?.id, r.pts);
-        const drawn = drawCards(myT.hand, myT.deck || [], 1);
-        myT.hand = drawn.hand;
+        flareDrew = cardDraw(g, teamKey, 1);
       }
-      addLog(g, teamKey, `Flare Screen: ${scStr(r, pss())}${r.hit ? ' + draw a card' : ''}`);
+      addLog(g, teamKey, `Flare Screen: ${scStr(r, pss())}${r.hit ? (flareDrew ? ' + draw a card' : ' (deck empty — no draw)') : ''}`);
       break;
     }
 
@@ -806,9 +821,8 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
         return pst && (pst.cold || 0) > 0;
       });
       if (!hasOppCold) return fail('Opponent needs a player with a cold marker');
-      const drawn = drawCards(myT.hand, myT.deck || [], 2);
-      myT.hand = drawn.hand;
-      addLog(g, teamKey, 'Turnover: drew 2 strategy cards');
+      const got = cardDraw(g, teamKey, 2);
+      addLog(g, teamKey, `Turnover: drew ${got} strategy card${got === 1 ? '' : 's'}${got < 2 ? ' — the deck ran out' : ''}`);
       break;
     }
 
@@ -1439,8 +1453,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
   // Check assist bonus draw
   const checkAssist = (t, k) => {
     if (t.assists === 5) {
-      const drawn = drawCards(t.hand, t.deck || [], 1);
-      t.hand = drawn.hand;
+      cardDraw(g, k, 1);
       addLog(g, k, `${t.name} reached 5 assists — bonus card drawn!`);
       t.assists = 6;
     }

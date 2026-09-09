@@ -186,7 +186,7 @@ export default function RulebookTab() {
           <li><strong>50 cards.</strong> Per-card copies: <strong>5 common, 4 uncommon, 3 rare, 1 legendary</strong>. The Deck Builder refuses to save a deck over a cap.</li>
           <li>Hand of <strong>7</strong>, refilled to 7 at the end of every section.</li>
           <li>The first time a team's assists reach <strong>5</strong>, it draws one bonus card.</li>
-          <li>Crunch-only cards stay in the deck until drawn, or until the timeout search takes one (see Crunch Time).</li>
+          <li>A crunch-only card drawn outside Crunch Time goes to the bottom of the deck and the draw continues; it reaches a hand only in the crunch section or through the timeout search (see Crunch Time). A card that says "draw" draws past seven.</li>
           <li>A team carries its own deck; the default deck is a designed fifty for players who have not built one.</li>
         </ul>
 

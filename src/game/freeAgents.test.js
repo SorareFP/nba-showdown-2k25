@@ -4,8 +4,9 @@ import { describe, it, expect } from 'vitest';
 import {
   freeAgentPrice, packOddsCost, readQuoteRow, FA_PACK_WEIGHT, FREE_AGENT_SETS, OPEN_REQUEST_LIMIT,
   searchQuotes, prepareSearch, seasonText, checkRequest, indexQuotes, quoteKey, REQUEST_STATUS,
-  AUTO_REJECT_MESSAGE, searchHitsNeverCard,
+  AUTO_REJECT_MESSAGE, searchHitsNeverCard, ARCHIVE_COVERAGE, coverageText,
 } from './freeAgents.js';
+import quoteIndex from '../../card-data/generated/quote-index.json';
 import { MARKET_PRICES, RARITY_ORDER } from './rarity.js';
 
 describe('the free-agent price', () => {
@@ -42,6 +43,27 @@ describe('a quote row', () => {
 
   it('allows three open requests', () => {
     expect(OPEN_REQUEST_LIMIT).toBe(3);
+  });
+});
+
+describe('where the archive stops', () => {
+  const runs = seasons => {
+    const out = [];
+    for (const y of [...new Set(seasons)].sort((a, b) => a - b)) {
+      const last = out.at(-1);
+      if (last && y === last[1] + 1) last[1] = y; else out.push([y, y]);
+    }
+    return out;
+  };
+
+  it('is exactly what the quote index holds, so the form never promises a season it cannot quote', () => {
+    expect(ARCHIVE_COVERAGE.regular).toEqual(runs(quoteIndex.rows.filter(r => r[3] === 'r').map(r => r[2])));
+    expect(ARCHIVE_COVERAGE.playoffs).toEqual(runs(quoteIndex.rows.filter(r => r[3] === 'p').map(r => r[2])));
+  });
+
+  it('says so in a sentence, the long run first and the stragglers after', () => {
+    expect(coverageText()).toBe('NBA regular seasons from 1984-85 to 2025-26 (plus 1975-76 and 1976-77), and playoff runs from 2002 to 2026');
+    expect(coverageText({ regular: [[2000, 2010]], playoffs: [] })).toBe('NBA regular seasons from 1999-00 to 2009-10');
   });
 });
 

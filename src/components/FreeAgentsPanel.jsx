@@ -9,7 +9,7 @@ import { useDialogs } from '../ui/dialogs.jsx';
 import { RARITY_CONFIG } from '../game/rarity.js';
 import {
   prepareSearch, searchQuotes, seasonText, quoteKey, searchHitsNeverCard, AUTO_REJECT_MESSAGE,
-  OPEN_REQUEST_LIMIT, REQUEST_STATUS,
+  OPEN_REQUEST_LIMIT, REQUEST_STATUS, coverageText,
 } from '../game/freeAgents.js';
 import { requestCard, myCardRequests } from '../firebase/freeAgents.js';
 import Skeleton from '../ui/Skeleton.jsx';
@@ -69,8 +69,9 @@ export default function FreeAgentsPanel({ uid, loadIndex = () => import('../../c
       <header className={s.head}>
         <h2 className={s.title}>Free Agents</h2>
         <p className={s.sub}>
-          Ask for any player's season. We build the card, and when it is ready you can sign it for its
-          price. Up to {OPEN_REQUEST_LIMIT} requests can wait at once.
+          Ask for any player's season: {coverageText()}. Older seasons aren't in our stats archive yet.
+          We build the card, and when it is ready you can sign it for its price. Up to {OPEN_REQUEST_LIMIT} requests
+          can wait at once.
         </p>
       </header>
 
@@ -80,7 +81,7 @@ export default function FreeAgentsPanel({ uid, loadIndex = () => import('../../c
           type="search"
           value={text}
           onChange={e => setText(e.target.value)}
-          placeholder="Search a player: Michael Jordan, Sue Bird, Dennis Rodman…"
+          placeholder="Search a player: Michael Jordan, Dennis Rodman, Steve Nash…"
           aria-label="Search a player"
         />
         {index == null ? (
@@ -90,7 +91,7 @@ export default function FreeAgentsPanel({ uid, loadIndex = () => import('../../c
         ) : text.trim().length < 3 ? (
           <p className={s.muted}>Type at least three letters.</p>
         ) : results.length === 0 ? (
-          <p className={s.muted}>Nobody by that name, or every one of their seasons already has a card.</p>
+          <p className={s.muted}>Nobody by that name in the archive, or every one of their seasons already has a card.</p>
         ) : (
           <ul className={s.players}>
             {results.map(p => (

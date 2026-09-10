@@ -20,6 +20,30 @@ export const FA_PACK_WEIGHT = 0.2;
 export const OPEN_REQUEST_LIMIT = 3;
 
 /**
+ * WHAT THE ARCHIVE REACHES, in season end years, so the form can say where
+ * it stops (the user, 2026-09-10: "you can't go back to Bob Cousy and Bill
+ * Russell. That's fine, but we need to say where the cutoff date is"). The
+ * cached Basketball-Reference tables jump from 1976-77 to 1984-85, and the
+ * playoff table begins in 2002. NBA only so far. A test pins this against
+ * quote-index.json, so a rebuilt archive cannot leave the sentence stale.
+ */
+export const ARCHIVE_COVERAGE = { regular: [[1976, 1977], [1985, 2026]], playoffs: [[2002, 2026]] };
+
+const endLabel = y => `${y - 1}-${String(y % 100).padStart(2, '0')}`;
+const listWords = xs => (xs.length < 2 ? xs.join('') : `${xs.slice(0, -1).join(', ')} and ${xs.at(-1)}`);
+
+/** "NBA regular seasons from 1984-85 to 2025-26 (plus 1975-76 and 1976-77), and playoff runs from 2002 to 2026". */
+export function coverageText(cov = ARCHIVE_COVERAGE) {
+  const runs = [...cov.regular].sort((a, b) => (b[1] - b[0]) - (a[1] - a[0]));
+  const [main, ...rest] = runs;
+  const extra = rest.flatMap(([a, b]) => Array.from({ length: b - a + 1 }, (_, i) => endLabel(a + i))).sort();
+  const po = cov.playoffs?.[0];
+  return `NBA regular seasons from ${endLabel(main[0])} to ${endLabel(main[1])}` +
+    (extra.length ? ` (plus ${listWords(extra)})` : '') +
+    (po ? `, and playoff runs from ${po[0]} to ${po[1]}` : '');
+}
+
+/**
  * Where a requested card can land. Classification is automatic:
  * playoffs → Standouts, first season → Rookie, best season → Super Season,
  * anything else → Throwbacks. `pack` is the set's own targeted pack; every

@@ -24,7 +24,7 @@ import { teamIdFor } from './modes/league.js';
 export const NEWS = [
   {
     id: 'free-agents', date: '2026-09-10', title: 'Free Agents: ask for any season',
-    body: 'Search any player in the archive, back to 1976-77, and see what their card would cost. Request it, and when the card is built you can sign it for its price. Up to three requests can wait at once.',
+    body: 'Search any NBA player\'s season from 1984-85 on (plus 1975-76 and 1976-77), or a playoff run from 2002, and see what their card would cost. Request it, and when the card is built you can sign it for its price. Up to three requests can wait at once.',
     to: 'freeagents', cta: 'Free Agents',
   },
   {

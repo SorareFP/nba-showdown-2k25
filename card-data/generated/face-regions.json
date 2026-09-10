@@ -10824,8 +10824,17 @@
         0.713
       ],
       "badge": null
+    },
+    "rookie/Bob_Sura": {
+      "name": [
+        0.0252,
+        0.2595,
+        0.1253,
+        0.4429
+      ],
+      "badge": null
     }
   },
-  "generatedAt": "2026-09-09T21:40:00.268Z",
+  "generatedAt": "2026-09-10T23:56:03.511Z",
   "note": "Per-face boxes of the rotated name and the Super Season pill, as fractions of the 843x1181 face, measured by scripts/studio/export.js. Read by src/cards/faceRegions.js for the holographic sheen."
 }

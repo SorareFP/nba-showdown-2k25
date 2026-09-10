@@ -64,7 +64,10 @@ const seasonLabel = season => `${season - 1}-${String(season).slice(2)}`;
  * has been listed under: Basketball-Reference retroactively renames, which is
  * exactly how this one entered the list in the first place.
  */
-export const NEVER_CARD = new Set(['enes kanter', 'enes freedom', 'enes kanter freedom']);
+// Stored NORMALIZED, because every check is `NEVER_CARD.has(normalizeName(x))`
+// and normalizeName strips spaces. Written as 'enes kanter' this set matched
+// nothing, anywhere, until 2026-09-10 (caught by the Free Agents quote tests).
+export const NEVER_CARD = new Set(['Enes Kanter', 'Enes Freedom', 'Enes Kanter Freedom'].map(normalizeName));
 
 /**
  * Every reward pick, franchises and the tiers above them, in file order.

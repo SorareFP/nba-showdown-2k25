@@ -1,7 +1,11 @@
 // The shared Free Agents rules (freeAgents.js): the price the user chose,
 // and how a quote row reads.
 import { describe, it, expect } from 'vitest';
-import { freeAgentPrice, packOddsCost, readQuoteRow, FA_PACK_WEIGHT, FREE_AGENT_SETS, OPEN_REQUEST_LIMIT } from './freeAgents.js';
+import {
+  freeAgentPrice, packOddsCost, readQuoteRow, FA_PACK_WEIGHT, FREE_AGENT_SETS, OPEN_REQUEST_LIMIT,
+  searchQuotes, prepareSearch, seasonText, checkRequest, indexQuotes, quoteKey, REQUEST_STATUS,
+  AUTO_REJECT_MESSAGE, searchHitsNeverCard,
+} from './freeAgents.js';
 import { MARKET_PRICES, RARITY_ORDER } from './rarity.js';
 
 describe('the free-agent price', () => {
@@ -38,5 +42,43 @@ describe('a quote row', () => {
 
   it('allows three open requests', () => {
     expect(OPEN_REQUEST_LIMIT).toBe(3);
+  });
+});
+
+describe('requests', () => {
+  const rows = [
+    ['jordami01', 'Michael Jordan', 1988, 'r', 'CHI', 1250, 'super-season'],
+    ['jordami01', 'Michael Jordan', 1991, 'p', 'CHI', 1300, 'summer-standouts'],
+    ['jordami01', 'Michael Jordan', 1985, 'r', 'CHI', 900, 'throwbacks'],
+    ['jordade01', 'DeAndre Jordan', 2014, 'r', 'LAC', 700, 'throwbacks'],
+    ['whitero01', 'Royce White', 2015, 'r', 'SAC', 150, 'throwbacks'],
+  ];
+
+  it('finds a player by any part of the name, name-start first, seasons in order', () => {
+    const found = searchQuotes(prepareSearch(rows), 'jord');
+    expect(found.map(p => p.name)).toEqual(['DeAndre Jordan', 'Michael Jordan']);   // neither starts with "jord"
+    expect(searchQuotes(prepareSearch(rows), 'mich')[0].seasons.map(s => seasonText(s))).toEqual(['1984-85', '1987-88', '1991 playoffs']);
+    expect(searchQuotes(prepareSearch(rows), 'jo')).toEqual([]);                    // too short to search
+  });
+
+  it('refuses the never-card names with the user\'s message, and the form can tell from the search text', () => {
+    expect(AUTO_REJECT_MESSAGE).toBe("That guys sucks, he's not getting a card.");
+    expect(checkRequest({ row: rows[4] })).toEqual({ ok: false, code: 'auto-rejected', msg: AUTO_REJECT_MESSAGE });
+    for (const t of ['Enes Kanter', 'kanter', 'Enes Freedom', 'royce white', 'ROYCE']) expect(searchHitsNeverCard(t), t).toBe(true);
+    for (const t of ['Tim Duncan', 'Royce O', 'ene']) expect(searchHitsNeverCard(t), t).toBe(false);
+  });
+
+  it('refuses a season with no quote, the same card twice, and a fourth open request', () => {
+    expect(checkRequest({ row: null }).code).toBe('not-found');
+    expect(checkRequest({ row: rows[0], alreadyAsked: true }).code).toBe('already-exists');
+    expect(checkRequest({ row: rows[0], openCount: 3 }).code).toBe('resource-exhausted');
+    expect(checkRequest({ row: rows[0], openCount: 2 })).toEqual({ ok: true });
+  });
+
+  it('finds a row by player, season and kind, the way the server looks one up', () => {
+    const index = indexQuotes(rows);
+    expect(index.get(quoteKey('jordami01', 1991, true))[5]).toBe(1300);
+    expect(index.get(quoteKey('jordami01', 1991, false))).toBeUndefined();
+    expect(REQUEST_STATUS.requested).toBe('requested');
   });
 });

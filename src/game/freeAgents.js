@@ -10,6 +10,9 @@
 import { PACK_WEIGHTS, MARKET_PRICES, getPlayerRarity } from './rarity.js';
 import { PACK_TYPES } from './packEngine.js';
 import { CARD_SETS, BASE_SET } from './cardSets.js';
+import { normName, isNeverCard, searchHitsNeverCard, AUTO_REJECT_MESSAGE } from './neverCard.js';
+
+export { normName, isNeverCard, searchHitsNeverCard, AUTO_REJECT_MESSAGE };
 
 /** How far the price leans from the rarity table toward the pack-odds cost. */
 export const FA_PACK_WEIGHT = 0.2;
@@ -79,4 +82,65 @@ export function readQuoteRow(row) {
     bbrefId, name, season, playoffs: kind === 'p', team, salary, set, rarity,
     price: freeAgentPrice(set, rarity),
   };
+}
+
+// ── Requests ─────────────────────────────────────────────────────────────────
+
+/** A request's life: asked, then answered (and, later, signed or gifted). */
+export const REQUEST_STATUS = { requested: 'requested', rejected: 'rejected', invoiced: 'invoiced', signed: 'signed', gifted: 'gifted' };
+export const REJECT_REASON_MAX = 200;
+/** One-tap reasons in the Studio; any other text works too. */
+export const QUICK_REJECT_REASONS = ['Not enough of a season to card.', "That one doesn't make sense.", "Not one we're going to make."];
+
+export const quoteKey = (bbrefId, season, playoffs) => `${bbrefId}|${season}|${playoffs ? 'p' : 'r'}`;
+
+/** The quote index by quoteKey: how the server finds the row it prices from. */
+export function indexQuotes(rows) {
+  const out = new Map();
+  for (const row of rows) out.set(quoteKey(row[0], row[2], row[3] === 'p'), row);
+  return out;
+}
+
+/** "1987-88" for a regular season, "1988 playoffs" for a run. */
+export function seasonText({ season, playoffs }) {
+  return playoffs ? `${season} playoffs` : `${season - 1}-${String(season % 100).padStart(2, '0')}`;
+}
+
+/** The index rows with their names normalized once, for the search box. */
+export function prepareSearch(rows) {
+  return rows.map(row => ({ row, n: normName(row[1]) }));
+}
+
+/**
+ * Players whose name contains the search text, each with every quotable
+ * season, earliest first. A name that STARTS with the text ranks first.
+ */
+export function searchQuotes(prepared, text, { limit = 12 } = {}) {
+  const q = normName(text);
+  if (q.length < 3) return [];
+  const byPlayer = new Map();
+  for (const { row, n } of prepared) {
+    if (!n.includes(q)) continue;
+    if (!byPlayer.has(row[0])) byPlayer.set(row[0], { bbrefId: row[0], name: row[1], starts: n.startsWith(q), seasons: [] });
+    byPlayer.get(row[0]).seasons.push(readQuoteRow(row));
+  }
+  return [...byPlayer.values()]
+    .sort((a, b) => Number(b.starts) - Number(a.starts) || a.name.localeCompare(b.name))
+    .slice(0, limit)
+    .map(p => ({ ...p, seasons: p.seasons.sort((x, y) => x.season - y.season || Number(x.playoffs) - Number(y.playoffs)) }));
+}
+
+/**
+ * May this request be made? The server's rule, shared so the form can say
+ * the same thing. `row` is the quote row (or null), `openCount` the player's
+ * waiting requests, `alreadyAsked` whether one of them is this very card.
+ */
+export function checkRequest({ row, openCount = 0, alreadyAsked = false }) {
+  if (row && isNeverCard(row[1])) return { ok: false, code: 'auto-rejected', msg: AUTO_REJECT_MESSAGE };
+  if (!row) return { ok: false, code: 'not-found', msg: 'That season is not in the archive, or it already has a card.' };
+  if (alreadyAsked) return { ok: false, code: 'already-exists', msg: 'You have already asked for that card.' };
+  if (openCount >= OPEN_REQUEST_LIMIT) {
+    return { ok: false, code: 'resource-exhausted', msg: `You already have ${OPEN_REQUEST_LIMIT} requests waiting. One has to be answered first.` };
+  }
+  return { ok: true };
 }

@@ -78,9 +78,11 @@ describe('the calibration line', () => {
 });
 
 describe('the permanent exclusion', () => {
-  it('never quotes Enes Kanter or Enes Freedom', () => {
+  it('never quotes Enes Kanter, Enes Freedom or Royce White', () => {
     expect(isNeverCard('Enes Kanter')).toBe(true);
     expect(isNeverCard('Enes Freedom')).toBe(true);
+    expect(isNeverCard('Enes Kanter Freedom')).toBe(true);
+    expect(isNeverCard('Royce White')).toBe(true);
     expect(isNeverCard('Tim Duncan')).toBe(false);
   });
 });

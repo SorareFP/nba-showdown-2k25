@@ -19,7 +19,7 @@ describe('news', () => {
 
   it('carries Unethical Hoops, and every button goes somewhere the app knows', () => {
     expect(NEWS.some(n => n.id === 'unethical-hoops')).toBe(true);
-    const places = ['play', 'season', 'shop', 'goals', 'collection', 'howtoplay', 'builder'];
+    const places = ['play', 'season', 'shop', 'goals', 'collection', 'howtoplay', 'builder', 'freeagents'];
     for (const n of [...NEWS, STARTER_NEWS]) {
       if (n.to) expect(places, n.id).toContain(n.to);
       if (n.to) expect(n.cta, n.id).toBeTruthy();

@@ -23,6 +23,11 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
+    id: 'free-agents', date: '2026-09-10', title: 'Free Agents: ask for any season',
+    body: 'Search any player in the archive, back to 1976-77, and see what their card would cost. Request it, and when the card is built you can sign it for its price. Up to three requests can wait at once.',
+    to: 'freeagents', cta: 'Free Agents',
+  },
+  {
     id: 'device-handoff', date: '2026-09-10', title: 'Pick up on any device',
     body: 'Start a game or a season fixture on your desktop and carry on from your phone, or the other way round: the newest copy of the game is picked up by itself, and a device left open can no longer overwrite the one you moved to.',
     to: 'play', cta: 'Play a game',

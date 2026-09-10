@@ -150,6 +150,16 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // FREE AGENT REQUESTS. A player reads their own; nobody writes one but the
+    // server: requestCard prices it from the quote index and enforces the
+    // three-waiting limit, and admins answer through their own callables. The
+    // admin queue is read through a callable too, so the admin list lives in
+    // one place (functions/index.js) rather than here as well.
+    match /cardRequests/{requestId} {
+      allow read: if request.auth != null && resource.data.uid == request.auth.uid;
+      allow write: if false;
+    }
+
     // Anything not named above is closed. New collections have to be considered
     // rather than inheriting a default.
     match /{document=**} {

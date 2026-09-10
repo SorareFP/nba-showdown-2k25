@@ -1,0 +1,76 @@
+.wrap { display: flex; flex-direction: column; gap: 14px; }
+.head { margin-bottom: 2px; }
+.title { margin: 0; font-size: 20px; font-weight: 800; }
+.sub { margin: 4px 0 0; color: var(--text-muted); font-size: 14px; line-height: 1.5; max-width: 640px; }
+.panel {
+  padding: 14px 16px;
+  border-radius: var(--radius);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+}
+.panelHead { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+.panelTitle { margin: 0; font-size: 15px; font-weight: 800; }
+.muted { color: var(--text-muted); font-size: 13px; }
+.search {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.25);
+  color: var(--text);
+  font-size: 15px;
+}
+.never {
+  padding: 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(220, 38, 38, 0.55);
+  background: rgba(220, 38, 38, 0.12);
+  font-weight: 800;
+}
+.players, .seasons, .requests { list-style: none; margin: 0; padding: 0; }
+.players { display: flex; flex-direction: column; gap: 12px; }
+.playerName { font-size: 15px; font-weight: 800; margin-bottom: 6px; }
+.seasons { display: flex; flex-direction: column; gap: 4px; }
+.season {
+  display: grid;
+  grid-template-columns: 110px 48px 70px 96px 90px auto;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.03);
+  font-size: 13px;
+}
+.when { font-weight: 700; }
+.salary { font-variant-numeric: tabular-nums; }
+.rarity { justify-self: start; padding: 1px 8px; border-radius: 999px; font-size: 11px; font-weight: 800; }
+.price { font-variant-numeric: tabular-nums; }
+.askBtn {
+  justify-self: end;
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(234, 88, 12, 0.6);
+  background: rgba(234, 88, 12, 0.16);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.askBtn:disabled { opacity: 0.5; cursor: default; }
+.requests { display: flex; flex-direction: column; gap: 8px; }
+.request { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; font-size: 13px; }
+.reqName { font-weight: 700; }
+.status { padding: 1px 8px; border-radius: 999px; font-size: 11px; font-weight: 800; background: rgba(255, 255, 255, 0.08); }
+.requested { color: #FBBF24; }
+.rejected { color: #F87171; }
+.invoiced, .signed, .gifted { color: #4ADE80; }
+.reason { flex-basis: 100%; color: var(--text-muted); font-style: italic; }
+
+/* Phone: the facts wrap onto a line or two and the button sits at the end,
+   rather than a grid cell per fact (141px a season, measured). */
+@media (max-width: 768px) {
+  .season { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; }
+  .askBtn { margin-left: auto; min-height: 40px; }
+}

@@ -55,6 +55,9 @@ const COPY = [
   'src/cards/teams.js',
   'src/cards/sets.js',
   'src/cards/playerId.js',
+  // Free Agents: the request rules and the price, and the never-card list.
+  'src/game/freeAgents.js',
+  'src/game/neverCard.js',
 ];
 
 /** The generated card data those modules import. */
@@ -82,7 +85,8 @@ for (const rel of COPY) {
 const dataDir = path.join(ROOT, DATA_DIR);
 let data = 0;
 for (const file of fs.readdirSync(dataDir)) {
-  if (!/^cards-.*\.json$/.test(file) && !/^(wnba-)?(player-)?pool.*\.json$/.test(file)) continue;
+  // quote-index.json: requestCard prices a request from it, never the client.
+  if (!/^cards-.*\.json$/.test(file) && !/^(wnba-)?(player-)?pool.*\.json$/.test(file) && file !== 'quote-index.json') continue;
   copyFile(path.join(DATA_DIR, file));
   data += 1;
 }

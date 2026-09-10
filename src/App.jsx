@@ -121,7 +121,7 @@ function AppInner() {
   useEffect(() => { if (tab !== 'collection') setCollectionView(null); }, [tab]);
   useEffect(() => { if (tab !== 'season') setSeasonOpen(null); }, [tab]);
   const homeGo = (to, opts = {}) => {
-    const section = { shop: 'shop', goals: 'goals', mycards: 'collection' }[to];
+    const section = { shop: 'shop', goals: 'goals', mycards: 'collection', freeagents: 'freeagents' }[to];
     if (section) { setCollectionView(section); goTab('collection'); return; }
     if (to === 'season') setSeasonOpen(opts.seasonId || opts.leagueId ? opts : null);
     goTab(to);

@@ -49,6 +49,10 @@ import { getStrat } from './shared/src/game/strats.js';
 import { settleGameReward, todayKey, sanitizeBox } from './shared/src/game/coinRewards.js';
 import { seasonEarnings, dynastyCoinFactor } from './shared/src/game/modes/prizes.js';
 import { getDatabase } from 'firebase-admin/database';
+import { readFileSync } from 'node:fs';
+import {
+  readQuoteRow, indexQuotes, quoteKey, checkRequest, REQUEST_STATUS, REJECT_REASON_MAX, QUICK_REJECT_REASONS,
+} from './shared/src/game/freeAgents.js';
 import {
   newLeague, entrantFor, addEntrant, removeEntrant, cancelLeague as cancelLeagueState, startTournament, startSeason,
   canReport, applyResult, scoresFromRoom, forfeitScores, fixtureOf, isHumanVsHumanFixture, humanFor, summarizeLeague,
@@ -1163,5 +1167,91 @@ export const forfeitLeagueFixture = onCall({ region: 'us-central1' }, async requ
     writeLeagueIndexes(tx, out.league);
     if (out.league.status === LEAGUE_STATUS.done) tx.set(joinCodeRef(league.joinCode), { status: LEAGUE_STATUS.done }, { merge: true });
     return { winner: out.winner, paid: out.payouts, status: out.league.status };
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
+// FREE AGENTS: requested cards (docs/plans/2026-09-10-free-agents-design.md)
+// ═══════════════════════════════════════════════════════════════════════════
+//
+// A player asks for an archived player-season. The price is the SERVER'S: it
+// is read from the same quote index the form shows, copied into shared/ by
+// prepare.mjs, so a client cannot quote itself a cheap card. Requests live in
+// `cardRequests/{id}`, readable by their owner, written only here.
+
+// Loaded on first use, not at cold start: every callable shares this module
+// and only the request path needs a 1.2 MB index.
+let QUOTES = null;
+function quotes() {
+  QUOTES ??= indexQuotes(JSON.parse(readFileSync(new URL('./shared/card-data/generated/quote-index.json', import.meta.url), 'utf8')).rows);
+  return QUOTES;
+}
+
+function requireAdmin(request) {
+  const uid = requireAuth(request);
+  const email = request.auth?.token?.email ?? '';
+  if (!ADMIN_EMAILS.has(email)) throw new HttpsError('permission-denied', 'Admins only');
+  return { uid, email };
+}
+
+const HTTPS_CODE = { 'auto-rejected': 'failed-precondition' };
+
+/** ASK FOR A CARD. Priced from the index; three waiting per player; never-card names refused. */
+export const requestCard = onCall({ region: 'us-central1' }, async request => {
+  const uid = requireAuth(request);
+  const bbrefId = String(request.data?.bbrefId ?? '');
+  const season = Number(request.data?.season);
+  const playoffs = Boolean(request.data?.playoffs);
+  const row = quotes().get(quoteKey(bbrefId, season, playoffs)) ?? null;
+  const open = db.collection('cardRequests').where('uid', '==', uid).where('status', '==', REQUEST_STATUS.requested);
+  return db.runTransaction(async tx => {
+    const mine = await tx.get(open);
+    const alreadyAsked = mine.docs.some(d => {
+      const r = d.data();
+      return r.bbrefId === bbrefId && r.season === season && Boolean(r.playoffs) === playoffs;
+    });
+    const verdict = checkRequest({ row, openCount: mine.size, alreadyAsked });
+    if (!verdict.ok) throw new HttpsError(HTTPS_CODE[verdict.code] ?? verdict.code, verdict.msg);
+    const q = readQuoteRow(row);
+    const ref = db.collection('cardRequests').doc();
+    tx.set(ref, {
+      uid,
+      requester: request.auth?.token?.name ?? null,
+      bbrefId, name: q.name, season, playoffs, team: q.team,
+      quote: { salary: q.salary, rarity: q.rarity, price: q.price, set: q.set },
+      status: REQUEST_STATUS.requested,
+      createdAt: FieldValue.serverTimestamp(),
+    });
+    return { id: ref.id, quote: { salary: q.salary, rarity: q.rarity, price: q.price } };
+  });
+});
+
+/** THE QUEUE, for the Card Studio. Admins only. */
+export const listCardRequests = onCall({ region: 'us-central1' }, async request => {
+  requireAdmin(request);
+  const status = Object.values(REQUEST_STATUS).includes(request.data?.status) ? request.data.status : REQUEST_STATUS.requested;
+  const snap = await db.collection('cardRequests').where('status', '==', status).limit(300).get();
+  return snap.docs
+    .map(d => {
+      const r = d.data();
+      return { ...r, id: d.id, createdAt: r.createdAt?.toMillis?.() ?? null, decidedAt: r.decidedAt?.toMillis?.() ?? null };
+    })
+    .sort((a, b) => (a.createdAt ?? 0) - (b.createdAt ?? 0));
+});
+
+/** SAY NO. Admins only; the requester sees the reason. */
+export const rejectCardRequest = onCall({ region: 'us-central1' }, async request => {
+  const { email } = requireAdmin(request);
+  const id = String(request.data?.id ?? '');
+  if (!id) throw new HttpsError('invalid-argument', 'No request given');
+  const reason = String(request.data?.reason ?? '').trim().slice(0, REJECT_REASON_MAX) || QUICK_REJECT_REASONS[2];
+  const ref = db.doc(`cardRequests/${id}`);
+  return db.runTransaction(async tx => {
+    const snap = await tx.get(ref);
+    if (!snap.exists) throw new HttpsError('not-found', 'No such request');
+    const status = snap.data().status;
+    if (status !== REQUEST_STATUS.requested) throw new HttpsError('failed-precondition', `That request is already ${status}`);
+    tx.update(ref, { status: REQUEST_STATUS.rejected, reason, decidedAt: FieldValue.serverTimestamp(), decidedBy: email });
+    return { id, status: REQUEST_STATUS.rejected, reason };
   });
 });

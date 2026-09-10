@@ -32,6 +32,7 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { readCache, REPO_ROOT } from './cache.js';
 import { normalizeName } from './resolveTeams.js';
+import { NEVER_CARD_NAMES } from '../../src/game/neverCard.js';
 import { buildSet, resolvePlayerIds } from './generateSpecialSets.js';
 import { CALIBRATION_FILE } from './calibrateAttributes.js';
 import { franchiseForSeason, canonicalTeam } from '../../src/cards/teams.js';
@@ -67,7 +68,8 @@ const seasonLabel = season => `${season - 1}-${String(season).slice(2)}`;
 // Stored NORMALIZED, because every check is `NEVER_CARD.has(normalizeName(x))`
 // and normalizeName strips spaces. Written as 'enes kanter' this set matched
 // nothing, anywhere, until 2026-09-10 (caught by the Free Agents quote tests).
-export const NEVER_CARD = new Set(['Enes Kanter', 'Enes Freedom', 'Enes Kanter Freedom'].map(normalizeName));
+// The names live in src/game/neverCard.js, which the site and server read too.
+export const NEVER_CARD = new Set(NEVER_CARD_NAMES.map(normalizeName));
 
 /**
  * Every reward pick, franchises and the tiers above them, in file order.

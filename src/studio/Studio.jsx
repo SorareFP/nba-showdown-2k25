@@ -47,6 +47,7 @@ import {
   hiddenSetKeys,
 } from './prefs.js';
 import styles from './Studio.module.css';
+import RequestsPanel from './RequestsPanel.jsx';
 
 /** Long enough that a drag saves once, short enough to feel immediate. */
 const SAVE_DEBOUNCE_MS = 500;
@@ -93,6 +94,8 @@ export default function Studio() {
   const [teamOverrides, setTeamOverrides] = useState({});
   const [crops, setCrops] = useState({});
   const [query, setQuery] = useState('');
+  // The Free Agent request queue (RequestsPanel), over the studio.
+  const [showRequests, setShowRequests] = useState(false);
   const [missingOnly, setMissingOnly] = useState(false);
   const [selectedId, setSelectedId] = useState(SOURCES[DEFAULT_SOURCE].players[0]?.id ?? null);
   const [saveStatus, setSaveStatus] = useState('idle');
@@ -435,6 +438,9 @@ export default function Studio() {
     <div className={styles.page}>
       <header className={styles.topBar}>
         <span className={styles.title}>Card Studio</span>
+        <button type="button" className={styles.setBadge} onClick={() => setShowRequests(true)} title="Free Agent requests">
+          Requests
+        </button>
 
         {/* Which set this session writes to — the ACTIVE one, not a constant.
             There are four now and each owns its photos, crops and team colours
@@ -680,6 +686,7 @@ export default function Studio() {
         </div>
       )}
 
+      {showRequests && <RequestsPanel onClose={() => setShowRequests(false)} />}
       <div className={styles.body}>
         <aside className={styles.sidebar}>
           <PlayerList

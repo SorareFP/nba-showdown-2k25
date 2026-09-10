@@ -407,17 +407,11 @@ export default function PvpGame({ roomCode, myRole, onLeave }) {
       clone.matchupTurn = 'A';
       clone.matchupPasses = 0;
 
-      // Clear hot/cold for benched players (moved here from draft resolver)
-      ['A', 'B'].forEach(k => {
-        const t = k === 'A' ? clone.teamA : clone.teamB;
-        t.stats.forEach(ps => {
-          if (!t.starters.find(p => p.id === ps.id)) {
-            ps.hot = 0; ps.cold = 0;
-            const m = ps.minutes || 0;
-            ps.minutes = m <= 8 ? 0 : Math.max(0, m - 8);
-          }
-        });
-      });
+      // NO BENCH REST HERE. endSection rests everyone who sat the section
+      // that just ended (benchRest: markers off, 4 minutes back), in PvP as
+      // in solo. This block used to ALSO rest the five about to sit, at the
+      // old 8, so a player benched twice in a row had his second rest counted
+      // twice (found 2026-09-10; the user chose one rule of 4, everywhere).
 
       clone.log = [...clone.log, { team: null, msg: 'All ten on the floor — matchup strategy continues.' }];
     }

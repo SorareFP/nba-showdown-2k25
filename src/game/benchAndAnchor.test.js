@@ -94,3 +94,23 @@ describe('returning a card to the deck', () => {
     expect(returnCardToDeck(g, 'A', 9)).toBe(g);   // out of range: untouched
   });
 });
+
+// THE REST RULE AT THE SECTION END (2026-09-10). A section on the bench takes
+// four minutes off, what a section of play puts on. The rule was 4 on paper
+// since 2026-09-05 but every real section end still recovered 8; the user
+// chose 4 everywhere. Nothing pinned the section-end amount, which is how the
+// two rules drifted apart.
+describe('the rest rule at the section end', () => {
+  it('rests a benched player four minutes and clears his markers, and adds four to a starter', () => {
+    const g = scoringGame(1, 1);                       // a0-a4 played, a5-a9 sat
+    Object.assign(getPS(g, 'A', 'a7'), { minutes: 12, hot: 2 });
+    getPS(g, 'A', 'a8').minutes = 8;
+    getPS(g, 'A', 'a9').minutes = 4;
+    getPS(g, 'A', 'a0').minutes = 8;
+    const ng = endSection(g);
+    expect(getPS(ng, 'A', 'a7')).toMatchObject({ minutes: 8, hot: 0, cold: 0 });   // 12 -> 8 (was 12 -> 4)
+    expect(getPS(ng, 'A', 'a8').minutes).toBe(4);                                 // 8 -> 4 (was 8 -> 0)
+    expect(getPS(ng, 'A', 'a9').minutes).toBe(0);
+    expect(getPS(ng, 'A', 'a0').minutes).toBe(12);                                // a section of play: +4
+  });
+});

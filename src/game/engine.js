@@ -1347,13 +1347,14 @@ export function endSection(g) {
   return ng;
 }
 
-// Bench rest recovery:
-//   - Hot/cold markers reset immediately when benched
-//   - First 8 min of fatigue decays at 2x rate (4 min rest = 8 min recovery)
-//   - Beyond 8 min of fatigue, decay is 1:1 (4 min rest = 4 min recovery)
-//   - So: 8 min fatigue → 1 section rest = fully rested
-//         12 min fatigue → 1 section rest = 4 min fatigue (recover 8), need 1 more rest
-//         16 min fatigue → 1 section rest = 8 min fatigue, 2nd rest = fully rested
+// Bench rest recovery: benchRest, the ONE rest rule (REST_RECOVERY = 4).
+//   - Hot/cold markers reset when benched
+//   - A section on the bench takes 4 minutes off the tracker, what a section
+//     of play puts on: 12 rests to 8 (−2), 8 to 4, 4 to 0.
+// This used to recover 8 (2x decay): the 2026-09-05 rule of 4 reached
+// restMinutes, the coach's lookahead and the rules pages, and never this
+// function, which is the one every section end runs. Found 2026-09-10 while
+// fixing simulated minutes; the user chose 4 everywhere.
 function clearBenchedMarkers(g, prevStarters) {
   const ng = { ...g };
   ['A', 'B'].forEach(k => {
@@ -1365,21 +1366,8 @@ function clearBenchedMarkers(g, prevStarters) {
       // the whole roster (the user, 2026-09-08: the card "treats players who
       // were refreshed at halftime like they were benched").
       ps.wasBenched = !wasPlaying.includes(ps.id);
-      if (!wasPlaying.includes(ps.id)) {
-        // Was on the bench last segment — recover fatigue and reset markers
-        ps.hot = 0; ps.cold = 0;
-        const min = ps.minutes || 0;
-        if (min <= 8) {
-          // First 8 min decay at 2x: 4 min rest recovers all 8
-          ps.minutes = 0;
-        } else {
-          // Beyond 8: first recover 8 at 2x rate, then 4 at 1:1 from the rest period
-          // Net: 4 min rest recovers 8 min (2x portion) but only if we have >8
-          // Actually: recover = min(8, fatigue) at 2x + remaining rest at 1:1
-          // With 4 min rest: 2x portion covers first 4 → recovers 8 min
-          ps.minutes = Math.max(0, min - 8);
-        }
-      }
+      // Was on the bench last segment: markers off, four minutes back.
+      if (!wasPlaying.includes(ps.id)) benchRest(ps);
     });
   });
   return ng;

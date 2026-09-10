@@ -152,3 +152,24 @@
   .startRow { flex-direction: column; }
   .startBtn, .randBoth { width: 100%; text-align: center; }
 }
+
+/* -- PHONES ------------------------------------------------------------------
+   The pool is a list of PlayerCard rows (PlayerCard.module.css), not an inner
+   scroller inside the page scroller. The filters stick under the 48px header
+   as ONE sideways-scrolling row, so changing a filter never means scrolling
+   back to the top; 16px text so iOS does not zoom on focus. */
+@media (max-width: 768px) {
+  .pool { display: flex; flex-direction: column; gap: 6px; max-height: none; overflow: visible; }
+  .filters {
+    position: sticky; top: 48px; z-index: 40;
+    flex-direction: row; flex-wrap: nowrap; overflow-x: auto;
+    gap: 6px; margin: 0 -0.5rem 8px; padding: 8px 0.5rem;
+    background: var(--navy);
+    border-bottom: 1px solid var(--border);
+    scrollbar-width: none;
+  }
+  .filters::-webkit-scrollbar { display: none; }
+  .filters input, .filters select { flex: 0 0 auto; width: auto !important; min-height: 40px; font-size: 16px; }
+  .filters input { width: 160px !important; }
+  .addA, .addB { min-height: 36px; font-size: 13px; }
+}

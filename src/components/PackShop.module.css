@@ -83,3 +83,24 @@
 @media (max-width: 600px) {
   .grid { grid-template-columns: 1fr; }
 }
+
+/* -- PHONES: pack rows -------------------------------------------------------
+   Name and a two-line description on the left, price and Buy on the right.
+   Measured before (2026-09-10): 3,521px, one tall tile per pack. */
+@media (max-width: 768px) {
+  .grid { grid-template-columns: 1fr; gap: 8px; }
+  .tile {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 12px; row-gap: 4px;
+    align-items: center;
+    padding: 10px 12px;
+  }
+  .tile > * { grid-column: 1; }
+  .tileDesc { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .tilePrice { grid-column: 2; grid-row: 1; justify-self: end; margin: 0; }
+  .buyBtn {
+    grid-column: 2; grid-row: 2 / span 3; align-self: start;
+    min-height: 40px; min-width: 96px; white-space: normal; font-size: 12px;
+  }
+}

@@ -168,3 +168,49 @@
   background: var(--green); color: #08131f; font-weight: 700; font-size: 12px;
 }
 .collectBtn:hover { filter: brightness(1.1); }
+
+/* -- PHONES: rows, not tiles, and filters that stay put ----------------------
+   Measured before (2026-09-10): 5,087px for forty cards. Thumbnail on the
+   left, name and set in the middle, the count and the one action a spare has
+   on the right; selling and the burn confirmation take the full width when
+   open. Breakpoint = PHONE_QUERY in src/ui/useIsPhone.js. */
+@media (max-width: 768px) {
+  .filters {
+    position: sticky; top: 48px; z-index: 40;
+    flex-wrap: nowrap; overflow-x: auto;
+    gap: 6px; margin: 0 -0.5rem; padding: 8px 0.5rem;
+    background: var(--navy);
+    border-bottom: 1px solid var(--border);
+    scrollbar-width: none;
+  }
+  .filters::-webkit-scrollbar { display: none; }
+  .filter, .search { flex: 0 0 auto; min-height: 40px; font-size: 16px; }
+  .search { order: -1; width: 150px; }
+
+  .grid { display: flex; flex-direction: column; gap: 6px; }
+  .card {
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr) auto;
+    column-gap: 10px; row-gap: 1px;
+    align-items: center;
+    padding: 6px 8px;
+    border-width: 1px 1px 1px 4px;
+  }
+  .card:hover { transform: none; }
+  .card > * { grid-column: 2; margin: 0; }
+  /* Placed explicitly: the art down the left; name, team and rarity in the
+     middle; the count and the one primary action on the right; the spare
+     actions (Burn and Sell, or the open sell or burn form) as a full row under
+     the text. Auto-placing every action into one cell stacked Collect on top
+     of Burn and Sell (caught at 375px, 2026-09-10). */
+  .cardArt { grid-column: 1; grid-row: 1 / 4; width: 48px; height: 48px; }
+  .cardName { grid-row: 1; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cardSub { grid-row: 2; font-size: 11px; }
+  .rarityBadge { grid-row: 3; }
+  .countBadge { position: static; grid-column: 3; grid-row: 1; justify-self: end; }
+  .collectBtn, .lockedNote { grid-column: 3; grid-row: 2 / 4; align-self: center; width: auto; min-width: 96px; margin: 0; }
+  .spareActions, .burnConfirm, .sellRow { grid-column: 2 / -1; margin-top: 6px; }
+  .spareActions { flex-direction: row; gap: 6px; }
+  .collectBtn, .burnBtn, .sellBtn, .burnYes, .burnNo, .sellYes { min-height: 36px; font-size: 12px; }
+  .burnBtn { margin: 0; }
+}

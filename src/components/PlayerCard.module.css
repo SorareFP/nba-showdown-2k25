@@ -90,3 +90,34 @@
   .chart { font-size: 10px; }
   .cardArt { height: 70px; }
 }
+
+/* -- PHONES: a one-line row, the full card on tap ---------------------------
+   Same markup, laid out as a row by grid areas: thumbnail; name, team and
+   salary; the three numbers; the actions on the right. The boosts and the roll
+   chart live in the lightbox the row already opens. Measured before, on a
+   375px phone (2026-09-10): Team Builder ran 1,895px with 5,877 pieces of
+   text under 12px. Breakpoint = PHONE_QUERY in src/ui/useIsPhone.js. */
+@media (max-width: 768px) {
+  .card {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr) auto;
+    grid-template-areas: "art head act" "art stats act";
+    column-gap: 10px; row-gap: 4px;
+    align-items: center;
+    padding: 6px 8px;
+    height: auto;
+  }
+  .card:hover { transform: none; box-shadow: none; }
+  .cardArt { grid-area: art; width: 44px; height: 44px; margin: 0; border-radius: 8px; }
+  .header { grid-area: head; margin: 0; gap: 8px; align-items: center; min-width: 0; }
+  .header > div { min-width: 0; }
+  .name { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .team { font-size: 11px; margin: 0; }
+  .salary { font-size: 11px; padding: 2px 7px; }
+  .stats { grid-area: stats; margin: 0; gap: 4px; }
+  .stat { flex: 0 0 auto; display: flex; align-items: baseline; gap: 3px; padding: 2px 6px; }
+  .statLabel { display: inline; font-size: 10px; }
+  .statValue { display: inline; font-size: 13px; }
+  .boosts, .chart { display: none; }
+  .actions { grid-area: act; margin: 0; padding: 0; width: 104px; }
+}

@@ -16,7 +16,7 @@ export default function PlayerCard({ card, compact = false, actions, highlighted
     >
       {imgUrl && !compact && (
         <Holo className={styles.cardArt} active={holoRegionsFor(card).length > 0} regions={holoRegionsFor(card)} idle={false}>
-          <img src={imgUrl} alt={card.name} className={styles.cardArtImg}
+          <img src={imgUrl} alt={card.name} className={styles.cardArtImg} loading="lazy"
             onError={fallbackTo(imgFull, e => { e.target.parentElement.style.display = 'none'; })} />
         </Holo>
       )}

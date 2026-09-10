@@ -201,3 +201,16 @@
 .navFavorite + .navBalance { margin-left: 12px; }
 .navCrest { width: 20px; height: 20px; object-fit: contain; }
 .navCrestDot { width: 16px; height: 16px; border-radius: 50%; }
+
+/* -- PHONES: the six sections as one sideways row ----------------------------
+   They wrapped to two rows at 13px. Breakpoint = PHONE_QUERY. */
+@media (max-width: 768px) {
+  .subNav {
+    flex-wrap: nowrap; overflow-x: auto;
+    margin: 0 -0.5rem; padding: 0 0.5rem 8px;
+    scrollbar-width: none;
+  }
+  .subNav::-webkit-scrollbar { display: none; }
+  .subNavBtn { flex: 0 0 auto; min-height: 40px; padding: 6px 12px; }
+  .navBalance { flex: 0 0 auto; padding-left: 8px; }
+}

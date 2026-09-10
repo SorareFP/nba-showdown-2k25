@@ -94,3 +94,28 @@
 
 /* Above the legendary foil (HoloSheen paints its layers at z-index 2). */
 .rarity { z-index: 3; }
+
+/* -- PHONES: listing rows ----------------------------------------------------
+   Thumbnail, name and team, the ask; Buy (or Take down) on the right at a
+   40px target. Breakpoint = PHONE_QUERY in src/ui/useIsPhone.js. */
+@media (max-width: 768px) {
+  .grid { display: flex; flex-direction: column; gap: 6px; }
+  .card {
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr) auto;
+    column-gap: 10px; row-gap: 1px;
+    align-items: center;
+    padding: 6px 8px;
+    border-width: 1px 1px 1px 4px;
+  }
+  .card > * { grid-column: 2; margin: 0; }
+  .art { grid-column: 1; grid-row: 1 / span 4; width: 48px; height: 48px; aspect-ratio: auto; }
+  .rarity { display: none; }
+  .name { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .price { font-size: 15px; }
+  .buy, .delist {
+    grid-column: 3; grid-row: 1 / span 4;
+    width: auto; min-width: 88px; min-height: 40px; margin: 0; padding: 0 12px;
+  }
+  .search { min-height: 40px; font-size: 16px; }
+}

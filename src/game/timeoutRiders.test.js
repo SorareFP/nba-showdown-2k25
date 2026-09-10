@@ -61,3 +61,29 @@ describe('the timeout riders name a player', () => {
     expect(getPS(two.game, 'A', a[0].id).minutes).toBe(4);
   });
 });
+
+// ATO Masterpiece fired on slot 0 at 3PT for the same reason (the user,
+// 2026-09-10: "ATO Masterpiece auto-fires instead of letting me choose who to
+// play it on"). It names a shooter AND a shot.
+describe('ATO Masterpiece names its shooter and its shot', () => {
+  it('refuses without a player or a shot type, then fires the named player\'s chosen check', () => {
+    const g = timeoutBoard();
+    getTeam(g, 'A').hand = ['ato_masterpiece'];
+    getTeam(g, 'B').hand = [];                                   // no answer: the check resolves at once
+    expect(execCard(g, 'A', 'ato_masterpiece', {}).msg).toMatch(/Choose one of your players/);
+    expect(execCard(g, 'A', 'ato_masterpiece', { checkType: 'paint' }).msg).toMatch(/Choose one of your players/);
+    expect(execCard(g, 'A', 'ato_masterpiece', { playerIdx: 3 }).msg).toMatch(/Choose a 3PT or Paint check/);
+
+    const a = getTeam(g, 'A').starters;
+    const paint = execCard(g, 'A', 'ato_masterpiece', { playerIdx: 3, checkType: 'paint' });
+    expect(paint.ok).toBe(true);
+    expect(getPS(paint.game, 'A', a[3].id).pnta).toBe(1);
+    expect(getPS(paint.game, 'A', a[0].id).pnta || 0).toBe(0);    // slot 0 is not the default any more
+    expect(getPS(paint.game, 'A', a[3].id).threepa || 0).toBe(0);
+
+    const three = execCard(g, 'A', 'ato_masterpiece', { playerIdx: 1, checkType: '3pt' });
+    expect(three.ok).toBe(true);
+    expect(getPS(three.game, 'A', a[1].id).threepa).toBe(1);
+    expect(getPS(three.game, 'A', a[1].id).pnta || 0).toBe(0);
+  });
+});

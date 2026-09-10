@@ -292,9 +292,15 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
 
     case 'ato_masterpiece': {
       if (g.timeoutActive !== teamKey) return fail('Play during your Timeout');
-      const atoType = opts.checkType === 'paint' ? 'paint' : '3pt';
+      // CHOSEN, like the other timeout riders. `idx` defaults to slot 0 for
+      // every card and the board sent no choice, so the card fired on whoever
+      // sat in slot 0, at 3PT (the user, 2026-09-10: "ATO Masterpiece
+      // auto-fires instead of letting me choose who to play it on").
+      if (opts.playerIdx == null || !myT.starters[opts.playerIdx]) return fail('Choose one of your players');
+      if (opts.checkType !== '3pt' && opts.checkType !== 'paint') return fail('Choose a 3PT or Paint check');
+      const atoType = opts.checkType;
       announceCheck(g, {
-        teamKey, playerIdx: idx, type: atoType, bonus: 2 + _assistShotBonus,
+        teamKey, playerIdx: opts.playerIdx, type: atoType, bonus: 2 + _assistShotBonus,
         cardLabel: 'ATO Masterpiece: out of the huddle',
       });
       break;

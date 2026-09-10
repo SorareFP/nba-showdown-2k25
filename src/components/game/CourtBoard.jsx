@@ -824,6 +824,26 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
     opts.targetIdx = eligible[pick].origIdx;
   }
 
+  // ── ATO Masterpiece: who takes the shot out of the huddle, and which ────
+  // It fired on slot 0 at 3PT because nothing here asked (the user,
+  // 2026-09-10: "ATO Masterpiece auto-fires instead of letting me choose who
+  // to play it on"). The engine now refuses it without both choices.
+  if (cardId === 'ato_masterpiece') {
+    const sgn = n => (n > 0 ? `+${n}` : `${n}`);
+    // Each row already prints the line and both boosts, so no extra info.
+    const shooters = filterStarters(myT.starters, p => Boolean(p));
+    const who = await pickFiltered(shooters, 'ATO Masterpiece — who takes the shot out of the huddle? (+2)', teamKey);
+    if (who === null) return null;
+    opts.playerIdx = who;
+    const p = myT.starters[who];
+    opts.checkType = await ask({
+      title: `${p.name}: which shot?`,
+      body: `Shot line ${p.shotLine}. A 3PT check at ${sgn((p.threePtBoost || 0) + 2)} or a Paint check at ${sgn((p.paintBoost || 0) + 2)}, before the defender's contest.`,
+      confirmLabel: '3PT check',
+      cancelLabel: 'Paint check',
+    }) ? '3pt' : 'paint';
+  }
+
   // ── Fresh Legs: up to two chosen players shed 4 minutes ────────────────
   if (cardId === 'fresh_legs') {
     const minsOf = p => getPS(game, teamKey, p.id)?.minutes || 0;

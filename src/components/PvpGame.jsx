@@ -506,7 +506,7 @@ export default function PvpGame({ roomCode, myRole, onLeave }) {
       <div className={styles.layout}>
         <Scoreboard game={localGame} pvpMode={true} myTeamKey={myTeamKey} isMyTurn={isMyTurn} />
         <GameLog log={localGame.log} />
-        <AnalyticsPanel analytics={localGame.analytics} />
+        <div className={styles.analyticsSlot}><AnalyticsPanel analytics={localGame.analytics} /></div>
 
         {/* Pending shot check / reaction banner — below game log for visibility */}
         {localGame.pendingShotCheck && (() => {

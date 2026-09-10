@@ -161,7 +161,7 @@
 @media (max-width: 768px) {
   .pool { display: flex; flex-direction: column; gap: 6px; max-height: none; overflow: visible; }
   .filters {
-    position: sticky; top: 48px; z-index: 40;
+    position: sticky; top: var(--phone-header-h); z-index: 40;
     flex-direction: row; flex-wrap: nowrap; overflow-x: auto;
     gap: 6px; margin: 0 -0.5rem 8px; padding: 8px 0.5rem;
     background: var(--navy);

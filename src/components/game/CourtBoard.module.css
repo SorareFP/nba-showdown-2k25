@@ -457,3 +457,46 @@
 
 /* The lineup card's game line: tonight's points, boards, dimes, plus-minus. */
 .blindPickLine { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+
+/* -- PHONES: the phase bar sticks, the hand folds into a strip ---------------
+   Measured before on a 375px phone (2026-09-10): the court started 593px down
+   the page, under the scoreboard (127), the log and analytics, the phase bar
+   (83) and the hand (232), and was itself 536px tall. Now the header,
+   scoreboard and phase bar stay pinned while the court scrolls under them,
+   and the hand is one sideways strip of cards: the playable ones lit orange,
+   the rest dimmed with their reason, as the user asked ("folded at the top,
+   lighting up when able to be played"). Breakpoint = PHONE_QUERY. */
+@media (max-width: 768px) {
+  .phaseBar {
+    position: sticky; top: calc(var(--phone-header-h) + var(--phone-score-h) + 4px); z-index: 44;
+    flex-wrap: nowrap; gap: 6px; padding: 6px 8px;
+    backdrop-filter: blur(8px);
+  }
+  .phaseInfo { flex: 1; min-width: 0; }
+  .phaseLabel, .phaseSub { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .phaseLabel { font-size: 11px; }
+  .phaseSub { font-size: 10px; }
+  .phaseCtrls {
+    flex-wrap: nowrap; gap: 6px; flex-shrink: 0; max-width: 72%;
+    overflow-x: auto; scrollbar-width: none;
+  }
+  .phaseCtrls::-webkit-scrollbar { display: none; }
+  /* The whose-turn label and pass count are bare spans: keep them one line. */
+  .phaseCtrls > span { white-space: nowrap; font-size: 11px; flex-shrink: 0; }
+  .segScore { display: none; }
+  .passBtn, .ctaBtn { min-height: 40px; padding: 0 10px; font-size: 12px; white-space: nowrap; flex-shrink: 0; }
+
+  .handPanel { max-height: none; }
+  .handTitle { padding: 4px 8px; }
+  .handList {
+    flex-direction: row; overflow-x: auto; overflow-y: hidden; max-height: none;
+    gap: 6px; padding: 6px;
+    scroll-snap-type: x proximity; scrollbar-width: none;
+  }
+  .handList::-webkit-scrollbar { display: none; }
+  .hcard { flex: 0 0 136px; scroll-snap-align: start; }
+  .hcard:not(.hdim) { box-shadow: 0 0 0 1px rgba(234, 88, 12, 0.6), 0 0 12px rgba(234, 88, 12, 0.25); }
+  .hcardStaged { box-shadow: 0 0 0 2px #4ADE80, 0 4px 16px rgba(74, 222, 128, 0.25); }
+  .hcardIconBtn { width: 28px; height: 28px; font-size: 13px; }
+  .confirmBtn { min-height: 32px; font-size: 11px; }
+}

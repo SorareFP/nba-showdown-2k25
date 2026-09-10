@@ -88,3 +88,34 @@
   .badge { font-size: 9px; padding: 2px 8px; }
   .tracks { flex-wrap: wrap; gap: 4px; justify-content: center; }
 }
+
+/* -- PHONES: a sticky strip ---------------------------------------------------
+   Both scores, the quarter and section, and the assist and rebound tracks,
+   pinned under the header while the court scrolls beneath. The phase line and
+   turn detail are dropped here because the phase bar directly below says the
+   same thing. Measured before (2026-09-10): 127px, and it scrolled away with
+   everything else, so the score was off screen for most of every section. */
+@media (max-width: 768px) {
+  .board {
+    position: sticky; top: var(--phone-header-h); z-index: 45;
+    box-sizing: border-box; height: var(--phone-score-h);
+    grid-template-columns: 1fr auto 1fr; gap: 6px;
+    padding: 4px 10px; border-radius: 10px;
+    background: rgba(21, 34, 56, 0.97);
+    backdrop-filter: blur(8px);
+    overflow: hidden;
+  }
+  .team { gap: 0; min-width: 0; }
+  .teamName { font-size: 10px; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+  .score { font-size: 26px; letter-spacing: -1px; }
+  .meta, .phase, .turnDetail { display: none; }
+  .center { gap: 3px; }
+  .badge { font-size: 10px; padding: 2px 8px; }
+  .tracks { gap: 6px; flex-wrap: nowrap; }
+  .trackVal { font-size: 13px; }
+  .trackLabel { font-size: 8px; }
+  .rebDiff { min-width: 64px; gap: 1px; }
+  .rebLabel, .rebThresholds { display: none; }
+  .rebTotal { font-size: 10px; }
+  .rebDiffVal { font-size: 9px; }
+}

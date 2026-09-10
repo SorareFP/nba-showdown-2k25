@@ -176,7 +176,7 @@
    open. Breakpoint = PHONE_QUERY in src/ui/useIsPhone.js. */
 @media (max-width: 768px) {
   .filters {
-    position: sticky; top: 48px; z-index: 40;
+    position: sticky; top: var(--phone-header-h); z-index: 40;
     flex-wrap: nowrap; overflow-x: auto;
     gap: 6px; margin: 0 -0.5rem; padding: 8px 0.5rem;
     background: var(--navy);

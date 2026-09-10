@@ -497,7 +497,8 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
       </div>
       <Scoreboard game={game} />
       <GameLog log={game.log} />
-      <AnalyticsPanel analytics={game.analytics} />
+      {/* Below the court on a phone (PlayTab.module.css .analyticsSlot). */}
+      <div className={styles.analyticsSlot}><AnalyticsPanel analytics={game.analytics} /></div>
       <CourtBoard
         game={game}
         setGame={handlers.setGame}

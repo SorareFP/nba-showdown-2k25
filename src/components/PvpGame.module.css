@@ -229,3 +229,8 @@
     text-align: center;
   }
 }
+
+/* Same as PlayTab: analytics below the court on a phone. */
+@media (max-width: 768px) {
+  .analyticsSlot { order: 10; }
+}

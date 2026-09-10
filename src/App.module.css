@@ -177,7 +177,7 @@
 .bottomNav, .sheetBackdrop, .short { display: none; }
 
 @media (max-width: 768px) {
-  .header { padding: 6px 10px; min-height: 48px; gap: 8px; }
+  .header { padding: 6px 10px; min-height: 0; height: var(--phone-header-h); gap: 8px; }
   .nav { display: none; }
   .logo { gap: 8px; min-width: 0; }
   .logoImg { width: 30px; height: 30px; }

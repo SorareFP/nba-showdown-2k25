@@ -34,3 +34,10 @@
 @media (max-width: 480px) {
   .deckPickers { grid-template-columns: 1fr; }
 }
+
+/* Analytics is reference, not play: on a phone it moves below the court so
+   the board starts sooner. The game log stays above, since its one line is
+   the latest thing that happened. */
+@media (max-width: 768px) {
+  .analyticsSlot { order: 10; }
+}

@@ -15,6 +15,7 @@ vi.mock('../firebase/CardStatsProvider.jsx', () => ({
 vi.mock('../firebase/collection.js', () => ({ getUserData: async () => null, loadClaims: async () => ({}) }));
 vi.mock('../firebase/seasons.js', () => ({ listSeasons: async () => [] }));
 vi.mock('../firebase/leagues.js', () => ({ listMyLeagues: async () => [], seasonOfLeague: () => null }));
+vi.mock('../firebase/games.js', () => ({ loadRemoteGame: async () => null }));
 
 import HomeTab from './HomeTab.jsx';
 

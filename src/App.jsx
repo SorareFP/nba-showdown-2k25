@@ -383,6 +383,7 @@ function AppInner() {
             {playMounted.current && (
               <div style={{ display: tab === 'play' ? 'block' : 'none' }}>
                 <PlayTab
+                  active={tab === 'play'}
                   teamA={teamA}
                   teamB={teamB}
                   preset={seasonPreset}

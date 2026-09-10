@@ -18,8 +18,9 @@ import { useLightbox } from './CardLightbox.jsx';
 import { getUserData, loadClaims } from '../firebase/collection.js';
 import { listSeasons } from '../firebase/seasons.js';
 import { listMyLeagues, seasonOfLeague } from '../firebase/leagues.js';
+import { loadRemoteGame } from '../firebase/games.js';
 import { collectedKeys, collectableKeys } from '../game/collections.js';
-import { readLocalGame, describeSave } from '../game/gameSave.js';
+import { readLocalGame, describeSave, newerSave } from '../game/gameSave.js';
 import { getPlayerThumbUrl, getPlayerImageUrl, getStratThumbPath, getStratImagePath, fallbackTo } from '../game/cardImages.js';
 import { newsFor, closestGoals, seasonsInProgress, careerLeaders, careerTotals } from '../game/home.js';
 import Skeleton from '../ui/Skeleton.jsx';
@@ -43,12 +44,14 @@ export default function HomeTab({ collection = {}, starter = null, onGo = () => 
   const [seasons, setSeasons] = useState(null);   // null while loading
   const [allNews, setAllNews] = useState(false);
   const [saved] = useState(() => { try { return readLocalGame(); } catch { return null; } });
+  const [remoteSave, setRemoteSave] = useState(null);
 
   useEffect(() => {
     if (!uid) return undefined;
     let live = true;
     getUserData(uid).then(u => { if (live) setCoins(u?.currency ?? 0); }).catch(() => {});
     loadClaims(uid).then(c => { if (live) setClaimed(new Set(Object.keys(c ?? {}))); }).catch(() => { if (live) setClaimed(new Set()); });
+    loadRemoteGame(uid).then(r => { if (live) setRemoteSave(r); }).catch(() => {});
     Promise.all([listSeasons(uid).catch(() => []), listMyLeagues(uid).catch(() => [])]).then(([solo, leagues]) => {
       if (!live) return;
       const shared = leagues.filter(l => l.kind === 'season').map(league => ({ league, season: seasonOfLeague(league) }));
@@ -65,7 +68,11 @@ export default function HomeTab({ collection = {}, starter = null, onGo = () => 
   const news = newsFor({ starterOpened: !starter || starter.opened });
   const shownNews = allNews ? news : news.slice(0, NEWS_SHOWN);
   const first = user?.displayName?.split(' ')[0] ?? null;
-  const resume = saved?.game && !saved.game.done ? saved : null;
+  // The game in progress here OR on the account, whichever is newer, so a
+  // game started on the desktop shows up on the phone.
+  const liveSave = x => (x?.game && !x.game.done ? x : null);
+  const fromOther = newerSave(liveSave(saved), liveSave(remoteSave)) === 'remote';
+  const resume = fromOther ? remoteSave : liveSave(saved);
   const noCards = owned.size === 0;
 
   return (
@@ -88,10 +95,10 @@ export default function HomeTab({ collection = {}, starter = null, onGo = () => 
       {resume && (
         <section className={s.resume}>
           <div>
-            <div className={s.kicker}>Game in progress</div>
+            <div className={s.kicker}>{fromOther ? 'Game in progress on your other device' : 'Game in progress'}</div>
             <div className={s.resumeLine}>{describeSave(resume)}</div>
           </div>
-          <button className={s.primary} onClick={() => onGo('play')}>Resume game</button>
+          <button className={s.primary} onClick={() => onGo('play')}>{fromOther ? 'Resume here' : 'Resume game'}</button>
         </section>
       )}
 

@@ -5,7 +5,7 @@
 // write by isSelf, like teams, decks and seasons — a game mints nothing (the
 // payout is claimed separately by claimGameReward, which rolls its own dice
 // on the client anyway).
-import { doc, getDoc, setDoc, deleteDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, deleteDoc, runTransaction } from 'firebase/firestore';
 import { db } from './config.js';
 import { forFirestore } from '../game/gameSave.js';
 
@@ -28,6 +28,31 @@ export async function saveRemoteGame(uid, save) {
   if (!body) return false;
   await setDoc(ref(uid), body);
   return true;
+}
+
+/**
+ * THE GUARDED WRITE. Writes `save`, or deletes the copy for null, ONLY if the
+ * account's copy is no newer than `baseAt`: the stamp of the last copy this
+ * device wrote or took. A newer one was written by another device since — the
+ * desktop tab left open while the game went on on the phone — and landing on
+ * top of it would throw that progress away. So the write is refused and the
+ * account's copy handed back.
+ *
+ * Resolves `{ ok: true }`, `{ ok: false, newer }` when refused, or
+ * `{ ok: false }` when the save cannot be shaped for Firestore.
+ */
+export async function saveRemoteGameIfCurrent(uid, save, baseAt = 0) {
+  if (!uid) return { ok: false };
+  const body = save ? forFirestore(save) : null;
+  if (save && !body) return { ok: false };
+  return runTransaction(db, async tx => {
+    const snap = await tx.get(ref(uid));
+    const cur = snap.exists() ? snap.data() : null;
+    if (cur?.game && (cur.at || 0) > (baseAt || 0)) return { ok: false, newer: cur };
+    if (body) tx.set(ref(uid), body);
+    else if (snap.exists()) tx.delete(ref(uid));
+    return { ok: true };
+  });
 }
 
 export async function clearRemoteGame(uid) {

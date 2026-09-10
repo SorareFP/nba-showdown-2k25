@@ -14,8 +14,8 @@ import { useDialogs, notify } from '../ui/dialogs.jsx';
 import { playCrunch, playBuzzer } from '../game/gameAudio.js';
 import { useAuth } from '../firebase/AuthProvider.jsx';
 import { loadDecks } from '../firebase/savedDecks.js';
-import { loadRemoteGame, saveRemoteGame, clearRemoteGame } from '../firebase/games.js';
-import { readLocalGame, writeLocalGame, makeSave, newerSave, saveIsFixture, describeSave, createRemoteSaver } from '../game/gameSave.js';
+import { loadRemoteGame, saveRemoteGameIfCurrent } from '../firebase/games.js';
+import { readLocalGame, writeLocalGame, makeSave, describeSave, createRemoteSaver, newGameId, remoteDecision, fixtureDecision, samePreset } from '../game/gameSave.js';
 import { markPlayed } from '../game/firstRun.js';
 import CourtBoard from './game/CourtBoard.jsx';
 import GameOver from './game/GameOver.jsx';
@@ -124,16 +124,27 @@ function rollGate(game) {
  * is skipped entirely and the results screen leaves to the season instead of
  * offering Play Again — the schedule decides what comes next, not this tab.
  */
-export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null, onPresetFinish = null }) {
+export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null, onPresetFinish = null, active = true }) {
   // The save, read once. Its preset is the one PlayTab uses when App has none
   // — which after a reload is always.
   const [saved] = useState(readLocalGame);
   const [game, dispatch] = useReducer(gameReducer, saved?.game ?? null);
   const [restoredPreset, setRestoredPreset] = useState(saved?.preset ?? null);
   const livePreset = preset ?? restoredPreset;
-  const { ask } = useDialogs();
+  const { ask, toast } = useDialogs();
   const { user } = useAuth();
   const uid = user?.uid ?? null;
+  // WHICH GAME, AND HOW FRESH (see "Which game, and which copy" in
+  // gameSave.js). `gameId` names a non-fixture game; `heldAt` is the stamp of
+  // this device's newest save; `baseAt` the stamp of the last copy the
+  // account had from, or gave to, this device. An account write is refused
+  // once the account has moved past it (saveRemoteGameIfCurrent).
+  const gameId = useRef(saved?.id ?? null);
+  const heldAt = useRef(saved?.at ?? 0);
+  const baseAt = useRef(saved?.at ?? 0);
+  const syncRef = useRef(null);      // the current handleRemote, for the saver's refusals
+  const syncing = useRef(false);     // a decision (maybe a dialog) is in flight
+  const arriving = useRef(false);    // a season fixture is being set up
 
   // THE ROAMING COPY: one debounced writer per signed-in account, flushed
   // when the page is hidden or left so the last change is not lost inside
@@ -141,9 +152,17 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
   const remote = useRef(null);
   useEffect(() => {
     if (!uid) { remote.current = null; return undefined; }
+    // Guarded: refused when the account moved on since this device last saw
+    // it, and the account's copy is then weighed like any other (handleRemote).
+    const guarded = async s => {
+      const r = await saveRemoteGameIfCurrent(uid, s, baseAt.current);
+      if (r.ok && s) baseAt.current = s.at;
+      return r;
+    };
     const saver = createRemoteSaver({
-      save: s => saveRemoteGame(uid, s),
-      clear: () => clearRemoteGame(uid),
+      save: guarded,
+      clear: () => guarded(null),
+      onConflict: newer => syncRef.current?.(newer),
       onError: e => console.warn('game save (account):', e?.message ?? e),
     });
     remote.current = saver;
@@ -171,10 +190,13 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
   const written = useRef({ game: saved?.game ?? null, preset: saved?.preset ?? null });
   const hadGame = useRef(Boolean(saved?.game));
   useEffect(() => {
-    if (written.current.game === game && written.current.preset === livePreset) return;
+    // The preset by KEY (samePreset): opening a fixture from the season hands
+    // over a new object for the same fixture, and that is not a change.
+    if (written.current.game === game && samePreset(written.current.preset, livePreset)) return;
     written.current = { game, preset: livePreset };
-    const save = makeSave(game, livePreset);
+    const save = makeSave(game, livePreset, gameId.current);
     writeLocalGame(save);
+    if (save) heldAt.current = save.at;
     if (save) { hadGame.current = true; remote.current?.push(save); markPlayed(); }
     else if (hadGame.current) { hadGame.current = false; remote.current?.push(null); }
   }, [game, livePreset]);
@@ -191,35 +213,85 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
   const [aiLevel, setAiLevelState] = useState(() => loadAiLevel());
   const setAiLevel = id => { setAiLevelState(id); saveAiLevel(id); };
 
-  // THE RESUME PROMPT. On the first look at a signed-in account, a save on
-  // the account that is newer than anything here is a game from another
-  // device. Ask before taking it — taking it replaces whatever this device
-  // had, and the next change here overwrites the account's copy in turn.
-  // Same snapshot or older: this device is current and nothing happens.
-  // With a fixture arriving from the season screen the preset effect below
-  // makes its own, fixture-specific offer, so this one stands down.
-  useEffect(() => {
-    if (!uid || preset) return undefined;
-    let live = true;
-    (async () => {
-      const remoteSave = await loadRemoteGame(uid).catch(() => null);
-      if (!live || !remoteSave?.game || remoteSave.game.done) return;
-      if (newerSave(readLocalGame(), remoteSave) !== 'remote') return;
-      const yes = await ask({
-        title: 'Resume the game from your other device?',
-        body: describeSave(remoteSave),
-        confirmLabel: 'Resume here',
-        cancelLabel: 'Not now',
-      });
-      if (!live || !yes) return;
-      setOpponent('ai');
-      setRestoredPreset(remoteSave.preset ?? null);
-      dispatch({ type: 'SET', game: remoteSave.game });
-    })();
-    return () => { live = false; };
-    // Once per account, deliberately: the local copy is read fresh inside.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  // ── Meeting the account's copy ──────────────────────────────────────────
+  //
+  // On opening Play, on coming back to this tab or window, and when a write
+  // was refused, the account's copy is weighed by remoteDecision (gameSave.js).
+  // A newer copy of THIS game is simply taken: the same evening, further along
+  // on the other device. The user (2026-09-10): the game state did not "shift
+  // elegantly from desktop to mobile". Only a DIFFERENT game over one going
+  // here is asked about. A season fixture arriving makes its own call below.
+  const liveNow = useRef(null);
+  liveNow.current = { game, preset: livePreset };
+  const adopt = useCallback((s, note) => {
+    setOpponent('ai');
+    setRestoredPreset(s.preset ?? null);
+    gameId.current = s.id ?? null;
+    baseAt.current = s.at || 0;
+    heldAt.current = s.at || 0;
+    // Taken as it is: the same stamp here and on the account, no re-save.
+    written.current = { game: s.game, preset: s.preset ?? null };
+    hadGame.current = true;
+    writeLocalGame(s);
+    dispatch({ type: 'SET', game: s.game });
+    if (note) toast(note);
+  }, [toast]);
+  const handleRemote = useCallback(async remote => {
+    if (!remote || syncing.current || arriving.current) return;
+    const { game: g, preset: p } = liveNow.current;
+    const held = g ? { game: g, preset: p, ...(gameId.current ? { id: gameId.current } : {}), at: heldAt.current } : null;
+    const decision = remoteDecision({ held, remote, baseAt: baseAt.current });
+    if (decision === 'none') return;
+    syncing.current = true;
+    try {
+      if (decision === 'adopt') {
+        adopt(remote, 'Picked up where you left off on your other device.');
+      } else if (decision === 'drop') {
+        // Finished over there, and reported and paid over there: the stale
+        // copy here just goes, and the account keeps the finished one.
+        baseAt.current = remote.at || 0;
+        hadGame.current = false;
+        dispatch({ type: 'SET', game: null });
+        setRestoredPreset(null);
+        toast('That game was finished on your other device.');
+        if (p) onPresetFinish?.(null);
+      } else {
+        const yes = await ask({
+          title: 'Your other device has a newer game',
+          body: `${describeSave(remote)} Taking it discards the game you have here.`,
+          confirmLabel: 'Take it',
+          cancelLabel: 'Keep this one',
+        });
+        if (yes) adopt(remote, null);
+        else baseAt.current = remote.at || 0;   // this device's next move overwrites it
+      }
+    } finally {
+      syncing.current = false;
+    }
+  }, [adopt, ask, toast, onPresetFinish]);
+  syncRef.current = handleRemote;
+  const lastSync = useRef(0);
+  const syncNow = useCallback(() => {
+    if (!uid || Date.now() - lastSync.current < 2000) return;
+    lastSync.current = Date.now();
+    loadRemoteGame(uid).then(r => { if (r) syncRef.current?.(r); }).catch(() => {});
   }, [uid]);
+  useEffect(() => {
+    if (!uid) return undefined;
+    // Back to the tab (visibility), or back to the window (focus — the page
+    // was never hidden, only behind another window or on another monitor).
+    const onVisible = () => { if (document.visibilityState === 'visible') syncNow(); };
+    const onFocus = () => syncNow();
+    document.addEventListener('visibilitychange', onVisible);
+    window.addEventListener('focus', onFocus);
+    return () => {
+      document.removeEventListener('visibilitychange', onVisible);
+      window.removeEventListener('focus', onFocus);
+    };
+  }, [uid, syncNow]);
+  // Opening Play is a check too: this tab stays mounted behind the others, so
+  // coming back to it is not a mount.
+  useEffect(() => { if (active) syncNow(); }, [active, syncNow]);
 
   // ── The AI opponent's turn driver ─────────────────────────────────────────
   //
@@ -359,6 +431,9 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
   }, [over]);
 
   const startGame = useCallback((rA, rB, deckA, deckB) => {
+    // A new game, named, and superseding whatever the account held before now.
+    gameId.current = newGameId();
+    baseAt.current = Date.now();
     dispatch({ type: 'SET', game: newGame(rA, rB, deckA, deckB, { clutchDice: CLUTCH_DICE }) });
   }, []);
 
@@ -370,17 +445,15 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
   useEffect(() => {
     if (!preset) { presetRef.current = null; return; }
     if (presetRef.current === preset.key) return;
-    // THE SAME FIXTURE, ALREADY IN PROGRESS HERE — restored from the local
-    // save after a reload, then re-entered from the season screen. Keep it:
-    // dealing again would discard it, and the ask below would offer to.
-    if (game && !game.done && saveIsFixture({ game, preset: restoredPreset }, preset)) {
-      presetRef.current = preset.key;
-      return;
-    }
-    // A fresh preset from App supersedes anything restored.
-    setRestoredPreset(null);
     presetRef.current = preset.key;
+    // What is here, as a save: the game and the preset it was restored with.
+    const held = game ? { game, preset: restoredPreset, ...(gameId.current ? { id: gameId.current } : {}), at: heldAt.current } : null;
     const deal = () => {
+      // A fresh preset from App supersedes anything restored, and a new game
+      // supersedes whatever the account held before this moment.
+      setRestoredPreset(null);
+      gameId.current = null;
+      baseAt.current = Date.now();
       setOpponent('ai');
       // The season's own deck for your side; the opponent plays the default.
       // THE VISITOR PLACES FIRST. Leading a row gives information away, so
@@ -388,43 +461,49 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
       // (B) leads; on the road you do (the user, 2026-09-09).
       dispatch({ type: 'SET', game: newGame(preset.rosterA, preset.rosterB, preset.deckA ?? null, null, { clutchDice: CLUTCH_DICE, placementFirst: preset.humanIsHome ? 'B' : 'A' }) });
     };
-    // A sandbox game in progress is somebody's evening. Dealing a fixture over
-    // the top of it would discard it with no warning and no way back, so the
-    // fixture asks first and bounces to the season if the answer is no. The
-    // ask is a promise, so the effect sets up and lets the answer arrive.
+    // WHICH COPY TO PLAY (fixtureDecision): the newest copy of this fixture,
+    // here or on the account, is simply played. The stale phone copy used to
+    // win, and a different game here used to hide the account's copy. A game
+    // in progress that the fixture would replace is somebody's evening, so that
+    // alone is asked about, and "no" bounces back to the season.
     let live = true;
-    if (!game || game.done) {
-      // The fixture may be in progress on another device — the phone it was
-      // started on. Offer that copy before dealing a fresh one.
-      (async () => {
-        const remoteSave = uid ? await loadRemoteGame(uid).catch(() => null) : null;
+    let decided = false;
+    arriving.current = true;
+    const bounce = () => { presetRef.current = null; onPresetFinish?.(null); };
+    (async () => {
+      try {
+        const remote = uid ? await loadRemoteGame(uid).catch(() => null) : null;
         if (!live) return;
-        if (remoteSave?.game && !remoteSave.game.done && saveIsFixture(remoteSave, preset)) {
-          const yes = await ask({
-            title: 'Resume this fixture from your other device?',
-            body: describeSave(remoteSave),
-            confirmLabel: 'Resume here',
-            cancelLabel: 'Start over',
-          });
-          if (!live) return;
-          if (yes) { setOpponent('ai'); dispatch({ type: 'SET', game: remoteSave.game }); return; }
+        const d = fixtureDecision({ held, remote, preset });
+        if (d.use === 'finished') {
+          decided = true;
+          toast('This fixture was finished on your other device. Record the result there.', { tone: 'error' });
+          bounce();
+          return;
         }
-        deal();
-      })();
-      return () => { live = false; };
-    }
-    ask({
-      title: 'Start this season fixture?',
-      body: 'The game you have going will be discarded.',
-      confirmLabel: 'Discard and play the fixture',
-      cancelLabel: 'Keep my game',
-      tone: 'danger',
-    }).then(yes => {
-      if (!live) return;
-      if (yes) deal();
-      else { presetRef.current = null; onPresetFinish?.(null); }
-    });
-    return () => { live = false; };
+        if (d.use === 'local') { decided = true; return; }
+        if (d.discards) {
+          const yes = await ask(d.use === 'remote'
+            ? { title: 'Resume this fixture from your other device?', body: `${describeSave(d.save)} The game you have going here will be discarded.`, confirmLabel: 'Resume the fixture', cancelLabel: 'Keep my game', tone: 'danger' }
+            : { title: 'Start this season fixture?', body: 'The game you have going will be discarded.', confirmLabel: 'Discard and play the fixture', cancelLabel: 'Keep my game', tone: 'danger' });
+          if (!live) return;
+          decided = true;
+          if (!yes) { bounce(); return; }
+        }
+        decided = true;
+        if (d.use === 'remote') adopt(d.save, 'Picked up where you left off on your other device.');
+        else deal();
+      } finally {
+        if (live) arriving.current = false;
+      }
+    })();
+    // StrictMode runs this twice on a first mount. A run cut short before it
+    // decided hands the fixture back, so the second run can take it.
+    return () => {
+      live = false;
+      arriving.current = false;
+      if (!decided) presetRef.current = null;
+    };
     // `preset` alone, deliberately: `game` is read once, when a preset first
     // arrives, and listing it would re-run this on every roll of the game it
     // just dealt.

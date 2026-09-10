@@ -23,6 +23,11 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
+    id: 'device-handoff', date: '2026-09-10', title: 'Pick up on any device',
+    body: 'Start a game or a season fixture on your desktop and carry on from your phone, or the other way round: the newest copy of the game is picked up by itself, and a device left open can no longer overwrite the one you moved to.',
+    to: 'play', cta: 'Play a game',
+  },
+  {
     id: 'placement-undo', date: '2026-09-10', title: 'Undo a placement',
     body: 'Put the wrong player on the floor? Take it back. Against the coach, until you place your next player; in PvP, until your opponent places.',
     to: 'play', cta: 'Play a game',

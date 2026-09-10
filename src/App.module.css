@@ -168,24 +168,94 @@
   width: 100%;
 }
 
-@media (max-width: 700px) {
-  .header { flex-direction: column; padding: 0.75rem 1rem; min-height: auto; gap: 0.5rem; }
-  .nav { flex-wrap: wrap; justify-content: center; gap: 3px; }
-  .navBtn { padding: 5px 10px; font-size: 12px; }
-  .main { padding: 0.75rem; }
-  .logoImg { width: 34px; height: 34px; }
-  .logoTitle { font-size: 14px; }
-  .logoSub { font-size: 10px; }
+/* ── PHONES ────────────────────────────────────────────────────────────────
+   The breakpoint is PHONE_QUERY in src/ui/useIsPhone.js — keep them equal.
+   Below it the header is one 48px row (logo, sound, account), the sections
+   move to a bottom bar, and the banners shed their explanations. Measured on
+   a 375px phone before this (2026-09-10): 330px of header and banners before
+   any content, the seven tabs wrapped to three rows of 11px pills. */
+.bottomNav, .sheetBackdrop, .short { display: none; }
+
+@media (max-width: 768px) {
+  .header { padding: 6px 10px; min-height: 48px; gap: 8px; }
+  .nav { display: none; }
+  .logo { gap: 8px; min-width: 0; }
+  .logoImg { width: 30px; height: 30px; }
+  .logoTitle { font-size: 14px; white-space: nowrap; }
+  .logoSub { display: none; }
+  .main { padding: 0.5rem 0.5rem calc(76px + env(safe-area-inset-bottom, 0px)); }
+
+  .long { display: none; }
+  .short { display: inline; }
+  .betaBanner { font-size: 11px; padding: 3px 10px; }
+  .starterBand, .firstRun {
+    font-size: 12px; gap: 8px; padding: 6px 12px;
+    flex-wrap: nowrap; justify-content: space-between; text-align: left;
+  }
+  .firstRun { padding-right: 38px; }
+  .starterBandBtn, .firstRunBtn { padding: 9px 12px; font-size: 12px; }
+  .firstRunDismiss { font-size: 22px; padding: 8px; right: 2px; }
+
+  .bottomNav {
+    display: flex;
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 120;
+    gap: 2px;
+    padding: 4px 6px calc(4px + env(safe-area-inset-bottom, 0px));
+    background: rgba(10, 22, 40, 0.97);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid var(--border);
+  }
+  .sheetBackdrop {
+    display: block;
+    position: fixed; inset: 0; z-index: 115;
+    background: rgba(0, 0, 0, 0.5);
+    animation: sheetFade var(--dur-beat) var(--ease-out) both;
+  }
 }
 
-@media (max-width: 420px) {
-  .header { padding: 0.5rem 0.75rem; }
-  .nav { gap: 2px; }
-  .navBtn { padding: 4px 7px; font-size: 11px; }
-  .main { padding: 0.5rem; }
-  .logoIcon { font-size: 22px; }
-  .logoTitle { font-size: 13px; }
+.bnBtn {
+  flex: 1 1 0; min-width: 0; min-height: 52px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+  background: transparent; color: var(--text-muted);
+  border: none; border-radius: 10px;
+  font-size: 11px; font-weight: 600;
+  position: relative;
+  transition: color var(--dur-quick) var(--ease-out), background var(--dur-quick) var(--ease-out);
 }
+.bnIcon { font-size: 20px; line-height: 1; }
+.bnLabel { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.bnActive { color: var(--text); background: var(--card-bg); }
+.bnActive::before {
+  content: ''; position: absolute; top: 0; left: 30%; right: 30%;
+  height: 2px; border-radius: 2px; background: var(--orange);
+}
+.bnDot {
+  position: absolute; top: 6px; left: calc(50% + 8px);
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--orange); box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.35);
+}
+
+/* The More sheet rises from under the bar and stops above it, so the bar
+   stays visible and the More button still closes it. */
+.sheet {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 10px 8px calc(72px + env(safe-area-inset-bottom, 0px));
+  background: #0f1d33;
+  border-top: 1px solid var(--border);
+  border-radius: 16px 16px 0 0;
+  animation: sheetUp var(--dur-beat) var(--ease-out) both;
+}
+.sheetItem {
+  display: flex; align-items: center; gap: 14px;
+  min-height: 52px; padding: 0 16px;
+  background: transparent; color: var(--text);
+  border: none; border-radius: 10px;
+  font-size: 15px; font-weight: 600; text-align: left;
+}
+.sheetItem:active, .sheetActive { background: var(--card-bg); }
+@keyframes sheetUp { from { transform: translateY(100%); } to { transform: none; } }
+@keyframes sheetFade { from { opacity: 0; } to { opacity: 1; } }
 
 /* The Collection tab's "cards waiting" dot. */
 .navDot {

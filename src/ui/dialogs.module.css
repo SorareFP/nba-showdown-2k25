@@ -166,3 +166,13 @@
 }
 .askInput:focus { outline: none; border-color: var(--orange); }
 .askConfirm:disabled { opacity: 0.45; cursor: not-allowed; }
+
+/* Above the phone's bottom bar (App.module.css), which would otherwise sit
+   on top of every toast. Same breakpoint as PHONE_QUERY. */
+@media (max-width: 768px) {
+  .toastHost {
+    left: 12px; right: 12px;
+    bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+    max-width: none;
+  }
+}

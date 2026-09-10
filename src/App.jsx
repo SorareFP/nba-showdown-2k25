@@ -24,6 +24,7 @@ import { ownedRoster } from './game/teamRules.js';
 import { CARD_MAP } from './game/cards.js';
 import styles from './App.module.css';
 import { hasPlayedBefore, markPlayed, PLAYED_EVENT } from './game/firstRun.js';
+import { phoneNavTabs } from './ui/phoneNav.js';
 
 // Tabs visible to logged-out users: THE FRONT DOOR AND THE RULES, nothing
 // that shows cards. The full card browser and a sandbox builder used to be
@@ -31,19 +32,21 @@ import { hasPlayedBefore, markPlayed, PLAYED_EVENT } from './game/firstRun.js';
 // the game on display to someone who owns none. The user (2026-09-08): "It
 // shouldn't show any cards and should push the user toward sign-up and the
 // starter pack."
+// `icon` and `short` are the phone bottom bar's: an icon over a one-word
+// label, because seven full labels at 11px wrapped to three rows (2026-09-10).
 const GUEST_TABS = [
-  { id: 'home',      label: '🏀 Welcome' },
-  { id: 'howtoplay', label: '📖 How to Play' },
+  { id: 'home',      label: '🏀 Welcome',     icon: '🏀', short: 'Welcome' },
+  { id: 'howtoplay', label: '📖 How to Play', icon: '📖', short: 'Rules' },
 ];
 // Tabs visible to logged-in users (cards/strats hidden to preserve pack surprise)
 const AUTH_TABS = [
-  { id: 'builder', label: '🏗 Team Builder' },
-  { id: 'play',    label: '🏀 Play' },
-  { id: 'season',  label: '📅 Season' },
-  { id: 'tournament', label: '🏆 Tournament' },
-  { id: 'pvp',     label: '⚔️ PvP' },
-  { id: 'collection', label: '💾 Collection' },
-  { id: 'howtoplay', label: '📖 How to Play' },
+  { id: 'builder', label: '🏗 Team Builder', icon: '🏗', short: 'Team' },
+  { id: 'play',    label: '🏀 Play',         icon: '🏀', short: 'Play' },
+  { id: 'season',  label: '📅 Season',       icon: '📅', short: 'Season' },
+  { id: 'tournament', label: '🏆 Tournament', icon: '🏆', short: 'Tournament' },
+  { id: 'pvp',     label: '⚔️ PvP',          icon: '⚔️', short: 'PvP' },
+  { id: 'collection', label: '💾 Collection', icon: '💾', short: 'Cards' },
+  { id: 'howtoplay', label: '📖 How to Play', icon: '📖', short: 'Rules' },
 ];
 
 function AppInner() {
@@ -90,6 +93,15 @@ function AppInner() {
     return () => window.removeEventListener(PLAYED_EVENT, done);
   }, []);
   const [helpSection, setHelpSection] = useState(null);
+  // The phone's More sheet (the sections that do not fit the bottom bar).
+  const [moreOpen, setMoreOpen] = useState(false);
+  useEffect(() => {
+    if (!moreOpen) return undefined;
+    const onKey = e => { if (e.key === 'Escape') setMoreOpen(false); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [moreOpen]);
+  const goTab = id => { setTab(id); setMoreOpen(false); };
   const playMounted = useRef(false);
   if (tab === 'play') playMounted.current = true;
 
@@ -174,6 +186,7 @@ function AppInner() {
   // A dot on the Collection tab while a card is waiting to be collected.
 
   const collectable = collectableKeys(collection ?? {}).size;
+  const phoneNav = phoneNavTabs(tabs);
 
   return (
     <div className={styles.app}>
@@ -214,7 +227,8 @@ function AppInner() {
       </header>
 
       <div className={styles.betaBanner}>
-        NBA Showdown 2026 is in beta — cards and collections are still subject to change.
+        <span className={styles.long}>NBA Showdown 2026 is in beta — cards and collections are still subject to change.</span>
+        <span className={styles.short}>Beta — cards and collections may still change.</span>
       </div>
       {/* THE FIRST THING A GUEST NEEDS TO KNOW. The starter pack, the
           collection, seasons and the roaming game all live on the account,
@@ -228,7 +242,7 @@ function AppInner() {
       {!user && !authLoading && tab !== 'home' && !tutorialMode && (
         <div className={styles.starterBand}>
           <span>
-            Your <strong>Starter Pack</strong> is ready — 20 players, 30 strategy cards and Unethical Hoops. <strong>Sign in with Google</strong> to open it.
+            Your <strong>Starter Pack</strong> is ready<span className={styles.long}> — 20 players, 30 strategy cards and Unethical Hoops. <strong>Sign in with Google</strong> to open it</span>.
           </span>
           <button className={styles.starterBandBtn} onClick={signIn}>Sign in with Google</button>
         </div>
@@ -237,7 +251,7 @@ function AppInner() {
       {user && starter && !starter.opened && tab !== 'collection' && !tutorialMode && (
         <div className={styles.starterBand}>
           <span>
-            Your <strong>Starter Pack</strong> is waiting{starter.favorite ? '' : ' — pick the team you support and open it'}. 20 players, 30 strategy cards and Unethical Hoops.
+            Your <strong>Starter Pack</strong> is waiting<span className={styles.long}>{starter.favorite ? '' : ' — pick the team you support and open it'}. 20 players, 30 strategy cards and Unethical Hoops</span>.
           </span>
           <button className={styles.starterBandBtn} onClick={() => setTab('collection')}>{starter.favorite ? 'Open it' : 'Claim it'}</button>
         </div>
@@ -245,7 +259,7 @@ function AppInner() {
       {!playedBefore && !tutorialMode && (
         <div className={styles.firstRun}>
           <span>
-            First time here? <strong>Play the tutorial</strong> — a guided quarter against the coach, about twelve minutes, that teaches placement, the card windows and rolling.
+            First time here?<span className={styles.long}> <strong>Play the tutorial</strong> — a guided quarter against the coach, about twelve minutes, that teaches placement, the card windows and rolling.</span>
           </span>
           <button className={styles.firstRunBtn} onClick={() => { setTutorialMode(true); setRulesOverTutorial(false); }}>Play the tutorial</button>
           <button className={styles.firstRunDismiss} onClick={() => { markPlayed(); }} aria-label="Dismiss">×</button>
@@ -345,6 +359,52 @@ function AppInner() {
           </>
         )}
       </main>
+
+      {/* THE PHONE'S BOTTOM BAR. Hidden above 768px by CSS, so desktop keeps
+          the header nav it has always had. Where thumbs reach, 52px targets,
+          padded into the safe area on notched phones. The top nav at 11px
+          wrapped seven pills to three rows and cost 110px before any content
+          (2026-09-10 survey). */}
+      <nav className={styles.bottomNav} aria-label="Sections">
+        {phoneNav.bar.map(t => (
+          <button
+            key={t.id}
+            className={`${styles.bnBtn} ${tab === t.id ? styles.bnActive : ''}`}
+            onClick={() => goTab(t.id)}
+            aria-current={tab === t.id ? 'page' : undefined}
+          >
+            <span className={styles.bnIcon} aria-hidden="true">{t.icon}</span>
+            <span className={styles.bnLabel}>{t.short}</span>
+            {t.id === 'collection' && collectable > 0 && <span className={styles.bnDot} aria-label={`${collectable} to collect`} />}
+          </button>
+        ))}
+        {phoneNav.more.length > 0 && (
+          <button
+            className={`${styles.bnBtn} ${phoneNav.more.some(t => t.id === tab) || moreOpen ? styles.bnActive : ''}`}
+            onClick={() => setMoreOpen(o => !o)}
+            aria-expanded={moreOpen}
+          >
+            <span className={styles.bnIcon} aria-hidden="true">☰</span>
+            <span className={styles.bnLabel}>More</span>
+          </button>
+        )}
+      </nav>
+      {moreOpen && (
+        <div className={styles.sheetBackdrop} onClick={() => setMoreOpen(false)}>
+          <div className={styles.sheet} role="dialog" aria-label="More sections" onClick={e => e.stopPropagation()}>
+            {phoneNav.more.map(t => (
+              <button
+                key={t.id}
+                className={`${styles.sheetItem} ${tab === t.id ? styles.sheetActive : ''}`}
+                onClick={() => goTab(t.id)}
+              >
+                <span className={styles.bnIcon} aria-hidden="true">{t.icon}</span>
+                {t.label.replace(/^\S+\s/, '')}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1399,10 +1399,13 @@ function BlindPickPhase({ game, setGame, pvpMode = false, myTeamKey = null, onDr
           const min = ps.minutes || 0;
           const fat = fatigueForMinutes(min);
           const hotCold = (ps.hot || 0) - (ps.cold || 0);
+          // Signed the way the other three boost labels in this file are: a
+          // negative printed as "3PT+-1" here until 2026-09-10.
+          const signed = n => `${n > 0 ? '+' : ''}${n}`;
           const boosts = [
-            p.threePtBoost ? `3PT+${p.threePtBoost}` : '',
-            p.paintBoost ? `Paint+${p.paintBoost}` : '',
-            p.defBoost ? `Def+${p.defBoost}` : '',
+            p.threePtBoost ? `3PT${signed(p.threePtBoost)}` : '',
+            p.paintBoost ? `Paint${signed(p.paintBoost)}` : '',
+            p.defBoost ? `Def${signed(p.defBoost)}` : '',
           ].filter(Boolean);
           const imgUrl = getPlayerThumbUrl(p.id, p.set);
           const imgFull = getPlayerImageUrl(p.id, p.set);

@@ -109,6 +109,7 @@ export default function HowToPlay({ scrollToSection, onStartTutorial, tutorialRu
           <p>Then <strong>Placement</strong>, one player at a time, in this order:</p>
           <p className={s.draftOrder}>A &rarr; B &rarr; B &rarr; A &rarr; A &rarr; B &rarr; B &rarr; A &rarr; A &rarr; B</p>
           <p>Each placement takes the <strong>next open row</strong>, and <strong>the two players in a row are the matchup</strong> — they guard each other for the whole section. Placement <em>is</em> the defensive assignment; there is no separate step. When you place into a row the opponent has already filled, the preview shows both directions of the pairing (your edge and theirs), so a late placement can counter what is already on the floor.</p>
+          <p>Put the wrong player down? <strong>↩ Undo</strong> in the bar takes back your last placement. Against the coach it lasts until you place your next player, and the coach's reply comes back with it, so the coach answers your corrected pick. In PvP it lasts until your opponent places. Playing a card, passing or locking ends it.</p>
           <p>Nobody re-deals the pairings afterwards. Only a <strong>switching card</strong> (High Screen &amp; Roll, Veer Switch, Switch Everything) or the Crunch Time <strong>timeout</strong> moves a defender. Matchup cards can be played alongside placement, and the matchup window carries on once the tenth player is down. Online PvP follows the same two steps, synchronised across the room.</p>
         </AccordionSection>
 

@@ -1,5 +1,5 @@
 import { rtdb } from './config.js';
-import { ref, set, get, update, onValue, off } from 'firebase/database';
+import { ref, set, get, update, onValue, off, runTransaction } from 'firebase/database';
 import { fixFromFirebase, prepareForFirebase } from './pvpGame.js';
 
 // ---------- helpers ----------
@@ -142,6 +142,29 @@ export async function writeGameState(code, gameState) {
   await update(ref(rtdb, `rooms/${code}/meta`), {
     lastActionAt: Date.now(),
   });
+}
+
+/**
+ * Write the game ONLY if the room still holds the game this client judged
+ * the write against: `stillCurrent(game)` sees the room's copy as it is at
+ * write time. For a write made out of turn, like a placement undo while the
+ * opponent is picking, which must not land on top of a move they made in the
+ * meantime. Resolves to whether it was written.
+ */
+export async function writeGameStateIf(code, gameState, stillCurrent) {
+  let applied = false;
+  const res = await runTransaction(ref(rtdb, `rooms/${code}/game`), cur => {
+    applied = false;
+    // The first pass can see an empty local cache; handing it back unchanged
+    // makes the server retry with the real value.
+    if (cur == null) return cur;
+    if (!stillCurrent(fixFromFirebase(cur))) return undefined;   // abort
+    applied = true;
+    return prepareForFirebase(gameState);
+  });
+  if (!(res.committed && applied)) return false;
+  await update(ref(rtdb, `rooms/${code}/meta`), { lastActionAt: Date.now() });
+  return true;
 }
 
 export async function writePrivateData(code, role, data) {

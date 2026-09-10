@@ -3,8 +3,9 @@ import { useAuth } from '../firebase/AuthProvider.jsx';
 import { useDialogs } from '../ui/dialogs.jsx';
 import {
   onGameState, onPrivateData, onRoomMeta,
-  writeGameState, writePrivateData, forfeitGame, abandonGame,
+  writeGameState, writeGameStateIf, writePrivateData, forfeitGame, abandonGame,
 } from '../firebase/pvpRoom.js';
+import { placementSnapshot, canUndoPlacement, undoPlacement, takenBackName } from '../game/placement.js';
 import {
   initializePvpGame, getWhoseTurn, extractPrivateData, stripPrivateData,
   fixFromFirebase, prepareForFirebase,
@@ -338,6 +339,23 @@ export default function PvpGame({ roomCode, myRole, onLeave }) {
     }
   }, [localGame, publicGame, myTeamKey, myRole, roomCode]);
 
+  // ── Undo my last placement (placement.js), until the opponent answers ──
+  // The snapshot is my game from just before the pick. Undoing is often out
+  // of turn (the opponent is up next), so it is written only if the room
+  // still holds exactly the game it was judged against; a pick or a card
+  // they got in first wins, and I am told.
+  const [placeUndo, setPlaceUndo] = useState(null);
+  const canUndoPlace = canUndoPlacement(localGame, placeUndo, { pvp: true });
+  const handleUndoPlace = useCallback(async () => {
+    if (!canUndoPlacement(localGame, placeUndo, { pvp: true })) return;
+    const seen = { step: localGame.placementStep ?? 10, logLen: (localGame.log ?? []).length };
+    const undone = stripPrivateData(undoPlacement(localGame, placeUndo));
+    setPlaceUndo(null);
+    const ok = await writeGameStateIf(roomCode, undone,
+      cur => (cur?.placementStep ?? 10) === seen.step && (cur?.log ?? []).length === seen.logLen);
+    if (!ok) toast('Too late to undo: your opponent has already moved.', { tone: 'error' });
+  }, [localGame, placeUndo, roomCode, toast]);
+
   // ── PvP Snake Placement: place one of my picks into the next open slot ─
   const handlePlacePlayer = useCallback(async (playerId) => {
     const step = publicGame.placementStep ?? 10;
@@ -406,6 +424,7 @@ export default function PvpGame({ roomCode, myRole, onLeave }) {
 
     const pubGame = stripPrivateData(clone);
     await writeGameState(roomCode, pubGame);
+    setPlaceUndo(placementSnapshot(localGame));   // the game before this pick
   }, [localGame, publicGame, privateData, myTeamKey, myRole, roomCode]);
 
   // ── End-game actions ────────────────────────────────────────────────────
@@ -544,6 +563,8 @@ export default function PvpGame({ roomCode, myRole, onLeave }) {
           onSpendRebound={handleSpendRebound}
           onDraftSubmit={handleDraftSubmit}
           onPlacePlayer={handlePlacePlayer}
+          onUndoPlace={canUndoPlace ? handleUndoPlace : null}
+          undoPlaceName={canUndoPlace ? takenBackName(localGame, placeUndo) : null}
           pvpMode={true}
           myTeamKey={myTeamKey}
           isMyTurn={isMyTurn}

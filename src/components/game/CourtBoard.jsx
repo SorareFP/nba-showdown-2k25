@@ -6,6 +6,7 @@ import { benchRest, passTurn } from '../../game/engine.js';
 import { salaryOrder } from '../../game/teamRules.js';
 import { getStrat } from '../../game/strats.js';
 import { aiDraftPick, aiPlacementPick } from '../../game/ai.js';
+import { placePlayer, placementSnapshot, canUndoPlacement, undoPlacement, takenBackName } from '../../game/placement.js';
 import styles from './CourtBoard.module.css';
 import { getPlayerImageUrl, getPlayerThumbUrl, getStratImagePath, getStratThumbPath, fallbackTo } from '../../game/cardImages.js';
 import { useLightbox } from '../CardLightbox.jsx';
@@ -20,34 +21,31 @@ function HelpBtn({ section }) {
   return <button className={styles.helpBtn} onClick={handleClick} title="How to Play">?</button>;
 }
 
-export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExecCard, onResolve, onSpendAssist, onSpendRebound, onDraftSubmit, onPlacePlayer, onTimeout = null, onEndTimeout = null, onSearchCrunch = null, pvpMode = false, myTeamKey = null, isMyTurn = true, defenceIsHuman = false, rollGate = null, aiIq = 1 }) {
+export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExecCard, onResolve, onSpendAssist, onSpendRebound, onDraftSubmit, onPlacePlayer, onUndoPlace = null, undoPlaceName = null, onTimeout = null, onEndTimeout = null, onSearchCrunch = null, pvpMode = false, myTeamKey = null, isMyTurn = true, defenceIsHuman = false, rollGate = null, aiIq = 1 }) {
   // ── Solo placement ─────────────────────────────────────────────────────────
   //
   // PvP passes a Firebase-backed onPlacePlayer; solo places locally with the
   // same rules. The AI takes its own steps a beat after the human, through
   // aiPlacementPick — counter-picking whatever just took the floor.
   const soloPlace = (playerId) => {
-    const g = JSON.parse(JSON.stringify(game));
-    const step = g.placementStep ?? 10;
-    if (step >= 10) return;
-    const order = g.placementOrder || ['A','B','B','A','A','B','B','A','A','B'];
-    const teamKey = order[step];
-    const team = teamKey === 'A' ? g.teamA : g.teamB;
-    const picks = teamKey === 'A' ? g.draft?.aPicks ?? [] : g.draft?.bPicks ?? [];
-    if (!picks.includes(playerId) || team.starters.find(pl => pl.id === playerId)) return;
-    const player = (team.roster || []).find(r => r.id === playerId);
-    if (!player) return;
-    team.starters.push(player);
-    g.placementStep = step + 1;
-    g.log = [...g.log, { team: teamKey, msg: `${player.name} takes the floor.` }];
-    if (g.placementStep === 10) {
-      g.matchupTurn = 'A';
-      g.matchupPasses = 0;
-      g.log = [...g.log, { team: null, msg: 'Placement complete — Matchup Strategy Phase.' }];
-    }
-    setGame(g);
+    const g = placePlayer(game, playerId);
+    if (g) setGame(g);
+    return Boolean(g);
   };
-  const placeHandler = onPlacePlayer ?? soloPlace;
+  // UNDO A PLACEMENT (placement.js). The snapshot is taken when YOU place,
+  // not when the coach does, so Undo means your last pick and brings the
+  // coach's reply back with it. PvP brings its own through the props.
+  const [placeUndo, setPlaceUndo] = useState(null);
+  const humanPlace = (playerId) => {
+    const snap = placementSnapshot(game);
+    if (soloPlace(playerId)) setPlaceUndo(snap);
+  };
+  const placeHandler = onPlacePlayer ?? humanPlace;
+  const soloUndo = !pvpMode && canUndoPlacement(game, placeUndo)
+    ? () => { setGame(undoPlacement(game, placeUndo)); setPlaceUndo(null); }
+    : null;
+  const undoPlace = pvpMode ? onUndoPlace : soloUndo;
+  const undoName = pvpMode ? undoPlaceName : (soloUndo ? takenBackName(game, placeUndo) : null);
 
   useEffect(() => {
     if (pvpMode) return;
@@ -87,7 +85,7 @@ export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExec
         const pick = await openModal({ teamKey: key, cardId: 'timeout_search', players: options.map(id => ({ id, name: getStrat(id)?.name ?? id })), label: 'Search the deck: take one crunch-time card, then shuffle' });
         if (pick === null) return;
         onSearchCrunch(key, options[pick]);
-      })} pvpMode={pvpMode} myTeamKey={myTeamKey} isMyTurn={isMyTurn} draftSelectedCount={draftSelected.length} />
+      })} pvpMode={pvpMode} myTeamKey={myTeamKey} isMyTurn={isMyTurn} draftSelectedCount={draftSelected.length} onUndoPlace={undoPlace} undoPlaceName={undoName} />
 
       {/* THE ANNOUNCED CHECK, AT THE TOP. It sat below the hands and the
           court, off the bottom of the screen on a laptop, and the other side
@@ -983,7 +981,7 @@ function SelectModal({ modal, game, onClose }) {
   );
 }
 
-function PhaseBar({ game, setGame, onEndSection, onTimeout = null, onEndTimeout = null, onSearchCrunch = null, pvpMode = false, myTeamKey = null, isMyTurn = true, draftSelectedCount = 0 }) {
+function PhaseBar({ game, setGame, onEndSection, onTimeout = null, onEndTimeout = null, onSearchCrunch = null, pvpMode = false, myTeamKey = null, isMyTurn = true, draftSelectedCount = 0, onUndoPlace = null, undoPlaceName = null }) {
   const { phase, quarter, section, matchupTurn, matchupPasses, scoringTurn, scoringPasses } = game;
   const rA = game.rollResults.A || [], rB = game.rollResults.B || [];
   // A player is "done" if they have a roll result OR they are blocked
@@ -1033,7 +1031,18 @@ function PhaseBar({ game, setGame, onEndSection, onTimeout = null, onEndTimeout 
           </span>
         </div>
         <div className={styles.phaseCtrls}>
-          <span style={{color:activeCol,fontWeight:600}}>Team {activeTeam}</span>
+          {/* On a phone the controls scroll sideways; with Undo up, the team
+              label and the surname give way so Lock stays on screen. */}
+          <span className={onUndoPlace ? styles.teamWhenUndo : undefined} style={{color:activeCol,fontWeight:600}}>Team {activeTeam}</span>
+          {onUndoPlace && (
+            <button
+              className={styles.passBtn}
+              onClick={onUndoPlace}
+              title={`Take ${undoPlaceName ?? 'your last placement'} back off the floor`}
+            >
+              ↩ Undo{undoPlaceName && <span className={styles.undoName}> {undoPlaceName.split(' ').slice(-1)[0]}</span>}
+            </button>
+          )}
           {!inPlacement && <span className={styles.passCount}>{matchupPasses}/2 passes</span>}
           <button className={styles.passBtn} onClick={pass} disabled={inPlacement || (pvpMode && !isMyTurn)}>Pass →</button>
           <button className={styles.ctaBtn} onClick={lock} disabled={inPlacement || (pvpMode && !isMyTurn) || Boolean(game.pendingChoice)} title={game.pendingChoice ? 'A Go Under check is waiting to be taken' : undefined}>Lock → Scoring</button>

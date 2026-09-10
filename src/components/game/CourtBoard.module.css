@@ -485,6 +485,8 @@
   .phaseCtrls > span { white-space: nowrap; font-size: 11px; flex-shrink: 0; }
   .segScore { display: none; }
   .passBtn, .ctaBtn { min-height: 40px; padding: 0 10px; font-size: 12px; white-space: nowrap; flex-shrink: 0; }
+  /* Placement undo: just "↩ Undo", and the team label steps aside for it. */
+  .undoName, .teamWhenUndo { display: none; }
 
   .handPanel { max-height: none; }
   .handTitle { padding: 4px 8px; }

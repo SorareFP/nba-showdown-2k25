@@ -132,6 +132,7 @@ export default function RulebookTab() {
           <li>When placing into a row the opponent has filled, the board previews both directions of the pairing.</li>
           <li>Nothing re-deals the pairings afterwards except a <strong>switching card</strong> or the Crunch Time <strong>timeout</strong>.</li>
           <li>Matchup cards may be played alongside placement; the window below continues once the tenth player is down.</li>
+          <li><strong>Undo</strong> takes back your last placement. Against the coach it lasts until you place your next player, and the coach's reply is taken back with it. In PvP it lasts until your opponent places. Any card, pass or lock ends it.</li>
         </ul>
 
         <div className={s.sub}>3. Matchup Card Window</div>

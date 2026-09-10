@@ -38,10 +38,11 @@ const VIEWS = [
   { key: 'market', label: 'Market' },
 ];
 
-export default function CollectionTab({ onLoadTeam, onCollectionChange }) {
+export default function CollectionTab({ onLoadTeam, onCollectionChange, initialView = null }) {
   const { user } = useAuth();
   const { ask } = useDialogs();
-  const [view, setView] = useState('teams');
+  // The home page opens a section directly (the Pack Shop, the collections).
+  const [view, setView] = useState(() => (VIEWS.some(v => v.key === initialView) ? initialView : 'teams'));
   const [teams, setTeams] = useState([]);
   const [decks, setDecks] = useState([]);
   const [collection, setCollection] = useState({});

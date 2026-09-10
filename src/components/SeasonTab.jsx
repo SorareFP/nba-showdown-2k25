@@ -80,12 +80,17 @@ export default function SeasonTab({
   onPlayFixture,
   pendingResult = null,
   onResultConsumed,
+  openSeasonId = null,
+  openLeagueId = null,
 }) {
   const { user } = useAuth();
   const { ask } = useDialogs();
   const uid = user?.uid ?? null;
   const [seasons, setSeasons] = useState([]);
   const [active, setActive] = useState(null);
+  // A season the home page asked for, opened on the first load and then
+  // forgotten, so a refresh later does not yank you back to it.
+  const wantSeason = useRef(openSeasonId);
   const [loading, setLoading] = useState(true);
   const [setup, setSetup] = useState(false);
   const [error, setError] = useState(null);
@@ -93,7 +98,7 @@ export default function SeasonTab({
   // one is open, the sub-screen for making or joining one, and the PvP room
   // a human-vs-human fixture is being played in.
   const [leagues, setLeagues] = useState([]);
-  const [activeLeague, setActiveLeague] = useState(null);
+  const [activeLeague, setActiveLeague] = useState(openLeagueId);
   const [shared, setShared] = useState(null);   // 'new' | 'join' | null
   const [room, setRoom] = useState(null);       // { code, role }
 
@@ -106,9 +111,14 @@ export default function SeasonTab({
       ]);
       setLeagues(mine.filter(l => l.kind === 'season'));
       setSeasons(list);
-      // Drop straight into the one season in progress — the common case is one.
+      // Drop straight into the season the home page asked for, else the one
+      // season in progress — the common case is one. Asked for a shared
+      // season, leave the solo list alone behind it.
       const live = list.filter(s => s.phase !== PHASE.done);
-      setActive(prev => (prev ? list.find(s => s.id === prev.id) ?? null : live.length === 1 ? live[0] : null));
+      const wanted = wantSeason.current ? list.find(s => s.id === wantSeason.current) ?? null : null;
+      wantSeason.current = null;
+      const auto = openLeagueId ? null : live.length === 1 ? live[0] : null;
+      setActive(prev => (prev ? list.find(s => s.id === prev.id) ?? null : wanted ?? auto));
     } catch (e) {
       setError(e?.message ?? 'Could not load your seasons');
     } finally {

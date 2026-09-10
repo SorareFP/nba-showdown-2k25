@@ -7,6 +7,8 @@ import SeasonTab from './components/SeasonTab.jsx';
 import TournamentTab from './components/TournamentTab.jsx';
 import HowToPlay from './components/HowToPlay.jsx';
 import WelcomeTab from './components/WelcomeTab.jsx';
+import HomeTab from './components/HomeTab.jsx';
+import Skeleton from './ui/Skeleton.jsx';
 import SignupBonus from './components/SignupBonus.jsx';
 import CollectionTab from './components/CollectionTab.jsx';
 import PvpLobby from './components/PvpLobby.jsx';
@@ -38,8 +40,12 @@ const GUEST_TABS = [
   { id: 'home',      label: '🏀 Welcome',     icon: '🏀', short: 'Welcome' },
   { id: 'howtoplay', label: '📖 How to Play', icon: '📖', short: 'Rules' },
 ];
-// Tabs visible to logged-in users (cards/strats hidden to preserve pack surprise)
+// Tabs visible to logged-in users (cards/strats hidden to preserve pack surprise).
+// HOME comes first and is where a signed-in session lands (2026-09-10). The
+// phone bar keeps its four everyday sections, so on a phone Home is the logo
+// and the first row of More.
 const AUTH_TABS = [
+  { id: 'home',    label: '🏠 Home',         icon: '🏠', short: 'Home' },
   { id: 'builder', label: '🏗 Team Builder', icon: '🏗', short: 'Team' },
   { id: 'play',    label: '🏀 Play',         icon: '🏀', short: 'Play' },
   { id: 'season',  label: '📅 Season',       icon: '📅', short: 'Season' },
@@ -51,7 +57,11 @@ const AUTH_TABS = [
 
 function AppInner() {
   const { user, loading: authLoading, signIn, justSignedUp, clearSignup } = useAuth();
-  const [tab, setTab] = useState(user ? 'builder' : 'home');
+  // Everyone lands on 'home': the Welcome page for a guest, HomeTab once
+  // signed in. `user` is null on the first render while auth restores, so the
+  // old `user ? 'builder' : 'home'` always started on 'home', and 'home' drew
+  // nothing for a signed-in player: the blank page (2026-09-10).
+  const [tab, setTab] = useState('home');
   const [teamA, setTeamA] = useState([]);
   const [teamB, setTeamB] = useState([]);
   const [collection, setCollection] = useState({});
@@ -102,6 +112,20 @@ function AppInner() {
     return () => window.removeEventListener('keydown', onKey);
   }, [moreOpen]);
   const goTab = id => { setTab(id); setMoreOpen(false); };
+  // THE HOME PAGE'S LINKS go deeper than a tab: the Pack Shop, the
+  // collections list, one particular season. That target rides along once
+  // and is dropped when you leave the tab, so a later tap on the tab itself
+  // opens it the usual way.
+  const [collectionView, setCollectionView] = useState(null);
+  const [seasonOpen, setSeasonOpen] = useState(null);   // { seasonId } | { leagueId }
+  useEffect(() => { if (tab !== 'collection') setCollectionView(null); }, [tab]);
+  useEffect(() => { if (tab !== 'season') setSeasonOpen(null); }, [tab]);
+  const homeGo = (to, opts = {}) => {
+    const section = { shop: 'shop', goals: 'goals', mycards: 'collection' }[to];
+    if (section) { setCollectionView(section); goTab('collection'); return; }
+    if (to === 'season') setSeasonOpen(opts.seasonId || opts.leagueId ? opts : null);
+    goTab(to);
+  };
   const playMounted = useRef(false);
   if (tab === 'play') playMounted.current = true;
 
@@ -191,13 +215,13 @@ function AppInner() {
   return (
     <div className={styles.app}>
       <header className={styles.header}>
-        <div className={styles.logo}>
+        <button type="button" className={styles.logo} onClick={() => goTab('home')} title="Home">
           <img src="/nba-showdown-2k25/logo.png" alt="NBA Showdown 2026" className={styles.logoImg} />
           <div>
             <div className={styles.logoTitle}>NBA Showdown 2026</div>
             <div className={styles.logoSub}>D20 Basketball Card Game · 306 Players</div>
           </div>
-        </div>
+        </button>
         <nav className={styles.nav} ref={navRef}>
           {marker && (
             <span
@@ -293,10 +317,23 @@ function AppInner() {
                 would remount it and throw the game away. It is the one tab
                 that does not cross-fade, and that is the trade. */}
             <div key={tab} className={styles.tabFade}>
-            {tab === 'home'    && !user && (
+            {tab === 'home' && !user && authLoading && (
+              <div style={{ maxWidth: 1080, margin: '0 auto', padding: '24px 20px' }}>
+                <Skeleton rows={4} height={72} label="Signing in" />
+              </div>
+            )}
+            {tab === 'home'    && !user && !authLoading && (
               <WelcomeTab
                 onTutorial={() => { setTutorialMode(true); setRulesOverTutorial(false); }}
                 onHowToPlay={() => setTab('howtoplay')}
+              />
+            )}
+            {tab === 'home' && user && (
+              <HomeTab
+                collection={collection}
+                starter={starter}
+                onGo={homeGo}
+                onTutorial={() => { setTutorialMode(true); setRulesOverTutorial(false); }}
               />
             )}
             {tab === 'cards'   && <CardsTab />}
@@ -319,9 +356,11 @@ function AppInner() {
                 collection={collection}
               />
             )}
-            {tab === 'collection' && <CollectionTab onLoadTeam={handleLoadTeam} onCollectionChange={refreshCollection} />}
+            {tab === 'collection' && <CollectionTab onLoadTeam={handleLoadTeam} onCollectionChange={refreshCollection} initialView={collectionView} />}
             {tab === 'season' && (
               <SeasonTab
+                openSeasonId={seasonOpen?.seasonId ?? null}
+                openLeagueId={seasonOpen?.leagueId ?? null}
                 teamA={teamA}
                 collection={collection}
                 pendingResult={seasonResult}

@@ -20,7 +20,9 @@
   border: 1px solid var(--border);
   background: rgba(0, 0, 0, 0.25);
   color: var(--text);
-  font-size: 15px;
+  /* 16px, not 15: iOS Safari zooms the whole page into any input smaller
+     than that the moment it is tapped. */
+  font-size: 16px;
 }
 .never {
   padding: 14px;

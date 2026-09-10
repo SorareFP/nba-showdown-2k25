@@ -165,9 +165,17 @@ export const HISTORICAL_TEAMS = {
   // C-sword, and it is genuinely a different logo from CLE16's wordmark-and-ball
   // — the two were checked side by side before this row was given a file of its
   // own, rather than widening CLE16's range. The user supplied the whole
-  // Cavaliers suite 2026-09-07; CLE71/84/95 and CLE11 are in
-  // card-art/logo-originals/ and stay uninstalled, no card wearing those years.
+  // Cavaliers suite 2026-09-07; CLE11 is in card-art/logo-originals/ and
+  // stays uninstalled, no card wearing that mark.
   CLE17: { name: 'Cavaliers', city: 'Cleveland',  abbr: 'CLE', primary: '#860038', secondary: '#FDBB30', logo: '/logos/CLE17.png', era: '2018-2022', unverifiedColors: true },
+  // THE THREE OLDER CAVALIERS MARKS, installed 2026-09-10 from the same suite
+  // (card-art/logo-originals/) once Free Agents opened every season back to
+  // 1977 — a requested Bob Sura 1995-96 printed today's wine and gold.
+  // Colours SAMPLED from each installed mark by auditEraColors (the two
+  // most-covered bins), not recalled — memory had them wrong for all three.
+  CLE71: { name: 'Cavaliers', city: 'Cleveland',  abbr: 'CLE', primary: '#EC123D', secondary: '#FBD024', logo: '/logos/CLE71.png', era: '1971-1983' }, // 41% / 43%
+  CLE84: { name: 'Cavaliers', city: 'Cleveland',  abbr: 'CLE', primary: '#F72121', secondary: '#00205F', logo: '/logos/CLE84.png', era: '1984-1994' }, // 88% / 10%
+  CLE95: { name: 'Cavaliers', city: 'Cleveland',  abbr: 'CLE', primary: '#4C88E0', secondary: '#F94300', logo: '/logos/CLE95.png', era: '1995-2003' }, // 68% / 25%
   DET02: { name: 'Pistons',  city: 'Detroit',     abbr: 'DET', primary: '#C8102E', secondary: '#1D42BA', logo: '/logos/DET02.png', era: '2002-2005', unverifiedColors: true },
   LAC16: { name: 'Clippers', city: 'Los Angeles', abbr: 'LAC', primary: '#C8102E', secondary: '#1D428A', logo: '/logos/LAC16.png', era: '2016-2024', unverifiedColors: true },
   TOR96: { name: 'Raptors',  city: 'Toronto',     abbr: 'TOR', primary: '#753BBD', secondary: '#CE1141', logo: '/logos/TOR96.png', era: '1996-2006', unverifiedColors: true },
@@ -265,6 +273,9 @@ export const FRANCHISE_ERAS = {
   ],
   SAC: [{ from: 1995, to: 2016, key: 'SAC95' }],
   CLE: [
+    { from: 1971, to: 1983, key: 'CLE71' },
+    { from: 1984, to: 1994, key: 'CLE84' },
+    { from: 1995, to: 2003, key: 'CLE95' },
     { from: 2004, to: 2010, key: 'CLE04' },
     { from: 2011, to: 2017, key: 'CLE16' },
     { from: 2018, to: 2022, key: 'CLE17' },

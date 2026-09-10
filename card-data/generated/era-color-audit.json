@@ -1,6 +1,934 @@
 {
- "generatedAt": "2026-09-06T12:04:31.367Z",
+ "generatedAt": "2026-09-10T21:58:04.155Z",
  "report": [
+  {
+   "key": "SEA",
+   "era": "1967-2008",
+   "primary": "#00653A",
+   "nearestPrimary": "#004035",
+   "dPrimary": 37,
+   "secondary": "#FFC72C",
+   "nearestSecondary": "#FF9E00",
+   "dSecondary": 60,
+   "palette": [
+    {
+     "hex": "#004035",
+     "pct": 32.7
+    },
+    {
+     "hex": "#AE1929",
+     "pct": 27.7
+    },
+    {
+     "hex": "#986349",
+     "pct": 22.8
+    },
+    {
+     "hex": "#FF9E00",
+     "pct": 9.9
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "UTA96",
+   "era": "1996-2004",
+   "primary": "#8033C4",
+   "nearestPrimary": "#8033C4",
+   "dPrimary": 0,
+   "secondary": "#00B7E9",
+   "nearestSecondary": "#00BBEB",
+   "dSecondary": 4,
+   "palette": [
+    {
+     "hex": "#A14949",
+     "pct": 33.8
+    },
+    {
+     "hex": "#8033C4",
+     "pct": 26.1
+    },
+    {
+     "hex": "#006474",
+     "pct": 14.8
+    },
+    {
+     "hex": "#00BBEB",
+     "pct": 3.4
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "UTA04",
+   "era": "2004-2010",
+   "primary": "#00275D",
+   "nearestPrimary": "#00275D",
+   "dPrimary": 0,
+   "secondary": "#6CAEDF",
+   "nearestSecondary": "#6CAEDF",
+   "dSecondary": 0,
+   "palette": [
+    {
+     "hex": "#00275D",
+     "pct": 54.8
+    },
+    {
+     "hex": "#6CAEDF",
+     "pct": 22.7
+    },
+    {
+     "hex": "#3E2680",
+     "pct": 10.7
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "UTA16",
+   "era": "2016-2022",
+   "primary": "#002144",
+   "nearestPrimary": "#002144",
+   "dPrimary": 0,
+   "secondary": "#FFA200",
+   "nearestSecondary": "#FFA200",
+   "dSecondary": 0,
+   "palette": [
+    {
+     "hex": "#002144",
+     "pct": 65.1
+    },
+    {
+     "hex": "#274E37",
+     "pct": 12.8
+    },
+    {
+     "hex": "#FFA200",
+     "pct": 12.6
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "PHI77",
+   "era": "1977-1997",
+   "primary": "#243E7C",
+   "nearestPrimary": "#243E7C",
+   "dPrimary": 0,
+   "secondary": "#EC1A34",
+   "nearestSecondary": "#EC1A34",
+   "dSecondary": 0,
+   "palette": [
+    {
+     "hex": "#243E7C",
+     "pct": 74.7
+    },
+    {
+     "hex": "#EC1A34",
+     "pct": 10.9
+    },
+    {
+     "hex": "#2C4A84",
+     "pct": 6.3
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "PHI09",
+   "era": "2009-2015",
+   "primary": "#0046AD",
+   "nearestPrimary": "#0046AD",
+   "dPrimary": 0,
+   "secondary": "#D7083B",
+   "nearestSecondary": "#D7083B",
+   "dSecondary": 0,
+   "palette": [
+    {
+     "hex": "#0046AD",
+     "pct": 78.3
+    },
+    {
+     "hex": "#D7083B",
+     "pct": 11
+    },
+    {
+     "hex": "#E6EEF5",
+     "pct": 3.3
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "DET79",
+   "era": "1979-1996",
+   "primary": "#EC0028",
+   "nearestPrimary": "#EC0028",
+   "dPrimary": 0,
+   "secondary": "#003CAB",
+   "nearestSecondary": "#003CAB",
+   "dSecondary": 0,
+   "palette": [
+    {
+     "hex": "#EC0028",
+     "pct": 52.4
+    },
+    {
+     "hex": "#003CAB",
+     "pct": 41.6
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "DET96",
+   "era": "1996-2001",
+   "primary": "#006271",
+   "nearestPrimary": "#006271",
+   "dPrimary": 0,
+   "secondary": "#9D2235",
+   "nearestSecondary": "#9D2235",
+   "dSecondary": 0,
+   "palette": [
+    {
+     "hex": "#006271",
+     "pct": 31.8
+    },
+    {
+     "hex": "#9D2235",
+     "pct": 18
+    },
+    {
+     "hex": "#8D9093",
+     "pct": 14.3
+    },
+    {
+     "hex": "#FFA400",
+     "pct": 4.3
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "MIL06",
+   "era": "2006-2015",
+   "primary": "#195331",
+   "nearestPrimary": "#195331",
+   "dPrimary": 0,
+   "secondary": "#B80028",
+   "nearestSecondary": "#B80028",
+   "dSecondary": 0,
+   "palette": [
+    {
+     "hex": "#195331",
+     "pct": 48.5
+    },
+    {
+     "hex": "#B80028",
+     "pct": 23
+    },
+    {
+     "hex": "#8C9093",
+     "pct": 22.4
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "NJN",
+   "era": "1977-2012",
+   "primary": "#002A60",
+   "nearestPrimary": "#002A60",
+   "dPrimary": 0,
+   "secondary": "#CE1141",
+   "nearestSecondary": "#CD1041",
+   "dSecondary": 1,
+   "palette": [
+    {
+     "hex": "#002A60",
+     "pct": 44.5
+    },
+    {
+     "hex": "#C6CFD4",
+     "pct": 17.9
+    },
+    {
+     "hex": "#777D84",
+     "pct": 13.5
+    },
+    {
+     "hex": "#CD1041",
+     "pct": 9.6
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "NOH",
+   "era": "2002-2013",
+   "primary": "#002B5C",
+   "nearestPrimary": "#280071",
+   "dPrimary": 62,
+   "secondary": "#B4975A",
+   "nearestSecondary": "#FFC72C",
+   "dSecondary": 100,
+   "palette": [
+    {
+     "hex": "#00778B",
+     "pct": 43.7
+    },
+    {
+     "hex": "#280071",
+     "pct": 31.2
+    },
+    {
+     "hex": "#FFC72C",
+     "pct": 20.6
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "NOK",
+   "era": "2005-2007",
+   "primary": "#002B5C",
+   "nearestPrimary": "#071921",
+   "dPrimary": 62,
+   "secondary": "#B4975A",
+   "nearestSecondary": "#FDB828",
+   "dSecondary": 94,
+   "palette": [
+    {
+     "hex": "#273996",
+     "pct": 33.7
+    },
+    {
+     "hex": "#0093B2",
+     "pct": 29.8
+    },
+    {
+     "hex": "#FDB828",
+     "pct": 12
+    },
+    {
+     "hex": "#071921",
+     "pct": 9.6
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "CHH",
+   "era": "1988-2002",
+   "primary": "#00778B",
+   "nearestPrimary": "#00798E",
+   "dPrimary": 4,
+   "secondary": "#280071",
+   "nearestSecondary": "#2E0076",
+   "dSecondary": 8,
+   "palette": [
+    {
+     "hex": "#00798E",
+     "pct": 62.7
+    },
+    {
+     "hex": "#2E0076",
+     "pct": 12.1
+    },
+    {
+     "hex": "#FF232A",
+     "pct": 10.3
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "CHB",
+   "error": "no file at /logos/CHB.png"
+  },
+  {
+   "key": "CHB04",
+   "era": "2005-2008",
+   "primary": "#F9423A",
+   "nearestPrimary": "#F63F3A",
+   "dPrimary": 4,
+   "secondary": "#004071",
+   "nearestSecondary": "#263F6A",
+   "dSecondary": 39,
+   "palette": [
+    {
+     "hex": "#263F6A",
+     "pct": 39.2
+    },
+    {
+     "hex": "#F63F3A",
+     "pct": 22.9
+    },
+    {
+     "hex": "#83878A",
+     "pct": 18.2
+    },
+    {
+     "hex": "#1D1D1D",
+     "pct": 10.9
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "CHB08",
+   "era": "2009-2012",
+   "primary": "#F9423A",
+   "nearestPrimary": "#DF5106",
+   "dPrimary": 60,
+   "secondary": "#004071",
+   "nearestSecondary": "#253E6A",
+   "dSecondary": 38,
+   "palette": [
+    {
+     "hex": "#253E6A",
+     "pct": 39.8
+    },
+    {
+     "hex": "#DF5106",
+     "pct": 23.1
+    },
+    {
+     "hex": "#83878A",
+     "pct": 18.4
+    },
+    {
+     "hex": "#1D1D1D",
+     "pct": 12.1
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "CHB13",
+   "era": "2013-2014",
+   "primary": "#F9423A",
+   "nearestPrimary": "#F47A24",
+   "dPrimary": 60,
+   "secondary": "#004071",
+   "nearestSecondary": "#042A5C",
+   "dSecondary": 31,
+   "palette": [
+    {
+     "hex": "#042A5C",
+     "pct": 51.5
+    },
+    {
+     "hex": "#A4A2A4",
+     "pct": 20.9
+    },
+    {
+     "hex": "#4C92CC",
+     "pct": 6.1
+    },
+    {
+     "hex": "#F47A24",
+     "pct": 5.8
+    },
+    {
+     "hex": "#949AA4",
+     "pct": 3.3
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "VAN",
+   "era": "1995-2001",
+   "primary": "#00B2A9",
+   "nearestPrimary": "#0CB2AC",
+   "dPrimary": 12,
+   "secondary": "#BC7844",
+   "nearestSecondary": "#94664C",
+   "dSecondary": 45,
+   "palette": [
+    {
+     "hex": "#241E24",
+     "pct": 43.1
+    },
+    {
+     "hex": "#94664C",
+     "pct": 11.5
+    },
+    {
+     "hex": "#14B2A4",
+     "pct": 11
+    },
+    {
+     "hex": "#0CB2AC",
+     "pct": 9.3
+    },
+    {
+     "hex": "#14B6AC",
+     "pct": 7
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "WSB",
+   "era": "1974-1997",
+   "primary": "#002B5C",
+   "nearestPrimary": "#003DA5",
+   "dPrimary": 75,
+   "secondary": "#E03A3E",
+   "nearestSecondary": "#D50032",
+   "dSecondary": 60,
+   "palette": [
+    {
+     "hex": "#003DA5",
+     "pct": 80.2
+    },
+    {
+     "hex": "#D50032",
+     "pct": 9.2
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "DEN04",
+   "era": "2004-2012",
+   "primary": "#418FDE",
+   "nearestPrimary": "#0090E5",
+   "dPrimary": 65,
+   "secondary": "#FFC72C",
+   "nearestSecondary": "#FFC500",
+   "dSecondary": 44,
+   "palette": [
+    {
+     "hex": "#FFC500",
+     "pct": 50.6
+    },
+    {
+     "hex": "#0057BF",
+     "pct": 24.8
+    },
+    {
+     "hex": "#0090E5",
+     "pct": 18.1
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "SAC95",
+   "era": "1995-2016",
+   "primary": "#5A2D81",
+   "nearestPrimary": "#6946A9",
+   "dPrimary": 49,
+   "secondary": "#000000",
+   "nearestSecondary": "#29251E",
+   "dSecondary": 63,
+   "palette": [
+    {
+     "hex": "#29251E",
+     "pct": 44.8
+    },
+    {
+     "hex": "#6946A9",
+     "pct": 31.5
+    },
+    {
+     "hex": "#8C8D8D",
+     "pct": 16.2
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "CLE04",
+   "era": "2004-2010",
+   "primary": "#860038",
+   "nearestPrimary": "#AE0731",
+   "dPrimary": 41,
+   "secondary": "#FDBB30",
+   "nearestSecondary": "#927046",
+   "dSecondary": 133,
+   "palette": [
+    {
+     "hex": "#001E45",
+     "pct": 56.5
+    },
+    {
+     "hex": "#927046",
+     "pct": 18.9
+    },
+    {
+     "hex": "#AE0731",
+     "pct": 17.4
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "CLE16",
+   "era": "2011-2017",
+   "primary": "#860038",
+   "nearestPrimary": "#7A1E3D",
+   "dPrimary": 33,
+   "secondary": "#FDBB30",
+   "nearestSecondary": "#FFB500",
+   "dSecondary": 48,
+   "palette": [
+    {
+     "hex": "#001E45",
+     "pct": 56.5
+    },
+    {
+     "hex": "#FFB500",
+     "pct": 18.9
+    },
+    {
+     "hex": "#7A1E3D",
+     "pct": 17.4
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "CLE17",
+   "era": "2018-2022",
+   "primary": "#860038",
+   "nearestPrimary": "#6F263D",
+   "dPrimary": 45,
+   "secondary": "#FDBB30",
+   "nearestSecondary": "#FFB81C",
+   "dSecondary": 20,
+   "palette": [
+    {
+     "hex": "#6F263D",
+     "pct": 31.3
+    },
+    {
+     "hex": "#FFB81C",
+     "pct": 24.6
+    },
+    {
+     "hex": "#031E42",
+     "pct": 10
+    },
+    {
+     "hex": "#FFB61C",
+     "pct": 3.5
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "CLE71",
+   "era": "1971-1983",
+   "primary": "#EC123D",
+   "nearestPrimary": "#EC123D",
+   "dPrimary": 0,
+   "secondary": "#FBD024",
+   "nearestSecondary": "#FBD024",
+   "dSecondary": 0,
+   "palette": [
+    {
+     "hex": "#FBD024",
+     "pct": 43.3
+    },
+    {
+     "hex": "#EC123D",
+     "pct": 41
+    },
+    {
+     "hex": "#FFFAE7",
+     "pct": 3.2
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "CLE84",
+   "era": "1984-1994",
+   "primary": "#F72121",
+   "nearestPrimary": "#F72121",
+   "dPrimary": 0,
+   "secondary": "#00205F",
+   "nearestSecondary": "#00205F",
+   "dSecondary": 0,
+   "palette": [
+    {
+     "hex": "#F72121",
+     "pct": 87.5
+    },
+    {
+     "hex": "#00205F",
+     "pct": 10.3
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "CLE95",
+   "era": "1995-2003",
+   "primary": "#4C88E0",
+   "nearestPrimary": "#4C88E0",
+   "dPrimary": 0,
+   "secondary": "#F94300",
+   "nearestSecondary": "#F94300",
+   "dSecondary": 0,
+   "palette": [
+    {
+     "hex": "#4C88E0",
+     "pct": 67.6
+    },
+    {
+     "hex": "#F94300",
+     "pct": 25.4
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "DET02",
+   "era": "2002-2005",
+   "primary": "#C8102E",
+   "nearestPrimary": "#D50032",
+   "dPrimary": 21,
+   "secondary": "#1D42BA",
+   "nearestSecondary": "#003DA5",
+   "dSecondary": 36,
+   "palette": [
+    {
+     "hex": "#041E42",
+     "pct": 33.9
+    },
+    {
+     "hex": "#003DA5",
+     "pct": 19.3
+    },
+    {
+     "hex": "#D50032",
+     "pct": 11.2
+    },
+    {
+     "hex": "#8D9093",
+     "pct": 10.6
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "LAC16",
+   "era": "2016-2024",
+   "primary": "#C8102E",
+   "nearestPrimary": "#D7083B",
+   "dPrimary": 21,
+   "secondary": "#1D428A",
+   "nearestSecondary": "#0046AE",
+   "dSecondary": 46,
+   "palette": [
+    {
+     "hex": "#1D1D1D",
+     "pct": 54.7
+    },
+    {
+     "hex": "#0046AE",
+     "pct": 21.4
+    },
+    {
+     "hex": "#D7083B",
+     "pct": 19.7
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "TOR96",
+   "era": "1996-2006",
+   "primary": "#753BBD",
+   "nearestPrimary": "#753BBD",
+   "dPrimary": 0,
+   "secondary": "#CE1141",
+   "nearestSecondary": "#BA0C2F",
+   "dSecondary": 27,
+   "palette": [
+    {
+     "hex": "#753BBD",
+     "pct": 26.7
+    },
+    {
+     "hex": "#BA0C2F",
+     "pct": 25.8
+    },
+    {
+     "hex": "#888B8D",
+     "pct": 24.7
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "TOR07",
+   "era": "2007-2008",
+   "primary": "#CE1141",
+   "nearestPrimary": "#BA0C2F",
+   "dPrimary": 27,
+   "secondary": "#000000",
+   "nearestSecondary": "#BA0C2F",
+   "dSecondary": 192,
+   "palette": [
+    {
+     "hex": "#BA0C2F",
+     "pct": 49
+    },
+    {
+     "hex": "#888B8D",
+     "pct": 30
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "TOR09",
+   "era": "2009-2015",
+   "primary": "#CE1141",
+   "nearestPrimary": "#BB2031",
+   "dPrimary": 29,
+   "secondary": "#A1A1A4",
+   "nearestSecondary": "#88898D",
+   "dSecondary": 42,
+   "palette": [
+    {
+     "hex": "#88898D",
+     "pct": 56.9
+    },
+    {
+     "hex": "#BB2031",
+     "pct": 30.9
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "ATL96",
+   "era": "1996-2007",
+   "primary": "#E03A3E",
+   "nearestPrimary": "#C40E34",
+   "dPrimary": 53,
+   "secondary": "#FDB927",
+   "nearestSecondary": "#8C664C",
+   "dSecondary": 145,
+   "palette": [
+    {
+     "hex": "#1C1E1C",
+     "pct": 32.5
+    },
+    {
+     "hex": "#C40A2C",
+     "pct": 19.4
+    },
+    {
+     "hex": "#C40E34",
+     "pct": 14.8
+    },
+    {
+     "hex": "#241E1C",
+     "pct": 8.4
+    },
+    {
+     "hex": "#8C664C",
+     "pct": 4.4
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "ATL08",
+   "era": "2008-2015",
+   "primary": "#002B5C",
+   "nearestPrimary": "#082240",
+   "dPrimary": 30,
+   "secondary": "#E03A3E",
+   "nearestSecondary": "#CB0729",
+   "dSecondary": 59,
+   "palette": [
+    {
+     "hex": "#082240",
+     "pct": 47.8
+    },
+    {
+     "hex": "#CB0729",
+     "pct": 29.7
+    },
+    {
+     "hex": "#B1B3B3",
+     "pct": 10.3
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "DAL80",
+   "era": "1981-2001",
+   "primary": "#00843D",
+   "nearestPrimary": "#00853B",
+   "dPrimary": 2,
+   "secondary": "#0064B1",
+   "nearestSecondary": "#002856",
+   "dSecondary": 109,
+   "palette": [
+    {
+     "hex": "#002856",
+     "pct": 51.8
+    },
+    {
+     "hex": "#00853B",
+     "pct": 39.3
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "HOU72",
+   "era": "1972-1995",
+   "primary": "#CE1141",
+   "nearestPrimary": "#BA0C2F",
+   "dPrimary": 27,
+   "secondary": "#FDB927",
+   "nearestSecondary": "#FFC72C",
+   "dSecondary": 15,
+   "palette": [
+    {
+     "hex": "#FFC72C",
+     "pct": 48.7
+    },
+    {
+     "hex": "#BA0C2F",
+     "pct": 39.3
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "HOU03",
+   "era": "2003-2019",
+   "primary": "#CE1141",
+   "nearestPrimary": "#CE1141",
+   "dPrimary": 0,
+   "secondary": "#C4CED4",
+   "nearestSecondary": "#CE1141",
+   "dSecondary": 240,
+   "palette": [
+    {
+     "hex": "#CE1141",
+     "pct": 83.5
+    },
+    {
+     "hex": "#061922",
+     "pct": 9
+    }
+   ],
+   "monochrome": false
+  },
   {
    "key": "HOU20",
    "era": "2019-2026",
@@ -26,6 +954,402 @@
     {
      "hex": "#707271",
      "pct": 8.2
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "MIL94",
+   "era": "1994-2006",
+   "primary": "#5C2F83",
+   "nearestPrimary": "#7B278F",
+   "dPrimary": 34,
+   "secondary": "#00471B",
+   "nearestSecondary": "#195331",
+   "dSecondary": 35,
+   "palette": [
+    {
+     "hex": "#195331",
+     "pct": 36.1
+    },
+    {
+     "hex": "#7B278F",
+     "pct": 32.9
+    },
+    {
+     "hex": "#8C9093",
+     "pct": 25.1
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "MIN89",
+   "era": "1989-1996",
+   "primary": "#005084",
+   "nearestPrimary": "#0032A0",
+   "dPrimary": 41,
+   "secondary": "#00A94F",
+   "nearestSecondary": "#009A44",
+   "dSecondary": 19,
+   "palette": [
+    {
+     "hex": "#0032A0",
+     "pct": 51.8
+    },
+    {
+     "hex": "#8D9093",
+     "pct": 17.5
+    },
+    {
+     "hex": "#009A44",
+     "pct": 13.3
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "MIN97",
+   "era": "1997-2017",
+   "primary": "#236192",
+   "nearestPrimary": "#236192",
+   "dPrimary": 0,
+   "secondary": "#00843D",
+   "nearestSecondary": "#00843D",
+   "dSecondary": 0,
+   "palette": [
+    {
+     "hex": "#236192",
+     "pct": 25.6
+    },
+    {
+     "hex": "#8D9093",
+     "pct": 21.3
+    },
+    {
+     "hex": "#00843D",
+     "pct": 20.5
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "MEM01",
+   "era": "2001-2004",
+   "primary": "#00285E",
+   "nearestPrimary": "#8F654D",
+   "dPrimary": 156,
+   "secondary": "#6CACE4",
+   "nearestSecondary": "#8F654D",
+   "dSecondary": 170,
+   "palette": [
+    {
+     "hex": "#C8102E",
+     "pct": 81.2
+    },
+    {
+     "hex": "#8F654D",
+     "pct": 12.9
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "PHI97",
+   "era": "1998-2009",
+   "primary": "#000000",
+   "nearestPrimary": "#071922",
+   "dPrimary": 43,
+   "secondary": "#C8102E",
+   "nearestSecondary": "#ED174B",
+   "dSecondary": 48,
+   "palette": [
+    {
+     "hex": "#BB9754",
+     "pct": 39
+    },
+    {
+     "hex": "#071922",
+     "pct": 31
+    },
+    {
+     "hex": "#ED174B",
+     "pct": 11.1
+    },
+    {
+     "hex": "#016BB7",
+     "pct": 6.2
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "ORL89",
+   "era": "1989-2000",
+   "primary": "#0077C0",
+   "nearestPrimary": "#0050B4",
+   "dPrimary": 41,
+   "secondary": "#000000",
+   "nearestSecondary": "#0050B4",
+   "dSecondary": 197,
+   "palette": [
+    {
+     "hex": "#0050B4",
+     "pct": 53
+    },
+    {
+     "hex": "#8C9093",
+     "pct": 34.9
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "ORL01",
+   "era": "2001-2010",
+   "primary": "#0077C0",
+   "nearestPrimary": "#0057BF",
+   "dPrimary": 32,
+   "secondary": "#C4CED4",
+   "nearestSecondary": "#8C9093",
+   "dSecondary": 106,
+   "palette": [
+    {
+     "hex": "#8C9093",
+     "pct": 54.7
+    },
+    {
+     "hex": "#0057BF",
+     "pct": 37.6
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "GSW89",
+   "era": "1989-1997",
+   "primary": "#1D4289",
+   "nearestPrimary": "#003478",
+   "dPrimary": 36,
+   "secondary": "#FFC72C",
+   "nearestSecondary": "#FECB00",
+   "dSecondary": 44,
+   "palette": [
+    {
+     "hex": "#FECB00",
+     "pct": 55.3
+    },
+    {
+     "hex": "#003478",
+     "pct": 39.5
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "GSW98",
+   "era": "1998-2010",
+   "primary": "#04529C",
+   "nearestPrimary": "#002147",
+   "dPrimary": 98,
+   "secondary": "#FFCC33",
+   "nearestSecondary": "#FFA200",
+   "dSecondary": 66,
+   "palette": [
+    {
+     "hex": "#002147",
+     "pct": 35.6
+    },
+    {
+     "hex": "#C23832",
+     "pct": 10.6
+    },
+    {
+     "hex": "#FFA200",
+     "pct": 6.6
+    },
+    {
+     "hex": "#F28C0B",
+     "pct": 3.7
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "LAC84",
+   "era": "1985-2015",
+   "primary": "#ED174C",
+   "nearestPrimary": "#EC0028",
+   "dPrimary": 43,
+   "secondary": "#006BB6",
+   "nearestSecondary": "#003CAB",
+   "dSecondary": 48,
+   "palette": [
+    {
+     "hex": "#003CAB",
+     "pct": 49.9
+    },
+    {
+     "hex": "#EC0028",
+     "pct": 40.4
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "PHX93",
+   "era": "1993-2000",
+   "primary": "#1D1160",
+   "nearestPrimary": "#691BA5",
+   "dPrimary": 103,
+   "secondary": "#E56020",
+   "nearestSecondary": "#FF5C00",
+   "dSecondary": 41,
+   "palette": [
+    {
+     "hex": "#691BA5",
+     "pct": 64.2
+    },
+    {
+     "hex": "#FF5C00",
+     "pct": 14.9
+    },
+    {
+     "hex": "#FF0035",
+     "pct": 7.5
+    },
+    {
+     "hex": "#FF3A00",
+     "pct": 6.1
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "PHX01",
+   "era": "2001-2013",
+   "primary": "#1D1160",
+   "nearestPrimary": "#602788",
+   "dPrimary": 81,
+   "secondary": "#E56020",
+   "nearestSecondary": "#DD5800",
+   "dSecondary": 34,
+   "palette": [
+    {
+     "hex": "#602788",
+     "pct": 35.7
+    },
+    {
+     "hex": "#586771",
+     "pct": 30.6
+    },
+    {
+     "hex": "#FF9F00",
+     "pct": 18.7
+    },
+    {
+     "hex": "#DD5800",
+     "pct": 7.6
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "SEA06",
+   "era": "2002-2008",
+   "primary": "#00653A",
+   "nearestPrimary": "#00653A",
+   "dPrimary": 0,
+   "secondary": "#FFC72C",
+   "nearestSecondary": "#FFC220",
+   "dSecondary": 13,
+   "palette": [
+    {
+     "hex": "#00653A",
+     "pct": 59.9
+    },
+    {
+     "hex": "#FFC220",
+     "pct": 20.7
+    },
+    {
+     "hex": "#FEC61E",
+     "pct": 3.3
+    },
+    {
+     "hex": "#005C38",
+     "pct": 3.3
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "DEN13",
+   "era": "2013-2018",
+   "primary": "#0E2240",
+   "nearestPrimary": "#001E45",
+   "dPrimary": 15,
+   "secondary": "#FEC524",
+   "nearestSecondary": "#FFC500",
+   "dSecondary": 36,
+   "palette": [
+    {
+     "hex": "#FFC500",
+     "pct": 50.4
+    },
+    {
+     "hex": "#001E45",
+     "pct": 25.1
+    },
+    {
+     "hex": "#0090E5",
+     "pct": 18.1
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "DET06",
+   "era": "2006-2017",
+   "primary": "#ED174C",
+   "nearestPrimary": "#D50032",
+   "dPrimary": 42,
+   "secondary": "#0058A6",
+   "nearestSecondary": "#003DA5",
+   "dSecondary": 27,
+   "palette": [
+    {
+     "hex": "#D50032",
+     "pct": 47.4
+    },
+    {
+     "hex": "#003DA5",
+     "pct": 23.8
+    },
+    {
+     "hex": "#041E42",
+     "pct": 11.5
+    }
+   ],
+   "monochrome": false
+  },
+  {
+   "key": "WAS97",
+   "era": "1997-2011",
+   "primary": "#246394",
+   "nearestPrimary": "#246394",
+   "dPrimary": 0,
+   "secondary": "#8F664E",
+   "nearestSecondary": "#8F664E",
+   "dSecondary": 0,
+   "palette": [
+    {
+     "hex": "#246394",
+     "pct": 56.8
+    },
+    {
+     "hex": "#8F664E",
+     "pct": 30
     }
    ],
    "monochrome": false

@@ -1,5 +1,75 @@
 {
  "set": "free-agents",
  "note": "Requested cards (Free Agents), built one at a time by scripts/cardgen/buildFreeAgent.mjs. Each card's own `set` is the set it joins; src/game/cardSets.js merges them in. Kept in its own file so regenerating Rookie or Super Season never wipes one.",
- "cards": []
+ "cards": [
+  {
+   "id": "Bob_Sura",
+   "name": "Bob Sura",
+   "team": "CLE95",
+   "pos": "SG",
+   "speed": 10,
+   "power": 7,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": 1,
+   "defBoost": 1,
+   "salary": 490,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 15,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 20,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 2
+    }
+   ],
+   "season": 1996,
+   "seasonLabel": "1995-96",
+   "age": 22,
+   "games": 79,
+   "mpg": 14.6,
+   "bbrefId": "surabo01",
+   "traded": false,
+   "metrics": {
+    "bpm": 0.1,
+    "vorp": 0.6,
+    "ws": 1.6,
+    "ws48": 0.069,
+    "per": 15
+   },
+   "provisional": false,
+   "set": "rookie",
+   "requested": true,
+   "requestId": "icPR9oLCfGeyhJaO6cNZ",
+   "builtAt": "2026-09-10T21:56:57.035Z"
+  }
+ ]
 }

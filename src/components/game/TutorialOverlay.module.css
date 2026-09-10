@@ -79,3 +79,17 @@
 @media (prefers-reduced-motion: reduce) {
   .highlight { animation: none; }
 }
+
+/* PHONES: the tooltip was a fixed 420px box on a 375px screen. Full width
+   less a margin, sitting just above the bottom tab bar (App.module.css).
+   Breakpoint = PHONE_QUERY in src/ui/useIsPhone.js. */
+@media (max-width: 768px) {
+  .tooltip {
+    left: 12px; right: 12px; transform: none;
+    max-width: none;
+    bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+    padding: 12px 14px;
+  }
+  .tooltipText { font-size: 13px; line-height: 1.5; }
+}
+

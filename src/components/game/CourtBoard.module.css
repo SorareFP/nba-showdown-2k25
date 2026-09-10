@@ -500,3 +500,42 @@
   .hcardIconBtn { width: 28px; height: 28px; font-size: 13px; }
   .confirmBtn { min-height: 32px; font-size: 11px; }
 }
+
+/* -- PHONES: the scoring slots ------------------------------------------------
+   Each slot was 163px at 375px wide: a 50px art band, the name, stat boxes,
+   boosts, a "vs" line, the advantage line and a 16px Roll button, the main
+   action in the game. Here the art band goes (the name opens the card
+   instead), the stats sit on one line, the "vs" name goes (the defender is in
+   the same row) but his DEF badge stays, Roll is a 36px target, and after a
+   roll only the PTS/REB/AST line of the box score stays on the slot. The
+   announced-check banner sticks below the phase bar rather than over it. */
+@media (max-width: 768px) {
+  .pendingBanner { top: calc(var(--phone-header-h) + var(--phone-score-h) + 64px); }
+  .matchups { padding: 20px 6px 6px; gap: 3px; justify-content: flex-start; }
+  .court { min-height: 0; }
+  .matchupRow { grid-template-columns: 1fr 18px 1fr; gap: 3px; }
+  .placementSlot { min-height: 0; padding: 2px; }
+  .cardArtSide { display: none; }
+  .cardSidebar { width: 100%; padding: 4px 6px; gap: 2px; }
+  .cardNameRow { align-items: center; }
+  .cardName { font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .hot, .cold { font-size: 10px; }
+  .fatBadge { font-size: 9px; }
+  .attrRow { justify-content: flex-start; gap: 8px; }
+  .attrItem { flex: 0 0 auto; flex-direction: row; align-items: baseline; gap: 2px; }
+  .attrLabel { font-size: 8px; }
+  .attrVal { font-size: 12px; }
+  /* The boosts are folded into the need the spend buttons print ("3PT (5A)
+     12+") and are on the card the name opens; the per-player box score is
+     in the log and at the final whistle. Neither earns 30px a row here. */
+  .boostRow, .gameStats { display: none; }
+  /* The defender's DEF badge shares the advantage line instead of taking a
+     line of its own. */
+  .advBlock { display: flex; flex-wrap: wrap; align-items: center; column-gap: 6px; }
+  .advVs { display: none; }
+  .advDefBadge { font-size: 9px; }
+  .advLine { order: -1; font-size: 11px; }
+  .rollArea { border-top: none; padding-top: 1px; margin-top: 0; }
+  .rollBtn { min-height: 36px; font-size: 13px; padding: 0; }
+  .astBtn, .rebBtn { min-height: 32px; font-size: 11px; }
+}

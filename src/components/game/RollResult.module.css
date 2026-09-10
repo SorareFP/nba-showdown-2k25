@@ -99,3 +99,18 @@
   45% { transform: translateX(3px); }
   70% { transform: translateX(-2px); }
 }
+
+/* -- PHONES: the landed roll on one line ---------------------------------------
+   Die, points and the rebound/assist line side by side, so a rolled slot is no
+   taller than one still showing its Roll button. The tumble keeps the landed
+   height, as above. Breakpoint = PHONE_QUERY in src/ui/useIsPhone.js. */
+@media (max-width: 768px) {
+  .result { display: flex; align-items: baseline; justify-content: center; flex-wrap: wrap; gap: 6px; }
+  .tumbleWrap { height: 22px; }
+  .tumble { font-size: 18px; }
+  .diceStr { font-size: 10px; }
+  .die { font-size: 12px; }
+  .pts { font-size: 16px; }
+  .statLine { font-size: 10px; }
+}
+

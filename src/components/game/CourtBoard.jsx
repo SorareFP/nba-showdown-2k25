@@ -1647,7 +1647,8 @@ function PlayerSlot({ player, ps, adv, fat, result, blocked, teamKey, idx, phase
       </div>
       {/* Right: stats sidebar */}
       <div className={styles.cardSidebar}>
-        <div className={styles.cardNameRow}>
+        {/* The name opens the card too: on a phone the art band that did is hidden. */}
+        <div className={styles.cardNameRow} onClick={() => open('player', player)} title="View card" style={{cursor:'pointer'}}>
           <span className={styles.cardName} style={{color:col}}>{player.name}</span>
           <div className={styles.markers}>
             {(()=>{const net=(ps.hot||0)-(ps.cold||0);if(net>0)return<span className={styles.hot}>🔥{net>1?'×'+net:''}</span>;if(net<0)return<span className={styles.cold}>❄️{Math.abs(net)>1?'×'+Math.abs(net):''}</span>;return null;})()}

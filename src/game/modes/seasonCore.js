@@ -127,7 +127,14 @@ export function recordResult(season, rawResult) {
 // saved before stats existed (no `stats` at all) reads as empty rather than
 // breaking. The user, 2026-09-08: "Player stats accumulated in a season
 // should show within the season."
-export const STAT_FIELDS = ['pts', 'reb', 'ast', 'min', 'tpm', 'tpa'];
+export const STAT_FIELDS = ['pts', 'reb', 'ast', 'min', 'tpm', 'tpa', 'alw'];
+
+// MATCHUP +/- (2026-09-10) is a player's points minus `alw`, the points the
+// man he guarded scored on him (creditAllowed, engine.js). A season that
+// began before the stat existed has games whose lines carry no `alw`, and
+// subtracting nothing from those games' points would read as a big plus. So
+// each row also keeps `mg` — games whose line carried `alw` — and `mpts`, the
+// points from those games only; the stat is `mpts - alw` over `mg` games.
 
 function foldBoxes(stats, sides) {
   let out = Array.isArray(stats) ? stats.map(r => ({ ...r })) : [];
@@ -136,28 +143,51 @@ function foldBoxes(stats, sides) {
     for (const line of box) {
       if (!line?.key) continue;
       let row = out.find(r => r.team === team && r.key === line.key);
-      if (!row) { row = { team, key: line.key, g: 0, pts: 0, reb: 0, ast: 0, min: 0, tpm: 0, tpa: 0 }; out.push(row); }
+      if (!row) {
+        row = { team, key: line.key, g: 0, mg: 0, mpts: 0 };
+        for (const f of STAT_FIELDS) row[f] = 0;
+        out.push(row);
+      }
       row.g += 1;
-      for (const f of STAT_FIELDS) row[f] += Number(line[f]) || 0;
+      // `|| 0` on the row as well: a row saved before a field existed has none.
+      for (const f of STAT_FIELDS) row[f] = (Number(row[f]) || 0) + (Number(line[f]) || 0);
+      if (line.alw !== undefined && line.alw !== null && Number.isFinite(Number(line.alw))) {
+        row.mg = (Number(row.mg) || 0) + 1;
+        row.mpts = (Number(row.mpts) || 0) + (Number(line.pts) || 0);
+      }
     }
   }
   return out;
+}
+
+/** Per-game rates and the matchup +/- (null where no game carried the data). */
+function withRates(r) {
+  return {
+    ...r,
+    ppg: r.g ? r.pts / r.g : 0,
+    rpg: r.g ? r.reb / r.g : 0,
+    apg: r.g ? r.ast / r.g : 0,
+    mpm: r.mg ? (Number(r.mpts) || 0) - (Number(r.alw) || 0) : null,
+  };
 }
 
 /** One team's players this season, totals and per-game, most points first. */
 export function teamSeasonStats(season, teamId) {
   return (season?.stats ?? [])
     .filter(r => r.team === teamId)
-    .map(r => ({ ...r, ppg: r.g ? r.pts / r.g : 0, rpg: r.g ? r.reb / r.g : 0, apg: r.g ? r.ast / r.g : 0 }))
+    .map(withRates)
     .sort((a, b) => b.pts - a.pts || b.ppg - a.ppg || a.key.localeCompare(b.key));
 }
 
-/** The league's leaders by a per-game average (`ppg`, `rpg`, `apg`) or a total. */
+/**
+ * The league's leaders by a per-game average (`ppg`, `rpg`, `apg`), the
+ * matchup +/- (`mpm`, only players with matchup data), or a total.
+ */
 export function seasonLeaders(season, { by = 'ppg', limit = 8, minGames = 1 } = {}) {
   const rows = (season?.stats ?? [])
-    .filter(r => r.g >= minGames)
-    .map(r => ({ ...r, ppg: r.g ? r.pts / r.g : 0, rpg: r.g ? r.reb / r.g : 0, apg: r.g ? r.ast / r.g : 0 }));
-  const total = { ppg: 'pts', rpg: 'reb', apg: 'ast' }[by] ?? by;
+    .filter(r => r.g >= minGames && (by !== 'mpm' || r.mg > 0))
+    .map(withRates);
+  const total = { ppg: 'pts', rpg: 'reb', apg: 'ast', mpm: 'mpts' }[by] ?? by;
   return rows
     .sort((a, b) => (b[by] ?? 0) - (a[by] ?? 0) || (b[total] ?? 0) - (a[total] ?? 0) || a.key.localeCompare(b.key))
     .slice(0, limit);

@@ -322,3 +322,14 @@
   padding: 7px 10px;
   max-width: 260px;
 }
+
+/* The Player stats panel's collapse toggle: the title itself, so the whole
+   heading is the target. */
+.collapseBtn {
+  background: none; border: none; padding: 0; margin: 0;
+  color: inherit; font: inherit; letter-spacing: inherit; text-transform: inherit;
+  display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+  min-height: 32px;
+}
+.collapseBtn:hover { color: var(--text); }
+

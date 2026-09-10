@@ -27,6 +27,8 @@ export function boxLinesFor(team) {
       min: ps.totalMinutes || 0,
       tpm: ps.threepm || 0,
       tpa: ps.threepa || 0,
+      // Points allowed to the man he guarded (creditAllowed, engine.js).
+      alw: ps.alw || 0,
     }));
 }
 

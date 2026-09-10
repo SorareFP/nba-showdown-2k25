@@ -127,6 +127,13 @@ describe('the tabs', () => {
     expect(out).toContain('Our League');
     expect(out).toContain('Host Team');
     expect(out).toContain('Standings');
+    // Player stats sit UNDER the standings, open on the league's leaders, and
+    // carry the matchup columns (the user, 2026-09-10).
+    expect(out.indexOf('Player stats')).toBeGreaterThan(out.indexOf('Standings'));
+    expect(out).toMatch(/<option value="leaders" selected="">/);
+    expect(out).toContain('League leaders (matchup +/-)');
+    expect(out).toContain('M+/-');
+    expect(out).toContain('aria-expanded="true"');
     expect(out).not.toContain('Sim it');
     expect(out).not.toContain('Abandon');
     expect(out).not.toContain('Sim the rest of the round');

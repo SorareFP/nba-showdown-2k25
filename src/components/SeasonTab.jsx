@@ -996,8 +996,6 @@ function Dashboard({
 
       {(isPlayoffs || isDone) && <BracketView season={season} by={by} />}
 
-      <SeasonStatsPanel season={season} by={by} myId={myId} />
-
       <section className={styles.panel}>
         <h3 className={styles.panelTitle}>Standings</h3>
         <div className={styles.tableWrap}>
@@ -1027,38 +1025,69 @@ function Dashboard({
         </div>
         <div className={styles.legend}>Top {berths} make the playoffs.</div>
       </section>
+
+      {/* Under the standings (the user, 2026-09-10). */}
+      <SeasonStatsPanel season={season} by={by} myId={myId} />
     </>
   );
 }
 
 /**
- * PLAYER STATS ACROSS THE SEASON — your team by default, any team, or the
- * league's leaders. Totals with the per-game beside them; the season folds
- * every played and simulated game's box score into `season.stats`.
+ * PLAYER STATS ACROSS THE SEASON — the league's leaders by default, or any
+ * one team. Totals with the per-game beside them; the season folds every
+ * played and simulated game's box score into `season.stats`. Collapsible,
+ * remembered per browser. The user, 2026-09-10: "put player stats under the
+ * standings column, make league leaders the default, and make it
+ * collapsable."
  */
-function SeasonStatsPanel({ season, by, myId }) {
-  const [view, setView] = useState(myId);
-  const teamId = view === 'leaders' ? null : view;
-  const rows = useMemo(() => (teamId ? teamSeasonStats(season, teamId) : seasonLeaders(season, { by: 'ppg', limit: 10 })), [season, teamId]);
+const STATS_OPEN_KEY = 'showdown.seasonStatsOpen';
+function readStatsOpen() {
+  try { return globalThis.localStorage?.getItem(STATS_OPEN_KEY) !== '0'; }
+  catch { return true; }
+}
+
+export function SeasonStatsPanel({ season, by, myId }) {
+  const [view, setView] = useState('leaders');
+  const [open, setOpen] = useState(readStatsOpen);
+  const toggle = () => setOpen(o => {
+    try { globalThis.localStorage?.setItem(STATS_OPEN_KEY, o ? '0' : '1'); } catch { /* a per-browser convenience */ }
+    return !o;
+  });
+  const leaderBy = view === 'leaders' ? 'ppg' : view === 'leaders-mpm' ? 'mpm' : null;
+  const teamId = leaderBy ? null : view;
+  const rows = useMemo(
+    () => (teamId ? teamSeasonStats(season, teamId) : seasonLeaders(season, { by: leaderBy, limit: 10 })),
+    [season, teamId, leaderBy]
+  );
   const nameOf = key => getCardByKey(key)?.name ?? key;
   const f1 = n => (Math.round(n * 10) / 10).toFixed(1);
+  const signed = n => (n == null ? '—' : `${n > 0 ? '+' : ''}${n}`);
   return (
     <section className={styles.panel}>
       <div className={styles.deckRow}>
-        <h3 className={styles.panelTitle}>Player stats</h3>
-        <select className={styles.deckSelect} value={view} onChange={e => setView(e.target.value)}>
-          <option value="leaders">League leaders (PPG)</option>
-          {(season.teams ?? []).map(t => <option key={t.id} value={t.id}>{t.name}{t.id === myId ? ' (you)' : ''}</option>)}
-        </select>
+        <h3 className={styles.panelTitle}>
+          <button type="button" className={styles.collapseBtn} onClick={toggle} aria-expanded={open}>
+            <span aria-hidden="true">{open ? '▾' : '▸'}</span> Player stats
+          </button>
+        </h3>
+        {open && (
+          <select className={styles.deckSelect} value={view} onChange={e => setView(e.target.value)} aria-label="Whose stats">
+            <option value="leaders">League leaders (PPG)</option>
+            <option value="leaders-mpm">League leaders (matchup +/-)</option>
+            {(season.teams ?? []).map(t => <option key={t.id} value={t.id}>{t.name}{t.id === myId ? ' (you)' : ''}</option>)}
+          </select>
+        )}
       </div>
-      {rows.length === 0 ? (
-        <div className={styles.muted}>No games in the book yet.</div>
+      {open && (rows.length === 0 ? (
+        <div className={styles.muted}>{leaderBy === 'mpm' ? 'No matchup numbers yet — they start with the next game played.' : 'No games in the book yet.'}</div>
       ) : (
         <div className={styles.tableWrap}>
           <table className={styles.table}>
             <thead>
               <tr>
                 <th>Player</th>{!teamId && <th>Team</th>}<th>G</th><th>PTS</th><th>PPG</th><th>REB</th><th>RPG</th><th>AST</th><th>APG</th><th>3PM</th><th>MIN</th>
+                <th title="Points allowed: scored on him by the man he was guarding">ALW</th>
+                <th title="Matchup plus-minus: his points minus the points his man scored on him">M+/-</th>
               </tr>
             </thead>
             <tbody>
@@ -1072,13 +1101,19 @@ function SeasonStatsPanel({ season, by, myId }) {
                   <td>{r.ast}</td><td>{f1(r.apg)}</td>
                   <td>{r.tpm}</td>
                   <td>{r.min}</td>
+                  <td>{r.mg ? r.alw : '—'}</td>
+                  <td className={r.mpm > 0 ? styles.pos : r.mpm < 0 ? styles.neg : ''}>{signed(r.mpm)}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
+      ))}
+      {open && (
+        <div className={styles.legend}>
+          Every game counts, played or simmed. ALW is what the man he guarded scored on him; M+/- is his own points minus that. Matchup numbers count from games played on or after 2026-09-10.
+        </div>
       )}
-      <div className={styles.legend}>Every game counts, played or simmed. Games recorded before this panel existed have no lines.</div>
     </section>
   );
 }

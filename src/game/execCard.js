@@ -3,6 +3,7 @@
 // Never mutates — always returns a new object via deepClone
 
 import { handOverPriority, getTeam, getOpp, getPS, calcAdv, shotCheck, matchupContest, drawCards, deepClone, getFatigue, recordDefSwitch, burnedSlots, roll20, checkAssistDraw, standingEntry, CROWD_FAVORITE_PTS, satOutLast, bottomedLines } from './engine.js';
+import { creditAllowed } from './engine.js';
 import { helpTargets, canAnswerCheck } from './canPlay.js';
 import { lookupChart } from './cards.js';
 import { getStrat } from './strats.js';
@@ -24,6 +25,7 @@ function scorePts(g, teamKey, playerId, pts) {
   getTeam(g, teamKey).score += pts;
   const ps = playerId ? getPS(g, teamKey, playerId) : null;
   if (ps) ps.pts = (ps.pts || 0) + pts;
+  if (playerId) creditAllowed(g, teamKey, playerId, pts);
 }
 
 /**
@@ -913,6 +915,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       const ccTeam = getTeam(g, oppKey2);
       ccTeam.score -= oldPts;
       if (ccPs) ccPs.pts = (ccPs.pts || 0) - oldPts;
+      creditAllowed(g, oppKey2, lsc.playerIdx, -oldPts);
       // Analytics: reverse the old shot check result
       if (g.analytics?.[oppKey2]) {
         g.analytics[oppKey2].shotCheckPts -= oldPts;
@@ -947,6 +950,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if (newR.hit) {
         ccTeam.score += newR.pts;
         if (ccPs) ccPs.pts += newR.pts;
+        creditAllowed(g, oppKey2, lsc.playerIdx, newR.pts);
         if (lsc.onHit === 'ast') ccTeam.assists++;
       }
 
@@ -1550,6 +1554,7 @@ export function applyShotCheck(g, psc) {
     // bucket never reached the box score — and Crowd Favorite, which counts
     // a player's section points off this number, could not see it.
     ps.pts = (ps.pts || 0) + r.pts;
+    creditAllowed(g, psc.teamKey, psc.playerIdx, r.pts);
     // A PAINT SCORE IS AN EVENT. Inside-Out reacts to it and Short-Roll
     // Playmaker pays on it, and neither could see it before: `lastRoll` is a
     // scoring ROLL and a paint bucket is a shot check, which is a different

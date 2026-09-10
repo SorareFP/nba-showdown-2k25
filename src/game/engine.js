@@ -120,6 +120,7 @@ function makeTeam(roster, name, deckConfig) {
       threepm: 0, threepa: 0,
       ftm: 0, fta: 0,
       pm: 0,
+      alw: 0,           // points ALLOWED: scored on him by the man he was guarding (creditAllowed)
     })),
   };
 }
@@ -410,6 +411,38 @@ export const SPEND_COSTS = {
  */
 export const contestConfig = { enabled: true };
 
+/**
+ * MATCHUP DEFENCE. Every point a player scores is charged to the defender
+ * guarding him at that moment — `offMatchups` for the attacking side, the
+ * same lookup matchupContest uses — as that defender's `alw` (points
+ * allowed). A player's MATCHUP +/- is then his own points minus his `alw`:
+ * what he did to his man, less what his man did to him. The user,
+ * 2026-09-10: "matchup +/- (points conceded against direct matchup while on
+ * the floor) for each player". Only starters score and only starters guard,
+ * so "while on the floor" holds by construction.
+ *
+ * `slotOrId` is the scorer's starter slot or his card id. `defId` names the
+ * defender outright where the caller already resolved him (a chart roll
+ * records defIdx itself). A negative `pts` takes points back — Coach's
+ * Challenge reversing a make — and never takes a defender below zero.
+ * Every site that adds to a player's `pts` calls this; matchupPlusMinus
+ * .test.js holds that across whole simulated games.
+ */
+export function creditAllowed(g, teamKey, slotOrId, pts, defId = null) {
+  if (!pts) return;
+  const defKey = teamKey === 'A' ? 'B' : 'A';
+  let id = defId;
+  if (!id) {
+    const starters = getTeam(g, teamKey)?.starters || [];
+    const slot = typeof slotOrId === 'number' ? slotOrId : starters.findIndex(p => p?.id === slotOrId);
+    if (slot < 0) return;
+    const defIdx = (g.offMatchups?.[teamKey] || [])[slot] ?? slot;
+    id = getTeam(g, defKey)?.starters?.[defIdx]?.id;
+  }
+  const dps = id ? getPS(g, defKey, id) : null;
+  if (dps) dps.alw = Math.max(0, (dps.alw || 0) + pts);
+}
+
 export function matchupContest(g, teamKey, idx, type) {
   if (!contestConfig.enabled) return 0;
   if (type === 'ft') return 0;
@@ -612,6 +645,7 @@ export function spendAssist(g, teamKey, type, playerIdx) {
       myT.score += r.pts;
       const ps2 = myT.stats.find(s => s.id === player.id);
       if (ps2) { ps2.pts += r.pts; ps2.threepa = (ps2.threepa || 0) + 1; ps2.threepm = (ps2.threepm || 0) + 1; }
+      creditAllowed(ng, teamKey, playerIdx, r.pts);
       if (ng.analytics?.[teamKey]) ng.analytics[teamKey].assistSpendPts += r.pts;
     } else {
       const ps2 = myT.stats.find(s => s.id === player.id);
@@ -633,6 +667,7 @@ export function spendAssist(g, teamKey, type, playerIdx) {
       myT.score += r.pts;
       const ps2 = myT.stats.find(s => s.id === player.id);
       if (ps2) ps2.pts += r.pts;
+      creditAllowed(ng, teamKey, playerIdx, r.pts);
       if (ng.analytics?.[teamKey]) ng.analytics[teamKey].assistSpendPts += r.pts;
     }
     if (r.die <= 2) ps.cold = (ps.cold || 0) + 1;
@@ -663,6 +698,7 @@ export function spendReboundBonus(g, teamKey, type, playerIdx) {
       myT.score += r.pts;
       const ps2 = myT.stats.find(s => s.id === player.id);
       if (ps2) ps2.pts += r.pts;
+      creditAllowed(ng, teamKey, playerIdx, r.pts);
       if (ng.analytics?.[teamKey]) ng.analytics[teamKey].reboundBonusPts += r.pts;
     }
     if (r.die <= 2) ps.cold = (ps.cold || 0) + 1;
@@ -1035,6 +1071,7 @@ export function doRoll(g, teamKey, idx, opts = {}) {
   nMyT.rebounds += result.reb;
   const ps2 = nMyT.stats.find(s => s.id === nPlayer.id);
   if (ps2) { ps2.pts += result.pts; ps2.reb += result.reb; ps2.ast += result.ast; }
+  creditAllowed(ng, teamKey, idx, result.pts, nDefPlayer?.id);
 
   // Analytics: chart scoring roll
   if (ng.analytics?.[teamKey]) {

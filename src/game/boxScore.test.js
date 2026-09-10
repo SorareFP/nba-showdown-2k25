@@ -15,7 +15,7 @@ describe('boxScoreFor', () => {
     // stats[2..9] never played: totalMinutes 0
     const box = boxScoreFor(g, 'A');
     expect(box).toHaveLength(2);
-    expect(box[0]).toEqual({ key: cardKey(t.roster[0]), pts: 24, reb: 6, ast: 3, min: 32, tpm: 3, tpa: 8 });
+    expect(box[0]).toEqual({ key: cardKey(t.roster[0]), pts: 24, reb: 6, ast: 3, min: 32, tpm: 3, tpa: 8, alw: 0 });
     expect(box[1].key).toBe(cardKey(t.roster[1]));
   });
 
@@ -33,8 +33,8 @@ describe('sanitizeBox', () => {
       { key: 'b' },
     ]);
     expect(out).toEqual([
-      { key: 'a', pts: 12, reb: 3, ast: 0, min: 200, tpm: 0, tpa: 4 },
-      { key: 'b', pts: 0, reb: 0, ast: 0, min: 0, tpm: 0, tpa: 0 },
+      { key: 'a', pts: 12, reb: 3, ast: 0, min: 200, tpm: 0, tpa: 4, alw: 0 },
+      { key: 'b', pts: 0, reb: 0, ast: 0, min: 0, tpm: 0, tpa: 0, alw: 0 },
     ]);
   });
 

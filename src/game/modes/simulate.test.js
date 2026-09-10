@@ -105,6 +105,33 @@ describe('simulateGame', () => {
     expect(Math.random).toBe(real);
   });
 
+  it('gives stars star minutes: the coach picks every section, not a rotation', () => {
+    // The simulator used to rotate the five least-used players in after the
+    // opening section, so every player on every AI team played exactly 24
+    // minutes (the user, 2026-09-10: "my players are playing way more than
+    // opposing teams' players"). Each section's five is now the coach's pick.
+    let s = 31;
+    const rng = () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 2 ** 32; };
+    const byRank = Array.from({ length: ROSTER_SIZE }, () => []);
+    for (let i = 0; i < 12; i += 1) {
+      // Franchise-built, the way a season builds its AI teams.
+      const a = buildAiRoster('LAL', { rng });
+      const taken = new Set(a.map(c => c.id));
+      const b = buildAiRoster('BOS', { rng, taken });
+      const g = simulateGame(a, b, { rng, keepGame: true }).game;
+      for (const t of [g.teamA, g.teamB]) {
+        t.roster
+          .map(p => ({ sal: p.salary, min: t.stats.find(x => x.id === p.id)?.totalMinutes ?? 0 }))
+          .sort((x, y) => y.sal - x.sal)
+          .forEach((r, k) => byRank[k].push(r.min));
+      }
+    }
+    const mpg = byRank.map(xs => xs.reduce((t, x) => t + x, 0) / xs.length);
+    expect(mpg[0]).toBeGreaterThan(mpg[ROSTER_SIZE - 1] + 6);   // the best-paid plays clearly more
+    expect(mpg.every(m => Math.abs(m - 24) < 0.5)).toBe(false);  // not the old flat 24 for everyone
+    expect(Math.round(mpg.reduce((t, m) => t + m, 0))).toBe(240); // still five on the floor, 48 minutes
+  });
+
   it('turns a fixture into a result the standings can read', () => {
     const rosters = { home: league[0].roster, away: league[1].roster };
     const res = simulateFixture({ id: 'r1g1', home: 'home', away: 'away' }, rosters, { rng: seeded(31) });

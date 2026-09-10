@@ -143,19 +143,17 @@ function draftStarters(g, brains = null) {
 
 /** One section: the matchup window, the scoring window, the rolls, the spends. */
 function playSection(g, sectionIndex, brains = null) {
-  // Rotate the five least-used players in after the opening section, the way
-  // the audit does, so fatigue means something across a whole game.
+  // EVERY SECTION'S FIVE IS THE COACH'S PICK, as it is at the table. This
+  // used to rotate the five least-used players in after the opening section,
+  // which swapped two fives back and forth and gave every player on every
+  // simulated team exactly 24 minutes, star and twelfth man alike, while a
+  // human's stars played 35-38 (the user, 2026-09-10: "my players are playing
+  // way more than opposing teams' players"). The coach's own lineupValue
+  // already weighs fatigue; endSection has refilled both pools.
   if (sectionIndex > 0) {
-    for (const key of ['A', 'B']) {
-      const team = key === 'A' ? g.teamA : g.teamB;
-      const byId = new Map(team.stats.map(p => [p.id, p]));
-      team.starters = team.roster
-        .map(c => ({ c, min: byId.get(c.id)?.minutes ?? 0, sal: c.salary ?? 0 }))
-        .sort((x, y) => x.min - y.min || y.sal - x.sal)
-        .slice(0, STARTERS)
-        .map(o => o.c);
-    }
-    g = runSnake(g, brains);
+    g.teamA.starters = [];
+    g.teamB.starters = [];
+    g = draftStarters(g, brains);
   }
 
   g.phase = 'matchup_strats';

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { calcAdv, getTeam, getOpp, getPS, getFatigue, SNAKE, SPEND_COSTS, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, extraRollPending, checkNeed, fatigueForMinutes, crunchSearchOptions } from '../../game/engine.js';
 import { canPlayCard, myHouseTargets, fwdTargets, preRollTargets, helpTargets } from '../../game/canPlay.js';
 import { resolveGoUnder } from '../../game/execCard.js';
@@ -70,10 +70,25 @@ export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExec
   // A hand card back to the bottom of the deck — see returnCardToDeck.
   const returnCard = (teamKey, handIdx) => setGame(returnCardToDeck(game, teamKey, handIdx));
 
+  // THE LATEST PLAY HANDLER, not the one this click closed over. A card's
+  // choices are awaited dialogs, seconds long, and in PvP the handler carries
+  // the room's game as it stood when it was made: a stale one would play the
+  // card onto a game the opponent has moved on from.
+  const onExecCardRef = useRef(onExecCard);
+  onExecCardRef.current = onExecCard;
   const handleExecCard = async (teamKey, cardId, baseOpts = {}) => {
-    const opts = await buildOpts(game, teamKey, cardId, baseOpts, openModal, { toast, ask, defenceIsHuman });
+    let opts;
+    try {
+      opts = await buildOpts(game, teamKey, cardId, baseOpts, openModal, { toast, ask, defenceIsHuman });
+    } catch (e) {
+      // Never silent: a card whose choices throw says so (the user,
+      // 2026-09-10: "Sometimes stagger action just won't fire").
+      console.error('card options failed', cardId, e);
+      toast(`That card could not be played: ${e?.message ?? e}`, { tone: 'error' });
+      return;
+    }
     if (opts === null) return;
-    onExecCard(teamKey, cardId, opts);
+    onExecCardRef.current(teamKey, cardId, opts);
   };
 
   return (
@@ -690,14 +705,25 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
 
   // ── Two-player cards ───────────────────────────────────────────────────
   if (cardId === 'stagger_action') {
-    // First pick: player with Speed 13+
-    const speedEligible = filterStarters(myT.starters, (p) => (p.speed || 0) >= 13);
+    // First pick: a Speed 13+ player who HAS a partner — a different player
+    // with a positive 3PT Bonus. Offering the only shooter as the speed half
+    // left the second list empty, and the card cancelled without a word.
+    const hasPartner = i => myT.starters.some((q, j) => j !== i && q && (q.threePtBoost || 0) > 0);
+    const speedEligible = filterStarters(myT.starters, (p, i) => Boolean(p) && (p.speed || 0) >= 13 && hasPartner(i));
+    if (!speedEligible.length) {
+      toast('Stagger Action needs a Speed 13+ player and a different player with a 3PT Bonus.', { tone: 'error' });
+      return null;
+    }
     const idx1 = await pickFiltered(speedEligible, '⚡ Stagger Action — Pick player with Speed 13+');
     if (idx1 === null) return null;
     opts.playerIdx = idx1;
 
     // Second pick: player with a 3PT bonus (excluding first pick)
-    const threeEligible = filterStarters(myT.starters, (p, i) => i !== idx1 && (p.threePtBoost || 0) > 0);
+    const threeEligible = filterStarters(myT.starters, (p, i) => Boolean(p) && i !== idx1 && (p.threePtBoost || 0) > 0);
+    if (!threeEligible.length) {
+      toast('Nobody else on the floor has a 3PT Bonus for Stagger Action.', { tone: 'error' });
+      return null;
+    }
     const idx2 = await pickFiltered(threeEligible, `⚡ Pick player with 3PT bonus`);
     if (idx2 === null) return null;
     opts.player2Idx = idx2;

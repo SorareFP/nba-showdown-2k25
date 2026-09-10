@@ -256,9 +256,29 @@ export function placementChoices(game, teamKey) {
     const placed = new Set((t.starters || []).map(pl => pl.id));
     return picks.filter(id => !placed.has(id)).map(id => (t.roster || []).find(r => r.id === id)).filter(Boolean);
   };
+  // WHAT THE OTHER BENCH HAS NOT SHOWN. The lineup pick is secret, so a coach
+  // placing against you knows who is on the floor and your roster, and not
+  // which five you picked. The search used to read the opponent's actual
+  // unplaced picks (the user, 2026-09-10: "When doing the matchup
+  // calculations, does the CPU already know my five players? They
+  // technically should not."). The rows it has not seen are now GUESSED from
+  // the roster: the players likeliest to have been picked, scored the way a
+  // coach picks its own five (lineupValue: fatigue, markers, attributes).
+  // Each real placement replaces a guess with the truth as the snake goes.
+  const guessRemaining = key => {
+    const t = getTeam(game, key);
+    const placed = new Set((t.starters || []).map(pl => pl.id));
+    const count = Math.max(0, 5 - placed.size);
+    return (t.roster || [])
+      .filter(r => r && !placed.has(r.id))
+      .map(r => ({ r, v: lineupValue(r, getPS(game, key, r.id)) }))
+      .sort((a, b) => b.v - a.v || String(a.r.id).localeCompare(String(b.r.id)))
+      .slice(0, count)
+      .map(x => x.r);
+  };
   const mine = remainingFor(teamKey);
   if (!mine.length) return [];
-  const theirs = remainingFor(oppKey);
+  const theirs = guessRemaining(oppKey);
   const order = game.placementOrder || DEFAULT_ORDER;
   const step = game.placementStep ?? (myT.starters.length + oppT.starters.length);
   // The steps after this one. The first must be mine for the scores to mean

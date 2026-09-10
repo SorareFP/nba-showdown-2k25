@@ -64,8 +64,13 @@ describe('requests', () => {
   it('refuses the never-card names with the user\'s message, and the form can tell from the search text', () => {
     expect(AUTO_REJECT_MESSAGE).toBe("That guys sucks, he's not getting a card.");
     expect(checkRequest({ row: rows[4] })).toEqual({ ok: false, code: 'auto-rejected', msg: AUTO_REJECT_MESSAGE });
-    for (const t of ['Enes Kanter', 'kanter', 'Enes Freedom', 'royce white', 'ROYCE']) expect(searchHitsNeverCard(t), t).toBe(true);
-    for (const t of ['Tim Duncan', 'Royce O', 'ene']) expect(searchHitsNeverCard(t), t).toBe(false);
+    // It waits for "Enes F", "Enes K", "Royce W" (the user, 2026-09-10), or a surname only he carries.
+    for (const t of ['Enes K', 'enes kanter', 'Enes F', 'Enes Freedom', 'Royce W', 'ROYCE WHITE', 'Kanter', 'freedom']) {
+      expect(searchHitsNeverCard(t), t).toBe(true);
+    }
+    for (const t of ['Enes', 'Enes ', 'Royce', 'Royce O', 'white', 'Coby White', 'Whiteside', 'free', 'Tim Duncan']) {
+      expect(searchHitsNeverCard(t), t).toBe(false);
+    }
   });
 
   it('refuses a season with no quote, the same card twice, and a fourth open request', () => {

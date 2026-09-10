@@ -29,8 +29,18 @@ export function isNeverCard(name) {
   return NEVER.has(normName(name));
 }
 
-/** Search text that points at one of them: "kanter", "royce white", "enes". */
+/**
+ * When the search box has said enough to mean one of them: the first name
+ * and the surname's first letter (the user, 2026-09-10: wait until the field
+ * says "Enes F", "Enes K" and "Royce W"). Matching four letters of any of
+ * them fired on "Enes" alone, and on "white" and "free", which blocked
+ * searching for Coby White or Hassan Whiteside. The two surnames nobody else
+ * carries count on their own; "White" does not.
+ */
+const NEVER_PREFIXES = ['Enes F', 'Enes K', 'Royce W'].map(normName);
+const NEVER_SURNAMES = ['Kanter', 'Freedom'].map(normName);
+
 export function searchHitsNeverCard(text) {
   const q = normName(text);
-  return q.length >= 4 && NEVER_CARD_NAMES.some(n => normName(n).includes(q));
+  return NEVER_PREFIXES.some(p => q.startsWith(p)) || NEVER_SURNAMES.some(s => q.includes(s));
 }

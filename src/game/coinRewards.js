@@ -165,7 +165,7 @@ export { MILESTONES, BAM_MILESTONE };
 // lines to the card's running totals and the client shows totals and
 // per-game averages on the card. Shared by the Cloud Function and the direct
 // route so both accept exactly the same shape.
-export const BOX_FIELDS = ['pts', 'reb', 'ast', 'min', 'tpm', 'tpa', 'alw'];
+export const BOX_FIELDS = ['pts', 'reb', 'ast', 'min', 'tpm', 'tpa', 'alw', 'gs', 'fta', 'ftm', 'pnta', 'pntm', 'dca', 'dcm', 'blk', 'onf', 'ona'];
 export const MAX_BOX_ROWS = 10;
 const BOX_CAP = 200;
 

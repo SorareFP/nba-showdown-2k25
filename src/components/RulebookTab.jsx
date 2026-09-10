@@ -296,7 +296,7 @@ export default function RulebookTab() {
           <li><strong>Quick Match:</strong> against the coach by salary band, or your team against a random opponent.</li>
           <li><strong>Hotseat:</strong> two managers, one screen.</li>
           <li><strong>Online PvP:</strong> a room with a live opponent; secret lineups, then the placement snake.</li>
-          <li><strong>Season:</strong> a round-robin against the league — Short (everyone once), Regular (home and away) or Long (three meetings) — with standings, playoffs that advance themselves, and a title purse claimed at the end.</li>
+          <li><strong>Season:</strong> a round-robin against the league — Short (everyone once), Regular (home and away) or Long (three meetings) — with standings, playoffs that advance themselves, and a title purse claimed at the end. When the regular season ends the league names its <strong>awards</strong> from regular-season games only: MVP, Sixth Man and Rookie of the Year by value over replacement, Defensive Player of the Year by the fewest points allowed per minute (at least 16 minutes a game over half his team's games), and the scoring title. A player's <strong>matchup +/-</strong> is his points minus what the man he guarded scored on him; a <strong>block</strong> is a miss his Defensive Bonus contest turned.</li>
         </ul>
         <p>A game in progress is saved on every change and restored on reload.</p>
       </Section>

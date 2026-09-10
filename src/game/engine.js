@@ -121,6 +121,10 @@ function makeTeam(roster, name, deckConfig) {
       ftm: 0, fta: 0,
       pm: 0,
       alw: 0,           // points ALLOWED: scored on him by the man he was guarding (creditAllowed)
+      // The finer line (2026-09-10, "as granular as possible"): games started,
+      // paint checks made/attempted, checks taken AGAINST him made/attempted and
+      // the misses his contest turned (blocks), and on-floor points for/against.
+      gs: 0, pnta: 0, pntm: 0, dca: 0, dcm: 0, blk: 0, onf: 0, ona: 0,
     })),
   };
 }
@@ -198,6 +202,7 @@ export function newGame(rosterA, rosterB, deckConfigA, deckConfigB, opts = {}) {
       : ['A','B','B','A','A','B','B','A','A','B'],
     lastMatchupCard: null,
     lastDefSwitch: null,    // the opponent's last defensive switch — what Overhelp / Burned on the Switch answer
+    secStart: { A: 0, B: 0 }, // the score when this section began: on-floor points (endSection)
     scoringTurn: 'B',
     scoringPasses: 0,
     pendingShotCheck: null,
@@ -428,19 +433,58 @@ export const contestConfig = { enabled: true };
  * Every site that adds to a player's `pts` calls this; matchupPlusMinus
  * .test.js holds that across whole simulated games.
  */
-export function creditAllowed(g, teamKey, slotOrId, pts, defId = null) {
-  if (!pts) return;
+/** The stat line of the defender guarding `slotOrId` (a starter slot or a card id) on `teamKey`'s offence. */
+function defenderPS(g, teamKey, slotOrId, defId = null) {
   const defKey = teamKey === 'A' ? 'B' : 'A';
   let id = defId;
   if (!id) {
     const starters = getTeam(g, teamKey)?.starters || [];
     const slot = typeof slotOrId === 'number' ? slotOrId : starters.findIndex(p => p?.id === slotOrId);
-    if (slot < 0) return;
+    if (slot < 0) return null;
     const defIdx = (g.offMatchups?.[teamKey] || [])[slot] ?? slot;
     id = getTeam(g, defKey)?.starters?.[defIdx]?.id;
   }
-  const dps = id ? getPS(g, defKey, id) : null;
+  return id ? getPS(g, defKey, id) : null;
+}
+
+export function creditAllowed(g, teamKey, slotOrId, pts, defId = null) {
+  if (!pts) return;
+  const dps = defenderPS(g, teamKey, slotOrId, defId);
   if (dps) dps.alw = Math.max(0, (dps.alw || 0) + pts);
+}
+
+/**
+ * DEFENDED CHECKS AND BLOCKS. A 3PT or paint check is taken against the
+ * defender guarding the shooter: he is charged a check against (`dca`) and,
+ * if it went in, a make against (`dcm`). A miss his Defensive Bonus contest
+ * turned — the total plus `contest` would have reached the line — is his
+ * BLOCK (`blk`). Free throws are uncontested and count for nobody.
+ *
+ * Returns true when it scored a block, so the caller can mark the result
+ * (`r.blk`); a negative `delta` (Coach's Challenge reversing the check) then
+ * takes back exactly what was given. No rule changes: these are stats read
+ * off events that already happen, the cheap step toward blocks and steals
+ * the user asked about on 2026-09-10.
+ */
+export function creditCheckDefended(g, teamKey, slotOrId, type, r, contest = 0, delta = 1) {
+  if (!r || type === 'ft') return false;
+  const dps = defenderPS(g, teamKey, slotOrId);
+  if (!dps) return false;
+  dps.dca = Math.max(0, (dps.dca || 0) + delta);
+  if (r.hit) dps.dcm = Math.max(0, (dps.dcm || 0) + delta);
+  const blocked = delta > 0
+    ? !r.hit && contest > 0 && (r.total + contest) >= r.line
+    : Boolean(r.blk);
+  if (blocked) dps.blk = Math.max(0, (dps.blk || 0) + delta);
+  return blocked && delta > 0;
+}
+
+/** A player's own paint-check line, attempts and makes, the way threepa/threepm are kept. */
+export function recordPaintCheck(g, teamKey, playerId, hit, delta = 1) {
+  const ps = getPS(g, teamKey, playerId);
+  if (!ps) return;
+  ps.pnta = Math.max(0, (ps.pnta || 0) + delta);
+  if (hit) ps.pntm = Math.max(0, (ps.pntm || 0) + delta);
 }
 
 export function matchupContest(g, teamKey, idx, type) {
@@ -619,6 +663,11 @@ export function checkNeed(g, teamKey, idx, type) {
 // Costs live in SPEND_COSTS above — that block is the single source of truth
 // for both the engine checks here and the buttons in CourtBoard.
 export function spendAssist(g, teamKey, type, playerIdx) {
+  // NOTHING SCORES AFTER THE FINAL WHISTLE. A rebound bonus earned in the
+  // last section carries to a next section that does not exist, and the
+  // simulator's coach spent it anyway: two points after the game ended,
+  // in the final score (caught by granularStats.test.js, 2026-09-10).
+  if (g.done) return { game: g, ok: false, msg: 'The game is over' };
   const ng = deepClone(g);
   const myT = getTeam(ng, teamKey);
   const player = myT.starters[playerIdx];
@@ -641,6 +690,7 @@ export function spendAssist(g, teamKey, type, playerIdx) {
     myT.assists -= SPEND_COSTS.assistThree;
     const astBonus = ng.tempEff?.[teamKey]?.['astBoost_' + playerIdx] || 0;
     const r = shotCheck(player, '3pt', spendParts(astBonus, matchupContest(ng, teamKey, playerIdx, '3pt')), ps);
+    if (creditCheckDefended(ng, teamKey, playerIdx, '3pt', r, matchupContest(ng, teamKey, playerIdx, '3pt'))) r.blk = true;
     if (r.hit) {
       myT.score += r.pts;
       const ps2 = myT.stats.find(s => s.id === player.id);
@@ -663,6 +713,8 @@ export function spendAssist(g, teamKey, type, playerIdx) {
     myT.assists -= SPEND_COSTS.assistPaint;
     const astBonus = ng.tempEff?.[teamKey]?.['astBoost_' + playerIdx] || 0;
     const r = shotCheck(player, 'paint', spendParts(astBonus, matchupContest(ng, teamKey, playerIdx, 'paint')), ps);
+    if (creditCheckDefended(ng, teamKey, playerIdx, 'paint', r, matchupContest(ng, teamKey, playerIdx, 'paint'))) r.blk = true;
+    recordPaintCheck(ng, teamKey, player.id, r.hit);
     if (r.hit) {
       myT.score += r.pts;
       const ps2 = myT.stats.find(s => s.id === player.id);
@@ -683,6 +735,8 @@ export function spendAssist(g, teamKey, type, playerIdx) {
 // ── Rebound Bonus Shot Checks ──────────────────────────────────────────────
 // +3 reb diff → Paint shot check for a chosen player (costs 3 REB)
 export function spendReboundBonus(g, teamKey, type, playerIdx) {
+  // Nothing scores after the final whistle — see spendAssist.
+  if (g.done) return { game: g, ok: false, msg: 'The game is over' };
   const ng = deepClone(g);
   const myT = getTeam(ng, teamKey);
   const player = myT.starters[playerIdx];
@@ -694,6 +748,8 @@ export function spendReboundBonus(g, teamKey, type, playerIdx) {
     if (myT.rebounds < SPEND_COSTS.reboundPaint) return { game: ng, ok: false, msg: `Need ${SPEND_COSTS.reboundPaint} rebounds (have ${myT.rebounds})` };
     myT.rebounds -= SPEND_COSTS.reboundPaint;
     const r = shotCheck(player, 'paint', spendParts(0, matchupContest(ng, teamKey, playerIdx, 'paint')), ps);
+    if (creditCheckDefended(ng, teamKey, playerIdx, 'paint', r, matchupContest(ng, teamKey, playerIdx, 'paint'))) r.blk = true;
+    recordPaintCheck(ng, teamKey, player.id, r.hit);
     if (r.hit) {
       myT.score += r.pts;
       const ps2 = myT.stats.find(s => s.id === player.id);
@@ -1135,6 +1191,16 @@ export function endSection(g) {
   // +/- and minutes
   const segPtsA = (ng.rollResults.A || []).reduce((s, r) => s + (r?.pts || 0), 0);
   const segPtsB = (ng.rollResults.B || []).reduce((s, r) => s + (r?.pts || 0), 0);
+  // ON-FLOOR POINTS: the whole section's score — rolls, cards, checks, free
+  // throws — for and against, for the five who played it. Two non-negative
+  // counts (box fields clamp at zero); on-floor +/- is onf − ona. A game saved
+  // before secStart existed skips its first section rather than hand the
+  // whole game so far to one lineup. The section's own number is still the
+  // one ending here: the advance comes further down.
+  const secFor = ng.secStart
+    ? { A: ng.teamA.score - (ng.secStart.A || 0), B: ng.teamB.score - (ng.secStart.B || 0) }
+    : null;
+  const firstSection = ng.quarter === 1 && ng.section === 1;
   ['A', 'B'].forEach(k => {
     const segFor = k === 'A' ? segPtsA : segPtsB;
     const segAg  = k === 'A' ? segPtsB : segPtsA;
@@ -1144,11 +1210,18 @@ export function endSection(g) {
         ps.minutes += 4;
         ps.totalMinutes = (ps.totalMinutes || 0) + 4;
         ps.pm = (ps.pm || 0) + (segFor - segAg);
+        if (firstSection) ps.gs = 1;
+        if (secFor) {
+          ps.onf = (ps.onf || 0) + Math.max(0, secFor[k]);
+          ps.ona = (ps.ona || 0) + Math.max(0, secFor[k === 'A' ? 'B' : 'A']);
+        }
         // Second Wind penalty: +4 extra minutes of fatigue
         if (ps.secondWindPenalty) { ps.minutes += 4; delete ps.secondWindPenalty; }
       }
     });
   });
+
+  ng.secStart = { A: ng.teamA.score, B: ng.teamB.score };
 
   // Rebound track bonuses (based on differential)
   const rd = ng.teamA.rebounds - ng.teamB.rebounds;

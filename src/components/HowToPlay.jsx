@@ -217,7 +217,7 @@ export default function HowToPlay({ scrollToSection, onStartTutorial, tutorialRu
             <li><strong>Quick Match</strong> against the coach, by salary band, or your team against a random opponent.</li>
             <li><strong>Hotseat</strong>: two managers at one screen.</li>
             <li><strong>Online PvP</strong>: rooms with a live opponent.</li>
-            <li><strong>Season</strong>: a round-robin schedule against the league — Short (everyone once), Regular (home and away) or Long — with standings, playoffs and a title purse.</li>
+            <li><strong>Season</strong>: a round-robin schedule against the league — Short (everyone once), Regular (home and away) or Long — with standings, playoffs and a title purse. Player stats keep every game, and when the regular season ends the league names its MVP, Defensive Player of the Year, Sixth Man, Rookie of the Year and scoring champion.</li>
           </ul>
           <p>A game in progress <strong>saves itself</strong>. Reload the page and you are back where you were.</p>
         </AccordionSection>

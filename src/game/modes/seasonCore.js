@@ -127,14 +127,17 @@ export function recordResult(season, rawResult) {
 // saved before stats existed (no `stats` at all) reads as empty rather than
 // breaking. The user, 2026-09-08: "Player stats accumulated in a season
 // should show within the season."
-export const STAT_FIELDS = ['pts', 'reb', 'ast', 'min', 'tpm', 'tpa', 'alw'];
+export const STAT_FIELDS = ['pts', 'reb', 'ast', 'min', 'tpm', 'tpa', 'alw', 'gs', 'fta', 'ftm', 'pnta', 'pntm', 'dca', 'dcm', 'blk', 'onf', 'ona'];
 
 // MATCHUP +/- (2026-09-10) is a player's points minus `alw`, the points the
 // man he guarded scored on him (creditAllowed, engine.js). A season that
 // began before the stat existed has games whose lines carry no `alw`, and
 // subtracting nothing from those games' points would read as a big plus. So
-// each row also keeps `mg` — games whose line carried `alw` — and `mpts`, the
-// points from those games only; the stat is `mpts - alw` over `mg` games.
+// each row also keeps `mg` — games whose line carried `alw` — and `mpts` and
+// `mmin`, the points and minutes from those games only; the stat is
+// `mpts - alw` over `mg` games, and points allowed per minute `alw / mmin`.
+// The finer fields (gs, ftm/fta, pntm/pnta, dcm/dca, blk, onf/ona) arrived
+// in the same release, so `mg` counts their games too.
 
 function foldBoxes(stats, sides) {
   let out = Array.isArray(stats) ? stats.map(r => ({ ...r })) : [];
@@ -144,7 +147,7 @@ function foldBoxes(stats, sides) {
       if (!line?.key) continue;
       let row = out.find(r => r.team === team && r.key === line.key);
       if (!row) {
-        row = { team, key: line.key, g: 0, mg: 0, mpts: 0 };
+        row = { team, key: line.key, g: 0, mg: 0, mpts: 0, mmin: 0 };
         for (const f of STAT_FIELDS) row[f] = 0;
         out.push(row);
       }
@@ -154,6 +157,7 @@ function foldBoxes(stats, sides) {
       if (line.alw !== undefined && line.alw !== null && Number.isFinite(Number(line.alw))) {
         row.mg = (Number(row.mg) || 0) + 1;
         row.mpts = (Number(row.mpts) || 0) + (Number(line.pts) || 0);
+        row.mmin = (Number(row.mmin) || 0) + (Number(line.min) || 0);
       }
     }
   }
@@ -168,6 +172,8 @@ function withRates(r) {
     rpg: r.g ? r.reb / r.g : 0,
     apg: r.g ? r.ast / r.g : 0,
     mpm: r.mg ? (Number(r.mpts) || 0) - (Number(r.alw) || 0) : null,
+    alwpm: r.mmin > 0 ? (Number(r.alw) || 0) / r.mmin : null,
+    onpm: r.mg ? (Number(r.onf) || 0) - (Number(r.ona) || 0) : null,
   };
 }
 
@@ -214,7 +220,10 @@ export function startPlayoffs(season) {
   const table = standings(season);
   const seeds = playoffSeeds(table, playoffCount(season.size));
   const bracket = makeBracket(seeds);
-  return { ...season, phase: PHASE.playoffs, bracket, round: 1, playoffSeeds: seeds };
+  // THE REGULAR SEASON, KEPT. Playoff games fold into `stats` as well, and an
+  // end-of-season award is a regular-season honour (awards.js reads this).
+  const regStats = (season.stats ?? []).map(r => ({ ...r }));
+  return { ...season, phase: PHASE.playoffs, bracket, round: 1, playoffSeeds: seeds, regStats };
 }
 
 /** What a team's season was worth in coins, once it is over. */

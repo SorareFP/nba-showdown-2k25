@@ -43,6 +43,7 @@ import {
   teamsById, earningsFor, PHASE, teamSeasonStats, seasonLeaders,
 } from '../game/modes/season.js';
 import { getCardByKey } from '../game/cardSets.js';
+import { seasonAwards, replacementRate, vorpOf, DPOY_MIN_MPG } from '../game/modes/awards.js';
 import { simulateFixture } from '../game/modes/simulate.js';
 import { LENGTHS, LEAGUE_SIZES, playoffCount, gamesPerTeam } from '../game/modes/schedule.js';
 import { SEASON_REWARDS } from '../game/modes/prizes.js';
@@ -1026,6 +1027,9 @@ function Dashboard({
         <div className={styles.legend}>Top {berths} make the playoffs.</div>
       </section>
 
+      {/* Announced when the regular season ends. */}
+      {(isPlayoffs || isDone) && <AwardsPanel season={season} by={by} myId={myId} />}
+
       {/* Under the standings (the user, 2026-09-10). */}
       <SeasonStatsPanel season={season} by={by} myId={myId} />
     </>
@@ -1048,6 +1052,9 @@ function readStatsOpen() {
 
 export function SeasonStatsPanel({ season, by, myId }) {
   const [view, setView] = useState('leaders');
+  // BOX or ADVANCED: the finer line in a second set of columns rather than
+  // one table twenty wide (the user, 2026-09-10: "as granular as possible").
+  const [cols, setCols] = useState('box');
   const [open, setOpen] = useState(readStatsOpen);
   const toggle = () => setOpen(o => {
     try { globalThis.localStorage?.setItem(STATS_OPEN_KEY, o ? '0' : '1'); } catch { /* a per-browser convenience */ }
@@ -1059,9 +1066,13 @@ export function SeasonStatsPanel({ season, by, myId }) {
     () => (teamId ? teamSeasonStats(season, teamId) : seasonLeaders(season, { by: leaderBy, limit: 10 })),
     [season, teamId, leaderBy]
   );
+  const repl = useMemo(() => replacementRate(season?.stats ?? []), [season]);
   const nameOf = key => getCardByKey(key)?.name ?? key;
   const f1 = n => (Math.round(n * 10) / 10).toFixed(1);
   const signed = n => (n == null ? '—' : `${n > 0 ? '+' : ''}${n}`);
+  const tone = n => (n > 0 ? styles.pos : n < 0 ? styles.neg : '');
+  const ma = (m, a) => `${m || 0}-${a || 0}`;
+  const measured = (r, v) => (r.mg ? v : '—');
   return (
     <section className={styles.panel}>
       <div className={styles.deckRow}>
@@ -1071,11 +1082,17 @@ export function SeasonStatsPanel({ season, by, myId }) {
           </button>
         </h3>
         {open && (
-          <select className={styles.deckSelect} value={view} onChange={e => setView(e.target.value)} aria-label="Whose stats">
-            <option value="leaders">League leaders (PPG)</option>
-            <option value="leaders-mpm">League leaders (matchup +/-)</option>
-            {(season.teams ?? []).map(t => <option key={t.id} value={t.id}>{t.name}{t.id === myId ? ' (you)' : ''}</option>)}
-          </select>
+          <div className={styles.statsCtrls}>
+            <div className={styles.segment} role="group" aria-label="Columns">
+              <button type="button" className={cols === 'box' ? styles.segOn : ''} aria-pressed={cols === 'box'} onClick={() => setCols('box')}>Box</button>
+              <button type="button" className={cols === 'adv' ? styles.segOn : ''} aria-pressed={cols === 'adv'} onClick={() => setCols('adv')}>Advanced</button>
+            </div>
+            <select className={styles.deckSelect} value={view} onChange={e => setView(e.target.value)} aria-label="Whose stats">
+              <option value="leaders">League leaders (PPG)</option>
+              <option value="leaders-mpm">League leaders (matchup +/-)</option>
+              {(season.teams ?? []).map(t => <option key={t.id} value={t.id}>{t.name}{t.id === myId ? ' (you)' : ''}</option>)}
+            </select>
+          </div>
         )}
       </div>
       {open && (rows.length === 0 ? (
@@ -1084,11 +1101,28 @@ export function SeasonStatsPanel({ season, by, myId }) {
         <div className={styles.tableWrap}>
           <table className={styles.table}>
             <thead>
-              <tr>
-                <th>Player</th>{!teamId && <th>Team</th>}<th>G</th><th>PTS</th><th>PPG</th><th>REB</th><th>RPG</th><th>AST</th><th>APG</th><th>3PM</th><th>MIN</th>
-                <th title="Points allowed: scored on him by the man he was guarding">ALW</th>
-                <th title="Matchup plus-minus: his points minus the points his man scored on him">M+/-</th>
-              </tr>
+              {cols === 'box' ? (
+                <tr>
+                  <th>Player</th>{!teamId && <th>Team</th>}<th>G</th><th>PTS</th><th>PPG</th><th>REB</th><th>RPG</th><th>AST</th><th>APG</th><th>3PM</th><th>MIN</th>
+                  <th title="Points allowed: scored on him by the man he was guarding">ALW</th>
+                  <th title="Matchup plus-minus: his points minus the points his man scored on him">M+/-</th>
+                </tr>
+              ) : (
+                <tr>
+                  <th>Player</th>{!teamId && <th>Team</th>}<th>G</th>
+                  <th title="Games started">GS</th>
+                  <th title="Minutes a game">MPG</th>
+                  <th title="Free throws, made-attempted">FT</th>
+                  <th title="Paint checks, made-attempted">PNT</th>
+                  <th title="3PT checks, made-attempted">3PT</th>
+                  <th title="Blocks: misses his Defensive Bonus contest turned">BLK</th>
+                  <th title="Checks taken against him, made-attempted">OPP</th>
+                  <th title="Points allowed per minute">ALW/M</th>
+                  <th title="On-floor plus-minus: the score while he played">ON+/-</th>
+                  <th title="Matchup plus-minus">M+/-</th>
+                  <th title="Value over replacement: points plus what his rebounds and assists buy, above a replacement-level card, over his minutes">VORP</th>
+                </tr>
+              )}
             </thead>
             <tbody>
               {rows.map(r => (
@@ -1096,13 +1130,31 @@ export function SeasonStatsPanel({ season, by, myId }) {
                   <td>{nameOf(r.key)}</td>
                   {!teamId && <td><TeamChip team={by.get(r.team)} /></td>}
                   <td>{r.g}</td>
-                  <td>{r.pts}</td><td>{f1(r.ppg)}</td>
-                  <td>{r.reb}</td><td>{f1(r.rpg)}</td>
-                  <td>{r.ast}</td><td>{f1(r.apg)}</td>
-                  <td>{r.tpm}</td>
-                  <td>{r.min}</td>
-                  <td>{r.mg ? r.alw : '—'}</td>
-                  <td className={r.mpm > 0 ? styles.pos : r.mpm < 0 ? styles.neg : ''}>{signed(r.mpm)}</td>
+                  {cols === 'box' ? (
+                    <>
+                      <td>{r.pts}</td><td>{f1(r.ppg)}</td>
+                      <td>{r.reb}</td><td>{f1(r.rpg)}</td>
+                      <td>{r.ast}</td><td>{f1(r.apg)}</td>
+                      <td>{r.tpm}</td>
+                      <td>{r.min}</td>
+                      <td>{measured(r, r.alw)}</td>
+                      <td className={tone(r.mpm)}>{signed(r.mpm)}</td>
+                    </>
+                  ) : (
+                    <>
+                      <td>{measured(r, r.gs || 0)}</td>
+                      <td>{f1(r.g ? r.min / r.g : 0)}</td>
+                      <td>{measured(r, ma(r.ftm, r.fta))}</td>
+                      <td>{measured(r, ma(r.pntm, r.pnta))}</td>
+                      <td>{ma(r.tpm, r.tpa)}</td>
+                      <td>{measured(r, r.blk || 0)}</td>
+                      <td>{measured(r, ma(r.dcm, r.dca))}</td>
+                      <td>{r.alwpm == null ? '—' : r.alwpm.toFixed(2)}</td>
+                      <td className={tone(r.onpm)}>{signed(r.onpm)}</td>
+                      <td className={tone(r.mpm)}>{signed(r.mpm)}</td>
+                      <td>{f1(vorpOf(r, repl))}</td>
+                    </>
+                  )}
                 </tr>
               ))}
             </tbody>
@@ -1111,9 +1163,50 @@ export function SeasonStatsPanel({ season, by, myId }) {
       ))}
       {open && (
         <div className={styles.legend}>
-          Every game counts, played or simmed. ALW is what the man he guarded scored on him; M+/- is his own points minus that. Matchup numbers count from games played on or after 2026-09-10.
+          Every game counts, played or simmed. ALW is what the man he guarded scored on him; M+/- is his own points minus that. A block is a miss his Defensive Bonus contest turned. Matchup and advanced numbers count from games played on or after 2026-09-10.
         </div>
       )}
+    </section>
+  );
+}
+
+/**
+ * THE SEASON'S AWARDS, announced when the regular season ends (awards.js).
+ * The user, 2026-09-10: MVP, Defensive Player of the Year "etc.", VORP for
+ * value, and for DPOY "points per minute played … with a threshold to
+ * qualify".
+ */
+function AwardsPanel({ season, by, myId }) {
+  const { awards, basis } = useMemo(() => seasonAwards(season), [season]);
+  const shown = awards.filter(Boolean);
+  if (!shown.length) return null;
+  const nameOf = key => getCardByKey(key)?.name ?? key;
+  const f1 = n => (Math.round(n * 10) / 10).toFixed(1);
+  const line = a => {
+    if (a.id === 'dpoy') return `${a.alwpm.toFixed(2)} points allowed a minute over ${a.mmin} minutes`;
+    if (a.id === 'scoring') return `${f1(a.ppg)} points a game`;
+    if (a.id === 'sixth') return `${f1(a.ppg)} PPG off the bench · VORP ${f1(a.vorp)}`;
+    return `${f1(a.ppg)} PPG · VORP ${f1(a.vorp)}`;
+  };
+  return (
+    <section className={styles.panel}>
+      <h3 className={styles.panelTitle}>Season awards</h3>
+      <div className={styles.awards}>
+        {shown.map(a => (
+          <div key={a.id} className={`${styles.award} ${a.team === myId ? styles.awardMine : ''}`}>
+            <div className={styles.awardLabel}>{a.label}</div>
+            <div className={styles.awardName}>{nameOf(a.key)}</div>
+            <TeamChip team={by.get(a.team)} />
+            <div className={styles.awardLine}>{line(a)}</div>
+          </div>
+        ))}
+      </div>
+      <div className={styles.legend}>
+        {basis === 'regular'
+          ? 'Decided on the regular season. '
+          : 'Decided on every game, playoffs included: this season reached the playoffs before awards existed. '}
+        MVP, Sixth Man and Rookie of the Year by value over replacement; Defensive Player of the Year by the fewest points allowed per minute, at least {DPOY_MIN_MPG} minutes a game over half his team's games.
+      </div>
     </section>
   );
 }

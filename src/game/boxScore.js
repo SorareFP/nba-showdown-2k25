@@ -29,6 +29,18 @@ export function boxLinesFor(team) {
       tpa: ps.threepa || 0,
       // Points allowed to the man he guarded (creditAllowed, engine.js).
       alw: ps.alw || 0,
+      // The finer line (engine.js stats init): started, free throws, paint
+      // checks, checks against, blocks, on-floor points for and against.
+      gs: ps.gs ? 1 : 0,
+      fta: ps.fta || 0,
+      ftm: ps.ftm || 0,
+      pnta: ps.pnta || 0,
+      pntm: ps.pntm || 0,
+      dca: ps.dca || 0,
+      dcm: ps.dcm || 0,
+      blk: ps.blk || 0,
+      onf: ps.onf || 0,
+      ona: ps.ona || 0,
     }));
 }
 

@@ -3,7 +3,7 @@
 // Never mutates — always returns a new object via deepClone
 
 import { handOverPriority, getTeam, getOpp, getPS, calcAdv, shotCheck, matchupContest, drawCards, deepClone, getFatigue, recordDefSwitch, burnedSlots, roll20, checkAssistDraw, standingEntry, CROWD_FAVORITE_PTS, satOutLast, bottomedLines } from './engine.js';
-import { creditAllowed } from './engine.js';
+import { creditAllowed, creditCheckDefended, recordPaintCheck } from './engine.js';
 import { helpTargets, canAnswerCheck } from './canPlay.js';
 import { lookupChart } from './cards.js';
 import { getStrat } from './strats.js';
@@ -88,6 +88,7 @@ function recordShot(g, teamKey, playerId, type, hit) {
   if (!ps) return;
   if (type === '3pt')   { ps.threepa = (ps.threepa || 0) + 1; if (hit) ps.threepm = (ps.threepm || 0) + 1; }
   if (type === 'ft')    { ps.fta = (ps.fta || 0) + 1;         if (hit) ps.ftm = (ps.ftm || 0) + 1; }
+  if (type === 'paint') { ps.pnta = (ps.pnta || 0) + 1;       if (hit) ps.pntm = (ps.pntm || 0) + 1; }
 }
 
 function addLog(g, team, msg) {
@@ -122,6 +123,7 @@ export function resolveGoUnder(game, slot) {
   const r = shotCheck(offPlayer, '3pt', pc.extra - matchupContest(g, pc.teamKey, slot, '3pt'), offPs);
   trackShotCheck(g, pc.teamKey, r, '3pt', slot);
   recordShot(g, pc.teamKey, offPlayer.id, '3pt', r.hit);
+  if (creditCheckDefended(g, pc.teamKey, slot, '3pt', r, matchupContest(g, pc.teamKey, slot, '3pt'))) r.blk = true;
   if (r.hit) scorePts(g, pc.teamKey, offPlayer.id, r.pts);
   if (r.die <= 2)  offPs.cold = (offPs.cold || 0) + 1;
   if (r.die >= 19) offPs.hot  = (offPs.hot  || 0) + 1;
@@ -551,6 +553,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if (g.analytics?.[teamKey]) g.analytics[teamKey].assistsFromCards++;
       const r = _shotCheck(player, '3pt', 1, ps);
       recordShot(g, teamKey, player?.id, '3pt', r.hit);
+      if (creditCheckDefended(g, teamKey, idx, '3pt', r, matchupContest(g, teamKey, idx, '3pt'))) r.blk = true;
       trackShotCheck(g, teamKey, r, '3pt');
       if (r.die <= 2)  pss().cold = (pss().cold || 0) + 1;
       if (r.die >= 19) pss().hot  = (pss().hot  || 0) + 1;
@@ -776,6 +779,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if (rr?.die !== 20) return fail('Player must have rolled a natural 20');
       const r = _shotCheck(player, '3pt', 0, ps);
       recordShot(g, teamKey, player?.id, '3pt', r.hit);
+      if (creditCheckDefended(g, teamKey, idx, '3pt', r, matchupContest(g, teamKey, idx, '3pt'))) r.blk = true;
       trackShotCheck(g, teamKey, r, '3pt');
       if (r.die <= 2)  pss().cold = (pss().cold || 0) + 1;
       if (r.die >= 19) pss().hot  = (pss().hot  || 0) + 1;
@@ -916,6 +920,8 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       ccTeam.score -= oldPts;
       if (ccPs) ccPs.pts = (ccPs.pts || 0) - oldPts;
       creditAllowed(g, oppKey2, lsc.playerIdx, -oldPts);
+      creditCheckDefended(g, oppKey2, lsc.playerIdx, oldResult.type ?? lsc.type, oldResult, 0, -1);
+      if ((oldResult.type ?? lsc.type) === 'paint') recordPaintCheck(g, oppKey2, ccPlayer.id, oldResult.hit, -1);
       // Analytics: reverse the old shot check result
       if (g.analytics?.[oppKey2]) {
         g.analytics[oppKey2].shotCheckPts -= oldPts;
@@ -935,6 +941,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       // Re-roll the shot check with same bonus
       const newR = shotCheck(ccPlayer, lsc.type, lsc.bonus || 0, ccPs);
       recordShot(g, oppKey2, ccPlayer.id, lsc.type, newR.hit);
+      if (creditCheckDefended(g, oppKey2, lsc.playerIdx, lsc.type, newR, matchupContest(g, oppKey2, lsc.playerIdx, lsc.type))) newR.blk = true;
       trackShotCheck(g, oppKey2, newR, lsc.type);
 
       // Apply new hot/cold
@@ -1536,6 +1543,7 @@ export function applyShotCheck(g, psc) {
 
   const r = shotCheck(player, psc.type, bonus, ps);
   recordShot(g, psc.teamKey, player?.id, psc.type, r.hit);
+  if (creditCheckDefended(g, psc.teamKey, psc.playerIdx, psc.type, r, matchupContest(g, psc.teamKey, psc.playerIdx, psc.type))) r.blk = true;
   trackShotCheck(g, psc.teamKey, r, psc.type, psc.playerIdx);
 
   // Auto hot/cold from the natural roll. FWD uses the wider range.

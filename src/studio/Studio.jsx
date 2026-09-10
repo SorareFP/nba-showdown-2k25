@@ -94,8 +94,16 @@ export default function Studio() {
   const [teamOverrides, setTeamOverrides] = useState({});
   const [crops, setCrops] = useState({});
   const [query, setQuery] = useState('');
-  // The Free Agent request queue (RequestsPanel), over the studio.
-  const [showRequests, setShowRequests] = useState(false);
+  // The Free Agent request queue (RequestsPanel), over the studio. Remembered
+  // for the tab, because building a card rewrites a card file and Vite
+  // reloads the page — the queue has to come back open.
+  const [showRequests, setShowRequestsState] = useState(() => {
+    try { return sessionStorage.getItem('studio.requests.open') === '1'; } catch { return false; }
+  });
+  const setShowRequests = open => {
+    try { sessionStorage.setItem('studio.requests.open', open ? '1' : '0'); } catch { /* private mode */ }
+    setShowRequestsState(open);
+  };
   const [missingOnly, setMissingOnly] = useState(false);
   const [selectedId, setSelectedId] = useState(SOURCES[DEFAULT_SOURCE].players[0]?.id ?? null);
   const [saveStatus, setSaveStatus] = useState('idle');

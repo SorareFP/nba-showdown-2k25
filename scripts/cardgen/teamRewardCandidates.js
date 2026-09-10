@@ -214,8 +214,12 @@ export function hasGameLog(bbrefId, season) {
   try { return Boolean(readCache(`gamelog-full-${bbrefId}-${season}`)); } catch { return false; }
 }
 
-/** Price every candidate through the real card pipeline, in one batch. */
-export function priceCandidates(candidates, { log = console.log, useRealGames = false } = {}) {
+/**
+ * Build and price every candidate as a FULL card through the real pipeline,
+ * in one batch. priceCandidates keeps only the salaries; the Free Agents
+ * builder (buildFreeAgent.mjs) keeps the card.
+ */
+export function buildCandidateCards(candidates, { log = console.log, useRealGames = false } = {}) {
   const calibration = JSON.parse(fs.readFileSync(CALIBRATION_FILE, 'utf8'));
   const archiveCache = readCache('bbref-history');
   const archiveRows = archiveCache?.data?.rows ?? archiveCache?.rows ?? [];
@@ -268,7 +272,12 @@ export function priceCandidates(candidates, { log = console.log, useRealGames = 
     selections, currentRows, calibration, biometrics, positionShares, useRealGames,
   }).map((card, i) => ({ ...card, games: candidates[i].games, mpg: candidates[i].mpg }));
   PV.priceAgainstBase(cards, { roundSalary: A.roundSalary, min: A.SALARY_MIN, max: A.SALARY_MAX });
+  return cards;
+}
 
+/** Price every candidate through the real card pipeline, in one batch. */
+export function priceCandidates(candidates, opts = {}) {
+  const cards = buildCandidateCards(candidates, opts);
   return candidates.map((c, i) => ({
     franchise: c.franchise,
     name: c.name,

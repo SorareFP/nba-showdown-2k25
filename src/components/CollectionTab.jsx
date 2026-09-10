@@ -615,7 +615,9 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
         />
       )}
 
-      {view === 'freeagents' && <FreeAgentsPanel uid={user.uid} />}
+      {view === 'freeagents' && (
+        <FreeAgentsPanel uid={user.uid} onChanged={() => { refresh(); onCollectionChange?.(); }} />
+      )}
 
       {view === 'shop' && (
         <>

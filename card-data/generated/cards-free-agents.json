@@ -1,0 +1,5 @@
+{
+ "set": "free-agents",
+ "note": "Requested cards (Free Agents), built one at a time by scripts/cardgen/buildFreeAgent.mjs. Each card's own `set` is the set it joins; src/game/cardSets.js merges them in. Kept in its own file so regenerating Rookie or Super Season never wipes one.",
+ "cards": []
+}

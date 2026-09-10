@@ -52,6 +52,7 @@ import { getDatabase } from 'firebase-admin/database';
 import { readFileSync } from 'node:fs';
 import {
   readQuoteRow, indexQuotes, quoteKey, checkRequest, REQUEST_STATUS, REJECT_REASON_MAX, QUICK_REJECT_REASONS,
+  invoiceFor, OPEN_STATUSES,
 } from './shared/src/game/freeAgents.js';
 import {
   newLeague, entrantFor, addEntrant, removeEntrant, cancelLeague as cancelLeagueState, startTournament, startSeason,
@@ -1203,7 +1204,8 @@ export const requestCard = onCall({ region: 'us-central1' }, async request => {
   const season = Number(request.data?.season);
   const playoffs = Boolean(request.data?.playoffs);
   const row = quotes().get(quoteKey(bbrefId, season, playoffs)) ?? null;
-  const open = db.collection('cardRequests').where('uid', '==', uid).where('status', '==', REQUEST_STATUS.requested);
+  // Open = asked, being made, or invoiced and unanswered: all hold a place.
+  const open = db.collection('cardRequests').where('uid', '==', uid).where('status', 'in', OPEN_STATUSES);
   return db.runTransaction(async tx => {
     const mine = await tx.get(open);
     const alreadyAsked = mine.docs.some(d => {
@@ -1234,7 +1236,11 @@ export const listCardRequests = onCall({ region: 'us-central1' }, async request 
   return snap.docs
     .map(d => {
       const r = d.data();
-      return { ...r, id: d.id, createdAt: r.createdAt?.toMillis?.() ?? null, decidedAt: r.decidedAt?.toMillis?.() ?? null };
+      const ms = t => t?.toMillis?.() ?? null;
+      return {
+        ...r, id: d.id, createdAt: ms(r.createdAt), decidedAt: ms(r.decidedAt), builtAt: ms(r.builtAt),
+        invoicedAt: ms(r.invoicedAt), signedAt: ms(r.signedAt), giftedAt: ms(r.giftedAt), declinedAt: ms(r.declinedAt),
+      };
     })
     .sort((a, b) => (a.createdAt ?? 0) - (b.createdAt ?? 0));
 });
@@ -1250,8 +1256,128 @@ export const rejectCardRequest = onCall({ region: 'us-central1' }, async request
     const snap = await tx.get(ref);
     if (!snap.exists) throw new HttpsError('not-found', 'No such request');
     const status = snap.data().status;
-    if (status !== REQUEST_STATUS.requested) throw new HttpsError('failed-precondition', `That request is already ${status}`);
+    // A built card can still be turned down before it is invoiced; the card
+    // itself stays wherever it was put (packs pick it up after a deploy).
+    if (status !== REQUEST_STATUS.requested && status !== REQUEST_STATUS.built) {
+      throw new HttpsError('failed-precondition', `That request is already ${status}`);
+    }
     tx.update(ref, { status: REQUEST_STATUS.rejected, reason, decidedAt: FieldValue.serverTimestamp(), decidedBy: email });
     return { id, status: REQUEST_STATUS.rejected, reason };
+  });
+});
+
+// ── Answering a request: build, invoice or gift, sign or decline ────────────
+//
+// The Card Studio builds the card (scripts/cardgen/buildFreeAgent.mjs) and
+// records it here. After a deploy the server knows the card and can invoice
+// it at the finished card's price, or gift it. The requester then signs (pays,
+// gets a spare copy) or declines (the user, 2026-09-10: "make sure I can reject
+// the invoice when the card is made"); the card stays in packs either way.
+
+const freeAgentSource = requestId => `freeagent:${requestId}`;
+const cleanBuilt = b => (b && typeof b === 'object'
+  ? {
+    salary: Number(b.salary) || null, rarity: String(b.rarity ?? ''), price: Number(b.price) || null,
+    set: String(b.set ?? ''), provisional: Boolean(b.provisional),
+  }
+  : null);
+
+async function requestInTx(tx, id) {
+  if (!id) throw new HttpsError('invalid-argument', 'No request given');
+  const ref = db.doc(`cardRequests/${id}`);
+  const snap = await tx.get(ref);
+  if (!snap.exists) throw new HttpsError('not-found', 'No such request');
+  return { ref, req: snap.data() };
+}
+
+/** One copy of a requested card into an account: the copy, the index, the supply. */
+function mintFreeAgent(tx, uid, cardKey, requestId, state) {
+  tx.set(db.collection(`users/${uid}/copies`).doc(), {
+    cardKey, type: 'player', mintedAt: FieldValue.serverTimestamp(), source: freeAgentSource(requestId), state,
+  });
+  tx.set(
+    db.doc(`users/${uid}/collection/${cardKey}`),
+    { type: 'player', count: FieldValue.increment(1), acquiredAt: FieldValue.serverTimestamp(), ...(state === EARNED ? { earned: true } : {}) },
+    { merge: true }
+  );
+  tx.set(db.doc('supply/current'), { counts: { [cardKey]: FieldValue.increment(1) } }, { merge: true });
+}
+
+/** THE CARD IS BUILT. Admins only: which card answers this request. */
+export const markCardRequestBuilt = onCall({ region: 'us-central1' }, async request => {
+  const { email } = requireAdmin(request);
+  const cardKey = String(request.data?.cardKey ?? '');
+  if (!cardKey) throw new HttpsError('invalid-argument', 'No card given');
+  return db.runTransaction(async tx => {
+    const { ref, req } = await requestInTx(tx, String(request.data?.id ?? ''));
+    if (req.status !== REQUEST_STATUS.requested && req.status !== REQUEST_STATUS.built) {
+      throw new HttpsError('failed-precondition', `That request is already ${req.status}`);
+    }
+    tx.update(ref, {
+      status: REQUEST_STATUS.built, cardKey, built: cleanBuilt(request.data?.built),
+      builtAt: FieldValue.serverTimestamp(), builtBy: email,
+    });
+    return { id: ref.id, status: REQUEST_STATUS.built, cardKey };
+  });
+});
+
+/** SEND THE INVOICE at the finished card's price. Admins only; the card must be deployed. */
+export const invoiceCardRequest = onCall({ region: 'us-central1' }, async request => {
+  const { email } = requireAdmin(request);
+  return db.runTransaction(async tx => {
+    const { ref, req } = await requestInTx(tx, String(request.data?.id ?? ''));
+    if (req.status !== REQUEST_STATUS.built) throw new HttpsError('failed-precondition', `That request is ${req.status}, not built`);
+    const card = getCardByKey(req.cardKey);
+    if (!card) throw new HttpsError('failed-precondition', 'The live game does not have this card yet. Deploy first, then send the invoice.');
+    const invoice = invoiceFor(card);
+    tx.update(ref, { status: REQUEST_STATUS.invoiced, invoice, invoicedAt: FieldValue.serverTimestamp(), invoicedBy: email });
+    return { id: ref.id, status: REQUEST_STATUS.invoiced, invoice };
+  });
+});
+
+/** GIFT IT. Admins only: one locked copy that can never be sold or burned (EARNED). */
+export const giftCardRequest = onCall({ region: 'us-central1' }, async request => {
+  const { email } = requireAdmin(request);
+  return db.runTransaction(async tx => {
+    const { ref, req } = await requestInTx(tx, String(request.data?.id ?? ''));
+    if (req.status !== REQUEST_STATUS.built && req.status !== REQUEST_STATUS.invoiced) {
+      throw new HttpsError('failed-precondition', `That request is ${req.status}`);
+    }
+    if (!getCardByKey(req.cardKey)) throw new HttpsError('failed-precondition', 'The live game does not have this card yet. Deploy first.');
+    mintFreeAgent(tx, req.uid, req.cardKey, ref.id, EARNED);
+    tx.update(ref, { status: REQUEST_STATUS.gifted, giftedAt: FieldValue.serverTimestamp(), giftedBy: email });
+    return { id: ref.id, status: REQUEST_STATUS.gifted };
+  });
+});
+
+/** SIGN THE FREE AGENT: the requester pays the invoice and gets a spare copy. */
+export const signFreeAgent = onCall({ region: 'us-central1' }, async request => {
+  const uid = requireAuth(request);
+  const userRef = db.doc(`users/${uid}`);
+  return db.runTransaction(async tx => {
+    const { ref, req } = await requestInTx(tx, String(request.data?.id ?? ''));
+    const userSnap = await tx.get(userRef);
+    if (req.uid !== uid) throw new HttpsError('permission-denied', 'That is not your request');
+    if (req.status !== REQUEST_STATUS.invoiced) throw new HttpsError('failed-precondition', `That request is ${req.status}`);
+    if (!getCardByKey(req.cardKey)) throw new HttpsError('failed-precondition', 'That card is not in the game yet');
+    const price = Number(req.invoice?.price) || 0;
+    const coins = userSnap.data()?.currency ?? 0;
+    if (coins < price) throw new HttpsError('failed-precondition', `Not enough coins: signing costs ${price}, you have ${coins}`);
+    mintFreeAgent(tx, uid, req.cardKey, ref.id, SPARE);
+    tx.update(userRef, { currency: FieldValue.increment(-price) });
+    tx.update(ref, { status: REQUEST_STATUS.signed, signedAt: FieldValue.serverTimestamp() });
+    return { id: ref.id, status: REQUEST_STATUS.signed, cardKey: req.cardKey, price };
+  });
+});
+
+/** DECLINE THE INVOICE. The requester says no; the card stays in packs for everyone. */
+export const declineCardRequest = onCall({ region: 'us-central1' }, async request => {
+  const uid = requireAuth(request);
+  return db.runTransaction(async tx => {
+    const { ref, req } = await requestInTx(tx, String(request.data?.id ?? ''));
+    if (req.uid !== uid) throw new HttpsError('permission-denied', 'That is not your request');
+    if (req.status !== REQUEST_STATUS.invoiced) throw new HttpsError('failed-precondition', `That request is ${req.status}`);
+    tx.update(ref, { status: REQUEST_STATUS.declined, declinedAt: FieldValue.serverTimestamp() });
+    return { id: ref.id, status: REQUEST_STATUS.declined };
   });
 });

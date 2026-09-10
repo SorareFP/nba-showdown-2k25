@@ -111,7 +111,27 @@ export function readQuoteRow(row) {
 // ── Requests ─────────────────────────────────────────────────────────────────
 
 /** A request's life: asked, then answered (and, later, signed or gifted). */
-export const REQUEST_STATUS = { requested: 'requested', rejected: 'rejected', invoiced: 'invoiced', signed: 'signed', gifted: 'gifted' };
+export const REQUEST_STATUS = {
+  requested: 'requested', rejected: 'rejected', built: 'built', invoiced: 'invoiced',
+  signed: 'signed', gifted: 'gifted', declined: 'declined',
+};
+
+/**
+ * Requests that still hold one of the player's three places: asked, being
+ * made, or invoiced and not yet answered. Signing, declining, a gift or a
+ * rejection frees the place.
+ */
+export const OPEN_STATUSES = [REQUEST_STATUS.requested, REQUEST_STATUS.built, REQUEST_STATUS.invoiced];
+
+/**
+ * THE INVOICE: the finished card's own salary and rarity, priced by its set
+ * (the user's call: the invoice is the finished card's price, the quote only
+ * an estimate).
+ */
+export function invoiceFor(card) {
+  const rarity = getPlayerRarity(card);
+  return { salary: card.salary, rarity, price: freeAgentPrice(card.set, rarity) };
+}
 export const REJECT_REASON_MAX = 200;
 /** One-tap reasons in the Studio; any other text works too. */
 export const QUICK_REJECT_REASONS = ['Not enough of a season to card.', "That one doesn't make sense.", "Not one we're going to make."];

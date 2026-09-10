@@ -17,6 +17,16 @@ export const requestCard = call('requestCard');
 export const listCardRequests = call('listCardRequests');
 /** Admins: `{ id, reason }`. */
 export const rejectCardRequest = call('rejectCardRequest');
+/** Admins: `{ id, cardKey, built }` once the Studio has built the card. */
+export const markCardRequestBuilt = call('markCardRequestBuilt');
+/** Admins: `{ id }` — invoice at the finished card's price (needs the card deployed). */
+export const invoiceCardRequest = call('invoiceCardRequest');
+/** Admins: `{ id }` — one locked copy, free. */
+export const giftCardRequest = call('giftCardRequest');
+/** Requester: `{ id }` — pay the invoice, get the card. */
+export const signFreeAgent = call('signFreeAgent');
+/** Requester: `{ id }` — say no to the invoice. */
+export const declineCardRequest = call('declineCardRequest');
 
 /** This player's requests, newest first. Readable by their owner only (firestore.rules). */
 export async function myCardRequests(uid) {

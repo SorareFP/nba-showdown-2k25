@@ -17,6 +17,8 @@
 // having to be prefixed with the base. Do not convert these to post hooks.
 import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, statSync } from 'node:fs';
 import { resolve, extname, sep } from 'node:path';
+import { execFile } from 'node:child_process';
+import { saveFreeAgent } from '../cardgen/freeAgentFile.js';
 import {
   ART_ROOT,
   CURRENT_SET,
@@ -162,6 +164,29 @@ export function isSafePlayerId(id) {
   return typeof id === 'string' && id.length > 0 && /^[A-Za-z0-9_.-]+$/.test(id) && !id.includes('..');
 }
 
+/**
+ * Runs scripts/cardgen/buildFreeAgent.mjs for one request, in a child process
+ * so a crash in the card pipeline cannot take the dev server down. The script
+ * prints one JSON line; anything the pipeline logs before it is ignored.
+ */
+function runFreeAgentBuild(root, args) {
+  return new Promise(done => {
+    execFile(
+      process.execPath,
+      [resolve(root, 'scripts/cardgen/buildFreeAgent.mjs'), JSON.stringify({ ...args, write: false })],
+      { cwd: root, timeout: 180_000, maxBuffer: 16 * 1024 * 1024 },
+      (err, stdout = '', stderr = '') => {
+        const line = String(stdout).trim().split(/\r?\n/).reverse().find(l => l.startsWith('{'));
+        try {
+          done(JSON.parse(line));
+        } catch {
+          done({ error: err?.message ?? (String(stderr).trim().split(/\r?\n/).pop() || 'The build printed nothing') });
+        }
+      }
+    );
+  });
+}
+
 /** Wraps a handler so a thrown error becomes a JSON 500, not a dead socket. */
 function guard(handler) {
   return async (req, res, next) => {
@@ -305,6 +330,76 @@ export function studioServerPlugin() {
           writeFileSync(pick(scope), JSON.stringify(parsed, null, 2) + '\n');
           json(res, 200, { ok: true, set: scope.set });
         });
+
+      // FREE AGENTS: build a requested card, then commit it. Two calls because
+      // writing cards-free-agents.json makes Vite reload every page that
+      // imports the card sets, the Studio included: the Studio builds, records
+      // the request as built, and only then commits the file.
+      const pendingBuilds = new Map();
+      const bodyJson = async req => JSON.parse((await readBody(req)).toString('utf8') || '{}');
+      server.middlewares.use(
+        '/__studio/free-agents/build',
+        guard(async (req, res) => {
+          if (req.method !== 'POST') return json(res, 405, { error: 'POST only' });
+          const out = await runFreeAgentBuild(server.config.root, await bodyJson(req));
+          if (out.error) return json(res, 422, out);
+          const { card, ...summary } = out;
+          pendingBuilds.set(summary.requestId, card);
+          json(res, 200, summary);
+        })
+      );
+      server.middlewares.use(
+        '/__studio/free-agents/commit',
+        guard(async (req, res) => {
+          if (req.method !== 'POST') return json(res, 405, { error: 'POST only' });
+          const { requestId } = await bodyJson(req);
+          const card = pendingBuilds.get(requestId);
+          if (!card) return json(res, 404, { error: 'Nothing built for that request here. Build it again.' });
+          saveFreeAgent(server.config.root, card);
+          pendingBuilds.delete(requestId);
+          json(res, 200, { ok: true, cardKey: `${card.set}:${card.id}` });
+        })
+      );
+
+      // Is the requested card's face exported yet? The site's lightbox shows
+      // the PNG, so an invoice should not go out before it exists.
+      server.middlewares.use(
+        '/__studio/free-agents/face',
+        guard(async (req, res) => {
+          const q = new URL(req.url, 'http://studio.local').searchParams;
+          const set = q.get('set');
+          const id = q.get('id');
+          if (!SET_IDS.includes(set) || !isSafePlayerId(id)) return json(res, 400, { error: 'bad set or id' });
+          json(res, 200, { exists: existsSync(resolve(server.config.root, 'public', 'cards', set, `${id}.png`)) });
+        })
+      );
+      // Export one requested card's face: `npm run export:cards -- --set X --only id`,
+      // against this very dev server (export.js drives it with Playwright and
+      // writes the thumb after).
+      server.middlewares.use(
+        '/__studio/free-agents/export',
+        guard(async (req, res) => {
+          if (req.method !== 'POST') return json(res, 405, { error: 'POST only' });
+          const { set, id } = await bodyJson(req);
+          if (!SET_IDS.includes(set) || !isSafePlayerId(id)) return json(res, 400, { error: 'bad set or id' });
+          const port = server.httpServer?.address()?.port ?? 5173;
+          const base = String(server.config.base ?? '/').replace(/\/$/, '');
+          const out = await new Promise(done => {
+            execFile(
+              process.execPath,
+              [resolve(server.config.root, 'scripts/studio/export.js'), '--set', set, '--only', id],
+              {
+                cwd: server.config.root, timeout: 300_000, maxBuffer: 16 * 1024 * 1024,
+                env: { ...process.env, STUDIO_URL: `http://localhost:${port}${base}` },
+              },
+              (err, stdout = '', stderr = '') => done({ err, log: `${stdout}${stderr}`.trim().split(/\r?\n/).slice(-6).join('\n') })
+            );
+          });
+          const exists = existsSync(resolve(server.config.root, 'public', 'cards', set, `${id}.png`));
+          if (out.err || !exists) return json(res, 500, { error: out.log || out.err?.message || 'The export wrote no face' });
+          json(res, 200, { ok: true, exists, log: out.log });
+        })
+      );
 
       server.middlewares.use('/__studio/crops', writeJsonRoute(s => s.crops));
       server.middlewares.use(

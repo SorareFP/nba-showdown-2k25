@@ -338,14 +338,23 @@ export const CARD_PLAYERS = SHIPPED_CARDS;
  * here the way the pool does.
  */
 const specialModules = import.meta.glob(
-  '../../card-data/generated/cards-{super-season,rookie,summer-standouts,dissonance,team-rewards,set-rewards,wnba,wnba-rookie,wnba-super-season,wnba-team-rewards,wnba-set-rewards}.json',
+  '../../card-data/generated/cards-{super-season,rookie,summer-standouts,dissonance,team-rewards,set-rewards,wnba,wnba-rookie,wnba-super-season,wnba-team-rewards,wnba-set-rewards,free-agents}.json',
   { eager: true }
 );
+
+// Requested cards (Free Agents) join the set each was classified into, here
+// as in src/game/cardSets.js, so a built request shows up for its photo.
+const FREE_AGENT_CARDS = Object.values(specialModules)
+  .map(mod => mod?.default)
+  .find(file => file?.set === 'free-agents')?.cards ?? [];
 
 function loadSpecialSet(id) {
   for (const mod of Object.values(specialModules)) {
     const file = mod?.default;
-    if (file?.set === id && Array.isArray(file.cards)) return file;
+    if (file?.set === id && Array.isArray(file.cards)) {
+      const joining = FREE_AGENT_CARDS.filter(c => c.set === id);
+      return joining.length ? { ...file, cards: [...file.cards, ...joining] } : file;
+    }
   }
   return null;
 }

@@ -4,28 +4,40 @@
 // opens. It shows what the user said it should: "return only a salary,
 // rarity and an invoice cost". The request itself is priced again on the
 // server; this panel only asks.
+//
+// When the card is made the request becomes an invoice at the finished card's
+// price: See card (the full face, art and chart), Sign, or Decline (the user,
+// 2026-09-10: "make sure I can reject the invoice when the card is made. When
+// it is ready, it should say 'see card' on the site").
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDialogs } from '../ui/dialogs.jsx';
+import { useLightbox } from './CardLightbox.jsx';
 import { RARITY_CONFIG } from '../game/rarity.js';
+import { getCardByKey } from '../game/cardSets.js';
 import {
   prepareSearch, searchQuotes, seasonText, quoteKey, searchHitsNeverCard, AUTO_REJECT_MESSAGE,
-  OPEN_REQUEST_LIMIT, REQUEST_STATUS, coverageText,
+  OPEN_REQUEST_LIMIT, REQUEST_STATUS, OPEN_STATUSES, coverageText,
 } from '../game/freeAgents.js';
-import { requestCard, myCardRequests } from '../firebase/freeAgents.js';
+import { requestCard, myCardRequests, signFreeAgent, declineCardRequest } from '../firebase/freeAgents.js';
 import Skeleton from '../ui/Skeleton.jsx';
 import s from './FreeAgentsPanel.module.css';
 
 const STATUS_TEXT = {
   [REQUEST_STATUS.requested]: 'Waiting',
-  [REQUEST_STATUS.rejected]: 'Rejected',
+  [REQUEST_STATUS.built]: 'Being made',
   [REQUEST_STATUS.invoiced]: 'Ready to sign',
   [REQUEST_STATUS.signed]: 'Signed',
   [REQUEST_STATUS.gifted]: 'Gifted',
+  [REQUEST_STATUS.rejected]: 'Rejected',
+  [REQUEST_STATUS.declined]: 'Declined',
 };
+/** Once one of these, the card exists and can be looked at. */
+const HAS_CARD = [REQUEST_STATUS.invoiced, REQUEST_STATUS.signed, REQUEST_STATUS.gifted];
 const coins = n => `🪙 ${Number(n ?? 0).toLocaleString()}`;
 
-export default function FreeAgentsPanel({ uid, loadIndex = () => import('../../card-data/generated/quote-index.json') }) {
-  const { toast } = useDialogs();
+export default function FreeAgentsPanel({ uid, onChanged = () => {}, loadIndex = () => import('../../card-data/generated/quote-index.json') }) {
+  const { toast, ask } = useDialogs();
+  const lightbox = useLightbox();
   const [index, setIndex] = useState(null);
   const [text, setText] = useState('');
   const [mine, setMine] = useState(null);
@@ -46,11 +58,11 @@ export default function FreeAgentsPanel({ uid, loadIndex = () => import('../../c
 
   const results = useMemo(() => (index ? searchQuotes(index, text) : []), [index, text]);
   const never = searchHitsNeverCard(text);
-  const waiting = (mine ?? []).filter(r => r.status === REQUEST_STATUS.requested);
-  const asked = new Set(waiting.map(r => quoteKey(r.bbrefId, r.season, r.playoffs)));
-  const full = waiting.length >= OPEN_REQUEST_LIMIT;
+  const open = (mine ?? []).filter(r => OPEN_STATUSES.includes(r.status));
+  const asked = new Set(open.map(r => quoteKey(r.bbrefId, r.season, r.playoffs)));
+  const full = open.length >= OPEN_REQUEST_LIMIT;
 
-  const ask = async q => {
+  const askFor = async q => {
     const key = quoteKey(q.bbrefId, q.season, q.playoffs);
     setBusy(key);
     try {
@@ -59,6 +71,45 @@ export default function FreeAgentsPanel({ uid, loadIndex = () => import('../../c
       await refreshMine();
     } catch (e) {
       toast(e?.message ?? 'That request did not go through.', { tone: 'error' });
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const see = r => {
+    const card = getCardByKey(r.cardKey);
+    if (!card) { toast('That card is on its way. Reload the page to pick up the latest cards.', { tone: 'error' }); return; }
+    lightbox?.open('player', card);
+  };
+
+  const sign = async r => {
+    setBusy(r.id);
+    try {
+      await signFreeAgent({ id: r.id });
+      toast(`Signed ${r.name}. The card is in your collection.`);
+      await refreshMine();
+      onChanged();
+    } catch (e) {
+      toast(e?.message ?? 'That signing did not go through.', { tone: 'error' });
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const decline = async r => {
+    const yes = await ask({
+      title: `Decline ${r.name}?`,
+      body: 'The card stays in packs for everyone. Declining frees one of your request places.',
+      confirmLabel: 'Decline',
+      cancelLabel: 'Keep it',
+    });
+    if (!yes) return;
+    setBusy(r.id);
+    try {
+      await declineCardRequest({ id: r.id });
+      await refreshMine();
+    } catch (e) {
+      toast(e?.message ?? 'That did not go through.', { tone: 'error' });
     } finally {
       setBusy(null);
     }
@@ -112,8 +163,8 @@ export default function FreeAgentsPanel({ uid, loadIndex = () => import('../../c
                         <button
                           className={s.askBtn}
                           disabled={busy === key || already || (full && !already)}
-                          onClick={() => ask(q)}
-                          title={full && !already ? `You have ${OPEN_REQUEST_LIMIT} requests waiting` : undefined}
+                          onClick={() => askFor(q)}
+                          title={full && !already ? `You have ${OPEN_REQUEST_LIMIT} requests open` : undefined}
                         >
                           {already ? 'Requested' : busy === key ? 'Asking…' : 'Request'}
                         </button>
@@ -130,7 +181,7 @@ export default function FreeAgentsPanel({ uid, loadIndex = () => import('../../c
       <section className={s.panel}>
         <div className={s.panelHead}>
           <h3 className={s.panelTitle}>Your requests</h3>
-          <span className={s.muted}>{waiting.length}/{OPEN_REQUEST_LIMIT} waiting</span>
+          <span className={s.muted}>{open.length}/{OPEN_REQUEST_LIMIT} open</span>
         </div>
         {mine == null ? (
           <Skeleton rows={2} height={40} label="Loading your requests" />
@@ -138,14 +189,35 @@ export default function FreeAgentsPanel({ uid, loadIndex = () => import('../../c
           <p className={s.muted}>Nothing asked for yet.</p>
         ) : (
           <ul className={s.requests}>
-            {mine.map(r => (
-              <li key={r.id} className={s.request}>
-                <span className={s.reqName}>{r.name}, {seasonText(r)}</span>
-                <span className={`${s.status} ${s[r.status] ?? ''}`}>{STATUS_TEXT[r.status] ?? r.status}</span>
-                {r.quote && <span className={s.muted}>${r.quote.salary?.toLocaleString()} · {RARITY_CONFIG[r.quote.rarity]?.label ?? r.quote.rarity} · {coins(r.quote.price)}</span>}
-                {r.status === REQUEST_STATUS.rejected && r.reason && <span className={s.reason}>{r.reason}</span>}
-              </li>
-            ))}
+            {mine.map(r => {
+              const bill = r.invoice ?? r.quote;
+              return (
+                <li key={r.id} className={s.request}>
+                  <span className={s.reqName}>{r.name}, {seasonText(r)}</span>
+                  <span className={`${s.status} ${s[r.status] ?? ''}`}>{STATUS_TEXT[r.status] ?? r.status}</span>
+                  {bill && (
+                    <span className={s.muted}>
+                      ${bill.salary?.toLocaleString()} · {RARITY_CONFIG[bill.rarity]?.label ?? bill.rarity} · {coins(bill.price)}
+                      {r.invoice ? '' : ' (estimate)'}
+                    </span>
+                  )}
+                  {r.status === REQUEST_STATUS.rejected && r.reason && <span className={s.reason}>{r.reason}</span>}
+                  {HAS_CARD.includes(r.status) && (
+                    <div className={s.reqActions}>
+                      <button className={s.ghostBtn} onClick={() => see(r)}>See card</button>
+                      {r.status === REQUEST_STATUS.invoiced && (
+                        <>
+                          <button className={s.askBtn} disabled={busy === r.id} onClick={() => sign(r)}>
+                            {busy === r.id ? 'Signing…' : `Sign for ${coins(r.invoice?.price)}`}
+                          </button>
+                          <button className={s.ghostBtn} disabled={busy === r.id} onClick={() => decline(r)}>Decline</button>
+                        </>
+                      )}
+                    </div>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         )}
       </section>

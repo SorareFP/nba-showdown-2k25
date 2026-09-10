@@ -6,7 +6,10 @@ import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 
 vi.mock('../ui/dialogs.jsx', () => ({ useDialogs: () => ({ toast: () => {}, ask: async () => true }) }));
-vi.mock('../firebase/freeAgents.js', () => ({ requestCard: async () => ({}), myCardRequests: async () => [] }));
+vi.mock('../firebase/freeAgents.js', () => ({
+  requestCard: async () => ({}), myCardRequests: async () => [],
+  signFreeAgent: async () => ({}), declineCardRequest: async () => ({}),
+}));
 
 import FreeAgentsPanel from './FreeAgentsPanel.jsx';
 

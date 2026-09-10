@@ -19,6 +19,7 @@ import wnbaSetRewards from '../../card-data/generated/cards-wnba-set-rewards.jso
 import wnba from '../../card-data/generated/cards-wnba.json' with { type: 'json' };
 import wnbaSuperSeason from '../../card-data/generated/cards-wnba-super-season.json' with { type: 'json' };
 import wnbaRookie from '../../card-data/generated/cards-wnba-rookie.json' with { type: 'json' };
+import freeAgents from '../../card-data/generated/cards-free-agents.json' with { type: 'json' };
 
 export const BASE_SET = '2026-27';
 
@@ -85,6 +86,20 @@ export const CARD_SETS = Object.fromEntries(
     ['wnba-set-rewards', wnbaSetRewards],
   ].map(([id, payload]) => [id, withoutMigrated(id, payload.cards).map(c => ({ ...c, set: id }))])
 );
+
+// FREE AGENTS: requested cards, built one at a time (buildFreeAgent.mjs) into
+// their own file and merged into the set each was classified into — Rookie,
+// Super Season, Summer Standouts. So a request joins that set's packs and its
+// collection, as the user asked. Their own file so regenerating Rookie or
+// Super Season can never wipe one.
+export function joinFreeAgents(sets, cards) {
+  for (const card of cards ?? []) {
+    if (!card?.set) continue;
+    (sets[card.set] ??= []).push({ ...card });
+  }
+  return sets;
+}
+joinFreeAgents(CARD_SETS, freeAgents.cards);
 
 /** The collection key for a card (or for a bare set+id pair). */
 export function cardKey(card) {

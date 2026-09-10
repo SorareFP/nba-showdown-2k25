@@ -90,3 +90,31 @@ export const saveCrops = (crops, set) => saveJson(cropsUrl(set), crops);
 
 /** Persists one set's whole team-override map. See teamTheme.js for its shape. */
 export const saveTeams = (overrides, set) => saveJson(teamsUrl(set), overrides);
+
+async function postJson(url, value) {
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(value),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok || body.error) throw new Error(body.error ?? `HTTP ${res.status}`);
+  return body;
+}
+
+/**
+ * FREE AGENTS: build one requested card (scripts/cardgen/buildFreeAgent.mjs).
+ * Nothing is written yet — commitFreeAgent writes it, after the request is
+ * recorded as built, because the write reloads this page.
+ */
+export const buildFreeAgentCard = ({ id, bbrefId, season, playoffs, set }) =>
+  postJson(`${BASE}/free-agents/build`, { requestId: id, bbrefId, season, playoffs, set });
+export const commitFreeAgent = requestId => postJson(`${BASE}/free-agents/commit`, { requestId });
+/** Is the face PNG exported (public/cards/{set}/{id}.png)? */
+export async function freeAgentFaceExists(set, id) {
+  const res = await fetch(`${BASE}/free-agents/face?set=${encodeURIComponent(set)}&id=${encodeURIComponent(id)}`);
+  const body = await res.json().catch(() => ({}));
+  return Boolean(body.exists);
+}
+/** Export one requested card's face, the way `npm run export:cards -- --set X --only id` does. */
+export const exportFreeAgentFace = (set, id) => postJson(`${BASE}/free-agents/export`, { set, id });

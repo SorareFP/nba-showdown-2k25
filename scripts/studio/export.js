@@ -77,7 +77,13 @@ async function cardsFor(set) {
   if (set === 'strats') return (await import('../../src/game/strats.js')).STRATS;
   const file = resolve(process.cwd(), 'card-data', 'generated', SET_FILES[set]);
   if (!existsSync(file)) return null;
-  const cards = JSON.parse(readFileSync(file, 'utf8')).cards ?? [];
+  // Requested cards (Free Agents) live in their own file and join the set
+  // each was built into, here as in the game (src/game/cardSets.js).
+  const freeAgentsFile = resolve(process.cwd(), 'card-data', 'generated', 'cards-free-agents.json');
+  const joining = existsSync(freeAgentsFile)
+    ? (JSON.parse(readFileSync(freeAgentsFile, 'utf8')).cards ?? []).filter(c => c.set === set)
+    : [];
+  const cards = [...(JSON.parse(readFileSync(file, 'utf8')).cards ?? []), ...joining];
   // MIGRATED CARDS ARE NOT IN THIS SET ANY MORE. The generated file still holds
   // them — the reward generator copies rather than deletes, so the origin file
   // stays a complete record — but the game and the studio both filter on

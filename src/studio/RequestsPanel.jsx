@@ -36,7 +36,7 @@ const VIEWS = [
   [REQUEST_STATUS.rejected, 'Rejected'],
 ];
 /** Sets the builder can build into today (scripts/cardgen/buildFreeAgent.mjs). */
-const BUILDABLE = new Set(['rookie', 'super-season', 'summer-standouts']);
+const BUILDABLE = new Set(['rookie', 'super-season', 'summer-standouts', 'wnba-rookie', 'wnba-super-season']);
 const VIEW_KEY = 'studio.requests.view';
 const NOTE_KEY = 'studio.requests.note';
 const coins = n => `🪙 ${Number(n ?? 0).toLocaleString()}`;

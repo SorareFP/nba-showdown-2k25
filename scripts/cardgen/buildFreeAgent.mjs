@@ -11,21 +11,27 @@
 //
 // ── WHAT IT DOES ────────────────────────────────────────────────────────────
 //
-// 1. Reads the season's rows from the cached full tables (a playoff run from
-//    the dunksandthrees playoff table), EPM from the API index or, before
-//    2002, the BPM bridge — the quote index's own inputs.
-// 2. Fetches the season's game log from Basketball-Reference if it is not
-//    cached, so the chart is cut from the REAL games, the way every shipped
-//    set is built.
-// 3. Builds and prices the full card through the team-reward pipeline
-//    (buildCandidateCards). src/game/cardSets.js merges the file's cards into
-//    the set each names. A rebuild of the same request replaces its card.
+// NBA: reads the season's rows from the cached full tables (a playoff run
+// from the dunksandthrees playoff table), EPM from the API index or, before
+// 2002, the BPM bridge — the quote index's own inputs — and builds through
+// the team-reward pipeline (buildCandidateCards).
+//
+// WNBA: rates the archive with the fitted BPM model, takes the season from
+// her career, and builds through buildWnbaCards, the WNBA Super Season set's
+// own path, priced against the same base.
+//
+// Either way the season's game log is fetched from Basketball-Reference if it
+// is not cached, so the chart is cut from the REAL games, the way every
+// shipped set is built. src/game/cardSets.js merges the file's cards into the
+// set each names. A rebuild of the same request replaces its card.
 //
 // The set is the one the request was classified into when it was quoted.
-// Throwbacks waits for its card design to be approved.
+// Throwbacks (both leagues) waits for its card design to be approved.
+import fs from 'node:fs';
+import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { readCache, writeCache, REPO_ROOT } from './cache.js';
-import { fetchGameLogFull } from './sources/basketballReference.js';
+import { fetchGameLogFull, fetchWnbaGameLogFull } from './sources/basketballReference.js';
 import { normalizeName } from './resolveTeams.js';
 import { careerSeasons } from './history.js';
 import { REPLACEMENT_EPM, seasonLabel } from './generateSpecialSets.js';
@@ -33,6 +39,11 @@ import { buildApiEpmIndex, buildBpmBridge, playoffSeason } from './summerStandou
 import { archiveBasis, requireArchive } from './epmArchive.js';
 import { buildCandidateCards } from './teamRewardCandidates.js';
 import { readFreeAgents, saveFreeAgent } from './freeAgentFile.js';
+import { CALIBRATION_FILE } from './calibrateAttributes.js';
+import * as PV from './playValue.js';
+import * as A from './attributes.js';
+import { loadArchive as loadWnbaArchive, rateArchive as rateWnbaArchive, careerOf as wnbaCareerOf, buildWnbaCards } from './wnba/generateWnbaLegends.js';
+import { WNBA_SEASON } from './wnba/constants.js';
 import { franchiseForSeason } from '../../src/cards/teams.js';
 import { playerIdFromName } from '../../src/cards/playerId.js';
 import { isNeverCard, AUTO_REJECT_MESSAGE } from '../../src/game/neverCard.js';
@@ -40,8 +51,9 @@ import { invoiceFor } from '../../src/game/freeAgents.js';
 import { CARD_SETS } from '../../src/game/cardSets.js';
 
 /** Sets a request can be built into today. Throwbacks waits for its design. */
-export const BUILDABLE_SETS = ['rookie', 'super-season', 'summer-standouts'];
+export const BUILDABLE_SETS = ['rookie', 'super-season', 'summer-standouts', 'wnba-rookie', 'wnba-super-season'];
 
+const WNBA_MODEL_FILE = path.join(REPO_ROOT, 'card-data', 'generated', 'wnba-bpm-model.json');
 const tryCache = key => { try { return readCache(key); } catch { return null; } };
 const tableRows = (season, kind) => {
   const cached = tryCache(`bbref-${season}-${kind}-full`);
@@ -53,6 +65,13 @@ const mostGames = rows => rows.reduce((best, r) => (!best || (r.games ?? 0) > (b
 export function freeAgentCardId(name, season, set, taken) {
   const base = playerIdFromName(name);
   return taken.has(`${set}:${base}`) ? `${base}_${season}` : base;
+}
+
+/** Fetch and cache one game log unless it is cached already. True when it was fetched. */
+async function ensureLog(key, fetchLog) {
+  if (tryCache(key)) return false;
+  writeCache(key, await fetchLog());
+  return true;
 }
 
 function regularCandidate(bbrefId, season) {
@@ -95,39 +114,65 @@ function playoffCandidate(bbrefId, season) {
   };
 }
 
-export async function buildFreeAgent({ bbrefId, season, playoffs = false, set, requestId = null, write = true, log = () => {} }) {
-  if (!BUILDABLE_SETS.includes(set)) {
-    throw new Error(set === 'throwbacks' ? 'Throwbacks waits for its card design to be approved.' : `Cannot build into "${set}"`);
-  }
+async function nbaCard({ bbrefId, season, playoffs }) {
   const candidate = playoffs ? playoffCandidate(bbrefId, season) : regularCandidate(bbrefId, season);
   if (isNeverCard(candidate.name)) throw new Error(AUTO_REJECT_MESSAGE);
+  const fetchedLog = await ensureLog(`gamelog-full-${bbrefId}-${season}`, () => fetchGameLogFull(bbrefId, season));
+  const [card] = buildCandidateCards([candidate], { log: () => {}, useRealGames: true });
+  return {
+    name: candidate.name, fetchedLog,
+    card: {
+      ...card,
+      team: franchiseForSeason(candidate.team, season),
+      seasonLabel: seasonLabel(season),
+      ...(playoffs ? { playoffRun: true } : {}),
+    },
+  };
+}
 
-  // The real games, fetched once and cached like every other set's logs.
-  const logKey = `gamelog-full-${bbrefId}-${season}`;
-  let fetchedLog = false;
-  if (!tryCache(logKey)) {
-    writeCache(logKey, await fetchGameLogFull(bbrefId, season));
-    fetchedLog = true;
+async function wnbaCard({ bbrefId, season, set }) {
+  const model = JSON.parse(fs.readFileSync(WNBA_MODEL_FILE, 'utf8'));
+  const seasons = rateWnbaArchive(loadWnbaArchive().loaded, model);
+  const reference = seasons.get(WNBA_SEASON);
+  if (!reference) throw new Error(`The WNBA reference season ${WNBA_SEASON} is not cached`);
+  const career = wnbaCareerOf(bbrefId, seasons);
+  const best = career.find(c => c.season === season);
+  if (!best) throw new Error(`No ${season} WNBA row for ${bbrefId} in the archive`);
+  if (isNeverCard(best.name)) throw new Error(AUTO_REJECT_MESSAGE);
+  const fetchedLog = await ensureLog(`gamelog-wnba-${bbrefId}-${season}`, () => fetchWnbaGameLogFull(bbrefId, season));
+  const calibration = JSON.parse(fs.readFileSync(CALIBRATION_FILE, 'utf8'));
+  const [card] = buildWnbaCards({ selections: [{ name: best.name, playerId: bbrefId, best, career }], seasons, reference, calibration });
+  PV.priceAgainstBase([card], { roundSalary: A.roundSalary, min: A.SALARY_MIN, max: A.SALARY_MAX });
+  // buildWnbaCards gives a first-season card the rookie pill for the Super
+  // Season twin; a card IN the Rookie set does not need telling.
+  if (set === 'wnba-rookie' && card.badges) {
+    card.badges = card.badges.filter(b => b !== 'rookie');
+    if (!card.badges.length) delete card.badges;
   }
+  return { name: best.name, fetchedLog, card };
+}
 
-  const [card] = buildCandidateCards([candidate], { log, useRealGames: true });
+export async function buildFreeAgent({ bbrefId, season, playoffs = false, set, requestId = null, write = true }) {
+  if (!BUILDABLE_SETS.includes(set)) {
+    throw new Error(/throwbacks$/.test(set) ? 'Throwbacks waits for its card design to be approved.' : `Cannot build into "${set}"`);
+  }
+  const { name, card, fetchedLog } = set.startsWith('wnba-')
+    ? await wnbaCard({ bbrefId, season, set })
+    : await nbaCard({ bbrefId, season, playoffs });
 
   const mine = c => requestId && c.requestId === requestId;
   const taken = new Set([
     ...Object.entries(CARD_SETS).flatMap(([setId, cards]) => cards.filter(c => !mine(c)).map(c => `${setId}:${c.id}`)),
     ...(readFreeAgents(REPO_ROOT).cards ?? []).filter(c => !mine(c)).map(c => `${c.set}:${c.id}`),
   ]);
-  const id = freeAgentCardId(candidate.name, season, set, taken);
+  const id = freeAgentCardId(name, season, set, taken);
   const built = {
     ...card,
     id,
-    name: candidate.name,
+    name,
     set,
-    team: franchiseForSeason(candidate.team, season),
     season,
-    seasonLabel: seasonLabel(season),
     bbrefId,
-    ...(playoffs ? { playoffRun: true } : {}),
     requested: true,
     requestId,
     builtAt: new Date().toISOString(),
@@ -136,8 +181,9 @@ export async function buildFreeAgent({ bbrefId, season, playoffs = false, set, r
 
   const invoice = invoiceFor(built);
   return {
-    requestId, cardKey: `${set}:${id}`, id, name: built.name, season, playoffs: Boolean(playoffs), set, team: built.team,
+    requestId, cardKey: `${set}:${id}`, id, name, season, playoffs: Boolean(playoffs), set, team: built.team,
     salary: invoice.salary, rarity: invoice.rarity, price: invoice.price, fetchedLog,
+    provisional: Boolean(built.provisional),
     ...(write ? {} : { card: built }),
   };
 }

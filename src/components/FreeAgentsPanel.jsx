@@ -132,7 +132,7 @@ export default function FreeAgentsPanel({ uid, onChanged = () => {}, loadIndex =
           type="search"
           value={text}
           onChange={e => setText(e.target.value)}
-          placeholder="Search a player: Michael Jordan, Dennis Rodman, Steve Nash…"
+          placeholder="Search a player: Michael Jordan, Lisa Leslie, Steve Nash…"
           aria-label="Search a player"
         />
         {index == null ? (

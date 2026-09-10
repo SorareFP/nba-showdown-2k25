@@ -4,7 +4,7 @@ import { describe, it, expect } from 'vitest';
 import {
   freeAgentPrice, packOddsCost, readQuoteRow, FA_PACK_WEIGHT, FREE_AGENT_SETS, OPEN_REQUEST_LIMIT,
   searchQuotes, prepareSearch, seasonText, checkRequest, indexQuotes, quoteKey, REQUEST_STATUS,
-  AUTO_REJECT_MESSAGE, searchHitsNeverCard, ARCHIVE_COVERAGE, coverageText,
+  AUTO_REJECT_MESSAGE, searchHitsNeverCard, ARCHIVE_COVERAGE, coverageText, isWnbaId,
 } from './freeAgents.js';
 import quoteIndex from '../../card-data/generated/quote-index.json';
 import { MARKET_PRICES, RARITY_ORDER } from './rarity.js';
@@ -57,13 +57,38 @@ describe('where the archive stops', () => {
   };
 
   it('is exactly what the quote index holds, so the form never promises a season it cannot quote', () => {
-    expect(ARCHIVE_COVERAGE.regular).toEqual(runs(quoteIndex.rows.filter(r => r[3] === 'r').map(r => r[2])));
-    expect(ARCHIVE_COVERAGE.playoffs).toEqual(runs(quoteIndex.rows.filter(r => r[3] === 'p').map(r => r[2])));
+    const nba = quoteIndex.rows.filter(r => !isWnbaId(r[0]));
+    const wnba = quoteIndex.rows.filter(r => isWnbaId(r[0]));
+    expect(ARCHIVE_COVERAGE.regular).toEqual(runs(nba.filter(r => r[3] === 'r').map(r => r[2])));
+    expect(ARCHIVE_COVERAGE.playoffs).toEqual(runs(nba.filter(r => r[3] === 'p').map(r => r[2])));
+    expect(ARCHIVE_COVERAGE.wnba).toEqual(runs(wnba.map(r => r[2])));
+    // A WNBA row always lands in a WNBA set, and an NBA row never does.
+    expect(wnba.every(r => r[6].startsWith('wnba-'))).toBe(true);
+    expect(nba.some(r => r[6].startsWith('wnba'))).toBe(false);
   });
 
   it('says so in a sentence, the long run first and the stragglers after', () => {
-    expect(coverageText()).toBe('NBA regular seasons from 1984-85 to 2025-26 (plus 1975-76 and 1976-77), and playoff runs from 2002 to 2026');
+    expect(coverageText()).toBe(
+      'NBA regular seasons from 1984-85 to 2025-26 (plus 1975-76 and 1976-77), playoff runs from 2002 to 2026, ' +
+      'and WNBA seasons from 1997 to 2026'
+    );
     expect(coverageText({ regular: [[2000, 2010]], playoffs: [] })).toBe('NBA regular seasons from 1999-00 to 2009-10');
+    expect(coverageText({ regular: [[2000, 2010]], playoffs: [[2002, 2010]] })).toBe(
+      'NBA regular seasons from 1999-00 to 2009-10, and playoff runs from 2002 to 2010'
+    );
+  });
+});
+
+describe('WNBA seasons', () => {
+  it('read as one year, and price through the WNBA Booster', () => {
+    expect(isWnbaId('wilsoa01w')).toBe(true);
+    expect(isWnbaId('wilsoa01')).toBe(false);
+    expect(seasonText({ bbrefId: 'lesleli01w', season: 2001, playoffs: false })).toBe('2001 WNBA');
+    expect(seasonText({ bbrefId: 'jordami01', season: 1988, playoffs: false })).toBe('1987-88');
+    for (const set of ['wnba-rookie', 'wnba-super-season', 'wnba-throwbacks']) {
+      expect(FREE_AGENT_SETS[set].league).toBe('wnba');
+      expect(freeAgentPrice(set, 'rare')).toBeGreaterThanOrEqual(MARKET_PRICES.rare);
+    }
   });
 });
 

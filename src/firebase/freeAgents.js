@@ -8,7 +8,15 @@ import { app, db } from './config.js';
 let fns = null;
 const call = name => data => {
   fns ??= getFunctions(app, 'us-central1');
-  return httpsCallable(fns, name)(data).then(r => r.data);
+  return httpsCallable(fns, name)(data).then(r => r.data, e => {
+    // A callable the live server does not have yet answers with a bare
+    // "internal" (Firebase gets a 404 page back, not JSON), which is what the
+    // Studio showed before the accept flow was deployed. Say what it means.
+    if (e?.code === 'functions/internal' && /^internal$/i.test(e.message ?? '')) {
+      throw new Error(`The server could not run ${name}. If it is new, deploy the functions first.`);
+    }
+    throw e;
+  });
 };
 
 /** `{ bbrefId, season, playoffs }` → `{ id, quote }`, or throws with the server's reason. */

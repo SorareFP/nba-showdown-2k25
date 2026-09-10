@@ -33,7 +33,8 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { readCache, REPO_ROOT } from './cache.js';
 import { normalizeName } from './resolveTeams.js';
-import { careerSeasons, bestSeason } from './history.js';
+import { careerSeasons, bestSeason, BEST_SEASON_MIN_GAMES, BEST_SEASON_MIN_MINUTES } from './history.js';
+import { SUPER_SEASON_MIN_SALARY } from '../../src/cards/badges.js';
 import { seasonDistribution } from './fetchHistory.js';
 import { rookieSeasonCounts, REPLACEMENT_EPM } from './generateSpecialSets.js';
 import { buildApiEpmIndex, buildBpmBridge, playoffSeason } from './summerStandouts.js';
@@ -42,8 +43,13 @@ import { priceCandidates } from './teamRewardCandidates.js';
 import { NEVER_CARD } from './generateTeamRewards.js';
 import * as A from './attributes.js';
 import { CARD_SETS } from '../../src/game/cardSets.js';
+import { loadArchive as loadWnbaArchive, rateArchive as rateWnbaArchive, careerOf as wnbaCareerOf } from './wnba/generateWnbaLegends.js';
+import { bestLegendSeason } from './wnba/legends.js';
+import { wnbaRookieSeasonCounts } from './wnba/generateWnbaRookies.js';
+import { fitRidge, predict } from './wnba/bpmModel.js';
 
 const GEN_DIR = path.join(REPO_ROOT, 'card-data', 'generated');
+const WNBA_MODEL_FILE = path.join(GEN_DIR, 'wnba-bpm-model.json');
 export const QUOTE_FILE = path.join(GEN_DIR, 'quote-index.json');
 
 /** Enough of a season to card at all. The chart's trust curve handles the thin end. */
@@ -88,6 +94,19 @@ export function classifySeason(career, season, { distributions, unprovable = new
   const { best, eligibility } = bestSeason(career, distributions);
   if (best && best.season === season && eligibility !== 'none') return 'super-season';
   return 'throwbacks';
+}
+
+/**
+ * THE TWIN RULE, the shipped sets' own (generateSpecialSets' same-season
+ * twins; the user, 2026-09-06: "If it qualifies as a super season, leave it a
+ * super season ... If it's just a best season like Wells, make it a rookie
+ * card"). A rookie year that is also the career's best stays SUPER SEASON only
+ * if it would print gold: a trusted season at SUPER_SEASON_MIN_SALARY or more.
+ * Settled after pricing, because gold is a salary line.
+ */
+export function settleTwin(set, { alsoBest, trusted, salary }, { rookie = 'rookie', best = 'super-season' } = {}) {
+  if (set === rookie && alsoBest && trusted && salary >= SUPER_SEASON_MIN_SALARY) return best;
+  return set;
 }
 
 /**
@@ -192,9 +211,95 @@ function realLogTargets(sets) {
   return out;
 }
 
+// ── WNBA ─────────────────────────────────────────────────────────────────────
+//
+// A WNBA card is priced off its real game log, and only the logs behind the
+// shipped sets are cached, so the per-100 card pass the NBA quotes run has
+// nothing to stand on here. The WNBA quote is a RIDGE FIT instead: from the
+// rated season (the fitted BPM equivalent every WNBA set selects on, as a
+// z-score in its own league, plus the box rates) to the salaries of the 200
+// real-log WNBA cards. Ten-fold cross-validated, 2026-09-10: r 0.96, sd $98,
+// level with the NBA pass. The invoice is the finished card's own price
+// either way.
+//
+// The archive opens with the league itself (1997), so a first season IS a
+// rookie season, with none of the NBA's unprovable debuts.
+
+/** Where a requested WNBA season lands: the WNBA sets' twins of the NBA three. */
+export const WNBA_SETS = { rookie: 'wnba-rookie', best: 'wnba-super-season', other: 'wnba-throwbacks' };
+
+/** The WNBA salary fit's inputs, from one rated season and its league's bpmHat spread. */
+export function wnbaFeatures(row, distribution) {
+  const mpg = (row.minutes ?? 0) / Math.max(row.games ?? 1, 1);
+  const z = distribution?.sd > 0 ? (row.bpmHat - distribution.mean) / distribution.sd : 0;
+  return [
+    z, row.obpmHat ?? 0, mpg, z * Math.min(mpg, 34),
+    row.pts100 ?? 0, row.trb100 ?? 0, row.ast100 ?? 0, row.usgPct ?? 0, row.tsPct ?? 0, row.stl100 ?? 0, row.blk100 ?? 0,
+  ];
+}
+
+/**
+ * Which WNBA set a requested season lands in, the NBA order: a rookie year
+ * first, then the career's best season, then Throwbacks. A rookie year that
+ * is also her best goes gold through settleTwin, as a legend's does in the
+ * shipped set (buildWnbaCards: "one gold card wearing the rookie pill too").
+ */
+export function classifyWnbaSeason(career, season) {
+  const first = career[0];
+  if (first && first.season === season && wnbaRookieSeasonCounts(first)) return WNBA_SETS.rookie;
+  const { best, eligibility } = bestLegendSeason(career);
+  if (best && best.season === season && eligibility !== 'none') return WNBA_SETS.best;
+  return WNBA_SETS.other;
+}
+
+/** Every uncarded WNBA season worth a card, quoted by the ridge fit. */
+export function wnbaQuotes({ carded, log = console.log } = {}) {
+  const model = JSON.parse(fs.readFileSync(WNBA_MODEL_FILE, 'utf8'));
+  const seasons = rateWnbaArchive(loadWnbaArchive().loaded, model);
+  const targets = realLogTargets(['wnba', 'wnba-super-season', 'wnba-rookie', 'wnba-team-rewards']);
+  const ids = new Set([...seasons.values()].flatMap(e => (e.rows ?? []).map(r => r.playerId)));
+
+  const X = [];
+  const y = [];
+  const candidates = [];
+  for (const playerId of ids) {
+    const career = wnbaCareerOf(playerId, seasons);
+    const top = bestLegendSeason(career);
+    for (const line of career) {
+      const features = wnbaFeatures(line, seasons.get(line.season)?.distribution);
+      const target = targets.get(`${playerId}|${line.season}`);
+      if (target != null) { X.push(features); y.push(target); }
+      if (isNeverCard(line.name)) continue;
+      if ((line.games ?? 0) < QUOTE_MIN_GAMES || (line.minutes ?? 0) < QUOTE_MIN_MINUTES) continue;
+      // By id only: a WNBA name can match an NBA card's name in the same year.
+      if (carded.has(`${playerId}|${line.season}`)) continue;
+      candidates.push({
+        playerId, line, features, set: classifyWnbaSeason(career, line.season),
+        // For the twin rule: her best season, and one that met the WNBA
+        // Super Season floors (70% of the schedule, 20 minutes a game).
+        alsoBest: top.best?.season === line.season && top.eligibility !== 'none',
+        trusted: top.eligibility === 'both',
+      });
+    }
+  }
+  const model2 = fitRidge(X, y, null, 0.1);
+  const pred = X.map(x => predict(model2, x));
+  const inSample = fitLine(pred.map((p, i) => [p, y[i]]));
+  const fit = { n: X.length, intercept: model2.intercept, coef: model2.coef, r: inSample?.r ?? null, sd: inSample?.sd ?? null };
+  log(`  wnba: ${candidates.length} seasons; ridge on ${fit.n} real-log cards, in-sample r=${fit.r?.toFixed(2)}, sd=$${fit.sd?.toFixed(0)}`);
+
+  const rows = candidates.map(c => {
+    const salary = calibrated(predict(model2, c.features), null);
+    const set = settleTwin(c.set, { ...c, salary }, { rookie: WNBA_SETS.rookie, best: WNBA_SETS.best });
+    return [c.playerId, c.line.name, c.line.season, 'r', c.line.team, salary, set];
+  });
+  const years = [...seasons.keys()].sort((a, b) => a - b);
+  return { rows, fit, seasons: [years[0], years.at(-1)] };
+}
+
 // ── Main ─────────────────────────────────────────────────────────────────────
 
-export function main({ first = 1976, last = BASE_SEASON, write = true, log = console.log } = {}) {
+export function main({ first = 1976, last = BASE_SEASON, write = true, wnba = true, log = console.log } = {}) {
   const t0 = Date.now();
   const { seasons, advanced, perPoss, shooting } = loadArchiveTables({ first, last });
   const unprovable = unprovableDebutSeasons(seasons);
@@ -213,6 +318,7 @@ export function main({ first = 1976, last = BASE_SEASON, write = true, log = con
   let skippedCarded = 0;
   for (const [playerId, rows] of careers) {
     const career = careerSeasons(rows);
+    const top = bestSeason(career, distributions);
     for (const line of career) {
       const name = line.name;
       if (isNeverCard(name)) continue;
@@ -235,6 +341,9 @@ export function main({ first = 1976, last = BASE_SEASON, write = true, log = con
         epm, ewinsPerGame, trustMinutes: line.minutes ?? 0,
         bbrefId: playerId,
         set: classifySeason(career, line.season, { distributions, unprovable }),
+        // For the twin rule: the career's best, in a season the gold line trusts.
+        alsoBest: top.best?.season === line.season && top.eligibility !== 'none',
+        trusted: games >= BEST_SEASON_MIN_GAMES && (line.minutes ?? 0) >= BEST_SEASON_MIN_MINUTES,
         carded: already, target,
       });
     }
@@ -290,7 +399,8 @@ export function main({ first = 1976, last = BASE_SEASON, write = true, log = con
     const rows = [];
     batch.forEach((c, i) => {
       if (c.carded) return;
-      rows.push([c.bbrefId, c.name, c.season, kind, c.team, calibrated(priced[i].salary, fit), c.set]);
+      const salary = calibrated(priced[i].salary, fit);
+      rows.push([c.bbrefId, c.name, c.season, kind, c.team, salary, settleTwin(c.set, { ...c, salary })]);
     });
     return rows;
   };
@@ -303,14 +413,18 @@ export function main({ first = 1976, last = BASE_SEASON, write = true, log = con
   const reg = { rows: quoteRows(regPriced, 'r', regPriced.fit), fit: regPriced.fit };
   const po = { rows: quoteRows(poPriced, 'p', poFit), fit: poFit };
 
-  const rows = [...reg.rows, ...po.rows].sort((x, y) => x[1].localeCompare(y[1]) || x[2] - y[2]);
+  const wn = wnba ? wnbaQuotes({ carded, log }) : { rows: [], fit: null, seasons: null };
+
+  const rows = [...reg.rows, ...po.rows, ...wn.rows].sort((x, y) => x[1].localeCompare(y[1]) || x[2] - y[2]);
   const bySet = rows.reduce((t, r) => ({ ...t, [r[6]]: (t[r[6]] ?? 0) + 1 }), {});
   const body = {
     generatedAt: new Date().toISOString(),
     note: 'Estimated salary and landing set for every archived player-season without a card. ' +
-      'Row: [bbrefId, name, season, kind r|p, team, salary, set]. Price comes from src/game/freeAgents.js.',
+      'Row: [bbrefId, name, season, kind r|p, team, salary, set]. Price comes from src/game/freeAgents.js. ' +
+      'WNBA rows carry a Basketball-Reference WNBA id (ending in w) and a wnba-* set.',
     seasons: [seasons[0], seasons.at(-1)],
-    calibration: { regular: reg.fit, playoffs: po.fit },
+    wnbaSeasons: wn.seasons,
+    calibration: { regular: reg.fit, playoffs: po.fit, wnba: wn.fit },
     counts: { rows: rows.length, bySet },
     rows,
   };

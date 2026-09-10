@@ -35,7 +35,15 @@ const STATUS_TEXT = {
 const HAS_CARD = [REQUEST_STATUS.invoiced, REQUEST_STATUS.signed, REQUEST_STATUS.gifted];
 const coins = n => `🪙 ${Number(n ?? 0).toLocaleString()}`;
 
-export default function FreeAgentsPanel({ uid, onChanged = () => {}, loadIndex = () => import('../../card-data/generated/quote-index.json') }) {
+// THE LOADER LIVES OUT HERE, ONE FUNCTION FOR EVERY RENDER. As a default
+// parameter it was a new function each render, and the effect that loads the
+// index depends on it: load → setIndex → render → new loader → load again,
+// forever, rebuilding 22,000 search entries and redrawing every result row
+// each time. A desktop shrugged it off; a phone ran out of room and reloaded
+// the tab as soon as a name was typed (the user, 2026-09-10).
+const loadQuoteIndex = () => import('../../card-data/generated/quote-index.json');
+
+export default function FreeAgentsPanel({ uid, onChanged = () => {}, loadIndex = loadQuoteIndex }) {
   const { toast, ask } = useDialogs();
   const lightbox = useLightbox();
   const [index, setIndex] = useState(null);

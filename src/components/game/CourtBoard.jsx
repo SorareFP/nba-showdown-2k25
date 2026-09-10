@@ -150,7 +150,9 @@ export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExec
  * which BLOCKED THE WHOLE TAB mid-possession: `toast` carries the notes
  * ("nobody is eligible"), `ask` the two that are genuinely questions.
  */
-async function buildOpts(game, teamKey, cardId, base, openModal, ui = {}) {
+// Exported for switchAnswers.test.jsx: every prompt a card raises goes through
+// `openModal`, so a test can count them and answer them.
+export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {}) {
   const toast = ui.toast ?? (() => {});
   const ask = ui.ask ?? (async () => false);
   const opts = { ...base };
@@ -566,26 +568,15 @@ async function buildOpts(game, teamKey, cardId, base, openModal, ui = {}) {
     opts.discardId = handWithoutThis[pick];
   }
 
-  // ── Overhelp: pick YOUR player to boost after opponent's switch ─────────
-  if (cardId === 'overhelp') {
-    const idx = await openModal({ teamKey, cardId, players: myT.starters, label: 'Select your player to get +2 roll bonus' });
-    if (idx === null) return null;
-    opts.playerIdx = idx;
-  }
-
-  // ── Burned on the Switch: auto-detect the switched players ─────────────
-  if (cardId === 'burned_switch') {
-    const lc = game.lastMatchupCard;
-    if (!lc) { toast('No switch to react to.'); return null; }
-    // The switch was on the opponent's offense — pick which of YOUR players benefited
-    // Show your starters and ask who got the weaker defender after the switch
-    const idx = await openModal({ teamKey, cardId, players: myT.starters, label: 'Select your player who got a weaker defender' });
-    if (idx === null) return null;
-    opts.playerIdx = idx;
-    // Track original and new defender from the switch
-    opts.originalDefIdx = lc.opts.origD1;
-    opts.newDefIdx = lc.opts.origD2;
-  }
+  // Overhelp and Burned on the Switch are picked ONCE, in the filtered list
+  // above: Overhelp from your players yet to roll, Burned from the slots the
+  // switch handed a weaker defender (burnedSlots over lastDefSwitch). Both
+  // used to prompt a second time here as well. Overhelp's second prompt
+  // offered all five starters ("+2", the card gives +3) and overrode the
+  // first choice; Burned's checked lastMatchupCard, the OFFENSIVE screen
+  // record, so after a Switch Everything it said "No switch to react to" and
+  // cancelled a card the engine had already lit as playable (the user,
+  // 2026-09-10). The engine reads lastDefSwitch; so does the picker.
 
   // ── Run the Floor / Twin Towers: the DEFENCE places the two checks ─────
   //

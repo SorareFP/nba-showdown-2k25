@@ -164,3 +164,19 @@
 }
 .ready { font-size: 13px; }
 .readyBad { color: var(--red); }
+
+/* ── A dynasty with friends ──────────────────────────────────────────────── */
+
+.readyWrap { display: inline-flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.clockLeft { font-weight: 600; color: var(--orange-light); }
+.bids { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 12px; }
+.bidChip {
+  font: inherit; font-size: 12px; padding: 4px 10px; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--orange); background: rgba(234, 88, 12, 0.12); color: var(--text);
+}
+.offers { display: flex; flex-direction: column; gap: 8px; }
+.offerLine {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;
+  padding: 8px 10px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 13px;
+}
+.offerMine { border-color: var(--orange); }

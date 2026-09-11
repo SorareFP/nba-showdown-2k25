@@ -125,6 +125,9 @@ const server = {
   attachLeagueRoom: (uid, payload) => call('attachLeagueRoom', payload),
   reportLeagueResult: (uid, payload) => call('reportLeagueResult', payload),
   forfeitLeagueFixture: (uid, payload) => call('forfeitLeagueFixture', payload),
+  // A dynasty with friends: every coach's move, and a week's sealed bids.
+  dynastyAct: (uid, payload) => call('dynastyAct', payload),
+  dynastyBid: (uid, payload) => call('dynastyBid', payload),
   devResetAccount: () => call('devResetAccount', {}),
   devGrantCoins: (uid, amount) => call('devGrantCoins', { amount }),
 };
@@ -260,6 +263,8 @@ const direct = {
   async attachLeagueRoom() { throw new Error('Leagues need the server route'); },
   async reportLeagueResult() { throw new Error('Leagues need the server route'); },
   async forfeitLeagueFixture() { throw new Error('Leagues need the server route'); },
+  async dynastyAct() { throw new Error('A dynasty with friends needs the server route'); },
+  async dynastyBid() { throw new Error('A dynasty with friends needs the server route'); },
   /** Bulk collect has no direct route: one card at a time, through collectCardDirect. */
   async collectAllCards() { throw new Error('Collect all needs the server route'); },
   /** Dev coins on the direct route: the old client write, which the rules will refuse. */
@@ -347,5 +352,9 @@ export const startLeague = (uid, payload) => impl.startLeague(uid, payload);
 export const attachLeagueRoom = (uid, payload) => impl.attachLeagueRoom(uid, payload);
 export const reportLeagueResult = (uid, payload) => impl.reportLeagueResult(uid, payload);
 export const forfeitLeagueFixture = (uid, payload) => impl.forfeitLeagueFixture(uid, payload);
+/** A coach's move in a dynasty with friends: `{ leagueId, op, args }` (dynastyFriends.js FRIEND_MOVES). */
+export const dynastyAct = (uid, payload) => impl.dynastyAct(uid, payload);
+/** A coach's sealed bids for this free-agency week: `{ leagueId, bids: [{ key, dp, years }] }`. */
+export const dynastyBid = (uid, payload) => impl.dynastyBid(uid, payload);
 /** Server only — there is no honest direct route to coins. */
 export const devGrantCoins = (uid, amount) => impl.devGrantCoins(uid, amount);

@@ -2,8 +2,11 @@
 // the lottery and free agency.
 //
 // Every rule lives in src/game/modes/dynasty.js and dynastyMarket.js. These
-// put the state on screen and hand each click to `act`, which runs one pure
-// transition and saves what comes back (DynastyTab.jsx). A screen that finds
+// put the state on screen and hand each click to `moves` — alone, each move
+// is one pure transition run through `act` and saved (soloMoves, below, and
+// DynastyTab.jsx); in a dynasty with friends it is a call to the server
+// (friendsMoves, FriendsDynasty.jsx), and `d.humanId` is the coach looking.
+// Either way the screen reads the same state. A screen that finds
 // itself deciding whether something is legal should ask the domain instead —
 // `quote` knows the ask, the room and the rival; `negotiate` refuses what
 // cannot be signed.
@@ -20,6 +23,7 @@ import {
 import {
   CAP_DP, APRON_DP, MIN_DP, MAX_DP, FA_DAYS, CONTRACT_YEARS, MOOD_TEXT, personality, rookieScale,
 } from '../../game/modes/dynastyMarket.js';
+import { clockLeft } from '../../game/modes/dynastyFriends.js';
 import { BASE_SET, getCardByKey } from '../../game/cardSets.js';
 import { getPlayerThumbUrl, getPlayerImageUrl, fallbackTo } from '../../game/cardImages.js';
 import { POSITIONS } from '../../game/teamRules.js';
@@ -121,7 +125,83 @@ function PayBar({ d, teamId, extra = 0 }) {
   );
 }
 
-export function FrontOffice({ d, act }) {
+// ── What a click does ───────────────────────────────────────────────────────
+
+/**
+ * Alone: every move is one pure transition run through `act`, which saves
+ * what comes back and turns a refusal into a toast (DynastyTab.jsx). `ready`
+ * is null — a phase closes when you close it. With friends the same names
+ * call the server instead (friendsMoves, FriendsDynasty.jsx).
+ */
+export function soloMoves(act, me) {
+  return {
+    friends: false,
+    isHost: false,
+    ready: null,
+    bids: [],
+    setBids: async () => false,
+    waive: key => act(x => waive(x, me, key)),
+    offer: (key, dp, years) => {
+      let out = null;
+      act(x => {
+        const r = negotiate(x, me, key, { dp, years });
+        out = r.result;
+        return r.dynasty;
+      });
+      return out;
+    },
+    renounce: key => act(x => renounce(x, me, key)),
+    signRookie: key => act(x => signRookie(x, me, key)),
+    fill: () => act(x => fillRoster(x, me)),
+    pick: key => act(x => simDraft(draftPick(x, me, key))),
+    pass: () => act(x => simDraft(passPick(x, me))),
+    simToMe: () => act(x => simDraft(x)),
+    autoDraft: () => act(x => simDraft(x, { all: true })),
+    finishDraft: () => act(x => finishDraft(x)),
+    closeSigning: () => act(x => closeSigning(x)),
+    closeResign: () => act(x => closeResign(x)),
+    drawLottery: () => act(x => drawLottery(x)),
+    closeRookies: () => act(x => closeRookies(x)),
+    nextWeek: () => act(x => nextFaDay(x)),
+    startSeason: () => act(x => startSeason(x)),
+    trade: deal => act(x => makeTrade(x, deal)),
+    propose: async () => false,
+  };
+}
+
+/**
+ * A phase's "done" button. Alone it closes the phase (`onDone`); with
+ * friends it says you are ready, and the phase moves on when every coach is —
+ * so it shows who it is still waiting on. `confirm` runs first either way.
+ */
+export function PhaseButton({ moves, label, onDone, confirm = null, disabled = false }) {
+  if (!moves.ready) {
+    const go = async () => { if (confirm && !(await confirm())) return; onDone(); };
+    return <button type="button" className={styles.primary} disabled={disabled} onClick={go}>{label}</button>;
+  }
+  const { mine, waiting, set } = moves.ready;
+  const toggle = async () => {
+    if (!mine && confirm && !(await confirm())) return;
+    set(!mine);
+  };
+  const others = waiting.filter(w => w !== 'you');
+  return (
+    <span className={dy.readyWrap}>
+      <button type="button" className={mine ? styles.ghost : styles.primary} disabled={disabled && !mine} onClick={toggle} title={label}>
+        {mine ? '✓ Ready — undo' : `I'm ready · ${label.replace(/\s*→$/, '')}`}
+      </button>
+      <span className={styles.muted}>{others.length ? `Waiting on ${others.join(', ')}` : mine ? 'Everyone is ready' : 'Everyone else is ready'}</span>
+    </span>
+  );
+}
+
+/** "11h 40m", "25m" — a pick clock's time left. */
+const formatLeft = ms => {
+  const m = Math.ceil(ms / 60000);
+  return m >= 60 ? `${Math.floor(m / 60)}h ${m % 60}m` : `${m}m`;
+};
+
+export function FrontOffice({ d, moves }) {
   const { ask } = useDialogs();
   const me = d.humanId;
   const rows = contractsOf(d, me);
@@ -133,7 +213,7 @@ export function FrontOffice({ d, act }) {
       confirmLabel: 'Waive him',
       tone: 'danger',
     });
-    if (yes) act(x => waive(x, me, k.key));
+    if (yes) moves.waive(k.key);
   };
   return (
     <section className={styles.panel}>
@@ -167,12 +247,61 @@ export function FrontOffice({ d, act }) {
 
 // ── The negotiating table ───────────────────────────────────────────────────
 
+/** A player at the top of a table: his face, his tag, his worth, his personality. */
+function PlayerHead({ d, q, cardKey, onClose }) {
+  const p = personality(q.pid);
+  return (
+    <div className={dy.negoTop}>
+      <Face cardKey={cardKey} big />
+      <div>
+        <div className={dy.negoName}>{q.card.name}</div>
+        <div className={styles.muted}>{q.card.pos} · age {ageOf(d, cardKey)} · {tagOf(q.card)}</div>
+        <div className={styles.muted}>${q.card.salary} · worth about {q.fair} DP</div>
+        <div className={dy.traitLine}><Trait pid={q.pid} full /></div>
+        <div className={dy.blurb}>{p.blurb}</div>
+      </div>
+      {onClose && <button type="button" className={dy.close} onClick={onClose} aria-label="Close">×</button>}
+    </div>
+  );
+}
+
+/** The terms of an offer: how many years, and DP a season. */
+function TermsPicker({ years, preferred, onYears, dp, onDp }) {
+  const clamp = v => Math.min(MAX_DP, Math.max(MIN_DP, Math.floor(Number(v) || MIN_DP)));
+  return (
+    <>
+      <div className={dy.yearsRow}>
+        <span className={styles.label}>Years</span>
+        {YEARS.map(y => (
+          <button key={y} type="button" className={`${dy.yearBtn} ${y === years ? dy.yearOn : ''}`} onClick={() => onYears(y)}>
+            {y}{y === preferred ? ' ★' : ''}
+          </button>
+        ))}
+      </div>
+      <div className={dy.offerRow}>
+        <button type="button" className={dy.stepBtn} onClick={() => onDp(clamp(dp - 1))} aria-label="One less">−</button>
+        <input
+          className={dy.dpInput}
+          type="number"
+          min={MIN_DP}
+          max={MAX_DP}
+          value={dp}
+          onChange={e => onDp(clamp(e.target.value))}
+          aria-label="DP a season"
+        />
+        <button type="button" className={dy.stepBtn} onClick={() => onDp(clamp(dp + 1))} aria-label="One more">+</button>
+        <span className={styles.muted}>DP a season · {dp * years} in all</span>
+      </div>
+    </>
+  );
+}
+
 /**
  * One player, one offer at a time. Shows his ask (never his floor), who else
  * is bidding, and your room; the verdict and his new ask come back from
  * `negotiate`. Mounted with `key={cardKey}` so every player starts fresh.
  */
-export function Negotiator({ d, cardKey, act, onClose = null, letGo = null }) {
+export function Negotiator({ d, cardKey, moves, onClose = null, letGo = null }) {
   const { toast } = useDialogs();
   const me = d.humanId;
   const first = quote(d, me, cardKey);
@@ -193,13 +322,8 @@ export function Negotiator({ d, cardKey, act, onClose = null, letGo = null }) {
         ? `${dp} DP does not fit — you have ${Math.max(0, q.room)} DP of room under your ${q.limit === APRON_DP ? 'apron' : 'cap'}.`
         : null;
 
-  const send = amount => {
-    let out = null;
-    act(x => {
-      const r = negotiate(x, me, cardKey, { dp: amount, years });
-      out = r.result;
-      return r.dynasty;
-    });
+  const send = async amount => {
+    const out = await moves.offer(cardKey, amount, years);
     if (!out) return;
     setSaid(out);
     if (out.accepted) {
@@ -216,17 +340,7 @@ export function Negotiator({ d, cardKey, act, onClose = null, letGo = null }) {
 
   return (
     <aside className={dy.nego}>
-      <div className={dy.negoTop}>
-        <Face cardKey={cardKey} big />
-        <div>
-          <div className={dy.negoName}>{q.card.name}</div>
-          <div className={styles.muted}>{q.card.pos} · age {ageOf(d, cardKey)} · {tagOf(q.card)}</div>
-          <div className={styles.muted}>${q.card.salary} · worth about {q.fair} DP</div>
-          <div className={dy.traitLine}><Trait pid={q.pid} full /></div>
-          <div className={dy.blurb}>{p.blurb}</div>
-        </div>
-        {onClose && <button type="button" className={dy.close} onClick={onClose} aria-label="Close">×</button>}
-      </div>
+      <PlayerHead d={d} q={q} cardKey={cardKey} onClose={onClose} />
 
       <div className={dy.askLine}>
         His ask: <strong>{q.ask} DP</strong> a season for {plural(years, 'year')}
@@ -240,29 +354,7 @@ export function Negotiator({ d, cardKey, act, onClose = null, letGo = null }) {
         </div>
       )}
 
-      <div className={dy.yearsRow}>
-        <span className={styles.label}>Years</span>
-        {YEARS.map(y => (
-          <button key={y} type="button" className={`${dy.yearBtn} ${y === years ? dy.yearOn : ''}`} onClick={() => pickYears(y)}>
-            {y}{y === q.preferred ? ' ★' : ''}
-          </button>
-        ))}
-      </div>
-
-      <div className={dy.offerRow}>
-        <button type="button" className={dy.stepBtn} onClick={() => setDp(v => Math.max(MIN_DP, v - 1))} aria-label="One less">−</button>
-        <input
-          className={dy.dpInput}
-          type="number"
-          min={MIN_DP}
-          max={MAX_DP}
-          value={dp}
-          onChange={e => setDp(Math.min(MAX_DP, Math.max(MIN_DP, Math.floor(Number(e.target.value) || MIN_DP))))}
-          aria-label="DP a season"
-        />
-        <button type="button" className={dy.stepBtn} onClick={() => setDp(v => Math.min(MAX_DP, v + 1))} aria-label="One more">+</button>
-        <span className={styles.muted}>DP a season · {dp * years} in all</span>
-      </div>
+      <TermsPicker years={years} preferred={q.preferred} onYears={pickYears} dp={dp} onDp={setDp} />
 
       <div className={dy.patience}>Patience <span className={dy.pips}>{pips}</span></div>
       {said && !said.accepted && (
@@ -293,6 +385,66 @@ export function Negotiator({ d, cardKey, act, onClose = null, letGo = null }) {
   );
 }
 
+/**
+ * A SEALED BID, in a dynasty with friends: his ask and your terms, kept from
+ * the other coaches until the week turns — when he takes the best deal by his
+ * own lights. Your standing bid on him, if you have one, fills the table.
+ */
+export function BidPanel({ d, cardKey, moves, onClose = null }) {
+  const me = d.humanId;
+  const all = moves.bids ?? [];
+  const standing = all.find(b => b.key === cardKey) ?? null;
+  const others = all.filter(b => b.key !== cardKey);
+  const [years, setYears] = useState(standing?.years ?? quote(d, me, cardKey).preferred);
+  const q = quote(d, me, cardKey, years);
+  const [dp, setDp] = useState(standing?.dp ?? q.ask);
+  const [busy, setBusy] = useState(false);
+  const pay = payroll(d, me);
+  const full = rosterKeys(d, me).length >= MAX_ROSTER;
+  const fits = dp <= MIN_DP ? pay + dp <= APRON_DP : pay + dp <= q.limit;
+  const blocked = full
+    ? `Your roster is full at ${MAX_ROSTER} — waive someone first.`
+    : !fits
+      ? `${dp} DP does not fit — you have ${Math.max(0, q.room)} DP of room under your ${q.limit === APRON_DP ? 'apron' : 'cap'}.`
+      : !standing && others.length >= 10 ? 'Ten bids a week at most.' : null;
+  const save = async list => {
+    setBusy(true);
+    try { await moves.setBids(list); } finally { setBusy(false); }
+  };
+  const pickYears = y => {
+    setYears(y);
+    if (!standing) setDp(quote(d, me, cardKey, y).ask);
+  };
+  return (
+    <aside className={dy.nego}>
+      <PlayerHead d={d} q={q} cardKey={cardKey} onClose={onClose} />
+      <div className={dy.askLine}>
+        His ask: <strong>{q.ask} DP</strong> a season for {plural(years, 'year')}
+        {q.ask >= MAX_DP && <span className={dy.buff} title={`A max deal: ${MAX_DP} DP a season is the most anyone can ask`}>max</span>}
+        {years !== q.preferred && <span className={styles.muted}> · he wants {q.preferred}</span>}
+      </div>
+      {q.rival && (
+        <div className={dy.rival}>
+          📨 {teamOf(d, q.rival.teamId)?.name} have offered {q.rival.dp} DP × {plural(q.rival.years, 'year')}.
+          He weighs it against the sealed bids when the week turns.
+        </div>
+      )}
+      <TermsPicker years={years} preferred={q.preferred} onYears={pickYears} dp={dp} onDp={setDp} />
+      {standing && <div className={`${dy.mood} ${dy.mood_close}`}>Your sealed bid: {standing.dp} DP × {plural(standing.years, 'year')}.</div>}
+      {blocked && <div className={dy.blocked}>{blocked}</div>}
+      <div className={dy.negoActions}>
+        <button type="button" className={styles.primary} disabled={Boolean(blocked) || busy} onClick={() => save([...others, { key: cardKey, dp, years }])}>
+          {standing ? `Change my bid to ${dp} × ${years}` : `Bid ${dp} × ${years}`}
+        </button>
+        {standing && <button type="button" className={styles.ghost} disabled={busy} onClick={() => save(others)}>Withdraw my bid</button>}
+      </div>
+      <div className={styles.muted}>
+        No other coach sees it. Under his ask he may still take it, if it is the best he gets; under what he will take at all, it signs nobody.
+      </div>
+    </aside>
+  );
+}
+
 function MarketRow({ d, cardKey, on, onClick, showRival = false }) {
   const q = quote(d, d.humanId, cardKey);
   return (
@@ -316,30 +468,27 @@ const SIGN_INTRO = {
   expiring: `Your players whose deals ran out talk only to you in this window. Re-signing your own can take you past the cap, up to the ${APRON_DP} apron — the reward for keeping a team together. Anyone you let go hits free agency.`,
 };
 
-export function SigningBoard({ d, act, kind }) {
+export function SigningBoard({ d, moves, kind }) {
   const { ask } = useDialogs();
   const me = d.humanId;
   const keys = rightsOf(d, me, kind);
   const [sel, setSel] = useState(keys[0] ?? null);
   const selected = keys.includes(sel) ? sel : null;
-  const done = async () => {
-    if (keys.length) {
-      const yes = await ask({
-        title: kind === 'draft' ? 'Done signing?' : 'Close the window?',
-        body: `${plural(keys.length, 'unsigned player')} will go to free agency, where anyone can sign them.`,
-        confirmLabel: 'Let them go',
-      });
-      if (!yes) return;
-    }
-    act(x => (kind === 'draft' ? closeSigning(x) : closeResign(x)));
-  };
+  const confirm = async () => !keys.length || ask({
+    title: kind === 'draft' ? 'Done signing?' : 'Close the window?',
+    body: `${plural(keys.length, 'unsigned player')} will go to free agency, where anyone can sign them.`,
+    confirmLabel: 'Let them go',
+  });
   return (
     <section className={styles.panel}>
       <div className={dy.panelHead}>
         <h3 className={styles.panelTitle}>{kind === 'draft' ? 'Sign your draftees' : 'Your free agents — the exclusive window'}</h3>
-        <button type="button" className={styles.primary} onClick={done}>
-          {kind === 'draft' ? 'Done — open free agency →' : 'Close the window →'}
-        </button>
+        <PhaseButton
+          moves={moves}
+          confirm={confirm}
+          onDone={kind === 'draft' ? moves.closeSigning : moves.closeResign}
+          label={kind === 'draft' ? 'Done — open free agency →' : 'Close the window →'}
+        />
       </div>
       <p className={dy.intro}>{SIGN_INTRO[kind]}</p>
       {kind === 'draft' && <PayBar d={d} teamId={me} extra={projectedPayroll(d, me) - payroll(d, me)} />}
@@ -357,9 +506,9 @@ export function SigningBoard({ d, act, kind }) {
             key={selected}
             d={d}
             cardKey={selected}
-            act={act}
+            moves={moves}
             onClose={() => setSel(keys.find(k => k !== selected) ?? null)}
-            letGo={() => act(x => renounce(x, me, selected))}
+            letGo={() => moves.renounce(selected)}
           />
         ) : <div className={dy.negoEmpty}>Pick a player to talk terms.</div>}
       </div>
@@ -384,7 +533,7 @@ function LotteryResult({ d }) {
   );
 }
 
-export function DraftRoom({ d, act }) {
+export function DraftRoom({ d, moves }) {
   const me = d.humanId;
   const fantasy = d.draft?.kind === 'fantasy';
   const clock = onClock(d);
@@ -409,7 +558,9 @@ export function DraftRoom({ d, act }) {
   const recent = [...picks].slice(-8).reverse();
   const extra = fantasy ? projectedPayroll(d, me) - payroll(d, me) : 0;
 
-  const pick = key => act(x => simDraft(draftPick(x, me, key)));
+  const pick = key => moves.pick(key);
+  // With friends a coach's pick is on a clock (dynastyFriends.js).
+  const left = moves.friends ? clockLeft(d) : null;
 
   return (
     <section className={styles.panel}>
@@ -422,6 +573,7 @@ export function DraftRoom({ d, act }) {
         {fantasy
           ? `Draft anyone — then you have to SIGN them, under a ${CAP_DP}-DP cap. The number beside each player is what he will ask you for; the bar keeps your running total.`
           : 'Players who have never been in the league. Two rounds; you can pass. A pick signs on the rookie scale — three years at three-quarters of his value — and can take you up to the apron. Everyone not taken goes back into the draft pool for a later year.'}
+        {moves.friends && ' Every coach has twelve hours on the clock; when it runs out, the AI picks for them.'}
       </p>
 
       <div className={`${dy.clock} ${mine ? dy.clockMine : ''}`}>
@@ -431,12 +583,19 @@ export function DraftRoom({ d, act }) {
             : mine
               ? `You are on the clock — pick ${clock.n}, round ${clock.round}.`
               : `${teamOf(d, clock.teamId)?.name} are on the clock (pick ${clock.n}).`}
+          {left != null && <span className={dy.clockLeft}> · {formatLeft(left)} left</span>}
         </span>
         <span className={dy.clockActions}>
-          {clock && !mine && <button type="button" className={styles.ghost} onClick={() => act(x => simDraft(x))}>Sim to my pick</button>}
-          {mine && !fantasy && <button type="button" className={styles.ghost} onClick={() => act(x => simDraft(passPick(x, me)))}>Pass</button>}
-          {clock && <button type="button" className={styles.ghost} onClick={() => act(x => simDraft(x, { all: true }))}>Auto-draft the rest</button>}
-          {!clock && <button type="button" className={styles.primary} onClick={() => act(x => finishDraft(x))}>{fantasy ? 'To signing →' : 'Sign your picks →'}</button>}
+          {moves.friends ? (
+            mine && !fantasy && <button type="button" className={styles.ghost} onClick={moves.pass}>Pass</button>
+          ) : (
+            <>
+              {clock && !mine && <button type="button" className={styles.ghost} onClick={moves.simToMe}>Sim to my pick</button>}
+              {mine && !fantasy && <button type="button" className={styles.ghost} onClick={moves.pass}>Pass</button>}
+              {clock && <button type="button" className={styles.ghost} onClick={moves.autoDraft}>Auto-draft the rest</button>}
+              {!clock && <button type="button" className={styles.primary} onClick={moves.finishDraft}>{fantasy ? 'To signing →' : 'Sign your picks →'}</button>}
+            </>
+          )}
         </span>
       </div>
 
@@ -513,7 +672,7 @@ export function DraftRoom({ d, act }) {
 
 // ── The lottery ─────────────────────────────────────────────────────────────
 
-export function LotteryRoom({ d, act }) {
+export function LotteryRoom({ d, moves }) {
   const odds = lotteryOdds(d);
   const cls = classFor(d);
   const last = d.history[d.history.length - 1];
@@ -522,7 +681,7 @@ export function LotteryRoom({ d, act }) {
     <section className={styles.panel}>
       <div className={dy.panelHead}>
         <h3 className={styles.panelTitle}>The draft lottery</h3>
-        <button type="button" className={styles.primary} onClick={() => act(x => drawLottery(x))}>Draw the lottery 🎱</button>
+        <PhaseButton moves={moves} onDone={moves.drawLottery} label="Draw the lottery 🎱" />
       </div>
       <p className={dy.intro}>
         The teams that missed the playoffs, worst record first — the worse the record, the better the odds. The lottery draws
@@ -563,28 +722,22 @@ export function LotteryRoom({ d, act }) {
 
 // ── Signing your picks ──────────────────────────────────────────────────────
 
-export function RookieSigning({ d, act }) {
+export function RookieSigning({ d, moves }) {
   const { ask } = useDialogs();
   const me = d.humanId;
   const keys = rightsOf(d, me, 'rookie');
   const full = rosterKeys(d, me).length >= MAX_ROSTER;
   const pay = payroll(d, me);
-  const done = async () => {
-    if (keys.length) {
-      const yes = await ask({
-        title: 'Done with your picks?',
-        body: `${plural(keys.length, 'unsigned pick')} will go to free agency.`,
-        confirmLabel: 'Let them go',
-      });
-      if (!yes) return;
-    }
-    act(x => closeRookies(x));
-  };
+  const confirm = async () => !keys.length || ask({
+    title: 'Done with your picks?',
+    body: `${plural(keys.length, 'unsigned pick')} will go to free agency.`,
+    confirmLabel: 'Let them go',
+  });
   return (
     <section className={styles.panel}>
       <div className={dy.panelHead}>
         <h3 className={styles.panelTitle}>Sign your picks</h3>
-        <button type="button" className={styles.primary} onClick={done}>Done — open free agency →</button>
+        <PhaseButton moves={moves} confirm={confirm} onDone={moves.closeRookies} label="Done — open free agency →" />
       </div>
       <p className={dy.intro}>
         A pick signs on the rookie scale — no haggling — and can take you past the cap up to the {APRON_DP} apron. A full
@@ -600,8 +753,8 @@ export function RookieSigning({ d, act }) {
               <span className={styles.muted}>pick #{d.rights[k]?.pick}</span>
               <span className={dy.rowAsk}><strong>{scale.dp}</strong> DP × {scale.years}</span>
               <span className={dy.clockActions}>
-                <button type="button" className={styles.primary} disabled={full || over} onClick={() => act(x => signRookie(x, me, k))} title={full ? 'Your roster is full' : over ? 'Past the apron' : ''}>Sign</button>
-                <button type="button" className={styles.ghost} onClick={() => act(x => renounce(x, me, k))}>Renounce</button>
+                <button type="button" className={styles.primary} disabled={full || over} onClick={() => moves.signRookie(k)} title={full ? 'Your roster is full' : over ? 'Past the apron' : ''}>Sign</button>
+                <button type="button" className={styles.ghost} onClick={() => moves.renounce(k)}>Renounce</button>
               </span>
             </div>
           );
@@ -620,7 +773,7 @@ const SORTS = {
   rival: (a, b) => Number(Boolean(b.rival)) - Number(Boolean(a.rival)) || (b.card.salary ?? 0) - (a.card.salary ?? 0),
 };
 
-export function FreeAgency({ d, act }) {
+export function FreeAgency({ d, moves }) {
   const { ask } = useDialogs();
   const me = d.humanId;
   const pre = d.phase === DPHASE.preseason;
@@ -647,18 +800,14 @@ export function FreeAgency({ d, act }) {
   const problem = rosterProblem(d, me);
   const lastDay = day >= FA_DAYS;
 
-  const nextDay = async () => {
-    if (bids && lastDay) {
-      const yes = await ask({
-        title: 'Close free agency?',
-        body: 'Every rival offer still standing signs, then the AI teams fill out their rosters from whoever is left.',
-        confirmLabel: 'Close it',
-      });
-      if (!yes) return;
-    }
-    setSel(null);
-    act(x => nextFaDay(x));
-  };
+  // With friends the week is SEALED BIDS (BidPanel), and it turns when every coach is ready.
+  const sealed = moves.friends && !pre;
+  const confirmWeek = async () => sealed || !(bids && lastDay) || ask({
+    title: 'Close free agency?',
+    body: 'Every rival offer still standing signs, then the AI teams fill out their rosters from whoever is left.',
+    confirmLabel: 'Close it',
+  });
+  const myBids = moves.bids ?? [];
 
   return (
     <section className={styles.panel}>
@@ -666,30 +815,44 @@ export function FreeAgency({ d, act }) {
         <h3 className={styles.panelTitle}>{pre ? `Preseason — Year ${d.year}` : `Free agency — week ${day} of ${FA_DAYS}`}</h3>
         <span className={dy.clockActions}>
           {!pre && (
-            <button type="button" className={styles.primary} onClick={nextDay}>
-              {lastDay ? 'Close free agency →' : 'Next week →'}
-            </button>
+            <PhaseButton
+              moves={moves}
+              confirm={confirmWeek}
+              onDone={() => { setSel(null); moves.nextWeek(); }}
+              label={lastDay ? 'Close free agency →' : 'Next week →'}
+            />
           )}
           {pre && problem && (
-            <button type="button" className={styles.ghost} onClick={() => act(x => fillRoster(x, me))}>
+            <button type="button" className={styles.ghost} onClick={moves.fill}>
               Fill to {MIN_ROSTER} with the cheapest
             </button>
           )}
-          {pre && (
-            <button type="button" className={styles.primary} disabled={Boolean(problem)} onClick={() => act(x => startSeason(x))}>
-              Start Year {d.year} →
-            </button>
-          )}
+          {/* With friends a coach still short when everyone is ready is filled with the cheapest. */}
+          {pre && <PhaseButton moves={moves} disabled={!moves.friends && Boolean(problem)} onDone={moves.startSeason} label={`Start Year ${d.year} →`} />}
         </span>
       </div>
       <p className={dy.intro}>
         {pre
           ? `${d.fa ? 'Free agency has closed; whoever is left signs for less. ' : ''}You need ${MIN_ROSTER}–${MAX_ROSTER} players to start the season.`
-          : `The AI teams bid too, and every rival offer still on the table at the end of the week signs. To take a player from them your deal has to beat theirs — as HE sees it, so a Ring Chaser takes less from a contender. Every unsigned player's price drops 10% a week. ${bids ? `${plural(bids, 'rival offer')} out this week.` : ''}`}
+          : sealed
+            ? `Sealed bids: no coach sees another's. Bid for anyone who fits — up to ten a week — and when every coach is ready the week turns: each free agent takes the best deal by his own lights, a coach's or an AI team's (a Ring Chaser takes less from a contender), and every unsigned player's price drops 10%. ${bids ? `${plural(bids, 'AI offer')} out this week.` : ''}`
+            : `The AI teams bid too, and every rival offer still on the table at the end of the week signs. To take a player from them your deal has to beat theirs — as HE sees it, so a Ring Chaser takes less from a contender. Every unsigned player's price drops 10% a week. ${bids ? `${plural(bids, 'rival offer')} out this week.` : ''}`}
       </p>
       {pre && (
         <div className={`${dy.ready} ${problem ? dy.readyBad : ''}`}>
           {problem ? `You have ${problem}.` : `Ready: ${rosterKeys(d, me).length} players, ${payroll(d, me)} DP.`}
+        </div>
+      )}
+      {sealed && (
+        <div className={dy.bids}>
+          <span className={styles.label}>Your sealed bids · week {day}</span>
+          {myBids.length
+            ? myBids.map(b => (
+              <button key={b.key} type="button" className={dy.bidChip} onClick={() => setSel(b.key)}>
+                {cardOf(b.key)?.name ?? b.key} · {b.dp} × {b.years}
+              </button>
+            ))
+            : <span className={styles.muted}>None yet — pick a free agent to bid.</span>}
         </div>
       )}
 
@@ -721,8 +884,10 @@ export function FreeAgency({ d, act }) {
           </div>
         </div>
         {selected
-          ? <Negotiator key={`${selected}:${day}`} d={d} cardKey={selected} act={act} onClose={() => setSel(null)} />
-          : <div className={dy.negoEmpty}>Pick a free agent to talk terms.</div>}
+          ? sealed
+            ? <BidPanel key={`${selected}:${day}:${myBids.find(b => b.key === selected)?.dp ?? ''}`} d={d} cardKey={selected} moves={moves} onClose={() => setSel(null)} />
+            : <Negotiator key={`${selected}:${day}`} d={d} cardKey={selected} moves={moves} onClose={() => setSel(null)} />
+          : <div className={dy.negoEmpty}>{sealed ? 'Pick a free agent to bid for.' : 'Pick a free agent to talk terms.'}</div>}
       </div>
     </section>
   );
@@ -773,9 +938,10 @@ function TradeSide({ d, title, rows, picks = [], picked, pickedPicks = [], onTog
  * both sides; the verdict is evaluateTrade's, live, and the deal goes through
  * only when they would take it.
  */
-export function TradeDesk({ d, act, defaultOpen = false }) {
+export function TradeDesk({ d, moves, defaultOpen = false }) {
   const me = d.humanId;
-  const partners = d.teams.filter(t => !t.human);
+  // With friends the other coaches are partners too — an offer they answer.
+  const partners = d.teams.filter(t => t.id !== me && (moves.friends || !t.human));
   const [open, setOpen] = useState(defaultOpen);
   const [to, setTo] = useState(partners[0]?.id ?? null);
   const [give, setGive] = useState([]);
@@ -800,6 +966,8 @@ export function TradeDesk({ d, act, defaultOpen = false }) {
   const toggle = (list, set) => key => { set(list.includes(key) ? list.filter(k => k !== key) : [...list, key]); setHint(null); };
   const partner = teamOf(d, to);
   const say = ev.verdict === 'illegal' ? { text: ev.problems[0], mood: 'mood_walked' } : VERDICT[ev.verdict];
+  // A coach answers for themselves: no AI verdict, only the rules.
+  const coach = Boolean(partner?.human);
   return (
     <section className={styles.panel}>
       <div className={dy.panelHead}>
@@ -822,6 +990,11 @@ export function TradeDesk({ d, act, defaultOpen = false }) {
             It wants to win a deal by a little. Contracts move with the players; both rosters stay at {MAX_ROSTER} or fewer
             and neither payroll may grow past the {APRON_DP} apron. Picks in the next two drafts can be traded too.
           </p>
+          {moves.friends && (
+            <p className={dy.intro}>
+              A trade with another coach is an offer they answer; the commissioner can veto it until the next phase.
+            </p>
+          )}
           <div className={dy.filters}>
             {partners.map(t => (
               <button
@@ -842,7 +1015,7 @@ export function TradeDesk({ d, act, defaultOpen = false }) {
               picked={deal.get} pickedPicks={deal.getPicks} onToggle={toggle(get, setGet)} onTogglePick={toggle(getPicks, setGetPicks)}
             />
           </div>
-          {anything && say && (
+          {anything && say && (!coach || ev.verdict === 'illegal') && (
             <div className={`${dy.mood} ${dy[say.mood] ?? ''}`}>
               {say.text}
               {ev.verdict !== 'illegal' && <span className={styles.muted}> · they value it {Math.round(ev.valueIn)} in, {Math.round(ev.valueOut)} out</span>}
@@ -866,19 +1039,30 @@ export function TradeDesk({ d, act, defaultOpen = false }) {
             </div>
           )}
           <div className={dy.negoActions}>
-            <button
-              type="button" className={styles.primary} disabled={ev.verdict !== 'accept'}
-              onClick={() => { if (act(x => makeTrade(x, deal))) clear(); }}
-            >
-              Make the trade
-            </button>
-            <button
-              type="button" className={styles.ghost}
-              disabled={!(deal.get.length || deal.getPicks.length) || ev.verdict === 'accept' || ev.verdict === 'illegal'}
-              onClick={() => setHint(suggestSweetener(d, deal) ?? { none: true })}
-            >
-              What would it take?
-            </button>
+            {coach ? (
+              <button
+                type="button" className={styles.primary} disabled={!anything || ev.verdict === 'illegal'}
+                onClick={async () => { if (await moves.propose(deal)) clear(); }}
+              >
+                Offer it to {partner.name}
+              </button>
+            ) : (
+              <>
+                <button
+                  type="button" className={styles.primary} disabled={ev.verdict !== 'accept'}
+                  onClick={async () => { if (await moves.trade(deal)) clear(); }}
+                >
+                  Make the trade
+                </button>
+                <button
+                  type="button" className={styles.ghost}
+                  disabled={!(deal.get.length || deal.getPicks.length) || ev.verdict === 'accept' || ev.verdict === 'illegal'}
+                  onClick={() => setHint(suggestSweetener(d, deal) ?? { none: true })}
+                >
+                  What would it take?
+                </button>
+              </>
+            )}
           </div>
         </>
       )}

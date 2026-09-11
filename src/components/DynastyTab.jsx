@@ -15,11 +15,16 @@
 // Season mode's own Dashboard — a dynasty year IS a season, played through
 // the Play tab the same way, with its result routed back here by
 // `returnTab: 'dynasty'` on the fixture (App.jsx).
-import { useState, useEffect, useCallback, useRef } from 'react';
+//
+// A DYNASTY WITH FRIENDS (dynasty/FriendsDynasty.jsx) is a league the server
+// runs: listed here beside the solo ones, opened in its own view, and its
+// results reported to the league instead of saved here.
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useAuth } from '../firebase/AuthProvider.jsx';
 import { useDialogs } from '../ui/dialogs.jsx';
 import { listDynasties, saveDynasty, deleteDynasty } from '../firebase/dynasties.js';
-import { claimDynastyReward } from '../firebase/serverWrites.js';
+import { claimDynastyReward, reportLeagueResult } from '../firebase/serverWrites.js';
+import { listMyLeagues, summarizeLeague, LEAGUE_STATUS } from '../firebase/leagues.js';
 import { loadDecks } from '../firebase/savedDecks.js';
 import { recordResult, isRecorded } from '../game/modes/season.js';
 import SeriesPicker, { seriesFor } from './league/SeriesPicker.jsx';
@@ -33,8 +38,10 @@ import { CAP_DP } from '../game/modes/dynastyMarket.js';
 import RosterPicker, { Choice } from './league/RosterPicker.jsx';
 import { SeasonDashboard } from './SeasonTab.jsx';
 import {
-  PhaseTrack, FrontOffice, DraftRoom, SigningBoard, LotteryRoom, RookieSigning, FreeAgency, NewsFeed, TradeDesk,
+  PhaseTrack, FrontOffice, DraftRoom, SigningBoard, LotteryRoom, RookieSigning, FreeAgency, NewsFeed, TradeDesk, soloMoves,
 } from './dynasty/DynastyScreens.jsx';
+import { FriendsSetup, JoinFriends, FriendsDynastyView } from './dynasty/FriendsDynasty.jsx';
+import PvpGame from './PvpGame.jsx';
 import styles from './SeasonTab.module.css';
 import dy from './dynasty/Dynasty.module.css';
 
@@ -66,11 +73,22 @@ export default function DynastyTab({
   const [loading, setLoading] = useState(true);
   const [setup, setSetup] = useState(false);
   const [error, setError] = useState(null);
+  // Dynasties with friends: the leagues of kind 'dynasty' this account is in,
+  // which one is open, the sub-screen for making or joining one, and the PvP
+  // room a coach-vs-coach game is being played in.
+  const [leagues, setLeagues] = useState([]);
+  const [activeLeague, setActiveLeague] = useState(null);
+  const [friends, setFriends] = useState(null);   // 'new' | 'join' | null
+  const [room, setRoom] = useState(null);         // { code, role }
 
   const refresh = useCallback(async () => {
     setLoading(true);
     try {
-      const all = await listDynasties(uid);
+      const [all, mine] = await Promise.all([
+        listDynasties(uid),
+        uid ? listMyLeagues(uid).catch(() => []) : Promise.resolve([]),
+      ]);
+      setLeagues(mine.filter(l => l.kind === 'dynasty' && l.status !== LEAGUE_STATUS.cancelled));
       setList(all);
       // Straight into the one dynasty in progress — the common case is one.
       const live = all.filter(d => d.phase !== DPHASE.done);
@@ -100,10 +118,24 @@ export default function DynastyTab({
   const consumed = useRef(null);
   useEffect(() => {
     if (!pendingResult || loading) return;
-    const d = list.find(x => x.season?.id === pendingResult.seasonId);
-    if (!d) return;
     const key = `${pendingResult.seasonId}:${pendingResult.fixtureId}`;
     if (consumed.current === key) return;
+    // A dynasty with friends reports to its league, which records it; the
+    // league document moves every coach's screen.
+    const shared = leagues.find(l => l.state?.season?.id === pendingResult.seasonId);
+    if (shared) {
+      consumed.current = key;
+      reportLeagueResult(uid, {
+        leagueId: shared.id, fixtureId: pendingResult.fixtureId,
+        homeScore: pendingResult.homeScore, awayScore: pendingResult.awayScore,
+        homeBox: pendingResult.homeBox ?? null, awayBox: pendingResult.awayBox ?? null,
+      }).catch(e => setError(e?.message ?? 'That result could not be recorded'));
+      setActiveLeague(shared.id);
+      onResultConsumed?.();
+      return;
+    }
+    const d = list.find(x => x.season?.id === pendingResult.seasonId);
+    if (!d) return;
     consumed.current = key;
     const s = d.season;
     const already = isRecorded(s, pendingResult.fixtureId);
@@ -116,7 +148,7 @@ export default function DynastyTab({
     }
     setActiveId(d.id);
     onResultConsumed?.();
-  }, [pendingResult, loading, list, commit, onResultConsumed]);
+  }, [pendingResult, loading, list, leagues, uid, commit, onResultConsumed]);
 
   const start = useCallback(async cfg => {
     setError(null);
@@ -156,10 +188,42 @@ export default function DynastyTab({
 
   if (loading) return <div className={styles.wrap}><div className={styles.muted}>Loading dynasties…</div></div>;
 
+  if (room) {
+    return (
+      <div className={styles.wrap}>
+        <PvpGame roomCode={room.code} myRole={room.role} onLeave={() => setRoom(null)} />
+      </div>
+    );
+  }
+
   return (
     <div className={styles.wrap}>
       {error && <div className={styles.error} onClick={() => setError(null)}>{error}</div>}
-      {setup ? (
+      {friends === 'new' ? (
+        <FriendsSetup
+          teamA={teamA}
+          collection={collection}
+          uid={uid}
+          onCancel={() => setFriends(null)}
+          onCreated={id => { setFriends(null); setActiveLeague(id); refresh(); }}
+        />
+      ) : friends === 'join' ? (
+        <JoinFriends
+          teamA={teamA}
+          collection={collection}
+          uid={uid}
+          onCancel={() => setFriends(null)}
+          onJoined={id => { setFriends(null); setActiveLeague(id); refresh(); }}
+        />
+      ) : activeLeague ? (
+        <FriendsDynastyView
+          leagueId={activeLeague}
+          uid={uid}
+          onBack={() => { setActiveLeague(null); refresh(); }}
+          onPlayFixture={onPlayFixture}
+          onOpenRoom={(code, role) => setRoom({ code, role })}
+        />
+      ) : setup ? (
         <DynastySetup teamA={teamA} collection={collection} uid={uid} onStart={start} onCancel={() => setSetup(false)} />
       ) : active ? (
         <DynastyView
@@ -171,7 +235,17 @@ export default function DynastyTab({
           onAbandon={() => remove(active.id)}
         />
       ) : (
-        <DynastyList list={list} onOpen={setActiveId} onNew={() => setSetup(true)} onDelete={remove} />
+        <DynastyList
+          list={list}
+          onOpen={setActiveId}
+          onNew={() => setSetup(true)}
+          onDelete={remove}
+          leagues={leagues}
+          uid={uid}
+          onOpenLeague={setActiveLeague}
+          onNewFriends={() => setFriends('new')}
+          onJoinFriends={() => setFriends('join')}
+        />
       )}
     </div>
   );
@@ -186,7 +260,52 @@ const PITCH = [
   { t: '🏆 Ten years', b: `Title money every year and a bonus for seeing all ten through. A fantasy-draft start pays ${FANTASY_DYNASTY_FACTOR}×.` },
 ];
 
-function DynastyList({ list, onOpen, onNew, onDelete }) {
+/** Dynasties with friends — one league, several coaches, run by the server. */
+function FriendsList({ leagues, uid, onOpen, onNew, onJoin }) {
+  return (
+    <section className={styles.panel}>
+      <div className={dy.panelHead}>
+        <h3 className={styles.panelTitle}>With friends</h3>
+        {uid && (
+          <span className={dy.clockActions}>
+            <button type="button" className={styles.ghost} onClick={onJoin}>Join with a code</button>
+            <button type="button" className={styles.primary} onClick={onNew}>New with friends</button>
+          </span>
+        )}
+      </div>
+      <p className={dy.intro}>
+        {uid
+          ? 'One league, a coach for each of you and AI teams for the rest. Draft on a twelve-hour clock, bid sealed in free agency, trade with each other, and move on when everyone is ready.'
+          : 'Sign in to run a dynasty with friends.'}
+      </p>
+      {leagues.length > 0 && (
+        <div className={styles.cards}>
+          {leagues.map(l => {
+            const s = summarizeLeague(l, uid);
+            const lobby = l.status === LEAGUE_STATUS.lobby;
+            return (
+              <div key={l.id} className={styles.seasonCard}>
+                <div className={styles.seasonCardTop}>
+                  <span className={styles.badge}>{lobby ? 'Lobby' : START_MODES[l.settings?.startMode]?.label ?? 'Dynasty'}</span>
+                  <span className={styles.muted}>{lobby ? `code ${l.joinCode}` : s.where}</span>
+                </div>
+                <div className={styles.seasonCardLine}>{l.name}</div>
+                <div className={styles.muted}>{l.entrants.length} coach{l.entrants.length === 1 ? '' : 'es'} · {l.settings?.size} teams</div>
+                <div className={styles.seasonCardActions}>
+                  <button type="button" className={styles.primary} onClick={() => onOpen(l.id)}>
+                    {lobby ? 'Open the lobby' : l.status === LEAGUE_STATUS.done ? 'Look back' : 'Continue'}
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </section>
+  );
+}
+
+function DynastyList({ list, onOpen, onNew, onDelete, leagues = [], uid = null, onOpenLeague, onNewFriends, onJoinFriends }) {
   return (
     <>
       <header className={styles.head}>
@@ -225,6 +344,7 @@ function DynastyList({ list, onOpen, onNew, onDelete }) {
           {PITCH.map(p => <div key={p.t} className={dy.pitchItem}><strong>{p.t}</strong>{p.b}</div>)}
         </div>
       )}
+      <FriendsList leagues={leagues} uid={uid} onOpen={onOpenLeague} onNew={onNewFriends} onJoin={onJoinFriends} />
     </>
   );
 }
@@ -394,6 +514,7 @@ function DynastyView({ d, uid, commit, onPlayFixture, onBack, onAbandon }) {
       return null;
     }
   }, [d, commit, toast]);
+  const moves = useMemo(() => soloMoves(act, d.humanId), [act, d.humanId]);
 
   const closeYear = () => {
     const next = act(x => endSeason(x));
@@ -423,8 +544,8 @@ function DynastyView({ d, uid, commit, onPlayFixture, onBack, onAbandon }) {
           )}
         />
         {/* In season until the deadline (the user, 2026-09-11). */}
-        <TradeDesk d={d} act={act} />
-        <FrontOffice d={d} act={act} />
+        <TradeDesk d={d} moves={moves} />
+        <FrontOffice d={d} moves={moves} />
         <HistoryPanel d={d} uid={uid} commit={commit} />
       </>
     );
@@ -432,12 +553,12 @@ function DynastyView({ d, uid, commit, onPlayFixture, onBack, onAbandon }) {
 
   const me = teamOf(d, d.humanId);
   let body = null;
-  if (d.phase === DPHASE.draft || d.phase === DPHASE.rookieDraft) body = <DraftRoom d={d} act={act} />;
-  else if (d.phase === DPHASE.signing) body = <SigningBoard d={d} act={act} kind="draft" />;
-  else if (d.phase === DPHASE.resign) body = <SigningBoard d={d} act={act} kind="expiring" />;
-  else if (d.phase === DPHASE.lottery) body = <LotteryRoom d={d} act={act} />;
-  else if (d.phase === DPHASE.rookies) body = <RookieSigning d={d} act={act} />;
-  else if (d.phase === DPHASE.freeAgency || d.phase === DPHASE.preseason) body = <FreeAgency d={d} act={act} />;
+  if (d.phase === DPHASE.draft || d.phase === DPHASE.rookieDraft) body = <DraftRoom d={d} moves={moves} />;
+  else if (d.phase === DPHASE.signing) body = <SigningBoard d={d} moves={moves} kind="draft" />;
+  else if (d.phase === DPHASE.resign) body = <SigningBoard d={d} moves={moves} kind="expiring" />;
+  else if (d.phase === DPHASE.lottery) body = <LotteryRoom d={d} moves={moves} />;
+  else if (d.phase === DPHASE.rookies) body = <RookieSigning d={d} moves={moves} />;
+  else if (d.phase === DPHASE.freeAgency || d.phase === DPHASE.preseason) body = <FreeAgency d={d} moves={moves} />;
   else if (d.phase === DPHASE.done) body = <DynastyFinale d={d} uid={uid} commit={commit} />;
 
   return (
@@ -475,8 +596,8 @@ function DynastyView({ d, uid, commit, onPlayFixture, onBack, onAbandon }) {
       </header>
       <PhaseTrack d={d} />
       {body}
-      {isOffseason(d) && <TradeDesk d={d} act={act} />}
-      {d.phase !== DPHASE.done && <FrontOffice d={d} act={act} />}
+      {isOffseason(d) && <TradeDesk d={d} moves={moves} />}
+      {d.phase !== DPHASE.done && <FrontOffice d={d} moves={moves} />}
       <HistoryPanel d={d} uid={uid} commit={commit} />
       <NewsFeed d={d} />
     </>

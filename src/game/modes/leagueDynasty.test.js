@@ -11,17 +11,17 @@ import { createFriendsDynasty, friendsAct } from './dynastyFriends.js';
 import { DPHASE, onClock, rosterKeys } from './dynasty.js';
 import { packDynasty, unpackDynasty } from './seasonPack.js';
 import { buildAiLeague } from './aiTeams.js';
-import { PHASE } from './seasonCore.js';
+import { PHASE, playoffGames } from './seasonCore.js';
 import { cardKey } from '../cardSets.js';
 
 const seeded = (s = 808) => () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 2 ** 32; };
 const T0 = 1_800_000_000_000;
 const tenEach = () => buildAiLeague(2, { rng: seeded(1) }).map(t => t.roster.map(cardKey));
 
-function lobby(startMode = 'fantasy-full', rosters = [[], []]) {
+function lobby(startMode = 'fantasy-full', rosters = [[], []], extra = {}) {
   const l = newLeague({
     id: 'dyn-1', kind: 'dynasty', name: 'Ours', hostUid: 'u1',
-    settings: { size: 4, length: 'online', startMode },
+    settings: { size: 4, length: 'online', startMode, ...extra },
     entrant: entrantFor('u1', { name: 'Ann', roster: rosters[0] }), joinCode: 'DYN123', now: 1,
   });
   return addEntrant(l, entrantFor('u2', { name: 'Bo', roster: rosters[1] }), 2);
@@ -140,5 +140,28 @@ describe('a year through the league', () => {
     expect(l.payouts.every(p => p.coins > 0 && /Year 1/.test(p.reason))).toBe(true);
     // Settling the same state again pays nothing twice.
     expect(settleDynasty(l, l.state).payouts).toHaveLength(0);
+  });
+
+  it('reports a playoff series game by game, each with its own home side', () => {
+    let l = start(lobby('own', tenEach(), { series: [3] }));
+    l = act(act(l, 'u1', 'ready'), 'u2', 'ready');
+    const seen = [];
+    let guard = 0;
+    while (leagueSeason(l)?.phase !== PHASE.done && guard++ < 300) {
+      const f = openFixtures(l)[0];
+      if (f.playoff) {
+        const g = playoffGames(leagueSeason(l)).find(x => x.id === f.id);
+        expect([f.home, f.away]).toEqual([g.home, g.away]);
+        seen.push(f.id);
+      }
+      const humanHome = f.home.startsWith('h:');
+      const humanAway = f.away.startsWith('h:');
+      const homeWins = humanHome || !humanAway;
+      l = applyResult(l, { fixtureId: f.id, homeScore: homeWins ? 90 : 70, awayScore: homeWins ? 70 : 90, forfeit: humanHome && humanAway }, { now: 10 + guard }).league;
+      // The same game twice is refused.
+      if (f.playoff) expect(canReport(l, 'u1', f.id, { forfeit: true })).toMatch(/already has a result|No such fixture/);
+    }
+    expect(leagueSeason(l).phase).toBe(PHASE.done);
+    expect(seen.some(id => /\.g2$/.test(id))).toBe(true);
   });
 });

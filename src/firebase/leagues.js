@@ -11,7 +11,8 @@ import { doc, getDoc, getDocs, collection, onSnapshot } from 'firebase/firestore
 import { db } from './config.js';
 import { cardKey, getCardByKey } from '../game/cardSets.js';
 import { hydrate, dehydrate } from './seasons.js';
-import { entrantFor } from '../game/modes/league.js';
+import { entrantFor, teamIdFor } from '../game/modes/league.js';
+import { unpackDynasty } from '../game/modes/seasonPack.js';
 
 export {
   summarizeLeague, fixtureOf, openFixtures, canReport, humanFor, teamOfUid, isHumanVsHumanFixture,
@@ -55,4 +56,27 @@ export function seasonOfLeague(league) {
 /** What startLeague expects for a season: the host's built season, rosters as keys. */
 export function seasonForStart(season) {
   return dehydrate(season);
+}
+
+// ── A dynasty with friends ──────────────────────────────────────────────────
+
+/**
+ * A friends dynasty as coach `uid` sees it: its live season's cards restored,
+ * and `humanId` the coach looking — all the dynasty screens need to show it
+ * as theirs. Read only: the server owns every change.
+ */
+export function dynastyOfLeague(league, uid) {
+  if (league?.kind !== 'dynasty' || !league.state) return null;
+  return { ...unpackDynasty(league.state), humanId: teamIdFor(uid) };
+}
+
+/** What a join code opens — its kind, and how a dynasty starts — before anyone joins. */
+export async function readJoinCode(code) {
+  const snap = await getDoc(doc(db, 'joinCodes', code));
+  return snap.exists() ? snap.data() : null;
+}
+
+/** Live updates of this coach's own sealed free-agency bids (only they can read them). */
+export function watchMyBids(leagueId, uid, cb) {
+  return onSnapshot(doc(db, 'leagues', leagueId, 'bids', uid), snap => cb(snap.exists() ? snap.data() : null), () => cb(null));
 }

@@ -29,10 +29,10 @@
 // fee that forms the pool, half to the champion and half across every match
 // win; a season's human-vs-human fixture waits for its PvP room; a stalled
 // fixture is the commissioner's call — force a forfeit or a simulation.
-import { makeBracket, reportMatch, champion as bracketChampion, winsFor, readyMatches } from './bracket.js';
+import { makeBracket, reportMatch, champion as bracketChampion, winsFor, readyMatches, matchIdOf } from './bracket.js';
 import { LEAGUE_SIZES, LENGTHS } from './schedule.js';
 import { TOURNAMENT_SIZES, ENTRY_FEES, tournamentPayouts, dynastyYearEarnings, dynastyCompletionEarnings } from './prizes.js';
-import { PHASE, recordResult, advance, roundComplete, earningsFor, teamsById } from './seasonCore.js';
+import { PHASE, recordResult, advance, roundComplete, earningsFor, teamsById, playoffGames, isRecorded } from './seasonCore.js';
 import { boxLinesFor } from '../boxScore.js';
 
 export const STATUS = { lobby: 'lobby', live: 'live', done: 'done', cancelled: 'cancelled' };
@@ -277,8 +277,16 @@ export function fixtureOf(league, fixtureId) {
   const s = leagueSeason(league);
   if (!s) return null;
   if (s.phase === PHASE.playoffs || s.phase === PHASE.done) {
-    const m = s.bracket?.matches.find(x => x.id === fixtureId);
-    if (m) return { id: m.id, home: m.a, away: m.b, ready: m.a != null && m.b != null, played: Boolean(m.winner), winner: m.winner, round: m.round, playoff: true };
+    // A playoff fixture is one GAME. In a series its id is `<match>.g<n>` and
+    // its home side is that game's (bracket.js HOME_PATTERN), not always the
+    // higher seed's — the scores reported are that game's home and away. A
+    // bare match id means the series' next game.
+    const g = s.phase === PHASE.playoffs
+      ? playoffGames(s).find(x => !x.result && (x.id === fixtureId || x.matchId === fixtureId))
+      : null;
+    if (g) return { id: g.id, home: g.home, away: g.away, ready: g.home != null && g.away != null, played: false, winner: null, round: s.round, playoff: true };
+    const m = s.bracket?.matches.find(x => x.id === matchIdOf(fixtureId));
+    if (m) return { id: String(fixtureId), home: m.a, away: m.b, ready: m.a != null && m.b != null, played: Boolean(m.winner) || isRecorded(s, fixtureId), winner: m.winner, round: m.round, playoff: true };
   }
   const f = s.fixtures.find(x => x.id === fixtureId);
   if (!f) return null;
@@ -291,7 +299,7 @@ export function openFixtures(league) {
   if (league.kind === 'tournament') return readyMatches(league.bracket).map(m => fixtureOf(league, m.id));
   const s = leagueSeason(league);
   if (!s) return [];
-  if (s.phase === PHASE.playoffs) return readyMatches(s.bracket).filter(m => m.round === s.round).map(m => fixtureOf(league, m.id));
+  if (s.phase === PHASE.playoffs) return playoffGames(s).filter(g => !g.result && g.home != null && g.away != null).map(g => fixtureOf(league, g.id));
   if (s.phase === PHASE.regular) return s.fixtures.filter(f => f.round === s.round && !f.result).map(f => fixtureOf(league, f.id));
   return [];
 }

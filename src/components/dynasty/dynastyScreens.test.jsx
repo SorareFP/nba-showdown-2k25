@@ -14,7 +14,7 @@ vi.mock('../../ui/dialogs.jsx', () => ({
 }));
 
 import DynastyTab, { DynastyView, DynastySetup } from '../DynastyTab.jsx';
-import { Negotiator, TradeDesk } from './DynastyScreens.jsx';
+import { Negotiator, TradeDesk, soloMoves } from './DynastyScreens.jsx';
 import {
   createDynasty, simDraft, draftPick, aiDraftChoice, onClock, finishDraft, closeSigning, nextFaDay,
   startSeason, endSeason, closeResign, drawLottery, fillRoster, rightsOf, freeAgentKeys, HUMAN_ID, DPHASE,
@@ -26,6 +26,7 @@ import { buildAiLeague } from '../../game/modes/aiTeams.js';
 const seeded = (s = 5) => () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 2 ** 32; };
 const html = el => renderToStaticMarkup(el);
 const view = d => html(<DynastyView d={d} uid="u1" commit={() => {}} onPlayFixture={() => {}} onBack={() => {}} onAbandon={() => {}} />);
+const solo = soloMoves(() => null, 'you');
 
 function fantasy(seed = 3) {
   return createDynasty({ id: 'F', size: 4, length: 'short', startMode: 'fantasy-full', rng: seeded(seed), human: { name: 'Alex Team' } });
@@ -101,7 +102,7 @@ describe('each phase', () => {
   it('the trade desk opens between seasons with both rosters and no verdict until something is picked', () => {
     const brought = buildAiLeague(1, { rng: seeded(1) })[0].roster;
     const d = createDynasty({ id: 'T', size: 4, length: 'online', startMode: 'own', rng: seeded(6), human: { name: 'Alex Team', roster: brought } });
-    const out = html(<TradeDesk d={d} act={() => null} defaultOpen />);
+    const out = html(<TradeDesk d={d} moves={solo} defaultOpen />);
     expect(out).toContain('Trades');
     expect(out).toContain('You send');
     expect(out).toContain('Make the trade');
@@ -109,9 +110,9 @@ describe('each phase', () => {
     expect(out).not.toContain('Not interested');
     // In season it stays open until the deadline (60% of the regular season), then closes.
     const inSeason = startSeason(d, { rng: seeded(7) });
-    expect(html(<TradeDesk d={inSeason} act={() => null} defaultOpen />)).toContain('Trade deadline');
+    expect(html(<TradeDesk d={inSeason} moves={solo} defaultOpen />)).toContain('Trade deadline');
     const late = { ...inSeason, season: { ...inSeason.season, round: tradeDeadlineRound(inSeason.season) + 1 } };
-    expect(html(<TradeDesk d={late} act={() => null} defaultOpen />)).toBe('');
+    expect(html(<TradeDesk d={late} moves={solo} defaultOpen />)).toBe('');
   });
 
   it('a negotiation with a rival bid on the table names the rival', () => {
@@ -119,7 +120,7 @@ describe('each phase', () => {
     const d = closeSigning(finishDraft(drafted(rng), { rng }), { rng });
     const key = Object.keys(d.fa.rivals)[0];
     if (!key) return;
-    const out = html(<Negotiator d={d} cardKey={key} act={() => null} />);
+    const out = html(<Negotiator d={d} cardKey={key} moves={solo} />);
     expect(out).toContain('have offered');
   });
 

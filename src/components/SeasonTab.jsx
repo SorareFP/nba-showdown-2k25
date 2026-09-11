@@ -520,6 +520,41 @@ function JoinShared({ teamA, collection, uid, onCancel, onJoined }) {
   );
 }
 
+/**
+ * The commissioner's sim of every AI-vs-AI game left in the round — a shared
+ * season's, or a friends dynasty's (dynasty/FriendsDynasty.jsx); humans'
+ * games wait. A playoff series goes one game at a time, each on the series
+ * as it now stands, so every game carries its own home side. Returns how
+ * many games were played.
+ */
+export async function simLeagueAi(uid, leagueId, season) {
+  const rosters = rostersOf(season);
+  const by = teamsById(season);
+  const ai = g => Boolean(g.home && g.away && !by.get(g.home)?.human && !by.get(g.away)?.human);
+  const report = (g, r) => reportLeagueResult(uid, {
+    leagueId, fixtureId: g.id, homeScore: r.homeScore, awayScore: r.awayScore, homeBox: r.homeBox, awayBox: r.awayBox, simulated: true,
+  });
+  let n = 0;
+  if (season.phase !== PHASE.playoffs) {
+    for (const f of roundFixtures(season).filter(x => !x.result && ai(x))) {
+      await report(f, simulateFixture(f, rosters));
+      n += 1;
+    }
+    return n;
+  }
+  let s = season;
+  const round = s.round;
+  for (let guard = 0; guard < 64 && s.phase === PHASE.playoffs && s.round === round; guard += 1) {
+    const g = playoffGames(s).find(x => !x.result && ai(x));
+    if (!g) break;
+    const r = simulateFixture(g, rosters);
+    await report(g, r);
+    s = recordResult(s, { fixtureId: g.id, home: g.home, away: g.away, homeScore: r.homeScore, awayScore: r.awayScore, simulated: true });
+    n += 1;
+  }
+  return n;
+}
+
 /** One shared season: its lobby, then the Dashboard in league mode. */
 function LeagueSeason({ leagueId, uid, onBack, onPlayFixture, onOpenRoom }) {
   const { ask, toast } = useDialogs();
@@ -558,18 +593,7 @@ function LeagueSeason({ leagueId, uid, onBack, onPlayFixture, onOpenRoom }) {
 
   /** The host runs every AI-vs-AI game left in the round; humans' games wait. */
   const simAi = () => run(async () => {
-    const rosters = rostersOf(season);
-    const by = teamsById(season);
-    const list = season.phase === PHASE.playoffs
-      ? (season.bracket?.matches ?? []).filter(m => m.round === season.round && m.a && m.b && !m.winner).map(m => ({ id: m.id, home: m.a, away: m.b }))
-      : roundFixtures(season).filter(f => !f.result);
-    let n = 0;
-    for (const f of list) {
-      if (by.get(f.home)?.human || by.get(f.away)?.human) continue;
-      const r = simulateFixture(f, rosters);
-      await reportLeagueResult(uid, { leagueId: league.id, fixtureId: f.id, homeScore: r.homeScore, awayScore: r.awayScore, homeBox: r.homeBox, awayBox: r.awayBox, simulated: true });
-      n += 1;
-    }
+    const n = await simLeagueAi(uid, league.id, season);
     if (!n) toast('No AI-vs-AI games left in this round.', { tone: 'success' });
   });
 

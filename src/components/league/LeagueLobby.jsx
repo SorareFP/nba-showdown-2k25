@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { canStart, LEAGUE_STATUS } from '../../firebase/leagues.js';
 import { tournamentPayouts } from '../../game/modes/prizes.js';
 import { LENGTHS, gamesPerTeam, playoffCount } from '../../game/modes/schedule.js';
+import { START_MODES } from '../../game/modes/dynasty.js';
 import styles from '../SeasonTab.module.css';
 import lg from './League.module.css';
 
@@ -14,6 +15,9 @@ export default function LeagueLobby({ league, uid, busy = false, onStart, onCanc
   const isHost = league.hostUid === uid;
   const why = canStart(league);
   const tour = league.kind === 'tournament';
+  // A dynasty with friends: a fantasy start drafts every roster, so nobody brings one.
+  const dyn = league.kind === 'dynasty';
+  const drafted = dyn && league.settings.startMode !== 'own';
   const { size, fee, length } = league.settings;
   const pay = tour ? tournamentPayouts(size, fee) : null;
   const aiTeams = tour ? 0 : Math.max(0, size - league.entrants.length);
@@ -30,7 +34,9 @@ export default function LeagueLobby({ league, uid, busy = false, onStart, onCanc
           <p className={styles.sub}>
             {tour
               ? `${size}-team tournament · entry ${fee ? `${fee} coins` : 'free'} · single elimination`
-              : `${LENGTHS[length]?.label ?? length} season · ${size} teams · ${gamesPerTeam(size, length)} games each · top ${playoffCount(size)} make the playoffs`}
+              : dyn
+                ? `${START_MODES[league.settings.startMode]?.label ?? 'Dynasty'} · ${size} teams · ${LENGTHS[length]?.label ?? length} seasons · ${league.settings.aging ? 'players age' : 'ten years'}`
+                : `${LENGTHS[length]?.label ?? length} season · ${size} teams · ${gamesPerTeam(size, length)} games each · top ${playoffCount(size)} make the playoffs`}
           </p>
         </div>
         <div className={styles.headActions}>
@@ -47,7 +53,9 @@ export default function LeagueLobby({ league, uid, busy = false, onStart, onCanc
         <div className={styles.muted}>
           {tour
             ? 'Send it to the people you want in. Each of them pays the entry when they join.'
-            : 'Send it to the friends you want in the league. AI teams fill whatever seats are left when you start.'}
+            : dyn
+              ? `Send it to the friends you want in. Each of you coaches a team${drafted ? ' drafted in the fantasy draft' : ' of ten you bring'}; AI teams take the other seats.`
+              : 'Send it to the friends you want in the league. AI teams fill whatever seats are left when you start.'}
         </div>
         {league.status !== LEAGUE_STATUS.lobby && (
           <div className={styles.note}>This lobby is closed.</div>
@@ -60,7 +68,9 @@ export default function LeagueLobby({ league, uid, busy = false, onStart, onCanc
           {league.entrants.map(e => (
             <div key={e.id} className={lg.entrant}>
               <span className={styles.chipName}>{e.name}</span>
-              <span className={styles.muted}>{e.roster?.length ?? 0} cards{e.deckName ? ` · ${e.deckName}` : ''}</span>
+              <span className={styles.muted}>
+                {drafted ? (e.deckName ?? 'default deck') : `${e.roster?.length ?? 0} cards${e.deckName ? ` · ${e.deckName}` : ''}`}
+              </span>
               {e.uid === league.hostUid && <span className={lg.tag}>host</span>}
               {e.uid === uid && <span className={lg.tagYou}>you</span>}
             </div>
@@ -68,7 +78,7 @@ export default function LeagueLobby({ league, uid, busy = false, onStart, onCanc
           {aiTeams > 0 && (
             <div className={`${lg.entrant} ${lg.entrantGhost}`}>
               <span className={styles.chipName}>{aiTeams} AI team{aiTeams === 1 ? '' : 's'}</span>
-              <span className={styles.muted}>built when the season starts</span>
+              <span className={styles.muted}>{dyn ? 'drafted when the dynasty starts' : 'built when the season starts'}</span>
             </div>
           )}
         </div>
@@ -86,9 +96,9 @@ export default function LeagueLobby({ league, uid, busy = false, onStart, onCanc
         {isHost ? (
           <>
             <button className={styles.primary} disabled={busy || Boolean(why)} onClick={onStart} title={why ?? ''}>
-              {busy ? 'Working…' : why ?? (tour ? 'Deal the bracket' : 'Start the season')}
+              {busy ? 'Working…' : why ?? (tour ? 'Deal the bracket' : dyn ? 'Start the dynasty' : 'Start the season')}
             </button>
-            <button className={styles.ghost} disabled={busy} onClick={onCancel}>Cancel {tour ? 'tournament' : 'league'}</button>
+            <button className={styles.ghost} disabled={busy} onClick={onCancel}>Cancel {tour ? 'tournament' : dyn ? 'dynasty' : 'league'}</button>
           </>
         ) : (
           <>

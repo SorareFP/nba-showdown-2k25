@@ -17,9 +17,14 @@ import { useId } from 'react';
 import { THROWBACK_TEAL } from './treatments.js';
 import s from './ThrowbackMotif.module.css';
 
-const SIZE = { band: [843, 112], top: [135, 132], bottom: [152, 132] };
-// The band's open patches: left of the league mark, and between the stat blocks.
-const LEFT = { x: 9, y: 7, w: 66, h: 99 };
+// The bottom-left slot sits FLUSH in the card's corner (the user, 2026-09-10:
+// "push this design into the bottom left corner, looking like it comes off the
+// corner"), 210x160: clear of the name above it and the chart to its right.
+const SIZE = { band: [843, 112], top: [135, 132], bottom: [210, 160] };
+// The band's open patches: left of the league mark — flush with the card's left
+// edge and the band's full height, so the stroke comes off the top-left corner
+// — and between the stat blocks. The frame paints over the outer 7px.
+const LEFT = { x: 0, y: 0, w: 77, h: 112 };
 const GAP = { x: 380, y: 7, w: 69, h: 99 };
 const TEAL_LIGHT = '#39CACA';
 const SCRIBBLE = '#5B2A86';
@@ -78,9 +83,10 @@ const DRAW = {
     <>
       {brushDefs(u)}
       <defs>{clipTo(`l${u}`, LEFT)}{clipTo(`g${u}`, GAP)}</defs>
+      {/* Off the top-left corner, sweeping down and right. */}
       <g clipPath={`url(#l${u})`}>
-        {swath(u, 'M 0 96 L 80 20', 34)}
-        {scribble(u, zigzag(12, 84, 70, 11, 3, -48))}
+        {swath(u, 'M -18 -16 L 96 110', 40)}
+        {scribble(u, zigzag(-2, 12, 104, 11, 4, 46))}
       </g>
       <g clipPath={`url(#g${u})`}>
         {swath(u, 'M 372 100 L 456 14', 38)}
@@ -96,12 +102,14 @@ const DRAW = {
       {scribble(u, zigzag(4, 98, 140, 16, 5, -22), 7)}
     </>
   ),
+  // Off the bottom-left corner, sweeping up and right: the strokes start past
+  // the corner, so they read as coming off the card's edge.
   bottom: u => (
     <>
       {brushDefs(u)}
-      {swath(u, 'M -10 110 L 165 48', 42)}
-      {swath(u, 'M 0 36 L 120 -4', 26, TEAL_LIGHT)}
-      {scribble(u, zigzag(6, 104, 150, 16, 5, -20), 7)}
+      {swath(u, 'M -24 188 L 196 16', 46)}
+      {swath(u, 'M -20 116 L 104 20', 24, TEAL_LIGHT)}
+      {scribble(u, zigzag(-6, 158, 214, 15, 6, -38), 7)}
     </>
   ),
 };

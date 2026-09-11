@@ -1,6 +1,7 @@
 /* The three places a Throwbacks card draws its brush (ThrowbackMotif.jsx).
- * Same boxes as the chevrons they replace and the band they sit over, so
- * nothing else on the card moves. */
+ * Nothing else on the card moves: the band overlay is the band's own box, the
+ * top-right slot is the chevron's, and the bottom-left slot sits flush in the
+ * card's corner under the frame, so its strokes come off the edge. */
 .band {
   position: absolute;
   left: 0;
@@ -17,7 +18,7 @@
 }
 .bottom {
   position: absolute;
-  left: 28px;
-  bottom: 18px;
+  left: 0;
+  bottom: 0;
   pointer-events: none;
 }

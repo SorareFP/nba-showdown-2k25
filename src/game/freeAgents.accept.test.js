@@ -1,7 +1,9 @@
 // Answering a Free Agent request: the invoice is the FINISHED card's price,
 // which requests still hold a place, and how a built card joins its set.
 import { describe, it, expect } from 'vitest';
-import { invoiceFor, freeAgentPrice, OPEN_STATUSES, OPEN_REQUEST_LIMIT, REQUEST_STATUS } from './freeAgents.js';
+import {
+  invoiceFor, freeAgentPrice, OPEN_STATUSES, OPEN_REQUEST_LIMIT, REQUEST_STATUS, signableCount, signNotice,
+} from './freeAgents.js';
 import { getPlayerRarity } from './rarity.js';
 import { joinFreeAgents, getCardByKey } from './cardSets.js';
 import { withFreeAgent } from '../../scripts/cardgen/freeAgentFile.js';
@@ -14,6 +16,16 @@ describe('the invoice', () => {
     // A card that came out a rarity higher than quoted is invoiced at the higher price.
     const star = invoiceFor({ set: 'rookie', salary: 1500 });
     expect(star.price).toBeGreaterThan(invoiceFor(card).price);
+  });
+});
+
+describe('the home screen note', () => {
+  it('counts only invoiced requests, and says so in the user\'s words', () => {
+    expect(signableCount([{ status: 'invoiced' }, { status: 'built' }, { status: 'signed' }, { status: 'invoiced' }])).toBe(2);
+    expect(signableCount(null)).toBe(0);
+    expect(signNotice(0)).toBeNull();
+    expect(signNotice(1)).toBe('You have a free agent waiting to be signed!');
+    expect(signNotice(2)).toBe('You have 2 free agents waiting to be signed!');
   });
 });
 

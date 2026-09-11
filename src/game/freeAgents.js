@@ -152,6 +152,15 @@ export function invoiceFor(card) {
   const rarity = getPlayerRarity(card);
   return { salary: card.salary, rarity, price: freeAgentPrice(card.set, rarity) };
 }
+/** Requests whose card is made and invoiced: the ones waiting for the player to sign. */
+export const signableCount = requests => (requests ?? []).filter(r => r?.status === REQUEST_STATUS.invoiced).length;
+
+/** The home screen's note beside the coins (the user, 2026-09-10). Null when nothing is waiting. */
+export function signNotice(n) {
+  if (!(n > 0)) return null;
+  return n === 1 ? 'You have a free agent waiting to be signed!' : `You have ${n} free agents waiting to be signed!`;
+}
+
 export const REJECT_REASON_MAX = 200;
 /** One-tap reasons in the Studio; any other text works too. */
 export const QUICK_REJECT_REASONS = ['Not enough of a season to card.', "That one doesn't make sense.", "Not one we're going to make."];

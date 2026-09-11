@@ -19,6 +19,8 @@ import { getUserData, loadClaims } from '../firebase/collection.js';
 import { listSeasons } from '../firebase/seasons.js';
 import { listMyLeagues, seasonOfLeague } from '../firebase/leagues.js';
 import { loadRemoteGame } from '../firebase/games.js';
+import { myCardRequests } from '../firebase/freeAgents.js';
+import { signableCount, signNotice } from '../game/freeAgents.js';
 import { collectedKeys, collectableKeys } from '../game/collections.js';
 import { readLocalGame, describeSave, newerSave } from '../game/gameSave.js';
 import { getPlayerThumbUrl, getPlayerImageUrl, getStratThumbPath, getStratImagePath, fallbackTo } from '../game/cardImages.js';
@@ -45,11 +47,14 @@ export default function HomeTab({ collection = {}, starter = null, onGo = () => 
   const [allNews, setAllNews] = useState(false);
   const [saved] = useState(() => { try { return readLocalGame(); } catch { return null; } });
   const [remoteSave, setRemoteSave] = useState(null);
+  // Free Agents whose card is made and invoiced, waiting for this player to sign.
+  const [signable, setSignable] = useState(0);
 
   useEffect(() => {
     if (!uid) return undefined;
     let live = true;
     getUserData(uid).then(u => { if (live) setCoins(u?.currency ?? 0); }).catch(() => {});
+    myCardRequests(uid).then(rs => { if (live) setSignable(signableCount(rs)); }).catch(() => {});
     loadClaims(uid).then(c => { if (live) setClaimed(new Set(Object.keys(c ?? {}))); }).catch(() => { if (live) setClaimed(new Set()); });
     loadRemoteGame(uid).then(r => { if (live) setRemoteSave(r); }).catch(() => {});
     Promise.all([listSeasons(uid).catch(() => []), listMyLeagues(uid).catch(() => [])]).then(([solo, leagues]) => {
@@ -84,6 +89,11 @@ export default function HomeTab({ collection = {}, starter = null, onGo = () => 
         </div>
         <div className={s.pills}>
           <span className={s.coinPill} title="Your coins">🪙 {coins == null ? '—' : coins.toLocaleString()} coins</span>
+          {signable > 0 && (
+            <button className={`${s.pill} ${s.faPill}`} onClick={() => onGo('freeagents')} title="Open Free Agents to see the card and sign it">
+              ✍️ {signNotice(signable)}
+            </button>
+          )}
           {waiting > 0 && (
             <button className={s.pill} onClick={() => onGo('mycards')}>
               {waiting} card{waiting === 1 ? '' : 's'} to collect

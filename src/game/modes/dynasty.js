@@ -376,6 +376,9 @@ export function createDynasty({
   if (startMode === 'own' && !brought.length) throw new Error('dynasty: bring a roster');
   if (brought.length > MAX_ROSTER) throw new Error(`dynasty: a roster is at most ${MAX_ROSTER}`);
   if (new Set(brought.map(c => c.id)).size !== brought.length) throw new Error('dynasty: one card per player');
+  // A FULL TEN to enter (the user, 2026-09-11: "there should just be
+  // 10-player rosters to enter. Or just choose a team to enter.").
+  if (startMode === 'own' && brought.length !== MAX_ROSTER) throw new Error(`dynasty: a dynasty team is ${MAX_ROSTER} players — this one has ${brought.length}`);
 
   // Bringing a player takes every card of him out of the league.
   const taken = new Set(brought.map(c => c.id));

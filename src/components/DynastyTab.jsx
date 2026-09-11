@@ -28,7 +28,7 @@ import {
   SEASON_REWARDS, DYNASTY_COMPLETION, DYNASTY_TITLE_BONUS, FANTASY_DYNASTY_FACTOR,
   dynastyCoinFactor, dynastyYearEarnings, dynastyCompletionEarnings,
 } from '../game/modes/prizes.js';
-import { createDynasty, START_MODES, DPHASE, simDraft, endSeason, endDynasty, isOffseason, summarizeDynasty, teamOf } from '../game/modes/dynasty.js';
+import { createDynasty, START_MODES, DPHASE, MAX_ROSTER, simDraft, endSeason, endDynasty, isOffseason, summarizeDynasty, teamOf } from '../game/modes/dynasty.js';
 import { CAP_DP } from '../game/modes/dynastyMarket.js';
 import RosterPicker, { Choice } from './league/RosterPicker.jsx';
 import { SeasonDashboard } from './SeasonTab.jsx';
@@ -255,7 +255,8 @@ function DynastySetup({ teamA, collection, uid, onStart, onCancel }) {
   const bonus = DYNASTY_COMPLETION[length] ?? DYNASTY_COMPLETION.regular;
   const x = n => Math.floor(n * factor);
   const chosenDeck = decks.find(dk => dk.id === deckId) ?? null;
-  const ok = !own || pick.roster.length > 0;
+  // A dynasty team is a full ten (the user, 2026-09-11).
+  const ok = !own || pick.roster.length === MAX_ROSTER;
 
   const go = async () => {
     setBusy(true);
@@ -320,7 +321,7 @@ function DynastySetup({ teamA, collection, uid, onStart, onCancel }) {
             collection={collection}
             uid={uid}
             onChange={setPick}
-            deckHint="Your cards arrive on contracts at their value, one to three years long. Short of eight, you sign the rest from free agency before year one."
+            deckHint={`A dynasty team is ${MAX_ROSTER} players — your current team, a saved team or a random one. They arrive on contracts at their value, one to three years long.`}
           />
         ) : decks.length > 0 && (
           <label className={styles.field}>
@@ -366,7 +367,7 @@ function DynastySetup({ teamA, collection, uid, onStart, onCancel }) {
         </div>
 
         <button type="button" className={styles.primary} disabled={!ok || busy} onClick={go}>
-          {busy ? 'Building the league…' : own ? (ok ? 'Start the dynasty' : 'Pick a roster') : 'To the draft room →'}
+          {busy ? 'Building the league…' : own ? (ok ? 'Start the dynasty' : `A dynasty team is ${MAX_ROSTER} players — this one has ${pick.roster.length}`) : 'To the draft room →'}
         </button>
       </div>
     </>

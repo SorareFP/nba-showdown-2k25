@@ -111,7 +111,7 @@ describe('bringing your own team', () => {
 
   it('bringing any card of a player takes his base card out of the league', () => {
     const special = CARD_SETS['super-season'].find(c => BASE_IDS.has(c.id));
-    const filler = CARDS.filter(c => c.id !== special.id).slice(0, 7);
+    const filler = CARDS.filter(c => c.id !== special.id).slice(0, 9);
     const d = ownDynasty({ roster: [special, ...filler] });
     expect(d.league).toContain(cardKey(special));
     expect(universe(d).map(k => getCardByKey(k).id).filter(id => id === special.id)).toHaveLength(1);
@@ -237,13 +237,22 @@ describe('the rules of a signing', () => {
     expect(() => negotiate(d, HUMAN_ID, top.key, { dp: q.ask, years: q.years })).toThrow(/does not fit/);
   });
 
-  it('fills an own-team start from the draft pool, since nobody has been a free agent yet', () => {
-    const d = ownDynasty({ roster: CARDS.filter(c => c.salary < 400).slice(0, 5) });
-    expect(freeAgentKeys(d)).toHaveLength(0);
-    const x = fillRoster(d, HUMAN_ID);
-    expect(rosterKeys(x, HUMAN_ID)).toHaveLength(MIN_ROSTER);
-    expect(leagueKeys(x).length).toBe(leagueKeys(d).length + 3);
-    expectConserved(x);
+  it('takes a full ten to enter with your own team', () => {
+    expect(() => ownDynasty({ roster: CARDS.slice(0, 9) })).toThrow(/10 players/);
+    expect(freeAgentKeys(ownDynasty())).toHaveLength(0);   // nobody has been a free agent yet
+  });
+
+  it('fills a short roster with camp invites from the draft pool when no free agent is left', () => {
+    const d = ownDynasty();
+    const ai = d.teams[1].id;
+    const gone = rosterKeys(d, ai).slice(0, 3);
+    // Three of theirs retired: no contracts, not free agents, and nobody else on the market.
+    const x = { ...d, contracts: Object.fromEntries(Object.entries(d.contracts).filter(([k]) => !gone.includes(k))), retired: gone };
+    expect(freeAgentKeys(x)).toHaveLength(0);
+    const y = fillRoster(x, ai);
+    expect(rosterKeys(y, ai)).toHaveLength(MIN_ROSTER);
+    expect(leagueKeys(y).length).toBe(leagueKeys(x).length + 1);
+    expectConserved(y);
   });
 
   it('waiving leaves his DP on the books for the season ahead, and frees him', () => {

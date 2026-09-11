@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { calcAdv, getTeam, getOpp, getPS, getFatigue, SNAKE, SPEND_COSTS, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, lastReturnedCard, undoReturnCard, extraRollPending, checkNeed, fatigueForMinutes, crunchSearchOptions } from '../../game/engine.js';
+import { calcAdv, getTeam, getOpp, getPS, getFatigue, SNAKE, SPEND_COSTS, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, lastReturnedCard, undoReturnCard, periodLabel, extraRollPending, checkNeed, fatigueForMinutes, crunchSearchOptions } from '../../game/engine.js';
 import { canPlayCard, myHouseTargets, fwdTargets, preRollTargets, helpTargets } from '../../game/canPlay.js';
 import { resolveGoUnder } from '../../game/execCard.js';
 import { benchRest, passTurn } from '../../game/engine.js';
@@ -1043,7 +1043,7 @@ function PhaseBar({ game, setGame, onEndSection, onTimeout = null, onEndTimeout 
   const lock = () => {
     const g=JSON.parse(JSON.stringify(game));
     g.phase='scoring';g.rollResults={A:[],B:[]};
-    g.log=[...g.log,{team:null,msg:`Q${g.quarter} Sec ${g.section} — Scoring Phase!`}];
+    g.log=[...g.log,{team:null,msg:`${periodLabel(g, { short: true })} — Scoring Phase!`}];
     setGame(g);
   };
 
@@ -1051,7 +1051,7 @@ function PhaseBar({ game, setGame, onEndSection, onTimeout = null, onEndTimeout 
     return (
       <div className={styles.phaseBar}>
         <div className={styles.phaseInfo}>
-          <span className={styles.phaseLabel}>Q{quarter} · Sec {section}/3 · Lineup Selection<HelpBtn section="draft" /></span>
+          <span className={styles.phaseLabel}>{periodLabel(game)} · Lineup Selection<HelpBtn section="draft" /></span>
           <span className={styles.phaseSub}>{draftSelectedCount}/5 selected</span>
         </div>
       </div>
@@ -1068,7 +1068,7 @@ function PhaseBar({ game, setGame, onEndSection, onTimeout = null, onEndTimeout 
       <div className={styles.phaseBar}>
         <div className={styles.phaseInfo}>
           <span className={styles.phaseLabel}>
-            Q{quarter} · Sec {section}/3 · Matchup Strategy
+            {periodLabel(game)} · Matchup Strategy
             {inPlacement && <span> · Placement {step}/10</span>}
             <HelpBtn section="matchup" />
           </span>
@@ -1104,7 +1104,7 @@ function PhaseBar({ game, setGame, onEndSection, onTimeout = null, onEndTimeout 
     return (
       <div className={styles.phaseBar}>
         <div className={styles.phaseInfo}>
-          <span className={styles.phaseLabel}>Q{quarter} · Sec {section}/3 · Scoring<HelpBtn section="scoring" /></span>
+          <span className={styles.phaseLabel}>{periodLabel(game)} · Scoring<HelpBtn section="scoring" /></span>
           {!rollingOpen
             ? <span className={styles.phaseSub} style={{color:col}}>Team {scoringTurn} strategy turn · {Math.min(scoringPasses,2)}/2 passes</span>
             : <span className={styles.phaseSub} style={{color:'var(--green)'}}>All players may roll</span>}

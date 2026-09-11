@@ -230,7 +230,9 @@ export function describeSave(save, now = Date.now()) {
   if (!save?.game) return '';
   const g = save.game;
   const what = save.preset?.label ? save.preset.label : `${g.teamA?.name ?? 'Team A'} vs ${g.teamB?.name ?? 'Team B'}`;
-  const where = g.done ? 'final' : `Q${g.quarter ?? '?'} · section ${g.section ?? '?'}`;
+  const where = g.done ? 'final'
+    : g.overtime ? (g.overtime === 1 ? 'overtime' : `overtime ${g.overtime}`)
+      : `Q${g.quarter ?? '?'} · section ${g.section ?? '?'}`;
   const score = `${g.teamA?.score ?? 0}–${g.teamB?.score ?? 0}`;
   const mins = Math.max(0, Math.round((now - (save.at || now)) / 60000));
   const when = mins < 1 ? 'just now' : mins < 60 ? `${mins} min ago` : mins < 1440 ? `${Math.round(mins / 60)} h ago` : `${Math.round(mins / 1440)} d ago`;

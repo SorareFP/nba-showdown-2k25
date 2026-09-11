@@ -20,7 +20,7 @@
 // is a blunt instrument, but the alternative is threading a generator through
 // every engine function, and the engine's purity is worth more than that.
 import {
-  newGame, doRoll, endSection, applyMatchups, spendAssist, spendReboundBonus, STARTERS,
+  newGame, doRoll, endSection, applyMatchups, spendAssist, spendReboundBonus, STARTERS, MAX_OVERTIMES,
   spendTimeout, endTimeout, searchCrunchCard,
 } from '../engine.js';
 import { execCard, resolvePendingShotCheck, resolveGoUnder } from '../execCard.js';
@@ -253,7 +253,9 @@ export function simulateGame(rosterA, rosterB, { deckA = null, deckB = null, rng
     // A is the fixture's HOME side (simulateFixture), so the visitor, B, leads the snake.
     let g = newGame(rosterA, rosterB, deckA, deckB, { clutchDice: CLUTCH_DICE, placementFirst: 'B' });
     g = draftStarters(g, brains);
-    for (let s = 0; s < SECTIONS && !g.done; s += 1) g = playSection(g, s, brains);
+    // Twelve sections, and overtime sections while it is tied (endSection).
+    let played = 0;
+    for (; !g.done && played < SECTIONS + MAX_OVERTIMES; played += 1) g = playSection(g, played, brains);
     const scoreA = g.teamA.score;
     const scoreB = g.teamB.score;
     return {
@@ -262,7 +264,7 @@ export function simulateGame(rosterA, rosterB, { deckA = null, deckB = null, rng
       winner: scoreA === scoreB ? null : (scoreA > scoreB ? 'A' : 'B'),
       boxA: boxScoreFor(g, 'A'),
       boxB: boxScoreFor(g, 'B'),
-      sections: SECTIONS,
+      sections: played,
       game: keepGame ? g : null,
     };
   } finally {

@@ -68,11 +68,12 @@ describe('simulateGame', () => {
 
   it('plays a whole game and returns a decided result', () => {
     const r = simulateGame(league[0].roster, league[1].roster, { rng: seeded(21) });
-    expect(r.sections).toBe(12);
+    // Twelve sections, and overtime if it was tied (2026-09-11) — this seed goes to one.
+    expect(r.sections).toBeGreaterThanOrEqual(12);
     expect(r.scoreA).toBeGreaterThan(0);
     expect(r.scoreB).toBeGreaterThan(0);
-    expect(['A', 'B', null]).toContain(r.winner);
-    if (r.winner) expect(r.winner).toBe(r.scoreA > r.scoreB ? 'A' : 'B');
+    expect(['A', 'B']).toContain(r.winner);
+    expect(r.winner).toBe(r.scoreA > r.scoreB ? 'A' : 'B');
     // Scores land where a twelve-section game lands, not at zero or in the hundreds of hundreds.
     expect(r.scoreA).toBeLessThan(250);
     expect(r.scoreB).toBeLessThan(250);

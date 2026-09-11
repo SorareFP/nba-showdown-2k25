@@ -70,7 +70,7 @@ export default function RulebookTab() {
         <p>
           A game is 4 quarters of 3 four-minute sections — 12 sections. Every section is a
           secret lineup pick, a placement snake, two card windows and a round of rolling.
-          Most points after 12 wins.
+          Most points after 12 wins; a tie goes to overtime — another Crunch-Time section, as many as it takes.
         </p>
       </Section>
 
@@ -164,6 +164,7 @@ export default function RulebookTab() {
           <li>Both hands refill to <strong>7</strong>.</li>
           <li>At halftime (start of Q3) all fatigue and all hot and cold markers reset.</li>
           <li>Entering the final section, Crunch Time arms if the margin is 20 or less.</li>
+          <li>Tied after the final section: <strong>overtime</strong> — another Crunch-Time section at any margin, the clock still reading Q4, with a fresh timeout, Clutch Possession and deck search for each team. Still tied, again (up to ten overtimes, after which a tie stands).</li>
         </ul>
       </Section>
 

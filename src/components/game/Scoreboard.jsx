@@ -1,5 +1,5 @@
 import styles from './Scoreboard.module.css';
-import { SNAKE } from '../../game/engine.js';
+import { SNAKE, periodLabel } from '../../game/engine.js';
 
 function HelpBtn() {
   const handleClick = (e) => {
@@ -21,7 +21,7 @@ export default function Scoreboard({ game, pvpMode = false, myTeamKey = null, is
     <div className={styles.board}>
       <TeamScore team={ga} color="var(--orange)" side="left" />
       <div className={styles.center}>
-        <div className={styles.badge}>Q{quarter} · Sec {section}/3</div>
+        <div className={styles.badge}>{periodLabel(game)}</div>
         <div className={styles.phase}>{phaseLabel} <HelpBtn /></div>
         {turnDetail && <div className={styles.turnDetail}>{turnDetail}</div>}
         <div className={styles.tracks}>

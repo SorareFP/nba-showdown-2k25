@@ -88,7 +88,7 @@ export default function HowToPlay({ scrollToSection, onStartTutorial, tutorialRu
         <AccordionSection {...sec('overview')}>
           <p>NBA Showdown 2026 pits two managers against each other. Build a 10-player roster under the salary cap, then play <strong>4 quarters</strong> of <strong>3 four-minute sections</strong> each — 12 sections in all.</p>
           <p>Every section runs the same way: a secret <strong>lineup pick</strong>, a <strong>placement snake</strong> that decides who guards whom, a <strong>matchup card window</strong>, a <strong>scoring card window</strong>, then <strong>rolling</strong> — each of your five starters rolls a D20, modified by their matchup, fatigue, markers and cards, and reads the result off their scoring chart.</p>
-          <p>Most points after 12 sections wins. If the final section starts with the score within 20, it is <strong>Crunch Time</strong> and its own rules apply.</p>
+          <p>Most points after 12 sections wins. If the final section starts with the score within 20, it is <strong>Crunch Time</strong> and its own rules apply. Tied at the end? <strong>Overtime</strong>: another Crunch-Time section, as many as it takes.</p>
         </AccordionSection>
 
         <AccordionSection {...sec('team')}>
@@ -192,12 +192,12 @@ export default function HowToPlay({ scrollToSection, onStartTutorial, tutorialRu
         </AccordionSection>
 
         <AccordionSection {...sec('crunch')}>
-          <p>Crunch Time is the <strong>final section of Q4</strong>, and it arms only when the score is within <strong>20</strong> as that section starts. The board shows a banner and the log says whether it armed. A blowout plays out as an ordinary section.</p>
+          <p>Crunch Time is the <strong>final section of Q4</strong>, and it arms only when the score is within <strong>20</strong> as that section starts. The board shows a banner and the log says whether it armed. A blowout plays out as an ordinary section. A game <strong>tied</strong> after it goes to <strong>overtime</strong>: another Crunch-Time section at any margin, with a fresh timeout and Clutch Possession for each team — and another after that if it is still tied.</p>
           <ul>
             <li><strong>Crunch-only cards wait for Crunch Time.</strong> One drawn in any earlier section goes straight to the bottom of your deck and you draw again. They come to hand only when drawn into the crunch section — or through <strong>the timeout search</strong>: during your timeout you may take <strong>one</strong> crunch-only card from your deck into hand and shuffle the rest.</li>
             <li><strong>Clutch Possession:</strong> once per team, chosen at roll time, one player rolls <strong>2 dice</strong> and keeps the better. An MVP or Clutch Player award on the card adds a die each. A player at &minus;6 fatigue or worse cannot use it.</li>
             <li><strong>Extra defensive intensity:</strong> every defender with a positive Def Boost contests shot checks 1 harder.</li>
-            <li><strong>The Timeout:</strong> one per team per game, Crunch Time only. It pauses play, lets you fully re-set your defensive matchups, lets you search the deck for one crunch-only card, and opens the window for the <strong>timeout riders</strong>: ATO Masterpiece (a chosen player takes a check at +2 out of the huddle), Fresh Legs (two players shed 4 minutes), Ice the Hot Hand (strip an opponent's hot markers), Reset (clear your own cold markers).</li>
+            <li><strong>The Timeout:</strong> one per team per game, and one more in each overtime, Crunch Time only. It pauses play, lets you fully re-set your defensive matchups, lets you search the deck for one crunch-only card, and opens the window for the <strong>timeout riders</strong>: ATO Masterpiece (a chosen player takes a check at +2 out of the huddle), Fresh Legs (two players shed 4 minutes), Ice the Hot Hand (strip an opponent's hot markers), Reset (clear your own cold markers).</li>
             <li><strong>Desperation Press:</strong> trailing only — the next opposing top-tier roll must be re-rolled.</li>
             <li><strong>Second Closer:</strong> a second Clutch Possession, for a different player.</li>
             <li><strong>Unethical Hoops:</strong> the card every new account starts with. A player of yours with a Speed or Power advantage draws the foul: four free-throw checks at +4.</li>
@@ -239,6 +239,7 @@ export default function HowToPlay({ scrollToSection, onStartTutorial, tutorialRu
             <dt>Snake</dt><dd>The placement order A-B-B-A-A-B-B-A-A-B. In a season the visitor leads and the home side answers; in a sandbox game Team A leads.</dd>
             <dt>Section</dt><dd>One of 3 per quarter, 12 per game: lineup pick, placement, matchup window, scoring window, rolling.</dd>
             <dt>Crunch Time</dt><dd>The final section, when the margin is 20 or less as it starts.</dd>
+            <dt>Overtime</dt><dd>Another Crunch-Time section when the game is tied after regulation — repeated until someone leads.</dd>
             <dt>Clutch Possession</dt><dd>Roll 2 dice (plus award dice) and keep the best. Once per team in Crunch Time.</dd>
             <dt>Timeout</dt><dd>One per game, Crunch Time only: re-set the defence and play a rider.</dd>
             <dt>Salary Cap</dt><dd>$5,500 across 10 players.</dd>

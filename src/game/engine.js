@@ -147,6 +147,17 @@ function emptyAnalytics() {
 
 /** Crunch Time arms in Q4's final section only when the margin is this close. */
 export const CRUNCH_MARGIN = 20; // was 10; the user raised it 2026-09-06 after a full game never armed
+/** Overtimes before a tie is allowed to stand — a bound for the simulators, not a rule anyone should meet. */
+export const MAX_OVERTIMES = 10;
+
+/**
+ * The period, as the board and the log say it: "Q4 · Sec 3/3", or "OT" /
+ * "2OT" once a tie has gone to overtime. `short` is the log's "Q4 Sec 3".
+ */
+export function periodLabel(g, { short = false } = {}) {
+  if (g?.overtime) return g.overtime === 1 ? 'OT' : `${g.overtime}OT`;
+  return short ? `Q${g?.quarter} Sec ${g?.section}` : `Q${g?.quarter} · Sec ${g?.section}/3`;
+}
 
 /**
  * WHEN THIS FILE LAST CHANGED, baked in by vite.config.js at transform time.
@@ -1321,6 +1332,15 @@ export function endSection(g) {
     } else {
       ng.log = [...ng.log, { team: null, msg: `=== Q${ng.quarter} begins ===` }];
     }
+  } else if (ng.teamA.score === ng.teamB.score && (ng.overtime || 0) < MAX_OVERTIMES) {
+    // OVERTIME (the user, 2026-09-11): "Overtime should just be another
+    // 'Crunch-Time' section, should there be a tie after regulation. In any
+    // game." The clock stays at Q4 section 3, so everything that asks "is this
+    // the final section" still says yes, and `overtime` counts the extras.
+    // Crunch re-arms below with fresh state: a new timeout, a new Clutch
+    // Possession, a new deck search — as many overtimes as it takes.
+    ng.overtime = (ng.overtime || 0) + 1;
+    ng.phase = 'draft';
   } else {
     ng.done = true;
     return ng;
@@ -1343,9 +1363,11 @@ export function endSection(g) {
     // the deck stays as it is here.
     ng.log = [...ng.log, {
       team: null,
-      msg: active
-        ? `🚨 CRUNCH TIME — final section, margin ${margin}. Clutch Possessions and Timeouts are live.`
-        : `Final section — margin ${margin}, no crunch (needs ≤${CRUNCH_MARGIN}).`,
+      msg: ng.overtime
+        ? `🚨 ${periodLabel(ng)} — tied at ${ng.teamA.score}. Another Crunch-Time section: Clutch Possessions and Timeouts are live.`
+        : active
+          ? `🚨 CRUNCH TIME — final section, margin ${margin}. Clutch Possessions and Timeouts are live.`
+          : `Final section — margin ${margin}, no crunch (needs ≤${CRUNCH_MARGIN}).`,
     }];
   }
 

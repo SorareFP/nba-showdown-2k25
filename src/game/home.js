@@ -33,6 +33,11 @@ export const NEWS = [
     to: 'play', cta: 'Play a game',
   },
   {
+    id: 'overtime', date: '2026-09-11', title: 'No more ties: overtime',
+    body: 'A game tied after regulation now goes to overtime — another Crunch-Time section at any margin, with a fresh timeout and Clutch Possession for each side, and another after that if it is still tied. In every game: against the coach, in PvP, and in every simulated season fixture.',
+    to: 'play', cta: 'Play a game',
+  },
+  {
     id: 'free-agents', date: '2026-09-10', title: 'Free Agents: ask for any season',
     body: 'Search any NBA player\'s season from 1984-85 on (plus 1975-76 and 1976-77), or a playoff run from 2002, and see what their card would cost. Request it, and when the card is built you can sign it for its price. Up to three requests can wait at once.',
     to: 'freeagents', cta: 'Free Agents',

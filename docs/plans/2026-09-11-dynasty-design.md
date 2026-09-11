@@ -1,0 +1,115 @@
+# Dynasty mode: the design (2026-09-11)
+
+This replaces the dynasty section of `2026-09-07-game-modes-design.md`. The domain module built that day (`src/game/modes/dynasty.js`) had no screens. It is rewritten here around the user's spec from today. The user asked me to build it and said they would make tweaks when they got back, so every number below is **my call** unless it is marked **[user]**.
+
+## The shape
+
+- **[user]** A dynasty is **ten seasons**. Finishing all ten pays a coin bonus.
+- **[user]** There are two ways to start, and the second one comes in two sizes:
+  - **Bring your team.** Use the roster you built from your own cards.
+  - **Fantasy draft.** Draft from every card in the base set.
+  - **Fantasy draft (random pool).** Draft from a smaller pool that is drawn at random. It holds 15 cards per team and is spread across the salary range, so it keeps both stars and cheap players.
+- **[user]** The pool is finite: **one copy of each player**. A player on any roster is out of the pool. Uniqueness is by person, so bringing LeBron's Super Season card takes base LeBron out of the league.
+- The league size (4–12) and the season length (short/regular/long) are the same choices Season mode offers. Each year is an ordinary Season: the same Dashboard, the same fixtures played through the Play tab, and the same per-game coins.
+
+## Dynasty Points (DP), the payroll
+
+**[user]** "The salary on the card is gonna determine … how much you can sign a player for. Better players ask for more dynasty points while ten salary cards are just happy to be on the team."
+
+- **A player's fair value** is `salary ÷ 55`, rounded, with a minimum of 1 DP.
+  - A $10 card is worth 1 DP.
+  - A $560 card (the median) is worth 10 DP.
+  - An $1,840 card (the top) is worth 33 DP.
+- **The cap is 100 DP** of payroll a season, which is the printed $5,500 cap converted into DP.
+  - A contract is **DP per season × years**. It counts against the cap every season it runs.
+  - DP is a payroll, not a bank. It never converts to coins, and coins never buy DP.
+- **The apron is 115 DP.**
+  - Re-signing **your own** expiring players and signing **your own draft picks** may take you over the cap, up to the apron. These are Bird rights: keeping your team together is what a dynasty is.
+  - A new free agent must fit under the cap.
+  - Exception: a **1-DP minimum deal** can always be signed, up to the apron.
+- **Rosters hold 8 to 10 players.** You cannot start a season with fewer than 8.
+- **Waiving** a player under contract is allowed in the offseason. His DP stays on your cap for the coming season as dead money, then it is gone.
+
+## Negotiation and personalities
+
+**[user]** "Maybe we randomly assign them personalities … something to make the signing process more intriguing."
+
+Every player in the dynasty is dealt a personality when the dynasty is created, and it never changes. Cards at $150 or less are always **Happy to Be Here**.
+
+| | Personality | What it does |
+|---|---|---|
+| 🤝 | Loyal | Takes 20% less from the team he last played for. |
+| 💍 | Ring Chaser | Takes 25% less from the champion and 12% less from a playoff team. Asks 12% more from a lottery team. |
+| 💰 | Mercenary | Asks 15% over his value. He has little give and 2 patience. |
+| 🛡️ | Security First | Wants 4 years. Each year short of that adds 12%. |
+| 🎲 | Bets on Himself | Wants 1 year. Each year past that adds 12%. |
+| 😎 | Easygoing | 5% under value, wide give, 4 patience. |
+| 😊 | Happy to Be Here | 1 DP, any length, signs with anyone. |
+
+### How a negotiation goes
+
+1. **He names an ask** for the length you pick. Behind it is a **floor** that you never see.
+2. **You make an offer** of DP per season and years.
+   - At or over the floor, he signs.
+   - Under the floor, he tells you how far apart you are: *close*, *apart*, or *insulted* (under 70% of the floor).
+3. **Each rejection** costs patience: 1 point, or 2 if he was insulted.
+   - After *close* or *apart*, his ask comes halfway down toward the floor, so a patient negotiator can find it.
+   - An insulting offer does not move his ask at all.
+4. **When his patience runs out, he stops talking to you** for the rest of that phase.
+
+Neither side rolls any dice. It is all arithmetic on the dealt personality, so reloading the page cannot re-roll a player.
+
+## The first year
+
+- **Bring your team.**
+  - Your cards arrive on contracts at their fair value, with lengths dealt from 1 to 3 years. That staggering means some of them expire after year one.
+  - The AI teams are built from the pool the way Season builds them, and they get staggered contracts too.
+  - Year one starts straight away.
+- **Fantasy draft.**
+  1. **The draft.** Ten rounds in a snake, with a random order. You pick on your turn and the AI picks the rest. While you draft, the screen keeps a running total of what your picks will ask.
+  2. **Signing (exclusive).** **[user]** You must spend DP to sign the players you drafted, under the 100 cap. A draftee you do not sign goes into free agency.
+  3. **Free agency**, then year one.
+
+## The offseason, in order
+
+1. **The exclusive window.** **[user]** Contracts tick down, and every expiring player talks only to his own team. You negotiate with yours. The AI teams decide theirs on the spot. Anyone unsigned when you close the window goes into free agency.
+2. **The lottery.** **[user]** "the worst team having better lottery odds just like real life."
+   - Only the teams that missed the playoffs enter. Their odds fall off linearly: in a 4-team lottery the worst team has 40%, then 30%, 20%, 10%.
+   - The lottery draws the top picks: half the lottery teams, at most 4. Everyone else picks in reverse order of the standings.
+3. **The draft.** **[user]** "a draft that introduces new players outside of the player pool."
+   - A draft class is made of **players who have no base card**. These are the special-set players: rookies, Super Seasons, Standouts, Dissonance and so on, with one card per person and his rookie card preferred.
+   - There are about 110 such players. They are dealt into 9 classes when the dynasty is created, one class per offseason and up to two per team.
+   - Picks go in lottery order. A second round, if the class runs that deep, uses the same order.
+4. **Sign your picks.** **[user]** A draft pick signs on a **rookie scale**: 3 years at three-quarters of his fair value. You can sign him up to the apron, or renounce him and send him to free agency.
+5. **Free agency.** **[user]** AI teams bid against you (the user's answer on 2026-09-07). It runs in **three days**:
+   - Each day the AI teams place offers, and you can see the best rival offer on every player.
+   - To sign a player, your offer has to clear his floor and also beat the rival offer. "Beat" means a better deal compared with each team's floor, so a Ring Chaser can take less from a contender.
+   - Clicking "Next day" lets every rival offer that is still standing sign. Every unsigned player's floor then drops 10% as the market cools.
+   - When free agency closes, the AI teams fill up to 8 with the cheapest players left.
+6. **The preseason check.** You need 8 to 10 players. A single button fills you up to 8 with the cheapest free agents. Then the next season starts.
+
+## Coins (the real economy)
+
+- **Games** pay what every game pays. **[user]** The user mentioned "maybe playing a game even gets a small buff". That is not built: it would change the game-reward server path, and the user said "we can figure that out."
+- **Each season** pays the Season title money for its length (champion / runner-up / playoffs), claimed once per year through a new callable, `claimDynastyReward`.
+- **Finishing all ten years** pays **1,000** coins for a regular-length dynasty (600 short, 1,500 long), **plus 150 for every title** won along the way.
+- **The fantasy-start buff.** **[user]** Fantasy-draft dynasties pay **1.5×** on the title money and on the completion bonus. This reverses the 2026-09-07 factor of 0.5.
+  - A regular fantasy dynasty with three titles pays 1.5 × (1,000 + 450) = 2,175 coins on completion, plus 600 for each title year.
+  - 1.5 is my reading of "decently substantial". It is one constant (`FANTASY_DYNASTY_FACTOR`).
+- **Same trust model as Season.** The dynasty document is written by the client. The server recomputes the payout from that document's own history and refuses a second claim through `claims/dynasty:{id}:{year}`. A player who forges the document can forge a season too. That is accepted, as it was for seasons.
+
+## Storage
+
+- A dynasty is stored at `users/{uid}/dynasties/{id}`. When signed out it falls back to localStorage, as Season does.
+- Rosters, contracts and draft classes are all card **keys**, and the live season is dehydrated the way `seasons.js` does it.
+- There are no arrays inside arrays, because Firestore refuses them.
+- **Deploy needs:** the Firestore rules (one new `match` line), and functions (`claimDynastyReward`).
+
+## Not built, and worth asking the user
+
+- **Trades.** There are none, AI or human.
+- **Aging and retirement.** A card is the same card in year ten. A player could retire after N years in the league, or a card's fair value could decay.
+- **In-season moves.** Every transaction happens in the offseason.
+- **Multiple humans in one dynasty.** A league version, like shared seasons.
+- **The small per-game coin buff.** See Coins above.
+- **Free agency against other humans' rosters.** This only matters once there is a shared version.

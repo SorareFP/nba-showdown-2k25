@@ -55,6 +55,12 @@ describe('personalities', () => {
     expect(teamFactor('loyal', { teamId: 'ai:BOS', lastTeamId: 'you' })).toBe(1);
   });
 
+  it('asks more from the team that just let him go, and only from that team', () => {
+    expect(teamFactor('easy', { teamId: 'you', spurnedBy: 'you' })).toBe(1.25);
+    expect(teamFactor('easy', { teamId: 'ai:BOS', spurnedBy: 'you' })).toBe(1);
+    expect(teamFactor('loyal', { teamId: 'you', lastTeamId: 'you', spurnedBy: 'you' })).toBeCloseTo(1);
+  });
+
   it('a Ring Chaser is cheaper for a champion and dearer for a lottery team', () => {
     const f = standing => teamFactor('ring', { standing });
     expect(f({ title: true, playoffs: true })).toBeLessThan(f({ title: false, playoffs: true }));

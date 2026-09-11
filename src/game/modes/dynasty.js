@@ -54,6 +54,14 @@ export const FANTASY_ROUNDS = MAX;
 export const RANDOM_POOL_PER_TEAM = 15;
 /** What an AI team holds back for each roster spot it still has to fill. */
 const AI_RESERVE_PER_SPOT = 5;
+/**
+ * A fantasy-drafting AI team drafts to a budget this far under the cap and
+ * signs one spot short of a full roster, so it has a spot and the DP to bid
+ * with in year one's free agency. Drafted to the cap and full, it could not
+ * bid at all — the first balance probe (2026-09-11) found zero rival offers.
+ */
+const AI_FA_ROOM = 12;
+const AI_OPEN_SPOTS = 1;
 /** Offers an AI team makes a day in free agency, and how far down the market it looks. */
 const AI_OFFERS_PER_DAY = 2;
 const AI_SHORTLIST = 40;
@@ -177,9 +185,14 @@ export function freeAgentKeys(d) {
   return universe(d).filter(key => !d.contracts[key] && !d.rights?.[key]);
 }
 
-/** What the team asking means to a player: his last team, and how that team did. */
+/** What the team asking means to a player: his last team, how that team did, and whether it just let him go. */
 export function ctxFor(d, key, teamId) {
-  return { teamId, lastTeamId: d.lastTeam?.[key] ?? null, standing: teamOf(d, teamId)?.last ?? null };
+  return {
+    teamId,
+    lastTeamId: d.lastTeam?.[key] ?? null,
+    standing: teamOf(d, teamId)?.last ?? null,
+    spurnedBy: d.spurned?.[key] ?? null,
+  };
 }
 
 /** The day of the market: free agency's day, the leftovers after it, else day one. */
@@ -371,6 +384,7 @@ export function createDynasty({
     contracts,
     rights: {},
     lastTeam: {},
+    spurned: {},
     talks: {},
     dead: [],
     draft: null,
@@ -406,11 +420,14 @@ function sign(d, teamId, key, { dp, years, how }) {
   return how === 'fill' && !team?.human ? next : say(next, `${team?.name} ${verb} ${who} — ${dp} DP × ${years} yr${years === 1 ? '' : 's'}.`);
 }
 
-/** Give up a player a team holds the rights to. He becomes a free agent. */
+/**
+ * Give up a player a team holds the rights to. He becomes a free agent — and,
+ * spurned, asks that team 25% more for the rest of the offseason.
+ */
 export function renounce(d, teamId, key) {
   const r = d.rights?.[key];
   if (!r || r.teamId !== teamId) throw new Error(`dynasty: ${teamId} holds no rights to ${key}`);
-  const next = { ...d, rights: omit(d.rights, key) };
+  const next = { ...d, rights: omit(d.rights, key), spurned: { ...(d.spurned ?? {}), [key]: teamId } };
   return r.kind === 'expiring' ? say(next, `${cardOf(key)?.name} leaves ${teamOf(d, teamId)?.name} for free agency.`) : next;
 }
 
@@ -427,6 +444,7 @@ export function waive(d, teamId, key) {
     contracts: omit(d.contracts, key),
     dead: [...(d.dead ?? []), { teamId, key, dp: k.dp, through: d.year }],
     lastTeam: { ...d.lastTeam, [key]: teamId },
+    spurned: { ...(d.spurned ?? {}), [key]: teamId },
   }, `${teamOf(d, teamId)?.name} waived ${cardOf(key)?.name} (${k.dp} DP dead this season).`);
 }
 
@@ -557,7 +575,7 @@ export function aiDraftChoice(d, teamId, rng = Math.random) {
   if (d.draft.kind !== 'fantasy') return pickWeighted(bySalary.slice(0, 2), [0.65, 0.35], rng);
   const committed = rightsOf(d, teamId, 'draft').reduce((t, k) => t + floorOf(d, k, teamId, undefined, 1), 0);
   const picksLeft = d.draft.order.slice(d.draft.picks.length).filter(t => t === teamId).length;
-  const budget = CAP_DP - payroll(d, teamId) - committed - (picksLeft - 1) * AI_RESERVE_PER_SPOT;
+  const budget = CAP_DP - AI_FA_ROOM - payroll(d, teamId) - committed - (picksLeft - 1) * AI_RESERVE_PER_SPOT;
   const fits = bySalary.filter(k => floorOf(d, k, teamId, undefined, 1) <= budget);
   if (!fits.length) return [...avail].sort((a, b) => floorOf(d, a, teamId, undefined, 1) - floorOf(d, b, teamId, undefined, 1))[0];
   return pickWeighted(fits.slice(0, 3), [0.6, 0.25, 0.15], rng);
@@ -590,7 +608,7 @@ export function finishDraft(d, { rng = Math.random } = {}) {
       for (const key of rightsOf(x, team.id, 'draft')) {
         const years = preferredYears(traitOf(x, key));
         const dp = floorOf(x, key, team.id, years, 1);
-        const fits = rosterKeys(x, team.id).length < MAX_ROSTER && payroll(x, team.id) + dp <= CAP_DP;
+        const fits = rosterKeys(x, team.id).length < MAX_ROSTER - AI_OPEN_SPOTS && payroll(x, team.id) + dp <= CAP_DP;
         x = fits ? sign(x, team.id, key, { dp, years, how: 'draft' }) : renounce(x, team.id, key);
       }
     }
@@ -792,7 +810,8 @@ export function startSeason(d, { rng = Math.random } = {}) {
     const dt = teamOf(x, t.id);
     return { ...t, human: Boolean(dt?.human), primary: dt?.primary ?? null, secondary: dt?.secondary ?? null, city: dt?.city ?? null };
   });
-  return say({ ...x, season, phase: DPHASE.season, fa: null, talks: {} }, `Year ${x.year} tips off.`);
+  // A new season forgives: nobody is spurned any more.
+  return say({ ...x, season, phase: DPHASE.season, fa: null, talks: {}, spurned: {} }, `Year ${x.year} tips off.`);
 }
 
 /**

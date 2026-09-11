@@ -59,6 +59,13 @@ Every player in the dynasty is dealt a personality when the dynasty is created, 
 
 Neither side rolls any dice. It is all arithmetic on the dealt personality, so reloading the page cannot re-roll a player.
 
+### Spurned, and the AI's room (from the first balance probe)
+
+The first run of an 8-team fantasy draft found a hole. The AI teams signed their whole draft class and finished at 10 of 10 players and 96–100 DP. That left year one's free agency with **zero** AI bids. A human could let every draftee walk and buy them all back in free agency, 20% cheaper by day 3, with nobody to outbid. Two rules close it:
+
+- **Spurned.** A player asks **25% more** from the team that let him go this offseason, whether it renounced his rights or waived him. A Loyal player's discount cancels it out. The new season forgives everyone.
+- **The AI keeps room.** A fantasy-drafting AI team drafts to a budget 12 DP under the cap and signs one spot short of a full roster, so it has a spot and the DP to bid with in year one.
+
 ## The first year
 
 - **Bring your team.**

@@ -116,14 +116,25 @@ export function yearFactor(pid, years) {
   return 1 + p.yearCost * Math.abs(diff);
 }
 
-export const TEAM_FACTORS = { loyalHome: 0.8, ringTitle: 0.75, ringPlayoffs: 0.88, ringLottery: 1.12 };
+export const TEAM_FACTORS = { loyalHome: 0.8, ringTitle: 0.75, ringPlayoffs: 0.88, ringLottery: 1.12, spurned: 1.25 };
 
 /**
  * What the team asking does to his price. `ctx` is `{ teamId, lastTeamId,
- * standing }` — standing being that team's last season, `{ title, playoffs }`,
- * or null before anyone has played.
+ * standing, spurnedBy }` — standing being that team's last season,
+ * `{ title, playoffs }`, or null before anyone has played.
+ *
+ * SPURNED: a player asks 25% more from the team that let him go this
+ * offseason (renounced his rights, or waived him). Without it the dominant
+ * move is to let every draftee walk and buy him back in free agency after the
+ * market has cooled — which the first balance probe (2026-09-11) showed was
+ * free, since nobody else had room to bid.
  */
 export function teamFactor(pid, ctx = {}) {
+  const spurned = ctx.spurnedBy && ctx.spurnedBy === ctx.teamId ? TEAM_FACTORS.spurned : 1;
+  return spurned * personalFactor(pid, ctx);
+}
+
+function personalFactor(pid, ctx) {
   if (pid === 'loyal') return ctx.lastTeamId && ctx.lastTeamId === ctx.teamId ? TEAM_FACTORS.loyalHome : 1;
   if (pid === 'ring') {
     const s = ctx.standing;

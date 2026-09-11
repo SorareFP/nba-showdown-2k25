@@ -155,9 +155,11 @@ describe('the fantasy draft', () => {
     d = dynasty;
     expectConserved(d);
 
-    // Close signing: the rest walk into a free agency the AI is already bidding in.
+    // Close signing: the rest walk into a free agency the AI is already bidding
+    // in — the AI keeps a spot and DP back from the draft for exactly this.
     d = closeSigning(d, { rng });
     expect(d.phase).toBe(DPHASE.freeAgency);
+    expect(Object.keys(d.fa.rivals).length).toBeGreaterThan(0);
     expect(rightsOf(d, HUMAN_ID)).toHaveLength(0);
     expect(rosterKeys(d, HUMAN_ID)).toHaveLength(1);
     for (let i = 0; i < FA_DAYS; i += 1) d = nextFaDay(d, { rng });
@@ -171,6 +173,20 @@ describe('the fantasy draft', () => {
     expect(d.phase).toBe(DPHASE.season);
     expect(d.season.teams.filter(t => t.human).map(t => t.id)).toEqual([HUMAN_ID]);
     expectConserved(d);
+  });
+
+  it('a draftee you let walk asks you more to come back', () => {
+    const rng = seeded(5);
+    let d = finishDraft(driveDraft(fantasyDynasty(), rng), { rng });
+    const key = rightsOf(d, HUMAN_ID, 'draft').find(k => d.traits[k] !== 'happy' && fairDp(getCardByKey(k)) >= 8);
+    const before = quote(d, HUMAN_ID, key).ask;
+    d = closeSigning(d, { rng });
+    expect(d.spurned[key]).toBe(HUMAN_ID);
+    expect(quote(d, HUMAN_ID, key).ask).toBeGreaterThan(before);
+    // A new season forgives.
+    for (let i = 0; i < FA_DAYS; i += 1) d = nextFaDay(d, { rng });
+    d = startSeason(fillRoster(d, HUMAN_ID), { rng });
+    expect(d.spurned).toEqual({});
   });
 
   it('a random pool is smaller and still spans the price range', () => {

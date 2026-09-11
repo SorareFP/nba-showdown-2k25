@@ -26,7 +26,7 @@ import path from 'node:path';
 import { REPO_ROOT } from '../cardgen/cache.js';
 import {
   newGame, doRoll, endSection, applyMatchups, spendAssist, spendReboundBonus, STARTERS,
-  spendTimeout, endTimeout, searchCrunchCard,
+  spendTimeout, endTimeout, searchCrunchCard, MAX_OVERTIMES,
 } from '../../src/game/engine.js';
 import { execCard, resolvePendingShotCheck, resolveGoUnder } from '../../src/game/execCard.js';
 import { STRATS, getStrat, CRUNCH_CARDS } from '../../src/game/strats.js';
@@ -243,7 +243,8 @@ for (let n = 0; n < GAMES; n += 1) {
   }
   runSnake(g);
 
-  for (let s = 0; s < SECTIONS && !g.done; s += 1) {
+  // Twelve sections, and overtime while it is tied (engine.js, 2026-09-11).
+  for (let s = 0; !g.done && s < SECTIONS + MAX_OVERTIMES; s += 1) {
     tallyHands(g, heldThisGame);
 
     // endSection clears starters; every section after the first re-picks five

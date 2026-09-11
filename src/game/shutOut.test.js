@@ -61,3 +61,27 @@ describe('a shut-out player', () => {
     expect(aiBuildCardOpts(ng, 'A', 'five_out').playerIdx).toBe(1);
   });
 });
+
+// This Is My House counts Defense (the user, 2026-09-10): Kyrie Irving
+// (S16/P5, Defense -1) shut out Isaiah Joe (S13/P4), but "after Irving's
+// defense -1, their power are equal".
+describe('This Is My House counts Defense', () => {
+  it('is refused on a Power tie that Defense makes, and greyed in the hand', () => {
+    const g = board();
+    getTeam(g, 'B').starters[0] = mk('irving', 16, 5, { defBoost: -1 });
+    getTeam(g, 'A').starters[0] = mk('joe', 13, 4);
+    const r = execCard(g, 'B', 'this_is_my_house', { targetIdx: 0, playerIdx: 0, defIdx: 0 });
+    expect(r.ok).toBe(false);
+    expect(r.msg).toMatch(/counting Defense/);
+    expect(canPlayCard(g, 'B', 'this_is_my_house').canPlay).toBe(false);
+  });
+
+  it('holds on a smaller attacker, and logs the numbers the defender guards at', () => {
+    const g = board();
+    getTeam(g, 'B').starters[0] = mk('irving', 16, 5, { defBoost: -1 });
+    getTeam(g, 'A').starters[0] = mk('smaller', 13, 3);
+    const r = execCard(g, 'B', 'this_is_my_house', { targetIdx: 0, playerIdx: 0, defIdx: 0 });
+    expect(r.ok).toBe(true);
+    expect(JSON.stringify(r.game)).toMatch(/guarding at S15\/P4/);
+  });
+});

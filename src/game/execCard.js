@@ -4,7 +4,7 @@
 
 import { handOverPriority, getTeam, getOpp, getPS, calcAdv, shotCheck, matchupContest, drawCards, deepClone, getFatigue, recordDefSwitch, burnedSlots, roll20, checkAssistDraw, standingEntry, CROWD_FAVORITE_PTS, satOutLast, bottomedLines } from './engine.js';
 import { creditAllowed, creditCheckDefended, recordPaintCheck } from './engine.js';
-import { helpTargets, canAnswerCheck } from './canPlay.js';
+import { helpTargets, canAnswerCheck, myHouseHolds } from './canPlay.js';
 import { lookupChart } from './cards.js';
 import { getStrat } from './strats.js';
 
@@ -846,13 +846,17 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       const myDefIdx = (g.offMatchups[teamKey === 'A' ? 'B' : 'A'] || [])[offSlot];
       const myDef = myT.starters[myDefIdx];
       if (!myDef) return fail('No defender assigned to that slot');
-      if (!(myDef.speed > offPlayer.speed && myDef.power > offPlayer.power))
-        return fail(`${myDef.name} must have higher Speed AND Power than ${offPlayer.name} (Def S${myDef.speed}/P${myDef.power} vs Off S${offPlayer.speed}/P${offPlayer.power})`);
+      // Counted the way the roll counts a matchup — Defense and card effects in
+      // (canPlay.js). The raw printed numbers let Kyrie Irving (P5, Defense -1)
+      // shut out a P4 (the user, 2026-09-10).
+      const hold = myHouseHolds(g, teamKey, offSlot);
+      if (!hold)
+        return fail(`${myDef.name} must have higher Speed AND Power than ${offPlayer.name}, counting Defense (Def S${myDef.speed}/P${myDef.power}, Defense ${myDef.defBoost ?? 0}, vs Off S${offPlayer.speed}/P${offPlayer.power})`);
       if (!g.blockedRolls) g.blockedRolls = {};
       const oppTeam = teamKey === 'A' ? 'B' : 'A';
       if (!g.blockedRolls[oppTeam]) g.blockedRolls[oppTeam] = {};
       g.blockedRolls[oppTeam][offSlot] = true;
-      addLog(g, teamKey, `THIS IS MY HOUSE! 🏠 ${myDef.name} (S${myDef.speed}/P${myDef.power}) shuts out ${offPlayer.name} — they skip their scoring roll!`);
+      addLog(g, teamKey, `THIS IS MY HOUSE! 🏠 ${myDef.name} (guarding at S${hold.defSpeed}/P${hold.defPower}) shuts out ${offPlayer.name} — they skip their scoring roll!`);
       break;
     }
 

@@ -5,7 +5,7 @@
 
 import { getTeam, getOpp, getPS, calcAdv, getFatigue, fatigueForMinutes, restMinutes, SPEND_COSTS, clutchAvailable, clutchEligible, burnedSlots, satOutLast, canRollSlot, extraRollPending, checkNeed, crunchSearchOptions } from './engine.js';
 import { lookupChart } from './cards.js';
-import { canPlayCard, helpTargets, staggerPair } from './canPlay.js';
+import { canPlayCard, helpTargets, staggerPair, myHouseTargets } from './canPlay.js';
 import { getStrat, STRATS, CRUNCH_CARDS } from './strats.js';
 
 /**
@@ -961,17 +961,11 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
     }
 
     case 'this_is_my_house': {
-      // Find a defender who has higher Speed AND Power than their offensive matchup
-      const oppMatchups = game.offMatchups[oppKey] || [];
-      for (let oi = 0; oi < (oppT.starters || []).length; oi++) {
-        const offP = oppT.starters[oi];
-        const di = oppMatchups[oi] ?? oi;
-        const defP = myT.starters[di];
-        if (offP && defP && defP.speed > offP.speed && defP.power > offP.power) {
-          return { playerIdx: oi }; // target the offensive player to block
-        }
-      }
-      return { playerIdx: 0 };
+      // The same list the picker offers and the engine accepts (canPlay.js),
+      // Defense and card effects counted. It used to compare the raw printed
+      // numbers, which let Kyrie Irving (P5, Defense -1) shut out a P4.
+      const target = myHouseTargets(game, teamKey)[0];
+      return { playerIdx: target ? target.offSlot : 0 };
     }
 
     case 'dogged': {

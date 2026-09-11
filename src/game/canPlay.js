@@ -108,20 +108,43 @@ export function helpTargets(g, teamKey) {
   return out;
 }
 
+/**
+ * DOES THE DEFENDER ON THIS SLOT OWN IT? He out-speeds AND out-powers the
+ * attacker, measured the way every roll measures a matchup — calcAdv, with
+ * the same effects the roll passes: a NEGATIVE Defense lowers the defender's
+ * Speed and Power, a positive one does not make him bigger, and active card
+ * effects count on both sides (an attacker's boost, a Defensive Stopper).
+ * Strictly higher on both: a tie is not "higher".
+ *
+ * The user, 2026-09-10: Kyrie Irving (S16/P5, Defense -1) shut out Isaiah Joe
+ * (S13/P4) — "after Irving's defense -1, their power are equal". The raw
+ * printed numbers were being compared.
+ *
+ * Returns `{ offSlot, off, def, defIdx, defSpeed, defPower }` — the defender's
+ * numbers as he guards — or null. The one test the picker, the engine and the
+ * coach all ask.
+ */
+export function myHouseHolds(g, teamKey, offSlot) {
+  const oppKey = teamKey === 'A' ? 'B' : 'A';
+  const off = getOpp(g, teamKey)?.starters?.[offSlot];
+  const defIdx = (g.offMatchups?.[oppKey] || [])[offSlot];
+  const def = getTeam(g, teamKey)?.starters?.[defIdx];
+  if (!off || !def) return null;
+  const eff = g.tempEff?.[oppKey] || {};
+  const a = calcAdv(off, def, eff, offSlot, g.tempDefEff?.[teamKey] ?? null, defIdx);
+  if (!(a.rawSpeedDiff < 0 && a.rawPowerDiff < 0)) return null;
+  // The defender's guarding numbers, recovered from the same two differences.
+  const defSpeed = off.speed + (eff['s' + offSlot] || 0) - a.rawSpeedDiff;
+  const defPower = off.power + (eff['p' + offSlot] || 0) - a.rawPowerDiff;
+  return { offSlot, off, def, defIdx, defSpeed, defPower };
+}
+
 export function myHouseTargets(g, teamKey) {
-  const myT = getTeam(g, teamKey);
-  const oppT = getOpp(g, teamKey);
   const oppKey = teamKey === 'A' ? 'B' : 'A';
   const oppRolls = g.rollResults?.[oppKey] || [];
-  const guards = g.offMatchups?.[oppKey] || [];
-  const out = [];
-  (oppT?.starters || []).forEach((off, offSlot) => {
-    if (!off || oppRolls[offSlot] != null) return;
-    const def = myT?.starters?.[guards[offSlot]];
-    if (!def) return;
-    if (def.speed > off.speed && def.power > off.power) out.push({ offSlot, off, def });
-  });
-  return out;
+  return (getOpp(g, teamKey)?.starters || [])
+    .map((off, offSlot) => (off && oppRolls[offSlot] == null ? myHouseHolds(g, teamKey, offSlot) : null))
+    .filter(Boolean);
 }
 
 // The cards that answer an ANNOUNCED shot check (g.pendingShotCheck). One

@@ -153,6 +153,7 @@ export default function RulebookTab() {
           <li>Rolling <strong>alternates</strong>, one player at a time, the human leading against the coach. A side with nobody left to roll stands aside.</li>
           <li>Between rolls either side may play <strong>pre-roll</strong> cards on a player who has not rolled, and <strong>reactions</strong> to what just happened.</li>
           <li>A player blocked by This Is My House does not roll. A player whose roll a card replaced (You Stand Over There) counts as rolled.</li>
+          <li>This Is My House needs the defender <strong>higher</strong> on both Speed and Power, counted as he guards: a minus Defense lowers both, and card effects count. A tie is not higher.</li>
         </ul>
 
         <div className={s.sub}>6. End of Section</div>

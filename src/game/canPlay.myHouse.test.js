@@ -8,7 +8,7 @@
 import { describe, it, expect } from 'vitest';
 import { newGame, getTeam } from './engine.js';
 import { CARDS } from './cards.js';
-import { canPlayCard, myHouseTargets } from './canPlay.js';
+import { canPlayCard, myHouseTargets, myHouseHolds } from './canPlay.js';
 
 /** A game in the scoring phase with hand-set starters, so the matchups are known. */
 function scoringGame(mine, theirs) {
@@ -60,5 +60,38 @@ describe('This Is My House', () => {
     const g = scoringGame(mine, five(12, 12));
     g.offMatchups.B = [4, 1, 2, 3, 0];
     expect(myHouseTargets(g, 'A').map(t => t.offSlot)).toEqual([0]);
+  });
+});
+
+// Slot 0 is the matchup under test; everyone else is hopeless, so the lists
+// below can only ever contain slot 0.
+const onlySlot0 = (def, off) => scoringGame(
+  [{ defBoost: 0, ...def }, ...five(1, 1).slice(1)],
+  [{ defBoost: 0, ...off }, ...five(19, 19).slice(1)],
+);
+
+describe('This Is My House counts Defense and card effects', () => {
+  it('refuses Kyrie Irving on Isaiah Joe: Defense -1 leaves their Power level (the user, 2026-09-10)', () => {
+    const g = onlySlot0({ speed: 16, power: 5, defBoost: -1 }, { speed: 13, power: 4 });
+    expect(myHouseHolds(g, 'A', 0)).toBeNull();
+    expect(myHouseTargets(g, 'A')).toEqual([]);
+    expect(canPlayCard(g, 'A', 'this_is_my_house').canPlay).toBe(false);
+  });
+
+  it('lets the same Irving shut out a smaller attacker, guarding at S15/P4', () => {
+    const g = onlySlot0({ speed: 16, power: 5, defBoost: -1 }, { speed: 13, power: 3 });
+    expect(myHouseHolds(g, 'A', 0)).toMatchObject({ offSlot: 0, defIdx: 0, defSpeed: 15, defPower: 4 });
+  });
+
+  it('does not count a POSITIVE Defense as extra size: a tie stays a tie', () => {
+    const g = onlySlot0({ speed: 16, power: 4, defBoost: 3 }, { speed: 13, power: 4 });
+    expect(myHouseHolds(g, 'A', 0)).toBeNull();
+  });
+
+  it('counts a card effect on the defender, as the roll does (Defensive Stopper)', () => {
+    const g = onlySlot0({ speed: 13, power: 4 }, { speed: 13, power: 4 });
+    expect(myHouseHolds(g, 'A', 0)).toBeNull();
+    g.tempDefEff = { A: { 0: { speedBoost: 5, powerBoost: 5 } } };
+    expect(myHouseHolds(g, 'A', 0)).toMatchObject({ defSpeed: 18, defPower: 9 });
   });
 });

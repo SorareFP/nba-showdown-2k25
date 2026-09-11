@@ -192,6 +192,31 @@ The user's corrections, and what was built from them.
 - **Your own team is ten players, and they come out of the pool.** This was already true, now confirmed.
 - **Overtime.** A tie after regulation plays another Crunch-Time section, again if it's still tied, in every game.
 
+## Round four: a dynasty with friends (2026-09-11, night)
+
+The user's four answers, and how each is built:
+
+- **Drafts: "Async, on a clock".** A coach has 12 hours a pick (`PICK_CLOCK_MS`). When it runs out the AI picks for them, and the commissioner can force the pick early. The server keeps no timer [my call]: every move runs the clock on the server's time first, and so does the `tick` a coach's screen sends when it sees a clock at zero. If clocks stall because nobody opens the app, a scheduled tick is the fix.
+- **Calendar: "All ready, host can force".** `setReady` / `advancePhase` close a phase for every coach at once. A draft ends by its picks and a season by its games; neither ends by readiness.
+- **Free agency: "Sealed bid, but three advanceable 'weeks'".**
+  - Each coach's bids live in `leagues/{id}/bids/{uid}`, which only that coach can read (firestore.rules).
+  - When the week turns (`nextFaWeek`), every free agent weighs the coaches' bids and the AI's standing offers by his own lights: DP over his floor at that length. The best players choose first.
+  - Up to ten bids a week [my call]. The preseason's leftovers are haggled, as they are alone.
+- **Trades: "Propose / accept".** An offer waits for the other coach, while AI teams answer as they do alone. The commissioner can strike an open offer, or reverse an accepted trade while every piece is still where it went, in the same phase (`vetoable`).
+
+How it runs:
+
+- **The league.** A league of kind `dynasty` (league.js). Its settings add `startMode`, `series` and `aging`. An own start needs ten players per coach, and no player twice.
+- **The start.** `startLeague` builds the dynasty on the server (`createFriendsDynasty`), never in the host's browser. The league's `state` is the packed dynasty (`seasonPack.js`), 23 KB for six teams.
+- **The moves.** Every move goes through `dynastyAct` (`FRIEND_MOVES`); a week's sealed bids go through `dynastyBid`.
+- **The money.** `settleDynasty` pays every coach each year's money as the year goes in the book, so there is nothing to claim. The completion bonus is paid when the dynasty ends.
+- **The season.** It is played through the league, as a shared season is:
+  - results go through `reportLeagueResult`;
+  - coach-vs-coach games are played in `LeagueMatch` rooms;
+  - the commissioner sims the AI games with `simLeagueAi`, now shared with shared seasons.
+  - Playoff fixtures are per game (`fixtureOf` and `openFixtures` are series-aware), so each game of a series is reported with its own home side.
+- **The client.** `dynasty/FriendsDynasty.jsx`. The offseason screens take `moves`: `soloMoves` alone, `friendsMoves` with friends. In a friends dynasty, `d.humanId` is set to the coach looking.
+
 ## Not built, and worth asking the user
 
 - **Trades.** There are none, AI or human.

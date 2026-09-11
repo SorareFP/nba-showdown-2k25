@@ -23,6 +23,11 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
+    id: 'dynasty-friends', date: '2026-09-11', title: 'Dynasty with friends',
+    body: 'Run one dynasty together: each of you coaches a team and AI teams fill the rest. Draft on a twelve-hour clock, bid sealed through three weeks of free agency, trade with each other (the commissioner can veto), and move on when everyone is ready. Each year\'s title money goes straight to every coach.',
+    to: 'dynasty', cta: 'Start one',
+  },
+  {
     id: 'dynasty', date: '2026-09-11', title: 'Dynasty mode: ten years, one league',
     body: 'Bring your own team or fantasy-draft the league, then sign everyone with Dynasty Points. Every player has a personality to haggle with, your own free agents talk only to you, the lottery hands out a class of legends and rookies, and the AI bids against you in free agency. Finish all ten years for a coin bonus; a fantasy-draft start pays 1.5×.',
     to: 'dynasty', cta: 'Start a dynasty',

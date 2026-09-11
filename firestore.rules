@@ -111,6 +111,11 @@ service cloud.firestore {
       // claim the same one twice. See claimSeasonReward in functions/index.js.
       match /seasons/{seasonId} { allow read, write: if isSelf(uid); }
 
+      // A DYNASTY IS TEN SEASONS OF THE SAME — contracts and drafts in Dynasty
+      // Points, which never convert. Its coins are claimed through
+      // claimDynastyReward into `claims/dynasty:{id}:{year}`, server-only.
+      match /dynasties/{dynastyId} { allow read, write: if isSelf(uid); }
+
       // The leagues this account is in — an index the server keeps so a list
       // needs no query over the shared documents. Read only.
       match /leagues/{leagueId} {

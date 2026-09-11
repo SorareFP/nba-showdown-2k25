@@ -134,8 +134,8 @@ describe('playing a season', () => {
     // Short season: 200 champion, 100 runner-up, 50 for making it.
     expect(earningsFor(s, final.a)).toEqual({ coins: 200, label: 'Season Champion' });
     expect(earningsFor(s, final.b)).toEqual({ coins: 100, label: 'Runner-up' });
-    // Halved for a fantasy-draft dynasty.
-    expect(earningsFor(s, final.a, 0.5).coins).toBe(100);
+    // Scaled by a factor — a fantasy-draft dynasty's 1.5.
+    expect(earningsFor(s, final.a, 1.5).coins).toBe(300);
     const missed = s.teams.map(t => t.id).find(id => !s.playoffSeeds.includes(id));
     expect(earningsFor(s, missed)).toEqual({ coins: 0, label: null });
   });

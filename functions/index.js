@@ -47,7 +47,7 @@ import { getStratRarity, STRAT_COPY_CAPS } from './shared/src/game/rarity.js';
 import { burnValueFor, checkListingPrice } from './shared/src/game/marketRules.js';
 import { getStrat } from './shared/src/game/strats.js';
 import { settleGameReward, todayKey, sanitizeBox } from './shared/src/game/coinRewards.js';
-import { seasonEarnings, dynastyCoinFactor } from './shared/src/game/modes/prizes.js';
+import { seasonEarnings, dynastyCoinFactor, dynastyClaim } from './shared/src/game/modes/prizes.js';
 import { getDatabase } from 'firebase-admin/database';
 import { readFileSync } from 'node:fs';
 import {
@@ -850,6 +850,32 @@ export const claimSeasonReward = onCall({ region: 'us-central1' }, async request
     tx.set(claimRef, { claimedAt: FieldValue.serverTimestamp(), coins, reward: null, season: seasonId, label });
     tx.set(db.doc(`users/${uid}`), { currency: FieldValue.increment(coins) }, { merge: true });
     return { seasonId, coins, label };
+  });
+});
+
+/**
+ * A DYNASTY'S COINS — one year's title money, or the ten-year bonus
+ * (`year: 'complete'`). The same trust model as claimSeasonReward: the price
+ * comes from the dynasty document's own history through dynastyClaim in the
+ * shared prizes.js, and the receipt `claims/dynasty:{id}:{year}` stops the
+ * second claim. A fantasy-draft dynasty is paid 1.5× (2026-09-11).
+ */
+export const claimDynastyReward = onCall({ region: 'us-central1' }, async request => {
+  const uid = requireAuth(request);
+  const dynastyId = String(request.data?.dynastyId ?? '').trim();
+  if (!dynastyId || dynastyId.includes('/')) throw new HttpsError('invalid-argument', 'No dynasty given');
+  const snap = await db.doc(`users/${uid}/dynasties/${dynastyId}`).get();
+  if (!snap.exists) throw new HttpsError('not-found', 'No such dynasty');
+  const judged = dynastyClaim(snap.data(), request.data?.year);
+  if (judged.error) throw new HttpsError('failed-precondition', judged.error);
+  const { coins, label, id } = judged;
+  const claimRef = db.doc(`users/${uid}/claims/dynasty:${dynastyId}:${id}`);
+  return db.runTransaction(async tx => {
+    const claim = await tx.get(claimRef);
+    if (claim.exists) throw new HttpsError('already-exists', 'Already claimed');
+    tx.set(claimRef, { claimedAt: FieldValue.serverTimestamp(), coins, reward: null, dynasty: dynastyId, year: id, label });
+    tx.set(db.doc(`users/${uid}`), { currency: FieldValue.increment(coins) }, { merge: true });
+    return { dynastyId, year: id, coins, label };
   });
 });
 

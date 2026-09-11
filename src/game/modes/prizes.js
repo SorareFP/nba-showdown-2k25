@@ -63,12 +63,76 @@ export function seasonEarnings(lengthId, { champion = false, runnerUp = false, m
   return { coins: Math.floor(coins * factor), label };
 }
 
-/**
- * The user's rule: "playing with your own cards should be what drives currency
- * income" — a dynasty begun with a fantasy draft of the whole pool earns
- * half, per game and per title.
- */
-export const FANTASY_DRAFT_FACTOR = 0.5;
+// ── DYNASTY ─────────────────────────────────────────────────────────────────
+//
+// A dynasty is ten seasons (docs/plans/2026-09-11-dynasty-design.md). Each one
+// pays the Season title money above, claimed once per year, and finishing all
+// ten pays a bonus on top.
+//
+// THE FANTASY BUFF REVERSED THE 2026-09-07 NERF. That day's rule halved a
+// fantasy-draft dynasty's coins; the user, 2026-09-11: "if you do a fantasy
+// draft, that should be buffed quite a bit." 1.5 is my reading of "decently
+// substantial" — one number, here. It multiplies the title money and the
+// completion bonus, never a game's own coins.
+
+export const DYNASTY_YEARS = 10;
+export const FANTASY_DYNASTY_FACTOR = 1.5;
+
+/** The coin multiplier for a dynasty's start: any fantasy draft is buffed. */
 export function dynastyCoinFactor(startMode) {
-  return startMode === 'fantasy' ? FANTASY_DRAFT_FACTOR : 1;
+  return String(startMode ?? '').startsWith('fantasy') ? FANTASY_DYNASTY_FACTOR : 1;
+}
+
+/** Finishing all ten seasons, by season length, plus a bonus for every title. */
+export const DYNASTY_COMPLETION = { short: 600, regular: 1000, long: 1500 };
+export const DYNASTY_TITLE_BONUS = 150;
+
+const dynastyHuman = dynasty => dynasty?.humanId ?? 'you';
+
+/** A dynasty's titles so far. */
+export function dynastyTitles(dynasty) {
+  const me = dynastyHuman(dynasty);
+  return (dynasty?.history ?? []).filter(h => h.champion === me).length;
+}
+
+/** What one finished year of a dynasty pays, from its own history. */
+export function dynastyYearEarnings(dynasty, year) {
+  const h = (dynasty?.history ?? []).find(x => x.year === year);
+  if (!h) return { coins: 0, label: null };
+  const me = dynastyHuman(dynasty);
+  return seasonEarnings(dynasty.length, {
+    champion: h.champion === me,
+    runnerUp: h.runnerUp === me,
+    madePlayoffs: (h.playoffSeeds ?? []).includes(me),
+  }, dynastyCoinFactor(dynasty.startMode));
+}
+
+/** The ten-year bonus: nothing until the dynasty is over and all ten are in the book. */
+export function dynastyCompletionEarnings(dynasty) {
+  const years = new Set((dynasty?.history ?? []).map(h => h.year));
+  if (dynasty?.phase !== 'done' || years.size < DYNASTY_YEARS) return { coins: 0, label: null };
+  const base = DYNASTY_COMPLETION[dynasty.length] ?? DYNASTY_COMPLETION.regular;
+  const titles = dynastyTitles(dynasty);
+  const coins = Math.floor((base + titles * DYNASTY_TITLE_BONUS) * dynastyCoinFactor(dynasty.startMode));
+  return { coins, label: titles ? `Ten-year dynasty · ${titles} title${titles === 1 ? '' : 's'}` : 'Ten-year dynasty' };
+}
+
+/**
+ * What a claim on a stored dynasty pays — `which` is a year (1–10) or
+ * 'complete'. One judge for the server and the browser's direct route:
+ * `{ coins, label, id }` to pay, or `{ error }`. The history has to be one
+ * entry a year from year one, in order, or it was not written by this mode.
+ */
+export function dynastyClaim(dynasty, which) {
+  const hist = dynasty?.history ?? [];
+  if (hist.some((h, i) => h.year !== i + 1)) return { error: 'That dynasty\'s history does not add up' };
+  if (which === 'complete') {
+    const r = dynastyCompletionEarnings(dynasty);
+    return r.coins ? { ...r, id: 'complete' } : { error: 'That dynasty is not finished' };
+  }
+  const year = Number(which);
+  if (!Number.isInteger(year) || year < 1 || year > DYNASTY_YEARS) return { error: 'No such year' };
+  const r = dynastyYearEarnings(dynasty, year);
+  if (!hist.some(h => h.year === year)) return { error: 'That year has not been played' };
+  return r.coins ? { coins: r.coins, label: `Year ${year} · ${r.label}`, id: String(year) } : { error: 'That year finished out of the money' };
 }

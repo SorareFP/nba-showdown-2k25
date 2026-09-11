@@ -59,7 +59,7 @@ import { generatePack, PACK_TYPES, favoriteTeamOptions } from '../game/packEngin
 import { getCardByKey } from '../game/cardSets.js';
 import { burnValueFor, listingFloor, checkListingPrice } from '../game/marketRules.js';
 import { settleGameReward, todayKey, sanitizeBox } from '../game/coinRewards.js';
-import { seasonEarnings, dynastyCoinFactor } from '../game/modes/prizes.js';
+import { seasonEarnings, dynastyCoinFactor, dynastyClaim } from '../game/modes/prizes.js';
 
 /**
  * FLIP THIS AFTER `firebase deploy --only functions`.
@@ -111,6 +111,7 @@ const server = {
   burnCard: (uid, cardKey) => call('burnCard', { cardKey }),
   claimGameReward: (uid, claim) => call('claimGameReward', claim),
   claimSeasonReward: (uid, seasonId) => call('claimSeasonReward', { seasonId }),
+  claimDynastyReward: (uid, dynastyId, year) => call('claimDynastyReward', { dynastyId, year }),
   setFavoriteTeam: (uid, team) => call('setFavoriteTeam', { team }),
   collectCard: (uid, cardKey) => call('collectCard', { cardKey }),
   collectAllCards: () => call('collectAllCards', {}),
@@ -186,6 +187,23 @@ const direct = {
       tx.set(doc(db, 'users', uid), { currency: increment(coins) }, { merge: true });
     });
     return { seasonId, coins, label };
+  },
+
+  /** A dynasty year's title money, or the ten-year bonus — the server's rule, in the browser. */
+  async claimDynastyReward(uid, dynastyId, year) {
+    const snap = await getDoc(doc(db, 'users', uid, 'dynasties', String(dynastyId)));
+    if (!snap.exists()) throw new Error('No such dynasty');
+    const judged = dynastyClaim(snap.data(), year);
+    if (judged.error) throw new Error(judged.error);
+    const { coins, label, id } = judged;
+    const claimRef = doc(db, 'users', uid, 'claims', `dynasty:${dynastyId}:${id}`);
+    await runTransaction(db, async tx => {
+      const claim = await tx.get(claimRef);
+      if (claim.exists()) throw new Error('Already claimed');
+      tx.set(claimRef, { claimedAt: serverTimestamp(), coins, reward: null, dynasty: dynastyId, year: id, label });
+      tx.set(doc(db, 'users', uid), { currency: increment(coins) }, { merge: true });
+    });
+    return { dynastyId, year: id, coins, label };
   },
   collectCard: (uid, cardKey) => collectCardDirect(uid, cardKey),
   listCard: async (uid, cardKey, price) => {
@@ -312,6 +330,8 @@ export const burnCard = (uid, cardKey) => impl.burnCard(uid, cardKey);
 export const claimGameReward = (uid, claim) => impl.claimGameReward(uid, claim);
 /** Pay a finished season's title money, once. Returns `{ coins, label }`. */
 export const claimSeasonReward = (uid, seasonId) => impl.claimSeasonReward(uid, seasonId);
+/** Pay a dynasty year's title money (`year` 1–10) or its ten-year bonus (`'complete'`), once. */
+export const claimDynastyReward = (uid, dynastyId, year) => impl.claimDynastyReward(uid, dynastyId, year);
 /** Name a favourite team, once and for good. `team` is league-qualified: "nba:MIL". */
 export const setFavoriteTeam = (uid, team) => impl.setFavoriteTeam(uid, team);
 /** Put one owned copy into the collection. Returns `{ cardKey, copyId }`. */

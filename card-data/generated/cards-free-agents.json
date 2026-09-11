@@ -70,6 +70,288 @@
    "requested": true,
    "requestId": "icPR9oLCfGeyhJaO6cNZ",
    "builtAt": "2026-09-10T21:56:57.035Z"
+  },
+  {
+   "id": "Jawad_Williams_2011",
+   "name": "Jawad Williams",
+   "team": "CLE16",
+   "pos": "SF",
+   "speed": 6,
+   "power": 7,
+   "shotLine": 18,
+   "paintBoost": 2,
+   "threePtBoost": 3,
+   "defBoost": -1,
+   "salary": 480,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 8,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 9,
+     "hi": 9,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 10,
+     "hi": 17,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 18,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "season": 2011,
+   "seasonLabel": "2010-11",
+   "age": 27,
+   "games": 26,
+   "mpg": 15,
+   "bbrefId": "willija04",
+   "traded": false,
+   "metrics": {
+    "bpm": -6.8,
+    "vorp": -0.5,
+    "ws": -0.5,
+    "ws48": -0.067,
+    "per": 4.8
+   },
+   "provisional": true,
+   "set": "throwbacks",
+   "requested": true,
+   "requestId": "XMjrxRKtApyVINeCRJjk",
+   "builtAt": "2026-09-11T00:42:46.729Z"
+  },
+  {
+   "id": "Mitch_Richmond_1998",
+   "name": "Mitch Richmond",
+   "team": "SAC95",
+   "pos": "SG",
+   "speed": 15,
+   "power": 10,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 3,
+   "defBoost": -1,
+   "salary": 1110,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 20,
+     "pts": 3,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 1998,
+   "seasonLabel": "1997-98",
+   "age": 32,
+   "games": 70,
+   "mpg": 36.7,
+   "bbrefId": "richmmi01",
+   "traded": false,
+   "metrics": {
+    "bpm": 3.6,
+    "vorp": 3.6,
+    "ws": 7.9,
+    "ws48": 0.148,
+    "per": 20.4
+   },
+   "provisional": false,
+   "set": "throwbacks",
+   "requested": true,
+   "requestId": "HCriYGAZnzZOsVaV6kn0",
+   "builtAt": "2026-09-11T00:42:57.168Z"
+  },
+  {
+   "id": "Shawn_Kemp_1999",
+   "name": "Shawn Kemp",
+   "team": "CLE95",
+   "pos": "PF",
+   "speed": 10,
+   "power": 15,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": -4,
+   "defBoost": 0,
+   "salary": 1130,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 20,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "season": 1999,
+   "seasonLabel": "1998-99",
+   "age": 29,
+   "games": 42,
+   "mpg": 35.1,
+   "bbrefId": "kempsh01",
+   "traded": false,
+   "metrics": {
+    "bpm": 4.2,
+    "vorp": 2.3,
+    "ws": 6.3,
+    "ws48": 0.205,
+    "per": 23.6
+   },
+   "provisional": false,
+   "set": "throwbacks",
+   "requested": true,
+   "requestId": "QaKsW1ZOAKZpJLdkfe86",
+   "builtAt": "2026-09-11T00:43:03.784Z"
+  },
+  {
+   "id": "Marissa_Coleman_2010",
+   "name": "Marissa Coleman",
+   "team": "WAS98",
+   "statRowTeam": "WAS",
+   "pos": "G-F",
+   "speed": 11,
+   "power": 7,
+   "shotLine": 15,
+   "paintBoost": -2,
+   "threePtBoost": 1,
+   "defBoost": 1,
+   "salary": 530,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 7,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 14,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 21,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2010,
+   "seasonLabel": "2010",
+   "games": 34,
+   "mpg": 19.5,
+   "minutes": 663,
+   "schedule": 34,
+   "bbrefId": "colemma01w",
+   "metrics": {
+    "bpmHat": 1.7,
+    "obpmHat": 0.26,
+    "dbpmHat": 1.45,
+    "seasonZ": 0.62,
+    "per": 13.8,
+    "ws": 2.5,
+    "wsPer40": 0.149,
+    "tsPct": 0.536,
+    "pts100": 17.9
+   },
+   "provisional": false,
+   "set": "wnba-throwbacks",
+   "requested": true,
+   "requestId": "EeklL0xNEwWURNgrvr14",
+   "builtAt": "2026-09-11T00:43:08.345Z"
   }
  ]
 }

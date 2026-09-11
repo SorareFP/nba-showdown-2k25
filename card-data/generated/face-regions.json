@@ -10833,8 +10833,44 @@
         0.4429
       ],
       "badge": null
+    },
+    "wnba-throwbacks/Marissa_Coleman_2010": {
+      "name": [
+        0.033,
+        0.1151,
+        0.1096,
+        0.7318
+      ],
+      "badge": null
+    },
+    "throwbacks/Jawad_Williams_2011": {
+      "name": [
+        0.0284,
+        0.1141,
+        0.1187,
+        0.7337
+      ],
+      "badge": null
+    },
+    "throwbacks/Shawn_Kemp_1999": {
+      "name": [
+        0.0252,
+        0.1896,
+        0.1253,
+        0.5828
+      ],
+      "badge": null
+    },
+    "throwbacks/Mitch_Richmond_1998": {
+      "name": [
+        0.0284,
+        0.1211,
+        0.1187,
+        0.7198
+      ],
+      "badge": null
     }
   },
-  "generatedAt": "2026-09-10T23:56:03.511Z",
+  "generatedAt": "2026-09-11T00:50:46.799Z",
   "note": "Per-face boxes of the rotated name and the Super Season pill, as fractions of the 843x1181 face, measured by scripts/studio/export.js. Read by src/cards/faceRegions.js for the holographic sheen."
 }

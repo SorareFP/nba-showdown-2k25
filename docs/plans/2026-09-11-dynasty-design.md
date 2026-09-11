@@ -112,6 +112,36 @@ The first run of an 8-team fantasy draft found a hole. The AI teams signed their
 - There are no arrays inside arrays, because Firestore refuses them.
 - **Deploy needs:** the Firestore rules (one new `match` line), and functions (`claimDynastyReward`).
 
+## Round two: the user's answers (2026-09-11, evening)
+
+The user answered the "not built" list below, then answered four follow-up questions.
+
+1. **Trades.** AI trade logic weighing printed salary, DP salary, years remaining and positional need. The weights will be informed by Bill Simmons' Trade Value rankings (The Ringer): talent, age, contract value, years of control.
+2. **Aging is a toggle.**
+   - Off: today's ten-year dynasty, where nobody ages.
+   - On:
+     - **Starting age:** every card has an age on January 1 of its card's year. Base cards take their 2025-26 Basketball-Reference age.
+     - **Aging:** everyone gains a year each season. A drafted player starts aging from the year he is drafted.
+     - **Price:** asks fall past 31.
+     - **Retirement:** the chance rises from 35, and retirement is certain at 40. Retired players never return.
+     - **Length:** the dynasty is **open-ended**. The ten-year bonus still pays at ten.
+3. **The draft pool.**
+   - **The fantasy draft is 10 rounds; every offseason draft is 2.**
+   - Players not taken in the fantasy draft go into the **draft pool, not free agency**.
+   - Each offseason, the next 10×teams players in the pool form the class. Undrafted players return to the pool. Retired players never re-enter.
+   - Free agency is only for players who have been in the league. My call: an own-team start therefore opens with an empty free-agent market.
+4. **Your collection.** No change. Dynasty cards exist only inside the dynasty.
+5. **Point-differential coins, for every game.**
+   - The win bonus scales with the margin, tuned so the average win still pays about 50.
+   - A small consolation is paid for losing by 5 or fewer.
+6. **Civ lengths and playoff series.**
+   - Season lengths are named Online, Quick, Standard, Epic and Marathon, with coins scaled to the length.
+   - **Series length is picked per round at setup** (best-of-1, 3, 5 or 7), in Season mode and in dynasties.
+7. **Dynasty with friends:** yes, as a league the way shared seasons are.
+8. **The buff size:** later.
+
+**Build order:** 5, 6, 3, 2, 1, 7.
+
 ## Not built, and worth asking the user
 
 - **Trades.** There are none, AI or human.

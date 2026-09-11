@@ -493,6 +493,9 @@ export const claimGameReward = onCall({ region: 'us-central1' }, async request =
   const claim = {
     won: Boolean(d.won),
     pvp: Boolean(d.pvp),
+    // My score minus theirs. The win bonus scales with it and a close loss
+    // pays a little; settleGameReward clamps it and caps what it can buy.
+    margin: d.margin ?? null,
     milestoneIds: Array.isArray(d.milestoneIds)
       ? d.milestoneIds.filter(x => typeof x === 'string').slice(0, 8)
       : [],

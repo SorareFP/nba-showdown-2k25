@@ -288,7 +288,7 @@ export default function RulebookTab() {
         </ul>
         <div className={s.sub}>Cards and coins</div>
         <ul>
-          <li>Games pay <strong>coins</strong>: wins, milestones by your own players (a triple-double, a 50-point game — the coach's do not count), and a daily first-win bonus. Coins buy packs — Booster 100, Deluxe 200, Super 300, Rare Deluxe 750, Super Deluxe 1,500, Mega Deluxe 3,000, a 36-pack Booster Box 3,000, Legendary Chase 6,000 — plus Division and Conference packs.</li>
+          <li>Games pay <strong>coins</strong>: 75 for finishing; a win bonus by the margin — 20 for a one-point win, rising evenly to 100 at 50 points (PvP ×1.5); 15 for a loss by five or fewer or a tie; milestones by your own players (a triple-double, a 50-point game — the coach's do not count), and a daily first-win bonus. Coins buy packs — Booster 100, Deluxe 200, Super 300, Rare Deluxe 750, Super Deluxe 1,500, Mega Deluxe 3,000, a 36-pack Booster Box 3,000, Legendary Chase 6,000 — plus Division and Conference packs.</li>
           <li>Special sets (Super Season, Rookie, Summer Standouts, and the WNBA equivalents) appear in ordinary packs at reduced odds within their rarity band.</li>
           <li>A pulled card is a <strong>spare</strong> until you press <strong>Collect</strong>. Collected copies count towards set goals and their rewards; spares can be <strong>listed</strong> on the market — at no less than the card's burn value — <strong>bought</strong>, or <strong>burned</strong> for coins.</li>
           <li>Teams and decks are built from owned cards only. A team carries its own deck.</li>

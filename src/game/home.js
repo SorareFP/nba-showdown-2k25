@@ -28,6 +28,11 @@ export const NEWS = [
     to: 'dynasty', cta: 'Start a dynasty',
   },
   {
+    id: 'margin-coins', date: '2026-09-11', title: 'Wins pay by the margin',
+    body: 'The victory bonus now scales with how much you win by: 20 coins for a one-point squeaker, up to 100 for a 50-point blowout (PvP pays half again). Losing by five or fewer, or a tie, pays 15 on top of the coins for finishing.',
+    to: 'play', cta: 'Play a game',
+  },
+  {
     id: 'free-agents', date: '2026-09-10', title: 'Free Agents: ask for any season',
     body: 'Search any NBA player\'s season from 1984-85 on (plus 1975-76 and 1976-77), or a playoff run from 2002, and see what their card would cost. Request it, and when the card is built you can sign it for its price. Up to three requests can wait at once.',
     to: 'freeagents', cta: 'Free Agents',

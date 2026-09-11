@@ -46,7 +46,10 @@ export default function GameOver({ game, onPlayAgain, isPvp = false, myTeamKey =
       // The box goes with the claim: the lifetime tracker's lines for MY team —
       // A against the coach, my side in PvP, nobody's in hotseat.
       // Milestones are MY players' — the coach's triple-double is not my bonus.
-      const claim = { won: youWon, pvp: isPvp, ...detectMilestones(game, myKey), box: myKey ? boxScoreFor(game, myKey) : [] };
+      // `margin` is MY score minus theirs: a win pays by it, a close loss pays a
+      // little (coinRewards.js). Hotseat has no "me", so no margin.
+      const margin = myKey === 'A' ? teamA.score - teamB.score : myKey === 'B' ? teamB.score - teamA.score : null;
+      const claim = { won: youWon, pvp: isPvp, margin, ...detectMilestones(game, myKey), box: myKey ? boxScoreFor(game, myKey) : [] };
       const today = todayKey();
       const preview = settleGameReward(
         claim,

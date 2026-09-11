@@ -11,6 +11,9 @@ import {
   DAILY_MILESTONE_CAP,
   MILESTONES,
   todayKey,
+  winBonus,
+  WIN_BY_MARGIN,
+  CLOSE_LOSS,
 } from './coinRewards.js';
 
 const TODAY = '2026-09-05';
@@ -82,6 +85,50 @@ describe('settleGameReward', () => {
     expect(r.bam).toBe(true);
     expect(r.bamCardId).toBe('Bam_Adebayo');
     expect(r.breakdown.some(b => b.special)).toBe(true);
+  });
+});
+
+describe('the win bonus by the margin (2026-09-11)', () => {
+  // THE TUNING SAMPLE: the absolute margins of 100 simulated games between
+  // AI-built franchise rosters (simulate.js, seeded). Median 17; a quarter by
+  // 30 or more. The curve is tuned so the average win over it still pays ~50.
+  const SAMPLE = [1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 5, 5, 6, 6, 6, 6, 6, 6, 6, 7, 7, 8, 9, 9, 9, 10, 11, 11, 11, 11, 12, 12, 12, 13, 13, 13, 14, 14, 15, 15, 15, 15, 16, 16, 17, 17, 17, 19, 19, 20, 20, 20, 20, 20, 21, 22, 22, 23, 23, 24, 24, 24, 25, 26, 26, 27, 27, 27, 28, 28, 28, 29, 29, 30, 31, 31, 32, 32, 33, 34, 35, 36, 36, 37, 37, 40, 40, 42, 42, 44, 45, 46, 47, 54, 57, 68];
+  const settle = claim => settleGameReward({ milestoneIds: [], ...claim }, { date: TODAY, coins: 0, firstWin: true }, TODAY);
+
+  it('pays a squeaker little and a blowout the most, rising in between', () => {
+    expect(winBonus(1)).toBe(WIN_BY_MARGIN.min);
+    expect(winBonus(WIN_BY_MARGIN.fullAt)).toBe(WIN_BY_MARGIN.max);
+    expect(winBonus(90)).toBe(WIN_BY_MARGIN.max);
+    for (let m = 1; m < 60; m += 1) expect(winBonus(m + 1)).toBeGreaterThanOrEqual(winBonus(m));
+  });
+
+  it('keeps the average win where it was, on the simulated spread of margins', () => {
+    const mean = SAMPLE.reduce((t, m) => t + winBonus(m), 0) / SAMPLE.length;
+    expect(mean).toBeGreaterThan(REWARD.win - 2);
+    expect(mean).toBeLessThan(REWARD.win + 2);
+  });
+
+  it('pays PvP half again on the same curve', () => {
+    expect(winBonus(17, true)).toBe(Math.round(winBonus(17) * REWARD.pvpWin / REWARD.win));
+    expect(settle({ won: true, pvp: true, margin: 50 }).coins).toBe(REWARD.complete + 150);
+  });
+
+  it('pays a client that sends no margin the flat bonus it always did', () => {
+    expect(settle({ won: true }).coins).toBe(REWARD.complete + REWARD.win);
+    expect(settle({ won: true, margin: 'lots' }).coins).toBe(REWARD.complete + REWARD.win);
+  });
+
+  it('pays a close loss or a tie a consolation, and nothing for a real loss or a hotseat game', () => {
+    expect(settle({ won: false, margin: -3 }).coins).toBe(REWARD.complete + CLOSE_LOSS.coins);
+    expect(settle({ won: false, margin: 0 }).breakdown.map(b => b.label)).toContain('Tie Game');
+    expect(settle({ won: false, margin: -6 }).coins).toBe(REWARD.complete);
+    expect(settle({ won: false, margin: null }).coins).toBe(REWARD.complete);
+  });
+
+  it('never pays more than the top of the curve, whatever margin is claimed', () => {
+    expect(settle({ won: true, margin: 1e9 }).coins).toBe(REWARD.complete + WIN_BY_MARGIN.max);
+    // A "win" claimed with no lead is a one-point win, not a negative bonus.
+    expect(settle({ won: true, margin: -40 }).coins).toBe(REWARD.complete + WIN_BY_MARGIN.min);
   });
 });
 

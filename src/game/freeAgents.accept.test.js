@@ -3,6 +3,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   invoiceFor, freeAgentPrice, OPEN_STATUSES, OPEN_REQUEST_LIMIT, REQUEST_STATUS, signableCount, signNotice,
+  isGift, signPriceText,
 } from './freeAgents.js';
 import { getPlayerRarity } from './rarity.js';
 import { joinFreeAgents, getCardByKey } from './cardSets.js';
@@ -28,6 +29,23 @@ describe('the home screen note', () => {
     expect(signNotice(0)).toBeNull();
     expect(signNotice(1)).toBe('You have a free agent waiting to be signed!');
     expect(signNotice(2)).toBe('You have 2 free agents waiting to be signed!');
+  });
+});
+
+describe('a gift', () => {
+  const gift = { status: 'invoiced', invoice: { salary: 480, rarity: 'uncommon', price: 0, gift: true } };
+  const bill = { status: 'invoiced', invoice: { salary: 480, rarity: 'uncommon', price: 260 } };
+
+  it('waits to be signed like any invoice, so the home screen counts it', () => {
+    expect(isGift(gift)).toBe(true);
+    expect(isGift(bill)).toBe(false);
+    expect(signableCount([gift, bill])).toBe(2);
+    expect(signNotice(signableCount([gift]))).toBe('You have a free agent waiting to be signed!');
+  });
+
+  it('prints 0 coins with a gift icon, and a real invoice its price', () => {
+    expect(signPriceText(gift)).toBe('🎁 0 coins');
+    expect(signPriceText(bill)).toBe('🪙 260');
   });
 });
 

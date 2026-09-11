@@ -1335,7 +1335,13 @@ export const invoiceCardRequest = onCall({ region: 'us-central1' }, async reques
   });
 });
 
-/** GIFT IT. Admins only: one locked copy that can never be sold or burned (EARNED). */
+/**
+ * GIFT IT. Admins only. A gift is an INVOICE FOR NOTHING: it waits on the
+ * player's Free Agents page like any other (the user, 2026-09-10: "Gifts
+ * should also say you have a free agent waiting to be signed and just have it
+ * say 0 coins and a gift icon"), and signing it mints the locked copy — see
+ * signFreeAgent. Turns a built request, or an unpaid invoice, into a gift.
+ */
 export const giftCardRequest = onCall({ region: 'us-central1' }, async request => {
   const { email } = requireAdmin(request);
   return db.runTransaction(async tx => {
@@ -1343,10 +1349,14 @@ export const giftCardRequest = onCall({ region: 'us-central1' }, async request =
     if (req.status !== REQUEST_STATUS.built && req.status !== REQUEST_STATUS.invoiced) {
       throw new HttpsError('failed-precondition', `That request is ${req.status}`);
     }
-    if (!getCardByKey(req.cardKey)) throw new HttpsError('failed-precondition', 'The live game does not have this card yet. Deploy first.');
-    mintFreeAgent(tx, req.uid, req.cardKey, ref.id, EARNED);
-    tx.update(ref, { status: REQUEST_STATUS.gifted, giftedAt: FieldValue.serverTimestamp(), giftedBy: email });
-    return { id: ref.id, status: REQUEST_STATUS.gifted };
+    const card = getCardByKey(req.cardKey);
+    if (!card) throw new HttpsError('failed-precondition', 'The live game does not have this card yet. Deploy first.');
+    const invoice = { ...invoiceFor(card), price: 0, gift: true };
+    tx.update(ref, {
+      status: REQUEST_STATUS.invoiced, invoice,
+      invoicedAt: FieldValue.serverTimestamp(), giftedBy: email,
+    });
+    return { id: ref.id, status: REQUEST_STATUS.invoiced, invoice };
   });
 });
 
@@ -1360,13 +1370,21 @@ export const signFreeAgent = onCall({ region: 'us-central1' }, async request => 
     if (req.uid !== uid) throw new HttpsError('permission-denied', 'That is not your request');
     if (req.status !== REQUEST_STATUS.invoiced) throw new HttpsError('failed-precondition', `That request is ${req.status}`);
     if (!getCardByKey(req.cardKey)) throw new HttpsError('failed-precondition', 'That card is not in the game yet');
-    const price = Number(req.invoice?.price) || 0;
+    // A GIFT signs for nothing, into a LOCKED copy (EARNED: never sold, never
+    // burned) — the gift rule, moved from the moment of gifting to the moment
+    // the player signs it. Anything else is paid for and spare.
+    const gift = req.invoice?.gift === true;
+    const price = gift ? 0 : Number(req.invoice?.price) || 0;
     const coins = userSnap.data()?.currency ?? 0;
     if (coins < price) throw new HttpsError('failed-precondition', `Not enough coins: signing costs ${price}, you have ${coins}`);
-    mintFreeAgent(tx, uid, req.cardKey, ref.id, SPARE);
-    tx.update(userRef, { currency: FieldValue.increment(-price) });
-    tx.update(ref, { status: REQUEST_STATUS.signed, signedAt: FieldValue.serverTimestamp() });
-    return { id: ref.id, status: REQUEST_STATUS.signed, cardKey: req.cardKey, price };
+    mintFreeAgent(tx, uid, req.cardKey, ref.id, gift ? EARNED : SPARE);
+    if (price > 0) tx.update(userRef, { currency: FieldValue.increment(-price) });
+    const status = gift ? REQUEST_STATUS.gifted : REQUEST_STATUS.signed;
+    tx.update(ref, {
+      status, signedAt: FieldValue.serverTimestamp(),
+      ...(gift ? { giftedAt: FieldValue.serverTimestamp() } : {}),
+    });
+    return { id: ref.id, status, cardKey: req.cardKey, price, gift };
   });
 });
 

@@ -16,7 +16,7 @@ import { RARITY_CONFIG } from '../game/rarity.js';
 import { getCardByKey } from '../game/cardSets.js';
 import {
   prepareSearch, searchQuotes, seasonText, quoteKey, searchHitsNeverCard, AUTO_REJECT_MESSAGE,
-  OPEN_REQUEST_LIMIT, REQUEST_STATUS, OPEN_STATUSES, coverageText,
+  OPEN_REQUEST_LIMIT, REQUEST_STATUS, OPEN_STATUSES, coverageText, isGift, signPriceText,
 } from '../game/freeAgents.js';
 import { requestCard, myCardRequests, signFreeAgent, declineCardRequest } from '../firebase/freeAgents.js';
 import Skeleton from '../ui/Skeleton.jsx';
@@ -94,7 +94,9 @@ export default function FreeAgentsPanel({ uid, onChanged = () => {}, loadIndex =
     setBusy(r.id);
     try {
       await signFreeAgent({ id: r.id });
-      toast(`Signed ${r.name}. The card is in your collection.`);
+      toast(isGift(r)
+        ? `Signed ${r.name}, a gift. The card is in your collection, locked to it.`
+        : `Signed ${r.name}. The card is in your collection.`);
       await refreshMine();
       onChanged();
     } catch (e) {
@@ -202,11 +204,13 @@ export default function FreeAgentsPanel({ uid, onChanged = () => {}, loadIndex =
               return (
                 <li key={r.id} className={s.request}>
                   <span className={s.reqName}>{r.name}, {seasonText(r)}</span>
-                  <span className={`${s.status} ${s[r.status] ?? ''}`}>{STATUS_TEXT[r.status] ?? r.status}</span>
+                  <span className={`${s.status} ${s[r.status] ?? ''}`}>
+                    {isGift(r) && r.status === REQUEST_STATUS.invoiced ? '🎁 Gift — ready to sign' : STATUS_TEXT[r.status] ?? r.status}
+                  </span>
                   {bill && (
                     <span className={s.muted}>
-                      ${bill.salary?.toLocaleString()} · {RARITY_CONFIG[bill.rarity]?.label ?? bill.rarity} · {coins(bill.price)}
-                      {r.invoice ? '' : ' (estimate)'}
+                      ${bill.salary?.toLocaleString()} · {RARITY_CONFIG[bill.rarity]?.label ?? bill.rarity} ·{' '}
+                      {r.invoice ? signPriceText(r) : `${coins(bill.price)} (estimate)`}
                     </span>
                   )}
                   {r.status === REQUEST_STATUS.rejected && r.reason && <span className={s.reason}>{r.reason}</span>}
@@ -216,7 +220,7 @@ export default function FreeAgentsPanel({ uid, onChanged = () => {}, loadIndex =
                       {r.status === REQUEST_STATUS.invoiced && (
                         <>
                           <button className={s.askBtn} disabled={busy === r.id} onClick={() => sign(r)}>
-                            {busy === r.id ? 'Signing…' : `Sign for ${coins(r.invoice?.price)}`}
+                            {busy === r.id ? 'Signing…' : `Sign for ${signPriceText(r)}`}
                           </button>
                           <button className={s.ghostBtn} disabled={busy === r.id} onClick={() => decline(r)}>Decline</button>
                         </>

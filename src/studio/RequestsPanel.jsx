@@ -23,7 +23,9 @@ import {
   listCardRequests, rejectCardRequest, markCardRequestBuilt, invoiceCardRequest, giftCardRequest,
 } from '../firebase/freeAgents.js';
 import { buildFreeAgentCard, commitFreeAgent, freeAgentFaceExists, exportFreeAgentFace } from './api.js';
-import { seasonText, QUICK_REJECT_REASONS, REJECT_REASON_MAX, FREE_AGENT_SETS, REQUEST_STATUS } from '../game/freeAgents.js';
+import {
+  seasonText, QUICK_REJECT_REASONS, REJECT_REASON_MAX, FREE_AGENT_SETS, REQUEST_STATUS, isGift, signPriceText,
+} from '../game/freeAgents.js';
 import s from './RequestsPanel.module.css';
 
 const VIEWS = [
@@ -140,7 +142,10 @@ export default function RequestsPanel({ onClose }) {
 
   const gift = r => run('gift', r.id, async () => {
     await giftCardRequest({ id: r.id });
-    setNote(`Gifted ${r.name} to ${r.requester ?? 'the requester'}: one locked copy.`);
+    setNote(
+      `Gift sent: ${r.name} to ${r.requester ?? 'the requester'}. It waits on their Free Agents page at ` +
+      '🎁 0 coins, and signing it gives them one locked copy.'
+    );
     setConfirmGift(null);
     drop(r.id);
   });
@@ -212,7 +217,7 @@ export default function RequestsPanel({ onClose }) {
                           <td>{r.team}</td>
                           <td>{FREE_AGENT_SETS[set]?.label ?? set}</td>
                           <td>
-                            {money(bill?.salary)} · {bill?.rarity} · {coins(bill?.price)}
+                            {money(bill?.salary)} · {bill?.rarity} · {r.invoice ? signPriceText(r) : coins(bill?.price)}
                             {r.built && r.quote && r.built.price !== r.quote.price && (
                               <div className={s.muted}>quoted {coins(r.quote.price)}</div>
                             )}
@@ -285,8 +290,8 @@ export default function RequestsPanel({ onClose }) {
                                 </div>
                               ) : (
                                 <div className={s.btnRow}>
-                                  <span className={s.muted}>Waiting on them to sign</span>
-                                  <button className={s.ghost} onClick={() => setConfirmGift(r.id)}>Gift instead</button>
+                                  <span className={s.muted}>{isGift(r) ? '🎁 Gift, waiting on them to sign' : 'Waiting on them to sign'}</span>
+                                  {!isGift(r) && <button className={s.ghost} onClick={() => setConfirmGift(r.id)}>Gift instead</button>}
                                 </div>
                               )
                             ) : (

@@ -15,6 +15,7 @@ import {
   finishDraft, projectedPayroll, closeSigning, closeResign, lotteryOdds, drawLottery, classFor, signRookie,
   closeRookies, nextFaDay, fillRoster, startSeason, rosterProblem, ageOf,
   tradeValue, evaluateTrade, makeTrade, suggestSweetener, picksOf, pickValue, pickLabel,
+  tradesOpen, tradeDeadlineRound,
 } from '../../game/modes/dynasty.js';
 import {
   CAP_DP, APRON_DP, MIN_DP, MAX_DP, FA_DAYS, CONTRACT_YEARS, MOOD_TEXT, personality, rookieScale,
@@ -235,7 +236,7 @@ export function Negotiator({ d, cardKey, act, onClose = null, letGo = null }) {
       {q.rival && (
         <div className={dy.rival}>
           📨 {teamOf(d, q.rival.teamId)?.name} have offered {q.rival.dp} DP × {plural(q.rival.years, 'year')}.
-          Beat it before the day ends or he signs there.
+          Beat it before the week is out or he signs there.
         </div>
       )}
 
@@ -662,11 +663,11 @@ export function FreeAgency({ d, act }) {
   return (
     <section className={styles.panel}>
       <div className={dy.panelHead}>
-        <h3 className={styles.panelTitle}>{pre ? `Preseason — Year ${d.year}` : `Free agency — day ${day} of ${FA_DAYS}`}</h3>
+        <h3 className={styles.panelTitle}>{pre ? `Preseason — Year ${d.year}` : `Free agency — week ${day} of ${FA_DAYS}`}</h3>
         <span className={dy.clockActions}>
           {!pre && (
             <button type="button" className={styles.primary} onClick={nextDay}>
-              {lastDay ? 'Close free agency →' : 'Next day →'}
+              {lastDay ? 'Close free agency →' : 'Next week →'}
             </button>
           )}
           {pre && problem && (
@@ -684,7 +685,7 @@ export function FreeAgency({ d, act }) {
       <p className={dy.intro}>
         {pre
           ? `${d.fa ? 'Free agency has closed; whoever is left signs for less. ' : ''}You need ${MIN_ROSTER}–${MAX_ROSTER} players to start the season.`
-          : `The AI teams bid too, and every rival offer still on the table at the end of the day signs. To take a player from them your deal has to beat theirs — as HE sees it, so a Ring Chaser takes less from a contender. Every unsigned player's price drops 10% a day. ${bids ? `${plural(bids, 'rival offer')} out today.` : ''}`}
+          : `The AI teams bid too, and every rival offer still on the table at the end of the week signs. To take a player from them your deal has to beat theirs — as HE sees it, so a Ring Chaser takes less from a contender. Every unsigned player's price drops 10% a week. ${bids ? `${plural(bids, 'rival offer')} out this week.` : ''}`}
       </p>
       {pre && (
         <div className={`${dy.ready} ${problem ? dy.readyBad : ''}`}>
@@ -782,7 +783,7 @@ export function TradeDesk({ d, act, defaultOpen = false }) {
   const [givePicks, setGivePicks] = useState([]);
   const [getPicks, setGetPicks] = useState([]);
   const [hint, setHint] = useState(null);
-  if (!isOffseason(d) || !partners.length) return null;
+  if (!tradesOpen(d) || !partners.length) return null;
   const myPicks = picksOf(d, me);
   const theirPicks = picksOf(d, to);
   const deal = {
@@ -805,6 +806,12 @@ export function TradeDesk({ d, act, defaultOpen = false }) {
         <h3 className={styles.panelTitle}>Trades</h3>
         <button type="button" className={dy.linkBtn} onClick={() => setOpen(v => !v)}>{open ? 'Close the trade desk' : 'Open the trade desk'}</button>
       </div>
+      {d.phase === DPHASE.season && d.season && (
+        <p className={dy.intro}>
+          Trade deadline: the end of round {tradeDeadlineRound(d.season)} of the regular season — 60% of the way through,
+          where the NBA's falls. A team in season keeps {MIN_ROSTER} players.
+        </p>
+      )}
       {open && (
         <>
           <p className={dy.intro}>

@@ -41,7 +41,10 @@ export const MAX_DP = 35;
 export const CONTRACT_YEARS = { min: 1, max: 5 };
 /** A draft pick signs for three-quarters of his value, for three seasons. */
 export const ROOKIE_SCALE = { share: 0.75, years: 3 };
-/** Free agency runs this many days; every floor drops 10% a day. */
+/**
+ * Free agency runs this many WEEKS (the user's word, 2026-09-11 — "three
+ * advanceable weeks"); every floor drops 10% a week. The code says `day`.
+ */
 export const FA_DAYS = 3;
 export const DAY_DISCOUNT = 0.1;
 /** The market after free agency closes: whoever is left, at the last price. */

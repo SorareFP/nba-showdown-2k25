@@ -434,6 +434,37 @@ describe('aging (2026-09-11)', () => {
   });
 });
 
+describe('more than one coach (a dynasty with friends)', () => {
+  it('seats every coach, ten each in an own start, one of each player across them all', () => {
+    const [a, b] = buildAiLeague(2, { rng: seeded(1) }).map(t => t.roster);
+    const d = createDynasty({
+      id: 'M', size: 6, length: 'online', startMode: 'own', rng: seeded(2),
+      humans: [{ id: 'h:1', name: 'One', uid: '1', roster: a }, { id: 'h:2', name: 'Two', uid: '2', roster: b }],
+    });
+    expect(d.humans).toEqual(['h:1', 'h:2']);
+    expect(rosterKeys(d, 'h:1')).toHaveLength(10);
+    expect(rosterKeys(d, 'h:2')).toHaveLength(10);
+    expect(d.teams.filter(t => t.human).map(t => t.id)).toEqual(['h:1', 'h:2']);
+    expectConserved(d);
+  });
+
+  it('stops the fantasy draft for each coach, and closes a window for all of them', () => {
+    const d = createDynasty({
+      id: 'F2', size: 4, length: 'online', startMode: 'fantasy-full', rng: seeded(3),
+      humans: [{ id: 'h:1', name: 'One' }, { id: 'h:2', name: 'Two' }],
+    });
+    let x = simDraft(d, { rng: seeded(4) });
+    expect(['h:1', 'h:2']).toContain(onClock(x).teamId);
+    x = finishDraft(driveDraft(x, seeded(5)), { rng: seeded(5) });
+    expect(rightsOf(x, 'h:1', 'draft').length).toBeGreaterThan(0);
+    expect(rightsOf(x, 'h:2', 'draft').length).toBeGreaterThan(0);
+    x = closeSigning(x, { rng: seeded(6) });
+    expect(rightsOf(x, 'h:1')).toHaveLength(0);
+    expect(rightsOf(x, 'h:2')).toHaveLength(0);
+    expect(summarizeDynasty(x, 'h:2').phase).toBe(DPHASE.freeAgency);
+  });
+});
+
 describe('the lottery, scaled from the NBA', () => {
   it('shares the NBA\'s fourteen slots out over a smaller lottery, and is the NBA\'s at fourteen', () => {
     expect(lotteryWeights(14)).toEqual([140, 140, 140, 125, 105, 90, 75, 60, 45, 30, 20, 15, 10, 5]);

@@ -6,7 +6,9 @@ import {
   createDynasty, HUMAN_ID, MAX_ROSTER, rosterKeys, payroll, startSeason, contractsOf,
   tradeValue, tradeProblems, evaluateTrade, makeTrade, suggestSweetener, aiTrades,
   picksOf, pickValue, parsePick, pickOwner, projectedSlot, teamDirection, nextDraftYear, ageOf, baseAge,
+  tradeDeadlineRound,
 } from './dynasty.js';
+import { cardKey } from '../cardSets.js';
 import { APRON_DP, talentValue, contractValue, controlFactor } from './dynastyMarket.js';
 import { buildAiLeague } from './aiTeams.js';
 
@@ -83,8 +85,11 @@ describe('a trade with the AI', () => {
     const [a, b] = rosterKeys(d, ai);
     expect(tradeProblems(d, { from: HUMAN_ID, to: ai, give: [], get: [a, b] }).join(' ')).toMatch(/1[12] players/);
     expect(tradeProblems(d, { from: HUMAN_ID, to: ai, give: [a], get: [] }).join(' ')).toMatch(/under contract with you/);
+    // In season until the deadline — 60% of the regular season, like the NBA's.
     const inSeason = startSeason(d, { rng: seeded(3) });
-    expect(tradeProblems(inSeason, { from: HUMAN_ID, to: ai, give: [mine], get: [a] })).toContain('Trades are made between seasons.');
+    expect(tradeProblems(inSeason, { from: HUMAN_ID, to: ai, give: [mine], get: [a] })).not.toContain('The trade deadline has passed.');
+    const late = { ...inSeason, season: { ...inSeason.season, round: tradeDeadlineRound(inSeason.season) + 1 } };
+    expect(tradeProblems(late, { from: HUMAN_ID, to: ai, give: [mine], get: [a] })).toContain('The trade deadline has passed.');
   });
 
   it('moves the contracts with the players, and nothing else', () => {
@@ -95,6 +100,19 @@ describe('a trade with the AI', () => {
     expect(Object.keys(x.contracts)).toHaveLength(Object.keys(d.contracts).length);
     expect(rosterKeys(x, HUMAN_ID)).toHaveLength(MAX_ROSTER);
     expect(x.news[0].text).toMatch(/^Trade: /);
+  });
+
+  it('moves the live season\'s rosters when it happens mid-season', () => {
+    const s = startSeason(d, { rng: seeded(3) });
+    const deal = rosterKeys(s, HUMAN_ID).flatMap(k => rosterKeys(s, ai).map(j => ({ from: HUMAN_ID, to: ai, give: [k], get: [j] })))
+      .find(p => evaluateTrade(s, p).verdict === 'accept');
+    const x = makeTrade(s, deal);
+    const mineNow = x.season.teams.find(t => t.id === HUMAN_ID).roster.map(cardKey);
+    const theirsNow = x.season.teams.find(t => t.id === ai).roster.map(cardKey);
+    expect(mineNow).toContain(deal.get[0]);
+    expect(mineNow).not.toContain(deal.give[0]);
+    expect(theirsNow).toContain(deal.give[0]);
+    expect(tradeDeadlineRound({ fixtures: [{ round: 10 }] })).toBe(6);
   });
 
   it('refuses a deal they turned down', () => {

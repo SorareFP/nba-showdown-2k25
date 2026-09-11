@@ -7,9 +7,9 @@
 // engine), and none of that belongs in a Cloud Function. This file imports
 // schedule.js, bracket.js and prizes.js — data and arithmetic — and nothing
 // else. season.js re-exports all of it, so every existing caller is unchanged.
-import { fixturesFrom, standingsFrom, playoffSeeds, playoffCount } from './schedule.js';
+import { fixturesFrom, standingsFrom, playoffSeeds, playoffCount, roundRobin, LENGTHS } from './schedule.js';
 import {
-  makeBracket, withSeries, recordGame, nextSeriesGame, matchIdOf, seriesWins, bestOfFor,
+  makeBracket, withSeries, recordGame, nextSeriesGame, matchIdOf, seriesWins, bestOfFor, SERIES_LENGTHS,
   champion as bracketChampion, runnerUp as bracketRunnerUp, currentRound, nextMatchFor,
 } from './bracket.js';
 import { seasonEarnings } from './prizes.js';
@@ -19,6 +19,32 @@ export const PHASE = {
   playoffs: 'playoffs',
   done: 'done',
 };
+
+/**
+ * A season's opening state from its teams: the round-robin and an empty
+ * table. Pure — createSeason (season.js) builds the AI league and calls
+ * this; a dynasty, which already has its teams, calls it directly, and that
+ * is what lets the server run a dynasty without the simulator.
+ */
+export function buildSeason({ id = `season-${Date.now()}`, teams, length = 'regular', series = null, size = teams.length }) {
+  const meetings = LENGTHS[length]?.meetings ?? LENGTHS.regular.meetings;
+  return {
+    id,
+    createdAt: Date.now(),
+    length,
+    size,
+    phase: PHASE.regular,
+    teams,
+    fixtures: fixturesFrom(roundRobin(teams.map(t => t.id), meetings)),
+    results: [],
+    stats: [],
+    round: 1,
+    bracket: null,
+    champion: null,
+    paid: false,
+    series: Array.isArray(series) && series.length ? series.map(n => (SERIES_LENGTHS.includes(n) ? n : 1)) : null,
+  };
+}
 
 /** The teams, by id. */
 export function teamsById(season) {

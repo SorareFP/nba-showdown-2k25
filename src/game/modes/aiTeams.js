@@ -12,7 +12,9 @@
 import { CARDS } from '../cards.js';
 import { TEAMS, TEAM_ALIASES } from '../../cards/teams.js';
 import { CAP, RANDOM_MIN_SAL } from '../teamRules.js';
-import { ROSTER_SIZE } from '../engine.js';
+// The roster size from teamRules rather than the engine, so a dynasty's AI
+// league can be built where the engine is not shipped (the Cloud Functions).
+import { MAX as ROSTER_SIZE } from '../teamRules.js';
 
 /** The franchise a card plays for, following the three aliases (BRK/CHO/PHO). */
 export function franchiseOf(card) {

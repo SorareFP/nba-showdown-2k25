@@ -52,6 +52,13 @@ const COPY = [
   'src/game/modes/schedule.js',
   'src/game/modes/bracket.js',
   'src/game/modes/league.js',
+  // A dynasty with friends is run here (2026-09-11): the rules, the market,
+  // the AI league they draft and the team rules they read — none of which
+  // touch the engine (aiTeams takes its roster size from teamRules for this).
+  'src/game/modes/dynasty.js',
+  'src/game/modes/dynastyMarket.js',
+  'src/game/modes/aiTeams.js',
+  'src/game/teamRules.js',
   'src/cards/teams.js',
   'src/cards/sets.js',
   'src/cards/playerId.js',
@@ -86,7 +93,9 @@ const dataDir = path.join(ROOT, DATA_DIR);
 let data = 0;
 for (const file of fs.readdirSync(dataDir)) {
   // quote-index.json: requestCard prices a request from it, never the client.
-  if (!/^cards-.*\.json$/.test(file) && !/^(wnba-)?(player-)?pool.*\.json$/.test(file) && file !== 'quote-index.json') continue;
+  // dynasty-ages.json: the dynasty's player ages (scripts/dynasty/buildAges.mjs).
+  if (!/^cards-.*\.json$/.test(file) && !/^(wnba-)?(player-)?pool.*\.json$/.test(file)
+    && file !== 'quote-index.json' && file !== 'dynasty-ages.json') continue;
   copyFile(path.join(DATA_DIR, file));
   data += 1;
 }

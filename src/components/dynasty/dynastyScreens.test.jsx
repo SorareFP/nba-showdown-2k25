@@ -18,6 +18,7 @@ import { Negotiator, TradeDesk } from './DynastyScreens.jsx';
 import {
   createDynasty, simDraft, draftPick, aiDraftChoice, onClock, finishDraft, closeSigning, nextFaDay,
   startSeason, endSeason, closeResign, drawLottery, fillRoster, rightsOf, freeAgentKeys, HUMAN_ID, DPHASE,
+  tradeDeadlineRound,
 } from '../../game/modes/dynasty.js';
 import { recordResult, roundFixtures, advance, totalRounds, PHASE } from '../../game/modes/season.js';
 import { buildAiLeague } from '../../game/modes/aiTeams.js';
@@ -89,8 +90,8 @@ describe('each phase', () => {
     const rng = seeded(8);
     let d = closeSigning(finishDraft(drafted(rng), { rng }), { rng });
     const out = view(d);
-    expect(out).toContain('Free agency — day 1 of 3');
-    expect(out).toContain('Next day');
+    expect(out).toContain('Free agency — week 1 of 3');
+    expect(out).toContain('Next week');
     for (let i = 0; i < 3; i += 1) d = nextFaDay(d, { rng });
     const pre = view(d);
     expect(pre).toContain('Preseason');
@@ -106,7 +107,11 @@ describe('each phase', () => {
     expect(out).toContain('Make the trade');
     expect(out).toContain('What would it take?');
     expect(out).not.toContain('Not interested');
-    expect(html(<TradeDesk d={startSeason(d, { rng: seeded(7) })} act={() => null} defaultOpen />)).toBe('');
+    // In season it stays open until the deadline (60% of the regular season), then closes.
+    const inSeason = startSeason(d, { rng: seeded(7) });
+    expect(html(<TradeDesk d={inSeason} act={() => null} defaultOpen />)).toContain('Trade deadline');
+    const late = { ...inSeason, season: { ...inSeason.season, round: tradeDeadlineRound(inSeason.season) + 1 } };
+    expect(html(<TradeDesk d={late} act={() => null} defaultOpen />)).toBe('');
   });
 
   it('a negotiation with a rival bid on the table names the rival', () => {

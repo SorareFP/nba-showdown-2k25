@@ -25,11 +25,10 @@
 // bookkeeping without the simulator. Everything there is re-exported here;
 // this file keeps what needs the engine: building the AI league and
 // simulating fixtures.
-import { roundRobin, fixturesFrom, LENGTHS } from './schedule.js';
 import { buildAiLeague } from './aiTeams.js';
 import { simulateFixture } from './simulate.js';
-import { PHASE, teamsById, rostersOf, decksOf, roundFixtures, isHumanVsHuman, recordResult } from './seasonCore.js';
-import { SERIES_LENGTHS, nextSeriesGame, matchIdOf } from './bracket.js';
+import { PHASE, teamsById, rostersOf, decksOf, roundFixtures, isHumanVsHuman, recordResult, buildSeason } from './seasonCore.js';
+import { nextSeriesGame, matchIdOf } from './bracket.js';
 
 export * from './seasonCore.js';
 
@@ -70,24 +69,7 @@ export function createSeason({
     })),
     ...ai,
   ];
-  const meetings = LENGTHS[length]?.meetings ?? LENGTHS.regular.meetings;
-  const fixtures = fixturesFrom(roundRobin(teams.map(t => t.id), meetings));
-  return {
-    id,
-    createdAt: Date.now(),
-    length,
-    size,
-    phase: PHASE.regular,
-    teams,
-    fixtures,
-    results: [],
-    stats: [],
-    round: 1,
-    bracket: null,
-    champion: null,
-    paid: false,
-    series: Array.isArray(series) && series.length ? series.map(n => (SERIES_LENGTHS.includes(n) ? n : 1)) : null,
-  };
+  return buildSeason({ id, teams, length, size, series });
 }
 
 /** The deck options a fixture is played with, from whoever is on each side. */

@@ -41,7 +41,9 @@ import { ALL_CARDS, BASE_SET, cardKey, getCardByKey } from '../cardSets.js';
 import DYNASTY_AGES from '../../../card-data/generated/dynasty-ages.json' with { type: 'json' };
 import { MAX } from '../teamRules.js';
 import { DYNASTY_YEARS } from './prizes.js';
-import { createSeason, standings, PHASE } from './season.js';
+// seasonCore, not season.js: season.js brings the simulator and the engine,
+// and a dynasty with friends runs on the server where neither is shipped.
+import { buildSeason, standings, totalRounds, PHASE } from './seasonCore.js';
 import { buildAiLeague } from './aiTeams.js';
 import { playoffCount } from './schedule.js';
 import {
@@ -143,6 +145,8 @@ function say(d, text) {
 
 export const teamOf = (d, teamId) => d.teams.find(t => t.id === teamId) ?? null;
 export const humanTeam = d => teamOf(d, d.humanId ?? HUMAN_ID);
+/** Every human team — one alone ('you'), one per coach in a dynasty with friends ('h:<uid>'). */
+export const humanIds = d => d.humans ?? [d.humanId ?? HUMAN_ID];
 export const traitOf = (d, key) => d.traits?.[key] ?? 'easy';
 
 /** The keys a team has under contract. */
@@ -361,7 +365,10 @@ function snakeOrder(teamIds, rounds) {
 export function createDynasty({
   id = `dynasty-${Date.now()}`,
   name = null,
+  // One human (`human`, as 'you'), or several (`humans`, each with its own id —
+  // 'h:<uid>' in a dynasty with friends).
   human = {},
+  humans = null,
   size = 8,
   length = 'regular',
   startMode = 'own',
@@ -373,13 +380,16 @@ export function createDynasty({
 } = {}) {
   if (!START_MODES[startMode]) throw new Error(`dynasty: no start mode ${startMode}`);
   if (size < 2) throw new Error('dynasty: a league needs two teams');
-  const brought = startMode === 'own' ? (human.roster ?? []) : [];
-  if (startMode === 'own' && !brought.length) throw new Error('dynasty: bring a roster');
-  if (brought.length > MAX_ROSTER) throw new Error(`dynasty: a roster is at most ${MAX_ROSTER}`);
+  const entrants = (humans?.length ? humans : [{ ...human, id: HUMAN_ID }])
+    .map(h => ({ ...h, roster: startMode === 'own' ? (h.roster ?? []) : [] }));
+  if (entrants.length > size) throw new Error(`dynasty: ${entrants.length} coaches do not fit in a ${size}-team league`);
+  const brought = entrants.flatMap(h => h.roster);
   if (new Set(brought.map(c => c.id)).size !== brought.length) throw new Error('dynasty: one card per player');
   // A FULL TEN to enter (the user, 2026-09-11: "there should just be
   // 10-player rosters to enter. Or just choose a team to enter.").
-  if (startMode === 'own' && brought.length !== MAX_ROSTER) throw new Error(`dynasty: a dynasty team is ${MAX_ROSTER} players — this one has ${brought.length}`);
+  for (const h of entrants) {
+    if (startMode === 'own' && h.roster.length !== MAX_ROSTER) throw new Error(`dynasty: a dynasty team is ${MAX_ROSTER} players — this one has ${h.roster.length}`);
+  }
 
   // Bringing a player takes every card of him out of the league.
   const taken = new Set(brought.map(c => c.id));
@@ -387,14 +397,15 @@ export function createDynasty({
   const poolCards = startMode === 'fantasy-random' ? spreadSample(base, size * RANDOM_POOL_PER_TEAM, rng) : base;
   // The AI franchises — names, colours and logos. Their rosters are drafted
   // (below), never the franchise-built ones Season mode deals.
-  const ai = buildAiLeague(size - 1, { cards: CARDS, taken, rng });
+  const ai = buildAiLeague(size - entrants.length, { cards: CARDS, taken, rng });
 
-  const me = {
-    id: HUMAN_ID, name: human.name || 'My Team', human: true, uid: human.uid ?? null,
+  const mine = entrants.map(h => ({
+    id: h.id, name: h.name || 'My Team', human: true, uid: h.uid ?? null,
     abbr: null, logo: null, primary: null, secondary: null, city: null,
-    deck: human.deck ?? null, deckName: human.deckName ?? null, last: null,
-  };
-  const teams = [me, ...ai.map(t => ({
+    deck: h.deck ?? null, deckName: h.deckName ?? null, last: null,
+  }));
+  const me = mine[0];
+  const teams = [...mine, ...ai.map(t => ({
     id: t.id, name: t.name, human: false, uid: null,
     abbr: t.abbr ?? null, logo: t.logo ?? null, primary: t.primary ?? null, secondary: t.secondary ?? null, city: t.city ?? null,
     deck: null, deckName: null, last: null,
@@ -418,7 +429,7 @@ export function createDynasty({
     // Staggered, so the exclusive window has somebody in it after year one.
     const years = () => CONTRACT_YEARS.min + Math.floor(rng() * 3);
     const put = (c, teamId) => { contracts[cardKey(c)] = { teamId, dp: fairDp(c), years: years(), since: 1, how: 'brought' }; };
-    for (const c of brought) put(c, HUMAN_ID);
+    for (const h of entrants) for (const c of h.roster) put(c, h.id);
   }
 
   const d = {
@@ -434,7 +445,8 @@ export function createDynasty({
     years: DYNASTY_YEARS,
     year: 1,
     phase: DPHASE.preseason,
-    humanId: HUMAN_ID,
+    humanId: me.id,
+    humans: mine.map(t => t.id),
     league: rostered,
     draftPool: waiting,
     retired: [],
@@ -757,7 +769,7 @@ export function finishDraft(d, { rng = Math.random } = {}) {
 export function closeSigning(d, { rng = Math.random } = {}) {
   if (d.phase !== DPHASE.signing) throw new Error('dynasty: not signing draftees');
   let x = d;
-  for (const key of rightsOf(x, x.humanId, 'draft')) x = renounce(x, x.humanId, key);
+  for (const h of humanIds(x)) for (const key of rightsOf(x, h, 'draft')) x = renounce(x, h, key);
   return openFreeAgency(x, { rng });
 }
 
@@ -765,7 +777,7 @@ export function closeSigning(d, { rng = Math.random } = {}) {
 export function closeRookies(d, { rng = Math.random } = {}) {
   if (d.phase !== DPHASE.rookies) throw new Error('dynasty: not signing picks');
   let x = d;
-  for (const key of rightsOf(x, x.humanId, 'rookie')) x = renounce(x, x.humanId, key);
+  for (const h of humanIds(x)) for (const key of rightsOf(x, h, 'rookie')) x = renounce(x, h, key);
   return openFreeAgency(x, { rng });
 }
 
@@ -952,14 +964,13 @@ export function startSeason(d, { rng = Math.random } = {}) {
   for (const team of x.teams.filter(t => !t.human)) x = fillRoster(x, team.id);
   const short = x.teams.filter(t => rosterProblem(x, t.id));
   if (short.length) throw new Error(`dynasty: ${short.map(t => `${t.name} has ${rosterProblem(x, t.id)}`).join('; ')}`);
-  const humans = x.teams.map(t => ({
-    id: t.id, name: t.name, uid: t.uid, abbr: t.abbr, logo: t.logo, deck: t.deck, deckName: t.deckName, roster: rosterOf(x, t.id),
+  const teams = x.teams.map(t => ({
+    id: t.id, name: t.name, human: Boolean(t.human), uid: t.uid ?? null, roster: rosterOf(x, t.id),
+    abbr: t.abbr ?? null, logo: t.logo ?? null, deck: t.deck ?? null, deckName: t.deckName ?? null,
+    primary: t.primary ?? null, secondary: t.secondary ?? null, city: t.city ?? null,
   }));
-  const season = createSeason({ id: `${x.id}-y${x.year}`, humans, size: x.teams.length, length: x.length, series: x.series ?? null, rng });
-  season.teams = season.teams.map(t => {
-    const dt = teamOf(x, t.id);
-    return { ...t, human: Boolean(dt?.human), primary: dt?.primary ?? null, secondary: dt?.secondary ?? null, city: dt?.city ?? null };
-  });
+  const season = buildSeason({ id: `${x.id}-y${x.year}`, teams, length: x.length, series: x.series ?? null });
+  void rng;
   // A new season forgives: nobody is spurned any more.
   return say({ ...x, season, phase: DPHASE.season, fa: null, talks: {}, spurned: {} }, `Year ${x.year} tips off.`);
 }
@@ -1076,7 +1087,7 @@ export function aiResign(d, rng = Math.random) {
 export function closeResign(d, { rng = Math.random } = {}) {
   if (d.phase !== DPHASE.resign) throw new Error('dynasty: the window is not open');
   let x = d;
-  for (const key of rightsOf(x, x.humanId, 'expiring')) x = renounce(x, x.humanId, key);
+  for (const h of humanIds(x)) for (const key of rightsOf(x, h, 'expiring')) x = renounce(x, h, key);
   x = aiTrades(x, { rng });
   return { ...x, phase: DPHASE.lottery, talks: {}, lottery: { ...lotteryOdds(x), order: null, moved: null } };
 }
@@ -1231,6 +1242,23 @@ export function pickValue(d, id, teamId) {
   return Math.max(0, v) * later * want;
 }
 
+/**
+ * THE TRADE DEADLINE (the user, 2026-09-11: "The trade desk should exist
+ * throughout the season too, with a deadline about the same % of the way
+ * through the year as the real NBA"). The NBA's falls in early February,
+ * about 60% of the way through its regular season, so a dynasty's is the end
+ * of the round that is 60% of its regular season. Trades are open all
+ * offseason and in season until then — never in the playoffs, the fantasy
+ * draft or its signing.
+ */
+export const TRADE_DEADLINE_SHARE = 0.6;
+export const tradeDeadlineRound = season => Math.max(1, Math.ceil(totalRounds(season) * TRADE_DEADLINE_SHARE));
+export function tradesOpen(d) {
+  if (isOffseason(d)) return true;
+  if (d.phase !== DPHASE.season || !d.season) return false;
+  return d.season.phase === PHASE.regular && d.season.round <= tradeDeadlineRound(d.season);
+}
+
 const dpOf = (d, keys) => keys.reduce((t, k) => t + (d.contracts[k]?.dp ?? 0), 0);
 
 /**
@@ -1240,7 +1268,7 @@ const dpOf = (d, keys) => keys.reduce((t, k) => t + (d.contracts[k]?.dp ?? 0), 0
  */
 export function tradeProblems(d, { from, to, give = [], get = [], givePicks = [], getPicks = [] }) {
   const out = [];
-  if (!isOffseason(d)) out.push('Trades are made between seasons.');
+  if (!tradesOpen(d)) out.push(d.phase === DPHASE.season ? 'The trade deadline has passed.' : 'No trades right now.');
   if (!give.length && !get.length && !givePicks.length && !getPicks.length) out.push('Nothing is in the deal yet.');
   if (give.some(k => d.contracts[k]?.teamId !== from)) out.push('Only players under contract with you can be traded.');
   if (get.some(k => d.contracts[k]?.teamId !== to)) out.push('That player is not under contract with them.');
@@ -1249,6 +1277,8 @@ export function tradeProblems(d, { from, to, give = [], get = [], givePicks = []
   for (const [team, loses, gains] of [[from, give, get], [to, get, give]]) {
     const size = rosterKeys(d, team).length - loses.length + gains.length;
     if (size > MAX_ROSTER) out.push(`${teamOf(d, team)?.name} would have ${size} players — ${MAX_ROSTER} is the most.`);
+    // Mid-season a team still has to take the floor.
+    if (d.phase === DPHASE.season && size < MIN_ROSTER) out.push(`${teamOf(d, team)?.name} would have ${size} players — a team in season keeps ${MIN_ROSTER}.`);
     const before = payroll(d, team);
     const after = before - dpOf(d, loses) + dpOf(d, gains);
     if (after > APRON_DP && after > before) out.push(`${teamOf(d, team)?.name} would be at ${after} DP — past the ${APRON_DP} apron.`);
@@ -1297,8 +1327,14 @@ export function makeTrade(d, deal, { force = false } = {}) {
   for (const id of deal.givePicks ?? []) move(id, deal.to);
   for (const id of deal.getPicks ?? []) move(id, deal.from);
   const names = (keys, picks = []) => [...keys.map(k => cardOf(k)?.name), ...picks.map(id => pickLabel(d, id))].join(' and ') || 'nothing';
+  let next = { ...d, contracts, pickOwner: owners };
+  // MID-SEASON the live season's rosters move too: the next fixture is played with them.
+  if (next.phase === DPHASE.season && next.season) {
+    const moved = new Set([deal.from, deal.to]);
+    next = { ...next, season: { ...next.season, teams: next.season.teams.map(t => (moved.has(t.id) ? { ...t, roster: rosterOf(next, t.id) } : t)) } };
+  }
   return say(
-    { ...d, contracts, pickOwner: owners },
+    next,
     `Trade: ${teamOf(d, deal.from)?.name} send ${names(give, deal.givePicks)} to ${teamOf(d, deal.to)?.name} for ${names(get, deal.getPicks)}.`,
   );
 }
@@ -1381,8 +1417,8 @@ export const PHASE_LABEL = {
 };
 
 /** One line about a dynasty, for its card on the list. */
-export function summarizeDynasty(d) {
-  const me = d.humanId ?? HUMAN_ID;
+export function summarizeDynasty(d, teamId = humanIds(d)[0]) {
+  const me = teamId;
   const titles = d.history.filter(h => h.champion === me).length;
   const wins = d.history.reduce((t, h) => t + (h.table.find(r => r.id === me)?.w ?? 0), 0);
   const losses = d.history.reduce((t, h) => t + (h.table.find(r => r.id === me)?.l ?? 0), 0);

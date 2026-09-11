@@ -422,6 +422,8 @@ function DynastyView({ d, uid, commit, onPlayFixture, onBack, onAbandon }) {
             </button>
           )}
         />
+        {/* In season until the deadline (the user, 2026-09-11). */}
+        <TradeDesk d={d} act={act} />
         <FrontOffice d={d} act={act} />
         <HistoryPanel d={d} uid={uid} commit={commit} />
       </>

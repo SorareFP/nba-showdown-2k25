@@ -99,17 +99,16 @@ export const DYNASTY_TITLE_BONUS = 150;
 
 const dynastyHuman = dynasty => dynasty?.humanId ?? 'you';
 
-/** A dynasty's titles so far. */
-export function dynastyTitles(dynasty) {
-  const me = dynastyHuman(dynasty);
-  return (dynasty?.history ?? []).filter(h => h.champion === me).length;
+/** A dynasty's titles so far — its human's, or one coach's in a dynasty with friends. */
+export function dynastyTitles(dynasty, teamId = dynastyHuman(dynasty)) {
+  return (dynasty?.history ?? []).filter(h => h.champion === teamId).length;
 }
 
-/** What one finished year of a dynasty pays, from its own history. */
-export function dynastyYearEarnings(dynasty, year) {
+/** What one finished year of a dynasty pays a team, from its own history. */
+export function dynastyYearEarnings(dynasty, year, teamId = dynastyHuman(dynasty)) {
   const h = (dynasty?.history ?? []).find(x => x.year === year);
   if (!h) return { coins: 0, label: null };
-  const me = dynastyHuman(dynasty);
+  const me = teamId;
   return seasonEarnings(dynasty.length, {
     champion: h.champion === me,
     runnerUp: h.runnerUp === me,
@@ -118,11 +117,11 @@ export function dynastyYearEarnings(dynasty, year) {
 }
 
 /** The ten-year bonus: nothing until the dynasty is over and all ten are in the book. */
-export function dynastyCompletionEarnings(dynasty) {
+export function dynastyCompletionEarnings(dynasty, teamId = dynastyHuman(dynasty)) {
   const years = new Set((dynasty?.history ?? []).map(h => h.year));
   if (dynasty?.phase !== 'done' || years.size < DYNASTY_YEARS) return { coins: 0, label: null };
   const base = DYNASTY_COMPLETION[dynasty.length] ?? DYNASTY_COMPLETION.regular;
-  const titles = dynastyTitles(dynasty);
+  const titles = dynastyTitles(dynasty, teamId);
   const coins = Math.floor((base + titles * DYNASTY_TITLE_BONUS) * dynastyCoinFactor(dynasty.startMode));
   return { coins, label: titles ? `Ten-year dynasty · ${titles} title${titles === 1 ? '' : 's'}` : 'Ten-year dynasty' };
 }

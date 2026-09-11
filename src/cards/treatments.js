@@ -402,25 +402,50 @@ function bronzeAccent(theme) {
  * team's — so the contrast contract at the top of this file holds by
  * construction. The keyline is nudged by readableOn like the others.
  */
+//
+// ── THE CUP IN THE TEAM'S COLOURS (2026-09-11) ─────────────────────────────
+//
+// The user: "make the teal part auto-adapt to each team's secondary color,
+// and the squiggle be the accent". So the brush is the team's SECONDARY, the
+// scribble its ACCENT, and the frame and band edge sweep from one to the other.
+// Each is nudged by readableOn against what it is painted on — the brush
+// against the field (or the band, for the band's patches), the scribble
+// against the brush it crosses — because half the league's accent IS its
+// secondary (gold on gold would vanish) and some secondaries sit at the
+// field's own brightness (the 1994-2003 Cavs' orange on their blue).
+//
+// `ctx` carries the raw pair from CardTemplate. A caller without it — the
+// sweeps — falls back to the theme's own derived pair; the cup's teal and
+// purple are the last resort, and what the approved mockups wore.
 export const THROWBACK_TEAL = '#1FB5B5';
-export const THROWBACK_PURPLE = '#6A2C91';
+export const THROWBACK_PURPLE = '#5B2A86';
 
-function throwbackLook(theme) {
+function throwbackLook(theme, ctx = {}) {
+  const secondary = ctx.secondary ?? theme.stripeSecondary ?? THROWBACK_TEAL;
+  const accent = ctx.accent ?? theme.accentOnField ?? THROWBACK_PURPLE;
+  const onSurface = ground => {
+    const brush = readableOn(secondary, ground, MIN_DECOR_CONTRAST);
+    return { brush, light: shade(brush, 0.18), scribble: readableOn(accent, brush, MIN_ACCENT_CONTRAST) };
+  };
+  const field = onSurface(theme.field);
+  const band = onSurface(theme.bandTop);
   return {
     ...theme,
-    frame: readableOn(THROWBACK_TEAL, theme.field, MIN_DECOR_CONTRAST),
+    frame: field.brush,
     // The band's diagonal stripes step aside: the brush patches are its pattern.
     stripeTonal: 'transparent',
     stripeSecondary: 'transparent',
     treatment: {
       id: 'throwback',
       motif: 'throwback',
+      // ThrowbackMotif's colours: `field` for the corners, `band` for the band's patches.
+      motifColors: { field, band },
       fieldStops: [theme.field],
       bandStops: [theme.bandTop, theme.bandBottom],
       sheen: null,
       band: null,
-      frameImage: `linear-gradient(135deg, ${THROWBACK_TEAL} 0%, #2BC9C9 45%, ${THROWBACK_PURPLE} 100%)`,
-      bandEdge: `linear-gradient(90deg, ${THROWBACK_TEAL} 0%, #2BC9C9 50%, ${THROWBACK_PURPLE} 100%)`,
+      frameImage: `linear-gradient(135deg, ${field.brush} 0%, ${field.light} 45%, ${field.scribble} 100%)`,
+      bandEdge: `linear-gradient(90deg, ${band.brush} 0%, ${band.scribble} 100%)`,
     },
   };
 }
@@ -444,9 +469,11 @@ export const TREATMENT_IDS = Object.keys(TREATMENTS);
  * two season sets render exactly as they did before this file existed, and
  * treatments.test.js asserts it rather than trusting it.
  */
-export function applyTreatment(theme, treatmentId) {
+export function applyTreatment(theme, treatmentId, ctx = {}) {
   const fn = TREATMENTS[treatmentId];
-  return fn ? fn(theme) : theme;
+  // `ctx` is the team's raw colour pair ({ secondary, accent }) for a treatment
+  // that paints in it (throwback); the others take the theme alone.
+  return fn ? fn(theme, ctx) : theme;
 }
 
 /**

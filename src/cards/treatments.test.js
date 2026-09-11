@@ -17,6 +17,7 @@ import { readFileSync } from 'node:fs';
 import {
   INK_LIGHT,
   MIN_ACCENT_CONTRAST,
+  MIN_DECOR_CONTRAST,
   compositeOver,
   contrastRatio,
   deriveFieldTheme,
@@ -938,12 +939,14 @@ describe('the stylesheet the treatments paint through', () => {
 
 // ── THE THROWBACK TREATMENT (docs/plans/2026-09-10-throwbacks-design.md) ─────
 describe('the throwback treatment', () => {
-  it('sweeps the keyline teal to purple and lays a band edge, all static gradients', () => {
+  it('sweeps the keyline brush to scribble and lays a band edge, all static gradients', () => {
     const t = themeFor(STOCK[0], 'throwback');
     expect(t.treatment.id).toBe('throwback');
     expect(t.treatment.motif).toBe('throwback');
-    expect(t.treatment.frameImage).toMatch(/^linear-gradient\(135deg, #1FB5B5/);
+    const { field } = t.treatment.motifColors;
+    expect(t.treatment.frameImage).toBe(`linear-gradient(135deg, ${field.brush} 0%, ${field.light} 45%, ${field.scribble} 100%)`);
     expect(t.treatment.bandEdge).toMatch(/^linear-gradient\(90deg/);
+    expect(t.frame).toBe(field.brush);
   });
 
   it('steps the band stripes aside and leaves every inked surface as the team had it', () => {
@@ -957,5 +960,30 @@ describe('the throwback treatment', () => {
         expect(t[k], k).toBe(base[k]);
       }
     }
+  });
+});
+
+// ── THE CUP IN THE TEAM'S COLOURS (the user, 2026-09-11) ─────────────────────
+describe('the throwback cup in team colours', () => {
+  it('paints the brush in the secondary and the scribble in the accent, each readable where it lands', () => {
+    for (const team of ALL_TEAMS) {
+      const [abbr, primary, secondary, accent] = team;
+      const base = deriveFieldTheme(primary, secondary, accent);
+      const t = applyTreatment(base, 'throwback', { secondary, accent });
+      const { field, band } = t.treatment.motifColors;
+      expect(contrastRatio(field.brush, base.field), `${abbr} brush on the field`).toBeGreaterThanOrEqual(MIN_DECOR_CONTRAST - 1e-6);
+      expect(contrastRatio(band.brush, base.bandTop), `${abbr} brush on the band`).toBeGreaterThanOrEqual(MIN_DECOR_CONTRAST - 1e-6);
+      expect(contrastRatio(field.scribble, field.brush), `${abbr} scribble on the brush`).toBeGreaterThanOrEqual(MIN_ACCENT_CONTRAST - 1e-6);
+      expect(contrastRatio(band.scribble, band.brush), `${abbr} band scribble on its brush`).toBeGreaterThanOrEqual(MIN_ACCENT_CONTRAST - 1e-6);
+    }
+  });
+
+  it('keeps the secondary itself where the field lets it, and nudges an accent that IS the secondary', () => {
+    // Lakers: gold on purple reads as it is; the accent is the same gold, so
+    // the scribble is moved off it rather than vanishing into the brush.
+    const base = deriveFieldTheme('#330072', '#FFC72C', '#FFC72C');
+    const { field } = applyTreatment(base, 'throwback', { secondary: '#FFC72C', accent: '#FFC72C' }).treatment.motifColors;
+    expect(field.brush.toLowerCase()).toBe('#ffc72c');
+    expect(field.scribble.toLowerCase()).not.toBe('#ffc72c');
   });
 });

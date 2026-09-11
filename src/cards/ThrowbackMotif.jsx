@@ -1,20 +1,24 @@
-// THE THROWBACKS MOTIF — the 1990s cup's teal brush stroke and purple scribble,
-// on every Throwbacks card whatever its decade (the user, 2026-09-10: one
-// uniform look, "keep the loud colors, it's fine"; the design is
-// docs/plans/2026-09-10-throwbacks-design.md). The palette around it is the
-// `throwback` treatment's (treatments.js), and CardTemplate draws this for any
-// treatment that carries `motif: 'throwback'`.
+// THE THROWBACKS MOTIF — the 1990s cup's brush stroke and scribble, on every
+// Throwbacks card whatever its decade (the user, 2026-09-10: one uniform look;
+// the design is docs/plans/2026-09-10-throwbacks-design.md). CardTemplate draws
+// this for any treatment that carries `motif: 'throwback'`.
+//
+// IN THE TEAM'S COLOURS (2026-09-11): the brush is the team's secondary and the
+// scribble its accent, each already nudged to read where it lands — the
+// `throwback` treatment (treatments.js) works them out and hands them in as
+// `colors: { field, band }`. The cup's own teal and purple are the fallback.
 //
 // Three slots, each a place the card already reserves for decoration and where
-// no text sits: the TOP-RIGHT and BOTTOM-LEFT corners the dotted chevrons hold
-// on every other set, and the TOP BAND's two open patches — left of the league
-// mark, and the gap between SPEED and POWER. Nothing is painted under a number
-// or a name.
+// no text sits: the TOP-RIGHT corner the chevron holds on every other set, the
+// BOTTOM-LEFT corner — flush, so the strokes come off the card's edge — and the
+// TOP BAND's two open patches — left of the league mark, flush with the edge,
+// and the gap between SPEED and POWER. Nothing is painted under a number or a
+// name.
 //
 // Static SVG drawn from shapes, not images: the batch export screenshots the
 // card, so there is nothing to load and nothing to animate.
 import { useId } from 'react';
-import { THROWBACK_TEAL } from './treatments.js';
+import { THROWBACK_TEAL, THROWBACK_PURPLE } from './treatments.js';
 import s from './ThrowbackMotif.module.css';
 
 // The bottom-left slot sits FLUSH in the card's corner (the user, 2026-09-10:
@@ -26,8 +30,9 @@ const SIZE = { band: [843, 112], top: [135, 132], bottom: [210, 160] };
 // — and between the stat blocks. The frame paints over the outer 7px.
 const LEFT = { x: 0, y: 0, w: 77, h: 112 };
 const GAP = { x: 380, y: 7, w: 69, h: 99 };
-const TEAL_LIGHT = '#39CACA';
-const SCRIBBLE = '#5B2A86';
+
+/** The cup's own colours: what the mockups wore, and the fallback. */
+const CUP = { brush: THROWBACK_TEAL, light: '#39CACA', scribble: THROWBACK_PURPLE };
 
 const f1 = n => n.toFixed(1);
 
@@ -66,11 +71,11 @@ function brushDefs(u) {
   );
 }
 
-const swath = (u, d, w, color = THROWBACK_TEAL) => (
+const swath = (u, d, w, color) => (
   <path d={d} fill="none" stroke={color} strokeWidth={w} strokeLinecap="round" filter={`url(#brush${u})`} />
 );
-const scribble = (u, d, w = 6) => (
-  <path d={d} fill="none" stroke={SCRIBBLE} strokeWidth={w} strokeLinejoin="round" strokeLinecap="round" filter={`url(#rough${u})`} />
+const scribble = (u, d, color, w = 6) => (
+  <path d={d} fill="none" stroke={color} strokeWidth={w} strokeLinejoin="round" strokeLinecap="round" filter={`url(#rough${u})`} />
 );
 const clipTo = (id, z) => (
   <clipPath id={id}>
@@ -79,49 +84,50 @@ const clipTo = (id, z) => (
 );
 
 const DRAW = {
-  band: u => (
+  band: (u, c) => (
     <>
       {brushDefs(u)}
       <defs>{clipTo(`l${u}`, LEFT)}{clipTo(`g${u}`, GAP)}</defs>
       {/* Off the top-left corner, sweeping down and right. */}
       <g clipPath={`url(#l${u})`}>
-        {swath(u, 'M -18 -16 L 96 110', 40)}
-        {scribble(u, zigzag(-2, 12, 104, 11, 4, 46))}
+        {swath(u, 'M -18 -16 L 96 110', 40, c.brush)}
+        {scribble(u, zigzag(-2, 12, 104, 11, 4, 46), c.scribble)}
       </g>
       <g clipPath={`url(#g${u})`}>
-        {swath(u, 'M 372 100 L 456 14', 38)}
-        {scribble(u, zigzag(384, 92, 84, 12, 4, -50))}
+        {swath(u, 'M 372 100 L 456 14', 38, c.brush)}
+        {scribble(u, zigzag(384, 92, 84, 12, 4, -50), c.scribble)}
       </g>
     </>
   ),
-  top: u => (
+  top: (u, c) => (
     <>
       {brushDefs(u)}
-      {swath(u, 'M -10 70 L 150 18', 40)}
-      {swath(u, 'M 10 132 L 150 86', 30, TEAL_LIGHT)}
-      {scribble(u, zigzag(4, 98, 140, 16, 5, -22), 7)}
+      {swath(u, 'M -10 70 L 150 18', 40, c.brush)}
+      {swath(u, 'M 10 132 L 150 86', 30, c.light)}
+      {scribble(u, zigzag(4, 98, 140, 16, 5, -22), c.scribble, 7)}
     </>
   ),
   // Off the bottom-left corner, sweeping up and right: the strokes start past
   // the corner, so they read as coming off the card's edge.
-  bottom: u => (
+  bottom: (u, c) => (
     <>
       {brushDefs(u)}
-      {swath(u, 'M -24 188 L 196 16', 46)}
-      {swath(u, 'M -20 116 L 104 20', 24, TEAL_LIGHT)}
-      {scribble(u, zigzag(-6, 158, 214, 15, 6, -38), 7)}
+      {swath(u, 'M -24 188 L 196 16', 46, c.brush)}
+      {swath(u, 'M -20 116 L 104 20', 24, c.light)}
+      {scribble(u, zigzag(-6, 158, 214, 15, 6, -38), c.scribble, 7)}
     </>
   ),
 };
 
-export default function ThrowbackMotif({ slot }) {
+export default function ThrowbackMotif({ slot, colors = null }) {
   const uid = useId().replace(/[^a-zA-Z0-9]/g, '');
   const draw = DRAW[slot];
   if (!draw) return null;
   const [w, h] = SIZE[slot];
+  const palette = { ...CUP, ...(slot === 'band' ? colors?.band : colors?.field) };
   return (
     <svg className={s[slot]} width={w} height={h} viewBox={`0 0 ${w} ${h}`} aria-hidden="true" data-motif="throwback" data-slot={slot}>
-      {draw(uid)}
+      {draw(uid, palette)}
     </svg>
   );
 }

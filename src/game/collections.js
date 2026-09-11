@@ -117,6 +117,15 @@ export const SPECIAL_SETS = [
   { id: 'wnba-rookie',       label: 'WNBA Rookie',       league: 'WNBA' },
 ];
 
+/**
+ * The cards a special set's COMPLETION GOAL asks for: the set's own, never a
+ * requested card (Free Agents). A request joins its set's look and its packs,
+ * but "he shouldn't have to be collected to finish the rookie collection"
+ * (the user, 2026-09-10, of Bob Sura's requested Rookie card) — so a request
+ * never moves anyone's finish line, and nobody's finished set reopens.
+ */
+const goalCards = setId => (CARD_SETS[setId] ?? []).filter(card => !card.requested).map(cardKey).sort();
+
 export const GOALS = (() => {
   const goals = [];
 
@@ -150,7 +159,7 @@ export const GOALS = (() => {
   // card built to the difficulty — so these pay coins by the same buy-out
   // share as every other goal and claim as coins-only until then.
   for (const { id, label } of SPECIAL_SETS.filter(s => s.league === 'NBA')) {
-    const requires = (CARD_SETS[id] ?? []).map(cardKey).sort();
+    const requires = goalCards(id);
     if (!requires.length) continue;
     goals.push({
       id: `set-${id}`,
@@ -175,7 +184,7 @@ export const GOALS = (() => {
     reward: REWARD_BY_GOAL['wnba-set'] ?? null,
   });
   for (const { id, label } of SPECIAL_SETS.filter(s => s.league === 'WNBA')) {
-    const requires = (CARD_SETS[id] ?? []).map(cardKey).sort();
+    const requires = goalCards(id);
     if (!requires.length) continue;
     goals.push({
       id: `set-${id}`,

@@ -9,7 +9,8 @@ import { getPlayerRarity } from './rarity.js';
 import { joinFreeAgents, getCardByKey } from './cardSets.js';
 import { withFreeAgent } from '../../scripts/cardgen/freeAgentFile.js';
 import { SPECIAL_SETS_IN_PACKS } from './packEngine.js';
-import { SPECIAL_SETS } from './collections.js';
+import { SPECIAL_SETS, GOALS } from './collections.js';
+import { CARD_SETS, cardKey } from './cardSets.js';
 
 describe('the invoice', () => {
   it('prices the finished card by its own salary and set, not the quote', () => {
@@ -75,6 +76,21 @@ describe('a built card joins its set', () => {
 
   it('the shipped game still finds its base cards with the free-agent file merged in', () => {
     expect(getCardByKey('Nikola_Jokic')).toBeTruthy();
+  });
+});
+
+describe('a requested card and its set\'s collection', () => {
+  it('joins the set (its look and its packs) but never its completion goal', () => {
+    // "He shouldn't have to be collected to finish the rookie collection" (the user, 2026-09-10).
+    const requested = Object.values(CARD_SETS).flat().filter(c => c.requested);
+    const goalKeys = new Set(GOALS.flatMap(g => g.requires));
+    for (const card of requested) {
+      expect(CARD_SETS[card.set].some(c => c.id === card.id), card.id).toBe(true);
+      expect(goalKeys.has(cardKey(card)), cardKey(card)).toBe(false);
+    }
+    const rookieGoal = GOALS.find(g => g.id === 'set-rookie');
+    expect(rookieGoal.requires.length)
+      .toBe(CARD_SETS.rookie.filter(c => !c.requested).length);
   });
 });
 

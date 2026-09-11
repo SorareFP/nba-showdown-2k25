@@ -62,9 +62,10 @@ Rookie cards come out slightly cheaper at the same weight (Rare 970 at 0.2), bec
 ## Packs and collections
 
 - **Throwbacks** joins `SPECIAL_SETS_IN_PACKS`. Boosters draw from it by rarity, under the existing `SPECIAL_BAND_SHARE` cap. A Team Pack draws the franchise's throwbacks through `currentFranchise`, the Kawhi-in-Toronto rule.
-- A request that lands in Rookie, Super Season or Summer Standouts goes wherever that set already goes, and joins that set's completion goal. Anyone who had finished the goal sees it reopen; their claim stays paid (claims are receipts).
+- A request that lands in Rookie, Super Season or Summer Standouts takes that set's look and goes wherever that set's cards go in packs, including the set's own pack.
+- **A requested card never counts toward a set's completion goal (decided 2026-09-10).** The user, of Bob Sura's Rookie card: "he shouldn't have to be collected to finish the rookie collection." So no request moves anyone's finish line, and no finished set reopens (`goalCards` in `src/game/collections.js`).
 - **Throwbacks has no completion goal (decided).** It grows with every request, so a goal would keep reopening.
-- **The Throwbacks look (decided): "somewhere between vintage and base."** The 2026-27 layout with vintage touches. It is mocked up for the user's approval before shipping.
+- **The Throwbacks look (decided, and shipped):** one 1990s teal-brush and purple-scribble look for every Throwbacks card. See `2026-09-10-throwbacks-design.md`.
 
 ## Flow
 

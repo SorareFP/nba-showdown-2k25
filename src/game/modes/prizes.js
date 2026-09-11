@@ -141,7 +141,8 @@ export function dynastyClaim(dynasty, which) {
     return r.coins ? { ...r, id: 'complete' } : { error: 'That dynasty is not finished' };
   }
   const year = Number(which);
-  if (!Number.isInteger(year) || year < 1 || year > DYNASTY_YEARS) return { error: 'No such year' };
+  // An aging dynasty runs past ten (2026-09-11); a hundred is only a sanity bound.
+  if (!Number.isInteger(year) || year < 1 || year > 100) return { error: 'No such year' };
   const r = dynastyYearEarnings(dynasty, year);
   if (!hist.some(h => h.year === year)) return { error: 'That year has not been played' };
   return r.coins ? { coins: r.coins, label: `Year ${year} · ${r.label}`, id: String(year) } : { error: 'That year finished out of the money' };

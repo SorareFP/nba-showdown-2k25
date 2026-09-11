@@ -152,11 +152,24 @@ export function dayFactor(day = 1) {
   return 1 - DAY_DISCOUNT * (d - 1);
 }
 
+/**
+ * AGE, in an aging dynasty (the user, 2026-09-11: "Retire + cheaper"): a
+ * player's price falls 7% a year past 31, never below 40% of his value.
+ * `ctx.age` is only set when the dynasty ages, so a ten-year one is untouched.
+ */
+export const AGE_PEAK = 31;
+export const AGE_DECLINE = 0.07;
+export const AGE_FLOOR = 0.4;
+export function ageFactor(age) {
+  if (!Number.isFinite(age) || age <= AGE_PEAK) return 1;
+  return Math.max(AGE_FLOOR, 1 - AGE_DECLINE * (age - AGE_PEAK));
+}
+
 /** The least he signs for. Never shown to the player. */
 export function floorFor(card, pid, ctx, years, day = 1) {
   const p = personality(pid);
   if (p.flat) return MIN_DP;
-  const raw = fairDp(card) * p.premium * teamFactor(pid, ctx) * yearFactor(pid, years) * dayFactor(day);
+  const raw = fairDp(card) * p.premium * teamFactor(pid, ctx) * yearFactor(pid, years) * dayFactor(day) * ageFactor(ctx?.age);
   return Math.max(MIN_DP, Math.round(raw));
 }
 

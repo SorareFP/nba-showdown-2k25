@@ -6,9 +6,10 @@ import {
   onClock, draftPick, draftAvailable, simDraft, aiDraftChoice, finishDraft, closeSigning, nextFaDay, fillRoster,
   startSeason, endSeason, closeResign, lotteryOdds, drawLottery, signRookie, closeRookies, classFor,
   projectedPayroll, summarizeDynasty, deadMoney, leagueKeys, passPick, DRAFT_CLASS_PER_TEAM, ROOKIE_ROUNDS,
+  baseAge, ageOf, retireChance, endDynasty,
 } from './dynasty.js';
 import { CAP_DP, APRON_DP, FA_DAYS, fairDp, PERSONALITIES } from './dynastyMarket.js';
-import { dynastyYearEarnings, dynastyCompletionEarnings, DYNASTY_YEARS, SEASON_REWARDS } from './prizes.js';
+import { dynastyYearEarnings, dynastyCompletionEarnings, dynastyClaim, DYNASTY_YEARS, SEASON_REWARDS } from './prizes.js';
 import { buildAiLeague } from './aiTeams.js';
 import { recordResult, roundFixtures, advance, totalRounds, PHASE } from './season.js';
 import { CARDS } from '../cards.js';
@@ -66,7 +67,8 @@ function expectConserved(d) {
   const held = [...Object.keys(d.contracts), ...Object.keys(d.rights)];
   expect(new Set(held).size).toBe(held.length);
   expect(held.every(k => league.includes(k))).toBe(true);
-  expect(held.length + freeAgentKeys(d).length).toBe(league.length);
+  // ...and the retired, who are neither held nor free.
+  expect(held.length + freeAgentKeys(d).length + (d.retired ?? []).length).toBe(league.length);
   const waiting = new Set(d.draftPool);
   expect(league.some(k => waiting.has(k))).toBe(false);
   const persons = universe(d).map(k => getCardByKey(k)?.id);
@@ -329,6 +331,71 @@ describe('the turn of the year', () => {
     d = closeRookies(d, { rng });
     expect(d.phase).toBe(DPHASE.freeAgency);
     expectConserved(d);
+  });
+});
+
+describe('aging (2026-09-11)', () => {
+  const aged = (seed = 31) => createDynasty({
+    id: 'A', size: 4, length: 'online', startMode: 'own', aging: true, rng: seeded(seed),
+    human: { name: 'Me', roster: buildAiLeague(1, { rng: seeded(1) })[0].roster },
+  });
+
+  it('gives every card an age: base cards from 2025-26, special cards their own', () => {
+    expect(CARDS.every(c => Number.isFinite(baseAge(cardKey(c))))).toBe(true);
+    expect(Math.max(...CARDS.map(c => baseAge(cardKey(c))))).toBeGreaterThanOrEqual(38);
+    const rookie = CARD_SETS.rookie.find(c => Number.isFinite(c.age));
+    expect(baseAge(cardKey(rookie))).toBe(rookie.age);
+  });
+
+  it('retires nobody before 35 and everybody by 40', () => {
+    expect([34, 35, 37, 39, 40, 44].map(retireChance)).toEqual([0, 1 / 6, 0.5, 5 / 6, 1, 1]);
+  });
+
+  it('ages the league a year a season, retires the old, and prices age into the ask', () => {
+    const rng = seeded(32);
+    let d = startSeason(aged(), { rng });
+    const young = rosterKeys(d, HUMAN_ID).find(k => ageOf(d, k) < 30);
+    const before = ageOf(d, young);
+    d = endSeason(finishSeason(d), { rng });
+    expect(ageOf(d, young)).toBe(before + 1);
+    for (const k of d.retired) {
+      expect(ageOf(d, k)).toBeGreaterThanOrEqual(35);
+      expect(d.contracts[k]).toBeUndefined();
+      expect(freeAgentKeys(d)).not.toContain(k);
+    }
+    expectConserved(d);
+    // The same player, same team: older is cheaper past 31.
+    const probe = rosterKeys(d, HUMAN_ID)[0];
+    const at = age => quote({ ...d, joined: { ...d.joined, [probe]: d.year - (age - baseAge(probe)) } }, HUMAN_ID, probe).ask;
+    expect(at(baseAge(probe) + 12)).toBeLessThanOrEqual(at(baseAge(probe)));
+  });
+
+  it('never ages or retires anyone in a ten-year dynasty', () => {
+    const rng = seeded(33);
+    let t = startSeason(ownDynasty(), { rng });
+    const k = rosterKeys(t, HUMAN_ID)[0];
+    const a0 = ageOf(t, k);
+    t = endSeason(finishSeason(t), { rng });
+    expect(ageOf(t, k)).toBe(a0);
+    expect(t.retired).toEqual([]);
+  });
+
+  it('runs past ten years, and ends when you end it', () => {
+    const rng = seeded(34);
+    let d = aged();
+    for (let guard = 0; guard < 80 && d.history.length < 11; guard += 1) {
+      d = autoYear(d, rng);
+      expectConserved(d);
+    }
+    expect(d.history).toHaveLength(11);
+    expect(d.phase).not.toBe(DPHASE.done);
+    expect(summarizeDynasty(d).years).toBeNull();
+    expect(dynastyCompletionEarnings(d).coins).toBe(0);
+    d = endDynasty(d);
+    expect(d.phase).toBe(DPHASE.done);
+    expect(dynastyCompletionEarnings(d).coins).toBeGreaterThan(0);
+    expect(dynastyClaim(d, 11).error ?? null).not.toBe('No such year');
+    expect(() => endDynasty(ownDynasty())).toThrow(/ten-year/);
   });
 });
 

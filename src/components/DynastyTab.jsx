@@ -28,7 +28,7 @@ import {
   SEASON_REWARDS, DYNASTY_COMPLETION, DYNASTY_TITLE_BONUS, FANTASY_DYNASTY_FACTOR,
   dynastyCoinFactor, dynastyYearEarnings, dynastyCompletionEarnings,
 } from '../game/modes/prizes.js';
-import { createDynasty, START_MODES, DPHASE, simDraft, endSeason, summarizeDynasty, teamOf } from '../game/modes/dynasty.js';
+import { createDynasty, START_MODES, DPHASE, simDraft, endSeason, endDynasty, isOffseason, summarizeDynasty, teamOf } from '../game/modes/dynasty.js';
 import { CAP_DP } from '../game/modes/dynastyMarket.js';
 import RosterPicker, { Choice } from './league/RosterPicker.jsx';
 import { SeasonDashboard } from './SeasonTab.jsx';
@@ -128,6 +128,7 @@ export default function DynastyTab({
         length: cfg.length,
         startMode: cfg.startMode,
         series: cfg.series ?? null,
+        aging: Boolean(cfg.aging),
       });
       // Into the draft room with the AI's picks before yours already made.
       if (d.phase === DPHASE.draft) d = simDraft(d);
@@ -206,7 +207,7 @@ function DynastyList({ list, onOpen, onNew, onDelete }) {
               <div key={d.id} className={styles.seasonCard}>
                 <div className={styles.seasonCardTop}>
                   <span className={styles.badge}>{START_MODES[d.startMode]?.label ?? d.startMode}</span>
-                  <span className={styles.muted}>{d.phase === DPHASE.done ? 'Complete' : `Year ${s.year} of ${s.years}`}</span>
+                  <span className={styles.muted}>{d.phase === DPHASE.done ? 'Complete' : `Year ${s.year}${s.years ? ` of ${s.years}` : ''}`}</span>
                 </div>
                 <div className={styles.seasonCardLine}>{d.name}</div>
                 <div className={styles.record}>{s.wins}–{s.losses}</div>
@@ -239,6 +240,7 @@ function DynastySetup({ teamA, collection, uid, onStart, onCancel }) {
   const [length, setLength] = useState('online');
   const [pick, setPick] = useState({ roster: [], deck: null, deckName: null });
   const [series, setSeries] = useState(null);
+  const [aging, setAging] = useState(false);
   const [decks, setDecks] = useState([]);
   const [deckId, setDeckId] = useState('default');
   const [busy, setBusy] = useState(false);
@@ -266,6 +268,7 @@ function DynastySetup({ teamA, collection, uid, onStart, onCancel }) {
       deck: own ? pick.deck : (chosenDeck?.cards ?? null),
       deckName: own ? pick.deckName : (chosenDeck?.name ?? null),
       series: seriesFor(size, series),
+      aging,
     });
     setBusy(false);
   };
@@ -292,6 +295,22 @@ function DynastySetup({ teamA, collection, uid, onStart, onCancel }) {
             {Object.values(START_MODES).map(m => (
               <Choice key={m.id} on={mode === m.id} onClick={() => setMode(m.id)} title={m.label} sub={m.blurb} />
             ))}
+          </div>
+        </div>
+
+        <div className={styles.field}>
+          <span className={styles.label}>Players</span>
+          <div className={styles.choices}>
+            <Choice
+              on={!aging} onClick={() => setAging(false)}
+              title="Ten years"
+              sub="Nobody ages. The dynasty ends after its tenth season."
+            />
+            <Choice
+              on={aging} onClick={() => setAging(true)}
+              title="Players age"
+              sub="A year older every season: asks fall past 31, retirement from 35, certain at 40. Runs until you end it."
+            />
           </div>
         </div>
 
@@ -340,7 +359,9 @@ function DynastySetup({ teamA, collection, uid, onStart, onCancel }) {
         <div className={styles.prize}>
           <strong>Coins{factor > 1 && <span className={dy.buff}>Fantasy draft ×{factor}</span>}</strong>
           <span>Every year: 🏆 {x(money.champion)} · 🥈 {x(money.runnerUp)} · playoffs {x(money.playoffs)}</span>
-          <span>All ten years: {x(bonus)}, plus {x(DYNASTY_TITLE_BONUS)} for every title</span>
+          <span>
+            {aging ? 'Once ten seasons are in' : 'All ten years'}: {x(bonus)}, plus {x(DYNASTY_TITLE_BONUS)} for every title
+          </span>
           <span className={styles.muted}>On top of the coins every game you play already pays.</span>
         </div>
 
@@ -355,7 +376,7 @@ function DynastySetup({ teamA, collection, uid, onStart, onCancel }) {
 // ── One dynasty ─────────────────────────────────────────────────────────────
 
 function DynastyView({ d, uid, commit, onPlayFixture, onBack, onAbandon }) {
-  const { toast } = useDialogs();
+  const { toast, ask } = useDialogs();
 
   /**
    * Run one transition and save it. A refusal from the rules (the cap, a full
@@ -396,7 +417,7 @@ function DynastyView({ d, uid, commit, onPlayFixture, onBack, onAbandon }) {
           presetExtra={{ returnTab: 'dynasty' }}
           finale={(
             <button type="button" className={styles.primary} onClick={closeYear}>
-              {d.year >= d.years ? 'Close out the dynasty →' : `Close out Year ${d.year} — to the offseason →`}
+              {!d.aging && d.year >= d.years ? 'Close out the dynasty →' : `Close out Year ${d.year} — to the offseason →`}
             </button>
           )}
         />
@@ -427,6 +448,25 @@ function DynastyView({ d, uid, commit, onPlayFixture, onBack, onAbandon }) {
         </div>
         <div className={styles.headActions}>
           <button type="button" className={styles.ghost} onClick={onBack}>All dynasties</button>
+          {/* An aging dynasty has no tenth-year finish: it ends when you end it. */}
+          {d.aging && d.history.length > 0 && isOffseason(d) && (
+            <button
+              type="button"
+              className={styles.ghost}
+              onClick={async () => {
+                const yes = await ask({
+                  title: 'End the dynasty here?',
+                  body: d.history.length >= 10
+                    ? `After ${d.history.length} seasons. The ten-year bonus is yours to claim.`
+                    : `After ${d.history.length} seasons — short of the ten that pay the completion bonus.`,
+                  confirmLabel: 'End it',
+                });
+                if (yes) act(x => endDynasty(x));
+              }}
+            >
+              End the dynasty
+            </button>
+          )}
           <button type="button" className={styles.ghost} onClick={onAbandon}>Abandon</button>
         </div>
       </header>
@@ -519,7 +559,8 @@ function DynastyFinale({ d, uid, commit }) {
   return (
     <div className={styles.finale}>
       <div className={styles.finaleTitle}>
-        Ten years. {s.titles ? '🏆'.repeat(s.titles) : 'No rings — but you saw it through.'}
+        {d.history.length === 10 ? 'Ten years.' : `${d.history.length} seasons.`}{' '}
+        {s.titles ? '🏆'.repeat(s.titles) : 'No rings — but you saw it through.'}
       </div>
       <div className={styles.muted}>
         {s.wins}–{s.losses} across the decade · {s.titles} title{s.titles === 1 ? '' : 's'}

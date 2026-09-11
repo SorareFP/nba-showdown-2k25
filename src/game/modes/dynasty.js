@@ -37,6 +37,8 @@
 // storage or the screen. DynastyTab.jsx is the shell.
 import { CARDS } from '../cards.js';
 import { ALL_CARDS, BASE_SET, cardKey, getCardByKey } from '../cardSets.js';
+// Ages for the cards that do not carry one — scripts/dynasty/buildAges.mjs.
+import DYNASTY_AGES from '../../../card-data/generated/dynasty-ages.json' with { type: 'json' };
 import { MAX } from '../teamRules.js';
 import { DYNASTY_YEARS } from './prizes.js';
 import { createSeason, standings, PHASE } from './season.js';
@@ -202,7 +204,40 @@ export function ctxFor(d, key, teamId) {
     lastTeamId: d.lastTeam?.[key] ?? null,
     standing: teamOf(d, teamId)?.last ?? null,
     spurnedBy: d.spurned?.[key] ?? null,
+    // Only an aging dynasty prices age in (dynastyMarket.ageFactor).
+    age: d.aging ? ageOf(d, key) : null,
   };
+}
+
+// ── Age (the user, 2026-09-11) ──────────────────────────────────────────────
+//
+// "give each card an age on Jan. 1 of the year the card is from, and every
+// new player that enters the draft starts aging the year they are drafted."
+// So a player's age is his card's age plus the seasons since he JOINED the
+// league — year one for everyone on a starting roster, the draft year for a
+// pick — and a player still waiting in the draft pool does not age. Only an
+// aging dynasty moves the number; a ten-year one shows the card's age.
+
+/** The age on the card: its own, else the generated table, else a league-median 27. */
+export function baseAge(key) {
+  const card = cardOf(key);
+  if (Number.isFinite(card?.age)) return card.age;
+  return DYNASTY_AGES[key] ?? 27;
+}
+
+/** A player's age in this dynasty's current (or coming) season. */
+export function ageOf(d, key) {
+  const joined = d.joined?.[key];
+  return baseAge(key) + (d.aging && joined ? Math.max(0, d.year - joined) : 0);
+}
+
+/** Retirement from 35 — one in six, a sixth more each year — certain at 40. */
+export const RETIRE_FROM = 35;
+export const RETIRE_BY = 40;
+export function retireChance(age) {
+  if (!Number.isFinite(age) || age < RETIRE_FROM) return 0;
+  if (age >= RETIRE_BY) return 1;
+  return (age - RETIRE_FROM + 1) / (RETIRE_BY - RETIRE_FROM + 1);
 }
 
 /** The day of the market: free agency's day, the leftovers after it, else day one. */
@@ -331,6 +366,8 @@ export function createDynasty({
   startMode = 'own',
   // Best-of per playoff round, first round first, for every year (bracket.js).
   series = null,
+  // Players age and retire, and the dynasty runs until you end it.
+  aging = false,
   rng = Math.random,
 } = {}) {
   if (!START_MODES[startMode]) throw new Error(`dynasty: no start mode ${startMode}`);
@@ -390,6 +427,7 @@ export function createDynasty({
     size,
     length,
     series: Array.isArray(series) && series.length ? series : null,
+    aging: Boolean(aging),
     years: DYNASTY_YEARS,
     year: 1,
     phase: DPHASE.preseason,
@@ -397,6 +435,8 @@ export function createDynasty({
     league: rostered,
     draftPool: waiting,
     retired: [],
+    // The year each player joined the league — where his aging starts.
+    joined: Object.fromEntries(rostered.map(k => [k, 1])),
     traits,
     teams,
     contracts,
@@ -552,7 +592,14 @@ export function fillRoster(d, teamId, min = MIN_ROSTER) {
     }
     choice ??= free[0] ?? null;
     if (!choice) break;
-    if (invite) x = { ...x, draftPool: x.draftPool.filter(k => k !== choice.key), league: [...leagueKeys(x), choice.key] };
+    if (invite) {
+      x = {
+        ...x,
+        draftPool: x.draftPool.filter(k => k !== choice.key),
+        league: [...leagueKeys(x), choice.key],
+        joined: { ...(x.joined ?? {}), [choice.key]: x.year },
+      };
+    }
     x = sign(x, teamId, choice.key, { dp: choice.dp, years: 1, how: 'fill' });
   }
   return x;
@@ -587,8 +634,9 @@ export function draftPick(d, teamId, key) {
     ...d,
     draft: { ...d.draft, picks: [...d.draft.picks, { n: clock.n, round: clock.round, teamId, key }] },
     rights: { ...d.rights, [key]: { teamId, kind, pick: clock.n } },
-    // Drafted is in the league, signed or not.
+    // Drafted is in the league, signed or not — and aging from this year.
     league: [...leagueKeys(d), key],
+    joined: { ...(d.joined ?? {}), [key]: d.year },
   };
   return kind === 'rookie' && clock.round === 1
     ? say(next, `Pick ${clock.n}: ${teamOf(d, teamId)?.name} take ${cardOf(key)?.name}.`)
@@ -887,7 +935,8 @@ export function endSeason(d, { rng = Math.random } = {}) {
   });
   const champ = teamOf(d, s.champion);
   let x = say({ ...d, teams, history: [...d.history, entry], season: null }, `🏆 ${champ?.name ?? 'Somebody'} win the Year ${d.year} title.`);
-  if (d.year >= (d.years ?? DYNASTY_YEARS)) return say({ ...x, phase: DPHASE.done }, 'The dynasty is complete.');
+  // A ten-year dynasty ends itself; an aging one runs until it is ended (endDynasty).
+  if (!d.aging && d.year >= (d.years ?? DYNASTY_YEARS)) return say({ ...x, phase: DPHASE.done }, 'The dynasty is complete.');
 
   const year = d.year + 1;
   const contracts = {};
@@ -904,7 +953,39 @@ export function endSeason(d, { rng = Math.random } = {}) {
     dead: (x.dead ?? []).filter(m => m.through >= year),
     phase: DPHASE.resign, talks: {}, fa: null, lottery: null,
   };
-  return aiResign(x, rng);
+  // Everyone is a year older now; the old may retire before the window opens.
+  return aiResign(retirements(x, rng), rng);
+}
+
+/**
+ * RETIREMENT, at the turn of the year in an aging dynasty: anyone in the
+ * league past 35 may go (retireChance). His contract or rights end with him —
+ * no dead money — and he never comes back.
+ */
+function retirements(d, rng) {
+  if (!d.aging) return d;
+  let x = d;
+  const gone = new Set(x.retired ?? []);
+  for (const key of leagueKeys(d)) {
+    if (gone.has(key)) continue;
+    const age = ageOf(x, key);
+    const p = retireChance(age);
+    if (!p || rng() >= p) continue;
+    const holder = x.contracts[key]?.teamId ?? x.rights?.[key]?.teamId ?? null;
+    x = { ...x, contracts: omit(x.contracts, key), rights: omit(x.rights, key), retired: [...(x.retired ?? []), key] };
+    gone.add(key);
+    if (holder) x = say(x, `${cardOf(key)?.name} retires at ${age}, from ${teamOf(x, holder)?.name}.`);
+  }
+  return x;
+}
+
+/** End an aging dynasty between seasons — it has no tenth-year finish of its own. */
+export function endDynasty(d) {
+  if (!d.aging) throw new Error('dynasty: a ten-year dynasty ends by itself');
+  if (d.phase === DPHASE.season || d.phase === DPHASE.done) throw new Error('dynasty: end it between seasons');
+  if (!d.history.length) throw new Error('dynasty: play a season first');
+  const n = d.history.length;
+  return say({ ...d, phase: DPHASE.done, talks: {}, fa: null }, `The dynasty is retired after ${n} season${n === 1 ? '' : 's'}.`);
 }
 
 /**
@@ -958,5 +1039,5 @@ export function summarizeDynasty(d) {
   const titles = d.history.filter(h => h.champion === me).length;
   const wins = d.history.reduce((t, h) => t + (h.table.find(r => r.id === me)?.w ?? 0), 0);
   const losses = d.history.reduce((t, h) => t + (h.table.find(r => r.id === me)?.l ?? 0), 0);
-  return { year: d.year, years: d.years ?? DYNASTY_YEARS, phase: d.phase, phaseLabel: PHASE_LABEL[d.phase] ?? d.phase, titles, wins, losses };
+  return { year: d.year, years: d.aging ? null : (d.years ?? DYNASTY_YEARS), phase: d.phase, phaseLabel: PHASE_LABEL[d.phase] ?? d.phase, titles, wins, losses };
 }

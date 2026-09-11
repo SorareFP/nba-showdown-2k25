@@ -13,7 +13,7 @@ import {
   DPHASE, MIN_ROSTER, MAX_ROSTER, PHASE_LABEL, isOffseason, teamOf, rosterKeys, contractsOf, payroll, deadMoney,
   rightsOf, freeAgentKeys, quote, negotiate, renounce, waive, onClock, draftAvailable, draftPick, passPick, simDraft,
   finishDraft, projectedPayroll, closeSigning, closeResign, lotteryOdds, drawLottery, classFor, signRookie,
-  closeRookies, nextFaDay, fillRoster, startSeason, rosterProblem,
+  closeRookies, nextFaDay, fillRoster, startSeason, rosterProblem, ageOf,
 } from '../../game/modes/dynasty.js';
 import {
   CAP_DP, APRON_DP, MIN_DP, FA_DAYS, CONTRACT_YEARS, MOOD_TEXT, personality, rookieScale,
@@ -58,14 +58,14 @@ export function Trait({ pid, full = false }) {
   return <span className={dy.trait} title={`${p.label} — ${p.blurb}`}>{p.icon}{full ? ` ${p.label}` : ''}</span>;
 }
 
-function PlayerCell({ cardKey }) {
+function PlayerCell({ cardKey, age = null }) {
   const c = cardOf(cardKey);
   return (
     <span className={dy.player}>
       <Face cardKey={cardKey} />
       <span className={dy.playerText}>
         <span className={dy.playerName}>{c?.name ?? cardKey}</span>
-        <span className={dy.playerSub}>{c?.pos} · {tagOf(c)} · ${c?.salary}</span>
+        <span className={dy.playerSub}>{c?.pos}{age != null ? ` · ${age}` : ''} · {tagOf(c)} · ${c?.salary}</span>
       </span>
     </span>
   );
@@ -85,7 +85,7 @@ export function PhaseTrack({ d }) {
   const at = steps.indexOf(d.phase);
   return (
     <div className={dy.track}>
-      <span className={dy.trackYear}>{d.phase === DPHASE.done ? 'Complete' : `Year ${d.year} of ${d.years}`}</span>
+      <span className={dy.trackYear}>{d.phase === DPHASE.done ? 'Complete' : `Year ${d.year}${d.aging ? '' : ` of ${d.years}`}`}</span>
       {steps.map((s, i) => (
         <span key={s} className={`${dy.step} ${i === at ? dy.stepOn : ''} ${i < at ? dy.stepDone : ''}`}>
           {i < at ? '✓ ' : ''}{PHASE_LABEL[s]}
@@ -148,7 +148,7 @@ export function FrontOffice({ d, act }) {
           <tbody>
             {rows.map(k => (
               <tr key={k.key}>
-                <td><PlayerCell cardKey={k.key} /></td>
+                <td><PlayerCell cardKey={k.key} age={ageOf(d, k.key)} /></td>
                 <td><strong>{k.dp}</strong></td>
                 <td>{k.years}</td>
                 <td><Trait pid={k.pid} /> <span className={styles.muted}>{HOW[k.how] ?? k.how}</span></td>
@@ -218,7 +218,7 @@ export function Negotiator({ d, cardKey, act, onClose = null, letGo = null }) {
         <Face cardKey={cardKey} big />
         <div>
           <div className={dy.negoName}>{q.card.name}</div>
-          <div className={styles.muted}>{q.card.pos} · {tagOf(q.card)}</div>
+          <div className={styles.muted}>{q.card.pos} · age {ageOf(d, cardKey)} · {tagOf(q.card)}</div>
           <div className={styles.muted}>${q.card.salary} · worth about {q.fair} DP</div>
           <div className={dy.traitLine}><Trait pid={q.pid} full /></div>
           <div className={dy.blurb}>{p.blurb}</div>
@@ -293,7 +293,7 @@ function MarketRow({ d, cardKey, on, onClick, showRival = false }) {
   const q = quote(d, d.humanId, cardKey);
   return (
     <button type="button" className={`${dy.row} ${on ? dy.rowOn : ''}`} onClick={onClick}>
-      <PlayerCell cardKey={cardKey} />
+      <PlayerCell cardKey={cardKey} age={ageOf(d, cardKey)} />
       <Trait pid={q.pid} />
       <span className={dy.rowAsk}>
         {q.talk.walked ? <span className={styles.muted}>walked</span> : <><strong>{q.ask}</strong> × {q.years}</>}
@@ -461,7 +461,7 @@ export function DraftRoom({ d, act }) {
               const key = keyOf(c);
               return (
                 <div key={key} className={dy.draftRow}>
-                  <PlayerCell cardKey={key} />
+                  <PlayerCell cardKey={key} age={ageOf(d, key)} />
                   <Trait pid={d.traits?.[key]} />
                   <span className={dy.rowAsk}>{fantasy ? <>asks <strong>{priceOf(key)}</strong></> : <><strong>{priceOf(key)}</strong> × 3</>}</span>
                   <button type="button" className={styles.primary} disabled={!mine} onClick={() => pick(key)}>Draft</button>
@@ -481,7 +481,7 @@ export function DraftRoom({ d, act }) {
             <div className={dy.boardList}>
               {mineSoFar.map(p => (
                 <div key={p.key} className={dy.boardLine}>
-                  <PlayerCell cardKey={p.key} />
+                  <PlayerCell cardKey={p.key} age={ageOf(d, p.key)} />
                   <span className={styles.muted}>#{p.n}{fantasy ? ` · asks ${priceOf(p.key)}` : ''}</span>
                 </div>
               ))}
@@ -544,7 +544,7 @@ export function LotteryRoom({ d, act }) {
         <>
           <div className={styles.label} style={{ marginTop: 16 }}>The top of the class</div>
           <div className={dy.classPeek}>
-            {[...cls].sort((a, b) => (cardOf(b)?.salary ?? 0) - (cardOf(a)?.salary ?? 0)).slice(0, 24).map(k => <PlayerCell key={k} cardKey={k} />)}
+            {[...cls].sort((a, b) => (cardOf(b)?.salary ?? 0) - (cardOf(a)?.salary ?? 0)).slice(0, 24).map(k => <PlayerCell key={k} cardKey={k} age={ageOf(d, k)} />)}
           </div>
         </>
       )}
@@ -587,7 +587,7 @@ export function RookieSigning({ d, act }) {
           const over = pay + scale.dp > APRON_DP;
           return (
             <div key={k} className={dy.draftRow}>
-              <PlayerCell cardKey={k} />
+              <PlayerCell cardKey={k} age={ageOf(d, k)} />
               <span className={styles.muted}>pick #{d.rights[k]?.pick}</span>
               <span className={dy.rowAsk}><strong>{scale.dp}</strong> DP × {scale.years}</span>
               <span className={dy.clockActions}>

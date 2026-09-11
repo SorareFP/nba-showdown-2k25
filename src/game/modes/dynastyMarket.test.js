@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   CAP_DP, MIN_DP, FA_DAYS, LEFTOVER_DAY, PERSONALITIES,
   fairDp, dealPersonality, yearFactor, teamFactor, dayFactor, floorFor, openingAsk, askFor,
-  newTalk, judgeOffer, toBeat, rookieScale,
+  newTalk, judgeOffer, toBeat, rookieScale, ageFactor,
 } from './dynastyMarket.js';
 
 const card = salary => ({ id: `c${salary}`, name: `Card ${salary}`, salary });
@@ -131,6 +131,16 @@ describe('an offer', () => {
   it('refuses an offer that is not a contract', () => {
     expect(() => judgeOffer({ card: c, pid, ctx: {}, offer: { dp: 0, years: 2 } })).toThrow();
     expect(() => judgeOffer({ card: c, pid, ctx: {}, offer: { dp: 5, years: 5 } })).toThrow();
+  });
+});
+
+describe('age (aging dynasties)', () => {
+  it('leaves a player alone to 31, then takes 7% a year, never past 40%', () => {
+    expect(ageFactor(null)).toBe(1);
+    expect(ageFactor(31)).toBe(1);
+    expect(ageFactor(35)).toBeCloseTo(0.72);
+    expect(ageFactor(50)).toBe(0.4);
+    expect(floorFor(card(1100), 'easy', { age: 36 }, 2)).toBeLessThan(floorFor(card(1100), 'easy', { age: 26 }, 2));
   });
 });
 

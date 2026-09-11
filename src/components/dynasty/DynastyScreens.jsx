@@ -11,7 +11,7 @@ import { useState, useMemo } from 'react';
 import { useDialogs } from '../../ui/dialogs.jsx';
 import {
   DPHASE, MIN_ROSTER, MAX_ROSTER, PHASE_LABEL, isOffseason, teamOf, rosterKeys, contractsOf, payroll, deadMoney,
-  rightsOf, freeAgentKeys, quote, negotiate, renounce, waive, onClock, draftAvailable, draftPick, simDraft,
+  rightsOf, freeAgentKeys, quote, negotiate, renounce, waive, onClock, draftAvailable, draftPick, passPick, simDraft,
   finishDraft, projectedPayroll, closeSigning, closeResign, lotteryOdds, drawLottery, classFor, signRookie,
   closeRookies, nextFaDay, fillRoster, startSeason, rosterProblem,
 } from '../../game/modes/dynasty.js';
@@ -400,7 +400,7 @@ export function DraftRoom({ d, act }) {
   const priceOf = key => (fantasy ? quote(d, me, key).ask : rookieScale(cardOf(key)).dp);
 
   const picks = d.draft?.picks ?? [];
-  const mineSoFar = picks.filter(p => p.teamId === me);
+  const mineSoFar = picks.filter(p => p.teamId === me && p.key);
   const upcoming = (d.draft?.order ?? []).slice(picks.length, picks.length + 12);
   const recent = [...picks].slice(-8).reverse();
   const extra = fantasy ? projectedPayroll(d, me) - payroll(d, me) : 0;
@@ -417,7 +417,7 @@ export function DraftRoom({ d, act }) {
       <p className={dy.intro}>
         {fantasy
           ? `Draft anyone — then you have to SIGN them, under a ${CAP_DP}-DP cap. The number beside each player is what he will ask you for; the bar keeps your running total.`
-          : 'Players who have never been in the league. A pick signs on the rookie scale — three years at three-quarters of his value — and can take you up to the apron.'}
+          : 'Players who have never been in the league. Two rounds; you can pass. A pick signs on the rookie scale — three years at three-quarters of his value — and can take you up to the apron. Everyone not taken goes back into the draft pool for a later year.'}
       </p>
 
       <div className={`${dy.clock} ${mine ? dy.clockMine : ''}`}>
@@ -430,6 +430,7 @@ export function DraftRoom({ d, act }) {
         </span>
         <span className={dy.clockActions}>
           {clock && !mine && <button type="button" className={styles.ghost} onClick={() => act(x => simDraft(x))}>Sim to my pick</button>}
+          {mine && !fantasy && <button type="button" className={styles.ghost} onClick={() => act(x => simDraft(passPick(x, me)))}>Pass</button>}
           {clock && <button type="button" className={styles.ghost} onClick={() => act(x => simDraft(x, { all: true }))}>Auto-draft the rest</button>}
           {!clock && <button type="button" className={styles.primary} onClick={() => act(x => finishDraft(x))}>{fantasy ? 'To signing →' : 'Sign your picks →'}</button>}
         </span>
@@ -491,7 +492,7 @@ export function DraftRoom({ d, act }) {
             <div className={dy.recent}>
               <span className={styles.label}>Recent picks</span>
               {recent.map(p => (
-                <span key={p.n}>#{p.n} {p.teamId === me ? 'You' : teamOf(d, p.teamId)?.name}: {cardOf(p.key)?.name}</span>
+                <span key={p.n}>#{p.n} {p.teamId === me ? 'You' : teamOf(d, p.teamId)?.name}: {p.key ? cardOf(p.key)?.name : 'pass'}</span>
               ))}
             </div>
           )}
@@ -517,7 +518,8 @@ export function LotteryRoom({ d, act }) {
       <p className={dy.intro}>
         The teams that missed the playoffs, worst record first — the worse the record, the better the odds. The lottery draws
         the top {plural(odds.draws, 'pick')}; everyone else picks in reverse order of the standings.
-        This class: {plural(cls.length, 'player')} who have never played in this league.
+        This class: the next {plural(cls.length, 'player')} in the draft pool, none of whom has played in this league. Two
+        rounds are drafted and the rest go back into the pool.
       </p>
       {odds.entries.length ? (
         <div className={styles.tableWrap}>
@@ -540,9 +542,9 @@ export function LotteryRoom({ d, act }) {
       ) : <div className={styles.muted}>Everyone made the playoffs — the draft goes in reverse order of the standings.</div>}
       {cls.length > 0 && (
         <>
-          <div className={styles.label} style={{ marginTop: 16 }}>The class</div>
+          <div className={styles.label} style={{ marginTop: 16 }}>The top of the class</div>
           <div className={dy.classPeek}>
-            {[...cls].sort((a, b) => (cardOf(b)?.salary ?? 0) - (cardOf(a)?.salary ?? 0)).map(k => <PlayerCell key={k} cardKey={k} />)}
+            {[...cls].sort((a, b) => (cardOf(b)?.salary ?? 0) - (cardOf(a)?.salary ?? 0)).slice(0, 24).map(k => <PlayerCell key={k} cardKey={k} />)}
           </div>
         </>
       )}

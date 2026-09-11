@@ -13,12 +13,17 @@
 //
 // ── THE FINITE POOL ─────────────────────────────────────────────────────────
 //
-// One of each PERSON. A card on a contract or held under a team's rights is
-// out of everyone else's reach; every other card in the league's universe is
-// a free agent. Nothing is destroyed — a player let go goes back into the
-// market — so contracts + rights + free agents is the universe, always. The
-// universe grows only through the draft, whose classes are players with no
-// base card at all (the special sets' legends and rookies).
+// One of each PERSON, in two places (the user, 2026-09-11):
+//
+//   THE LEAGUE — everyone who has been in it: brought, drafted, signed. A
+//     card on a contract or held under a team's rights is out of everyone
+//     else's reach; the rest of the league are the FREE AGENTS. Nothing is
+//     destroyed, so contracts + rights + free agents is the league, always.
+//   THE DRAFT POOL — a queue of everyone who has not: every base card not in
+//     play and every special-set player with no base card, plus whoever the
+//     fantasy draft left on the board. Each offseason the next ten a team
+//     come off the front as the class; two rounds are drafted and the rest go
+//     back on the end. A drafted player joins the league.
 //
 // ── EVERYTHING IS A CARD KEY ────────────────────────────────────────────────
 //
@@ -175,14 +180,19 @@ export function rightsOf(d, teamId, kind = null) {
     .map(([key]) => key);
 }
 
-/** Every card in the league's world: the pool and every draft class that has entered. */
+/** The players who have been in the league — the only ones who can be free agents. */
+export const leagueKeys = d => d.league ?? [];
+
+/** Every card the dynasty knows: the league, the draft pool, and a draft board still on the table. */
 export function universe(d) {
-  return [...new Set([...d.pool, ...(d.entered ?? [])])];
+  const board = d.draft?.pool ? draftAvailable(d) : [];
+  return [...new Set([...leagueKeys(d), ...(d.draftPool ?? []), ...board])];
 }
 
-/** Everyone nobody holds. */
+/** Everyone in the league nobody holds, and nobody who has retired. */
 export function freeAgentKeys(d) {
-  return universe(d).filter(key => !d.contracts[key] && !d.rights?.[key]);
+  const gone = new Set(d.retired ?? []);
+  return leagueKeys(d).filter(key => !d.contracts[key] && !d.rights?.[key] && !gone.has(key));
 }
 
 /** What the team asking means to a player: his last team, how that team did, and whether it just let him go. */
@@ -293,16 +303,13 @@ export function draftClassCards(excludePersons = new Set()) {
   return [...byPerson.values()];
 }
 
-/** Deal the classes: one per offseason, up to two a team, shuffled. */
-function dealClasses(cards, size, rng, years = DYNASTY_YEARS) {
-  const deck = shuffle(cards, rng);
-  const count = years - 1;
-  const per = Math.min(2 * size, Math.floor(deck.length / count));
-  return Array.from({ length: count }, (_, i) => ({
-    year: i + 2,
-    keys: deck.slice(i * per, (i + 1) * per).map(cardKey),
-  }));
-}
+/**
+ * The offseason draft (the user, 2026-09-11: "We only need 2 rounds per
+ * off-season draft. The fantasy draft is the one that is 10 rounds"): a class
+ * of the next ten players a team from the draft pool, two rounds drafted.
+ */
+export const DRAFT_CLASS_PER_TEAM = 10;
+export const ROOKIE_ROUNDS = 2;
 
 function snakeOrder(teamIds, rounds) {
   const order = [];
@@ -352,10 +359,18 @@ export function createDynasty({
     deck: null, deckName: null, last: null,
   }))];
 
-  const classes = dealClasses(draftClassCards(taken), size, rng);
-  const pool = [...poolCards.map(cardKey), ...brought.map(cardKey)];
+  // WHO IS WHERE AT THE START. The league is whoever is on a roster (own), or
+  // nobody yet (fantasy — the draft brings them in). The board is what the
+  // fantasy draft picks from. Everyone else waits in the draft pool.
+  const board = startMode === 'own' ? [] : poolCards.map(cardKey);
+  const rostered = startMode === 'own' ? [...brought, ...ai.flatMap(t => t.roster)].map(cardKey) : [];
+  const inPlay = new Set([...board, ...rostered]);
+  const waiting = shuffle([
+    ...draftClassCards(taken).map(cardKey),
+    ...base.map(cardKey).filter(k => !inPlay.has(k)),
+  ], rng);
   const traits = {};
-  for (const key of [...pool, ...classes.flatMap(c => c.keys)]) traits[key] = dealPersonality(cardOf(key), rng);
+  for (const key of [...rostered, ...board, ...waiting]) traits[key] = dealPersonality(cardOf(key), rng);
 
   const contracts = {};
   if (startMode === 'own') {
@@ -368,7 +383,7 @@ export function createDynasty({
 
   const d = {
     id,
-    version: 2,
+    version: 3,
     createdAt: Date.now(),
     name: name || `${me.name} Dynasty`,
     startMode,
@@ -379,9 +394,9 @@ export function createDynasty({
     year: 1,
     phase: DPHASE.preseason,
     humanId: HUMAN_ID,
-    pool,
-    entered: [],
-    classes,
+    league: rostered,
+    draftPool: waiting,
+    retired: [],
     traits,
     teams,
     contracts,
@@ -398,11 +413,11 @@ export function createDynasty({
     news: [],
     claimed: {},
   };
-  if (startMode === 'own') return say(d, 'The league opens. Fill your roster if you like, then start year one.');
+  if (startMode === 'own') return say(d, 'The league opens. Everyone not on a roster waits in the draft pool; start year one when you are ready.');
   const order = snakeOrder(shuffle(teams.map(t => t.id), rng), FANTASY_ROUNDS);
   return say(
-    { ...d, phase: DPHASE.draft, draft: { kind: 'fantasy', order, picks: [], pool: [...pool] } },
-    `The fantasy draft: ${FANTASY_ROUNDS} rounds, ${pool.length} players. Draft who you can afford — every pick has to be signed.`,
+    { ...d, phase: DPHASE.draft, draft: { kind: 'fantasy', order, picks: [], pool: board } },
+    `The fantasy draft: ${FANTASY_ROUNDS} rounds, ${board.length} players. Draft who you can afford — every pick has to be signed.`,
   );
 }
 
@@ -464,7 +479,7 @@ function assertCanTalk(d, teamId, key) {
   }
   if (d.phase === DPHASE.freeAgency || d.phase === DPHASE.preseason) {
     if (d.contracts[key] || r) throw new Error('dynasty: that player is not a free agent');
-    if (!universe(d).includes(key)) throw new Error('dynasty: that player is not in this league');
+    if (!leagueKeys(d).includes(key)) throw new Error('dynasty: that player is not in this league');
     return;
   }
   throw new Error('dynasty: nobody is signing right now');
@@ -519,12 +534,25 @@ export function fillRoster(d, teamId, min = MIN_ROSTER) {
   for (let guard = 0; guard < MAX_ROSTER; guard += 1) {
     if (rosterKeys(x, teamId).length >= min) break;
     const day = marketDay(x);
-    const offers = freeAgentKeys(x)
+    const priced = keys => keys
       .map(key => ({ key, dp: floorOf(x, key, teamId, preferredYears(traitOf(x, key)), day) }))
       .sort((a, b) => a.dp - b.dp || salaryOf(b.key) - salaryOf(a.key));
     const pay = payroll(x, teamId);
-    const choice = offers.find(o => pay + o.dp <= CAP_DP) ?? offers.find(o => pay + o.dp <= APRON_DP) ?? offers[0];
+    const fits = (o, limit) => pay + o.dp <= limit;
+    const free = priced(freeAgentKeys(x));
+    // CAMP INVITES: when no free agent fits under the apron — an own-team
+    // start opens with no free agents at all — the cheapest players waiting
+    // in the draft pool come in on minimum-length deals. My call, 2026-09-11.
+    let choice = free.find(o => fits(o, CAP_DP)) ?? free.find(o => fits(o, APRON_DP)) ?? null;
+    let invite = false;
+    if (!choice) {
+      const camp = priced(x.draftPool ?? []);
+      choice = camp.find(o => fits(o, CAP_DP)) ?? camp.find(o => fits(o, APRON_DP)) ?? null;
+      invite = Boolean(choice);
+    }
+    choice ??= free[0] ?? null;
     if (!choice) break;
+    if (invite) x = { ...x, draftPool: x.draftPool.filter(k => k !== choice.key), league: [...leagueKeys(x), choice.key] };
     x = sign(x, teamId, choice.key, { dp: choice.dp, years: 1, how: 'fill' });
   }
   return x;
@@ -559,10 +587,21 @@ export function draftPick(d, teamId, key) {
     ...d,
     draft: { ...d.draft, picks: [...d.draft.picks, { n: clock.n, round: clock.round, teamId, key }] },
     rights: { ...d.rights, [key]: { teamId, kind, pick: clock.n } },
+    // Drafted is in the league, signed or not.
+    league: [...leagueKeys(d), key],
   };
   return kind === 'rookie' && clock.round === 1
     ? say(next, `Pick ${clock.n}: ${teamOf(d, teamId)?.name} take ${cardOf(key)?.name}.`)
     : next;
+}
+
+/** Pass on a pick — the offseason draft only; the fantasy draft fills rosters. */
+export function passPick(d, teamId) {
+  const clock = onClock(d);
+  if (!clock) throw new Error('dynasty: the draft is over');
+  if (clock.teamId !== teamId) throw new Error(`dynasty: ${teamId} is not on the clock`);
+  if (d.draft.kind === 'fantasy') throw new Error('dynasty: every fantasy pick has to be made');
+  return { ...d, draft: { ...d.draft, picks: [...d.draft.picks, { n: clock.n, round: clock.round, teamId, key: null }] } };
 }
 
 /**
@@ -605,8 +644,11 @@ export const draftDone = d => !onClock(d);
 export function finishDraft(d, { rng = Math.random } = {}) {
   if (!draftDone(d)) throw new Error('dynasty: the draft is not over');
   const record = { kind: d.draft.kind, picks: d.draft.picks };
+  // Nobody took them: the fantasy draft's leftovers are shuffled into the draft
+  // pool, an offseason class's go back on the end of it. Neither is a free agent.
+  const undrafted = draftAvailable(d);
   if (d.draft.kind === 'fantasy') {
-    let x = { ...d, draft: record, phase: DPHASE.signing, talks: {} };
+    let x = { ...d, draft: record, phase: DPHASE.signing, talks: {}, draftPool: shuffle([...(d.draftPool ?? []), ...undrafted], rng) };
     for (const team of x.teams.filter(t => !t.human)) {
       for (const key of rightsOf(x, team.id, 'draft')) {
         const years = preferredYears(traitOf(x, key));
@@ -615,10 +657,9 @@ export function finishDraft(d, { rng = Math.random } = {}) {
         x = fits ? sign(x, team.id, key, { dp, years, how: 'draft' }) : renounce(x, team.id, key);
       }
     }
-    void rng;
     return say(x, 'The draft is done. Sign your draftees — anyone you do not sign goes to free agency.');
   }
-  let x = { ...d, draft: record, phase: DPHASE.rookies, talks: {} };
+  let x = { ...d, draft: record, phase: DPHASE.rookies, talks: {}, draftPool: [...(d.draftPool ?? []), ...undrafted] };
   for (const team of x.teams.filter(t => !t.human)) {
     for (const key of rightsOf(x, team.id, 'rookie')) {
       const scale = rookieScale(cardOf(key));
@@ -664,9 +705,9 @@ export function lotteryOdds(d) {
   return { entries, draws: k ? Math.min(4, Math.max(1, Math.floor(k / 2))) : 0 };
 }
 
-/** This year's class — the players entering the league before season `year`. */
-export function classFor(d, year = d.year) {
-  return d.classes.find(c => c.year === year)?.keys ?? [];
+/** The coming class: the next ten a team off the front of the draft pool. */
+export function classFor(d) {
+  return (d.draftPool ?? []).slice(0, DRAFT_CLASS_PER_TEAM * d.teams.length);
 }
 
 /** Draw the lottery and open the draft. */
@@ -690,12 +731,11 @@ export function drawLottery(d, { rng = Math.random } = {}) {
   const winner = teamOf(d, order[0]);
   let x = say({ ...d, lottery }, `${winner?.name} win the lottery and pick first.`);
   if (!cls.length) return openFreeAgency({ ...x, draft: null }, { rng });
-  const rounds = Math.min(2, Math.ceil(cls.length / d.teams.length));
   x = {
     ...x,
     phase: DPHASE.rookieDraft,
-    entered: [...new Set([...(d.entered ?? []), ...cls])],
-    draft: { kind: 'rookie', order: Array.from({ length: rounds }, () => order).flat(), picks: [], pool: [...cls] },
+    draftPool: (d.draftPool ?? []).slice(cls.length),
+    draft: { kind: 'rookie', order: Array.from({ length: ROOKIE_ROUNDS }, () => order).flat(), picks: [], pool: [...cls] },
   };
   return x;
 }

@@ -5,9 +5,9 @@ import {
   rosterKeys, contractsOf, payroll, freeAgentKeys, universe, rightsOf, quote, negotiate, waive,
   onClock, draftPick, draftAvailable, simDraft, aiDraftChoice, finishDraft, closeSigning, nextFaDay, fillRoster,
   startSeason, endSeason, closeResign, lotteryOdds, drawLottery, signRookie, closeRookies, classFor,
-  projectedPayroll, summarizeDynasty, deadMoney,
+  projectedPayroll, summarizeDynasty, deadMoney, leagueKeys, passPick, DRAFT_CLASS_PER_TEAM, ROOKIE_ROUNDS,
 } from './dynasty.js';
-import { CAP_DP, APRON_DP, FA_DAYS, fairDp } from './dynastyMarket.js';
+import { CAP_DP, APRON_DP, FA_DAYS, fairDp, PERSONALITIES } from './dynastyMarket.js';
 import { dynastyYearEarnings, dynastyCompletionEarnings, DYNASTY_YEARS, SEASON_REWARDS } from './prizes.js';
 import { buildAiLeague } from './aiTeams.js';
 import { recordResult, roundFixtures, advance, totalRounds, PHASE } from './season.js';
@@ -57,13 +57,19 @@ function finishSeason(d) {
   return { ...d, season: s };
 }
 
-/** Contracts + rights + free agents is the universe, and one of each person. */
+/**
+ * Contracts + rights + free agents is the league; nobody is both in the
+ * league and waiting in the draft pool; one of each person everywhere.
+ */
 function expectConserved(d) {
-  const all = universe(d);
+  const league = leagueKeys(d);
   const held = [...Object.keys(d.contracts), ...Object.keys(d.rights)];
   expect(new Set(held).size).toBe(held.length);
-  expect(held.length + freeAgentKeys(d).length).toBe(all.length);
-  const persons = all.map(k => getCardByKey(k)?.id);
+  expect(held.every(k => league.includes(k))).toBe(true);
+  expect(held.length + freeAgentKeys(d).length).toBe(league.length);
+  const waiting = new Set(d.draftPool);
+  expect(league.some(k => waiting.has(k))).toBe(false);
+  const persons = universe(d).map(k => getCardByKey(k)?.id);
   expect(persons.every(Boolean)).toBe(true);
   expect(new Set(persons).size).toBe(persons.length);
 }
@@ -105,8 +111,8 @@ describe('bringing your own team', () => {
     const special = CARD_SETS['super-season'].find(c => BASE_IDS.has(c.id));
     const filler = CARDS.filter(c => c.id !== special.id).slice(0, 7);
     const d = ownDynasty({ roster: [special, ...filler] });
-    expect(d.pool).toContain(cardKey(special));
-    expect(d.pool.map(k => getCardByKey(k).id).filter(id => id === special.id)).toHaveLength(1);
+    expect(d.league).toContain(cardKey(special));
+    expect(universe(d).map(k => getCardByKey(k).id).filter(id => id === special.id)).toHaveLength(1);
     expectConserved(d);
   });
 
@@ -196,10 +202,22 @@ describe('the fantasy draft', () => {
     expect(d.spurned).toEqual({});
   });
 
+  it('sends the players nobody drafted to the draft pool, not free agency', () => {
+    const rng = seeded(5);
+    const drafted = driveDraft(fantasyDynasty(), rng);
+    const left = draftAvailable(drafted);
+    expect(left).toHaveLength(CARDS.length - 4 * FANTASY_ROUNDS);
+    const d = closeSigning(finishDraft(drafted, { rng }), { rng });
+    const fa = new Set(freeAgentKeys(d));
+    expect(left.some(k => fa.has(k))).toBe(false);
+    expect(left.every(k => d.draftPool.includes(k))).toBe(true);
+    expectConserved(d);
+  });
+
   it('a random pool is smaller and still spans the price range', () => {
     const d = fantasyDynasty({ startMode: 'fantasy-random', size: 6 });
-    expect(d.pool).toHaveLength(6 * RANDOM_POOL_PER_TEAM);
-    const salaries = d.pool.map(k => getCardByKey(k).salary).sort((a, b) => a - b);
+    expect(d.draft.pool).toHaveLength(6 * RANDOM_POOL_PER_TEAM);
+    const salaries = d.draft.pool.map(k => getCardByKey(k).salary).sort((a, b) => a - b);
     expect(salaries[salaries.length - 1]).toBeGreaterThan(1200);
     expect(salaries[0]).toBeLessThan(300);
   });
@@ -207,13 +225,23 @@ describe('the fantasy draft', () => {
 
 describe('the rules of a signing', () => {
   it('will not sign past a full roster or over the cap', () => {
-    const d = ownDynasty();
-    const fa = freeAgentKeys(d).sort((a, b) => getCardByKey(b).salary - getCardByKey(a).salary)[0];
-    expect(() => negotiate(d, HUMAN_ID, fa, { dp: 5, years: 2 })).toThrow(/full/);
-    const cut = waive(d, HUMAN_ID, rosterKeys(d, HUMAN_ID)[0]);
-    const q = quote(cut, HUMAN_ID, fa);
+    let d = ownDynasty();
+    const [top] = contractsOf(d, HUMAN_ID);
+    d = waive(d, HUMAN_ID, top.key);                     // a free agent now; his DP stays on the books
+    const full = fillRoster(d, HUMAN_ID, MAX_ROSTER);    // a camp invite takes the spot
+    expect(() => negotiate(full, HUMAN_ID, top.key, { dp: 5, years: 2 })).toThrow(/full/);
+    const q = quote(d, HUMAN_ID, top.key);
     expect(q.room).toBeLessThan(q.ask);
-    expect(() => negotiate(cut, HUMAN_ID, fa, { dp: q.ask, years: q.years })).toThrow(/does not fit/);
+    expect(() => negotiate(d, HUMAN_ID, top.key, { dp: q.ask, years: q.years })).toThrow(/does not fit/);
+  });
+
+  it('fills an own-team start from the draft pool, since nobody has been a free agent yet', () => {
+    const d = ownDynasty({ roster: CARDS.filter(c => c.salary < 400).slice(0, 5) });
+    expect(freeAgentKeys(d)).toHaveLength(0);
+    const x = fillRoster(d, HUMAN_ID);
+    expect(rosterKeys(x, HUMAN_ID)).toHaveLength(MIN_ROSTER);
+    expect(leagueKeys(x).length).toBe(leagueKeys(d).length + 3);
+    expectConserved(x);
   });
 
   it('waiving leaves his DP on the books for the season ahead, and frees him', () => {
@@ -226,23 +254,29 @@ describe('the rules of a signing', () => {
     expectConserved(x);
   });
 
+  // Free agency after a fantasy draft: your unsigned draftees and the AI's
+  // tenth picks are on the market, and you have a whole cap of room.
+  const market = seed => {
+    const rng = seeded(seed);
+    return closeSigning(finishDraft(driveDraft(fantasyDynasty(), rng), { rng }), { rng });
+  };
+
   it('signs a free agent who takes the offer', () => {
-    // Waiving frees a roster spot but not the cap (dead money), so the one who
-    // fits is the cheapest — and a minimum deal always fits, up to the apron.
-    const d = waive(ownDynasty(), HUMAN_ID, contractsOf(ownDynasty(), HUMAN_ID).at(-1).key);
+    const d = market(6);
     const q = freeAgentKeys(d).map(k => quote(d, HUMAN_ID, k)).sort((a, b) => a.ask - b.ask)[0];
     const { dynasty, result } = negotiate(d, HUMAN_ID, q.key, { dp: q.ask, years: q.years });
     expect(result.accepted).toBe(true);
     expect(dynasty.contracts[q.key].teamId).toBe(HUMAN_ID);
   });
 
-  it('haggles: an offer under his floor brings the ask down', () => {
-    const d = waive(ownDynasty(), HUMAN_ID, contractsOf(ownDynasty(), HUMAN_ID).at(-1).key);
-    const q = freeAgentKeys(d).map(k => quote(d, HUMAN_ID, k)).find(x => x.pid === 'easy' && x.ask >= 8);
+  it('haggles: an insulting offer costs patience and does not move his ask', () => {
+    const d = market(6);
+    const q = freeAgentKeys(d).map(k => quote(d, HUMAN_ID, k)).find(x => x.pid !== 'happy' && x.ask >= 8);
     const { dynasty, result } = negotiate(d, HUMAN_ID, q.key, { dp: 1, years: q.years });
     expect(result.accepted).toBe(false);
     expect(result.mood).toBe('insulted');
-    expect(dynasty.talks[q.key].patience).toBe(2);
+    expect(dynasty.talks[q.key].patience).toBe(PERSONALITIES[q.pid].patience - 2);
+    expect(result.ask).toBe(q.ask);
   });
 });
 
@@ -275,18 +309,39 @@ describe('the turn of the year', () => {
     const odds = lotteryOdds(d);
     expect(odds.entries.map(e => e.pct)).toEqual([66.7, 33.3]);
     expect(odds.draws).toBe(1);
+    // The class: the next ten a team off the draft pool, none of them ever in the league.
+    const upcoming = classFor(d);
+    const before = new Set(leagueKeys(d));
+    expect(upcoming).toHaveLength(DRAFT_CLASS_PER_TEAM * 4);
+    expect(upcoming.some(k => before.has(k))).toBe(false);
     d = drawLottery(d, { rng });
     expect(d.lottery.order).toHaveLength(4);
     expect(d.lottery.order.slice(0, 2).sort()).toEqual(odds.entries.map(e => e.teamId).sort());
-    const cls = classFor(d, 2);
-    expect(cls.length).toBeGreaterThan(0);
-    for (const k of cls) expect(BASE_IDS.has(getCardByKey(k).id)).toBe(false);
+    expect(d.draft.pool).toEqual(upcoming);
+    expect(d.draft.order).toHaveLength(ROOKIE_ROUNDS * 4);
+    const waiting = d.draftPool.length;
     d = finishDraft(driveDraft(d, rng), { rng });
+    // Two rounds taken; everyone else back on the end of the draft pool.
+    expect(d.draftPool.length).toBe(waiting + upcoming.length - ROOKIE_ROUNDS * 4);
+    expect(d.draftPool.slice(-(upcoming.length - ROOKIE_ROUNDS * 4)).every(k => upcoming.includes(k))).toBe(true);
     expect(d.phase).toBe(DPHASE.rookies);
     for (const t of d.teams.filter(t => !t.human)) expect(rightsOf(d, t.id, 'rookie')).toHaveLength(0);
     d = closeRookies(d, { rng });
     expect(d.phase).toBe(DPHASE.freeAgency);
     expectConserved(d);
+  });
+});
+
+describe('passing', () => {
+  it('lets you pass on an offseason pick, and never on a fantasy one', () => {
+    const rng = seeded(12);
+    let d = closeResign(endSeason(finishSeason(startSeason(ownDynasty(), { rng })), { rng }));
+    d = simDraft(drawLottery(d, { rng }), { rng });
+    expect(onClock(d).teamId).toBe(HUMAN_ID);
+    const after = passPick(d, HUMAN_ID);
+    expect(after.draft.picks.at(-1)).toMatchObject({ teamId: HUMAN_ID, key: null });
+    expect(rightsOf(after, HUMAN_ID, 'rookie')).toHaveLength(0);
+    expect(() => passPick(simDraft(fantasyDynasty(), { rng }), HUMAN_ID)).toThrow(/fantasy/);
   });
 });
 

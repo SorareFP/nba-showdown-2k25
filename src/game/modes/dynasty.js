@@ -251,7 +251,8 @@ export function marketDay(d) {
   return d.fa?.day ?? 1;
 }
 
-function floorOf(d, key, teamId, years = preferredYears(traitOf(d, key)), day = marketDay(d)) {
+/** The least a player signs for from a team, at a length, on a day of the market. Never shown to a player. */
+export function floorOf(d, key, teamId, years = preferredYears(traitOf(d, key)), day = marketDay(d)) {
   return floorFor(cardOf(key), traitOf(d, key), ctxFor(d, key, teamId), years, day);
 }
 
@@ -505,6 +506,13 @@ function sign(d, teamId, key, { dp, years, how }) {
   const who = how === 'rookie' ? `${card?.name}` : card?.name;
   return how === 'fill' && !team?.human ? next : say(next, `${team?.name} ${verb} ${who} — ${dp} DP × ${years} yr${years === 1 ? '' : 's'}.`);
 }
+
+/**
+ * Put a player under contract on terms already agreed — the sealed free
+ * agency of a dynasty with friends (dynastyFriends.js), where the player has
+ * chosen among the bids before anyone signs. Alone, go through negotiate.
+ */
+export const signContract = (d, teamId, key, terms) => sign(d, teamId, key, terms);
 
 /**
  * Give up a player a team holds the rights to. He becomes a free agent — and,

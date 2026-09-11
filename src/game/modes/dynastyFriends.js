@@ -1,0 +1,250 @@
+// A DYNASTY WITH FRIENDS — what a shared dynasty adds to dynasty.js. Pure: the
+// Cloud Functions run it (functions/index.js) and the browser reads it.
+//
+// The user, 2026-09-11:
+//   * drafts are ASYNC ON A CLOCK — a coach picks when it is his turn, from
+//     any device; when the clock runs out the AI picks for him, and the
+//     commissioner can force it early;
+//   * a phase moves on when EVERY COACH IS READY, and the commissioner can
+//     force it;
+//   * free agency is three advanceable WEEKS OF SEALED BIDS — nobody sees
+//     another coach's offer, and at the end of each week every free agent
+//     takes the best deal by his own lights, a coach's or an AI team's;
+//   * trades between coaches are PROPOSED AND ACCEPTED, and the commissioner
+//     can veto.
+//
+// The dynasty document is readable by every member, so what must stay secret
+// — the sealed bids — never goes in it: the server keeps each coach's bids in
+// a document only that coach can read, and hands them all to nextFaWeek at
+// the week's end.
+import {
+  DPHASE, humanIds, onClock, draftPick, passPick, aiDraftChoice, simDraft, finishDraft, draftDone,
+  closeSigning, closeResign, drawLottery, closeRookies, nextFaDay, fillRoster, startSeason, endSeason,
+  freeAgentKeys, rosterKeys, fitsCap, marketDay, tradeProblems, makeTrade, parsePick, pickOwner,
+  MAX_ROSTER, teamOf, signContract, floorOf, rosterProblem, tradesOpen,
+} from './dynasty.js';
+import { PHASE } from './seasonCore.js';
+import { CONTRACT_YEARS, MIN_DP, MAX_DP } from './dynastyMarket.js';
+import { getCardByKey } from '../cardSets.js';
+
+/** How long a coach has to make a draft pick before the AI makes it for him. */
+export const PICK_CLOCK_MS = 12 * 60 * 60 * 1000;
+/** Trade offers kept on the document, newest last. */
+const OFFERS_KEPT = 40;
+
+const nameOf = key => getCardByKey(key)?.name ?? key;
+const news = (d, text) => ({ ...d, news: [{ year: d.year, text }, ...(d.news ?? [])].slice(0, 80) });
+
+// ── Ready, and moving on ────────────────────────────────────────────────────
+
+export function setReady(d, teamId, ready = true) {
+  if (!humanIds(d).includes(teamId)) throw new Error('dynasty: only a coach can be ready');
+  return { ...d, ready: { ...(d.ready ?? {}), [teamId]: Boolean(ready) } };
+}
+export const isReady = (d, teamId) => Boolean(d.ready?.[teamId]);
+export const allReady = d => humanIds(d).every(h => isReady(d, h));
+
+/**
+ * Close the phase the dynasty is in — what "Done" means there, for everyone.
+ * A draft is run to its end (the AI picks for anyone still to), a preseason
+ * fills any coach short of eight, and free agency turns its week with the
+ * sealed `bids`. Everyone is un-readied for the next phase.
+ */
+export function advancePhase(d, { rng = Math.random, bids = [], now = Date.now() } = {}) {
+  let x;
+  switch (d.phase) {
+    case DPHASE.draft:
+    case DPHASE.rookieDraft:
+      x = finishDraft(simDraft(d, { rng, all: true }), { rng });
+      break;
+    case DPHASE.signing: x = closeSigning(d, { rng }); break;
+    case DPHASE.resign: x = closeResign(d, { rng }); break;
+    case DPHASE.lottery: x = stampClock(simDraft(drawLottery(d, { rng }), { rng }), now); break;
+    case DPHASE.rookies: x = closeRookies(d, { rng }); break;
+    case DPHASE.freeAgency: x = nextFaWeek(d, bids, { rng }); break;
+    case DPHASE.preseason: {
+      let y = d;
+      for (const h of humanIds(d)) if (rosterProblem(y, h)) y = fillRoster(y, h);
+      x = startSeason(y, { rng });
+      break;
+    }
+    case DPHASE.season:
+      if (d.season?.phase !== PHASE.done) throw new Error('dynasty: the season is still being played');
+      x = endSeason(d, { rng });
+      break;
+    default:
+      throw new Error('dynasty: there is nothing to move on to');
+  }
+  return { ...x, ready: {} };
+}
+
+// ── The draft clock ─────────────────────────────────────────────────────────
+
+/** Start the clock for whoever is on it, when it is a new pick. */
+export function stampClock(d, now = Date.now()) {
+  const c = onClock(d);
+  if (!c || d.draft.clockFor === c.n) return d;
+  return { ...d, draft: { ...d.draft, clockFor: c.n, clockAt: now } };
+}
+
+/** Milliseconds left on the pick clock, or null when no coach is on it. */
+export function clockLeft(d, now = Date.now()) {
+  const c = onClock(d);
+  if (!c || !humanIds(d).includes(c.teamId) || d.draft.clockAt == null) return null;
+  return Math.max(0, PICK_CLOCK_MS - (now - d.draft.clockAt));
+}
+
+/**
+ * Run the draft forward: the AI teams pick at once, and a coach whose clock
+ * has run out — or, with `force`, the coach on it now — has the AI pick for
+ * him. A finished draft is closed (finishDraft), un-readying everyone.
+ */
+export function runDraftClock(d, { now = Date.now(), rng = Math.random, force = false } = {}) {
+  let x = stampClock(simDraft(d, { rng }), now);
+  let forcing = force;
+  for (let guard = 0; guard < 500; guard += 1) {
+    const c = onClock(x);
+    if (!c) break;
+    const expired = now - (x.draft.clockAt ?? now) >= PICK_CLOCK_MS;
+    if (!forcing && !expired) break;
+    const key = aiDraftChoice(x, c.teamId, rng);
+    x = news(draftPick(x, c.teamId, key), `${teamOf(x, c.teamId)?.name}'s clock ran out — the AI took ${nameOf(key)} for them.`);
+    forcing = false;
+    x = stampClock(simDraft(x, { rng }), now);
+  }
+  if (x.draft && !x.draft.done && draftDone(x) && (x.phase === DPHASE.draft || x.phase === DPHASE.rookieDraft)) {
+    x = { ...finishDraft(x, { rng }), ready: {} };
+  }
+  return x;
+}
+
+/** A coach's own pick (or pass, `key` null), then the draft runs on to the next coach. */
+export function coachPick(d, teamId, key, { now = Date.now(), rng = Math.random } = {}) {
+  const picked = key == null ? passPick(d, teamId) : draftPick(d, teamId, key);
+  return runDraftClock(picked, { now, rng });
+}
+
+// ── Sealed free agency ──────────────────────────────────────────────────────
+
+/** Why a sealed bid cannot stand, or null. `bid` is { key, dp, years }. */
+export function bidProblem(d, teamId, { key, dp, years } = {}) {
+  if (d.phase !== DPHASE.freeAgency) return 'Free agency is not open.';
+  if (!humanIds(d).includes(teamId)) return 'Only a coach bids.';
+  if (!freeAgentKeys(d).includes(key)) return 'That player is not a free agent.';
+  if (!Number.isInteger(dp) || dp < MIN_DP || dp > MAX_DP) return `A bid is ${MIN_DP}–${MAX_DP} DP a season.`;
+  if (!Number.isInteger(years) || years < CONTRACT_YEARS.min || years > CONTRACT_YEARS.max) return `A bid is for ${CONTRACT_YEARS.min}–${CONTRACT_YEARS.max} years.`;
+  if (rosterKeys(d, teamId).length >= MAX_ROSTER) return `Your roster is full at ${MAX_ROSTER}.`;
+  if (!fitsCap(d, teamId, key, dp)) return `${dp} DP does not fit under your cap.`;
+  return null;
+}
+
+/**
+ * The end of a week of sealed bids. Every free agent looks at the bids on
+ * him — the coaches' `bids` ([{ teamId, key, dp, years }]) and the AI teams'
+ * standing offers — and takes the one that is best by his own lights (DP
+ * over his floor for that team, at that length) of those that clear his
+ * floor. The best players choose first; a bid that no longer fits a roster
+ * or a cap by then is passed over for the next. Then the week turns, or free
+ * agency closes, exactly as it does alone.
+ */
+export function nextFaWeek(d, bids = [], { rng = Math.random } = {}) {
+  if (d.phase !== DPHASE.freeAgency) throw new Error('dynasty: free agency is not open');
+  const day = marketDay(d);
+  const free = new Set(freeAgentKeys(d));
+  const offers = new Map();
+  const add = (key, o) => offers.set(key, [...(offers.get(key) ?? []), o]);
+  for (const b of bids) {
+    if (!b || bidProblem(d, b.teamId, b)) continue;
+    const floor = floorOf(d, b.key, b.teamId, b.years, day);
+    if (b.dp >= floor) add(b.key, { teamId: b.teamId, dp: b.dp, years: b.years, ratio: b.dp / floor });
+  }
+  for (const [key, r] of Object.entries(d.fa?.rivals ?? {})) if (free.has(key)) add(key, r);
+  let x = d;
+  const salary = key => getCardByKey(key)?.salary ?? 0;
+  for (const key of [...offers.keys()].sort((a, b) => salary(b) - salary(a))) {
+    const list = [...offers.get(key)].sort((a, b) => b.ratio - a.ratio);
+    for (const o of list) {
+      if (rosterKeys(x, o.teamId).length >= MAX_ROSTER || !fitsCap(x, o.teamId, key, o.dp)) continue;
+      x = signContract(x, o.teamId, key, { dp: o.dp, years: o.years, how: 'fa' });
+      break;
+    }
+  }
+  // Every standing AI offer has had its answer above; the week turns as it does alone.
+  return nextFaDay({ ...x, fa: { ...x.fa, rivals: {} } }, { rng });
+}
+
+// ── Trades between coaches ──────────────────────────────────────────────────
+
+const clean = deal => ({
+  from: deal.from, to: deal.to,
+  give: [...(deal.give ?? [])], get: [...(deal.get ?? [])],
+  givePicks: [...(deal.givePicks ?? [])], getPicks: [...(deal.getPicks ?? [])],
+});
+
+/** Offer another coach a trade. It waits for their answer. */
+export function proposeTrade(d, deal, { id, now = Date.now() } = {}) {
+  if (!id) throw new Error('dynasty: an offer needs an id');
+  const humans = humanIds(d);
+  if (!humans.includes(deal.from) || !humans.includes(deal.to) || deal.from === deal.to) throw new Error('dynasty: an offer is from one coach to another');
+  const problems = tradeProblems(d, deal);
+  if (problems.length) throw new Error(`dynasty: ${problems[0]}`);
+  const offer = { id, ...clean(deal), status: 'open', at: now, year: d.year, phase: d.phase };
+  return news({ ...d, offers: [...(d.offers ?? []), offer].slice(-OFFERS_KEPT) }, `${teamOf(d, deal.from)?.name} made ${teamOf(d, deal.to)?.name} a trade offer.`);
+}
+
+function setStatus(d, id, patch) {
+  return { ...d, offers: (d.offers ?? []).map(o => (o.id === id ? { ...o, ...patch } : o)) };
+}
+
+/** Accept (the trade happens) or decline an offer made to you. */
+export function respondTrade(d, id, teamId, accept, { now = Date.now() } = {}) {
+  const offer = (d.offers ?? []).find(o => o.id === id);
+  if (!offer || offer.status !== 'open') throw new Error('dynasty: that offer is not open');
+  if (offer.to !== teamId) throw new Error('dynasty: that offer is not yours to answer');
+  if (!accept) return setStatus(d, id, { status: 'declined', decidedAt: now });
+  const problems = tradeProblems(d, offer);
+  if (problems.length) throw new Error(`dynasty: ${problems[0]}`);
+  return setStatus(makeTrade(d, offer, { force: true }), id, { status: 'accepted', decidedAt: now, year: d.year, phase: d.phase });
+}
+
+/** Take back an offer you made, while it is still open. */
+export function withdrawTrade(d, id, teamId, { now = Date.now() } = {}) {
+  const offer = (d.offers ?? []).find(o => o.id === id);
+  if (!offer || offer.status !== 'open') throw new Error('dynasty: that offer is not open');
+  if (offer.from !== teamId) throw new Error('dynasty: that offer is not yours to withdraw');
+  return setStatus(d, id, { status: 'withdrawn', decidedAt: now });
+}
+
+/** Whether an accepted trade can still be undone: every piece is where it put them, in the same phase. */
+export function vetoable(d, offer) {
+  if (offer.status === 'open') return true;
+  if (offer.status !== 'accepted' || offer.year !== d.year || offer.phase !== d.phase || !tradesOpen(d)) return false;
+  const at = (k, team) => d.contracts[k]?.teamId === team;
+  const owns = (id, team) => { const p = parsePick(id); return pickOwner(d, p.year, p.round, p.origin) === team; };
+  return offer.give.every(k => at(k, offer.to)) && offer.get.every(k => at(k, offer.from))
+    && offer.givePicks.every(id => owns(id, offer.to)) && offer.getPicks.every(id => owns(id, offer.from));
+}
+
+/**
+ * The commissioner's veto: an open offer is struck; an accepted trade is
+ * reversed, if every piece is still where it put them and it is the same
+ * phase. After that it stands.
+ */
+export function vetoTrade(d, id, { now = Date.now() } = {}) {
+  const offer = (d.offers ?? []).find(o => o.id === id);
+  if (!offer) throw new Error('dynasty: no such offer');
+  if (!vetoable(d, offer)) throw new Error('dynasty: too late to veto that one');
+  let x = d;
+  if (offer.status === 'accepted') {
+    x = makeTrade(x, { from: offer.to, to: offer.from, give: offer.give, get: offer.get, givePicks: offer.givePicks, getPicks: offer.getPicks }, { force: true });
+    x = { ...x, news: x.news.slice(1) };   // the reversal is not a trade; the veto line below says what happened
+  }
+  x = setStatus(x, id, { status: 'vetoed', decidedAt: now });
+  return news(x, `The commissioner vetoed ${teamOf(d, offer.from)?.name}'s trade with ${teamOf(d, offer.to)?.name}.`);
+}
+
+/** The offers a coach can see waiting on them, and their own still open. */
+export function openOffers(d, teamId) {
+  const all = (d.offers ?? []).filter(o => o.status === 'open');
+  return { toMe: all.filter(o => o.to === teamId), fromMe: all.filter(o => o.from === teamId) };
+}

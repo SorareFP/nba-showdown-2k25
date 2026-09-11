@@ -59,10 +59,10 @@ describe('the tab', () => {
     expect(html(<DynastyTab teamA={[]} collection={{}} />)).toContain('Loading dynasties');
   });
 
-  it('setup offers the three starts and shows the fantasy buff on the coins', () => {
+  it('setup offers the three starts and shows the fantasy nerf on the coins', () => {
     const out = html(<DynastySetup teamA={[]} collection={{}} uid="u1" onStart={() => {}} onCancel={() => {}} />);
     for (const t of ['Bring your team', 'Fantasy draft', 'random pool']) expect(out).toContain(t);
-    expect(out).toContain('Fantasy draft ×1.5');
+    expect(out).toContain('Fantasy draft ×0.5');
     expect(out).toContain('To the draft room');
   });
 

@@ -76,16 +76,18 @@ export function seasonEarnings(lengthId, { champion = false, runnerUp = false, m
 // pays the Season title money above, claimed once per year, and finishing all
 // ten pays a bonus on top.
 //
-// THE FANTASY BUFF REVERSED THE 2026-09-07 NERF. That day's rule halved a
-// fantasy-draft dynasty's coins; the user, 2026-09-11: "if you do a fantasy
-// draft, that should be buffed quite a bit." 1.5 is my reading of "decently
-// substantial" — one number, here. It multiplies the title money and the
-// completion bonus, never a game's own coins.
+// A FANTASY DRAFT PAYS HALF. The 2026-09-07 rule halved a fantasy-draft
+// dynasty's coins; on 2026-09-11 it was briefly turned into a 1.5× buff, and
+// the user corrected it the same day: "I think I said fantasy draft should buff
+// coin output -- I meant nerf." A fantasy draft hands you any card in the set
+// without owning it; bringing your own team is the path the collection earns.
+// One number, here. It multiplies the title money and the completion bonus,
+// never a game's own coins.
 
 export const DYNASTY_YEARS = 10;
-export const FANTASY_DYNASTY_FACTOR = 1.5;
+export const FANTASY_DYNASTY_FACTOR = 0.5;
 
-/** The coin multiplier for a dynasty's start: any fantasy draft is buffed. */
+/** The coin multiplier for a dynasty's start: any fantasy draft pays FANTASY_DYNASTY_FACTOR. */
 export function dynastyCoinFactor(startMode) {
   return String(startMode ?? '').startsWith('fantasy') ? FANTASY_DYNASTY_FACTOR : 1;
 }

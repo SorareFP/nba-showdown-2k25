@@ -158,10 +158,11 @@
 }
 .pitchItem strong { display: block; color: var(--text); font-size: 14px; margin-bottom: 4px; }
 
-.buff {
+.buff, .nerf {
   display: inline-block; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 999px;
   background: var(--green); color: #fff; margin-left: 6px; vertical-align: middle;
 }
+.nerf { background: var(--orange); }
 .ready { font-size: 13px; }
 .readyBad { color: var(--red); }
 

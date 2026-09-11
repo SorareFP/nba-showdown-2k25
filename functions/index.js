@@ -865,7 +865,7 @@ export const claimSeasonReward = onCall({ region: 'us-central1' }, async request
  * (`year: 'complete'`). The same trust model as claimSeasonReward: the price
  * comes from the dynasty document's own history through dynastyClaim in the
  * shared prizes.js, and the receipt `claims/dynasty:{id}:{year}` stops the
- * second claim. A fantasy-draft dynasty is paid 1.5× (2026-09-11).
+ * second claim. A fantasy-draft dynasty is paid half (FANTASY_DYNASTY_FACTOR).
  */
 export const claimDynastyReward = onCall({ region: 'us-central1' }, async request => {
   const uid = requireAuth(request);

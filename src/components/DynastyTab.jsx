@@ -273,7 +273,7 @@ const PITCH = [
   { t: '💸 Dynasty Points', b: `A ${CAP_DP}-DP payroll. A player's ask comes from his salary: stars want a lot, $10 cards are just happy to be here.` },
   { t: '🤝 Personalities', b: 'Loyal, Ring Chaser, Mercenary, Security First, Bets on Himself, Easygoing — each haggles differently, and each runs out of patience.' },
   { t: '🎱 The lottery', b: 'Miss the playoffs for a shot at the top pick of a class of legends and rookies who have never been in the league.' },
-  { t: '🏆 Ten years', b: `Title money every year and a bonus for seeing all ten through. A fantasy-draft start pays ${FANTASY_DYNASTY_FACTOR}×.` },
+  { t: '🏆 Ten years', b: `Title money every year and a bonus for seeing all ten through. A fantasy-draft start pays ${FANTASY_DYNASTY_FACTOR}× — bring your own team for the full amount.` },
 ];
 
 /**
@@ -564,7 +564,7 @@ function DynastySetup({ teamA, collection, uid, onStart, onCancel }) {
         <SeriesPicker size={size} value={series} onChange={setSeries} label="Playoff series, every year" />
 
         <div className={styles.prize}>
-          <strong>Coins{factor > 1 && <span className={dy.buff}>Fantasy draft ×{factor}</span>}</strong>
+          <strong>Coins{factor !== 1 && <span className={factor > 1 ? dy.buff : dy.nerf}>Fantasy draft ×{factor}</span>}</strong>
           <span>Every year: 🏆 {x(money.champion)} · 🥈 {x(money.runnerUp)} · playoffs {x(money.playoffs)}</span>
           <span>
             {aging ? 'Once ten seasons are in' : 'All ten years'}: {x(bonus)}, plus {x(DYNASTY_TITLE_BONUS)} for every title

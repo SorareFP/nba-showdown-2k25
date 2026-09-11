@@ -100,9 +100,10 @@ The first run of an 8-team fantasy draft found a hole. The AI teams signed their
 - **Games** pay what every game pays. **[user]** The user mentioned "maybe playing a game even gets a small buff". That is not built: it would change the game-reward server path, and the user said "we can figure that out."
 - **Each season** pays the Season title money for its length (champion / runner-up / playoffs), claimed once per year through a new callable, `claimDynastyReward`.
 - **Finishing all ten years** pays **1,000** coins for a regular-length dynasty (600 short, 1,500 long), **plus 150 for every title** won along the way.
-- **The fantasy-start buff.** **[user]** Fantasy-draft dynasties pay **1.5×** on the title money and on the completion bonus. This reverses the 2026-09-07 factor of 0.5.
-  - A regular fantasy dynasty with three titles pays 1.5 × (1,000 + 450) = 2,175 coins on completion, plus 600 for each title year.
-  - 1.5 is my reading of "decently substantial". It is one constant (`FANTASY_DYNASTY_FACTOR`).
+- **The fantasy-start NERF.** **[user]** Fantasy-draft dynasties pay **0.5×** on the title money and on the completion bonus.
+  - The user corrected it on 2026-09-11: "I think I said fantasy draft should buff coin output -- I meant nerf." It had shipped as a 1.5× buff for a few hours, never deployed. 0.5 is the 2026-09-07 factor restored. It is one constant (`FANTASY_DYNASTY_FACTOR`).
+  - A regular fantasy dynasty with three titles pays 0.5 × (1,000 + 450) = 725 coins on completion, plus 200 for each title year.
+  - Why a nerf fits: a fantasy draft hands you any card in the set without owning it; bringing your own team is the collection-earned path.
 - **Same trust model as Season.** The dynasty document is written by the client. The server recomputes the payout from that document's own history and refuses a second claim through `claims/dynasty:{id}:{year}`. A player who forges the document can forge a season too. That is accepted, as it was for seasons.
 
 ## Storage

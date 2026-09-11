@@ -203,7 +203,7 @@ export function FriendsSetup({ teamA, collection, uid, onCancel, onCreated }) {
         </div>
         <SeriesPicker size={size} value={series} onChange={setSeries} label="Playoff series, every year" />
         <div className={styles.prize}>
-          <strong>Coins{factor > 1 && <span className={dy.buff}>Fantasy draft ×{factor}</span>}</strong>
+          <strong>Coins{factor !== 1 && <span className={factor > 1 ? dy.buff : dy.nerf}>Fantasy draft ×{factor}</span>}</strong>
           <span>Every year, to every coach by their finish: 🏆 {x(money.champion)} · 🥈 {x(money.runnerUp)} · playoffs {x(money.playoffs)}</span>
           <span>{aging ? 'Once ten seasons are in' : 'All ten years'}: {x(bonus)}, plus {x(DYNASTY_TITLE_BONUS)} a title</span>
           <span className={styles.muted}>Paid to your account as each year goes in the book — nothing to claim.</span>

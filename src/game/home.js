@@ -34,7 +34,7 @@ export const NEWS = [
   },
   {
     id: 'dynasty', date: '2026-09-11', title: 'Dynasty mode: ten years, one league',
-    body: 'Bring your own team or fantasy-draft the league, then sign everyone with Dynasty Points. Every player has a personality to haggle with, your own free agents talk only to you, the lottery hands out a class of legends and rookies, and the AI bids against you in free agency. Finish all ten years for a coin bonus; a fantasy-draft start pays 1.5×.',
+    body: 'Bring your own team or fantasy-draft the league, then sign everyone with Dynasty Points. Every player has a personality to haggle with, your own free agents talk only to you, the lottery hands out a class of legends and rookies, and the AI bids against you in free agency. Finish all ten years for a coin bonus; a fantasy-draft start pays half, so bring your own team for the full amount.',
     to: 'dynasty', cta: 'Start a dynasty',
   },
   {

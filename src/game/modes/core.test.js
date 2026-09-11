@@ -183,9 +183,9 @@ describe('prizes', () => {
     expect(seasonEarnings('long', { runnerUp: true })).toEqual({ coins: 350, label: 'Runner-up' });
     expect(seasonEarnings('regular', { madePlayoffs: true })).toEqual({ coins: 100, label: 'Made the Playoffs' });
     expect(seasonEarnings('regular', {})).toEqual({ coins: 0, label: null });
-    // A fantasy-draft dynasty is BUFFED (2026-09-11), not halved as it was on 2026-09-07.
-    expect(seasonEarnings('regular', { champion: true }, dynastyCoinFactor('fantasy-full'))).toEqual({ coins: 600, label: 'Season Champion' });
-    expect(dynastyCoinFactor('fantasy-random')).toBe(1.5);
+    // A fantasy-draft dynasty pays HALF — the user's correction, 2026-09-11 ("I meant nerf").
+    expect(seasonEarnings('regular', { champion: true }, dynastyCoinFactor('fantasy-full'))).toEqual({ coins: 200, label: 'Season Champion' });
+    expect(dynastyCoinFactor('fantasy-random')).toBe(0.5);
     expect(dynastyCoinFactor('own')).toBe(1);
     expect(dynastyCoinFactor(undefined)).toBe(1);
     expect(SEASON_REWARDS.long.champion).toBeGreaterThan(SEASON_REWARDS.regular.champion);

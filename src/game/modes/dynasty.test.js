@@ -9,7 +9,7 @@ import {
   baseAge, ageOf, retireChance, endDynasty, lotteryWeights,
 } from './dynasty.js';
 import { CAP_DP, APRON_DP, FA_DAYS, fairDp, PERSONALITIES } from './dynastyMarket.js';
-import { dynastyYearEarnings, dynastyCompletionEarnings, dynastyClaim, DYNASTY_YEARS, SEASON_REWARDS } from './prizes.js';
+import { dynastyYearEarnings, dynastyCompletionEarnings, dynastyClaim, DYNASTY_YEARS, SEASON_REWARDS, FANTASY_DYNASTY_FACTOR } from './prizes.js';
 import { buildAiLeague } from './aiTeams.js';
 import { recordResult, roundFixtures, advance, totalRounds, PHASE } from './season.js';
 import { CARDS } from '../cards.js';
@@ -499,12 +499,13 @@ describe('ten years', () => {
     expect(d.phase).toBe(DPHASE.done);
     expect(d.history.map(h => h.year)).toEqual(Array.from({ length: DYNASTY_YEARS }, (_, i) => i + 1));
     const done = dynastyCompletionEarnings(d);
-    expect(done.coins).toBeGreaterThanOrEqual(Math.floor(600 * 1.5));
+    // A fantasy start pays FANTASY_DYNASTY_FACTOR (half — the user's correction, 2026-09-11).
+    expect(done.coins).toBeGreaterThanOrEqual(Math.floor(600 * FANTASY_DYNASTY_FACTOR));
     const s = summarizeDynasty(d);
     expect(s.phaseLabel).toBe('Complete');
     const year1 = dynastyYearEarnings(d, 1);
     const h = d.history[0];
-    if (h.champion === HUMAN_ID) expect(year1.coins).toBe(SEASON_REWARDS.short.champion * 1.5);
+    if (h.champion === HUMAN_ID) expect(year1.coins).toBe(Math.floor(SEASON_REWARDS.short.champion * FANTASY_DYNASTY_FACTOR));
   });
 
   it('pays nothing for the ten-year bonus before the tenth season is in', () => {

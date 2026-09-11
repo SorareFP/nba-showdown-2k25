@@ -115,6 +115,13 @@ describe('bringing your own team', () => {
     const twin = CARD_SETS['super-season'].find(x => x.id === c.id) ?? { ...c, set: 'super-season' };
     expect(() => ownDynasty({ roster: [c, twin] })).toThrow(/one card per player/);
   });
+
+  it('carries the playoff series picked at setup into every year', () => {
+    const brought = buildAiLeague(1, { rng: seeded(1) })[0].roster;
+    const d = createDynasty({ id: 'S', size: 8, length: 'online', startMode: 'own', series: [3, 3, 7], rng: seeded(3), human: { name: 'Me', roster: brought } });
+    expect(d.series).toEqual([3, 3, 7]);
+    expect(startSeason(d, { rng: seeded(4) }).season.series).toEqual([3, 3, 7]);
+  });
 });
 
 describe('the fantasy draft', () => {

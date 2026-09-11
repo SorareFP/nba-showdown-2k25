@@ -40,8 +40,10 @@ import { useDialogs } from '../ui/dialogs.jsx';
 import {
   createSeason, standings, roundFixtures, recordResult, rostersOf, decksOf, setDeck,
   simulateRound, simulatePlayoffRound, roundComplete, advance, totalRounds,
-  teamsById, earningsFor, PHASE, teamSeasonStats, seasonLeaders,
+  teamsById, earningsFor, PHASE, teamSeasonStats, seasonLeaders, playoffGames, isRecorded,
 } from '../game/modes/season.js';
+import { bestOfFor, seriesWins } from '../game/modes/bracket.js';
+import SeriesPicker, { seriesFor } from './league/SeriesPicker.jsx';
 import { getCardByKey } from '../game/cardSets.js';
 import { seasonAwards, replacementRate, vorpOf, DPOY_MIN_MPG } from '../game/modes/awards.js';
 import { simulateFixture } from '../game/modes/simulate.js';
@@ -166,9 +168,8 @@ export default function SeasonTab({
       : seasons.find(s => s.id === pendingResult.seasonId);
     if (!target) return;
     consumedRef.current = key;
-    const already = target.phase === PHASE.playoffs
-      ? target.bracket?.matches.some(m => m.id === pendingResult.fixtureId && m.winner)
-      : target.fixtures.some(f => f.id === pendingResult.fixtureId && f.result);
+    // A series game counts as recorded once the series has that many games.
+    const already = isRecorded(target, pendingResult.fixtureId);
     if (!already) {
       try {
         commit(recordResult(target, pendingResult));
@@ -188,6 +189,7 @@ export default function SeasonTab({
         humans: [{ id: MY_ID, name: draft.name, uid, roster: draft.roster, deck: draft.deck, deckName: draft.deckName }],
         size: draft.size,
         length: draft.length,
+        series: draft.series ?? null,
       });
       await saveSeason(uid, season);
       setSeasons(list => [season, ...list]);
@@ -622,6 +624,7 @@ function Setup({ teamA, collection, uid, onStart, onCancel }) {
   const [size, setSize] = useState(8);
   const [length, setLength] = useState('quick');
   const [pick, setPick] = useState({ roster: [], deck: null, deckName: null });
+  const [series, setSeries] = useState(null);
   const roster = pick.roster;
 
   const ok = roster.length >= MIN_TO_PLAY;
@@ -677,6 +680,8 @@ function Setup({ teamA, collection, uid, onStart, onCancel }) {
           </div>
         </div>
 
+        <SeriesPicker size={size} value={series} onChange={setSeries} />
+
         <div className={styles.prize}>
           <strong>Title money</strong>
           <span>🏆 {money.champion} · 🥈 {money.runnerUp} · playoffs {money.playoffs}</span>
@@ -690,6 +695,7 @@ function Setup({ teamA, collection, uid, onStart, onCancel }) {
             name: name.trim() || 'My Team', roster, size, length,
             deck: pick.deck,
             deckName: pick.deckName,
+            series: seriesFor(size, series),
           })}
         >
           {ok ? `Start ${gamesPerTeam(size, length)}-game season` : `Pick at least ${MIN_TO_PLAY} cards`}
@@ -732,16 +738,8 @@ function Dashboard({
   /** This round's games, in one shape whichever phase we are in. */
   const games = useMemo(() => {
     if (!isPlayoffs) return roundFixtures(season);
-    return (season.bracket?.matches ?? [])
-      .filter(m => m.round === season.round)
-      .map(m => ({
-        id: m.id,
-        home: m.a,
-        away: m.b,
-        result: m.winner
-          ? { homeScore: m.result?.homeScore ?? 0, awayScore: m.result?.awayScore ?? 0, winner: m.winner }
-          : null,
-      }));
+    // One row per series: its next game, or its result once decided (seasonCore).
+    return playoffGames(season);
   }, [season, isPlayoffs]);
 
   const mine = games.find(g => g.home === myId || g.away === myId) ?? null;
@@ -805,7 +803,7 @@ function Dashboard({
       nameA: me.name,
       nameB: opp.name,
       label: isPlayoffs
-        ? `${playoffRoundName(season.round, bracketRounds)} · ${homeIsMine ? 'vs' : 'at'} ${opp.name}`
+        ? `${playoffRoundName(season.round, bracketRounds)}${mine.bestOf > 1 ? ` · Game ${mine.game}` : ''} · ${homeIsMine ? 'vs' : 'at'} ${opp.name}`
         : `Round ${season.round} · ${homeIsMine ? 'vs' : 'at'} ${opp.name}`,
       ...(presetExtra ?? {}),
     });
@@ -923,6 +921,11 @@ function Dashboard({
                 </span>
                 <TeamChip team={by.get(mine.away)} right won={mine.result ? mine.result.awayScore > mine.result.homeScore : false} />
               </div>
+              {isPlayoffs && mine.bestOf > 1 && !mine.result && (
+                <div className={styles.hint}>
+                  Best of {mine.bestOf} · Game {mine.game} · you lead {mine.home === myId ? mine.winsHome : mine.winsAway}–{mine.home === myId ? mine.winsAway : mine.winsHome}
+                </div>
+              )}
               {myGameLeft && !isHH && (
                 <div className={styles.hint}>
                   {mine.home === myId ? 'Home court: the visitor places first in the snake and you answer every row.' : 'On the road: you place first in the snake and the home side answers.'}
@@ -1236,7 +1239,9 @@ function FixtureRow({ game, by }) {
   return (
     <div className={styles.fixture}>
       <TeamChip team={home} won={r ? r.homeScore > r.awayScore : false} />
-      <span className={styles.score}>{r ? `${r.homeScore} – ${r.awayScore}` : 'vs'}</span>
+      <span className={styles.score}>
+        {r ? `${r.homeScore} – ${r.awayScore}` : game.bestOf > 1 ? `${game.winsHome}–${game.winsAway} · G${game.game}` : 'vs'}
+      </span>
       <TeamChip team={away} right won={r ? r.awayScore > r.homeScore : false} />
     </div>
   );
@@ -1265,13 +1270,20 @@ function BracketView({ season, by }) {
       <div className={styles.bracket}>
         {rounds.map(r => (
           <div key={r} className={styles.bracketCol}>
-            <div className={styles.bracketHead}>{playoffRoundName(r, bracket.rounds)}</div>
-            {bracket.matches.filter(m => m.round === r).map(m => (
-              <div key={m.id} className={styles.bracketMatch}>
-                <BracketSide team={by.get(m.a)} won={m.winner === m.a} score={m.result?.homeScore} />
-                <BracketSide team={by.get(m.b)} won={m.winner === m.b} score={m.result?.awayScore} />
-              </div>
-            ))}
+            <div className={styles.bracketHead}>
+              {playoffRoundName(r, bracket.rounds)}
+              {bestOfFor(bracket.matches.find(m => m.round === r)) > 1 && ` · best of ${bestOfFor(bracket.matches.find(m => m.round === r))}`}
+            </div>
+            {bracket.matches.filter(m => m.round === r).map(m => {
+              // A series in progress shows the games won so far.
+              const live = !m.winner && bestOfFor(m) > 1 ? seriesWins(m) : null;
+              return (
+                <div key={m.id} className={styles.bracketMatch}>
+                  <BracketSide team={by.get(m.a)} won={m.winner === m.a} score={live ? live.a : m.result?.homeScore} />
+                  <BracketSide team={by.get(m.b)} won={m.winner === m.b} score={live ? live.b : m.result?.awayScore} />
+                </div>
+              );
+            })}
           </div>
         ))}
       </div>

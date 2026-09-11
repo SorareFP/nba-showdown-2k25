@@ -322,6 +322,8 @@ export function createDynasty({
   size = 8,
   length = 'regular',
   startMode = 'own',
+  // Best-of per playoff round, first round first, for every year (bracket.js).
+  series = null,
   rng = Math.random,
 } = {}) {
   if (!START_MODES[startMode]) throw new Error(`dynasty: no start mode ${startMode}`);
@@ -372,6 +374,7 @@ export function createDynasty({
     startMode,
     size,
     length,
+    series: Array.isArray(series) && series.length ? series : null,
     years: DYNASTY_YEARS,
     year: 1,
     phase: DPHASE.preseason,
@@ -805,7 +808,7 @@ export function startSeason(d, { rng = Math.random } = {}) {
   const humans = x.teams.map(t => ({
     id: t.id, name: t.name, uid: t.uid, abbr: t.abbr, logo: t.logo, deck: t.deck, deckName: t.deckName, roster: rosterOf(x, t.id),
   }));
-  const season = createSeason({ id: `${x.id}-y${x.year}`, humans, size: x.teams.length, length: x.length, rng });
+  const season = createSeason({ id: `${x.id}-y${x.year}`, humans, size: x.teams.length, length: x.length, series: x.series ?? null, rng });
   season.teams = season.teams.map(t => {
     const dt = teamOf(x, t.id);
     return { ...t, human: Boolean(dt?.human), primary: dt?.primary ?? null, secondary: dt?.secondary ?? null, city: dt?.city ?? null };

@@ -21,7 +21,8 @@ import { useDialogs } from '../ui/dialogs.jsx';
 import { listDynasties, saveDynasty, deleteDynasty } from '../firebase/dynasties.js';
 import { claimDynastyReward } from '../firebase/serverWrites.js';
 import { loadDecks } from '../firebase/savedDecks.js';
-import { recordResult, PHASE } from '../game/modes/season.js';
+import { recordResult, isRecorded } from '../game/modes/season.js';
+import SeriesPicker, { seriesFor } from './league/SeriesPicker.jsx';
 import { LENGTHS, PICKABLE_LENGTHS, LEAGUE_SIZES, playoffCount, gamesPerTeam } from '../game/modes/schedule.js';
 import {
   SEASON_REWARDS, DYNASTY_COMPLETION, DYNASTY_TITLE_BONUS, FANTASY_DYNASTY_FACTOR,
@@ -105,9 +106,7 @@ export default function DynastyTab({
     if (consumed.current === key) return;
     consumed.current = key;
     const s = d.season;
-    const already = s.phase === PHASE.playoffs
-      ? s.bracket?.matches.some(m => m.id === pendingResult.fixtureId && m.winner)
-      : s.fixtures.some(f => f.id === pendingResult.fixtureId && f.result);
+    const already = isRecorded(s, pendingResult.fixtureId);
     if (!already) {
       try {
         commit({ ...d, season: recordResult(s, pendingResult) });
@@ -128,6 +127,7 @@ export default function DynastyTab({
         size: cfg.size,
         length: cfg.length,
         startMode: cfg.startMode,
+        series: cfg.series ?? null,
       });
       // Into the draft room with the AI's picks before yours already made.
       if (d.phase === DPHASE.draft) d = simDraft(d);
@@ -238,6 +238,7 @@ function DynastySetup({ teamA, collection, uid, onStart, onCancel }) {
   const [size, setSize] = useState(8);
   const [length, setLength] = useState('online');
   const [pick, setPick] = useState({ roster: [], deck: null, deckName: null });
+  const [series, setSeries] = useState(null);
   const [decks, setDecks] = useState([]);
   const [deckId, setDeckId] = useState('default');
   const [busy, setBusy] = useState(false);
@@ -264,6 +265,7 @@ function DynastySetup({ teamA, collection, uid, onStart, onCancel }) {
       roster: own ? pick.roster : [],
       deck: own ? pick.deck : (chosenDeck?.cards ?? null),
       deckName: own ? pick.deckName : (chosenDeck?.name ?? null),
+      series: seriesFor(size, series),
     });
     setBusy(false);
   };
@@ -332,6 +334,8 @@ function DynastySetup({ teamA, collection, uid, onStart, onCancel }) {
             ))}
           </div>
         </div>
+
+        <SeriesPicker size={size} value={series} onChange={setSeries} label="Playoff series, every year" />
 
         <div className={styles.prize}>
           <strong>Coins{factor > 1 && <span className={dy.buff}>Fantasy draft ×{factor}</span>}</strong>

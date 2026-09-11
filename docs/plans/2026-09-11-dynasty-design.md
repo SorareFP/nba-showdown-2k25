@@ -129,7 +129,11 @@ The user answered the "not built" list below, then answered four follow-up quest
    - **The fantasy draft is 10 rounds; every offseason draft is 2.**
    - Players not taken in the fantasy draft go into the **draft pool, not free agency**.
    - Each offseason, the next 10×teams players in the pool form the class. Undrafted players return to the pool. Retired players never re-enter.
-   - Free agency is only for players who have been in the league. My call: an own-team start therefore opens with an empty free-agent market.
+   - Free agency is only for players who have been in the league. My calls:
+     - An own-team start therefore opens with an empty free-agent market. A short roster fills with **camp invites**: the cheapest players waiting in the draft pool, on one-year deals.
+     - A team may **pass** on an offseason pick. The AI never passes; it renounces a pick it can't fit.
+     - The fantasy draft's leftovers are shuffled into the pool. An offseason class's undrafted players go back on the end of the queue.
+   - **Built** (probe: day-one AI bids 2/7/10 at 4/8/12 teams; every AI roster ends 10 deep at 89–100 DP; the pool never runs dry at 339–419 players).
 4. **Your collection.** No change. Dynasty cards exist only inside the dynasty.
 5. **Point-differential coins, for every game.**
    - The win bonus scales with the margin, tuned so the average win still pays about 50.

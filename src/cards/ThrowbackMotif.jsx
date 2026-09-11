@@ -24,12 +24,21 @@ import s from './ThrowbackMotif.module.css';
 // The bottom-left slot sits FLUSH in the card's corner (the user, 2026-09-10:
 // "push this design into the bottom left corner, looking like it comes off the
 // corner"), 210x160: clear of the name above it and the chart to its right.
-const SIZE = { band: [843, 112], top: [135, 132], bottom: [210, 160] };
-// The band's open patches: left of the league mark — flush with the card's left
-// edge and the band's full height, so the stroke comes off the top-left corner
-// — and between the stat blocks. The frame paints over the outer 7px.
-const LEFT = { x: 0, y: 0, w: 77, h: 112 };
-const GAP = { x: 380, y: 7, w: 69, h: 99 };
+//
+// EVERY STROKE RUNS TO A LINE THE CARD ALREADY HAS, never to a box edge (the
+// user, 2026-09-11: "make sure the design connects to where it's headed"). The
+// top-left stroke comes off the corner and runs down to the band's bottom line,
+// passing BEHIND the league mark, which paints over it. The middle stroke runs
+// top line to bottom line inside the gap between SPEED and POWER, so neither
+// side cuts it. The top-right strokes come off the corner and leave through
+// the translucent bar's left edge (the slot's own left edge), in a slot tall
+// enough that none leaves through its bottom.
+const SIZE = { band: [843, 112], top: [135, 168], bottom: [210, 160] };
+// The band's patches: the top-left one runs under the league mark and stops
+// short of SPEED's letters (x ~186); the middle one is the gap between the two
+// stat blocks. The frame paints over the outer 7px.
+const LEFT = { x: 0, y: 0, w: 150, h: 112 };
+const GAP = { x: 376, y: 0, w: 77, h: 112 };
 
 /** The cup's own colours: what the mockups wore, and the fallback. */
 const CUP = { brush: THROWBACK_TEAL, light: '#39CACA', scribble: THROWBACK_PURPLE };
@@ -88,23 +97,25 @@ const DRAW = {
     <>
       {brushDefs(u)}
       <defs>{clipTo(`l${u}`, LEFT)}{clipTo(`g${u}`, GAP)}</defs>
-      {/* Off the top-left corner, sweeping down and right. */}
+      {/* Off the top-left corner, down to the band's bottom line, behind the league mark. */}
       <g clipPath={`url(#l${u})`}>
-        {swath(u, 'M -18 -16 L 96 110', 40, c.brush)}
-        {scribble(u, zigzag(-2, 12, 104, 11, 4, 46), c.scribble)}
+        {swath(u, 'M -18 -16 L 118 126', 40, c.brush)}
+        {scribble(u, zigzag(-2, 10, 142, 11, 5, 46), c.scribble)}
       </g>
+      {/* Top line to bottom line, inside the gap: nothing cuts its sides. */}
       <g clipPath={`url(#g${u})`}>
-        {swath(u, 'M 372 100 L 456 14', 38, c.brush)}
-        {scribble(u, zigzag(384, 92, 84, 12, 4, -50), c.scribble)}
+        {swath(u, 'M 432 -12 L 398 124', 34, c.brush)}
+        {scribble(u, zigzag(430, -2, 118, 9, 5, 104), c.scribble)}
       </g>
     </>
   ),
+  // Off the top-right corner, down and left, out through the bar's left edge.
   top: (u, c) => (
     <>
       {brushDefs(u)}
-      {swath(u, 'M -10 70 L 150 18', 40, c.brush)}
-      {swath(u, 'M 10 132 L 150 86', 30, c.light)}
-      {scribble(u, zigzag(4, 98, 140, 16, 5, -22), c.scribble, 7)}
+      {swath(u, 'M 150 -24 L -12 104', 40, c.brush)}
+      {swath(u, 'M 150 44 L -12 150', 28, c.light)}
+      {scribble(u, zigzag(140, -8, 176, 14, 6, 142), c.scribble, 7)}
     </>
   ),
   // Off the bottom-left corner, sweeping up and right: the strokes start past

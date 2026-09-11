@@ -6,7 +6,11 @@ import { describe, it, expect, vi } from 'vitest';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 
-vi.mock('../CardLightbox.jsx', () => ({ useLightbox: () => ({ open: () => {} }) }));
+vi.mock('../CardLightbox.jsx', () => ({
+  useLightbox: () => ({ open: () => {} }),
+  // eslint-disable-next-line no-unused-vars
+  ZoomImg: ({ player, strat, ...img }) => <img alt="" {...img} />,
+}));
 
 import { HandPanel } from './CourtBoard.jsx';
 import { newGame, getTeam, returnCardToDeck, undoReturnCard } from '../../game/engine.js';

@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { getPlayerImageUrl, getStratImagePath } from '../game/cardImages.js';
-import { cardKey } from '../game/cardSets.js';
+import { cardKey, getCardByKey } from '../game/cardSets.js';
+import { getStrat } from '../game/strats.js';
 import { useCardStats } from '../firebase/CardStatsProvider.jsx';
 import Holo from './HoloSheen.jsx';
 import { holoRegionsFor } from '../cards/faceRegions.js';
@@ -13,6 +14,45 @@ const LightboxCtx = createContext(null);
 
 export function useLightbox() {
   return useContext(LightboxCtx);
+}
+
+/**
+ * A CARD IMAGE THAT OPENS THE WHOLE CARD, on click or Enter: this lightbox,
+ * with its stats and the full-resolution face. The user, 2026-09-11: "It is
+ * way too hard to see details. Whenever a card's art is displayed on screen
+ * in any menu, it probably makes sense to be able to click it and see the
+ * whole card." Every card image on a menu goes through this.
+ *
+ * `player` is a card or a card key, `strat` a strategy card or its id; every
+ * other prop is the <img>'s. The click STOPS here, so a row or a button behind
+ * the picture keeps its own job — looking at a card and choosing it are
+ * different clicks. Without a LightboxProvider (render tests), or for a card
+ * that does not exist, it is a plain picture.
+ */
+export function ZoomImg({ player = null, strat = null, style = undefined, title = undefined, ...img }) {
+  const lb = useLightbox();
+  const type = player != null ? 'player' : strat != null ? 'strat' : null;
+  const data = type === 'player' ? (typeof player === 'string' ? getCardByKey(player) : player)
+    : type === 'strat' ? (typeof strat === 'string' ? getStrat(strat) : strat)
+      : null;
+  if (!lb || !data) return <img style={style} title={title} {...img} />;
+  const open = e => {
+    e.stopPropagation();
+    e.preventDefault();
+    lb.open(type, data);
+  };
+  return (
+    <img
+      {...img}
+      role="button"
+      tabIndex={0}
+      aria-label={img.alt || `${data.name} — see the whole card`}
+      title={title ?? `${data.name} — see the whole card`}
+      style={{ cursor: 'zoom-in', ...style }}
+      onClick={open}
+      onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') open(e); }}
+    />
+  );
 }
 
 export function LightboxProvider({ children }) {

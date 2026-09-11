@@ -12,6 +12,7 @@
 // cannot be signed.
 import { useState, useMemo } from 'react';
 import { useDialogs } from '../../ui/dialogs.jsx';
+import { ZoomImg } from '../CardLightbox.jsx';
 import {
   DPHASE, MIN_ROSTER, MAX_ROSTER, PHASE_LABEL, isOffseason, teamOf, rosterKeys, contractsOf, payroll, deadMoney,
   rightsOf, freeAgentKeys, quote, negotiate, renounce, waive, onClock, draftAvailable, draftPick, passPick, simDraft,
@@ -47,9 +48,11 @@ function tagOf(card) {
   return `${card.team} · ${season} ${SET_WORD[card.set] ?? ''}`.trim();
 }
 
+/** A player's face — click it for the whole card (ZoomImg). */
 export function Face({ cardKey, big = false }) {
   return (
-    <img
+    <ZoomImg
+      player={cardKey}
       className={big ? dy.faceBig : dy.face}
       src={getPlayerThumbUrl(cardKey)}
       onError={fallbackTo(getPlayerImageUrl(cardKey), e => { e.currentTarget.style.visibility = 'hidden'; })}

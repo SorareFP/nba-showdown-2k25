@@ -1,5 +1,7 @@
 .backdrop {
-  position: fixed; inset: 0; z-index: 300;
+  /* Above every other overlay (the sign-up pop-up is 1200): a card opened from
+     inside one has to land in front of it. */
+  position: fixed; inset: 0; z-index: 1300;
   background: rgba(0,0,0,0.75);
   display: flex; align-items: center; justify-content: center;
   padding: 1.5rem;
@@ -93,7 +95,7 @@
   color: #F1F5F9; font-size: 24px;
   width: 40px; height: 40px; border-radius: 10px;
   cursor: pointer; display: flex; align-items: center; justify-content: center;
-  z-index: 301;
+  z-index: 1301;
 }
 
 /* The lifetime line — see CardStatsProvider. */

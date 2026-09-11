@@ -28,6 +28,7 @@ import { getPlayerImageUrl, getPlayerThumbUrl, fallbackTo } from '../game/cardIm
 import { loadListings } from '../firebase/market.js';
 import { buyListing, delistCard } from '../firebase/serverWrites.js';
 import styles from './Market.module.css';
+import { ZoomImg } from './CardLightbox.jsx';
 
 const SORTS = {
   price: { label: 'Cheapest', cmp: (a, b) => a.price - b.price },
@@ -169,7 +170,8 @@ export default function Market({ uid, coins, onTraded }) {
           return (
             <div key={l.id} className={styles.card} style={{ borderColor: cfg.color }}>
               <Holo className={styles.art} active={holoRegionsFor(l.card).length > 0} regions={holoRegionsFor(l.card)} idle={false}>
-                <img
+                <ZoomImg
+                  player={l.card}
                   src={getPlayerThumbUrl(cardKey(l.card))}
                   alt=""
                   className={styles.artImg}

@@ -10,6 +10,7 @@
 import { useAuth } from '../firebase/AuthProvider.jsx';
 import { getStratThumbPath, getStratImagePath, fallbackTo } from '../game/cardImages.js';
 import s from './WelcomeTab.module.css';
+import { ZoomImg } from './CardLightbox.jsx';
 
 export default function WelcomeTab({ onTutorial, onHowToPlay }) {
   const { signIn, loading } = useAuth();
@@ -41,7 +42,8 @@ export default function WelcomeTab({ onTutorial, onHowToPlay }) {
           </p>
         </div>
         <figure className={s.gift}>
-          <img
+          <ZoomImg
+            strat="unethical_hoops"
             className={s.giftCard}
             src={thumb}
             alt="Unethical Hoops — the sign-up card"

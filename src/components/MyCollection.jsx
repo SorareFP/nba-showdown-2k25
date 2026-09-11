@@ -27,6 +27,7 @@
 import { useState, useMemo } from 'react';
 import { ALL_CARDS, cardKey, BASE_SET } from '../game/cardSets.js';
 import { STRATS } from '../game/strats.js';
+import { ZoomImg } from './CardLightbox.jsx';
 import {
   getPlayerRarity, getStratRarity, RARITY_CONFIG, RARITY_ORDER,
   BURN_VALUES, STRAT_BURN_VALUES, getMarketPrice,
@@ -192,7 +193,8 @@ export default function MyCollection({ collection, onBurn, onList, onCollect, on
           return (
             <div key={c.key} className={styles.card} style={{ borderColor: cfg.color }}>
               <Holo className={styles.cardArt} active={c.type === 'player' && holoRegionsFor(c).length > 0} regions={holoRegionsFor(c)} idle={false}>
-                <img
+                <ZoomImg
+                  {...(c.type === 'player' ? { player: c.key } : { strat: c.key })}
                   src={c.imgUrl}
                   alt={c.name}
                   className={styles.cardArtImg}

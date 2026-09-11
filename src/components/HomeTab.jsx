@@ -14,7 +14,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useAuth } from '../firebase/AuthProvider.jsx';
 import { useCardStats } from '../firebase/CardStatsProvider.jsx';
-import { useLightbox } from './CardLightbox.jsx';
+import { useLightbox, ZoomImg } from './CardLightbox.jsx';
 import { getUserData, loadClaims } from '../firebase/collection.js';
 import { listSeasons } from '../firebase/seasons.js';
 import { listMyLeagues, seasonOfLeague } from '../firebase/leagues.js';
@@ -223,7 +223,8 @@ export default function HomeTab({ collection = {}, starter = null, onGo = () => 
             {shownNews.map(n => (
               <li key={n.id} className={`${s.news} ${n.highlight ? s.newsHi : ''}`}>
                 {n.image && (
-                  <img
+                  <ZoomImg
+                    strat={n.image}
                     className={s.newsImg}
                     src={getStratThumbPath(n.image)}
                     onError={fallbackTo(getStratImagePath(n.image))}

@@ -5,6 +5,7 @@ import { STRATS } from '../game/strats.js';
 import { getStratRarity, RARITY_CONFIG, STRAT_COPY_CAPS } from '../game/rarity.js';
 import { getStratImagePath, getStratThumbPath, fallbackTo } from '../game/cardImages.js';
 import styles from './DeckEditor.module.css';
+import { ZoomImg } from './CardLightbox.jsx';
 
 const PHASE_ORDER = ['matchup', 'pre_roll', 'scoring', 'post_roll', 'reaction'];
 const PHASE_LABELS = {
@@ -101,7 +102,7 @@ export default function DeckEditor({ deck, onSave, onCancel, collection }) {
                 return (
                   <div key={s.id} className={`${styles.cardRow} ${count > 0 ? styles.cardActive : ''}`}
                     style={notOwned ? { opacity: 0.4 } : undefined}>
-                    {imgPath && <img src={imgPath} alt="" className={styles.cardThumb} onError={fallbackTo(imgFull)} />}
+                    {imgPath && <ZoomImg strat={s} src={imgPath} alt="" className={styles.cardThumb} onError={fallbackTo(imgFull)} />}
                     <div className={styles.cardInfo}>
                       <div className={styles.cardName} style={{ color: s.color }}>
                         {s.name}

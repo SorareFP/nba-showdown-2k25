@@ -27,6 +27,7 @@ import { getTeam } from '../cards/teams.js';
 // same helper the card renderer uses, rather than a second copy of the rule.
 import { logoSrc, LEAGUE_LOGOS } from '../cards/CardTemplate.jsx';
 import styles from './CollectionGoals.module.css';
+import { ZoomImg } from './CardLightbox.jsx';
 
 const LEAGUES = [
   { key: 'NBA', label: 'NBA' },
@@ -96,7 +97,8 @@ function RosterCard({ cardKey: key, owned, collected, busy, onCollect }) {
       className={`${styles.missing} ${collected ? styles.owned : ''}`}
       style={{ borderColor: collected ? 'transparent' : cfg.color }}
     >
-      <img
+      <ZoomImg
+        player={key}
         className={styles.missingArt}
         src={getPlayerThumbUrl(key)}
         alt=""

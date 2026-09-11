@@ -9,7 +9,7 @@ import { aiDraftPick, aiPlacementPick } from '../../game/ai.js';
 import { placePlayer, placementSnapshot, canUndoPlacement, undoPlacement, takenBackName } from '../../game/placement.js';
 import styles from './CourtBoard.module.css';
 import { getPlayerImageUrl, getPlayerThumbUrl, getStratImagePath, getStratThumbPath, fallbackTo } from '../../game/cardImages.js';
-import { useLightbox } from '../CardLightbox.jsx';
+import { useLightbox, ZoomImg } from '../CardLightbox.jsx';
 import { useDialogs } from '../../ui/dialogs.jsx';
 import RollResult from './RollResult.jsx';
 
@@ -1467,7 +1467,7 @@ function BlindPickPhase({ game, setGame, pvpMode = false, myTeamKey = null, onDr
               {isSelected && <span className={styles.blindPickCheck}>&#10003;</span>}
               <div className={styles.blindPickArt}>
                 {imgUrl
-                  ? <img src={imgUrl} alt={p.name} className={styles.blindPickImg} onError={fallbackTo(imgFull, e => { e.target.style.display = 'none'; })} />
+                  ? <ZoomImg player={p} src={imgUrl} alt={p.name} className={styles.blindPickImg} onError={fallbackTo(imgFull, e => { e.target.style.display = 'none'; })} />
                   : <div className={styles.blindPickPlaceholder}>{p.name.charAt(0)}</div>
                 }
               </div>
@@ -1565,7 +1565,7 @@ function PlacedCard({ player, stats, col }) {
   const pImgFull = getPlayerImageUrl(player.id, player.set);
   return (
     <div className={styles.placedCard} style={{borderColor:col}}>
-      {pImgUrl && <img src={pImgUrl} alt={player.name} className={styles.placedArt} onError={fallbackTo(pImgFull, e => { e.target.style.display = 'none'; })} />}
+      {pImgUrl && <ZoomImg player={player} src={pImgUrl} alt={player.name} className={styles.placedArt} onError={fallbackTo(pImgFull, e => { e.target.style.display = 'none'; })} />}
       <div className={styles.placedName} style={{color:col}}>{player.name}{(()=>{const n=(ps.hot||0)-(ps.cold||0);return n>0?' 🔥':n<0?' ❄️':'';})()}{fat<0&&<span className={styles.fatTag}> FAT{fat}</span>}</div>
       <div className={styles.placedMeta}>S{player.speed} · P{player.power} · <span style={{color:'#60A5FA'}}>${player.salary}</span>{boosts.length>0&&' · '+boosts.join(' ')}</div>
     </div>
@@ -1981,7 +1981,7 @@ export function HandPanel({ game, teamKey, onExecCard, onReturnCard = null, onUn
 
               {sImg
                 ? <>
-                    <img src={sImg} alt={s.name} className={styles.hcardImgEl} onError={fallbackTo(sImgFull, e => { e.target.style.display = 'none'; })} />
+                    <ZoomImg strat={s} src={sImg} alt={s.name} className={styles.hcardImgEl} onError={fallbackTo(sImgFull, e => { e.target.style.display = 'none'; })} />
                     <div className={styles.hcardOverlay}>
                       <div className={styles.hname}>{s.name}</div>
                       {!canClick && <div style={{ fontSize: 9, color: '#F87171', marginTop: 2, padding: '0 4px' }}>

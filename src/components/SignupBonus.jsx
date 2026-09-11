@@ -9,6 +9,7 @@
 import { useEffect } from 'react';
 import { getStratThumbPath, getStratImagePath, fallbackTo } from '../game/cardImages.js';
 import s from './SignupBonus.module.css';
+import { ZoomImg } from './CardLightbox.jsx';
 
 export default function SignupBonus({ name, onClaim, onDismiss }) {
   useEffect(() => {
@@ -22,7 +23,8 @@ export default function SignupBonus({ name, onClaim, onDismiss }) {
     <div className={s.backdrop} role="dialog" aria-modal="true" aria-label="Your sign-up bonus">
       <div className={s.sheet}>
         <figure className={s.cardWrap}>
-          <img
+          <ZoomImg
+            strat="unethical_hoops"
             className={s.card}
             src={getStratThumbPath('unethical_hoops')}
             alt="Unethical Hoops"

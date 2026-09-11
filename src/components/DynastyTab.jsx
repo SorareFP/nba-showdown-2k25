@@ -23,10 +23,11 @@ import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useAuth } from '../firebase/AuthProvider.jsx';
 import { useDialogs } from '../ui/dialogs.jsx';
 import { listDynasties, saveDynasty, deleteDynasty } from '../firebase/dynasties.js';
+import { listSeasons } from '../firebase/seasons.js';
 import { claimDynastyReward, reportLeagueResult } from '../firebase/serverWrites.js';
 import { listMyLeagues, summarizeLeague, LEAGUE_STATUS } from '../firebase/leagues.js';
 import { loadDecks } from '../firebase/savedDecks.js';
-import { recordResult, isRecorded } from '../game/modes/season.js';
+import { recordResult, isRecorded, standings, totalRounds, PHASE as SEASON_PHASE } from '../game/modes/season.js';
 import SeriesPicker, { seriesFor } from './league/SeriesPicker.jsx';
 import { LENGTHS, PICKABLE_LENGTHS, LEAGUE_SIZES, playoffCount, gamesPerTeam } from '../game/modes/schedule.js';
 import {
@@ -36,7 +37,7 @@ import {
 import { createDynasty, START_MODES, DPHASE, MAX_ROSTER, simDraft, endSeason, endDynasty, isOffseason, summarizeDynasty, teamOf } from '../game/modes/dynasty.js';
 import { CAP_DP } from '../game/modes/dynastyMarket.js';
 import RosterPicker, { Choice } from './league/RosterPicker.jsx';
-import { SeasonDashboard } from './SeasonTab.jsx';
+import { SeasonDashboard, MY_ID } from './SeasonTab.jsx';
 import {
   PhaseTrack, FrontOffice, DraftRoom, SigningBoard, LotteryRoom, RookieSigning, FreeAgency, NewsFeed, TradeDesk, soloMoves,
 } from './dynasty/DynastyScreens.jsx';
@@ -64,6 +65,9 @@ export default function DynastyTab({
   onPlayFixture,
   pendingResult = null,
   onResultConsumed,
+  // Season mode lives in this tab now (2026-09-11): its screens are the
+  // 'season' route, opened with `{ seasonId }`, `{ leagueId }` or `{ action }`.
+  onOpenSeasons = null,
 }) {
   const { user } = useAuth();
   const { ask } = useDialogs();
@@ -80,19 +84,28 @@ export default function DynastyTab({
   const [activeLeague, setActiveLeague] = useState(null);
   const [friends, setFriends] = useState(null);   // 'new' | 'join' | null
   const [room, setRoom] = useState(null);         // { code, role }
+  // One season: the solo seasons and shared seasons, listed here (read only).
+  const [seasons, setSeasons] = useState([]);
+  const [seasonLeagues, setSeasonLeagues] = useState([]);
 
   const refresh = useCallback(async () => {
     setLoading(true);
     try {
-      const [all, mine] = await Promise.all([
+      const [all, mine, solo] = await Promise.all([
         listDynasties(uid),
         uid ? listMyLeagues(uid).catch(() => []) : Promise.resolve([]),
+        listSeasons(uid).catch(() => []),
       ]);
       setLeagues(mine.filter(l => l.kind === 'dynasty' && l.status !== LEAGUE_STATUS.cancelled));
+      setSeasonLeagues(mine.filter(l => l.kind === 'season' && l.status !== LEAGUE_STATUS.cancelled));
+      setSeasons(solo);
       setList(all);
-      // Straight into the one dynasty in progress — the common case is one.
+      // Straight into the one dynasty in progress — but only when there is
+      // nothing else here to choose between, now that seasons live here too.
       const live = all.filter(d => d.phase !== DPHASE.done);
-      setActiveId(prev => prev ?? (live.length === 1 ? live[0].id : null));
+      const others = solo.some(s => s.phase !== SEASON_PHASE.done)
+        || mine.some(l => l.kind !== 'tournament' && (l.status === LEAGUE_STATUS.live || l.status === LEAGUE_STATUS.lobby));
+      setActiveId(prev => prev ?? (live.length === 1 && !others ? live[0].id : null));
     } catch (e) {
       setError(e?.message ?? 'Could not load your dynasties');
     } finally {
@@ -245,6 +258,9 @@ export default function DynastyTab({
           onOpenLeague={setActiveLeague}
           onNewFriends={() => setFriends('new')}
           onJoinFriends={() => setFriends('join')}
+          seasons={seasons}
+          seasonLeagues={seasonLeagues}
+          onOpenSeasons={onOpenSeasons}
         />
       )}
     </div>
@@ -259,6 +275,72 @@ const PITCH = [
   { t: '🎱 The lottery', b: 'Miss the playoffs for a shot at the top pick of a class of legends and rookies who have never been in the league.' },
   { t: '🏆 Ten years', b: `Title money every year and a bonus for seeing all ten through. A fantasy-draft start pays ${FANTASY_DYNASTY_FACTOR}×.` },
 ];
+
+/**
+ * ONE SEASON — Season mode, folded into this tab (the user, 2026-09-11). Its
+ * screens and saves are unchanged (SeasonTab.jsx); this only LISTS them, and
+ * every button opens the 'season' route through `onOpen` (App.jsx).
+ */
+export function SeasonsPanel({ seasons = [], leagues = [], uid = null, onOpen }) {
+  const live = seasons.filter(s => s.phase !== SEASON_PHASE.done);
+  const finished = seasons.length - live.length;
+  return (
+    <section className={styles.panel}>
+      <div className={dy.panelHead}>
+        <h3 className={styles.panelTitle}>One season</h3>
+        <span className={dy.clockActions}>
+          {uid && <button type="button" className={styles.ghost} onClick={() => onOpen({ action: 'join' })}>Join a shared season</button>}
+          {uid && <button type="button" className={styles.ghost} onClick={() => onOpen({ action: 'newShared' })}>New shared season</button>}
+          <button type="button" className={styles.primary} onClick={() => onOpen({ action: 'new' })}>New season</button>
+        </span>
+      </div>
+      <p className={dy.intro}>
+        One schedule and the playoffs, with 5–10 of your own cards against AI franchise teams — no contracts, no Dynasty
+        Points. Every game pays what a game always pays; the title pays on top.
+      </p>
+      {(live.length > 0 || leagues.length > 0) && (
+        <div className={styles.cards}>
+          {live.map(s => {
+            const row = standings(s).find(t => t.id === MY_ID);
+            return (
+              <div key={s.id} className={styles.seasonCard}>
+                <div className={styles.seasonCardTop}>
+                  <span className={styles.badge}>{LENGTHS[s.length]?.label ?? s.length}</span>
+                  <span className={styles.muted}>{s.size} teams</span>
+                </div>
+                <div className={styles.seasonCardLine}>
+                  {s.phase === SEASON_PHASE.playoffs ? 'Playoffs' : `Round ${s.round} of ${totalRounds(s)}`}
+                </div>
+                <div className={styles.record}>{row ? `${row.w}–${row.l}` : '0–0'}</div>
+                <div className={styles.seasonCardActions}>
+                  <button type="button" className={styles.primary} onClick={() => onOpen({ seasonId: s.id })}>Resume</button>
+                </div>
+              </div>
+            );
+          })}
+          {leagues.map(l => (
+            <div key={l.id} className={styles.seasonCard}>
+              <div className={styles.seasonCardTop}>
+                <span className={styles.badge}>Shared</span>
+                <span className={styles.muted}>{l.status === LEAGUE_STATUS.lobby ? `code ${l.joinCode}` : summarizeLeague(l, uid).where}</span>
+              </div>
+              <div className={styles.seasonCardLine}>{l.name}</div>
+              <div className={styles.muted}>{l.entrants.length} human · {l.settings?.size} teams</div>
+              <div className={styles.seasonCardActions}>
+                <button type="button" className={styles.primary} onClick={() => onOpen({ leagueId: l.id })}>Open</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+      {seasons.length > 0 && (
+        <button type="button" className={dy.linkBtn} onClick={() => onOpen({})}>
+          All seasons{finished ? ` · ${finished} finished` : ''} →
+        </button>
+      )}
+    </section>
+  );
+}
 
 /** Dynasties with friends — one league, several coaches, run by the server. */
 function FriendsList({ leagues, uid, onOpen, onNew, onJoin }) {
@@ -305,7 +387,10 @@ function FriendsList({ leagues, uid, onOpen, onNew, onJoin }) {
   );
 }
 
-function DynastyList({ list, onOpen, onNew, onDelete, leagues = [], uid = null, onOpenLeague, onNewFriends, onJoinFriends }) {
+function DynastyList({
+  list, onOpen, onNew, onDelete, leagues = [], uid = null, onOpenLeague, onNewFriends, onJoinFriends,
+  seasons = [], seasonLeagues = [], onOpenSeasons = null,
+}) {
   return (
     <>
       <header className={styles.head}>
@@ -344,6 +429,7 @@ function DynastyList({ list, onOpen, onNew, onDelete, leagues = [], uid = null, 
           {PITCH.map(p => <div key={p.t} className={dy.pitchItem}><strong>{p.t}</strong>{p.b}</div>)}
         </div>
       )}
+      {onOpenSeasons && <SeasonsPanel seasons={seasons} leagues={seasonLeagues} uid={uid} onOpen={onOpenSeasons} />}
       <FriendsList leagues={leagues} uid={uid} onOpen={onOpenLeague} onNew={onNewFriends} onJoin={onJoinFriends} />
     </>
   );

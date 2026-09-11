@@ -32,6 +32,12 @@
 // room instead of a Play button, and the host sims only the AI-vs-AI games.
 // The result of your own game against an AI team still comes back through
 // PlayTab and `pendingResult`; it is routed to the league by its season id.
+//
+// ── INSIDE DYNASTY (2026-09-11) ─────────────────────────────────────────────
+//
+// The user folded Season into the Dynasty tab. This screen and its saves are
+// unchanged; it is reached from Dynasty's One season panel (`openAction`
+// opens straight into making or joining one) and `onExit` goes back there.
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useAuth } from '../firebase/AuthProvider.jsx';
 import { loadRemoteGame } from '../firebase/games.js';
@@ -84,6 +90,8 @@ export default function SeasonTab({
   onResultConsumed,
   openSeasonId = null,
   openLeagueId = null,
+  openAction = null,   // 'new' | 'newShared' | 'join'
+  onExit = null,
 }) {
   const { user } = useAuth();
   const { ask } = useDialogs();
@@ -94,14 +102,14 @@ export default function SeasonTab({
   // forgotten, so a refresh later does not yank you back to it.
   const wantSeason = useRef(openSeasonId);
   const [loading, setLoading] = useState(true);
-  const [setup, setSetup] = useState(false);
+  const [setup, setSetup] = useState(openAction === 'new');
   const [error, setError] = useState(null);
   // Shared seasons: the leagues of kind 'season' this account is in, which
   // one is open, the sub-screen for making or joining one, and the PvP room
   // a human-vs-human fixture is being played in.
   const [leagues, setLeagues] = useState([]);
   const [activeLeague, setActiveLeague] = useState(openLeagueId);
-  const [shared, setShared] = useState(null);   // 'new' | 'join' | null
+  const [shared, setShared] = useState(openAction === 'newShared' ? 'new' : openAction === 'join' ? 'join' : null);   // 'new' | 'join' | null
   const [room, setRoom] = useState(null);       // { code, role }
 
   const refresh = useCallback(async () => {
@@ -279,6 +287,7 @@ export default function SeasonTab({
           onOpenLeague={setActiveLeague}
           onNewShared={() => setShared('new')}
           onJoinShared={() => setShared('join')}
+          onExit={onExit}
         />
       )}
     </div>
@@ -287,18 +296,21 @@ export default function SeasonTab({
 
 // ── The list of saved seasons ───────────────────────────────────────────────
 
-function SeasonList({ seasons, leagues = [], uid, onOpen, onNew, onDelete, onOpenLeague, onNewShared, onJoinShared }) {
+function SeasonList({ seasons, leagues = [], uid, onOpen, onNew, onDelete, onOpenLeague, onNewShared, onJoinShared, onExit = null }) {
   return (
     <>
       <header className={styles.head}>
         <div>
-          <h2 className={styles.title}>Season</h2>
+          <h2 className={styles.title}>One season</h2>
           <p className={styles.sub}>
             Play a full schedule against a league of AI teams, then the playoffs.
             Every game pays what a game always pays; the title pays once more on top.
           </p>
         </div>
-        <button className={styles.primary} onClick={onNew}>+ New season</button>
+        <div className={styles.headActions}>
+          {onExit && <button className={styles.ghost} onClick={onExit}>← Dynasty</button>}
+          <button className={styles.primary} onClick={onNew}>+ New season</button>
+        </div>
       </header>
 
       {seasons.length === 0 ? (
@@ -474,7 +486,9 @@ function JoinShared({ teamA, collection, uid, onCancel, onJoined }) {
       const entrant = entrantFromTeam(uid, { name: name.trim() || 'My Team', roster: pick.roster, deck: pick.deck, deckName: pick.deckName });
       const res = await joinLeague(uid, { code, entrant });
       if (res.kind !== 'season') {
-        toast(`${res.name} is a tournament — it is under the Tournament tab.`, { tone: 'success' });
+        toast(res.kind === 'dynasty'
+          ? `${res.name} is a dynasty — it is in the Dynasty tab, under With friends.`
+          : `${res.name} is a tournament — it is under the Tournament tab.`, { tone: 'success' });
         onCancel();
         return;
       }

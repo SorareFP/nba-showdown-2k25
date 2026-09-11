@@ -241,7 +241,9 @@ export function JoinFriends({ teamA, collection, uid, onCancel, onJoined }) {
   const ok = open && (!own || pick.roster.length === MAX_ROSTER);
   const note = !info ? null
     : info.missing ? 'No league with that code.'
-      : !dyn ? `That code is a ${info.kind} — join it under the ${info.kind === 'tournament' ? 'Tournament' : 'Season'} tab.`
+      : !dyn ? (info.kind === 'tournament'
+        ? 'That code is a tournament — join it under the Tournament tab.'
+        : 'That code is a shared season — join it under One season, with "Join a shared season".')
         : !open ? 'That dynasty has already started.'
           : own ? `A dynasty you bring your own ten to.` : `A fantasy-draft dynasty — bring nothing but a deck.`;
 

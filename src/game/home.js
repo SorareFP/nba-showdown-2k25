@@ -23,6 +23,11 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
+    id: 'season-in-dynasty', date: '2026-09-11', title: 'Seasons now live in Dynasty',
+    body: 'One tab for leagues: a single season, a ten-year dynasty, or either with friends. Your seasons in progress are right where you left them — under One season in the Dynasty tab.',
+    to: 'season', cta: 'Your seasons',
+  },
+  {
     id: 'dynasty-friends', date: '2026-09-11', title: 'Dynasty with friends',
     body: 'Run one dynasty together: each of you coaches a team and AI teams fill the rest. Draft on a twelve-hour clock, bid sealed through three weeks of free agency, trade with each other (the commissioner can veto), and move on when everyone is ready. Each year\'s title money goes straight to every coach.',
     to: 'dynasty', cta: 'Start one',

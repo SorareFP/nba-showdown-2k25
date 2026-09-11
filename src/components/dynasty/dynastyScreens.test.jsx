@@ -13,14 +13,14 @@ vi.mock('../../ui/dialogs.jsx', () => ({
   useDialogs: () => ({ ask: async () => true, toast: () => {} }),
 }));
 
-import DynastyTab, { DynastyView, DynastySetup } from '../DynastyTab.jsx';
+import DynastyTab, { DynastyView, DynastySetup, SeasonsPanel } from '../DynastyTab.jsx';
 import { Negotiator, TradeDesk, soloMoves } from './DynastyScreens.jsx';
 import {
   createDynasty, simDraft, draftPick, aiDraftChoice, onClock, finishDraft, closeSigning, nextFaDay,
   startSeason, endSeason, closeResign, drawLottery, fillRoster, rightsOf, freeAgentKeys, HUMAN_ID, DPHASE,
   tradeDeadlineRound,
 } from '../../game/modes/dynasty.js';
-import { recordResult, roundFixtures, advance, totalRounds, PHASE } from '../../game/modes/season.js';
+import { recordResult, roundFixtures, advance, totalRounds, PHASE, createSeason } from '../../game/modes/season.js';
 import { buildAiLeague } from '../../game/modes/aiTeams.js';
 
 const seeded = (s = 5) => () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 2 ** 32; };
@@ -64,6 +64,13 @@ describe('the tab', () => {
     for (const t of ['Bring your team', 'Fantasy draft', 'random pool']) expect(out).toContain(t);
     expect(out).toContain('Fantasy draft ×1.5');
     expect(out).toContain('To the draft room');
+  });
+
+  it('lists a season in progress under One season, with the way back into it', () => {
+    const roster = buildAiLeague(1, { rng: seeded(1) })[0].roster;
+    const s = createSeason({ humans: [{ id: 'you', name: 'Alex Team', roster }], size: 4, length: 'online', rng: seeded(2) });
+    const out = html(<SeasonsPanel seasons={[s]} leagues={[]} uid="u1" onOpen={() => {}} />);
+    for (const t of ['One season', 'Resume', 'New season', 'Join a shared season', 'All seasons']) expect(out).toContain(t);
   });
 });
 

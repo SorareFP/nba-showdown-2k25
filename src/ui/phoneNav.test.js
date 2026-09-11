@@ -12,7 +12,7 @@ describe('the phone bottom bar', () => {
   });
 
   it('puts the four everyday sections on the bar and the rest behind More', () => {
-    const tabs = ['builder', 'play', 'season', 'tournament', 'pvp', 'collection', 'howtoplay'].map(t);
+    const tabs = ['builder', 'play', 'dynasty', 'tournament', 'pvp', 'collection', 'howtoplay'].map(t);
     const { bar, more } = phoneNavTabs(tabs);
     expect(bar.map(x => x.id)).toEqual(PHONE_BAR);
     expect(more.map(x => x.id)).toEqual(['tournament', 'pvp', 'howtoplay']);
@@ -20,7 +20,7 @@ describe('the phone bottom bar', () => {
   });
 
   it('never loses a section: bar and More together are the whole list', () => {
-    const tabs = ['builder', 'play', 'season', 'tournament', 'pvp', 'collection', 'howtoplay'].map(t);
+    const tabs = ['builder', 'play', 'dynasty', 'tournament', 'pvp', 'collection', 'howtoplay'].map(t);
     const { bar, more } = phoneNavTabs(tabs);
     expect([...bar, ...more].map(x => x.id).sort()).toEqual(tabs.map(x => x.id).sort());
   });

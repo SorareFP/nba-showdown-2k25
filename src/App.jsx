@@ -49,7 +49,10 @@ const AUTH_TABS = [
   { id: 'home',    label: '🏠 Home',         icon: '🏠', short: 'Home' },
   { id: 'builder', label: '🏗 Team Builder', icon: '🏗', short: 'Team' },
   { id: 'play',    label: '🏀 Play',         icon: '🏀', short: 'Play' },
-  { id: 'season',  label: '📅 Season',       icon: '📅', short: 'Season' },
+  // SEASON LIVES INSIDE DYNASTY (the user, 2026-09-11: "We can probably fold
+  // Season mode into Dynasty at this point"). It keeps its screens and its
+  // saves; the 'season' route is reached from Dynasty's One season panel and
+  // the home page, and lights the Dynasty button while it is open.
   { id: 'dynasty', label: '👑 Dynasty',      icon: '👑', short: 'Dynasty' },
   { id: 'tournament', label: '🏆 Tournament', icon: '🏆', short: 'Tournament' },
   { id: 'pvp',     label: '⚔️ PvP',          icon: '⚔️', short: 'PvP' },
@@ -125,7 +128,8 @@ function AppInner() {
   const homeGo = (to, opts = {}) => {
     const section = { shop: 'shop', goals: 'goals', mycards: 'collection', freeagents: 'freeagents' }[to];
     if (section) { setCollectionView(section); goTab('collection'); return; }
-    if (to === 'season') setSeasonOpen(opts.seasonId || opts.leagueId ? opts : null);
+    // `action`: Dynasty's One season buttons open straight into new / newShared / join.
+    if (to === 'season') setSeasonOpen(opts.seasonId || opts.leagueId || opts.action ? opts : null);
     goTab(to);
   };
   const playMounted = useRef(false);
@@ -180,6 +184,8 @@ function AppInner() {
   }, []);
 
   const tabs = user ? AUTH_TABS : GUEST_TABS;
+  // The button a route lights: a season is part of Dynasty now.
+  const navTab = tab === 'season' ? 'dynasty' : tab;
   // Signing out from a signed-in-only tab lands on the front door.
   useEffect(() => {
     if (!user && !authLoading && !tabs.some(t => t.id === tab)) setTab('home');
@@ -187,7 +193,7 @@ function AppInner() {
 
   useEffect(() => {
     const measure = () => {
-      const el = navRef.current?.querySelector(`[data-tab="${tab}"]`);
+      const el = navRef.current?.querySelector(`[data-tab="${navTab}"]`);
       if (!el) { setMarker(null); return; }
       // Just under the button, in the padding the nav reserves for it.
       setMarker({ left: el.offsetLeft, width: el.offsetWidth, top: el.offsetTop + el.offsetHeight + 2 });
@@ -195,7 +201,7 @@ function AppInner() {
     measure();
     window.addEventListener('resize', measure);
     return () => window.removeEventListener('resize', measure);
-  }, [tab, tabs]);
+  }, [navTab, tabs]);
 
   const handleLoadTeam = (savedTeam, slot) => {
     // Only the cards still owned — see ownedRoster in teamRules.js.
@@ -236,7 +242,7 @@ function AppInner() {
             <button
               key={t.id}
               data-tab={t.id}
-              className={`${styles.navBtn} ${tab === t.id ? styles.active : ''}`}
+              className={`${styles.navBtn} ${navTab === t.id ? styles.active : ''}`}
               onClick={() => setTab(t.id)}
             >
               {t.label}
@@ -363,6 +369,8 @@ function AppInner() {
               <SeasonTab
                 openSeasonId={seasonOpen?.seasonId ?? null}
                 openLeagueId={seasonOpen?.leagueId ?? null}
+                openAction={seasonOpen?.action ?? null}
+                onExit={() => goTab('dynasty')}
                 teamA={teamA}
                 collection={collection}
                 pendingResult={seasonResult}
@@ -372,6 +380,7 @@ function AppInner() {
             )}
             {tab === 'dynasty' && (
               <DynastyTab
+                onOpenSeasons={opts => homeGo('season', opts)}
                 teamA={teamA}
                 collection={collection}
                 pendingResult={seasonResult}
@@ -421,9 +430,9 @@ function AppInner() {
         {phoneNav.bar.map(t => (
           <button
             key={t.id}
-            className={`${styles.bnBtn} ${tab === t.id ? styles.bnActive : ''}`}
+            className={`${styles.bnBtn} ${navTab === t.id ? styles.bnActive : ''}`}
             onClick={() => goTab(t.id)}
-            aria-current={tab === t.id ? 'page' : undefined}
+            aria-current={navTab === t.id ? 'page' : undefined}
           >
             <span className={styles.bnIcon} aria-hidden="true">{t.icon}</span>
             <span className={styles.bnLabel}>{t.short}</span>
@@ -432,7 +441,7 @@ function AppInner() {
         ))}
         {phoneNav.more.length > 0 && (
           <button
-            className={`${styles.bnBtn} ${phoneNav.more.some(t => t.id === tab) || moreOpen ? styles.bnActive : ''}`}
+            className={`${styles.bnBtn} ${phoneNav.more.some(t => t.id === navTab) || moreOpen ? styles.bnActive : ''}`}
             onClick={() => setMoreOpen(o => !o)}
             aria-expanded={moreOpen}
           >
@@ -447,7 +456,7 @@ function AppInner() {
             {phoneNav.more.map(t => (
               <button
                 key={t.id}
-                className={`${styles.sheetItem} ${tab === t.id ? styles.sheetActive : ''}`}
+                className={`${styles.sheetItem} ${navTab === t.id ? styles.sheetActive : ''}`}
                 onClick={() => goTab(t.id)}
               >
                 <span className={styles.bnIcon} aria-hidden="true">{t.icon}</span>

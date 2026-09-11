@@ -4,8 +4,9 @@
 // screen, so a signed-in player's seven sections split: the four used every
 // session on the bar, in the order a session runs (play, adjust the team,
 // check the season, open packs), and the rest in a sheet behind More. A
-// guest has two sections and gets both, with no More.
-export const PHONE_BAR = ['play', 'builder', 'season', 'collection'];
+// guest has two sections and gets both, with no More. Seasons live inside
+// Dynasty since 2026-09-11, so Dynasty holds the bar's league slot.
+export const PHONE_BAR = ['play', 'builder', 'dynasty', 'collection'];
 export const PHONE_BAR_MAX = 5;
 
 export function phoneNavTabs(tabs) {

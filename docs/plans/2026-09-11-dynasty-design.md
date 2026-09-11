@@ -156,6 +156,42 @@ The user answered the "not built" list below, then answered four follow-up quest
 
 **Build order:** 5, 6, 3, 2, 1, 7.
 
+## Round three: trades, picks, max deals, the lottery (2026-09-11, late)
+
+The user's corrections, and what was built from them.
+
+- **Trades use Simmons' logic, not his order.** The user: "don't take the order of Simmons' trade-value rankings and prescribe them to our players … Just use the logic." And: "Because there is no skill incline/decline, a 38-year-old on a 1-year deal is the same as a 23-year-old on a 1-year deal."
+  - An age curve fitted to the Ringer's list was built, then **removed before it was committed**.
+  - A player's value to a team is made of:
+    - **talent**, convex: fair DP^1.4, so a star is worth more than two halves of one;
+    - **control**, 0.9× for one season up to 1.2× at four;
+    - **the contract**, where each season underpaid adds value and each season overpaid subtracts it;
+    - **need** at his position, where the targets are G 4 / F 4 / C 2;
+    - **buyers and sellers:** a contender pays for talent now and minds money less, while a rebuilder pays for years and savings;
+    - **age only as retirement risk**, in aging dynasties: the share of the deal he's expected to play, which a rebuilder weighs twice.
+  - The AI accepts deals it wins by 8% and calls anything within 15% "close".
+    - "What would it take?" names the cheapest single player or pick that gets the deal done.
+    - Trades happen between seasons. Both rosters must end at ten or fewer, and neither payroll may grow past the apron.
+  - AI teams trade with each other up to twice each offseason, when both sides gain. Half of the attempts are the buyer's deal: a contender's pick for a rebuilder's player.
+- **Draft picks can be traded.** The user: "More valuable for bad teams?" Yes.
+  - Each team owns its 1st and 2nd in the next two drafts.
+  - A pick is worth the class player projected at the original team's slot, on a rookie-scale deal.
+  - Picks a year further out are worth 0.75×. A rebuilder values a pick at 1.25×, a contender at 0.85×.
+  - The owner makes the pick in the original team's slot, shown as "(via BOS)".
+- **Max deals.** The user asked for these by DP and by years.
+  - A max deal is 35 DP a season (35% of the cap) for up to 5 years. Security First now wants five years.
+  - Asks and floors never pass the max, so stars ask for it and the haggling moves to the years.
+- **The lottery is the NBA's, scaled down.**
+  - The NBA's 14 slots are split into k equal shares, one per lottery team. Two lottery teams get 81.5/18.5, three get 61.5/31.5/7, four get 48/33/15/4, and six get 32.7/28.8/20/11.5/5/2.
+  - Picks 1–3 are drawn. A 30-team dynasty isn't offered, since leagues run 4–12 teams.
+- **With your own team, the AI fantasy-drafts the rest of the league around your ten** (the user: "the same way as if the user was in the draft too").
+  - Each pick is made to a budget: the cap, less the 12 DP kept for free agency, less the cheapest cost of filling the rest of the roster.
+  - Among players that fit, the AI takes the one its roster needs by position. The user: "not just grabbing the best player."
+  - Then the AI signs its picks and settles free agency among itself.
+  - The probe: AI rosters at 83–93 DP, 9–10 players, mostly 4 guards, 4–5 wings and 1–3 bigs.
+- **Your own team is ten players, and they come out of the pool.** This was already true, now confirmed.
+- **Overtime.** A tie after regulation plays another Crunch-Time section, again if it's still tied, in every game.
+
 ## Not built, and worth asking the user
 
 - **Trades.** There are none, AI or human.

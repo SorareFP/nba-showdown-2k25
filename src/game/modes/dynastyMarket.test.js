@@ -42,9 +42,9 @@ describe('personalities', () => {
   });
 
   it('prices the length each one wants', () => {
-    expect(yearFactor('security', 4)).toBe(1);
-    expect(yearFactor('security', 1)).toBeCloseTo(1.36);
-    expect(yearFactor('security', 4)).toBeLessThan(yearFactor('security', 2));
+    expect(yearFactor('security', 5)).toBe(1);
+    expect(yearFactor('security', 1)).toBeCloseTo(1.48);
+    expect(yearFactor('security', 5)).toBeLessThan(yearFactor('security', 2));
     expect(yearFactor('bet', 1)).toBe(1);
     expect(yearFactor('bet', 3)).toBeCloseTo(1.24);
     expect(yearFactor('money', 4)).toBeCloseTo(1.04);
@@ -114,7 +114,7 @@ describe('an offer', () => {
     let talk = newTalk('money');
     for (let i = 0; i < 2; i += 1) talk = judgeOffer({ card: c, pid: 'money', ctx: {}, offer: { dp: 12, years: 2 }, talk }).talk;
     expect(talk.walked).toBe(true);
-    const after = judgeOffer({ card: c, pid: 'money', ctx: {}, offer: { dp: 99, years: 2 }, talk });
+    const after = judgeOffer({ card: c, pid: 'money', ctx: {}, offer: { dp: 35, years: 2 }, talk });
     expect(after.accepted).toBe(false);
     expect(after.mood).toBe('walked');
   });
@@ -130,7 +130,15 @@ describe('an offer', () => {
 
   it('refuses an offer that is not a contract', () => {
     expect(() => judgeOffer({ card: c, pid, ctx: {}, offer: { dp: 0, years: 2 } })).toThrow();
-    expect(() => judgeOffer({ card: c, pid, ctx: {}, offer: { dp: 5, years: 5 } })).toThrow();
+    expect(() => judgeOffer({ card: c, pid, ctx: {}, offer: { dp: 5, years: 6 } })).toThrow();
+    expect(() => judgeOffer({ card: c, pid, ctx: {}, offer: { dp: 36, years: 2 } })).toThrow();
+  });
+
+  it('never asks past a max deal: the stars all ask the max', () => {
+    const star = card(1840); // 33 DP of value
+    expect(floorFor(star, 'money', {}, 2)).toBe(35);
+    expect(openingAsk(star, 'money', {}, 2)).toBe(35);
+    expect(judgeOffer({ card: star, pid: 'money', ctx: {}, offer: { dp: 35, years: 5 } }).accepted).toBe(true);
   });
 });
 

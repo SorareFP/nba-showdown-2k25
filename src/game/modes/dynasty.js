@@ -47,6 +47,7 @@ import { playoffCount } from './schedule.js';
 import {
   CAP_DP, APRON_DP, MIN_DP, FA_DAYS, LEFTOVER_DAY, CONTRACT_YEARS,
   fairDp, dealPersonality, floorFor, openingAsk, askFor, preferredYears, newTalk, judgeOffer, rookieScale, toBeat,
+  TRADE, talentValue, contractValue, controlFactor,
 } from './dynastyMarket.js';
 
 export { DYNASTY_YEARS };
@@ -384,9 +385,9 @@ export function createDynasty({
   const taken = new Set(brought.map(c => c.id));
   const base = CARDS.filter(c => !taken.has(c.id));
   const poolCards = startMode === 'fantasy-random' ? spreadSample(base, size * RANDOM_POOL_PER_TEAM, rng) : base;
-  // The AI franchises. Their rosters are kept only when everyone brings a team;
-  // a fantasy league drafts its own.
-  const ai = buildAiLeague(size - 1, { cards: startMode === 'own' ? base : CARDS, taken, rng });
+  // The AI franchises — names, colours and logos. Their rosters are drafted
+  // (below), never the franchise-built ones Season mode deals.
+  const ai = buildAiLeague(size - 1, { cards: CARDS, taken, rng });
 
   const me = {
     id: HUMAN_ID, name: human.name || 'My Team', human: true, uid: human.uid ?? null,
@@ -399,11 +400,11 @@ export function createDynasty({
     deck: null, deckName: null, last: null,
   }))];
 
-  // WHO IS WHERE AT THE START. The league is whoever is on a roster (own), or
-  // nobody yet (fantasy — the draft brings them in). The board is what the
-  // fantasy draft picks from. Everyone else waits in the draft pool.
-  const board = startMode === 'own' ? [] : poolCards.map(cardKey);
-  const rostered = startMode === 'own' ? [...brought, ...ai.flatMap(t => t.roster)].map(cardKey) : [];
+  // WHO IS WHERE AT THE START. The league is your ten (own) or nobody yet;
+  // the board is what the fantasy draft picks from — with you in it, or the
+  // AI teams drafting around your ten. Everyone else waits in the draft pool.
+  const board = poolCards.map(cardKey);
+  const rostered = brought.map(cardKey);
   const inPlay = new Set([...board, ...rostered]);
   const waiting = shuffle([
     ...draftClassCards(taken).map(cardKey),
@@ -418,7 +419,6 @@ export function createDynasty({
     const years = () => CONTRACT_YEARS.min + Math.floor(rng() * 3);
     const put = (c, teamId) => { contracts[cardKey(c)] = { teamId, dp: fairDp(c), years: years(), since: 1, how: 'brought' }; };
     for (const c of brought) put(c, HUMAN_ID);
-    for (const t of ai) for (const c of t.roster) put(c, t.id);
   }
 
   const d = {
@@ -446,6 +446,8 @@ export function createDynasty({
     rights: {},
     lastTeam: {},
     spurned: {},
+    // Only the TRADED picks: pickId → owner. Every other pick is its team's.
+    pickOwner: {},
     talks: {},
     dead: [],
     draft: null,
@@ -456,7 +458,18 @@ export function createDynasty({
     news: [],
     claimed: {},
   };
-  if (startMode === 'own') return say(d, 'The league opens. Everyone not on a roster waits in the draft pool; start year one when you are ready.');
+  if (startMode === 'own') {
+    // THE REST OF THE LEAGUE IS FANTASY-DRAFTED (the user, 2026-09-11: "the
+    // rest of the teams, if no fantasy draft is chosen, should be fantasy
+    // drafted the same way as if the user was in the draft too"). The AI
+    // teams snake-draft the board around your ten, sign what they drafted,
+    // and settle a free agency of their leftovers among themselves.
+    const aiIds = shuffle(teams.filter(t => !t.human).map(t => t.id), rng);
+    let x = { ...d, phase: DPHASE.draft, draft: { kind: 'fantasy', order: snakeOrder(aiIds, FANTASY_ROUNDS), picks: [], pool: board } };
+    x = closeSigning(finishDraft(simDraft(x, { rng, all: true }), { rng }), { rng });
+    for (let day = 0; day <= FA_DAYS && x.phase === DPHASE.freeAgency; day += 1) x = nextFaDay(x, { rng });
+    return say({ ...x, news: [] }, 'The league opens: the AI teams drafted around your ten. Start year one when you are ready.');
+  }
   const order = snakeOrder(shuffle(teams.map(t => t.id), rng), FANTASY_ROUNDS);
   return say(
     { ...d, phase: DPHASE.draft, draft: { kind: 'fantasy', order, picks: [], pool: board } },
@@ -664,13 +677,28 @@ export function passPick(d, teamId) {
 export function aiDraftChoice(d, teamId, rng = Math.random) {
   const avail = draftAvailable(d).filter(k => cardOf(k));
   if (!avail.length) return null;
-  const bySalary = [...avail].sort((a, b) => salaryOf(b) - salaryOf(a));
-  if (d.draft.kind !== 'fantasy') return pickWeighted(bySalary.slice(0, 2), [0.65, 0.35], rng);
-  const committed = rightsOf(d, teamId, 'draft').reduce((t, k) => t + floorOf(d, k, teamId, undefined, 1), 0);
+  // Everyone he would play with: the roster and the picks already made.
+  const mine = [...rosterKeys(d, teamId), ...rightsOf(d, teamId)];
+  const score = k => talentValue(cardOf(k)) * needFactor(mine, cardOf(k));
+  if (d.draft.kind !== 'fantasy') {
+    const best = [...avail].sort((a, b) => score(b) - score(a));
+    return pickWeighted(best.slice(0, 2), [0.65, 0.35], rng);
+  }
+  // A FANTASY DRAFT IS DRAFTED TO A CAP (the user, 2026-09-11: "drafting to
+  // make a team that fits in the salary cap, not just grabbing the best
+  // player"). Every pick has to be signed, so this pick's budget is the cap,
+  // less what the picks so far will cost, less room kept for free agency,
+  // less what the rest of the roster costs filled as cheaply as it could be;
+  // and of those that fit, the best is the one the ROSTER needs — guards,
+  // wings and bigs in proportion.
+  const floor = k => floorOf(d, k, teamId, undefined, 1);
+  const committed = rightsOf(d, teamId, 'draft').reduce((t, k) => t + floor(k), 0);
   const picksLeft = d.draft.order.slice(d.draft.picks.length).filter(t => t === teamId).length;
-  const budget = CAP_DP - AI_FA_ROOM - payroll(d, teamId) - committed - (picksLeft - 1) * AI_RESERVE_PER_SPOT;
-  const fits = bySalary.filter(k => floorOf(d, k, teamId, undefined, 1) <= budget);
-  if (!fits.length) return [...avail].sort((a, b) => floorOf(d, a, teamId, undefined, 1) - floorOf(d, b, teamId, undefined, 1))[0];
+  const reserve = avail.map(floor).sort((a, b) => a - b).slice(0, Math.max(0, picksLeft - 1))
+    .reduce((t, f) => t + Math.max(f, AI_RESERVE_PER_SPOT), 0);
+  const budget = CAP_DP - AI_FA_ROOM - payroll(d, teamId) - committed - reserve;
+  const fits = avail.filter(k => floor(k) <= budget).sort((a, b) => score(b) - score(a));
+  if (!fits.length) return [...avail].sort((a, b) => floor(a) - floor(b))[0];
   return pickWeighted(fits.slice(0, 3), [0.6, 0.25, 0.15], rng);
 }
 
@@ -694,7 +722,7 @@ export const draftDone = d => !onClock(d);
  */
 export function finishDraft(d, { rng = Math.random } = {}) {
   if (!draftDone(d)) throw new Error('dynasty: the draft is not over');
-  const record = { kind: d.draft.kind, picks: d.draft.picks };
+  const record = { kind: d.draft.kind, picks: d.draft.picks, origin: d.draft.origin ?? null };
   // Nobody took them: the fantasy draft's leftovers are shuffled into the draft
   // pool, an offseason class's go back on the end of it. Neither is a free agent.
   const undrafted = draftAvailable(d);
@@ -710,7 +738,11 @@ export function finishDraft(d, { rng = Math.random } = {}) {
     }
     return say(x, 'The draft is done. Sign your draftees — anyone you do not sign goes to free agency.');
   }
-  let x = { ...d, draft: record, phase: DPHASE.rookies, talks: {}, draftPool: [...(d.draftPool ?? []), ...undrafted] };
+  let x = {
+    ...d, draft: record, phase: DPHASE.rookies, talks: {}, draftPool: [...(d.draftPool ?? []), ...undrafted],
+    // This year's picks are made: their trade records go.
+    pickOwner: Object.fromEntries(Object.entries(d.pickOwner ?? {}).filter(([id]) => parsePick(id).year !== d.year)),
+  };
   for (const team of x.teams.filter(t => !t.human)) {
     for (const key of rightsOf(x, team.id, 'rookie')) {
       const scale = rookieScale(cardOf(key));
@@ -740,20 +772,40 @@ export function closeRookies(d, { rng = Math.random } = {}) {
 // ── The lottery ─────────────────────────────────────────────────────────────
 
 /**
- * The lottery: every team that missed the playoffs, worst first, with odds
- * falling off linearly — four teams draw 40/30/20/10. It draws the top half
- * of the lottery's picks (four at most); everyone else picks in reverse
- * order of the standings.
+ * THE LOTTERY, scaled from the NBA's (the user, 2026-09-11: "scale a lottery
+ * from the current NBA odds to a smaller league and distribute the odds of
+ * picks 1-3 based on fewer teams being in the lottery"). The NBA's fourteen
+ * lottery slots, worst first, carry 14 / 14 / 14 / 12.5 / 10.5 / 9 / 7.5 / 6
+ * / 4.5 / 3 / 2 / 1.5 / 1 / 0.5 % at #1. A lottery of k teams splits those
+ * fourteen slots into k equal shares and gives each team its share's odds:
+ * two teams draw 81.5 / 18.5, four draw 48 / 33 / 15 / 4, fourteen the NBA's
+ * own. Picks 1–3 are drawn, a winner out of the next draw; everyone else picks
+ * in reverse order of the standings.
  */
+const NBA_LOTTERY = [140, 140, 140, 125, 105, 90, 75, 60, 45, 30, 20, 15, 10, 5];
+export const LOTTERY_DRAWS = 3;
+
+/** The NBA's odds shared out over a lottery of `k` teams, worst first (per 1,000). */
+export function lotteryWeights(k) {
+  const n = NBA_LOTTERY.length;
+  return Array.from({ length: k }, (_, i) => {
+    const lo = (i * n) / k;
+    const hi = ((i + 1) * n) / k;
+    let w = 0;
+    for (let s = Math.floor(lo); s < Math.ceil(hi); s += 1) w += NBA_LOTTERY[s] * (Math.min(hi, s + 1) - Math.max(lo, s));
+    return w;
+  });
+}
+
 export function lotteryOdds(d) {
   const last = d.history[d.history.length - 1];
   if (!last) return { entries: [], draws: 0 };
   const berths = playoffCount(d.teams.length);
   const out = [...last.table].filter(r => r.rank > berths).sort((a, b) => b.rank - a.rank);
-  const k = out.length;
-  const total = (k * (k + 1)) / 2;
-  const entries = out.map((r, i) => ({ teamId: r.id, rank: r.rank, weight: k - i, pct: Math.round(((k - i) / total) * 1000) / 10 }));
-  return { entries, draws: k ? Math.min(4, Math.max(1, Math.floor(k / 2))) : 0 };
+  const weights = lotteryWeights(out.length);
+  const total = weights.reduce((t, w) => t + w, 0);
+  const entries = out.map((r, i) => ({ teamId: r.id, rank: r.rank, weight: weights[i], pct: Math.round((weights[i] / total) * 1000) / 10 }));
+  return { entries, draws: Math.min(LOTTERY_DRAWS, out.length) };
 }
 
 /** The coming class: the next ten a team off the front of the draft pool. */
@@ -779,14 +831,18 @@ export function drawLottery(d, { rng = Math.random } = {}) {
   const moved = odds.entries.map((e, i) => ({ teamId: e.teamId, from: i + 1, to: order.indexOf(e.teamId) + 1 }));
   const cls = classFor(d);
   const lottery = { entries: odds.entries, draws: odds.draws, order, moved };
+  // A traded pick is made by whoever owns it, in the slot its original team earned.
+  const origin = Array.from({ length: ROOKIE_ROUNDS }, () => order).flat();
+  const owners = origin.map((t, i) => pickOwner(d, d.year, Math.floor(i / order.length) + 1, t));
   const winner = teamOf(d, order[0]);
-  let x = say({ ...d, lottery }, `${winner?.name} win the lottery and pick first.`);
+  const via = owners[0] !== order[0] ? ` — the pick belongs to ${teamOf(d, owners[0])?.name}` : ' and pick first';
+  let x = say({ ...d, lottery }, `${winner?.name} win the lottery${via}.`);
   if (!cls.length) return openFreeAgency({ ...x, draft: null }, { rng });
   x = {
     ...x,
     phase: DPHASE.rookieDraft,
     draftPool: (d.draftPool ?? []).slice(cls.length),
-    draft: { kind: 'rookie', order: Array.from({ length: ROOKIE_ROUNDS }, () => order).flat(), picks: [], pool: [...cls] },
+    draft: { kind: 'rookie', order: owners, origin, picks: [], pool: [...cls] },
   };
   return x;
 }
@@ -1013,12 +1069,300 @@ export function aiResign(d, rng = Math.random) {
   return x;
 }
 
-/** Close the exclusive window: your unsigned go to free agency, and it is lottery time. */
-export function closeResign(d) {
+/**
+ * Close the exclusive window: your unsigned go to free agency, the AI teams
+ * make their trades among themselves, and it is lottery time.
+ */
+export function closeResign(d, { rng = Math.random } = {}) {
   if (d.phase !== DPHASE.resign) throw new Error('dynasty: the window is not open');
   let x = d;
   for (const key of rightsOf(x, x.humanId, 'expiring')) x = renounce(x, x.humanId, key);
+  x = aiTrades(x, { rng });
   return { ...x, phase: DPHASE.lottery, talks: {}, lottery: { ...lotteryOdds(x), order: null, moved: null } };
+}
+
+// ── Trades (the user, 2026-09-11) ───────────────────────────────────────────
+//
+// "AI trades should consider salary, dynasty point salary and years
+// remaining, positional need. Use logic from Bill Simmons' trade-value
+// articles … to figure out weights."
+//
+// One player's value TO ONE TEAM is dynastyMarket's talent (convex), years of
+// control and contract; the chance he retires before the deal is out (aging
+// dynasties — the only thing age means, since nobody gets better or worse);
+// whether the team contends or rebuilds; and its need at his position. Picks
+// trade too (below). An AI team takes a deal that wins it a little; two AI
+// teams trade when both come out ahead by their own lights. Between seasons
+// only; contracts move with the players.
+
+const POS_GROUP = { PG: 'G', SG: 'G', SF: 'F', PF: 'F', C: 'C' };
+/** What a ten-man roster wants at each position group. */
+const POS_TARGET = { G: 4, F: 4, C: 2 };
+const groupOf = key => POS_GROUP[cardOf(key)?.pos] ?? 'F';
+
+/** Short at his position: worth up to 30% more; long: down to 15% less. */
+function needFactor(teamKeys, card) {
+  const group = POS_GROUP[card?.pos] ?? 'F';
+  const gap = POS_TARGET[group] - teamKeys.filter(k => groupOf(k) === group).length;
+  if (gap > 0) return Math.min(1.3, 1 + 0.1 * gap);
+  if (gap < 0) return Math.max(0.85, 1 + 0.05 * gap);
+  return 1;
+}
+
+/** Where a team is expected to pick (1 = first): last season's reverse standings, else its roster's talent. */
+export function projectedSlot(d, teamId) {
+  const last = d.history[d.history.length - 1];
+  const worstFirst = last
+    ? [...last.table].sort((a, b) => b.rank - a.rank).map(r => r.id)
+    : d.teams
+      .map(t => ({ id: t.id, v: rosterKeys(d, t.id).reduce((s, k) => s + talentValue(cardOf(k)), 0) }))
+      .sort((a, b) => a.v - b.v)
+      .map(x => x.id);
+  const i = worstFirst.indexOf(teamId);
+  return i < 0 ? d.teams.length : i + 1;
+}
+
+/** Contending (made the playoffs last year) or rebuilding; before any season, the stronger half contends. */
+export function teamDirection(d, teamId) {
+  const last = teamOf(d, teamId)?.last;
+  if (last) return last.playoffs ? 'contend' : 'rebuild';
+  return projectedSlot(d, teamId) > d.teams.length / 2 ? 'contend' : 'rebuild';
+}
+
+/**
+ * The share of the deal he is expected to play before retiring — 1 unless
+ * the dynasty ages. The one thing age means in a trade (the user: "this
+ * player is going to retire soon, so I'm going to dump him").
+ */
+function availability(d, key, years) {
+  if (!d.aging) return 1;
+  const age = ageOf(d, key);
+  const seasons = Math.max(1, years);
+  let alive = 1;
+  let sum = 0;
+  for (let t = 0; t < seasons; t += 1) {
+    if (t > 0) alive *= 1 - retireChance(age + t);
+    sum += alive;
+  }
+  return sum / seasons;
+}
+
+/**
+ * What a player under contract is worth to `teamId`, judged against the
+ * roster he would be on (`rosterAfter`; its current roster by default):
+ * talent, control and contract, times the share of it he is expected to
+ * play — minded twice by a rebuilding team, which is buying seasons it has
+ * not played yet — times the team's need at his position.
+ */
+export function tradeValue(d, key, teamId, rosterAfter = null) {
+  const card = cardOf(key);
+  if (!card) return 0;
+  const k = d.contracts[key];
+  const years = k?.years ?? 1;
+  const rebuild = teamDirection(d, teamId) === 'rebuild';
+  const stays = availability(d, key, years);
+  const weight = rebuild ? stays * stays : stays;
+  // BUYERS AND SELLERS, the column's other constant: a contender pays for the
+  // player now and minds the money less; a rebuilder pays for the years and
+  // the savings. That difference is what lets two teams both win a deal.
+  const cf = controlFactor(years);
+  const control = rebuild ? cf ** 1.5 : 1 + (cf - 1) / 2;
+  const money = rebuild ? 1.25 : 0.75;
+  const base = (talentValue(card) * control + contractValue(card, k) * money) * weight;
+  return base * needFactor(rosterAfter ?? rosterKeys(d, teamId), card);
+}
+
+// ── Draft picks ─────────────────────────────────────────────────────────────
+//
+// The user: "We can make draft picks tradeable too, but I'm not really sure
+// on the logic there. More valuable for bad teams?" Every team holds its own
+// first- and second-rounder in each draft until it trades one; `pickOwner`
+// records only the traded ones, and the next two drafts are on the table. A
+// pick is worth the player it is projected to land — the coming class's best
+// at the slot its ORIGINAL team is projected to pick in, on the rookie
+// scale's cheap control — so a bad team's pick is worth more; less for a
+// draft a year further out; more to a rebuilding team, less to a contender.
+// The owner makes the pick, in the original team's slot.
+
+export const pickId = (year, round, origin) => `${year}-${round}-${origin}`;
+export function parsePick(id) {
+  const [year, round, ...rest] = String(id).split('-');
+  return { year: Number(year), round: Number(round), origin: rest.join('-') };
+}
+export const pickOwner = (d, year, round, origin) => d.pickOwner?.[pickId(year, round, origin)] ?? origin;
+
+/** The first draft still to be made: this offseason's until it starts, then next year's. */
+export function nextDraftYear(d) {
+  return d.phase === DPHASE.resign || d.phase === DPHASE.lottery ? d.year : d.year + 1;
+}
+
+/** A pick in words: "Year 3 1st (BOS)". */
+export function pickLabel(d, id) {
+  const { year, round, origin } = parsePick(id);
+  const t = teamOf(d, origin);
+  return `Year ${year} ${round === 1 ? '1st' : '2nd'} (${t?.abbr ?? (t?.human ? 'yours' : t?.name ?? origin)})`;
+}
+
+/** The picks a team holds in the next two drafts. A ten-year dynasty has none past its last season. */
+export function picksOf(d, teamId) {
+  const first = nextDraftYear(d);
+  const out = [];
+  for (const year of [first, first + 1]) {
+    if (!d.aging && year > (d.years ?? DYNASTY_YEARS)) continue;
+    for (let round = 1; round <= ROOKIE_ROUNDS; round += 1) {
+      for (const t of d.teams) if (pickOwner(d, year, round, t.id) === teamId) out.push(pickId(year, round, t.id));
+    }
+  }
+  return out;
+}
+
+/** What a pick is worth to `teamId`. */
+export function pickValue(d, id, teamId) {
+  const { year, round, origin } = parsePick(id);
+  const slot = (round - 1) * d.teams.length + projectedSlot(d, origin);
+  const board = [...classFor(d)].sort((a, b) => talentValue(cardOf(b)) - talentValue(cardOf(a)));
+  const key = board[Math.min(slot, board.length) - 1];
+  if (!key) return 0;
+  const card = cardOf(key);
+  const scale = rookieScale(card);
+  const v = talentValue(card) * controlFactor(scale.years) + contractValue(card, scale);
+  const later = year > nextDraftYear(d) ? 0.75 : 0.9;
+  const want = teamDirection(d, teamId) === 'rebuild' ? 1.25 : 0.85;
+  return Math.max(0, v) * later * want;
+}
+
+const dpOf = (d, keys) => keys.reduce((t, k) => t + (d.contracts[k]?.dp ?? 0), 0);
+
+/**
+ * Why a deal cannot happen, or []. A deal is `{ from, to, give, get }`:
+ * `give` goes from → to, `get` comes back. Both rosters end at ten or fewer,
+ * and neither payroll may grow past the apron.
+ */
+export function tradeProblems(d, { from, to, give = [], get = [], givePicks = [], getPicks = [] }) {
+  const out = [];
+  if (!isOffseason(d)) out.push('Trades are made between seasons.');
+  if (!give.length && !get.length && !givePicks.length && !getPicks.length) out.push('Nothing is in the deal yet.');
+  if (give.some(k => d.contracts[k]?.teamId !== from)) out.push('Only players under contract with you can be traded.');
+  if (get.some(k => d.contracts[k]?.teamId !== to)) out.push('That player is not under contract with them.');
+  if (givePicks.length && givePicks.some(id => !picksOf(d, from).includes(id))) out.push('That pick is not yours to trade.');
+  if (getPicks.length && getPicks.some(id => !picksOf(d, to).includes(id))) out.push('That pick is not theirs to trade.');
+  for (const [team, loses, gains] of [[from, give, get], [to, get, give]]) {
+    const size = rosterKeys(d, team).length - loses.length + gains.length;
+    if (size > MAX_ROSTER) out.push(`${teamOf(d, team)?.name} would have ${size} players — ${MAX_ROSTER} is the most.`);
+    const before = payroll(d, team);
+    const after = before - dpOf(d, loses) + dpOf(d, gains);
+    if (after > APRON_DP && after > before) out.push(`${teamOf(d, team)?.name} would be at ${after} DP — past the ${APRON_DP} apron.`);
+  }
+  return out;
+}
+
+/**
+ * The other side's answer: what it gets, valued on the roster it would have,
+ * against what it gives, valued on the roster it has — and it wants to win
+ * by TRADE.aiEdge. `verdict` is accept, close (within TRADE.closeBand),
+ * reject, or illegal; `short` is the value it is missing.
+ */
+export function evaluateTrade(d, deal) {
+  const problems = tradeProblems(d, deal);
+  const { to, give = [], get = [], givePicks = [], getPicks = [] } = deal;
+  const after = rosterKeys(d, to).filter(k => !get.includes(k));
+  const valueIn = give.reduce((t, k) => t + tradeValue(d, k, to, [...after, ...give]), 0)
+    + givePicks.reduce((t, id) => t + pickValue(d, id, to), 0);
+  const valueOut = get.reduce((t, k) => t + tradeValue(d, k, to), 0)
+    + getPicks.reduce((t, id) => t + pickValue(d, id, to), 0);
+  const needed = valueOut + TRADE.aiEdge * Math.abs(valueOut);
+  const short = Math.max(0, needed - valueIn);
+  const verdict = problems.length ? 'illegal'
+    : valueIn >= needed ? 'accept'
+      : short <= (1 - TRADE.closeBand) * Math.max(Math.abs(needed), 10) ? 'close' : 'reject';
+  return { problems, valueIn, valueOut, needed, short, verdict };
+}
+
+/** Make a deal the other side accepts — or, with `force`, one already judged (the AI's own). */
+export function makeTrade(d, deal, { force = false } = {}) {
+  if (!force) {
+    const ev = evaluateTrade(d, deal);
+    if (ev.verdict !== 'accept') throw new Error(ev.problems[0] ?? 'dynasty: they turned it down');
+  }
+  const give = deal.give ?? [];
+  const get = deal.get ?? [];
+  const contracts = { ...d.contracts };
+  for (const k of give) contracts[k] = { ...contracts[k], teamId: deal.to };
+  for (const k of get) contracts[k] = { ...contracts[k], teamId: deal.from };
+  const owners = { ...(d.pickOwner ?? {}) };
+  const move = (id, owner) => {
+    if (parsePick(id).origin === owner) delete owners[id];
+    else owners[id] = owner;
+  };
+  for (const id of deal.givePicks ?? []) move(id, deal.to);
+  for (const id of deal.getPicks ?? []) move(id, deal.from);
+  const names = (keys, picks = []) => [...keys.map(k => cardOf(k)?.name), ...picks.map(id => pickLabel(d, id))].join(' and ') || 'nothing';
+  return say(
+    { ...d, contracts, pickOwner: owners },
+    `Trade: ${teamOf(d, deal.from)?.name} send ${names(give, deal.givePicks)} to ${teamOf(d, deal.to)?.name} for ${names(get, deal.getPicks)}.`,
+  );
+}
+
+/**
+ * The cheapest single addition of yours — a player or a pick — that would get
+ * the deal done: `{ key }` or `{ pick }`, or null when nothing alone does.
+ */
+export function suggestSweetener(d, deal) {
+  const players = rosterKeys(d, deal.from).filter(k => !(deal.give ?? []).includes(k))
+    .map(k => ({ key: k, cost: tradeValue(d, k, deal.from), deal: { ...deal, give: [...(deal.give ?? []), k] } }));
+  const picks = picksOf(d, deal.from).filter(id => !(deal.givePicks ?? []).includes(id))
+    .map(id => ({ pick: id, cost: pickValue(d, id, deal.from), deal: { ...deal, givePicks: [...(deal.givePicks ?? []), id] } }));
+  const works = [...players, ...picks].filter(x => evaluateTrade(d, x.deal).verdict === 'accept').sort((a, b) => a.cost - b.cost);
+  if (!works.length) return null;
+  return { key: works[0].key ?? null, pick: works[0].pick ?? null };
+}
+
+/**
+ * The AI trading among itself, once an offseason: a handful of one-for-one
+ * looks between two AI teams, made only when BOTH come out ahead by their
+ * own lights.
+ */
+export function aiTrades(d, { rng = Math.random, attempts = 24, max = 2 } = {}) {
+  if (!isOffseason(d)) return d;
+  const ai = d.teams.filter(t => !t.human).map(t => t.id);
+  let x = d;
+  let made = 0;
+  const any = list => list[Math.floor(rng() * list.length)];
+  for (let i = 0; i < attempts && made < max && ai.length >= 2; i += 1) {
+    const contenders = ai.filter(t => teamDirection(x, t) === 'contend');
+    const rebuilders = ai.filter(t => teamDirection(x, t) === 'rebuild');
+    let deal;
+    let aGains;
+    let bGains;
+    if (contenders.length && rebuilders.length && rng() < 0.5) {
+      // THE BUYER'S DEAL: a contender sends a pick to a rebuilder for a
+      // player — each values what it gets over what it gives.
+      const a = any(contenders);
+      const b = any(rebuilders);
+      const pick = any(picksOf(x, a));
+      const rb = rosterKeys(x, b);
+      if (!pick || !rb.length) continue;
+      const kb = any(rb);
+      deal = { from: a, to: b, give: [], get: [kb], givePicks: [pick], getPicks: [] };
+      bGains = pickValue(x, pick, b) - tradeValue(x, kb, b);
+      aGains = tradeValue(x, kb, a, [...rosterKeys(x, a), kb]) - pickValue(x, pick, a);
+    } else {
+      const a = any(ai);
+      const b = any(ai.filter(t => t !== a));
+      const ra = rosterKeys(x, a);
+      const rb = rosterKeys(x, b);
+      if (!ra.length || !rb.length) continue;
+      const ka = any(ra);
+      const kb = any(rb);
+      deal = { from: a, to: b, give: [ka], get: [kb] };
+      bGains = tradeValue(x, ka, b, [...rb.filter(k => k !== kb), ka]) - tradeValue(x, kb, b);
+      aGains = tradeValue(x, kb, a, [...ra.filter(k => k !== ka), kb]) - tradeValue(x, ka, a);
+    }
+    if (tradeProblems(x, deal).length || bGains <= 1 || aGains <= 1) continue;
+    x = makeTrade(x, deal, { force: true });
+    made += 1;
+  }
+  return x;
 }
 
 // ── For the list screen ─────────────────────────────────────────────────────

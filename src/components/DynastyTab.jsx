@@ -33,7 +33,7 @@ import { CAP_DP } from '../game/modes/dynastyMarket.js';
 import RosterPicker, { Choice } from './league/RosterPicker.jsx';
 import { SeasonDashboard } from './SeasonTab.jsx';
 import {
-  PhaseTrack, FrontOffice, DraftRoom, SigningBoard, LotteryRoom, RookieSigning, FreeAgency, NewsFeed,
+  PhaseTrack, FrontOffice, DraftRoom, SigningBoard, LotteryRoom, RookieSigning, FreeAgency, NewsFeed, TradeDesk,
 } from './dynasty/DynastyScreens.jsx';
 import styles from './SeasonTab.module.css';
 import dy from './dynasty/Dynasty.module.css';
@@ -473,6 +473,7 @@ function DynastyView({ d, uid, commit, onPlayFixture, onBack, onAbandon }) {
       </header>
       <PhaseTrack d={d} />
       {body}
+      {isOffseason(d) && <TradeDesk d={d} act={act} />}
       {d.phase !== DPHASE.done && <FrontOffice d={d} act={act} />}
       <HistoryPanel d={d} uid={uid} commit={commit} />
       <NewsFeed d={d} />

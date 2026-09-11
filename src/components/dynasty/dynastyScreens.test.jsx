@@ -14,7 +14,7 @@ vi.mock('../../ui/dialogs.jsx', () => ({
 }));
 
 import DynastyTab, { DynastyView, DynastySetup } from '../DynastyTab.jsx';
-import { Negotiator } from './DynastyScreens.jsx';
+import { Negotiator, TradeDesk } from './DynastyScreens.jsx';
 import {
   createDynasty, simDraft, draftPick, aiDraftChoice, onClock, finishDraft, closeSigning, nextFaDay,
   startSeason, endSeason, closeResign, drawLottery, fillRoster, rightsOf, freeAgentKeys, HUMAN_ID, DPHASE,
@@ -95,6 +95,18 @@ describe('each phase', () => {
     const pre = view(d);
     expect(pre).toContain('Preseason');
     expect(pre).toContain('Start Year 1');
+  });
+
+  it('the trade desk opens between seasons with both rosters and no verdict until something is picked', () => {
+    const brought = buildAiLeague(1, { rng: seeded(1) })[0].roster;
+    const d = createDynasty({ id: 'T', size: 4, length: 'online', startMode: 'own', rng: seeded(6), human: { name: 'Alex Team', roster: brought } });
+    const out = html(<TradeDesk d={d} act={() => null} defaultOpen />);
+    expect(out).toContain('Trades');
+    expect(out).toContain('You send');
+    expect(out).toContain('Make the trade');
+    expect(out).toContain('What would it take?');
+    expect(out).not.toContain('Not interested');
+    expect(html(<TradeDesk d={startSeason(d, { rng: seeded(7) })} act={() => null} defaultOpen />)).toBe('');
   });
 
   it('a negotiation with a rival bid on the table names the rival', () => {

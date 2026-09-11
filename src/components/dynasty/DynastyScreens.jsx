@@ -14,9 +14,10 @@ import {
   rightsOf, freeAgentKeys, quote, negotiate, renounce, waive, onClock, draftAvailable, draftPick, passPick, simDraft,
   finishDraft, projectedPayroll, closeSigning, closeResign, lotteryOdds, drawLottery, classFor, signRookie,
   closeRookies, nextFaDay, fillRoster, startSeason, rosterProblem, ageOf,
+  tradeValue, evaluateTrade, makeTrade, suggestSweetener, picksOf, pickValue, pickLabel,
 } from '../../game/modes/dynasty.js';
 import {
-  CAP_DP, APRON_DP, MIN_DP, FA_DAYS, CONTRACT_YEARS, MOOD_TEXT, personality, rookieScale,
+  CAP_DP, APRON_DP, MIN_DP, MAX_DP, FA_DAYS, CONTRACT_YEARS, MOOD_TEXT, personality, rookieScale,
 } from '../../game/modes/dynastyMarket.js';
 import { BASE_SET, getCardByKey } from '../../game/cardSets.js';
 import { getPlayerThumbUrl, getPlayerImageUrl, fallbackTo } from '../../game/cardImages.js';
@@ -228,6 +229,7 @@ export function Negotiator({ d, cardKey, act, onClose = null, letGo = null }) {
 
       <div className={dy.askLine}>
         His ask: <strong>{q.ask} DP</strong> a season for {plural(years, 'year')}
+        {q.ask >= MAX_DP && <span className={dy.buff} title={`A max deal: ${MAX_DP} DP a season is the most anyone can ask`}>max</span>}
         {years !== q.preferred && <span className={styles.muted}> · he wants {q.preferred}</span>}
       </div>
       {q.rival && (
@@ -252,11 +254,12 @@ export function Negotiator({ d, cardKey, act, onClose = null, letGo = null }) {
           className={dy.dpInput}
           type="number"
           min={MIN_DP}
+          max={MAX_DP}
           value={dp}
-          onChange={e => setDp(Math.max(MIN_DP, Math.floor(Number(e.target.value) || MIN_DP)))}
+          onChange={e => setDp(Math.min(MAX_DP, Math.max(MIN_DP, Math.floor(Number(e.target.value) || MIN_DP))))}
           aria-label="DP a season"
         />
-        <button type="button" className={dy.stepBtn} onClick={() => setDp(v => v + 1)} aria-label="One more">+</button>
+        <button type="button" className={dy.stepBtn} onClick={() => setDp(v => Math.min(MAX_DP, v + 1))} aria-label="One more">+</button>
         <span className={styles.muted}>DP a season · {dp * years} in all</span>
       </div>
 
@@ -441,6 +444,11 @@ export function DraftRoom({ d, act }) {
           {upcoming.map((id, i) => (
             <span key={`${picks.length + i}`} className={`${dy.tick} ${id === me ? dy.tickMe : ''}`}>
               {picks.length + i + 1}. {id === me ? 'You' : (teamOf(d, id)?.abbr ?? teamOf(d, id)?.name)}
+              {(() => {
+                // A traded pick is made in its original team's slot.
+                const origin = d.draft?.origin?.[picks.length + i];
+                return origin && origin !== id ? ` (via ${origin === me ? 'you' : teamOf(d, origin)?.abbr ?? teamOf(d, origin)?.name})` : '';
+              })()}
             </span>
           ))}
         </div>
@@ -715,6 +723,158 @@ export function FreeAgency({ d, act }) {
           ? <Negotiator key={`${selected}:${day}`} d={d} cardKey={selected} act={act} onClose={() => setSel(null)} />
           : <div className={dy.negoEmpty}>Pick a free agent to talk terms.</div>}
       </div>
+    </section>
+  );
+}
+
+// ── The trade desk ──────────────────────────────────────────────────────────
+
+const VERDICT = {
+  accept: { text: 'They would do this.', mood: 'mood_close' },
+  close: { text: 'Close — they want a little more. Ask what it would take.', mood: 'mood_apart' },
+  reject: { text: 'Not interested.', mood: 'mood_insulted' },
+};
+
+function TradeSide({ d, title, rows, picks = [], picked, pickedPicks = [], onToggle, onTogglePick, teamId }) {
+  return (
+    <div>
+      <div className={styles.label}>{title}</div>
+      <div className={dy.list}>
+        {rows.map(k => (
+          <button key={k.key} type="button" className={`${dy.row} ${picked.includes(k.key) ? dy.rowOn : ''}`} onClick={() => onToggle(k.key)}>
+            <PlayerCell cardKey={k.key} age={ageOf(d, k.key)} />
+            <span className={dy.rowAsk}>{k.dp} × {k.years}</span>
+            <span className={styles.muted} title="What they value him at">{Math.round(tradeValue(d, k.key, teamId))}</span>
+            <span>{picked.includes(k.key) ? '✓' : ''}</span>
+          </button>
+        ))}
+        {picks.map(id => (
+          <button key={id} type="button" className={`${dy.row} ${pickedPicks.includes(id) ? dy.rowOn : ''}`} onClick={() => onTogglePick(id)}>
+            <span className={dy.player}>
+              <span className={dy.playerText}>
+                <span className={dy.playerName}>🎟️ {pickLabel(d, id)}</span>
+                <span className={dy.playerSub}>draft pick</span>
+              </span>
+            </span>
+            <span />
+            <span className={styles.muted} title="What they value it at">{Math.round(pickValue(d, id, teamId))}</span>
+            <span>{pickedPicks.includes(id) ? '✓' : ''}</span>
+          </button>
+        ))}
+        {!rows.length && !picks.length && <div className={styles.muted}>Nothing to trade.</div>}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Trades with the AI, between seasons. You pick a partner and players on
+ * both sides; the verdict is evaluateTrade's, live, and the deal goes through
+ * only when they would take it.
+ */
+export function TradeDesk({ d, act, defaultOpen = false }) {
+  const me = d.humanId;
+  const partners = d.teams.filter(t => !t.human);
+  const [open, setOpen] = useState(defaultOpen);
+  const [to, setTo] = useState(partners[0]?.id ?? null);
+  const [give, setGive] = useState([]);
+  const [get, setGet] = useState([]);
+  const [givePicks, setGivePicks] = useState([]);
+  const [getPicks, setGetPicks] = useState([]);
+  const [hint, setHint] = useState(null);
+  if (!isOffseason(d) || !partners.length) return null;
+  const myPicks = picksOf(d, me);
+  const theirPicks = picksOf(d, to);
+  const deal = {
+    from: me,
+    to,
+    give: give.filter(k => d.contracts[k]?.teamId === me),
+    get: get.filter(k => d.contracts[k]?.teamId === to),
+    givePicks: givePicks.filter(id => myPicks.includes(id)),
+    getPicks: getPicks.filter(id => theirPicks.includes(id)),
+  };
+  const anything = deal.give.length + deal.get.length + deal.givePicks.length + deal.getPicks.length > 0;
+  const clear = () => { setGive([]); setGet([]); setGivePicks([]); setGetPicks([]); setHint(null); };
+  const ev = evaluateTrade(d, deal);
+  const toggle = (list, set) => key => { set(list.includes(key) ? list.filter(k => k !== key) : [...list, key]); setHint(null); };
+  const partner = teamOf(d, to);
+  const say = ev.verdict === 'illegal' ? { text: ev.problems[0], mood: 'mood_walked' } : VERDICT[ev.verdict];
+  return (
+    <section className={styles.panel}>
+      <div className={dy.panelHead}>
+        <h3 className={styles.panelTitle}>Trades</h3>
+        <button type="button" className={dy.linkBtn} onClick={() => setOpen(v => !v)}>{open ? 'Close the trade desk' : 'Open the trade desk'}</button>
+      </div>
+      {open && (
+        <>
+          <p className={dy.intro}>
+            The AI trades on a front office's logic (after Bill Simmons' Trade Value): a star is worth more than two halves
+            of one, years of control are worth paying for, a cheap contract is an asset and an overpaid one a burden, a
+            position it is short at is worth more, and a rebuilding team wants picks where a contender wants players.
+            Nobody gets better or worse with age — it only matters when a player might retire before his deal is out.
+            It wants to win a deal by a little. Contracts move with the players; both rosters stay at {MAX_ROSTER} or fewer
+            and neither payroll may grow past the {APRON_DP} apron. Picks in the next two drafts can be traded too.
+          </p>
+          <div className={dy.filters}>
+            {partners.map(t => (
+              <button
+                key={t.id} type="button" className={`${dy.yearBtn} ${t.id === to ? dy.yearOn : ''}`}
+                onClick={() => { setTo(t.id); setGet([]); setGetPicks([]); setHint(null); }}
+              >
+                {t.abbr ?? t.name}
+              </button>
+            ))}
+          </div>
+          <div className={dy.split}>
+            <TradeSide
+              d={d} title="You send" rows={contractsOf(d, me)} picks={myPicks} teamId={to}
+              picked={deal.give} pickedPicks={deal.givePicks} onToggle={toggle(give, setGive)} onTogglePick={toggle(givePicks, setGivePicks)}
+            />
+            <TradeSide
+              d={d} title={`${partner?.name ?? 'They'} send`} rows={contractsOf(d, to)} picks={theirPicks} teamId={to}
+              picked={deal.get} pickedPicks={deal.getPicks} onToggle={toggle(get, setGet)} onTogglePick={toggle(getPicks, setGetPicks)}
+            />
+          </div>
+          {anything && say && (
+            <div className={`${dy.mood} ${dy[say.mood] ?? ''}`}>
+              {say.text}
+              {ev.verdict !== 'illegal' && <span className={styles.muted}> · they value it {Math.round(ev.valueIn)} in, {Math.round(ev.valueOut)} out</span>}
+            </div>
+          )}
+          {hint && (
+            <div className={dy.rival}>
+              {hint.key || hint.pick
+                ? (
+                  <>
+                    Add <strong>{hint.key ? cardOf(hint.key)?.name : pickLabel(d, hint.pick)}</strong> and they would take it.{' '}
+                    <button
+                      type="button" className={dy.linkBtn}
+                      onClick={() => { if (hint.key) setGive([...give, hint.key]); else setGivePicks([...givePicks, hint.pick]); setHint(null); }}
+                    >
+                      Add {hint.key ? 'him' : 'it'}
+                    </button>
+                  </>
+                )
+                : 'Nothing of yours on its own gets this done — try another piece.'}
+            </div>
+          )}
+          <div className={dy.negoActions}>
+            <button
+              type="button" className={styles.primary} disabled={ev.verdict !== 'accept'}
+              onClick={() => { if (act(x => makeTrade(x, deal))) clear(); }}
+            >
+              Make the trade
+            </button>
+            <button
+              type="button" className={styles.ghost}
+              disabled={!(deal.get.length || deal.getPicks.length) || ev.verdict === 'accept' || ev.verdict === 'illegal'}
+              onClick={() => setHint(suggestSweetener(d, deal) ?? { none: true })}
+            >
+              What would it take?
+            </button>
+          </div>
+        </>
+      )}
     </section>
   );
 }

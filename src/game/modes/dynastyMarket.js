@@ -31,7 +31,14 @@ export const MIN_DP = 1;
 export const DP_PER_SALARY = 55;
 /** A card this cheap is always Happy to Be Here. */
 export const HAPPY_MAX_SALARY = 150;
-export const CONTRACT_YEARS = { min: 1, max: 4 };
+/**
+ * A MAX DEAL (the user, 2026-09-11: "we should have max deals, dynasty-points
+ * and years wise"): 35 DP a season — 35% of the cap — for up to five seasons.
+ * Nobody asks past it, so the stars all ask the max and the haggling is
+ * about the years.
+ */
+export const MAX_DP = 35;
+export const CONTRACT_YEARS = { min: 1, max: 5 };
 /** A draft pick signs for three-quarters of his value, for three seasons. */
 export const ROOKIE_SCALE = { share: 0.75, years: 3 };
 /** Free agency runs this many days; every floor drops 10% a day. */
@@ -69,7 +76,7 @@ export const PERSONALITIES = {
   security: {
     id: 'security', label: 'Security First', icon: '🛡️',
     blurb: 'Wants every year you can give him; each one short costs you.',
-    premium: 1, give: 0.85, patience: 3, years: 4, yearCost: 0.12, direction: 'short',
+    premium: 1, give: 0.85, patience: 3, years: 5, yearCost: 0.12, direction: 'short',
   },
   bet: {
     id: 'bet', label: 'Bets on Himself', icon: '🎲',
@@ -170,13 +177,13 @@ export function floorFor(card, pid, ctx, years, day = 1) {
   const p = personality(pid);
   if (p.flat) return MIN_DP;
   const raw = fairDp(card) * p.premium * teamFactor(pid, ctx) * yearFactor(pid, years) * dayFactor(day) * ageFactor(ctx?.age);
-  return Math.max(MIN_DP, Math.round(raw));
+  return Math.min(MAX_DP, Math.max(MIN_DP, Math.round(raw)));
 }
 
 /** What he opens at, before any haggling. */
 export function openingAsk(card, pid, ctx, years, day = 1) {
   const floor = floorFor(card, pid, ctx, years, day);
-  return Math.max(floor, Math.ceil(floor / personality(pid).give));
+  return Math.min(MAX_DP, Math.max(floor, Math.ceil(floor / personality(pid).give)));
 }
 
 /** His ask now: `progress` is how much of the gap to his floor the talks have closed. */
@@ -219,8 +226,8 @@ export function judgeOffer({ card, pid, ctx, offer, talk = null, day = 1, rivalR
   const t = talk ?? newTalk(pid);
   const dp = Math.floor(offer?.dp ?? 0);
   const years = Math.floor(offer?.years ?? 0);
-  if (dp < MIN_DP || years < CONTRACT_YEARS.min || years > CONTRACT_YEARS.max) {
-    throw new Error(`dynasty: an offer is at least ${MIN_DP} DP for ${CONTRACT_YEARS.min}–${CONTRACT_YEARS.max} years`);
+  if (dp < MIN_DP || dp > MAX_DP || years < CONTRACT_YEARS.min || years > CONTRACT_YEARS.max) {
+    throw new Error(`dynasty: an offer is ${MIN_DP}–${MAX_DP} DP a season for ${CONTRACT_YEARS.min}–${CONTRACT_YEARS.max} years`);
   }
   if (t.walked) return { accepted: false, mood: 'walked', talk: t };
   const floor = floorFor(card, pid, ctx, years, day);
@@ -243,4 +250,40 @@ export function judgeOffer({ card, pid, ctx, offer, talk = null, day = 1, rivalR
 /** A draft pick's contract: fixed, not negotiated. */
 export function rookieScale(card) {
   return { dp: Math.max(MIN_DP, Math.round(fairDp(card) * ROOKIE_SCALE.share)), years: ROOKIE_SCALE.years };
+}
+
+// ── TRADE VALUE (2026-09-11) ────────────────────────────────────────────────
+//
+// The user: AI trades should weigh salary, DP salary, years remaining and
+// positional need, using the LOGIC of Bill Simmons' Trade Value columns — not
+// his order ("our players will function differently and have different use
+// cases. Just use the logic."). And: "Because there is no skill
+// incline/decline, a 38-year-old on a 1-year deal is the same as a
+// 23-year-old on a 1-year deal, all other things equal." So:
+//
+//   TALENT, convex. The column's first rule: a star is worth more than two
+//     halves of one — nobody trades a franchise player for two starters.
+//     Fair value ^ 1.4 makes a 30-DP star worth 1.3× two 15s.
+//   CONTROL. Years of control are a column staple: a rental is worth less
+//     than the same player for four seasons.
+//   THE CONTRACT. Every season left is worth what he is underpaid by, or
+//     costs what he is overpaid by — the cheap long deal is the asset, the
+//     overpaid one the albatross.
+//   CONTEXT is the league's (dynasty.js, which reads rosters): need at his
+//     position; contending or rebuilding; and age ONLY as the chance he
+//     retires before his deal is out, in an aging dynasty.
+
+export const TRADE = { convexity: 1.4, surplusWeight: 1.5, aiEdge: 0.08, closeBand: 0.85 };
+
+/** What a player's talent is worth in a trade. */
+export const talentValue = card => fairDp(card) ** TRADE.convexity;
+
+/** Seasons of control: one is 0.9 of him, four or more 1.2 — nobody pays much for a rental. */
+export const controlFactor = years => 0.8 + 0.1 * Math.min(4, Math.max(1, years ?? 1));
+
+/** What his contract adds (underpaid) or takes away (overpaid), over the seasons left. */
+export function contractValue(card, contract) {
+  if (!contract) return 0;
+  const years = Math.min(CONTRACT_YEARS.max, Math.max(0, contract.years ?? 0));
+  return (fairDp(card) - (contract.dp ?? fairDp(card))) * years * TRADE.surplusWeight;
 }

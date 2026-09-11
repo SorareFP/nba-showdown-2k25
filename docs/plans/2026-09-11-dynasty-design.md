@@ -125,6 +125,16 @@ The user answered the "not built" list below, then answered four follow-up quest
      - **Price:** asks fall past 31.
      - **Retirement:** the chance rises from 35, and retirement is certain at 40. Retired players never return.
      - **Length:** the dynasty is **open-ended**. The ten-year bonus still pays at ten.
+   - **Built:**
+     - **Ages.** A player's age is the card's age plus the seasons since he joined the league.
+       - The card's age comes from its own `age`, or else from `card-data/generated/dynasty-ages.json`, which `scripts/dynasty/buildAges.mjs` writes: 400 ages, none missing.
+       - A player still in the draft pool doesn't age.
+     - **Price.** The ask is multiplied by `ageFactor`: 7% off per year past 31, never below 40% of his value.
+     - **Retirement.** `retireChance` is 1 in 6 at 35, rising by a sixth a year, and certain at 40.
+       - It's rolled at the turn of each year.
+       - His contract ends with him, with no dead money.
+     - **Ending.** `endDynasty` ends an aging dynasty between seasons.
+     - **Claims.** A year's claim is no longer capped at ten.
 3. **The draft pool.**
    - **The fantasy draft is 10 rounds; every offseason draft is 2.**
    - Players not taken in the fantasy draft go into the **draft pool, not free agency**.

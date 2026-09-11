@@ -1916,7 +1916,8 @@ function PendingBanner({ game, onResolve, onExecCard }) {
   );
 }
 
-function HandPanel({ game, teamKey, onExecCard, onReturnCard = null, onUndoReturn = null, pvpMode = false, isMyTurn = true }) {
+// Exported for the render test (handUndo.test.jsx); the board renders it for each side.
+export function HandPanel({ game, teamKey, onExecCard, onReturnCard = null, onUndoReturn = null, pvpMode = false, isMyTurn = true }) {
   const [staged, setStaged] = useState(null);
   const { open } = useLightbox();
   const t = getTeam(game, teamKey);

@@ -6,13 +6,27 @@
 // away alternate across meetings so a Regular season is one home and one
 // away against everyone.
 
-/** The user's "variable season lengths", as how many times each pair meets. */
+/**
+ * The user's "variable season lengths", as how many times each pair meets —
+ * named after Civilization's game speeds (the user, 2026-09-11: "use Civ
+ * terms for each length"). Online is the old Short, Quick the old Regular,
+ * Standard the old Long. Those three ids stay as LEGACY aliases so a season
+ * or dynasty saved under them still reads, still schedules and is still paid;
+ * they are never offered.
+ */
 export const LENGTHS = {
-  short: { id: 'short', label: 'Short', meetings: 1, blurb: 'Everyone once' },
-  regular: { id: 'regular', label: 'Regular', meetings: 2, blurb: 'Home and away' },
-  long: { id: 'long', label: 'Long', meetings: 3, blurb: 'Everyone three times' },
+  online: { id: 'online', label: 'Online', meetings: 1, blurb: 'Everyone once' },
+  quick: { id: 'quick', label: 'Quick', meetings: 2, blurb: 'Home and away' },
+  standard: { id: 'standard', label: 'Standard', meetings: 3, blurb: 'Everyone three times' },
+  epic: { id: 'epic', label: 'Epic', meetings: 4, blurb: 'Everyone four times' },
+  marathon: { id: 'marathon', label: 'Marathon', meetings: 6, blurb: 'Everyone six times' },
+  short: { id: 'short', label: 'Online', meetings: 1, blurb: 'Everyone once', legacy: true },
+  regular: { id: 'regular', label: 'Quick', meetings: 2, blurb: 'Home and away', legacy: true },
+  long: { id: 'long', label: 'Standard', meetings: 3, blurb: 'Everyone three times', legacy: true },
 };
-export const LENGTH_IDS = Object.keys(LENGTHS);
+/** The lengths a setup screen offers, shortest first. */
+export const PICKABLE_LENGTHS = Object.values(LENGTHS).filter(l => !l.legacy);
+export const LENGTH_IDS = PICKABLE_LENGTHS.map(l => l.id);
 
 /** The league sizes offered. */
 export const LEAGUE_SIZES = [4, 6, 8, 10, 12];

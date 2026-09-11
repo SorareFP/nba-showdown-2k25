@@ -125,3 +125,95 @@ export function winsFor(bracket, teamId) {
 export function eliminated(bracket, teamId) {
   return bracket.matches.some(m => m.winner && m.winner !== teamId && (m.a === teamId || m.b === teamId));
 }
+
+const ROUND_NAMES = { 1: 'Final', 2: 'Semifinals', 3: 'Quarterfinals', 4: 'First Round' };
+/** A playoff round's name counted from the END, so eight teams start in the quarters. */
+export function playoffRoundName(round, rounds) {
+  return ROUND_NAMES[rounds - round + 1] ?? `Round ${round}`;
+}
+
+// ── SERIES (2026-09-11) ─────────────────────────────────────────────────────
+//
+// The user: a playoff series length "picked per round at setup". A match can
+// be a best-of-N series:
+//
+//   * `bestOf` on the match, 1 when absent — every bracket made before this,
+//     and every tournament;
+//   * its games in `games`;
+//   * its `winner` set only when one side has won ceil(N / 2).
+//
+// A single game keeps the MATCH's id as its fixture id, so nothing that plays
+// best-of-1 changes shape (tournaments, shared seasons, saved seasons). A
+// longer series names each game `${matchId}.g${n}`, which keeps a Play-tab
+// save, a returning score and the "already recorded" guard pointing at one
+// game rather than at the whole series.
+
+export const SERIES_LENGTHS = [1, 3, 5, 7];
+export const bestOfFor = match => (SERIES_LENGTHS.includes(match?.bestOf) ? match.bestOf : 1);
+export const winsNeeded = bestOf => Math.floor(bestOf / 2) + 1;
+
+/**
+ * Home court, game by game. Side `a` is the higher seed: 2-2-1-1-1 in a
+ * seven, 2-2-1 in a five, 1-1-1 in a three.
+ */
+const HOME_PATTERN = { 1: 'a', 3: 'aba', 5: 'aabba', 7: 'aabbaba' };
+
+/** A fixture id's match: `r1m2.g3` → `r1m2`, and a match id is its own. */
+export const matchIdOf = fixtureId => String(fixtureId).split('.g')[0];
+
+/** Games won so far by each side of a match. */
+export function seriesWins(match) {
+  const games = match?.games ?? [];
+  return { a: games.filter(g => g.winner === match.a).length, b: games.filter(g => g.winner === match.b).length };
+}
+
+/** The next game of a match as a fixture `{ id, n, home, away, matchId }`, or null when decided or not ready. */
+export function nextSeriesGame(match) {
+  if (!match || match.winner || match.a == null || match.b == null) return null;
+  const bestOf = bestOfFor(match);
+  const n = (match.games?.length ?? 0) + 1;
+  if (bestOf === 1) return { id: match.id, n: 1, home: match.a, away: match.b, matchId: match.id };
+  const side = HOME_PATTERN[bestOf][n - 1] ?? 'a';
+  return {
+    id: `${match.id}.g${n}`, n, matchId: match.id,
+    home: side === 'a' ? match.a : match.b,
+    away: side === 'a' ? match.b : match.a,
+  };
+}
+
+/** Set every match's series length from a per-round list, round 1 first; a round not listed is one game. */
+export function withSeries(bracket, series = null) {
+  if (!Array.isArray(series) || !series.length) return bracket;
+  return {
+    ...bracket,
+    matches: bracket.matches.map(m => ({ ...m, bestOf: SERIES_LENGTHS.includes(series[m.round - 1]) ? series[m.round - 1] : 1 })),
+  };
+}
+
+/**
+ * Record one game: `{ home, away, homeScore, awayScore, simulated? }` under
+ * the fixture id nextSeriesGame named. Best-of-1 is reportMatch exactly. In a
+ * series the game joins `games`, and once a side has the wins it needs the
+ * match is reported with the series score as its result (side a's wins as
+ * `homeScore`, side b's as `awayScore`, the way a bracket view reads them).
+ */
+export function recordGame(bracket, fixtureId, game) {
+  const matchId = matchIdOf(fixtureId);
+  const match = bracket.matches.find(m => m.id === matchId);
+  if (!match) throw new Error(`bracket: no match ${matchId}`);
+  const expected = nextSeriesGame(match);
+  if (!expected) throw new Error(`bracket: ${matchId} is ${match.winner ? 'already decided' : 'not ready'}`);
+  if (expected.id !== String(fixtureId)) throw new Error(`bracket: ${fixtureId} is not the next game — ${expected.id} is`);
+  const winnerId = game.homeScore > game.awayScore ? game.home : game.away;
+  if (bestOfFor(match) === 1) return reportMatch(bracket, matchId, winnerId, { ...game });
+  const played = {
+    n: expected.n, home: game.home, away: game.away,
+    homeScore: game.homeScore, awayScore: game.awayScore, winner: winnerId, simulated: Boolean(game.simulated),
+  };
+  const games = [...(match.games ?? []), played];
+  const next = { ...bracket, matches: bracket.matches.map(m => (m.id === matchId ? { ...m, games } : m)) };
+  const wins = seriesWins({ ...match, games });
+  const need = winsNeeded(bestOfFor(match));
+  if (wins.a < need && wins.b < need) return next;
+  return reportMatch(next, matchId, wins.a >= need ? match.a : match.b, { series: true, homeScore: wins.a, awayScore: wins.b, games: games.length });
+}

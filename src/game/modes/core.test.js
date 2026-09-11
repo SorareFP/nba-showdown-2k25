@@ -59,6 +59,10 @@ describe('roundRobin', () => {
     }
     expect(gamesPerTeam(8, 'regular')).toBe(14);
     expect(gamesPerTeam(8, 'long')).toBe(21);
+    // The Civ names (2026-09-11); the old ids above still read.
+    expect(gamesPerTeam(8, 'online')).toBe(7);
+    expect(gamesPerTeam(8, 'quick')).toBe(14);
+    expect(gamesPerTeam(8, 'marathon')).toBe(42);
   });
 
   it('numbers fixtures by round', () => {
@@ -185,5 +189,10 @@ describe('prizes', () => {
     expect(dynastyCoinFactor('own')).toBe(1);
     expect(dynastyCoinFactor(undefined)).toBe(1);
     expect(SEASON_REWARDS.long.champion).toBeGreaterThan(SEASON_REWARDS.regular.champion);
+    // Each Civ length pays more than the one before, and an old id pays what its new name does.
+    const ladder = ['online', 'quick', 'standard', 'epic', 'marathon'].map(id => seasonEarnings(id, { champion: true }).coins);
+    expect(ladder).toEqual([...ladder].sort((a, b) => a - b));
+    expect(new Set(ladder).size).toBe(5);
+    expect(seasonEarnings('short', { champion: true })).toEqual(seasonEarnings('online', { champion: true }));
   });
 });

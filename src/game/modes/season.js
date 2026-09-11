@@ -29,6 +29,7 @@ import { roundRobin, fixturesFrom, LENGTHS } from './schedule.js';
 import { buildAiLeague } from './aiTeams.js';
 import { simulateFixture } from './simulate.js';
 import { PHASE, teamsById, rostersOf, decksOf, roundFixtures, isHumanVsHuman, recordResult } from './seasonCore.js';
+import { SERIES_LENGTHS, nextSeriesGame, matchIdOf } from './bracket.js';
 
 export * from './seasonCore.js';
 
@@ -49,6 +50,8 @@ export function createSeason({
   length = 'regular',
   rng = Math.random,
   cards = undefined,
+  // Best-of per playoff round, first round first (bracket.js); null plays one game a round.
+  series = null,
 } = {}) {
   if (!humans.length) throw new Error('season: needs at least one human team');
   if (size < humans.length) throw new Error(`season: ${humans.length} humans do not fit in a ${size}-team league`);
@@ -83,6 +86,7 @@ export function createSeason({
     bracket: null,
     champion: null,
     paid: false,
+    series: Array.isArray(series) && series.length ? series.map(n => (SERIES_LENGTHS.includes(n) ? n : 1)) : null,
   };
 }
 
@@ -111,14 +115,21 @@ export function simulateRound(season, { skip = [], rng = undefined } = {}) {
 /** Simulate every ready playoff match except the ones held back. */
 export function simulatePlayoffRound(season, { skip = [], rng = undefined } = {}) {
   if (season.phase !== PHASE.playoffs || !season.bracket) return season;
-  const hold = new Set(skip);
+  // `skip` may name a series game (`r1m1.g2`); it holds the whole series.
+  const hold = new Set(skip.map(matchIdOf));
   const rosters = rostersOf(season);
+  const round = season.round;
   let s = season;
-  for (const m of s.bracket.matches.filter(x => x.a && x.b && !x.winner && x.round === s.round)) {
-    if (hold.has(m.id)) continue;
+  // Game by game until every series in the round that is not held — and not
+  // two humans' — is decided. The round moves on by itself when its last one is.
+  for (let guard = 0; guard < 400; guard += 1) {
+    if (s.phase !== PHASE.playoffs || s.round !== round) break;
     const by = teamsById(s);
-    if (by.get(m.a)?.human && by.get(m.b)?.human) continue;
-    const fixture = { id: m.id, home: m.a, away: m.b };
+    const m = s.bracket.matches.find(x => x.round === round && x.a && x.b && !x.winner
+      && !hold.has(x.id) && !(by.get(x.a)?.human && by.get(x.b)?.human));
+    if (!m) break;
+    const g = nextSeriesGame(m);
+    const fixture = { id: g.id, home: g.home, away: g.away };
     const r = simulateFixture(fixture, rosters, { ...deckOpts(s, fixture), ...(rng ? { rng } : {}) });
     s = recordResult(s, r);
   }

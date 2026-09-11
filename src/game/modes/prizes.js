@@ -47,6 +47,13 @@ export function tournamentEarnings(size, fee, { wins = 0, champion = false } = {
  * themselves; this is what the season adds once, at the end.
  */
 export const SEASON_REWARDS = {
+  // The Civ lengths (schedule.js), scaled with the games a team plays.
+  online: { champion: 200, runnerUp: 100, playoffs: 50 },
+  quick: { champion: 400, runnerUp: 200, playoffs: 100 },
+  standard: { champion: 700, runnerUp: 350, playoffs: 150 },
+  epic: { champion: 950, runnerUp: 475, playoffs: 200 },
+  marathon: { champion: 1400, runnerUp: 700, playoffs: 300 },
+  // The ids before the Civ names — seasons saved under them are still paid.
   short: { champion: 200, runnerUp: 100, playoffs: 50 },
   regular: { champion: 400, runnerUp: 200, playoffs: 100 },
   long: { champion: 700, runnerUp: 350, playoffs: 150 },
@@ -84,7 +91,10 @@ export function dynastyCoinFactor(startMode) {
 }
 
 /** Finishing all ten seasons, by season length, plus a bonus for every title. */
-export const DYNASTY_COMPLETION = { short: 600, regular: 1000, long: 1500 };
+export const DYNASTY_COMPLETION = {
+  online: 600, quick: 1000, standard: 1500, epic: 2000, marathon: 2800,
+  short: 600, regular: 1000, long: 1500,
+};
 export const DYNASTY_TITLE_BONUS = 150;
 
 const dynastyHuman = dynasty => dynasty?.humanId ?? 'you';

@@ -8,7 +8,10 @@
 // schedule.js, bracket.js and prizes.js — data and arithmetic — and nothing
 // else. season.js re-exports all of it, so every existing caller is unchanged.
 import { fixturesFrom, standingsFrom, playoffSeeds, playoffCount } from './schedule.js';
-import { makeBracket, reportMatch, champion as bracketChampion, runnerUp as bracketRunnerUp, currentRound, nextMatchFor } from './bracket.js';
+import {
+  makeBracket, withSeries, recordGame, nextSeriesGame, matchIdOf, seriesWins, bestOfFor,
+  champion as bracketChampion, runnerUp as bracketRunnerUp, currentRound, nextMatchFor,
+} from './bracket.js';
 import { seasonEarnings } from './prizes.js';
 
 export const PHASE = {
@@ -72,7 +75,12 @@ export function fixtureFor(season, teamId, round = season.round) {
 export function nextFixtureFor(season, teamId) {
   if (season.phase === PHASE.playoffs) {
     const m = season.bracket ? nextMatchFor(season.bracket, teamId) : null;
-    return m ? { id: m.id, round: m.round, home: m.a, away: m.b, playoff: true, result: null } : null;
+    if (!m) return null;
+    // In a series, the next GAME; a match still waiting on an opponent is itself.
+    const g = nextSeriesGame(m);
+    return g
+      ? { id: g.id, round: m.round, home: g.home, away: g.away, playoff: true, result: null, game: g.n, bestOf: bestOfFor(m) }
+      : { id: m.id, round: m.round, home: m.a, away: m.b, playoff: true, result: null };
   }
   return season.fixtures.find(f => !f.result && (f.home === teamId || f.away === teamId)) ?? null;
 }
@@ -98,7 +106,8 @@ export function recordResult(season, rawResult) {
   s.stats = foldBoxes(s.stats, [[result.home, homeBox], [result.away, awayBox]]);
   if (s.phase === PHASE.playoffs) {
     const winner = result.homeScore > result.awayScore ? result.home : result.away;
-    s.bracket = reportMatch(s.bracket, result.fixtureId, winner, { ...result });
+    // One GAME — of a series, or a match that is one game (bracket.js).
+    s.bracket = recordGame(s.bracket, result.fixtureId, result);
     s.results.push({ ...result, playoff: true, winner });
     const champ = bracketChampion(s.bracket);
     if (champ) {
@@ -205,6 +214,49 @@ export function roundComplete(season) {
 }
 
 /**
+ * The current playoff round, one row per match: its next game to play, or —
+ * once decided — its result, which for a series is the series score. The
+ * shape a round's regular-season fixtures have, so a screen lists both alike:
+ * `{ id, matchId, home, away, result, game, bestOf, winsHome, winsAway }`.
+ */
+export function playoffGames(season) {
+  return (season.bracket?.matches ?? []).filter(m => m.round === season.round).map(m => {
+    const g = nextSeriesGame(m);
+    const wins = seriesWins(m);
+    const home = g?.home ?? m.a;
+    const away = g?.away ?? m.b;
+    return {
+      id: g?.id ?? m.id,
+      matchId: m.id,
+      home,
+      away,
+      game: g?.n ?? null,
+      bestOf: bestOfFor(m),
+      winsHome: home === m.a ? wins.a : wins.b,
+      winsAway: away === m.a ? wins.a : wins.b,
+      result: m.winner
+        ? { homeScore: m.result?.homeScore ?? 0, awayScore: m.result?.awayScore ?? 0, winner: m.winner, series: Boolean(m.result?.series) }
+        : null,
+    };
+  });
+}
+
+/**
+ * Whether a fixture's result is already in the book — the guard a returning
+ * score is checked against, so one landing twice is recorded once. A series
+ * game counts as recorded once the series has that many games in it.
+ */
+export function isRecorded(season, fixtureId) {
+  const f = season.fixtures.find(x => x.id === fixtureId);
+  if (f) return Boolean(f.result);
+  const m = season.bracket?.matches.find(x => x.id === matchIdOf(fixtureId));
+  if (!m) return false;
+  if (bestOfFor(m) === 1) return Boolean(m.winner);
+  const n = Number(String(fixtureId).split('.g')[1]) || 1;
+  return (m.games?.length ?? 0) >= n;
+}
+
+/**
  * Move to the next round, or into the playoffs when the schedule is done.
  * Refuses while the round still has a game in it.
  */
@@ -219,7 +271,8 @@ export function advance(season) {
 export function startPlayoffs(season) {
   const table = standings(season);
   const seeds = playoffSeeds(table, playoffCount(season.size));
-  const bracket = makeBracket(seeds);
+  // `season.series`: best-of per round, picked at setup; none is one game a round.
+  const bracket = withSeries(makeBracket(seeds), season.series);
   // THE REGULAR SEASON, KEPT. Playoff games fold into `stats` as well, and an
   // end-of-season award is a regular-season honour (awards.js reads this).
   const regStats = (season.stats ?? []).map(r => ({ ...r }));

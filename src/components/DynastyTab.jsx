@@ -22,7 +22,7 @@ import { listDynasties, saveDynasty, deleteDynasty } from '../firebase/dynasties
 import { claimDynastyReward } from '../firebase/serverWrites.js';
 import { loadDecks } from '../firebase/savedDecks.js';
 import { recordResult, PHASE } from '../game/modes/season.js';
-import { LENGTHS, LEAGUE_SIZES, playoffCount, gamesPerTeam } from '../game/modes/schedule.js';
+import { LENGTHS, PICKABLE_LENGTHS, LEAGUE_SIZES, playoffCount, gamesPerTeam } from '../game/modes/schedule.js';
 import {
   SEASON_REWARDS, DYNASTY_COMPLETION, DYNASTY_TITLE_BONUS, FANTASY_DYNASTY_FACTOR,
   dynastyCoinFactor, dynastyYearEarnings, dynastyCompletionEarnings,
@@ -236,7 +236,7 @@ function DynastySetup({ teamA, collection, uid, onStart, onCancel }) {
   const [teamName, setTeamName] = useState(first ? `${first}'s Team` : 'My Team');
   const [mode, setMode] = useState('fantasy-full');
   const [size, setSize] = useState(8);
-  const [length, setLength] = useState('short');
+  const [length, setLength] = useState('online');
   const [pick, setPick] = useState({ roster: [], deck: null, deckName: null });
   const [decks, setDecks] = useState([]);
   const [deckId, setDeckId] = useState('default');
@@ -323,7 +323,7 @@ function DynastySetup({ teamA, collection, uid, onStart, onCancel }) {
         <div className={styles.field}>
           <span className={styles.label}>Each season</span>
           <div className={styles.choices}>
-            {Object.values(LENGTHS).map(l => (
+            {PICKABLE_LENGTHS.map(l => (
               <Choice
                 key={l.id} on={length === l.id} onClick={() => setLength(l.id)}
                 title={l.label}

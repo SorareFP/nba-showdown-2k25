@@ -45,7 +45,7 @@ import {
 import { getCardByKey } from '../game/cardSets.js';
 import { seasonAwards, replacementRate, vorpOf, DPOY_MIN_MPG } from '../game/modes/awards.js';
 import { simulateFixture } from '../game/modes/simulate.js';
-import { LENGTHS, LEAGUE_SIZES, playoffCount, gamesPerTeam } from '../game/modes/schedule.js';
+import { LENGTHS, PICKABLE_LENGTHS, LEAGUE_SIZES, playoffCount, gamesPerTeam } from '../game/modes/schedule.js';
 import { SEASON_REWARDS } from '../game/modes/prizes.js';
 import { MIN_TO_PLAY } from '../game/teamRules.js';
 import { loadDecks } from '../firebase/savedDecks.js';
@@ -389,7 +389,7 @@ function SharedSetup({ teamA, collection, uid, onCancel, onCreated }) {
   const [leagueName, setLeagueName] = useState('Our League');
   const [name, setName] = useState(() => (user?.displayName ? `${user.displayName.split(' ')[0]}'s Team` : 'My Team'));
   const [size, setSize] = useState(8);
-  const [length, setLength] = useState('regular');
+  const [length, setLength] = useState('quick');
   const [pick, setPick] = useState({ roster: [], deck: null, deckName: null });
   const [busy, setBusy] = useState(false);
   const ok = pick.roster.length >= MIN_TO_PLAY;
@@ -439,7 +439,7 @@ function SharedSetup({ teamA, collection, uid, onCancel, onCreated }) {
         <div className={styles.field}>
           <span className={styles.label}>Season length</span>
           <div className={styles.choices}>
-            {Object.values(LENGTHS).map(l => (
+            {PICKABLE_LENGTHS.map(l => (
               <Choice key={l.id} on={length === l.id} onClick={() => setLength(l.id)} title={l.label} sub={`${gamesPerTeam(size, l.id)} games · ${l.blurb}`} />
             ))}
           </div>
@@ -620,7 +620,7 @@ function Setup({ teamA, collection, uid, onStart, onCancel }) {
   const { user } = useAuth();
   const [name, setName] = useState(() => (user?.displayName ? `${user.displayName.split(' ')[0]}'s Team` : 'My Team'));
   const [size, setSize] = useState(8);
-  const [length, setLength] = useState('regular');
+  const [length, setLength] = useState('quick');
   const [pick, setPick] = useState({ roster: [], deck: null, deckName: null });
   const roster = pick.roster;
 
@@ -667,7 +667,7 @@ function Setup({ teamA, collection, uid, onStart, onCancel }) {
         <div className={styles.field}>
           <span className={styles.label}>Season length</span>
           <div className={styles.choices}>
-            {Object.values(LENGTHS).map(l => (
+            {PICKABLE_LENGTHS.map(l => (
               <Choice
                 key={l.id} on={length === l.id} onClick={() => setLength(l.id)}
                 title={l.label}

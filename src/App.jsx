@@ -4,6 +4,7 @@ import StratsTab from './components/StratsTab.jsx';
 import TeamBuilderTab from './components/TeamBuilderTab.jsx';
 import PlayTab from './components/PlayTab.jsx';
 import SeasonTab from './components/SeasonTab.jsx';
+import DynastyTab from './components/DynastyTab.jsx';
 import TournamentTab from './components/TournamentTab.jsx';
 import HowToPlay from './components/HowToPlay.jsx';
 import WelcomeTab from './components/WelcomeTab.jsx';
@@ -49,6 +50,7 @@ const AUTH_TABS = [
   { id: 'builder', label: '🏗 Team Builder', icon: '🏗', short: 'Team' },
   { id: 'play',    label: '🏀 Play',         icon: '🏀', short: 'Play' },
   { id: 'season',  label: '📅 Season',       icon: '📅', short: 'Season' },
+  { id: 'dynasty', label: '👑 Dynasty',      icon: '👑', short: 'Dynasty' },
   { id: 'tournament', label: '🏆 Tournament', icon: '🏆', short: 'Tournament' },
   { id: 'pvp',     label: '⚔️ PvP',          icon: '⚔️', short: 'PvP' },
   { id: 'collection', label: '💾 Collection', icon: '💾', short: 'Cards' },
@@ -368,6 +370,15 @@ function AppInner() {
                 onPlayFixture={fixture => { setSeasonPreset(fixture); setTab('play'); }}
               />
             )}
+            {tab === 'dynasty' && (
+              <DynastyTab
+                teamA={teamA}
+                collection={collection}
+                pendingResult={seasonResult}
+                onResultConsumed={() => setSeasonResult(null)}
+                onPlayFixture={fixture => { setSeasonPreset(fixture); setTab('play'); }}
+              />
+            )}
             {tab === 'tournament' && <TournamentTab teamA={teamA} collection={collection} />}
             {tab === 'pvp' && !pvpGame && (
               <PvpLobby collection={collection} onGameStart={(roomCode, myRole) => setPvpGame({ roomCode, myRole })} />
@@ -391,7 +402,8 @@ function AppInner() {
                     setSeasonPreset(null);
                     // A null result is a fixture left unplayed, not a 0-0.
                     if (result) setSeasonResult(result);
-                    setTab('season');
+                    // A dynasty's fixture carries `returnTab: 'dynasty'`.
+                    setTab(result?.returnTab ?? seasonPreset?.returnTab ?? 'season');
                   }}
                 />
               </div>

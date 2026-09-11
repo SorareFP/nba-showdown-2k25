@@ -704,6 +704,10 @@ function Setup({ teamA, collection, uid, onStart, onCancel }) {
 function Dashboard({
   season, uid, commit, onPlayFixture, onBack, onAbandon,
   league = null, busy = false, onOpenRoom = null, onSimAi = null, onForfeit = null,
+  // A dynasty year is this same screen (DynastyTab.jsx): its own finale in
+  // place of the title-money claim, its own title, and a fixture that says
+  // which tab to come back to.
+  finale = null, presetExtra = null, title = null, backLabel = 'All seasons',
 }) {
   const { ask, toast } = useDialogs();
   // In a shared season you are `h:<uid>`; alone, you are myId.
@@ -803,8 +807,9 @@ function Dashboard({
       label: isPlayoffs
         ? `${playoffRoundName(season.round, bracketRounds)} · ${homeIsMine ? 'vs' : 'at'} ${opp.name}`
         : `Round ${season.round} · ${homeIsMine ? 'vs' : 'at'} ${opp.name}`,
+      ...(presetExtra ?? {}),
     });
-  }, [mine, me, by, season, isPlayoffs, bracketRounds, onPlayFixture, toast]);
+  }, [mine, me, by, season, isPlayoffs, bracketRounds, onPlayFixture, toast, presetExtra]);
 
   /** Swap decks between rounds. Games already in the book are not re-run. */
   const changeDeck = useCallback(id => {
@@ -861,7 +866,7 @@ function Dashboard({
     <>
       <header className={styles.head}>
         <div>
-          <h2 className={styles.title}>{league ? league.name : (me?.name ?? 'Season')}</h2>
+          <h2 className={styles.title}>{title ?? (league ? league.name : (me?.name ?? 'Season'))}</h2>
           <p className={styles.sub}>
             {league ? `${me?.name ?? 'Your team'} · ` : ''}
             {LENGTHS[season.length]?.label ?? season.length} season · {season.size} teams ·{' '}
@@ -873,7 +878,7 @@ function Dashboard({
           </p>
         </div>
         <div className={styles.headActions}>
-          <button className={styles.ghost} onClick={onBack}>All seasons</button>
+          <button className={styles.ghost} onClick={onBack}>{backLabel}</button>
           {onAbandon && <button className={styles.ghost} onClick={onAbandon}>Abandon</button>}
         </div>
       </header>
@@ -885,7 +890,7 @@ function Dashboard({
               ? '🏆 Champions'
               : `${by.get(season.champion)?.name ?? 'Someone else'} won it`}
           </div>
-          {league ? (
+          {finale ?? (league ? (
             <div className={styles.muted}>
               {leagueEarned > 0 ? `+${leagueEarned} coins · ${earnings.label ?? 'season'} — paid to your account` : 'No title money this time'}
             </div>
@@ -899,7 +904,7 @@ function Dashboard({
             ) : (
               <div className={styles.muted}>{earnings.label} — sign in to be paid for a season</div>
             )
-          )}
+          ))}
         </div>
       )}
 

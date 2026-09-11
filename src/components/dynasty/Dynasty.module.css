@@ -1,0 +1,166 @@
+/* Dynasty mode — built on SeasonTab.module.css (buttons, panels, tables) and
+   the app's tokens (src/index.css). One breakpoint, 768px, like the rest. */
+
+/* ── The year's track ────────────────────────────────────────────────────── */
+
+.track { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.trackYear { font-weight: 800; font-size: 13px; margin-right: 6px; }
+.step {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+  padding: 4px 10px; border-radius: 999px; border: 1px solid var(--border); color: var(--text-muted);
+}
+.stepOn { background: var(--orange); border-color: var(--orange); color: #fff; }
+.stepDone { color: var(--text); }
+
+.panelHead { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+.panelHead h3 { margin: 0; }
+.intro { margin: 0 0 12px; color: var(--text-muted); font-size: 13px; line-height: 1.5; max-width: 78ch; }
+
+/* ── The payroll bar ─────────────────────────────────────────────────────── */
+
+.pay { display: flex; flex-direction: column; gap: 6px; margin: 4px 0 12px; }
+.payTrack {
+  position: relative; height: 12px; background: var(--navy);
+  border: 1px solid var(--border); border-radius: 999px; overflow: hidden;
+}
+.payFill { position: absolute; top: 0; bottom: 0; left: 0; background: var(--orange); transition: width 0.2s; }
+.payOver .payFill { background: var(--red); }
+.payExtra {
+  position: absolute; top: 0; bottom: 0;
+  background: repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.45) 0 4px, rgba(255, 255, 255, 0.12) 4px 8px);
+}
+.payCap { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--text); opacity: 0.8; }
+.payLegend { font-size: 12px; }
+
+/* ── Lists and the negotiating table ─────────────────────────────────────── */
+
+.split { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(280px, 1fr); gap: 16px; align-items: start; }
+@media (max-width: 768px) {
+  .split { grid-template-columns: 1fr; }
+}
+
+.list { display: flex; flex-direction: column; gap: 2px; max-height: 620px; overflow-y: auto; padding-right: 4px; }
+.filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px; }
+.filters input, .filters select {
+  background: var(--navy); border: 1px solid var(--border); border-radius: var(--radius-sm);
+  color: var(--text); font: inherit; font-size: 13px; padding: 6px 10px;
+}
+.filters input[type='search'] { flex: 1 1 160px; min-width: 0; }
+.toggle { display: inline-flex; gap: 6px; align-items: center; font-size: 12px; color: var(--text-muted); cursor: pointer; }
+
+.row {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto auto auto; align-items: center; gap: 10px;
+  padding: 6px 8px; border: 1px solid transparent; border-radius: var(--radius-sm);
+  background: transparent; color: var(--text); font: inherit; text-align: left; cursor: pointer; width: 100%;
+}
+.row:hover { background: var(--card-hover); }
+.rowOn { border-color: var(--orange); background: var(--card-hover); }
+.rowAsk { font-size: 13px; white-space: nowrap; }
+.rowRival { font-size: 12px; color: var(--orange-light); white-space: nowrap; min-width: 56px; text-align: right; }
+.more { align-self: center; margin-top: 6px; }
+
+.player { display: inline-flex; align-items: center; gap: 10px; min-width: 0; }
+.playerText { display: flex; flex-direction: column; min-width: 0; }
+.playerName { font-weight: 700; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.playerSub { font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.face { width: 34px; height: 48px; object-fit: cover; object-position: top; border-radius: 4px; background: var(--navy); flex: none; }
+.faceBig { width: 96px; height: 134px; object-fit: cover; object-position: top; border-radius: 8px; background: var(--navy); flex: none; }
+
+.trait { font-size: 15px; white-space: nowrap; }
+.traitLine { margin-top: 8px; font-size: 13px; font-weight: 700; }
+.blurb { font-size: 12px; color: var(--text-muted); margin-top: 2px; line-height: 1.4; }
+
+.nego {
+  position: sticky; top: 12px; display: flex; flex-direction: column; gap: 12px;
+  background: var(--navy-light); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px;
+}
+@media (max-width: 768px) {
+  .nego { position: static; }
+}
+.negoEmpty {
+  padding: 28px 16px; text-align: center; color: var(--text-muted);
+  border: 1px dashed var(--border); border-radius: var(--radius); font-size: 13px;
+}
+.negoTop { display: flex; gap: 12px; position: relative; padding-right: 20px; }
+.negoName { font-size: 18px; font-weight: 800; line-height: 1.2; }
+.close {
+  position: absolute; top: -8px; right: -6px; background: none; border: none;
+  color: var(--text-muted); font-size: 22px; line-height: 1; cursor: pointer; padding: 4px;
+}
+.askLine { font-size: 14px; }
+.askLine strong { font-size: 18px; }
+.rival {
+  font-size: 13px; padding: 8px 10px; border-radius: var(--radius-sm);
+  background: rgba(234, 88, 12, 0.12); border: 1px solid var(--orange);
+}
+.yearsRow, .offerRow, .negoActions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.yearBtn, .stepBtn {
+  min-width: 40px; padding: 6px 10px; border-radius: var(--radius-sm); border: 1px solid var(--border);
+  background: transparent; color: var(--text); font: inherit; font-weight: 700; cursor: pointer;
+}
+.yearBtn:hover, .stepBtn:hover { background: var(--card-hover); }
+.yearOn, .yearOn:hover { background: var(--orange); border-color: var(--orange); color: #fff; }
+.dpInput {
+  width: 76px; text-align: center; font: inherit; font-size: 17px; font-weight: 800;
+  background: var(--navy); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 6px;
+}
+.patience { font-size: 12px; color: var(--text-muted); }
+.pips { letter-spacing: 0.15em; color: var(--orange-light); }
+.mood { font-size: 13px; padding: 8px 10px; border-radius: var(--radius-sm); border: 1px solid var(--border); }
+.mood_close { border-color: var(--green); }
+.mood_apart, .mood_outbid { border-color: var(--orange); }
+.mood_insulted, .mood_walked { border-color: var(--red); }
+.blocked { font-size: 12px; color: var(--red); }
+
+/* ── The draft room ──────────────────────────────────────────────────────── */
+
+.clock {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  padding: 12px 14px; border-radius: var(--radius); background: var(--navy-light);
+  border: 1px solid var(--border); margin-bottom: 12px;
+}
+.clockMine { border-color: var(--orange); box-shadow: 0 0 0 1px var(--orange) inset; }
+.clockText { font-weight: 800; }
+.clockActions { display: flex; gap: 8px; flex-wrap: wrap; }
+.ticker { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 10px; }
+.tick { flex: none; font-size: 11px; padding: 4px 8px; border-radius: 999px; border: 1px solid var(--border); white-space: nowrap; }
+.tickMe { background: var(--orange); border-color: var(--orange); color: #fff; font-weight: 700; }
+.draftRow {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto auto auto; gap: 10px; align-items: center;
+  padding: 6px 8px; border-radius: var(--radius-sm);
+}
+.draftRow:hover { background: var(--card-hover); }
+.board { display: flex; flex-direction: column; gap: 10px; }
+.boardList { display: flex; flex-direction: column; gap: 6px; }
+.boardLine { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 13px; }
+.recent { font-size: 12px; color: var(--text-muted); display: flex; flex-direction: column; gap: 3px; }
+
+.lottoResult { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.lottoChip { font-size: 12px; padding: 4px 10px; border-radius: 999px; background: var(--navy-light); border: 1px solid var(--border); }
+.lottoUp { border-color: var(--green); }
+.classPeek { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 8px; margin-top: 12px; }
+
+/* ── The wire, the pitch, small things ───────────────────────────────────── */
+
+.news { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; font-size: 13px; }
+.newsYear { display: inline-block; min-width: 32px; margin-right: 8px; font-size: 11px; font-weight: 800; color: var(--text-muted); }
+
+.linkBtn {
+  background: none; border: none; color: var(--orange-light); font: inherit; font-size: 12px;
+  font-weight: 700; cursor: pointer; padding: 2px 4px; white-space: nowrap;
+}
+.linkBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.pitch { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.pitchItem {
+  background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 14px; font-size: 13px; line-height: 1.5; color: var(--text-muted);
+}
+.pitchItem strong { display: block; color: var(--text); font-size: 14px; margin-bottom: 4px; }
+
+.buff {
+  display: inline-block; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 999px;
+  background: var(--green); color: #fff; margin-left: 6px; vertical-align: middle;
+}
+.ready { font-size: 13px; }
+.readyBad { color: var(--red); }

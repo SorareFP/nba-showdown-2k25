@@ -36,7 +36,8 @@ describe('HomeTab', () => {
   it('leads the news with the Starter Pack while it is unopened', () => {
     const out = html({ starter: { opened: false, favorite: false, bonusSeen: true } });
     expect(out).toContain('Your Starter Pack is waiting');
-    expect(out.indexOf('Your Starter Pack is waiting')).toBeLessThan(out.indexOf('Undo a placement'));
+    // Ahead of even the newest item, which the page always shows.
+    expect(out.indexOf('Your Starter Pack is waiting')).toBeLessThan(out.indexOf('Dynasty mode: ten years, one league'));
     expect(html({ starter: { opened: true } })).not.toContain('Your Starter Pack is waiting');
   });
 

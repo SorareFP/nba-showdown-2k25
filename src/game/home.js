@@ -23,6 +23,11 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
+    id: 'dynasty', date: '2026-09-11', title: 'Dynasty mode: ten years, one league',
+    body: 'Bring your own team or fantasy-draft the league, then sign everyone with Dynasty Points. Every player has a personality to haggle with, your own free agents talk only to you, the lottery hands out a class of legends and rookies, and the AI bids against you in free agency. Finish all ten years for a coin bonus; a fantasy-draft start pays 1.5×.',
+    to: 'dynasty', cta: 'Start a dynasty',
+  },
+  {
     id: 'free-agents', date: '2026-09-10', title: 'Free Agents: ask for any season',
     body: 'Search any NBA player\'s season from 1984-85 on (plus 1975-76 and 1976-77), or a playoff run from 2002, and see what their card would cost. Request it, and when the card is built you can sign it for its price. Up to three requests can wait at once.',
     to: 'freeagents', cta: 'Free Agents',

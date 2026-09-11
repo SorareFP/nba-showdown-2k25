@@ -538,7 +538,8 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
     if (!livePreset) return <GameOver game={game} mode={opponent} onPlayAgain={handlers.onPlayAgain} />;
     // The score as the FIXTURE sees it — see resultFromPlayed for why the
     // home/away mapping is not written out here.
-    const result = { seasonId: livePreset.seasonId, ...resultFromPlayed(livePreset, game.teamA.score, game.teamB.score, boxScoreFor(game, 'A'), boxScoreFor(game, 'B')) };
+    // `returnTab`: a dynasty fixture goes back to the Dynasty tab, not Season.
+    const result = { seasonId: livePreset.seasonId, returnTab: livePreset.returnTab ?? null, ...resultFromPlayed(livePreset, game.teamA.score, game.teamB.score, boxScoreFor(game, 'A'), boxScoreFor(game, 'B')) };
     return (
       <GameOver
         game={game}

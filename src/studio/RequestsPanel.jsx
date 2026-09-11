@@ -20,7 +20,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
 import { auth, googleProvider } from '../firebase/config.js';
 import {
-  listCardRequests, rejectCardRequest, markCardRequestBuilt, invoiceCardRequest, giftCardRequest,
+  listCardRequests, rejectCardRequest, markCardRequestBuilt, invoiceCardRequest, giftCardRequest, regiftCardRequest,
 } from '../firebase/freeAgents.js';
 import { buildFreeAgentCard, commitFreeAgent, freeAgentFaceExists, exportFreeAgentFace } from './api.js';
 import {
@@ -63,6 +63,7 @@ export default function RequestsPanel({ onClose }) {
   const [rejecting, setRejecting] = useState(null);   // request id with the reason box open
   const [reason, setReason] = useState('');
   const [confirmGift, setConfirmGift] = useState(null);
+  const [confirmRegift, setConfirmRegift] = useState(null);
   const [busy, setBusy] = useState(null);             // `${action}:${id}`
   const [faces, setFaces] = useState({});             // request id -> face exported?
 
@@ -147,6 +148,18 @@ export default function RequestsPanel({ onClose }) {
       '🎁 0 coins, and signing it gives them one locked copy.'
     );
     setConfirmGift(null);
+    drop(r.id);
+  });
+
+  // A gift sent before gifts waited to be signed: the copy was minted on the
+  // spot. Take it back and re-send it as a gift to sign.
+  const regift = r => run('regift', r.id, async () => {
+    const out = await regiftCardRequest({ id: r.id });
+    setNote(
+      `${r.name}: took back ${out.removed} copy from ${r.requester ?? 'the requester'} and re-sent it as a ` +
+      '🎁 0-coin gift. It waits on their Free Agents page to be signed.'
+    );
+    setConfirmRegift(null);
     drop(r.id);
   });
 
@@ -292,6 +305,21 @@ export default function RequestsPanel({ onClose }) {
                                 <div className={s.btnRow}>
                                   <span className={s.muted}>{isGift(r) ? '🎁 Gift, waiting on them to sign' : 'Waiting on them to sign'}</span>
                                   {!isGift(r) && <button className={s.ghost} onClick={() => setConfirmGift(r.id)}>Gift instead</button>}
+                                </div>
+                              )
+                            ) : status === REQUEST_STATUS.gifted && !r.signedAt ? (
+                              confirmRegift === r.id ? (
+                                <div className={s.btnRow}>
+                                  <span className={s.muted}>Takes their copy back and re-sends it as a 🎁 gift to sign.</span>
+                                  <button className={s.primary} disabled={Boolean(busy)} onClick={() => regift(r)}>
+                                    {isBusy('regift', r.id) ? 'Re-sending…' : 'Yes, re-send'}
+                                  </button>
+                                  <button className={s.ghost} onClick={() => setConfirmRegift(null)}>Cancel</button>
+                                </div>
+                              ) : (
+                                <div className={s.btnRow}>
+                                  <span className={s.muted}>Gifted before gifts waited to be signed</span>
+                                  <button className={s.ghost} disabled={Boolean(busy)} onClick={() => setConfirmRegift(r.id)}>Re-send as gift</button>
                                 </div>
                               )
                             ) : (

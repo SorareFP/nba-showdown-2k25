@@ -31,6 +31,8 @@ export const markCardRequestBuilt = call('markCardRequestBuilt');
 export const invoiceCardRequest = call('invoiceCardRequest');
 /** Admins: `{ id }` — one locked copy, free. */
 export const giftCardRequest = call('giftCardRequest');
+/** Admins: `{ id }` — take back a copy gifted the old way (minted on the spot) and re-send it as a gift to sign. */
+export const regiftCardRequest = call('regiftCardRequest');
 /** Requester: `{ id }` — pay the invoice, get the card. */
 export const signFreeAgent = call('signFreeAgent');
 /** Requester: `{ id }` — say no to the invoice. */

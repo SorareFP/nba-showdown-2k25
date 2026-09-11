@@ -1399,3 +1399,61 @@ export const declineCardRequest = onCall({ region: 'us-central1' }, async reques
     return { id: ref.id, status: REQUEST_STATUS.declined };
   });
 });
+
+/**
+ * RE-SEND AN OLD GIFT AS A GIFT TO SIGN. Admins only.
+ *
+ * Before gifts waited to be signed, Gift minted the locked copy on the spot.
+ * The user asked for those to be taken back and re-sent so they arrive the new
+ * way (2026-09-10: "remove Coleman from my account, and the Jawad Williams card
+ * from the account it was sent to, then re-send so they can be received as
+ * gifts"). So this removes EXACTLY the copy this request minted — the one whose
+ * source is freeagent:<request id>, never another copy of the same card — with
+ * the burn's own bookkeeping (the collection entry, the supply), and re-issues
+ * the request as a 🎁 0-coin gift invoice.
+ *
+ * Only a request gifted the OLD way qualifies: status gifted and never signed.
+ */
+export const regiftCardRequest = onCall({ region: 'us-central1' }, async request => {
+  const { email } = requireAdmin(request);
+  return db.runTransaction(async tx => {
+    // Every read before any write, as a transaction requires.
+    const { ref, req } = await requestInTx(tx, String(request.data?.id ?? ''));
+    if (req.status !== REQUEST_STATUS.gifted || req.signedAt) {
+      throw new HttpsError('failed-precondition', 'Only a gift sent before gifts waited to be signed can be re-sent');
+    }
+    const card = getCardByKey(req.cardKey);
+    if (!card) throw new HttpsError('failed-precondition', 'The live game does not have this card');
+    const copiesOfCard = await tx.get(
+      db.collection(`users/${req.uid}/copies`).where('cardKey', '==', req.cardKey)
+    );
+    const indexRef = db.doc(`users/${req.uid}/collection/${req.cardKey}`);
+    const index = (await tx.get(indexRef)).data() ?? {};
+
+    const source = freeAgentSource(ref.id);
+    const removing = copiesOfCard.docs.filter(d => d.data().source === source);
+    const staying = copiesOfCard.docs.filter(d => d.data().source !== source);
+    for (const d of removing) tx.delete(d.ref);
+    if (removing.length > 0) {
+      if (staying.length === 0) {
+        tx.delete(indexRef);
+      } else {
+        tx.set(indexRef, {
+          count: FieldValue.increment(-removing.length),
+          // Still earned only if a copy that stays is.
+          earned: staying.some(d => d.data().state === EARNED) ? true : FieldValue.delete(),
+          ...(removing.some(d => d.id === index.collectedCopyId) ? { collectedCopyId: FieldValue.delete() } : {}),
+        }, { merge: true });
+      }
+      tx.set(db.doc('supply/current'), { counts: { [req.cardKey]: FieldValue.increment(-removing.length) } }, { merge: true });
+    }
+
+    const invoice = { ...invoiceFor(card), price: 0, gift: true };
+    tx.update(ref, {
+      status: REQUEST_STATUS.invoiced, invoice,
+      invoicedAt: FieldValue.serverTimestamp(), giftedBy: email,
+      giftedAt: FieldValue.delete(), regiftedAt: FieldValue.serverTimestamp(), removedCopies: removing.length,
+    });
+    return { id: ref.id, status: REQUEST_STATUS.invoiced, removed: removing.length, invoice };
+  });
+});

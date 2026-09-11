@@ -102,7 +102,7 @@ describe('seasons in progress', () => {
       uid: 'u1',
     });
     expect(rows.map(r => [r.kind, r.id])).toEqual([['solo', 's1'], ['league', 'L1']]);
-    expect(rows[0].title).toBe('Short season · 4 teams');
+    expect(rows[0].title).toBe('Online season · 4 teams' /* a 'short' season reads by its Civ name (2026-09-11) */);
     expect(rows[1]).toMatchObject({ title: 'Our League', team: 'My Team', record: '0–0' });
     expect(rows[1].next).toBeTruthy();
   });

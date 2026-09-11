@@ -2,7 +2,7 @@
 // is a flag, not "zero minutes" (halftime zeroes everyone); and Defensive
 // Anchor doubles a defender's Defensive Bonus instead of asking for +3.
 import { describe, it, expect } from 'vitest';
-import { newGame, endSection, getPS, satOutLast, calcAdv, matchupContest, returnCardToDeck } from './engine.js';
+import { newGame, endSection, getPS, satOutLast, calcAdv, matchupContest, returnCardToDeck, lastReturnedCard, undoReturnCard } from './engine.js';
 import { canPlayCard } from './canPlay.js';
 import { execCard } from './execCard.js';
 
@@ -92,6 +92,38 @@ describe('returning a card to the deck', () => {
     expect(ng.teamA.deck).toEqual(['x2', 'd1', 'd2']);
     expect(ng.log.at(-1).msg).toMatch(/returns .* to the bottom of the deck/);
     expect(returnCardToDeck(g, 'A', 9)).toBe(g);   // out of range: untouched
+  });
+
+  // THE UNDO (2026-09-11): "Just accidentally went to play a card and sent it
+  // to the bottom of my deck."
+  it('takes a put-back back into the hand, newest first, for the rest of the section', () => {
+    const g = scoringGame();
+    g.teamA.hand = ['x1', 'x2', 'x3'];
+    g.teamA.deck = ['d1', 'd2'];
+    let ng = returnCardToDeck(returnCardToDeck(g, 'A', 1), 'A', 0);   // x2, then x1
+    expect(lastReturnedCard(ng, 'A').id).toBe('x1');
+    ng = undoReturnCard(ng, 'A');
+    expect(ng.teamA.hand).toEqual(['x3', 'x1']);
+    expect(ng.teamA.deck).toEqual(['x2', 'd1', 'd2']);
+    expect(ng.log.at(-1).msg).toMatch(/takes .* back into the hand/);
+    ng = undoReturnCard(ng, 'A');
+    expect(ng.teamA.hand).toEqual(['x3', 'x1', 'x2']);
+    expect(ng.teamA.deck).toEqual(['d1', 'd2']);
+    expect(lastReturnedCard(ng, 'A')).toBeNull();
+    expect(undoReturnCard(ng, 'A')).toBe(ng);   // nothing left to take back: untouched
+  });
+
+  it('will not take one back once the section has moved on, the card is buried, or the game is over', () => {
+    const g = scoringGame();
+    g.teamA.hand = ['x1'];
+    g.teamA.deck = ['d1'];
+    const ng = returnCardToDeck(g, 'A', 0);
+    expect(lastReturnedCard(ng, 'A')).not.toBeNull();
+    expect(lastReturnedCard({ ...ng, section: ng.section + 1 }, 'A')).toBeNull();
+    const buried = { ...ng, teamA: { ...ng.teamA, deck: ['crunch_card', ...ng.teamA.deck] } };
+    expect(lastReturnedCard(buried, 'A')).toBeNull();
+    expect(lastReturnedCard({ ...ng, done: true }, 'A')).toBeNull();
+    expect(lastReturnedCard(ng, 'B')).toBeNull();   // the other side has nothing to take back
   });
 });
 

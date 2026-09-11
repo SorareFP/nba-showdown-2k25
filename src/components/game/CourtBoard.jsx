@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { calcAdv, getTeam, getOpp, getPS, getFatigue, SNAKE, SPEND_COSTS, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, extraRollPending, checkNeed, fatigueForMinutes, crunchSearchOptions } from '../../game/engine.js';
+import { calcAdv, getTeam, getOpp, getPS, getFatigue, SNAKE, SPEND_COSTS, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, lastReturnedCard, undoReturnCard, extraRollPending, checkNeed, fatigueForMinutes, crunchSearchOptions } from '../../game/engine.js';
 import { canPlayCard, myHouseTargets, fwdTargets, preRollTargets, helpTargets } from '../../game/canPlay.js';
 import { resolveGoUnder } from '../../game/execCard.js';
 import { benchRest, passTurn } from '../../game/engine.js';
@@ -69,6 +69,8 @@ export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExec
 
   // A hand card back to the bottom of the deck — see returnCardToDeck.
   const returnCard = (teamKey, handIdx) => setGame(returnCardToDeck(game, teamKey, handIdx));
+  // ...and taken back again, for the rest of the section — see undoReturnCard.
+  const undoReturn = teamKey => setGame(undoReturnCard(game, teamKey));
 
   // THE LATEST PLAY HANDLER, not the one this click closed over. A card's
   // choices are awaited dialogs, seconds long, and in PvP the handler carries
@@ -120,7 +122,7 @@ export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExec
         <div className={styles.courtLayout}>
           {/* Left hand panel: Team A's hand (or empty placeholder in PvP if I'm Team B) */}
           {(!pvpMode || myTeamKey === 'A')
-            ? <HandPanel game={game} teamKey="A" onExecCard={handleExecCard} onReturnCard={returnCard} pvpMode={pvpMode} isMyTurn={isMyTurn} />
+            ? <HandPanel game={game} teamKey="A" onExecCard={handleExecCard} onReturnCard={returnCard} onUndoReturn={undoReturn} pvpMode={pvpMode} isMyTurn={isMyTurn} />
             : <div className={styles.handPlaceholder} />
           }
 
@@ -142,7 +144,7 @@ export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExec
 
           {/* Right hand panel: Team B's hand (or empty placeholder in PvP if I'm Team A) */}
           {(!pvpMode || myTeamKey === 'B')
-            ? <HandPanel game={game} teamKey="B" onExecCard={handleExecCard} onReturnCard={returnCard} pvpMode={pvpMode} isMyTurn={isMyTurn} />
+            ? <HandPanel game={game} teamKey="B" onExecCard={handleExecCard} onReturnCard={returnCard} onUndoReturn={undoReturn} pvpMode={pvpMode} isMyTurn={isMyTurn} />
             : <div className={styles.handPlaceholder} />
           }
         </div>
@@ -1914,7 +1916,7 @@ function PendingBanner({ game, onResolve, onExecCard }) {
   );
 }
 
-function HandPanel({ game, teamKey, onExecCard, onReturnCard = null, pvpMode = false, isMyTurn = true }) {
+function HandPanel({ game, teamKey, onExecCard, onReturnCard = null, onUndoReturn = null, pvpMode = false, isMyTurn = true }) {
   const [staged, setStaged] = useState(null);
   const { open } = useLightbox();
   const t = getTeam(game, teamKey);
@@ -1925,11 +1927,22 @@ function HandPanel({ game, teamKey, onExecCard, onReturnCard = null, pvpMode = f
   const playablePhases = phase === 'matchup_strats' ? ['matchup'] : (isActive ? ['scoring', 'pre_roll', 'post_roll'] : []);
   // In PvP, also allow reaction cards when it's your turn to react (isMyTurn handles this)
   const pvpCanPlay = !pvpMode || isMyTurn;
+  // The last card put back, while it can still be taken back (undoReturnCard).
+  const back = onUndoReturn && pvpCanPlay ? lastReturnedCard(game, teamKey) : null;
 
   return (
     <div className={`${styles.handPanel} ${teamKey === 'A' ? styles.handL : styles.handR}`}>
       <div className={styles.handTitle} style={{ color: col }}>
         Team {teamKey} <span className={styles.handCount}>{t.hand.length}</span>
+        {back && (
+          <button
+            className={styles.handUndo}
+            onClick={() => onUndoReturn(teamKey)}
+            title={`Take ${back.name} back from the bottom of your deck`}
+          >
+            ↩ Undo
+          </button>
+        )}
       </div>
       <div className={styles.handList}>
         {t.hand.length === 0 && <div className={styles.handEmpty}>No cards</div>}

@@ -350,8 +350,45 @@ export function returnCardToDeck(g, teamKey, handIdx) {
   if (!t?.hand || handIdx < 0 || handIdx >= t.hand.length) return g;
   const [id] = t.hand.splice(handIdx, 1);
   t.deck = [id, ...(t.deck || [])];
+  // Remembered, newest last, so it can be taken back (undoReturnCard).
+  t.returned = [...(t.returned || []), { id, quarter: ng.quarter, section: ng.section }].slice(-7);
   const name = getStrat(id)?.name ?? id;
   ng.log = [...ng.log, { team: teamKey, msg: `${t.name} returns ${name} to the bottom of the deck` }];
+  return ng;
+}
+
+/**
+ * TAKE A PUT-BACK BACK (2026-09-11). The user: "Need an undo for strategy
+ * card usage. Just accidentally went to play a card and sent it to the
+ * bottom of my deck."
+ *
+ * Playing a card already asks for a confirmation. The ↩ beside it did not.
+ *
+ * A put-back draws nothing and reveals nothing (its log line names the card
+ * already), so taking it back costs nobody anything. It is allowed:
+ *   - for the rest of that section, newest put-back first;
+ *   - while that card is still the bottom of the deck. A crunch card bottomed
+ *     since, or a timeout's shuffle, has moved it, and then it stays put.
+ */
+export function lastReturnedCard(g, teamKey) {
+  const t = getTeam(g, teamKey);
+  const last = t?.returned?.[t.returned.length - 1];
+  if (!last || g.done) return null;
+  if (last.quarter !== g.quarter || last.section !== g.section) return null;
+  if ((t.deck ?? [])[0] !== last.id) return null;
+  return { id: last.id, name: getStrat(last.id)?.name ?? last.id };
+}
+
+/** The last put-back taken back into the hand, or the game untouched when there is none to take. */
+export function undoReturnCard(g, teamKey) {
+  const back = lastReturnedCard(g, teamKey);
+  if (!back) return g;
+  const ng = deepClone(g);
+  const t = getTeam(ng, teamKey);
+  t.deck = t.deck.slice(1);
+  t.hand = [...(t.hand || []), back.id];
+  t.returned = t.returned.slice(0, -1);
+  ng.log = [...ng.log, { team: teamKey, msg: `↩ ${t.name} takes ${back.name} back into the hand` }];
   return ng;
 }
 

@@ -65,6 +65,10 @@ const SET_FILES = {
   // place those faces are ever rendered.
   'set-rewards': 'cards-set-rewards.json',
   'wnba-set-rewards': 'cards-wnba-set-rewards.json',
+  // Request-only sets: no generated file exists, and cardsFor falls back to
+  // the requested cards built into them (cards-free-agents.json).
+  throwbacks: 'cards-throwbacks.json',
+  'wnba-throwbacks': 'cards-wnba-throwbacks.json',
   // THE STRATEGY DECK IS NOT A GENERATED FILE. Its cards are declared in
   // src/game/strats.js rather than built by a generator, so it names no JSON —
   // `null` marks a set whose list comes from code. It exports like any other
@@ -75,14 +79,16 @@ const SET_FILES = {
 /** The cards of one set: from its generated file, or from code. */
 async function cardsFor(set) {
   if (set === 'strats') return (await import('../../src/game/strats.js')).STRATS;
-  const file = resolve(process.cwd(), 'card-data', 'generated', SET_FILES[set]);
-  if (!existsSync(file)) return null;
   // Requested cards (Free Agents) live in their own file and join the set
   // each was built into, here as in the game (src/game/cardSets.js).
   const freeAgentsFile = resolve(process.cwd(), 'card-data', 'generated', 'cards-free-agents.json');
   const joining = existsSync(freeAgentsFile)
     ? (JSON.parse(readFileSync(freeAgentsFile, 'utf8')).cards ?? []).filter(c => c.set === set)
     : [];
+  const file = resolve(process.cwd(), 'card-data', 'generated', SET_FILES[set]);
+  // A set made ONLY of requests (Throwbacks) has no generated file: its cards
+  // are the requests built into it.
+  if (!existsSync(file)) return joining.length ? joining : null;
   const cards = [...(JSON.parse(readFileSync(file, 'utf8')).cards ?? []), ...joining];
   // MIGRATED CARDS ARE NOT IN THIS SET ANY MORE. The generated file still holds
   // them — the reward generator copies rather than deletes, so the origin file

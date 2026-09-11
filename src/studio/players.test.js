@@ -502,6 +502,8 @@ describe('the base set\'s card-type badges', () => {
     // studio actually lists — which is the join that would catch the badge file
     // and the salary file having been generated from different pools.
     expect(BADGE_FILE.counts.printed).toEqual({
+      // No base card is a Throwback: that pill is the Throwbacks set's own.
+      throwback: 0,
       [ROOKIE_BADGE]: 33,
       [SUPER_SEASON_BADGE]: 20,
       [BEST_SEASON_BADGE]: 127,
@@ -629,7 +631,7 @@ describe('the special sets in the source list', () => {
       c => c.migratedFrom?.set === WNBA_SUPER_SEASON_SET
     ).length;
 
-  it('offers all thirteen sets, in the order the model declares them', () => {
+  it('offers all fifteen sets, in the order the model declares them', () => {
     // THE MODEL, not the row of buttons. Every set is still a source and still
     // reachable; one of them (`cards`) is now folded behind the selector's
     // disclosure, which is a rendering rule and is pinned separately against
@@ -639,6 +641,8 @@ describe('the special sets in the source list', () => {
       'pool', 'cards', SUPER_SEASON_SET, ROOKIE_SET, SUMMER_STANDOUTS_SET,
       DISSONANCE_SET, 'team-rewards', SET_REWARDS_SET, WNBA_SET, WNBA_SUPER_SEASON_SET, WNBA_ROOKIE_SET,
       WNBA_TEAM_REWARDS_SET, WNBA_SET_REWARDS_SET,
+      // The request-only sets: Free Agents' Throwbacks, one per league.
+      'throwbacks', 'wnba-throwbacks',
       // The strategy deck is a source but NOT a card set: it has no season, no
       // badges and no treatment, and sets.js does not carry it. It renders
       // through StratTemplate instead, which is what `template` selects.
@@ -772,6 +776,8 @@ describe('the selector\'s reference group', () => {
       'pool', SUPER_SEASON_SET, ROOKIE_SET, SUMMER_STANDOUTS_SET,
       DISSONANCE_SET, 'team-rewards', SET_REWARDS_SET, WNBA_SET, WNBA_SUPER_SEASON_SET, WNBA_ROOKIE_SET,
       WNBA_TEAM_REWARDS_SET, WNBA_SET_REWARDS_SET,
+      // Free Agents' Throwbacks: request-only, and live — photos land here.
+      'throwbacks', 'wnba-throwbacks',
       // The strategy deck is primary for the same reason every special set is:
       // it is being curated right now (nine cards still have no art), and a
       // live source folded away is a source the user stops finding.
@@ -987,5 +993,17 @@ describe('the award marks the studio joins on', () => {
     expect(awardsFor(WNBA_SET, 'A_ja_Wilson')).toEqual([]);
     expect(awardsFor(CURRENT_SET, 'Nobody_At_All')).toEqual([]);
     expect(awardsFor('constructor', 'constructor')).toEqual([]);
+  });
+});
+
+// ── THE REQUEST-ONLY SETS (Free Agents' Throwbacks, 2026-09-10) ─────────────
+describe('the Throwbacks sources', () => {
+  it('open as sets of built requests, never as a set waiting on a generator', () => {
+    for (const id of ['throwbacks', 'wnba-throwbacks']) {
+      const source = SOURCES[id];
+      expect(source.set, id).toBe(id);
+      expect(source.sub, id).not.toBe('not generated yet');
+      expect(source.players.every(c => c.set === id), id).toBe(true);
+    }
   });
 });

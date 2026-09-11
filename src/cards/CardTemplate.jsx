@@ -27,6 +27,7 @@ import { SUPER_SEASON_BADGE, BEST_SEASON_BADGE, badgeColors, badgeLabel, badgeVa
 import { awardImagePath, awardVars, pickAwards } from './awards.js';
 import { deriveFieldTheme, fieldThemeVars } from './fieldTheme.js';
 import { applyTreatment, treatmentVars } from './treatments.js';
+import ThrowbackMotif from './ThrowbackMotif.jsx';
 import { resolvePhotoUrl, cropToStyle } from './photo.js';
 import styles from './CardTemplate.module.css';
 
@@ -290,6 +291,9 @@ export default function CardTemplate({
   const base = deriveFieldTheme(team.primary, team.secondary, accent);
   const field = applyTreatment(base, cardTreatment(set, card.salary, card.badges ?? []));
   const treatment = field.treatment ?? null;
+  // A treatment that carries a MOTIF draws it as well — the Throwbacks brush
+  // (ThrowbackMotif.jsx), in the band's open patches and instead of the chevrons.
+  const motif = treatment?.motif ?? null;
 
   // THE SET IS PART OF THE PHOTO'S PATH, and leaving it out was a real bug:
   // photos live at card-art/sets/{set}/photos/{id}{ext}, so a card rendered
@@ -431,6 +435,8 @@ export default function CardTemplate({
       {treatment?.sheen && <div className={styles.treatmentSheen} />}
 
       <div className={styles.topBand} />
+      {/* Over the band, under everything printed on it — tree order again. */}
+      {motif === 'throwback' && <ThrowbackMotif slot="band" />}
       <LeagueMark league={league} />
 
       <div className={`${styles.statBlock} ${styles.speedBlock}`}>
@@ -442,8 +448,8 @@ export default function CardTemplate({
         <div className={styles.statValue}>{card.power ?? MISSING}</div>
       </div>
 
-      <div className={styles.chevronTop} />
-      <div className={styles.chevronBottom} />
+      {motif === 'throwback' ? <ThrowbackMotif slot="top" /> : <div className={styles.chevronTop} />}
+      {motif === 'throwback' ? <ThrowbackMotif slot="bottom" /> : <div className={styles.chevronBottom} />}
 
       <div className={styles.nameSlot}>
         <div className={styles.nameText} style={{ fontSize: nameFontSize(card.name) }}>

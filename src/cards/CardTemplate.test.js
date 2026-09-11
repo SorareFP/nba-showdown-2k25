@@ -749,6 +749,8 @@ describe('league mark', () => {
     const wnbaSets = SET_IDS.filter(i => setLeague(i) === 'WNBA');
     expect(wnbaSets).toEqual([
       WNBA_SET, WNBA_SUPER_SEASON_SET, WNBA_ROOKIE_SET, WNBA_TEAM_REWARDS_SET, WNBA_SET_REWARDS_SET,
+      // The Free Agents catch-all, WNBA side (2026-09-10).
+      'wnba-throwbacks',
     ]);
     for (const id of SET_IDS.filter(i => !wnbaSets.includes(i))) {
       expect(setLeague(id), id).toBe('NBA');
@@ -2271,5 +2273,30 @@ describe('the generated award file, on the cards it belongs to', () => {
     expect(html).toContain('/awards/AS');
     expect(html).toContain('SUPER SEASON');
     expect(html).toContain('2021-22');
+  });
+});
+
+// ── THE THROWBACKS LOOK (docs/plans/2026-09-10-throwbacks-design.md) ─────────
+describe('the Throwbacks look', () => {
+  const card = {
+    id: 'X', name: 'Test Player', team: 'CLE', season: 1996, seasonLabel: '1995-96', salary: 500,
+    speed: 10, power: 7, shotLine: 16, paintBoost: 0, threePtBoost: 1, defBoost: 1, pos: 'SG',
+    chart: [{ lo: 1, hi: 10, pts: 1, reb: 0, ast: 0 }, { lo: 11, hi: 99, pts: 2, reb: 1, ast: 1 }],
+  };
+
+  it('draws the brush in the band and both corners, instead of the chevrons', () => {
+    for (const set of ['throwbacks', 'wnba-throwbacks']) {
+      const html = renderToStaticMarkup(
+        React.createElement(CardTemplate, { card: { ...card, team: set.startsWith('wnba') ? 'SEA' : 'CLE' }, set })
+      );
+      for (const slot of ['band', 'top', 'bottom']) expect(html, `${set} ${slot}`).toContain(`data-slot="${slot}"`);
+      expect(html).toContain('THROWBACK');
+      expect(html).toContain('data-treatment="throwback"');
+    }
+  });
+
+  it('leaves every other set on its chevrons, with no motif', () => {
+    const html = renderToStaticMarkup(React.createElement(CardTemplate, { card, set: 'rookie' }));
+    expect(html).not.toContain('data-slot=');
   });
 });

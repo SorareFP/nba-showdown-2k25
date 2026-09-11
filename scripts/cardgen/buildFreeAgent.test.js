@@ -4,10 +4,17 @@ import { describe, it, expect } from 'vitest';
 import { freeAgentCardId, BUILDABLE_SETS } from './buildFreeAgent.mjs';
 
 describe('building a requested card', () => {
-  it('builds into Rookie, Super Season and Summer Standouts in both leagues, and waits on Throwbacks', () => {
-    expect(BUILDABLE_SETS).toEqual(['rookie', 'super-season', 'summer-standouts', 'wnba-rookie', 'wnba-super-season']);
-    expect(BUILDABLE_SETS).not.toContain('throwbacks');
-    expect(BUILDABLE_SETS).not.toContain('wnba-throwbacks');
+  it('builds into every set a request can land in, Throwbacks included, in both leagues', () => {
+    expect(BUILDABLE_SETS).toEqual([
+      'rookie', 'super-season', 'summer-standouts', 'throwbacks',
+      'wnba-rookie', 'wnba-super-season', 'wnba-throwbacks',
+    ]);
+    expect(BUILDABLE_SETS).not.toContain('dissonance');
+  });
+
+  it('always puts the season on a Throwbacks id, to match the art\'s file names', () => {
+    expect(freeAgentCardId('Marissa Coleman', 2010, 'wnba-throwbacks', new Set())).toBe('Marissa_Coleman_2010');
+    expect(freeAgentCardId('Jawad Williams', 2011, 'throwbacks', new Set())).toBe('Jawad_Williams_2011');
   });
 
   it('uses the player id, and adds the season only when the set already holds it', () => {

@@ -389,11 +389,48 @@ function bronzeAccent(theme) {
   };
 }
 
+/**
+ * THROWBACK — the Free Agents catch-all set (docs/plans/2026-09-10-throwbacks-design.md).
+ *
+ * One look for every Throwbacks card, whatever its decade: the 1990s cup's
+ * teal brush stroke and purple scribble, loud on purpose — the user, choosing
+ * it over six per-decade mockups: "keep the loud colors, it's fine". The
+ * drawing itself is ThrowbackMotif.jsx's, which CardTemplate renders for any
+ * treatment carrying `motif: 'throwback'`; this is the palette around it.
+ *
+ * Nothing inked moves — the field, the band, the panels and every ink stay the
+ * team's — so the contrast contract at the top of this file holds by
+ * construction. The keyline is nudged by readableOn like the others.
+ */
+export const THROWBACK_TEAL = '#1FB5B5';
+export const THROWBACK_PURPLE = '#6A2C91';
+
+function throwbackLook(theme) {
+  return {
+    ...theme,
+    frame: readableOn(THROWBACK_TEAL, theme.field, MIN_DECOR_CONTRAST),
+    // The band's diagonal stripes step aside: the brush patches are its pattern.
+    stripeTonal: 'transparent',
+    stripeSecondary: 'transparent',
+    treatment: {
+      id: 'throwback',
+      motif: 'throwback',
+      fieldStops: [theme.field],
+      bandStops: [theme.bandTop, theme.bandBottom],
+      sheen: null,
+      band: null,
+      frameImage: `linear-gradient(135deg, ${THROWBACK_TEAL} 0%, #2BC9C9 45%, ${THROWBACK_PURPLE} 100%)`,
+      bandEdge: `linear-gradient(90deg, ${THROWBACK_TEAL} 0%, #2BC9C9 50%, ${THROWBACK_PURPLE} 100%)`,
+    },
+  };
+}
+
 /** Every treatment, by the id a set declares in src/cards/sets.js. */
 export const TREATMENTS = {
   'gold-foil': goldFoil,
   'green-accent': greenAccent,
   'bronze-accent': bronzeAccent,
+  throwback: throwbackLook,
 };
 
 /** The ids a set is allowed to declare. */

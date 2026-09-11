@@ -1,0 +1,23 @@
+/* The three places a Throwbacks card draws its brush (ThrowbackMotif.jsx).
+ * Same boxes as the chevrons they replace and the band they sit over, so
+ * nothing else on the card moves. */
+.band {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+}
+/* Over the sidebar's scrim, like .chevronTop, for the same reason. */
+.top {
+  position: absolute;
+  right: 7px;
+  top: 4px;
+  pointer-events: none;
+  z-index: 1;
+}
+.bottom {
+  position: absolute;
+  left: 28px;
+  bottom: 18px;
+  pointer-events: none;
+}

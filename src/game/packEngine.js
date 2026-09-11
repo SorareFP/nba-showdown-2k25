@@ -138,6 +138,10 @@ export const PACK_TYPES = {
 export const SPECIAL_SETS_IN_PACKS = [
   'super-season', 'rookie', 'summer-standouts',
   'wnba-super-season', 'wnba-rookie',
+  // Throwbacks, the Free Agents catch-all, "into packs based on its rarity"
+  // like every requested card. Inside the same special-band share, so no odds
+  // move; and no completion goal (collections.js SPECIAL_SETS), by decision.
+  'throwbacks', 'wnba-throwbacks',
 ];
 
 /**

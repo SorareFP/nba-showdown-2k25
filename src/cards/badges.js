@@ -119,6 +119,7 @@ export const DISSONANCE_BADGE = 'dissonance';
 /** The team-completion reward sets' own mark — see TEAM_REWARDS_SET. */
 export const TEAM_REWARD_BADGE = 'team-reward';
 export const SET_REWARD_BADGE = 'set-reward';
+export const THROWBACK_BADGE = 'throwback';
 
 /**
  * The salary at which a best season is a SUPER season.
@@ -332,6 +333,14 @@ export const BADGES = [
     // reasoning as TEAM REWARD — the origin set's badge prints underneath it.
     id: SET_REWARD_BADGE,
     text: 'SET REWARD',
+    fill: theme => theme.accentOnField,
+  },
+  {
+    // The THROWBACKS pill (Free Agents: a requested season that is neither a
+    // rookie year nor a best season). The team's accent, like the other set
+    // pills — the decade's own colours live in its motifs (EraMotif.jsx).
+    id: THROWBACK_BADGE,
+    text: 'THROWBACK',
     fill: theme => theme.accentOnField,
   },
 ];

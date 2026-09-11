@@ -38,7 +38,7 @@
 //                   or null — see src/cards/badges.js
 //   treatment       the set-level visual treatment, or null — see treatments.js
 
-import { DISSONANCE_BADGE, ROOKIE_BADGE, SUMMER_STANDOUT_BADGE, SUPER_SEASON_BADGE, TEAM_REWARD_BADGE, SET_REWARD_BADGE, tierBadge } from './badges.js';
+import { DISSONANCE_BADGE, ROOKIE_BADGE, SUMMER_STANDOUT_BADGE, SUPER_SEASON_BADGE, TEAM_REWARD_BADGE, SET_REWARD_BADGE, THROWBACK_BADGE, tierBadge } from './badges.js';
 
 /** The set currently being built. Every studio write goes under this. */
 export const CURRENT_SET = '2026-27';
@@ -120,6 +120,15 @@ export const WNBA_ROOKIE_SET = 'wnba-rookie';
  */
 export const WNBA_TEAM_REWARDS_SET = 'wnba-team-rewards';
 export const WNBA_SET_REWARDS_SET = 'wnba-set-rewards';
+
+/**
+ * THROWBACKS — the Free Agents catch-all: a requested season that is neither a
+ * rookie year nor a best season. One set per league, like every other card
+ * type, and one look for both: the `throwback` treatment (treatments.js) and
+ * its brush (ThrowbackMotif.jsx).
+ */
+export const THROWBACKS_SET = 'throwbacks';
+export const WNBA_THROWBACKS_SET = 'wnba-throwbacks';
 
 /**
  * The season whose STATS the current set is built from.
@@ -413,6 +422,32 @@ export const SETS = [
     showsSeason: true,
     badge: SET_REWARD_BADGE,
     treatment: 'bronze-accent',
+  },
+  {
+    id: THROWBACKS_SET,
+    name: 'Throwbacks',
+    statsSeason: 'the season',
+    kind: 'special',
+    editable: true,
+    hidesEmptyRows: true,
+    // WHICH season it is IS the card, as on every set cut across seasons.
+    showsSeason: true,
+    badge: THROWBACK_BADGE,
+    // One look for every Throwbacks card, any decade: the 1990s teal brush and
+    // purple scribble (treatments.js + ThrowbackMotif.jsx).
+    treatment: 'throwback',
+  },
+  {
+    id: WNBA_THROWBACKS_SET,
+    name: 'WNBA Throwbacks',
+    statsSeason: 'the season',
+    kind: 'special',
+    league: 'WNBA',
+    editable: true,
+    hidesEmptyRows: true,
+    showsSeason: true,
+    badge: THROWBACK_BADGE,
+    treatment: 'throwback',
   },
 ];
 

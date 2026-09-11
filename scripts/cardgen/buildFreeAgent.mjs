@@ -26,7 +26,8 @@
 // set each names. A rebuild of the same request replaces its card.
 //
 // The set is the one the request was classified into when it was quoted.
-// Throwbacks (both leagues) waits for its card design to be approved.
+// Throwbacks (both leagues) wears one look (the `throwback` treatment), and
+// its card ids always carry the season.
 import fs from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -50,8 +51,11 @@ import { isNeverCard, AUTO_REJECT_MESSAGE } from '../../src/game/neverCard.js';
 import { invoiceFor } from '../../src/game/freeAgents.js';
 import { CARD_SETS } from '../../src/game/cardSets.js';
 
-/** Sets a request can be built into today. Throwbacks waits for its design. */
-export const BUILDABLE_SETS = ['rookie', 'super-season', 'summer-standouts', 'wnba-rookie', 'wnba-super-season'];
+/** Every set a request can land in. Dissonance stays an admin call, never a build. */
+export const BUILDABLE_SETS = [
+  'rookie', 'super-season', 'summer-standouts', 'throwbacks',
+  'wnba-rookie', 'wnba-super-season', 'wnba-throwbacks',
+];
 
 const WNBA_MODEL_FILE = path.join(REPO_ROOT, 'card-data', 'generated', 'wnba-bpm-model.json');
 const tryCache = key => { try { return readCache(key); } catch { return null; } };
@@ -61,9 +65,15 @@ const tableRows = (season, kind) => {
 };
 const mostGames = rows => rows.reduce((best, r) => (!best || (r.games ?? 0) > (best.games ?? 0) ? r : best), null);
 
-/** The card's id: the player's, with the season added when that set already holds the id. */
+/**
+ * The card's id: the player's, with the season added when that set already
+ * holds the id. A THROWBACKS id always carries its season — one player can
+ * have many Throwbacks seasons, and the art is named that way
+ * (card-art/sets/throwbacks/photos/Jawad_Williams_2011.jpg).
+ */
 export function freeAgentCardId(name, season, set, taken) {
   const base = playerIdFromName(name);
+  if (/throwbacks$/.test(set)) return `${base}_${season}`;
   return taken.has(`${set}:${base}`) ? `${base}_${season}` : base;
 }
 
@@ -154,7 +164,7 @@ async function wnbaCard({ bbrefId, season, set }) {
 
 export async function buildFreeAgent({ bbrefId, season, playoffs = false, set, requestId = null, write = true }) {
   if (!BUILDABLE_SETS.includes(set)) {
-    throw new Error(/throwbacks$/.test(set) ? 'Throwbacks waits for its card design to be approved.' : `Cannot build into "${set}"`);
+    throw new Error(`Cannot build into "${set}"`);
   }
   const { name, card, fetchedLog } = set.startsWith('wnba-')
     ? await wnbaCard({ bbrefId, season, set })

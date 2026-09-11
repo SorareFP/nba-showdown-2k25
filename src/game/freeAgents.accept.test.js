@@ -7,6 +7,8 @@ import {
 import { getPlayerRarity } from './rarity.js';
 import { joinFreeAgents, getCardByKey } from './cardSets.js';
 import { withFreeAgent } from '../../scripts/cardgen/freeAgentFile.js';
+import { SPECIAL_SETS_IN_PACKS } from './packEngine.js';
+import { SPECIAL_SETS } from './collections.js';
 
 describe('the invoice', () => {
   it('prices the finished card by its own salary and set, not the quote', () => {
@@ -55,5 +57,13 @@ describe('a built card joins its set', () => {
 
   it('the shipped game still finds its base cards with the free-agent file merged in', () => {
     expect(getCardByKey('Nikola_Jokic')).toBeTruthy();
+  });
+});
+
+describe('Throwbacks in packs', () => {
+  it('pulls from both Throwbacks sets like the other specials, with no completion goal', () => {
+    expect(SPECIAL_SETS_IN_PACKS).toEqual(expect.arrayContaining(['throwbacks', 'wnba-throwbacks']));
+    expect(SPECIAL_SETS.map(s => s.id)).not.toContain('throwbacks');
+    expect(SPECIAL_SETS.map(s => s.id)).not.toContain('wnba-throwbacks');
   });
 });

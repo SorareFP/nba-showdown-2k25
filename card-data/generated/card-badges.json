@@ -10,7 +10,8 @@
   "summer-standout",
   "dissonance",
   "team-reward",
-  "set-reward"
+  "set-reward",
+  "throwback"
  ],
  "counts": {
   "players": 180,
@@ -21,7 +22,8 @@
    "summer-standout": 0,
    "dissonance": 0,
    "team-reward": 0,
-   "set-reward": 0
+   "set-reward": 0,
+   "throwback": 0
   },
   "printed": {
    "rookie": 33,
@@ -30,7 +32,8 @@
    "summer-standout": 0,
    "dissonance": 0,
    "team-reward": 0,
-   "set-reward": 0
+   "set-reward": 0,
+   "throwback": 0
   },
   "multiple": 33
  },

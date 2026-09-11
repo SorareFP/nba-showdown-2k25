@@ -356,8 +356,16 @@ function loadSpecialSet(id) {
       return joining.length ? { ...file, cards: [...file.cards, ...joining] } : file;
     }
   }
+  // A set made ONLY of requested cards has no generated file of its own: its
+  // cards are the requests built into it (Throwbacks, both leagues).
+  if (REQUEST_ONLY_SETS.includes(id)) {
+    return { set: id, cards: FREE_AGENT_CARDS.filter(c => c.set === id), requestedOnly: true };
+  }
   return null;
 }
+
+/** Sets with no generator: every card in them is a built Free Agents request. */
+export const REQUEST_ONLY_SETS = ['throwbacks', 'wnba-throwbacks'];
 
 export const SUPER_SEASON_FILE = loadSpecialSet(SUPER_SEASON_SET);
 export const ROOKIE_FILE = loadSpecialSet(ROOKIE_SET);
@@ -370,6 +378,8 @@ export const WNBA_SUPER_SEASON_FILE = loadSpecialSet(WNBA_SUPER_SEASON_SET);
 export const WNBA_ROOKIE_FILE = loadSpecialSet(WNBA_ROOKIE_SET);
 export const WNBA_TEAM_REWARDS_FILE = loadSpecialSet(WNBA_TEAM_REWARDS_SET);
 export const WNBA_SET_REWARDS_FILE = loadSpecialSet(WNBA_SET_REWARDS_SET);
+export const THROWBACKS_FILE = loadSpecialSet('throwbacks');
+export const WNBA_THROWBACKS_FILE = loadSpecialSet('wnba-throwbacks');
 
 const byName = (a, b) => a.name.localeCompare(b.name);
 
@@ -704,6 +714,25 @@ export const SOURCES = {
       'Re-run `node scripts/cardgen/generateSetRewards.js` after the home sets.',
   }),
 
+  // ── The request-only sets ─────────────────────────────────────────────────
+  //
+  // Free Agents' catch-all, one per league. No generator: every card here is a
+  // request built from the Requests panel (scripts/cardgen/buildFreeAgent.mjs),
+  // so the list grows one card at a time and starts empty.
+  throwbacks: specialSource('throwbacks', THROWBACKS_FILE, {
+    sub: 'requested seasons (Free Agents)',
+    hint:
+      'THE FREE AGENTS CATCH-ALL: a requested season that is not a rookie year, a best season or a ' +
+      'playoff run. Cards arrive one at a time from Requests → Build card; give each a photo named ' +
+      'like its id (Jawad_Williams_2011) and export its face. One look for every card, any decade: ' +
+      'the 1990s teal brush and purple scribble.',
+  }),
+  'wnba-throwbacks': specialSource('wnba-throwbacks', WNBA_THROWBACKS_FILE, {
+    sub: 'requested seasons (Free Agents)',
+    hint:
+      'THE WNBA SIDE OF THE FREE AGENTS CATCH-ALL. Same rules as the NBA Throwbacks set: cards ' +
+      'arrive from Requests → Build card, photos are named like the id (Marissa_Coleman_2010).',
+  }),
   strats: {
     key: 'strats',
     set: 'strats',

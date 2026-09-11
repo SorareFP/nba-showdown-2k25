@@ -36,7 +36,10 @@ const VIEWS = [
   [REQUEST_STATUS.rejected, 'Rejected'],
 ];
 /** Sets the builder can build into today (scripts/cardgen/buildFreeAgent.mjs). */
-const BUILDABLE = new Set(['rookie', 'super-season', 'summer-standouts', 'wnba-rookie', 'wnba-super-season']);
+const BUILDABLE = new Set([
+  'rookie', 'super-season', 'summer-standouts', 'throwbacks',
+  'wnba-rookie', 'wnba-super-season', 'wnba-throwbacks',
+]);
 const VIEW_KEY = 'studio.requests.view';
 const NOTE_KEY = 'studio.requests.note';
 const coins = n => `🪙 ${Number(n ?? 0).toLocaleString()}`;
@@ -241,7 +244,7 @@ export default function RequestsPanel({ onClose }) {
                                 <button
                                   className={s.primary}
                                   disabled={Boolean(busy) || !BUILDABLE.has(r.quote?.set)}
-                                  title={BUILDABLE.has(r.quote?.set) ? undefined : 'Throwbacks waits for its card design to be approved'}
+                                  title={BUILDABLE.has(r.quote?.set) ? undefined : 'This set is not built from the Studio'}
                                   onClick={() => build(r)}
                                 >
                                   {isBusy('build', r.id) ? 'Building…' : 'Build card'}

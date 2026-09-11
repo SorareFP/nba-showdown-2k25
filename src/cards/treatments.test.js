@@ -935,3 +935,27 @@ describe('the stylesheet the treatments paint through', () => {
     }
   });
 });
+
+// ── THE THROWBACK TREATMENT (docs/plans/2026-09-10-throwbacks-design.md) ─────
+describe('the throwback treatment', () => {
+  it('sweeps the keyline teal to purple and lays a band edge, all static gradients', () => {
+    const t = themeFor(STOCK[0], 'throwback');
+    expect(t.treatment.id).toBe('throwback');
+    expect(t.treatment.motif).toBe('throwback');
+    expect(t.treatment.frameImage).toMatch(/^linear-gradient\(135deg, #1FB5B5/);
+    expect(t.treatment.bandEdge).toMatch(/^linear-gradient\(90deg/);
+  });
+
+  it('steps the band stripes aside and leaves every inked surface as the team had it', () => {
+    for (const team of STOCK) {
+      const [, primary, secondary, accent] = team;
+      const base = deriveFieldTheme(primary, secondary, accent);
+      const t = applyTreatment(base, 'throwback');
+      expect(t.stripeTonal).toBe('transparent');
+      expect(t.stripeSecondary).toBe('transparent');
+      for (const k of ['field', 'ink', 'panel', 'panelInk', 'bandTop', 'bandBottom', 'bandInk', 'accentOnField']) {
+        expect(t[k], k).toBe(base[k]);
+      }
+    }
+  });
+});

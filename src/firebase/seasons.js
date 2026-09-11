@@ -20,34 +20,17 @@
 // server-only collection the goals already use. See functions/index.js.
 import { doc, setDoc, getDoc, deleteDoc, collection, getDocs } from 'firebase/firestore';
 import { db } from './config.js';
-import { cardKey, getCardByKey } from '../game/cardSets.js';
+import { packSeason, unpackSeason } from '../game/modes/seasonPack.js';
 
 const LOCAL_KEY = 'showdown.seasons';
 
+// The packing itself is shared with the Cloud Functions (modes/seasonPack.js):
+// a dynasty with friends stores its live season the same way.
 /** A season with its rosters flattened to keys — what actually gets stored. */
-export function dehydrate(season) {
-  return {
-    ...season,
-    teams: (season.teams ?? []).map(t => ({ ...t, roster: (t.roster ?? []).map(cardKey) })),
-  };
-}
+export const dehydrate = packSeason;
 
-/**
- * A stored season with its cards restored. A card that no longer exists (a set
- * was regenerated under a running season — the rookie trim did exactly this)
- * is dropped rather than left as `undefined`, and that team plays a man short
- * rather than the season failing to open.
- */
-export function hydrate(stored) {
-  if (!stored) return null;
-  return {
-    ...stored,
-    teams: (stored.teams ?? []).map(t => ({
-      ...t,
-      roster: (t.roster ?? []).map(k => getCardByKey(k)).filter(Boolean),
-    })),
-  };
-}
+/** A stored season with its cards restored; a card that no longer exists is dropped. */
+export const hydrate = unpackSeason;
 
 function readLocal() {
   try {

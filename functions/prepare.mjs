@@ -56,7 +56,9 @@ const COPY = [
   // the AI league they draft and the team rules they read — none of which
   // touch the engine (aiTeams takes its roster size from teamRules for this).
   'src/game/modes/dynasty.js',
+  'src/game/modes/dynastyFriends.js',
   'src/game/modes/dynastyMarket.js',
+  'src/game/modes/seasonPack.js',
   'src/game/modes/aiTeams.js',
   'src/game/teamRules.js',
   'src/cards/teams.js',

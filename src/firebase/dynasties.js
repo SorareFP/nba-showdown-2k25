@@ -13,20 +13,15 @@
 // model as a season.
 import { doc, setDoc, getDoc, deleteDoc, collection, getDocs } from 'firebase/firestore';
 import { db } from './config.js';
-import { dehydrate as dehydrateSeason, hydrate as hydrateSeason } from './seasons.js';
+import { packDynasty, unpackDynasty } from '../game/modes/seasonPack.js';
 
 const LOCAL_KEY = 'showdown.dynasties';
 
 /** What actually gets stored: the live season's rosters as keys, and no `undefined`. */
-export function dehydrateDynasty(d) {
-  return JSON.parse(JSON.stringify({ ...d, season: d.season ? dehydrateSeason(d.season) : null }));
-}
+export const dehydrateDynasty = packDynasty;
 
 /** A stored dynasty with its live season's cards restored. */
-export function hydrateDynasty(stored) {
-  if (!stored) return null;
-  return { ...stored, season: stored.season ? hydrateSeason(stored.season) : null };
-}
+export const hydrateDynasty = unpackDynasty;
 
 function readLocal() {
   try {

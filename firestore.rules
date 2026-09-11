@@ -149,6 +149,14 @@ service cloud.firestore {
     match /leagues/{leagueId} {
       allow read: if request.auth != null && request.auth.uid in resource.data.members;
       allow write: if false;
+
+      // A coach's SEALED free-agency bids in a dynasty with friends — theirs
+      // alone to read, so no other coach sees an offer; written by dynastyBid
+      // and read at the week's end by dynastyAct.
+      match /bids/{uid} {
+        allow read: if request.auth != null && request.auth.uid == uid;
+        allow write: if false;
+      }
     }
     match /joinCodes/{code} {
       allow read: if request.auth != null;

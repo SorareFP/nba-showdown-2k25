@@ -22,6 +22,7 @@ import {
   closeSigning, closeResign, drawLottery, closeRookies, nextFaDay, fillRoster, startSeason, endSeason,
   freeAgentKeys, rosterKeys, fitsCap, marketDay, tradeProblems, makeTrade, parsePick, pickOwner,
   MAX_ROSTER, teamOf, signContract, floorOf, rosterProblem, tradesOpen,
+  createDynasty, negotiate, renounce, signRookie, waive, endDynasty,
 } from './dynasty.js';
 import { PHASE } from './seasonCore.js';
 import { CONTRACT_YEARS, MIN_DP, MAX_DP } from './dynastyMarket.js';
@@ -247,4 +248,120 @@ export function vetoTrade(d, id, { now = Date.now() } = {}) {
 export function openOffers(d, teamId) {
   const all = (d.offers ?? []).filter(o => o.status === 'open');
   return { toMe: all.filter(o => o.to === teamId), fromMe: all.filter(o => o.from === teamId) };
+}
+
+// ── Starting one, and one coach's move ──────────────────────────────────────
+
+/**
+ * The dynasty a friends league starts with, built on the server from the
+ * lobby: every entrant a coach, under the league's settings. A fantasy draft
+ * is run to the first coach's pick, so the room opens on someone's clock.
+ */
+export function createFriendsDynasty(league, { rng = Math.random, now = Date.now() } = {}) {
+  const s = league.settings;
+  const humans = league.entrants.map(e => ({
+    id: e.id, name: e.name, uid: e.uid, deck: e.deck ?? null, deckName: e.deckName ?? null,
+    roster: s.startMode === 'own' ? e.roster.map(k => getCardByKey(k)).filter(Boolean) : [],
+  }));
+  const d = createDynasty({
+    id: league.id, name: league.name, humans, size: s.size, length: s.length,
+    startMode: s.startMode, series: s.series ?? null, aging: Boolean(s.aging), rng,
+  });
+  return d.phase === DPHASE.draft ? runDraftClock(d, { now, rng }) : d;
+}
+
+const inDraft = d => d.phase === DPHASE.draft || d.phase === DPHASE.rookieDraft;
+
+/** Whether "everyone is ready" can move this phase on: a draft ends by its picks, a season by its games. */
+export function canAdvance(d) {
+  if (inDraft(d) || d.phase === DPHASE.done) return false;
+  if (d.phase === DPHASE.season) return d.season?.phase === PHASE.done;
+  return true;
+}
+
+/** The moves a coach can make, by name — what the server's dynastyAct accepts. */
+export const FRIEND_MOVES = [
+  'tick', 'pick', 'pass', 'offer', 'renounce', 'signRookie', 'waive', 'fill', 'ready',
+  'force', 'end', 'tradeAi', 'propose', 'respond', 'withdraw', 'veto', 'setDeck',
+];
+
+/**
+ * One coach's move, as the server makes it. `op` names it and `args` carries
+ * it; `isHost` is the commissioner's say-so, `bids` the week's sealed bids
+ * (should the week turn), `id` the id a new trade offer takes. The draft clock
+ * runs first, so a pick that has run out is the AI's before anything else
+ * happens. Returns `{ dynasty, result }` — `result` is a player's answer to
+ * an offer, else null.
+ */
+export function friendsAct(d, teamId, op, args = {}, { now = Date.now(), rng = Math.random, isHost = false, bids = [], id = null } = {}) {
+  if (!humanIds(d).includes(teamId)) throw new Error('dynasty: you are not a coach in this dynasty');
+  if (d.phase === DPHASE.done) throw new Error('dynasty: this dynasty is over');
+  const commissioner = () => { if (!isHost) throw new Error('dynasty: only the commissioner can do that'); };
+  const key = () => String(args?.key ?? '');
+  let x = inDraft(d) ? runDraftClock(d, { now, rng }) : d;
+  let result = null;
+  switch (op) {
+    case 'tick':
+      break;
+    case 'pick':
+    case 'pass': {
+      const c = onClock(x);
+      if (!c || c.teamId !== teamId) throw new Error('dynasty: you are not on the clock');
+      x = coachPick(x, teamId, op === 'pass' ? null : key(), { now, rng });
+      break;
+    }
+    case 'offer': {
+      // Free agency is sealed bids (dynastyBid); the exclusive windows and the
+      // leftovers of the preseason are haggled, as alone.
+      if (x.phase === DPHASE.freeAgency) throw new Error('dynasty: free agency is sealed bids — bid for him this week');
+      const r = negotiate(x, teamId, key(), { dp: Number(args?.dp), years: Number(args?.years) });
+      x = r.dynasty;
+      result = r.result;
+      break;
+    }
+    case 'renounce': x = renounce(x, teamId, key()); break;
+    case 'signRookie': x = signRookie(x, teamId, key()); break;
+    case 'waive': x = waive(x, teamId, key()); break;
+    case 'fill': x = fillRoster(x, teamId); break;
+    case 'ready':
+      x = setReady(x, teamId, args?.ready !== false);
+      if (allReady(x) && canAdvance(x)) x = advancePhase(x, { rng, bids, now });
+      break;
+    case 'force':
+      commissioner();
+      if (inDraft(x)) x = runDraftClock(x, { now, rng, force: true });
+      else if (canAdvance(x)) x = advancePhase(x, { rng, bids, now });
+      else throw new Error('dynasty: the season is still being played');
+      break;
+    case 'end':
+      commissioner();
+      x = endDynasty(x);
+      break;
+    case 'tradeAi': {
+      const deal = clean({ ...(args?.deal ?? {}), from: teamId });
+      const partner = teamOf(x, deal.to);
+      if (!partner) throw new Error('dynasty: no such team');
+      if (partner.human) throw new Error('dynasty: a trade with a coach is an offer they answer');
+      x = makeTrade(x, deal);
+      break;
+    }
+    case 'propose': x = proposeTrade(x, { ...(args?.deal ?? {}), from: teamId }, { id, now }); break;
+    case 'respond': x = respondTrade(x, String(args?.id ?? ''), teamId, args?.accept === true, { now }); break;
+    case 'withdraw': x = withdrawTrade(x, String(args?.id ?? ''), teamId, { now }); break;
+    case 'veto':
+      commissioner();
+      x = vetoTrade(x, String(args?.id ?? ''), { now });
+      break;
+    case 'setDeck': {
+      // The deck itself is checked by the server against the strategy cards.
+      const deck = args?.deck && typeof args.deck === 'object' ? args.deck : null;
+      const deckName = deck ? (String(args?.deckName ?? '').slice(0, 40) || null) : null;
+      const put = t => (t.id === teamId ? { ...t, deck, deckName } : t);
+      x = { ...x, teams: x.teams.map(put), season: x.season ? { ...x.season, teams: x.season.teams.map(put) } : x.season };
+      break;
+    }
+    default:
+      throw new Error(`dynasty: no such move ${op}`);
+  }
+  return { dynasty: x, result };
 }

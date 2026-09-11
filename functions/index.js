@@ -57,8 +57,12 @@ import {
 import {
   newLeague, entrantFor, addEntrant, removeEntrant, cancelLeague as cancelLeagueState, startTournament, startSeason,
   canReport, applyResult, scoresFromRoom, forfeitScores, fixtureOf, isHumanVsHumanFixture, humanFor, summarizeLeague,
+  startDynastyLeague, settleDynasty, isMember, teamIdFor,
   STATUS as LEAGUE_STATUS,
 } from './shared/src/game/modes/league.js';
+import { DPHASE } from './shared/src/game/modes/dynasty.js';
+import { createFriendsDynasty, friendsAct, bidProblem, FRIEND_MOVES } from './shared/src/game/modes/dynastyFriends.js';
+import { packDynasty, unpackDynasty } from './shared/src/game/modes/seasonPack.js';
 
 initializeApp();
 const db = getFirestore();
@@ -920,26 +924,41 @@ function writeLeagueIndexes(tx, league, removedUid = null) {
   if (removedUid) tx.delete(leagueIndexRef(removedUid, league.id));
 }
 
+/** A strategy deck as a client sends it, checked against the copy caps; null for the default deck. */
+function cleanDeck(raw) {
+  if (!raw || typeof raw !== 'object') return null;
+  const deck = {};
+  let total = 0;
+  for (const [id, n] of Object.entries(raw)) {
+    const count = Number(n);
+    const strat = getStrat(id);
+    const cap = strat ? (STRAT_COPY_CAPS[getStratRarity(strat)] ?? 5) : 0;
+    if (!strat || !Number.isInteger(count) || count < 0 || count > cap) throw new HttpsError('invalid-argument', `Bad deck entry ${id}`);
+    if (count > 0) { deck[id] = count; total += count; }
+  }
+  if (total > 50) throw new HttpsError('invalid-argument', 'That deck is too big');
+  return deck;
+}
+
+/**
+ * How many cards an entrant brings: five to ten, except in a dynasty — its
+ * own start brings exactly ten, and its fantasy start drafts every roster, so
+ * whatever was sent is dropped (`drafted`).
+ */
+function rosterRule(kind, startMode) {
+  if (kind !== 'dynasty') return { min: 5, max: 10, drafted: false };
+  return (startMode ?? 'fantasy-full') === 'own' ? { min: 10, max: 10, drafted: false } : { min: 0, max: 0, drafted: true };
+}
+
 /** An entrant as the lobby sends it, checked to the bone. */
-function cleanEntrant(uid, raw) {
+function cleanEntrant(uid, raw, { min = 5, max = 10, drafted = false } = {}) {
+  if (drafted) raw = { ...(raw ?? {}), roster: [] };
   if (!raw || typeof raw !== 'object') throw new HttpsError('invalid-argument', 'No team given');
   const roster = Array.isArray(raw.roster) ? raw.roster.map(k => String(k)) : [];
-  if (roster.length < 5 || roster.length > 10) throw new HttpsError('invalid-argument', 'A team is five to ten cards');
+  if (roster.length < min || roster.length > max) throw new HttpsError('invalid-argument', min === max ? `A team is ${min} cards` : `A team is ${min} to ${max} cards`);
   if (new Set(roster).size !== roster.length) throw new HttpsError('invalid-argument', 'A team cannot carry the same card twice');
   for (const k of roster) if (!getCardByKey(k)) throw new HttpsError('invalid-argument', `No such card ${k}`);
-  let deck = null;
-  if (raw.deck && typeof raw.deck === 'object') {
-    deck = {};
-    let total = 0;
-    for (const [id, n] of Object.entries(raw.deck)) {
-      const count = Number(n);
-      const strat = getStrat(id);
-      const cap = strat ? (STRAT_COPY_CAPS[getStratRarity(strat)] ?? 5) : 0;
-      if (!strat || !Number.isInteger(count) || count < 0 || count > cap) throw new HttpsError('invalid-argument', `Bad deck entry ${id}`);
-      if (count > 0) { deck[id] = count; total += count; }
-    }
-    if (total > 50) throw new HttpsError('invalid-argument', 'That deck is too big');
-  }
+  const deck = cleanDeck(raw.deck);
   return entrantFor(uid, {
     name: String(raw.name ?? 'My Team').slice(0, 40) || 'My Team',
     roster,
@@ -950,6 +969,7 @@ function cleanEntrant(uid, raw) {
 
 /** Every card in a roster must be in the caller's collection right now. */
 async function assertOwned(uid, keys) {
+  if (!keys.length) return;
   const snaps = await db.getAll(...keys.map(k => db.doc(`users/${uid}/collection/${k}`)));
   for (const snap of snaps) {
     if (!snap.exists || (snap.data()?.count ?? 0) < 1) throw new HttpsError('failed-precondition', `You do not own ${getCardByKey(snap.id)?.name ?? snap.id}`);
@@ -974,15 +994,15 @@ async function readRoom(code) {
 }
 
 function leagueError(e) {
-  return e instanceof HttpsError ? e : new HttpsError('failed-precondition', String(e?.message ?? e).replace(/^league: /, ''));
+  return e instanceof HttpsError ? e : new HttpsError('failed-precondition', String(e?.message ?? e).replace(/^(league|dynasty): /, ''));
 }
 
 export const createLeague = onCall({ region: 'us-central1' }, async request => {
   const uid = requireAuth(request);
   const { kind, name, settings, entrant: raw } = request.data ?? {};
-  const entrant = cleanEntrant(uid, raw);
+  const entrant = cleanEntrant(uid, raw, rosterRule(kind, settings?.startMode));
   await assertOwned(uid, entrant.roster);
-  const id = `${kind === 'tournament' ? 'tour' : 'league'}-${Date.now()}-${Math.floor(Math.random() * 1e6).toString(36)}`;
+  const id = `${{ tournament: 'tour', dynasty: 'dyn' }[kind] ?? 'league'}-${Date.now()}-${Math.floor(Math.random() * 1e6).toString(36)}`;
   return db.runTransaction(async tx => {
     let joinCode = newJoinCode();
     for (let i = 0; i < 6; i += 1) {
@@ -997,7 +1017,8 @@ export const createLeague = onCall({ region: 'us-central1' }, async request => {
     catch (e) { throw new HttpsError('invalid-argument', String(e.message).replace(/^league: /, '')); }
     chargeFee(tx, userSnap, uid, league.settings.fee);
     tx.set(leagueRef(id), league);
-    tx.set(joinCodeRef(joinCode), { leagueId: id, kind: league.kind, status: league.status, createdAt: FieldValue.serverTimestamp() });
+    // startMode: what a dynasty asks an entrant to bring, read before they join.
+    tx.set(joinCodeRef(joinCode), { leagueId: id, kind: league.kind, startMode: league.settings.startMode ?? null, status: league.status, createdAt: FieldValue.serverTimestamp() });
     writeLeagueIndexes(tx, league);
     return { leagueId: id, joinCode };
   });
@@ -1008,7 +1029,10 @@ export const joinLeague = onCall({ region: 'us-central1' }, async request => {
   const { code, entrant: raw } = request.data ?? {};
   const joinCode = String(code ?? '').trim().toUpperCase();
   if (!/^[A-Z0-9]{6}$/.test(joinCode)) throw new HttpsError('invalid-argument', 'That is not a join code');
-  const entrant = cleanEntrant(uid, raw);
+  // What the league asks an entrant to bring, from its code, before the team is checked.
+  const peek = await joinCodeRef(joinCode).get();
+  if (!peek.exists) throw new HttpsError('not-found', 'No league with that code');
+  const entrant = cleanEntrant(uid, raw, rosterRule(peek.data().kind, peek.data().startMode));
   await assertOwned(uid, entrant.roster);
   return db.runTransaction(async tx => {
     const codeSnap = await tx.get(joinCodeRef(joinCode));
@@ -1075,9 +1099,11 @@ export const startLeague = onCall({ region: 'us-central1' }, async request => {
     if (league.hostUid !== uid) throw new HttpsError('permission-denied', 'Only the host can start it');
     let next;
     try {
-      next = league.kind === 'tournament'
-        ? startTournament(league, { rng: Math.random, now: Date.now() })
-        : startSeason(league, state, { now: Date.now() });
+      if (league.kind === 'tournament') next = startTournament(league, { rng: Math.random, now: Date.now() });
+      // A dynasty with friends is built HERE, never by the host's browser:
+      // its drafts, contracts and free agency are all changed here from now on.
+      else if (league.kind === 'dynasty') next = startDynastyLeague(league, packDynasty(createFriendsDynasty(league, { rng: Math.random, now: Date.now() })), { now: Date.now() });
+      else next = startSeason(league, state, { now: Date.now() });
     } catch (e) { throw leagueError(e); }
     tx.set(ref, next);
     tx.set(joinCodeRef(league.joinCode), { status: next.status }, { merge: true });
@@ -1197,6 +1223,97 @@ export const forfeitLeagueFixture = onCall({ region: 'us-central1' }, async requ
     writeLeagueIndexes(tx, out.league);
     if (out.league.status === LEAGUE_STATUS.done) tx.set(joinCodeRef(league.joinCode), { status: LEAGUE_STATUS.done }, { merge: true });
     return { winner: out.winner, paid: out.payouts, status: out.league.status };
+  });
+});
+
+// ── A DYNASTY WITH FRIENDS (2026-09-11) ─────────────────────────────────────
+//
+// A league whose state is the whole dynasty, changed only here: every
+// coach's move goes through dynastyAct, which runs the shared rules
+// (modes/dynastyFriends.js) on the stored dynasty, pays each year's money as
+// the year goes into the book, and writes it back. Its season's games are
+// reported like any shared season's (reportLeagueResult). The SEALED
+// free-agency bids live apart, in leagues/{id}/bids/{uid}, readable by their
+// coach alone (firestore.rules), and are read here only as a week turns.
+// The draft clock has no timer of its own: every move — and the 'tick' a
+// coach's screen sends when it sees a clock run out — runs it on the
+// server's time first.
+
+const bidsRef = (leagueId, uid) => db.doc(`leagues/${leagueId}/bids/${uid}`);
+
+async function readLiveDynasty(tx, leagueId, uid) {
+  const ref = leagueRef(String(leagueId));
+  const snap = await tx.get(ref);
+  if (!snap.exists) throw new HttpsError('not-found', 'No such league');
+  const league = snap.data();
+  if (league.kind !== 'dynasty') throw new HttpsError('failed-precondition', 'That league is not a dynasty');
+  if (!isMember(league, uid)) throw new HttpsError('permission-denied', 'Not a member');
+  if (league.status !== LEAGUE_STATUS.live) throw new HttpsError('failed-precondition', 'That dynasty is not live');
+  return { ref, league, dynasty: unpackDynasty(league.state) };
+}
+
+/** Every coach's sealed bids for the week the dynasty is in, flattened for nextFaWeek. */
+async function weekBids(tx, leagueId, d) {
+  if (d.phase !== DPHASE.freeAgency) return { bids: [], refs: [] };
+  const snap = await tx.get(db.collection(`leagues/${leagueId}/bids`));
+  const bids = [];
+  for (const doc of snap.docs) {
+    const b = doc.data();
+    if (b.year !== d.year || b.day !== d.fa?.day) continue;
+    for (const x of b.bids ?? []) bids.push({ teamId: b.teamId, key: x.key, dp: x.dp, years: x.years });
+  }
+  return { bids, refs: snap.docs.map(s => s.ref) };
+}
+
+/** One coach's move: `{ leagueId, op, args }`, `op` one of FRIEND_MOVES. */
+export const dynastyAct = onCall({ region: 'us-central1' }, async request => {
+  const uid = requireAuth(request);
+  const { leagueId, op } = request.data ?? {};
+  const args = request.data?.args && typeof request.data.args === 'object' ? request.data.args : {};
+  if (!leagueId || !FRIEND_MOVES.includes(op)) throw new HttpsError('invalid-argument', 'A league and a move are required');
+  const moveArgs = op === 'setDeck' ? { deck: cleanDeck(args.deck), deckName: args.deckName ?? null } : args;
+  return db.runTransaction(async tx => {
+    const { ref, league, dynasty: before } = await readLiveDynasty(tx, leagueId, uid);
+    const { bids, refs } = await weekBids(tx, league.id, before);
+    const now = Date.now();
+    let out;
+    try {
+      out = friendsAct(before, teamIdFor(uid), op, moveArgs, {
+        now, rng: Math.random, isHost: uid === league.hostUid, bids,
+        id: `o-${now.toString(36)}-${Math.floor(Math.random() * 1e6).toString(36)}`,
+      });
+    } catch (e) { throw leagueError(e); }
+    const after = out.dynasty;
+    const settled = settleDynasty(league, packDynasty(after), { now });
+    // A week of sealed bids is spent once it turns.
+    const turned = before.phase === DPHASE.freeAgency && (after.phase !== DPHASE.freeAgency || after.fa?.day !== before.fa?.day);
+    if (turned) for (const r of refs) tx.delete(r);
+    creditAll(tx, settled.payouts);
+    tx.set(ref, settled.league);
+    writeLeagueIndexes(tx, settled.league);
+    if (settled.league.status === LEAGUE_STATUS.done) tx.set(joinCodeRef(league.joinCode), { status: LEAGUE_STATUS.done }, { merge: true });
+    return { phase: after.phase, year: after.year, result: out.result ?? null, paid: settled.payouts };
+  });
+});
+
+/** A coach's sealed bids for this free-agency week, all at once, replacing any they made before. */
+export const dynastyBid = onCall({ region: 'us-central1' }, async request => {
+  const uid = requireAuth(request);
+  const { leagueId } = request.data ?? {};
+  const raw = request.data?.bids;
+  if (!leagueId || !Array.isArray(raw)) throw new HttpsError('invalid-argument', 'A league and bids are required');
+  if (raw.length > 10) throw new HttpsError('invalid-argument', 'Ten bids a week at most');
+  const bids = raw.map(b => ({ key: String(b?.key ?? ''), dp: Number(b?.dp), years: Number(b?.years) }));
+  if (new Set(bids.map(b => b.key)).size !== bids.length) throw new HttpsError('invalid-argument', 'One bid per player');
+  return db.runTransaction(async tx => {
+    const { league, dynasty: d } = await readLiveDynasty(tx, leagueId, uid);
+    const teamId = teamIdFor(uid);
+    for (const b of bids) {
+      const why = bidProblem(d, teamId, b);
+      if (why) throw new HttpsError('failed-precondition', why);
+    }
+    tx.set(bidsRef(league.id, uid), { teamId, year: d.year, day: d.fa.day, bids, at: FieldValue.serverTimestamp() });
+    return { year: d.year, week: d.fa.day, count: bids.length };
   });
 });
 

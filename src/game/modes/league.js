@@ -31,12 +31,27 @@
 // fixture is the commissioner's call — force a forfeit or a simulation.
 import { makeBracket, reportMatch, champion as bracketChampion, winsFor, readyMatches } from './bracket.js';
 import { LEAGUE_SIZES, LENGTHS } from './schedule.js';
-import { TOURNAMENT_SIZES, ENTRY_FEES, tournamentPayouts } from './prizes.js';
+import { TOURNAMENT_SIZES, ENTRY_FEES, tournamentPayouts, dynastyYearEarnings, dynastyCompletionEarnings } from './prizes.js';
 import { PHASE, recordResult, advance, roundComplete, earningsFor, teamsById } from './seasonCore.js';
 import { boxLinesFor } from '../boxScore.js';
 
 export const STATUS = { lobby: 'lobby', live: 'live', done: 'done', cancelled: 'cancelled' };
-export const KINDS = ['tournament', 'season'];
+// 'dynasty' (2026-09-11): a dynasty with friends. Its `state` is the whole
+// dynasty (dynasty.js), which the SERVER builds and changes (dynastyFriends.js);
+// its live season is `state.season`, played exactly like a shared season's.
+export const KINDS = ['tournament', 'season', 'dynasty'];
+export const DYNASTY_STARTS = ['own', 'fantasy-full', 'fantasy-random'];
+
+/** The season a league plays right now: its state, or a dynasty's live season. */
+export function leagueSeason(league) {
+  if (league?.kind === 'dynasty') return league.state?.phase === 'season' ? (league.state.season ?? null) : null;
+  return league?.state ?? null;
+}
+
+/** A league with its season replaced — back into the dynasty for a dynasty. */
+function withSeason(league, season) {
+  return league.kind === 'dynasty' ? { ...league, state: { ...league.state, season } } : { ...league, state: season };
+}
 /** A forfeit is recorded as this score, so standings and brackets read it like any other game. */
 export const FORFEIT_SCORE = { winner: 20, loser: 0 };
 
@@ -59,14 +74,23 @@ function checkSettings(kind, settings) {
   if (!KINDS.includes(kind)) throw new Error(`league: unknown kind ${kind}`);
   const size = Number(settings?.size);
   if (kind === 'tournament' && !TOURNAMENT_SIZES.includes(size)) throw new Error(`league: a tournament is ${TOURNAMENT_SIZES.join('/')} teams`);
-  if (kind === 'season' && !LEAGUE_SIZES.includes(size)) throw new Error(`league: a season is ${LEAGUE_SIZES.join('/')} teams`);
+  if (kind !== 'tournament' && !LEAGUE_SIZES.includes(size)) throw new Error(`league: a ${kind} is ${LEAGUE_SIZES.join('/')} teams`);
   const fee = Number(settings?.fee ?? 0);
   if (kind === 'tournament' && !ENTRY_FEES.includes(fee)) throw new Error(`league: the entry fee is one of ${ENTRY_FEES.join('/')}`);
-  if (kind === 'season' && fee !== 0) throw new Error('league: a season has no entry fee');
-  const length = kind === 'season' ? (settings?.length ?? 'regular') : null;
-  if (kind === 'season' && !LENGTHS[length]) throw new Error('league: unknown season length');
-  return { size, fee, length, seeding: 'random' };
+  if (kind !== 'tournament' && fee !== 0) throw new Error(`league: a ${kind} has no entry fee`);
+  const length = kind !== 'tournament' ? (settings?.length ?? 'regular') : null;
+  if (kind !== 'tournament' && !LENGTHS[length]) throw new Error('league: unknown season length');
+  if (kind !== 'dynasty') return { size, fee, length, seeding: 'random' };
+  const startMode = settings?.startMode ?? 'fantasy-full';
+  if (!DYNASTY_STARTS.includes(startMode)) throw new Error('league: unknown way to start a dynasty');
+  const series = Array.isArray(settings?.series)
+    ? settings.series.slice(0, 5).map(n => ([1, 3, 5, 7].includes(Number(n)) ? Number(n) : 1))
+    : null;
+  return { size, fee, length, seeding: 'random', startMode, series, aging: Boolean(settings?.aging) };
 }
+
+/** A card key's PERSON — `rookie:Allen_Iverson` and `Allen_Iverson` are one man. */
+const personOf = key => String(key).split(':').pop();
 
 /** A league in its lobby, with the host as its first entrant. */
 export function newLeague({ id, kind, name, hostUid, settings, entrant, joinCode, now = Date.now() }) {
@@ -76,7 +100,7 @@ export function newLeague({ id, kind, name, hostUid, settings, entrant, joinCode
   return {
     id,
     kind,
-    name: String(name ?? (kind === 'tournament' ? 'Tournament' : 'Season')).slice(0, 60),
+    name: String(name ?? ({ tournament: 'Tournament', season: 'Season', dynasty: 'Dynasty' }[kind])).slice(0, 60),
     hostUid,
     status: STATUS.lobby,
     createdAt: now,
@@ -143,8 +167,63 @@ export function cancelLeague(league, now = Date.now()) {
 export function canStart(league) {
   if (league.status !== STATUS.lobby) return 'It has already started';
   if (league.kind === 'tournament' && !isFull(league)) return `Needs ${league.settings.size - league.entrants.length} more`;
+  if (league.kind === 'dynasty') {
+    // A fantasy start drafts every roster; an own start brings a full ten
+    // each, and one of each player across all of them.
+    if (league.settings.startMode !== 'own') return null;
+    if (league.entrants.some(e => (e.roster?.length ?? 0) !== 10)) return 'Every coach brings a team of ten';
+    const persons = league.entrants.flatMap(e => e.roster.map(personOf));
+    if (new Set(persons).size !== persons.length) return 'Two coaches have brought the same player';
+    return null;
+  }
   if (league.entrants.some(e => (e.roster?.length ?? 0) < 5)) return 'Everyone needs a team of at least five';
   return null;
+}
+
+/**
+ * Start a dynasty with friends from the dynasty the SERVER built
+ * (createDynasty, every entrant a coach). Checked: its coaches are exactly
+ * the entrants.
+ */
+export function startDynastyLeague(league, state, { now = Date.now() } = {}) {
+  const why = canStart(league);
+  if (why) throw new Error(`league: ${why}`);
+  if (league.kind !== 'dynasty') throw new Error('league: not a dynasty');
+  const want = new Set(league.entrants.map(e => e.id));
+  const got = new Set(state?.humans ?? []);
+  if (want.size !== got.size || [...want].some(id => !got.has(id))) throw new Error('league: the dynasty\'s coaches are not the entrants');
+  return { ...league, status: STATUS.live, startedAt: now, state: { ...state, id: league.id } };
+}
+
+/**
+ * Put a dynasty's new state on its league, and pay what it earned: every
+ * year newly in its history pays each coach that year's money (as a solo
+ * dynasty's year claim would), and the dynasty's end pays the ten-year bonus
+ * and closes the league. `next` is the stored (packed) dynasty.
+ */
+export function settleDynasty(league, next, { now = Date.now() } = {}) {
+  const before = league.state;
+  const had = new Set((before?.history ?? []).map(h => h.year));
+  const payouts = [];
+  const pay = (e, r, reason) => { if (r.coins > 0) payouts.push({ uid: e.uid, teamId: e.id, coins: r.coins, reason, at: now }); };
+  for (const h of next.history ?? []) {
+    if (had.has(h.year)) continue;
+    for (const e of league.entrants) {
+      const r = dynastyYearEarnings(next, h.year, e.id);
+      pay(e, r, `Year ${h.year} · ${r.label}`);
+    }
+  }
+  const finished = next.phase === 'done' && before?.phase !== 'done';
+  if (finished) for (const e of league.entrants) { const r = dynastyCompletionEarnings(next, e.id); pay(e, r, r.label); }
+  return {
+    league: {
+      ...league,
+      state: next,
+      payouts: [...(league.payouts ?? []), ...payouts],
+      ...(finished ? { status: STATUS.done, finishedAt: now } : {}),
+    },
+    payouts,
+  };
 }
 
 /** Deal the bracket. Random seeding — a PvP rating is the design's eventual seed. */
@@ -195,7 +274,7 @@ export function fixtureOf(league, fixtureId) {
     if (!m) return null;
     return { id: m.id, home: m.a, away: m.b, ready: m.a != null && m.b != null, played: Boolean(m.winner), winner: m.winner, round: m.round, playoff: true };
   }
-  const s = league.state;
+  const s = leagueSeason(league);
   if (!s) return null;
   if (s.phase === PHASE.playoffs || s.phase === PHASE.done) {
     const m = s.bracket?.matches.find(x => x.id === fixtureId);
@@ -210,7 +289,8 @@ export function fixtureOf(league, fixtureId) {
 export function openFixtures(league) {
   if (league.status !== STATUS.live) return [];
   if (league.kind === 'tournament') return readyMatches(league.bracket).map(m => fixtureOf(league, m.id));
-  const s = league.state;
+  const s = leagueSeason(league);
+  if (!s) return [];
   if (s.phase === PHASE.playoffs) return readyMatches(s.bracket).filter(m => m.round === s.round).map(m => fixtureOf(league, m.id));
   if (s.phase === PHASE.regular) return s.fixtures.filter(f => f.round === s.round && !f.result).map(f => fixtureOf(league, f.id));
   return [];
@@ -233,7 +313,7 @@ export function canReport(league, uid, fixtureId, { simulated = false, forfeit =
   if (!f) return 'No such fixture';
   if (!f.ready) return 'That fixture is not ready';
   if (f.played) return 'That fixture already has a result';
-  if (league.kind === 'season' && !f.playoff && !f.inRound) return 'That fixture is not in the current round';
+  if (league.kind !== 'tournament' && !f.playoff && !f.inRound) return 'That fixture is not in the current round';
   const isHost = uid === league.hostUid;
   const mine = teamOfUid(league, uid);
   const inIt = mine === f.home || mine === f.away;
@@ -325,7 +405,7 @@ export function applyResult(league, result, { now = Date.now() } = {}) {
   }
 
   // A season: record, then let the calendar move as far as it can.
-  let state = recordResult(league.state, {
+  let state = recordResult(leagueSeason(league), {
     fixtureId: f.id, home: f.home, away: f.away, homeScore, awayScore,
     simulated: Boolean(result.simulated), forfeit: Boolean(result.forfeit),
     homeBox: result.homeBox ?? null, awayBox: result.awayBox ?? null,
@@ -335,7 +415,10 @@ export function applyResult(league, result, { now = Date.now() } = {}) {
     if (moved === state) break;
     state = moved;
   }
-  let next = { ...league, state };
+  let next = withSeason(league, state);
+  // A dynasty's season ending is the server's to turn into its offseason
+  // (dynastyFriends.js) — title money and all — so nothing ends here.
+  if (league.kind === 'dynasty') return { league: next, payouts, winner };
   if (state.phase === PHASE.done) {
     for (const e of league.entrants) pay(e.id, earningsFor(state, e.id).coins, earningsFor(state, e.id).label ?? 'season');
     next = { ...next, status: STATUS.done, finishedAt: now };
@@ -361,8 +444,10 @@ export function summarizeLeague(league, uid = null) {
   let where = null;
   if (league.status === STATUS.lobby) where = `${league.entrants.length}/${league.settings.size} in`;
   else if (league.kind === 'tournament') where = league.status === STATUS.done ? 'final' : `round ${league.bracket ? Math.min(...league.bracket.matches.filter(m => !m.winner).map(m => m.round)) : 1}`;
+  else if (league.kind === 'dynasty') where = league.status === STATUS.done ? 'complete' : `year ${league.state?.year ?? 1} · ${league.state?.phase ?? ''}`;
   else if (league.state) where = league.state.phase === PHASE.done ? 'final' : league.state.phase === PHASE.playoffs ? 'playoffs' : `round ${league.state.round}`;
-  const champion = league.kind === 'tournament' ? (league.bracket ? bracketChampion(league.bracket) : null) : (league.state?.champion ?? null);
+  const champion = league.kind === 'tournament' ? (league.bracket ? bracketChampion(league.bracket) : null)
+    : league.kind === 'dynasty' ? null : (league.state?.champion ?? null);
   return {
     id: league.id, kind: league.kind, name: league.name, status: league.status, where,
     size: league.settings.size, fee: league.settings.fee, pool: league.pool,

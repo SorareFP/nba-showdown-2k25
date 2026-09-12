@@ -107,7 +107,7 @@ const server = {
   openBoxPack: (uid, boxId) => call('openBoxPack', { boxId }),
   buyListing: (uid, listingId) => call('buyListing', { listingId }),
   claimGoal: (uid, goalId) => call('claimGoal', { goalId }),
-  listCard: (uid, cardKey, price) => call('listCard', { cardKey, price }),
+  listCard: (uid, cardKey, price, qty = 1) => call('listCard', { cardKey, price, qty }),
   delistCard: (uid, listingId) => call('delistCard', { listingId }),
   burnCard: (uid, cardKey) => call('burnCard', { cardKey }),
   claimGameReward: (uid, claim) => call('claimGameReward', claim),
@@ -245,11 +245,11 @@ const direct = {
     return { dynastyId, year: id, coins, label };
   },
   collectCard: (uid, cardKey) => collectCardDirect(uid, cardKey),
-  listCard: async (uid, cardKey, price) => {
+  listCard: async (uid, cardKey, price, qty = 1) => {
     // The same floor the server holds: never below the burn value.
     const floor = checkListingPrice(cardKey, price);
     if (!floor.ok) throw new Error(floor.msg);
-    return listCardDirect(uid, cardKey, price);
+    return listCardDirect(uid, cardKey, price, qty);
   },
   delistCard: (uid, listingId) => delistCardDirect(uid, listingId),
   async burnCard(uid, cardKey) {
@@ -374,7 +374,8 @@ export async function loadBoxes(uid) {
 }
 export const buyListing = (uid, listingId) => impl.buyListing(uid, listingId);
 export const claimGoal = (uid, goalId) => impl.claimGoal(uid, goalId);
-export const listCard = (uid, cardKey, price) => impl.listCard(uid, cardKey, price);
+/** Put `qty` spares of a card on the market at one price. */
+export const listCard = (uid, cardKey, price, qty = 1) => impl.listCard(uid, cardKey, price, qty);
 export const delistCard = (uid, listingId) => impl.delistCard(uid, listingId);
 export const burnCard = (uid, cardKey) => impl.burnCard(uid, cardKey);
 /** Settle a finished game. `claim` is `{ won, pvp, milestoneIds, bam }`. */

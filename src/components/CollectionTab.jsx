@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useAuth } from '../firebase/AuthProvider.jsx';
 import { loadTeams, deleteTeam, updateTeam } from '../firebase/savedTeams.js';
 import { loadDecks, deleteDeck } from '../firebase/savedDecks.js';
@@ -17,6 +17,8 @@ import TeamEditor from './TeamEditor.jsx';
 import PackShop from './PackShop.jsx';
 import PackOpening from './PackOpening.jsx';
 import { getStrat } from '../game/strats.js';
+import { myListings } from '../firebase/market.js';
+import { delistCard } from '../firebase/serverWrites.js';
 import MyCollection from './MyCollection.jsx';
 import Market from './Market.jsx';
 import CollectionGoals from './CollectionGoals.jsx';
@@ -69,6 +71,7 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
   // engine had before supply existed, so a slow or failed read costs fairness,
   // never a broken pack.
   const [supply, setSupply] = useState({});
+  const [listings, setListings] = useState([]);
   // The permanent choice: null until it is made, and then never null again.
   // See FavoriteTeamPicker for why it is a screen rather than a dropdown.
   const [pickingTeam, setPickingTeam] = useState(false);
@@ -78,7 +81,7 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
   const refresh = useCallback(async () => {
     if (!user) return;
     setLoading(true);
-    const [t, d, c, u, cl, sup] = await Promise.all([
+    const [t, d, c, u, cl, sup, mine] = await Promise.all([
       loadTeams(user.uid),
       loadDecks(user.uid),
       loadCollection(user.uid),
@@ -88,6 +91,10 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
       // nothing breaks without, so a failure degrades to uniform pulls instead
       // of taking the whole tab down with it.
       readSupply().catch(() => ({})),
+      // WHAT IS ALREADY ON THE MARKET. Without it a listed copy still counted
+      // as a spare, so the collection offered Sell and Burn on cards whose
+      // every spare was gone (the user, 2026-09-12). Cosmetic if it fails.
+      myListings(user.uid).catch(() => []),
     ]);
     setTeams(t);
     setDecks(d);
@@ -95,6 +102,7 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
     setUserData(u);
     setClaims(cl);
     setSupply(sup);
+    setListings(mine);
     setLoading(false);
   }, [user]);
 
@@ -271,6 +279,23 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
     setView('collection');
     refresh();
     onCollectionChange?.();
+  };
+
+  // cardKey -> the listings of it this player has up, so the collection can
+  // count spares that are actually sellable and offer Unlist on the rest.
+  const listedByCard = useMemo(() => {
+    const out = {};
+    for (const l of listings) (out[l.cardKey] ??= []).push(l);
+    return out;
+  }, [listings]);
+
+  const handleUnlist = async listingId => {
+    try {
+      await delistCard(user.uid, listingId);
+      await refresh();
+    } catch (e) {
+      setToast(e.message);
+    }
   };
 
   const pendingReveals = userData?.settings?.pendingReveals ?? [];
@@ -659,7 +684,7 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
 
       {/* ── My Collection ── */}
       {view === 'collection' && (
-        <MyCollection collection={collection} onBurn={handleBurn} onList={handleList} onCollect={handleCollect} onCollectAll={handleCollectAll} collectableCount={collectable} />
+        <MyCollection collection={collection} onBurn={handleBurn} onList={handleList} onUnlist={handleUnlist} listedByCard={listedByCard} onCollect={handleCollect} onCollectAll={handleCollectAll} collectableCount={collectable} />
       )}
 
       {/* ── Collections (the goal ladder) ── */}

@@ -71,40 +71,47 @@ export function validPrice(price) {
  * the collected copy and any earned copy are unreachable from here by
  * construction rather than by a check somebody might forget.
  */
-export async function listCard(uid, cardKey, price) {
+export async function listCard(uid, cardKey, price, qty = 1) {
   if (!validPrice(price)) throw new Error('Price must be a whole number of coins above zero');
 
   const snap = await getDocs(copiesRef(uid));
   const mine = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(c => c.cardKey === cardKey);
   if (mine.length === 0) throw new Error('Card not owned');
 
-  const spare = mine.find(c => c.state === COPY_STATE.SPARE);
-  if (!spare) {
+  const spares = mine.filter(c => c.state === COPY_STATE.SPARE);
+  if (!spares.length) {
     const only = mine.find(c => isProtected(c.state));
     throw new Error(
       only?.state === COPY_STATE.EARNED
         ? 'This is a collection reward — it can never be sold'
-        : 'Your only copy is the one in your collection — collect a spare to sell'
+        : mine.some(c => c.state === COPY_STATE.LISTED)
+          ? 'Every spare of that card is already on the market'
+          : 'Your only copy is the one in your collection — collect a spare to sell'
     );
   }
+  const n = Math.min(Math.max(1, Math.trunc(qty)), spares.length);
 
   // ESCROW BY STATE, not by moving the document. The copy stays in the seller's
   // subtree and simply stops being spare, so a listing that is never bought
   // needs no repair and a seller browsing their own collection still sees the
   // card they own. `listed` is not in PROTECTED, so burnCard would otherwise
   // still take it — which is why burn re-checks for exactly `spare`.
-  const listing = doc(listingsRef());
   const batch = writeBatch(db);
-  batch.update(copyRef(uid, spare.id), { state: COPY_STATE.LISTED, listingId: listing.id });
-  batch.set(listing, {
-    cardKey,
-    copyId: spare.id,
-    seller: uid,
-    price,
-    listedAt: serverTimestamp(),
-  });
+  const ids = [];
+  for (const spare of spares.slice(0, n)) {
+    const listing = doc(listingsRef());
+    batch.update(copyRef(uid, spare.id), { state: COPY_STATE.LISTED, listingId: listing.id });
+    batch.set(listing, {
+      cardKey,
+      copyId: spare.id,
+      seller: uid,
+      price,
+      listedAt: serverTimestamp(),
+    });
+    ids.push(listing.id);
+  }
   await batch.commit();
-  return listing.id;
+  return ids[0];
 }
 
 /** Take a listing down. The copy goes back to being an ordinary spare. */

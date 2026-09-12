@@ -516,6 +516,19 @@ const MAX_GAME_CLAIMS_PER_MINUTE = 3;
  *
  * A transaction read, so the state is the state at commit time.
  */
+/**
+ * EVERY SPARE OF A CARD, so a seller can put more than one on the market in a
+ * go (the user, 2026-09-12: "I should be able to list multiple duplicates of a
+ * card at once"). A LISTED copy is not a spare and never comes back from here,
+ * which is also why a listed card cannot be burned: findSpare refuses it.
+ */
+async function findSpares(tx, uid, cardKey) {
+  const snap = await tx.get(db.collection(`users/${uid}/copies`).where('cardKey', '==', cardKey));
+  if (snap.empty) throw new HttpsError('failed-precondition', 'Card not owned');
+  const mine = snap.docs.map(d => ({ id: d.id, ref: d.ref, ...d.data() }));
+  return { spares: mine.filter(c => c.state === SPARE), all: mine };
+}
+
 async function findSpare(tx, uid, cardKey) {
   const snap = await tx.get(db.collection(`users/${uid}/copies`).where('cardKey', '==', cardKey));
   if (snap.empty) throw new HttpsError('failed-precondition', 'Card not owned');
@@ -541,10 +554,13 @@ async function findSpare(tx, uid, cardKey) {
  */
 export const listCard = onCall({ region: 'us-central1' }, async request => {
   const uid = requireAuth(request);
-  const { cardKey, price } = request.data ?? {};
+  const { cardKey, price, qty = 1 } = request.data ?? {};
   if (!cardKey) throw new HttpsError('invalid-argument', 'No card given');
   if (!validPrice(price)) {
     throw new HttpsError('invalid-argument', 'Price must be a whole number of coins above zero');
+  }
+  if (!Number.isInteger(qty) || qty < 1 || qty > 50) {
+    throw new HttpsError('invalid-argument', 'List between 1 and 50 copies at a time');
   }
   // NEVER BELOW THE BURN VALUE (the user, 2026-09-08). The same check the
   // sell form and the direct route make, from the same shared module.
@@ -552,13 +568,31 @@ export const listCard = onCall({ region: 'us-central1' }, async request => {
   if (!floorCheck.ok) throw new HttpsError('failed-precondition', floorCheck.msg);
 
   return db.runTransaction(async tx => {
-    const { spare } = await findSpare(tx, uid, cardKey);
-    const listingRef = db.collection('listings').doc();
-    tx.update(spare.ref, { state: LISTED, listingId: listingRef.id });
-    tx.set(listingRef, {
-      cardKey, copyId: spare.id, seller: uid, price, listedAt: FieldValue.serverTimestamp(),
-    });
-    return { listingId: listingRef.id };
+    const { spares, all } = await findSpares(tx, uid, cardKey);
+    if (!spares.length) {
+      const only = all.find(c => c.state === COLLECTED || c.state === EARNED);
+      throw new HttpsError(
+        'failed-precondition',
+        only?.state === EARNED
+          ? 'This is a collection reward — it can never be sold or burned'
+          : all.some(c => c.state === LISTED)
+            ? 'Every spare of that card is already on the market'
+            : 'Your only copy is the one in your collection — collect a spare first'
+      );
+    }
+    if (qty > spares.length) {
+      throw new HttpsError('failed-precondition', `You have ${spares.length} spare${spares.length === 1 ? '' : 's'} to sell`);
+    }
+    const listingIds = [];
+    for (const spare of spares.slice(0, qty)) {
+      const listingRef = db.collection('listings').doc();
+      tx.update(spare.ref, { state: LISTED, listingId: listingRef.id });
+      tx.set(listingRef, {
+        cardKey, copyId: spare.id, seller: uid, price, listedAt: FieldValue.serverTimestamp(),
+      });
+      listingIds.push(listingRef.id);
+    }
+    return { listingId: listingIds[0], listingIds, listed: listingIds.length };
   });
 });
 

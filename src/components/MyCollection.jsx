@@ -55,7 +55,7 @@ const SET_LABELS = {
   'wnba-team-rewards': 'WNBA Team Rewards',
 };
 
-export default function MyCollection({ collection, onBurn, onList, onCollect, onCollectAll = null, collectableCount = 0 }) {
+export default function MyCollection({ collection, onBurn, onList, onUnlist = null, listedByCard = {}, onCollect, onCollectAll = null, collectableCount = 0 }) {
   const [typeFilter, setTypeFilter] = useState('all');
   const [rarityFilter, setRarityFilter] = useState('all');
   const [setFilter, setSetFilter] = useState('ALL');
@@ -65,6 +65,9 @@ export default function MyCollection({ collection, onBurn, onList, onCollect, on
   // Which card is being priced, and at what. Selling needs a NUMBER from the
   // player, so unlike burning it cannot be a two-tap confirm.
   const [selling, setSelling] = useState(null);
+  // How many copies this listing is for. A seller with four spares should not
+  // have to price the same card four times (the user, 2026-09-12).
+  const [sellQty, setSellQty] = useState(1);
   const [askPrice, setAskPrice] = useState('');
 
   const allCards = useMemo(() => {
@@ -184,7 +187,12 @@ export default function MyCollection({ collection, onBurn, onList, onCollect, on
           // The collected copy is the protected one; everything else is a spare.
           // An uncollected card is ALL spares — and offers Collect.
           const collected = entry.collected === true || entry.earned === true;
-          const spares = Math.max(0, owned - (collected ? 1 : 0));
+          // A LISTED COPY IS NOT A SPARE. It is in escrow — burnCard and
+          // listCard both refuse it on the server — so counting it here is
+          // what put a Sell button on a card with nothing left to sell.
+          const mineListed = listedByCard[c.key] ?? [];
+          const listed = mineListed.length;
+          const spares = Math.max(0, owned - (collected ? 1 : 0) - listed);
           const canCollect = Boolean(onCollect) && c.type === 'player' && owned > 0 && !collected;
           const cfg = RARITY_CONFIG[c.rarity];
           const burnVal = c.type === 'strat'
@@ -226,8 +234,23 @@ export default function MyCollection({ collection, onBurn, onList, onCollect, on
               )}
 
               {spares === 0 ? (
-                <div className={styles.lockedNote}>
-                  {entry.earned ? 'Reward' : 'Collected'}
+                <div className={styles.spareActions}>
+                  {listed > 0 && onUnlist ? (
+                    <>
+                      <span className={styles.lockedNote}>
+                        {listed === 1 ? 'On the market' : `${listed} on the market`}
+                      </span>
+                      <button
+                        className={styles.burnBtn}
+                        title="Take one copy back off the market"
+                        onClick={() => onUnlist(mineListed[0].id)}
+                      >Unlist</button>
+                    </>
+                  ) : (
+                    <div className={styles.lockedNote}>
+                      {entry.earned ? 'Reward' : 'Collected'}
+                    </div>
+                  )}
                 </div>
               ) : confirmBurn === c.key ? (
                 <div className={styles.burnConfirm}>
@@ -254,12 +277,23 @@ export default function MyCollection({ collection, onBurn, onList, onCollect, on
                       if (e.key === 'Enter') {
                         const p = Number(askPrice || c.suggested);
                         if (Number.isInteger(p) && p >= burnVal) {
-                          onList?.(c.key, p);
+                          onList?.(c.key, p, Math.min(sellQty, spares));
                           setSelling(null);
                         }
                       }
                     }}
                   />
+                  {spares > 1 && (
+                    <input
+                      className={styles.sellInput}
+                      type="number"
+                      min={1}
+                      max={spares}
+                      value={sellQty}
+                      title={`How many of your ${spares} spares to list at this price`}
+                      onChange={e => setSellQty(Math.min(spares, Math.max(1, Math.trunc(Number(e.target.value) || 1))))}
+                    />
+                  )}
                   <button
                     className={styles.sellYes}
                     disabled={!(Number.isInteger(Number(askPrice || c.suggested)) && Number(askPrice || c.suggested) >= burnVal)}
@@ -267,10 +301,10 @@ export default function MyCollection({ collection, onBurn, onList, onCollect, on
                     onClick={() => {
                       const p = Number(askPrice || c.suggested);
                       if (!Number.isInteger(p) || p < burnVal) return;
-                      onList?.(c.key, p);
+                      onList?.(c.key, p, Math.min(sellQty, spares));
                       setSelling(null);
                     }}
-                  >List</button>
+                  >List{spares > 1 && sellQty > 1 ? ` x${Math.min(sellQty, spares)}` : ''}</button>
                   <button className={styles.burnNo} onClick={() => setSelling(null)}>✕</button>
                   {Number(askPrice || c.suggested) < burnVal && (
                     <span className={styles.sellFloor}>min {burnVal}</span>
@@ -281,12 +315,19 @@ export default function MyCollection({ collection, onBurn, onList, onCollect, on
                   <button className={styles.burnBtn} onClick={() => setConfirmBurn(c.key)}>
                     Burn (+{burnVal})
                   </button>
+                  {listed > 0 && onUnlist && (
+                    <button
+                      className={styles.burnBtn}
+                      title={`${listed} on the market — take one back`}
+                      onClick={() => onUnlist(mineListed[0].id)}
+                    >Unlist</button>
+                  )}
                   {/* Selling needs somewhere for the copy to GO, which a strat
                       deck and an un-tradable set do not have. */}
                   {onList && c.suggested && (
                     <button
                       className={styles.sellBtn}
-                      onClick={() => { setSelling(c.key); setAskPrice(String(c.suggested)); }}
+                      onClick={() => { setSelling(c.key); setAskPrice(String(c.suggested)); setSellQty(1); }}
                     >
                       Sell
                     </button>

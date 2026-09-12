@@ -234,6 +234,22 @@ def player(d, x, y, color=BLUE, h=220, pose='stand', face=True, number=None, wid
     return (x, hy + head)
 
 
+def whistle(d, x, y):
+    """A ref's whistle, mid-tweet."""
+    circle(d, (x, y), 34, fill=GREY, width=5)
+    poly(d, [(x + 20, y - 24), (x + 90, y - 34), (x + 90, y - 4), (x + 20, y + 16)], fill=GREY, width=5)
+    circle(d, (x - 6, y - 4), 9, fill=BLACK, width=3)
+    for i, r in enumerate((46, 66, 86)):
+        arc(d, (x + 90, y - 18), r, -55, 55, width=4 + i % 2)
+
+
+def bench(d, x, y, w=300):
+    """A wooden bench, seen side on."""
+    poly(d, [(x - w / 2, y - 40), (x + w / 2, y - 40), (x + w / 2, y - 10), (x - w / 2, y - 10)], fill=BROWN, width=6)
+    for s2 in (-1, 1):
+        line(d, (x + s2 * (w / 2 - 30), y - 10), (x + s2 * (w / 2 - 30), y + 60), width=8)
+
+
 def screen_wall(d, x, y):
     poly(d, [(x - 60, y - 200), (x + 60, y - 200), (x + 60, y), (x - 60, y)], fill=BROWN, width=6)
     for row in range(5):
@@ -347,6 +363,38 @@ def caption(d, s):
 
 
 # ── scenes ─────────────────────────────────────────────────────────────────
+def s_hack_a(d, s):
+    # HACK-A-____: the foul comes before the play does. He is wrapped up before
+    # he can go to work, the whistle goes, and all he gets is four from the line.
+    court(d)
+    player(d, W / 2 + 40, H * 0.94, BLUE, h=320, pose='stand', number=34)
+    player(d, W / 2 - 150, H * 0.94, RED, h=250, pose='hug', number=5)
+    ball(d, (W / 2 + 150, H * 0.62))
+    whistle(d, 120, 150)
+    text(d, (250, 96), 'TWEET!', size=58, fill=RED, anchor='la')
+    # the only offence left: four trips up at the rim
+    for c in ((960, 610), (900, 505), (810, 425), (712, 380)):
+        ball(d, c, r=24)
+    text(d, (1010, 500), 'x4', size=64, fill=BLACK, anchor='lm')
+
+
+def s_foul_trouble(d, s):
+    # FOUL TROUBLE: beaten one time too many, so the coach sits him. The tally
+    # is the reason; the arrow is the walk to the bench.
+    court(d)
+    player(d, W / 2 - 330, H * 0.95, BLUE, h=250, pose='run', number=7)
+    ball(d, (W / 2 - 210, H * 0.70))
+    # the seat under him: the sit pose puts his thighs at h * 0.42 off the floor
+    bench(d, W - 230, H * 0.95 - 210 * 0.42 + 40)
+    player(d, W - 230, H * 0.95, RED, h=210, pose='sit', number=21)
+    whistle(d, 120, 150)
+    for i in range(4):
+        line(d, (600 + i * 30, 118), (592 + i * 30, 190), width=7)
+    line(d, (592, 190), (712, 112), fill=RED, width=7)
+    text(d, (760, 152), 'PF 5', size=58, fill=RED, anchor='lm')
+    arrow(d, (W / 2 + 90, H * 0.58), (W - 400, H * 0.72))
+
+
 def s_generic(d, s):
     court(d)
     player(d, W / 2 - 140, H * 0.9, BLUE, pose='shoot', number=1)
@@ -720,6 +768,7 @@ SCENES = {
     'find_the_open_man': s_open_man, 'putback_specialist': s_putback_specialist, 'rim_protector': s_rim_protector,
     'drop_coverage': s_drop_coverage, 'smothering_defense': s_smothering, 'denial': s_denial,
     'hustle_play': s_hustle, 'glass_cleaner': s_glass_cleaner, 'box_out': s_box_out,
+    'hack_a': s_hack_a, 'foul_trouble': s_foul_trouble,
 }
 
 

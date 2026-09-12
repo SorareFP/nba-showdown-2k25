@@ -5,7 +5,7 @@
 
 import { getTeam, getOpp, getPS, calcAdv, getFatigue, fatigueForMinutes, restMinutes, SPEND_COSTS, clutchAvailable, clutchEligible, burnedSlots, satOutLast, canRollSlot, extraRollPending, checkNeed, crunchSearchOptions } from './engine.js';
 import { lookupChart } from './cards.js';
-import { canPlayCard, helpTargets, staggerPair, myHouseTargets } from './canPlay.js';
+import { canPlayCard, helpTargets, staggerPair, myHouseTargets, foulTroubleTargets } from './canPlay.js';
 import { getStrat, STRATS, CRUNCH_CARDS } from './strats.js';
 
 /**
@@ -706,6 +706,11 @@ function evaluateCard(game, teamKey, cardId, strat, opts = {}) {
     fresh_legs: 6,
     ice_the_hot_hand: 7,
     reset: 6,
+    // Priced on the swing it actually buys, which the opts builder measures
+    // per target: a roll taken away, minus the free throws handed over.
+    hack_a: 7,
+    // A whole section without their best defender, but only next section.
+    foul_trouble: 6,
 
     // Wave one (2026-09-06)
     spain_pick_roll: 6, mismatch_hunter: 6, strength_in_numbers: 8, energizer: 5,
@@ -984,6 +989,39 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
       // Use the matchup AI to figure out best defense
       const result = aiSetMatchups(game, teamKey);
       return result ? { assignments: result.matchups } : {};
+    }
+
+    case 'hack_a': {
+      // WHICH MAN TO FOUL is the whole card. For every opponent still to roll,
+      // weigh the roll he loses (expectedOutput over his chart, matchup bonus
+      // in) against the four free throws he gains: d20 + 10 against his shot
+      // line, markers counted. The biggest swing is the hack.
+      const hkOpp = teamKey === 'A' ? 'B' : 'A';
+      const hkOppT = getOpp(game, teamKey);
+      const hkRolls = game.rollResults?.[hkOpp] || [];
+      const hkBlocked = game.blockedRolls?.[hkOpp] || {};
+      let best = null;
+      (hkOppT.starters || []).forEach((p, i) => {
+        if (!p || hkRolls[i] != null || hkBlocked[i]) return;
+        const dp = starters[(game.offMatchups?.[hkOpp] || [])[i] ?? i];
+        const a = dp ? calcAdv(p, dp, game.tempEff?.[hkOpp] || {}, i) : { rollBonus: 0 };
+        const ps = getPS(game, hkOpp, p.id) || {};
+        const marker = ((ps.hot || 0) - (ps.cold || 0)) * 2;
+        const ftHit = Math.min(1, Math.max(0, (21 - ((p.shotLine || 99) - 10 - marker)) / 20));
+        const swing = expectedOutput(p, (a.rollBonus || 0) + marker) - 4 * ftHit;
+        if (!best || swing > best.swing) best = { i, swing };
+      });
+      return { targetIdx: best ? best.i : 0 };
+    }
+
+    case 'foul_trouble': {
+      // Bench the best of the men we can foul: what he pays his team over a
+      // section is his chart plus what he takes away at the other end.
+      const ftList = foulTroubleTargets(game, teamKey);
+      if (!ftList.length) return {};
+      const worth = t => expectedOutput(t.def) + (t.def.defBoost || 0) * 0.5;
+      const pick = ftList.slice().sort((a, b) => worth(b) - worth(a))[0];
+      return { defIdx: pick.defIdx };
     }
 
     case 'this_is_my_house': {

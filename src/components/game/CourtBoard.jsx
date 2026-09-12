@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { calcAdv, getTeam, getOpp, getPS, getFatigue, SNAKE, SPEND_COSTS, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, lastReturnedCard, undoReturnCard, periodLabel, extraRollPending, checkNeed, fatigueForMinutes, crunchSearchOptions } from '../../game/engine.js';
-import { canPlayCard, myHouseTargets, fwdTargets, preRollTargets, helpTargets } from '../../game/canPlay.js';
+import { canPlayCard, myHouseTargets, fwdTargets, preRollTargets, helpTargets, foulTroubleTargets } from '../../game/canPlay.js';
 import { resolveGoUnder } from '../../game/execCard.js';
 import { benchRest, passTurn } from '../../game/engine.js';
 import { salaryOrder } from '../../game/teamRules.js';
@@ -773,6 +773,45 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
     const s2 = await openModal({ teamKey, cardId, players: myT.starters, label: `⚡ Pick player 2 to swap with ${myT.starters[s1]?.name}`, extraInfo: swapInfo });
     if (s2 === null) return null;
     opts.swapSlot1 = s1; opts.swapSlot2 = s2;
+  }
+
+  // ── Hack-A-____ ────────────────────────────────────────────────────────
+  // The choice IS the card, so the row shows what the swap is worth: the roll
+  // he loses against the four free throws he gets. A 14 line makes about 3.4
+  // of them and a 19 line about 2.2, which is why hacking the wrong man is a
+  // gift.
+  if (cardId === 'hack_a') {
+    const rolled = game.rollResults?.[oppKey] || [];
+    const blocked = game.blockedRolls?.[oppKey] || {};
+    const targets = oppT.starters
+      .map((p, i) => ({ p, origIdx: i }))
+      .filter(({ p, origIdx }) => p && rolled[origIdx] == null && !blocked[origIdx]);
+    if (!targets.length) { toast('Every opponent has already rolled.', { tone: 'error' }); return null; }
+    const pick = await openModal({
+      teamKey: oppKey, cardId, players: targets.map(t => t.p),
+      label: 'Foul which opponent? (no scoring roll, four free throws)',
+      extraInfo: targets.map(({ p }) => {
+        const ftPts = (4 * Math.min(1, Math.max(0, (21 - ((p.shotLine || 99) - 10)) / 20))).toFixed(1);
+        return `Shot line ${p.shotLine} — four FTs are worth about ${ftPts} pts`;
+      }),
+    });
+    if (pick === null) return null;
+    opts.targetIdx = targets[pick].origIdx;
+  }
+
+  // ── Foul Trouble ───────────────────────────────────────────────────────
+  // Only the defenders the engine would accept: a man being beaten by 4 or
+  // more, read through calcAdv, the same list canPlayCard lit the card on.
+  if (cardId === 'foul_trouble') {
+    const targets = foulTroubleTargets(game, teamKey);
+    if (!targets.length) return null; // greyed in the hand; nothing to say
+    const pick = await openModal({
+      teamKey: oppKey, cardId, players: targets.map(t => t.def),
+      label: 'Who picks up the foul? (sits out the whole next section)',
+      extraInfo: targets.map(({ off, def, adv }) => `Beaten by ${adv} — your ${off.name} on ${def.name} (S${def.speed}/P${def.power})`),
+    });
+    if (pick === null) return null;
+    opts.defIdx = targets[pick].defIdx;
   }
 
   // ── This Is My House ───────────────────────────────────────────────────

@@ -225,6 +225,7 @@ export function newGame(rosterA, rosterB, deckConfigA, deckConfigB, opts = {}) {
     ghosted: {},
     ignFatigue: {},
     blockedRolls: {},
+    foulTrouble: { A: [], B: [] },   // ids benched for the NEXT section — Foul Trouble
     log: [],
     done: false,
     analytics: { A: emptyAnalytics(), B: emptyAnalytics() },
@@ -1388,13 +1389,25 @@ export function endSection(g) {
   const prevStartersA = ng.teamA.starters.map(p => p.id);
   const prevStartersB = ng.teamB.starters.map(p => p.id);
 
-  // Reset for new draft
+  // Reset for new draft. FOUL TROUBLE takes its man out of the pool here and
+  // nowhere else: the human picker, the coach's aiDraftPick and the simulator
+  // all choose their five out of this list, so one filter benches him for all
+  // three. The debt is paid once — the list is cleared straight after.
+  const sitA = new Set(ng.foulTrouble?.A || []);
+  const sitB = new Set(ng.foulTrouble?.B || []);
   ng.draft = {
-    aPool: ng.teamA.roster.slice(),
-    bPool: ng.teamB.roster.slice(),
+    aPool: ng.teamA.roster.filter(p => !sitA.has(p.id)),
+    bPool: ng.teamB.roster.filter(p => !sitB.has(p.id)),
     aReady: false,
     bReady: false,
   };
+  ['A', 'B'].forEach(k => {
+    const sit = k === 'A' ? sitA : sitB;
+    getTeam(ng, k).roster.forEach(p => {
+      if (sit.has(p.id)) ng.log = [...ng.log, { team: k, msg: `${p.name} is in foul trouble — he sits this section out.` }];
+    });
+  });
+  ng.foulTrouble = { A: [], B: [] };
   ng.teamA.starters = []; ng.teamB.starters = [];
   ng.offMatchups = { A: [0, 1, 2, 3, 4], B: [0, 1, 2, 3, 4] };
   ng.matchupTurn = 'A'; ng.matchupPasses = 0; ng.lastMatchupCard = null; ng.lastDefSwitch = null;

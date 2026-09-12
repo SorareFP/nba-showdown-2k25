@@ -72,6 +72,37 @@ export function staggerPair(starters) {
   return null;
 }
 
+/**
+ * FOUL TROUBLE — the opposing DEFENDERS worth attacking until they foul.
+ *
+ * A foul is what a beaten defender gives up, so the condition is the mismatch
+ * itself: one of your players beating the man guarding him by 4 or more on
+ * Speed or Power, the same bar Help Defender and Mismatch Hunter use. Read
+ * through calcAdv, never off the printed numbers, so Defense and card effects
+ * count (the eligibility rule, 2026-09-10).
+ *
+ * Returned as { slot, off, def, defIdx, adv } so the picker, the coach and the
+ * engine all agree on who is eligible.
+ */
+export function foulTroubleTargets(g, teamKey) {
+  const myT = getTeam(g, teamKey);
+  const oppT = getOpp(g, teamKey);
+  const oppKey = teamKey === 'A' ? 'B' : 'A';
+  const guards = g.offMatchups?.[teamKey] || [];
+  const already = new Set(g.foulTrouble?.[oppKey] || []);
+  const out = [];
+  (myT?.starters || []).forEach((off, slot) => {
+    if (!off) return;
+    const defIdx = guards[slot] ?? slot;
+    const def = oppT?.starters?.[defIdx];
+    if (!def || already.has(def.id)) return;
+    const a = calcAdv(off, def, g.tempEff?.[teamKey] || {}, slot);
+    const adv = Math.max(a.speedAdv, a.powerAdv);
+    if (adv >= 4) out.push({ slot, off, def, defIdx, adv });
+  });
+  return out;
+}
+
 export function preRollTargets(g, teamKey, cond = () => true) {
   const rolls = g.rollResults?.[teamKey] || [];
   const blocked = g.blockedRolls?.[teamKey] || {};
@@ -359,6 +390,11 @@ export function canPlayCard(g, teamKey, cardId) {
       if ((g.crunch.extra?.[teamKey] || 0) >= 1) return no('One Second Closer per game');
       return ok('A second Clutch Possession, for a different player');
     }
+    if (cardId === 'hack_a') {
+      // Anyone who has yet to roll: the foul happens before he can go to work.
+      if (preRollTargets(g, teamKey === 'A' ? 'B' : 'A').length === 0) return no('Every opponent has already rolled');
+      return ok('Foul an opponent: no scoring roll, four free throws instead');
+    }
     // The four timeout riders: only during YOUR called timeout.
     if (g.timeoutActive !== teamKey) return no('Play during your Timeout');
     if (cardId === 'ice_the_hot_hand') {
@@ -422,6 +458,17 @@ export function canPlayCard(g, teamKey, cardId) {
     const hasSpeedBoost = Object.keys(oppEff).some(k => /^s[0-9]+$/.test(k) && oppEff[k] > 0);
     if (!hasSpeedBoost) return no('Opponent must have played a card that boosts Speed first');
     return ok('Halve their Speed boost, −1 Assist');
+  }
+
+  if (cardId === 'foul_trouble') {
+    if (phase !== 'matchup_strats' && phase !== 'scoring') return no('Only playable during Matchup or Scoring Phase');
+    // A card that benches a man NEXT section needs a next section. Overtime
+    // would give it one, but nobody knows that yet when the card is played.
+    if (g.quarter === 4 && g.section === 3) return no('No section left for him to sit out');
+    if ((oppT.roster || []).length < 6) return no('The opponent has no bench — nobody to replace him');
+    const ft = foulTroubleTargets(g, teamKey);
+    if (!ft.length) return no('Need one of your players beating his defender by 4+ on Speed or Power');
+    return ok('Send a beaten defender to the bench for the whole next section');
   }
 
   if (cardId === 'switch_the_screen') {

@@ -123,6 +123,10 @@ export const STRATS = [
     desc:'Play during your Timeout: clear all cold markers from one of your players. Deep breath.' },
   { id:'second_closer',       name:'Second Closer',      phase:'scoring',  side:'off', copies:1, locked:false, color:'#A21CAF', rarity:'rare',
     desc:'CRUNCH TIME: your team gains a second Clutch Possession this game, for a different player.' },
+  { id:'hack_a',              name:'Hack-A-____',        phase:'scoring',  side:'def', copies:1, locked:false, color:'#78350F', rarity:'rare',
+    desc:'CRUNCH TIME: foul a chosen opponent before he can go to work. He skips his scoring roll and shoots four free throws instead.' },
+  { id:'foul_trouble',        name:'Foul Trouble',       phase:'scoring',  side:'off', copies:2, locked:false, color:'#9A3412', rarity:'uncommon',
+    desc:'Choose an opposing defender your player is beating by 4 or more on Speed or Power: he picks up the foul that sits him for the whole next section.' },
   { id:'delayed_slip',        name:'Delayed Slip',       phase:'scoring',  side:'off', copies:2, locked:false, color:'#7C3AED', rarity:'common',
     desc:'Choose a player with Speed ≥12 and Power ≥10. If they have no matchup advantage, give them +2 to scoring roll and +1 Rebound.' },
   // ── Wave one of the docx backlog (the user's own designs, 2026-09-06) ────
@@ -238,5 +242,5 @@ export function getStrat(id) {
  */
 export const CRUNCH_CARDS = [
   'desperation_press', 'ato_masterpiece', 'fresh_legs', 'ice_the_hot_hand', 'reset', 'second_closer',
-  'unethical_hoops',
+  'unethical_hoops', 'hack_a',
 ];

@@ -152,12 +152,13 @@ export default function RulebookTab() {
         <ul>
           <li>Rolling <strong>alternates</strong>, one player at a time, the human leading against the coach. A side with nobody left to roll stands aside.</li>
           <li>Between rolls either side may play <strong>pre-roll</strong> cards on a player who has not rolled, and <strong>reactions</strong> to what just happened.</li>
-          <li>A player blocked by This Is My House does not roll. A player whose roll a card replaced (You Stand Over There) counts as rolled.</li>
+          <li>A player blocked by This Is My House or Hack-A-____ does not roll. A player whose roll a card replaced (You Stand Over There) counts as rolled.</li>
           <li>This Is My House needs the defender <strong>higher</strong> on both Speed and Power, counted as he guards: a minus Defense lowers both, and card effects count. A tie is not higher.</li>
         </ul>
 
         <div className={s.sub}>6. End of Section</div>
         <ul>
+          <li>A player sent off by <strong>Foul Trouble</strong> is not in the pool for the next section — the whole section, both his ends of the floor — and he is back the section after.</li>
           <li>All temporary effects clear (boosts, ghosts, blocks, standing cards whose players left the floor).</li>
           <li>Each starter adds <strong>4 minutes</strong>; each benched player sheds <strong>4 minutes</strong>.</li>
           <li>The rebound track pays: the leader gains +1 stored assist.</li>
@@ -278,6 +279,7 @@ export default function RulebookTab() {
           <li><strong>Ice the Hot Hand</strong> (timeout rider): strip all hot markers from one opposing player.</li>
           <li><strong>Reset</strong> (timeout rider): clear all cold markers from one of your players.</li>
           <li><strong>Unethical Hoops</strong> (the sign-up card): a player of yours with a Speed or Power advantage draws the foul — four free-throw checks at +4.</li>
+          <li><strong>Hack-A-____:</strong> foul an opponent who has not rolled. He skips his scoring roll and shoots four free throws instead — worth about 3.4 points off a shot line of 14 and about 2.2 off a 19, so pick the man who cannot make them.</li>
         </ul>
       </Section>
 

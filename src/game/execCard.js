@@ -4,7 +4,7 @@
 
 import { handOverPriority, getTeam, getOpp, getPS, calcAdv, shotCheck, matchupContest, drawCards, deepClone, getFatigue, recordDefSwitch, burnedSlots, roll20, checkAssistDraw, standingEntry, CROWD_FAVORITE_PTS, satOutLast, bottomedLines } from './engine.js';
 import { creditAllowed, creditCheckDefended, recordPaintCheck } from './engine.js';
-import { helpTargets, canAnswerCheck, myHouseHolds } from './canPlay.js';
+import { helpTargets, canAnswerCheck, myHouseHolds, foulTroubleTargets } from './canPlay.js';
 import { lookupChart } from './cards.js';
 import { getStrat } from './strats.js';
 
@@ -882,6 +882,64 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       // ps.pts, so all of them count. The threshold is CROWD_FAVORITE_PTS.
       g.tempEff[teamKey]['crowd_' + idx] = { at: pss()?.pts || 0 };
       addLog(g, teamKey, `Crowd Favorite: if ${player?.name} scores ${CROWD_FAVORITE_PTS}+ pts this section (rolls or shot checks) → hot marker`);
+      break;
+    }
+
+    case 'hack_a': {
+      // HACK-A-_____ (the user, 2026-09-12): "skip an opposing player's
+      // scoring roll and make them shoot 4 FTs instead."
+      //
+      // The roll is taken the way This Is My House takes it — blockedRolls,
+      // which also shuts the roll-REPLACERS out — and then the four shots go
+      // up for HIS team: announceCheck carries the shooter's teamKey, so the
+      // points, the box score and the plus-minus all land on the right side.
+      // A free throw is never contested and never pauses, so the whole trip
+      // to the line resolves in this one call.
+      //
+      // The dilemma is the real one: an FT check is d20 + 10 against the shot
+      // line, so four of them are about 3.4 points off a 14 line and about
+      // 2.2 off a 19. Hack the wrong man and you have handed him the game.
+      const hkOpp = teamKey === 'A' ? 'B' : 'A';
+      if (opts.targetIdx == null) return fail('Choose an opposing player to foul');
+      const hkIdx = Number(opts.targetIdx);
+      const victim = oppT.starters[hkIdx];
+      if (!victim) return fail('Choose an opposing player to foul');
+      if (g.rollResults[hkOpp]?.[hkIdx] != null) return fail(`${victim.name} has already rolled`);
+      if (g.blockedRolls?.[hkOpp]?.[hkIdx]) return fail(`${victim.name} is already shut out this segment`);
+      if (!g.blockedRolls) g.blockedRolls = {};
+      if (!g.blockedRolls[hkOpp]) g.blockedRolls[hkOpp] = {};
+      g.blockedRolls[hkOpp][hkIdx] = true;
+      const last = victim.name.split(' ').slice(-1)[0] || victim.name;
+      addLog(g, teamKey, `HACK-A-${last.toUpperCase()}! Fouled before the play — no scoring roll, four from the line.`);
+      announceCheck(g, {
+        teamKey: hkOpp, playerIdx: hkIdx, type: 'ft', bonus: 0,
+        cardLabel: `Hack-A: ${victim.name} — first free throw`,
+        then: [
+          { cardLabel: `Hack-A: ${victim.name} — second free throw` },
+          { cardLabel: `Hack-A: ${victim.name} — third free throw` },
+          { cardLabel: `Hack-A: ${victim.name} — fourth free throw` },
+        ],
+      });
+      break;
+    }
+
+    case 'foul_trouble': {
+      // FOUL TROUBLE (the user, 2026-09-12): "forces a player to the bench
+      // next segment." Enforced where the next section's pool is built
+      // (endSection), which is the one place the human picker, the coach's
+      // aiDraftPick and the simulator all draw their five from.
+      const ftOpp = teamKey === 'A' ? 'B' : 'A';
+      const ftList = foulTroubleTargets(g, teamKey);
+      if (!ftList.length) return fail('Nobody is beating his defender by 4 or more');
+      const chosen = opts.defIdx != null
+        ? ftList.find(t => t.defIdx === Number(opts.defIdx))
+        : null;
+      if (opts.defIdx != null && !chosen) return fail('That defender is not being beaten by 4 or more');
+      // No pick named: the man losing worst is the one who fouls.
+      const t = chosen || ftList.slice().sort((a, b) => b.adv - a.adv)[0];
+      if (!g.foulTrouble) g.foulTrouble = { A: [], B: [] };
+      g.foulTrouble[ftOpp] = [...(g.foulTrouble[ftOpp] || []), t.def.id];
+      addLog(g, teamKey, `Foul Trouble: ${t.off.name} draws it on ${t.def.name} (beaten by ${t.adv}) — he sits the next section.`);
       break;
     }
 

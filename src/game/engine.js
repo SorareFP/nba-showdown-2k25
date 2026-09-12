@@ -213,6 +213,7 @@ export function newGame(rosterA, rosterB, deckConfigA, deckConfigB, opts = {}) {
       : ['A','B','B','A','A','B','B','A','A','B'],
     lastMatchupCard: null,
     lastDefSwitch: null,    // the opponent's last defensive switch — what Overhelp / Burned on the Switch answer
+    lastAutoScore: null,    // points taken with no roll and no check — what Verticality answers
     secStart: { A: 0, B: 0 }, // the score when this section began: on-floor points (endSection)
     scoringTurn: 'B',
     scoringPasses: 0,
@@ -1314,6 +1315,7 @@ export function endSection(g) {
   }
   ng.tempEff = {}; ng.tempDefEff = {}; ng.ghosted = {}; ng.ignFatigue = {}; ng.openMan = {};
   ng.lastDoubleTeam = null; ng.lastRoll = null; ng.lastCheckMiss = null; ng.lastPaintScore = null;
+  ng.lastAutoScore = null;
   ng.matchupsSet = {};
   ng.rollResults = { A: [], B: [] }; ng.pendingShotCheck = null; ng.lastShotCheck = null;
   // reboundBonuses were set earlier in this function — they persist to the next section's scoring phase

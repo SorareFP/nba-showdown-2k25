@@ -568,6 +568,40 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       break;
     }
 
+    case 'switch_the_screen': {
+      // The defence swapping two of its own assignments: the mirror of High
+      // Screen & Roll. It RECORDS the switch, so the offence answers it with
+      // Overhelp or Burned on the Switch exactly as it answers the rare.
+      const stsOpp = teamKey === 'A' ? 'B' : 'A';
+      const stsMu = [...(g.offMatchups[stsOpp] || [0, 1, 2, 3, 4])];
+      let si = Number(opts.slots?.[0]);
+      let sj = Number(opts.slots?.[1]);
+      if (!(Number.isInteger(si) && Number.isInteger(sj) && si !== sj && stsMu[si] != null && stsMu[sj] != null)) {
+        // No pair named: switch the two defenders losing worst, which is what
+        // a coach calls the switch for.
+        const ranked = (oppT.starters || [])
+          .map((p, s) => {
+            const d = myT.starters[stsMu[s]];
+            if (!p || !d) return null;
+            const a = calcAdv(p, d, g.tempEff[stsOpp] || {}, s);
+            return { s, gap: a.speedAdv + a.powerAdv };
+          })
+          .filter(Boolean)
+          .sort((a, b) => b.gap - a.gap);
+        if (ranked.length < 2) return fail('Need two opposing players to switch between');
+        si = ranked[0].s;
+        sj = ranked[1].s;
+      }
+      const stsBefore = [...stsMu];
+      const swap = stsMu[si];
+      stsMu[si] = stsMu[sj];
+      stsMu[sj] = swap;
+      g.offMatchups[stsOpp] = stsMu;
+      g.lastDefSwitch = recordDefSwitch(teamKey, 'switch_the_screen', stsBefore, stsMu);
+      addLog(g, teamKey, `Switch the Screen: ${myT.starters[stsMu[si]]?.name} now guards ${oppT.starters[si]?.name}, ${myT.starters[stsMu[sj]]?.name} takes ${oppT.starters[sj]?.name}`);
+      break;
+    }
+
     case 'switch_everything': {
       const oppTeam = teamKey === 'A' ? 'B' : 'A';
       if (opts.assignments && opts.assignments.length === 5) {
@@ -665,6 +699,17 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       break;
     }
 
+    case 'first_step': {
+      // The Speed twin of Power Move — and the card that gives Beat Him to
+      // the Spot something to answer, since the Speed side had no plain
+      // common boost while Power did.
+      const fsBonus = adv.speedAdv >= 5 ? 3 : 2;
+      if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
+      g.tempEff[teamKey]['s' + idx] = (g.tempEff[teamKey]['s' + idx] || 0) + fsBonus;
+      addLog(g, teamKey, `First Step: ${player?.name} +${fsBonus} Speed this segment`);
+      break;
+    }
+
     case 'power_move': {
       const bonus = adv.powerAdv >= 5 ? 3 : 2;
       if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
@@ -702,6 +747,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       scorePts(g, teamKey, player?.id, 2);
       if (g.analytics?.[teamKey]) g.analytics[teamKey].shotCheckPts += 2;
       pss().hot = (pss().hot || 0) + 1;
+      g.lastAutoScore = { teamKey, playerIdx: idx, playerId: player?.id, pts: 2, cardId };
       addLog(g, teamKey, `Rimshaker: ${player?.name} +2pts + extra 🔥`);
       break;
     }
@@ -737,6 +783,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
         return fail(`${player?.name} needs +2 Spd AND +2 Pwr advantage (has +${ucAdv.speedAdv} Spd, +${ucAdv.powerAdv} Pwr)`);
       scorePts(g, teamKey, player?.id, 2);
       if (g.analytics?.[teamKey]) g.analytics[teamKey].shotCheckPts += 2;
+      g.lastAutoScore = { teamKey, playerIdx: idx, playerId: player?.id, pts: 2, cardId };
       addLog(g, teamKey, `Uncontested Layup: ${player?.name} auto 2pts`);
       break;
     }
@@ -756,6 +803,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if ((player?.power || 0) < 14) return fail('Need Power 14+');
       scorePts(g, teamKey, player?.id, 2);
       if (g.analytics?.[teamKey]) g.analytics[teamKey].shotCheckPts += 2;
+      g.lastAutoScore = { teamKey, playerIdx: idx, playerId: player?.id, pts: 2, cardId };
       addLog(g, teamKey, `Putback Dunk: ${player?.name} auto 2pts!`);
       break;
     }
@@ -910,6 +958,30 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if (!cut) addLog(g, teamKey, 'Beat Him to the Spot: no active Speed boosts found, −1 AST still applies');
       oppT.assists = Math.max(0, (oppT.assists || 0) - 1);
       addLog(g, teamKey, 'Beat Him to the Spot: opponent −1 Assist');
+      break;
+    }
+
+    case 'verticality': {
+      // THE ANSWER TO THE AUTOMATIC SCORERS. Uncontested Layup, Putback Dunk,
+      // Rimshaker and Lob City score with no roll and no shot check, so until
+      // now no reaction could touch them (the user, 2026-09-12). They leave
+      // `lastAutoScore` behind, and a defender who is up to the job takes the
+      // points back — negative points through the same helper, so the score,
+      // the player line and the matchup plus-minus all unwind together.
+      const auto = g.lastAutoScore;
+      if (!auto) return fail('Nothing was scored for free');
+      if (auto.teamKey === teamKey) return fail('Can only answer the opponent');
+      const vDIdx = (g.offMatchups[auto.teamKey] || [])[auto.playerIdx] ?? auto.playerIdx;
+      const vDef = (myT.starters || [])[vDIdx];
+      const vScorer = (oppT.starters || [])[auto.playerIdx];
+      if (!vDef) return fail('No defender on that player');
+      if (!((vDef.defBoost || 0) > 0 || (vDef.power || 0) >= (vScorer?.power || 0))) {
+        return fail(vDef.name + ' cannot stand him up');
+      }
+      scorePts(g, auto.teamKey, auto.playerId, -auto.pts);
+      if (g.analytics?.[auto.teamKey]) g.analytics[auto.teamKey].shotCheckPts -= auto.pts;
+      g.lastAutoScore = null;
+      addLog(g, teamKey, `Verticality: ${vDef.name} goes straight up — ${vScorer?.name ?? 'that score'} loses ${auto.pts} points`);
       break;
     }
 
@@ -1333,6 +1405,13 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
         if ((p.power || 0) >= 15) { pts += 2; scorePts(g, teamKey, p.id, 2); }
       });
       myT.assists += ast;
+      // One bucket is what Verticality answers, so the hook names the last man
+      // to dunk it rather than the whole lob barrage.
+      if (pts > 0) {
+        let lobIdx = -1;
+        myT.starters.forEach((p, i) => { if (p && (p.power || 0) >= 15) lobIdx = i; });
+        if (lobIdx >= 0) g.lastAutoScore = { teamKey, playerIdx: lobIdx, playerId: myT.starters[lobIdx]?.id, pts: 2, cardId };
+      }
       addLog(g, teamKey, `Lob City: discards ${discard.replace(/_/g, ' ')} — +${ast} AST (Speed 15+), +${pts} pts (Power 15+)`);
       break; // the wrapper below removes the card and runs the 5-assist draw
     }

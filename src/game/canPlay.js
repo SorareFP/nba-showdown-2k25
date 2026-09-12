@@ -424,6 +424,30 @@ export function canPlayCard(g, teamKey, cardId) {
     return ok('Halve their Speed boost, −1 Assist');
   }
 
+  if (cardId === 'switch_the_screen') {
+    if (phase !== 'matchup_strats' && phase !== 'scoring') return no('Only playable during Matchup or Scoring Phase');
+    // THE DEFENCE INITIATING A SWITCH. Until this card the only one was Switch
+    // Everything, a rare — which left Overhelp and Burned on the Switch, both
+    // offensive answers to a defensive switch, with almost nothing to answer
+    // (the user, 2026-09-12).
+    if ((oppT.starters || []).filter(Boolean).length < 2) return no('Need two opposing players to switch between');
+    return ok('Swap the defenders on two opposing players');
+  }
+
+  if (cardId === 'verticality') {
+    if (phase !== 'scoring' && phase !== 'matchup_strats') return no('Only playable during Matchup or Scoring Phase');
+    const auto = g.lastAutoScore;
+    if (!auto) return no('Play right after an opponent card scores with no roll and no check');
+    if (auto.teamKey === teamKey) return no('Can only answer the opponent');
+    const vdIdx = (g.offMatchups[auto.teamKey] || [])[auto.playerIdx] ?? auto.playerIdx;
+    const vdef = (myT.starters || [])[vdIdx];
+    if (!vdef) return no('No defender on that player');
+    const vscorer = (oppT.starters || [])[auto.playerIdx];
+    const stands = (vdef.defBoost || 0) > 0 || (vdef.power || 0) >= (vscorer?.power || 0);
+    if (!stands) return no(vdef.name + ' needs a Defensive Bonus, or the Power to stand him up');
+    return ok('Wipe the ' + auto.pts + ' points that card took for free');
+  }
+
   if (cardId === 'dogged') {
     if (phase !== 'scoring' && phase !== 'matchup_strats') return no('Only playable during Matchup or Scoring Phase');
     const oppKey = teamKey === 'A' ? 'B' : 'A';
@@ -674,6 +698,9 @@ export function canPlayCard(g, teamKey, cardId) {
     case 'power_move':
       if (preRollTargets(g, teamKey).length === 0) return no('Everyone has rolled');
       return ok('Give a player +2 Power (or +3 if Power advantage ≥5)');
+    case 'first_step':
+      if (preRollTargets(g, teamKey).length === 0) return no('Everyone has rolled');
+      return ok('Give a player +2 Speed (or +3 if Speed advantage ≥5)');
     case 'and_one': {
       const hasAdv3 = myT.starters.some((p, i) => {
         const defIdx = (g.offMatchups[teamKey] || [])[i] ?? i;

@@ -15,6 +15,8 @@ export const STRATS = [
     desc:'Hound one opposing player the length of the floor: −1 to their scoring roll this segment, and they gain 4 minutes of fatigue.' },
 
   // ── PRE-ROLL ──
+  { id:'switch_the_screen',   name:'Switch the Screen',  phase:'matchup',  side:'def', copies:3, locked:false, color:'#1D4ED8', rarity:'common',
+    desc:'Swap the defenders on two opposing players. The offence may answer with Overhelp or Burned on the Switch.' },
   { id:'ghost_screen',        name:'Ghost Screen',       phase:'pre_roll', side:'off', copies:2, locked:false, color:'#6366F1', rarity:'common',
     desc:'Choose an offensive player with Speed 12+. They are treated as having no defender for matchup advantage — roll penalty is negated to 0.' },
   { id:'you_stand_over_there',name:'You Stand Over There',phase:'pre_roll',side:'off', copies:2, locked:false, color:'#7C3AED', rarity:'uncommon',
@@ -39,6 +41,8 @@ export const STRATS = [
     desc:'Player with a Power advantage attempts two Paint Shot Checks. Power advantage ≥4: +2 to each check.' },
   { id:'power_move',          name:'Power Move',         phase:'scoring',  side:'off', copies:3, locked:false, color:'#9333EA', rarity:'common',
     desc:'Choose a player: +2 Power. If their Power advantage is already ≥5: +3 Power instead.' },
+  { id:'first_step',          name:'First Step',         phase:'scoring',  side:'off', copies:3, locked:false, color:'#0891B2', rarity:'common',
+    desc:'Choose a player: +2 Speed. If their Speed advantage is already 5 or more: +3 Speed instead.' },
   { id:'and_one',             name:'And One!!!',         phase:'scoring',  side:'off', copies:3, locked:true,  color:'#F59E0B', rarity:'uncommon',
     desc:'Speed or Power advantage ≥3: +1 pt. Advantage ≥5: also attempt a free throw check. 🔒 Uncancelable.' },
   { id:'rimshaker',           name:'Rimshaker',          phase:'scoring',  side:'off', copies:2, locked:false, color:'#EF4444', rarity:'uncommon',
@@ -87,6 +91,8 @@ export const STRATS = [
     desc:'Play after an opponent activates a card that boosts Power. Their Power boost is halved (rounded down), and they suffer −1 Rebound.' },
   { id:'beat_to_the_spot',    name:'Beat Him to the Spot', phase:'reaction', side:'def', copies:2, locked:false, color:'#334155', rarity:'common',
     desc:'Play after an opponent activates a card that boosts Speed. Their Speed boost is halved (rounded down), and they suffer −1 Assist.' },
+  { id:'verticality',         name:'Verticality',        phase:'reaction', side:'def', copies:2, locked:false, color:'#0F766E', rarity:'common',
+    desc:'An opponent card just scored with no roll and no check: if your defender on that player has a Defensive Bonus or matches his Power, those points are wiped.' },
   { id:'dogged',              name:'Dogged',             phase:'scoring',  side:'def', copies:2, locked:false, color:'#78716C', rarity:'common',
     desc:'Target an opposing fatigued player: they suffer an additional −2 Speed and −2 Power until benched for a segment.' },
   { id:'overhelp',            name:'Overhelp',           phase:'reaction', side:'off', copies:2, locked:false, color:'#0369A1', rarity:'common',

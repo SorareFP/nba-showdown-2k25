@@ -457,7 +457,7 @@ describe('the base set\'s badges', () => {
     // base card is at least as strong, and hands it the pill instead. So the
     // title of this test now holds only for the metric-detected exclusion; the
     // second rule deliberately trades cards for badges, 39 of them.
-    expect(SUPER.cards.length).toBe(194);
+    expect(SUPER.cards.length).toBe(196);
     //
     // AND 321 -> 348 WHEN THE STANDOUT NEWCOMERS' ROOKIE YEARS ARRIVED — every
     // standout outside the pool whose career begins inside the cache-and-EPM
@@ -588,8 +588,8 @@ describe('the base set\'s badges', () => {
     // the set and onto the badge, and most of them are the cheap role players
     // the rule exists to catch — so the BEST SEASON side of the split grew far
     // more than the gilded one.
-    expect(counts.printed[BEST_SEASON_BADGE]).toBe(127);
-    expect(counts.printed[SUPER_SEASON_BADGE]).toBe(20);
+    expect(counts.printed[BEST_SEASON_BADGE]).toBe(123);
+    expect(counts.printed[SUPER_SEASON_BADGE]).toBe(22);
     // Nobody loses their pill entirely in the resolution.
     expect(BADGE_IDS.reduce((n, id) => n + counts.printed[id], 0)).toBe(counts.players);
     expect(counts.multiple).toBe(ROOKIE.excluded.length);

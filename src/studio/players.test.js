@@ -480,8 +480,8 @@ describe('the base set\'s card-type badges', () => {
     // players it exists to catch, so nearly all land on the BEST SEASON side.
     // 20/127 on 2026-09-09: the absolute paint line and the any-player-may-spend
     // salary rule repriced the set; one badged card slipped under the line.
-    expect(printed.filter(id => id === SUPER_SEASON_BADGE).length).toBe(20);
-    expect(printed.filter(id => id === BEST_SEASON_BADGE).length).toBe(127);
+    expect(printed.filter(id => id === SUPER_SEASON_BADGE).length).toBe(22);
+    expect(printed.filter(id => id === BEST_SEASON_BADGE).length).toBe(123);
     // Everyone who prints ROOKIE is someone the SUPER SEASON fact is also true
     // of — the nesting is what makes this a priority question and not a rule.
     // The tier does not touch it: a rookie card is cheap, its Super Season
@@ -505,8 +505,12 @@ describe('the base set\'s card-type badges', () => {
       // No base card is a Throwback: that pill is the Throwbacks set's own.
       throwback: 0,
       [ROOKIE_BADGE]: 33,
-      [SUPER_SEASON_BADGE]: 20,
-      [BEST_SEASON_BADGE]: 127,
+      // Gilding follows the rarity bands, and the 2026-09-12 bench-curve
+      // reprice re-cut them: two more Super Season cards now beat their base
+      // card's band, so two move from best-season to super-season. The pair
+      // still sums to the same 145 gilded-or-badged faces.
+      [SUPER_SEASON_BADGE]: 22,
+      [BEST_SEASON_BADGE]: 123,
       // In the id list, never on a base-set record: the STANDOUT, TRADED and
       // TEAM REWARD pills are SET badges, worn by their whole sets and no one
       // else. A base-set player earning one would mean a special-set card had

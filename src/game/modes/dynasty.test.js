@@ -240,8 +240,19 @@ describe('the rules of a signing', () => {
     let d = ownDynasty();
     const [top] = contractsOf(d, HUMAN_ID);
     d = waive(d, HUMAN_ID, top.key);                     // a free agent now; his DP stays on the books
-    const full = fillRoster(d, HUMAN_ID, MAX_ROSTER);    // a camp invite takes the spot
-    expect(() => negotiate(full, HUMAN_ID, top.key, { dp: 5, years: 2 })).toThrow(/full/);
+    // A FULL ROSTER AND A FREE AGENT WHO IS DEFINITELY STILL FREE. Naming the
+    // man we waived made the test depend on his price being higher than every
+    // other free agent's, because fillRoster takes the cheapest that fits and
+    // only then falls back to a camp invite. The 2026-09-12 reprice moved him
+    // under somebody, fill signed him straight back, and the failure read
+    // "that player is not a free agent" rather than anything about a roster.
+    // So the roster is filled first and a free agent is made afterwards, off
+    // another team's books, where nothing this test does can consume him.
+    const filled = fillRoster(d, HUMAN_ID, MAX_ROSTER);
+    const rival = filled.teams.find(t => !t.human);
+    const [rivalTop] = contractsOf(filled, rival.id);
+    const full = waive(filled, rival.id, rivalTop.key);
+    expect(() => negotiate(full, HUMAN_ID, rivalTop.key, { dp: 5, years: 2 })).toThrow(/full/);
     const q = quote(d, HUMAN_ID, top.key);
     expect(q.room).toBeLessThan(q.ask);
     expect(() => negotiate(d, HUMAN_ID, top.key, { dp: q.ask, years: q.years })).toThrow(/does not fit/);

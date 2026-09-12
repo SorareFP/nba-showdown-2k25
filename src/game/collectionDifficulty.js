@@ -42,7 +42,7 @@
 // measure back into buy-out cost and erase the pull-luck tail that is the
 // actual difficulty.
 import { CARD_SETS, BASE_SET, cardKey } from './cardSets.js';
-import { getPlayerRarity, PACK_WEIGHTS } from './rarity.js';
+import { getPlayerRarity, PACK_WEIGHTS, RARITY_SALARY } from './rarity.js';
 import { PACK_TYPES } from './packEngine.js';
 import { GOALS, TEAM_ROSTERS, WNBA_ROSTERS, WNBA_SET } from './collections.js';
 
@@ -164,10 +164,17 @@ export const TEAM_DIFFICULTY_RANK = {
  * packs of the bottom — are not a power creep problem: they are rarer to obtain
  * than the pack-pulled legendaries already in circulation, and slower.
  */
+// THE DOLLAR RANGES ARE getPlayerRarity's, AND THEY HAVE TO BE. This table
+// once carried its own copy of them — 700-899, 900-1199, 1200+ — and when the
+// 2026-09-12 bench curve moved the rarity cuts to 1330/950/700/420 the two
+// disagreed: the ladder told generateTeamRewards that New York earns
+// "super-rare ($900-1199)" while getPlayerRarity called a $940 card rare, so
+// two picks failed a test neither pick was wrong about. Derived from the one
+// source now, so a re-cut cannot leave this behind.
 export const REWARD_BANDS = [
-  { band: 'rare', minRank: 0, salary: [700, 899] },
-  { band: 'super-rare', minRank: 1 / 3, salary: [900, 1199] },
-  { band: 'legendary', minRank: 2 / 3, salary: [1200, Infinity] },
+  { band: 'rare', minRank: 0, salary: [RARITY_SALARY.rare, RARITY_SALARY['super-rare'] - 1] },
+  { band: 'super-rare', minRank: 1 / 3, salary: [RARITY_SALARY['super-rare'], RARITY_SALARY.legendary - 1] },
+  { band: 'legendary', minRank: 2 / 3, salary: [RARITY_SALARY.legendary, Infinity] },
 ];
 
 export function rewardBandFor(goalId) {

@@ -9,6 +9,7 @@ import {
   FACE_W, FACE_H, PHOTO_POLYGON, BAND_POLYGON, FRAME_RING, NAME_SLOT, clipPathFor, wearsGold, holoRegionsFor,
 } from './faceRegions.js';
 import { SUPER_SEASON_SET, WNBA_SUPER_SEASON_SET, ROOKIE_SET, BASE_SET } from './sets.js';
+import { RARITY_SALARY } from '../game/rarity.js';
 
 const css = fs.readFileSync(path.join(path.dirname(fileURLToPath(import.meta.url)), 'CardTemplate.module.css'), 'utf8');
 const rule = (name, prop) => {
@@ -53,16 +54,25 @@ describe('faceRegions', () => {
     const keys = card => holoRegionsFor(card).map(r => r.key);
     // A legendary Super Season gets the photo and the gold; a super-rare one only the gold.
     // (These synthetic cards have no measurement, so the name falls back to its slot and there is no pill.)
-    expect(keys({ set: SUPER_SEASON_SET, salary: 1200 })).toEqual(['photo', 'band', 'frame', 'name']);
-    expect(keys({ set: WNBA_SUPER_SEASON_SET, salary: 1200 })).toEqual(['photo', 'band', 'frame', 'name']);
-    expect(keys({ set: SUPER_SEASON_SET, salary: 950 })).toEqual(['band', 'frame', 'name']);
+    //
+    // THE SALARIES COME OFF THE BAND CUTS, not from literals. They were 1200
+    // and 950, picked because those were legendary and super-rare — and the
+    // 2026-09-12 reprice re-cut the bands to 1330/930, which turned the
+    // "legendary" fixture super-rare and failed a test about gilding that had
+    // nothing to do with the change.
+    const leg = RARITY_SALARY.legendary;
+    const superRare = RARITY_SALARY['super-rare'];
+    const common = RARITY_SALARY.uncommon - 20;
+    expect(keys({ set: SUPER_SEASON_SET, salary: leg })).toEqual(['photo', 'band', 'frame', 'name']);
+    expect(keys({ set: WNBA_SUPER_SEASON_SET, salary: leg })).toEqual(['photo', 'band', 'frame', 'name']);
+    expect(keys({ set: SUPER_SEASON_SET, salary: superRare })).toEqual(['band', 'frame', 'name']);
     // A plain legendary gets the photo; a plain rookie or common gets nothing.
-    expect(keys({ set: BASE_SET, id: 'Nobody', salary: 1300 })).toEqual(['photo']);
-    expect(keys({ set: ROOKIE_SET, salary: 1300 })).toEqual(['photo']);
-    expect(keys({ set: BASE_SET, id: 'Nobody', salary: 400 })).toEqual([]);
+    expect(keys({ set: BASE_SET, id: 'Nobody', salary: leg + 100 })).toEqual(['photo']);
+    expect(keys({ set: ROOKIE_SET, salary: leg + 100 })).toEqual(['photo']);
+    expect(keys({ set: BASE_SET, id: 'Nobody', salary: common })).toEqual([]);
     expect(holoRegionsFor(null)).toEqual([]);
     // The user's three: gilded base cards under the legendary line get the gold.
-    expect(keys({ set: BASE_SET, salary: 1170, badges: ['super-season'] })).toEqual(['band', 'frame', 'name']);
+    expect(keys({ set: BASE_SET, salary: leg - 10, badges: ['super-season'] })).toEqual(['band', 'frame', 'name']);
     // Every region carries its own clip.
     for (const r of holoRegionsFor({ set: SUPER_SEASON_SET, salary: 1200 })) expect(r.clip).toMatch(/^polygon\(/);
     // A base card wearing the Super Season pill is gilded at $900 and up (the

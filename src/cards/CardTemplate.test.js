@@ -1740,7 +1740,7 @@ describe('the season and the card-type badge', () => {
     // 146 on 2026-09-07: the beaten-by-base rule moved 39 more players out of
     // the Super Season SET and onto the base-card pill, which is the same
     // exclusion consequence measured from the badge side.
-    expect(superSeason.length).toBe(147);
+    expect(superSeason.length).toBe(145);
     for (const player of superSeason) {
       const html = render({ card: player, set: CURRENT_SET });
       expect(html, player.name).not.toContain('ROOKIE');
@@ -1785,12 +1785,12 @@ describe('the season and the card-type badge', () => {
     // any-player-may-spend salary rule (playValue.js) repriced the set, and
     // one badged base card slipped under SUPER_SEASON_MIN_SALARY. A
     // measurement of the price, as every note above says.
-    expect(gilded.length).toBe(20);
+    expect(gilded.length).toBe(22);
     // 125 on 2026-09-07: the beaten-by-base rule's 39 are mostly cheap role
     // players, so nearly all of them land on the BEST SEASON side of the line.
-    expect(superSeason.length - gilded.length).toBe(127);
-    expect(BADGE_FILE.counts.printed[SUPER_SEASON_BADGE]).toBe(20);
-    expect(BADGE_FILE.counts.printed[BEST_SEASON_BADGE]).toBe(127);
+    expect(superSeason.length - gilded.length).toBe(123);
+    expect(BADGE_FILE.counts.printed[SUPER_SEASON_BADGE]).toBe(22);
+    expect(BADGE_FILE.counts.printed[BEST_SEASON_BADGE]).toBe(123);
     expect(BADGE_FILE.counts.printed[ROOKIE_BADGE]).toBe(33);
   });
 

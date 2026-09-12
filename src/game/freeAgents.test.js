@@ -7,13 +7,13 @@ import {
   AUTO_REJECT_MESSAGE, searchHitsNeverCard, ARCHIVE_COVERAGE, coverageText, isWnbaId,
 } from './freeAgents.js';
 import quoteIndex from '../../card-data/generated/quote-index.json';
-import { MARKET_PRICES, RARITY_ORDER } from './rarity.js';
+import { MARKET_PRICES, RARITY_ORDER, RARITY_SALARY } from './rarity.js';
 
 describe('the free-agent price', () => {
   it('is the rarity table leaned 20% toward pack odds, the numbers the user picked (2026-09-10)', () => {
     expect(FA_PACK_WEIGHT).toBe(0.2);
-    expect(RARITY_ORDER.map(r => freeAgentPrice('throwbacks', r))).toEqual([100, 260, 1100, 3780, 9100]);
-    expect(RARITY_ORDER.map(r => freeAgentPrice('rookie', r))).toEqual([100, 210, 970, 3120, 7760]);
+    expect(RARITY_ORDER.map(r => freeAgentPrice('throwbacks', r))).toEqual([100, 260, 1100, 3740, 9100]);
+    expect(RARITY_ORDER.map(r => freeAgentPrice('rookie', r))).toEqual([100, 220, 960, 3150, 7580]);
   });
 
   it('sits between the table and the pack-odds cost, and climbs with rarity', () => {
@@ -35,8 +35,11 @@ describe('the free-agent price', () => {
 
 describe('a quote row', () => {
   it('reads the compact index row into salary, rarity and price', () => {
-    const q = readQuoteRow(['jordami01', 'Michael Jordan', 1988, 'r', 'CHI', 1250, 'super-season']);
-    expect(q).toMatchObject({ bbrefId: 'jordami01', season: 1988, playoffs: false, salary: 1250, rarity: 'legendary', set: 'super-season' });
+    // The salary comes off the band cut, so a re-cut cannot silently turn this
+    // fixture super-rare — which 2026-09-12 did, at a hard-coded 1250.
+    const legendary = RARITY_SALARY.legendary;
+    const q = readQuoteRow(['jordami01', 'Michael Jordan', 1988, 'r', 'CHI', legendary, 'super-season']);
+    expect(q).toMatchObject({ bbrefId: 'jordami01', season: 1988, playoffs: false, salary: legendary, rarity: 'legendary', set: 'super-season' });
     expect(q.price).toBe(freeAgentPrice('super-season', 'legendary'));
     expect(readQuoteRow(['x', 'X', 2010, 'p', 'BOS', 500, 'summer-standouts']).playoffs).toBe(true);
   });

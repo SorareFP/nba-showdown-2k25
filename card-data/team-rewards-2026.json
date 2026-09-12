@@ -53,7 +53,7 @@
       "season": 2009,
       "team": "ATL",
       "goal": "nba-team-ATL",
-      "bandException": "A hundred dollars under the super-rare floor at $850, after the 2026-09-12 bench-curve reprice moved BOTH sides of the test: Atlanta's roster got dearer, so the franchise now earns super-rare, while Josh Smith's 2008-09 barely moved. DECLARED, NOT SOLVED - it is larger than any other exception in this file, and the honest fix is to re-pick Atlanta against real game logs (fetchTeamRewardCandidateLogs.mjs ATL, then teamRewardCandidates.js ATL --real). The user, 2026-09-12, cleared the rewards to change; this one waits on the choice of which Atlanta season should represent the franchise."
+      "bandException": "A hundred dollars under the super-rare floor at $850. The 2026-09-12 bench-curve reprice moved BOTH sides of the test: Atlanta's roster got dearer, so the franchise climbed to super-rare, while Josh Smith's 2008-09 barely moved. Shown the gap and the option to re-pick against real game logs, the user said \"just use Smith\" - so this is a decision, not a rounding artefact, and it is the largest exception in this file on purpose. His 2008-09 is the Josh Smith season Atlanta remembers; the in-band alternatives price higher and mean less to the franchise, which is the same trade Miami made for Mourning."
     },
     "TOR": {
       "name": "Anthony Parker",

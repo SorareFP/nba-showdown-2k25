@@ -29,12 +29,21 @@ import { STRATS, getStrat } from './strats.js';
 // collection difficulty earns — which is a fixed point, because the difficulty
 // is itself computed from the rarity of the franchise's cards. 1330/950 leaves
 // two rewards out of band where 1200/900 left nine.
+/** The floor of each band, in dollars. The one place the cuts are written. */
+export const RARITY_SALARY = {
+  legendary: 1330,
+  'super-rare': 930,
+  rare: 700,
+  uncommon: 420,
+  common: 0,
+};
+
 export function getPlayerRarity(card) {
   const s = card.salary || 0;
-  if (s >= 1330) return 'legendary';
-  if (s >= 950) return 'super-rare';
-  if (s >= 700) return 'rare';
-  if (s >= 420) return 'uncommon';
+  if (s >= RARITY_SALARY.legendary) return 'legendary';
+  if (s >= RARITY_SALARY['super-rare']) return 'super-rare';
+  if (s >= RARITY_SALARY.rare) return 'rare';
+  if (s >= RARITY_SALARY.uncommon) return 'uncommon';
   return 'common';
 }
 

@@ -1,0 +1,1308 @@
+{
+ "generatedAt": "2026-09-12T13:12:01.997Z",
+ "capUsd": 154647000,
+ "source": "basketball-reference.com/contracts (one row a player, first season column)",
+ "note": "The deal a player ARRIVES on in an own-team start. Negotiations price the card, not this.",
+ "contracts": {
+  "Tyrese_Maxey": {
+   "usd": 40770520,
+   "years": 3
+  },
+  "Amen_Thompson": {
+   "usd": 12258609,
+   "years": 1
+  },
+  "Kevin_Durant": {
+   "usd": 43902439,
+   "years": 2
+  },
+  "Luka_Doncic": {
+   "usd": 49800000,
+   "years": 3
+  },
+  "Trey_Murphy_III": {
+   "usd": 27000000,
+   "years": 3
+  },
+  "Jamal_Murray": {
+   "usd": 50105628,
+   "years": 3
+  },
+  "Jalen_Johnson": {
+   "usd": 30000000,
+   "years": 4
+  },
+  "Jabari_Smith_Jr": {
+   "usd": 23643411,
+   "years": 5
+  },
+  "Anthony_Edwards": {
+   "usd": 48924624,
+   "years": 3
+  },
+  "Jalen_Brunson": {
+   "usd": 37739521,
+   "years": 3
+  },
+  "VJ_Edgecombe": {
+   "usd": 11663880,
+   "years": 3
+  },
+  "Nikola_Jokic": {
+   "usd": 59033114,
+   "years": 2
+  },
+  "James_Harden": {
+   "usd": 30647619,
+   "years": 3
+  },
+  "Paolo_Banchero": {
+   "usd": 41500000,
+   "years": 5
+  },
+  "Austin_Reaves": {
+   "usd": 41240250,
+   "years": 4
+  },
+  "Keegan_Murray": {
+   "usd": 24137936,
+   "years": 5
+  },
+  "Jaylen_Brown": {
+   "usd": 57078728,
+   "years": 3
+  },
+  "Lauri_Markkanen": {
+   "usd": 46113154,
+   "years": 3
+  },
+  "Derrick_White": {
+   "usd": 30348000,
+   "years": 3
+  },
+  "Cade_Cunningham": {
+   "usd": 50105628,
+   "years": 4
+  },
+  "Brandon_Ingram": {
+   "usd": 40000000,
+   "years": 2
+  },
+  "Desmond_Bane": {
+   "usd": 39446090,
+   "years": 3
+  },
+  "Donovan_Mitchell": {
+   "usd": 50105628,
+   "years": 5
+  },
+  "Devin_Booker": {
+   "usd": 57078728,
+   "years": 4
+  },
+  "Cooper_Flagg": {
+   "usd": 14517480,
+   "years": 3
+  },
+  "Scottie_Barnes": {
+   "usd": 41754690,
+   "years": 4
+  },
+  "Nickeil_Alexander_Walker": {
+   "usd": 14403710,
+   "years": 3
+  },
+  "Deni_Avdija": {
+   "usd": 13125000,
+   "years": 2
+  },
+  "Alperen_Sengun": {
+   "usd": 35642202,
+   "years": 4
+  },
+  "Toumani_Camara": {
+   "usd": 18080358,
+   "years": 4
+  },
+  "Shai_Gilgeous_Alexander": {
+   "usd": 40806150,
+   "years": 1
+  },
+  "Pascal_Siakam": {
+   "usd": 48924624,
+   "years": 2
+  },
+  "LeBron_James": {
+   "usd": 3876529,
+   "years": 2
+  },
+  "OG_Anunoby": {
+   "usd": 42500000,
+   "years": 3
+  },
+  "Dyson_Daniels": {
+   "usd": 25000000,
+   "years": 4
+  },
+  "Keyonte_George": {
+   "usd": 6563925,
+   "years": 1
+  },
+  "Julius_Randle": {
+   "usd": 33333334,
+   "years": 2
+  },
+  "Mikal_Bridges": {
+   "usd": 33482145,
+   "years": 4
+  },
+  "Jayson_Tatum": {
+   "usd": 58456566,
+   "years": 4
+  },
+  "Michael_Porter_Jr": {
+   "usd": 40806150,
+   "years": 1
+  },
+  "Bam_Adebayo": {
+   "usd": 49800000,
+   "years": 3
+  },
+  "Payton_Pritchard": {
+   "usd": 7767857,
+   "years": 2
+  },
+  "Kawhi_Leonard": {
+   "usd": 50300000,
+   "years": 1
+  },
+  "Ryan_Rollins": {
+   "usd": 4000000,
+   "years": 2
+  },
+  "Josh_Giddey": {
+   "usd": 25000000,
+   "years": 3
+  },
+  "Evan_Mobley": {
+   "usd": 50105628,
+   "years": 4
+  },
+  "Immanuel_Quickley": {
+   "usd": 32500000,
+   "years": 3
+  },
+  "Christian_Braun": {
+   "usd": 21551726,
+   "years": 5
+  },
+  "Jaden_McDaniels": {
+   "usd": 26200001,
+   "years": 3
+  },
+  "Joel_Embiid": {
+   "usd": 58100000,
+   "years": 3
+  },
+  "Kon_Knueppel": {
+   "usd": 10516560,
+   "years": 3
+  },
+  "Kelly_Oubre_Jr": {
+   "usd": 8050000,
+   "years": 2
+  },
+  "Zach_LaVine": {
+   "usd": 48967380,
+   "years": 1
+  },
+  "Tyler_Herro": {
+   "usd": 33000000,
+   "years": 1
+  },
+  "Anthony_Davis": {
+   "usd": 58456566,
+   "years": 2
+  },
+  "Andrew_Nembhard": {
+   "usd": 19550160,
+   "years": 2
+  },
+  "Rudy_Gobert": {
+   "usd": 36500000,
+   "years": 2
+  },
+  "DeMar_DeRozan": {
+   "usd": 2449421,
+   "years": 1
+  },
+  "Saddiq_Bey": {
+   "usd": 6440678,
+   "years": 1
+  },
+  "Jimmy_Butler": {
+   "usd": 56832773,
+   "years": 1
+  },
+  "Karl_Anthony_Towns": {
+   "usd": 57078728,
+   "years": 2
+  },
+  "De_Aaron_Fox": {
+   "usd": 49800000,
+   "years": 4
+  },
+  "Miles_Bridges": {
+   "usd": 22826087,
+   "years": 1
+  },
+  "Onyeka_Okongwu": {
+   "usd": 16120000,
+   "years": 2
+  },
+  "P_J_Washington": {
+   "usd": 19813044,
+   "years": 4
+  },
+  "Stephen_Curry": {
+   "usd": 62587158,
+   "years": 1
+  },
+  "Paul_George": {
+   "usd": 54126380,
+   "years": 2
+  },
+  "Devin_Vassell": {
+   "usd": 27000000,
+   "years": 3
+  },
+  "Cameron_Johnson": {
+   "usd": 23062500,
+   "years": 1
+  },
+  "Dillon_Brooks": {
+   "usd": 19992727,
+   "years": 4
+  },
+  "Donte_DiVincenzo": {
+   "usd": 12535000,
+   "years": 1
+  },
+  "Brandon_Miller": {
+   "usd": 15104626,
+   "years": 1
+  },
+  "Jaren_Jackson_Jr": {
+   "usd": 49000000,
+   "years": 4
+  },
+  "RJ_Barrett": {
+   "usd": 29616071,
+   "years": 1
+  },
+  "Andrew_Wiggins": {
+   "usd": 30169644,
+   "years": 3
+  },
+  "Josh_Hart": {
+   "usd": 20923760,
+   "years": 2
+  },
+  "Ivica_Zubac": {
+   "usd": 20342140,
+   "years": 2
+  },
+  "Franz_Wagner": {
+   "usd": 41754690,
+   "years": 4
+  },
+  "Stephon_Castle": {
+   "usd": 10015920,
+   "years": 2
+  },
+  "Darius_Garland": {
+   "usd": 42166510,
+   "years": 2
+  },
+  "CJ_McCollum": {
+   "usd": 21000000,
+   "years": 1
+  },
+  "Anthony_Black": {
+   "usd": 10106316,
+   "years": 1
+  },
+  "Zion_Williamson": {
+   "usd": 42166510,
+   "years": 2
+  },
+  "Jerami_Grant": {
+   "usd": 34206898,
+   "years": 2
+  },
+  "Domantas_Sabonis": {
+   "usd": 45472000,
+   "years": 2
+  },
+  "Aaron_Nesmith": {
+   "usd": 11000000,
+   "years": 1
+  },
+  "Norman_Powell": {
+   "usd": 21500000,
+   "years": 2
+  },
+  "Peyton_Watson": {
+   "usd": 20465116,
+   "years": 4
+  },
+  "Naji_Marshall": {
+   "usd": 9428571,
+   "years": 1
+  },
+  "Shaedon_Sharpe": {
+   "usd": 20089287,
+   "years": 4
+  },
+  "Jrue_Holiday": {
+   "usd": 34800000,
+   "years": 2
+  },
+  "Quentin_Grimes": {
+   "usd": 13953489,
+   "years": 4
+  },
+  "Wendell_Carter_Jr": {
+   "usd": 18102000,
+   "years": 3
+  },
+  "Victor_Wembanyama": {
+   "usd": 16868246,
+   "years": 1
+  },
+  "Matas_Buzelis": {
+   "usd": 5715360,
+   "years": 2
+  },
+  "Max_Christie": {
+   "usd": 8285714,
+   "years": 2
+  },
+  "A_J_Green": {
+   "usd": 10044644,
+   "years": 4
+  },
+  "Kyshawn_George": {
+   "usd": 3108000,
+   "years": 1
+  },
+  "Giannis_Antetokounmpo": {
+   "usd": 58456566,
+   "years": 2
+  },
+  "Chet_Holmgren": {
+   "usd": 41500000,
+   "years": 5
+  },
+  "Grayson_Allen": {
+   "usd": 18125000,
+   "years": 2
+  },
+  "Davion_Mitchell": {
+   "usd": 12400000,
+   "years": 1
+  },
+  "Ja_Morant": {
+   "usd": 42166510,
+   "years": 2
+  },
+  "Brandin_Podziemski": {
+   "usd": 5679459,
+   "years": 1
+  },
+  "Collin_Gillespie": {
+   "usd": 10714286,
+   "years": 4
+  },
+  "Marcus_Smart": {
+   "usd": 6064000,
+   "years": 2
+  },
+  "Jalen_Williams": {
+   "usd": 41500000,
+   "years": 5
+  },
+  "Nikola_Vucevic": {
+   "usd": 2449421,
+   "years": 1
+  },
+  "Royce_O_Neale": {
+   "usd": 10875000,
+   "years": 2
+  },
+  "Herbert_Jones": {
+   "usd": 14898786,
+   "years": 4
+  },
+  "Jaime_Jaquez_Jr": {
+   "usd": 5939141,
+   "years": 1
+  },
+  "Rui_Hachimura": {
+   "usd": 14000000,
+   "years": 2
+  },
+  "LaMelo_Ball": {
+   "usd": 40770520,
+   "years": 3
+  },
+  "Aaron_Gordon": {
+   "usd": 33658037,
+   "years": 3
+  },
+  "Santi_Aldama": {
+   "usd": 17007043,
+   "years": 2
+  },
+  "Dejounte_Murray": {
+   "usd": 32785071,
+   "years": 2
+  },
+  "Nic_Claxton": {
+   "usd": 23147727,
+   "years": 2
+  },
+  "Tobias_Harris": {
+   "usd": 15044000,
+   "years": 2
+  },
+  "Bub_Carrington": {
+   "usd": 4900560,
+   "years": 1
+  },
+  "Ace_Bailey": {
+   "usd": 9523080,
+   "years": 3
+  },
+  "Jalen_Suggs": {
+   "usd": 32400000,
+   "years": 4
+  },
+  "Julian_Champagnie": {
+   "usd": 13888889,
+   "years": 3
+  },
+  "Draymond_Green": {
+   "usd": 27678571,
+   "years": 1
+  },
+  "Duncan_Robinson": {
+   "usd": 15992957,
+   "years": 2
+  },
+  "Ayo_Dosunmu": {
+   "usd": 19310345,
+   "years": 5
+  },
+  "Alex_Sarr": {
+   "usd": 12370680,
+   "years": 2
+  },
+  "Deandre_Ayton": {
+   "usd": 8104000,
+   "years": 1
+  },
+  "Donovan_Clingan": {
+   "usd": 7519920,
+   "years": 2
+  },
+  "Kris_Dunn": {
+   "usd": 5684800,
+   "years": 1
+  },
+  "Jarrett_Allen": {
+   "usd": 28000000,
+   "years": 3
+  },
+  "John_Collins": {
+   "usd": 17000000,
+   "years": 3
+  },
+  "Tre_Jones": {
+   "usd": 8000000,
+   "years": 2
+  },
+  "Noah_Clowney": {
+   "usd": 5414034,
+   "years": 1
+  },
+  "Derrick_Jones_Jr": {
+   "usd": 10476190,
+   "years": 1
+  },
+  "Jaylon_Tyson": {
+   "usd": 3658560,
+   "years": 1
+  },
+  "Myles_Turner": {
+   "usd": 26584164,
+   "years": 3
+  },
+  "Isaac_Okoro": {
+   "usd": 11814814,
+   "years": 1
+  },
+  "Luguentz_Dort": {
+   "usd": 18222222,
+   "years": 1
+  },
+  "Tim_Hardaway_Jr": {
+   "usd": 6500000,
+   "years": 1
+  },
+  "Cason_Wallace": {
+   "usd": 7420806,
+   "years": 1
+  },
+  "Sam_Merrill": {
+   "usd": 9160715,
+   "years": 3
+  },
+  "Maxime_Raynaud": {
+   "usd": 2150917,
+   "years": 2
+  },
+  "Jaylen_Wells": {
+   "usd": 2296271,
+   "years": 2
+  },
+  "Pelle_Larsson": {
+   "usd": 2296271,
+   "years": 1
+  },
+  "Jusuf_Nurkic": {
+   "usd": 10576923,
+   "years": 2
+  },
+  "Miles_McBride": {
+   "usd": 3956523,
+   "years": 1
+  },
+  "Reed_Sheppard": {
+   "usd": 11108880,
+   "years": 2
+  },
+  "Kyle_Kuzma": {
+   "usd": 20345152,
+   "years": 1
+  },
+  "Bilal_Coulibaly": {
+   "usd": 9240012,
+   "years": 1
+  },
+  "De_Andre_Hunter": {
+   "usd": 24910714,
+   "years": 1
+  },
+  "Naz_Reid": {
+   "usd": 23275862,
+   "years": 4
+  },
+  "Ausar_Thompson": {
+   "usd": 11117925,
+   "years": 1
+  },
+  "Moussa_Diabate": {
+   "usd": 2461462,
+   "years": 1
+  },
+  "Jalen_Green": {
+   "usd": 36251166,
+   "years": 2
+  },
+  "Jeremiah_Fears": {
+   "usd": 7896240,
+   "years": 3
+  },
+  "Cedric_Coward": {
+   "usd": 6001080,
+   "years": 3
+  },
+  "Zach_Edey": {
+   "usd": 6332760,
+   "years": 2
+  },
+  "Ajay_Mitchell": {
+   "usd": 2850000,
+   "years": 2
+  },
+  "Tari_Eason": {
+   "usd": 14051724,
+   "years": 5
+  },
+  "Harrison_Barnes": {
+   "usd": 8000000,
+   "years": 1
+  },
+  "Moses_Moody": {
+   "usd": 12500000,
+   "years": 2
+  },
+  "Isaiah_Collier": {
+   "usd": 2763960,
+   "years": 1
+  },
+  "Jarace_Walker": {
+   "usd": 8478542,
+   "years": 1
+  },
+  "Trae_Young": {
+   "usd": 49488300,
+   "years": 4
+  },
+  "Neemias_Queta": {
+   "usd": 2667944,
+   "years": 1
+  },
+  "Egor_Demin": {
+   "usd": 7233720,
+   "years": 3
+  },
+  "Nique_Clifford": {
+   "usd": 3263400,
+   "years": 2
+  },
+  "Jake_LaRavia": {
+   "usd": 6000000,
+   "years": 1
+  },
+  "Coby_White": {
+   "usd": 22839506,
+   "years": 3
+  },
+  "Derik_Queen": {
+   "usd": 5416080,
+   "years": 2
+  },
+  "Jakob_Poeltl": {
+   "usd": 19500000,
+   "years": 4
+  },
+  "Anfernee_Simons": {
+   "usd": 6000000,
+   "years": 2
+  },
+  "Sam_Hauser": {
+   "usd": 10848215,
+   "years": 3
+  },
+  "Tristan_Da_Silva": {
+   "usd": 3991200,
+   "years": 1
+  },
+  "Cody_Williams": {
+   "usd": 6015600,
+   "years": 2
+  },
+  "Terance_Mann": {
+   "usd": 15500000,
+   "years": 2
+  },
+  "Bobby_Portis": {
+   "usd": 14521414,
+   "years": 2
+  },
+  "Dennis_Schroder": {
+   "usd": 14809200,
+   "years": 2
+  },
+  "Isaiah_Hartenstein": {
+   "usd": 23148148,
+   "years": 3
+  },
+  "Tre_Johnson": {
+   "usd": 8649600,
+   "years": 3
+  },
+  "Precious_Achiuwa": {
+   "usd": 5477000,
+   "years": 2
+  },
+  "Cam_Spencer": {
+   "usd": 2411090,
+   "years": 3
+  },
+  "Dominick_Barlow": {
+   "usd": 3415000,
+   "years": 1
+  },
+  "Collin_Sexton": {
+   "usd": 9366000,
+   "years": 2
+  },
+  "Mark_Williams": {
+   "usd": 11728395,
+   "years": 3
+  },
+  "Brice_Sensabaugh": {
+   "usd": 4862237,
+   "years": 1
+  },
+  "Kyle_Filipowski": {
+   "usd": 3000000,
+   "years": 2
+  },
+  "Kris_Murray": {
+   "usd": 5315004,
+   "years": 1
+  },
+  "Keldon_Johnson": {
+   "usd": 17500000,
+   "years": 1
+  },
+  "Svi_Mykhailiuk": {
+   "usd": 3850000,
+   "years": 2
+  },
+  "De_Anthony_Melton": {
+   "usd": 5477000,
+   "years": 2
+  },
+  "Landry_Shamet": {
+   "usd": 5357143,
+   "years": 4
+  },
+  "Ziaire_Williams": {
+   "usd": 2449421,
+   "years": 1
+  },
+  "Khris_Middleton": {
+   "usd": 5591122,
+   "years": 3
+  },
+  "Isaiah_Stewart": {
+   "usd": 15000000,
+   "years": 2
+  },
+  "Ty_Jerome": {
+   "usd": 9220050,
+   "years": 2
+  },
+  "Dylan_Harper": {
+   "usd": 12989040,
+   "years": 3
+  },
+  "Jamal_Shead": {
+   "usd": 2296271,
+   "years": 1
+  },
+  "Jordan_Goodwin": {
+   "usd": 5864198,
+   "years": 3
+  },
+  "Sion_James": {
+   "usd": 2411090,
+   "years": 3
+  },
+  "Kevin_Huerter": {
+   "usd": 8333333,
+   "years": 3
+  },
+  "Zaccharie_Risacher": {
+   "usd": 13826040,
+   "years": 2
+  },
+  "Dean_Wade": {
+   "usd": 9000000,
+   "years": 4
+  },
+  "Brandon_Williams": {
+   "usd": 2449421,
+   "years": 1
+  },
+  "Nolan_Traore": {
+   "usd": 4002000,
+   "years": 2
+  },
+  "Kel_el_Ware": {
+   "usd": 4654920,
+   "years": 1
+  },
+  "Jock_Landale": {
+   "usd": 14100000,
+   "years": 1
+  },
+  "Will_Riley": {
+   "usd": 3688320,
+   "years": 2
+  },
+  "Jordan_Miller": {
+   "usd": 5300000,
+   "years": 3
+  },
+  "Spencer_Jones": {
+   "usd": 6000000,
+   "years": 2
+  },
+  "Malik_Monk": {
+   "usd": 20190035,
+   "years": 2
+  },
+  "Oso_Ighodaro": {
+   "usd": 2296271,
+   "years": 2
+  },
+  "Sandro_Mamukelashvili": {
+   "usd": 13000000,
+   "years": 4
+  },
+  "Collin_Murray_Boyles": {
+   "usd": 6649560,
+   "years": 3
+  },
+  "Aaron_Wiggins": {
+   "usd": 9224300,
+   "years": 3
+  },
+  "Brook_Lopez": {
+   "usd": 9187500,
+   "years": 1
+  },
+  "Klay_Thompson": {
+   "usd": 17460317,
+   "years": 1
+  },
+  "Daniel_Gafford": {
+   "usd": 17263584,
+   "years": 3
+  },
+  "Luke_Kennard": {
+   "usd": 6064000,
+   "years": 2
+  },
+  "Al_Horford": {
+   "usd": 6822000,
+   "years": 2
+  },
+  "GG_Jackson_II": {
+   "usd": 2406205,
+   "years": 1
+  },
+  "Vit_Krejci": {
+   "usd": 2667944,
+   "years": 2
+  },
+  "Ryan_Kalkbrenner": {
+   "usd": 2411090,
+   "years": 3
+  },
+  "Ben_Sheppard": {
+   "usd": 5031669,
+   "years": 1
+  },
+  "Kentavious_Caldwell_Pope": {
+   "usd": 17744971,
+   "years": 1
+  },
+  "Isaiah_Joe": {
+   "usd": 11323006,
+   "years": 2
+  },
+  "Gary_Trent_Jr": {
+   "usd": 15200000,
+   "years": 4
+  },
+  "Jay_Huff": {
+   "usd": 2667944,
+   "years": 2
+  },
+  "Bryce_McGowens": {
+   "usd": 2584539,
+   "years": 2
+  },
+  "Luke_Kornet": {
+   "usd": 10450000,
+   "years": 3
+  },
+  "Drake_Powell": {
+   "usd": 3540600,
+   "years": 2
+  },
+  "Danny_Wolf": {
+   "usd": 2941440,
+   "years": 2
+  },
+  "Ben_Saraf": {
+   "usd": 3028560,
+   "years": 2
+  },
+  "Jalen_Smith": {
+   "usd": 9428571,
+   "years": 1
+  },
+  "Gui_Santos": {
+   "usd": 4629630,
+   "years": 3
+  },
+  "Ja_Kobe_Walter": {
+   "usd": 3811800,
+   "years": 1
+  },
+  "Patrick_Williams": {
+   "usd": 18000000,
+   "years": 3
+  },
+  "Keon_Ellis": {
+   "usd": 8780488,
+   "years": 2
+  },
+  "Walter_Clayton": {
+   "usd": 4190520,
+   "years": 2
+  },
+  "Daniss_Jenkins": {
+   "usd": 4000000,
+   "years": 1
+  },
+  "Marvin_Bagley_III": {
+   "usd": 2449421,
+   "years": 1
+  },
+  "Justin_Champagnie": {
+   "usd": 2667944,
+   "years": 2
+  },
+  "Will_Richard": {
+   "usd": 2150917,
+   "years": 3
+  },
+  "Ron_Holland": {
+   "usd": 9069600,
+   "years": 2
+  },
+  "Jose_Alvarado": {
+   "usd": 4500000,
+   "years": 3
+  },
+  "Kobe_Sanders": {
+   "usd": 2622139,
+   "years": 4
+  },
+  "Kyle_Anderson": {
+   "usd": 2449421,
+   "years": 1
+  },
+  "Yves_Missi": {
+   "usd": 3512760,
+   "years": 1
+  },
+  "Jericho_Sims": {
+   "usd": 2801346,
+   "years": 1
+  },
+  "Jaylin_Williams": {
+   "usd": 7774648,
+   "years": 2
+  },
+  "Mitchell_Robinson": {
+   "usd": 15044000,
+   "years": 3
+  },
+  "Ryan_Nembhard": {
+   "usd": 2150917,
+   "years": 1
+  },
+  "Andre_Drummond": {
+   "usd": 2449421,
+   "years": 1
+  },
+  "Ryan_Dunn": {
+   "usd": 2784240,
+   "years": 1
+  },
+  "Micah_Potter": {
+   "usd": 2801346,
+   "years": 1
+  },
+  "Ousmane_Dieng": {
+   "usd": 5750000,
+   "years": 3
+  },
+  "Caris_LeVert": {
+   "usd": 14809200,
+   "years": 1
+  },
+  "Sidy_Cissoko": {
+   "usd": 2497812,
+   "years": 1
+  },
+  "Taylor_Hendricks": {
+   "usd": 7805900,
+   "years": 1
+  },
+  "Day_Ron_Sharpe": {
+   "usd": 10000000,
+   "years": 2
+  },
+  "Olivier_Maxence_Prosper": {
+   "usd": 2497812,
+   "years": 1
+  },
+  "Corey_Kispert": {
+   "usd": 13975000,
+   "years": 3
+  },
+  "Baylor_Scheierman": {
+   "usd": 2744040,
+   "years": 1
+  },
+  "Mike_Conley": {
+   "usd": 2449421,
+   "years": 1
+  },
+  "Jaxson_Hayes": {
+   "usd": 6000000,
+   "years": 2
+  },
+  "Alex_Caruso": {
+   "usd": 19550160,
+   "years": 3
+  },
+  "Craig_Porter_Jr": {
+   "usd": 2406205,
+   "years": 1
+  },
+  "Jordan_Clarkson": {
+   "usd": 2449421,
+   "years": 1
+  },
+  "Kasparas_Jakucionis": {
+   "usd": 3841680,
+   "years": 2
+  },
+  "Jordan_Walsh": {
+   "usd": 2406205,
+   "years": 1
+  },
+  "Javonte_Green": {
+   "usd": 3943679,
+   "years": 1
+  },
+  "Nicolas_Batum": {
+   "usd": 5881680,
+   "years": 1
+  },
+  "Adem_Bona": {
+   "usd": 2296271,
+   "years": 2
+  },
+  "Josh_Okogie": {
+   "usd": 6000000,
+   "years": 2
+  },
+  "Jarred_Vanderbilt": {
+   "usd": 12428571,
+   "years": 2
+  },
+  "Jared_McCain": {
+   "usd": 4422600,
+   "years": 1
+  },
+  "Quinten_Post": {
+   "usd": 8285714,
+   "years": 3
+  },
+  "T_J_McConnell": {
+   "usd": 11000000,
+   "years": 3
+  },
+  "Nikola_Jovic": {
+   "usd": 16200000,
+   "years": 4
+  },
+  "Robert_Williams": {
+   "usd": 13968254,
+   "years": 3
+  },
+  "Josh_Minott": {
+   "usd": 4500000,
+   "years": 2
+  },
+  "Simone_Fontecchio": {
+   "usd": 2449421,
+   "years": 1
+  },
+  "Bones_Hyland": {
+   "usd": 2845883,
+   "years": 1
+  },
+  "Isaiah_Jackson": {
+   "usd": 7000000,
+   "years": 2
+  },
+  "Jevon_Carter": {
+   "usd": 2449421,
+   "years": 1
+  },
+  "Trendon_Watford": {
+   "usd": 2449421,
+   "years": 1
+  },
+  "Dru_Smith": {
+   "usd": 2584539,
+   "years": 2
+  },
+  "Luka_Garza": {
+   "usd": 2801346,
+   "years": 1
+  },
+  "Buddy_Hield": {
+   "usd": 9658536,
+   "years": 2
+  },
+  "Jaden_Hardy": {
+   "usd": 6000000,
+   "years": 2
+  },
+  "Nae_Qwan_Tomlin": {
+   "usd": 2411090,
+   "years": 1
+  },
+  "Pete_Nance": {
+   "usd": 2537526,
+   "years": 2
+  },
+  "Josh_Green": {
+   "usd": 14679012,
+   "years": 1
+  },
+  "Leonard_Miller": {
+   "usd": 2406205,
+   "years": 1
+  },
+  "Gary_Payton_II": {
+   "usd": 2449421,
+   "years": 1
+  },
+  "Kenrich_Williams": {
+   "usd": 5000000,
+   "years": 1
+  },
+  "Justin_Edwards": {
+   "usd": 2411090,
+   "years": 2
+  },
+  "Mouhamed_Gueye": {
+   "usd": 2406205,
+   "years": 1
+  },
+  "Goga_Bitadze": {
+   "usd": 7608696,
+   "years": 1
+  },
+  "Julian_Strawther": {
+   "usd": 4826931,
+   "years": 1
+  },
+  "Micah_Peavy": {
+   "usd": 2150917,
+   "years": 3
+  },
+  "Rob_Dillingham": {
+   "usd": 6889320,
+   "years": 2
+  },
+  "Caleb_Martin": {
+   "usd": 10001493,
+   "years": 2
+  },
+  "Karlo_Matkovic": {
+   "usd": 2296271,
+   "years": 1
+  },
+  "Nick_Richards": {
+   "usd": 2449421,
+   "years": 1
+  },
+  "Hugo_Gonzalez": {
+   "usd": 2923560,
+   "years": 2
+  },
+  "Tyus_Jones": {
+   "usd": 2449421,
+   "years": 1
+  },
+  "Gradey_Dick": {
+   "usd": 7131511,
+   "years": 1
+  },
+  "Jamaree_Bouyea": {
+   "usd": 2584539,
+   "years": 1
+  },
+  "Paul_Reed": {
+   "usd": 5602689,
+   "years": 1
+  },
+  "Gary_Harris": {
+   "usd": 3815861,
+   "years": 1
+  },
+  "Jordan_Hawkins": {
+   "usd": 7021895,
+   "years": 1
+  },
+  "Jaylen_Clark": {
+   "usd": 3086420,
+   "years": 3
+  },
+  "Noah_Penda": {
+   "usd": 2150917,
+   "years": 3
+  },
+  "Tre_Mann": {
+   "usd": 8000000,
+   "years": 2
+  },
+  "Terrence_Shannon_Jr": {
+   "usd": 2801640,
+   "years": 1
+  },
+  "Clint_Capela": {
+   "usd": 7035000,
+   "years": 2
+  },
+  "Thomas_Bryant": {
+   "usd": 2449421,
+   "years": 1
+  },
+  "Jamal_Cain": {
+   "usd": 2584539,
+   "years": 1
+  },
+  "Rasheer_Fleming": {
+   "usd": 2150917,
+   "years": 3
+  },
+  "Zeke_Nnaji": {
+   "usd": 7466667,
+   "years": 2
+  },
+  "Tyrese_Haliburton": {
+   "usd": 48924624,
+   "years": 3
+  },
+  "Kyrie_Irving": {
+   "usd": 39491282,
+   "years": 2
+  },
+  "Damian_Lillard": {
+   "usd": 22516603,
+   "years": 4
+  },
+  "Fred_VanVleet": {
+   "usd": 25000000,
+   "years": 1
+  }
+ }
+}

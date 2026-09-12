@@ -97,7 +97,8 @@ for (const file of fs.readdirSync(dataDir)) {
   // quote-index.json: requestCard prices a request from it, never the client.
   // dynasty-ages.json: the dynasty's player ages (scripts/dynasty/buildAges.mjs).
   if (!/^cards-.*\.json$/.test(file) && !/^(wnba-)?(player-)?pool.*\.json$/.test(file)
-    && file !== 'quote-index.json' && file !== 'dynasty-ages.json') continue;
+    && file !== 'quote-index.json' && file !== 'dynasty-ages.json'
+    && file !== 'dynasty-contracts.json') continue;
   copyFile(path.join(DATA_DIR, file));
   data += 1;
 }

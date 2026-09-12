@@ -6,9 +6,9 @@ import {
   onClock, draftPick, draftAvailable, simDraft, aiDraftChoice, finishDraft, closeSigning, nextFaDay, fillRoster,
   startSeason, endSeason, closeResign, lotteryOdds, drawLottery, signRookie, closeRookies, classFor,
   projectedPayroll, summarizeDynasty, deadMoney, leagueKeys, passPick, DRAFT_CLASS_PER_TEAM, ROOKIE_ROUNDS,
-  baseAge, ageOf, retireChance, endDynasty, lotteryWeights,
+  baseAge, ageOf, retireChance, endDynasty, lotteryWeights, contractFor,
 } from './dynasty.js';
-import { CAP_DP, APRON_DP, FA_DAYS, fairDp, PERSONALITIES } from './dynastyMarket.js';
+import { CAP_DP, APRON_DP, FA_DAYS, fairDp, PERSONALITIES, CONTRACT_YEARS } from './dynastyMarket.js';
 import { dynastyYearEarnings, dynastyCompletionEarnings, dynastyClaim, DYNASTY_YEARS, SEASON_REWARDS, FANTASY_DYNASTY_FACTOR } from './prizes.js';
 import { buildAiLeague } from './aiTeams.js';
 import { recordResult, roundFixtures, advance, totalRounds, PHASE } from './season.js';
@@ -95,7 +95,7 @@ function autoYear(d, rng) {
 }
 
 describe('bringing your own team', () => {
-  it('puts every roster on staggered contracts at fair value, and opens in the preseason', () => {
+  it('puts every roster on its REAL contract, and opens in the preseason', () => {
     const d = ownDynasty();
     expect(d.phase).toBe(DPHASE.preseason);
     expect(d.teams).toHaveLength(4);
@@ -104,12 +104,17 @@ describe('bringing your own team', () => {
       expect(rosterKeys(d, t.id).length).toBeGreaterThanOrEqual(MIN_ROSTER);
       expect(rosterKeys(d, t.id).length).toBeLessThanOrEqual(MAX_ROSTER);
     }
+    // The deal he is really on (the user, 2026-09-12), or what the card is
+    // worth when the source has no row for him — a retro card, or a free agent.
     const mine = contractsOf(d, HUMAN_ID);
     for (const k of mine) {
-      expect(k.dp).toBe(fairDp(k.card));
+      const real = contractFor(k.key);
+      expect(k.dp).toBe(real?.dp ?? fairDp(k.card));
       expect(k.years).toBeGreaterThanOrEqual(1);
-      expect(k.years).toBeLessThanOrEqual(3);
+      expect(k.years).toBeLessThanOrEqual(real ? CONTRACT_YEARS.max : 3);
     }
+    // A team of current NBA players is mostly on real contracts.
+    expect(mine.filter(k => contractFor(k.key)).length).toBeGreaterThan(0);
     expectConserved(d);
   });
 
@@ -246,13 +251,19 @@ describe('the rules of a signing', () => {
     expect(() => ownDynasty({ roster: CARDS.slice(0, 9) })).toThrow(/10 players/);
   });
 
-  it('fantasy-drafts the AI teams around your ten — to the cap, and by position', () => {
+  it('fantasy-drafts the AI teams around your ten — on real contracts, and by position', () => {
     const d = ownDynasty({ size: 8 });
     const group = pos => ({ PG: 'G', SG: 'G', SF: 'F', PF: 'F', C: 'C' }[pos]);
     for (const t of d.teams.filter(t => !t.human)) {
       const keys = rosterKeys(d, t.id);
-      expect(payroll(d, t.id)).toBeLessThanOrEqual(APRON_DP);
-      expect(keys.every(k => d.contracts[k].how !== 'brought')).toBe(true);
+      // An own start has no signing period, so the AI's teams arrive on real
+      // contracts too — and may open OVER the apron, which the first offseason
+      // is what makes them trade or let someone walk (the user, 2026-09-12).
+      expect(payroll(d, t.id)).toBeGreaterThan(0);
+      for (const k of keys) {
+        const real = contractFor(k);
+        if (real) expect(d.contracts[k].dp).toBe(real.dp);
+      }
       const counts = { G: 0, F: 0, C: 0 };
       for (const k of keys) counts[group(getCardByKey(k).pos)] += 1;
       expect(counts.G).toBeGreaterThanOrEqual(2);

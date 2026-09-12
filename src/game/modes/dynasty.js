@@ -39,6 +39,7 @@ import { CARDS } from '../cards.js';
 import { ALL_CARDS, BASE_SET, cardKey, getCardByKey } from '../cardSets.js';
 // Ages for the cards that do not carry one — scripts/dynasty/buildAges.mjs.
 import DYNASTY_AGES from '../../../card-data/generated/dynasty-ages.json' with { type: 'json' };
+import DYNASTY_CONTRACTS from '../../../card-data/generated/dynasty-contracts.json' with { type: 'json' };
 import { MAX } from '../teamRules.js';
 import { DYNASTY_YEARS } from './prizes.js';
 // seasonCore, not season.js: season.js brings the simulator and the engine,
@@ -47,7 +48,7 @@ import { buildSeason, standings, totalRounds, PHASE } from './seasonCore.js';
 import { buildAiLeague } from './aiTeams.js';
 import { playoffCount } from './schedule.js';
 import {
-  CAP_DP, APRON_DP, MIN_DP, FA_DAYS, LEFTOVER_DAY, CONTRACT_YEARS,
+  CAP_DP, APRON_DP, MIN_DP, MAX_DP, FA_DAYS, LEFTOVER_DAY, CONTRACT_YEARS,
   fairDp, dealPersonality, floorFor, openingAsk, askFor, preferredYears, newTalk, judgeOffer, rookieScale, toBeat,
   TRADE, talentValue, contractValue, controlFactor,
 } from './dynastyMarket.js';
@@ -224,6 +225,32 @@ export function ctxFor(d, key, teamId) {
 // aging dynasty moves the number; a ten-year one shows the card's age.
 
 /** The age on the card: its own, else the generated table, else a league-median 27. */
+/**
+ * THE DEAL A PLAYER ARRIVES ON in an own-team start: his real NBA contract,
+ * priced in Dynasty Points. The user, 2026-09-12: "all players come in on
+ * their current contracts, Wemby included, and there is no signing period...
+ * Players who need to be re-signed or are free agents should ask for what
+ * their card is worth." So this is ONLY the arriving deal — every negotiation
+ * after it prices the card (dynastyMarket.js), which is why a rookie-scale
+ * star is a bargain until his deal runs out and then asks for the max.
+ *
+ * A season's salary is read as a share of the NBA cap and paid as the same
+ * share of the DP cap, so a max contract lands on the DP max. Null for anyone
+ * with no current deal — a retro, throwback or WNBA card, or a free agent the
+ * source has no row for — and the caller falls back to what the card is worth.
+ * Keyed by card key, so only the current set matches: a 2015 Curry card is
+ * never priced off the 2026 Curry contract.
+ */
+export function contractFor(key) {
+  const row = DYNASTY_CONTRACTS.contracts?.[key];
+  if (!row?.usd) return null;
+  const dp = Math.round((row.usd / DYNASTY_CONTRACTS.capUsd) * CAP_DP);
+  return {
+    dp: Math.max(MIN_DP, Math.min(MAX_DP, dp)),
+    years: Math.max(CONTRACT_YEARS.min, Math.min(CONTRACT_YEARS.max, row.years || 1)),
+  };
+}
+
 export function baseAge(key) {
   const card = cardOf(key);
   if (Number.isFinite(card?.age)) return card.age;
@@ -427,9 +454,15 @@ export function createDynasty({
 
   const contracts = {};
   if (startMode === 'own') {
-    // Staggered, so the exclusive window has somebody in it after year one.
+    // EVERY PLAYER ARRIVES ON HIS REAL CONTRACT — real money, the years he
+    // has left, and no signing period (the user, 2026-09-12). A card with no
+    // current NBA deal comes in at what the card is worth, on a staggered
+    // one-to-three years so the exclusive window has somebody in it.
     const years = () => CONTRACT_YEARS.min + Math.floor(rng() * 3);
-    const put = (c, teamId) => { contracts[cardKey(c)] = { teamId, dp: fairDp(c), years: years(), since: 1, how: 'brought' }; };
+    const put = (c, teamId) => {
+      const real = contractFor(cardKey(c));
+      contracts[cardKey(c)] = { teamId, dp: real?.dp ?? fairDp(c), years: real?.years ?? years(), since: 1, how: 'brought' };
+    };
     for (const h of entrants) for (const c of h.roster) put(c, h.id);
   }
 
@@ -479,9 +512,11 @@ export function createDynasty({
     // and settle a free agency of their leftovers among themselves.
     const aiIds = shuffle(teams.filter(t => !t.human).map(t => t.id), rng);
     let x = { ...d, phase: DPHASE.draft, draft: { kind: 'fantasy', order: snakeOrder(aiIds, FANTASY_ROUNDS), picks: [], pool: board } };
-    x = closeSigning(finishDraft(simDraft(x, { rng, all: true }), { rng }), { rng });
-    for (let day = 0; day <= FA_DAYS && x.phase === DPHASE.freeAgency; day += 1) x = nextFaDay(x, { rng });
-    return say({ ...x, news: [] }, 'The league opens: the AI teams drafted around your ten. Start year one when you are ready.');
+    x = finishDraft(simDraft(x, { rng, all: true }), { rng, real: true });
+    // NO SIGNING PERIOD in an own start: everyone, yours and theirs, is
+    // already on a contract, so the league opens straight into the preseason.
+    x = { ...x, phase: DPHASE.preseason, talks: {} };
+    return say({ ...x, news: [] }, 'The league opens: every team on its real contracts. Start year one when you are ready.');
   }
   const order = snakeOrder(shuffle(teams.map(t => t.id), rng), FANTASY_ROUNDS);
   return say(
@@ -740,7 +775,7 @@ export const draftDone = d => !onClock(d);
  * Close a finished draft. The fantasy draft goes to signing — the AI signs its
  * draftees where it can — and the rookie draft to signing picks.
  */
-export function finishDraft(d, { rng = Math.random } = {}) {
+export function finishDraft(d, { rng = Math.random, real = false } = {}) {
   if (!draftDone(d)) throw new Error('dynasty: the draft is not over');
   const record = { kind: d.draft.kind, picks: d.draft.picks, origin: d.draft.origin ?? null };
   // Nobody took them: the fantasy draft's leftovers are shuffled into the draft
@@ -750,10 +785,15 @@ export function finishDraft(d, { rng = Math.random } = {}) {
     let x = { ...d, draft: record, phase: DPHASE.signing, talks: {}, draftPool: shuffle([...(d.draftPool ?? []), ...undrafted], rng) };
     for (const team of x.teams.filter(t => !t.human)) {
       for (const key of rightsOf(x, team.id, 'draft')) {
-        const years = preferredYears(traitOf(x, key));
-        const dp = floorOf(x, key, team.id, years, 1);
-        const fits = rosterKeys(x, team.id).length < MAX_ROSTER - AI_OPEN_SPOTS && payroll(x, team.id) + dp <= CAP_DP;
-        x = fits ? sign(x, team.id, key, { dp, years, how: 'draft' }) : renounce(x, team.id, key);
+        // `real`: an own-team start, where the AI's teams arrive on real
+        // contracts exactly as the coach's does — no negotiation, and over
+        // the apron is allowed, because getting back under is the problem
+        // the first offseason sets you (the user, 2026-09-12).
+        const deal = real ? contractFor(key) : null;
+        const years = deal?.years ?? preferredYears(traitOf(x, key));
+        const dp = deal?.dp ?? floorOf(x, key, team.id, years, 1);
+        const fits = real || (rosterKeys(x, team.id).length < MAX_ROSTER - AI_OPEN_SPOTS && payroll(x, team.id) + dp <= CAP_DP);
+        x = fits ? sign(x, team.id, key, { dp, years, how: real ? 'brought' : 'draft' }) : renounce(x, team.id, key);
       }
     }
     return say(x, 'The draft is done. Sign your draftees — anyone you do not sign goes to free agency.');

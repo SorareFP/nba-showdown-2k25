@@ -21,6 +21,18 @@ export const AI_LEVELS = [
   { id: 'deity',     label: 'Deity',     iq: 1,    blurb: 'the full search, every time' },
 ];
 
+// THE LADDER IS MEASURED, and the even spacing holds. 2,500 games a rung
+// (2026-09-12, simulate.js with the level swapped into both brains, ±2% at
+// 95%): Deity beats Settler 58.9% at +4.70 a game, Chieftain 56.9%/+3.39,
+// Warlord 54.2%/+2.08, Prince 53.3%/+1.39, King 51.4%/+0.53 — monotonic on
+// both columns, about a point of margin a rung — with the Deity-vs-Deity
+// control at 50.1%/+0.04.
+//
+// MEASURE THIS WITH ENOUGH GAMES OR NOT AT ALL. At 600 a rung the interval is
+// ±4 and the control drifted 48% to 51.7% between two runs of identical code;
+// tuned on that noise, the rungs looked broken and a re-spacing looked
+// justified. It was not. One game's dice are worth more than the whole ladder,
+// so nothing under a couple of thousand games a rung says anything.
 export const DEFAULT_AI_LEVEL = 'deity';
 const KEY = 'showdown.aiLevel';
 

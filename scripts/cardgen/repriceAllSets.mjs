@@ -49,6 +49,13 @@ const SPECIALS = [
   'cards-wnba.json',
   'cards-wnba-rookie.json',
   'cards-wnba-super-season.json',
+  // The three the warning above was written for, and which it did not save:
+  // all carry salaries, all were priced against the base line, and all three
+  // sat out every reprice until 2026-09-12 — so a set-completion reward was
+  // quietly on an older line than the card it rewards you for collecting.
+  'cards-set-rewards.json',
+  'cards-wnba-team-rewards.json',
+  'cards-wnba-set-rewards.json',
 ];
 for (const f of SPECIALS) {
   if (!fs.existsSync(path.join(GEN, f))) { console.log(`${f}: missing, skipped`); continue; }

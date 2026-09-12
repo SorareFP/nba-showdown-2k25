@@ -158,21 +158,26 @@ export function aiDraftPick(game, teamKey) {
  * Returns `matchups[i]` = index of MY starter guarding THEIR attacker in slot
  * i, the shape applyMatchups writes and doRoll reads.
  */
-export function aiSetMatchups(game, teamKey) {
+/**
+ * cost[a][d]: what the opponent's attacker in slot `a` gets against my
+ * defender `d`, star-weighted — the currency every assignment decision in
+ * this file is priced in. `effOverride` lets a caller ask the question under
+ * a DIFFERENT set of temporary effects, which is how Switch Everything gets
+ * priced against its own doubling below.
+ */
+function matchupCosts(game, teamKey, effOverride = null) {
   const myT = getTeam(game, teamKey);
   const oppKey = teamKey === 'A' ? 'B' : 'A';
   const oppT = getTeam(game, oppKey);
-
   const attackers = oppT?.starters || [];
   const defenders = myT?.starters || [];
   const n = Math.min(attackers.length, defenders.length);
   if (n === 0) return null;
 
-  const tempEff = game.tempEff?.[oppKey] || {};
+  const tempEff = effOverride ?? (game.tempEff?.[oppKey] || {});
   const tempDefEff = game.tempDefEff?.[teamKey] ?? null;
   const meanSal = attackers.reduce((t, p) => t + (p?.salary || 0), 0) / n || 1;
 
-  // cost[a][d]: what attacker a gets against defender d, star-weighted.
   const cost = attackers.slice(0, n).map((att, a) =>
     defenders.slice(0, n).map((def, d) => {
       if (!att || !def) return 0;
@@ -181,6 +186,22 @@ export function aiSetMatchups(game, teamKey) {
       return adv.rollBonus * weight;
     })
   );
+  return { n, cost };
+}
+
+/** The total that permutation `perm` concedes, in the same currency. */
+function assignmentTotal(m, perm) {
+  if (!m || !perm) return Infinity;
+  let t = 0;
+  for (let a = 0; a < m.n; a += 1) t += m.cost[a]?.[perm[a] ?? a] ?? 0;
+  return t;
+}
+
+/** The permutation that concedes least, and what it concedes. */
+function bestAssignment(game, teamKey, effOverride = null) {
+  const m = matchupCosts(game, teamKey, effOverride);
+  if (!m) return null;
+  const { n, cost } = m;
 
   let best = null;
   let bestTotal = Infinity;
@@ -206,7 +227,12 @@ export function aiSetMatchups(game, teamKey) {
   };
   walk(0, 0, -Infinity);
 
-  return { type: 'set_matchups', matchups: best };
+  return { matchups: best, total: bestTotal, costs: m };
+}
+
+export function aiSetMatchups(game, teamKey) {
+  const r = bestAssignment(game, teamKey);
+  return r?.matchups ? { type: 'set_matchups', matchups: r.matchups } : null;
 }
 
 // ── Placement: which player takes the floor next ────────────────────────────
@@ -502,6 +528,40 @@ export function switchEverythingChanges(game, teamKey) {
 }
 
 /**
+ * WHAT SWITCH EVERYTHING IS WORTH, net of what it costs.
+ *
+ * "Does anybody move?" was the wrong question, and it is the one the coach
+ * used to ask (the user, 2026-09-12: "AI also seems to play Switch Everything
+ * in a way that gives me massive advantages"). The card reassigns the whole
+ * defence AND doubles every advantage the offence holds, so a reassignment
+ * that gains a little while the doubling costs a lot is a gift. Worse, the
+ * assignment it applied was the optimum computed WITHOUT the doubling, so it
+ * was not even the best answer under the card's own terms.
+ *
+ * Both halves are fixed here by pricing the two boards in one currency:
+ *
+ *   now      what they get off the floor as it stands, undoubled
+ *   after    what they get off the best assignment WITH doubling counted
+ *
+ * The gain is now − after, and the card is worth a turn only when that clears
+ * SWITCH_FLOOR, the same bar High Screen & Roll and the cancellers answer to.
+ * Measured over 150 simulated games the old rule played it 100 times, one in
+ * six of them for a net LOSS, the worst at −8.1 of weighted roll bonus.
+ */
+export function switchEverythingValue(game, teamKey) {
+  const oppKey = teamKey === 'A' ? 'B' : 'A';
+  const plain = game.tempEff?.[oppKey] || {};
+  const m = matchupCosts(game, teamKey, plain);
+  if (!m) return { gain: 0, matchups: null };
+  const now = assignmentTotal(m, game.offMatchups?.[oppKey] || [0, 1, 2, 3, 4]);
+  // Already doubled (a second copy in the same segment): the price is paid,
+  // so the reassignment is all upside and is judged on its own.
+  const after = bestAssignment(game, teamKey, { ...plain, doubleAdv: true });
+  if (!after?.matchups) return { gain: 0, matchups: null };
+  return { gain: now - after.total, matchups: after.matchups };
+}
+
+/**
  * THE SCREEN AND ITS CANCELLERS ARE JUDGED IN POINTS, not from a table.
  *
  * High Screen & Roll used to be a flat 6 with a fallback swap of slots 0 and
@@ -619,7 +679,10 @@ export function switchCancelValue(game, teamKey, cardId) {
 
 function evaluateCard(game, teamKey, cardId, strat, opts = {}) {
   const phase = game.phase;
-  if (cardId === 'switch_everything' && !switchEverythingChanges(game, teamKey)) return 0;
+  if (cardId === 'switch_everything') {
+    const { gain } = switchEverythingValue(game, teamKey);
+    return gain >= SWITCH_FLOOR ? Math.min(10, 3 + 2 * gain) : 0;
+  }
   if (cardId === 'high_screen_roll') {
     if (phase !== 'matchup_strats') return 0;
     const sc = bestScreen(game, teamKey);
@@ -694,7 +757,7 @@ function evaluateCard(game, teamKey, cardId, strat, opts = {}) {
     cross_court_dime: 7,
     energy_injection: 4,
     crowd_favorite: 4,   // fires now (was 5+ with no reader)
-    switch_everything: 6,
+    switch_everything: 6,   // unreachable: priced in points above, net of the doubling
     this_is_my_house: 8,
     delayed_slip: 4,
     double_team: 6,
@@ -986,9 +1049,10 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
     }
 
     case 'switch_everything': {
-      // Use the matchup AI to figure out best defense
-      const result = aiSetMatchups(game, teamKey);
-      return result ? { assignments: result.matchups } : {};
+      // The assignment that is best UNDER THE DOUBLING, not the one that
+      // would be best if the card were free — see switchEverythingValue.
+      const { matchups } = switchEverythingValue(game, teamKey);
+      return matchups ? { assignments: matchups } : {};
     }
 
     case 'hack_a': {

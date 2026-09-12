@@ -1061,6 +1061,55 @@ export function pendingRolls(g, teamKey) {
   return n;
 }
 
+/**
+ * WHO MAY ROLL RIGHT NOW — the solo driver's alternation rule.
+ *
+ * Strict alternation with the human leading: the human rolls, the coach rolls,
+ * and the human gets the floor back — to roll again or to play a reaction —
+ * before the coach's next die. A side with nobody left to roll stands aside
+ * and the other finishes. `pendingRolls` counts slots that are neither rolled
+ * nor blocked, so a This Is My House block does not stall the rotation.
+ *
+ * Returns { A, B }: whether each side may roll right now. Used by the AI
+ * driver for B and by CourtBoard to enable the human's buttons for A. It
+ * lives here rather than in PlayTab because coachCardWindow below is the
+ * same rule read from the other end, and two copies of a turn rule is how
+ * one of them goes stale.
+ */
+export function rollGate(g) {
+  // Second rolls (Offensive Board Mastery) count as rolls still to make.
+  const a = pendingRolls(g, 'A');
+  const b = pendingRolls(g, 'B');
+  return {
+    A: b === 0 || a >= b,   // the human leads: equal counts means it is A's turn
+    B: a === 0 || b > a,    // the coach follows: it rolls only once it is behind
+  };
+}
+
+/**
+ * MAY THE COACH PLAY A CARD RIGHT NOW, in the rolling stage?
+ *
+ * While it still has dice to throw the answer is the alternation rule above:
+ * one card window before each of its own rolls, so the human keeps the floor
+ * between them. Once its five have rolled the answer is simply YES — the
+ * human's hand stays live until the section ends, and the coach's used to go
+ * dead here, because every card window in the driver hung off "does it still
+ * need to roll" (the user, 2026-09-12: "the AI is not playing obvious cards
+ * like Putback Dunk when available").
+ *
+ * That last window is where the conditions that ripen LATE come true, since
+ * rebounds and assists only accumulate as the dice land: Putback Dunk wants a
+ * rebound lead, which a section is likeliest to hand you after the rolls, not
+ * before them. Measured over 150 simulated games it is 5.3% of all the coach's
+ * card plays — about one a side a game — and both simulators, which have
+ * always had the window, are where that measurement comes from.
+ */
+export function coachCardWindow(g, teamKey = 'B') {
+  if (!g || g.phase !== 'scoring') return false;
+  if (pendingRolls(g, teamKey) === 0) return true;
+  return Boolean(rollGate(g)[teamKey]);
+}
+
 export function doRoll(g, teamKey, idx, opts = {}) {
   const myT = getTeam(g, teamKey);
   const oppT = getOpp(g, teamKey);

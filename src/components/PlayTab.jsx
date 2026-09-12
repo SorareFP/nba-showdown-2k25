@@ -1,5 +1,5 @@
 import { useReducer, useCallback, useState, useEffect, useRef } from 'react';
-import { newGame, doRoll, endSection, spendAssist, spendReboundBonus, applyMatchups, spendTimeout, endTimeout, clutchAvailable, passTurn, pendingRolls, searchCrunchCard } from '../game/engine.js';
+import { newGame, doRoll, endSection, spendAssist, spendReboundBonus, applyMatchups, spendTimeout, endTimeout, clutchAvailable, passTurn, pendingRolls, rollGate, coachCardWindow, searchCrunchCard } from '../game/engine.js';
 import { aiTurn, aiScoringDecision, aiRollDecision, aiSpendDecision, aiReactionDecision, aiCrunchDecision, aiCrunchSearch, aiSetMatchups, aiGoUnderChoice } from '../game/ai.js';
 import { CLUTCH_DICE } from '../game/clutchAwards.js';
 import { execCard, resolvePendingShotCheck, resolveGoUnder } from '../game/execCard.js';
@@ -93,29 +93,6 @@ const AI_DELAY = 700;
  * before taking the newer one. The helpers live in src/game/gameSave.js and
  * src/firebase/games.js.
  */
-
-/**
- * WHO MAY ROLL NEXT, once both sides have passed and the dice are live.
- *
- * Strict alternation with the human leading: the human rolls, the coach rolls,
- * and the human gets the floor back — to roll again or to play a reaction —
- * before the coach's next die. A side with nobody left to roll stands aside
- * and the other finishes. `pending` counts slots that are neither rolled nor
- * blocked, so a This Is My House block does not stall the rotation.
- *
- * Returns { A, B }: whether each side may roll right now. Used by the AI
- * driver for B and by CourtBoard to enable the human's buttons for A.
- */
-function rollGate(game) {
-  // Second rolls (Offensive Board Mastery) count as rolls still to make.
-  const pending = key => pendingRolls(game, key);
-  const a = pending('A');
-  const b = pending('B');
-  return {
-    A: b === 0 || a >= b,   // the human leads: equal counts means it is A's turn
-    B: a === 0 || b > a,    // the coach follows: it rolls only once it is behind
-  };
-}
 
 /**
  * `preset` is a game somebody else decided on: a season fixture, handed down
@@ -354,7 +331,7 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
         const rollingOpen = (game.scoringPasses || 0) >= 99;
 
         if (!rollingOpen && game.scoringTurn === 'B') {
-          const action = aiScoringDecision(game, 'B');
+          const action = aiScoringDecision(game, 'B', { iq });
           if (action?.type === 'play_card' && tryCard(action.cardId, action.opts)) return;
           dispatch({ type: 'UPDATE', game: passTurn(game, 'B') });
           return;
@@ -367,7 +344,7 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
           // before a human could reach it — Anticipate the Pass most visibly
           // (the user, 2026-09-07: "the CPU just goes and goes and goes").
           // Both simulators already alternate; the live driver now does too.
-          // See rollGate below for the rule, which is the same one the
+          // See rollGate in engine.js for the rule, which is the same one the
           // human's Roll buttons obey from the other side.
           const gate = rollGate(game);
           if (needsRoll && gate.B) {
@@ -378,7 +355,7 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
               // First the search: one crunch card out of the deck, then riders.
               const wanted = aiCrunchSearch(game, 'B');
               if (wanted) { dispatch({ type: 'SEARCH_CRUNCH', teamKey: 'B', cardId: wanted, silent: true }); return; }
-              const rider = aiScoringDecision(game, 'B');
+              const rider = aiScoringDecision(game, 'B', { iq });
               if (rider?.type === 'play_card' && tryCard(rider.cardId, rider.opts)) return;
               dispatch({ type: 'END_TIMEOUT' });
               return;
@@ -390,7 +367,7 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
             // Mid-roll card window before the next die — a Heat Check on a
             // fresh top-tier roll. One play per tick; a rejected play falls
             // through to the roll.
-            const cardAction = aiScoringDecision(game, 'B');
+            const cardAction = aiScoringDecision(game, 'B', { iq });
             if (cardAction?.type === 'play_card' && tryCard(cardAction.cardId, cardAction.opts)) return;
             const action = aiRollDecision(game, 'B');
             if (action?.playerIdx != null) {
@@ -398,6 +375,15 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
               return;
             }
             // No rollable player despite open slots — fall through to spends.
+          } else if (coachCardWindow(game, 'B')) {
+            // THE COACH'S LAST CARD WINDOW (coachCardWindow, engine.js). Every
+            // window above hangs off "does it still need to roll", so once its
+            // five were in, the coach could not play another card all section
+            // — while the human's hand stayed live. Both simulators have
+            // always given the side a window here, and it is where the cards
+            // whose conditions ripen late finally become legal.
+            const late = aiScoringDecision(game, 'B', { iq });
+            if (late?.type === 'play_card' && tryCard(late.cardId, late.opts)) return;
           }
           const spend = aiSpendDecision(game, 'B', { iq });
           if (spend?.type === 'spend_assist') {

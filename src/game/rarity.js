@@ -1,6 +1,6 @@
 // src/game/rarity.js — Rarity utilities, weights, burn values
 import { CARDS } from './cards.js';
-import { STRATS } from './strats.js';
+import { STRATS, getStrat } from './strats.js';
 
 // Player rarity derived from salary. LEGENDARY (approved 2026-09-03) is the
 // apex band — 16 base cards at $1,200+ (Giannis $1,730 down to LaMelo) — with
@@ -152,6 +152,23 @@ export const STRAT_BURN_VALUES = {
 // 5/4/3/1 (the user, 2026-09-07). Enforced by validateDeck on every save —
 // until then this table governed only the generated default deck, and a
 // player could run eight of anything.
+/**
+ * HOW MANY COPIES OF A STRATEGY CARD ARE ANY USE — the deck cap, read as a
+ * collection rule as well as a deck one.
+ *
+ * A sixth copy of a common cannot be played: the deck editor, savedDecks.js
+ * and cleanDeck all refuse it. So a sixth copy pulled out of a pack is not a
+ * card, it is coins that have not been counted yet (the user, 2026-09-12: "we
+ * can add an auto-burn for any strategy card in your collection that goes
+ * above the deck cap for its rarity"). Returns null for anything that is not
+ * a strategy card — players have no cap.
+ */
+export function stratCopyCap(cardKey) {
+  const strat = getStrat(cardKey);
+  if (!strat) return null;
+  return STRAT_COPY_CAPS[getStratRarity(strat)] ?? 5;
+}
+
 export const STRAT_COPY_CAPS = {
   'common': 5,
   'uncommon': 4,

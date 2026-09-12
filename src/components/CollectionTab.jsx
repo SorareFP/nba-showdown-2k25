@@ -16,6 +16,7 @@ import DeckEditor from './DeckEditor.jsx';
 import TeamEditor from './TeamEditor.jsx';
 import PackShop from './PackShop.jsx';
 import PackOpening from './PackOpening.jsx';
+import { getStrat } from '../game/strats.js';
 import MyCollection from './MyCollection.jsx';
 import Market from './Market.jsx';
 import CollectionGoals from './CollectionGoals.jsx';
@@ -165,7 +166,8 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
   // not saved. The direct route saves first too now, so there is one flow.
   const handleBuyPack = async (packType, options) => {
     try {
-      const { cards, spent, box } = await openPack(user.uid, packType, options, supply);
+      const { cards, spent, box, burned } = await openPack(user.uid, packType, options, supply);
+      noteBurned(burned);
       // The server has already taken the coins; show it now rather than after
       // the reveal, so the balance on the reveal screen is the real one.
       setUserData(u => (u ? { ...u, currency: (u.currency ?? 0) - (spent ?? 0) } : u));
@@ -178,9 +180,23 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
     }
   };
 
+  /**
+   * OVER THE DECK CAP, PAID OUT. A strategy card past its band's cap can never
+   * be played, so the server pays its burn value instead of minting clutter
+   * (the user, 2026-09-12). The reveal still shows the pull; this says what
+   * happened to it.
+   */
+  const noteBurned = list => {
+    if (!list?.length) return;
+    const coins = list.reduce((t, b) => t + (b.coins ?? 0), 0);
+    const names = [...new Set(list.map(b => getStrat(b.cardKey)?.name ?? b.cardKey))];
+    setToast(`${names.join(', ')} — already at the deck cap, burned for $${coins}.`);
+  };
+
   /** Open a box's first pack and hand the reveal the box it came from. */
   const startBox = async box => {
     const first = await openBoxPack(user.uid, box.id, supply);
+    noteBurned(first.burned);
     setOpeningPack({
       cards: first.cards.map(c => ({ ...c, packIndex: 0 })),
       packType: 'booster_box',
@@ -195,6 +211,7 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
     if (!box) return false;
     try {
       const next = await openBoxPack(user.uid, box.id, supply);
+      noteBurned(next.burned);
       setOpeningPack(p => {
         const nextIndex = Math.max(...p.cards.map(c => c.packIndex ?? 0)) + 1;
         return {

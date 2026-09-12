@@ -2,7 +2,8 @@
 import { db } from './config.js';
 import { goalProgress, claimableGoals, goalCoinReward } from '../game/collections.js';
 import { CARD_MAP } from '../game/cards.js';
-import { getMarketPrice } from '../game/rarity.js';
+import { getMarketPrice, stratCopyCap } from '../game/rarity.js';
+import { burnValueFor } from '../game/marketRules.js';
 import {
   collection, doc, getDocs, getDoc, setDoc, updateDoc, deleteDoc,
   serverTimestamp, writeBatch, increment,
@@ -115,9 +116,22 @@ export async function addCardsToCollection(uid, cards, packType, cost) {
   // or a spare, so it has to be read before anything is written.
   const existing = await loadCollection(uid);
 
+  // A COPY OVER THE DECK CAP IS COINS, NOT A CARD — see recordMints in
+  // functions/index.js for the rule; this is the direct twin of it.
   const minted = {};
+  const burned = [];
+  const held = new Map();
   for (const card of cards) {
     const key = card.id;
+    if (card.type === 'strat') {
+      const cap = stratCopyCap(key);
+      const have = held.get(key) ?? (existing[key]?.count ?? 0);
+      if (cap != null && have >= cap) {
+        burned.push({ cardKey: key, coins: burnValueFor(key) ?? 0, cap });
+        continue;
+      }
+      held.set(key, have + 1);
+    }
     const copy = doc(copiesRef(uid));
     batch.set(copy, {
       cardKey: key,
@@ -140,6 +154,9 @@ export async function addCardsToCollection(uid, cards, packType, cost) {
     );
   }
 
+  // The over-cap copies never became cards; they become coins here.
+  const burnCoins = burned.reduce((t, b) => t + b.coins, 0);
+
   // One document, one write, merged — see readSupply for why it is not read by
   // name. `increment` inside a nested object is why this is setDoc/merge rather
   // than updateDoc: a card key holds a colon, which an update field path would
@@ -150,7 +167,9 @@ export async function addCardsToCollection(uid, cards, packType, cost) {
     { merge: true }
   );
 
-  if (cost > 0) batch.update(doc(db, 'users', uid), { currency: increment(-cost) });
+  // The price out and the over-cap burn back, in one write.
+  const net = burnCoins - (cost > 0 ? cost : 0);
+  if (net !== 0) batch.set(doc(db, 'users', uid), { currency: increment(net) }, { merge: true });
 
   batch.set(doc(histRef(uid)), {
     packType,

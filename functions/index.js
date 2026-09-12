@@ -43,7 +43,7 @@ import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 import { generatePack, PACK_TYPES, favoriteTeamOptions, normalizeFavoriteTeam, nextBoxPack } from './shared/src/game/packEngine.js';
 import { goalProgress, goalCoinReward, REWARD_BY_GOAL, collectedKeys } from './shared/src/game/collections.js';
 import { getCardByKey } from './shared/src/game/cardSets.js';
-import { getStratRarity, STRAT_COPY_CAPS } from './shared/src/game/rarity.js';
+import { getStratRarity, STRAT_COPY_CAPS, stratCopyCap } from './shared/src/game/rarity.js';
 import { burnValueFor, checkListingPrice } from './shared/src/game/marketRules.js';
 import { getStrat } from './shared/src/game/strats.js';
 import { settleGameReward, todayKey, sanitizeBox } from './shared/src/game/coinRewards.js';
@@ -116,12 +116,30 @@ async function readSupply() {
  * from those packs shouldn't even be decided"). A box now mints one pack at a
  * time through openBoxPack, and this is the part both routes share.
  */
-function recordMints(tx, uid, cards, source) {
+function recordMints(tx, uid, cards, source, held = new Map()) {
   const minted = {};
   const types = {};
+  // A COPY OVER THE DECK CAP IS COINS, NOT A CARD. The cap is what the deck
+  // editor and cleanDeck already enforce — 5 common, 4 uncommon, 3 rare, 1
+  // legendary — so a copy beyond it can never be played, sits in the
+  // collection as clutter, and is burned on arrival instead. `held` is what
+  // the player already owns of each strat, read before the first write; it
+  // counts up as this pack mints, so two over-cap copies in one pack both
+  // burn. Players are never capped and never auto-burned.
+  const burned = [];
   for (const card of cards) {
     const key = card.id;
     const type = card.type === 'strat' ? 'strat' : 'player';
+    if (type === 'strat') {
+      const cap = stratCopyCap(key);
+      const have = held.get(key) ?? 0;
+      if (cap != null && have >= cap) {
+        const coins = burnValueFor(key) ?? 0;
+        burned.push({ cardKey: key, coins, cap });
+        continue;
+      }
+      held.set(key, have + 1);
+    }
     tx.set(db.collection(`users/${uid}/copies`).doc(), {
       cardKey: key,
       type,
@@ -131,6 +149,10 @@ function recordMints(tx, uid, cards, source) {
     });
     minted[key] = (minted[key] ?? 0) + 1;
     types[key] = type;
+  }
+  const burnCoins = burned.reduce((t, b) => t + b.coins, 0);
+  if (burnCoins > 0) {
+    tx.set(db.doc(`users/${uid}`), { currency: FieldValue.increment(burnCoins) }, { merge: true });
   }
 
   for (const [key, n] of Object.entries(minted)) {
@@ -153,7 +175,19 @@ function recordMints(tx, uid, cards, source) {
       { merge: true }
     );
   }
-  return minted;
+  return { minted, burned, burnCoins };
+}
+
+/**
+ * What the player already holds of each strategy card in `cards`, read inside
+ * the transaction and BEFORE any write — Firestore takes every read first.
+ */
+async function heldStrats(tx, uid, cards) {
+  const keys = [...new Set(cards.filter(c => c.type === 'strat').map(c => c.id))];
+  const snaps = await Promise.all(keys.map(k => tx.get(db.doc(`users/${uid}/collection/${k}`))));
+  const held = new Map();
+  keys.forEach((k, i) => held.set(k, snaps[i].exists ? (snaps[i].data()?.count ?? 0) : 0));
+  return held;
 }
 
 export const openPack = onCall({ region: 'us-central1' }, async request => {
@@ -246,7 +280,8 @@ export const openPack = onCall({ region: 'us-central1' }, async request => {
     // "none of my packed strats are saving to my collection", 2026-09-05).
     // The direct route always saved them, which is why localhost never
     // showed it.
-    recordMints(tx, uid, cards, packType);
+    const held = await heldStrats(tx, uid, cards);
+    const { burned } = recordMints(tx, uid, cards, packType, held);
 
     tx.update(userRef, {
       currency: FieldValue.increment(-cost),
@@ -260,8 +295,9 @@ export const openPack = onCall({ region: 'us-central1' }, async request => {
 
     // Returned so the reveal screen can show what was ALREADY recorded. The
     // cards are the player's the moment this commits; the animation is a
-    // replay, not a negotiation.
-    return { cards, spent: cost };
+    // replay, not a negotiation. `burned` names the strategy cards that came
+    // in over the deck cap and were paid out instead of kept.
+    return { cards, spent: cost, burned };
   });
 });
 
@@ -308,7 +344,8 @@ export const openBoxPack = onCall({ region: 'us-central1' }, async request => {
       supply,
       favoriteTeam: user.favoriteTeam ?? null,
     });
-    recordMints(tx, uid, cards, box.boughtAs ?? 'booster_box');
+    const held = await heldStrats(tx, uid, cards);
+    const { burned } = recordMints(tx, uid, cards, box.boughtAs ?? 'booster_box', held);
 
     const usedBooster = (box.left ?? 0) > 0;
     const left = usedBooster ? box.left - 1 : (box.left ?? 0);
@@ -319,7 +356,7 @@ export const openBoxPack = onCall({ region: 'us-central1' }, async request => {
 
     tx.update(userRef, { packWindow: { at: now, n: recent + 1 } });
 
-    return { cards, packType, left, bonusLeft, boxId };
+    return { cards, packType, left, bonusLeft, boxId, burned };
   });
 });
 

@@ -879,7 +879,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       const oppEff = g.tempEff[oppKey] || {};
       let halved = false;
       for (const key of Object.keys(oppEff)) {
-        if (key.startsWith('p') && oppEff[key] > 0) {
+        if (/^p[0-9]+$/.test(key) && oppEff[key] > 0) {
           const orig = oppEff[key];
           oppEff[key] = Math.floor(orig / 2);
           addLog(g, teamKey, `Offensive Foul: Power boost on slot ${key.slice(1)} halved (${orig} → ${oppEff[key]})`);
@@ -889,6 +889,27 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if (!halved) addLog(g, teamKey, 'Offensive Foul: no active Power boosts found, −1 REB still applies');
       oppT.rebounds = Math.max(0, oppT.rebounds - 1);
       addLog(g, teamKey, 'Offensive Foul: opponent −1 Rebound');
+      break;
+    }
+
+    case 'beat_to_the_spot': {
+      // The Speed mirror of Offensive Foul: halve every Speed boost the
+      // opponent has bought this section, and take an assist off the board —
+      // Power buys rebounds, Speed buys assists, so each card docks its own.
+      const oppKeySpd = teamKey === 'A' ? 'B' : 'A';
+      const oppEffSpd = g.tempEff[oppKeySpd] || {};
+      let cut = false;
+      for (const key of Object.keys(oppEffSpd)) {
+        if (/^s[0-9]+$/.test(key) && oppEffSpd[key] > 0) {
+          const orig = oppEffSpd[key];
+          oppEffSpd[key] = Math.floor(orig / 2);
+          addLog(g, teamKey, `Beat Him to the Spot: Speed boost on slot ${key.slice(1)} halved (${orig} → ${oppEffSpd[key]})`);
+          cut = true;
+        }
+      }
+      if (!cut) addLog(g, teamKey, 'Beat Him to the Spot: no active Speed boosts found, −1 AST still applies');
+      oppT.assists = Math.max(0, (oppT.assists || 0) - 1);
+      addLog(g, teamKey, 'Beat Him to the Spot: opponent −1 Assist');
       break;
     }
 

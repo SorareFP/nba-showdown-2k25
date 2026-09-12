@@ -85,6 +85,8 @@ export const STRATS = [
     desc:'Opponent has 6+ assists: spend 1 of your assists to remove 2 from their track.' },
   { id:'offensive_foul',      name:'Offensive Foul',     phase:'reaction', side:'def', copies:2, locked:false, color:'#64748B', rarity:'common',
     desc:'Play after an opponent activates a card that boosts Power. Their Power boost is halved (rounded down), and they suffer −1 Rebound.' },
+  { id:'beat_to_the_spot',    name:'Beat Him to the Spot', phase:'reaction', side:'def', copies:2, locked:false, color:'#334155', rarity:'common',
+    desc:'Play after an opponent activates a card that boosts Speed. Their Speed boost is halved (rounded down), and they suffer −1 Assist.' },
   { id:'dogged',              name:'Dogged',             phase:'scoring',  side:'def', copies:2, locked:false, color:'#78716C', rarity:'common',
     desc:'Target an opposing fatigued player: they suffer an additional −2 Speed and −2 Power until benched for a segment.' },
   { id:'overhelp',            name:'Overhelp',           phase:'reaction', side:'off', copies:2, locked:false, color:'#0369A1', rarity:'common',

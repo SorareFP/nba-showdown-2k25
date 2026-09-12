@@ -57,7 +57,7 @@ describe('answers stay cheap', () => {
   const ANSWERS = [
     'go_under', 'fight_over', 'veer_switch', 'burned_switch', 'overhelp',
     'close_out', 'box_out', 'glass_cleaner', 'drop_coverage', 'smothering_defense',
-    'offensive_foul', 'hustle_play', 'rim_protector',
+    'offensive_foul', 'beat_to_the_spot', 'hustle_play', 'rim_protector',
   ];
 
   it('bands every counter as common', () => {

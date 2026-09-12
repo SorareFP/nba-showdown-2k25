@@ -652,7 +652,7 @@ function evaluateCard(game, teamKey, cardId, strat, opts = {}) {
     // dead even after switch cards came alive.
     const reactionValues = {
       go_under: 7, fight_over: 6, veer_switch: 6, burned_switch: 5,
-      offensive_foul: 5, cold_spell: 6, anticipate_pass: 5, overhelp: 5,
+      offensive_foul: 5, beat_to_the_spot: 5, cold_spell: 6, anticipate_pass: 5, overhelp: 5,
       offensive_board: 5, rebound_tap_out: 5, coaches_challenge: 6, close_out: 6,
       // Wave one (2026-09-06)
       find_the_open_man: 7, putback_specialist: 6, rim_protector: 7, drop_coverage: 5,

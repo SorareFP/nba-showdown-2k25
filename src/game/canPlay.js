@@ -406,9 +406,22 @@ export function canPlayCard(g, teamKey, cardId) {
     // Must be played in reaction to an opponent's card that boosts Power
     const oppKey = teamKey === 'A' ? 'B' : 'A';
     const oppEff = g.tempEff[oppKey] || {};
-    const hasPowerBoost = Object.keys(oppEff).some(k => k.startsWith('p') && oppEff[k] > 0);
+    // A SLOT key only: 'p0'..'p4'. startsWith('p') also caught 'paintAst0',
+    // the facilitator's assist counter, which is not a Power boost at all.
+    const hasPowerBoost = Object.keys(oppEff).some(k => /^p[0-9]+$/.test(k) && oppEff[k] > 0);
     if (!hasPowerBoost) return no('Opponent must have played a card that boosts Power first');
     return ok('Halve opponent\'s Power boost, −1 Rebound');
+  }
+
+  if (cardId === 'beat_to_the_spot') {
+    if (phase !== 'scoring' && phase !== 'matchup_strats') return no('Only playable during Matchup or Scoring Phase');
+    // The Speed twin of Offensive Foul: the defender wins the drive with his
+    // feet, so the burst a card just bought is cut in half.
+    const oppKey = teamKey === 'A' ? 'B' : 'A';
+    const oppEff = g.tempEff[oppKey] || {};
+    const hasSpeedBoost = Object.keys(oppEff).some(k => /^s[0-9]+$/.test(k) && oppEff[k] > 0);
+    if (!hasSpeedBoost) return no('Opponent must have played a card that boosts Speed first');
+    return ok('Halve their Speed boost, −1 Assist');
   }
 
   if (cardId === 'dogged') {

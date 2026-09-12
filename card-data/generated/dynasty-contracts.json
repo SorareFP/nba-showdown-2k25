@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-12T13:12:01.997Z",
+ "generatedAt": "2026-09-12T13:22:08.279Z",
  "capUsd": 154647000,
  "source": "basketball-reference.com/contracts (one row a player, first season column)",
  "note": "The deal a player ARRIVES on in an own-team start. Negotiations price the card, not this.",
@@ -315,6 +315,12 @@
   "Franz_Wagner": {
    "usd": 41754690,
    "years": 4
+  },
+  "Bennedict_Mathurin": {
+   "usd": 8000000,
+   "years": 2,
+   "manual": true,
+   "note": "signed with NOP for 2026-27: 2 years, $16.0M total ($8.0M average). From the Spotrac screenshot the user sent on 2026-09-12; BBRef had no row yet."
   },
   "Stephon_Castle": {
    "usd": 10015920,

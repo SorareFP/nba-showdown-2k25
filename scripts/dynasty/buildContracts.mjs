@@ -74,6 +74,26 @@ async function rowsFor(team) {
 const rows = [];
 for (const t of TEAMS) rows.push(...await rowsFor(t));
 
+/**
+ * DEALS THE SOURCE HAS NOT CAUGHT UP WITH, by card id.
+ *
+ * Basketball-Reference lists a contract once the season's books show it, so a
+ * player who signed after that reads as a free agent and would arrive at card
+ * value. That fallback is fine (the user, 2026-09-12: "card value is a
+ * perfectly fine fallback") — this is only for the ones worth being exact
+ * about. `usd` is the season's salary; where only a total and a length are
+ * known, the average is the honest estimate.
+ *
+ * Every entry needs a source in its note, and should be deleted once the
+ * source carries the deal — a stale override outlives the contract it copies.
+ */
+const MANUAL = {
+  Bennedict_Mathurin: {
+    usd: 8000000, years: 2,
+    note: 'signed with NOP for 2026-27: 2 years, $16.0M total ($8.0M average). From the Spotrac screenshot the user sent on 2026-09-12; BBRef had no row yet.',
+  },
+};
+
 // MATCHING. Exact spelling first; only then the suffix-stripped form, and only
 // when it is unambiguous — "LeBron James Jr." must never become LeBron James
 // (the Gary Payton lesson).
@@ -94,13 +114,21 @@ const cards = JSON.parse(fs.readFileSync('card-data/generated/cards-2026-27.json
 const list = Array.isArray(cards) ? cards : (cards.cards ?? Object.values(cards)[0]);
 const contracts = {};
 const missed = [];
+const filled = [];
 for (const c of list) {
   let hit = exact.get(plain(c.name));
   if (!hit) {
     const near = loose.get(stripped(c.name)) ?? [];
     if (near.length === 1) [hit] = near;            // unambiguous only
   }
-  if (!hit) { missed.push(c.name); continue; }
+  if (!hit) {
+    const manual = MANUAL[c.id];
+    if (manual) {
+      contracts[c.id] = { usd: manual.usd, years: Math.max(1, Math.min(5, manual.years)), manual: true, note: manual.note };
+      filled.push(c.name);
+    } else missed.push(c.name);
+    continue;
+  }
   contracts[c.id] = { usd: hit.usd, years: Math.max(1, Math.min(5, hit.years)) };
 }
 
@@ -113,4 +141,5 @@ fs.writeFileSync(OUT, `${JSON.stringify({
 }, null, 1)}\n`);
 
 console.log(`rows ${rows.length} · matched ${Object.keys(contracts).length}/${list.length} (${(Object.keys(contracts).length / list.length * 100).toFixed(1)}%)`);
-console.log(`unmatched (${missed.length}): ${missed.slice(0, 20).join(', ')}`);
+if (filled.length) console.log(`filled by hand (${filled.length}): ${filled.join(', ')}`);
+console.log(`no contract, so card value (${missed.length}): ${missed.slice(0, 20).join(', ')}`);

@@ -14,7 +14,7 @@
    "paintBoost": -1,
    "threePtBoost": 1,
    "defBoost": 2,
-   "salary": 1730,
+   "salary": 2020,
    "chart": [
     {
      "lo": 1,
@@ -88,7 +88,7 @@
    "paintBoost": 0,
    "threePtBoost": -6,
    "defBoost": 2,
-   "salary": 1410,
+   "salary": 1610,
    "chart": [
     {
      "lo": 1,
@@ -155,7 +155,7 @@
    "paintBoost": 1,
    "threePtBoost": -3,
    "defBoost": 3,
-   "salary": 1330,
+   "salary": 1490,
    "chart": [
     {
      "lo": 1,
@@ -217,7 +217,7 @@
    "paintBoost": 0,
    "threePtBoost": -2,
    "defBoost": 0,
-   "salary": 1340,
+   "salary": 1480,
    "chart": [
     {
      "lo": 1,

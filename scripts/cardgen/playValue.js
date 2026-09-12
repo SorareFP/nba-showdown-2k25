@@ -267,15 +267,52 @@ export function priceCardsInPlace(cards, opts) {
   return { salaries, moved, priced: cards.length };
 }
 
+/**
+ * THE BENCH BREAK: how far below strict proportionality the cheap end sits.
+ *
+ * Matching the reference mean AND spread, which is what this used to do, fixes
+ * the LINE's two ends and lets its intercept fall where it may. It fell at -97:
+ * every card got ninety-seven dollars off a price proportional to its value,
+ * which is five per cent of Victor Wembanyama and three quarters of a floor
+ * card. Since only five of a roster's ten play at once, that made the other
+ * five nearly free — the five cheapest cards cost $290 together, leaving $5,210
+ * of a $5,500 cap for the starting five, and a bench of scraps became the
+ * dominant build.
+ *
+ * Nobody chose -97; it was arithmetic. The user, 2026-09-12, chose this: keep a
+ * break for depth, because depth SHOULD be cheap when it plays half the time,
+ * but make it a quarter rather than three quarters, "so long as the players are
+ * deserving of that salary".
+ *
+ * WHY A CURVE AND NOT AN INTERCEPT. Subtracting a constant cannot do it: the
+ * break it gives is the constant over the price, so it decays like 1/value —
+ * 23% for the single cheapest card, 12% for the next, nothing by mid-table —
+ * and pushing the constant high enough to lift the TIER drives the bottom into
+ * the $10 floor and re-compresses exactly what this exists to undo. A power
+ * curve gives the whole cheap end one break and tapers smoothly, with no
+ * clamping and no inversions: price stays strictly increasing in value, so no
+ * card is priced above or below what it is worth.
+ *
+ * MEASURED at 1.30, holding the reference mean: the cheapest tenth of the set
+ * pays 27% under proportional, the cheapest quarter 21%, and the dearest tenth
+ * pays 16% over — the top is what funds the break, which is what holding the
+ * mean means. The five cheapest cards go from $290 to $390.
+ *
+ * IT MOVES THE RARITY BANDS WITH IT, and that is not optional: the bands are
+ * fixed dollar thresholds, every one of them above the mean price, so inflating
+ * the top promotes cards across them. Left alone this run took legendary from
+ * 14 cards to 22. getPlayerRarity's thresholds were re-cut in the same change
+ * to hold the populations roughly where they were — see the note there.
+ */
+export const BENCH_CURVE = 1.30;
+
 export function priceSet(cards, { field, basis, roundSalary, min, max } = {}) {
   const { value } = computePlayValue(cards, { field });
   const b = basis ?? value;
-  const mV = mean(b);
-  const sV = sd(b) || 1;
-  return value.map(v =>
-    Math.min(
-      Math.max(roundSalary(REFERENCE_SALARY.mean + ((v - mV) / sV) * REFERENCE_SALARY.sd), min),
-      max
-    )
-  );
+  // The curve is anchored on the BASIS, so a sixteen-card special set is placed
+  // on the base set's line rather than stretched across its own spread — the
+  // property priceAgainstBase exists to hold.
+  const curved = v => Math.sign(v) * Math.abs(v) ** BENCH_CURVE;
+  const A = REFERENCE_SALARY.mean / (mean(b.map(curved)) || 1);
+  return value.map(v => Math.min(Math.max(roundSalary(A * curved(v)), min), max));
 }

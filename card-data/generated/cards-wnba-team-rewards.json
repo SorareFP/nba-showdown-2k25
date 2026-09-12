@@ -22,7 +22,7 @@
    "paintBoost": -1,
    "threePtBoost": -2,
    "defBoost": 1,
-   "salary": 1310,
+   "salary": 1450,
    "chart": [
     {
      "lo": 1,
@@ -94,7 +94,7 @@
    "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": 3,
-   "salary": 1250,
+   "salary": 1370,
    "chart": [
     {
      "lo": 1,
@@ -166,7 +166,7 @@
    "paintBoost": 0,
    "threePtBoost": 2,
    "defBoost": 0,
-   "salary": 1190,
+   "salary": 1300,
    "chart": [
     {
      "lo": 1,
@@ -232,7 +232,7 @@
    "paintBoost": 2,
    "threePtBoost": 0,
    "defBoost": -1,
-   "salary": 1180,
+   "salary": 1280,
    "chart": [
     {
      "lo": 1,
@@ -311,7 +311,7 @@
    "paintBoost": 0,
    "threePtBoost": 2,
    "defBoost": -1,
-   "salary": 1080,
+   "salary": 1130,
    "chart": [
     {
      "lo": 1,
@@ -393,7 +393,7 @@
    "paintBoost": 1,
    "threePtBoost": 1,
    "defBoost": 1,
-   "salary": 1050,
+   "salary": 1120,
    "chart": [
     {
      "lo": 1,
@@ -458,7 +458,7 @@
    "paintBoost": -1,
    "threePtBoost": -1,
    "defBoost": 0,
-   "salary": 970,
+   "salary": 1010,
    "chart": [
     {
      "lo": 1,
@@ -523,7 +523,7 @@
    "paintBoost": 0,
    "threePtBoost": -6,
    "defBoost": 2,
-   "salary": 960,
+   "salary": 1000,
    "chart": [
     {
      "lo": 1,
@@ -595,7 +595,7 @@
    "paintBoost": -1,
    "threePtBoost": 0,
    "defBoost": 3,
-   "salary": 890,
+   "salary": 910,
    "chart": [
     {
      "lo": 1,
@@ -667,7 +667,7 @@
    "paintBoost": -3,
    "threePtBoost": 3,
    "defBoost": 1,
-   "salary": 840,
+   "salary": 860,
    "chart": [
     {
      "lo": 1,
@@ -740,7 +740,7 @@
    "paintBoost": -2,
    "threePtBoost": 2,
    "defBoost": 1,
-   "salary": 770,
+   "salary": 780,
    "chart": [
     {
      "lo": 1,
@@ -812,7 +812,7 @@
    "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": 1,
-   "salary": 730,
+   "salary": 740,
    "chart": [
     {
      "lo": 1,
@@ -884,7 +884,7 @@
    "paintBoost": -3,
    "threePtBoost": 3,
    "defBoost": -1,
-   "salary": 610,
+   "salary": 600,
    "chart": [
     {
      "lo": 1,

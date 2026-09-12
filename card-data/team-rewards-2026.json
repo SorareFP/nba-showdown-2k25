@@ -52,7 +52,8 @@
       "name": "Josh Smith",
       "season": 2009,
       "team": "ATL",
-      "goal": "nba-team-ATL"
+      "goal": "nba-team-ATL",
+      "bandException": "A hundred dollars under the super-rare floor at $850, after the 2026-09-12 bench-curve reprice moved BOTH sides of the test: Atlanta's roster got dearer, so the franchise now earns super-rare, while Josh Smith's 2008-09 barely moved. DECLARED, NOT SOLVED - it is larger than any other exception in this file, and the honest fix is to re-pick Atlanta against real game logs (fetchTeamRewardCandidateLogs.mjs ATL, then teamRewardCandidates.js ATL --real). The user, 2026-09-12, cleared the rewards to change; this one waits on the choice of which Atlanta season should represent the franchise."
     },
     "TOR": {
       "name": "Anthony Parker",
@@ -159,7 +160,8 @@
     "IND": {
       "set": "super-season",
       "id": "Myles_Turner",
-      "goal": "nba-team-IND"
+      "goal": "nba-team-IND",
+      "bandException": "Eleven dollars over the rare ceiling at $960, after the 2026-09-12 bench-curve reprice. Indiana's collection difficulty now earns rare and Turner's 2018-19 lands one rounding step above it - smaller than Philadelphia's twenty and Miami's forty. Nothing about the pick is wrong; the line moved under it."
     },
     "NOP": {
       "set": "rookie",

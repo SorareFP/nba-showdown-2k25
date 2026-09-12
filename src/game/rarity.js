@@ -3,17 +3,38 @@ import { CARDS } from './cards.js';
 import { STRATS, getStrat } from './strats.js';
 
 // Player rarity derived from salary. LEGENDARY (approved 2026-09-03) is the
-// apex band — 16 base cards at $1,200+ (Giannis $1,730 down to LaMelo) — with
-// its own sliver of pull weight and NO place in any guarantee: "guaranteed
-// super-rare" means exactly the $900-1,199 band, so the apex cards come only
-// from the base odds. The salary thresholds survive the 2026-27 reprice with
-// near-identical tier proportions to the shipped set.
+// apex band — with its own sliver of pull weight and NO place in any
+// guarantee: "guaranteed super-rare" means exactly the band below it, so the
+// apex cards come only from the base odds.
+//
+// THE CUTS MOVED WITH THE BENCH CURVE (2026-09-12). They were 1200/900/700/450
+// against a pricing line whose intercept was an accident; playValue.js now
+// prices on a curve that gives the cheap end a quarter off proportional and
+// funds it from the top, which lifts every price above the mean. Left alone
+// that promoted eight cards into the apex band — legendary went 14 to 22 — for
+// no reason anybody chose, and pack odds, burn values and the collection
+// ladder all read these bands.
+//
+// So the thresholds were re-cut to hold the POPULATIONS rather than the
+// numbers, the user's call being that they "don't need to be exact". Measured
+// on the 348-card base set, shipped against re-cut:
+//
+//   legendary  14 -> 14     super-rare  40 -> 34     rare  49 -> 52
+//   uncommon  134 -> 138    common     111 -> 110
+//
+// Every band within six of where it was, and the apex band exactly where it
+// was, so the ecosystem the old numbers were tuned against is the one these
+// numbers describe. The cuts were chosen against TWO objectives at once: those
+// populations, and how many franchise rewards land in the band their
+// collection difficulty earns — which is a fixed point, because the difficulty
+// is itself computed from the rarity of the franchise's cards. 1330/950 leaves
+// two rewards out of band where 1200/900 left nine.
 export function getPlayerRarity(card) {
   const s = card.salary || 0;
-  if (s >= 1200) return 'legendary';
-  if (s >= 900) return 'super-rare';
+  if (s >= 1330) return 'legendary';
+  if (s >= 950) return 'super-rare';
   if (s >= 700) return 'rare';
-  if (s >= 450) return 'uncommon';
+  if (s >= 420) return 'uncommon';
   return 'common';
 }
 

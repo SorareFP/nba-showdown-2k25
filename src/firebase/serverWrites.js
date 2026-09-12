@@ -223,6 +223,9 @@ const direct = {
     return { cardKey, coins: value };
   },
   async claimGameReward(uid, claim) {
+    // The dynasty rate is the server's to grant — it is the only side that can
+    // read the dynasty and check the game came from its live season.
+    claim = { ...claim, dynasty: false };
     const me = await getUserData(uid);
     const today = todayKey();
     const settled = settleGameReward(

@@ -13,7 +13,7 @@ import styles from './GameOver.module.css';
  * (two people at one screen), or PvP via `isPvp` + `myTeamKey`. The claim's
  * `won` and the headline both come from humanWon — see outcome.js for why.
  */
-export default function GameOver({ game, onPlayAgain, isPvp = false, myTeamKey = null, mode = 'ai', onLeave = null, leaveLabel = 'Leave Game' }) {
+export default function GameOver({ game, onPlayAgain, isPvp = false, myTeamKey = null, mode = 'ai', onLeave = null, leaveLabel = 'Leave Game', dynasty = null }) {
   const { user } = useAuth();
   const { refresh: refreshCardStats } = useCardStats();
   const { teamA, teamB } = game;
@@ -49,7 +49,14 @@ export default function GameOver({ game, onPlayAgain, isPvp = false, myTeamKey =
       // `margin` is MY score minus theirs: a win pays by it, a close loss pays a
       // little (coinRewards.js). Hotseat has no "me", so no margin.
       const margin = myKey === 'A' ? teamA.score - teamB.score : myKey === 'B' ? teamB.score - teamA.score : null;
-      const claim = { won: youWon, pvp: isPvp, margin, ...detectMilestones(game, myKey), box: myKey ? boxScoreFor(game, myKey) : [] };
+      // A dynasty fixture sends WHICH dynasty and season it came from. The
+      // preview below shows the plain rate; the server verifies the dynasty
+      // and pays 15% more, and its answer replaces the preview.
+      const claim = {
+        won: youWon, pvp: isPvp, margin, ...detectMilestones(game, myKey),
+        box: myKey ? boxScoreFor(game, myKey) : [],
+        ...(dynasty ?? {}),
+      };
       const today = todayKey();
       const preview = settleGameReward(
         claim,

@@ -14,12 +14,32 @@ import {
   winBonus,
   WIN_BY_MARGIN,
   CLOSE_LOSS,
+  DYNASTY_GAME_FACTOR,
 } from './coinRewards.js';
 
 const TODAY = '2026-09-05';
 const fresh = { date: '', coins: 0, firstWin: false };
 
 describe('settleGameReward', () => {
+  // A GAME INSIDE A DYNASTY pays 15% more (the user, 2026-09-11: "Something
+  // between the flat +10 and 25%. Maybe 10-20%?"). The flag is the server's:
+  // it is set only after the dynasty document is read (functions/index.js).
+  it('pays the dynasty rate on a dynasty game, and nothing extra otherwise', () => {
+    const claim = { won: true, pvp: false, margin: 12, milestoneIds: [] };
+    const plain = settleGameReward(claim, { ...fresh, firstWin: true, date: TODAY }, TODAY);
+    const dyn = settleGameReward({ ...claim, dynasty: true }, { ...fresh, firstWin: true, date: TODAY }, TODAY);
+    expect(dyn.coins).toBe(plain.coins + Math.floor(plain.coins * (DYNASTY_GAME_FACTOR - 1)));
+    expect(dyn.breakdown.some(b => /Dynasty Game/.test(b.label))).toBe(true);
+    expect(plain.breakdown.some(b => /Dynasty Game/.test(b.label))).toBe(false);
+  });
+
+  it('leaves the daily-capped milestone coins out of the dynasty bonus', () => {
+    const m = MILESTONES[0];
+    const r = settleGameReward({ won: false, milestoneIds: [m.id], dynasty: true }, fresh, TODAY);
+    expect(r.milestoneCoins).toBe(m.coins);
+    expect(r.coins).toBe(REWARD.complete + m.coins + Math.floor(REWARD.complete * (DYNASTY_GAME_FACTOR - 1)));
+  });
+
   it('pays completion, the win bonus and the first win of the day', () => {
     const r = settleGameReward({ won: true, pvp: false, milestoneIds: [], bam: false }, fresh, TODAY);
     expect(r.coins).toBe(REWARD.complete + REWARD.win + REWARD.dailyFirstWin);

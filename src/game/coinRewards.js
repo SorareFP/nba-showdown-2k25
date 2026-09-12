@@ -50,6 +50,23 @@ export const REWARD = {
 export const WIN_BY_MARGIN = { min: 20, max: 100, fullAt: 50 };
 /** Losing by this much or less — a tie included — pays a consolation. */
 export const CLOSE_LOSS = { within: 5, coins: 15 };
+
+/**
+ * A GAME INSIDE A DYNASTY PAYS MORE. The user, 2026-09-11, on the small
+ * per-game nudge: "Something between the flat +10 and 25%. Maybe 10-20%?" —
+ * so 15% on what the game itself paid, on top of the title money the year
+ * pays at the end.
+ *
+ * Milestones are NOT scaled: they come out of a daily cap (DAILY_MILESTONE_CAP)
+ * and scaling them would quietly raise it. The bonus rides on the parts a
+ * dynasty game earns for being played — completion, the win bonus or a close
+ * loss, and the daily first win.
+ *
+ * The claim's `dynasty` flag is the SERVER'S (functions/index.js), never the
+ * browser's: it is set only after reading the player's own dynasty document
+ * and finding the live season the game says it belongs to.
+ */
+export const DYNASTY_GAME_FACTOR = 1.15;
 const MAX_MARGIN = 200;
 
 /** A client-sent margin as a whole number of points, or null for none. */
@@ -181,6 +198,16 @@ export function settleGameReward(claim, daily, today) {
   if (firstWin) {
     coins += REWARD.dailyFirstWin;
     breakdown.push({ label: 'Daily First Win', coins: REWARD.dailyFirstWin });
+  }
+
+  // The dynasty nudge, on everything but the capped milestone coins.
+  if (c.dynasty) {
+    const base = coins - milestoneCoins;
+    const extra = Math.floor(base * (DYNASTY_GAME_FACTOR - 1));
+    if (extra > 0) {
+      coins += extra;
+      breakdown.push({ label: `Dynasty Game · +${Math.round((DYNASTY_GAME_FACTOR - 1) * 100)}%`, coins: extra });
+    }
   }
 
   const bam = Boolean(c.bam);

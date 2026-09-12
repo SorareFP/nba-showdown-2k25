@@ -491,6 +491,33 @@ export const burnCard = onCall({ region: 'us-central1' }, async request => {
  * let the client touch them, because a client that can zero its own counters
  * has no cap.
  */
+/**
+ * WAS THIS GAME PLAYED INSIDE A DYNASTY? A dynasty game pays 15% more
+ * (coinRewards.js DYNASTY_GAME_FACTOR), and the browser does not get to say
+ * so: this reads the player's OWN dynasty — or the friends league they coach
+ * in — and only agrees if it is in its season phase and that season is the
+ * one the game came from. The rest of the claim is trusted the way it always
+ * was (the dice are rolled on the client); a bare multiplier on the client's
+ * word would be a coin printer, which is a different thing.
+ *
+ * Reads only, and called before this transaction's first write.
+ */
+async function inLiveDynastySeason(tx, uid, { dynastyId, leagueId, seasonId }) {
+  if (!seasonId) return false;
+  if (dynastyId) {
+    const snap = await tx.get(db.doc(`users/${uid}/dynasties/${dynastyId}`));
+    const d = snap.exists ? snap.data() : null;
+    return Boolean(d && d.phase === 'season' && d.season?.id === seasonId);
+  }
+  if (leagueId) {
+    const snap = await tx.get(db.doc(`leagues/${leagueId}`));
+    const l = snap.exists ? snap.data() : null;
+    return Boolean(l && l.kind === 'dynasty' && l.members?.[uid]
+      && l.state?.phase === 'season' && l.state?.season?.id === seasonId);
+  }
+  return false;
+}
+
 export const claimGameReward = onCall({ region: 'us-central1' }, async request => {
   const uid = requireAuth(request);
   const d = request.data ?? {};
@@ -508,6 +535,12 @@ export const claimGameReward = onCall({ region: 'us-central1' }, async request =
     // the caller's team. Sanitized to shape, then to cards that exist.
     box: sanitizeBox(d.box).filter(row => getCardByKey(row.key)),
   };
+  // Where the game says it came from. Checked below, never believed as-is.
+  const from = {
+    dynastyId: typeof d.dynastyId === 'string' ? d.dynastyId.slice(0, 200) : null,
+    leagueId: typeof d.leagueId === 'string' ? d.leagueId.slice(0, 200) : null,
+    seasonId: typeof d.seasonId === 'string' ? d.seasonId.slice(0, 200) : null,
+  };
   const userRef = db.doc(`users/${uid}`);
 
   return db.runTransaction(async tx => {
@@ -520,6 +553,9 @@ export const claimGameReward = onCall({ region: 'us-central1' }, async request =
     if (recent >= MAX_GAME_CLAIMS_PER_MINUTE) {
       throw new HttpsError('resource-exhausted', 'Slow down a moment');
     }
+
+    // The dynasty rate, granted here or not at all.
+    claim.dynasty = await inLiveDynastySeason(tx, uid, from);
 
     const today = todayKey();
     const settled = settleGameReward(

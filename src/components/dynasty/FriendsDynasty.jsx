@@ -461,7 +461,7 @@ export function FriendsDynastyView({ leagueId, uid, onBack, onPlayFixture, onOpe
           onForfeit={forfeit}
           title={`${league.name} · Year ${d.year}`}
           backLabel="All dynasties"
-          presetExtra={{ returnTab: 'dynasty' }}
+          presetExtra={{ returnTab: 'dynasty', leagueId: league.id }}
           finale={(
             <span className={dy.readyWrap}>
               <PhaseButton moves={moves} onDone={noop} label={last ? 'Close out the dynasty →' : `Close out Year ${d.year} →`} />

@@ -622,7 +622,7 @@ function DynastyView({ d, uid, commit, onPlayFixture, onBack, onAbandon }) {
           onAbandon={onAbandon}
           title={`${d.name} · Year ${d.year}`}
           backLabel="All dynasties"
-          presetExtra={{ returnTab: 'dynasty' }}
+          presetExtra={{ returnTab: 'dynasty', dynastyId: d.id }}
           finale={(
             <button type="button" className={styles.primary} onClick={closeYear}>
               {!d.aging && d.year >= d.years ? 'Close out the dynasty →' : `Close out Year ${d.year} — to the offseason →`}

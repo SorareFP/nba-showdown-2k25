@@ -61,6 +61,19 @@ const HORIZON = 0.5;
 const WORN_PER_POINT = 0.15;
 /** How far a card's value can wobble before the sort — see aiScoringDecision. */
 const CARD_JITTER = 0.3;
+
+/**
+ * A DECISION PLAYED BADLY — the difficulty ladder's shape (aiLevels.js).
+ * With probability `iq` the coach does the considered thing; the rest of the
+ * time a beginner's version of it. The first lever was the placement snake
+ * (aiPlacementPick); these are the same dial on the cards it plays, the
+ * checks it answers and the assists it spends. Math.random is the stream the
+ * sim harness seeds, so audits stay reproducible, and iq 1 (every simulator,
+ * the audit and the tutorial) never takes these branches at all.
+ */
+function misplays(iq = 1) {
+  return iq < 1 && Math.random() >= iq;
+}
 /** Expected points a spend check is worth taking at once (a 30% three), and at a doubled surplus — see aiSpendDecision. */
 const SPEND_GOOD = 0.9;
 const SPEND_FLOOR = 0.45;
@@ -362,7 +375,7 @@ export function aiPlacementPick(game, teamKey, { iq = 1 } = {}) {
 // anywhere in this file. One decision per call, greedy: threes ahead of paint
 // by the best boost in the lineup, rebound paint-checks when the section
 // published one. The caller loops until null.
-export function aiSpendDecision(game, teamKey) {
+export function aiSpendDecision(game, teamKey, opts = {}) {
   const team = getTeam(game, teamKey);
   if (!team?.starters?.length) return null;
   // Any player may take a spend check now (2026-09-09); the AI nominates the
@@ -401,6 +414,12 @@ export function aiSpendDecision(game, teamKey) {
   if (three) choices.push({ spendType: '3pt', idx: three.idx, ev: three.pHit * 3, cost: SPEND_COSTS.assistThree });
   if (paint) choices.push({ spendType: 'paint', idx: paint.idx, ev: paint.pHit * 2, cost: SPEND_COSTS.assistPaint });
   choices.sort((a, b) => b.ev - a.ev);
+  // LEVER FOUR — THE CURRENCY. A lower level spends the moment it can afford
+  // anything, keeping nothing back for the cards in its hand.
+  if (misplays(opts.iq)) {
+    const any = choices.find(c => ast >= c.cost);
+    if (any) return { type: 'spend_assist', spendType: any.spendType, playerIdx: any.idx };
+  }
   const best = choices.find(c => ast >= c.cost);
   if (best) {
     const floor = surplus >= 3 * best.cost ? 0 : surplus >= 2 * best.cost ? SPEND_FLOOR : SPEND_GOOD;
@@ -438,6 +457,13 @@ export function aiScoringDecision(game, teamKey, opts = {}) {
   }
 
   if (playable.length === 0) return { type: 'pass' };
+
+  // LEVER TWO — CARD JUDGEMENT. A lower level knows what it can play and not
+  // which is worth playing: any legal card, chosen at random.
+  if (misplays(opts.iq)) {
+    const wild = playable[Math.floor(Math.random() * playable.length)];
+    return { type: 'play_card', cardId: wild.cardId, opts: aiBuildCardOpts(game, teamKey, wild.cardId) };
+  }
 
   // A MIXED STRATEGY. evaluateCard is very nearly a fixed table, so with a
   // straight sort the AI played the same card from the same hand every time
@@ -1378,7 +1404,9 @@ export function aiCrunchSearch(game, teamKey) {
 
 // ── Reaction Card Decision ──────────────────────────────────────────────────
 // Check if AI should play a reaction card in response to opponent's action.
-export function aiReactionDecision(game, teamKey, trigger) {
+export function aiReactionDecision(game, teamKey, trigger, opts = {}) {
+  // LEVER THREE — THE ANSWER. A lower level watches the check go by.
+  if (misplays(opts.iq)) return null;
   const team = getTeam(game, teamKey);
   const hand = team.hand || [];
 

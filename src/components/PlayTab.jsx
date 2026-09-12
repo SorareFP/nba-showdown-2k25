@@ -303,6 +303,9 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
   // window. The human keeps the same window through PendingBanner, which
   // pauses on the AI's checks with Close Out on offer — the MTG-style pause,
   // already built.
+  // The coach's level reaches every judgement it makes, not just the snake:
+  // cards, the answer to a check, and what it does with its assists.
+  const iq = iqOf(aiLevel);
   useEffect(() => {
     if (!game || game.done || opponent !== 'ai') return undefined;
     const timer = setTimeout(() => {
@@ -325,7 +328,7 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
         const psc = game.pendingShotCheck;
         if (psc.teamKey === 'A') {
           if (!psc.reacted) {
-            const react = aiReactionDecision(game, 'B', 'shot_check');
+            const react = aiReactionDecision(game, 'B', 'shot_check', { iq });
             if (react?.type === 'play_card' && tryCard(react.cardId, react.opts)) return;
           }
           dispatch({ type: 'RESOLVE_CHECK' });
@@ -340,7 +343,7 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
         if (r.ok) { dispatch({ type: 'UPDATE', game: r.game }); return; }
       }
       if (phase === 'matchup_strats' && (game.placementStep ?? 10) >= 10 && game.matchupTurn === 'B') {
-        const action = aiTurn(game, 'B');
+        const action = aiTurn(game, 'B', { iq });
         // One card, then the turn is the human's (handOverPriority); or pass.
         if (action?.type === 'play_card' && tryCard(action.cardId, action.opts)) return;
         dispatch({ type: 'UPDATE', game: passTurn(game, 'B') });
@@ -396,7 +399,7 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
             }
             // No rollable player despite open slots — fall through to spends.
           }
-          const spend = aiSpendDecision(game, 'B');
+          const spend = aiSpendDecision(game, 'B', { iq });
           if (spend?.type === 'spend_assist') {
             const res = spendAssist(game, 'B', spend.spendType, spend.playerIdx);
             if (res.ok) { dispatch({ type: 'UPDATE', game: res.game }); return; }
@@ -409,7 +412,7 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
       }
     }, AI_DELAY);
     return () => clearTimeout(timer);
-  }, [game, opponent]);
+  }, [game, opponent, iq]);
 
   // ── The two moments the game announces about itself ───────────────────────
   //
@@ -544,6 +547,12 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
       <GameOver
         game={game}
         mode="ai"
+        // A dynasty fixture names its dynasty (or its friends league) and the
+        // season it belongs to; the SERVER checks that before paying the
+        // dynasty rate (coinRewards.js DYNASTY_GAME_FACTOR).
+        dynasty={livePreset.dynastyId || livePreset.leagueId
+          ? { dynastyId: livePreset.dynastyId ?? null, leagueId: livePreset.leagueId ?? null, seasonId: livePreset.seasonId ?? null }
+          : null}
         onLeave={() => { dispatch({ type: 'SET', game: null }); setRestoredPreset(null); onPresetFinish?.(result); }}
         leaveLabel="Back to the season →"
       />

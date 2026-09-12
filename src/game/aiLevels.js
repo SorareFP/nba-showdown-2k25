@@ -5,15 +5,20 @@
 // random matchup IQ, and then we scale it up to 'perfect'." So the first
 // lever is `iq`: the chance, at each placement in the snake, that the coach
 // plays the search's best answer rather than a random one. Deity is the
-// full search every time; Settler is a coin with no memory. Other levers
-// (card judgement, spend judgement) can hang off the same ladder later.
+// full search every time; Settler is a coin with no memory.
+//
+// 2026-09-12: the same dial now runs four judgements, all through
+// `misplays(iq)` in ai.js — the placement snake, WHICH CARD it plays from
+// the hand, whether it ANSWERS an announced shot check, and how it spends
+// assists. A level is one number because a coach who reads the floor also
+// reads its hand; splitting them would be six sliders nobody wants to set.
 export const AI_LEVELS = [
-  { id: 'settler',   label: 'Settler',   iq: 0,    blurb: 'places at random' },
-  { id: 'chieftain', label: 'Chieftain', iq: 0.25, blurb: 'finds the right matchup one time in four' },
+  { id: 'settler',   label: 'Settler',   iq: 0,    blurb: 'places at random, plays any card, answers nothing' },
+  { id: 'chieftain', label: 'Chieftain', iq: 0.25, blurb: 'gets it right one time in four' },
   { id: 'warlord',   label: 'Warlord',   iq: 0.5,  blurb: 'half the time' },
   { id: 'prince',    label: 'Prince',    iq: 0.75, blurb: 'three times in four' },
   { id: 'king',      label: 'King',      iq: 0.9,  blurb: 'nearly always' },
-  { id: 'deity',     label: 'Deity',     iq: 1,    blurb: 'the full search, every placement' },
+  { id: 'deity',     label: 'Deity',     iq: 1,    blurb: 'the full search, every time' },
 ];
 
 export const DEFAULT_AI_LEVEL = 'deity';

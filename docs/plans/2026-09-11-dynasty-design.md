@@ -218,6 +218,17 @@ How it runs:
   - Playoff fixtures are per game (`fixtureOf` and `openFixtures` are series-aware), so each game of a series is reported with its own home side.
 - **The client.** `dynasty/FriendsDynasty.jsx`. The offseason screens take `moves`: `soloMoves` alone, `friendsMoves` with friends. In a friends dynasty, `d.humanId` is set to the coach looking.
 
+## Round five: real contracts on an own-team start (2026-09-12)
+
+**[user]** "If a player just uses normal rosters/brings their team in, all players come in on their current contracts, Wemby included, and there is no signing period. This is the same for AI. Players who need to be re-signed or are free agents should ask for what their card is worth." And: "if your team comes in massively over the apron, you'll have to let some people walk or trade them to get under the apron NEXT season, or before you can re-sign anyone."
+
+- **The arriving deal is real.** `contractFor(key)` reads this season's salary as a share of the NBA cap and pays the same share of the 100-DP cap, so a max contract lands on the 35-DP max. The years are the years left on THAT deal.
+- **Everything after it prices the card.** Free agency, the exclusive window and rookie scale are untouched, which is the whole point: Wembanyama opens at 11 DP for one year and then asks 35.
+- **No signing period in an own start.** The AI's teams are still fantasy-drafted around your ten, but they sign at their real contracts (`finishDraft(x, { real: true })`) and the league opens in the preseason.
+- **Over the apron is legal on arrival** and nothing had to change to allow it: squad size is the only roster check, the cap gates every signing, and a trade that reduces an over-apron payroll is already allowed. A star-heavy ten opens near 281 DP against a 115 apron.
+- **Cards with no current NBA deal** — retro, throwbacks, WNBA, and the 23 current players the source has no row for — arrive at what the card is worth on a one-to-three-year deal.
+- **The data**: `scripts/dynasty/buildContracts.mjs` → `card-data/generated/dynasty-contracts.json`, built from basketball-reference.com/contracts (Spotrac blocks automated requests; the user's screenshots of it agreed with the pull). 325 of 348 base cards match.
+
 ## Not built, and worth asking the user
 
 - **Trades.** There are none, AI or human.

@@ -5,8 +5,11 @@
  * the same way — two answers derived from two copies of this arithmetic would
  * not be comparable, and the whole question is a comparison.
  *
- * THE SCORING ECONOMY HAS THREE CHANNELS, and pricing only the first is the
- * mistake that makes every shooter look replacement-level:
+ * THE SCORING ECONOMY HAS FOUR CHANNELS, and pricing only the first is the
+ * mistake that makes every shooter look replacement-level. This header said
+ * THREE long after `defence` was added below, and that stale sentence is the
+ * reason a 2026-09-12 investigation twice concluded the model ignored defence
+ * when it does not — read the code, and keep this list in step with it:
  *
  *   chart       `scoringRoll` does `score += result.pts` with no check at all.
  *               Ungated, and the largest channel.
@@ -16,6 +19,11 @@
  *   target      a team spends its POOLED currency on whoever converts best, so
  *               a card that converts well is worth something even when it
  *               generates none of the currency itself.
+ *   defence     points DENIED, against a median defender rather than a
+ *               synthetic average: what the field scores on this card, chart
+ *               and converted currency alike, less what it scores on the
+ *               median. Negative for a card the field feasts on, which is how
+ *               a 1 SPD / 1 PWR defender pays for the hole he opens.
  *
  * Everything is measured at the roll bonus the engine's own matchup rule
  * gives, against the whole field, so Speed+Power enters through what it

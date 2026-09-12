@@ -90,12 +90,13 @@ export function setPillFor(card) {
   return { id: set, label: getSet(set)?.name ?? set };
 }
 
-export default function PackOpening({ cards, coins = null, onDone, onSaveRest = null }) {
+export default function PackOpening({ cards, coins = null, onDone, onSaveRest = null, box = null, onRequestPack = null }) {
   const [current, setCurrent] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const [dismissed, setDismissed] = useState([]);
   const [transitioning, setTransitioning] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [loadingPack, setLoadingPack] = useState(false);
   const [quiet, setQuiet] = useState(isMuted);
 
   // INSPECTING A PULLED CARD. Hovering a card in the rail shows it on the
@@ -160,8 +161,16 @@ export default function PackOpening({ cards, coins = null, onDone, onSaveRest = 
   }, [allEnriched]);
   const [packNo, setPackNo] = useState(0);
   const enriched = groups[packNo] ?? [];
-  const isBox = groups.length > 1;
-  const lastPack = packNo >= groups.length - 1;
+  // A LIVE BOX HOLDS SLOTS, NOT CARDS. `groups` is only what has been opened
+  // so far — one pack, at the start — so "is this a box" and "is this the last
+  // pack" come from the box's own remaining count rather than from the length
+  // of a list that no longer contains the future (the user, 2026-09-12: the
+  // cards "should be decided when the pack is opened"). A resumed legacy box,
+  // whose cards were all rolled at purchase, still arrives as many groups and
+  // still works: packsLeft is 0 and the old arithmetic takes over.
+  const packsLeft = box ? (box.left ?? 0) + (box.bonusLeft ?? 0) : 0;
+  const isBox = Boolean(box) || groups.length > 1;
+  const lastPack = packsLeft === 0 && packNo >= groups.length - 1;
 
   const totalCards = enriched.length;
   const allDone = totalCards > 0 && dismissed.length === totalCards; // this pack
@@ -229,7 +238,15 @@ export default function PackOpening({ cards, coins = null, onDone, onSaveRest = 
   };
 
   // Next pack in the box: the same screen, fresh state, the pack after this.
-  const handleNextPack = () => {
+  const handleNextPack = async () => {
+    if (loadingPack) return;
+    // The next pack of a live box does not exist yet: the server rolls it now.
+    if (box && packNo >= groups.length - 1) {
+      setLoadingPack(true);
+      let got = false;
+      try { got = Boolean(await onRequestPack?.()); } finally { setLoadingPack(false); }
+      if (!got) return;
+    }
     stopInspecting();
     setDismissed([]);
     setCurrent(0);
@@ -245,8 +262,11 @@ export default function PackOpening({ cards, coins = null, onDone, onSaveRest = 
   const handleSaveRest = async () => {
     if (saving || !onSaveRest) return;
     setSaving(true);
+    // A live box needs nothing saved — the unopened packs are slots on the
+    // box document and the shop offers them back. Only a legacy box, rolled
+    // in full at purchase, still has a reveal to put down.
     const thisPack = enriched[0]?.packIndex ?? 0;
-    const rest = cards.filter(c => (c.packIndex ?? 0) > thisPack);
+    const rest = box ? [] : cards.filter(c => (c.packIndex ?? 0) > thisPack);
     await onSaveRest(rest);
   };
 

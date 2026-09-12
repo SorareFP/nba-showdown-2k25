@@ -78,6 +78,15 @@ service cloud.firestore {
         allow write: if false;
       }
 
+      // AN UNOPENED BOX. Slots, not cards: the pulls are rolled one pack at a
+      // time by openBoxPack, so this document never holds a card that has not
+      // been seen. Server-written for the same reason copies are — a client
+      // that can add slots can mint.
+      match /boxes/{boxId} {
+        allow read: if isSelf(uid);
+        allow write: if false;
+      }
+
       // Claims are the record of which goals have paid out. Server-written for
       // the same reason as currency: writing one by hand is free money.
       match /claims/{goalId} {

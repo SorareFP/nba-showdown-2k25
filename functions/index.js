@@ -40,7 +40,7 @@ import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import { initializeApp } from 'firebase-admin/app';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 
-import { generatePack, PACK_TYPES, favoriteTeamOptions, normalizeFavoriteTeam } from './shared/src/game/packEngine.js';
+import { generatePack, PACK_TYPES, favoriteTeamOptions, normalizeFavoriteTeam, nextBoxPack } from './shared/src/game/packEngine.js';
 import { goalProgress, goalCoinReward, REWARD_BY_GOAL, collectedKeys } from './shared/src/game/collections.js';
 import { getCardByKey } from './shared/src/game/cardSets.js';
 import { getStratRarity, STRAT_COPY_CAPS } from './shared/src/game/rarity.js';
@@ -107,6 +107,55 @@ async function readSupply() {
  * that half-committed would be the worst outcome available — coins gone and no
  * cards, or cards with no debit.
  */
+/**
+ * WRITE A PACK'S PULLS INTO THE LEDGER: one copy document each, the per-card
+ * collection count, and the supply the odds read next time.
+ *
+ * Lifted out of openPack when the booster box stopped deciding its cards at
+ * purchase (the user, 2026-09-12: "when I buy the booster box, all the cards
+ * from those packs shouldn't even be decided"). A box now mints one pack at a
+ * time through openBoxPack, and this is the part both routes share.
+ */
+function recordMints(tx, uid, cards, source) {
+  const minted = {};
+  const types = {};
+  for (const card of cards) {
+    const key = card.id;
+    const type = card.type === 'strat' ? 'strat' : 'player';
+    tx.set(db.collection(`users/${uid}/copies`).doc(), {
+      cardKey: key,
+      type,
+      mintedAt: FieldValue.serverTimestamp(),
+      source,
+      state: SPARE,
+    });
+    minted[key] = (minted[key] ?? 0) + 1;
+    types[key] = type;
+  }
+
+  for (const [key, n] of Object.entries(minted)) {
+    tx.set(
+      db.doc(`users/${uid}/collection/${key}`),
+      { type: types[key], count: FieldValue.increment(n), acquiredAt: FieldValue.serverTimestamp() },
+      { merge: true }
+    );
+  }
+
+  // SUPPLY MOVES ON A MINT — of a PLAYER. Strategy cards have no supply:
+  // the pack odds never read them (packEngine.js), so they are not counted.
+  // This is the write the whole exercise exists to take out of the client's
+  // hands.
+  const playerMints = Object.entries(minted).filter(([k]) => types[k] === 'player');
+  if (playerMints.length) {
+    tx.set(
+      db.doc('supply/current'),
+      { counts: Object.fromEntries(playerMints.map(([k, n]) => [k, FieldValue.increment(n)])) },
+      { merge: true }
+    );
+  }
+  return minted;
+}
+
 export const openPack = onCall({ region: 'us-central1' }, async request => {
   const uid = requireAuth(request);
   const { packType, options = {} } = request.data ?? {};
@@ -148,6 +197,38 @@ export const openPack = onCall({ region: 'us-central1' }, async request => {
     // write-once (see setFavoriteTeam) precisely so the starter's guaranteed
     // core — and the pack bias that will lean on it later — cannot be steered
     // by a client that fancies a different franchise this minute.
+    // A BOX DECIDES NOTHING AT THE TILL. It used to roll all 36 boosters and
+    // the bonus pack here and mint every card before the reveal screen opened,
+    // which put the whole box in the collection the moment it was bought — so
+    // a box put down half-opened spoiled itself (the user, 2026-09-12: "I
+    // saved some from my booster box for later, and it looks like there are
+    // some spoilers"). Now the purchase buys SLOTS, and openBoxPack rolls one
+    // pack when the player opens it, against the supply as it stands then.
+    if (def.box) {
+      const boxRef = db.collection(`users/${uid}/boxes`).doc();
+      tx.set(boxRef, {
+        packType: 'booster',
+        bonus: def.bonus ?? null,
+        left: def.box,
+        bonusLeft: def.bonus ? 1 : 0,
+        boughtAs: packType,
+        options: options ?? {},
+        boughtAt: FieldValue.serverTimestamp(),
+      });
+      tx.update(userRef, {
+        currency: FieldValue.increment(-cost),
+        packWindow: { at: now, n: recent + 1 },
+      });
+      tx.set(db.collection(`users/${uid}/packHistory`).doc(), {
+        packType, cost, openedAt: FieldValue.serverTimestamp(), cards: 0,
+      });
+      return {
+        cards: [],
+        spent: cost,
+        box: { id: boxRef.id, left: def.box, bonusLeft: def.bonus ? 1 : 0 },
+      };
+    }
+
     const cards = generatePack(
       packType,
       def.once
@@ -165,42 +246,7 @@ export const openPack = onCall({ region: 'us-central1' }, async request => {
     // "none of my packed strats are saving to my collection", 2026-09-05).
     // The direct route always saved them, which is why localhost never
     // showed it.
-    const minted = {};
-    const types = {};
-    for (const card of cards) {
-      const key = card.id;
-      const type = card.type === 'strat' ? 'strat' : 'player';
-      tx.set(db.collection(`users/${uid}/copies`).doc(), {
-        cardKey: key,
-        type,
-        mintedAt: FieldValue.serverTimestamp(),
-        source: packType,
-        state: SPARE,
-      });
-      minted[key] = (minted[key] ?? 0) + 1;
-      types[key] = type;
-    }
-
-    for (const [key, n] of Object.entries(minted)) {
-      tx.set(
-        db.doc(`users/${uid}/collection/${key}`),
-        { type: types[key], count: FieldValue.increment(n), acquiredAt: FieldValue.serverTimestamp() },
-        { merge: true }
-      );
-    }
-
-    // SUPPLY MOVES ON A MINT — of a PLAYER. Strategy cards have no supply:
-    // the pack odds never read them (packEngine.js), so they are not counted.
-    // This is the write the whole exercise exists to take out of the client's
-    // hands.
-    const playerMints = Object.entries(minted).filter(([k]) => types[k] === 'player');
-    if (playerMints.length) {
-      tx.set(
-        db.doc('supply/current'),
-        { counts: Object.fromEntries(playerMints.map(([k, n]) => [k, FieldValue.increment(n)])) },
-        { merge: true }
-      );
-    }
+    recordMints(tx, uid, cards, packType);
 
     tx.update(userRef, {
       currency: FieldValue.increment(-cost),
@@ -216,6 +262,64 @@ export const openPack = onCall({ region: 'us-central1' }, async request => {
     // cards are the player's the moment this commits; the animation is a
     // replay, not a negotiation.
     return { cards, spent: cost };
+  });
+});
+
+/**
+ * OPEN ONE PACK OUT OF A BOX.
+ *
+ * The dice stay on the server for the same reason they do in openPack, and
+ * they are rolled HERE rather than at purchase, so a box on the shelf holds no
+ * decided cards to spoil. Supply is read fresh each time, which also means a
+ * box opened over a week reflects what the pool looked like across that week
+ * rather than on the day it was bought.
+ *
+ * The coins were taken when the box was bought; this call is free.
+ */
+export const openBoxPack = onCall({ region: 'us-central1' }, async request => {
+  const uid = requireAuth(request);
+  const { boxId } = request.data ?? {};
+  if (!boxId) throw new HttpsError('invalid-argument', 'No box given');
+
+  const userRef = db.doc(`users/${uid}`);
+  const boxRef = db.doc(`users/${uid}/boxes/${boxId}`);
+  const supply = await readSupply();
+
+  return db.runTransaction(async tx => {
+    const [userSnap, boxSnap] = await Promise.all([tx.get(userRef), tx.get(boxRef)]);
+    if (!userSnap.exists) throw new HttpsError('failed-precondition', 'No such player');
+    if (!boxSnap.exists) throw new HttpsError('not-found', 'No such box');
+    const user = userSnap.data();
+    const box = boxSnap.data();
+
+    const packType = nextBoxPack(box);
+    if (!packType) throw new HttpsError('failed-precondition', 'That box is empty');
+    const def = PACK_TYPES[packType];
+    if (!def) throw new HttpsError('failed-precondition', `Unknown pack ${packType}`);
+
+    const now = Date.now();
+    const recent = (user.packWindow?.at ?? 0) > now - 60_000 ? (user.packWindow?.n ?? 0) : 0;
+    if (recent >= MAX_PACKS_PER_MINUTE) {
+      throw new HttpsError('resource-exhausted', 'Slow down a moment');
+    }
+
+    const cards = generatePack(packType, {
+      ...(box.options ?? {}),
+      supply,
+      favoriteTeam: user.favoriteTeam ?? null,
+    });
+    recordMints(tx, uid, cards, box.boughtAs ?? 'booster_box');
+
+    const usedBooster = (box.left ?? 0) > 0;
+    const left = usedBooster ? box.left - 1 : (box.left ?? 0);
+    const bonusLeft = usedBooster ? (box.bonusLeft ?? 0) : Math.max(0, (box.bonusLeft ?? 0) - 1);
+    // An empty box is gone: nothing left to resume, nothing left to list.
+    if (left === 0 && bonusLeft === 0) tx.delete(boxRef);
+    else tx.update(boxRef, { left, bonusLeft });
+
+    tx.update(userRef, { packWindow: { at: now, n: recent + 1 } });
+
+    return { cards, packType, left, bonusLeft, boxId };
   });
 });
 

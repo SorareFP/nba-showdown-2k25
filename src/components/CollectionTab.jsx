@@ -7,7 +7,7 @@ import { loadCollection, getUserData, loadClaims, addCoins, readSupply, updateUs
 // collection.js or market.js directly would bypass USE_CLOUD_FUNCTIONS, which
 // is exactly how the first version of the server rollout was wired to nothing.
 import {
-  openPack, listCard, burnCard, claimGoal, devResetAccount, devGrantCoins, USE_CLOUD_FUNCTIONS, collectCard, collectAllCards,
+  openPack, openBoxPack, loadBoxes, listCard, burnCard, claimGoal, devResetAccount, devGrantCoins, USE_CLOUD_FUNCTIONS, collectCard, collectAllCards,
   setFavoriteTeam } from '../firebase/serverWrites.js';
 import { CARD_MAP } from '../game/cards.js';
 import { STRAT_MAP } from '../game/strats.js';
@@ -165,13 +165,48 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
   // not saved. The direct route saves first too now, so there is one flow.
   const handleBuyPack = async (packType, options) => {
     try {
-      const { cards, spent } = await openPack(user.uid, packType, options, supply);
+      const { cards, spent, box } = await openPack(user.uid, packType, options, supply);
       // The server has already taken the coins; show it now rather than after
       // the reveal, so the balance on the reveal screen is the real one.
       setUserData(u => (u ? { ...u, currency: (u.currency ?? 0) - (spent ?? 0) } : u));
+      // A BOX BOUGHT IS A BOX OF SLOTS. Nothing is decided yet, so the reveal
+      // opens on the first pack and asks for each one after it.
+      if (box) { await startBox(box); return; }
       setOpeningPack({ cards, packType, options });
     } catch (e) {
       setToast(e.message);
+    }
+  };
+
+  /** Open a box's first pack and hand the reveal the box it came from. */
+  const startBox = async box => {
+    const first = await openBoxPack(user.uid, box.id, supply);
+    setOpeningPack({
+      cards: first.cards.map(c => ({ ...c, packIndex: 0 })),
+      packType: 'booster_box',
+      options: {},
+      box: { id: box.id, left: first.left, bonusLeft: first.bonusLeft },
+    });
+  };
+
+  /** The reveal has reached the end of a pack and wants the next one. */
+  const handleRequestPack = async () => {
+    const box = openingPack?.box;
+    if (!box) return false;
+    try {
+      const next = await openBoxPack(user.uid, box.id, supply);
+      setOpeningPack(p => {
+        const nextIndex = Math.max(...p.cards.map(c => c.packIndex ?? 0)) + 1;
+        return {
+          ...p,
+          cards: [...p.cards, ...next.cards.map(c => ({ ...c, packIndex: nextIndex }))],
+          box: { ...p.box, left: next.left, bonusLeft: next.bonusLeft },
+        };
+      });
+      return true;
+    } catch (e) {
+      setToast(e.message);
+      return false;
     }
   };
 
@@ -225,6 +260,21 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
   const handleResume = () => {
     if (!pendingReveals.length) return;
     setOpeningPack({ cards: pendingReveals, packType: 'booster_box', options: {}, resumed: true });
+  };
+
+  // BOXES WITH SLOTS LEFT. A box bought before 2026-09-12 rolled all its cards
+  // at the till and left them in settings.pendingReveals above; one bought
+  // after holds slots here. Both are offered, so a box in progress on the day
+  // the rule changed is not stranded.
+  const [boxes, setBoxes] = useState([]);
+  useEffect(() => {
+    let live = true;
+    if (!user?.uid) return undefined;
+    loadBoxes(user.uid).then(b => { if (live) setBoxes(b); }).catch(() => {});
+    return () => { live = false; };
+  }, [user?.uid, openingPack]);
+  const handleResumeBox = async id => {
+    try { await startBox({ id }); } catch (e) { setToast(e.message); }
   };
 
   const handleList = async (cardId, price) => {
@@ -366,6 +416,8 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
         coins={userData?.currency ?? 0}
         onDone={handlePackDone}
         onSaveRest={openingPack.packType === 'booster_box' ? handleSaveRest : null}
+        box={openingPack.box ?? null}
+        onRequestPack={handleRequestPack}
       />
     );
   }
@@ -621,6 +673,15 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
 
       {view === 'shop' && (
         <>
+          {boxes.map(b => (
+            <div key={b.id} style={{ margin: '0 0 16px', padding: '12px 16px', border: '1px solid var(--orange)', borderRadius: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
+              <div>
+                <strong>{(b.left ?? 0) + (b.bonusLeft ?? 0)} packs still to open</strong>
+                <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>A booster box on the shelf. Each pack is rolled when you open it — nothing is decided yet.</div>
+              </div>
+              <button className={styles.loadBtn} onClick={() => handleResumeBox(b.id)}>Open one</button>
+            </div>
+          ))}
           {pendingReveals.length > 0 && (
             <div style={{ margin: '0 0 16px', padding: '12px 16px', border: '1px solid var(--orange)', borderRadius: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
               <div>

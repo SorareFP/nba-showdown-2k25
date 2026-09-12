@@ -40,7 +40,7 @@
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import {
   collection, doc, getDoc, getDocs, query, where, writeBatch, increment, deleteField,
-  runTransaction, serverTimestamp,
+  runTransaction, serverTimestamp, addDoc, updateDoc, deleteDoc, orderBy,
 } from 'firebase/firestore';
 import { app, db } from './config.js';
 import {
@@ -55,7 +55,7 @@ import {
   delistCard as delistCardDirect,
   buyListing as buyListingDirect,
 } from './market.js';
-import { generatePack, PACK_TYPES, favoriteTeamOptions } from '../game/packEngine.js';
+import { generatePack, PACK_TYPES, favoriteTeamOptions, nextBoxPack } from '../game/packEngine.js';
 import { getCardByKey } from '../game/cardSets.js';
 import { burnValueFor, listingFloor, checkListingPrice } from '../game/marketRules.js';
 import { settleGameReward, todayKey, sanitizeBox } from '../game/coinRewards.js';
@@ -104,6 +104,7 @@ export { burnValueFor, listingFloor, checkListingPrice };
 /** The server route. `uid` is ignored: the server knows who is calling. */
 const server = {
   openPack: (uid, packType, options = {}) => call('openPack', { packType, options }),
+  openBoxPack: (uid, boxId) => call('openBoxPack', { boxId }),
   buyListing: (uid, listingId) => call('buyListing', { listingId }),
   claimGoal: (uid, goalId) => call('claimGoal', { goalId }),
   listCard: (uid, cardKey, price) => call('listCard', { cardKey, price }),
@@ -137,12 +138,47 @@ const direct = {
   async openPack(uid, packType, options = {}, supply = {}) {
     const def = PACK_TYPES[packType];
     if (!def) throw new Error(`Unknown pack ${packType}`);
+    // A BOX BUYS SLOTS, NOT CARDS — see openPack in functions/index.js.
+    if (def.box) {
+      const ref = await addDoc(collection(db, 'users', uid, 'boxes'), {
+        packType: 'booster',
+        bonus: def.bonus ?? null,
+        left: def.box,
+        bonusLeft: def.bonus ? 1 : 0,
+        boughtAs: packType,
+        options: options ?? {},
+        boughtAt: serverTimestamp(),
+      });
+      if (def.price) await addCoins(uid, -def.price);
+      return { cards: [], spent: def.price ?? 0, box: { id: ref.id, left: def.box, bonusLeft: def.bonus ? 1 : 0 } };
+    }
     // The starter is the same draw for everybody, so it is not weighted by what
     // the playerbase already owns — see CollectionTab for the reasoning.
     const cards = generatePack(packType, def.once ? { ...options } : { ...options, supply });
     await addCardsToCollection(uid, cards, packType, def.price ?? 0);
     if (def.once) await updateUserFields(uid, { starterPackOpened: true });
     return { cards, spent: def.price ?? 0 };
+  },
+  /**
+   * One pack out of a box, rolled NOW. The direct twin of openBoxPack — the
+   * box holds slots, not decided cards, so nothing is spoiled by a box put
+   * down half-opened.
+   */
+  async openBoxPack(uid, boxId, supply = {}) {
+    const boxRef = doc(db, 'users', uid, 'boxes', String(boxId));
+    const snap = await getDoc(boxRef);
+    if (!snap.exists()) throw new Error('No such box');
+    const box = snap.data();
+    const packType = nextBoxPack(box);
+    if (!packType) throw new Error('That box is empty');
+    const cards = generatePack(packType, { ...(box.options ?? {}), supply });
+    await addCardsToCollection(uid, cards, box.boughtAs ?? 'booster_box', 0);
+    const usedBooster = (box.left ?? 0) > 0;
+    const left = usedBooster ? box.left - 1 : (box.left ?? 0);
+    const bonusLeft = usedBooster ? (box.bonusLeft ?? 0) : Math.max(0, (box.bonusLeft ?? 0) - 1);
+    if (left === 0 && bonusLeft === 0) await deleteDoc(boxRef);
+    else await updateDoc(boxRef, { left, bonusLeft });
+    return { cards, packType, left, bonusLeft, boxId };
   },
   buyListing: (uid, listingId) => buyListingDirect(uid, listingId),
   claimGoal: (uid, goalId) => claimGoalDirect(uid, goalId),
@@ -329,6 +365,13 @@ const impl = USE_CLOUD_FUNCTIONS ? server : direct;
 
 /** Open a pack. Returns `{ cards, spent }`; the cards are already the player's. */
 export const openPack = (uid, packType, options, supply) => impl.openPack(uid, packType, options, supply);
+/** Open the next pack out of a box. Returns `{ cards, packType, left, bonusLeft }`. */
+export const openBoxPack = (uid, boxId, supply) => impl.openBoxPack(uid, boxId, supply);
+/** The boxes this player still has packs in, oldest first. */
+export async function loadBoxes(uid) {
+  const snap = await getDocs(query(collection(db, 'users', uid, 'boxes'), orderBy('boughtAt')));
+  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+}
 export const buyListing = (uid, listingId) => impl.buyListing(uid, listingId);
 export const claimGoal = (uid, goalId) => impl.claimGoal(uid, goalId);
 export const listCard = (uid, cardKey, price) => impl.listCard(uid, cardKey, price);

@@ -771,6 +771,19 @@ export function generatePack(packType, options = {}) {
  * only restate rather than check. See the DUPLICATES note in generatePack for
  * why the cap is two and why it counts repeat slots.
  */
+/**
+ * THE PACK A BOX HANDS OVER NEXT: its boosters first, then the bonus, then
+ * nothing. A box holds SLOTS rather than decided cards (the user, 2026-09-12:
+ * "when I buy the booster box, all the cards from those packs shouldn't even
+ * be decided"), and this is the rule both the callable and the direct route
+ * read so they cannot disagree about what slot 37 is.
+ */
+export function nextBoxPack(box) {
+  if ((box?.left ?? 0) > 0) return box.packType ?? 'booster';
+  if ((box?.bonusLeft ?? 0) > 0) return box.bonus ?? null;
+  return null;
+}
+
 export const MAX_DUPES_PER_PACK = 2;
 
 export { CONFERENCES, DIVISIONS };

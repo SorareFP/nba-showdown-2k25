@@ -186,7 +186,7 @@ export const STRATS = [
   { id:'pick_and_roll_maestro', name:'Pick-and-Roll Maestro', phase:'matchup', side:'off', copies:1, locked:true, color:'#9A3412', rarity:'rare',
     desc:'A player at Speed 14+ swaps defenders with a teammate. If their new defender is 5+ slower than they are, they take a Paint Shot Check: 2 points and +1 Assist.' },
   { id:'short_roll_playmaker', name:'Short-Roll Playmaker', phase:'matchup', side:'off', copies:2, locked:false, color:'#155E75', rarity:'uncommon',
-    desc:'Designate a player with Speed 8+ and Power 8+: they add +1 Assist every time they score in the paint this period.' },
+    desc:'Designate a player with Speed 8+ and Power 8+: they add +1 Assist every time they HIT A PAINT CHECK this period. A scoring roll is not a paint check.' },
   { id:'inside_out',          name:'Inside-Out',         phase:'reaction', side:'off', copies:2, locked:false, color:'#1D4ED8', rarity:'uncommon',
     desc:'After one of your players scores in the paint: a teammate takes a free 3PT Shot Check.' },
   { id:'lob_city',            name:'Lob City',           phase:'scoring',  side:'off', copies:1, locked:false, color:'#7E22CE', rarity:'rare',

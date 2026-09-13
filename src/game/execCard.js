@@ -1400,7 +1400,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       }
       if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
       g.tempEff[teamKey]['paintAst' + idx] = 1;
-      addLog(g, teamKey, `Short-Roll Playmaker: ${player?.name} adds an assist on every paint score this period`);
+      addLog(g, teamKey, `Short-Roll Playmaker: ${player?.name} adds an assist on every PAINT CHECK he hits this period (not on scoring rolls)`);
       break;
     }
 

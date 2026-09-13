@@ -213,7 +213,15 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
     'stretch_five', 'post_domination', 'unsung_hero', 'transition_outlet',
     'find_the_open_man', 'putback_specialist', 'hustle_play',
     // Wave two (2026-09-07).
-    'outside_pick', 'short_roll_playmaker', 'pick_and_roll_maestro',
+    'outside_pick',
+    // NOT short_roll_playmaker OR pick_and_roll_maestro. Both have their own
+    // picker below, with the filter the card actually requires — 8/8 for the
+    // facilitator, Speed 14+ for the ball-handler — and both then OVERWRITE
+    // opts.playerIdx. Listing them here as well asked the player twice and
+    // threw the first answer away: the user, 2026-09-13, chose Naz Hillmon
+    // (Speed 7 / Power 7) at the first prompt, was asked again with only the
+    // two eligible players on offer, and the card landed on the second pick.
+    // A card belongs in ONE of these two places, never both.
   ];
 
   // Cards that show ALL my starters (no filtering — additive, safe post-roll)

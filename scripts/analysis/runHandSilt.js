@@ -23,7 +23,15 @@
  * card on the bottom of the deck "any time, at no cost in turns" (engine.js),
  * the hand refills at the section end, and ai.js has never called it once.
  *
- * This counts, per section, how much of the average hand is playable at all.
+ * ── THE CLASSIFICATION IS THE WHOLE MEASUREMENT ─────────────────────────────
+ *
+ * The first version of this had two buckets — playable, and everything else —
+ * and the "everything else" pile was wrong in a way that mattered. The sample
+ * is taken during aiScoringDecision, and 16 of the 93 strategy cards are
+ * MATCHUP-phase: they are illegal during scoring by definition, and counting
+ * them as silt makes the hand look far more clogged than it is. Worse, the
+ * cycling policy built on that reading cycled them, which throws away good
+ * cards. Four buckets now, and only the last one is silt.
  */
 import { simulateGame } from '../../src/game/modes/simulate.js';
 import * as ai from '../../src/game/ai.js';
@@ -54,7 +62,12 @@ function roster(taken) {
   throw new Error('no roster');
 }
 
-// section -> { hands, cards, playable, reactions, stuck }
+// The phases a card can actually be played in during the SCORING window —
+// the moment this probe samples. A matchup card here is not stuck, it is
+// early; its phase comes round at the top of the next section.
+const LIVE_IN_SCORING = new Set(['scoring', 'pre_roll', 'post_roll']);
+
+// section -> { hands, cards, playable, reactions, offPhase, stuck }
 const bySec = new Map();
 const stuckIds = new Map();
 
@@ -63,12 +76,13 @@ const watcher = {
   aiScoringDecision: (game, teamKey, opts = {}) => {
     const t = getTeam(game, teamKey);
     const sec = (game.quarter - 1) * 3 + game.section;
-    const row = bySec.get(sec) ?? { hands: 0, cards: 0, playable: 0, reactions: 0 };
+    const row = bySec.get(sec) ?? { hands: 0, cards: 0, playable: 0, reactions: 0, offPhase: 0 };
     row.hands += 1;
     for (const id of t.hand || []) {
       row.cards += 1;
       const s = getStrat(id);
       if (s?.phase === 'reaction') { row.reactions += 1; continue; }
+      if (!LIVE_IN_SCORING.has(s?.phase)) { row.offPhase += 1; continue; }
       if (canPlayCard(game, teamKey, id)?.canPlay) row.playable += 1;
       else stuckIds.set(id, (stuckIds.get(id) ?? 0) + 1);
     }
@@ -85,18 +99,19 @@ for (let i = 0; i < GAMES; i += 1) {
 }
 
 console.log(`THE HAND, SECTION BY SECTION — ${GAMES} games\n`);
-console.log('  sec   hand   playable now   held for a reaction   STUCK (neither)');
+console.log('  sec   hand   playable   a reaction   wrong phase   STUCK (in phase, still illegal)');
 for (let s = 1; s <= 12; s += 1) {
   const r = bySec.get(s);
   if (!r || !r.hands) continue;
   const hand = r.cards / r.hands;
   const play = r.playable / r.hands;
   const react = r.reactions / r.hands;
-  const stuck = hand - play - react;
-  console.log(`  S${String(s).padStart(2)}   ${hand.toFixed(2)}       ${play.toFixed(2)}                ${react.toFixed(2)}            ${stuck.toFixed(2)}  ${'█'.repeat(Math.round(stuck * 6))}`);
+  const off = r.offPhase / r.hands;
+  const stuck = hand - play - react - off;
+  console.log(`  S${String(s).padStart(2)}   ${hand.toFixed(2)}     ${play.toFixed(2)}       ${react.toFixed(2)}        ${off.toFixed(2)}          ${stuck.toFixed(2)}  ${'█'.repeat(Math.round(stuck * 10))}`);
 }
 
-console.log('\nThe cards most often sitting in hand unplayable (the silt):');
+console.log('\nThe cards most often in hand, IN PHASE, and still not legal — the real silt:');
 const worst = [...stuckIds.entries()].sort((a, b) => b[1] - a[1]).slice(0, 12);
 const total = [...stuckIds.values()].reduce((a, b) => a + b, 0);
 for (const [id, n] of worst) {

@@ -220,41 +220,70 @@ const VARIANTS = {
     },
   },
 
-  // ── THE ROTATION, WITH THE MATCHUP IT IS WALKING INTO ─────────────────────
+  // ── THE 2x2: PLANNING AND MATCHUP ARE SEPARATE CLAIMS ─────────────────────
   //
-  // The user, 2026-09-14: "There is logic to keeping certain players on the
-  // floor to match up better, even if they're tired."
+  // The shipped brain is now BOTH — it plans the half and it reads the matchup
+  // it is walking into. That is one change too many to read from one number,
+  // and the synthetic fixtures in ai.lineup.test.js caught why: with the
+  // matchup edge in, a 15/15 star outranks a fresh 9/9 bench body at twelve
+  // minutes, which is the resting behaviour the planner was shipped FOR. The
+  // edge is points a section and the planner's marginal is a fraction of one,
+  // so the edge can simply drown it.
   //
-  // Right, and the planner cannot see it. rotationValue reads one player's
-  // chart against one player's fatigue; `body` and `shoot` — speed, power,
-  // defBoost, the shooting boosts — are a standing PROXY for matchup value,
-  // the same number whoever the opponent fields. A big slow centre and a fast
-  // guard with the same speed+power score identically, when one of them is
-  // about to be hunted all section and the other is about to do the hunting.
+  // So take the corners apart. All three rows read BACKWARDS against a shipped
+  // brain that has both: a row near 50% is that corner being as good as both.
   //
-  // So swap the proxy for the real thing: what this player is worth against
-  // the five they are LIKELY to field, drawn the way placementChoices draws
-  // them. This is the same replacement the placement work made — a guess that
-  // is one lineup becomes an average over the lineups that could show up —
-  // applied one decision earlier, at the lineup pick rather than the snake.
+  //   rotation_greedy    neither — one section of lookahead, standing proxy
+  //   planner_proxy      planning only — what 9f6a85f1 shipped
+  //   matchup_greedy     matchup only — greedy pick, real edge
   //
-  // The weight is not a free parameter: pairValue is points a section and so
-  // is the planner's own output, so the matchup term REPLACES body+shoot
-  // rather than being added on top of it with a coefficient nobody tuned.
-  rotation_matchup: {
+  // If matchup_greedy reads level with the control, the planning is doing
+  // nothing in the pair and the DP is dead weight.
+  rotation_greedy: {
+    ...ai,
+    aiDraftPick: (game, teamKey) => {
+      const pool = teamKey === 'A' ? game.draft.aPool : game.draft.bPool;
+      if (!pool || pool.length === 0) return null;
+      const scored = pool.map(player => ({
+        player,
+        score: ai.lineupValue(player, getPS(game, teamKey, player.id)),
+      }));
+      scored.sort((a, b) => b.score - a.score);
+      return { type: 'draft_pick', playerId: scored[0].player.id };
+    },
+  },
+
+  planner_proxy: {
     ...ai,
     aiDraftPick: (game, teamKey) => {
       const pool = teamKey === 'A' ? game.draft.aPool : game.draft.bPool;
       if (!pool || pool.length === 0) return null;
       const left = ai.sectionsLeftInHalf(game);
+      const scored = pool.map(player => ({
+        player,
+        score: ai.rotationValue(player, getPS(game, teamKey, player.id), left),
+      }));
+      scored.sort((a, b) => b.score - a.score);
+      return { type: 'draft_pick', playerId: scored[0].player.id };
+    },
+  },
+
+  matchup_greedy: {
+    ...ai,
+    aiDraftPick: (game, teamKey) => {
+      const pool = teamKey === 'A' ? game.draft.aPool : game.draft.bPool;
+      if (!pool || pool.length === 0) return null;
       const oppKey = teamKey === 'A' ? 'B' : 'A';
-      const theirFives = sampleFives(game, oppKey, MATCHUP_SAMPLES);
-      const scored = pool.map(player => {
-        const ps = getPS(game, teamKey, player.id);
-        const proxy = 0.05 * (player.speed + player.power + (player.defBoost || 0))
-          + 0.1 * ((player.threePtBoost || 0) + (player.paintBoost || 0));
-        return { player, score: ai.rotationValue(player, ps, left) - proxy + matchupEdge(game, teamKey, player, theirFives) };
-      });
+      const fives = sampleFives(game, oppKey, MATCHUP_SAMPLES);
+      const scored = pool.map(player => ({
+        player,
+        // lineupValue is the old one-section pick; the edge replaces its own
+        // body/shoot proxy the same way rotationValue does.
+        score: ai.lineupValue(player, getPS(game, teamKey, player.id))
+          - 0.05 * (player.speed + player.power + (player.defBoost || 0))
+          - 0.1 * ((player.threePtBoost || 0) + (player.paintBoost || 0))
+          + matchupEdge(game, teamKey, player, fives),
+      }));
       scored.sort((a, b) => b.score - a.score);
       return { type: 'draft_pick', playerId: scored[0].player.id };
     },

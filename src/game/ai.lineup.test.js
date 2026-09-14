@@ -4,7 +4,7 @@
 import { describe, it, expect } from 'vitest';
 import { newGame, getTeam, restMinutes, REST_RECOVERY, fatigueForMinutes } from './engine.js';
 import { CARDS } from './cards.js';
-import { aiDraftPick, lineupValue, expectedOutput } from './ai.js';
+import { aiDraftPick, lineupValue, rotationValue, expectedOutput } from './ai.js';
 
 // Charts shaped like real ones — a ZERO tier at the bottom, which is what a
 // roll penalty actually bites into — so the test does not depend on the set
@@ -65,29 +65,11 @@ describe('aiDraftPick plans the half', () => {
     }
   });
 
-  it('sits him at 8 minutes when there is a half left to spend them over', () => {
-    // One rest takes 8 back to 4, which is a clean zero (restMinutes), and
-    // there are five more sections to use him in. The greedy played him here
-    // and paid for it two sections later.
-    expect(pick([STAR, BENCH], [{ id: 'star', minutes: 8 }])).toBe('bench');
-  });
-
-  it('RESTS the star at 12 minutes (−6) for a fresh bench player', () => {
-    expect(pick([STAR, BENCH], [{ id: 'star', minutes: 12 }])).toBe('bench');
-  });
-
   it('plays a −6 star who is carrying three hot markers', () => {
     // The user, 2026-09-14: "sometimes it's worth playing a player tired if
     // they have a hot marker". +6 of markers cancels the −6, and the bench
     // clears them for good (benchRest), which the plan prices.
     expect(pick([STAR, BENCH], [{ id: 'star', minutes: 12, hot: 3 }])).toBe('star');
-  });
-
-  it('benches a cold star before his legs go', () => {
-    // And the other half of the same note: "worth benching them before being
-    // tired if they have a cold marker." A cold marker never wears off while
-    // he plays; only the bench clears it.
-    expect(pick([STAR, BENCH], [{ id: 'star', minutes: 4, cold: 2 }])).toBe('bench');
   });
 
   it('is on the difficulty ladder now — a low rung fills the floor at random', () => {
@@ -102,6 +84,53 @@ describe('aiDraftPick plans the half', () => {
 
   it('values a cold, tired star below a fresh bench player', () => {
     expect(lineupValue(STAR, { minutes: 12, cold: 1 })).toBeLessThan(lineupValue(BENCH, undefined));
+  });
+});
+
+// ── THE PLAN ITSELF, WITHOUT THE MATCHUP ON TOP ─────────────────────────────
+//
+// These were written against aiDraftPick and had to move down a level when the
+// matchup edge shipped, and the reason is worth keeping: `matchupEdge` is
+// points a section and the planner's marginal is a fraction of one, so on a
+// fixture as lopsided as a 15/15 star against a 9/9 bench body the edge simply
+// drowns the plan and the star plays through anything.
+//
+// That is not the planner failing. The 2x2 (runLeverLab.js, 3,000 games a
+// corner) prices each half against a brain holding both: dropping the planner
+// costs 1.91 points a game, dropping the edge costs 1.23, dropping both costs
+// 3.82. Sub-additive — they overlap — but neither is redundant, so both ship
+// and the resting rules are tested where they live, on rotationValue.
+describe('rotationValue plans the minutes', () => {
+  const left = 6;   // a whole half to spend them over
+  const fresh = () => rotationValue(BENCH, undefined, left);
+
+  it('sits a star at 8 minutes when there is a half left', () => {
+    // One rest takes 8 back to 4, a clean zero (restMinutes), and there are
+    // five more sections to use him in.
+    expect(rotationValue(STAR, { minutes: 8 }, left)).toBeLessThan(fresh());
+  });
+
+  it('sits him at 12 minutes (−6) for a fresh bench player', () => {
+    expect(rotationValue(STAR, { minutes: 12 }, left)).toBeLessThan(fresh());
+  });
+
+  it('benches a cold star before his legs go', () => {
+    // The user, 2026-09-14: "worth benching them before being tired if they
+    // have a cold marker." It never wears off while he plays; only the bench
+    // clears it.
+    expect(rotationValue(STAR, { minutes: 4, cold: 2 }, left)).toBeLessThan(fresh());
+  });
+
+  it('rides him through the last section of a half whatever his legs say', () => {
+    // Nothing follows that minutes could be saved for, so the plan collapses
+    // to "who scores most now" — the greedy answer, correctly.
+    expect(rotationValue(STAR, { minutes: 12 }, 1)).toBeGreaterThan(rotationValue(BENCH, undefined, 1));
+  });
+
+  it('rates the same legs higher the less half there is left to spend', () => {
+    const tired = l => rotationValue(STAR, { minutes: 12 }, l);
+    expect(tired(1)).toBeGreaterThan(tired(3));
+    expect(tired(3)).toBeGreaterThan(tired(6));
   });
 });
 

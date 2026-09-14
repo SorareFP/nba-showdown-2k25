@@ -32,6 +32,8 @@ import * as ai from '../../src/game/ai.js';
 import { CARDS } from '../../src/game/cards.js';
 import { CAP, RANDOM_MIN_SAL } from '../../src/game/teamRules.js';
 import { getTeam, getOpp, getPS, getFatigue, calcAdv } from '../../src/game/engine.js';
+import { canPlayCard } from '../../src/game/canPlay.js';
+import { getStrat } from '../../src/game/strats.js';
 
 const GAMES = Number(process.argv[2] ?? 400);
 const ONLY = (process.argv.find(a => a.startsWith('--only=')) ?? '--only=').split('=')[1] || null;
@@ -76,6 +78,20 @@ function roster(taken) {
 //            Rolling your weakest first draws the answers out before the roll
 //            that matters.
 //   RISK     the greedy read may simply be right — points banked are points.
+//
+// ── ANSWERED: BEST-FIRST IS RIGHT, LEAVE IT ALONE ───────────────────────────
+//
+// 3,000 games a variant against the shipped best-first coach, control
+// 49.4% / -0.17:
+//
+//     roll_worst_first       47.6%   -1.34   loses
+//     roll_assists_first     49.1%   -0.25   level
+//     roll_best_chart_last   47.3%   -1.64   loses
+//
+// Both "save the best for last" readings lose clearly and the assist-banking
+// one is a wash, so neither the answer-drawing argument nor the spend-timing
+// argument pays for giving up the best matchup first. The variants are kept
+// because the next person to have this idea should find it already measured.
 //
 /** What a card's chart pays in assists a roll, at the bonus it carries. */
 function assistYield(card, mod) {
@@ -179,8 +195,36 @@ function matchupEdge(game, teamKey, player, fives) {
   return n ? total / n : 0;
 }
 
+// ── LEVER 2, TAKE TWO: CYCLING, WITH THE PHASE BUG OUT ──────────────────────
+//
+// The first attempt cycled any non-reaction card it could not play, which
+// included MATCHUP-phase cards — illegal during scoring by definition, legal
+// at the top of the next section. Roughly one cycle in five threw away a live
+// card, so the "cycling is a wash" result was measured on a broken policy and
+// does not stand. This is the same idea with only genuinely dead cards moved:
+// the card's phase has to be one that the scoring window can actually play.
+const LIVE_IN_SCORING = new Set(['scoring', 'pre_roll', 'post_roll']);
+const CYCLE_AT = 6;
+
+function cycleDead(game, teamKey) {
+  const t = getTeam(game, teamKey);
+  const hand = t?.hand || [];
+  if (hand.length < CYCLE_AT) return null;
+  for (let i = 0; i < hand.length; i += 1) {
+    const strat = getStrat(hand[i]);
+    if (!strat || !LIVE_IN_SCORING.has(strat.phase)) continue;
+    if (canPlayCard(game, teamKey, hand[i])?.canPlay) continue;
+    return { type: 'return_card', handIdx: i };
+  }
+  return null;
+}
+
 const VARIANTS = {
   control: ai,
+
+  // Forwards, not backwards: the shipped brain does NOT cycle, so a WIN here
+  // is cycling being worth shipping.
+  cycling_fixed: { ...ai, aiCycleDecision: cycleDead },
 
 
   // Worst matchup first: the answers come out on the rolls that matter least.

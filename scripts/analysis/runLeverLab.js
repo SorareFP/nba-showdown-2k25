@@ -182,6 +182,7 @@ function matchupEdge(game, teamKey, player, fives) {
 const VARIANTS = {
   control: ai,
 
+
   // Worst matchup first: the answers come out on the rolls that matter least.
   roll_worst_first: { ...ai, aiRollDecision: reorderRolls(c => -c.bonus) },
 

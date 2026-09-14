@@ -1619,6 +1619,39 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
 
 // ── Rolling Decision ────────────────────────────────────────────────────────
 // Pick the next player to roll, prioritizing best matchups first.
+// ── CYCLING A DEAD HAND: MEASURED, AND IT DOES NOTHING ──────────────────────
+//
+// Not a hypothetical — this was built, run and taken out again, and the note
+// is here so it is not rebuilt on the same reasoning.
+//
+// THE FINDING IS REAL. scripts/analysis/runHandSilt.js, 60 games, the average
+// hand and what is in it:
+//
+//     sec    hand    playable now    waiting on a reaction    stuck
+//     S 1    4.20        0.53               2.32              1.35
+//     S12    7.34        0.19               5.34              1.81
+//
+// By the final section the coach holds seven cards and a fifth of one can be
+// played. endSection refills to SEVEN, so a hand already there draws nothing,
+// and what it cannot play never leaves. Card plays fall from 382 in section
+// one to 98 in section nine (runCardValues.js). The clog is the cards the user
+// noticed first: Rimshaker 23.4% of stuck-card-sections, Putback Dunk 22.1%,
+// Back to the Basket 17.5% — not refused, just never legal.
+//
+// THE OBVIOUS FIX DOES NOT PAY. returnCardToDeck puts a card on the bottom at
+// no cost in turns, so a dead card cleared before the draw is a live one drawn
+// after it. Implemented (aiCycleDecision, hand >= 6, never a reaction card) it
+// fired 6.8 times a game across both benches — so it was really running — and
+// at 2,400 games the coach that did NOT cycle scored 51.1% / -0.21 against the
+// one that did, with the control at 49.9% / +0.14. Win rate and margin point
+// opposite ways and both sit inside the interval. A wash.
+//
+// WHAT THAT MEANS: hand throughput is not what limits the coach's scoring. It
+// plays about 21 cards a game either way, and the extra draws do not become
+// points. The silt is worth fixing AT SOURCE instead — a deck built to the
+// roster would not hold cards the roster can never make legal — which is the
+// deck-construction lever, not this one.
+
 export function aiRollDecision(game, teamKey) {
   const myT = getTeam(game, teamKey);
   const oppT = getOpp(game, teamKey);

@@ -167,8 +167,8 @@ export default function HowToPlay({ scrollToSection, onStartTutorial, tutorialRu
           <p>Assists accumulate across the game and are a currency:</p>
           <ul>
             <li><strong>1 AST:</strong> +1 to a player's next shot check.</li>
-            <li><strong>5 AST:</strong> a 3PT check for any player. His 3PT Bonus, plus or minus, rides on the die; the button shows the roll he needs.</li>
-            <li><strong>5 AST:</strong> a paint check for any player, the same way with his Paint Bonus.</li>
+            <li><strong>5 AST:</strong> a 3PT check for any player. Their 3PT Bonus, plus or minus, rides on the die; the button shows the roll he needs.</li>
+            <li><strong>5 AST:</strong> a paint check for any player, the same way with their Paint Bonus.</li>
           </ul>
           <h4>Rebound Track</h4>
           <p>Rebounds accumulate too, and the <strong>difference</strong> between the teams is what pays:</p>
@@ -218,7 +218,7 @@ export default function HowToPlay({ scrollToSection, onStartTutorial, tutorialRu
             <li><strong>Quick Match</strong> against the coach, by salary band, or your team against a random opponent.</li>
             <li><strong>Hotseat</strong>: two managers at one screen.</li>
             <li><strong>Online PvP</strong>: rooms with a live opponent.</li>
-            <li><strong>Season</strong>: a round-robin schedule against the league — Short (everyone once), Regular (home and away) or Long — with standings, playoffs and a title purse. Player stats keep every game, and when the regular season ends the league names its MVP, Defensive Player of the Year, Sixth Man, Rookie of the Year and scoring champion.</li>
+            <li><strong>Season</strong>: a round-robin schedule against the league — Short (everyone once), Regular (home and away) or Long — with standings, playoffs and a title purse. Player stats keep every game, and when the regular season ends the league names its MVP, Defensive Player of the Year, Sixth Player, Rookie of the Year and scoring champion.</li>
           </ul>
           <p>A game in progress <strong>saves itself</strong>. Reload the page and you are back where you were.</p>
         </AccordionSection>

@@ -64,7 +64,7 @@ export const NEWS = [
   },
   {
     id: 'awards', date: '2026-09-10', title: 'End-of-season awards',
-    body: 'When the regular season ends the league names an MVP (value over replacement), a Defensive Player of the Year (fewest points allowed per minute, 16 minutes a game to qualify), a Sixth Man, a Rookie of the Year and a Scoring Title.',
+    body: 'When the regular season ends the league names an MVP (value over replacement), a Defensive Player of the Year (fewest points allowed per minute, 16 minutes a game to qualify), a Sixth Player, a Rookie of the Year and a Scoring Title.',
     to: 'season', cta: 'Go to Season',
   },
   {

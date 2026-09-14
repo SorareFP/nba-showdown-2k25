@@ -153,12 +153,12 @@ export default function RulebookTab() {
           <li>Rolling <strong>alternates</strong>, one player at a time, the human leading against the coach. A side with nobody left to roll stands aside.</li>
           <li>Between rolls either side may play <strong>pre-roll</strong> cards on a player who has not rolled, and <strong>reactions</strong> to what just happened.</li>
           <li>A player blocked by This Is My House or Hack-A-____ does not roll. A player whose roll a card replaced (You Stand Over There) counts as rolled.</li>
-          <li>This Is My House needs the defender <strong>higher</strong> on both Speed and Power, counted as he guards: a minus Defense lowers both, and card effects count. A tie is not higher.</li>
+          <li>This Is My House needs the defender <strong>higher</strong> on both Speed and Power, counted as they guard: a minus Defense lowers both, and card effects count. A tie is not higher.</li>
         </ul>
 
         <div className={s.sub}>6. End of Section</div>
         <ul>
-          <li>A player sent off by <strong>Foul Trouble</strong> is not in the pool for the next section — the whole section, both his ends of the floor — and he is back the section after.</li>
+          <li>A player sent off by <strong>Foul Trouble</strong> is not in the pool for the next section — the whole section, both ends of the floor — and they are back the section after.</li>
           <li>All temporary effects clear (boosts, ghosts, blocks, standing cards whose players left the floor).</li>
           <li>Each starter adds <strong>4 minutes</strong>; each benched player sheds <strong>4 minutes</strong>.</li>
           <li>The rebound track pays: the leader gains +1 stored assist.</li>
@@ -228,8 +228,8 @@ export default function RulebookTab() {
         <p>Assists accumulate across the game and can be spent:</p>
         <ul>
           <li><strong>1 AST:</strong> +1 to a player's next shot check.</li>
-          <li><strong>5 AST:</strong> a 3PT check for any player; his 3PT Bonus, either sign, applies. The button shows the die he needs.</li>
-          <li><strong>5 AST:</strong> a paint check for any player; his Paint Bonus applies the same way.</li>
+          <li><strong>5 AST:</strong> a 3PT check for any player; their 3PT Bonus, either sign, applies. The button shows the die he needs.</li>
+          <li><strong>5 AST:</strong> a paint check for any player; their Paint Bonus applies the same way.</li>
           <li><strong>Reaching 5 for the first time</strong> draws a bonus strategy card.</li>
         </ul>
 
@@ -279,7 +279,7 @@ export default function RulebookTab() {
           <li><strong>Ice the Hot Hand</strong> (timeout rider): strip all hot markers from one opposing player.</li>
           <li><strong>Reset</strong> (timeout rider): clear all cold markers from one of your players.</li>
           <li><strong>Unethical Hoops</strong> (the sign-up card): a player of yours with a Speed or Power advantage draws the foul — four free-throw checks at +4.</li>
-          <li><strong>Hack-A-____:</strong> foul an opponent who has not rolled. He skips his scoring roll and shoots four free throws instead — worth about 3.4 points off a shot line of 14 and about 2.2 off a 19, so pick the man who cannot make them.</li>
+          <li><strong>Hack-A-____:</strong> foul an opponent who has not rolled. They skip their scoring roll and shoot four free throws instead — worth about 3.4 points off a shot line of 14 and about 2.2 off a 19, so pick the one who cannot make them.</li>
         </ul>
       </Section>
 
@@ -301,7 +301,7 @@ export default function RulebookTab() {
           <li><strong>Quick Match:</strong> against the coach by salary band, or your team against a random opponent.</li>
           <li><strong>Hotseat:</strong> two managers, one screen.</li>
           <li><strong>Online PvP:</strong> a room with a live opponent; secret lineups, then the placement snake.</li>
-          <li><strong>Season:</strong> a round-robin against the league — Short (everyone once), Regular (home and away) or Long (three meetings) — with standings, playoffs that advance themselves, and a title purse claimed at the end. When the regular season ends the league names its <strong>awards</strong> from regular-season games only: MVP, Sixth Man and Rookie of the Year by value over replacement, Defensive Player of the Year by the fewest points allowed per minute (at least 16 minutes a game over half his team's games), and the scoring title. A player's <strong>matchup +/-</strong> is his points minus what the man he guarded scored on him; a <strong>block</strong> is a miss his Defensive Bonus contest turned.</li>
+          <li><strong>Season:</strong> a round-robin against the league — Short (everyone once), Regular (home and away) or Long (three meetings) — with standings, playoffs that advance themselves, and a title purse claimed at the end. When the regular season ends the league names its <strong>awards</strong> from regular-season games only: MVP, Sixth Player and Rookie of the Year by value over replacement, Defensive Player of the Year by the fewest points allowed per minute (at least 16 minutes a game over half their team's games), and the scoring title. A player's <strong>matchup +/-</strong> is their points minus what the player they guarded scored on them; a <strong>block</strong> is a miss their Defensive Bonus contest turned.</li>
         </ul>
         <p>A game in progress is saved on every change and restored on reload.</p>
       </Section>

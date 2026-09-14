@@ -532,10 +532,10 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
   // ── Help Defender: which mismatch, and who rotates over ────────────────
   if (cardId === 'help_defender') {
     const targets = helpTargets(game, teamKey);
-    if (targets.length === 0) { toast('No opponent yet to roll is beating his defender by +4.'); return null; }
+    if (targets.length === 0) { toast('No opponent yet to roll is beating their defender by +4.'); return null; }
     const t = targets.length === 1 ? 0 : await pickFiltered(
       targets.map(x => ({ p: x.off, origIdx: x.offSlot })),
-      'Who is beating his man?', teamKey
+      'Who is beating their defender?', teamKey
     );
     if (t === null) return null;
     const chosen = targets.find(x => x.offSlot === t) ?? targets[0];
@@ -543,7 +543,7 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
     const helpers = myT.starters
       .map((p, i) => ({ p, origIdx: i }))
       .filter(({ origIdx }) => origIdx !== chosen.defIdx);
-    const h = await pickFiltered(helpers, 'Who rotates over? (his man gets +3)', teamKey);
+    const h = await pickFiltered(helpers, 'Who rotates over? (their assignment gets +3)', teamKey);
     if (h === null) return null;
     opts.helperIdx = h;
   }
@@ -1696,7 +1696,7 @@ function LiveEffects({ game, teamKey, idx }) {
   if (game.ghosted?.[teamKey]?.[idx])    push('ghost', styles.liveGood, '👻 no defender', 'Ghost Screen: treated as unguarded for matchups');
   if (game.ignFatigue?.[teamKey]?.[idx]) push('wind',  styles.liveGood, 'ignores FAT', 'Second Wind: fatigue penalty ignored this segment');
   const om = game.openMan?.[teamKey];
-  if (om && typeof om === 'object' && om.except?.includes(idx)) push('trapped', styles.liveBad, 'trapped', 'Doubled — cannot be the open man');
+  if (om && typeof om === 'object' && om.except?.includes(idx)) push('trapped', styles.liveBad, 'trapped', 'Doubled — cannot be the open teammate');
   return tags.length ? <div className={styles.liveRow}>{tags}</div> : null;
 }
 

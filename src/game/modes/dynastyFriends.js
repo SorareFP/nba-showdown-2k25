@@ -313,7 +313,7 @@ export function friendsAct(d, teamId, op, args = {}, { now = Date.now(), rng = M
     case 'offer': {
       // Free agency is sealed bids (dynastyBid); the exclusive windows and the
       // leftovers of the preseason are haggled, as alone.
-      if (x.phase === DPHASE.freeAgency) throw new Error('dynasty: free agency is sealed bids — bid for him this week');
+      if (x.phase === DPHASE.freeAgency) throw new Error('dynasty: free agency is sealed bids — bid for them this week');
       const r = negotiate(x, teamId, key(), { dp: Number(args?.dp), years: Number(args?.years) });
       x = r.dynasty;
       result = r.result;

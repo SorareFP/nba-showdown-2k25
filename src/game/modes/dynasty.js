@@ -537,7 +537,7 @@ function sign(d, teamId, key, { dp, years, how }) {
     rights: omit(d.rights, key),
     fa: d.fa ? { ...d.fa, rivals: omit(d.fa.rivals, key) } : d.fa,
   };
-  const verb = how === 'resign' ? 're-signed' : how === 'rookie' ? 'signed his pick' : 'signed';
+  const verb = how === 'resign' ? 're-signed' : how === 'rookie' ? 'signed their pick' : 'signed';
   const who = how === 'rookie' ? `${card?.name}` : card?.name;
   return how === 'fill' && !team?.human ? next : say(next, `${team?.name} ${verb} ${who} — ${dp} DP × ${years} yr${years === 1 ? '' : 's'}.`);
 }
@@ -630,7 +630,7 @@ export function signRookie(d, teamId, key) {
   if (!r || r.kind !== 'rookie' || r.teamId !== teamId) throw new Error('dynasty: that is not your pick');
   if (rosterKeys(d, teamId).length >= MAX_ROSTER) throw new Error(`dynasty: your roster is full at ${MAX_ROSTER} — waive someone first`);
   const scale = rookieScale(cardOf(key));
-  if (payroll(d, teamId) + scale.dp > APRON_DP) throw new Error(`dynasty: his ${scale.dp} DP would take you past the ${APRON_DP} apron`);
+  if (payroll(d, teamId) + scale.dp > APRON_DP) throw new Error(`dynasty: their ${scale.dp} DP would take you past the ${APRON_DP} apron`);
   return sign(d, teamId, key, { ...scale, how: 'rookie' });
 }
 

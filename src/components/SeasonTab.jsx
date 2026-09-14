@@ -1160,8 +1160,8 @@ export function SeasonStatsPanel({ season, by, myId }) {
               {cols === 'box' ? (
                 <tr>
                   <th>Player</th>{!teamId && <th>Team</th>}<th>G</th><th>PTS</th><th>PPG</th><th>REB</th><th>RPG</th><th>AST</th><th>APG</th><th>3PM</th><th>MIN</th>
-                  <th title="Points allowed: scored on him by the man he was guarding">ALW</th>
-                  <th title="Matchup plus-minus: his points minus the points his man scored on him">M+/-</th>
+                  <th title="Points allowed: scored on them by the player they were guarding">ALW</th>
+                  <th title="Matchup plus-minus: their points minus the points their assignment scored on them">M+/-</th>
                 </tr>
               ) : (
                 <tr>
@@ -1171,12 +1171,12 @@ export function SeasonStatsPanel({ season, by, myId }) {
                   <th title="Free throws, made-attempted">FT</th>
                   <th title="Paint checks, made-attempted">PNT</th>
                   <th title="3PT checks, made-attempted">3PT</th>
-                  <th title="Blocks: misses his Defensive Bonus contest turned">BLK</th>
-                  <th title="Checks taken against him, made-attempted">OPP</th>
+                  <th title="Blocks: misses their Defensive Bonus contest turned">BLK</th>
+                  <th title="Checks taken against them, made-attempted">OPP</th>
                   <th title="Points allowed per minute">ALW/M</th>
-                  <th title="On-floor plus-minus: the score while he played">ON+/-</th>
+                  <th title="On-floor plus-minus: the score while they played">ON+/-</th>
                   <th title="Matchup plus-minus">M+/-</th>
-                  <th title="Value over replacement: points plus what his rebounds and assists buy, above a replacement-level card, over his minutes">VORP</th>
+                  <th title="Value over replacement: points plus what their rebounds and assists buy, above a replacement-level card, over their minutes">VORP</th>
                 </tr>
               )}
             </thead>
@@ -1261,7 +1261,7 @@ function AwardsPanel({ season, by, myId }) {
         {basis === 'regular'
           ? 'Decided on the regular season. '
           : 'Decided on every game, playoffs included: this season reached the playoffs before awards existed. '}
-        MVP, Sixth Man and Rookie of the Year by value over replacement; Defensive Player of the Year by the fewest points allowed per minute, at least {DPOY_MIN_MPG} minutes a game over half his team's games.
+        MVP, Sixth Player and Rookie of the Year by value over replacement; Defensive Player of the Year by the fewest points allowed per minute, at least {DPOY_MIN_MPG} minutes a game over half their team's games.
       </div>
     </section>
   );

@@ -464,10 +464,10 @@ export function canPlayCard(g, teamKey, cardId) {
     if (phase !== 'matchup_strats' && phase !== 'scoring') return no('Only playable during Matchup or Scoring Phase');
     // A card that benches a man NEXT section needs a next section. Overtime
     // would give it one, but nobody knows that yet when the card is played.
-    if (g.quarter === 4 && g.section === 3) return no('No section left for him to sit out');
-    if ((oppT.roster || []).length < 6) return no('The opponent has no bench — nobody to replace him');
+    if (g.quarter === 4 && g.section === 3) return no('No section left for them to sit out');
+    if ((oppT.roster || []).length < 6) return no('The opponent has no bench — nobody to replace them');
     const ft = foulTroubleTargets(g, teamKey);
-    if (!ft.length) return no('Need one of your players beating his defender by 4+ on Speed or Power');
+    if (!ft.length) return no('Need one of your players beating their defender by 4+ on Speed or Power');
     return ok('Send a beaten defender to the bench for the whole next section');
   }
 
@@ -491,7 +491,7 @@ export function canPlayCard(g, teamKey, cardId) {
     if (!vdef) return no('No defender on that player');
     const vscorer = (oppT.starters || [])[auto.playerIdx];
     const stands = (vdef.defBoost || 0) > 0 || (vdef.power || 0) >= (vscorer?.power || 0);
-    if (!stands) return no(vdef.name + ' needs a Defensive Bonus, or the Power to stand him up');
+    if (!stands) return no(vdef.name + ' needs a Defensive Bonus, or the Power to stand them up');
     return ok('Wipe the ' + auto.pts + ' points that card took for free');
   }
 
@@ -606,9 +606,9 @@ export function canPlayCard(g, teamKey, cardId) {
   if (cardId === 'help_defender') {
     if (phase !== 'scoring') return no('Only playable during Scoring Phase');
     if (helpTargets(g, teamKey).length === 0) {
-      return no('No opponent yet to roll is beating his defender by +4');
+      return no('No opponent yet to roll is beating their defender by +4');
     }
-    return ok('Rotate a defender over — he loses his edge, someone else gets +3');
+    return ok('Rotate a defender over — they lose their edge, someone else gets +3');
   }
   if (['find_the_open_man', 'putback_specialist', 'glass_cleaner', 'box_out'].includes(cardId)) {
     if (cardId === 'find_the_open_man') {
@@ -701,12 +701,12 @@ export function canPlayCard(g, teamKey, cardId) {
     case 'stretch_five': {
       const big = myT.starters.some(p => p && String(p.pos || '').split(/[-/]/).some(t => t === 'C' || t === 'PF') && ((p.shotLine ?? 18) - (p.threePtBoost || 0)) <= 14);
       if (!big) return no('Need a C or PF who converts threes at 14 or lower');
-      return ok('His 3PT check, then a teammate\'s paint check at +2');
+      return ok('Their 3PT check, then a teammate\'s paint check at +2');
     }
     case 'post_domination': {
       const bigs = myT.starters.filter(p => (p?.power || 0) >= 15).length;
       if (bigs < 2) return no(`Need two players at Power 15+ (have ${bigs})`);
-      return ok('Double one big man\'s rebounds this period');
+      return ok('Double one big\'s rebounds this period');
     }
     case 'unsung_hero':
       if (preRollTargets(g, teamKey, p => (p.salary || 0) <= 400).length === 0) return no('Need a $400-or-less player still to roll');

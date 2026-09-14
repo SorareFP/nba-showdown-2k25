@@ -3,7 +3,7 @@
 // Never mutates — always returns a new object via deepClone
 
 import { handOverPriority, getTeam, getOpp, getPS, calcAdv, shotCheck, matchupContest, drawCards, deepClone, getFatigue, recordDefSwitch, burnedSlots, roll20, checkAssistDraw, standingEntry, CROWD_FAVORITE_PTS, satOutLast, bottomedLines } from './engine.js';
-import { creditAllowed, creditCheckDefended, recordPaintCheck } from './engine.js';
+import { creditAllowed, creditCheckDefended, recordPaintCheck, creditPaintScore } from './engine.js';
 import { helpTargets, canAnswerCheck, myHouseHolds, foulTroubleTargets } from './canPlay.js';
 import { lookupChart } from './cards.js';
 import { getStrat } from './strats.js';
@@ -930,7 +930,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       // aiDraftPick and the simulator all draw their five from.
       const ftOpp = teamKey === 'A' ? 'B' : 'A';
       const ftList = foulTroubleTargets(g, teamKey);
-      if (!ftList.length) return fail('Nobody is beating his defender by 4 or more');
+      if (!ftList.length) return fail('Nobody is beating their defender by 4 or more');
       const chosen = opts.defIdx != null
         ? ftList.find(t => t.defIdx === Number(opts.defIdx))
         : null;
@@ -939,7 +939,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       const t = chosen || ftList.slice().sort((a, b) => b.adv - a.adv)[0];
       if (!g.foulTrouble) g.foulTrouble = { A: [], B: [] };
       g.foulTrouble[ftOpp] = [...(g.foulTrouble[ftOpp] || []), t.def.id];
-      addLog(g, teamKey, `Foul Trouble: ${t.off.name} draws it on ${t.def.name} (beaten by ${t.adv}) — he sits the next section.`);
+      addLog(g, teamKey, `Foul Trouble: ${t.off.name} draws it on ${t.def.name} (beaten by ${t.adv}) — they sit the next section.`);
       break;
     }
 
@@ -1034,7 +1034,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       const vScorer = (oppT.starters || [])[auto.playerIdx];
       if (!vDef) return fail('No defender on that player');
       if (!((vDef.defBoost || 0) > 0 || (vDef.power || 0) >= (vScorer?.power || 0))) {
-        return fail(vDef.name + ' cannot stand him up');
+        return fail(vDef.name + ' cannot stand them up');
       }
       scorePts(g, auto.teamKey, auto.playerId, -auto.pts);
       if (g.analytics?.[auto.teamKey]) g.analytics[auto.teamKey].shotCheckPts -= auto.pts;
@@ -1215,7 +1215,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       g.tempDefEff[teamKey][idx] = { ...cur, dbExtra: db };
       const oppKeyA = teamKey === 'A' ? 'B' : 'A';
       const guarded = (g.offMatchups[oppKeyA] || []).indexOf(idx);
-      const who = guarded >= 0 ? oppT.starters[guarded]?.name : 'his man';
+      const who = guarded >= 0 ? oppT.starters[guarded]?.name : 'their assignment';
       addLog(g, teamKey, `Defensive Anchor: ${player?.name} anchors on ${who} — Def +${db} counts double (+${db * 2}) this section`);
       break;
     }
@@ -1400,7 +1400,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       }
       if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
       g.tempEff[teamKey]['paintAst' + idx] = 1;
-      addLog(g, teamKey, `Short-Roll Playmaker: ${player?.name} adds an assist on every PAINT CHECK he hits this period (not on scoring rolls)`);
+      addLog(g, teamKey, `Short-Roll Playmaker: ${player?.name} adds an assist on every PAINT CHECK they hit this period (not on scoring rolls)`);
       break;
     }
 
@@ -1517,7 +1517,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
     case 'find_the_open_man': {
       const dt = g.lastDoubleTeam;
       if (!dt || dt.teamKey === teamKey) return fail('The opponent has no Double Team on the floor');
-      if (idx === dt.targetIdx) return fail(`${player?.name} is the one being trapped — pick the open man`);
+      if (idx === dt.targetIdx) return fail(`${player?.name} is the one being trapped — pick an open teammate`);
       if ((g.rollResults[teamKey] || [])[idx] != null) return fail(`${player?.name} has already rolled this segment.`);
       if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
       g.tempEff[teamKey]['r' + idx] = (g.tempEff[teamKey]['r' + idx] || 0) + 4;
@@ -1590,13 +1590,13 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       // 2026-09-07 over the docx draft, which could never fire: it asked for
       // "a teammate not yet matched up" and the snake matches all five.
       const targets = helpTargets(g, teamKey);
-      if (!targets.length) return fail('No opponent yet to roll is beating his defender by +4');
+      if (!targets.length) return fail('No opponent yet to roll is beating their defender by +4');
       const pick = targets.find(t => t.offSlot === opts.targetIdx) ?? targets[0];
       const helpOppKey = teamKey === 'A' ? 'B' : 'A';
       const guards = g.offMatchups[helpOppKey] || [];
       const helper = opts.helperIdx;
       if (helper === undefined || helper === null) return fail('Choose which defender rotates over');
-      if (helper === pick.defIdx) return fail(`${pick.def?.name} is already guarding him — pick another defender`);
+      if (helper === pick.defIdx) return fail(`${pick.def?.name} is already guarding them — pick another defender`);
       const helpMan = myT.starters[helper];
       if (!helpMan) return fail('No such defender');
       // The attacker loses his edge: the same flag Defensive Anchor sets.
@@ -1611,9 +1611,9 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       let openName = 'nobody';
       if (openSlot >= 0) {
         g.tempEff[helpOppKey]['r' + openSlot] = (g.tempEff[helpOppKey]['r' + openSlot] || 0) + 3;
-        openName = oppT.starters[openSlot]?.name ?? 'his man';
+        openName = oppT.starters[openSlot]?.name ?? 'their assignment';
       }
-      addLog(g, teamKey, `Help Defender: ${helpMan.name} rotates onto ${pick.off?.name} (+${pick.adv} edge gone) — ${openName} is open, +3 on his next roll`);
+      addLog(g, teamKey, `Help Defender: ${helpMan.name} rotates onto ${pick.off?.name} (+${pick.adv} edge gone) — ${openName} is open, +3 on their next roll`);
       break;
     }
 
@@ -1735,15 +1735,7 @@ export function applyShotCheck(g, psc) {
     // Playmaker pays on it, and neither could see it before: `lastRoll` is a
     // scoring ROLL and a paint bucket is a shot check, which is a different
     // thing. Cleared at section end with the rest of the per-section state.
-    if (psc.type === 'paint') {
-      g.lastPaintScore = { teamKey: psc.teamKey, playerIdx: psc.playerIdx, playerId: player?.id };
-      const te = g.tempEff?.[psc.teamKey] || {};
-      if (te['paintAst' + psc.playerIdx]) {
-        myT.assists += 1;
-        if (g.analytics?.[psc.teamKey]) g.analytics[psc.teamKey].assistsFromCards += 1;
-        g.log = [...g.log, { team: psc.teamKey, msg: `Short-Roll Playmaker: ${player?.name} scores inside — +1 AST` }];
-      }
-    }
+    if (psc.type === 'paint') creditPaintScore(g, psc.teamKey, psc.playerIdx, player);
     if (hitAst) {
       myT.assists += hitAst;
       if (g.analytics?.[psc.teamKey]) g.analytics[psc.teamKey].assistsFromCards += hitAst;

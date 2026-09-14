@@ -112,7 +112,7 @@ describe('Foul Trouble', () => {
     const even = board({ aHand: ['foul_trouble'] });
     const check = canPlayCard(even, 'A', 'foul_trouble');
     expect(check.canPlay).toBe(false);
-    expect(check.reason).toMatch(/beating his defender/);
+    expect(check.reason).toMatch(/beating their defender/);
 
     const g = mismatch();
     expect(canPlayCard(g, 'A', 'foul_trouble').canPlay).toBe(true);

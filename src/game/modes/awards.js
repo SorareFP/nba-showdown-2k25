@@ -107,7 +107,7 @@ export function seasonAwards(season) {
     awards: [
       pack('mvp', 'Most Valuable Player', mvp),
       pack('dpoy', 'Defensive Player of the Year', dpoy),
-      pack('sixth', 'Sixth Man of the Year', sixth),
+      pack('sixth', 'Sixth Player of the Year', sixth),
       pack('roy', 'Rookie of the Year', roy),
       pack('scoring', 'Scoring Title', scoring),
     ],

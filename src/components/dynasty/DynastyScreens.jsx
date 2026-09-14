@@ -212,8 +212,8 @@ export function FrontOffice({ d, moves }) {
   const cut = async k => {
     const yes = await ask({
       title: `Waive ${k.card.name}?`,
-      body: `He becomes a free agent now, and his ${k.dp} DP stays on your cap for Year ${d.year} as dead money.`,
-      confirmLabel: 'Waive him',
+      body: `They become a free agent now, and their ${k.dp} DP stays on your cap for Year ${d.year} as dead money.`,
+      confirmLabel: 'Waive them',
       tone: 'danger',
     });
     if (yes) moves.waive(k.key);
@@ -362,7 +362,7 @@ export function Negotiator({ d, cardKey, moves, onClose = null, letGo = null }) 
       <div className={dy.patience}>Patience <span className={dy.pips}>{pips}</span></div>
       {said && !said.accepted && (
         <div className={`${dy.mood} ${dy[`mood_${said.mood}`] ?? ''}`}>
-          {MOOD_TEXT[said.mood]}{said.mood !== 'walked' && ` His ask is now ${said.ask}.`}
+          {MOOD_TEXT[said.mood]}{said.mood !== 'walked' && ` Their ask is now ${said.ask}.`}
         </div>
       )}
       {blocked && <div className={dy.blocked}>{blocked}</div>}
@@ -467,7 +467,7 @@ function MarketRow({ d, cardKey, on, onClick, showRival = false }) {
 // ── Signing your own: draftees, and the exclusive window ────────────────────
 
 const SIGN_INTRO = {
-  draft: `Your draftees only talk to you — for now. Each has an ask set by his salary and bent by his personality; offer less and he may take it, or walk. Everyone has to fit under the ${CAP_DP}-DP cap. Anyone you have not signed when you are done goes to free agency.`,
+  draft: `Your draftees only talk to you — for now. Each has an ask set by their salary and bent by their personality; offer less and they may take it, or walk. Everyone has to fit under the ${CAP_DP}-DP cap. Anyone you have not signed when you are done goes to free agency.`,
   expiring: `Your players whose deals ran out talk only to you in this window. Re-signing your own can take you past the cap, up to the ${APRON_DP} apron — the reward for keeping a team together. Anyone you let go hits free agency.`,
 };
 
@@ -574,7 +574,7 @@ export function DraftRoom({ d, moves }) {
       {!fantasy && <LotteryResult d={d} />}
       <p className={dy.intro}>
         {fantasy
-          ? `Draft anyone — then you have to SIGN them, under a ${CAP_DP}-DP cap. The number beside each player is what he will ask you for; the bar keeps your running total.`
+          ? `Draft anyone — then you have to SIGN them, under a ${CAP_DP}-DP cap. The number beside each player is what they will ask you for; the bar keeps your running total.`
           : 'Players who have never been in the league. Two rounds; you can pass. A pick signs on the rookie scale — three years at three-quarters of his value — and can take you up to the apron. Everyone not taken goes back into the draft pool for a later year.'}
         {moves.friends && ' Every coach has twelve hours on the clock; when it runs out, the AI picks for them.'}
       </p>
@@ -913,7 +913,7 @@ function TradeSide({ d, title, rows, picks = [], picked, pickedPicks = [], onTog
           <button key={k.key} type="button" className={`${dy.row} ${picked.includes(k.key) ? dy.rowOn : ''}`} onClick={() => onToggle(k.key)}>
             <PlayerCell cardKey={k.key} age={ageOf(d, k.key)} />
             <span className={dy.rowAsk}>{k.dp} × {k.years}</span>
-            <span className={styles.muted} title="What they value him at">{Math.round(tradeValue(d, k.key, teamId))}</span>
+            <span className={styles.muted} title="What they value them at">{Math.round(tradeValue(d, k.key, teamId))}</span>
             <span>{picked.includes(k.key) ? '✓' : ''}</span>
           </button>
         ))}

@@ -270,8 +270,8 @@ export default function DynastyTab({
 // ── The list ────────────────────────────────────────────────────────────────
 
 const PITCH = [
-  { t: '💸 Dynasty Points', b: `A ${CAP_DP}-DP payroll. A player's ask comes from his salary: stars want a lot, $10 cards are just happy to be here.` },
-  { t: '🤝 Personalities', b: 'Loyal, Ring Chaser, Mercenary, Security First, Bets on Himself, Easygoing — each haggles differently, and each runs out of patience.' },
+  { t: '💸 Dynasty Points', b: `A ${CAP_DP}-DP payroll. A player's ask comes from their salary: stars want a lot, $10 cards are just happy to be here.` },
+  { t: '🤝 Personalities', b: 'Loyal, Ring Chaser, Mercenary, Security First, Bets on Themself, Easygoing — each haggles differently, and each runs out of patience.' },
   { t: '🎱 The lottery', b: 'Miss the playoffs for a shot at the top pick of a class of legends and rookies who have never been in the league.' },
   { t: '🏆 Ten years', b: `Title money every year and a bonus for seeing all ten through. A fantasy-draft start pays ${FANTASY_DYNASTY_FACTOR}× — bring your own team for the full amount.` },
 ];

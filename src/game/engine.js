@@ -712,6 +712,30 @@ export function checkNeed(g, teamKey, idx, type) {
 // ── Assist Spending ────────────────────────────────────────────────────────
 // Costs live in SPEND_COSTS above — that block is the single source of truth
 // for both the engine checks here and the buttons in CourtBoard.
+/**
+ * A PAINT BUCKET WENT IN — record it once, wherever it came from.
+ *
+ * THREE ROUTES SCORE IN THE PAINT and only one of them used to say so. A card
+ * that announces a paint check resolves through applyShotCheck, which set
+ * `lastPaintScore` and paid Short-Roll Playmaker's assist; the two SPEND
+ * routes — 5 AST for a paint check, and the rebound-differential paint check —
+ * scored the points and told nobody. So a designated playmaker could hit two
+ * paint checks in a period and collect nothing (the user, 2026-09-14: "Not
+ * sure my short-roll playmaker was given their assists here", with both of
+ * Amen Thompson's buckets coming off spends), and Inside-Out, which waits for
+ * a paint score, was blind to them too.
+ *
+ * One helper, called from all three, so a fourth route cannot quietly skip it.
+ */
+export function creditPaintScore(g, teamKey, playerIdx, player) {
+  g.lastPaintScore = { teamKey, playerIdx, playerId: player?.id };
+  const te = g.tempEff?.[teamKey] || {};
+  if (!te['paintAst' + playerIdx]) return;
+  getTeam(g, teamKey).assists += 1;
+  if (g.analytics?.[teamKey]) g.analytics[teamKey].assistsFromCards += 1;
+  g.log = [...g.log, { team: teamKey, msg: `Short-Roll Playmaker: ${player?.name} scores inside — +1 AST` }];
+}
+
 export function spendAssist(g, teamKey, type, playerIdx) {
   // NOTHING SCORES AFTER THE FINAL WHISTLE. A rebound bonus earned in the
   // last section carries to a next section that does not exist, and the
@@ -771,6 +795,7 @@ export function spendAssist(g, teamKey, type, playerIdx) {
       if (ps2) ps2.pts += r.pts;
       creditAllowed(ng, teamKey, playerIdx, r.pts);
       if (ng.analytics?.[teamKey]) ng.analytics[teamKey].assistSpendPts += r.pts;
+      creditPaintScore(ng, teamKey, playerIdx, player);
     }
     if (r.die <= 2) ps.cold = (ps.cold || 0) + 1;
     if (r.die >= 19) ps.hot = (ps.hot || 0) + 1;
@@ -806,6 +831,7 @@ export function spendReboundBonus(g, teamKey, type, playerIdx) {
       if (ps2) ps2.pts += r.pts;
       creditAllowed(ng, teamKey, playerIdx, r.pts);
       if (ng.analytics?.[teamKey]) ng.analytics[teamKey].reboundBonusPts += r.pts;
+      creditPaintScore(ng, teamKey, playerIdx, player);
     }
     if (r.die <= 2) ps.cold = (ps.cold || 0) + 1;
     if (r.die >= 19) ps.hot = (ps.hot || 0) + 1;
@@ -1453,7 +1479,7 @@ export function endSection(g) {
   ['A', 'B'].forEach(k => {
     const sit = k === 'A' ? sitA : sitB;
     getTeam(ng, k).roster.forEach(p => {
-      if (sit.has(p.id)) ng.log = [...ng.log, { team: k, msg: `${p.name} is in foul trouble — he sits this section out.` }];
+      if (sit.has(p.id)) ng.log = [...ng.log, { team: k, msg: `${p.name} is in foul trouble — they sit this section out.` }];
     });
   });
   ng.foulTrouble = { A: [], B: [] };

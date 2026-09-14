@@ -63,7 +63,7 @@ export function fairDp(card) {
 export const PERSONALITIES = {
   loyal: {
     id: 'loyal', label: 'Loyal', icon: '🤝',
-    blurb: 'Takes 20% less to stay with the team he played for.',
+    blurb: 'Takes 20% less to stay with the team they played for.',
     premium: 1, give: 0.85, patience: 3, years: 3, yearCost: 0.06,
   },
   ring: {
@@ -78,17 +78,17 @@ export const PERSONALITIES = {
   },
   security: {
     id: 'security', label: 'Security First', icon: '🛡️',
-    blurb: 'Wants every year you can give him; each one short costs you.',
+    blurb: 'Wants every year you can give them; each one short costs you.',
     premium: 1, give: 0.85, patience: 3, years: 5, yearCost: 0.12, direction: 'short',
   },
   bet: {
-    id: 'bet', label: 'Bets on Himself', icon: '🎲',
+    id: 'bet', label: 'Bets on Themself', icon: '🎲',
     blurb: 'Wants one year, to cash in next time; each extra year costs you.',
     premium: 1, give: 0.85, patience: 3, years: 1, yearCost: 0.12, direction: 'long',
   },
   easy: {
     id: 'easy', label: 'Easygoing', icon: '😎',
-    blurb: 'A little under his value and wide open to a deal.',
+    blurb: 'A little under their value and wide open to a deal.',
     premium: 0.95, give: 0.78, patience: 4, years: 2, yearCost: 0.04,
   },
   happy: {
@@ -213,9 +213,9 @@ export function toBeat(card, pid, ctx, years, day, rivalRatio) {
 
 export const MOOD_TEXT = {
   signed: 'Deal.',
-  close: 'Close — he wants a little more.',
+  close: 'Close — they want a little more.',
   apart: 'Not there yet.',
-  insulted: 'Insulted. That cost you his patience.',
+  insulted: 'Insulted. That cost you their patience.',
   outbid: 'Another team is offering him a better deal.',
   walked: 'He is done talking to you.',
 };

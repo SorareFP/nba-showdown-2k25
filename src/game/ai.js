@@ -115,13 +115,105 @@ export function lineupValue(player, ps) {
   return now + horizon * (nextIfPlayed - nextIfRested) + body + shoot - worn;
 }
 
-export function aiDraftPick(game, teamKey) {
+// ── THE ROTATION: planning the half instead of the next four minutes ────────
+//
+// The user, 2026-09-14, on aiDraftPick: "no notion of the five as a unit, and
+// no 12-section minutes budget. A human rests Giannis in S2 and S5 so he's
+// fresh for crunch."
+//
+// WHAT THE LADDER DOES TO A PLAYER WHO NEVER SITS. Minutes on the tracker at
+// the start of each section of a half, and the roll they carry:
+//
+//     never sits    0 / 0    4 / 0    8 / -2   12 / -6   16 / -12  20 / -18
+//     planned       0 / 0    4 / 0    8 / rest  4 / 0     8 / rest  4 / 0
+//
+// Six sections, and the difference in the LAST one — the section with Crunch
+// Time and the Clutch Possession in it — is eighteen points of roll. The
+// planned half plays four of six and arrives fresh. lineupValue's one-section
+// lookahead cannot see that: it weighs this section against the next, decides
+// at -6 that one more is nearly free, and walks a star down the ladder.
+//
+// SO PLAN THE WHOLE HALF. For one player the problem is small enough to solve
+// exactly — minutes are a multiple of four, the choice is play or sit, and
+// halftime wipes the tracker, so the horizon is at most six sections and the
+// state is (minutes, markers, sections left). What the pick wants is not the
+// value of playing him, but the MARGINAL value: the best plan that plays him
+// now, less the best plan that sits him now. A star three sections in scores
+// well and still ranks below a fresh body, which is the whole point.
+//
+// The five-as-a-unit half of the note is NOT solved here: the pick is still
+// greedy over the marginal values, and the constraint that exactly five play
+// is handled by taking the top five. A joint search over lineups is a
+// different and much larger problem.
+
+/** Sections left in this half, the one about to be played included. */
+export function sectionsLeftInHalf(game) {
+  // An overtime is a single section that re-arms at Q4 S3 (engine.js), and
+  // nothing follows it that can be planned for.
+  if (game?.overtime) return 1;
+  const q = game?.quarter ?? 1;
+  const sec = game?.section ?? 1;
+  const lastOfHalf = q <= 2 ? 2 : 4;
+  return Math.max(1, (lastOfHalf - q) * 3 + (3 - sec) + 1);
+}
+
+/**
+ * The best total a card can pay over `left` sections from here, playing or
+ * sitting as it likes. `mark` is hot minus cold, worth two to the roll each;
+ * a section on the bench clears them (benchRest) and no plan can get them
+ * back, so the state is only "has them or does not".
+ */
+function planValue(card, min, mark, left, memo) {
+  if (left <= 0) return 0;
+  const key = `${min}|${mark}|${left}`;
+  const seen = memo.get(key);
+  if (seen !== undefined) return seen;
+  const play = expectedOutput(card, fatigueForMinutes(min) + mark * 2)
+    + planValue(card, min + SECTION_MINUTES, mark, left - 1, memo);
+  const sit = planValue(card, restMinutes(min), 0, left - 1, memo);
+  const best = Math.max(play, sit);
+  memo.set(key, best);
+  return best;
+}
+
+/**
+ * What playing this player THIS section is worth, given the rest of the half.
+ *
+ * `body` and `shoot` are carried over from lineupValue unchanged: speed and
+ * power decide matchup advantage, which is a roll bonus no chart can show
+ * because the opponent's lineup is not known when the pick is made. Keeping
+ * them identical is deliberate — it leaves the planner as the only thing that
+ * changed, so a duel can attribute the result to it.
+ */
+export function rotationValue(player, ps, left = 1) {
+  const min = ps?.minutes || 0;
+  const mark = ps ? (ps.hot || 0) - (ps.cold || 0) : 0;
+  const memo = new Map();
+  const play = expectedOutput(player, fatigueForMinutes(min) + mark * 2)
+    + planValue(player, min + SECTION_MINUTES, mark, left - 1, memo);
+  const sit = planValue(player, restMinutes(min), 0, left - 1, memo);
+  const body = 0.05 * (player.speed + player.power + (player.defBoost || 0));
+  const shoot = 0.1 * ((player.threePtBoost || 0) + (player.paintBoost || 0));
+  return (play - sit) + body + shoot;
+}
+
+/**
+ * LEVER FIVE ON THE DIFFICULTY LADDER — and until 2026-09-14 the rotation was
+ * not on it at all: aiDraftPick took no `iq`, so Settler and Deity filled the
+ * floor the same considered way. A lower rung now sends out a body it simply
+ * likes the look of.
+ */
+export function aiDraftPick(game, teamKey, { iq = 1 } = {}) {
   const pool = teamKey === 'A' ? game.draft.aPool : game.draft.bPool;
   if (!pool || pool.length === 0) return null;
+  if (misplays(iq)) {
+    return { type: 'draft_pick', playerId: pool[Math.floor(Math.random() * pool.length)].id };
+  }
 
+  const left = sectionsLeftInHalf(game);
   const scored = pool.map(player => ({
     player,
-    score: lineupValue(player, getPS(game, teamKey, player.id)),
+    score: rotationValue(player, getPS(game, teamKey, player.id), left),
   }));
   scored.sort((a, b) => b.score - a.score);
   return { type: 'draft_pick', playerId: scored[0].player.id };

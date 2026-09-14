@@ -121,7 +121,7 @@ export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExec
 
       {game.phase === 'draft' ? (
         <BlindPickPhase game={game} setGame={setGame} pvpMode={pvpMode} myTeamKey={myTeamKey}
-          onDraftSubmit={onDraftSubmit} selected={draftSelected} setSelected={setDraftSelected} />
+          onDraftSubmit={onDraftSubmit} selected={draftSelected} setSelected={setDraftSelected} aiIq={aiIq} />
       ) : (
         <div className={styles.courtLayout}>
           {/* Left hand panel: Team A's hand (or empty placeholder in PvP if I'm Team B) */}
@@ -1370,7 +1370,7 @@ function PlacementAffordance({ game, teamKey, onPlacePlayer }) {
 // ── Blind Pick Phase ──────────────────────────────────────────────────────
 // Replaces the old snake draft. Player selects 5 from their 10-player roster.
 // On submit, AI picks 5 for the opponent and the game transitions to matchup_strats.
-function BlindPickPhase({ game, setGame, pvpMode = false, myTeamKey = null, onDraftSubmit, selected, setSelected }) {
+function BlindPickPhase({ game, setGame, pvpMode = false, myTeamKey = null, onDraftSubmit, selected, setSelected, aiIq = 1 }) {
   const teamKey = pvpMode ? (myTeamKey || 'A') : 'A';
   const pool = teamKey === 'A' ? game.draft.aPool : game.draft.bPool;
   const stats = teamKey === 'A' ? game.teamA.stats : game.teamB.stats;
@@ -1412,7 +1412,9 @@ function BlindPickPhase({ game, setGame, pvpMode = false, myTeamKey = null, onDr
     // AI picks 5 for opponent
     const oppKey = teamKey === 'A' ? 'B' : 'A';
     for (let i = 0; i < 5; i++) {
-      const action = aiDraftPick(g, oppKey);
+      // The rung reaches the ROTATION too, as of 2026-09-14 — it used to fill
+      // the floor the same considered way at Settler as at Deity.
+      const action = aiDraftPick(g, oppKey, { iq: aiIq });
       if (action) {
         const oppPool = oppKey === 'A' ? g.draft.aPool : g.draft.bPool;
         const pIdx = oppPool.findIndex(p => p.id === action.playerId);

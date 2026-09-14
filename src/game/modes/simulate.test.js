@@ -130,7 +130,12 @@ describe('simulateGame', () => {
     const mpg = byRank.map(xs => xs.reduce((t, x) => t + x, 0) / xs.length);
     expect(mpg[0]).toBeGreaterThan(mpg[ROSTER_SIZE - 1] + 6);   // the best-paid plays clearly more
     expect(mpg.every(m => Math.abs(m - 24) < 0.5)).toBe(false);  // not the old flat 24 for everyone
-    expect(Math.round(mpg.reduce((t, m) => t + m, 0))).toBe(240); // still five on the floor, 48 minutes
+    // Five on the floor for every section: 5 x 48 = 240 minutes of regulation.
+    // NOT exactly 240 — an overtime is another section, and a tie in any of
+    // the twelve games sampled here adds its minutes to the mean. The rotation
+    // planner (ai.js) changed which games go to overtime, which is how this
+    // read 242 and caught an assertion that had quietly assumed regulation.
+    expect(Math.round(mpg.reduce((t, m) => t + m, 0))).toBeGreaterThanOrEqual(240);
   });
 
   it('turns a fixture into a result the standings can read', () => {

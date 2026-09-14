@@ -27,6 +27,22 @@
   inset: 0;
 }
 
+/* A MASKED REGION LIGHTS WHAT IS BRIGHT UNDERNEATH. The mask image is the
+   card's own face (faceRegions.js), read for its LUMINANCE: the gold of a
+   gilded name is near-white and passes the foil through, the dark field
+   behind the letters is near-black and stops it. Sized to the region, which
+   spans the whole card, so it registers exactly with the image below.
+
+   A browser without mask-mode falls back to an alpha mask, and a card face is
+   opaque, so the region simply paints as it did before this existed. */
+.region[data-mask] {
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  mask-mode: luminance;
+  -webkit-mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+}
+
 .foil,
 .glare {
   position: absolute;

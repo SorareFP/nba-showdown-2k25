@@ -174,8 +174,20 @@ export default function Holo({ active = true, regions = DEFAULT_REGIONS, idle = 
     >
       {children}
       <span className={styles.face} aria-hidden="true">
-        {regions.map(asRegion).map(({ key, clip }) => (
-          <span key={key} className={styles.region} data-region={key} style={{ clipPath: clip }}>
+        {regions.map(asRegion).map(({ key, clip, mask }) => (
+          <span
+            key={key}
+            className={styles.region}
+            data-region={key}
+            data-mask={mask ? '' : undefined}
+            style={{
+              clipPath: clip,
+              // The region span covers the WHOLE card and is only clipped, so
+              // a mask sized to it lands on the face pixel for pixel — see the
+              // note in faceRegions.js for why the mask is the card itself.
+              ...(mask ? { maskImage: `url(${mask})`, WebkitMaskImage: `url(${mask})` } : null),
+            }}
+          >
             <span className={styles.foil} />
             <span className={styles.glare} />
           </span>

@@ -27,6 +27,8 @@
 import { cardTreatment } from './sets.js';
 import { badgesFor } from './badgeLookup.js';
 import { getPlayerRarity } from '../game/rarity.js';
+import { getPlayerThumbUrl } from '../game/cardImages.js';
+import { cardKey } from '../game/cardSets.js';
 
 export const FACE_W = 843;
 export const FACE_H = 1181;
@@ -116,7 +118,28 @@ export function holoRegionsFor(card) {
     const m = measuredFor(card);
     out.push({ key: 'band', clip: clipPathFor('band') });
     out.push({ key: 'frame', clip: clipPathFor('frame') });
-    out.push({ key: 'name', clip: m?.name ? clipPathForBox(m.name) : clipPathFor('name') });
+    // THE NAME LIGHTS THE LETTERS, NOT THE BOX. A measured name is a
+    // getBoundingClientRect, which can only ever be a rectangle, so clipping
+    // the foil to it painted a slab down the side of the card (the user,
+    // 2026-09-14: "appearing as a bar over the name instead of just the
+    // letters themselves").
+    //
+    // Glyph shapes are not available to clip to: what is on screen at this
+    // point is a flat PNG of the face — CardTemplate is never mounted here, so
+    // there is no text element to reach for. But the card's own image IS the
+    // shape. Masked by it in LUMINANCE mode, the foil paints where the face is
+    // bright — the gold letters — and skips the dark field they sit on, with
+    // no font metrics to line up and nothing to drift out of register, because
+    // the mask is the very image underneath.
+    //
+    // The thumb rather than the full PNG: every tile has already loaded it, so
+    // the mask costs nothing, and a browser without mask-mode simply treats an
+    // opaque image as an opaque alpha mask and gets today's bar back.
+    out.push({
+      key: 'name',
+      clip: m?.name ? clipPathForBox(m.name) : clipPathFor('name'),
+      mask: getPlayerThumbUrl(cardKey(card)),
+    });
     if (m?.badge) out.push({ key: 'badge', clip: clipPathForBox(m.badge) });
   }
   return out;

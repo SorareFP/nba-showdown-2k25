@@ -24,7 +24,7 @@
 // start and never burnable at any count. The guarantee itself lives in
 // burnCard and collectCard on the server, because a hidden button is a
 // suggestion and not a rule.
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { ALL_CARDS, cardKey, BASE_SET } from '../game/cardSets.js';
 import { STRATS } from '../game/strats.js';
 import { ZoomImg } from './CardLightbox.jsx';
@@ -60,6 +60,12 @@ export default function MyCollection({ collection, onBurn, onList, onUnlist = nu
   const [rarityFilter, setRarityFilter] = useState('all');
   const [setFilter, setSetFilter] = useState('ALL');
   const [teamFilter, setTeamFilter] = useState('ALL');
+  // HOW MANY OF IT YOU HOLD. "Duplicates" is the plain reading — two or more —
+  // but after listing and the collection copy, a card can be a duplicate and
+  // still have nothing you can do with it, so the second option is the
+  // actionable one: a spare that is neither collected nor already on the
+  // market.
+  const [copiesFilter, setCopiesFilter] = useState('all');
   const [search, setSearch] = useState('');
   const [confirmBurn, setConfirmBurn] = useState(null);
   // Which card is being priced, and at what. Selling needs a NUMBER from the
@@ -115,8 +121,20 @@ export default function MyCollection({ collection, onBurn, onList, onUnlist = nu
     };
   }, [allCards, collection]);
 
+  // The row below does this arithmetic too; both read it from here so a card
+  // cannot be filtered in as sellable and then render with nothing to sell.
+  const sparesOf = useCallback(key => {
+    const entry = collection[key] ?? {};
+    const owned = entry.count ?? 0;
+    const collected = entry.collected === true || entry.earned === true;
+    const listed = (listedByCard[key] ?? []).length;
+    return Math.max(0, owned - (collected ? 1 : 0) - listed);
+  }, [collection, listedByCard]);
+
   const filtered = useMemo(() => {
     let list = allCards.filter(c => (collection[c.key]?.count ?? 0) > 0);
+    if (copiesFilter === 'dupes') list = list.filter(c => (collection[c.key]?.count ?? 0) > 1);
+    if (copiesFilter === 'spare') list = list.filter(c => sparesOf(c.key) > 0);
     if (typeFilter !== 'all') list = list.filter(c => c.type === typeFilter);
     if (rarityFilter !== 'all') list = list.filter(c => c.rarity === rarityFilter);
     if (setFilter !== 'ALL') list = list.filter(c => c.set === setFilter);
@@ -131,7 +149,7 @@ export default function MyCollection({ collection, onBurn, onList, onUnlist = nu
       rank(a.rarity) - rank(b.rarity) ||
       a.name.localeCompare(b.name)
     );
-  }, [allCards, typeFilter, rarityFilter, setFilter, teamFilter, search, collection]);
+  }, [allCards, typeFilter, rarityFilter, setFilter, teamFilter, copiesFilter, search, collection, sparesOf]);
 
   const totalOwned = useMemo(
     () => Object.values(collection).reduce((n, e) => n + (e?.count ?? 0), 0),
@@ -172,6 +190,16 @@ export default function MyCollection({ collection, onBurn, onList, onUnlist = nu
         <select value={teamFilter} onChange={e => setTeamFilter(e.target.value)} className={styles.filter}>
           {teams.map(t => <option key={t} value={t}>{t === 'ALL' ? 'All Teams' : t}</option>)}
         </select>
+        <select
+          value={copiesFilter}
+          onChange={e => setCopiesFilter(e.target.value)}
+          className={styles.filter}
+          title="Duplicates is two or more copies; a spare is one you could sell or burn right now"
+        >
+          <option value="all">All Copies</option>
+          <option value="dupes">Duplicates (2+)</option>
+          <option value="spare">Spare to sell or burn</option>
+        </select>
         <input
           className={styles.search}
           placeholder="Search..."
@@ -192,7 +220,7 @@ export default function MyCollection({ collection, onBurn, onList, onUnlist = nu
           // what put a Sell button on a card with nothing left to sell.
           const mineListed = listedByCard[c.key] ?? [];
           const listed = mineListed.length;
-          const spares = Math.max(0, owned - (collected ? 1 : 0) - listed);
+          const spares = sparesOf(c.key);
           const canCollect = Boolean(onCollect) && c.type === 'player' && owned > 0 && !collected;
           const cfg = RARITY_CONFIG[c.rarity];
           const burnVal = c.type === 'strat'

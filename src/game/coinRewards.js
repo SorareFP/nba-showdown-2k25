@@ -77,11 +77,22 @@ export const DYNASTY_GAME_FACTOR = 1.15;
  * The win bonus already scales with the MARGIN (WIN_BY_MARGIN above): 20 coins
  * at +1, 100 at +50. An easier coach loses by more, so before this table the
  * cheapest opponent was the most profitable one and grinding Settler was the
- * optimal way to earn. Measured in MIRROR MATCHES — the same ten on both
- * benches, so the rung is the only thing that differs; roster strength is a
- * separate lever with its own fix (scripts/analysis/runDifficultyPay.js) — a
- * 60-game pilot put Settler at 1.11x the Deity rate, and a 1,200-game run is
- * the number to trust if the two ever disagree.
+ * optimal way to earn.
+ *
+ * MEASURED IN MIRROR MATCHES — the same ten on both benches, so the rung is
+ * the only thing that differs; roster strength is a separate lever with its
+ * own fix. 1,200 games a rung, scripts/analysis/runDifficultyPay.js:
+ *
+ *     rung        margin   win%   coins/game   vs Deity
+ *     Settler       +7.8    68%       107.1     1.112x
+ *     Chieftain     +4.9    63%       103.1     1.070x
+ *     Warlord       +2.4    55%        99.7     1.035x
+ *     Prince        +0.8    52%        97.8     1.016x
+ *     King          -0.1    50%        96.5     1.002x
+ *     Deity         -0.7    49%        96.3     1.000x   (control)
+ *
+ * Monotonic on all four columns, and the control sits within noise of even
+ * (1.6 sd on margin at this n, 0.7 on win rate).
  *
  * ── WHY EVERY FACTOR IS AT MOST 1 ───────────────────────────────────────────
  *
@@ -98,9 +109,10 @@ export const DYNASTY_GAME_FACTOR = 1.15;
  * its word while a dynasty game is read off the league document
  * (functions/index.js).
  *
- * The spread is wider than the 1.11x inversion on purpose: neutralising it
- * makes the rung free, and the point is that it should be a choice. Half rate
- * at Settler is a collection that takes twice as long.
+ * THE SPREAD IS WIDER THAN THE INVERSION ON PURPOSE. Merely flattening it
+ * would take 0.899 / 0.935 / 0.967 / 0.985 / 0.998 — which makes the rung
+ * FREE, and the point is that it should be a choice. Half rate at Settler is
+ * a collection that takes twice as long to finish.
  */
 // Ordered easiest to hardest, and the LABELS live here rather than beside the
 // iq numbers in aiLevels.js so there is one list of rungs rather than two that

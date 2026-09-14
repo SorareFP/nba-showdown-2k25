@@ -285,7 +285,7 @@ const DEFAULT_ORDER = ['A', 'B', 'B', 'A', 'A', 'B', 'B', 'A', 'A', 'B'];
  * sides play the rest out. Sorted best first. Exported so the tutorial can
  * say why the coach chose what it chose.
  */
-export function placementChoices(game, teamKey) {
+export function placementChoices(game, teamKey, { samples = 1, rng = Math.random } = {}) {
   const oppKey = teamKey === 'A' ? 'B' : 'A';
   const myT = getTeam(game, teamKey);
   const oppT = getTeam(game, oppKey);
@@ -315,67 +315,129 @@ export function placementChoices(game, teamKey) {
       .slice(0, count)
       .map(x => x.r);
   };
-  const mine = remainingFor(teamKey);
-  if (!mine.length) return [];
-  const theirs = guessRemaining(oppKey);
-  const order = game.placementOrder || DEFAULT_ORDER;
-  const step = game.placementStep ?? (myT.starters.length + oppT.starters.length);
-  // The steps after this one. The first must be mine for the scores to mean
-  // "if I place this now"; a caller asking out of turn is scored as if it were.
-  const ahead = order.slice(step);
-  const steps = ahead.length && ahead[0] === teamKey ? ahead.slice(1) : ahead;
-
-  // Pairing values, from my chair, for every remaining pair — and for the
-  // row the opponent has already led, if they are a player ahead of me.
-  const val = mine.map(m => theirs.map(o => pairValue(game, teamKey, m, o)));
-  const openOpp = oppT.starters.length > myT.starters.length ? oppT.starters[myT.starters.length] : null;
-  const openVal = openOpp ? mine.map(m => pairValue(game, teamKey, m, openOpp)) : null;
-
-  const memo = new Map();
-  const bits = mask => { const out = []; for (let i = 0; mask >> i; i += 1) if (mask & (1 << i)) out.push(i); return out; };
-  const solve = (si, mMask, oMask, open) => {
-    if (si >= steps.length) return 0;
-    const key = `${si}|${mMask}|${oMask}|${open ? open.side + open.idx : '-'}`;
-    if (memo.has(key)) return memo.get(key);
-    const mover = steps[si];
-    let best;
-    if (mover === teamKey) {
-      const cands = bits(mMask);
-      if (!cands.length) best = solve(si + 1, mMask, oMask, open);
-      else {
-        best = -Infinity;
-        for (const m of cands) {
-          const answering = open && open.side === 'opp';
-          const gain = answering ? (open.idx === -1 ? openVal[m] : val[m][open.idx]) : 0;
-          const v = gain + solve(si + 1, mMask & ~(1 << m), oMask, answering ? null : { side: 'me', idx: m });
-          if (v > best) best = v;
-        }
-      }
-    } else {
-      const cands = bits(oMask);
-      if (!cands.length) best = solve(si + 1, mMask, oMask, open);
-      else {
-        best = Infinity;
-        for (const o of cands) {
-          const answering = open && open.side === 'me';
-          const gain = answering ? val[open.idx][o] : 0;
-          const v = gain + solve(si + 1, mMask, oMask & ~(1 << o), answering ? null : { side: 'opp', idx: o });
-          if (v < best) best = v;
-        }
-      }
+  /**
+   * THE FIVE THEY HAVE NOT SHOWN YET, DRAWN RATHER THAN ASSUMED.
+   *
+   * guessRemaining above takes the top `count` by lineupValue and treats them
+   * as certain, which is one good guess and an overconfident one: the snake is
+   * the whole game (the user, 2026-09-14: "deep knowledge of the other team,
+   * who may or may not be coming next, and optimizing matchups — that's the
+   * name of the entire game"), and a coach who is sure about a lineup it
+   * cannot see will place against a team that never takes the floor.
+   *
+   * Sampling instead. Weight every unplaced card by lineupValue — the same
+   * reading the coach uses to pick its OWN five — and draw `count` of them
+   * without replacement. Run the search against several such lineups and
+   * average what each of my cards is worth across them, so a placement that
+   * is merely good against one guess loses to one that holds up across the
+   * lineups they are actually likely to field.
+   *
+   * At samples = 1 this is exactly the old single guess, because the first
+   * draw of a weighted sample with no randomness is the top of the list.
+   */
+  const drawRemaining = key => {
+    const t = getTeam(game, key);
+    const placed = new Set((t.starters || []).map(pl => pl.id));
+    const count = Math.max(0, 5 - placed.size);
+    const pool = (t.roster || [])
+      .filter(r => r && !placed.has(r.id))
+      .map(r => ({ r, v: lineupValue(r, getPS(game, key, r.id)) }));
+    if (pool.length <= count) return pool.map(x => x.r);
+    // Shift so the weakest card still has some chance of being played: a
+    // negative lineupValue would otherwise be impossible rather than unlikely.
+    const floor = Math.min(...pool.map(x => x.v));
+    const weights = pool.map(x => Math.max(0.01, x.v - floor + 0.5));
+    const out = [];
+    const left = [...pool.keys()];
+    for (let n = 0; n < count && left.length; n += 1) {
+      let total = left.reduce((t2, i) => t2 + weights[i], 0);
+      let roll = rng() * total;
+      let pick = left[left.length - 1];
+      for (const i of left) { roll -= weights[i]; if (roll <= 0) { pick = i; break; } }
+      out.push(pool[pick].r);
+      left.splice(left.indexOf(pick), 1);
     }
-    memo.set(key, best);
-    return best;
+    return out;
   };
 
-  const mMask0 = (1 << mine.length) - 1;
-  const oMask0 = (1 << theirs.length) - 1;
-  const answering = Boolean(openOpp);
-  const out = mine.map((player, m) => {
-    const gain = answering ? openVal[m] : 0;
-    const v = gain + solve(0, mMask0 & ~(1 << m), oMask0, answering ? null : { side: 'me', idx: m });
-    return { player, value: v, rowValue: answering ? openVal[m] : null, answering };
-  });
+  const mine = remainingFor(teamKey);
+  if (!mine.length) return [];
+  /** Every one of my cards scored against ONE possible opponent lineup. */
+  const scoreAgainst = theirs => {
+    // `theirs` is the lineup this pass is played against.
+    const order = game.placementOrder || DEFAULT_ORDER;
+    const step = game.placementStep ?? (myT.starters.length + oppT.starters.length);
+    // The steps after this one. The first must be mine for the scores to mean
+    // "if I place this now"; a caller asking out of turn is scored as if it were.
+    const ahead = order.slice(step);
+    const steps = ahead.length && ahead[0] === teamKey ? ahead.slice(1) : ahead;
+
+    // Pairing values, from my chair, for every remaining pair — and for the
+    // row the opponent has already led, if they are a player ahead of me.
+    const val = mine.map(m => theirs.map(o => pairValue(game, teamKey, m, o)));
+    const openOpp = oppT.starters.length > myT.starters.length ? oppT.starters[myT.starters.length] : null;
+    const openVal = openOpp ? mine.map(m => pairValue(game, teamKey, m, openOpp)) : null;
+
+    const memo = new Map();
+    const bits = mask => { const out = []; for (let i = 0; mask >> i; i += 1) if (mask & (1 << i)) out.push(i); return out; };
+    const solve = (si, mMask, oMask, open) => {
+      if (si >= steps.length) return 0;
+      const key = `${si}|${mMask}|${oMask}|${open ? open.side + open.idx : '-'}`;
+      if (memo.has(key)) return memo.get(key);
+      const mover = steps[si];
+      let best;
+      if (mover === teamKey) {
+        const cands = bits(mMask);
+        if (!cands.length) best = solve(si + 1, mMask, oMask, open);
+        else {
+          best = -Infinity;
+          for (const m of cands) {
+            const answering = open && open.side === 'opp';
+            const gain = answering ? (open.idx === -1 ? openVal[m] : val[m][open.idx]) : 0;
+            const v = gain + solve(si + 1, mMask & ~(1 << m), oMask, answering ? null : { side: 'me', idx: m });
+            if (v > best) best = v;
+          }
+        }
+      } else {
+        const cands = bits(oMask);
+        if (!cands.length) best = solve(si + 1, mMask, oMask, open);
+        else {
+          best = Infinity;
+          for (const o of cands) {
+            const answering = open && open.side === 'me';
+            const gain = answering ? val[open.idx][o] : 0;
+            const v = gain + solve(si + 1, mMask, oMask & ~(1 << o), answering ? null : { side: 'opp', idx: o });
+            if (v < best) best = v;
+          }
+        }
+      }
+      memo.set(key, best);
+      return best;
+    };
+
+    const mMask0 = (1 << mine.length) - 1;
+    const oMask0 = (1 << theirs.length) - 1;
+    const answering = Boolean(openOpp);
+    const out = mine.map((player, m) => {
+      const gain = answering ? openVal[m] : 0;
+      const v = gain + solve(0, mMask0 & ~(1 << m), oMask0, answering ? null : { side: 'me', idx: m });
+      return { player, value: v, rowValue: answering ? openVal[m] : null, answering };
+    });
+    return out;
+  };
+
+  // One pass is the old behaviour exactly; more are averaged, so a placement
+  // that only works against one guessed five cannot win.
+  const passes = Math.max(1, Math.trunc(samples));
+  const lineups = passes === 1 ? [guessRemaining(oppKey)]
+    : Array.from({ length: passes }, () => drawRemaining(oppKey));
+  const tallies = lineups.map(scoreAgainst);
+  const out = mine.map((player, i) => ({
+    player,
+    value: tallies.reduce((t, pass) => t + pass[i].value, 0) / tallies.length,
+    rowValue: tallies[0][i].rowValue,
+    answering: tallies[0][i].answering,
+  }));
   out.sort((a, b) => b.value - a.value);
   return out;
 }
@@ -385,8 +447,46 @@ export function placementChoices(game, teamKey) {
  * chance this placement is the search's best answer; otherwise it is any
  * remaining player. Math.random, so the sims' seeded rng reproduces it.
  */
-export function aiPlacementPick(game, teamKey, { iq = 1 } = {}) {
-  const choices = placementChoices(game, teamKey);
+/**
+ * HOW MANY OPPONENT LINEUPS THE COACH WEIGHS BEFORE IT PLACES, at the top rung.
+ *
+ * The placement snake is the game — the user, 2026-09-14: "deep knowledge of
+ * the other team, who may or may not be coming next, and optimizing matchups.
+ * That's the name of the entire game" — and the coach used to answer it with
+ * ONE guess: the top five by lineupValue, held as certain.
+ *
+ * MEASURING THIS TOOK TWO HARNESSES AND NEARLY WENT WRONG TWICE.
+ *
+ * runAiDuel says the distribution LOSES, 47.8% over 800 games. It is right and
+ * it is measuring the wrong thing: aiDraftPick takes the top five by
+ * lineupValue and guessRemaining predicts the top five by lineupValue, so in
+ * AI-vs-AI the guess is not a guess, it is the truth, and sampling can only
+ * add noise to a perfect prediction. A human does not pick that way.
+ *
+ * Against an opponent choosing its five OFF the coach's own ordering, 2,200
+ * games an arm, with the control (same brain both sides) at 49.4% / +0.16:
+ *
+ *      4 lineups   50.5%   +0.64
+ *      8 lineups   51.7%   +0.68
+ *     16 lineups   53.1%   +1.21
+ *
+ * Monotonic, and 53.1% clears the +/-2.1 interval at that n. At 500 games the
+ * same arms read 51.2 / 50.4 / 51.0 / 51.0 against a control of +0.93 — all
+ * noise, and a default of 1 was nearly shipped on the strength of it. The
+ * ladder's own warning applies to its levers too: enough games or none.
+ */
+export const PLACEMENT_SAMPLES = 16;
+
+/**
+ * Foresight is the rung. Settler weighs one lineup and then usually ignores
+ * the answer (misplays below); Deity weighs all sixteen. This is the ladder's
+ * fifth lever and, unlike the four misplays dials, it has no ceiling at
+ * "never do the dumb thing" — a better search just keeps being better.
+ */
+export const samplesFor = iq => Math.max(1, Math.round(1 + (PLACEMENT_SAMPLES - 1) * Math.max(0, Math.min(1, iq))));
+
+export function aiPlacementPick(game, teamKey, { iq = 1, samples = samplesFor(iq) } = {}) {
+  const choices = placementChoices(game, teamKey, { samples });
   if (!choices.length) return null;
   const pick = iq >= 1 || Math.random() < iq
     ? choices[0]

@@ -21,6 +21,7 @@
 // every engine function, and the engine's purity is worth more than that.
 import {
   newGame, doRoll, endSection, applyMatchups, spendAssist, spendReboundBonus, STARTERS, MAX_OVERTIMES,
+  returnCardToDeck,
   spendTimeout, endTimeout, searchCrunchCard,
 } from '../engine.js';
 import { execCard, resolvePendingShotCheck, resolveGoUnder } from '../execCard.js';
@@ -234,6 +235,15 @@ function playSection(g, sectionIndex, brains = null) {
     if (action?.type === 'play_card') g = tryPlay(g, key, action, brains).g;
   }
   for (const key of ['A', 'B']) g = spendAll(g, key, brains);
+  // CYCLE BEFORE THE DRAW. endSection refills each hand to seven, so a dead
+  // card cleared now is a live one drawn a moment later; held, it blocks the
+  // draw for the rest of the game (ai.js aiCycleDecision). A brain that does
+  // not offer the decision simply does not cycle, which is how the lab
+  // measures it both ways.
+  for (const key of ['A', 'B']) {
+    const cycle = brainOf(brains, key).aiCycleDecision?.(g, key);
+    if (cycle?.type === 'return_card') g = returnCardToDeck(g, key, cycle.handIdx);
+  }
   g = endSection(g);
   for (const key of ['A', 'B']) g = spendAll(g, key, brains);
   return g;

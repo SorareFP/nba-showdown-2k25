@@ -336,10 +336,53 @@ const VARIANTS = {
 
 // ── The duel ────────────────────────────────────────────────────────────────
 const names = ONLY ? ONLY.split(',') : Object.keys(VARIANTS);
+// ── ARCHETYPE MODE ──────────────────────────────────────────────────────────
+//
+// --arch=fast|big|stoppy draws both teams from one archetype instead of at
+// random. It exists because cycling measured +1.22 margin on one seed and
+// +0.30 on the next, and the likeliest reason is not noise but ROSTER: the AI
+// plays the same fifty whatever it fields, and runDeckFit.js shows legality
+// swinging a hundred points between archetypes — Back to the Basket is legal
+// 100% of the time for a big team and 0% for a fast one. A fast team is
+// holding dead cards a big team never draws dead, so cycling should be worth
+// much more to one than the other. If it is, cycling is a deck-fit problem
+// wearing a different hat, and the fix belongs in the deck.
+const ARCH = (process.argv.find(a => a.startsWith('--arch=')) ?? '--arch=').split('=')[1] || null;
+const WANTS = {
+  fast: c => c.speed * 2 + (c.threePtBoost ?? 0) * 3,
+  big: c => c.power * 2 + (c.paintBoost ?? 0) * 3,
+  stoppy: c => (c.defBoost ?? 0) * 5 + c.speed + c.power,
+};
+
+/** Ten cards under the cap maximising `want`, skipping `taken`. */
+function archRoster(want, taken) {
+  const free = CARDS.filter(c => !taken.has(c.id));
+  const ranked = [...free].sort((a, b) => want(b) - want(a));
+  const cheap = [...free].sort((a, b) => (a.salary ?? 0) - (b.salary ?? 0));
+  const out = []; const ids = new Set(); let sal = 0;
+  for (const c of ranked) {
+    if (out.length >= 10) break;
+    if (ids.has(c.id)) continue;
+    const after = 10 - out.length - 1;
+    let reserve = 0, n = 0;
+    for (const x of cheap) {
+      if (n >= after) break;
+      if (ids.has(x.id) || x.id === c.id) continue;
+      reserve += x.salary ?? 0; n += 1;
+    }
+    if (n < after || sal + (c.salary ?? 0) + reserve > CAP) continue;
+    out.push(c); ids.add(c.id); sal += c.salary ?? 0;
+  }
+  for (const c of out) taken.add(c.id);
+  return out;
+}
+
 const pairs = [];
 for (let i = 0; i < Math.max(8, Math.ceil(GAMES / 8)); i += 1) {
   const taken = new Set();
-  pairs.push([roster(taken), roster(taken)]);
+  pairs.push(ARCH
+    ? [archRoster(WANTS[ARCH], taken), archRoster(WANTS[ARCH], taken)]
+    : [roster(taken), roster(taken)]);
 }
 
 console.log(`THE LEVER LAB — each variant against the shipped brain, ${GAMES} games\n`);

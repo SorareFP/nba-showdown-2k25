@@ -1709,38 +1709,57 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
 
 // ── Rolling Decision ────────────────────────────────────────────────────────
 // Pick the next player to roll, prioritizing best matchups first.
-// ── CYCLING A DEAD HAND: MEASURED, AND IT DOES NOTHING ──────────────────────
+// ── CYCLING A DEAD HAND: IT DEPENDS ENTIRELY ON THE DECK, SO IT IS NOT HERE ──
 //
-// Not a hypothetical — this was built, run and taken out again, and the note
-// is here so it is not rebuilt on the same reasoning.
+// Built twice, measured four times, and shipped neither time. The whole story
+// is here because every part of it was informative.
 //
-// THE FINDING IS REAL. scripts/analysis/runHandSilt.js, 60 games, the average
-// hand and what is in it:
+// THE PROBLEM IS REAL (scripts/analysis/runHandSilt.js, 60 games):
 //
-//     sec    hand    playable now    waiting on a reaction    stuck
-//     S 1    4.20        0.53               2.32              1.35
-//     S12    7.34        0.19               5.34              1.81
+//     sec    hand    playable   a reaction   wrong phase   STUCK
+//     S 1    4.10      0.57        2.19         0.31        1.03
+//     S12    7.22      0.23        5.31         0.27        1.41
 //
-// By the final section the coach holds seven cards and a fifth of one can be
-// played. endSection refills to SEVEN, so a hand already there draws nothing,
-// and what it cannot play never leaves. Card plays fall from 382 in section
-// one to 98 in section nine (runCardValues.js). The clog is the cards the user
-// noticed first: Rimshaker 23.4% of stuck-card-sections, Putback Dunk 22.1%,
-// Back to the Basket 17.5% — not refused, just never legal.
+// By the last section the coach holds seven cards and can play a fifth of one.
+// endSection refills to SEVEN, so a hand already there draws nothing and what
+// it cannot play never leaves; card plays fall from 382 in section one to 98
+// in section nine (runCardValues.js). Three cards are 74% of the real silt —
+// Rimshaker 32.1%, Putback Dunk 22.5%, Back to the Basket 19.6% — never
+// refused, just never legal. That is the answer to the oldest question asked
+// of this AI (the user: "the AI is not playing obvious cards like Putback Dunk
+// when available"). It was never card judgement. The card was not legal.
 //
-// THE OBVIOUS FIX DOES NOT PAY. returnCardToDeck puts a card on the bottom at
-// no cost in turns, so a dead card cleared before the draw is a live one drawn
-// after it. Implemented (aiCycleDecision, hand >= 6, never a reaction card) it
-// fired 6.8 times a game across both benches — so it was really running — and
-// at 2,400 games the coach that did NOT cycle scored 51.1% / -0.21 against the
-// one that did, with the control at 49.9% / +0.14. Win rate and margin point
-// opposite ways and both sit inside the interval. A wash.
+// FIRST ATTEMPT, WRONG POLICY. It skipped reaction cards and cycled anything
+// else it could not play, which swept up MATCHUP-phase cards — illegal during
+// the scoring window by definition, legal again next section. About one cycle
+// in five threw away a live card and the policy measured as a wash. RULE:
+// classify by phase before calling a card dead.
 //
-// WHAT THAT MEANS: hand throughput is not what limits the coach's scoring. It
-// plays about 21 cards a game either way, and the extra draws do not become
-// points. The silt is worth fixing AT SOURCE instead — a deck built to the
-// roster would not hold cards the roster can never make legal — which is the
-// deck-construction lever, not this one.
+// SECOND ATTEMPT, RIGHT POLICY, AND THE RUNS DISAGREED. 3,000 games said
+// 51.5% / +1.05 against a coach that does not cycle (control 49.4% / -0.17);
+// 4,000 more at another seed said 50.0% / +0.47 against 50.7% / +0.17. Pooled,
+// the win rate says nothing (z 0.59) and the margin is borderline (z 2.74).
+//
+// AND THE DISAGREEMENT WAS THE ANSWER. The runs drew different rosters, and
+// the AI plays the same fifty whatever it fields. Split by archetype, 2,500
+// games each:
+//
+//     FAST roster (Back to the Basket 0% legal)      cycling +1.9 win, +0.68
+//     BIG  roster (Back to the Basket 100% legal)    cycling -1.8 win, -1.26
+//
+// A 3.7-point swing. Cycling helps exactly as much as the deck misfits the
+// roster, and HURTS a roster the deck already suits — there it bottoms cards
+// that would have come good. Averaged over random rosters the two cancel,
+// which is the borderline pooled number.
+//
+// SO IT IS NOT A LEVER OF ITS OWN. It is the deck-fit problem wearing a
+// different hat, and a mid-game clean-up is the wrong place to fix it: build
+// the deck to the roster and there is nothing to cycle. See runDeckFit.js —
+// legality swings a hundred points between archetypes, twelve cards have a
+// 15-point spread, and every AI team in every mode plays the same fifty.
+//
+// The lab keeps `cycling_fixed` and the inert hook in simulate.js so this
+// stays reproducible when the deck work lands.
 
 export function aiRollDecision(game, teamKey) {
   const myT = getTeam(game, teamKey);

@@ -36,7 +36,6 @@ import {
 } from '../game/modes/prizes.js';
 import { createDynasty, START_MODES, DPHASE, MAX_ROSTER, simDraft, endSeason, endDynasty, isOffseason, summarizeDynasty, teamOf } from '../game/modes/dynasty.js';
 import { CAP_DP } from '../game/modes/dynastyMarket.js';
-import { AI_LEVELS, loadAiLevel, iqOf, levelById } from '../game/aiLevels.js';
 import RosterPicker, { Choice } from './league/RosterPicker.jsx';
 import { SeasonDashboard, MY_ID } from './SeasonTab.jsx';
 import {
@@ -175,12 +174,9 @@ export default function DynastyTab({
         startMode: cfg.startMode,
         series: cfg.series ?? null,
         aging: Boolean(cfg.aging),
-        // THE RUNG, FIXED AT THE DOOR. Taken from the device's setting once,
-        // here, and then it is the league's: it drafts the AI teams, coaches
-        // every fixture in it, and sets what those games pay. Changing the
-        // device setting later does not reach a dynasty already running.
-        aiLevel: cfg.aiLevel,
-        iq: iqOf(cfg.aiLevel),
+        // No rung here on purpose: the AI teams always draft at full strength,
+        // and the coach difficulty is a per-game setting you can move whenever
+        // you like (SeasonDashboard). See createDynasty.
       });
       // Into the draft room with the AI's picks before yours already made.
       if (d.phase === DPHASE.draft) d = simDraft(d);
@@ -454,9 +450,6 @@ function DynastySetup({ teamA, collection, uid, onStart, onCancel }) {
   const [pick, setPick] = useState({ roster: [], deck: null, deckName: null });
   const [series, setSeries] = useState(null);
   const [aging, setAging] = useState(false);
-  // The rung starts at whatever this device last played at, and is then the
-  // league's for good — see createDynasty.
-  const [aiLevel, setAiLevel] = useState(() => loadAiLevel());
   const [decks, setDecks] = useState([]);
   const [deckId, setDeckId] = useState('default');
   const [busy, setBusy] = useState(false);
@@ -486,7 +479,6 @@ function DynastySetup({ teamA, collection, uid, onStart, onCancel }) {
       deckName: own ? pick.deckName : (chosenDeck?.name ?? null),
       series: seriesFor(size, series),
       aging,
-      aiLevel,
     });
     setBusy(false);
   };
@@ -574,24 +566,6 @@ function DynastySetup({ teamA, collection, uid, onStart, onCancel }) {
 
         <SeriesPicker size={size} value={series} onChange={setSeries} label="Playoff series, every year" />
 
-        {/* THE RUNG, CHOSEN ONCE. It drafts the AI teams, coaches every game
-            in the league, and sets what those games pay — so it cannot be
-            turned down after the draft to farm an easy league. */}
-        <div className={styles.field}>
-          <span className={styles.label}>The other coaches</span>
-          <div className={styles.choices}>
-            {AI_LEVELS.map(l => (
-              <Choice
-                key={l.id} on={aiLevel === l.id} onClick={() => setAiLevel(l.id)}
-                title={l.label}
-                sub={`${l.blurb} · games pay ${Math.round(l.pay * 100)}%`}
-              />
-            ))}
-          </div>
-          <span className={styles.muted}>
-            Fixed for the whole dynasty: it drafts the other teams, coaches every fixture, and sets what a game in it is worth.
-          </span>
-        </div>
 
         <div className={styles.prize}>
           <strong>Coins{factor !== 1 && <span className={factor > 1 ? dy.buff : dy.nerf}>Fantasy draft ×{factor}</span>}</strong>
@@ -652,10 +626,7 @@ function DynastyView({ d, uid, commit, onPlayFixture, onBack, onAbandon }) {
           onAbandon={onAbandon}
           title={`${d.name} · Year ${d.year}`}
           backLabel="All dynasties"
-          // The league's own rung rides on the fixture: PlayTab coaches the
-          // game at it and GameOver claims at its rate, whatever this device
-          // is set to.
-          presetExtra={{ returnTab: 'dynasty', dynastyId: d.id, aiLevel: d.aiLevel ?? null }}
+          presetExtra={{ returnTab: 'dynasty', dynastyId: d.id }}
           finale={(
             <button type="button" className={styles.primary} onClick={closeYear}>
               {!d.aging && d.year >= d.years ? 'Close out the dynasty →' : `Close out Year ${d.year} — to the offseason →`}
@@ -686,7 +657,7 @@ function DynastyView({ d, uid, commit, onPlayFixture, onBack, onAbandon }) {
         <div>
           <h2 className={styles.title}>{d.name}</h2>
           <p className={styles.sub}>
-            {me?.name} · {START_MODES[d.startMode]?.label} · {d.teams.length} teams · {LENGTHS[d.length]?.label ?? d.length} seasons{d.aiLevel ? ` · ${levelById(d.aiLevel).label} (${Math.round(levelById(d.aiLevel).pay * 100)}% coin)` : ''}
+            {me?.name} · {START_MODES[d.startMode]?.label} · {d.teams.length} teams · {LENGTHS[d.length]?.label ?? d.length} seasons
           </p>
         </div>
         <div className={styles.headActions}>

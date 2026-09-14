@@ -682,15 +682,13 @@ async function inLiveDynastySeason(tx, uid, { dynastyId, leagueId, seasonId }) {
   if (dynastyId) {
     const snap = await tx.get(db.doc(`users/${uid}/dynasties/${dynastyId}`));
     const d = snap.exists ? snap.data() : null;
-    if (!(d && d.phase === 'season' && d.season?.id === seasonId)) return false;
-    return { aiLevel: typeof d.aiLevel === 'string' ? d.aiLevel : null };
+    return Boolean(d && d.phase === 'season' && d.season?.id === seasonId);
   }
   if (leagueId) {
     const snap = await tx.get(db.doc(`leagues/${leagueId}`));
     const l = snap.exists ? snap.data() : null;
-    if (!(l && l.kind === 'dynasty' && l.members?.[uid]
-      && l.state?.phase === 'season' && l.state?.season?.id === seasonId)) return false;
-    return { aiLevel: typeof l.state?.aiLevel === 'string' ? l.state.aiLevel : null };
+    return Boolean(l && l.kind === 'dynasty' && l.members?.[uid]
+      && l.state?.phase === 'season' && l.state?.season?.id === seasonId);
   }
   return false;
 }
@@ -734,18 +732,15 @@ export const claimGameReward = onCall({ region: 'us-central1' }, async request =
       throw new HttpsError('resource-exhausted', 'Slow down a moment');
     }
 
-    // The dynasty rate, granted here or not at all — and with it the league's
-    // OWN rung, which overrides whatever the client said it played at. A
-    // dynasty fixes its difficulty at the door and every game in it is worth
-    // what that rung is worth (coinRewards.js AI_PAY); a client that could
-    // name its own rung could draft against Settler and claim at Deity.
+    // The dynasty rate, granted here or not at all.
     //
-    // Outside a dynasty the client's word stands, and costs nothing: every
-    // factor on the ladder is at most 1, so the most a lie can buy is the
-    // full rate an honest Deity game already pays.
-    const inDynasty = await inLiveDynastySeason(tx, uid, from);
-    claim.dynasty = Boolean(inDynasty);
-    if (inDynasty && inDynasty.aiLevel) claim.aiLevel = inDynasty.aiLevel;
+    // THE RUNG IS TAKEN ON TRUST, and that is safe by construction: every
+    // factor in AI_PAY is at most 1, so the most a lying client can claim is
+    // the full rate an honest Deity game already pays. There is nothing to
+    // gain by naming a rung you did not play, and the coach difficulty is a
+    // per-game choice the player can change whenever they like — so there is
+    // no stored number to check it against, and no need for one.
+    claim.dynasty = await inLiveDynastySeason(tx, uid, from);
 
     const today = todayKey();
     const settled = settleGameReward(

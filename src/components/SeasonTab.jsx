@@ -56,6 +56,7 @@ import { simulateFixture } from '../game/modes/simulate.js';
 import { LENGTHS, PICKABLE_LENGTHS, LEAGUE_SIZES, playoffCount, gamesPerTeam } from '../game/modes/schedule.js';
 import { SEASON_REWARDS } from '../game/modes/prizes.js';
 import { MIN_TO_PLAY } from '../game/teamRules.js';
+import { AI_LEVELS, loadAiLevel, saveAiLevel, payOf } from '../game/aiLevels.js';
 import { loadDecks } from '../firebase/savedDecks.js';
 import { logoSrc } from '../cards/CardTemplate.jsx';
 import { listSeasons, saveSeason, deleteSeason } from '../firebase/seasons.js';
@@ -745,6 +746,38 @@ function Setup({ teamA, collection, uid, onStart, onCancel }) {
 
 // ── The season itself ───────────────────────────────────────────────────────
 
+/**
+ * THE COACH DIFFICULTY, WHERE THE GAME IS LAUNCHED FROM.
+ *
+ * The user, 2026-09-14: "we'll want in-game AI difficulty to be changeable in
+ * a dynasty/season probably."
+ *
+ * It sits beside the play button rather than in the dynasty's setup screen
+ * because the rung is no longer a property of the league: the AI teams draft
+ * at full strength whatever it says (createDynasty), and this decides only how
+ * well the coach plays the NEXT game and what that game pays (coinRewards.js
+ * AI_PAY). Moving it mid-season is therefore not an exploit — every factor on
+ * the ladder is at most 1, so turning the coach down can only cost coins.
+ *
+ * One setting per device, the same one the sandbox screen in PlayTab reads, so
+ * the two can never disagree about what "your difficulty" means. A shared
+ * league hides it: there the opponent is a person.
+ */
+function CoachDifficulty() {
+  const [level, setLevel] = useState(() => loadAiLevel());
+  const change = id => { setLevel(id); saveAiLevel(id); };
+  const pay = Math.round(payOf(level) * 100);
+  return (
+    <label className={styles.coachPick} title="How hard the coach plays this game — and what the game pays">
+      <span className={styles.muted}>Coach</span>
+      <select className={styles.input} value={level} onChange={e => change(e.target.value)}>
+        {AI_LEVELS.map(l => <option key={l.id} value={l.id}>{l.label}</option>)}
+      </select>
+      <span className={styles.muted}>{pay < 100 ? `pays ${pay}%` : 'full rate'}</span>
+    </label>
+  );
+}
+
 function Dashboard({
   season, uid, commit, onPlayFixture, onBack, onAbandon,
   league = null, busy = false, onOpenRoom = null, onSimAi = null, onForfeit = null,
@@ -978,6 +1011,7 @@ function Dashboard({
               {myGameLeft && !isHH && (
                 <div className={styles.myGameActions}>
                   <button className={styles.primary} onClick={play}>{inProgress ? '▶ Resume this game' : '▶ Play this game'}</button>
+                  {!league && <CoachDifficulty />}
                   {!league && (
                     <button
                       className={styles.ghost}

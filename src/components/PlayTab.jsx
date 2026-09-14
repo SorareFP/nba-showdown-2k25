@@ -189,11 +189,16 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
   // browser. Applies to every game against the coach, sandbox or season.
   const [aiLevel, setAiLevelState] = useState(() => loadAiLevel());
   const setAiLevel = id => { setAiLevelState(id); saveAiLevel(id); };
-  // A FIXTURE BRINGS ITS OWN RUNG. A dynasty fixes its difficulty at the door
-  // (createDynasty) because the same number drafted its AI teams and decides
-  // what its games pay; letting tonight's device setting coach it would let a
-  // league drafted against Settler be played against Deity for full coin, or
-  // the reverse. A plain season fixture carries none and takes the device's.
+  // ONE SETTING, EVERYWHERE, AND CHANGEABLE. The user, 2026-09-14: "we'll want
+  // in-game AI difficulty to be changeable in a dynasty/season probably."
+  //
+  // An earlier version of this pinned the rung to the dynasty, because the same
+  // number also drafted its AI teams and letting it move would have allowed a
+  // league drafted against Settler to be played against Deity. The draft no
+  // longer reads it (createDynasty: the AI always drafts at full strength), so
+  // the exploit is gone and the rung is free to be what it should be — a knob
+  // you can turn between games. A fixture may still carry one, for a mode that
+  // wants to insist.
   const playedLevel = livePreset?.aiLevel ?? aiLevel;
 
   // ── Meeting the account's copy ──────────────────────────────────────────

@@ -537,38 +537,42 @@ describe('ten years', () => {
   });
 });
 
-// ── THE RUNG IS THE LEAGUE'S, NOT THE DEVICE'S ──────────────────────────────
+// ── THE AI DRAFTS WELL WHATEVER THE COACH DIFFICULTY IS ─────────────────────
 //
-// The user, 2026-09-14: "Let's just wire in the difficulty differences now."
-// A dynasty fixes its difficulty at the door, and the same number does three
-// jobs — it drafts the AI teams, it coaches every fixture, and it prices what
-// those games pay. Fixing all three together is what closes the obvious hole:
-// draft against Settler so the other teams take junk, then play them at Deity
-// for full coin.
-describe('a dynasty remembers the rung it was started on', () => {
-  it('stores the rung id beside the number the draft reads', () => {
+// The user, 2026-09-14: "I honestly think it makes sense for the AI to draft
+// their teams intelligently regardless of the difficulty setting."
+//
+// An earlier version of this pinned the rung to the league and used it for
+// both the draft and the coaching, so that a Settler dynasty could not be
+// played at Deity for full coin. Separating the two removes that hole rather
+// than papering over it — there is nothing left to exploit once the draft
+// does not read the rung — and it means a player who wants an easier evening
+// is not handed a decade of junk opponents.
+describe('the draft does not read the coach difficulty', () => {
+  it('stores no rung on the league at all', () => {
     const d = createDynasty({
       id: 'R', size: 4, length: 'short', startMode: 'fantasy-full',
-      rng: seeded(11), human: { name: 'Me' }, aiLevel: 'warlord', iq: 0.5,
+      rng: seeded(11), human: { name: 'Me' },
     });
-    expect(d.aiLevel).toBe('warlord');
-    expect(d.iq).toBe(0.5);
+    expect(d.aiLevel).toBeUndefined();
+    expect(d.iq).toBe(1);
   });
 
-  it('defaults to the full-strength coach when nothing is chosen', () => {
-    const d = createDynasty({
+  it('keeps the drafting dial available for a toggle that does not exist yet', () => {
+    // The parameter survives so a drafting-difficulty toggle is one line; it
+    // is simply not wired to the coach difficulty.
+    const dumb = createDynasty({
       id: 'R2', size: 4, length: 'short', startMode: 'fantasy-full',
-      rng: seeded(12), human: { name: 'Me' },
+      rng: seeded(12), human: { name: 'Me' }, iq: 0,
     });
-    expect(d.aiLevel).toBe(null);
-    expect(d.iq).toBe(1);
+    expect(dumb.iq).toBe(0);
   });
 
   it('survives the round trip the friends league stores it through', () => {
     const d = createDynasty({
       id: 'R3', size: 4, length: 'short', startMode: 'fantasy-full',
-      rng: seeded(13), human: { name: 'Me' }, aiLevel: 'king', iq: 0.9,
+      rng: seeded(13), human: { name: 'Me' },
     });
-    expect(unpackDynasty(packDynasty(d)).aiLevel).toBe('king');
+    expect(unpackDynasty(packDynasty(d)).iq).toBe(1);
   });
 });

@@ -404,23 +404,24 @@ export function createDynasty({
   series = null,
   // Players age and retire, and the dynasty runs until you end it.
   aging = false,
-  // THE RUNG THE LEAGUE WAS STARTED ON, remembered, because a dynasty outlives
-  // the browser setting that created it. It decides three things, and they are
-  // deliberately the same number:
+  // HOW WELL THE AI TEAMS DRAFT — and deliberately NOT the coach difficulty.
   //
-  //   the DRAFT   Settler takes anything it can pay for, Deity takes the best
-  //               value for money (aiDraftChoice)
-  //   the GAMES   every fixture in the league is coached at this rung, not at
-  //               whatever the device happens to be set to tonight
-  //   the PAY     what a game in it is worth (coinRewards.js AI_PAY), read off
-  //               this document by the server rather than believed from the
-  //               client
+  // The user, 2026-09-14: "I honestly think it makes sense for the AI to draft
+  // their teams intelligently regardless of the difficulty setting, but we can
+  // add an AI drafting difficulty toggle somewhere if we want."
   //
-  // Fixing all three together is what stops the obvious exploit: draft against
-  // a Settler league so the AI teams take junk, then play them at Deity for
-  // full coin. `aiLevel` is the rung's id and `iq` its number — the caller
-  // derives both from one choice (aiLevels.js).
-  aiLevel = null,
+  // Right, and it is the simpler design as well as the kinder one. A draft is
+  // a one-time act that fixes the league's quality for ten years, and someone
+  // who turns the coach down for an easier EVENING should not be handed a
+  // league of junk teams for a decade. So this defaults to the full search and
+  // nothing wires it to the rung; the parameter stays because a drafting
+  // toggle is then one line.
+  //
+  // It also closes the hole that made the rung worth fixing at the door in the
+  // first place: draft against Settler so the other teams take junk, then play
+  // them at Deity for full coin. That only existed while ONE number did both
+  // jobs. Separate them and the in-game rung is free to change whenever the
+  // player likes, which is the other half of what was asked for.
   iq = 1,
   rng = Math.random,
 } = {}) {
@@ -509,7 +510,6 @@ export function createDynasty({
     createdAt: Date.now(),
     name: name || `${me.name} Dynasty`,
     startMode,
-    aiLevel,
     iq,
     entryCap,
     size,

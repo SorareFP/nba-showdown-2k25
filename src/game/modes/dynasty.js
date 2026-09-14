@@ -404,11 +404,23 @@ export function createDynasty({
   series = null,
   // Players age and retire, and the dynasty runs until you end it.
   aging = false,
-  // THE RUNG THE LEAGUE WAS STARTED ON, remembered, because the AI teams draft
-  // to it: Settler takes anything it can pay for, Deity takes the best value
-  // for money (aiDraftChoice). A dynasty outlives the browser setting that
-  // created it, so the number belongs on the league rather than being read
-  // fresh each session.
+  // THE RUNG THE LEAGUE WAS STARTED ON, remembered, because a dynasty outlives
+  // the browser setting that created it. It decides three things, and they are
+  // deliberately the same number:
+  //
+  //   the DRAFT   Settler takes anything it can pay for, Deity takes the best
+  //               value for money (aiDraftChoice)
+  //   the GAMES   every fixture in the league is coached at this rung, not at
+  //               whatever the device happens to be set to tonight
+  //   the PAY     what a game in it is worth (coinRewards.js AI_PAY), read off
+  //               this document by the server rather than believed from the
+  //               client
+  //
+  // Fixing all three together is what stops the obvious exploit: draft against
+  // a Settler league so the AI teams take junk, then play them at Deity for
+  // full coin. `aiLevel` is the rung's id and `iq` its number — the caller
+  // derives both from one choice (aiLevels.js).
+  aiLevel = null,
   iq = 1,
   rng = Math.random,
 } = {}) {
@@ -497,6 +509,7 @@ export function createDynasty({
     createdAt: Date.now(),
     name: name || `${me.name} Dynasty`,
     startMode,
+    aiLevel,
     iq,
     entryCap,
     size,

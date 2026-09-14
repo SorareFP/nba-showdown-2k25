@@ -12,14 +12,31 @@
 // the hand, whether it ANSWERS an announced shot check, and how it spends
 // assists. A level is one number because a coach who reads the floor also
 // reads its hand; splitting them would be six sliders nobody wants to set.
-export const AI_LEVELS = [
-  { id: 'settler',   label: 'Settler',   iq: 0,    blurb: 'places at random, plays any card, answers nothing' },
-  { id: 'chieftain', label: 'Chieftain', iq: 0.25, blurb: 'gets it right one time in four' },
-  { id: 'warlord',   label: 'Warlord',   iq: 0.5,  blurb: 'half the time' },
-  { id: 'prince',    label: 'Prince',    iq: 0.75, blurb: 'three times in four' },
-  { id: 'king',      label: 'King',      iq: 0.9,  blurb: 'nearly always' },
-  { id: 'deity',     label: 'Deity',     iq: 1,    blurb: 'the full search, every time' },
+//
+// 2026-09-14: a FIFTH lever, and the first one that is not a chance to blunder
+// — how many of your possible lineups the coach weighs before it places
+// (ai.js samplesFor). The four misplays dials stop at "never do the dumb
+// thing"; a search only gets better the longer it looks, so this is the one
+// with no ceiling. One lineup at Settler, sixteen at Deity.
+//
+// The NAMES and the PAY RATE come from coinRewards.js, which the server runs:
+// the rung decides what a game is worth (AI_PAY), and one list of rungs beats
+// two that drift.
+import { AI_PAY, payFactorOf } from './coinRewards.js';
+
+const LADDER = [
+  { id: 'settler',   iq: 0,    blurb: 'places at random, plays any card, answers nothing' },
+  { id: 'chieftain', iq: 0.25, blurb: 'gets it right one time in four' },
+  { id: 'warlord',   iq: 0.5,  blurb: 'half the time' },
+  { id: 'prince',    iq: 0.75, blurb: 'three times in four' },
+  { id: 'king',      iq: 0.9,  blurb: 'nearly always' },
+  { id: 'deity',     iq: 1,    blurb: 'the full search, every time' },
 ];
+export const AI_LEVELS = LADDER.map(l => ({
+  ...l,
+  label: AI_PAY[l.id].label,
+  pay: AI_PAY[l.id].pay,
+}));
 
 // THE LADDER IS MEASURED, and the even spacing holds. 2,500 games a rung
 // (2026-09-12, simulate.js with the level swapped into both brains, ±2% at
@@ -43,6 +60,11 @@ export function levelById(id) {
 /** The matchup IQ for a level id — 0 to 1. */
 export function iqOf(id) {
   return levelById(id).iq;
+}
+
+/** What a game against this rung pays, as a fraction of the Deity rate. */
+export function payOf(id) {
+  return payFactorOf(levelById(id).id);
 }
 
 /** This browser's chosen level, or the default. Storage may be absent; that is fine. */

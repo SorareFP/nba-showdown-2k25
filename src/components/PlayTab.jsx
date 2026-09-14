@@ -189,6 +189,12 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
   // browser. Applies to every game against the coach, sandbox or season.
   const [aiLevel, setAiLevelState] = useState(() => loadAiLevel());
   const setAiLevel = id => { setAiLevelState(id); saveAiLevel(id); };
+  // A FIXTURE BRINGS ITS OWN RUNG. A dynasty fixes its difficulty at the door
+  // (createDynasty) because the same number drafted its AI teams and decides
+  // what its games pay; letting tonight's device setting coach it would let a
+  // league drafted against Settler be played against Deity for full coin, or
+  // the reverse. A plain season fixture carries none and takes the device's.
+  const playedLevel = livePreset?.aiLevel ?? aiLevel;
 
   // ── Meeting the account's copy ──────────────────────────────────────────
   //
@@ -282,7 +288,7 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
   // already built.
   // The coach's level reaches every judgement it makes, not just the snake:
   // cards, the answer to a check, and what it does with its assists.
-  const iq = iqOf(aiLevel);
+  const iq = iqOf(playedLevel);
   useEffect(() => {
     if (!game || game.done || opponent !== 'ai') return undefined;
     const timer = setTimeout(() => {
@@ -524,7 +530,9 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
   );
 
   if (game.done) {
-    if (!livePreset) return <GameOver game={game} mode={opponent} onPlayAgain={handlers.onPlayAgain} />;
+    // The rung only prices a game the COACH played: hotseat is two people and
+    // the difficulty setting never applied to it.
+    if (!livePreset) return <GameOver game={game} mode={opponent} aiLevel={opponent === 'ai' ? playedLevel : null} onPlayAgain={handlers.onPlayAgain} />;
     // The score as the FIXTURE sees it — see resultFromPlayed for why the
     // home/away mapping is not written out here.
     // `returnTab`: a dynasty fixture goes back to the Dynasty tab, not Season.
@@ -533,6 +541,9 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
       <GameOver
         game={game}
         mode="ai"
+        // What the game was played at — the fixture's rung, or this device's.
+        // The server re-reads a dynasty's own rung and overrides this.
+        aiLevel={playedLevel}
         // A dynasty fixture names its dynasty (or its friends league) and the
         // season it belongs to; the SERVER checks that before paying the
         // dynasty rate (coinRewards.js DYNASTY_GAME_FACTOR).
@@ -580,7 +591,7 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
         // Only against the coach: hotseat is two humans at one screen and
         // they alternate by agreement, and PvP has its own turn machinery.
         rollGate={opponent === 'ai' ? rollGate(game) : null}
-        aiIq={opponent === 'ai' ? iqOf(aiLevel) : 1}
+        aiIq={opponent === 'ai' ? iqOf(playedLevel) : 1}
         onRoll={handlers.onRoll}
         onEndSection={handlers.onEndSection}
         onExecCard={handlers.onExecCard}
@@ -658,8 +669,16 @@ function NoGame({ canUseBuilt, rosterA, rosterB, opponent, setOpponent, aiLevel,
           {opponent === 'ai' && (
             <div className={styles.deckPicker}>
               <label className={styles.deckLabel} style={{ color: 'var(--blue)' }}>Coach difficulty</label>
-              <select className={styles.deckSelect} value={aiLevel} onChange={e => setAiLevel(e.target.value)} title="How often the coach finds the right matchup in the placement snake">
-                {AI_LEVELS.map(l => <option key={l.id} value={l.id}>{l.label} — {l.blurb}</option>)}
+              {/* The rate is on the option because it is part of the choice:
+                  an easier coach loses by more, and the win bonus scales with
+                  the margin, so without it the easiest rung would be the most
+                  profitable one to grind (coinRewards.js AI_PAY). */}
+              <select className={styles.deckSelect} value={aiLevel} onChange={e => setAiLevel(e.target.value)} title="How hard the coach plays — and what a game against it pays">
+                {AI_LEVELS.map(l => (
+                  <option key={l.id} value={l.id}>
+                    {l.label} — {l.blurb}{l.pay < 1 ? ` · ${Math.round(l.pay * 100)}% coin` : ''}
+                  </option>
+                ))}
               </select>
             </div>
           )}

@@ -13,7 +13,13 @@ import styles from './GameOver.module.css';
  * (two people at one screen), or PvP via `isPvp` + `myTeamKey`. The claim's
  * `won` and the headline both come from humanWon — see outcome.js for why.
  */
-export default function GameOver({ game, onPlayAgain, isPvp = false, myTeamKey = null, mode = 'ai', onLeave = null, leaveLabel = 'Leave Game', dynasty = null }) {
+/**
+ * `aiLevel` is the rung the coach played at (aiLevels.js), or null when no
+ * coach played — hotseat, PvP. It scales what the game pays (coinRewards.js
+ * AI_PAY), and for a dynasty fixture the server ignores what is sent here and
+ * reads the league's own rung instead.
+ */
+export default function GameOver({ game, onPlayAgain, isPvp = false, myTeamKey = null, mode = 'ai', onLeave = null, leaveLabel = 'Leave Game', dynasty = null, aiLevel = null }) {
   const { user } = useAuth();
   const { refresh: refreshCardStats } = useCardStats();
   const { teamA, teamB } = game;
@@ -55,6 +61,7 @@ export default function GameOver({ game, onPlayAgain, isPvp = false, myTeamKey =
       const claim = {
         won: youWon, pvp: isPvp, margin, ...detectMilestones(game, myKey),
         box: myKey ? boxScoreFor(game, myKey) : [],
+        aiLevel: isPvp ? null : aiLevel,
         ...(dynasty ?? {}),
       };
       const today = todayKey();
@@ -85,7 +92,7 @@ export default function GameOver({ game, onPlayAgain, isPvp = false, myTeamKey =
 
       setRewardsApplied(true);
     })();
-  }, [user, game, youWon, myKey, isPvp, refreshCardStats]);
+  }, [user, game, youWon, myKey, isPvp, aiLevel, refreshCardStats]);
 
   return (
     <div className={styles.wrap}>

@@ -14,6 +14,7 @@ import { buildAiLeague } from './aiTeams.js';
 import { recordResult, roundFixtures, advance, totalRounds, PHASE } from './season.js';
 import { CARDS } from '../cards.js';
 import { getCardByKey, cardKey, CARD_SETS } from '../cardSets.js';
+import { packDynasty, unpackDynasty } from './seasonPack.js';
 
 const seeded = (s = 808) => () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 2 ** 32; };
 const BASE_IDS = new Set(CARDS.map(c => c.id));
@@ -533,5 +534,41 @@ describe('ten years', () => {
   it('pays nothing for the ten-year bonus before the tenth season is in', () => {
     const d = ownDynasty();
     expect(dynastyCompletionEarnings(d)).toEqual({ coins: 0, label: null });
+  });
+});
+
+// ── THE RUNG IS THE LEAGUE'S, NOT THE DEVICE'S ──────────────────────────────
+//
+// The user, 2026-09-14: "Let's just wire in the difficulty differences now."
+// A dynasty fixes its difficulty at the door, and the same number does three
+// jobs — it drafts the AI teams, it coaches every fixture, and it prices what
+// those games pay. Fixing all three together is what closes the obvious hole:
+// draft against Settler so the other teams take junk, then play them at Deity
+// for full coin.
+describe('a dynasty remembers the rung it was started on', () => {
+  it('stores the rung id beside the number the draft reads', () => {
+    const d = createDynasty({
+      id: 'R', size: 4, length: 'short', startMode: 'fantasy-full',
+      rng: seeded(11), human: { name: 'Me' }, aiLevel: 'warlord', iq: 0.5,
+    });
+    expect(d.aiLevel).toBe('warlord');
+    expect(d.iq).toBe(0.5);
+  });
+
+  it('defaults to the full-strength coach when nothing is chosen', () => {
+    const d = createDynasty({
+      id: 'R2', size: 4, length: 'short', startMode: 'fantasy-full',
+      rng: seeded(12), human: { name: 'Me' },
+    });
+    expect(d.aiLevel).toBe(null);
+    expect(d.iq).toBe(1);
+  });
+
+  it('survives the round trip the friends league stores it through', () => {
+    const d = createDynasty({
+      id: 'R3', size: 4, length: 'short', startMode: 'fantasy-full',
+      rng: seeded(13), human: { name: 'Me' }, aiLevel: 'king', iq: 0.9,
+    });
+    expect(unpackDynasty(packDynasty(d)).aiLevel).toBe('king');
   });
 });

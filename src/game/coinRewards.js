@@ -67,6 +67,59 @@ export const CLOSE_LOSS = { within: 5, coins: 15 };
  * and finding the live season the game says it belongs to.
  */
 export const DYNASTY_GAME_FACTOR = 1.15;
+
+/**
+ * WHAT THE RUNG PAYS. The user, 2026-09-14: "make sure we're scaling coin
+ * earnings based on difficulty too."
+ *
+ * ── THE LADDER PAID BACKWARDS ───────────────────────────────────────────────
+ *
+ * The win bonus already scales with the MARGIN (WIN_BY_MARGIN above): 20 coins
+ * at +1, 100 at +50. An easier coach loses by more, so before this table the
+ * cheapest opponent was the most profitable one and grinding Settler was the
+ * optimal way to earn. Measured in MIRROR MATCHES — the same ten on both
+ * benches, so the rung is the only thing that differs; roster strength is a
+ * separate lever with its own fix (scripts/analysis/runDifficultyPay.js) — a
+ * 60-game pilot put Settler at 1.11x the Deity rate, and a 1,200-game run is
+ * the number to trust if the two ever disagree.
+ *
+ * ── WHY EVERY FACTOR IS AT MOST 1 ───────────────────────────────────────────
+ *
+ * Deity is the default (aiLevels.js DEFAULT_AI_LEVEL) and the rate the whole
+ * economy was tuned at — the collection timelines, the pack prices, the
+ * "~110 games for the hardest collection" number. A bonus ladder would move
+ * that ceiling and re-open all of it; a penalty ladder leaves the ceiling
+ * exactly where it is and only asks the player who turns the coach down to
+ * earn at the rate they are playing at.
+ *
+ * It also means the client cannot print coins by lying about the rung. The
+ * best claim available is the one an honest Deity game already makes, so an
+ * unverifiable field costs nothing — which is why a sandbox game is taken at
+ * its word while a dynasty game is read off the league document
+ * (functions/index.js).
+ *
+ * The spread is wider than the 1.11x inversion on purpose: neutralising it
+ * makes the rung free, and the point is that it should be a choice. Half rate
+ * at Settler is a collection that takes twice as long.
+ */
+// Ordered easiest to hardest, and the LABELS live here rather than beside the
+// iq numbers in aiLevels.js so there is one list of rungs rather than two that
+// can drift. aiLevels.js reads this table for its names and its pay column;
+// this module stays free of imports because the server runs it.
+export const AI_PAY = {
+  settler:   { label: 'Settler',   pay: 0.5 },
+  chieftain: { label: 'Chieftain', pay: 0.65 },
+  warlord:   { label: 'Warlord',   pay: 0.8 },
+  prince:    { label: 'Prince',    pay: 0.9 },
+  king:      { label: 'King',      pay: 0.97 },
+  deity:     { label: 'Deity',     pay: 1 },
+};
+/** The pay factor for a rung id. An id this table does not know pays full. */
+export function payFactorOf(level) {
+  const f = AI_PAY[level]?.pay;
+  return Number.isFinite(f) ? Math.min(1, Math.max(0, f)) : 1;
+}
+
 const MAX_MARGIN = 200;
 
 /** A client-sent margin as a whole number of points, or null for none. */
@@ -200,7 +253,25 @@ export function settleGameReward(claim, daily, today) {
     breakdown.push({ label: 'Daily First Win', coins: REWARD.dailyFirstWin });
   }
 
-  // The dynasty nudge, on everything but the capped milestone coins.
+  // THE TWO MULTIPLIERS, both on everything but the capped milestone coins.
+  //
+  // Milestones are left out of both: they come out of a daily cap
+  // (DAILY_MILESTONE_CAP) and scaling them would quietly move it. What rides
+  // here is what the game earns for being played — completion, the win bonus
+  // or a close loss, and the daily first win.
+  //
+  // The rung comes off FIRST, because it says what the game was worth; the
+  // dynasty rate then pays its 15% on that. A Settler dynasty game is
+  // 0.5 x 1.15, not 1.15 with a discount bolted on after.
+  const earned = coins - milestoneCoins;
+  const pay = payFactorOf(c.aiLevel);
+  if (pay < 1) {
+    const cut = earned - Math.round(earned * pay);
+    if (cut > 0) {
+      coins -= cut;
+      breakdown.push({ label: `${AI_PAY[c.aiLevel]?.label ?? 'Easier coach'} · ${Math.round(pay * 100)}% rate`, coins: -cut });
+    }
+  }
   if (c.dynasty) {
     const base = coins - milestoneCoins;
     const extra = Math.floor(base * (DYNASTY_GAME_FACTOR - 1));

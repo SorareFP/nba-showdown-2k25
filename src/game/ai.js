@@ -6,7 +6,7 @@
 import { getTeam, getOpp, getPS, calcAdv, getFatigue, fatigueForMinutes, restMinutes, SPEND_COSTS, clutchAvailable, clutchEligible, burnedSlots, satOutLast, canRollSlot, extraRollPending, checkNeed, crunchSearchOptions } from './engine.js';
 import { lookupChart } from './cards.js';
 import { canPlayCard, helpTargets, staggerPair, myHouseTargets, foulTroubleTargets } from './canPlay.js';
-import { getStrat, STRATS, CRUNCH_CARDS } from './strats.js';
+import { getStrat, STRATS } from './strats.js';
 
 /**
  * AI action types:
@@ -1568,22 +1568,38 @@ export function aiRollDecision(game, teamKey) {
 }
 
 /**
- * The Crunch Time timeout brain: call the one timeout when the moment is
- * right — trailing, or a rider in hand worth the stoppage — then the caller
- * re-sets the defense, plays the best rider, and resumes.
+ * The Crunch Time timeout brain: call the one timeout as soon as the rules
+ * allow it — see below for why there is no "right moment" to wait for — then
+ * the caller re-sets the defense, searches the deck, plays the best rider,
+ * and resumes.
  */
 export function aiCrunchDecision(game, teamKey) {
   if (!game.crunch?.active || game.phase !== 'scoring') return null;
   if (game.crunch.timeoutUsed?.[teamKey] || game.timeoutActive) return null;
-  const team = getTeam(game, teamKey);
-  const opp = getOpp(game, teamKey);
-  const riders = ['ato_masterpiece', 'fresh_legs', 'ice_the_hot_hand', 'reset'];
-  const holdsRider = (team.hand || []).some(id => riders.includes(id));
-  const trailing = team.score < opp.score;
-  // The search (2026-09-09): a crunch card still in the deck is reason enough.
-  const canSearch = (team.deck || []).some(id => CRUNCH_CARDS.includes(id));
-  if (trailing || holdsRider || canSearch) return { type: 'timeout' };
-  return null;
+  // CALL IT THE MOMENT IT IS LEGAL. The user, 2026-09-14: "the way the timeout
+  // works, it makes the most sense to play it ASAP because you get to reset
+  // the defense right away. It's a free 'switch everything' without the roll
+  // bonus." That is right, and the mechanics make it more one-sided still:
+  //
+  //   THE ASSIGNMENT IT REPLACES CAME FROM THE SNAKE. Placement sets the
+  //   matchups, and the snake is a compromise — you never get the free
+  //   optimum from it. The timeout hands you exactly that (spendTimeout, then
+  //   applyMatchups), so it is worth something the instant crunch arms, not
+  //   only once a screen has left the assignment stale.
+  //   SWITCH EVERYTHING PAYS FOR THE SAME THING. That card reassigns the
+  //   defence too, and doubles every opponent offensive advantage to do it.
+  //   The timeout doubles nothing.
+  //   EARLIER COVERS MORE ROLLS. The re-set holds for the rest of the
+  //   section, so every roll after the call is played at the better pairing.
+  //   HOLDING IT FOR OVERTIME BUYS NOTHING. endSection rebuilds crunch at
+  //   every Q4S3, overtime included, with a fresh timeoutUsed — so an OT
+  //   comes with its own timeout and this one cannot be saved for it.
+  //
+  // Unused, it is simply wasted. The old condition — trailing, or holding a
+  // rider, or a crunch card still in the deck — was true almost always, and
+  // the "almost" was the bug: ahead, no rider, nothing left to search, the
+  // coach passed and threw the re-set away.
+  return { type: 'timeout' };
 }
 
 /**

@@ -95,10 +95,35 @@ describe('the timeout search', () => {
     const pick = aiCrunchSearch(to, 'A');
     expect(['ato_masterpiece', 'fresh_legs', 'unethical_hoops']).toContain(pick);
     expect(aiCrunchSearch(spendTimeout(crunch(), 'B').game, 'A')).toBeNull();   // not A's timeout
-    // Nothing to search for, nothing else to do: no timeout.
+  });
+
+  // THE TIMEOUT IS NOT A JUDGEMENT CALL, and this is the case that proves it.
+  // The user, 2026-09-14: "the way the timeout works, it makes the most sense
+  // to play it ASAP because you get to reset the defense right away. It's a
+  // free 'switch everything' without the roll bonus."
+  //
+  // Leading, nothing left in the deck to search for, no rider in hand — the
+  // old brain passed here, and passing throws away a full defensive re-set
+  // that Switch Everything would have charged doubled opponent advantages
+  // for. Unused it is simply wasted, and an overtime brings its own.
+  it('calls it even with nothing to search for and a lead to protect', () => {
     const bare = crunch();
-    bare.teamA.deck = [filler, filler]; bare.teamA.score = 84;
-    expect(aiCrunchDecision(bare, 'A')).toBeNull();
+    bare.teamA.deck = [filler, filler];
+    bare.teamA.hand = [];
+    bare.teamA.score = 84; bare.teamB.score = 80;
+    expect(aiCrunchDecision(bare, 'A')).toEqual({ type: 'timeout' });
+  });
+
+  it('still refuses when the rules refuse — used already, or not crunch', () => {
+    const used = crunch();
+    used.crunch.timeoutUsed = { A: true };
+    expect(aiCrunchDecision(used, 'A')).toBeNull();
+    const mid = crunch();
+    mid.timeoutActive = 'B';
+    expect(aiCrunchDecision(mid, 'A')).toBeNull();
+    const quiet = crunch();
+    quiet.crunch.active = false;
+    expect(aiCrunchDecision(quiet, 'A')).toBeNull();
   });
 
   it('the simulator plays whole games under the rule', () => {

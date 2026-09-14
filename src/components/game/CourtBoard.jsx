@@ -21,7 +21,11 @@ function HelpBtn({ section }) {
   return <button className={styles.helpBtn} onClick={handleClick} title="How to Play">?</button>;
 }
 
-export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExecCard, onResolve, onSpendAssist, onSpendRebound, onDraftSubmit, onPlacePlayer, onUndoPlace = null, undoPlaceName = null, onTimeout = null, onEndTimeout = null, onSearchCrunch = null, pvpMode = false, myTeamKey = null, isMyTurn = true, defenceIsHuman = false, rollGate = null, aiIq = 1 }) {
+export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExecCard, onResolve, onSpendAssist, onSpendRebound, onDraftSubmit, onPlacePlayer, onUndoPlace = null, undoPlaceName = null, onTimeout = null, onEndTimeout = null, onSearchCrunch = null, pvpMode = false, myTeamKey = null, isMyTurn = true, defenceIsHuman = false, rollGate = null, aiIq = 1,
+  // WHICH SIDE THE COACH PLAYS, or null when a person plays both (hotseat) or
+  // the game is PvP. Its hand goes face down and its roster status comes up in
+  // that panel's place — see OppStatusPanel.
+  coachTeam = null }) {
   // ── Solo placement ─────────────────────────────────────────────────────────
   //
   // PvP passes a Firebase-backed onPlacePlayer; solo places locally with the
@@ -121,9 +125,11 @@ export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExec
       ) : (
         <div className={styles.courtLayout}>
           {/* Left hand panel: Team A's hand (or empty placeholder in PvP if I'm Team B) */}
-          {(!pvpMode || myTeamKey === 'A')
-            ? <HandPanel game={game} teamKey="A" onExecCard={handleExecCard} onReturnCard={returnCard} onUndoReturn={undoReturn} pvpMode={pvpMode} isMyTurn={isMyTurn} />
-            : <div className={styles.handPlaceholder} />
+          {coachTeam === 'A'
+            ? <OppStatusPanel game={game} teamKey="A" />
+            : (!pvpMode || myTeamKey === 'A')
+              ? <HandPanel game={game} teamKey="A" onExecCard={handleExecCard} onReturnCard={returnCard} onUndoReturn={undoReturn} pvpMode={pvpMode} isMyTurn={isMyTurn} />
+              : <div className={styles.handPlaceholder} />
           }
 
           <div className={styles.court}>
@@ -143,9 +149,11 @@ export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExec
           </div>
 
           {/* Right hand panel: Team B's hand (or empty placeholder in PvP if I'm Team A) */}
-          {(!pvpMode || myTeamKey === 'B')
-            ? <HandPanel game={game} teamKey="B" onExecCard={handleExecCard} onReturnCard={returnCard} onUndoReturn={undoReturn} pvpMode={pvpMode} isMyTurn={isMyTurn} />
-            : <div className={styles.handPlaceholder} />
+          {coachTeam === 'B'
+            ? <OppStatusPanel game={game} teamKey="B" />
+            : (!pvpMode || myTeamKey === 'B')
+              ? <HandPanel game={game} teamKey="B" onExecCard={handleExecCard} onReturnCard={returnCard} onUndoReturn={undoReturn} pvpMode={pvpMode} isMyTurn={isMyTurn} />
+              : <div className={styles.handPlaceholder} />
           }
         </div>
       )}
@@ -1964,6 +1972,78 @@ function PendingBanner({ game, onResolve, onExecCard }) {
 }
 
 // Exported for the render test (handUndo.test.jsx); the board renders it for each side.
+/**
+ * THE COACH'S SIDE — what you are entitled to know, in the space its cards
+ * used to occupy.
+ *
+ * The user, 2026-09-14: "the human user should be able to see the opposite
+ * team's entire roster and its status the way the AI will be able to know
+ * ours ... Additionally, human should not be able to see AI's strategy cards."
+ *
+ * Both halves of that are one change. A solo game is not PvP, so every gate in
+ * this file that hides a hand reads `pvpMode && ...` and the coach's seven
+ * cards were dealt face-up — you could read its hand and plan around it, which
+ * is a bigger edge than any difficulty rung. They are face-down now.
+ *
+ * What replaces them is the information the coach genuinely has about YOU and
+ * you did not have about it: the whole roster, who is on the floor, minutes on
+ * the fatigue tracker, the penalty those minutes carry, and hot and cold
+ * markers. placementChoices reads exactly these fields off your side, so this
+ * is the same table, pointed the other way. The hand and deck COUNTS stay
+ * visible — how many cards someone is holding was never secret.
+ */
+export function OppStatusPanel({ game, teamKey }) {
+  const t = getTeam(game, teamKey);
+  const col = teamKey === 'A' ? 'var(--orange)' : 'var(--blue)';
+  const onFloor = new Set((t.starters || []).map(p => p?.id).filter(Boolean));
+  // On the floor first, then the bench, each by minutes played — the order a
+  // coach reads a rotation in.
+  const rows = (t.roster || []).map(p => {
+    const ps = getPS(game, teamKey, p.id) || {};
+    const min = ps.minutes || 0;
+    return {
+      p,
+      min,
+      fat: fatigueForMinutes(min),
+      hot: ps.hot || 0,
+      cold: ps.cold || 0,
+      pts: ps.pts || 0,
+      playing: onFloor.has(p.id),
+    };
+  }).sort((a, b) => (b.playing - a.playing) || (b.min - a.min));
+
+  return (
+    <div className={`${styles.handPanel} ${teamKey === 'A' ? styles.handL : styles.handR}`}>
+      <div className={styles.handTitle} style={{ color: col }}>
+        Team {teamKey}
+        <span className={styles.handCount} title="Cards in hand — face down">🂠 {t.hand.length}</span>
+      </div>
+      <div className={styles.oppRows}>
+        {rows.map(r => (
+          <div
+            key={r.p.id}
+            className={`${styles.oppRow} ${r.playing ? styles.oppOn : ''}`}
+            title={`${r.p.name} — ${r.playing ? 'on the floor' : 'on the bench'}, ${r.min} min on the fatigue tracker${r.fat < 0 ? `, ${r.fat} to every roll` : ''}${r.hot ? `, ${r.hot} hot` : ''}${r.cold ? `, ${r.cold} cold` : ''}`}
+          >
+            <span className={styles.oppDot} style={{ background: r.playing ? col : 'transparent', borderColor: col }} />
+            <span className={styles.oppName}>{r.p.name}</span>
+            <span className={styles.oppMeta}>
+              {r.pts > 0 && <span className={styles.oppPts}>{r.pts}p</span>}
+              {r.hot > 0 && <span>{'🔥'.repeat(Math.min(3, r.hot))}</span>}
+              {r.cold > 0 && <span>{'❄️'.repeat(Math.min(3, r.cold))}</span>}
+              {r.min >= 16
+                ? <span className={styles.oppRest}>⛔{r.min}m</span>
+                : r.fat < 0
+                  ? <span className={styles.fatTag}>FAT{r.fat}</span>
+                  : <span className={styles.oppMin}>{r.min}m</span>}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function HandPanel({ game, teamKey, onExecCard, onReturnCard = null, onUndoReturn = null, pvpMode = false, isMyTurn = true }) {
   const [staged, setStaged] = useState(null);
   const { open } = useLightbox();

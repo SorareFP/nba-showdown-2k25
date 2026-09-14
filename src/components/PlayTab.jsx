@@ -604,6 +604,10 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
         // defence gets to make the choices that are the defence's — see
         // allocateStandingChecks. Against the coach, the engine allocates.
         defenceIsHuman={opponent === 'human'}
+        // The coach's hand goes face down and its roster status comes up in
+        // that panel's place. Hotseat passes null: both hands belong to the
+        // person at the screen, and hiding one from the other is theatre.
+        coachTeam={opponent === 'ai' ? 'B' : null}
       />
     </div>
   );

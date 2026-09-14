@@ -544,3 +544,18 @@
   .rollBtn { min-height: 36px; font-size: 13px; padding: 0; }
   .astBtn, .rebBtn { min-height: 32px; font-size: 11px; }
 }
+
+/* ── The coach's side: its cards face down, its roster status face up ──────
+   Replaces the hand panel in a solo game (OppStatusPanel). The rows are the
+   same fields placementChoices reads off the human's side — minutes, the
+   fatigue penalty they carry, hot and cold markers — so the information is
+   symmetric rather than merely visible. */
+.oppRows  { display:flex; flex-direction:column; overflow-y:auto; padding:2px; gap:1px; }
+.oppRow   { display:flex; align-items:center; gap:5px; padding:3px 5px; border-radius:5px; font-size:10px; color:var(--text-muted); }
+.oppOn    { background:rgba(255,255,255,0.05); color:var(--text); font-weight:600; }
+.oppDot   { width:6px; height:6px; border-radius:50%; border:1px solid; flex:none; }
+.oppName  { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.oppMeta  { margin-left:auto; display:flex; align-items:center; gap:3px; flex:none; font-size:9px; }
+.oppPts   { color:var(--text); font-weight:700; }
+.oppMin   { color:#64748B; }
+.oppRest  { color:#F59E0B; font-weight:700; }

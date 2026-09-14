@@ -782,24 +782,71 @@ export function aiDraftChoice(d, teamId, rng = Math.random, { iq = 1 } = {}) {
   // humans brought (entryCap), every other draft is the ordinary 100.
   const cap = d.phase === DPHASE.draft && d.year === 1 ? (d.entryCap ?? CAP_DP) : CAP_DP;
   const budget = cap - AI_FA_ROOM - payroll(d, teamId) - committed - reserve;
-  const fits = avail.filter(k => floor(k) <= budget).sort((a, b) => score(b) - score(a));
+  const fits = avail.filter(k => floor(k) <= budget);
   if (!fits.length) return [...avail].sort((a, b) => floor(a) - floor(b))[0];
 
   // THE DIFFICULTY RUNG DRAFTS THE TEAM. Settler takes anything it can pay
-  // for; Deity takes the best of what fits. `iq` is the chance of doing the
-  // considered thing, the same dial misplays() turns everywhere else.
-  //
-  // RANKING BY VALUE-FOR-MONEY WAS TRIED HERE AND BACKED OUT. Talent per DP is
-  // the right instinct — talentValue is fairDp convexed, what the card is
-  // WORTH, while floor() is his real contract, and Wembanyama is worth 35 and
-  // costs 11 — but dividing by price swings by multiples where needFactor
-  // nudges by thirty per cent, so the draft bought cheap guards and fielded
-  // teams with no centre. Forcing the missing positions onto the board did not
-  // rescue it either. The lever is real and worth returning to with the
-  // positional requirement as a proper constraint over the whole ten, not a
-  // late filter; it is not worth shipping half-tuned.
+  // for; Deity drafts on the three things below. `iq` is the chance of doing
+  // the considered thing, the same dial misplays() turns everywhere else — and
+  // this is the lever with range, because the ladder's four existing ones are
+  // worth about seven points between them while the roster is worth forty
+  // (scripts/analysis/runRosterGap.js).
   if (iq < 1 && rng() >= iq) return fits[Math.floor(rng() * fits.length)];
-  return pickWeighted(fits.slice(0, 3), [0.6, 0.25, 0.15], rng);
+
+  // ── 1. WHAT HE IS WORTH AGAINST WHAT HE COSTS ────────────────────────────
+  // talentValue is fairDp convexed — how good the card IS — while floor() is
+  // his real contract, and the two are not the same number: Victor Wembanyama
+  // is the best card in the set and costs eleven of a hundred on his rookie
+  // deal, where Jokic, Curry and Embiid all sit at the 35-DP ceiling. Ranking
+  // on talent alone spent a third of the cap on a player an eleven-DP one
+  // matches.
+  const talent = k => talentValue(cardOf(k));
+  const repl = Math.min(...fits.map(talent));
+  const perDp = k => (talent(k) - repl) / Math.max(floor(k), 1);
+
+  // ── 2. DP REMAINING, SPREAD OVER THE SPOTS LEFT ──────────────────────────
+  // Value for money on its own drafts ten bargains and leaves the cap unspent,
+  // which is how the first attempt at this fielded a cheap, bad team. What is
+  // actually on offer is `budget` across `picksLeft` spots, so a pick near its
+  // share is neither hoarding nor starving the rest. Cards far under the share
+  // are not punished — a bargain IS the point — but a pick that eats several
+  // spots' worth has to be worth several spots.
+  const share = Math.max(1, budget / Math.max(1, picksLeft));
+  const affordability = k => (floor(k) <= share ? 1 : share / floor(k));
+
+  // ── 3. THE TEAM'S SPEED AND POWER, NOT ITS POSITIONS ─────────────────────
+  // The roll bonus is max(speedAdv, powerAdv) against the man you draw, so a
+  // roster that is all one axis gets answered by anyone who covers the other.
+  // needFactor sorts G/F/C, which is a PROXY for this and a weak one: it moves
+  // the number by at most thirty per cent where price swings by multiples, and
+  // a draft ranked on price alone fielded teams with no centre at all.
+  //
+  // This is the mechanic itself. Five play at once, so what matters is the
+  // best five on each axis; a card is worth what it ADDS to those two top-five
+  // sums. Once five quick players are in, another adds nothing to the speed
+  // side and a big adds everything to the power side — which is the positional
+  // balance falling out of the thing positions were standing in for.
+  const topFive = (keys, stat) => keys
+    .map(k => cardOf(k)?.[stat] ?? 0)
+    .sort((a, b) => b - a)
+    .slice(0, 5)
+    .reduce((t, v) => t + v, 0);
+  const nowS = topFive(mine, 'speed');
+  const nowP = topFive(mine, 'power');
+  const coverage = k => {
+    const withHim = [...mine, k];
+    return (topFive(withHim, 'speed') - nowS) + (topFive(withHim, 'power') - nowP);
+  };
+  // Scaled against the best gain on the board, so it is a multiplier in 0..1
+  // rather than a number that swamps or is swamped by the two above.
+  const bestCover = Math.max(...fits.map(coverage), 1);
+
+  const rank = k => perDp(k)
+    * affordability(k)
+    * (0.35 + 0.65 * (coverage(k) / bestCover))
+    * needFactor(mine, cardOf(k));
+  const ranked = [...fits].sort((a, b) => rank(b) - rank(a));
+  return pickWeighted(ranked.slice(0, 3), [0.6, 0.25, 0.15], rng);
 }
 
 /** Let the AI pick until a human is on the clock (or, with `all`, to the end). */

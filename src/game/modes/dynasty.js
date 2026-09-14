@@ -404,6 +404,12 @@ export function createDynasty({
   series = null,
   // Players age and retire, and the dynasty runs until you end it.
   aging = false,
+  // THE RUNG THE LEAGUE WAS STARTED ON, remembered, because the AI teams draft
+  // to it: Settler takes anything it can pay for, Deity takes the best value
+  // for money (aiDraftChoice). A dynasty outlives the browser setting that
+  // created it, so the number belongs on the league rather than being read
+  // fresh each session.
+  iq = 1,
   rng = Math.random,
 } = {}) {
   if (!START_MODES[startMode]) throw new Error(`dynasty: no start mode ${startMode}`);
@@ -466,12 +472,33 @@ export function createDynasty({
     for (const h of entrants) for (const c of h.roster) put(c, h.id);
   }
 
+  // WHAT THE HUMANS ACTUALLY BROUGHT. An own start lets you field the ten you
+  // own on their real contracts with no cap check at the door — the user's own
+  // rule, 2026-09-12: come in over the apron and you let people walk or trade
+  // them to get under before you can re-sign anyone NEXT season. That is a fine
+  // rule; it was only ever applied to one side. The AI teams drafted to the
+  // 100-DP cap while a collector's best ten came in at 301, which is a threefold
+  // payroll advantage and the whole of a forty-point win
+  // (scripts/analysis/runRosterGap.js).
+  //
+  // So year one is drafted to what the league's richest human brought, and
+  // everybody is over the apron together, facing the same reckoning in year two.
+  const entryCap = Math.max(
+    CAP_DP,
+    ...entrants.map(h => (h.roster ?? []).reduce((t, c) => {
+      const real = contractFor(cardKey(c));
+      return t + (real?.dp ?? fairDp(c));
+    }, 0)),
+  );
+
   const d = {
     id,
     version: 3,
     createdAt: Date.now(),
     name: name || `${me.name} Dynasty`,
     startMode,
+    iq,
+    entryCap,
     size,
     length,
     series: Array.isArray(series) && series.length ? series : null,
@@ -729,7 +756,7 @@ export function passPick(d, teamId) {
  * leaves room for the spots after it. A rookie draft takes the best player.
  * A little chance in both, so two drafts are not the same draft.
  */
-export function aiDraftChoice(d, teamId, rng = Math.random) {
+export function aiDraftChoice(d, teamId, rng = Math.random, { iq = 1 } = {}) {
   const avail = draftAvailable(d).filter(k => cardOf(k));
   if (!avail.length) return null;
   // Everyone he would play with: the roster and the picks already made.
@@ -751,20 +778,40 @@ export function aiDraftChoice(d, teamId, rng = Math.random) {
   const picksLeft = d.draft.order.slice(d.draft.picks.length).filter(t => t === teamId).length;
   const reserve = avail.map(floor).sort((a, b) => a - b).slice(0, Math.max(0, picksLeft - 1))
     .reduce((t, f) => t + Math.max(f, AI_RESERVE_PER_SPOT), 0);
-  const budget = CAP_DP - AI_FA_ROOM - payroll(d, teamId) - committed - reserve;
+  // The cap this draft is played to: year one of an own start matches what the
+  // humans brought (entryCap), every other draft is the ordinary 100.
+  const cap = d.phase === DPHASE.draft && d.year === 1 ? (d.entryCap ?? CAP_DP) : CAP_DP;
+  const budget = cap - AI_FA_ROOM - payroll(d, teamId) - committed - reserve;
   const fits = avail.filter(k => floor(k) <= budget).sort((a, b) => score(b) - score(a));
   if (!fits.length) return [...avail].sort((a, b) => floor(a) - floor(b))[0];
+
+  // THE DIFFICULTY RUNG DRAFTS THE TEAM. Settler takes anything it can pay
+  // for; Deity takes the best of what fits. `iq` is the chance of doing the
+  // considered thing, the same dial misplays() turns everywhere else.
+  //
+  // RANKING BY VALUE-FOR-MONEY WAS TRIED HERE AND BACKED OUT. Talent per DP is
+  // the right instinct — talentValue is fairDp convexed, what the card is
+  // WORTH, while floor() is his real contract, and Wembanyama is worth 35 and
+  // costs 11 — but dividing by price swings by multiples where needFactor
+  // nudges by thirty per cent, so the draft bought cheap guards and fielded
+  // teams with no centre. Forcing the missing positions onto the board did not
+  // rescue it either. The lever is real and worth returning to with the
+  // positional requirement as a proper constraint over the whole ten, not a
+  // late filter; it is not worth shipping half-tuned.
+  if (iq < 1 && rng() >= iq) return fits[Math.floor(rng() * fits.length)];
   return pickWeighted(fits.slice(0, 3), [0.6, 0.25, 0.15], rng);
 }
 
 /** Let the AI pick until a human is on the clock (or, with `all`, to the end). */
-export function simDraft(d, { rng = Math.random, all = false } = {}) {
+export function simDraft(d, { rng = Math.random, all = false, iq } = {}) {
   let x = d;
+  // The dynasty remembers the rung it was started on; a caller may override.
+  const level = iq ?? d.iq ?? 1;
   for (let guard = 0; guard < 1000; guard += 1) {
     const clock = onClock(x);
     if (!clock) break;
     if (!all && teamOf(x, clock.teamId)?.human) break;
-    x = draftPick(x, clock.teamId, aiDraftChoice(x, clock.teamId, rng));
+    x = draftPick(x, clock.teamId, aiDraftChoice(x, clock.teamId, rng, { iq: level }));
   }
   return x;
 }

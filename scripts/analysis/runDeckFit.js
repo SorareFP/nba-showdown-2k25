@@ -112,8 +112,17 @@ for (const r of rows.slice(0, 16)) {
   console.log(`  ${name.slice(0, 23).padEnd(24)} ${r.rs.map(x => `${(100 * x).toFixed(0)}%`.padStart(7)).join('')}   ${(100 * r.spread).toFixed(0)} pts`);
 }
 
-console.log('\nDEAD FOR EVERYONE (legal under 10% of the time for every roster):');
-const dead = rows.filter(r => Math.max(...r.rs) < 0.10).sort((a, b) => a.mean - b.mean);
+// ONLY CARDS THE SCORING WINDOW CAN PLAY. This probe samples during
+// aiScoringDecision, where every matchup-phase and reaction card is illegal
+// by definition - the first version printed six of them here at 0% as "dead
+// for everyone", which was the probe describing itself. runHandSilt.js had
+// the same bug and the same fix.
+const IN_WINDOW = new Set(['scoring', 'pre_roll', 'post_roll']);
+console.log('\nDEAD FOR EVERYONE (a scoring-window card legal under 10% of the time for every roster):');
+const dead = rows
+  .filter(r => IN_WINDOW.has(getStrat(r.id)?.phase))
+  .filter(r => Math.max(...r.rs) < 0.10)
+  .sort((a, b) => a.mean - b.mean);
 for (const r of dead.slice(0, 14)) {
   console.log(`  ${(getStrat(r.id)?.name ?? r.id).padEnd(26)} ${(100 * r.mean).toFixed(1)}%`);
 }

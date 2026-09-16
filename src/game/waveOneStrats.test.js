@@ -310,7 +310,7 @@ describe('scoring-phase wave-one cards', () => {
 
 // ── Reactions: offense ─────────────────────────────────────────────────────
 describe('offensive reactions', () => {
-  it('Find the Open Man answers a Double Team with +4 to someone not trapped', () => {
+  it('Extra Pass answers a Double Team with +4 to someone not trapped', () => {
     const g = game({ hand: ['find_the_open_man'] });
     expect(canPlayCard(g, 'A', 'find_the_open_man').canPlay).toBe(false);
     g.lastDoubleTeam = { teamKey: 'B', targetIdx: 0 };
@@ -321,7 +321,7 @@ describe('offensive reactions', () => {
     expect(r.game.lastDoubleTeam).toBeNull();
   });
 
-  it('Double Team leaves the record Find the Open Man reads', () => {
+  it('Double Team leaves the record Extra Pass reads', () => {
     const g = game({ B: five('b'), hand: [] });
     getTeam(g, 'B').hand = ['double_team'];
     g.scoringTurn = 'B';

@@ -4,7 +4,7 @@
 //     Burned on the Switch (both offensive answers to one) finally have
 //     something other than a rare to answer.
 //   First Step — the Speed twin of Power Move; the Speed side had no plain
-//     common boost, which is why Beat Him to the Spot triggered half as often
+//     common boost, which is why Beat 'Em to the Spot triggered half as often
 //     as Offensive Foul in the audit.
 //   Verticality — the answer to the cards that score with no roll and no shot
 //     check, which nothing could touch before.
@@ -88,7 +88,7 @@ describe('First Step', () => {
     expect(big.game.tempEff.B.s0).toBe(3);
   });
 
-  it('is what Beat Him to the Spot answers', () => {
+  it("is what Beat 'Em to the Spot answers", () => {
     const g = board({ bHand: ['first_step'] });
     const boosted = execCard(g, 'B', 'first_step', { playerIdx: 0 }).game;
     boosted.teamA.hand = ['beat_to_the_spot'];

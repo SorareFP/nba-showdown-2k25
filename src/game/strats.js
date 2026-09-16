@@ -89,7 +89,7 @@ export const STRATS = [
     desc:'Opponent has 6+ assists: spend 1 of your assists to remove 2 from their track.' },
   { id:'offensive_foul',      name:'Offensive Foul',     phase:'reaction', side:'def', copies:2, locked:false, color:'#64748B', rarity:'common',
     desc:'Play after an opponent activates a card that boosts Power. Their Power boost is halved (rounded down), and they suffer −1 Rebound.' },
-  { id:'beat_to_the_spot',    name:'Beat Him to the Spot', phase:'reaction', side:'def', copies:2, locked:false, color:'#334155', rarity:'common',
+  { id:'beat_to_the_spot',    name:"Beat 'Em to the Spot", phase:'reaction', side:'def', copies:2, locked:false, color:'#334155', rarity:'common',
     desc:'Play after an opponent activates a card that boosts Speed. Their Speed boost is halved (rounded down), and they suffer −1 Assist.' },
   { id:'verticality',         name:'Verticality',        phase:'reaction', side:'def', copies:2, locked:false, color:'#0F766E', rarity:'common',
     desc:'An opponent card just scored with no roll and no check: if your defender on that player has a Defensive Bonus or matches their Power, those points are wiped.' },
@@ -200,7 +200,7 @@ export const STRATS = [
   { id:'transition_outlet',   name:'Transition Outlet',  phase:'scoring',  side:'off', copies:2, locked:false, color:'#0E7490', rarity:'common',
     desc:'Spend 1 Rebound and 1 Assist: a player with a Speed advantage announces a 3PT or Paint Shot Check at +2. Hit: +1 Assist.' },
   // Reactions — offense
-  { id:'find_the_open_man',   name:'Find the Open Man',  phase:'reaction', side:'off', copies:2, locked:false, color:'#0369A1', rarity:'common',
+  { id:'find_the_open_man',   name:'Extra Pass',         phase:'reaction', side:'off', copies:2, locked:false, color:'#0369A1', rarity:'common',
     desc:'The opponent has a Double Team on the floor: a player of yours they are NOT trapping gets +4 to their scoring roll.' },
   { id:'putback_specialist',  name:'Putback Specialist', phase:'reaction', side:'off', copies:2, locked:false, color:'#0284C7', rarity:'uncommon',
     desc:'After your player misses a shot check, spend 2 Rebounds: any player of yours announces a Paint Shot Check at +3.' },

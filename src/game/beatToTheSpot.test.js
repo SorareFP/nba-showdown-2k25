@@ -28,7 +28,7 @@ function scoring({ bHand = [], aEff = {} } = {}) {
   return g;
 }
 
-describe('Beat Him to the Spot', () => {
+describe("Beat 'Em to the Spot", () => {
   it('waits for a Speed boost to punish', () => {
     const none = scoring({ bHand: ['beat_to_the_spot'] });
     expect(canPlayCard(none, 'B', 'beat_to_the_spot').canPlay).toBe(false);

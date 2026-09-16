@@ -1009,13 +1009,13 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
         if (/^s[0-9]+$/.test(key) && oppEffSpd[key] > 0) {
           const orig = oppEffSpd[key];
           oppEffSpd[key] = Math.floor(orig / 2);
-          addLog(g, teamKey, `Beat Him to the Spot: Speed boost on slot ${key.slice(1)} halved (${orig} → ${oppEffSpd[key]})`);
+          addLog(g, teamKey, `Beat 'Em to the Spot: Speed boost on slot ${key.slice(1)} halved (${orig} → ${oppEffSpd[key]})`);
           cut = true;
         }
       }
-      if (!cut) addLog(g, teamKey, 'Beat Him to the Spot: no active Speed boosts found, −1 AST still applies');
+      if (!cut) addLog(g, teamKey, "Beat 'Em to the Spot: no active Speed boosts found, −1 AST still applies");
       oppT.assists = Math.max(0, (oppT.assists || 0) - 1);
-      addLog(g, teamKey, 'Beat Him to the Spot: opponent −1 Assist');
+      addLog(g, teamKey, "Beat 'Em to the Spot: opponent −1 Assist");
       break;
     }
 
@@ -1522,7 +1522,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
       g.tempEff[teamKey]['r' + idx] = (g.tempEff[teamKey]['r' + idx] || 0) + 4;
       g.lastDoubleTeam = null;
-      addLog(g, teamKey, `Find the Open Man: ${oppT.starters[dt.targetIdx]?.name} is trapped — ${player?.name} +4 roll`);
+      addLog(g, teamKey, `Extra Pass: ${oppT.starters[dt.targetIdx]?.name} is trapped — ${player?.name} +4 roll`);
       break;
     }
     case 'putback_specialist': {

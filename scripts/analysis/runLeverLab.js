@@ -227,6 +227,14 @@ function cycleDead(game, teamKey) {
 // pick — the best 3PT shooter who has not rolled, the best shooter overall for
 // the Dime — on a brain that otherwise has the new value gate, so what it
 // measures is the TARGETING alone. A loss here is the new targeting winning.
+//
+// MEASURED, 2,400 games, seed 9091: old targeting 49.1% +/-2.0 / -0.55 against
+// the shipped brain, control 51.0% / +0.17 — the new targeting ahead by about
+// 1.9 points of win rate and 0.7 of margin. Right direction, not significant
+// on its own (z ~1.7 on margin); a second seed is pooled below when it lands.
+// The VALUE GATE — never play a card nobody nets above zero on, the part that
+// actually stops the Shai play — is not what this row measures: it holds in
+// both arms, and a play with negative expected points is a loss by construction.
 const FORFEIT = new Set(['green_light', 'you_stand_over_there', 'five_out', 'cross_court_dime']);
 function oldForfeitTarget(game, teamKey, cardId) {
   const t = getTeam(game, teamKey);

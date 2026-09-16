@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 import { calcAdv, getTeam, getOpp, getPS, getFatigue, SNAKE, SPEND_COSTS, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, lastReturnedCard, undoReturnCard, periodLabel, extraRollPending, checkNeed, fatigueForMinutes, crunchSearchOptions } from '../../game/engine.js';
 import { canPlayCard, myHouseTargets, fwdTargets, preRollTargets, helpTargets, foulTroubleTargets } from '../../game/canPlay.js';
 import { resolveGoUnder } from '../../game/execCard.js';
-import { benchRest, passTurn } from '../../game/engine.js';
+import { benchRest, passTurn, MAX_STRAIGHT_MINUTES, restRuleLifted, pickablePool } from '../../game/engine.js';
 import { salaryOrder } from '../../game/teamRules.js';
 import { getStrat } from '../../game/strats.js';
-import { aiDraftPick, aiPlacementPick } from '../../game/ai.js';
+import { aiDraftPick, aiPlacementPick, forfeitNet, FORFEIT_CARDS } from '../../game/ai.js';
 import { placePlayer, placementSnapshot, canUndoPlacement, undoPlacement, takenBackName } from '../../game/placement.js';
 import styles from './CourtBoard.module.css';
 import { getPlayerImageUrl, getPlayerThumbUrl, getStratImagePath, getStratThumbPath, fallbackTo } from '../../game/cardImages.js';
@@ -26,7 +26,12 @@ export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExec
   // WHICH SIDE THE COACH PLAYS, or null when a person plays both (hotseat) or
   // the game is PvP. Its hand goes face down and its roster status comes up in
   // that panel's place — see OppStatusPanel.
-  coachTeam = null }) {
+  coachTeam = null,
+  // COACH TIPS (the user, 2026-09-16): the picker shows what a card that
+  // replaces a roll is worth on each player, net of the roll it gives up.
+  // null means "on below Deity"; the tutorial passes true.
+  coachTips = null }) {
+  const tips = coachTips ?? aiIq < 1;
   // ── Solo placement ─────────────────────────────────────────────────────────
   //
   // PvP passes a Firebase-backed onPlacePlayer; solo places locally with the
@@ -86,7 +91,7 @@ export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExec
   const handleExecCard = async (teamKey, cardId, baseOpts = {}) => {
     let opts;
     try {
-      opts = await buildOpts(game, teamKey, cardId, baseOpts, openModal, { toast, ask, defenceIsHuman });
+      opts = await buildOpts(game, teamKey, cardId, baseOpts, openModal, { toast, ask, defenceIsHuman, coachTips: tips });
     } catch (e) {
       // Never silent: a card whose choices throw says so (the user,
       // 2026-09-10: "Sometimes stagger action just won't fire").
@@ -503,6 +508,22 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
 
     // Build info function for cards that benefit from showing matchup details
     let infoFn = undefined;
+    // COACH TIP for a card that replaces a roll with shot checks. The user,
+    // 2026-09-16, after the coach played You Stand Over There on Shai: "add
+    // coach tips that flags these sorts of things to players on lower
+    // difficulties and in the How To Play tutorial." The number is the one
+    // the coach itself reads (ai.js forfeitNet): what the checks pay, less
+    // the roll this player would have made. Your best scorer is usually the
+    // worst target, and this is where that becomes visible.
+    if (FORFEIT_CARDS[cardId] && ui.coachTips) {
+      infoFn = (p, origIdx) => {
+        const r = forfeitNet(game, teamKey, origIdx, cardId);
+        if (!r) return '';
+        const net = (r.net >= 0 ? '+' : '') + r.net.toFixed(1);
+        const why = 'checks ' + r.checks.toFixed(1) + ' vs roll ' + r.roll.toFixed(1);
+        return r.net < 0 ? '(' + net + ' — gives up more than it makes: ' + why + ')' : '(' + net + ': ' + why + ')';
+      };
+    }
     if (cardId === 'and_one') {
       infoFn = (p, origIdx) => {
         const di = offMatchups[origIdx] ?? origIdx;
@@ -1378,8 +1399,13 @@ function BlindPickPhase({ game, setGame, pvpMode = false, myTeamKey = null, onDr
   const myReady = pvpMode && (teamKey === 'A' ? game.draft.aReady : game.draft.bReady);
   const oppReady = pvpMode && (teamKey === 'A' ? game.draft.bReady : game.draft.aReady);
 
+  // TWELVE STRAIGHT IS THE LIMIT (engine.js mustRest). The old "MUST REST" at
+  // sixteen was a label; this is the rule, and it bends before it breaks the
+  // game - with fewer than five rested, pickablePool lets the least-tired in.
+  const eligible = new Set(pickablePool(game, teamKey, pool).map(x => x.id));
   const toggle = (playerId) => {
     if (myReady) return; // Already submitted in PvP
+    if (!eligible.has(playerId) && !selected.includes(playerId)) return;
     setSelected(prev => {
       if (prev.includes(playerId)) return prev.filter(id => id !== playerId);
       if (prev.length >= 5) return prev;
@@ -1519,8 +1545,9 @@ function BlindPickPhase({ game, setGame, pvpMode = false, myTeamKey = null, onDr
           return (
             <button
               key={p.id}
-              className={`${styles.blindPickCard} ${isSelected ? styles.blindPickSelected : ''} ${min >= 16 ? styles.blindPickExhausted : ''}`}
+              className={`${styles.blindPickCard} ${isSelected ? styles.blindPickSelected : ''} ${!eligible.has(p.id) && !isSelected ? styles.blindPickExhausted : ''}`}
               onClick={() => toggle(p.id)}
+              disabled={!eligible.has(p.id) && !isSelected}
             >
               {isSelected && <span className={styles.blindPickCheck}>&#10003;</span>}
               <div className={styles.blindPickArt}>
@@ -1550,7 +1577,7 @@ function BlindPickPhase({ game, setGame, pvpMode = false, myTeamKey = null, onDr
               {min > 0 && (
                 <div className={`${styles.blindPickFatigue} ${fat < 0 ? styles.blindPickFatWarn : ''}`}>
                   {min}m{fat < 0 ? ` (${fat})` : ''}
-                  {min >= 16 && ' MUST REST'}
+                  {!eligible.has(p.id) && !isSelected && ' MUST REST'}
                 </div>
               )}
             </button>
@@ -1663,7 +1690,7 @@ function PickList({ pool, stats, onPick, col, oppStarters = [], myStarters = [],
           return (
             <button key={p.id} className={styles.pickItem} onClick={()=>onPick(p)}>
               <span className={styles.pickName}>{p.name}{(()=>{const n=(ps.hot||0)-(ps.cold||0);return n>0?' 🔥':n<0?' ❄️':'';})()}</span>
-              <span className={styles.pickMeta}>S{p.speed} P{p.power}{boosts&&' · '+boosts}{min>=16?' ⛔ MUST REST':fat<0?` FAT${fat}`:min>0?` ${min}m`:''}</span>
+              <span className={styles.pickMeta}>S{p.speed} P{p.power}{boosts&&' · '+boosts}{min>=MAX_STRAIGHT_MINUTES&&!restRuleLifted(game)?' ⛔ MUST REST':fat<0?` FAT${fat}`:min>0?` ${min}m`:''}</span>
               {preview && (
                 <span className={styles.pickMatchup}>
                   vs {preview.oppName}: Off <span style={{color:preview.offAdv.rollBonus>0?'#4ADE80':preview.offAdv.hasPenalty?'#F87171':'#94A3B8'}}>{preview.offAdv.rollBonus>0?'+':''}{preview.offAdv.rollBonus}</span>
@@ -2037,7 +2064,7 @@ export function OppStatusPanel({ game, teamKey }) {
               {r.pts > 0 && <span className={styles.oppPts}>{r.pts}p</span>}
               {r.hot > 0 && <span>{'🔥'.repeat(Math.min(3, r.hot))}</span>}
               {r.cold > 0 && <span>{'❄️'.repeat(Math.min(3, r.cold))}</span>}
-              {r.min >= 16
+              {r.min >= MAX_STRAIGHT_MINUTES && !restRuleLifted(game)
                 ? <span className={styles.oppRest}>⛔{r.min}m</span>
                 : r.fat < 0
                   ? <span className={styles.fatTag}>FAT{r.fat}</span>

@@ -150,6 +150,7 @@ export default function HowToPlay({ scrollToSection, onStartTutorial, tutorialRu
 
         <AccordionSection {...sec('cards')}>
           <p>You play from a <strong>50-card deck</strong> of strategy cards, holding a hand of <strong>7</strong> that refills to 7 at the end of every section. Copies per card are capped by rarity: <strong>5 common, 4 uncommon, 3 rare, 1 legendary</strong>. The Deck Builder enforces it when you save.</p>
+          <p><strong>A card that replaces a roll</strong> &mdash; Green Light, You Stand Over There, Five-Out Offense, Cross-Court Dime &mdash; is worth its shot checks <em>minus the roll it gives up</em>. Your best scorer is usually the <em>worst</em> player to spend it on: a star's roll pays in points, rebounds and assists that two checks rarely match. Below Deity, and always in the tutorial, the picker shows that number beside each player. The coach reads the same one.</p>
           <h4>Card Phases</h4>
           <ul>
             <li><strong>Matchup:</strong> the matchup window — switches and their counters.</li>
@@ -186,6 +187,7 @@ export default function HowToPlay({ scrollToSection, onStartTutorial, tutorialRu
             <li><strong>12 minutes:</strong> &minus;6.</li>
             <li><strong>16 minutes:</strong> &minus;12, and &minus;6 more for every section after that (20 minutes &minus;18, 24 minutes &minus;24). It does not stop.</li>
           </ul>
+          <p><strong>Twelve straight is the limit.</strong> A player with 12 minutes or more on the tracker <strong>must sit the next section</strong> &mdash; except in the <strong>fourth quarter and overtime</strong>, when anyone can play through. The coach lives by the same rule.</p>
           <p><strong>Rest:</strong> a section on the bench takes <strong>4 minutes</strong> off — the same amount a section of play adds. A star at 12 rests to 8 and is still at &minus;2; it takes three sections off to get back to fresh. Benching also clears hot and cold markers.</p>
           <p><strong>Halftime:</strong> all fatigue and all markers reset at the start of Q3.</p>
           <p>Second Wind lets a tired player ignore the penalty for one section, at the cost of extra minutes afterwards. Sitting a cold, tired star for one section is usually the better play.</p>

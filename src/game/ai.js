@@ -3,7 +3,7 @@
 // Pure functions: takes game state + team key, returns an action object.
 // No React, no side effects. Used by tutorial, solo mode, sim-to-end.
 
-import { getTeam, getOpp, getPS, calcAdv, getFatigue, fatigueForMinutes, restMinutes, SPEND_COSTS, clutchAvailable, clutchEligible, burnedSlots, satOutLast, canRollSlot, extraRollPending, checkNeed, crunchSearchOptions } from './engine.js';
+import { getTeam, getOpp, getPS, calcAdv, getFatigue, fatigueForMinutes, restMinutes, MAX_STRAIGHT_MINUTES, pickablePool, SPEND_COSTS, clutchAvailable, clutchEligible, burnedSlots, satOutLast, canRollSlot, extraRollPending, checkNeed, crunchSearchOptions } from './engine.js';
 import { lookupChart } from './cards.js';
 import { canPlayCard, helpTargets, staggerPair, myHouseTargets, foulTroubleTargets } from './canPlay.js';
 import { getStrat, STRATS } from './strats.js';
@@ -163,14 +163,22 @@ export function sectionsLeftInHalf(game) {
  * a section on the bench clears them (benchRest) and no plan can get them
  * back, so the state is only "has them or does not".
  */
-function planValue(card, min, mark, left, memo) {
+function planValue(card, min, mark, left, memo, exemptWithin = 0) {
   if (left <= 0) return 0;
   const key = `${min}|${mark}|${left}`;
   const seen = memo.get(key);
   if (seen !== undefined) return seen;
-  const play = expectedOutput(card, fatigueForMinutes(min) + mark * 2)
-    + planValue(card, min + SECTION_MINUTES, mark, left - 1, memo);
-  const sit = planValue(card, restMinutes(min), 0, left - 1, memo);
+  // THE REST RULE, inside the plan: at twelve on the tracker he cannot play
+  // the next section unless it is one the rule lifts for - the last
+  // `exemptWithin` of the half (three when that half ends in Q4). A plan that
+  // walks him to twelve outside those has to sit him there, which is what a
+  // real rotation looks like.
+  const allowed = min < MAX_STRAIGHT_MINUTES || left <= exemptWithin;
+  const play = allowed
+    ? expectedOutput(card, fatigueForMinutes(min) + mark * 2)
+      + planValue(card, min + SECTION_MINUTES, mark, left - 1, memo, exemptWithin)
+    : -Infinity;
+  const sit = planValue(card, restMinutes(min), 0, left - 1, memo, exemptWithin);
   const best = Math.max(play, sit);
   memo.set(key, best);
   return best;
@@ -185,13 +193,16 @@ function planValue(card, min, mark, left, memo) {
  * them identical is deliberate — it leaves the planner as the only thing that
  * changed, so a duel can attribute the result to it.
  */
-export function rotationValue(player, ps, left = 1, edge = null) {
+export function rotationValue(player, ps, left = 1, edge = null, { exemptWithin = 0 } = {}) {
   const min = ps?.minutes || 0;
   const mark = ps ? (ps.hot || 0) - (ps.cold || 0) : 0;
+  // Twelve straight is the limit (engine.js MAX_STRAIGHT_MINUTES): if he may
+  // not play this section, playing him is not on the menu at all.
+  if (!(min < MAX_STRAIGHT_MINUTES || left <= exemptWithin)) return -Infinity;
   const memo = new Map();
   const play = expectedOutput(player, fatigueForMinutes(min) + mark * 2)
-    + planValue(player, min + SECTION_MINUTES, mark, left - 1, memo);
-  const sit = planValue(player, restMinutes(min), 0, left - 1, memo);
+    + planValue(player, min + SECTION_MINUTES, mark, left - 1, memo, exemptWithin);
+  const sit = planValue(player, restMinutes(min), 0, left - 1, memo, exemptWithin);
   // `edge` is what this player is worth against the five they will actually
   // face (matchupEdge). Without it, the standing proxy: speed and power decide
   // matchup advantage, and a chart cannot show it.
@@ -288,13 +299,21 @@ function matchupEdge(game, teamKey, player, fives) {
  * likes the look of.
  */
 export function aiDraftPick(game, teamKey, { iq = 1 } = {}) {
-  const pool = teamKey === 'A' ? game.draft.aPool : game.draft.bPool;
-  if (!pool || pool.length === 0) return null;
+  const whole = teamKey === 'A' ? game.draft.aPool : game.draft.bPool;
+  if (!whole || whole.length === 0) return null;
+  // The rest rule is a RULE, not a judgement: every rung obeys it, Settler
+  // included, and a five can always be named (pickablePool bends before the
+  // game breaks).
+  const pool = pickablePool(game, teamKey, whole);
   if (misplays(iq)) {
     return { type: 'draft_pick', playerId: pool[Math.floor(Math.random() * pool.length)].id };
   }
 
   const left = sectionsLeftInHalf(game);
+  // The last three sections of the second half are the fourth quarter, where
+  // the rest rule lifts; an overtime is one lifted section. The first half
+  // has no such window.
+  const exemptWithin = (game.overtime || (game.quarter ?? 1) >= 3) ? 3 : 0;
   const oppKey = teamKey === 'A' ? 'B' : 'A';
   // The rung decides how many of their lineups are weighed, as it does for the
   // placement search: one at Settler, all eight at Deity.
@@ -303,7 +322,7 @@ export function aiDraftPick(game, teamKey, { iq = 1 } = {}) {
   const fives = likelyFives(game, oppKey, passes, rand);
   const scored = pool.map(player => ({
     player,
-    score: rotationValue(player, getPS(game, teamKey, player.id), left, matchupEdge(game, teamKey, player, fives)),
+    score: rotationValue(player, getPS(game, teamKey, player.id), left, matchupEdge(game, teamKey, player, fives), { exemptWithin }),
   }));
   scored.sort((a, b) => b.score - a.score);
   return { type: 'draft_pick', playerId: scored[0].player.id };
@@ -1007,6 +1026,14 @@ function evaluateCard(game, teamKey, cardId, strat, opts = {}) {
     return reactionValues[cardId] ?? 4;
   }
 
+  // THE FORFEIT FAMILY IS PRICED BY WHAT IT GIVES UP. A card that would net
+  // nobody above zero is not played — the table value below is what it is
+  // worth when there IS a player it pays on (forfeitNet).
+  if (FORFEIT_CARDS[cardId]) {
+    const best = bestForfeitTarget(game, teamKey, cardId);
+    if (!best || best.net <= 0) return 0;
+  }
+
   // Base values by card type
   const values = {
     // Matchup phase
@@ -1095,6 +1122,90 @@ function evaluateCard(game, teamKey, cardId, strat, opts = {}) {
 
 // ── Build Card Options ──────────────────────────────────────────────────────
 // For cards that need player selection, pick the best target.
+// ── THE FORFEIT FAMILY: cards that replace a scoring roll with shot checks ──
+//
+// The user, 2026-09-16: "I think the AI just used 'You Stand Over There' on
+// Shai on Deity difficulty. His ability to score 4 is so accessible and
+// getting rebounds and assists makes that kind of a low-EV play."
+//
+// It did, and at Deity that was the coach's CONSIDERED choice, because two
+// things were wrong with how it read these cards. The target was "the best
+// 3PT shooter who has not rolled" — which never subtracts the roll it is
+// throwing away, and Shai has a good 3PT bonus AND the chart that makes the
+// roll worth keeping. And the card's value was a flat number from a table (7),
+// the same whoever played it, so a losing play looked as good as a winning one.
+//
+// Four cards do this: Green Light (three 3PT checks), You Stand Over There
+// (two), Five-Out Offense (two at +1, needs a 3PT bonus), Cross-Court Dime (a
+// paint check and a 3PT check, for three assists). What each is worth on a
+// given player is the same sum every time:
+//
+//     what the checks pay          points per hit x the chance of a hit, the
+//                                  engine's own arithmetic (checkNeed: assist
+//                                  boost, the defender's contest, the shooting
+//                                  bonus, hot and cold)
+//   - what the roll would have     expectedOutput at the roll bonus he carries
+//                                  — points, and rebounds and assists at half,
+//                                  which is exactly the part the old pick
+//                                  never saw
+//   - what the card costs          three assists for the Dime, at roughly what
+//                                  an assist buys back on a check
+//
+// The coach plays the card on the player for whom that NET is largest, and
+// does not play it at all when no player nets above zero. The same function
+// is what a coach tip reads off for a human about to make the Shai play.
+export const FORFEIT_CARDS = {
+  green_light:          { checks: [{ type: '3pt', bonus: 0 }, { type: '3pt', bonus: 0 }, { type: '3pt', bonus: 0 }] },
+  you_stand_over_there: { checks: [{ type: '3pt', bonus: 0 }, { type: '3pt', bonus: 0 }] },
+  five_out:             { checks: [{ type: '3pt', bonus: 1 }, { type: '3pt', bonus: 1 }], needsThree: true },
+  cross_court_dime:     { checks: [{ type: 'paint', bonus: 0 }, { type: '3pt', bonus: 0 }], assists: 3 },
+};
+/** What a made check scores (SPEND_COSTS' own reading: a three is 3, a paint bucket 2). */
+const CHECK_PTS = { '3pt': 3, paint: 2 };
+/** Roughly what one banked assist buys back — a +1 on a check, or a fifth of a three. */
+const ASSIST_WORTH = 0.3;
+
+/**
+ * What playing `cardId` on the player in slot `idx` is worth, net of the roll
+ * he gives up — or null when he is not a legal target (already rolled,
+ * blocked, or short of the card's condition).
+ */
+export function forfeitNet(game, teamKey, idx, cardId) {
+  const spec = FORFEIT_CARDS[cardId];
+  if (!spec) return null;
+  const myT = getTeam(game, teamKey);
+  const oppT = getOpp(game, teamKey);
+  const p = myT?.starters?.[idx];
+  if (!p) return null;
+  if ((game.rollResults?.[teamKey] || [])[idx] != null) return null;
+  if ((game.blockedRolls?.[teamKey] || {})[idx]) return null;
+  if (spec.needsThree && !((p.threePtBoost || 0) > 0)) return null;
+  let checks = 0;
+  for (const c of spec.checks) {
+    const { need } = checkNeed(game, teamKey, idx, c.type);
+    const pHit = Math.min(1, Math.max(0, (21 - (need - c.bonus)) / 20));
+    checks += CHECK_PTS[c.type] * pHit;
+  }
+  const di = (game.offMatchups?.[teamKey] || [])[idx] ?? idx;
+  const dp = oppT?.starters?.[di];
+  const adv = dp ? calcAdv(p, dp, game.tempEff?.[teamKey] || {}, idx) : { rollBonus: 0 };
+  const ps = getPS(game, teamKey, p.id) || {};
+  const roll = expectedOutput(p, adv.rollBonus + getFatigue(game, teamKey, idx) + ((ps.hot || 0) - (ps.cold || 0)) * 2);
+  const cost = (spec.assists || 0) * ASSIST_WORTH;
+  return { idx, player: p, checks, roll, cost, net: checks - roll - cost };
+}
+
+/** The legal target that nets the most for `cardId`, or null when nobody is legal. */
+export function bestForfeitTarget(game, teamKey, cardId) {
+  const n = getTeam(game, teamKey)?.starters?.length || 0;
+  let best = null;
+  for (let i = 0; i < n; i += 1) {
+    const r = forfeitNet(game, teamKey, i, cardId);
+    if (r && (!best || r.net > best.net)) best = r;
+  }
+  return best;
+}
+
 export function aiBuildCardOpts(game, teamKey, cardId) {
   const myT = getTeam(game, teamKey);
   const oppKey = teamKey === 'A' ? 'B' : 'A';
@@ -1206,6 +1317,14 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
 
     case 'green_light':
     case 'you_stand_over_there':
+    case 'five_out':
+    case 'cross_court_dime': {
+      // WHO GIVES UP THE LEAST — see forfeitNet. The old pick took the best 3PT
+      // shooter, which on a good team is the player whose roll is worth most.
+      const best = bestForfeitTarget(game, teamKey, cardId);
+      return { playerIdx: best ? best.idx : 0 };
+    }
+
     case 'from_way_downtown':
     case 'catch_and_shoot':
     case 'elevator_doors': {
@@ -1314,15 +1433,6 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
         return acc;
       }, []);
       return { playerIdx: cheap[0] || 0, player2Idx: cheap[1] || 1 };
-    }
-
-    case 'cross_court_dime': {
-      // Best shooter overall
-      const best = starters.reduce((b, p, i) => {
-        const val = (p.threePtBoost || 0) + (p.paintBoost || 0);
-        return val > (b.val || 0) ? { idx: i, val } : b;
-      }, { idx: 0, val: 0 });
-      return { playerIdx: best.idx };
     }
 
     case 'crowd_favorite': {
@@ -1562,12 +1672,6 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
         return { i, rb };
       }).sort((u, v) => v.rb - u.rb);
       return { playerIdx: scored[0]?.i ?? cand[0]?.i ?? 0 };
-    }
-    case 'five_out': {
-      const cand = starters.map((p, i) => ({ p, i }))
-        .filter(({ p, i }) => p && (rolls[i] == null && !blocked[i]) && (p.threePtBoost || 0) > 0)
-        .sort((u, v) => ((u.p.shotLine ?? 18) - (u.p.threePtBoost || 0)) - ((v.p.shotLine ?? 18) - (v.p.threePtBoost || 0)));
-      return { playerIdx: cand[0]?.i ?? 0 };
     }
     case 'hammer_set': {
       const cand = starters.map((p, i) => ({ p, i })).filter(({ p, i }) => {

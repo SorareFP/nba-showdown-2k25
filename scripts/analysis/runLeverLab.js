@@ -219,8 +219,51 @@ function cycleDead(game, teamKey) {
   return null;
 }
 
+// ── THE FORFEIT FAMILY, TARGETED THE OLD WAY ────────────────────────────────
+//
+// READ BACKWARDS. The shipped coach now prices Green Light, You Stand Over
+// There, Five-Out and Cross-Court Dime by the roll they give up (ai.js
+// forfeitNet) and refuses a losing one. This variant restores the OLD target
+// pick — the best 3PT shooter who has not rolled, the best shooter overall for
+// the Dime — on a brain that otherwise has the new value gate, so what it
+// measures is the TARGETING alone. A loss here is the new targeting winning.
+const FORFEIT = new Set(['green_light', 'you_stand_over_there', 'five_out', 'cross_court_dime']);
+function oldForfeitTarget(game, teamKey, cardId) {
+  const t = getTeam(game, teamKey);
+  const starters = t.starters || [];
+  const rolls = game.rollResults?.[teamKey] || [];
+  const blocked = game.blockedRolls?.[teamKey] || {};
+  if (cardId === 'cross_court_dime') {
+    const best = starters.reduce((b, p, i) => {
+      const val = (p.threePtBoost || 0) + (p.paintBoost || 0);
+      return val > (b.val || 0) ? { idx: i, val } : b;
+    }, { idx: 0, val: 0 });
+    return { playerIdx: best.idx };
+  }
+  if (cardId === 'five_out') {
+    const cand = starters.map((p, i) => ({ p, i }))
+      .filter(({ p, i }) => p && rolls[i] == null && !blocked[i] && (p.threePtBoost || 0) > 0)
+      .sort((u, v) => ((u.p.shotLine ?? 18) - (u.p.threePtBoost || 0)) - ((v.p.shotLine ?? 18) - (v.p.threePtBoost || 0)));
+    return { playerIdx: cand[0]?.i ?? 0 };
+  }
+  const best = starters.reduce((b, p, i) => {
+    if (rolls[i] != null && !rolls[i]?.isReplaced) return b;
+    if (blocked[i]) return b;
+    const tpb = p.threePtBoost || 0;
+    return tpb > (b.boost || -99) ? { idx: i, boost: tpb } : b;
+  }, { idx: 0, boost: -99 });
+  return { playerIdx: best.idx };
+}
+
 const VARIANTS = {
   control: ai,
+
+  forfeit_old_targets: {
+    ...ai,
+    aiBuildCardOpts: (game, teamKey, cardId) => (FORFEIT.has(cardId)
+      ? oldForfeitTarget(game, teamKey, cardId)
+      : ai.aiBuildCardOpts(game, teamKey, cardId)),
+  },
 
   // Forwards, not backwards: the shipped brain does NOT cycle, so a WIN here
   // is cycling being worth shipping.

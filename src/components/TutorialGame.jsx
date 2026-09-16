@@ -274,6 +274,8 @@ export default function TutorialGame({ onExit }) {
         onResolve={handlers.onResolve}
         onSpendAssist={handlers.onSpendAssist}
         onSpendRebound={handlers.onSpendRebound}
+        // The tutorial always shows the coach tips - it is where they teach.
+        coachTips
       />
     </div>
   );

@@ -44,8 +44,17 @@ function tally(iq, hand, n = 200) {
 
 describe('card judgement', () => {
   const hand = ['you_stand_over_there', 'pin_down_screen', 'green_light', 'from_way_downtown'];
+  // ON THIS BOARD You Stand Over There is a losing play, and the coach knows
+  // it at every rung (ai.js forfeitNet, 2026-09-16): each mk() player rolls
+  // for 2 pts + 1 reb + 1 ast = 3.0 expected, and two 3PT checks at a shot
+  // line of 14 with a +1 bonus hit 40% of the time for 2 x 3 x 0.4 = 2.4.
+  // Green Light's THREE checks make 3.6, which is why it still leads. The
+  // value gate sits above the difficulty dial - a rule about what a card is
+  // worth, not a judgement a lower rung gets to fumble - so Settler cannot
+  // draw it either.
+  const playable = ['pin_down_screen', 'green_light', 'from_way_downtown'];
 
-  it('Deity plays the card it rates best; Settler plays any of them', () => {
+  it('Deity plays the card it rates best; Settler plays any of the ones worth playing', () => {
     const deity = tally(1, hand);
     const best = Object.entries(deity).sort((a, b) => b[1] - a[1])[0];
     // The shipped brain, jitter and all: one card takes the clear majority.
@@ -53,9 +62,20 @@ describe('card judgement', () => {
     expect(best[1]).toBeGreaterThan(120);
 
     const settler = tally(0, hand);
-    // Every card in the hand turns up, and none of them dominates.
-    expect(Object.keys(settler).sort()).toEqual([...hand].sort());
+    // Every card worth playing turns up, and none of them dominates.
+    expect(Object.keys(settler).sort()).toEqual([...playable].sort());
     expect(Math.max(...Object.values(settler))).toBeLessThan(120);
+  });
+
+  it('refuses You Stand Over There on a roll worth keeping, and plays it on one that is not', () => {
+    const only = ['you_stand_over_there'];
+    expect(tally(1, only, 20).pass).toBe(20);
+    // A chart that pays nothing on the roll: the checks are all upside.
+    const g = scoring(only);
+    for (const p of getTeam(g, 'B').starters) p.chart = [{ lo: 1, hi: 99, pts: 0, reb: 0, ast: 0 }];
+    const d = aiScoringDecision(g, 'B', { iq: 1 });
+    expect(d.type).toBe('play_card');
+    expect(d.cardId).toBe('you_stand_over_there');
   });
 
   it('still plays a legal card — a bad coach is not a stuck one', () => {

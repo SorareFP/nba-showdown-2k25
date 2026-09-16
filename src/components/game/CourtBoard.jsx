@@ -267,8 +267,10 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
         break;
       }
       case 'burst_of_momentum': {
-        eligible = filterStarters(myT.starters, (p, i) => rolls[i]?.isTop && (rolls[i]?.pts || 0) >= 5);
-        label = 'Select player (top tier + 5pts)';
+        // 3+, as canPlay.js reads it (2026-09-16): the picker lagged the rework
+        // and told a coach with a legal play there was nobody to choose.
+        eligible = filterStarters(myT.starters, (p, i) => rolls[i]?.isTop && (rolls[i]?.pts || 0) >= 3);
+        label = 'Select player (top tier + 3pts)';
         break;
       }
       case 'drive_the_lane': {
@@ -363,8 +365,14 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
         break;
       }
       case 'post_domination': {
-        eligible = filterStarters(myT.starters, p => (p.power || 0) >= 15);
-        label = 'Whose rebounds are doubled this period?';
+        // The matchup door (2026-09-16), as canPlay.js reads it: a Power edge
+        // over the man guarding him, and still to roll.
+        eligible = filterStarters(myT.starters, (p, i) => {
+          if (rolls[i] != null) return false;
+          const dp = defenders[offMatchups[i] ?? i];
+          return dp && calcAdv(p, dp, game.tempEff?.[teamKey] || {}, i).powerAdv > 0;
+        });
+        label = 'Double whose rebounds? (a Power edge, not yet rolled)';
         break;
       }
       case 'transition_outlet': {

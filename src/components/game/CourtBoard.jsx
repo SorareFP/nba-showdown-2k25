@@ -10,6 +10,7 @@ import { placePlayer, placementSnapshot, canUndoPlacement, undoPlacement, takenB
 import styles from './CourtBoard.module.css';
 import { getPlayerImageUrl, getPlayerThumbUrl, getStratImagePath, getStratThumbPath, fallbackTo } from '../../game/cardImages.js';
 import { useLightbox, ZoomImg } from '../CardLightbox.jsx';
+import { useCardPeek } from '../CardPeek.jsx';
 import { useDialogs } from '../../ui/dialogs.jsx';
 import RollResult from './RollResult.jsx';
 
@@ -1354,7 +1355,7 @@ function PlacementAffordance({ game, teamKey, onPlacePlayer }) {
                 {mine && theirs && (
                   <span className={styles.placementBoth}>
                     <span className={styles.placementAdv} style={{ color: mineCol }} title="What my player gets attacking them">⚔ {fmt(mine)}</span>
-                    <span className={styles.placementAdv} style={{ color: theirsCol }} title="What their player gets attacking mine">🛡 {fmt(theirs)}</span>
+                    <span className={styles.placementAdv} style={{ color: theirsCol }} title="Opposing player's roll bonus if guarded by this player">🛡 {fmt(theirs)}</span>
                   </span>
                 )}
               </button>
@@ -1724,7 +1725,10 @@ function needTitle(kind, n, player, lead = null) {
 function PlayerSlot({ player, ps, adv, fat, result, blocked, teamKey, idx, phase, game, defPlayer, defSelect, defIdx, onDefChange, onRoll, onClutch = null, onSpendAssist, onSpendRebound, pvpDisabled = false, rollLocked = false }) {
   // Offensive Board Mastery owes this slot a second roll: the button comes back.
   const extraRoll = phase === 'scoring' && extraRollPending(game, teamKey, idx);
-  const { open } = useLightbox();
+  const lb = useLightbox();
+  const open = lb.open;
+  // Hover two seconds on the art or the name and the whole card comes up (CardPeek.jsx).
+  const peek = useCardPeek(lb, 'player', player);
   const col=teamKey==='A'?'var(--orange)':'var(--blue)';
   const rollCol=adv?(adv.rollBonus>0?'#4ADE80':adv.hasPenalty?'#F87171':'#94A3B8'):'#94A3B8';
   const allStats=[...game.teamA.stats,...game.teamB.stats];
@@ -1744,7 +1748,7 @@ function PlayerSlot({ player, ps, adv, fat, result, blocked, teamKey, idx, phase
   return (
     <div className={`${styles.cardFace} ${styles.cardHoriz} ${glowCheap?styles.cardGlow:''}`} style={{borderColor:col}}>
       {/* Left: card art */}
-      <div className={styles.cardArtSide} onClick={() => open('player', player)} style={{cursor:'pointer'}}>
+      <div className={styles.cardArtSide} onClick={() => { lb.unpeek?.(); open('player', player); }} style={{cursor:'pointer'}} {...peek}>
         {imgUrl
           ? <img src={imgUrl} alt={player.name} className={styles.cardArtSideImg} onError={fallbackTo(imgFull, e => { e.target.style.display = 'none'; })} />
           : <div className={styles.cardArtPlaceholder} style={{background:col+'20'}}>{player.name.charAt(0)}</div>
@@ -1753,7 +1757,7 @@ function PlayerSlot({ player, ps, adv, fat, result, blocked, teamKey, idx, phase
       {/* Right: stats sidebar */}
       <div className={styles.cardSidebar}>
         {/* The name opens the card too: on a phone the art band that did is hidden. */}
-        <div className={styles.cardNameRow} onClick={() => open('player', player)} title="View card" style={{cursor:'pointer'}}>
+        <div className={styles.cardNameRow} onClick={() => { lb.unpeek?.(); open('player', player); }} title="View card" style={{cursor:'pointer'}} {...peek}>
           <span className={styles.cardName} style={{color:col}}>{player.name}</span>
           <div className={styles.markers}>
             {(()=>{const net=(ps.hot||0)-(ps.cold||0);if(net>0)return<span className={styles.hot}>🔥{net>1?'×'+net:''}</span>;if(net<0)return<span className={styles.cold}>❄️{Math.abs(net)>1?'×'+Math.abs(net):''}</span>;return null;})()}

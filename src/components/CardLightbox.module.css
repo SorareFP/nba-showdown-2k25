@@ -108,3 +108,23 @@
    so the foil clips to the card and not to the backdrop. */
 .zoomBtn { z-index: 3; }
 .fullResHolo { display: inline-block; line-height: 0; border-radius: 12px; overflow: hidden; }
+
+/* THE HOVER MAGNIFIER (CardPeek.jsx). Above the pinned bars and the hand
+   strip, below the lightbox (1300) and the sign-up pop-up (1200) is fine
+   because it never shows while either is open. pointer-events: none is the
+   whole trick — the card under the pointer keeps its click, and the first
+   mouse move takes the picture away. */
+.peek {
+  position: fixed; inset: 0; z-index: 1150;
+  display: flex; align-items: center; justify-content: center;
+  padding: 1.5rem; pointer-events: none;
+  background: rgba(0,0,0,0.45);
+  animation: peekIn 120ms ease-out;
+}
+.peekImg {
+  max-width: min(92vw, 520px); max-height: 88vh;
+  object-fit: contain; border-radius: 12px;
+  box-shadow: 0 16px 60px rgba(0,0,0,0.7);
+}
+@keyframes peekIn { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .peek { animation: none; } }

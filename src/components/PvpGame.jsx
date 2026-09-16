@@ -408,7 +408,7 @@ export default function PvpGame({ roomCode, myRole, onLeave }) {
       clone.matchupPasses = 0;
 
       // NO BENCH REST HERE. endSection rests everyone who sat the section
-      // that just ended (benchRest: markers off, 4 minutes back), in PvP as
+      // that just ended (benchRest: markers off, REST_RECOVERY minutes back), in PvP as
       // in solo. This block used to ALSO rest the five about to sit, at the
       // old 8, so a player benched twice in a row had his second rest counted
       // twice (found 2026-09-10; the user chose one rule of 4, everywhere).

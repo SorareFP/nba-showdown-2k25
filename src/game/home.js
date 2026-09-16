@@ -29,7 +29,7 @@ export const NEWS = [
   },
   {
     id: 'twelve-minutes', date: '2026-09-16', title: 'Twelve straight minutes is the limit',
-    body: 'A player at twelve minutes on the tracker sits the next section — you and the coach alike. The fourth quarter and overtime lift it; halftime resets it. Season and dynasty sims follow the same rule, so the 40-point averages are gone.',
+    body: 'A player at twelve minutes on the tracker sits the next section — you and the coach alike — and a section on the bench takes eight minutes off, two sections\' worth, so one rest brings him back under the fatigue line. The fourth quarter and overtime lift the limit; halftime resets everything. Season and dynasty sims follow the same rule, so the 40-point averages are gone.',
     to: 'play', cta: 'Play a game',
   },
   {

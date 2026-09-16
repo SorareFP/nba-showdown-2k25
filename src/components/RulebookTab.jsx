@@ -250,7 +250,7 @@ export default function RulebookTab() {
         </div>
         <ul>
           <li><strong>Twelve straight is the limit:</strong> a player with 12+ minutes on the tracker <strong>must sit the coming section</strong>. The rule lifts for the <strong>fourth quarter and every overtime</strong>. If fewer than five players are rested enough, the least-tired fill the floor.</li>
-          <li><strong>Rest:</strong> a section on the bench takes <strong>4 minutes</strong> off. Play and rest are symmetric: 12 rests to 8 (still −2), and three sections off return a player to fresh.</li>
+          <li><strong>Rest:</strong> a section on the bench takes <strong>8 minutes</strong> off — two sections of play. 12 rests to 4 (fresh), 8 to 0; three on, one off is the rhythm of a game.</li>
           <li><strong>Markers:</strong> a section on the bench clears hot and cold markers.</li>
           <li><strong>Halftime:</strong> all fatigue and markers reset at the start of Q3.</li>
           <li><strong>Second Wind</strong> ignores the penalty for one section and charges extra minutes afterwards.</li>

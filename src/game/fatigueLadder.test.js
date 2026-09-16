@@ -36,8 +36,9 @@ describe('the fatigue ladder', () => {
     // Past −12 the chart is on its floor — "a cost the chart cannot show"
     // (lineupValue) — and with the eight-minute rest (2026-09-16) the rested
     // prospect at 24 vs 20 is exactly six points of wear apart, so 24 ties 20
-    // rather than falling further. A tie on the floor is not a step back up.
-    expect(at(24)).toBeLessThanOrEqual(at(20));
+    // rather than falling further (to floating point: the two differ in the
+    // sixteenth place). A tie on the floor is not a step back up.
+    expect(at(24)).toBeLessThanOrEqual(at(20) + 1e-9);
     // A cheap fresh player: somewhere on the way down the star falls below him.
     const body = [...CARDS].sort((a, b) => a.salary - b.salary).find(c => c.salary >= 200);
     const freshBody = lineupValue(body, { minutes: 0, hot: 0, cold: 0 });

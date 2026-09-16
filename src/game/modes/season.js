@@ -25,6 +25,7 @@
 // bookkeeping without the simulator. Everything there is re-exported here;
 // this file keeps what needs the engine: building the AI league and
 // simulating fixtures.
+import { fitDeck } from '../deckFit.js';
 import { buildAiLeague } from './aiTeams.js';
 import { simulateFixture } from './simulate.js';
 import { PHASE, teamsById, rostersOf, decksOf, roundFixtures, isHumanVsHuman, recordResult, buildSeason } from './seasonCore.js';
@@ -67,7 +68,11 @@ export function createSeason({
       abbr: h.abbr ?? null, logo: h.logo ?? null,
       deck: h.deck ?? null, deckName: h.deckName ?? null,
     })),
-    ...ai,
+    // DECK-MATCHED OPPONENTS (the user, 2026-09-16). An AI team's fifty is
+    // fitted to the ten it fields (deckFit.js) — or stays the default fifty
+    // when no archetype is near enough, which the measurement said is most of
+    // them. Humans bring their own.
+    ...ai.map(t => ({ ...t, deck: t.deck ?? fitDeck(t.roster), deckName: t.deckName ?? null })),
   ];
   return buildSeason({ id, teams, length, size, series });
 }

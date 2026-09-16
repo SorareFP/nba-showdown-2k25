@@ -2,6 +2,7 @@
 // which is fast and exact; one test plays a real simulated round so the wiring
 // to the engine is proved rather than assumed.
 import { describe, it, expect } from 'vitest';
+import { DEFAULT_DECK_COPIES } from '../defaultDeckWeights.js';
 import {
   createSeason, PHASE, standings, recordResult, roundFixtures, roundComplete, advance,
   totalRounds, nextFixtureFor, fixtureFor, isHumanVsHuman, simulateRound, simulatePlayoffRound,
@@ -227,35 +228,50 @@ describe('resultFromPlayed', () => {
 // bring their own and a simulated fixture has to know which side's is which.
 describe('season decks', () => {
   const deck = { close_out: 2, rim_protector: 1 };
+  const FIFTY = Object.values(DEFAULT_DECK_COPIES).reduce((a, b) => a + b, 0);
+  // An AI team is either absent from the map (the default fifty) or carries a
+  // FITTED fifty of its own (deckFit.js, the user 2026-09-16: "Deck-matched AI
+  // opponents are what I want"). Never a human's, and never anything else.
+  const aiDecksAreTheirOwn = s => {
+    for (const t of s.teams.filter(x => !x.human)) {
+      const d = decksOf(s)[t.id];
+      if (d === undefined) continue;
+      expect(Object.values(d).reduce((a, b) => a + b, 0), t.id).toBe(FIFTY);
+      expect(d).not.toEqual(deck);
+    }
+  };
 
-  it('carries the deck a human brought and leaves the AI teams on the default', () => {
+  it('carries the deck a human brought, and fits or defaults the AI teams', () => {
     const pool = buildAiLeague(1, { rng: seeded(11) });
     const s = createSeason({
       id: 'd', size: 4, length: 'short', rng: seeded(12),
       humans: [{ id: 'me1', name: 'Me', roster: pool[0].roster, deck, deckName: 'Wall' }],
     });
-    expect(decksOf(s)).toEqual({ me1: deck });
+    expect(decksOf(s).me1).toEqual(deck);
     expect(s.teams.find(t => t.id === 'me1').deckName).toBe('Wall');
-    // Every AI team is absent from the map, which is what "the default" means.
-    for (const t of s.teams.filter(x => !x.human)) expect(decksOf(s)[t.id]).toBeUndefined();
+    aiDecksAreTheirOwn(s);
   });
 
-  it('defaults to no deck at all when none is brought', () => {
-    expect(decksOf(makeSeason())).toEqual({});
+  it('gives the human no deck at all when none is brought', () => {
+    const s = makeSeason();
+    expect(decksOf(s).me1).toBeUndefined();
+    aiDecksAreTheirOwn(s);
   });
 
-  it('swaps a deck between rounds without touching the games already played', () => {
+  it('swaps a deck between rounds without touching the games already played, or the AI decks', () => {
     let s = makeSeason({ size: 4 });
     s = feedRound(s);
     const playedBefore = s.results.length;
+    const aiBefore = Object.fromEntries(s.teams.filter(t => !t.human).map(t => [t.id, decksOf(s)[t.id]]));
     s = setDeck(s, 'me1', deck, 'Wall');
-    expect(decksOf(s)).toEqual({ me1: deck });
+    expect(decksOf(s).me1).toEqual(deck);
     expect(s.results).toHaveLength(playedBefore);
     // And back to the default, which clears the name with it rather than
     // leaving a label pointing at nothing.
     s = setDeck(s, 'me1', null);
-    expect(decksOf(s)).toEqual({});
+    expect(decksOf(s).me1).toBeUndefined();
     expect(s.teams.find(t => t.id === 'me1').deckName).toBeNull();
+    for (const [id, d] of Object.entries(aiBefore)) expect(decksOf(s)[id], id).toEqual(d);
   });
 
   it('hands the simulator the deck for the right side of the fixture', () => {

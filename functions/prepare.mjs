@@ -60,6 +60,10 @@ const COPY = [
   'src/game/modes/dynastyMarket.js',
   'src/game/modes/seasonPack.js',
   'src/game/modes/aiTeams.js',
+  // The deck fitter and its precomputed table — a season's AI teams take a
+  // deck from it, and a dynasty with friends deals its league on the server.
+  'src/game/deckFit.js',
+  'src/game/archetypeDecks.js',
   'src/game/teamRules.js',
   'src/cards/teams.js',
   'src/cards/sets.js',

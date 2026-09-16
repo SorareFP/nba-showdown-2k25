@@ -37,6 +37,7 @@
 // storage or the screen. DynastyTab.jsx is the shell.
 import { CARDS } from '../cards.js';
 import { ALL_CARDS, BASE_SET, cardKey, getCardByKey, baseKey, copyKey } from '../cardSets.js';
+import { fitDeck } from '../deckFit.js';
 // Ages for the cards that do not carry one — scripts/dynasty/buildAges.mjs.
 import DYNASTY_AGES from '../../../card-data/generated/dynasty-ages.json' with { type: 'json' };
 import DYNASTY_CONTRACTS from '../../../card-data/generated/dynasty-contracts.json' with { type: 'json' };
@@ -1178,7 +1179,11 @@ export function startSeason(d, { rng = Math.random } = {}) {
   if (short.length) throw new Error(`dynasty: ${short.map(t => `${t.name} has ${rosterProblem(x, t.id)}`).join('; ')}`);
   const teams = x.teams.map(t => ({
     id: t.id, name: t.name, human: Boolean(t.human), uid: t.uid ?? null, roster: rosterOf(x, t.id),
-    abbr: t.abbr ?? null, logo: t.logo ?? null, deck: t.deck ?? null, deckName: t.deckName ?? null,
+    abbr: t.abbr ?? null, logo: t.logo ?? null,
+    // An AI team's fifty is fitted to the ten it drafted (deckFit.js) every
+    // season, since the roster moves between them; a human's is their own.
+    deck: t.human ? (t.deck ?? null) : fitDeck(rosterOf(d, t.id)),
+    deckName: t.deckName ?? null,
     primary: t.primary ?? null, secondary: t.secondary ?? null, city: t.city ?? null,
   }));
   const season = buildSeason({ id: `${x.id}-y${x.year}`, teams, length: x.length, series: x.series ?? null });

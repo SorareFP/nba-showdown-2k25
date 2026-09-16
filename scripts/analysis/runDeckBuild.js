@@ -72,18 +72,23 @@ import { CARDS } from '../../src/game/cards.js';
 import { CAP } from '../../src/game/teamRules.js';
 import { getTeam } from '../../src/game/engine.js';
 import { canPlayCard } from '../../src/game/canPlay.js';
-import { getStrat } from '../../src/game/strats.js';
+import { getStrat, CRUNCH_CARDS } from '../../src/game/strats.js';
 import { DEFAULT_DECK_COPIES } from '../../src/game/defaultDeckWeights.js';
 import { stratCopyCap } from '../../src/game/rarity.js';
 
 const GAMES = Number(process.argv[2] ?? 400);
 const DECK_SIZE = Object.values(DEFAULT_DECK_COPIES).reduce((a, b) => a + b, 0);
 
-/** The switching family and its floors — the user's design steer, not a finding. */
-const FLOORS = {
-  high_screen_roll: 4, veer_switch: 3, burned_on_the_switch: 3,
-  go_under: 2, fight_over: 2, overhelp: 2,
-};
+// THE SWITCHING FLOORS, read off the designed fifty itself rather than typed
+// here. The first version keyed Burned on the Switch as `burned_on_the_switch`
+// — the card's id is `burned_switch` — so that floor silently never applied
+// and every emitted deck carried it at 2. The rule the user set
+// (card_design_steers) is that the switching family keeps its designed copies
+// whatever the profile says; the designed copies are DEFAULT_DECK_COPIES, so
+// that is where the floors come from, and an id typo cannot lose one again.
+const SWITCHING = ['high_screen_roll', 'veer_switch', 'burned_switch', 'go_under', 'fight_over', 'overhelp'];
+const FLOORS = Object.fromEntries(SWITCHING.map(id => [id, DEFAULT_DECK_COPIES[id] ?? 0]));
+for (const id of SWITCHING) if (!(id in DEFAULT_DECK_COPIES)) throw new Error(`switching floor: ${id} is not in the default fifty`);
 
 function archetype(want) {
   const ranked = [...CARDS].sort((a, b) => want(b) - want(a));
@@ -137,6 +142,12 @@ function profile(roster, foe, games) {
 // nothing about it; it keeps whatever the default fifty gave it. Same for
 // matchup-phase cards, which this probe never samples in their own phase.
 const JUDGED = new Set(['scoring', 'pre_roll', 'post_roll']);
+// A CRUNCH-ONLY CARD IS NEVER JUDGED. It is illegal outside Crunch Time by
+// design (drawCards bottoms it; the timeout searches for it), so its legality
+// rate in a scoring-window sample is near zero for EVERY roster — and the
+// first table cut Reset and Fresh Legs from two archetypes on exactly that
+// reading. Same trap as the matchup-phase cards, same fix: exempt by kind.
+const judged = id => JUDGED.has(getStrat(id)?.phase) && !CRUNCH_CARDS.includes(id);
 
 function fit(seen) {
   const want = {};
@@ -144,7 +155,7 @@ function fit(seen) {
   for (const [id, copies] of Object.entries(DEFAULT_DECK_COPIES)) {
     const strat = getStrat(id);
     const floor = FLOORS[id] ?? 0;
-    if (!strat || !JUDGED.has(strat.phase) || floor) {
+    if (!strat || !judged(id) || floor) {
       want[id] = Math.max(copies, floor);
       spent += want[id];
       continue;
@@ -166,7 +177,7 @@ function fit(seen) {
   }
   // Re-spend the difference on the most legal cards, respecting the caps.
   const spendable = Object.keys(want)
-    .filter(id => JUDGED.has(getStrat(id)?.phase) && !FLOORS[id])
+    .filter(id => judged(id) && !FLOORS[id])
     .sort((a, b) => {
       const ra = seen.get(a), rb = seen.get(b);
       return ((rb?.legal ?? 0) / Math.max(1, rb?.held ?? 1)) - ((ra?.legal ?? 0) / Math.max(1, ra?.held ?? 1));

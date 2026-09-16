@@ -242,7 +242,7 @@ export default function RulebookTab() {
       </Section>
 
       <Section id="fatigue">
-        <p>Every section on the floor adds <strong>4 minutes</strong>. The penalty applies to scoring rolls and shot checks alike:</p>
+        <p>Every section on the floor adds <strong>4 minutes</strong>. The penalty applies to scoring rolls and to 3PT and paint checks alike (free throws are exempt):</p>
         <div className={s.highlight}>
           <strong>8+ minutes:</strong> −2<br/>
           <strong>12+ minutes:</strong> −6<br/>

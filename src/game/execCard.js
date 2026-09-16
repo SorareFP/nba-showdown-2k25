@@ -120,7 +120,7 @@ export function resolveGoUnder(game, slot) {
   const offPlayer = offT.starters[slot];
   if (!offPlayer) return { game, ok: false, msg: 'No such player' };
   const offPs = getPS(g, pc.teamKey, offPlayer.id) || {};
-  const r = shotCheck(offPlayer, '3pt', pc.extra - matchupContest(g, pc.teamKey, slot, '3pt'), offPs);
+  const r = shotCheck(offPlayer, '3pt', pc.extra - matchupContest(g, pc.teamKey, slot, '3pt'), offPs, getFatigue(g, pc.teamKey, slot));
   trackShotCheck(g, pc.teamKey, r, '3pt', slot);
   recordShot(g, pc.teamKey, offPlayer.id, '3pt', r.hit);
   if (creditCheckDefended(g, pc.teamKey, slot, '3pt', r, matchupContest(g, pc.teamKey, slot, '3pt'))) r.blk = true;
@@ -188,7 +188,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
   // card's chosen player (idx), so their assigned defender's Defensive Bonus
   // contests it in one place.
   const _shotCheck = (p, type, extra, pStats) =>
-    shotCheck(p, type, (extra || 0) + _assistShotBonus - matchupContest(g, teamKey, idx, type), pStats);
+    shotCheck(p, type, (extra || 0) + _assistShotBonus - matchupContest(g, teamKey, idx, type), pStats, getFatigue(g, teamKey, idx));
 
   const player    = myT.starters[idx];
   const ps        = getPS(g, teamKey, player?.id) || {};
@@ -1101,7 +1101,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       }
 
       // Re-roll the shot check with same bonus
-      const newR = shotCheck(ccPlayer, lsc.type, lsc.bonus || 0, ccPs);
+      const newR = shotCheck(ccPlayer, lsc.type, lsc.bonus || 0, ccPs, getFatigue(g, oppKey2, lsc.playerIdx));
       recordShot(g, oppKey2, ccPlayer.id, lsc.type, newR.hit);
       if (creditCheckDefended(g, oppKey2, lsc.playerIdx, lsc.type, newR, matchupContest(g, oppKey2, lsc.playerIdx, lsc.type))) newR.blk = true;
       trackShotCheck(g, oppKey2, newR, lsc.type);
@@ -1715,7 +1715,7 @@ export function applyShotCheck(g, psc) {
   }
   const hitAst = psc.onHitAst ?? (psc.onHit === 'ast' ? 1 : 0);
 
-  const r = shotCheck(player, psc.type, bonus, ps);
+  const r = shotCheck(player, psc.type, bonus, ps, getFatigue(g, psc.teamKey, psc.playerIdx));
   recordShot(g, psc.teamKey, player?.id, psc.type, r.hit);
   if (creditCheckDefended(g, psc.teamKey, psc.playerIdx, psc.type, r, matchupContest(g, psc.teamKey, psc.playerIdx, psc.type))) r.blk = true;
   trackShotCheck(g, psc.teamKey, r, psc.type, psc.playerIdx);

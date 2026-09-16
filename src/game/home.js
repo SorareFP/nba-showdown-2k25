@@ -23,6 +23,11 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
+    id: 'tired-checks', date: '2026-09-16', title: 'Tired legs miss shots too',
+    body: 'The fatigue tracker\'s penalty now applies to 3PT and paint checks the way it applies to scoring rolls — the rules pages had said so all along; the dice had not. Free throws are exempt. A trial: say so if it plays wrong.',
+    to: 'play', cta: 'Play a game',
+  },
+  {
     id: 'difficulty-ladder', date: '2026-09-16', title: 'The coach\'s ladder, reshaped',
     body: 'Prince is now the fair game and the default: the full search on an even roster, at the standard rate. Below it the coach is handicapped and games pay less. Above it the coach\'s team gets better — King and Deity draft to a richer cap and read more of your lineups — and games pay more, up to 1.5× on Deity. PvP pays the top rate. A season or dynasty pays at the rung it was built at, so turn the coach down whenever you like.',
     to: 'play', cta: 'Play a game',

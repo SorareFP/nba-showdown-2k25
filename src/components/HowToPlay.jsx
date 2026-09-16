@@ -184,7 +184,7 @@ export default function HowToPlay({ scrollToSection, onStartTutorial, tutorialRu
           <p>Every section on the floor adds <strong>4 minutes</strong> to a player's tracker:</p>
           <ul>
             <li><strong>Under 8 minutes:</strong> no penalty — two sections are free.</li>
-            <li><strong>8 minutes:</strong> &minus;2 to all rolls and checks.</li>
+            <li><strong>8 minutes:</strong> &minus;2 to scoring rolls and to 3PT and paint checks (free throws are exempt).</li>
             <li><strong>12 minutes:</strong> &minus;6.</li>
             <li><strong>16 minutes:</strong> &minus;12, and &minus;6 more for every section after that (20 minutes &minus;18, 24 minutes &minus;24). It does not stop.</li>
           </ul>

@@ -685,7 +685,7 @@ export function endTimeout(g) {
   return ng;
 }
 
-export function shotCheck(player, type, extra, ps) {
+export function shotCheck(player, type, extra, ps, fat = fatigueForMinutes(ps?.minutes || 0)) {
   const die = roll20();
   // WHERE THE BONUS CAME FROM, not just how big it is.
   //
@@ -712,6 +712,13 @@ export function shotCheck(player, type, extra, ps) {
   if (type === 'ft') { bonus += 10; parts.push({ label: 'FT', n: 10 }); }
   const marker = ((ps?.hot || 0) - (ps?.cold || 0)) * 2;
   if (marker) { bonus += marker; parts.push({ label: marker > 0 ? '🔥' : '🧊', n: marker }); }
+  // TIRED LEGS MISS SHOTS TOO (2026-09-16, a trial the user asked for). The
+  // tracker's penalty rides on a 3PT or paint check as it rides on the
+  // scoring roll — the rules pages had said "rolls and checks alike" all
+  // along; the dice had not. Free throws are exempt. A caller with the game
+  // passes getFatigue, so Second Wind's exemption holds here as well; the
+  // default reads the tracker off the player's own state.
+  if (fat && type !== 'ft') { bonus += fat; parts.push({ label: 'FAT', n: fat }); }
   const total = die + bonus;
   const hit = total >= player.shotLine;
   const pts = hit ? (type === '3pt' ? 3 : type === 'paint' ? 2 : 1) : 0;
@@ -752,7 +759,9 @@ export function checkNeed(g, teamKey, idx, type) {
   const astBonus = g.tempEff?.[teamKey]?.['astBoost_' + idx] || 0;
   const boost = type === '3pt' ? (player.threePtBoost || 0) : type === 'paint' ? (player.paintBoost || 0) : 0;
   const marker = ((ps.hot || 0) - (ps.cold || 0)) * 2;
-  const bonus = astBonus - matchupContest(g, teamKey, idx, type) + boost + marker;
+  // The tracker's penalty, as shotCheck will apply it (free throws exempt).
+  const fat = type === 'ft' ? 0 : getFatigue(g, teamKey, idx);
+  const bonus = astBonus - matchupContest(g, teamKey, idx, type) + boost + marker + fat;
   const need = (player.shotLine || 99) - bonus;
   const pHit = Math.min(1, Math.max(0, (21 - need) / 20));
   return { need, pHit, bonus };
@@ -812,7 +821,7 @@ export function spendAssist(g, teamKey, type, playerIdx) {
     // a bonus to be able to spend"); the bonus, either sign, rides on the die.
     myT.assists -= SPEND_COSTS.assistThree;
     const astBonus = ng.tempEff?.[teamKey]?.['astBoost_' + playerIdx] || 0;
-    const r = shotCheck(player, '3pt', spendParts(astBonus, matchupContest(ng, teamKey, playerIdx, '3pt')), ps);
+    const r = shotCheck(player, '3pt', spendParts(astBonus, matchupContest(ng, teamKey, playerIdx, '3pt')), ps, getFatigue(ng, teamKey, playerIdx));
     if (creditCheckDefended(ng, teamKey, playerIdx, '3pt', r, matchupContest(ng, teamKey, playerIdx, '3pt'))) r.blk = true;
     if (r.hit) {
       myT.score += r.pts;
@@ -835,7 +844,7 @@ export function spendAssist(g, teamKey, type, playerIdx) {
     if (myT.assists < SPEND_COSTS.assistPaint) return { game: ng, ok: false, msg: `Need ${SPEND_COSTS.assistPaint} assists (have ${myT.assists})` };
     myT.assists -= SPEND_COSTS.assistPaint;
     const astBonus = ng.tempEff?.[teamKey]?.['astBoost_' + playerIdx] || 0;
-    const r = shotCheck(player, 'paint', spendParts(astBonus, matchupContest(ng, teamKey, playerIdx, 'paint')), ps);
+    const r = shotCheck(player, 'paint', spendParts(astBonus, matchupContest(ng, teamKey, playerIdx, 'paint')), ps, getFatigue(ng, teamKey, playerIdx));
     if (creditCheckDefended(ng, teamKey, playerIdx, 'paint', r, matchupContest(ng, teamKey, playerIdx, 'paint'))) r.blk = true;
     recordPaintCheck(ng, teamKey, player.id, r.hit);
     if (r.hit) {
@@ -871,7 +880,7 @@ export function spendReboundBonus(g, teamKey, type, playerIdx) {
     // Second-chance paint shot check (from +3 reb advantage) — costs 3 REB
     if (myT.rebounds < SPEND_COSTS.reboundPaint) return { game: ng, ok: false, msg: `Need ${SPEND_COSTS.reboundPaint} rebounds (have ${myT.rebounds})` };
     myT.rebounds -= SPEND_COSTS.reboundPaint;
-    const r = shotCheck(player, 'paint', spendParts(0, matchupContest(ng, teamKey, playerIdx, 'paint')), ps);
+    const r = shotCheck(player, 'paint', spendParts(0, matchupContest(ng, teamKey, playerIdx, 'paint')), ps, getFatigue(ng, teamKey, playerIdx));
     if (creditCheckDefended(ng, teamKey, playerIdx, 'paint', r, matchupContest(ng, teamKey, playerIdx, 'paint'))) r.blk = true;
     recordPaintCheck(ng, teamKey, player.id, r.hit);
     if (r.hit) {

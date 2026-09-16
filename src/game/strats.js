@@ -96,7 +96,11 @@ export const STRATS = [
   { id:'verticality',         name:'Verticality',        phase:'reaction', side:'def', copies:2, locked:false, color:'#0F766E', rarity:'common',
     desc:'An opponent card just scored with no roll and no check: if your defender on that player has a Defensive Bonus or matches their Power, those points are wiped.' },
   { id:'dogged',              name:'Dogged',             phase:'scoring',  side:'def', copies:2, locked:false, color:'#78716C', rarity:'common',
-    desc:'Target an opposing fatigued player: they suffer an additional −2 Speed and −2 Power until benched for a segment.' },
+    // ANY AMOUNT OF FATIGUE (2026-09-16, the user: "with any amount of
+    // fatigue"). The door was the fatigue PENALTY — eight minutes on the
+    // tracker — and once the coach rested its players at twelve the AI held
+    // this 337 times and played it never. Now any minutes on the tracker.
+    desc:'Target an opposing player with any minutes on the fatigue tracker: −2 Speed and −2 Power until benched for a segment.' },
   { id:'overhelp',            name:'Overhelp',           phase:'reaction', side:'off', copies:2, locked:false, color:'#0369A1', rarity:'common',
     desc:'Opponent plays a defensive switching card: one of your players gets +3 to their scoring roll this segment.' },
   { id:'burned_switch',       name:'Burned on the Switch',phase:'reaction',side:'off', copies:2, locked:false, color:'#DC2626', rarity:'common',

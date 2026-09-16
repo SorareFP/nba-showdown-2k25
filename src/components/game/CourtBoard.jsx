@@ -732,10 +732,12 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
 
   // ── Dogged: target fatigued OPPONENT ───────────────────────────────────
   if (cardId === 'dogged') {
-    const eligible = filterStarters(oppT.starters, (_, i) => getFatigue(game, oppKey, i) < 0);
-    if (eligible.length === 0) { toast('No fatigued opponent players.'); return null; }
-    const idx = await pickFiltered(eligible, 'Target fatigued opponent:', oppKey,
-      (p, oi) => `(FAT ${getFatigue(game, oppKey, oi)})`);
+    // Any minutes on the tracker (2026-09-16), not the penalty — canPlay.js.
+    const minsOf = p => getPS(game, oppKey, p.id)?.minutes || 0;
+    const eligible = filterStarters(oppT.starters, p => minsOf(p) > 0);
+    if (eligible.length === 0) { toast('No opponent with minutes on the fatigue tracker.'); return null; }
+    const idx = await pickFiltered(eligible, 'Target an opponent with minutes on the tracker:', oppKey,
+      (p, oi) => `(${minsOf(p)} min${getFatigue(game, oppKey, oi) < 0 ? `, FAT ${getFatigue(game, oppKey, oi)}` : ''})`);
     if (idx === null) return null;
     opts.playerIdx = idx;
   }

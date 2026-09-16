@@ -496,11 +496,13 @@ export function canPlayCard(g, teamKey, cardId) {
   }
 
   if (cardId === 'dogged') {
+    // Any minutes on the fatigue tracker (2026-09-16), not the penalty: the
+    // penalty starts at eight minutes, and a rested coach rarely gets there.
     if (phase !== 'scoring' && phase !== 'matchup_strats') return no('Only playable during Matchup or Scoring Phase');
     const oppKey = teamKey === 'A' ? 'B' : 'A';
-    const hasFatigued = oppT.starters.some((_, i) => getFatigue(g, oppKey, i) < 0);
-    if (!hasFatigued) return no('No fatigued opponent players in lineup');
-    return ok('Target a fatigued opponent for additional −2 Spd/Pwr');
+    const anyMinutes = oppT.starters.some(p => p && (getPS(g, oppKey, p.id)?.minutes || 0) > 0);
+    if (!anyMinutes) return no('No opponent with minutes on the fatigue tracker');
+    return ok('Target an opponent with minutes on the tracker for −2 Spd/Pwr');
   }
 
   if (cardId === 'coaches_challenge') {

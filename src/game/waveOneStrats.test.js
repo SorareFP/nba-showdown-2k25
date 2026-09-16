@@ -284,6 +284,22 @@ describe('scoring-phase wave-one cards', () => {
     expect(canPlayCard(game({ A: bigs, B: five('b', 10, 16), hand: ['post_domination'] }), 'A', 'post_domination').canPlay).toBe(false);
   });
 
+  it('Dogged (reworked 2026-09-16) fires at an opponent with any minutes on the tracker, not only a penalised one', () => {
+    // The old door was the fatigue penalty, eight minutes: 337 holds, no plays, once the coach rested at twelve.
+    const fresh = game({ hand: ['dogged'] });
+    expect(canPlayCard(fresh, 'A', 'dogged').canPlay).toBe(false);
+    const g = game({ hand: ['dogged'] });
+    getTeam(g, 'B').stats.push({ id: 'b2', minutes: 4 });             // one section on the floor, no penalty yet
+    expect(canPlayCard(g, 'A', 'dogged').canPlay).toBe(true);
+    const r = play(g, 'dogged', { playerIdx: 2 });
+    expect(r.ok).toBe(true);
+    expect(r.game.tempEff.B.s2).toBe(-2);
+    expect(r.game.tempEff.B.p2).toBe(-2);
+    expect(log(r.game, 'Dogged')[0].msg).toContain('4 min');
+    expect(play(g, 'dogged', { playerIdx: 0 }).ok).toBe(false);        // fresh
+    expect(canPlayCard(game({ hand: ['dogged'], phase: 'matchup_strats' }), 'A', 'dogged').canPlay).toBe(false);
+  });
+
   it('Burst of Momentum (reworked 2026-09-16) opens on a top-tier roll of 3+ points — 5+ never happened', () => {
     // A chart's top band pays 1-4 points a roll (1,331 top-tier rolls measured, never 5).
     const g = game({ hand: ['burst_of_momentum'] });

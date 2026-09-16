@@ -418,18 +418,9 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
   // kind of thing you hear.
   const crunchArmed = Boolean(game?.crunch?.active);
   const lastCrunch = useRef(false);
-  // The flash goes with the whistle (2026-09-16): one red pulse over the court.
-  const [crunchFlash, setCrunchFlash] = useState(false);
   useEffect(() => {
-    if (crunchArmed && !lastCrunch.current) {
-      playCrunch();
-      setCrunchFlash(true);
-      const t = setTimeout(() => setCrunchFlash(false), 900);
-      lastCrunch.current = crunchArmed;
-      return () => clearTimeout(t);
-    }
+    if (crunchArmed && !lastCrunch.current) playCrunch();
     lastCrunch.current = crunchArmed;
-    return undefined;
   }, [crunchArmed]);
 
   const over = Boolean(game?.done);
@@ -587,7 +578,6 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
 
   return (
     <div className={styles.layout}>
-      {crunchFlash && <div className={styles.crunchFlash} aria-hidden="true" />}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
         <div style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 600 }}>
           {livePreset ? livePreset.label : ''}

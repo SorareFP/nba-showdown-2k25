@@ -41,19 +41,3 @@
 @media (max-width: 768px) {
   .analyticsSlot { order: 10; }
 }
-
-/* ── CRUNCH TIME ARMS (2026-09-16): one red pulse over everything ── */
-.crunchFlash {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 60;
-  background: radial-gradient(ellipse at center, rgba(220, 38, 38, 0) 40%, rgba(220, 38, 38, 0.55) 100%);
-  animation: crunchFlash 0.9s ease-out forwards;
-}
-@keyframes crunchFlash {
-  0% { opacity: 0; }
-  20% { opacity: 1; }
-  100% { opacity: 0; }
-}
-@media (prefers-reduced-motion: reduce) { .crunchFlash { animation: none; opacity: 0.5; } }

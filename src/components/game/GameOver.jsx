@@ -96,7 +96,6 @@ export default function GameOver({ game, onPlayAgain, isPvp = false, myTeamKey =
 
   return (
     <div className={styles.wrap}>
-      {youWon && <Confetti />}
       <div className={styles.finalScore}>
         <div className={styles.label}>FINAL SCORE</div>
         <div className={styles.score}>{teamA.score} — {teamB.score}</div>
@@ -215,33 +214,6 @@ function BoxScore({ team, col }) {
           </tfoot>
         </table>
       </div>
-    </div>
-  );
-}
-
-/**
- * CONFETTI FOR A WIN (2026-09-16). Forty pieces, CSS only, each with its own
- * lane, delay, colour and spin, falling once; the reduced-motion rule turns it
- * into a still scatter. Nothing here touches the game.
- */
-const CONFETTI_COLOURS = ['var(--orange)', 'var(--gold)', 'var(--blue)', 'var(--green)', '#F8FAFC'];
-function Confetti() {
-  const pieces = Array.from({ length: 40 }, (_, i) => ({
-    left: `${(i * 37) % 100}%`,
-    delay: `${(i % 10) * 0.12}s`,
-    dur: `${2.4 + (i % 5) * 0.35}s`,
-    color: CONFETTI_COLOURS[i % CONFETTI_COLOURS.length],
-    spin: `${(i % 2 ? 1 : -1) * (360 + (i % 4) * 180)}deg`,
-  }));
-  return (
-    <div className={styles.confetti} aria-hidden="true">
-      {pieces.map((p, i) => (
-        <span
-          key={i}
-          className={styles.piece}
-          style={{ left: p.left, animationDelay: p.delay, animationDuration: p.dur, background: p.color, '--spin': p.spin }}
-        />
-      ))}
     </div>
   );
 }

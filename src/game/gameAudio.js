@@ -23,7 +23,6 @@
 // this file is quieter than the quietest chime in the pack ladder, because a
 // pack is an event and a roll is punctuation.
 import { audio, tone, noise } from './audioEngine.js';
-import { playSfx, preloadSfx } from './sfx.js';
 
 /**
  * The die leaving your hand.
@@ -35,10 +34,6 @@ import { playSfx, preloadSfx } from './sfx.js';
 export function playRoll() {
   const ac = audio();
   if (!ac) return;
-  // The first cue of a game is the one that warms the clips (sfx.js): it is
-  // inside the gesture that made the context, which is the only time that works.
-  preloadSfx();
-  if (playSfx('bounce')) return;
   noise(ac, { start: 0, dur: 0.09, gain: 0.05, from: 2600, to: 900 });
   noise(ac, { start: 0.11, dur: 0.07, gain: 0.035, from: 1900, to: 700 });
 }
@@ -62,7 +57,6 @@ export function playLanding(band, pts = 0) {
   if (!ac) return;
   switch (band) {
     case 'crit':
-      playSfx('roar');   // the crowd, over the chime; nothing if the clip is not here
       tone(ac, { freq: 784, dur: 0.16, gain: 0.075, type: 'triangle' });
       tone(ac, { freq: 1175, start: 0.09, dur: 0.3, gain: 0.07, type: 'triangle', overtone: { ratio: 2, gain: 0.3 } });
       break;
@@ -70,7 +64,6 @@ export function playLanding(band, pts = 0) {
       tone(ac, { freq: 988, dur: 0.28, gain: 0.07, type: 'triangle', overtone: { ratio: 2.2, gain: 0.25 } });
       break;
     case 'fumble':
-      playSfx('groan');
       tone(ac, { freq: 110, dur: 0.22, gain: 0.075, type: 'sawtooth', lowpass: { from: 700, to: 160 } });
       break;
     case 'miss':
@@ -95,7 +88,6 @@ export function playLanding(band, pts = 0) {
 export function playCrunch() {
   const ac = audio();
   if (!ac) return;
-  playSfx('whistle');   // the referee, under the two-note fall
   tone(ac, { freq: 330, dur: 0.4, gain: 0.07, type: 'triangle', overtone: { ratio: 1.5, gain: 0.35 } });
   tone(ac, { freq: 247, start: 0.22, dur: 0.55, gain: 0.075, type: 'triangle', overtone: { ratio: 1.5, gain: 0.35 } });
 }
@@ -106,34 +98,4 @@ export function playBuzzer() {
   if (!ac) return;
   tone(ac, { freq: 175, dur: 1.1, gain: 0.085, type: 'sawtooth', lowpass: { from: 1400, to: 500 } });
   tone(ac, { freq: 233, dur: 1.1, gain: 0.06, type: 'sawtooth', lowpass: { from: 1400, to: 500 } });
-}
-
-/**
- * AN EMBER (2026-09-16): the first hot marker. The user: "remove the heating
- * up voice and just use like an ember sound." The clip is a crackle; the
- * synth stands in with four tiny bursts of air, falling, close together.
- * Returns whether anything played.
- */
-export function playEmber() {
-  const ac = audio();
-  if (!ac) return false;
-  if (playSfx('ember')) return true;
-  noise(ac, { start: 0,    dur: 0.05, gain: 0.035, from: 3200, to: 1200 });
-  noise(ac, { start: 0.09, dur: 0.04, gain: 0.03,  from: 2800, to: 1000 });
-  noise(ac, { start: 0.2,  dur: 0.06, gain: 0.04,  from: 3600, to: 1400 });
-  noise(ac, { start: 0.33, dur: 0.04, gain: 0.025, from: 2400, to: 900 });
-  return true;
-}
-
-/**
- * A SHOT CHECK LANDING (2026-09-16): the net or the rim. The clips are the
- * point of this one — a swish is a swish — and the synth stands in until they
- * are here: a short bright tick for a make, a dull thud for a miss.
- */
-export function playCheck(hit) {
-  const ac = audio();
-  if (!ac) return;
-  if (playSfx(hit ? 'swish' : 'rim')) return;
-  if (hit) tone(ac, { freq: 1318, dur: 0.12, gain: 0.05, type: 'triangle' });
-  else tone(ac, { freq: 150, dur: 0.16, gain: 0.06, type: 'square', lowpass: { from: 900, to: 200 } });
 }

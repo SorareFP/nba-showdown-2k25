@@ -2,7 +2,7 @@
 // Pure function: takes game state + card + opts, returns new state
 // Never mutates — always returns a new object via deepClone
 
-import { handOverPriority, getTeam, getOpp, getPS, calcAdv, shotCheck, noteCheckFx, matchupContest, drawCards, deepClone, getFatigue, recordDefSwitch, burnedSlots, roll20, checkAssistDraw, standingEntry, CROWD_FAVORITE_PTS, satOutLast, bottomedLines } from './engine.js';
+import { handOverPriority, getTeam, getOpp, getPS, calcAdv, shotCheck, matchupContest, drawCards, deepClone, getFatigue, recordDefSwitch, burnedSlots, roll20, checkAssistDraw, standingEntry, CROWD_FAVORITE_PTS, satOutLast, bottomedLines } from './engine.js';
 import { creditAllowed, creditCheckDefended, recordPaintCheck, creditPaintScore } from './engine.js';
 import { helpTargets, canAnswerCheck, myHouseHolds, foulTroubleTargets } from './canPlay.js';
 import { lookupChart } from './cards.js';
@@ -60,7 +60,6 @@ function trackShotCheck(g, teamKey, r, type, playerIdx) {
   // the latest miss (a hit clears it), gone at section end. Free throws are
   // not a shot anyone crashes for.
   if (type !== 'ft') g.lastCheckMiss = r.hit ? null : { teamKey, type, playerIdx: playerIdx ?? null, claimed: false };
-  noteCheckFx(g, r, type, teamKey);
   if (!g.analytics?.[teamKey]) return;
   g.analytics[teamKey].totalShotChecks++;
   if (r.hit) {

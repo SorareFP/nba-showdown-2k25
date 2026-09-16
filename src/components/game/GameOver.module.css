@@ -76,24 +76,3 @@
 .footer { text-align: center; }
 .playAgain { background: var(--orange); color: #fff; padding: 12px 32px; border-radius: var(--radius); font-size: 15px; font-weight: 600; }
 .playAgain:hover { background: #C2410C; }
-
-/* ── CONFETTI (2026-09-16): a win, and only a win ── */
-.confetti { position: fixed; inset: 0; pointer-events: none; z-index: 70; overflow: hidden; }
-.piece {
-  position: absolute;
-  top: -12px;
-  width: 9px;
-  height: 14px;
-  border-radius: 2px;
-  opacity: 0;
-  animation-name: confettiFall;
-  animation-timing-function: ease-in;
-  animation-fill-mode: forwards;
-}
-@keyframes confettiFall {
-  0%   { opacity: 1; transform: translateY(0) rotate(0deg); }
-  100% { opacity: 0.9; transform: translateY(105vh) rotate(var(--spin, 540deg)); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .piece { animation: none; opacity: 0.8; top: auto; bottom: 8%; }
-}

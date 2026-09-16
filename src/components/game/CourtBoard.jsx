@@ -1458,17 +1458,17 @@ function BlindPickPhase({ game, setGame, pvpMode = false, myTeamKey = null, onDr
       }
     }
 
-    // Clear hot/cold for benched players (not in starters)
-    ['A', 'B'].forEach(k => {
-      const t = k === 'A' ? g.teamA : g.teamB;
-      t.stats.forEach(ps => {
-        if (!t.starters.find(p => p.id === ps.id)) {
-          ps.hot = 0; ps.cold = 0;
-          const m = ps.minutes || 0;
-          ps.minutes = m <= 8 ? 0 : Math.max(0, m - 8);
-        }
-      });
-    });
+    // NO REST IS APPLIED HERE. A block used to sit at this spot that rested
+    // everyone not in the chosen fives — minutes minus EIGHT, markers cleared,
+    // both teams — the moment the lineup was submitted. Two things wrong with
+    // it. It was a duplicate: endSection already rests every non-player by
+    // REST_RECOVERY (four, the user's 2026-09-05 rule), so solo games were
+    // double-resting at the old amount while the simulator and PvP never did.
+    // And it was a tell: the coach's non-picked players visibly recovered the
+    // instant you submitted, so the five that did not were its lineup (the
+    // user, 2026-09-16: "I know who is in their current 5 for this segment").
+    // The tracker now changes only at endSection, and until the snake has
+    // placed a player the roster panel knows nothing the court does not.
 
     g.offMatchups = { A: [0, 1, 2, 3, 4], B: [0, 1, 2, 3, 4] };
 

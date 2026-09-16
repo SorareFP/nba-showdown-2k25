@@ -122,16 +122,10 @@ export default function TutorialGame({ onExit }) {
             // If draft complete, transition to matchup phase
             if (g.teamA.starters.length === 5 && g.teamB.starters.length === 5) {
               g.offMatchups = { A: [0, 1, 2, 3, 4], B: [0, 1, 2, 3, 4] };
-              ['A', 'B'].forEach(k => {
-                const t = k === 'A' ? g.teamA : g.teamB;
-                t.stats.forEach(ps => {
-                  if (!t.starters.find(p => p.id === ps.id)) {
-                    ps.hot = 0; ps.cold = 0;
-                    const m = ps.minutes || 0;
-                    ps.minutes = m <= 8 ? 0 : Math.max(0, m - 8);
-                  }
-                });
-              });
+              // No rest here: endSection rests every non-player by the rule
+              // (REST_RECOVERY). A copy of the board's old submit-time rest
+              // used to sit at this spot - see CourtBoard's handleSubmit for
+              // why it went (a duplicate at the old amount, and a tell).
               g.phase = 'matchup_strats';
               g.log = [...g.log, { team: null, msg: 'Draft complete — Matchup Strategy Phase.' }];
             }

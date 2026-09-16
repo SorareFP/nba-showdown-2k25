@@ -17,6 +17,19 @@
  *
  * `--cutoff` overrides FIT_CUTOFF so the dial can be set by measurement rather
  * than by the round number it started at.
+ *
+ * ── THE CONTROL IS HONEST ───────────────────────────────────────────────────
+ *
+ * The first run's identical-deck control read 53.2% +/-3.5 (n=792), 1.8 sd
+ * above even, which made every fitted row suspect. `--cutoff 0` — nothing
+ * fitted, 1,200 identical mirror games — read 48.3% +/-2.8 and -0.03 a game:
+ * 1.2 sd BELOW even. Two controls straddling 50% in opposite directions is
+ * what noise looks like; pooled they sit at 50.2%. So the harness is not
+ * tilted, and the first run's reading stands as read: no measurable gain over
+ * random rosters as a whole (+0.90 inside +/-4.8), the gain concentrated in
+ * fast rosters (+6.52, n=63) exactly where the profile put it, stoppy and big
+ * flat by design. A league-wide number would need a run several times this
+ * size, concentrated on the rosters the classifier acts on.
  */
 import { simulateGame } from '../../src/game/modes/simulate.js';
 import { CARDS } from '../../src/game/cards.js';

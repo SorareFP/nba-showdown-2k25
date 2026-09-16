@@ -34,6 +34,7 @@ import { LEAGUE_SIZES, LENGTHS } from './schedule.js';
 import { TOURNAMENT_SIZES, ENTRY_FEES, tournamentPayouts, dynastyYearEarnings, dynastyCompletionEarnings } from './prizes.js';
 import { PHASE, recordResult, advance, roundComplete, earningsFor, teamsById, playoffGames, isRecorded } from './seasonCore.js';
 import { boxLinesFor } from '../boxScore.js';
+import { AI_PAY } from '../coinRewards.js';
 
 export const STATUS = { lobby: 'lobby', live: 'live', done: 'done', cancelled: 'cancelled' };
 // 'dynasty' (2026-09-11): a dynasty with friends. Its `state` is the whole
@@ -86,7 +87,12 @@ function checkSettings(kind, settings) {
   const series = Array.isArray(settings?.series)
     ? settings.series.slice(0, 5).map(n => ([1, 3, 5, 7].includes(Number(n)) ? Number(n) : 1))
     : null;
-  return { size, fee, length, seeding: 'random', startMode, series, aging: Boolean(settings?.aging) };
+  // THE RUNG (2026-09-16): fixed at the door like a solo dynasty's. The
+  // server builds the AI teams to its cap (createFriendsDynasty) and a game
+  // in the league pays at the lower of it and the rung it is played at
+  // (claimGameReward). Null is Prince, the fair game.
+  const aiLevel = AI_PAY[settings?.aiLevel] ? settings.aiLevel : null;
+  return { size, fee, length, seeding: 'random', startMode, series, aging: Boolean(settings?.aging), aiLevel };
 }
 
 /** A card key's PERSON — `rookie:Allen_Iverson` and `Allen_Iverson` are one man. */

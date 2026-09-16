@@ -110,6 +110,7 @@ const server = {
   listCard: (uid, cardKey, price, qty = 1) => call('listCard', { cardKey, price, qty }),
   delistCard: (uid, listingId) => call('delistCard', { listingId }),
   burnCard: (uid, cardKey) => call('burnCard', { cardKey }),
+  burnOverCap: () => call('burnOverCap', {}),
   claimGameReward: (uid, claim) => call('claimGameReward', claim),
   claimSeasonReward: (uid, seasonId) => call('claimSeasonReward', { seasonId }),
   claimDynastyReward: (uid, dynastyId, year) => call('claimDynastyReward', { dynastyId, year }),
@@ -259,6 +260,7 @@ const direct = {
     await burnCardDirect(uid, cardKey, value);
     return { cardKey, coins: value };
   },
+  async burnOverCap() { return { burned: [], coins: 0 }; },
   async claimGameReward(uid, claim) {
     // The dynasty rate is the server's to grant — it is the only side that can
     // read the dynasty and check the game came from its live season.
@@ -380,6 +382,8 @@ export const claimGoal = (uid, goalId) => impl.claimGoal(uid, goalId);
 export const listCard = (uid, cardKey, price, qty = 1) => impl.listCard(uid, cardKey, price, qty);
 export const delistCard = (uid, listingId) => impl.delistCard(uid, listingId);
 export const burnCard = (uid, cardKey) => impl.burnCard(uid, cardKey);
+/** Burns the strategy copies over the deck cap for their burn value (2026-09-16); idempotent, says what it burned. */
+export const burnOverCap = uid => impl.burnOverCap(uid);
 /** Settle a finished game. `claim` is `{ won, pvp, milestoneIds, bam }`. */
 export const claimGameReward = (uid, claim) => impl.claimGameReward(uid, claim);
 /** Pay a finished season's title money, once. Returns `{ coins, label }`. */

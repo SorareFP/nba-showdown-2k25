@@ -15,6 +15,19 @@ const keys = n => roster(n).map(c => c.id);
 const entrant = (uid, n) => entrantFor(uid, { name: `Team ${uid}`, roster: keys(n) });
 const seeded = (s = 7) => () => { s = (s * 1103515245 + 12345) & 0x7fffffff; return s / 0x7fffffff; };
 
+describe('a dynasty lobby\'s rung (2026-09-16)', () => {
+  it('keeps a known rung in its settings and nulls an unknown one; a season lobby has none', () => {
+    const mk = aiLevel => newLeague({
+      id: 'L9', kind: 'dynasty', name: 'R', hostUid: 'u1', joinCode: 'ABC124', now: 1000, entrant: entrant('u1', 0),
+      settings: { size: 4, fee: 0, length: 'short', startMode: 'fantasy-full', aiLevel },
+    });
+    expect(mk('deity').settings.aiLevel).toBe('deity');
+    expect(mk('grandmaster').settings.aiLevel).toBe(null);
+    expect(mk(undefined).settings.aiLevel).toBe(null);
+    expect(lobby('season', 4, 0).settings.aiLevel).toBeUndefined();
+  });
+});
+
 function lobby(kind = 'tournament', size = 4, fee = 100) {
   const settings = kind === 'tournament' ? { size, fee } : { size, fee: 0, length: 'short' };
   return newLeague({ id: 'L1', kind, name: 'Test', hostUid: 'u1', settings, entrant: entrant('u1', 0), joinCode: 'ABC123', now: 1000 });

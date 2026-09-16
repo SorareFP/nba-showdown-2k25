@@ -23,6 +23,31 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
+    id: 'difficulty-ladder', date: '2026-09-16', title: 'The coach\'s ladder, reshaped',
+    body: 'Prince is now the fair game and the default: the full search on an even roster, at the standard rate. Below it the coach is handicapped and games pay less. Above it the coach\'s team gets better — King and Deity draft to a richer cap and read more of your lineups — and games pay more, up to 1.5× on Deity. PvP pays the top rate. A season or dynasty pays at the rung it was built at, so turn the coach down whenever you like.',
+    to: 'play', cta: 'Play a game',
+  },
+  {
+    id: 'twelve-minutes', date: '2026-09-16', title: 'Twelve straight minutes is the limit',
+    body: 'A player at twelve minutes on the tracker sits the next section — you and the coach alike. The fourth quarter and overtime lift it; halftime resets it. Season and dynasty sims follow the same rule, so the 40-point averages are gone.',
+    to: 'play', cta: 'Play a game',
+  },
+  {
+    id: 'free-agent-filters', date: '2026-09-16', title: 'Free Agents: browse by season, team and salary',
+    body: 'Pick a season or a team to see everyone the archive has — every 1995-96 Cavalier, best-paid first — and narrow by salary either way. A name still works on its own.',
+    to: 'freeagents', cta: 'Free Agents',
+  },
+  {
+    id: 'cards-reworked', date: '2026-09-16', title: 'Three cards reworked',
+    body: 'Burst of Momentum fires on a top-tier roll of 3+ points (a top band never paid 5, so it never fired). Post Domination reads the matchup: a player with a Power advantage over his defender, before he rolls, doubles his rebounds this period. Dogged fires at any opponent with minutes on the fatigue tracker. Burst and Post Domination join the default fifty; Cross-Court Dime and Turnover leave it.',
+    to: 'play', cta: 'Play a game',
+  },
+  {
+    id: 'commissioner-tools', date: '2026-09-16', title: 'Commissioner\'s tools for a dynasty with friends',
+    body: 'The host can sim the coaches\' games — it asks twice and refuses a game open in a room — and can delete the dynasty outright by typing its name. A declined Free Agents invoice can be sent again.',
+    to: 'dynasty', cta: 'Go to Dynasty',
+  },
+  {
     id: 'season-in-dynasty', date: '2026-09-11', title: 'Seasons now live in Dynasty',
     body: 'One tab for leagues: a single season, a ten-year dynasty, or either with friends. Your seasons in progress are right where you left them — under One season in the Dynasty tab.',
     to: 'season', cta: 'Your seasons',

@@ -67,6 +67,7 @@ import {
   listMyLeagues, watchLeague, seasonOfLeague, seasonForStart, rosterOfEntrant, entrantFromTeam, teamIdFor, earningsByUid,
   summarizeLeague, LEAGUE_STATUS,
 } from '../firebase/leagues.js';
+import { coachFixturesOpen } from '../game/modes/league.js';
 import RosterPicker, { Choice } from './league/RosterPicker.jsx';
 import LeagueLobby from './league/LeagueLobby.jsx';
 import LeagueMatch from './league/LeagueMatch.jsx';
@@ -603,7 +604,7 @@ export async function simLeagueCoaches(uid, leagueId, season, fixtureIds) {
 
 /** One shared season: its lobby, then the Dashboard in league mode. */
 function LeagueSeason({ leagueId, uid, onBack, onPlayFixture, onOpenRoom }) {
-  const { ask, toast } = useDialogs();
+  const { ask, askText, toast } = useDialogs();
   const [league, setLeague] = useState(undefined);
   const [busy, setBusy] = useState(false);
   useEffect(() => watchLeague(leagueId, setLeague), [leagueId]);
@@ -642,6 +643,37 @@ function LeagueSeason({ leagueId, uid, onBack, onPlayFixture, onOpenRoom }) {
     const n = await simLeagueAi(uid, league.id, season);
     if (!n) toast('No AI-vs-AI games left in this round.', { tone: 'success' });
   });
+  // THE COMMISSIONER SIMS THE COACHES' GAMES (2026-09-16) — the same four
+  // gates as a dynasty with friends (FriendsDynasty.jsx): host only while a
+  // coach's game is open, a dialog naming every game, the word SIM typed,
+  // and the server refusing any game open in a room.
+  const simCoaches = async () => {
+    const open = coachFixturesOpen(league);
+    if (!open.length) { toast('No coach\'s game is open this round.'); return; }
+    const by = teamsById(season);
+    const nameOf = id => by.get(id)?.name ?? id;
+    const yes = await ask({
+      title: `Sim ${open.length === 1 ? 'this game' : `these ${open.length} games`} for the coaches?`,
+      body: 'The computer plays each one with both rosters and decks. The coaches in them do not get to play it, a game already open in a room is refused, and a result cannot be undone.',
+      lines: open.map(f => `${nameOf(f.home)} vs ${nameOf(f.away)}${f.room ? ` · room ${f.room} is open` : ''}`),
+      confirmLabel: 'Next',
+      tone: 'danger',
+    });
+    if (!yes) return;
+    const word = await askText({
+      title: 'Type SIM to confirm',
+      body: 'Every coach will see these results marked as the commissioner\'s sim.',
+      placeholder: 'SIM', maxLength: 3, confirmLabel: 'Sim them', tone: 'danger',
+    });
+    if (word == null) return;
+    if (word.trim().toUpperCase() !== 'SIM') { toast('Not simmed — that was not SIM.', { tone: 'error' }); return; }
+    run(async () => {
+      const out = await simLeagueCoaches(uid, league.id, season, open.map(f => f.id));
+      const lines = out.done.map(r => `${nameOf(r.home)} ${r.homeScore}–${r.awayScore} ${nameOf(r.away)}`);
+      const fails = out.failed.map(r => `${nameOf(r.home)} vs ${nameOf(r.away)}: ${r.error}`);
+      toast([...lines, ...fails].join(' · ') || 'Nothing to sim.', { tone: fails.length ? 'error' : 'success' });
+    });
+  };
 
   const forfeit = async (fixtureId, loserTeamId, loserName) => {
     const yes = await ask({
@@ -681,6 +713,7 @@ function LeagueSeason({ leagueId, uid, onBack, onPlayFixture, onOpenRoom }) {
       busy={busy}
       onOpenRoom={onOpenRoom}
       onSimAi={simAi}
+      onSimCoaches={simCoaches}
       onForfeit={forfeit}
     />
   );

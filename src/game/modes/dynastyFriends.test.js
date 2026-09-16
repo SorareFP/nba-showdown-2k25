@@ -6,7 +6,7 @@ import {
 } from './dynasty.js';
 import {
   PICK_CLOCK_MS, setReady, allReady, advancePhase, stampClock, clockLeft, runDraftClock, coachPick,
-  bidProblem, nextFaWeek, proposeTrade, respondTrade, withdrawTrade, vetoTrade, vetoable, openOffers,
+  bidProblem, nextFaWeek, proposeTrade, respondTrade, withdrawTrade, vetoTrade, vetoable, openOffers, createFriendsDynasty,
 } from './dynastyFriends.js';
 import { buildAiLeague } from './aiTeams.js';
 
@@ -152,5 +152,18 @@ describe('trades between coaches', () => {
     const ai = d.teams.find(t => !t.human).id;
     expect(() => proposeTrade(d, { ...deal, to: ai, get: [contractsOf(d, ai)[0].key] }, { id: 'x' })).toThrow(/one coach to another/);
     expect(() => proposeTrade(d, { ...deal, to: A }, { id: 'y' })).toThrow(/one coach to another/);
+  });
+});
+
+describe("the lobby's rung (2026-09-16)", () => {
+  it('rides into the dynasty the server builds, so its AI teams draft to the rung and its games pay at it', () => {
+    const league = {
+      id: 'LR', name: 'Rung',
+      settings: { size: 4, length: 'online', startMode: 'fantasy-full', series: null, aging: false, aiLevel: 'deity' },
+      entrants: [{ id: A, name: 'Ann', uid: 'a' }, { id: B, name: 'Bo', uid: 'b' }],
+    };
+    expect(createFriendsDynasty(league, { rng: seeded(3), now: T0 }).aiLevel).toBe('deity');
+    const fair = { ...league, settings: { ...league.settings, aiLevel: null } };
+    expect(createFriendsDynasty(fair, { rng: seeded(3), now: T0 }).aiLevel).toBe(null);
   });
 });

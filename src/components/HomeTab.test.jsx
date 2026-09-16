@@ -3,6 +3,7 @@
 // paint — the greeting, the news, the panels' loading and empty states — which
 // is exactly the page that used to be blank.
 import { describe, it, expect, vi } from 'vitest';
+import { NEWS } from '../game/home.js';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 
@@ -36,8 +37,11 @@ describe('HomeTab', () => {
   it('leads the news with the Starter Pack while it is unopened', () => {
     const out = html({ starter: { opened: false, favorite: false, bonusSeen: true } });
     expect(out).toContain('Your Starter Pack is waiting');
-    // Ahead of even the newest item, which the page always shows.
-    expect(out.indexOf('Your Starter Pack is waiting')).toBeLessThan(out.indexOf('Dynasty mode: ten years, one league'));
+    // Ahead of even the newest item, which the page always shows — read off
+    // the feed, so a new item does not move this test (2026-09-16).
+    const newest = NEWS[0].title.replace(/&/g, '&amp;').replace(/'/g, '&#x27;').replace(/"/g, '&quot;');   // as static markup escapes it
+    expect(out.indexOf(newest)).toBeGreaterThan(-1);
+    expect(out.indexOf('Your Starter Pack is waiting')).toBeLessThan(out.indexOf(newest));
     expect(html({ starter: { opened: true } })).not.toContain('Your Starter Pack is waiting');
   });
 

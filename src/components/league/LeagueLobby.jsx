@@ -7,6 +7,7 @@ import { canStart, LEAGUE_STATUS } from '../../firebase/leagues.js';
 import { tournamentPayouts } from '../../game/modes/prizes.js';
 import { LENGTHS, gamesPerTeam, playoffCount } from '../../game/modes/schedule.js';
 import { START_MODES } from '../../game/modes/dynasty.js';
+import { levelById } from '../../game/aiLevels.js';
 import styles from '../SeasonTab.module.css';
 import lg from './League.module.css';
 
@@ -35,7 +36,7 @@ export default function LeagueLobby({ league, uid, busy = false, onStart, onCanc
             {tour
               ? `${size}-team tournament · entry ${fee ? `${fee} coins` : 'free'} · single elimination`
               : dyn
-                ? `${START_MODES[league.settings.startMode]?.label ?? 'Dynasty'} · ${size} teams · ${LENGTHS[length]?.label ?? length} seasons · ${league.settings.aging ? 'players age' : 'ten years'}`
+                ? `${START_MODES[league.settings.startMode]?.label ?? 'Dynasty'} · ${size} teams · ${LENGTHS[length]?.label ?? length} seasons · ${league.settings.aging ? 'players age' : 'ten years'} · ${levelById(league.settings.aiLevel ?? 'prince').label}`
                 : `${LENGTHS[length]?.label ?? length} season · ${size} teams · ${gamesPerTeam(size, length)} games each · top ${playoffCount(size)} make the playoffs`}
           </p>
         </div>

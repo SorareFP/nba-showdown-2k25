@@ -7,7 +7,7 @@ import { loadCollection, getUserData, loadClaims, addCoins, readSupply, updateUs
 // collection.js or market.js directly would bypass USE_CLOUD_FUNCTIONS, which
 // is exactly how the first version of the server rollout was wired to nothing.
 import {
-  openPack, openBoxPack, loadBoxes, listCard, burnCard, claimGoal, devResetAccount, devGrantCoins, USE_CLOUD_FUNCTIONS, collectCard, collectAllCards,
+  openPack, openBoxPack, loadBoxes, listCard, burnCard, burnOverCap, claimGoal, devResetAccount, devGrantCoins, USE_CLOUD_FUNCTIONS, collectCard, collectAllCards,
   setFavoriteTeam } from '../firebase/serverWrites.js';
 import { CARD_MAP } from '../game/cards.js';
 import { STRAT_MAP } from '../game/strats.js';
@@ -200,6 +200,19 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
     const names = [...new Set(list.map(b => getStrat(b.cardKey)?.name ?? b.cardKey))];
     setToast(`${names.join(', ')} — already at the deck cap, burned for $${coins}.`);
   };
+
+  // THE ONE-TIME SWEEP (2026-09-16). Packs have burned an over-cap strategy
+  // copy on arrival since the 12th and the market is gated now; what got in
+  // before that is paid out here, once a session, the same toast as a pack.
+  useEffect(() => {
+    if (!user?.uid || !USE_CLOUD_FUNCTIONS) return;
+    const key = `overcap-swept:${user.uid}`;
+    try { if (sessionStorage.getItem(key)) return; sessionStorage.setItem(key, '1'); } catch { /* private mode: sweep anyway */ }
+    burnOverCap(user.uid)
+      .then(out => { if (out?.burned?.length) { noteBurned(out.burned); refresh(); } })
+      .catch(() => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.uid]);
 
   /** Open a box's first pack and hand the reveal the box it came from. */
   const startBox = async box => {

@@ -266,6 +266,7 @@ export function createFriendsDynasty(league, { rng = Math.random, now = Date.now
   const d = createDynasty({
     id: league.id, name: league.name, humans, size: s.size, length: s.length,
     startMode: s.startMode, series: s.series ?? null, aging: Boolean(s.aging), rng,
+    aiLevel: s.aiLevel ?? null,
   });
   return d.phase === DPHASE.draft ? runDraftClock(d, { now, rng }) : d;
 }

@@ -28,6 +28,7 @@ import {
 } from '../../firebase/leagues.js';
 import { loadDecks } from '../../firebase/savedDecks.js';
 import { START_MODES, DPHASE, MAX_ROSTER, humanIds, teamOf, isOffseason, summarizeDynasty, pickLabel } from '../../game/modes/dynasty.js';
+import { AI_LEVELS, loadAiLevel, levelById } from '../../game/aiLevels.js';
 import { clockLeft, canAdvance, vetoable } from '../../game/modes/dynastyFriends.js';
 import { SEASON_REWARDS, DYNASTY_COMPLETION, DYNASTY_TITLE_BONUS, dynastyCoinFactor, dynastyYearEarnings } from '../../game/modes/prizes.js';
 import { LENGTHS, PICKABLE_LENGTHS, LEAGUE_SIZES, playoffCount, gamesPerTeam } from '../../game/modes/schedule.js';
@@ -117,6 +118,8 @@ export function FriendsSetup({ teamA, collection, uid, onCancel, onCreated }) {
   const [length, setLength] = useState('online');
   const [series, setSeries] = useState(null);
   const [aging, setAging] = useState(false);
+  // The rung the league is built at; starts at this device's current dial.
+  const [aiLevel, setAiLevel] = useState(() => loadAiLevel());
   const [pick, setPick] = useState({ roster: [], deck: null, deckName: null });
   const [deck, setDeck] = useState(null);
   const [busy, setBusy] = useState(false);
@@ -139,7 +142,7 @@ export function FriendsSetup({ teamA, collection, uid, onCancel, onCreated }) {
       const res = await createLeague(uid, {
         kind: 'dynasty',
         name: leagueName.trim() || 'Our Dynasty',
-        settings: { size, length, fee: 0, startMode: mode, series: seriesFor(size, series), aging },
+        settings: { size, length, fee: 0, startMode: mode, series: seriesFor(size, series), aging, aiLevel },
         entrant,
       });
       toast(`Lobby open — code ${res.joinCode}`, { tone: 'success' });
@@ -204,6 +207,24 @@ export function FriendsSetup({ teamA, collection, uid, onCancel, onCreated }) {
           </div>
         </div>
         <SeriesPicker size={size} value={series} onChange={setSeries} label="Playoff series, every year" />
+        {/* THE LEAGUE'S RUNG (2026-09-16), the same choice a solo dynasty
+            makes at the door: above Prince the AI teams draft to a richer cap
+            for every coach, and a game here never pays above it. */}
+        <div className={styles.field}>
+          <span className={styles.label}>The other coaches</span>
+          <div className={styles.choices}>
+            {AI_LEVELS.map(l => (
+              <Choice
+                key={l.id} on={aiLevel === l.id} onClick={() => setAiLevel(l.id)}
+                title={l.label}
+                sub={`${l.blurb} · games pay ${Math.round(l.pay * 100)}%`}
+              />
+            ))}
+          </div>
+          <span className={styles.muted}>
+            Prince is a fair game at the standard rate. Above it their teams are better and games pay more. Fixed for the league; any coach can turn the coach down game by game, never up.
+          </span>
+        </div>
         <div className={styles.prize}>
           <strong>Coins{factor !== 1 && <span className={factor > 1 ? dy.buff : dy.nerf}>Fantasy draft ×{factor}</span>}</strong>
           <span>Every year, to every coach by their finish: 🏆 {x(money.champion)} · 🥈 {x(money.runnerUp)} · playoffs {x(money.playoffs)}</span>
@@ -552,7 +573,7 @@ export function FriendsDynastyView({ leagueId, uid, onBack, onPlayFixture, onOpe
           <h2 className={styles.title}>{league.name}</h2>
           <p className={styles.sub}>
             {teamOf(d, me)?.name} · {START_MODES[d.startMode]?.label} · {d.teams.length} teams, {humanIds(d).length} coaches ·{' '}
-            {LENGTHS[d.length]?.label ?? d.length} seasons{host ? ` · commissioner ${host}` : ''}
+            {LENGTHS[d.length]?.label ?? d.length} seasons · {levelById(d.aiLevel ?? 'prince').label}{host ? ` · commissioner ${host}` : ''}
           </p>
         </div>
         <div className={styles.headActions}>

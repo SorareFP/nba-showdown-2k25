@@ -399,9 +399,21 @@ export const buyListing = onCall({ region: 'us-central1' }, async request => {
 
     const copy = copySnap.data();
 
+    // A STRATEGY COPY OVER THE DECK CAP IS NOT FOR SALE TO YOU (2026-09-16).
+    // The cap is what the deck editor enforces — 5 common, 4 uncommon, 3 rare,
+    // 1 legendary — and a copy past it can never be played. A pack burns one
+    // on arrival (recordMints); the market refuses to sell you one, since the
+    // listing floor is the burn value and you could never get it back.
+    const cap = stratCopyCap(listing.cardKey);
+    const have = buyerIndexSnap.exists ? (buyerIndexSnap.data()?.count ?? 0) : 0;
+    if (cap != null && have >= cap) {
+      throw new HttpsError('failed-precondition', `You already hold ${cap} — the most a deck can use — so another could never be played`);
+    }
+
     tx.delete(sellerCopyRef);
     tx.set(db.collection(`users/${uid}/copies`).doc(), {
       cardKey: listing.cardKey,
+      type: copy.type ?? (getStrat(listing.cardKey) ? 'strat' : 'player'),
       mintedAt: copy.mintedAt ?? null,
       source: copy.source ?? null,
       // A bought card is a spare until its new owner collects it.
@@ -412,8 +424,10 @@ export const buyListing = onCall({ region: 'us-central1' }, async request => {
     });
     tx.set(db.doc(`users/${listing.seller}/collection/${listing.cardKey}`),
       { count: FieldValue.increment(-1) }, { merge: true });
+    // The index says what the card is; a bought strategy card was being
+    // filed as a player here.
     tx.set(buyerIndexRef,
-      { type: 'player', count: FieldValue.increment(1), acquiredAt: FieldValue.serverTimestamp() },
+      { type: getStrat(listing.cardKey) ? 'strat' : 'player', count: FieldValue.increment(1), acquiredAt: FieldValue.serverTimestamp() },
       { merge: true });
     tx.set(db.doc(`users/${uid}`), { currency: FieldValue.increment(-listing.price) }, { merge: true });
     tx.set(db.doc(`users/${listing.seller}`), { currency: FieldValue.increment(listing.price) }, { merge: true });
@@ -648,6 +662,44 @@ export const burnCard = onCall({ region: 'us-central1' }, async request => {
     tx.set(db.doc(`users/${uid}`), { currency: FieldValue.increment(value) }, { merge: true });
 
     return { cardKey, coins: value };
+  });
+});
+
+/**
+ * BURN THE COPIES OVER THE DECK CAP (2026-09-16). Packs have burned an
+ * over-cap strategy copy on arrival since the 12th (recordMints); this pays
+ * out the ones that got in before that, or through the market before it was
+ * gated. Spares only — a collected, listed or earned copy is never touched —
+ * at the burn value, the same coins a pack pays. The Collection tab calls it
+ * once a session; it is idempotent and says what it burned.
+ */
+export const burnOverCap = onCall({ region: 'us-central1' }, async request => {
+  const uid = requireAuth(request);
+  return db.runTransaction(async tx => {
+    // Every read before the first write: Firestore refuses a read after one.
+    const index = await tx.get(db.collection(`users/${uid}/collection`));
+    const over = index.docs
+      .map(d => ({ cardKey: d.id, count: d.data()?.count ?? 0, cap: stratCopyCap(d.id) }))
+      .filter(x => x.cap != null && x.count > x.cap);
+    const work = [];
+    for (const x of over) {
+      const snap = await tx.get(db.collection(`users/${uid}/copies`).where('cardKey', '==', x.cardKey));
+      const spares = snap.docs.filter(d => d.data().state === SPARE);
+      const n = Math.min(spares.length, x.count - x.cap);
+      if (n > 0) work.push({ ...x, refs: spares.slice(0, n).map(d => d.ref), n });
+    }
+    const burned = [];
+    let coins = 0;
+    for (const w of work) {
+      const value = burnValueFor(w.cardKey) ?? 0;
+      for (const ref of w.refs) tx.delete(ref);
+      tx.set(db.doc(`users/${uid}/collection/${w.cardKey}`), { count: FieldValue.increment(-w.n) }, { merge: true });
+      tx.set(db.doc('supply/current'), { counts: { [w.cardKey]: FieldValue.increment(-w.n) } }, { merge: true });
+      coins += value * w.n;
+      burned.push({ cardKey: w.cardKey, burned: w.n, coins: value * w.n, cap: w.cap });
+    }
+    if (coins > 0) tx.set(db.doc(`users/${uid}`), { currency: FieldValue.increment(coins) }, { merge: true });
+    return { burned, coins };
   });
 });
 

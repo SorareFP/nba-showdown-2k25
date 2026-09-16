@@ -1,20 +1,22 @@
-// THE ANNOUNCER — two lines, at the first and second hot marker.
+// THE ANNOUNCER — one line, at the second hot marker; an ember at the first.
 //
 // The user, 2026-09-16: "He's heating up and he's on fire for the first and
-// second hot markers." The recordings everyone knows are Midway's and cannot
-// ship; the LINES can. A recorded voice goes in as sounds/heating-up.mp3 and
-// sounds/on-fire.mp3 (sfx.js) and wins the moment it is there; until then the
-// browser's own speech voice says them — a placeholder, and it sounds like
-// one, but the moment fires where it should.
+// second hot markers" — then, having heard the speech voice, "remove the
+// heating up voice and just use like an ember sound." So the first marker
+// crackles (gameAudio.js playEmber) and the second gets the line. The
+// recording everyone knows is Midway's and cannot ship; the LINE can. A
+// recorded voice goes in as sounds/on-fire.mp3 (sfx.js) and wins the moment
+// it is there; until then the browser's own speech voice says it — a
+// placeholder, and it sounds like one, but the moment fires where it should.
 //
 // A roll of 19+ puts a marker on (engine.js); the count AFTER the roll says
 // which line. Markers from cards (Burst of Momentum, a Heat Check hit) do not
 // announce — the roll is the moment the whole table is watching.
 import { isMuted } from './audioEngine.js';
 import { playSfx } from './sfx.js';
+import { playEmber } from './gameAudio.js';
 
 export const LINES = {
-  heating_up: "He's heating up!",
   on_fire: "He's on fire!",
 };
 
@@ -51,9 +53,9 @@ export function announce(key, { now = Date.now() } = {}) {
   return speak(LINES[key]);
 }
 
-/** The marker a roll just awarded: the count after it picks the line. */
+/** The marker a roll just awarded: the first is an ember, the second the line. */
 export function announceMarker(hotAfter, opts) {
-  if (hotAfter === 1) return announce('heating_up', opts);
+  if (hotAfter === 1) return playEmber();
   if (hotAfter === 2) return announce('on_fire', opts);
   return false;
 }

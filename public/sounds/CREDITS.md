@@ -12,8 +12,8 @@ preview encoding; no attribution is required, and it is given anyway.
 | whistle.mp3 | Crunch Time arming | "Referee whistle sound.wav" by Rosa-Orenes256 — https://freesound.org/people/Rosa-Orenes256/sounds/538422/ |
 | roar.mp3 | a natural 20 | "Crowd Cheer II" by FoolBoyMedia — https://freesound.org/people/FoolBoyMedia/sounds/397435/ |
 | groan.mp3 | a natural 1 | "CRWDReac_Crowd Sigh In Disappointment" by ShangusBurger — https://freesound.org/people/ShangusBurger/sounds/763880/ |
-| heating-up.mp3 | the first hot marker | not yet recorded — the browser's speech voice stands in (`src/game/announcer.js`) |
-| on-fire.mp3 | the second hot marker | not yet recorded — as above |
+| ember.mp3 | the first hot marker | (to be fetched — a synth crackle stands in, `src/game/gameAudio.js` playEmber) |
+| on-fire.mp3 | the second hot marker | not yet recorded — the browser's speech voice stands in (`src/game/announcer.js`) |
 
-The two announcer lines are ours to record: the NBA Jam recordings are
-Midway's and do not ship, whatever the game earns.
+The announcer line is ours to record: the NBA Jam recording is Midway's and
+does not ship, whatever the game earns.

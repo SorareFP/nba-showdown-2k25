@@ -12,7 +12,7 @@ import { CARDS } from './cards.js';
 describe('the clips', () => {
   beforeEach(() => _resetSfx());
   it('name every moment and answer false without a context, so the synth plays instead', () => {
-    for (const k of ['bounce', 'swish', 'rim', 'whistle', 'roar', 'groan', 'heating_up', 'on_fire']) expect(SAMPLES[k]?.file).toBeTruthy();
+    for (const k of ['bounce', 'swish', 'rim', 'whistle', 'roar', 'groan', 'ember', 'on_fire']) expect(SAMPLES[k]?.file).toBeTruthy();
     expect(playSfx('swish')).toBe(false);
     expect(playSfx('nope')).toBe(false);
     expect(hasSfx('swish')).toBe(false);
@@ -33,17 +33,19 @@ describe('the announcer', () => {
     delete globalThis.speechSynthesis;
     vi.restoreAllMocks();
   });
-  it('says the first line at one marker and the second at two, nothing at three, and one line per moment', () => {
-    expect(announceMarker(1, { now: 1000 })).toBe(true);
-    expect(announceMarker(2, { now: 1200 })).toBe(false);      // too soon: one line, not two on top of each other
+  it('crackles at one marker (no voice), says the line at two, nothing at three, and one line per moment', () => {
+    expect(announceMarker(1, { now: 1000 })).toBe(false);      // the ember: no context here, so nothing — and no voice either
+    expect(spoken).toEqual([]);
+    expect(announceMarker(2, { now: 1200 })).toBe(true);
+    expect(announce('on_fire', { now: 1400 })).toBe(false);    // too soon: one line, not two on top of each other
     expect(announceMarker(2, { now: 5000 })).toBe(true);
     expect(announceMarker(3, { now: 9000 })).toBe(false);
     expect(announceMarker(0, { now: 12000 })).toBe(false);
-    expect(spoken).toEqual([LINES.heating_up, LINES.on_fire]);
+    expect(spoken).toEqual([LINES.on_fire, LINES.on_fire]);
   });
   it('is silent when muted, and never throws without a speech API', () => {
     toggleMute();
-    try { expect(announce('heating_up', { now: 1000 })).toBe(false); } finally { if (isMuted()) toggleMute(); }
+    try { expect(announce('on_fire', { now: 1000 })).toBe(false); } finally { if (isMuted()) toggleMute(); }
     delete globalThis.speechSynthesis;
     expect(announce('on_fire', { now: 50000 })).toBe(false);
     expect(spoken).toEqual([]);

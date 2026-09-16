@@ -31,8 +31,10 @@ export const SAMPLES = {
   whistle:    { file: 'whistle.mp3',    gain: 0.5 },
   roar:       { file: 'roar.mp3',       gain: 0.35, offset: 0.4, dur: 3.2, fade: 0.9 },
   groan:      { file: 'groan.mp3',      gain: 0.45, dur: 2.2, fade: 0.5 },
-  // The announcer's two lines — a recorded voice, when there is one (announcer.js).
-  heating_up: { file: 'heating-up.mp3', gain: 0.9 },
+  // The first hot marker is an ember, not a line (the user, 2026-09-16:
+  // "remove the heating up voice and just use like an ember sound"); the
+  // second is the announcer's one line — a recorded voice, when there is one.
+  ember:      { file: 'ember.mp3',      gain: 0.6, dur: 1.6, fade: 0.5 },
   on_fire:    { file: 'on-fire.mp3',    gain: 0.9 },
 };
 

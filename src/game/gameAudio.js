@@ -109,6 +109,23 @@ export function playBuzzer() {
 }
 
 /**
+ * AN EMBER (2026-09-16): the first hot marker. The user: "remove the heating
+ * up voice and just use like an ember sound." The clip is a crackle; the
+ * synth stands in with four tiny bursts of air, falling, close together.
+ * Returns whether anything played.
+ */
+export function playEmber() {
+  const ac = audio();
+  if (!ac) return false;
+  if (playSfx('ember')) return true;
+  noise(ac, { start: 0,    dur: 0.05, gain: 0.035, from: 3200, to: 1200 });
+  noise(ac, { start: 0.09, dur: 0.04, gain: 0.03,  from: 2800, to: 1000 });
+  noise(ac, { start: 0.2,  dur: 0.06, gain: 0.04,  from: 3600, to: 1400 });
+  noise(ac, { start: 0.33, dur: 0.04, gain: 0.025, from: 2400, to: 900 });
+  return true;
+}
+
+/**
  * A SHOT CHECK LANDING (2026-09-16): the net or the rim. The clips are the
  * point of this one — a swish is a swish — and the synth stands in until they
  * are here: a short bright tick for a make, a dull thud for a miss.

@@ -12,11 +12,13 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDialogs } from '../ui/dialogs.jsx';
 import { useLightbox } from './CardLightbox.jsx';
-import { RARITY_CONFIG } from '../game/rarity.js';
+import { RARITY_CONFIG, RARITY_SALARY } from '../game/rarity.js';
 import { getCardByKey } from '../game/cardSets.js';
+import { TEAMS, HISTORICAL_TEAMS, WNBA_TEAMS, WNBA_HISTORICAL_TEAMS, canonicalTeam } from '../cards/teams.js';
 import {
   prepareSearch, searchQuotes, seasonText, quoteKey, searchHitsNeverCard, AUTO_REJECT_MESSAGE,
   OPEN_REQUEST_LIMIT, REQUEST_STATUS, OPEN_STATUSES, coverageText, isGift, signPriceText,
+  quoteFilterOptions, countQuotes, canBrowse,
 } from '../game/freeAgents.js';
 import { requestCard, myCardRequests, signFreeAgent, declineCardRequest } from '../firebase/freeAgents.js';
 import Skeleton from '../ui/Skeleton.jsx';
@@ -43,10 +45,37 @@ const coins = n => `🪙 ${Number(n ?? 0).toLocaleString()}`;
 // the tab as soon as a name was typed (the user, 2026-09-10).
 const loadQuoteIndex = () => import('../../card-data/generated/quote-index.json');
 
+// ── THE FILTERS (2026-09-16) ─────────────────────────────────────────────────
+const NO_FILTERS = { season: null, team: null, salaryMin: null, salaryMax: null };
+// Salary and rarity are one scale (rarity.js), so the salary steps are the
+// rarity floors, said both ways: "$420 and up" is "Uncommon and up".
+const bandLabel = r => RARITY_CONFIG[r]?.label ?? r;
+const SALARY_FROM = [
+  { v: RARITY_SALARY.uncommon, label: `$${RARITY_SALARY.uncommon} and up · ${bandLabel('uncommon')} and up` },
+  { v: RARITY_SALARY.rare, label: `$${RARITY_SALARY.rare} and up · ${bandLabel('rare')} and up` },
+  { v: RARITY_SALARY['super-rare'], label: `$${RARITY_SALARY['super-rare']} and up · ${bandLabel('super-rare')} and up` },
+  { v: RARITY_SALARY.legendary, label: `$${RARITY_SALARY.legendary.toLocaleString()} and up · ${bandLabel('legendary')}` },
+];
+const SALARY_TO = [
+  { v: RARITY_SALARY.uncommon - 1, label: `under $${RARITY_SALARY.uncommon} · ${bandLabel('common')} only` },
+  { v: RARITY_SALARY.rare - 1, label: `under $${RARITY_SALARY.rare} · up to ${bandLabel('uncommon')}` },
+  { v: RARITY_SALARY['super-rare'] - 1, label: `under $${RARITY_SALARY['super-rare']} · up to ${bandLabel('rare')}` },
+  { v: RARITY_SALARY.legendary - 1, label: `under $${RARITY_SALARY.legendary.toLocaleString()} · up to ${bandLabel('super-rare')}` },
+];
+/** A team's name beside its letters when we know it; the two leagues share letters, so the league picks the map. */
+function teamLabel(league, abbr) {
+  const t = league === 'wnba'
+    ? (WNBA_TEAMS[abbr] ?? WNBA_HISTORICAL_TEAMS[abbr])
+    : (TEAMS[canonicalTeam(abbr)] ?? HISTORICAL_TEAMS[abbr]);
+  return t ? `${abbr} · ${t.city} ${t.name}` : abbr;
+}
+
 export default function FreeAgentsPanel({ uid, onChanged = () => {}, loadIndex = loadQuoteIndex }) {
   const { toast, ask } = useDialogs();
   const lightbox = useLightbox();
   const [index, setIndex] = useState(null);
+  const [options, setOptions] = useState(null);       // the seasons and teams the index holds
+  const [filters, setFilters] = useState(NO_FILTERS);
   const [text, setText] = useState('');
   const [mine, setMine] = useState(null);
   const [busy, setBusy] = useState(null);
@@ -54,7 +83,12 @@ export default function FreeAgentsPanel({ uid, onChanged = () => {}, loadIndex =
   useEffect(() => {
     let live = true;
     loadIndex()
-      .then(m => { if (live) setIndex(prepareSearch((m.default ?? m).rows)); })
+      .then(m => {
+        if (!live) return;
+        const rows = (m.default ?? m).rows;
+        setIndex(prepareSearch(rows));
+        setOptions(quoteFilterOptions(rows));
+      })
       .catch(() => { if (live) setIndex([]); });
     return () => { live = false; };
   }, [loadIndex]);
@@ -64,7 +98,10 @@ export default function FreeAgentsPanel({ uid, onChanged = () => {}, loadIndex =
   }, [uid]);
   useEffect(() => { refreshMine(); }, [refreshMine]);
 
-  const results = useMemo(() => (index ? searchQuotes(index, text) : []), [index, text]);
+  const results = useMemo(() => (index ? searchQuotes(index, text, { filters }) : []), [index, text, filters]);
+  const total = useMemo(() => (index && results.length ? countQuotes(index, text, filters) : 0), [index, text, filters, results.length]);
+  const setFilter = (key, value) => setFilters(f => ({ ...f, [key]: value }));
+  const filtering = canBrowse(filters) || filters.salaryMin != null || filters.salaryMax != null;
   const never = searchHitsNeverCard(text);
   const open = (mine ?? []).filter(r => OPEN_STATUSES.includes(r.status));
   const asked = new Set(open.map(r => quoteKey(r.bbrefId, r.season, r.playoffs)));
@@ -145,15 +182,52 @@ export default function FreeAgentsPanel({ uid, onChanged = () => {}, loadIndex =
           placeholder="Search a player: Michael Jordan, Lisa Leslie, Steve Nash…"
           aria-label="Search a player"
         />
+        {/* THE FILTERS: a season or a team opens the list without a name. */}
+        <div className={s.filters}>
+          <select className={s.select} aria-label="Season" value={filters.season ?? ''} onChange={e => setFilter('season', e.target.value ? Number(e.target.value) : null)}>
+            <option value="">Any season</option>
+            {(options?.seasons ?? []).map(y => <option key={y} value={y}>{seasonText({ season: y })}</option>)}
+          </select>
+          <select className={s.select} aria-label="Team" value={filters.team ?? ''} onChange={e => setFilter('team', e.target.value || null)}>
+            <option value="">Any team</option>
+            {options?.teams.nba.length > 0 && (
+              <optgroup label="NBA">
+                {options.teams.nba.map(t => <option key={`nba:${t}`} value={`nba:${t}`}>{teamLabel('nba', t)}</option>)}
+              </optgroup>
+            )}
+            {options?.teams.wnba.length > 0 && (
+              <optgroup label="WNBA">
+                {options.teams.wnba.map(t => <option key={`wnba:${t}`} value={`wnba:${t}`}>{teamLabel('wnba', t)}</option>)}
+              </optgroup>
+            )}
+          </select>
+          <select className={s.select} aria-label="Salary at least" value={filters.salaryMin ?? ''} onChange={e => setFilter('salaryMin', e.target.value ? Number(e.target.value) : null)}>
+            <option value="">Any salary</option>
+            {SALARY_FROM.map(o => <option key={o.v} value={o.v}>{o.label}</option>)}
+          </select>
+          <select className={s.select} aria-label="Salary at most" value={filters.salaryMax ?? ''} onChange={e => setFilter('salaryMax', e.target.value ? Number(e.target.value) : null)}>
+            <option value="">No ceiling</option>
+            {SALARY_TO.map(o => <option key={o.v} value={o.v}>{o.label}</option>)}
+          </select>
+          {filtering && <button type="button" className={s.ghostBtn} onClick={() => setFilters(NO_FILTERS)}>Clear</button>}
+        </div>
         {index == null ? (
           <Skeleton rows={3} height={44} label="Loading the archive" />
         ) : never ? (
           <div className={s.never}>{AUTO_REJECT_MESSAGE}</div>
-        ) : text.trim().length < 3 ? (
-          <p className={s.muted}>Type at least three letters.</p>
+        ) : text.trim().length < 3 && !canBrowse(filters) ? (
+          <p className={s.muted}>Type at least three letters, or pick a season or a team.</p>
         ) : results.length === 0 ? (
-          <p className={s.muted}>Nobody by that name in the archive, or every one of their seasons already has a card.</p>
+          <p className={s.muted}>
+            {text.trim().length >= 3
+              ? 'Nobody by that name in the archive with those filters, or every one of their seasons already has a card.'
+              : 'Nobody in the archive matches those filters.'}
+          </p>
         ) : (
+          <>
+          {total > results.length && (
+            <p className={s.muted}>Showing {results.length} of {total} players, best-paid first — add a name or a salary to narrow it.</p>
+          )}
           <ul className={s.players}>
             {results.map(p => (
               <li key={p.bbrefId} className={s.player}>
@@ -185,6 +259,7 @@ export default function FreeAgentsPanel({ uid, onChanged = () => {}, loadIndex =
               </li>
             ))}
           </ul>
+          </>
         )}
       </section>
 

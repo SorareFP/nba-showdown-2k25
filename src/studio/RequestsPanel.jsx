@@ -64,6 +64,7 @@ export default function RequestsPanel({ onClose }) {
   const [reason, setReason] = useState('');
   const [confirmGift, setConfirmGift] = useState(null);
   const [confirmRegift, setConfirmRegift] = useState(null);
+  const [confirmResend, setConfirmResend] = useState(null);  // a declined invoice, sent again
   const [busy, setBusy] = useState(null);             // `${action}:${id}`
   const [faces, setFaces] = useState({});             // request id -> face exported?
 
@@ -135,9 +136,12 @@ export default function RequestsPanel({ onClose }) {
     setFaces(f => ({ ...f, [r.id]: true }));
   });
 
-  const invoice = r => run('invoice', r.id, async () => {
+  const invoice = (r, again = false) => run('invoice', r.id, async () => {
     const out = await invoiceCardRequest({ id: r.id });
-    setNote(`Invoice sent: ${r.name} for ${coins(out.invoice?.price)}. It shows on their Free Agents page.`);
+    setNote(again
+      ? `Invoice re-sent: ${r.name} for ${coins(out.invoice?.price)}. It waits on ${r.requester ?? 'their'} Free Agents page again.`
+      : `Invoice sent: ${r.name} for ${coins(out.invoice?.price)}. It shows on their Free Agents page.`);
+    setConfirmResend(null);
     drop(r.id);
   });
 
@@ -320,6 +324,31 @@ export default function RequestsPanel({ onClose }) {
                                 <div className={s.btnRow}>
                                   <span className={s.muted}>Gifted before gifts waited to be signed</span>
                                   <button className={s.ghost} disabled={Boolean(busy)} onClick={() => setConfirmRegift(r.id)}>Re-send as gift</button>
+                                </div>
+                              )
+                            ) : status === REQUEST_STATUS.declined ? (
+                              // DECLINED, ASKED AGAIN (2026-09-16): the same card at its price
+                              // today, or as a gift. Each is a two-click affair like Gift.
+                              confirmResend === r.id ? (
+                                <div className={s.btnRow}>
+                                  <span className={s.muted}>Sends the same card again at its price today; it waits on their page like the first time.</span>
+                                  <button className={s.primary} disabled={Boolean(busy)} onClick={() => invoice(r, true)}>
+                                    {isBusy('invoice', r.id) ? 'Sending…' : 'Yes, re-send'}
+                                  </button>
+                                  <button className={s.ghost} onClick={() => setConfirmResend(null)}>Cancel</button>
+                                </div>
+                              ) : confirmGift === r.id ? (
+                                <div className={s.btnRow}>
+                                  <button className={s.primary} disabled={Boolean(busy)} onClick={() => gift(r)}>
+                                    {isBusy('gift', r.id) ? 'Gifting…' : 'Yes, gift it'}
+                                  </button>
+                                  <button className={s.ghost} onClick={() => setConfirmGift(null)}>Cancel</button>
+                                </div>
+                              ) : (
+                                <div className={s.btnRow}>
+                                  <span className={s.muted}>{r.declinedAt ? `Declined ${new Date(r.declinedAt).toLocaleDateString()}` : 'Declined'}{r.resent ? ` · re-sent ${r.resent}×` : ''}</span>
+                                  <button className={s.ghost} disabled={Boolean(busy)} onClick={() => setConfirmResend(r.id)}>Re-send invoice</button>
+                                  <button className={s.ghost} disabled={Boolean(busy)} onClick={() => setConfirmGift(r.id)}>Gift instead</button>
                                 </div>
                               )
                             ) : (

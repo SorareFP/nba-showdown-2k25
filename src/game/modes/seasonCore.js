@@ -149,7 +149,9 @@ export function recordResult(season, rawResult) {
   if (!fixture) throw new Error(`season: no fixture ${result.fixtureId}`);
   if (fixture.result) throw new Error(`season: ${result.fixtureId} is already played`);
   const winner = result.homeScore > result.awayScore ? fixture.home : fixture.away;
-  fixture.result = { homeScore: result.homeScore, awayScore: result.awayScore, winner, simulated: Boolean(result.simulated), forfeit: Boolean(result.forfeit) };
+  // The commissioner's sim of a coach's game (2026-09-16) is marked on the
+  // fixture too, so the dashboard's row can say so.
+  fixture.result = { homeScore: result.homeScore, awayScore: result.awayScore, winner, simulated: Boolean(result.simulated), forfeit: Boolean(result.forfeit), ...(result.coachSim ? { coachSim: true } : {}) };
   s.results.push({ ...result, home: fixture.home, away: fixture.away, winner });
   return s;
 }

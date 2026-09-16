@@ -4,6 +4,7 @@ import { describe, it, expect } from 'vitest';
 import {
   freeAgentPrice, packOddsCost, readQuoteRow, FA_PACK_WEIGHT, FREE_AGENT_SETS, OPEN_REQUEST_LIMIT,
   searchQuotes, prepareSearch, seasonText, checkRequest, indexQuotes, quoteKey, REQUEST_STATUS,
+  quoteFilterOptions, countQuotes, canBrowse,
   AUTO_REJECT_MESSAGE, searchHitsNeverCard, ARCHIVE_COVERAGE, coverageText, isWnbaId,
 } from './freeAgents.js';
 import quoteIndex from '../../card-data/generated/quote-index.json';
@@ -109,6 +110,26 @@ describe('requests', () => {
     expect(found.map(p => p.name)).toEqual(['DeAndre Jordan', 'Michael Jordan']);   // neither starts with "jord"
     expect(searchQuotes(prepareSearch(rows), 'mich')[0].seasons.map(s => seasonText(s))).toEqual(['1984-85', '1987-88', '1991 playoffs']);
     expect(searchQuotes(prepareSearch(rows), 'jo')).toEqual([]);                    // too short to search
+  });
+
+  it('narrows a name search by season, team and salary, and opens a team or a season without a name', () => {
+    const p = prepareSearch(rows);
+    expect(searchQuotes(p, 'jord', { filters: { season: 1991 } })[0].seasons.map(s => seasonText(s))).toEqual(['1991 playoffs']);
+    expect(searchQuotes(p, 'jord', { filters: { team: 'nba:LAC' } }).map(x => x.name)).toEqual(['DeAndre Jordan']);
+    expect(searchQuotes(p, 'jord', { filters: { team: 'wnba:LAC' } })).toEqual([]);          // the leagues share letters
+    expect(searchQuotes(p, 'jord', { filters: { salaryMin: 1000 } })[0].seasons.map(s => s.salary)).toEqual([1250, 1300]);
+    expect(searchQuotes(p, 'jord', { filters: { salaryMax: 900 } }).map(x => x.name)).toEqual(['DeAndre Jordan', 'Michael Jordan']);
+    // A browse: no name, a team or a season, best-paid first, capped.
+    expect(searchQuotes(p, '', { filters: { team: 'nba:CHI' } }).map(x => x.name)).toEqual(['Michael Jordan']);
+    expect(searchQuotes(p, '', { filters: { season: 2014 } }).map(x => x.name)).toEqual(['DeAndre Jordan']);
+    expect(searchQuotes(p, '', { filters: { season: 2015 } })).toEqual([]);                  // a never-card is never listed
+    expect(searchQuotes(p, 'jo', { filters: { salaryMin: 100 } })).toEqual([]);              // salary alone is the whole archive
+    expect(canBrowse({ salaryMin: 100 })).toBe(false);
+    expect(canBrowse({ team: 'nba:CHI' })).toBe(true);
+    expect(searchQuotes(p, '', { filters: { team: 'nba:CHI' }, browseLimit: 0 })).toEqual([]);
+    expect(countQuotes(p, '', { team: 'nba:CHI' })).toBe(1);
+    expect(countQuotes(p, 'jord')).toBe(2);
+    expect(quoteFilterOptions(rows)).toEqual({ seasons: [2015, 2014, 1991, 1988, 1985], teams: { nba: ['CHI', 'LAC', 'SAC'], wnba: [] } });
   });
 
   it('refuses the never-card names with the user\'s message, and the form can tell from the search text', () => {

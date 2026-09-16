@@ -3,7 +3,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   newLeague, entrantFor, addEntrant, removeEntrant, cancelLeague, canStart,
-  startTournament, startSeason, fixtureOf, openFixtures, canReport, applyResult,
+  startTournament, startSeason, fixtureOf, openFixtures, canReport, applyResult, coachFixturesOpen,
   scoresFromRoom, forfeitScores, summarizeLeague, earningsByUid, STATUS, FORFEIT_SCORE,
 } from './league.js';
 import { tournamentPayouts } from './prizes.js';
@@ -167,6 +167,23 @@ describe('a season with humans', () => {
     }
     expect(l.state.round).toBe(2);
     expect(openFixtures(l).every(f => f.round === 2)).toBe(true);
+  });
+
+  it('lets the commissioner sim a coach\'s game only with the flag, and marks the book (2026-09-16)', () => {
+    let { l } = live();
+    const open = coachFixturesOpen(l);
+    expect(open.length).toBeGreaterThan(0);
+    expect(open.every(f => (f.home.startsWith('h:') || f.away.startsWith('h:')) && f.room === null)).toBe(true);
+    const f = open[0];
+    expect(canReport(l, 'u1', f.id, { simulated: true })).toMatch(/played, not simulated/);
+    expect(canReport(l, 'u1', f.id, { simulated: true, coaches: true })).toBe(null);
+    expect(canReport(l, 'u2', f.id, { simulated: true, coaches: true })).toMatch(/commissioner/);
+    l = applyResult(l, { fixtureId: f.id, homeScore: 50, awayScore: 44, simulated: true, coachSim: true }).league;
+    expect(JSON.stringify(l.state)).toContain('"coachSim":true');
+    expect(coachFixturesOpen(l).some(x => x.id === f.id)).toBe(false);
+    // A room on the fixture rides along, for the dialog to say so.
+    const withRoom = { ...l, rooms: { [coachFixturesOpen(l)[0].id]: { code: 'ROOM9' } } };
+    expect(coachFixturesOpen(withRoom)[0].room).toBe('ROOM9');
   });
 
   it('plays the whole calendar through and pays the title money at the end', () => {

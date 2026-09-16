@@ -571,6 +571,36 @@ export async function simLeagueAi(uid, leagueId, season) {
   return n;
 }
 
+/**
+ * THE COMMISSIONER'S SIM OF THE COACHES' GAMES (2026-09-16). The fixtures
+ * given — coachFixturesOpen (league.js) — are each simulated here with both
+ * rosters and the decks they brought, and reported with `coaches: true`, the
+ * flag the server allows the host alone and refuses for any game open in a
+ * room. One refusal does not stop the rest; both lists come back.
+ */
+export async function simLeagueCoaches(uid, leagueId, season, fixtureIds) {
+  const rosters = rostersOf(season);
+  const decks = decksOf(season);
+  const all = season.phase === PHASE.playoffs ? playoffGames(season) : roundFixtures(season);
+  const done = [];
+  const failed = [];
+  for (const id of fixtureIds) {
+    const f = all.find(x => x.id === id);
+    if (!f || f.result || !f.home || !f.away) continue;
+    const r = simulateFixture(f, rosters, { deckA: decks[f.home] ?? null, deckB: decks[f.away] ?? null });
+    try {
+      await reportLeagueResult(uid, {
+        leagueId, fixtureId: f.id, homeScore: r.homeScore, awayScore: r.awayScore, homeBox: r.homeBox, awayBox: r.awayBox,
+        simulated: true, coaches: true,
+      });
+      done.push({ id: f.id, home: f.home, away: f.away, homeScore: r.homeScore, awayScore: r.awayScore });
+    } catch (e) {
+      failed.push({ id: f.id, home: f.home, away: f.away, error: e?.message ?? 'refused' });
+    }
+  }
+  return { done, failed };
+}
+
 /** One shared season: its lobby, then the Dashboard in league mode. */
 function LeagueSeason({ leagueId, uid, onBack, onPlayFixture, onOpenRoom }) {
   const { ask, toast } = useDialogs();
@@ -804,7 +834,7 @@ function CoachDifficulty() {
 
 function Dashboard({
   season, uid, commit, onPlayFixture, onBack, onAbandon,
-  league = null, busy = false, onOpenRoom = null, onSimAi = null, onForfeit = null,
+  league = null, busy = false, onOpenRoom = null, onSimAi = null, onForfeit = null, onSimCoaches = null,
   // A dynasty year is this same screen (DynastyTab.jsx): its own finale in
   // place of the title-money claim, its own title, and a fixture that says
   // which tab to come back to.
@@ -843,6 +873,8 @@ function Dashboard({
   const isHH = Boolean(league && mine && by.get(mine.home)?.human && by.get(mine.away)?.human);
   const isAi = g => Boolean(g.home && g.away && !by.get(g.home)?.human && !by.get(g.away)?.human);
   const aiLeft = Boolean(league) && games.some(g => !g.result && isAi(g));
+  // A coach's game still open — what the commissioner's sim offers (2026-09-16).
+  const coachLeft = Boolean(league) && games.some(g => !g.result && g.home && g.away && !isAi(g));
   const hhOpen = league ? games.filter(g => g !== mine && !g.result && g.home && g.away && by.get(g.home)?.human && by.get(g.away)?.human) : [];
   const leagueEarned = league ? (earningsByUid(league)[uid] ?? 0) : 0;
 
@@ -1077,6 +1109,16 @@ function Dashboard({
               <div className={styles.rowActions}>
                 {isHost && aiLeft && (
                   <button className={styles.ghost} disabled={busy} onClick={onSimAi}>{busy ? 'Simming…' : 'Sim the AI games'}</button>
+                )}
+                {isHost && onSimCoaches && coachLeft && (
+                  <button
+                    className={styles.ghost}
+                    disabled={busy}
+                    onClick={onSimCoaches}
+                    title="Commissioner: the computer plays the coaches' open games. It asks twice, and a game open in a room is refused."
+                  >
+                    {busy ? 'Simming…' : 'Sim the coaches\' games'}
+                  </button>
                 )}
                 {!isHost && othersLeft && <span className={styles.muted}>The commissioner sims the AI games; the round moves on when every game is in.</span>}
                 {isHost && !aiLeft && othersLeft && <span className={styles.muted}>Waiting on the games between coaches.</span>}
@@ -1336,7 +1378,7 @@ function FixtureRow({ game, by }) {
     <div className={styles.fixture}>
       <TeamChip team={home} won={r ? r.homeScore > r.awayScore : false} />
       <span className={styles.score}>
-        {r ? `${r.homeScore} – ${r.awayScore}` : game.bestOf > 1 ? `${game.winsHome}–${game.winsAway} · G${game.game}` : 'vs'}
+        {r ? `${r.homeScore} – ${r.awayScore}${r.coachSim ? ' · sim' : ''}` : game.bestOf > 1 ? `${game.winsHome}–${game.winsAway} · G${game.game}` : 'vs'}
       </span>
       <TeamChip team={away} right won={r ? r.awayScore > r.homeScore : false} />
     </div>

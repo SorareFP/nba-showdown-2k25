@@ -202,19 +202,73 @@ export function prepareSearch(rows) {
  * Players whose name contains the search text, each with every quotable
  * season, earliest first. A name that STARTS with the text ranks first.
  */
-export function searchQuotes(prepared, text, { limit = 12 } = {}) {
+// ── THE FILTERS (2026-09-16, the user: "add year, team, and salary filters
+// to the free agents request page"). A filter narrows a name search, and a
+// season or a team opens the list WITHOUT a name — every 1995-96 Cavalier,
+// say — sorted best-paid first so the stars lead. Salary alone does not
+// open it: that is the whole archive.
+
+/** The choices the filters offer, read once from the index: seasons newest first, teams by league. */
+export function quoteFilterOptions(rows) {
+  const seasons = new Set();
+  const nba = new Set();
+  const wnba = new Set();
+  for (const row of rows) {
+    seasons.add(row[2]);
+    (isWnbaId(row[0]) ? wnba : nba).add(row[4]);
+  }
+  return { seasons: [...seasons].sort((a, b) => b - a), teams: { nba: [...nba].sort(), wnba: [...wnba].sort() } };
+}
+
+/**
+ * Does a quote row pass the filters? `team` reads `nba:CLE` or `wnba:CON`,
+ * because the two leagues share abbreviations (ATL is the Hawks and the
+ * Dream); `season` is the season a row is indexed under (1996 for 1995-96,
+ * and for the WNBA's 1996); the salary bounds are inclusive.
+ */
+export function quoteMatches(row, f) {
+  if (!f) return true;
+  if (f.season != null && row[2] !== Number(f.season)) return false;
+  if (f.team) {
+    const [league, abbr] = String(f.team).split(':');
+    if (row[4] !== abbr || isWnbaId(row[0]) !== (league === 'wnba')) return false;
+  }
+  if (f.salaryMin != null && row[5] < Number(f.salaryMin)) return false;
+  if (f.salaryMax != null && row[5] > Number(f.salaryMax)) return false;
+  return true;
+}
+
+/** Filters that open the list without a name: a season or a team. */
+export const canBrowse = f => Boolean(f && (f.season != null || f.team));
+
+export function searchQuotes(prepared, text, { limit = 12, filters = null, browseLimit = 40 } = {}) {
   const q = normName(text);
-  if (q.length < 3) return [];
+  const named = q.length >= 3;
+  if (!named && !canBrowse(filters)) return [];
   const byPlayer = new Map();
   for (const { row, n } of prepared) {
-    if (!n.includes(q)) continue;
-    if (!byPlayer.has(row[0])) byPlayer.set(row[0], { bbrefId: row[0], name: row[1], starts: n.startsWith(q), seasons: [] });
-    byPlayer.get(row[0]).seasons.push(readQuoteRow(row));
+    // A browse never lists a never-card; a name search still does, so the
+    // form can answer that name with the message (searchHitsNeverCard).
+    if (named ? !n.includes(q) : isNeverCard(row[1])) continue;
+    if (!quoteMatches(row, filters)) continue;
+    if (!byPlayer.has(row[0])) byPlayer.set(row[0], { bbrefId: row[0], name: row[1], starts: named && n.startsWith(q), top: 0, seasons: [] });
+    const p = byPlayer.get(row[0]);
+    p.top = Math.max(p.top, row[5]);
+    p.seasons.push(readQuoteRow(row));
   }
+  // A name search reads name-start first; a browse reads best-paid first.
+  const order = named
+    ? (a, b) => Number(b.starts) - Number(a.starts) || a.name.localeCompare(b.name)
+    : (a, b) => b.top - a.top || a.name.localeCompare(b.name);
   return [...byPlayer.values()]
-    .sort((a, b) => Number(b.starts) - Number(a.starts) || a.name.localeCompare(b.name))
-    .slice(0, limit)
-    .map(p => ({ ...p, seasons: p.seasons.sort((x, y) => x.season - y.season || Number(x.playoffs) - Number(y.playoffs)) }));
+    .sort(order)
+    .slice(0, named ? limit : browseLimit)
+    .map(({ top, ...p }) => ({ ...p, seasons: p.seasons.sort((x, y) => x.season - y.season || Number(x.playoffs) - Number(y.playoffs)) }));
+}
+
+/** How many players a search or a browse matches before the cap — for a "showing N of M" line. */
+export function countQuotes(prepared, text, filters = null) {
+  return searchQuotes(prepared, text, { limit: Infinity, browseLimit: Infinity, filters }).length;
 }
 
 /**

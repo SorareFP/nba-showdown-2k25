@@ -122,6 +122,7 @@ const server = {
   joinLeague: (uid, payload) => call('joinLeague', payload),
   leaveLeague: (uid, leagueId) => call('leaveLeague', { leagueId }),
   cancelLeague: (uid, leagueId) => call('cancelLeague', { leagueId }),
+  deleteLeague: (uid, payload) => call('deleteLeague', payload),
   startLeague: (uid, payload) => call('startLeague', payload),
   attachLeagueRoom: (uid, payload) => call('attachLeagueRoom', payload),
   reportLeagueResult: (uid, payload) => call('reportLeagueResult', payload),
@@ -298,6 +299,7 @@ const direct = {
   async joinLeague() { throw new Error('Leagues need the server route'); },
   async leaveLeague() { throw new Error('Leagues need the server route'); },
   async cancelLeague() { throw new Error('Leagues need the server route'); },
+  async deleteLeague() { throw new Error('Leagues need the server route'); },
   async startLeague() { throw new Error('Leagues need the server route'); },
   async attachLeagueRoom() { throw new Error('Leagues need the server route'); },
   async reportLeagueResult() { throw new Error('Leagues need the server route'); },
@@ -395,6 +397,8 @@ export const createLeague = (uid, payload) => impl.createLeague(uid, payload);
 export const joinLeague = (uid, payload) => impl.joinLeague(uid, payload);
 export const leaveLeague = (uid, leagueId) => impl.leaveLeague(uid, leagueId);
 export const cancelLeague = (uid, leagueId) => impl.cancelLeague(uid, leagueId);
+/** The host deletes a dynasty outright: `{ leagueId, name }`, the name typed to confirm (2026-09-16). */
+export const deleteLeague = (uid, payload) => impl.deleteLeague(uid, payload);
 export const startLeague = (uid, payload) => impl.startLeague(uid, payload);
 export const attachLeagueRoom = (uid, payload) => impl.attachLeagueRoom(uid, payload);
 export const reportLeagueResult = (uid, payload) => impl.reportLeagueResult(uid, payload);

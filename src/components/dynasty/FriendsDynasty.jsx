@@ -19,8 +19,10 @@ import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useAuth } from '../../firebase/AuthProvider.jsx';
 import { useDialogs } from '../../ui/dialogs.jsx';
 import {
-  createLeague, joinLeague, leaveLeague, cancelLeague, startLeague, forfeitLeagueFixture, dynastyAct, dynastyBid,
+  createLeague, joinLeague, leaveLeague, cancelLeague, deleteLeague, startLeague, forfeitLeagueFixture, dynastyAct, dynastyBid,
 } from '../../firebase/serverWrites.js';
+import { coachFixturesOpen } from '../../game/modes/league.js';
+import { teamsById } from '../../game/modes/season.js';
 import {
   watchLeague, watchMyBids, readJoinCode, dynastyOfLeague, entrantFromTeam, teamIdFor, earningsByUid, LEAGUE_STATUS,
 } from '../../firebase/leagues.js';
@@ -33,7 +35,7 @@ import { getCardByKey } from '../../game/cardSets.js';
 import RosterPicker, { Choice } from '../league/RosterPicker.jsx';
 import SeriesPicker, { seriesFor } from '../league/SeriesPicker.jsx';
 import LeagueLobby from '../league/LeagueLobby.jsx';
-import { SeasonDashboard, simLeagueAi } from '../SeasonTab.jsx';
+import { SeasonDashboard, simLeagueAi, simLeagueCoaches } from '../SeasonTab.jsx';
 import {
   PhaseTrack, FrontOffice, DraftRoom, SigningBoard, LotteryRoom, RookieSigning, FreeAgency, NewsFeed, TradeDesk, PhaseButton,
 } from './DynastyScreens.jsx';
@@ -309,7 +311,7 @@ export function JoinFriends({ teamA, collection, uid, onCancel, onJoined }) {
 // ── One dynasty with friends ────────────────────────────────────────────────
 
 export function FriendsDynastyView({ leagueId, uid, onBack, onPlayFixture, onOpenRoom }) {
-  const { ask, toast } = useDialogs();
+  const { ask, askText, toast } = useDialogs();
   const [league, setLeague] = useState(undefined);
   const [bidDoc, setBidDoc] = useState(null);
   const [busy, setBusy] = useState(false);
@@ -422,6 +424,59 @@ export function FriendsDynastyView({ leagueId, uid, onBack, onPlayFixture, onOpe
     const n = await simLeagueAi(uid, league.id, d.season);
     if (!n) toast('No AI-vs-AI games left in this round.', { tone: 'success' });
   });
+  // THE COMMISSIONER SIMS THE COACHES' GAMES (2026-09-16, the user: "only
+  // for the host, and add multiple checks before doing it"). Four gates: the
+  // button exists for the host alone and only while a coach's game is open
+  // (SeasonDashboard); a dialog names every game it would decide and what
+  // that means; the word SIM has to be typed; and the server checks the host
+  // again and refuses any game that is open in a room (reportLeagueResult).
+  const simCoaches = async () => {
+    const open = coachFixturesOpen(league);
+    if (!open.length) { toast('No coach\'s game is open this round.'); return; }
+    const by = teamsById(d.season);
+    const nameOf = id => by.get(id)?.name ?? id;
+    const yes = await ask({
+      title: `Sim ${open.length === 1 ? 'this game' : `these ${open.length} games`} for the coaches?`,
+      body: 'The computer plays each one with both rosters and decks. The coaches in them do not get to play it, a game already open in a room is refused, and a result cannot be undone.',
+      lines: open.map(f => `${nameOf(f.home)} vs ${nameOf(f.away)}${f.room ? ` · room ${f.room} is open` : ''}`),
+      confirmLabel: 'Next',
+      tone: 'danger',
+    });
+    if (!yes) return;
+    const word = await askText({
+      title: 'Type SIM to confirm',
+      body: 'Every coach will see these results marked as the commissioner\'s sim.',
+      placeholder: 'SIM', maxLength: 3, confirmLabel: 'Sim them', tone: 'danger',
+    });
+    if (word == null) return;
+    if (word.trim().toUpperCase() !== 'SIM') { toast('Not simmed — that was not SIM.', { tone: 'error' }); return; }
+    run(async () => {
+      const out = await simLeagueCoaches(uid, league.id, d.season, open.map(f => f.id));
+      const lines = out.done.map(r => `${nameOf(r.home)} ${r.homeScore}–${r.awayScore} ${nameOf(r.away)}`);
+      const fails = out.failed.map(r => `${nameOf(r.home)} vs ${nameOf(r.away)}: ${r.error}`);
+      toast([...lines, ...fails].join(' · ') || 'Nothing to sim.', { tone: fails.length ? 'error' : 'success' });
+    });
+  };
+  // DELETE THE DYNASTY (2026-09-16, the user: "Need the ability to delete a
+  // dynasty if you're the host"). Two dialogs — what it means, then the
+  // dynasty's name typed out — and the server asks for the name again.
+  const deleteIt = async () => {
+    const yes = await ask({
+      title: 'Delete this dynasty?',
+      body: `It disappears for all ${humanIds(d).length} coaches — every season, trade and contract in it. Coins already paid stay paid; nothing is refunded. This cannot be undone.`,
+      confirmLabel: 'Next',
+      tone: 'danger',
+    });
+    if (!yes) return;
+    const typed = await askText({
+      title: 'Type the dynasty\'s name to delete it',
+      body: `“${league.name}”`,
+      placeholder: league.name, confirmLabel: 'Delete it', tone: 'danger',
+    });
+    if (typed == null) return;
+    if (typed.trim() !== String(league.name ?? '').trim()) { toast('Not deleted — the name did not match.', { tone: 'error' }); return; }
+    run(async () => { await deleteLeague(uid, { leagueId: league.id, name: typed.trim() }); onBack(); }, 'The dynasty is deleted.');
+  };
   const forfeit = async (fixtureId, loserTeamId, loserName) => {
     const yes = await ask({
       title: `${loserName} forfeits?`,
@@ -439,6 +494,11 @@ export function FriendsDynastyView({ leagueId, uid, onBack, onPlayFixture, onOpe
       {d.phase !== DPHASE.done && <FrontOffice d={d} moves={moves} />}
       <FriendsYears d={d} />
       <NewsFeed d={d} />
+      {isHost && (
+        <div className={styles.rowActions}>
+          <button type="button" className={styles.ghost} disabled={busy} onClick={deleteIt}>Delete this dynasty</button>
+        </div>
+      )}
     </>
   );
 
@@ -458,6 +518,7 @@ export function FriendsDynastyView({ leagueId, uid, onBack, onPlayFixture, onOpe
           busy={busy}
           onOpenRoom={onOpenRoom}
           onSimAi={simAi}
+          onSimCoaches={simCoaches}
           onForfeit={forfeit}
           title={`${league.name} · Year ${d.year}`}
           backLabel="All dynasties"

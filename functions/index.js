@@ -1327,6 +1327,40 @@ export const cancelLeague = onCall({ region: 'us-central1' }, async request => {
   });
 });
 
+/**
+ * DELETE A DYNASTY (2026-09-16, the user: "Need the ability to delete a
+ * dynasty if you're the host"). The host's call at any point — lobby, live or
+ * done — and it is gone for every coach: the league, its join code, the
+ * sealed bids and each member's index line. Nothing is refunded and coins
+ * already paid stay paid (a lobby that has not started is CANCELLED instead,
+ * which refunds — cancelLeague). A dynasty only: a tournament's pool is other
+ * people's entry money. The screen asks for the dynasty's name typed out; the
+ * server asks for it too, so a stray call cannot delete anything.
+ */
+export const deleteLeague = onCall({ region: 'us-central1' }, async request => {
+  const uid = requireAuth(request);
+  const { leagueId, name } = request.data ?? {};
+  if (!leagueId) throw new HttpsError('invalid-argument', 'No league given');
+  return db.runTransaction(async tx => {
+    const ref = leagueRef(String(leagueId));
+    const snap = await tx.get(ref);
+    if (!snap.exists) throw new HttpsError('not-found', 'No such league');
+    const league = snap.data();
+    if (league.hostUid !== uid) throw new HttpsError('permission-denied', 'Only the host can delete it');
+    if (league.kind !== 'dynasty') throw new HttpsError('failed-precondition', 'Only a dynasty can be deleted');
+    if (String(name ?? '').trim() !== String(league.name ?? '').trim()) {
+      throw new HttpsError('failed-precondition', 'Type the dynasty\'s name exactly to delete it');
+    }
+    const bids = await tx.get(db.collection(`leagues/${String(leagueId)}/bids`));
+    for (const b of bids.docs) tx.delete(b.ref);
+    const members = Object.keys(league.members ?? {});
+    for (const m of members) tx.delete(leagueIndexRef(m, league.id));
+    if (league.joinCode) tx.delete(joinCodeRef(league.joinCode));
+    tx.delete(ref);
+    return { deleted: true, members: members.length };
+  });
+});
+
 export const startLeague = onCall({ region: 'us-central1' }, async request => {
   const uid = requireAuth(request);
   const { leagueId, state } = request.data ?? {};
@@ -1403,6 +1437,13 @@ export const reportLeagueResult = onCall({ region: 'us-central1' }, async reques
   const { leagueId, fixtureId } = request.data ?? {};
   if (!leagueId || !fixtureId) throw new HttpsError('invalid-argument', 'League and fixture are required');
   const simulated = request.data?.simulated === true;
+  // THE COMMISSIONER'S SIM OF A COACH'S GAME (2026-09-16). A fixture with a
+  // human in it is played, never simulated — unless the host says so with
+  // this flag, which only a screen that asked twice sets. The host's browser
+  // ran the sim (simulate.js is not in this bundle), the trust the AI-vs-AI
+  // sim already extends to the host; the server is the gate: the host only
+  // (canReport), and never a game that is open in a room.
+  const coaches = simulated && request.data?.coaches === true;
   // Look first (outside the transaction) to learn whether a room decides it.
   const peek = await leagueRef(String(leagueId)).get();
   if (!peek.exists) throw new HttpsError('not-found', 'No such league');
@@ -1411,28 +1452,43 @@ export const reportLeagueResult = onCall({ region: 'us-central1' }, async reques
   if (!f0) throw new HttpsError('not-found', 'No such fixture');
   const hh = isHumanVsHumanFixture(peeked, f0);
   const roomCode = String(request.data?.roomCode ?? peeked.rooms?.[f0.id]?.code ?? '').trim().toUpperCase();
-  let scores;
-  if (hh) {
-    if (!roomCode) throw new HttpsError('failed-precondition', 'A human-vs-human result comes from its room');
-    const room = await readRoom(roomCode);
-    try { scores = scoresFromRoom(peeked, f0, room); } catch (e) { throw leagueError(e); }
-  } else {
+  // The caller's own numbers: a human's game against the AI, or a sim.
+  const numbers = () => {
     const home = Number(request.data?.homeScore);
     const away = Number(request.data?.awayScore);
     if (![home, away].every(n => Number.isInteger(n) && n >= 0 && n <= 300)) throw new HttpsError('invalid-argument', 'Scores must be whole numbers');
     // The box lines are the season's player totals — telemetry, no coins;
     // sanitised to real cards and capped like a game claim's box.
     const cleanBox = box => (Array.isArray(box) ? sanitizeBox(box).filter(row => getCardByKey(row.key)) : null);
-    scores = { homeScore: home, awayScore: away, forfeit: false, homeBox: cleanBox(request.data?.homeBox), awayBox: cleanBox(request.data?.awayBox) };
+    return { homeScore: home, awayScore: away, forfeit: false, homeBox: cleanBox(request.data?.homeBox), awayBox: cleanBox(request.data?.awayBox) };
+  };
+  let scores;
+  if (coaches) {
+    if (peeked.hostUid !== uid) throw new HttpsError('permission-denied', 'Only the commissioner can sim a coach\'s game');
+    if (roomCode) {
+      const room = await readRoom(roomCode);
+      if (room.meta && room.meta.status !== 'abandoned') {
+        throw new HttpsError('failed-precondition', room.game?.done
+          ? `That game finished in room ${roomCode} — a coach in it records it from there`
+          : `That game has room ${roomCode} open: it is being played, not simmed. If it has stalled, forfeit it.`);
+      }
+    }
+    scores = numbers();
+  } else if (hh) {
+    if (!roomCode) throw new HttpsError('failed-precondition', 'A human-vs-human result comes from its room');
+    const room = await readRoom(roomCode);
+    try { scores = scoresFromRoom(peeked, f0, room); } catch (e) { throw leagueError(e); }
+  } else {
+    scores = numbers();
   }
   return db.runTransaction(async tx => {
     const ref = leagueRef(String(leagueId));
     const snap = await tx.get(ref);
     const league = snap.data();
-    const why = canReport(league, uid, String(fixtureId), { simulated, roomCode: roomCode || null });
+    const why = canReport(league, uid, String(fixtureId), { simulated, coaches, roomCode: roomCode || null });
     if (why) throw new HttpsError('failed-precondition', why);
     let out;
-    try { out = applyResult(league, { fixtureId: String(fixtureId), ...scores, simulated, roomCode: roomCode || null }, { now: Date.now() }); }
+    try { out = applyResult(league, { fixtureId: String(fixtureId), ...scores, simulated, coachSim: coaches, roomCode: roomCode || null }, { now: Date.now() }); }
     catch (e) { throw leagueError(e); }
     creditAll(tx, out.payouts);
     tx.set(ref, out.league);
@@ -1712,12 +1768,20 @@ export const invoiceCardRequest = onCall({ region: 'us-central1' }, async reques
   const { email } = requireAdmin(request);
   return db.runTransaction(async tx => {
     const { ref, req } = await requestInTx(tx, String(request.data?.id ?? ''));
-    if (req.status !== REQUEST_STATUS.built) throw new HttpsError('failed-precondition', `That request is ${req.status}, not built`);
+    // RE-SENT TO A DECLINED ONE (2026-09-16, the user: "add a re-send invoice
+    // to declined cards"): a coach who said no can be asked again — the same
+    // card at its price today — and it waits on their page to be signed or
+    // declined like the first time. The decline stays in the record.
+    const again = req.status === REQUEST_STATUS.declined;
+    if (req.status !== REQUEST_STATUS.built && !again) throw new HttpsError('failed-precondition', `That request is ${req.status}, not built`);
     const card = getCardByKey(req.cardKey);
     if (!card) throw new HttpsError('failed-precondition', 'The live game does not have this card yet. Deploy first, then send the invoice.');
     const invoice = invoiceFor(card);
-    tx.update(ref, { status: REQUEST_STATUS.invoiced, invoice, invoicedAt: FieldValue.serverTimestamp(), invoicedBy: email });
-    return { id: ref.id, status: REQUEST_STATUS.invoiced, invoice };
+    tx.update(ref, {
+      status: REQUEST_STATUS.invoiced, invoice, invoicedAt: FieldValue.serverTimestamp(), invoicedBy: email,
+      ...(again ? { resentAt: FieldValue.serverTimestamp(), resent: FieldValue.increment(1) } : {}),
+    });
+    return { id: ref.id, status: REQUEST_STATUS.invoiced, invoice, again };
   });
 });
 
@@ -1726,13 +1790,14 @@ export const invoiceCardRequest = onCall({ region: 'us-central1' }, async reques
  * player's Free Agents page like any other (the user, 2026-09-10: "Gifts
  * should also say you have a free agent waiting to be signed and just have it
  * say 0 coins and a gift icon"), and signing it mints the locked copy — see
- * signFreeAgent. Turns a built request, or an unpaid invoice, into a gift.
+ * signFreeAgent. Turns a built request, an unpaid invoice, or a declined one
+ * (2026-09-16) into a gift.
  */
 export const giftCardRequest = onCall({ region: 'us-central1' }, async request => {
   const { email } = requireAdmin(request);
   return db.runTransaction(async tx => {
     const { ref, req } = await requestInTx(tx, String(request.data?.id ?? ''));
-    if (req.status !== REQUEST_STATUS.built && req.status !== REQUEST_STATUS.invoiced) {
+    if (![REQUEST_STATUS.built, REQUEST_STATUS.invoiced, REQUEST_STATUS.declined].includes(req.status)) {
       throw new HttpsError('failed-precondition', `That request is ${req.status}`);
     }
     const card = getCardByKey(req.cardKey);

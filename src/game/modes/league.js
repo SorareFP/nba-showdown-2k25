@@ -311,12 +311,28 @@ export function isHumanVsHumanFixture(league, fixture) {
 }
 
 /**
+ * THE COACHES' GAMES STILL OPEN THIS ROUND — what the commissioner's sim
+ * offers (2026-09-16). Every ready, unplayed fixture of the current round (or
+ * playoff round) with a human on at least one side, each with the room it
+ * has, if any. Seasons only: a tournament's games are all coaches' games and
+ * are forfeited, never simmed.
+ */
+export function coachFixturesOpen(league) {
+  if (!league || league.kind === 'tournament') return [];
+  return openFixtures(league)
+    .filter(f => humanFor(league, f.home) || humanFor(league, f.away))
+    .map(f => ({ ...f, room: league.rooms?.[f.id]?.code ?? null }));
+}
+
+/**
  * May `uid` report this result? Null when yes, else why not.
  *   simulated  — an AI-vs-AI fixture the host simulated (seasons only)
+ *   coaches    — with simulated: the host simulated a COACH'S fixture
+ *                (2026-09-16), a flag a screen sets only after asking twice
  *   forfeit    — the commissioner's call on a stalled fixture
  * A human-vs-human result must come with a room; the server reads it there.
  */
-export function canReport(league, uid, fixtureId, { simulated = false, forfeit = false, roomCode = null } = {}) {
+export function canReport(league, uid, fixtureId, { simulated = false, coaches = false, forfeit = false, roomCode = null } = {}) {
   if (league.status !== STATUS.live) return 'The league is not live';
   if (!isMember(league, uid)) return 'Not a member';
   const f = fixtureOf(league, fixtureId);
@@ -330,7 +346,7 @@ export function canReport(league, uid, fixtureId, { simulated = false, forfeit =
   if (forfeit) return isHost ? null : 'Only the commissioner can force a forfeit';
   if (simulated) {
     if (!isHost) return 'Only the commissioner can simulate';
-    if (humanFor(league, f.home) || humanFor(league, f.away)) return 'A human\'s fixture is played, not simulated';
+    if (!coaches && (humanFor(league, f.home) || humanFor(league, f.away))) return 'A human\'s fixture is played, not simulated';
     return null;
   }
   if (!inIt) return 'Not your fixture';
@@ -401,7 +417,7 @@ export function applyResult(league, result, { now = Date.now() } = {}) {
   };
 
   if (league.kind === 'tournament') {
-    const record = { homeScore, awayScore, simulated: Boolean(result.simulated), forfeit: Boolean(result.forfeit), roomCode: result.roomCode ?? null, at: now };
+    const record = { homeScore, awayScore, simulated: Boolean(result.simulated), forfeit: Boolean(result.forfeit), roomCode: result.roomCode ?? null, at: now, ...(result.coachSim ? { coachSim: true } : {}) };
     const bracket = reportMatch(league.bracket, f.id, winner, record);
     const { perWin, champion: championShare } = tournamentPayouts(league.settings.size, league.settings.fee);
     pay(winner, perWin, `won ${f.id}`);
@@ -418,6 +434,8 @@ export function applyResult(league, result, { now = Date.now() } = {}) {
   let state = recordResult(leagueSeason(league), {
     fixtureId: f.id, home: f.home, away: f.away, homeScore, awayScore,
     simulated: Boolean(result.simulated), forfeit: Boolean(result.forfeit),
+    // The commissioner's sim of a coach's game is marked, so the book says so.
+    ...(result.coachSim ? { coachSim: true } : {}),
     homeBox: result.homeBox ?? null, awayBox: result.awayBox ?? null,
   });
   while (state.phase === PHASE.regular && roundComplete(state)) {

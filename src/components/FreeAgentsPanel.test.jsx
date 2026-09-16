@@ -24,5 +24,11 @@ describe('FreeAgentsPanel', () => {
     expect(out).not.toContain('Sue Bird');
     expect(out).toContain('Loading the archive');
     expect(out).toContain('Your requests');
+    // The filters (2026-09-16), empty until the index lands: a season, a team, a salary either way.
+    expect(out).toContain('Any season');
+    expect(out).toContain('Any team');
+    expect(out).toContain('Any salary');
+    expect(out).toContain('No ceiling');
+    expect(out).toContain('$420 and up · Uncommon and up');
   });
 });

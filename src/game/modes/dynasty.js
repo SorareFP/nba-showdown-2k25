@@ -36,7 +36,7 @@
 // Every function takes a dynasty and returns a new one; nothing here touches
 // storage or the screen. DynastyTab.jsx is the shell.
 import { CARDS } from '../cards.js';
-import { ALL_CARDS, BASE_SET, cardKey, getCardByKey } from '../cardSets.js';
+import { ALL_CARDS, BASE_SET, cardKey, getCardByKey, baseKey, copyKey } from '../cardSets.js';
 // Ages for the cards that do not carry one — scripts/dynasty/buildAges.mjs.
 import DYNASTY_AGES from '../../../card-data/generated/dynasty-ages.json' with { type: 'json' };
 import DYNASTY_CONTRACTS from '../../../card-data/generated/dynasty-contracts.json' with { type: 'json' };
@@ -431,7 +431,22 @@ export function createDynasty({
     .map(h => ({ ...h, roster: startMode === 'own' ? (h.roster ?? []) : [] }));
   if (entrants.length > size) throw new Error(`dynasty: ${entrants.length} coaches do not fit in a ${size}-team league`);
   const brought = entrants.flatMap(h => h.roster);
-  if (new Set(brought.map(c => c.id)).size !== brought.length) throw new Error('dynasty: one card per player');
+  // ONE OF EACH PLAYER PER TEAM — not per league. Two coaches may bring the
+  // same player (the user, 2026-09-16); the second copy takes a suffixed key
+  // (cardSets.js copyKey) so contracts and history can tell them apart, and
+  // getCardByKey reads both as the one card.
+  for (const h of entrants) {
+    if (new Set(h.roster.map(c => c.id)).size !== h.roster.length) throw new Error('dynasty: one card per player');
+  }
+  const seenKey = {};
+  const keyed = entrants.map(h => ({
+    ...h,
+    keys: h.roster.map(c => {
+      const base = cardKey(c);
+      seenKey[base] = (seenKey[base] ?? 0) + 1;
+      return copyKey(base, seenKey[base]);
+    }),
+  }));
   // A FULL TEN to enter (the user, 2026-09-11: "there should just be
   // 10-player rosters to enter. Or just choose a team to enter.").
   for (const h of entrants) {
@@ -462,7 +477,7 @@ export function createDynasty({
   // the board is what the fantasy draft picks from — with you in it, or the
   // AI teams drafting around your ten. Everyone else waits in the draft pool.
   const board = poolCards.map(cardKey);
-  const rostered = brought.map(cardKey);
+  const rostered = keyed.flatMap(h => h.keys);
   const inPlay = new Set([...board, ...rostered]);
   const waiting = shuffle([
     ...draftClassCards(taken).map(cardKey),
@@ -478,11 +493,11 @@ export function createDynasty({
     // current NBA deal comes in at what the card is worth, on a staggered
     // one-to-three years so the exclusive window has somebody in it.
     const years = () => CONTRACT_YEARS.min + Math.floor(rng() * 3);
-    const put = (c, teamId) => {
+    const put = (c, key, teamId) => {
       const real = contractFor(cardKey(c));
-      contracts[cardKey(c)] = { teamId, dp: real?.dp ?? fairDp(c), years: real?.years ?? years(), since: 1, how: 'brought' };
+      contracts[key] = { teamId, dp: real?.dp ?? fairDp(c), years: real?.years ?? years(), since: 1, how: 'brought' };
     };
-    for (const h of entrants) for (const c of h.roster) put(c, h.id);
+    for (const h of keyed) h.roster.forEach((c, i) => put(c, h.keys[i], h.id));
   }
 
   // WHAT THE HUMANS ACTUALLY BROUGHT. An own start lets you field the ten you
@@ -597,7 +612,46 @@ export function renounce(d, teamId, key) {
   const r = d.rights?.[key];
   if (!r || r.teamId !== teamId) throw new Error(`dynasty: ${teamId} holds no rights to ${key}`);
   const next = { ...d, rights: omit(d.rights, key), spurned: { ...(d.spurned ?? {}), [key]: teamId } };
+  const merged = mergeDuplicate(next, key, teamId);
+  if (merged) return merged;
   return r.kind === 'expiring' ? say(next, `${cardOf(key)?.name} leaves ${teamOf(d, teamId)?.name} for free agency.`) : next;
+}
+
+/** The person a key names, whatever set the card is from and whichever copy it is. */
+const personOf = key => baseKey(key).split(':').pop();
+
+/**
+ * A SECOND COPY DOES NOT BECOME A FREE AGENT — IT LEAVES.
+ *
+ * The user, 2026-09-16: "User 1 and User 2 both have Saniya Rivers on their
+ * roster. User 1 re-signs Rivers in the off-season and User 2 does not.
+ * Instead of the Rivers duplicate going into the free-agency pool, that card
+ * is removed."
+ *
+ * Called the moment a key stops being held (renounce, waive). If any OTHER key
+ * for the same person is still under contract or rights anywhere in the
+ * league, this one is struck from the league entirely — no free agent, no
+ * rights, nothing to sign — and the log says so. If this was the last copy,
+ * nothing happens here and the player hits the market as ever. Returns the
+ * merged dynasty, or null when there was nothing to merge.
+ */
+function mergeDuplicate(d, key, teamId) {
+  const person = personOf(key);
+  const stillHeld = [...Object.keys(d.contracts ?? {}), ...Object.keys(d.rights ?? {})]
+    .some(k => k !== key && personOf(k) === person);
+  if (!stillHeld) return null;
+  const drop = obj => omit(obj ?? {}, key);
+  return say({
+    ...d,
+    league: leagueKeys(d).filter(k => k !== key),
+    contracts: drop(d.contracts),
+    rights: drop(d.rights),
+    traits: drop(d.traits),
+    joined: drop(d.joined),
+    lastTeam: drop(d.lastTeam),
+    spurned: drop(d.spurned),
+  }, `${cardOf(key)?.name}'s second card leaves the league — another team already has ${cardOf(key)?.name}.`)
+    ;
 }
 
 /**
@@ -608,13 +662,16 @@ export function waive(d, teamId, key) {
   if (!isOffseason(d)) throw new Error('dynasty: moves are made in the offseason');
   const k = d.contracts[key];
   if (!k || k.teamId !== teamId) throw new Error(`dynasty: ${key} is not under contract with ${teamId}`);
-  return say({
+  const waived = say({
     ...d,
     contracts: omit(d.contracts, key),
     dead: [...(d.dead ?? []), { teamId, key, dp: k.dp, through: d.year }],
     lastTeam: { ...d.lastTeam, [key]: teamId },
     spurned: { ...(d.spurned ?? {}), [key]: teamId },
   }, `${teamOf(d, teamId)?.name} waived ${cardOf(key)?.name} (${k.dp} DP dead this season).`);
+  // The dead money stays — that was the price of waiving — but a second copy
+  // of a player another team still holds does not hit the market.
+  return mergeDuplicate(waived, key, teamId) ?? waived;
 }
 
 /** Which players a team may talk to in the phase the dynasty is in. */

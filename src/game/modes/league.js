@@ -90,7 +90,6 @@ function checkSettings(kind, settings) {
 }
 
 /** A card key's PERSON — `rookie:Allen_Iverson` and `Allen_Iverson` are one man. */
-const personOf = key => String(key).split(':').pop();
 
 /** A league in its lobby, with the host as its first entrant. */
 export function newLeague({ id, kind, name, hostUid, settings, entrant, joinCode, now = Date.now() }) {
@@ -169,11 +168,14 @@ export function canStart(league) {
   if (league.kind === 'tournament' && !isFull(league)) return `Needs ${league.settings.size - league.entrants.length} more`;
   if (league.kind === 'dynasty') {
     // A fantasy start drafts every roster; an own start brings a full ten
-    // each, and one of each player across all of them.
+    // each. Two coaches MAY bring the same player (the user, 2026-09-16:
+    // "It's ok if two users bring the same player") — each copy is its own
+    // roster entry (cardSets.js copyKey), and a copy that reaches free agency
+    // while the other is still held simply leaves the league (dynasty.js
+    // mergeDuplicate). One player twice on ONE team is still refused, by the
+    // server at entry and by createDynasty.
     if (league.settings.startMode !== 'own') return null;
     if (league.entrants.some(e => (e.roster?.length ?? 0) !== 10)) return 'Every coach brings a team of ten';
-    const persons = league.entrants.flatMap(e => e.roster.map(personOf));
-    if (new Set(persons).size !== persons.length) return 'Two coaches have brought the same player';
     return null;
   }
   if (league.entrants.some(e => (e.roster?.length ?? 0) < 5)) return 'Everyone needs a team of at least five';

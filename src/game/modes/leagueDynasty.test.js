@@ -40,11 +40,14 @@ function act(l, uid, op, args = {}) {
 }
 
 describe('the lobby', () => {
-  it('asks nothing of a fantasy start, and ten each — no player twice — of an own start', () => {
+  it('asks nothing of a fantasy start, and ten each of an own start — shared players allowed', () => {
     expect(canStart(lobby())).toBeNull();
     expect(canStart(lobby('own'))).toMatch(/team of ten/);
     const [ra, rb] = tenEach();
-    expect(canStart(lobby('own', [ra, ra]))).toMatch(/same player/);
+    // Two coaches may bring the same player (the user, 2026-09-16); the
+    // dynasty keys the second copy apart and merges it away if it ever goes
+    // unsigned while the other is held (dynasty.js mergeDuplicate).
+    expect(canStart(lobby('own', [ra, ra]))).toBeNull();
     expect(canStart(lobby('own', [ra, rb]))).toBeNull();
     expect(() => newLeague({
       id: 'x', kind: 'dynasty', hostUid: 'u1', settings: { size: 4, length: 'online', startMode: 'nope' },

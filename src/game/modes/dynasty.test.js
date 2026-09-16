@@ -2,7 +2,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   createDynasty, HUMAN_ID, MIN_ROSTER, MAX_ROSTER, DPHASE, RANDOM_POOL_PER_TEAM, FANTASY_ROUNDS,
-  rosterKeys, contractsOf, payroll, freeAgentKeys, universe, rightsOf, quote, negotiate, waive,
+  rosterKeys, contractsOf, payroll, freeAgentKeys, universe, rightsOf, quote, negotiate, waive, renounce,
   onClock, draftPick, draftAvailable, simDraft, aiDraftChoice, finishDraft, closeSigning, nextFaDay, fillRoster,
   startSeason, endSeason, closeResign, lotteryOdds, drawLottery, signRookie, closeRookies, classFor,
   projectedPayroll, summarizeDynasty, deadMoney, leagueKeys, passPick, DRAFT_CLASS_PER_TEAM, ROOKIE_ROUNDS,
@@ -128,7 +128,7 @@ describe('bringing your own team', () => {
     expectConserved(d);
   });
 
-  it('refuses two cards of one player', () => {
+  it('refuses two cards of one player ON ONE TEAM', () => {
     const c = CARDS[0];
     const twin = CARD_SETS['super-season'].find(x => x.id === c.id) ?? { ...c, set: 'super-season' };
     expect(() => ownDynasty({ roster: [c, twin] })).toThrow(/one card per player/);
@@ -458,7 +458,7 @@ describe('aging (2026-09-11)', () => {
 });
 
 describe('more than one coach (a dynasty with friends)', () => {
-  it('seats every coach, ten each in an own start, one of each player across them all', () => {
+  it('seats every coach, ten each in an own start', () => {
     const [a, b] = buildAiLeague(2, { rng: seeded(1) }).map(t => t.roster);
     const d = createDynasty({
       id: 'M', size: 6, length: 'online', startMode: 'own', rng: seeded(2),
@@ -469,6 +469,67 @@ describe('more than one coach (a dynasty with friends)', () => {
     expect(rosterKeys(d, 'h:2')).toHaveLength(10);
     expect(d.teams.filter(t => t.human).map(t => t.id)).toEqual(['h:1', 'h:2']);
     expectConserved(d);
+  });
+
+  // TWO COACHES, ONE PLAYER. The user, 2026-09-16: "It's ok if two users
+  // bring the same player ... User 1 re-signs Rivers in the off-season and
+  // User 2 does not. Instead of the Rivers duplicate going into the
+  // free-agency pool, that card is removed."
+  describe('two coaches bring the same player', () => {
+    const omitKey = (o, k) => { const c = { ...(o ?? {}) }; delete c[k]; return c; };
+    const shared = () => {
+      const [a, b] = buildAiLeague(2, { rng: seeded(1) }).map(t => t.roster);
+      const star = a[0];
+      // Coach two's ten is nine of his own plus coach one's best card.
+      const bb = [star, ...b.filter(c => c.id !== star.id).slice(0, 9)];
+      const d = createDynasty({
+        id: 'D', size: 6, length: 'online', startMode: 'own', rng: seeded(2),
+        humans: [{ id: 'h:1', name: 'One', uid: '1', roster: a }, { id: 'h:2', name: 'Two', uid: '2', roster: bb }],
+      });
+      return { d, star, key: cardKey(star), copy: `${cardKey(star)}~2` };
+    };
+
+    it('lets both in, the second under a copy key that reads as the same card', () => {
+      const { d, star, key, copy } = shared();
+      expect(rosterKeys(d, 'h:1')).toContain(key);
+      expect(rosterKeys(d, 'h:2')).toContain(copy);
+      expect(getCardByKey(copy)).toBe(getCardByKey(key));
+      expect(getCardByKey(copy).id).toBe(star.id);
+      // Held twice, nobody free, and the pool holds no third.
+      const held = [...Object.keys(d.contracts), ...Object.keys(d.rights)];
+      expect(new Set(held).size).toBe(held.length);
+      expect(d.draftPool.map(k => getCardByKey(k)?.id)).not.toContain(star.id);
+    });
+
+    it('removes the copy that goes unsigned while the other is still held', () => {
+      const { d, key, copy } = shared();
+      const x = { ...d, contracts: omitKey(d.contracts, copy), rights: { ...(d.rights ?? {}), [copy]: { teamId: 'h:2', kind: 'expiring' } } };
+      const after = renounce(x, 'h:2', copy);
+      expect(after.league).not.toContain(copy);
+      expect(after.contracts[copy]).toBeUndefined();
+      expect(after.rights[copy]).toBeUndefined();
+      expect(freeAgentKeys(after)).not.toContain(copy);
+      expect(after.contracts[key]?.teamId).toBe('h:1');
+      expect(after.news[0].text).toMatch(/second card leaves the league/);   // say(): news feed, newest first
+    });
+
+    it('lets the last copy hit the market as ever', () => {
+      const { d, key, copy } = shared();
+      let x = { ...d, league: d.league.filter(k => k !== copy), contracts: omitKey(d.contracts, copy) };
+      x = { ...x, contracts: omitKey(x.contracts, key), rights: { ...(x.rights ?? {}), [key]: { teamId: 'h:1', kind: 'expiring' } } };
+      const after = renounce(x, 'h:1', key);
+      expect(after.league).toContain(key);
+      expect(freeAgentKeys(after)).toContain(key);
+    });
+
+    it('waiving a copy keeps the dead money but not the player', () => {
+      const { d, key, copy } = shared();
+      const after = waive({ ...d, phase: DPHASE.resign }, 'h:2', copy);
+      expect(after.dead.some(m => m.key === copy && m.teamId === 'h:2')).toBe(true);
+      expect(after.league).not.toContain(copy);
+      expect(freeAgentKeys(after)).not.toContain(copy);
+      expect(after.contracts[key]?.teamId).toBe('h:1');
+    });
   });
 
   it('stops the fantasy draft for each coach, and closes a window for all of them', () => {

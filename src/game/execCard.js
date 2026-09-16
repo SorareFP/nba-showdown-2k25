@@ -819,7 +819,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
     case 'burst_of_momentum': {
       const rr = (g.rollResults[teamKey] || [])[idx];
       if (!rr?.isTop) return fail('Player must hit highest scoring tier');
-      if ((rr?.pts || 0) < 5) return fail(`Player scored ${rr?.pts} pts (need 5+)`);
+      if ((rr?.pts || 0) < 3) return fail(`Player scored ${rr?.pts} pts (need 3+)`);
       myT.assists++;
       myT.rebounds++;
       if (g.analytics?.[teamKey]) { g.analytics[teamKey].assistsFromCards++; g.analytics[teamKey].reboundsGenerated++; }
@@ -1489,12 +1489,17 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       break;
     }
     case 'post_domination': {
-      const bigs = myT.starters.filter(p => p && (p.power || 0) >= 15).length;
-      if (bigs < 2) return fail(`Need two players at Power 15+ (have ${bigs})`);
-      if ((player?.power || 0) < 15) return fail(`${player?.name} is not Power 15+`);
+      // A MATCHUP DOOR since 2026-09-16 (canPlay.js says why): the chosen
+      // player must have a Power advantage over the man guarding him, and
+      // must still be to roll.
+      if (!player) return fail('Choose a player');
+      if ((g.rollResults[teamKey] || [])[idx] != null) return fail(`${player.name} has already rolled this segment.`);
+      const dp = oppT?.starters?.[(g.offMatchups?.[teamKey] || [])[idx] ?? idx];
+      const adv = dp ? calcAdv(player, dp, g.tempEff[teamKey] || {}, idx) : null;
+      if (!adv || adv.powerAdv <= 0) return fail(`${player.name} has no Power advantage over his defender`);
       if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
       g.tempEff[teamKey]['reb2' + idx] = 1;
-      addLog(g, teamKey, `Post Domination: ${player?.name}'s rebounds are doubled this period`);
+      addLog(g, teamKey, `Post Domination: ${player.name}'s rebounds are doubled this period`);
       break;
     }
     case 'unsung_hero': {

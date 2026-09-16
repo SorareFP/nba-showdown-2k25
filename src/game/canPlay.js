@@ -589,8 +589,9 @@ export function canPlayCard(g, teamKey, cardId) {
 
   if (cardId === 'burst_of_momentum') {
     if (phase !== 'scoring') return no('Only playable during Scoring Phase');
-    const ok2 = (g.rollResults[teamKey] || []).some(r => r?.isTop && (r?.pts || 0) >= 5);
-    if (!ok2) return no('Need a player who hit top tier AND scored 5+ pts');
+    // 3+, not 5+ (2026-09-16): a top band pays 1-4 points; 5+ never came.
+    const ok2 = (g.rollResults[teamKey] || []).some(r => r?.isTop && (r?.pts || 0) >= 3);
+    if (!ok2) return no('Need a player who hit top tier AND scored 3+ pts');
     return ok();
   }
 
@@ -704,9 +705,17 @@ export function canPlayCard(g, teamKey, cardId) {
       return ok('Their 3PT check, then a teammate\'s paint check at +2');
     }
     case 'post_domination': {
-      const bigs = myT.starters.filter(p => (p?.power || 0) >= 15).length;
-      if (bigs < 2) return no(`Need two players at Power 15+ (have ${bigs})`);
-      return ok('Double one big\'s rebounds this period');
+      // REWORKED 2026-09-16. The door was two players at Power 15+ on the
+      // floor: sixteen such players exist, nearly all $1,000+, and 3.4% of
+      // cap-legal tens carry two. Now a MATCHUP door, read the way Bully
+      // Ball reads it — through calcAdv, so a Defensive Bonus counts — for a
+      // player still to roll, since a doubled rebound is worth nothing after.
+      const edge = preRollTargets(g, teamKey, (p, i) => {
+        const dp = oppT.starters[(g.offMatchups[teamKey] || [])[i] ?? i];
+        return dp && calcAdv(p, dp, g.tempEff[teamKey] || {}, i).powerAdv > 0;
+      });
+      if (edge.length === 0) return no('Need a player with a Power advantage over his defender, still to roll');
+      return ok('Double his rebounds this period');
     }
     case 'unsung_hero':
       if (preRollTargets(g, teamKey, p => (p.salary || 0) <= 400).length === 0) return no('Need a $400-or-less player still to roll');

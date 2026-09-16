@@ -264,12 +264,39 @@ describe('scoring-phase wave-one cards', () => {
     expect(play(g, 'stretch_five', { playerIdx: 0, player2Idx: 1 }).ok).toBe(false);
   });
 
-  it('Post Domination needs two Power 15+ bigs and doubles one of them', () => {
-    const A = five('a'); A[0] = p('big1', 10, 15); A[1] = p('big2', 10, 16);
+  it('Post Domination (reworked 2026-09-16) doubles the rebounds of a player with a Power edge who has not rolled', () => {
+    const A = five('a'); A[1] = p('big', 10, 12);          // +2 Power on the man guarding him
     const g = game({ A, hand: ['post_domination'] });
+    expect(canPlayCard(g, 'A', 'post_domination').canPlay).toBe(true);
     expect(play(g, 'post_domination', { playerIdx: 1 }).game.tempEff.A.reb21).toBe(1);
-    const one = five('a'); one[0] = p('big1', 10, 15);
-    expect(canPlayCard(game({ A: one, hand: ['post_domination'] }), 'A', 'post_domination').canPlay).toBe(false);
+    expect(play(g, 'post_domination', { playerIdx: 0 }).ok).toBe(false);   // no edge there
+    // The edge is read through calcAdv, so a Defensive Bonus on the defender eats it.
+    const B = five('b'); B[1] = p('wall', 10, 10, { defBoost: 2 });
+    expect(canPlayCard(game({ A, B, hand: ['post_domination'] }), 'A', 'post_domination').canPlay).toBe(false);
+    // Already rolled: nothing left to double.
+    const rolled = game({ A, hand: ['post_domination'] });
+    rolled.rollResults.A[1] = { pts: 2, reb: 1, ast: 0 };
+    expect(canPlayCard(rolled, 'A', 'post_domination').canPlay).toBe(false);
+    expect(play(rolled, 'post_domination', { playerIdx: 1 }).ok).toBe(false);
+    // Nobody with an edge at all — the old door, two Power-15+ bigs, is gone.
+    expect(canPlayCard(game({ hand: ['post_domination'] }), 'A', 'post_domination').canPlay).toBe(false);
+    const bigs = five('a'); bigs[0] = p('big1', 10, 15); bigs[1] = p('big2', 10, 16);
+    expect(canPlayCard(game({ A: bigs, B: five('b', 10, 16), hand: ['post_domination'] }), 'A', 'post_domination').canPlay).toBe(false);
+  });
+
+  it('Burst of Momentum (reworked 2026-09-16) opens on a top-tier roll of 3+ points — 5+ never happened', () => {
+    // A chart's top band pays 1-4 points a roll (1,331 top-tier rolls measured, never 5).
+    const g = game({ hand: ['burst_of_momentum'] });
+    g.rollResults.A[2] = { isTop: true, pts: 3, reb: 1, ast: 1 };
+    expect(canPlayCard(g, 'A', 'burst_of_momentum').canPlay).toBe(true);
+    const r = play(g, 'burst_of_momentum', { playerIdx: 2 });
+    expect(r.ok).toBe(true);
+    expect(getTeam(r.game, 'A').assists).toBe(1);
+    expect(getTeam(r.game, 'A').rebounds).toBe(1);
+    const two = game({ hand: ['burst_of_momentum'] });
+    two.rollResults.A[2] = { isTop: true, pts: 2, reb: 1, ast: 1 };
+    expect(canPlayCard(two, 'A', 'burst_of_momentum').canPlay).toBe(false);
+    expect(play(two, 'burst_of_momentum', { playerIdx: 2 }).ok).toBe(false);
   });
 
   it('Unsung Hero is for $400 or less', () => {

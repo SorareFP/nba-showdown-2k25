@@ -70,7 +70,9 @@ export const STRATS = [
   { id:'heat_check',          name:'Heat Check',         phase:'post_roll',side:'off', copies:3, locked:true,  color:'#F97316', rarity:'uncommon',
     desc:'A player hit their highest scoring tier: attempt a 3PT Shot Check at −2. Success: +3 pts + hot marker. 🔒 Uncancelable.' },
   { id:'burst_of_momentum',   name:'Burst of Momentum',  phase:'post_roll',side:'off', copies:2, locked:false, color:'#DC2626', rarity:'uncommon',
-    desc:'Player hits their top tier AND scores 5+ pts this segment: +1 AST, +1 REB, and a hot marker.' },
+    // 3+, not 5+ (2026-09-16): a chart's top band pays at most 4 points a
+    // roll, so the old door never opened once — measured, not guessed.
+    desc:'Player hits their top tier AND scores 3+ pts this segment: +1 AST, +1 REB, and a hot marker.' },
   { id:'flare_screen',        name:'Flare Screen',       phase:'post_roll',side:'off', copies:2, locked:false, color:'#F59E0B', rarity:'uncommon',
     desc:'A player rolled a natural 20: they make a 3PT Shot Check. Success: +3 pts + draw a card.' },
 
@@ -194,7 +196,9 @@ export const STRATS = [
   { id:'stretch_five',        name:'Stretch Five',       phase:'scoring',  side:'off', copies:2, locked:false, color:'#6D28D9', rarity:'rare',
     desc:'A C or PF whose 3PT line is 14 or lower takes a 3PT Shot Check; then a teammate of your choice takes a Paint Shot Check at +2.' },
   { id:'post_domination',     name:'Post Domination',    phase:'pre_roll', side:'off', copies:1, locked:false, color:'#5B21B6', rarity:'rare',
-    desc:'With two players at Power 15+ on the floor, choose one: their rebounds from scoring rolls are doubled this period.' },
+    // A MATCHUP DOOR (2026-09-16): two Power-15+ players on the floor was a
+    // door 3.4% of cap-legal tens could open. Now the way Bully Ball reads.
+    desc:'Choose a player with a Power advantage over his defender, before he rolls: his rebounds from scoring rolls are doubled this period.' },
   { id:'unsung_hero',         name:'Unsung Hero',        phase:'pre_roll', side:'off', copies:2, locked:false, color:'#0F766E', rarity:'common',
     desc:'Choose a player with salary $400 or less who has not rolled: they roll two D20 and keep the higher this period.' },
   { id:'transition_outlet',   name:'Transition Outlet',  phase:'scoring',  side:'off', copies:2, locked:false, color:'#0E7490', rarity:'common',

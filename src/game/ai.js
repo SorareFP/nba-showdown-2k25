@@ -1418,7 +1418,7 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
     }
 
     case 'burst_of_momentum': {
-      const topBig = rolls.findIndex(r => r?.isTop && (r?.pts || 0) >= 5);
+      const topBig = rolls.findIndex(r => r?.isTop && (r?.pts || 0) >= 3);
       return { playerIdx: topBig >= 0 ? topBig : 0 };
     }
 
@@ -1757,8 +1757,13 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
       return { playerIdx: big?.i ?? 0, player2Idx: mate[0]?.i ?? 1 };
     }
     case 'post_domination': {
-      const cand = starters.map((p, i) => ({ p, i })).filter(({ p }) => (p?.power || 0) >= 15)
-        .sort((u, v) => expectedOutput(v.p) - expectedOutput(u.p));
+      // The matchup door (2026-09-16): a Power edge over his defender, still
+      // to roll; the best producer among them.
+      const cand = starters.map((p, i) => ({ p, i })).filter(({ p, i }) => {
+        if (!p || rolls[i] != null || blocked[i]) return false;
+        const dp = oppT.starters[(game.offMatchups?.[teamKey] || [])[i] ?? i];
+        return dp && calcAdv(p, dp, game.tempEff?.[teamKey] || {}, i).powerAdv > 0;
+      }).sort((u, v) => expectedOutput(v.p) - expectedOutput(u.p));
       return { playerIdx: cand[0]?.i ?? 0 };
     }
     case 'unsung_hero': {

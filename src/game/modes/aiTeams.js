@@ -44,7 +44,13 @@ export function franchisePool(cards = CARDS, min = 3) {
  * best of the rest, always keeping the roster payable — every pick leaves
  * enough room for the spots still to fill at the pool's cheapest price.
  */
-export function buildAiRoster(abbr, { cards = CARDS, taken = new Set(), rng = Math.random } = {}) {
+// `cap` is the salary cap this roster is drawn to. Above the fair rung the
+// coach's team is simply better (coinRewards.js RUNG_CAP: King and Deity carry
+// a cap multiplier), which is the one honest way to make it harder — the
+// user, 2026-09-16, on rubber-banding: "What I want when the difficulty goes
+// up is for the opposing team to be better/smarter." A person can see the
+// cards.
+export function buildAiRoster(abbr, { cards = CARDS, taken = new Set(), rng = Math.random, cap = CAP } = {}) {
   const free = cards.filter(c => !taken.has(c.id));
   const mine = free.filter(c => franchiseOf(c) === abbr);
   const others = free.filter(c => franchiseOf(c) !== abbr);
@@ -72,7 +78,7 @@ export function buildAiRoster(abbr, { cards = CARDS, taken = new Set(), rng = Ma
       counted += 1;
     }
     if (counted < spotsAfter) return false;
-    return sal + (c.salary ?? 0) + reserve <= CAP;
+    return sal + (c.salary ?? 0) + reserve <= cap;
   };
   const take = c => { roster.push(c); ids.add(c.id); sal += c.salary ?? 0; };
   for (const c of rank(mine)) {
@@ -89,7 +95,7 @@ export function buildAiRoster(abbr, { cards = CARDS, taken = new Set(), rng = Ma
   // roster is always ten deep.
   for (const c of cheap) {
     if (roster.length >= ROSTER_SIZE) break;
-    if (ids.has(c.id) || sal + (c.salary ?? 0) > CAP) continue;
+    if (ids.has(c.id) || sal + (c.salary ?? 0) > cap) continue;
     take(c);
   }
   // Spend up to the floor if the draw came in cheap: swap the smallest salary
@@ -97,7 +103,7 @@ export function buildAiRoster(abbr, { cards = CARDS, taken = new Set(), rng = Ma
   for (let guard = 0; guard < 40 && roster.length > 0 && sal < RANDOM_MIN_SAL; guard += 1) {
     const worstIdx = roster.reduce((w, c, i) => ((c.salary ?? 0) < (roster[w].salary ?? 0) ? i : w), 0);
     const worst = roster[worstIdx];
-    const room = CAP - sal + (worst.salary ?? 0);
+    const room = cap - sal + (worst.salary ?? 0);
     const upgrade = free
       .filter(c => !ids.has(c.id) && (c.salary ?? 0) <= room && (c.salary ?? 0) > (worst.salary ?? 0))
       .sort((a, b) => (b.salary ?? 0) - (a.salary ?? 0))[0];
@@ -115,7 +121,10 @@ export function buildAiRoster(abbr, { cards = CARDS, taken = new Set(), rng = Ma
  * logo, roster }]`, each roster distinct from the others and from `taken`
  * (the cards a human entrant brought, which a dynasty removes from the pool).
  */
-export function buildAiLeague(count, { cards = CARDS, taken = new Set(), exclude = [], rng = Math.random } = {}) {
+// `capMult` is the rung's cap multiplier (coinRewards.js capOf): 1 up to
+// Prince, more above it. Every team in the league draws to the same cap.
+export function buildAiLeague(count, { cards = CARDS, taken = new Set(), exclude = [], rng = Math.random, capMult = 1 } = {}) {
+  const cap = Math.round(CAP * capMult);
   const skip = new Set(exclude.map(a => String(a).toUpperCase()));
   const pool = franchisePool(cards).filter(f => !skip.has(f.abbr));
   // Shuffle so the same league size does not always field the same franchises.
@@ -126,7 +135,7 @@ export function buildAiLeague(count, { cards = CARDS, taken = new Set(), exclude
   const used = new Set(taken);
   const out = [];
   for (const f of pool.slice(0, count)) {
-    const roster = buildAiRoster(f.abbr, { cards, taken: used, rng });
+    const roster = buildAiRoster(f.abbr, { cards, taken: used, rng, cap });
     for (const c of roster) used.add(c.id);
     out.push({
       id: `ai:${f.abbr}`,

@@ -38,6 +38,16 @@
 import { CARDS } from '../cards.js';
 import { ALL_CARDS, BASE_SET, cardKey, getCardByKey, baseKey, copyKey } from '../cardSets.js';
 import { fitDeck } from '../deckFit.js';
+import { capOf } from '../coinRewards.js';
+
+// THE AI'S CAP AT THIS LEAGUE'S RUNG (2026-09-16). Above Prince the coach's
+// teams are richer: the same DP cap and apron, multiplied by the rung's cap
+// (coinRewards.js capOf). Every AI-side check reads these — the draft budget,
+// signing the draftees, the rookie scale, free-agency room and bids. A HUMAN
+// team's limits (limitFor, fitsCap) never do: a rung makes the opposition
+// better, never the player's own books tighter.
+const aiCapDp = d => Math.round(CAP_DP * capOf(d.aiLevel));
+const aiApronDp = d => Math.round(APRON_DP * capOf(d.aiLevel));
 // Ages for the cards that do not carry one — scripts/dynasty/buildAges.mjs.
 import DYNASTY_AGES from '../../../card-data/generated/dynasty-ages.json' with { type: 'json' };
 import DYNASTY_CONTRACTS from '../../../card-data/generated/dynasty-contracts.json' with { type: 'json' };
@@ -424,6 +434,14 @@ export function createDynasty({
   // jobs. Separate them and the in-game rung is free to change whenever the
   // player likes, which is the other half of what was asked for.
   iq = 1,
+  // THE LEAGUE'S RUNG (2026-09-16, the reshaped ladder). Above Prince the
+  // coach's teams are BETTER: they draft to a DP budget multiplied by the
+  // rung's cap (coinRewards.js capOf — this module runs on the server, and
+  // coinRewards is the import-free table it can read). The rung is remembered
+  // so a game in this league pays at the lower of the league's rung and the
+  // rung it was played at (payFloorOf): turn the coach down whenever you like,
+  // but you are not paid for opponents that were never drafted. null is Prince.
+  aiLevel = null,
   rng = Math.random,
 } = {}) {
   if (!START_MODES[startMode]) throw new Error(`dynasty: no start mode ${startMode}`);
@@ -527,6 +545,7 @@ export function createDynasty({
     name: name || `${me.name} Dynasty`,
     startMode,
     iq,
+    aiLevel,
     entryCap,
     size,
     length,
@@ -851,7 +870,9 @@ export function aiDraftChoice(d, teamId, rng = Math.random, { iq = 1 } = {}) {
     .reduce((t, f) => t + Math.max(f, AI_RESERVE_PER_SPOT), 0);
   // The cap this draft is played to: year one of an own start matches what the
   // humans brought (entryCap), every other draft is the ordinary 100.
-  const cap = d.phase === DPHASE.draft && d.year === 1 ? (d.entryCap ?? CAP_DP) : CAP_DP;
+  // A richer league's AI teams draft to a richer budget — the rung's cap
+  // multiplier on the DP cap. Better players, the same rules.
+  const cap = d.phase === DPHASE.draft && d.year === 1 ? Math.round((d.entryCap ?? CAP_DP) * capOf(d.aiLevel)) : aiCapDp(d);
   const budget = cap - AI_FA_ROOM - payroll(d, teamId) - committed - reserve;
   const fits = avail.filter(k => floor(k) <= budget);
   if (!fits.length) return [...avail].sort((a, b) => floor(a) - floor(b))[0];
@@ -957,7 +978,7 @@ export function finishDraft(d, { rng = Math.random, real = false } = {}) {
         const deal = real ? contractFor(key) : null;
         const years = deal?.years ?? preferredYears(traitOf(x, key));
         const dp = deal?.dp ?? floorOf(x, key, team.id, years, 1);
-        const fits = real || (rosterKeys(x, team.id).length < MAX_ROSTER - AI_OPEN_SPOTS && payroll(x, team.id) + dp <= CAP_DP);
+        const fits = real || (rosterKeys(x, team.id).length < MAX_ROSTER - AI_OPEN_SPOTS && payroll(x, team.id) + dp <= aiCapDp(x));
         x = fits ? sign(x, team.id, key, { dp, years, how: real ? 'brought' : 'draft' }) : renounce(x, team.id, key);
       }
     }
@@ -971,7 +992,7 @@ export function finishDraft(d, { rng = Math.random, real = false } = {}) {
   for (const team of x.teams.filter(t => !t.human)) {
     for (const key of rightsOf(x, team.id, 'rookie')) {
       const scale = rookieScale(cardOf(key));
-      const fits = rosterKeys(x, team.id).length < MAX_ROSTER && payroll(x, team.id) + scale.dp <= APRON_DP;
+      const fits = rosterKeys(x, team.id).length < MAX_ROSTER && payroll(x, team.id) + scale.dp <= aiApronDp(x);
       x = fits ? sign(x, team.id, key, { ...scale, how: 'rookie' }) : renounce(x, team.id, key);
     }
   }
@@ -1100,7 +1121,7 @@ export function aiRivalOffers(d, rng = Math.random) {
       const floor = floorOf(d, key, team.id, years, day);
       const dp = Math.max(floor, Math.ceil(floor * (1 + rng() * 0.1)));
       const spotsAfter = Math.max(0, MIN_ROSTER - size - (made[team.id] ?? 0) - 1);
-      const room = CAP_DP - payroll(d, team.id) - (spent[team.id] ?? 0) - spotsAfter * AI_RESERVE_PER_SPOT;
+      const room = aiCapDp(d) - payroll(d, team.id) - (spent[team.id] ?? 0) - spotsAfter * AI_RESERVE_PER_SPOT;
       if (dp > room && dp > MIN_DP) continue;
       const ratio = dp / floor;
       const cur = rivals[key];
@@ -1131,7 +1152,7 @@ function resolveRivals(d) {
   for (const [key, r] of bids) {
     if (!free.has(key)) continue;
     if (rosterKeys(x, r.teamId).length >= MAX_ROSTER) continue;
-    if (payroll(x, r.teamId) + r.dp > (r.dp <= MIN_DP ? APRON_DP : CAP_DP)) continue;
+    if (payroll(x, r.teamId) + r.dp > (r.dp <= MIN_DP ? aiApronDp(x) : aiCapDp(x))) continue;
     x = sign(x, r.teamId, key, { dp: r.dp, years: r.years, how: 'fa' });
     free.delete(key);
   }

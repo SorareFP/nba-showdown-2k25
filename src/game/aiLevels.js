@@ -19,23 +19,47 @@
 // thing"; a search only gets better the longer it looks, so this is the one
 // with no ceiling. One lineup at Settler, sixteen at Deity.
 //
+// 2026-09-16: THE LADDER IS RESHAPED AROUND A FAIR MIDPOINT. The user: "I
+// think the midpoint should be the 1x payout, with Deity being the 1.5x or
+// whatever ... it should be really hard to win on Deity." And the rule that
+// decides HOW it gets hard: "when I turn up the difficulty, players on my team
+// get stupid to an unrealistic level and that's how the difficulty is raised.
+// I hate that. What I want when the difficulty goes up is for the opposing
+// team to be better/smarter."
+//
+// So this is Civilization's shape. Below Prince the coach is HANDICAPPED —
+// `iq` is the chance it plays its considered answer, the four misplays dials.
+// Prince is a FAIR game: the full search against an equal roster, and it is
+// the default. Above Prince the coach cannot get smarter — the full search is
+// the full search, and perfect play on even terms is 50% — so its TEAM gets
+// better: `cap` is the multiplier on the salary (or DP) cap its rosters are
+// built to, and `samples` is how many of your possible lineups its placement
+// search weighs, the one judgement dial with no ceiling. Nothing on any rung
+// touches the human's cards, dice, fatigue or judgement.
+//
 // The NAMES and the PAY RATE come from coinRewards.js, which the server runs:
 // the rung decides what a game is worth (AI_PAY), and one list of rungs beats
 // two that drift.
-import { AI_PAY, payFactorOf } from './coinRewards.js';
+import { AI_PAY, payFactorOf, capOf, samplesOf } from './coinRewards.js';
+export { capOf, samplesOf };
 
+// `iq` is the only number that lives here: the chance the coach plays its
+// considered answer, which is 1 — the full search — from Prince up. Pay, the
+// cap multiplier and the placement samples come from the table (AI_PAY).
 const LADDER = [
   { id: 'settler',   iq: 0,    blurb: 'places at random, plays any card, answers nothing' },
   { id: 'chieftain', iq: 0.25, blurb: 'gets it right one time in four' },
   { id: 'warlord',   iq: 0.5,  blurb: 'half the time' },
-  { id: 'prince',    iq: 0.75, blurb: 'three times in four' },
-  { id: 'king',      iq: 0.9,  blurb: 'nearly always' },
-  { id: 'deity',     iq: 1,    blurb: 'the full search, every time' },
+  { id: 'prince',    iq: 1,    blurb: 'the full search on an even roster — a fair game' },
+  { id: 'king',      iq: 1,    blurb: 'a richer roster, and it reads more of your lineups' },
+  { id: 'deity',     iq: 1,    blurb: 'the best team in the league, and it sees everything you might do' },
 ];
 export const AI_LEVELS = LADDER.map(l => ({
   ...l,
   label: AI_PAY[l.id].label,
   pay: AI_PAY[l.id].pay,
+  cap: AI_PAY[l.id].cap,
+  samples: AI_PAY[l.id].samples,
 }));
 
 // THE LADDER IS MEASURED, and the even spacing holds. 2,500 games a rung
@@ -50,7 +74,12 @@ export const AI_LEVELS = LADDER.map(l => ({
 // tuned on that noise, the rungs looked broken and a re-spacing looked
 // justified. It was not. One game's dice are worth more than the whole ladder,
 // so nothing under a couple of thousand games a rung says anything.
-export const DEFAULT_AI_LEVEL = 'deity';
+//
+// 2026-09-16: THE MEASUREMENT ABOVE IS OF THE OLD SPACING (0/.25/.5/.75/.9/1).
+// Prince, King and Deity are now all the full search; what separates them is
+// the roster cap and the placement samples, and their tilt is measured by
+// scripts/analysis/runHandicapLevers.js, not by this ladder duel.
+export const DEFAULT_AI_LEVEL = 'prince';
 const KEY = 'showdown.aiLevel';
 
 export function levelById(id) {
@@ -62,10 +91,12 @@ export function iqOf(id) {
   return levelById(id).iq;
 }
 
-/** What a game against this rung pays, as a fraction of the Deity rate. */
+/** What a game against this rung pays, as a fraction of the fair rate. */
 export function payOf(id) {
   return payFactorOf(levelById(id).id);
 }
+
+// capOf and samplesOf are the table's (coinRewards.js), re-exported above.
 
 /** This browser's chosen level, or the default. Storage may be absent; that is fine. */
 export function loadAiLevel() {

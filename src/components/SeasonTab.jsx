@@ -199,6 +199,7 @@ export default function SeasonTab({
         size: draft.size,
         length: draft.length,
         series: draft.series ?? null,
+        aiLevel: draft.aiLevel ?? null,
       });
       await saveSeason(uid, season);
       setSeasons(list => [season, ...list]);
@@ -664,6 +665,8 @@ function Setup({ teamA, collection, uid, onStart, onCancel }) {
   const [length, setLength] = useState('quick');
   const [pick, setPick] = useState({ roster: [], deck: null, deckName: null });
   const [series, setSeries] = useState(null);
+  // The rung the league is built at; starts at the device's current dial.
+  const [aiLevel, setAiLevel] = useState(() => loadAiLevel());
   const roster = pick.roster;
 
   const ok = roster.length >= MIN_TO_PLAY;
@@ -727,6 +730,26 @@ function Setup({ teamA, collection, uid, onStart, onCancel }) {
           <span className={styles.muted}>On top of the coins every game in the season already pays.</span>
         </div>
 
+        {/* THE LEAGUE'S RUNG (2026-09-16). Fixed at creation: above Prince the
+            AI teams are built to a richer cap, so this decides who you face all
+            season, and a game in the league never pays above it. The per-game
+            coach dial beside the play button can still turn the coach DOWN. */}
+        <div className={styles.field}>
+          <span className={styles.label}>The other coaches</span>
+          <div className={styles.choices}>
+            {AI_LEVELS.map(l => (
+              <Choice
+                key={l.id} on={aiLevel === l.id} onClick={() => setAiLevel(l.id)}
+                title={l.label}
+                sub={`${l.blurb} · games pay ${Math.round(l.pay * 100)}%`}
+              />
+            ))}
+          </div>
+          <span className={styles.muted}>
+            Prince is a fair game at the standard rate. Above it their teams are better — you can see it on their cards — and games pay more. Fixed for the league; you can turn the coach down game by game, never up.
+          </span>
+        </div>
+
         <button
           className={styles.primary}
           disabled={!ok}
@@ -735,6 +758,7 @@ function Setup({ teamA, collection, uid, onStart, onCancel }) {
             deck: pick.deck,
             deckName: pick.deckName,
             series: seriesFor(size, series),
+            aiLevel,
           })}
         >
           {ok ? `Start ${gamesPerTeam(size, length)}-game season` : `Pick at least ${MIN_TO_PLAY} cards`}

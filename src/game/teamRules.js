@@ -53,13 +53,16 @@ export function ownedPlayers(collection) {
  */
 export const RANDOM_MIN_SAL = 4800;
 
-export function randomizeTeam(other, ownedOnly, collection) {
+// `capMult` scales the band the roster is drawn in — the coach's rung above
+// Prince (coinRewards.js capOf). Both ends move, so a richer draw actually
+// spends the extra: a 1.2x cap that lands on a plain salary is no advantage.
+export function randomizeTeam(other, ownedOnly, collection, capMult = 1) {
   let available = [...CARDS];
   if (ownedOnly && collection) {
     available = available.filter(c => (collection[c.id]?.count || 0) > 0);
   }
-  const MIN_SAL = RANDOM_MIN_SAL;
-  const MAX_SAL = CAP;
+  const MIN_SAL = Math.round(RANDOM_MIN_SAL * capMult);
+  const MAX_SAL = Math.round(CAP * capMult);
 
   // Pick a random target salary within range for each attempt
   // This ensures true spread across the 4800-5500 range

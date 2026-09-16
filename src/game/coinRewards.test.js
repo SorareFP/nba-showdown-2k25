@@ -49,9 +49,15 @@ describe('settleGameReward', () => {
 
   it('pays a PvP win more, and a loss only the completion', () => {
     const win = settleGameReward({ won: true, pvp: true, milestoneIds: [] }, { ...fresh, firstWin: true, date: TODAY }, TODAY);
-    expect(win.coins).toBe(REWARD.complete + REWARD.pvpWin);
+    // PvP pays the TOP rate since 2026-09-16 — PAY_MAX (1.5x) on the whole
+    // earned base, the same as a Deity game (the user: "I'm honestly fine
+    // with it being max to encourage PvP play"). pvpWin itself equals win.
+    expect(REWARD.pvpWin).toBe(REWARD.win);
+    expect(win.coins).toBe(Math.round((REWARD.complete + REWARD.win) * 1.5));
     const loss = settleGameReward({ won: false, pvp: true, milestoneIds: [] }, fresh, TODAY);
-    expect(loss.coins).toBe(REWARD.complete);
+    // A PvP loss still pays the top rate on the completion money, exactly as
+    // a Deity loss does: the rate is about who you played, not whether you won.
+    expect(loss.coins).toBe(Math.round(REWARD.complete * 1.5));
     expect(loss.firstWin).toBe(false);
   });
 
@@ -128,9 +134,10 @@ describe('the win bonus by the margin (2026-09-11)', () => {
     expect(mean).toBeLessThan(REWARD.win + 2);
   });
 
-  it('pays PvP half again on the same curve', () => {
+  it('pays PvP the top rate on the whole base, not a premium on the curve', () => {
     expect(winBonus(17, true)).toBe(Math.round(winBonus(17) * REWARD.pvpWin / REWARD.win));
-    expect(settle({ won: true, pvp: true, margin: 50 }).coins).toBe(REWARD.complete + 150);
+    expect(winBonus(17, true)).toBe(winBonus(17));
+    expect(settle({ won: true, pvp: true, margin: 50 }).coins).toBe(Math.round((REWARD.complete + 100) * 1.5));
   });
 
   it('pays a client that sends no margin the flat bonus it always did', () => {

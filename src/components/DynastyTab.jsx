@@ -36,6 +36,7 @@ import {
 } from '../game/modes/prizes.js';
 import { createDynasty, START_MODES, DPHASE, MAX_ROSTER, simDraft, endSeason, endDynasty, isOffseason, summarizeDynasty, teamOf } from '../game/modes/dynasty.js';
 import { CAP_DP } from '../game/modes/dynastyMarket.js';
+import { AI_LEVELS, loadAiLevel, levelById } from '../game/aiLevels.js';
 import RosterPicker, { Choice } from './league/RosterPicker.jsx';
 import { SeasonDashboard, MY_ID } from './SeasonTab.jsx';
 import {
@@ -174,9 +175,10 @@ export default function DynastyTab({
         startMode: cfg.startMode,
         series: cfg.series ?? null,
         aging: Boolean(cfg.aging),
-        // No rung here on purpose: the AI teams always draft at full strength,
-        // and the coach difficulty is a per-game setting you can move whenever
-        // you like (SeasonDashboard). See createDynasty.
+        // THE LEAGUE'S RUNG. The AI teams always draft at full strength; above
+        // Prince they draft to a richer budget, and a game in this dynasty
+        // pays at the lower of this rung and the rung it is played at.
+        aiLevel: cfg.aiLevel ?? null,
       });
       // Into the draft room with the AI's picks before yours already made.
       if (d.phase === DPHASE.draft) d = simDraft(d);
@@ -450,6 +452,8 @@ function DynastySetup({ teamA, collection, uid, onStart, onCancel }) {
   const [pick, setPick] = useState({ roster: [], deck: null, deckName: null });
   const [series, setSeries] = useState(null);
   const [aging, setAging] = useState(false);
+  // The rung the league is built at; starts at the device's current dial.
+  const [aiLevel, setAiLevel] = useState(() => loadAiLevel());
   const [decks, setDecks] = useState([]);
   const [deckId, setDeckId] = useState('default');
   const [busy, setBusy] = useState(false);
@@ -479,6 +483,7 @@ function DynastySetup({ teamA, collection, uid, onStart, onCancel }) {
       deckName: own ? pick.deckName : (chosenDeck?.name ?? null),
       series: seriesFor(size, series),
       aging,
+      aiLevel,
     });
     setBusy(false);
   };
@@ -565,6 +570,27 @@ function DynastySetup({ teamA, collection, uid, onStart, onCancel }) {
         </div>
 
         <SeriesPicker size={size} value={series} onChange={setSeries} label="Playoff series, every year" />
+
+        {/* THE LEAGUE'S RUNG (2026-09-16). Fixed at creation: above Prince the
+            AI teams are built to a richer cap, so this decides who you face all
+            season, and a game in the league never pays above it. The per-game
+            coach dial beside the play button can still turn the coach DOWN. */}
+        <div className={styles.field}>
+          <span className={styles.label}>The other coaches</span>
+          <div className={styles.choices}>
+            {AI_LEVELS.map(l => (
+              <Choice
+                key={l.id} on={aiLevel === l.id} onClick={() => setAiLevel(l.id)}
+                title={l.label}
+                sub={`${l.blurb} · games pay ${Math.round(l.pay * 100)}%`}
+              />
+            ))}
+          </div>
+          <span className={styles.muted}>
+            Prince is a fair game at the standard rate. Above it their teams are better — you can see it on their cards — and games pay more. Fixed for the league; you can turn the coach down game by game, never up.
+          </span>
+        </div>
+
 
 
         <div className={styles.prize}>
@@ -657,7 +683,7 @@ function DynastyView({ d, uid, commit, onPlayFixture, onBack, onAbandon }) {
         <div>
           <h2 className={styles.title}>{d.name}</h2>
           <p className={styles.sub}>
-            {me?.name} · {START_MODES[d.startMode]?.label} · {d.teams.length} teams · {LENGTHS[d.length]?.label ?? d.length} seasons
+            {me?.name} · {START_MODES[d.startMode]?.label} · {d.teams.length} teams · {LENGTHS[d.length]?.label ?? d.length} seasons · {levelById(d.aiLevel ?? 'prince').label}
           </p>
         </div>
         <div className={styles.headActions}>

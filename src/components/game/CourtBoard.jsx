@@ -22,7 +22,7 @@ function HelpBtn({ section }) {
   return <button className={styles.helpBtn} onClick={handleClick} title="How to Play">?</button>;
 }
 
-export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExecCard, onResolve, onSpendAssist, onSpendRebound, onDraftSubmit, onPlacePlayer, onUndoPlace = null, undoPlaceName = null, onTimeout = null, onEndTimeout = null, onSearchCrunch = null, pvpMode = false, myTeamKey = null, isMyTurn = true, defenceIsHuman = false, rollGate = null, aiIq = 1,
+export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExecCard, onResolve, onSpendAssist, onSpendRebound, onDraftSubmit, onPlacePlayer, onUndoPlace = null, undoPlaceName = null, onTimeout = null, onEndTimeout = null, onSearchCrunch = null, pvpMode = false, myTeamKey = null, isMyTurn = true, defenceIsHuman = false, rollGate = null, aiIq = 1, aiSamples = undefined,
   // WHICH SIDE THE COACH PLAYS, or null when a person plays both (hotseat) or
   // the game is PvP. Its hand goes face down and its roster status comes up in
   // that panel's place — see OppStatusPanel.
@@ -64,11 +64,12 @@ export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExec
     const order = game.placementOrder || ['A','B','B','A','A','B','B','A','A','B'];
     if (order[step] !== 'B') return;
     const t = setTimeout(() => {
-      const action = aiPlacementPick(game, 'B', { iq: aiIq });
+      // How many of your possible lineups it weighs is the rung's (samplesOf).
+      const action = aiPlacementPick(game, 'B', { iq: aiIq, ...(aiSamples ? { samples: aiSamples } : {}) });
       if (action) soloPlace(action.playerId);
     }, 650);
     return () => clearTimeout(t);
-  }, [pvpMode, game, aiIq]);
+  }, [pvpMode, game, aiIq, aiSamples]);
 
   const [modal, setModal] = useState(null);
   const [draftSelected, setDraftSelected] = useState([]);

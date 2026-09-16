@@ -58,11 +58,26 @@ describe('who places first', () => {
 });
 
 describe('the difficulty ladder', () => {
-  it('runs Settler to Deity with IQ rising from 0 to 1', () => {
+  it('runs Settler to Deity: IQ rises to the fair rung, then the roster and the search do', () => {
+    // Civilization's shape (aiLevels.js, 2026-09-16): below Prince the coach
+    // is handicapped, Prince is a fair game and the default, above Prince the
+    // coach's TEAM is better — never the human's worse.
     expect(AI_LEVELS.map(l => l.id)).toEqual(['settler', 'chieftain', 'warlord', 'prince', 'king', 'deity']);
-    for (let i = 1; i < AI_LEVELS.length; i += 1) expect(AI_LEVELS[i].iq).toBeGreaterThan(AI_LEVELS[i - 1].iq);
+    for (let i = 1; i < AI_LEVELS.length; i += 1) {
+      const a = AI_LEVELS[i - 1], b = AI_LEVELS[i];
+      expect(b.iq, b.id).toBeGreaterThanOrEqual(a.iq);
+      expect(b.samples, b.id).toBeGreaterThanOrEqual(a.samples);
+      expect(b.cap, b.id).toBeGreaterThanOrEqual(a.cap);
+      expect(b.pay, b.id).toBeGreaterThan(a.pay);            // every rung is worth more than the last
+      // Something gets harder at every step.
+      expect(b.iq > a.iq || b.samples > a.samples || b.cap > a.cap, `${a.id} -> ${b.id}`).toBe(true);
+    }
     expect(iqOf('settler')).toBe(0);
-    expect(iqOf('deity')).toBe(1);
+    expect(iqOf('prince')).toBe(1);                            // the full search is the fair game
+    expect(iqOf('deity')).toBe(1);                             // ...and Deity is not smarter than fair
+    expect(AI_LEVELS.find(l => l.id === 'prince').cap).toBe(1);
+    expect(AI_LEVELS.find(l => l.id === 'deity').cap).toBeGreaterThan(1);
+    expect(DEFAULT_AI_LEVEL).toBe('prince');
     expect(levelById('nonsense').id).toBe(DEFAULT_AI_LEVEL);
   });
 

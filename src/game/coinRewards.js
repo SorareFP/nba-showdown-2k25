@@ -28,7 +28,12 @@ export const REWARD = {
   // ~110. Neither of these is capped per day — only milestones are.
   complete: 75,
   win: 50,
-  pvpWin: 75,
+  // PvP's premium no longer lives here. It was 75 — 1.5x on the win bonus
+  // alone. Since 2026-09-16 a PvP claim takes PAY_MAX on the whole earned base
+  // in settleGameReward, the same way a Deity game does (the user: "I'm
+  // honestly fine with it being max to encourage PvP play"), so this equals
+  // win and the curve code reads the same as ever.
+  pvpWin: 50,
   dailyFirstWin: 50,
 };
 
@@ -42,7 +47,8 @@ export const REWARD = {
  * quarter of games were won by 30 or more. Over that spread the AVERAGE win
  * still pays about 50, so the economy stays where it was.
  *
- * PvP scales the same curve by pvpWin / win (1.5×).
+ * PvP no longer scales this curve (pvpWin equals win); its premium is
+ * PAY_MAX on the whole earned base, applied in settleGameReward.
  *
  * A claim with no margin (a client older than this) gets the flat bonus it
  * always did.
@@ -94,42 +100,79 @@ export const DYNASTY_GAME_FACTOR = 1.15;
  * Monotonic on all four columns, and the control sits within noise of even
  * (1.6 sd on margin at this n, 0.7 on win rate).
  *
- * ── WHY EVERY FACTOR IS AT MOST 1 ───────────────────────────────────────────
+ * ── THE FAIR RUNG IS 1x, AND IT IS THE DEFAULT ───────────────────────────────
  *
- * Deity is the default (aiLevels.js DEFAULT_AI_LEVEL) and the rate the whole
- * economy was tuned at — the collection timelines, the pack prices, the
- * "~110 games for the hardest collection" number. A bonus ladder would move
- * that ceiling and re-open all of it; a penalty ladder leaves the ceiling
- * exactly where it is and only asks the player who turns the coach down to
- * earn at the rate they are playing at.
+ * The user, 2026-09-16: "I think the midpoint should be the 1x payout, with
+ * Deity being the 1.5x or whatever. Although I think for that, the actual
+ * difficulty would be tilted toward losing. i.e. it should be really hard to
+ * win on Deity."
  *
- * It also means the client cannot print coins by lying about the rung. The
- * best claim available is the one an honest Deity game already makes, so an
- * unverifiable field costs nothing — which is why a sandbox game is taken at
- * its word while a dynasty game is read off the league document
- * (functions/index.js).
+ * So the ladder is Civilization's shape (aiLevels.js): below Prince the coach
+ * is handicapped and pays under 1x; Prince is a fair game — the full search,
+ * an equal roster — at 1x, and it is the default, because 1x is the rate the
+ * economy was tuned at (the "~110 games for the hardest collection" number)
+ * and the default experience must stay on it; above Prince the coach's TEAM
+ * is better, drawn to a richer cap, and a win against it pays more.
  *
- * THE SPREAD IS WIDER THAN THE INVERSION ON PURPOSE. Merely flattening it
- * would take 0.899 / 0.935 / 0.967 / 0.985 / 0.998 — which makes the rung
- * FREE, and the point is that it should be a choice. Half rate at Settler is
- * a collection that takes twice as long to finish.
+ * A PvP game carries no rung and is untouched by this table: two people play
+ * on their own logic, and it pays its own flat rate (pvpWin).
+ *
+ * ── WHAT A BONUS COSTS IN TRUST ─────────────────────────────────────────────
+ *
+ * The first ladder was penalties only, so a client that lied about its rung
+ * could gain nothing. With Deity at 1.5x that property is gone: the rung is
+ * client-asserted, and it now buys coins — the same class of trust as the
+ * client-asserted margin, which already moves a win between 20 and 100. Two
+ * things bound it. The factor is clamped here, so the most a lie can name is
+ * PAY_MAX. And a LEAGUE game pays at the lower of the rung the league was
+ * created at and the rung it was played at (functions/index.js reads the
+ * league's own document): a season or dynasty builds its AI rosters once, to
+ * its rung's cap, so being paid for a Deity game inside a Prince league would
+ * be paid for opponents that were never on the floor.
  */
-// Ordered easiest to hardest, and the LABELS live here rather than beside the
-// iq numbers in aiLevels.js so there is one list of rungs rather than two that
-// can drift. aiLevels.js reads this table for its names and its pay column;
-// this module stays free of imports because the server runs it.
+// THE RUNG TABLE. Ordered easiest to hardest. The labels, the pay, and the
+// two things that make a rung above Prince harder — `cap`, the multiplier on
+// the salary or DP cap the coach's rosters are built to, and `samples`, how
+// many of the human's possible lineups its placement search weighs — all
+// live HERE rather than beside the iq numbers in aiLevels.js, because this
+// module is import-free and the server runs it: a friends dynasty is dealt on
+// the server, and its AI teams draft to the rung's cap. aiLevels.js reads
+// this table; one list of rungs beats two that drift.
+//
+// `cap` for King and Deity is SET BY MEASUREMENT (scripts/analysis/
+// runHandicapLevers.js, 800 games a lever, full-search coach both benches):
+// a 10% richer cap won 72.9% (+11.7 a game), a 20% richer cap 86.6% (+21.0),
+// with the control at 51.2%. The cap is a strong lever — about a point of
+// margin per percent — so the targets (King ~60%, Deity ~75%) sit at 1.05 and
+// 1.12. First reading; a rerun at exactly these values is the next check.
 export const AI_PAY = {
-  settler:   { label: 'Settler',   pay: 0.5 },
-  chieftain: { label: 'Chieftain', pay: 0.65 },
-  warlord:   { label: 'Warlord',   pay: 0.8 },
-  prince:    { label: 'Prince',    pay: 0.9 },
-  king:      { label: 'King',      pay: 0.97 },
-  deity:     { label: 'Deity',     pay: 1 },
+  settler:   { label: 'Settler',   pay: 0.5,  cap: 1,    samples: 1 },
+  chieftain: { label: 'Chieftain', pay: 0.7,  cap: 1,    samples: 4 },
+  warlord:   { label: 'Warlord',   pay: 0.85, cap: 1,    samples: 8 },
+  prince:    { label: 'Prince',    pay: 1,    cap: 1,    samples: 16 },
+  king:      { label: 'King',      pay: 1.25, cap: 1.05, samples: 32 },
+  deity:     { label: 'Deity',     pay: 1.5,  cap: 1.12, samples: 64 },
 };
-/** The pay factor for a rung id. An id this table does not know pays full. */
+/** The multiplier on the cap the coach's rosters are built to at this rung — 1 up to Prince, and for no rung. */
+export function capOf(level) {
+  const c = AI_PAY[level]?.cap;
+  return Number.isFinite(c) && c > 0 ? c : 1;
+}
+/** How many of the human's possible lineups the coach's placement search weighs at this rung. */
+export function samplesOf(level) {
+  const n = AI_PAY[level]?.samples;
+  return Number.isFinite(n) && n > 0 ? n : 16;
+}
+/** The most any rung can pay — the clamp a client-asserted rung is held to. */
+export const PAY_MAX = 1.5;
+/** The pay factor for a rung id. An id this table does not know pays the fair rate. */
 export function payFactorOf(level) {
   const f = AI_PAY[level]?.pay;
-  return Number.isFinite(f) ? Math.min(1, Math.max(0, f)) : 1;
+  return Number.isFinite(f) ? Math.min(PAY_MAX, Math.max(0, f)) : 1;
+}
+/** The lower of two rungs' pay — what a league game pays when it was played above the rung it was built at. */
+export function payFloorOf(created, played) {
+  return Math.min(payFactorOf(created), payFactorOf(played));
 }
 
 const MAX_MARGIN = 200;
@@ -276,12 +319,17 @@ export function settleGameReward(claim, daily, today) {
   // dynasty rate then pays its 15% on that. A Settler dynasty game is
   // 0.5 x 1.15, not 1.15 with a discount bolted on after.
   const earned = coins - milestoneCoins;
-  const pay = payFactorOf(c.aiLevel);
-  if (pay < 1) {
-    const cut = earned - Math.round(earned * pay);
-    if (cut > 0) {
-      coins -= cut;
-      breakdown.push({ label: `${AI_PAY[c.aiLevel]?.label ?? 'Easier coach'} · ${Math.round(pay * 100)}% rate`, coins: -cut });
+  // A PvP GAME PAYS THE TOP RATE. The user, 2026-09-16: "I'm honestly fine
+  // with it being max to encourage PvP play." So two people are paid what
+  // Deity pays — the same multiplier on the same base — and the old separate
+  // premium on the win bonus alone (pvpWin) is folded into this.
+  const pay = c.pvp ? PAY_MAX : payFactorOf(c.aiLevel);
+  if (pay !== 1) {
+    const delta = Math.round(earned * pay) - earned;
+    if (delta !== 0) {
+      coins += delta;
+      const label = c.pvp ? 'PvP' : (AI_PAY[c.aiLevel]?.label ?? (pay < 1 ? 'Easier coach' : 'Harder coach'));
+      breakdown.push({ label: `${label} · ${Math.round(pay * 100)}% rate`, coins: delta });
     }
   }
   if (c.dynasty) {

@@ -76,13 +76,21 @@ function roster(taken, cap = CAP) {
 
 const bump = (team, n) => team.map(c => ({ ...c, speed: c.speed + n, power: c.power + n }));
 
-const LEVERS = {
-  control: () => { const t = new Set(); return [roster(t), roster(t)]; },
-  'cap+10': () => { const t = new Set(); return [roster(t, Math.round(CAP * 1.10)), roster(t)]; },
-  'cap+20': () => { const t = new Set(); return [roster(t, Math.round(CAP * 1.20)), roster(t)]; },
-  'attr+1': () => { const t = new Set(); const r = roster(t); return [bump(r, 1), r]; },
-  'attr+2': () => { const t = new Set(); const r = roster(t); return [bump(r, 2), r]; },
-};
+// --caps 1.05,1.12   measure exactly these cap multipliers instead of the
+//                    default set — how a chosen rung is verified.
+const capsArg = process.argv.includes('--caps') ? process.argv[process.argv.indexOf('--caps') + 1] : null;
+const LEVERS = capsArg
+  ? Object.fromEntries([
+    ['control', () => { const t = new Set(); return [roster(t), roster(t)]; }],
+    ...capsArg.split(',').map(Number).map(m => [`cap x${m}`, () => { const t = new Set(); return [roster(t, Math.round(CAP * m)), roster(t)]; }]),
+  ])
+  : {
+    control: () => { const t = new Set(); return [roster(t), roster(t)]; },
+    'cap+10': () => { const t = new Set(); return [roster(t, Math.round(CAP * 1.10)), roster(t)]; },
+    'cap+20': () => { const t = new Set(); return [roster(t, Math.round(CAP * 1.20)), roster(t)]; },
+    'attr+1': () => { const t = new Set(); const r = roster(t); return [bump(r, 1), r]; },
+    'attr+2': () => { const t = new Set(); const r = roster(t); return [bump(r, 2), r]; },
+  };
 
 console.log(`A MATERIAL ADVANTAGE, IN POINTS — full-search coach both sides, ${GAMES} games a lever\n`);
 console.log('  lever      win%     95% CI    margin    (the advantaged side)');

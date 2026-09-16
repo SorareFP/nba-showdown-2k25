@@ -610,13 +610,39 @@ describe('ten years', () => {
 // does not read the rung — and it means a player who wants an easier evening
 // is not handed a decade of junk opponents.
 describe('the draft does not read the coach difficulty', () => {
-  it('stores no rung on the league at all', () => {
+  it('drafts at full strength whatever rung the league is built at', () => {
+    // The rung the league is built at is REMEMBERED (2026-09-16: a game in it
+    // pays at the lower of that and the rung it was played at), and above
+    // Prince it makes the AI teams' budget richer — but never their draft
+    // dumber. null is Prince.
     const d = createDynasty({
       id: 'R', size: 4, length: 'short', startMode: 'fantasy-full',
       rng: seeded(11), human: { name: 'Me' },
     });
-    expect(d.aiLevel).toBeUndefined();
+    expect(d.aiLevel).toBeNull();
     expect(d.iq).toBe(1);
+    const hard = createDynasty({
+      id: 'R1', size: 4, length: 'short', startMode: 'fantasy-full',
+      rng: seeded(11), human: { name: 'Me' }, aiLevel: 'deity',
+    });
+    expect(hard.aiLevel).toBe('deity');
+    expect(hard.iq).toBe(1);
+  });
+
+  it("gives a Deity league's AI teams a richer budget than a Prince league's", () => {
+    // Same seed, same pool: the only difference is the cap the AI drafts to.
+    const spend = level => {
+      let d = createDynasty({
+        id: 'B', size: 4, length: 'short', startMode: 'fantasy-full',
+        rng: seeded(21), human: { name: 'Me' }, aiLevel: level,
+      });
+      // Drafted players are only RIGHTS until the signing window; finishDraft
+      // is where the AI signs its draftees and a payroll exists to read.
+      d = finishDraft(driveDraft(d, seeded(22)), { rng: seeded(23) });
+      const ai = d.teams.filter(t => !t.human).map(t => t.id);
+      return ai.reduce((sum, id) => sum + payroll(d, id), 0) / ai.length;
+    };
+    expect(spend('deity')).toBeGreaterThan(spend('prince'));
   });
 
   it('keeps the drafting dial available for a toggle that does not exist yet', () => {

@@ -5,7 +5,7 @@ import { CLUTCH_DICE } from '../game/clutchAwards.js';
 import { execCard, resolvePendingShotCheck, resolveGoUnder } from '../game/execCard.js';
 import { randomizeTeam, MIN_TO_PLAY } from '../game/teamRules.js';
 import { resultFromPlayed } from '../game/modes/season.js';
-import { AI_LEVELS, iqOf, loadAiLevel, saveAiLevel } from '../game/aiLevels.js';
+import { AI_LEVELS, iqOf, capOf, samplesOf, loadAiLevel, saveAiLevel } from '../game/aiLevels.js';
 import { boxScoreFor } from '../game/boxScore.js';
 // A REDUCER CANNOT HOLD A HOOK, and must not have side effects at all — so a
 // rejected play reports through the module-level sink rather than through
@@ -597,6 +597,7 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
         // they alternate by agreement, and PvP has its own turn machinery.
         rollGate={opponent === 'ai' ? rollGate(game) : null}
         aiIq={opponent === 'ai' ? iqOf(playedLevel) : 1}
+        aiSamples={opponent === 'ai' ? samplesOf(playedLevel) : undefined}
         onRoll={handlers.onRoll}
         onEndSection={handlers.onEndSection}
         onExecCard={handlers.onExecCard}
@@ -702,7 +703,7 @@ function NoGame({ canUseBuilt, rosterA, rosterB, opponent, setOpponent, aiLevel,
           {rosterA.length >= MIN_TO_PLAY && (
             <button
               className={styles.btnSec}
-              onClick={() => handleStart(rosterA, randomizeTeam(rosterA, false, null))}
+              onClick={() => handleStart(rosterA, randomizeTeam(rosterA, false, null, opponent === 'ai' ? capOf(aiLevel) : 1))}
               title="Your Team A against a random roster in the salary band"
             >
               🏀 Team A vs a random opponent

@@ -26,6 +26,7 @@
 // this file keeps what needs the engine: building the AI league and
 // simulating fixtures.
 import { fitDeck } from '../deckFit.js';
+import { capOf } from '../coinRewards.js';
 import { buildAiLeague } from './aiTeams.js';
 import { simulateFixture } from './simulate.js';
 import { PHASE, teamsById, rostersOf, decksOf, roundFixtures, isHumanVsHuman, recordResult, buildSeason } from './seasonCore.js';
@@ -52,11 +53,16 @@ export function createSeason({
   cards = undefined,
   // Best-of per playoff round, first round first (bracket.js); null plays one game a round.
   series = null,
+  // THE RUNG THE LEAGUE IS BUILT AT (2026-09-16). Above Prince the AI teams
+  // draw to a richer cap (coinRewards.js capOf) — better players, the same
+  // rules — and the season remembers the rung so a game in it pays at the
+  // lower of this and the rung it was played at (payFloorOf). null is Prince.
+  aiLevel = null,
 } = {}) {
   if (!humans.length) throw new Error('season: needs at least one human team');
   if (size < humans.length) throw new Error(`season: ${humans.length} humans do not fit in a ${size}-team league`);
   const taken = new Set(humans.flatMap(h => h.roster.map(c => c.id)));
-  const ai = buildAiLeague(size - humans.length, { taken, rng, ...(cards ? { cards } : {}) });
+  const ai = buildAiLeague(size - humans.length, { taken, rng, capMult: capOf(aiLevel), ...(cards ? { cards } : {}) });
   const teams = [
     // `deck` is the strategy deck this human brings — the shape savedDecks
     // stores, a { cardId: count } map, or null for the engine's default fifty.
@@ -74,7 +80,7 @@ export function createSeason({
     // them. Humans bring their own.
     ...ai.map(t => ({ ...t, deck: t.deck ?? fitDeck(t.roster), deckName: t.deckName ?? null })),
   ];
-  return buildSeason({ id, teams, length, size, series });
+  return { ...buildSeason({ id, teams, length, size, series }), aiLevel };
 }
 
 /** The deck options a fixture is played with, from whoever is on each side. */

@@ -46,7 +46,7 @@ import { getCardByKey } from './shared/src/game/cardSets.js';
 import { getStratRarity, STRAT_COPY_CAPS, stratCopyCap } from './shared/src/game/rarity.js';
 import { burnValueFor, checkListingPrice } from './shared/src/game/marketRules.js';
 import { getStrat } from './shared/src/game/strats.js';
-import { settleGameReward, todayKey, sanitizeBox } from './shared/src/game/coinRewards.js';
+import { settleGameReward, todayKey, sanitizeBox, payFactorOf } from './shared/src/game/coinRewards.js';
 import { seasonEarnings, dynastyCoinFactor, dynastyClaim } from './shared/src/game/modes/prizes.js';
 import { getDatabase } from 'firebase-admin/database';
 import { readFileSync } from 'node:fs';
@@ -682,15 +682,29 @@ async function inLiveDynastySeason(tx, uid, { dynastyId, leagueId, seasonId }) {
   if (dynastyId) {
     const snap = await tx.get(db.doc(`users/${uid}/dynasties/${dynastyId}`));
     const d = snap.exists ? snap.data() : null;
-    return Boolean(d && d.phase === 'season' && d.season?.id === seasonId);
+    if (!(d && d.phase === 'season' && d.season?.id === seasonId)) return false;
+    return { aiLevel: typeof d.aiLevel === 'string' ? d.aiLevel : null };
   }
   if (leagueId) {
     const snap = await tx.get(db.doc(`leagues/${leagueId}`));
     const l = snap.exists ? snap.data() : null;
-    return Boolean(l && l.kind === 'dynasty' && l.members?.[uid]
-      && l.state?.phase === 'season' && l.state?.season?.id === seasonId);
+    if (!(l && l.kind === 'dynasty' && l.members?.[uid]
+      && l.state?.phase === 'season' && l.state?.season?.id === seasonId)) return false;
+    return { aiLevel: typeof l.state?.aiLevel === 'string' ? l.state.aiLevel : null };
   }
   return false;
+}
+
+/**
+ * THE RUNG A PLAIN SEASON WAS BUILT AT, read off the player's own season
+ * document — null when the game names no season, or the season records no
+ * rung (one created before the ladder was reshaped pays as played).
+ */
+async function seasonRung(tx, uid, { dynastyId, leagueId, seasonId }) {
+  if (!seasonId || dynastyId || leagueId) return null;
+  const snap = await tx.get(db.doc(`users/${uid}/seasons/${seasonId}`));
+  const s = snap.exists ? snap.data() : null;
+  return typeof s?.aiLevel === 'string' ? s.aiLevel : null;
 }
 
 export const claimGameReward = onCall({ region: 'us-central1' }, async request => {
@@ -732,15 +746,20 @@ export const claimGameReward = onCall({ region: 'us-central1' }, async request =
       throw new HttpsError('resource-exhausted', 'Slow down a moment');
     }
 
-    // The dynasty rate, granted here or not at all.
+    // The dynasty rate, granted here or not at all — and the rung's pay floor.
     //
-    // THE RUNG IS TAKEN ON TRUST, and that is safe by construction: every
-    // factor in AI_PAY is at most 1, so the most a lying client can claim is
-    // the full rate an honest Deity game already pays. There is nothing to
-    // gain by naming a rung you did not play, and the coach difficulty is a
-    // per-game choice the player can change whenever they like — so there is
-    // no stored number to check it against, and no need for one.
-    claim.dynasty = await inLiveDynastySeason(tx, uid, from);
+    // Since the ladder was reshaped (2026-09-16) a rung above Prince pays MORE,
+    // so the client-asserted rung buys coins. Two bounds. AI_PAY clamps it at
+    // PAY_MAX. And a LEAGUE game pays at the lower of the rung the league was
+    // built at and the rung it was played at (payFloorOf): a season or dynasty
+    // drafts its AI rosters once, to its rung's cap, so a Deity claim inside a
+    // Prince league would be paid for opponents that were never on the floor.
+    // A sandbox game has no league to check and is taken at its word, as the
+    // margin always has been.
+    const inDynasty = await inLiveDynastySeason(tx, uid, from);
+    claim.dynasty = Boolean(inDynasty);
+    const builtAt = (inDynasty && inDynasty.aiLevel) || await seasonRung(tx, uid, from);
+    if (builtAt && payFactorOf(builtAt) < payFactorOf(claim.aiLevel)) claim.aiLevel = builtAt;
 
     const today = todayKey();
     const settled = settleGameReward(

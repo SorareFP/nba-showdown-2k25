@@ -231,7 +231,10 @@ function cycleDead(game, teamKey) {
 // MEASURED, 2,400 games, seed 9091: old targeting 49.1% +/-2.0 / -0.55 against
 // the shipped brain, control 51.0% / +0.17 — the new targeting ahead by about
 // 1.9 points of win rate and 0.7 of margin. Right direction, not significant
-// on its own (z ~1.7 on margin); a second seed is pooled below when it lands.
+// on its own (z ~1.7 on margin). SECOND SEED (31337, 2,400): old targeting
+// 48.7% / -0.67, control 50.8% / +0.29. POOLED, 4,800 an arm: the new
+// targeting is ahead by 2.0 points of win rate (z 1.96) and 0.84 of margin
+// (z 2.7) — a real, modest gain, consistent across both seeds.
 // The VALUE GATE — never play a card nobody nets above zero on, the part that
 // actually stops the Shai play — is not what this row measures: it holds in
 // both arms, and a play with negative expected points is a loss by construction.

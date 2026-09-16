@@ -123,3 +123,28 @@ describe('a whole game under the rule', () => {
     expect(violations).toEqual([]);
   });
 });
+
+// THE ONE REST RULE HAS ONE CALLER (2026-09-16). CourtBoard's snake draft
+// rested every benched player as the lineups completed, and endSection rested
+// them again at the section end — a star at 12 came back fresh in one sitting,
+// and nothing pinned it because each path was right on its own. So: benchRest
+// is called from endSection, and from nowhere else in the app's source.
+import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { join, dirname, basename } from 'node:path';
+import { fileURLToPath } from 'node:url';
+describe('the one rest rule', () => {
+  it('benchRest is called only from endSection', () => {
+    const root = join(dirname(fileURLToPath(import.meta.url)), '..');
+    const files = [];
+    const walk = d => {
+      for (const n of readdirSync(d)) {
+        const p = join(d, n);
+        if (statSync(p).isDirectory()) walk(p);
+        else if ((n.endsWith('.js') || n.endsWith('.jsx')) && !n.includes('.test.')) files.push(p);
+      }
+    };
+    walk(root);
+    const callers = files.filter(f => basename(f) !== 'engine.js' && readFileSync(f, 'utf8').includes('benchRest('));
+    expect(callers.map(f => f.slice(root.length)).sort()).toEqual([]);
+  });
+});

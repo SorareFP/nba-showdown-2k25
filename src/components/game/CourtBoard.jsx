@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { calcAdv, getTeam, getOpp, getPS, getFatigue, SNAKE, SPEND_COSTS, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, lastReturnedCard, undoReturnCard, periodLabel, extraRollPending, checkNeed, fatigueForMinutes, crunchSearchOptions } from '../../game/engine.js';
 import { canPlayCard, myHouseTargets, fwdTargets, preRollTargets, helpTargets, foulTroubleTargets } from '../../game/canPlay.js';
 import { resolveGoUnder } from '../../game/execCard.js';
-import { benchRest, passTurn, MAX_STRAIGHT_MINUTES, restRuleLifted, pickablePool } from '../../game/engine.js';
+import { passTurn, MAX_STRAIGHT_MINUTES, restRuleLifted, pickablePool } from '../../game/engine.js';
 import { salaryOrder } from '../../game/teamRules.js';
 import { getStrat } from '../../game/strats.js';
 import { aiDraftPick, aiPlacementPick, forfeitNet, FORFEIT_CARDS } from '../../game/ai.js';
@@ -1611,7 +1611,12 @@ function DraftRow({ idx, game, setGame, pvpMode = false, myTeamKey = null, isMyT
     d.step++;
     if(g.teamA.starters.length===5&&g.teamB.starters.length===5){
       g.offMatchups={A:[0,1,2,3,4],B:[0,1,2,3,4]};
-      ['A','B'].forEach(k=>{const t=k==='A'?g.teamA:g.teamB;t.stats.forEach(ps=>{if(!t.starters.find(p=>p.id===ps.id))benchRest(ps);});});
+      // NO BENCH REST HERE (2026-09-16, the user: "I don't think fatigue is
+      // right in the app"). This step used to rest every benched player as the
+      // lineups completed, and endSection rests them again when the section
+      // ends — so one section off was two rests, and a star at 12 came back
+      // fresh in one sitting. endSection is the ONE rest rule (engine.js); a
+      // test now greps for any other caller of benchRest outside it.
       g.phase='matchup_strats';
       g.log=[...g.log,{team:null,msg:'Draft complete — Matchup Strategy Phase.'}];
     }

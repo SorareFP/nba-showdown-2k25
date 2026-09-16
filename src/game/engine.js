@@ -685,6 +685,18 @@ export function endTimeout(g) {
   return ng;
 }
 
+/**
+ * THE LAST CHECK, FOR THE BOARD'S EAR AND EYE (2026-09-16). Every 3PT or
+ * paint check leaves this — hit or miss, whose, worth what — sequence-numbered
+ * so a screen effect fires exactly once per check (CourtBoard's CheckFx).
+ * Free throws are not a shot anyone watches drop. Card checks note it from
+ * trackShotCheck (execCard.js); the spend checks below note it themselves.
+ */
+export function noteCheckFx(g, r, type, teamKey) {
+  if (!g || !r || type === 'ft') return;
+  g.checkFx = { seq: (g.checkFx?.seq || 0) + 1, hit: Boolean(r.hit), type, teamKey, pts: r.pts || 0 };
+}
+
 export function shotCheck(player, type, extra, ps, fat = fatigueForMinutes(ps?.minutes || 0)) {
   const die = roll20();
   // WHERE THE BONUS CAME FROM, not just how big it is.
@@ -822,6 +834,7 @@ export function spendAssist(g, teamKey, type, playerIdx) {
     myT.assists -= SPEND_COSTS.assistThree;
     const astBonus = ng.tempEff?.[teamKey]?.['astBoost_' + playerIdx] || 0;
     const r = shotCheck(player, '3pt', spendParts(astBonus, matchupContest(ng, teamKey, playerIdx, '3pt')), ps, getFatigue(ng, teamKey, playerIdx));
+    noteCheckFx(ng, r, '3pt', teamKey);
     if (creditCheckDefended(ng, teamKey, playerIdx, '3pt', r, matchupContest(ng, teamKey, playerIdx, '3pt'))) r.blk = true;
     if (r.hit) {
       myT.score += r.pts;
@@ -845,6 +858,7 @@ export function spendAssist(g, teamKey, type, playerIdx) {
     myT.assists -= SPEND_COSTS.assistPaint;
     const astBonus = ng.tempEff?.[teamKey]?.['astBoost_' + playerIdx] || 0;
     const r = shotCheck(player, 'paint', spendParts(astBonus, matchupContest(ng, teamKey, playerIdx, 'paint')), ps, getFatigue(ng, teamKey, playerIdx));
+    noteCheckFx(ng, r, 'paint', teamKey);
     if (creditCheckDefended(ng, teamKey, playerIdx, 'paint', r, matchupContest(ng, teamKey, playerIdx, 'paint'))) r.blk = true;
     recordPaintCheck(ng, teamKey, player.id, r.hit);
     if (r.hit) {
@@ -881,6 +895,7 @@ export function spendReboundBonus(g, teamKey, type, playerIdx) {
     if (myT.rebounds < SPEND_COSTS.reboundPaint) return { game: ng, ok: false, msg: `Need ${SPEND_COSTS.reboundPaint} rebounds (have ${myT.rebounds})` };
     myT.rebounds -= SPEND_COSTS.reboundPaint;
     const r = shotCheck(player, 'paint', spendParts(0, matchupContest(ng, teamKey, playerIdx, 'paint')), ps, getFatigue(ng, teamKey, playerIdx));
+    noteCheckFx(ng, r, 'paint', teamKey);
     if (creditCheckDefended(ng, teamKey, playerIdx, 'paint', r, matchupContest(ng, teamKey, playerIdx, 'paint'))) r.blk = true;
     recordPaintCheck(ng, teamKey, player.id, r.hit);
     if (r.hit) {

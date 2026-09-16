@@ -66,7 +66,8 @@ function TeamScore({ team, color, side }) {
   return (
     <div className={`${styles.team} ${side === 'right' ? styles.right : ''}`}>
       <div className={styles.teamName} style={{ color }}>{team.name}</div>
-      <div className={styles.score}>{team.score}</div>
+      {/* Keyed on the number so a change remounts the span and replays the pop (2026-09-16). */}
+      <div className={styles.score}><span key={team.score} className={styles.scorePop}>{team.score}</span></div>
       <div className={styles.meta}>{team.hand.length} cards</div>
     </div>
   );

@@ -23,9 +23,10 @@
 // identity would make every slot's die spin whenever anything happened. The
 // signature is the roll's CONTENT, so the animation runs once, when this
 // player's number actually changes.
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { usePrefersReducedMotion } from '../../ui/motion.js';
 import { playRoll, playLanding } from '../../game/gameAudio.js';
+import { announceMarker } from '../../game/announcer.js';
 import styles from './RollResult.module.css';
 
 /** How long the die tumbles, and how fast the faces swap while it does. */
@@ -49,9 +50,14 @@ export function bandOf(result) {
   return 'hit';
 }
 
-export default function RollResult({ result, col }) {
+export default function RollResult({ result, col, hot = 0 }) {
   const reduced = usePrefersReducedMotion();
   const [face, setFace] = useState(null);
+  // THE ANNOUNCER (announcer.js): a 19+ puts a marker on (engine.js), and the
+  // count after the roll picks the line. Read through a ref so a marker a
+  // card adds later does not re-fire the landing.
+  const hotRef = useRef(hot);
+  hotRef.current = hot;
 
   // EVERY DEPENDENCY BELOW IS A PRIMITIVE, and that is the whole trick.
   //
@@ -74,7 +80,10 @@ export default function RollResult({ result, col }) {
       setFace(null);
       // A roll still HAPPENED with the motion turned down, so the landing still
       // sounds — it is the tumble that is skipped, not the result.
-      if (sig && !replaced) playLanding(bandOf(result), result?.pts ?? 0);
+      if (sig && !replaced) {
+        playLanding(bandOf(result), result?.pts ?? 0);
+        if (typeof die === 'number' && die >= 19) announceMarker(hotRef.current);
+      }
       return undefined;
     }
 
@@ -85,6 +94,7 @@ export default function RollResult({ result, col }) {
       clearInterval(spin);
       setFace(null);
       playLanding(bandOf(result), result?.pts ?? 0);
+      if (die >= 19) announceMarker(hotRef.current);
     }, TUMBLE_MS);
     return () => { clearInterval(spin); clearTimeout(stop); };
     // `result` is read inside these callbacks but is deliberately NOT a

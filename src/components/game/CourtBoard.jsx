@@ -6,6 +6,7 @@ import { benchRest, passTurn, MAX_STRAIGHT_MINUTES, restRuleLifted, pickablePool
 import { salaryOrder } from '../../game/teamRules.js';
 import { getStrat } from '../../game/strats.js';
 import { aiDraftPick, aiPlacementPick, forfeitNet, FORFEIT_CARDS } from '../../game/ai.js';
+import { playCheck } from '../../game/gameAudio.js';
 import { placePlayer, placementSnapshot, canUndoPlacement, undoPlacement, takenBackName } from '../../game/placement.js';
 import styles from './CourtBoard.module.css';
 import { getPlayerImageUrl, getPlayerThumbUrl, getStratImagePath, getStratThumbPath, fallbackTo } from '../../game/cardImages.js';
@@ -140,6 +141,7 @@ export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExec
           }
 
           <div className={styles.court}>
+            <CheckFx game={game} />
             <CourtMarkings />
             <div className={styles.teamLabelA}>TEAM A</div>
             <div className={styles.teamLabelB}>TEAM B</div>
@@ -1776,7 +1778,7 @@ function PlayerSlot({ player, ps, adv, fat, result, blocked, teamKey, idx, phase
   ].filter(Boolean);
 
   return (
-    <div className={`${styles.cardFace} ${styles.cardHoriz} ${glowCheap?styles.cardGlow:''}`} style={{borderColor:col}}>
+    <div className={`${styles.cardFace} ${styles.cardHoriz} ${glowCheap?styles.cardGlow:''} ${((ps?.hot||0)-(ps?.cold||0))>=2?styles.onFire:''}`} style={{borderColor:col}}>
       {/* Left: card art */}
       <div className={styles.cardArtSide} onClick={() => { lb.unpeek?.(); open('player', player); }} style={{cursor:'pointer'}} {...peek}>
         {imgUrl
@@ -1826,9 +1828,9 @@ function PlayerSlot({ player, ps, adv, fat, result, blocked, teamKey, idx, phase
         {phase==='scoring'&&(
           <div className={styles.rollArea}>
             {blocked?<div className={styles.blocked}>🏠 Blocked</div>
-            :result!=null&&!extraRoll?<RollResult result={result} col={col} />
+            :result!=null&&!extraRoll?<RollResult result={result} col={col} hot={ps?.hot||0} />
             :<>
-              {result!=null&&<RollResult result={result} col={col} />}
+              {result!=null&&<RollResult result={result} col={col} hot={ps?.hot||0} />}
               <button className={styles.rollBtn} style={{background:col}} onClick={onRoll} disabled={pvpDisabled || rollLocked}
                 title={rollLocked ? 'Their roll — play a reaction now, or wait for the die' : undefined}>
                 {rollLocked ? '🎲 Their roll' : extraRoll ? '🎲 2nd roll −2' : '🎲 Roll'}
@@ -2175,6 +2177,39 @@ export function HandPanel({ game, teamKey, onExecCard, onReturnCard = null, onUn
           );
         })}
       </div>
+    </div>
+  );
+}
+
+/**
+ * THE CHECK, HEARD AND SEEN (2026-09-16). Every 3PT or paint check leaves a
+ * sequence-numbered note on the game (engine.js noteCheckFx); this plays the
+ * net or the rim (gameAudio.js playCheck) and throws a word across the court
+ * for a second. The first render is skipped so a loaded save does not replay
+ * its last check; a check that resolves while the tab is hidden still plays
+ * once, when it comes back — the sequence, not the clock, is what fires it.
+ */
+function CheckFx({ game }) {
+  const seq = game?.checkFx?.seq || 0;
+  const [flash, setFlash] = useState(null);
+  const seen = useRef(null);
+  useEffect(() => {
+    if (seen.current === null) { seen.current = seq; return undefined; }
+    if (!seq || seq === seen.current) return undefined;
+    seen.current = seq;
+    const fx = game.checkFx;
+    playCheck(fx.hit);
+    setFlash({ seq, hit: fx.hit, type: fx.type, teamKey: fx.teamKey });
+    const t = setTimeout(() => setFlash(null), 1100);
+    return () => clearTimeout(t);
+    // `game` is read for the note's content; `seq` is what changes per check.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [seq]);
+  if (!flash) return null;
+  const word = flash.hit ? (flash.type === '3pt' ? 'SPLASH' : 'SWISH') : 'CLANK';
+  return (
+    <div key={flash.seq} className={`${styles.checkFlash} ${flash.hit ? styles.checkHit : styles.checkMiss}`} aria-hidden="true">
+      {word}
     </div>
   );
 }

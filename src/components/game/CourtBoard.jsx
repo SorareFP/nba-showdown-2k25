@@ -1465,7 +1465,7 @@ function BlindPickPhase({ game, setGame, pvpMode = false, myTeamKey = null, onDr
     // everyone not in the chosen fives — minutes minus EIGHT, markers cleared,
     // both teams — the moment the lineup was submitted. Two things wrong with
     // it. It was a duplicate: endSection already rests every non-player by
-    // REST_RECOVERY (eight since 2026-09-16; four from 09-05 to then), so solo games were
+    // restMinutes (the original rule, restored 2026-09-16: clear at or under eight, four off above), so solo games were
     // double-resting at the old amount while the simulator and PvP never did.
     // And it was a tell: the coach's non-picked players visibly recovered the
     // instant you submitted, so the five that did not were its lineup (the

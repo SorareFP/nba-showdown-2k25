@@ -189,7 +189,7 @@ export default function HowToPlay({ scrollToSection, onStartTutorial, tutorialRu
             <li><strong>16 minutes:</strong> &minus;12, and &minus;6 more for every section after that (20 minutes &minus;18, 24 minutes &minus;24). It does not stop.</li>
           </ul>
           <p><strong>Twelve straight is the limit.</strong> A player with 12 minutes or more on the tracker <strong>must sit the next section</strong> &mdash; except in the <strong>fourth quarter and overtime</strong>, when anyone can play through. The coach lives by the same rule.</p>
-          <p><strong>Rest:</strong> a section on the bench takes <strong>8 minutes</strong> off — two sections of play. A star at 12 rests to 4 and is fresh again; three on, one off is the rhythm of a game. Benching also clears hot and cold markers.</p>
+          <p><strong>Rest:</strong> a section on the bench <strong>clears the tracker at 8 minutes or under</strong> — two sections on, one off, and a player is fresh again. Above 8 a rest takes <strong>4 minutes</strong> off: a star at 12 rests to 8, still at &minus;2, and needs a second rest to be fresh. Benching also clears hot and cold markers.</p>
           <p><strong>Halftime:</strong> all fatigue and all markers reset at the start of Q3.</p>
           <p>Second Wind lets a tired player ignore the penalty for one section, at the cost of extra minutes afterwards. Sitting a cold, tired star for one section is usually the better play.</p>
         </AccordionSection>

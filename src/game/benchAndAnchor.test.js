@@ -127,22 +127,22 @@ describe('returning a card to the deck', () => {
   });
 });
 
-// THE REST RULE AT THE SECTION END. A section on the bench takes EIGHT
-// minutes off — two sections of play (2026-09-16, the user: "one period of
-// rest should recover two periods of fatigue"). It was 4 from 2026-09-05 to
-// then, and before that 8; on 2026-09-10 the section end and the paper rule
-// were found on different numbers, which is why this pins the section end's
-// amount to REST_RECOVERY rather than to a literal.
+// THE REST RULE AT THE SECTION END. A section on the bench clears the
+// tracker at or under eight minutes and takes four off above it — the
+// original rule, restored 2026-09-16 (the user: "12 rests to 8 and then 8
+// rests to 0"). On 2026-09-10 the section end and the paper rule were found
+// on different numbers, which is why this pins the section end to
+// restMinutes rather than to a literal.
 describe('the rest rule at the section end', () => {
-  it('rests a benched player eight minutes and clears his markers, and adds four to a starter', () => {
+  it('rests a benched player by the rule — 12 to 8, 8 to 0 — clears his markers, and adds four to a starter', () => {
     const g = scoringGame(1, 1);                       // a0-a4 played, a5-a9 sat
     Object.assign(getPS(g, 'A', 'a7'), { minutes: 12, hot: 2 });
     getPS(g, 'A', 'a8').minutes = 8;
     getPS(g, 'A', 'a9').minutes = 4;
     getPS(g, 'A', 'a0').minutes = 8;
     const ng = endSection(g);
-    expect(getPS(ng, 'A', 'a7')).toMatchObject({ minutes: 4, hot: 0, cold: 0 });   // 12 -> 4: fresh again
-    expect(getPS(ng, 'A', 'a8').minutes).toBe(0);                                 // 8 -> 0
+    expect(getPS(ng, 'A', 'a7')).toMatchObject({ minutes: 8, hot: 0, cold: 0 });   // 12 -> 8: still −2
+    expect(getPS(ng, 'A', 'a8').minutes).toBe(0);                                 // 8 -> 0: fresh again
     expect(getPS(ng, 'A', 'a9').minutes).toBe(0);
     expect(getPS(ng, 'A', 'a0').minutes).toBe(12);                                // a section of play: +4
   });

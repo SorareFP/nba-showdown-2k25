@@ -327,18 +327,22 @@ export function fatigueForMinutes(min) {
 }
 
 /**
- * Minutes a section on the bench takes off the tracker.
+ * Minutes a section on the bench takes off the tracker — and the line at or
+ * under which a rest clears it.
  *
- * EIGHT: ONE SECTION OFF IS TWO SECTIONS ON (2026-09-16, the user: "one
- * period of rest should recover two periods of fatigue. Seems like maybe
- * it's only recovering one at a time"). It was eight, then four from
- * 2026-09-05 ("he only should have recovered a little bit") — which the user
- * now calls a miscommunication. With eight, a star at 12 rests to 4, under
- * the first threshold, so one section off after three on brings him back
- * fresh; with the twelve-straight limit (mustRest) that is the rhythm of a
- * game: three on, one off. Halftime still resets everything.
+ * THE ORIGINAL RULE, RESTORED (2026-09-16, the user: "it should be 12 rests
+ * to 8 and then 8 rests to 0 … that was an original rule where 8 rests to 0,
+ * but everything above 8 only rests 4"). Two regimes: at or under eight
+ * minutes — two sections of play — one section off brings a player back
+ * fresh; above it, one section off takes four minutes, so a star at 12 rests
+ * to 8 (still −2) and needs a second rest to be fresh. From 2026-09-05 the
+ * rule was a flat four (12 → 8 → 4 → 0), read from "he only should have
+ * recovered a little bit"; the flat eight that stood for an hour today was
+ * the other half of the same miscommunication. Halftime still resets.
  */
-export const REST_RECOVERY = 8;
+export const REST_RECOVERY = 4;
+/** At or under this many minutes on the tracker, a section on the bench clears it. */
+export const REST_CLEARS_AT = 8;
 
 /**
  * Did this player sit out the previous section? The flag is written at every
@@ -406,9 +410,10 @@ export function undoReturnCard(g, teamKey) {
   return ng;
 }
 
-/** Minutes left on the tracker after one section on the bench, floored at zero. */
+/** Minutes left on the tracker after one section on the bench: cleared at or under REST_CLEARS_AT, else REST_RECOVERY off. */
 export function restMinutes(min) {
-  return Math.max(0, (min || 0) - REST_RECOVERY);
+  const m = min || 0;
+  return m <= REST_CLEARS_AT ? 0 : m - REST_RECOVERY;
 }
 
 /** A section on the bench: markers go cold, minutes recover. Mutates `ps`. */
@@ -1540,15 +1545,15 @@ export function endSection(g) {
   return ng;
 }
 
-// Bench rest recovery: benchRest, the ONE rest rule (REST_RECOVERY = 8).
+// Bench rest recovery: benchRest, the ONE rest rule (restMinutes).
 //   - Hot/cold markers reset when benched
-//   - A section on the bench takes 8 minutes off the tracker, two sections
-//     of play: 12 rests to 4 (fresh), 8 to 0.
-// Eight, then four (2026-09-05), then eight again (2026-09-16, the user:
-// "one period of rest should recover two periods of fatigue"). Whatever the
-// number, it lives in REST_RECOVERY alone: this function, restMinutes, the
-// coach's lookahead and the rules pages all read it — a 2026-09-10 bug had
-// this function on its own copy.
+//   - A section on the bench clears the tracker at or under 8 minutes and
+//     takes 4 off above it: 8 rests to 0, 12 to 8, 16 to 12.
+// The original rule, restored 2026-09-16 after a flat 4 (2026-09-05) and a
+// flat 8 (earlier today) — both halves of one miscommunication. Whatever the
+// rule, it lives in restMinutes alone: this function, the coach's lookahead
+// and the rules pages all read it — a 2026-09-10 bug had this function on
+// its own copy.
 function clearBenchedMarkers(g, prevStarters) {
   const ng = { ...g };
   ['A', 'B'].forEach(k => {

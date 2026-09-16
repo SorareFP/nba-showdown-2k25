@@ -2,7 +2,7 @@
 // designed for. The regression: raw attributes with a flat deduction kept a
 // −6 star ahead of every fresh bench player, so the AI never rested anyone.
 import { describe, it, expect } from 'vitest';
-import { newGame, getTeam, restMinutes, REST_RECOVERY, fatigueForMinutes } from './engine.js';
+import { newGame, getTeam, restMinutes, REST_RECOVERY, REST_CLEARS_AT, fatigueForMinutes } from './engine.js';
 import { CARDS } from './cards.js';
 import { aiDraftPick, lineupValue, rotationValue, expectedOutput } from './ai.js';
 
@@ -111,7 +111,7 @@ describe('rotationValue plans the minutes', () => {
   const fresh = () => rotationValue(BENCH, undefined, left);
 
   it('sits a star at 8 minutes when there is a half left', () => {
-    // One rest takes 8 back to 0 (restMinutes: a section off is two on), and
+    // One rest takes 8 back to 0 (restMinutes clears at or under eight), and
     // there are five more sections to use him in.
     expect(rotationValue(STAR, { minutes: 8 }, left)).toBeLessThan(fresh());
   });
@@ -157,16 +157,18 @@ describe('rotationValue plans the minutes', () => {
 });
 
 describe('rest', () => {
-  it('recovers two sections of minutes per section on the bench (the user, 2026-09-16)', () => {
-    expect(REST_RECOVERY).toBe(8);
-    expect(restMinutes(12)).toBe(4);
+  it('clears the tracker at or under eight minutes and takes four off above it (the original rule, 2026-09-16)', () => {
+    expect(REST_RECOVERY).toBe(4);
+    expect(REST_CLEARS_AT).toBe(8);
+    expect(restMinutes(16)).toBe(12);
+    expect(restMinutes(12)).toBe(8);
     expect(restMinutes(8)).toBe(0);
     expect(restMinutes(4)).toBe(0);
     expect(restMinutes(0)).toBe(0);
   });
 
-  it('so three straight sections then one rest brings him back fresh; a whole half straight still leaves a −2', () => {
-    expect(fatigueForMinutes(restMinutes(12))).toBe(0);     // 12 → 4, under the first threshold
-    expect(fatigueForMinutes(restMinutes(16))).toBe(-2);    // 16 → 8
+  it('so two sections then one rest is fresh again, and three straight then one rest still leaves a −2', () => {
+    expect(fatigueForMinutes(restMinutes(8))).toBe(0);
+    expect(fatigueForMinutes(restMinutes(12))).toBe(-2);    // 12 → 8
   });
 });

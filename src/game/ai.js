@@ -1489,13 +1489,11 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
     }
 
     case 'dogged': {
-      // Any minutes on the tracker (2026-09-16). Hound the most-played man
-      // on the floor — the −2s stack on whatever fatigue he is carrying —
-      // and among equals, the best producer.
+      // A fatigued opponent, at any depth (2026-09-17): the most tired man
+      // on the floor, and among equals the best producer.
       const oppStarters = oppT.starters || [];
-      const mins = p => (p ? (getPS(game, oppKey, p.id)?.minutes || 0) : 0);
-      const cand = oppStarters.map((p, i) => ({ p, i })).filter(({ p }) => p && mins(p) > 0)
-        .sort((u, v) => mins(v.p) - mins(u.p) || expectedOutput(v.p) - expectedOutput(u.p));
+      const cand = oppStarters.map((p, i) => ({ p, i, fat: getFatigue(game, oppKey, i) })).filter(({ p, fat }) => p && fat < 0)
+        .sort((u, v) => u.fat - v.fat || expectedOutput(v.p) - expectedOutput(u.p));
       return { playerIdx: cand[0]?.i ?? 0 };
     }
 

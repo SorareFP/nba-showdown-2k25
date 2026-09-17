@@ -1044,18 +1044,18 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
     }
 
     case 'dogged': {
-      // Target an opposing player with any minutes on the fatigue tracker
-      // (2026-09-16): −2 Speed and −2 Power until benched.
+      // A fatigued opponent, at any depth (2026-09-17): −2 Speed and −2
+      // Power until benched, on top of whatever fatigue he is carrying.
       const oppKey3 = teamKey === 'A' ? 'B' : 'A';
       const targetIdx = opts.playerIdx !== undefined ? opts.playerIdx : 0;
       const targetP = oppT.starters[targetIdx];
       if (!targetP) return fail('Invalid target');
-      const mins = getPS(g, oppKey3, targetP.id)?.minutes || 0;
-      if (mins <= 0) return fail(targetP.name + ' is fresh — no minutes on the tracker');
+      const fat = getFatigue(g, oppKey3, targetIdx);
+      if (fat >= 0) return fail(targetP.name + ' is not fatigued');
       if (!g.tempEff[oppKey3]) g.tempEff[oppKey3] = {};
       g.tempEff[oppKey3]['s' + targetIdx] = (g.tempEff[oppKey3]['s' + targetIdx] || 0) - 2;
       g.tempEff[oppKey3]['p' + targetIdx] = (g.tempEff[oppKey3]['p' + targetIdx] || 0) - 2;
-      addLog(g, teamKey, `Dogged: ${targetP.name} (${mins} min on the tracker) suffers −2 Spd/−2 Pwr until benched`);
+      addLog(g, teamKey, `Dogged: ${targetP.name} (FAT ${fat}) suffers −2 Spd/−2 Pwr until benched`);
       break;
     }
 

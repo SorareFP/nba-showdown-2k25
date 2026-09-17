@@ -496,13 +496,15 @@ export function canPlayCard(g, teamKey, cardId) {
   }
 
   if (cardId === 'dogged') {
-    // Any minutes on the fatigue tracker (2026-09-16), not the penalty: the
-    // penalty starts at eight minutes, and a rested coach rarely gets there.
+    // A FATIGUED opponent, at any depth (2026-09-17, the user: "Dogged still
+    // seems to be able to be played on players with minutes, not players who
+    // are currently fatigued"). The penalty is the door — −2 at eight minutes
+    // counts as much as −12 — not the tracker's minutes.
     if (phase !== 'scoring' && phase !== 'matchup_strats') return no('Only playable during Matchup or Scoring Phase');
     const oppKey = teamKey === 'A' ? 'B' : 'A';
-    const anyMinutes = oppT.starters.some(p => p && (getPS(g, oppKey, p.id)?.minutes || 0) > 0);
-    if (!anyMinutes) return no('No opponent with minutes on the fatigue tracker');
-    return ok('Target an opponent with minutes on the tracker for −2 Spd/Pwr');
+    const anyTired = oppT.starters.some((p, i) => p && getFatigue(g, oppKey, i) < 0);
+    if (!anyTired) return no('No fatigued opponent on the floor');
+    return ok('Target a fatigued opponent for −2 Spd/Pwr until benched');
   }
 
   if (cardId === 'coaches_challenge') {

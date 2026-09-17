@@ -394,6 +394,32 @@ export function FriendsDynastyView({ leagueId, uid, onBack, onPlayFixture, onOpe
     finally { setBusy(false); }
   }, [toast]);
 
+  // DELETE THE DYNASTY (2026-09-16, the user: "Need the ability to delete a
+  // dynasty if you're the host"). Two dialogs — what it means, then the
+  // dynasty's name typed out — and the server asks for the name again. The
+  // button sits in the header beside the other commissioner's calls (it was
+  // at the foot of the page under the news feed; 2026-09-17: "I still think
+  // that I am unable to delete a dynasty with friends").
+  const sameName = (a, b) => String(a ?? '').trim().replace(/ +/g, ' ').toLowerCase() === String(b ?? '').trim().replace(/ +/g, ' ').toLowerCase();
+  const deleteIt = async () => {
+    const yes = await ask({
+      title: 'Delete this dynasty?',
+      body: `It disappears for all ${league.entrants.length} coaches — every season, trade and contract in it. Coins already paid stay paid; nothing is refunded. This cannot be undone.`,
+      confirmLabel: 'Next',
+      tone: 'danger',
+    });
+    if (!yes) return;
+    const typed = await askText({
+      title: 'Type the dynasty\'s name to delete it',
+      body: `“${league.name}”`,
+      placeholder: league.name, confirmLabel: 'Delete it', tone: 'danger',
+    });
+    if (typed == null) return;
+    // The name is a check that you mean it, not a spelling test: case and
+    // runs of spaces do not count (the server reads it the same way).
+    if (!sameName(typed, league.name)) { toast(`Not deleted — that is not “${league.name}”.`, { tone: 'error' }); return; }
+    run(async () => { await deleteLeague(uid, { leagueId: league.id, name: typed.trim() }); onBack(); }, 'The dynasty is deleted.');
+  };
   if (league === undefined) return <div className={styles.muted}>Loading…</div>;
   if (league === null) return <div className={styles.empty}>That dynasty is gone. <button type="button" className={styles.ghost} onClick={onBack}>Back</button></div>;
 
@@ -408,7 +434,7 @@ export function FriendsDynastyView({ leagueId, uid, onBack, onPlayFixture, onOpe
     };
     return (
       <LeagueLobby
-        league={league} uid={uid} busy={busy} onBack={onBack} onCancel={cancel} onLeave={leave}
+        league={league} uid={uid} busy={busy} onBack={onBack} onCancel={cancel} onLeave={leave} onDelete={isHost ? deleteIt : null}
         onStart={() => run(() => startLeague(uid, { leagueId: league.id }), 'The dynasty is under way.')}
       />
     );
@@ -478,32 +504,6 @@ export function FriendsDynastyView({ leagueId, uid, onBack, onPlayFixture, onOpe
       toast([...lines, ...fails].join(' · ') || 'Nothing to sim.', { tone: fails.length ? 'error' : 'success' });
     });
   };
-  // DELETE THE DYNASTY (2026-09-16, the user: "Need the ability to delete a
-  // dynasty if you're the host"). Two dialogs — what it means, then the
-  // dynasty's name typed out — and the server asks for the name again. The
-  // button sits in the header beside the other commissioner's calls (it was
-  // at the foot of the page under the news feed; 2026-09-17: "I still think
-  // that I am unable to delete a dynasty with friends").
-  const sameName = (a, b) => String(a ?? '').trim().replace(/ +/g, ' ').toLowerCase() === String(b ?? '').trim().replace(/ +/g, ' ').toLowerCase();
-  const deleteIt = async () => {
-    const yes = await ask({
-      title: 'Delete this dynasty?',
-      body: `It disappears for all ${humanIds(d).length} coaches — every season, trade and contract in it. Coins already paid stay paid; nothing is refunded. This cannot be undone.`,
-      confirmLabel: 'Next',
-      tone: 'danger',
-    });
-    if (!yes) return;
-    const typed = await askText({
-      title: 'Type the dynasty\'s name to delete it',
-      body: `“${league.name}”`,
-      placeholder: league.name, confirmLabel: 'Delete it', tone: 'danger',
-    });
-    if (typed == null) return;
-    // The name is a check that you mean it, not a spelling test: case and
-    // runs of spaces do not count (the server reads it the same way).
-    if (!sameName(typed, league.name)) { toast(`Not deleted — that is not “${league.name}”.`, { tone: 'error' }); return; }
-    run(async () => { await deleteLeague(uid, { leagueId: league.id, name: typed.trim() }); onBack(); }, 'The dynasty is deleted.');
-  };
   const forfeit = async (fixtureId, loserTeamId, loserName) => {
     const yes = await ask({
       title: `${loserName} forfeits?`,
@@ -542,6 +542,7 @@ export function FriendsDynastyView({ leagueId, uid, onBack, onPlayFixture, onOpe
           onSimAi={simAi}
           onSimCoaches={simCoaches}
           onForfeit={forfeit}
+          headExtra={isHost ? <button type="button" className={styles.ghost} disabled={busy} onClick={deleteIt}>Delete this dynasty</button> : null}
           title={`${league.name} · Year ${d.year}`}
           backLabel="All dynasties"
           presetExtra={{ returnTab: 'dynasty', leagueId: league.id }}
@@ -549,7 +550,6 @@ export function FriendsDynastyView({ leagueId, uid, onBack, onPlayFixture, onOpe
             <span className={dy.readyWrap}>
               <PhaseButton moves={moves} onDone={noop} label={last ? 'Close out the dynasty →' : `Close out Year ${d.year} →`} />
               {canForce && <button type="button" className={styles.ghost} onClick={force}>Force it on</button>}
-              {isHost && <button type="button" className={styles.ghost} disabled={busy} onClick={deleteIt}>Delete this dynasty</button>}
             </span>
           )}
         />

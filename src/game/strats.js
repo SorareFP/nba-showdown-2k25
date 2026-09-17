@@ -100,7 +100,7 @@ export const STRATS = [
     // fatigue"). The door was the fatigue PENALTY — eight minutes on the
     // tracker — and once the coach rested its players at twelve the AI held
     // this 337 times and played it never. Now any minutes on the tracker.
-    desc:'Target an opposing player with any minutes on the fatigue tracker: −2 Speed and −2 Power until benched for a segment.' },
+    desc:'Target a fatigued opposing player, however little: −2 Speed and −2 Power until benched for a segment.' },
   { id:'overhelp',            name:'Overhelp',           phase:'reaction', side:'off', copies:2, locked:false, color:'#0369A1', rarity:'common',
     desc:'Opponent plays a defensive switching card: one of your players gets +3 to their scoring roll this segment.' },
   { id:'burned_switch',       name:'Burned on the Switch',phase:'reaction',side:'off', copies:2, locked:false, color:'#DC2626', rarity:'common',

@@ -11,7 +11,7 @@ import { levelById } from '../../game/aiLevels.js';
 import styles from '../SeasonTab.module.css';
 import lg from './League.module.css';
 
-export default function LeagueLobby({ league, uid, busy = false, onStart, onCancel, onLeave, onBack }) {
+export default function LeagueLobby({ league, uid, busy = false, onStart, onCancel, onLeave, onBack, onDelete = null }) {
   const [copied, setCopied] = useState(false);
   const isHost = league.hostUid === uid;
   const why = canStart(league);
@@ -100,6 +100,7 @@ export default function LeagueLobby({ league, uid, busy = false, onStart, onCanc
               {busy ? 'Working…' : why ?? (tour ? 'Deal the bracket' : dyn ? 'Start the dynasty' : 'Start the season')}
             </button>
             <button className={styles.ghost} disabled={busy} onClick={onCancel}>Cancel {tour ? 'tournament' : dyn ? 'dynasty' : 'league'}</button>
+            {onDelete && <button className={styles.ghost} disabled={busy} onClick={onDelete}>Delete dynasty</button>}
           </>
         ) : (
           <>

@@ -868,6 +868,9 @@ function CoachDifficulty() {
 function Dashboard({
   season, uid, commit, onPlayFixture, onBack, onAbandon,
   league = null, busy = false, onOpenRoom = null, onSimAi = null, onForfeit = null, onSimCoaches = null,
+  // A caller's own header buttons — a dynasty's commissioner calls — shown
+  // in every phase, unlike `finale`, which the season's end alone renders.
+  headExtra = null,
   // A dynasty year is this same screen (DynastyTab.jsx): its own finale in
   // place of the title-money claim, its own title, and a fixture that says
   // which tab to come back to.
@@ -1038,6 +1041,7 @@ function Dashboard({
         <div className={styles.headActions}>
           <button className={styles.ghost} onClick={onBack}>{backLabel}</button>
           {onAbandon && <button className={styles.ghost} onClick={onAbandon}>Abandon</button>}
+          {headExtra}
         </div>
       </header>
 

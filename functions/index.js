@@ -1400,8 +1400,11 @@ export const deleteLeague = onCall({ region: 'us-central1' }, async request => {
     const league = snap.data();
     if (league.hostUid !== uid) throw new HttpsError('permission-denied', 'Only the host can delete it');
     if (league.kind !== 'dynasty') throw new HttpsError('failed-precondition', 'Only a dynasty can be deleted');
-    if (String(name ?? '').trim() !== String(league.name ?? '').trim()) {
-      throw new HttpsError('failed-precondition', 'Type the dynasty\'s name exactly to delete it');
+    // The name is a check that the host means it, not a spelling test: case
+    // and runs of spaces do not count, the same reading the screen makes.
+    const norm = s => String(s ?? '').trim().replace(/ +/g, ' ').toLowerCase();
+    if (norm(name) !== norm(league.name)) {
+      throw new HttpsError('failed-precondition', `Type the dynasty's name to delete it — it is "${league.name}"`);
     }
     const bids = await tx.get(db.collection(`leagues/${String(leagueId)}/bids`));
     for (const b of bids.docs) tx.delete(b.ref);

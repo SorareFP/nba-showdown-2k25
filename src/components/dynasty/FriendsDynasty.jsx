@@ -480,7 +480,11 @@ export function FriendsDynastyView({ leagueId, uid, onBack, onPlayFixture, onOpe
   };
   // DELETE THE DYNASTY (2026-09-16, the user: "Need the ability to delete a
   // dynasty if you're the host"). Two dialogs — what it means, then the
-  // dynasty's name typed out — and the server asks for the name again.
+  // dynasty's name typed out — and the server asks for the name again. The
+  // button sits in the header beside the other commissioner's calls (it was
+  // at the foot of the page under the news feed; 2026-09-17: "I still think
+  // that I am unable to delete a dynasty with friends").
+  const sameName = (a, b) => String(a ?? '').trim().replace(/ +/g, ' ').toLowerCase() === String(b ?? '').trim().replace(/ +/g, ' ').toLowerCase();
   const deleteIt = async () => {
     const yes = await ask({
       title: 'Delete this dynasty?',
@@ -495,7 +499,9 @@ export function FriendsDynastyView({ leagueId, uid, onBack, onPlayFixture, onOpe
       placeholder: league.name, confirmLabel: 'Delete it', tone: 'danger',
     });
     if (typed == null) return;
-    if (typed.trim() !== String(league.name ?? '').trim()) { toast('Not deleted — the name did not match.', { tone: 'error' }); return; }
+    // The name is a check that you mean it, not a spelling test: case and
+    // runs of spaces do not count (the server reads it the same way).
+    if (!sameName(typed, league.name)) { toast(`Not deleted — that is not “${league.name}”.`, { tone: 'error' }); return; }
     run(async () => { await deleteLeague(uid, { leagueId: league.id, name: typed.trim() }); onBack(); }, 'The dynasty is deleted.');
   };
   const forfeit = async (fixtureId, loserTeamId, loserName) => {
@@ -515,11 +521,6 @@ export function FriendsDynastyView({ leagueId, uid, onBack, onPlayFixture, onOpe
       {d.phase !== DPHASE.done && <FrontOffice d={d} moves={moves} />}
       <FriendsYears d={d} />
       <NewsFeed d={d} />
-      {isHost && (
-        <div className={styles.rowActions}>
-          <button type="button" className={styles.ghost} disabled={busy} onClick={deleteIt}>Delete this dynasty</button>
-        </div>
-      )}
     </>
   );
 
@@ -548,6 +549,7 @@ export function FriendsDynastyView({ leagueId, uid, onBack, onPlayFixture, onOpe
             <span className={dy.readyWrap}>
               <PhaseButton moves={moves} onDone={noop} label={last ? 'Close out the dynasty →' : `Close out Year ${d.year} →`} />
               {canForce && <button type="button" className={styles.ghost} onClick={force}>Force it on</button>}
+              {isHost && <button type="button" className={styles.ghost} disabled={busy} onClick={deleteIt}>Delete this dynasty</button>}
             </span>
           )}
         />
@@ -582,6 +584,7 @@ export function FriendsDynastyView({ leagueId, uid, onBack, onPlayFixture, onOpe
           {isHost && d.aging && d.history.length > 0 && isOffseason(d) && (
             <button type="button" className={styles.ghost} onClick={endIt}>End the dynasty</button>
           )}
+          {isHost && <button type="button" className={styles.ghost} disabled={busy} onClick={deleteIt}>Delete this dynasty</button>}
         </div>
       </header>
       <PhaseTrack d={d} />

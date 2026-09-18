@@ -823,6 +823,31 @@ export function creditPaintScore(g, teamKey, playerIdx, player) {
   g.log = [...g.log, { team: teamKey, msg: `Short-Roll Playmaker: ${player?.name} scores inside — +1 AST` }];
 }
 
+/**
+ * THE CHECK A COACH'S CHALLENGE REACHES — every shot check, wherever it came
+ * from, records itself here as the latest one.
+ *
+ * Only the announced card checks (applyShotCheck) did. The spend checks — the
+ * 5-AST 3PT and paint checks and the rebound paint check — and the checks a
+ * card rolls inside itself (Rebound Tap-Out, And-One, Drive the Lane, Flare
+ * Screen) left the record alone, so a Challenge reached back past them to an
+ * older card check (the user, 2026-09-18: Mouhamed Gueye's Rebound Paint Check
+ * went in, the Challenge re-rolled Kyle Anderson's earlier Bully Ball MISS —
+ * into a make — "Coach's challenge should apply to the rebound paint check,
+ * not bully ball").
+ *
+ * `pool` names where the check's points were booked in the analytics, so the
+ * Challenge takes them back out of the same place: 'card' (the shot-check
+ * tallies trackShotCheck keeps), 'assistSpend' or 'reboundBonus'. `bonus` is
+ * what the re-roll adds — a number or shotCheck's parts array.
+ */
+export function noteLastCheck(g, { teamKey, playerIdx, player, type, result, label, bonus = 0, pool = 'card', specialRoll, onHit, closeOutApplied = false }) {
+  g.lastShotCheck = {
+    teamKey, playerIdx, playerId: player?.id, type, result, pts: result.pts,
+    cardLabel: label, bonus, pool, specialRoll, onHit, closeOutApplied,
+  };
+}
+
 export function spendAssist(g, teamKey, type, playerIdx) {
   // NOTHING SCORES AFTER THE FINAL WHISTLE. A rebound bonus earned in the
   // last section carries to a next section that does not exist, and the
@@ -850,8 +875,10 @@ export function spendAssist(g, teamKey, type, playerIdx) {
     // a bonus to be able to spend"); the bonus, either sign, rides on the die.
     myT.assists -= SPEND_COSTS.assistThree;
     const astBonus = ng.tempEff?.[teamKey]?.['astBoost_' + playerIdx] || 0;
-    const r = shotCheck(player, '3pt', spendParts(astBonus, matchupContest(ng, teamKey, playerIdx, '3pt')), ps, getFatigue(ng, teamKey, playerIdx));
+    const parts3 = spendParts(astBonus, matchupContest(ng, teamKey, playerIdx, '3pt'));
+    const r = shotCheck(player, '3pt', parts3, ps, getFatigue(ng, teamKey, playerIdx));
     if (creditCheckDefended(ng, teamKey, playerIdx, '3pt', r, matchupContest(ng, teamKey, playerIdx, '3pt'))) r.blk = true;
+    noteLastCheck(ng, { teamKey, playerIdx, player, type: '3pt', result: r, label: `${SPEND_COSTS.assistThree}-AST 3PT check`, bonus: parts3, pool: 'assistSpend' });
     if (r.hit) {
       myT.score += r.pts;
       const ps2 = myT.stats.find(s => s.id === player.id);
@@ -873,9 +900,11 @@ export function spendAssist(g, teamKey, type, playerIdx) {
     if (myT.assists < SPEND_COSTS.assistPaint) return { game: ng, ok: false, msg: `Need ${SPEND_COSTS.assistPaint} assists (have ${myT.assists})` };
     myT.assists -= SPEND_COSTS.assistPaint;
     const astBonus = ng.tempEff?.[teamKey]?.['astBoost_' + playerIdx] || 0;
-    const r = shotCheck(player, 'paint', spendParts(astBonus, matchupContest(ng, teamKey, playerIdx, 'paint')), ps, getFatigue(ng, teamKey, playerIdx));
+    const partsP = spendParts(astBonus, matchupContest(ng, teamKey, playerIdx, 'paint'));
+    const r = shotCheck(player, 'paint', partsP, ps, getFatigue(ng, teamKey, playerIdx));
     if (creditCheckDefended(ng, teamKey, playerIdx, 'paint', r, matchupContest(ng, teamKey, playerIdx, 'paint'))) r.blk = true;
     recordPaintCheck(ng, teamKey, player.id, r.hit);
+    noteLastCheck(ng, { teamKey, playerIdx, player, type: 'paint', result: r, label: `${SPEND_COSTS.assistPaint}-AST paint check`, bonus: partsP, pool: 'assistSpend' });
     if (r.hit) {
       myT.score += r.pts;
       const ps2 = myT.stats.find(s => s.id === player.id);
@@ -909,9 +938,11 @@ export function spendReboundBonus(g, teamKey, type, playerIdx) {
     // Second-chance paint shot check (from +3 reb advantage) — costs 3 REB
     if (myT.rebounds < SPEND_COSTS.reboundPaint) return { game: ng, ok: false, msg: `Need ${SPEND_COSTS.reboundPaint} rebounds (have ${myT.rebounds})` };
     myT.rebounds -= SPEND_COSTS.reboundPaint;
-    const r = shotCheck(player, 'paint', spendParts(0, matchupContest(ng, teamKey, playerIdx, 'paint')), ps, getFatigue(ng, teamKey, playerIdx));
+    const partsR = spendParts(0, matchupContest(ng, teamKey, playerIdx, 'paint'));
+    const r = shotCheck(player, 'paint', partsR, ps, getFatigue(ng, teamKey, playerIdx));
     if (creditCheckDefended(ng, teamKey, playerIdx, 'paint', r, matchupContest(ng, teamKey, playerIdx, 'paint'))) r.blk = true;
     recordPaintCheck(ng, teamKey, player.id, r.hit);
+    noteLastCheck(ng, { teamKey, playerIdx, player, type: 'paint', result: r, label: 'Rebound Paint Check', bonus: partsR, pool: 'reboundBonus' });
     if (r.hit) {
       myT.score += r.pts;
       const ps2 = myT.stats.find(s => s.id === player.id);

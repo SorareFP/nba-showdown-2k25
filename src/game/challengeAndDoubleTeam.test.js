@@ -2,8 +2,8 @@
 //   - the AI's Coach's Challenge answers a MAKE, never a miss (a re-roll of a
 //     miss can only turn it into a make — it did, for three)
 //   - Double Team is once per section
-import { describe, it, expect } from 'vitest';
-import { newGame, getTeam } from './engine.js';
+import { describe, it, expect, vi } from 'vitest';
+import { newGame, getTeam, spendReboundBonus, spendAssist } from './engine.js';
 import { execCard } from './execCard.js';
 import { canPlayCard } from './canPlay.js';
 import { aiScoringDecision, aiReactionDecision } from './ai.js';
@@ -53,6 +53,87 @@ describe("the AI's Coach's Challenge", () => {
     const g = scoring({ bHand: ['coaches_challenge'] });
     g.lastShotCheck = { ...lastCheck(true), teamKey: 'B' };
     expect(aiScoringDecision(g, 'B').type).toBe('pass');
+  });
+});
+
+// THE CHECK A CHALLENGE REACHES (the user, 2026-09-18): Mouhamed Gueye's
+// Rebound Paint Check went in, and the Challenge re-rolled Kyle Anderson's
+// OLDER Bully Ball miss into a make — the spend checks never recorded
+// themselves as the latest check. Every route now does (noteLastCheck).
+describe("the check a Coach's Challenge reaches", () => {
+  const staleMiss = { teamKey: 'B', playerIdx: 1, playerId: 'b1', type: 'paint', result: { hit: false, pts: 0, die: 5, type: 'paint' }, pts: 0, cardLabel: 'Bully Ball paint #2', bonus: -1, pool: 'card' };
+  const forced = (g, fn, rand) => {
+    const spy = vi.spyOn(Math, 'random').mockReturnValue(rand);
+    try { return fn(g); } finally { spy.mockRestore(); }
+  };
+
+  it('is the Rebound Paint Check that just went in, not an older card miss — and the Challenge takes back its points', () => {
+    const g = scoring();
+    getTeam(g, 'B').rebounds = 6;
+    getTeam(g, 'A').hand = ['coaches_challenge'];
+    g.lastShotCheck = staleMiss;
+    const before = getTeam(g, 'B').score;
+    const spent = forced(g, x => spendReboundBonus(x, 'B', 'paint_check', 3), 0.99);   // a 20: in
+    expect(spent.ok).toBe(true);
+    const made = spent.game;
+    expect(getTeam(made, 'B').score).toBe(before + 2);
+    expect(made.lastShotCheck).toMatchObject({ teamKey: 'B', playerIdx: 3, cardLabel: 'Rebound Paint Check', pool: 'reboundBonus', pts: 2 });
+    expect(made.lastShotCheck.result.hit).toBe(true);
+    // The prompt names what is about to be re-rolled.
+    made.phase = 'scoring';
+    const can = canPlayCard(made, 'A', 'coaches_challenge');
+    expect(can.canPlay).toBe(true);
+    expect(can.reason ?? can.msg ?? '').toMatch(/b3's Rebound Paint Check \(a make, 2 pts\)/);
+    const shotPtsBefore = made.analytics?.B?.shotCheckPts;
+    const reb = made.analytics?.B?.reboundBonusPts;
+    const ch = forced(made, x => execCard(x, 'A', 'coaches_challenge', {}), 0);           // a 1: out
+    expect(ch.ok).toBe(true);
+    expect(getTeam(ch.game, 'B').score).toBe(before);                                   // the 2 came off
+    expect(ch.game.log.at(-1).msg).toMatch(/Coach's Challenge: b3's Rebound Paint Check re-rolled/);
+    expect(ch.game.log.at(-1).msg).not.toMatch(/Bully Ball/);
+    if (made.analytics?.B) {
+      expect(ch.game.analytics.B.reboundBonusPts).toBe(reb - 2);                        // taken back where it was booked
+      expect(ch.game.analytics.B.shotCheckPts).toBe(shotPtsBefore);                     // the card tallies untouched
+    }
+    expect(ch.game.lastShotCheck).toBeNull();
+  });
+
+  it('is the 5-AST 3PT check too, and a challenge of it moves the 3PT line both ways', () => {
+    const g = scoring();
+    getTeam(g, 'B').assists = 6;
+    g.lastShotCheck = staleMiss;
+    const spent = forced(g, x => spendAssist(x, 'B', '3pt', 2), 0.99);
+    expect(spent.ok).toBe(true);
+    expect(spent.game.lastShotCheck).toMatchObject({ teamKey: 'B', playerIdx: 2, type: '3pt', pool: 'assistSpend', pts: 3 });
+    const ps = s => s.find(x => x.id === 'b2');
+    expect(ps(getTeam(spent.game, 'B').stats)).toMatchObject({ threepa: 1, threepm: 1 });
+    getTeam(spent.game, 'A').hand = ['coaches_challenge'];
+    spent.game.phase = 'scoring';
+    const ch = forced(spent.game, x => execCard(x, 'A', 'coaches_challenge', {}), 0);
+    expect(ch.ok).toBe(true);
+    expect(ps(getTeam(ch.game, 'B').stats)).toMatchObject({ threepa: 1, threepm: 0 });  // one attempt, now a miss
+  });
+
+  it('is written by every route that rolls a check', async () => {
+    const { readFileSync } = await import('node:fs');
+    // Every line that rolls a check in the two files is followed, within a
+    // few lines, by a noteLastCheck — the Challenge's own re-roll excepted.
+    // A fifth route that forgets it fails here by name.
+    const missing = [];
+    for (const file of ['./engine.js', './execCard.js']) {
+      const lines = readFileSync(new URL(file, import.meta.url), 'utf8').split(/\r?\n/);
+      lines.forEach((line, i) => {
+        const code = line.replace(/\/\/.*$/, '');
+        if (!/(?:_shotCheck|\bshotCheck)\(/.test(code)) return;
+        if (/function shotCheck|const _shotCheck|lsc\.type/.test(code)) return; // definitions; the re-roll itself
+        if (/const _shotCheck/.test(lines[i - 1] ?? '')) return;              // the wrapper's body
+        // Up to the next roll (or 60 lines): applyShotCheck notes its check at the end.
+        let end = i + 1;
+        while (end < lines.length && end < i + 60 && !/(?:_shotCheck|\bshotCheck)\(/.test(lines[end].replace(/\/\/.*$/, ''))) end += 1;
+        if (!/noteLastCheck\(/.test(lines.slice(i, end).join('\n'))) missing.push(`${file}:${i + 1}`);
+      });
+    }
+    expect(missing).toEqual([]);
   });
 });
 

@@ -513,7 +513,11 @@ export function canPlayCard(g, teamKey, cardId) {
     if (used >= 2) return no("Already used 2 Coach's Challenges this game");
     if (!g.lastShotCheck) return no('No recent shot check to challenge');
     if (g.lastShotCheck.teamKey === teamKey) return no("Can only challenge opponent's shot checks");
-    return ok("Re-roll opponent's last shot check");
+    // Name the target, so nobody challenges a check they did not mean to
+    // (the user, 2026-09-18, whose Challenge hit an older Bully Ball miss).
+    const lsc = g.lastShotCheck;
+    const who = getOpp(g, teamKey)?.starters?.[lsc.playerIdx]?.name;
+    return ok(`Re-roll ${who ? `${who}'s ` : ''}${lsc.cardLabel ?? 'last shot check'} (${lsc.result?.hit ? `a make, ${lsc.pts} pts` : 'a miss'})`);
   }
 
   if (cardId === 'delayed_slip') {

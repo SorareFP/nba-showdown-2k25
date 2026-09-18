@@ -3,7 +3,7 @@
 // Never mutates — always returns a new object via deepClone
 
 import { handOverPriority, getTeam, getOpp, getPS, calcAdv, shotCheck, matchupContest, drawCards, deepClone, getFatigue, recordDefSwitch, burnedSlots, roll20, checkAssistDraw, standingEntry, CROWD_FAVORITE_PTS, satOutLast, bottomedLines } from './engine.js';
-import { creditAllowed, creditCheckDefended, recordPaintCheck, creditPaintScore } from './engine.js';
+import { creditAllowed, creditCheckDefended, recordPaintCheck, creditPaintScore, noteLastCheck } from './engine.js';
 import { helpTargets, canAnswerCheck, myHouseHolds, foulTroubleTargets } from './canPlay.js';
 import { lookupChart } from './cards.js';
 import { getStrat } from './strats.js';
@@ -120,8 +120,10 @@ export function resolveGoUnder(game, slot) {
   const offPlayer = offT.starters[slot];
   if (!offPlayer) return { game, ok: false, msg: 'No such player' };
   const offPs = getPS(g, pc.teamKey, offPlayer.id) || {};
-  const r = shotCheck(offPlayer, '3pt', pc.extra - matchupContest(g, pc.teamKey, slot, '3pt'), offPs, getFatigue(g, pc.teamKey, slot));
+  const guBonus = pc.extra - matchupContest(g, pc.teamKey, slot, '3pt');
+  const r = shotCheck(offPlayer, '3pt', guBonus, offPs, getFatigue(g, pc.teamKey, slot));
   trackShotCheck(g, pc.teamKey, r, '3pt', slot);
+  noteLastCheck(g, { teamKey: pc.teamKey, playerIdx: slot, player: offPlayer, type: '3pt', result: r, label: 'Go Under 3PT check', bonus: guBonus });
   recordShot(g, pc.teamKey, offPlayer.id, '3pt', r.hit);
   if (creditCheckDefended(g, pc.teamKey, slot, '3pt', r, matchupContest(g, pc.teamKey, slot, '3pt'))) r.blk = true;
   if (r.hit) scorePts(g, pc.teamKey, offPlayer.id, r.pts);
@@ -561,6 +563,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       recordShot(g, teamKey, player?.id, '3pt', r.hit);
       if (creditCheckDefended(g, teamKey, idx, '3pt', r, matchupContest(g, teamKey, idx, '3pt'))) r.blk = true;
       trackShotCheck(g, teamKey, r, '3pt');
+      noteLastCheck(g, { teamKey, playerIdx: idx, player, type: '3pt', result: r, label: 'Rebound Tap-Out', bonus: 1 });
       if (r.die <= 2)  pss().cold = (pss().cold || 0) + 1;
       if (r.die >= 19) pss().hot  = (pss().hot  || 0) + 1;
       if (r.hit) scorePts(g, teamKey, player?.id, r.pts);
@@ -733,6 +736,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
         const r = _shotCheck(player, 'ft', 0, ps);
         recordShot(g, teamKey, player?.id, 'ft', r.hit);
         trackShotCheck(g, teamKey, r, 'ft');
+        noteLastCheck(g, { teamKey, playerIdx: idx, player, type: 'ft', result: r, label: 'And-One free throw' });
         if (r.die <= 2)  pss().cold = (pss().cold || 0) + 1;
         if (r.die >= 19) pss().hot  = (pss().hot  || 0) + 1;
         if (r.hit) scorePts(g, teamKey, player?.id, r.pts);
@@ -759,6 +763,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
         const r = _shotCheck(player, 'ft', 0, ps);
         recordShot(g, teamKey, player?.id, 'ft', r.hit);
         trackShotCheck(g, teamKey, r, 'ft');
+        noteLastCheck(g, { teamKey, playerIdx: idx, player, type: 'ft', result: r, label: `Drive FT #${i + 1}` });
         if (r.die <= 2)  pss().cold = (pss().cold || 0) + 1;
         if (r.die >= 19) pss().hot  = (pss().hot  || 0) + 1;
         tot += r.pts;
@@ -840,6 +845,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       recordShot(g, teamKey, player?.id, '3pt', r.hit);
       if (creditCheckDefended(g, teamKey, idx, '3pt', r, matchupContest(g, teamKey, idx, '3pt'))) r.blk = true;
       trackShotCheck(g, teamKey, r, '3pt');
+      noteLastCheck(g, { teamKey, playerIdx: idx, player, type: '3pt', result: r, label: 'Flare Screen' });
       if (r.die <= 2)  pss().cold = (pss().cold || 0) + 1;
       if (r.die >= 19) pss().hot  = (pss().hot  || 0) + 1;
       let flareDrew = 0;
@@ -1089,12 +1095,18 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       creditAllowed(g, oppKey2, lsc.playerIdx, -oldPts);
       creditCheckDefended(g, oppKey2, lsc.playerIdx, oldResult.type ?? lsc.type, oldResult, 0, -1);
       if ((oldResult.type ?? lsc.type) === 'paint') recordPaintCheck(g, oppKey2, ccPlayer.id, oldResult.hit, -1);
-      // Analytics: reverse the old shot check result
-      if (g.analytics?.[oppKey2]) {
-        g.analytics[oppKey2].shotCheckPts -= oldPts;
-        if (oldResult.hit) g.analytics[oppKey2].totalShotCheckHits--;
-        g.analytics[oppKey2].totalShotChecks--;
-        if (oldResult.hit && oldResult.type === 'ft') g.analytics[oppKey2].freeThrowPts -= oldPts;
+      // Analytics: reverse the old result from the tally it was booked in — a
+      // spend check's points sit in assistSpendPts / reboundBonusPts, not the
+      // card shot-check tallies (noteLastCheck's `pool`; older saves: 'card').
+      const ccPool = lsc.pool ?? 'card';
+      const ccAn = g.analytics?.[oppKey2];
+      if (ccAn && ccPool === 'card') {
+        ccAn.shotCheckPts -= oldPts;
+        if (oldResult.hit) ccAn.totalShotCheckHits--;
+        ccAn.totalShotChecks--;
+        if (oldResult.hit && oldResult.type === 'ft') ccAn.freeThrowPts -= oldPts;
+      } else if (ccAn) {
+        ccAn[`${ccPool}Pts`] = (ccAn[`${ccPool}Pts`] || 0) - oldPts;
       }
       if (oldResult.hit && lsc.onHit === 'ast') { ccTeam.assists--; }
       // Reverse shot stats
@@ -1109,7 +1121,8 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       const newR = shotCheck(ccPlayer, lsc.type, lsc.bonus || 0, ccPs, getFatigue(g, oppKey2, lsc.playerIdx));
       recordShot(g, oppKey2, ccPlayer.id, lsc.type, newR.hit);
       if (creditCheckDefended(g, oppKey2, lsc.playerIdx, lsc.type, newR, matchupContest(g, oppKey2, lsc.playerIdx, lsc.type))) newR.blk = true;
-      trackShotCheck(g, oppKey2, newR, lsc.type);
+      if (ccPool === 'card') trackShotCheck(g, oppKey2, newR, lsc.type);
+      else if (ccAn && newR.hit) ccAn[`${ccPool}Pts`] = (ccAn[`${ccPool}Pts`] || 0) + newR.pts;
 
       // Apply new hot/cold
       if (lsc.specialRoll === 'fwd') {
@@ -1767,13 +1780,11 @@ export function applyShotCheck(g, psc) {
   if (!r.hit && psc.rimProtector) msg += ' — Rim Protector! +2 REB for the defence';
   g.log = [...g.log, { team: psc.teamKey, msg }];
 
-  // Track for Coach's Challenge
-  g.lastShotCheck = {
-    teamKey: psc.teamKey, playerIdx: psc.playerIdx, playerId: player?.id,
-    type: psc.type, result: r, pts: r.pts, cardLabel: label,
-    bonus, specialRoll: psc.specialRoll, onHit: psc.onHit,
-    closeOutApplied: !!psc.closeOutBonus,
-  };
+  // Track for Coach's Challenge — the one record every check route writes.
+  noteLastCheck(g, {
+    teamKey: psc.teamKey, playerIdx: psc.playerIdx, player, type: psc.type, result: r, label,
+    bonus, specialRoll: psc.specialRoll, onHit: psc.onHit, closeOutApplied: !!psc.closeOutBonus,
+  });
   return r;
 }
 

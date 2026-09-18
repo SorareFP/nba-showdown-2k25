@@ -18,7 +18,7 @@ export const STRATS = [
   { id:'switch_the_screen',   name:'Switch the Screen',  phase:'matchup',  side:'def', copies:3, locked:false, color:'#1D4ED8', rarity:'common',
     desc:'Swap the defenders on two opposing players. The offence may answer with Overhelp or Burned on the Switch.' },
   { id:'ghost_screen',        name:'Ghost Screen',       phase:'pre_roll', side:'off', copies:2, locked:false, color:'#6366F1', rarity:'common',
-    desc:'Choose an offensive player with Speed 12+. They are treated as having no defender for matchup advantage — roll penalty is negated to 0.' },
+    desc:'Choose an offensive player with Speed 12+. They are treated as having no defender — roll penalty is negated to 0, and their shot checks are uncontested.' },
   { id:'you_stand_over_there',name:'You Stand Over There',phase:'pre_roll',side:'off', copies:2, locked:false, color:'#7C3AED', rarity:'uncommon',
     desc:'Before a player makes their scoring roll: they skip it and attempt two 3PT Shot Checks instead.' },
   { id:'putback_dunk',        name:'Putback Dunk',       phase:'pre_roll', side:'off', copies:2, locked:false, color:'#7C3AED', rarity:'uncommon',

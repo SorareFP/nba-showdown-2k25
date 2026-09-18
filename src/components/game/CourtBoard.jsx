@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { calcAdv, getTeam, getOpp, getPS, getFatigue, SNAKE, SPEND_COSTS, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, lastReturnedCard, undoReturnCard, periodLabel, extraRollPending, checkNeed, fatigueForMinutes, crunchSearchOptions } from '../../game/engine.js';
+import { calcAdv, matchupAdv, getTeam, getOpp, getPS, getFatigue, SNAKE, SPEND_COSTS, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, lastReturnedCard, undoReturnCard, periodLabel, extraRollPending, checkNeed, fatigueForMinutes, crunchSearchOptions } from '../../game/engine.js';
 import { canPlayCard, myHouseTargets, fwdTargets, preRollTargets, helpTargets, foulTroubleTargets } from '../../game/canPlay.js';
 import { resolveGoUnder } from '../../game/execCard.js';
 import { passTurn, MAX_STRAIGHT_MINUTES, restRuleLifted, pickablePool } from '../../game/engine.js';
@@ -1307,7 +1307,7 @@ function MatchupRow({ idx, game, setGame, onRoll, onExecCard, onSpendAssist, onS
   const aDef=game.teamB.starters[aDefIdx], bDef=game.teamA.starters[bDefIdx];
   return (
     <div className={styles.matchupRow}>
-      <PlayerSlot player={ap} ps={getPS(game,'A',ap.id)||{}} adv={aDef?calcAdv(ap,aDef,game.tempEff?.A||{},idx,game.tempDefEff?.B,aDefIdx):null}
+      <PlayerSlot player={ap} ps={getPS(game,'A',ap.id)||{}} adv={aDef?matchupAdv(game,'A',idx):null}
         fat={getFatigue(game,'A',idx)} result={(game.rollResults.A||[])[idx]} blocked={game.blockedRolls?.A?.[idx]}
         teamKey="A" idx={idx} phase={game.phase} game={game}
         defPlayer={aDef} defSelect={game.teamB.starters} defIdx={aDefIdx}
@@ -1317,7 +1317,7 @@ function MatchupRow({ idx, game, setGame, onRoll, onExecCard, onSpendAssist, onS
       <div className={styles.connector}>
         <div className={styles.connLine}/><div className={styles.slotNum}>{idx+1}</div><div className={styles.connLine}/>
       </div>
-      <PlayerSlot player={bp} ps={getPS(game,'B',bp.id)||{}} adv={bDef?calcAdv(bp,bDef,game.tempEff?.B||{},idx,game.tempDefEff?.A,bDefIdx):null}
+      <PlayerSlot player={bp} ps={getPS(game,'B',bp.id)||{}} adv={bDef?matchupAdv(game,'B',idx):null}
         fat={getFatigue(game,'B',idx)} result={(game.rollResults.B||[])[idx]} blocked={game.blockedRolls?.B?.[idx]}
         teamKey="B" idx={idx} phase={game.phase} game={game}
         defPlayer={bDef} defSelect={game.teamA.starters} defIdx={bDefIdx}
@@ -1746,8 +1746,10 @@ function LiveEffects({ game, teamKey, idx }) {
     push('def', styles.liveDef, 'D +' + (de.speedBoost || 0) + '/+' + (de.powerBoost || 0),
       'Defensive Speed/Power boost this segment (Double Team, Energizer, Defensive Identity, Defensive Stopper)');
   }
-  if (game.ghosted?.[teamKey]?.[idx])    push('ghost', styles.liveGood, '👻 no defender', 'Ghost Screen: treated as unguarded for matchups');
-  if (game.ignFatigue?.[teamKey]?.[idx]) push('wind',  styles.liveGood, 'ignores FAT', 'Second Wind: fatigue penalty ignored this segment');
+  // Both marks are FLAT keys, 'A_0' (execCard.js writes them so, engine.js
+  // reads them so); a nested read here meant neither chip ever showed.
+  if (game.ghosted?.[`${teamKey}_${idx}`])    push('ghost', styles.liveGood, '👻 no defender', 'Ghost Screen: no defender — no matchup edge or penalty, and no contest on his checks');
+  if (game.ignFatigue?.[`${teamKey}_${idx}`]) push('wind',  styles.liveGood, 'ignores FAT', 'Second Wind: fatigue penalty ignored this segment');
   const om = game.openMan?.[teamKey];
   if (om && typeof om === 'object' && om.except?.includes(idx)) push('trapped', styles.liveBad, 'trapped', 'Doubled — cannot be the open teammate');
   return tags.length ? <div className={styles.liveRow}>{tags}</div> : null;
@@ -1823,7 +1825,7 @@ function PlayerSlot({ player, ps, adv, fat, result, blocked, teamKey, idx, phase
         {adv&&defPlayer&&(
           <div className={styles.advBlock}>
             <div className={styles.advVsRow}>
-              <span className={styles.advVs}>vs {defPlayer.name}</span>
+              <span className={styles.advVs}>{adv.ghosted ? `👻 screened off ${defPlayer.name}` : `vs ${defPlayer.name}`}</span>
               {adv.db>0&&<span className={styles.advDefBadge}>DEF+{adv.db}</span>}
             </div>
             <div className={styles.advLine}>

@@ -586,9 +586,38 @@ export function recordPaintCheck(g, teamKey, playerId, hit, delta = 1) {
   if (hit) ps.pntm = Math.max(0, (ps.pntm || 0) + delta);
 }
 
+/** Is this slot's man screened off this section — Ghost Screen (execCard.js)? */
+export function isGhosted(g, teamKey, idx) {
+  return Boolean(g?.ghosted?.[`${teamKey}_${idx}`]);
+}
+
+/**
+ * THE MATCHUP A SLOT ROLLS AGAINST — the one reader for the roll (doRoll),
+ * the board's "vs …" readout and the coach's pricing of that slot. The user,
+ * 2026-09-18: "Ghost screen is not eliminating disadvantages". The roll did
+ * honour it — doRoll zeroed a ghosted man's matchup — but the board computed
+ * its own raw calcAdv and kept showing "Roll −2 ⚠", and the coach priced the
+ * roll the same way. A ghosted man has no defender: no edge, no penalty.
+ */
+export function matchupAdv(g, teamKey, idx) {
+  if (isGhosted(g, teamKey, idx)) {
+    return { speedAdv: 0, powerAdv: 0, rawSpeedDiff: 0, rawPowerDiff: 0, db: 0, rollBonus: 0, hasPenalty: false, ghosted: true };
+  }
+  const player = getTeam(g, teamKey)?.starters?.[idx];
+  const oppT = getOpp(g, teamKey);
+  const defIdx = (g.offMatchups?.[teamKey] || [])[idx] ?? idx;
+  const def = oppT?.starters?.[defIdx] || oppT?.starters?.[0];
+  if (!player || !def) return null;
+  const oppKey = teamKey === 'A' ? 'B' : 'A';
+  return calcAdv(player, def, g.tempEff?.[teamKey] || {}, idx, g.tempDefEff?.[oppKey], defIdx);
+}
+
 export function matchupContest(g, teamKey, idx, type) {
   if (!contestConfig.enabled) return 0;
   if (type === 'ft') return 0;
+  // No defender, no contest (2026-09-18): Ghost Screen's man is "treated as
+  // having no defender", so nobody's Defensive Bonus is on his shot either.
+  if (isGhosted(g, teamKey, idx)) return 0;
   const defIdx = (g.offMatchups?.[teamKey] || [])[idx] ?? idx;
   const def = getOpp(g, teamKey).starters?.[defIdx];
   const defKey = teamKey === 'A' ? 'B' : 'A';
@@ -1215,14 +1244,10 @@ export function doRoll(g, teamKey, idx, opts = {}) {
   const nPlayer = nMyT.starters[idx];
   const nDefPlayer = nOppT.starters[defIdx];
 
-  const ghosted = ng.ghosted?.[`${teamKey}_${idx}`];
-  let adv;
-  if (ghosted) {
-    adv = { speedAdv: 0, powerAdv: 0, rollBonus: 0, hasPenalty: false };
-  } else {
-    const oppKey = teamKey === 'A' ? 'B' : 'A';
-    adv = calcAdv(nPlayer, nDefPlayer, ng.tempEff[teamKey], idx, ng.tempDefEff?.[oppKey], defIdx);
-  }
+  // The one matchup reader (matchupAdv): Ghost Screen zeroes it here, on the
+  // board's readout and in the coach's pricing alike.
+  const ghosted = isGhosted(ng, teamKey, idx);
+  const adv = matchupAdv(ng, teamKey, idx);
 
   let bonus = adv.rollBonus;
   const te = ng.tempEff[teamKey] || {};

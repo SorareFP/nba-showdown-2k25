@@ -3,7 +3,7 @@
 // wave introduced — an announced Paint check the defence can answer (Back to
 // the Basket), and ONE answer per announced check.
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { newGame, getTeam, doRoll } from './engine.js';
+import { newGame, getTeam, doRoll, matchupAdv, matchupContest, checkNeed } from './engine.js';
 import { CARDS } from './cards.js';
 import { execCard, resolvePendingShotCheck } from './execCard.js';
 import { canPlayCard } from './canPlay.js';
@@ -282,6 +282,27 @@ describe('scoring-phase wave-one cards', () => {
     expect(canPlayCard(game({ hand: ['post_domination'] }), 'A', 'post_domination').canPlay).toBe(false);
     const bigs = five('a'); bigs[0] = p('big1', 10, 15); bigs[1] = p('big2', 10, 16);
     expect(canPlayCard(game({ A: bigs, B: five('b', 10, 16), hand: ['post_domination'] }), 'A', 'post_domination').canPlay).toBe(false);
+  });
+
+  it('Ghost Screen erases the matchup everywhere it is read — the roll, the readout, the contest (2026-09-18)', () => {
+    // Speed 12, Power 6 against a Def+1 wing: a penalty, and a contest on checks.
+    const A = five('a'); A[0] = p('gray', 12, 6, { shotLine: 15, threePtBoost: 1 });
+    const B = five('b'); B[0] = p('kawhi', 14, 15, { defBoost: 1 });
+    const g = game({ A, B, hand: ['ghost_screen'] });
+    expect(matchupAdv(g, 'A', 0).hasPenalty).toBe(true);
+    expect(matchupContest(g, 'A', 0, '3pt')).toBe(1);
+    const need = checkNeed(g, 'A', 0, '3pt').need;
+    const r = play(g, 'ghost_screen', { playerIdx: 0 });
+    expect(r.ok).toBe(true);
+    const adv = matchupAdv(r.game, 'A', 0);
+    expect(adv).toMatchObject({ rollBonus: 0, hasPenalty: false, ghosted: true });
+    expect(matchupContest(r.game, 'A', 0, '3pt')).toBe(0);
+    expect(checkNeed(r.game, 'A', 0, '3pt').need).toBe(need - 1);     // the Def+1 contest is gone
+    // And the roll itself carries no matchup term.
+    vi.spyOn(Math, 'random').mockReturnValue(0.6);                      // a 13
+    const rolled = doRoll(r.game, 'A', 0);
+    expect(rolled.rollResults.A[0].die).toBe(13);
+    expect(rolled.rollResults.A[0].finalRoll).toBe(13);
   });
 
   it('Dogged fires at a fatigued opponent at any depth — the penalty, not the minutes (2026-09-17)', () => {

@@ -3,7 +3,7 @@
 // Pure functions: takes game state + team key, returns an action object.
 // No React, no side effects. Used by tutorial, solo mode, sim-to-end.
 
-import { getTeam, getOpp, getPS, calcAdv, getFatigue, fatigueForMinutes, restMinutes, MAX_STRAIGHT_MINUTES, pickablePool, SPEND_COSTS, clutchAvailable, clutchEligible, burnedSlots, satOutLast, canRollSlot, extraRollPending, checkNeed, crunchSearchOptions } from './engine.js';
+import { getTeam, getOpp, getPS, calcAdv, matchupAdv, isGhosted, getFatigue, fatigueForMinutes, restMinutes, MAX_STRAIGHT_MINUTES, pickablePool, SPEND_COSTS, clutchAvailable, clutchEligible, burnedSlots, satOutLast, canRollSlot, extraRollPending, checkNeed, crunchSearchOptions } from './engine.js';
 import { lookupChart } from './cards.js';
 import { canPlayCard, helpTargets, staggerPair, myHouseTargets, foulTroubleTargets } from './canPlay.js';
 import { getStrat, STRATS } from './strats.js';
@@ -888,6 +888,8 @@ const CANCELLERS = ['go_under', 'fight_over', 'veer_switch'];
 const SWITCH_FLOOR = 0.4;
 const pointsFor = (game, offKey, p, slot, def, extra = 0) => {
   if (!p || !def) return 0;
+  // A ghosted man has no defender to switch (Ghost Screen): no edge either way.
+  if (isGhosted(game, offKey, slot)) return expectedOutput(p, carriedMod(game, offKey, p) + extra);
   const eff = game.tempEff?.[offKey] || {};
   return expectedOutput(p, calcAdv(p, def, eff, slot).rollBonus + carriedMod(game, offKey, p) + extra);
 };
@@ -1186,9 +1188,9 @@ export function forfeitNet(game, teamKey, idx, cardId) {
     const pHit = Math.min(1, Math.max(0, (21 - (need - c.bonus)) / 20));
     checks += CHECK_PTS[c.type] * pHit;
   }
-  const di = (game.offMatchups?.[teamKey] || [])[idx] ?? idx;
-  const dp = oppT?.starters?.[di];
-  const adv = dp ? calcAdv(p, dp, game.tempEff?.[teamKey] || {}, idx) : { rollBonus: 0 };
+  // The roll given up is priced at the matchup the dice would use (matchupAdv:
+  // Ghost Screen, a defender's own boosts), not a bare calcAdv.
+  const adv = matchupAdv(game, teamKey, idx) || { rollBonus: 0 };
   const ps = getPS(game, teamKey, p.id) || {};
   const roll = expectedOutput(p, adv.rollBonus + getFatigue(game, teamKey, idx) + ((ps.hot || 0) - (ps.cold || 0)) * 2);
   const cost = (spec.assists || 0) * ASSIST_WORTH;

@@ -7,13 +7,13 @@ import {
   startSeason, endSeason, closeResign, lotteryOdds, drawLottery, signRookie, closeRookies, classFor,
   projectedPayroll, summarizeDynasty, deadMoney, leagueKeys, passPick, classSize, ROOKIE_ROUNDS, buildDraftClass,
   baseAge, ageOf, retireChance, endDynasty, lotteryWeights, contractFor, aiCapDp, aiApronDp, tradeProblems,
-  rookieTerms, rookieCommitted, rookieProblem, teamOf, pickId, pickValue,
+  rookieTerms, rookieCommitted, rookieProblem, teamOf, pickId, pickValue, projectedSlot,
 } from './dynasty.js';
 import { CAP_DP, APRON_DP, AI_APRON_DP, FA_DAYS, fairDp, PERSONALITIES, CONTRACT_YEARS, rookieScale, talentValue, contractValue } from './dynastyMarket.js';
 import { getPlayerRarity } from '../rarity.js';
 import { dynastyYearEarnings, dynastyCompletionEarnings, dynastyClaim, DYNASTY_YEARS, SEASON_REWARDS, FANTASY_DYNASTY_FACTOR } from './prizes.js';
 import { buildAiLeague } from './aiTeams.js';
-import { recordResult, roundFixtures, advance, totalRounds, PHASE } from './season.js';
+import { recordResult, roundFixtures, advance, totalRounds, standings, PHASE } from './season.js';
 import { CARDS } from '../cards.js';
 import { getCardByKey, cardKey, CARD_SETS } from '../cardSets.js';
 import { packDynasty, unpackDynasty } from './seasonPack.js';
@@ -712,18 +712,32 @@ describe('the AI drafts what it can sign (2026-09-17)', () => {
     const best = [...draftAvailable(rich)].sort((a, b) => talentValue(getCardByKey(b)) - talentValue(getCardByKey(a)))[0];
     expect(talentValue(getCardByKey(choice))).toBeGreaterThanOrEqual(0.7 * talentValue(getCardByKey(best)));
     // Books at the apron: nothing fits, and shedding does not free room this season (dead money), so it passes.
-    const poor = { ...d, dead: [...d.dead, { teamId: ai, key: 'x', dp: aiApronDp(d), through: d.year }] };
+    // The roster is topped up to the floor first: a team BELOW it drafts past
+    // its apron (2026-09-18, 'a short-handed AI team' below), so the pass is
+    // pinned on the team this test always meant — one that can take the floor.
+    const atFloor = { ...d, contracts: { ...d.contracts } };
+    const spare = d.draftPool.filter(k => !d.draft.pool.includes(k));
+    const short = MIN_ROSTER - rosterKeys(d, ai).length - rightsOf(d, ai).length;
+    for (const k of spare.slice(0, Math.max(0, short))) atFloor.contracts[k] = { teamId: ai, dp: 1, years: 1, since: d.year, how: 'fill' };
+    expect(rosterKeys(atFloor, ai).length + rightsOf(atFloor, ai).length).toBeGreaterThanOrEqual(MIN_ROSTER);
+    const poor = { ...atFloor, dead: [...d.dead, { teamId: ai, key: 'x', dp: aiApronDp(d), through: d.year }] };
     const at = { ...poor, draft: { ...poor.draft, order: poor.draft.order.map((t, i) => (i === poor.draft.picks.length ? ai : t)) } };
     expect(aiDraftChoice(at, ai, () => 0)).toBeNull();
     // ...and simDraft turns that null into a pass, not a throw.
     const passed = simDraft(at, { rng });
     expect(passed.draft.picks[at.draft.picks.length]).toMatchObject({ teamId: ai, key: null });
-    // A full roster with money: it takes the best player when waiving its worst contract makes room for him.
+    // A full roster with money: it takes the best player when shedding its weakest man (shedCandidate) frees a seat for him.
+    // Full counts the picks it already holds this draft — each has a seat
+    // waiting (aiDraftChoice's `mine`); the class-seed change of 2026-09-18
+    // gave this seed's AI team a pick before this clock, and a roster of ten
+    // plus that right had no seat even after a shed.
     const full = { ...rich, contracts: { ...rich.contracts } };
-    const extra = draftAvailable(rich).slice(-(MAX_ROSTER - rosterKeys(rich, ai).length));
+    const seats = MAX_ROSTER - rosterKeys(rich, ai).length - rightsOf(rich, ai).length;
+    const board = draftAvailable(rich);
+    const extra = board.slice(board.length - Math.max(0, seats));
     for (const k of extra) full.contracts[k] = { teamId: ai, dp: 1, years: 1, since: 1, how: 'fill' };
     full.draft = { ...full.draft, pool: full.draft.pool.filter(k => !extra.includes(k)), order: full.draft.order.map((t, i) => (i === full.draft.picks.length ? ai : t)) };
-    expect(rosterKeys(full, ai)).toHaveLength(MAX_ROSTER);
+    expect(rosterKeys(full, ai).length + rightsOf(full, ai).length).toBe(MAX_ROSTER);
     const shedPick = aiDraftChoice(full, ai, () => 0);
     expect(shedPick).not.toBeNull();
     expect(talentValue(getCardByKey(shedPick))).toBe(Math.max(...draftAvailable(full).map(k => talentValue(getCardByKey(k)))));
@@ -795,6 +809,222 @@ describe('the AI drafts what it can sign (2026-09-17)', () => {
   });
 });
 
+// ── BUDGETING FOR THE PICKS, AND THE SHORT-HANDED TEAM (2026-09-18) ────────
+// A verifier's own starts passed 192 of 420 AI rookie slots, 21 of 30 first-
+// overall picks among them: aiResign re-signed to the apron holding nothing
+// back, the draft passed for money, and fillRoster then signed a free agent
+// past the apron anyway.
+describe('the AI budgets for its picks (2026-09-18)', () => {
+  it('a short-handed AI team at its apron drafts pick 1, has him under contract at tip-off, and no free agent takes it past the apron', () => {
+    const rng = seeded(16);
+    const base = drawLottery(closeResign(endSeason(finishSeason(startSeason(ownDynasty({ size: 8 }), { rng })), { rng }), { rng }), { rng });
+    expect(base.phase).toBe(DPHASE.rookieDraft);
+    expect(base.draft.picks).toHaveLength(0);
+    // An AI team that also holds one of its own picks in this draft, so pick 1
+    // and that one take it from six to the floor of eight.
+    const ai = base.teams.find(t => !t.human && base.draft.order.slice(1).includes(t.id)).id;
+    const contracts = { ...base.contracts };
+    for (const k of rosterKeys(base, ai).slice(6)) delete contracts[k];
+    const six = { ...base, contracts, draft: { ...base.draft, order: base.draft.order.map((t, i) => (i === 0 ? ai : t)) } };
+    expect(rosterKeys(six, ai)).toHaveLength(6);
+    const gap = aiApronDp(six) - payroll(six, ai);
+    const at = { ...six, dead: [...six.dead, { teamId: ai, key: 'x', dp: gap, through: six.year }] };
+    expect(payroll(at, ai)).toBe(aiApronDp(at));
+    expect(onClock(at)).toMatchObject({ n: 1, teamId: ai });
+    const before = new Set(rosterKeys(at, ai));
+
+    let d = simDraft(at, { rng, all: true });
+    const first = d.draft.picks[0];
+    expect(first).toMatchObject({ n: 1, teamId: ai });
+    expect(first.key).not.toBeNull();
+    d = closeRookies(finishDraft(d, { rng }), { rng });
+    for (let guard = 0; guard < 10 && d.phase === DPHASE.freeAgency; guard += 1) d = nextFaDay(d, { rng });
+    d = startSeason(fillRoster(d, HUMAN_ID), { rng });
+
+    expect(d.contracts[first.key]).toMatchObject({ teamId: ai, dp: rookieScale(1, 8).dp, years: 3, how: 'rookie' });
+    expect(rosterKeys(d, ai).length).toBeGreaterThanOrEqual(MIN_ROSTER);
+    // Everyone new is a pick on the scale: no free agent, no fill.
+    const added = rosterKeys(d, ai).filter(k => !before.has(k));
+    expect(added.every(k => d.contracts[k].how === 'rookie')).toBe(true);
+    expect(payroll(d, ai)).toBe(aiApronDp(d) + added.reduce((t, k) => t + d.contracts[k].dp, 0));
+  });
+
+  it('opens that door only for an AI team that cannot fill the floor on minimum deals, and never for a human', () => {
+    const rng = seeded(16);
+    const base = drawLottery(closeResign(endSeason(finishSeason(startSeason(ownDynasty({ size: 8 }), { rng })), { rng }), { rng }), { rng });
+    const ai = base.teams.find(t => !t.human).id;
+    const trimmed = (x, teamId, n) => {
+      const contracts = { ...x.contracts };
+      for (const k of rosterKeys(x, teamId).slice(n)) delete contracts[k];
+      return { ...x, contracts };
+    };
+    const withRoom = (x, teamId, room, apron) => ({ ...x, dead: [...x.dead, { teamId, key: `x-${teamId}`, dp: apron - payroll(x, teamId) - room, through: x.year }] });
+    const onFirst = x => ({ ...x, draft: { ...x.draft, order: x.draft.order.map((t, i) => (i === 0 ? ai : t)) } });
+    // Seven players and 7 DP of room: an eighth on a 1-DP deal keeps it under
+    // the apron, so a 10-DP first pick is passed, not drafted past it.
+    const seven = onFirst(withRoom(trimmed(base, ai, 7), ai, 7, aiApronDp(base)));
+    expect(aiDraftChoice(seven, ai, () => 0)).toBeNull();
+    // Seven and no room at all: the pick is drafted — it fills the seat.
+    expect(aiDraftChoice(onFirst(withRoom(trimmed(base, ai, 7), ai, 0, aiApronDp(base))), ai, () => 0)).not.toBeNull();
+    // A human of six at the apron signs nothing past it — the human's apron is a hard line.
+    const spare = base.draftPool.filter(k => !base.draft.pool.includes(k))[0];
+    let h = withRoom(trimmed(base, HUMAN_ID, 6), HUMAN_ID, 0, APRON_DP);
+    h = { ...h, phase: DPHASE.rookies, rights: { ...h.rights, [spare]: { teamId: HUMAN_ID, kind: 'rookie', pick: 1 } } };
+    expect(rookieProblem(h, HUMAN_ID, spare)).toMatch(/apron/);
+    // ...where an AI team of six at its apron signs him.
+    let a = withRoom(trimmed(base, ai, 6), ai, 0, aiApronDp(base));
+    a = { ...a, phase: DPHASE.rookies, rights: { ...a.rights, [spare]: { teamId: ai, kind: 'rookie', pick: 1 } } };
+    expect(rookieProblem(a, ai, spare)).toBeNull();
+  });
+
+  it('re-signs so that its payroll and the scale of its two projected first-rounders fit its apron', () => {
+    const rng = () => 0;   // every expiring player wanted — only the money decides
+    const s = seeded(17);
+    let d = finishSeason(startSeason(ownDynasty({ size: 8 }), { rng: s }));
+    // One AI team with a roster of dear players all expiring: its five
+    // cheapest swapped for the other AI teams' five dearest, and all ten on
+    // their last year.
+    const ai = d.teams.find(t => !t.human).id;
+    const contracts = { ...d.contracts };
+    const cheap = rosterKeys(d, ai).sort((x, y) => contracts[x].dp - contracts[y].dp).slice(0, 5);
+    const dear = Object.keys(contracts).filter(k => contracts[k].teamId !== ai && contracts[k].teamId !== HUMAN_ID)
+      .sort((x, y) => contracts[y].dp - contracts[x].dp).slice(0, 5);
+    cheap.forEach((k, i) => {
+      const [a, b] = [contracts[k], contracts[dear[i]]];
+      contracts[k] = { ...a, teamId: b.teamId };
+      contracts[dear[i]] = { ...b, teamId: ai };
+    });
+    for (const k of Object.keys(contracts)) if (contracts[k].teamId === ai) contracts[k] = { ...contracts[k], years: 1 };
+    d = { ...d, contracts };
+    // ...and a second first-rounder: the worst team's, bought in a trade.
+    const worst = [...d.teams].map(t => t.id).filter(id => id !== ai)
+      .sort((x, y) => standings(d.season).find(r => r.id === y).rank - standings(d.season).find(r => r.id === x).rank)[0];
+    d = { ...d, pickOwner: { ...d.pickOwner, [pickId(d.year + 1, 1, worst)]: ai } };
+
+    const y = endSeason(d, { rng });
+    expect(y.phase).toBe(DPHASE.resign);
+    const firsts = [ai, worst].map(t => rookieScale(projectedSlot(y, t), 8).dp);
+    const expiring = rosterKeys(d, ai);
+    // The budget binds: keeping everyone would have gone far past the apron.
+    expect(expiring.reduce((t, k) => t + d.contracts[k].dp, 0)).toBeGreaterThan(aiApronDp(y));
+    expect(rosterKeys(y, ai).length).toBeGreaterThan(0);
+    expect(payroll(y, ai) + firsts[0] + firsts[1]).toBeLessThanOrEqual(aiApronDp(y));
+    // The same window with neither pick: it keeps more.
+    const bare = { ...d, pickOwner: { ...d.pickOwner, [pickId(d.year + 1, 1, worst)]: worst, [pickId(d.year + 1, 1, ai)]: worst, [pickId(d.year + 1, 2, ai)]: worst } };
+    expect(payroll(endSeason(bare, { rng }), ai)).toBeGreaterThan(payroll(y, ai));
+  });
+
+  it('a deal that runs past this year also leaves room for NEXT year’s picks', () => {
+    // A verifier (2026-09-18): payroll carried from the year before passed
+    // first-overall picks — a stacked start's LAL tipped into year three at
+    // 109 DP with nothing to re-sign, its year-two re-sign and picks having
+    // spent year three's room. One AI team, its whole roster on deals that
+    // run past next season but one expiring player who wants years, and no
+    // picks in the coming draft: this year he fits to the DP, and only next
+    // year's picks can stop him.
+    const rng = () => 0;   // every expiring player wanted — only the money decides
+    const s = seeded(18);
+    const done = finishSeason(startSeason(ownDynasty({ size: 8 }), { rng: s }));
+    const ai = done.teams.find(t => !t.human).id;
+    const next = done.year + 1;
+    const noPicks = (x, years) => ({
+      ...x,
+      pickOwner: {
+        ...x.pickOwner,
+        ...Object.fromEntries(years.flatMap(y => [1, 2].map(r => [pickId(y, r, ai), HUMAN_ID]))),
+      },
+    });
+    const books = (key, ballast) => {
+      const contracts = { ...done.contracts };
+      for (const k of rosterKeys(done, ai)) contracts[k] = { ...contracts[k], dp: 1, years: k === key ? 1 : 3 };
+      const other = rosterKeys(done, ai).find(k => k !== key);
+      contracts[other] = { ...contracts[other], dp: ballast };
+      return { ...done, contracts };
+    };
+    // The one who wants a deal of two years or more, and what he re-signs for
+    // when nothing is in the way (no picks in either draft, a light payroll).
+    let key = null;
+    let terms = null;
+    for (const k of rosterKeys(done, ai)) {
+      const t = endSeason(noPicks(books(k, 1), [next, next + 1]), { rng }).contracts[k];
+      if (t?.teamId === ai && t.years >= 2) { key = k; terms = t; break; }
+    }
+    expect(key).not.toBeNull();
+    // Payroll then lands on the apron to the DP: the ballast takes the rest.
+    const others = rosterKeys(done, ai).length - 2;
+    const ballast = aiApronDp(done) - terms.dp - others;
+    expect(ballast).toBeGreaterThanOrEqual(1);
+    expect(rosterKeys(done, ai).length).toBeGreaterThanOrEqual(MIN_ROSTER);
+    // No picks in either draft: he fits this year and next, and re-signs.
+    const free = endSeason(noPicks(books(key, ballast), [next, next + 1]), { rng });
+    expect(free.contracts[key]).toMatchObject({ teamId: ai, dp: terms.dp, years: terms.years });
+    expect(payroll(free, ai)).toBe(aiApronDp(free));
+    // Its own picks in NEXT year's draft: this year still fits to the DP, but
+    // next season's books cannot hold him and those picks, so he walks.
+    const held = endSeason(noPicks(books(key, ballast), [next]), { rng });
+    expect(held.contracts[key]).toBeUndefined();
+    expect(freeAgentKeys(held)).toContain(key);
+  });
+
+  it('drafts for a full roster when the pick beats its weakest man, however bad its worst-value contract', () => {
+    // The rookie draft's half of the shed (2026-09-18): the pick is weighed
+    // against the man the deadline would waive — the weakest — not the worst-
+    // value contract, which is often an overpaid star.
+    const rng = seeded(19);
+    const base = drawLottery(closeResign(endSeason(finishSeason(startSeason(ownDynasty({ size: 8 }), { rng })), { rng }), { rng }), { rng });
+    const ai = base.teams.find(t => !t.human).id;
+    const rights = Object.fromEntries(Object.entries(base.rights ?? {}).filter(([, r]) => !(r.teamId === ai && r.kind === 'rookie')));
+    const contracts = Object.fromEntries(Object.entries(base.contracts).map(([k, c]) => [k, c.teamId === ai ? { ...c, dp: 1, years: 2 } : c]));
+    const spare = base.draftPool.filter(k => !base.draft.pool.includes(k));
+    const need = MAX_ROSTER - rosterKeys(base, ai).length;
+    for (const k of spare.slice(0, need)) contracts[k] = { teamId: ai, dp: 1, years: 1, since: base.year, how: 'fill' };
+    const talent = k => talentValue(getCardByKey(k));
+    const star = [...rosterKeys({ contracts }, ai)].sort((a, b) => talent(b) - talent(a))[0];
+    contracts[star] = { ...contracts[star], dp: 40, years: 3 };
+    // Only players below the star are left on the board.
+    const pool = base.draft.pool.filter(k => talent(k) < talent(star));
+    const x = { ...base, rights, contracts, draft: { ...base.draft, pool, order: base.draft.order.map((t, i) => (i === 0 ? ai : t)) } };
+    expect(rosterKeys(x, ai)).toHaveLength(MAX_ROSTER);
+    expect(onClock(x)).toMatchObject({ n: 1, teamId: ai });
+    expect(payroll(x, ai) + rookieScale(1, 8).dp).toBeLessThanOrEqual(aiApronDp(x));
+    const value = k => contractValue(getCardByKey(k), x.contracts[k]);
+    const worstValue = rosterKeys(x, ai).reduce((w, k) => (value(k) < value(w) ? k : w));
+    const weakest = rosterKeys(x, ai).reduce((w, k) => (talent(k) < talent(w) ? k : w));
+    const top = Math.max(...draftAvailable(x).map(talent));
+    // The old rule would pass: the worst-value contract out-talents the board.
+    expect(worstValue).toBe(star);
+    expect(top).toBeGreaterThan(talent(weakest));
+    const choice = aiDraftChoice(x, ai, () => 0);
+    expect(choice).not.toBeNull();
+    expect(talent(choice)).toBe(top);
+  });
+});
+
+describe('the class seed (2026-09-18)', () => {
+  it('draws independent classes for ids that differ only in their last characters', () => {
+    // ids own1..own150 hashed to seeds in lock-step before the finalizer:
+    // over 150 own starts a year-two super-rare 47% of the time against the
+    // user's 60%. Here one league's pool under ids own1..own1000 — a thousand
+    // so three standard errors are tight enough to tell: the raw hash drew a
+    // super-rare in 65.7% of these classes, the mixed seed in 60.7% (and a
+    // legendary in 17.3% against 15%).
+    const d = ownDynasty({ size: 8 });
+    const n = 1000;
+    let sr = 0;
+    let leg = 0;
+    for (let i = 1; i <= n; i += 1) {
+      const { draftClass: _drop, ...x } = { ...d, id: `own${i}` };
+      const bands = classFor(x).map(k => getPlayerRarity(getCardByKey(k)));
+      if (bands.includes('super-rare')) sr += 1;
+      if (bands.includes('legendary')) leg += 1;
+    }
+    // Three standard errors either side.
+    const within = (hits, p) => Math.abs(hits / n - p) <= 3 * Math.sqrt((p * (1 - p)) / n);
+    expect(within(sr, 0.6)).toBe(true);
+    expect(within(leg, 0.15)).toBe(true);
+  });
+});
+
 describe('an older save (2026-09-17)', () => {
   it('with no stored class builds one on read — the same every read, even from storage — and drafts it', () => {
     const rng = seeded(11);
@@ -839,14 +1069,21 @@ describe('the deadline shed (2026-09-17)', () => {
       draftPool: pool.filter(k => !fillers.includes(k)),
     };
     expect(rosterKeys(x, ai)).toHaveLength(MAX_ROSTER);
-    // The contract it would shed: worth least over its years (the engine's worstContract).
-    const worst = rosterKeys(x, ai).reduce((w, k) => (contractValue(getCardByKey(k), x.contracts[k]) < contractValue(getCardByKey(w), x.contracts[w]) ? k : w));
+    // The man it would shed: its weakest by talent, the contract worth least
+    // over its years breaking a tie (the engine's shedCandidate, 2026-09-18 —
+    // it was the worst-value contract alone until then).
+    const worst = shedOf(x, ai);
     return { x, ai, worst };
+  };
+  const shedOf = (x, ai) => {
+    const t = k => talentValue(getCardByKey(k));
+    const v = k => contractValue(getCardByKey(k), x.contracts[k]);
+    return rosterKeys(x, ai).reduce((w, k) => (t(k) < t(w) || (t(k) === t(w) && v(k) < v(w)) ? k : w));
   };
   const byTalent = keys => [...keys].sort((a, b) => talentValue(getCardByKey(b)) - talentValue(getCardByKey(a)));
   const d0 = ownDynasty({ size: 4 });
 
-  it('waives the contract worth least — dead money — for a better pick, ONE contract only, and lets the next pick lapse', () => {
+  it('waives its weakest man — dead money — for a better pick, ONE contract only, and lets the next pick lapse', () => {
     const [star, second] = byTalent(d0.draftPool);
     const { x, ai, worst } = setup([star, second]);
     expect(talentValue(getCardByKey(star))).toBeGreaterThan(talentValue(getCardByKey(worst)));
@@ -874,6 +1111,64 @@ describe('the deadline shed (2026-09-17)', () => {
     expect(y.rights[scrub]).toBeUndefined();
     expect(freeAgentKeys(y)).toContain(scrub);
     expect(y.news.some(n => /lapse unsigned/.test(n.text) && n.text.includes(getCardByKey(scrub).name))).toBe(true);
+  });
+
+  it('weighs the pick against its weakest man, not its worst-value contract: an overpaid star stays, the scrub goes', () => {
+    // A verifier's fantasy start (2026-09-18, seed 6, year 2) passed a first-
+    // overall super-rare while carrying a 4.7-talent player, because the pick
+    // was weighed against its worst-VALUE contract — a 128-talent star on a
+    // big deal. Here the dearest-talent man is put on a deal far over his
+    // worth, so he is the worst-value contract by a distance, and the pick
+    // sits between him and the weakest man.
+    const pool = byTalent(d0.draftPool);
+    const pick = pool[Math.floor(pool.length / 4)];
+    const { x: base, ai } = setup([pick]);
+    const star = byTalent(rosterKeys(base, ai))[0];
+    const x = { ...base, contracts: { ...base.contracts, [star]: { ...base.contracts[star], dp: 40, years: 3 } } };
+    const value = k => contractValue(getCardByKey(k), x.contracts[k]);
+    const worstValue = rosterKeys(x, ai).reduce((w, k) => (value(k) < value(w) ? k : w));
+    const weakest = shedOf(x, ai);
+    expect(worstValue).toBe(star);
+    expect(weakest).not.toBe(star);
+    // The old rule would have let him lapse; the new one sheds the weakest.
+    expect(talentValue(getCardByKey(pick))).toBeLessThanOrEqual(talentValue(getCardByKey(star)));
+    expect(talentValue(getCardByKey(pick))).toBeGreaterThan(talentValue(getCardByKey(weakest)));
+    expect(payroll(x, ai) + rookieScale(2, 4).dp).toBeLessThanOrEqual(aiApronDp(x));
+    const y = startSeason(fillRoster(x, HUMAN_ID), { rng: seeded(3) });
+    expect(y.contracts[star]).toMatchObject({ teamId: ai, dp: 40 });
+    expect(y.contracts[weakest]).toBeUndefined();
+    expect(y.contracts[pick]).toMatchObject({ teamId: ai, how: 'rookie' });
+    expect(rosterKeys(y, ai)).toHaveLength(MAX_ROSTER);
+  });
+
+  it('never sheds for money: an AI team of eight at its apron keeps its eight and lets the pick lapse', () => {
+    // A verifier (2026-09-18): the deadline waived a team of eight down to
+    // seven for a pick refused for MONEY, and seven is short-handed, so the
+    // pick signed past the apron — a 20-DP starter waived and the team at 125
+    // against 115. The shed frees a seat, never money; it answers the full
+    // roster's refusal only.
+    const d = ownDynasty({ size: 8, seed: 2 });
+    const ai = d.teams.find(t => !t.human).id;
+    const [star] = byTalent(d.draftPool);
+    const contracts = { ...d.contracts };
+    for (const k of rosterKeys(d, ai).slice(8)) delete contracts[k];
+    const eight = { ...d, contracts };
+    expect(rosterKeys(eight, ai)).toHaveLength(8);
+    const x = {
+      ...eight,
+      dead: [...(eight.dead ?? []), { teamId: ai, key: 'x', dp: aiApronDp(eight) - payroll(eight, ai), through: eight.year }],
+      rights: { ...eight.rights, [star]: { teamId: ai, kind: 'rookie', pick: 1 } },
+      league: [...leagueKeys(eight), star],
+      draftPool: eight.draftPool.filter(k => k !== star),
+    };
+    expect(payroll(x, ai)).toBe(aiApronDp(x));
+    expect(rookieProblem(x, ai, star)).toMatch(/apron/);
+    const before = rosterKeys(x, ai);
+    const y = startSeason(fillRoster(x, HUMAN_ID), { rng: seeded(3) });
+    expect(rosterKeys(y, ai).sort()).toEqual([...before].sort());
+    expect(y.contracts[star]).toBeUndefined();
+    expect(freeAgentKeys(y)).toContain(star);
+    expect(payroll(y, ai)).toBe(aiApronDp(y));
   });
 });
 

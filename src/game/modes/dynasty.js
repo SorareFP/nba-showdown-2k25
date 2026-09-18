@@ -481,11 +481,31 @@ export function buildDraftClass(d, rng = Math.random) {
   return out;
 }
 
-/** The class's deterministic rng, seeded from the dynasty and the draft year. */
+/**
+ * The class's deterministic rng, seeded from the dynasty and the draft year.
+ *
+ * MIXED BEFORE IT SEEDS (2026-09-18). The raw FNV-1a hash of `${id}:${year}`
+ * went straight into the LCG, and ids that differ only in their last
+ * character (own1, own2, … — or dynasty-<n>) hash to seeds a small multiple
+ * of the FNV prime apart, so their first rolls moved in lock-step: over 150
+ * such ids the year-two class had a super-rare 47% of the time against the
+ * 60% the user set. murmur3's fmix32 finalizer spreads every input bit over
+ * the whole word, and the LCG's first few outputs are thrown away besides.
+ * This changes which class a given dynasty draws — harmless: a save stores
+ * its class once drawn (withClass), and only one with none stored redraws.
+ */
 function classRng(d, year) {
   let s = 2166136261;
   for (const ch of `${d.id}:${year}`) s = Math.imul(s ^ ch.charCodeAt(0), 16777619) >>> 0;
-  return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 2 ** 32; };
+  s ^= s >>> 16;
+  s = Math.imul(s, 0x85ebca6b);
+  s ^= s >>> 13;
+  s = Math.imul(s, 0xc2b2ae35);
+  s ^= s >>> 16;
+  s >>>= 0;
+  const next = () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 2 ** 32; };
+  for (let i = 0; i < 4; i += 1) next();
+  return next;
 }
 
 /**
@@ -857,15 +877,46 @@ export function negotiate(d, teamId, key, offer) {
  */
 const RIGHTS_WINDOW = new Set([DPHASE.rookies, DPHASE.signing, DPHASE.resign, DPHASE.freeAgency, DPHASE.preseason]);
 
+/**
+ * A SHORT-HANDED AI TEAM DRAFTS AND SIGNS PAST ITS APRON (2026-09-18). An AI
+ * team whose roster — `held`: its contracts, plus the rights it holds when
+ * it is drafting — is below MIN_ROSTER cannot take the floor, and fillRoster
+ * already signs "anyone at all rather than a team that cannot take the
+ * floor", past the apron if it must. Before this, the draft passed that very
+ * team's picks for money and then fillRoster brought in a free agent over the
+ * apron anyway: a verifier's own-start run found 55 passes from teams below
+ * the floor, and all nine AI team-seasons that tipped off over the apron came
+ * from them (ORL, seed 7, passed picks 1 and 9 and signed two free agents to
+ * 126 DP). A pick on the rookie scale — 2 to 10 DP — is the better and
+ * usually the cheaper way to fill that seat. The user asked that "teams
+ * drafting that player need a chance to sign him". A human team gets no such
+ * exception: the human's apron is their own hard line (the user, 2026-09-17),
+ * and a human short of the floor fills it themselves.
+ *
+ * It is fillRoster's exception exactly, so it opens only where fillRoster's
+ * would: when `room` under the apron cannot fill the seats still short even
+ * on minimum deals. A team of seven with seven DP of room fills its eighth
+ * seat on a 1-DP deal and stays under the apron — the user: AI teams "should
+ * not bring in a team over that cap" — rather than draft an 8-DP pick past
+ * it (the first probe of this rule tipped two teams off at 116).
+ */
+const shortHanded = (d, teamId, held, room) => !teamOf(d, teamId)?.human && held < MIN_ROSTER
+  && room < (MIN_ROSTER - held) * MIN_DP;
+
 /** Why a team cannot sign its pick right now, or null. */
 export function rookieProblem(d, teamId, key) {
   const r = d.rights?.[key];
   if (!r || r.kind !== 'rookie' || r.teamId !== teamId) return 'that is not your pick';
   if (!RIGHTS_WINDOW.has(d.phase)) return 'picks are signed between the draft and the season';
-  if (rosterKeys(d, teamId).length >= MAX_ROSTER) return `your roster is full at ${MAX_ROSTER} — waive someone first`;
+  const size = rosterKeys(d, teamId).length;
+  if (size >= MAX_ROSTER) return `your roster is full at ${MAX_ROSTER} — waive someone first`;
   const apron = apronFor(d, teamId);
   const { dp } = rookieTerms(d, key);
-  if (payroll(d, teamId) + dp > apron) return `their ${dp} DP would take you past the ${apron} apron`;
+  // Signing, the seat he fills is one of the contracts short of the floor —
+  // the pick itself is not counted, so a team of six at its apron signs two
+  // picks past it.
+  const room = apron - payroll(d, teamId);
+  if (dp > room && !shortHanded(d, teamId, size, room)) return `their ${dp} DP would take you past the ${apron} apron`;
   return null;
 }
 
@@ -876,11 +927,23 @@ export function signRookie(d, teamId, key) {
   return sign(d, teamId, key, { ...rookieTerms(d, key), how: 'rookie' });
 }
 
-/** The contract an AI team would shed first: the one worth least over its years (contractValue). */
-function worstContract(d, teamId) {
+/**
+ * The man an AI team sheds for a pick: the one whose loss costs it least
+ * TALENT, the contract worth least over its years (contractValue) only
+ * breaking a tie. Until 2026-09-18 it was the worst-value contract alone, and
+ * the pick was weighed against HIM — usually an overpaid star, not the
+ * weakest player — so a full lottery team with money passed a first-overall
+ * super-rare (talent 75.8) while carrying a 4.7-talent player, because its
+ * worst-value deal was a 128-talent star (a verifier's fantasy start, seed 6,
+ * year 2). The shed buys a seat, never money (waive keeps the DP this season
+ * as dead money), so the seat to give up is the weakest man's.
+ */
+function shedCandidate(d, teamId) {
   const keys = rosterKeys(d, teamId);
   if (!keys.length) return null;
-  return keys.reduce((w, k) => (contractValue(cardOf(k), d.contracts[k]) < contractValue(cardOf(w), d.contracts[w]) ? k : w));
+  const talent = k => talentValue(cardOf(k));
+  const value = k => contractValue(cardOf(k), d.contracts[k]);
+  return keys.reduce((w, k) => (talent(k) < talent(w) || (talent(k) === talent(w) && value(k) < value(w)) ? k : w));
 }
 
 /**
@@ -890,8 +953,8 @@ function worstContract(d, teamId) {
  * week of free agency, its close, and the season's start. Best pick first, so
  * the room goes to the better player. At the `deadline` an AI team that drafted
  * a player it could only sign after SHEDDING ONE CONTRACT sheds it: it waives
- * the contract worth least (dead money as waive books it) when the pick's
- * talent beats the waived player's, and otherwise lets the pick lapse.
+ * its weakest man (shedCandidate; dead money as waive books it) when the
+ * pick's talent beats his, and otherwise lets the pick lapse.
  */
 function aiSignRookies(d, { deadline = false } = {}) {
   let x = d;
@@ -902,10 +965,17 @@ function aiSignRookies(d, { deadline = false } = {}) {
     for (const key of held) {
       if (!rookieProblem(x, team.id, key)) { x = sign(x, team.id, key, { ...rookieTerms(x, key), how: 'rookie' }); continue; }
       if (!deadline || shedOne) continue;
-      const worst = worstContract(x, team.id);
-      if (!worst || talentValue(cardOf(key)) <= talentValue(cardOf(worst))) continue;
       // Waived as waive books it: the DP stays this season as dead money, so
-      // what a shed buys is the ROSTER SPOT — it never makes money room.
+      // what a shed buys is the ROSTER SPOT — it never makes money room. So
+      // only the full roster's refusal is answered with a shed (a verifier,
+      // 2026-09-18): a team of eight refused for money used to waive down to
+      // seven, and seven is short-handed, so the pick then signed past the
+      // apron — a team that could take the floor waived a 20-DP starter and
+      // tipped off at 125 against a 115 apron. The user: AI teams "should not
+      // bring in a team over that cap".
+      if (rosterKeys(x, team.id).length < MAX_ROSTER) continue;
+      const worst = shedCandidate(x, team.id);
+      if (!worst || talentValue(cardOf(key)) <= talentValue(cardOf(worst))) continue;
       const shed = waive(x, team.id, worst);
       if (rookieProblem(shed, team.id, key)) continue;
       x = sign(shed, team.id, key, { ...rookieTerms(shed, key), how: 'rookie' });
@@ -931,7 +1001,9 @@ function lapseRookies(d) {
  * and the human's one-click answer to a short roster. Cheapest first, the
  * better player on a tie, under the team's cap if possible, its apron if not
  * (the human's 130, the AI's 115 at the rung), and anyone at all rather than
- * a team that cannot take the floor — the one way past the apron there is.
+ * a team that cannot take the floor — one of the two ways past the apron, the
+ * other being a short-handed AI team signing its own picks (shortHanded,
+ * 2026-09-18), which runs first so a pick takes the seat before a free agent.
  */
 export function fillRoster(d, teamId, min = MIN_ROSTER) {
   let x = d;
@@ -1049,18 +1121,26 @@ export function aiDraftChoice(d, teamId, rng = Math.random, { iq = 1 } = {}) {
     const room = apronFor(d, teamId) - payroll(d, teamId) - rookieCommitted(d, teamId);
     const spots = MAX_ROSTER - mine.length;
     const best = [...avail].sort((a, b) => score(b) - score(a));
-    if (dp <= room && spots > 0) return pickWeighted(best.slice(0, 2), [0.65, 0.35], rng);
-    // Nothing fits. It may still take the best player if shedding ONE
-    // contract would make him fit — the one worth least, waived as
-    // aiSignRookies will waive it at the deadline — and only for a player
-    // better than the man it would let go. A waive leaves its DP on this
-    // season's books as dead money, so in practice this is the full roster's
-    // way to a pick: the shed frees a spot, never money.
-    const worst = teamOf(d, teamId)?.human ? null : worstContract(d, teamId);
+    // An AI team below the floor with its picks counted, and no room to fill
+    // those seats under the apron, drafts whatever the money says
+    // (shortHanded, 2026-09-18): the seat has to be filled, and a scale pick
+    // fills it better and cheaper than the free agent fillRoster would
+    // otherwise sign past the apron.
+    const fits = dp <= room || shortHanded(d, teamId, mine.length, room);
+    // A waive leaves its DP on this season's books as dead money, so no shed
+    // makes money room: a slot that does not fit the books is passed.
+    if (!fits) return null;
+    if (spots > 0) return pickWeighted(best.slice(0, 2), [0.65, 0.35], rng);
+    // The books fit but the roster is full: the FULL ROSTER'S way to a pick.
+    // It takes the best player when shedding ONE contract frees the seat —
+    // its weakest man (shedCandidate), waived as aiSignRookies will waive him
+    // at the deadline — and only for a player better than that man. Weighed
+    // against the worst-value contract until 2026-09-18, which passed
+    // first-overall picks for the sake of 4-talent benchwarmers.
+    if (spots + 1 <= 0) return null;
+    const worst = teamOf(d, teamId)?.human ? null : shedCandidate(d, teamId);
     if (!worst || talentValue(cardOf(best[0])) <= talentValue(cardOf(worst))) return null;
-    const shed = waive(d, teamId, worst);
-    const roomAfter = apronFor(shed, teamId) - payroll(shed, teamId) - rookieCommitted(shed, teamId);
-    return dp <= roomAfter && spots + 1 > 0 ? best[0] : null;
+    return best[0];
   }
   // A FANTASY DRAFT IS DRAFTED TO A CAP (the user, 2026-09-11: "drafting to
   // make a team that fits in the salary cap, not just grabbing the best
@@ -1578,10 +1658,57 @@ export function endDynasty(d) {
 }
 
 /**
+ * WHAT AN AI TEAM HOLDS BACK FOR THE DRAFT AHEAD (2026-09-18): the rookie
+ * scale of every pick it holds in the coming draft — its own and any it
+ * traded for — and how many seats those picks will fill. A pick is priced at
+ * the slot its original team is projected to pick in (projectedSlot), except
+ * that a lottery team's first-rounder is priced as the FIRST pick: any team
+ * in the lottery can win it, and a team that reserved for pick four and drew
+ * pick one would be the two DP short that passes a first-overall pick.
+ * `year` prices a later draft the same way, on today's standings — the best
+ * guess there is a year out (aiResign's look ahead).
+ */
+function draftReserve(d, teamId, year = nextDraftYear(d)) {
+  const teams = d.teams.length;
+  const lottery = new Set(lotteryOdds(d).entries.map(e => e.teamId));
+  let dp = 0;
+  let picks = 0;
+  for (const id of picksOf(d, teamId)) {
+    const { year: y, round, origin } = parsePick(id);
+    if (y !== year) continue;
+    const at = round === 1 && lottery.has(origin) ? 1 : projectedSlot(d, origin);
+    dp += rookieScale((round - 1) * teams + at, teams).dp;
+    picks += 1;
+  }
+  return { dp, picks };
+}
+
+/**
  * The AI's exclusive window: keep a player at his floor when he fits under
  * the AI's apron (aiApronDp — it read the human's APRON_DP until 2026-09-17)
  * and is worth it — at least the team's median salary, or a coin flip — and
  * let him walk otherwise.
+ *
+ * IT BUDGETS FOR ITS PICKS FIRST (2026-09-18). The user: "AI should draft
+ * players based on what they can fit in their dynasty points" and "teams
+ * drafting that player need a chance to sign him". Re-signing up to the apron
+ * with nothing held back left no room for the team's own picks: a verifier's
+ * own-start run passed 21 of 30 first-overall picks, most for money. So
+ * before anyone is kept, the window holds back the scale of the team's picks
+ * in the coming draft (draftReserve) and AI_RESERVE_PER_SPOT for every seat
+ * still short of MIN_ROSTER once those re-signings and picks are counted. The
+ * apron itself does not move; a team that has to choose keeps the same
+ * players in the same order and simply stops sooner.
+ *
+ * AND A DEAL THAT RUNS PAST THIS YEAR LOOKS A YEAR AHEAD (2026-09-18). The
+ * reserve above covers the coming draft only, so a multi-year re-sign could
+ * spend NEXT year's room: a verifier's stacked start (seed 23, LAL, year 3)
+ * passed a legendary first-overall pick at 109 DP with nothing to re-sign —
+ * its books were a year-two re-sign of 21 DP and year two's picks. So a deal
+ * of two years or more also has to fit the apron next season beside every
+ * contract that will still be running then (years ≥ 2), the coming draft's
+ * picks (three-year scale deals) and next year's picks at their scale. The
+ * player who does not fit on his terms walks, as any other who does not fit.
  */
 export function aiResign(d, rng = Math.random) {
   let x = d;
@@ -1589,10 +1716,19 @@ export function aiResign(d, rng = Math.random) {
     const kept = rosterOf(x, team.id).map(c => c.salary ?? 0).sort((a, b) => a - b);
     const median = kept.length ? kept[Math.floor(kept.length / 2)] : 0;
     const expiring = rightsOf(x, team.id, 'expiring').sort((a, b) => salaryOf(b) - salaryOf(a));
+    const reserve = draftReserve(x, team.id);
+    const ahead = draftReserve(x, team.id, nextDraftYear(x) + 1);
+    // What is already on next season's books: contracts with a year to run
+    // after this one. Signing adds to it, so it is read every time.
+    const running = () => Object.values(x.contracts).filter(k => k.teamId === team.id && k.years >= 2).reduce((t, k) => t + k.dp, 0);
     for (const key of expiring) {
       const years = preferredYears(traitOf(x, key));
       const dp = floorOf(x, key, team.id, years, 1);
-      const fits = rosterKeys(x, team.id).length < MAX_ROSTER && payroll(x, team.id) + dp <= aiApronDp(x);
+      const after = rosterKeys(x, team.id).length + 1;
+      const short = Math.max(0, MIN_ROSTER - after - reserve.picks);
+      const held = reserve.dp + short * AI_RESERVE_PER_SPOT;
+      const nextYear = years < 2 || running() + dp + reserve.dp + ahead.dp <= aiApronDp(x);
+      const fits = after <= MAX_ROSTER && payroll(x, team.id) + dp + held <= aiApronDp(x) && nextYear;
       const wanted = salaryOf(key) >= median || rng() < 0.5;
       x = fits && wanted ? sign(x, team.id, key, { dp, years, how: 'resign' }) : renounce(x, team.id, key);
     }

@@ -56,6 +56,29 @@ export function OwnedMark({ count, inline = false }) {
   );
 }
 
+/**
+ * The listings a buyer sees. "My listings" shows only yours; "Hide mine" (the
+ * user, 2026-09-18: "a checkbox in the market that hides my own listings")
+ * takes yours out of the browse, and gives way while "My listings" is on.
+ */
+export function filterListings(rows, { uid, mineOnly = false, hideMine = false, search = '' } = {}) {
+  let list = rows;
+  if (mineOnly) list = list.filter(l => l.seller === uid);
+  else if (hideMine) list = list.filter(l => l.seller !== uid);
+  if (search) {
+    const s = search.toLowerCase();
+    list = list.filter(l => l.card.name.toLowerCase().includes(s) || String(l.card.team ?? '').toLowerCase().includes(s));
+  }
+  return list;
+}
+
+// "Hide mine" is remembered on this device — a viewing preference, not account
+// state. Storage can be missing or blocked (private windows), so every touch
+// is guarded and the box simply starts unticked.
+const HIDE_MINE_KEY = 'market.hideMine';
+const readHideMine = () => { try { return localStorage.getItem(HIDE_MINE_KEY) === '1'; } catch { return false; } };
+const writeHideMine = on => { try { localStorage.setItem(HIDE_MINE_KEY, on ? '1' : '0'); } catch { /* not kept */ } };
+
 export default function Market({ uid, coins, onTraded, collection = {} }) {
   const [listings, setListings] = useState(null);
   const [busy, setBusy] = useState(null);
@@ -63,6 +86,7 @@ export default function Market({ uid, coins, onTraded, collection = {} }) {
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState('price');
   const [mineOnly, setMineOnly] = useState(false);
+  const [hideMine, setHideMine] = useState(readHideMine);
 
   const refresh = useCallback(async () => {
     try {
@@ -87,14 +111,8 @@ export default function Market({ uid, coins, onTraded, collection = {} }) {
 
   const shown = useMemo(() => {
     if (!rows) return null;
-    let list = rows;
-    if (mineOnly) list = list.filter(l => l.seller === uid);
-    if (search) {
-      const s = search.toLowerCase();
-      list = list.filter(l => l.card.name.toLowerCase().includes(s) || String(l.card.team ?? '').toLowerCase().includes(s));
-    }
-    return [...list].sort(SORTS[sort].cmp);
-  }, [rows, mineOnly, search, sort, uid]);
+    return [...filterListings(rows, { uid, mineOnly, hideMine, search })].sort(SORTS[sort].cmp);
+  }, [rows, mineOnly, hideMine, search, sort, uid]);
 
   /** How many copies of this card are for sale, for the "1 of N" line. */
   const openFor = useMemo(() => {
@@ -163,6 +181,15 @@ export default function Market({ uid, coins, onTraded, collection = {} }) {
         >
           My listings{mineCount ? ` (${mineCount})` : ''}
         </button>
+        <label className={`${styles.check} ${mineOnly ? styles.checkOff : ''}`} title="Leave your own listings out of the browse">
+          <input
+            type="checkbox"
+            checked={hideMine}
+            disabled={mineOnly}
+            onChange={e => { setHideMine(e.target.checked); writeHideMine(e.target.checked); }}
+          />
+          Hide mine
+        </label>
       </div>
 
       {toast && <div className={styles.toast} onClick={() => setToast(null)}>{toast}</div>}
@@ -172,7 +199,9 @@ export default function Market({ uid, coins, onTraded, collection = {} }) {
         <div className={styles.empty}>
           {mineOnly
             ? 'You have nothing listed. Sell a spare from My Collection.'
-            : 'Nothing for sale yet. List a spare and you will be the first.'}
+            : hideMine && mineCount > 0 && !search && rows?.length === mineCount
+              ? 'Only your own listings are up right now. Untick Hide mine to see them.'
+              : 'Nothing for sale yet. List a spare and you will be the first.'}
         </div>
       )}
 

@@ -95,6 +95,18 @@
 /* Above the legendary foil (HoloSheen paints its layers at z-index 2). */
 .rarity { z-index: 3; }
 
+/* OWNED (2026-09-18): the Collection's x-count pill, top-right of the art.
+   On a phone the art is a 48px thumbnail, so the count rides beside the name
+   instead (.ownedInline, shown only there). */
+.owned {
+  position: absolute; top: 5px; right: 5px; z-index: 3;
+  background: rgba(0,0,0,0.65);
+  border-radius: 10px; padding: 2px 8px;
+  font-size: 11px; font-weight: 700;
+  color: #fff;
+}
+.ownedInline { display: none; }
+
 /* -- PHONES: listing rows ----------------------------------------------------
    Thumbnail, name and team, the ask; Buy (or Take down) on the right at a
    40px target. Breakpoint = PHONE_QUERY in src/ui/useIsPhone.js. */
@@ -111,6 +123,13 @@
   .card > * { grid-column: 2; margin: 0; }
   .art { grid-column: 1; grid-row: 1 / span 4; width: 48px; height: 48px; aspect-ratio: auto; }
   .rarity { display: none; }
+  .owned { display: none; }
+  .ownedInline {
+    display: inline-block; margin-left: 6px; vertical-align: 1px;
+    padding: 0 6px; border-radius: 8px;
+    background: rgba(255,255,255,0.12);
+    font-size: 11px; font-weight: 700;
+  }
   .name { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .price { font-size: 15px; }
   .buy, .delist {

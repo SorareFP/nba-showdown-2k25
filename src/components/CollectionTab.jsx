@@ -718,6 +718,7 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
         <Market
           uid={user.uid}
           coins={userData?.currency ?? 0}
+          collection={collection}
           onTraded={() => { refresh(); onCollectionChange?.(); }}
         />
       )}

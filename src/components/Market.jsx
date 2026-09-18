@@ -40,7 +40,23 @@ const SORTS = {
   name: { label: 'A–Z', cmp: (a, b) => (a.card?.name ?? '').localeCompare(b.card?.name ?? '') },
 };
 
-export default function Market({ uid, coins, onTraded }) {
+/**
+ * HOW MANY YOU ALREADY OWN (2026-09-18, the user: "Can we add a 'Owned' flag
+ * on cards in the market that you already own … the 1x or 2x in the top right
+ * corner like in the collection"). The same x-count pill the Collection draws,
+ * read from the same index (users/{uid}/collection, keyed by cardKey — which
+ * every listing carries). Nothing when you own none.
+ */
+export function OwnedMark({ count, inline = false }) {
+  if (!(count > 0)) return null;
+  return (
+    <span className={inline ? styles.ownedInline : styles.owned} title={`You own ${count}`}>
+      x{count}
+    </span>
+  );
+}
+
+export default function Market({ uid, coins, onTraded, collection = {} }) {
   const [listings, setListings] = useState(null);
   const [busy, setBusy] = useState(null);
   const [toast, setToast] = useState(null);
@@ -167,6 +183,7 @@ export default function Market({ uid, coins, onTraded }) {
           const mine = l.seller === uid;
           const anchor = getMarketPrice(l.card);
           const open = openFor[l.cardKey] ?? 1;
+          const owned = collection[l.cardKey]?.count ?? 0;
           return (
             <div key={l.id} className={styles.card} style={{ borderColor: cfg.color }}>
               <Holo className={styles.art} active={holoRegionsFor(l.card).length > 0} regions={holoRegionsFor(l.card)} idle={false}>
@@ -181,8 +198,9 @@ export default function Market({ uid, coins, onTraded }) {
                 <div className={styles.rarity} style={{ background: cfg.bg, color: cfg.color }}>
                   {cfg.label}
                 </div>
+                <OwnedMark count={owned} />
               </Holo>
-              <div className={styles.name}>{l.card.name}</div>
+              <div className={styles.name}>{l.card.name}<OwnedMark count={owned} inline /></div>
               <div className={styles.meta}>
                 {l.card.team} · ${l.card.salary}
                 {open > 1 && <span className={styles.open}> · {open} listed</span>}

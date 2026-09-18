@@ -88,7 +88,12 @@ export default function HomeTab({ collection = {}, starter = null, onGo = () => 
           <p className={s.sub}>Here is where everything stands.</p>
         </div>
         <div className={s.pills}>
-          <span className={s.coinPill} title="Your coins">🪙 {coins == null ? '—' : coins.toLocaleString()} coins</span>
+          {/* The balance is a way to spend it (2026-09-18, the user: "The little
+              space that says your coin amount on the home page should be a
+              clickable link to the pack market"). */}
+          <button className={s.coinPill} onClick={() => onGo('shop')} title="Your coins — open the pack shop">
+            🪙 {coins == null ? '—' : coins.toLocaleString()} coins
+          </button>
           {signable > 0 && (
             <button className={`${s.pill} ${s.faPill}`} onClick={() => onGo('freeagents')} title="Open Free Agents to see the card and sign it">
               ✍️ {signNotice(signable)}

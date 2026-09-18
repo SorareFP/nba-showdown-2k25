@@ -34,6 +34,11 @@ describe('HomeTab', () => {
     expect(out).toContain('Go to the Pack Shop');
   });
 
+  it('makes the coin balance a way into the pack shop (2026-09-18)', () => {
+    // A button, not a label: the balance is where you spend it.
+    expect(html({})).toMatch(/<button[^>]*title="Your coins — open the pack shop"[^>]*>🪙/);
+  });
+
   it('leads the news with the Starter Pack while it is unopened', () => {
     const out = html({ starter: { opened: false, favorite: false, bonusSeen: true } });
     expect(out).toContain('Your Starter Pack is waiting');

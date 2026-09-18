@@ -18,8 +18,9 @@ import { Negotiator, TradeDesk, soloMoves } from './DynastyScreens.jsx';
 import {
   createDynasty, simDraft, draftPick, aiDraftChoice, onClock, finishDraft, closeSigning, nextFaDay,
   startSeason, endSeason, closeResign, drawLottery, fillRoster, rightsOf, freeAgentKeys, HUMAN_ID, DPHASE,
-  tradeDeadlineRound,
+  tradeDeadlineRound, draftAvailable, passPick, closeRookies,
 } from '../../game/modes/dynasty.js';
+import { rookieScale, APRON_DP } from '../../game/modes/dynastyMarket.js';
 import { recordResult, roundFixtures, advance, totalRounds, PHASE, createSeason } from '../../game/modes/season.js';
 import { buildAiLeague } from '../../game/modes/aiTeams.js';
 
@@ -152,5 +153,30 @@ describe('each phase', () => {
     d = drawLottery(d, { rng });
     expect(view(d)).toContain('draft');
     expect(freeAgentKeys(fillRoster(d, HUMAN_ID)).length).toBeGreaterThan(0);
+  });
+  it('the rookie draft prices the slot and keeps a budget to the apron; an unsigned pick follows you into free agency', () => {
+    const rng = seeded(9);
+    const brought = buildAiLeague(1, { rng: seeded(1) })[0].roster;
+    let d = createDynasty({ id: 'R', size: 4, length: 'short', startMode: 'own', rng, human: { name: 'Alex Team', roster: brought } });
+    d = endSeason(finish(startSeason(d, { rng })), { rng });
+    d = simDraft(drawLottery(closeResign(d), { rng }), { rng });
+    const c = onClock(d);
+    expect(c?.teamId).toBe(HUMAN_ID);
+    const room = view(d);
+    expect(room).toContain(`This slot signs at ${rookieScale(c.n, 4).dp} DP`);
+    expect(room).toMatch(new RegExp(`of room to the ${APRON_DP} apron|past the ${APRON_DP} apron`));
+    d = draftPick(d, HUMAN_ID, draftAvailable(d)[0]);
+    for (let g = 0; g < 20; g += 1) {
+      d = simDraft(d, { rng });
+      if (!onClock(d)) break;
+      d = passPick(d, HUMAN_ID);
+    }
+    d = finishDraft(d, { rng });
+    expect(view(d)).toContain('Sign your picks');
+    d = closeRookies(d, { rng });
+    expect(rightsOf(d, HUMAN_ID, 'rookie')).toHaveLength(1);
+    const fa = view(d);
+    expect(fa).toContain('rights until the season starts');
+    expect(fa).toContain(`${rookieScale(c.n, 4).dp}</strong> DP × 3`);
   });
 });

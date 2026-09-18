@@ -152,9 +152,27 @@ describe('age (aging dynasties)', () => {
   });
 });
 
+// THE SLOT PRICES THE PICK (the user, 2026-09-17): round one 10 → 5, round
+// two 3 → 2, three years; the card's salary has nothing to do with it.
 describe('the rookie scale', () => {
-  it('is three years at three-quarters of value', () => {
-    expect(rookieScale(card(1100))).toEqual({ dp: 15, years: 3 });
-    expect(rookieScale(card(10))).toEqual({ dp: 1, years: 3 });
+  it('slides from 10 at the first pick to 5 at the last of round one, 3 to 2 in round two, three years', () => {
+    expect(rookieScale(1, 8)).toEqual({ dp: 10, years: 3, round: 1, slot: 1 });
+    expect(rookieScale(8, 8)).toEqual({ dp: 5, years: 3, round: 1, slot: 8 });
+    expect(rookieScale(9, 8)).toEqual({ dp: 3, years: 3, round: 2, slot: 1 });
+    expect(rookieScale(16, 8)).toEqual({ dp: 2, years: 3, round: 2, slot: 8 });
+    // Linear and rounded between: an eight-team round one is 10 9 9 8 7 6 6 5.
+    expect(Array.from({ length: 8 }, (_, i) => rookieScale(i + 1, 8).dp)).toEqual([10, 9, 9, 8, 7, 6, 6, 5]);
+    expect(Array.from({ length: 8 }, (_, i) => rookieScale(9 + i, 8).dp)).toEqual([3, 3, 3, 3, 2, 2, 2, 2]);
+  });
+
+  it('is the same at a slot whatever the league size, and never below the minimum', () => {
+    expect(rookieScale(1, 4).dp).toBe(10);
+    expect(rookieScale(4, 4).dp).toBe(5);
+    expect(rookieScale(1, 30).dp).toBe(10);
+    expect(rookieScale(30, 30).dp).toBe(5);
+    expect(rookieScale(60, 30).dp).toBe(2);
+    // A pick past round two is priced as the last of round two; a bad number is the first pick.
+    expect(rookieScale(99, 8).dp).toBe(2);
+    expect(rookieScale(0, 8).dp).toBe(10);
   });
 });

@@ -23,8 +23,22 @@
 
 /** The payroll cap, in DP per season. */
 export const CAP_DP = 100;
-/** Your own players (Bird rights) and your own draft picks may take you this far over it. */
-export const APRON_DP = 115;
+/**
+ * THE HUMAN'S APRON (the user, 2026-09-17): your own players (Bird rights)
+ * and your own draft picks may take you this far over the cap — 130, in the
+ * NBA's proportions (its aprons sit a quarter to a third above its cap). It
+ * was 115 from 2026-09-11 to 2026-09-17.
+ */
+export const APRON_DP = 130;
+/**
+ * THE AI'S APRON. The user, 2026-09-17: "The AI should be able to go over
+ * that cap to the same apron as humans, but they should not bring in a team
+ * over that cap." So an AI team ARRIVES at or under its cap (dynasty.js
+ * aiCapDp) and may re-sign, sign its picks and fill its roster up to this —
+ * tighter than the human's, because the AI never has to get back under it.
+ * dynasty.js scales both by the league's rung (aiApronDp).
+ */
+export const AI_APRON_DP = 115;
 /** The minimum deal — always signable, up to the apron. */
 export const MIN_DP = 1;
 /** Printed salary per Dynasty Point: the $5,500 cap is 100 DP. */
@@ -39,8 +53,15 @@ export const HAPPY_MAX_SALARY = 150;
  */
 export const MAX_DP = 35;
 export const CONTRACT_YEARS = { min: 1, max: 5 };
-/** A draft pick signs for three-quarters of his value, for three seasons. */
-export const ROOKIE_SCALE = { share: 0.75, years: 3 };
+/**
+ * THE ROOKIE SCALE IS THE PICK'S SLOT, NOT THE CARD (the user, 2026-09-17).
+ * NBA-style: round one slides from 10 DP at the first pick to 5 at the last
+ * pick of the round, round two from 3 to 2, every deal three seasons. Until
+ * 2026-09-17 a pick signed at three-quarters of the CARD's value, which put a
+ * legendary draftee at 20-31 DP — nobody could sign one, and the "class" of
+ * a shuffled pool full of them went 34-39% signed.
+ */
+export const ROOKIE_SCALE = { first: { top: 10, bottom: 5 }, second: { top: 3, bottom: 2 }, years: 3 };
 /**
  * Free agency runs this many WEEKS (the user's word, 2026-09-11 — "three
  * advanceable weeks"); every floor drops 10% a week. The code says `day`.
@@ -250,9 +271,22 @@ export function judgeOffer({ card, pid, ctx, offer, talk = null, day = 1, rivalR
   return { accepted: false, mood, talk: { ...t, offers, patience, progress, walked: patience <= 0, mood } };
 }
 
-/** A draft pick's contract: fixed, not negotiated. */
-export function rookieScale(card) {
-  return { dp: Math.max(MIN_DP, Math.round(fairDp(card) * ROOKIE_SCALE.share)), years: ROOKIE_SCALE.years };
+/**
+ * A draft pick's contract: fixed by his slot, not negotiated. `pick` is the
+ * overall pick number (1 = first overall) in a draft of `teams` teams; the
+ * round is read off it, and the price slides linearly, rounded, from the
+ * round's top to its bottom. A pick past round two is priced as the last of
+ * round two.
+ */
+export function rookieScale(pick, teams) {
+  const n = Math.max(1, Math.floor(teams) || 1);
+  const overall = Math.max(1, Math.floor(pick) || 1);
+  const round = overall > n ? 2 : 1;
+  const slot = round === 1 ? overall : Math.min(n, overall - n);
+  const band = round === 1 ? ROOKIE_SCALE.first : ROOKIE_SCALE.second;
+  const t = n > 1 ? (slot - 1) / (n - 1) : 0;
+  const dp = Math.max(MIN_DP, Math.round(band.top - (band.top - band.bottom) * t));
+  return { dp, years: ROOKIE_SCALE.years, round, slot };
 }
 
 // ── TRADE VALUE (2026-09-11) ────────────────────────────────────────────────

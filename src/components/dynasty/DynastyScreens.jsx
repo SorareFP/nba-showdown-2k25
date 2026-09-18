@@ -17,12 +17,12 @@ import {
   DPHASE, MIN_ROSTER, MAX_ROSTER, PHASE_LABEL, isOffseason, teamOf, rosterKeys, contractsOf, payroll, deadMoney,
   rightsOf, freeAgentKeys, quote, negotiate, renounce, waive, onClock, draftAvailable, draftPick, passPick, simDraft,
   finishDraft, projectedPayroll, closeSigning, closeResign, lotteryOdds, drawLottery, classFor, signRookie,
-  closeRookies, nextFaDay, fillRoster, startSeason, rosterProblem, ageOf,
+  closeRookies, nextFaDay, fillRoster, startSeason, rosterProblem, ageOf, rookieTerms, rookieCommitted, rookieProblem,
   tradeValue, evaluateTrade, makeTrade, suggestSweetener, picksOf, pickValue, pickLabel,
-  tradesOpen, tradeDeadlineRound,
+  tradesOpen, tradeDeadlineRound, TRADE_MATCH,
 } from '../../game/modes/dynasty.js';
 import {
-  CAP_DP, APRON_DP, MIN_DP, MAX_DP, FA_DAYS, CONTRACT_YEARS, MOOD_TEXT, personality, rookieScale,
+  CAP_DP, APRON_DP, AI_APRON_DP, MIN_DP, MAX_DP, FA_DAYS, CONTRACT_YEARS, MOOD_TEXT, personality, rookieScale,
 } from '../../game/modes/dynastyMarket.js';
 import { clockLeft } from '../../game/modes/dynastyFriends.js';
 import { BASE_SET, getCardByKey } from '../../game/cardSets.js';
@@ -106,7 +106,7 @@ export function PhaseTrack({ d }) {
 
 // ── The payroll ─────────────────────────────────────────────────────────────
 
-function PayBar({ d, teamId, extra = 0 }) {
+function PayBar({ d, teamId, extra = 0, extraNote = 'more if your draftees sign at their asks' }) {
   const pay = payroll(d, teamId);
   const dead = deadMoney(d, teamId);
   const scale = Math.max(APRON_DP, pay + extra);
@@ -120,7 +120,7 @@ function PayBar({ d, teamId, extra = 0 }) {
       </div>
       <div className={dy.payLegend}>
         <strong>{pay} of {CAP_DP} DP</strong>
-        {extra > 0 && <span> · {extra} more if your draftees sign at their asks</span>}
+        {extra > 0 && <span> · {extra} {extraNote}</span>}
         {dead > 0 && <span> · {dead} of it dead money</span>}
         <span className={styles.muted}> · apron {APRON_DP} for your own players</span>
       </div>
@@ -468,7 +468,7 @@ function MarketRow({ d, cardKey, on, onClick, showRival = false }) {
 
 const SIGN_INTRO = {
   draft: `Your draftees only talk to you — for now. Each has an ask set by their salary and bent by their personality; offer less and they may take it, or walk. Everyone has to fit under the ${CAP_DP}-DP cap. Anyone you have not signed when you are done goes to free agency.`,
-  expiring: `Your players whose deals ran out talk only to you in this window. Re-signing your own can take you past the cap, up to the ${APRON_DP} apron — the reward for keeping a team together. Anyone you let go hits free agency.`,
+  expiring: `Your players whose deals ran out talk only to you in this window. Re-signing your own can take you past the cap, up to the ${APRON_DP} apron — the reward for keeping a team together. AI teams arrive under the ${CAP_DP} cap and may re-sign up to ${AI_APRON_DP}. Anyone you let go hits free agency.`,
 };
 
 export function SigningBoard({ d, moves, kind }) {
@@ -494,6 +494,7 @@ export function SigningBoard({ d, moves, kind }) {
         />
       </div>
       <p className={dy.intro}>{SIGN_INTRO[kind]}</p>
+      <PendingRights d={d} moves={moves} />
       {kind === 'draft' && <PayBar d={d} teamId={me} extra={projectedPayroll(d, me) - payroll(d, me)} />}
       <div className={dy.split}>
         <div className={dy.list}>
@@ -553,13 +554,18 @@ export function DraftRoom({ d, moves }) {
       .sort((a, b) => (b.salary ?? 0) - (a.salary ?? 0));
   }, [d, search, pos]);
   const keyOf = c => draftAvailable(d).find(k => cardOf(k) === c);
-  const priceOf = key => (fantasy ? quote(d, me, key).ask : rookieScale(cardOf(key)).dp);
+  // A fantasy pick costs what he asks; a rookie pick costs its SLOT (the
+  // user, 2026-09-17), the same for everyone on the board.
+  const slot = clock ? rookieScale(clock.n, d.teams.length) : null;
+  const priceOf = key => (fantasy ? quote(d, me, key).ask : slot?.dp ?? 0);
 
   const picks = d.draft?.picks ?? [];
   const mineSoFar = picks.filter(p => p.teamId === me && p.key);
   const upcoming = (d.draft?.order ?? []).slice(picks.length, picks.length + 12);
   const recent = [...picks].slice(-8).reverse();
-  const extra = fantasy ? projectedPayroll(d, me) - payroll(d, me) : 0;
+  // The running total: asks in a fantasy draft, the scale of the picks made in a rookie draft.
+  const extra = projectedPayroll(d, me) - payroll(d, me);
+  const room = APRON_DP - payroll(d, me) - rookieCommitted(d, me);
 
   const pick = key => moves.pick(key);
   // With friends a coach's pick is on a clock (dynastyFriends.js).
@@ -575,7 +581,7 @@ export function DraftRoom({ d, moves }) {
       <p className={dy.intro}>
         {fantasy
           ? `Draft anyone — then you have to SIGN them, under a ${CAP_DP}-DP cap. The number beside each player is what they will ask you for; the bar keeps your running total.`
-          : 'Players who have never been in the league. Two rounds; you can pass. A pick signs on the rookie scale — three years at three-quarters of his value — and can take you up to the apron. Everyone not taken goes back into the draft pool for a later year.'}
+          : `A class of ${d.draft?.pool?.length || classFor(d).length || 0} drawn by rarity — one rare is guaranteed, a legendary is a long shot. Two rounds; you can pass. A pick signs on the rookie scale, priced by the SLOT, not the player: 10 DP at the first pick down to 5 at the end of round one, 3 down to 2 in round two, three years. He is your rights until the season starts — sign him any time before, up to the ${APRON_DP} apron. Everyone not taken goes back into the draft pool.`}
         {moves.friends && ' Every coach has twelve hours on the clock; when it runs out, the AI picks for them.'}
       </p>
 
@@ -584,8 +590,8 @@ export function DraftRoom({ d, moves }) {
           {!clock
             ? 'The draft is over.'
             : mine
-              ? `You are on the clock — pick ${clock.n}, round ${clock.round}.`
-              : `${teamOf(d, clock.teamId)?.name} are on the clock (pick ${clock.n}).`}
+              ? `You are on the clock — pick ${clock.n}, round ${clock.round}.${!fantasy && slot ? ` This slot signs at ${slot.dp} DP × ${slot.years}.` : ''}`
+              : `${teamOf(d, clock.teamId)?.name} are on the clock (pick ${clock.n}${!fantasy && slot ? `, ${slot.dp} DP on the scale` : ''}).`}
           {left != null && <span className={dy.clockLeft}> · {formatLeft(left)} left</span>}
         </span>
         <span className={dy.clockActions}>
@@ -648,12 +654,17 @@ export function DraftRoom({ d, moves }) {
         <div className={dy.board}>
           <div className={dy.nego}>
             <div className={styles.label}>Your picks</div>
-            {fantasy && <PayBar d={d} teamId={me} extra={extra} />}
+            <PayBar d={d} teamId={me} extra={extra} extraNote={fantasy ? undefined : 'on the scale for the picks you hold'} />
+            {!fantasy && (
+              <div className={`${dy.ready} ${room < (slot?.dp ?? 0) ? dy.readyBad : ''}`}>
+                {room >= 0 ? `${room} DP of room to the ${APRON_DP} apron after your picks` : `${-room} DP past the ${APRON_DP} apron — a pick you cannot sign lapses when the season starts`}
+              </div>
+            )}
             <div className={dy.boardList}>
               {mineSoFar.map(p => (
                 <div key={p.key} className={dy.boardLine}>
                   <PlayerCell cardKey={p.key} age={ageOf(d, p.key)} />
-                  <span className={styles.muted}>#{p.n}{fantasy ? ` · asks ${priceOf(p.key)}` : ''}</span>
+                  <span className={styles.muted}>#{p.n} · {fantasy ? `asks ${priceOf(p.key)}` : `${rookieScale(p.n, d.teams.length).dp} DP × ${rookieScale(p.n, d.teams.length).years}`}</span>
                 </div>
               ))}
               {!mineSoFar.length && <span className={styles.muted}>None yet.</span>}
@@ -689,8 +700,9 @@ export function LotteryRoom({ d, moves }) {
       <p className={dy.intro}>
         The teams that missed the playoffs, worst record first — the worse the record, the better the odds. The lottery draws
         the top {plural(odds.draws, 'pick')}; everyone else picks in reverse order of the standings.
-        This class: the next {plural(cls.length, 'player')} in the draft pool, none of whom has played in this league. Two
-        rounds are drafted and the rest go back into the pool.
+        This class: {plural(cls.length, 'player')} drawn from the draft pool by rarity — at least one rare, a super-rare more
+        often than not, a legendary about one year in seven — none of whom has played in this league. Two rounds are
+        drafted, priced by the slot (10 DP at the top down to 2 at the end of round two), and the rest go back into the pool.
       </p>
       {odds.entries.length ? (
         <div className={styles.tableWrap}>
@@ -725,45 +737,78 @@ export function LotteryRoom({ d, moves }) {
 
 // ── Signing your picks ──────────────────────────────────────────────────────
 
-export function RookieSigning({ d, moves }) {
-  const { ask } = useDialogs();
+/**
+ * THE RIGHTS LIST (the user, 2026-09-17): the picks a coach holds, each with
+ * its slot's scale and a Sign button — disabled, and saying why, when the
+ * roster is full or the deal would pass the apron. Shown on the picks screen
+ * and again through free agency and the preseason, since the rights last
+ * until the season starts.
+ */
+export function RightsList({ d, moves }) {
   const me = d.humanId;
   const keys = rightsOf(d, me, 'rookie');
-  const full = rosterKeys(d, me).length >= MAX_ROSTER;
-  const pay = payroll(d, me);
-  const confirm = async () => !keys.length || ask({
-    title: 'Done with your picks?',
-    body: `${plural(keys.length, 'unsigned pick')} will go to free agency.`,
-    confirmLabel: 'Let them go',
-  });
+  if (!keys.length) return <div className={styles.muted}>No picks left to sign.</div>;
+  return (
+    <div className={dy.list}>
+      {keys.map(k => {
+        const scale = rookieTerms(d, k);
+        const problem = rookieProblem(d, me, k);
+        const full = /roster is full/.test(problem ?? '');
+        const over = /apron/.test(problem ?? '');
+        // Said on the row, not only in a tooltip a phone never shows.
+        const why = full ? 'roster full' : over ? 'past the apron' : null;
+        return (
+          <div key={k} className={dy.draftRow}>
+            <PlayerCell cardKey={k} age={ageOf(d, k)} />
+            <span className={styles.muted}>pick #{d.rights[k]?.pick}</span>
+            <span className={dy.rowAsk}><strong>{scale.dp}</strong> DP × {scale.years}{why && <span className={styles.muted}> · {why}</span>}</span>
+            <span className={dy.clockActions}>
+              <button type="button" className={styles.primary} disabled={Boolean(problem)} onClick={() => moves.signRookie(k)} title={problem ? `Cannot sign: ${problem}` : ''}>Sign</button>
+              <button type="button" className={styles.ghost} onClick={() => moves.renounce(k)}>Renounce</button>
+            </span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+/**
+ * The rights list as a panel of its own, for the phases after the picks
+ * screen — free agency, the preseason, and the signing boards — so a pick
+ * the coach has not signed is one click away wherever the window is open.
+ * Nothing when there are none.
+ */
+export function PendingRights({ d, moves }) {
+  const me = d.humanId;
+  if (!rightsOf(d, me, 'rookie').length) return null;
+  return (
+    <div className={dy.nego} style={{ marginBottom: 12 }}>
+      <div className={styles.label}>Your picks — rights until the season starts</div>
+      <div className={styles.muted}>
+        Each signs at his slot's scale, up to the {APRON_DP} apron; {rookieCommitted(d, me)} DP on the scale for all of them. Unsigned when the season starts, they become free agents.
+      </div>
+      <RightsList d={d} moves={moves} />
+    </div>
+  );
+}
+
+export function RookieSigning({ d, moves }) {
+  const me = d.humanId;
+  const keys = rightsOf(d, me, 'rookie');
   return (
     <section className={styles.panel}>
       <div className={dy.panelHead}>
         <h3 className={styles.panelTitle}>Sign your picks</h3>
-        <PhaseButton moves={moves} confirm={confirm} onDone={moves.closeRookies} label="Done — open free agency →" />
+        <PhaseButton moves={moves} onDone={moves.closeRookies} label="Open free agency →" />
       </div>
       <p className={dy.intro}>
-        A pick signs on the rookie scale — no haggling — and can take you past the cap up to the {APRON_DP} apron. A full
-        roster has to waive someone first (Front office, below).
+        A pick signs on the rookie scale — his slot's price, no haggling — and can take you past the cap up to the {APRON_DP} apron.
+        A full roster has to waive someone first (Front office, below). Your picks stay <strong>your rights</strong> through free agency
+        and the preseason: sign them whenever they fit. Anyone still unsigned when the season starts becomes a free agent.
+        {keys.length > 0 && ` You hold ${plural(keys.length, 'pick')} — ${rookieCommitted(d, me)} DP on the scale.`}
       </p>
-      <div className={dy.list}>
-        {keys.map(k => {
-          const scale = rookieScale(cardOf(k));
-          const over = pay + scale.dp > APRON_DP;
-          return (
-            <div key={k} className={dy.draftRow}>
-              <PlayerCell cardKey={k} age={ageOf(d, k)} />
-              <span className={styles.muted}>pick #{d.rights[k]?.pick}</span>
-              <span className={dy.rowAsk}><strong>{scale.dp}</strong> DP × {scale.years}</span>
-              <span className={dy.clockActions}>
-                <button type="button" className={styles.primary} disabled={full || over} onClick={() => moves.signRookie(k)} title={full ? 'Your roster is full' : over ? 'Past the apron' : ''}>Sign</button>
-                <button type="button" className={styles.ghost} onClick={() => moves.renounce(k)}>Renounce</button>
-              </span>
-            </div>
-          );
-        })}
-        {!keys.length && <div className={styles.muted}>No picks left to sign.</div>}
-      </div>
+      <RightsList d={d} moves={moves} />
     </section>
   );
 }
@@ -802,6 +847,8 @@ export function FreeAgency({ d, moves }) {
   const bids = Object.keys(d.fa?.rivals ?? {}).length;
   const problem = rosterProblem(d, me);
   const lastDay = day >= FA_DAYS;
+  // Picks still unsigned: their rights last to the start of the season.
+  const rights = rightsOf(d, me, 'rookie');
 
   // With friends the week is SEALED BIDS (BidPanel), and it turns when every coach is ready.
   const sealed = moves.friends && !pre;
@@ -809,6 +856,11 @@ export function FreeAgency({ d, moves }) {
     title: 'Close free agency?',
     body: 'Every rival offer still standing signs, then the AI teams fill out their rosters from whoever is left.',
     confirmLabel: 'Close it',
+  });
+  const confirmStart = async () => !rights.length || ask({
+    title: `Start the season with ${plural(rights.length, 'unsigned pick')}?`,
+    body: 'Their rights lapse when the season starts: anyone you have not signed becomes a free agent.',
+    confirmLabel: 'Start the season',
   });
   const myBids = moves.bids ?? [];
 
@@ -831,9 +883,10 @@ export function FreeAgency({ d, moves }) {
             </button>
           )}
           {/* With friends a coach still short when everyone is ready is filled with the cheapest. */}
-          {pre && <PhaseButton moves={moves} disabled={!moves.friends && Boolean(problem)} onDone={moves.startSeason} label={`Start Year ${d.year} →`} />}
+          {pre && <PhaseButton moves={moves} confirm={confirmStart} disabled={!moves.friends && Boolean(problem)} onDone={moves.startSeason} label={`Start Year ${d.year} →`} />}
         </span>
       </div>
+      <PendingRights d={d} moves={moves} />
       <p className={dy.intro}>
         {pre
           ? `${d.fa ? 'Free agency has closed; whoever is left signs for less. ' : ''}You need ${MIN_ROSTER}–${MAX_ROSTER} players to start the season.`
@@ -991,7 +1044,9 @@ export function TradeDesk({ d, moves, defaultOpen = false }) {
             position it is short at is worth more, and a rebuilding team wants picks where a contender wants players.
             Nobody gets better or worse with age — it only matters when a player might retire before his deal is out.
             It wants to win a deal by a little. Contracts move with the players; both rosters stay at {MAX_ROSTER} or fewer
-            and neither payroll may grow past the {APRON_DP} apron. Picks in the next two drafts can be traded too.
+            and neither payroll may grow past its apron — {APRON_DP} for you, {AI_APRON_DP} for an AI team. A side over the{' '}
+            {CAP_DP} cap after the deal takes back at most {Math.round(TRADE_MATCH * 100)}% of the DP it sends out. Picks
+            in the next two drafts can be traded too.
           </p>
           {moves.friends && (
             <p className={dy.intro}>

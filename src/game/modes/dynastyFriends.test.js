@@ -2,11 +2,13 @@
 // sealed free-agency weeks, and trades between coaches with a veto.
 import { describe, it, expect } from 'vitest';
 import {
-  createDynasty, DPHASE, onClock, rosterKeys, rightsOf, freeAgentKeys, contractsOf, quote, startSeason,
+  createDynasty, DPHASE, onClock, rosterKeys, rightsOf, freeAgentKeys, contractsOf, quote, startSeason, waive, MAX_ROSTER,
 } from './dynasty.js';
+import { rookieScale } from './dynastyMarket.js';
 import {
   PICK_CLOCK_MS, setReady, allReady, advancePhase, stampClock, clockLeft, runDraftClock, coachPick,
   bidProblem, nextFaWeek, proposeTrade, respondTrade, withdrawTrade, vetoTrade, vetoable, openOffers, createFriendsDynasty,
+  friendsAct, FRIEND_MOVES,
 } from './dynastyFriends.js';
 import { buildAiLeague } from './aiTeams.js';
 
@@ -108,6 +110,29 @@ describe('sealed free agency', () => {
     const key = freeAgentKeys(d).find(k => !d.fa.rivals[k] && quote(d, A, k).ask >= 8);
     const x = nextFaWeek(d, [{ teamId: A, key, dp: 1, years: 2 }], { rng: seeded(9) });
     expect(x.contracts[key]).toBeUndefined();
+  });
+});
+
+// THE RIGHTS WINDOW WITH FRIENDS (the user, 2026-09-17): a coach signs his
+// pick through the server's move list in any phase until the season starts.
+describe('a coach\'s picks', () => {
+  // Free agency with a pick of Ann's still unsigned, from the draft pool.
+  const withPick = () => {
+    let d = toFreeAgency();
+    const key = d.draftPool[0];
+    d = { ...d, draftPool: d.draftPool.slice(1), league: [...d.league, key], rights: { ...d.rights, [key]: { teamId: A, kind: 'rookie', pick: 2 } } };
+    if (rosterKeys(d, A).length >= MAX_ROSTER) d = waive(d, A, rosterKeys(d, A)[0]);
+    return { d, key };
+  };
+
+  it('signs at the slot\'s scale in free agency and in the preseason — and not for another coach, nor in season', () => {
+    expect(FRIEND_MOVES).toContain('signRookie');
+    const { d, key } = withPick();
+    const terms = { teamId: A, dp: rookieScale(2, d.teams.length).dp, years: 3, how: 'rookie' };
+    expect(friendsAct(d, A, 'signRookie', { key }, { now: T0 }).dynasty.contracts[key]).toMatchObject(terms);
+    expect(friendsAct({ ...d, phase: DPHASE.preseason }, A, 'signRookie', { key }, { now: T0 }).dynasty.contracts[key]).toMatchObject(terms);
+    expect(() => friendsAct(d, B, 'signRookie', { key }, { now: T0 })).toThrow(/not your pick/);
+    expect(() => friendsAct({ ...d, phase: DPHASE.season }, A, 'signRookie', { key }, { now: T0 })).toThrow(/between the draft and the season/);
   });
 });
 

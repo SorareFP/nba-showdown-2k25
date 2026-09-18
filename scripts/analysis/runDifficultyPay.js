@@ -15,7 +15,7 @@
  *
  * MIRROR MATCHES: the same ten on both benches, so the rung is the ONLY
  * difference and the pay gap it produces is coaching and nothing else. Roster
- * strength is a separate lever with its own fix (dynasty's entryCap), and
+ * strength is a separate lever with its own rules (dynasty's aiCapDp), and
  * mixing the two here would price one as the other.
  *
  * The claim is priced exactly as the server prices it, with the daily

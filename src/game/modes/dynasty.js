@@ -21,9 +21,9 @@
 //     destroyed, so contracts + rights + free agents is the league, always.
 //   THE DRAFT POOL — a queue of everyone who has not: every base card not in
 //     play and every special-set player with no base card, plus whoever the
-//     fantasy draft left on the board. Each offseason the next ten a team
-//     come off the front as the class; two rounds are drafted and the rest go
-//     back on the end. A drafted player joins the league.
+//     fantasy draft left on the board. Each offseason a CLASS is drawn from
+//     it by rarity (buildDraftClass, 2026-09-17); two rounds are drafted and
+//     the rest go back on the end. A drafted player joins the league.
 //
 // ── EVERYTHING IS A CARD KEY ────────────────────────────────────────────────
 //
@@ -39,15 +39,27 @@ import { CARDS } from '../cards.js';
 import { ALL_CARDS, BASE_SET, cardKey, getCardByKey, baseKey, copyKey } from '../cardSets.js';
 import { fitDeck } from '../deckFit.js';
 import { capOf } from '../coinRewards.js';
+import { getPlayerRarity } from '../rarity.js';
 
-// THE AI'S CAP AT THIS LEAGUE'S RUNG (2026-09-16). Above Prince the coach's
-// teams are richer: the same DP cap and apron, multiplied by the rung's cap
+// THE AI'S CAP AND APRON AT THIS LEAGUE'S RUNG (2026-09-16). Above Prince the
+// coach's teams are richer: the DP cap and the AI's OWN apron (dynastyMarket
+// AI_APRON_DP, 115 — not the human's 130), multiplied by the rung's cap
 // (coinRewards.js capOf). Every AI-side check reads these — the draft budget,
-// signing the draftees, the rookie scale, free-agency room and bids. A HUMAN
-// team's limits (limitFor, fitsCap) never do: a rung makes the opposition
-// better, never the player's own books tighter.
-const aiCapDp = d => Math.round(CAP_DP * capOf(d.aiLevel));
-const aiApronDp = d => Math.round(APRON_DP * capOf(d.aiLevel));
+// signing the draftees, re-signing, the rookie scale, free-agency room and
+// bids, filling a roster, its side of a trade. A HUMAN team's limits
+// (limitFor, fitsCap, CAP_DP / APRON_DP) never do: a rung makes the
+// opposition better, never the player's own books tighter.
+//
+// The user, 2026-09-17: "The AI should be able to go over that cap to the
+// same apron as humans, but they should not bring in a team over that cap."
+// So an AI team ARRIVES at or under aiCapDp whatever the humans brought
+// (aiDraftChoice, finishDraft), and grows past it only afterwards — through
+// re-signings, its picks and free agency — never past aiApronDp.
+export const aiCapDp = d => Math.round(CAP_DP * capOf(d.aiLevel));
+export const aiApronDp = d => Math.round(AI_APRON_DP * capOf(d.aiLevel));
+/** A team's cap and apron: the human's fixed numbers, or the AI's at this rung. */
+const capFor = (d, teamId) => (teamOf(d, teamId)?.human ? CAP_DP : aiCapDp(d));
+const apronFor = (d, teamId) => (teamOf(d, teamId)?.human ? APRON_DP : aiApronDp(d));
 // Ages for the cards that do not carry one — scripts/dynasty/buildAges.mjs.
 import DYNASTY_AGES from '../../../card-data/generated/dynasty-ages.json' with { type: 'json' };
 import DYNASTY_CONTRACTS from '../../../card-data/generated/dynasty-contracts.json' with { type: 'json' };
@@ -59,7 +71,7 @@ import { buildSeason, standings, totalRounds, PHASE } from './seasonCore.js';
 import { buildAiLeague } from './aiTeams.js';
 import { playoffCount } from './schedule.js';
 import {
-  CAP_DP, APRON_DP, MIN_DP, MAX_DP, FA_DAYS, LEFTOVER_DAY, CONTRACT_YEARS,
+  CAP_DP, APRON_DP, AI_APRON_DP, MIN_DP, MAX_DP, FA_DAYS, LEFTOVER_DAY, CONTRACT_YEARS,
   fairDp, dealPersonality, floorFor, openingAsk, askFor, preferredYears, newTalk, judgeOffer, rookieScale, toBeat,
   TRADE, talentValue, contractValue, controlFactor,
 } from './dynastyMarket.js';
@@ -339,13 +351,27 @@ export function quote(d, teamId, key, years = null) {
   };
 }
 
-/** The opening ask a team's draftees will make — the draft room's running total. */
+/** A pick's contract on the rookie scale: his slot in this league's draft (dynastyMarket.rookieScale). */
+export function rookieTerms(d, key) {
+  const { dp, years } = rookieScale(d.rights?.[key]?.pick ?? 1, d.teams.length);
+  return { dp, years };
+}
+
+/** What a team's unsigned picks would cost on the scale — the room they reserve. */
+export function rookieCommitted(d, teamId) {
+  return rightsOf(d, teamId, 'rookie').reduce((t, key) => t + rookieTerms(d, key).dp, 0);
+}
+
+/**
+ * The draft room's running total: the opening asks of a team's fantasy
+ * draftees, and the scale of the picks it holds the rights to.
+ */
 export function projectedPayroll(d, teamId) {
   const asks = rightsOf(d, teamId, 'draft').reduce((t, key) => {
     const pid = traitOf(d, key);
     return t + openingAsk(cardOf(key), pid, ctxFor(d, key, teamId), preferredYears(pid), 1);
   }, 0);
-  return payroll(d, teamId) + asks;
+  return payroll(d, teamId) + asks + rookieCommitted(d, teamId);
 }
 
 // ── Creating one ────────────────────────────────────────────────────────────
@@ -384,11 +410,99 @@ export function draftClassCards(excludePersons = new Set()) {
 
 /**
  * The offseason draft (the user, 2026-09-11: "We only need 2 rounds per
- * off-season draft. The fantasy draft is the one that is 10 rounds"): a class
- * of the next ten players a team from the draft pool, two rounds drafted.
+ * off-season draft. The fantasy draft is the one that is 10 rounds"): two
+ * rounds drafted from a class of two a team plus four.
  */
-export const DRAFT_CLASS_PER_TEAM = 10;
 export const ROOKIE_ROUNDS = 2;
+export const DRAFT_CLASS_EXTRA = 4;
+/** How big a class is in a league of `teams` teams. */
+export const classSize = teams => ROOKIE_ROUNDS * teams + DRAFT_CLASS_EXTRA;
+
+// ── THE CLASS IS BUILT BY RARITY, NOT SLICED (the user, 2026-09-17) ─────────
+//
+// The second run's verdict: the draft class was "way way way too good". It
+// was a slice of ten a team off a shuffled pool that held every undrafted
+// base card — the stars nobody could afford — and averaged five legendaries
+// and twelve super-rares in an eight-team class. Now the class is DRAWN, band
+// by band, from the same universe (the special-set persons plus the base
+// leftovers — the user: "a small chance of a legendary in the pool"):
+//
+//   legendary   one, with probability 0.15 — never two;
+//   super-rare  one at 0.60, and a second at 0.15 only after the first;
+//   rare        ONE GUARANTEED, then a further one at 0.60, 0.35 and 0.15 —
+//               cascading, each roll only after the one before it landed;
+//   the rest    uncommon or common, a coin flip a seat.
+//
+// A band the pool cannot supply falls to the band below it. The class is
+// decided ONCE a year and stored on d.draftClass (withClass) so the trade
+// desk's pick values, the lottery room, the draft room, the AI and
+// finishDraft all see the same players.
+const CLASS_ODDS = {
+  legendary: [0.15],
+  'super-rare': [0.6, 0.15],
+  rare: [1, 0.6, 0.35, 0.15],
+};
+const CLASS_BANDS = ['legendary', 'super-rare', 'rare', 'uncommon', 'common'];
+
+/**
+ * Draw a class of classSize(teams) keys from `d.draftPool` with `rng`. Pure:
+ * the pool is not touched — drawLottery takes the class out of it.
+ */
+export function buildDraftClass(d, rng = Math.random) {
+  const want = classSize(d.teams.length);
+  const byBand = Object.fromEntries(CLASS_BANDS.map(b => [b, []]));
+  for (const key of d.draftPool ?? []) {
+    const card = cardOf(key);
+    if (card) byBand[getPlayerRarity(card)].push(key);
+  }
+  for (const b of CLASS_BANDS) byBand[b] = shuffle(byBand[b], rng);
+  const out = [];
+  // A seat in `band`, or the first band below it with anyone left in it.
+  // `upward`: a filler seat in a pool with nothing left below it takes the
+  // nearest band ABOVE instead — else a pool of only rares and better would
+  // never fill its class (it looped forever until 2026-09-18). Only the
+  // uncommon/common seats go up; the odds' own seats never do.
+  const seat = (band, upward = false) => {
+    if (out.length >= want) return;
+    const at = CLASS_BANDS.indexOf(band);
+    const order = [...CLASS_BANDS.slice(at), ...(upward ? CLASS_BANDS.slice(0, at).reverse() : [])];
+    for (const b of order) {
+      const key = byBand[b].shift();
+      if (key) { out.push(key); return; }
+    }
+  };
+  for (const band of ['legendary', 'super-rare', 'rare']) {
+    for (const p of CLASS_ODDS[band]) {
+      if (rng() >= p) break;
+      seat(band);
+    }
+  }
+  while (out.length < want && CLASS_BANDS.some(b => byBand[b].length)) seat(rng() < 0.5 ? 'uncommon' : 'common', true);
+  return out;
+}
+
+/** The class's deterministic rng, seeded from the dynasty and the draft year. */
+function classRng(d, year) {
+  let s = 2166136261;
+  for (const ch of `${d.id}:${year}`) s = Math.imul(s ^ ch.charCodeAt(0), 16777619) >>> 0;
+  return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 2 ** 32; };
+}
+
+/**
+ * Draw the class of the next draft still to be made and store it, once: a
+ * class already stored for that year is kept. It is drawn the moment the one
+ * before it leaves the pool — the lottery's draw (drawLottery), or the fantasy
+ * draft's close for year two — so from then until its own draft every pick
+ * is valued on the players who will really be in it. Until 2026-09-18 a
+ * preview priced the picks all season and closeResign threw it away for a
+ * fresh draw: a trade was valued on a class nobody drafted. The seed is the
+ * dynasty and the year, so the class is the same however the game got there.
+ * `classFor` reads the same draw for a save that has none stored yet.
+ */
+function withClass(d, year = nextDraftYear(d)) {
+  if (d.draftClass?.keys && d.draftClass.year === year) return d;
+  return { ...d, draftClass: { year, keys: buildDraftClass(d, classRng(d, year)) } };
+}
 
 function snakeOrder(teamIds, rounds) {
   const order = [];
@@ -522,21 +636,14 @@ export function createDynasty({
   // WHAT THE HUMANS ACTUALLY BROUGHT. An own start lets you field the ten you
   // own on their real contracts with no cap check at the door — the user's own
   // rule, 2026-09-12: come in over the apron and you let people walk or trade
-  // them to get under before you can re-sign anyone NEXT season. That is a fine
-  // rule; it was only ever applied to one side. The AI teams drafted to the
-  // 100-DP cap while a collector's best ten came in at 301, which is a threefold
-  // payroll advantage and the whole of a forty-point win
-  // (scripts/analysis/runRosterGap.js).
-  //
-  // So year one is drafted to what the league's richest human brought, and
-  // everybody is over the apron together, facing the same reckoning in year two.
-  const entryCap = Math.max(
-    CAP_DP,
-    ...entrants.map(h => (h.roster ?? []).reduce((t, c) => {
-      const real = contractFor(cardKey(c));
-      return t + (real?.dp ?? fairDp(c));
-    }, 0)),
-  );
+  // them to get under before you can re-sign anyone NEXT season. For a few
+  // days (2026-09-14 to 2026-09-17) the AI teams were drafted to what the
+  // richest human brought (`entryCap`), so a 301-DP collector's ten faced
+  // 166-243-DP opponents. The user ended that on 2026-09-17: "they should not
+  // bring in a team over that cap." The AI teams draft to aiCapDp whatever
+  // the humans brought; the human's payroll advantage is year one's, and the
+  // apron is the reckoning that takes it back. Old saves still carry an
+  // `entryCap` field; nothing reads it.
 
   const d = {
     id,
@@ -546,7 +653,6 @@ export function createDynasty({
     startMode,
     iq,
     aiLevel,
-    entryCap,
     size,
     length,
     series: Array.isArray(series) && series.length ? series : null,
@@ -586,7 +692,9 @@ export function createDynasty({
     // teams snake-draft the board around your ten, sign what they drafted,
     // and settle a free agency of their leftovers among themselves.
     const aiIds = shuffle(teams.filter(t => !t.human).map(t => t.id), rng);
-    let x = { ...d, phase: DPHASE.draft, draft: { kind: 'fantasy', order: snakeOrder(aiIds, FANTASY_ROUNDS), picks: [], pool: board } };
+    // `real`: this draft signs on REAL contracts (finishDraft), so the AI
+    // budgets its picks on those numbers, not on what the cards would ask.
+    let x = { ...d, phase: DPHASE.draft, draft: { kind: 'fantasy', real: true, order: snakeOrder(aiIds, FANTASY_ROUNDS), picks: [], pool: board } };
     x = finishDraft(simDraft(x, { rng, all: true }), { rng, real: true });
     // NO SIGNING PERIOD in an own start: everyone, yours and theirs, is
     // already on a contract, so the league opens straight into the preseason.
@@ -740,25 +848,95 @@ export function negotiate(d, teamId, key, offer) {
   return { dynasty: next, result: { accepted: false, mood: verdict.mood, ask: quote(next, teamId, key, years).ask } };
 }
 
-/** Sign your draft pick at the rookie scale. */
-export function signRookie(d, teamId, key) {
-  if (d.phase !== DPHASE.rookies) throw new Error('dynasty: picks are signed after the draft');
+/**
+ * THE RIGHTS WINDOW (the user, 2026-09-17). A drafted player is his team's
+ * RIGHTS from the pick until the preseason closes, and signs at the scale at
+ * any point in the signing, re-signing, free-agency and preseason phases while
+ * he fits under the team's apron. Nothing renounces a pick at the draft;
+ * whatever is still unsigned lapses once, when the season starts.
+ */
+const RIGHTS_WINDOW = new Set([DPHASE.rookies, DPHASE.signing, DPHASE.resign, DPHASE.freeAgency, DPHASE.preseason]);
+
+/** Why a team cannot sign its pick right now, or null. */
+export function rookieProblem(d, teamId, key) {
   const r = d.rights?.[key];
-  if (!r || r.kind !== 'rookie' || r.teamId !== teamId) throw new Error('dynasty: that is not your pick');
-  if (rosterKeys(d, teamId).length >= MAX_ROSTER) throw new Error(`dynasty: your roster is full at ${MAX_ROSTER} — waive someone first`);
-  const scale = rookieScale(cardOf(key));
-  if (payroll(d, teamId) + scale.dp > APRON_DP) throw new Error(`dynasty: their ${scale.dp} DP would take you past the ${APRON_DP} apron`);
-  return sign(d, teamId, key, { ...scale, how: 'rookie' });
+  if (!r || r.kind !== 'rookie' || r.teamId !== teamId) return 'that is not your pick';
+  if (!RIGHTS_WINDOW.has(d.phase)) return 'picks are signed between the draft and the season';
+  if (rosterKeys(d, teamId).length >= MAX_ROSTER) return `your roster is full at ${MAX_ROSTER} — waive someone first`;
+  const apron = apronFor(d, teamId);
+  const { dp } = rookieTerms(d, key);
+  if (payroll(d, teamId) + dp > apron) return `their ${dp} DP would take you past the ${apron} apron`;
+  return null;
+}
+
+/** Sign your draft pick at the rookie scale, any time in the rights window. */
+export function signRookie(d, teamId, key) {
+  const problem = rookieProblem(d, teamId, key);
+  if (problem) throw new Error(`dynasty: ${problem}`);
+  return sign(d, teamId, key, { ...rookieTerms(d, key), how: 'rookie' });
+}
+
+/** The contract an AI team would shed first: the one worth least over its years (contractValue). */
+function worstContract(d, teamId) {
+  const keys = rosterKeys(d, teamId);
+  if (!keys.length) return null;
+  return keys.reduce((w, k) => (contractValue(cardOf(k), d.contracts[k]) < contractValue(cardOf(w), d.contracts[w]) ? k : w));
+}
+
+/**
+ * THE AI SIGNS ITS PICKS WHENEVER THEY FIT (the user, 2026-09-17: "AI rookie
+ * signing happens whenever it fits during the window, not only at
+ * finishDraft"). Run at every turn of the window — the draft's close, each
+ * week of free agency, its close, and the season's start. Best pick first, so
+ * the room goes to the better player. At the `deadline` an AI team that drafted
+ * a player it could only sign after SHEDDING ONE CONTRACT sheds it: it waives
+ * the contract worth least (dead money as waive books it) when the pick's
+ * talent beats the waived player's, and otherwise lets the pick lapse.
+ */
+function aiSignRookies(d, { deadline = false } = {}) {
+  let x = d;
+  for (const team of d.teams.filter(t => !t.human)) {
+    const held = rightsOf(x, team.id, 'rookie').sort((a, b) => talentValue(cardOf(b)) - talentValue(cardOf(a)));
+    // ONE contract a team, the user's word — a second pick that needs a shed lapses.
+    let shedOne = false;
+    for (const key of held) {
+      if (!rookieProblem(x, team.id, key)) { x = sign(x, team.id, key, { ...rookieTerms(x, key), how: 'rookie' }); continue; }
+      if (!deadline || shedOne) continue;
+      const worst = worstContract(x, team.id);
+      if (!worst || talentValue(cardOf(key)) <= talentValue(cardOf(worst))) continue;
+      // Waived as waive books it: the DP stays this season as dead money, so
+      // what a shed buys is the ROSTER SPOT — it never makes money room.
+      const shed = waive(x, team.id, worst);
+      if (rookieProblem(shed, team.id, key)) continue;
+      x = sign(shed, team.id, key, { ...rookieTerms(shed, key), how: 'rookie' });
+      shedOne = true;
+    }
+  }
+  return x;
+}
+
+/** The deadline: every pick still unsigned, on any team, lapses to free agency. */
+function lapseRookies(d) {
+  let x = d;
+  for (const team of d.teams) {
+    for (const key of rightsOf(x, team.id, 'rookie')) {
+      x = say(renounce(x, team.id, key), `${team.name}'s rights to ${cardOf(key)?.name} lapse unsigned — he is a free agent.`);
+    }
+  }
+  return x;
 }
 
 /**
  * Fill a roster to `min` with the cheapest free agents — the AI teams' floor,
  * and the human's one-click answer to a short roster. Cheapest first, the
- * better player on a tie, under the cap if possible, the apron if not, and
- * anyone at all rather than a team that cannot take the floor.
+ * better player on a tie, under the team's cap if possible, its apron if not
+ * (the human's 130, the AI's 115 at the rung), and anyone at all rather than
+ * a team that cannot take the floor — the one way past the apron there is.
  */
 export function fillRoster(d, teamId, min = MIN_ROSTER) {
   let x = d;
+  const cap = capFor(d, teamId);
+  const apron = apronFor(d, teamId);
   for (let guard = 0; guard < MAX_ROSTER; guard += 1) {
     if (rosterKeys(x, teamId).length >= min) break;
     const day = marketDay(x);
@@ -771,11 +949,16 @@ export function fillRoster(d, teamId, min = MIN_ROSTER) {
     // CAMP INVITES: when no free agent fits under the apron — an own-team
     // start opens with no free agents at all — the cheapest players waiting
     // in the draft pool come in on minimum-length deals. My call, 2026-09-11.
-    let choice = free.find(o => fits(o, CAP_DP)) ?? free.find(o => fits(o, APRON_DP)) ?? null;
+    let choice = free.find(o => fits(o, cap)) ?? free.find(o => fits(o, apron)) ?? null;
     let invite = false;
     if (!choice) {
-      const camp = priced(x.draftPool ?? []);
-      choice = camp.find(o => fits(o, CAP_DP)) ?? camp.find(o => fits(o, APRON_DP)) ?? null;
+      // Never a member of the class drawn for the next draft (d.draftClass,
+      // 2026-09-17) — the class is the lottery's, not camp's. Stored first,
+      // so an older save's class cannot reshuffle when camp takes a player.
+      x = withClass(x);
+      const drawn = new Set(x.draftClass.keys);
+      const camp = priced((x.draftPool ?? []).filter(k => !drawn.has(k)));
+      choice = camp.find(o => fits(o, cap)) ?? camp.find(o => fits(o, apron)) ?? null;
       invite = Boolean(choice);
     }
     choice ??= free[0] ?? null;
@@ -843,8 +1026,9 @@ export function passPick(d, teamId) {
 /**
  * The AI's pick. A fantasy draft is drafted to a budget — every pick has to
  * be signed under the cap, so it takes the best player whose price still
- * leaves room for the spots after it. A rookie draft takes the best player.
- * A little chance in both, so two drafts are not the same draft.
+ * leaves room for the spots after it. A rookie draft takes the best player
+ * IT CAN SIGN, or null to pass. A little chance in both, so two drafts are
+ * not the same draft.
  */
 export function aiDraftChoice(d, teamId, rng = Math.random, { iq = 1 } = {}) {
   const avail = draftAvailable(d).filter(k => cardOf(k));
@@ -853,8 +1037,30 @@ export function aiDraftChoice(d, teamId, rng = Math.random, { iq = 1 } = {}) {
   const mine = [...rosterKeys(d, teamId), ...rightsOf(d, teamId)];
   const score = k => talentValue(cardOf(k)) * needFactor(mine, cardOf(k));
   if (d.draft.kind !== 'fantasy') {
+    // THE AI DRAFTS WHAT IT CAN SIGN (the user, 2026-09-17). This slot's
+    // scale has to fit under the team's apron with its payroll and the scale
+    // of the picks it already holds, and there has to be a roster spot once
+    // those picks are counted. Among the players who fit — every player costs
+    // the same at a slot, so either they all do or none does — the best is
+    // talent for the roster's need, the top two at 65/35.
+    const teams = d.teams.length;
+    const clock = onClock(d);
+    const { dp } = rookieScale(clock?.n ?? 1, teams);
+    const room = apronFor(d, teamId) - payroll(d, teamId) - rookieCommitted(d, teamId);
+    const spots = MAX_ROSTER - mine.length;
     const best = [...avail].sort((a, b) => score(b) - score(a));
-    return pickWeighted(best.slice(0, 2), [0.65, 0.35], rng);
+    if (dp <= room && spots > 0) return pickWeighted(best.slice(0, 2), [0.65, 0.35], rng);
+    // Nothing fits. It may still take the best player if shedding ONE
+    // contract would make him fit — the one worth least, waived as
+    // aiSignRookies will waive it at the deadline — and only for a player
+    // better than the man it would let go. A waive leaves its DP on this
+    // season's books as dead money, so in practice this is the full roster's
+    // way to a pick: the shed frees a spot, never money.
+    const worst = teamOf(d, teamId)?.human ? null : worstContract(d, teamId);
+    if (!worst || talentValue(cardOf(best[0])) <= talentValue(cardOf(worst))) return null;
+    const shed = waive(d, teamId, worst);
+    const roomAfter = apronFor(shed, teamId) - payroll(shed, teamId) - rookieCommitted(shed, teamId);
+    return dp <= roomAfter && spots + 1 > 0 ? best[0] : null;
   }
   // A FANTASY DRAFT IS DRAFTED TO A CAP (the user, 2026-09-11: "drafting to
   // make a team that fits in the salary cap, not just grabbing the best
@@ -863,19 +1069,39 @@ export function aiDraftChoice(d, teamId, rng = Math.random, { iq = 1 } = {}) {
   // less what the rest of the roster costs filled as cheaply as it could be;
   // and of those that fit, the best is the one the ROSTER needs — guards,
   // wings and bigs in proportion.
+  // THE NUMBER HE WILL SIGN AT. A draft that signs on real contracts (an
+  // own-team start, `draft.real`) budgets on the real deal, and only a card
+  // with no current NBA deal on what it would ask — the same fallback
+  // finishDraft signs him at. Any other draft prices the card.
+  const real = Boolean(d.draft.real);
   const floor = k => floorOf(d, k, teamId, undefined, 1);
-  const committed = rightsOf(d, teamId, 'draft').reduce((t, k) => t + floor(k), 0);
+  const cost = k => (real ? contractFor(k)?.dp : null) ?? floor(k);
+  const committed = rightsOf(d, teamId, 'draft').reduce((t, k) => t + cost(k), 0);
   const picksLeft = d.draft.order.slice(d.draft.picks.length).filter(t => t === teamId).length;
-  const reserve = avail.map(floor).sort((a, b) => a - b).slice(0, Math.max(0, picksLeft - 1))
+  const reserve = avail.map(cost).sort((a, b) => a - b).slice(0, Math.max(0, picksLeft - 1))
     .reduce((t, f) => t + Math.max(f, AI_RESERVE_PER_SPOT), 0);
-  // The cap this draft is played to: year one of an own start matches what the
-  // humans brought (entryCap), every other draft is the ordinary 100.
-  // A richer league's AI teams draft to a richer budget — the rung's cap
-  // multiplier on the DP cap. Better players, the same rules.
-  const cap = d.phase === DPHASE.draft && d.year === 1 ? Math.round((d.entryCap ?? CAP_DP) * capOf(d.aiLevel)) : aiCapDp(d);
-  const budget = cap - AI_FA_ROOM - payroll(d, teamId) - committed - reserve;
-  const fits = avail.filter(k => floor(k) <= budget);
-  if (!fits.length) return [...avail].sort((a, b) => floor(a) - floor(b))[0];
+  // The cap this draft is played to is the AI's cap at the league's rung —
+  // WHATEVER THE HUMANS BROUGHT (the user, 2026-09-17: "they should not bring
+  // in a team over that cap"). A richer league's AI teams draft to a richer
+  // budget — the rung's cap multiplier on the DP cap. Better players, the
+  // same rules. Room for free agency is kept back only when there is a
+  // free agency to bid in: an own start has no signing period and no
+  // year-one market, so the AI spends the cap on the ten it drafts.
+  const cap = aiCapDp(d);
+  const budget = cap - (real ? 0 : AI_FA_ROOM) - payroll(d, teamId) - committed - reserve;
+  const affordable = avail.filter(k => cost(k) <= budget);
+  if (!affordable.length) return [...avail].sort((a, b) => cost(a) - cost(b))[0];
+  // THE POSITIONAL FLOOR, the money reserve's twin (2026-09-17): a ten is
+  // not left without two guards, two forwards and a centre. Once the picks
+  // left are no more than the spots those floors still need, this pick comes
+  // from a group that is short. needFactor below only LEANS the ranking, and
+  // a ranking that pays for talent (it does now) out-leans it — one seed
+  // fielded a single forward.
+  const have = g => mine.filter(k => groupOf(k) === g).length;
+  const shortGroups = Object.keys(POS_FLOOR).filter(g => have(g) < POS_FLOOR[g]);
+  const stillNeed = shortGroups.reduce((t, g) => t + POS_FLOOR[g] - have(g), 0);
+  const floored = stillNeed >= picksLeft ? affordable.filter(k => shortGroups.includes(groupOf(k))) : [];
+  const fits = floored.length ? floored : affordable;
 
   // THE DIFFICULTY RUNG DRAFTS THE TEAM. Settler takes anything it can pay
   // for; Deity drafts on the three things below. `iq` is the chance of doing
@@ -885,26 +1111,32 @@ export function aiDraftChoice(d, teamId, rng = Math.random, { iq = 1 } = {}) {
   // (scripts/analysis/runRosterGap.js).
   if (iq < 1 && rng() >= iq) return fits[Math.floor(rng() * fits.length)];
 
-  // ── 1. WHAT HE IS WORTH AGAINST WHAT HE COSTS ────────────────────────────
-  // talentValue is fairDp convexed — how good the card IS — while floor() is
-  // his real contract, and the two are not the same number: Victor Wembanyama
-  // is the best card in the set and costs eleven of a hundred on his rookie
-  // deal, where Jokic, Curry and Embiid all sit at the 35-DP ceiling. Ranking
-  // on talent alone spent a third of the cap on a player an eleven-DP one
-  // matches.
+  // ── 1. WHAT HE IS WORTH OVER THE MAN THE MONEY WOULD OTHERWISE BUY ──────
+  // talentValue is fairDp convexed — how good the card IS — and cost() is
+  // what he signs for, and the two are not the same number on a real
+  // contract: Victor Wembanyama is the best card in the set and costs eleven
+  // of a hundred on his rookie deal, where Jokic, Curry and Embiid all sit at
+  // the 35-DP ceiling. The price is charged ONCE, by the affordability below.
+  // Until 2026-09-17 it was charged twice — talent per DP here, then the
+  // share over the price again — and the moment the draft was priced on real
+  // contracts the AI took ten rookie deals and left two-thirds of its cap
+  // unspent (payrolls of 22-41 DP, rosters worth ~110 by fairDp). Priced
+  // once, the same draft spends 94-100 and fields ~150 with a best five of
+  // ~90 — bargains first, then stars with the room they leave, then fillers.
   const talent = k => talentValue(cardOf(k));
   const repl = Math.min(...fits.map(talent));
-  const perDp = k => (talent(k) - repl) / Math.max(floor(k), 1);
+  const over = k => talent(k) - repl;
 
   // ── 2. DP REMAINING, SPREAD OVER THE SPOTS LEFT ──────────────────────────
-  // Value for money on its own drafts ten bargains and leaves the cap unspent,
-  // which is how the first attempt at this fielded a cheap, bad team. What is
-  // actually on offer is `budget` across `picksLeft` spots, so a pick near its
-  // share is neither hoarding nor starving the rest. Cards far under the share
-  // are not punished — a bargain IS the point — but a pick that eats several
-  // spots' worth has to be worth several spots.
+  // What is actually on offer is `budget` across `picksLeft` spots, so a
+  // pick near its share is neither hoarding nor starving the rest. Cards
+  // under the share are not punished — a bargain IS the point — but a pick
+  // that eats several spots' worth has to be worth several spots. Above the
+  // share this is talent over price, and talent is convex, so of two dear
+  // players the better one wins; a pick that costs the share is judged on
+  // talent alone, so a bargain star beats a full-price one.
   const share = Math.max(1, budget / Math.max(1, picksLeft));
-  const affordability = k => (floor(k) <= share ? 1 : share / floor(k));
+  const affordability = k => (cost(k) <= share ? 1 : share / cost(k));
 
   // ── 3. THE TEAM'S SPEED AND POWER, NOT ITS POSITIONS ─────────────────────
   // The roll bonus is max(speedAdv, powerAdv) against the man you draw, so a
@@ -933,7 +1165,7 @@ export function aiDraftChoice(d, teamId, rng = Math.random, { iq = 1 } = {}) {
   // rather than a number that swamps or is swamped by the two above.
   const bestCover = Math.max(...fits.map(coverage), 1);
 
-  const rank = k => perDp(k)
+  const rank = k => over(k)
     * affordability(k)
     * (0.35 + 0.65 * (coverage(k) / bestCover))
     * needFactor(mine, cardOf(k));
@@ -950,7 +1182,9 @@ export function simDraft(d, { rng = Math.random, all = false, iq } = {}) {
     const clock = onClock(x);
     if (!clock) break;
     if (!all && teamOf(x, clock.teamId)?.human) break;
-    x = draftPick(x, clock.teamId, aiDraftChoice(x, clock.teamId, rng, { iq: level }));
+    const key = aiDraftChoice(x, clock.teamId, rng, { iq: level });
+    // A rookie pick nobody on the books can sign is passed (aiDraftChoice).
+    x = key == null ? passPick(x, clock.teamId) : draftPick(x, clock.teamId, key);
   }
   return x;
 }
@@ -961,7 +1195,7 @@ export const draftDone = d => !onClock(d);
  * Close a finished draft. The fantasy draft goes to signing — the AI signs its
  * draftees where it can — and the rookie draft to signing picks.
  */
-export function finishDraft(d, { rng = Math.random, real = false } = {}) {
+export function finishDraft(d, { rng = Math.random, real = Boolean(d.draft?.real) } = {}) {
   if (!draftDone(d)) throw new Error('dynasty: the draft is not over');
   const record = { kind: d.draft.kind, picks: d.draft.picks, origin: d.draft.origin ?? null };
   // Nobody took them: the fantasy draft's leftovers are shuffled into the draft
@@ -972,31 +1206,34 @@ export function finishDraft(d, { rng = Math.random, real = false } = {}) {
     for (const team of x.teams.filter(t => !t.human)) {
       for (const key of rightsOf(x, team.id, 'draft')) {
         // `real`: an own-team start, where the AI's teams arrive on real
-        // contracts exactly as the coach's does — no negotiation, and over
-        // the apron is allowed, because getting back under is the problem
-        // the first offseason sets you (the user, 2026-09-12).
+        // contracts exactly as the coach's does — no negotiation, and every
+        // spot filled, but NEVER past the AI's cap (the user, 2026-09-17:
+        // "they should not bring in a team over that cap"). A draftee who
+        // would take the team over it walks, and the roster is filled from
+        // the cheap end at the season's start. Only the coach's own ten may
+        // arrive over the cap — that is the reckoning the first offseason
+        // sets THEM (the user, 2026-09-12).
         const deal = real ? contractFor(key) : null;
         const years = deal?.years ?? preferredYears(traitOf(x, key));
         const dp = deal?.dp ?? floorOf(x, key, team.id, years, 1);
-        const fits = real || (rosterKeys(x, team.id).length < MAX_ROSTER - AI_OPEN_SPOTS && payroll(x, team.id) + dp <= aiCapDp(x));
+        const fits = real
+          ? payroll(x, team.id) + dp <= aiCapDp(x)
+          : rosterKeys(x, team.id).length < MAX_ROSTER - AI_OPEN_SPOTS && payroll(x, team.id) + dp <= aiCapDp(x);
         x = fits ? sign(x, team.id, key, { dp, years, how: real ? 'brought' : 'draft' }) : renounce(x, team.id, key);
       }
     }
-    return say(x, 'The draft is done. Sign your draftees — anyone you do not sign goes to free agency.');
+    // Year two's class is drawn now, from the pool with the leftovers in it.
+    return say(withClass(x), 'The draft is done. Sign your draftees — anyone you do not sign goes to free agency.');
   }
-  let x = {
+  const x = {
     ...d, draft: record, phase: DPHASE.rookies, talks: {}, draftPool: [...(d.draftPool ?? []), ...undrafted],
+    // d.draftClass is already NEXT year's (drawn at the lottery); the
+    // undrafted go back into the pool for the class after it.
     // This year's picks are made: their trade records go.
     pickOwner: Object.fromEntries(Object.entries(d.pickOwner ?? {}).filter(([id]) => parsePick(id).year !== d.year)),
   };
-  for (const team of x.teams.filter(t => !t.human)) {
-    for (const key of rightsOf(x, team.id, 'rookie')) {
-      const scale = rookieScale(cardOf(key));
-      const fits = rosterKeys(x, team.id).length < MAX_ROSTER && payroll(x, team.id) + scale.dp <= aiApronDp(x);
-      x = fits ? sign(x, team.id, key, { ...scale, how: 'rookie' }) : renounce(x, team.id, key);
-    }
-  }
-  return x;
+  // The AI signs what fits now; the rest stay its rights until the season starts.
+  return aiSignRookies(x);
 }
 
 /** Done signing draftees: whoever is unsigned goes to free agency, which opens. */
@@ -1007,12 +1244,15 @@ export function closeSigning(d, { rng = Math.random } = {}) {
   return openFreeAgency(x, { rng });
 }
 
-/** Done signing picks: the unsigned go to free agency, which opens. */
+/**
+ * Done with the picks screen: free agency opens. Nobody is renounced here —
+ * an unsigned pick stays the team's rights, signable at the scale through
+ * free agency and the preseason, and lapses only when the season starts
+ * (the user, 2026-09-17).
+ */
 export function closeRookies(d, { rng = Math.random } = {}) {
   if (d.phase !== DPHASE.rookies) throw new Error('dynasty: not signing picks');
-  let x = d;
-  for (const h of humanIds(x)) for (const key of rightsOf(x, h, 'rookie')) x = renounce(x, h, key);
-  return openFreeAgency(x, { rng });
+  return openFreeAgency(d, { rng });
 }
 
 // ── The lottery ─────────────────────────────────────────────────────────────
@@ -1054,9 +1294,32 @@ export function lotteryOdds(d) {
   return { entries, draws: Math.min(LOTTERY_DRAWS, out.length) };
 }
 
-/** The coming class: the next ten a team off the front of the draft pool. */
+/** classFor's remembered draws for a save with no class stored, by the pool array they were drawn from. */
+const UNSTORED = new WeakMap();
+
+/**
+ * The class of the next draft still to be made (nextDraftYear): the one
+ * stored on d.draftClass (withClass) — what a pick's trade value, the lottery
+ * room and the draw all read, from the day it is drawn to its draft. During
+ * the rookie draft that is already NEXT year's; the class being drafted is
+ * d.draft.pool.
+ */
 export function classFor(d) {
-  return (d.draftPool ?? []).slice(0, DRAFT_CLASS_PER_TEAM * d.teams.length);
+  const c = d.draftClass;
+  const year = nextDraftYear(d);
+  if (c?.keys && c.year === year) return c.keys;
+  // A save with no class stored for that year (before 2026-09-17 there was
+  // none) reads the very draw withClass will store — same seed, same pool —
+  // and the next step that moves the pool stores it first. Remembered per
+  // pool: pickValue asks on every trade the AI weighs, and the pool array is
+  // replaced, never mutated, when it changes.
+  const tag = `${d.id}:${year}:${d.teams.length}`;
+  const pool = d.draftPool ?? [];
+  const hit = UNSTORED.get(pool);
+  if (hit?.tag === tag) return hit.keys;
+  const keys = buildDraftClass(d, classRng(d, year));
+  UNSTORED.set(pool, { tag, keys });
+  return keys;
 }
 
 /** Draw the lottery and open the draft. */
@@ -1075,7 +1338,9 @@ export function drawLottery(d, { rng = Math.random } = {}) {
   const rest = [...last.table].sort((a, b) => b.rank - a.rank).map(r => r.id).filter(id => !lotteryIds.includes(id));
   const order = [...lotteryIds, ...rest];
   const moved = odds.entries.map((e, i) => ({ teamId: e.teamId, from: i + 1, to: order.indexOf(e.teamId) + 1 }));
-  const cls = classFor(d);
+  // The class the window drew — only those still waiting in the pool.
+  const waiting = new Set(d.draftPool ?? []);
+  const cls = classFor(d).filter(k => waiting.has(k));
   const lottery = { entries: odds.entries, draws: odds.draws, order, moved };
   // A traded pick is made by whoever owns it, in the slot its original team earned.
   const origin = Array.from({ length: ROOKIE_ROUNDS }, () => order).flat();
@@ -1083,14 +1348,17 @@ export function drawLottery(d, { rng = Math.random } = {}) {
   const winner = teamOf(d, order[0]);
   const via = owners[0] !== order[0] ? ` — the pick belongs to ${teamOf(d, owners[0])?.name}` : ' and pick first';
   let x = say({ ...d, lottery }, `${winner?.name} win the lottery${via}.`);
-  if (!cls.length) return openFreeAgency({ ...x, draft: null }, { rng });
+  // This year's class leaves the pool for the draft room, and next year's is
+  // drawn from what is left (withClass) — decided once, a year ahead.
+  if (!cls.length) return openFreeAgency(withClass({ ...x, phase: DPHASE.rookies, draft: null }), { rng });
+  const taken = new Set(cls);
   x = {
     ...x,
     phase: DPHASE.rookieDraft,
-    draftPool: (d.draftPool ?? []).slice(cls.length),
+    draftPool: (d.draftPool ?? []).filter(k => !taken.has(k)),
     draft: { kind: 'rookie', order: owners, origin, picks: [], pool: [...cls] },
   };
-  return x;
+  return withClass(x);
 }
 
 // ── Free agency ─────────────────────────────────────────────────────────────
@@ -1110,8 +1378,10 @@ export function aiRivalOffers(d, rng = Math.random) {
   const made = {};
   for (const team of shuffle(d.teams.filter(t => !t.human), rng)) {
     const size = rosterKeys(d, team.id).length;
-    const open = MAX_ROSTER - size;
+    // A pick still to sign holds his roster spot and his scale (2026-09-17).
+    const open = MAX_ROSTER - size - rightsOf(d, team.id, 'rookie').length;
     if (open <= 0) continue;
+    const reserved = rookieCommitted(d, team.id);
     const limit = Math.min(open, AI_OFFERS_PER_DAY);
     const worst = size ? Math.min(...rosterOf(d, team.id).map(c => c.salary ?? 0)) : 0;
     for (const key of market) {
@@ -1121,8 +1391,11 @@ export function aiRivalOffers(d, rng = Math.random) {
       const floor = floorOf(d, key, team.id, years, day);
       const dp = Math.max(floor, Math.ceil(floor * (1 + rng() * 0.1)));
       const spotsAfter = Math.max(0, MIN_ROSTER - size - (made[team.id] ?? 0) - 1);
-      const room = aiCapDp(d) - payroll(d, team.id) - (spent[team.id] ?? 0) - spotsAfter * AI_RESERVE_PER_SPOT;
-      if (dp > room && dp > MIN_DP) continue;
+      const booked = payroll(d, team.id) + (spent[team.id] ?? 0);
+      const room = aiCapDp(d) - booked - reserved - spotsAfter * AI_RESERVE_PER_SPOT;
+      // The human's own rule (fitsCap): a real deal fits under the cap, a
+      // minimum deal anywhere under the apron — and nothing past it.
+      if (dp > room && !(dp <= MIN_DP && booked + dp <= aiApronDp(d))) continue;
       const ratio = dp / floor;
       const cur = rivals[key];
       if (cur && cur.ratio >= ratio) continue;
@@ -1162,7 +1435,8 @@ function resolveRivals(d) {
 /** Next day of free agency; after the last one it closes. */
 export function nextFaDay(d, { rng = Math.random } = {}) {
   if (d.phase !== DPHASE.freeAgency) throw new Error('dynasty: free agency is not open');
-  const x = resolveRivals(d);
+  // A pick that fits by now — a trade took money off the books — signs.
+  const x = aiSignRookies(resolveRivals(d));
   const day = (d.fa?.day ?? 1) + 1;
   if (day > FA_DAYS) return closeFreeAgency(x);
   const y = { ...x, fa: { day, rivals: {} } };
@@ -1171,7 +1445,8 @@ export function nextFaDay(d, { rng = Math.random } = {}) {
 
 /** Close free agency: the AI teams fill to eight from what is left, and it is the preseason. */
 export function closeFreeAgency(d) {
-  let x = { ...d, phase: DPHASE.preseason, fa: { day: LEFTOVER_DAY, rivals: {} }, talks: {} };
+  // Picks first — a signed pick counts toward the eight — then the fill.
+  let x = aiSignRookies({ ...d, phase: DPHASE.preseason, fa: { day: LEFTOVER_DAY, rivals: {} }, talks: {} });
   for (const team of x.teams.filter(t => !t.human)) x = fillRoster(x, team.id);
   return say(x, 'Free agency has closed. Whoever is left will sign for less.');
 }
@@ -1194,7 +1469,11 @@ export function rosterProblem(d, teamId) {
  */
 export function startSeason(d, { rng = Math.random } = {}) {
   if (d.phase !== DPHASE.preseason) throw new Error('dynasty: the season starts from the preseason');
-  let x = d;
+  // THE RIGHTS WINDOW CLOSES HERE (the user, 2026-09-17): the AI signs what
+  // fits, sheds one contract for a pick worth it, and every pick still
+  // unsigned — on any team — lapses to free agency. Then the AI fills to eight.
+  // An older save stores its next class here, before camp can take from the pool.
+  let x = withClass(lapseRookies(aiSignRookies(d, { deadline: true })));
   for (const team of x.teams.filter(t => !t.human)) x = fillRoster(x, team.id);
   const short = x.teams.filter(t => rosterProblem(x, t.id));
   if (short.length) throw new Error(`dynasty: ${short.map(t => `${t.name} has ${rosterProblem(x, t.id)}`).join('; ')}`);
@@ -1203,7 +1482,9 @@ export function startSeason(d, { rng = Math.random } = {}) {
     abbr: t.abbr ?? null, logo: t.logo ?? null,
     // An AI team's fifty is fitted to the ten it drafted (deckFit.js) every
     // season, since the roster moves between them; a human's is their own.
-    deck: t.human ? (t.deck ?? null) : fitDeck(rosterOf(d, t.id)),
+    // The roster as it tips off — its picks signed at the deadline and its
+    // fill included (it read the preseason's `d` until 2026-09-18).
+    deck: t.human ? (t.deck ?? null) : fitDeck(rosterOf(x, t.id)),
     deckName: t.deckName ?? null,
     primary: t.primary ?? null, secondary: t.secondary ?? null, city: t.city ?? null,
   }));
@@ -1298,8 +1579,9 @@ export function endDynasty(d) {
 
 /**
  * The AI's exclusive window: keep a player at his floor when he fits under
- * the apron and is worth it — at least the team's median salary, or a coin
- * flip — and let him walk otherwise.
+ * the AI's apron (aiApronDp — it read the human's APRON_DP until 2026-09-17)
+ * and is worth it — at least the team's median salary, or a coin flip — and
+ * let him walk otherwise.
  */
 export function aiResign(d, rng = Math.random) {
   let x = d;
@@ -1310,7 +1592,7 @@ export function aiResign(d, rng = Math.random) {
     for (const key of expiring) {
       const years = preferredYears(traitOf(x, key));
       const dp = floorOf(x, key, team.id, years, 1);
-      const fits = rosterKeys(x, team.id).length < MAX_ROSTER && payroll(x, team.id) + dp <= APRON_DP;
+      const fits = rosterKeys(x, team.id).length < MAX_ROSTER && payroll(x, team.id) + dp <= aiApronDp(x);
       const wanted = salaryOf(key) >= median || rng() < 0.5;
       x = fits && wanted ? sign(x, team.id, key, { dp, years, how: 'resign' }) : renounce(x, team.id, key);
     }
@@ -1324,7 +1606,9 @@ export function aiResign(d, rng = Math.random) {
  */
 export function closeResign(d, { rng = Math.random } = {}) {
   if (d.phase !== DPHASE.resign) throw new Error('dynasty: the window is not open');
-  let x = d;
+  // The class was drawn a year ago (withClass) and the trades below are
+  // valued on it; an older save with none stored stores the same draw now.
+  let x = withClass(d);
   for (const h of humanIds(x)) for (const key of rightsOf(x, h, 'expiring')) x = renounce(x, h, key);
   x = aiTrades(x, { rng });
   return { ...x, phase: DPHASE.lottery, talks: {}, lottery: { ...lotteryOdds(x), order: null, moved: null } };
@@ -1347,6 +1631,8 @@ export function closeResign(d, { rng = Math.random } = {}) {
 const POS_GROUP = { PG: 'G', SG: 'G', SF: 'F', PF: 'F', C: 'C' };
 /** What a ten-man roster wants at each position group. */
 const POS_TARGET = { G: 4, F: 4, C: 2 };
+/** The least a drafted ten is left with at each group (aiDraftChoice). */
+const POS_FLOOR = { G: 2, F: 2, C: 1 };
 const groupOf = key => POS_GROUP[cardOf(key)?.pos] ?? 'F';
 
 /** Short at his position: worth up to 30% more; long: down to 15% less. */
@@ -1473,7 +1759,8 @@ export function pickValue(d, id, teamId) {
   const key = board[Math.min(slot, board.length) - 1];
   if (!key) return 0;
   const card = cardOf(key);
-  const scale = rookieScale(card);
+  // The slot prices the deal (2026-09-17): a top pick costs more and lands more.
+  const scale = rookieScale(slot, d.teams.length);
   const v = talentValue(card) * controlFactor(scale.years) + contractValue(card, scale);
   const later = year > nextDraftYear(d) ? 0.75 : 0.9;
   const want = teamDirection(d, teamId) === 'rebuild' ? 1.25 : 0.85;
@@ -1500,9 +1787,21 @@ export function tradesOpen(d) {
 const dpOf = (d, keys) => keys.reduce((t, k) => t + (d.contracts[k]?.dp ?? 0), 0);
 
 /**
+ * SALARY MATCHING (the user, 2026-09-17: cap and apron in the NBA's
+ * proportions, and the NBA's rule with them): a team OVER ITS CAP after a
+ * deal may take back at most this share of the DP it sends out. Under the
+ * cap after it, no matching — it has the room.
+ */
+export const TRADE_MATCH = 1.25;
+
+/**
  * Why a deal cannot happen, or []. A deal is `{ from, to, give, get }`:
- * `give` goes from → to, `get` comes back. Both rosters end at ten or fewer,
- * and neither payroll may grow past the apron.
+ * `give` goes from → to, `get` comes back. Both rosters end at ten or fewer;
+ * a side over its cap after the deal takes back at most TRADE_MATCH of what
+ * it sends; and neither payroll may grow past its apron — the human's 130, an
+ * AI team's 115 at the rung (aiApronDp). A payroll already past its apron may
+ * still come DOWN through a trade (the user, 2026-09-12: trade them to get
+ * under), which matching allows by itself.
  */
 export function tradeProblems(d, { from, to, give = [], get = [], givePicks = [], getPicks = [] }) {
   const out = [];
@@ -1518,8 +1817,14 @@ export function tradeProblems(d, { from, to, give = [], get = [], givePicks = []
     // Mid-season a team still has to take the floor.
     if (d.phase === DPHASE.season && size < MIN_ROSTER) out.push(`${teamOf(d, team)?.name} would have ${size} players — a team in season keeps ${MIN_ROSTER}.`);
     const before = payroll(d, team);
-    const after = before - dpOf(d, loses) + dpOf(d, gains);
-    if (after > APRON_DP && after > before) out.push(`${teamOf(d, team)?.name} would be at ${after} DP — past the ${APRON_DP} apron.`);
+    const sent = dpOf(d, loses);
+    const taken = dpOf(d, gains);
+    const after = before - sent + taken;
+    const apron = apronFor(d, team);
+    if (after > apron && after > before) out.push(`${teamOf(d, team)?.name} would be at ${after} DP — past the ${apron} apron.`);
+    else if (after > capFor(d, team) && taken > sent * TRADE_MATCH) {
+      out.push(`${teamOf(d, team)?.name} would be over the cap taking back ${taken} DP for ${sent} — over the cap a team takes back at most ${Math.round(TRADE_MATCH * 100)}% of what it sends out.`);
+    }
   }
   return out;
 }

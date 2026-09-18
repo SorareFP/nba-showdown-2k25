@@ -6,10 +6,10 @@ import {
   createDynasty, HUMAN_ID, MAX_ROSTER, rosterKeys, payroll, startSeason, contractsOf,
   tradeValue, tradeProblems, evaluateTrade, makeTrade, suggestSweetener, aiTrades,
   picksOf, pickValue, parsePick, pickOwner, projectedSlot, teamDirection, nextDraftYear, ageOf, baseAge,
-  tradeDeadlineRound,
+  tradeDeadlineRound, aiApronDp, classFor,
 } from './dynasty.js';
-import { cardKey } from '../cardSets.js';
-import { APRON_DP, talentValue, contractValue, controlFactor } from './dynastyMarket.js';
+import { cardKey, getCardByKey } from '../cardSets.js';
+import { talentValue, contractValue, controlFactor, rookieScale } from './dynastyMarket.js';
 import { buildAiLeague } from './aiTeams.js';
 
 const seeded = (s = 808) => () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 2 ** 32; };
@@ -80,7 +80,7 @@ describe('a trade with the AI', () => {
     expect(fleece.ev.verdict).toBe('reject');
   });
 
-  it('keeps rosters at ten and payrolls under the apron, and trades only between seasons', () => {
+  it("keeps rosters at ten and payrolls under each side's apron, and trades only between seasons", () => {
     const [mine] = rosterKeys(d, HUMAN_ID);
     const [a, b] = rosterKeys(d, ai);
     expect(tradeProblems(d, { from: HUMAN_ID, to: ai, give: [], get: [a, b] }).join(' ')).toMatch(/1[12] players/);
@@ -148,6 +148,21 @@ describe('draft picks', () => {
     expect(v(y, 1, worst)).toBeGreaterThan(v(y + 1, 1, worst));
   });
 
+  it('prices a pick on its SLOT\'s scale, not the card it lands (2026-09-17)', () => {
+    const y = nextDraftYear(d);
+    const board = [...classFor(d)].sort((a, b) => talentValue(getCardByKey(b)) - talentValue(getCardByKey(a)));
+    for (const round of [1, 2]) {
+      for (const t of d.teams) {
+        const slot = (round - 1) * d.teams.length + projectedSlot(d, t.id);
+        const card = getCardByKey(board[Math.min(slot, board.length) - 1]);
+        const scale = rookieScale(slot, d.teams.length);
+        const want = teamDirection(d, HUMAN_ID) === 'rebuild' ? 1.25 : 0.85;
+        const v = Math.max(0, talentValue(card) * controlFactor(scale.years) + contractValue(card, scale)) * 0.9 * want;
+        expect(pickValue(d, `${y}-${round}-${t.id}`, HUMAN_ID)).toBeCloseTo(v, 6);
+      }
+    }
+  });
+
   it('is worth more to a rebuilding team than to a contender', () => {
     const id = picksOf(d, HUMAN_ID)[0];
     const as = playoffs => ({ ...d, teams: d.teams.map(t => (t.id === ai ? { ...t, last: { playoffs } } : t)) });
@@ -186,7 +201,8 @@ describe('the AI trading among itself', () => {
       expect(made).toBeLessThanOrEqual(3);
       for (const t of x.teams) {
         expect(rosterKeys(x, t.id).length).toBeLessThanOrEqual(MAX_ROSTER);
-        if (payroll(x, t.id) > payroll(d, t.id)) expect(payroll(x, t.id)).toBeLessThanOrEqual(APRON_DP);
+        // An AI team's OWN apron (115 at Prince, 2026-09-17), not the human's 130.
+        if (payroll(x, t.id) > payroll(d, t.id)) expect(payroll(x, t.id)).toBeLessThanOrEqual(aiApronDp(x));
       }
       expect(rosterKeys(x, HUMAN_ID).sort()).toEqual(rosterKeys(d, HUMAN_ID).sort());
     }

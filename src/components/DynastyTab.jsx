@@ -35,7 +35,7 @@ import {
   dynastyCoinFactor, dynastyYearEarnings, dynastyCompletionEarnings,
 } from '../game/modes/prizes.js';
 import { createDynasty, START_MODES, DPHASE, MAX_ROSTER, simDraft, endSeason, endDynasty, isOffseason, summarizeDynasty, teamOf } from '../game/modes/dynasty.js';
-import { CAP_DP } from '../game/modes/dynastyMarket.js';
+import { CAP_DP, APRON_DP, AI_APRON_DP } from '../game/modes/dynastyMarket.js';
 import { AI_LEVELS, loadAiLevel, levelById } from '../game/aiLevels.js';
 import RosterPicker, { Choice } from './league/RosterPicker.jsx';
 import { SeasonDashboard, MY_ID } from './SeasonTab.jsx';
@@ -275,9 +275,9 @@ export default function DynastyTab({
 // ── The list ────────────────────────────────────────────────────────────────
 
 const PITCH = [
-  { t: '💸 Dynasty Points', b: `A ${CAP_DP}-DP payroll. A player's ask comes from their salary: stars want a lot, $10 cards are just happy to be here.` },
+  { t: '💸 Dynasty Points', b: `A ${CAP_DP}-DP payroll, and a ${APRON_DP} apron for keeping your own players; AI teams arrive under the cap and may re-sign to ${AI_APRON_DP}. A player's ask comes from their salary: stars want a lot, $10 cards are just happy to be here.` },
   { t: '🤝 Personalities', b: 'Loyal, Ring Chaser, Mercenary, Security First, Bets on Themself, Easygoing — each haggles differently, and each runs out of patience.' },
-  { t: '🎱 The lottery', b: 'Miss the playoffs for a shot at the top pick of a class of legends and rookies who have never been in the league.' },
+  { t: '🎱 The lottery', b: 'Miss the playoffs for a shot at the top pick of a class drawn by rarity — one rare guaranteed, a legendary a long shot — priced by the slot, yours to sign until the season starts.' },
   { t: '🏆 Ten years', b: `Title money every year and a bonus for seeing all ten through. A fantasy-draft start pays ${FANTASY_DYNASTY_FACTOR}× — bring your own team for the full amount.` },
 ];
 

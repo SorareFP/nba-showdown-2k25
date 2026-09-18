@@ -109,7 +109,10 @@ export function runDraftClock(d, { now = Date.now(), rng = Math.random, force = 
     const expired = now - (x.draft.clockAt ?? now) >= PICK_CLOCK_MS;
     if (!forcing && !expired) break;
     const key = aiDraftChoice(x, c.teamId, rng);
-    x = news(draftPick(x, c.teamId, key), `${teamOf(x, c.teamId)?.name}'s clock ran out — the AI took ${nameOf(key)} for them.`);
+    // A rookie pick the books cannot sign is passed, as the AI passes its own (2026-09-17).
+    x = key == null
+      ? news(passPick(x, c.teamId), `${teamOf(x, c.teamId)?.name}'s clock ran out — nobody on the board fits their books, so the pick is passed.`)
+      : news(draftPick(x, c.teamId, key), `${teamOf(x, c.teamId)?.name}'s clock ran out — the AI took ${nameOf(key)} for them.`);
     forcing = false;
     x = stampClock(simDraft(x, { rng }), now);
   }

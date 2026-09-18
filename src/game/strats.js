@@ -22,7 +22,7 @@ export const STRATS = [
   { id:'you_stand_over_there',name:'You Stand Over There',phase:'pre_roll',side:'off', copies:2, locked:false, color:'#7C3AED', rarity:'uncommon',
     desc:'Before a player makes their scoring roll: they skip it and attempt two 3PT Shot Checks instead.' },
   { id:'putback_dunk',        name:'Putback Dunk',       phase:'pre_roll', side:'off', copies:2, locked:false, color:'#7C3AED', rarity:'uncommon',
-    desc:'Your team leads in rebounds and a player has Power 14+: score 2 points automatically.' },
+    desc:'Your team leads in rebounds and a player has Power 14+: score 2 points automatically. Once per section.' },
   { id:'pin_down_screen',     name:'Pin-Down Screen',    phase:'pre_roll', side:'off', copies:2, locked:false, color:'#BE185D', rarity:'uncommon',
     desc:'Discard a card. Choose a player to attempt a 3PT Shot Check at +5. Success: 3 pts + 1 assist to a teammate.' },
   { id:'turnover',            name:'Turnover',           phase:'pre_roll', side:'def', copies:2, locked:false, color:'#DC2626', rarity:'common',

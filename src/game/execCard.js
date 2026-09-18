@@ -799,8 +799,13 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
     }
 
     case 'putback_dunk': {
+      // Once per section (2026-09-18): the mark lives in tempEff, which
+      // endSection wipes, as Double Team's does.
+      if (g.tempEff?.[teamKey]?.putbackUsed) return fail('Putback Dunk is once per section');
       if (myT.rebounds <= oppT.rebounds) return fail('Team must lead in rebounds');
       if ((player?.power || 0) < 14) return fail('Need Power 14+');
+      if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
+      g.tempEff[teamKey].putbackUsed = true;
       scorePts(g, teamKey, player?.id, 2);
       if (g.analytics?.[teamKey]) g.analytics[teamKey].shotCheckPts += 2;
       g.lastAutoScore = { teamKey, playerIdx: idx, playerId: player?.id, pts: 2, cardId };

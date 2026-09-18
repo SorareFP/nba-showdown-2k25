@@ -145,6 +145,25 @@ describe('Verticality', () => {
     expect(canPlayCard(wiped, 'B', 'verticality').canPlay).toBe(false);
   });
 
+  it('Putback Dunk is once per section (2026-09-18), and the next section opens it again', () => {
+    const bigs = [mk('a0', 10, 16), mk('a1'), mk('a2'), mk('a3'), mk('a4')];
+    const g = freeTwo('putback_dunk', bigs, undefined);
+    g.teamA.hand = ['putback_dunk', 'putback_dunk'];
+    g.teamA.rebounds = 5;
+    g.teamB.rebounds = 1;
+    const first = execCard(g, 'A', 'putback_dunk', { playerIdx: 0 });
+    expect(first.ok).toBe(true);
+    expect(first.game.teamA.score).toBe(2);
+    first.game.scoringTurn = 'A';
+    const check = canPlayCard(first.game, 'A', 'putback_dunk');
+    expect(check.canPlay).toBe(false);
+    expect(check.reason).toMatch(/once per section/);
+    expect(execCard(first.game, 'A', 'putback_dunk', { playerIdx: 0 }).ok).toBe(false);
+    // The mark is section state: a fresh tempEff (what endSection sets) clears it.
+    const next = { ...first.game, tempEff: {} };
+    expect(canPlayCard(next, 'A', 'putback_dunk').canPlay).toBe(true);
+  });
+
   it('is never played on your own free basket', () => {
     const bigs = [mk('a0', 10, 16), mk('a1'), mk('a2'), mk('a3'), mk('a4')];
     const g = freeTwo('putback_dunk', bigs, undefined);

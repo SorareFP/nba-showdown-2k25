@@ -566,6 +566,10 @@ export function canPlayCard(g, teamKey, cardId) {
     }
 
     if (cardId === 'putback_dunk') {
+      // ONCE PER SECTION (2026-09-18, the user: "Putback dunk should only be
+      // able to be played once a section") — Double Team's rule and flag
+      // shape: a tempEff mark endSection wipes.
+      if (g.tempEff?.[teamKey]?.putbackUsed) return no('Putback Dunk is once per section');
       if (myT.rebounds <= oppT.rebounds) return no('Your team must lead in rebounds');
       if (!myT.starters.some(p => p.power >= 14)) return no('Need a player with Power 14+ in lineup');
       return ok();

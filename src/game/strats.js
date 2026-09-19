@@ -252,3 +252,12 @@ export const CRUNCH_CARDS = [
   'desperation_press', 'ato_masterpiece', 'fresh_legs', 'ice_the_hot_hand', 'reset', 'second_closer',
   'unethical_hoops', 'hack_a',
 ];
+
+/**
+ * THE TIMEOUT RIDERS: the crunch cards that play only inside your own called
+ * timeout (canPlay's gate). One list (2026-09-18): canPlay let them through by
+ * falling past every other crunch card, the coach's card values retyped them,
+ * and the tutorial asked players to search for and play "timeout cards"
+ * without saying which these were.
+ */
+export const TIMEOUT_RIDERS = ['ato_masterpiece', 'fresh_legs', 'ice_the_hot_hand', 'reset'];

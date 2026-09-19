@@ -64,7 +64,7 @@ export default function WelcomeTab({ onTutorial, onHowToPlay }) {
         </div>
         <div className={s.step}>
           <div className={s.stepNum}>3</div>
-          <div><strong>Play the tutorial</strong>, a guided quarter against the coach, then Quick Match, a Season, or a friend in PvP.</div>
+          <div><strong>Play the tutorial</strong>, a guided first quarter and a Crunch-Time finish against the coach, then Quick Match, a Season, or a friend in PvP.</div>
         </div>
       </section>
     </div>

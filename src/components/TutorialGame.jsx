@@ -1,45 +1,19 @@
-import { useReducer, useCallback, useEffect, useRef, useState } from 'react';
-import { newGame, doRoll, endSection, spendAssist, spendReboundBonus, getTeam, SNAKE, applyMatchups } from '../game/engine.js';
-import { execCard, resolvePendingShotCheck, resolveGoUnder } from '../game/execCard.js';
+import { useReducer, useEffect, useRef, useState } from 'react';
+import { newGame, rollGate } from '../game/engine.js';
 import { CARD_MAP } from '../game/cards.js';
-import { aiDraftPick, aiScoringDecision, aiRollDecision, aiTurn, aiGoUnderChoice } from '../game/ai.js';
-import { TUTORIAL_TOOLTIPS, TUTORIAL_ROSTER_A_IDS, TUTORIAL_ROSTER_B_IDS } from '../game/tutorialData.js';
+import { CLUTCH_DICE } from '../game/clutchAwards.js';
+import { TUTORIAL_TOOLTIPS, TUTORIAL_ROSTER_A_IDS, TUTORIAL_ROSTER_B_IDS, whatsNext } from '../game/tutorialData.js';
 // The hands are shaped per section so each lesson has its prop — see the file.
 import { teachingHands } from '../game/tutorialHands.js';
+// The reducer, the skip to Crunch Time after Q1, and the coach's every move
+// live in a plain module so they can be tested (2026-09-18).
+import { tutorialReducer, tutorialCoachStep } from '../game/tutorialFlow.js';
 import { markPlayed } from '../game/firstRun.js';
 import TutorialOverlay from './game/TutorialOverlay.jsx';
 import CourtBoard from './game/CourtBoard.jsx';
 import Scoreboard from './game/Scoreboard.jsx';
 import GameLog from './game/GameLog.jsx';
 import styles from './TutorialGame.module.css';
-
-// ── Reducer (mirrors PlayTab) ───────────────────────────────────────────────
-function gameReducer(state, action) {
-  if (!state && action.type !== 'SET') return state;
-  switch (action.type) {
-    case 'SET':         return action.game;
-    case 'ROLL':        return doRoll(state, action.teamKey, action.idx);
-    case 'END_SECTION': return teachingHands(endSection(state));
-    case 'EXEC_CARD': {
-      const { game, ok, msg } = execCard(state, action.teamKey, action.cardId, action.opts || {});
-      if (!ok) { console.warn('TutorialGame EXEC_CARD failed:', msg); return state; }
-      return game;
-    }
-    case 'SPEND_ASSIST': {
-      const { game, ok, msg } = spendAssist(state, action.teamKey, action.spendType, action.playerIdx);
-      if (!ok) { console.warn('TutorialGame SPEND_ASSIST failed:', msg); return state; }
-      return game;
-    }
-    case 'SPEND_REBOUND': {
-      const { game, ok, msg } = spendReboundBonus(state, action.teamKey, action.rebType, action.playerIdx);
-      if (!ok) { console.warn('TutorialGame SPEND_REBOUND failed:', msg); return state; }
-      return game;
-    }
-    case 'RESOLVE_CHECK': return resolvePendingShotCheck(state);
-    case 'UPDATE':      return action.game;
-    default:            return state;
-  }
-}
 
 // ── Resolve roster IDs to card objects ──────────────────────────────────────
 function resolveRoster(ids) {
@@ -54,175 +28,59 @@ export default function TutorialGame({ onExit }) {
   const rosterA = resolveRoster(TUTORIAL_ROSTER_A_IDS);
   const rosterB = resolveRoster(TUTORIAL_ROSTER_B_IDS);
 
-  const [game, dispatch] = useReducer(gameReducer, null);
+  const [game, dispatch] = useReducer(tutorialReducer, null);
   const [completed, setCompleted] = useState(false);
-  const aiRunning = useRef(false);
   const mounted = useRef(true);
 
-  // Initialize game on mount
+  // Initialize game on mount. The clutch dice are the real game's (PlayTab),
+  // so the Crunch-Time section shows the same Clutch Possession the player
+  // will meet — the coach's Shai rolls his award dice here too.
   useEffect(() => {
     mounted.current = true;
-    dispatch({ type: 'SET', game: teachingHands(newGame(rosterA, rosterB)) });
+    dispatch({ type: 'SET', game: teachingHands(newGame(rosterA, rosterB, undefined, undefined, { clutchDice: CLUTCH_DICE })) });
     return () => { mounted.current = false; };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Handlers (same shape as PlayTab) ────────────────────────────────────
   const handlers = {
     setGame:       (g)                          => dispatch({ type: 'UPDATE', game: g }),
-    onRoll:        (teamKey, idx)               => dispatch({ type: 'ROLL', teamKey, idx }),
+    onRoll:        (teamKey, idx, opts)         => dispatch({ type: 'ROLL', teamKey, idx, opts }),
     onSpendAssist: (teamKey, spendType, playerIdx) => dispatch({ type: 'SPEND_ASSIST', teamKey, spendType, playerIdx }),
     onSpendRebound:(teamKey, rebType, playerIdx) => dispatch({ type: 'SPEND_REBOUND', teamKey, rebType, playerIdx }),
     onEndSection:  ()                           => dispatch({ type: 'END_SECTION' }),
     onExecCard:    (teamKey, cardId, opts)       => dispatch({ type: 'EXEC_CARD', teamKey, cardId, opts }),
     onResolve:     ()                           => dispatch({ type: 'RESOLVE_CHECK' }),
+    onTimeout:     (teamKey)                    => dispatch({ type: 'TIMEOUT', teamKey }),
+    onEndTimeout:  ()                           => dispatch({ type: 'END_TIMEOUT' }),
+    onSearchCrunch:(teamKey, cardId)            => dispatch({ type: 'SEARCH_CRUNCH', teamKey, cardId }),
   };
 
-  // ── Detect tutorial completion (Q1 finished → quarter > 1) ──────────────
+  // ── Progress: Q1 done counts as having played; the final whistle ends it ──
+  // The tutorial used to end the moment Q1 did. It now skips to Q4's last
+  // section for Crunch Time (tutorialFlow.js), so the completion screen waits
+  // for the game to finish — overtime included, if the dice tie it.
   useEffect(() => {
     if (!game) return;
-    if (game.quarter > 1 && !completed) {
-      setCompleted(true);
-      markPlayed();
-    }
+    if (game.quarter > 1) markPlayed();
+    if (game.done && !completed) setCompleted(true);
   }, [game, completed]);
 
   // ── AI logic for Team B ─────────────────────────────────────────────────
+  // The lineup needs nothing here: the board's lineup screen picks the
+  // coach's five when you submit yours (CourtBoard BlindPickPhase), and the
+  // board also runs the coach's placements. Every other move is
+  // tutorialCoachStep's (tutorialFlow.js), a pure function the tests drive
+  // (2026-09-18): the a-b-a-b roll gate, the demo canceller, the coach's
+  // timeout order, and its checks waiting for YOUR ▶ Resolve all live there,
+  // so none of them can quietly leave the tutorial. This effect only waits
+  // AI_DELAY and dispatches what it returns; a new game state clears the
+  // timer and asks again.
   useEffect(() => {
-    if (!game || completed || aiRunning.current) return;
-
-    // Pending shot check — resolve it first
-    if (game.pendingShotCheck) {
-      const timer = setTimeout(() => {
-        if (!mounted.current) return;
-        dispatch({ type: 'RESOLVE_CHECK' });
-      }, AI_DELAY);
-      return () => clearTimeout(timer);
-    }
-
-    const phase = game.phase;
-
-    // ── Draft: AI picks when SNAKE[step] === 1 (Team B) ──────────────────
-    if (phase === 'draft') {
-      const step = game.draft.step;
-      if (step >= 10) return; // draft done, waiting for "Continue"
-      if (SNAKE[step] !== 1) return; // Team A's turn, player picks
-
-      aiRunning.current = true;
-      const timer = setTimeout(() => {
-        if (!mounted.current) { aiRunning.current = false; return; }
-        const action = aiDraftPick(game, 'B');
-        if (action) {
-          // Perform draft pick for Team B (same logic as CourtBoard pick())
-          const g = JSON.parse(JSON.stringify(game));
-          const card = g.draft.bPool.find(c => c.id === action.playerId);
-          if (card) {
-            g.teamB.starters.push(card);
-            g.draft.bPool = g.draft.bPool.filter(c => c.id !== card.id);
-            g.draft.step++;
-            // If draft complete, transition to matchup phase
-            if (g.teamA.starters.length === 5 && g.teamB.starters.length === 5) {
-              g.offMatchups = { A: [0, 1, 2, 3, 4], B: [0, 1, 2, 3, 4] };
-              // No rest here: endSection rests every non-player by the rule
-              // (REST_RECOVERY). A copy of the board's old submit-time rest
-              // used to sit at this spot - see CourtBoard's handleSubmit for
-              // why it went (a duplicate at the old amount, and a tell).
-              g.phase = 'matchup_strats';
-              g.log = [...g.log, { team: null, msg: 'Draft complete — Matchup Strategy Phase.' }];
-            }
-            dispatch({ type: 'UPDATE', game: g });
-          }
-        }
-        aiRunning.current = false;
-      }, AI_DELAY);
-      return () => { clearTimeout(timer); aiRunning.current = false; };
-    }
-
-    // A Go Under check waiting on the coach's choice: name the shooter first.
-    if (game.pendingChoice?.teamKey === 'B') {
-      const r = resolveGoUnder(game, aiGoUnderChoice(game, 'B'));
-      if (r.ok) { dispatch({ type: 'UPDATE', game: r.game }); return undefined; }
-    }
-    // ── Matchup Strats: AI plays or passes on its turn ───────────────────
-    if (phase === 'matchup_strats' && game.matchupTurn === 'B') {
-      aiRunning.current = true;
-      const timer = setTimeout(() => {
-        if (!mounted.current) { aiRunning.current = false; return; }
-        // `demo`: the coach always answers a switch with the canceller it holds,
-        // so the section-2 lesson lands every time (see evaluateCard).
-        const action = aiTurn(game, 'B', { demo: true });
-        if (action && action.type === 'set_matchups') {
-          // Defence, which the AI previously never assigned — see aiTurn.
-          dispatch({ type: 'UPDATE', game: applyMatchups(game, 'B', action.matchups) });
-        } else if (action && action.type === 'play_card') {
-          dispatch({ type: 'EXEC_CARD', teamKey: 'B', cardId: action.cardId, opts: action.opts || {} });
-        } else {
-          // Pass in matchup phase
-          const g = JSON.parse(JSON.stringify(game));
-          g.matchupPasses++;
-          if (g.matchupPasses >= 2) {
-            g.phase = 'scoring';
-            g.rollResults = { A: [], B: [] };
-            g.log = [...g.log, { team: null, msg: 'Both passed — Scoring Phase!' }];
-          } else {
-            g.matchupTurn = 'A';
-            g.log = [...g.log, { team: 'B', msg: 'Passed.' }];
-          }
-          dispatch({ type: 'UPDATE', game: g });
-        }
-        aiRunning.current = false;
-      }, AI_DELAY);
-      return () => { clearTimeout(timer); aiRunning.current = false; };
-    }
-
-    // ── Scoring: AI card play or pass, then rolling ──────────────────────
-    if (phase === 'scoring') {
-      const rollingOpen = game.scoringPasses >= 99;
-
-      // Card-play phase: AI's turn to play a card or pass
-      if (!rollingOpen && game.scoringTurn === 'B') {
-        aiRunning.current = true;
-        const timer = setTimeout(() => {
-          if (!mounted.current) { aiRunning.current = false; return; }
-          const action = aiScoringDecision(game, 'B');
-          if (action && action.type === 'play_card') {
-            dispatch({ type: 'EXEC_CARD', teamKey: 'B', cardId: action.cardId, opts: action.opts || {} });
-          } else {
-            // Pass in scoring phase
-            const g = JSON.parse(JSON.stringify(game));
-            g.scoringPasses++;
-            if (g.scoringPasses >= 2) {
-              g.scoringPasses = 99;
-              g.log = [...g.log, { team: null, msg: 'Both passed — rolling begins!' }];
-            } else {
-              g.scoringTurn = 'A';
-              g.log = [...g.log, { team: 'B', msg: 'Passed scoring turn.' }];
-            }
-            dispatch({ type: 'UPDATE', game: g });
-          }
-          aiRunning.current = false;
-        }, AI_DELAY);
-        return () => { clearTimeout(timer); aiRunning.current = false; };
-      }
-
-      // Rolling phase: AI rolls its players
-      if (rollingOpen) {
-        const rollsB = game.rollResults.B || [];
-        const blockedB = game.blockedRolls?.B || {};
-        const needsRoll = [0, 1, 2, 3, 4].some(i => rollsB[i] == null && !blockedB[i]);
-        if (needsRoll) {
-          aiRunning.current = true;
-          const timer = setTimeout(() => {
-            if (!mounted.current) { aiRunning.current = false; return; }
-            const action = aiRollDecision(game, 'B');
-            if (action) {
-              dispatch({ type: 'ROLL', teamKey: 'B', idx: action.playerIdx });
-            }
-            aiRunning.current = false;
-          }, AI_DELAY);
-          return () => { clearTimeout(timer); aiRunning.current = false; };
-        }
-      }
-    }
+    if (!game || completed || game.done) return undefined;
+    const action = tutorialCoachStep(game);
+    if (!action) return undefined;
+    const timer = setTimeout(() => { if (mounted.current) dispatch(action); }, AI_DELAY);
+    return () => clearTimeout(timer);
   }, [game, completed]);
 
   // ── Completion screen ───────────────────────────────────────────────────
@@ -237,9 +95,14 @@ export default function TutorialGame({ onExit }) {
             Final Score: <span className={styles.teamA}>Team A {scoreA}</span> &ndash; <span className={styles.teamB}>{scoreB} Team B</span>
           </p>
           <p className={styles.completionMsg}>
-            You have learned drafting, matchups, strategy cards, scoring rolls, fatigue, and substitutions.
+            You have learned lineups, placement, matchups, strategy cards, scoring rolls, fatigue, substitutions and Crunch Time.
             Head to How to Play for the full rules reference, or jump into a real game!
           </p>
+          {/* Computed from the tables the game reads (tutorialData.js whatsNext). */}
+          <div className={styles.nextTitle}>What you'll meet next</div>
+          <ul className={styles.nextList}>
+            {whatsNext().map(line => <li key={line}>{line}</li>)}
+          </ul>
           <div className={styles.completionBtns}>
             <button className={styles.btnPri} onClick={onExit}>Back to How to Play</button>
           </div>
@@ -257,19 +120,30 @@ export default function TutorialGame({ onExit }) {
         <button className={styles.exitBtn} onClick={onExit}>Exit Tutorial</button>
       </div>
       <TutorialOverlay game={game} tooltips={TUTORIAL_TOOLTIPS} onSkip={onExit} />
-      <Scoreboard game={game} />
+      {/* Whose die it is — the tutorial enforces the a-b-a-b roll too. */}
+      <Scoreboard game={game} rollGate={rollGate(game)} />
       <GameLog log={game.log} />
       <CourtBoard
         game={game}
         setGame={handlers.setGame}
+        // The human leads the dice, the coach follows (rollGate) — the rule
+        // s1_rolling_open teaches, now the board's too.
+        rollGate={rollGate(game)}
         onRoll={handlers.onRoll}
         onEndSection={handlers.onEndSection}
         onExecCard={handlers.onExecCard}
         onResolve={handlers.onResolve}
         onSpendAssist={handlers.onSpendAssist}
         onSpendRebound={handlers.onSpendRebound}
+        onTimeout={handlers.onTimeout}
+        onEndTimeout={handlers.onEndTimeout}
+        onSearchCrunch={handlers.onSearchCrunch}
         // The tutorial always shows the coach tips - it is where they teach.
         coachTips
+        // The coach's hand stays face up (the lessons name its cards), so no
+        // coachTeam; the coach's side is watch-only all the same — its ▶ and
+        // ↩, slots and turn played FOR the coach (2026-09-18).
+        watchOnlyTeam="B"
       />
     </div>
   );

@@ -369,7 +369,9 @@ export function returnCardToDeck(g, teamKey, handIdx) {
   const [id] = t.hand.splice(handIdx, 1);
   t.deck = [id, ...(t.deck || [])];
   // Remembered, newest last, so it can be taken back (undoReturnCard).
-  t.returned = [...(t.returned || []), { id, quarter: ng.quarter, section: ng.section }].slice(-7);
+  // `overtime` too (2026-09-18): overtime keeps Q4 S3, so without it a card put
+  // back in regulation's last section could still be taken back in overtime.
+  t.returned = [...(t.returned || []), { id, quarter: ng.quarter, section: ng.section, overtime: ng.overtime || 0 }].slice(-7);
   const name = getStrat(id)?.name ?? id;
   ng.log = [...ng.log, { team: teamKey, msg: `${t.name} returns ${name} to the bottom of the deck` }];
   return ng;
@@ -384,7 +386,8 @@ export function returnCardToDeck(g, teamKey, handIdx) {
  *
  * A put-back draws nothing and reveals nothing (its log line names the card
  * already), so taking it back costs nobody anything. It is allowed:
- *   - for the rest of that section, newest put-back first;
+ *   - for the rest of that section, newest put-back first (each overtime is
+ *     a section of its own, though it keeps Q4 S3 — 2026-09-18);
  *   - while that card is still the bottom of the deck. A crunch card bottomed
  *     since, or a timeout's shuffle, has moved it, and then it stays put.
  */
@@ -392,7 +395,7 @@ export function lastReturnedCard(g, teamKey) {
   const t = getTeam(g, teamKey);
   const last = t?.returned?.[t.returned.length - 1];
   if (!last || g.done) return null;
-  if (last.quarter !== g.quarter || last.section !== g.section) return null;
+  if (last.quarter !== g.quarter || last.section !== g.section || (last.overtime || 0) !== (g.overtime || 0)) return null;
   if ((t.deck ?? [])[0] !== last.id) return null;
   return { id: last.id, name: getStrat(last.id)?.name ?? last.id };
 }
@@ -1228,6 +1231,19 @@ export function rollGate(g) {
     A: b === 0 || a >= b,   // the human leads: equal counts means it is A's turn
     B: a === 0 || b > a,    // the coach follows: it rolls only once it is behind
   };
+}
+
+/**
+ * WHOSE DIE IT IS, in words — the one line the Scoreboard and the board's
+ * phase bar both print (2026-09-18: each held its own copy of this three-way
+ * test with the same strings). `gate` is rollGate(g) where the a-b-a-b roll
+ * is enforced (against the coach, the tutorial), or null — hotseat and PvP —
+ * where anyone may roll.
+ */
+export function rollTurnLine(g, gate) {
+  if (!gate) return 'All players may roll';
+  if (pendingRolls(g, 'A') === 0 && pendingRolls(g, 'B') === 0) return 'All rolls in';
+  return gate.A ? 'Your roll' : "Coach's roll";
 }
 
 /**

@@ -34,6 +34,10 @@
 .teamB { color:var(--blue); font-weight:700; }
 .completionMsg { color:var(--text-muted); font-size:13px; line-height:1.7; margin-bottom:1.5rem; }
 .completionBtns { display:flex; flex-direction:column; gap:10px; align-items:center; }
+/* What the tutorial leaves for the real game (2026-09-18) — read as a list, so left-aligned. */
+.nextTitle { font-size:13px; font-weight:700; color:var(--text); margin-bottom:6px; text-align:left; }
+.nextList { text-align:left; color:var(--text-muted); font-size:12.5px; line-height:1.6; margin:0 0 1.5rem; padding-left:1.2rem; }
+.nextList li { margin-bottom:6px; }
 .btnPri {
   background:var(--orange); color:#fff;
   padding:12px 28px; font-size:14px;

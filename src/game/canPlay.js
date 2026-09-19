@@ -1,7 +1,7 @@
 // NBA Showdown 2026 — Card playability rules
 // Returns { canPlay: bool, reason: string }
 
-import { CRUNCH_CARDS } from './strats.js';
+import { CRUNCH_CARDS, TIMEOUT_RIDERS } from './strats.js';
 import { getTeam, getOpp, getPS, getFatigue, calcAdv, burnedSlots, satOutLast } from './engine.js';
 
 const ok = (r = '') => ({ canPlay: true, reason: r });
@@ -395,8 +395,8 @@ export function canPlayCard(g, teamKey, cardId) {
       if (preRollTargets(g, teamKey === 'A' ? 'B' : 'A').length === 0) return no('Every opponent has already rolled');
       return ok('Foul an opponent: no scoring roll, four free throws instead');
     }
-    // The four timeout riders: only during YOUR called timeout.
-    if (g.timeoutActive !== teamKey) return no('Play during your Timeout');
+    // The timeout riders (strats.js TIMEOUT_RIDERS): only during YOUR called timeout.
+    if (TIMEOUT_RIDERS.includes(cardId) && g.timeoutActive !== teamKey) return no('Play during your Timeout');
     if (cardId === 'ice_the_hot_hand') {
       const hasHot = oppT.starters.some(p => (getPS(g, teamKey === 'A' ? 'B' : 'A', p.id)?.hot || 0) > 0);
       if (!hasHot) return no('No opposing player holds a hot marker');

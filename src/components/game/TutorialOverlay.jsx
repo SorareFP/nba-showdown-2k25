@@ -15,7 +15,7 @@ import s from './TutorialOverlay.module.css';
  *     phase: string,         // game phase (draft, matchup_strats, scoring)
  *     condition: function,   // (game) => boolean
  *   },
- *   section: number,         // which tutorial section (1, 2, 3)
+ *   section: number,         // which tutorial section (1-4; 4 is the skip to Crunch Time)
  *   priority: number,        // higher = shown first when multiple match
  * }
  */

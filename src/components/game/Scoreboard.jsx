@@ -1,5 +1,5 @@
 import styles from './Scoreboard.module.css';
-import { SNAKE, periodLabel } from '../../game/engine.js';
+import { periodLabel, rollTurnLine } from '../../game/engine.js';
 
 function HelpBtn() {
   const handleClick = (e) => {
@@ -9,13 +9,16 @@ function HelpBtn() {
   return <button className={styles.helpBtn} onClick={handleClick} title="How to Play">?</button>;
 }
 
-export default function Scoreboard({ game, pvpMode = false, myTeamKey = null, isMyTurn = true }) {
+// `rollGate` (engine.js rollGate, or null): passed where the a-b-a-b roll is
+// enforced — against the coach and in the tutorial — so the line says whose
+// die it is instead of "All players may roll" (2026-09-18).
+export default function Scoreboard({ game, pvpMode = false, myTeamKey = null, isMyTurn = true, rollGate = null }) {
   const { teamA: ga, teamB: gb, quarter, section, phase } = game;
   const phaseLabel = { draft:'Matchup Draft', matchup_strats:'Strategy Phase', scoring:'Scoring Phase' }[phase] || phase;
   const rebDiff = ga.rebounds - gb.rebounds;
 
   // Build turn detail string
-  const turnDetail = buildTurnDetail(game, pvpMode, myTeamKey, isMyTurn);
+  const turnDetail = buildTurnDetail(game, pvpMode, myTeamKey, isMyTurn, rollGate);
 
   return (
     <div className={styles.board}>
@@ -35,16 +38,19 @@ export default function Scoreboard({ game, pvpMode = false, myTeamKey = null, is
   );
 }
 
-function buildTurnDetail(game, pvpMode, myTeamKey, isMyTurn) {
+function buildTurnDetail(game, pvpMode, myTeamKey, isMyTurn, rollGate = null) {
   const { phase, matchupTurn, matchupPasses, scoringTurn, scoringPasses } = game;
 
+  // THE SECRET LINEUP. This read `draft.step`, a field the secret-lineup
+  // rewrite dropped, and printed "Pick 1/10 · Team A's pick" over a screen
+  // where both sides pick five at once (2026-09-18).
   if (phase === 'draft') {
-    const step = game.draft?.step || 0;
-    const actTeam = SNAKE[Math.min(step, 9)] === 0 ? 'A' : 'B';
-    const done = game.teamA.starters.length === 5 && game.teamB.starters.length === 5;
-    if (done) return 'Draft complete';
-    if (pvpMode) return actTeam === myTeamKey ? `Pick ${step+1}/10 · Your pick` : `Pick ${step+1}/10 · Opponent picking...`;
-    return `Pick ${step+1}/10 · Team ${actTeam}'s pick`;
+    if (pvpMode) {
+      const mine = myTeamKey === 'B' ? game.draft?.bReady : game.draft?.aReady;
+      const theirs = myTeamKey === 'B' ? game.draft?.aReady : game.draft?.bReady;
+      if (mine) return theirs ? 'Revealing lineups…' : 'Lineup locked · waiting for opponent';
+    }
+    return 'Pick your five';
   }
 
   if (phase === 'matchup_strats') {
@@ -54,7 +60,10 @@ function buildTurnDetail(game, pvpMode, myTeamKey, isMyTurn) {
 
   if (phase === 'scoring') {
     const rollingOpen = scoringPasses >= 99;
-    if (rollingOpen) return '🎲 All players may roll';
+    if (rollingOpen) {
+      // One wording with the phase bar's (engine.js rollTurnLine).
+      return `🎲 ${rollTurnLine(game, rollGate)}`;
+    }
     if (pvpMode) return isMyTurn ? `Your strategy turn · ${Math.min(scoringPasses,2)}/2 passes` : `Opponent's strategy turn`;
     return `Team ${scoringTurn} strategy · ${Math.min(scoringPasses,2)}/2 passes`;
   }

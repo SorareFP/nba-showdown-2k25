@@ -6,7 +6,10 @@ import { describe, it, expect } from 'vitest';
 import { newGame } from './engine.js';
 import { CARDS } from './cards.js';
 import { aiPlacementPick } from './ai.js';
-import { placePlayer, placingTeam, placementSnapshot, canUndoPlacement, undoPlacement, takenBackName } from './placement.js';
+import {
+  placePlayer, placingTeam, placementSnapshot, canUndoPlacement, undoPlacement, takenBackName,
+  beginPlacement, submitSoloLineup, LINEUPS_LOCKED,
+} from './placement.js';
 
 /** A game at the first placement, as the lineup lock leaves it. */
 function atPlacement(first = 'A') {
@@ -138,5 +141,46 @@ describe('undo in PvP', () => {
     expect(canUndoPlacement(g, s2, { pvp: true })).toBe(true);
     expect(canUndoPlacement(g, s1, { pvp: true })).toBe(false);
     expect(undoPlacement(g, s2).teamB.starters).toHaveLength(1);
+  });
+});
+
+// THE ONE LINEUP SUBMIT (2026-09-18): CourtBoard's solo lineup screen, PvP's
+// resolver and the tutorial walk all end in beginPlacement, and the tutorial
+// lessons key on what it writes.
+describe('the lineup submit', () => {
+  const fresh = (first = 'A') => newGame(CARDS.slice(0, 10), CARDS.slice(10, 20), null, null, { placementFirst: first });
+
+  it('moves both fives to pick lists, empties the starters, logs the anchor and starts the snake', () => {
+    const g = fresh();
+    const mine = g.teamA.roster.slice(2, 7).map(p => p.id);
+    const seen = [];
+    const next = submitSoloLineup(g, mine, (cur, key) => {
+      // The coach picks with your five already on your starters, as the board always did.
+      seen.push(cur.teamA.starters.map(p => p.id));
+      const pool = key === 'A' ? cur.draft.aPool : cur.draft.bPool;
+      return { playerId: pool[0].id };
+    });
+    expect(seen[0]).toEqual(mine);
+    expect(next.draft.aPicks).toEqual(mine);
+    expect(next.draft.bPicks).toEqual(g.teamB.roster.slice(0, 5).map(p => p.id));
+    expect(next.draft.aPool.map(p => p.id)).toEqual(g.teamA.roster.filter(p => !mine.includes(p.id)).map(p => p.id));
+    expect(next.draft.bPool).toHaveLength(5);
+    expect(next.teamA.starters).toEqual([]);
+    expect(next.teamB.starters).toEqual([]);
+    expect(next.phase).toBe('matchup_strats');
+    expect(next.placementStep).toBe(0);
+    expect(next.offMatchups).toEqual({ A: [0, 1, 2, 3, 4], B: [0, 1, 2, 3, 4] });
+    expect(next.log[next.log.length - 1]).toEqual({ team: null, msg: LINEUPS_LOCKED });
+    expect(placingTeam(next)).toBe('A');
+    // The input game is untouched.
+    expect(g.phase).toBe('draft');
+  });
+
+  it("keeps a season's visitor-first order, and takes PvP's own when given", () => {
+    const g = fresh('B');
+    const a = g.teamA.roster.slice(0, 5).map(p => p.id);
+    const b = g.teamB.roster.slice(0, 5).map(p => p.id);
+    expect(placingTeam(beginPlacement(g, a, b))).toBe('B');
+    expect(placingTeam(beginPlacement(g, a, b, { order: ['A', 'B', 'B', 'A', 'A', 'B', 'B', 'A', 'A', 'B'] }))).toBe('A');
   });
 });

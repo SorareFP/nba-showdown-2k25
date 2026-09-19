@@ -5,7 +5,7 @@ import {
   onGameState, onPrivateData, onRoomMeta,
   writeGameState, writeGameStateIf, writePrivateData, forfeitGame, abandonGame,
 } from '../firebase/pvpRoom.js';
-import { placementSnapshot, canUndoPlacement, undoPlacement, takenBackName } from '../game/placement.js';
+import { placementSnapshot, canUndoPlacement, undoPlacement, takenBackName, beginPlacement, DEFAULT_ORDER } from '../game/placement.js';
 import {
   initializePvpGame, getWhoseTurn, extractPrivateData, stripPrivateData,
   fixFromFirebase, prepareForFirebase,
@@ -291,38 +291,33 @@ export default function PvpGame({ roomCode, myRole, onLeave }) {
 
       console.log('[DRAFT] Resolver:', { myPool: myPool?.length, oppPool: oppPool?.length, oppPicks: oppPicks?.length });
 
-      // Starters start EMPTY — players are placed one at a time via snake order.
-      clone.teamA.starters = [];
-      clone.teamB.starters = [];
-
-      // Reduce pools to the 5 that each coach did NOT pick (= bench candidates).
-      // These are revealed once placement completes (step === 10).
-      const myUnpicked = myPool.filter(p => !selectedPlayerIds.includes(p.id));
-      const oppUnpicked = oppPool.filter(p => !oppPicks.includes(p.id));
+      // Both full pools in place; beginPlacement (placement.js) reduces them
+      // to the 5 each coach did NOT pick (= bench candidates, revealed once
+      // placement completes), stores the ORDERED pick lists so the placement
+      // handler knows whose picks are whose, empties the starters for the
+      // snake, and writes the log line the tutorial lessons anchor on. It is
+      // the one lineup submit the solo board and the tutorial walk call too
+      // (2026-09-18) — this block used to be a hand copy of it.
       if (myTeamKey === 'A') {
-        clone.draft.aPool = myUnpicked;
-        clone.draft.bPool = oppUnpicked;
+        clone.draft.aPool = myPool;
+        clone.draft.bPool = oppPool;
       } else {
-        clone.draft.bPool = myUnpicked;
-        clone.draft.aPool = oppUnpicked;
+        clone.draft.bPool = myPool;
+        clone.draft.aPool = oppPool;
       }
-
-      // Store the ORDERED pick lists for each side so the placement handler
-      // knows whose picks are whose.
-      clone.draft.aPicks = myTeamKey === 'A' ? selectedPlayerIds : oppPicks;
-      clone.draft.bPicks = myTeamKey === 'A' ? oppPicks : selectedPlayerIds;
-
-      clone.offMatchups = { A: [0, 1, 2, 3, 4], B: [0, 1, 2, 3, 4] };
-      clone.phase = 'matchup_strats';
-      clone.placementStep = 0;
-      clone.placementOrder = ['A','B','B','A','A','B','B','A','A','B'];
-      clone.bench = null;
-      clone.matchupTurn = 'A';
-      clone.matchupPasses = 0;
-      clone.log = [...clone.log, { team: null, msg: 'Lineups locked — begin placement.' }];
+      const placed = beginPlacement(
+        clone,
+        myTeamKey === 'A' ? selectedPlayerIds : oppPicks,
+        myTeamKey === 'A' ? oppPicks : selectedPlayerIds,
+        // PvP sets its own order: A leads (placement.js DEFAULT_ORDER, not a retyped copy).
+        { order: DEFAULT_ORDER },
+      );
+      placed.bench = null;
+      placed.matchupTurn = 'A';
+      placed.matchupPasses = 0;
 
       // Write ONLY the public game state. Private data is NEVER touched.
-      const pubGame = stripPrivateData(clone);
+      const pubGame = stripPrivateData(placed);
       await writeGameState(roomCode, pubGame);
     } else {
       // ── FIRST SUBMITTER: store picks in a separate path, update game state ──
@@ -360,7 +355,7 @@ export default function PvpGame({ roomCode, myRole, onLeave }) {
   const handlePlacePlayer = useCallback(async (playerId) => {
     const step = publicGame.placementStep ?? 10;
     if (step >= 10) return;
-    const order = publicGame.placementOrder || ['A','B','B','A','A','B','B','A','A','B'];
+    const order = publicGame.placementOrder || DEFAULT_ORDER;
     const activeTeam = order[step];
     if (activeTeam !== myTeamKey) {
       console.warn('[PLACE] Not your turn to place');

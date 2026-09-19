@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import { calcAdv, matchupAdv, getTeam, getOpp, getPS, getFatigue, SNAKE, SPEND_COSTS, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, lastReturnedCard, undoReturnCard, periodLabel, extraRollPending, checkNeed, fatigueForMinutes, crunchSearchOptions } from '../../game/engine.js';
+import { calcAdv, matchupAdv, getTeam, getOpp, getPS, getFatigue, SPEND_COSTS, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, lastReturnedCard, undoReturnCard, periodLabel, extraRollPending, checkNeed, fatigueForMinutes, crunchSearchOptions, rollTurnLine } from '../../game/engine.js';
 import { canPlayCard, myHouseTargets, fwdTargets, preRollTargets, helpTargets, foulTroubleTargets } from '../../game/canPlay.js';
 import { resolveGoUnder } from '../../game/execCard.js';
 import { passTurn, MAX_STRAIGHT_MINUTES, restRuleLifted, pickablePool } from '../../game/engine.js';
 import { salaryOrder } from '../../game/teamRules.js';
 import { getStrat } from '../../game/strats.js';
 import { aiDraftPick, aiPlacementPick, forfeitNet, FORFEIT_CARDS } from '../../game/ai.js';
-import { placePlayer, placementSnapshot, canUndoPlacement, undoPlacement, takenBackName } from '../../game/placement.js';
+import { placePlayer, placementSnapshot, canUndoPlacement, undoPlacement, takenBackName, submitSoloLineup, DEFAULT_ORDER } from '../../game/placement.js';
 import styles from './CourtBoard.module.css';
 import { getPlayerImageUrl, getPlayerThumbUrl, getStratImagePath, getStratThumbPath, fallbackTo } from '../../game/cardImages.js';
 import { useLightbox, ZoomImg } from '../CardLightbox.jsx';
@@ -27,11 +27,22 @@ export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExec
   // the game is PvP. Its hand goes face down and its roster status comes up in
   // that panel's place — see OppStatusPanel.
   coachTeam = null,
+  // THE SIDE THE HUMAN ONLY WATCHES, by team key, or null (2026-09-18). Its
+  // hand (when drawn face up), its player slots — Roll, Clutch, AST/REB
+  // spends — its Close Out and Challenge, and its Pass/Lock turn are all
+  // inert: the coach plays them, not the person at the screen. It defaults to
+  // coachTeam, so EVERY board with a coach is watch-only on the coach's side
+  // (PlayTab passes coachTeam="B"; the human could press the coach's Roll on
+  // its die and Pass on its turn). The tutorial passes it explicitly, because
+  // it draws the coach's hand face up (its lessons name the coach's cards)
+  // and so passes no coachTeam. Hotseat and PvP have no coach: nothing changes.
+  watchOnlyTeam = null,
   // COACH TIPS (the user, 2026-09-16): the picker shows what a card that
   // replaces a roll is worth on each player, net of the roll it gives up.
   // null means "on below Deity"; the tutorial passes true.
   coachTips = null }) {
   const tips = coachTips ?? aiIq < 1;
+  const watchOnly = watchOnlyTeam ?? coachTeam ?? null;
   // ── Solo placement ─────────────────────────────────────────────────────────
   //
   // PvP passes a Firebase-backed onPlacePlayer; solo places locally with the
@@ -61,7 +72,7 @@ export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExec
     if (pvpMode) return;
     const step = game.placementStep ?? 10;
     if (game.phase !== 'matchup_strats' || step >= 10) return;
-    const order = game.placementOrder || ['A','B','B','A','A','B','B','A','A','B'];
+    const order = game.placementOrder || DEFAULT_ORDER;
     if (order[step] !== 'B') return;
     const t = setTimeout(() => {
       // How many of your possible lineups it weighs is the rung's (samplesOf).
@@ -113,14 +124,14 @@ export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExec
         const pick = await openModal({ teamKey: key, cardId: 'timeout_search', players: options.map(id => ({ id, name: getStrat(id)?.name ?? id })), label: 'Search the deck: take one crunch-time card, then shuffle' });
         if (pick === null) return;
         onSearchCrunch(key, options[pick]);
-      })} pvpMode={pvpMode} myTeamKey={myTeamKey} isMyTurn={isMyTurn} draftSelectedCount={draftSelected.length} onUndoPlace={undoPlace} undoPlaceName={undoName} />
+      })} pvpMode={pvpMode} myTeamKey={myTeamKey} isMyTurn={isMyTurn} draftSelectedCount={draftSelected.length} onUndoPlace={undoPlace} undoPlaceName={undoName} rollGate={rollGate} readOnlySide={watchOnly} />
 
       {/* THE ANNOUNCED CHECK, AT THE TOP. It sat below the hands and the
           court, off the bottom of the screen on a laptop, and the other side
           waited on a Resolve nobody could see (the user, 2026-09-08). Here it
           is beside the scoreboard, and it sticks while the page scrolls. */}
       {game.pendingShotCheck && (
-        <PendingBanner game={game} onResolve={onResolve} onExecCard={handleExecCard} />
+        <PendingBanner game={game} onResolve={onResolve} onExecCard={handleExecCard} readOnlyTeam={watchOnly} />
       )}
       {!game.pendingShotCheck && game.pendingChoice && (
         <ChoiceBanner game={game} setGame={setGame} pvpMode={pvpMode} myTeamKey={myTeamKey} />
@@ -135,7 +146,7 @@ export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExec
           {coachTeam === 'A'
             ? <OppStatusPanel game={game} teamKey="A" />
             : (!pvpMode || myTeamKey === 'A')
-              ? <HandPanel game={game} teamKey="A" onExecCard={handleExecCard} onReturnCard={returnCard} onUndoReturn={undoReturn} pvpMode={pvpMode} isMyTurn={isMyTurn} />
+              ? <HandPanel game={game} teamKey="A" onExecCard={handleExecCard} onReturnCard={returnCard} onUndoReturn={undoReturn} pvpMode={pvpMode} isMyTurn={isMyTurn} readOnly={watchOnly === 'A'} />
               : <div className={styles.handPlaceholder} />
           }
 
@@ -148,7 +159,7 @@ export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExec
                 <MatchupRow key={i} idx={i} game={game} setGame={setGame}
                   onRoll={onRoll} onExecCard={handleExecCard} onSpendAssist={onSpendAssist} onSpendRebound={onSpendRebound}
                   onPlacePlayer={placeHandler}
-                  pvpMode={pvpMode} myTeamKey={myTeamKey} isMyTurn={isMyTurn} rollGate={rollGate} />
+                  pvpMode={pvpMode} myTeamKey={myTeamKey} isMyTurn={isMyTurn} rollGate={rollGate} readOnlySide={watchOnly} />
               ))}
             </div>
             <TrackPanel game={game} side="left" />
@@ -159,7 +170,7 @@ export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExec
           {coachTeam === 'B'
             ? <OppStatusPanel game={game} teamKey="B" />
             : (!pvpMode || myTeamKey === 'B')
-              ? <HandPanel game={game} teamKey="B" onExecCard={handleExecCard} onReturnCard={returnCard} onUndoReturn={undoReturn} pvpMode={pvpMode} isMyTurn={isMyTurn} />
+              ? <HandPanel game={game} teamKey="B" onExecCard={handleExecCard} onReturnCard={returnCard} onUndoReturn={undoReturn} pvpMode={pvpMode} isMyTurn={isMyTurn} readOnly={watchOnly === 'B'} />
               : <div className={styles.handPlaceholder} />
           }
         </div>
@@ -1116,7 +1127,7 @@ function SelectModal({ modal, game, onClose }) {
   );
 }
 
-function PhaseBar({ game, setGame, onEndSection, onTimeout = null, onEndTimeout = null, onSearchCrunch = null, pvpMode = false, myTeamKey = null, isMyTurn = true, draftSelectedCount = 0, onUndoPlace = null, undoPlaceName = null }) {
+function PhaseBar({ game, setGame, onEndSection, onTimeout = null, onEndTimeout = null, onSearchCrunch = null, pvpMode = false, myTeamKey = null, isMyTurn = true, draftSelectedCount = 0, onUndoPlace = null, undoPlaceName = null, rollGate = null, readOnlySide = null }) {
   const { phase, quarter, section, matchupTurn, matchupPasses, scoringTurn, scoringPasses } = game;
   const rA = game.rollResults.A || [], rB = game.rollResults.B || [];
   // A player is "done" if they have a roll result OR they are blocked
@@ -1124,9 +1135,17 @@ function PhaseBar({ game, setGame, onEndSection, onTimeout = null, onEndTimeout 
   const bA = game.blockedRolls?.A || {}, bB = game.blockedRolls?.B || {};
   const allRolled = [0,1,2,3,4].every(i => isDone(rA,bA,i)) && [0,1,2,3,4].every(i => isDone(rB,bB,i));
   const rollingOpen = scoringPasses >= 99;
+  // The bar's rolling line: with `rollGate` (the coach, the tutorial) whose
+  // die it is; without one (hotseat, PvP) "All players may roll". One wording
+  // with the Scoreboard's — engine.js rollTurnLine (2026-09-18).
+  const rollingText = rollTurnLine(game, rollGate);
 
   // Whoever holds the turn passes — the engine owns the rule (passTurn).
   const pass = () => { if (game.pendingChoice) return; setGame(passTurn(game, phase === 'matchup_strats' ? matchupTurn : scoringTurn)); };
+  // Not on the turn of a side the human only watches (2026-09-18): in the
+  // tutorial a click in the coach's beat passed FOR the coach, and could skip
+  // the section-2 cancel the lessons promise.
+  const watchedTurn = Boolean(readOnlySide) && (phase === 'matchup_strats' ? matchupTurn : scoringTurn) === readOnlySide;
   const lock = () => {
     const g=JSON.parse(JSON.stringify(game));
     g.phase='scoring';g.rollResults={A:[],B:[]};
@@ -1147,7 +1166,7 @@ function PhaseBar({ game, setGame, onEndSection, onTimeout = null, onEndTimeout 
   if (phase === 'matchup_strats') {
     const step = game.placementStep ?? 10;
     const inPlacement = step < 10;
-    const order = game.placementOrder || ['A','B','B','A','A','B','B','A','A','B'];
+    const order = game.placementOrder || DEFAULT_ORDER;
     const activeTeam = inPlacement ? order[step] : matchupTurn;
     const activeCol = activeTeam === 'A' ? 'var(--orange)' : 'var(--blue)';
 
@@ -1173,14 +1192,15 @@ function PhaseBar({ game, setGame, onEndSection, onTimeout = null, onEndTimeout 
             <button
               className={styles.passBtn}
               onClick={onUndoPlace}
+              data-tutorial="placement-undo"
               title={`Take ${undoPlaceName ?? 'your last placement'} back off the floor`}
             >
               ↩ Undo{undoPlaceName && <span className={styles.undoName}> {undoPlaceName.split(' ').slice(-1)[0]}</span>}
             </button>
           )}
           {!inPlacement && <span className={styles.passCount}>{matchupPasses}/2 passes</span>}
-          <button className={styles.passBtn} onClick={pass} disabled={inPlacement || (pvpMode && !isMyTurn)}>Pass →</button>
-          <button className={styles.ctaBtn} onClick={lock} disabled={inPlacement || (pvpMode && !isMyTurn) || Boolean(game.pendingChoice)} title={game.pendingChoice ? 'A Go Under check is waiting to be taken' : undefined}>Lock → Scoring</button>
+          <button className={styles.passBtn} onClick={pass} disabled={inPlacement || (pvpMode && !isMyTurn) || watchedTurn}>Pass →</button>
+          <button className={styles.ctaBtn} data-tutorial="lock-scoring" onClick={lock} disabled={inPlacement || (pvpMode && !isMyTurn) || watchedTurn || Boolean(game.pendingChoice)} title={game.pendingChoice ? 'A Go Under check is waiting to be taken' : undefined}>Lock → Scoring</button>
         </div>
       </div>
     );
@@ -1194,7 +1214,7 @@ function PhaseBar({ game, setGame, onEndSection, onTimeout = null, onEndTimeout 
           <span className={styles.phaseLabel}>{periodLabel(game)} · Scoring<HelpBtn section="scoring" /></span>
           {!rollingOpen
             ? <span className={styles.phaseSub} style={{color:col}}>Team {scoringTurn} strategy turn · {Math.min(scoringPasses,2)}/2 passes</span>
-            : <span className={styles.phaseSub} style={{color:'var(--green)'}}>All players may roll</span>}
+            : <span className={styles.phaseSub} style={{color:'var(--green)'}}>{rollingText}</span>}
           {['A', 'B'].map(k => {
             // `openMan` carries its exclusions now — the trapped man cannot be
             // the open man. Reads the old bare-number shape too.
@@ -1216,13 +1236,13 @@ function PhaseBar({ game, setGame, onEndSection, onTimeout = null, onEndTimeout 
         </div>
         <div className={styles.phaseCtrls}>
           {(segA>0||segB>0) && <span className={styles.segScore}><span style={{color:'var(--orange)'}}>A {segA}</span>–<span style={{color:'var(--blue)'}}>{segB} B</span></span>}
-          {!rollingOpen && <button className={styles.passBtn} onClick={pass} disabled={pvpMode && !isMyTurn}>Pass →</button>}
+          {!rollingOpen && <button className={styles.passBtn} onClick={pass} disabled={(pvpMode && !isMyTurn) || watchedTurn}>Pass →</button>}
           {onTimeout && game.crunch?.active && rollingOpen && !game.timeoutActive && !game.crunch.timeoutUsed?.[pvpMode ? myTeamKey : 'A'] && (!pvpMode || isMyTurn) &&
-            <button className={styles.passBtn} onClick={() => onTimeout(pvpMode ? myTeamKey : 'A')}>⏸ Timeout</button>}
+            <button className={styles.passBtn} data-tutorial="timeout" onClick={() => onTimeout(pvpMode ? myTeamKey : 'A')}>⏸ Timeout</button>}
           {onSearchCrunch && game.timeoutActive === (pvpMode ? myTeamKey : 'A') && crunchSearchOptions(game, pvpMode ? myTeamKey : 'A').length > 0 &&
-            <button className={styles.passBtn} onClick={() => onSearchCrunch(pvpMode ? myTeamKey : 'A')} title="Take one crunch-time card from your deck, then shuffle it">🔍 Search deck</button>}
+            <button className={styles.passBtn} data-tutorial="search-deck" onClick={() => onSearchCrunch(pvpMode ? myTeamKey : 'A')} title="Take one crunch-time card from your deck, then shuffle it">🔍 Search deck</button>}
           {onEndTimeout && game.timeoutActive === (pvpMode ? myTeamKey : 'A') &&
-            <button className={styles.ctaBtn} onClick={onEndTimeout}>▶ Resume play</button>}
+            <button className={styles.ctaBtn} data-tutorial="resume-play" onClick={onEndTimeout}>▶ Resume play</button>}
           {allRolled && !game.pendingShotCheck && (() => {
             const votes = game.endSectionVotes || {};
             const myVoted = pvpMode && myTeamKey ? votes[myTeamKey] : false;
@@ -1244,7 +1264,7 @@ function PhaseBar({ game, setGame, onEndSection, onTimeout = null, onEndTimeout 
   return null;
 }
 
-function MatchupRow({ idx, game, setGame, onRoll, onExecCard, onSpendAssist, onSpendRebound, onPlacePlayer, pvpMode = false, myTeamKey = null, isMyTurn = true, rollGate = null }) {
+function MatchupRow({ idx, game, setGame, onRoll, onExecCard, onSpendAssist, onSpendRebound, onPlacePlayer, pvpMode = false, myTeamKey = null, isMyTurn = true, rollGate = null, readOnlySide = null }) {
   if (game.phase === 'draft') return null; // Draft handled by BlindPickPhase
   const ap=game.teamA.starters[idx], bp=game.teamB.starters[idx];
   // During placement phase, empty slots need special handling
@@ -1256,7 +1276,7 @@ function MatchupRow({ idx, game, setGame, onRoll, onExecCard, onSpendAssist, onS
       return <div className={styles.emptyRow}/>;
     }
     // Figure out which side is the "next to be placed" given the snake order
-    const order = game.placementOrder || ['A','B','B','A','A','B','B','A','A','B'];
+    const order = game.placementOrder || DEFAULT_ORDER;
     const activeTeam = order[step];
     const aCount = game.teamA.starters.length;
     const bCount = game.teamB.starters.length;
@@ -1305,6 +1325,12 @@ function MatchupRow({ idx, game, setGame, onRoll, onExecCard, onSpendAssist, onS
   }
   const aDefIdx=game.offMatchups.A[idx], bDefIdx=game.offMatchups.B[idx];
   const aDef=game.teamB.starters[aDefIdx], bDef=game.teamA.starters[bDefIdx];
+  // A side the human watches but does not play (watchOnlyTeam, 2026-09-18):
+  // its slots go inert as the other side's do in PvP — no Roll, no Clutch,
+  // no AST/REB spend — and never read "Their roll", which in the tutorial sat
+  // on the coach's slots during YOUR die. With no coach nothing changes.
+  const inert = k => (pvpMode && myTeamKey !== k) || readOnlySide === k;
+  const locked = k => (readOnlySide === k ? false : rollGate ? !rollGate[k] : false);
   return (
     <div className={styles.matchupRow}>
       <PlayerSlot player={ap} ps={getPS(game,'A',ap.id)||{}} adv={aDef?matchupAdv(game,'A',idx):null}
@@ -1313,7 +1339,7 @@ function MatchupRow({ idx, game, setGame, onRoll, onExecCard, onSpendAssist, onS
         defPlayer={aDef} defSelect={game.teamB.starters} defIdx={aDefIdx}
         onDefChange={di=>{const g=JSON.parse(JSON.stringify(game));g.offMatchups.A[idx]=di;setGame(g);}}
         onRoll={()=>onRoll('A',idx)} onClutch={()=>onRoll('A',idx,{clutch:true})} onSpendAssist={onSpendAssist} onSpendRebound={onSpendRebound}
-        pvpDisabled={pvpMode && myTeamKey !== 'A'} rollLocked={rollGate ? !rollGate.A : false} />
+        pvpDisabled={inert('A')} rollLocked={locked('A')} />
       <div className={styles.connector}>
         <div className={styles.connLine}/><div className={styles.slotNum}>{idx+1}</div><div className={styles.connLine}/>
       </div>
@@ -1323,7 +1349,7 @@ function MatchupRow({ idx, game, setGame, onRoll, onExecCard, onSpendAssist, onS
         defPlayer={bDef} defSelect={game.teamA.starters} defIdx={bDefIdx}
         onDefChange={di=>{const g=JSON.parse(JSON.stringify(game));g.offMatchups.B[idx]=di;setGame(g);}}
         onRoll={()=>onRoll('B',idx)} onClutch={()=>onRoll('B',idx,{clutch:true})} onSpendAssist={onSpendAssist} onSpendRebound={onSpendRebound}
-        pvpDisabled={pvpMode && myTeamKey !== 'B'} rollLocked={rollGate ? !rollGate.B : false} />
+        pvpDisabled={inert('B')} rollLocked={locked('B')} />
     </div>
   );
 }
@@ -1432,42 +1458,13 @@ function BlindPickPhase({ game, setGame, pvpMode = false, myTeamKey = null, onDr
       return;
     }
 
-    // Solo mode: AI picks for opponent
-    const g = JSON.parse(JSON.stringify(game));
-
-    // Set player's starters
-    const myPool = teamKey === 'A' ? g.draft.aPool : g.draft.bPool;
-    const picks = selected.map(id => myPool.find(p => p.id === id)).filter(Boolean);
-    if (teamKey === 'A') {
-      g.teamA.starters = picks;
-      g.draft.aPool = myPool.filter(p => !selected.includes(p.id));
-    } else {
-      g.teamB.starters = picks;
-      g.draft.bPool = myPool.filter(p => !selected.includes(p.id));
-    }
-
-    // AI picks 5 for opponent
-    const oppKey = teamKey === 'A' ? 'B' : 'A';
-    for (let i = 0; i < 5; i++) {
-      // The rung reaches the ROTATION too, as of 2026-09-14 — it used to fill
-      // the floor the same considered way at Settler as at Deity.
-      const action = aiDraftPick(g, oppKey, { iq: aiIq });
-      if (action) {
-        const oppPool = oppKey === 'A' ? g.draft.aPool : g.draft.bPool;
-        const pIdx = oppPool.findIndex(p => p.id === action.playerId);
-        if (pIdx >= 0) {
-          const picked = oppPool[pIdx];
-          if (oppKey === 'A') {
-            g.teamA.starters.push(picked);
-            g.draft.aPool = g.draft.aPool.filter((_, j) => j !== pIdx);
-          } else {
-            g.teamB.starters.push(picked);
-            g.draft.bPool = g.draft.bPool.filter((_, j) => j !== pIdx);
-          }
-        }
-      }
-    }
-
+    // Solo mode: the AI picks the opponent's five. The submit is one pure
+    // function (placement.js submitSoloLineup, 2026-09-18) that the tutorial's
+    // test walk calls too: the tutorial lessons key on the log anchor and the
+    // pick lists it writes, and a hand copy of this block let them drift.
+    // The rung reaches the ROTATION too, as of 2026-09-14 — it used to fill
+    // the floor the same considered way at Settler as at Deity.
+    //
     // NO REST IS APPLIED HERE. A block used to sit at this spot that rested
     // everyone not in the chosen fives — minutes minus EIGHT, markers cleared,
     // both teams — the moment the lineup was submitted. Two things wrong with
@@ -1479,23 +1476,14 @@ function BlindPickPhase({ game, setGame, pvpMode = false, myTeamKey = null, onDr
     // user, 2026-09-16: "I know who is in their current 5 for this segment").
     // The tracker now changes only at endSection, and until the snake has
     // placed a player the roster panel knows nothing the court does not.
-
-    g.offMatchups = { A: [0, 1, 2, 3, 4], B: [0, 1, 2, 3, 4] };
-
+    //
     // ── SOLO GETS THE PLACEMENT SNAKE TOO ─────────────────────────────────
     //
     // The chosen fives move to pick lists and the starters empty back out, so
     // the same snake PvP runs decides who lines up opposite whom — the row a
     // player lands in IS his starting matchup. Before this, solo rows paired
     // by pick order and neither side ever chose an assignment.
-    g.draft.aPicks = g.teamA.starters.map(pl => pl.id);
-    g.draft.bPicks = g.teamB.starters.map(pl => pl.id);
-    g.teamA.starters = [];
-    g.teamB.starters = [];
-    g.placementStep = 0;
-    g.placementOrder = g.placementOrder || ['A','B','B','A','A','B','B','A','A','B'];
-    g.phase = 'matchup_strats';
-    g.log = [...g.log, { team: null, msg: 'Lineups locked — begin placement.' }];
+    const g = submitSoloLineup(game, selected, (cur, key) => aiDraftPick(cur, key, { iq: aiIq }), { teamKey });
 
     setSelected([]);
     setGame(g);
@@ -1585,7 +1573,7 @@ function BlindPickPhase({ game, setGame, pvpMode = false, myTeamKey = null, onDr
                 {boosts.length > 0 && <span className={styles.blindPickBoosts}>{boosts.join(' ')}</span>}
               </div>
               {min > 0 && (
-                <div className={`${styles.blindPickFatigue} ${fat < 0 ? styles.blindPickFatWarn : ''}`}>
+                <div className={`${styles.blindPickFatigue} ${fat < 0 ? styles.blindPickFatWarn : ''}`} data-tutorial={!eligible.has(p.id) && !isSelected ? 'must-rest' : 'lineup-minutes'}>
                   {min}m{fat < 0 ? ` (${fat})` : ''}
                   {!eligible.has(p.id) && !isSelected && ' MUST REST'}
                 </div>
@@ -1596,132 +1584,6 @@ function BlindPickPhase({ game, setGame, pvpMode = false, myTeamKey = null, onDr
       </div>
     </div>
   );
-}
-
-// ── DraftRow (legacy, kept for TutorialGame compatibility) ────────────────
-function DraftRow({ idx, game, setGame, pvpMode = false, myTeamKey = null, isMyTurn = true }) {
-  const { draft, teamA, teamB } = game;
-  const aS=teamA.starters, bS=teamB.starters;
-  const actTeam = SNAKE[Math.min(draft.step,9)]===0?'A':'B';
-  const done = aS.length===5&&bS.length===5;
-  // In PvP, only show pick list for my team and only when it's my turn
-  const isNextA = actTeam==='A'&&aS.length===idx&&!done && (!pvpMode || (myTeamKey === 'A' && isMyTurn));
-  const isNextB = actTeam==='B'&&bS.length===idx&&!done && (!pvpMode || (myTeamKey === 'B' && isMyTurn));
-
-  const pick = (card, team) => {
-    const g=JSON.parse(JSON.stringify(game));
-    const d=g.draft;
-    if(team==='A'){g.teamA.starters.push(card);d.aPool=d.aPool.filter(c=>c.id!==card.id);}
-    else{g.teamB.starters.push(card);d.bPool=d.bPool.filter(c=>c.id!==card.id);}
-    d.step++;
-    if(g.teamA.starters.length===5&&g.teamB.starters.length===5){
-      g.offMatchups={A:[0,1,2,3,4],B:[0,1,2,3,4]};
-      // NO BENCH REST HERE (2026-09-16, the user: "I don't think fatigue is
-      // right in the app"). This step used to rest every benched player as the
-      // lineups completed, and endSection rests them again when the section
-      // ends — so one section off was two rests, and a star at 12 came back
-      // fresh in one sitting. endSection is the ONE rest rule (engine.js); a
-      // test now greps for any other caller of benchRest outside it.
-      g.phase='matchup_strats';
-      g.log=[...g.log,{team:null,msg:'Draft complete — Matchup Strategy Phase.'}];
-    }
-    setGame(g);
-  };
-
-  // In PvP, show "Picking..." when opponent has the active pick at this slot
-  const oppPickingA = pvpMode && actTeam==='A' && myTeamKey!=='A' && aS.length===idx && !done;
-  const oppPickingB = pvpMode && actTeam==='B' && myTeamKey!=='B' && bS.length===idx && !done;
-
-  return (
-    <div className={styles.matchupRow}>
-      <div className={styles.draftCell}>
-        {aS[idx] ? <PlacedCard player={aS[idx]} stats={teamA.stats} col="var(--orange)"/>
-          : isNextA ? <PickList pool={draft.aPool} stats={teamA.stats} onPick={c=>pick(c,'A')} col="var(--orange)" oppStarters={bS} myStarters={aS} slotIdx={idx}/>
-          : oppPickingA ? <div className={styles.oppPicking}>Picking...</div>
-          : <EmptySlot idx={idx} col="var(--orange)"/>}
-      </div>
-      <div className={styles.connector}>
-        <div className={styles.connLine}/><div className={styles.slotNum}>{idx+1}</div><div className={styles.connLine}/>
-      </div>
-      <div className={styles.draftCell}>
-        {bS[idx] ? <PlacedCard player={bS[idx]} stats={teamB.stats} col="var(--blue)"/>
-          : isNextB ? <PickList pool={draft.bPool} stats={teamB.stats} onPick={c=>pick(c,'B')} col="var(--blue)" oppStarters={aS} myStarters={bS} slotIdx={idx}/>
-          : oppPickingB ? <div className={styles.oppPicking}>Picking...</div>
-          : <EmptySlot idx={idx} col="var(--blue)"/>}
-      </div>
-    </div>
-  );
-}
-
-function PlacedCard({ player, stats, col }) {
-  const ps=stats?.find(s=>s.id===player.id)||{};
-  const min=ps.minutes||0,fat=fatigueForMinutes(min);
-  const boosts=[
-    player.threePtBoost?`3PT${player.threePtBoost>0?'+':''}${player.threePtBoost}`:'',
-    player.paintBoost?`Paint${player.paintBoost>0?'+':''}${player.paintBoost}`:'',
-    player.defBoost?`Def${player.defBoost>0?'+':''}${player.defBoost}`:'',
-  ].filter(Boolean);
-  const pImgUrl = getPlayerThumbUrl(player.id, player.set);
-  const pImgFull = getPlayerImageUrl(player.id, player.set);
-  return (
-    <div className={styles.placedCard} style={{borderColor:col}}>
-      {pImgUrl && <ZoomImg player={player} src={pImgUrl} alt={player.name} className={styles.placedArt} onError={fallbackTo(pImgFull, e => { e.target.style.display = 'none'; })} />}
-      <div className={styles.placedName} style={{color:col}}>{player.name}{(()=>{const n=(ps.hot||0)-(ps.cold||0);return n>0?' 🔥':n<0?' ❄️':'';})()}{fat<0&&<span className={styles.fatTag}> FAT{fat}</span>}</div>
-      <div className={styles.placedMeta}>S{player.speed} · P{player.power} · <span style={{color:'#60A5FA'}}>${player.salary}</span>{boosts.length>0&&' · '+boosts.join(' ')}</div>
-    </div>
-  );
-}
-
-function PickList({ pool, stats, onPick, col, oppStarters = [], myStarters = [], slotIdx }) {
-  const [q,setQ]=useState('');
-  const filtered=pool.filter(p=>!q||p.name.toLowerCase().includes(q.toLowerCase()));
-
-  // Compute matchup preview: what would this player's offense look like vs the opponent at same slot,
-  // and what would the opponent's offense look like against this player on defense
-  const getMatchupPreview = (candidate) => {
-    const opp = oppStarters[slotIdx]; // opponent at same slot (default matchup)
-    if (!opp) return null;
-    // Candidate on offense vs opponent on defense
-    const offAdv = calcAdv(candidate, opp, {}, slotIdx);
-    // Opponent on offense vs candidate on defense
-    const defAdv = calcAdv(opp, candidate, {}, slotIdx);
-    return { offAdv, defAdv, oppName: opp.name };
-  };
-
-  return (
-    <div className={styles.pickList} style={{borderColor:col+'80'}}>
-      <div className={styles.pickLabel} style={{color:col}}>▼ Pick player</div>
-      <input className={styles.pickSearch} placeholder="Filter…" value={q} onChange={e=>setQ(e.target.value)} />
-      <div className={styles.pickScroll}>
-        {filtered.map(p=>{
-          const ps=stats?.find(s=>s.id===p.id)||{};
-          const min=ps.minutes||0,fat=fatigueForMinutes(min);
-          const boosts=[
-            p.threePtBoost?`3PT${p.threePtBoost>0?'+':''}${p.threePtBoost}`:'',
-            p.paintBoost?`Paint${p.paintBoost>0?'+':''}${p.paintBoost}`:'',
-            p.defBoost?`Def${p.defBoost>0?'+':''}${p.defBoost}`:'',
-          ].filter(Boolean).join(' ');
-          const preview = getMatchupPreview(p);
-          return (
-            <button key={p.id} className={styles.pickItem} onClick={()=>onPick(p)}>
-              <span className={styles.pickName}>{p.name}{(()=>{const n=(ps.hot||0)-(ps.cold||0);return n>0?' 🔥':n<0?' ❄️':'';})()}</span>
-              <span className={styles.pickMeta}>S{p.speed} P{p.power}{boosts&&' · '+boosts}{min>=MAX_STRAIGHT_MINUTES&&!restRuleLifted(game)?' ⛔ MUST REST':fat<0?` FAT${fat}`:min>0?` ${min}m`:''}</span>
-              {preview && (
-                <span className={styles.pickMatchup}>
-                  vs {preview.oppName}: Off <span style={{color:preview.offAdv.rollBonus>0?'#4ADE80':preview.offAdv.hasPenalty?'#F87171':'#94A3B8'}}>{preview.offAdv.rollBonus>0?'+':''}{preview.offAdv.rollBonus}</span>
-                  {' · '}Opp Off <span style={{color:preview.defAdv.rollBonus>0?'#F87171':preview.defAdv.hasPenalty?'#4ADE80':'#94A3B8'}}>{preview.defAdv.rollBonus>0?'+':''}{preview.defAdv.rollBonus}</span>
-                </span>
-              )}
-            </button>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-function EmptySlot({ idx, col }) {
-  return <div className={styles.emptySlot} style={{borderColor:col+'30'}}><span style={{color:col+'50',fontSize:11}}>Slot {idx+1}</span></div>;
 }
 
 /** The temporary, card-driven effects on one slot — see the note at its call site. */
@@ -1848,7 +1710,7 @@ function PlayerSlot({ player, ps, adv, fat, result, blocked, teamKey, idx, phase
                 {rollLocked ? '🎲 Their roll' : extraRoll ? '🎲 2nd roll −2' : '🎲 Roll'}
               </button>
               {onClutch && !pvpDisabled && !rollLocked && game.crunch?.active && clutchAvailable(game, teamKey) > 0 && fat > -6 &&
-                <button className={styles.rollBtn} style={{background:'#B45309'}} title={`Clutch Possession: roll ${2 + (game.clutchDice?.[player.id] || 0)} dice, keep the best`} onClick={onClutch}>⭐ Clutch ({2 + (game.clutchDice?.[player.id] || 0)})</button>}
+                <button className={styles.rollBtn} data-tutorial={`clutch-${teamKey}`} style={{background:'#B45309'}} title={`Clutch Possession: roll ${2 + (game.clutchDice?.[player.id] || 0)} dice, keep the best`} onClick={onClutch}>⭐ Clutch ({2 + (game.clutchDice?.[player.id] || 0)})</button>}
             </>}
             {/* Assist spending buttons — costs come from SPEND_COSTS so the
                 buttons can never show at a count the engine will refuse */}
@@ -1987,14 +1849,18 @@ function ChoiceBanner({ game, setGame, pvpMode = false, myTeamKey = null }) {
   );
 }
 
-function PendingBanner({ game, onResolve, onExecCard }) {
+// `readOnlyTeam`: the side the human only watches on this board (CourtBoard
+// watchOnlyTeam) — its Close Out and Challenge are the coach's to play, not
+// buttons for the human (2026-09-18).
+function PendingBanner({ game, onResolve, onExecCard, readOnlyTeam = null }) {
   const { pendingShotCheck: psc } = game;
   const offP=getTeam(game,psc.teamKey).starters[psc.playerIdx];
   const defKey=psc.teamKey==='A'?'B':'A';
+  const defLive = defKey !== readOnlyTeam;
   const hasCloseOut=getTeam(game,defKey).hand.includes('close_out');
   const coPlay=hasCloseOut?canPlayCard(game,defKey,'close_out'):null;
   const lsc=game.lastShotCheck;
-  const canChallenge=Boolean(lsc && lsc.teamKey===psc.teamKey && getTeam(game,defKey).hand.includes('coaches_challenge') && canPlayCard(game,defKey,'coaches_challenge').canPlay);
+  const canChallenge=defLive && Boolean(lsc && lsc.teamKey===psc.teamKey && getTeam(game,defKey).hand.includes('coaches_challenge') && canPlayCard(game,defKey,'coaches_challenge').canPlay);
   return (
     <div className={styles.pendingBanner}>
       <div className={styles.pendingInfo}>
@@ -2003,7 +1869,7 @@ function PendingBanner({ game, onResolve, onExecCard }) {
         <span style={{color:hasCloseOut&&coPlay?.canPlay?'var(--green)':'#94A3B8',fontSize:12}}>Team {defKey}: {hasCloseOut&&coPlay?.canPlay?'⚡ Close Out available!':'no Close Out'}</span>
       </div>
       <div className={styles.pendingActions}>
-        {hasCloseOut&&coPlay?.canPlay&&<button className={styles.coBtn} onClick={()=>onExecCard(defKey,'close_out',{})}>Close Out −3</button>}
+        {defLive&&hasCloseOut&&coPlay?.canPlay&&<button className={styles.coBtn} onClick={()=>onExecCard(defKey,'close_out',{})}>Close Out −3</button>}
         {/* COACH'S CHALLENGE ON THE CHECK THAT JUST LANDED. A card that takes
             several checks in a row (Green Light) announces the next one the
             moment the last resolves, and the challenge only ever reaches the
@@ -2094,7 +1960,10 @@ export function OppStatusPanel({ game, teamKey }) {
   );
 }
 
-export function HandPanel({ game, teamKey, onExecCard, onReturnCard = null, onUndoReturn = null, pvpMode = false, isMyTurn = true }) {
+// `readOnly` (2026-09-18): the hand is shown face up and nothing on it acts —
+// no ▶, no ↩, no Undo — for the tutorial's coach, whose cards the lessons
+// name. Every other board leaves it false and is unchanged.
+export function HandPanel({ game, teamKey, onExecCard, onReturnCard = null, onUndoReturn = null, pvpMode = false, isMyTurn = true, readOnly = false }) {
   const [staged, setStaged] = useState(null);
   const { open } = useLightbox();
   const t = getTeam(game, teamKey);
@@ -2104,17 +1973,19 @@ export function HandPanel({ game, teamKey, onExecCard, onReturnCard = null, onUn
   const isActive = phase === 'matchup_strats' ? matchupTurn === teamKey : (rollingOpen || scoringTurn === teamKey);
   const playablePhases = phase === 'matchup_strats' ? ['matchup'] : (isActive ? ['scoring', 'pre_roll', 'post_roll'] : []);
   // In PvP, also allow reaction cards when it's your turn to react (isMyTurn handles this)
-  const pvpCanPlay = !pvpMode || isMyTurn;
+  const pvpCanPlay = (!pvpMode || isMyTurn) && !readOnly;
   // The last card put back, while it can still be taken back (undoReturnCard).
   const back = onUndoReturn && pvpCanPlay ? lastReturnedCard(game, teamKey) : null;
 
   return (
-    <div className={`${styles.handPanel} ${teamKey === 'A' ? styles.handL : styles.handR}`}>
+    <div className={`${styles.handPanel} ${teamKey === 'A' ? styles.handL : styles.handR}`} data-tutorial={`hand-${teamKey}`}>
       <div className={styles.handTitle} style={{ color: col }}>
         Team {teamKey} <span className={styles.handCount}>{t.hand.length}</span>
+        {readOnly && <span className={styles.handCount} title="The coach plays these; shown so the lessons can name them">view only</span>}
         {back && (
           <button
             className={styles.handUndo}
+            data-tutorial="hand-undo"
             onClick={() => onUndoReturn(teamKey)}
             title={`Take ${back.name} back from the bottom of your deck`}
           >
@@ -2134,8 +2005,8 @@ export function HandPanel({ game, teamKey, onExecCard, onReturnCard = null, onUn
           const isStaged = staged === hi;
 
           return (
-            <div key={`${id}-${hi}`} data-card-id={id}
-              className={`${styles.hcard} ${!canClick ? styles.hdim : ''} ${isReaction && play.canPlay ? styles.hreact : ''} ${sImg ? styles.hcardHasImg : ''} ${isStaged ? styles.hcardStaged : ''}`}
+            <div key={`${id}-${hi}`} data-card-id={id} data-tutorial={`card-${teamKey}-${id}`}
+              className={`${styles.hcard} ${!canClick && !readOnly ? styles.hdim : ''} ${isReaction && play.canPlay && !readOnly ? styles.hreact : ''} ${sImg ? styles.hcardHasImg : ''} ${isStaged ? styles.hcardStaged : ''}`}
               style={{ borderLeftColor: s.color }}>
 
               {/* Icon bar */}
@@ -2161,7 +2032,7 @@ export function HandPanel({ game, teamKey, onExecCard, onReturnCard = null, onUn
                     <ZoomImg strat={s} src={sImg} alt={s.name} className={styles.hcardImgEl} onError={fallbackTo(sImgFull, e => { e.target.style.display = 'none'; })} />
                     <div className={styles.hcardOverlay}>
                       <div className={styles.hname}>{s.name}</div>
-                      {!canClick && <div style={{ fontSize: 9, color: '#F87171', marginTop: 2, padding: '0 4px' }}>
+                      {!canClick && !readOnly && <div style={{ fontSize: 9, color: '#F87171', marginTop: 2, padding: '0 4px' }}>
                         {play.reason}
                       </div>}
                     </div>
@@ -2169,7 +2040,7 @@ export function HandPanel({ game, teamKey, onExecCard, onReturnCard = null, onUn
                 : <>
                     <div className={styles.hphase}>{s.side === 'off' ? '⚡' : '🛡'} {s.phase.replace('_', ' ')}{s.locked ? ' 🔒' : ''}</div>
                     <div className={styles.hname}>{s.name}</div>
-                    <div className={styles.hdesc}>{canClick ? s.desc.substring(0, 65) + '…' : play.reason}</div>
+                    <div className={styles.hdesc}>{canClick || readOnly ? s.desc.substring(0, 65) + '…' : play.reason}</div>
                   </>
               }
 

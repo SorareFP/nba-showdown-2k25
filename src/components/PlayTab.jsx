@@ -586,7 +586,8 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
           {livePreset ? '✕ Leave fixture' : '✕ Abandon game'}
         </button>
       </div>
-      <Scoreboard game={game} />
+      {/* Whose die it is, where the a-b-a-b roll is enforced (2026-09-18). */}
+      <Scoreboard game={game} rollGate={opponent === 'ai' ? rollGate(game) : null} />
       <GameLog log={game.log} />
       {/* Below the court on a phone (PlayTab.module.css .analyticsSlot). */}
       <div className={styles.analyticsSlot}><AnalyticsPanel analytics={game.analytics} /></div>

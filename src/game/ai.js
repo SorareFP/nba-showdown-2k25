@@ -6,7 +6,8 @@
 import { getTeam, getOpp, getPS, calcAdv, matchupAdv, isGhosted, getFatigue, fatigueForMinutes, restMinutes, MAX_STRAIGHT_MINUTES, pickablePool, SPEND_COSTS, clutchAvailable, clutchEligible, burnedSlots, satOutLast, canRollSlot, extraRollPending, checkNeed, crunchSearchOptions } from './engine.js';
 import { lookupChart } from './cards.js';
 import { canPlayCard, helpTargets, staggerPair, myHouseTargets, foulTroubleTargets } from './canPlay.js';
-import { getStrat, STRATS } from './strats.js';
+import { getStrat, STRATS, TIMEOUT_RIDERS } from './strats.js';
+import { DEFAULT_ORDER } from './placement.js';
 
 /**
  * AI action types:
@@ -478,7 +479,6 @@ export function pairValue(game, myKey, mine, theirs, tempEff = {}, myIdx = 0) {
   return myPts - theirPts + 0.05 * (myAdv.rollBonus - theirAdv.rollBonus);
 }
 
-const DEFAULT_ORDER = ['A', 'B', 'B', 'A', 'A', 'B', 'B', 'A', 'A', 'B'];
 
 /**
  * Every remaining placement for `teamKey`, scored by the search: the value of
@@ -884,6 +884,8 @@ export function switchEverythingValue(game, teamKey) {
  * lesson that shows one lands every time.
  */
 const CANCELLERS = ['go_under', 'fight_over', 'veer_switch'];
+/** What a canceller is worth to the tutorial's coach (opts.demo): more than any card's table value can jitter to. */
+const DEMO_CANCEL_VALUE = 20;
 /** Points a section a switch (or its cancel) must be worth before a card goes on it. */
 const SWITCH_FLOOR = 0.4;
 const pointsFor = (game, offKey, p, slot, def, extra = 0) => {
@@ -992,7 +994,11 @@ function evaluateCard(game, teamKey, cardId, strat, opts = {}) {
     return sc && sc.delta >= SWITCH_FLOOR ? Math.min(10, 3 + 2 * sc.delta) : 0;
   }
   if (CANCELLERS.includes(cardId)) {
-    if (opts.demo) return 7;
+    // Above anything the ±15% jitter can lift another card to (2026-09-18):
+    // at a flat 7 the tutorial's coach answered your switch with its own High
+    // Screen & Roll (up to 10) in 8% of tutorials, and the cancel lesson that
+    // opts.demo exists for never came.
+    if (opts.demo) return DEMO_CANCEL_VALUE;
     const { saved } = switchCancelValue(game, teamKey, cardId);
     return saved >= SWITCH_FLOOR ? Math.min(10, 3 + 2 * saved) : 0;
   }
@@ -1116,7 +1122,7 @@ function evaluateCard(game, teamKey, cardId, strat, opts = {}) {
   // A called timeout exists FOR its riders: while your own window is open
   // they outrank everything else in hand, or the window closes unspent.
   if (game.timeoutActive === teamKey
-    && ['ato_masterpiece', 'fresh_legs', 'ice_the_hot_hand', 'reset'].includes(cardId)) {
+    && TIMEOUT_RIDERS.includes(cardId)) {
     return (values[cardId] || 3) + 4;
   }
   return values[cardId] || 3;

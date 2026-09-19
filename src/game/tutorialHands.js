@@ -9,12 +9,23 @@
 // introduce it in the second phase and show that the opposing coach
 // canceled it."
 //
+// Section 3 (2026-09-18): the player holds a card from the forfeit family
+// (Green Light, You Stand Over There, Five-Out, Cross-Court Dime) if one is
+// still in the deck, so the coach tip that prices it has a card to price —
+// the board prints forfeitNet per player in the tutorial, and the lesson
+// reads the same number. Never created: when none is left in the deck the
+// hand is left alone and the lesson simply does not fire.
+//
 // Pure: takes a game, returns a game. No card is created or lost — a card
 // pulled into a hand comes off the deck, a card pushed out goes to the deck.
 // `drawCards` pops from the END of the deck, so "next to be drawn" is the end
 // and "the bottom" is index 0.
 
+import { FORFEIT_CARDS } from './ai.js';
+
 export const TEACHING_CARD = 'high_screen_roll';
+/** The cards that replace a roll with shot checks — ai.js prices them (forfeitNet). */
+export const FORFEIT_LESSON_CARDS = Object.keys(FORFEIT_CARDS);
 export const CANCELLERS = ['go_under', 'fight_over', 'veer_switch'];
 export const LESSON_CANCELLER = 'go_under';
 const HAND = 7;
@@ -53,9 +64,20 @@ function withoutInHand(team, ids) {
   return { ...team, hand, deck };
 }
 
-/** The shaped game for Q1 sections 1 and 2; any other section unchanged. */
+/** One of `ids` in the hand: already there, or the first the deck holds; otherwise the team untouched. */
+function oneOfInHand(team, ids) {
+  if (team.hand.some(id => ids.includes(id))) return team;
+  const found = [...team.deck].reverse().find(id => ids.includes(id));
+  return found ? ensureInHand(team, found) : team;
+}
+
+/** The shaped game for Q1 sections 1 to 3; any other section unchanged. */
 export function teachingHands(g) {
-  if (!g || g.quarter !== 1 || (g.section !== 1 && g.section !== 2)) return g;
+  if (!g || g.quarter !== 1 || ![1, 2, 3].includes(g.section)) return g;
+  if (g.section === 3) {
+    const teamA = oneOfInHand(g.teamA, FORFEIT_LESSON_CARDS);
+    return teamA === g.teamA ? g : { ...g, teamA };
+  }
   let teamA = ensureInHand(g.teamA, TEACHING_CARD);
   let teamB = g.teamB;
   if (g.section === 1) {

@@ -125,6 +125,31 @@ describe('returning a card to the deck', () => {
     expect(lastReturnedCard({ ...ng, done: true }, 'A')).toBeNull();
     expect(lastReturnedCard(ng, 'B')).toBeNull();   // the other side has nothing to take back
   });
+
+  // OVERTIME IS A NEW SECTION FOR THE UNDO (2026-09-18). Overtime keeps Q4 S3,
+  // so a put-back compared on quarter and section alone stayed undoable from
+  // regulation's last section into overtime. The rule says "until the section
+  // ends", and regulation has ended.
+  it('a Q4 S3 put-back is not undoable in overtime; one put back inside overtime is, in that overtime only', () => {
+    const g = scoringGame(4, 3);
+    g.teamA.hand = ['x1', 'x2'];
+    g.teamA.deck = Array.from({ length: 12 }, (_, i) => `d${i}`);   // enough that the refill never reaches x1
+    const back = returnCardToDeck(g, 'A', 0);
+    expect(lastReturnedCard(back, 'A').id).toBe('x1');
+    back.teamA.score = 50; back.teamB.score = 50;
+    const ot = endSection(back);
+    expect([ot.quarter, ot.section, ot.overtime]).toEqual([4, 3, 1]);
+    expect(ot.teamA.deck[0]).toBe('x1');           // still the deck bottom, still refused
+    expect(lastReturnedCard(ot, 'A')).toBeNull();
+    expect(undoReturnCard(ot, 'A')).toBe(ot);
+
+    const hand = ot.teamA.hand.slice();
+    const inOt = returnCardToDeck(ot, 'A', 0);
+    expect(inOt.teamA.returned.at(-1)).toMatchObject({ quarter: 4, section: 3, overtime: 1 });
+    expect(lastReturnedCard(inOt, 'A').id).toBe(hand[0]);
+    expect(undoReturnCard(inOt, 'A').teamA.hand).toContain(hand[0]);
+    expect(lastReturnedCard({ ...inOt, overtime: 2 }, 'A')).toBeNull();   // the next overtime is another section
+  });
 });
 
 // THE REST RULE AT THE SECTION END. A section on the bench clears the

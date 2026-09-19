@@ -23,7 +23,10 @@
 // A second pick of your own in a row (the snake deals two) takes a fresh
 // snapshot, so Undo always means the last player you put down.
 
-const DEFAULT_ORDER = ['A', 'B', 'B', 'A', 'A', 'B', 'B', 'A', 'A', 'B'];
+// Exported (2026-09-18): the board, PvP, the coach's search and the
+// tutorial's placement lesson all retyped it.
+// Frozen, since a shared array is one stray mutation from every game's order.
+export const DEFAULT_ORDER = Object.freeze(['A', 'B', 'B', 'A', 'A', 'B', 'B', 'A', 'A', 'B']);
 const orderOf = g => g.placementOrder || DEFAULT_ORDER;
 const teamOf = (g, k) => (k === 'A' ? g.teamA : g.teamB);
 const clone = g => JSON.parse(JSON.stringify(g));
@@ -68,7 +71,10 @@ export function placementSnapshot(game) {
 }
 
 // The closing line each placement path writes when the tenth player is down.
-const CLOSING_LINE = /^(Placement complete|All ten on the floor)/;
+// Exported (2026-09-18) because it is also where the matchup card window
+// opens: the tutorial's lessons read the coach's window moves from here, so a
+// placement ('X takes the floor.') is never mistaken for a card.
+export const CLOSING_LINE = /^(Placement complete|All ten on the floor)/;
 
 /**
  * Whether everything since the snapshot is placements and nothing else. Each
@@ -120,4 +126,65 @@ export function undoPlacement(game, snap) {
   const g = clone(snap.before);
   g.log = [...(g.log ?? []), { team: snap.teamKey, msg: `↩ ${name ?? 'A placement'} taken back.` }];
   return g;
+}
+
+// ── THE LINEUP SUBMIT (2026-09-18) ───────────────────────────────────────────
+//
+// Both fives locked, the snake begins. This lived inline in CourtBoard's
+// lineup screen, again in PvpGame's resolver, and a third time in the
+// tutorial's test walk — and the tutorial lessons key on what it writes: the
+// log anchor below (every "this section" lesson reads the log from it) and
+// draft.aPicks (the placement lessons' best answer). A lesson keyed on a field
+// the submit stopped writing went dead with every test green once already
+// (draft.step), so there is one submit now and every caller goes through it.
+
+/** The line every section's log starts from — tutorialData.js sectionLog keys on it. */
+export const LINEUPS_LOCKED = 'Lineups locked — begin placement.';
+
+/**
+ * The two fives to pick lists: `aPicks` / `bPicks` are player ids in pick
+ * order, taken out of the draft pools; the starters empty back out so the
+ * snake decides who lines up opposite whom. `order` overrides the game's own
+ * placement order (PvP sets its own); by default the game's is kept, so a
+ * season's visitor still leads.
+ */
+export function beginPlacement(game, aPicks, bPicks, { order = null } = {}) {
+  const g = clone(game);
+  g.draft = g.draft || {};
+  g.draft.aPool = (g.draft.aPool || []).filter(p => !aPicks.includes(p.id));
+  g.draft.bPool = (g.draft.bPool || []).filter(p => !bPicks.includes(p.id));
+  g.draft.aPicks = [...aPicks];
+  g.draft.bPicks = [...bPicks];
+  g.teamA.starters = [];
+  g.teamB.starters = [];
+  g.offMatchups = { A: [0, 1, 2, 3, 4], B: [0, 1, 2, 3, 4] };
+  g.placementStep = 0;
+  g.placementOrder = order ? [...order] : orderOf(g);
+  g.phase = 'matchup_strats';
+  g.log = [...(g.log ?? []), { team: null, msg: LINEUPS_LOCKED }];
+  return g;
+}
+
+/**
+ * THE SOLO SUBMIT: `selected` (five ids) is `teamKey`'s five, and
+ * `coachPick(g, key)` names the other side's one pick at a time, from the game
+ * with the picks so far on its starters (CourtBoard passes aiDraftPick at the
+ * rung's iq). No rest is applied here: endSection is the one rest rule (the
+ * note at CourtBoard's lineup submit says why).
+ */
+export function submitSoloLineup(game, selected, coachPick, { teamKey = 'A' } = {}) {
+  const g = clone(game);
+  const oppKey = teamKey === 'A' ? 'B' : 'A';
+  const poolKey = k => (k === 'A' ? 'aPool' : 'bPool');
+  teamOf(g, teamKey).starters = selected.map(id => g.draft[poolKey(teamKey)].find(p => p.id === id)).filter(Boolean);
+  g.draft[poolKey(teamKey)] = g.draft[poolKey(teamKey)].filter(p => !selected.includes(p.id));
+  for (let i = 0; i < 5; i += 1) {
+    const action = coachPick(g, oppKey);
+    const pool = g.draft[poolKey(oppKey)];
+    const at = action ? pool.findIndex(p => p.id === action.playerId) : -1;
+    if (at < 0) continue;
+    teamOf(g, oppKey).starters.push(pool[at]);
+    g.draft[poolKey(oppKey)] = pool.filter((_, j) => j !== at);
+  }
+  return beginPlacement(g, g.teamA.starters.map(p => p.id), g.teamB.starters.map(p => p.id));
 }

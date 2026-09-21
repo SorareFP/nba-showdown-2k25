@@ -119,13 +119,39 @@ export function freeAgentPrice(set, rarity, w = FA_PACK_WEIGHT) {
  * `[bbrefId, name, season, kind, team, salary, set]`, where kind is
  * 'r' for a regular season and 'p' for a playoff run.
  */
-export function readQuoteRow(row) {
+export function readQuoteRow(row, spread = null) {
   const [bbrefId, name, season, kind, team, salary, set] = row;
   const rarity = getPlayerRarity({ salary });
-  return {
+  const out = {
     bbrefId, name, season, playoffs: kind === 'p', team, salary, set, rarity,
     price: freeAgentPrice(set, rarity),
   };
+  // HOW SURE THE QUOTE IS (2026-09-21). The user requested Kyle Korver
+  // 2010-11: "said it'd be $790 rare and cost 1,100 coins. It came out as a
+  // $570 uncommon." The quote is priced off season tables and the card off
+  // its real game log, and measured over 460 real-log cards the miss has no
+  // shape a better fit removes (a richer calibration moved the band hit rate
+  // from 78% to 82%): it is noise of about one spread. So the quote says so —
+  // the bands one spread either side, which the form prints when they differ.
+  if (spread > 0) {
+    out.spread = spread;
+    out.rarityLow = getPlayerRarity({ salary: Math.max(0, salary - spread) });
+    out.rarityHigh = getPlayerRarity({ salary: salary + spread });
+    out.uncertain = out.rarityLow !== out.rarityHigh;
+  }
+  return out;
+}
+
+/**
+ * The quote's spread for a row: the residual sd of the calibration that
+ * priced it, as the index records it (regular seasons, playoff runs and the
+ * WNBA each have their own line). Null when the index carries none.
+ */
+export function quoteSpread(calibration, row) {
+  if (!calibration) return null;
+  const fit = isWnbaId(row[0]) ? calibration.wnba : row[3] === 'p' ? calibration.playoffs : calibration.regular;
+  const sd = Number(fit?.sd);
+  return Number.isFinite(sd) && sd > 0 ? Math.round(sd) : null;
 }
 
 // ── Requests ─────────────────────────────────────────────────────────────────
@@ -193,9 +219,9 @@ export function seasonText({ season, playoffs, bbrefId }) {
   return playoffs ? `${season} playoffs` : `${season - 1}-${String(season % 100).padStart(2, '0')}`;
 }
 
-/** The index rows with their names normalized once, for the search box. */
-export function prepareSearch(rows) {
-  return rows.map(row => ({ row, n: normName(row[1]) }));
+/** The index rows with their names normalized once, for the search box — and each row's quote spread. */
+export function prepareSearch(rows, calibration = null) {
+  return rows.map(row => ({ row, n: normName(row[1]), spread: quoteSpread(calibration, row) }));
 }
 
 /**
@@ -246,7 +272,7 @@ export function searchQuotes(prepared, text, { limit = 12, filters = null, brows
   const named = q.length >= 3;
   if (!named && !canBrowse(filters)) return [];
   const byPlayer = new Map();
-  for (const { row, n } of prepared) {
+  for (const { row, n, spread } of prepared) {
     // A browse never lists a never-card; a name search still does, so the
     // form can answer that name with the message (searchHitsNeverCard).
     if (named ? !n.includes(q) : isNeverCard(row[1])) continue;
@@ -254,7 +280,7 @@ export function searchQuotes(prepared, text, { limit = 12, filters = null, brows
     if (!byPlayer.has(row[0])) byPlayer.set(row[0], { bbrefId: row[0], name: row[1], starts: named && n.startsWith(q), top: 0, seasons: [] });
     const p = byPlayer.get(row[0]);
     p.top = Math.max(p.top, row[5]);
-    p.seasons.push(readQuoteRow(row));
+    p.seasons.push(readQuoteRow(row, spread ?? null));
   }
   // A name search reads name-start first; a browse reads best-paid first.
   const order = named

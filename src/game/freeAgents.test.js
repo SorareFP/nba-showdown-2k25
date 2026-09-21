@@ -2,7 +2,7 @@
 // and how a quote row reads.
 import { describe, it, expect } from 'vitest';
 import {
-  freeAgentPrice, packOddsCost, readQuoteRow, FA_PACK_WEIGHT, FREE_AGENT_SETS, OPEN_REQUEST_LIMIT,
+  freeAgentPrice, packOddsCost, readQuoteRow, quoteSpread, FA_PACK_WEIGHT, FREE_AGENT_SETS, OPEN_REQUEST_LIMIT,
   searchQuotes, prepareSearch, seasonText, checkRequest, indexQuotes, quoteKey, REQUEST_STATUS,
   quoteFilterOptions, countQuotes, canBrowse,
   AUTO_REJECT_MESSAGE, searchHitsNeverCard, ARCHIVE_COVERAGE, coverageText, isWnbaId,
@@ -43,6 +43,27 @@ describe('a quote row', () => {
     expect(q).toMatchObject({ bbrefId: 'jordami01', season: 1988, playoffs: false, salary: legendary, rarity: 'legendary', set: 'super-season' });
     expect(q.price).toBe(freeAgentPrice('super-season', 'legendary'));
     expect(readQuoteRow(['x', 'X', 2010, 'p', 'BOS', 500, 'summer-standouts']).playoffs).toBe(true);
+  });
+
+  // The Korver case (2026-09-21): quoted $790 rare, built $570 uncommon. With
+  // the calibration's spread the row says which bands are in reach.
+  it('says how sure it is: the bands one spread either side, when they differ', () => {
+    const row = ['korveky01', 'Kyle Korver', 2011, 'r', 'CHI', 790, 'throwbacks'];
+    const q = readQuoteRow(row, 124);
+    expect(q).toMatchObject({ spread: 124, rarity: 'rare', rarityLow: 'uncommon', rarityHigh: 'rare', uncertain: true });
+    const sure = readQuoteRow(['x', 'X', 2011, 'r', 'CHI', 810, 'throwbacks'], 100);   // 710..910: rare both ways
+    expect(sure).toMatchObject({ rarityLow: 'rare', rarityHigh: 'rare', uncertain: false });
+    expect(readQuoteRow(row)).not.toHaveProperty('spread');                        // no calibration, no claim
+    // The spread comes from the line that priced the row: regular, playoffs or WNBA.
+    const cal = { regular: { sd: 124.2 }, playoffs: { sd: 98.4 }, wnba: { sd: 93.6 } };
+    expect(quoteSpread(cal, row)).toBe(124);
+    expect(quoteSpread(cal, ['x', 'X', 2010, 'p', 'BOS', 500, 'summer-standouts'])).toBe(98);
+    expect(quoteSpread(cal, ['moorema01w', 'Maya Moore', 2016, 'r', 'MIN', 1200, 'wnba-throwbacks'])).toBe(94);
+    expect(quoteSpread(null, row)).toBeNull();
+    // The shipped index carries a spread for every line, and a search passes it through.
+    expect(quoteSpread(quoteIndex.calibration, row)).toBeGreaterThan(0);
+    const hit = searchQuotes(prepareSearch(quoteIndex.rows, quoteIndex.calibration), 'korver').find(p => p.bbrefId === 'korveky01');
+    expect(hit.seasons.every(sn => sn.spread > 0)).toBe(true);
   });
 
   it('allows three open requests', () => {

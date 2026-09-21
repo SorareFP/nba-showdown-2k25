@@ -256,7 +256,7 @@ export function classifyWnbaSeason(career, season) {
 export function wnbaQuotes({ carded, log = console.log } = {}) {
   const model = JSON.parse(fs.readFileSync(WNBA_MODEL_FILE, 'utf8'));
   const seasons = rateWnbaArchive(loadWnbaArchive().loaded, model);
-  const targets = realLogTargets(['wnba', 'wnba-super-season', 'wnba-rookie', 'wnba-team-rewards']);
+  const targets = realLogTargets(['wnba', 'wnba-super-season', 'wnba-rookie', 'wnba-team-rewards', 'wnba-throwbacks']);
   const ids = new Set([...seasons.values()].flatMap(e => (e.rows ?? []).map(r => r.playerId)));
 
   const X = [];
@@ -299,7 +299,7 @@ export function wnbaQuotes({ carded, log = console.log } = {}) {
 
 // ── Main ─────────────────────────────────────────────────────────────────────
 
-export function main({ first = 1976, last = BASE_SEASON, write = true, wnba = true, log = console.log } = {}) {
+export function main({ first = 1976, last = BASE_SEASON, write = true, wnba = true, debug = false, log = console.log } = {}) {
   const t0 = Date.now();
   const { seasons, advanced, perPoss, shooting } = loadArchiveTables({ first, last });
   const unprovable = unprovableDebutSeasons(seasons);
@@ -308,7 +308,10 @@ export function main({ first = 1976, last = BASE_SEASON, write = true, wnba = tr
   const careers = new Map();
   for (const r of advanced) (careers.get(r.playerId) ?? careers.set(r.playerId, []).get(r.playerId)).push(r);
   const carded = cardedIndex(CARD_SETS);
-  const targets = realLogTargets(['super-season', 'rookie', 'team-rewards', 'summer-standouts']);
+  // The requested cards themselves calibrate the next quotes (2026-09-21):
+  // a built free agent is a real-log card in exactly the price zone the
+  // requests come from, and the throwbacks set is where most of them land.
+  const targets = realLogTargets(['super-season', 'rookie', 'team-rewards', 'summer-standouts', 'throwbacks']);
   const apiEpm = buildApiEpmIndex();
   const bridge = buildBpmBridge(archiveBasis(requireArchive()));
   log(`Archive ${seasons[0]}-${seasons.at(-1)}: ${seasons.length} seasons, ${careers.size} players, ${advanced.length} rows.`);
@@ -389,10 +392,18 @@ export function main({ first = 1976, last = BASE_SEASON, write = true, wnba = tr
     const t = Date.now();
     const priced = priceCandidates(batch, { log: () => {} });
     const pairs = [];
-    batch.forEach((c, i) => { if (c.target != null) pairs.push([priced[i].salary, c.target]); });
+    // The calibration pairs with the season behind each, for the diagnostics
+    // a `debug` run returns (2026-09-21: the user's Korver 2010-11 was quoted
+    // $790 and built $570, and the question was whether that miss has a shape).
+    const detail = [];
+    batch.forEach((c, i) => {
+      if (c.target == null) return;
+      pairs.push([priced[i].salary, c.target]);
+      detail.push({ name: c.name, season: c.season, set: c.set, games: c.games, mpg: c.mpg, epm: Number(c.epm.toFixed(2)), per100: priced[i].salary, real: c.target });
+    });
     const fit = fitLine(pairs);
     log(`  ${label}: priced ${batch.length} in ${((Date.now() - t) / 1000).toFixed(1)}s; own fit ${describe(fit)}`);
-    return { batch, priced, fit };
+    return { batch, priced, fit, detail };
   };
   // Quotes only: a carded season was in the batch as a calibration pair.
   const quoteRows = ({ batch, priced }, kind, fit) => {
@@ -434,6 +445,8 @@ export function main({ first = 1976, last = BASE_SEASON, write = true, wnba = tr
     fs.writeFileSync(QUOTE_FILE, `${JSON.stringify(body)}\n`);
     log(`  ${QUOTE_FILE}`);
   }
+  // Never in the file: the calibration pairs, for a probe to study the misses.
+  if (debug) body.debug = { regular: regPriced.detail, playoffs: poPriced.detail };
   return body;
 }
 

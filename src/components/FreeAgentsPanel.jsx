@@ -86,7 +86,8 @@ export default function FreeAgentsPanel({ uid, onChanged = () => {}, loadIndex =
       .then(m => {
         if (!live) return;
         const rows = (m.default ?? m).rows;
-        setIndex(prepareSearch(rows));
+        // The calibration's spread rides with each row: the quote says how sure it is.
+        setIndex(prepareSearch(rows, (m.default ?? m).calibration ?? null));
         setOptions(quoteFilterOptions(rows));
       })
       .catch(() => { if (live) setIndex([]); });
@@ -228,6 +229,10 @@ export default function FreeAgentsPanel({ uid, onChanged = () => {}, loadIndex =
           {total > results.length && (
             <p className={s.muted}>Showing {results.length} of {total} players, best-paid first — add a name or a salary to narrow it.</p>
           )}
+          <p className={s.muted}>
+            Salaries and prices are estimates from the season's tables; the card is built from its real game log, and most finish within about
+            ${results[0]?.seasons?.[0]?.spread ?? 120} of the quote — sometimes a band up or down. You are billed at the finished card's price.
+          </p>
           <ul className={s.players}>
             {results.map(p => (
               <li key={p.bbrefId} className={s.player}>
@@ -241,9 +246,14 @@ export default function FreeAgentsPanel({ uid, onChanged = () => {}, loadIndex =
                       <li key={key} className={s.season}>
                         <span className={s.when}>{seasonText(q)}</span>
                         <span className={s.muted}>{q.team}</span>
-                        <span className={s.salary}>${q.salary.toLocaleString()}</span>
+                        <span className={s.salary} title={q.spread ? `An estimate: most cards finish within about $${q.spread} of it` : undefined}>≈ ${q.salary.toLocaleString()}</span>
                         <span className={s.rarity} style={{ color: rc?.color, background: rc?.bg }}>{rc?.label ?? q.rarity}</span>
-                        <span className={s.price}>{coins(q.price)}</span>
+                        {q.uncertain && (
+                          <span className={s.muted} title="The bands one spread either side of the estimate">
+                            or {RARITY_CONFIG[q.rarityLow]?.label ?? q.rarityLow}–{RARITY_CONFIG[q.rarityHigh]?.label ?? q.rarityHigh}
+                          </span>
+                        )}
+                        <span className={s.price} title="You pay the finished card's price, not the estimate">≈ {coins(q.price)}</span>
                         <button
                           className={s.askBtn}
                           disabled={busy === key || already || (full && !already)}

@@ -1213,16 +1213,59 @@ export function TradeDesk({ d, moves, defaultOpen = false }) {
   );
 }
 
-/** "To make room, X is waived" — the men a deal's roster relief cuts (tradeRelief), one line each. */
+/** "To make room, X is waived" — the men a deal's roster relief cuts (tradeRelief), one line each, with his face. */
 function ReliefLines({ d, relief = {}, me }) {
   const lines = Object.entries(relief).flatMap(([team, keys]) => keys.map(key => ({ team, key })));
   if (!lines.length) return null;
   return lines.map(({ team, key }) => (
-    <div key={key} className={dy.rival}>
-      To make room, {team === me ? 'you waive' : `${teamOf(d, team)?.name} waive`} <strong>{cardOf(key)?.name}</strong> — on
-      waivers; his {d.contracts[key]?.dp} DP stays on {team === me ? 'your' : 'their'} books this season unless he is claimed.
+    <div key={key} className={`${dy.rival} ${dy.reliefLine}`}>
+      <Face cardKey={key} />
+      <span>
+        To make room, {team === me ? 'you waive' : `${teamOf(d, team)?.name} waive`} <strong>{cardOf(key)?.name}</strong> — on
+        waivers; his {d.contracts[key]?.dp} DP stays on {team === me ? 'your' : 'their'} books this season unless he is claimed.
+      </span>
     </div>
   ));
+}
+
+/** A man in a deal: his face (a tap opens the whole card), name, position, tag, salary, Speed/Power and contract. */
+function DealMan({ d, cardKey }) {
+  const c = cardOf(cardKey);
+  const k = d.contracts?.[cardKey];
+  return (
+    <span className={dy.player}>
+      <Face cardKey={cardKey} />
+      <span className={dy.playerText}>
+        <span className={dy.playerName}>{c?.name ?? cardKey}</span>
+        <span className={dy.playerSub}>{c?.pos} · {c ? tagOf(c) : ''} · ${c?.salary} · S{c?.speed}/P{c?.power}</span>
+        {k && <span className={dy.playerSub}>{k.dp} DP × {k.years} yr</span>}
+      </span>
+    </span>
+  );
+}
+
+/**
+ * THE PIECES OF A DEAL, AS CARDS (the user, 2026-09-21: "We need to be able to
+ * see the players in a proposed trade from AI. You can only see names
+ * currently."). Each side: its men with their faces, its picks as chips. One
+ * component for the inbox of the solo and the friends dynasty, so the two
+ * cannot drift.
+ */
+export function DealSides({ d, deal }) {
+  const side = (title, keys = [], picks = []) => (
+    <div className={dy.dealSide}>
+      <div className={dy.dealHead}>{title}</div>
+      {keys.map(k => <DealMan key={k} d={d} cardKey={k} />)}
+      {picks.map(id => <span key={id} className={dy.pickChip}>{pickLabel(d, id)}</span>)}
+      {!keys.length && !picks.length && <span className={styles.muted}>nothing</span>}
+    </div>
+  );
+  return (
+    <div className={dy.dealSides}>
+      {side(`${teamOf(d, deal.from)?.name ?? deal.from} send`, deal.give, deal.givePicks)}
+      {side(`${teamOf(d, deal.to)?.name ?? deal.to} send`, deal.get, deal.getPicks)}
+    </div>
+  );
 }
 
 // ── Trade offers ────────────────────────────────────────────────────────────
@@ -1242,8 +1285,6 @@ export function TradeInbox({ d, moves }) {
   const fromMe = offers.filter(o => o.status === 'open' && o.from === me);
   const watch = moves.isHost ? offers.filter(o => vetoable(d, o) && !(o.status === 'open' && (o.to === me || o.from === me))) : [];
   if (!toMe.length && !fromMe.length && !watch.length) return null;
-  const side = (keys = [], picks = []) => [...keys.map(k => cardOf(k)?.name ?? k), ...picks.map(id => pickLabel(d, id))].join(', ') || 'nothing';
-  const text = o => `${teamOf(d, o.from)?.name} send ${side(o.give, o.givePicks)} to ${teamOf(d, o.to)?.name} for ${side(o.get, o.getPicks)}`;
   const veto = async o => {
     const yes = await ask({
       title: 'Veto this trade?',
@@ -1265,13 +1306,16 @@ export function TradeInbox({ d, moves }) {
           const worth = o.ai && !dead ? offerValue(d, o, me) : null;
           return (
             <div key={o.id} className={`${dy.offerLine} ${dy.offerMine}`}>
-              <div>
-                {text(o)}
-                {worth && (
-                  <span className={styles.muted}>
-                    {' '}· to you: {Math.round(worth.valueIn)} in, {Math.round(worth.valueOut)} out · until the next turn
-                  </span>
-                )}
+              <div className={dy.offerBody}>
+                <div>
+                  <strong>{teamOf(d, o.from)?.name}</strong> offer you a trade
+                  {worth && (
+                    <span className={styles.muted}>
+                      {' '}· to you: {Math.round(worth.valueIn)} in, {Math.round(worth.valueOut)} out · until the next turn
+                    </span>
+                  )}
+                </div>
+                <DealSides d={d} deal={o} />
                 {dead
                   ? <div className={styles.muted}>No longer possible — {dead}</div>
                   : <ReliefLines d={d} relief={tradeRelief(d, o)} me={me} />}
@@ -1285,13 +1329,22 @@ export function TradeInbox({ d, moves }) {
         })}
         {fromMe.map(o => (
           <div key={o.id} className={dy.offerLine}>
-            <span>{text(o)} <span className={styles.muted}>· waiting on them</span></span>
+            <div className={dy.offerBody}>
+              <div>Your offer to <strong>{teamOf(d, o.to)?.name}</strong> <span className={styles.muted}>· waiting on them</span></div>
+              <DealSides d={d} deal={o} />
+            </div>
             <button type="button" className={styles.ghost} onClick={() => moves.withdraw(o.id)}>Withdraw</button>
           </div>
         ))}
         {watch.map(o => (
           <div key={o.id} className={dy.offerLine}>
-            <span>{text(o)} <span className={styles.muted}>· {o.status === 'accepted' ? 'done' : 'open'}</span></span>
+            <div className={dy.offerBody}>
+              <div>
+                <strong>{teamOf(d, o.from)?.name}</strong> and <strong>{teamOf(d, o.to)?.name}</strong>
+                <span className={styles.muted}> · {o.status === 'accepted' ? 'done' : 'open'}</span>
+              </div>
+              <DealSides d={d} deal={o} />
+            </div>
             <button type="button" className={dy.linkBtn} onClick={() => veto(o)}>Veto</button>
           </div>
         ))}

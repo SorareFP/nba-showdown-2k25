@@ -25,6 +25,7 @@ import { rookieScale, APRON_DP } from '../../game/modes/dynastyMarket.js';
 import { recordResult, roundFixtures, advance, totalRounds, PHASE, createSeason } from '../../game/modes/season.js';
 import { buildAiLeague } from '../../game/modes/aiTeams.js';
 import { getCardByKey } from '../../game/cardSets.js';
+import { getPlayerThumbUrl } from '../../game/cardImages.js';
 
 const seeded = (s = 5) => () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 2 ** 32; };
 const html = el => renderToStaticMarkup(el);
@@ -166,6 +167,18 @@ describe('each phase', () => {
     expect(out).toContain('Decline');
     expect(out).toContain('to you:');
     expect(out).toContain('To make room, you waive');
+    // THE PIECES AS CARDS (the user, 2026-09-21: "We need to be able to see
+    // the players in a proposed trade from AI. You can only see names
+    // currently."): every man in the deal, and the waived one, prints his
+    // face — a ZoomImg on his thumb — with his name and contract.
+    for (const key of [...offer.give, ...offer.get]) {
+      expect(out).toContain(getPlayerThumbUrl(key));
+      expect(out).toContain(getCardByKey(key).name);
+    }
+    expect(out).toContain('5 DP × 2 yr');                                      // their men's deals
+    expect(out).toContain('5 DP × ');                                          // and yours
+    expect((out.match(/<img /g) ?? []).length).toBeGreaterThanOrEqual(offer.give.length + offer.get.length + 1);   // + the waived man
+    expect(out).toContain(`${dealt.teams.find(t => t.id === ai).name}</strong> offer you a trade`);
     expect(view(d)).toContain('Trade offers');
     expect(typeof solo.respond).toBe('function');
     expect(out).not.toContain('No longer possible');

@@ -74,7 +74,7 @@ export default function HowToPlay({ scrollToSection, onStartTutorial, tutorialRu
             <h2>{tutorialRunning ? 'Your tutorial is waiting' : 'Interactive Tutorial'}</h2>
             <p>{tutorialRunning
               ? 'The game is paused exactly where you left it. Read what you came for, then head back.'
-              : 'Learn by playing a guided quarter against the coach. Covers the placement draft, the card windows, rolling, fatigue and substitutions.'}</p>
+              : 'Learn by playing a guided first quarter and a Crunch-Time finish against the coach. Covers the lineup pick, the placement snake, the card windows, rolling, fatigue and substitutions, and the timeout, Clutch and overtime at the end.'}</p>
             {!tutorialRunning && <span className={s.tutorialTime}>~12–15 minutes</span>}
           </div>
           <button className={s.tutorialBtn} onClick={onStartTutorial}>

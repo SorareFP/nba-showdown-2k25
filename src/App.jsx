@@ -291,7 +291,7 @@ function AppInner() {
       {!playedBefore && !tutorialMode && (
         <div className={styles.firstRun}>
           <span>
-            First time here?<span className={styles.long}> <strong>Play the tutorial</strong> — a guided quarter against the coach, about twelve minutes, that teaches placement, the card windows and rolling.</span>
+            First time here?<span className={styles.long}> <strong>Play the tutorial</strong> — a guided first quarter and a Crunch-Time finish against the coach, about fifteen minutes, that teaches placement, the card windows, rolling and the timeout.</span>
           </span>
           <button className={styles.firstRunBtn} onClick={() => { setTutorialMode(true); setRulesOverTutorial(false); }}>Play the tutorial</button>
           <button className={styles.firstRunDismiss} onClick={() => { markPlayed(); }} aria-label="Dismiss">×</button>

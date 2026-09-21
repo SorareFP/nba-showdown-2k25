@@ -160,7 +160,7 @@ export default function RulebookTab() {
         <ul>
           <li>A player sent off by <strong>Foul Trouble</strong> is not in the pool for the next section — the whole section, both ends of the floor — and they are back the section after.</li>
           <li>All temporary effects clear (boosts, ghosts, blocks, standing cards whose players left the floor).</li>
-          <li>Each starter adds <strong>4 minutes</strong>; each benched player sheds <strong>4 minutes</strong>.</li>
+          <li>Each starter adds <strong>4 minutes</strong>; a section on the bench <strong>clears</strong> a tracker at 8 minutes or under and takes <strong>4 minutes</strong> off above that.</li>
           <li>The rebound track pays: the leader gains +1 stored assist.</li>
           <li>Both hands refill to <strong>7</strong>.</li>
           <li>At halftime (start of Q3) all fatigue and all hot and cold markers reset.</li>
@@ -344,7 +344,7 @@ export default function RulebookTab() {
           <div className={s.glossaryDef}>A card in effect for the whole section while its players are on the floor (Twin Towers, Run the Floor).</div>
 
           <div className={s.glossaryTerm}>Fatigue</div>
-          <div className={s.glossaryDef}>4 minutes per section played. 8+ = −2, 12+ = −6, 16 = −12 and −6 more per section after that. A section on the bench sheds 4.</div>
+          <div className={s.glossaryDef}>4 minutes per section played. 8+ = −2, 12+ = −6, 16 = −12 and −6 more per section after that. A section on the bench clears a tracker at 8 or under, and takes 4 off above that (12 rests to 8).</div>
 
           <div className={s.glossaryTerm}>Snake</div>
           <div className={s.glossaryDef}>The placement order A-B-B-A-A-B-B-A-A-B — the visitor leads in a season, Team A in a sandbox game.</div>

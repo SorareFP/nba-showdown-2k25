@@ -150,6 +150,8 @@
   font-weight: 700; cursor: pointer; padding: 2px 4px; white-space: nowrap;
 }
 .linkBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+/* The waiver wire under the front office's contracts (2026-09-18). */
+.wire { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border); }
 
 .pitch { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
 .pitchItem {

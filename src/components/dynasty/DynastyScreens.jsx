@@ -20,14 +20,17 @@ import {
   closeRookies, nextFaDay, fillRoster, startSeason, rosterProblem, ageOf, rookieTerms, rookieCommitted, rookieProblem,
   tradeValue, evaluateTrade, makeTrade, suggestSweetener, picksOf, pickValue, pickLabel,
   tradesOpen, tradeDeadlineRound, TRADE_MATCH,
+  waiverList, waiverOrder, claimProblem, claimWaiver, withdrawClaim, resolveWaivers,
+  answerOffer, offerValue, offerProblems, tradeRelief, TRADE_RELIEF, OFFER_FAIRNESS, OPEN_OFFERS_PER_COACH,
+  aiCapDp, aiApronDp, aiSalaryCap,
 } from '../../game/modes/dynasty.js';
 import {
-  CAP_DP, APRON_DP, AI_APRON_DP, MIN_DP, MAX_DP, FA_DAYS, CONTRACT_YEARS, MOOD_TEXT, personality, rookieScale,
+  CAP_DP, APRON_DP, MIN_DP, MAX_DP, FA_DAYS, CONTRACT_YEARS, MOOD_TEXT, personality, rookieScale,
 } from '../../game/modes/dynastyMarket.js';
-import { clockLeft } from '../../game/modes/dynastyFriends.js';
+import { clockLeft, vetoable } from '../../game/modes/dynastyFriends.js';
 import { BASE_SET, getCardByKey } from '../../game/cardSets.js';
 import { getPlayerThumbUrl, getPlayerImageUrl, fallbackTo } from '../../game/cardImages.js';
-import { POSITIONS } from '../../game/teamRules.js';
+import { POSITIONS, CAP as CARD_CAP } from '../../game/teamRules.js';
 import styles from '../SeasonTab.module.css';
 import dy from './Dynasty.module.css';
 
@@ -36,7 +39,7 @@ const SET_WORD = {
   rookie: 'Rookie', 'super-season': 'Super Season', 'summer-standouts': 'Standouts', dissonance: 'Dissonance',
   'team-rewards': 'Team Reward', 'set-rewards': 'Set Reward', throwbacks: 'Throwback',
 };
-const HOW = { brought: 'brought', draft: 'drafted', resign: 're-signed', fa: 'free agent', rookie: 'rookie scale', fill: 'minimum' };
+const HOW = { brought: 'brought', draft: 'drafted', resign: 're-signed', fa: 'free agent', rookie: 'rookie scale', fill: 'minimum', waivers: 'off waivers' };
 const YEARS = Array.from({ length: CONTRACT_YEARS.max - CONTRACT_YEARS.min + 1 }, (_, i) => CONTRACT_YEARS.min + i);
 const plural = (n, one, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
 
@@ -144,6 +147,8 @@ export function soloMoves(act, me) {
     bids: [],
     setBids: async () => false,
     waive: key => act(x => waive(x, me, key)),
+    claim: key => act(x => claimWaiver(x, me, key)),
+    unclaim: key => act(x => withdrawClaim(x, me, key)),
     offer: (key, dp, years) => {
       let out = null;
       act(x => {
@@ -169,6 +174,8 @@ export function soloMoves(act, me) {
     startSeason: () => act(x => startSeason(x)),
     trade: deal => act(x => makeTrade(x, deal)),
     propose: async () => false,
+    // An AI team's offer (2026-09-18): judged again as you answer it (answerOffer).
+    respond: (id, accept) => act(x => answerOffer(x, id, me, accept)),
   };
 }
 
@@ -212,7 +219,8 @@ export function FrontOffice({ d, moves }) {
   const cut = async k => {
     const yes = await ask({
       title: `Waive ${k.card.name}?`,
-      body: `They become a free agent now, and their ${k.dp} DP stays on your cap for Year ${d.year} as dead money.`,
+      // Waivers (the user, 2026-09-18): "If they are claimed, that money would come off the cap."
+      body: `They go on waivers until the league moves on. If another team claims them, the contract goes with them and their ${k.dp} DP comes off your cap. If nobody does, they become a free agent and the ${k.dp} DP stays on your cap for Year ${d.year} as dead money.`,
       confirmLabel: 'Waive them',
       tone: 'danger',
     });
@@ -244,7 +252,61 @@ export function FrontOffice({ d, moves }) {
           </tbody>
         </table>
       </div>
+      <WaiverWire d={d} moves={moves} />
     </section>
+  );
+}
+
+/**
+ * THE WAIVER WIRE (the user, 2026-09-18): everyone waived since the league
+ * last moved on. A claim is yours to put in or take back until then; when it
+ * resolves, the teams are asked worst record first, and the first that
+ * claims — an AI team whenever the deal fits and is worth having, you only
+ * if you claimed — takes the contract and clears the waiving team's books.
+ */
+export function WaiverWire({ d, moves }) {
+  const me = d.humanId;
+  const list = waiverList(d);
+  if (!list.length) return null;
+  const order = waiverOrder(d);
+  return (
+    <div className={dy.wire}>
+      <div className={dy.panelHead}>
+        <h4 className={styles.panelTitle}>Waiver wire</h4>
+        <span className={styles.muted}>Resolves when the league next moves on · your priority #{order.indexOf(me) + 1} of {order.length}</span>
+      </div>
+      <div className={styles.tableWrap}>
+        <table className={styles.table}>
+          <thead>
+            <tr><th>Player</th><th>Waived by</th><th>DP × years</th><th /></tr>
+          </thead>
+          <tbody>
+            {list.map(w => {
+              const mine = w.from === me;
+              const claimed = w.claims.includes(me);
+              const why = mine ? null : claimProblem(d, me, w.key);
+              return (
+                <tr key={w.key}>
+                  <td><PlayerCell cardKey={w.key} age={ageOf(d, w.key)} /></td>
+                  <td>{mine ? 'You' : teamOf(d, w.from)?.name}</td>
+                  <td><strong>{w.dp}</strong> × {w.years}</td>
+                  <td>
+                    {mine && <span className={styles.muted}>If he is claimed, his DP comes off your books</span>}
+                    {!mine && claimed && <button type="button" className={dy.linkBtn} onClick={() => moves.unclaim?.(w.key)}>✓ Claimed — withdraw</button>}
+                    {!mine && !claimed && (
+                      <button type="button" className={dy.linkBtn} disabled={Boolean(why)} title={why ?? `Take his ${w.dp} DP × ${w.years} if nobody ahead of you claims him`} onClick={() => moves.claim?.(w.key)}>
+                        Claim
+                      </button>
+                    )}
+                    {!mine && !claimed && why && <div className={styles.muted}>{why}</div>}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
   );
 }
 
@@ -466,9 +528,13 @@ function MarketRow({ d, cardKey, on, onClick, showRival = false }) {
 
 // ── Signing your own: draftees, and the exclusive window ────────────────────
 
+/** The AI's limits at this league's rung, in one phrase — its DP cap and apron, and its card-salary ceiling (the user, 2026-09-18). */
+const money = n => `$${n.toLocaleString('en-US')}`;
+const aiLimits = d => `AI teams arrive under their ${aiCapDp(d)}-DP cap and may re-sign up to ${aiApronDp(d)} — and must ALSO keep their roster's card salary under ${money(aiSalaryCap(d))} (the Team Builder's ${money(CARD_CAP)} × this league's coach rung), whoever they sign, draft, claim or trade for — the one way past it being a team short of eight with no room left, which fills the seat with the cheapest card there is. You answer to DP alone.`;
+
 const SIGN_INTRO = {
-  draft: `Your draftees only talk to you — for now. Each has an ask set by their salary and bent by their personality; offer less and they may take it, or walk. Everyone has to fit under the ${CAP_DP}-DP cap. Anyone you have not signed when you are done goes to free agency.`,
-  expiring: `Your players whose deals ran out talk only to you in this window. Re-signing your own can take you past the cap, up to the ${APRON_DP} apron — the reward for keeping a team together. AI teams arrive under the ${CAP_DP} cap and may re-sign up to ${AI_APRON_DP}. Anyone you let go hits free agency.`,
+  draft: () => `Your draftees only talk to you — for now. Each has an ask set by their salary and bent by their personality; offer less and they may take it, or walk. Everyone has to fit under the ${CAP_DP}-DP cap. Anyone you have not signed when you are done goes to free agency.`,
+  expiring: d => `Your players whose deals ran out talk only to you in this window. Re-signing your own can take you past the cap, up to the ${APRON_DP} apron — the reward for keeping a team together. ${aiLimits(d)} Anyone you let go hits free agency.`,
 };
 
 export function SigningBoard({ d, moves, kind }) {
@@ -493,7 +559,7 @@ export function SigningBoard({ d, moves, kind }) {
           label={kind === 'draft' ? 'Done — open free agency →' : 'Close the window →'}
         />
       </div>
-      <p className={dy.intro}>{SIGN_INTRO[kind]}</p>
+      <p className={dy.intro}>{SIGN_INTRO[kind](d)}</p>
       <PendingRights d={d} moves={moves} />
       {kind === 'draft' && <PayBar d={d} teamId={me} extra={projectedPayroll(d, me) - payroll(d, me)} />}
       <div className={dy.split}>
@@ -701,7 +767,7 @@ export function LotteryRoom({ d, moves }) {
         The teams that missed the playoffs, worst record first — the worse the record, the better the odds. The lottery draws
         the top {plural(odds.draws, 'pick')}; everyone else picks in reverse order of the standings.
         This class: {plural(cls.length, 'player')} drawn from the draft pool by rarity — at least one rare, a super-rare more
-        often than not, a legendary about one year in seven — none of whom has played in this league. Two rounds are
+        often than not (two in about 15% of classes), a legendary about one year in seven — none of whom has played in this league. Two rounds are
         drafted, priced by the slot (10 DP at the top down to 2 at the end of round two), and the rest go back into the pool.
       </p>
       {odds.entries.length ? (
@@ -846,6 +912,10 @@ export function FreeAgency({ d, moves }) {
   const selected = sel && freeAgentKeys(d).includes(sel) ? sel : null;
   const bids = Object.keys(d.fa?.rivals ?? {}).length;
   const problem = rosterProblem(d, me);
+  // The season starts by resolving the wire (startSeason), so a coach of
+  // seven with a claim that will land is not held back by the button
+  // (2026-09-18) — the check reads the roster as it will tip off.
+  const startProblem = pre && problem && waiverList(d).length ? rosterProblem(resolveWaivers(d), me) : problem;
   const lastDay = day >= FA_DAYS;
   // Picks still unsigned: their rights last to the start of the season.
   const rights = rightsOf(d, me, 'rookie');
@@ -883,7 +953,7 @@ export function FreeAgency({ d, moves }) {
             </button>
           )}
           {/* With friends a coach still short when everyone is ready is filled with the cheapest. */}
-          {pre && <PhaseButton moves={moves} confirm={confirmStart} disabled={!moves.friends && Boolean(problem)} onDone={moves.startSeason} label={`Start Year ${d.year} →`} />}
+          {pre && <PhaseButton moves={moves} confirm={confirmStart} disabled={!moves.friends && Boolean(startProblem)} onDone={moves.startSeason} label={`Start Year ${d.year} →`} />}
         </span>
       </div>
       <PendingRights d={d} moves={moves} />
@@ -1044,13 +1114,27 @@ export function TradeDesk({ d, moves, defaultOpen = false }) {
             position it is short at is worth more, and a rebuilding team wants picks where a contender wants players.
             Nobody gets better or worse with age — it only matters when a player might retire before his deal is out.
             It wants to win a deal by a little. Contracts move with the players; both rosters stay at {MAX_ROSTER} or fewer
-            and neither payroll may grow past its apron — {APRON_DP} for you, {AI_APRON_DP} for an AI team. A side over the{' '}
-            {CAP_DP} cap after the deal takes back at most {Math.round(TRADE_MATCH * 100)}% of the DP it sends out. Picks
-            in the next two drafts can be traded too.
+            and neither payroll may grow past its apron — {APRON_DP} for you, {aiApronDp(d)} for an AI team. An AI team
+            already past its apron only trades down: taking any DP back, it must send out more. A side over the{' '}
+            {CAP_DP} cap after the deal takes back at most {Math.round(TRADE_MATCH * 100)}% of the DP it sends out. An AI
+            team must also end the deal with its roster's card salary under {money(aiSalaryCap(d))} (the Team
+            Builder's {money(CARD_CAP)} × this league's coach rung) — or, already past it, no higher than it was; your
+            side answers to DP alone. Picks in the next two drafts can be traded too.
+          </p>
+          <p className={dy.intro}>
+            A side that would end with more than {MAX_ROSTER} players <strong>waives its weakest to make room</strong> —
+            {TRADE_RELIEF === 1 ? ' one man' : ` up to ${TRADE_RELIEF}`} at most, shown in the deal before you make it. He goes on waivers:
+            claimed, his DP comes off that side's books; unclaimed, it stays there this season as dead money, so it counts
+            against that side's apron now. The AI takes a deal like that only if it still wins without him. AI teams make
+            you offers too — each turn of the offseason and each round up to the deadline, one a team at most, never below
+            {' '}{Math.round(OFFER_FAIRNESS * 100)}% of what they ask you to give by your own team's needs. They wait under
+            Trade offers until the next turn.
           </p>
           {moves.friends && (
             <p className={dy.intro}>
-              A trade with another coach is an offer they answer; the commissioner can veto it until the next phase.
+              A trade with another coach is an offer they answer; the commissioner can veto it until the next phase. A
+              trade with an AI team — made here or by taking its offer — is not the commissioner's to veto. You can have
+              {' '}{OPEN_OFFERS_PER_COACH} offers waiting at once, and the same deal only once.
             </p>
           )}
           <div className={dy.filters}>
@@ -1079,6 +1163,7 @@ export function TradeDesk({ d, moves, defaultOpen = false }) {
               {ev.verdict !== 'illegal' && <span className={styles.muted}> · they value it {Math.round(ev.valueIn)} in, {Math.round(ev.valueOut)} out</span>}
             </div>
           )}
+          {anything && ev.verdict !== 'illegal' && <ReliefLines d={d} relief={ev.relief} me={me} />}
           {hint && (
             <div className={dy.rival}>
               {hint.key || hint.pick
@@ -1124,6 +1209,93 @@ export function TradeDesk({ d, moves, defaultOpen = false }) {
           </div>
         </>
       )}
+    </section>
+  );
+}
+
+/** "To make room, X is waived" — the men a deal's roster relief cuts (tradeRelief), one line each. */
+function ReliefLines({ d, relief = {}, me }) {
+  const lines = Object.entries(relief).flatMap(([team, keys]) => keys.map(key => ({ team, key })));
+  if (!lines.length) return null;
+  return lines.map(({ team, key }) => (
+    <div key={key} className={dy.rival}>
+      To make room, {team === me ? 'you waive' : `${teamOf(d, team)?.name} waive`} <strong>{cardOf(key)?.name}</strong> — on
+      waivers; his {d.contracts[key]?.dp} DP stays on {team === me ? 'your' : 'their'} books this season unless he is claimed.
+    </div>
+  ));
+}
+
+// ── Trade offers ────────────────────────────────────────────────────────────
+
+/**
+ * The offers waiting on you — an AI team's (2026-09-18, alone and with
+ * friends) or another coach's — the ones you made, and for the commissioner
+ * every trade still open to a veto. An AI team's offer shows what it is
+ * worth to you by your own team's needs, and whom it would waive to make
+ * room; it lapses at the next turn, and answering it judges it again.
+ */
+export function TradeInbox({ d, moves }) {
+  const { ask } = useDialogs();
+  const me = d.humanId;
+  const offers = [...(d.offers ?? [])].reverse();
+  const toMe = offers.filter(o => o.status === 'open' && o.to === me);
+  const fromMe = offers.filter(o => o.status === 'open' && o.from === me);
+  const watch = moves.isHost ? offers.filter(o => vetoable(d, o) && !(o.status === 'open' && (o.to === me || o.from === me))) : [];
+  if (!toMe.length && !fromMe.length && !watch.length) return null;
+  const side = (keys = [], picks = []) => [...keys.map(k => cardOf(k)?.name ?? k), ...picks.map(id => pickLabel(d, id))].join(', ') || 'nothing';
+  const text = o => `${teamOf(d, o.from)?.name} send ${side(o.give, o.givePicks)} to ${teamOf(d, o.to)?.name} for ${side(o.get, o.getPicks)}`;
+  const veto = async o => {
+    const yes = await ask({
+      title: 'Veto this trade?',
+      body: o.status === 'accepted' ? 'It is undone: every piece goes back where it was.' : 'The offer is struck before it is answered.',
+      confirmLabel: 'Veto it',
+      tone: 'danger',
+    });
+    if (yes) moves.veto(o.id);
+  };
+  return (
+    <section className={styles.panel}>
+      <div className={dy.panelHead}><h3 className={styles.panelTitle}>Trade offers</h3></div>
+      <div className={dy.offers}>
+        {toMe.map(o => {
+          // Judged again as it stands now (2026-09-18): the league may have
+          // moved since it was made — another offer taken this turn, a
+          // signing, a claim — and Accept is not offered on a dead deal.
+          const dead = offerProblems(d, o)[0] ?? null;
+          const worth = o.ai && !dead ? offerValue(d, o, me) : null;
+          return (
+            <div key={o.id} className={`${dy.offerLine} ${dy.offerMine}`}>
+              <div>
+                {text(o)}
+                {worth && (
+                  <span className={styles.muted}>
+                    {' '}· to you: {Math.round(worth.valueIn)} in, {Math.round(worth.valueOut)} out · until the next turn
+                  </span>
+                )}
+                {dead
+                  ? <div className={styles.muted}>No longer possible — {dead}</div>
+                  : <ReliefLines d={d} relief={tradeRelief(d, o)} me={me} />}
+              </div>
+              <span className={dy.clockActions}>
+                <button type="button" className={styles.primary} disabled={Boolean(dead)} onClick={() => moves.respond(o.id, true)}>Accept</button>
+                <button type="button" className={styles.ghost} onClick={() => moves.respond(o.id, false)}>Decline</button>
+              </span>
+            </div>
+          );
+        })}
+        {fromMe.map(o => (
+          <div key={o.id} className={dy.offerLine}>
+            <span>{text(o)} <span className={styles.muted}>· waiting on them</span></span>
+            <button type="button" className={styles.ghost} onClick={() => moves.withdraw(o.id)}>Withdraw</button>
+          </div>
+        ))}
+        {watch.map(o => (
+          <div key={o.id} className={dy.offerLine}>
+            <span>{text(o)} <span className={styles.muted}>· {o.status === 'accepted' ? 'done' : 'open'}</span></span>
+            <button type="button" className={dy.linkBtn} onClick={() => veto(o)}>Veto</button>
+          </div>
+        ))}
+      </div>
     </section>
   );
 }

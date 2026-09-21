@@ -23,6 +23,8 @@ import {
   freeAgentKeys, rosterKeys, fitsCap, marketDay, tradeProblems, makeTrade, parsePick, pickOwner,
   MAX_ROSTER, teamOf, signContract, floorOf, rosterProblem, tradesOpen,
   createDynasty, negotiate, renounce, signRookie, waive, endDynasty,
+  resolveWaivers, claimWaiver, withdrawClaim, signingFits,
+  answerOffer, reliefOf, restoreRelief, reliefOnWire, trimOffers, offerProblems, dealSig, OPEN_OFFERS_PER_COACH,
 } from './dynasty.js';
 import { PHASE } from './seasonCore.js';
 import { CONTRACT_YEARS, MIN_DP, MAX_DP } from './dynastyMarket.js';
@@ -30,8 +32,6 @@ import { getCardByKey } from '../cardSets.js';
 
 /** How long a coach has to make a draft pick before the AI makes it for him. */
 export const PICK_CLOCK_MS = 12 * 60 * 60 * 1000;
-/** Trade offers kept on the document, newest last. */
-const OFFERS_KEPT = 40;
 
 const nameOf = key => getCardByKey(key)?.name ?? key;
 const news = (d, text) => ({ ...d, news: [{ year: d.year, text }, ...(d.news ?? [])].slice(0, 80) });
@@ -64,8 +64,13 @@ export function advancePhase(d, { rng = Math.random, bids = [], now = Date.now()
     case DPHASE.rookies: x = closeRookies(d, { rng }); break;
     case DPHASE.freeAgency: x = nextFaWeek(d, bids, { rng }); break;
     case DPHASE.preseason: {
-      let y = d;
-      for (const h of humanIds(d)) if (rosterProblem(y, h)) y = fillRoster(y, h);
+      // The wire resolves BEFORE a short coach is filled (reviewer,
+      // 2026-09-18): startSeason resolves it first alone, and filling first
+      // let the minimum deal take the seat or the apron room a standing
+      // claim needed — the claim failed and the coach got a man he never
+      // asked for. startSeason's own resolve then finds the wire empty.
+      let y = resolveWaivers(d);
+      for (const h of humanIds(y)) if (rosterProblem(y, h)) y = fillRoster(y, h);
       x = startSeason(y, { rng });
       break;
     }
@@ -151,8 +156,12 @@ export function bidProblem(d, teamId, { key, dp, years } = {}) {
  * or a cap by then is passed over for the next. Then the week turns, or free
  * agency closes, exactly as it does alone.
  */
-export function nextFaWeek(d, bids = [], { rng = Math.random } = {}) {
-  if (d.phase !== DPHASE.freeAgency) throw new Error('dynasty: free agency is not open');
+export function nextFaWeek(d0, bids = [], { rng = Math.random } = {}) {
+  if (d0.phase !== DPHASE.freeAgency) throw new Error('dynasty: free agency is not open');
+  // THE WIRE FIRST (2026-09-18): whoever was waived this week is claimed or
+  // freed before the bids are read, as nextFaDay does alone — a claim is a
+  // contract the week's signings then have to fit around.
+  const d = resolveWaivers(d0);
   const day = marketDay(d);
   const free = new Set(freeAgentKeys(d));
   const offers = new Map();
@@ -168,7 +177,10 @@ export function nextFaWeek(d, bids = [], { rng = Math.random } = {}) {
   for (const key of [...offers.keys()].sort((a, b) => salary(b) - salary(a))) {
     const list = [...offers.get(key)].sort((a, b) => b.ratio - a.ratio);
     for (const o of list) {
-      if (rosterKeys(x, o.teamId).length >= MAX_ROSTER || !fitsCap(x, o.teamId, key, o.dp)) continue;
+      // An AI team's standing bid signs only within its card-salary ceiling
+      // too (dynasty.js aiSalaryCap, the user, 2026-09-18) — the same rule as
+      // alone; a coach's bid is never held to it (signingFits).
+      if (rosterKeys(x, o.teamId).length >= MAX_ROSTER || !fitsCap(x, o.teamId, key, o.dp) || !signingFits(x, o.teamId, key)) continue;
       x = signContract(x, o.teamId, key, { dp: o.dp, years: o.years, how: 'fa' });
       break;
     }
@@ -192,23 +204,40 @@ export function proposeTrade(d, deal, { id, now = Date.now() } = {}) {
   if (!humans.includes(deal.from) || !humans.includes(deal.to) || deal.from === deal.to) throw new Error('dynasty: an offer is from one coach to another');
   const problems = tradeProblems(d, deal);
   if (problems.length) throw new Error(`dynasty: ${problems[0]}`);
+  // Open offers are never trimmed and a coach's never lapses, so a coach's
+  // are counted (2026-09-18, a review: 200 proposals kept 201 offers in a
+  // document Firestore caps at 1 MiB) and the same deal is not made twice.
+  const mine = (d.offers ?? []).filter(o => o.status === 'open' && o.from === deal.from);
+  if (mine.some(o => dealSig(o) === dealSig(deal))) throw new Error('dynasty: you have already offered them that deal');
+  if (mine.length >= OPEN_OFFERS_PER_COACH) throw new Error(`dynasty: you have ${OPEN_OFFERS_PER_COACH} offers waiting — withdraw one first`);
   const offer = { id, ...clean(deal), status: 'open', at: now, year: d.year, phase: d.phase };
-  return news({ ...d, offers: [...(d.offers ?? []), offer].slice(-OFFERS_KEPT) }, `${teamOf(d, deal.from)?.name} made ${teamOf(d, deal.to)?.name} a trade offer.`);
+  return news({ ...d, offers: trimOffers([...(d.offers ?? []), offer], d) }, `${teamOf(d, deal.from)?.name} made ${teamOf(d, deal.to)?.name} a trade offer.`);
 }
 
 function setStatus(d, id, patch) {
   return { ...d, offers: (d.offers ?? []).map(o => (o.id === id ? { ...o, ...patch } : o)) };
 }
 
-/** Accept (the trade happens) or decline an offer made to you. */
+/**
+ * Accept (the trade happens) or decline an offer made to you — a coach's, or
+ * an AI team's (2026-09-18), which answerOffer judges again as alone: the
+ * rules, and whether the AI still wants it. Either way a side over ten
+ * waives its weakest to make room (dynasty.js tradeRelief), and who that was
+ * is kept on the offer so a veto can put him back.
+ */
 export function respondTrade(d, id, teamId, accept, { now = Date.now() } = {}) {
   const offer = (d.offers ?? []).find(o => o.id === id);
   if (!offer || offer.status !== 'open') throw new Error('dynasty: that offer is not open');
   if (offer.to !== teamId) throw new Error('dynasty: that offer is not yours to answer');
+  if (offer.ai) return setStatus(answerOffer(d, id, teamId, accept), id, { decidedAt: now });
   if (!accept) return setStatus(d, id, { status: 'declined', decidedAt: now });
-  const problems = tradeProblems(d, offer);
+  // Judged from the answering coach's side, so the reason reads as theirs.
+  const problems = offerProblems(d, offer);
   if (problems.length) throw new Error(`dynasty: ${problems[0]}`);
-  return setStatus(makeTrade(d, offer, { force: true }), id, { status: 'accepted', decidedAt: now, year: d.year, phase: d.phase });
+  const relief = reliefOf(d, offer);
+  return setStatus(makeTrade(d, offer, { force: true }), id, {
+    status: 'accepted', decidedAt: now, year: d.year, phase: d.phase, ...(relief.length ? { relief } : {}),
+  });
 }
 
 /** Take back an offer you made, while it is still open. */
@@ -219,12 +248,20 @@ export function withdrawTrade(d, id, teamId, { now = Date.now() } = {}) {
   return setStatus(d, id, { status: 'withdrawn', decidedAt: now });
 }
 
-/** Whether an accepted trade can still be undone: every piece is where it put them, in the same phase. */
+/**
+ * Whether an accepted trade can still be undone: every piece is where it put
+ * them, in the same phase. Only a deal BETWEEN COACHES (2026-09-18, a review):
+ * the veto is the friends' check on each other, and an AI team's offer is
+ * no more the commissioner's to strike than a trade made with it at the desk.
+ */
 export function vetoable(d, offer) {
+  if (offer.ai) return false;
   if (offer.status === 'open') return true;
   if (offer.status !== 'accepted' || offer.year !== d.year || offer.phase !== d.phase || !tradesOpen(d)) return false;
   const at = (k, team) => d.contracts[k]?.teamId === team;
   const owns = (id, team) => { const p = parsePick(id); return pickOwner(d, p.year, p.round, p.origin) === team; };
+  // A man the trade waived to make room must still be on the wire to come back.
+  if (!reliefOnWire(d, offer.relief)) return false;
   return offer.give.every(k => at(k, offer.to)) && offer.get.every(k => at(k, offer.from))
     && offer.givePicks.every(id => owns(id, offer.to)) && offer.getPicks.every(id => owns(id, offer.from));
 }
@@ -237,10 +274,14 @@ export function vetoable(d, offer) {
 export function vetoTrade(d, id, { now = Date.now() } = {}) {
   const offer = (d.offers ?? []).find(o => o.id === id);
   if (!offer) throw new Error('dynasty: no such offer');
+  if (offer.ai) throw new Error('dynasty: only a trade between coaches can be vetoed');
   if (!vetoable(d, offer)) throw new Error('dynasty: too late to veto that one');
   let x = d;
   if (offer.status === 'accepted') {
-    x = makeTrade(x, { from: offer.to, to: offer.from, give: offer.give, get: offer.get, givePicks: offer.givePicks, getPicks: offer.getPicks }, { force: true });
+    // The relief first (2026-09-18): whoever the trade waived is back on his
+    // team, and the reversal cuts nobody new.
+    x = restoreRelief(x, offer.relief);
+    x = makeTrade(x, { from: offer.to, to: offer.from, give: offer.give, get: offer.get, givePicks: offer.givePicks, getPicks: offer.getPicks }, { force: true, relief: false });
     x = { ...x, news: x.news.slice(1) };   // the reversal is not a trade; the veto line below says what happened
   }
   x = setStatus(x, id, { status: 'vetoed', decidedAt: now });
@@ -287,6 +328,9 @@ export function canAdvance(d) {
 export const FRIEND_MOVES = [
   'tick', 'pick', 'pass', 'offer', 'renounce', 'signRookie', 'waive', 'fill', 'ready',
   'force', 'end', 'tradeAi', 'propose', 'respond', 'withdraw', 'veto', 'setDeck',
+  // A claim on a waived player (2026-09-18), and taking it back; the wire
+  // resolves when the phase, the week or the season's round moves on.
+  'claim', 'unclaim',
 ];
 
 /**
@@ -326,6 +370,8 @@ export function friendsAct(d, teamId, op, args = {}, { now = Date.now(), rng = M
     case 'renounce': x = renounce(x, teamId, key()); break;
     case 'signRookie': x = signRookie(x, teamId, key()); break;
     case 'waive': x = waive(x, teamId, key()); break;
+    case 'claim': x = claimWaiver(x, teamId, key()); break;
+    case 'unclaim': x = withdrawClaim(x, teamId, key()); break;
     case 'fill': x = fillRoster(x, teamId); break;
     case 'ready':
       x = setReady(x, teamId, args?.ready !== false);

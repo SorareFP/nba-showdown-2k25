@@ -60,11 +60,109 @@ export const aiApronDp = d => Math.round(AI_APRON_DP * capOf(d.aiLevel));
 /** A team's cap and apron: the human's fixed numbers, or the AI's at this rung. */
 const capFor = (d, teamId) => (teamOf(d, teamId)?.human ? CAP_DP : aiCapDp(d));
 const apronFor = (d, teamId) => (teamOf(d, teamId)?.human ? APRON_DP : aiApronDp(d));
+
+// ── THE AI'S CARD-SALARY CEILING (the user, 2026-09-18) ─────────────────────
+//
+// The user asked "Are dynasty opponents still bound to the $5500 salary cap?
+// The second year of dynasty is HARD." They were not: DP was the only limit,
+// and DP stopped converting to card salary at $55 a DP once real contracts,
+// the slot scale and the hidden floor came in. A read-only investigation
+// (2026-09-18) measured fantasy-start AI rosters at $4,898 of card salary in
+// year one, $5,615, $6,289, $6,852 by year four; an own start's AI teams
+// arrived at ~$8,800 on real contracts against the human's $5,500 ten, and
+// the human won 0.4% of head-to-heads. The user chose, from four options:
+// "AI $5,500×rung ceiling — AI rosters must ALSO fit a card-salary cap
+// ($5,500 × the rung's cap, e.g. ×1.12 at Deity) on top of DP, on every AI
+// path: draft, re-sign, rookies, FA, trades, claims. You stay on DP only —
+// never a worse you."
+//
+// So an AI team's CONTRACTED roster, summed on each card record's `salary`
+// field (the Team Builder's number — getCardByKey(key).salary, a second copy
+// read as its card), may never END a step above aiSalaryCap: $5,500 (the
+// Team Builder's CAP, teamRules.js — the cap the human's own ten was built
+// under) × the rung's cap (coinRewards.js capOf: 1 to Prince, 1.05 King,
+// 1.12 Deity). DP still binds as well; this is a second limit, not a new
+// currency. Every AI acquisition reads salaryFits: the fantasy and own-start
+// draft (aiDraftChoice, finishDraft), re-signing (aiResign), the rookie draft
+// and its signings and deadline shed (aiDraftChoice, rookieProblem,
+// aiSignRookies), free agency (aiRivalOffers, resolveRivals, a friends week's
+// nextFaWeek), the fill (fillRoster), waiver claims (fitProblem) and every
+// trade's AI side (tradeProblems — which the AI's own search, its offers to
+// a coach, a coach's offer to it and a coach accepting its offer all go
+// through). A coach's team is NEVER bound by it (salaryFits is true for a
+// human team): the user, "You stay on DP only — never a worse you".
+//
+// AN OLDER SAVE ALREADY OVER IT IS NOT BROKEN: nothing is cut. A team above
+// the ceiling simply cannot add card salary until it is back under — a step
+// may leave it where it was or lower (a trade that sends out more than it
+// takes, a man who walks), never higher. The one case a team may end above
+// the ceiling is the floor: an AI team always fields MIN_ROSTER, and when no
+// player fits, the fill signs the cheapest card there is (fillRoster).
+//
+// SO THAT THE FLOOR IS RARELY NEEDED, EVERY PATH KEEPS ROOM (2026-09-19,
+// after a verifier's step trace): a cheap card's worth for each seat the step
+// leaves the team short of eight (seatsHeld — picks, trades, claims, the fill
+// itself, re-signing and free agency alike), its unsigned picks' cards, and in
+// re-signing and the trades before the draft the cards its coming picks will
+// carry (draftReserve's `salary`).
+export const aiSalaryCap = d => Math.round(CARD_CAP * capOf(d.aiLevel));
+/** The card salary of a team's contracted roster — the card record's `salary`, summed. */
+export function aiSalaryOf(d, teamId) {
+  let t = 0;
+  for (const [key, k] of Object.entries(d.contracts)) if (k.teamId === teamId) t += salaryOf(key);
+  return t;
+}
+/** The card salary of these keys. */
+const salaryOfKeys = keys => keys.reduce((t, k) => t + salaryOf(k), 0);
+/**
+ * Whether a team may take `add` on (and let `drop` go) and still be within its
+ * card-salary ceiling: always, for a coach; for an AI team, when the roster
+ * ends at or under aiSalaryCap — or, a team already over it (an older save),
+ * no dearer than it is now. `held` is card salary the team has spoken for
+ * without a contract yet (its unsigned picks), counted on top.
+ */
+export function salaryFits(d, teamId, add = [], drop = [], held = 0) {
+  const team = teamOf(d, teamId);
+  if (!team || team.human) return true;
+  const now = aiSalaryOf(d, teamId);
+  const after = now + held + salaryOfKeys(add) - salaryOfKeys(drop);
+  return after <= Math.max(aiSalaryCap(d), now);
+}
+/** What an AI team's unsigned picks will carry in card salary — the room they reserve, as rookieCommitted is in DP. */
+const rookieSalaryHeld = (d, teamId) => salaryOfKeys(rightsOf(d, teamId, 'rookie'));
+/**
+ * Whether a free agent's card fits a team's ceiling at signing, its unsigned
+ * picks held back — the AI's bids signing alone (resolveRivals) and in a
+ * friends week (dynastyFriends nextFaWeek). Always, for a coach.
+ */
+export const signingFits = (d, teamId, key) => salaryFits(d, teamId, [key], [], rookieSalaryHeld(d, teamId));
+/**
+ * Card salary an AI team holds back for each seat it is still short of
+ * MIN_ROSTER, so the seat can be filled under the ceiling: a cheap card, and
+ * the pool always has them (the draft pool's camp invites run to $30).
+ */
+const AI_SALARY_PER_SPOT = 150;
+/**
+ * The card salary an AI team keeps back for the seats a step would still
+ * leave it short of MIN_ROSTER, `seatsAfter` being its seats once the step is
+ * done (0 for a coach, who is never bound). EVERY AI acquisition holds it
+ * (2026-09-19): the first build held it only in re-signing and free agency,
+ * and a verifier's step trace found the other paths spending the eighth
+ * seat's room while the team was short — a rookie signing took a 6-man
+ * Memphis to $5,500 on Zubac, a trade took a 6-man San Antonio from $5,190
+ * to $6,110 — so the fill then had to sign past the ceiling: 22 of 2,240 AI
+ * team-seasons tipped off over it, 16 of them in year four.
+ */
+function seatsHeld(d, teamId, seatsAfter) {
+  if (teamOf(d, teamId)?.human) return 0;
+  return Math.max(0, MIN_ROSTER - seatsAfter) * AI_SALARY_PER_SPOT;
+}
 // Ages for the cards that do not carry one — scripts/dynasty/buildAges.mjs.
 import DYNASTY_AGES from '../../../card-data/generated/dynasty-ages.json' with { type: 'json' };
 import DYNASTY_CONTRACTS from '../../../card-data/generated/dynasty-contracts.json' with { type: 'json' };
-import { MAX } from '../teamRules.js';
-import { DYNASTY_YEARS } from './prizes.js';
+// CAP: the Team Builder's $5,500 — the AI's card-salary ceiling's base (aiSalaryCap).
+import { MAX, CAP as CARD_CAP } from '../teamRules.js';
+import { DYNASTY_YEARS, ownGamesPlayed } from './prizes.js';
 // seasonCore, not season.js: season.js brings the simulator and the engine,
 // and a dynasty with friends runs on the server where neither is shipped.
 import { buildSeason, standings, totalRounds, PHASE } from './seasonCore.js';
@@ -171,6 +269,8 @@ export const teamOf = (d, teamId) => d.teams.find(t => t.id === teamId) ?? null;
 export const humanTeam = d => teamOf(d, d.humanId ?? HUMAN_ID);
 /** Every human team — one alone ('you'), one per coach in a dynasty with friends ('h:<uid>'). */
 export const humanIds = d => d.humans ?? [d.humanId ?? HUMAN_ID];
+/** One coach, and it is this device's player — not a dynasty with friends (2026-09-18, the share-played count). */
+export const isSoloDynasty = d => (d.humanId ?? HUMAN_ID) === HUMAN_ID && humanIds(d).length === 1;
 export const traitOf = (d, key) => d.traits?.[key] ?? 'easy';
 
 /** The keys a team has under contract. */
@@ -220,9 +320,14 @@ export function universe(d) {
   return [...new Set([...leagueKeys(d), ...(d.draftPool ?? []), ...board])];
 }
 
-/** Everyone in the league nobody holds, and nobody who has retired. */
+/**
+ * Everyone in the league nobody holds, and nobody who has retired — nor
+ * anyone on waivers (2026-09-18), who is a free agent only once the wire
+ * resolves with nobody claiming him.
+ */
 export function freeAgentKeys(d) {
   const gone = new Set(d.retired ?? []);
+  for (const w of d.waivers ?? []) gone.add(w.key);
   return leagueKeys(d).filter(key => !d.contracts[key] && !d.rights?.[key] && !gone.has(key));
 }
 
@@ -283,7 +388,11 @@ export function baseAge(key) {
 /** A player's age in this dynasty's current (or coming) season. */
 export function ageOf(d, key) {
   const joined = d.joined?.[key];
-  return baseAge(key) + (d.aging && joined ? Math.max(0, d.year - joined) : 0);
+  // 2026-09-18: a join year of 0 is a real join, so test for a number, not
+  // truthiness. The engine starts at year 1 and writes d.year, so it never
+  // writes 0 itself, but a test (or a hand-built save) that back-dates a join
+  // to year 0 was being read as "never joined" and the man did not age.
+  return baseAge(key) + (d.aging && Number.isFinite(joined) ? Math.max(0, d.year - joined) : 0);
 }
 
 /** Retirement from 35 — one in six, a sixth more each year — certain at 40. */
@@ -428,7 +537,11 @@ export const classSize = teams => ROOKIE_ROUNDS * teams + DRAFT_CLASS_EXTRA;
 // leftovers — the user: "a small chance of a legendary in the pool"):
 //
 //   legendary   one, with probability 0.15 — never two;
-//   super-rare  one at 0.60, and a second at 0.15 only after the first;
+//   super-rare  one at 0.60, and a second only after the first — at 0.25,
+//               so that TWO super-rares land in 15% of ALL classes
+//               (0.60 × 0.25). The user, 2026-09-18, confirming they meant
+//               15% of classes, not 15% of the classes that already had one:
+//               the roll was 0.15 until then, two in about 9% of classes;
 //   rare        ONE GUARANTEED, then a further one at 0.60, 0.35 and 0.15 —
 //               cascading, each roll only after the one before it landed;
 //   the rest    uncommon or common, a coin flip a seat.
@@ -439,7 +552,7 @@ export const classSize = teams => ROOKIE_ROUNDS * teams + DRAFT_CLASS_EXTRA;
 // finishDraft all see the same players.
 const CLASS_ODDS = {
   legendary: [0.15],
-  'super-rare': [0.6, 0.15],
+  'super-rare': [0.6, 0.25],
   rare: [1, 0.6, 0.35, 0.15],
 };
 const CLASS_BANDS = ['legendary', 'super-rare', 'rare', 'uncommon', 'common'];
@@ -719,7 +832,8 @@ export function createDynasty({
     // NO SIGNING PERIOD in an own start: everyone, yours and theirs, is
     // already on a contract, so the league opens straight into the preseason.
     x = { ...x, phase: DPHASE.preseason, talks: {} };
-    return say({ ...x, news: [] }, 'The league opens: every team on its real contracts. Start year one when you are ready.');
+    // The preseason is the first turn: the AI may already have an offer for you.
+    return aiOfferTurn(say({ ...x, news: [] }, 'The league opens: every team on its real contracts. Start year one when you are ready.'));
   }
   const order = snakeOrder(shuffle(teams.map(t => t.id), rng), FANTASY_ROUNDS);
   return say(
@@ -803,23 +917,219 @@ function mergeDuplicate(d, key, teamId) {
 }
 
 /**
- * Waive a player under contract, in the offseason: he is a free agent now,
- * and his DP stays on the books for the coming season as dead money.
+ * Waive a player under contract, in the offseason. His DP goes on the books
+ * for the coming season as dead money and he goes ON WAIVERS (below): until
+ * the league next moves on, any other team may claim him, and a claim takes
+ * his contract as it stands and takes the dead money off the waiving team's
+ * books. Unclaimed, the dead money stays and he is a free agent — which is
+ * all a waive did until 2026-09-18.
  */
 export function waive(d, teamId, key) {
   if (!isOffseason(d)) throw new Error('dynasty: moves are made in the offseason');
+  return release(d, teamId, key);
+}
+
+/**
+ * The waive itself, in any phase. A coach waives in the offseason (waive); a
+ * TRADE'S ROSTER RELIEF (tradeRelief, 2026-09-18) waives in season too, up
+ * to the deadline, and its man sits on the wire until the next round turns
+ * (seasonTurn) exactly as an offseason waive waits for the next phase.
+ */
+function release(d, teamId, key) {
   const k = d.contracts[key];
   if (!k || k.teamId !== teamId) throw new Error(`dynasty: ${key} is not under contract with ${teamId}`);
-  const waived = say({
+  const cut = {
     ...d,
     contracts: omit(d.contracts, key),
     dead: [...(d.dead ?? []), { teamId, key, dp: k.dp, through: d.year }],
     lastTeam: { ...d.lastTeam, [key]: teamId },
     spurned: { ...(d.spurned ?? {}), [key]: teamId },
-  }, `${teamOf(d, teamId)?.name} waived ${cardOf(key)?.name} (${k.dp} DP dead this season).`);
+  };
   // The dead money stays — that was the price of waiving — but a second copy
-  // of a player another team still holds does not hit the market.
-  return mergeDuplicate(waived, key, teamId) ?? waived;
+  // of a player another team still holds does not hit the market, and so is
+  // not on waivers either: it leaves the league as it did before waivers.
+  const merged = mergeDuplicate(say(cut, `${teamOf(d, teamId)?.name} waived ${cardOf(key)?.name} (${k.dp} DP dead this season).`), key, teamId);
+  if (merged) return merged;
+  const wire = { key, from: teamId, dp: k.dp, years: k.years, year: d.year, claims: [] };
+  return say(
+    { ...cut, waivers: [...waiverList(d), wire] },
+    `${teamOf(d, teamId)?.name} waived ${cardOf(key)?.name} — on waivers until the league moves on. A claim takes his ${k.dp} DP × ${k.years} off their books; unclaimed, it stays as dead money this season.`,
+  );
+}
+
+// ── WAIVERS (the user, 2026-09-18) ──────────────────────────────────────────
+//
+// "If they are claimed, that money would come off the cap." A waived player
+// sits ON WAIVERS until the dynasty next moves on — the next phase turn, the
+// next day of free agency, or in season the next round — and then the wire
+// RESOLVES (resolveWaivers): the teams are asked in waiver priority, the
+// worst record of the most recent regular season first (waiverOrder), never
+// the team that waived him.
+//
+//   An AI team claims when his contract fits under its apron (aiApronDp) with
+//     a roster spot, and the contract is worth having — contractValue > 0,
+//     the same number its trades weigh: underpaid, not overpaid.
+//   A HUMAN team claims only if its coach put in a claim during the window
+//     (claimWaiver), and only while it fits the human's apron (130) and
+//     roster.
+//
+// The first team that qualifies takes the contract as it stands — the DP and
+// the years left — and THE WAIVING TEAM'S DEAD MONEY FOR HIM IS REMOVED.
+// Nobody qualifies: the dead money stays and he is a free agent, as before.
+// The AI's own deadline sheds (aiSignRookies) go through the wire too, so a
+// shed that somebody claims clears the shedding team's books.
+//
+// d.waivers is `[{ key, from, dp, years, year, claims: [teamId] }]`, oldest
+// first. A save from before 2026-09-18 has no list and reads as an empty one.
+
+/** The waiver wire: every player waived since the league last moved on. */
+export const waiverList = d => d.waivers ?? [];
+/** Whether a player is on waivers right now — not under contract, and not a free agent yet. */
+export const onWaivers = (d, key) => waiverList(d).some(w => w.key === key);
+
+/**
+ * WAIVER PRIORITY: every team, worst regular-season record first — the most
+ * recent season in the history (its table's ranks are the regular season's).
+ * Before a season has been played there are no standings, so the order is
+ * SEEDED from the dynasty's id (the class seed, keyed 'waivers'): fixed for
+ * the whole of year one and the same on every device and on the server.
+ */
+export function waiverOrder(d) {
+  const last = d.history?.[d.history.length - 1];
+  const ids = d.teams.map(t => t.id);
+  if (last?.table?.length) {
+    const ranked = [...last.table].sort((a, b) => b.rank - a.rank).map(r => r.id).filter(id => ids.includes(id));
+    return [...ranked, ...ids.filter(id => !ranked.includes(id))];
+  }
+  return shuffle(ids, classRng(d, 'waivers'));
+}
+
+/** Seats a team's roster has taken: its contracts, and for an AI team its unsigned picks, each holding his seat (aiRivalOffers). */
+const seatsTaken = (d, teamId) => rosterKeys(d, teamId).length + (teamOf(d, teamId)?.human ? 0 : rightsOf(d, teamId, 'rookie').length);
+
+/** Why `teamId` cannot take this player off waivers right now, or null. */
+export function claimProblem(d, teamId, key) {
+  const w = waiverList(d).find(x => x.key === key);
+  if (!w) return 'that player is not on waivers';
+  return fitProblem(d, teamId, w);
+}
+
+/** Why `teamId` cannot take the waiver `w` — his seat and his DP on its books — or null. */
+function fitProblem(d, teamId, w) {
+  if (w.from === teamId) return 'you waived him';
+  if (!teamOf(d, teamId)) return 'no such team';
+  if (seatsTaken(d, teamId) >= MAX_ROSTER) return `your roster is full at ${MAX_ROSTER} — waive someone first`;
+  const apron = apronFor(d, teamId);
+  // An AI team keeps the scale of its unsigned picks back, as it does in free agency.
+  const booked = payroll(d, teamId) + (teamOf(d, teamId)?.human ? 0 : rookieCommitted(d, teamId));
+  if (booked + w.dp > apron) return `his ${w.dp} DP would take you past the ${apron} apron`;
+  // An AI team's claim fits its card-salary ceiling too, its unsigned picks
+  // counted as their DP is above (aiSalaryCap, the user, 2026-09-18), and a
+  // cheap card kept back for each seat still short of eight (seatsHeld).
+  const held = rookieSalaryHeld(d, teamId) + seatsHeld(d, teamId, seatsTaken(d, teamId) + 1);
+  if (!salaryFits(d, teamId, [w.key], [], held)) return `his $${salaryOf(w.key)} card would take them past the $${aiSalaryCap(d)} salary ceiling`;
+  return null;
+}
+
+/** A coach's claim on a waived player, standing until the wire resolves. */
+export function claimWaiver(d, teamId, key) {
+  if (!teamOf(d, teamId)?.human) throw new Error('dynasty: only a coach puts in a claim');
+  const problem = claimProblem(d, teamId, key);
+  if (problem) throw new Error(`dynasty: ${problem}`);
+  return {
+    ...d,
+    waivers: waiverList(d).map(w => (w.key === key && !w.claims.includes(teamId) ? { ...w, claims: [...w.claims, teamId] } : w)),
+  };
+}
+
+/** Take a claim back while the window is still open. */
+export function withdrawClaim(d, teamId, key) {
+  if (!onWaivers(d, key)) throw new Error('dynasty: that player is not on waivers');
+  return { ...d, waivers: waiverList(d).map(w => (w.key === key ? { ...w, claims: w.claims.filter(t => t !== teamId) } : w)) };
+}
+
+/** Whether `teamId` takes `w` when its turn in the order comes. */
+function claims(d, teamId, w) {
+  // The wire is emptied as it resolves, so the entry itself is checked.
+  if (fitProblem(d, teamId, w)) return false;
+  if (teamOf(d, teamId)?.human) return w.claims.includes(teamId);
+  return contractValue(cardOf(w.key), { dp: w.dp, years: w.years }) > 0;
+}
+
+/**
+ * Put the live season's rosters back in step with the contracts for these
+ * teams — a claim in season is on the claimant's roster for the next
+ * fixture (makeTrade does the same). A season stored with its rosters as
+ * keys (a friends league's document, seasonPack.js) keeps them as keys.
+ */
+function syncSeasonRosters(d, teamIds) {
+  if (!d.season?.teams) return d;
+  const moved = new Set(teamIds);
+  const asKeys = d.season.teams.some(t => typeof t.roster?.[0] === 'string');
+  const teams = d.season.teams.map(t => {
+    if (!moved.has(t.id)) return t;
+    const cards = rosterOf(d, t.id);
+    return { ...t, roster: asKeys ? cards.map(cardKey) : cards };
+  });
+  return { ...d, season: { ...d.season, teams } };
+}
+
+/**
+ * THE WIRE RESOLVES — oldest waiver first, each against the rosters and
+ * payrolls the claims before it left. Run at the start of every step that
+ * moves the league on (closeResign, drawLottery, finishDraft, closeRookies,
+ * nextFaDay, closeFreeAgency, startSeason, endSeason, a friends week, a
+ * season's round — seasonTurn), so a player waived during a step (a
+ * deadline shed) waits on the wire for the step after it.
+ */
+export function resolveWaivers(d) {
+  const list = waiverList(d);
+  if (!list.length) return d;
+  let x = { ...d, waivers: [] };
+  const touched = new Set();
+  for (const w of list) {
+    // Nothing else can take him off the wire, but a hand-edited save could.
+    if (x.contracts[w.key] || x.rights?.[w.key] || (x.retired ?? []).includes(w.key)) continue;
+    const from = teamOf(x, w.from);
+    const taker = waiverOrder(x).filter(id => id !== w.from).find(id => claims(x, id, w));
+    const name = cardOf(w.key)?.name;
+    if (!taker) {
+      x = say(x, `Nobody claimed ${name} — he is a free agent, and his ${w.dp} DP stays on ${from?.name}'s books this season.`);
+      continue;
+    }
+    // His dead money on the waiving team, the one entry THIS waive booked
+    // (reviewer, 2026-09-18): the same man can be waived twice in one
+    // offseason — unclaimed at 35 DP, back on 1 DP, waived again — and the
+    // first match cleared the 35 while the claimant took the 1, so 34 DP left
+    // the league. Only the waive on the wire now can be claimed, and its
+    // entry is the latest for him at his DP; two at the same DP are the same
+    // money whichever goes.
+    const at = (x.dead ?? []).findLastIndex(m => m.teamId === w.from && m.key === w.key && m.through === w.year && m.dp === w.dp);
+    x = {
+      ...x,
+      contracts: { ...x.contracts, [w.key]: { teamId: taker, dp: w.dp, years: w.years, since: x.year, how: 'waivers' } },
+      dead: at < 0 ? (x.dead ?? []) : x.dead.filter((_, i) => i !== at),
+    };
+    touched.add(taker);
+    x = say(x, `${teamOf(x, taker)?.name} claimed ${name} off waivers — his salary comes off ${from?.name}'s books.`);
+  }
+  return touched.size ? syncSeasonRosters(x, [...touched]) : x;
+}
+
+/**
+ * The live season after a result: in season the wire resolves when a ROUND
+ * turns (or the regular season gives way to the playoffs), the season's own
+ * "the league moves on". Every shell that saves a season into a dynasty goes
+ * through this — DynastyTab alone, league.js applyResult with friends.
+ */
+export function seasonTurn(d, season) {
+  const before = d.season;
+  const next = { ...d, season };
+  const turned = !before || before.round !== season?.round || before.phase !== season?.phase;
+  if (!turned) return next;
+  // A round turning is a turn for the AI's offers too (2026-09-18): the
+  // open ones lapse and, up to the deadline, new ones are made.
+  return aiOfferTurn(waiverList(next).length ? resolveWaivers(next) : next);
 }
 
 /** Which players a team may talk to in the phase the dynasty is in. */
@@ -835,6 +1145,7 @@ function assertCanTalk(d, teamId, key) {
   }
   if (d.phase === DPHASE.freeAgency || d.phase === DPHASE.preseason) {
     if (d.contracts[key] || r) throw new Error('dynasty: that player is not a free agent');
+    if (onWaivers(d, key)) throw new Error('dynasty: that player is on waivers — put in a claim instead');
     if (!leagueKeys(d).includes(key)) throw new Error('dynasty: that player is not in this league');
     return;
   }
@@ -917,6 +1228,15 @@ export function rookieProblem(d, teamId, key) {
   // picks past it.
   const room = apron - payroll(d, teamId);
   if (dp > room && !shortHanded(d, teamId, size, room)) return `their ${dp} DP would take you past the ${apron} apron`;
+  // An AI team's pick also fits its card-salary ceiling (aiSalaryCap,
+  // 2026-09-18) — short-handed or not: a seat the ceiling will not pay for
+  // is the fill's, at the cheap end. Never a coach's (salaryFits). A team
+  // still short of eight once he signs keeps a cheap card's room for each
+  // seat left (seatsHeld, 2026-09-19), or the fill signs past the ceiling.
+  // Its other unsigned picks count as seats — the draft kept their cards'
+  // room (aiDraftChoice) — so two picks into a five-man roster keep $150.
+  const seatsAfter = size + rightsOf(d, teamId, 'rookie').length;
+  if (!salaryFits(d, teamId, [key], [], seatsHeld(d, teamId, seatsAfter))) return `his $${salaryOf(key)} card would take them past the $${aiSalaryCap(d)} salary ceiling`;
   return null;
 }
 
@@ -939,7 +1259,11 @@ export function signRookie(d, teamId, key) {
  * as dead money), so the seat to give up is the weakest man's.
  */
 function shedCandidate(d, teamId) {
-  const keys = rosterKeys(d, teamId);
+  return weakestOf(d, rosterKeys(d, teamId));
+}
+
+/** The weakest of these players: the least talent, then the worst contract. A trade's roster relief waives him too (tradeRelief). */
+function weakestOf(d, keys) {
   if (!keys.length) return null;
   const talent = k => talentValue(cardOf(k));
   const value = k => contractValue(cardOf(k), d.contracts[k]);
@@ -966,7 +1290,9 @@ function aiSignRookies(d, { deadline = false } = {}) {
       if (!rookieProblem(x, team.id, key)) { x = sign(x, team.id, key, { ...rookieTerms(x, key), how: 'rookie' }); continue; }
       if (!deadline || shedOne) continue;
       // Waived as waive books it: the DP stays this season as dead money, so
-      // what a shed buys is the ROSTER SPOT — it never makes money room. So
+      // what a shed buys is the ROSTER SPOT — it never makes money room. (He
+      // goes on waivers, 2026-09-18, and a claim clears the dead money after
+      // the fact; the decision here cannot count on one.) So
       // only the full roster's refusal is answered with a shed (a verifier,
       // 2026-09-18): a team of eight refused for money used to waive down to
       // seven, and seven is short-handed, so the pick then signed past the
@@ -1016,22 +1342,50 @@ export function fillRoster(d, teamId, min = MIN_ROSTER) {
       .map(key => ({ key, dp: floorOf(x, key, teamId, preferredYears(traitOf(x, key)), day) }))
       .sort((a, b) => a.dp - b.dp || salaryOf(b.key) - salaryOf(a.key));
     const pay = payroll(x, teamId);
-    const fits = (o, limit) => pay + o.dp <= limit;
+    // An AI team's fill fits its card-salary ceiling as well as its books
+    // (aiSalaryCap, 2026-09-18); a coach's always does (salaryFits).
+    // First with a cheap card's room kept for each seat after this one
+    // (seatsHeld, 2026-09-19): the fill is cheapest by DP, and a $400 card on
+    // the cheapest deal could leave the eighth seat nothing under the ceiling.
+    const later = seatsHeld(x, teamId, rosterKeys(x, teamId).length + 1);
+    const fits = (o, limit, held = later) => pay + o.dp <= limit && salaryFits(x, teamId, [o.key], [], held);
+    const tiers = (list, held) => list.find(o => fits(o, cap, held)) ?? list.find(o => fits(o, apron, held)) ?? null;
     const free = priced(freeAgentKeys(x));
     // CAMP INVITES: when no free agent fits under the apron — an own-team
     // start opens with no free agents at all — the cheapest players waiting
     // in the draft pool come in on minimum-length deals. My call, 2026-09-11.
-    let choice = free.find(o => fits(o, cap)) ?? free.find(o => fits(o, apron)) ?? null;
+    let choice = tiers(free, later);
     let invite = false;
+    let camp = [];
     if (!choice) {
       // Never a member of the class drawn for the next draft (d.draftClass,
       // 2026-09-17) — the class is the lottery's, not camp's. Stored first,
       // so an older save's class cannot reshuffle when camp takes a player.
       x = withClass(x);
       const drawn = new Set(x.draftClass.keys);
-      const camp = priced((x.draftPool ?? []).filter(k => !drawn.has(k)));
-      choice = camp.find(o => fits(o, cap)) ?? camp.find(o => fits(o, apron)) ?? null;
+      camp = priced((x.draftPool ?? []).filter(k => !drawn.has(k)));
+      choice = tiers(camp, later);
       invite = Boolean(choice);
+      // Nothing leaves the seats after it their room: the tiers as they
+      // were, free agents first, before the floor's last resorts below.
+      if (!choice && later) {
+        choice = tiers(free, 0);
+        if (!choice) { choice = tiers(camp, 0); invite = Boolean(choice); }
+      }
+    }
+    // THE FLOOR BEATS THE LIMITS. An AI team nothing fits for still takes the
+    // floor: on the cheapest DEAL whose card fits its salary ceiling (past
+    // the apron, fillRoster's old last resort), else — the ceiling and the
+    // floor colliding (2026-09-18) — on the CHEAPEST CARD there is, free agent
+    // or camp, so it ends as little past the ceiling as it can. That is the
+    // one way an AI team ends a step above its ceiling, and it is rare (the
+    // phase-3 measure). A coach keeps the old last resort: the cheapest deal.
+    if (!choice && !teamOf(x, teamId)?.human) {
+      const all = [...free, ...camp];
+      choice = all.filter(o => salaryFits(x, teamId, [o.key])).sort((a, b) => a.dp - b.dp || salaryOf(a.key) - salaryOf(b.key))[0]
+        ?? [...all].sort((a, b) => salaryOf(a.key) - salaryOf(b.key) || a.dp - b.dp)[0]
+        ?? null;
+      invite = Boolean(choice) && !free.includes(choice);
     }
     choice ??= free[0] ?? null;
     if (!choice) break;
@@ -1130,7 +1484,17 @@ export function aiDraftChoice(d, teamId, rng = Math.random, { iq = 1 } = {}) {
     // A waive leaves its DP on this season's books as dead money, so no shed
     // makes money room: a slot that does not fit the books is passed.
     if (!fits) return null;
-    if (spots > 0) return pickWeighted(best.slice(0, 2), [0.65, 0.35], rng);
+    // AND ONLY A PLAYER ITS CARD-SALARY CEILING HAS ROOM FOR (aiSalaryCap,
+    // the user, 2026-09-18), beside the picks it already holds: the slot
+    // costs every player the same DP, but not the same card salary, so here
+    // the players differ. None fits: the pick is passed, as for money. A
+    // coach's side is never bound (salaryFits).
+    // Held back too: a cheap card for each seat still short of eight once
+    // this pick is counted (seatsHeld, 2026-09-19), as rookieProblem will
+    // hold it when he signs — else the AI drafts a man it cannot sign.
+    const held = rookieSalaryHeld(d, teamId) + seatsHeld(d, teamId, mine.length + 1);
+    const signable = best.filter(k => salaryFits(d, teamId, [k], [], held));
+    if (spots > 0) return signable.length ? pickWeighted(signable.slice(0, 2), [0.65, 0.35], rng) : null;
     // The books fit but the roster is full: the FULL ROSTER'S way to a pick.
     // It takes the best player when shedding ONE contract frees the seat —
     // its weakest man (shedCandidate), waived as aiSignRookies will waive him
@@ -1139,8 +1503,10 @@ export function aiDraftChoice(d, teamId, rng = Math.random, { iq = 1 } = {}) {
     // first-overall picks for the sake of 4-talent benchwarmers.
     if (spots + 1 <= 0) return null;
     const worst = teamOf(d, teamId)?.human ? null : shedCandidate(d, teamId);
-    if (!worst || talentValue(cardOf(best[0])) <= talentValue(cardOf(worst))) return null;
-    return best[0];
+    // The shed takes his card salary off the roster, so the ceiling is read without him.
+    const top = worst ? best.find(k => salaryFits(d, teamId, [k], [worst], held)) : null;
+    if (!top || talentValue(cardOf(top)) <= talentValue(cardOf(worst))) return null;
+    return top;
   }
   // A FANTASY DRAFT IS DRAFTED TO A CAP (the user, 2026-09-11: "drafting to
   // make a team that fits in the salary cap, not just grabbing the best
@@ -1169,8 +1535,38 @@ export function aiDraftChoice(d, teamId, rng = Math.random, { iq = 1 } = {}) {
   // year-one market, so the AI spends the cap on the ten it drafts.
   const cap = aiCapDp(d);
   const budget = cap - (real ? 0 : AI_FA_ROOM) - payroll(d, teamId) - committed - reserve;
-  const affordable = avail.filter(k => cost(k) <= budget);
-  if (!affordable.length) return [...avail].sort((a, b) => cost(a) - cost(b))[0];
+  // AND TO THE CARD-SALARY CEILING (the user, 2026-09-18: "AI rosters must
+  // ALSO fit a card-salary cap … on every AI path: draft"). The same shape
+  // as the DP budget: the ceiling, less the cards on the roster and the ones
+  // drafted so far, less a price held back for each pick after this one. That
+  // price is NOT the cheapest card on the board: every team fills its last
+  // seats from the cheap end at once, and the first build of this, holding
+  // back the very cheapest, left its last two picks $230-250 with $180 of
+  // room (own start, seed 2). So it is the card at the rank the whole draft
+  // still has to make — cards that cheap will still be there — but never
+  // more than an even tenth of the ceiling, or a small pool (fantasy-random)
+  // would hold back everything. A coach is never bound by it — the pick the
+  // AI makes for a coach whose clock ran out (dynastyFriends runDraftClock)
+  // drafts to DP alone.
+  const human = Boolean(teamOf(d, teamId)?.human);
+  let salBudget = Infinity;
+  if (!human) {
+    const cheap = avail.map(salaryOf).sort((a, b) => a - b);
+    const remaining = d.draft.order.length - d.draft.picks.length;
+    const perSpot = Math.min(cheap[Math.min(remaining, cheap.length) - 1] ?? 0, Math.round(aiSalaryCap(d) / MAX_ROSTER));
+    salBudget = aiSalaryCap(d) - aiSalaryOf(d, teamId) - salaryOfKeys(rightsOf(d, teamId, 'draft'))
+      - Math.max(0, picksLeft - 1) * perSpot;
+  }
+  const affordable = avail.filter(k => cost(k) <= budget && salaryOf(k) <= salBudget);
+  // Nothing fits both: every fantasy pick has to be made, so the cheapest
+  // deal — for an AI team among the cards the ceiling still has room for
+  // first, else the cheapest card (a draftee it cannot sign under the
+  // ceiling walks at finishDraft). A coach's clock-run-out pick: the cheapest deal, as ever.
+  if (!affordable.length) {
+    if (human) return [...avail].sort((a, b) => cost(a) - cost(b))[0];
+    const room = k => (salaryOf(k) <= salBudget ? 0 : 1);
+    return [...avail].sort((a, b) => room(a) - room(b) || (room(a) ? salaryOf(a) - salaryOf(b) : cost(a) - cost(b)))[0];
+  }
   // THE POSITIONAL FLOOR, the money reserve's twin (2026-09-17): a ten is
   // not left without two guards, two forwards and a centre. Once the picks
   // left are no more than the spots those floors still need, this pick comes
@@ -1275,8 +1671,10 @@ export const draftDone = d => !onClock(d);
  * Close a finished draft. The fantasy draft goes to signing — the AI signs its
  * draftees where it can — and the rookie draft to signing picks.
  */
-export function finishDraft(d, { rng = Math.random, real = Boolean(d.draft?.real) } = {}) {
-  if (!draftDone(d)) throw new Error('dynasty: the draft is not over');
+export function finishDraft(d0, { rng = Math.random, real = Boolean(d0.draft?.real) } = {}) {
+  if (!draftDone(d0)) throw new Error('dynasty: the draft is not over');
+  // The league moves on: whoever was waived during the draft is resolved first.
+  const d = resolveWaivers(d0);
   const record = { kind: d.draft.kind, picks: d.draft.picks, origin: d.draft.origin ?? null };
   // Nobody took them: the fantasy draft's leftovers are shuffled into the draft
   // pool, an offseason class's go back on the end of it. Neither is a free agent.
@@ -1296,14 +1694,17 @@ export function finishDraft(d, { rng = Math.random, real = Boolean(d.draft?.real
         const deal = real ? contractFor(key) : null;
         const years = deal?.years ?? preferredYears(traitOf(x, key));
         const dp = deal?.dp ?? floorOf(x, key, team.id, years, 1);
-        const fits = real
+        // ...nor past its card-salary ceiling (aiSalaryCap, the user,
+        // 2026-09-18): the own start's AI teams arrived on real contracts at
+        // ~$8,800 of card salary against the coach's $5,500 ten.
+        const fits = salaryFits(x, team.id, [key]) && (real
           ? payroll(x, team.id) + dp <= aiCapDp(x)
-          : rosterKeys(x, team.id).length < MAX_ROSTER - AI_OPEN_SPOTS && payroll(x, team.id) + dp <= aiCapDp(x);
+          : rosterKeys(x, team.id).length < MAX_ROSTER - AI_OPEN_SPOTS && payroll(x, team.id) + dp <= aiCapDp(x));
         x = fits ? sign(x, team.id, key, { dp, years, how: real ? 'brought' : 'draft' }) : renounce(x, team.id, key);
       }
     }
     // Year two's class is drawn now, from the pool with the leftovers in it.
-    return say(withClass(x), 'The draft is done. Sign your draftees — anyone you do not sign goes to free agency.');
+    return aiOfferTurn(say(withClass(x), 'The draft is done. Sign your draftees — anyone you do not sign goes to free agency.'));
   }
   const x = {
     ...d, draft: record, phase: DPHASE.rookies, talks: {}, draftPool: [...(d.draftPool ?? []), ...undrafted],
@@ -1313,13 +1714,13 @@ export function finishDraft(d, { rng = Math.random, real = Boolean(d.draft?.real
     pickOwner: Object.fromEntries(Object.entries(d.pickOwner ?? {}).filter(([id]) => parsePick(id).year !== d.year)),
   };
   // The AI signs what fits now; the rest stay its rights until the season starts.
-  return aiSignRookies(x);
+  return aiOfferTurn(aiSignRookies(x));
 }
 
 /** Done signing draftees: whoever is unsigned goes to free agency, which opens. */
 export function closeSigning(d, { rng = Math.random } = {}) {
   if (d.phase !== DPHASE.signing) throw new Error('dynasty: not signing draftees');
-  let x = d;
+  let x = resolveWaivers(d);
   for (const h of humanIds(x)) for (const key of rightsOf(x, h, 'draft')) x = renounce(x, h, key);
   return openFreeAgency(x, { rng });
 }
@@ -1332,7 +1733,7 @@ export function closeSigning(d, { rng = Math.random } = {}) {
  */
 export function closeRookies(d, { rng = Math.random } = {}) {
   if (d.phase !== DPHASE.rookies) throw new Error('dynasty: not signing picks');
-  return openFreeAgency(d, { rng });
+  return openFreeAgency(resolveWaivers(d), { rng });
 }
 
 // ── The lottery ─────────────────────────────────────────────────────────────
@@ -1403,8 +1804,9 @@ export function classFor(d) {
 }
 
 /** Draw the lottery and open the draft. */
-export function drawLottery(d, { rng = Math.random } = {}) {
-  if (d.phase !== DPHASE.lottery) throw new Error('dynasty: not lottery time');
+export function drawLottery(d0, { rng = Math.random } = {}) {
+  if (d0.phase !== DPHASE.lottery) throw new Error('dynasty: not lottery time');
+  const d = resolveWaivers(d0);
   const odds = lotteryOdds(d);
   const left = [...odds.entries];
   const top = [];
@@ -1438,7 +1840,7 @@ export function drawLottery(d, { rng = Math.random } = {}) {
     draftPool: (d.draftPool ?? []).filter(k => !taken.has(k)),
     draft: { kind: 'rookie', order: owners, origin, picks: [], pool: [...cls] },
   };
-  return withClass(x);
+  return aiOfferTurn(withClass(x));
 }
 
 // ── Free agency ─────────────────────────────────────────────────────────────
@@ -1455,6 +1857,7 @@ export function aiRivalOffers(d, rng = Math.random) {
   const rivals = {};
   const market = freeAgentKeys(d).filter(k => cardOf(k)).sort((a, b) => salaryOf(b) - salaryOf(a)).slice(0, AI_SHORTLIST);
   const spent = {};
+  const spentSal = {};
   const made = {};
   for (const team of shuffle(d.teams.filter(t => !t.human), rng)) {
     const size = rosterKeys(d, team.id).length;
@@ -1476,15 +1879,22 @@ export function aiRivalOffers(d, rng = Math.random) {
       // The human's own rule (fitsCap): a real deal fits under the cap, a
       // minimum deal anywhere under the apron — and nothing past it.
       if (dp > room && !(dp <= MIN_DP && booked + dp <= aiApronDp(d))) continue;
+      // AND THE CARD-SALARY CEILING (aiSalaryCap, the user, 2026-09-18): the
+      // cards it already bid on today, its unsigned picks and a cheap card
+      // for each seat still short of eight are held back, as the DP is above.
+      const salHeld = rookieSalaryHeld(d, team.id) + (spentSal[team.id] ?? 0) + spotsAfter * AI_SALARY_PER_SPOT;
+      if (!salaryFits(d, team.id, [key], [], salHeld)) continue;
       const ratio = dp / floor;
       const cur = rivals[key];
       if (cur && cur.ratio >= ratio) continue;
       if (cur) {
         spent[cur.teamId] -= cur.dp;
+        spentSal[cur.teamId] -= salaryOf(key);
         made[cur.teamId] -= 1;
       }
       rivals[key] = { teamId: team.id, dp, years, ratio };
       spent[team.id] = (spent[team.id] ?? 0) + dp;
+      spentSal[team.id] = (spentSal[team.id] ?? 0) + salaryOf(key);
       made[team.id] = (made[team.id] ?? 0) + 1;
     }
   }
@@ -1494,7 +1904,7 @@ export function aiRivalOffers(d, rng = Math.random) {
 /** Open free agency: day one, fresh talks, the AI's first bids on the table. */
 export function openFreeAgency(d, { rng = Math.random } = {}) {
   const x = { ...d, phase: DPHASE.freeAgency, fa: { day: 1, rivals: {} }, talks: {}, draft: d.draft?.pool ? { kind: d.draft.kind, picks: d.draft.picks } : d.draft };
-  return say({ ...x, fa: { day: 1, rivals: aiRivalOffers(x, rng) } }, 'Free agency is open. The AI teams have made their first offers.');
+  return aiOfferTurn(say({ ...x, fa: { day: 1, rivals: aiRivalOffers(x, rng) } }, 'Free agency is open. The AI teams have made their first offers.'));
 }
 
 /** The end of a day: every rival bid still standing — and still affordable — signs. */
@@ -1506,6 +1916,9 @@ function resolveRivals(d) {
     if (!free.has(key)) continue;
     if (rosterKeys(x, r.teamId).length >= MAX_ROSTER) continue;
     if (payroll(x, r.teamId) + r.dp > (r.dp <= MIN_DP ? aiApronDp(x) : aiCapDp(x))) continue;
+    // The ceiling is read again at signing (aiSalaryCap, 2026-09-18): a
+    // claim or a trade since the bid may have taken the room.
+    if (!signingFits(x, r.teamId, key)) continue;
     x = sign(x, r.teamId, key, { dp: r.dp, years: r.years, how: 'fa' });
     free.delete(key);
   }
@@ -1515,20 +1928,25 @@ function resolveRivals(d) {
 /** Next day of free agency; after the last one it closes. */
 export function nextFaDay(d, { rng = Math.random } = {}) {
   if (d.phase !== DPHASE.freeAgency) throw new Error('dynasty: free agency is not open');
-  // A pick that fits by now — a trade took money off the books — signs.
-  const x = aiSignRookies(resolveRivals(d));
+  // The wire first (a claim is a contract the day's bids have to fit
+  // around); then a pick that fits by now — a trade or a claim took money
+  // off the books — signs.
+  const x = aiSignRookies(resolveRivals(resolveWaivers(d)));
   const day = (d.fa?.day ?? 1) + 1;
   if (day > FA_DAYS) return closeFreeAgency(x);
   const y = { ...x, fa: { day, rivals: {} } };
-  return { ...y, fa: { day, rivals: aiRivalOffers(y, rng) } };
+  return aiOfferTurn({ ...y, fa: { day, rivals: aiRivalOffers(y, rng) } });
 }
 
 /** Close free agency: the AI teams fill to eight from what is left, and it is the preseason. */
 export function closeFreeAgency(d) {
   // Picks first — a signed pick counts toward the eight — then the fill.
-  let x = aiSignRookies({ ...d, phase: DPHASE.preseason, fa: { day: LEFTOVER_DAY, rivals: {} }, talks: {} });
+  let x = aiSignRookies({ ...resolveWaivers(d), phase: DPHASE.preseason, fa: { day: LEFTOVER_DAY, rivals: {} }, talks: {} });
+  // The AI's second trading point of the offseason (2026-09-18): after the
+  // market, before the fill — a team short of eight may trade for a man first.
+  x = aiTrades(x);
   for (const team of x.teams.filter(t => !t.human)) x = fillRoster(x, team.id);
-  return say(x, 'Free agency has closed. Whoever is left will sign for less.');
+  return aiOfferTurn(say(x, 'Free agency has closed. Whoever is left will sign for less.'));
 }
 
 // ── The season, and the turn of the year ────────────────────────────────────
@@ -1553,7 +1971,11 @@ export function startSeason(d, { rng = Math.random } = {}) {
   // fits, sheds one contract for a pick worth it, and every pick still
   // unsigned — on any team — lapses to free agency. Then the AI fills to eight.
   // An older save stores its next class here, before camp can take from the pool.
-  let x = withClass(lapseRookies(aiSignRookies(d, { deadline: true })));
+  // The wire resolves before the deadline; the deadline's own sheds wait on
+  // it for the season's first round to turn (seasonTurn).
+  // The AI's last trading point of the offseason (2026-09-18) comes first,
+  // so a pick a trade makes room for signs before the deadline.
+  let x = withClass(lapseRookies(aiSignRookies(aiTrades(resolveWaivers(d)), { deadline: true })));
   for (const team of x.teams.filter(t => !t.human)) x = fillRoster(x, team.id);
   const short = x.teams.filter(t => rosterProblem(x, t.id));
   if (short.length) throw new Error(`dynasty: ${short.map(t => `${t.name} has ${rosterProblem(x, t.id)}`).join('; ')}`);
@@ -1571,7 +1993,7 @@ export function startSeason(d, { rng = Math.random } = {}) {
   const season = buildSeason({ id: `${x.id}-y${x.year}`, teams, length: x.length, series: x.series ?? null });
   void rng;
   // A new season forgives: nobody is spurned any more.
-  return say({ ...x, season, phase: DPHASE.season, fa: null, talks: {}, spurned: {} }, `Year ${x.year} tips off.`);
+  return aiOfferTurn(say({ ...x, season, phase: DPHASE.season, fa: null, talks: {}, spurned: {} }, `Year ${x.year} tips off.`));
 }
 
 /**
@@ -1580,8 +2002,11 @@ export function startSeason(d, { rng = Math.random } = {}) {
  * its own, and the exclusive window opens. After the tenth season the
  * dynasty is done instead.
  */
-export function endSeason(d, { rng = Math.random } = {}) {
-  if (d.phase !== DPHASE.season || d.season?.phase !== PHASE.done) throw new Error('dynasty: the season is not finished');
+export function endSeason(d0, { rng = Math.random } = {}) {
+  if (d0.phase !== DPHASE.season || d0.season?.phase !== PHASE.done) throw new Error('dynasty: the season is not finished');
+  // Anyone still on the wire (a season whose rounds were never turned
+  // through seasonTurn) is resolved before the year closes.
+  const d = resolveWaivers(d0);
   const s = d.season;
   const table = standings(s);
   const seeds = s.playoffSeeds ?? [];
@@ -1591,6 +2016,13 @@ export function endSeason(d, { rng = Math.random } = {}) {
     runnerUp: s.runnerUp ?? null,
     playoffSeeds: [...seeds],
     table: table.map(r => ({ id: r.id, w: r.w, l: r.l, rank: r.rank })),
+    // THE SHARE THE COACH PLAYED (2026-09-18): the user, "title/year money is
+    // multiplied by the share of your own games you actually played (simmed
+    // ones don't count)". Counted now, while the season's results still
+    // exist; prizes.js dynastyYearEarnings reads it. A solo dynasty only (its
+    // one coach is HUMAN_ID; a friends dynasty's are h:<uid>) — one with
+    // friends keeps its own rules, and its entries carry no count.
+    ...(isSoloDynasty(d) ? { own: ownGamesPlayed(s.results, HUMAN_ID) } : {}),
   };
   const teams = d.teams.map(t => {
     const row = table.find(r => r.id === t.id);
@@ -1605,7 +2037,7 @@ export function endSeason(d, { rng = Math.random } = {}) {
   const champ = teamOf(d, s.champion);
   let x = say({ ...d, teams, history: [...d.history, entry], season: null }, `🏆 ${champ?.name ?? 'Somebody'} win the Year ${d.year} title.`);
   // A ten-year dynasty ends itself; an aging one runs until it is ended (endDynasty).
-  if (!d.aging && d.year >= (d.years ?? DYNASTY_YEARS)) return say({ ...x, phase: DPHASE.done }, 'The dynasty is complete.');
+  if (!d.aging && d.year >= (d.years ?? DYNASTY_YEARS)) return aiOfferTurn(say({ ...x, phase: DPHASE.done }, 'The dynasty is complete.'));
 
   const year = d.year + 1;
   const contracts = {};
@@ -1623,7 +2055,7 @@ export function endSeason(d, { rng = Math.random } = {}) {
     phase: DPHASE.resign, talks: {}, fa: null, lottery: null,
   };
   // Everyone is a year older now; the old may retire before the window opens.
-  return aiResign(retirements(x, rng), rng);
+  return aiOfferTurn(aiResign(retirements(x, rng), rng));
 }
 
 /**
@@ -1654,7 +2086,7 @@ export function endDynasty(d) {
   if (d.phase === DPHASE.season || d.phase === DPHASE.done) throw new Error('dynasty: end it between seasons');
   if (!d.history.length) throw new Error('dynasty: play a season first');
   const n = d.history.length;
-  return say({ ...d, phase: DPHASE.done, talks: {}, fa: null }, `The dynasty is retired after ${n} season${n === 1 ? '' : 's'}.`);
+  return aiOfferTurn(say({ ...resolveWaivers(d), phase: DPHASE.done, talks: {}, fa: null }, `The dynasty is retired after ${n} season${n === 1 ? '' : 's'}.`));
 }
 
 /**
@@ -1667,21 +2099,48 @@ export function endDynasty(d) {
  * pick one would be the two DP short that passes a first-overall pick.
  * `year` prices a later draft the same way, on today's standings — the best
  * guess there is a year out (aiResign's look ahead).
+ *
+ * AND THE CARD SALARY THOSE PICKS WILL CARRY (`salary`, 2026-09-19). The
+ * ceiling holds card salary where the scale holds DP, and re-signing with
+ * only the scale held back spent the salary room the picks needed: a
+ * reviewer's probe had the AI passing 56% of its rookie picks with the
+ * ceiling (19% without), 4 of 54 first-overall picks among them — the bug
+ * above, in salary. So each pick holds the card at its projected overall
+ * slot in the class already drawn for it (classFor), the class ranked by
+ * talent as the AI drafts it; the lottery's first-rounder the class's best.
+ * Only the coming draft has a class, so a later `year` holds no salary.
+ * `held` prices a pick list other than the team's own (a trade's).
  */
-function draftReserve(d, teamId, year = nextDraftYear(d)) {
+function draftReserve(d, teamId, year = nextDraftYear(d), held = picksOf(d, teamId)) {
   const teams = d.teams.length;
   const lottery = new Set(lotteryOdds(d).entries.map(e => e.teamId));
+  const ranked = year === nextDraftYear(d) ? rankedClass(d) : [];
   let dp = 0;
   let picks = 0;
-  for (const id of picksOf(d, teamId)) {
+  let salary = 0;
+  for (const id of held) {
     const { year: y, round, origin } = parsePick(id);
     if (y !== year) continue;
     const at = round === 1 && lottery.has(origin) ? 1 : projectedSlot(d, origin);
-    dp += rookieScale((round - 1) * teams + at, teams).dp;
+    const slot = (round - 1) * teams + at;
+    dp += rookieScale(slot, teams).dp;
+    if (ranked.length) salary += salaryOf(ranked[Math.min(slot, ranked.length) - 1]);
     picks += 1;
   }
-  return { dp, picks };
+  return { dp, picks, salary };
 }
+
+/** The coming draft's class, best first by talent — the order the AI takes it in. */
+function rankedClass(d) {
+  const cls = classFor(d);
+  const hit = RANKED.get(cls);
+  if (hit) return hit;
+  const ranked = cls.filter(k => cardOf(k)).sort((a, b) => talentValue(cardOf(b)) - talentValue(cardOf(a)));
+  RANKED.set(cls, ranked);
+  return ranked;
+}
+/** rankedClass, remembered per class array (a stored class is never mutated, only replaced). */
+const RANKED = new WeakMap();
 
 /**
  * The AI's exclusive window: keep a player at his floor when he fits under
@@ -1728,7 +2187,13 @@ export function aiResign(d, rng = Math.random) {
       const short = Math.max(0, MIN_ROSTER - after - reserve.picks);
       const held = reserve.dp + short * AI_RESERVE_PER_SPOT;
       const nextYear = years < 2 || running() + dp + reserve.dp + ahead.dp <= aiApronDp(x);
-      const fits = after <= MAX_ROSTER && payroll(x, team.id) + dp + held <= aiApronDp(x) && nextYear;
+      // And his card fits the ceiling (aiSalaryCap, the user, 2026-09-18),
+      // with a cheap card held back for each seat still short of eight — and
+      // the cards the coming picks will carry (draftReserve's salary,
+      // 2026-09-19), so the ceiling passes no more picks than the apron does.
+      const salHeld = short * AI_SALARY_PER_SPOT + reserve.salary;
+      const fits = after <= MAX_ROSTER && payroll(x, team.id) + dp + held <= aiApronDp(x) && nextYear
+        && salaryFits(x, team.id, [key], [], salHeld);
       const wanted = salaryOf(key) >= median || rng() < 0.5;
       x = fits && wanted ? sign(x, team.id, key, { dp, years, how: 'resign' }) : renounce(x, team.id, key);
     }
@@ -1744,10 +2209,10 @@ export function closeResign(d, { rng = Math.random } = {}) {
   if (d.phase !== DPHASE.resign) throw new Error('dynasty: the window is not open');
   // The class was drawn a year ago (withClass) and the trades below are
   // valued on it; an older save with none stored stores the same draw now.
-  let x = withClass(d);
+  let x = withClass(resolveWaivers(d));
   for (const h of humanIds(x)) for (const key of rightsOf(x, h, 'expiring')) x = renounce(x, h, key);
-  x = aiTrades(x, { rng });
-  return { ...x, phase: DPHASE.lottery, talks: {}, lottery: { ...lotteryOdds(x), order: null, moved: null } };
+  x = aiTrades(x);
+  return aiOfferTurn({ ...x, phase: DPHASE.lottery, talks: {}, lottery: { ...lotteryOdds(x), order: null, moved: null } });
 }
 
 // ── Trades (the user, 2026-09-11) ───────────────────────────────────────────
@@ -1774,7 +2239,12 @@ const groupOf = key => POS_GROUP[cardOf(key)?.pos] ?? 'F';
 /** Short at his position: worth up to 30% more; long: down to 15% less. */
 function needFactor(teamKeys, card) {
   const group = POS_GROUP[card?.pos] ?? 'F';
-  const gap = POS_TARGET[group] - teamKeys.filter(k => groupOf(k) === group).length;
+  return needAt(group, teamKeys.filter(k => groupOf(k) === group).length);
+}
+
+/** needFactor from the count a roster has at the group — how a search reads it (valuerFor). */
+function needAt(group, count) {
+  const gap = POS_TARGET[group] - count;
   if (gap > 0) return Math.min(1.3, 1 + 0.1 * gap);
   if (gap < 0) return Math.max(0.85, 1 + 0.05 * gap);
   return 1;
@@ -1828,9 +2298,16 @@ function availability(d, key, years) {
 export function tradeValue(d, key, teamId, rosterAfter = null) {
   const card = cardOf(key);
   if (!card) return 0;
+  return baseTradeValue(d, key, teamId) * needFactor(rosterAfter ?? rosterKeys(d, teamId), card);
+}
+
+/** tradeValue before the need at his position — the part a search can remember (valuerFor). */
+function baseTradeValue(d, key, teamId, direction = teamDirection(d, teamId)) {
+  const card = cardOf(key);
+  if (!card) return 0;
   const k = d.contracts[key];
   const years = k?.years ?? 1;
-  const rebuild = teamDirection(d, teamId) === 'rebuild';
+  const rebuild = direction === 'rebuild';
   const stays = availability(d, key, years);
   const weight = rebuild ? stays * stays : stays;
   // BUYERS AND SELLERS, the column's other constant: a contender pays for the
@@ -1839,8 +2316,76 @@ export function tradeValue(d, key, teamId, rosterAfter = null) {
   const cf = controlFactor(years);
   const control = rebuild ? cf ** 1.5 : 1 + (cf - 1) / 2;
   const money = rebuild ? 1.25 : 0.75;
-  const base = (talentValue(card) * control + contractValue(card, k) * money) * weight;
-  return base * needFactor(rosterAfter ?? rosterKeys(d, teamId), card);
+  return (talentValue(card) * control + contractValue(card, k) * money) * weight;
+}
+
+/**
+ * ONE STATE'S TRADE VALUES, REMEMBERED (2026-09-18). The directed AI search
+ * (aiTrades) and the AI's proposals to a coach (aiProposals) weigh tens of
+ * thousands of deals against one unchanged dynasty, and every tradeValue
+ * re-derived the team's direction (in year one a talent ranking of the whole
+ * league) and every pickValue re-sorted the class. This holds each team's
+ * direction, roster, payroll and picks, each player's value before need and
+ * each pick's value, for ONE state — the numbers are tradeValue's and
+ * pickValue's own, so a deal judged here is judged exactly as evaluateTrade
+ * judges it. Never keep one across a change to the dynasty.
+ */
+function valuerFor(d) {
+  // One map per kind of number, keyed by team then key: a search asks tens of
+  // thousands of times, and building a string key per ask was its hot spot.
+  const memo = () => {
+    const byTeam = new Map();
+    return (t, id, make) => {
+      let m = byTeam.get(t);
+      if (!m) byTeam.set(t, (m = new Map()));
+      if (!m.has(id)) m.set(id, make());
+      return m.get(id);
+    };
+  };
+  const team = memo();
+  const bases = memo();
+  const pickMemo = memo();
+  const groups = new Map();
+  const group = key => {
+    if (!groups.has(key)) groups.set(key, cardOf(key) ? (POS_GROUP[cardOf(key).pos] ?? 'F') : null);
+    return groups.get(key);
+  };
+  const direction = t => team(t, 'dir', () => teamDirection(d, t));
+  const roster = t => team(t, 'roster', () => rosterKeys(d, t));
+  const base = (key, t) => bases(t, key, () => baseTradeValue(d, key, t, direction(t)));
+  return {
+    direction,
+    roster,
+    /** A player's position group ('F' for a card without one), or null when there is no card. */
+    group,
+    pay: t => team(t, 'pay', () => payroll(d, t)),
+    /** Its roster's card salary (aiSalaryOf) — the AI ceiling's reading. */
+    salary: t => team(t, 'sal', () => aiSalaryOf(d, t)),
+    picks: t => team(t, 'picks', () => picksOf(d, t)),
+    player(key, t, after = null) {
+      const card = cardOf(key);
+      if (!card) return 0;
+      return base(key, t) * needFactor(after ?? roster(t), card);
+    },
+    pick: (id, t) => pickMemo(t, id, () => pickValue(d, id, t)),
+    /** A roster's count at each position group. */
+    counts: t => team(t, 'counts', () => {
+      const c = { G: 0, F: 0, C: 0 };
+      for (const k of roster(t)) c[groupOf(k)] += 1;
+      return c;
+    }),
+    /** tradeValue on a roster given by its counts at each group, not its keys — the same number, without building the roster. */
+    playerAt(key, t, counts) {
+      const g = group(key);
+      return g ? base(key, t) * needAt(g, counts[g]) : 0;
+    },
+    /** The roster weakest first, as weakestOf ranks it (a stable sort keeps its tie order). */
+    weakOrder: t => team(t, 'weak', () => {
+      const talent = new Map(roster(t).map(k => [k, talentValue(cardOf(k))]));
+      const value = new Map(roster(t).map(k => [k, contractValue(cardOf(k), d.contracts[k])]));
+      return [...roster(t)].sort((p, q) => talent.get(p) - talent.get(q) || value.get(p) - value.get(q));
+    }),
+  };
 }
 
 // ── Draft picks ─────────────────────────────────────────────────────────────
@@ -1930,69 +2475,254 @@ const dpOf = (d, keys) => keys.reduce((t, k) => t + (d.contracts[k]?.dp ?? 0), 0
  */
 export const TRADE_MATCH = 1.25;
 
+// ── ROSTER RELIEF (2026-09-18) ──────────────────────────────────────────────
+//
+// The user's decision, 2026-09-17, as recorded: "trades: receiving side may
+// auto-waive its CHEAPEST for roster room". What is built waives its WEAKEST
+// (shedCandidate's pick: least talent, then worst contract), because the
+// lead's phase-2 brief (2026-09-18) asked for shedCandidate — the two
+// differ, and which the user meant is put to them (open as of 2026-09-18);
+// weakestOf/v.weakOrder is the one place to change. Every roster is ten in year one,
+// so before this no two-for-one and no salary dump could ever be legal (a
+// probe, 2026-09-18: 0 of 3,150 human→AI two-for-ones). Now a side that would
+// end ABOVE MAX_ROSTER waives its weakest man — never one coming in, never
+// one going out — as part of the deal. He goes ON WAIVERS like any waive, so
+// a claim takes his contract and his DP off that side's books; until then
+// his DP stays as dead money, which is why relief leaves a side's payroll —
+// and so its apron check — exactly where the trade puts it. One man a side:
+// a deal that would need two cuts is still too many players. A coach sees
+// the cut in the deal before saying yes ("to make room, X is waived"); an AI
+// side takes a deal with a cut only when it still wins after losing him —
+// evaluateTrade counts him in what that side gives up.
+export const TRADE_RELIEF = 1;
+
+/** Who each side of a deal waives to make room: `{ [teamId]: [key] }`, empty when nobody has to. */
+export function tradeRelief(d, { from, to, give = [], get = [] }, v = null) {
+  const relief = {};
+  for (const [team, loses, gains] of [[from, give, get], [to, get, give]]) {
+    const size = (v ? v.roster(team) : rosterKeys(d, team)).filter(k => !loses.includes(k)).length;
+    const over = size + gains.length - MAX_ROSTER;
+    if (over <= 0 || over > TRADE_RELIEF) continue;
+    // A search reads the same order off its valuer: weakestOf, ranked once.
+    if (v) {
+      relief[team] = v.weakOrder(team).filter(k => !loses.includes(k)).slice(0, over);
+      continue;
+    }
+    let staying = rosterKeys(d, team).filter(k => !loses.includes(k));
+    const cut = [];
+    for (let i = 0; i < over; i += 1) {
+      const worst = weakestOf(d, staying);
+      if (!worst) break;
+      cut.push(worst);
+      staying = staying.filter(k => k !== worst);
+    }
+    relief[team] = cut;
+  }
+  return relief;
+}
+
+/**
+ * A deal's relief as it will be undone if it must be (a commissioner's veto,
+ * dynastyFriends.js): each man's team, key and contract as it stood.
+ */
+export function reliefOf(d, deal) {
+  return Object.entries(tradeRelief(d, deal)).flatMap(([teamId, keys]) => keys.map(key => ({ teamId, key, contract: { ...d.contracts[key] } })));
+}
+
+/**
+ * Put a trade's relief back while each man is still on the wire — a vetoed
+ * trade is undone whole (dynastyFriends.js vetoTrade). His dead money goes,
+ * his wire entry goes, his contract returns as it stood.
+ */
+export function restoreRelief(d, entries = []) {
+  let x = d;
+  for (const { teamId, key, contract } of entries) {
+    const w = waiverList(x).find(e => e.key === key && e.from === teamId);
+    if (!w) throw new Error('dynasty: a player that trade waived has left the waiver wire');
+    const at = (x.dead ?? []).findLastIndex(m => m.teamId === teamId && m.key === key && m.through === w.year && m.dp === w.dp);
+    x = {
+      ...x,
+      waivers: waiverList(x).filter(e => e !== w),
+      contracts: { ...x.contracts, [key]: contract },
+      dead: at < 0 ? (x.dead ?? []) : x.dead.filter((_, i) => i !== at),
+      spurned: omit(x.spurned, key),
+    };
+  }
+  return x;
+}
+
+/** Whether a trade's relief can still be undone: every man it waived is still on the wire. */
+export const reliefOnWire = (d, entries = []) => entries.every(({ teamId, key }) => waiverList(d).some(e => e.key === key && e.from === teamId));
+
 /**
  * Why a deal cannot happen, or []. A deal is `{ from, to, give, get }`:
- * `give` goes from → to, `get` comes back. Both rosters end at ten or fewer;
- * a side over its cap after the deal takes back at most TRADE_MATCH of what
- * it sends; and neither payroll may grow past its apron — the human's 130, an
- * AI team's 115 at the rung (aiApronDp). A payroll already past its apron may
- * still come DOWN through a trade (the user, 2026-09-12: trade them to get
- * under), which matching allows by itself.
+ * `give` goes from → to, `get` comes back. Both rosters end at ten or fewer
+ * — after a side's roster relief (tradeRelief), one man at most; a side over
+ * its cap after the deal takes back at most TRADE_MATCH of what it sends;
+ * and neither payroll may grow past its apron — the human's 130, an AI
+ * team's 115 at the rung (aiApronDp). The man relief waives stays on the
+ * books as dead money, so he counts against that apron. A payroll already
+ * past its apron may still come DOWN through a trade (the user, 2026-09-12:
+ * trade them to get under) — an AI team only down, a coach down or even. `v` is a
+ * valuerFor(d) a search passes to share its rosters and payrolls.
  */
-export function tradeProblems(d, { from, to, give = [], get = [], givePicks = [], getPicks = [] }) {
+export function tradeProblems(d, deal, v = null) {
+  const { from, to, give = [], get = [], givePicks = [], getPicks = [] } = deal;
   const out = [];
+  const rosterOfTeam = t => (v ? v.roster(t) : rosterKeys(d, t));
+  const picksOfTeam = t => (v ? v.picks(t) : picksOf(d, t));
   if (!tradesOpen(d)) out.push(d.phase === DPHASE.season ? 'The trade deadline has passed.' : 'No trades right now.');
   if (!give.length && !get.length && !givePicks.length && !getPicks.length) out.push('Nothing is in the deal yet.');
   if (give.some(k => d.contracts[k]?.teamId !== from)) out.push('Only players under contract with you can be traded.');
   if (get.some(k => d.contracts[k]?.teamId !== to)) out.push('That player is not under contract with them.');
-  if (givePicks.length && givePicks.some(id => !picksOf(d, from).includes(id))) out.push('That pick is not yours to trade.');
-  if (getPicks.length && getPicks.some(id => !picksOf(d, to).includes(id))) out.push('That pick is not theirs to trade.');
+  if (givePicks.length && givePicks.some(id => !picksOfTeam(from).includes(id))) out.push('That pick is not yours to trade.');
+  if (getPicks.length && getPicks.some(id => !picksOfTeam(to).includes(id))) out.push('That pick is not theirs to trade.');
+  const relief = tradeRelief(d, deal, v);
   for (const [team, loses, gains] of [[from, give, get], [to, get, give]]) {
-    const size = rosterKeys(d, team).length - loses.length + gains.length;
-    if (size > MAX_ROSTER) out.push(`${teamOf(d, team)?.name} would have ${size} players — ${MAX_ROSTER} is the most.`);
+    const size = rosterOfTeam(team).length - loses.length + gains.length;
+    if (size - (relief[team]?.length ?? 0) > MAX_ROSTER) {
+      out.push(`${teamOf(d, team)?.name} would have ${size} players — ${MAX_ROSTER} is the most, and a trade waives at most ${TRADE_RELIEF} to make room.`);
+    }
     // Mid-season a team still has to take the floor.
     if (d.phase === DPHASE.season && size < MIN_ROSTER) out.push(`${teamOf(d, team)?.name} would have ${size} players — a team in season keeps ${MIN_ROSTER}.`);
-    const before = payroll(d, team);
+    // Relief moves a man's DP from his contract to dead money: the payroll is the trade's alone.
+    const before = v ? v.pay(team) : payroll(d, team);
     const sent = dpOf(d, loses);
     const taken = dpOf(d, gains);
     const after = before - sent + taken;
     const apron = apronFor(d, team);
+    // An AI TEAM past its apron trades only DOWN (2026-09-18): taking any DP
+    // back, it must send out more. An even swap kept one at 117 of its 115
+    // (the phase-2 measure) — still over after a trade and no nearer under.
+    // A coach keeps the NBA's even swap (the user, 2026-09-12: trade them to
+    // get under — and the measure's 300-DP start lost a quarter of its legal
+    // one-for-ones when the rule was both sides'). A picks-only deal or a dump
+    // takes nothing back.
+    const evenIsUp = taken > 0 && after === before && !teamOf(d, team)?.human;
     if (after > apron && after > before) out.push(`${teamOf(d, team)?.name} would be at ${after} DP — past the ${apron} apron.`);
+    else if (after > apron && evenIsUp) {
+      out.push(`${teamOf(d, team)?.name} are already past their ${apron} apron at ${before} DP — they only trade down: taking any DP back, they must send out more.`);
+    }
     else if (after > capFor(d, team) && taken > sent * TRADE_MATCH) {
       out.push(`${teamOf(d, team)?.name} would be over the cap taking back ${taken} DP for ${sent} — over the cap a team takes back at most ${Math.round(TRADE_MATCH * 100)}% of what it sends out.`);
+    }
+    // AN AI SIDE ENDS WITHIN ITS CARD-SALARY CEILING (aiSalaryCap, the user,
+    // 2026-09-18) — whoever proposed the deal: the AI's own search, its offer
+    // to a coach, or a coach's offer to it. The man its relief waives leaves
+    // the roster, so his card leaves the sum. A team already over the ceiling
+    // (an older save) may trade level or down, never up. A coach's side is
+    // never held to it — "never a worse you".
+    //
+    // And room kept (2026-09-19) as every other AI path keeps it: its
+    // unsigned picks' cards (as fitProblem); before the draft (the re-sign
+    // window's and the lottery's trades, closeResign aiTrades) the cards the
+    // picks it will hold after the deal are projected to carry
+    // (draftReserve); and a cheap card for each seat, those picks counted,
+    // still short of eight (seatsHeld). A verifier's step trace had
+    // closeResign's trades take short-handed AI teams to the ceiling, and the
+    // fill then sign past it.
+    if (!teamOf(d, team)?.human) {
+      const salNow = v ? v.salary(team) : aiSalaryOf(d, team);
+      const salAfter = salNow - salaryOfKeys(loses) - salaryOfKeys(relief[team] ?? []) + salaryOfKeys(gains);
+      const ceiling = aiSalaryCap(d);
+      const unsigned = rightsOf(d, team, 'rookie');
+      const beforeDraft = d.phase === DPHASE.resign || d.phase === DPHASE.lottery;
+      const heldFor = (players, picks) => {
+        let seats = players + unsigned.length;
+        let h = salaryOfKeys(unsigned);
+        if (beforeDraft) {
+          const coming = draftReserve(d, team, nextDraftYear(d), picks);
+          h += coming.salary;
+          seats += coming.picks;
+        }
+        return h + seatsHeld(d, team, seats);
+      };
+      const [outP, inP] = team === from ? [givePicks, getPicks] : [getPicks, givePicks];
+      const picksAfter = [...picksOfTeam(team).filter(id => !outP.includes(id)), ...inP];
+      const held = heldFor(size - (relief[team]?.length ?? 0), picksAfter);
+      // What it needs is what is measured against the ceiling, before and
+      // after: a LEVEL two-for-one that leaves a team one short of eight
+      // still spends the eighth seat's room. The second build compared the
+      // salary alone, and closeFreeAgency's trades took a New York at $5,490
+      // from eight men to seven, level, and the fill then signed past the
+      // ceiling (the 2026-09-19 re-measure, 2 of 2,240 team-seasons).
+      // Both are read: the roster's own salary may not rise past the ceiling
+      // (sending out a pick lowers the need, never the salary on the books).
+      const needNow = salNow + heldFor(rosterOfTeam(team).length, picksOfTeam(team));
+      if ((salAfter > ceiling && salAfter > salNow) || (salAfter + held > ceiling && salAfter + held > needNow)) {
+        out.push(salAfter > ceiling
+          ? `${teamOf(d, team)?.name} would carry $${salAfter} of card salary — past the AI's $${ceiling} ceiling at this league's rung.`
+          : `${teamOf(d, team)?.name} would carry $${salAfter} of card salary and need $${held} more for their picks and empty seats — past the AI's $${ceiling} ceiling at this league's rung.`);
+      }
     }
   }
   return out;
 }
 
+/** One side of a deal, as that side sees it: what comes in, what goes out, and whom it waives to make room. */
+function sideOf(deal, team, relief) {
+  const cut = relief[team] ?? [];
+  return team === deal.to
+    ? { ins: deal.give ?? [], outs: deal.get ?? [], inPicks: deal.givePicks ?? [], outPicks: deal.getPicks ?? [], cut }
+    : { ins: deal.get ?? [], outs: deal.give ?? [], inPicks: deal.getPicks ?? [], outPicks: deal.givePicks ?? [], cut };
+}
+
+/**
+ * What a side gets, valued on the roster it would have, against what it
+ * gives, valued on the roster it has — and the man its relief waives counts
+ * as given up: his talent, never less than nothing (his DP is dead money
+ * whether he goes or not).
+ */
+function sideValues(v, team, { ins, outs, inPicks, outPicks, cut }) {
+  // The roster it would have, by its count at each position (needFactor's only reading of it).
+  const after = { ...v.counts(team) };
+  for (const k of outs) after[v.group(k) ?? 'F'] -= 1;
+  for (const k of cut) after[v.group(k) ?? 'F'] -= 1;
+  for (const k of ins) after[v.group(k) ?? 'F'] += 1;
+  const valueIn = ins.reduce((t, k) => t + v.playerAt(k, team, after), 0)
+    + inPicks.reduce((t, id) => t + v.pick(id, team), 0);
+  const valueOut = outs.reduce((t, k) => t + v.player(k, team), 0)
+    + outPicks.reduce((t, id) => t + v.pick(id, team), 0)
+    + cut.reduce((t, k) => t + Math.max(0, v.player(k, team)), 0);
+  return { valueIn, valueOut };
+}
+
+/** What the AI wants back for what it gives: its value out plus TRADE.aiEdge. */
+const neededFor = valueOut => valueOut + TRADE.aiEdge * Math.abs(valueOut);
+/** By how much a side clears the AI's edge (negative: it would not take the deal). */
+const margin = s => s.valueIn - neededFor(s.valueOut);
+
 /**
  * The other side's answer: what it gets, valued on the roster it would have,
- * against what it gives, valued on the roster it has — and it wants to win
- * by TRADE.aiEdge. `verdict` is accept, close (within TRADE.closeBand),
- * reject, or illegal; `short` is the value it is missing.
+ * against what it gives (and the man it waives to make room), valued on the
+ * roster it has — and it wants to win by TRADE.aiEdge. `verdict` is accept,
+ * close (within TRADE.closeBand), reject, or illegal; `short` is the value it
+ * is missing; `relief` is who each side waives to make room (tradeRelief).
  */
-export function evaluateTrade(d, deal) {
-  const problems = tradeProblems(d, deal);
-  const { to, give = [], get = [], givePicks = [], getPicks = [] } = deal;
-  const after = rosterKeys(d, to).filter(k => !get.includes(k));
-  const valueIn = give.reduce((t, k) => t + tradeValue(d, k, to, [...after, ...give]), 0)
-    + givePicks.reduce((t, id) => t + pickValue(d, id, to), 0);
-  const valueOut = get.reduce((t, k) => t + tradeValue(d, k, to), 0)
-    + getPicks.reduce((t, id) => t + pickValue(d, id, to), 0);
-  const needed = valueOut + TRADE.aiEdge * Math.abs(valueOut);
+export function evaluateTrade(d, deal, v = valuerFor(d)) {
+  const problems = tradeProblems(d, deal, v);
+  const relief = tradeRelief(d, deal, v);
+  const { valueIn, valueOut } = sideValues(v, deal.to, sideOf(deal, deal.to, relief));
+  const needed = neededFor(valueOut);
   const short = Math.max(0, needed - valueIn);
   const verdict = problems.length ? 'illegal'
     : valueIn >= needed ? 'accept'
       : short <= (1 - TRADE.closeBand) * Math.max(Math.abs(needed), 10) ? 'close' : 'reject';
-  return { problems, valueIn, valueOut, needed, short, verdict };
+  return { problems, valueIn, valueOut, needed, short, verdict, relief };
 }
 
-/** Make a deal the other side accepts — or, with `force`, one already judged (the AI's own). */
-export function makeTrade(d, deal, { force = false } = {}) {
+/**
+ * Make a deal the other side accepts — or, with `force`, one already judged
+ * (the AI's own, an offer a coach accepted). A side over ten waives its
+ * relief man as part of it; `relief: false` is a veto's reversal, which puts
+ * the relief back itself (restoreRelief) and must not cut anyone new.
+ */
+export function makeTrade(d, deal, { force = false, relief = true } = {}) {
   if (!force) {
     const ev = evaluateTrade(d, deal);
     if (ev.verdict !== 'accept') throw new Error(ev.problems[0] ?? 'dynasty: they turned it down');
   }
+  const cut = relief ? tradeRelief(d, deal) : {};
   const give = deal.give ?? [];
   const get = deal.get ?? [];
   const contracts = { ...d.contracts };
@@ -2007,14 +2737,18 @@ export function makeTrade(d, deal, { force = false } = {}) {
   for (const id of deal.getPicks ?? []) move(id, deal.from);
   const names = (keys, picks = []) => [...keys.map(k => cardOf(k)?.name), ...picks.map(id => pickLabel(d, id))].join(' and ') || 'nothing';
   let next = { ...d, contracts, pickOwner: owners };
-  // MID-SEASON the live season's rosters move too: the next fixture is played with them.
-  if (next.phase === DPHASE.season && next.season) {
-    const moved = new Set([deal.from, deal.to]);
-    next = { ...next, season: { ...next.season, teams: next.season.teams.map(t => (moved.has(t.id) ? { ...t, roster: rosterOf(next, t.id) } : t)) } };
+  const cuts = [];
+  for (const [team, keys] of Object.entries(cut)) {
+    for (const k of keys) {
+      next = release(next, team, k);
+      cuts.push(`${teamOf(d, team)?.name} waive ${cardOf(k)?.name} to make room`);
+    }
   }
+  // MID-SEASON the live season's rosters move too: the next fixture is played with them.
+  if (next.phase === DPHASE.season && next.season) next = syncSeasonRosters(next, [deal.from, deal.to]);
   return say(
     next,
-    `Trade: ${teamOf(d, deal.from)?.name} send ${names(give, deal.givePicks)} to ${teamOf(d, deal.to)?.name} for ${names(get, deal.getPicks)}.`,
+    `Trade: ${teamOf(d, deal.from)?.name} send ${names(give, deal.givePicks)} to ${teamOf(d, deal.to)?.name} for ${names(get, deal.getPicks)}${cuts.length ? `; ${cuts.join('; ')}` : ''}.`,
   );
 }
 
@@ -2023,61 +2757,323 @@ export function makeTrade(d, deal, { force = false } = {}) {
  * the deal done: `{ key }` or `{ pick }`, or null when nothing alone does.
  */
 export function suggestSweetener(d, deal) {
+  const v = valuerFor(d);
   const players = rosterKeys(d, deal.from).filter(k => !(deal.give ?? []).includes(k))
-    .map(k => ({ key: k, cost: tradeValue(d, k, deal.from), deal: { ...deal, give: [...(deal.give ?? []), k] } }));
+    .map(k => ({ key: k, cost: v.player(k, deal.from), deal: { ...deal, give: [...(deal.give ?? []), k] } }));
   const picks = picksOf(d, deal.from).filter(id => !(deal.givePicks ?? []).includes(id))
-    .map(id => ({ pick: id, cost: pickValue(d, id, deal.from), deal: { ...deal, givePicks: [...(deal.givePicks ?? []), id] } }));
-  const works = [...players, ...picks].filter(x => evaluateTrade(d, x.deal).verdict === 'accept').sort((a, b) => a.cost - b.cost);
+    .map(id => ({ pick: id, cost: v.pick(id, deal.from), deal: { ...deal, givePicks: [...(deal.givePicks ?? []), id] } }));
+  const works = [...players, ...picks].filter(x => evaluateTrade(d, x.deal, v).verdict === 'accept').sort((a, b) => a.cost - b.cost);
   if (!works.length) return null;
   return { key: works[0].key ?? null, pick: works[0].pick ?? null };
 }
 
-/**
- * The AI trading among itself, once an offseason: a handful of one-for-one
- * looks between two AI teams, made only when BOTH come out ahead by their
- * own lights.
- */
-export function aiTrades(d, { rng = Math.random, attempts = 24, max = 2 } = {}) {
-  if (!isOffseason(d)) return d;
-  const ai = d.teams.filter(t => !t.human).map(t => t.id);
-  let x = d;
-  let made = 0;
-  const any = list => list[Math.floor(rng() * list.length)];
-  for (let i = 0; i < attempts && made < max && ai.length >= 2; i += 1) {
-    const contenders = ai.filter(t => teamDirection(x, t) === 'contend');
-    const rebuilders = ai.filter(t => teamDirection(x, t) === 'rebuild');
-    let deal;
-    let aGains;
-    let bGains;
-    if (contenders.length && rebuilders.length && rng() < 0.5) {
-      // THE BUYER'S DEAL: a contender sends a pick to a rebuilder for a
-      // player — each values what it gets over what it gives.
-      const a = any(contenders);
-      const b = any(rebuilders);
-      const pick = any(picksOf(x, a));
-      const rb = rosterKeys(x, b);
-      if (!pick || !rb.length) continue;
-      const kb = any(rb);
-      deal = { from: a, to: b, give: [], get: [kb], givePicks: [pick], getPicks: [] };
-      bGains = pickValue(x, pick, b) - tradeValue(x, kb, b);
-      aGains = tradeValue(x, kb, a, [...rosterKeys(x, a), kb]) - pickValue(x, pick, a);
-    } else {
-      const a = any(ai);
-      const b = any(ai.filter(t => t !== a));
-      const ra = rosterKeys(x, a);
-      const rb = rosterKeys(x, b);
-      if (!ra.length || !rb.length) continue;
-      const ka = any(ra);
-      const kb = any(rb);
-      deal = { from: a, to: b, give: [ka], get: [kb] };
-      bGains = tradeValue(x, ka, b, [...rb.filter(k => k !== kb), ka]) - tradeValue(x, kb, b);
-      aGains = tradeValue(x, kb, a, [...ra.filter(k => k !== ka), kb]) - tradeValue(x, ka, a);
+// ── THE DEALS A TEAM'S SITUATION CALLS FOR (2026-09-18) ─────────────────────
+//
+// The approved design, for the AI trading among itself and for its offers to
+// a coach alike — every deal `a` could send `b`:
+//   (a) a team OVER ITS CAP sheds DP: a player for nothing, or a player and a
+//       pick to take him; a team SHORT OF THE FLOOR fills a seat with a pick;
+//   (b) a CONTENDER sends picks to a REBUILDER for a player (and, `mirror`, a
+//       rebuilder sends a player to a contender for its picks);
+//   (c) one-for-one and two-for-one swaps (and, `mirror`, one-for-two), which
+//       need at a position (needFactor) and direction (tradeValue) make worth
+//       doing for both sides.
+// The AI's search over its own teams runs both orders of every pair, so it
+// needs no mirror; an offer to a coach runs one order only, so it does.
+
+function* pairsOf(list) {
+  for (let i = 0; i < list.length; i += 1) for (let j = i + 1; j < list.length; j += 1) yield [list[i], list[j]];
+}
+
+function* dealShapes(d, v, a, b, { mirror = false } = {}) {
+  const ra = v.roster(a);
+  const rb = v.roster(b);
+  const pa = v.picks(a);
+  const pb = v.picks(b);
+  const deal = (give, get, givePicks = [], getPicks = []) => ({ from: a, to: b, give, get, givePicks, getPicks });
+  // (c) swaps
+  for (const x of ra) for (const y of rb) yield deal([x], [y]);
+  for (const two of pairsOf(ra)) for (const y of rb) yield deal(two, [y]);
+  if (mirror) for (const x of ra) for (const two of pairsOf(rb)) yield deal([x], two);
+  // (b) picks for a player
+  const buys = v.direction(a) === 'contend' && v.direction(b) === 'rebuild';
+  if (buys || ra.length < MIN_ROSTER) {
+    for (const p of pa) for (const y of rb) yield deal([], [y], [p]);
+    for (const two of pairsOf(pa)) for (const y of rb) yield deal([], [y], two);
+  }
+  if (mirror && v.direction(a) === 'rebuild' && v.direction(b) === 'contend') {
+    for (const x of ra) for (const q of pb) yield deal([x], [], [], [q]);
+    for (const x of ra) for (const two of pairsOf(pb)) yield deal([x], [], [], two);
+  }
+  // (a) over the cap: shed a contract, with a pick to take it if it must
+  if (v.pay(a) > capFor(d, a)) {
+    for (const x of ra) {
+      yield deal([x], []);
+      for (const p of pa) yield deal([x], [], [p]);
     }
-    if (tradeProblems(x, deal).length || bGains <= 1 || aGains <= 1) continue;
+  }
+  // ...and the other side over ITS cap, shedding onto `a` — a coach over the
+  // apron is who most needs a taker (the user, 2026-09-12: "trade them to
+  // get under").
+  if (mirror && v.pay(b) > capFor(d, b)) {
+    for (const y of rb) {
+      yield deal([], [y]);
+      for (const q of pb) yield deal([], [y], [], [q]);
+    }
+  }
+}
+
+// ── THE AI TRADING AMONG ITSELF: A DIRECTED SEARCH (2026-09-18) ─────────────
+//
+// The user, 2026-09-17: the AI should trade — with the other teams and with
+// you. Until today aiTrades drew 24 random pairs once a year and made a deal
+// only when both sides gained: three trades in forty seeded dynasties. Now,
+// at each offseason point where the AI teams already act (closeResign,
+// closeFreeAgency, startSeason), every AI team weighs every deal its
+// situation calls for (dealShapes) with every other AI team. A deal is made
+// only when BOTH sides would take it by their own lights — each clears the
+// edge the AI asks of a coach (TRADE.aiEdge, evaluateTrade's rule, from each
+// side) — and it passes every rule (tradeProblems: rosters and relief,
+// aprons, matching). The best deal league-wide goes first, best meaning the
+// SMALLER of the two sides' margins, so a deal both like beats one that
+// fleeces; a team makes one deal a point; AI_TRADES_PER_OFFSEASON across the
+// whole offseason, counted in d.aiDeals ({ year, n }). No dice: the same
+// dynasty makes the same deals, on the server and alone.
+export const AI_TRADES_PER_OFFSEASON = 3;
+
+/** The best deal between two AI teams neither in `skip`, or null. */
+function bestAiDeal(d, skip) {
+  const v = valuerFor(d);
+  const ai = d.teams.filter(t => !t.human && !skip.has(t.id)).map(t => t.id);
+  let best = null;
+  for (const a of ai) {
+    for (const b of ai) {
+      if (a === b) continue;
+      for (const deal of dealShapes(d, v, a, b)) {
+        const relief = tradeRelief(d, deal, v);
+        const sa = sideValues(v, a, sideOf(deal, a, relief));
+        const ma = margin(sa);
+        if (ma < 0 || sa.valueIn - sa.valueOut <= 1) continue;
+        const sb = sideValues(v, b, sideOf(deal, b, relief));
+        const mb = margin(sb);
+        if (mb < 0 || sb.valueIn - sb.valueOut <= 1) continue;
+        const score = Math.min(ma, mb);
+        if (best && score <= best.score) continue;
+        if (tradeProblems(d, deal, v).length) continue;
+        best = { deal, score };
+      }
+    }
+  }
+  return best?.deal ?? null;
+}
+
+/** AI-to-AI deals made so far this offseason. */
+const aiDealsMade = d => (d.aiDeals?.year === d.year ? d.aiDeals.n : 0);
+
+export function aiTrades(d, { max = AI_TRADES_PER_OFFSEASON } = {}) {
+  if (!isOffseason(d)) return d;
+  let x = d;
+  const traded = new Set();
+  for (let left = Math.min(max, AI_TRADES_PER_OFFSEASON - aiDealsMade(d)); left > 0; left -= 1) {
+    const deal = bestAiDeal(x, traded);
+    if (!deal) break;
     x = makeTrade(x, deal, { force: true });
-    made += 1;
+    x = { ...x, aiDeals: { year: x.year, n: aiDealsMade(x) + 1 } };
+    traded.add(deal.from);
+    traded.add(deal.to);
   }
   return x;
+}
+
+// ── THE AI PROPOSES TO YOU (2026-09-18) ─────────────────────────────────────
+//
+// The user, 2026-09-17: the AI should "propose trades". At every turn of the
+// dynasty while trades are open — each offseason phase, each day (week, with
+// friends) of free agency, the preseason, and each round of the regular
+// season up to the deadline — every AI team weighs the deals its situation
+// calls for (dealShapes, both ways round) with every coach, and keeps a deal
+// only when:
+//   * it is LEGAL now (tradeProblems) — no offer is ever posted illegal;
+//   * the AI would take it itself: its own side clears TRADE.aiEdge, the
+//     same rule it answers a coach's offer by;
+//   * it does not insult: the coach's side, valued by the coach's own
+//     direction and needs, gets back at least OFFER_FAIRNESS of what it
+//     gives (the relief man counted as given up);
+//   * the coach has not already turned it down (or let it lapse) this year.
+// Its best — the smaller of the two sides' margins again — is its ONE offer;
+// the AI_OFFERS_PER_TURN best offers league-wide are posted in d.offers, the
+// shape a coach's proposal takes (dynastyFriends.js proposeTrade) with `ai:
+// true`. An offer lapses at the next turn. Accepting one runs the rules again
+// (answerOffer): the world may have moved since it was made. No dice here
+// either, so a dynasty with friends — the server running the same turns —
+// posts exactly the offers a dynasty alone would.
+export const AI_OFFERS_PER_TURN = 3;
+export const OFFER_FAIRNESS = 0.9;
+/** Offers kept on the dynasty once decided, newest last; open ones are always kept. */
+export const OFFERS_KEPT = 40;
+/**
+ * The most offers one coach may have open at once (2026-09-18). A coach's
+ * offer to another coach never lapses, and open offers are never trimmed, so
+ * without this a friends league's document — which Firestore caps at 1 MiB —
+ * grew with every proposal (a review: 200 proposals, 201 offers kept).
+ */
+export const OPEN_OFFERS_PER_COACH = 10;
+
+const cleanDeal = deal => ({
+  from: deal.from, to: deal.to,
+  give: [...(deal.give ?? [])], get: [...(deal.get ?? [])],
+  givePicks: [...(deal.givePicks ?? [])], getPicks: [...(deal.getPicks ?? [])],
+});
+/** One string per deal, the same whichever order its pieces were picked in. */
+export const dealSig = o => [o.from, o.to, [...(o.give ?? [])].sort(), [...(o.get ?? [])].sort(), [...(o.givePicks ?? [])].sort(), [...(o.getPicks ?? [])].sort()].join('|');
+
+/** The turn a dynasty is on — a new one lapses the AI's open offers and asks for new ones. */
+const turnOf = d => [d.year, d.phase, d.fa?.day ?? 0, d.season?.phase ?? '', d.season?.round ?? 0].join(':');
+
+/**
+ * Trim the offers a dynasty keeps. Always kept: every open offer (each
+ * coach has at most OPEN_OFFERS_PER_COACH, the AI at most AI_OFFERS_PER_TURN
+ * a turn) and — given `d` — a trade between coaches accepted this phase,
+ * which the commissioner can still veto (a review, 2026-09-18: the trim
+ * could drop one mid-phase and the veto threw "no such offer"). Of the rest,
+ * OFFERS_KEPT stay: an AI team's decided offers go first, oldest first, since
+ * a busy year expires up to three a turn; then the coaches', oldest first.
+ */
+export function trimOffers(offers = [], d = null) {
+  const standing = o => o.status === 'open'
+    || (d && o.status === 'accepted' && !o.ai && o.year === d.year && o.phase === d.phase);
+  const decided = offers.filter(o => !standing(o));
+  const over = decided.length - OFFERS_KEPT;
+  if (over <= 0) return offers;
+  const drop = new Set([...decided.filter(o => o.ai), ...decided.filter(o => !o.ai)].slice(0, over));
+  return offers.filter(o => !drop.has(o));
+}
+
+/**
+ * The deals the coaches turned down or let lapse this year, which the AI
+ * does not offer again until the next (the docs promise it). Kept apart
+ * from d.offers (2026-09-18, a review): that list is trimmed, and a year of
+ * up to three lapses a turn outgrew it, so an old refusal could come back.
+ */
+const refusalsOf = d => new Set([
+  ...(d.offerRefusals?.year === d.year ? d.offerRefusals.sigs : []),
+  // An older save kept them only on the offers themselves.
+  ...(d.offers ?? []).filter(o => o.ai && o.year === d.year && (o.status === 'declined' || o.status === 'expired')).map(dealSig),
+]);
+function refuse(d, offers) {
+  const sigs = d.offerRefusals?.year === d.year ? d.offerRefusals.sigs : [];
+  const add = offers.map(dealSig).filter(s => !sigs.includes(s));
+  return add.length ? { ...d, offerRefusals: { year: d.year, sigs: [...sigs, ...add] } } : d;
+}
+
+/**
+ * Why an offer made TO `offer.to` cannot be accepted now, worded for the
+ * coach answering it, or []. The rules are tradeProblems' with the deal
+ * turned round to the answering side (they are the same both ways but for
+ * their words: a review, 2026-09-18, found "Only players under contract
+ * with you" said to a coach about the AI's own player). An AI team's offer
+ * is also off when that team no longer clears its edge on it.
+ */
+export function offerProblems(d, offer) {
+  const turned = {
+    from: offer.to, to: offer.from,
+    give: offer.get ?? [], get: offer.give ?? [], givePicks: offer.getPicks ?? [], getPicks: offer.givePicks ?? [],
+  };
+  const v = valuerFor(d);
+  const out = tradeProblems(d, turned, v);
+  if (!out.length && offer.ai && margin(sideValues(v, offer.from, sideOf(offer, offer.from, tradeRelief(d, offer, v)))) < 0) {
+    out.push(`${teamOf(d, offer.from)?.name} have thought better of it — the deal is off.`);
+  }
+  return out;
+}
+
+/** How a coach's side of an AI offer looks to the coach: `{ valueIn, valueOut }`, relief included. */
+export function offerValue(d, offer, teamId = offer.to) {
+  const v = valuerFor(d);
+  return sideValues(v, teamId, sideOf(offer, teamId, tradeRelief(d, offer, v)));
+}
+
+/** The deals the AI teams would offer the coaches right now, best first — one an AI team, AI_OFFERS_PER_TURN in all. */
+export function aiProposals(d) {
+  if (!tradesOpen(d)) return [];
+  const v = valuerFor(d);
+  const humans = humanIds(d).filter(h => teamOf(d, h));
+  const refused = refusalsOf(d);
+  const best = [];
+  for (const a of d.teams.filter(t => !t.human).map(t => t.id)) {
+    let top = null;
+    for (const h of humans) {
+      for (const deal of dealShapes(d, v, a, h, { mirror: true })) {
+        const relief = tradeRelief(d, deal, v);
+        const mine = sideValues(v, a, sideOf(deal, a, relief));
+        const ma = margin(mine);
+        if (ma < 0) continue;
+        const theirs = sideValues(v, h, sideOf(deal, h, relief));
+        if (theirs.valueIn < OFFER_FAIRNESS * theirs.valueOut) continue;
+        const score = Math.min(ma, theirs.valueIn - theirs.valueOut);
+        if (top && score <= top.score) continue;
+        if (tradeProblems(d, deal, v).length || refused.has(dealSig(deal))) continue;
+        top = { deal, score };
+      }
+    }
+    if (top) best.push(top);
+  }
+  return best.sort((x, y) => y.score - x.score).slice(0, AI_OFFERS_PER_TURN).map(b => cleanDeal(b.deal));
+}
+
+/**
+ * A TURN OF THE DYNASTY, for the AI's offers: the open ones lapse, and while
+ * trades are open the best new ones are posted, each with a line on the
+ * wire. Called at the end of every transition that moves the dynasty on and
+ * at each round of a season (seasonTurn); a second call on the same turn
+ * does nothing, so a transition built of others posts once.
+ */
+export function aiOfferTurn(d) {
+  const turn = turnOf(d);
+  if (d.offerTurn === turn) return d;
+  const lapsed = (d.offers ?? []).filter(o => o.ai && o.status === 'open');
+  let x = { ...d, offerTurn: turn };
+  // A lapse is a refusal for the year, kept where no trim reaches it — but
+  // only within the year it was made: the turn into a new year forgives.
+  if (lapsed.length) {
+    x = { ...x, offers: d.offers.map(o => (o.ai && o.status === 'open' ? { ...o, status: 'expired' } : o)) };
+    x = refuse(x, lapsed.filter(o => o.year === x.year));
+  }
+  const deals = aiProposals(x);
+  if (!deals.length) return lapsed.length ? { ...x, offers: trimOffers(x.offers, x) } : x;
+  const names = (keys, picks) => [...keys.map(k => cardOf(k)?.name), ...picks.map(id => pickLabel(x, id))].join(' and ') || 'nothing';
+  for (const deal of deals) {
+    const offer = { id: `ai-${turn}-${deal.from}-${deal.to}`, ...deal, status: 'open', ai: true, year: x.year, phase: x.phase };
+    x = say(
+      { ...x, offers: [...(x.offers ?? []), offer] },
+      `${teamOf(x, deal.from)?.name} offer ${teamOf(x, deal.to)?.name} ${names(deal.give, deal.givePicks)} for ${names(deal.get, deal.getPicks)}.`,
+    );
+  }
+  return { ...x, offers: trimOffers(x.offers, x) };
+}
+
+/**
+ * A coach's answer to an AI team's offer. Declined, it is marked and will not
+ * be made again this year. Accepted, it is judged AGAIN, now — the rules
+ * (tradeProblems) and the AI's own edge — because the world may have moved
+ * since it was posted (a signing, a trade, a claim); a deal that no longer
+ * stands is refused, and one that does is made, relief and all.
+ */
+export function answerOffer(d, id, teamId, accept) {
+  const offer = (d.offers ?? []).find(o => o.id === id);
+  if (!offer || offer.status !== 'open') throw new Error('dynasty: that offer is not open');
+  if (offer.to !== teamId) throw new Error('dynasty: that offer is not yours to answer');
+  const mark = (x, patch) => ({ ...x, offers: (x.offers ?? []).map(o => (o.id === id ? { ...o, ...patch } : o)) });
+  if (!accept) return mark(offer.ai ? refuse(d, [offer]) : d, { status: 'declined' });
+  // Judged from the answering coach's side, so the reason reads as theirs.
+  const problems = offerProblems(d, offer);
+  if (problems.length) throw new Error(`dynasty: ${problems[0]}`);
+  const relief = reliefOf(d, offer);
+  const x = makeTrade(d, offer, { force: true });
+  return mark(
+    say(x, `${teamOf(d, teamId)?.name} accepted ${teamOf(d, offer.from)?.name}'s offer.`),
+    { status: 'accepted', year: d.year, phase: d.phase, ...(relief.length ? { relief } : {}) },
+  );
 }
 
 // ── For the list screen ─────────────────────────────────────────────────────

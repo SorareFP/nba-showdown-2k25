@@ -8,7 +8,7 @@ import {
   leagueSeason, canReport, summarizeLeague, STATUS,
 } from './league.js';
 import { createFriendsDynasty, friendsAct } from './dynastyFriends.js';
-import { DPHASE, onClock, rosterKeys } from './dynasty.js';
+import { DPHASE, onClock, rosterKeys, waive, tradeProblems } from './dynasty.js';
 import { packDynasty, unpackDynasty } from './seasonPack.js';
 import { buildAiLeague } from './aiTeams.js';
 import { PHASE, playoffGames } from './seasonCore.js';
@@ -93,12 +93,20 @@ describe('moves', () => {
 
   it('trades between coaches go through offers the commissioner can veto', () => {
     let l = start(lobby('own', tenEach()));
+    // BUILT (2026-09-18): both coaches' books at 5 DP a man, so the one-for-
+    // one swap is legal whatever the pool dealt them — one card changing
+    // team had put it past an apron — and only the offer, the answer and the
+    // veto are under test.
+    const even = Object.fromEntries(Object.entries(l.state.contracts).map(([k, c]) => [k, c.teamId.startsWith('h:') ? { ...c, dp: 5 } : c]));
+    l = { ...l, state: { ...l.state, contracts: even } };
     const d = unpackDynasty(l.state);
     const give = rosterKeys(d, 'h:u2')[0];
     const get = rosterKeys(d, 'h:u1')[0];
+    expect(tradeProblems(d, { from: 'h:u2', to: 'h:u1', give: [give], get: [get] })).toEqual([]);
     expect(() => act(l, 'u2', 'tradeAi', { deal: { to: 'h:u1', give: [give], get: [get] } })).toThrow(/offer they answer/);
     l = act(l, 'u2', 'propose', { deal: { to: 'h:u1', give: [give], get: [get] } });
-    const id = l.state.offers[0].id;
+    // The coach's offer — the AI's own offers (2026-09-18) are in d.offers too.
+    const id = l.state.offers.find(o => !o.ai).id;
     l = act(l, 'u1', 'respond', { id, accept: true });
     expect(l.state.contracts[give].teamId).toBe('h:u1');
     expect(() => act(l, 'u2', 'veto', { id })).toThrow(/commissioner/);
@@ -166,5 +174,74 @@ describe('a year through the league', () => {
     }
     expect(leagueSeason(l).phase).toBe(PHASE.done);
     expect(seen.some(id => /\.g2$/.test(id))).toBe(true);
+  });
+});
+
+// ── WAIVERS WITH FRIENDS (the user, 2026-09-18) ────────────────────────────
+// The same wire as alone (dynasty.test.js 'waivers'), through the server's
+// moves: a coach waives, another claims with the 'claim' move, and the wire
+// resolves when the phase moves on — or, in season, when a round turns in
+// the league's own results (league.js applyResult → seasonTurn). The books
+// and the standings are set by hand so priority does not ride on the pool.
+describe('waivers with friends (2026-09-18)', () => {
+  it('a coach\'s claim takes a waived contract at the phase turn, and an in-season claim resolves when the round turns', () => {
+    let l = start(lobby('own', tenEach()));
+    const d0 = unpackDynasty(l.state);
+    const [u1, u2] = ['h:u1', 'h:u2'];
+    const ai = d0.teams.filter(t => !t.human).map(t => t.id);
+    // Both coaches' books at 1 DP a man; Bo trimmed to nine, so he has a
+    // seat; Ann's best on a 1-DP, three-year deal; Bo last in the standings.
+    const contracts = Object.fromEntries(Object.entries(d0.contracts).map(([k, c]) => [k, [u1, u2].includes(c.teamId) ? { ...c, dp: 1, years: 2 } : c]));
+    delete contracts[rosterKeys(d0, u2)[0]];
+    const key = rosterKeys(d0, u1)[0];
+    contracts[key] = { ...contracts[key], years: 3 };
+    const worstFirst = [u2, u1, ...ai];
+    const table = worstFirst.map((id, i) => ({ id, w: i, l: 9 - i, rank: worstFirst.length - i }));
+    l = { ...l, state: packDynasty({ ...d0, contracts, history: [{ year: 0, champion: null, runnerUp: null, playoffSeeds: [], table }] }) };
+
+    l = act(l, 'u1', 'waive', { key });
+    expect(l.state.waivers.map(w => w.key)).toEqual([key]);
+    expect(() => act(l, 'u1', 'claim', { key })).toThrow(/you waived him/);
+    l = act(l, 'u2', 'claim', { key });
+    expect(l.state.waivers[0].claims).toEqual([u2]);
+    // Nothing moves until the phase does: both ready, the season tips off.
+    expect(l.state.contracts[key]).toBeUndefined();
+    l = act(act(l, 'u1', 'ready'), 'u2', 'ready');
+    expect(l.state.phase).toBe(DPHASE.season);
+    expect(l.state.contracts[key]).toMatchObject({ teamId: u2, dp: 1, years: 3, how: 'waivers' });
+    expect(l.state.dead.filter(m => m.teamId === u1)).toEqual([]);
+    expect(l.state.waivers).toEqual([]);
+
+    // IN SEASON: an AI team's man on the wire (as a deadline shed leaves
+    // one), Ann — now worst — claims him, and a round of results turns it.
+    const s0 = unpackDynasty(l.state);
+    const from = ai[0];
+    const shed = rosterKeys(s0, from)[0];
+    const bargain = { ...s0, phase: DPHASE.preseason, contracts: { ...s0.contracts, [shed]: { ...s0.contracts[shed], dp: 1, years: 3 } } };
+    const waived = waive(bargain, from, shed);
+    const s1 = {
+      ...waived,
+      phase: DPHASE.season,
+      history: [{ year: 0, champion: null, runnerUp: null, playoffSeeds: [], table: [u1, u2, ...ai].map((id, i, all) => ({ id, w: i, l: 9 - i, rank: all.length - i })) }],
+      season: { ...waived.season, teams: waived.season.teams.map(t => (t.id === from ? { ...t, roster: t.roster.filter(c => cardKey(c) !== shed) } : t)) },
+    };
+    l = act({ ...l, state: packDynasty(s1) }, 'u1', 'claim', { key: shed });
+    const round = leagueSeason(l).round;
+    let guard = 0;
+    while (leagueSeason(l).round === round && guard++ < 50) {
+      expect(l.state.contracts[shed]).toBeUndefined();
+      const f = openFixtures(l)[0];
+      const humanHome = f.home.startsWith('h:');
+      const humanAway = f.away.startsWith('h:');
+      l = applyResult(l, { fixtureId: f.id, homeScore: 90, awayScore: 70, forfeit: humanHome && humanAway }, { now: 10 + guard }).league;
+    }
+    expect(leagueSeason(l).round).toBe(round + 1);
+    expect(l.state.contracts[shed]).toMatchObject({ teamId: u1, dp: 1, years: 3, how: 'waivers' });
+    expect(l.state.dead.filter(m => m.teamId === from && m.key === shed)).toEqual([]);
+    // Stored packed: Ann's live roster, as keys, has him for the next round.
+    const annRoster = l.state.season.teams.find(t => t.id === u1).roster;
+    expect(annRoster.every(k => typeof k === 'string')).toBe(true);
+    expect(annRoster).toContain(shed);
+    expect(l.state.news.some(n => /claimed .* off waivers — his salary comes off/.test(n.text))).toBe(true);
   });
 });

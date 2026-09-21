@@ -13,9 +13,9 @@ vi.mock('../../ui/dialogs.jsx', () => ({
 }));
 
 import { DraftRoom, FreeAgency, TradeDesk, PhaseButton, BidPanel } from './DynastyScreens.jsx';
-import { friendsMoves, TradeInbox, FriendsSetup } from './FriendsDynasty.jsx';
+import { friendsMoves, TradeInbox, FriendsSetup, friendsPreset } from './FriendsDynasty.jsx';
 import LeagueLobby from '../league/LeagueLobby.jsx';
-import { createDynasty, onClock, DPHASE, rosterKeys, freeAgentKeys } from '../../game/modes/dynasty.js';
+import { createDynasty, onClock, DPHASE, rosterKeys, freeAgentKeys, tradeProblems } from '../../game/modes/dynasty.js';
 import { runDraftClock, proposeTrade, setReady, advancePhase, PICK_CLOCK_MS } from '../../game/modes/dynastyFriends.js';
 import { newLeague, entrantFor } from '../../game/modes/league.js';
 import { buildAiLeague } from '../../game/modes/aiTeams.js';
@@ -77,9 +77,15 @@ describe('a dynasty with friends, on screen', () => {
   });
 
   it('the trade desk offers a coach a trade, and the inbox answers it', () => {
-    const d = own();
+    // BUILT (2026-09-18): both coaches at 5 DP a man, so the swap is legal
+    // whatever the pool dealt them (one card changing team put it past Bo's
+    // apron) and only the desk and the inbox are under test.
+    const d0 = own();
+    const d = { ...d0, contracts: Object.fromEntries(Object.entries(d0.contracts).map(([k, c]) => [k, c.teamId === A || c.teamId === B ? { ...c, dp: 5 } : c])) };
     expect(html(<TradeDesk d={as(d, A)} moves={movesFor(d, A)} defaultOpen />)).toContain('Offer it to Bo');
-    const x = proposeTrade(d, { from: A, to: B, give: [rosterKeys(d, A)[0]], get: [rosterKeys(d, B)[0]] }, { id: 'o1' });
+    const deal = { from: A, to: B, give: [rosterKeys(d, A)[0]], get: [rosterKeys(d, B)[0]] };
+    expect(tradeProblems(d, deal)).toEqual([]);
+    const x = proposeTrade(d, deal, { id: 'o1' });
     const theirs = html(<TradeInbox d={as(x, B)} moves={movesFor(x, B)} />);
     expect(theirs).toContain('Accept');
     expect(theirs).toContain('Decline');
@@ -96,5 +102,13 @@ describe('a dynasty with friends, on screen', () => {
     expect(lobby).toContain('Fantasy draft');
     expect(lobby).toContain('drafted when the dynasty starts');
     expect(html(<FriendsSetup teamA={[]} collection={{}} uid="u1" onCancel={() => {}} onCreated={() => {}} />)).toContain('Open the lobby');
+  });
+});
+
+// The league's rung plays a game against an AI team with friends too (2026-09-18).
+describe("a friends dynasty fixture's rung", () => {
+  it("carries the league's rung, and names Prince when the league has none", () => {
+    expect(friendsPreset({ aiLevel: 'king' }, 'L1')).toEqual({ returnTab: 'dynasty', leagueId: 'L1', aiLevel: 'king' });
+    expect(friendsPreset({ aiLevel: null }, 'L1').aiLevel).toBe('prince');
   });
 });

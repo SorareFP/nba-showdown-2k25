@@ -34,18 +34,29 @@ import {
   SEASON_REWARDS, DYNASTY_COMPLETION, DYNASTY_TITLE_BONUS, FANTASY_DYNASTY_FACTOR,
   dynastyCoinFactor, dynastyYearEarnings, dynastyCompletionEarnings,
 } from '../game/modes/prizes.js';
-import { createDynasty, START_MODES, DPHASE, MAX_ROSTER, simDraft, endSeason, endDynasty, isOffseason, summarizeDynasty, teamOf } from '../game/modes/dynasty.js';
+import { createDynasty, START_MODES, DPHASE, MAX_ROSTER, simDraft, endSeason, endDynasty, isOffseason, summarizeDynasty, teamOf, seasonTurn } from '../game/modes/dynasty.js';
 import { CAP_DP, APRON_DP, AI_APRON_DP } from '../game/modes/dynastyMarket.js';
-import { AI_LEVELS, loadAiLevel, levelById } from '../game/aiLevels.js';
+import { AI_LEVELS, loadAiLevel, levelById, capOf } from '../game/aiLevels.js';
+import { CAP as CARD_CAP } from '../game/teamRules.js';
 import RosterPicker, { Choice } from './league/RosterPicker.jsx';
 import { SeasonDashboard, MY_ID } from './SeasonTab.jsx';
 import {
-  PhaseTrack, FrontOffice, DraftRoom, SigningBoard, LotteryRoom, RookieSigning, FreeAgency, NewsFeed, TradeDesk, soloMoves,
+  PhaseTrack, FrontOffice, DraftRoom, SigningBoard, LotteryRoom, RookieSigning, FreeAgency, NewsFeed, TradeDesk, TradeInbox, soloMoves,
 } from './dynasty/DynastyScreens.jsx';
 import { FriendsSetup, JoinFriends, FriendsDynastyView } from './dynasty/FriendsDynasty.jsx';
 import PvpGame from './PvpGame.jsx';
 import styles from './SeasonTab.module.css';
 import dy from './dynasty/Dynasty.module.css';
+
+/**
+ * What a dynasty fixture carries to the Play tab. THE LEAGUE'S RUNG PLAYS THE
+ * GAME (2026-09-18, a bug the card-salary investigation found): with no
+ * aiLevel on the preset, PlayTab played the coach at this DEVICE's difficulty
+ * (`livePreset?.aiLevel ?? the setting`), so a Deity dynasty could be played
+ * against a Settler coach. A league built with no rung is Prince — named, or
+ * PlayTab's `??` would read the device setting again.
+ */
+export const dynastyPreset = d => ({ returnTab: 'dynasty', dynastyId: d.id, aiLevel: d.aiLevel ?? 'prince' });
 
 /** A domain error as a sentence for a player. */
 export function cleanError(e) {
@@ -155,7 +166,8 @@ export default function DynastyTab({
     const already = isRecorded(s, pendingResult.fixtureId);
     if (!already) {
       try {
-        commit({ ...d, season: recordResult(s, pendingResult) });
+        // Through seasonTurn: a round that turns resolves the waiver wire (2026-09-18).
+        commit(seasonTurn(d, recordResult(s, pendingResult)));
       } catch (e) {
         setError(e?.message ?? 'That result could not be recorded');
       }
@@ -176,8 +188,9 @@ export default function DynastyTab({
         series: cfg.series ?? null,
         aging: Boolean(cfg.aging),
         // THE LEAGUE'S RUNG. The AI teams always draft at full strength; above
-        // Prince they draft to a richer budget, and a game in this dynasty
-        // pays at the lower of this rung and the rung it is played at.
+        // Prince they draft to a richer budget, and since 2026-09-18 every
+        // game in this dynasty is coached and paid at this rung (dynastyPreset
+        // — the device's Coach picker no longer reaches a dynasty game).
         aiLevel: cfg.aiLevel ?? null,
       });
       // Into the draft room with the AI's picks before yours already made.
@@ -275,7 +288,8 @@ export default function DynastyTab({
 // ── The list ────────────────────────────────────────────────────────────────
 
 const PITCH = [
-  { t: '💸 Dynasty Points', b: `A ${CAP_DP}-DP payroll, and a ${APRON_DP} apron for keeping your own players; AI teams arrive under the cap and may re-sign to ${AI_APRON_DP}. A player's ask comes from their salary: stars want a lot, $10 cards are just happy to be here.` },
+  // The AI's card-salary ceiling (the user, 2026-09-18): "AI rosters must ALSO fit a card-salary cap … You stay on DP only".
+  { t: '💸 Dynasty Points', b: `A ${CAP_DP}-DP payroll, and a ${APRON_DP} apron for keeping your own players; AI teams arrive under the cap and may re-sign to ${AI_APRON_DP} — and must ALSO keep their roster's card salary under $${CARD_CAP.toLocaleString('en-US')} × the coach rung ($${Math.round(CARD_CAP * capOf('deity')).toLocaleString('en-US')} at Deity). You answer to DP alone. A player's ask comes from their salary: stars want a lot, $10 cards are just happy to be here.` },
   { t: '🤝 Personalities', b: 'Loyal, Ring Chaser, Mercenary, Security First, Bets on Themself, Easygoing — each haggles differently, and each runs out of patience.' },
   { t: '🎱 The lottery', b: 'Miss the playoffs for a shot at the top pick of a class drawn by rarity — one rare guaranteed, a legendary a long shot — priced by the slot, yours to sign until the season starts.' },
   { t: '🏆 Ten years', b: `Title money every year and a bonus for seeing all ten through. A fantasy-draft start pays ${FANTASY_DYNASTY_FACTOR}× — bring your own team for the full amount.` },
@@ -573,8 +587,10 @@ function DynastySetup({ teamA, collection, uid, onStart, onCancel }) {
 
         {/* THE LEAGUE'S RUNG (2026-09-16). Fixed at creation: above Prince the
             AI teams are built to a richer cap, so this decides who you face all
-            season, and a game in the league never pays above it. The per-game
-            coach dial beside the play button can still turn the coach DOWN. */}
+            season, and a game in the league never pays above it. Since
+            2026-09-18 it also COACHES every game (dynastyPreset carries it to
+            the Play tab): the per-game dial beside the play button no longer
+            reaches a dynasty game, up or down. */}
         <div className={styles.field}>
           <span className={styles.label}>The other coaches</span>
           <div className={styles.choices}>
@@ -587,7 +603,7 @@ function DynastySetup({ teamA, collection, uid, onStart, onCancel }) {
             ))}
           </div>
           <span className={styles.muted}>
-            Prince is a fair game at the standard rate. Above it their teams are better — you can see it on their cards — and games pay more. Fixed for the league; you can turn the coach down game by game, never up.
+            Prince is a fair game at the standard rate. Above it their teams are better — you can see it on their cards — and games pay more. Fixed for the league: every game in it is coached, and paid, at this rung.
           </span>
         </div>
 
@@ -646,19 +662,21 @@ function DynastyView({ d, uid, commit, onPlayFixture, onBack, onAbandon }) {
         <SeasonDashboard
           season={d.season}
           uid={uid}
-          commit={s => commit({ ...d, season: s })}
+          commit={s => commit(seasonTurn(d, s))}
           onPlayFixture={onPlayFixture}
           onBack={onBack}
           onAbandon={onAbandon}
           title={`${d.name} · Year ${d.year}`}
           backLabel="All dynasties"
-          presetExtra={{ returnTab: 'dynasty', dynastyId: d.id }}
+          presetExtra={dynastyPreset(d)}
           finale={(
             <button type="button" className={styles.primary} onClick={closeYear}>
               {!d.aging && d.year >= d.years ? 'Close out the dynasty →' : `Close out Year ${d.year} — to the offseason →`}
             </button>
           )}
         />
+        {/* The AI's offers, each round up to the deadline (2026-09-18). */}
+        <TradeInbox d={d} moves={moves} />
         {/* In season until the deadline (the user, 2026-09-11). */}
         <TradeDesk d={d} moves={moves} />
         <FrontOffice d={d} moves={moves} />
@@ -712,6 +730,8 @@ function DynastyView({ d, uid, commit, onPlayFixture, onBack, onAbandon }) {
       </header>
       <PhaseTrack d={d} />
       {body}
+      {/* The AI's offers to you (2026-09-18): each turn of the offseason. */}
+      <TradeInbox d={d} moves={moves} />
       {isOffseason(d) && <TradeDesk d={d} moves={moves} />}
       {d.phase !== DPHASE.done && <FrontOffice d={d} moves={moves} />}
       <HistoryPanel d={d} uid={uid} commit={commit} />

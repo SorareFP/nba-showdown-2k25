@@ -34,6 +34,7 @@ import { LEAGUE_SIZES, LENGTHS } from './schedule.js';
 import { TOURNAMENT_SIZES, ENTRY_FEES, tournamentPayouts, dynastyYearEarnings, dynastyCompletionEarnings } from './prizes.js';
 import { PHASE, recordResult, advance, roundComplete, earningsFor, teamsById, playoffGames, isRecorded } from './seasonCore.js';
 import { boxLinesFor } from '../boxScore.js';
+import { seasonTurn } from './dynasty.js';
 import { AI_PAY } from '../coinRewards.js';
 
 export const STATUS = { lobby: 'lobby', live: 'live', done: 'done', cancelled: 'cancelled' };
@@ -451,8 +452,11 @@ export function applyResult(league, result, { now = Date.now() } = {}) {
   }
   let next = withSeason(league, state);
   // A dynasty's season ending is the server's to turn into its offseason
-  // (dynastyFriends.js) — title money and all — so nothing ends here.
-  if (league.kind === 'dynasty') return { league: next, payouts, winner };
+  // (dynastyFriends.js) — title money and all — so nothing ends here. But a
+  // round turning is the league moving on, and the waiver wire resolves on it
+  // (dynasty.js seasonTurn, 2026-09-18): a deadline shed claimed in season is
+  // on the claimant's roster for the next round.
+  if (league.kind === 'dynasty') return { league: { ...league, state: seasonTurn(league.state, state) }, payouts, winner };
   if (state.phase === PHASE.done) {
     for (const e of league.entrants) pay(e.id, earningsFor(state, e.id).coins, earningsFor(state, e.id).label ?? 'season');
     next = { ...next, status: STATUS.done, finishedAt: now };

@@ -27,18 +27,17 @@ import {
   watchLeague, watchMyBids, readJoinCode, dynastyOfLeague, entrantFromTeam, teamIdFor, earningsByUid, LEAGUE_STATUS,
 } from '../../firebase/leagues.js';
 import { loadDecks } from '../../firebase/savedDecks.js';
-import { START_MODES, DPHASE, MAX_ROSTER, humanIds, teamOf, isOffseason, summarizeDynasty, pickLabel } from '../../game/modes/dynasty.js';
+import { START_MODES, DPHASE, MAX_ROSTER, humanIds, teamOf, isOffseason, summarizeDynasty } from '../../game/modes/dynasty.js';
 import { AI_LEVELS, loadAiLevel, levelById } from '../../game/aiLevels.js';
-import { clockLeft, canAdvance, vetoable } from '../../game/modes/dynastyFriends.js';
+import { clockLeft, canAdvance } from '../../game/modes/dynastyFriends.js';
 import { SEASON_REWARDS, DYNASTY_COMPLETION, DYNASTY_TITLE_BONUS, dynastyCoinFactor, dynastyYearEarnings } from '../../game/modes/prizes.js';
 import { LENGTHS, PICKABLE_LENGTHS, LEAGUE_SIZES, playoffCount, gamesPerTeam } from '../../game/modes/schedule.js';
-import { getCardByKey } from '../../game/cardSets.js';
 import RosterPicker, { Choice } from '../league/RosterPicker.jsx';
 import SeriesPicker, { seriesFor } from '../league/SeriesPicker.jsx';
 import LeagueLobby from '../league/LeagueLobby.jsx';
 import { SeasonDashboard, simLeagueAi, simLeagueCoaches } from '../SeasonTab.jsx';
 import {
-  PhaseTrack, FrontOffice, DraftRoom, SigningBoard, LotteryRoom, RookieSigning, FreeAgency, NewsFeed, TradeDesk, PhaseButton,
+  PhaseTrack, FrontOffice, DraftRoom, SigningBoard, LotteryRoom, RookieSigning, FreeAgency, NewsFeed, TradeDesk, PhaseButton, TradeInbox,
 } from './DynastyScreens.jsx';
 import styles from '../SeasonTab.module.css';
 import dy from './Dynasty.module.css';
@@ -51,6 +50,13 @@ const noop = () => {};
  * same names), each a call to the server. `send(op, args)` resolves to the
  * server's answer, or null when it refused (it says why in a toast).
  */
+/**
+ * What a friends dynasty's fixture carries to the Play tab: the league's rung
+ * plays a game against an AI team (2026-09-18), not this device's difficulty
+ * — as a dynasty alone (DynastyTab dynastyPreset). null is Prince.
+ */
+export const friendsPreset = (d, leagueId) => ({ returnTab: 'dynasty', leagueId, aiLevel: d.aiLevel ?? 'prince' });
+
 export function friendsMoves({ d, me, isHost = false, send, setBids = async () => false, bids = [] }) {
   const ready = d.ready ?? {};
   return {
@@ -64,6 +70,8 @@ export function friendsMoves({ d, me, isHost = false, send, setBids = async () =
     bids,
     setBids,
     waive: key => send('waive', { key }),
+    claim: key => send('claim', { key }),
+    unclaim: key => send('unclaim', { key }),
     offer: async (key, dp, years) => (await send('offer', { key, dp, years }))?.result ?? null,
     renounce: key => send('renounce', { key }),
     signRookie: key => send('signRookie', { key }),
@@ -545,7 +553,7 @@ export function FriendsDynastyView({ leagueId, uid, onBack, onPlayFixture, onOpe
           headExtra={isHost ? <button type="button" className={styles.ghost} disabled={busy} onClick={deleteIt}>Delete this dynasty</button> : null}
           title={`${league.name} · Year ${d.year}`}
           backLabel="All dynasties"
-          presetExtra={{ returnTab: 'dynasty', leagueId: league.id }}
+          presetExtra={friendsPreset(d, league.id)}
           finale={(
             <span className={dy.readyWrap}>
               <PhaseButton moves={moves} onDone={noop} label={last ? 'Close out the dynasty →' : `Close out Year ${d.year} →`} />
@@ -594,60 +602,12 @@ export function FriendsDynastyView({ leagueId, uid, onBack, onPlayFixture, onOpe
   );
 }
 
-// ── Trade offers between coaches ────────────────────────────────────────────
-
-/**
- * The offers waiting on you, the ones you made, and — for the commissioner —
- * every trade still open to a veto.
- */
-export function TradeInbox({ d, moves }) {
-  const { ask } = useDialogs();
-  const me = d.humanId;
-  const offers = [...(d.offers ?? [])].reverse();
-  const toMe = offers.filter(o => o.status === 'open' && o.to === me);
-  const fromMe = offers.filter(o => o.status === 'open' && o.from === me);
-  const watch = moves.isHost ? offers.filter(o => vetoable(d, o) && !(o.status === 'open' && (o.to === me || o.from === me))) : [];
-  if (!toMe.length && !fromMe.length && !watch.length) return null;
-  const side = (keys = [], picks = []) => [...keys.map(k => getCardByKey(k)?.name ?? k), ...picks.map(id => pickLabel(d, id))].join(', ') || 'nothing';
-  const text = o => `${teamOf(d, o.from)?.name} send ${side(o.give, o.givePicks)} to ${teamOf(d, o.to)?.name} for ${side(o.get, o.getPicks)}`;
-  const veto = async o => {
-    const yes = await ask({
-      title: 'Veto this trade?',
-      body: o.status === 'accepted' ? 'It is undone: every piece goes back where it was.' : 'The offer is struck before it is answered.',
-      confirmLabel: 'Veto it',
-      tone: 'danger',
-    });
-    if (yes) moves.veto(o.id);
-  };
-  return (
-    <section className={styles.panel}>
-      <div className={dy.panelHead}><h3 className={styles.panelTitle}>Trade offers</h3></div>
-      <div className={dy.offers}>
-        {toMe.map(o => (
-          <div key={o.id} className={`${dy.offerLine} ${dy.offerMine}`}>
-            <span>{text(o)}</span>
-            <span className={dy.clockActions}>
-              <button type="button" className={styles.primary} onClick={() => moves.respond(o.id, true)}>Accept</button>
-              <button type="button" className={styles.ghost} onClick={() => moves.respond(o.id, false)}>Decline</button>
-            </span>
-          </div>
-        ))}
-        {fromMe.map(o => (
-          <div key={o.id} className={dy.offerLine}>
-            <span>{text(o)} <span className={styles.muted}>· waiting on them</span></span>
-            <button type="button" className={styles.ghost} onClick={() => moves.withdraw(o.id)}>Withdraw</button>
-          </div>
-        ))}
-        {watch.map(o => (
-          <div key={o.id} className={dy.offerLine}>
-            <span>{text(o)} <span className={styles.muted}>· {o.status === 'accepted' ? 'done' : 'open'}</span></span>
-            <button type="button" className={dy.linkBtn} onClick={() => veto(o)}>Veto</button>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
+// ── Trade offers ────────────────────────────────────────────────────────────
+//
+// TradeInbox lives with the other screens (DynastyScreens.jsx) since the AI
+// teams began making offers alone too (2026-09-18); it is re-exported here
+// for the screens and tests that import it from the friends shell.
+export { TradeInbox };
 
 // ── The years ───────────────────────────────────────────────────────────────
 

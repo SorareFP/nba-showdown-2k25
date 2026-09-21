@@ -1380,16 +1380,19 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
 
     case 'unethical_hoops': {
       if (!adv || (adv.speedAdv <= 0 && adv.powerAdv <= 0)) return fail(`${player?.name} needs a Speed or Power advantage`);
-      // A foul drawn is two shots. Free throws are never contested, so both
-      // resolve on the spot — announceCheck knows.
+      // A foul drawn is free throws. They are never contested, so all of
+      // them resolve on the spot — announceCheck knows.
+      // FOUR free throws (the user, 2026-09-08). PLAIN ones since 2026-09-21
+      // (the user: "Unethical Hoops should not boost free throw shot
+      // checks"): a free throw already carries its own +10 in shotCheck, so
+      // the +4 each one used to add on top is gone — bonus 0, four times.
       announceCheck(g, {
-        teamKey, playerIdx: idx, type: 'ft', bonus: 4,
+        teamKey, playerIdx: idx, type: 'ft', bonus: 0,
         cardLabel: `Unethical Hoops: ${player?.name} draws the foul — first free throw`,
-        // FOUR free throws (the user, 2026-09-08), each at +4.
         then: [
-          { playerIdx: idx, type: 'ft', bonus: 4, cardLabel: 'Unethical Hoops: second free throw' },
-          { playerIdx: idx, type: 'ft', bonus: 4, cardLabel: 'Unethical Hoops: third free throw' },
-          { playerIdx: idx, type: 'ft', bonus: 4, cardLabel: 'Unethical Hoops: fourth free throw' },
+          { playerIdx: idx, type: 'ft', bonus: 0, cardLabel: 'Unethical Hoops: second free throw' },
+          { playerIdx: idx, type: 'ft', bonus: 0, cardLabel: 'Unethical Hoops: third free throw' },
+          { playerIdx: idx, type: 'ft', bonus: 0, cardLabel: 'Unethical Hoops: fourth free throw' },
         ],
       });
       break;

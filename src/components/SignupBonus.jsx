@@ -36,7 +36,7 @@ export default function SignupBonus({ name, onClaim, onDismiss }) {
           <h2 className={s.title}>{first ? `Welcome, ${first}.` : 'Welcome.'} Unethical Hoops is yours.</h2>
           <p className={s.body}>
             A Crunch Time card for signing up: a player of yours with a Speed or Power advantage
-            draws the foul — two free-throw checks at +4. It comes in your Starter Pack alongside
+            draws the foul — four free-throw checks. It comes in your Starter Pack alongside
             20 players and 30 strategy cards, built around the team you support.
           </p>
           <div className={s.actions}>

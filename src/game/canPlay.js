@@ -380,7 +380,9 @@ export function canPlayCard(g, teamKey, cardId) {
         return a && (a.speedAdv > 0 || a.powerAdv > 0);
       });
       if (!some) return no('Need a player with a Speed or Power advantage');
-      return ok('Draw the foul — two free throws at +4');
+      // Four PLAIN free throws (the user, 2026-09-21: no boost on free-throw
+      // checks); this line had said "two ... at +4" since the card was two.
+      return ok('Draw the foul — four free throws');
     }
     if (cardId === 'desperation_press') {
       if (myT.score >= oppT.score) return no('Only playable while trailing');

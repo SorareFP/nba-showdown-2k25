@@ -177,12 +177,16 @@ export const STRATS = [
   // user, 2026-09-07: "a picture of Shai getting fouled, an Underdog logo
   // somewhere on it, and it should just award +4 FT checks to any player with
   // an offensive power or speed advantage of their choosing during
-  // Crunch-Time." Read as a foul drawn: TWO free throws, each at +4.
+  // Crunch-Time." Read as a foul drawn: TWO free throws, each at +4; four
+  // since 2026-09-08, and PLAIN since 2026-09-21 (the user: "Unethical Hoops
+  // should not boost free throw shot checks" — a free throw carries its own
+  // +10 in shotCheck, and the +4 on top was the boost). The face prints this
+  // desc, so the PNG needs a re-export.
   { id:'unethical_hoops',     name:'Unethical Hoops',    phase:'scoring',  side:'off', copies:1, locked:false, color:'#B91C1C', rarity:'rare', promo:true,
     // The sponsor line on the face: a small PRESENTED BY over the logo in
     // public/logos/, beside the team logos. Only this card has one today.
     presentedBy: { name: 'Underdog', logo: 'underdog.png' },
-    desc:'CRUNCH TIME: a player of yours with a Speed or Power advantage draws the foul — four free-throw checks at +4.' },
+    desc:'CRUNCH TIME: a player of yours with a Speed or Power advantage draws the foul — four free-throw checks.' },
   { id:'run_the_floor',       name:'Run the Floor',      phase:'scoring',  side:'off', copies:1, locked:false, color:'#0D9488', rarity:'legendary',
     desc:'With three players at Speed 12+ on the floor: two Paint Shot Checks at +2, allocated by the defence, +1 Assist each. Stays in play until one of them is benched.' },
   { id:'twin_towers',         name:'Twin Towers',        phase:'scoring',  side:'off', copies:1, locked:false, color:'#7C2D12', rarity:'legendary',

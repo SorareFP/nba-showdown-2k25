@@ -59,6 +59,22 @@ export const PACK_TYPES = {
   // narrower pool, and it has to be a premium: at booster price it would strictly
   // dominate the booster and nothing else in the shop would ever sell.
   team_pack:     { name: 'Team Pack',           players: 5,  strats: 1,  price: 250,  needsTeam: true },
+  // WNBA TEAM PACK (the user, 2026-09-21: "I think we should have WNBA team
+  // packs too."). The same shape as the team pack, scoped to one WNBA
+  // franchise's base cards: pool 'wnba' plus the team, six to eleven cards a
+  // roster against the NBA's nine to sixteen. PRICED BY MEASUREMENT, not by
+  // copying 250: over 3,000 packs each (seeded rng, a team a pack round-robin,
+  // players at MARKET_PRICES, strats at 20x burn) the NBA team pack deals 754
+  // coins of market value a pack — 3.02 per coin at 250 — and this one 798
+  // (0.10 super-rares and 0.003 legendaries a pack against 0.08 and 0.013):
+  // 3.19 per coin at 250, 2.90 at 275. The NBA rate lands at 264 exactly,
+  // between two shop steps; 250 is the one taken because the mean is carried
+  // by one roster (the Lynx, 8.73 per coin — six cards, 44% rare-or-better)
+  // and thirteen of the fifteen franchises sit BELOW the NBA average at 250
+  // (the Sky 2.09, the Storm 2.10; the NBA's own floor is the Bucks at 2.52).
+  // Mirrors the NBA team pack in everything else: no per-pack supply and no
+  // daily limit beyond the server's per-minute one.
+  wnba_team_pack: { name: 'WNBA Team Pack',     players: 5,  strats: 1,  price: 250,  needsTeam: true, pool: 'wnba' },
   // LEAGUE PACKS ARE TARGETED PACKS. Same price as the booster, a narrower pool
   // — see LEAGUE_SETS. A scoped pool does not mix the special sets in, which
   // is what "narrower" means here.
@@ -92,7 +108,47 @@ export const PACK_TYPES = {
   // more of the top band for less money. At 300 it pays 5.8 per coin: a
   // premium over the Super Booster for a narrower, stronger pool, which is
   // what the targeting is worth and no more.
-  super_season:  { name: 'Super Season Pack',    players: 3,  strats: 1,  price: 300,  pool: 'super-season', guaranteedRarePlayer: 1 },
+  // REPRICED AGAIN 2026-09-21, 300 -> 240 (the user: "Super Season packs are
+  // still too expensive for the amount of quality cards in those packs").
+  // The 09-09 "premium" had put the pack BELOW the Super Booster on value per
+  // coin, which is a discount on quality dressed as a premium. Measured over
+  // 3,000 packs each on today's engine (seeded rng; players at MARKET_PRICES,
+  // strats at 20x burn; the 09-12 rarity re-cut means the 09-09 numbers are
+  // not comparable):
+  //
+  //   pack                        price  E[salary]  rare+%  SR/pack  LEG/pack  value/coin
+  //   Super Season                  300      1928    40.3     0.65     0.007        6.04
+  //   Super Season                  275      1928    40.3     0.65     0.007        6.59
+  //   Super Season                  250      1928    40.3     0.65     0.007        7.25
+  //   Super Season                  240      1928    40.3     0.65     0.007        7.55
+  //   Super Season                  235      1928    40.3     0.65     0.007        7.71
+  //   Super Season                  225      1928    40.3     0.65     0.007        8.05
+  //   Super Season                  200      1928    40.3     0.65     0.007        9.06
+  //   Super Season, 4 players       300      2365    32.0     0.67     0.007        6.45
+  //   Super Season, 4 players       250      2365    32.0     0.67     0.007        7.74
+  //   Super Season, guaranteed SR   300      2054    40.3     1.03     0.007        7.80
+  //   Super Booster                 300      2539    28.1     0.54     0.013        6.44
+  //   Summer Standouts              275      1667    39.5     0.48     0.005        5.64
+  //   Team Pack (30 teams)          250      2050     9.7     0.08     0.013        3.02
+  //   WNBA Team Pack (15 teams)     250      1971    11.6     0.10     0.003        3.19
+  //   Booster                       100      1984     9.7     0.08     0.013        7.92
+  //
+  // (Over 30,000 packs the same seed gives Booster 8.02, Super Booster 6.43,
+  // Super Season 7.55 at 240 and 8.05 at 225, each within ±0.05.)
+  //
+  // 240 is the price cut that puts the pack clearly above the Super Booster —
+  // 17% better per coin, 0.65 super-rares a pack to its 0.54 — while keeping
+  // it UNDER the plain booster (7.55 to 7.92; 8.02 over 30,000 packs), so the
+  // everyday pack is still the shop's best per-coin entry and still sells.
+  // 250 stays only 13% above the Super Booster, which is not "clearly"; 225
+  // reaches 25% but lands LEVEL with the booster (8.05 to 8.02), and a
+  // targeted pack that matches the everyday one per coin makes the everyday
+  // one pointless — the two targets only hold together between about 230 and
+  // 245, and 240 is the shop-friendly number inside that. A fourth player or a
+  // super-rare guarantee would have reached the band too, but only by changing
+  // what the pack is; the price alone does it. Summer Standouts is the same
+  // shape at 5.64 and was NOT touched — the user named Super Season.
+  super_season:  { name: 'Super Season Pack',    players: 3,  strats: 1,  price: 240,  pool: 'super-season', guaranteedRarePlayer: 1 },
   // THE ROOKIE PACK GETS NO GUARANTEE AND STAYS CHEAP, deliberately. Its pool
   // is the weak one — median $400, 13% rare-or-better, three legendaries in 261
   // cards — and at 75 coins it is already the best value in the shop (0.037
@@ -556,9 +612,18 @@ export function generatePack(packType, options = {}) {
     // PLUS this franchise's special-set cards, whatever era they print. See the
     // note in poolFor: a Toronto pack should reach Kawhi's Raptors card, and
     // the card says TOR09, so the match has to go through the era table.
-    const specials = SPECIAL_SETS_IN_PACKS
+    //
+    // THE NBA'S SPECIALS ONLY, for the NBA team pack. Seven codes name a team
+    // in both leagues and two NBA relocations land on WNBA teams that never
+    // moved (currentFranchiseFor), so the unguarded era match dealt eight
+    // Indiana Fever legends into the Pacers pack and the Seattle Storm's into
+    // Oklahoma City's — found 2026-09-21 while the WNBA team pack was built
+    // on this filter. The WNBA team pack deals the franchise's BASE cards
+    // (the user's ask, "pool 'wnba' + team"); its legends stay in the WNBA
+    // set packs and the boosters.
+    const specials = def.pool === 'wnba' ? [] : SPECIAL_SETS_IN_PACKS
       .flatMap(id => CARD_SETS[id] ?? [])
-      .filter(c => currentFranchise(c.team) === options.team);
+      .filter(c => leagueOfCard(c) === 'nba' && currentFranchise(c.team) === options.team);
     playerPool = [...roster, ...specials];
     if (roster.length === 0) {
       throw new Error(

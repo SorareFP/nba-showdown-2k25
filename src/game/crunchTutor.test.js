@@ -56,7 +56,10 @@ describe('Unethical Hoops', () => {
     expect(canPlayCard(g, 'A', 'unethical_hoops').canPlay).toBe(false);
   });
 
-  it('is four free throws at +4 for the chosen player, and they reach the box score', () => {
+  it('is four PLAIN free throws for the chosen player, and they reach the box score', () => {
+    // The user, 2026-09-21: "Unethical Hoops should not boost free throw shot
+    // checks." Each check announces at bonus 0 — the +10 a free throw carries
+    // in shotCheck is the whole bonus — and no log line prints a +4.
     const g = crunchGame();
     g.teamA.starters[0].speed = 13;
     const spy = vi.spyOn(Math, 'random').mockReturnValue(0.99); // a 20, four times
@@ -68,7 +71,11 @@ describe('Unethical Hoops', () => {
     const lines = g2.log.filter(l => /Unethical Hoops/.test(l.msg));
     expect(lines.length).toBeGreaterThanOrEqual(4);
     expect(lines.some(l => /fourth free throw/.test(l.msg))).toBe(true);
-    expect(lines.some(l => /\+4/.test(l.msg))).toBe(true);
+    // No "+4 card" on any line: a card's bonus prints labelled `card`, and
+    // the only +4 left is the hot-marker streak a run of makes builds.
+    expect(lines.some(l => /\+\d+ card/.test(l.msg))).toBe(false);
+    expect(lines.filter(l => /\+10 FT/.test(l.msg))).toHaveLength(4);
+    expect(g2.lastShotCheck).toMatchObject({ type: 'ft', bonus: 0 });
   });
 
   it('refuses a player with no edge', () => {

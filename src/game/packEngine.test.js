@@ -7,7 +7,8 @@ import {
   generatePack, PACK_TYPES, CONFERENCES, DIVISIONS, MAX_DUPES_PER_PACK,
   SPECIAL_SETS_IN_PACKS, SPECIAL_BAND_SHARE, parseFavoriteTeam, favoriteTeamOptions, normalizeFavoriteTeam, leagueOfCard } from './packEngine.js';
 import { CARD_MAP } from './cards.js';
-import { TEAM_ROSTERS } from './collections.js';
+import { TEAM_ROSTERS, WNBA_ROSTERS, WNBA_TEAM_CODES } from './collections.js';
+import { STRATS } from './strats.js';
 import { CARD_SETS, BASE_SET, cardKey, ALL_CARDS } from './cardSets.js';
 import { currentFranchise, currentFranchiseFor, getTeam } from '../cards/teams.js';
 import { getPlayerRarity, RARITY_ORDER } from './rarity.js';
@@ -16,7 +17,7 @@ import { shopPacks, PACK_COPY } from '../components/PackShop.jsx';
 /** Options good enough to open any pack, whatever it needs. */
 function optionsFor(def) {
   const opts = {};
-  if (def.needsTeam) opts.team = 'OKC';
+  if (def.needsTeam) opts.team = def.pool === 'wnba' ? 'LVA' : 'OKC';
   if (def.themed === 'conference') opts.conference = 'East';
   if (def.themed === 'division') opts.division = 'Pacific';
   return opts;
@@ -136,6 +137,20 @@ describe('targeted packs stay inside their target', () => {
     expect(special / n).toBeLessThan(SPECIAL_BAND_SHARE + 0.1);
   });
 
+  it('keeps the other league\'s specials out of an NBA team pack', () => {
+    // Found 2026-09-21 while the WNBA team pack was built on this filter: the
+    // era match read every special through the NBA's franchise table, so
+    // eight Indiana Fever legends reached the Pacers pack and the Seattle
+    // Storm's reached Oklahoma City's (SEA relocated to OKC — in the NBA).
+    for (const team of ['IND', 'OKC', 'ATL', 'MIN', 'DAL']) {
+      for (let i = 0; i < 200; i += 1) {
+        for (const pull of players(generatePack('team_pack', { team }))) {
+          expect(pull.id.startsWith('wnba'), `${team} pulled ${pull.id}`).toBe(false);
+        }
+      }
+    }
+  });
+
   it('draws a conference pack only from that conference', () => {
     const east = new Set(CONFERENCES.East);
     for (let i = 0; i < 40; i++) {
@@ -163,6 +178,75 @@ describe('targeted packs stay inside their target', () => {
         }
       }
     }
+  });
+});
+
+describe('the WNBA team pack', () => {
+  // The user, 2026-09-21: "I think we should have WNBA team packs too." The
+  // same shape as the team pack, scoped to one WNBA franchise's base cards.
+  const def = PACK_TYPES.wnba_team_pack;
+
+  it('is the team pack\'s shape, scoped to the WNBA set', () => {
+    expect(def).toMatchObject({ players: PACK_TYPES.team_pack.players, strats: PACK_TYPES.team_pack.strats, needsTeam: true, pool: 'wnba' });
+  });
+
+  it('deals only that WNBA team\'s base cards — the shared codes included', () => {
+    // ATL, CHI, DAL, IND, MIN, PHO/PHX and WAS name a team in both leagues;
+    // a Dream pack must never deal a Hawk, and never a legend from the WNBA
+    // special sets either (the ask was "pool 'wnba' + team").
+    for (const team of WNBA_TEAM_CODES) {
+      const roster = new Set(WNBA_ROSTERS[team]);
+      for (let i = 0; i < 40; i += 1) {
+        for (const pull of players(generatePack('wnba_team_pack', { team }))) {
+          expect(roster.has(pull.id), `${team} pulled ${pull.id}`).toBe(true);
+        }
+      }
+    }
+  });
+
+  it('fills the strat slot', () => {
+    for (let i = 0; i < 40; i += 1) {
+      const pack = generatePack('wnba_team_pack', { team: 'MIN' });
+      const strats = pack.filter(c => c.type === 'strat');
+      expect(strats).toHaveLength(def.strats);
+      for (const s of strats) expect(STRATS.some(x => x.id === s.id && !x.promo), s.id).toBe(true);
+    }
+  });
+
+  it('refuses a team the WNBA set does not hold — an NBA code included', () => {
+    expect(() => generatePack('wnba_team_pack', { team: 'XXX' })).toThrow(/no cards for team/);
+    expect(() => generatePack('wnba_team_pack', { team: 'OKC' })).toThrow(/no cards for team/);
+    expect(() => generatePack('wnba_team_pack', { team: 'LAL' })).toThrow(/no cards for team/);
+    expect(() => generatePack('wnba_team_pack', {})).not.toThrow();  // no team: the whole WNBA set, like the NBA pack
+  });
+
+  it('is priced at the NBA team pack\'s value per coin — 250 by the measured table', () => {
+    // 3,000 packs each, 2026-09-21: the NBA team pack deals 754 coins of
+    // market value a pack (3.02 per coin at 250), the WNBA one 798 — the
+    // same rate lands at 264, and 250 is the shop step taken. The reasoning
+    // is beside the definition in packEngine.js.
+    expect(def.price).toBe(250);
+    expect(PACK_TYPES.team_pack.price).toBe(250);
+  });
+
+  it('is in the shop with a WNBA picker of its own', () => {
+    const row = shopPacks().find(p => p.key === 'wnba_team_pack');
+    expect(row?.pick).toBe('wnbaTeam');
+    expect(row?.group).toBe(PACK_COPY.team_pack.group);
+  });
+});
+
+describe('the Super Season price', () => {
+  it('is 240 — 17% above the Super Booster and still under the booster on value per coin, by the measured table', () => {
+    // The user, 2026-09-21: "Super Season packs are still too expensive for
+    // the amount of quality cards in those packs." At 300 the pack paid 6.04
+    // coins of market value per coin against the Super Booster's 6.44; at
+    // 240 it pays 7.55, inside the 15-25% band over the Super Booster and
+    // under the plain booster's 7.92 (225 would have tied the booster) — the
+    // table is beside the definition.
+    expect(PACK_TYPES.super_season.price).toBe(240);
+    expect(PACK_TYPES.super_season).toMatchObject({ players: 3, strats: 1, guaranteedRarePlayer: 1 });
+    expect(PACK_TYPES.standouts.price).toBe(275);   // not touched: the user named Super Season
   });
 });
 

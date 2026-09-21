@@ -23,6 +23,11 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
+    id: 'wnba-team-packs', date: '2026-09-21', title: 'WNBA Team Packs, a cheaper Super Season, and plain free throws',
+    body: 'The Pack Shop sells a WNBA Team Pack: five players from one WNBA roster and a strat, 250 coins, priced against the NBA Team Pack by what comes out. The Super Season Pack drops from 300 to 240 — measured, it was paying less per coin than the Super Booster. And Unethical Hoops draws four plain free throws now: the +4 on each check is gone (a free throw carries its own +10).',
+    to: 'shop', cta: 'Pack Shop',
+  },
+  {
     id: 'coin-fixes', date: '2026-09-18', title: 'What a game pays: four fixes',
     body: 'A harder coach\'s premium is now a win\'s: a loss pays the standard rate at King and Deity (below Prince the discount stays). A game where you built the coach\'s team or picked its deck, or a Quick Match, pays at most the standard rate — the premium is for beating a team the coach drew itself. A finished game is paid once, however often the page reloads, and it keeps the difficulty and the opponent it was dealt with. Season and dynasty title money is paid by the share of your own games you played — simmed ones do not count.',
     to: 'play', cta: 'Play a game',
@@ -123,7 +128,7 @@ export const NEWS = [
   },
   {
     id: 'unethical-hoops', date: '2026-09-07', title: 'Unethical Hoops, presented by Underdog',
-    body: 'The sign-up card. In Crunch Time, a player of yours with a Speed or Power advantage draws the foul: four free-throw checks at +4. One comes in every Starter Pack.',
+    body: 'The sign-up card. In Crunch Time, a player of yours with a Speed or Power advantage draws the foul: four free-throw checks. One comes in every Starter Pack.',
     image: 'unethical_hoops',
   },
 ];

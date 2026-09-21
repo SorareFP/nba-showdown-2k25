@@ -683,7 +683,7 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
       return a && (a.speedAdv > 0 || a.powerAdv > 0);
     });
     if (eligible.length === 0) { toast('Nobody has a Speed or Power advantage to draw the foul with.'); return null; }
-    const pick = await pickFiltered(eligible, 'Who draws the foul? (two free throws at +4)', teamKey,
+    const pick = await pickFiltered(eligible, 'Who draws the foul? (four free throws)', teamKey,
       (p, i) => { const d = defenders[offMatchups[i] ?? i]; const a = calcAdv(p, d, game.tempEff?.[teamKey] || {}, i); return `S${a.speedAdv > 0 ? '+' : ''}${a.speedAdv} P${a.powerAdv > 0 ? '+' : ''}${a.powerAdv}`; });
     if (pick === null) return null;
     opts.playerIdx = pick;

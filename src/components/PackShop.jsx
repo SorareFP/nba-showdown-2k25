@@ -14,7 +14,7 @@
 // not silently drift apart again.
 import { useMemo, useState } from 'react';
 import { PACK_TYPES, CONFERENCES, DIVISIONS } from '../game/packEngine.js';
-import { TEAM_CODES } from '../game/collections.js';
+import { TEAM_CODES, WNBA_TEAM_CODES } from '../game/collections.js';
 import { getTeam } from '../cards/teams.js';
 import { useDialogs } from '../ui/dialogs.jsx';
 import styles from './PackShop.module.css';
@@ -34,6 +34,8 @@ export const PACK_COPY = {
   nba_super:      { group: 'Targeted', desc: '5 NBA players only · 1 rare+ player' },
   wnba_booster:   { group: 'Targeted', desc: '5 WNBA players only + 2 strats' },
   wnba_super:     { group: 'Targeted', desc: '5 WNBA players only · 1 rare+ player' },
+  // The user, 2026-09-21: "I think we should have WNBA team packs too."
+  wnba_team_pack: { group: 'Targeted', desc: '5 players from ONE WNBA roster — the fast way to finish a WNBA collection', pick: 'wnbaTeam' },
 
   rare_deluxe:    { group: 'Premium', desc: '3 players, every one rare or better' },
   super_deluxe:   { group: 'Premium', desc: '3 players · 1 guaranteed super rare' },
@@ -67,6 +69,7 @@ export default function PackShop({ currency, onBuyPack }) {
   const [conf, setConf] = useState('East');
   const [div, setDiv] = useState('Atlantic');
   const [team, setTeam] = useState(TEAM_CODES[0]);
+  const [wnbaTeam, setWnbaTeam] = useState(WNBA_TEAM_CODES[0]);
 
   const packs = useMemo(shopPacks, []);
   const coins = currency ?? 0;
@@ -80,8 +83,9 @@ export default function PackShop({ currency, onBuyPack }) {
     if (pack.pick === 'conference') opts.conference = conf;
     if (pack.pick === 'division') opts.division = div;
     if (pack.pick === 'team') opts.team = team;
+    if (pack.pick === 'wnbaTeam') opts.team = wnbaTeam;
     if (pack.def.price > 0) {
-      const detail = pack.pick === 'conference' ? ` (${conf})` : pack.pick === 'division' ? ` (${div})` : pack.pick === 'team' ? ` (${getTeam(team)?.name ?? team})` : '';
+      const detail = pack.pick === 'conference' ? ` (${conf})` : pack.pick === 'division' ? ` (${div})` : pack.pick === 'team' ? ` (${getTeam(team)?.name ?? team})` : pack.pick === 'wnbaTeam' ? ` (${getTeam(wnbaTeam, { league: 'WNBA' })?.name ?? wnbaTeam})` : '';
       const yes = await ask({
         title: `Buy ${pack.def.name}${detail}?`,
         body: `${pack.def.price.toLocaleString()} coins. You have ${coins.toLocaleString()}.`,
@@ -112,6 +116,19 @@ export default function PackShop({ currency, onBuyPack }) {
         <select className={styles.selector} value={team} onChange={e => setTeam(e.target.value)}>
           {TEAM_CODES.map(t => {
             const info = getTeam(t, { league: 'NBA' });
+            return <option key={t} value={t}>{info?.city ? `${info.city} ${info.name}` : t}</option>;
+          })}
+        </select>
+      );
+    }
+    // THE WNBA PICKER READS THE WNBA TABLE, and only it: seven codes name a
+    // team in both leagues, so a shared picker would print the Hawks for
+    // the Dream.
+    if (pack.pick === 'wnbaTeam') {
+      return (
+        <select className={styles.selector} value={wnbaTeam} onChange={e => setWnbaTeam(e.target.value)}>
+          {WNBA_TEAM_CODES.map(t => {
+            const info = getTeam(t, { league: 'WNBA' });
             return <option key={t} value={t}>{info?.city ? `${info.city} ${info.name}` : t}</option>;
           })}
         </select>

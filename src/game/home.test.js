@@ -32,7 +32,7 @@ describe('closest collections', () => {
 
   it('names the pack that feeds a goal, and none for a set no pack sells', () => {
     expect(packForGoal(teamGoal).id).toBe('nba_booster');
-    expect(packForGoal(GOALS_BY_ID['set-super-season'])).toMatchObject({ id: 'super_season', price: 240 });
+    expect(packForGoal(GOALS_BY_ID['set-super-season'])).toMatchObject({ id: 'super_season', price: 300 });
     expect(packForGoal(GOALS_BY_ID['set-dissonance'])).toBeNull();
     expect(packForGoal(GOALS_BY_ID['wnba-set']).id).toBe('wnba_booster');
   });

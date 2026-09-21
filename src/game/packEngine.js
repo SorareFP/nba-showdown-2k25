@@ -108,13 +108,18 @@ export const PACK_TYPES = {
   // more of the top band for less money. At 300 it pays 5.8 per coin: a
   // premium over the Super Booster for a narrower, stronger pool, which is
   // what the targeting is worth and no more.
-  // REPRICED AGAIN 2026-09-21, 300 -> 240 (the user: "Super Season packs are
-  // still too expensive for the amount of quality cards in those packs").
-  // The 09-09 "premium" had put the pack BELOW the Super Booster on value per
-  // coin, which is a discount on quality dressed as a premium. Measured over
-  // 3,000 packs each on today's engine (seeded rng; players at MARKET_PRICES,
-  // strats at 20x burn; the 09-12 rarity re-cut means the 09-09 numbers are
-  // not comparable):
+  // 2026-09-21: the user's "Super Season packs are still too expensive for
+  // the amount of quality cards in those packs" was read as a price cut
+  // (300 -> 240) and meant the OPPOSITE: "I meant that the super season pack
+  // was too cheap at 300. Aren't they basically all rares and above?" The
+  // price is back at 300 the same day. The measured table stays, because it
+  // answers the question: the pack does NOT deal the pool's quality. The set
+  // is 65% rare-or-better, but PACK_WEIGHTS picks the BAND first, so the
+  // pack's pulls are 40% rare-or-better with the one guarantee — a pack that
+  // dealt from the pool's own distribution would be a different, dearer pack.
+  // Measured over 3,000 packs each on today's engine (seeded rng; players at
+  // MARKET_PRICES, strats at 20x burn; the 09-12 rarity re-cut means the
+  // 09-09 numbers are not comparable):
   //
   //   pack                        price  E[salary]  rare+%  SR/pack  LEG/pack  value/coin
   //   Super Season                  300      1928    40.3     0.65     0.007        6.04
@@ -134,21 +139,13 @@ export const PACK_TYPES = {
   //   Booster                       100      1984     9.7     0.08     0.013        7.92
   //
   // (Over 30,000 packs the same seed gives Booster 8.02, Super Booster 6.43,
-  // Super Season 7.55 at 240 and 8.05 at 225, each within ±0.05.)
+  // Super Season 6.04 at 300, 7.55 at 240 and 8.05 at 225, each within ±0.05.)
   //
-  // 240 is the price cut that puts the pack clearly above the Super Booster —
-  // 17% better per coin, 0.65 super-rares a pack to its 0.54 — while keeping
-  // it UNDER the plain booster (7.55 to 7.92; 8.02 over 30,000 packs), so the
-  // everyday pack is still the shop's best per-coin entry and still sells.
-  // 250 stays only 13% above the Super Booster, which is not "clearly"; 225
-  // reaches 25% but lands LEVEL with the booster (8.05 to 8.02), and a
-  // targeted pack that matches the everyday one per coin makes the everyday
-  // one pointless — the two targets only hold together between about 230 and
-  // 245, and 240 is the shop-friendly number inside that. A fourth player or a
-  // super-rare guarantee would have reached the band too, but only by changing
-  // what the pack is; the price alone does it. Summer Standouts is the same
-  // shape at 5.64 and was NOT touched — the user named Super Season.
-  super_season:  { name: 'Super Season Pack',    players: 3,  strats: 1,  price: 240,  pool: 'super-season', guaranteedRarePlayer: 1 },
+  // At 300 the pack pays 6.04 per coin: under the Super Booster's 6.44 and
+  // the booster's 7.92 — a premium for the narrower, stronger pool, which is
+  // the 09-09 reasoning and the user's. Summer Standouts (5.64 at 275) is the
+  // same shape and was not touched.
+  super_season:  { name: 'Super Season Pack',    players: 3,  strats: 1,  price: 300,  pool: 'super-season', guaranteedRarePlayer: 1 },
   // THE ROOKIE PACK GETS NO GUARANTEE AND STAYS CHEAP, deliberately. Its pool
   // is the weak one — median $400, 13% rare-or-better, three legendaries in 261
   // cards — and at 75 coins it is already the best value in the shop (0.037

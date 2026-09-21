@@ -23,8 +23,8 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
-    id: 'wnba-team-packs', date: '2026-09-21', title: 'WNBA Team Packs, a cheaper Super Season, and plain free throws',
-    body: 'The Pack Shop sells a WNBA Team Pack: five players from one WNBA roster and a strat, 250 coins, priced against the NBA Team Pack by what comes out. The Super Season Pack drops from 300 to 240 — measured, it was paying less per coin than the Super Booster. And Unethical Hoops draws four plain free throws now: the +4 on each check is gone (a free throw carries its own +10).',
+    id: 'wnba-team-packs', date: '2026-09-21', title: 'WNBA Team Packs, and plain free throws',
+    body: 'The Pack Shop sells a WNBA Team Pack: five players from one WNBA roster and a strat, 250 coins, priced against the NBA Team Pack by what comes out. And Unethical Hoops draws four plain free throws now: the +4 on each check is gone (a free throw carries its own +10).',
     to: 'shop', cta: 'Pack Shop',
   },
   {

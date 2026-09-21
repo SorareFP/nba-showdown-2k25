@@ -237,14 +237,13 @@ describe('the WNBA team pack', () => {
 });
 
 describe('the Super Season price', () => {
-  it('is 240 — 17% above the Super Booster and still under the booster on value per coin, by the measured table', () => {
-    // The user, 2026-09-21: "Super Season packs are still too expensive for
-    // the amount of quality cards in those packs." At 300 the pack paid 6.04
-    // coins of market value per coin against the Super Booster's 6.44; at
-    // 240 it pays 7.55, inside the 15-25% band over the Super Booster and
-    // under the plain booster's 7.92 (225 would have tied the booster) — the
-    // table is beside the definition.
-    expect(PACK_TYPES.super_season.price).toBe(240);
+  it('is 300 — a premium for the narrower, stronger pool, by the measured table', () => {
+    // The user, 2026-09-21: "I meant that the super season pack was too cheap
+    // at 300" — a same-day reversal of a cut to 240 that had read the ask
+    // backwards. At 300 the pack pays 6.04 coins of market value per coin
+    // against the Super Booster's 6.44 and the booster's 7.92; the table is
+    // beside the definition.
+    expect(PACK_TYPES.super_season.price).toBe(300);
     expect(PACK_TYPES.super_season).toMatchObject({ players: 3, strats: 1, guaranteedRarePlayer: 1 });
     expect(PACK_TYPES.standouts.price).toBe(275);   // not touched: the user named Super Season
   });

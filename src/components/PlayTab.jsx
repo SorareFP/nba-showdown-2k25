@@ -5,7 +5,7 @@ import { CLUTCH_DICE } from '../game/clutchAwards.js';
 import { execCard, resolvePendingShotCheck, resolveGoUnder } from '../game/execCard.js';
 import { randomizeTeam, MIN_TO_PLAY } from '../game/teamRules.js';
 import { resultFromPlayed } from '../game/modes/season.js';
-import { AI_LEVELS, iqOf, capOf, samplesOf, loadAiLevel, saveAiLevel } from '../game/aiLevels.js';
+import { AI_LEVELS, iqOf, capOf, samplesOf, loadAiLevel, saveAiLevel, payNote } from '../game/aiLevels.js';
 import { boxScoreFor } from '../game/boxScore.js';
 // A REDUCER CANNOT HOLD A HOOK, and must not have side effects at all — so a
 // rejected play reports through the module-level sink rather than through
@@ -15,7 +15,8 @@ import { playCrunch, playBuzzer } from '../game/gameAudio.js';
 import { useAuth } from '../firebase/AuthProvider.jsx';
 import { loadDecks } from '../firebase/savedDecks.js';
 import { loadRemoteGame, saveRemoteGameIfCurrent } from '../firebase/games.js';
-import { readLocalGame, writeLocalGame, makeSave, describeSave, createRemoteSaver, newGameId, remoteDecision, fixtureDecision, samePreset } from '../game/gameSave.js';
+import { readLocalGame, writeLocalGame, makeSave, describeSave, createRemoteSaver, newGameId, remoteDecision, fixtureDecision, samePreset, gameTerms, termsOf, claimIdOf } from '../game/gameSave.js';
+import { rungDrawFor, stampBelongs } from '../game/gameClaim.js';
 import { markPlayed } from '../game/firstRun.js';
 import CourtBoard from './game/CourtBoard.jsx';
 import GameOver from './game/GameOver.jsx';
@@ -116,7 +117,30 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
   // this device's newest save; `baseAt` the stamp of the last copy the
   // account had from, or gave to, this device. An account write is refused
   // once the account has moved past it (saveRemoteGameIfCurrent).
-  const gameId = useRef(saved?.id ?? null);
+  // A save from before ids existed gets one now (2026-09-18), so its claim
+  // can carry a receipt key: it is paid once and stamped, like any other.
+  const gameId = useRef(saved?.id ?? (saved?.game && !saved.preset?.key ? newGameId() : null));
+  // THE GAME'S PAY TERMS (gameSave.js gameTerms), fixed when it was dealt and
+  // restored with it — never re-read from this device's settings, which is
+  // what let a reloaded hotseat game claim as a game against the coach and a
+  // Settler game claim at Deity (2026-09-18). `paid` is the claim's stamp: a
+  // paid game's results screen shows what it was paid and never re-sends.
+  const [terms, setTermsState] = useState(() => (saved?.game ? termsOf(saved, loadAiLevel()) : null));
+  const termsRef = useRef(terms);
+  const setTerms = useCallback(t => { termsRef.current = t; setTermsState(t); }, []);
+  const [paid, setPaidState] = useState(saved?.paid ?? null);
+  const paidRef = useRef(saved?.paid ?? null);
+  const setPaid = useCallback(p => { paidRef.current = p; setPaidState(p); }, []);
+  // An old save's new id and terms are written back to THIS device once, with
+  // its own stamp kept — re-stamping on mount would make it look newer than
+  // another device's real progress — so a reload finds the same id and terms.
+  useEffect(() => {
+    if (saved?.game && (!saved.terms || (!saved.id && !saved.preset?.key))) {
+      writeLocalGame({ ...saved, ...(gameId.current ? { id: gameId.current } : {}), terms: termsRef.current });
+    }
+    // Once, for the save read at mount.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const heldAt = useRef(saved?.at ?? 0);
   const baseAt = useRef(saved?.at ?? 0);
   const syncRef = useRef(null);      // the current handleRemote, for the saver's refusals
@@ -171,7 +195,7 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
     // over a new object for the same fixture, and that is not a change.
     if (written.current.game === game && samePreset(written.current.preset, livePreset)) return;
     written.current = { game, preset: livePreset };
-    const save = makeSave(game, livePreset, gameId.current);
+    const save = makeSave(game, livePreset, gameId.current, { terms: termsRef.current, paid: paidRef.current });
     writeLocalGame(save);
     if (save) heldAt.current = save.at;
     if (save) { hadGame.current = true; remote.current?.push(save); markPlayed(); }
@@ -184,11 +208,21 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
   // control gate in CourtBoard is `pvpMode && ...`). Hotseat is how you test
   // a specific outcome: steer both teams to the score you want and see what
   // the results screen pays. Chosen on the pre-game screen, fixed for the game.
-  const [opponent, setOpponent] = useState('ai');
+  //
+  // `opponent` is the pre-game CHOICE; a game in progress plays by its saved
+  // terms (gameOpponent), so a reload cannot turn a hotseat game into a game
+  // against the coach (2026-09-18).
+  const [opponent, setOpponent] = useState(() => (saved?.game ? termsOf(saved).opponent : 'ai'));
+  const gameOpponent = terms?.opponent ?? opponent;
   // COACH DIFFICULTY — the matchup IQ lever (aiLevels.js), remembered per
   // browser. Applies to every game against the coach, sandbox or season.
   const [aiLevel, setAiLevelState] = useState(() => loadAiLevel());
   const setAiLevel = id => { setAiLevelState(id); saveAiLevel(id); };
+  // Back on this tab, the device setting is read again (2026-09-18): the tab
+  // stays mounted once visited, and the Season tab's Coach picker writes the
+  // same setting, so the picker here would otherwise show — and a new game be
+  // dealt at — the rung read at mount. A game in progress plays by its terms.
+  useEffect(() => { if (active) setAiLevelState(loadAiLevel()); }, [active]);
   // ONE SETTING, EVERYWHERE, AND CHANGEABLE. The user, 2026-09-14: "we'll want
   // in-game AI difficulty to be changeable in a dynasty/season probably."
   //
@@ -199,7 +233,34 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
   // the exploit is gone and the rung is free to be what it should be — a knob
   // you can turn between games. A fixture may still carry one, for a mode that
   // wants to insist.
-  const playedLevel = livePreset?.aiLevel ?? aiLevel;
+  //
+  // 2026-09-18: and once a game is dealt, ITS rung (terms.aiLevel) is the one
+  // it is played and paid at — the setting here, or on the Season tab, moves
+  // the next game, never this one.
+  const playedLevel = terms?.aiLevel ?? livePreset?.aiLevel ?? aiLevel;
+
+  // THE PAID STAMP. The claim's answer goes into the save — local and the
+  // account's copy — so a reload, or the same finished game on another
+  // device, shows what it was paid and never claims it again. The server's
+  // receipt (gameReceipts/{key}) is the guard that holds when this cannot run.
+  //
+  // ONLY THE GAME THAT WAS CLAIMED (2026-09-18). The answer can land seconds
+  // late — after Play Again and a Quick Match, or 'Back to the season' and the
+  // next fixture's deal — and this used to stamp whatever game was live then:
+  // the new game was marked paid, never claimed, and its results screen
+  // showed the old game's coins. The key must be the live game's key.
+  const stampPaid = useCallback((claimKey, result) => {
+    const { game: g, preset: p } = liveNow.current ?? {};
+    if (!stampBelongs(claimKey, claimIdOf({ game: g, preset: p, id: gameId.current }))) return;
+    const stamp = { coins: result?.coins ?? 0, breakdown: result?.breakdown ?? [], at: Date.now() };
+    setPaid(stamp);
+    if (!g) return;
+    const save = makeSave(g, p, gameId.current, { terms: termsRef.current, paid: stamp });
+    written.current = { game: g, preset: p };
+    writeLocalGame(save);
+    heldAt.current = save.at;
+    remote.current?.push(save);
+  }, [setPaid]);
 
   // ── Meeting the account's copy ──────────────────────────────────────────
   //
@@ -212,9 +273,14 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
   const liveNow = useRef(null);
   liveNow.current = { game, preset: livePreset };
   const adopt = useCallback((s, note) => {
-    setOpponent('ai');
+    // The copy's own terms and stamp — the opponent is no longer forced back
+    // to the coach (a hotseat game stays hotseat on every device).
+    const t = termsOf(s, loadAiLevel());
+    setTerms(t);
+    setOpponent(t.opponent);
+    setPaid(s.paid ?? null);
     setRestoredPreset(s.preset ?? null);
-    gameId.current = s.id ?? null;
+    gameId.current = s.id ?? (s.preset?.key ? null : newGameId());
     baseAt.current = s.at || 0;
     heldAt.current = s.at || 0;
     // Taken as it is: the same stamp here and on the account, no re-save.
@@ -223,7 +289,7 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
     writeLocalGame(s);
     dispatch({ type: 'SET', game: s.game });
     if (note) toast(note);
-  }, [toast]);
+  }, [toast, setTerms, setPaid]);
   const handleRemote = useCallback(async remote => {
     if (!remote || syncing.current || arriving.current) return;
     const { game: g, preset: p } = liveNow.current;
@@ -241,6 +307,8 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
         hadGame.current = false;
         dispatch({ type: 'SET', game: null });
         setRestoredPreset(null);
+        setTerms(null);
+        setPaid(null);
         toast('That game was finished on your other device.');
         if (p) onPresetFinish?.(null);
       } else {
@@ -256,7 +324,7 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
     } finally {
       syncing.current = false;
     }
-  }, [adopt, ask, toast, onPresetFinish]);
+  }, [adopt, ask, toast, onPresetFinish, setTerms, setPaid]);
   syncRef.current = handleRemote;
   const lastSync = useRef(0);
   const syncNow = useCallback(() => {
@@ -295,7 +363,7 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
   // cards, the answer to a check, and what it does with its assists.
   const iq = iqOf(playedLevel);
   useEffect(() => {
-    if (!game || game.done || opponent !== 'ai') return undefined;
+    if (!game || game.done || gameOpponent !== 'ai') return undefined;
     const timer = setTimeout(() => {
       const phase = game.phase;
 
@@ -409,7 +477,7 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
       }
     }, AI_DELAY);
     return () => clearTimeout(timer);
-  }, [game, opponent, iq]);
+  }, [game, gameOpponent, iq]);
 
   // ── The two moments the game announces about itself ───────────────────────
   //
@@ -430,12 +498,18 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
     lastOver.current = over;
   }, [over]);
 
-  const startGame = useCallback((rA, rB, deckA, deckB) => {
+  // `rungDraw`: did the coach's side come from randomizeTeam at THIS rung's
+  // cap — the only game a rung above Prince pays its premium for (the user,
+  // 2026-09-18: "any game where the coach did not draw its own team at the
+  // rung pays the fair Prince rate"). NoGame says so per button.
+  const startGame = useCallback((rA, rB, deckA, deckB, { rungDraw = false } = {}) => {
     // A new game, named, and superseding whatever the account held before now.
     gameId.current = newGameId();
     baseAt.current = Date.now();
+    setTerms(gameTerms({ opponent, aiLevel, rungDraw }));
+    setPaid(null);
     dispatch({ type: 'SET', game: newGame(rA, rB, deckA, deckB, { clutchDice: CLUTCH_DICE }) });
-  }, []);
+  }, [opponent, aiLevel, setTerms, setPaid]);
 
   // A FIXTURE STARTS ITSELF. The ref is the "which one" — without it every
   // re-render while a season game is in progress would deal a fresh game over
@@ -455,6 +529,22 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
       gameId.current = null;
       baseAt.current = Date.now();
       setOpponent('ai');
+      // A fixture's coach plays the league's team, not one drawn here, so the
+      // client says rungDraw false and the SERVER decides: it reads the
+      // league's own rung and pays a verified league game at the lower of the
+      // two (functions/index.js claimGameReward).
+      //
+      // The rung is read FRESH from the device (2026-09-18): PlayTab stays
+      // mounted once visited, so its own `aiLevel` is the one read at mount,
+      // while the Season tab's Coach picker writes only the device setting.
+      // Open Play at Deity, pick Settler on the Season tab ("pays 50%"), press
+      // Play — the fixture was dealt, played and paid at Deity. The terms
+      // freeze whatever is read here, so it has to be what the picker shows.
+      const device = loadAiLevel();
+      setAiLevelState(device);
+      const level = preset.aiLevel ?? device;
+      setTerms(gameTerms({ opponent: 'ai', aiLevel: level, rungDraw: false }));
+      setPaid(null);
       // The season's own deck for your side; the opponent plays the default.
       // THE VISITOR PLACES FIRST. Leading a row gives information away, so
       // home court is answering the snake: when you are at home the coach
@@ -520,7 +610,7 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
     onEndSection: ()                      => dispatch({ type: 'END_SECTION' }),
     onExecCard:   (teamKey, cardId, opts) => dispatch({ type: 'EXEC_CARD', teamKey, cardId, opts }),
     onResolve:    ()                      => dispatch({ type: 'RESOLVE_CHECK' }),
-    onPlayAgain:  ()                      => dispatch({ type: 'SET', game: null }),
+    onPlayAgain:  ()                      => { setTerms(null); setPaid(null); dispatch({ type: 'SET', game: null }); },
   };
 
   // One frame of the pre-game screen before the effect above deals the fixture
@@ -535,9 +625,18 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
   );
 
   if (game.done) {
-    // The rung only prices a game the COACH played: hotseat is two people and
-    // the difficulty setting never applied to it.
-    if (!livePreset) return <GameOver game={game} mode={opponent} aiLevel={opponent === 'ai' ? playedLevel : null} onPlayAgain={handlers.onPlayAgain} />;
+    // THE CLAIM IS PRICED FROM THE SAVED TERMS (2026-09-18) and keyed by the
+    // game's identity, and a paid game carries its stamp. The rung only prices
+    // a game the COACH played: hotseat is two people and the difficulty
+    // setting never applied to it.
+    const claimTerms = terms ?? gameTerms({ opponent: gameOpponent, aiLevel: null, rungDraw: false });
+    const payProps = {
+      claimId: claimIdOf({ game, preset: livePreset, id: gameId.current }),
+      rungDraw: claimTerms.rungDraw,
+      paid,
+      onPaid: stampPaid,
+    };
+    if (!livePreset) return <GameOver game={game} mode={claimTerms.opponent === 'human' ? 'hotseat' : 'ai'} aiLevel={claimTerms.opponent === 'ai' ? claimTerms.aiLevel : null} onPlayAgain={handlers.onPlayAgain} {...payProps} />;
     // The score as the FIXTURE sees it — see resultFromPlayed for why the
     // home/away mapping is not written out here.
     // `returnTab`: a dynasty fixture goes back to the Dynasty tab, not Season.
@@ -546,16 +645,25 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
       <GameOver
         game={game}
         mode="ai"
-        // What the game was played at — the fixture's rung, or this device's.
-        // The server re-reads a dynasty's own rung and overrides this.
-        aiLevel={playedLevel}
-        // A dynasty fixture names its dynasty (or its friends league) and the
-        // season it belongs to; the SERVER checks that before paying the
-        // dynasty rate (coinRewards.js DYNASTY_GAME_FACTOR).
-        dynasty={livePreset.dynastyId || livePreset.leagueId
-          ? { dynastyId: livePreset.dynastyId ?? null, leagueId: livePreset.leagueId ?? null, seasonId: livePreset.seasonId ?? null }
+        // What the game was played at — fixed in its terms when it was dealt.
+        // The server re-reads a league's own rung and floors this by it.
+        aiLevel={claimTerms.aiLevel ?? playedLevel}
+        {...payProps}
+        // WHERE THE FIXTURE CAME FROM: its season always, and its dynasty or
+        // friends league when it has one. The SERVER checks each against the
+        // account's own records before it pays a league's rung (the league
+        // drew the coach's teams at it — season.js capOf(aiLevel)) floored by
+        // min(built-at, played-at), or the dynasty rate (DYNASTY_GAME_FACTOR).
+        // 2026-09-18: this was sent for dynasty and friends fixtures only, so
+        // a plain season's game never reached that check — a Deity season's
+        // win paid 1x as a "custom" game, and a Settler season played with the
+        // dial at Prince escaped the league's floor. A shared (non-dynasty)
+        // league's seasonId names no season of the player's, so it still
+        // prices as a game the server cannot verify, at most the fair rate.
+        fixtureFrom={livePreset.seasonId
+          ? { dynastyId: livePreset.dynastyId ?? null, leagueId: livePreset.leagueId ?? null, seasonId: livePreset.seasonId }
           : null}
-        onLeave={() => { dispatch({ type: 'SET', game: null }); setRestoredPreset(null); onPresetFinish?.(result); }}
+        onLeave={() => { dispatch({ type: 'SET', game: null }); setRestoredPreset(null); setTerms(null); setPaid(null); onPresetFinish?.(result); }}
         leaveLabel="Back to the season →"
       />
     );
@@ -572,6 +680,8 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
     if (!yes) return;
     dispatch({ type: 'SET', game: null });
     setRestoredPreset(null);
+    setTerms(null);
+    setPaid(null);
     // No result: the season clears the preset and leaves the fixture open.
     if (livePreset) onPresetFinish?.(null);
   };
@@ -587,7 +697,7 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
         </button>
       </div>
       {/* Whose die it is, where the a-b-a-b roll is enforced (2026-09-18). */}
-      <Scoreboard game={game} rollGate={opponent === 'ai' ? rollGate(game) : null} />
+      <Scoreboard game={game} rollGate={gameOpponent === 'ai' ? rollGate(game) : null} />
       <GameLog log={game.log} />
       {/* Below the court on a phone (PlayTab.module.css .analyticsSlot). */}
       <div className={styles.analyticsSlot}><AnalyticsPanel analytics={game.analytics} /></div>
@@ -596,9 +706,9 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
         setGame={handlers.setGame}
         // Only against the coach: hotseat is two humans at one screen and
         // they alternate by agreement, and PvP has its own turn machinery.
-        rollGate={opponent === 'ai' ? rollGate(game) : null}
-        aiIq={opponent === 'ai' ? iqOf(playedLevel) : 1}
-        aiSamples={opponent === 'ai' ? samplesOf(playedLevel) : undefined}
+        rollGate={gameOpponent === 'ai' ? rollGate(game) : null}
+        aiIq={gameOpponent === 'ai' ? iqOf(playedLevel) : 1}
+        aiSamples={gameOpponent === 'ai' ? samplesOf(playedLevel) : undefined}
         onRoll={handlers.onRoll}
         onEndSection={handlers.onEndSection}
         onExecCard={handlers.onExecCard}
@@ -610,11 +720,11 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
         // Hotseat means a real person is sitting on the other side, so the
         // defence gets to make the choices that are the defence's — see
         // allocateStandingChecks. Against the coach, the engine allocates.
-        defenceIsHuman={opponent === 'human'}
+        defenceIsHuman={gameOpponent === 'human'}
         // The coach's hand goes face down and its roster status comes up in
         // that panel's place. Hotseat passes null: both hands belong to the
         // person at the screen, and hiding one from the other is theatre.
-        coachTeam={opponent === 'ai' ? 'B' : null}
+        coachTeam={gameOpponent === 'ai' ? 'B' : null}
       />
     </div>
   );
@@ -639,18 +749,34 @@ function NoGame({ canUseBuilt, rosterA, rosterB, opponent, setOpponent, aiLevel,
     return deck?.cards || null;
   };
 
-  const handleStart = (rA, rB) => {
-    onStart(rA, rB, getDeckConfig(deckA), getDeckConfig(deckB));
+  const handleStart = (rA, rB, how = {}) => {
+    onStart(rA, rB, getDeckConfig(deckA), getDeckConfig(deckB), how);
   };
 
   // Two rosters inside the salary band real teams live in — the same draw the
   // sandbox's dice button makes — rather than the first twenty cards of a
   // shuffle, which could put a $2,400 team against a $5,500 one.
+  //
+  // Both are drawn at the PLAIN cap, so above Prince the coach has not drawn
+  // its own team at the rung and the game pays at most the fair rate
+  // (2026-09-18); at or below Prince the plain cap IS the rung's cap.
+  //
+  // WHAT THE COACH PLAYS IS ITS DECK TOO (2026-09-18). The Team B deck picker
+  // hands the coach a deck the human chose — an empty one, even — and a Deity
+  // coach with no strategy cards won 45% where an honest one wins 74%, paid
+  // at 1.5x. rungDrawFor counts a chosen Team B deck as a custom game.
+  const how = button => ({ rungDraw: rungDrawFor(button, { opponent, aiLevel, deckB }) });
   const quickStart = () => {
     const a = randomizeTeam([], false, null);
     const b = randomizeTeam(a, false, null);
-    onStart(a, b, getDeckConfig(deckA), getDeckConfig(deckB));
+    onStart(a, b, getDeckConfig(deckA), getDeckConfig(deckB), how('quick'));
   };
+  // THE BUTTONS SAY SO (2026-09-18): the picker promises "a win pays 150%",
+  // and two of the three starts cannot pay it above Prince. Said here, not
+  // discovered on the results screen.
+  const premium = opponent === 'ai' && capOf(aiLevel) > 1;
+  const customNote = 'pays at most the standard rate';
+  const deckNote = premium && deckB !== 'default' ? `You chose the coach's deck: ${customNote}` : null;
 
   const hasSavedDecks = decks.length > 0;
 
@@ -687,7 +813,7 @@ function NoGame({ canUseBuilt, rosterA, rosterB, opponent, setOpponent, aiLevel,
               <select className={styles.deckSelect} value={aiLevel} onChange={e => setAiLevel(e.target.value)} title="How hard the coach plays — and what a game against it pays">
                 {AI_LEVELS.map(l => (
                   <option key={l.id} value={l.id}>
-                    {l.label} — {l.blurb}{l.pay < 1 ? ` · ${Math.round(l.pay * 100)}% coin` : ''}
+                    {l.label} — {l.blurb} · {payNote(l.id)}
                   </option>
                 ))}
               </select>
@@ -696,22 +822,41 @@ function NoGame({ canUseBuilt, rosterA, rosterB, opponent, setOpponent, aiLevel,
         </div>
 
         <div className={styles.noGameBtns}>
+          {/* YOU BUILT THE COACH'S TEAM here, so no rung's premium applies
+              (2026-09-18: the farm was a junk Team B at Deity, 263 a game). */}
           {canUseBuilt && (
-            <button className={styles.btnPri} onClick={() => handleStart(rosterA, rosterB)}>
+            <button
+              className={styles.btnPri}
+              onClick={() => handleStart(rosterA, rosterB, how('built'))}
+              title={premium ? `You built the coach's team: ${customNote}` : undefined}
+            >
               🏀 Start with Team Builder Rosters
             </button>
           )}
           {rosterA.length >= MIN_TO_PLAY && (
             <button
               className={styles.btnSec}
-              onClick={() => handleStart(rosterA, randomizeTeam(rosterA, false, null, opponent === 'ai' ? capOf(aiLevel) : 1))}
-              title="Your Team A against a random roster in the salary band"
+              onClick={() => handleStart(rosterA, randomizeTeam(rosterA, false, null, opponent === 'ai' ? capOf(aiLevel) : 1), how('random'))}
+              title={deckNote ?? 'Your Team A against a random roster in the salary band'}
             >
               🏀 Team A vs a random opponent
             </button>
           )}
-          <button className={styles.btnSec} onClick={quickStart}>🎲 Quick Match (random teams)</button>
+          <button
+            className={styles.btnSec}
+            onClick={quickStart}
+            title={premium ? `Both teams drawn at the plain cap: ${customNote}` : undefined}
+          >
+            🎲 Quick Match (random teams)
+          </button>
         </div>
+        {premium && (
+          <p className={styles.hint}>
+            {deckNote
+              ? `${deckNote}.`
+              : `Only “Team A vs a random opponent” with the default Team B deck pays this rung's win premium — the coach draws its own team at the rung. The other starts pay at most the standard rate.`}
+          </p>
+        )}
         {rosterA.length < MIN_TO_PLAY && <p className={styles.hint}>Load a team into Team A to play it — or Quick Match.</p>}
         {user && !hasSavedDecks && !loadingDecks && (
           <p className={styles.hint}>No saved decks — using default deck. Build one in the Collection tab.</p>

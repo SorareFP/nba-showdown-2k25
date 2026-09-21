@@ -21,6 +21,16 @@
  * The claim is priced exactly as the server prices it, with the daily
  * counters pre-spent so neither the milestone cap nor the once-a-day first
  * win confounds the per-game number.
+ *
+ * TWO PRICES A GAME (2026-09-18). `coins/game` is the claim with no rung —
+ * the inversion this script was written to size. `paid now` is the same claim
+ * at the rung under today's rules (coinRewards.js gamePayFactor): the rung's
+ * factor on a WIN, at most 1x on a loss — the user: "Loss 1x, win 1.5x —
+ * losing pays the same at every rung; only a win takes the rung's
+ * multiplier" — and priced as if the coach drew its own team at the rung
+ * (rungDraw true), since a mirror match is a stand-in for that draw. A real
+ * custom game (Team Builder Rosters, Quick Match above Prince) pays at most
+ * 1x; the farm numbers are in the 2026-09-18 report, not here.
  */
 import { readFileSync } from 'node:fs';
 import { computePlayValue } from '../cardgen/playValue.js';
@@ -81,12 +91,12 @@ const spent = { date: '2026-09-14', coins: DAILY_MILESTONE_CAP, firstWin: true }
 
 console.log(`WHAT ONE GAME PAYS, by the coach's rung — ${GAMES} games each`);
 console.log('(the same ten on both benches - you at Deity, the coach at the rung named)\n');
-console.log('  rung        margin    win%    coins/game   vs Deity');
+console.log('  rung        margin    win%    coins/game   vs Deity   paid now');
 const rows = [];
 for (const lvl of AI_LEVELS) {
   const them = wrap(iqOf(lvl.id));
   const us = wrap(1);
-  let margin = 0, wins = 0, coins = 0;
+  let margin = 0, wins = 0, coins = 0, now = 0;
   for (let i = 0; i < GAMES; i += 1) {
     const flip = i % 2 === 1;
     const res = simulateGame(flip ? THEIRS : MINE, flip ? MINE : THEIRS, {
@@ -103,12 +113,13 @@ for (const lvl of AI_LEVELS) {
       box: boxScoreFor(res.game, myKey),
     };
     coins += settleGameReward(claim, spent, '2026-09-14').coins;
+    now += settleGameReward({ ...claim, aiLevel: lvl.id, rungDraw: true }, spent, '2026-09-14').coins;
   }
-  rows.push({ lvl, margin: margin / GAMES, win: wins / GAMES, coins: coins / GAMES });
+  rows.push({ lvl, margin: margin / GAMES, win: wins / GAMES, coins: coins / GAMES, now: now / GAMES });
 }
 const deity = rows[rows.length - 1].coins;
 for (const r of rows) {
-  console.log(`  ${r.lvl.label.padEnd(10)} ${(r.margin >= 0 ? '+' : '') + r.margin.toFixed(1).padStart(6)}   ${(100 * r.win).toFixed(0).padStart(3)}%   ${r.coins.toFixed(1).padStart(8)}   ${(r.coins / deity).toFixed(3).padStart(6)}×`);
+  console.log(`  ${r.lvl.label.padEnd(10)} ${(r.margin >= 0 ? '+' : '') + r.margin.toFixed(1).padStart(6)}   ${(100 * r.win).toFixed(0).padStart(3)}%   ${r.coins.toFixed(1).padStart(8)}   ${(r.coins / deity).toFixed(3).padStart(6)}×   ${r.now.toFixed(1).padStart(8)}`);
 }
 console.log('\nTO FLATTEN — the factor that makes every rung pay what Deity pays:');
 for (const r of rows) console.log(`  ${r.lvl.id.padEnd(10)} ${(deity / r.coins).toFixed(3)}`);

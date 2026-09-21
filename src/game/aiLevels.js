@@ -96,6 +96,20 @@ export function payOf(id) {
   return payFactorOf(levelById(id).id);
 }
 
+/**
+ * THE RATE IN WORDS, for a difficulty picker. Since 2026-09-18 a rung above
+ * Prince pays its premium on a WIN only — the user: "Loss 1x, win 1.5x —
+ * losing pays the same at every rung; only a win takes the rung's
+ * multiplier" — so the words say "a win pays", not "pays". Below Prince the
+ * cut applies to every game.
+ */
+export function payNote(id) {
+  const pct = Math.round(payOf(id) * 100);
+  if (pct < 100) return `pays ${pct}%`;
+  if (pct > 100) return `a win pays ${pct}%`;
+  return 'full rate';
+}
+
 // capOf and samplesOf are the table's (coinRewards.js), re-exported above.
 
 /** This browser's chosen level, or the default. Storage may be absent; that is fine. */

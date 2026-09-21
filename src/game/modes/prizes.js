@@ -59,6 +59,76 @@ export const SEASON_REWARDS = {
   long: { champion: 700, runnerUp: 350, playoffs: 150 },
 };
 
+// ── PAID BY THE SHARE YOU PLAYED (2026-09-18) ──────────────────────────────
+//
+// A solo season's commissioner tools include "Sim it" on your own game, and a
+// season with every one of your games simmed still paid its full title money
+// — minutes of clicking for a purse sized for a schedule of games. The user's
+// decision: "Pay by share played — title/year money is multiplied by the share
+// of your own games you actually played (simmed ones don't count)."
+//
+// Counted from the results the season itself keeps: every result, regular
+// season and playoffs, where your team is home or away, and `simulated` marks
+// one you did not play (simulate.js stamps it; a game you played comes back
+// through resultFromPlayed without it). Friends leagues are NOT counted this
+// way — their forfeits and commissioner sims are not the coach's own clicks,
+// and they keep their own rules (league.js).
+
+/** Your games in a list of results: `{ played, total }`, simulated ones not played. */
+export function ownGamesPlayed(results, teamId) {
+  let played = 0;
+  let total = 0;
+  for (const r of Array.isArray(results) ? results : []) {
+    if (!r || (r.home !== teamId && r.away !== teamId)) continue;
+    total += 1;
+    if (!r.simulated) played += 1;
+  }
+  return { played, total };
+}
+
+/** The share of your games you played, 0–1. No games at all is a full share (nothing was simmed). */
+export function playedShare(own) {
+  const total = Number(own?.total) || 0;
+  if (total <= 0) return 1;
+  return Math.max(0, Math.min(1, (Number(own?.played) || 0) / total));
+}
+
+/** Why a purse the standings earned pays nothing: every one of your games was simmed. */
+export const SIMMED_OUT = 'Every game of yours was simmed — title money is paid by the share you played';
+
+/** The words a purse cut by the share carries, or '' when nothing was cut. */
+export function shareNote(own) {
+  return playedShare(own) < 1 ? ` · ${own.played} of ${own.total} games played` : '';
+}
+
+/**
+ * WHAT A FINISHED SOLO SEASON PAYS — the title money times the fantasy factor
+ * times the share you played. One judge for the server (claimSeasonReward),
+ * the browser's direct route and the season screen's claim button, so all
+ * three show and pay the same number. `{ coins, label, own, share, simmedOut }`:
+ * `simmedOut` is a purse the standings earned and the share took to nothing.
+ */
+export function soloSeasonPurse(season) {
+  const mine = (season?.teams ?? []).find(t => t.human);
+  if (!mine) return { coins: 0, label: null, own: { played: 0, total: 0 }, share: 1, simmedOut: false };
+  const flags = {
+    champion: season.champion === mine.id,
+    runnerUp: season.runnerUp === mine.id,
+    madePlayoffs: (season.playoffSeeds ?? []).includes(mine.id),
+  };
+  const own = ownGamesPlayed(season.results, mine.id);
+  const share = playedShare(own);
+  const full = seasonEarnings(season.length, flags, dynastyCoinFactor(season.startMode));
+  const paid = seasonEarnings(season.length, flags, dynastyCoinFactor(season.startMode) * share);
+  return {
+    coins: paid.coins,
+    label: full.label ? `${full.label}${shareNote(own)}` : null,
+    own,
+    share,
+    simmedOut: full.coins > 0 && paid.coins === 0,
+  };
+}
+
 /** The one line a finished season pays a human team. */
 export function seasonEarnings(lengthId, { champion = false, runnerUp = false, madePlayoffs = false } = {}, factor = 1) {
   const r = SEASON_REWARDS[lengthId] ?? SEASON_REWARDS.regular;
@@ -106,16 +176,42 @@ export function dynastyTitles(dynasty, teamId = dynastyHuman(dynasty)) {
   return (dynasty?.history ?? []).filter(h => h.champion === teamId).length;
 }
 
+/**
+ * THE SHARE A SOLO DYNASTY'S COACH PLAYED (2026-09-18, "pay by share played").
+ * A year's history entry carries `own: { played, total }` — the human's games
+ * that year, counted when the season closed (dynasty.js endSeason) from the
+ * season's own results. Only a SOLO dynasty's entries carry it: a dynasty with
+ * friends keeps its own rules (league.js pays it), so its entries have none,
+ * and a year closed before the count existed has none either — those are paid
+ * in full, because nothing says what was simmed in them.
+ *
+ * `year` null is the whole dynasty: every year that carries a count, summed —
+ * what the ten-year bonus is paid by.
+ */
+export function dynastyOwnPlayed(dynasty, year = null, teamId = dynastyHuman(dynasty)) {
+  if (teamId !== dynastyHuman(dynasty)) return null;
+  const rows = (dynasty?.history ?? []).filter(h => h?.own && (year == null || h.year === year));
+  if (!rows.length) return null;
+  return rows.reduce((t, h) => ({
+    played: t.played + (Number(h.own.played) || 0),
+    total: t.total + (Number(h.own.total) || 0),
+  }), { played: 0, total: 0 });
+}
+
 /** What one finished year of a dynasty pays a team, from its own history. */
 export function dynastyYearEarnings(dynasty, year, teamId = dynastyHuman(dynasty)) {
   const h = (dynasty?.history ?? []).find(x => x.year === year);
   if (!h) return { coins: 0, label: null };
   const me = teamId;
-  return seasonEarnings(dynasty.length, {
+  const flags = {
     champion: h.champion === me,
     runnerUp: h.runnerUp === me,
     madePlayoffs: (h.playoffSeeds ?? []).includes(me),
-  }, dynastyCoinFactor(dynasty.startMode));
+  };
+  // The year money times the share of that year's own games the coach played.
+  const own = dynastyOwnPlayed(dynasty, year, teamId);
+  const r = seasonEarnings(dynasty.length, flags, dynastyCoinFactor(dynasty.startMode) * playedShare(own));
+  return { ...r, label: r.label ? `${r.label}${shareNote(own)}` : null };
 }
 
 /** The ten-year bonus: nothing until the dynasty is over and all ten are in the book. */
@@ -124,8 +220,11 @@ export function dynastyCompletionEarnings(dynasty, teamId = dynastyHuman(dynasty
   if (dynasty?.phase !== 'done' || years.size < DYNASTY_YEARS) return { coins: 0, label: null };
   const base = DYNASTY_COMPLETION[dynasty.length] ?? DYNASTY_COMPLETION.regular;
   const titles = dynastyTitles(dynasty, teamId);
-  const coins = Math.floor((base + titles * DYNASTY_TITLE_BONUS) * dynastyCoinFactor(dynasty.startMode));
-  return { coins, label: titles ? `Ten-year dynasty · ${titles} title${titles === 1 ? '' : 's'}` : 'Ten-year dynasty' };
+  // Paid by the share of the whole dynasty's own games played (2026-09-18).
+  const own = dynastyOwnPlayed(dynasty, null, teamId);
+  const coins = Math.floor((base + titles * DYNASTY_TITLE_BONUS) * dynastyCoinFactor(dynasty.startMode) * playedShare(own));
+  const label = titles ? `Ten-year dynasty · ${titles} title${titles === 1 ? '' : 's'}` : 'Ten-year dynasty';
+  return { coins, label: `${label}${shareNote(own)}` };
 }
 
 /**
@@ -139,6 +238,7 @@ export function dynastyClaim(dynasty, which) {
   if (hist.some((h, i) => h.year !== i + 1)) return { error: 'That dynasty\'s history does not add up' };
   if (which === 'complete') {
     const r = dynastyCompletionEarnings(dynasty);
+    if (!r.coins && r.label && playedShare(dynastyOwnPlayed(dynasty)) === 0) return { error: SIMMED_OUT };
     return r.coins ? { ...r, id: 'complete' } : { error: 'That dynasty is not finished' };
   }
   const year = Number(which);
@@ -146,5 +246,6 @@ export function dynastyClaim(dynasty, which) {
   if (!Number.isInteger(year) || year < 1 || year > 100) return { error: 'No such year' };
   const r = dynastyYearEarnings(dynasty, year);
   if (!hist.some(h => h.year === year)) return { error: 'That year has not been played' };
+  if (!r.coins && r.label && playedShare(dynastyOwnPlayed(dynasty, year)) === 0) return { error: SIMMED_OUT };
   return r.coins ? { coins: r.coins, label: `Year ${year} · ${r.label}`, id: String(year) } : { error: 'That year finished out of the money' };
 }

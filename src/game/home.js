@@ -23,6 +23,11 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
+    id: 'coin-fixes', date: '2026-09-18', title: 'What a game pays: four fixes',
+    body: 'A harder coach\'s premium is now a win\'s: a loss pays the standard rate at King and Deity (below Prince the discount stays). A game where you built the coach\'s team or picked its deck, or a Quick Match, pays at most the standard rate — the premium is for beating a team the coach drew itself. A finished game is paid once, however often the page reloads, and it keeps the difficulty and the opponent it was dealt with. Season and dynasty title money is paid by the share of your own games you played — simmed ones do not count.',
+    to: 'play', cta: 'Play a game',
+  },
+  {
     id: 'tired-checks', date: '2026-09-16', title: 'Tired legs miss shots too',
     body: 'The fatigue tracker\'s penalty now applies to 3PT and paint checks the way it applies to scoring rolls — the rules pages had said so all along; the dice had not. Free throws are exempt. A trial: say so if it plays wrong.',
     to: 'play', cta: 'Play a game',

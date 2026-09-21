@@ -58,8 +58,8 @@ import {
 import { generatePack, PACK_TYPES, favoriteTeamOptions, nextBoxPack } from '../game/packEngine.js';
 import { getCardByKey } from '../game/cardSets.js';
 import { burnValueFor, listingFloor, checkListingPrice } from '../game/marketRules.js';
-import { settleGameReward, todayKey, sanitizeBox } from '../game/coinRewards.js';
-import { seasonEarnings, dynastyCoinFactor, dynastyClaim } from '../game/modes/prizes.js';
+import { settleGameReward, todayKey, sanitizeBox, payFactorOf } from '../game/coinRewards.js';
+import { dynastyClaim, soloSeasonPurse, SIMMED_OUT } from '../game/modes/prizes.js';
 
 /**
  * FLIP THIS AFTER `firebase deploy --only functions`.
@@ -214,12 +214,10 @@ const direct = {
     if (season.phase !== 'done') throw new Error('That season is not over');
     const mine = (season.teams ?? []).find(t => t.human);
     if (!mine) throw new Error('That season has no team of yours');
-    const { coins, label } = seasonEarnings(season.length, {
-      champion: season.champion === mine.id,
-      runnerUp: season.runnerUp === mine.id,
-      madePlayoffs: (season.playoffSeeds ?? []).includes(mine.id),
-    }, dynastyCoinFactor(season.startMode));
-    if (!coins) throw new Error('That season finished out of the money');
+    // The server's judge: title money by the share played (2026-09-18).
+    const purse = soloSeasonPurse(season);
+    const { coins, label } = purse;
+    if (!coins) throw new Error(purse.simmedOut ? SIMMED_OUT : 'That season finished out of the money');
     const claimRef = doc(db, 'users', uid, 'claims', `season:${seasonId}`);
     await runTransaction(db, async tx => {
       const claim = await tx.get(claimRef);
@@ -263,8 +261,33 @@ const direct = {
   async burnOverCap() { return { burned: [], coins: 0 }; },
   async claimGameReward(uid, claim) {
     // The dynasty rate is the server's to grant — it is the only side that can
-    // read the dynasty and check the game came from its live season.
-    claim = { ...claim, dynasty: false };
+    // read the dynasty and check the game came from its live season. So is a
+    // league game's rung: this route cannot verify one, so a fixture here is
+    // priced as a custom game, at no more than the fair rate (2026-09-18).
+    //
+    // 2026-09-18: except a PLAIN season, which is the player's own document
+    // and readable here — the server's seasonRung, in the browser. Its teams
+    // were drawn at its rung (season.js), so the game counts as drawn at the
+    // rung and pays min(built-at, played-at); a season that records no rung
+    // is Prince's. The key must name the season, as on the server.
+    const fixture = Boolean(claim.seasonId || claim.dynastyId || claim.leagueId);
+    let builtAt = null;
+    const keyFits = !claim.gameId || (typeof claim.gameId === 'string' && claim.gameId.startsWith(`fixture:${claim.seasonId}:`));
+    if (claim.seasonId && !claim.dynastyId && !claim.leagueId && keyFits) {
+      const seasonSnap = await getDoc(doc(db, 'users', uid, 'seasons', String(claim.seasonId)));
+      if (seasonSnap.exists()) builtAt = typeof seasonSnap.data()?.aiLevel === 'string' ? seasonSnap.data().aiLevel : 'prince';
+    }
+    claim = builtAt
+      ? { ...claim, dynasty: false, rungDraw: true, aiLevel: payFactorOf(builtAt) < payFactorOf(claim.aiLevel) ? builtAt : claim.aiLevel }
+      : { ...claim, dynasty: false, rungDraw: claim.rungDraw === true && !fixture };
+    // NO RECEIPT ON THIS ROUTE (2026-09-18). The server writes one in the same
+    // transaction as the credit (gameReceipts/{key}); this route cannot. That
+    // collection is closed to the browser by the rules' catch-all, so a write
+    // here would throw AFTER the coins were paid, and a read-check-then-pay
+    // without a transaction lets two tabs both pass. This route is dev-only —
+    // live only while USE_CLOUD_FUNCTIONS is false, i.e. before the rules and
+    // functions are deployed — so it is simply unguarded: the save's paid
+    // stamp (PlayTab stampPaid) is the only thing that stops a repeat here.
     const me = await getUserData(uid);
     const today = todayKey();
     const settled = settleGameReward(
@@ -288,6 +311,7 @@ const direct = {
       firstWin: settled.firstWin,
       bam: settled.bam,
       minted: settled.bam ? settled.bamCardId : null,
+      breakdown: settled.breakdown,
     };
   },
   /**

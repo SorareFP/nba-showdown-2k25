@@ -36,12 +36,63 @@ export const REMOTE_LOG_KEEP = 300;
 export const REMOTE_DEBOUNCE_MS = 1500;
 
 /**
- * A save: `{ game, preset, id, at }`, or null for "nothing in progress".
- * `id` names a non-fixture game (see gameIdentity); it is left off when absent.
+ * A save: `{ game, preset, id, terms, paid, at }`, or null for "nothing in
+ * progress". `id` names a non-fixture game (see gameIdentity); `terms` are the
+ * game's pay terms, fixed when it was dealt (gameTerms); `paid` is the stamp a
+ * claimed game carries (the claim's answer). Each is left off when absent.
  */
-export function makeSave(game, preset, id = null) {
+export function makeSave(game, preset, id = null, { terms = null, paid = null } = {}) {
   if (!game) return null;
-  return { game, preset: preset ?? null, ...(id ? { id } : {}), at: Date.now() };
+  return {
+    game,
+    preset: preset ?? null,
+    ...(id ? { id } : {}),
+    ...(terms ? { terms } : {}),
+    ...(paid ? { paid } : {}),
+    at: Date.now(),
+  };
+}
+
+// ── The game's pay terms (2026-09-18) ────────────────────────────────────────
+//
+// Two farms came from the save NOT knowing what kind of game it was. The
+// opponent was never saved and a reload forced it back to the coach, so a
+// hotseat game — both benches steered by the player to any score — became a
+// paid game against the coach. And the rung was re-read from this device's
+// setting when the results screen mounted, so a game played at Settler could
+// be claimed at Deity by changing the setting (on the Season tab, even) and
+// reloading. The terms are fixed when the game is dealt and ride the save to
+// every device; the claim is priced from them and nothing else.
+//
+//   opponent   'ai' or 'human' (hotseat)
+//   aiLevel    the rung the coach plays and the claim is priced at; null for hotseat
+//   rungDraw   did the coach draw its OWN team at that rung's cap
+//              (randomizeTeam(..., capOf(rung))) — a custom or plain-cap team
+//              never pays a rung's premium (coinRewards.js gamePayFactor)
+
+/** The terms a game is dealt with. */
+export function gameTerms({ opponent = 'ai', aiLevel = null, rungDraw = false } = {}) {
+  const ai = opponent !== 'human';
+  return { opponent: ai ? 'ai' : 'human', aiLevel: ai ? (aiLevel ?? null) : null, rungDraw: ai && Boolean(rungDraw) };
+}
+
+/**
+ * The terms of a save — its own, or for a save written before terms existed,
+ * the coach at `fallbackLevel` with rungDraw false: such a save is paid once,
+ * at no more than the fair rate, because nothing says what it really was.
+ */
+export function termsOf(save, fallbackLevel = null) {
+  if (save?.terms && typeof save.terms === 'object') return gameTerms(save.terms);
+  return gameTerms({ opponent: 'ai', aiLevel: fallbackLevel, rungDraw: false });
+}
+
+/**
+ * WHAT THE CLAIM IS KEYED BY — the game's identity (gameIdentity below), which
+ * the server writes a receipt under so the same game is paid once however
+ * many times its results screen mounts. Null when the save cannot say.
+ */
+export function claimIdOf(save) {
+  return gameIdentity(save);
 }
 
 // ── The local copy ───────────────────────────────────────────────────────────

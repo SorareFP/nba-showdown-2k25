@@ -54,9 +54,9 @@ import { getCardByKey } from '../game/cardSets.js';
 import { seasonAwards, replacementRate, vorpOf, DPOY_MIN_MPG } from '../game/modes/awards.js';
 import { simulateFixture } from '../game/modes/simulate.js';
 import { LENGTHS, PICKABLE_LENGTHS, LEAGUE_SIZES, playoffCount, gamesPerTeam } from '../game/modes/schedule.js';
-import { SEASON_REWARDS } from '../game/modes/prizes.js';
+import { SEASON_REWARDS, soloSeasonPurse, SIMMED_OUT } from '../game/modes/prizes.js';
 import { MIN_TO_PLAY } from '../game/teamRules.js';
-import { AI_LEVELS, loadAiLevel, saveAiLevel, payOf } from '../game/aiLevels.js';
+import { AI_LEVELS, loadAiLevel, saveAiLevel, payNote } from '../game/aiLevels.js';
 import { loadDecks } from '../firebase/savedDecks.js';
 import { logoSrc } from '../cards/CardTemplate.jsx';
 import { listSeasons, saveSeason, deleteSeason } from '../firebase/seasons.js';
@@ -796,7 +796,10 @@ function Setup({ teamA, collection, uid, onStart, onCancel }) {
         {/* THE LEAGUE'S RUNG (2026-09-16). Fixed at creation: above Prince the
             AI teams are built to a richer cap, so this decides who you face all
             season, and a game in the league never pays above it. The per-game
-            coach dial beside the play button can still turn the coach DOWN. */}
+            coach dial beside the play button can still turn the coach DOWN.
+            2026-09-18: the pay line is payNote's, as on the coach dial — the
+            user's rule "Loss 1x, win 1.5x": only a WIN takes a premium rung's
+            rate; a flat "games pay 150%" was no longer true. */}
         <div className={styles.field}>
           <span className={styles.label}>The other coaches</span>
           <div className={styles.choices}>
@@ -804,12 +807,12 @@ function Setup({ teamA, collection, uid, onStart, onCancel }) {
               <Choice
                 key={l.id} on={aiLevel === l.id} onClick={() => setAiLevel(l.id)}
                 title={l.label}
-                sub={`${l.blurb} · games pay ${Math.round(l.pay * 100)}%`}
+                sub={`${l.blurb} · ${payNote(l.id)}`}
               />
             ))}
           </div>
           <span className={styles.muted}>
-            Prince is a fair game at the standard rate. Above it their teams are better — you can see it on their cards — and games pay more. Fixed for the league; you can turn the coach down game by game, never up.
+            Prince is a fair game at the standard rate. Above it their teams are better — you can see it on their cards — and a win pays more; a loss pays the standard rate. Fixed for the league; you can turn the coach down game by game, never up.
           </span>
         </div>
 
@@ -843,8 +846,11 @@ function Setup({ teamA, collection, uid, onStart, onCancel }) {
  * because the rung is no longer a property of the league: the AI teams draft
  * at full strength whatever it says (createDynasty), and this decides only how
  * well the coach plays the NEXT game and what that game pays (coinRewards.js
- * AI_PAY). Moving it mid-season is therefore not an exploit — every factor on
- * the ladder is at most 1, so turning the coach down can only cost coins.
+ * AI_PAY). Moving it mid-season is not an exploit: a league game pays at the
+ * lower of the rung the league was built at and the rung it was played at
+ * (payFloorOf, on the server), and since 2026-09-18 the rung is FIXED IN THE
+ * GAME'S SAVE when the game is dealt (PlayTab), so turning this after the tip
+ * — or on another tab, then reloading — changes neither the coach nor the pay.
  *
  * One setting per device, the same one the sandbox screen in PlayTab reads, so
  * the two can never disagree about what "your difficulty" means. A shared
@@ -853,14 +859,13 @@ function Setup({ teamA, collection, uid, onStart, onCancel }) {
 function CoachDifficulty() {
   const [level, setLevel] = useState(() => loadAiLevel());
   const change = id => { setLevel(id); saveAiLevel(id); };
-  const pay = Math.round(payOf(level) * 100);
   return (
     <label className={styles.coachPick} title="How hard the coach plays this game — and what the game pays">
       <span className={styles.muted}>Coach</span>
       <select className={styles.input} value={level} onChange={e => change(e.target.value)}>
         {AI_LEVELS.map(l => <option key={l.id} value={l.id}>{l.label}</option>)}
       </select>
-      <span className={styles.muted}>{pay < 100 ? `pays ${pay}%` : 'full rate'}</span>
+      <span className={styles.muted}>{payNote(level)}</span>
     </label>
   );
 }
@@ -985,7 +990,7 @@ function Dashboard({
     if (!mine) return;
     const yes = await ask({
       title: 'Sim your own game?',
-      body: 'The result counts in the standings, but you will not play it — and a simmed game pays no coins.',
+      body: 'The result counts in the standings, but you will not play it — a simmed game pays no coins, and the title money at the end is paid by the share of your games you played.',
       confirmLabel: 'Sim it',
     });
     if (!yes) return;
@@ -1006,7 +1011,14 @@ function Dashboard({
   // season only now; `advance` is the only thing that moves a season on.
   const next = useCallback(() => commit(advance(season)), [season, commit]);
 
-  const earnings = isDone ? earningsFor(season, myId) : { coins: 0, label: null };
+  // A SOLO SEASON IS PAID BY THE SHARE YOU PLAYED (2026-09-18, the user:
+  // "title/year money is multiplied by the share of your own games you
+  // actually played (simmed ones don't count)"). soloSeasonPurse is the same
+  // judge claimSeasonReward prices with, so the button and the payout agree,
+  // and its label says "7 of 14 games played" when the share cut it. A shared
+  // league keeps its own rules (league.js pays it).
+  const purse = isDone && !league ? soloSeasonPurse(season) : null;
+  const earnings = !isDone ? { coins: 0, label: null } : purse ?? earningsFor(season, myId);
   const claim = useCallback(async () => {
     setClaiming(true);
     try {
@@ -1056,7 +1068,7 @@ function Dashboard({
             <div className={styles.muted}>
               {leagueEarned > 0 ? `+${leagueEarned} coins · ${earnings.label ?? 'season'} — paid to your account` : 'No title money this time'}
             </div>
-          ) : earnings.coins > 0 && (
+          ) : earnings.coins > 0 ? (
             season.paid ? (
               <div className={styles.muted}>{earnings.label} — paid</div>
             ) : uid ? (
@@ -1066,6 +1078,10 @@ function Dashboard({
             ) : (
               <div className={styles.muted}>{earnings.label} — sign in to be paid for a season</div>
             )
+          ) : purse?.simmedOut && (
+            // The standings earned a purse and the share played took it to
+            // nothing: say why rather than showing no button at all.
+            <div className={styles.muted}>{earnings.label} — {SIMMED_OUT}</div>
           ))}
         </div>
       )}
@@ -1109,7 +1125,7 @@ function Dashboard({
                     <button
                       className={styles.ghost}
                       onClick={simMine}
-                      title="Commissioner tool: resolve it without playing. A simmed game pays nothing."
+                      title="Commissioner tool: resolve it without playing. A simmed game pays nothing, and it counts against the title money's share played."
                     >
                       Sim it
                     </button>

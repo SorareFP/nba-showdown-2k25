@@ -119,7 +119,9 @@ describe("the tutorial coach's hand is face up and view-only", () => {
     // from it (round five, 2026-09-18) — no second prop to forget.
     const play = readFileSync(new URL('../PlayTab.jsx', import.meta.url), 'utf8');
     expect(play).not.toMatch(/watchOnlyTeam|readOnlyHand/);
-    expect(play).toMatch(/coachTeam=\{opponent === 'ai' \? 'B' : null\}/);
+    // `gameOpponent` since 2026-09-18: the opponent a game was dealt with,
+    // from its saved terms, not the pre-game chooser's current value.
+    expect(play).toMatch(/coachTeam=\{gameOpponent === 'ai' \? 'B' : null\}/);
   });
 });
 

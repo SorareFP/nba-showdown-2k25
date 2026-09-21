@@ -47,7 +47,7 @@ import { getStratRarity, STRAT_COPY_CAPS, stratCopyCap } from './shared/src/game
 import { burnValueFor, checkListingPrice } from './shared/src/game/marketRules.js';
 import { getStrat } from './shared/src/game/strats.js';
 import { settleGameReward, todayKey, sanitizeBox, payFactorOf } from './shared/src/game/coinRewards.js';
-import { seasonEarnings, dynastyCoinFactor, dynastyClaim } from './shared/src/game/modes/prizes.js';
+import { dynastyClaim, soloSeasonPurse, SIMMED_OUT } from './shared/src/game/modes/prizes.js';
 import { getDatabase } from 'firebase-admin/database';
 import { readFileSync } from 'node:fs';
 import {
@@ -749,15 +749,49 @@ async function inLiveDynastySeason(tx, uid, { dynastyId, leagueId, seasonId }) {
 
 /**
  * THE RUNG A PLAIN SEASON WAS BUILT AT, read off the player's own season
- * document — null when the game names no season, or the season records no
- * rung (one created before the ladder was reshaped pays as played).
+ * document — null when the game names no season or the season does not
+ * exist, 'prince' for a season that records no rung: it was built before the
+ * ladder was reshaped, at the plain cap, which is Prince's (2026-09-18 — it
+ * used to pay as played, and a Deity claim inside it was paid for opponents
+ * drawn at the plain cap).
  */
 async function seasonRung(tx, uid, { dynastyId, leagueId, seasonId }) {
   if (!seasonId || dynastyId || leagueId) return null;
   const snap = await tx.get(db.doc(`users/${uid}/seasons/${seasonId}`));
-  const s = snap.exists ? snap.data() : null;
-  return typeof s?.aiLevel === 'string' ? s.aiLevel : null;
+  if (!snap.exists) return null;
+  const s = snap.data();
+  return typeof s?.aiLevel === 'string' ? s.aiLevel : 'prince';
 }
+
+/**
+ * A GAME'S CLAIM KEY, as the receipt's document id — or null for none (a
+ * client older than the key, or one that cannot say). The key is the game's
+ * identity from gameSave.js (`fixture:<season>:<fixture>`, `game:<id>`) or a
+ * PvP room's (`pvp:<code>:<createdAt>`); a slash would make it a path.
+ */
+function claimKeyOf(raw) {
+  if (typeof raw !== 'string') return null;
+  const k = raw.trim().slice(0, 300);
+  if (!k || k.includes('/') || k === '.' || k === '..' || /^__.*__$/.test(k)) return null;
+  return k;
+}
+
+/**
+ * HOW LONG A GAME RECEIPT IS KEPT. The receipt only has to outlive the save it
+ * guards — one game per account slot, stamped paid on the device the moment
+ * the claim answers — so a month is generous. The field is for a Firestore
+ * TTL policy on the `gameReceipts` collection group (deploy notes); without
+ * one the receipts are kept, a document of a few hundred bytes (the
+ * breakdown rides along) per game played.
+ *
+ * THEIR OWN COLLECTION (2026-09-18). They went into `claims` first, beside
+ * the goal ladder's receipts — and the client reads that whole collection on
+ * every Home and Collection load (collection.js loadClaims), so every game
+ * ever played would have been a document read on every Home visit. Nothing
+ * on the client reads `gameReceipts`; the rules' closing catch-all keeps it
+ * server-only with no rule of its own.
+ */
+const GAME_RECEIPT_DAYS = 30;
 
 export const claimGameReward = onCall({ region: 'us-central1' }, async request => {
   const uid = requireAuth(request);
@@ -772,9 +806,14 @@ export const claimGameReward = onCall({ region: 'us-central1' }, async request =
       ? d.milestoneIds.filter(x => typeof x === 'string').slice(0, 8)
       : [],
     bam: Boolean(d.bam),
-    // The rung the coach played at. Priced by AI_PAY, replaced below for a
-    // dynasty game by the one on the league document.
+    // The rung the coach played at. Priced by AI_PAY, floored below for a
+    // league game by the one on the league document.
     aiLevel: typeof d.aiLevel === 'string' ? d.aiLevel.slice(0, 40) : null,
+    // DID THE COACH DRAW ITS OWN TEAM AT THE RUNG (2026-09-18). Only an
+    // explicit true counts: a client older than the field is priced as a
+    // custom game, at no more than the fair rate (gamePayFactor). Replaced
+    // below for a verified league game, whose teams the league drew.
+    rungDraw: d.rungDraw === true,
     // The lifetime tracker's input: one line per card that took the floor for
     // the caller's team. Sanitized to shape, then to cards that exist.
     box: sanitizeBox(d.box).filter(row => getCardByKey(row.key)),
@@ -786,11 +825,28 @@ export const claimGameReward = onCall({ region: 'us-central1' }, async request =
     seasonId: typeof d.seasonId === 'string' ? d.seasonId.slice(0, 200) : null,
   };
   const userRef = db.doc(`users/${uid}`);
+  // THE RECEIPT (2026-09-18). A finished game re-claimed on every reload: the
+  // save stayed until Play Again, the results screen mounted again, and
+  // nothing here remembered paying it. Now the game's key is written in the
+  // SAME transaction as the credit, and a repeat is answered with what was
+  // paid and `already: true` — which the client treats as success and stamps
+  // its save with, so it stops asking. No key (a client older than this):
+  // paid as before, without a receipt; the rate limit is the bound there.
+  const claimKey = claimKeyOf(d.gameId);
+  const receiptRef = claimKey ? db.doc(`users/${uid}/gameReceipts/${claimKey}`) : null;
 
   return db.runTransaction(async tx => {
     const userSnap = await tx.get(userRef);
     if (!userSnap.exists) throw new HttpsError('failed-precondition', 'No such player');
     const user = userSnap.data();
+
+    if (receiptRef) {
+      const receipt = await tx.get(receiptRef);
+      if (receipt.exists) {
+        const r = receipt.data() ?? {};
+        return { already: true, coins: r.coins ?? 0, breakdown: Array.isArray(r.breakdown) ? r.breakdown : [] };
+      }
+    }
 
     const now = Date.now();
     const recent = (user.gameWindow?.at ?? 0) > now - 60_000 ? (user.gameWindow?.n ?? 0) : 0;
@@ -808,10 +864,30 @@ export const claimGameReward = onCall({ region: 'us-central1' }, async request =
     // Prince league would be paid for opponents that were never on the floor.
     // A sandbox game has no league to check and is taken at its word, as the
     // margin always has been.
-    const inDynasty = await inLiveDynastySeason(tx, uid, from);
+    //
+    // 2026-09-18: a VERIFIED league game's coach played a team the league drew
+    // at its own rung, so it counts as drawn at the rung (rungDraw) and the
+    // floor decides the rate. A league or dynasty that records no rung was
+    // drawn at the plain cap — Prince's. A game that names a league this
+    // cannot verify was not drawn here at all: at most the fair rate.
+    //
+    // THE KEY MUST NAME THE SEASON (2026-09-18). Every fixture now sends its
+    // season (plain seasons did not, so their rung was never read), and a
+    // fixture's key is `fixture:<season>:<fixture>` (SeasonTab's preset key,
+    // gameSave.js gameIdentity). A claim that names a season under some other
+    // key — a sandbox game borrowing a Deity season's id — is not that
+    // season's game, so it is not verified. No key at all is a client older
+    // than the key, which only ever sent a season for a dynasty fixture.
+    const keyFitsSeason = !claimKey || (from.seasonId != null && claimKey.startsWith(`fixture:${from.seasonId}:`));
+    const inDynasty = keyFitsSeason ? await inLiveDynastySeason(tx, uid, from) : false;
     claim.dynasty = Boolean(inDynasty);
-    const builtAt = (inDynasty && inDynasty.aiLevel) || await seasonRung(tx, uid, from);
-    if (builtAt && payFactorOf(builtAt) < payFactorOf(claim.aiLevel)) claim.aiLevel = builtAt;
+    const builtAt = inDynasty ? (inDynasty.aiLevel || 'prince') : keyFitsSeason ? await seasonRung(tx, uid, from) : null;
+    if (builtAt) {
+      claim.rungDraw = true;
+      if (payFactorOf(builtAt) < payFactorOf(claim.aiLevel)) claim.aiLevel = builtAt;
+    } else if (from.seasonId || from.dynastyId || from.leagueId) {
+      claim.rungDraw = false;
+    }
 
     const today = todayKey();
     const settled = settleGameReward(
@@ -848,6 +924,16 @@ export const claimGameReward = onCall({ region: 'us-central1' }, async request =
       dailyFirstWin: settled.daily.firstWin,
       gameWindow: { at: now, n: recent + 1 },
     });
+    if (receiptRef) {
+      tx.set(receiptRef, {
+        claimedAt: FieldValue.serverTimestamp(),
+        expireAt: new Date(now + GAME_RECEIPT_DAYS * 86_400_000),
+        game: claimKey,
+        coins: settled.coins,
+        breakdown: settled.breakdown,
+        reward: null,
+      });
+    }
 
     // LIFETIME STATS, per card, per player: totals the client averages. They
     // ride the reward claim because that is the one call a finished game
@@ -873,6 +959,9 @@ export const claimGameReward = onCall({ region: 'us-central1' }, async request =
       firstWin: settled.firstWin,
       bam: Boolean(minted),
       minted,
+      // The server's own lines, so the results screen shows what was paid —
+      // a league's rung and the dynasty rate are known only here.
+      breakdown: settled.breakdown,
     };
   });
 });
@@ -908,11 +997,13 @@ const BATCH = 400;
 async function wipeAccount(uid) {
   // Teams and decks too: they name cards, and after a reset they would name
   // cards the account no longer holds. The user noticed (2026-09-05).
-  const [copies, coll, hist, claims, listings, teams, decks, seasons, games, stats] = await Promise.all([
+  const [copies, coll, hist, claims, receipts, listings, teams, decks, seasons, games, stats] = await Promise.all([
     db.collection(`users/${uid}/copies`).get(),
     db.collection(`users/${uid}/collection`).get(),
     db.collection(`users/${uid}/packHistory`).get(),
     db.collection(`users/${uid}/claims`).get(),
+    // Game receipts (2026-09-18): a wiped account starts its games afresh.
+    db.collection(`users/${uid}/gameReceipts`).get(),
     db.collection('listings').where('seller', '==', uid).get(),
     db.collection(`users/${uid}/teams`).get(),
     db.collection(`users/${uid}/decks`).get(),
@@ -930,7 +1021,7 @@ async function wipeAccount(uid) {
     if (key) returned[key] = (returned[key] ?? 0) - 1;
   });
 
-  const refs = [...copies.docs, ...coll.docs, ...hist.docs, ...claims.docs, ...listings.docs, ...teams.docs, ...decks.docs, ...seasons.docs, ...games.docs, ...stats.docs].map(d => d.ref);
+  const refs = [...copies.docs, ...coll.docs, ...hist.docs, ...claims.docs, ...receipts.docs, ...listings.docs, ...teams.docs, ...decks.docs, ...seasons.docs, ...games.docs, ...stats.docs].map(d => d.ref);
   for (let i = 0; i < refs.length; i += BATCH) {
     const batch = db.batch();
     for (const ref of refs.slice(i, i + BATCH)) batch.delete(ref);
@@ -962,7 +1053,7 @@ async function wipeAccount(uid) {
 
   return {
     uid,
-    copies: copies.size, cards: coll.size, claims: claims.size, listings: listings.size,
+    copies: copies.size, cards: coll.size, claims: claims.size, gameReceipts: receipts.size, listings: listings.size,
     teams: teams.size, decks: decks.size, seasons: seasons.size, games: games.size, cardStats: stats.size,
   };
 }
@@ -1134,13 +1225,14 @@ export const claimSeasonReward = onCall({ region: 'us-central1' }, async request
   const mine = (season.teams ?? []).find(t => t.human);
   if (!mine) throw new HttpsError('failed-precondition', 'That season has no team of yours');
 
-  const factor = dynastyCoinFactor(season.startMode);
-  const { coins, label } = seasonEarnings(season.length, {
-    champion: season.champion === mine.id,
-    runnerUp: season.runnerUp === mine.id,
-    madePlayoffs: (season.playoffSeeds ?? []).includes(mine.id),
-  }, factor);
-  if (!coins) throw new HttpsError('failed-precondition', 'That season finished out of the money');
+  // PAID BY THE SHARE PLAYED (2026-09-18, the user: "title/year money is
+  // multiplied by the share of your own games you actually played (simmed
+  // ones don't count)"). soloSeasonPurse counts the season's own results —
+  // the same judge the season screen's button shows — times the fantasy
+  // factor as before.
+  const purse = soloSeasonPurse(season);
+  const { coins, label } = purse;
+  if (!coins) throw new HttpsError('failed-precondition', purse.simmedOut ? SIMMED_OUT : 'That season finished out of the money');
 
   const claimRef = db.doc(`users/${uid}/claims/season:${seasonId}`);
   return db.runTransaction(async tx => {
@@ -1158,6 +1250,11 @@ export const claimSeasonReward = onCall({ region: 'us-central1' }, async request
  * comes from the dynasty document's own history through dynastyClaim in the
  * shared prizes.js, and the receipt `claims/dynasty:{id}:{year}` stops the
  * second claim. A fantasy-draft dynasty is paid half (FANTASY_DYNASTY_FACTOR).
+ * Since 2026-09-18 a solo dynasty's year money and ten-year bonus are also
+ * paid by the share of its coach's own games played, not simmed (the user:
+ * "pay by share played") — dynastyClaim reads the count each year's history
+ * entry carries (dynasty.js endSeason); a year filed before the count existed
+ * is paid in full.
  */
 export const claimDynastyReward = onCall({ region: 'us-central1' }, async request => {
   const uid = requireAuth(request);

@@ -20,6 +20,12 @@
 //
 //   MILESTONES ARE NOT SCALED. They come out of a daily cap, and scaling them
 //   would quietly move the cap.
+//
+//   2026-09-18: THE PREMIUM IS A WIN'S, against a team the coach drew. A loss
+//   pays at most 1x at any rung, and a coach handed a team it did not draw at
+//   its rung pays at most 1x (coinRewards.js gamePayFactor; the user's words
+//   and the farm they close are in coinFixes.test.js). The claims below are
+//   wins with no `rungDraw`, which the table prices as drawn.
 import { describe, it, expect } from 'vitest';
 import {
   settleGameReward, AI_PAY, payFactorOf, payFloorOf, PAY_MAX, DAILY_MILESTONE_CAP, MILESTONES, REWARD,
@@ -120,8 +126,10 @@ describe('what a finished game is worth', () => {
     const easy = settleGameReward({ won: false, milestoneIds: all, aiLevel: 'settler' }, fresh, TODAY);
     const hard = settleGameReward({ won: false, milestoneIds: all, aiLevel: 'deity' }, fresh, TODAY);
     expect(easy.milestoneCoins).toBe(hard.milestoneCoins);
-    // Only the completion money differs — the part the game earned for being played.
-    expect(hard.coins - easy.coins).toBe(Math.round(REWARD.complete * 1.5) - Math.round(REWARD.complete * 0.5));
+    // Only the completion money differs — the part the game earned for being
+    // played. A LOSS, so since 2026-09-18 Deity pays it at the fair rate (the
+    // user: "only a win takes the rung's multiplier") and Settler keeps its cut.
+    expect(hard.coins - easy.coins).toBe(REWARD.complete - Math.round(REWARD.complete * 0.5));
   });
 
   it('applies the rung first, then pays the dynasty rate on what is left', () => {

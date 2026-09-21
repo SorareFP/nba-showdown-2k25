@@ -117,6 +117,11 @@ export const DYNASTY_GAME_FACTOR = 1.15;
  * A PvP game carries no rung and is untouched by this table: two people play
  * on their own logic, and it pays its own flat rate (pvpWin).
  *
+ * 2026-09-18: THE PREMIUM IS A WIN'S, AND ONLY AGAINST A TEAM THE COACH DREW.
+ * A loss pays at most 1x at any rung, and a game whose coach did not draw its
+ * own team at the rung's cap pays at most 1x (gamePayFactor below, with the
+ * user's words). The table is unchanged; what it multiplies is narrower.
+ *
  * ── WHAT A BONUS COSTS IN TRUST ─────────────────────────────────────────────
  *
  * The first ladder was penalties only, so a client that lied about its rung
@@ -173,6 +178,45 @@ export function payFactorOf(level) {
 /** The lower of two rungs' pay — what a league game pays when it was played above the rung it was built at. */
 export function payFloorOf(created, played) {
   return Math.min(payFactorOf(created), payFactorOf(played));
+}
+
+/**
+ * THE FACTOR A GAME AGAINST THE COACH ACTUALLY TAKES (2026-09-18). The rung's
+ * pay (payFactorOf) with the two limits the farm investigation led to, and
+ * the one function settleGameReward and the probes both read.
+ *
+ * The question was the user's: "Is it currently possible to just spam-play
+ * really bad teams from team builder on deity and farm coins?" It was. A loss
+ * at Deity paid the 75 completion x 1.5 however badly it was lost (113 a game
+ * for a team of the ten weakest cards, more than an honest Prince game's 98),
+ * and a Deity game whose coach was handed a junk roster paid 263.
+ *
+ * A LOSS PAYS 1x, ONLY A WIN TAKES THE PREMIUM. The user's decision: "Loss 1x,
+ * win 1.5x — losing pays the same at every rung; only a win takes the rung's
+ * multiplier." Implemented as min(1, rung) on a loss rather than a flat 1:
+ * below Prince the discount stays, because a flat 1 would make a Settler LOSS
+ * (75) out-pay a Settler WIN ((75 + 50) x 0.5 = 62) — the old backwards ladder
+ * again, from the other end. A tie is not a win.
+ *
+ * A COACH THAT DID NOT DRAW ITS OWN TEAM PAYS AT MOST 1x. The user: "Pay 1x —
+ * any game where the coach did not draw its own team at the rung pays the
+ * fair Prince rate." A rung above Prince earns its premium by fielding a
+ * better team (the richer cap, capOf), so a game where the coach was handed
+ * the human's Team B, or drew at the plain cap (Quick Match), was never the
+ * harder game it was paid as. `rungDraw === false` says so; below Prince the
+ * discount stays here too (min, not a flat 1) — a Settler coach misplays
+ * whatever team it holds.
+ *
+ * `rungDraw` missing is TRUE here, so a table read without it (a probe, an old
+ * test) prices the rung as it always did. The server never lets it go
+ * missing: functions/index.js sets it to a boolean before pricing, and a
+ * client older than this field is priced as a custom game.
+ */
+export function gamePayFactor({ aiLevel = null, won = false, rungDraw = true } = {}) {
+  let pay = payFactorOf(aiLevel);
+  if (rungDraw === false) pay = Math.min(pay, 1);
+  if (!won) pay = Math.min(pay, 1);
+  return pay;
 }
 
 const MAX_MARGIN = 200;
@@ -256,8 +300,10 @@ export function detectMilestones(game, teamKey = null) {
 /**
  * Price a claim against the daily counters. Pure; runs on both sides.
  *
- *   claim  { won, pvp, margin, milestoneIds, bam }   what the client says happened
- *          (margin: MY score minus theirs; null when nobody is "you")
+ *   claim  { won, pvp, margin, milestoneIds, bam, aiLevel, rungDraw, dynasty }
+ *          what the client says happened (margin: MY score minus theirs; null
+ *          when nobody is "you"; rungDraw: did the coach draw its own team at
+ *          the rung — see gamePayFactor; dynasty is the server's to set)
  *   daily  { date, coins, firstWin }         the counters as stored
  *   today  'YYYY-MM-DD'
  *
@@ -323,7 +369,22 @@ export function settleGameReward(claim, daily, today) {
   // with it being max to encourage PvP play." So two people are paid what
   // Deity pays — the same multiplier on the same base — and the old separate
   // premium on the win bonus alone (pvpWin) is folded into this.
-  const pay = c.pvp ? PAY_MAX : payFactorOf(c.aiLevel);
+  //
+  // PvP KEEPS IT WIN OR LOSE (2026-09-18). The loss-pays-1x rule below is
+  // about the coach; a PvP loser played a person and the user's rule for PvP
+  // is "max". BUT IT CAN BE FARMED ALONE TODAY (2026-09-18): pvpRoom.js
+  // joinRoom lets an account join its own room in production (the self-join
+  // block is commented out "for testing"), so one account in two tabs plays
+  // itself at this rate, win or lose. The claim receipt holds that to one
+  // payout per room, not two; closing it — block self-join, or refuse a PvP
+  // claim whose host and guest are the same uid — is the user's call and is
+  // raised with the lead, not made here. (A forfeit pays nobody; PvpGame.jsx.)
+  //
+  // Against the coach the factor is gamePayFactor's: the premium above Prince
+  // on a WIN against a coach that drew its own team at the rung, and never
+  // otherwise (see gamePayFactor for the user's words on both).
+  const rungPay = payFactorOf(c.aiLevel);
+  const pay = c.pvp ? PAY_MAX : gamePayFactor({ aiLevel: c.aiLevel, won: c.won, rungDraw: c.rungDraw });
   if (pay !== 1) {
     const delta = Math.round(earned * pay) - earned;
     if (delta !== 0) {
@@ -331,6 +392,19 @@ export function settleGameReward(claim, daily, today) {
       const label = c.pvp ? 'PvP' : (AI_PAY[c.aiLevel]?.label ?? (pay < 1 ? 'Easier coach' : 'Harder coach'));
       breakdown.push({ label: `${label} · ${Math.round(pay * 100)}% rate`, coins: delta });
     }
+  }
+  // WHY A PREMIUM RUNG PAID THE FAIR RATE — a zero line, so the results
+  // screen says it rather than leaving a Deity player to wonder where the
+  // 150% went.
+  if (!c.pvp && rungPay > 1 && pay < rungPay) {
+    const rung = AI_PAY[c.aiLevel]?.label ?? 'Harder coach';
+    breakdown.push({
+      label: c.rungDraw === false
+        ? `${rung} premium · only when the coach draws its own team`
+        : `${rung} premium · paid on a win`,
+      coins: 0,
+      note: true,
+    });
   }
   if (c.dynasty) {
     const base = coins - milestoneCoins;

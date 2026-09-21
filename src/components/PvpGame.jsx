@@ -494,7 +494,11 @@ export default function PvpGame({ roomCode, myRole, onLeave }) {
   if (localGame.done) {
     return (
       <div className={styles.gameOverWrap}>
-        <GameOver game={localGame} onPlayAgain={onLeave} isPvp myTeamKey={myTeamKey} />
+        {/* Keyed by the ROOM (its code and when it was made — codes are
+            reused), not the seat, so a reconnect re-mounting this screen is
+            paid once (2026-09-18, the server's gameReceipts/{key} receipt). */}
+        <GameOver game={localGame} onPlayAgain={onLeave} isPvp myTeamKey={myTeamKey}
+          claimId={meta?.createdAt ? `pvp:${roomCode}:${meta.createdAt}` : null} />
       </div>
     );
   }

@@ -6,6 +6,7 @@ import { claimGameReward } from '../../firebase/serverWrites.js';
 import { humanWon, humanTeamKey } from '../../game/outcome.js';
 import { boxScoreFor } from '../../game/boxScore.js';
 import { useCardStats } from '../../firebase/CardStatsProvider.jsx';
+import { buildGameClaim, paidView, readClaimAnswer } from '../../game/gameClaim.js';
 import styles from './GameOver.module.css';
 
 /**
@@ -16,10 +17,22 @@ import styles from './GameOver.module.css';
 /**
  * `aiLevel` is the rung the coach played at (aiLevels.js), or null when no
  * coach played — hotseat, PvP. It scales what the game pays (coinRewards.js
- * AI_PAY), and for a dynasty fixture the server ignores what is sent here and
- * reads the league's own rung instead.
+ * AI_PAY), and for a league fixture the server floors it by the league's own
+ * rung.
+ *
+ * THE GAME IS PAID ONCE (2026-09-18). A finished game's save stayed in
+ * localStorage until Play Again, and every reload mounted this screen and
+ * claimed again; the ref below was the only guard and a reload resets it.
+ * Now:
+ *   `claimId`  the game's identity (gameSave.js claimIdOf; a PvP room's code
+ *              and creation stamp) — the server keeps a receipt under it and
+ *              answers a repeat with `already: true` and what it paid
+ *   `paid`     the stamp a claimed game's save carries: shown, never re-sent
+ *   `onPaid`   called with (claimId, { coins, breakdown }), so the caller can
+ *              stamp the save — of THAT game only (gameClaim.js stampBelongs)
+ *   `rungDraw` did the coach draw its own team at the rung (the pay terms)
  */
-export default function GameOver({ game, onPlayAgain, isPvp = false, myTeamKey = null, mode = 'ai', onLeave = null, leaveLabel = 'Leave Game', dynasty = null, aiLevel = null }) {
+export default function GameOver({ game, onPlayAgain, isPvp = false, myTeamKey = null, mode = 'ai', onLeave = null, leaveLabel = 'Leave Game', fixtureFrom = null, aiLevel = null, claimId = null, paid = null, onPaid = null, rungDraw = false }) {
   const { user } = useAuth();
   const { refresh: refreshCardStats } = useCardStats();
   const { teamA, teamB } = game;
@@ -40,6 +53,13 @@ export default function GameOver({ game, onPlayAgain, isPvp = false, myTeamKey =
     if (!user || appliedRef.current) return;
     appliedRef.current = true;
 
+    // Already paid: what it was paid, and no claim.
+    if (paid) {
+      setRewards(paidView(paid));
+      setRewardsApplied(true);
+      return;
+    }
+
     (async () => {
       const userData = await getUserData(user.uid);
       if (!userData) return;
@@ -55,15 +75,17 @@ export default function GameOver({ game, onPlayAgain, isPvp = false, myTeamKey =
       // `margin` is MY score minus theirs: a win pays by it, a close loss pays a
       // little (coinRewards.js). Hotseat has no "me", so no margin.
       const margin = myKey === 'A' ? teamA.score - teamB.score : myKey === 'B' ? teamB.score - teamA.score : null;
-      // A dynasty fixture sends WHICH dynasty and season it came from. The
-      // preview below shows the plain rate; the server verifies the dynasty
-      // and pays 15% more, and its answer replaces the preview.
-      const claim = {
-        won: youWon, pvp: isPvp, margin, ...detectMilestones(game, myKey),
+      // A fixture sends WHICH season (and dynasty or friends league) it came
+      // from — every fixture, not only a dynasty's (2026-09-18). The preview
+      // below prices it as a custom game; the server verifies the season,
+      // pays the league's rung floored by the played one (and a dynasty's 15%),
+      // and its answer replaces the preview.
+      // Built by gameClaim.js buildGameClaim, where a test reaches it.
+      const claim = buildGameClaim({
+        won: youWon, isPvp, margin, milestones: detectMilestones(game, myKey),
         box: myKey ? boxScoreFor(game, myKey) : [],
-        aiLevel: isPvp ? null : aiLevel,
-        ...(dynasty ?? {}),
-      };
+        aiLevel, rungDraw, claimId, fixtureFrom,
+      });
       const today = todayKey();
       const preview = settleGameReward(
         claim,
@@ -76,15 +98,18 @@ export default function GameOver({ game, onPlayAgain, isPvp = false, myTeamKey =
       // client's view of the counters was stale — a game finished on another
       // device a moment ago — and then the server is the one that is right.
       try {
-        const paid = await claimGameReward(user.uid, claim);
-        refreshCardStats();
-        setRewards(r => ({
-          ...r,
-          coins: paid.coins,
-          milestoneCoins: paid.milestoneCoins,
-          firstWin: paid.firstWin,
-          bamReward: paid.bam,
-        }));
+        const res = await claimGameReward(user.uid, claim);
+        // `already: true` is paid before — by a reload's first mount, or on
+        // another device — and is success, not an error: show what it was
+        // paid and stamp the save. A fresh pay shows the server's breakdown:
+        // it is the side that knows a league's rung and the dynasty rate.
+        const answer = readClaimAnswer(res, preview);
+        if (answer.fresh) refreshCardStats();
+        setRewards(answer.view);
+        // The stamp names ITS game (2026-09-18): the answer can land after
+        // Play Again and a new deal, and the caller stamps only when this key
+        // is still the live game's (gameClaim.js stampBelongs).
+        onPaid?.(claimId, answer.stamp);
       } catch (e) {
         console.error('Reward claim failed:', e);
         setRewards(r => ({ ...r, coins: 0, error: e.message }));
@@ -92,7 +117,7 @@ export default function GameOver({ game, onPlayAgain, isPvp = false, myTeamKey =
 
       setRewardsApplied(true);
     })();
-  }, [user, game, youWon, myKey, isPvp, aiLevel, refreshCardStats]);
+  }, [user, game, youWon, myKey, isPvp, aiLevel, refreshCardStats, paid, claimId, rungDraw, onPaid]);
 
   return (
     <div className={styles.wrap}>
@@ -118,7 +143,7 @@ export default function GameOver({ game, onPlayAgain, isPvp = false, myTeamKey =
               <div key={i} className={styles.rewardRow}>
                 <span className={styles.rewardLabel}>{item.label}</span>
                 <span className={item.special ? styles.rewardSpecial : styles.rewardCoins}>
-                  {item.special ? 'CARD' : `+${item.coins}`}
+                  {item.special ? 'CARD' : item.note ? '—' : `+${item.coins}`}
                 </span>
               </div>
             ))}

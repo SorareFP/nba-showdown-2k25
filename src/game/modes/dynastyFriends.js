@@ -29,6 +29,7 @@ import {
 import { PHASE } from './seasonCore.js';
 import { CONTRACT_YEARS, MIN_DP, MAX_DP } from './dynastyMarket.js';
 import { getCardByKey } from '../cardSets.js';
+import { setTeamDeck, importCard } from './dynasty.js';
 
 /** How long a coach has to make a draft pick before the AI makes it for him. */
 export const PICK_CLOCK_MS = 12 * 60 * 60 * 1000;
@@ -331,6 +332,9 @@ export const FRIEND_MOVES = [
   // A claim on a waived player (2026-09-18), and taking it back; the wire
   // resolves when the phase, the week or the season's round moves on.
   'claim', 'unclaim',
+  // Bringing an owned card into the league for Franchise Points (2026-09-22);
+  // the server checks the coach owns it before the move runs.
+  'import',
 ];
 
 /**
@@ -402,14 +406,12 @@ export function friendsAct(d, teamId, op, args = {}, { now = Date.now(), rng = M
       commissioner();
       x = vetoTrade(x, String(args?.id ?? ''), { now });
       break;
-    case 'setDeck': {
-      // The deck itself is checked by the server against the strategy cards.
-      const deck = args?.deck && typeof args.deck === 'object' ? args.deck : null;
-      const deckName = deck ? (String(args?.deckName ?? '').slice(0, 40) || null) : null;
-      const put = t => (t.id === teamId ? { ...t, deck, deckName } : t);
-      x = { ...x, teams: x.teams.map(put), season: x.season ? { ...x.season, teams: x.season.teams.map(put) } : x.season };
+    case 'setDeck':
+      // The deck itself is checked by the server against the strategy cards;
+      // the move is the one the solo dynasty makes (setTeamDeck).
+      x = setTeamDeck(x, teamId, args?.deck, args?.deckName);
       break;
-    }
+    case 'import': x = importCard(x, teamId, key()); break;
     default:
       throw new Error(`dynasty: no such move ${op}`);
   }

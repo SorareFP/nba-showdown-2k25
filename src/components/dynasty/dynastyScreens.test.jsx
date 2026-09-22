@@ -14,7 +14,9 @@ vi.mock('../../ui/dialogs.jsx', () => ({
 }));
 
 import DynastyTab, { DynastyView, DynastySetup, SeasonsPanel, dynastyPreset } from '../DynastyTab.jsx';
-import { Negotiator, TradeDesk, FreeAgency, TradeInbox, soloMoves } from './DynastyScreens.jsx';
+import { Negotiator, TradeDesk, FreeAgency, TradeInbox, soloMoves, ImportPanel, DeckPicker, FrontOffice } from './DynastyScreens.jsx';
+import { leagueKeys, importCost, setTeamDeck } from '../../game/modes/dynasty.js';
+import { CARD_SETS, cardKey } from '../../game/cardSets.js';
 import {
   createDynasty, simDraft, draftPick, aiDraftChoice, onClock, finishDraft, closeSigning, nextFaDay,
   startSeason, endSeason, closeResign, drawLottery, fillRoster, rightsOf, freeAgentKeys, HUMAN_ID, DPHASE,
@@ -306,5 +308,48 @@ describe("a dynasty fixture's rung", () => {
     const desk = html(<TradeDesk d={d} moves={solo} defaultOpen />);
     expect(desk).toContain('$6,160');
     expect(desk).toContain('your side answers to DP alone');
+  });
+});
+
+// Franchise Points and the deck (2026-09-22): the Front Office shows the
+// points, the deck picker and the import panel; the panel prices and judges
+// each owned card, and its button carries the reason when one is refused.
+describe('the Front Office brings players in, and picks a deck', () => {
+  const brought = buildAiLeague(1, { rng: seeded(1) })[0].roster;
+  const d0 = createDynasty({ id: 'F', size: 4, length: 'online', startMode: 'own', rng: seeded(6), human: { name: 'Alex Team', roster: brought } });
+  const key = CARD_SETS['super-season'].map(c => cardKey(c))
+    .find(k => !leagueKeys(d0).includes(k) && !(d0.draftPool ?? []).includes(k) && !(d0.draftClass?.keys ?? []).includes(k));
+  const card = getCardByKey(key);
+  const cost = importCost(card);
+  const drop = rosterKeys(d0, HUMAN_ID)[0];
+  const { [drop]: gone, ...contracts } = d0.contracts;
+  void gone;
+  const room = { ...d0, phase: DPHASE.resign, contracts, league: leagueKeys(d0).filter(k => k !== drop), fp: { [HUMAN_ID]: cost } };
+
+  it('lists an owned card outside the league with its price and value, live when it fits', () => {
+    const out = html(<ImportPanel d={room} moves={solo} collection={{ [key]: { count: 1 }, [rosterKeys(room, HUMAN_ID)[0]]: { count: 1 } }} />);
+    expect(out).toContain('Bring in a player');
+    expect(out).toContain(card.name);
+    expect(out).toContain(`<strong>${cost}</strong>`);
+    expect(out).toContain(getPlayerThumbUrl(key));
+    expect(out).toMatch(/<button[^>]*title="Bring them in"[^>]*>\s*Bring in/);
+    expect(out).not.toContain(getCardByKey(rosterKeys(room, HUMAN_ID)[0]).name + '</span><span');   // a league man is not offered
+    // Short of the points: the button says why and is off.
+    const broke = html(<ImportPanel d={{ ...room, fp: {} }} moves={solo} collection={{ [key]: { count: 1 } }} />);
+    expect(broke).toMatch(/<button[^>]*disabled[^>]*title="That takes \d+ Franchise Points/);
+    // Nothing owned outside the league, or no collection: nothing shown.
+    expect(html(<ImportPanel d={room} moves={solo} collection={{}} />)).toBe('');
+    expect(html(<ImportPanel d={room} moves={solo} collection={null} />)).toBe('');
+  });
+
+  it('shows the points on the payroll bar and the deck picker in the Front Office', () => {
+    const out = html(<FrontOffice d={setTeamDeck(room, HUMAN_ID, { high_screen_roll: 4 }, 'Screens')} moves={solo} uid="u1" collection={{ [key]: { count: 1 } }} />);
+    expect(out).toContain(`⭐ ${cost} Franchise Points`);
+    expect(out).toContain('Strategy deck');
+    expect(out).toContain('The default fifty');
+    expect(out).toContain('Bring in a player');
+    // No signed-in id, no picker; no handler, no picker.
+    expect(html(<DeckPicker uid={null} current="Screens" onChange={() => {}} />)).toBe('');
+    expect(html(<DeckPicker uid="u1" current="Screens" onChange={null} />)).toBe('');
   });
 });

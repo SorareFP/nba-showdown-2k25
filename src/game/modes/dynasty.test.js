@@ -19,6 +19,8 @@ import { recordResult, roundFixtures, advance, totalRounds, standings, PHASE } f
 import { CARDS } from '../cards.js';
 import { getCardByKey, cardKey, CARD_SETS } from '../cardSets.js';
 import { packDynasty, unpackDynasty } from './seasonPack.js';
+import { fpFinishPoints, fpEarned, fpOf, importCost, importProblem, importCandidates, importCard, setTeamDeck, IMPORT_YEARS, FP_PER_SERIES, FP_TITLE } from './dynasty.js';
+import { payOf } from '../aiLevels.js';
 
 const seeded = (s = 808) => () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 2 ** 32; };
 const BASE_IDS = new Set(CARDS.map(c => c.id));
@@ -2063,5 +2065,104 @@ describe('the draft does not read the coach difficulty', () => {
       rng: seeded(13), human: { name: 'Me' },
     });
     expect(unpackDynasty(packDynasty(d)).iq).toBe(1);
+  });
+});
+
+// THE USER'S IDEAS OF 2026-09-18, built 2026-09-22: a dynasty's own currency,
+// earned by the finish, the series and the title, weighted by the rung; spent
+// to bring an owned card in. And a deck that is never frozen.
+describe('Franchise Points and the deck (2026-09-22)', () => {
+  // Every base card is in the league already (the undrafted pool is the free
+  // agents), so what a coach brings in is a special-set card.
+  const outsider = d => CARD_SETS['super-season'].map(c => cardKey(c))
+    .find(k => !leagueKeys(d).includes(k) && !(d.draftPool ?? []).includes(k) && !(d.draftClass?.keys ?? []).includes(k));
+  /** The own start's ten with one seat opened: the first man's deal gone, and he leaves the league. */
+  const withSeat = d => {
+    const drop = rosterKeys(d, HUMAN_ID)[0];
+    const { [drop]: gone, ...contracts } = d.contracts;
+    void gone;
+    return { ...d, contracts, league: leagueKeys(d).filter(k => k !== drop) };
+  };
+
+  it('pays the finish (first of N is 10, last 0), the series and the title, weighted by the rung', () => {
+    expect(fpFinishPoints(1, 8)).toBe(10);
+    expect(fpFinishPoints(8, 8)).toBe(0);
+    expect(fpFinishPoints(4, 8)).toBe(6);
+    expect(fpFinishPoints(null, 8)).toBe(0);
+    const rng = seeded(11);
+    let d = ownDynasty({ size: 4 });
+    if (d.phase !== DPHASE.season) d = startSeason(d, { rng });
+    const fin = finishSeason(d);
+    const table = standings(fin.season);
+    const e = fpEarned(fin, fin.season, HUMAN_ID, table);
+    const rank = table.find(r => r.id === HUMAN_ID).rank;
+    const base = fpFinishPoints(rank, 4) + FP_PER_SERIES * e.series + (fin.season.champion === HUMAN_ID ? FP_TITLE : 0);
+    expect(e.points).toBe(Math.round(base * payOf(fin.aiLevel)));
+    expect(e.why).toContain(`of 4`);
+    // Deity pays more for the same year; the easiest rung less.
+    expect(fpEarned({ ...fin, aiLevel: 'deity' }, fin.season, HUMAN_ID, table).points).toBe(Math.round(base * payOf('deity')));
+    expect(payOf('deity')).toBeGreaterThan(payOf('settler'));
+    // The year's close banks it, writes it into the history entry, and says so.
+    const closed = endSeason(fin, { rng });
+    expect(fpOf(closed, HUMAN_ID)).toBe(e.points);
+    expect(closed.history.at(-1).fp[HUMAN_ID]).toBe(e.points);
+    expect(closed.news.some(n => n.text.includes('Franchise Points'))).toBe(true);
+    // An old save with no points reads as none.
+    expect(fpOf({ ...closed, fp: undefined }, HUMAN_ID)).toBe(0);
+  });
+
+  it('brings an owned card in for its price, signed at its value for two years, and refuses everything else', () => {
+    const d = ownDynasty({ size: 4 });
+    const key = outsider(d);
+    const card = getCardByKey(key);
+    const cost = importCost(card);
+    const dp = fairDp(card);
+    expect(cost).toBeGreaterThan(0);
+    const full = { ...d, phase: DPHASE.resign, fp: { [HUMAN_ID]: cost } };
+    expect(importProblem(full, HUMAN_ID, key)).toMatch(/roster is full/);
+    expect(() => importCard(full, HUMAN_ID, key)).toThrow(/roster is full/);
+    const room = withSeat(full);
+    expect(importProblem(room, HUMAN_ID, key)).toBeNull();
+    const x = importCard(room, HUMAN_ID, key);
+    expect(x.contracts[key]).toMatchObject({ teamId: HUMAN_ID, dp, years: IMPORT_YEARS, how: 'imported' });
+    expect(rosterKeys(x, HUMAN_ID)).toContain(key);
+    expect(leagueKeys(x)).toContain(key);
+    expect(fpOf(x, HUMAN_ID)).toBe(0);
+    expect(x.imports).toEqual([{ year: d.year, teamId: HUMAN_ID, key, cost, dp }]);
+    expect(x.news[0].text).toContain('bring in');
+    // Every refusal, by name.
+    expect(importProblem(x, HUMAN_ID, key)).toMatch(/already in this league/);
+    expect(importProblem({ ...room, fp: { [HUMAN_ID]: cost - 1 } }, HUMAN_ID, key)).toMatch(/Franchise Points/);
+    expect(importProblem({ ...room, phase: DPHASE.season }, HUMAN_ID, key)).toMatch(/offseason/);
+    expect(importProblem({ ...room, phase: DPHASE.draft }, HUMAN_ID, key)).toMatch(/offseason/);
+    expect(importProblem(room, HUMAN_ID, rosterKeys(room, HUMAN_ID)[0])).toMatch(/already in this league/);
+    expect(importProblem(room, HUMAN_ID, key, { owned: false })).toMatch(/do not own/);
+    expect(importProblem(room, HUMAN_ID, 'nope:Nobody')).toMatch(/No such card/);
+    const ai = room.teams.find(t => !t.human).id;
+    expect(importProblem(room, ai, key)).toMatch(/Only a coach/);
+    // The cap: nine men at 11 DP leave no room for anyone dearer than a minimum deal.
+    const capped = { ...room, contracts: Object.fromEntries(Object.entries(room.contracts).map(([k, c]) => [k, c.teamId === HUMAN_ID ? { ...c, dp: 11 } : c])) };
+    if (dp > 1) expect(importProblem(capped, HUMAN_ID, key)).toMatch(/cap/);
+    // The candidates: owned, not in the league, best first, each priced and judged.
+    const inLeague = rosterKeys(room, HUMAN_ID)[0];
+    const cands = importCandidates(room, HUMAN_ID, { [key]: { count: 1 }, [inLeague]: { count: 2 }, 'nope:Nobody': { count: 1 } });
+    expect(cands.map(c => c.key)).toEqual([key]);
+    expect(cands[0]).toMatchObject({ cost, dp, problem: null });
+    expect(importCandidates(room, HUMAN_ID, { [key]: { count: 0 } })).toEqual([]);
+  });
+
+  it('changes the deck any time, on the team and on a live season alike', () => {
+    const d = ownDynasty({ size: 4 });
+    const deck = { high_screen_roll: 4 };
+    const x = setTeamDeck(d, HUMAN_ID, deck, 'Screens');
+    expect(teamOf(x, HUMAN_ID)).toMatchObject({ deck, deckName: 'Screens' });
+    expect(teamOf(x, x.teams.find(t => !t.human).id).deck).toBe(teamOf(d, d.teams.find(t => !t.human).id).deck);
+    const live = startSeason(x, { rng: seeded(3) });
+    const back = setTeamDeck(live, HUMAN_ID, null, 'ignored');
+    expect(teamOf(back, HUMAN_ID)).toMatchObject({ deck: null, deckName: null });
+    expect(back.season.teams.find(t => t.id === HUMAN_ID)).toMatchObject({ deck: null, deckName: null });
+    const again = setTeamDeck(back, HUMAN_ID, deck, 'Screens');
+    expect(again.season.teams.find(t => t.id === HUMAN_ID)).toMatchObject({ deck, deckName: 'Screens' });
+    expect(teamOf(again, HUMAN_ID).deckName).toBe('Screens');
   });
 });

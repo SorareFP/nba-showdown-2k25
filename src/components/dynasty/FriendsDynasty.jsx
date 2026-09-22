@@ -83,6 +83,10 @@ export function friendsMoves({ d, me, isHost = false, send, setBids = async () =
     respond: (id, accept) => send('respond', { id, accept }),
     withdraw: id => send('withdraw', { id }),
     veto: id => send('veto', { id }),
+    // The deck is never frozen, and a coach brings owned cards in for
+    // Franchise Points (2026-09-22); the server checks the card is theirs.
+    setDeck: (deck, deckName) => send('setDeck', { deck, deckName }),
+    importCard: key => send('import', { key }),
     force: () => send('force'),
     end: () => send('end'),
     tick: () => send('tick'),
@@ -339,7 +343,7 @@ export function JoinFriends({ teamA, collection, uid, onCancel, onJoined }) {
 
 // ── One dynasty with friends ────────────────────────────────────────────────
 
-export function FriendsDynastyView({ leagueId, uid, onBack, onPlayFixture, onOpenRoom }) {
+export function FriendsDynastyView({ leagueId, uid, onBack, onPlayFixture, onOpenRoom, collection = null }) {
   const { ask, askText, toast } = useDialogs();
   const [league, setLeague] = useState(undefined);
   const [bidDoc, setBidDoc] = useState(null);
@@ -526,7 +530,7 @@ export function FriendsDynastyView({ leagueId, uid, onBack, onPlayFixture, onOpe
     <>
       <TradeInbox d={d} moves={moves} />
       {(isOffseason(d) || d.phase === DPHASE.season) && <TradeDesk d={d} moves={moves} />}
-      {d.phase !== DPHASE.done && <FrontOffice d={d} moves={moves} />}
+      {d.phase !== DPHASE.done && <FrontOffice d={d} moves={moves} uid={uid} collection={collection} />}
       <FriendsYears d={d} />
       <NewsFeed d={d} />
     </>
@@ -541,6 +545,7 @@ export function FriendsDynastyView({ leagueId, uid, onBack, onPlayFixture, onOpe
           season={d.season}
           uid={uid}
           commit={noop}
+          onChangeDeck={moves.setDeck}
           onPlayFixture={onPlayFixture}
           onBack={onBack}
           onAbandon={null}

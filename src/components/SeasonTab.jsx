@@ -880,6 +880,9 @@ function Dashboard({
   // place of the title-money claim, its own title, and a fixture that says
   // which tab to come back to.
   finale = null, presetExtra = null, title = null, backLabel = 'All seasons',
+  // A dynasty's deck change goes through the dynasty's own move (2026-09-22),
+  // so the team and the live season agree; a plain season keeps its own.
+  onChangeDeck = null,
 }) {
   const { ask, toast } = useDialogs();
   // In a shared season you are `h:<uid>`; alone, you are myId.
@@ -980,9 +983,10 @@ function Dashboard({
   /** Swap decks between rounds. Games already in the book are not re-run. */
   const changeDeck = useCallback(id => {
     const chosen = decks.find(d => d.id === id);
-    commit(setDeck(season, myId, chosen?.cards ?? null, chosen?.name ?? null));
+    if (onChangeDeck) onChangeDeck(chosen?.cards ?? null, chosen?.name ?? null);
+    else commit(setDeck(season, myId, chosen?.cards ?? null, chosen?.name ?? null));
     toast(chosen ? `Playing ${chosen.name} from here on.` : 'Back to the default fifty.', { tone: 'success' });
-  }, [decks, season, commit, toast]);
+  }, [decks, season, commit, toast, onChangeDeck]);
 
   // Commissioner tools, the user's own list: force-sim your own game, or run
   // the rest of the round without waiting on anyone.
@@ -1143,7 +1147,7 @@ function Dashboard({
             {games.filter(g => g !== mine).map(g => <FixtureRow key={g.id} game={g} by={by} />)}
           </div>
 
-          {!league && decks.length > 0 && (
+          {(onChangeDeck || !league) && decks.length > 0 && (
             <label className={styles.deckRow}>
               <span className={styles.label}>Your deck</span>
               <select

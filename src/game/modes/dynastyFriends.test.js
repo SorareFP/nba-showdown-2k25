@@ -6,7 +6,8 @@ import {
   tradeProblems, payroll, tradeRelief, onWaivers, deadMoney, resolveWaivers, OPEN_OFFERS_PER_COACH, OFFERS_KEPT, trimOffers,
 } from './dynasty.js';
 import { rookieScale, fairDp, contractValue, APRON_DP } from './dynastyMarket.js';
-import { getCardByKey } from '../cardSets.js';
+import { getCardByKey, CARD_SETS, cardKey } from '../cardSets.js';
+import { leagueKeys, importCost, fpOf } from './dynasty.js';
 import {
   PICK_CLOCK_MS, setReady, allReady, advancePhase, stampClock, clockLeft, runDraftClock, coachPick,
   bidProblem, nextFaWeek, proposeTrade, respondTrade, withdrawTrade, vetoTrade, vetoable, openOffers, createFriendsDynasty,
@@ -399,5 +400,35 @@ describe('waivers with friends (2026-09-18)', () => {
     expect(payroll(x, A)).toBe(APRON_DP);
     // The same claim alone: startSeason resolves the wire first too.
     expect(startSeason(d, { rng: seeded(9) }).contracts[key].teamId).toBe(A);
+  });
+});
+
+describe('the deck and Franchise Points with friends (2026-09-22)', () => {
+  it('names both moves; a deck is set through the dynasty move, and a card brought in for the points', () => {
+    expect(FRIEND_MOVES).toContain('setDeck');
+    expect(FRIEND_MOVES).toContain('import');
+    const d = own();
+    const deck = { high_screen_roll: 4 };
+    const decked = friendsAct(d, A, 'setDeck', { deck, deckName: 'Screens' }, { now: T0 }).dynasty;
+    expect(decked.teams.find(t => t.id === A)).toMatchObject({ deck, deckName: 'Screens' });
+    expect(decked.teams.find(t => t.id === B).deck).toBe(d.teams.find(t => t.id === B).deck);
+    // A card outside the league, a seat, and exactly the points it costs.
+    const key = CARD_SETS['super-season'].map(c => cardKey(c))
+      .find(k => !leagueKeys(d).includes(k) && !(d.draftPool ?? []).includes(k) && !(d.draftClass?.keys ?? []).includes(k));
+    const cost = importCost(getCardByKey(key));
+    const drop = rosterKeys(d, A)[0];
+    const { [drop]: gone, ...contracts } = d.contracts;
+    void gone;
+    const room = { ...d, phase: DPHASE.preseason, contracts, league: leagueKeys(d).filter(k => k !== drop), fp: { [A]: cost } };
+    const x = friendsAct(room, A, 'import', { key }, { now: T0 }).dynasty;
+    expect(x.contracts[key]).toMatchObject({ teamId: A, how: 'imported' });
+    expect(fpOf(x, A)).toBe(0);
+    // Bo's ten is full; with a seat he still has no points. Ann cannot bring the same man in twice.
+    expect(() => friendsAct(room, B, 'import', { key }, { now: T0 })).toThrow(/roster is full/);
+    const dropB = rosterKeys(room, B)[0];
+    const { [dropB]: goneB, ...withSeat } = room.contracts;
+    void goneB;
+    expect(() => friendsAct({ ...room, contracts: withSeat, league: leagueKeys(room).filter(k => k !== dropB) }, B, 'import', { key }, { now: T0 })).toThrow(/Franchise Points/);
+    expect(() => friendsAct(x, A, 'import', { key }, { now: T0 })).toThrow(/already in this league/);
   });
 });

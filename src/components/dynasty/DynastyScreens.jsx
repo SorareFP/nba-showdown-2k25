@@ -10,7 +10,7 @@
 // itself deciding whether something is legal should ask the domain instead —
 // `quote` knows the ask, the room and the rival; `negotiate` refuses what
 // cannot be signed.
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useDialogs } from '../../ui/dialogs.jsx';
 import { ZoomImg } from '../CardLightbox.jsx';
 import {
@@ -23,7 +23,10 @@ import {
   waiverList, waiverOrder, claimProblem, claimWaiver, withdrawClaim, resolveWaivers,
   answerOffer, offerValue, offerProblems, tradeRelief, TRADE_RELIEF, OFFER_FAIRNESS, OPEN_OFFERS_PER_COACH,
   aiCapDp, aiApronDp, aiSalaryCap,
+  setTeamDeck, importCard, importCandidates, fpOf, FP_IMPORT_COST, FP_FINISH_MAX, FP_PER_SERIES, FP_TITLE, IMPORT_YEARS,
 } from '../../game/modes/dynasty.js';
+import { loadDecks } from '../../firebase/savedDecks.js';
+import { RARITY_CONFIG, getPlayerRarity } from '../../game/rarity.js';
 import {
   CAP_DP, APRON_DP, MIN_DP, MAX_DP, FA_DAYS, CONTRACT_YEARS, MOOD_TEXT, personality, rookieScale,
 } from '../../game/modes/dynastyMarket.js';
@@ -39,7 +42,7 @@ const SET_WORD = {
   rookie: 'Rookie', 'super-season': 'Super Season', 'summer-standouts': 'Standouts', dissonance: 'Dissonance',
   'team-rewards': 'Team Reward', 'set-rewards': 'Set Reward', throwbacks: 'Throwback',
 };
-const HOW = { brought: 'brought', draft: 'drafted', resign: 're-signed', fa: 'free agent', rookie: 'rookie scale', fill: 'minimum', waivers: 'off waivers' };
+const HOW = { imported: 'brought in', brought: 'brought', draft: 'drafted', resign: 're-signed', fa: 'free agent', rookie: 'rookie scale', fill: 'minimum', waivers: 'off waivers' };
 const YEARS = Array.from({ length: CONTRACT_YEARS.max - CONTRACT_YEARS.min + 1 }, (_, i) => CONTRACT_YEARS.min + i);
 const plural = (n, one, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
 
@@ -123,6 +126,11 @@ function PayBar({ d, teamId, extra = 0, extraNote = 'more if your draftees sign 
       </div>
       <div className={dy.payLegend}>
         <strong>{pay} of {CAP_DP} DP</strong>
+        {teamOf(d, teamId)?.human && (
+          <span title={`Earned as each year closes: the finish (first of ${d.teams.length} is ${FP_FINISH_MAX}), ${FP_PER_SERIES} a playoff series won, ${FP_TITLE} for the title — times the coach rung. Spent to bring a card you own into the league.`}>
+            {' '}· ⭐ {fpOf(d, teamId)} Franchise Points
+          </span>
+        )}
         {extra > 0 && <span> · {extra} {extraNote}</span>}
         {dead > 0 && <span> · {dead} of it dead money</span>}
         <span className={styles.muted}> · apron {APRON_DP} for your own players</span>
@@ -176,6 +184,10 @@ export function soloMoves(act, me) {
     propose: async () => false,
     // An AI team's offer (2026-09-18): judged again as you answer it (answerOffer).
     respond: (id, accept) => act(x => answerOffer(x, id, me, accept)),
+    // The deck is never frozen, and a coach brings owned cards in for
+    // Franchise Points (2026-09-22) — the same two moves a friends dynasty sends.
+    setDeck: (deck, deckName) => act(x => setTeamDeck(x, me, deck, deckName)),
+    importCard: key => act(x => importCard(x, me, key)),
   };
 }
 
@@ -211,7 +223,100 @@ const formatLeft = ms => {
   return m >= 60 ? `${Math.floor(m / 60)}h ${m % 60}m` : `${m}m`;
 };
 
-export function FrontOffice({ d, moves }) {
+/**
+ * THE DECK IS NEVER FROZEN (the user, 2026-09-18): a coach's saved decks, and
+ * the default fifty, pickable in the Front Office in every phase — the season
+ * dashboard shows the same picker between rounds. The pick goes through the
+ * dynasty move (setTeamDeck), so the team and a live season agree.
+ */
+export function DeckPicker({ uid, current = null, onChange }) {
+  const [decks, setDecks] = useState([]);
+  useEffect(() => {
+    if (!uid) return undefined;
+    let live = true;
+    loadDecks(uid).then(list => { if (live) setDecks(list ?? []); }).catch(() => { if (live) setDecks([]); });
+    return () => { live = false; };
+  }, [uid]);
+  if (!uid || !onChange) return null;
+  const value = decks.find(dk => dk.name === current)?.id ?? 'default';
+  return (
+    <label className={styles.deckRow}>
+      <span className={styles.label}>Strategy deck</span>
+      <select
+        className={styles.deckSelect}
+        value={value}
+        onChange={e => { const dk = decks.find(x => x.id === e.target.value) ?? null; onChange(dk?.cards ?? null, dk?.name ?? null); }}
+      >
+        <option value="default">The default fifty</option>
+        {decks.map(dk => <option key={dk.id} value={dk.id}>{dk.name}</option>)}
+      </select>
+      <span className={styles.muted}>Changes any time; games from here on use it.</span>
+    </label>
+  );
+}
+
+/**
+ * BRING A PLAYER IN (the user, 2026-09-18: "a way to bring in players in your
+ * collection that were not there prior to the dynasty starting, at some sort
+ * of price"). The coach's owned cards that are not in this league, best first,
+ * each with its Franchise Point price by rarity and the DP it signs at; the
+ * rules (importProblem) say what stops one. Offseason only.
+ */
+export function ImportPanel({ d, moves, collection = null }) {
+  const { ask } = useDialogs();
+  const [all, setAll] = useState(false);
+  const me = d.humanId;
+  if (!collection || !moves?.importCard || !teamOf(d, me)?.human) return null;
+  const rows = importCandidates(d, me, collection);
+  if (!rows.length) return null;
+  const shown = all ? rows : rows.slice(0, 8);
+  const bring = async r => {
+    const yes = await ask({
+      title: `Bring in ${r.card.name}?`,
+      body: `${r.cost} Franchise Points (you have ${fpOf(d, me)}), and they sign at ${r.dp} DP for ${IMPORT_YEARS} years. The card stays in your collection.`,
+      confirmLabel: 'Bring them in',
+    });
+    if (yes) moves.importCard(r.key);
+  };
+  return (
+    <section className={styles.panel}>
+      <div className={dy.panelHead}>
+        <h3 className={styles.panelTitle}>Bring in a player</h3>
+        <span className={styles.muted}>⭐ {fpOf(d, me)} Franchise Points · common {FP_IMPORT_COST.common}, uncommon {FP_IMPORT_COST.uncommon}, rare {FP_IMPORT_COST.rare}, super-rare {FP_IMPORT_COST['super-rare']}, legendary {FP_IMPORT_COST.legendary}</span>
+      </div>
+      <p className={dy.intro}>
+        A card you own that is not in this league can join your team for Franchise Points — earned as each year closes by
+        your finish, the playoff series you win and a title, weighted by the coach rung. The player signs at his value
+        for {IMPORT_YEARS} years, under the {CAP_DP}-DP cap, in the offseason.
+      </p>
+      <div className={styles.tableWrap}>
+        <table className={styles.table}>
+          <thead><tr><th>Player</th><th>Rarity</th><th>Points</th><th>Signs at</th><th /></tr></thead>
+          <tbody>
+            {shown.map(r => (
+              <tr key={r.key}>
+                <td><PlayerCell cardKey={r.key} /></td>
+                <td>{RARITY_CONFIG[getPlayerRarity(r.card)]?.label ?? getPlayerRarity(r.card)}</td>
+                <td><strong>{r.cost}</strong></td>
+                <td>{r.dp} DP × {IMPORT_YEARS}</td>
+                <td>
+                  <button type="button" className={dy.linkBtn} disabled={Boolean(r.problem)} title={r.problem ?? 'Bring them in'} onClick={() => bring(r)}>
+                    Bring in
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {rows.length > shown.length && (
+        <button type="button" className={dy.linkBtn} onClick={() => setAll(true)}>Show all {rows.length}</button>
+      )}
+    </section>
+  );
+}
+
+export function FrontOffice({ d, moves, uid = null, collection = null }) {
   const { ask } = useDialogs();
   const me = d.humanId;
   const rows = contractsOf(d, me);
@@ -233,6 +338,7 @@ export function FrontOffice({ d, moves }) {
         <span className={styles.muted}>{rows.length} of {MAX_ROSTER} under contract · {MIN_ROSTER} to play a season</span>
       </div>
       <PayBar d={d} teamId={me} />
+      <DeckPicker uid={uid} current={teamOf(d, me)?.deckName ?? null} onChange={moves.setDeck} />
       <div className={styles.tableWrap}>
         <table className={styles.table}>
           <thead>
@@ -253,6 +359,7 @@ export function FrontOffice({ d, moves }) {
         </table>
       </div>
       <WaiverWire d={d} moves={moves} />
+      <ImportPanel d={d} moves={moves} collection={collection} />
     </section>
   );
 }

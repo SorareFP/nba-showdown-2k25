@@ -1720,6 +1720,9 @@ export const dynastyAct = onCall({ region: 'us-central1' }, async request => {
   const args = request.data?.args && typeof request.data.args === 'object' ? request.data.args : {};
   if (!leagueId || !FRIEND_MOVES.includes(op)) throw new HttpsError('invalid-argument', 'A league and a move are required');
   const moveArgs = op === 'setDeck' ? { deck: cleanDeck(args.deck), deckName: args.deckName ?? null } : args;
+  // A card brought in for Franchise Points (2026-09-22) must be the coach's
+  // own — the same check a league's entrant roster passes at the door.
+  if (op === 'import') await assertOwned(uid, [String(args.key ?? '')]);
   return db.runTransaction(async tx => {
     const { ref, league, dynasty: before } = await readLiveDynasty(tx, leagueId, uid);
     const { bids, refs } = await weekBids(tx, league.id, before);

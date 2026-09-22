@@ -23,6 +23,11 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
+    id: 'franchise-points', date: '2026-09-22', title: 'Franchise Points, and a deck you can change',
+    body: 'A dynasty now pays its coaches in Franchise Points as each year closes: your regular-season finish (first of the league is 10), 3 for every playoff series you win, 10 for the title, all weighted by the coach rung. Spend them in the offseason to bring a card you own into the league — a common for 2, a rare for 8, a legendary for 32 — and the player signs at his value for two years under the cap. And your strategy deck is no longer frozen at the start: change it in the Front Office or between rounds, alone or with friends.',
+    to: 'dynasty', cta: 'Dynasty',
+  },
+  {
     id: 'reward-identities', date: '2026-09-22', title: 'Reward cards wear their identity',
     body: 'Every Team and Set reward now prints in the look of what it is — gold for a Super Season, green for a Rookie, the Throwback brush for a season that was neither, its own for a playoff run — with the reward pill on top. Three franchise rewards were re-picked after Kawhi Leonard\'s move to Toronto and Brandon Ingram\'s to the Clippers: Toronto pays Vince Carter\'s 1999-2000, Washington John Wall\'s 2016-17 (his Super Season card), and the Clippers Elton Brand\'s 2002-03. New cards: Super Seasons for Wall, Brand (2005-06), Gilbert Arenas (2005-06), DeAndre Jordan (2014-15) and Anthony Parker (2006-07), Rookie cards for Wall, Brand, Arenas and Jordan, Bradley Beal\'s 2020-21 as a Throwback, and Ivica Zubac\'s 2024-25 back in Super Season. Because those sets grew, the Super Season and Rookie collections — and the East and West conference collections, which swapped Kawhi and Ingram — reopen for anyone who had finished them; the capstone you already earned is yours.',
     to: 'collection', cta: 'See the rewards',

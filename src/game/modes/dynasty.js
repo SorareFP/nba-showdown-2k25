@@ -39,6 +39,7 @@ import { CARDS } from '../cards.js';
 import { ALL_CARDS, BASE_SET, cardKey, getCardByKey, baseKey, copyKey } from '../cardSets.js';
 import { fitDeck } from '../deckFit.js';
 import { capOf } from '../coinRewards.js';
+import { payOf } from '../aiLevels.js';
 import { getPlayerRarity } from '../rarity.js';
 
 // THE AI'S CAP AND APRON AT THIS LEAGUE'S RUNG (2026-09-16). Above Prince the
@@ -1122,6 +1123,128 @@ export function resolveWaivers(d) {
  * "the league moves on". Every shell that saves a season into a dynasty goes
  * through this — DynastyTab alone, league.js applyResult with friends.
  */
+// ── FRANCHISE POINTS, AND THE DECK ─────────────────────────────────────────
+//
+// The user (2026-09-18): "I think there should be a way to bring in players
+// in your collection that were not there prior to the dynasty starting, at
+// some sort of price. Dynasty points perhaps? And maybe dynasty points are
+// rewarded for season finish, weighted for difficulty, as well as playoff
+// series wins and championships?" — "Yes on your ideas" (built 2026-09-22).
+//
+// A dynasty's own currency, never coins: EARNED when a year closes (endSeason)
+// by the regular-season finish (first of N is FP_FINISH_MAX, last is 0),
+// FP_PER_SERIES for each playoff series won and FP_TITLE for the title, all
+// times the rung's pay factor (payOf: Prince 1x, King 1.25x, Deity 1.5x, the
+// easier rungs less) — so a Deity champion of eight banks about 44 a year
+// and a Prince fourth-place first-round loser about 6. SPENT in the offseason
+// on a card the coach OWNS that is not in the league: its rarity's price
+// (FP_IMPORT_COST — a mid-table year buys a rare, a title year a legendary),
+// then the player signs at his value (fairDp) for IMPORT_YEARS under the cap.
+// AI teams never import. Old saves read `fp` as {}.
+export const FP_FINISH_MAX = 10;
+export const FP_PER_SERIES = 3;
+export const FP_TITLE = 10;
+export const FP_IMPORT_COST = { common: 2, uncommon: 4, rare: 8, 'super-rare': 16, legendary: 32 };
+export const IMPORT_YEARS = 2;
+
+const nth = n => (n == null ? '?' : `${n}${['th', 'st', 'nd', 'rd'][(n % 100 > 10 && n % 100 < 14) ? 0 : Math.min(n % 10, 4) % 4] ?? 'th'}`);
+
+/** Playoff series a team won this season — every bracket match it is the winner of. */
+export function playoffSeriesWins(season, teamId) {
+  return (season?.bracket?.matches ?? []).filter(m => m.winner === teamId).length;
+}
+
+/** First of N is FP_FINISH_MAX, last is 0, straight between. */
+export function fpFinishPoints(rank, n) {
+  if (!(rank >= 1) || !(n > 1)) return 0;
+  return Math.round(FP_FINISH_MAX * (n - rank) / (n - 1));
+}
+
+/** What a finished season earns one team, and why — the number endSeason banks. */
+export function fpEarned(d, season, teamId, table = standings(season)) {
+  const row = table.find(r => r.id === teamId);
+  const n = d.teams.length;
+  const finish = fpFinishPoints(row?.rank, n);
+  const series = playoffSeriesWins(season, teamId);
+  const title = season?.champion === teamId;
+  const factor = payOf(d.aiLevel);
+  const points = Math.round((finish + FP_PER_SERIES * series + (title ? FP_TITLE : 0)) * factor);
+  const parts = [`${nth(row?.rank)} of ${n}`];
+  if (series) parts.push(`${series} playoff series won`);
+  if (title) parts.push('the title');
+  const why = parts.join(', ') + (factor !== 1 ? ` × ${factor} for ${d.aiLevel}` : '');
+  return { points, finish, series, title, factor, why };
+}
+
+/** A team's Franchise Points in hand. */
+export const fpOf = (d, teamId) => Number(d.fp?.[teamId]) || 0;
+
+/** What bringing a card in costs, by its rarity. */
+export const importCost = card => FP_IMPORT_COST[getPlayerRarity(card)] ?? FP_IMPORT_COST.legendary;
+
+/** Why a coach cannot bring this card in right now, or null. `owned` is the caller's word (the server checks it). */
+export function importProblem(d, teamId, key, { owned = true } = {}) {
+  const t = teamOf(d, teamId);
+  if (!t?.human) return 'Only a coach brings players in';
+  const open = d.phase === DPHASE.signing || d.phase === DPHASE.resign || d.phase === DPHASE.freeAgency || d.phase === DPHASE.preseason;
+  if (!open) return 'Players come in during the offseason — after the draft and before the season';
+  const card = cardOf(key);
+  if (!card) return 'No such card';
+  if (!owned) return 'You do not own that card';
+  const taken = leagueKeys(d).includes(key) || (d.draftPool ?? []).includes(key) || (d.draftClass?.keys ?? []).includes(key)
+    || waiverList(d).some(w => w.key === key) || (d.imports ?? []).some(i => i.key === key);
+  if (taken) return `${card.name} is already in this league`;
+  if (rosterKeys(d, teamId).length >= MAX_ROSTER) return `Your roster is full (${MAX_ROSTER})`;
+  const cost = importCost(card);
+  if (fpOf(d, teamId) < cost) return `That takes ${cost} Franchise Points — you have ${fpOf(d, teamId)}`;
+  const dp = fairDp(card);
+  if (!fitsCap(d, teamId, key, dp)) return `${card.name} signs at ${dp} DP, and that does not fit under the ${CAP_DP} cap`;
+  return null;
+}
+
+/** The coach's owned cards not in the league, best first, each with its price and what stops it. */
+export function importCandidates(d, teamId, collection) {
+  const inLeague = new Set([...leagueKeys(d), ...(d.draftPool ?? []), ...(d.draftClass?.keys ?? []), ...waiverList(d).map(w => w.key)]);
+  return Object.entries(collection ?? {})
+    .filter(([key, v]) => (v?.count ?? 0) > 0 && !inLeague.has(key))
+    .map(([key]) => ({ key, card: cardOf(key) }))
+    .filter(({ card }) => card)
+    .map(({ key, card }) => ({ key, card, cost: importCost(card), dp: fairDp(card), problem: importProblem(d, teamId, key) }))
+    .sort((a, b) => (b.card.salary ?? 0) - (a.card.salary ?? 0) || a.card.name.localeCompare(b.card.name));
+}
+
+/** Bring an owned card into the league on the coach's roster: the points spent, the player signed at his value. */
+export function importCard(d, teamId, key, opts = {}) {
+  const problem = importProblem(d, teamId, key, opts);
+  if (problem) throw new Error(`dynasty: ${problem}`);
+  const card = cardOf(key);
+  const cost = importCost(card);
+  const dp = fairDp(card);
+  let x = {
+    ...d,
+    league: [...leagueKeys(d), key],
+    fp: { ...(d.fp ?? {}), [teamId]: fpOf(d, teamId) - cost },
+    imports: [...(d.imports ?? []), { year: d.year, teamId, key, cost, dp }],
+  };
+  x = sign(x, teamId, key, { dp, years: IMPORT_YEARS, how: 'imported' });
+  return say(x, `${teamOf(d, teamId)?.name} bring in ${card.name} from their collection — ${cost} Franchise Points, ${dp} DP × ${IMPORT_YEARS}.`);
+}
+
+/**
+ * THE DECK IS NEVER FROZEN (the user, 2026-09-18: "Strategy decks chosen for
+ * dynasty games should not be frozen at the start of the dynasty the way that
+ * players are"). A coach's fifty changes whenever they like — the offseason
+ * screens and the season dashboard both call this — on the team and, when a
+ * season is live, on the season's copy the fixtures read. A null deck is the
+ * default fifty. The server cleans the deck itself before it gets here.
+ */
+export function setTeamDeck(d, teamId, deck, deckName = null) {
+  const clean = deck && typeof deck === 'object' ? deck : null;
+  const name = clean ? (String(deckName ?? '').slice(0, 40) || null) : null;
+  const put = t => (t.id === teamId ? { ...t, deck: clean, deckName: name } : t);
+  return { ...d, teams: d.teams.map(put), season: d.season ? { ...d.season, teams: d.season.teams.map(put) } : d.season };
+}
+
 export function seasonTurn(d, season) {
   const before = d.season;
   const next = { ...d, season };
@@ -2035,7 +2158,18 @@ export function endSeason(d0, { rng = Math.random } = {}) {
     };
   });
   const champ = teamOf(d, s.champion);
-  let x = say({ ...d, teams, history: [...d.history, entry], season: null }, `🏆 ${champ?.name ?? 'Somebody'} win the Year ${d.year} title.`);
+  // FRANCHISE POINTS (2026-09-22): every coach banks the year's points here,
+  // and the entry keeps what each earned, for the years table.
+  const fpNow = { ...(d.fp ?? {}) };
+  const fpLines = [];
+  for (const h of humanIds(d)) {
+    const e = fpEarned(d, s, h, table);
+    entry.fp = { ...(entry.fp ?? {}), [h]: e.points };
+    fpNow[h] = (Number(fpNow[h]) || 0) + e.points;
+    fpLines.push(`⭐ ${teamOf(d, h)?.name} earn ${e.points} Franchise Points — ${e.why}.`);
+  }
+  let x = say({ ...d, teams, fp: fpNow, history: [...d.history, entry], season: null }, `🏆 ${champ?.name ?? 'Somebody'} win the Year ${d.year} title.`);
+  for (const line of fpLines) x = say(x, line);
   // A ten-year dynasty ends itself; an aging one runs until it is ended (endDynasty).
   if (!d.aging && d.year >= (d.years ?? DYNASTY_YEARS)) return aiOfferTurn(say({ ...x, phase: DPHASE.done }, 'The dynasty is complete.'));
 

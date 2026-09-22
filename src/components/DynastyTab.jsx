@@ -250,6 +250,7 @@ export default function DynastyTab({
         <FriendsDynastyView
           leagueId={activeLeague}
           uid={uid}
+          collection={collection}
           onBack={() => { setActiveLeague(null); refresh(); }}
           onPlayFixture={onPlayFixture}
           onOpenRoom={(code, role) => setRoom({ code, role })}
@@ -260,6 +261,7 @@ export default function DynastyTab({
         <DynastyView
           d={active}
           uid={uid}
+          collection={collection}
           commit={commit}
           onPlayFixture={onPlayFixture}
           onBack={() => setActiveId(null)}
@@ -289,6 +291,7 @@ export default function DynastyTab({
 
 const PITCH = [
   // The AI's card-salary ceiling (the user, 2026-09-18): "AI rosters must ALSO fit a card-salary cap … You stay on DP only".
+  { t: '⭐ Franchise Points', b: 'A currency of the dynasty itself: earned as each year closes — your finish, every playoff series you win, a title — weighted by the coach rung, and spent in the offseason to bring a card you own into the league, priced by its rarity. Your strategy deck is never frozen: change it any time.' },
   { t: '💸 Dynasty Points', b: `A ${CAP_DP}-DP payroll, and a ${APRON_DP} apron for keeping your own players; AI teams arrive under the cap and may re-sign to ${AI_APRON_DP} — and must ALSO keep their roster's card salary under $${CARD_CAP.toLocaleString('en-US')} × the coach rung ($${Math.round(CARD_CAP * capOf('deity')).toLocaleString('en-US')} at Deity). You answer to DP alone. A player's ask comes from their salary: stars want a lot, $10 cards are just happy to be here.` },
   { t: '🤝 Personalities', b: 'Loyal, Ring Chaser, Mercenary, Security First, Bets on Themself, Easygoing — each haggles differently, and each runs out of patience.' },
   { t: '🎱 The lottery', b: 'Miss the playoffs for a shot at the top pick of a class drawn by rarity — one rare guaranteed, a legendary a long shot — priced by the slot, yours to sign until the season starts.' },
@@ -628,7 +631,7 @@ function DynastySetup({ teamA, collection, uid, onStart, onCancel }) {
 
 // ── One dynasty ─────────────────────────────────────────────────────────────
 
-function DynastyView({ d, uid, commit, onPlayFixture, onBack, onAbandon }) {
+function DynastyView({ d, uid, commit, onPlayFixture, onBack, onAbandon, collection = null }) {
   const { toast, ask } = useDialogs();
 
   /**
@@ -663,6 +666,7 @@ function DynastyView({ d, uid, commit, onPlayFixture, onBack, onAbandon }) {
           season={d.season}
           uid={uid}
           commit={s => commit(seasonTurn(d, s))}
+          onChangeDeck={moves.setDeck}
           onPlayFixture={onPlayFixture}
           onBack={onBack}
           onAbandon={onAbandon}
@@ -679,7 +683,7 @@ function DynastyView({ d, uid, commit, onPlayFixture, onBack, onAbandon }) {
         <TradeInbox d={d} moves={moves} />
         {/* In season until the deadline (the user, 2026-09-11). */}
         <TradeDesk d={d} moves={moves} />
-        <FrontOffice d={d} moves={moves} />
+        <FrontOffice d={d} moves={moves} uid={uid} collection={collection} />
         <HistoryPanel d={d} uid={uid} commit={commit} />
       </>
     );
@@ -790,7 +794,7 @@ function HistoryPanel({ d, uid, commit }) {
                   <td>{h.year}</td>
                   <td>{teamOf(d, h.champion)?.name ?? '—'}</td>
                   <td>{row ? `${row.w}–${row.l}` : '—'}</td>
-                  <td>{finish}</td>
+                  <td>{finish}{h.fp?.[me] != null && <span className={styles.muted}> · ⭐ +{h.fp[me]}</span>}</td>
                   <td>
                     {!pay.coins ? <span className={styles.muted}>—</span>
                       : d.claimed?.[h.year] ? <span className={styles.muted}>+{pay.coins} paid</span>

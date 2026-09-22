@@ -114,3 +114,19 @@ fs.writeFileSync(
 );
 
 console.log(`prepare: copied ${n} module(s) and ${data} data file(s) into functions/shared/`);
+
+// LOAD WHAT WAS COPIED (2026-09-22). A shared module that imports a file
+// this list does not carry passes every test in src/ and breaks the deploy
+// ("Functions codebase could not be analyzed successfully") — dynasty.js did
+// it that morning with aiLevels.js. So the copy proves it can load, here,
+// where the deploy will load it: every module resolved against shared/ alone.
+const { pathToFileURL } = await import('node:url');
+for (const rel of COPY) {
+  try {
+    await import(pathToFileURL(path.join(OUT, rel)).href);
+  } catch (e) {
+    console.error(`prepare: ${rel} does not load from functions/shared/ — ${e.message}`);
+    process.exit(1);
+  }
+}
+console.log(`prepare: all ${n} shared module(s) load`);

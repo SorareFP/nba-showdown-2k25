@@ -20,7 +20,7 @@ import { CARDS } from '../cards.js';
 import { getCardByKey, cardKey, CARD_SETS } from '../cardSets.js';
 import { packDynasty, unpackDynasty } from './seasonPack.js';
 import { fpFinishPoints, fpEarned, fpOf, importCost, importProblem, importCandidates, importCard, setTeamDeck, IMPORT_YEARS, FP_PER_SERIES, FP_TITLE } from './dynasty.js';
-import { payOf } from '../aiLevels.js';
+import { payFactorOf as payOf } from '../coinRewards.js';
 
 const seeded = (s = 808) => () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 2 ** 32; };
 const BASE_IDS = new Set(CARDS.map(c => c.id));

@@ -38,8 +38,9 @@
 import { CARDS } from '../cards.js';
 import { ALL_CARDS, BASE_SET, cardKey, getCardByKey, baseKey, copyKey } from '../cardSets.js';
 import { fitDeck } from '../deckFit.js';
-import { capOf } from '../coinRewards.js';
-import { payOf } from '../aiLevels.js';
+// payFactorOf, not aiLevels.js's payOf: this file runs on the server too
+// (functions/prepare.mjs copies it), and coinRewards.js is what is shared.
+import { capOf, payFactorOf } from '../coinRewards.js';
 import { getPlayerRarity } from '../rarity.js';
 
 // THE AI'S CAP AND APRON AT THIS LEAGUE'S RUNG (2026-09-16). Above Prince the
@@ -1134,8 +1135,8 @@ export function resolveWaivers(d) {
 // A dynasty's own currency, never coins: EARNED when a year closes (endSeason)
 // by the regular-season finish (first of N is FP_FINISH_MAX, last is 0),
 // FP_PER_SERIES for each playoff series won and FP_TITLE for the title, all
-// times the rung's pay factor (payOf: Prince 1x, King 1.25x, Deity 1.5x, the
-// easier rungs less) — so a Deity champion of eight banks about 44 a year
+// times the rung's pay factor (payFactorOf: Prince 1x, King 1.25x, Deity
+// 1.5x, the easier rungs less; a rung the table does not know pays 1x) — so a Deity champion of eight banks about 44 a year
 // and a Prince fourth-place first-round loser about 6. SPENT in the offseason
 // on a card the coach OWNS that is not in the league: its rarity's price
 // (FP_IMPORT_COST — a mid-table year buys a rare, a title year a legendary),
@@ -1167,7 +1168,7 @@ export function fpEarned(d, season, teamId, table = standings(season)) {
   const finish = fpFinishPoints(row?.rank, n);
   const series = playoffSeriesWins(season, teamId);
   const title = season?.champion === teamId;
-  const factor = payOf(d.aiLevel);
+  const factor = payFactorOf(d.aiLevel);
   const points = Math.round((finish + FP_PER_SERIES * series + (title ? FP_TITLE : 0)) * factor);
   const parts = [`${nth(row?.rank)} of ${n}`];
   if (series) parts.push(`${series} playoff series won`);

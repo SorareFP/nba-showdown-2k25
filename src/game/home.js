@@ -23,6 +23,11 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
+    id: 'reward-identities', date: '2026-09-22', title: 'Reward cards wear their identity',
+    body: 'Every Team and Set reward now prints in the look of what it is — gold for a Super Season, green for a Rookie, the Throwback brush for a season that was neither, its own for a playoff run — with the reward pill on top. Three franchise rewards were re-picked after Kawhi Leonard\'s move to Toronto and Brandon Ingram\'s to the Clippers: Toronto pays Vince Carter\'s 1999-2000, Washington John Wall\'s 2016-17 (his Super Season card), and the Clippers Elton Brand\'s 2002-03. New cards: Super Seasons for Wall, Brand (2005-06), Gilbert Arenas (2005-06), DeAndre Jordan (2014-15) and Anthony Parker (2006-07), Rookie cards for Wall, Brand, Arenas and Jordan, Bradley Beal\'s 2020-21 as a Throwback, and Ivica Zubac\'s 2024-25 back in Super Season. Because those sets grew, the Super Season and Rookie collections — and the East and West conference collections, which swapped Kawhi and Ingram — reopen for anyone who had finished them; the capstone you already earned is yours.',
+    to: 'collection', cta: 'See the rewards',
+  },
+  {
     id: 'wnba-team-packs', date: '2026-09-21', title: 'WNBA Team Packs, and plain free throws',
     body: 'The Pack Shop sells a WNBA Team Pack: five players from one WNBA roster and a strat, 250 coins, priced against the NBA Team Pack by what comes out. And Unethical Hoops draws four plain free throws now: the +4 on each check is gone (a free throw carries its own +10).',
     to: 'shop', cta: 'Pack Shop',

@@ -66,7 +66,9 @@ const COPY = [
   'src/game/archetypeDecks.js',
   'src/game/teamRules.js',
   'src/cards/teams.js',
-  'src/cards/sets.js',
+  // NOT src/cards/sets.js (2026-09-22): nothing on the server imports it, and
+  // it drags badges.js, fieldTheme.js and treatments.js behind it — the load
+  // check below is what noticed.
   'src/cards/playerId.js',
   // Free Agents: the request rules and the price, and the never-card list.
   'src/game/freeAgents.js',

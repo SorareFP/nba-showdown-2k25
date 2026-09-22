@@ -81,7 +81,17 @@ describe('faceRegions', () => {
     expect(wearsGold({ set: BASE_SET, salary: 850, badges: ['super-season'] })).toBe(false);
     expect(wearsGold({ set: BASE_SET, salary: 1200, badges: ['super-season', 'rookie'] })).toBe(false);
     // A capstone migrated from Super Season prints in the reward set's bronze, not gold.
+    // (The NO-WEARS case, kept as is: gold never comes from `migratedFrom`.)
     expect(wearsGold({ set: 'set-rewards', salary: 1400, badges: ['super-season', 'set-reward'], migratedFrom: { set: SUPER_SEASON_SET } })).toBe(false);
+    // A reward WEARS its identity (2026-09-22): the same card wearing a gilded
+    // Super Season gets the sheen its printed face has; under the line the
+    // gold is withheld and the face falls back to bronze; a Throwback wearer
+    // is never gold. Asserted on wearsGold, not holoRegionsFor: a legendary
+    // reward gets the photo sheen by rarity whatever it wears.
+    const migrated = { set: 'set-rewards', badges: ['super-season', 'set-reward'], migratedFrom: { set: SUPER_SEASON_SET } };
+    expect(wearsGold({ ...migrated, salary: 1400, wears: 'super-season' })).toBe(true);
+    expect(wearsGold({ ...migrated, salary: 860, wears: 'super-season' })).toBe(false);
+    expect(wearsGold({ ...migrated, salary: 1400, wears: 'throwbacks' })).toBe(false);
     expect(wearsGold(null)).toBe(false);
   });
 

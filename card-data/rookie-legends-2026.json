@@ -51,5 +51,9 @@
   "Gary Payton": {
     "season": 1991,
     "reason": "1990-91 rookie year — 82g, 2244min. Forced because the archive lookup folds 'Gary Payton II' onto this name and returns the son's 2017 debut."
+  },
+  "Bradley Beal": {
+    "season": 2013,
+    "reason": "keep-alive, 2026-09-18: he left the team-reward picks (Wall's 2016-17 is the Wizards reward now), and the rookie candidate universe reads those picks — without this entry the next generateSpecialSets would DELETE rookie:Bradley_Beal (2012-13, $850) and pulled copies must keep resolving"
   }
 }

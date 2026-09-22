@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-09T22:03:21.643Z",
+ "generatedAt": "2026-09-22T12:17:00.844Z",
  "set": "set-rewards",
  "note": "SET COMPLETION REWARDS — cards MOVED out of their home special set (see migratedFrom) and earned by completing that set (rewardGoal). Built by scripts/cardgen/generateSetRewards.js from card-data/set-rewards-2026.json; the strongest card by salary of each group is the reward.",
  "cards": [
@@ -71,6 +71,7 @@
    "badges": [
     "super-season"
    ],
+   "wears": "super-season",
    "migratedFrom": {
     "set": "super-season",
     "id": "Russell_Westbrook"
@@ -88,7 +89,7 @@
    "paintBoost": 0,
    "threePtBoost": -6,
    "defBoost": 2,
-   "salary": 1610,
+   "salary": 1590,
    "chart": [
     {
      "lo": 1,
@@ -138,6 +139,7 @@
    "badges": [
     "rookie"
    ],
+   "wears": "rookie",
    "migratedFrom": {
     "set": "rookie",
     "id": "Michael_Jordan"
@@ -155,7 +157,7 @@
    "paintBoost": 1,
    "threePtBoost": -3,
    "defBoost": 3,
-   "salary": 1490,
+   "salary": 1470,
    "chart": [
     {
      "lo": 1,
@@ -200,6 +202,7 @@
    "badges": [
     "summer-standout"
    ],
+   "wears": "summer-standouts",
    "migratedFrom": {
     "set": "summer-standouts",
     "id": "Dwyane_Wade"
@@ -285,6 +288,7 @@
    "badges": [
     "dissonance"
    ],
+   "wears": "dissonance",
    "migratedFrom": {
     "set": "dissonance",
     "id": "Russell_Westbrook"

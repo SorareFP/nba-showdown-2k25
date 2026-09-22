@@ -30,7 +30,7 @@
 // WHEN to ask; it does not get to decide what completion means. That keeps the
 // rule testable without a network and identical across the tracker, the claim,
 // and anything later that asks the same question.
-import { CARD_SETS, BASE_SET, cardKey } from './cardSets.js';
+import { CARD_SETS, BASE_SET, cardKey, canonicalKey } from './cardSets.js';
 import { CONFERENCES } from './packEngine.js';
 import { notionalPrice } from './rarity.js';
 
@@ -265,7 +265,12 @@ export function collectedKeys(collection) {
   return new Set(
     Object.entries(collection ?? {})
       .filter(([, e]) => e && (e.collected === true || e.earned === true) && (e.count ?? 0) > 0)
-      .map(([key]) => key)
+      // AN OLD KEY COUNTS AS THE CARD IT IS (2026-09-22): a copy stored under a
+      // key the card has since left (cardSets.KEY_ALIASES) still satisfies the
+      // goal that now asks for the new key — MyCollection lists ALL_CARDS by
+      // the new key, and would otherwise show it as missing while it sits in
+      // the binder.
+      .map(([key]) => canonicalKey(key))
   );
 }
 
@@ -283,8 +288,8 @@ export function collectableKeys(collection) {
         e && e.type !== 'strat' && (e.count ?? 0) > 0 && e.collected !== true && e.earned !== true
         // Only a card some collection is asking for — a card no goal wants
         // is not "eligible" for anything, however many copies sit in the box.
-        && GOAL_CARD_KEYS.has(key))
-      .map(([key]) => key)
+        && GOAL_CARD_KEYS.has(canonicalKey(key)))
+      .map(([key]) => canonicalKey(key))
   );
 }
 

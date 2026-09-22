@@ -43,8 +43,12 @@ import { indexBiometrics, loadBiometrics } from './biometrics.js';
 import { indexPositionShares, loadPositionShares } from './positionShares.js';
 import * as PV from './playValue.js';
 import * as A from './attributes.js';
-import { buildApiEpmIndex } from './summerStandouts.js';
-import { bestSeason } from './history.js';
+import { buildApiEpmIndex, buildBpmBridge } from './summerStandouts.js';
+import { archiveBasis, requireArchive } from './epmArchive.js';
+import { nbaCareerContext, nbaIdentityFor, settleTwin, wornByMigrated } from './rewardIdentity.js';
+export { wornByMigrated };
+import { setBadge } from '../../src/cards/sets.js';
+import { BEST_SEASON_BADGE, SUPER_SEASON_BADGE } from '../../src/cards/badges.js';
 
 
 export const SET_ID = 'team-rewards';
@@ -136,6 +140,21 @@ export const ORIGIN_BADGE = {
   'summer-standouts': 'summer-standout',
 };
 
+/**
+ * ── AND SINCE 2026-09-22 THE CARD WEARS ITS IDENTITY ────────────────────────
+ *
+ * The user (2026-09-18): "If a card does not qualify for super season or
+ * rookie (or dissonance), 26-27, they should be throwbacks." A reward keeps
+ * being the reward, but `wears` names the set whose LOOK it takes — gold for a
+ * Super Season, green for a Rookie, the brush for a Throwback, its own for a
+ * Summer Standout — and cardTreatment (src/cards/sets.js) reads exactly that
+ * one field. The identity badge goes into `badges` too, for the audit, the
+ * awards join and every reader older than the field.
+ *
+ * A MIGRATED card wears the set it came from, except a flagged Super Season
+ * (wornByMigrated in rewardIdentity.js — Stockton's ruling); a BUILT card is
+ * judged by the Free Agents classifier (wornByBuilt below).
+ */
 function moveCard({ set, id, franchise, goal, bandException }) {
   const file = path.join(GEN_DIR, `cards-${set}.json`);
   if (!fs.existsSync(file)) throw new Error(`Cannot migrate from ${set}: ${file} does not exist.`);
@@ -143,10 +162,16 @@ function moveCard({ set, id, franchise, goal, bandException }) {
   if (!source) throw new Error(`Cannot migrate ${set}:${id} — no such card in that set.`);
   const badge = ORIGIN_BADGE[set];
   if (!badge) throw new Error(`No origin badge declared for set ${set}.`);
+  const wears = wornByMigrated(source, set);
+  // A dropped claim stays dropped: the flagged card keeps its badges WITHOUT
+  // super-season and gains the badge of what it wears instead.
+  const carried = (source.badges ?? []).filter(b => !(source.notBestSeason && b === SUPER_SEASON_BADGE));
+  const identity = wears === set ? badge : setBadge(wears);
   return {
     ...source,
     set: SET_ID,
-    badges: [...new Set([...(source.badges ?? []), badge])],
+    badges: [...new Set([...carried, identity])],
+    wears,
     migratedFrom: { set, id },
     rewardFor: franchise,
     rewardGoal: goal,
@@ -225,65 +250,27 @@ function assertEarnedBands(cards) {
 }
 
 /**
- * The badges a BUILT reward earns on its own merits.
+ * The identity a BUILT reward wears, and the badges that say so.
  *
- * Twenty-seven rewards were moved out of Super Season, Rookie or Summer
- * Standouts and carry that set's badge with them. The three built from scratch
- * carry nothing — so the same questions get asked of them directly: is this the
- * player's FIRST season, and is it his BEST one?
+ * Until 2026-09-22 this was `builtBadges`: it rebuilt the career from the
+ * 2002+ tables and asked "first season? best season?" of that — and stamped
+ * Anthony Parker's 2006-07 with a false ROOKIE, because his 1997-98 debut sat
+ * in the 1985+ archive it never read. The judge is now the Free Agents
+ * classifier over the WHOLE archive (rewardIdentity.js): rookie, super-season
+ * or throwbacks by the rules the shipped sets use, and the twin rule settled
+ * AFTER pricing because gold is a salary line. Never bbref-history (pool
+ * careers only) and never a truncated window.
  *
- * ── WHY THE CAREER IS REBUILT FROM THE SEASON TABLES ────────────────────────
- *
- * `bbref-history` holds only the current pool's careers, and all three of these
- * players are retired or out of it, so they are simply not in there. The
- * per-season full tables are, and they carry the four metrics `seasonScore`
- * reads. The scoring itself is history.js's own `bestSeason` — the function the
- * Super Season set uses to make exactly this decision — because a second copy
- * of that rule would be a second copy that can disagree.
- *
- * ── AND WHY A TRUNCATED CAREER GETS NO BADGE AT ALL ─────────────────────────
- *
- * The tables start at 2002. A player who debuted before that has an invisible
- * early career, and both questions would be answered wrongly and confidently:
- * his first CACHED season is not his rookie year, and his best cached season is
- * not necessarily his best. Age is the tell — nobody's rookie year is at 24 —
- * so a career that opens above that age is reported and left unbadged rather
- * than guessed at.
+ * `identity` is what nbaIdentityFor returned before pricing; the card's
+ * salary is known here. A rookie year that is also the best but prints under
+ * the gold line stays a Rookie wearing the BEST SEASON pill too, exactly as
+ * generateSpecialSets' same-season twins do.
  */
-const ROOKIE_MAX_AGE = 23;
-
-function careerFromSeasonTables(playerId) {
-  const career = [];
-  for (let season = 2002; season <= LAST_SEASON; season += 1) {
-    const rows = seasonRows(season, 'advanced').filter(r => r.playerId === playerId);
-    if (rows.length === 0) continue;
-    // The season-wide aggregate where a trade split the year, else the one row.
-    career.push({ ...(rows.find(r => /TM$/.test(r.team ?? '')) ?? rows[0]), season });
-  }
-  return career;
-}
-
-export function builtBadges(pick, playerId, distributions, log = console.log) {
-  const career = careerFromSeasonTables(playerId);
-  if (career.length === 0) return [];
-  const first = career[0];
-  // TRUNCATED ONLY IF THE CAREER RUNS OFF THE EDGE. The age test alone was too
-  // blunt: it read Marc Gasol's 2009 debut at 24 and Luis Scola's at 27 as
-  // careers that began before the window, when both are simply late debuts —
-  // Scola came over from Europe at 27, which IS his rookie year. A career is
-  // only invisible if it starts in the very first season the tables carry.
-  if (first.season <= 2002 && (first.age ?? 0) > ROOKIE_MAX_AGE) {
-    log(
-      `  ${pick.name}: career opens at age ${first.age} in ${first.season}, so it began before the ` +
-        'cached tables — no badge claimed.'
-    );
-    return [];
-  }
-  const badges = [];
-  if (first.season === pick.season) badges.push('rookie');
-  const { best } = bestSeason(career, distributions);
-  if (best?.season === pick.season) badges.push('super-season');
-  return badges;
+export function wornByBuilt(identity, salary) {
+  const wears = settleTwin(identity.wears, { ...identity, salary });
+  const badges = [setBadge(wears)];
+  if (wears === 'rookie' && identity.alsoBest) badges.push(BEST_SEASON_BADGE);
+  return { wears, badges };
 }
 
 /**
@@ -329,11 +316,23 @@ export function main({ log = console.log, enforceBands = true } = {}) {
   const calibration = JSON.parse(fs.readFileSync(CALIBRATION_FILE, 'utf8'));
   const historyCache = readCache('bbref-history');
   const archiveRows = historyCache?.data?.rows ?? historyCache?.rows ?? [];
-  const historyDistributions = historyCache?.seasons ?? {};
   const pool = JSON.parse(fs.readFileSync(path.join(GEN_DIR, 'player-pool-2026.json'), 'utf8'));
   const biometrics = indexBiometrics(loadBiometrics());
   const positionShares = indexPositionShares(loadPositionShares());
   const apiEpm = buildApiEpmIndex();
+  // THE PRE-2002 BPM BRIDGE, the same one the Super Season legends and the
+  // Free Agents builder cross on. Until 2026-09-22 a built pick's skill came
+  // only from the dunksandthrees index, which opens in 2002, so Vince Carter's
+  // 1999-2000 — the Raptors reward the user picked by name — would have been
+  // priced with no EPM at all ($620 instead of ~$1310). Built lazily: only a
+  // pick the index does not reach pays for the archive load.
+  let bridgeInstance = null;
+  const bridge = () => {
+    if (!bridgeInstance) bridgeInstance = buildBpmBridge(archiveBasis(requireArchive()));
+    return bridgeInstance;
+  };
+  // The whole-archive careers the identity of a built pick is judged on.
+  const identityCtx = nbaCareerContext();
 
   const currentByName = new Map();
   for (const row of archiveRows) {
@@ -358,7 +357,13 @@ export function main({ log = console.log, enforceBands = true } = {}) {
       continue;
     }
     const rim = stintRow(shooting, pick.name, pick.team);
-    const epm = apiEpm.get(`${normalizeName(pick.name)}|${pick.season}`);
+    let epm = apiEpm.get(`${normalizeName(pick.name)}|${pick.season}`);
+    if (!epm && Number.isFinite(advRow.bpm)) {
+      epm = {
+        epm: bridge().epmFromBpm(advRow.bpm),
+        ewinsPerGame: bridge().ewinsPerGameFromVorp(advRow.vorp, advRow.games),
+      };
+    }
     const realGames = advRow.games ?? 0;
     const realMpg = realGames > 0 ? (advRow.minutes ?? 0) / realGames : 0;
     selections.push({
@@ -376,7 +381,10 @@ export function main({ log = console.log, enforceBands = true } = {}) {
         trustMinutes: seasonMinutes(adv, pick.name),
       },
     });
-    meta.push({ ...pick, realGames, realMpg, playerId: advRow.playerId });
+    meta.push({
+      ...pick, realGames, realMpg, playerId: advRow.playerId,
+      identity: nbaIdentityFor(identityCtx, advRow.playerId, pick.season),
+    });
   }
   if (missing.length) {
     // Hand-picked, one per franchise: a missing row leaves a team unrewardable
@@ -422,10 +430,18 @@ export function main({ log = console.log, enforceBands = true } = {}) {
     // wants him anyway ("Mourning is a fun enough card that it seems fine as
     // a reward", 2026-09-07).
     ...(meta[i].bandException ? { bandException: meta[i].bandException } : {}),
-    badges: builtBadges(meta[i], meta[i].playerId, historyDistributions, log),
   }));
 
   PV.priceAgainstBase(cards, { roundSalary: A.roundSalary, min: A.SALARY_MIN, max: A.SALARY_MAX });
+
+  // WHAT EACH BUILT CARD WEARS, settled now that the salary is known (the twin
+  // rule is a gold-line question). The badge is stamped beside it.
+  cards.forEach((card, i) => {
+    const { wears, badges } = wornByBuilt(meta[i].identity, card.salary);
+    card.wears = wears;
+    card.badges = badges;
+    log(`  ${meta[i].goal}: ${card.name} ${card.seasonLabel} $${card.salary} wears ${wears}`);
+  });
 
   // MIGRATED CARDS ARE NOT REPRICED. They were priced by their own set against
   // the same base field; running them through priceAgainstBase again in this
@@ -448,7 +464,8 @@ export function main({ log = console.log, enforceBands = true } = {}) {
     set: SET_ID,
     provisional: true,
     sources: {
-      roster: 'card-data/team-rewards-2026.json — 27 cards MOVED from Super Season/Rookie/Summer Standouts, 3 built fresh, 3 tier rewards',
+      roster: `card-data/team-rewards-2026.json — ${moved.length} cards MOVED from Super Season/Rookie/Summer Standouts, ${picks.length} built (franchise picks and the 3 tiers)`,
+      identity: 'every card WEARS its identity (wears): the set it came from, or for a built pick the Free Agents classifier over the 1976-2026 archive (rewardIdentity.js)',
       statLine: "that season's own row for that team, from the full-league tables",
       skill: 'EPM from the season table, Speed+Power trust from the season minutes',
       pricing: 'play value against the base set, like every special set',

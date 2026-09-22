@@ -189,7 +189,15 @@ export default function Studio() {
   // BEST SEASON and keeps its team's own palette. The chip below reads this,
   // not `activeTreatment`, because a header reading "gold-foil" over a card
   // with no gold on it is the studio lying about its own preview.
-  const shownTreatment = cardTreatment(activeSet, selected?.salary, selected?.badges ?? []);
+  //
+  // AND A REWARD WEARS ITS IDENTITY (2026-09-22): a team or set reward carries
+  // `wears`, the set whose look it prints in, and cardTreatment is the one
+  // reader of it — so the chip and its gate below read this, not the set's own
+  // declaration, or a bronze set would show a "bronze-accent" chip over a gold
+  // card. The special sources spread the whole record (players.js), so the
+  // field is on `selected`.
+  const shownTreatment = cardTreatment(activeSet, selected?.salary, selected?.badges ?? [], selected?.wears);
+  const wornSet = typeof selected?.wears === 'string' ? selected.wears : null;
   const scale = useFitScale(previewEl);
 
   // ── Load persisted state, per SET ─────────────────────────────────────────
@@ -478,14 +486,25 @@ export default function Studio() {
             the table before anyone reads it — and, on a set that TIERS, which
             side of the line the card in front of you is on. Flipping through
             210 Super Season cards, that is the question this chip answers. */}
-        {activeTreatment && (
+        {/* Gated on the CARD's treatment as well as the set's (2026-09-22): a
+            reward wearing another set's identity is treated even when its own
+            set's declaration is the bronze it fell back from. */}
+        {(activeTreatment || shownTreatment) && (
           <span
             className={styles.setBadge}
             title={
-              `This set carries the "${activeTreatment}" treatment, composed on top of each team's ` +
-              'own colours rather than replacing them (src/cards/treatments.js). It is a static ' +
-              'gradient, so it survives the PNG export, and it is only ever allowed to spend ' +
-              'contrast the untreated card already had.' +
+              (activeTreatment
+                ? `This set carries the "${activeTreatment}" treatment, composed on top of each team's ` +
+                  'own colours rather than replacing them (src/cards/treatments.js). It is a static ' +
+                  'gradient, so it survives the PNG export, and it is only ever allowed to spend ' +
+                  'contrast the untreated card already had.'
+                : `This card wears the "${shownTreatment}" treatment (src/cards/treatments.js).`) +
+              (wornSet
+                ? ` This card WEARS the "${wornSet}" set's identity — a reward printed in the look of ` +
+                  `the set it came from, with its own pill on top (cardTreatment in src/cards/sets.js); ` +
+                  `it shows "${shownTreatment}" because that is what the worn set gives it at this ` +
+                  'salary, falling back to its own set\'s look when the worn set gives nothing.'
+                : '') +
               (shownTreatment
                 ? ''
                 : ` This card is under $${SUPER_SEASON_MIN_SALARY}, so it prints BEST SEASON in the ` +

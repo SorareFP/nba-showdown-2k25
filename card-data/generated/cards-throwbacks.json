@@ -1,0 +1,67 @@
+{
+ "set": "throwbacks",
+ "generatedAt": "2026-09-22T12:17:05.244Z",
+ "note": "CURATED THROWBACKS — generator-owned (scripts/cardgen/generateCuratedCards.js from card-data/curated-cards-2026.json). Retired rewards that qualify for no other set. Requested Throwbacks live in cards-free-agents.json; both join the throwbacks set in cardSets.js.",
+ "cards": [
+  {
+   "id": "Bradley_Beal_2021",
+   "name": "Bradley Beal",
+   "team": "WAS",
+   "pos": "SG",
+   "speed": 15,
+   "power": 10,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": -1,
+   "salary": 1540,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 3,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 99,
+     "pts": 4,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2021,
+   "seasonLabel": "2020-21",
+   "age": 27,
+   "games": 60,
+   "mpg": 35.8,
+   "bbrefId": "bealbr01",
+   "traded": false,
+   "metrics": {
+    "bpm": 3.4,
+    "vorp": 2.9,
+    "ws": 5.9,
+    "ws48": 0.132,
+    "per": 22.7
+   },
+   "provisional": false,
+   "set": "throwbacks",
+   "curated": "The Wizards reward until 2026-09-18, when John Wall's 2016-17 Super Season took the goal (the user: \"Go with Vince, Wall and Brand\"). His 31-a-game year is nobody's best season by the rule (2018-19 is) and not his rookie year (2012-13, carded), so it keeps its card as a Throwback rather than vanishing. Nobody had earned it: \"No one has them yet, it doesn't matter. But it should just change face.\""
+  }
+ ]
+}

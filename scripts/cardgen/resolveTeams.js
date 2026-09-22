@@ -107,16 +107,22 @@ export function resolvePlayerTeams(pool, roster, manual = {}) {
     // free agents that way (DeMar DeRozan, 201942, verified 2026-08-29). Merely
     // finding a record is not enough; stamping `null` onto the card as if it
     // were a team would be worse than keeping the pool's real, stale one.
-    if (match && match.team) {
-      resolved.push({ ...player, team: canonicalTeam(match.team), personId: match.personId });
-      stats.roster += 1;
-      continue;
-    }
-
+    // A MANUAL TEAM WINS OVER THE ROSTER (2026-09-18). It was only a
+    // fallback for names nba.com could not place; now it is also how a move
+    // the cached roster does not show yet gets onto the card — an offseason
+    // trade. The user: "Can you change the Kawhi Leonard 26-27 card to the
+    // Raptors? He was traded." A null entry still means "needs a human" and
+    // falls through to the sources below.
     const override = manual[player.name];
     if (override) {
       resolved.push({ ...player, team: canonicalTeam(override), personId: match?.personId ?? null });
       stats.manual += 1;
+      continue;
+    }
+
+    if (match && match.team) {
+      resolved.push({ ...player, team: canonicalTeam(match.team), personId: match.personId });
+      stats.roster += 1;
       continue;
     }
 

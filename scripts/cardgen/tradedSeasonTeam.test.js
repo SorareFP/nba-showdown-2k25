@@ -18,7 +18,8 @@ import { isAggregateTeam } from './fetchHistory.js';
 
 const GEN = path.join(REPO_ROOT, 'card-data', 'generated');
 const CACHE = path.join(REPO_ROOT, 'card-data', 'cache');
-const SWEPT = ['cards-super-season', 'cards-rookie', 'cards-summer-standouts', 'cards-team-rewards', 'cards-set-rewards'];
+// cards-throwbacks since 2026-09-22: the curated throwbacks are generated too (the reward batch).
+const SWEPT = ['cards-super-season', 'cards-rookie', 'cards-summer-standouts', 'cards-team-rewards', 'cards-set-rewards', 'cards-throwbacks'];
 const norm = s => String(s ?? '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z]/g, '');
 
 function fullTable(season) {

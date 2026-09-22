@@ -65,8 +65,12 @@ import { rewardBandFor } from '../../../src/game/collectionDifficulty.js';
 import { WNBA_SET } from '../../../src/cards/sets.js';
 import * as PV from '../playValue.js';
 import * as A from '../attributes.js';
-import { loadArchive, rateArchive, buildWnbaCards } from './generateWnbaLegends.js';
+import { loadArchive, rateArchive, buildWnbaCards, careerOf } from './generateWnbaLegends.js';
 import { franchiseOf, MIN_GAMES } from './wnbaRewardCandidates.js';
+import { setBadge } from '../../../src/cards/sets.js';
+import { SUPER_SEASON_BADGE } from '../../../src/cards/badges.js';
+import { bestLegendSeason } from './legends.js';
+import { classifyWnbaSeason, settleTwin, wornByMigrated, WNBA_SETS } from '../rewardIdentity.js';
 
 /**
  * The badge a migrated card keeps from the set it came from.
@@ -123,15 +127,38 @@ function moveCard({ set, id, franchise, goal, bandException }) {
   if (!source) throw new Error(`Cannot migrate ${set}:${id} — no such card in that set.`);
   const badge = ORIGIN_BADGE[set];
   if (!badge) throw new Error(`No origin badge declared for set ${set}.`);
+  // WHAT IT WEARS (2026-09-22): the set it came from — the same rule and the
+  // same flagged-Super-Season exception as the NBA set (rewardIdentity.js).
+  const wears = wornByMigrated(source, set);
+  const carried = (source.badges ?? []).filter(b => !(source.notBestSeason && b === SUPER_SEASON_BADGE));
   return {
     ...source,
     set: SET_ID,
-    badges: [...new Set([...(source.badges ?? []), badge])],
+    badges: [...new Set([...carried, wears === set ? badge : setBadge(wears)])],
+    wears,
     migratedFrom: { set, id },
     rewardFor: franchise,
     rewardGoal: goal,
     ...(bandException ? { bandException } : {}),
   };
+}
+
+/**
+ * The identity a BUILT WNBA reward wears: the Free Agents classifier over her
+ * whole rated career (the user, 2026-09-18: a reward that does not qualify as
+ * a Super Season or a Rookie "should be throwbacks"), with the twin rule
+ * settled after pricing because gold is a salary line. `career` is careerOf()
+ * for the pick's player id over the rated archive.
+ */
+export function wornByBuiltWnba(career, season, salary) {
+  const set = classifyWnbaSeason(career, season);
+  const top = bestLegendSeason(career);
+  const wears = settleTwin(set, {
+    alsoBest: top.best?.season === season && top.eligibility !== 'none',
+    trusted: top.eligibility === 'both',
+    salary,
+  }, { rookie: WNBA_SETS.rookie, best: WNBA_SETS.best });
+  return { wears, badges: [setBadge(wears)] };
 }
 
 /**
@@ -297,6 +324,13 @@ export function main({ log = console.log, enforceBands = true } = {}) {
   }));
 
   PV.priceAgainstBase(cards, { roundSalary: A.roundSalary, min: A.SALARY_MIN, max: A.SALARY_MAX });
+
+  // What each built card WEARS, once its salary is known.
+  cards.forEach((card, i) => {
+    const { wears, badges } = wornByBuiltWnba(careerOf(rows[i].playerId, seasons), picks[i].season, card.salary);
+    card.wears = wears;
+    card.badges = badges;
+  });
 
   // AFTER pricing, never through it — see moveCard.
   cards.push(...moved.map(moveCard));

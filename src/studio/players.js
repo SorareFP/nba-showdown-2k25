@@ -338,7 +338,7 @@ export const CARD_PLAYERS = SHIPPED_CARDS;
  * here the way the pool does.
  */
 const specialModules = import.meta.glob(
-  '../../card-data/generated/cards-{super-season,rookie,summer-standouts,dissonance,team-rewards,set-rewards,wnba,wnba-rookie,wnba-super-season,wnba-team-rewards,wnba-set-rewards,free-agents}.json',
+  '../../card-data/generated/cards-{super-season,rookie,summer-standouts,dissonance,team-rewards,set-rewards,wnba,wnba-rookie,wnba-super-season,wnba-team-rewards,wnba-set-rewards,free-agents,throwbacks}.json',
   { eager: true }
 );
 
@@ -357,14 +357,17 @@ function loadSpecialSet(id) {
     }
   }
   // A set made ONLY of requested cards has no generated file of its own: its
-  // cards are the requests built into it (Throwbacks, both leagues).
+  // cards are the requests built into it. Since 2026-09-22 that is the WNBA
+  // Throwbacks alone: the NBA Throwbacks has a generator-owned file
+  // (cards-throwbacks.json, the curated retired rewards), found above, and the
+  // requests join it there.
   if (REQUEST_ONLY_SETS.includes(id)) {
     return { set: id, cards: FREE_AGENT_CARDS.filter(c => c.set === id), requestedOnly: true };
   }
   return null;
 }
 
-/** Sets with no generator: every card in them is a built Free Agents request. */
+/** Sets that MAY have no generated file: then every card in them is a built Free Agents request. */
 export const REQUEST_ONLY_SETS = ['throwbacks', 'wnba-throwbacks'];
 
 export const SUPER_SEASON_FILE = loadSpecialSet(SUPER_SEASON_SET);
@@ -714,18 +717,22 @@ export const SOURCES = {
       'Re-run `node scripts/cardgen/generateSetRewards.js` after the home sets.',
   }),
 
-  // ── The request-only sets ─────────────────────────────────────────────────
+  // ── The catch-all sets ────────────────────────────────────────────────────
   //
-  // Free Agents' catch-all, one per league. No generator: every card here is a
-  // request built from the Requests panel (scripts/cardgen/buildFreeAgent.mjs),
-  // so the list grows one card at a time and starts empty.
+  // Free Agents' catch-all, one per league. Requests built from the Requests
+  // panel (scripts/cardgen/buildFreeAgent.mjs) arrive one card at a time. The
+  // NBA side also holds the CURATED throwbacks since 2026-09-22 — a retired
+  // reward that qualifies for no other set (Bradley Beal's 2020-21, the
+  // Wizards reward until the Wall re-pick), written by
+  // scripts/cardgen/generateCuratedCards.js from card-data/curated-cards-2026.json.
   throwbacks: specialSource('throwbacks', THROWBACKS_FILE, {
-    sub: 'requested seasons (Free Agents)',
+    sub: 'requested and curated seasons',
     hint:
-      'THE FREE AGENTS CATCH-ALL: a requested season that is not a rookie year, a best season or a ' +
-      'playoff run. Cards arrive one at a time from Requests → Build card; give each a photo named ' +
-      'like its id (Jawad_Williams_2011) and export its face. One look for every card, any decade: ' +
-      'the 1990s teal brush and purple scribble.',
+      'THE FREE AGENTS CATCH-ALL, plus the curated throwbacks: a season that is not a rookie year, a ' +
+      'best season or a playoff run. Requests arrive one at a time from Requests → Build card; the ' +
+      'curated ones (a retired reward with nowhere else to go) come from card-data/curated-cards-2026.json. ' +
+      'Give each a photo named like its id (Jawad_Williams_2011) and export its face. One look for ' +
+      'every card, any decade: the 1990s teal brush and purple scribble.',
   }),
   'wnba-throwbacks': specialSource('wnba-throwbacks', WNBA_THROWBACKS_FILE, {
     sub: 'requested seasons (Free Agents)',

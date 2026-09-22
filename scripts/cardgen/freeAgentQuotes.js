@@ -34,9 +34,16 @@ import { pathToFileURL } from 'node:url';
 import { readCache, REPO_ROOT } from './cache.js';
 import { normalizeName } from './resolveTeams.js';
 import { careerSeasons, bestSeason, BEST_SEASON_MIN_GAMES, BEST_SEASON_MIN_MINUTES } from './history.js';
-import { SUPER_SEASON_MIN_SALARY } from '../../src/cards/badges.js';
 import { seasonDistribution } from './fetchHistory.js';
-import { rookieSeasonCounts, REPLACEMENT_EPM } from './generateSpecialSets.js';
+import { REPLACEMENT_EPM } from './generateSpecialSets.js';
+// THE CLASSIFIER LIVES IN rewardIdentity.js SINCE 2026-09-22: the reward
+// generators judge a built reward's identity by the same rule a request is
+// quoted by (the user: "If a card does not qualify for super season or rookie
+// (or dissonance), 26-27, they should be throwbacks"), and they cannot import
+// it from here without a cycle (this file imports generateTeamRewards for
+// NEVER_CARD). Re-exported so every caller and test keeps its import.
+import { unprovableDebutSeasons, classifySeason, settleTwin, classifyWnbaSeason, WNBA_SETS } from './rewardIdentity.js';
+export { unprovableDebutSeasons, classifySeason, settleTwin, classifyWnbaSeason, WNBA_SETS };
 import { buildApiEpmIndex, buildBpmBridge, playoffSeason } from './summerStandouts.js';
 import { archiveBasis, requireArchive } from './epmArchive.js';
 import { priceCandidates } from './teamRewardCandidates.js';
@@ -45,7 +52,6 @@ import * as A from './attributes.js';
 import { CARD_SETS } from '../../src/game/cardSets.js';
 import { loadArchive as loadWnbaArchive, rateArchive as rateWnbaArchive, careerOf as wnbaCareerOf } from './wnba/generateWnbaLegends.js';
 import { bestLegendSeason } from './wnba/legends.js';
-import { wnbaRookieSeasonCounts } from './wnba/generateWnbaRookies.js';
 import { fitRidge, predict } from './wnba/bpmModel.js';
 
 const GEN_DIR = path.join(REPO_ROOT, 'card-data', 'generated');
@@ -67,46 +73,6 @@ export const BASE_SEASON = 2026;
 /** Enes Kanter / Enes Freedom are never carded, in any set (permanent rule). */
 export function isNeverCard(name) {
   return NEVER_CARD.has(normalizeName(name));
-}
-
-/**
- * The seasons a debut cannot be PROVEN in: the first of every contiguous run
- * the archive holds. 1976 opens the archive, and 1985 follows the 1978-84
- * gap, so a player first seen there may have debuted unseen.
- */
-export function unprovableDebutSeasons(seasons) {
-  const have = new Set(seasons);
-  return new Set(seasons.filter(s => !have.has(s - 1)));
-}
-
-/**
- * Which set a requested REGULAR season lands in, by the rules the existing
- * sets use. Rookie outranks Super Season, as it does on the badges.
- *
- * `career` is careerSeasons() for the player; `distributions` maps season to
- * seasonDistribution(); `unprovable` comes from unprovableDebutSeasons().
- */
-export function classifySeason(career, season, { distributions, unprovable = new Set() }) {
-  const first = career[0];
-  if (first && first.season === season && !unprovable.has(first.season) && rookieSeasonCounts(first)) {
-    return 'rookie';
-  }
-  const { best, eligibility } = bestSeason(career, distributions);
-  if (best && best.season === season && eligibility !== 'none') return 'super-season';
-  return 'throwbacks';
-}
-
-/**
- * THE TWIN RULE, the shipped sets' own (generateSpecialSets' same-season
- * twins; the user, 2026-09-06: "If it qualifies as a super season, leave it a
- * super season ... If it's just a best season like Wells, make it a rookie
- * card"). A rookie year that is also the career's best stays SUPER SEASON only
- * if it would print gold: a trusted season at SUPER_SEASON_MIN_SALARY or more.
- * Settled after pricing, because gold is a salary line.
- */
-export function settleTwin(set, { alsoBest, trusted, salary }, { rookie = 'rookie', best = 'super-season' } = {}) {
-  if (set === rookie && alsoBest && trusted && salary >= SUPER_SEASON_MIN_SALARY) return best;
-  return set;
 }
 
 /**
@@ -225,9 +191,6 @@ function realLogTargets(sets) {
 // The archive opens with the league itself (1997), so a first season IS a
 // rookie season, with none of the NBA's unprovable debuts.
 
-/** Where a requested WNBA season lands: the WNBA sets' twins of the NBA three. */
-export const WNBA_SETS = { rookie: 'wnba-rookie', best: 'wnba-super-season', other: 'wnba-throwbacks' };
-
 /** The WNBA salary fit's inputs, from one rated season and its league's bpmHat spread. */
 export function wnbaFeatures(row, distribution) {
   const mpg = (row.minutes ?? 0) / Math.max(row.games ?? 1, 1);
@@ -236,20 +199,6 @@ export function wnbaFeatures(row, distribution) {
     z, row.obpmHat ?? 0, mpg, z * Math.min(mpg, 34),
     row.pts100 ?? 0, row.trb100 ?? 0, row.ast100 ?? 0, row.usgPct ?? 0, row.tsPct ?? 0, row.stl100 ?? 0, row.blk100 ?? 0,
   ];
-}
-
-/**
- * Which WNBA set a requested season lands in, the NBA order: a rookie year
- * first, then the career's best season, then Throwbacks. A rookie year that
- * is also her best goes gold through settleTwin, as a legend's does in the
- * shipped set (buildWnbaCards: "one gold card wearing the rookie pill too").
- */
-export function classifyWnbaSeason(career, season) {
-  const first = career[0];
-  if (first && first.season === season && wnbaRookieSeasonCounts(first)) return WNBA_SETS.rookie;
-  const { best, eligibility } = bestLegendSeason(career);
-  if (best && best.season === season && eligibility !== 'none') return WNBA_SETS.best;
-  return WNBA_SETS.other;
 }
 
 /** Every uncarded WNBA season worth a card, quoted by the ridge fit. */

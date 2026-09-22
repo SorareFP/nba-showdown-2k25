@@ -139,6 +139,16 @@ describe('resolvePlayerTeams', () => {
     expect(stats.ambiguous).toBe(1);
   });
 
+  it('lets a manual team win over the roster — an offseason trade the roster does not show (2026-09-18)', () => {
+    const pool = [{ name: 'Kawhi Leonard', team: 'LAC' }];
+    const roster = [{ fullName: 'Kawhi Leonard', team: 'LAC', personId: 202695 }];
+    const { resolved, stats } = resolvePlayerTeams(pool, roster, { 'Kawhi Leonard': 'TOR' });
+    expect(resolved[0]).toMatchObject({ team: 'TOR', personId: 202695 });
+    expect(stats).toMatchObject({ manual: 1, roster: 0 });
+    // A null entry is still "needs a human": the roster decides.
+    expect(resolvePlayerTeams(pool, roster, { 'Kawhi Leonard': null }).resolved[0].team).toBe('LAC');
+  });
+
   it('uses a manual override when the roster has no match', () => {
     const pool = [{ name: 'Russell Westbrook', team: 'SAC' }];
     const { resolved, unresolved } = resolvePlayerTeams(pool, roster, { 'Russell Westbrook': 'DEN' });

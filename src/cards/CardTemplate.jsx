@@ -288,16 +288,24 @@ export default function CardTemplate({
   // its team's own palette: the gold foil is the gilded tier's, and it is
   // withheld by the same comparison that turns its pill from SUPER SEASON into
   // BEST SEASON, so the two can never disagree about whether this card is gold.
+  //
+  // AND A REWARD WEARS ITS IDENTITY (2026-09-22): `card.wears` names the set
+  // whose look a reward card prints in — Super Season gold, Rookie green, the
+  // Throwback brush — and `cardTreatment` is the one place that reads it, so
+  // this call, the studio's chip and the sheen in faceRegions.js all get the
+  // same answer. The user's rule (2026-09-18): "Wear the identity."
   const base = deriveFieldTheme(team.primary, team.secondary, accent);
   // The raw pair rides along for a treatment that paints in the team's own
   // colours (the Throwbacks cup: brush = secondary, scribble = accent).
-  const field = applyTreatment(base, cardTreatment(set, card.salary, card.badges ?? []), {
+  const field = applyTreatment(base, cardTreatment(set, card.salary, card.badges ?? [], card.wears), {
     secondary: team.secondary,
     accent,
   });
   const treatment = field.treatment ?? null;
   // A treatment that carries a MOTIF draws it as well — the Throwbacks brush
   // (ThrowbackMotif.jsx), in the band's open patches and instead of the chevrons.
+  // It keys off the TREATMENT, not the set, which is what lets a reward wearing
+  // `throwbacks` draw the brush in its own team's colours with no code of its own.
   const motif = treatment?.motif ?? null;
 
   // THE SET IS PART OF THE PHOTO'S PATH, and leaving it out was a real bug:
@@ -356,16 +364,51 @@ export default function CardTemplate({
   // answer is to keep the card and drop the claim, not to silently keep
   // claiming it. See scripts/cardgen/auditSuperSeasonBadges.js, which stamps
   // the flag.
-  const declared = card.notBestSeason ? null : setBadge(set);
-  const carried = Array.isArray(card.badges) ? card.badges : [];
+  //
+  // AND IT DECLINES ONLY THAT CLAIM (2026-09-22). Until now the flag dropped
+  // the SET's pill whatever the set was, so John Stockton's Utah reward — a
+  // migrated Super Season that is not his best year — printed no pill at all,
+  // not even TEAM REWARD, which is not a claim about the season and was never
+  // in question. A set whose declared badge is not SUPER SEASON keeps it; what
+  // a flagged card does not print is any SUPER SEASON / BEST SEASON pill,
+  // whether the set declared it, the identity below would supply it or the
+  // record carried it.
+  const declines = id =>
+    card.notBestSeason === true && (id === SUPER_SEASON_BADGE || id === BEST_SEASON_BADGE);
+  const declaredId = setBadge(set);
+  const declared = declines(declaredId) ? null : declaredId;
+  const carried = (Array.isArray(card.badges) ? card.badges : []).filter(id => !declines(id));
   const badge = declared
     ? pickBadge([declared], card.salary)
     : pickBadge(carried, card.salary);
-  const extraBadges = declared
-    ? carried
-        .map(id => pickBadge([id], card.salary))
-        .filter(b => b && b.id !== badge?.id)
-    : [];
+  // ── THE IDENTITY PILL, FROM ONE SOURCE ────────────────────────────────────
+  //
+  // A reward WEARS the set it came from (`card.wears`, see cardTreatment in
+  // sets.js), and the pill that says which — SUPER SEASON, ROOKIE, THROWBACK —
+  // is that set's declared badge, asked of `setBadge` exactly as the reward's
+  // own pill is. `wears` is a SET id and the badge is a badge id; the two
+  // namespaces are never compared as strings (badges.js), only joined through
+  // this lookup. It prints ONCE, directly under the declared pill, tiered by
+  // the same salary line as everywhere else (SUPER SEASON → BEST SEASON), and
+  // the record's carried ids print after it deduped against the declared pill,
+  // the identity pill and each other — the data step still stamps the identity
+  // into `badges` for the audit, the awards and older readers, and this dedupe
+  // is what keeps that from printing it twice. A same-season twin extra stays
+  // (ROOKIE under SUPER SEASON, BEST SEASON under ROOKIE); a duplicate does
+  // not. Stockton, wearing Throwbacks (the user, 2026-09-18), prints TEAM
+  // REWARD over THROWBACK; Portis, wearing Super Season at $860, prints TEAM
+  // REWARD over BEST SEASON.
+  const wornId = typeof card.wears === 'string' ? setBadge(card.wears) : null;
+  const identity = wornId && !declines(wornId) ? pickBadge([wornId], card.salary) : null;
+  const extraBadges = [];
+  if (declared) {
+    const seen = new Set([badge?.id]);
+    for (const b of [identity, ...carried.map(id => pickBadge([id], card.salary))]) {
+      if (!b || seen.has(b.id)) continue;
+      seen.add(b.id);
+      extraBadges.push(b);
+    }
+  }
   // The season, by contrast, IS purely a set question. A base-set record
   // carries no seasonLabel at all, and a 2025-26 legend card has its season
   // drawn into the hand-made art, so gating on the data instead of the set

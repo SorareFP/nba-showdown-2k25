@@ -1,0 +1,12 @@
+{
+  "_comment": "CURATED THROWBACKS (2026-09-22). A card that stops being a reward and qualifies for no other set — not a rookie year, not the career's best season, not a playoff run, not the current season — becomes a Throwback, by the user's rule (2026-09-18): \"If a card does not qualify for super season or rookie (or dissonance), 26-27, they should be throwbacks.\" These are built by scripts/cardgen/generateCuratedCards.js through the Free Agents builder into card-data/generated/cards-throwbacks.json, a GENERATOR-OWNED file — never into cards-free-agents.json, which the Card Studio writes whole. Throwbacks ids always carry the season (Bradley_Beal_2021). Rows: bbrefId, name, season (the end year), set, why.",
+  "cards": [
+    {
+      "bbrefId": "bealbr01",
+      "name": "Bradley Beal",
+      "season": 2021,
+      "set": "throwbacks",
+      "why": "The Wizards reward until 2026-09-18, when John Wall's 2016-17 Super Season took the goal (the user: \"Go with Vince, Wall and Brand\"). His 31-a-game year is nobody's best season by the rule (2018-19 is) and not his rookie year (2012-13, carded), so it keeps its card as a Throwback rather than vanishing. Nobody had earned it: \"No one has them yet, it doesn't matter. But it should just change face.\""
+    }
+  ]
+}

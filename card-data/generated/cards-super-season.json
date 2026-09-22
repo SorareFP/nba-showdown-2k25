@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-12T16:46:09.339Z",
+ "generatedAt": "2026-09-22T12:16:51.696Z",
  "set": "super-season",
  "provisional": true,
  "sources": {
@@ -1913,6 +1913,71 @@
    "provisional": true
   },
   {
+   "id": "Anthony_Parker",
+   "name": "Anthony Parker",
+   "team": "TOR07",
+   "pos": "SG",
+   "speed": 14,
+   "power": 10,
+   "shotLine": 15,
+   "paintBoost": 1,
+   "threePtBoost": 3,
+   "defBoost": 0,
+   "salary": 770,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 8,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 9,
+     "hi": 14,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 23,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 24,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2007,
+   "seasonLabel": "2006-07",
+   "age": 31,
+   "games": 73,
+   "mpg": 33.4,
+   "bbrefId": "parkean01",
+   "traded": false,
+   "metrics": {
+    "bpm": 1.4,
+    "vorp": 2.1,
+    "ws": 6.5,
+    "ws48": 0.127,
+    "per": 14.5
+   },
+   "provisional": false
+  },
+  {
    "id": "Austin_Reaves",
    "name": "Austin Reaves",
    "team": "LAL",
@@ -3757,6 +3822,64 @@
    "provisional": false
   },
   {
+   "id": "DeAndre_Jordan",
+   "name": "DeAndre Jordan",
+   "team": "LAC84",
+   "pos": "C",
+   "speed": 9,
+   "power": 16,
+   "shotLine": 16,
+   "paintBoost": 4,
+   "threePtBoost": -4,
+   "defBoost": 1,
+   "salary": 1010,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 7,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 15,
+     "pts": 1,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 99,
+     "pts": 2,
+     "reb": 2,
+     "ast": 0
+    }
+   ],
+   "season": 2015,
+   "seasonLabel": "2014-15",
+   "age": 26,
+   "games": 82,
+   "mpg": 34.4,
+   "bbrefId": "jordade01",
+   "traded": false,
+   "metrics": {
+    "bpm": 2.9,
+    "vorp": 3.5,
+    "ws": 12.8,
+    "ws48": 0.217,
+    "per": 21
+   },
+   "provisional": false
+  },
+  {
    "id": "Dejounte_Murray",
    "name": "Dejounte Murray",
    "team": "SAS",
@@ -4865,6 +4988,64 @@
    "provisional": false
   },
   {
+   "id": "Elton_Brand",
+   "name": "Elton Brand",
+   "team": "LAC84",
+   "pos": "PF",
+   "speed": 12,
+   "power": 16,
+   "shotLine": 14,
+   "paintBoost": 1,
+   "threePtBoost": -6,
+   "defBoost": 2,
+   "salary": 1070,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    }
+   ],
+   "season": 2006,
+   "seasonLabel": "2005-06",
+   "age": 26,
+   "games": 79,
+   "mpg": 39.2,
+   "bbrefId": "brandel01",
+   "traded": false,
+   "metrics": {
+    "bpm": 6.7,
+    "vorp": 6.8,
+    "ws": 14.8,
+    "ws48": 0.229,
+    "per": 26.5
+   },
+   "provisional": false
+  },
+  {
    "id": "Evan_Mobley",
    "name": "Evan Mobley",
    "team": "CLE",
@@ -5360,6 +5541,71 @@
     "ws": 12.9,
     "ws48": 0.281,
     "per": 32.1
+   },
+   "provisional": false
+  },
+  {
+   "id": "Gilbert_Arenas",
+   "name": "Gilbert Arenas",
+   "team": "WAS97",
+   "pos": "PG",
+   "speed": 16,
+   "power": 11,
+   "shotLine": 15,
+   "paintBoost": 1,
+   "threePtBoost": 0,
+   "defBoost": 0,
+   "salary": 1270,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 20,
+     "pts": 3,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2006,
+   "seasonLabel": "2005-06",
+   "age": 24,
+   "games": 80,
+   "mpg": 42.3,
+   "bbrefId": "arenagi01",
+   "traded": false,
+   "metrics": {
+    "bpm": 5.4,
+    "vorp": 6.3,
+    "ws": 13.6,
+    "ws48": 0.193,
+    "per": 23.8
    },
    "provisional": false
   },
@@ -7319,6 +7565,71 @@
     "ws": 10.7,
     "ws48": 0.2,
     "per": 21.9
+   },
+   "provisional": false
+  },
+  {
+   "id": "John_Wall",
+   "name": "John Wall",
+   "team": "WAS",
+   "pos": "PG",
+   "speed": 15,
+   "power": 10,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": 1,
+   "defBoost": 0,
+   "salary": 1230,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 7,
+     "hi": 15,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 20,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 2
+    }
+   ],
+   "season": 2017,
+   "seasonLabel": "2016-17",
+   "age": 26,
+   "games": 78,
+   "mpg": 36.4,
+   "bbrefId": "walljo01",
+   "traded": false,
+   "metrics": {
+    "bpm": 4.7,
+    "vorp": 4.8,
+    "ws": 8.8,
+    "ws48": 0.149,
+    "per": 23.2
    },
    "provisional": false
   },
@@ -11066,7 +11377,7 @@
    "paintBoost": 1,
    "threePtBoost": 3,
    "defBoost": -1,
-   "salary": 660,
+   "salary": 650,
    "chart": [
     {
      "lo": 1,
@@ -11511,10 +11822,10 @@
    "speed": 10,
    "power": 10,
    "shotLine": 14,
-   "paintBoost": -3,
+   "paintBoost": -2,
    "threePtBoost": 2,
    "defBoost": 0,
-   "salary": 700,
+   "salary": 690,
    "chart": [
     {
      "lo": 1,

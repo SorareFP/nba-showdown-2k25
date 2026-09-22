@@ -76,6 +76,7 @@ import {
   DISSONANCE_SET,
   TEAM_REWARDS_SET,
   SUPER_SEASON_SET,
+  THROWBACKS_SET,
   setStatsSeason,
 } from '../../src/cards/sets.js';
 
@@ -608,6 +609,8 @@ async function main() {
   const standouts = readJson(path.join(GEN_DIR, `cards-${SUMMER_STANDOUTS_SET}.json`));
   const dissonance = readJson(path.join(GEN_DIR, `cards-${DISSONANCE_SET}.json`));
   const teamRewards = readJson(path.join(GEN_DIR, `cards-${TEAM_REWARDS_SET}.json`));
+  // The curated throwbacks (2026-09-22): generator-owned, joined like every set.
+  const throwbacks = readJson(path.join(GEN_DIR, `cards-${THROWBACKS_SET}.json`));
 
   const baseSeason = statsSeasonEndYear(CURRENT_SET);
   if (baseSeason == null) {
@@ -637,6 +640,9 @@ async function main() {
     // their awards were already joined under the OLD set id; leaving them there
     // would strand Jokić's MVP on a set that no longer holds his card.
     { set: TEAM_REWARDS_SET, cards: teamRewards.cards },
+    // A retired reward that became a Throwback keeps its season's awards too —
+    // Beal's 2020-21 All-Star nod travels with the card, not the set it left.
+    { set: THROWBACKS_SET, cards: throwbacks.cards },
   ];
   const seasons = seasonsNeeded(plan);
 

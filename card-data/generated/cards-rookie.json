@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-12T16:46:09.985Z",
+ "generatedAt": "2026-09-22T12:16:52.622Z",
  "set": "rookie",
  "provisional": true,
  "sources": {
@@ -4247,7 +4247,7 @@
    "paintBoost": 3,
    "threePtBoost": -4,
    "defBoost": 0,
-   "salary": 1270,
+   "salary": 1280,
    "chart": [
     {
      "lo": 1,
@@ -5512,7 +5512,7 @@
    "paintBoost": 4,
    "threePtBoost": -4,
    "defBoost": -1,
-   "salary": 880,
+   "salary": 890,
    "chart": [
     {
      "lo": 1,
@@ -5563,6 +5563,78 @@
     "ws": 5.8,
     "ws48": 0.128,
     "per": 20.5
+   },
+   "provisional": false
+  },
+  {
+   "id": "DeAndre_Jordan",
+   "name": "DeAndre Jordan",
+   "team": "LAC84",
+   "pos": "C",
+   "speed": 5,
+   "power": 10,
+   "shotLine": 18,
+   "paintBoost": 6,
+   "threePtBoost": -2,
+   "defBoost": 0,
+   "salary": 290,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 9,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 11,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 12,
+     "hi": 17,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 18,
+     "hi": 22,
+     "pts": 1,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 2,
+     "reb": 2,
+     "ast": 0
+    }
+   ],
+   "season": 2009,
+   "seasonLabel": "2008-09",
+   "age": 20,
+   "games": 53,
+   "mpg": 14.5,
+   "bbrefId": "jordade01",
+   "traded": false,
+   "metrics": {
+    "bpm": -3.3,
+    "vorp": -0.3,
+    "ws": 1.3,
+    "ws48": 0.079,
+    "per": 14.1
    },
    "provisional": false
   },
@@ -6346,11 +6418,11 @@
    "pos": "SG",
    "speed": 14,
    "power": 9,
-   "shotLine": 16,
-   "paintBoost": 1,
-   "threePtBoost": 1,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 1090,
+   "salary": 1120,
    "chart": [
     {
      "lo": 1,
@@ -6368,13 +6440,13 @@
     },
     {
      "lo": 4,
-     "hi": 15,
+     "hi": 14,
      "pts": 2,
      "reb": 0,
      "ast": 0
     },
     {
-     "lo": 16,
+     "lo": 15,
      "hi": 99,
      "pts": 3,
      "reb": 1,
@@ -6476,11 +6548,11 @@
    "pos": "PF",
    "speed": 8,
    "power": 12,
-   "shotLine": 17,
-   "paintBoost": 4,
-   "threePtBoost": -3,
+   "shotLine": 16,
+   "paintBoost": 3,
+   "threePtBoost": -4,
    "defBoost": 0,
-   "salary": 630,
+   "salary": 650,
    "chart": [
     {
      "lo": 1,
@@ -6498,13 +6570,13 @@
     },
     {
      "lo": 7,
-     "hi": 16,
+     "hi": 15,
      "pts": 1,
      "reb": 1,
      "ast": 0
     },
     {
-     "lo": 17,
+     "lo": 16,
      "hi": 21,
      "pts": 2,
      "reb": 1,
@@ -6654,6 +6726,71 @@
     "ws": 1.3,
     "ws48": 0.061,
     "per": 8.8
+   },
+   "provisional": false
+  },
+  {
+   "id": "Elton_Brand",
+   "name": "Elton Brand",
+   "team": "CHI",
+   "pos": "PF",
+   "speed": 9,
+   "power": 12,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": -5,
+   "defBoost": -1,
+   "salary": 740,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 21,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 2,
+     "reb": 2,
+     "ast": 0
+    }
+   ],
+   "season": 2000,
+   "seasonLabel": "1999-00",
+   "age": 20,
+   "games": 81,
+   "mpg": 37,
+   "bbrefId": "brandel01",
+   "traded": false,
+   "metrics": {
+    "bpm": 1.3,
+    "vorp": 2.5,
+    "ws": 7.5,
+    "ws48": 0.121,
+    "per": 20.6
    },
    "provisional": false
   },
@@ -7174,6 +7311,71 @@
     "ws": 1.2,
     "ws48": 0.031,
     "per": 10.8
+   },
+   "provisional": false
+  },
+  {
+   "id": "Gilbert_Arenas",
+   "name": "Gilbert Arenas",
+   "team": "GSW98",
+   "pos": "PG",
+   "speed": 11,
+   "power": 8,
+   "shotLine": 15,
+   "paintBoost": 1,
+   "threePtBoost": 0,
+   "defBoost": 0,
+   "salary": 620,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 7,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 14,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2002,
+   "seasonLabel": "2001-02",
+   "age": 20,
+   "games": 47,
+   "mpg": 24.6,
+   "bbrefId": "arenagi01",
+   "traded": false,
+   "metrics": {
+    "bpm": 1,
+    "vorp": 0.9,
+    "ws": 2.7,
+    "ws48": 0.114,
+    "per": 17
    },
    "provisional": false
   },
@@ -10195,6 +10397,71 @@
    "provisional": true
   },
   {
+   "id": "John_Wall",
+   "name": "John Wall",
+   "team": "WAS97",
+   "pos": "PG",
+   "speed": 10,
+   "power": 6,
+   "shotLine": 18,
+   "paintBoost": 2,
+   "threePtBoost": 0,
+   "defBoost": -1,
+   "salary": 470,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 7,
+     "hi": 12,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 13,
+     "hi": 17,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 18,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2011,
+   "seasonLabel": "2010-11",
+   "age": 20,
+   "games": 69,
+   "mpg": 37.8,
+   "bbrefId": "walljo01",
+   "traded": false,
+   "metrics": {
+    "bpm": -0.8,
+    "vorp": 0.8,
+    "ws": 2.2,
+    "ws48": 0.041,
+    "per": 15.8
+   },
+   "provisional": false
+  },
+  {
    "id": "Jonas_Valanciunas",
    "name": "Jonas Valančiūnas",
    "team": "TOR09",
@@ -12009,9 +12276,9 @@
    "pos": "SG",
    "speed": 9,
    "power": 7,
-   "shotLine": 16,
-   "paintBoost": 3,
-   "threePtBoost": 4,
+   "shotLine": 15,
+   "paintBoost": 2,
+   "threePtBoost": 3,
    "defBoost": -2,
    "salary": 500,
    "chart": [
@@ -12038,13 +12305,13 @@
     },
     {
      "lo": 8,
-     "hi": 15,
+     "hi": 14,
      "pts": 2,
      "reb": 0,
      "ast": 0
     },
     {
-     "lo": 16,
+     "lo": 15,
      "hi": 19,
      "pts": 2,
      "reb": 0,
@@ -15162,11 +15429,11 @@
    "pos": "C",
    "speed": 8,
    "power": 13,
-   "shotLine": 15,
-   "paintBoost": 0,
-   "threePtBoost": -5,
+   "shotLine": 16,
+   "paintBoost": 1,
+   "threePtBoost": -4,
    "defBoost": 1,
-   "salary": 1170,
+   "salary": 1140,
    "chart": [
     {
      "lo": 1,
@@ -15191,13 +15458,13 @@
     },
     {
      "lo": 10,
-     "hi": 14,
+     "hi": 15,
      "pts": 2,
      "reb": 1,
      "ast": 0
     },
     {
-     "lo": 15,
+     "lo": 16,
      "hi": 22,
      "pts": 3,
      "reb": 2,
@@ -16624,7 +16891,7 @@
    "paintBoost": 0,
    "threePtBoost": 5,
    "defBoost": -1,
-   "salary": 440,
+   "salary": 450,
    "chart": [
     {
      "lo": 1,
@@ -17068,9 +17335,9 @@
    "pos": "C",
    "speed": 7,
    "power": 18,
-   "shotLine": 17,
-   "paintBoost": 5,
-   "threePtBoost": -3,
+   "shotLine": 18,
+   "paintBoost": 6,
+   "threePtBoost": -2,
    "defBoost": 2,
    "salary": 1440,
    "chart": [
@@ -17097,13 +17364,13 @@
     },
     {
      "lo": 12,
-     "hi": 16,
+     "hi": 17,
      "pts": 3,
      "reb": 2,
      "ast": 0
     },
     {
-     "lo": 17,
+     "lo": 18,
      "hi": 99,
      "pts": 3,
      "reb": 2,
@@ -17458,11 +17725,11 @@
    "pos": "PG",
    "speed": 10,
    "power": 6,
-   "shotLine": 15,
-   "paintBoost": -1,
-   "threePtBoost": -3,
+   "shotLine": 14,
+   "paintBoost": -2,
+   "threePtBoost": -4,
    "defBoost": 0,
-   "salary": 500,
+   "salary": 520,
    "chart": [
     {
      "lo": 1,
@@ -17480,13 +17747,13 @@
     },
     {
      "lo": 7,
-     "hi": 14,
+     "hi": 13,
      "pts": 1,
      "reb": 1,
      "ast": 1
     },
     {
-     "lo": 15,
+     "lo": 14,
      "hi": 21,
      "pts": 2,
      "reb": 1,

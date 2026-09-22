@@ -457,7 +457,14 @@ describe('the base set\'s badges', () => {
     // base card is at least as strong, and hands it the pill instead. So the
     // title of this test now holds only for the metric-detected exclusion; the
     // second rule deliberately trades cards for badges, 39 of them.
-    expect(SUPER.cards.length).toBe(196);
+    // 201 on 2026-09-22, the reward/identity batch: five named seasons joined
+    // through legends-2026.json — John Wall 2016-17 (the Wizards reward,
+    // migrated out again by generateTeamRewards, so the game shows 200 plus
+    // Zubac's 2024-25 back from the Clippers reward), Elton Brand 2005-06,
+    // Gilbert Arenas 2005-06, DeAndre Jordan 2014-15 ("Use the best card, if
+    // it's a super season, make it as such") and Anthony Parker 2006-07, the
+    // outgoing Toronto reward that the identity sweep found IS his best season.
+    expect(SUPER.cards.length).toBe(201);
     //
     // AND 321 -> 348 WHEN THE STANDOUT NEWCOMERS' ROOKIE YEARS ARRIVED — every
     // standout outside the pool whose career begins inside the cache-and-EPM
@@ -487,7 +494,13 @@ describe('the base set\'s badges', () => {
     // 282 on 2026-09-09: the franchise-reward re-pick put Beal and Matthews
     // into the rookie candidate universe (their 2012-13 and 2009-10) and took
     // Wall out of it with his 2010-11. Super Season holds at 194.
-    expect(ROOKIE.cards.length).toBe(282);
+    // 286 on 2026-09-22, the reward/identity batch: Wall 2010-11, Brand
+    // 1999-2000, Arenas 2001-02 and DeAndre Jordan 2008-09 entered the universe
+    // through their legends entries ("Make sure all those guys get super
+    // seasons and rookies too") and all four clear the 20 G / 600 min bar; Beal
+    // stays through rookie-legends-2026.json now that he left the team-reward
+    // picks. Parker (1997-98: 37 G, 196 min) fails the bar and gets none.
+    expect(ROOKIE.cards.length).toBe(286);
     const poolNames = new Set(POOL.map(p => p.name));
     const bothBlocks = [...new Set([
       ...Object.keys(STANDOUTS.superSeasons ?? {}),

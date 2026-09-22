@@ -99,5 +99,25 @@
   "Vince Carter": {
     "season": 2001,
     "reason": "capstone pick 2026-09-06 (rule A) — 27.6 ppg in Toronto, BPM 7.6"
+  },
+  "John Wall": {
+    "season": 2017,
+    "reason": "the Wizards reward, 2026-09-18 — the user: \"Use the best card, if it's a super season, make it as such\"; 2016-17 is his best season by the rule (BPM+VORP), so it IS his Super Season card, migrated into team-rewards as Zubac's was (team-rewards-2026.json migrated.WAS)"
+  },
+  "Elton Brand": {
+    "season": 2006,
+    "reason": "2026-09-18 — the user: \"Make sure all those guys get super seasons and rookies too\"; his best season by the rule (79 G, 3099 min; 2002-03 is the Clippers reward, a Throwback)"
+  },
+  "Gilbert Arenas": {
+    "season": 2006,
+    "reason": "2026-09-18 — the user: \"Make sure all those guys get super seasons and rookies too\"; his best season by the rule (80 G, 3384 min)"
+  },
+  "DeAndre Jordan": {
+    "season": 2015,
+    "reason": "2026-09-18 — the user liked his 2017-18, but asked that the card be his BEST season by the same test (\"Use the best card\"): 2014-15 scores 1.615 to 2017-18's 0.777, so 2014-15 is the card"
+  },
+  "Anthony Parker": {
+    "season": 2007,
+    "reason": "2026-09-18 — the outgoing Toronto reward (re-picked to Vince Carter 1999-2000). The identity sweep found 2006-07 IS his best season by the rule, so it is his Super Season card rather than a Throwback; prices under the gold line (tier-down look). He has no rookie card and cannot (1997-98: 37 G, 196 min fails the bar)"
   }
 }

@@ -56,6 +56,8 @@ const SPECIALS = [
   'cards-set-rewards.json',
   'cards-wnba-team-rewards.json',
   'cards-wnba-set-rewards.json',
+  // The curated throwbacks (2026-09-22), priced on the same line as everything else.
+  'cards-throwbacks.json',
 ];
 for (const f of SPECIALS) {
   if (!fs.existsSync(path.join(GEN, f))) { console.log(`${f}: missing, skipped`); continue; }

@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-09T22:03:12.944Z",
+ "generatedAt": "2026-09-22T12:17:00.608Z",
  "set": "wnba-team-rewards",
  "provisional": true,
  "sources": {
@@ -80,7 +80,11 @@
    },
    "provisional": false,
    "rewardFor": "ATL",
-   "rewardGoal": "wnba-team-ATL"
+   "rewardGoal": "wnba-team-ATL",
+   "wears": "wnba-throwbacks",
+   "badges": [
+    "throwback"
+   ]
   },
   {
    "id": "Tamika_Catchings",
@@ -152,7 +156,11 @@
    },
    "provisional": false,
    "rewardFor": "IND",
-   "rewardGoal": "wnba-team-IND"
+   "rewardGoal": "wnba-team-IND",
+   "wears": "wnba-throwbacks",
+   "badges": [
+    "throwback"
+   ]
   },
   {
    "id": "Cappie_Pondexter",
@@ -166,7 +174,7 @@
    "paintBoost": 0,
    "threePtBoost": 2,
    "defBoost": 0,
-   "salary": 1300,
+   "salary": 1290,
    "chart": [
     {
      "lo": 1,
@@ -218,7 +226,11 @@
    "provisional": false,
    "rewardFor": "NYL",
    "rewardGoal": "wnba-team-NYL",
-   "bandException": "Ten dollars under the legendary floor at $1190 after the 2026-09-09 reprice (absolute paint line + any-player-may-spend salary rule). No eligible Liberty season reaches $1200 on a real log: her 2012 $960, McCarville 2008 $910, Prince 2015 $870; Stewart and Ionescu are on the roster this reward is for, Charles is carded by name. The user, 2026-09-09: keep Pondexter, allow ten under. The same size of exception Las Vegas carries for Hammon and Philadelphia for Erving."
+   "bandException": "Ten dollars under the legendary floor at $1190 after the 2026-09-09 reprice (absolute paint line + any-player-may-spend salary rule). No eligible Liberty season reaches $1200 on a real log: her 2012 $960, McCarville 2008 $910, Prince 2015 $870; Stewart and Ionescu are on the roster this reward is for, Charles is carded by name. The user, 2026-09-09: keep Pondexter, allow ten under. The same size of exception Las Vegas carries for Hammon and Philadelphia for Erving.",
+   "wears": "wnba-super-season",
+   "badges": [
+    "super-season"
+   ]
   },
   {
    "id": "Seimone_Augustus",
@@ -297,7 +309,11 @@
    },
    "provisional": false,
    "rewardFor": "MIN",
-   "rewardGoal": "wnba-team-MIN"
+   "rewardGoal": "wnba-team-MIN",
+   "wears": "wnba-super-season",
+   "badges": [
+    "super-season"
+   ]
   },
   {
    "id": "Becky_Hammon",
@@ -311,7 +327,7 @@
    "paintBoost": 0,
    "threePtBoost": 2,
    "defBoost": -1,
-   "salary": 1130,
+   "salary": 1140,
    "chart": [
     {
      "lo": 1,
@@ -373,6 +389,7 @@
    "badges": [
     "super-season"
    ],
+   "wears": "wnba-super-season",
    "migratedFrom": {
     "set": "wnba-super-season",
     "id": "Becky_Hammon"
@@ -393,7 +410,7 @@
    "paintBoost": 1,
    "threePtBoost": 1,
    "defBoost": 1,
-   "salary": 1120,
+   "salary": 1110,
    "chart": [
     {
      "lo": 1,
@@ -444,7 +461,11 @@
    },
    "provisional": false,
    "rewardFor": "PHO",
-   "rewardGoal": "wnba-team-PHO"
+   "rewardGoal": "wnba-team-PHO",
+   "wears": "wnba-super-season",
+   "badges": [
+    "super-season"
+   ]
   },
   {
    "id": "Chamique_Holdsclaw",
@@ -509,7 +530,11 @@
    },
    "provisional": false,
    "rewardFor": "WAS",
-   "rewardGoal": "wnba-team-WAS"
+   "rewardGoal": "wnba-team-WAS",
+   "wears": "wnba-throwbacks",
+   "badges": [
+    "throwback"
+   ]
   },
   {
    "id": "Cheryl_Ford",
@@ -581,7 +606,11 @@
    },
    "provisional": false,
    "rewardFor": "DAL",
-   "rewardGoal": "wnba-team-DAL"
+   "rewardGoal": "wnba-team-DAL",
+   "wears": "wnba-super-season",
+   "badges": [
+    "super-season"
+   ]
   },
   {
    "id": "Alysha_Clark",
@@ -653,7 +682,11 @@
    },
    "provisional": false,
    "rewardFor": "SEA",
-   "rewardGoal": "wnba-team-SEA"
+   "rewardGoal": "wnba-team-SEA",
+   "wears": "wnba-super-season",
+   "badges": [
+    "super-season"
+   ]
   },
   {
    "id": "Epiphanny_Prince",
@@ -726,7 +759,11 @@
    "provisional": false,
    "rewardFor": "CHI",
    "rewardGoal": "wnba-team-CHI",
-   "bandException": "Thirty dollars under the super-rare floor at $870 after the 2026-09-06 league factor. Her 2012 ($1270) clears it into LEGENDARY, $70 over; no other eligible Sky season reaches $900 (Meesseman 2022 $830, Quigley 2017 $850; Vandersloot, Fowles and Parker are carded elsewhere). Under by thirty keeps the reward below the harder collections' rewards, which is what the band is for. The same size of exception Las Vegas gets for Hammon."
+   "bandException": "Thirty dollars under the super-rare floor at $870 after the 2026-09-06 league factor. Her 2012 ($1270) clears it into LEGENDARY, $70 over; no other eligible Sky season reaches $900 (Meesseman 2022 $830, Quigley 2017 $850; Vandersloot, Fowles and Parker are carded elsewhere). Under by thirty keeps the reward below the harder collections' rewards, which is what the band is for. The same size of exception Las Vegas gets for Hammon.",
+   "wears": "wnba-throwbacks",
+   "badges": [
+    "throwback"
+   ]
   },
   {
    "id": "Mwadi_Mabika",
@@ -740,7 +777,7 @@
    "paintBoost": -2,
    "threePtBoost": 2,
    "defBoost": 1,
-   "salary": 780,
+   "salary": 770,
    "chart": [
     {
      "lo": 1,
@@ -798,7 +835,11 @@
    },
    "provisional": false,
    "rewardFor": "LAS",
-   "rewardGoal": "wnba-team-LAS"
+   "rewardGoal": "wnba-team-LAS",
+   "wears": "wnba-throwbacks",
+   "badges": [
+    "throwback"
+   ]
   },
   {
    "id": "Nykesha_Sales",
@@ -812,7 +853,7 @@
    "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": 1,
-   "salary": 740,
+   "salary": 730,
    "chart": [
     {
      "lo": 1,
@@ -870,7 +911,11 @@
    },
    "provisional": false,
    "rewardFor": "CON",
-   "rewardGoal": "wnba-team-CON"
+   "rewardGoal": "wnba-team-CON",
+   "wears": "wnba-throwbacks",
+   "badges": [
+    "throwback"
+   ]
   },
   {
    "id": "Sophia_Witherspoon",
@@ -884,7 +929,7 @@
    "paintBoost": -3,
    "threePtBoost": 3,
    "defBoost": -1,
-   "salary": 600,
+   "salary": 590,
    "chart": [
     {
      "lo": 1,
@@ -943,7 +988,11 @@
    "provisional": false,
    "rewardFor": "POR",
    "rewardGoal": "wnba-team-POR",
-   "bandException": "Portland earns super-rare ($900-1199) since the 2026-09-06 league factor, but no Fire season prices above $730 (Tamicha Jackson 2002): the franchise played three seasons, 2000-02, and its best players were journeymen. The cheapest reward in the set, declared rather than hidden -- the same kind of exception Las Vegas gets for Hammon, in the other direction."
+   "bandException": "Portland earns super-rare ($900-1199) since the 2026-09-06 league factor, but no Fire season prices above $730 (Tamicha Jackson 2002): the franchise played three seasons, 2000-02, and its best players were journeymen. The cheapest reward in the set, declared rather than hidden -- the same kind of exception Las Vegas gets for Hammon, in the other direction.",
+   "wears": "wnba-throwbacks",
+   "badges": [
+    "throwback"
+   ]
   }
  ]
 }

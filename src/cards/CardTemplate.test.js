@@ -2035,8 +2035,11 @@ describe('the generated award file, on the cards it belongs to', () => {
     // and started being cards MOVED out of the other three. A moved card takes
     // its season with it, so it has to take its awards too — Jokić's MVP would
     // otherwise be stranded on a set that no longer holds his card.
+    // AND THE CURATED THROWBACKS (2026-09-22): a retired reward that qualifies
+    // for no other set keeps its season's awards — Beal's 2020-21 All-Star nod
+    // travels with the card into cards-throwbacks.json, not with the set it left.
     expect(Object.keys(AWARDS_FILE.sets).sort()).toEqual(
-      [CURRENT_SET, ROOKIE_SET, SUMMER_STANDOUTS_SET, SUPER_SEASON_SET, 'dissonance', 'team-rewards'].sort()
+      [CURRENT_SET, ROOKIE_SET, SUMMER_STANDOUTS_SET, SUPER_SEASON_SET, 'dissonance', 'team-rewards', 'throwbacks'].sort()
     );
     // The WNBA sets are absent, and that is a data gap rather than a decision:
     // Basketball-Reference serves that league under a different path and the
@@ -2199,9 +2202,14 @@ describe('the generated award file, on the cards it belongs to', () => {
     // Robinson, Hill, Duncan, Olajuwon and Yao had their rookie All-Star and
     // ROY marks missing. Beal's 2012-13 and Matthews's 2009-10 rookie cards
     // entered through the team-rewards universe; Wall's 2010-11 left with his.
+    // 34 -> 35 ON 2026-09-22, the reward/identity batch: Elton Brand's
+    // 1999-2000 (co-Rookie of the Year) entered through his legends entry, and
+    // Beal's 2012-13 stayed through rookie-legends-2026.json when he left the
+    // team-reward picks. Wall, Arenas and DeAndre Jordan's rookie years came
+    // too, and none of the three won anything as a rookie.
     const rookies = marked(ROOKIE_SET);
-    expect(rookies.length).toBe(34);
-    expect(rookies.filter(r => r.awards.includes('ROY')).length).toBe(27);
+    expect(rookies.length).toBe(35);
+    expect(rookies.filter(r => r.awards.includes('ROY')).length).toBe(28);
     // Two ROYs live on reward cards now — Chris Paul's 2005-06 Hornets rookie
     // year is New Orleans's, and LaMelo's went back to the rookie set when the
     // downgrade rule replaced him.
@@ -2235,7 +2243,7 @@ describe('the generated award file, on the cards it belongs to', () => {
       }
       expect(r.awards, r.name).toEqual(r.champion ? ['CHAMP'] : ['ROY']);
     }
-    expect(rookies.filter(r => r.awards.includes('ROY'))).toHaveLength(27);
+    expect(rookies.filter(r => r.awards.includes('ROY'))).toHaveLength(28); // 28 on 2026-09-22: Elton Brand's co-ROY
     // 4, not 8: the rookie playing-time bar removed exactly the profile a ring
     // reaches without a rookie ever earning minutes — a title team's bench.
     // 5 on 2026-09-09, with the regenerated file.
@@ -2298,5 +2306,99 @@ describe('the Throwbacks look', () => {
   it('leaves every other set on its chevrons, with no motif', () => {
     const html = renderToStaticMarkup(React.createElement(CardTemplate, { card, set: 'rookie' }));
     expect(html).not.toContain('data-slot=');
+  });
+});
+
+describe('a reward wears its identity (2026-09-22)', () => {
+  // The user's rule (2026-09-18): "Wear the identity" — a reward keeps its
+  // set and its TEAM REWARD / SET REWARD pill on top, and prints in the look
+  // of the set it came from, with that set's pill directly under its own.
+  // Fixtures, not card data: the data step stamps `wears` separately.
+  const reward = {
+    id: 'X', name: 'Test Player', team: 'UTA', season: 2002, seasonLabel: '2001-02', salary: 1000,
+    speed: 10, power: 7, shotLine: 16, paintBoost: 0, threePtBoost: 1, defBoost: 1, pos: 'PG',
+    chart: [{ lo: 1, hi: 10, pts: 1, reb: 0, ast: 0 }, { lo: 11, hi: 99, pts: 2, reb: 1, ast: 1 }],
+    rewardGoal: 'nba-team-UTA',
+  };
+  const pills = html => [...html.matchAll(/class="[^"]*_badge_[^"]*"[^>]*>([^<]*)</g)].map(m => m[1]);
+
+  it('(a) a worn Throwback: the brush in team colours, TEAM REWARD over THROWBACK', () => {
+    // Stockton's Utah reward by the user's ruling — not his best season, so it
+    // wears Throwbacks rather than gold-with-no-pill.
+    const html = render({ card: { ...reward, badges: ['throwback'], wears: 'throwbacks' }, set: 'team-rewards' });
+    expect(html).toContain('data-treatment="throwback"');
+    for (const slot of ['band', 'top', 'bottom']) expect(html, slot).toContain(`data-slot="${slot}"`);
+    expect(pills(html)).toEqual(['TEAM REWARD', 'THROWBACK']);
+    // Once, even though the record carries the id too.
+    expect(html.match(/THROWBACK/g)).toHaveLength(1);
+  });
+
+  it('(b) a notBestSeason team reward keeps TEAM REWARD and prints no SUPER/BEST SEASON pill', () => {
+    // notBestSeason declines only the Super Season claim. Before 2026-09-22 it
+    // dropped the SET's pill whatever the set was, so Stockton printed nothing.
+    const flagged = { ...reward, notBestSeason: true, badges: [] };
+    const bare = render({ card: flagged, set: 'team-rewards' });
+    expect(pills(bare)).toEqual(['TEAM REWARD']);
+    expect(bare).toContain('data-treatment="bronze-accent"');
+    // Wearing Super Season, the identity pill is declined too — neither tier of it —
+    // and so is a super-season id left on the record; the worn gold still prints.
+    const worn = render({ card: { ...flagged, badges: ['super-season'], wears: 'super-season' }, set: 'team-rewards' });
+    expect(pills(worn)).toEqual(['TEAM REWARD']);
+    expect(worn).not.toContain('SUPER SEASON');
+    expect(worn).not.toContain('BEST SEASON');
+    expect(worn).toContain('data-treatment="gold-foil"');
+    const wornUnder = render({ card: { ...flagged, salary: 860, wears: 'super-season' }, set: 'team-rewards' });
+    expect(pills(wornUnder)).toEqual(['TEAM REWARD']);
+    // A flagged card in the Super Season SET itself still prints no pill and keeps its gold — unchanged.
+    const inSet = render({ card: flagged, set: SUPER_SEASON_SET });
+    expect(pills(inSet)).toEqual([]);
+    expect(inSet).toContain('data-treatment="gold-foil"');
+  });
+
+  it('(c) a worn Super Season under the line: TEAM REWARD over BEST SEASON in bronze — Portis', () => {
+    const html = render({ card: { ...reward, salary: 860, badges: ['super-season'], wears: 'super-season' }, set: 'team-rewards' });
+    expect(pills(html)).toEqual(['TEAM REWARD', 'BEST SEASON']);
+    expect(html).toContain('data-treatment="bronze-accent"');
+    expect(html).not.toContain('SUPER SEASON');
+    // And at the line: gold, with SUPER SEASON — once — under the reward pill.
+    const gilded = render({ card: { ...reward, salary: 1090, badges: ['super-season'], wears: 'super-season' }, set: 'team-rewards' });
+    expect(pills(gilded)).toEqual(['TEAM REWARD', 'SUPER SEASON']);
+    expect(gilded).toContain('data-treatment="gold-foil"');
+  });
+
+  it('prints the identity pill from `wears`, once, and the carried extras deduped after it', () => {
+    // A same-season twin extra stays: ROOKIE under SUPER SEASON, BEST SEASON under ROOKIE.
+    const twinSS = render({ card: { ...reward, salary: 1400, badges: ['rookie', 'super-season'], wears: 'super-season' }, set: 'set-rewards' });
+    expect(pills(twinSS)).toEqual(['SET REWARD', 'SUPER SEASON', 'ROOKIE']);
+    expect(twinSS).toContain('data-treatment="gold-foil"');
+    const twinRookie = render({ card: { ...reward, salary: 700, badges: ['super-season', 'rookie'], wears: 'rookie' }, set: 'set-rewards' });
+    expect(pills(twinRookie)).toEqual(['SET REWARD', 'ROOKIE', 'BEST SEASON']);
+    expect(twinRookie).toContain('data-treatment="green-accent"');
+    // A worn set with no pill of its own (the base set) adds none, and the look falls back to bronze.
+    const base = render({ card: { ...reward, badges: [], wears: CURRENT_SET }, set: 'team-rewards' });
+    expect(pills(base)).toEqual(['TEAM REWARD']);
+    expect(base).toContain('data-treatment="bronze-accent"');
+    // No `wears`: today's face exactly — the carried ids under the reward pill, bronze.
+    const standout = render({ card: { ...reward, salary: 1490, badges: ['summer-standout'] }, set: 'set-rewards' });
+    expect(pills(standout)).toEqual(['SET REWARD', 'SUMMER']); // the pill's text (badges.js), not the badge id
+    expect(standout).toContain('data-treatment="bronze-accent"');
+    // And wearing Summer Standouts or Dissonance is that same face, byte for byte.
+    expect(render({ card: { ...reward, salary: 1490, badges: ['summer-standout'], wears: SUMMER_STANDOUTS_SET }, set: 'set-rewards' }))
+      .toBe(standout);
+    const dissonance = render({ card: { ...reward, salary: 1480, badges: ['dissonance'] }, set: 'set-rewards' });
+    expect(render({ card: { ...reward, salary: 1480, badges: ['dissonance'], wears: 'dissonance' }, set: 'set-rewards' }))
+      .toBe(dissonance);
+    expect(pills(dissonance)).toEqual(['SET REWARD', 'DISSONANCE']);
+  });
+
+  it('renders every worn set on every reward set without throwing', () => {
+    for (const set of ['team-rewards', 'set-rewards', 'wnba-team-rewards', 'wnba-set-rewards']) {
+      for (const worn of SET_IDS) {
+        const team = set.startsWith('wnba') ? 'SEA' : 'UTA';
+        const html = render({ card: { ...reward, team, wears: worn }, set });
+        expect(pills(html)[0], `${set} wearing ${worn}`).toBe(set.includes('team') ? 'TEAM REWARD' : 'SET REWARD');
+        expect(html, `${set} wearing ${worn}`).toMatch(/data-treatment="/);
+      }
+    }
   });
 });

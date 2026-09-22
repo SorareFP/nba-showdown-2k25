@@ -8,13 +8,6 @@
       "epm": 3.15,
       "goal": "nba-team-DET"
     },
-    "WAS": {
-      "name": "Bradley Beal",
-      "season": 2021,
-      "team": "WAS",
-      "goal": "nba-team-WAS",
-      "note": "His 31-a-game year. Replaces Wall 2015-16 ($900) after WAS moved up to legendary on 2026-09-09. $1380 on his real log."
-    },
     "NYK": {
       "name": "Allan Houston",
       "season": 2003,
@@ -33,7 +26,7 @@
       "season": 2006,
       "team": "MIA",
       "goal": "nba-team-MIA",
-      "bandException": "Forty dollars under the super-rare floor at $860. The user, 2026-09-07, shown the gap: \"Mourning is a fun enough card that it seems fine as a reward.\" His 2005-06 is the Heat's title season and the last real year of a franchise icon; the alternatives price in band but mean nothing to Miami. The same size and kind of exception Chicago's Prince and Portland's Witherspoon carry in the WNBA set, declared rather than hidden."
+      "bandException": "Declared on 2026-09-07 at $860, forty dollars under Miami's super-rare floor; the user, shown the gap: \"Mourning is a fun enough card that it seems fine as a reward.\" His 2005-06 is the Heat's title season and the last real year of a franchise icon; the alternatives price in band but mean nothing to Miami. REFRESHED 2026-09-22: he now prints $1000, INSIDE super-rare ($930-1329) — the reprices since moved him up, so the exception is dormant and kept only so the next drift below the line is a decision already made, not a build failure."
     },
     "CHA": {
       "name": "Gerald Wallace",
@@ -53,13 +46,15 @@
       "season": 2009,
       "team": "ATL",
       "goal": "nba-team-ATL",
-      "bandException": "A hundred dollars under the super-rare floor at $850. The 2026-09-12 bench-curve reprice moved BOTH sides of the test: Atlanta's roster got dearer, so the franchise climbed to super-rare, while Josh Smith's 2008-09 barely moved. Shown the gap and the option to re-pick against real game logs, the user said \"just use Smith\" - so this is a decision, not a rounding artefact, and it is the largest exception in this file on purpose. His 2008-09 is the Josh Smith season Atlanta remembers; the in-band alternatives price higher and mean less to the franchise, which is the same trade Miami made for Mourning."
+      "bandException": "Declared after the 2026-09-12 bench-curve reprice at $850, a hundred dollars under the super-rare floor Atlanta then earned: the reprice moved BOTH sides of the test, and shown the gap and the option to re-pick against real game logs, the user said \"just use Smith\" - a decision, not a rounding artefact. His 2008-09 is the Josh Smith season Atlanta remembers. REFRESHED 2026-09-22: Atlanta earns RARE now and he prints $840, INSIDE rare ($700-929); the exception is dormant and stays declared for the next time the line moves under him."
     },
     "TOR": {
-      "name": "Anthony Parker",
-      "season": 2007,
+      "name": "Vince Carter",
+      "season": 2000,
       "team": "TOR",
-      "goal": "nba-team-TOR"
+      "goal": "nba-team-TOR",
+      "note": "The user, 2026-09-18: \"Go with Vince, Wall and Brand.\" Replaces Anthony Parker 2006-07 after Kawhi Leonard's move to Toronto took TOR from rare to legendary (8th hardest). His 2000-01 is the Super Season capstone and 1998-99 his Rookie card, so 1999-2000 — the dunk-contest year — is the Raptors reward. Priced over the pre-2002 BPM bridge (no dunksandthrees EPM before 2002).",
+      "bandException": "Twenty dollars under the legendary floor: $1310 against $1330, the number generateTeamRewards printed on 2026-09-22 (the pre-2002 BPM bridge; it priced $620 with no EPM at all). The user picked him by name on 2026-09-18 — \"Go with Vince, Wall and Brand\" — knowing NO uncarded Raptors season reaches legendary: Bosh 2010 $1250, Lowry 2017 $1170, Vince 2003 $1160, and his 2000-01 ($1480) is already the Super Season capstone. The same size of exception Philadelphia carries for Erving, declared rather than hidden. Drop this field if a reprice lifts him to $1330."
     },
     "HOU": {
       "name": "Luis Scola",
@@ -79,6 +74,13 @@
       "team": "POR",
       "goal": "nba-team-POR",
       "note": "Replaces the migrated Lillard 2019-20 ($1340, legendary) after the 2026-09-09 reprice dropped POR to super-rare. $930 on his real log; the user chose him over Whiteside 2019-20 ($1080)."
+    },
+    "LAC": {
+      "name": "Elton Brand",
+      "season": 2003,
+      "team": "LAC",
+      "goal": "nba-team-LAC",
+      "note": "The user, 2026-09-18: \"Go with Vince, Wall and Brand.\" Brandon Ingram's move to the Clippers took LAC from super-rare to rare (29th), so Zubac's migrated 2024-25 ($1090) went back to Super Season and this is built fresh. His 2005-06 is his Super Season card (legends-2026.json); 2002-03 is the reward, a Throwback by the identity rule."
     }
   },
   "_excluded": {
@@ -125,7 +127,7 @@
       "set": "super-season",
       "id": "Julius_Erving",
       "goal": "nba-team-PHI",
-      "bandException": "Dr. J's 1976-77 prices $1,180, twenty dollars under the legendary floor. Philadelphia has no off-roster Philly-jersey card above it: Barkley's 1989-90 is $1,160 and everything higher is Joel Embiid, who is ON the 2026-27 roster this reward is for. Twenty dollars is not worth rewarding a roster with a better copy of a player already in it."
+      "bandException": "Dr. J's 1976-77 prints $1290 (2026-09-22; it was $1,180 when this was declared), forty dollars under the legendary floor of $1330. Philadelphia has no off-roster Philly-jersey card above it: Barkley's 1989-90 is $1,160 and everything higher is Joel Embiid, who is ON the 2026-27 roster this reward is for. Forty dollars is not worth rewarding a roster with a better copy of a player already in it."
     },
     "SAS": {
       "set": "super-season",
@@ -147,11 +149,6 @@
       "id": "Kobe_Bryant",
       "goal": "nba-team-LAL"
     },
-    "LAC": {
-      "set": "super-season",
-      "id": "Ivica_Zubac",
-      "goal": "nba-team-LAC"
-    },
     "ORL": {
       "set": "summer-standouts",
       "id": "Jameer_Nelson",
@@ -161,7 +158,7 @@
       "set": "super-season",
       "id": "Myles_Turner",
       "goal": "nba-team-IND",
-      "bandException": "Eleven dollars over the rare ceiling at $960, after the 2026-09-12 bench-curve reprice. Indiana's collection difficulty now earns rare and Turner's 2018-19 lands one rounding step above it - smaller than Philadelphia's twenty and Miami's forty. Nothing about the pick is wrong; the line moved under it."
+      "bandException": "Declared after the 2026-09-12 bench-curve reprice, when Indiana earned rare and Turner's 2018-19 landed at $960, eleven dollars over the rare ceiling - one rounding step, smaller than Philadelphia's twenty and Miami's forty. REFRESHED 2026-09-22: Indiana earns SUPER-RARE now and he still prints $960, INSIDE super-rare ($930-1329); the exception is dormant and stays declared for the next time the line moves. Nothing about the pick is wrong; the line moved under it, twice."
     },
     "NOP": {
       "set": "rookie",
@@ -197,6 +194,12 @@
       "set": "super-season",
       "id": "Bobby_Portis",
       "goal": "nba-team-MIL"
+    },
+    "WAS": {
+      "set": "super-season",
+      "id": "John_Wall",
+      "goal": "nba-team-WAS",
+      "note": "The user, 2026-09-18: \"Use the best card, if it's a super season, make it as such.\" Kawhi's move took WAS from legendary to super-rare (11th); Beal's 2020-21 ($1540) became a curated Throwback (card-data/curated-cards-2026.json) and Wall's 2016-17, his best season by the rule, is his Super Season card moved in — exactly as Zubac's was for LAC."
     }
   }
 }

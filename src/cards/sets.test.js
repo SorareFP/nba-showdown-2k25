@@ -229,6 +229,80 @@ describe('cardTreatment', () => {
     expect(cardTreatment('nope', 10)).toBeNull();
     expect(cardTreatment('constructor', 10)).toBeNull();
   });
+
+  describe('a reward WEARS its identity (`wears`, 2026-09-22)', () => {
+    // The user's rule (2026-09-18): "Wear the identity" — a team or set reward
+    // keeps its set, its key and its pill, and prints in the look of the set it
+    // came from. The fourth argument is that set's id, and this is the ONE
+    // function that reads it.
+    const REWARD_SETS = ['team-rewards', 'set-rewards', 'wnba-team-rewards', 'wnba-set-rewards'];
+
+    it('gives every reward set the worn set\'s look, tiered as that set tiers', () => {
+      for (const set of REWARD_SETS) {
+        expect(cardTreatment(set, 1400, ['super-season'], SUPER_SEASON_SET), set).toBe('gold-foil');
+        expect(cardTreatment(set, 1400, ['super-season'], WNBA_SUPER_SEASON_SET), set).toBe('gold-foil');
+        expect(cardTreatment(set, 500, ['rookie'], ROOKIE_SET), set).toBe('green-accent');
+        expect(cardTreatment(set, 500, ['rookie'], 'wnba-rookie'), set).toBe('green-accent');
+        expect(cardTreatment(set, 1000, ['throwback'], 'throwbacks'), set).toBe('throwback');
+        expect(cardTreatment(set, 1000, ['throwback'], 'wnba-throwbacks'), set).toBe('throwback');
+        // The Rookie look does not tier, so neither does a worn one.
+        expect(cardTreatment(set, 10, ['rookie'], ROOKIE_SET), set).toBe('green-accent');
+      }
+    });
+
+    it('falls back to the reward set\'s own bronze when the worn set gives nothing', () => {
+      // Summer Standouts and Dissonance declare no treatment, and neither does
+      // the base set: the eight playoff-run rewards and Westbrook's 2019-20
+      // print exactly as they did before `wears` existed.
+      for (const set of REWARD_SETS) {
+        for (const worn of ['summer-standouts', 'dissonance', CURRENT_SET, WNBA_SET]) {
+          expect(cardTreatment(set, 1500, [], worn), `${set} wearing ${worn}`).toBe('bronze-accent');
+          expect(cardTreatment(set, 1500, [], worn), `${set} wearing ${worn}`).toBe(setTreatment(set));
+        }
+      }
+    });
+
+    it('falls back to bronze when the TIER withheld the gold — the Portis ruling', () => {
+      // Bobby Portis' Milwaukee reward is $860, forty under the line, wearing
+      // Super Season. The user (pre-flight, 2026-09-18): a withheld gold falls
+      // back to the BRONZE reward look — never to plain team colours, which is
+      // what the worn set alone would give him.
+      expect(cardTreatment(SUPER_SEASON_SET, 860, ['super-season'])).toBeNull();
+      expect(cardTreatment('team-rewards', 860, ['super-season'], SUPER_SEASON_SET)).toBe('bronze-accent');
+      expect(cardTreatment('team-rewards', SUPER_SEASON_MIN_SALARY - 10, [], WNBA_SUPER_SEASON_SET)).toBe('bronze-accent');
+      // And at the line, the worn gold — the same inclusive edge the set has.
+      expect(cardTreatment('team-rewards', SUPER_SEASON_MIN_SALARY, [], SUPER_SEASON_SET)).toBe('gold-foil');
+    });
+
+    it('evaluates the worn set exactly as the card would be evaluated in it', () => {
+      // Every set, every salary, both with and without a Super Season badge on
+      // the record: wearing a set is being judged by that set's rule.
+      for (const worn of SETS) {
+        for (const salary of [10, 899, 900, 1500, undefined]) {
+          for (const badges of [[], ['super-season'], ['super-season', 'rookie']]) {
+            const asWorn = cardTreatment(worn.id, salary, badges);
+            const expected = asWorn ?? cardTreatment('set-rewards', salary, badges);
+            expect(cardTreatment('set-rewards', salary, badges, worn.id), `${worn.id} $${salary} ${badges}`)
+              .toBe(expected);
+          }
+        }
+      }
+    });
+
+    it('changes nothing when `wears` is absent, empty or unknown', () => {
+      for (const set of SETS) {
+        for (const salary of [10, 899, 900, 1500, undefined]) {
+          const today = cardTreatment(set.id, salary);
+          expect(cardTreatment(set.id, salary, [], null), set.id).toBe(today);
+          expect(cardTreatment(set.id, salary, [], undefined), set.id).toBe(today);
+          expect(cardTreatment(set.id, salary, [], ''), set.id).toBe(today);
+          // An unknown worn set has no treatment to give, so the card's own answers.
+          expect(cardTreatment(set.id, salary, [], 'nope'), set.id).toBe(today);
+          expect(cardTreatment(set.id, salary, [], 'constructor'), set.id).toBe(today);
+        }
+      }
+    });
+  });
 });
 
 describe('isEditableSet', () => {

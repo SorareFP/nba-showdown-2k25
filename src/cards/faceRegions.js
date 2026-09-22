@@ -99,10 +99,17 @@ export function measuredFor(card) {
  * Brandon Miller case, 2026-09-02). Base cards do not carry their badges, so
  * the lookup goes through badgeLookup.js, which reads the generator's file
  * exactly as the studio does before it renders.
+ *
+ * AND A REWARD WEARS ITS IDENTITY (2026-09-22): `card.wears` is passed
+ * through, so a reward wearing a gilded Super Season gets the sheen its
+ * printed face has, and one wearing Throwbacks (or a Super Season the tier
+ * demoted, which falls back to bronze) does not. Gold never comes from
+ * `migratedFrom` — only from `wears`, through this one rule. A legendary
+ * reward still gets the photo sheen by rarity below, whatever it wears.
  */
 export function wearsGold(card) {
   if (!card) return false;
-  return cardTreatment(card.set, card.salary, badgesFor(card)) === 'gold-foil';
+  return cardTreatment(card.set, card.salary, badgesFor(card), card.wears) === 'gold-foil';
 }
 
 /**

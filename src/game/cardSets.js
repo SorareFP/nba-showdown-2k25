@@ -20,6 +20,8 @@ import wnba from '../../card-data/generated/cards-wnba.json' with { type: 'json'
 import wnbaSuperSeason from '../../card-data/generated/cards-wnba-super-season.json' with { type: 'json' };
 import wnbaRookie from '../../card-data/generated/cards-wnba-rookie.json' with { type: 'json' };
 import freeAgents from '../../card-data/generated/cards-free-agents.json' with { type: 'json' };
+// Curated Throwbacks (2026-09-22): generator-owned, never the requests file.
+import throwbacks from '../../card-data/generated/cards-throwbacks.json' with { type: 'json' };
 
 export const BASE_SET = '2026-27';
 
@@ -101,6 +103,14 @@ export function joinFreeAgents(sets, cards) {
 }
 joinFreeAgents(CARD_SETS, freeAgents.cards);
 
+// CURATED THROWBACKS join the same way (2026-09-22). A reward that stops being
+// the reward and qualifies for no other set becomes a Throwback — Bradley
+// Beal's 2020-21, the Wizards reward until the Wall re-pick — and those cards
+// are the GENERATOR'S (scripts/cardgen/generateCuratedCards.js writes
+// cards-throwbacks.json from card-data/curated-cards-2026.json), never the
+// user's requests file. Each card names its set, so the join is the same one.
+joinFreeAgents(CARD_SETS, throwbacks.cards);
+
 /** The collection key for a card (or for a bare set+id pair). */
 export function cardKey(card) {
   return card.set === BASE_SET || !card.set ? card.id : `${card.set}:${card.id}`;
@@ -110,6 +120,32 @@ export function cardKey(card) {
 export const ALL_CARDS = Object.values(CARD_SETS).flat();
 
 const BY_KEY = new Map(ALL_CARDS.map(c => [cardKey(c), c]));
+
+/**
+ * OLD KEYS THAT STILL HAVE TO RESOLVE, literally and only these.
+ *
+ * A card's key is its set and id, and a card that changes set changes key.
+ * Nobody had earned the Toronto reward when it was re-picked (the user,
+ * 2026-09-18: "No one has them yet, it doesn't matter. But it should just
+ * change face"), so the reward keys themselves need no alias — but dynasties
+ * draft from every non-base card (dynasty.js draftClassCards), and
+ * team-rewards:Anthony_Parker was Parker's ONLY card, so a saved or friends
+ * dynasty holding him would silently lose him (salary 0) when the key stopped
+ * resolving. His 2006-07 qualifies as his Super Season, which is where the
+ * card now lives. Consulted only after a direct miss, so a live key is never
+ * rerouted; canonicalKey folds an old-key copy in a collection onto the card
+ * it is, so it still counts.
+ */
+export const KEY_ALIASES = Object.freeze({
+  'team-rewards:Anthony_Parker': 'super-season:Anthony_Parker',
+});
+
+/** The key a collection entry counts as: itself, unless it is an old key for a card that moved. */
+export function canonicalKey(key) {
+  const plain = baseKey(key);
+  const alias = KEY_ALIASES[plain];
+  return alias ? String(key).replace(plain, alias) : key;
+}
 
 /**
  * A SECOND COPY OF THE SAME CARD, in a league where two coaches brought it.
@@ -133,6 +169,7 @@ export const copyKey = (key, n) => (n > 1 ? `${baseKey(key)}~${n}` : baseKey(key
  * collection UIs skip those rather than crash.
  */
 export function getCardByKey(key) {
-  return BY_KEY.get(key) ?? BY_KEY.get(baseKey(key));
+  // The alias is the LAST resort: a live key never goes through it.
+  return BY_KEY.get(key) ?? BY_KEY.get(baseKey(key)) ?? BY_KEY.get(KEY_ALIASES[baseKey(key)]);
 }
 

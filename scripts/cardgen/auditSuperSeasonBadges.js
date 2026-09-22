@@ -47,7 +47,7 @@ import { bestSeason } from './history.js';
 import { seasonDistribution } from './fetchHistory.js';
 import { CARD_SETS } from '../../src/game/cardSets.js';
 import { setBadge } from '../../src/cards/sets.js';
-import { SUPER_SEASON_BADGE } from '../../src/cards/badges.js';
+import { SUPER_SEASON_BADGE, THROWBACK_BADGE } from '../../src/cards/badges.js';
 
 /** Cached season tables, oldest first. */
 function cachedSeasons() {
@@ -110,10 +110,15 @@ export function audit({ log = console.log, showAll = false } = {}) {
     const declared = setBadge(setId);
     for (const card of cards) {
       const carried = Array.isArray(card.badges) ? card.badges : [];
-      // The claim is made either by the SET or by the CARD. `tierBadge` maps it
-      // down to BEST SEASON under $900, but that is the same claim in a plainer
-      // word — both are "this was his best" and both are checked.
-      if (declared !== SUPER_SEASON_BADGE && !carried.includes(SUPER_SEASON_BADGE)) continue;
+      // The claim is made by the SET, by the CARD, or — since 2026-09-22 — by
+      // the set the card WEARS: a reward with `wears: 'super-season'` prints
+      // the SUPER SEASON pill through CardTemplate's identity row (setBadge of
+      // the worn set, never a string compare against the badge id), so it is
+      // making the claim and is checked here like the other two routes.
+      // `tierBadge` maps it down to BEST SEASON under $900, but that is the
+      // same claim in a plainer word — all three are "this was his best".
+      const worn = typeof card.wears === 'string' ? setBadge(card.wears) : null;
+      if (declared !== SUPER_SEASON_BADGE && !carried.includes(SUPER_SEASON_BADGE) && worn !== SUPER_SEASON_BADGE) continue;
       // A CARD THAT HAS ALREADY DROPPED THE CLAIM IS NOT CLAIMING ANYTHING.
       // `notBestSeason` is what CardTemplate reads to suppress its set's badge,
       // so a flagged card prints no Super Season pill and there is nothing here
@@ -211,6 +216,19 @@ function stamp(wrong, { log = console.log } = {}) {
       card.notBestSeason = true;
       if (Array.isArray(card.badges) && card.badges.includes(SUPER_SEASON_BADGE)) {
         card.badges = card.badges.filter(b => b !== SUPER_SEASON_BADGE);
+      }
+      // A REWARD THAT WORE SUPER SEASON WEARS THROWBACKS NOW (2026-09-22). The
+      // user's ruling on John Stockton's Jazz reward (2026-09-18, after the
+      // pre-flight): a flagged card "wears the THROWBACK look (TEAM REWARD +
+      // THROWBACK pills), not gold-no-pill" — a dropped claim is not an
+      // identity to wear. Only a card that carries `wears` at all (a reward)
+      // is touched; a Super Season card in its own set has no `wears` and
+      // keeps declining its set's badge through the flag alone. His migrated
+      // source is filtered out of CARD_SETS, so the reward generators never
+      // see the flag on it and this stamp is where the ruling lands.
+      if (card.wears === 'super-season' || card.wears === 'wnba-super-season') {
+        card.wears = card.wears === 'super-season' ? 'throwbacks' : 'wnba-throwbacks';
+        card.badges = [...new Set([...(card.badges ?? []), THROWBACK_BADGE])];
       }
       n += 1;
     }

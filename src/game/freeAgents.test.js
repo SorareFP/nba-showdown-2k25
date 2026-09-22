@@ -14,7 +14,11 @@ describe('the free-agent price', () => {
   it('is the rarity table leaned 20% toward pack odds, the numbers the user picked (2026-09-10)', () => {
     expect(FA_PACK_WEIGHT).toBe(0.2);
     expect(RARITY_ORDER.map(r => freeAgentPrice('throwbacks', r))).toEqual([100, 260, 1100, 3740, 9100]);
-    expect(RARITY_ORDER.map(r => freeAgentPrice('rookie', r))).toEqual([100, 220, 960, 3150, 7580]);
+    // The rookie rare price is 970 since 2026-09-22: pack odds are read off the
+    // set, and the reward/identity batch put four rookie years into it (Wall,
+    // Brand, Arenas, DeAndre Jordan), which moved the rare share one rounding
+    // step. The lean and the table are untouched.
+    expect(RARITY_ORDER.map(r => freeAgentPrice('rookie', r))).toEqual([100, 220, 970, 3150, 7580]);
   });
 
   it('sits between the table and the pack-odds cost, and climbs with rarity', () => {

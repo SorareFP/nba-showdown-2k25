@@ -428,7 +428,11 @@ describe('the committed file', () => {
     // legends added on 2026-09-06 — all-time greats carry trophies, and the
     // 39 that left were cheap role players carrying none.
     // 77 on 2026-09-09: Lillard's 2019-20 came back from the Portland reward.
-    expect(AWARDS.counts[SUPER_SEASON_SET].marked).toBe(77);
+    // 79 on 2026-09-22, the reward/identity batch: Arenas 2005-06, Brand
+    // 2005-06, DeAndre Jordan 2014-15 and Parker 2006-07 joined (Wall's 2016-17
+    // joined too but left again as the Wizards reward, marked under
+    // team-rewards), and Zubac's 2024-25 came back from the Clippers reward.
+    expect(AWARDS.counts[SUPER_SEASON_SET].marked).toBe(79);
     // The rookie set moves at last, and only on the ring: no player in that
     // pool was an All-Star as a rookie, but six of them won a title as one.
     //
@@ -442,12 +446,18 @@ describe('the committed file', () => {
     // 34 on 2026-09-09: regenerated after the reward re-pick, which also
     // caught the file up with the 2026-09-07 widening (Ewing, Robinson, Hill,
     // Duncan, Olajuwon, Yao were unmarked). ROY 20 -> 27.
-    expect(AWARDS.counts[ROOKIE_SET].marked).toBe(34);
+    // 35 on 2026-09-22, the reward/identity batch: Elton Brand's 1999-2000
+    // (co-ROY) entered through his legends entry; Beal's 2012-13 stayed
+    // through rookie-legends-2026.json when he left the team-reward picks.
+    expect(AWARDS.counts[ROOKIE_SET].marked).toBe(35);
     // 17 -> 12: five Rookies of the Year became team rewards. Their ROY marks
     // moved with them, which is the assertion two lines down.
-    expect(AWARDS.counts[ROOKIE_SET].byCode.ROY).toBe(27);
+    expect(AWARDS.counts[ROOKIE_SET].byCode.ROY).toBe(28); // 28 on 2026-09-22: Brand's co-ROY
     expect(AWARDS.counts['team-rewards'].byCode.ROY).toBe(2);
-    expect(AWARDS.counts['team-rewards'].marked).toBe(19);
+    // 20 on 2026-09-22: the re-picks brought two All-Stars (Vince Carter
+    // 1999-2000, John Wall 2016-17) and took one away (Beal 2020-21, now a
+    // curated Throwback, marked under `throwbacks`).
+    expect(AWARDS.counts['team-rewards'].marked).toBe(20);
     // The standouts themselves: a playoff-run card is the season a ring was
     // actually won in, so the ring is the mark that carries the set.
     // 23 with Rodman's 1996 title run — his ring is the mark.
@@ -472,11 +482,11 @@ describe('the committed file', () => {
     expect(AWARDS.counts[CURRENT_SET].ifSelectionsCounted).toBe(45);
     // 85 on 2026-09-07 with the awards file regenerated against the current
     // Super Season roster — the capstone legends it had gone stale against.
-    expect(AWARDS.counts[SUPER_SEASON_SET].ifSelectionsCounted).toBe(86) /* 86 on 2026-09-09: Lillard's ring-year card back in Super Season */;
+    expect(AWARDS.counts[SUPER_SEASON_SET].ifSelectionsCounted).toBe(90) /* 86 on 2026-09-09: Lillard's ring-year card back in Super Season; 90 on 2026-09-22: Arenas, Brand, DeAndre Jordan and Parker joined (the reward/identity batch) */;
     // 21, not 25: the rookie playing-time bar, same four bench rings.
     // 24, and equal to `marked`: a rookie card's only trophies are ROY and a
     // ring, neither of which the selection suffix distinguishes.
-    expect(AWARDS.counts[ROOKIE_SET].ifSelectionsCounted).toBe(34); // 34 on 2026-09-09, with the regenerated file
+    expect(AWARDS.counts[ROOKIE_SET].ifSelectionsCounted).toBe(35); // 34 on 2026-09-09, with the regenerated file; 35 on 2026-09-22 (Brand's co-ROY)
   });
 
   it('names every champion it marked, and gets them right', () => {

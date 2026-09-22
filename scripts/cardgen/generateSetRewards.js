@@ -22,6 +22,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { REPO_ROOT } from './cache.js';
+import { setBadge } from '../../src/cards/sets.js';
+import { SUPER_SEASON_BADGE } from '../../src/cards/badges.js';
+import { wornByMigrated } from './rewardIdentity.js';
 
 const GEN_DIR = path.join(REPO_ROOT, 'card-data', 'generated');
 export const PICKS_FILE = path.join(REPO_ROOT, 'card-data', 'set-rewards-2026.json');
@@ -57,10 +60,18 @@ export function chooseReward(group, cards) {
 export function moveCard(source, { set, goal }) {
   const badge = ORIGIN_BADGE[set];
   if (!badge) throw new Error(`No origin badge declared for set ${set}.`);
+  // WHAT IT WEARS (2026-09-22): the home set — the user's "a reward WEARS its
+  // identity" rule, one field read by cardTreatment. Same flagged-Super-Season
+  // exception as the team rewards (rewardIdentity.js); none of the six is
+  // flagged today. Dissonance and Summer Standouts declare no treatment, so
+  // those two keep the bronze reward look with their pill (the look step).
+  const wears = wornByMigrated(source, set);
+  const carried = (source.badges ?? []).filter(b => !(source.notBestSeason && b === SUPER_SEASON_BADGE));
   return {
     ...source,
     set: leagueOf(set) === 'WNBA' ? 'wnba-set-rewards' : 'set-rewards',
-    badges: [...new Set([...(source.badges ?? []), badge])],
+    badges: [...new Set([...carried, wears === set ? badge : setBadge(wears)])],
+    wears,
     migratedFrom: { set, id: source.id },
     rewardGoal: goal,
   };

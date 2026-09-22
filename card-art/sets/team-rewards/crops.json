@@ -94,11 +94,6 @@
     "y": 0,
     "zoom": 1
   },
-  "Anthony_Parker": {
-    "x": 0,
-    "y": 2.34,
-    "zoom": 1
-  },
   "Blake_Griffin": {
     "x": 9.78,
     "y": 0,
@@ -119,11 +114,6 @@
     "y": 0,
     "zoom": 1
   },
-  "Ivica_Zubac": {
-    "x": -9.14,
-    "y": 0,
-    "zoom": 1
-  },
   "Jason_Kidd": {
     "x": 0.37,
     "y": 0,
@@ -140,7 +130,7 @@
     "zoom": 1
   },
   "John_Wall": {
-    "x": -19.2,
+    "x": -32.24,
     "y": 0,
     "zoom": 1
   },
@@ -199,9 +189,14 @@
     "y": 38.5,
     "zoom": 1.77
   },
-  "Bradley_Beal": {
-    "x": 0.16,
+  "Elton_Brand": {
+    "x": -2.48,
     "y": 0,
-    "zoom": 1
+    "zoom": 1.14
+  },
+  "Vince_Carter": {
+    "x": 7.43,
+    "y": -14.23,
+    "zoom": 1.49
   }
 }

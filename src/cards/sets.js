@@ -507,8 +507,45 @@ export function setTreatment(id) {
  * TAKES THE SALARY, NOT THE CARD, so this file still knows nothing about the
  * shape of a card record — the same reason `pickBadge` takes a list of ids.
  * Omitting it means gold, exactly as it does there.
+ *
+ * ── A REWARD WEARS ITS IDENTITY (`wears`, 2026-09-22) ───────────────────────
+ *
+ * A team or set reward is a card MOVED out of (or built to the standard of)
+ * another set — somebody's Super Season, rookie year, playoff run — and until
+ * now its face said only that it was a reward: the bronze accent and the
+ * TEAM REWARD pill, whatever it had been. The user's rule (2026-09-18): "Wear
+ * the identity" — a reward keeps being the reward, but it looks like what it
+ * IS. Super Season gold, Rookie green, the Throwback brush, with the reward's
+ * own pill on top.
+ *
+ * `wears` is a SET ID carried on the card record, and it is honoured HERE and
+ * nowhere else: this is the one function every renderer asks what a card looks
+ * like (CardTemplate, the studio's chip, faceRegions' sheen), so a second
+ * reading of the field anywhere would be the two-renderers drift this file
+ * exists to prevent. The rule:
+ *
+ *   1. Evaluate the WORN set exactly as the card would be evaluated if it sat
+ *      in that set — this same function, no `wears` — so the worn look tiers
+ *      the way the set tiers (gold is withheld under SUPER_SEASON_MIN_SALARY)
+ *      and the Brandon Miller branch applies as it would there.
+ *   2. If that answer is null FOR ANY REASON — the worn set declares no
+ *      treatment (Summer Standouts, Dissonance, the base set), or the tier
+ *      withheld the gold — the card gets its OWN set's answer, i.e. the reward
+ *      set's bronze. The user's pre-flight ruling on Bobby Portis ($860, forty
+ *      dollars under the gold line, wearing Super Season): "a withheld gold
+ *      falls back to the BRONZE reward look with TEAM REWARD over BEST
+ *      SEASON" — never to plain team colours, which would make him the only
+ *      reward with no reward look at all.
+ *
+ * No `wears` means exactly what it always did. The eight Summer Standouts
+ * rewards and Westbrook's Dissonance reward wear sets with no treatment, so
+ * they fall through to the bronze and print byte-for-byte as before.
  */
-export function cardTreatment(set, salary, cardBadges = []) {
+export function cardTreatment(set, salary, cardBadges = [], wears = null) {
+  if (typeof wears === 'string' && wears !== '') {
+    const worn = cardTreatment(wears, salary, cardBadges);
+    return worn !== null ? worn : cardTreatment(set, salary, cardBadges);
+  }
   const badge = setBadge(set);
   if (badge !== null && tierBadge(badge, salary) !== badge) return null;
   const declared = setTreatment(set);

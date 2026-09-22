@@ -42,6 +42,15 @@ export const SET_ID = 'throwbacks';
 /** The fields that belong to a REQUEST, not to a card the generator owns. */
 const REQUEST_ONLY_FIELDS = ['requested', 'requestId', 'builtAt'];
 
+/** generateSpecialSets.js writes this (every run, even empty); it runs before this step. */
+export const DEMOTED_FILE = path.join(GEN_DIR, 'demoted-super-seasons.json');
+
+export function readDemoted(file = DEMOTED_FILE) {
+  if (!fs.existsSync(file)) return [];
+  const { cards = [] } = JSON.parse(fs.readFileSync(file, 'utf8'));
+  return cards.map(c => ({ ...c, set: SET_ID }));
+}
+
 export function readCurated(file = CURATED_FILE) {
   if (!fs.existsSync(file)) return [];
   const { cards = [] } = JSON.parse(fs.readFileSync(file, 'utf8'));
@@ -71,13 +80,19 @@ export async function main({ log = console.log } = {}) {
     log(`  ${entry.name} ${entry.season}: ${built.cardKey} $${built.salary} ${built.rarity}` +
       (built.provisional ? ' PROVISIONAL' : '') + (built.fetchedLog ? ' (log fetched)' : ''));
   }
+  // The Super Seasons the generator demoted (a Rookie card of the player's
+  // out-priced them, 2026-09-22): already built, they join as they are.
+  const demoted = readDemoted();
+  for (const card of demoted) log(`  ${card.name} ${card.seasonLabel}: throwbacks:${card.id} $${card.salary} (demoted Super Season)`);
+  cards.push(...demoted);
   cards.sort((a, b) => b.salary - a.salary || a.id.localeCompare(b.id));
   const body = {
     set: SET_ID,
     generatedAt: new Date().toISOString(),
     note:
       'CURATED THROWBACKS — generator-owned (scripts/cardgen/generateCuratedCards.js from ' +
-      'card-data/curated-cards-2026.json). Retired rewards that qualify for no other set. ' +
+      'card-data/curated-cards-2026.json, plus demoted-super-seasons.json). Retired rewards that qualify ' +
+      'for no other set, and Super Seasons a Rookie card of the player\'s out-priced. ' +
       'Requested Throwbacks live in cards-free-agents.json; both join the throwbacks set in cardSets.js.',
     cards,
   };

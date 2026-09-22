@@ -184,6 +184,9 @@ export const BADGE_FILE = path.join(GEN_DIR, 'card-badges.json');
  * base card.
  */
 export const BEATEN_BY_BASE = 'best season is the current one — its card is stronger';
+/** A Super Season out-priced by the same player's Rookie card leaves the set for Throwbacks (2026-09-22). */
+export const BEATEN_BY_ROOKIE = 'the player\'s Rookie card is stronger — a Throwback instead';
+export const DEMOTED_FILE = path.join(GEN_DIR, 'demoted-super-seasons.json');
 
 export const EXCLUSION_BADGES = {
   superSeason: SUPER_SEASON_BADGE,
@@ -1903,6 +1906,57 @@ export function main({ log = console.log } = {}) {
     );
   }
 
+  // ── A SUPER SEASON THE PLAYER'S OWN ROOKIE CARD BEATS IS NOT HIS BEST CARD ──
+  //
+  // The user (2026-09-22): "Mitchell Robinson's Rookie card is better than his
+  // Super Season. The Super Season card should be a throwback." A Super Season
+  // card is the player's best card or it is nothing of the kind: when his
+  // Rookie card (a different season) out-prices it, the season leaves this set
+  // and becomes a Throwback — the same finished card under the Throwback's
+  // look and id (<id>_<season>) — through demoted-super-seasons.json, which
+  // generateCuratedCards.js folds into cards-throwbacks.json. Applied to all
+  // five it caught the day it was written (Mitchell Robinson, Kirilenko, Yao,
+  // Duncan, David Robinson — whose Spurs reward now migrates from the
+  // Throwback). Written even when empty, so the curated step never reads a
+  // stale list.
+  {
+    const ss = builtSets.get(SUPER_SEASON_SET);
+    const rookies = new Map(builtSets.get(ROOKIE_SET).map(c => [c.name, c]));
+    const demoted = [];
+    for (const card of [...ss]) {
+      const rk = rookies.get(card.name);
+      if (!rk || rk.season === card.season || !((rk.salary ?? 0) > (card.salary ?? 0))) continue;
+      ss.splice(ss.indexOf(card), 1);
+      // Not an EXCLUSION (that list means "the fact prints on the base card"
+      // and feeds card-badges.json): a move, written under `demoted` so the
+      // accounting still finds every pool player once.
+      (selection.demoted ??= []).push({
+        name: card.name, season: card.season, seasonLabel: card.seasonLabel, salary: card.salary,
+        to: 'throwbacks', id: `${card.id}_${card.season}`, reason: BEATEN_BY_ROOKIE,
+      });
+      const { notBestSeason, ...rest } = card;
+      void notBestSeason;
+      demoted.push({
+        ...rest,
+        id: `${card.id}_${card.season}`,
+        set: 'throwbacks',
+        badges: (card.badges ?? []).filter(b => b !== 'super-season' && b !== 'best-season'),
+        demoted: `${BEATEN_BY_ROOKIE} (rookie ${rk.seasonLabel} $${rk.salary} against $${card.salary}, 2026-09-22)`,
+      });
+    }
+    fs.writeFileSync(DEMOTED_FILE, `${JSON.stringify({
+      set: 'throwbacks',
+      generatedAt: new Date().toISOString(),
+      note: 'Super Seasons out-priced by the same player\'s Rookie card (generateSpecialSets.js, 2026-09-22): ' +
+        'the same finished cards as Throwbacks. generateCuratedCards.js folds them into cards-throwbacks.json.',
+      cards: demoted,
+    }, null, 1)}\n`);
+    log(
+      `  beaten by the rookie card: ${demoted.length} demoted to Throwbacks` +
+        `${demoted.length ? ` — ${demoted.map(c => `${c.name} ${c.seasonLabel}`).join('; ')}` : ''}`
+    );
+  }
+
   for (const [set, selections, file] of [
     [SUPER_SEASON_SET, selection.superSeason, OUTPUT_FILES[SUPER_SEASON_SET]],
     [ROOKIE_SET, selection.rookie, OUTPUT_FILES[ROOKIE_SET]],
@@ -1944,6 +1998,10 @@ export function main({ log = console.log } = {}) {
         excludedCount: excluded.length,
         excludedThin,
         excludedThinCount: excludedThin.length,
+        // Super Seasons a Rookie card of the player's out-priced, moved to
+        // Throwbacks (BEATEN_BY_ROOKIE, 2026-09-22): a fourth way out of this
+        // set, counted by the accounting test like the other three.
+        demoted: set === SUPER_SEASON_SET ? (selection.demoted ?? []) : [],
         // The same-season twins this set ceded to the other one — a third
         // category beside carded and excluded, so the one-card-per-pool-player
         // accounting still closes. See the twin rule above.

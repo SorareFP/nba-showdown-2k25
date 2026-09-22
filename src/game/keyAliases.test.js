@@ -14,7 +14,13 @@ import { collectedKeys, collectableKeys } from './collections.js';
 
 describe('KEY_ALIASES', () => {
   it('holds exactly the one old key, and its target is a live card', () => {
-    expect(KEY_ALIASES).toEqual({ 'team-rewards:Anthony_Parker': 'super-season:Anthony_Parker' });
+    expect(KEY_ALIASES).toEqual({
+      'team-rewards:Anthony_Parker': 'super-season:Anthony_Parker',
+      // The Spurs reward changed id when its season was demoted to a Throwback (2026-09-22).
+      'team-rewards:David_Robinson': 'team-rewards:David_Robinson_1994',
+    });
+    expect(getCardByKey('team-rewards:David_Robinson')).toBe(getCardByKey('team-rewards:David_Robinson_1994'));
+    expect(getCardByKey('team-rewards:David_Robinson_1994')).toMatchObject({ name: 'David Robinson', wears: 'throwbacks', rewardFor: 'SAS' });
     const parker = getCardByKey('super-season:Anthony_Parker');
     expect(parker).toBeTruthy();
     expect(parker.set).toBe('super-season');

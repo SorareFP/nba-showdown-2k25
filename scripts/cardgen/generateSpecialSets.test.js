@@ -208,6 +208,9 @@ describe.each([
     const pool = new Set(POOL.map(p => p.name));
     // Legends sit on top of that accounting the same way: named, off-pool,
     // and carded — see card-data/legends-2026.json.
+    // An off-pool legend whose season was demoted to Throwbacks (2026-09-22)
+    // is still this set's business: counted on both sides, like a carded one.
+    const demotedNames = new Set((file.demoted ?? []).map(d => d.name));
     const offPool = [...new Set([
       ...Object.keys(STANDOUTS.superSeasons ?? {}),
       ...Object.keys(STANDOUTS.playoffCards ?? {}),
@@ -215,13 +218,16 @@ describe.each([
       ...ROOKIE_LEGEND_NAMES,
       ...DISSONANCE_NAMES,
       ...TEAM_REWARD_NAMES,
-    ])].filter(name => carded.has(name) && !pool.has(name)).length;
+    ])].filter(name => (carded.has(name) || demotedNames.has(name)) && !pool.has(name)).length;
     const ceded = (file.mergedIntoTwin ?? []).length;
     // The playing-time cut is a THIRD way out of the rookie set, and it has to
     // be counted here or the rule stops being "everyone is accounted for" and
     // becomes "everyone we happened to look at".
     const thin = (file.excludedThin ?? []).length;
-    expect(carded.size + excluded.size + ceded + thin).toBe(POOL.length + offPool);
+    // And the fourth way out of the Super Season set (2026-09-22): a season
+    // the player's own Rookie card out-prices moves to Throwbacks (BEATEN_BY_ROOKIE).
+    const demoted = (file.demoted ?? []).length;
+    expect(carded.size + excluded.size + ceded + thin + demoted).toBe(POOL.length + offPool);
     for (const name of carded) expect(excluded.has(name)).toBe(false);
     for (const e of file.excluded) expect(e.reason).toBeTruthy();
     expect(file.excludedCount).toBe(file.excluded.length);
@@ -464,7 +470,10 @@ describe('the base set\'s badges', () => {
     // Gilbert Arenas 2005-06, DeAndre Jordan 2014-15 ("Use the best card, if
     // it's a super season, make it as such") and Anthony Parker 2006-07, the
     // outgoing Toronto reward that the identity sweep found IS his best season.
-    expect(SUPER.cards.length).toBe(201);
+    // 196 later on 2026-09-22: five seasons a Rookie card of the player's
+    // out-prices moved to Throwbacks (BEATEN_BY_ROOKIE — Mitchell Robinson,
+    // Kirilenko, Yao, Duncan, David Robinson).
+    expect(SUPER.cards.length).toBe(196);
     //
     // AND 321 -> 348 WHEN THE STANDOUT NEWCOMERS' ROOKIE YEARS ARRIVED — every
     // standout outside the pool whose career begins inside the cache-and-EPM
@@ -520,7 +529,7 @@ describe('the base set\'s badges', () => {
       ...bothBlocks, ...readLegends().map(l => l.name), ...ROOKIE_LEGEND_NAMES,
       ...DISSONANCE_NAMES, ...TEAM_REWARD_NAMES,
     ])].filter(name => ROOKIE.cards.some(c => c.name === name) && !poolNames.has(name)).length;
-    expect(SUPER.cards.length + SUPER.excluded.length + (SUPER.mergedIntoTwin ?? []).length)
+    expect(SUPER.cards.length + SUPER.excluded.length + (SUPER.mergedIntoTwin ?? []).length + (SUPER.demoted ?? []).length)
       .toBe(POOL.length + ssOffPool);
     // The playing-time bar is the third exit from the rookie set, alongside the
     // badge exclusion and the twin merge. Counted here for the same reason the

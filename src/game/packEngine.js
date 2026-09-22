@@ -170,10 +170,15 @@ export const PACK_TYPES = {
  * Season card is a real card with a real salary and it should be able to turn
  * up in a real pack.
  *
- * TEAM REWARDS AND DISSONANCE ARE NOT HERE, and never can be: rewards are the
- * payoff for finishing a roster and Dissonance is reward territory too. Putting
- * either in a booster would make the ladder decorative — the same reason
- * `NOT_FOR_SALE` keeps them out of the market.
+ * TEAM AND SET REWARDS ARE NOT HERE, and never can be: rewards are the payoff
+ * for finishing a roster, and putting them in a booster would make the ladder
+ * decorative — the same reason `NOT_FOR_SALE` keeps them out of the market.
+ *
+ * DISSONANCE IS HERE SINCE 2026-09-22. It had been kept out as "reward
+ * territory", yet nothing handed one out — no pack, no market, no request —
+ * while its collection goal and its capstone (Westbrook 2019-20) stood. The
+ * user, asked: "Into the boosters" — the same reduced special share as every
+ * other special set. It stays off the market (NOT_FOR_SALE), as before.
  */
 // BOTH LEAGUES' SPECIALS, not just the NBA's (the user, 2026-09-07: "Specials
 // should appear in standard packs across both, but just at that reduced amount
@@ -189,7 +194,7 @@ export const PACK_TYPES = {
 // The reward sets stay out on both sides — team-rewards, set-rewards and their
 // WNBA twins are earned, not pulled, and that was already symmetric.
 export const SPECIAL_SETS_IN_PACKS = [
-  'super-season', 'rookie', 'summer-standouts',
+  'super-season', 'rookie', 'summer-standouts', 'dissonance',
   'wnba-super-season', 'wnba-rookie',
   // Throwbacks, the Free Agents catch-all, "into packs based on its rarity"
   // like every requested card. Inside the same special-band share, so no odds

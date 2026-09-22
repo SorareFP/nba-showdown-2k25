@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-22T12:17:42.822Z",
+ "generatedAt": "2026-09-22T17:10:39.197Z",
  "source": "Basketball-Reference's season `advanced` tables, awards column — a voted award's suffix is its finishing position, so only -1 is a win — plus the same pages' `advanced_post` table, whose awards column holds one cell a season and that cell is always `Finals MVP-1`, plus each season index page's League Champion row and that team's roster, which is where the ring comes from and which is in no column at all",
  "declared": [
   "MVP",
@@ -585,14 +585,14 @@
    }
   },
   "super-season": {
-   "cards": 103,
-   "marked": 79,
-   "multiple": 20,
+   "cards": 100,
+   "marked": 77,
+   "multiple": 19,
    "capped": 0,
    "mostHeld": 4,
-   "ifSelectionsCounted": 90,
+   "ifSelectionsCounted": 87,
    "byCode": {
-    "MVP": 12,
+    "MVP": 11,
     "FMVP": 2,
     "DPOY": 6,
     "ROY": 0,
@@ -600,7 +600,7 @@
     "6MOY": 3,
     "CPOY": 0,
     "CHAMP": 10,
-    "AS": 69
+    "AS": 67
    }
   },
   "rookie": {
@@ -680,14 +680,14 @@
    }
   },
   "throwbacks": {
-   "cards": 1,
-   "marked": 1,
-   "multiple": 0,
+   "cards": 5,
+   "marked": 4,
+   "multiple": 1,
    "capped": 0,
-   "mostHeld": 1,
-   "ifSelectionsCounted": 1,
+   "mostHeld": 2,
+   "ifSelectionsCounted": 5,
    "byCode": {
-    "MVP": 0,
+    "MVP": 1,
     "FMVP": 0,
     "DPOY": 0,
     "ROY": 0,
@@ -695,7 +695,7 @@
     "6MOY": 0,
     "CPOY": 0,
     "CHAMP": 0,
-    "AS": 1
+    "AS": 4
    }
   }
  },
@@ -1466,16 +1466,6 @@
     "awards": [
      "AS"
     ]
-   },
-   {
-    "id": "Andrei_Kirilenko",
-    "name": "Andrei Kirilenko",
-    "season": 2005,
-    "bbrefId": "kirilan01",
-    "raw": "DPOY-10,DEF2",
-    "rawPost": null,
-    "champion": null,
-    "awards": []
    },
    {
     "id": "Anthony_Davis",
@@ -2452,19 +2442,6 @@
     "awards": []
    },
    {
-    "id": "Tim_Duncan",
-    "name": "Tim Duncan",
-    "season": 2002,
-    "bbrefId": "duncati01",
-    "raw": "MVP-1,AS,NBA1,DEF1",
-    "rawPost": null,
-    "champion": null,
-    "awards": [
-     "MVP",
-     "AS"
-    ]
-   },
-   {
     "id": "Tim_Hardaway_Jr",
     "name": "Tim Hardaway Jr.",
     "season": 2017,
@@ -2558,18 +2535,6 @@
     "season": 2001,
     "bbrefId": "cartevi01",
     "raw": "MVP-11,AS,NBA2",
-    "rawPost": null,
-    "champion": null,
-    "awards": [
-     "AS"
-    ]
-   },
-   {
-    "id": "Yao_Ming",
-    "name": "Yao Ming",
-    "season": 2009,
-    "bbrefId": "mingya01",
-    "raw": "MVP-12,AS,NBA2",
     "rawPost": null,
     "champion": null,
     "awards": [
@@ -4293,7 +4258,7 @@
     ]
    },
    {
-    "id": "David_Robinson",
+    "id": "David_Robinson_1994",
     "name": "David Robinson",
     "season": 1994,
     "bbrefId": "robinda01",
@@ -4531,6 +4496,53 @@
     "awards": [
      "AS"
     ]
+   },
+   {
+    "id": "David_Robinson_1994",
+    "name": "David Robinson",
+    "season": 1994,
+    "bbrefId": "robinda01",
+    "raw": "MVP-2,DPOY-2,AS,NBA2,DEF2",
+    "rawPost": null,
+    "champion": null,
+    "awards": [
+     "AS"
+    ]
+   },
+   {
+    "id": "Yao_Ming_2009",
+    "name": "Yao Ming",
+    "season": 2009,
+    "bbrefId": "mingya01",
+    "raw": "MVP-12,AS,NBA2",
+    "rawPost": null,
+    "champion": null,
+    "awards": [
+     "AS"
+    ]
+   },
+   {
+    "id": "Tim_Duncan_2002",
+    "name": "Tim Duncan",
+    "season": 2002,
+    "bbrefId": "duncati01",
+    "raw": "MVP-1,AS,NBA1,DEF1",
+    "rawPost": null,
+    "champion": null,
+    "awards": [
+     "MVP",
+     "AS"
+    ]
+   },
+   {
+    "id": "Andrei_Kirilenko_2005",
+    "name": "Andrei Kirilenko",
+    "season": 2005,
+    "bbrefId": "kirilan01",
+    "raw": "DPOY-10,DEF2",
+    "rawPost": null,
+    "champion": null,
+    "awards": []
    }
   ]
  }

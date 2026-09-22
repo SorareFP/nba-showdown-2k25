@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-22T12:16:51.696Z",
+ "generatedAt": "2026-09-22T17:09:48.418Z",
  "set": "super-season",
  "provisional": true,
  "sources": {
@@ -913,6 +913,53 @@
  "excludedCount": 178,
  "excludedThin": [],
  "excludedThinCount": 0,
+ "demoted": [
+  {
+   "name": "Mitchell Robinson",
+   "season": 2020,
+   "seasonLabel": "2019-20",
+   "salary": 590,
+   "to": "throwbacks",
+   "id": "Mitchell_Robinson_2020",
+   "reason": "the player's Rookie card is stronger — a Throwback instead"
+  },
+  {
+   "name": "Tim Duncan",
+   "season": 2002,
+   "seasonLabel": "2001-02",
+   "salary": 1240,
+   "to": "throwbacks",
+   "id": "Tim_Duncan_2002",
+   "reason": "the player's Rookie card is stronger — a Throwback instead"
+  },
+  {
+   "name": "David Robinson",
+   "season": 1994,
+   "seasonLabel": "1993-94",
+   "salary": 1440,
+   "to": "throwbacks",
+   "id": "David_Robinson_1994",
+   "reason": "the player's Rookie card is stronger — a Throwback instead"
+  },
+  {
+   "name": "Andrei Kirilenko",
+   "season": 2005,
+   "seasonLabel": "2004-05",
+   "salary": 1050,
+   "to": "throwbacks",
+   "id": "Andrei_Kirilenko_2005",
+   "reason": "the player's Rookie card is stronger — a Throwback instead"
+  },
+  {
+   "name": "Yao Ming",
+   "season": 2009,
+   "seasonLabel": "2008-09",
+   "salary": 1340,
+   "to": "throwbacks",
+   "id": "Yao_Ming_2009",
+   "reason": "the player's Rookie card is stronger — a Throwback instead"
+  }
+ ],
  "mergedIntoTwin": [
   {
    "name": "Keegan Murray",
@@ -1580,79 +1627,6 @@
    "provisional": false
   },
   {
-   "id": "Andrei_Kirilenko",
-   "name": "Andrei Kirilenko",
-   "team": "UTA04",
-   "pos": "PF",
-   "speed": 11,
-   "power": 15,
-   "shotLine": 15,
-   "paintBoost": 2,
-   "threePtBoost": -3,
-   "defBoost": 4,
-   "salary": 1060,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 4,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 5,
-     "hi": 7,
-     "pts": 1,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 8,
-     "hi": 14,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 15,
-     "hi": 21,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 22,
-     "hi": 99,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    }
-   ],
-   "season": 2005,
-   "seasonLabel": "2004-05",
-   "age": 23,
-   "games": 41,
-   "mpg": 32.9,
-   "bbrefId": "kirilan01",
-   "traded": false,
-   "metrics": {
-    "bpm": 9.2,
-    "vorp": 3.8,
-    "ws": 5.5,
-    "ws48": 0.197,
-    "per": 24.4
-   },
-   "provisional": false,
-   "notBestSeason": true
-  },
-  {
    "id": "Anfernee_Simons",
    "name": "Anfernee Simons",
    "team": "POR",
@@ -1793,7 +1767,7 @@
    "paintBoost": 0,
    "threePtBoost": 4,
    "defBoost": 0,
-   "salary": 1480,
+   "salary": 1490,
    "chart": [
     {
      "lo": 1,
@@ -2111,7 +2085,7 @@
    "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": 0,
-   "salary": 850,
+   "salary": 860,
    "chart": [
     {
      "lo": 1,
@@ -3073,7 +3047,7 @@
    "paintBoost": 4,
    "threePtBoost": -3,
    "defBoost": 1,
-   "salary": 1060,
+   "salary": 1070,
    "chart": [
     {
      "lo": 1,
@@ -3511,71 +3485,6 @@
    "provisional": false
   },
   {
-   "id": "David_Robinson",
-   "name": "David Robinson",
-   "team": "SAS",
-   "pos": "C",
-   "speed": 11,
-   "power": 19,
-   "shotLine": 15,
-   "paintBoost": 1,
-   "threePtBoost": -5,
-   "defBoost": 4,
-   "salary": 1440,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 6,
-     "pts": 0,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 7,
-     "hi": 14,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 15,
-     "hi": 20,
-     "pts": 3,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 21,
-     "hi": 99,
-     "pts": 3,
-     "reb": 1,
-     "ast": 1
-    }
-   ],
-   "season": 1994,
-   "seasonLabel": "1993-94",
-   "age": 28,
-   "games": 80,
-   "mpg": 40.5,
-   "bbrefId": "robinda01",
-   "traded": false,
-   "metrics": {
-    "bpm": 11.9,
-    "vorp": 11.4,
-    "ws": 20,
-    "ws48": 0.296,
-    "per": 30.7
-   },
-   "provisional": false
-  },
-  {
    "id": "De_Aaron_Fox",
    "name": "De'Aaron Fox",
    "team": "SAC",
@@ -3702,7 +3611,7 @@
    "paintBoost": 0,
    "threePtBoost": 5,
    "defBoost": 2,
-   "salary": 840,
+   "salary": 850,
    "chart": [
     {
      "lo": 1,
@@ -6509,7 +6418,7 @@
    "paintBoost": -1,
    "threePtBoost": -3,
    "defBoost": -1,
-   "salary": 1110,
+   "salary": 1120,
    "chart": [
     {
      "lo": 1,
@@ -7456,7 +7365,7 @@
    "paintBoost": 2,
    "threePtBoost": -1,
    "defBoost": 0,
-   "salary": 1190,
+   "salary": 1200,
    "chart": [
     {
      "lo": 1,
@@ -7839,7 +7748,7 @@
    "paintBoost": 0,
    "threePtBoost": -1,
    "defBoost": 2,
-   "salary": 730,
+   "salary": 740,
    "chart": [
     {
      "lo": 1,
@@ -8338,7 +8247,7 @@
    "paintBoost": 3,
    "threePtBoost": 3,
    "defBoost": 1,
-   "salary": 1690,
+   "salary": 1700,
    "chart": [
     {
      "lo": 1,
@@ -9720,7 +9629,7 @@
    "paintBoost": -1,
    "threePtBoost": 2,
    "defBoost": 0,
-   "salary": 590,
+   "salary": 600,
    "chart": [
     {
      "lo": 1,
@@ -10017,7 +9926,7 @@
    "paintBoost": 1,
    "threePtBoost": -6,
    "defBoost": 4,
-   "salary": 1590,
+   "salary": 1600,
    "chart": [
     {
      "lo": 1,
@@ -10311,71 +10220,6 @@
    "provisional": false
   },
   {
-   "id": "Mitchell_Robinson",
-   "name": "Mitchell Robinson",
-   "team": "NYK",
-   "pos": "C",
-   "speed": 7,
-   "power": 11,
-   "shotLine": 18,
-   "paintBoost": 6,
-   "threePtBoost": -2,
-   "defBoost": 1,
-   "salary": 590,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 7,
-     "pts": 0,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 8,
-     "hi": 17,
-     "pts": 1,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 18,
-     "hi": 22,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 23,
-     "hi": 99,
-     "pts": 2,
-     "reb": 2,
-     "ast": 0
-    }
-   ],
-   "season": 2020,
-   "seasonLabel": "2019-20",
-   "age": 21,
-   "games": 61,
-   "mpg": 23.1,
-   "bbrefId": "robinmi01",
-   "traded": false,
-   "metrics": {
-    "bpm": 2.9,
-    "vorp": 1.8,
-    "ws": 6.8,
-    "ws48": 0.23,
-    "per": 23.5
-   },
-   "provisional": false
-  },
-  {
    "id": "Myles_Turner",
    "name": "Myles Turner",
    "team": "IND",
@@ -10516,7 +10360,7 @@
    "paintBoost": 3,
    "threePtBoost": -5,
    "defBoost": 2,
-   "salary": 910,
+   "salary": 920,
    "chart": [
     {
      "lo": 1,
@@ -11377,7 +11221,7 @@
    "paintBoost": 1,
    "threePtBoost": 3,
    "defBoost": -1,
-   "salary": 650,
+   "salary": 660,
    "chart": [
     {
      "lo": 1,
@@ -11825,7 +11669,7 @@
    "paintBoost": -2,
    "threePtBoost": 2,
    "defBoost": 0,
-   "salary": 690,
+   "salary": 700,
    "chart": [
     {
      "lo": 1,
@@ -12520,71 +12364,6 @@
     "ws": 5.6,
     "ws48": 0.178,
     "per": 21
-   },
-   "provisional": false
-  },
-  {
-   "id": "Tim_Duncan",
-   "name": "Tim Duncan",
-   "team": "SAS",
-   "pos": "PF",
-   "speed": 12,
-   "power": 17,
-   "shotLine": 15,
-   "paintBoost": 3,
-   "threePtBoost": -5,
-   "defBoost": 2,
-   "salary": 1250,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 6,
-     "pts": 0,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 7,
-     "hi": 14,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 15,
-     "hi": 20,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 21,
-     "hi": 99,
-     "pts": 2,
-     "reb": 2,
-     "ast": 1
-    }
-   ],
-   "season": 2002,
-   "seasonLabel": "2001-02",
-   "age": 25,
-   "games": 82,
-   "mpg": 40.6,
-   "bbrefId": "duncati01",
-   "traded": false,
-   "metrics": {
-    "bpm": 7.6,
-    "vorp": 8,
-    "ws": 17.8,
-    "ws48": 0.257,
-    "per": 27
    },
    "provisional": false
   },
@@ -13423,71 +13202,6 @@
     "ws": 5,
     "ws48": 0.129,
     "per": 18.4
-   },
-   "provisional": false
-  },
-  {
-   "id": "Yao_Ming",
-   "name": "Yao Ming",
-   "team": "HOU03",
-   "pos": "C",
-   "speed": 7,
-   "power": 19,
-   "shotLine": 14,
-   "paintBoost": 1,
-   "threePtBoost": -6,
-   "defBoost": 2,
-   "salary": 1340,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 6,
-     "pts": 0,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 7,
-     "hi": 13,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 14,
-     "hi": 20,
-     "pts": 3,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 21,
-     "hi": 99,
-     "pts": 3,
-     "reb": 2,
-     "ast": 0
-    }
-   ],
-   "season": 2009,
-   "seasonLabel": "2008-09",
-   "age": 28,
-   "games": 77,
-   "mpg": 33.6,
-   "bbrefId": "mingya01",
-   "traded": false,
-   "metrics": {
-    "bpm": 3.1,
-    "vorp": 3.3,
-    "ws": 10.6,
-    "ws48": 0.196,
-    "per": 22.7
    },
    "provisional": false
   },

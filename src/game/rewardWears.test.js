@@ -26,7 +26,9 @@ const WEARS = {
   'team-rewards:Kevin_Durant': 'summer-standouts', // a playoff run keeps its identity (the user's ruling)
   'team-rewards:Jamal_Murray': 'summer-standouts',
   'team-rewards:Kobe_Bryant': 'super-season',
-  'team-rewards:David_Robinson': 'super-season',
+  // 2026-09-22: his 1989-90 Rookie card out-prices the 1993-94 season, which
+  // the Super Season generator demotes to a Throwback; the reward migrates from there.
+  'team-rewards:David_Robinson_1994': 'throwbacks',
   'team-rewards:Blake_Griffin': 'super-season', // built; 2018-19 is his best by the rule (2.30 over 2.26)
   'team-rewards:Kevin_Garnett': 'summer-standouts',
   'team-rewards:Kyrie_Irving': 'summer-standouts',

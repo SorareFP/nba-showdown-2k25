@@ -138,6 +138,9 @@ export const ORIGIN_BADGE = {
   'super-season': 'super-season',
   rookie: 'rookie',
   'summer-standouts': 'summer-standout',
+  // A demoted Super Season (generateSpecialSets BEATEN_BY_ROOKIE, 2026-09-22)
+  // lives in cards-throwbacks.json; David Robinson's Spurs reward comes from there.
+  throwbacks: 'throwback',
 };
 
 /**

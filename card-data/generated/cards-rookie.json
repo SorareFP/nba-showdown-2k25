@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-22T12:16:52.622Z",
+ "generatedAt": "2026-09-22T17:09:49.374Z",
  "set": "rookie",
  "provisional": true,
  "sources": {
@@ -966,6 +966,7 @@
   }
  ],
  "excludedThinCount": 111,
+ "demoted": [],
  "mergedIntoTwin": [],
  "mergedIntoTwinCount": 0,
  "cards": [

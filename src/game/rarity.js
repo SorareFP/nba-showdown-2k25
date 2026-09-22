@@ -135,7 +135,8 @@ export const MARKET_PRICES = {
  * Sets the market will not sell, at any price.
  *
  * EARNED CARDS MUST STAY EARNED. Team rewards are the payoff for completing a
- * roster and Dissonance is reward territory too — neither is in any pack. If
+ * roster (never in any pack); Dissonance mixes into the boosters since
+ * 2026-09-22 but is still not sold here, a curated set kept off the market. If
  * the market priced them off salary like everything else, the hardest
  * collection in the game would be purchasable for 5,000 coins and the entire
  * ladder would be decorative. `getMarketPrice` returning null is the whole

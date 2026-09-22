@@ -130,9 +130,10 @@
       "bandException": "Dr. J's 1976-77 prints $1290 (2026-09-22; it was $1,180 when this was declared), forty dollars under the legendary floor of $1330. Philadelphia has no off-roster Philly-jersey card above it: Barkley's 1989-90 is $1,160 and everything higher is Joel Embiid, who is ON the 2026-27 roster this reward is for. Forty dollars is not worth rewarding a roster with a better copy of a player already in it."
     },
     "SAS": {
-      "set": "super-season",
-      "id": "David_Robinson",
-      "goal": "nba-team-SAS"
+      "set": "throwbacks",
+      "id": "David_Robinson_1994",
+      "goal": "nba-team-SAS",
+      "_comment": "2026-09-22: his 1989-90 Rookie card ($2230) out-prices this 1993-94 season ($1440), so the Super Season generator demotes it to a Throwback (BEATEN_BY_ROOKIE) and the reward migrates from there — the user: 'The Super Season card should be a throwback.' The old key team-rewards:David_Robinson is aliased in cardSets.js."
     },
     "GSW": {
       "set": "summer-standouts",

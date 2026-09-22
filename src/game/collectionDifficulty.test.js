@@ -273,7 +273,9 @@ describe('migrated rewards', () => {
 
   it('only ever migrates out of a set that has an origin badge', () => {
     for (const card of moved) {
-      expect(['super-season', 'rookie', 'summer-standouts'], card.name)
+      // Throwbacks since 2026-09-22: David Robinson's Spurs reward comes from
+      // the Super Season his own Rookie card out-priced (demoted there).
+      expect(['super-season', 'rookie', 'summer-standouts', 'throwbacks'], card.name)
         .toContain(card.migratedFrom.set);
     }
   });
@@ -283,6 +285,7 @@ describe('migrated rewards', () => {
       'super-season': 'super-season',
       rookie: 'rookie',
       'summer-standouts': 'summer-standout',
+      throwbacks: 'throwback',
     };
     for (const card of moved) {
       // UNLESS THE CLAIM WAS NOT TRUE. A Super Season badge asserts "this was

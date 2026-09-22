@@ -1,7 +1,7 @@
 {
  "set": "throwbacks",
- "generatedAt": "2026-09-22T12:17:05.244Z",
- "note": "CURATED THROWBACKS — generator-owned (scripts/cardgen/generateCuratedCards.js from card-data/curated-cards-2026.json). Retired rewards that qualify for no other set. Requested Throwbacks live in cards-free-agents.json; both join the throwbacks set in cardSets.js.",
+ "generatedAt": "2026-09-22T17:09:53.942Z",
+ "note": "CURATED THROWBACKS — generator-owned (scripts/cardgen/generateCuratedCards.js from card-data/curated-cards-2026.json, plus demoted-super-seasons.json). Retired rewards that qualify for no other set, and Super Seasons a Rookie card of the player's out-priced. Requested Throwbacks live in cards-free-agents.json; both join the throwbacks set in cardSets.js.",
  "cards": [
   {
    "id": "Bradley_Beal_2021",
@@ -62,6 +62,353 @@
    "provisional": false,
    "set": "throwbacks",
    "curated": "The Wizards reward until 2026-09-18, when John Wall's 2016-17 Super Season took the goal (the user: \"Go with Vince, Wall and Brand\"). His 31-a-game year is nobody's best season by the rule (2018-19 is) and not his rookie year (2012-13, carded), so it keeps its card as a Throwback rather than vanishing. Nobody had earned it: \"No one has them yet, it doesn't matter. But it should just change face.\""
+  },
+  {
+   "id": "David_Robinson_1994",
+   "name": "David Robinson",
+   "team": "SAS",
+   "pos": "C",
+   "speed": 11,
+   "power": 19,
+   "shotLine": 15,
+   "paintBoost": 1,
+   "threePtBoost": -5,
+   "defBoost": 4,
+   "salary": 1440,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 20,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 1994,
+   "seasonLabel": "1993-94",
+   "age": 28,
+   "games": 80,
+   "mpg": 40.5,
+   "bbrefId": "robinda01",
+   "traded": false,
+   "metrics": {
+    "bpm": 11.9,
+    "vorp": 11.4,
+    "ws": 20,
+    "ws48": 0.296,
+    "per": 30.7
+   },
+   "provisional": false,
+   "set": "throwbacks",
+   "badges": [],
+   "demoted": "the player's Rookie card is stronger — a Throwback instead (rookie 1989-90 $2230 against $1440, 2026-09-22)"
+  },
+  {
+   "id": "Yao_Ming_2009",
+   "name": "Yao Ming",
+   "team": "HOU03",
+   "pos": "C",
+   "speed": 7,
+   "power": 19,
+   "shotLine": 14,
+   "paintBoost": 1,
+   "threePtBoost": -6,
+   "defBoost": 2,
+   "salary": 1340,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 20,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 0
+    }
+   ],
+   "season": 2009,
+   "seasonLabel": "2008-09",
+   "age": 28,
+   "games": 77,
+   "mpg": 33.6,
+   "bbrefId": "mingya01",
+   "traded": false,
+   "metrics": {
+    "bpm": 3.1,
+    "vorp": 3.3,
+    "ws": 10.6,
+    "ws48": 0.196,
+    "per": 22.7
+   },
+   "provisional": false,
+   "set": "throwbacks",
+   "badges": [],
+   "demoted": "the player's Rookie card is stronger — a Throwback instead (rookie 2002-03 $1520 against $1340, 2026-09-22)"
+  },
+  {
+   "id": "Tim_Duncan_2002",
+   "name": "Tim Duncan",
+   "team": "SAS",
+   "pos": "PF",
+   "speed": 12,
+   "power": 17,
+   "shotLine": 15,
+   "paintBoost": 3,
+   "threePtBoost": -5,
+   "defBoost": 2,
+   "salary": 1240,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 20,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 2,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "season": 2002,
+   "seasonLabel": "2001-02",
+   "age": 25,
+   "games": 82,
+   "mpg": 40.6,
+   "bbrefId": "duncati01",
+   "traded": false,
+   "metrics": {
+    "bpm": 7.6,
+    "vorp": 8,
+    "ws": 17.8,
+    "ws48": 0.257,
+    "per": 27
+   },
+   "provisional": false,
+   "set": "throwbacks",
+   "badges": [],
+   "demoted": "the player's Rookie card is stronger — a Throwback instead (rookie 1997-98 $1960 against $1240, 2026-09-22)"
+  },
+  {
+   "id": "Andrei_Kirilenko_2005",
+   "name": "Andrei Kirilenko",
+   "team": "UTA04",
+   "pos": "PF",
+   "speed": 11,
+   "power": 15,
+   "shotLine": 15,
+   "paintBoost": 2,
+   "threePtBoost": -3,
+   "defBoost": 4,
+   "salary": 1050,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 7,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 21,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2005,
+   "seasonLabel": "2004-05",
+   "age": 23,
+   "games": 41,
+   "mpg": 32.9,
+   "bbrefId": "kirilan01",
+   "traded": false,
+   "metrics": {
+    "bpm": 9.2,
+    "vorp": 3.8,
+    "ws": 5.5,
+    "ws48": 0.197,
+    "per": 24.4
+   },
+   "provisional": false,
+   "set": "throwbacks",
+   "badges": [],
+   "demoted": "the player's Rookie card is stronger — a Throwback instead (rookie 2001-02 $1190 against $1050, 2026-09-22)"
+  },
+  {
+   "id": "Mitchell_Robinson_2020",
+   "name": "Mitchell Robinson",
+   "team": "NYK",
+   "pos": "C",
+   "speed": 7,
+   "power": 11,
+   "shotLine": 18,
+   "paintBoost": 6,
+   "threePtBoost": -2,
+   "defBoost": 1,
+   "salary": 590,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 7,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 17,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 18,
+     "hi": 22,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 2,
+     "reb": 2,
+     "ast": 0
+    }
+   ],
+   "season": 2020,
+   "seasonLabel": "2019-20",
+   "age": 21,
+   "games": 61,
+   "mpg": 23.1,
+   "bbrefId": "robinmi01",
+   "traded": false,
+   "metrics": {
+    "bpm": 2.9,
+    "vorp": 1.8,
+    "ws": 6.8,
+    "ws48": 0.23,
+    "per": 23.5
+   },
+   "provisional": false,
+   "set": "throwbacks",
+   "badges": [],
+   "demoted": "the player's Rookie card is stronger — a Throwback instead (rookie 2018-19 $610 against $590, 2026-09-22)"
   }
  ]
 }

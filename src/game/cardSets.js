@@ -97,6 +97,9 @@ export const CARD_SETS = Object.fromEntries(
 export function joinFreeAgents(sets, cards) {
   for (const card of cards ?? []) {
     if (!card?.set) continue;
+    // A joined card can migrate into a reward too (David Robinson's Spurs
+    // reward comes from the Throwbacks since 2026-09-22): a move, not a copy.
+    if (hasMigratedOut(card.set, card.id)) continue;
     (sets[card.set] ??= []).push({ ...card });
   }
   return sets;
@@ -138,6 +141,9 @@ const BY_KEY = new Map(ALL_CARDS.map(c => [cardKey(c), c]));
  */
 export const KEY_ALIASES = Object.freeze({
   'team-rewards:Anthony_Parker': 'super-season:Anthony_Parker',
+  // The Spurs reward's card kept its numbers and changed its id when its
+  // season was demoted to a Throwback (2026-09-22, BEATEN_BY_ROOKIE).
+  'team-rewards:David_Robinson': 'team-rewards:David_Robinson_1994',
 });
 
 /** The key a collection entry counts as: itself, unless it is an old key for a card that moved. */

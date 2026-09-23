@@ -7,11 +7,27 @@
 // on the client anyway).
 import { doc, getDoc, setDoc, deleteDoc, runTransaction } from 'firebase/firestore';
 import { db } from './config.js';
-import { forFirestore } from '../game/gameSave.js';
+import { forFirestore, needsBackup } from '../game/gameSave.js';
 
 export const CURRENT_GAME_DOC = 'current';
+/**
+ * THE ACCOUNT'S BACKUP (2026-09-23): the in-progress game the last write
+ * replaced or cleared — the same rule as this device's backups (gameSave.js
+ * needsBackup), kept inside the write's own transaction so the two can never
+ * disagree. Same rules path as `current` (users/{uid}/games/{gameId}).
+ */
+export const PREVIOUS_GAME_DOC = 'previous';
 
 const ref = uid => doc(db, 'users', uid, 'games', CURRENT_GAME_DOC);
+const prevRef = uid => doc(db, 'users', uid, 'games', PREVIOUS_GAME_DOC);
+
+/** The account's backup, or null. */
+export async function loadRemoteBackup(uid) {
+  if (!uid) return null;
+  const snap = await getDoc(prevRef(uid));
+  const data = snap.exists() ? snap.data() : null;
+  return data && data.game ? data : null;
+}
 
 /** The save on the account, or null. */
 export async function loadRemoteGame(uid) {
@@ -49,6 +65,9 @@ export async function saveRemoteGameIfCurrent(uid, save, baseAt = 0) {
     const snap = await tx.get(ref(uid));
     const cur = snap.exists() ? snap.data() : null;
     if (cur?.game && (cur.at || 0) > (baseAt || 0)) return { ok: false, newer: cur };
+    // An in-progress game about to be replaced, cleared or overwritten by an
+    // older copy of itself is kept first (gameSave.js needsBackup).
+    if (needsBackup(cur, body)) tx.set(prevRef(uid), cur);
     if (body) tx.set(ref(uid), body);
     else if (snap.exists()) tx.delete(ref(uid));
     return { ok: true };
@@ -58,4 +77,10 @@ export async function saveRemoteGameIfCurrent(uid, save, baseAt = 0) {
 export async function clearRemoteGame(uid) {
   if (!uid) return;
   await deleteDoc(ref(uid));
+}
+
+/** Forget the account's backup (the player said so on the Recover list). */
+export async function clearRemoteBackup(uid) {
+  if (!uid) return;
+  await deleteDoc(prevRef(uid));
 }

@@ -1,4 +1,4 @@
-import { useReducer, useCallback, useState, useEffect, useRef } from 'react';
+import { useReducer, useCallback, useState, useEffect, useRef, useMemo } from 'react';
 import { newGame, doRoll, endSection, spendAssist, spendReboundBonus, applyMatchups, spendTimeout, endTimeout, clutchAvailable, passTurn, pendingRolls, rollGate, coachCardWindow, searchCrunchCard } from '../game/engine.js';
 import { aiTurn, aiScoringDecision, aiRollDecision, aiSpendDecision, aiReactionDecision, aiCrunchDecision, aiCrunchSearch, aiSetMatchups, aiGoUnderChoice } from '../game/ai.js';
 import { CLUTCH_DICE } from '../game/clutchAwards.js';
@@ -14,8 +14,11 @@ import { useDialogs, notify } from '../ui/dialogs.jsx';
 import { playCrunch, playBuzzer } from '../game/gameAudio.js';
 import { useAuth } from '../firebase/AuthProvider.jsx';
 import { loadDecks } from '../firebase/savedDecks.js';
-import { loadRemoteGame, saveRemoteGameIfCurrent } from '../firebase/games.js';
-import { readLocalGame, writeLocalGame, makeSave, describeSave, createRemoteSaver, newGameId, remoteDecision, fixtureDecision, samePreset, gameTerms, termsOf, claimIdOf } from '../game/gameSave.js';
+import { loadRemoteGame, saveRemoteGameIfCurrent, loadRemoteBackup, clearRemoteBackup } from '../firebase/games.js';
+import {
+  readLocalGame, writeLocalGame, makeSave, describeSave, createRemoteSaver, newGameId, remoteDecision, fixtureDecision, samePreset, gameTerms, termsOf, claimIdOf,
+  readBackups, dropBackup, recoverable, takePendingRecover, RECOVER_EVENT,
+} from '../game/gameSave.js';
 import { rungDrawFor, stampBelongs } from '../game/gameClaim.js';
 import { markPlayed } from '../game/firstRun.js';
 import CourtBoard from './game/CourtBoard.jsx';
@@ -190,13 +193,29 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
   // holding exactly the game the player came here to resume.
   const written = useRef({ game: saved?.game ?? null, preset: saved?.preset ?? null });
   const hadGame = useRef(Boolean(saved?.game));
+  // A REFUSED SAVE IS SAID OUT LOUD (2026-09-23), once a sitting: the
+  // browser is out of room or blocking storage, and a game with nothing
+  // behind it must not look like one that is saved.
+  const storageWarned = useRef(false);
+  // Set by abandon(): the game about to be cleared was let go on purpose.
+  const abandoning = useRef(false);
   useEffect(() => {
     // The preset by KEY (samePreset): opening a fixture from the season hands
     // over a new object for the same fixture, and that is not a change.
     if (written.current.game === game && samePreset(written.current.preset, livePreset)) return;
     written.current = { game, preset: livePreset };
     const save = makeSave(game, livePreset, gameId.current, { terms: termsRef.current, paid: paidRef.current });
-    writeLocalGame(save);
+    const stored = writeLocalGame(save, { abandoned: abandoning.current });
+    abandoning.current = false;
+    // A cleared game went to the backups just now, after this render read them.
+    if (!save) setBackupsSeen(n => n + 1);
+    if (!stored && save && !storageWarned.current) {
+      storageWarned.current = true;
+      toast(uid
+        ? 'This browser refused to store your game (it may be out of room). It is still saving to your account.'
+        : 'This browser refused to store your game (it may be out of room). Sign in so it saves to your account.',
+      { tone: 'error' });
+    }
     if (save) heldAt.current = save.at;
     if (save) { hadGame.current = true; remote.current?.push(save); markPlayed(); }
     else if (hadGame.current) { hadGame.current = false; remote.current?.push(null); }
@@ -326,6 +345,53 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
     }
   }, [adopt, ask, toast, onPresetFinish, setTerms, setPaid]);
   syncRef.current = handleRemote;
+
+  // ── Recovering a game (2026-09-23) ──────────────────────────────────────
+  //
+  // Every in-progress game a save replaced or cleared is kept (gameSave.js
+  // backups, and the account's `previous`). Recovering one takes it as the
+  // game here, NEWEST from this moment — so it also becomes the account's
+  // copy — and whatever was going here goes to the backups in its place, so
+  // a recovery can itself be undone.
+  const recover = useCallback(s => {
+    if (!s?.game) return;
+    const fresh = { ...s, at: Date.now() };
+    adopt(fresh, 'Recovered — back where you left off.');
+    dropBackup(s);
+    remote.current?.push(fresh);
+  }, [adopt]);
+  // Asked for from Home (requestRecover): by event while mounted, by the
+  // pending key on mount.
+  useEffect(() => {
+    const pending = takePendingRecover();
+    if (pending) recover(pending);
+    const on = e => { takePendingRecover(); recover(e.detail); };
+    window.addEventListener(RECOVER_EVENT, on);
+    return () => window.removeEventListener(RECOVER_EVENT, on);
+  }, [recover]);
+  const [accountBackup, setAccountBackup] = useState(null);
+  useEffect(() => {
+    if (!uid) { setAccountBackup(null); return undefined; }
+    let live = true;
+    loadRemoteBackup(uid).then(r => { if (live) setAccountBackup(r); }).catch(() => {});
+    return () => { live = false; };
+  }, [uid, game === null]);
+  const [backupsSeen, setBackupsSeen] = useState(0);
+  const recoverList = useMemo(
+    () => (game ? [] : recoverable(null, [...readBackups(), ...(accountBackup ? [accountBackup] : [])])),
+    // Re-read when the game goes, a backup is forgotten, or the account's arrives.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [game, accountBackup, backupsSeen]
+  );
+  const forget = useCallback(s => {
+    dropBackup(s);
+    if (accountBackup && (accountBackup === s || accountBackup.at === s.at)) {
+      setAccountBackup(null);
+      if (uid) clearRemoteBackup(uid).catch(() => {});
+    }
+    setBackupsSeen(n => n + 1);
+  }, [accountBackup, uid]);
+
   const lastSync = useRef(0);
   const syncNow = useCallback(() => {
     if (!uid || Date.now() - lastSync.current < 2000) return;
@@ -621,6 +687,7 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
       rosterA={rosterA} rosterB={rosterB}
       opponent={opponent} setOpponent={setOpponent} aiLevel={aiLevel} setAiLevel={setAiLevel}
       onStart={startGame}
+      recoverList={recoverList} onRecover={recover} onForget={forget}
     />
   );
 
@@ -676,8 +743,9 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
   const abandon = async () => {
     const yes = await ask(livePreset
       ? { title: 'Leave this fixture?', body: 'It stays unplayed and you can come back to it.', confirmLabel: 'Leave it' }
-      : { title: 'Abandon this game?', body: 'Nothing about it is kept.', confirmLabel: 'Abandon', tone: 'danger' });
+      : { title: 'Abandon this game?', body: 'It is set aside under Recover a game on the Play screen, in case you change your mind.', confirmLabel: 'Abandon', tone: 'danger' });
     if (!yes) return;
+    abandoning.current = true;
     dispatch({ type: 'SET', game: null });
     setRestoredPreset(null);
     setTerms(null);
@@ -730,7 +798,31 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
   );
 }
 
-function NoGame({ canUseBuilt, rosterA, rosterB, opponent, setOpponent, aiLevel, setAiLevel, onStart }) {
+/**
+ * THE GAMES THAT CAN BE TAKEN BACK (2026-09-23): whatever a save replaced or
+ * cleared while it was still going, newest first. Resume takes it as the game
+ * here; Forget lets it go.
+ */
+export function RecoverList({ list = [], onRecover, onForget }) {
+  if (!list.length) return null;
+  return (
+    <div className={styles.recover}>
+      <div className={styles.recoverHead}>Recover a game</div>
+      <p className={styles.hint} style={{ marginTop: 0 }}>A game in progress was replaced or cleared. It was kept — pick it back up here.</p>
+      {list.map(s => (
+        <div key={`${s.id ?? s.preset?.key ?? ''}:${s.at}`} className={styles.recoverRow}>
+          <span className={styles.recoverLine}>{describeSave(s)}{s.abandoned ? ' (you abandoned it)' : ''}</span>
+          <span className={styles.recoverBtns}>
+            <button className={styles.btnPri} onClick={() => onRecover(s)}>Resume</button>
+            {onForget && <button className={styles.btnSec} onClick={() => onForget(s)}>Forget</button>}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function NoGame({ canUseBuilt, rosterA, rosterB, opponent, setOpponent, aiLevel, setAiLevel, onStart, recoverList = [], onRecover, onForget }) {
   const { user } = useAuth();
   const [decks, setDecks] = useState([]);
   const [deckA, setDeckA] = useState('default');
@@ -783,6 +875,7 @@ function NoGame({ canUseBuilt, rosterA, rosterB, opponent, setOpponent, aiLevel,
   return (
     <div className={styles.noGame}>
       <div className={styles.noGameCard}>
+        <RecoverList list={recoverList} onRecover={onRecover} onForget={onForget} />
         <div className={styles.noGameIcon}>🏀</div>
         <h2>NBA Showdown 2026</h2>
         <p>D20 Basketball Card Game — 306 Players · Strategy Deck System</p>

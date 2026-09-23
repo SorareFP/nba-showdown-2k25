@@ -107,13 +107,159 @@ export function readLocalGame() {
   }
 }
 
-/** Null clears. Storage can be absent or refuse; a game that cannot be saved is still a game. */
-export function writeLocalGame(save) {
+/**
+ * Null clears. Returns whether the write landed — it USED TO SWALLOW a refusal
+ * and carry on, so a browser that had run out of room kept a game going with
+ * no save behind it and said nothing (2026-09-23, the user lost a game mid-play:
+ * "that can't happen"). Now:
+ *
+ *   - An in-progress game about to be REPLACED by a different one, CLEARED, or
+ *     overwritten by an older copy of itself goes to the backups first
+ *     (needsBackup), so no path through this function loses one.
+ *   - A refused write is tried once more with the log trimmed — the game is
+ *     the rules state, the log is history — and the old save stays in place
+ *     if that fails too (setItem never half-writes).
+ *   - The answer comes back, so the caller can say so out loud.
+ */
+export function writeLocalGame(save, { abandoned = false } = {}) {
+  const store = globalThis.localStorage;
+  if (!store) return false;
   try {
-    if (!save) globalThis.localStorage?.removeItem(LOCAL_KEY);
-    else globalThis.localStorage?.setItem(LOCAL_KEY, JSON.stringify(save));
+    const cur = readLocalGame();
+    // A game the player ABANDONED on purpose is kept too — as an undo — but
+    // marked, so Home does not keep offering it (recoverable skipAbandoned).
+    if (needsBackup(cur, save)) backupSave(abandoned ? { ...cur, abandoned: true } : cur);
   } catch {
-    /* unsaved, still playable */
+    /* a backup that cannot be kept must not stop the save itself */
+  }
+  try {
+    if (!save) store.removeItem(LOCAL_KEY);
+    else store.setItem(LOCAL_KEY, JSON.stringify(save));
+    return true;
+  } catch {
+    if (!save) return false;
+    try {
+      store.setItem(LOCAL_KEY, JSON.stringify(trimLog(save)));
+      return true;
+    } catch {
+      return false;
+    }
+  }
+}
+
+/** The save with its game log cut to the last REMOTE_LOG_KEEP lines. */
+export function trimLog(save) {
+  if (!Array.isArray(save?.game?.log) || save.game.log.length <= REMOTE_LOG_KEEP) return save;
+  return { ...save, game: { ...save.game, log: save.game.log.slice(-REMOTE_LOG_KEEP) }, logTrimmed: true };
+}
+
+// ── Backups: no game in progress is ever simply gone (2026-09-23) ─────────────
+//
+// Every in-progress game that a write would replace with a DIFFERENT game,
+// clear, or overwrite with an OLDER copy of itself is kept here first, newest
+// first, one per game, BACKUP_KEEP deep. The account keeps one more the same
+// way (users/{uid}/games/previous, src/firebase/games.js). The Play screen
+// and Home list what can be recovered (recoverable) — a deploy, a bug, a
+// wrong tap, another device: whatever took the game, it can be taken back.
+
+export const BACKUP_KEY = 'showdown.game.backups';
+export const BACKUP_KEEP = 5;
+
+/** Would `next` landing on top of `cur` lose `cur`? Only an in-progress game is worth keeping. */
+export function needsBackup(cur, next) {
+  if (!inProgress(cur)) return false;
+  if (!next?.game) return true;
+  if (!sameGame(cur, next)) return true;
+  return (next.at || 0) < (cur.at || 0);
+}
+
+/** The backups, newest first. */
+export function readBackups() {
+  try {
+    const raw = globalThis.localStorage?.getItem(BACKUP_KEY);
+    const list = raw ? JSON.parse(raw) : [];
+    return Array.isArray(list) ? list.filter(s => s?.game) : [];
+  } catch {
+    return [];
+  }
+}
+
+const backupKey = s => gameIdentity(s) ?? `at:${s?.at ?? 0}`;
+
+/** Keep `save` among the backups: the newest copy of each game, BACKUP_KEEP of them. */
+export function backupSave(save) {
+  if (!inProgress(save)) return;
+  const k = backupKey(save);
+  const list = [save, ...readBackups().filter(s => backupKey(s) !== k)]
+    .sort((a, b) => (b.at || 0) - (a.at || 0));
+  // A backup trimmed of its log is still the whole game; room matters here.
+  const store = globalThis.localStorage;
+  for (let keep = BACKUP_KEEP; keep >= 1; keep -= 1) {
+    try {
+      store?.setItem(BACKUP_KEY, JSON.stringify(list.slice(0, keep).map(trimLog)));
+      return;
+    } catch {
+      /* try fewer */
+    }
+  }
+}
+
+/** Take a recovered game off the backups. */
+export function dropBackup(save) {
+  const k = backupKey(save);
+  try {
+    globalThis.localStorage?.setItem(BACKUP_KEY, JSON.stringify(readBackups().filter(s => backupKey(s) !== k)));
+  } catch {
+    /* it stays listed; recovering it twice is harmless */
+  }
+}
+
+/**
+ * What can be recovered: in-progress games among `candidates` (this device's
+ * backups, the account's previous game) that are not the game `current`
+ * already is — one per game, the newest copy, newest first.
+ */
+export function recoverable(current, candidates = [], { skipAbandoned = false, maxAgeMs = null, now = Date.now() } = {}) {
+  const seen = new Set(current?.game ? [backupKey(current)] : []);
+  // A game abandoned on purpose, however many copies of it there are.
+  const abandoned = new Set(candidates.filter(s => s?.abandoned).map(backupKey));
+  return candidates
+    .filter(inProgress)
+    .filter(s => !skipAbandoned || !abandoned.has(backupKey(s)))
+    .filter(s => maxAgeMs == null || now - (s.at || 0) <= maxAgeMs)
+    .sort((a, b) => (b.at || 0) - (a.at || 0))
+    .filter(s => {
+      const k = backupKey(s);
+      if (seen.has(k)) return false;
+      seen.add(k);
+      return true;
+    });
+}
+
+/** How long Home offers a recoverable game; the Play screen offers every one kept. */
+export const HOME_RECOVER_MS = 3 * 24 * 60 * 60 * 1000;
+
+/**
+ * A recovery asked for somewhere else (Home): the save is handed to PlayTab,
+ * mounted or not — by an event if it is listening, and by a pending key it
+ * reads when it mounts.
+ */
+export const RECOVER_KEY = 'showdown.game.recover';
+export const RECOVER_EVENT = 'showdown:recover';
+export function requestRecover(save) {
+  try { globalThis.localStorage?.setItem(RECOVER_KEY, JSON.stringify(save)); } catch { /* the event still carries it */ }
+  globalThis.dispatchEvent?.(new CustomEvent(RECOVER_EVENT, { detail: save }));
+}
+/** The pending recovery, taken (removed) as it is read. */
+export function takePendingRecover() {
+  try {
+    const raw = globalThis.localStorage?.getItem(RECOVER_KEY);
+    if (!raw) return null;
+    globalThis.localStorage.removeItem(RECOVER_KEY);
+    const s = JSON.parse(raw);
+    return s?.game ? s : null;
+  } catch {
+    return null;
   }
 }
 

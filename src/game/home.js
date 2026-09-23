@@ -23,6 +23,11 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
+    id: 'recover-game', date: '2026-09-23', title: 'A game in progress is never lost',
+    body: 'Any game in progress that gets replaced or cleared — another device, a new game, a crash, even one you abandon — is kept. Play and Home offer it under "Recover a game", and Resume puts you back where you were. If a screen ever breaks, it now says so and offers to reload instead of going blank.',
+    to: 'play', cta: 'Play',
+  },
+  {
     id: 'wave-two-twins', date: '2026-09-23', title: 'Five new strategy cards',
     body: 'The twins the deck was missing, now in packs: Blow-By (Speed 13+ and hot: +2 pts, another hot marker), Point God (a Speed edge before he rolls: his assists doubled), Passing Lane (cancel a roll\'s assists, one more with the Speed edge), Clamp the Reserve (an opposing $400 man still to roll keeps the lower die) and Feeling It (your hot marker draws two). Placeholder art for now.',
     to: 'shop', cta: 'Pack Shop',

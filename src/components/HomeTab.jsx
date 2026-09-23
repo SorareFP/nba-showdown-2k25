@@ -18,11 +18,11 @@ import { useLightbox, ZoomImg } from './CardLightbox.jsx';
 import { getUserData, loadClaims } from '../firebase/collection.js';
 import { listSeasons } from '../firebase/seasons.js';
 import { listMyLeagues, seasonOfLeague } from '../firebase/leagues.js';
-import { loadRemoteGame } from '../firebase/games.js';
+import { loadRemoteGame, loadRemoteBackup, clearRemoteBackup } from '../firebase/games.js';
 import { myCardRequests } from '../firebase/freeAgents.js';
 import { signableCount, signNotice } from '../game/freeAgents.js';
 import { collectedKeys, collectableKeys } from '../game/collections.js';
-import { readLocalGame, describeSave, newerSave } from '../game/gameSave.js';
+import { readLocalGame, describeSave, newerSave, readBackups, recoverable, requestRecover, dropBackup, HOME_RECOVER_MS } from '../game/gameSave.js';
 import { getPlayerThumbUrl, getPlayerImageUrl, getStratThumbPath, getStratImagePath, fallbackTo } from '../game/cardImages.js';
 import { newsFor, closestGoals, seasonsInProgress, careerLeaders, careerTotals } from '../game/home.js';
 import Skeleton from '../ui/Skeleton.jsx';
@@ -47,6 +47,8 @@ export default function HomeTab({ collection = {}, starter = null, onGo = () => 
   const [allNews, setAllNews] = useState(false);
   const [saved] = useState(() => { try { return readLocalGame(); } catch { return null; } });
   const [remoteSave, setRemoteSave] = useState(null);
+  const [remoteBackup, setRemoteBackup] = useState(null);
+  const [forgot, setForgot] = useState(0);
   // Free Agents whose card is made and invoiced, waiting for this player to sign.
   const [signable, setSignable] = useState(0);
 
@@ -57,6 +59,7 @@ export default function HomeTab({ collection = {}, starter = null, onGo = () => 
     myCardRequests(uid).then(rs => { if (live) setSignable(signableCount(rs)); }).catch(() => {});
     loadClaims(uid).then(c => { if (live) setClaimed(new Set(Object.keys(c ?? {}))); }).catch(() => { if (live) setClaimed(new Set()); });
     loadRemoteGame(uid).then(r => { if (live) setRemoteSave(r); }).catch(() => {});
+    loadRemoteBackup(uid).then(r => { if (live) setRemoteBackup(r); }).catch(() => {});
     Promise.all([listSeasons(uid).catch(() => []), listMyLeagues(uid).catch(() => [])]).then(([solo, leagues]) => {
       if (!live) return;
       const shared = leagues.filter(l => l.kind === 'season').map(league => ({ league, season: seasonOfLeague(league) }));
@@ -78,6 +81,15 @@ export default function HomeTab({ collection = {}, starter = null, onGo = () => 
   const liveSave = x => (x?.game && !x.game.done ? x : null);
   const fromOther = newerSave(liveSave(saved), liveSave(remoteSave)) === 'remote';
   const resume = fromOther ? remoteSave : liveSave(saved);
+  // A GAME THAT WAS REPLACED OR CLEARED while it was going (gameSave.js
+  // backups, and the account's `previous`, 2026-09-23): offered here too,
+  // since a reload lands on Home. Recovering hands it to the Play tab, and
+  // whatever is going there is kept in its place.
+  const recoverList = useMemo(
+    () => recoverable(resume, [...readBackups(), ...(remoteBackup ? [remoteBackup] : [])], { skipAbandoned: true, maxAgeMs: HOME_RECOVER_MS }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [resume, remoteBackup, forgot]
+  );
   const noCards = owned.size === 0;
 
   return (
@@ -114,6 +126,20 @@ export default function HomeTab({ collection = {}, starter = null, onGo = () => 
             <div className={s.resumeLine}>{describeSave(resume)}</div>
           </div>
           <button className={s.primary} onClick={() => onGo('play')}>{fromOther ? 'Resume here' : 'Resume game'}</button>
+        </section>
+      )}
+
+      {recoverList.length > 0 && (
+        <section className={s.resume}>
+          <div>
+            <div className={s.kicker}>A game you can recover</div>
+            <div className={s.resumeLine}>{describeSave(recoverList[0])}</div>
+            {resume && <div className={s.resumeLine} style={{ opacity: 0.7 }}>Recovering it keeps the game above, too.</div>}
+          </div>
+          <div className={s.pills}>
+            <button className={s.primary} onClick={() => { requestRecover(recoverList[0]); onGo('play'); }}>Recover it</button>
+            <button className={s.pill} onClick={() => { dropBackup(recoverList[0]); if (remoteBackup && remoteBackup.at === recoverList[0].at) { setRemoteBackup(null); clearRemoteBackup(uid).catch(() => {}); } setForgot(n => n + 1); }}>Forget</button>
+          </div>
         </section>
       )}
 

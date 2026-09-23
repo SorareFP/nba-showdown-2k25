@@ -21,6 +21,7 @@ import { AuthProvider, useAuth } from './firebase/AuthProvider.jsx';
 import { LightboxProvider } from './components/CardLightbox.jsx';
 import { DialogProvider } from './ui/dialogs.jsx';
 import SoundToggle from './ui/SoundToggle.jsx';
+import ErrorBoundary from './ui/ErrorBoundary.jsx';
 import { CardStatsProvider } from './firebase/CardStatsProvider.jsx';
 import { collectableKeys } from './game/collections.js';
 import { loadCollection, getUserData, updateUserFields } from './firebase/collection.js';
@@ -313,6 +314,8 @@ function AppInner() {
         />
       )}
       <main className={styles.main}>
+        {/* A crash shows a way back, never a blank page (ui/ErrorBoundary.jsx). */}
+        <ErrorBoundary>
         {tutorialMode && (
           <div style={{ display: rulesOverTutorial ? 'none' : 'block' }}>
             <TutorialGame onExit={() => { setTutorialMode(false); setRulesOverTutorial(false); setTab('howtoplay'); }} />
@@ -420,6 +423,7 @@ function AppInner() {
             )}
           </>
         )}
+        </ErrorBoundary>
       </main>
 
       {/* THE PHONE'S BOTTOM BAR. Hidden above 768px by CSS, so desktop keeps
@@ -482,7 +486,7 @@ export default function App() {
           {isPackDemo()
             // The collection demo sits in the app's own column, so the width
             // it is judging is the width the real tab gets.
-            ? (demoKind() === 'collection' ? <main className={styles.main}><PackOpeningDemo /></main> : <PackOpeningDemo />)
+            ? (['collection', 'play'].includes(demoKind()) ? <main className={styles.main}><ErrorBoundary><PackOpeningDemo /></ErrorBoundary></main> : <PackOpeningDemo />)
             : <AppInner />}
         </DialogProvider>
       </LightboxProvider>

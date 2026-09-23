@@ -3,6 +3,8 @@
 //   http://localhost:5173/nba-showdown-2k25/?demo=pack
 //   http://localhost:5173/nba-showdown-2k25/?demo=claim        a collection claimed
 //   http://localhost:5173/nba-showdown-2k25/?demo=collection   the collection screens, for layout
+//   http://localhost:5173/nba-showdown-2k25/?demo=play         the Play tab signed out: a real game, saved
+//                                                              locally, with its recover list and board
 //
 // Mounted by App.jsx in place of the app, in development builds only, when
 // the query string asks for it. The pack is a real booster from the engine
@@ -15,6 +17,7 @@ import ClaimReveal from './ClaimReveal.jsx';
 import MyCollection from './MyCollection.jsx';
 import CollectionGoals from './CollectionGoals.jsx';
 import PackShop from './PackShop.jsx';
+import PlayTab from './PlayTab.jsx';
 import { generatePack, SPECIAL_SETS_IN_PACKS } from '../game/packEngine.js';
 import { CARD_SETS, BASE_SET, cardKey, getCardByKey } from '../game/cardSets.js';
 import { getPlayerRarity } from '../game/rarity.js';
@@ -23,11 +26,11 @@ import { allGoalProgress } from '../game/collections.js';
 /** The cards a booster can actually deal — not every registered set. */
 const PACKABLE = [BASE_SET, ...SPECIAL_SETS_IN_PACKS].flatMap(id => CARD_SETS[id] ?? []);
 
-/** Which dev demo the query string asks for: 'pack', 'claim', 'collection' or null. Never in production. */
+/** Which dev demo the query string asks for: 'pack', 'claim', 'collection', 'play' or null. Never in production. */
 export const demoKind = () => {
   if (!import.meta.env?.DEV || typeof window === 'undefined') return null;
   const kind = new URLSearchParams(window.location.search).get('demo');
-  return ['pack', 'claim', 'collection'].includes(kind) ? kind : null;
+  return ['pack', 'claim', 'collection', 'play'].includes(kind) ? kind : null;
 };
 export const isPackDemo = () => demoKind() !== null;
 
@@ -79,6 +82,9 @@ export default function PackOpeningDemo() {
   const cards = useMemo(demoPulls, []);
   if (demoKind() === 'claim') return <ClaimDemo />;
   if (demoKind() === 'collection') return <CollectionDemo />;
+  // The real Play tab with no account: Quick Match deals a game, and it saves
+  // and recovers exactly as a signed-in one does on this device.
+  if (demoKind() === 'play') return <PlayTab teamA={[]} teamB={[]} active />;
   return (
     <div style={{ padding: '16px 20px' }}>
       <PackOpening

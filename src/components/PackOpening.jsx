@@ -646,8 +646,13 @@ const FANFARE = {
 };
 const CONFETTI_PALETTE = { 'super-rare': ['#F59E0B', '#FDE68A', '#FFFFFF'], legendary: ['#A855F7', '#D8B4FE', '#F59E0B', '#FFFFFF'] };
 
-export function Fanfare({ rarity }) {
-  const spec = FANFARE[rarity] ?? null;
+/**
+ * `stamp` overrides the band's name — the collection claim stamps its own
+ * words over the reward card (ClaimReveal.jsx) with the same flash and
+ * confetti a pull of that band gets.
+ */
+export function Fanfare({ rarity, stamp = null }) {
+  const spec = FANFARE[rarity] ? { ...FANFARE[rarity], stamp: stamp ?? FANFARE[rarity].stamp } : null;
   const count = spec?.confetti ?? 0;
   const palette = CONFETTI_PALETTE[rarity] ?? [];
   // Rolled once per mount — the parent re-renders while this plays.

@@ -22,6 +22,7 @@ import { delistCard } from '../firebase/serverWrites.js';
 import MyCollection from './MyCollection.jsx';
 import Market from './Market.jsx';
 import CollectionGoals from './CollectionGoals.jsx';
+import ClaimReveal from './ClaimReveal.jsx';
 import FavoriteTeamPicker, { teamForOption, favoriteTeamName } from './FavoriteTeamPicker.jsx';
 import { logoSrc } from '../cards/CardTemplate.jsx';
 import { useDialogs } from '../ui/dialogs.jsx';
@@ -402,16 +403,15 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
     }
   };
 
+  // THE CLAIM IS A REVEAL, not a toast (ClaimReveal.jsx, 2026-09-23): the
+  // reward card turns over on its own stage with the fanfare a pull of its
+  // band gets. The server has already paid and minted by the time it shows.
+  const [claimReveal, setClaimReveal] = useState(null); // { goalId, cardKey, coins }
   const handleClaim = async (goalId) => {
     setBusyGoal(goalId);
     try {
       const res = await claimGoal(user.uid, goalId);
-      const card = res.card ? CARD_MAP[res.card]?.name ?? res.card : null;
-      setToast(
-        card
-          ? `Claimed! ${card}${res.coins ? ` and ${res.coins.toLocaleString()} coins` : ''}.`
-          : `Claimed ${res.coins.toLocaleString()} coins.`
-      );
+      setClaimReveal({ goalId, cardKey: res.card ?? null, coins: res.coins ?? 0 });
       await refresh();
       onCollectionChange?.();
     } catch (e) {
@@ -752,6 +752,14 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
         </>
       )}
 
+      {claimReveal && (
+        <ClaimReveal
+          goalId={claimReveal.goalId}
+          cardKey={claimReveal.cardKey}
+          coins={claimReveal.coins}
+          onClose={() => setClaimReveal(null)}
+        />
+      )}
       {toast && (
         <div className={styles.toast} role="status" onClick={() => setToast(null)}>
           {toast}

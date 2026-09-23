@@ -214,3 +214,10 @@
   .collectBtn, .burnBtn, .sellBtn, .burnYes, .burnNo, .sellYes { min-height: 36px; font-size: 12px; }
   .burnBtn { margin: 0; }
 }
+
+/* ── WIDE SCREENS (2026-09-23) ──────────────────────────────────────────────
+   More columns come free from auto-fill as the app's column widens; the
+   tiles also grow a little past 2200px so the art reads at monitor distance. */
+@media (min-width: 2200px) {
+  .grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
+}

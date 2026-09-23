@@ -559,3 +559,11 @@
 .oppPts   { color:var(--text); font-weight:700; }
 .oppMin   { color:#64748B; }
 .oppRest  { color:#F59E0B; font-weight:700; }
+
+/* ── WIDE SCREENS (2026-09-23) ──────────────────────────────────────────────
+   The app's column grows to 2400px on a big monitor (App.module.css). The
+   court is a 1fr track with a fixed height, so past this it would only
+   stretch sideways; the board keeps a width it reads well at. */
+@media (min-width: 2200px) {
+  .wrap { max-width: 1680px; width: 100%; margin: 0 auto; }
+}

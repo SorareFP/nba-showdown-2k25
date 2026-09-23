@@ -1,6 +1,8 @@
 // A DEV-ONLY PACK OPENING, for looking at the reveal without an account.
 //
 //   http://localhost:5173/nba-showdown-2k25/?demo=pack
+//   http://localhost:5173/nba-showdown-2k25/?demo=claim        a collection claimed
+//   http://localhost:5173/nba-showdown-2k25/?demo=collection   the collection screens, for layout
 //
 // Mounted by App.jsx in place of the app, in development builds only, when
 // the query string asks for it. The pack is a real booster from the engine
@@ -10,6 +12,9 @@
 import { useMemo } from 'react';
 import PackOpening from './PackOpening.jsx';
 import ClaimReveal from './ClaimReveal.jsx';
+import MyCollection from './MyCollection.jsx';
+import CollectionGoals from './CollectionGoals.jsx';
+import PackShop from './PackShop.jsx';
 import { generatePack, SPECIAL_SETS_IN_PACKS } from '../game/packEngine.js';
 import { CARD_SETS, BASE_SET, cardKey, getCardByKey } from '../game/cardSets.js';
 import { getPlayerRarity } from '../game/rarity.js';
@@ -18,11 +23,11 @@ import { allGoalProgress } from '../game/collections.js';
 /** The cards a booster can actually deal — not every registered set. */
 const PACKABLE = [BASE_SET, ...SPECIAL_SETS_IN_PACKS].flatMap(id => CARD_SETS[id] ?? []);
 
-/** Which dev demo the query string asks for: 'pack', 'claim' or null. Never in production. */
+/** Which dev demo the query string asks for: 'pack', 'claim', 'collection' or null. Never in production. */
 export const demoKind = () => {
   if (!import.meta.env?.DEV || typeof window === 'undefined') return null;
   const kind = new URLSearchParams(window.location.search).get('demo');
-  return kind === 'pack' || kind === 'claim' ? kind : null;
+  return ['pack', 'claim', 'collection'].includes(kind) ? kind : null;
 };
 export const isPackDemo = () => demoKind() !== null;
 
@@ -51,9 +56,29 @@ function ClaimDemo() {
   return <ClaimReveal goalId={goalId} cardKey={reward} coins={490} onClose={() => window.location.reload()} />;
 }
 
+/**
+ * ?demo=collection — My Collection, the collection goals and the Pack Shop
+ * over a synthetic binder (every packable card, one copy, the base set
+ * collected), for judging the layout at any width without an account.
+ */
+function CollectionDemo() {
+  const collection = useMemo(() => Object.fromEntries(
+    PACKABLE.map((c, i) => [cardKey(c), { type: 'player', count: 1 + (i % 3 === 0 ? 1 : 0), collected: c.set === BASE_SET }])
+  ), []);
+  const noop = () => {};
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+      <MyCollection collection={collection} onBurn={noop} onList={noop} onCollect={noop} />
+      <CollectionGoals collection={collection} claims={{}} coins={0} onClaim={noop} onCollect={noop} busyGoal={null} busyCard={null} />
+      <PackShop currency={4321} onBuyPack={noop} />
+    </div>
+  );
+}
+
 export default function PackOpeningDemo() {
   const cards = useMemo(demoPulls, []);
   if (demoKind() === 'claim') return <ClaimDemo />;
+  if (demoKind() === 'collection') return <CollectionDemo />;
   return (
     <div style={{ padding: '16px 20px' }}>
       <PackOpening

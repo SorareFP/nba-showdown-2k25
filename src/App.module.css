@@ -169,6 +169,21 @@
   width: 100%;
 }
 
+/* ── WIDE SCREENS (2026-09-23) ─────────────────────────────────────────────
+   The user, on a 3840x2160 monitor: "Is there a better way to use space on
+   widescreen monitors without affecting the mobile layout?" The column was
+   1200px at every desktop width. It now grows in two steps above 1600px —
+   min-width queries only, so nothing at or below the phone breakpoint can
+   move. Screens with a natural width of their own (the game board, the rules,
+   the landing page) keep their own caps inside it; the card grids, tables
+   and goal lists take the room. */
+@media (min-width: 1600px) {
+  .main { max-width: 1520px; }
+}
+@media (min-width: 2200px) {
+  .main { max-width: min(2400px, 90vw); padding: 1.5rem 2rem; }
+}
+
 /* ── PHONES ────────────────────────────────────────────────────────────────
    The breakpoint is PHONE_QUERY in src/ui/useIsPhone.js — keep them equal.
    Below it the header is one 48px row (logo, sound, account), the sections

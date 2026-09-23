@@ -12,7 +12,7 @@ import HomeTab from './components/HomeTab.jsx';
 import Skeleton from './ui/Skeleton.jsx';
 import SignupBonus from './components/SignupBonus.jsx';
 import CollectionTab from './components/CollectionTab.jsx';
-import PackOpeningDemo, { isPackDemo } from './components/PackOpeningDemo.jsx';
+import PackOpeningDemo, { isPackDemo, demoKind } from './components/PackOpeningDemo.jsx';
 import PvpLobby from './components/PvpLobby.jsx';
 import PvpGame from './components/PvpGame.jsx';
 import TutorialGame from './components/TutorialGame.jsx';
@@ -479,7 +479,11 @@ export default function App() {
         <DialogProvider>
           {/* `?demo=pack` in a dev build shows a pack opening with no account
               behind it — see PackOpeningDemo.jsx. Never in production. */}
-          {isPackDemo() ? <PackOpeningDemo /> : <AppInner />}
+          {isPackDemo()
+            // The collection demo sits in the app's own column, so the width
+            // it is judging is the width the real tab gets.
+            ? (demoKind() === 'collection' ? <main className={styles.main}><PackOpeningDemo /></main> : <PackOpeningDemo />)
+            : <AppInner />}
         </DialogProvider>
       </LightboxProvider>
       </CardStatsProvider>

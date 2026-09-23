@@ -205,3 +205,10 @@
   background: rgba(255,255,255,0.02);
 }
 .owned .missingName { font-weight: 600; }
+
+/* ── WIDE SCREENS (2026-09-23) ──────────────────────────────────────────────
+   A goal is a row, and a 2000px row is mostly bar. Past 1600px the goals sit
+   side by side; `start` keeps an opened goal from stretching its neighbour. */
+@media (min-width: 1600px) {
+  .goals { display: grid; grid-template-columns: repeat(auto-fill, minmax(640px, 1fr)); align-items: start; gap: 8px; }
+}

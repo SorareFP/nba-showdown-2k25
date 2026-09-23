@@ -53,3 +53,28 @@
 .recoverLine { font-size: 13px; color: var(--text); flex: 1 1 220px; }
 .recoverBtns { display: flex; gap: 6px; }
 .recoverBtns button { padding: 7px 14px; font-size: 13px; }
+
+/* -- A BIG MONITOR (2026-09-23) -- PlayTab renders this only past useIsWide
+   (2200px). The court and scoreboard take the main column; the game log and
+   the analytics dock OPEN in a rail beside them, pinned under the header,
+   so a whole game reads without scrolling or unfolding anything. */
+.wideGame {
+  /* A size up, the whole game area at once: the board's type was set for a
+     laptop (7 to 14 pixels) and reads small from a desk's distance on a big
+     monitor. Full-screen card overlays undo it (CardLightbox --ui-zoom). */
+  --ui-zoom: 1.2; zoom: var(--ui-zoom);
+  display: grid; grid-template-columns: minmax(0, 1fr) 440px; gap: 16px; align-items: start;
+}
+.wideMain { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.wideRail {
+  /* Lengths here are in the zoomed box's pixels, so the pin and the height
+     divide the header offset and the viewport by the zoom. */
+  position: sticky; top: calc(76px / var(--ui-zoom)); height: calc((100vh - 92px) / var(--ui-zoom));
+  display: flex; flex-direction: column; gap: 10px; min-height: 0;
+}
+/* Opened, the analytics table scrolls in the lower part of the rail; the log keeps the rest. */
+.railAnalytics { flex: 0 1 auto; max-height: 55%; overflow-y: auto; min-height: 0; }
+/* A 4K screen at 100% scaling: the same game, half again as large. */
+@media (min-width: 3000px) {
+  .wideGame { --ui-zoom: 1.5; }
+}

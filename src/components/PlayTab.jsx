@@ -11,6 +11,7 @@ import { boxScoreFor } from '../game/boxScore.js';
 // rejected play reports through the module-level sink rather than through
 // useDialogs(). See notify() in ui/dialogs.jsx.
 import { useDialogs, notify } from '../ui/dialogs.jsx';
+import { useIsWide } from '../ui/useIsWide.js';
 import { playCrunch, playBuzzer } from '../game/gameAudio.js';
 import { useAuth } from '../firebase/AuthProvider.jsx';
 import { loadDecks } from '../firebase/savedDecks.js';
@@ -112,6 +113,7 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
   const [game, dispatch] = useReducer(gameReducer, saved?.game ?? null);
   const [restoredPreset, setRestoredPreset] = useState(saved?.preset ?? null);
   const livePreset = preset ?? restoredPreset;
+  const wide = useIsWide();
   const { ask, toast } = useDialogs();
   const { user } = useAuth();
   const uid = user?.uid ?? null;
@@ -754,6 +756,8 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
     if (livePreset) onPresetFinish?.(null);
   };
 
+  const board = boardFor({ game, handlers, gameOpponent, playedLevel });
+
   return (
     <div className={styles.layout}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
@@ -764,11 +768,36 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
           {livePreset ? '✕ Leave fixture' : '✕ Abandon game'}
         </button>
       </div>
-      {/* Whose die it is, where the a-b-a-b roll is enforced (2026-09-18). */}
-      <Scoreboard game={game} rollGate={gameOpponent === 'ai' ? rollGate(game) : null} />
-      <GameLog log={game.log} />
-      {/* Below the court on a phone (PlayTab.module.css .analyticsSlot). */}
-      <div className={styles.analyticsSlot}><AnalyticsPanel analytics={game.analytics} /></div>
+      {wide ? (
+        // A BIG MONITOR (useIsWide): the scoreboard and the court in the main
+        // column, the log and the analytics docked open in a rail beside them.
+        <div className={styles.wideGame}>
+          <div className={styles.wideMain}>
+            <Scoreboard game={game} rollGate={gameOpponent === 'ai' ? rollGate(game) : null} />
+            {board}
+          </div>
+          <aside className={styles.wideRail} aria-label="Game log and analytics">
+            <GameLog log={game.log} docked />
+            <div className={styles.railAnalytics}><AnalyticsPanel analytics={game.analytics} /></div>
+          </aside>
+        </div>
+      ) : (
+        <>
+          {/* Whose die it is, where the a-b-a-b roll is enforced (2026-09-18). */}
+          <Scoreboard game={game} rollGate={gameOpponent === 'ai' ? rollGate(game) : null} />
+          <GameLog log={game.log} />
+          {/* Below the court on a phone (PlayTab.module.css .analyticsSlot). */}
+          <div className={styles.analyticsSlot}><AnalyticsPanel analytics={game.analytics} /></div>
+          {board}
+        </>
+      )}
+    </div>
+  );
+}
+
+/** The court, the hands and the phase bar: one element, placed by PlayTab's layout. */
+function boardFor({ game, handlers, gameOpponent, playedLevel }) {
+  return (
       <CourtBoard
         game={game}
         setGame={handlers.setGame}
@@ -794,7 +823,6 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
         // person at the screen, and hiding one from the other is theatre.
         coachTeam={gameOpponent === 'ai' ? 'B' : null}
       />
-    </div>
   );
 }
 

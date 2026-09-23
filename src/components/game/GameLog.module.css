@@ -10,6 +10,12 @@
 .teamB   { border-left:3px solid var(--blue);   background:rgba(59,130,246,0.07); }
 .sys     { color:#64748B; font-style:italic; }
 
+/* DOCKED in the wide-monitor rail (PlayTab): always open and as tall as the
+   rail allows. The rail's zoom does the sizing up. */
+.docked { display:flex; flex-direction:column; min-height:0; flex:1 1 auto; }
+.docked .scroll { max-height:none; flex:1 1 auto; min-height:0; padding:8px; gap:4px; }
+.docked .entry { font-size:12px; padding:4px 10px; }
+
 @media (max-width: 600px) {
   .toggle { padding: 7px 10px; gap: 6px; }
   .toggleTitle { font-size: 10px; }

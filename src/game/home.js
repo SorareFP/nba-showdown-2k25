@@ -23,6 +23,11 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
+    id: 'wide-screens', date: '2026-09-23', title: 'Built for a big monitor',
+    body: 'On a wide screen the app now uses the width: more cards per row in your collection, collection goals side by side, and in a game the court is a size larger with the game log and analytics open in a rail beside it, so a whole game reads without scrolling. Laptops and phones look exactly as before.',
+    to: 'play', cta: 'Play',
+  },
+  {
     id: 'recover-game', date: '2026-09-23', title: 'A game in progress is never lost',
     body: 'Any game in progress that gets replaced or cleared — another device, a new game, a crash, even one you abandon — is kept. Play and Home offer it under "Recover a game", and Resume puts you back where you were. If a screen ever breaks, it now says so and offers to reload instead of going blank.',
     to: 'play', cta: 'Play',

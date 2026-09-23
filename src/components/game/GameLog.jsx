@@ -2,8 +2,14 @@ import { useState, useEffect, useRef } from 'react';
 import styles from './GameLog.module.css';
 import { ENGINE_STAMP } from '../../game/engine.js';
 
-export default function GameLog({ log }) {
-  const [open, setOpen] = useState(false);
+/**
+ * `docked`: the wide-monitor rail beside the court (PlayTab, useIsWide). The
+ * log is always open there and fills the rail's height, so the whole game
+ * reads at a glance; there is nothing to fold.
+ */
+export default function GameLog({ log, docked = false }) {
+  const [openState, setOpen] = useState(false);
+  const open = docked || openState;
   const scrollRef = useRef(null);
   const bottomRef = useRef(null);
   useEffect(() => {
@@ -32,14 +38,22 @@ export default function GameLog({ log }) {
   };
 
   return (
-    <div className={styles.panel}>
+    <div className={`${styles.panel} ${docked ? styles.docked : ''}`}>
       <div style={{ display: 'flex', alignItems: 'stretch' }}>
-        <button className={styles.toggle} style={{ flex: 1 }} onClick={() => setOpen(o => !o)}>
-          <span className={styles.toggleTitle}>Game Log</span>
-          <span className={styles.last}>{last ? last.msg.substring(0,60)+(last.msg.length>60?'…':'') : 'Game started'}</span>
-          <span className={styles.count}>{log.length} entries</span>
-          <span>{open ? '▲' : '▼'}</span>
-        </button>
+        {docked ? (
+          <div className={styles.toggle} style={{ flex: 1 }}>
+            <span className={styles.toggleTitle}>Game Log</span>
+            <span className={styles.last} />
+            <span className={styles.count}>{log.length} entries</span>
+          </div>
+        ) : (
+          <button className={styles.toggle} style={{ flex: 1 }} onClick={() => setOpen(o => !o)}>
+            <span className={styles.toggleTitle}>Game Log</span>
+            <span className={styles.last}>{last ? last.msg.substring(0,60)+(last.msg.length>60?'…':'') : 'Game started'}</span>
+            <span className={styles.count}>{log.length} entries</span>
+            <span>{open ? '▲' : '▼'}</span>
+          </button>
+        )}
         <button className={styles.toggle} style={{ flex: '0 0 auto', padding: '0 10px' }} onClick={copyLog} title="Copy the whole log to the clipboard">
           {copied ? '✓ Copied' : '⧉ Copy'}
         </button>

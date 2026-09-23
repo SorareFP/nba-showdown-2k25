@@ -140,6 +140,10 @@ const COMPOSED_STRATS = new Set([
   'unsung_hero', 'transition_outlet', 'find_the_open_man', 'putback_specialist', 'rim_protector',
   'drop_coverage', 'smothering_defense', 'denial', 'hustle_play', 'glass_cleaner', 'box_out',
   'help_defender',
+  // The Speed twin of Offensive Foul and the answer to the automatic scorers (2026-09-12).
+  'beat_to_the_spot', 'verticality',
+  // Wave two twins (2026-09-23), approved on placeholder art.
+  'blow_by', 'point_god', 'passing_lane', 'clamp_the_reserve', 'feeling_it',
 ]);
 const PHASE_LABEL = { matchup: 'Matchup', pre_roll: 'Pre-roll', scoring: 'Scoring', post_roll: 'Post-roll', reaction: 'Reaction' };
 

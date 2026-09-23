@@ -7,10 +7,11 @@ import {
   getTeam, endSection, doRoll, matchupAdv, getPS, restMinutes, getFatigue, checkNeed, rollGate, CRUNCH_MARGIN, passTurn,
   crunchSearchOptions, clutchAvailable, clutchDiceFor, returnCardToDeck, undoReturnCard, lastReturnedCard,
   fatigueForMinutes, MAX_STRAIGHT_MINUTES, REST_CLEARS_AT, REST_RECOVERY, newGame, pendingRolls, canRollSlot,
+  reboundCheckBonus,
 } from './engine.js';
 import {
   TUTORIAL_TOOLTIPS, TUTORIAL_ROSTER_A_IDS, TUTORIAL_ROSTER_B_IDS, restRuleText, SECTION_MINUTES, HOT_FROM, COLD_TO,
-  markerStep, whatsNext, REB_LEAD_FOR_PAINT, HAND_SIZE, crunchContestBump, firstTiredMinutes, clutchGateMinutes,
+  markerStep, whatsNext, REB_LEAD_FOR_BONUS, REB_LEAD_BONUS, HAND_SIZE, crunchContestBump, firstTiredMinutes, clutchGateMinutes,
 } from './tutorialData.js';
 import { CARD_MAP } from './cards.js';
 import { forfeitNet, FORFEIT_CARDS, aiBuildCardOpts } from './ai.js';
@@ -297,10 +298,11 @@ describe('the rest rule, computed', () => {
     expect(detail('s2_draft_reminder', g)).toContain(restRuleText());
   });
 
-  it('the REB paint check opens at the rebound lead the lessons quote', () => {
-    const at = lead => { const g = toRolling(tutorialGame()); g.teamA.rebounds = 10 + lead; g.teamB.rebounds = 10; return Boolean(endSection(g).reboundBonuses?.A?.paintCheck); };
-    expect(at(REB_LEAD_FOR_PAINT)).toBe(true);
-    expect(at(REB_LEAD_FOR_PAINT - 1)).toBe(false);
+  it('the glass winner\'s bonus on the REB paint check comes at the lead the lessons quote', () => {
+    const at = lead => { const g = toRolling(tutorialGame()); g.teamA.rebounds = 10 + lead; g.teamB.rebounds = 10; return reboundCheckBonus(endSection(g), 'A'); };
+    expect(REB_LEAD_BONUS).toBeGreaterThan(0);
+    expect(at(REB_LEAD_FOR_BONUS)).toBe(REB_LEAD_BONUS);
+    expect(at(REB_LEAD_FOR_BONUS - 1)).toBe(0);
   });
 
   it('a section on the floor adds SECTION_MINUTES, as the lessons say', () => {

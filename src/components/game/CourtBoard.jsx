@@ -1792,12 +1792,14 @@ function TrackPanel({ game, side }) {
   return (
     <div className={`${styles.trackPanel} ${side==='left'?styles.trackL:styles.trackR}`}>
       <Track l="AST" v={team.assists} col={col} max={10} bonus={team.assists>=5}/>
-      <Track l="REB" v={rebDiff===0?'0':`+${absDiff}`} col={leadCol} max={10} raw={team.rebounds}/>
+      {/* ✓ when the bank buys a rebound paint check; the glass winner's +2 beside it. */}
+      <Track l="REB" v={rebDiff===0?'0':`+${absDiff}`} col={leadCol} max={10} raw={team.rebounds}
+        bonus={reboundCheckOpen(game, teamKey)} extra={reboundCheckBonus(game, teamKey) ? `+${reboundCheckBonus(game, teamKey)}` : null}/>
     </div>
   );
 }
 
-function Track({l,v,col,max,bonus,raw}){
+function Track({l,v,col,max,bonus,raw,extra}){
   const numV = typeof v === 'number' ? v : parseInt(v) || 0;
   const pct=Math.min(100,(Math.abs(numV)/max)*100);
   return (
@@ -1807,6 +1809,7 @@ function Track({l,v,col,max,bonus,raw}){
       <div className={styles.tv} style={{color:col}}>{v}</div>
       {raw !== undefined && <div className={styles.traw}>({raw})</div>}
       {bonus&&<div className={styles.tbonus}>✓</div>}
+      {extra&&<div className={styles.tbonus} title="The next rebound paint check's bonus, for winning the glass">{extra}</div>}
     </div>
   );
 }

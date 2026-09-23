@@ -502,19 +502,35 @@ export const SPEND_COSTS = {
  * (scripts/analysis/reboundEconomy.mjs).
  *
  * The user: "assists can be fired for shot checks on an aggregate basis,
- * while rebounding is nerfed because it is a net +/-." Measured with the gate
- * at 3: a team makes about 44 rebounds a game and turns them into about a
- * point and a half; 31 are still in the bank at the final buzzer.
+ * while rebounding is nerfed because it is a net +/-. I'd like to make
+ * rebounding more important, close to equally important as assists are."
+ * Under the old rule (a 3+ section lead opened ONE check), a team made about
+ * 44 rebounds a game, turned them into 1.5 points, and still held 31 at the
+ * final buzzer; assists turned into 8.4. Swept over 600 AI games a variant:
+ *
+ *                               REB pts  AST pts  REB left  team score
+ *   old: lead 3+ opens one        1.5      8.4      31.4      119.6
+ *   old gate, check at +3         2.1      8.4      31.5      121.1
+ *   open at 8 REB                 3.5      8.5       9.0      122.1
+ *   open at 6 REB                 4.9      8.6       6.9      123.4
+ *   open at 5 REB                 6.0      8.2       5.7      124.5
+ *   open at 5, glass winner +2    6.4      8.1       5.6      124.3   <- SHIPPED
+ *   open at 4 REB                 7.8      8.6       4.7      127.0
+ *
+ * So the bank is a currency like the assists: 5 REB buys a paint check for
+ * any player at any time, the same price as the assist paint check. The
+ * net +/- still pays at a section's end: the leader's +1 AST as before, and
+ * a lead of 3+ puts the next rebound check at +2.
  */
 export const REBOUND_RULES = {
   /** Section-end lead on the Rebound Track that opens the check; 0 opens it whenever the bank covers the cost. */
-  paintGate: 3,
+  paintGate: 0,
   /** With a gate: one check per published lead. */
-  oncePerSection: true,
+  oncePerSection: false,
   /** On every rebound paint check. */
   paintBonus: 0,
   /** On the first check after winning a section's glass by `leadGate` or more. */
-  leadBonus: 0,
+  leadBonus: 2,
   leadGate: 3,
 };
 
@@ -848,7 +864,7 @@ export function checkNeed(g, teamKey, idx, type, { extra = 0, banked = true } = 
  * THREE ROUTES SCORE IN THE PAINT and only one of them used to say so. A card
  * that announces a paint check resolves through applyShotCheck, which set
  * `lastPaintScore` and paid Short-Roll Playmaker's assist; the two SPEND
- * routes — 5 AST for a paint check, and the rebound-differential paint check —
+ * routes — 5 AST for a paint check, and the 5-REB rebound paint check —
  * scored the points and told nobody. So a designated playmaker could hit two
  * paint checks in a period and collect nothing (the user, 2026-09-14: "Not
  * sure my short-roll playmaker was given their assists here", with both of
@@ -1018,8 +1034,8 @@ export function spendReboundBonus(g, teamKey, type, playerIdx) {
   // point went to players on the worst shot line in the set. Removing it leaves
   // conversion gated on the boosts, which is what the boosts are for.
   //
-  // The +3 rebound-differential paint check above is untouched: it is a TEAM
-  // reward the player chooses a target for, so shooting still decides it.
+  // The rebound paint check above is a different thing: it spends the TEAM
+  // bank on a shooter the coach chooses, so shooting still decides it.
 
   return { game: ng, ok: false, msg: 'Unknown rebound bonus type' };
 }
@@ -1536,9 +1552,12 @@ export function endSection(g) {
     const wk = rd > 0 ? 'A' : 'B';
     const wTeam = getTeam(ng, wk);
 
-    // Winning the rebound track at section end → +1 stored assist
+    // Winning the rebound track at section end → +1 stored assist, and a
+    // big enough lead puts the next rebound paint check at +2 (REBOUND_RULES).
     wTeam.assists++;
-    ng.log = [...ng.log, { team: wk, msg: `Rebound Track lead → ${wTeam.name} +1 AST` }];
+    const edge = REBOUND_RULES.leadBonus && absRd >= REBOUND_RULES.leadGate
+      ? ` · next rebound paint check +${REBOUND_RULES.leadBonus}` : '';
+    ng.log = [...ng.log, { team: wk, msg: `Rebound Track lead → ${wTeam.name} +1 AST${edge}` }];
 
     // Track rebound bonuses earned this section for UI display
     if (!ng.reboundBonuses) ng.reboundBonuses = {};

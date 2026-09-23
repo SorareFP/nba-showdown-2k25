@@ -5,7 +5,7 @@
 import {
   getTeam, calcAdv, matchupAdv, getPS, getFatigue, fatigueForMinutes, FATIGUE_STEP_PAST_16,
   restMinutes, REST_CLEARS_AT, REST_RECOVERY, MAX_STRAIGHT_MINUTES, restRuleLifted, mustRest,
-  shotCheck, checkNeed, matchupContest, SPEND_COSTS, CRUNCH_MARGIN,
+  shotCheck, checkNeed, matchupContest, SPEND_COSTS, REBOUND_RULES, CRUNCH_MARGIN,
   clutchAvailable, clutchDiceFor, clutchEligible, crunchSearchOptions, lastReturnedCard, periodLabel, rollGate,
   canRollSlot,
 } from './engine.js';
@@ -222,8 +222,9 @@ export const SECTION_MINUTES = 4;
 /** The natural dice that leave a marker (doRoll: `die >= 19` hot, `die <= 2` cold) — pinned by a test that rolls them. */
 export const HOT_FROM = 19;
 export const COLD_TO = 2;
-/** The rebound-track lead at a section's end that opens the REB paint check (endSection: `absRd >= 3`) — pinned by a test. */
-export const REB_LEAD_FOR_PAINT = 3;
+/** The rebound-track lead at a section's end that puts the next REB paint check at +REB_LEAD_BONUS (REBOUND_RULES) — pinned by a test. */
+export const REB_LEAD_FOR_BONUS = REBOUND_RULES.leadGate;
+export const REB_LEAD_BONUS = REBOUND_RULES.leadBonus;
 /** The hand every section draws back up to (newGame and endSection both write a bare 7) — pinned by a test. */
 export const HAND_SIZE = 7;
 
@@ -601,7 +602,7 @@ export function whatsNext() {
     `${MAX_STRAIGHT_MINUTES} straight minutes is the limit: a player at ${MAX_STRAIGHT_MINUTES}+ sits the next section, except in the fourth quarter and overtime. A section on the bench clears a tracker at ${REST_CLEARS_AT} minutes or less and takes ${REST_RECOVERY} off above that.`,
     `Coaches run from ${ladder[0].label} to ${ladder[ladder.length - 1].label}. ${fair.label} is the fair default and pays the standard rate (${fair.pay}×); ${listNames(easier.map(r => `${r.label} ${r.pay}×`))} are easier and pay less; ${listNames(harder.map(r => `${r.label} ${r.pay}×`))} field better-built teams and pay more.`,
     `A deck is ${deck} strategy cards, at most ${caps.common} copies of a common, ${caps.uncommon} of an uncommon, ${caps.rare} of a rare and ${caps.legendary} of a legendary.`,
-    `Spends: ${SPEND_COSTS.assistBoost} AST for +1 on a shot check, ${SPEND_COSTS.assistThree} AST for a 3PT check, ${SPEND_COSTS.assistPaint} AST for a paint check, ${SPEND_COSTS.reboundPaint} REB for a paint check after a section you finish ${REB_LEAD_FOR_PAINT}+ ahead on the rebound track.`,
+    `Spends: ${SPEND_COSTS.assistBoost} AST for +1 on a shot check, ${SPEND_COSTS.assistThree} AST for a 3PT check, ${SPEND_COSTS.assistPaint} AST for a paint check, ${SPEND_COSTS.reboundPaint} REB for a paint check (at +${REB_LEAD_BONUS} the first time after a section you finish ${REB_LEAD_FOR_BONUS}+ ahead on the rebound track).`,
     'A tie after regulation goes to overtime: another Crunch-Time section, with a fresh Clutch Possession, timeout and deck search.',
   ];
 }
@@ -820,7 +821,7 @@ export const TUTORIAL_TOOLTIPS = [
   {
     id: 's2_assists_intro',
     text: "Did you notice your assist and rebound tracks? You can spend them on bonus shot checks! Check the buttons below each player.",
-    detail: () => `${SPEND_COSTS.assistBoost} AST = +1 to a shot check. ${SPEND_COSTS.assistThree} AST = a 3PT check, ${SPEND_COSTS.assistPaint} AST = a paint check, for any player — their bonus rides on the die, and the button shows the roll he needs. And after a section you finish ${REB_LEAD_FOR_PAINT}+ ahead on the rebound track, ${SPEND_COSTS.reboundPaint} REB buys a paint check too. The first time you reach 5 assists you draw a bonus card!`,
+    detail: () => `${SPEND_COSTS.assistBoost} AST = +1 to a shot check. ${SPEND_COSTS.assistThree} AST = a 3PT check, ${SPEND_COSTS.assistPaint} AST = a paint check, for any player — their bonus rides on the die, and the button shows the roll he needs. Rebounds spend the same way: ${SPEND_COSTS.reboundPaint} REB buys a paint check for any player, at +${REB_LEAD_BONUS} the first time after a section you finish ${REB_LEAD_FOR_BONUS}+ ahead on the rebound track. The first time you reach 5 assists you draw a bonus card!`,
     section: 2,
     priority: 70,
     trigger: { phase: 'scoring', condition: (g) => g.quarter === 1 && g.section === 2 && g.scoringPasses >= 99 },

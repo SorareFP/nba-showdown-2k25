@@ -173,10 +173,14 @@ export default function HowToPlay({ scrollToSection, onStartTutorial, tutorialRu
             <li><strong>5 AST:</strong> a paint check for any player, the same way with their Paint Bonus.</li>
           </ul>
           <h4>Rebound Track</h4>
-          <p>Rebounds accumulate too, and the <strong>difference</strong> between the teams is what pays:</p>
+          <p>Rebounds accumulate too, and you spend them the way you spend assists:</p>
           <ul>
-            <li><strong>Leading at section end:</strong> +1 stored assist.</li>
-            <li><strong>Leading by 3 or more:</strong> a second-chance paint check, for 5 REB.</li>
+            <li><strong>5 REB:</strong> a paint check for any player, any time. Their Paint Bonus rides on the die; the button shows the roll he needs.</li>
+          </ul>
+          <p>At the end of a section, the <strong>difference</strong> between the teams pays too:</p>
+          <ul>
+            <li><strong>Leading:</strong> +1 stored assist.</li>
+            <li><strong>Leading by 3 or more:</strong> your next rebound paint check is at <strong>+2</strong>.</li>
           </ul>
         </AccordionSection>
 

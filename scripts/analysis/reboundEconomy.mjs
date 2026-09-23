@@ -26,6 +26,9 @@ export const VARIANTS = {
   open8: { paintGate: 0, paintBonus: 0, oncePerSection: false, cost: 8 },
   // Open at 6, and the section's glass winner (3+) takes its check at +2.
   hybrid: { paintGate: 0, paintBonus: 0, oncePerSection: false, cost: 6, leadBonus: 2, leadGate: 3 },
+  // Priced like the assist paint check (5), the glass winner's first check at +2.
+  hybrid5: { paintGate: 0, paintBonus: 0, oncePerSection: false, cost: 5, leadBonus: 2, leadGate: 3 },
+  open4: { paintGate: 0, paintBonus: 0, oncePerSection: false, cost: 4 },
 };
 
 function rngFrom(seed) {

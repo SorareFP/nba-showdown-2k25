@@ -3,7 +3,7 @@
 // section-end lead on the Rebound Track, or any time the bank covers it), the
 // bonus it carries, and the glass winner's extra. The engine enforces the
 // gate itself; the board and the coach read the same predicate.
-import { describe, it, expect, vi, afterEach } from 'vitest';
+import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
 import {
   newGame, getTeam, endSection, spendReboundBonus, checkNeed, SPEND_COSTS,
   REBOUND_RULES, reboundCheckOpen, reboundCheckBonus,
@@ -29,8 +29,24 @@ function game() {
 const DEFAULTS = { ...REBOUND_RULES };
 const DEFAULT_COST = SPEND_COSTS.reboundPaint;
 afterEach(() => { Object.assign(REBOUND_RULES, DEFAULTS); SPEND_COSTS.reboundPaint = DEFAULT_COST; });
+const GATED = { paintGate: 3, oncePerSection: true, paintBonus: 0, leadBonus: 0, leadGate: 3 };
 
-describe('the gated check (the rule today)', () => {
+describe('the rule shipped 2026-09-23', () => {
+  it("opens the bank like the assists, at the assist paint check's price, with +2 for a 3+ glass win", () => {
+    expect(REBOUND_RULES).toMatchObject({ paintGate: 0, oncePerSection: false, paintBonus: 0, leadBonus: 2, leadGate: 3 });
+    expect(SPEND_COSTS.reboundPaint).toBe(SPEND_COSTS.assistPaint);
+  });
+
+  it('says so in the section-end log', () => {
+    const g = game();
+    g.teamA.rebounds = 14; g.teamB.rebounds = 10;
+    const lines = endSection(g).log.map(l => l.msg);
+    expect(lines.some(m => /Rebound Track lead → .* \+1 AST · next rebound paint check \+2/.test(m))).toBe(true);
+  });
+});
+
+describe('the gated check (the rule before 2026-09-23, still a setting)', () => {
+  beforeEach(() => { Object.assign(REBOUND_RULES, GATED); });
   it('opens only for a section won on the glass by the gate, and only with the bank to pay', () => {
     const g = game();
     g.teamA.rebounds = 20;
@@ -101,6 +117,7 @@ describe('the button and the coach ask the check the spend will take', () => {
   });
 
   it('gated: the coach always takes the published check', () => {
+    Object.assign(REBOUND_RULES, GATED);
     const g = game();
     g.teamA.rebounds = SPEND_COSTS.reboundPaint;
     g.reboundBonuses = { A: { diff: 3, paintCheck: true } };

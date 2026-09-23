@@ -23,6 +23,11 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
+    id: 'rebounds-spend', date: '2026-09-23', title: 'Rebounds spend like assists',
+    body: 'Your rebounds are a currency now: 5 REB buys a paint check for any player, any time, the same price as the assist paint check. Winning a section on the glass still pays: +1 assist, and a lead of 3 or more puts your next rebound check at +2. Teams used to finish games with 30 rebounds they could never use; a big front line now turns them into points.',
+    to: 'play', cta: 'Play',
+  },
+  {
     id: 'wide-screens', date: '2026-09-23', title: 'Built for a big monitor',
     body: 'On a wide screen the app now uses the width: more cards per row in your collection, collection goals side by side, and in a game the court is a size larger with the game log and analytics open in a rail beside it, so a whole game reads without scrolling. Laptops and phones look exactly as before.',
     to: 'play', cta: 'Play',

@@ -1,0 +1,95 @@
+# THE LIVE SERIES' NIGHTLY JOB (2026-09-23).
+#
+# The user: "Those will need a job to run each day that reallocates stats and
+# re-exports the faces." Every night in the NBA season: regenerate the `live`
+# set from the day's data, re-export its faces with the Studio (a headless
+# browser), rebuild the thumbnails, commit the result and publish the site.
+#
+# GATED by the repository variable LIVE_SERIES (Settings → Variables → Actions):
+# it runs only when that is "on", so it can exist — and be run by hand — long
+# before the season. The season mode of scripts/cardgen/generateLive.js is not
+# wired yet (see docs/plans/2026-09-23-live-series-design.md); until it is, a
+# manual run mirrors the base set, which is the same set the repo already has.
+#
+# Secrets it reads: DUNKSANDTHREES_API_KEY (the keyed API, for what the public
+# page cannot serve). The push and the Pages deploy use the workflow's own
+# GITHUB_TOKEN (contents: write).
+#
+# THE FACES ARE NEVER COMMITTED. One set's faces are ~230 MB and every one of
+# them changes every night, so they go straight from the runner to Pages
+# (`npm run deploy` publishes dist/, and gh-pages keeps whatever a later
+# deploy does not touch). Only the two JSON files are committed, so the app's
+# numbers and the faces on Pages come from the same run. public/cards/live is
+# gitignored for the same reason.
+name: Live Series
+
+on:
+  schedule:
+    # 09:00 UTC — after the previous night's games are in dunksandthrees' tables.
+    - cron: '0 9 * * *'
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'generateLive mode (mirror until the season mode is wired)'
+        default: mirror
+        type: choice
+        options: [mirror, season]
+
+concurrency:
+  group: live-series
+  cancel-in-progress: false
+
+jobs:
+  live:
+    if: ${{ vars.LIVE_SERIES == 'on' || github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: write
+    env:
+      DUNKSANDTHREES_API_KEY: ${{ secrets.DUNKSANDTHREES_API_KEY }}
+      STUDIO_URL: http://localhost:5173/nba-showdown-2k25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: npm ci
+      - run: pip install pillow
+      # Puppeteer's Chromium for the face export.
+      - run: npx puppeteer browsers install chrome
+
+      - name: Regenerate the Live Series
+        run: node scripts/cardgen/generateLive.js --mode ${{ github.event.inputs.mode || 'season' }}
+
+      - name: Start the Studio
+        run: |
+          npx vite --port 5173 --strictPort > studio.log 2>&1 &
+          for i in $(seq 1 60); do curl -sf "$STUDIO_URL/" > /dev/null && break; sleep 1; done
+          curl -sf "$STUDIO_URL/" > /dev/null
+
+      - name: Re-export the faces
+        run: |
+          node scripts/studio/export.js --set live
+          python scripts/studio/thumbs.py --set live
+
+      - name: Commit the day's numbers
+        run: |
+          git config user.name "live-series[bot]"
+          git config user.email "live-series[bot]@users.noreply.github.com"
+          git add card-data/generated/cards-live.json card-data/generated/live-status.json
+          git diff --cached --quiet && echo "nothing moved today" || git commit -m "chore(live): the Live Series as of $(date -u +%F)"
+          git push
+
+      # dist/ carries the fresh faces from public/cards/live; they are not in
+      # the commit above (see the header). gh-pages pushes with GITHUB_TOKEN.
+      - name: Publish
+        run: |
+          git config url."https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/".insteadOf "https://github.com/"
+          npm run deploy

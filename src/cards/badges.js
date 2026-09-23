@@ -100,7 +100,7 @@
 // every live and defunct franchise, on treated AND untreated fields, in
 // src/cards/treatments.test.js.
 import { MIN_ACCENT_CONTRAST, pickInkFor, readableOn } from './fieldTheme.js';
-import { GOLD } from './treatments.js';
+import { GOLD, BLUE } from './treatments.js';
 
 /**
  * The badge ids.
@@ -120,6 +120,8 @@ export const DISSONANCE_BADGE = 'dissonance';
 export const TEAM_REWARD_BADGE = 'team-reward';
 export const SET_REWARD_BADGE = 'set-reward';
 export const THROWBACK_BADGE = 'throwback';
+/** The Live Series (2026-09-23): a 2026-27 card whose numbers move with the season. */
+export const LIVE_BADGE = 'live';
 
 /**
  * The salary at which a best season is a SUPER season.
@@ -342,6 +344,13 @@ export const BADGES = [
     id: THROWBACK_BADGE,
     text: 'THROWBACK',
     fill: theme => theme.accentOnField,
+  },
+  {
+    // The one pill that IS its set's colour: a live card is the same player as
+    // his base card, and the blue is what tells the two apart at a glance.
+    id: LIVE_BADGE,
+    text: 'LIVE',
+    fill: theme => readableOn(BLUE, theme.field, MIN_ACCENT_CONTRAST),
   },
 ];
 

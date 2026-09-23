@@ -50,6 +50,9 @@ const SET_FILES = {
   '2026-27': 'cards-2026-27.json',
   'super-season': 'cards-super-season.json',
   rookie: 'cards-rookie.json',
+  // The Live Series (2026-09-23): its photos are the base set's (setPaths),
+  // its faces its own — public/cards/live/.
+  live: 'cards-live.json',
   'summer-standouts': 'cards-summer-standouts.json',
   dissonance: 'cards-dissonance.json',
   // Registered when the team-completion set shipped. A set missing from this

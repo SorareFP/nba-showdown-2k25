@@ -45,6 +45,7 @@ export const PACK_COPY = {
 
   super_season:   { group: 'Other Sets', desc: '3 Super Season players' },
   rookie_pack:    { group: 'Other Sets', desc: '5 Rookie cards + 2 strats' },
+  live_pack:      { group: 'Other Sets', desc: '5 Live Series cards + 2 strats · this season, as it happens' },
   standouts:      { group: 'Other Sets', desc: '3 Summer Standouts' },
 };
 

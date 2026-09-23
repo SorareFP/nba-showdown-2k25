@@ -20,6 +20,7 @@ import {
   CURRENT_SET,
   DEFAULT_PHOTO_EXT,
   FINISHED_SET,
+  LIVE_SET,
   ROOKIE_SET,
   SETS,
   SET_IDS,
@@ -40,7 +41,8 @@ import {
 describe('the declared set list', () => {
   it('holds the fifteen sets the studio offers', () => {
     expect(SET_IDS).toEqual([
-      '2026-27', '2025-26', 'super-season', 'rookie', 'summer-standouts',
+      // The Live Series (2026-09-23) sits with the season it mirrors.
+      '2026-27', 'live', '2025-26', 'super-season', 'rookie', 'summer-standouts',
       'dissonance', 'team-rewards', 'set-rewards', 'wnba', 'wnba-super-season', 'wnba-rookie',
       'wnba-team-rewards', 'wnba-set-rewards',
       // The Free Agents catch-all, one per league (2026-09-10).
@@ -322,9 +324,15 @@ describe('isEditableSet', () => {
 });
 
 describe('every set owns a separate directory', () => {
+  // THE ONE EXCEPTION IS THE LIVE SERIES (2026-09-23): it is the base set's
+  // players again, so its photos, crops and team colours ARE the base set's —
+  // one photo curated once, worn by both faces. Its EXPORT is still its own,
+  // because the faces differ (the trim, the pill, and soon the numbers).
+  const OWN_ART = SET_IDS.filter(id => id !== LIVE_SET);
+
   it('scopes photos, crops, team colours and exports by set id', () => {
     const seen = new Set();
-    for (const id of SET_IDS) {
+    for (const id of OWN_ART) {
       const paths = setPaths(id);
       expect(paths.root).toBe(`${ART_ROOT}/sets/${id}`);
       expect(paths.photos).toContain(`/${id}/`);
@@ -340,11 +348,27 @@ describe('every set owns a separate directory', () => {
     }
   });
 
+  it('points the Live Series at the base set\'s art and at an export of its own', () => {
+    const live = setPaths(LIVE_SET);
+    const base = setPaths(CURRENT_SET);
+    expect(live.photos).toBe(base.photos);
+    expect(live.crops).toBe(base.crops);
+    expect(live.teamOverrides).toBe(base.teamOverrides);
+    expect(live.cards).toBe(`public/cards/${LIVE_SET}`);
+    expect(live.cards).not.toBe(base.cards);
+    // And the base set is the ONLY set it shares with: the borrowed paths
+    // collide with nothing else in the model.
+    const others = OWN_ART.filter(id => id !== CURRENT_SET).map(id => setPaths(id));
+    for (const o of others) expect(o.photos).not.toBe(live.photos);
+  });
+
   it('gives the same player a different photo URL in each set', () => {
     // The id spaces overlap BY DESIGN — every set derives ids with the same
     // rule — so the set is the only thing keeping one card's art off another's.
-    const urls = SET_IDS.map(id => photoUrlPath('LeBron_James', id, DEFAULT_PHOTO_EXT));
-    expect(new Set(urls).size).toBe(SET_IDS.length);
+    const urls = OWN_ART.map(id => photoUrlPath('LeBron_James', id, DEFAULT_PHOTO_EXT));
+    expect(new Set(urls).size).toBe(OWN_ART.length);
     for (const url of urls) expect(url).toContain('LeBron_James.jpg');
+    expect(photoUrlPath('LeBron_James', LIVE_SET, DEFAULT_PHOTO_EXT))
+      .toBe(photoUrlPath('LeBron_James', CURRENT_SET, DEFAULT_PHOTO_EXT));
   });
 });

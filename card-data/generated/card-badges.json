@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-22T17:09:49.385Z",
+ "generatedAt": "2026-09-23T12:32:44.076Z",
  "set": "2026-27",
  "provisional": true,
  "source": "the Super Season and Rookie exclusion lists: a player whose best or rookie season is 2026 gets no card in that set, because his base card already IS that season — so the fact is printed on the base card as a badge instead",
@@ -11,7 +11,8 @@
   "dissonance",
   "team-reward",
   "set-reward",
-  "throwback"
+  "throwback",
+  "live"
  ],
  "counts": {
   "players": 178,
@@ -23,7 +24,8 @@
    "dissonance": 0,
    "team-reward": 0,
    "set-reward": 0,
-   "throwback": 0
+   "throwback": 0,
+   "live": 0
   },
   "printed": {
    "rookie": 33,
@@ -33,7 +35,8 @@
    "dissonance": 0,
    "team-reward": 0,
    "set-reward": 0,
-   "throwback": 0
+   "throwback": 0,
+   "live": 0
   },
   "multiple": 33
  },

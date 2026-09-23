@@ -66,6 +66,9 @@ export const GOLD_LO = '#7A5C16';
 /** The rookie green. One tone — "plain and simple", in the user's words. */
 export const GREEN = '#00A94F';
 export const GREEN_LO = '#03502A';
+/** The Live Series' electric blue (the user, 2026-09-23: "an electric blue trim like the green of the rookie cards"). */
+export const BLUE = '#1E7BFF';
+export const BLUE_LO = '#0B3C8C';
 // BRONZE — the team-completion rewards. Deliberately NOT gold: gold is the
 // Super Season tier and means "one of the best seasons ever played". A reward
 // card means "you finished a roster" — an achievement of collecting rather
@@ -450,10 +453,41 @@ function throwbackLook(theme, ctx = {}) {
   };
 }
 
+/**
+ * BLUE ACCENT — the Live Series (2026-09-23). The rookie treatment's exact
+ * shape in electric blue: the keyline, the ornaments and one band stripe go
+ * blue, the field, band, chart and the player's name stay the team's. A live
+ * card is the same player as his 2026-27 base card with numbers that move
+ * with the season, and the trim is the one thing that says which card you
+ * are holding — so, like the rookie green, it re-colours accents and nothing
+ * else. The LIVE pill is the badge (badges.js), blue on the untreated theme.
+ */
+function blueAccent(theme) {
+  return {
+    ...theme,
+    frame: readableOn(BLUE, theme.field, MIN_DECOR_CONTRAST),
+    accentOnField: readableOn(BLUE, theme.field, MIN_ACCENT_CONTRAST),
+    nameAccent: theme.accentOnField,
+    stripeSecondary: readableOn(BLUE, theme.bandTop, MIN_DECOR_CONTRAST),
+    treatment: {
+      id: 'blue-accent',
+      fieldStops: [theme.field],
+      bandStops: [theme.bandTop, theme.bandBottom],
+      sheen: null,
+      band: null,
+      frameImage: null,
+      bandEdge: readableOn(BLUE, theme.field, MIN_DECOR_CONTRAST),
+      source: BLUE,
+      sourceLow: BLUE_LO,
+    },
+  };
+}
+
 /** Every treatment, by the id a set declares in src/cards/sets.js. */
 export const TREATMENTS = {
   'gold-foil': goldFoil,
   'green-accent': greenAccent,
+  'blue-accent': blueAccent,
   'bronze-accent': bronzeAccent,
   throwback: throwbackLook,
 };

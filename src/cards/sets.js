@@ -38,7 +38,7 @@
 //                   or null — see src/cards/badges.js
 //   treatment       the set-level visual treatment, or null — see treatments.js
 
-import { DISSONANCE_BADGE, ROOKIE_BADGE, SUMMER_STANDOUT_BADGE, SUPER_SEASON_BADGE, TEAM_REWARD_BADGE, SET_REWARD_BADGE, THROWBACK_BADGE, tierBadge } from './badges.js';
+import { LIVE_BADGE, DISSONANCE_BADGE, ROOKIE_BADGE, SUMMER_STANDOUT_BADGE, SUPER_SEASON_BADGE, TEAM_REWARD_BADGE, SET_REWARD_BADGE, THROWBACK_BADGE, tierBadge } from './badges.js';
 
 /** The set currently being built. Every studio write goes under this. */
 export const CURRENT_SET = '2026-27';
@@ -48,6 +48,19 @@ export const SUPER_SEASON_SET = 'super-season';
 
 /** Rookie-year cards, one per player whose rookie year is not the one on his base card. */
 export const ROOKIE_SET = 'rookie';
+
+/**
+ * The Live Series: the base cards as the season moves them (2026-09-23), and
+ * whether it is IN PLAY — in the packs, with a collection goal. Off until the
+ * NBA season starts (the user: "This won't be necessary until the start of
+ * the NBA season, but I want to start to get it wired"); the set itself is
+ * registered and its faces export either way, so flipping this is the whole
+ * launch. DECLARED in liveSeries.js, because the pack engine and the
+ * collection goals read the switch on the server and this file does not ship
+ * there; re-exported here so the app has one place to ask about a set.
+ */
+import { LIVE_SET, LIVE_SERIES_ON } from './liveSeries.js';
+export { LIVE_SET, LIVE_SERIES_ON };
 
 /**
  * The WNBA set. A different LEAGUE, which is a third thing a set can be —
@@ -195,6 +208,24 @@ export const SETS = [
     // only says whether the SET puts one on every card. See src/cards/badges.js.
     badge: null,
     treatment: null,
+  },
+  {
+    // THE LIVE SERIES (the user, 2026-09-23): the 2026-27 base cards again,
+    // "with an electric blue trim like the green of the rookie cards", whose
+    // numbers are re-allocated every day of the season from dunksandthrees'
+    // current-season EPM and the season's game logs, and whose faces are
+    // re-exported by a nightly job. One card per base card, the same id, its
+    // photo the base set's (setPaths). Until the season, a mirror of the base
+    // set — and out of the packs and the collection goals (LIVE_SERIES_ON).
+    id: LIVE_SET,
+    name: 'Live Series',
+    statsSeason: '2026-27, as it happens',
+    kind: 'special',
+    editable: false,
+    hidesEmptyRows: true,
+    showsSeason: false,
+    badge: LIVE_BADGE,
+    treatment: 'blue-accent',
   },
   {
     id: '2025-26',
@@ -689,12 +720,15 @@ export const ART_ROOT = 'card-art';
  */
 export function setPaths(set = CURRENT_SET) {
   const root = `${ART_ROOT}/sets/${set}`;
+  // A live card is its base card's player in the same season: the photo, the
+  // crop and the team colours are the base set's, not a second copy of them.
+  const art = set === LIVE_SET ? `${ART_ROOT}/sets/${CURRENT_SET}` : root;
   return {
     set,
     root,
-    photos: `${root}/photos`,
-    crops: `${root}/crops.json`,
-    teamOverrides: `${root}/team-overrides.json`,
+    photos: `${art}/photos`,
+    crops: `${art}/crops.json`,
+    teamOverrides: `${art}/team-overrides.json`,
     // Where a batch export of THIS set writes. Deliberately not
     // public/cards/players/ — see FINISHED_SET.
     cards: `public/cards/${set}`,

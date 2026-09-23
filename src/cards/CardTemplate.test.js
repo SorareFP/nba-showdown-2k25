@@ -50,6 +50,7 @@ import {
   CURRENT_SET,
   FINISHED_SET,
   IMAGE_EXTENSIONS,
+  LIVE_SET,
   ROOKIE_SET,
   SETS,
   SET_IDS,
@@ -844,9 +845,13 @@ describe('the curated photo is looked up in THIS card\'s set', () => {
   });
 
   it('gives every set its own path, including the two special ones', () => {
+    // Except the Live Series (2026-09-23), whose photos ARE the base set's:
+    // the same player, the same season, one photo curated once — see setPaths
+    // and the sets.test.js pin. Its face is rendered from the base set's art.
     for (const id of SET_IDS) {
       const html = render({ card: MABREY, hasPhoto: true, set: id });
-      expect(srcOf(html), id).toContain(`/card-art/sets/${id}/photos/Marina_Mabrey.jpg`);
+      const artSet = id === LIVE_SET ? CURRENT_SET : id;
+      expect(srcOf(html), id).toContain(`/card-art/sets/${artSet}/photos/Marina_Mabrey.jpg`);
     }
   });
 

@@ -70,6 +70,9 @@ const COPY = [
   // it drags badges.js, fieldTheme.js and treatments.js behind it — the load
   // check below is what noticed.
   'src/cards/playerId.js',
+  // The Live Series' launch switch (2026-09-23): packEngine.js and
+  // collections.js gate the `live` set on it. It imports nothing.
+  'src/cards/liveSeries.js',
   // Free Agents: the request rules and the price, and the never-card list.
   'src/game/freeAgents.js',
   'src/game/neverCard.js',

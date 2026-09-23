@@ -36,6 +36,7 @@ import {
   STATS_SEASON,
   FINISHED_SET,
   FINISHED_STATS_SEASON,
+  LIVE_SET,
   ROOKIE_SET,
   SET_IDS,
   SUPER_SEASON_SET,
@@ -518,6 +519,9 @@ describe('the base set\'s card-type badges', () => {
       'summer-standout': 0,
       dissonance: 0,
       'team-reward': 0, 'set-reward': 0,
+      // LIVE is the Live Series set's own pill (2026-09-23): every card in
+      // that set wears it and no base card does.
+      live: 0,
     });
   });
 
@@ -635,14 +639,16 @@ describe('the special sets in the source list', () => {
       c => c.migratedFrom?.set === WNBA_SUPER_SEASON_SET
     ).length;
 
-  it('offers all fifteen sets, in the order the model declares them', () => {
+  it('offers all sixteen sets, in the order the model declares them', () => {
     // THE MODEL, not the row of buttons. Every set is still a source and still
     // reachable; one of them (`cards`) is now folded behind the selector's
     // disclosure, which is a rendering rule and is pinned separately against
     // visibleSources below. Nothing may fall out of SOURCES to achieve that —
     // a set removed from here is a set the studio cannot open at all.
+    // The Live Series sits second, where sets.js declares it: it is the base
+    // set again, as the season moves it (2026-09-23).
     expect(Object.keys(SOURCES)).toEqual([
-      'pool', 'cards', SUPER_SEASON_SET, ROOKIE_SET, SUMMER_STANDOUTS_SET,
+      'pool', LIVE_SET, 'cards', SUPER_SEASON_SET, ROOKIE_SET, SUMMER_STANDOUTS_SET,
       DISSONANCE_SET, 'team-rewards', SET_REWARDS_SET, WNBA_SET, WNBA_SUPER_SEASON_SET, WNBA_ROOKIE_SET,
       WNBA_TEAM_REWARDS_SET, WNBA_SET_REWARDS_SET,
       // The request-only sets: Free Agents' Throwbacks, one per league.
@@ -777,7 +783,7 @@ describe('the selector\'s reference group', () => {
       expect(source.secondary, source.key).not.toBe(true);
     }
     expect(PRIMARY_SOURCES.map(s => s.key)).toEqual([
-      'pool', SUPER_SEASON_SET, ROOKIE_SET, SUMMER_STANDOUTS_SET,
+      'pool', LIVE_SET, SUPER_SEASON_SET, ROOKIE_SET, SUMMER_STANDOUTS_SET,
       DISSONANCE_SET, 'team-rewards', SET_REWARDS_SET, WNBA_SET, WNBA_SUPER_SEASON_SET, WNBA_ROOKIE_SET,
       WNBA_TEAM_REWARDS_SET, WNBA_SET_REWARDS_SET,
       // Free Agents' Throwbacks: request-only, and live — photos land here.

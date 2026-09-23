@@ -46,6 +46,7 @@ import {
   TEAM_REWARDS_SET,
   SET_REWARDS_SET,
   ROOKIE_SET,
+  LIVE_SET,
   WNBA_SET,
   WNBA_ROOKIE_SET,
   WNBA_TEAM_REWARDS_SET,
@@ -338,7 +339,7 @@ export const CARD_PLAYERS = SHIPPED_CARDS;
  * here the way the pool does.
  */
 const specialModules = import.meta.glob(
-  '../../card-data/generated/cards-{super-season,rookie,summer-standouts,dissonance,team-rewards,set-rewards,wnba,wnba-rookie,wnba-super-season,wnba-team-rewards,wnba-set-rewards,free-agents,throwbacks}.json',
+  '../../card-data/generated/cards-{live,super-season,rookie,summer-standouts,dissonance,team-rewards,set-rewards,wnba,wnba-rookie,wnba-super-season,wnba-team-rewards,wnba-set-rewards,free-agents,throwbacks}.json',
   { eager: true }
 );
 
@@ -372,6 +373,7 @@ export const REQUEST_ONLY_SETS = ['throwbacks', 'wnba-throwbacks'];
 
 export const SUPER_SEASON_FILE = loadSpecialSet(SUPER_SEASON_SET);
 export const ROOKIE_FILE = loadSpecialSet(ROOKIE_SET);
+export const LIVE_FILE = loadSpecialSet(LIVE_SET);
 export const SUMMER_STANDOUTS_FILE = loadSpecialSet(SUMMER_STANDOUTS_SET);
 export const DISSONANCE_FILE = loadSpecialSet(DISSONANCE_SET);
 export const TEAM_REWARDS_FILE = loadSpecialSet(TEAM_REWARDS_SET);
@@ -511,6 +513,18 @@ export const SOURCES = {
         : ' No numbers yet — run `node scripts/cardgen/generateCards.js` to fill them in.'),
     players: [...POOL_PLAYERS].sort(byName),
   },
+  // THE LIVE SERIES (2026-09-23): the base cards as the season moves them.
+  // Not editable here — its photos, crops and colours ARE the base set's
+  // (setPaths), so curate those on the 2026-27 source; this one is for the
+  // preview and the export.
+  [LIVE_SET]: specialSource(LIVE_SET, LIVE_FILE, {
+    sub: `the 2026-27 cards as the season moves them · ${LIVE_FILE?.live?.mode ?? 'mirror'} mode`,
+    hint:
+      'EVERY 2026-27 BASE CARD AGAIN, in the blue trim, re-allocated from dunksandthrees\' current-season ' +
+      'EPM and the season\'s game logs by a nightly job once the NBA season starts (generateLive.js, ' +
+      '.github/workflows/live-series.yml). Until then a MIRROR of the base set. Photos and crops are the ' +
+      'base set\'s: curate them there. Re-export with `node scripts/studio/export.js --set live`.',
+  }),
   cards: {
     key: 'cards',
     set: FINISHED_SET,

@@ -23,3 +23,12 @@ card-art/photo-hunt.html
 
 # Windows shortcuts the studio folder collects
 *.lnk
+
+# The Live Series' faces (2026-09-23). One set's faces are ~230 MB, and the
+# nightly job (.github/workflows/live-series.yml) re-exports all of them, so
+# they are never committed: the job publishes them straight to Pages and
+# commits only card-data/generated/cards-live.json and live-status.json. Delete
+# a local export before `npm run deploy`, or the deploy overwrites the night's
+# faces with stale ones — gh-pages keeps whatever a deploy does not touch.
+public/cards/live
+public/cards/thumbs/live

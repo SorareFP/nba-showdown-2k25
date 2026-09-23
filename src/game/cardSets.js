@@ -10,6 +10,7 @@
 import base from '../../card-data/generated/cards-2026-27.json' with { type: 'json' };
 import superSeason from '../../card-data/generated/cards-super-season.json' with { type: 'json' };
 import rookie from '../../card-data/generated/cards-rookie.json' with { type: 'json' };
+import live from '../../card-data/generated/cards-live.json' with { type: 'json' };
 import standouts from '../../card-data/generated/cards-summer-standouts.json' with { type: 'json' };
 import dissonance from '../../card-data/generated/cards-dissonance.json' with { type: 'json' };
 import teamRewards from '../../card-data/generated/cards-team-rewards.json' with { type: 'json' };
@@ -71,6 +72,10 @@ const withoutMigrated = (setId, cards) => cards.filter(c => !hasMigratedOut(setI
 export const CARD_SETS = Object.fromEntries(
   [
     [BASE_SET, base],
+    // The Live Series (2026-09-23): the base cards as the season moves them.
+    // Registered so a live card can be owned, shown and played; whether any
+    // pack deals one is LIVE_SERIES_ON (packEngine.js).
+    ['live', live],
     ['super-season', superSeason],
     ['rookie', rookie],
     ['summer-standouts', standouts],

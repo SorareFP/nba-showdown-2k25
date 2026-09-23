@@ -11,6 +11,7 @@
 // strange-jersey stints are reward territory, like the Bam 83-point card.
 import { STRATS } from './strats.js';
 import { CARD_SETS, BASE_SET, cardKey } from './cardSets.js';
+import { LIVE_SERIES_ON } from '../cards/liveSeries.js';
 import { currentFranchise, currentFranchiseFor, WNBA_HISTORICAL_TEAMS } from '../cards/teams.js';
 import { getPlayerRarity, getStratRarity, PACK_WEIGHTS, RARITY_ORDER } from './rarity.js';
 
@@ -152,6 +153,12 @@ export const PACK_TYPES = {
   // against a booster's 0.048). That is the on-ramp working as intended: a lot
   // of cards that are not very good, priced accordingly.
   rookie_pack:   { name: 'Rookie Pack',         players: 5,  strats: 2,  price: 75,   pool: 'rookie' },
+  // THE LIVE SERIES PACK (2026-09-23): the base cards as the season moves
+  // them, blue trim, from their own pool. Priced as the plain booster because
+  // its pool IS the base pool's players with numbers that move — to be
+  // measured against the booster before the season (the shop's value-per-coin
+  // method). Sold only once the series is in play (LIVE_SERIES_ON, liveSeries.js).
+  ...(LIVE_SERIES_ON ? { live_pack: { name: 'Live Series Pack', players: 5, strats: 2, price: 100, pool: 'live' } } : {}),
   // Same treatment and the same reason — 45 cards at a $780 median and 64%
   // rare-or-better, which the band gate was flattening exactly as it flattened
   // Super Season. 0.129 coins per point of salary.
@@ -196,6 +203,9 @@ export const PACK_TYPES = {
 export const SPECIAL_SETS_IN_PACKS = [
   'super-season', 'rookie', 'summer-standouts', 'dissonance',
   'wnba-super-season', 'wnba-rookie',
+  // The Live Series joins the boosters at the special share once the season
+  // is on (2026-09-23; LIVE_SERIES_ON in liveSeries.js is the switch).
+  ...(LIVE_SERIES_ON ? ['live'] : []),
   // Throwbacks, the Free Agents catch-all, "into packs based on its rarity"
   // like every requested card. Inside the same special-band share, so no odds
   // move; and no completion goal (collections.js SPECIAL_SETS), by decision.

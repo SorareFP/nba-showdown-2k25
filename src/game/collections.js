@@ -31,6 +31,7 @@
 // rule testable without a network and identical across the tracker, the claim,
 // and anything later that asks the same question.
 import { CARD_SETS, BASE_SET, cardKey, canonicalKey } from './cardSets.js';
+import { LIVE_SERIES_ON } from '../cards/liveSeries.js';
 import { CONFERENCES } from './packEngine.js';
 import { notionalPrice } from './rarity.js';
 
@@ -113,6 +114,8 @@ export const SPECIAL_SETS = [
   { id: 'rookie',            label: 'Rookie',            league: 'NBA' },
   { id: 'summer-standouts',  label: 'Summer Standouts',  league: 'NBA' },
   { id: 'dissonance',        label: 'Dissonance',        league: 'NBA' },
+  // The Live Series' goal opens with the season (2026-09-23, LIVE_SERIES_ON).
+  ...(LIVE_SERIES_ON ? [{ id: 'live', label: 'Live Series', league: 'NBA' }] : []),
   { id: 'wnba-super-season', label: 'WNBA Super Season', league: 'WNBA' },
   { id: 'wnba-rookie',       label: 'WNBA Rookie',       league: 'WNBA' },
 ];

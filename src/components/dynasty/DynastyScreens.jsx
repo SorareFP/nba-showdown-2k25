@@ -24,6 +24,8 @@ import {
   answerOffer, offerValue, offerProblems, tradeRelief, TRADE_RELIEF, OFFER_FAIRNESS, OPEN_OFFERS_PER_COACH,
   aiCapDp, aiApronDp, aiSalaryCap,
   setTeamDeck, importCard, importCandidates, fpOf, FP_IMPORT_COST, FP_FINISH_MAX, FP_PER_SERIES, FP_TITLE, IMPORT_YEARS,
+  hireStaff, hireProblem, STAFF_ROLES, STAFF_ORDER, staffTier, protectPlayer, protectProblem, stealPick, stealProblem,
+  apronOf, aiDraftChoice, draftDone,
 } from '../../game/modes/dynasty.js';
 import { loadDecks } from '../../firebase/savedDecks.js';
 import { RARITY_CONFIG, getPlayerRarity } from '../../game/rarity.js';
@@ -188,6 +190,11 @@ export function soloMoves(act, me) {
     // Franchise Points (2026-09-22) — the same two moves a friends dynasty sends.
     setDeck: (deck, deckName) => act(x => setTeamDeck(x, me, deck, deckName)),
     importCard: key => act(x => importCard(x, me, key)),
+    // The staff (2026-09-23): hire, protect, steal — the friends dynasty's
+    // three moves of the same names.
+    hire: role => act(x => hireStaff(x, me, role)),
+    protect: key => act(x => protectPlayer(x, me, key)),
+    steal: key => act(x => stealPick(x, me, key)),
   };
 }
 
@@ -316,11 +323,84 @@ export function ImportPanel({ d, moves, collection = null }) {
   );
 }
 
+/**
+ * THE STAFF (the user, 2026-09-23: "something like the way dynasty points
+ * are used for support staff in College Football 27"). Three roles, three
+ * tiers each, bought with Franchise Points in order and kept for the
+ * dynasty. Each row says what is in effect and what the next tier buys; the
+ * domain (hireProblem) says why a hire is refused, on the row.
+ */
+export function StaffPanel({ d, moves }) {
+  const { ask } = useDialogs();
+  const me = d.humanId;
+  if (!moves?.hire || !teamOf(d, me)?.human) return null;
+  const hire = async (role, tier) => {
+    const spec = STAFF_ROLES[role];
+    const next = spec.tiers[tier];
+    const yes = await ask({
+      title: `Hire ${next.name}?`,
+      body: `${spec.name}, tier ${tier + 1}: ${next.blurb} ${next.cost} Franchise Points (you have ${fpOf(d, me)}). Staff stay for the whole dynasty.`,
+      confirmLabel: 'Hire',
+    });
+    if (yes) moves.hire(role);
+  };
+  return (
+    <section className={styles.panel}>
+      <div className={dy.panelHead}>
+        <h3 className={styles.panelTitle}>Staff</h3>
+        <span className={styles.muted}>⭐ {fpOf(d, me)} Franchise Points · tiers cost {STAFF_ROLES.scout.tiers.map(t => t.cost).join(', ')}</span>
+      </div>
+      <p className={dy.intro}>
+        Franchise Points hire a front office too: three roles, three tiers each, bought in order and kept for the
+        dynasty. A full role costs what a legendary import does. AI teams hire nobody.
+      </p>
+      <div className={styles.tableWrap}>
+        <table className={styles.table}>
+          <thead><tr><th>Role</th><th>In effect</th><th>Next</th><th /></tr></thead>
+          <tbody>
+            {STAFF_ORDER.map(role => {
+              const spec = STAFF_ROLES[role];
+              const tier = staffTier(d, me, role);
+              const next = spec.tiers[tier] ?? null;
+              const problem = hireProblem(d, me, role);
+              return (
+                <tr key={role}>
+                  <td><strong>{spec.name}</strong><div className={styles.muted}>tier {tier} of {spec.tiers.length}</div></td>
+                  <td>
+                    {tier
+                      ? spec.tiers.slice(0, tier).map(t => <div key={t.name}>✓ {t.name} <span className={styles.muted}>— {t.blurb}</span></div>)
+                      : <span className={styles.muted}>Nobody yet</span>}
+                  </td>
+                  <td>
+                    {next
+                      ? <><strong>{next.name}</strong> · {next.cost} pts<div className={styles.muted}>{next.blurb}</div></>
+                      : <span className={styles.muted}>Fully staffed</span>}
+                  </td>
+                  <td>
+                    {next && (
+                      <button type="button" className={dy.linkBtn} disabled={Boolean(problem)} title={problem ?? `Hire ${next.name}`} onClick={() => hire(role, tier)}>
+                        Hire
+                      </button>
+                    )}
+                    {next && problem && <div className={styles.muted}>{problem}</div>}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+}
+
 export function FrontOffice({ d, moves, uid = null, collection = null }) {
   const { ask } = useDialogs();
   const me = d.humanId;
   const rows = contractsOf(d, me);
   const canMove = isOffseason(d);
+  // Prime Extension (staff): the one player who skips this year's retirement roll.
+  const shielded = d.protected?.[me] ?? null;
   const cut = async k => {
     const yes = await ask({
       title: `Waive ${k.card.name}?`,
@@ -351,7 +431,14 @@ export function FrontOffice({ d, moves, uid = null, collection = null }) {
                 <td><strong>{k.dp}</strong></td>
                 <td>{k.years}</td>
                 <td><Trait pid={k.pid} /> <span className={styles.muted}>{HOW[k.how] ?? k.how}</span></td>
-                <td>{canMove && <button type="button" className={dy.linkBtn} onClick={() => cut(k)}>Waive</button>}</td>
+                <td>
+                  {canMove && <button type="button" className={dy.linkBtn} onClick={() => cut(k)}>Waive</button>}
+                  {moves.protect && !protectProblem(d, me, k.key) && (
+                    shielded === k.key
+                      ? <span className={styles.muted} title="Prime Extension: no retirement roll at the turn of this year"> 🛡 protected</span>
+                      : <button type="button" className={dy.linkBtn} title="Prime Extension: he skips this year's retirement roll" onClick={() => moves.protect(k.key)}> Protect</button>
+                  )}
+                </td>
               </tr>
             ))}
             {!rows.length && <tr><td colSpan={5} className={styles.muted}>Nobody under contract yet.</td></tr>}
@@ -360,6 +447,7 @@ export function FrontOffice({ d, moves, uid = null, collection = null }) {
       </div>
       <WaiverWire d={d} moves={moves} />
       <ImportPanel d={d} moves={moves} collection={collection} />
+      <StaffPanel d={d} moves={moves} />
     </section>
   );
 }
@@ -484,14 +572,16 @@ export function Negotiator({ d, cardKey, moves, onClose = null, letGo = null }) 
   const p = personality(q.pid);
   const pay = payroll(d, me);
   const full = rosterKeys(d, me).length >= MAX_ROSTER;
-  const fits = amount => (amount <= MIN_DP ? pay + amount <= APRON_DP : pay + amount <= q.limit);
+  // The apron is the coach's own (apronOf): 125 with a Luxury Apron.
+  const apron = apronOf(d, me);
+  const fits = amount => (amount <= MIN_DP ? pay + amount <= apron : pay + amount <= q.limit);
   const walked = q.talk.walked;
   const blocked = full
     ? `Your roster is full at ${MAX_ROSTER} — waive someone first.`
     : walked
       ? MOOD_TEXT.walked
       : !fits(dp)
-        ? `${dp} DP does not fit — you have ${Math.max(0, q.room)} DP of room under your ${q.limit === APRON_DP ? 'apron' : 'cap'}.`
+        ? `${dp} DP does not fit — you have ${Math.max(0, q.room)} DP of room under your ${q.limit > CAP_DP ? 'apron' : 'cap'}.`
         : null;
 
   const send = async amount => {
@@ -517,8 +607,16 @@ export function Negotiator({ d, cardKey, moves, onClose = null, letGo = null }) 
       <div className={dy.askLine}>
         His ask: <strong>{q.ask} DP</strong> a season for {plural(years, 'year')}
         {q.ask >= MAX_DP && <span className={dy.buff} title={`A max deal: ${MAX_DP} DP a season is the most anyone can ask`}>max</span>}
+        {q.discount < 1 && <span className={dy.buff} title="Hometown Discount (staff): your own player asks 10% less of you">−10%</span>}
         {years !== q.preferred && <span className={styles.muted}> · he wants {q.preferred}</span>}
       </div>
+      {q.floor != null && (
+        // Read the Room (staff, 2026-09-23): the personality and the floor,
+        // which the table otherwise never shows.
+        <div className={dy.rival} title="Read the Room: the Cap Strategist's read">
+          🔎 <Trait pid={q.pid} /> {personality(q.pid).blurb} He would take about <strong>{q.floor} DP</strong> for {plural(years, 'year')}.
+        </div>
+      )}
       {q.rival && (
         <div className={dy.rival}>
           📨 {teamOf(d, q.rival.teamId)?.name} have offered {q.rival.dp} DP × {plural(q.rival.years, 'year')}.
@@ -551,7 +649,7 @@ export function Negotiator({ d, cardKey, moves, onClose = null, letGo = null }) 
         {letGo && <button type="button" className={styles.ghost} onClick={letGo}>Let him go</button>}
       </div>
       <div className={styles.muted}>
-        Room: {Math.max(0, q.room)} DP under your {q.limit === APRON_DP ? 'apron (Bird rights)' : 'cap'}. A {MIN_DP}-DP minimum deal always fits.
+        Room: {Math.max(0, q.room)} DP under your {q.limit > CAP_DP ? `apron (Bird rights, ${q.limit})` : 'cap'}. A {MIN_DP}-DP minimum deal always fits.
       </div>
     </aside>
   );
@@ -573,11 +671,11 @@ export function BidPanel({ d, cardKey, moves, onClose = null }) {
   const [busy, setBusy] = useState(false);
   const pay = payroll(d, me);
   const full = rosterKeys(d, me).length >= MAX_ROSTER;
-  const fits = dp <= MIN_DP ? pay + dp <= APRON_DP : pay + dp <= q.limit;
+  const fits = dp <= MIN_DP ? pay + dp <= apronOf(d, me) : pay + dp <= q.limit;
   const blocked = full
     ? `Your roster is full at ${MAX_ROSTER} — waive someone first.`
     : !fits
-      ? `${dp} DP does not fit — you have ${Math.max(0, q.room)} DP of room under your ${q.limit === APRON_DP ? 'apron' : 'cap'}.`
+      ? `${dp} DP does not fit — you have ${Math.max(0, q.room)} DP of room under your ${q.limit > CAP_DP ? 'apron' : 'cap'}.`
       : !standing && others.length >= 10 ? 'Ten bids a week at most.' : null;
   const save = async list => {
     setBusy(true);
@@ -593,8 +691,16 @@ export function BidPanel({ d, cardKey, moves, onClose = null }) {
       <div className={dy.askLine}>
         His ask: <strong>{q.ask} DP</strong> a season for {plural(years, 'year')}
         {q.ask >= MAX_DP && <span className={dy.buff} title={`A max deal: ${MAX_DP} DP a season is the most anyone can ask`}>max</span>}
+        {q.discount < 1 && <span className={dy.buff} title="Hometown Discount (staff): your own player asks 10% less of you">−10%</span>}
         {years !== q.preferred && <span className={styles.muted}> · he wants {q.preferred}</span>}
       </div>
+      {q.floor != null && (
+        // Read the Room (staff, 2026-09-23): the personality and the floor,
+        // which the table otherwise never shows.
+        <div className={dy.rival} title="Read the Room: the Cap Strategist's read">
+          🔎 <Trait pid={q.pid} /> {personality(q.pid).blurb} He would take about <strong>{q.floor} DP</strong> for {plural(years, 'year')}.
+        </div>
+      )}
       {q.rival && (
         <div className={dy.rival}>
           📨 {teamOf(d, q.rival.teamId)?.name} have offered {q.rival.dp} DP × {plural(q.rival.years, 'year')}.
@@ -738,7 +844,14 @@ export function DraftRoom({ d, moves }) {
   const recent = [...picks].slice(-8).reverse();
   // The running total: asks in a fantasy draft, the scale of the picks made in a rookie draft.
   const extra = projectedPayroll(d, me) - payroll(d, me);
-  const room = APRON_DP - payroll(d, me) - rookieCommitted(d, me);
+  const room = apronOf(d, me) - payroll(d, me) - rookieCommitted(d, me);
+  // The Head Scout (staff, 2026-09-23): the AI's board as a mock draft at
+  // tier 1, and the steal after the last pick at tier 3.
+  const scout = staffTier(d, me, 'scout');
+  const stealOpen = !fantasy && scout >= 3 && draftDone(d) && !d.draft?.stolen?.[me] && draftAvailable(d).length > 0;
+  const stealRows = stealOpen
+    ? draftAvailable(d).map(k => ({ k, c: cardOf(k) })).filter(r => r.c).sort((a, b) => (b.c.salary ?? 0) - (a.c.salary ?? 0)).slice(0, 12)
+    : [];
 
   const pick = key => moves.pick(key);
   // With friends a coach's pick is on a clock (dynastyFriends.js).
@@ -757,6 +870,34 @@ export function DraftRoom({ d, moves }) {
           : `A class of ${d.draft?.pool?.length || classFor(d).length || 0} drawn by rarity — one rare is guaranteed, a legendary is a long shot. Two rounds; you can pass. A pick signs on the rookie scale, priced by the SLOT, not the player: 10 DP at the first pick down to 5 at the end of round one, 3 down to 2 in round two, three years. He is your rights until the season starts — sign him any time before, up to the ${APRON_DP} apron. Everyone not taken goes back into the draft pool.`}
         {moves.friends && ' Every coach has twelve hours on the clock; when it runs out, the AI picks for them.'}
       </p>
+      {!fantasy && scout >= 1 && clock && upcoming.some(t => t !== me) && (
+        <div className={dy.wire}>
+          <div className={styles.label}>Mock board — the Head Scout's read of the next picks</div>
+          <div className={styles.muted}>
+            {upcoming.filter(t => t !== me).slice(0, 6).map(t => {
+              const k = aiDraftChoice(d, t, () => 0.5);
+              return `${teamOf(d, t)?.name}: ${k ? cardOf(k)?.name ?? k : 'pass'}`;
+            }).join(' · ')}
+          </div>
+        </div>
+      )}
+      {stealOpen && (
+        <div className={dy.wire}>
+          <div className={styles.label}>Second-Round Steal</div>
+          <div className={styles.muted}>After the last pick, take one player nobody drafted — he signs at the last slot's scale.</div>
+          <div className={dy.list}>
+            {stealRows.map(({ k }) => {
+              const why = stealProblem(d, me, k);
+              return (
+                <div key={k} className={dy.draftRow}>
+                  <PlayerCell cardKey={k} age={ageOf(d, k)} />
+                  <button type="button" className={dy.linkBtn} disabled={Boolean(why)} title={why ?? 'Steal him'} onClick={() => moves.steal?.(k)}>Steal</button>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       <div className={`${dy.clock} ${mine ? dy.clockMine : ''}`}>
         <span className={dy.clockText}>
@@ -864,6 +1005,7 @@ export function LotteryRoom({ d, moves }) {
   const cls = classFor(d);
   const last = d.history[d.history.length - 1];
   const me = d.humanId;
+  const graded = staffTier(d, me, 'scout') >= 1;
   return (
     <section className={styles.panel}>
       <div className={dy.panelHead}>
@@ -898,9 +1040,20 @@ export function LotteryRoom({ d, moves }) {
       ) : <div className={styles.muted}>Everyone made the playoffs — the draft goes in reverse order of the standings.</div>}
       {cls.length > 0 && (
         <>
-          <div className={styles.label} style={{ marginTop: 16 }}>The top of the class</div>
+          <div className={styles.label} style={{ marginTop: 16 }}>{graded ? 'The class, graded by your Head Scout' : 'The top of the class'}</div>
           <div className={dy.classPeek}>
-            {[...cls].sort((a, b) => (cardOf(b)?.salary ?? 0) - (cardOf(a)?.salary ?? 0)).slice(0, 24).map(k => <PlayerCell key={k} cardKey={k} age={ageOf(d, k)} />)}
+            {[...cls].sort((a, b) => (cardOf(b)?.salary ?? 0) - (cardOf(a)?.salary ?? 0)).slice(0, graded ? cls.length : 24).map(k => (
+              // Scouting Department (staff, 2026-09-23): the whole class,
+              // each with its band and salary, before the lottery.
+              graded
+                ? (
+                  <div key={k} className={dy.draftRow}>
+                    <PlayerCell cardKey={k} age={ageOf(d, k)} />
+                    <span className={styles.muted}>{RARITY_CONFIG[getPlayerRarity(cardOf(k))]?.label ?? ''} · ${cardOf(k)?.salary ?? '—'}</span>
+                  </div>
+                )
+                : <PlayerCell key={k} cardKey={k} age={ageOf(d, k)} />
+            ))}
           </div>
         </>
       )}

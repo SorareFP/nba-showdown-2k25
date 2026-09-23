@@ -87,6 +87,10 @@ export function friendsMoves({ d, me, isHost = false, send, setBids = async () =
     // Franchise Points (2026-09-22); the server checks the card is theirs.
     setDeck: (deck, deckName) => send('setDeck', { deck, deckName }),
     importCard: key => send('import', { key }),
+    // The staff (2026-09-23): the same three moves the solo dynasty makes.
+    hire: role => send('hire', { role }),
+    protect: key => send('protect', { key }),
+    steal: key => send('steal', { key }),
     force: () => send('force'),
     end: () => send('end'),
     tick: () => send('tick'),

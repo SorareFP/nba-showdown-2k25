@@ -23,6 +23,11 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
+    id: 'dynasty-staff', date: '2026-09-23', title: 'Hire a front office',
+    body: 'Franchise Points now hire staff, three tiers a role, kept for the dynasty: a Head Scout (a graded class, the AI\'s mock board, +25% lottery weight, a steal after the last pick), a Cap Strategist (every free agent\'s floor shown, your own players re-sign 10% under their ask, a 125-DP apron) and, in an aging dynasty, Sports Science (retirement starts later, one protected player a year). Tiers cost 3, 6 and 12 — a full role is a legendary\'s worth of points.',
+    to: 'dynasty', cta: 'Dynasty',
+  },
+  {
     id: 'legendary-odds', date: '2026-09-23', title: 'Where the Legendaries are',
     body: 'Nobody had packed a Legendary yet — about one booster in seventy carries one. Now every premium pack carries its own chance, and the dearer the pack the better the rate: Rare Deluxe about one pack in nine, Super Deluxe one in four, Mega Deluxe one in two, the Chase still the only sure thing. The Super Season and Summer Standouts packs deal their sets\' own odds — most of a pack rare or better — and are priced for it: 450 and 350.',
     to: 'shop', cta: 'Pack Shop',

@@ -61,7 +61,8 @@ export const aiCapDp = d => Math.round(CAP_DP * capOf(d.aiLevel));
 export const aiApronDp = d => Math.round(AI_APRON_DP * capOf(d.aiLevel));
 /** A team's cap and apron: the human's fixed numbers, or the AI's at this rung. */
 const capFor = (d, teamId) => (teamOf(d, teamId)?.human ? CAP_DP : aiCapDp(d));
-const apronFor = (d, teamId) => (teamOf(d, teamId)?.human ? APRON_DP : aiApronDp(d));
+// A coach's apron can carry a Luxury Apron (staff, 2026-09-23) — apronOf.
+const apronFor = (d, teamId) => apronOf(d, teamId);
 
 // ── THE AI'S CARD-SALARY CEILING (the user, 2026-09-18) ─────────────────────
 //
@@ -423,12 +424,12 @@ export function floorOf(d, key, teamId, years = preferredYears(traitOf(d, key)),
  */
 export function limitFor(d, teamId, key) {
   const r = d.rights?.[key];
-  return r && r.teamId === teamId && (r.kind === 'expiring' || r.kind === 'rookie') ? APRON_DP : CAP_DP;
+  return r && r.teamId === teamId && (r.kind === 'expiring' || r.kind === 'rookie') ? apronOf(d, teamId) : CAP_DP;
 }
 
 /** Whether `dp` more fits: a minimum deal always does, up to the apron. */
 export function fitsCap(d, teamId, key, dp) {
-  const limit = dp <= MIN_DP ? APRON_DP : limitFor(d, teamId, key);
+  const limit = dp <= MIN_DP ? apronOf(d, teamId) : limitFor(d, teamId, key);
   return payroll(d, teamId) + dp <= limit;
 }
 
@@ -451,14 +452,19 @@ export function quote(d, teamId, key, years = null) {
   const day = marketDay(d);
   const talk = d.talks?.[key] ?? newTalk(pid);
   const rival = rivalFor(d, key, teamId);
-  const ask = Math.max(
+  // Hometown Discount (staff, 2026-09-23): a coach's own expiring player asks
+  // 10% less of him, and negotiate judges the offer on the same footing.
+  const discount = discountFor(d, teamId, key);
+  const ask = Math.max(MIN_DP, Math.ceil(Math.max(
     askFor(card, pid, ctx, y, { progress: talk.progress, day }),
     toBeat(card, pid, ctx, y, day, rival?.ratio ?? 0),
-  );
+  ) * discount));
   const limit = limitFor(d, teamId, key);
   return {
-    key, card, pid, years: y, preferred: preferredYears(pid), ask, rival, talk,
+    key, card, pid, years: y, preferred: preferredYears(pid), ask, rival, talk, discount,
     limit, room: limit - payroll(d, teamId), fair: fairDp(card),
+    // Read the Room (staff): the floor, for the coach who has paid to see it.
+    floor: staffTier(d, teamId, 'cap') >= 1 ? Math.max(MIN_DP, Math.ceil(floorOf(d, key, teamId, y, day) * discount)) : null,
   };
 }
 
@@ -808,6 +814,10 @@ export function createDynasty({
     rights: {},
     lastTeam: {},
     spurned: {},
+    // The staff each coach has hired (staff, 2026-09-23), and the one player
+    // each has protected from this year's retirement roll.
+    staff: {},
+    protected: {},
     // Only the TRADED picks: pickId → owner. Every other pick is its team's.
     pickOwner: {},
     talks: {},
@@ -1231,6 +1241,148 @@ export function importCard(d, teamId, key, opts = {}) {
   return say(x, `${teamOf(d, teamId)?.name} bring in ${card.name} from their collection — ${cost} Franchise Points, ${dp} DP × ${IMPORT_YEARS}.`);
 }
 
+// ── Staff (the user, 2026-09-23) ────────────────────────────────────────────
+//
+// "I'm thinking something like the way dynasty points are used for support
+// staff in College Football 27." Three roles, three tiers each, bought with
+// FRANCHISE POINTS in order and kept for the dynasty — the three the user
+// liked of the five drafted (docs/plans/2026-09-23-dynasty-staff-design.md);
+// the on-court and front-office roles wait on him. Priced 3 / 6 / 12 against
+// imports at 2–32, so a full role costs a legendary and nobody staffs
+// everything. AI teams hire nobody: the rung's cap is their edge. Old saves
+// read `staff` and `protected` as {}.
+export const STAFF_ROLES = {
+  scout: {
+    name: 'Head Scout',
+    tiers: [
+      { name: 'Scouting Department', cost: 3, blurb: 'The class is graded before the lottery, and the AI\'s board shows as a mock draft.' },
+      { name: 'Ping-Pong Balls', cost: 6, blurb: 'Your lottery weight is +25%.' },
+      { name: 'Second-Round Steal', cost: 12, blurb: 'Once a draft, after the last pick, take one player nobody drafted.' },
+    ],
+  },
+  cap: {
+    name: 'Cap Strategist',
+    tiers: [
+      { name: 'Read the Room', cost: 3, blurb: 'Every free agent\'s personality and floor show before you haggle.' },
+      { name: 'Hometown Discount', cost: 6, blurb: 'Your own expiring players re-sign 10% under their ask.' },
+      { name: 'Luxury Apron', cost: 12, blurb: 'Your apron rises 115 to 125 DP.' },
+    ],
+  },
+  science: {
+    name: 'Sports Science',
+    aging: true,
+    tiers: [
+      { name: 'Load Management', cost: 3, blurb: 'Your players\' retirement risk starts a year later.' },
+      { name: 'Prime Extension', cost: 6, blurb: 'Name one player a season: he skips that year\'s retirement roll.' },
+      { name: 'Fountain of Youth', cost: 12, blurb: 'The whole retirement window shifts two years for your team.' },
+    ],
+  },
+};
+export const STAFF_ORDER = ['scout', 'cap', 'science'];
+export const LOTTERY_BOOST = 1.25;
+export const HOMETOWN_DISCOUNT = 0.9;
+export const LUXURY_APRON = 10;
+
+/** A team's tier in a role, 0 to 3. */
+export const staffTier = (d, teamId, role) => Number(d.staff?.[teamId]?.[role]) || 0;
+/** Every role's tier for a team. */
+export const staffOf = (d, teamId) => Object.fromEntries(STAFF_ORDER.map(r => [r, staffTier(d, teamId, r)]));
+
+/** Why a coach cannot hire the next tier of this role now, or null. */
+export function hireProblem(d, teamId, role) {
+  if (!teamOf(d, teamId)?.human) return 'Only a coach hires staff';
+  const spec = STAFF_ROLES[role];
+  if (!spec) return 'No such role';
+  if (spec.aging && !d.aging) return `${spec.name} needs an aging dynasty — nobody retires in a ten-year one`;
+  if (d.phase === DPHASE.done) return 'The dynasty is over';
+  const tier = staffTier(d, teamId, role);
+  if (tier >= spec.tiers.length) return `${spec.name} is fully staffed`;
+  const cost = spec.tiers[tier].cost;
+  if (fpOf(d, teamId) < cost) return `That takes ${cost} Franchise Points — you have ${fpOf(d, teamId)}`;
+  return null;
+}
+
+/** Hire the next tier of a role: the points spent, the perk in effect from now on. */
+export function hireStaff(d, teamId, role) {
+  const problem = hireProblem(d, teamId, role);
+  if (problem) throw new Error(`dynasty: ${problem}`);
+  const spec = STAFF_ROLES[role];
+  const tier = staffTier(d, teamId, role);
+  const next = spec.tiers[tier];
+  const x = {
+    ...d,
+    fp: { ...(d.fp ?? {}), [teamId]: fpOf(d, teamId) - next.cost },
+    staff: { ...(d.staff ?? {}), [teamId]: { ...(d.staff?.[teamId] ?? {}), [role]: tier + 1 } },
+    hires: [...(d.hires ?? []), { year: d.year, teamId, role, tier: tier + 1, cost: next.cost }],
+  };
+  return say(x, `${teamOf(d, teamId)?.name} hire ${next.name} — ${spec.name}, tier ${tier + 1}, ${next.cost} Franchise Points.`);
+}
+
+/** A coach's apron: the fixed number, ten more with a Luxury Apron; the AI's at its rung. */
+export const apronOf = (d, teamId) => (teamOf(d, teamId)?.human
+  ? APRON_DP + (staffTier(d, teamId, 'cap') >= 3 ? LUXURY_APRON : 0)
+  : aiApronDp(d));
+
+/** Hometown Discount: a coach's own expiring player, with a tier-2 Cap Strategist. */
+export const discountFor = (d, teamId, key) => {
+  const r = d.rights?.[key];
+  return r?.kind === 'expiring' && r.teamId === teamId && staffTier(d, teamId, 'cap') >= 2 ? HOMETOWN_DISCOUNT : 1;
+};
+
+/** How many years later a team's players' retirement risk starts (Sports Science). */
+export const retireShift = (d, teamId) => {
+  if (!teamId) return 0;
+  const tier = staffTier(d, teamId, 'science');
+  return tier >= 3 ? 2 : tier >= 1 ? 1 : 0;
+};
+
+/** Why a coach cannot protect this player from the year's retirement roll, or null. */
+export function protectProblem(d, teamId, key) {
+  if (!teamOf(d, teamId)?.human) return 'Only a coach protects a player';
+  if (!d.aging) return 'Nobody retires in a ten-year dynasty';
+  if (staffTier(d, teamId, 'science') < 2) return 'Prime Extension takes Sports Science at tier 2';
+  if (d.phase === DPHASE.done) return 'The dynasty is over';
+  const mine = d.contracts?.[key]?.teamId === teamId || d.rights?.[key]?.teamId === teamId;
+  if (!mine) return 'He is not yours';
+  return null;
+}
+
+/** Name the one player who skips this year's retirement roll. Replaceable until the year turns. */
+export function protectPlayer(d, teamId, key) {
+  const problem = protectProblem(d, teamId, key);
+  if (problem) throw new Error(`dynasty: ${problem}`);
+  const x = { ...d, protected: { ...(d.protected ?? {}), [teamId]: key } };
+  return say(x, `${teamOf(d, teamId)?.name} protect ${cardOf(key)?.name} — no retirement roll at the turn of this year.`);
+}
+
+/** Why a coach cannot steal this undrafted player after the last pick, or null. */
+export function stealProblem(d, teamId, key) {
+  if (!teamOf(d, teamId)?.human) return 'Only a coach steals a pick';
+  if (staffTier(d, teamId, 'scout') < 3) return 'Second-Round Steal takes a Head Scout at tier 3';
+  if (d.phase !== DPHASE.rookieDraft || !d.draft || d.draft.kind === 'fantasy') return 'The steal comes at the end of a rookie draft';
+  if (!draftDone(d)) return 'Wait for the last pick';
+  if (d.draft.stolen?.[teamId]) return 'One steal a draft';
+  if (!draftAvailable(d).includes(key)) return 'He was drafted';
+  if (rosterKeys(d, teamId).length + rightsOf(d, teamId).length >= MAX_ROSTER) return `Your roster is full (${MAX_ROSTER})`;
+  return null;
+}
+
+/** Take one undrafted player after the last pick — a rookie's rights at the last slot's scale. */
+export function stealPick(d, teamId, key) {
+  const problem = stealProblem(d, teamId, key);
+  if (problem) throw new Error(`dynasty: ${problem}`);
+  const dr = d.draft;
+  const n = dr.picks.length + 1;
+  const x = {
+    ...d,
+    draft: { ...dr, picks: [...dr.picks, { n, round: ROOKIE_ROUNDS, teamId, key, steal: true }], stolen: { ...(dr.stolen ?? {}), [teamId]: key } },
+    rights: { ...d.rights, [key]: { teamId, kind: 'rookie', pick: dr.order.length } },
+    league: [...leagueKeys(d), key],
+    joined: { ...(d.joined ?? {}), [key]: d.year },
+  };
+  return say(x, `${teamOf(d, teamId)?.name} steal ${cardOf(key)?.name} after the last pick — the Head Scout's find.`);
+}
+
 /**
  * THE DECK IS NEVER FROZEN (the user, 2026-09-18: "Strategy decks chosen for
  * dynasty games should not be frozen at the start of the dynasty the way that
@@ -1290,8 +1442,11 @@ export function negotiate(d, teamId, key, offer) {
   if (!fitsCap(d, teamId, key, dp)) throw new Error(`dynasty: ${dp} DP does not fit under your limit of ${limitFor(d, teamId, key)}`);
   const pid = traitOf(d, key);
   const rival = rivalFor(d, key, teamId);
+  // Hometown Discount: the player weighs the coach's offer as if it were 10%
+  // bigger; the deal signs at what was actually offered.
+  const discount = discountFor(d, teamId, key);
   const verdict = judgeOffer({
-    card: cardOf(key), pid, ctx: ctxFor(d, key, teamId), offer: { dp, years },
+    card: cardOf(key), pid, ctx: ctxFor(d, key, teamId), offer: { dp: Math.round(dp / discount), years },
     talk: d.talks?.[key] ?? null, day: marketDay(d), rivalRatio: rival?.ratio ?? 0,
   });
   let next = { ...d, talks: { ...(d.talks ?? {}), [key]: verdict.talk } };
@@ -1893,7 +2048,8 @@ export function lotteryOdds(d) {
   if (!last) return { entries: [], draws: 0 };
   const berths = playoffCount(d.teams.length);
   const out = [...last.table].filter(r => r.rank > berths).sort((a, b) => b.rank - a.rank);
-  const weights = lotteryWeights(out.length);
+  // Ping-Pong Balls (staff, 2026-09-23): a coach's weight, and only his, +25%.
+  const weights = lotteryWeights(out.length).map((w, i) => w * (staffTier(d, out[i].id, 'scout') >= 2 ? LOTTERY_BOOST : 1));
   const total = weights.reduce((t, w) => t + w, 0);
   const entries = out.map((r, i) => ({ teamId: r.id, rank: r.rank, weight: weights[i], pct: Math.round((weights[i] / total) * 1000) / 10 }));
   return { entries, draws: Math.min(LOTTERY_DRAWS, out.length) };
@@ -2205,14 +2361,21 @@ function retirements(d, rng) {
   for (const key of leagueKeys(d)) {
     if (gone.has(key)) continue;
     const age = ageOf(x, key);
-    const p = retireChance(age);
-    if (!p || rng() >= p) continue;
     const holder = x.contracts[key]?.teamId ?? x.rights?.[key]?.teamId ?? null;
+    // Sports Science (staff, 2026-09-23): a coach's players start their risk
+    // a year or two later, and the one he protected skips this year's roll.
+    if (holder && x.protected?.[holder] === key) {
+      if (retireChance(age) > 0) x = say(x, `${cardOf(key)?.name} is protected this year — no retirement roll at ${age}.`);
+      continue;
+    }
+    const p = retireChance(age - retireShift(x, holder));
+    if (!p || rng() >= p) continue;
     x = { ...x, contracts: omit(x.contracts, key), rights: omit(x.rights, key), retired: [...(x.retired ?? []), key] };
     gone.add(key);
     if (holder) x = say(x, `${cardOf(key)?.name} retires at ${age}, from ${teamOf(x, holder)?.name}.`);
   }
-  return x;
+  // A protection is for one turn of the year, used or not.
+  return { ...x, protected: {} };
 }
 
 /** End an aging dynasty between seasons — it has no tenth-year finish of its own. */

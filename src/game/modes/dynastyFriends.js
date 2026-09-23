@@ -29,7 +29,7 @@ import {
 import { PHASE } from './seasonCore.js';
 import { CONTRACT_YEARS, MIN_DP, MAX_DP } from './dynastyMarket.js';
 import { getCardByKey } from '../cardSets.js';
-import { setTeamDeck, importCard } from './dynasty.js';
+import { setTeamDeck, importCard, hireStaff, protectPlayer, stealPick } from './dynasty.js';
 
 /** How long a coach has to make a draft pick before the AI makes it for him. */
 export const PICK_CLOCK_MS = 12 * 60 * 60 * 1000;
@@ -335,6 +335,10 @@ export const FRIEND_MOVES = [
   // Bringing an owned card into the league for Franchise Points (2026-09-22);
   // the server checks the coach owns it before the move runs.
   'import',
+  // The staff (2026-09-23): hiring a role's next tier, protecting a player
+  // from the year's retirement roll, and the Head Scout's steal after the
+  // last pick. The domain refuses each where it does not apply.
+  'hire', 'protect', 'steal',
 ];
 
 /**
@@ -412,6 +416,9 @@ export function friendsAct(d, teamId, op, args = {}, { now = Date.now(), rng = M
       x = setTeamDeck(x, teamId, args?.deck, args?.deckName);
       break;
     case 'import': x = importCard(x, teamId, key()); break;
+    case 'hire': x = hireStaff(x, teamId, String(args?.role ?? '')); break;
+    case 'protect': x = protectPlayer(x, teamId, key()); break;
+    case 'steal': x = stealPick(x, teamId, key()); break;
     default:
       throw new Error(`dynasty: no such move ${op}`);
   }

@@ -41,8 +41,10 @@ import { getPlayerRarity, getStratRarity, RARITY_CONFIG, RARITY_ORDER } from '..
 import { getSet } from '../cards/sets.js';
 import { BASE_SET } from '../game/cardSets.js';
 import { getPlayerImageUrl, getStratImagePath } from '../game/cardImages.js';
-import { playFlip, playReveal, playComplete, isMuted, toggleMute } from '../game/packAudio.js';
+import { playFlip, playReveal, playComplete, playRip, playFanfare, isMuted, toggleMute } from '../game/packAudio.js';
+import { PACK_TYPES } from '../game/packEngine.js';
 import Holo from './HoloSheen.jsx';
+import PackRip from './PackRip.jsx';
 import { holoRegionsFor } from '../cards/faceRegions.js';
 import styles from './PackOpening.module.css';
 
@@ -90,7 +92,7 @@ export function setPillFor(card) {
   return { id: set, label: getSet(set)?.name ?? set };
 }
 
-export default function PackOpening({ cards, coins = null, onDone, onSaveRest = null, box = null, onRequestPack = null }) {
+export default function PackOpening({ cards, coins = null, onDone, onSaveRest = null, box = null, onRequestPack = null, packName = null }) {
   const [current, setCurrent] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const [dismissed, setDismissed] = useState([]);
@@ -98,6 +100,11 @@ export default function PackOpening({ cards, coins = null, onDone, onSaveRest = 
   const [saving, setSaving] = useState(false);
   const [loadingPack, setLoadingPack] = useState(false);
   const [quiet, setQuiet] = useState(isMuted);
+  // THE WRAPPER. Every pack starts sealed (PackRip.jsx): the stage holds the
+  // foil until it is torn, and only then the stack. `justOpened` is the beat
+  // after the tear, when the stack rises out of where the pack was.
+  const [sealed, setSealed] = useState(true);
+  const [justOpened, setJustOpened] = useState(false);
 
   // INSPECTING A PULLED CARD. Hovering a card in the rail shows it on the
   // stage at full size; clicking pins it so it stays put while the pointer
@@ -176,6 +183,19 @@ export default function PackOpening({ cards, coins = null, onDone, onSaveRest = 
   const allDone = totalCards > 0 && dismissed.length === totalCards; // this pack
   const boxDone = allDone && lastPack;
   const currentCard = enriched[current];
+  // What the wrapper says on it: the pack's own name where the pulls carry
+  // one (a box's packs do), else what the caller called it, else "Pack".
+  // A WNBA pack wears the WNBA back.
+  const packDef = PACK_TYPES[enriched[0]?.packType] ?? null;
+  const packLabel = packDef?.name ?? packName ?? (isBox ? 'Booster Pack' : 'Pack');
+  const packBack = String(packDef?.pool ?? '').startsWith('wnba')
+    ? '/nba-showdown-2k25/card-back-wnba.png'
+    : '/nba-showdown-2k25/card-back.png';
+  const handleOpened = useCallback(() => {
+    setSealed(false);
+    setJustOpened(true);
+    setTimeout(() => setJustOpened(false), 500);
+  }, []);
 
 
   useEffect(() => {
@@ -193,7 +213,7 @@ export default function PackOpening({ cards, coins = null, onDone, onSaveRest = 
       // The set picks the instrument; the rarity picks the row. A strat is its
       // own quiet kind.
       const set = currentCard?.type === 'strat' ? 'strats' : currentCard?.card?.set ?? null;
-      setTimeout(() => playReveal(rarity, set), 280);
+      setTimeout(() => { playReveal(rarity, set); playFanfare(rarity); }, 280);
       // 👑 LEBROOOOON JAMES — the one sampled sound, because it is a joke and a
       // joke cannot be synthesized. Guarded: a missing file must not stop a pull.
       // Every LeBron, not just the base one. `currentCard.id` is the COLLECTION
@@ -225,6 +245,7 @@ export default function PackOpening({ cards, coins = null, onDone, onSaveRest = 
   }, [handleClick, inspect, stopInspecting]);
 
   const handleSkipAll = () => {
+    setSealed(false);
     setDismissed(enriched.map((_, i) => i));
     setCurrent(totalCards);
     setFlipped(false);
@@ -252,6 +273,7 @@ export default function PackOpening({ cards, coins = null, onDone, onSaveRest = 
     setCurrent(0);
     setFlipped(false);
     setTransitioning(false);
+    setSealed(true);
     setPackNo(n => n + 1);
   };
 
@@ -349,9 +371,15 @@ export default function PackOpening({ cards, coins = null, onDone, onSaveRest = 
             </div>
           )}
 
-          {!inspected && !allDone && (
+          {!inspected && !allDone && sealed && (
+            <div className={styles.stageArea}>
+              <PackRip name={packLabel} count={totalCards} back={packBack} onRip={playRip} onOpened={handleOpened} />
+            </div>
+          )}
+
+          {!inspected && !allDone && !sealed && (
             <div
-              className={`${styles.stageArea} ${currentCard?.type === 'strat' ? styles.stratStage : ''}`}
+              className={`${styles.stageArea} ${currentCard?.type === 'strat' ? styles.stratStage : ''} ${flipped && currentCard?.rarity === 'legendary' ? styles.shake : ''}`}
               onClick={handleClick}
               onKeyDown={handleKey}
               role="button"
@@ -363,7 +391,7 @@ export default function PackOpening({ cards, coins = null, onDone, onSaveRest = 
               {[...Array(peekCount)].map((_, pi) => (
                 <div
                   key={`peek-${pi}`}
-                  className={styles.peekCard}
+                  className={`${styles.peekCard} ${justOpened ? styles.stackIn : ''}`}
                   style={{
                     transform: `translateX(${(pi + 1) * 7}px) translateY(${(pi + 1) * 5}px) scale(${1 - (pi + 1) * 0.02})`,
                     zIndex: 10 - pi - 1,
@@ -378,7 +406,7 @@ export default function PackOpening({ cards, coins = null, onDone, onSaveRest = 
               {currentCard && (
                 <div
                   key={currentCard.idx}
-                  className={`${styles.mainCard} ${flipped ? styles.mainFlipped : ''}`}
+                  className={`${styles.mainCard} ${flipped ? styles.mainFlipped : ''} ${justOpened ? styles.stackIn : ''}`}
                   style={{ zIndex: 10 }}
                 >
                   <div className={styles.mainInner}>
@@ -407,6 +435,7 @@ export default function PackOpening({ cards, coins = null, onDone, onSaveRest = 
                   {flipped && <SparkEffect rarity={currentCard.rarity} />}
                 </div>
               )}
+              {flipped && currentCard && <Fanfare key={`fanfare-${currentCard.idx}`} rarity={currentCard.rarity} />}
             </div>
           )}
 
@@ -439,6 +468,14 @@ export default function PackOpening({ cards, coins = null, onDone, onSaveRest = 
               <div className={styles.plateSub}>
                 {inspected.sub}{inspected.sub ? ' · ' : ''}{pinned ? 'tap the card to go back' : 'viewing'}
               </div>
+            </div>
+          ) : !allDone && sealed ? (
+            <div className={styles.nameplate}>
+              <div className={styles.platePills}>
+                <div className={styles.plateRarity} style={{ color: 'var(--text-dim)', background: 'transparent' }}>Sealed</div>
+              </div>
+              <div className={styles.plateName}>{packLabel}</div>
+              <div className={styles.plateSub}>{totalCards} cards inside · tear it open</div>
             </div>
           ) : !allDone && currentCard && (
             <div className={styles.nameplate}>
@@ -500,7 +537,7 @@ export default function PackOpening({ cards, coins = null, onDone, onSaveRest = 
               return (
                 <div
                   key={di}
-                  className={`${styles.railItem} ${inspect === di ? styles.railItemActive : ''}`}
+                  className={`${styles.railItem} ${inspect === di ? styles.railItemActive : ''} ${styles[`rail_${cssRarity(c.rarity)}`] ?? ''}`}
                   style={{ borderColor: cfg.color }}
                   role="button"
                   tabIndex={0}
@@ -593,4 +630,65 @@ function SparkEffect({ rarity }) {
   );
 }
 
-export { TIER, burstFor, revealRank };
+/**
+ * THE FANFARE, for the two bands that earn one (the user, 2026-09-23: "more
+ * fanfare when opening a Super Rare or Legendary"). Over the chime, the
+ * aura, the sparks and the sweep that every reveal already has: a flash of
+ * the band's colour across the whole screen, the band's name stamped over
+ * the card as it lands, and confetti down the page — a handful for a
+ * super-rare, a fall of it for a legendary, which also shakes the stage
+ * (the class is set on the stage in PackOpening). Nothing below super-rare
+ * gets any of it: a fanfare on every rare is wallpaper.
+ */
+const FANFARE = {
+  'super-rare': { stamp: 'Super Rare', confetti: 28 },
+  legendary: { stamp: 'Legendary', confetti: 80 },
+};
+const CONFETTI_PALETTE = { 'super-rare': ['#F59E0B', '#FDE68A', '#FFFFFF'], legendary: ['#A855F7', '#D8B4FE', '#F59E0B', '#FFFFFF'] };
+
+export function Fanfare({ rarity }) {
+  const spec = FANFARE[rarity] ?? null;
+  const count = spec?.confetti ?? 0;
+  const palette = CONFETTI_PALETTE[rarity] ?? [];
+  // Rolled once per mount — the parent re-renders while this plays.
+  const bits = useMemo(() => (
+    [...Array(count)].map((_, i) => ({
+      x: Math.random() * 100,
+      delay: Math.random() * 0.7,
+      dur: 2.4 + Math.random() * 1.6,
+      w: 6 + Math.random() * 8,
+      h: 4 + Math.random() * 6,
+      color: palette[i % palette.length],
+      spin: Math.round(Math.random() * 900 - 450),
+      drift: Math.round(Math.random() * 120 - 60),
+    }))
+  ), [count, palette]);
+  if (!spec) return null;
+  const tier = cssRarity(rarity);
+  return (
+    <>
+      <div className={`${styles.flash} ${styles[`flash_${tier}`]}`} aria-hidden />
+      <div className={`${styles.stamp} ${styles[`stamp_${tier}`]}`} aria-hidden>{spec.stamp}</div>
+      <div className={styles.confetti} aria-hidden>
+        {bits.map((b, i) => (
+          <span
+            key={i}
+            className={styles.bit}
+            style={{
+              left: `${b.x}%`,
+              width: `${b.w}px`,
+              height: `${b.h}px`,
+              background: b.color,
+              '--delay': `${b.delay}s`,
+              '--dur': `${b.dur}s`,
+              '--spin': `${b.spin}deg`,
+              '--drift': `${b.drift}px`,
+            }}
+          />
+        ))}
+      </div>
+    </>
+  );
+}
+
+export { TIER, burstFor, revealRank, FANFARE };

@@ -1,0 +1,120 @@
+/* THE SEALED PACK. Fills the stage (the card's own box), so the wrapper is
+   exactly the size of what is inside it. `--tear` (0..1) is how far across the
+   top the tear has gone; the two strip pieces are clipped against it. */
+
+.pack {
+  position: absolute; inset: 0;
+  border-radius: 12px;
+  cursor: grab;
+  user-select: none; -webkit-user-select: none;
+  touch-action: none;
+  outline: none;
+  --strip-h: 16%;
+  /* The zig-zag along the torn edge — one polygon, used by the body's top and
+     the strips' bottom so the two edges are the same tear. */
+  --zig: polygon(0 0, 100% 0, 100% 78%, 96% 100%, 92% 80%, 88% 100%, 84% 82%, 80% 100%, 76% 79%, 72% 100%, 68% 84%, 64% 100%, 60% 80%, 56% 100%, 52% 78%, 48% 100%, 44% 83%, 40% 100%, 36% 79%, 32% 100%, 28% 81%, 24% 100%, 20% 78%, 16% 100%, 12% 82%, 8% 100%, 4% 80%, 0 100%);
+}
+.pack:focus-visible { box-shadow: 0 0 0 2px var(--orange); }
+.dragging { cursor: grabbing; }
+.opening { cursor: default; pointer-events: none; }
+
+/* The wrapper's body: the card back, darkened and desaturated under a foil,
+   with its top cut along the same zig-zag the strip tears on. */
+.body {
+  position: absolute; inset: 0;
+  border-radius: 12px; overflow: hidden;
+  background: linear-gradient(160deg, #1c2b55 0%, #0b1024 100%);
+  clip-path: polygon(0 calc(var(--strip-h) * 0.78), 4% calc(var(--strip-h) * 1), 8% calc(var(--strip-h) * 0.8), 12% calc(var(--strip-h) * 1), 16% calc(var(--strip-h) * 0.82), 20% calc(var(--strip-h) * 1), 24% calc(var(--strip-h) * 0.78), 28% calc(var(--strip-h) * 1), 32% calc(var(--strip-h) * 0.81), 36% calc(var(--strip-h) * 1), 40% calc(var(--strip-h) * 0.79), 44% calc(var(--strip-h) * 1), 48% calc(var(--strip-h) * 0.83), 52% calc(var(--strip-h) * 1), 56% calc(var(--strip-h) * 0.78), 60% calc(var(--strip-h) * 1), 64% calc(var(--strip-h) * 0.8), 68% calc(var(--strip-h) * 1), 72% calc(var(--strip-h) * 0.84), 76% calc(var(--strip-h) * 1), 80% calc(var(--strip-h) * 0.79), 84% calc(var(--strip-h) * 1), 88% calc(var(--strip-h) * 0.82), 92% calc(var(--strip-h) * 1), 96% calc(var(--strip-h) * 0.8), 100% calc(var(--strip-h) * 0.78), 100% 100%, 0 100%);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
+}
+.backArt {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; display: block;
+  opacity: 0.55; filter: saturate(0.7) brightness(0.8);
+  pointer-events: none;
+}
+/* The foil: a slow diagonal sheen over a dark wash, and a faint diamond grain
+   so it reads as a wrapper rather than as a photo. */
+.foil {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(115deg, rgba(255,255,255,0.00) 0%, rgba(255,255,255,0.16) 28%, rgba(255,255,255,0.02) 42%, rgba(255,255,255,0.10) 58%, rgba(0,0,0,0.30) 100%),
+    repeating-linear-gradient(45deg, rgba(255,255,255,0.025) 0 2px, transparent 2px 6px),
+    linear-gradient(180deg, rgba(8,12,30,0.35), rgba(8,12,30,0.65));
+  background-size: 240% 100%, auto, auto;
+  animation: foilShine 5.5s ease-in-out infinite;
+}
+@keyframes foilShine {
+  0%, 100% { background-position: 0% 0, 0 0, 0 0; }
+  50% { background-position: 100% 0, 0 0, 0 0; }
+}
+.crimpTop, .crimpBottom {
+  position: absolute; left: 0; right: 0; height: 9%;
+  background: repeating-linear-gradient(90deg, rgba(255,255,255,0.12) 0 3px, rgba(0,0,0,0.25) 3px 6px);
+  pointer-events: none;
+}
+.crimpTop { top: 0; border-radius: 12px 12px 0 0; height: 34%; }
+.crimpBottom { bottom: 0; border-radius: 0 0 12px 12px; height: 6%; }
+
+.label {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+  padding: 18% 12% 12%;
+  text-align: center; pointer-events: none;
+}
+.logo { width: 46%; max-width: 180px; height: auto; filter: drop-shadow(0 6px 18px rgba(0,0,0,0.6)); }
+.name {
+  font-size: clamp(16px, 2.2vw, 22px); font-weight: 900; letter-spacing: 0.14em; text-transform: uppercase;
+  color: #fff; text-shadow: 0 2px 12px rgba(0,0,0,0.7);
+}
+.count {
+  font-size: 12px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--gold); text-shadow: 0 1px 8px rgba(0,0,0,0.7);
+}
+.hint {
+  position: absolute; bottom: 9%; left: 0; right: 0; text-align: center;
+  font-size: 12px; color: rgba(255,255,255,0.55);
+  animation: hintPulse 2.2s ease-in-out infinite; pointer-events: none;
+}
+@keyframes hintPulse { 0%, 100% { opacity: 0.45; } 50% { opacity: 0.95; } }
+
+/* ── THE STRIP ─────────────────────────────────────────────────────────── */
+.stripClip {
+  position: absolute; left: 0; right: 0; top: 0; height: var(--strip-h);
+  pointer-events: none;
+}
+.keepClip { clip-path: inset(0 0 0 calc(var(--tear) * 100%)); }
+.tornClip { clip-path: inset(0 calc((1 - var(--tear)) * 100%) 0 0); overflow: visible; }
+.strip {
+  position: absolute; inset: 0;
+  border-radius: 12px 12px 0 0; overflow: hidden;
+  background: linear-gradient(160deg, #22346a 0%, #101838 100%);
+  clip-path: var(--zig);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.45);
+}
+.strip .backArt { height: 625%; object-position: top; }
+/* The torn piece lifts and hinges at the tear front as the pointer goes. */
+.stripTorn {
+  transform-origin: calc(var(--tear) * 100%) 100%;
+  transform: translateY(calc(var(--tear) * -12px)) rotate(calc(var(--tear) * -5deg));
+  transition: transform 60ms linear;
+}
+.sealed .stripTorn { transition: transform 260ms var(--ease-out); }
+
+/* ── OPENING ───────────────────────────────────────────────────────────── */
+.opening .stripClip { animation: stripFly 0.55s ease-in forwards; }
+.opening .body { animation: bodyDrop 0.6s ease-in 0.06s forwards; }
+.opening .hint { display: none; }
+@keyframes stripFly {
+  0% { transform: none; opacity: 1; }
+  100% { transform: translate(-34%, -160%) rotate(-26deg); opacity: 0; }
+}
+@keyframes bodyDrop {
+  0% { transform: none; opacity: 1; }
+  100% { transform: translateY(42%) scale(0.94); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .foil, .hint { animation: none; }
+  .opening .stripClip, .opening .body { animation-duration: 0.01ms; }
+}

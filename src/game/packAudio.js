@@ -159,6 +159,43 @@ export function playReveal(rarity, set = null) {
   }
 }
 
+/** The wrapper tearing: a bright noise tear with a shorter crackle riding on it. */
+export function playRip() {
+  const ac = audio();
+  if (!ac) return;
+  noise(ac, { dur: 0.32, gain: 0.08, from: 2600, to: 500 });
+  noise(ac, { start: 0.04, dur: 0.16, gain: 0.05, from: 4200, to: 1400 });
+}
+
+/**
+ * THE FANFARE, on top of the chime, for the two bands that earn one (the
+ * user, 2026-09-23: "more fanfare when opening a Super Rare or Legendary").
+ * A super-rare gets a drum hit under its chime. A legendary gets the drum, a
+ * crowd rising behind it, and a three-note horn call once the chime has
+ * unfurled — the only place in the game a horn is heard.
+ */
+export function playFanfare(rarity) {
+  const ac = audio();
+  if (!ac) return;
+  if (rarity === 'super-rare') {
+    noise(ac, { dur: 0.26, gain: 0.07, from: 220, to: 60 });
+    return;
+  }
+  if (rarity !== 'legendary') return;
+  noise(ac, { dur: 0.36, gain: 0.1, from: 200, to: 50 });
+  noise(ac, { start: 0.15, dur: 1.4, gain: 0.035, from: 700, to: 2400 });
+  [0, 7, 12].forEach((n, i) => {
+    tone(ac, {
+      freq: semitone(330, n),
+      start: 0.9 + i * 0.09,
+      dur: 0.7,
+      gain: 0.06,
+      type: 'square',
+      lowpass: { from: 2200, to: 900 },
+    });
+  });
+}
+
 /** Every card seen. A short rising two-note figure, deliberately modest. */
 export function playComplete() {
   const ac = audio();

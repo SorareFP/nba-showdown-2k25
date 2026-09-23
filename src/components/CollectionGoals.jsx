@@ -27,7 +27,7 @@ import { getTeam } from '../cards/teams.js';
 // same helper the card renderer uses, rather than a second copy of the rule.
 import { logoSrc, LEAGUE_LOGOS } from '../cards/CardTemplate.jsx';
 import styles from './CollectionGoals.module.css';
-import { ZoomImg } from './CardLightbox.jsx';
+import { ZoomImg, useLightbox } from './CardLightbox.jsx';
 
 const LEAGUES = [
   { key: 'NBA', label: 'NBA' },
@@ -127,6 +127,57 @@ function RosterCard({ cardKey: key, owned, collected, busy, onCollect }) {
   );
 }
 
+/**
+ * The reward chip: the prize's name beside the claim line.
+ *
+ * ONCE CLAIMED IT OPENS THE CARD (the user, 2026-09-23: "making the
+ * collection reward viewable through this button once a collection is
+ * claimed"). The chip becomes a button with the card's face on it, and a
+ * click brings the whole card up in the lightbox — the same place every
+ * other card image on a menu goes. Before the claim it stays a label: the
+ * face is the prize, and it is shown when it is yours.
+ */
+export function RewardChip({ reward, claimed }) {
+  const lb = useLightbox();
+  const key = cardKeyOf(reward);
+  const label = `${reward.name}${reward.seasonLabel ? ` ${reward.seasonLabel}` : ''}`;
+  if (!claimed || !lb) {
+    return (
+      <span className={styles.rewardChip} title={claimed ? `Reward: ${label}` : `Reward: ${label} — claim the collection to see the card`}>
+        🏆 {reward.name}
+      </span>
+    );
+  }
+  const open = e => {
+    e.stopPropagation();
+    lb.unpeek?.();
+    lb.open('player', reward);
+  };
+  return (
+    <button
+      type="button"
+      className={`${styles.rewardChip} ${styles.rewardOpen}`}
+      title={`${label} — see the whole card`}
+      aria-label={`${reward.name} — see your reward card`}
+      onClick={open}
+    >
+      <img
+        className={styles.rewardThumb}
+        src={getPlayerThumbUrl(key)}
+        alt=""
+        loading="lazy"
+        onError={fallbackTo(getPlayerImageUrl(key), e => { e.currentTarget.style.display = 'none'; })}
+      />
+      🏆 {reward.name}
+    </button>
+  );
+}
+
+/** A card's key, for the image helpers, which take a key rather than a card. */
+function cardKeyOf(card) {
+  return card.set && card.set !== '2026-27' ? `${card.set}:${card.id}` : card.id;
+}
+
 /** The whole roster, missing first, capped so a set-sized goal stays readable. */
 function rosterFor(goal, counts, limit = 60) {
   const keys = GOALS_BY_ID[goal.id]?.requires ?? [];
@@ -216,9 +267,7 @@ function GoalRow({ goal, counts, collected, claimed, coins, busy, busyCard, onCl
           <span className={styles.togo}>{goal.missingCount} to go</span>
         )}
         {reward ? (
-          <span className={styles.rewardChip} title={`Reward: ${reward.name} ${reward.seasonLabel ?? ''}`}>
-            🏆 {reward.name}
-          </span>
+          <RewardChip reward={reward} claimed={Boolean(claimed)} />
         ) : payout > 0 ? (
           // SAYING SO BEATS SHOWING NOTHING. A blank space here reads as a
           // reward that failed to load; three WNBA franchises pay coins by

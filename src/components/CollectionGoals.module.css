@@ -112,10 +112,24 @@
 .claimed { font-size: 12px; font-weight: 700; color: var(--green); }
 .togo { font-size: 11px; color: var(--text-dim); }
 .rewardChip {
-  font-size: 11px; color: var(--text-muted);
+  display: inline-flex; align-items: center; gap: 6px;
+  font: inherit; font-size: 11px; color: var(--text-muted);
   background: rgba(255,255,255,0.05); border: 1px solid var(--border);
   border-radius: 10px; padding: 2px 9px;
   max-width: 240px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+/* Claimed: the chip is a button that opens the card. The face on it says so
+   before the cursor does. */
+.rewardOpen {
+  cursor: zoom-in; color: var(--text);
+  border-color: rgba(245,158,11,0.45); background: rgba(245,158,11,0.08);
+  padding-left: 4px;
+  transition: filter var(--dur-fast, .12s) var(--ease, ease), border-color var(--dur-fast, .12s) var(--ease, ease);
+}
+.rewardOpen:hover, .rewardOpen:focus-visible { filter: brightness(1.15); border-color: var(--gold); outline: none; }
+.rewardThumb {
+  height: 22px; width: auto; border-radius: 3px; display: block;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.4);
 }
 
 /* ── Missing cards ───────────────────────────────────────────────────────── */

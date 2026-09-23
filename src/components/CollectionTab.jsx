@@ -473,6 +473,7 @@ export default function CollectionTab({ onLoadTeam, onCollectionChange, initialV
         onSaveRest={openingPack.packType === 'booster_box' ? handleSaveRest : null}
         box={openingPack.box ?? null}
         onRequestPack={handleRequestPack}
+        packName={PACK_TYPES[openingPack.packType]?.name ?? null}
       />
     );
   }

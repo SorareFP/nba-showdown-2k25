@@ -23,6 +23,11 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
+    id: 'pack-rip', date: '2026-09-23', title: 'Tear the pack open',
+    body: 'Every pack now arrives sealed: drag across the top to tear it, or tap. A Super Rare or a Legendary lands with a flash, a stamp and confetti — and a horn for the Legendary. And a claimed collection\'s reward chip opens the reward card itself.',
+    to: 'shop', cta: 'Pack Shop',
+  },
+  {
     id: 'franchise-points', date: '2026-09-22', title: 'Franchise Points, and a deck you can change',
     body: 'A dynasty now pays its coaches in Franchise Points as each year closes: your regular-season finish (first of the league is 10), 3 for every playoff series you win, 10 for the title, all weighted by the coach rung. Spend them in the offseason to bring a card you own into the league — a common for 2, a rare for 8, a legendary for 32 — and the player signs at his value for two years under the cap. And your strategy deck is no longer frozen at the start: change it in the Front Office or between rounds, alone or with friends.',
     to: 'dynasty', cta: 'Dynasty',

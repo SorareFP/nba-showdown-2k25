@@ -333,14 +333,90 @@
   .ray { height: 130px; }
 }
 
+/* ── OUT OF THE WRAPPER ───────────────────────────────────────────────────
+   The beat after the tear (PackRip.jsx): the stack rises out of where the
+   pack was, instead of simply being there. */
+.stackIn { animation: stackIn 0.45s var(--ease-out) both; }
+@keyframes stackIn {
+  from { opacity: 0; transform: translateY(9%) scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ── THE FANFARE ──────────────────────────────────────────────────────────
+   Super-rare and legendary only — see Fanfare in the JSX. Three parts: a
+   flash of the band's colour over the whole screen as the card lands, the
+   band's name stamped across the card, and confetti down the page. The
+   legendary also shakes the stage. */
+.flash {
+  position: fixed; inset: 0; z-index: 55; pointer-events: none;
+  animation: flashOut 0.9s ease-out 0.22s both;
+}
+.flash_super_rare { background: radial-gradient(circle at 50% 45%, rgba(245,158,11,0.55), rgba(245,158,11,0.10) 45%, transparent 75%); }
+.flash_legendary { background: radial-gradient(circle at 50% 45%, rgba(216,180,254,0.85), rgba(168,85,247,0.30) 40%, transparent 75%); }
+@keyframes flashOut {
+  0% { opacity: 0; }
+  12% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.stamp {
+  position: absolute; top: 9%; left: 50%; z-index: 30; pointer-events: none;
+  transform: translateX(-50%) rotate(-8deg);
+  font-size: clamp(26px, 6.5vw, 54px); font-weight: 900; line-height: 1;
+  letter-spacing: 0.12em; text-transform: uppercase; white-space: nowrap;
+  padding: 6px 18px; border: 4px solid currentColor; border-radius: 8px;
+  background: rgba(8, 12, 30, 0.72);
+  animation: stampIn 0.5s var(--ease-punch) 0.3s both, stampOut 0.45s ease-in 2.4s forwards;
+}
+.stamp_super_rare { color: #F59E0B; text-shadow: 0 0 22px rgba(245,158,11,0.9); box-shadow: 0 0 40px rgba(245,158,11,0.45); }
+.stamp_legendary { color: #D8B4FE; text-shadow: 0 0 26px rgba(168,85,247,1), 0 0 60px rgba(168,85,247,0.6); box-shadow: 0 0 60px rgba(168,85,247,0.6); }
+@keyframes stampIn {
+  0% { opacity: 0; transform: translateX(-50%) rotate(-8deg) scale(3.2); }
+  60% { opacity: 1; transform: translateX(-50%) rotate(-8deg) scale(0.94); }
+  100% { opacity: 1; transform: translateX(-50%) rotate(-8deg) scale(1); }
+}
+@keyframes stampOut { to { opacity: 0; transform: translateX(-50%) rotate(-8deg) translateY(-12px); } }
+
+.confetti { position: fixed; inset: 0; z-index: 54; pointer-events: none; overflow: hidden; }
+.bit {
+  position: absolute; top: -4vh;
+  border-radius: 2px; opacity: 0;
+  animation: confettiFall var(--dur) linear var(--delay) forwards;
+}
+@keyframes confettiFall {
+  0% { opacity: 0; transform: translate3d(0, 0, 0) rotate(0deg); }
+  6% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { opacity: 0; transform: translate3d(var(--drift), 112vh, 0) rotate(var(--spin)); }
+}
+
+.shake { animation: stageShake 0.5s ease-out 0.28s; }
+@keyframes stageShake {
+  0%, 100% { transform: none; }
+  15% { transform: translate(-6px, 3px) rotate(-0.6deg); }
+  30% { transform: translate(6px, -3px) rotate(0.6deg); }
+  45% { transform: translate(-4px, 2px); }
+  60% { transform: translate(4px, -2px); }
+  75% { transform: translate(-2px, 1px); }
+}
+
+/* The rail remembers the big pulls: a super-rare glows, a legendary pulses. */
+.rail_super_rare { box-shadow: 0 0 14px rgba(245,158,11,0.35); }
+.rail_legendary { box-shadow: 0 0 18px rgba(168,85,247,0.6); animation: railIn 0.3s ease-out, railLegendary 1.6s ease-in-out infinite; }
+@keyframes railLegendary {
+  0%, 100% { box-shadow: 0 0 14px rgba(168,85,247,0.45); }
+  50% { box-shadow: 0 0 26px rgba(168,85,247,0.9); }
+}
+
 /* Somebody who has asked for less motion gets the colour and the sound and
    none of the throwing-about. The information is in the palette either way. */
 @media (prefers-reduced-motion: reduce) {
   .mainInner { transition-duration: 0.01ms; }
-  .spark, .ray, .aura { display: none; }
+  .spark, .ray, .aura, .confetti, .flash { display: none; }
   .front_rare, .front_super_rare, .front_legendary,
   .mainFlipped .front_super_rare, .mainFlipped .front_legendary { animation: none; }
-  .railItem, .backHint, .tapHint { animation: none; }
+  .railItem, .backHint, .tapHint, .stackIn, .shake, .rail_legendary { animation: none; }
+  .stamp { animation: stampOut 0.01ms 2.4s forwards; }
 }
 
 /* ── The box's progress, as a shape ───────────────────────────────────────

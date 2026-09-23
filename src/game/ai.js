@@ -3,7 +3,7 @@
 // Pure functions: takes game state + team key, returns an action object.
 // No React, no side effects. Used by tutorial, solo mode, sim-to-end.
 
-import { getTeam, getOpp, getPS, calcAdv, matchupAdv, isGhosted, getFatigue, fatigueForMinutes, restMinutes, MAX_STRAIGHT_MINUTES, pickablePool, SPEND_COSTS, clutchAvailable, clutchEligible, burnedSlots, satOutLast, canRollSlot, extraRollPending, checkNeed, crunchSearchOptions } from './engine.js';
+import { getTeam, getOpp, getPS, calcAdv, matchupAdv, isGhosted, getFatigue, fatigueForMinutes, restMinutes, MAX_STRAIGHT_MINUTES, pickablePool, SPEND_COSTS, REBOUND_RULES, reboundCheckOpen, reboundCheckBonus, clutchAvailable, clutchEligible, burnedSlots, satOutLast, canRollSlot, extraRollPending, checkNeed, crunchSearchOptions } from './engine.js';
 import { lookupChart } from './cards.js';
 import { canPlayCard, helpTargets, staggerPair, myHouseTargets, foulTroubleTargets, clampTargets } from './canPlay.js';
 import { getStrat, STRATS, TIMEOUT_RIDERS } from './strats.js';
@@ -191,6 +191,8 @@ const SPEND_GOOD = 0.9;
 const SPEND_FLOOR = 0.45;
 /** What the cards that spend assists need — the coach keeps that much back. */
 const ASSIST_COST = { cross_court_dime: 3, pick_and_pop: 2, anticipate_pass: 1, crash_and_kick: 1, three_point_barrage: 1 };
+/** What the cards that spend rebounds cost, for the same reserve on an open rebound check. */
+const REBOUND_COST = { offensive_board: 3, rebound_tap_out: 2, crash_and_kick: 3, transition_outlet: 1, putback_specialist: 2 };
 
 /** The pick's score: this section's output, half of next section's swing, a little body. */
 export function lineupValue(player, ps) {
@@ -840,15 +842,16 @@ export function aiSpendDecision(game, teamKey, opts = {}) {
   // best CHANCE on the floor — checkNeed's reading of bonus, contest and
   // markers against the Shot Line — and spends only when the check is
   // worth the currency: about a point of expected scoring per five spent.
-  const bestChance = type => {
+  const bestChanceWith = (type, needOpts) => {
     let out = null;
     team.starters.forEach((p, i) => {
       if (!p) return;
-      const n = checkNeed(game, teamKey, i, type);
+      const n = checkNeed(game, teamKey, i, type, needOpts);
       if (!out || n.pHit > out.pHit) out = { idx: i, pHit: n.pHit };
     });
     return out;
   };
+  const bestChance = type => bestChanceWith(type);
   // ASSISTS ARE WORTH NOTHING IN THE BANK. The first cut of this spent only
   // on a ≥30% three or a ≥45% paint check; against real lineups the paint
   // bar was never met and a third of lineups never met the three bar, so a
@@ -883,10 +886,20 @@ export function aiSpendDecision(game, teamKey, opts = {}) {
     const floor = surplus >= 3 * best.cost ? 0 : surplus >= 2 * best.cost ? SPEND_FLOOR : SPEND_GOOD;
     if (surplus >= best.cost && best.ev >= floor) return { type: 'spend_assist', spendType: best.spendType, playerIdx: best.idx };
   }
-  const bonuses = game.reboundBonuses?.[teamKey];
-  if ((team.rebounds ?? 0) >= SPEND_COSTS.reboundPaint && bonuses?.paintCheck && paint) {
-    // The rebound check is a reward for winning the glass: always worth taking.
-    return { type: 'spend_rebound', rebType: 'paint_check', playerIdx: paint.idx };
+  if (paint && reboundCheckOpen(game, teamKey)) {
+    // GATED, it is a reward for winning the glass: always worth taking. OPEN
+    // (REBOUND_RULES.paintGate 0), the bank is a currency like the assists:
+    // keep what the cards in hand need, and spend the rest in the same tiers.
+    // The shooter is chosen on the check this spend takes: its own bonus, no banked assist.
+    const best = bestChanceWith('paint', { extra: reboundCheckBonus(game, teamKey), banked: false });
+    if (REBOUND_RULES.paintGate > 0) return { type: 'spend_rebound', rebType: 'paint_check', playerIdx: best.idx };
+    const reb = team.rebounds ?? 0;
+    const rebReserve = Math.max(0, ...(team.hand || []).map(id => REBOUND_COST[id] || 0));
+    const rebSurplus = reb - rebReserve;
+    const cost = SPEND_COSTS.reboundPaint;
+    const ev = best.pHit * 2;
+    const floor = rebSurplus >= 3 * cost ? 0 : rebSurplus >= 2 * cost ? SPEND_FLOOR : SPEND_GOOD;
+    if (misplays(opts.iq) || (rebSurplus >= cost && ev >= floor)) return { type: 'spend_rebound', rebType: 'paint_check', playerIdx: best.idx };
   }
   return null;
 }

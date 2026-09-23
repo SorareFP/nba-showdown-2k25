@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { calcAdv, matchupAdv, getTeam, getOpp, getPS, getFatigue, SPEND_COSTS, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, lastReturnedCard, undoReturnCard, periodLabel, extraRollPending, checkNeed, fatigueForMinutes, crunchSearchOptions, rollTurnLine } from '../../game/engine.js';
+import { calcAdv, matchupAdv, getTeam, getOpp, getPS, getFatigue, SPEND_COSTS, reboundCheckOpen, reboundCheckBonus, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, lastReturnedCard, undoReturnCard, periodLabel, extraRollPending, checkNeed, fatigueForMinutes, crunchSearchOptions, rollTurnLine } from '../../game/engine.js';
 import { canPlayCard, myHouseTargets, fwdTargets, preRollTargets, helpTargets, foulTroubleTargets, clampTargets } from '../../game/canPlay.js';
 import { resolveGoUnder } from '../../game/execCard.js';
 import { passTurn, MAX_STRAIGHT_MINUTES, restRuleLifted, pickablePool } from '../../game/engine.js';
@@ -1746,14 +1746,11 @@ function PlayerSlot({ player, ps, adv, fat, result, blocked, teamKey, idx, phase
             })()}
             {/* Rebound bonus buttons */}
             {onSpendRebound && !pvpDisabled && (() => {
-              const rb = game.reboundBonuses?.[teamKey];
-              if (!rb) return null;
-              const myT2 = teamKey==='A'?game.teamA:game.teamB;
               const cR = SPEND_COSTS.reboundPaint;
               // The 2-REB putback was removed — see spendReboundBonus in engine.js.
-              // Any player may take the check (the engine never required a bonus).
-              if (!(rb.paintCheck && myT2.rebounds >= cR)) return null;
-              const nR = checkNeed(game, teamKey, idx, 'paint');
+              // Any player may take the check; REBOUND_RULES says when it is open.
+              if (!reboundCheckOpen(game, teamKey)) return null;
+              const nR = checkNeed(game, teamKey, idx, 'paint', { extra: reboundCheckBonus(game, teamKey), banked: false });
               return (
                 <div className={styles.assistSpend}>
                   <button className={styles.rebBtn} title={needTitle('Paint', nR, player, `Costs ${cR} REB`)} onClick={()=>onSpendRebound(teamKey,'paint_check',idx)}>Paint (−{cR}R) {needLabel(nR)}</button>

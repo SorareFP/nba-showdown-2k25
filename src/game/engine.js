@@ -492,9 +492,47 @@ export const SPEND_COSTS = {
   assistThree: 5,
   /** 5 AST: a paint check, 2 points. Any player; the Paint Bonus (either sign) rides on it. */
   assistPaint: 5,
-  /** 5 REB: the +3-differential paint check. */
+  /** 5 REB: the rebound paint check (REBOUND_RULES says when it is open). */
   reboundPaint: 5,
 };
+
+/**
+ * THE GLASS (2026-09-23) — when the rebound paint check is open, and what it
+ * carries. Dials, like SPEND_COSTS, so the balance work can sweep them
+ * (scripts/analysis/reboundEconomy.mjs).
+ *
+ * The user: "assists can be fired for shot checks on an aggregate basis,
+ * while rebounding is nerfed because it is a net +/-." Measured with the gate
+ * at 3: a team makes about 44 rebounds a game and turns them into about a
+ * point and a half; 31 are still in the bank at the final buzzer.
+ */
+export const REBOUND_RULES = {
+  /** Section-end lead on the Rebound Track that opens the check; 0 opens it whenever the bank covers the cost. */
+  paintGate: 3,
+  /** With a gate: one check per published lead. */
+  oncePerSection: true,
+  /** On every rebound paint check. */
+  paintBonus: 0,
+  /** On the first check after winning a section's glass by `leadGate` or more. */
+  leadBonus: 0,
+  leadGate: 3,
+};
+
+/** Whether `teamKey` may take a rebound paint check now: the bank covers it and the rule opens it. */
+export function reboundCheckOpen(g, teamKey) {
+  const t = getTeam(g, teamKey);
+  if (!t || (t.rebounds ?? 0) < SPEND_COSTS.reboundPaint) return false;
+  if (REBOUND_RULES.paintGate <= 0) return true;
+  return Boolean(g.reboundBonuses?.[teamKey]?.paintCheck);
+}
+
+/** The bonus the next rebound paint check carries: the flat one, and the glass winner's once a section. */
+export function reboundCheckBonus(g, teamKey) {
+  const rb = g.reboundBonuses?.[teamKey];
+  const lead = REBOUND_RULES.leadBonus && rb && !rb.leadUsed && (rb.diff ?? 0) >= REBOUND_RULES.leadGate
+    ? REBOUND_RULES.leadBonus : 0;
+  return (REBOUND_RULES.paintBonus || 0) + lead;
+}
 
 // ── Shot Check ─────────────────────────────────────────────────────────────
 // No speed/power advantage — only player's own boost + hot/cold + card bonus
@@ -784,11 +822,13 @@ function spendParts(astBonus, contest) {
  * his hot/cold markers, against his Shot Line. `need` is the least die that
  * converts; `pHit` its chance on a d20.
  */
-export function checkNeed(g, teamKey, idx, type) {
+export function checkNeed(g, teamKey, idx, type, { extra = 0, banked = true } = {}) {
   const player = getTeam(g, teamKey).starters[idx];
   if (!player) return { need: 21, pHit: 0, bonus: 0 };
   const ps = getPS(g, teamKey, player.id) || {};
-  const astBonus = g.tempEff?.[teamKey]?.['astBoost_' + idx] || 0;
+  // `banked`: the assist boost rides on an ASSIST spend; the rebound check
+  // does not take it (spendReboundBonus), so its button asks without it.
+  const astBonus = (banked ? g.tempEff?.[teamKey]?.['astBoost_' + idx] || 0 : 0) + extra;
   const boost = type === '3pt' ? (player.threePtBoost || 0) : type === 'paint' ? (player.paintBoost || 0) : 0;
   const marker = ((ps.hot || 0) - (ps.cold || 0)) * 2;
   // The tracker's penalty, as shotCheck will apply it (free throws exempt).
@@ -927,7 +967,7 @@ export function spendAssist(g, teamKey, type, playerIdx) {
 }
 
 // ── Rebound Bonus Shot Checks ──────────────────────────────────────────────
-// +3 reb diff → Paint shot check for a chosen player (costs 3 REB)
+// The rebound paint check: SPEND_COSTS.reboundPaint REB, open per REBOUND_RULES.
 export function spendReboundBonus(g, teamKey, type, playerIdx) {
   // Nothing scores after the final whistle — see spendAssist.
   if (g.done) return { game: g, ok: false, msg: 'The game is over' };
@@ -938,10 +978,13 @@ export function spendReboundBonus(g, teamKey, type, playerIdx) {
   const ps = getPS(ng, teamKey, player.id) || {};
 
   if (type === 'paint_check') {
-    // Second-chance paint shot check (from +3 reb advantage) — costs 3 REB
     if (myT.rebounds < SPEND_COSTS.reboundPaint) return { game: ng, ok: false, msg: `Need ${SPEND_COSTS.reboundPaint} rebounds (have ${myT.rebounds})` };
+    // The ENGINE refuses a closed check too; the board and the coach only ever
+    // offered it when open, and a rule has to hold where it is enforced.
+    if (!reboundCheckOpen(ng, teamKey)) return { game: ng, ok: false, msg: `The rebound paint check opens when you win a section's glass by ${REBOUND_RULES.paintGate}+` };
+    const rebBonus = reboundCheckBonus(ng, teamKey);
     myT.rebounds -= SPEND_COSTS.reboundPaint;
-    const partsR = spendParts(0, matchupContest(ng, teamKey, playerIdx, 'paint'));
+    const partsR = [{ label: 'REB', n: rebBonus }, { label: 'contest', n: -(matchupContest(ng, teamKey, playerIdx, 'paint') || 0) }];
     const r = shotCheck(player, 'paint', partsR, ps, getFatigue(ng, teamKey, playerIdx));
     if (creditCheckDefended(ng, teamKey, playerIdx, 'paint', r, matchupContest(ng, teamKey, playerIdx, 'paint'))) r.blk = true;
     recordPaintCheck(ng, teamKey, player.id, r.hit);
@@ -956,8 +999,13 @@ export function spendReboundBonus(g, teamKey, type, playerIdx) {
     }
     if (r.die <= 2) ps.cold = (ps.cold || 0) + 1;
     if (r.die >= 19) ps.hot = (ps.hot || 0) + 1;
-    // Mark as used
-    if (ng.reboundBonuses?.[teamKey]) ng.reboundBonuses[teamKey].paintCheck = false;
+    // Mark as used: the published check (with a gate, once a section) and the
+    // glass winner's bonus (always once).
+    const rbUsed = ng.reboundBonuses?.[teamKey];
+    if (rbUsed) {
+      if (REBOUND_RULES.oncePerSection) rbUsed.paintCheck = false;
+      if (REBOUND_RULES.leadBonus) rbUsed.leadUsed = true;
+    }
     ng.log = [...ng.log, { team: teamKey, msg: `Rebound Paint Check (−${SPEND_COSTS.reboundPaint} REB): ${player.name} ${checkLine(r)}` }];
     return { game: ng, ok: true };
   }
@@ -1494,7 +1542,7 @@ export function endSection(g) {
 
     // Track rebound bonuses earned this section for UI display
     if (!ng.reboundBonuses) ng.reboundBonuses = {};
-    ng.reboundBonuses[wk] = { diff: absRd, paintCheck: absRd >= 3 };
+    ng.reboundBonuses[wk] = { diff: absRd, paintCheck: absRd >= REBOUND_RULES.paintGate };
   }
 
   // No putback detection: the rule was removed (see spendReboundBonus).

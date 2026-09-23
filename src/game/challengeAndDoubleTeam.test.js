@@ -70,6 +70,7 @@ describe("the check a Coach's Challenge reaches", () => {
   it('is the Rebound Paint Check that just went in, not an older card miss — and the Challenge takes back its points', () => {
     const g = scoring();
     getTeam(g, 'B').rebounds = 6;
+    g.reboundBonuses = { B: { diff: 3, paintCheck: true } };   // B won the last section's glass
     getTeam(g, 'A').hand = ['coaches_challenge'];
     g.lastShotCheck = staleMiss;
     const before = getTeam(g, 'B').score;

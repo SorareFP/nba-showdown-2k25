@@ -23,6 +23,11 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
+    id: 'wave-two-twins', date: '2026-09-23', title: 'Five new strategy cards',
+    body: 'The twins the deck was missing, now in packs: Blow-By (Speed 13+ and hot: +2 pts, another hot marker), Point God (a Speed edge before he rolls: his assists doubled), Passing Lane (cancel a roll\'s assists, one more with the Speed edge), Clamp the Reserve (an opposing $400 man still to roll keeps the lower die) and Feeling It (your hot marker draws two). Placeholder art for now.',
+    to: 'shop', cta: 'Pack Shop',
+  },
+  {
     id: 'dynasty-staff', date: '2026-09-23', title: 'Hire a front office',
     body: 'Franchise Points now hire staff, three tiers a role, kept for the dynasty: a Head Scout (a graded class, the AI\'s mock board, +25% lottery weight, a steal after the last pick), a Cap Strategist (every free agent\'s floor shown, your own players re-sign 10% under their ask, a 125-DP apron) and, in an aging dynasty, Sports Science (retirement starts later, one protected player a year). Tiers cost 3, 6 and 12 — a full role is a legendary\'s worth of points.',
     to: 'dynasty', cta: 'Dynasty',

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { calcAdv, matchupAdv, getTeam, getOpp, getPS, getFatigue, SPEND_COSTS, reboundCheckOpen, reboundCheckBonus, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, lastReturnedCard, undoReturnCard, periodLabel, extraRollPending, checkNeed, fatigueForMinutes, crunchSearchOptions, rollTurnLine } from '../../game/engine.js';
-import { canPlayCard, myHouseTargets, fwdTargets, preRollTargets, helpTargets, foulTroubleTargets, clampTargets } from '../../game/canPlay.js';
+import { canPlayCard, myHouseTargets, fwdTargets, preRollTargets, helpTargets, foulTroubleTargets, clampTargets, kickOutTargets } from '../../game/canPlay.js';
 import { resolveGoUnder } from '../../game/execCard.js';
 import { passTurn, MAX_STRAIGHT_MINUTES, restRuleLifted, pickablePool } from '../../game/engine.js';
 import { salaryOrder } from '../../game/teamRules.js';
@@ -238,6 +238,8 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
     'five_out', 'hammer_set', 'iso_heavy', 'crash_and_kick', 'pick_and_pop', 'extra_pass',
     'stretch_five', 'post_domination', 'unsung_hero', 'transition_outlet',
     'find_the_open_man', 'putback_specialist', 'hustle_play',
+    // The glass (2026-09-23): who takes the kick-out three, who owns the glass.
+    'kick_out_three', 'own_the_glass',
     // Wave two (2026-09-07).
     'outside_pick',
     // NOT short_roll_playmaker OR pick_and_roll_maestro. Both have their own
@@ -356,6 +358,17 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
       case 'iso_heavy': case 'unsung_hero': {
         eligible = preRollTargets(game, teamKey, cardId === 'unsung_hero' ? (p => (p.salary || 0) <= 400) : undefined).map(({ p, idx }) => ({ p, origIdx: idx }));
         label = cardId === 'iso_heavy' ? 'Who takes over? (+3, teammates −2)' : 'Select a $400-or-less player (two dice, keep higher)';
+        break;
+      }
+      case 'kick_out_three': {
+        // The list the engine takes (kickOutTargets): not the shooter who missed, a 3PT Bonus of +1 or more.
+        eligible = kickOutTargets(game, teamKey);
+        label = 'Kick it out to whom? (a 3PT check)';
+        break;
+      }
+      case 'own_the_glass': {
+        eligible = filterStarters(myT.starters, () => true);
+        label = 'Who owns the glass? (two paint checks at +1)';
         break;
       }
       case 'crash_and_kick': case 'extra_pass': case 'putback_specialist': {

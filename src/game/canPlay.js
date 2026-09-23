@@ -119,6 +119,34 @@ export function clampTargets(g, teamKey) {
     .filter(({ p, origIdx }) => p && rolls[origIdx] == null && (p.salary || 0) <= 400);
 }
 
+/**
+ * THE GLASS CARDS' SHARED READS (2026-09-23). One list each, read by the
+ * playability check, the board's picker, the coach and the engine's refusal,
+ * so a player offered is a player the engine takes.
+ *
+ * kickOutTargets — Kick-Out Three: your own last check just missed (and no
+ * card has claimed the board); a teammate OTHER than that shooter with a 3PT
+ * Bonus of +1 or more. `{ p, origIdx }` in your slot order.
+ */
+export function kickOutTargets(g, teamKey) {
+  const miss = g.lastCheckMiss;
+  if (!miss || miss.teamKey !== teamKey || miss.claimed) return [];
+  return (getTeam(g, teamKey)?.starters || [])
+    .map((p, origIdx) => ({ p, origIdx }))
+    .filter(({ p, origIdx }) => p && origIdx !== miss.playerIdx && (p.threePtBoost || 0) >= 1);
+}
+
+/** Rebound and Push — the slot of YOUR defender on the opponent who just missed, or null. */
+export function pushGuardIdx(g, teamKey) {
+  const miss = g.lastCheckMiss;
+  if (!miss || miss.teamKey === teamKey || miss.claimed || miss.playerIdx == null) return null;
+  const gi = (g.offMatchups?.[miss.teamKey] || [])[miss.playerIdx];
+  return gi != null && getTeam(g, teamKey)?.starters?.[gi] ? gi : null;
+}
+
+/** Own the Glass — the lead on the Rebound Track it needs (the banks' difference, as the track shows it). */
+export const OWN_THE_GLASS_LEAD = 6;
+
 export function preRollTargets(g, teamKey, cond = () => true) {
   const rolls = g.rollResults?.[teamKey] || [];
   const blocked = g.blockedRolls?.[teamKey] || {};
@@ -654,7 +682,25 @@ export function canPlayCard(g, teamKey, cardId) {
     }
     return ok('Rotate a defender over — they lose their edge, someone else gets +3');
   }
-  if (['find_the_open_man', 'putback_specialist', 'glass_cleaner', 'box_out', 'passing_lane'].includes(cardId)) {
+  if (['find_the_open_man', 'putback_specialist', 'glass_cleaner', 'box_out', 'passing_lane', 'kick_out_three', 'rebound_and_push'].includes(cardId)) {
+    // The glass cards (2026-09-23): the same missed-check window as Putback
+    // Specialist (ours) and Glass Cleaner (theirs); whoever claims it first
+    // has the board.
+    if (cardId === 'kick_out_three') {
+      const miss = g.lastCheckMiss;
+      if (!miss || miss.teamKey !== teamKey || miss.claimed) return no('Your player must have just missed a shot check');
+      if (myT.rebounds < 2) return no(`Need 2 rebounds (have ${myT.rebounds})`);
+      if (!kickOutTargets(g, teamKey).length) return no('Need a teammate other than the shooter with a 3PT Bonus of +1 or more');
+      return ok('−2 REB → a 3PT check for a shooter on the kick-out');
+    }
+    if (cardId === 'rebound_and_push') {
+      const miss = g.lastCheckMiss;
+      if (!miss || miss.teamKey === teamKey || miss.claimed) return no('The opponent must have just missed a shot check');
+      if (myT.rebounds < 2) return no(`Need 2 rebounds (have ${myT.rebounds})`);
+      const gi = pushGuardIdx(g, teamKey);
+      if (gi == null) return no('None of your defenders is on the shooter');
+      return ok(`−2 REB → ${myT.starters[gi]?.name ?? 'your defender'} pushes it: a Paint check at +1`);
+    }
     // Box Out's twin for assists (2026-09-23).
     if (cardId === 'passing_lane') {
       const lr = g.lastRoll;
@@ -706,6 +752,15 @@ export function canPlayCard(g, teamKey, cardId) {
       const n = myT.starters.filter(p => (p?.threePtBoost || 0) > 0).length;
       if (n < 3) return no(`Need three players with a 3PT Bonus (have ${n})`);
       return ok(`${n} 3PT checks`);
+    }
+    case 'grab_and_go':
+      if (myT.rebounds < 3) return no(`Need 3 rebounds (have ${myT.rebounds})`);
+      return ok('−3 REB → +2 AST');
+    case 'own_the_glass': {
+      const lead = (myT.rebounds || 0) - (oppT.rebounds || 0);
+      if (lead < OWN_THE_GLASS_LEAD) return no(`Lead the Rebound Track by ${OWN_THE_GLASS_LEAD} (you are at ${lead >= 0 ? '+' : ''}${lead})`);
+      if (myT.rebounds < 5) return no(`Need 5 rebounds (have ${myT.rebounds})`);
+      return ok('−5 REB → two Paint checks at +1');
     }
     case 'crash_and_kick':
       if (myT.rebounds < 3) return no(`Need 3 rebounds (have ${myT.rebounds})`);

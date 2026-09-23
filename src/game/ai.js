@@ -5,7 +5,7 @@
 
 import { getTeam, getOpp, getPS, calcAdv, matchupAdv, isGhosted, getFatigue, fatigueForMinutes, restMinutes, MAX_STRAIGHT_MINUTES, pickablePool, SPEND_COSTS, REBOUND_RULES, reboundCheckOpen, reboundCheckBonus, clutchAvailable, clutchEligible, burnedSlots, satOutLast, canRollSlot, extraRollPending, checkNeed, crunchSearchOptions } from './engine.js';
 import { lookupChart } from './cards.js';
-import { canPlayCard, helpTargets, staggerPair, myHouseTargets, foulTroubleTargets, clampTargets } from './canPlay.js';
+import { canPlayCard, helpTargets, staggerPair, myHouseTargets, foulTroubleTargets, clampTargets, kickOutTargets } from './canPlay.js';
 import { getStrat, STRATS, TIMEOUT_RIDERS } from './strats.js';
 import { DEFAULT_ORDER } from './placement.js';
 
@@ -192,7 +192,11 @@ const SPEND_FLOOR = 0.45;
 /** What the cards that spend assists need — the coach keeps that much back. */
 const ASSIST_COST = { cross_court_dime: 3, pick_and_pop: 2, anticipate_pass: 1, crash_and_kick: 1, three_point_barrage: 1 };
 /** What the cards that spend rebounds cost, for the same reserve on an open rebound check. */
-const REBOUND_COST = { offensive_board: 3, rebound_tap_out: 2, crash_and_kick: 3, transition_outlet: 1, putback_specialist: 2 };
+const REBOUND_COST = {
+  offensive_board: 3, rebound_tap_out: 2, crash_and_kick: 3, transition_outlet: 1, putback_specialist: 2,
+  // The glass cards (2026-09-23).
+  kick_out_three: 2, rebound_and_push: 2, grab_and_go: 3, own_the_glass: 5,
+};
 
 /** The pick's score: this section's output, half of next section's swing, a little body. */
 export function lineupValue(player, ps) {
@@ -1179,6 +1183,9 @@ function evaluateCard(game, teamKey, cardId, strat, opts = {}) {
       help_defender: 7,
       // Wave two twins (2026-09-23): Box Out's price, for assists.
       passing_lane: 6,
+      // The glass (2026-09-23): Putback Specialist's price for its twin;
+      // the transition bucket a touch under, the shooter is not chosen.
+      kick_out_three: 6, rebound_and_push: 5,
     };
     return reactionValues[cardId] ?? 4;
   }
@@ -1209,6 +1216,9 @@ function evaluateCard(game, teamKey, cardId, strat, opts = {}) {
     turnover: 4,
     // Wave two twins (2026-09-23): priced as the cards they mirror.
     feeling_it: 4, clamp_the_reserve: 5, point_god: 6, blow_by: 7,
+    // The glass (2026-09-23): two checks for 5 REB against one; the
+    // exchange is a small edge, played when nothing better is.
+    own_the_glass: 8, grab_and_go: 3,
 
     // Scoring
     green_light: 8,
@@ -1580,6 +1590,23 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
     }
     case 'feeling_it': {
       // Like Turnover: the condition is the team's, nothing to choose.
+      return {};
+    }
+    case 'kick_out_three': {
+      // The best three on the kick-out, as the check will read it — the shared list.
+      const cand = kickOutTargets(game, teamKey)
+        .map(t => ({ ...t, pHit: checkNeed(game, teamKey, t.origIdx, '3pt').pHit }))
+        .sort((u, v) => v.pHit - u.pHit);
+      return { playerIdx: cand[0]?.origIdx ?? 0 };
+    }
+    case 'own_the_glass': {
+      // Two paint checks at +1 by one player: the best finisher on the floor.
+      const cand = starters.map((p, i) => ({ i, pHit: p ? checkNeed(game, teamKey, i, 'paint', { extra: 1 }).pHit : -1 }))
+        .sort((u, v) => v.pHit - u.pHit);
+      return { playerIdx: cand[0]?.i ?? 0 };
+    }
+    case 'grab_and_go': case 'rebound_and_push': {
+      // Nothing to choose: the exchange, and the defender already on the shooter.
       return {};
     }
     case 'clamp_the_reserve': {

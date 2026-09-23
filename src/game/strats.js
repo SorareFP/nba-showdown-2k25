@@ -253,6 +253,25 @@ export const STRATS = [
   { id:'feeling_it',          name:'Feeling It',         phase:'pre_roll', side:'off', copies:2, locked:false, color:'#EA580C', rarity:'common',
     // Turnover, off the hot marker instead of the cold one.
     desc:'One of your players has a hot marker: draw 2 strategy cards.' },
+
+  // ── THE GLASS (2026-09-23) — ways to spend a surplus on the boards ──────
+  // The user: "Definitely a few rebound-based strategy cards, ways to
+  // leverage surplus rebounding." Drafted in
+  // docs/plans/2026-09-23-rebound-cards-design.md and approved ("Great,
+  // let's do it"). Rebounds spend like assists now (REBOUND_RULES: 5 REB, a
+  // paint check), so each of these beats the check its rebounds would buy.
+  { id:'kick_out_three',      name:'Kick-Out Three',     phase:'reaction', side:'off', copies:2, locked:false, color:'#0369A1', rarity:'uncommon',
+    // Putback Specialist's three-point twin: the board goes back out.
+    desc:'After your player misses a shot check, spend 2 Rebounds: a different player of yours with a 3PT Bonus of +1 or more announces a 3PT Shot Check.' },
+  { id:'grab_and_go',         name:'Grab and Go',        phase:'scoring',  side:'off', copies:2, locked:false, color:'#15803D', rarity:'common',
+    // The plain exchange: the currency you have too much of for the one that buys threes.
+    desc:'Spend 3 Rebounds: +2 Assists.' },
+  { id:'rebound_and_push',    name:'Rebound and Push',   phase:'reaction', side:'def', copies:2, locked:false, color:'#0F766E', rarity:'uncommon',
+    // Glass Cleaner's miss, turned into a transition bucket the other way.
+    desc:'Right after an opponent misses a shot check, spend 2 Rebounds: your defender on the shooter announces a Paint Shot Check at +1.' },
+  { id:'own_the_glass',       name:'Own the Glass',      phase:'scoring',  side:'off', copies:1, locked:false, color:'#166534', rarity:'rare',
+    // The dominant front line's card: the lead is the door, the bank the fuel.
+    desc:'Your team leads the Rebound Track by 6 or more: spend 5 Rebounds: a player of yours announces two Paint Shot Checks at +1.' },
 ];
 
 export const STRAT_MAP = Object.fromEntries(STRATS.map(s => [s.id, s]));

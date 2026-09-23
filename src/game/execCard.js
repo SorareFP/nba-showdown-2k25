@@ -4,7 +4,7 @@
 
 import { handOverPriority, getTeam, getOpp, getPS, calcAdv, shotCheck, matchupContest, drawCards, deepClone, getFatigue, recordDefSwitch, burnedSlots, roll20, checkAssistDraw, standingEntry, CROWD_FAVORITE_PTS, satOutLast, bottomedLines } from './engine.js';
 import { creditAllowed, creditCheckDefended, recordPaintCheck, creditPaintScore, noteLastCheck } from './engine.js';
-import { helpTargets, canAnswerCheck, myHouseHolds, foulTroubleTargets, clampTargets } from './canPlay.js';
+import { helpTargets, canAnswerCheck, myHouseHolds, foulTroubleTargets, clampTargets, kickOutTargets, pushGuardIdx, OWN_THE_GLASS_LEAD } from './canPlay.js';
 import { lookupChart } from './cards.js';
 import { getStrat } from './strats.js';
 
@@ -1560,6 +1560,55 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       miss.claimed = true;
       addLog(g, teamKey, `Putback Specialist: −2 REB → ${player?.name} announces a Paint check at +3.`);
       announceCheck(g, { teamKey, playerIdx: idx, type: 'paint', bonus: 3 + _assistShotBonus, cardLabel: 'Putback Specialist' });
+      break;
+    }
+    // ── THE GLASS (2026-09-23) ─────────────────────────────────────────────
+    case 'kick_out_three': {
+      const miss = g.lastCheckMiss;
+      if (!miss || miss.teamKey !== teamKey || miss.claimed) return fail('Your player must have just missed a shot check');
+      if (myT.rebounds < 2) return fail(`Need 2 rebounds (have ${myT.rebounds})`);
+      if (!kickOutTargets(g, teamKey).some(t => t.origIdx === idx)) {
+        return fail(`${player?.name ?? 'That player'} cannot take the kick-out: a teammate other than the shooter, with a 3PT Bonus of +1 or more`);
+      }
+      myT.rebounds -= 2;
+      miss.claimed = true;
+      addLog(g, teamKey, `Kick-Out Three: −2 REB → the board goes back out to ${player?.name} for a 3PT check.`);
+      announceCheck(g, { teamKey, playerIdx: idx, type: '3pt', bonus: _assistShotBonus, cardLabel: 'Kick-Out Three' });
+      break;
+    }
+    case 'rebound_and_push': {
+      const miss = g.lastCheckMiss;
+      if (!miss || miss.teamKey === teamKey || miss.claimed) return fail('The opponent must have just missed a shot check');
+      if (myT.rebounds < 2) return fail(`Need 2 rebounds (have ${myT.rebounds})`);
+      const gi = pushGuardIdx(g, teamKey);
+      if (gi == null) return fail('None of your defenders is on the shooter');
+      const guard = myT.starters[gi];
+      myT.rebounds -= 2;
+      miss.claimed = true;
+      addLog(g, teamKey, `Rebound and Push: ${guard.name} boards the miss and pushes — −2 REB, a Paint check at +1.`);
+      announceCheck(g, { teamKey, playerIdx: gi, type: 'paint', bonus: 1 + _assistShotBonus, cardLabel: 'Rebound and Push' });
+      break;
+    }
+    case 'grab_and_go': {
+      if (myT.rebounds < 3) return fail(`Need 3 rebounds (have ${myT.rebounds})`);
+      myT.rebounds -= 3;
+      myT.assists += 2;
+      if (g.analytics?.[teamKey]) g.analytics[teamKey].assistsFromCards += 2;
+      addLog(g, teamKey, 'Grab and Go: −3 REB → +2 AST');
+      break;
+    }
+    case 'own_the_glass': {
+      const lead = (myT.rebounds || 0) - (oppT.rebounds || 0);
+      if (lead < OWN_THE_GLASS_LEAD) return fail(`Your team must lead the Rebound Track by ${OWN_THE_GLASS_LEAD} (lead ${lead})`);
+      if (myT.rebounds < 5) return fail(`Need 5 rebounds (have ${myT.rebounds})`);
+      if (!player) return fail('Choose a player');
+      myT.rebounds -= 5;
+      addLog(g, teamKey, `Own the Glass: −5 REB → ${player.name} owns the offensive glass: two Paint checks at +1.`);
+      announceCheck(g, {
+        teamKey, playerIdx: idx, type: 'paint', bonus: 1 + _assistShotBonus,
+        cardLabel: 'Own the Glass #1',
+        then: [{ cardLabel: 'Own the Glass #2' }],
+      });
       break;
     }
     case 'rim_protector': case 'drop_coverage': case 'smothering_defense': case 'denial': case 'hustle_play': {

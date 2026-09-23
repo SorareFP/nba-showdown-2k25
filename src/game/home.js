@@ -23,6 +23,11 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
+    id: 'glass-cards', date: '2026-09-23', title: 'Four cards for the glass',
+    body: 'New strategy cards for teams that win the boards, now in packs: Kick-Out Three (after your miss, 2 REB sends a 3PT check to a shooter on the kick-out), Grab and Go (3 REB become 2 AST), Rebound and Push (after their miss, 2 REB and your defender on the shooter takes a paint check at +1) and Own the Glass (lead the Rebound Track by 6: 5 REB for two paint checks at +1). Placeholder art for now.',
+    to: 'shop', cta: 'Shop',
+  },
+  {
     id: 'rebounds-spend', date: '2026-09-23', title: 'Rebounds spend like assists',
     body: 'Your rebounds are a currency now: 5 REB buys a paint check for any player, any time, the same price as the assist paint check. Winning a section on the glass still pays: +1 assist, and a lead of 3 or more puts your next rebound check at +2. Teams used to finish games with 30 rebounds they could never use; a big front line now turns them into points.',
     to: 'play', cta: 'Play',

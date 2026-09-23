@@ -755,7 +755,50 @@ def s_box_out(d, s):
     arrow(d, (W / 2 + 130, H * 0.62), (W / 2 + 230, H * 0.62), fill=RED)
 
 
+# ── THE GLASS (2026-09-23) ──────────────────────────────────────────────────
+def s_kick_out_three(d, s):
+    court(d)
+    player(d, W / 2 - 60, H * 0.95, BLUE, h=280, pose='arms_up', number=34)
+    player(d, W - 170, H * 0.95, BLUE, pose='shoot', number=3)
+    ball(d, (W - 230, H * 0.42))
+    arrow(d, (W / 2 - 20, H * 0.45), (W - 280, H * 0.45), fill=RED)
+    text(d, (W / 2 - 160, 150), 'CLANK', size=60, fill=RED, shadow=WHITE, anchor='mm')
+    text(d, (W - 230, 150), '3!', size=90, fill=GREEN, shadow=WHITE, anchor='mm')
+
+
+def s_grab_and_go(d, s):
+    court(d)
+    player(d, W / 2 - 200, H * 0.95, BLUE, h=280, pose='arms_up', number=13)
+    ball(d, (W / 2 - 200, H * 0.95 - 400))
+    arrow(d, (W / 2 - 60, H * 0.55), (W / 2 + 220, H * 0.55), fill=GREEN)
+    text(d, (W / 2 - 200, 130), '-3 REB', size=60, fill=RED, shadow=WHITE, anchor='mm')
+    text(d, (W / 2 + 230, 130), '+2 AST', size=60, fill=GREEN, shadow=WHITE, anchor='mm')
+
+
+def s_rebound_and_push(d, s):
+    court(d)
+    player(d, 200, H * 0.95, BLUE, h=290, pose='arms_up', number=21)
+    ball(d, (200, H * 0.95 - 410))
+    arrow(d, (300, H * 0.6), (W - 300, H * 0.6), fill=GREEN)
+    player(d, W - 200, H * 0.95, BLUE, pose='run', number=21)
+    for i in range(3):
+        line(d, (W - 330 - i * 30, H * 0.82 + i * 20), (W - 270 - i * 30, H * 0.82 + i * 20), width=5)
+    text(d, (W / 2, 130), 'PUSH IT', size=80, fill=RED, shadow=WHITE, anchor='mm')
+
+
+def s_own_the_glass(d, s):
+    court(d)
+    player(d, W / 2 - 150, H * 0.96, BLUE, h=320, pose='arms_up', number=6)
+    player(d, W / 2 + 150, H * 0.96, BLUE, h=320, pose='arms_up', number=6)
+    ball(d, (W / 2 - 150, H * 0.96 - 440))
+    ball(d, (W / 2 + 150, H * 0.96 - 440))
+    player(d, W / 2 + 380, H * 0.9, RED, pose='stand', number=1)
+    text(d, (W / 2, 120), 'MINE', size=100, fill=GREEN, shadow=WHITE, anchor='mm')
+
+
 SCENES = {
+    'kick_out_three': s_kick_out_three, 'grab_and_go': s_grab_and_go,
+    'rebound_and_push': s_rebound_and_push, 'own_the_glass': s_own_the_glass,
     'double_team': s_double_team, 'pick_up_full_court': s_pick_up_full_court, 'cross_court_dime': s_cross_court_dime,
     'desperation_press': s_desperation_press, 'second_closer': s_second_closer, 'ato_masterpiece': s_ato_masterpiece,
     'fresh_legs': s_fresh_legs, 'ice_the_hot_hand': s_ice_the_hot_hand, 'reset': s_reset,

@@ -144,6 +144,8 @@ const COMPOSED_STRATS = new Set([
   'beat_to_the_spot', 'verticality',
   // Wave two twins (2026-09-23), approved on placeholder art.
   'blow_by', 'point_god', 'passing_lane', 'clamp_the_reserve', 'feeling_it',
+  // The glass (2026-09-23), approved on placeholder art.
+  'kick_out_three', 'grab_and_go', 'rebound_and_push', 'own_the_glass',
 ]);
 const PHASE_LABEL = { matchup: 'Matchup', pre_roll: 'Pre-roll', scoring: 'Scoring', post_roll: 'Post-roll', reaction: 'Reaction' };
 

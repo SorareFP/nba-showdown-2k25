@@ -257,3 +257,42 @@ export function loadAllRealGames() {
   }
   return out;
 }
+
+// ── THE LIVE SERIES' WINDOW (2026-09-23) ─────────────────────────────────────
+//
+// One season's games, up to a date, with NO floor: the live card's chart is
+// cut from this season's real games plus synthetic games from dunksandthrees'
+// expected rates for the rest of the 82 (generateCards.js, fillGames), so
+// three real games among seventy-nine synthetic ones are evidence rather than
+// a hazard. The same adjustment tail as every other window (finishWindow), and
+// the same last-82 cap once a season plus its playoffs runs past it. The
+// user's choice for the early season (2026-09-23): the expected rates alone,
+// which the real games replace one at a time — never last season's games.
+
+/** A log's rows through the window rule, without touching the cache — the testable half. */
+export function liveRowsFromLog(log, season, defense, { asOf = null } = {}) {
+  if (!log) return null;
+  const rows = [...(log.reg ?? []), ...(log.post ?? [])]
+    .filter(g => !asOf || (g.date ?? '') <= asOf)
+    .sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''))
+    .slice(0, WINDOW_GAMES);
+  if (!rows.length) return null;
+  return finishWindow(rows, defense, g => `${season}|${TEAM_ALIAS[g.opp] ?? g.opp}`);
+}
+
+/** The cached `gamelog-full-{playerId}-{season}` page through liveRowsFromLog. */
+export function liveSeasonRows(playerId, season, defense, options) {
+  return liveRowsFromLog(readCache(`gamelog-full-${playerId}-${season}`), season, defense, options);
+}
+
+/** One season's opponent table — the latest dated DEF EPM per team, keyed `${season}|${alias}`. */
+export function seasonTeamDefense(season) {
+  const out = new Map();
+  const latest = new Map();
+  for (const r of readCache(`dunksandthrees-api-team-epm-${season}`) ?? []) {
+    const prev = latest.get(r.team_alias);
+    if (!prev || r.game_dt > prev.game_dt) latest.set(r.team_alias, r);
+  }
+  for (const [alias, r] of latest) out.set(`${season}|${alias}`, r.team_depm ?? 0);
+  return out;
+}

@@ -7,9 +7,11 @@
 #
 # GATED by the repository variable LIVE_SERIES (Settings → Variables → Actions):
 # it runs only when that is "on", so it can exist — and be run by hand — long
-# before the season. The season mode of scripts/cardgen/generateLive.js is not
-# wired yet (see docs/plans/2026-09-23-live-series-design.md); until it is, a
-# manual run mirrors the base set, which is the same set the repo already has.
+# before the season. A scheduled run is the SEASON mode of
+# scripts/cardgen/generateLive.js (dunksandthrees' expected page, this
+# season's game logs; see docs/plans/2026-09-23-live-series-design.md), which
+# refuses until dunksandthrees serves the 2026-27 season; a manual run
+# defaults to a MIRROR of the base set, the same set the repo already has.
 #
 # Secrets it reads: DUNKSANDTHREES_API_KEY (the keyed API, for what the public
 # page cannot serve). The push and the Pages deploy use the workflow's own
@@ -64,6 +66,18 @@ jobs:
       - run: pip install pillow
       # Puppeteer's Chromium for the face export.
       - run: npx puppeteer browsers install chrome
+
+      # The stat cache between nights: this season's game-log pages (fetched
+      # only for players who have played since the cached page, at the polite
+      # spacing, capped per night) and the two dunksandthrees pages. The key
+      # is unique per run so every night saves; restore-keys picks up the
+      # newest previous night.
+      - uses: actions/cache@v4
+        with:
+          path: card-data/cache
+          key: live-cache-${{ github.run_id }}
+          restore-keys: |
+            live-cache-
 
       - name: Regenerate the Live Series
         run: node scripts/cardgen/generateLive.js --mode ${{ github.event.inputs.mode || 'season' }}

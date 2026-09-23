@@ -194,6 +194,17 @@ export function buildCard({
   // exaggerates away from balance along its existing lean — the override
   // group's attackable hole. The budget change arrives via speedPowerTotal.
   exaggerateSplit = false,
+  // THE LIVE SERIES (2026-09-23): when the real games run short of this
+  // many, synthetic games from the predicted rates fill the window — see
+  // fillGames. Zero (the base set) keeps the real-or-synthetic rule above.
+  fillTo = 0,
+  // And the level and spread those synthetic games are made at: the real-log
+  // path's own `{ levels, shape }` from calibrateLiveFill.js, rather than the
+  // published set's in card-calibration.json — the two are not the same scale
+  // (see that file's header). Read only when a window is being filled; the
+  // shape is the fitted quantile curve, so the fill synthesizes from it
+  // rather than from the section model.
+  fill = null,
 }) {
   const per100 = {
     pts: rate?.pts100 ?? 0,
@@ -227,12 +238,16 @@ export function buildCard({
   // Def Boost, all of which are settled before a chart is cut.
   const bands = {};
   for (const stat of V.CHART_STATS) {
-    const fit = { level: calibration.chart.levels[stat], shape: calibration.chart.shape };
-    const games = realGames ?? V.synthesizeGames({
+    const filling = fillTo > 0 && Boolean(fill?.levels?.[stat] && fill?.shape);
+    const fit = filling
+      ? { level: fill.levels[stat], shape: fill.shape }
+      : { level: calibration.chart.levels[stat], shape: calibration.chart.shape };
+    const synthesize = count => V.synthesizeGames({
       per100: { [stat]: per100[stat] },
       mpg: player.mpg,
-      games: player.games,
+      games: count,
       fit,
+      sections: !filling,
       // The shot profile, for the points event model. Rebounds and assists need
       // none of it — their event is worth exactly one.
       mix: rate
@@ -246,6 +261,7 @@ export function buildCard({
           }
         : null,
     });
+    const games = realGames ? fillGames(realGames, fillTo, synthesize) : synthesize(player.games);
     const placed = rollCdf
       ? placeBandsOnCdf(computeStatBands(games, stat), rollCdf)
       : computeStatBands(games, stat);
@@ -286,8 +302,9 @@ export function buildCard({
       ast: t.ast,
     })),
     // A chart cut from real game logs is no longer provisional — that flag
-    // has always meant "synthetic distribution stands in for real games".
-    provisional: !realGames,
+    // has always meant "synthetic distribution stands in for real games", and
+    // a window part-filled with them is still part synthetic.
+    provisional: !realGames || (fillTo > 0 && realGames.length < fillTo),
   };
 
   // Salary is deliberately NOT set here. It used to be, and could be, while the
@@ -297,6 +314,34 @@ export function buildCard({
   // guessing means a card that somehow escapes that pass is obviously broken
   // instead of quietly cheap.
   return card;
+}
+
+/**
+ * Every k-th row of a synthetic log, evenly spaced.
+ *
+ * synthesizeGames lays its rows out in ascending quantile order and never
+ * makes fewer than MIN_SYNTHETIC_GAMES of them, so a short fill cannot just
+ * take the first few — those would be the floor of the distribution. Picking
+ * evenly through the list keeps the shape whatever the count.
+ */
+export function evenSample(rows, k) {
+  if (k >= rows.length) return rows;
+  const out = [];
+  for (let i = 0; i < k; i += 1) out.push(rows[Math.floor(((i + 0.5) * rows.length) / k)]);
+  return out;
+}
+
+/**
+ * The Live Series' window: the real games there are, and synthetic games from
+ * the predicted rates for the rest of `fillTo`. Real games replace synthetic
+ * ones one at a time as the season goes, which is exactly the user's early-
+ * season rule (2026-09-23): the expected rates alone until this season's logs
+ * fill the window. `synthesize(count)` is the caller's synthetic-game maker.
+ */
+export function fillGames(real, fillTo, synthesize) {
+  const short = fillTo - real.length;
+  if (short <= 0) return real;
+  return [...real, ...evenSample(synthesize(short), short)];
 }
 
 /** Expected value per face of a d20, the measure the finished set is priced on. */
@@ -328,6 +373,18 @@ export function generateCards({
   // Built by the caller, which owns the Basketball-Reference season tables the
   // historical builder needs. Absent in tests, which exercise the pool path.
   carryForwardCards = null,
+  // THE LIVE SERIES (2026-09-23) hands in its own windows instead of the
+  // base set's cached last-82: `realGamesById` (card id -> adjusted rows),
+  // `windowCounts` (card id -> games per season, for the archetype EPM
+  // weighting; an empty map reads the current row alone), `chartFill` (the
+  // window every card's real games are topped up to with synthetic ones; 0
+  // keeps the base rule) and `sharesSeason` (the season the positional
+  // shares are blended to). Null falls back to the loaders, as before.
+  realGamesById = null,
+  windowCounts = null,
+  chartFill = 0,
+  chartFillCalibration = null,
+  sharesSeason = CURRENT_STATS_SEASON,
 }) {
   // The carried-forward players are IN THE POOL, because the studio takes its
   // identity from the pool and a card nobody can find has no use. But their
@@ -403,9 +460,9 @@ export function generateCards({
     if (!seasonEpmIndexes.has(season)) seasonEpmIndexes.set(season, indexByName(seasonRows(season)));
     return seasonEpmIndexes.get(season);
   };
-  const windowCounts = loadAllWindowSeasonCounts();
+  const windowMix = windowCounts ?? loadAllWindowSeasonCounts();
   const windowWeightedEpm = (p, a) => {
-    const counts = windowCounts.get(playerIdFromName(p.name));
+    const counts = windowMix.get(playerIdFromName(p.name));
     if (!counts) return { epmOff: a.epmOff, epmDef: a.epmDef, basis: 'current season' };
     let off = 0, def = 0, games = 0;
     const parts = [];
@@ -475,7 +532,7 @@ export function generateCards({
 
   const fieldStubs = resolved.map((player, i) => {
     const { shaped, total } = shapingFor(player, i);
-    const shares = positionShares?.careerForName(player.name, CURRENT_STATS_SEASON) ?? null;
+    const shares = positionShares?.careerForName(player.name, sharesSeason) ?? null;
     let { speed, power } = A.splitFromCalibration(total, {
       pos: player.pos,
       size: biometrics.get(normalizeName(player.name)) ?? null,
@@ -496,7 +553,7 @@ export function generateCards({
   // Real last-82 game logs (opponent-adjusted, minutes-damped), keyed by card
   // id. Empty map when the fetch job hasn't run — every card then falls back
   // to the provisional synthesis, exactly as before.
-  const realGamesById = loadAllRealGames();
+  const realGamesIndex = realGamesById ?? loadAllRealGames();
   let realCount = 0;
 
   const targets = [];
@@ -507,14 +564,14 @@ export function generateCards({
     const sp = spIndex.get(normalizeName(player.name));
     const size = lookup(biometrics, player.name);
     if (!size) missingSize.push(player.name);
-    const shares = positionShares?.careerForName(player.name, CURRENT_STATS_SEASON) ?? null;
+    const shares = positionShares?.careerForName(player.name, sharesSeason) ?? null;
     if (!shares) missingShares.push(player.name);
     targets.push({
       pts: V.per4MinFromPer100(rate?.pts100 ?? 0),
       reb: V.per4MinFromPer100(rate ? trb100(rate) : 0),
       ast: V.per4MinFromPer100(rate?.ast100 ?? 0),
     });
-    const realGames = realGamesById.get(playerIdFromName(player.name)) ?? null;
+    const realGames = realGamesIndex.get(playerIdFromName(player.name)) ?? null;
     if (realGames) realCount += 1;
     const { shaped, total } = shapingFor(player, i);
     if (shaped) shapedCount += 1;
@@ -531,6 +588,8 @@ export function generateCards({
         rollCdf: rollCdfs[i],
         realGames,
         exaggerateSplit: shaped,
+        fillTo: chartFill,
+        fill: chartFillCalibration,
       })
     );
   });
@@ -549,7 +608,7 @@ export function generateCards({
   // does — and pricing runs below, on the shaped body.
   const carriedShaped = carried.cards.map(c => {
     if (!archetypes.get(normalizeName(c.name))?.override) return c;
-    const shares = positionShares?.careerForName(c.name, c.carriedFrom ?? CURRENT_STATS_SEASON) ?? null;
+    const shares = positionShares?.careerForName(c.name, c.carriedFrom ?? sharesSeason) ?? null;
     return { ...c, ...ARCH.exaggerateSplit(c.speed, c.power, shares) };
   });
   const carriedShapedCount = carriedShaped.filter((c, i) => c !== carried.cards[i]).length;

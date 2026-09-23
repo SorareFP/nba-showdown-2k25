@@ -472,3 +472,55 @@ export async function fetchSeasonEpm(
     }
   );
 }
+
+// ── team-epm ────────────────────────────────────────────────────────────────
+//
+// THE LIVE SERIES' OPPONENT TABLE (2026-09-23). realGames.js adjusts every
+// game-log row by the opponent's DEF EPM, read from the cached
+// `dunksandthrees-api-team-epm-{season}` series; the base set's 2025 and 2026
+// files were fetched by hand. The nightly job refreshes the current season's
+// series through this function, so a live card's games are adjusted by the
+// opponent as it is this week. One request a night, against the endpoint's
+// three-a-minute allowance. The series carries the regular season AND the
+// playoffs (`seasontype` 2 and 4 rows together), which is why no season type
+// is asked for.
+
+export const teamEpmCacheKey = season => `dunksandthrees-api-team-epm-${season}`;
+
+/** The columns realGames.js reads, plus the one that proves the season. */
+export const REQUIRED_TEAM_EPM_FIELDS = ['season', 'game_dt', 'team_alias', 'team_depm'];
+
+/** Validates a `team-epm` body the way parseSeasonEpmRows does: the shape, then the season it echoes. */
+export function parseTeamEpmRows(rows, { season }) {
+  if (!Array.isArray(rows) || rows.length === 0) {
+    throw new Error(`team-epm returned no rows for season ${season}.`);
+  }
+  const missing = REQUIRED_TEAM_EPM_FIELDS.filter(f => !(f in rows[0]));
+  if (missing.length) {
+    throw new Error(
+      `team-epm rows are missing expected fields: ${missing.join(', ')}. The API's response ` +
+        'shape has changed — see REQUIRED_TEAM_EPM_FIELDS in sources/dunksAndThreesApi.js.'
+    );
+  }
+  const wrong = rows.find(r => r.season !== season);
+  if (wrong) {
+    throw new Error(
+      `team-epm served season ${wrong.season}, not ${season} (${wrong.team_alias} ${wrong.game_dt}).`
+    );
+  }
+  return rows;
+}
+
+/** One season's dated team EPM series, cached under the key realGames.js reads. */
+export async function fetchTeamEpm(season, { force = false, ...options } = {}) {
+  if (!Number.isInteger(season) || season < FIRST_API_SEASON) {
+    throw new Error(
+      `season must be an integer year of ${FIRST_API_SEASON} or later, got ${JSON.stringify(season)}`
+    );
+  }
+  return cached(
+    teamEpmCacheKey(season),
+    async () => parseTeamEpmRows(await apiRequest('teamEpm', { season }, options), { season }),
+    { force, meta: { source: `${API_BASE}/${ENDPOINTS.teamEpm.path}`, season } }
+  );
+}

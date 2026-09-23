@@ -56,6 +56,117 @@ export function expectedOutput(card, mod = 0) {
   return total / 20;
 }
 
+// ── SHOT CHECKS AND THE CONTEST (2026-09-23) ────────────────────────────────
+//
+// The user: "Shot checks are what really drive scoring, so it should probably
+// try and do a lot to stop them." A defender's Defensive Bonus comes off every
+// 3PT and paint check the man he guards takes — 5% of make chance a point —
+// and the matchup brain never priced it: the chart was the whole of a row's
+// value. What a contest is worth depends on how many checks that man takes,
+// and that is steep in how good a shooter he is, because the coach and the
+// cards route checks to the best chance on the floor. Measured, not guessed
+// (scripts/analysis/checkVolume.mjs, 400 AI-vs-AI games): contested checks a
+// section by the shooter's own uncontested make chance.
+export const CHECK_RATE = {
+  '3pt': [[0.05, 0.016], [0.15, 0.022], [0.30, 0.136], [0.45, 0.594]],
+  paint: [[0.15, 0.009], [0.20, 0.023], [0.25, 0.024], [0.30, 0.042], [0.35, 0.089], [0.40, 0.166], [0.45, 0.245]],
+};
+const CHECK_POINTS = { '3pt': 3, paint: 2 };
+
+/** A rate off a measured table: straight lines between the points, the end slopes carried on, never below 0 or past 1. */
+export function rateAt(table, p) {
+  const [first] = table;
+  const last = table[table.length - 1];
+  if (p <= first[0]) return Math.max(0, first[1] * (p / first[0]));
+  for (let i = 1; i < table.length; i += 1) {
+    const [x1, y1] = table[i];
+    if (p <= x1) {
+      const [x0, y0] = table[i - 1];
+      return y0 + ((y1 - y0) * (p - x0)) / (x1 - x0);
+    }
+  }
+  const [x0, y0] = table[table.length - 2];
+  return Math.min(1, last[1] + ((last[1] - y0) * (p - last[0])) / (last[0] - x0));
+}
+
+/** A shooter's make chance on one kind of check at a modifier (markers, fatigue, minus a contest). */
+function checkHit(shooter, type, mod = 0) {
+  const boost = type === '3pt' ? (shooter?.threePtBoost || 0) : (shooter?.paintBoost || 0);
+  const need = (shooter?.shotLine ?? 99) - boost - mod;
+  return Math.min(1, Math.max(0, (21 - need) / 20));
+}
+
+/** A defender's contest, as matchupContest rolls it: his Defensive Bonus (with Defensive Anchor's), one more in Crunch Time. */
+export function contestOf(game, def, defKey = null, defIdx = null) {
+  const extra = defKey != null ? (game?.tempDefEff?.[defKey]?.[defIdx]?.dbExtra || 0) : 0;
+  const base = Math.max(0, (def?.defBoost || 0) + extra);
+  return base > 0 && game?.crunch?.active ? base + 1 : base;
+}
+
+/**
+ * What a shooter's 3PT and paint checks pay a section against a contest:
+ * how many he takes (CHECK_RATE, at his uncontested chance) times the points
+ * times his chance with the contest taken off. The difference between two
+ * defenders is the points the better one denies.
+ */
+export function checkPoints(shooter, contest = 0, mod = 0) {
+  let total = 0;
+  for (const type of ['3pt', 'paint']) {
+    const rate = rateAt(CHECK_RATE[type], checkHit(shooter, type, mod));
+    total += rate * CHECK_POINTS[type] * checkHit(shooter, type, mod - contest);
+  }
+  return total;
+}
+
+// ── PLAYING THE SCORE (2026-09-23) ──────────────────────────────────────────
+//
+// The coach weighed every row by its average and nothing else: a 10% shot at
+// a big tier counted exactly at its mean whether it was up twenty or down ten
+// with a section left. The user: "We can pull some levers here." What a coach
+// wants is not the most points but the best chance of winning, and when the
+// margin is roughly normal that is Φ((lead + μ) / σ) — so near the current
+// board, a point of spread is worth −lead / (2σ²) points of average, σ² being
+// what the rest of the game can still move the margin. Behind, spread is
+// worth having (a long shot is how a deficit closes); ahead, it is a cost.
+// Early, σ² is large and the weight is near nothing; it grows as the game
+// shortens. Rows are weighed by average + weight × (the spread of both
+// charts in the row), and the switch re-deal the same way.
+export const RISK_AWARE = true;
+/** Spread of a section's margin, from the same 400 games: a final margin's sd of 20.1 over twelve sections. */
+export const SECTION_MARGIN_SD = 5.8;
+export const RISK_CAP = 0.25;
+
+/** Sections left in the game, the one about to be played included. */
+export function sectionsLeftInGame(game) {
+  if (game?.overtime) return 1;
+  const q = game?.quarter ?? 1;
+  const sec = game?.section ?? 1;
+  return Math.max(1, (4 - q) * 3 + (3 - sec) + 1);
+}
+
+/** Points of average one point of margin variance is worth to `teamKey` right now. */
+export function riskWeight(game, teamKey) {
+  if (!RISK_AWARE || !game?.teamA || !game?.teamB) return 0;
+  const lead = (getTeam(game, teamKey)?.score ?? 0) - (getOpp(game, teamKey)?.score ?? 0);
+  const k = -lead / (2 * sectionsLeftInGame(game) * SECTION_MARGIN_SD ** 2);
+  return Math.max(-RISK_CAP, Math.min(RISK_CAP, k));
+}
+
+/** The variance of what a chart pays over a d20 carrying `mod`, in expectedOutput's units. */
+export function outputVariance(card, mod = 0) {
+  if (!Array.isArray(card?.chart) || card.chart.length === 0) return 0;
+  let s = 0;
+  let s2 = 0;
+  for (let die = 1; die <= 20; die += 1) {
+    const t = lookupChart(card, die + mod);
+    const v = (t.pts || 0) + 0.5 * (t.reb || 0) + 0.5 * (t.ast || 0);
+    s += v;
+    s2 += v * v;
+  }
+  const m = s / 20;
+  return Math.max(0, s2 / 20 - m * m);
+}
+
 const SECTION_MINUTES = 4;
 const HORIZON = 0.5;
 /** Points a section charged per point of fatigue penalty beyond −6 — see lineupValue. */
@@ -378,16 +489,25 @@ function matchupCosts(game, teamKey, effOverride = null) {
 
   const tempEff = effOverride ?? (game.tempEff?.[oppKey] || {});
   const tempDefEff = game.tempDefEff?.[teamKey] ?? null;
-  const meanSal = attackers.reduce((t, p) => t + (p?.salary || 0), 0) / n || 1;
-
-  const cost = attackers.slice(0, n).map((att, a) =>
-    defenders.slice(0, n).map((def, d) => {
+  // IN POINTS SINCE 2026-09-23, the snake's own currency. It was the roll
+  // bonus conceded, weighted by the attacker's salary — a proxy that never
+  // read a chart or a contest. The user: "I think the AI should act
+  // optimally when it knows what players are already on the board." Every
+  // player is on the board here, so the cost is what the attacker's chart
+  // pays at the bonus this defender gives him, plus his checks against this
+  // defender's contest, less the score's worth of his spread (riskWeight).
+  const kappa = riskWeight(game, teamKey);
+  const cost = attackers.slice(0, n).map((att, a) => {
+    const ghosted = isGhosted(game, oppKey, a);
+    const mod = carriedMod(game, oppKey, att);
+    return defenders.slice(0, n).map((def, d) => {
       if (!att || !def) return 0;
-      const adv = calcAdv(att, def, tempEff, a, tempDefEff, d);
-      const weight = 0.5 + 0.5 * ((att.salary || meanSal) / meanSal);
-      return adv.rollBonus * weight;
-    })
-  );
+      // A man Ghost Screen freed has no defender: no edge, no contest, whoever is assigned.
+      const bonus = ghosted ? 0 : calcAdv(att, def, tempEff, a, tempDefEff, d).rollBonus;
+      const contest = ghosted ? 0 : contestOf(game, def, teamKey, d);
+      return expectedOutput(att, bonus + mod) + checkPoints(att, contest, mod) - kappa * outputVariance(att, bonus + mod);
+    });
+  });
   return { n, cost };
 }
 
@@ -469,14 +589,23 @@ function carriedMod(game, teamKey, player) {
  * flat charts — the bonus also gates cards (Mismatch Hunter, Unethical Hoops)
  * and decides the shot-check contest, which the chart cannot show.
  */
-export function pairValue(game, myKey, mine, theirs, tempEff = {}, myIdx = 0) {
+export function pairValue(game, myKey, mine, theirs, tempEff = {}, myIdx = 0, kappa = 0) {
   if (!mine || !theirs) return 0;
   const oppKey = myKey === 'A' ? 'B' : 'A';
   const myAdv = calcAdv(mine, theirs, tempEff, myIdx);
   const theirAdv = calcAdv(theirs, mine, {}, 0);
-  const myPts = expectedOutput(mine, myAdv.rollBonus + carriedMod(game, myKey, mine));
-  const theirPts = expectedOutput(theirs, theirAdv.rollBonus + carriedMod(game, oppKey, theirs));
-  return myPts - theirPts + 0.05 * (myAdv.rollBonus - theirAdv.rollBonus);
+  const myMod = carriedMod(game, myKey, mine);
+  const theirMod = carriedMod(game, oppKey, theirs);
+  // The chart at the bonus each carries, and each shooter's checks against
+  // the other's contest (2026-09-23): the row guards both ways.
+  const myPts = expectedOutput(mine, myAdv.rollBonus + myMod) + checkPoints(mine, contestOf(game, theirs), myMod);
+  const theirPts = expectedOutput(theirs, theirAdv.rollBonus + theirMod) + checkPoints(theirs, contestOf(game, mine), theirMod);
+  // Playing the score (riskWeight): the spread of both charts, weighed by
+  // what spread is worth to this side at this margin and this late.
+  const spread = kappa
+    ? kappa * (outputVariance(mine, myAdv.rollBonus + myMod) + outputVariance(theirs, theirAdv.rollBonus + theirMod))
+    : 0;
+  return myPts - theirPts + spread + 0.05 * (myAdv.rollBonus - theirAdv.rollBonus);
 }
 
 
@@ -563,6 +692,8 @@ export function placementChoices(game, teamKey, { samples = 1, rng = Math.random
 
   const mine = remainingFor(teamKey);
   if (!mine.length) return [];
+  // The score, read once for the whole search (riskWeight).
+  const kappa = riskWeight(game, teamKey);
   /** Every one of my cards scored against ONE possible opponent lineup. */
   const scoreAgainst = theirs => {
     // `theirs` is the lineup this pass is played against.
@@ -575,9 +706,9 @@ export function placementChoices(game, teamKey, { samples = 1, rng = Math.random
 
     // Pairing values, from my chair, for every remaining pair — and for the
     // row the opponent has already led, if they are a player ahead of me.
-    const val = mine.map(m => theirs.map(o => pairValue(game, teamKey, m, o)));
+    const val = mine.map(m => theirs.map(o => pairValue(game, teamKey, m, o, {}, 0, kappa)));
     const openOpp = oppT.starters.length > myT.starters.length ? oppT.starters[myT.starters.length] : null;
-    const openVal = openOpp ? mine.map(m => pairValue(game, teamKey, m, openOpp)) : null;
+    const openVal = openOpp ? mine.map(m => pairValue(game, teamKey, m, openOpp, {}, 0, kappa)) : null;
 
     const memo = new Map();
     const bits = mask => { const out = []; for (let i = 0; mask >> i; i += 1) if (mask & (1 << i)) out.push(i); return out; };
@@ -890,10 +1021,13 @@ const DEMO_CANCEL_VALUE = 20;
 const SWITCH_FLOOR = 0.4;
 const pointsFor = (game, offKey, p, slot, def, extra = 0) => {
   if (!p || !def) return 0;
-  // A ghosted man has no defender to switch (Ghost Screen): no edge either way.
-  if (isGhosted(game, offKey, slot)) return expectedOutput(p, carriedMod(game, offKey, p) + extra);
+  const mod = carriedMod(game, offKey, p);
+  // A ghosted man has no defender to switch (Ghost Screen): no edge either way, no contest.
+  if (isGhosted(game, offKey, slot)) return expectedOutput(p, mod + extra) + checkPoints(p, 0, mod);
   const eff = game.tempEff?.[offKey] || {};
-  return expectedOutput(p, calcAdv(p, def, eff, slot).rollBonus + carriedMod(game, offKey, p) + extra);
+  // His checks against this defender's contest count too (2026-09-23): a
+  // screen that trades a good contester off a shooter is worth what it frees.
+  return expectedOutput(p, calcAdv(p, def, eff, slot).rollBonus + mod + extra) + checkPoints(p, contestOf(game, def), mod);
 };
 
 /** My best High Screen & Roll: the two of my attackers whose defenders, traded, pay most. */

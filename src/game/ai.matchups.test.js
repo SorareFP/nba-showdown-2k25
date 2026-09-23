@@ -19,6 +19,8 @@ function matchupGame(defenders, attackers) {
 }
 
 const filler = { speed: 10, power: 10, salary: 300 };
+/** An attacker who gives the defence nothing to think about: a flat chart and no shot. */
+const quiet = { ...filler, chart: [{ lo: 1, hi: 99, pts: 1, reb: 0, ast: 0 }], shotLine: 21, threePtBoost: -3, paintBoost: -3 };
 const totalFor = (g, matchups) => {
   const att = getTeam(g, 'A').starters;
   const def = getTeam(g, 'B').starters;
@@ -73,15 +75,42 @@ describe('aiSetMatchups', () => {
     expect(chosen).toBeLessThanOrEqual(totalFor(g, [0, 1, 2, 3, 4]));
   });
 
-  it('spends its best defender on their star, not their twelfth man, when it must choose', () => {
-    // One good defender, one attacker who is a star by salary and one who is
-    // not, otherwise identical. Salary weighting sends the good defender to
-    // the star.
+  it('spends its best defender where it denies the most points: the chart a bonus moves, not the salary', () => {
+    // POINTS SINCE 2026-09-23 (the user: "the AI should act optimally when it
+    // knows what players are already on the board"). It used to weigh the
+    // bonus by SALARY; now it reads the chart. Two attackers with the same
+    // body and shooting: one whose chart pays the same on every roll (a bonus
+    // buys nothing) and one whose chart climbs steeply — the expensive one
+    // is the FLAT chart here, so salary and points disagree on purpose.
+    const flat = [{ lo: 1, hi: 99, pts: 1, reb: 0, ast: 0 }];
+    const steep = [
+      { lo: 1, hi: 10, pts: 0, reb: 0, ast: 0 }, { lo: 11, hi: 16, pts: 2, reb: 1, ast: 0 },
+      { lo: 17, hi: 22, pts: 3, reb: 1, ast: 1 }, { lo: 23, hi: 99, pts: 5, reb: 2, ast: 1 },
+    ];
+    const shooting = { shotLine: 20, threePtBoost: 0, paintBoost: 0 };
     const g = matchupGame(
       [{ speed: 17, power: 17, salary: 900 }, filler, filler, filler, filler],
-      [{ speed: 14, power: 14, salary: 300 }, { speed: 14, power: 14, salary: 1400 }, filler, filler, filler]
+      [{ speed: 14, power: 14, salary: 1400, chart: flat, ...shooting }, { speed: 14, power: 14, salary: 300, chart: steep, ...shooting }, quiet, quiet, quiet]
     );
     const { matchups } = aiSetMatchups(g, 'B');
     expect(matchups[1]).toBe(0);
+  });
+
+  it('puts its contest on the shooter: a Defensive Bonus guards the man who takes the checks', () => {
+    // Two defenders with the same body, one with a +3 Defensive Bonus; two
+    // attackers with the same body and chart, one a sharp shooter (he takes
+    // most of the checks) and one who cannot shoot. The bonus comes off every
+    // check he guards, so it belongs on the shooter.
+    const chart = [{ lo: 1, hi: 10, pts: 1, reb: 0, ast: 0 }, { lo: 11, hi: 99, pts: 2, reb: 1, ast: 1 }];
+    const g = matchupGame(
+      [{ speed: 12, power: 12, defBoost: 0 }, { speed: 12, power: 12, defBoost: 3 }, filler, filler, filler],
+      [
+        { speed: 12, power: 12, chart, shotLine: 20, threePtBoost: -3, paintBoost: -3 },
+        { speed: 12, power: 12, chart, shotLine: 12, threePtBoost: 1, paintBoost: 1 },
+        quiet, quiet, quiet,
+      ]
+    );
+    const { matchups } = aiSetMatchups(g, 'B');
+    expect(matchups[1]).toBe(1);
   });
 });

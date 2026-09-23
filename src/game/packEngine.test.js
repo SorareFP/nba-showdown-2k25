@@ -169,6 +169,27 @@ describe('targeted packs stay inside their target', () => {
     }
   });
 
+  it('ignores a team, conference or division on a pack that declares none (2026-09-23)', () => {
+    // openPack passes the client's options through, and a filter any pack
+    // honoured turned a 100-coin booster into a team pack (found 2026-09-21).
+    // Forty boosters told "LAC, East, Pacific" still draw from the whole base
+    // pool, and an unknown team on a booster is nothing to throw about.
+    const teams = new Set();
+    for (let i = 0; i < 40; i++) {
+      for (const pull of players(generatePack('booster', { team: 'LAC', conference: 'East', division: 'Pacific' }))) {
+        const t = CARD_MAP[pull.id]?.team;
+        if (t) teams.add(t);
+      }
+    }
+    expect(teams.size).toBeGreaterThan(5);
+    expect(() => generatePack('booster', { team: 'XXX' })).not.toThrow();
+    // A themed pack reads its own theme and nothing else.
+    const east = new Set(CONFERENCES.East);
+    for (const pull of players(generatePack('conference', { conference: 'East', team: 'LAC', division: 'Pacific' }))) {
+      expect(east.has(CARD_MAP[pull.id].team)).toBe(true);
+    }
+  });
+
   it('draws a set-scoped pack only from its own pool', () => {
     for (const [key, set] of [['nba_booster', BASE_SET], ['wnba_booster', 'wnba'], ['rookie_pack', 'rookie'], ['standouts', 'summer-standouts']]) {
       const pool = new Set(CARD_SETS[set].map(cardKey));

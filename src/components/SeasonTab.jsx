@@ -1124,7 +1124,8 @@ function Dashboard({
               {myGameLeft && !isHH && (
                 <div className={styles.myGameActions}>
                   <button className={styles.primary} onClick={play}>{inProgress ? '▶ Resume this game' : '▶ Play this game'}</button>
-                  {!league && <CoachDifficulty />}
+                  {/* A dynasty plays at its league's rung (the preset carries it, 2026-09-18), so the dial would do nothing there. */}
+                  {!league && !presetExtra?.aiLevel && <CoachDifficulty />}
                   {!league && (
                     <button
                       className={styles.ghost}

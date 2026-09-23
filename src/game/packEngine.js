@@ -589,12 +589,17 @@ export function generatePack(packType, options = {}) {
   let playerPool = poolFor(def);
   let stratPool = packableStrats();
 
-  // Apply team/conference/division filters (meaningful for NBA pools only).
-  if (options.conference) {
+  // Apply team/conference/division filters (meaningful for NBA pools only) —
+  // ONLY ON THE PACKS THAT DECLARE THEM (2026-09-23). openPack passes the
+  // client's options straight through, and a filter honoured by any pack let
+  // a crafted call turn a 100-coin booster into a team pack (the WNBA team
+  // pack's reviewer found it, 2026-09-21). A themed pack reads its theme's
+  // option; a team pack reads its team; every other pack ignores all three.
+  if (options.conference && def.themed === 'conference') {
     const teams = CONFERENCES[options.conference] || [];
     playerPool = playerPool.filter(c => teams.includes(c.team));
   }
-  if (options.division) {
+  if (options.division && def.themed === 'division') {
     const teams = DIVISIONS[options.division] || [];
     playerPool = playerPool.filter(c => teams.includes(c.team));
   }
@@ -607,7 +612,7 @@ export function generatePack(packType, options = {}) {
   // An unknown team code would silently empty the pool and hand back a pack of
   // nothing, so it throws instead — a pack someone paid for must never open
   // empty.
-  if (options.team) {
+  if (options.team && def.needsTeam) {
     const before = playerPool.length;
     // THE BASE ROSTER, matched exactly — a current card's team IS the franchise.
     const roster = playerPool.filter(c => c.team === options.team);

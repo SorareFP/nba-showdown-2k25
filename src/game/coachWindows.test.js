@@ -82,11 +82,18 @@ describe('the coach keeps a card window after its last roll', () => {
 });
 
 describe('Switch Everything is priced against its own doubling', () => {
+  // The coach prices a matchup in the POINTS a bonus moves on the attacker's
+  // chart (2026-09-23), so these attackers need charts that climb with the
+  // die; the flat default pays 2 on every roll and no matchup can matter.
+  const steep = [
+    { lo: 1, hi: 8, pts: 0, reb: 0, ast: 0 }, { lo: 9, hi: 14, pts: 2, reb: 1, ast: 0 },
+    { lo: 15, hi: 20, pts: 4, reb: 1, ast: 1 }, { lo: 21, hi: 99, pts: 6, reb: 2, ast: 1 },
+  ];
   /** A's stars hold advantages B cannot answer; the switch only doubles them. */
   const lopsided = () => {
-    const a = roster('a');
-    a[0] = mk('a0', { speed: 20, power: 20, salary: 900 });
-    a[1] = mk('a1', { speed: 18, power: 18, salary: 900 });
+    const a = roster('a', { chart: steep });
+    a[0] = mk('a0', { speed: 20, power: 20, salary: 900, chart: steep });
+    a[1] = mk('a1', { speed: 18, power: 18, salary: 900, chart: steep });
     const b = roster('b', { speed: 6, power: 6 });
     return board({ a, b, bHand: ['switch_everything'] });
   };
@@ -103,8 +110,8 @@ describe('Switch Everything is priced against its own doubling', () => {
     // The coach holds its own everywhere — so the doubling costs it almost
     // nothing — except one star its stopper is not on. Putting him right is
     // worth more than the price, and that is the case the card is FOR.
-    const a = roster('a');
-    a[0] = mk('a0', { speed: 20, power: 20, salary: 900 });
+    const a = roster('a', { chart: steep });
+    a[0] = mk('a0', { speed: 20, power: 20, salary: 900, chart: steep });
     const b = roster('b', { speed: 12, power: 12 });
     b[3] = mk('b3', { speed: 20, power: 20 });
     const g = board({ a, b, bHand: ['switch_everything'] });

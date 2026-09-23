@@ -233,6 +233,26 @@ export const STRATS = [
     desc:'An opponent yet to roll has a Speed or Power advantage of +4 or more: one of your other defenders rotates over. They get no positive matchup bonus this section — and the player your helper left gets +3 on their next roll.' },
   { id:'box_out',             name:'Box Out',            phase:'reaction', side:'def', copies:2, locked:false, color:'#065F46', rarity:'common',
     desc:'Right after an opponent\'s scoring roll wins rebounds: cancel them. −1 more from their track if your defender on them has more Power.' },
+
+  // ── WAVE TWO TWINS (2026-09-23) — the unpaired half of the twin survey ──
+  // Power buys rebounds and Speed buys assists (Offensive Foul / Beat 'Em to
+  // the Spot set the pattern); each of these mirrors a card that had one
+  // side only. Built for the user's sign-off, per the approval rule.
+  { id:'blow_by',             name:'Blow-By',            phase:'scoring',  side:'off', copies:2, locked:false, color:'#2563EB', rarity:'uncommon',
+    // Rimshaker's Speed twin.
+    desc:'Player has Speed 13+ and a hot marker: +2 pts and add another hot marker.' },
+  { id:'point_god',           name:'Point God',          phase:'pre_roll', side:'off', copies:1, locked:false, color:'#1D4ED8', rarity:'rare',
+    // Post Domination's Speed twin: the same matchup door, on the other stat.
+    desc:'Choose a player with a Speed advantage over his defender, before he rolls: his assists from scoring rolls are doubled this period.' },
+  { id:'passing_lane',        name:'Passing Lane',       phase:'reaction', side:'def', copies:2, locked:false, color:'#047857', rarity:'common',
+    // Box Out, for the other currency.
+    desc:'Right after an opponent\'s scoring roll wins assists: cancel them. −1 more from their track if your defender on them has more Speed.' },
+  { id:'clamp_the_reserve',   name:'Clamp the Reserve',  phase:'pre_roll', side:'def', copies:2, locked:false, color:'#7F1D1D', rarity:'common',
+    // Unsung Hero's defensive mirror.
+    desc:'Choose an opposing player with salary $400 or less who has not rolled: they roll two D20 and keep the lower this period.' },
+  { id:'feeling_it',          name:'Feeling It',         phase:'pre_roll', side:'off', copies:2, locked:false, color:'#EA580C', rarity:'common',
+    // Turnover, off the hot marker instead of the cold one.
+    desc:'One of your players has a hot marker: draw 2 strategy cards.' },
 ];
 
 export const STRAT_MAP = Object.fromEntries(STRATS.map(s => [s.id, s]));

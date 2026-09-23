@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { calcAdv, matchupAdv, getTeam, getOpp, getPS, getFatigue, SPEND_COSTS, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, lastReturnedCard, undoReturnCard, periodLabel, extraRollPending, checkNeed, fatigueForMinutes, crunchSearchOptions, rollTurnLine } from '../../game/engine.js';
-import { canPlayCard, myHouseTargets, fwdTargets, preRollTargets, helpTargets, foulTroubleTargets } from '../../game/canPlay.js';
+import { canPlayCard, myHouseTargets, fwdTargets, preRollTargets, helpTargets, foulTroubleTargets, clampTargets } from '../../game/canPlay.js';
 import { resolveGoUnder } from '../../game/execCard.js';
 import { passTurn, MAX_STRAIGHT_MINUTES, restRuleLifted, pickablePool } from '../../game/engine.js';
 import { salaryOrder } from '../../game/teamRules.js';
@@ -945,6 +945,21 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
       teamKey: oppKey, cardId, players: eligible.map(e => e.p),
       label: 'Ice which opponent? (strips every hot marker)',
       extraInfo: eligible.map(e => `${e.hot} hot marker${e.hot > 1 ? 's' : ''}`),
+    });
+    if (pick === null) return null;
+    opts.targetIdx = eligible[pick].origIdx;
+  }
+
+  // ── Clamp the Reserve: which cheap opponent keeps the lower die ─────────
+  // The same list the playability check and the engine read (clampTargets),
+  // so a name offered here is a name the engine takes.
+  if (cardId === 'clamp_the_reserve') {
+    const eligible = clampTargets(game, teamKey);
+    if (!eligible.length) { toast('No opposing $400-or-less player is still to roll.', { tone: 'error' }); return null; }
+    const pick = await openModal({
+      teamKey: oppKey, cardId, players: eligible.map(e => e.p),
+      label: 'Clamp which opponent? (two dice, keep the lower)',
+      extraInfo: eligible.map(e => `$${e.p.salary}`),
     });
     if (pick === null) return null;
     opts.targetIdx = eligible[pick].origIdx;

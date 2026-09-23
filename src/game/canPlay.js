@@ -103,6 +103,22 @@ export function foulTroubleTargets(g, teamKey) {
   return out;
 }
 
+/**
+ * CLAMP THE RESERVE's targets (2026-09-23): the OPPONENT's starters at $400
+ * or less who are still to roll — Unsung Hero's door, on the other side.
+ * The one list the playability check, the board's picker, the AI and the
+ * engine's refusal all read, so a target offered is a target the engine
+ * takes. Returns `{ p, origIdx }` in the opponent's slot order.
+ */
+export function clampTargets(g, teamKey) {
+  const oppKey = teamKey === 'A' ? 'B' : 'A';
+  const oppT = getTeam(g, oppKey);
+  const rolls = g.rollResults?.[oppKey] || [];
+  return (oppT?.starters || [])
+    .map((p, origIdx) => ({ p, origIdx }))
+    .filter(({ p, origIdx }) => p && rolls[origIdx] == null && (p.salary || 0) <= 400);
+}
+
 export function preRollTargets(g, teamKey, cond = () => true) {
   const rolls = g.rollResults?.[teamKey] || [];
   const blocked = g.blockedRolls?.[teamKey] || {};
@@ -553,8 +569,21 @@ export function canPlayCard(g, teamKey, cardId) {
   }
 
   // ── PRE-ROLL ───────────────────────────────────────────────────────────
-  if (['ghost_screen','you_stand_over_there','putback_dunk','pin_down_screen','turnover'].includes(cardId)) {
+  if (['ghost_screen','you_stand_over_there','putback_dunk','pin_down_screen','turnover','feeling_it','clamp_the_reserve'].includes(cardId)) {
     if (phase !== 'scoring') return no('Only playable during Scoring Phase');
+
+    // Turnover's twin off the hot marker (2026-09-23).
+    if (cardId === 'feeling_it') {
+      const hasHot = myT.starters.some(p => { const ps = getPS(g, teamKey, p.id); return (ps?.hot || 0) > 0; });
+      if (!hasHot) return no('One of your players needs a hot marker');
+      return ok('Draw 2 strategy cards');
+    }
+    // Unsung Hero's defensive mirror (2026-09-23): the same shared list the
+    // board's picker, the AI and the engine's refusal read.
+    if (cardId === 'clamp_the_reserve') {
+      if (clampTargets(g, teamKey).length === 0) return no('Need an opposing $400-or-less player still to roll');
+      return ok('They roll two dice and keep the lower');
+    }
 
     if (cardId === 'ghost_screen') {
       // Can't play on players who already rolled
@@ -625,7 +654,13 @@ export function canPlayCard(g, teamKey, cardId) {
     }
     return ok('Rotate a defender over — they lose their edge, someone else gets +3');
   }
-  if (['find_the_open_man', 'putback_specialist', 'glass_cleaner', 'box_out'].includes(cardId)) {
+  if (['find_the_open_man', 'putback_specialist', 'glass_cleaner', 'box_out', 'passing_lane'].includes(cardId)) {
+    // Box Out's twin for assists (2026-09-23).
+    if (cardId === 'passing_lane') {
+      const lr = g.lastRoll;
+      if (!lr || lr.teamKey === teamKey || lr.deflected || !(lr.ast > 0)) return no('The opponent must have just won assists on a scoring roll');
+      return ok(`Cancel their ${lr.ast} AST`);
+    }
     if (cardId === 'find_the_open_man') {
       const dt = g.lastDoubleTeam;
       if (!dt || dt.teamKey === teamKey) return no('The opponent must have a Double Team on the floor');
@@ -734,6 +769,22 @@ export function canPlayCard(g, teamKey, cardId) {
     case 'unsung_hero':
       if (preRollTargets(g, teamKey, p => (p.salary || 0) <= 400).length === 0) return no('Need a $400-or-less player still to roll');
       return ok('Two dice, keep the higher');
+    case 'point_god': {
+      // Post Domination's Speed twin (2026-09-23): the same matchup door, read
+      // through calcAdv, for a player still to roll.
+      const edge = preRollTargets(g, teamKey, (p, i) => {
+        const dp = oppT.starters[(g.offMatchups[teamKey] || [])[i] ?? i];
+        return dp && calcAdv(p, dp, g.tempEff[teamKey] || {}, i).speedAdv > 0;
+      });
+      if (edge.length === 0) return no('Need a player with a Speed advantage over his defender, still to roll');
+      return ok('Double his assists this period');
+    }
+    case 'blow_by': {
+      // Rimshaker's Speed twin (2026-09-23).
+      const hasHot = myT.starters.some(p => { const ps = getPS(g, teamKey, p.id) || {}; return p.speed >= 13 && (ps.hot || 0) > 0; });
+      if (!hasHot) return no('Need a Speed 13+ player with a hot marker');
+      return ok('+2 pts and another hot marker');
+    }
     case 'transition_outlet': {
       if (myT.rebounds < 1 || myT.assists < 1) return no('Need 1 rebound and 1 assist to spend');
       const some = myT.starters.some((p, i) => {

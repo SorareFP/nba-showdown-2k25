@@ -4,7 +4,7 @@
 
 import { handOverPriority, getTeam, getOpp, getPS, calcAdv, shotCheck, matchupContest, drawCards, deepClone, getFatigue, recordDefSwitch, burnedSlots, roll20, checkAssistDraw, standingEntry, CROWD_FAVORITE_PTS, satOutLast, bottomedLines } from './engine.js';
 import { creditAllowed, creditCheckDefended, recordPaintCheck, creditPaintScore, noteLastCheck } from './engine.js';
-import { helpTargets, canAnswerCheck, myHouseHolds, foulTroubleTargets } from './canPlay.js';
+import { helpTargets, canAnswerCheck, myHouseHolds, foulTroubleTargets, clampTargets } from './canPlay.js';
 import { lookupChart } from './cards.js';
 import { getStrat } from './strats.js';
 
@@ -1667,6 +1667,70 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       oppT.rebounds = Math.max(0, oppT.rebounds - take);
       lr.boxed = true;
       addLog(g, teamKey, `Box Out: ${guard?.name || 'your defender'} boxes out ${roller?.name || 'the roller'} — ${before - oppT.rebounds} REB cancelled`);
+      break;
+    }
+
+    // ── WAVE TWO TWINS (2026-09-23) ─────────────────────────────────────────
+    case 'blow_by': {
+      // Rimshaker's Speed twin. Leaves lastAutoScore behind like every
+      // automatic scorer, so Verticality can answer it.
+      if ((player?.speed || 0) < 13) return fail('Need Speed 13+');
+      if (!(ps.hot > 0)) return fail(player?.name + ' needs a hot marker');
+      scorePts(g, teamKey, player?.id, 2);
+      if (g.analytics?.[teamKey]) g.analytics[teamKey].shotCheckPts += 2;
+      pss().hot = (pss().hot || 0) + 1;
+      g.lastAutoScore = { teamKey, playerIdx: idx, playerId: player?.id, pts: 2, cardId };
+      addLog(g, teamKey, `Blow-By: ${player?.name} +2pts + extra 🔥`);
+      break;
+    }
+    case 'point_god': {
+      // Post Domination's Speed twin: a Speed edge over his defender, still to
+      // roll; his assists from scoring rolls double (engine.js, `ast2`).
+      if (!player) return fail('Choose a player');
+      if ((g.rollResults[teamKey] || [])[idx] != null) return fail(`${player.name} has already rolled this segment.`);
+      const dpG = oppT?.starters?.[(g.offMatchups?.[teamKey] || [])[idx] ?? idx];
+      const advG = dpG ? calcAdv(player, dpG, g.tempEff[teamKey] || {}, idx) : null;
+      if (!advG || advG.speedAdv <= 0) return fail(`${player.name} has no Speed advantage over his defender`);
+      if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
+      g.tempEff[teamKey]['ast2' + idx] = 1;
+      addLog(g, teamKey, `Point God: ${player.name}'s assists are doubled this period`);
+      break;
+    }
+    case 'passing_lane': {
+      // Box Out, for assists: the roll's assists come off the track, one more
+      // if the defender on the roller has the Speed edge.
+      const lrA = g.lastRoll;
+      if (!lrA || lrA.teamKey === teamKey || lrA.deflected || !(lrA.ast > 0)) return fail('The opponent must have just won assists on a scoring roll');
+      const rollerA = oppT.starters[lrA.idx];
+      const guardA = myT.starters[(g.offMatchups[lrA.teamKey] || [])[lrA.idx]];
+      let takeA = lrA.ast;
+      if (rollerA && guardA && (guardA.speed || 0) > (rollerA.speed || 0)) takeA += 1;
+      const beforeA = oppT.assists || 0;
+      oppT.assists = Math.max(0, beforeA - takeA);
+      lrA.deflected = true;
+      addLog(g, teamKey, `Passing Lane: ${guardA?.name || 'your defender'} jumps the pass to ${rollerA?.name || 'the roller'} — ${beforeA - oppT.assists} AST cancelled`);
+      break;
+    }
+    case 'clamp_the_reserve': {
+      // Unsung Hero's defensive mirror. THE CHOICE IS THE CARD: the engine
+      // refuses without a target from clampTargets, so a picker that was
+      // skipped cannot land it on slot 0 (the ATO Masterpiece lesson).
+      const oppKeyC = teamKey === 'A' ? 'B' : 'A';
+      const targets = clampTargets(g, teamKey);
+      const tIdxC = opts.targetIdx;
+      const chosen = targets.find(t => t.origIdx === tIdxC);
+      if (tIdxC === undefined || !chosen) return fail('Choose an opposing $400-or-less player still to roll');
+      if (!g.tempEff[oppKeyC]) g.tempEff[oppKeyC] = {};
+      g.tempEff[oppKeyC]['dis' + tIdxC] = 1;
+      addLog(g, teamKey, `Clamp the Reserve: ${chosen.p.name} rolls two dice and keeps the lower this period`);
+      break;
+    }
+    case 'feeling_it': {
+      // Turnover's twin: one of YOUR hot markers pays out two cards.
+      const hasHotF = myT.starters.some(p => { const pst = getPS(g, teamKey, p?.id); return pst && (pst.hot || 0) > 0; });
+      if (!hasHotF) return fail('One of your players needs a hot marker');
+      const gotF = cardDraw(g, teamKey, 2);
+      addLog(g, teamKey, `Feeling It: drew ${gotF} strategy card${gotF === 1 ? '' : 's'}${gotF < 2 ? ' — the deck ran out' : ''}`);
       break;
     }
 

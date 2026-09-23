@@ -5,7 +5,7 @@
 
 import { getTeam, getOpp, getPS, calcAdv, matchupAdv, isGhosted, getFatigue, fatigueForMinutes, restMinutes, MAX_STRAIGHT_MINUTES, pickablePool, SPEND_COSTS, clutchAvailable, clutchEligible, burnedSlots, satOutLast, canRollSlot, extraRollPending, checkNeed, crunchSearchOptions } from './engine.js';
 import { lookupChart } from './cards.js';
-import { canPlayCard, helpTargets, staggerPair, myHouseTargets, foulTroubleTargets } from './canPlay.js';
+import { canPlayCard, helpTargets, staggerPair, myHouseTargets, foulTroubleTargets, clampTargets } from './canPlay.js';
 import { getStrat, STRATS, TIMEOUT_RIDERS } from './strats.js';
 import { DEFAULT_ORDER } from './placement.js';
 
@@ -1030,6 +1030,8 @@ function evaluateCard(game, teamKey, cardId, strat, opts = {}) {
       find_the_open_man: 7, putback_specialist: 6, rim_protector: 7, drop_coverage: 5,
       smothering_defense: 5, denial: 4, hustle_play: 5, glass_cleaner: 6, box_out: 6,
       help_defender: 7,
+      // Wave two twins (2026-09-23): Box Out's price, for assists.
+      passing_lane: 6,
     };
     return reactionValues[cardId] ?? 4;
   }
@@ -1058,6 +1060,8 @@ function evaluateCard(game, teamKey, cardId, strat, opts = {}) {
     putback_dunk: 8,
     pin_down_screen: 6,
     turnover: 4,
+    // Wave two twins (2026-09-23): priced as the cards they mirror.
+    feeling_it: 4, clamp_the_reserve: 5, point_god: 6, blow_by: 7,
 
     // Scoring
     green_light: 8,
@@ -1418,6 +1422,24 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
         return p.power >= 13 && (ps?.hot || 0) > 0;
       });
       return { playerIdx: hotPwr >= 0 ? hotPwr : 0 };
+    }
+    case 'blow_by': {
+      // Rimshaker's Speed twin (2026-09-23).
+      const hotSpd = starters.findIndex(p => {
+        const ps = getPS(game, teamKey, p.id);
+        return p.speed >= 13 && (ps?.hot || 0) > 0;
+      });
+      return { playerIdx: hotSpd >= 0 ? hotSpd : 0 };
+    }
+    case 'feeling_it': {
+      // Like Turnover: the condition is the team's, nothing to choose.
+      return {};
+    }
+    case 'clamp_the_reserve': {
+      // Unsung Hero's mirror: the best producer among the opponent's cheap
+      // men still to roll — the shared list, so the engine takes the pick.
+      const cand = clampTargets(game, teamKey).sort((u, v) => expectedOutput(v.p) - expectedOutput(u.p));
+      return { targetIdx: cand[0]?.origIdx ?? 0 };
     }
 
     case 'heat_check': {
@@ -1780,6 +1802,16 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
     case 'unsung_hero': {
       const cand = starters.map((p, i) => ({ p, i })).filter(({ p, i }) => p && (rolls[i] == null && !blocked[i]) && (p.salary || 0) <= 400)
         .sort((u, v) => expectedOutput(v.p) - expectedOutput(u.p));
+      return { playerIdx: cand[0]?.i ?? 0 };
+    }
+    case 'point_god': {
+      // Post Domination's Speed twin (2026-09-23): a Speed edge over his
+      // defender, still to roll; the best producer among them.
+      const cand = starters.map((p, i) => ({ p, i })).filter(({ p, i }) => {
+        if (!p || rolls[i] != null || blocked[i]) return false;
+        const dp = oppT.starters[(game.offMatchups?.[teamKey] || [])[i] ?? i];
+        return dp && calcAdv(p, dp, game.tempEff?.[teamKey] || {}, i).speedAdv > 0;
+      }).sort((u, v) => expectedOutput(v.p) - expectedOutput(u.p));
       return { playerIdx: cand[0]?.i ?? 0 };
     }
     case 'transition_outlet': {

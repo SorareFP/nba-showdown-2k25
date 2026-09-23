@@ -1368,6 +1368,8 @@ export function doRoll(g, teamKey, idx, opts = {}) {
 
   // Post Domination: this player's rebounds from scoring rolls are doubled.
   if (te['reb2' + idx] && result.reb) result = { ...result, reb: result.reb * 2 };
+  // Point God, Post Domination's Speed twin (2026-09-23): the assists double.
+  if (te['ast2' + idx] && result.ast) result = { ...result, ast: result.ast * 2 };
   if (!ng.rollResults[teamKey]) ng.rollResults[teamKey] = [];
   // defId/defDb: who was guarding this roll, for matchup plus-minus analysis.
   ng.rollResults[teamKey][idx] = {
@@ -1402,7 +1404,8 @@ export function doRoll(g, teamKey, idx, opts = {}) {
   }];
 
   // The roll Box Out can answer, and Spain Pick & Roll's assist for a score.
-  ng.lastRoll = { teamKey, idx, reb: result.reb, pts: result.pts, boxed: false };
+  // `ast` and `deflected` for Passing Lane (2026-09-23), Box Out's twin.
+  ng.lastRoll = { teamKey, idx, reb: result.reb, ast: result.ast, pts: result.pts, boxed: false, deflected: false };
   if (te['astOnScore' + idx] && result.pts > 0) {
     nMyT.assists += 1;
     ng.log = [...ng.log, { team: teamKey, msg: `Spain Pick & Roll: ${nPlayer.name} scores — +1 AST` }];

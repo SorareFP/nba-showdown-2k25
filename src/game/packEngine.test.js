@@ -6,7 +6,7 @@ import { describe, it, expect } from 'vitest';
 import {
   generatePack, PACK_TYPES, CONFERENCES, DIVISIONS, MAX_DUPES_PER_PACK,
   SPECIAL_SETS_IN_PACKS, SPECIAL_BAND_SHARE, parseFavoriteTeam, favoriteTeamOptions, normalizeFavoriteTeam, leagueOfCard,
-  legendaryShareOf, tierScaleFor } from './packEngine.js';
+  tierScaleFor } from './packEngine.js';
 import { CARD_MAP } from './cards.js';
 import { TEAM_ROSTERS, WNBA_ROSTERS, WNBA_TEAM_CODES } from './collections.js';
 import { STRATS } from './strats.js';
@@ -270,7 +270,10 @@ describe('the Super Season price', () => {
     // table beside the definition.
     expect(PACK_TYPES.super_season.price).toBe(450);
     expect(PACK_TYPES.super_season).toMatchObject({ players: 3, strats: 1, guaranteedRarePlayer: 1, poolOdds: true });
-    expect(PACK_TYPES.standouts.price).toBe(275);   // not touched: the user named Super Season
+    // 350 since 2026-09-23 ("Reprice Summer please"): pool odds and the
+    // ladder's legendary chance, priced level with the Super Booster.
+    expect(PACK_TYPES.standouts.price).toBe(350);
+    expect(PACK_TYPES.standouts).toMatchObject({ poolOdds: true, apexOdds: 0.054 });
   });
 });
 
@@ -324,62 +327,72 @@ describe('guarantees', () => {
     }
   });
 
-  it('never launders a legendary out of a "guaranteed super rare"', () => {
-    // The guarantee means EXACTLY the super-rare band: a Super Deluxe's one
-    // guaranteed slot, and the starter's, cannot be the apex.
+  it('never launders a legendary out of the starter\'s "guaranteed super rare"', () => {
+    // The starter has no apexOdds, so its guaranteed slot is EXACTLY the
+    // super-rare band and a free pack can never hand out the apex through it.
     let legendaries = 0;
-    for (let i = 0; i < 400; i++) {
-      const all = players(generatePack('super_deluxe')).map(rarityOf);
+    for (let i = 0; i < 150; i++) {
+      const all = players(generatePack('starter', { favoriteTeam: 'nba:BOS' })).map(rarityOf);
       expect(all.some(r => atLeast(r, 'super-rare'))).toBe(true);
-      // The two free slots can still hit the 0.3% base odds; the guaranteed
-      // one cannot, so over 400 packs the count stays a base-odds count.
+      // Twenty slots at the 0.3% base odds is the only way in: a base-odds count.
       legendaries += all.filter(r => r === 'legendary').length;
     }
-    expect(legendaries).toBeLessThan(20);
+    expect(legendaries).toBeLessThan(25);
   });
 
-  it('lets a legendary through the "all of them" Deluxe packs at its share of the band (2026-09-23)', () => {
-    // The user: "Legendaries should be in Rare and Mega Deluxes, not sure why
-    // they're not." A super-rare-or-better slot is the apex 15% of the time
-    // and a rare-or-better slot 3% — PACK_WEIGHTS' own ratio, not the pool's
-    // card count, which would have made a Mega Deluxe mostly legendary.
-    expect(legendaryShareOf('super-rare')).toBeCloseTo(0.003 / 0.02, 6);
-    expect(legendaryShareOf('rare')).toBeCloseTo(0.003 / 0.1, 6);
-    expect(legendaryShareOf('legendary')).toBe(1);
-    const N = 1500;
-    let mega = 0;
-    let rare = 0;
-    for (let i = 0; i < N; i++) {
-      const all = players(generatePack('mega_deluxe')).map(rarityOf);
-      expect(all.every(r => atLeast(r, 'super-rare'))).toBe(true);
-      mega += all.filter(r => r === 'legendary').length;
-      rare += players(generatePack('rare_deluxe')).map(rarityOf).filter(r => r === 'legendary').length;
+  it('deals each premium pack a legendary at its own odds, never two (the ladder, 2026-09-23)', () => {
+    // The user: "it's kinda silly that better, more expensive packs have worse
+    // coins per legendary than the normal booster." Each carries apexOdds,
+    // rolled once a pack; the free slots never deal another.
+    const N = 2000;
+    for (const type of ['rare_deluxe', 'super_deluxe', 'mega_deluxe', 'super_season', 'standouts']) {
+      const def = PACK_TYPES[type];
+      expect(def.apexOdds, type).toBeGreaterThan(0);
+      let packsWith = 0;
+      for (let i = 0; i < N; i++) {
+        const legs = players(generatePack(type)).map(rarityOf).filter(r => r === 'legendary').length;
+        expect(legs, type).toBeLessThanOrEqual(1);
+        if (legs) packsWith += 1;
+      }
+      const rate = packsWith / N;
+      const sd = Math.sqrt((def.apexOdds * (1 - def.apexOdds)) / N);
+      expect(Math.abs(rate - def.apexOdds), `${type}: ${rate} vs ${def.apexOdds}`).toBeLessThan(4 * sd + 0.004);
     }
-    // Three slots at 15%: 0.45 a pack, give or take the dice over 1,500 packs.
-    expect(mega / N).toBeGreaterThan(0.33);
-    expect(mega / N).toBeLessThan(0.58);
-    // Three slots at 3%: 0.09 a pack.
-    expect(rare / N).toBeGreaterThan(0.05);
-    expect(rare / N).toBeLessThan(0.14);
   });
 
-  it('deals the Super Season pool\'s own quality, so its legendary rate is the pool\'s and not the booster\'s (2026-09-23)', () => {
+  it('puts coins per legendary on a ladder: under the booster, over the Chase, falling as the price rises', () => {
+    const perLegendary = type => PACK_TYPES[type].price / PACK_TYPES[type].apexOdds;
+    // The booster: five slots at the 0.3% base odds.
+    const booster = PACK_TYPES.booster.price / (1 - (1 - 0.003) ** PACK_TYPES.booster.players);
+    const chase = PACK_TYPES.legendary_chase.price;
+    expect(booster).toBeGreaterThan(chase);
+    for (const type of ['rare_deluxe', 'super_deluxe', 'mega_deluxe', 'super_season', 'standouts']) {
+      expect(perLegendary(type), type).toBeLessThan(booster);
+      expect(perLegendary(type), type).toBeGreaterThan(chase);
+    }
+    expect(perLegendary('rare_deluxe')).toBeGreaterThan(perLegendary('super_deluxe'));
+    expect(perLegendary('super_deluxe')).toBeGreaterThan(perLegendary('mega_deluxe'));
+  });
+
+  it('deals the Super Season pool\'s own quality below the apex band (2026-09-23)', () => {
     // The user: "super season packs should have higher chances of legendaries
     // because there are so many in the pack." The band is still picked first,
-    // but scaled by the pool's share of it over the base set's.
+    // but scaled by the pool's share of it over the base set's; the legendary
+    // itself is the pack's apexOdds, not the pool's share.
     const scale = tierScaleFor(CARD_SETS['super-season']);
-    expect(scale.legendary).toBeGreaterThan(4);
+    expect(scale['super-rare']).toBeGreaterThan(2);
     expect(scale.common).toBeLessThan(0.3);
     // The base set against itself is the flat weights exactly.
     for (const t of RARITY_ORDER) expect(tierScaleFor(CARD_SETS[BASE_SET])[t]).toBeCloseTo(1, 9);
-    const N = 1500;
-    let leg = 0;
-    let boosterLeg = 0;
+    const N = 1000;
+    let srs = 0;
+    let boosterSrs = 0;
     for (let i = 0; i < N; i++) {
-      leg += players(generatePack('super_season')).map(rarityOf).filter(r => r === 'legendary').length;
-      boosterLeg += players(generatePack('booster')).map(rarityOf).filter(r => r === 'legendary').length;
+      srs += players(generatePack('super_season')).map(rarityOf).filter(r => r === 'super-rare').length;
+      boosterSrs += players(generatePack('booster')).map(rarityOf).filter(r => r === 'super-rare').length;
     }
-    expect(leg / N).toBeGreaterThan(3 * (boosterLeg / N + 0.005));
+    // Three players against five, and still several times the super-rares.
+    expect(srs / N).toBeGreaterThan(3 * (boosterSrs / N));
   });
 });
 

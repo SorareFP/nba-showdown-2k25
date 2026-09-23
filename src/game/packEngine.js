@@ -5,15 +5,14 @@
 // one engine. Cross-set salaries are priced against the same base field, so
 // the salary-derived rarity tiers mean the same thing in every pool.
 //
-// LEGENDARY and the guarantees: `guaranteedSR` means EXACTLY the super-rare
-// band ($900-1,199) — a starter or a Super Deluxe cannot launder one out of
-// its guarantee. The two "all of them" packs are different since 2026-09-23:
-// Rare Deluxe deals rare OR BETTER and Mega Deluxe super-rare OR BETTER, the
-// legendary at the share PACK_WEIGHTS gives it against the band
-// (legendaryShareOf), so the apex is reachable there without either pack
-// becoming a cheaper legendary than the Chase. Everywhere else the apex cards
-// come only from the 0.3% base odds. Dissonance is not sold in any pack — its
-// 13 strange-jersey stints are reward territory, like the Bam 83-point card.
+// LEGENDARY and the guarantees: a player guarantee (`guaranteedSR`,
+// `guaranteedRarePlayer`, `allRarePlus`, `allSR`) is capped at the super-rare
+// band ($900-1,199) — a band draw never launders the apex. A premium pack
+// reaches the apex through ITS OWN `apexOdds`, rolled once a pack (the
+// ladder above rare_deluxe, 2026-09-23), and the Chase through its guarantee;
+// everywhere else the apex cards come only from the 0.3% base odds.
+// Dissonance is not sold in any pack — its 13 strange-jersey stints are
+// reward territory, like the Bam 83-point card.
 import { STRATS } from './strats.js';
 import { CARD_SETS, BASE_SET, cardKey } from './cardSets.js';
 import { LIVE_SERIES_ON } from '../cards/liveSeries.js';
@@ -49,9 +48,34 @@ export const PACK_TYPES = {
   division:      { name: 'Division Pack',       players: 5,  strats: 2,  price: 100,  themed: 'division' },
   conference:    { name: 'Conference Pack',      players: 5,  strats: 2,  price: 100,  themed: 'conference' },
   conf_super:    { name: 'Conference Super',     players: 5,  strats: 2,  price: 300,  themed: 'conference', guaranteedRarePlayer: 1 },
-  rare_deluxe:   { name: 'Rare Deluxe',         players: 3,  strats: 1,  price: 750,  allRarePlus: true, mixesSpecials: true },
-  super_deluxe:  { name: 'Super Deluxe',        players: 3,  strats: 1,  price: 1500, guaranteedSR: 1, mixesSpecials: true },
-  mega_deluxe:   { name: 'Mega Deluxe',         players: 3,  strats: 1,  price: 3000, allSR: true, rareStrat: true, mixesSpecials: true },
+  // ── THE LEGENDARY LADDER (apexOdds, 2026-09-23) ─────────────────────────
+  //
+  // The user: "it's kinda silly that better, more expensive packs have worse
+  // coins per legendary than the normal booster. Feels like there should be
+  // a premium there" — with the booster's ~1.5% a pack (0.3% a slot, five
+  // slots: about 6,700 coins a legendary) and the Chase's sure one at 6,000
+  // as the two ends. So every premium pack carries ITS OWN chance of a
+  // legendary, rolled once a pack, set so that coins per legendary falls as
+  // the price rises and every rung sits between the booster and the Chase:
+  //
+  //   pack             price  apexOdds  coins/legendary
+  //   Booster            100    (base)     ~6,700
+  //   Rare Deluxe        750     0.115      6,520
+  //   Summer Standouts   350     0.054      6,480   (a set pack: between the two, as asked)
+  //   Super Season       450     0.070      6,430   (the same)
+  //   Super Deluxe     1,500     0.235      6,380
+  //   Mega Deluxe      3,000     0.480      6,250
+  //   Legendary Chase  6,000     1          6,000
+  //
+  // A hit puts exactly one legendary in the pack's first premium slot and
+  // every other draw stays out of the apex band, so the chance printed on the
+  // pack is the chance — supply decay and pool odds move the bands below it
+  // and cannot lift it. The 15% / 3% "share of the band" this replaced
+  // (earlier the same day) made a Mega Deluxe dearer a legendary than a
+  // booster, which is the silliness the user named.
+  rare_deluxe:   { name: 'Rare Deluxe',         players: 3,  strats: 1,  price: 750,  allRarePlus: true, mixesSpecials: true, apexOdds: 0.115 },
+  super_deluxe:  { name: 'Super Deluxe',        players: 3,  strats: 1,  price: 1500, guaranteedSR: 1, mixesSpecials: true, apexOdds: 0.235 },
+  mega_deluxe:   { name: 'Mega Deluxe',         players: 3,  strats: 1,  price: 3000, allSR: true, rareStrat: true, mixesSpecials: true, apexOdds: 0.48 },
   // The bulk play: 36 boosters at a discount PLUS a bonus Super Booster —
   // volume and a kicker, while Mega Deluxe stays the certainty play.
   booster_box:   { name: 'Booster Box (36 + bonus)', players: 0, strats: 0, price: 3000, box: 36, bonus: 'super' },
@@ -167,12 +191,15 @@ export const PACK_TYPES = {
   //   Super Booster                 300      1938    28.0     0.54     0.013    1.3%        6.46      23077
   //   Booster                       100       826    10.1     0.08     0.018    1.8%        8.26       5556
   //
-  // The pool's odds lift the pack from 40% rare-or-better to 62%, from one
-  // legendary in 140 packs to one in ten, and at 300 it would pay 9.73 a coin
-  // — more than a booster. 450 puts it at 6.49, level with the Super
-  // Booster's 6.46: the same rule as before (a premium for the narrower,
-  // stronger pool, and no more), applied to the pack it now is.
-  super_season:  { name: 'Super Season Pack',    players: 3,  strats: 1,  price: 450,  pool: 'super-season', guaranteedRarePlayer: 1, poolOdds: true },
+  // The pool's odds lift the pack from 40% rare-or-better to 62%, and at 300
+  // it would pay 9.73 a coin — more than a booster. 450 puts it level with
+  // the Super Booster: the same rule as before (a premium for the narrower,
+  // stronger pool, and no more), applied to the pack it now is. The
+  // legendary is NOT left to the pool's share (which came to one pack in ten,
+  // 4,600 coins a legendary — cheaper than the Chase): the user's rule for a
+  // set pack is "worse than the Legendary Chase, though better than the
+  // booster", so it takes its place on the ladder above at apexOdds 0.07.
+  super_season:  { name: 'Super Season Pack',    players: 3,  strats: 1,  price: 450,  pool: 'super-season', guaranteedRarePlayer: 1, poolOdds: true, apexOdds: 0.07 },
   // THE ROOKIE PACK GETS NO GUARANTEE AND STAYS CHEAP, deliberately. Its pool
   // is the weak one — median $400, 13% rare-or-better, three legendaries in 261
   // cards — and at 75 coins it is already the best value in the shop (0.037
@@ -190,7 +217,22 @@ export const PACK_TYPES = {
   // Super Season. 0.129 coins per point of salary.
   // Same measurement, same reason: 7.0 per coin and 0.51 super-rares at 225;
   // 5.7 per coin at 275.
-  standouts:     { name: 'Summer Standouts Pack', players: 3, strats: 1,  price: 275,  pool: 'summer-standouts', guaranteedRarePlayer: 1 },
+  // 2026-09-23 ("Reprice Summer please"): the pool's own odds, like Super
+  // Season, and the ladder's legendary chance. Measured over 5,000 packs
+  // (scripts/analysis/packValue.mjs) with the pool's odds on:
+  //
+  //   pack                        price  E[value]  rare+%  SR/pack  value/coin
+  //   Summer Standouts              275      2276    61.9     0.60        8.27
+  //   Summer Standouts              325      2276    61.9     0.60        7.00
+  //   Summer Standouts              350      2276    61.9     0.60        6.50
+  //   Summer Standouts              375      2276    61.9     0.60        6.07
+  //   Super Booster                 300      1944    28.4     0.54        6.48
+  //
+  // The pool's odds lift it from 40% rare-or-better to 62% and at 275 it
+  // would pay 8.27 a coin — a booster's rate for a far stronger pool. 350
+  // puts it level with the Super Booster, the same rule as the Super Season
+  // pack; apexOdds 0.054 is 350 / 6,480, its rung on the ladder.
+  standouts:     { name: 'Summer Standouts Pack', players: 3, strats: 1,  price: 350,  pool: 'summer-standouts', guaranteedRarePlayer: 1, poolOdds: true, apexOdds: 0.054 },
 };
 
 /**
@@ -580,32 +622,13 @@ function weightedPick(cards, getRarityFn, excludeRarities, supply = NO_SUPPLY, p
   return pickWeighted(buckets[chosen], supply);
 }
 
-/**
- * THE LEGENDARY'S SHARE OF A BAND that reaches it: what PACK_WEIGHTS says the
- * apex band is worth against the rest of the band. A "super-rare or better"
- * slot is a legendary 0.003 / (0.017 + 0.003) = 15% of the time; a "rare or
- * better" slot 3%. The rest of the band draws as it always has.
- */
-export function legendaryShareOf(minRarity) {
-  const band = RARITY_ORDER.slice(RARITY_ORDER.indexOf(minRarity));
-  const total = band.reduce((sum, tier) => sum + (PACK_WEIGHTS[tier] ?? 0), 0);
-  return total > 0 ? PACK_WEIGHTS.legendary / total : 0;
-}
-
-// Pick a card inside a rarity BAND — min up to max inclusive.
-//
-// A PLAYER band that reaches the legendary does NOT draw it by card count —
-// the apex band is a third of the super-rare band's size, and a Mega Deluxe
-// drawing three "super-rare or better" cards by count would have been a
-// legendary most packs. Those callers pass `apexShare` (legendaryShareOf):
-// the legendary takes that share, and the band below it draws exactly as it
-// did. The user (2026-09-23): "Legendaries should be in Rare and Mega
-// Deluxes, not sure why they're not." They were shut out so a guarantee could
-// not be a cheaper route to the apex than the Chase; at this share they are
-// not — see the odds under the Deluxe packs in PACK_TYPES. The Chase's
-// STRAT slot passes no share and draws its band by count, as it always has:
-// four apex strats among the rare-or-better deck is the rate it was built on.
-function pickInBand(cards, getRarityFn, minRarity, maxRarity = 'super-rare', supply = NO_SUPPLY, apexShare = null) {
+// Pick a card inside a rarity BAND — min up to max inclusive. A player
+// guarantee's band is capped at super-rare: the legendary in a premium pack
+// comes from its apexOdds roll (generatePack), never from a band draw. The
+// Chase's STRAT slot draws its rare-to-legendary band by count, as it always
+// has: four apex strats among the rare-or-better deck is the rate it was
+// built on.
+function pickInBand(cards, getRarityFn, minRarity, maxRarity = 'super-rare', supply = NO_SUPPLY) {
   const minIdx = RARITY_ORDER.indexOf(minRarity);
   const maxIdx = RARITY_ORDER.indexOf(maxRarity);
   const eligible = cards.filter(c => {
@@ -613,13 +636,6 @@ function pickInBand(cards, getRarityFn, minRarity, maxRarity = 'super-rare', sup
     return i >= minIdx && i <= maxIdx;
   });
   if (eligible.length === 0) return cards[Math.floor(Math.random() * cards.length)];
-  if (apexShare != null && maxRarity === 'legendary' && minRarity !== 'legendary') {
-    const apex = eligible.filter(c => getRarityFn(c) === 'legendary');
-    const rest = eligible.filter(c => getRarityFn(c) !== 'legendary');
-    if (apex.length && rest.length) {
-      return Math.random() < apexShare ? pickWeighted(apex, supply) : pickWeighted(rest, supply);
-    }
-  }
   // Guarantees respect the same within-band weighting, so a guaranteed rare is
   // not a back door into the special sets at four times their pack rate.
   return pickWeighted(eligible, supply);
@@ -798,18 +814,33 @@ export function generatePack(packType, options = {}) {
     }
   }
 
-  // Guaranteed super-rare players — the band, never legendary.
+  // THE PACK'S OWN LEGENDARY CHANCE (apexOdds — the ladder in PACK_TYPES).
+  // Rolled once a pack. A hit is exactly one legendary, dealt in the first
+  // premium slot below; every other draw in an apexOdds pack stays out of the
+  // apex band (the fill excludes it), so the chance on the pack is the chance.
+  const apexHit = (def.apexOdds ?? 0) > 0 && Math.random() < def.apexOdds;
+  let apexDealt = false;
+  const apexNow = () => apexHit && !apexDealt;
+  const dealApex = () => {
+    apexDealt = true;
+    srCount += 1;
+    return pulled(pickInBand(playerPool, getPlayerRarity, 'legendary', 'legendary', supply));
+  };
+
+  // Guaranteed super-rare players — the band exactly, unless this is the
+  // pack's legendary. The starter has no apexOdds and can never deal one here.
   if (def.guaranteedSR) {
     for (let i = 0; i < def.guaranteedSR; i++) {
+      if (apexNow()) { result.push(dealApex()); continue; }
       const card = pickInBand(playerPool, getPlayerRarity, 'super-rare', 'super-rare', supply);
       result.push(pulled(card));
       srCount++;
     }
   }
 
-  // Guaranteed rare player (rare or super-rare, never legendary)
+  // Guaranteed rare player (rare or super-rare), or the pack's legendary.
   if (def.guaranteedRarePlayer) {
-    result.push(pulled(pickInBand(playerPool, getPlayerRarity, 'rare', 'super-rare', supply)));
+    result.push(apexNow() ? dealApex() : pulled(pickInBand(playerPool, getPlayerRarity, 'rare', 'super-rare', supply)));
   }
 
   // Guaranteed rare (player or strat)
@@ -821,11 +852,11 @@ export function generatePack(packType, options = {}) {
     }
   }
 
-  // All rare+ packs: rare or better, the legendary at its share of the band
-  // (legendaryShareOf — 3% a slot, about one Rare Deluxe in eleven).
+  // All rare+ packs: rare or super-rare, with the pack's legendary (apexOdds)
+  // taking the first slot when it hits.
   if (def.allRarePlus) {
     for (let i = result.length; i < def.players; i++) {
-      result.push(pulled(pickInBand(playerPool, getPlayerRarity, 'rare', 'legendary', supply, legendaryShareOf('rare'))));
+      result.push(apexNow() ? dealApex() : pulled(pickInBand(playerPool, getPlayerRarity, 'rare', 'super-rare', supply)));
     }
     for (let i = 0; i < def.strats; i++) {
       result.push({ id: pickInBand(stratPool, getStratRarity, 'rare', 'rare').id, type: 'strat' });
@@ -850,12 +881,11 @@ export function generatePack(packType, options = {}) {
     }
   }
 
-  // All super-rare packs: super-rare or better, the legendary at its share of
-  // the band (15% a slot — a Mega Deluxe carries one about two packs in five,
-  // which at 3,000 is still dearer a legendary than the Chase's 6,000 sure one).
+  // All super-rare packs: the band exactly, with the pack's legendary
+  // (apexOdds — about one Mega Deluxe in two) taking the first slot when it hits.
   if (def.allSR) {
     for (let i = result.length; i < def.players; i++) {
-      result.push(pulled(pickInBand(playerPool, getPlayerRarity, 'super-rare', 'legendary', supply, legendaryShareOf('super-rare'))));
+      result.push(apexNow() ? dealApex() : pulled(pickInBand(playerPool, getPlayerRarity, 'super-rare', 'super-rare', supply)));
     }
     if (def.rareStrat) {
       result.push({ id: pickInBand(stratPool, getStratRarity, 'rare', 'rare').id, type: 'strat' });
@@ -886,6 +916,9 @@ export function generatePack(packType, options = {}) {
   const seenInPack = new Set(result.filter(c => c.type === 'player').map(c => c.id));
   // The pool's own odds, for a pack that deals its pool's quality (tierScaleFor).
   const poolOdds = def.poolOdds ? tierScaleFor(playerPool) : null;
+  // An apexOdds pack's legendary was decided above; its free slots never
+  // deal another, so the chance on the pack is the chance.
+  const exclude = def.apexOdds != null ? ['legendary'] : undefined;
   let dupes = 0;
   for (let i = playersFilled; i < def.players; i++) {
     // Once the cap is spent, draw from what has not appeared yet. Falling back
@@ -896,7 +929,7 @@ export function generatePack(packType, options = {}) {
       const unseen = playerPool.filter(c => !seenInPack.has(cardKey(c)));
       if (unseen.length > 0) source = unseen;
     }
-    const card = weightedPick(source, getPlayerRarity, undefined, supply, poolOdds);
+    const card = weightedPick(source, getPlayerRarity, exclude, supply, poolOdds);
     const tier = getPlayerRarity(card);
     if (tier === 'super-rare' || tier === 'legendary') {
       if (srCount >= srCap) {

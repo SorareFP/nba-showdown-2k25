@@ -185,11 +185,11 @@ describe('guarantees still hold under supply', () => {
     }
   });
 
-  it('keeps the legendary at its share of the band even when every super-rare is saturated', () => {
-    // Since 2026-09-23 a Mega Deluxe slot is super-rare OR BETTER, the apex
-    // at legendaryShareOf's 15%. Supply decay weighs cards INSIDE a band; it
-    // must not be able to push a slot across into the apex band. With every
-    // super-rare saturated the legendary count is still the share's, not more.
+  it('keeps the legendary at the pack\'s own odds even when every super-rare is saturated', () => {
+    // Since 2026-09-23 a Mega Deluxe carries a legendary at its apexOdds,
+    // rolled once a pack. Supply decay weighs cards INSIDE a band; it must
+    // not be able to push a slot across into the apex band. With every
+    // super-rare saturated the legendary count is still the pack's, not more.
     const srs = (CARD_SETS[BASE_SET] ?? []).filter(c => getPlayerRarity(c) === 'super-rare');
     const saturated = Object.fromEntries(srs.map(c => [cardKey(c), 900]));
     const N = 800;
@@ -197,10 +197,12 @@ describe('guarantees still hold under supply', () => {
     for (let i = 0; i < N; i += 1) {
       const rs = players(generatePack('mega_deluxe', { supply: saturated })).map(rarityOf);
       for (const r of rs) expect(r === 'super-rare' || r === 'legendary', r).toBe(true);
-      legendaries += rs.filter(r => r === 'legendary').length;
+      const legs = rs.filter(r => r === 'legendary').length;
+      expect(legs).toBeLessThanOrEqual(1);
+      legendaries += legs;
     }
-    // Three slots at 15% is 0.45 a pack; saturation must not lift it.
-    expect(legendaries / N).toBeLessThan(0.6);
-    expect(legendaries / N).toBeGreaterThan(0.3);
+    const odds = PACK_TYPES.mega_deluxe.apexOdds;
+    expect(legendaries / N).toBeLessThan(odds + 0.08);
+    expect(legendaries / N).toBeGreaterThan(odds - 0.08);
   });
 });

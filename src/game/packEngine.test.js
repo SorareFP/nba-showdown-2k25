@@ -5,7 +5,8 @@
 import { describe, it, expect } from 'vitest';
 import {
   generatePack, PACK_TYPES, CONFERENCES, DIVISIONS, MAX_DUPES_PER_PACK,
-  SPECIAL_SETS_IN_PACKS, SPECIAL_BAND_SHARE, parseFavoriteTeam, favoriteTeamOptions, normalizeFavoriteTeam, leagueOfCard } from './packEngine.js';
+  SPECIAL_SETS_IN_PACKS, SPECIAL_BAND_SHARE, parseFavoriteTeam, favoriteTeamOptions, normalizeFavoriteTeam, leagueOfCard,
+  legendaryShareOf, tierScaleFor } from './packEngine.js';
 import { CARD_MAP } from './cards.js';
 import { TEAM_ROSTERS, WNBA_ROSTERS, WNBA_TEAM_CODES } from './collections.js';
 import { STRATS } from './strats.js';
@@ -264,8 +265,11 @@ describe('the Super Season price', () => {
     // backwards. At 300 the pack pays 6.04 coins of market value per coin
     // against the Super Booster's 6.44 and the booster's 7.92; the table is
     // beside the definition.
-    expect(PACK_TYPES.super_season.price).toBe(300);
-    expect(PACK_TYPES.super_season).toMatchObject({ players: 3, strats: 1, guaranteedRarePlayer: 1 });
+    // 450 since 2026-09-23: the pack deals its pool's own odds (poolOdds) and
+    // is priced level with the Super Booster by value per coin — see the
+    // table beside the definition.
+    expect(PACK_TYPES.super_season.price).toBe(450);
+    expect(PACK_TYPES.super_season).toMatchObject({ players: 3, strats: 1, guaranteedRarePlayer: 1, poolOdds: true });
     expect(PACK_TYPES.standouts.price).toBe(275);   // not touched: the user named Super Season
   });
 });
@@ -314,23 +318,68 @@ describe('guarantees', () => {
     }
   });
 
-  it('reaches the apex band only through the Legendary Chase', () => {
+  it('guarantees the apex band only through the Legendary Chase', () => {
     for (let i = 0; i < 120; i++) {
       expect(players(generatePack('legendary_chase')).map(rarityOf)).toContain('legendary');
     }
   });
 
   it('never launders a legendary out of a "guaranteed super rare"', () => {
-    // The guarantee means EXACTLY the super-rare band. If it were "super-rare or
-    // better" the apex cards would leak into a 1,500-coin pack and the chase
-    // pack would stop meaning anything.
+    // The guarantee means EXACTLY the super-rare band: a Super Deluxe's one
+    // guaranteed slot, and the starter's, cannot be the apex.
     let legendaries = 0;
     for (let i = 0; i < 400; i++) {
-      const all = players(generatePack('mega_deluxe')).map(rarityOf);
-      expect(all.every(r => atLeast(r, 'super-rare'))).toBe(true);
+      const all = players(generatePack('super_deluxe')).map(rarityOf);
+      expect(all.some(r => atLeast(r, 'super-rare'))).toBe(true);
+      // The two free slots can still hit the 0.3% base odds; the guaranteed
+      // one cannot, so over 400 packs the count stays a base-odds count.
       legendaries += all.filter(r => r === 'legendary').length;
     }
-    expect(legendaries).toBe(0);
+    expect(legendaries).toBeLessThan(20);
+  });
+
+  it('lets a legendary through the "all of them" Deluxe packs at its share of the band (2026-09-23)', () => {
+    // The user: "Legendaries should be in Rare and Mega Deluxes, not sure why
+    // they're not." A super-rare-or-better slot is the apex 15% of the time
+    // and a rare-or-better slot 3% — PACK_WEIGHTS' own ratio, not the pool's
+    // card count, which would have made a Mega Deluxe mostly legendary.
+    expect(legendaryShareOf('super-rare')).toBeCloseTo(0.003 / 0.02, 6);
+    expect(legendaryShareOf('rare')).toBeCloseTo(0.003 / 0.1, 6);
+    expect(legendaryShareOf('legendary')).toBe(1);
+    const N = 1500;
+    let mega = 0;
+    let rare = 0;
+    for (let i = 0; i < N; i++) {
+      const all = players(generatePack('mega_deluxe')).map(rarityOf);
+      expect(all.every(r => atLeast(r, 'super-rare'))).toBe(true);
+      mega += all.filter(r => r === 'legendary').length;
+      rare += players(generatePack('rare_deluxe')).map(rarityOf).filter(r => r === 'legendary').length;
+    }
+    // Three slots at 15%: 0.45 a pack, give or take the dice over 1,500 packs.
+    expect(mega / N).toBeGreaterThan(0.33);
+    expect(mega / N).toBeLessThan(0.58);
+    // Three slots at 3%: 0.09 a pack.
+    expect(rare / N).toBeGreaterThan(0.05);
+    expect(rare / N).toBeLessThan(0.14);
+  });
+
+  it('deals the Super Season pool\'s own quality, so its legendary rate is the pool\'s and not the booster\'s (2026-09-23)', () => {
+    // The user: "super season packs should have higher chances of legendaries
+    // because there are so many in the pack." The band is still picked first,
+    // but scaled by the pool's share of it over the base set's.
+    const scale = tierScaleFor(CARD_SETS['super-season']);
+    expect(scale.legendary).toBeGreaterThan(4);
+    expect(scale.common).toBeLessThan(0.3);
+    // The base set against itself is the flat weights exactly.
+    for (const t of RARITY_ORDER) expect(tierScaleFor(CARD_SETS[BASE_SET])[t]).toBeCloseTo(1, 9);
+    const N = 1500;
+    let leg = 0;
+    let boosterLeg = 0;
+    for (let i = 0; i < N; i++) {
+      leg += players(generatePack('super_season')).map(rarityOf).filter(r => r === 'legendary').length;
+      boosterLeg += players(generatePack('booster')).map(rarityOf).filter(r => r === 'legendary').length;
+    }
+    expect(leg / N).toBeGreaterThan(3 * (boosterLeg / N + 0.005));
   });
 });
 

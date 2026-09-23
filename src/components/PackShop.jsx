@@ -37,13 +37,13 @@ export const PACK_COPY = {
   // The user, 2026-09-21: "I think we should have WNBA team packs too."
   wnba_team_pack: { group: 'Targeted', desc: '5 players from ONE WNBA roster — the fast way to finish a WNBA collection', pick: 'wnbaTeam' },
 
-  rare_deluxe:    { group: 'Premium', desc: '3 players, every one rare or better' },
+  rare_deluxe:    { group: 'Premium', desc: '3 players, every one rare or better — a Legendary can be among them' },
   super_deluxe:   { group: 'Premium', desc: '3 players · 1 guaranteed super rare' },
-  mega_deluxe:    { group: 'Premium', desc: '3 super rares + 1 rare strat' },
+  mega_deluxe:    { group: 'Premium', desc: '3 super rares or better + 1 rare strat · a Legendary about two packs in five' },
   legendary_chase:{ group: 'Premium', desc: 'The only pack that guarantees a LEGENDARY' },
   booster_box:    { group: 'Premium', desc: '36 boosters at a discount, plus a bonus Super Booster' },
 
-  super_season:   { group: 'Other Sets', desc: '3 Super Season players' },
+  super_season:   { group: 'Other Sets', desc: '3 Super Season players at the set\'s own odds · a Legendary about one pack in ten' },
   rookie_pack:    { group: 'Other Sets', desc: '5 Rookie cards + 2 strats' },
   live_pack:      { group: 'Other Sets', desc: '5 Live Series cards + 2 strats · this season, as it happens' },
   standouts:      { group: 'Other Sets', desc: '3 Summer Standouts' },

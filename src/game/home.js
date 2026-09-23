@@ -23,6 +23,11 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
+    id: 'legendary-odds', date: '2026-09-23', title: 'Where the Legendaries are',
+    body: 'Nobody had packed a Legendary yet — about one booster in sixty carries one. Now the Rare Deluxe and the Mega Deluxe can deal one (about one pack in eleven, and two in five), and the Super Season Pack deals its set\'s own odds: a quarter of that set is Legendary, so it lands one about one pack in ten, and it costs 450 for it. The Legendary Chase is still the only sure thing.',
+    to: 'shop', cta: 'Pack Shop',
+  },
+  {
     id: 'pack-rip', date: '2026-09-23', title: 'Tear the pack open',
     body: 'Every pack now arrives sealed: drag across the top to tear it, or tap. A Super Rare or a Legendary lands with a flash, a stamp and confetti — and a horn for the Legendary. And a claimed collection\'s reward chip opens the reward card itself.',
     to: 'shop', cta: 'Pack Shop',

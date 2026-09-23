@@ -5,10 +5,15 @@
 // one engine. Cross-set salaries are priced against the same base field, so
 // the salary-derived rarity tiers mean the same thing in every pool.
 //
-// LEGENDARY is deliberately shut out of every guarantee: `guaranteedSR` and
-// `allSR` mean EXACTLY the super-rare band ($900-1,199). The apex cards come
-// only from the 0.3% base odds. Dissonance is not sold in any pack — its 13
-// strange-jersey stints are reward territory, like the Bam 83-point card.
+// LEGENDARY and the guarantees: `guaranteedSR` means EXACTLY the super-rare
+// band ($900-1,199) — a starter or a Super Deluxe cannot launder one out of
+// its guarantee. The two "all of them" packs are different since 2026-09-23:
+// Rare Deluxe deals rare OR BETTER and Mega Deluxe super-rare OR BETTER, the
+// legendary at the share PACK_WEIGHTS gives it against the band
+// (legendaryShareOf), so the apex is reachable there without either pack
+// becoming a cheaper legendary than the Chase. Everywhere else the apex cards
+// come only from the 0.3% base odds. Dissonance is not sold in any pack — its
+// 13 strange-jersey stints are reward territory, like the Bam 83-point card.
 import { STRATS } from './strats.js';
 import { CARD_SETS, BASE_SET, cardKey } from './cardSets.js';
 import { LIVE_SERIES_ON } from '../cards/liveSeries.js';
@@ -146,7 +151,28 @@ export const PACK_TYPES = {
   // the booster's 7.92 — a premium for the narrower, stronger pool, which is
   // the 09-09 reasoning and the user's. Summer Standouts (5.64 at 275) is the
   // same shape and was not touched.
-  super_season:  { name: 'Super Season Pack',    players: 3,  strats: 1,  price: 300,  pool: 'super-season', guaranteedRarePlayer: 1 },
+  // 2026-09-23: THE PACK NOW DEALS THE POOL'S QUALITY. The user: "super season
+  // packs should have higher chances of legendaries because there are so many
+  // in the pack, which is why I had said I thought the price was too low."
+  // `poolOdds` scales every band by the pool's share of it over the base
+  // set's (tierScaleFor), which is exactly the "different, dearer pack" the
+  // note above describes. Measured on the new odds over 5,000 packs
+  // (scripts/analysis/packValue.mjs, the same valuation as the table above):
+  //
+  //   pack                        price  E[value]  rare+%  SR/pack  LEG/pack  P(leg)  value/coin  coins/leg
+  //   Super Season                  300      2919    61.7     0.87     0.105   10.2%        9.73       2930
+  //   Super Season                  400      2919    61.7     0.87     0.105   10.2%        7.30       3906
+  //   Super Season                  450      2919    61.7     0.87     0.105   10.2%        6.49       4395
+  //   Super Season                  500      2919    61.7     0.87     0.105   10.2%        5.84       4883
+  //   Super Booster                 300      1938    28.0     0.54     0.013    1.3%        6.46      23077
+  //   Booster                       100       826    10.1     0.08     0.018    1.8%        8.26       5556
+  //
+  // The pool's odds lift the pack from 40% rare-or-better to 62%, from one
+  // legendary in 140 packs to one in ten, and at 300 it would pay 9.73 a coin
+  // — more than a booster. 450 puts it at 6.49, level with the Super
+  // Booster's 6.46: the same rule as before (a premium for the narrower,
+  // stronger pool, and no more), applied to the pack it now is.
+  super_season:  { name: 'Super Season Pack',    players: 3,  strats: 1,  price: 450,  pool: 'super-season', guaranteedRarePlayer: 1, poolOdds: true },
   // THE ROOKIE PACK GETS NO GUARANTEE AND STAYS CHEAP, deliberately. Its pool
   // is the weak one — median $400, 13% rare-or-better, three legendaries in 261
   // cards — and at 75 coins it is already the best value in the shop (0.037
@@ -489,11 +515,37 @@ function pickWeighted(list, supply = NO_SUPPLY) {
     : pickBySupply(bases, supply);
 }
 
+/**
+ * A POOL'S OWN ODDS: how much richer or poorer each band is in this pool than
+ * in the base set, as a multiplier on PACK_WEIGHTS.
+ *
+ * The band is picked first, from flat weights, so a pool's composition never
+ * showed through: a Super Season pack drew a legendary 0.3% of the time from
+ * a set that is a quarter legendary. The user (2026-09-23): "super season
+ * packs should have higher chances of legendaries because there are so many
+ * in the pack." A pack that declares `poolOdds` scales each band's weight by
+ * the pool's share of that band over the base set's — the Super Season
+ * pool's 27% legendary against the base set's 4% makes the apex band 6.7x
+ * as likely a slot, its 4% common band an eighth as likely — so the pack
+ * deals the pool's quality, and is priced for it.
+ */
+export function tierScaleFor(pool, base = CARD_SETS[BASE_SET] ?? []) {
+  const share = cards => {
+    const counts = Object.fromEntries(RARITY_ORDER.map(t => [t, 0]));
+    for (const c of cards) counts[getPlayerRarity(c)] += 1;
+    return Object.fromEntries(RARITY_ORDER.map(t => [t, cards.length ? counts[t] / cards.length : 0]));
+  };
+  const own = share(pool);
+  const ref = share(base);
+  return Object.fromEntries(RARITY_ORDER.map(t => [t, ref[t] > 0 ? own[t] / ref[t] : own[t] > 0 ? 1 : 0]));
+}
+
 // Weighted random pick — normalized by pool size so pull rates match PACK_WEIGHTS targets.
-// Step 1: Pick a rarity tier using PACK_WEIGHTS as flat probabilities.
+// Step 1: Pick a rarity tier using PACK_WEIGHTS as flat probabilities (times
+//         the pool's own scale, for a pack that declares poolOdds).
 // Step 2: Pick a random card within that tier.
 // This ensures actual pull rates match the targets regardless of pool sizes.
-function weightedPick(cards, getRarityFn, excludeRarities, supply = NO_SUPPLY) {
+function weightedPick(cards, getRarityFn, excludeRarities, supply = NO_SUPPLY, poolOdds = null) {
   const pool = excludeRarities
     ? cards.filter(c => !excludeRarities.includes(getRarityFn(c)))
     : cards;
@@ -511,7 +563,7 @@ function weightedPick(cards, getRarityFn, excludeRarities, supply = NO_SUPPLY) {
   const tiers = Object.keys(buckets);
   let totalW = 0;
   const tierWeights = tiers.map(t => {
-    const w = PACK_WEIGHTS[t] || PACK_WEIGHTS.common;
+    const w = (PACK_WEIGHTS[t] || PACK_WEIGHTS.common) * (poolOdds?.[t] ?? 1);
     totalW += w;
     return { tier: t, weight: w };
   });
@@ -528,9 +580,32 @@ function weightedPick(cards, getRarityFn, excludeRarities, supply = NO_SUPPLY) {
   return pickWeighted(buckets[chosen], supply);
 }
 
-// Pick a card inside a rarity BAND — min up to max inclusive. Guarantees use
-// a capped band so "guaranteed super-rare" can never launder out a legendary.
-function pickInBand(cards, getRarityFn, minRarity, maxRarity = 'super-rare', supply = NO_SUPPLY) {
+/**
+ * THE LEGENDARY'S SHARE OF A BAND that reaches it: what PACK_WEIGHTS says the
+ * apex band is worth against the rest of the band. A "super-rare or better"
+ * slot is a legendary 0.003 / (0.017 + 0.003) = 15% of the time; a "rare or
+ * better" slot 3%. The rest of the band draws as it always has.
+ */
+export function legendaryShareOf(minRarity) {
+  const band = RARITY_ORDER.slice(RARITY_ORDER.indexOf(minRarity));
+  const total = band.reduce((sum, tier) => sum + (PACK_WEIGHTS[tier] ?? 0), 0);
+  return total > 0 ? PACK_WEIGHTS.legendary / total : 0;
+}
+
+// Pick a card inside a rarity BAND — min up to max inclusive.
+//
+// A PLAYER band that reaches the legendary does NOT draw it by card count —
+// the apex band is a third of the super-rare band's size, and a Mega Deluxe
+// drawing three "super-rare or better" cards by count would have been a
+// legendary most packs. Those callers pass `apexShare` (legendaryShareOf):
+// the legendary takes that share, and the band below it draws exactly as it
+// did. The user (2026-09-23): "Legendaries should be in Rare and Mega
+// Deluxes, not sure why they're not." They were shut out so a guarantee could
+// not be a cheaper route to the apex than the Chase; at this share they are
+// not — see the odds under the Deluxe packs in PACK_TYPES. The Chase's
+// STRAT slot passes no share and draws its band by count, as it always has:
+// four apex strats among the rare-or-better deck is the rate it was built on.
+function pickInBand(cards, getRarityFn, minRarity, maxRarity = 'super-rare', supply = NO_SUPPLY, apexShare = null) {
   const minIdx = RARITY_ORDER.indexOf(minRarity);
   const maxIdx = RARITY_ORDER.indexOf(maxRarity);
   const eligible = cards.filter(c => {
@@ -538,6 +613,13 @@ function pickInBand(cards, getRarityFn, minRarity, maxRarity = 'super-rare', sup
     return i >= minIdx && i <= maxIdx;
   });
   if (eligible.length === 0) return cards[Math.floor(Math.random() * cards.length)];
+  if (apexShare != null && maxRarity === 'legendary' && minRarity !== 'legendary') {
+    const apex = eligible.filter(c => getRarityFn(c) === 'legendary');
+    const rest = eligible.filter(c => getRarityFn(c) !== 'legendary');
+    if (apex.length && rest.length) {
+      return Math.random() < apexShare ? pickWeighted(apex, supply) : pickWeighted(rest, supply);
+    }
+  }
   // Guarantees respect the same within-band weighting, so a guaranteed rare is
   // not a back door into the special sets at four times their pack rate.
   return pickWeighted(eligible, supply);
@@ -739,10 +821,11 @@ export function generatePack(packType, options = {}) {
     }
   }
 
-  // All rare+ packs (rare and super-rare band)
+  // All rare+ packs: rare or better, the legendary at its share of the band
+  // (legendaryShareOf — 3% a slot, about one Rare Deluxe in eleven).
   if (def.allRarePlus) {
     for (let i = result.length; i < def.players; i++) {
-      result.push(pulled(pickInBand(playerPool, getPlayerRarity, 'rare', 'super-rare', supply)));
+      result.push(pulled(pickInBand(playerPool, getPlayerRarity, 'rare', 'legendary', supply, legendaryShareOf('rare'))));
     }
     for (let i = 0; i < def.strats; i++) {
       result.push({ id: pickInBand(stratPool, getStratRarity, 'rare', 'rare').id, type: 'strat' });
@@ -767,10 +850,12 @@ export function generatePack(packType, options = {}) {
     }
   }
 
-  // All super-rare packs — the band exactly.
+  // All super-rare packs: super-rare or better, the legendary at its share of
+  // the band (15% a slot — a Mega Deluxe carries one about two packs in five,
+  // which at 3,000 is still dearer a legendary than the Chase's 6,000 sure one).
   if (def.allSR) {
     for (let i = result.length; i < def.players; i++) {
-      result.push(pulled(pickInBand(playerPool, getPlayerRarity, 'super-rare', 'super-rare', supply)));
+      result.push(pulled(pickInBand(playerPool, getPlayerRarity, 'super-rare', 'legendary', supply, legendaryShareOf('super-rare'))));
     }
     if (def.rareStrat) {
       result.push({ id: pickInBand(stratPool, getStratRarity, 'rare', 'rare').id, type: 'strat' });
@@ -799,6 +884,8 @@ export function generatePack(packType, options = {}) {
   // you open are ones you already opened in that pack.
   const playersFilled = result.filter(c => c.type === 'player').length;
   const seenInPack = new Set(result.filter(c => c.type === 'player').map(c => c.id));
+  // The pool's own odds, for a pack that deals its pool's quality (tierScaleFor).
+  const poolOdds = def.poolOdds ? tierScaleFor(playerPool) : null;
   let dupes = 0;
   for (let i = playersFilled; i < def.players; i++) {
     // Once the cap is spent, draw from what has not appeared yet. Falling back
@@ -809,11 +896,11 @@ export function generatePack(packType, options = {}) {
       const unseen = playerPool.filter(c => !seenInPack.has(cardKey(c)));
       if (unseen.length > 0) source = unseen;
     }
-    const card = weightedPick(source, getPlayerRarity, undefined, supply);
+    const card = weightedPick(source, getPlayerRarity, undefined, supply, poolOdds);
     const tier = getPlayerRarity(card);
     if (tier === 'super-rare' || tier === 'legendary') {
       if (srCount >= srCap) {
-        const fallback = weightedPick(source, getPlayerRarity, ['super-rare', 'legendary'], supply);
+        const fallback = weightedPick(source, getPlayerRarity, ['super-rare', 'legendary'], supply, poolOdds);
         if (seenInPack.has(cardKey(fallback))) dupes += 1;
         seenInPack.add(cardKey(fallback));
         result.push(pulled(fallback));

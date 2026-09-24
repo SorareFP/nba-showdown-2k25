@@ -26,8 +26,9 @@ import { IMAGE_EXTENSIONS } from '../../src/cards/sets.js';
 // The one rule the studio reads too (2026-09-24: "Photo hunt and card studio
 // aren't matching"): a placeholder is owed a photo, a dormant Throwback is not.
 import { photoState, needsPhoto } from '../../src/studio/photoNeeds.js';
+// The search and the uniform, shared with the studio's live Photo Hunt panel.
+import { huntTarget, stratSearchUrl } from '../../src/studio/photoSearch.js';
 import { STRATS } from '../../src/game/strats.js';
-import { getTeam, franchiseForSeason, canonicalTeam } from '../../src/cards/teams.js';
 
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 
@@ -75,69 +76,21 @@ function owed(setId, id, have, placeholders) {
   return needsPhoto(photoState(setId, id, { photoIds: have, placeholders, dormantKeys: DORMANT_KEYS }));
 }
 
-/**
- * The year to SEARCH for, which is not the year to print.
- *
- * A card says "2006-07" because that is the season. An image search for
- * "2006-07" only matches pages that spell the season that way, and most do not
- * — a photo agency captions it "2007". Searching the latter year alone finds
- * the same uniform and far more of it. The table keeps the full label, because
- * a reader needs to know which season they are looking for.
- *
- * WNBA labels are already a single year and pass through untouched.
- */
-function searchSeason(label, rookie = false) {
-  const span = /^(\d{4})-\d{2}$/.exec(String(label ?? ''));
-  if (!span) return String(label ?? '');
-  // A ROOKIE CARD SEARCHES THE EARLIER YEAR (the user, 2026-09-07). The rule
-  // above holds for a season in general — an agency captions 2006-07 as
-  // "2007" — but a rookie is written about when he ARRIVES: "2024 NBA draft",
-  // "2024 rookie", his summer-league and opening-night photos. Searching 2025
-  // for a 2024-25 rookie finds his second-half and playoff pictures instead.
-  return String(Number(span[1]) + (rookie ? 0 : 1));
-}
-
-/**
- * The search a human would type, minus the part they would forget.
- *
- * `-card -cards -topps -panini -facebook -instagram -threads` is load-bearing: without it a player-plus-season
- * image search returns trading cards, which is precisely the thing this hunt is
- * trying to make rather than find.
- */
-function searchUrl(name, team, seasonLabel, league, rookie = false) {
-  const parts = [
-    name, team?.city, team?.name,
-    league === 'WNBA' ? 'WNBA' : null,
-    searchSeason(seasonLabel, rookie),
-    rookie ? 'rookie' : null,
-  ].filter(Boolean).join(' ');
-  const q = encodeURIComponent(`${parts} -card -cards -topps -panini -facebook -instagram -threads`);
-  return `https://www.google.com/search?tbm=isch&tbs=isz:l&q=${q}`;
-}
-
 function rowsFor(setId, league) {
   const have = photoIds(setId);
   const placeholders = placeholderIds(setId);
   const cards = (CARD_SETS[setId] ?? []).filter(c => owed(setId, c.id, have, placeholders));
   cards.sort((a, b) => a.name.localeCompare(b.name));
   return cards.map(card => {
-    // The card's team code is already era-resolved by the generators; resolving
-    // again is a no-op for those and a correction for any that are not.
-    const key = card.season
-      ? franchiseForSeason(canonicalTeam(card.team), card.season)
-      : card.team;
-    const team = getTeam(key, { league });
-    const label = card.seasonLabel ?? (league === 'WNBA' ? '2026' : '2025-26');
-    const era = team?.era ? `<span class="era">${esc(team.era)}</span>` : '';
-    // A rookie card searches differently — see searchSeason. A capstone reward
-    // MIGRATED out of a rookie set is still a rookie card and searches the
-    // same way (Michael Jordan 1984-85 in set-rewards).
-    const rookie = /rookie$/.test(setId) || /rookie$/.test(card.migratedFrom?.set ?? '');
+    // The season, the era-resolved team, its uniform era and the search —
+    // src/studio/photoSearch.js, which the studio's panel reads too.
+    const t = huntTarget(setId, card);
+    const era = t.era ? `<span class="era">${esc(t.era)}</span>` : '';
     return `<tr data-k="${esc(setId)}/${esc(card.id)}">` +
       `<td class="pick"><button class="tick" aria-label="done"></button></td>` +
-      `<td class="who"><a href="${esc(searchUrl(card.name, team, label, league, rookie))}" target="_blank" rel="noopener">${esc(card.name)}</a></td>` +
-      `<td class="season">${esc(label)}</td>` +
-      `<td class="jersey"><span class="code">${esc(key)}</span> ${era}</td>` +
+      `<td class="who"><a href="${esc(t.url)}" target="_blank" rel="noopener">${esc(card.name)}</a></td>` +
+      `<td class="season">${esc(t.label)}</td>` +
+      `<td class="jersey"><span class="code">${esc(t.code)}</span> ${era}</td>` +
       `<td class="fileid">${esc(card.id)}</td></tr>`;
   });
 }
@@ -165,8 +118,7 @@ function stratRows() {
     .filter(s => owed('strats', s.id, have, placeholders))
     .sort((a, b) => a.name.localeCompare(b.name))
     .map(s => {
-      const q = encodeURIComponent(`NBA ${s.name} basketball -card -cards -topps -panini -facebook -instagram -threads`);
-      const url = `https://www.google.com/search?tbm=isch&tbs=isz:l&q=${q}`;
+      const url = stratSearchUrl(s);
       return `<tr data-k="strats/${esc(s.id)}">` +
         `<td class="pick"><button class="tick" aria-label="done"></button></td>` +
         `<td class="who"><a href="${url}" target="_blank" rel="noopener">${esc(s.name)}</a></td>` +

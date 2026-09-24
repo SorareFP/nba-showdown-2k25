@@ -50,6 +50,8 @@ import styles from './Studio.module.css';
 import { photoState, needsPhoto } from './photoNeeds.js';
 import { DORMANT_KEYS } from '../game/cardSets.js';
 import RequestsPanel from './RequestsPanel.jsx';
+import PhotoHuntPanel, { huntRows } from './PhotoHuntPanel.jsx';
+import { huntTarget, stratSearchUrl } from './photoSearch.js';
 
 /** Long enough that a drag saves once, short enough to feel immediate. */
 const SAVE_DEBOUNCE_MS = 500;
@@ -111,6 +113,10 @@ export default function Studio() {
     setShowRequestsState(open);
   };
   const [missingOnly, setMissingOnly] = useState(false);
+  // THE LIVE PHOTO HUNT (PhotoHuntPanel.jsx, 2026-09-24): every owed card in
+  // every set, read from this state, so it never drifts the way the published
+  // page does the moment a photo is dropped.
+  const [showHunt, setShowHunt] = useState(false);
   const [selectedId, setSelectedId] = useState(SOURCES[DEFAULT_SOURCE].players[0]?.id ?? null);
   const [saveStatus, setSaveStatus] = useState('idle');
   const [notice, setNotice] = useState(null);
@@ -187,6 +193,10 @@ export default function Studio() {
     .filter(s => showHidden || !hidden.has(s.key) || s.key === sourceKey);
   const secondaryOffered = offered.filter(s => s.secondary);
   const photoIds = useMemo(() => new Set(photos), [photos]);
+  const huntCount = useMemo(
+    () => huntRows(SOURCES, { allPhotos, allPlaceholders }).reduce((n, g) => n + g.rows.length, 0),
+    [allPhotos, allPlaceholders]
+  );
   // THE SHARED RULE for this set's rows (photoNeeds.js): what the Photo Hunt lists.
   const stateOf = useMemo(() => {
     const ph = new Set(placeholders);
@@ -473,6 +483,9 @@ export default function Studio() {
         <button type="button" className={styles.setBadge} onClick={() => setShowRequests(true)} title="Free Agent requests">
           Requests
         </button>
+        <button type="button" className={styles.setBadge} onClick={() => setShowHunt(true)} title="Every card still owed a photo, live">
+          Photo Hunt · {huntCount}
+        </button>
 
         {/* Which set this session writes to — the ACTIVE one, not a constant.
             There are four now and each owns its photos, crops and team colours
@@ -730,6 +743,28 @@ export default function Studio() {
       )}
 
       {showRequests && <RequestsPanel onClose={() => setShowRequests(false)} />}
+      {showHunt && (
+        <PhotoHuntPanel
+          sources={SOURCES}
+          allPhotos={allPhotos}
+          allPlaceholders={allPlaceholders}
+          onClose={() => setShowHunt(false)}
+          onOpen={(key, id) => { switchSource(key); setSelectedId(id); setShowHunt(false); }}
+          onUploaded={async (set, id) => {
+            // Every set's lists come with any set's state; the active set's own
+            // list too when the photo landed in it (and its preview re-fetches).
+            const state = await fetchStudioState(activeSet);
+            setAllPhotos(state.allPhotos ?? {});
+            setAllPlaceholders(state.allPlaceholders ?? {});
+            if (set === activeSet) {
+              setPhotos(state.photos ?? []);
+              setPlaceholders(state.placeholders ?? []);
+              setPhotoExts(state.photoExt ?? {});
+              setPhotoVersions(v => ({ ...v, [id]: Date.now() }));
+            }
+          }}
+        />
+      )}
       <div className={styles.body}>
         <aside className={styles.sidebar}>
           <PlayerList
@@ -753,6 +788,18 @@ export default function Studio() {
         </aside>
 
         <section className={styles.stage}>
+          {/* The hunt for the card on screen: its search and uniform, while it is owed a photo. */}
+          {selected && editable && needsPhoto(stateOf(selected.id)) && (() => {
+            const strat = source.template === 'strat';
+            const t = strat ? null : huntTarget(activeSet, selected);
+            return (
+              <div className={styles.huntLine}>
+                <span>{stateOf(selected.id) === 'placeholder' ? 'Placeholder art — still wants a photo' : 'Needs a photo'}</span>
+                {t && <span className={styles.huntEra}><b>{t.code}</b> {t.era} · {t.label}</span>}
+                <a href={strat ? stratSearchUrl(selected) : t.url} target="_blank" rel="noopener noreferrer">🔎 Search images</a>
+              </div>
+            );
+          })()}
           <CropEditor
             card={selected}
             crop={crops[selectedId]}

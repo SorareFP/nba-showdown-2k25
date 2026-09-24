@@ -15,7 +15,7 @@
 // middleware for `base: '/nba-showdown-2k25/'`. That is what lets these routes
 // answer on their bare paths (`/__studio/state`, `/card-art/...`) instead of
 // having to be prefixed with the base. Do not convert these to post hooks.
-import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, statSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, statSync, renameSync } from 'node:fs';
 import { resolve, extname, sep, join } from 'node:path';
 import { execFile } from 'node:child_process';
 import { saveFreeAgent } from '../cardgen/freeAgentFile.js';
@@ -135,6 +135,32 @@ function ensureDirs(paths) {
  * A corrupt crops.json must not take the whole dev server down — the studio
  * still needs to boot so the file can be fixed or re-saved from the UI.
  */
+/**
+ * A NEW PHOTO REPLACES THE OLD ONE WHOLE (2026-09-24). An upload always lands
+ * as {id}.jpg, so a placeholder .png (or an older .webp) of the same card
+ * beside it would stay on disk and could still be the file the preview picks —
+ * and the card would stay on _placeholders.json, owed a photo it now has. The
+ * other files move to photos/_replaced/ (kept, never deleted) and the id
+ * leaves the manifest. Returns the files moved.
+ */
+export function supersedeOldPhotos(photosDir, playerId) {
+  const moved = [];
+  for (const f of readdirSync(photosDir)) {
+    if (!ALLOWED_PHOTO_EXT.has(extname(f).toLowerCase())) continue;
+    if (playerIdFromFile(f) !== playerId || f === `${playerId}.jpg`) continue;
+    const dest = join(photosDir, '_replaced');
+    mkdirSync(dest, { recursive: true });
+    renameSync(join(photosDir, f), join(dest, `${Date.now()}-${f}`));
+    moved.push(f);
+  }
+  const manifest = join(photosDir, '_placeholders.json');
+  const list = readJsonFile(manifest, null);
+  if (Array.isArray(list) && list.includes(playerId)) {
+    writeFileSync(manifest, JSON.stringify(list.filter(id => id !== playerId), null, 2) + '\n');
+  }
+  return moved;
+}
+
 /** The ids whose file is only placeholder art (paintPlaceholders.py's _placeholders.json). */
 function readPlaceholders(photosDir) {
   const list = photosDir ? readJsonFile(join(photosDir, '_placeholders.json'), []) : [];
@@ -307,7 +333,8 @@ export function studioServerPlugin() {
           const body = await readBody(req);
           if (!body.length) return json(res, 400, { error: 'empty body' });
           writeFileSync(resolve(scope.photos, `${playerId}.jpg`), body);
-          json(res, 200, { ok: true, set: scope.set, playerId, bytes: body.length });
+          const replaced = supersedeOldPhotos(scope.photos, playerId);
+          json(res, 200, { ok: true, set: scope.set, playerId, bytes: body.length, replaced });
         })
       );
 

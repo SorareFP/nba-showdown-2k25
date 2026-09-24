@@ -1,5 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { photoExtMap, isSafePlayerId, requestedSet, STRATS_SCOPE, STUDIO_SCOPES } from './studioServerPlugin.js';
+import { mkdtempSync, writeFileSync, readdirSync, readFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { photoExtMap, isSafePlayerId, requestedSet, STRATS_SCOPE, STUDIO_SCOPES, supersedeOldPhotos } from './studioServerPlugin.js';
 import {
   DEFAULT_PHOTO_EXT,
   IMAGE_EXTENSIONS,
@@ -142,5 +145,26 @@ describe('which sets the server will write to', () => {
     expect(isEditableSet('super-season')).toBe(true);
     expect(isEditableSet('rookie')).toBe(true);
     expect(isEditableSet('2025-26')).toBe(false);
+  });
+});
+
+describe('a new photo replaces the old one whole (2026-09-24)', () => {
+  it('moves the other files of that card aside and takes it off the placeholder list', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'studio-photos-'));
+    try {
+      writeFileSync(join(dir, 'blow_by.png'), 'placeholder');   // the MS-Paint doodle
+      writeFileSync(join(dir, 'blow_by.jpg'), 'real photo');    // the upload, just written
+      writeFileSync(join(dir, 'blow_by_2.webp'), 'another card');
+      writeFileSync(join(dir, '_placeholders.json'), JSON.stringify(['blow_by', 'reset']));
+      expect(supersedeOldPhotos(dir, 'blow_by')).toEqual(['blow_by.png']);
+      // The upload stays, a different card is untouched, the doodle is kept aside, not deleted.
+      expect(readdirSync(dir).sort()).toEqual(['_placeholders.json', '_replaced', 'blow_by.jpg', 'blow_by_2.webp']);
+      expect(readdirSync(join(dir, '_replaced'))).toHaveLength(1);
+      expect(JSON.parse(readFileSync(join(dir, '_placeholders.json'), 'utf8'))).toEqual(['reset']);
+      // Nothing else to move the second time.
+      expect(supersedeOldPhotos(dir, 'blow_by')).toEqual([]);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
   });
 });

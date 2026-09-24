@@ -1,0 +1,62 @@
+/* The studio's live Photo Hunt (PhotoHuntPanel.jsx) — the Requests panel's frame. */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(2, 6, 23, 0.72);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 20px;
+  overflow: auto;
+}
+.box {
+  width: min(1100px, 100%);
+  background: #0f172a;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 16px 18px;
+  color: #f8fafc;
+}
+.head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+.title { margin: 0; font-size: 18px; font-weight: 800; }
+.spacer { flex: 1; }
+.muted { color: rgba(248, 250, 252, 0.6); font-size: 12px; margin: 0 0 10px; }
+.empty { color: rgba(248, 250, 252, 0.75); }
+.ok { color: #86efac; font-size: 13px; margin: 0 0 10px; }
+.err { color: #fca5a5; font-size: 13px; margin: 0 0 10px; }
+.toc { display: flex; gap: 6px; flex-wrap: wrap; }
+.toc a {
+  font-size: 12px; font-weight: 700; color: #fdba74; text-decoration: none;
+  border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 5px; padding: 3px 8px;
+}
+.ghost {
+  border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 700; cursor: pointer;
+  color: #f8fafc; border: 1px solid rgba(255, 255, 255, 0.16); background: rgba(255, 255, 255, 0.06);
+}
+.group { margin-top: 16px; }
+.groupTitle {
+  margin: 0 0 6px; font-size: 12px; font-weight: 800; letter-spacing: 0.08em;
+  text-transform: uppercase; color: rgba(248, 250, 252, 0.7);
+}
+.count { color: #fdba74; }
+.list { list-style: none; margin: 0; padding: 0; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; }
+.row {
+  display: grid;
+  grid-template-columns: minmax(160px, 1.4fr) 90px minmax(120px, 1fr) 110px auto auto;
+  align-items: center; gap: 10px;
+  padding: 6px 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  font-size: 13px;
+}
+.row:last-child { border-bottom: none; }
+.rowDrop { background: rgba(234, 88, 12, 0.22); outline: 1px dashed #ea580c; }
+.name { font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.when { color: rgba(248, 250, 252, 0.65); font-variant-numeric: tabular-nums; }
+.where { color: rgba(248, 250, 252, 0.65); font-size: 12px; }
+.where b { color: #fdba74; }
+.tag { color: rgba(248, 250, 252, 0.5); font-size: 11px; font-style: italic; }
+.search { color: #fdba74; font-weight: 700; text-decoration: none; font-size: 12px; white-space: nowrap; }
+@media (max-width: 760px) {
+  .row { grid-template-columns: 1fr auto auto; }
+  .when, .where, .tag { display: none; }
+}

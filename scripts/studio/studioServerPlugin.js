@@ -16,7 +16,7 @@
 // answer on their bare paths (`/__studio/state`, `/card-art/...`) instead of
 // having to be prefixed with the base. Do not convert these to post hooks.
 import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, statSync } from 'node:fs';
-import { resolve, extname, sep } from 'node:path';
+import { resolve, extname, sep, join } from 'node:path';
 import { execFile } from 'node:child_process';
 import { saveFreeAgent } from '../cardgen/freeAgentFile.js';
 import {
@@ -135,6 +135,12 @@ function ensureDirs(paths) {
  * A corrupt crops.json must not take the whole dev server down — the studio
  * still needs to boot so the file can be fixed or re-saved from the UI.
  */
+/** The ids whose file is only placeholder art (paintPlaceholders.py's _placeholders.json). */
+function readPlaceholders(photosDir) {
+  const list = photosDir ? readJsonFile(join(photosDir, '_placeholders.json'), []) : [];
+  return Array.isArray(list) ? list : [];
+}
+
 function readJsonFile(path, fallback) {
   if (!existsSync(path)) return fallback;
   try {
@@ -252,6 +258,12 @@ export function studioServerPlugin() {
             // real file. Only entries that are not the default are worth
             // sending, but sending all of them keeps the consumer trivial.
             photoExt: photoExtMap(photos),
+            // PLACEHOLDER ART (2026-09-24): a file the studio composes a face
+            // from, but that is still owed the real photo — the Photo Hunt
+            // lists it, so the studio must not count it done
+            // (src/studio/photoNeeds.js).
+            placeholders: readPlaceholders(scope.photos),
+            allPlaceholders: Object.fromEntries(STUDIO_SCOPES.map(id => [id, readPlaceholders(forSet[id]?.photos)])),
             crops: readJsonFile(scope.crops, {}),
             teamOverrides: readJsonFile(scope.teams, {}),
             // EVERY SCOPE'S PHOTO IDS, not just this one's — what the set bar

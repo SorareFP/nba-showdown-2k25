@@ -47,6 +47,8 @@ import {
   hiddenSetKeys,
 } from './prefs.js';
 import styles from './Studio.module.css';
+import { photoState, needsPhoto } from './photoNeeds.js';
+import { DORMANT_KEYS } from '../game/cardSets.js';
 import RequestsPanel from './RequestsPanel.jsx';
 
 /** Long enough that a drag saves once, short enough to feel immediate. */
@@ -80,6 +82,10 @@ export default function Studio() {
   // Every scope's photo ids, for the set bar's auto-hide — see the server's
   // `allPhotos`. Only the ACTIVE set's list drives the roster view.
   const [allPhotos, setAllPhotos] = useState({});
+  // Placeholder art per scope (the server reads _placeholders.json): owed a
+  // real photo, so never counted done (photoNeeds.js, 2026-09-24).
+  const [placeholders, setPlaceholders] = useState([]);
+  const [allPlaceholders, setAllPlaceholders] = useState({});
   const [hiddenSets, setHiddenSets] = useState(readHiddenSets);
   const [revealedSets, setRevealedSets] = useState(readRevealedSets);
   const [autoHide, setAutoHide] = useState(readAutoHide);
@@ -163,10 +169,12 @@ export default function Studio() {
     for (const src of Object.values(SOURCES)) {
       const have = new Set(allPhotos[src.set] ?? []);
       if (!have.size || !src.players.length) continue;
-      if (src.players.every(p => have.has(p.id))) done.push(src.key);
+      const ph = new Set(allPlaceholders[src.set] ?? []);
+      const owed = p => needsPhoto(photoState(src.set, p.id, { photoIds: have, placeholders: ph, dormantKeys: DORMANT_KEYS }));
+      if (!src.players.some(owed)) done.push(src.key);
     }
     return done;
-  }, [allPhotos]);
+  }, [allPhotos, allPlaceholders]);
 
   const hidden = useMemo(
     () => hiddenSetKeys({ hidden: hiddenSets, revealed: revealedSets, complete: completeKeys, autoHide }),
@@ -179,9 +187,14 @@ export default function Studio() {
     .filter(s => showHidden || !hidden.has(s.key) || s.key === sourceKey);
   const secondaryOffered = offered.filter(s => s.secondary);
   const photoIds = useMemo(() => new Set(photos), [photos]);
+  // THE SHARED RULE for this set's rows (photoNeeds.js): what the Photo Hunt lists.
+  const stateOf = useMemo(() => {
+    const ph = new Set(placeholders);
+    return id => photoState(activeSet, id, { photoIds, placeholders: ph, dormantKeys: DORMANT_KEYS });
+  }, [activeSet, photoIds, placeholders]);
   const visible = useMemo(
-    () => filterPlayers(players, { query, missingOnly, photoIds }),
-    [players, query, missingOnly, photoIds]
+    () => filterPlayers(players, { query, missingOnly, photoIds, stateOf }),
+    [players, query, missingOnly, photoIds, stateOf]
   );
   const selected = players.find(p => p.id === selectedId) ?? null;
   // WHAT THE CARD ON SCREEN ACTUALLY GETS, which is no longer the same as what
@@ -220,8 +233,9 @@ export default function Studio() {
       .then(state => {
         if (!live) return;
         setPhotos(state.photos ?? []);
-      setAllPhotos(state.allPhotos ?? {});
         setAllPhotos(state.allPhotos ?? {});
+        setPlaceholders(state.placeholders ?? []);
+        setAllPlaceholders(state.allPlaceholders ?? {});
         setPhotoExts(state.photoExt ?? {});
         setCrops(state.crops ?? {});
         setTeamOverrides(state.teamOverrides ?? {});
@@ -383,6 +397,8 @@ export default function Studio() {
       // that edit and then persist the stale value over it.
       const state = await fetchStudioState(activeSet);
       setPhotos(state.photos ?? []);
+      // A real photo dropped on a placeholder takes it off the manifest.
+      setPlaceholders(state.placeholders ?? []);
       // Travels with the photo list for the same reason: an upload that lands
       // as {id}.jpg beside a hand-saved {id}.jpeg changes which file the
       // preview should point at, and only the server can see that.
@@ -720,6 +736,7 @@ export default function Studio() {
             players={players}
             visible={visible}
             photoIds={photoIds}
+            stateOf={stateOf}
             selectedId={selectedId}
             onSelect={setSelectedId}
             onDropFile={handleDropFile}

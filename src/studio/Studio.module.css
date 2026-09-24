@@ -349,6 +349,16 @@
   background: var(--green);
   border-color: var(--green);
 }
+/* Placeholder art: a face, but the real photo is still owed (photoNeeds.js). */
+.dotPlaceholder {
+  background: linear-gradient(90deg, var(--green) 50%, transparent 50%);
+  border-color: var(--green);
+}
+/* A dormant Throwback: out of packs until requested; no photo is owed. */
+.dotDormant {
+  border-style: dashed;
+  opacity: 0.45;
+}
 
 .rowName {
   overflow: hidden;

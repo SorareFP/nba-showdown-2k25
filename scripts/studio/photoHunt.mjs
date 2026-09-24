@@ -21,7 +21,11 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { CARD_SETS } from '../../src/game/cardSets.js';
+import { CARD_SETS, DORMANT_KEYS } from '../../src/game/cardSets.js';
+import { IMAGE_EXTENSIONS } from '../../src/cards/sets.js';
+// The one rule the studio reads too (2026-09-24: "Photo hunt and card studio
+// aren't matching"): a placeholder is owed a photo, a dormant Throwback is not.
+import { photoState, needsPhoto } from '../../src/studio/photoNeeds.js';
 import { STRATS } from '../../src/game/strats.js';
 import { getTeam, franchiseForSeason, canonicalTeam } from '../../src/cards/teams.js';
 
@@ -41,16 +45,34 @@ const SECTIONS = [
   ['wnba-super-season', 'WNBA Super Season', 'WNBA'],
   ['wnba-team-rewards', 'WNBA Team Rewards', 'WNBA'],
   ['wnba-set-rewards', 'WNBA Set Rewards', 'WNBA'],
+  // The catch-alls, since 2026-09-24: a requested or curated Throwback is
+  // live in packs and owed a photo like any card. The dormant ones are not in
+  // CARD_SETS at all, so they never appear.
+  ['throwbacks', 'Throwbacks', 'NBA'],
+  ['wnba-throwbacks', 'WNBA Throwbacks', 'WNBA'],
 ];
 
 const esc = s => String(s ?? '')
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
-/** File stems already present in a set's photos directory. */
+/** Photo stems in a set's photos directory — image files only, as the studio's server counts them. */
 function photoIds(set) {
   const dir = path.join(ROOT, 'card-art', 'sets', set, 'photos');
   if (!fs.existsSync(dir)) return new Set();
-  return new Set(fs.readdirSync(dir).map(f => f.replace(/\.[^.]+$/, '')));
+  return new Set(fs.readdirSync(dir)
+    .filter(f => IMAGE_EXTENSIONS.includes(path.extname(f).toLowerCase()))
+    .map(f => f.replace(/\.[^.]+$/, '')));
+}
+
+/** The ids whose file is only placeholder art (paintPlaceholders.py writes the manifest). */
+function placeholderIds(set) {
+  const manifest = path.join(ROOT, 'card-art', 'sets', set, 'photos', '_placeholders.json');
+  return new Set(fs.existsSync(manifest) ? JSON.parse(fs.readFileSync(manifest, 'utf8')) : []);
+}
+
+/** Owed a photo, by the rule the studio shares (src/studio/photoNeeds.js). */
+function owed(setId, id, have, placeholders) {
+  return needsPhoto(photoState(setId, id, { photoIds: have, placeholders, dormantKeys: DORMANT_KEYS }));
 }
 
 /**
@@ -95,7 +117,8 @@ function searchUrl(name, team, seasonLabel, league, rookie = false) {
 
 function rowsFor(setId, league) {
   const have = photoIds(setId);
-  const cards = (CARD_SETS[setId] ?? []).filter(c => !have.has(c.id));
+  const placeholders = placeholderIds(setId);
+  const cards = (CARD_SETS[setId] ?? []).filter(c => owed(setId, c.id, have, placeholders));
   cards.sort((a, b) => a.name.localeCompare(b.name));
   return cards.map(card => {
     // The card's team code is already era-resolved by the generators; resolving
@@ -121,32 +144,15 @@ function rowsFor(setId, league) {
 
 // ── Strategy cards ──────────────────────────────────────────────────────────
 //
-// Forty-two strats have a hand-made face; these nine are COMPOSED by the
-// studio from strats.js and need only a photo dropped on them (the studio's
-// own note in src/studio/players.js). The photo lands where every other
-// set's does — card-art/sets/strats/photos/{id}.{ext} — so this section reads
-// the same folder the studio writes. The search is the card's idea, not a
+// EVERY strat face is composed by the studio from strats.js (the full export
+// of 2026-09-06 replaced the old hand-made strat_*.png faces), so a strat is
+// owed a photo exactly as a player card is: none on disk, or MS-Paint
+// placeholder art (scripts/studio/paintPlaceholders.py) listed in
+// _placeholders.json. This section used to read a hand-kept list of
+// "composed" strats that had gone stale — it asked for 46 while 95 wore
+// placeholders or nothing. The photo lands where every other set's does —
+// card-art/sets/strats/photos/{id}.{ext}. The search is the card's idea, not a
 // player: "NBA double team" finds a trap, not a person.
-const COMPOSED_STRATS = new Set([
-  // The sign-up promo: the user wants a photo of Shai getting fouled here
-  // (and an Underdog logo somewhere on the face), 2026-09-07.
-  'unethical_hoops',
-  'double_team', 'pick_up_full_court', 'cross_court_dime',
-  'desperation_press', 'second_closer', 'ato_masterpiece', 'fresh_legs', 'ice_the_hot_hand', 'reset',
-  // Wave one of the docx backlog (2026-09-06).
-  'spain_pick_roll', 'mismatch_hunter', 'strength_in_numbers', 'energizer', 'defensive_identity',
-  'defensive_anchor', 'swarming_defense', 'five_out', 'hammer_set', 'iso_heavy', 'three_point_barrage',
-  'crash_and_kick', 'pick_and_pop', 'extra_pass', 'lob_city', 'stretch_five', 'post_domination',
-  'unsung_hero', 'transition_outlet', 'find_the_open_man', 'putback_specialist', 'rim_protector',
-  'drop_coverage', 'smothering_defense', 'denial', 'hustle_play', 'glass_cleaner', 'box_out',
-  'help_defender',
-  // The Speed twin of Offensive Foul and the answer to the automatic scorers (2026-09-12).
-  'beat_to_the_spot', 'verticality',
-  // Wave two twins (2026-09-23), approved on placeholder art.
-  'blow_by', 'point_god', 'passing_lane', 'clamp_the_reserve', 'feeling_it',
-  // The glass (2026-09-23), approved on placeholder art.
-  'kick_out_three', 'grab_and_go', 'rebound_and_push', 'own_the_glass',
-]);
 const PHASE_LABEL = { matchup: 'Matchup', pre_roll: 'Pre-roll', scoring: 'Scoring', post_roll: 'Post-roll', reaction: 'Reaction' };
 
 function stratRows() {
@@ -154,10 +160,9 @@ function stratRows() {
   // MS-Paint placeholders (scripts/studio/paintPlaceholders.py) sit in the
   // photos folder so the studio composes a face today, and list themselves in
   // _placeholders.json so the hunt still asks for the real photo.
-  const manifest = path.join(ROOT, 'card-art', 'sets', 'strats', 'photos', '_placeholders.json');
-  const placeholders = new Set(fs.existsSync(manifest) ? JSON.parse(fs.readFileSync(manifest, 'utf8')) : []);
+  const placeholders = placeholderIds('strats');
   return STRATS
-    .filter(s => COMPOSED_STRATS.has(s.id) && (!have.has(s.id) || placeholders.has(s.id)))
+    .filter(s => owed('strats', s.id, have, placeholders))
     .sort((a, b) => a.name.localeCompare(b.name))
     .map(s => {
       const q = encodeURIComponent(`NBA ${s.name} basketball -card -cards -topps -panini -facebook -instagram -threads`);

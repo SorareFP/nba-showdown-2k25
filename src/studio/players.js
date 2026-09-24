@@ -56,6 +56,7 @@ import {
 } from '../cards/sets.js';
 import { playerIdFromName } from '../cards/playerId.js';
 import { hasMigratedOut } from '../game/cardSets.js';
+import { needsPhoto } from './photoNeeds.js';
 
 /**
  * The team-resolved pool, when `node scripts/cardgen/generateTeams.js` has been
@@ -833,11 +834,25 @@ function asSet(photoIds) {
  * accumulates files from both sources, and reporting "310 / 350" because the
  * shipped-card photos were counted too would make the progress number useless.
  */
-export function photoProgress(players, photoIds) {
+export function photoProgress(players, photoIds, { stateOf = null } = {}) {
   const have = asSet(photoIds);
-  let withPhoto = 0;
-  for (const p of players) if (have.has(p.id)) withPhoto += 1;
-  return { withPhoto, total: players.length, missing: players.length - withPhoto };
+  if (!stateOf) {
+    let withPhoto = 0;
+    for (const p of players) if (have.has(p.id)) withPhoto += 1;
+    return { withPhoto, total: players.length, missing: players.length - withPhoto };
+  }
+  // THE SHARED RULE (photoNeeds.js, 2026-09-24), so the studio counts what the
+  // Photo Hunt lists: a placeholder is still to go, a dormant Throwback is
+  // not counted at all.
+  let withPhoto = 0, total = 0, dormant = 0, placeholder = 0;
+  for (const p of players) {
+    const st = stateOf(p.id);
+    if (st === 'dormant') { dormant += 1; continue; }
+    total += 1;
+    if (st === 'photo') withPhoto += 1;
+    if (st === 'placeholder') placeholder += 1;
+  }
+  return { withPhoto, total, missing: total - withPhoto, dormant, placeholder };
 }
 
 /**
@@ -847,11 +862,11 @@ export function photoProgress(players, photoIds) {
  * five, "who still needs a photo" is the only question being asked, and
  * scrolling 350 rows looking for hollow dots is not an answer.
  */
-export function filterPlayers(players, { query = '', missingOnly = false, photoIds } = {}) {
+export function filterPlayers(players, { query = '', missingOnly = false, photoIds, stateOf = null } = {}) {
   const have = asSet(photoIds);
   const q = query.trim().toLowerCase();
   return players.filter(p => {
-    if (missingOnly && have.has(p.id)) return false;
+    if (missingOnly && (stateOf ? !needsPhoto(stateOf(p.id)) : have.has(p.id))) return false;
     if (!q) return true;
     return (
       p.name.toLowerCase().includes(q) ||

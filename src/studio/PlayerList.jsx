@@ -16,6 +16,8 @@ export default function PlayerList({
   players,
   visible,
   photoIds,
+  // The shared rule (photoNeeds.js): 'photo' | 'placeholder' | 'missing' | 'dormant'.
+  stateOf = null,
   selectedId,
   onSelect,
   onDropFile,
@@ -33,7 +35,7 @@ export default function PlayerList({
   // dragover preventDefault the browser refuses the drop itself.
   editable = true,
 }) {
-  const progress = photoProgress(players, photoIds);
+  const progress = photoProgress(players, photoIds, { stateOf });
   const pct = progress.total ? Math.round((progress.withPhoto / progress.total) * 100) : 0;
 
   return (
@@ -43,7 +45,11 @@ export default function PlayerList({
           <span className={styles.progressCount} data-testid="photo-progress">
             {progress.withPhoto} / {progress.total} photos
           </span>
-          <span className={styles.progressLabel}>{progress.missing} to go</span>
+          <span className={styles.progressLabel}>
+            {progress.missing} to go
+            {progress.placeholder ? ` · ${progress.placeholder} on placeholder art` : ''}
+            {progress.dormant ? ` · ${progress.dormant} dormant` : ''}
+          </span>
         </div>
         <div className={styles.progressTrack}>
           <div className={styles.progressFill} style={{ width: `${pct}%` }} />
@@ -72,12 +78,20 @@ export default function PlayerList({
         {visible.length === 0 && <li className={styles.rowEmpty}>no players match that filter</li>}
         {visible.map(player => {
           const hasPhoto = photoIds.has(player.id);
+          const state = stateOf ? stateOf(player.id) : (hasPhoto ? 'photo' : 'missing');
+          const dotTitle = {
+            photo: 'Has a photo',
+            placeholder: 'Placeholder art — still wants the real photo',
+            missing: 'Needs a photo',
+            dormant: 'Dormant: out of packs until requested — a photo wakes it, none is owed',
+          }[state];
           return (
             <li key={player.id} role="option" aria-selected={player.id === selectedId}>
               <button
                 type="button"
                 data-player-id={player.id}
                 data-has-photo={hasPhoto ? 'true' : 'false'}
+                data-photo-state={state}
                 className={[
                   styles.row,
                   player.id === selectedId ? styles.rowSelected : '',
@@ -119,7 +133,8 @@ export default function PlayerList({
                 }
               >
                 <span
-                  className={`${styles.dot} ${hasPhoto ? styles.dotFilled : ''}`}
+                  className={`${styles.dot} ${state === 'photo' ? styles.dotFilled : ''} ${state === 'placeholder' ? styles.dotPlaceholder : ''} ${state === 'dormant' ? styles.dotDormant : ''}`}
+                  title={dotTitle}
                   aria-hidden="true"
                 />
                 <span className={styles.rowName}>{player.name}</span>

@@ -14,6 +14,26 @@ import { useCardPeek } from '../CardPeek.jsx';
 import { useDialogs } from '../../ui/dialogs.jsx';
 import RollResult from './RollResult.jsx';
 
+/**
+ * A player's markers as the engine counts them: hot minus cold, each worth 2
+ * on a roll or a check. The COUNT prints from two up (the user, 2026-09-24:
+ * "it should say hot/cold x2+ or however many hot markers they have") — a
+ * bare HOT on a player carrying three was hiding +6.
+ */
+export function markerCount(ps) {
+  return (ps?.hot || 0) - (ps?.cold || 0);
+}
+export function markerWord(ps) {
+  const n = markerCount(ps);
+  if (n === 0) return '';
+  return `${n > 0 ? 'HOT' : 'COLD'}${Math.abs(n) > 1 ? ` ×${Math.abs(n)}` : ''}`;
+}
+export function markerEmoji(ps) {
+  const n = markerCount(ps);
+  if (n === 0) return '';
+  return `${n > 0 ? '🔥' : '❄️'}${Math.abs(n) > 1 ? `×${Math.abs(n)}` : ''}`;
+}
+
 function HelpBtn({ section }) {
   const handleClick = (e) => {
     e.stopPropagation();
@@ -1142,7 +1162,7 @@ function SelectModal({ modal, game, onClose }) {
             const extra = extraInfo?.[i];
             return (
               <button key={p.id} className={styles.modalBtn} style={{ borderLeftColor: col }} onClick={() => onClose(i)}>
-                <div className={styles.mName}>{p.name}{(()=>{const n=(ps.hot||0)-(ps.cold||0);return n>0?' 🔥':n<0?' ❄️':'';})()}{fat<0&&<span className={styles.fatTag}> FAT{fat}</span>}</div>
+                <div className={styles.mName}>{p.name}{markerCount(ps) ? ` ${markerEmoji(ps)}` : ''}{fat<0&&<span className={styles.fatTag}> FAT{fat}</span>}</div>
                 <div className={styles.mSub}>S{p.speed} · P{p.power} · Line {p.shotLine}{boosts&&` · ${boosts}`}{min>0&&` · ${min}min`}</div>
                 {extra && <div className={styles.mExtra}>{extra}</div>}
               </button>
@@ -1584,8 +1604,8 @@ function BlindPickPhase({ game, setGame, pvpMode = false, myTeamKey = null, onDr
               </div>
               <div className={styles.blindPickName}>
                 {p.name}
-                {hotCold > 0 && <span className={styles.blindPickHot}> HOT</span>}
-                {hotCold < 0 && <span className={styles.blindPickCold}> COLD</span>}
+                {hotCold > 0 && <span className={styles.blindPickHot}> {markerWord(ps)}</span>}
+                {hotCold < 0 && <span className={styles.blindPickCold}> {markerWord(ps)}</span>}
               </div>
               <div className={styles.blindPickStats}>
                 S{p.speed} · P{p.power} · Line {p.shotLine}
@@ -1694,7 +1714,7 @@ function PlayerSlot({ player, ps, adv, fat, result, blocked, teamKey, idx, phase
         <div className={styles.cardNameRow} onClick={() => { lb.unpeek?.(); open('player', player); }} title="View card" style={{cursor:'pointer'}} {...peek}>
           <span className={styles.cardName} style={{color:col}}>{player.name}</span>
           <div className={styles.markers}>
-            {(()=>{const net=(ps.hot||0)-(ps.cold||0);if(net>0)return<span className={styles.hot}>🔥{net>1?'×'+net:''}</span>;if(net<0)return<span className={styles.cold}>❄️{Math.abs(net)>1?'×'+Math.abs(net):''}</span>;return null;})()}
+            {markerCount(ps) !== 0 && <span className={markerCount(ps) > 0 ? styles.hot : styles.cold}>{markerEmoji(ps)}</span>}
             {fat<0&&<span className={styles.fatBadge}>FAT{fat}</span>}
           </div>
         </div>
@@ -1973,8 +1993,7 @@ export function OppStatusPanel({ game, teamKey }) {
             <span className={styles.oppName}>{r.p.name}</span>
             <span className={styles.oppMeta}>
               {r.pts > 0 && <span className={styles.oppPts}>{r.pts}p</span>}
-              {r.hot > 0 && <span>{'🔥'.repeat(Math.min(3, r.hot))}</span>}
-              {r.cold > 0 && <span>{'❄️'.repeat(Math.min(3, r.cold))}</span>}
+              {markerCount(r) !== 0 && <span>{markerEmoji(r)}</span>}
               {r.min >= MAX_STRAIGHT_MINUTES && !restRuleLifted(game)
                 ? <span className={styles.oppRest}>⛔{r.min}m</span>
                 : r.fat < 0

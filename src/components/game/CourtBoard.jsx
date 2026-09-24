@@ -13,7 +13,7 @@ import { useLightbox, ZoomImg } from '../CardLightbox.jsx';
 import { useCardPeek } from '../CardPeek.jsx';
 import { useDialogs } from '../../ui/dialogs.jsx';
 import RollResult from './RollResult.jsx';
-import { useIsWide } from '../../ui/useIsWide.js';
+import { useIsRoomy } from '../../ui/useIsWide.js';
 
 /**
  * A player's markers as the engine counts them: hot minus cold, each worth 2
@@ -91,7 +91,9 @@ export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExec
   // coach's reply back with it. PvP brings its own through the props.
   const [placeUndo, setPlaceUndo] = useState(null);
   // The zig-zag floor on a big monitor (ZigZagFloor); the five rows elsewhere.
-  const wide = useIsWide();
+  // From 1600px, where the app column widens (useIsRoomy) — not the 2200 of
+  // the docked rail, which a scaled 4K screen never reaches.
+  const wide = useIsRoomy();
   const humanPlace = (playerId) => {
     const snap = placementSnapshot(game);
     if (soloPlace(playerId)) setPlaceUndo(snap);

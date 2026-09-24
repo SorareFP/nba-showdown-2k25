@@ -15,26 +15,51 @@ import { useEffect, useState } from 'react';
 export const WIDE_MIN_WIDTH = 2200;
 export const WIDE_QUERY = `(min-width: ${WIDE_MIN_WIDTH}px)`;
 
-export function isWideNow() {
-  try { return globalThis.matchMedia?.(WIDE_QUERY).matches ?? false; }
+/**
+ * THE ROOMY STEP, App.module.css's first wide step: past 1600px the app
+ * column grows from 1200 to 1520, and the court's five matchup rows grow with
+ * it — at 1920 x 1080 the rows alone stood 2,690px tall. The zig-zag floor
+ * switches on HERE, not at WIDE_MIN_WIDTH (2026-09-24): a 4K monitor under
+ * Windows display scaling is 1920 (200%) or 2194 (175%) CSS pixels wide, so
+ * the 2200 step never reached the screen the zig-zag was drawn for.
+ */
+export const ROOMY_MIN_WIDTH = 1600;
+export const ROOMY_QUERY = `(min-width: ${ROOMY_MIN_WIDTH}px)`;
+
+const matchesNow = query => {
+  try { return globalThis.matchMedia?.(query).matches ?? false; }
   catch { return false; }
+};
+
+export function isWideNow() {
+  return matchesNow(WIDE_QUERY);
 }
 
-export function useIsWide() {
-  const [wide, setWide] = useState(isWideNow);
+function useMediaQuery(query) {
+  const [on, setOn] = useState(() => matchesNow(query));
 
   useEffect(() => {
-    const mq = globalThis.matchMedia?.(WIDE_QUERY);
+    const mq = globalThis.matchMedia?.(query);
     if (!mq) return undefined;
-    const onChange = e => setWide(e.matches);
-    setWide(mq.matches);
+    const onChange = e => setOn(e.matches);
+    setOn(mq.matches);
     if (mq.addEventListener) mq.addEventListener('change', onChange);
     else mq.addListener(onChange);
     return () => {
       if (mq.removeEventListener) mq.removeEventListener('change', onChange);
       else mq.removeListener(onChange);
     };
-  }, []);
+  }, [query]);
 
-  return wide;
+  return on;
+}
+
+/** Past 2200px: the docked game-log rail and the zoomed board (PlayTab). */
+export function useIsWide() {
+  return useMediaQuery(WIDE_QUERY);
+}
+
+/** Past 1600px: the zig-zag floor (CourtBoard). */
+export function useIsRoomy() {
+  return useMediaQuery(ROOMY_QUERY);
 }

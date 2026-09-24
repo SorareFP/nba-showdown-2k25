@@ -13,7 +13,7 @@ vi.mock('../CardLightbox.jsx', () => ({
 }));
 import CourtBoard, { ZIGZAG_TOP } from './CourtBoard.jsx';
 import { rollGate } from '../../game/engine.js';
-import { WIDE_QUERY } from '../../ui/useIsWide.js';
+import { WIDE_QUERY, ROOMY_QUERY } from '../../ui/useIsWide.js';
 import { tutorialStart, openRolling } from '../../game/tutorialWalk.testkit.js';
 
 const noop = () => {};
@@ -24,9 +24,12 @@ const board = g => renderToStaticMarkup(
     onSpendAssist={noop} onSpendRebound={noop}
   />,
 );
-const setWide = wide => {
-  globalThis.matchMedia = q => ({ matches: wide && q === WIDE_QUERY, addEventListener() {}, removeEventListener() {} });
+// The queries a screen of `width` CSS pixels matches.
+const setWidth = width => {
+  const min = { [ROOMY_QUERY]: 1600, [WIDE_QUERY]: 2200 };
+  globalThis.matchMedia = q => ({ matches: width >= (min[q] ?? Infinity), addEventListener() {}, removeEventListener() {} });
 };
+const setWide = wide => setWidth(wide ? 2560 : 1440);
 afterEach(() => { delete globalThis.matchMedia; });
 
 describe('the court on a big monitor', () => {
@@ -39,6 +42,17 @@ describe('the court on a big monitor', () => {
     // Every tile carries the same player card the rows draw, stood up.
     expect((html.match(/cardPortrait/g) ?? []).length).toBe(10);
     expect(html).not.toMatch(/matchupRow/);
+  });
+
+  it('reaches a 4K screen under Windows scaling, below the docked rail\'s 2200', () => {
+    // 3840 x 2160 at 200% is 1920 CSS pixels, at 175% 2194: the user's
+    // screen, where the rows stood 2,690px tall and the zig-zag never showed.
+    for (const width of [1600, 1920, 2194]) {
+      setWidth(width);
+      const html = board(openRolling(tutorialStart()));
+      expect((html.match(/cardPortrait/g) ?? []).length, String(width)).toBe(10);
+      expect(html, String(width)).not.toMatch(/matchupRow/);
+    }
   });
 
   it('keeps the five rows everywhere else', () => {

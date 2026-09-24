@@ -569,7 +569,9 @@
 }
 
 /* ── THE ZIG-ZAG FLOOR (2026-09-24) ──────────────────────────────────────────
-   The wide board only (ZigZagFloor, useIsWide). Each team's five are card
+   The wide board only (ZigZagFloor, useIsRoomy: 1600px and up, where the
+   app column widens — the docked rail's 2200 never reached a 4K screen under
+   Windows scaling, 2026-09-24). Each team's five are card
    tiles in the user's sketch: 1, 3, 5 above, 2 and 4 below and between,
    overlapping their neighbours' corners. Each half is a 4-card-wide band: a
    tile is a quarter of it and 1.9 of its widths tall, the top row steps 1.5

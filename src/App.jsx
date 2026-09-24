@@ -486,7 +486,7 @@ export default function App() {
           {isPackDemo()
             // The collection demo sits in the app's own column, so the width
             // it is judging is the width the real tab gets.
-            ? (['collection', 'play'].includes(demoKind()) ? <main className={styles.main}><ErrorBoundary><PackOpeningDemo /></ErrorBoundary></main> : <PackOpeningDemo />)
+            ? (['collection', 'play', 'dynasty'].includes(demoKind()) ? <main className={styles.main}><ErrorBoundary><PackOpeningDemo /></ErrorBoundary></main> : <PackOpeningDemo />)
             : <AppInner />}
         </DialogProvider>
       </LightboxProvider>

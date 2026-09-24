@@ -23,6 +23,11 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
+    id: 'fixture-kept', date: '2026-09-24', title: 'Leaving a fixture keeps your game',
+    body: 'Stepping out of a season or dynasty fixture used to throw the game in progress away. Now "Back to the dynasty" keeps it exactly where you left it, through a page reload too, and the fixture offers "Resume this game". A fixture game you lost earlier may still be under Recover a game on the Play screen.',
+    to: 'play', cta: 'Play',
+  },
+  {
     id: 'burst-once', date: '2026-09-24', title: 'Burst of Momentum: once per player per section',
     body: 'Burst of Momentum (+1 AST, +1 REB and a hot marker for a top-tier roll of 3+ points) can now be played on each player once per section. A second copy still works on a different player who earned it.',
     to: 'play', cta: 'Play',

@@ -745,17 +745,28 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
   // game sat there with no exit but playing it through. Same reset the
   // results screen uses, behind a confirm because it discards the game.
   const abandon = async () => {
-    const yes = await ask(livePreset
-      ? { title: 'Leave this fixture?', body: 'It stays unplayed and you can come back to it.', confirmLabel: 'Leave it' }
-      : { title: 'Abandon this game?', body: 'It is set aside under Recover a game on the Play screen, in case you change your mind.', confirmLabel: 'Abandon', tone: 'danger' });
+    // A FIXTURE IS LEFT, NOT THROWN AWAY (2026-09-24). The user, in a dynasty:
+    // "Game state still is not saving upon leaving a game". Leaving asked
+    // "Leave this fixture? It stays unplayed and you can come back to it" and
+    // then cleared the game — the fixture stayed unplayed, the evening's
+    // progress went to the backups, and "Resume" dealt a fresh game. Now the
+    // game stays exactly where it is and the season or dynasty screen offers
+    // "Resume this game". App drops its preset on the way out, so the restored
+    // one has to carry the fixture, or the next save would forget which
+    // fixture this is and the season could not find it again.
+    if (livePreset) {
+      setRestoredPreset(livePreset);
+      toast('Your game is saved — Resume it from the fixture whenever you like.');
+      onPresetFinish?.(null);
+      return;
+    }
+    const yes = await ask({ title: 'Abandon this game?', body: 'It is set aside under Recover a game on the Play screen, in case you change your mind.', confirmLabel: 'Abandon', tone: 'danger' });
     if (!yes) return;
     abandoning.current = true;
     dispatch({ type: 'SET', game: null });
     setRestoredPreset(null);
     setTerms(null);
     setPaid(null);
-    // No result: the season clears the preset and leaves the fixture open.
-    if (livePreset) onPresetFinish?.(null);
   };
 
   const board = boardFor({ game, handlers, gameOpponent, playedLevel });
@@ -767,7 +778,7 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
           {livePreset ? livePreset.label : ''}
         </div>
         <button className={styles.btnSec} onClick={abandon} style={{ fontSize: 12, padding: '4px 12px' }}>
-          {livePreset ? '✕ Leave fixture' : '✕ Abandon game'}
+          {livePreset ? (livePreset.returnTab === 'dynasty' ? '↩ Back to the dynasty (saved)' : '↩ Back to the season (saved)') : '✕ Abandon game'}
         </button>
       </div>
       {wide ? (

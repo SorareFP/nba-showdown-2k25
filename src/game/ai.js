@@ -3,7 +3,7 @@
 // Pure functions: takes game state + team key, returns an action object.
 // No React, no side effects. Used by tutorial, solo mode, sim-to-end.
 
-import { getTeam, getOpp, getPS, calcAdv, matchupAdv, isGhosted, getFatigue, fatigueForMinutes, restMinutes, MAX_STRAIGHT_MINUTES, pickablePool, SPEND_COSTS, REBOUND_RULES, reboundCheckOpen, reboundCheckBonus, clutchAvailable, clutchEligible, burnedSlots, satOutLast, canRollSlot, extraRollPending, checkNeed, crunchSearchOptions } from './engine.js';
+import { getTeam, getOpp, getPS, calcAdv, matchupAdv, isGhosted, getFatigue, fatigueForMinutes, restMinutes, MAX_STRAIGHT_MINUTES, pickablePool, SPEND_COSTS, REBOUND_RULES, reboundCheckOpen, reboundCheckBonus, reboundTrackLead, clutchAvailable, clutchEligible, burnedSlots, satOutLast, canRollSlot, extraRollPending, checkNeed, crunchSearchOptions } from './engine.js';
 import { lookupChart } from './cards.js';
 import { canPlayCard, burstTargets, helpTargets, staggerPair, myHouseTargets, foulTroubleTargets, clampTargets, kickOutTargets, REBOUND_CARD_COST } from './canPlay.js';
 import { getStrat, STRATS, TIMEOUT_RIDERS } from './strats.js';
@@ -893,10 +893,11 @@ export function aiSpendDecision(game, teamKey, opts = {}) {
     // The shooter is chosen on the check this spend takes: its own bonus, no banked assist.
     const best = bestChanceWith('paint', { extra: reboundCheckBonus(game, teamKey), banked: false });
     if (REBOUND_RULES.paintGate > 0) return { type: 'spend_rebound', rebType: 'paint_check', playerIdx: best.idx };
-    // With the lead rule the LEAD is what pays (a spend and the cards in hand
-    // both need it), so the surplus is counted on the smaller of the two.
-    const lead = (team.rebounds ?? 0) - (getOpp(game, teamKey).rebounds ?? 0);
-    const reb = REBOUND_RULES.leadToSpend ? Math.min(team.rebounds ?? 0, lead) : (team.rebounds ?? 0);
+    // With the lead-to-spend dial on, the LEAD caps what the check may take,
+    // so the surplus is counted on the smaller of the two.
+    const reb = REBOUND_RULES.leadToSpend
+      ? Math.min(team.rebounds ?? 0, reboundTrackLead(game, teamKey))
+      : (team.rebounds ?? 0);
     const rebReserve = Math.max(0, ...(team.hand || []).map(id => REBOUND_COST[id] || 0));
     const rebSurplus = reb - rebReserve;
     const cost = SPEND_COSTS.reboundPaint;

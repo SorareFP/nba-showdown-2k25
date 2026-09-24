@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { calcAdv, matchupAdv, getTeam, getOpp, getPS, getFatigue, SPEND_COSTS, reboundCheckOpen, reboundCheckBonus, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, lastReturnedCard, undoReturnCard, periodLabel, extraRollPending, checkNeed, fatigueForMinutes, crunchSearchOptions, rollTurnLine } from '../../game/engine.js';
+import { calcAdv, matchupAdv, getTeam, getOpp, getPS, getFatigue, SPEND_COSTS, reboundCheckOpen, reboundCheckBonus, reboundTrackLead, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, lastReturnedCard, undoReturnCard, periodLabel, extraRollPending, checkNeed, fatigueForMinutes, crunchSearchOptions, rollTurnLine } from '../../game/engine.js';
 import { canPlayCard, burstTargets, myHouseTargets, fwdTargets, preRollTargets, helpTargets, foulTroubleTargets, clampTargets, kickOutTargets } from '../../game/canPlay.js';
 import { resolveGoUnder } from '../../game/execCard.js';
 import { passTurn, MAX_STRAIGHT_MINUTES, restRuleLifted, pickablePool } from '../../game/engine.js';
@@ -1897,9 +1897,10 @@ function PlayerSlot({ player, ps, adv, fat, result, blocked, teamKey, idx, phase
 function TrackPanel({ game, side }) {
   const col=side==='left'?'var(--orange)':'var(--blue)';
   const team=side==='left'?game.teamA:game.teamB;
-  const opp=side==='left'?game.teamB:game.teamA;
   const teamKey=side==='left'?'A':'B';
-  const rebDiff=team.rebounds-opp.rebounds;
+  // The bar is the Rebound Track (rebounds WON, which a spend never moves);
+  // the number under it is the bank, what the team holds to spend.
+  const rebDiff=reboundTrackLead(game, teamKey);
   const absDiff=Math.abs(rebDiff);
   // Show the absolute diff in the color of whoever leads
   const leadCol = rebDiff>0 ? col : rebDiff<0 ? (side==='left'?'var(--blue)':'var(--orange)') : '#94A3B8';
@@ -1907,13 +1908,13 @@ function TrackPanel({ game, side }) {
     <div className={`${styles.trackPanel} ${side==='left'?styles.trackL:styles.trackR}`}>
       <Track l="AST" v={team.assists} col={col} max={10} bonus={team.assists>=5}/>
       {/* ✓ when the bank buys a rebound paint check; the glass winner's +2 beside it. */}
-      <Track l="REB" v={rebDiff===0?'0':`+${absDiff}`} col={leadCol} max={10} raw={team.rebounds}
+      <Track l="REB" v={rebDiff===0?'0':`+${absDiff}`} col={leadCol} max={10} raw={team.rebounds} rawTitle="Rebounds to spend"
         bonus={reboundCheckOpen(game, teamKey)} extra={reboundCheckBonus(game, teamKey) ? `+${reboundCheckBonus(game, teamKey)}` : null}/>
     </div>
   );
 }
 
-function Track({l,v,col,max,bonus,raw,extra}){
+function Track({l,v,col,max,bonus,raw,rawTitle,extra}){
   const numV = typeof v === 'number' ? v : parseInt(v) || 0;
   const pct=Math.min(100,(Math.abs(numV)/max)*100);
   return (
@@ -1921,7 +1922,7 @@ function Track({l,v,col,max,bonus,raw,extra}){
       <div className={styles.tl}>{l}</div>
       <div className={styles.tbar}><div className={styles.tfill} style={{height:pct+'%',background:col}}/></div>
       <div className={styles.tv} style={{color:col}}>{v}</div>
-      {raw !== undefined && <div className={styles.traw}>({raw})</div>}
+      {raw !== undefined && <div className={styles.traw} title={rawTitle}>({raw})</div>}
       {bonus&&<div className={styles.tbonus}>✓</div>}
       {extra&&<div className={styles.tbonus} title="The next rebound paint check's bonus, for winning the glass">{extra}</div>}
     </div>

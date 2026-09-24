@@ -2,7 +2,7 @@
 // Returns { canPlay: bool, reason: string }
 
 import { CRUNCH_CARDS, TIMEOUT_RIDERS } from './strats.js';
-import { getTeam, getOpp, getPS, getFatigue, calcAdv, burnedSlots, satOutLast } from './engine.js';
+import { getTeam, getOpp, getPS, getFatigue, calcAdv, burnedSlots, satOutLast, reboundTrackLead } from './engine.js';
 
 const ok = (r = '') => ({ canPlay: true, reason: r });
 const no = (r) => ({ canPlay: false, reason: r });
@@ -312,21 +312,21 @@ export const REBOUND_CARD_COST = Object.freeze({
   kick_out_three: 2, grab_and_go: 3, rebound_and_push: 2, own_the_glass: 5,
 });
 
-/** How far `teamKey` leads the rebound battle (the Rebound Track): negative when it trails. */
-export const reboundLead = (g, teamKey) =>
-  (getTeam(g, teamKey)?.rebounds ?? 0) - (getOpp(g, teamKey)?.rebounds ?? 0);
+/** How far `teamKey` leads the rebound battle (the Rebound Track, rebounds WON): negative when it trails. */
+export const reboundLead = reboundTrackLead;
 
 /**
- * A CARD THAT SPENDS REBOUNDS NEEDS THE LEAD TO PAY FOR THEM (2026-09-24). The
- * user: "For cards that use rebounds, the player using it should need to LEAD
- * the rebounding battle by the cost it takes to play it. It shouldn't just
- * give unearned rebounds to the other team." The track is the difference of
- * the two banks, so a spend from a thin lead handed the lead — and its +1
- * assist and +2 check at the section's end — to a side that won nothing. With
- * the lead at least the cost, a spend leaves you ahead or level. The engine
- * refuses the same card (execCard.js). The 5-REB rebound paint check is not a
- * card; it takes the same rule through REBOUND_RULES.leadToSpend
- * (reboundCheckProblem, engine.js). Null when the card may spend.
+ * A CARD THAT SPENDS REBOUNDS NEEDS THE LEAD (2026-09-24). The user: "For
+ * cards that use rebounds, the player using it should need to LEAD the
+ * rebounding battle by the cost it takes to play it. It shouldn't just give
+ * unearned rebounds to the other team." When the track was the difference of
+ * the two banks a spend moved it, and a spend from a thin lead handed the
+ * lead to a side that won nothing. The same day the track and the bank split
+ * (gainRebounds, engine.js): a spend no longer moves the track, and the lead
+ * this reads is rebounds won, so the rule stands as the user's condition for
+ * playing the card. The engine refuses the same card (execCard.js). The 5-REB
+ * rebound paint check is not a card and needs only the bank. Null when the
+ * card may spend.
  */
 export function reboundLeadProblem(g, teamKey, cardId) {
   const cost = REBOUND_CARD_COST[cardId];
@@ -694,7 +694,7 @@ function cardVerdict(g, teamKey, cardId) {
       // able to be played once a section") — Double Team's rule and flag
       // shape: a tempEff mark endSection wipes.
       if (g.tempEff?.[teamKey]?.putbackUsed) return no('Putback Dunk is once per section');
-      if (myT.rebounds <= oppT.rebounds) return no('Your team must lead in rebounds');
+      if (reboundTrackLead(g, teamKey) <= 0) return no('Your team must lead in rebounds');
       if (!myT.starters.some(p => p.power >= 14)) return no('Need a player with Power 14+ in lineup');
       return ok();
     }
@@ -819,7 +819,7 @@ function cardVerdict(g, teamKey, cardId) {
       if (myT.rebounds < 3) return no(`Need 3 rebounds (have ${myT.rebounds})`);
       return ok('−3 REB → +2 AST');
     case 'own_the_glass': {
-      const lead = (myT.rebounds || 0) - (oppT.rebounds || 0);
+      const lead = reboundTrackLead(g, teamKey);
       if (lead < OWN_THE_GLASS_LEAD) return no(`Lead the Rebound Track by ${OWN_THE_GLASS_LEAD} (you are at ${lead >= 0 ? '+' : ''}${lead})`);
       if (myT.rebounds < 5) return no(`Need 5 rebounds (have ${myT.rebounds})`);
       return ok('−5 REB → two Paint checks at +1');

@@ -518,14 +518,20 @@ export const SPEND_COSTS = {
  *   open at 4 REB                 7.8      8.6       4.7      127.0
  *
  * 2026-09-24, 400 games a variant, the check needing a track lead of its
- * cost (leadToSpend, below), glass winner +2:
+ * cost (leadToSpend, below), glass winner +2, the track the difference of
+ * the banks:
  *   the 09-23 rule (no lead)      6.5      8.1       5.6      125.1
- *   lead 5, costs 5               0.8      8.1      37.8      117.2   <- SHIPPED
+ *   lead 5, costs 5               0.8      8.1      37.8      117.2   (f5c522ee)
  *   lead 4, costs 4               1.0      7.8      38.0      117.0
  *   lead 3, costs 3               1.4      7.8      37.7      118.0
  *
  * A lead is a difference of two banks that grow together, so it seldom
  * stands at the price: under the lead rule the check is rare at any cost.
+ * So the track and the bank SPLIT (below), the check open on the bank:
+ *   split, open at 5, +2 lead     6.7      8.4       6.1      123.8   <- SHIPPED
+ * and the glass now weighs more in winning than the assists do: a standard
+ * deviation of rebounds out-produced is worth +0.165 in win chance (0.096
+ * before), of assists +0.083.
  *
  * So the bank is a currency like the assists: 5 REB buys a paint check for
  * any player at any time, the same price as the assist paint check. The
@@ -543,22 +549,59 @@ export const REBOUND_RULES = {
   leadBonus: 2,
   leadGate: 3,
   /**
-   * The check needs a Rebound Track LEAD of at least its cost (2026-09-24).
-   * The user: "When I use a paint shot check, all of a sudden the other team
-   * is +5 in rebounds... I should only be able to make a paint shot check if
-   * I'm +3, or whatever we decided on, then rebounds go back to even." The
-   * track is the difference of the two banks, so spending 5 from a level
-   * track put the other side +5 — with its +1 assist and +2 check at the
-   * section's end — for glass it never won. With the lead at least the cost,
-   * a spend leaves you ahead or level: the rebound cards' rule
-   * (reboundLeadProblem, canPlay.js) on the check.
+   * Whether the check also needs a Rebound Track lead of its cost. Off since
+   * the track and the bank split (below): it was on for an afternoon
+   * (2026-09-24, f5c522ee), when the track was the difference of the banks
+   * and a spend moved it — and it cut the rebound checks from 7.2 a game to
+   * 0.8. The dial is kept for the sweep.
    */
-  leadToSpend: true,
+  leadToSpend: false,
 };
 
+/*
+ * THE TRACK AND THE BANK ARE SPLIT (2026-09-24). The Rebound Track used to be
+ * the difference of the two banks, so a spend moved it: the user, "When I use
+ * a paint shot check, all of a sudden the other team is +5 in rebounds." A
+ * lead-to-spend rule fixed that and all but killed the currency (see
+ * leadToSpend), so the user took the split instead ("Yeah let's do that"):
+ *
+ *   team.reboundsWon — every rebound the team has GRABBED this game. The
+ *     track is the difference of these, and it decides the section-end +1
+ *     assist and the glass winner's +2. Spending never moves it; a card that
+ *     cancels rebounds (Box Out, Cold Spell, Offensive Foul) takes them off
+ *     it, since they were never won.
+ *   team.rebounds — what the team holds to spend, like the assists.
+ *
+ * A rebound comes in through gainRebounds and a cancel goes out through
+ * loseRebounds; a spend touches only `rebounds`. A game saved before the
+ * split has no `reboundsWon`, and neither does a new game until its first
+ * rebound: the track reads the bank until then (trackRebounds).
+ */
+
+/** The rebounds `team` has won this game, the count its side of the track shows. */
+export const trackRebounds = team => team?.reboundsWon ?? team?.rebounds ?? 0;
+
 /** How far `teamKey` leads the Rebound Track: negative when it trails. */
-const reboundTrackLead = (g, teamKey) =>
-  (getTeam(g, teamKey)?.rebounds ?? 0) - (getOpp(g, teamKey)?.rebounds ?? 0);
+export const reboundTrackLead = (g, teamKey) =>
+  trackRebounds(getTeam(g, teamKey)) - trackRebounds(getOpp(g, teamKey));
+
+/** `team` grabs `n` rebounds: onto the track and into the bank. */
+export function gainRebounds(team, n) {
+  if (!team || !n) return;
+  const won = trackRebounds(team);
+  team.rebounds = (team.rebounds ?? 0) + n;
+  team.reboundsWon = won + n;
+}
+
+/** `n` of `team`'s rebounds are cancelled: off the track, and out of the bank as far as it holds them. Returns how many came off the track. */
+export function loseRebounds(team, n) {
+  if (!team || !(n > 0)) return 0;
+  const won = trackRebounds(team);
+  const off = Math.min(won, n);
+  team.reboundsWon = won - off;
+  team.rebounds = Math.max(0, (team.rebounds ?? 0) - n);
+  return off;
+}
 
 /** Why `teamKey` may not take a rebound paint check now, or null when it may. */
 export function reboundCheckProblem(g, teamKey) {
@@ -576,7 +619,7 @@ export function reboundCheckProblem(g, teamKey) {
   return null;
 }
 
-/** Whether `teamKey` may take a rebound paint check now: the bank covers it, the lead pays for it, and the rule opens it. */
+/** Whether `teamKey` may take a rebound paint check now: the bank covers it and the rule opens it. */
 export function reboundCheckOpen(g, teamKey) {
   return reboundCheckProblem(g, teamKey) === null;
 }
@@ -1484,7 +1527,7 @@ export function doRoll(g, teamKey, idx, opts = {}) {
 
   nMyT.score += result.pts;
   nMyT.assists += result.ast;
-  nMyT.rebounds += result.reb;
+  gainRebounds(nMyT, result.reb);
   const ps2 = nMyT.stats.find(s => s.id === nPlayer.id);
   if (ps2) { ps2.pts += result.pts; ps2.reb += result.reb; ps2.ast += result.ast; }
   creditAllowed(ng, teamKey, idx, result.pts, nDefPlayer?.id);
@@ -1584,8 +1627,9 @@ export function endSection(g) {
 
   ng.secStart = { A: ng.teamA.score, B: ng.teamB.score };
 
-  // Rebound track bonuses (based on differential)
-  const rd = ng.teamA.rebounds - ng.teamB.rebounds;
+  // Rebound track bonuses (based on the differential of rebounds WON: spends
+  // never move it — see gainRebounds)
+  const rd = reboundTrackLead(ng, 'A');
   const absRd = Math.abs(rd);
   if (absRd > 0) {
     const wk = rd > 0 ? 'A' : 'B';

@@ -1,5 +1,5 @@
 import styles from './Scoreboard.module.css';
-import { periodLabel, rollTurnLine, SPEND_COSTS, REBOUND_RULES } from '../../game/engine.js';
+import { periodLabel, rollTurnLine, SPEND_COSTS, REBOUND_RULES, trackRebounds } from '../../game/engine.js';
 
 function HelpBtn() {
   const handleClick = (e) => {
@@ -15,7 +15,10 @@ function HelpBtn() {
 export default function Scoreboard({ game, pvpMode = false, myTeamKey = null, isMyTurn = true, rollGate = null }) {
   const { teamA: ga, teamB: gb, quarter, section, phase } = game;
   const phaseLabel = { draft:'Matchup Draft', matchup_strats:'Strategy Phase', scoring:'Scoring Phase' }[phase] || phase;
-  const rebDiff = ga.rebounds - gb.rebounds;
+  // The Rebound Track: rebounds WON, which a spend never moves (gainRebounds).
+  const aWon = trackRebounds(ga);
+  const bWon = trackRebounds(gb);
+  const rebDiff = aWon - bWon;
 
   // Build turn detail string
   const turnDetail = buildTurnDetail(game, pvpMode, myTeamKey, isMyTurn, rollGate);
@@ -29,7 +32,7 @@ export default function Scoreboard({ game, pvpMode = false, myTeamKey = null, is
         {turnDetail && <div className={styles.turnDetail}>{turnDetail}</div>}
         <div className={styles.tracks}>
           <Track label="AST" val={ga.assists} col="var(--orange)" />
-          <ReboundDiff diff={rebDiff} aReb={ga.rebounds} bReb={gb.rebounds} />
+          <ReboundDiff diff={rebDiff} aReb={aWon} bReb={bWon} />
           <Track label="AST" val={gb.assists} col="var(--blue)" />
         </div>
       </div>
@@ -95,20 +98,20 @@ function ReboundDiff({ diff, aReb, bReb }) {
   const leadCol = diff > 0 ? 'var(--orange)' : diff < 0 ? 'var(--blue)' : '#94A3B8';
   const sign = diff > 0 ? '+' : diff < 0 ? '' : '';
 
-  // Threshold markers. The leader may buy a paint check once its lead covers
-  // the price (REBOUND_RULES.leadToSpend), which spends it back to level at
-  // worst; short of that, a lead of leadGate+ at the section's end puts its
-  // next check at +leadBonus. This read "+3: Paint Check" from the gated rule
+  // Threshold markers. A lead of leadGate+ at the section's end puts the
+  // leader's next rebound check at +leadBonus. The check itself is bought
+  // from the bank, not the track, so the track marks it only with the
+  // lead-to-spend dial on. This read "+3: Paint Check" from the gated rule
   // before 2026-09-23 and still did on 2026-09-24.
   const cost = SPEND_COSTS.reboundPaint;
-  const canBuy = REBOUND_RULES.leadToSpend ? absDiff >= cost : absDiff > 0;
+  const canBuy = REBOUND_RULES.leadToSpend && absDiff >= cost;
   const hasGate = REBOUND_RULES.leadBonus > 0 && absDiff >= REBOUND_RULES.leadGate;
 
   return (
     <div className={styles.rebDiff}>
       <div className={styles.rebLabel}>REB</div>
       <div className={styles.rebSlider}>
-        <span className={styles.rebTotal} style={{ color: 'var(--orange)' }}>{aReb}</span>
+        <span className={styles.rebTotal} style={{ color: 'var(--orange)' }} title="Rebounds won this game">{aReb}</span>
         <div className={styles.rebBarWrap}>
           <div className={styles.rebBar}>
             <div className={styles.rebFill} style={{
@@ -125,7 +128,7 @@ function ReboundDiff({ diff, aReb, bReb }) {
             {diff === 0 ? 'EVEN' : `+${absDiff}`}
           </div>
         </div>
-        <span className={styles.rebTotal} style={{ color: 'var(--blue)' }}>{bReb}</span>
+        <span className={styles.rebTotal} style={{ color: 'var(--blue)' }} title="Rebounds won this game">{bReb}</span>
       </div>
       <div className={styles.rebThresholds}>
         {/* +5 Fast Break is gone — the mechanic was removed from the engine and

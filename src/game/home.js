@@ -23,8 +23,8 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
-    id: 'rebound-lead', date: '2026-09-24', title: 'Rebound spends need the lead',
-    body: 'Spending rebounds now needs your team to lead the rebound battle by at least what it spends, so a spend can never hand the lead (and its end-of-section assist) to the other side. That goes for the strategy cards that spend rebounds and for the 5-rebound paint check: the check needs a lead of 5, and paying for it leaves the track level at worst. The scoreboard shows "+5: Paint Check" when it is open.',
+    id: 'rebound-track-split', date: '2026-09-24', title: 'Spending rebounds never moves the track',
+    body: 'The rebound track now counts the rebounds each team has won this game, and spending never moves it: a 5-rebound paint check used to hand the other team the lead (and its end-of-section assist). What you hold to spend is the number beside the track, spent like your assists. A card that cancels rebounds (Box Out, Cold Spell, Offensive Foul) takes them off the track too. Strategy cards that spend rebounds still need you to lead the track by what they cost.',
     to: 'play', cta: 'Play',
   },
   {

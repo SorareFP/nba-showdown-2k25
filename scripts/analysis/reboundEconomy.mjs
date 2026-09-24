@@ -30,6 +30,9 @@ export const VARIANTS = {
   hybrid5: { paintGate: 0, paintBonus: 0, oncePerSection: false, cost: 5, leadBonus: 2, leadGate: 3 },
   open4: { paintGate: 0, paintBonus: 0, oncePerSection: false, cost: 4 },
   // hybrid5, and the check needs a Rebound Track lead of its cost (2026-09-24).
+  // Measured while the track was the difference of the banks (f5c522ee); since
+  // the split the track is rebounds WON and a spend no longer lowers the lead,
+  // so these now gate on a lead the spend leaves standing. hybrid5 IS the split.
   lead5: { paintGate: 0, paintBonus: 0, oncePerSection: false, cost: 5, leadBonus: 2, leadGate: 3, leadToSpend: true },
   lead4: { paintGate: 0, paintBonus: 0, oncePerSection: false, cost: 4, leadBonus: 2, leadGate: 3, leadToSpend: true },
   lead3: { paintGate: 0, paintBonus: 0, oncePerSection: false, cost: 3, leadBonus: 2, leadGate: 3, leadToSpend: true },

@@ -173,16 +173,16 @@ export default function HowToPlay({ scrollToSection, onStartTutorial, tutorialRu
             <li><strong>5 AST:</strong> a paint check for any player, the same way with their Paint Bonus.</li>
           </ul>
           <h4>Rebound Track</h4>
-          <p>Rebounds accumulate too, and you spend them the way you spend assists:</p>
+          <p>Rebounds count twice. The <strong>track</strong> is every rebound your team has <strong>won</strong> this game against theirs; spending never moves it. The number beside it is what you <strong>hold</strong>, and you spend that the way you spend assists:</p>
           <ul>
-            <li><strong>5 REB:</strong> a paint check for any player, any time <strong>you lead the rebound battle by 5 or more</strong>, so paying for it leaves the track level at worst. Their Paint Bonus rides on the die; the button shows the roll he needs.</li>
+            <li><strong>5 REB:</strong> a paint check for any player, any time. Their Paint Bonus rides on the die; the button shows the roll he needs.</li>
           </ul>
-          <p>At the end of a section, the <strong>difference</strong> between the teams pays too:</p>
+          <p>A card that <strong>cancels</strong> rebounds (Box Out, Cold Spell, Offensive Foul) takes them off the track too, since they were never won. At the end of a section, the <strong>track</strong> pays:</p>
           <ul>
             <li><strong>Leading:</strong> +1 stored assist.</li>
             <li><strong>Leading by 3 or more:</strong> your next rebound paint check is at <strong>+2</strong>.</li>
           </ul>
-          <p>A <strong>strategy card that spends rebounds</strong> needs your team to lead the rebound battle by at least what it spends, so playing it never hands the lead to the other side.</p>
+          <p>A <strong>strategy card that spends rebounds</strong> needs your team to lead the track by at least what it spends.</p>
         </AccordionSection>
 
         <AccordionSection {...sec('fatigue')}>

@@ -602,7 +602,7 @@ export function whatsNext() {
     `${MAX_STRAIGHT_MINUTES} straight minutes is the limit: a player at ${MAX_STRAIGHT_MINUTES}+ sits the next section, except in the fourth quarter and overtime. A section on the bench clears a tracker at ${REST_CLEARS_AT} minutes or less and takes ${REST_RECOVERY} off above that.`,
     `Coaches run from ${ladder[0].label} to ${ladder[ladder.length - 1].label}. ${fair.label} is the fair default and pays the standard rate (${fair.pay}×); ${listNames(easier.map(r => `${r.label} ${r.pay}×`))} are easier and pay less; ${listNames(harder.map(r => `${r.label} ${r.pay}×`))} field better-built teams and pay more.`,
     `A deck is ${deck} strategy cards, at most ${caps.common} copies of a common, ${caps.uncommon} of an uncommon, ${caps.rare} of a rare and ${caps.legendary} of a legendary.`,
-    `Spends: ${SPEND_COSTS.assistBoost} AST for +1 on a shot check, ${SPEND_COSTS.assistThree} AST for a 3PT check, ${SPEND_COSTS.assistPaint} AST for a paint check, ${SPEND_COSTS.reboundPaint} REB for a paint check while you lead the rebound track by ${SPEND_COSTS.reboundPaint}+ (at +${REB_LEAD_BONUS} the first time after a section you finish ${REB_LEAD_FOR_BONUS}+ ahead on the rebound track).`,
+    `Spends: ${SPEND_COSTS.assistBoost} AST for +1 on a shot check, ${SPEND_COSTS.assistThree} AST for a 3PT check, ${SPEND_COSTS.assistPaint} AST for a paint check, ${SPEND_COSTS.reboundPaint} REB for a paint check (at +${REB_LEAD_BONUS} the first time after a section you finish ${REB_LEAD_FOR_BONUS}+ ahead on the rebound track).`,
     'A tie after regulation goes to overtime: another Crunch-Time section, with a fresh Clutch Possession, timeout and deck search.',
   ];
 }
@@ -821,7 +821,7 @@ export const TUTORIAL_TOOLTIPS = [
   {
     id: 's2_assists_intro',
     text: "Did you notice your assist and rebound tracks? You can spend them on bonus shot checks! Check the buttons below each player.",
-    detail: () => `${SPEND_COSTS.assistBoost} AST = +1 to a shot check. ${SPEND_COSTS.assistThree} AST = a 3PT check, ${SPEND_COSTS.assistPaint} AST = a paint check, for any player — their bonus rides on the die, and the button shows the roll he needs. Rebounds spend the same way: ${SPEND_COSTS.reboundPaint} REB buys a paint check for any player while you lead the rebound track by ${SPEND_COSTS.reboundPaint} or more (so it leaves the track level at worst), at +${REB_LEAD_BONUS} the first time after a section you finish ${REB_LEAD_FOR_BONUS}+ ahead on the rebound track. The first time you reach 5 assists you draw a bonus card!`,
+    detail: () => `${SPEND_COSTS.assistBoost} AST = +1 to a shot check. ${SPEND_COSTS.assistThree} AST = a 3PT check, ${SPEND_COSTS.assistPaint} AST = a paint check, for any player — their bonus rides on the die, and the button shows the roll he needs. Rebounds spend the same way: ${SPEND_COSTS.reboundPaint} REB buys a paint check for any player, at +${REB_LEAD_BONUS} the first time after a section you finish ${REB_LEAD_FOR_BONUS}+ ahead on the rebound track. The track counts rebounds won, so spending never moves it. The first time you reach 5 assists you draw a bonus card!`,
     section: 2,
     priority: 70,
     trigger: { phase: 'scoring', condition: (g) => g.quarter === 1 && g.section === 2 && g.scoringPasses >= 99 },

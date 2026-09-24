@@ -7,8 +7,10 @@ import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
 import {
   newGame, getTeam, endSection, spendReboundBonus, checkNeed, SPEND_COSTS,
   REBOUND_RULES, reboundCheckOpen, reboundCheckBonus, reboundCheckProblem,
+  gainRebounds, loseRebounds, trackRebounds, reboundTrackLead, doRoll,
 } from './engine.js';
 import { aiSpendDecision } from './ai.js';
+import { reboundLeadProblem } from './canPlay.js';
 
 const mk = (id, over = {}) => ({
   id, name: id, team: 'TST', pos: 'C', speed: 10, power: 10, defBoost: 0,
@@ -33,7 +35,7 @@ const GATED = { paintGate: 3, oncePerSection: true, paintBonus: 0, leadBonus: 0,
 
 describe('the rule shipped 2026-09-23', () => {
   it("opens the bank like the assists, at the assist paint check's price, with +2 for a 3+ glass win", () => {
-    expect(REBOUND_RULES).toMatchObject({ paintGate: 0, oncePerSection: false, paintBonus: 0, leadBonus: 2, leadGate: 3, leadToSpend: true });
+    expect(REBOUND_RULES).toMatchObject({ paintGate: 0, oncePerSection: false, paintBonus: 0, leadBonus: 2, leadGate: 3, leadToSpend: false });
     expect(SPEND_COSTS.reboundPaint).toBe(SPEND_COSTS.assistPaint);
   });
 
@@ -45,62 +47,73 @@ describe('the rule shipped 2026-09-23', () => {
   });
 });
 
-describe('the check needs the lead to pay for it (2026-09-24)', () => {
+describe('the track and the bank are split (2026-09-24)', () => {
   // The user: "When I use a paint shot check, all of a sudden the other team is
-  // +5 in rebounds... I should only be able to make a paint shot check if I'm
-  // +3, or whatever we decided on, then rebounds go back to even."
+  // +5 in rebounds." A lead-to-spend rule fixed it and cut the checks from 7.2
+  // a game to 0.8, so the user took the split: the track counts rebounds WON,
+  // the bank what a team holds to spend. "Yeah let's do that."
   const cost = () => SPEND_COSTS.reboundPaint;
+  const won = (g, a, b) => { gainRebounds(g.teamA, a); gainRebounds(g.teamB, b); return g; };
 
-  it('is the shipped rule', () => {
-    expect(REBOUND_RULES.leadToSpend).toBe(true);
+  it('is the shipped rule: the check needs only the bank', () => {
+    expect(REBOUND_RULES.leadToSpend).toBe(false);
+    const g = won(game(), 12, 12);
+    expect(reboundTrackLead(g, 'A')).toBe(0);
+    expect(reboundCheckOpen(g, 'A')).toBe(true);
   });
 
-  it('stays shut on a level track, however deep the bank', () => {
+  it('a spend never moves the track: the reported +5 is gone', () => {
+    const g = won(game(), 12, 12);
+    const spent = spendReboundBonus(g, 'A', 'paint_check', 0);
+    expect(spent.ok).toBe(true);
+    expect(getTeam(spent.game, 'A')).toMatchObject({ rebounds: 12 - cost(), reboundsWon: 12 });
+    expect(reboundTrackLead(spent.game, 'B')).toBe(0);
+  });
+
+  it('a scoring roll adds to both', () => {
     const g = game();
-    g.teamA.rebounds = 12; g.teamB.rebounds = 12;
-    expect(reboundCheckOpen(g, 'A')).toBe(false);
+    const r = doRoll(g, 'A', 0);
+    expect(getTeam(r, 'A')).toMatchObject({ rebounds: 1, reboundsWon: 1 });
+  });
+
+  it('the section end pays the track, not the bank', () => {
+    const g = won(game(), 10, 7);
+    g.teamA.rebounds = 2;                                  // spent 8 of its 10
+    const ng = endSection(g);
+    expect(ng.teamA.assists).toBe(1);
+    expect(ng.reboundBonuses.A).toMatchObject({ diff: 3 });
+    expect(ng.log.some(l => /Rebound Track lead → .* \+1 AST · next rebound paint check \+2/.test(l.msg))).toBe(true);
+  });
+
+  it('a cancel comes off the track too, since the rebounds were never won', () => {
+    const t = { rebounds: 0 };
+    gainRebounds(t, 4);
+    t.rebounds = 1;                                        // spent 3
+    expect(loseRebounds(t, 2)).toBe(2);
+    expect(t).toMatchObject({ rebounds: 0, reboundsWon: 2 });
+  });
+
+  it('a game saved before the split reads its bank as the track until its next rebound', () => {
+    const t = { rebounds: 6 };
+    expect(trackRebounds(t)).toBe(6);
+    gainRebounds(t, 1);
+    expect(t).toMatchObject({ rebounds: 7, reboundsWon: 7 });
+  });
+
+  it('a rebound card still needs the lead, now on rebounds won', () => {
+    const g = won(game(), 10, 7);
+    g.teamA.rebounds = 4;                                  // under the opponent's bank of 7
+    expect(reboundLeadProblem(g, 'A', 'offensive_board')).toBeNull();        // costs 3, lead 3
+    expect(reboundLeadProblem(g, 'A', 'own_the_glass')).toMatch(/lead by 3/);
+  });
+
+  it('the dial, on, gates the check on the track lead', () => {
+    REBOUND_RULES.leadToSpend = true;
+    const g = won(game(), 12, 12);
     expect(reboundCheckProblem(g, 'A')).toBe(`Lead the rebound battle by ${cost()} to spend ${cost()} REB (you are level)`);
     const refused = spendReboundBonus(g, 'A', 'paint_check', 0);
     expect(refused.ok).toBe(false);
-    expect(refused.msg).toContain('are level');
     expect(getTeam(refused.game, 'A').rebounds).toBe(12);
-  });
-
-  it('opens at a lead of its cost, and the spend leaves the track level', () => {
-    const g = game();
-    g.teamA.rebounds = 12; g.teamB.rebounds = 12 - cost() + 1;
-    expect(reboundCheckProblem(g, 'A')).toMatch(/you lead by 4/);
-    g.teamB.rebounds = 12 - cost();
-    expect(reboundCheckOpen(g, 'A')).toBe(true);
-    const spent = spendReboundBonus(g, 'A', 'paint_check', 0);
-    expect(spent.ok).toBe(true);
-    expect(getTeam(spent.game, 'A').rebounds).toBe(getTeam(spent.game, 'B').rebounds);
-    expect(reboundCheckOpen(spent.game, 'A')).toBe(false);
-  });
-
-  it('never opens for the side that trails', () => {
-    const g = game();
-    g.teamA.rebounds = 9; g.teamB.rebounds = 11;
-    expect(reboundCheckProblem(g, 'A')).toMatch(/you trail by 2/);
-  });
-
-  it('the coach spends only what the lead can pay', () => {
-    const g = game();
-    g.teamA.rebounds = 3 * cost(); g.teamB.rebounds = 3 * cost() - 3;
-    expect(aiSpendDecision(g, 'A')).toBeNull();
-    g.teamB.rebounds = 0;
-    expect(aiSpendDecision(g, 'A')).toMatchObject({ type: 'spend_rebound' });
-    // Its rebound cards need the lead too: a lead of the check's cost is all reserve.
-    g.teamB.rebounds = 3 * cost() - cost();
-    g.teamA.hand = ['offensive_board'];
-    expect(aiSpendDecision(g, 'A')).toBeNull();
-  });
-
-  it('is a dial: off, the bank alone opens it (the rule of 2026-09-23)', () => {
-    REBOUND_RULES.leadToSpend = false;
-    const g = game();
-    g.teamA.rebounds = 12; g.teamB.rebounds = 12;
-    expect(reboundCheckOpen(g, 'A')).toBe(true);
   });
 });
 

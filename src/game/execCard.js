@@ -3,7 +3,7 @@
 // Never mutates — always returns a new object via deepClone
 
 import { handOverPriority, getTeam, getOpp, getPS, calcAdv, shotCheck, matchupContest, drawCards, deepClone, getFatigue, recordDefSwitch, burnedSlots, roll20, checkAssistDraw, standingEntry, CROWD_FAVORITE_PTS, satOutLast, bottomedLines } from './engine.js';
-import { creditAllowed, creditCheckDefended, recordPaintCheck, creditPaintScore, noteLastCheck } from './engine.js';
+import { creditAllowed, creditCheckDefended, recordPaintCheck, creditPaintScore, noteLastCheck, gainRebounds, loseRebounds, reboundTrackLead } from './engine.js';
 import { burstTargets, helpTargets, canAnswerCheck, myHouseHolds, foulTroubleTargets, clampTargets, kickOutTargets, pushGuardIdx, OWN_THE_GLASS_LEAD, reboundLeadProblem } from './canPlay.js';
 import { lookupChart } from './cards.js';
 import { getStrat } from './strats.js';
@@ -501,7 +501,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       const targetPlayer = oppT.starters[rollIdx];
       const targetPs = getPS(g, teamKey === 'A' ? 'B' : 'A', targetPlayer?.id) || {};
       targetPs.cold = (targetPs.cold || 0) + 1;
-      oppT.rebounds = Math.max(0, oppT.rebounds - 1);
+      loseRebounds(oppT, 1);
       addLog(g, teamKey, `Cold Spell: ${targetPlayer?.name} ❄️ cold marker + opponent REB Track −1`);
       break;
     }
@@ -810,7 +810,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       // Once per section (2026-09-18): the mark lives in tempEff, which
       // endSection wipes, as Double Team's does.
       if (g.tempEff?.[teamKey]?.putbackUsed) return fail('Putback Dunk is once per section');
-      if (myT.rebounds <= oppT.rebounds) return fail('Team must lead in rebounds');
+      if (reboundTrackLead(g, teamKey) <= 0) return fail('Team must lead in rebounds');
       if ((player?.power || 0) < 14) return fail('Need Power 14+');
       if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
       g.tempEff[teamKey].putbackUsed = true;
@@ -838,7 +838,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
       g.tempEff[teamKey].burstIds = [...(g.tempEff[teamKey].burstIds || []), player?.id];
       myT.assists++;
-      myT.rebounds++;
+      gainRebounds(myT, 1);
       if (g.analytics?.[teamKey]) { g.analytics[teamKey].assistsFromCards++; g.analytics[teamKey].reboundsGenerated++; }
       pss().hot = (pss().hot || 0) + 1;
       addLog(g, teamKey, `Burst of Momentum: ${player?.name} +1 AST +1 REB 🔥`);
@@ -1011,7 +1011,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
         }
       }
       if (!halved) addLog(g, teamKey, 'Offensive Foul: no active Power boosts found, −1 REB still applies');
-      oppT.rebounds = Math.max(0, oppT.rebounds - 1);
+      loseRebounds(oppT, 1);
       addLog(g, teamKey, 'Offensive Foul: opponent −1 Rebound');
       break;
     }
@@ -1167,7 +1167,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       if (adv.rollBonus > 0) return fail(player?.name + ' already has a matchup advantage');
       if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
       g.tempEff[teamKey]['r' + idx] = (g.tempEff[teamKey]['r' + idx] || 0) + 2;
-      myT.rebounds++;
+      gainRebounds(myT, 1);
       if (g.analytics?.[teamKey]) g.analytics[teamKey].reboundsGenerated++;
       addLog(g, teamKey, `Delayed Slip: ${player?.name} +2 scoring roll + 1 REB`);
       break;
@@ -1605,7 +1605,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       break;
     }
     case 'own_the_glass': {
-      const lead = (myT.rebounds || 0) - (oppT.rebounds || 0);
+      const lead = reboundTrackLead(g, teamKey);
       if (lead < OWN_THE_GLASS_LEAD) return fail(`Your team must lead the Rebound Track by ${OWN_THE_GLASS_LEAD} (lead ${lead})`);
       if (myT.rebounds < 5) return fail(`Need 5 rebounds (have ${myT.rebounds})`);
       if (!player) return fail('Choose a player');
@@ -1708,7 +1708,7 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       const shooter = miss.playerIdx != null ? oppT.starters[miss.playerIdx] : null;
       const guard = shooter ? myT.starters[(g.offMatchups[miss.teamKey] || [])[miss.playerIdx]] : null;
       if (shooter && guard && (guard.power || 0) > (shooter.power || 0)) gain += 1;
-      myT.rebounds += gain;
+      gainRebounds(myT, gain);
       addLog(g, teamKey, `Glass Cleaner: ${shooter ? shooter.name + ' misses — ' : ''}+${gain} REB${gain === 3 ? ` (${guard.name} out-muscles him)` : ''}`);
       break;
     }
@@ -1719,10 +1719,9 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       const guard = myT.starters[(g.offMatchups[lr.teamKey] || [])[lr.idx]];
       let take = lr.reb;
       if (roller && guard && (guard.power || 0) > (roller.power || 0)) take += 1;
-      const before = oppT.rebounds;
-      oppT.rebounds = Math.max(0, oppT.rebounds - take);
+      const cancelled = loseRebounds(oppT, take);
       lr.boxed = true;
-      addLog(g, teamKey, `Box Out: ${guard?.name || 'your defender'} boxes out ${roller?.name || 'the roller'} — ${before - oppT.rebounds} REB cancelled`);
+      addLog(g, teamKey, `Box Out: ${guard?.name || 'your defender'} boxes out ${roller?.name || 'the roller'} — ${cancelled} REB cancelled`);
       break;
     }
 
@@ -1889,7 +1888,7 @@ export function applyShotCheck(g, psc) {
     }
     if (psc.onHitHot) ps.hot = (ps.hot || 0) + 1;
   } else if (psc.rimProtector) {
-    getTeam(g, psc.rimProtector).rebounds += 2;
+    gainRebounds(getTeam(g, psc.rimProtector), 2);
   }
 
   const label = psc.cardLabel || psc.type.toUpperCase();

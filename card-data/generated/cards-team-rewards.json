@@ -1,9 +1,9 @@
 {
- "generatedAt": "2026-09-22T17:09:58.498Z",
+ "generatedAt": "2026-09-24T13:59:09.672Z",
  "set": "team-rewards",
  "provisional": true,
  "sources": {
-  "roster": "card-data/team-rewards-2026.json — 18 cards MOVED from Super Season/Rookie/Summer Standouts, 15 built (franchise picks and the 3 tiers)",
+  "roster": "card-data/team-rewards-2026.json — 20 cards MOVED from Super Season/Rookie/Summer Standouts, 13 built (franchise picks and the 3 tiers)",
   "identity": "every card WEARS its identity (wears): the set it came from, or for a built pick the Free Agents classifier over the 1976-2026 archive (rewardIdentity.js)",
   "statLine": "that season's own row for that team, from the full-league tables",
   "skill": "EPM from the season table, Speed+Power trust from the season minutes",
@@ -75,8 +75,77 @@
     "per": 31.9
    },
    "provisional": false,
+   "set": "team-rewards",
+   "badges": [
+    "super-season"
+   ],
+   "wears": "super-season",
+   "migratedFrom": {
+    "set": "super-season",
+    "id": "Giannis_Antetokounmpo"
+   },
    "rewardFor": null,
-   "rewardGoal": "nba-set",
+   "rewardGoal": "nba-set"
+  },
+  {
+   "id": "Stephen_Curry",
+   "name": "Stephen Curry",
+   "team": "GSW",
+   "pos": "PG",
+   "speed": 19,
+   "power": 11,
+   "shotLine": 14,
+   "paintBoost": -1,
+   "threePtBoost": 2,
+   "defBoost": 0,
+   "salary": 2110,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 4,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 14,
+     "hi": 99,
+     "pts": 4,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2021,
+   "seasonLabel": "2020-21",
+   "age": 32,
+   "games": 63,
+   "mpg": 34.2,
+   "bbrefId": "curryst01",
+   "traded": false,
+   "metrics": {
+    "bpm": 8.7,
+    "vorp": 5.8,
+    "ws": 9,
+    "ws48": 0.201,
+    "per": 26.3
+   },
+   "provisional": false,
+   "rewardFor": null,
+   "rewardGoal": "nba-conference-West",
    "wears": "throwbacks",
    "badges": [
     "throwback"
@@ -146,76 +215,17 @@
     "per": 31.4
    },
    "provisional": false,
-   "rewardFor": null,
-   "rewardGoal": "nba-conference-East",
-   "wears": "throwbacks",
+   "set": "team-rewards",
    "badges": [
-    "throwback"
-   ]
-  },
-  {
-   "id": "Stephen_Curry",
-   "name": "Stephen Curry",
-   "team": "GSW",
-   "pos": "PG",
-   "speed": 19,
-   "power": 11,
-   "shotLine": 14,
-   "paintBoost": -1,
-   "threePtBoost": 2,
-   "defBoost": 0,
-   "salary": 2110,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 6,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 7,
-     "hi": 13,
-     "pts": 4,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 14,
-     "hi": 99,
-     "pts": 4,
-     "reb": 1,
-     "ast": 1
-    }
+    "super-season"
    ],
-   "season": 2021,
-   "seasonLabel": "2020-21",
-   "age": 32,
-   "games": 63,
-   "mpg": 34.2,
-   "bbrefId": "curryst01",
-   "traded": false,
-   "metrics": {
-    "bpm": 8.7,
-    "vorp": 5.8,
-    "ws": 9,
-    "ws48": 0.201,
-    "per": 26.3
+   "wears": "super-season",
+   "migratedFrom": {
+    "set": "super-season",
+    "id": "Joel_Embiid"
    },
-   "provisional": false,
    "rewardFor": null,
-   "rewardGoal": "nba-conference-West",
-   "wears": "throwbacks",
-   "badges": [
-    "throwback"
-   ]
+   "rewardGoal": "nba-conference-East"
   },
   {
    "id": "Paul_George",
@@ -351,71 +361,7 @@
    "rewardGoal": "nba-team-GSW"
   },
   {
-   "id": "Jamal_Murray",
-   "name": "Jamal Murray",
-   "team": "DEN",
-   "pos": "PG",
-   "speed": 17,
-   "power": 11,
-   "shotLine": 15,
-   "paintBoost": -1,
-   "threePtBoost": 3,
-   "defBoost": 1,
-   "salary": 1470,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 6,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 7,
-     "hi": 14,
-     "pts": 2,
-     "reb": 0,
-     "ast": 1
-    },
-    {
-     "lo": 15,
-     "hi": 99,
-     "pts": 3,
-     "reb": 1,
-     "ast": 1
-    }
-   ],
-   "season": 2023,
-   "seasonLabel": "2022-23",
-   "age": null,
-   "games": 20,
-   "mpg": 39.9,
-   "bbrefId": "murraja01",
-   "traded": false,
-   "metrics": {},
-   "provisional": false,
-   "playoffRun": true,
-   "set": "team-rewards",
-   "badges": [
-    "summer-standout"
-   ],
-   "wears": "summer-standouts",
-   "migratedFrom": {
-    "set": "summer-standouts",
-    "id": "Jamal_Murray"
-   },
-   "rewardFor": "DEN",
-   "rewardGoal": "nba-team-DEN"
-  },
-  {
-   "id": "Kobe_Bryant",
+   "id": "Kobe_Bryant_2006",
    "name": "Kobe Bryant",
    "team": "LAL",
    "pos": "SG",
@@ -479,16 +425,85 @@
    },
    "provisional": false,
    "set": "team-rewards",
-   "badges": [
-    "super-season"
-   ],
-   "wears": "super-season",
-   "migratedFrom": {
+   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
+   "demotedFrom": {
     "set": "super-season",
     "id": "Kobe_Bryant"
    },
+   "badges": [
+    "throwback"
+   ],
+   "wears": "throwbacks",
+   "migratedFrom": {
+    "set": "throwbacks",
+    "id": "Kobe_Bryant_2006"
+   },
    "rewardFor": "LAL",
    "rewardGoal": "nba-team-LAL"
+  },
+  {
+   "id": "Jamal_Murray",
+   "name": "Jamal Murray",
+   "team": "DEN",
+   "pos": "PG",
+   "speed": 17,
+   "power": 11,
+   "shotLine": 15,
+   "paintBoost": -1,
+   "threePtBoost": 3,
+   "defBoost": 1,
+   "salary": 1470,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2023,
+   "seasonLabel": "2022-23",
+   "age": null,
+   "games": 20,
+   "mpg": 39.9,
+   "bbrefId": "murraja01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true,
+   "set": "team-rewards",
+   "badges": [
+    "summer-standout"
+   ],
+   "wears": "summer-standouts",
+   "migratedFrom": {
+    "set": "summer-standouts",
+    "id": "Jamal_Murray"
+   },
+   "rewardFor": "DEN",
+   "rewardGoal": "nba-team-DEN"
   },
   {
    "id": "David_Robinson_1994",
@@ -555,10 +570,14 @@
    },
    "provisional": false,
    "set": "team-rewards",
+   "demoted": "the player's Rookie card is stronger — a Throwback instead (rookie 1989-90 $2100 against $1580, 2026-09-22)",
+   "demotedFrom": {
+    "set": "super-season",
+    "id": "David_Robinson"
+   },
    "badges": [
     "throwback"
    ],
-   "demoted": "the player's Rookie card is stronger — a Throwback instead (rookie 1989-90 $2230 against $1440, 2026-09-22)",
    "wears": "throwbacks",
    "migratedFrom": {
     "set": "throwbacks",
@@ -1056,217 +1075,6 @@
    ]
   },
   {
-   "id": "Alonzo_Mourning",
-   "name": "Alonzo Mourning",
-   "team": "MIA",
-   "pos": "C",
-   "speed": 8,
-   "power": 15,
-   "shotLine": 17,
-   "paintBoost": 5,
-   "threePtBoost": -3,
-   "defBoost": 3,
-   "salary": 960,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 3,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 4,
-     "hi": 11,
-     "pts": 1,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 12,
-     "hi": 16,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 17,
-     "hi": 99,
-     "pts": 2,
-     "reb": 2,
-     "ast": 0
-    }
-   ],
-   "season": 2006,
-   "seasonLabel": "2005-06",
-   "age": 35,
-   "games": 65,
-   "mpg": 20,
-   "bbrefId": "mournal01",
-   "traded": false,
-   "metrics": {
-    "bpm": 1.8,
-    "vorp": 1.2,
-    "ws": 4.8,
-    "ws48": 0.176,
-    "per": 19.4
-   },
-   "provisional": false,
-   "rewardFor": "MIA",
-   "rewardGoal": "nba-team-MIA",
-   "bandException": "Declared on 2026-09-07 at $860, forty dollars under Miami's super-rare floor; the user, shown the gap: \"Mourning is a fun enough card that it seems fine as a reward.\" His 2005-06 is the Heat's title season and the last real year of a franchise icon; the alternatives price in band but mean nothing to Miami. REFRESHED 2026-09-22: he now prints $1000, INSIDE super-rare ($930-1329) — the reprices since moved him up, so the exception is dormant and kept only so the next drift below the line is a decision already made, not a build failure.",
-   "wears": "throwbacks",
-   "badges": [
-    "throwback"
-   ]
-  },
-  {
-   "id": "Chris_Paul",
-   "name": "Chris Paul",
-   "team": "NOK",
-   "pos": "PG",
-   "speed": 18,
-   "power": 9,
-   "shotLine": 15,
-   "paintBoost": -2,
-   "threePtBoost": -3,
-   "defBoost": 2,
-   "salary": 980,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 6,
-     "pts": 0,
-     "reb": 0,
-     "ast": 1
-    },
-    {
-     "lo": 7,
-     "hi": 14,
-     "pts": 2,
-     "reb": 0,
-     "ast": 1
-    },
-    {
-     "lo": 15,
-     "hi": 99,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    }
-   ],
-   "season": 2006,
-   "seasonLabel": "2005-06",
-   "age": 20,
-   "games": 78,
-   "mpg": 36,
-   "bbrefId": "paulch01",
-   "traded": false,
-   "metrics": {
-    "bpm": 5.2,
-    "vorp": 5.1,
-    "ws": 10.4,
-    "ws48": 0.178,
-    "per": 22.1
-   },
-   "provisional": false,
-   "set": "team-rewards",
-   "badges": [
-    "rookie"
-   ],
-   "wears": "rookie",
-   "migratedFrom": {
-    "set": "rookie",
-    "id": "Chris_Paul"
-   },
-   "rewardFor": "NOP",
-   "rewardGoal": "nba-team-NOP"
-  },
-  {
-   "id": "John_Stockton",
-   "name": "John Stockton",
-   "team": "UTA96",
-   "pos": "PG",
-   "speed": 18,
-   "power": 10,
-   "shotLine": 14,
-   "paintBoost": 0,
-   "threePtBoost": -4,
-   "defBoost": 1,
-   "salary": 990,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 6,
-     "pts": 0,
-     "reb": 0,
-     "ast": 1
-    },
-    {
-     "lo": 7,
-     "hi": 13,
-     "pts": 1,
-     "reb": 0,
-     "ast": 1
-    },
-    {
-     "lo": 14,
-     "hi": 99,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    }
-   ],
-   "season": 2002,
-   "seasonLabel": "2001-02",
-   "age": 39,
-   "games": 82,
-   "mpg": 31.3,
-   "bbrefId": "stockjo01",
-   "traded": false,
-   "metrics": {
-    "bpm": 5.3,
-    "vorp": 4.8,
-    "ws": 10.7,
-    "ws48": 0.2,
-    "per": 21.9
-   },
-   "provisional": false,
-   "set": "team-rewards",
-   "badges": [
-    "throwback"
-   ],
-   "wears": "throwbacks",
-   "migratedFrom": {
-    "set": "super-season",
-    "id": "John_Stockton"
-   },
-   "rewardFor": "UTA",
-   "rewardGoal": "nba-team-UTA",
-   "notBestSeason": true
-  },
-  {
    "id": "Sam_Cassell",
    "name": "Sam Cassell",
    "team": "MIN97",
@@ -1335,6 +1143,77 @@
    "wears": "super-season",
    "badges": [
     "super-season"
+   ]
+  },
+  {
+   "id": "Allan_Houston",
+   "name": "Allan Houston",
+   "team": "NYK",
+   "pos": "SG",
+   "speed": 13,
+   "power": 9,
+   "shotLine": 14,
+   "paintBoost": -4,
+   "threePtBoost": 2,
+   "defBoost": -2,
+   "salary": 1000,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 20,
+     "pts": 3,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2003,
+   "seasonLabel": "2002-03",
+   "age": 31,
+   "games": 82,
+   "mpg": 37.9,
+   "bbrefId": "houstal01",
+   "traded": false,
+   "metrics": {
+    "bpm": 1,
+    "vorp": 2.4,
+    "ws": 7.2,
+    "ws48": 0.111,
+    "per": 17.7
+   },
+   "provisional": false,
+   "rewardFor": "NYK",
+   "rewardGoal": "nba-team-NYK",
+   "wears": "throwbacks",
+   "badges": [
+    "throwback"
    ]
   },
   {
@@ -1409,17 +1288,17 @@
    ]
   },
   {
-   "id": "Myles_Turner",
-   "name": "Myles Turner",
-   "team": "IND",
-   "pos": "C",
-   "speed": 9,
-   "power": 15,
-   "shotLine": 15,
-   "paintBoost": 1,
-   "threePtBoost": 0,
-   "defBoost": 2,
-   "salary": 920,
+   "id": "John_Stockton_2002",
+   "name": "John Stockton",
+   "team": "UTA96",
+   "pos": "PG",
+   "speed": 18,
+   "power": 10,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": -4,
+   "defBoost": 1,
+   "salary": 990,
    "chart": [
     {
      "lo": 1,
@@ -1432,129 +1311,124 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 14,
+     "hi": 99,
+     "pts": 2,
      "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2002,
+   "seasonLabel": "2001-02",
+   "age": 39,
+   "games": 82,
+   "mpg": 31.3,
+   "bbrefId": "stockjo01",
+   "traded": false,
+   "metrics": {
+    "bpm": 5.3,
+    "vorp": 4.8,
+    "ws": 10.7,
+    "ws48": 0.2,
+    "per": 21.9
+   },
+   "provisional": false,
+   "set": "team-rewards",
+   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
+   "demotedFrom": {
+    "set": "super-season",
+    "id": "John_Stockton"
+   },
+   "badges": [
+    "throwback"
+   ],
+   "wears": "throwbacks",
+   "migratedFrom": {
+    "set": "throwbacks",
+    "id": "John_Stockton_2002"
+   },
+   "rewardFor": "UTA",
+   "rewardGoal": "nba-team-UTA"
+  },
+  {
+   "id": "Chris_Paul",
+   "name": "Chris Paul",
+   "team": "NOK",
+   "pos": "PG",
+   "speed": 18,
+   "power": 9,
+   "shotLine": 15,
+   "paintBoost": -2,
+   "threePtBoost": -3,
+   "defBoost": 2,
+   "salary": 980,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
      "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 1
     },
     {
      "lo": 7,
      "hi": 14,
      "pts": 2,
-     "reb": 1,
-     "ast": 0
+     "reb": 0,
+     "ast": 1
     },
     {
      "lo": 15,
-     "hi": 20,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 21,
      "hi": 99,
      "pts": 2,
-     "reb": 2,
-     "ast": 0
-    }
-   ],
-   "season": 2019,
-   "seasonLabel": "2018-19",
-   "age": 22,
-   "games": 74,
-   "mpg": 28.6,
-   "bbrefId": "turnemy01",
-   "traded": false,
-   "metrics": {
-    "bpm": 2.5,
-    "vorp": 2.4,
-    "ws": 6.3,
-    "ws48": 0.144,
-    "per": 18
-   },
-   "provisional": false,
-   "set": "team-rewards",
-   "badges": [
-    "super-season"
-   ],
-   "wears": "super-season",
-   "migratedFrom": {
-    "set": "super-season",
-    "id": "Myles_Turner"
-   },
-   "rewardFor": "IND",
-   "rewardGoal": "nba-team-IND",
-   "bandException": "Declared after the 2026-09-12 bench-curve reprice, when Indiana earned rare and Turner's 2018-19 landed at $960, eleven dollars over the rare ceiling - one rounding step, smaller than Philadelphia's twenty and Miami's forty. REFRESHED 2026-09-22: Indiana earns SUPER-RARE now and he still prints $960, INSIDE super-rare ($930-1329); the exception is dormant and stays declared for the next time the line moves. Nothing about the pick is wrong; the line moved under it, twice."
-  },
-  {
-   "id": "Allan_Houston",
-   "name": "Allan Houston",
-   "team": "NYK",
-   "pos": "SG",
-   "speed": 13,
-   "power": 9,
-   "shotLine": 14,
-   "paintBoost": -4,
-   "threePtBoost": 2,
-   "defBoost": -2,
-   "salary": 1000,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 6,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 7,
-     "hi": 13,
-     "pts": 2,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 14,
-     "hi": 20,
-     "pts": 3,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 21,
-     "hi": 99,
-     "pts": 3,
      "reb": 1,
      "ast": 1
     }
    ],
-   "season": 2003,
-   "seasonLabel": "2002-03",
-   "age": 31,
-   "games": 82,
-   "mpg": 37.9,
-   "bbrefId": "houstal01",
+   "season": 2006,
+   "seasonLabel": "2005-06",
+   "age": 20,
+   "games": 78,
+   "mpg": 36,
+   "bbrefId": "paulch01",
    "traded": false,
    "metrics": {
-    "bpm": 1,
-    "vorp": 2.4,
-    "ws": 7.2,
-    "ws48": 0.111,
-    "per": 17.7
+    "bpm": 5.2,
+    "vorp": 5.1,
+    "ws": 10.4,
+    "ws48": 0.178,
+    "per": 22.1
    },
    "provisional": false,
-   "rewardFor": "NYK",
-   "rewardGoal": "nba-team-NYK",
-   "wears": "throwbacks",
+   "set": "team-rewards",
    "badges": [
-    "throwback"
-   ]
+    "rookie"
+   ],
+   "wears": "rookie",
+   "migratedFrom": {
+    "set": "rookie",
+    "id": "Chris_Paul"
+   },
+   "rewardFor": "NOP",
+   "rewardGoal": "nba-team-NOP"
   },
   {
    "id": "Jameer_Nelson",
@@ -1635,6 +1509,160 @@
    "rewardGoal": "nba-team-ORL"
   },
   {
+   "id": "Alonzo_Mourning",
+   "name": "Alonzo Mourning",
+   "team": "MIA",
+   "pos": "C",
+   "speed": 8,
+   "power": 15,
+   "shotLine": 17,
+   "paintBoost": 5,
+   "threePtBoost": -3,
+   "defBoost": 3,
+   "salary": 960,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 11,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 12,
+     "hi": 16,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 17,
+     "hi": 99,
+     "pts": 2,
+     "reb": 2,
+     "ast": 0
+    }
+   ],
+   "season": 2006,
+   "seasonLabel": "2005-06",
+   "age": 35,
+   "games": 65,
+   "mpg": 20,
+   "bbrefId": "mournal01",
+   "traded": false,
+   "metrics": {
+    "bpm": 1.8,
+    "vorp": 1.2,
+    "ws": 4.8,
+    "ws48": 0.176,
+    "per": 19.4
+   },
+   "provisional": false,
+   "rewardFor": "MIA",
+   "rewardGoal": "nba-team-MIA",
+   "bandException": "Declared on 2026-09-07 at $860, forty dollars under Miami's super-rare floor; the user, shown the gap: \"Mourning is a fun enough card that it seems fine as a reward.\" His 2005-06 is the Heat's title season and the last real year of a franchise icon; the alternatives price in band but mean nothing to Miami. REFRESHED 2026-09-22: he now prints $1000, INSIDE super-rare ($930-1329) — the reprices since moved him up, so the exception is dormant and kept only so the next drift below the line is a decision already made, not a build failure.",
+   "wears": "throwbacks",
+   "badges": [
+    "throwback"
+   ]
+  },
+  {
+   "id": "Myles_Turner_2019",
+   "name": "Myles Turner",
+   "team": "IND",
+   "pos": "C",
+   "speed": 9,
+   "power": 15,
+   "shotLine": 15,
+   "paintBoost": 1,
+   "threePtBoost": 0,
+   "defBoost": 2,
+   "salary": 920,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 20,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 2,
+     "reb": 2,
+     "ast": 0
+    }
+   ],
+   "season": 2019,
+   "seasonLabel": "2018-19",
+   "age": 22,
+   "games": 74,
+   "mpg": 28.6,
+   "bbrefId": "turnemy01",
+   "traded": false,
+   "metrics": {
+    "bpm": 2.5,
+    "vorp": 2.4,
+    "ws": 6.3,
+    "ws48": 0.144,
+    "per": 18
+   },
+   "provisional": false,
+   "set": "team-rewards",
+   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
+   "demotedFrom": {
+    "set": "super-season",
+    "id": "Myles_Turner"
+   },
+   "badges": [
+    "throwback"
+   ],
+   "wears": "throwbacks",
+   "migratedFrom": {
+    "set": "throwbacks",
+    "id": "Myles_Turner_2019"
+   },
+   "rewardFor": "IND",
+   "rewardGoal": "nba-team-IND",
+   "bandException": "Declared after the 2026-09-12 bench-curve reprice, when Indiana earned rare and Turner's 2018-19 landed at $960, eleven dollars over the rare ceiling - one rounding step, smaller than Philadelphia's twenty and Miami's forty. REFRESHED 2026-09-22: Indiana earns SUPER-RARE now and he still prints $960, INSIDE super-rare ($930-1329); the exception is dormant and stays declared for the next time the line moves. Nothing about the pick is wrong; the line moved under it, twice."
+  },
+  {
    "id": "Nic_Claxton",
    "name": "Nic Claxton",
    "team": "BKN",
@@ -1711,6 +1739,84 @@
    "rewardGoal": "nba-team-BKN"
   },
   {
+   "id": "Steve_Nash",
+   "name": "Steve Nash",
+   "team": "PHX01",
+   "pos": "PG",
+   "speed": 14,
+   "power": 8,
+   "shotLine": 13,
+   "paintBoost": 0,
+   "threePtBoost": -2,
+   "defBoost": -1,
+   "salary": 880,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 5,
+     "hi": 6,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 7,
+     "hi": 12,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 13,
+     "hi": 19,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 20,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 2
+    }
+   ],
+   "season": 2010,
+   "seasonLabel": "2009-10",
+   "age": null,
+   "games": 16,
+   "mpg": 33.7,
+   "bbrefId": "nashst01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true,
+   "set": "team-rewards",
+   "badges": [
+    "summer-standout"
+   ],
+   "wears": "summer-standouts",
+   "migratedFrom": {
+    "set": "summer-standouts",
+    "id": "Steve_Nash"
+   },
+   "rewardFor": "PHX",
+   "rewardGoal": "nba-team-PHX"
+  },
+  {
    "id": "Gerald_Wallace",
    "name": "Gerald Wallace",
    "team": "CHB04",
@@ -1779,6 +1885,78 @@
    "wears": "super-season",
    "badges": [
     "super-season"
+   ]
+  },
+  {
+   "id": "Josh_Smith",
+   "name": "Josh Smith",
+   "team": "ATL08",
+   "pos": "PF",
+   "speed": 9,
+   "power": 12,
+   "shotLine": 17,
+   "paintBoost": 5,
+   "threePtBoost": -1,
+   "defBoost": 1,
+   "salary": 850,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 11,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 12,
+     "hi": 16,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 17,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2009,
+   "seasonLabel": "2008-09",
+   "age": 23,
+   "games": 69,
+   "mpg": 35.1,
+   "bbrefId": "smithjo03",
+   "traded": false,
+   "metrics": {
+    "bpm": 1.7,
+    "vorp": 2.3,
+    "ws": 4.9,
+    "ws48": 0.097,
+    "per": 17.2
+   },
+   "provisional": false,
+   "rewardFor": "ATL",
+   "rewardGoal": "nba-team-ATL",
+   "bandException": "Declared after the 2026-09-12 bench-curve reprice at $850, a hundred dollars under the super-rare floor Atlanta then earned: the reprice moved BOTH sides of the test, and shown the gap and the option to re-pick against real game logs, the user said \"just use Smith\" - a decision, not a rounding artefact. His 2008-09 is the Josh Smith season Atlanta remembers. REFRESHED 2026-09-22: Atlanta earns RARE now and he prints $840, INSIDE rare ($700-929); the exception is dormant and stays declared for the next time the line moves under him.",
+   "wears": "throwbacks",
+   "badges": [
+    "throwback"
    ]
   },
   {
@@ -1865,89 +2043,17 @@
    "rewardGoal": "nba-team-MIL"
   },
   {
-   "id": "Josh_Smith",
-   "name": "Josh Smith",
-   "team": "ATL08",
-   "pos": "PF",
-   "speed": 9,
-   "power": 12,
-   "shotLine": 17,
-   "paintBoost": 5,
-   "threePtBoost": -1,
-   "defBoost": 1,
-   "salary": 850,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 6,
-     "pts": 0,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 7,
-     "hi": 11,
-     "pts": 1,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 12,
-     "hi": 16,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 17,
-     "hi": 99,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    }
-   ],
-   "season": 2009,
-   "seasonLabel": "2008-09",
-   "age": 23,
-   "games": 69,
-   "mpg": 35.1,
-   "bbrefId": "smithjo03",
-   "traded": false,
-   "metrics": {
-    "bpm": 1.7,
-    "vorp": 2.3,
-    "ws": 4.9,
-    "ws48": 0.097,
-    "per": 17.2
-   },
-   "provisional": false,
-   "rewardFor": "ATL",
-   "rewardGoal": "nba-team-ATL",
-   "bandException": "Declared after the 2026-09-12 bench-curve reprice at $850, a hundred dollars under the super-rare floor Atlanta then earned: the reprice moved BOTH sides of the test, and shown the gap and the option to re-pick against real game logs, the user said \"just use Smith\" - a decision, not a rounding artefact. His 2008-09 is the Josh Smith season Atlanta remembers. REFRESHED 2026-09-22: Atlanta earns RARE now and he prints $840, INSIDE rare ($700-929); the exception is dormant and stays declared for the next time the line moves under him.",
-   "wears": "throwbacks",
-   "badges": [
-    "throwback"
-   ]
-  },
-  {
-   "id": "Steve_Nash",
-   "name": "Steve Nash",
-   "team": "PHX01",
+   "id": "Mike_Bibby",
+   "name": "Mike Bibby",
+   "team": "SAC95",
    "pos": "PG",
-   "speed": 14,
-   "power": 8,
-   "shotLine": 13,
+   "speed": 15,
+   "power": 9,
+   "shotLine": 15,
    "paintBoost": 0,
-   "threePtBoost": -2,
-   "defBoost": -1,
-   "salary": 880,
+   "threePtBoost": 0,
+   "defBoost": 0,
+   "salary": 800,
    "chart": [
     {
      "lo": 1,
@@ -1961,43 +2067,43 @@
      "hi": 4,
      "pts": 0,
      "reb": 0,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 5,
-     "hi": 6,
+     "hi": 8,
      "pts": 1,
      "reb": 0,
-     "ast": 1
+     "ast": 0
     },
     {
-     "lo": 7,
-     "hi": 12,
+     "lo": 9,
+     "hi": 14,
      "pts": 2,
      "reb": 0,
-     "ast": 1
+     "ast": 0
     },
     {
-     "lo": 13,
-     "hi": 19,
+     "lo": 15,
+     "hi": 22,
      "pts": 2,
      "reb": 0,
-     "ast": 1
+     "ast": 0
     },
     {
-     "lo": 20,
+     "lo": 23,
      "hi": 99,
      "pts": 2,
-     "reb": 1,
-     "ast": 2
+     "reb": 0,
+     "ast": 1
     }
    ],
-   "season": 2010,
-   "seasonLabel": "2009-10",
+   "season": 2002,
+   "seasonLabel": "2001-02",
    "age": null,
    "games": 16,
-   "mpg": 33.7,
-   "bbrefId": "nashst01",
+   "mpg": 41.3,
+   "bbrefId": "bibbymi01",
    "traded": false,
    "metrics": {},
    "provisional": false,
@@ -2009,10 +2115,10 @@
    "wears": "summer-standouts",
    "migratedFrom": {
     "set": "summer-standouts",
-    "id": "Steve_Nash"
+    "id": "Mike_Bibby"
    },
-   "rewardFor": "PHX",
-   "rewardGoal": "nba-team-PHX"
+   "rewardFor": "SAC",
+   "rewardGoal": "nba-team-SAC"
   },
   {
    "id": "Elton_Brand",
@@ -2148,84 +2254,6 @@
    "badges": [
     "throwback"
    ]
-  },
-  {
-   "id": "Mike_Bibby",
-   "name": "Mike Bibby",
-   "team": "SAC95",
-   "pos": "PG",
-   "speed": 15,
-   "power": 9,
-   "shotLine": 15,
-   "paintBoost": 0,
-   "threePtBoost": 0,
-   "defBoost": 0,
-   "salary": 800,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 4,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 5,
-     "hi": 8,
-     "pts": 1,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 9,
-     "hi": 14,
-     "pts": 2,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 15,
-     "hi": 22,
-     "pts": 2,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 23,
-     "hi": 99,
-     "pts": 2,
-     "reb": 0,
-     "ast": 1
-    }
-   ],
-   "season": 2002,
-   "seasonLabel": "2001-02",
-   "age": null,
-   "games": 16,
-   "mpg": 41.3,
-   "bbrefId": "bibbymi01",
-   "traded": false,
-   "metrics": {},
-   "provisional": false,
-   "playoffRun": true,
-   "set": "team-rewards",
-   "badges": [
-    "summer-standout"
-   ],
-   "wears": "summer-standouts",
-   "migratedFrom": {
-    "set": "summer-standouts",
-    "id": "Mike_Bibby"
-   },
-   "rewardFor": "SAC",
-   "rewardGoal": "nba-team-SAC"
   },
   {
    "id": "Luis_Scola",
@@ -2365,7 +2393,8 @@
     "id": "Jason_Kidd"
    },
    "rewardFor": "DAL",
-   "rewardGoal": "nba-team-DAL"
+   "rewardGoal": "nba-team-DAL",
+   "bandException": "Declared 2026-09-24 after the salary model's rebound and assist rates were corrected (e55a187c, 2cb684eb): his 1994-95 Rookie card went $700 -> $670, thirty dollars under the rare floor Dallas earns. The Mourning precedent: a small miss on a reward people may already hold is documented, not re-picked."
   }
  ]
 }

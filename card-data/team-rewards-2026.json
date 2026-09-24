@@ -89,10 +89,10 @@
   "_tierComment": "PICKS TARGET THE LOW END OF THEIR BAND, which is what keeps each source set’s marquee card where it is: Curry’s 2015-16, LeBron’s 2008-09, Embiid’s 2021-22 and Gilgeous-Alexander’s 2024-25 all stay in Super Season. THE CONFERENCE ODDITY IS FIXED. The East reward was a Houston card because only Giannis cleared the franchise ceiling from an Eastern team, and he was the capstone. Two moves solved it: Oklahoma City dropped from Gilgeous-Alexander ($1,680) to Paul George ($1,500), lowering the ceiling, and the three tiers are now BUILT from seasons no set holds rather than moved from ones that do. Every tier is conference-correct and above every franchise reward: LeBron’s 2009-10 MVP year for the East, Curry’s 2020-21 for the West, and Giannis’ 2019-20 MVP+DPOY season — $2,030, the best card in the game — for all 348 cards.",
   "tiers": {
     "nba-conference-East": {
-      "name": "Joel Embiid",
-      "season": 2023,
-      "team": "PHI",
-      "goal": "nba-conference-East"
+      "set": "super-season",
+      "id": "Joel_Embiid",
+      "goal": "nba-conference-East",
+      "_comment": "2026-09-24: the Super Season value pick made Joel Embiid's 2023 his/her Super Season, so the reward migrates from it and wears the gold (the John Wall precedent) rather than printing the same season twice. Was a built pick."
     },
     "nba-conference-West": {
       "name": "Stephen Curry",
@@ -101,10 +101,10 @@
       "goal": "nba-conference-West"
     },
     "nba-set": {
-      "name": "Giannis Antetokounmpo",
-      "season": 2020,
-      "team": "MIL",
-      "goal": "nba-set"
+      "set": "super-season",
+      "id": "Giannis_Antetokounmpo",
+      "goal": "nba-set",
+      "_comment": "2026-09-24: the Super Season value pick made Giannis Antetokounmpo's 2020 his/her Super Season, so the reward migrates from it and wears the gold (the John Wall precedent) rather than printing the same season twice. Was a built pick."
     }
   },
   "migrated": {
@@ -146,9 +146,10 @@
       "goal": "nba-team-DEN"
     },
     "LAL": {
-      "set": "super-season",
-      "id": "Kobe_Bryant",
-      "goal": "nba-team-LAL"
+      "set": "throwbacks",
+      "id": "Kobe_Bryant_2006",
+      "goal": "nba-team-LAL",
+      "_comment": "2026-09-24: the Super Season value pick moved Kobe_Bryant's Super Season to 2009; this reward keeps its 2006 season by migrating from the retired Throwback (the David Robinson precedent). Alias the old key team-rewards:Kobe_Bryant -> ...:Kobe_Bryant_2006 in cardSets.js KEY_ALIASES."
     },
     "ORL": {
       "set": "summer-standouts",
@@ -156,10 +157,11 @@
       "goal": "nba-team-ORL"
     },
     "IND": {
-      "set": "super-season",
-      "id": "Myles_Turner",
+      "set": "throwbacks",
+      "id": "Myles_Turner_2019",
       "goal": "nba-team-IND",
-      "bandException": "Declared after the 2026-09-12 bench-curve reprice, when Indiana earned rare and Turner's 2018-19 landed at $960, eleven dollars over the rare ceiling - one rounding step, smaller than Philadelphia's twenty and Miami's forty. REFRESHED 2026-09-22: Indiana earns SUPER-RARE now and he still prints $960, INSIDE super-rare ($930-1329); the exception is dormant and stays declared for the next time the line moves. Nothing about the pick is wrong; the line moved under it, twice."
+      "bandException": "Declared after the 2026-09-12 bench-curve reprice, when Indiana earned rare and Turner's 2018-19 landed at $960, eleven dollars over the rare ceiling - one rounding step, smaller than Philadelphia's twenty and Miami's forty. REFRESHED 2026-09-22: Indiana earns SUPER-RARE now and he still prints $960, INSIDE super-rare ($930-1329); the exception is dormant and stays declared for the next time the line moves. Nothing about the pick is wrong; the line moved under it, twice.",
+      "_comment": "2026-09-24: the Super Season value pick moved Myles_Turner's Super Season to 2023; this reward keeps its 2019 season by migrating from the retired Throwback (the David Robinson precedent). Alias the old key team-rewards:Myles_Turner -> ...:Myles_Turner_2019 in cardSets.js KEY_ALIASES."
     },
     "NOP": {
       "set": "rookie",
@@ -167,9 +169,10 @@
       "goal": "nba-team-NOP"
     },
     "UTA": {
-      "set": "super-season",
-      "id": "John_Stockton",
-      "goal": "nba-team-UTA"
+      "set": "throwbacks",
+      "id": "John_Stockton_2002",
+      "goal": "nba-team-UTA",
+      "_comment": "2026-09-24: the Super Season value pick moved John_Stockton's Super Season to 1995; this reward keeps its 2002 season by migrating from the retired Throwback (the David Robinson precedent). Alias the old key team-rewards:John_Stockton -> ...:John_Stockton_2002 in cardSets.js KEY_ALIASES."
     },
     "PHX": {
       "set": "summer-standouts",
@@ -179,7 +182,8 @@
     "DAL": {
       "set": "rookie",
       "id": "Jason_Kidd",
-      "goal": "nba-team-DAL"
+      "goal": "nba-team-DAL",
+      "bandException": "Declared 2026-09-24 after the salary model's rebound and assist rates were corrected (e55a187c, 2cb684eb): his 1994-95 Rookie card went $700 -> $670, thirty dollars under the rare floor Dallas earns. The Mourning precedent: a small miss on a reward people may already hold is documented, not re-picked."
     },
     "SAC": {
       "set": "summer-standouts",

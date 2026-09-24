@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-23T12:32:44.064Z",
+ "generatedAt": "2026-09-24T13:40:26.995Z",
  "set": "rookie",
  "provisional": true,
  "sources": {
@@ -8418,10 +8418,7 @@
     "ws48": 0.048,
     "per": 14.6
    },
-   "provisional": false,
-   "badges": [
-    "best-season"
-   ]
+   "provisional": false
   },
   {
    "id": "Jaden_McDaniels",
@@ -11622,10 +11619,7 @@
     "ws48": 0.087,
     "per": 12.3
    },
-   "provisional": false,
-   "badges": [
-    "best-season"
-   ]
+   "provisional": false
   },
   {
    "id": "Kel_el_Ware",

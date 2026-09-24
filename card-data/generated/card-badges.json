@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-23T12:32:44.076Z",
+ "generatedAt": "2026-09-24T13:40:27.006Z",
  "set": "2026-27",
  "provisional": true,
  "source": "the Super Season and Rookie exclusion lists: a player whose best or rookie season is 2026 gets no card in that set, because his base card already IS that season — so the fact is printed on the base card as a badge instead",
@@ -15,10 +15,10 @@
   "live"
  ],
  "counts": {
-  "players": 178,
+  "players": 173,
   "applies": {
    "rookie": 33,
-   "super-season": 178,
+   "super-season": 173,
    "best-season": 0,
    "summer-standout": 0,
    "dissonance": 0,
@@ -29,8 +29,8 @@
   },
   "printed": {
    "rookie": 33,
-   "super-season": 22,
-   "best-season": 123,
+   "super-season": 20,
+   "best-season": 120,
    "summer-standout": 0,
    "dissonance": 0,
    "team-reward": 0,
@@ -71,13 +71,6 @@
    ]
   },
   {
-   "id": "Andrew_Nembhard",
-   "name": "Andrew Nembhard",
-   "badges": [
-    "super-season"
-   ]
-  },
-  {
    "id": "Andrew_Wiggins",
    "name": "Andrew Wiggins",
    "badges": [
@@ -101,13 +94,6 @@
   {
    "id": "Ayo_Dosunmu",
    "name": "Ayo Dosunmu",
-   "badges": [
-    "super-season"
-   ]
-  },
-  {
-   "id": "Bam_Adebayo",
-   "name": "Bam Adebayo",
    "badges": [
     "super-season"
    ]
@@ -221,13 +207,6 @@
    ]
   },
   {
-   "id": "Coby_White",
-   "name": "Coby White",
-   "badges": [
-    "super-season"
-   ]
-  },
-  {
    "id": "Cody_Williams",
    "name": "Cody Williams",
    "badges": [
@@ -289,6 +268,13 @@
   {
    "id": "Day_Ron_Sharpe",
    "name": "Day'Ron Sharpe",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "De_Anthony_Melton",
+   "name": "De'Anthony Melton",
    "badges": [
     "super-season"
    ]
@@ -468,6 +454,13 @@
    ]
   },
   {
+   "id": "Jaden_Hardy",
+   "name": "Jaden Hardy",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
    "id": "Jaden_McDaniels",
    "name": "Jaden McDaniels",
    "badges": [
@@ -546,6 +539,13 @@
    ]
   },
   {
+   "id": "Jarrett_Allen",
+   "name": "Jarrett Allen",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
    "id": "Javon_Small",
    "name": "Javon Small",
    "badges": [
@@ -603,13 +603,6 @@
    ]
   },
   {
-   "id": "Jerami_Grant",
-   "name": "Jerami Grant",
-   "badges": [
-    "super-season"
-   ]
-  },
-  {
    "id": "Jeremiah_Fears",
    "name": "Jeremiah Fears",
    "badges": [
@@ -655,13 +648,6 @@
   {
    "id": "Jose_Alvarado",
    "name": "Jose Alvarado",
-   "badges": [
-    "super-season"
-   ]
-  },
-  {
-   "id": "Josh_Green",
-   "name": "Josh Green",
    "badges": [
     "super-season"
    ]
@@ -726,13 +712,6 @@
   {
    "id": "Keldon_Johnson",
    "name": "Keldon Johnson",
-   "badges": [
-    "super-season"
-   ]
-  },
-  {
-   "id": "Kelly_Oubre_Jr",
-   "name": "Kelly Oubre Jr.",
    "badges": [
     "super-season"
    ]
@@ -976,13 +955,6 @@
    ]
   },
   {
-   "id": "Pascal_Siakam",
-   "name": "Pascal Siakam",
-   "badges": [
-    "super-season"
-   ]
-  },
-  {
    "id": "Pat_Spencer",
    "name": "Pat Spencer",
    "badges": [
@@ -1112,13 +1084,6 @@
    ]
   },
   {
-   "id": "Sam_Merrill",
-   "name": "Sam Merrill",
-   "badges": [
-    "super-season"
-   ]
-  },
-  {
    "id": "Sandro_Mamukelashvili",
    "name": "Sandro Mamukelashvili",
    "badges": [
@@ -1240,6 +1205,13 @@
    ]
   },
   {
+   "id": "Tyrese_Martin",
+   "name": "Tyrese Martin",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
    "id": "Tyrese_Maxey",
    "name": "Tyrese Maxey",
    "badges": [
@@ -1302,13 +1274,6 @@
   {
    "id": "Zaccharie_Risacher",
    "name": "Zaccharie Risacher",
-   "badges": [
-    "super-season"
-   ]
-  },
-  {
-   "id": "Zeke_Nnaji",
-   "name": "Zeke Nnaji",
    "badges": [
     "super-season"
    ]

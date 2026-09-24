@@ -44,6 +44,7 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { readCache, REPO_ROOT } from './cache.js';
 import { bestSeason } from './history.js';
+import { superSeasonMap } from './rewardIdentity.js';
 import { seasonDistribution } from './fetchHistory.js';
 import { CARD_SETS } from '../../src/game/cardSets.js';
 import { setBadge } from '../../src/cards/sets.js';
@@ -133,9 +134,25 @@ export function audit({ log = console.log, showAll = false } = {}) {
   const wrong = [];
   const unverifiable = [];
   let ok = 0;
+  // THE BEST SEASON IS THE MOST VALUABLE ONE (the value pick, 2026-09-24): a
+  // player with a Super Season card is judged against the season that card
+  // carries — it was chosen by pricing every eligible season. The box-score
+  // rule below stays the judge for players with no such card (a base card
+  // carrying the badge, a requested season).
+  const superSeasonOf = superSeasonMap();
   for (const { set, card } of claims) {
     const id = card.bbrefId ?? card.playerId;
     if (!id) { unverifiable.push({ set, card, why: 'card names no bbrefId' }); continue; }
+    const pinned = superSeasonOf.get(id);
+    if (pinned != null) {
+      if (pinned === card.season) {
+        ok += 1;
+        if (showAll) log(`  ok   ${set.padEnd(18)} ${card.name} ${card.seasonLabel ?? card.season} (value pick)`);
+      } else {
+        wrong.push({ set, card, best: pinned });
+      }
+      continue;
+    }
     const career = byId.get(id)?.length ? byId.get(id) : careerFromTables(id);
     if (career.length === 0) { unverifiable.push({ set, card, why: 'no career rows' }); continue; }
     const first = career[0];

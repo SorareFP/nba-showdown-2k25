@@ -473,7 +473,15 @@ describe('the base set\'s badges', () => {
     // 196 later on 2026-09-22: five seasons a Rookie card of the player's
     // out-prices moved to Throwbacks (BEATEN_BY_ROOKIE — Mitchell Robinson,
     // Kirilenko, Yao, Duncan, David Robinson).
-    expect(SUPER.cards.length).toBe(196);
+    // 202 on 2026-09-24, THE VALUE PICK (superSeasonValue.js): every eligible
+    // season priced and the most valuable kept. Ten players whose box-score
+    // pick priced under their own base card have an earlier season that beats
+    // it and joined (Adebayo 2023-24, Siakam 2022-23, Jerami Grant 2022-23,
+    // Keegan Murray, Coby White, Nembhard, Merrill, Oubre, Josh Green, Nnaji);
+    // four left — Mathurin (his Rookie card now out-prices every season) and
+    // Melton, Allen and Tyrese Martin (their base cards out-price them after
+    // the currency-rate reprice). Each shipped one is a Throwback now.
+    expect(SUPER.cards.length).toBe(202);
     //
     // AND 321 -> 348 WHEN THE STANDOUT NEWCOMERS' ROOKIE YEARS ARRIVED — every
     // standout outside the pool whose career begins inside the cache-and-EPM
@@ -610,8 +618,12 @@ describe('the base set\'s badges', () => {
     // the set and onto the badge, and most of them are the cheap role players
     // the rule exists to catch — so the BEST SEASON side of the split grew far
     // more than the gilded one.
-    expect(counts.printed[BEST_SEASON_BADGE]).toBe(123);
-    expect(counts.printed[SUPER_SEASON_BADGE]).toBe(22);
+    // 20/120 on 2026-09-24: the currency-rate reprice and the value pick moved
+    // the base badges — 173 badged players, not 178 (ten found a season that
+    // beats their base card, and joined the Super Season set; five went the
+    // other way). A measurement, as every note above says.
+    expect(counts.printed[BEST_SEASON_BADGE]).toBe(120);
+    expect(counts.printed[SUPER_SEASON_BADGE]).toBe(20);
     // Nobody loses their pill entirely in the resolution.
     expect(BADGE_IDS.reduce((n, id) => n + counts.printed[id], 0)).toBe(counts.players);
     expect(counts.multiple).toBe(ROOKIE.excluded.length);

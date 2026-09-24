@@ -436,7 +436,14 @@ describe('the committed file', () => {
     // 2008-09 left for Throwbacks with the other seasons a Rookie card of the
     // player's out-prices (BEATEN_BY_ROOKIE; Mitchell Robinson and Kirilenko
     // carried no mark).
-    expect(AWARDS.counts[SUPER_SEASON_SET].marked).toBe(77);
+    // 78 on 2026-09-24, the VALUE PICK (superSeasonValue.js): each player's
+    // Super Season is now his highest-salary season, and the trophy years do
+    // not always win it — Jordan's 1987-88 MVP+DPOY lost to his 1989-90,
+    // Kareem's 1976-77, Bird's 1984-85, Malone's 1996-97 and Durant's 2013-14
+    // MVPs all left for the Throwbacks with their marks. Thirty-three marked
+    // seasons left, thirty-four arrived (Kobe's 2008-09 ring and Finals MVP,
+    // Barkley's 1992-93 MVP among them), so the count barely moves.
+    expect(AWARDS.counts[SUPER_SEASON_SET].marked).toBe(78);
     // The rookie set moves at last, and only on the ring: no player in that
     // pool was an All-Star as a rookie, but six of them won a title as one.
     //
@@ -477,7 +484,10 @@ describe('the committed file', () => {
     // still leaves each set a minority.
     // 10, not 11: Yabusele's ring left the base set with him.
     expect(AWARDS.counts[CURRENT_SET].byCode.CHAMP).toBe(10);
-    expect(AWARDS.counts[SUPER_SEASON_SET].byCode.CHAMP).toBe(10);
+    // 11 on 2026-09-24 (the value pick): the three 2024-25 Thunder rings left
+    // for Throwbacks (Jalen Williams, Dort, Kenrich Williams); Derrick White
+    // 2023-24, Kobe 2008-09, Draymond Green 2014-15 and Zeke Nnaji 2022-23 came.
+    expect(AWARDS.counts[SUPER_SEASON_SET].byCode.CHAMP).toBe(11);
     // …against what admitting All-NBA and All-Defensive as well would mark.
     // Still a step up on every set, which is the case for stopping here.
     // (Unchanged by the ring: ifSelectionsCounted asks about the awards column,
@@ -486,7 +496,7 @@ describe('the committed file', () => {
     expect(AWARDS.counts[CURRENT_SET].ifSelectionsCounted).toBe(45);
     // 85 on 2026-09-07 with the awards file regenerated against the current
     // Super Season roster — the capstone legends it had gone stale against.
-    expect(AWARDS.counts[SUPER_SEASON_SET].ifSelectionsCounted).toBe(87) /* 86 on 2026-09-09: Lillard's ring-year card back in Super Season; 90 on 2026-09-22: Arenas, Brand, DeAndre Jordan and Parker joined (the reward/identity batch); 87 later that day: Duncan, Yao and Kirilenko demoted to Throwbacks (BEATEN_BY_ROOKIE) */;
+    expect(AWARDS.counts[SUPER_SEASON_SET].ifSelectionsCounted).toBe(85) /* 85 on 2026-09-24: the value pick (78 marked, the selection-only seasons it moved were a wash less two); 86 on 2026-09-09: Lillard's ring-year card back in Super Season; 90 on 2026-09-22: Arenas, Brand, DeAndre Jordan and Parker joined (the reward/identity batch); 87 later that day: Duncan, Yao and Kirilenko demoted to Throwbacks (BEATEN_BY_ROOKIE) */;
     // 21, not 25: the rookie playing-time bar, same four bench rings.
     // 24, and equal to `marked`: a rookie card's only trophies are ROY and a
     // ring, neither of which the selection suffix distinguishes.
@@ -535,9 +545,8 @@ describe('the committed file', () => {
       '2026-27 Jalen Brunson 2026 FMVP+CHAMP+AS',
       '2026-27 Shai Gilgeous-Alexander 2026 MVP+CPOY+AS',
       'summer-standouts Kawhi Leonard 2019 FMVP+CHAMP+AS',
-      // Jordan's 1987-88: MVP and DPOY in the same year, which only he and
-      // Hakeem have ever done. Arrived with the force-included legends.
-      'super-season Michael Jordan 1988 MVP+DPOY+AS',
+      // Kobe's 2008-09, his Super Season since the value pick (2026-09-24).
+      'super-season Kobe Bryant 2009 FMVP+CHAMP+AS',
       'super-season Shai Gilgeous-Alexander 2025 MVP+FMVP+CHAMP+AS',
       "super-season Shaquille O'Neal 2000 MVP+FMVP+CHAMP+AS",
       // Durant's 2017 standout card is Golden State's reward now. Giannis'
@@ -546,6 +555,10 @@ describe('the committed file', () => {
       // this list.
       'team-rewards Giannis Antetokounmpo 2020 MVP+DPOY+AS',
       'team-rewards Kevin Durant 2017 FMVP+CHAMP+AS',
+      // Jordan's 1987-88: MVP and DPOY in the same year, which only he and
+      // Hakeem have ever done. Arrived with the force-included legends, and a
+      // Throwback since the value pick gave his Super Season to 1989-90.
+      'throwbacks Michael Jordan 1988 MVP+DPOY+AS',
     ]);
   });
 
@@ -574,7 +587,8 @@ describe('the committed file', () => {
     expect(AWARDS.counts[CURRENT_SET].byCode.FMVP).toBe(1);
     // One on the reward set: Durant's 2017, moved in with his card.
     expect(AWARDS.counts['team-rewards'].byCode.FMVP).toBe(1);
-    expect(AWARDS.counts[SUPER_SEASON_SET].byCode.FMVP).toBe(2);
+    // Three since the value pick made Kobe's 2008-09 his Super Season.
+    expect(AWARDS.counts[SUPER_SEASON_SET].byCode.FMVP).toBe(3);
     // ZERO IN THE ROOKIE SET, and that is a fact about the award rather than a
     // miss: no rookie has won a Finals MVP in the 2004..2026 range, and only
     // Magic Johnson ever has.

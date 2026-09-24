@@ -339,7 +339,7 @@ export const CARD_PLAYERS = SHIPPED_CARDS;
  * here the way the pool does.
  */
 const specialModules = import.meta.glob(
-  '../../card-data/generated/cards-{live,super-season,rookie,summer-standouts,dissonance,team-rewards,set-rewards,wnba,wnba-rookie,wnba-super-season,wnba-team-rewards,wnba-set-rewards,free-agents,throwbacks}.json',
+  '../../card-data/generated/cards-{live,super-season,rookie,summer-standouts,dissonance,team-rewards,set-rewards,wnba,wnba-rookie,wnba-super-season,wnba-team-rewards,wnba-set-rewards,free-agents,throwbacks,wnba-throwbacks}.json',
   { eager: true }
 );
 
@@ -358,10 +358,12 @@ function loadSpecialSet(id) {
     }
   }
   // A set made ONLY of requested cards has no generated file of its own: its
-  // cards are the requests built into it. Since 2026-09-22 that is the WNBA
-  // Throwbacks alone: the NBA Throwbacks has a generator-owned file
-  // (cards-throwbacks.json, the curated retired rewards), found above, and the
-  // requests join it there.
+  // cards are the requests built into it. Neither Throwbacks set is one any
+  // more — the NBA side has had a generator-owned file since 2026-09-22
+  // (cards-throwbacks.json, the curated retired rewards) and the WNBA side
+  // since 2026-09-24 (cards-wnba-throwbacks.json, the retired WNBA Super
+  // Seasons), both found above with the requests joining them — so this is
+  // the fallback for a checkout that has not run generateCuratedCards.
   if (REQUEST_ONLY_SETS.includes(id)) {
     return { set: id, cards: FREE_AGENT_CARDS.filter(c => c.set === id), requestedOnly: true };
   }
@@ -749,10 +751,12 @@ export const SOURCES = {
       'every card, any decade: the 1990s teal brush and purple scribble.',
   }),
   'wnba-throwbacks': specialSource('wnba-throwbacks', WNBA_THROWBACKS_FILE, {
-    sub: 'requested seasons (Free Agents)',
+    sub: 'requested and retired seasons',
     hint:
       'THE WNBA SIDE OF THE FREE AGENTS CATCH-ALL. Same rules as the NBA Throwbacks set: cards ' +
-      'arrive from Requests → Build card, photos are named like the id (Marissa_Coleman_2010).',
+      'arrive from Requests → Build card, photos are named like the id (Marissa_Coleman_2010). ' +
+      'Since 2026-09-24 it also holds the WNBA Super Seasons the value pick retired ' +
+      '(scripts/cardgen/generateCuratedCards.js writes cards-wnba-throwbacks.json).',
   }),
   strats: {
     key: 'strats',

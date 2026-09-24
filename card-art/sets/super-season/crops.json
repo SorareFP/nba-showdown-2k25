@@ -19,11 +19,6 @@
     "y": 0,
     "zoom": 1
   },
-  "DeMar_DeRozan": {
-    "x": -1.79,
-    "y": 0,
-    "zoom": 1
-  },
   "Dennis_Rodman": {
     "x": -2.33,
     "y": -1.82,
@@ -151,11 +146,6 @@
   },
   "Paul_Pierce": {
     "x": -5.91,
-    "y": 0,
-    "zoom": 1
-  },
-  "Pau_Gasol": {
-    "x": -9.14,
     "y": 0,
     "zoom": 1
   },
@@ -329,21 +319,6 @@
     "y": 0,
     "zoom": 1
   },
-  "Caris_LeVert": {
-    "x": 15.71,
-    "y": 0,
-    "zoom": 1
-  },
-  "Charles_Barkley": {
-    "x": -19.98,
-    "y": 29.36,
-    "zoom": 1.48
-  },
-  "Chris_Paul": {
-    "x": -37.24,
-    "y": 0,
-    "zoom": 1
-  },
   "Christian_Braun": {
     "x": -16.29,
     "y": 0,
@@ -351,11 +326,6 @@
   },
   "CJ_McCollum": {
     "x": 13.38,
-    "y": 0,
-    "zoom": 1
-  },
-  "Clint_Capela": {
-    "x": 9.51,
     "y": 0,
     "zoom": 1
   },
@@ -414,11 +384,6 @@
     "y": 0,
     "zoom": 1
   },
-  "Dennis_Schroder": {
-    "x": -0.39,
-    "y": 0,
-    "zoom": 1
-  },
   "Derrick_White": {
     "x": -12.41,
     "y": 0,
@@ -433,16 +398,6 @@
     "x": -46.51,
     "y": -5.08,
     "zoom": 1.13
-  },
-  "Dillon_Brooks": {
-    "x": -17.26,
-    "y": 0,
-    "zoom": 1
-  },
-  "Domantas_Sabonis": {
-    "x": -14.75,
-    "y": 0,
-    "zoom": 1
   },
   "Donovan_Mitchell": {
     "x": -5.82,
@@ -481,11 +436,6 @@
   },
   "Franz_Wagner": {
     "x": -6.01,
-    "y": 0,
-    "zoom": 1
-  },
-  "Fred_VanVleet": {
-    "x": -15.52,
     "y": 0,
     "zoom": 1
   },
@@ -584,11 +534,6 @@
     "y": -2.78,
     "zoom": 1.1
   },
-  "Jakob_Poeltl": {
-    "x": -9.9,
-    "y": 0,
-    "zoom": 1
-  },
   "Jalen_Brunson": {
     "x": -31.04,
     "y": 0,
@@ -638,11 +583,6 @@
     "x": -7.57,
     "y": 0,
     "zoom": 1
-  },
-  "Jarred_Vanderbilt": {
-    "x": 9.7,
-    "y": -6.23,
-    "zoom": 1.13
   },
   "Jarrett_Allen": {
     "x": -24.25,
@@ -784,11 +724,6 @@
     "y": -6.95,
     "zoom": 1.23
   },
-  "Mikal_Bridges": {
-    "x": -26.12,
-    "y": 0,
-    "zoom": 1
-  },
   "Mitchell_Robinson": {
     "x": -10.31,
     "y": 0,
@@ -803,11 +738,6 @@
     "x": -3.71,
     "y": -9.81,
     "zoom": 1.3
-  },
-  "Nicolas_Batum": {
-    "x": 14.99,
-    "y": 0,
-    "zoom": 1
   },
   "Nikola_Jovic": {
     "x": 12.9,
@@ -844,11 +774,6 @@
     "y": 0,
     "zoom": 1
   },
-  "Quentin_Grimes": {
-    "x": -2.42,
-    "y": 0,
-    "zoom": 1
-  },
   "RJ_Barrett": {
     "x": -7.41,
     "y": 0,
@@ -858,11 +783,6 @@
     "x": -7.57,
     "y": -6.46,
     "zoom": 1.26
-  },
-  "Royce_O_Neale": {
-    "x": -4.19,
-    "y": 0,
-    "zoom": 1
   },
   "Rudy_Gobert": {
     "x": -10.16,
@@ -901,11 +821,6 @@
   },
   "Thomas_Bryant": {
     "x": 17.41,
-    "y": 0,
-    "zoom": 1
-  },
-  "Tim_Hardaway_Jr": {
-    "x": 32.88,
     "y": 0,
     "zoom": 1
   },

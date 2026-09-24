@@ -70,7 +70,7 @@ import { franchiseOf, MIN_GAMES } from './wnbaRewardCandidates.js';
 import { setBadge } from '../../../src/cards/sets.js';
 import { SUPER_SEASON_BADGE } from '../../../src/cards/badges.js';
 import { bestLegendSeason } from './legends.js';
-import { classifyWnbaSeason, settleTwin, wornByMigrated, WNBA_SETS } from '../rewardIdentity.js';
+import { classifyWnbaSeason, settleTwin, wornByMigrated, WNBA_SETS, superSeasonMap, isBestSeason } from '../rewardIdentity.js';
 
 /**
  * The badge a migrated card keeps from the set it came from.
@@ -150,11 +150,12 @@ function moveCard({ set, id, franchise, goal, bandException }) {
  * settled after pricing because gold is a salary line. `career` is careerOf()
  * for the pick's player id over the rated archive.
  */
-export function wornByBuiltWnba(career, season, salary) {
-  const set = classifyWnbaSeason(career, season);
+export function wornByBuiltWnba(career, season, salary, { superSeasonOf = superSeasonMap(), playerId = null } = {}) {
+  // Her Super Season card's season first (the value pick, 2026-09-24).
+  const set = classifyWnbaSeason(career, season, { superSeasonOf, playerId });
   const top = bestLegendSeason(career);
   const wears = settleTwin(set, {
-    alsoBest: top.best?.season === season && top.eligibility !== 'none',
+    alsoBest: isBestSeason(career, season, top, { superSeasonOf, playerId }),
     trusted: top.eligibility === 'both',
     salary,
   }, { rookie: WNBA_SETS.rookie, best: WNBA_SETS.best });
@@ -327,7 +328,7 @@ export function main({ log = console.log, enforceBands = true } = {}) {
 
   // What each built card WEARS, once its salary is known.
   cards.forEach((card, i) => {
-    const { wears, badges } = wornByBuiltWnba(careerOf(rows[i].playerId, seasons), picks[i].season, card.salary);
+    const { wears, badges } = wornByBuiltWnba(careerOf(rows[i].playerId, seasons), picks[i].season, card.salary, { playerId: rows[i].playerId });
     card.wears = wears;
     card.badges = badges;
   });

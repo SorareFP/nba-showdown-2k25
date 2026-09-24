@@ -23,6 +23,8 @@ import wnbaRookie from '../../card-data/generated/cards-wnba-rookie.json' with {
 import freeAgents from '../../card-data/generated/cards-free-agents.json' with { type: 'json' };
 // Curated Throwbacks (2026-09-22): generator-owned, never the requests file.
 import throwbacks from '../../card-data/generated/cards-throwbacks.json' with { type: 'json' };
+// …and the WNBA ones, the Super Seasons the value pick retired (2026-09-24).
+import wnbaThrowbacks from '../../card-data/generated/cards-wnba-throwbacks.json' with { type: 'json' };
 
 export const BASE_SET = '2026-27';
 
@@ -47,7 +49,13 @@ export const BASE_SET = '2026-27';
  */
 const MIGRATED_OUT = new Set(
   // The set-completion rewards migrate the same way (generateSetRewards.js).
-  [...teamRewards.cards, ...wnbaTeamRewards.cards, ...setRewards.cards, ...wnbaSetRewards.cards]
+  // And since the Super Season value pick (2026-09-24) a SUPER SEASON card can
+  // absorb a requested or curated card of the same season: it records
+  // `migratedFrom`, and the old copy leaves its set here just the same.
+  [
+    ...teamRewards.cards, ...wnbaTeamRewards.cards, ...setRewards.cards, ...wnbaSetRewards.cards,
+    ...superSeason.cards, ...wnbaSuperSeason.cards,
+  ]
     .filter(c => c.migratedFrom)
     .map(c => `${c.migratedFrom.set}:${c.migratedFrom.id}`)
 );
@@ -118,6 +126,7 @@ joinFreeAgents(CARD_SETS, freeAgents.cards);
 // cards-throwbacks.json from card-data/curated-cards-2026.json), never the
 // user's requests file. Each card names its set, so the join is the same one.
 joinFreeAgents(CARD_SETS, throwbacks.cards);
+joinFreeAgents(CARD_SETS, wnbaThrowbacks.cards);
 
 /** The collection key for a card (or for a bare set+id pair). */
 export function cardKey(card) {
@@ -149,13 +158,54 @@ export const KEY_ALIASES = Object.freeze({
   // The Spurs reward's card kept its numbers and changed its id when its
   // season was demoted to a Throwback (2026-09-22, BEATEN_BY_ROOKIE).
   'team-rewards:David_Robinson': 'team-rewards:David_Robinson_1994',
+  // THE SUPER SEASON VALUE PICK (2026-09-24) moved three Super Seasons a
+  // franchise reward migrates from; each reward keeps its own season by
+  // migrating from that season's retired Throwback, and changes id with it
+  // (syncRewardsToSuperSeasons.py) — the Robinson precedent, three times.
+  'team-rewards:Kobe_Bryant': 'team-rewards:Kobe_Bryant_2006',
+  'team-rewards:Myles_Turner': 'team-rewards:Myles_Turner_2019',
+  'team-rewards:John_Stockton': 'team-rewards:John_Stockton_2002',
 });
+
+/**
+ * THE ALIASES THE CARDS THEMSELVES IMPLY (2026-09-24), beside the hand-kept
+ * list above, read off the generated files so a move and its alias can never
+ * disagree:
+ *
+ *   absorbed   a Super Season card that absorbed a requested or curated card
+ *              of the same season (`migratedFrom`, the value pick): the old
+ *              card's key resolves to the Super Season
+ *   retired    a Throwback that WAS a player's Super Season (`demotedFrom`:
+ *              the value pick moved it, or a Rookie or base card beat it):
+ *              the old Super Season key resolves to the Throwback of the same
+ *              season — used only once that key has stopped resolving (the
+ *              player has no Super Season now, or a reward took it), so an
+ *              owner keeps the card they had. The five 2026-09-22 demotions
+ *              (Duncan, Yao, Kirilenko, Mitchell and David Robinson) had no
+ *              alias until this; their old keys resolved to nothing.
+ *
+ * Like KEY_ALIASES, consulted only after a direct miss.
+ */
+const setOf = (card, fallback) => card.set ?? fallback;
+export const DERIVED_ALIASES = new Map([
+  ...[[superSeason.cards, 'super-season'], [wnbaSuperSeason.cards, 'wnba-super-season']].flatMap(([cards, set]) =>
+    cards.filter(c => c.migratedFrom).map(c => [`${c.migratedFrom.set}:${c.migratedFrom.id}`, `${set}:${c.id}`])),
+  ...[...throwbacks.cards, ...wnbaThrowbacks.cards]
+    .filter(c => c.demotedFrom)
+    .sort((a, b) => a.id.localeCompare(b.id))
+    .map(c => [`${c.demotedFrom.set}:${c.demotedFrom.id}`, `${setOf(c, 'throwbacks')}:${c.id}`]),
+].reverse().filter(([from], i, all) => all.findIndex(([f]) => f === from) === i));
+
+/** The key an old key now stands for, or undefined: the hand-kept list first, then the derived one. */
+const aliasOf = plain => KEY_ALIASES[plain] ?? DERIVED_ALIASES.get(plain);
 
 /** The key a collection entry counts as: itself, unless it is an old key for a card that moved. */
 export function canonicalKey(key) {
   const plain = baseKey(key);
-  const alias = KEY_ALIASES[plain];
-  return alias ? String(key).replace(plain, alias) : key;
+  const alias = aliasOf(plain);
+  // A derived alias only stands in for a key that no longer resolves.
+  if (!alias || (!KEY_ALIASES[plain] && BY_KEY.has(plain))) return key;
+  return String(key).replace(plain, alias);
 }
 
 /**
@@ -181,6 +231,6 @@ export const copyKey = (key, n) => (n > 1 ? `${baseKey(key)}~${n}` : baseKey(key
  */
 export function getCardByKey(key) {
   // The alias is the LAST resort: a live key never goes through it.
-  return BY_KEY.get(key) ?? BY_KEY.get(baseKey(key)) ?? BY_KEY.get(KEY_ALIASES[baseKey(key)]);
+  return BY_KEY.get(key) ?? BY_KEY.get(baseKey(key)) ?? BY_KEY.get(aliasOf(baseKey(key)));
 }
 

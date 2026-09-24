@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-22T17:10:01.685Z",
+ "generatedAt": "2026-09-24T14:01:16.780Z",
  "set": "wnba-team-rewards",
  "provisional": true,
  "sources": {
@@ -87,82 +87,6 @@
    ]
   },
   {
-   "id": "Tamika_Catchings",
-   "name": "Tamika Catchings",
-   "team": "IND",
-   "statRowTeam": "IND",
-   "pos": "F",
-   "speed": 13,
-   "power": 13,
-   "shotLine": 15,
-   "paintBoost": 0,
-   "threePtBoost": 3,
-   "defBoost": 3,
-   "salary": 1370,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 6,
-     "pts": 0,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 7,
-     "hi": 14,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 15,
-     "hi": 20,
-     "pts": 3,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 21,
-     "hi": 99,
-     "pts": 3,
-     "reb": 2,
-     "ast": 1
-    }
-   ],
-   "league": "WNBA",
-   "season": 2012,
-   "seasonLabel": "2012",
-   "games": 34,
-   "mpg": 30.5,
-   "minutes": 1036,
-   "bbrefId": "catchta01w",
-   "metrics": {
-    "bpmHat": 9.47,
-    "obpmHat": 6.46,
-    "dbpmHat": 3.01,
-    "seasonZ": 0,
-    "per": 27.3,
-    "ws": 7.8,
-    "wsPer40": 0.301,
-    "tsPct": 0.552,
-    "pts100": 30.6
-   },
-   "provisional": false,
-   "rewardFor": "IND",
-   "rewardGoal": "wnba-team-IND",
-   "wears": "wnba-throwbacks",
-   "badges": [
-    "throwback"
-   ]
-  },
-  {
    "id": "Cappie_Pondexter",
    "name": "Cappie Pondexter",
    "team": "NYL03",
@@ -233,18 +157,18 @@
    ]
   },
   {
-   "id": "Seimone_Augustus",
-   "name": "Seimone Augustus",
-   "team": "MIN99",
-   "statRowTeam": "MIN",
-   "pos": "G-F",
-   "speed": 14,
-   "power": 10,
+   "id": "Tamika_Catchings",
+   "name": "Tamika Catchings",
+   "team": "IND",
+   "statRowTeam": "IND",
+   "pos": "F",
+   "speed": 13,
+   "power": 13,
    "shotLine": 14,
-   "paintBoost": 2,
+   "paintBoost": -1,
    "threePtBoost": 0,
-   "defBoost": -1,
-   "salary": 1390,
+   "defBoost": 3,
+   "salary": 1340,
    "chart": [
     {
      "lo": 1,
@@ -255,64 +179,57 @@
     },
     {
      "lo": 3,
-     "hi": 3,
+     "hi": 6,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
-     "lo": 4,
-     "hi": 7,
-     "pts": 2,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 8,
+     "lo": 7,
      "hi": 13,
-     "pts": 3,
-     "reb": 0,
+     "pts": 2,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 14,
-     "hi": 21,
+     "hi": 20,
      "pts": 3,
      "reb": 1,
      "ast": 0
     },
     {
-     "lo": 22,
+     "lo": 21,
      "hi": 99,
      "pts": 3,
-     "reb": 1,
+     "reb": 2,
      "ast": 1
     }
    ],
    "league": "WNBA",
-   "season": 2007,
-   "seasonLabel": "2007",
+   "season": 2012,
+   "seasonLabel": "2012",
    "games": 34,
-   "mpg": 32.1,
-   "minutes": 1093,
-   "bbrefId": "augusse01w",
+   "mpg": 30.5,
+   "minutes": 1036,
+   "bbrefId": "catchta01w",
    "metrics": {
-    "bpmHat": 5.56,
-    "obpmHat": 6.59,
-    "dbpmHat": -1.03,
+    "bpmHat": 9.47,
+    "obpmHat": 6.46,
+    "dbpmHat": 3.01,
     "seasonZ": 0,
-    "per": 27.4,
-    "ws": 6.1,
-    "wsPer40": 0.224,
-    "tsPct": 0.583,
-    "pts100": 36.1
+    "per": 27.3,
+    "ws": 7.8,
+    "wsPer40": 0.301,
+    "tsPct": 0.552,
+    "pts100": 30.6
    },
    "provisional": false,
-   "rewardFor": "MIN",
-   "rewardGoal": "wnba-team-MIN",
-   "wears": "wnba-super-season",
+   "rewardFor": "IND",
+   "rewardGoal": "wnba-team-IND",
+   "wears": "wnba-throwbacks",
    "badges": [
-    "super-season"
+    "throwback"
    ]
   },
   {
@@ -324,10 +241,10 @@
    "speed": 17,
    "power": 7,
    "shotLine": 14,
-   "paintBoost": 0,
+   "paintBoost": 1,
    "threePtBoost": 2,
    "defBoost": -1,
-   "salary": 1220,
+   "salary": 1240,
    "chart": [
     {
      "lo": 1,
@@ -399,6 +316,82 @@
    "bandException": "Ten dollars under the legendary floor at $1190. A migrated card is NOT repriced -- it keeps the salary its own set gave it -- so the alternative is un-migrating her and printing a second Becky Hammon a year apart, which is the duplicate the migration exists to prevent. The same size of exception Philadelphia gets for Erving."
   },
   {
+   "id": "Seimone_Augustus",
+   "name": "Seimone Augustus",
+   "team": "MIN11",
+   "statRowTeam": "MIN",
+   "pos": "G-F",
+   "speed": 13,
+   "power": 9,
+   "shotLine": 14,
+   "paintBoost": 1,
+   "threePtBoost": 0,
+   "defBoost": 0,
+   "salary": 1190,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 13,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 21,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2011,
+   "seasonLabel": "2011",
+   "games": 34,
+   "mpg": 29.3,
+   "minutes": 997,
+   "bbrefId": "augusse01w",
+   "metrics": {
+    "bpmHat": 4.43,
+    "obpmHat": 4.27,
+    "dbpmHat": 0.17,
+    "seasonZ": 0,
+    "per": 21.7,
+    "ws": 5.4,
+    "wsPer40": 0.215,
+    "tsPct": 0.562,
+    "pts100": 29.1
+   },
+   "provisional": false,
+   "rewardFor": "MIN",
+   "rewardGoal": "wnba-team-MIN",
+   "wears": "wnba-throwbacks",
+   "badges": [
+    "throwback"
+   ]
+  },
+  {
    "id": "Penny_Taylor",
    "name": "Penny Taylor",
    "team": "PHO11",
@@ -406,11 +399,11 @@
    "pos": "F",
    "speed": 14,
    "power": 12,
-   "shotLine": 13,
-   "paintBoost": 1,
-   "threePtBoost": 1,
+   "shotLine": 12,
+   "paintBoost": 0,
+   "threePtBoost": -2,
    "defBoost": 1,
-   "salary": 1180,
+   "salary": 1150,
    "chart": [
     {
      "lo": 1,
@@ -428,13 +421,13 @@
     },
     {
      "lo": 7,
-     "hi": 12,
+     "hi": 11,
      "pts": 2,
      "reb": 0,
      "ast": 0
     },
     {
-     "lo": 13,
+     "lo": 12,
      "hi": 99,
      "pts": 2,
      "reb": 1,
@@ -468,75 +461,6 @@
    ]
   },
   {
-   "id": "Chamique_Holdsclaw",
-   "name": "Chamique Holdsclaw",
-   "team": "WAS98",
-   "statRowTeam": "WAS",
-   "pos": "F",
-   "speed": 10,
-   "power": 12,
-   "shotLine": 16,
-   "paintBoost": -1,
-   "threePtBoost": -1,
-   "defBoost": 0,
-   "salary": 1010,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 6,
-     "pts": 0,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 7,
-     "hi": 15,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 16,
-     "hi": 99,
-     "pts": 3,
-     "reb": 1,
-     "ast": 0
-    }
-   ],
-   "league": "WNBA",
-   "season": 2004,
-   "seasonLabel": "2004",
-   "games": 23,
-   "mpg": 34.8,
-   "minutes": 801,
-   "bbrefId": "holdsch01w",
-   "metrics": {
-    "bpmHat": 3.95,
-    "obpmHat": 3.74,
-    "dbpmHat": 0.21,
-    "seasonZ": 0,
-    "per": 24,
-    "ws": 3,
-    "wsPer40": 0.151,
-    "tsPct": 0.474,
-    "pts100": 31.3
-   },
-   "provisional": false,
-   "rewardFor": "WAS",
-   "rewardGoal": "wnba-team-WAS",
-   "wears": "wnba-throwbacks",
-   "badges": [
-    "throwback"
-   ]
-  },
-  {
    "id": "Cheryl_Ford",
    "name": "Cheryl Ford",
    "team": "DET2",
@@ -545,10 +469,10 @@
    "speed": 9,
    "power": 15,
    "shotLine": 14,
-   "paintBoost": 0,
+   "paintBoost": 1,
    "threePtBoost": -6,
    "defBoost": 2,
-   "salary": 940,
+   "salary": 990,
    "chart": [
     {
      "lo": 1,
@@ -607,82 +531,6 @@
    "provisional": false,
    "rewardFor": "DAL",
    "rewardGoal": "wnba-team-DAL",
-   "wears": "wnba-super-season",
-   "badges": [
-    "super-season"
-   ]
-  },
-  {
-   "id": "Alysha_Clark",
-   "name": "Alysha Clark",
-   "team": "SEA",
-   "statRowTeam": "SEA",
-   "pos": "F",
-   "speed": 12,
-   "power": 12,
-   "shotLine": 12,
-   "paintBoost": -1,
-   "threePtBoost": 0,
-   "defBoost": 3,
-   "salary": 940,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 7,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 8,
-     "hi": 11,
-     "pts": 1,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 12,
-     "hi": 24,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 25,
-     "hi": 99,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    }
-   ],
-   "league": "WNBA",
-   "season": 2020,
-   "seasonLabel": "2020",
-   "games": 22,
-   "mpg": 28.8,
-   "minutes": 633,
-   "bbrefId": "clarkal01w",
-   "metrics": {
-    "bpmHat": 6.12,
-    "obpmHat": 3.32,
-    "dbpmHat": 2.8,
-    "seasonZ": 0,
-    "per": 18.2,
-    "ws": 3.6,
-    "wsPer40": 0.229,
-    "tsPct": 0.693,
-    "pts100": 17.5
-   },
-   "provisional": false,
-   "rewardFor": "SEA",
-   "rewardGoal": "wnba-team-SEA",
    "wears": "wnba-super-season",
    "badges": [
     "super-season"
@@ -766,6 +614,151 @@
    ]
   },
   {
+   "id": "Alysha_Clark",
+   "name": "Alysha Clark",
+   "team": "SEA",
+   "statRowTeam": "SEA",
+   "pos": "F",
+   "speed": 12,
+   "power": 12,
+   "shotLine": 12,
+   "paintBoost": -1,
+   "threePtBoost": -2,
+   "defBoost": 3,
+   "salary": 910,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 7,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 11,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 12,
+     "hi": 24,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 25,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2020,
+   "seasonLabel": "2020",
+   "games": 22,
+   "mpg": 28.8,
+   "minutes": 633,
+   "bbrefId": "clarkal01w",
+   "metrics": {
+    "bpmHat": 6.12,
+    "obpmHat": 3.32,
+    "dbpmHat": 2.8,
+    "seasonZ": 0,
+    "per": 18.2,
+    "ws": 3.6,
+    "wsPer40": 0.229,
+    "tsPct": 0.693,
+    "pts100": 17.5
+   },
+   "provisional": false,
+   "rewardFor": "SEA",
+   "rewardGoal": "wnba-team-SEA",
+   "wears": "wnba-super-season",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Chamique_Holdsclaw",
+   "name": "Chamique Holdsclaw",
+   "team": "WAS98",
+   "statRowTeam": "WAS",
+   "pos": "F",
+   "speed": 10,
+   "power": 11,
+   "shotLine": 16,
+   "paintBoost": 2,
+   "threePtBoost": -1,
+   "defBoost": 0,
+   "salary": 810,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    }
+   ],
+   "league": "WNBA",
+   "season": 2000,
+   "seasonLabel": "2000",
+   "games": 32,
+   "mpg": 35.3,
+   "minutes": 1131,
+   "bbrefId": "holdsch01w",
+   "metrics": {
+    "bpmHat": 3.02,
+    "obpmHat": 3.33,
+    "dbpmHat": -0.3,
+    "seasonZ": 0,
+    "per": 21.4,
+    "ws": 3.5,
+    "wsPer40": 0.125,
+    "tsPct": 0.505,
+    "pts100": 28.8
+   },
+   "provisional": false,
+   "rewardFor": "WAS",
+   "rewardGoal": "wnba-team-WAS",
+   "wears": "wnba-throwbacks",
+   "badges": [
+    "throwback"
+   ]
+  },
+  {
    "id": "Mwadi_Mabika",
    "name": "Mwadi Mabika",
    "team": "LAS97",
@@ -775,9 +768,9 @@
    "power": 8,
    "shotLine": 14,
    "paintBoost": -2,
-   "threePtBoost": 2,
+   "threePtBoost": 0,
    "defBoost": 1,
-   "salary": 800,
+   "salary": 760,
    "chart": [
     {
      "lo": 1,
@@ -851,9 +844,9 @@
    "power": 10,
    "shotLine": 15,
    "paintBoost": 0,
-   "threePtBoost": 3,
+   "threePtBoost": 1,
    "defBoost": 1,
-   "salary": 760,
+   "salary": 720,
    "chart": [
     {
      "lo": 1,
@@ -927,9 +920,9 @@
    "power": 7,
    "shotLine": 15,
    "paintBoost": -3,
-   "threePtBoost": 3,
+   "threePtBoost": 1,
    "defBoost": -1,
-   "salary": 660,
+   "salary": 620,
    "chart": [
     {
      "lo": 1,

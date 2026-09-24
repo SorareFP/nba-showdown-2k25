@@ -338,14 +338,7 @@ export const BEST_SEASON_MIN_GAMES = 58;
  */
 export function bestSeason(seasons, distributions, weights = BEST_SEASON_WEIGHTS) {
   const scored = seasons.map(s => ({ ...s, ...seasonScore(s, distributions?.[s.season], weights) }));
-  const longEnough = scored.filter(s => (s.minutes ?? 0) >= BEST_SEASON_MIN_MINUTES);
-  const qualified = longEnough.filter(s => (s.games ?? 0) >= BEST_SEASON_MIN_GAMES);
-
-  const [pool, eligibility] = qualified.length > 0
-    ? [qualified, 'both']
-    : longEnough.length > 0
-      ? [longEnough, 'minutesOnly']
-      : [scored, 'none'];
+  const { pool, eligibility } = eligibleSeasons(scored);
 
   const best = pool.reduce((a, b) => (b.score > a.score ? b : a), pool[0] ?? null);
   return {
@@ -357,6 +350,23 @@ export function bestSeason(seasons, distributions, weights = BEST_SEASON_WEIGHTS
     /** Nothing cleared either floor. The name predates the games floor. */
     usedFallbackFloor: eligibility === 'none' && scored.length > 0,
   };
+}
+
+/**
+ * The seasons a best-season pick may choose from, by the tiered floors above.
+ *
+ * Its own function since 2026-09-24: the Super Season is now the player's most
+ * VALUABLE eligible season (generateSpecialSets.js, the value pick), and the
+ * seasons it prices must be exactly the ones this rule would have scored —
+ * one eligibility, read by both, so the two picks can never disagree about
+ * which seasons were in the running.
+ */
+export function eligibleSeasons(seasons) {
+  const longEnough = seasons.filter(s => (s.minutes ?? 0) >= BEST_SEASON_MIN_MINUTES);
+  const qualified = longEnough.filter(s => (s.games ?? 0) >= BEST_SEASON_MIN_GAMES);
+  if (qualified.length > 0) return { pool: qualified, eligibility: 'both' };
+  if (longEnough.length > 0) return { pool: longEnough, eligibility: 'minutesOnly' };
+  return { pool: seasons, eligibility: 'none' };
 }
 
 /**

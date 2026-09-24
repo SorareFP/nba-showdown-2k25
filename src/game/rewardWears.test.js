@@ -9,6 +9,15 @@
 // reward look. The generators stamp `wears`; cardTreatment reads it. This
 // table is the sweep's verdict written down, so a generator regression —
 // builtBadges' false ROOKIE on Parker was one — fails loudly, by name.
+//
+// RE-CUT BY THE SUPER SEASON VALUE PICK (2026-09-24). Each player's Super
+// Season became the season his card prices highest, so a reward that was a
+// Super Season card can now sit on a retired season (Kobe 2005-06, Turner
+// 2018-19, Stockton 2001-02 — re-pointed to their Throwbacks ids, the old keys
+// aliased in cardSets.js) and a built reward can now BE the Super Season
+// (Giannis 2019-20, Embiid 2022-23 — migrated from it, the identity
+// unchanged in kind). Stockton is no longer a flag and a ruling: his 2001-02
+// is a Throwback card, and the reward wears the set it came from like any other.
 import { describe, it, expect } from 'vitest';
 import { CARD_SETS, getCardByKey, cardKey } from './cardSets.js';
 import { cardTreatment, setBadge, setTreatment } from '../cards/sets.js';
@@ -18,14 +27,17 @@ const REWARD_SETS = ['team-rewards', 'wnba-team-rewards', 'set-rewards', 'wnba-s
 
 /** key -> the set whose look the reward wears. The whole reward roster, nothing left off. */
 const WEARS = {
-  // ── NBA team rewards (33): 15 built, 18 moved ────────────────────────────
-  'team-rewards:Giannis_Antetokounmpo': 'throwbacks', // 2019-20, the set tier; his best is 2021-22 (carded)
-  'team-rewards:Joel_Embiid': 'throwbacks', // 2022-23, the East tier; his best is 2021-22 (carded)
+  // ── NBA team rewards (33): 13 built, 20 moved ────────────────────────────
+  // 2019-20 (the set tier) and 2022-23 (the East tier) are their Super Seasons
+  // since the value pick, so both rewards migrate from that set now.
+  'team-rewards:Giannis_Antetokounmpo': 'super-season',
+  'team-rewards:Joel_Embiid': 'super-season',
   'team-rewards:Stephen_Curry': 'throwbacks', // 2020-21, the West tier; his best is 2015-16 (carded)
   'team-rewards:Paul_George': 'super-season',
   'team-rewards:Kevin_Durant': 'summer-standouts', // a playoff run keeps its identity (the user's ruling)
   'team-rewards:Jamal_Murray': 'summer-standouts',
-  'team-rewards:Kobe_Bryant': 'super-season',
+  // 2005-06, retired to a Throwback when 2008-09 took his Super Season.
+  'team-rewards:Kobe_Bryant_2006': 'throwbacks',
   // 2026-09-22: his 1989-90 Rookie card out-prices the 1993-94 season, which
   // the Super Season generator demotes to a Throwback; the reward migrates from there.
   'team-rewards:David_Robinson_1994': 'throwbacks',
@@ -38,14 +50,14 @@ const WEARS = {
   'team-rewards:Marc_Gasol': 'throwbacks',
   'team-rewards:Alonzo_Mourning': 'throwbacks',
   'team-rewards:Chris_Paul': 'rookie',
-  'team-rewards:John_Stockton': 'throwbacks', // 2001-02 is not his best (1994-95 is): "wears the THROWBACK look"
+  'team-rewards:John_Stockton_2002': 'throwbacks', // 2001-02, a Throwback card since the value pick
   'team-rewards:Sam_Cassell': 'super-season',
   'team-rewards:Wesley_Matthews': 'super-season',
-  'team-rewards:Myles_Turner': 'super-season',
+  'team-rewards:Myles_Turner_2019': 'throwbacks', // 2018-19, retired to a Throwback by the value pick
   'team-rewards:Allan_Houston': 'throwbacks',
   'team-rewards:Jameer_Nelson': 'summer-standouts',
-  'team-rewards:Nic_Claxton': 'super-season',
-  'team-rewards:Gerald_Wallace': 'super-season', // $900, on the gold line — inclusive, so gold
+  'team-rewards:Nic_Claxton': 'super-season', // $890 since the 2026-09-24 reprice: under the gold line, bronze
+  'team-rewards:Gerald_Wallace': 'super-season', // $870 since the reprice (was $900, on the line): bronze
   'team-rewards:Bobby_Portis': 'super-season', // under the gold line: bronze with TEAM REWARD over BEST SEASON
   'team-rewards:Josh_Smith': 'throwbacks',
   'team-rewards:Steve_Nash': 'summer-standouts',
@@ -58,10 +70,13 @@ const WEARS = {
   'wnba-team-rewards:Angel_McCoughtry': 'wnba-throwbacks',
   'wnba-team-rewards:Tamika_Catchings': 'wnba-throwbacks',
   'wnba-team-rewards:Cappie_Pondexter': 'wnba-super-season',
-  'wnba-team-rewards:Seimone_Augustus': 'wnba-super-season',
+  // 2010-11, the Lynx re-pick (2026-09-24): her 2006-07 priced legendary once
+  // the salary model and the WNBA shooting scale were corrected, over the band
+  // Minnesota earns. 2011 is the Lynx's first title, a Throwback season.
+  'wnba-team-rewards:Seimone_Augustus': 'wnba-throwbacks',
   'wnba-team-rewards:Becky_Hammon': 'wnba-super-season',
   'wnba-team-rewards:Penny_Taylor': 'wnba-super-season',
-  'wnba-team-rewards:Chamique_Holdsclaw': 'wnba-throwbacks',
+  'wnba-team-rewards:Chamique_Holdsclaw': 'wnba-throwbacks', // 1999-2000, the Mystics re-pick (2026-09-24)
   'wnba-team-rewards:Cheryl_Ford': 'wnba-super-season',
   'wnba-team-rewards:Alysha_Clark': 'wnba-super-season',
   'wnba-team-rewards:Epiphanny_Prince': 'wnba-throwbacks',
@@ -107,14 +122,16 @@ describe('every reward wears its identity', () => {
   it('a migrated reward wears the set it came from, unless the claim was dropped', () => {
     for (const card of rewards.filter(c => c.migratedFrom)) {
       if (card.notBestSeason) {
-        // Stockton: the user's ruling, not gold-no-pill.
+        // The user's ruling for a flagged Super Season: Throwbacks, not gold-no-pill.
         expect(card.migratedFrom.set, cardKey(card)).toBe('super-season');
         expect(card.wears, cardKey(card)).toBe('throwbacks');
         continue;
       }
       expect(card.wears, cardKey(card)).toBe(card.migratedFrom.set);
     }
-    expect(rewards.filter(c => c.notBestSeason).map(cardKey)).toEqual(['team-rewards:John_Stockton']);
+    // None since the value pick: Stockton's 2001-02 is a Throwback card now,
+    // and the reward migrates from it (see the header).
+    expect(rewards.filter(c => c.notBestSeason).map(cardKey)).toEqual([]);
   });
 
   it('draws the worn look, and falls back to the bronze reward look when the tier withholds gold', () => {
@@ -122,9 +139,17 @@ describe('every reward wears its identity', () => {
     const portis = getCardByKey('team-rewards:Bobby_Portis');
     expect(portis.salary).toBeLessThan(SUPER_SEASON_MIN_SALARY);
     expect(treat(portis)).toEqual(setTreatment('team-rewards'));
-    const wallace = getCardByKey('team-rewards:Gerald_Wallace');
-    expect(wallace.salary).toBeGreaterThanOrEqual(SUPER_SEASON_MIN_SALARY);
-    expect(treat(wallace)).toEqual(cardTreatment('super-season', wallace.salary, wallace.badges));
+    // Wesley Matthews is the cheapest reward over the line since the 2026-09-24
+    // reprice took Gerald Wallace from $900 (on it — inclusive) to $870.
+    const matthews = getCardByKey('team-rewards:Wesley_Matthews');
+    expect(matthews.salary).toBeGreaterThanOrEqual(SUPER_SEASON_MIN_SALARY);
+    expect(treat(matthews)).toEqual(cardTreatment('super-season', matthews.salary, matthews.badges));
+    // And every reward wearing Super Season follows the line, whichever side.
+    for (const card of rewards.filter(c => c.wears === 'super-season')) {
+      expect(treat(card), cardKey(card)).toEqual(card.salary >= SUPER_SEASON_MIN_SALARY
+        ? cardTreatment('super-season', card.salary, card.badges)
+        : setTreatment(card.set));
+    }
     for (const card of rewards) {
       if (card.wears === 'summer-standouts' || card.wears === 'dissonance') {
         // No set treatment to wear: the reward's own bronze, with the pill.

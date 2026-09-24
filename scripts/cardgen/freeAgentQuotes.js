@@ -42,7 +42,7 @@ import { REPLACEMENT_EPM } from './generateSpecialSets.js';
 // (or dissonance), 26-27, they should be throwbacks"), and they cannot import
 // it from here without a cycle (this file imports generateTeamRewards for
 // NEVER_CARD). Re-exported so every caller and test keeps its import.
-import { unprovableDebutSeasons, classifySeason, settleTwin, classifyWnbaSeason, WNBA_SETS } from './rewardIdentity.js';
+import { unprovableDebutSeasons, classifySeason, settleTwin, classifyWnbaSeason, WNBA_SETS, superSeasonMap, isBestSeason } from './rewardIdentity.js';
 export { unprovableDebutSeasons, classifySeason, settleTwin, classifyWnbaSeason, WNBA_SETS };
 import { buildApiEpmIndex, buildBpmBridge, playoffSeason } from './summerStandouts.js';
 import { archiveBasis, requireArchive } from './epmArchive.js';
@@ -202,7 +202,7 @@ export function wnbaFeatures(row, distribution) {
 }
 
 /** Every uncarded WNBA season worth a card, quoted by the ridge fit. */
-export function wnbaQuotes({ carded, log = console.log } = {}) {
+export function wnbaQuotes({ carded, log = console.log, superSeasonOf = superSeasonMap() } = {}) {
   const model = JSON.parse(fs.readFileSync(WNBA_MODEL_FILE, 'utf8'));
   const seasons = rateWnbaArchive(loadWnbaArchive().loaded, model);
   const targets = realLogTargets(['wnba', 'wnba-super-season', 'wnba-rookie', 'wnba-team-rewards', 'wnba-throwbacks']);
@@ -223,10 +223,10 @@ export function wnbaQuotes({ carded, log = console.log } = {}) {
       // By id only: a WNBA name can match an NBA card's name in the same year.
       if (carded.has(`${playerId}|${line.season}`)) continue;
       candidates.push({
-        playerId, line, features, set: classifyWnbaSeason(career, line.season),
-        // For the twin rule: her best season, and one that met the WNBA
-        // Super Season floors (70% of the schedule, 20 minutes a game).
-        alsoBest: top.best?.season === line.season && top.eligibility !== 'none',
+        playerId, line, features, set: classifyWnbaSeason(career, line.season, { superSeasonOf, playerId }),
+        // For the twin rule: her best season (her Super Season card's, since
+        // the value pick), and one that met the WNBA Super Season floors.
+        alsoBest: isBestSeason(career, line.season, top, { superSeasonOf, playerId }),
         trusted: top.eligibility === 'both',
       });
     }
@@ -249,6 +249,9 @@ export function wnbaQuotes({ carded, log = console.log } = {}) {
 // ── Main ─────────────────────────────────────────────────────────────────────
 
 export function main({ first = 1976, last = BASE_SEASON, write = true, wnba = true, debug = false, log = console.log } = {}) {
+  // The season each player's Super Season card carries (the value pick,
+  // 2026-09-24): a requested season is his Super Season only if it is THAT one.
+  const superSeasonOf = superSeasonMap();
   const t0 = Date.now();
   const { seasons, advanced, perPoss, shooting } = loadArchiveTables({ first, last });
   const unprovable = unprovableDebutSeasons(seasons);
@@ -292,9 +295,10 @@ export function main({ first = 1976, last = BASE_SEASON, write = true, wnba = tr
         advRow: { ...line, playerId }, ppRow: pp, shRow: sh,
         epm, ewinsPerGame, trustMinutes: line.minutes ?? 0,
         bbrefId: playerId,
-        set: classifySeason(career, line.season, { distributions, unprovable }),
-        // For the twin rule: the career's best, in a season the gold line trusts.
-        alsoBest: top.best?.season === line.season && top.eligibility !== 'none',
+        set: classifySeason(career, line.season, { distributions, unprovable, superSeasonOf, playerId }),
+        // For the twin rule: the career's best (his Super Season card's since
+        // the value pick), in a season the gold line trusts.
+        alsoBest: isBestSeason(career, line.season, top, { superSeasonOf, playerId }),
         trusted: games >= BEST_SEASON_MIN_GAMES && (line.minutes ?? 0) >= BEST_SEASON_MIN_MINUTES,
         carded: already, target,
       });

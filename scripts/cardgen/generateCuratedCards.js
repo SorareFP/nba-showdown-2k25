@@ -39,16 +39,31 @@ export const CURATED_FILE = path.join(REPO_ROOT, 'card-data', 'curated-cards-202
 export const OUTPUT_FILE = path.join(GEN_DIR, 'cards-throwbacks.json');
 export const SET_ID = 'throwbacks';
 
+/**
+ * THE WNBA SIDE HAS A FILE OF ITS OWN (2026-09-24). The value pick retires
+ * WNBA Super Seasons too, and a card file is one set: the studio and the face
+ * export read a set from the file whose `set` it is (scripts/studio/export.js
+ * already named cards-wnba-throwbacks.json), so seventeen WNBA Throwbacks
+ * folded into the NBA file were joined by the game and invisible to both.
+ */
+export const WNBA_SET_ID = 'wnba-throwbacks';
+export const WNBA_OUTPUT_FILE = path.join(GEN_DIR, 'cards-wnba-throwbacks.json');
+
 /** The fields that belong to a REQUEST, not to a card the generator owns. */
 const REQUEST_ONLY_FIELDS = ['requested', 'requestId', 'builtAt'];
 
 /** generateSpecialSets.js writes this (every run, even empty); it runs before this step. */
 export const DEMOTED_FILE = path.join(GEN_DIR, 'demoted-super-seasons.json');
 
+/** The WNBA Super Seasons the value pick retired (wnba/generateWnbaLegends.js, 2026-09-24). */
+export const WNBA_DEMOTED_FILE = path.join(GEN_DIR, 'demoted-wnba-super-seasons.json');
+
 export function readDemoted(file = DEMOTED_FILE) {
   if (!fs.existsSync(file)) return [];
   const { cards = [] } = JSON.parse(fs.readFileSync(file, 'utf8'));
-  return cards.map(c => ({ ...c, set: SET_ID }));
+  // A demoted card keeps the Throwbacks set it names (wnba-throwbacks for a
+  // WNBA season); one that names none is an NBA Throwback.
+  return cards.map(c => ({ ...c, set: c.set ?? SET_ID }));
 }
 
 export function readCurated(file = CURATED_FILE) {
@@ -82,23 +97,37 @@ export async function main({ log = console.log } = {}) {
   }
   // The Super Seasons the generator demoted (a Rookie card of the player's
   // out-priced them, 2026-09-22): already built, they join as they are.
-  const demoted = readDemoted();
-  for (const card of demoted) log(`  ${card.name} ${card.seasonLabel}: throwbacks:${card.id} $${card.salary} (demoted Super Season)`);
+  const demoted = [...readDemoted(), ...readDemoted(WNBA_DEMOTED_FILE)];
+  for (const card of demoted) log(`  ${card.name} ${card.seasonLabel}: ${card.set}:${card.id} $${card.salary} (demoted Super Season)`);
   cards.push(...demoted);
-  cards.sort((a, b) => b.salary - a.salary || a.id.localeCompare(b.id));
+  const bySalary = (a, b) => b.salary - a.salary || a.id.localeCompare(b.id);
+  const nba = cards.filter(c => c.set !== WNBA_SET_ID).sort(bySalary);
+  const wnba = cards.filter(c => c.set === WNBA_SET_ID).sort(bySalary);
   const body = {
     set: SET_ID,
     generatedAt: new Date().toISOString(),
     note:
       'CURATED THROWBACKS — generator-owned (scripts/cardgen/generateCuratedCards.js from ' +
       'card-data/curated-cards-2026.json, plus demoted-super-seasons.json). Retired rewards that qualify ' +
-      'for no other set, and Super Seasons a Rookie card of the player\'s out-priced. ' +
+      'for no other set, and Super Seasons that are no longer a Super Season (a Rookie card of the ' +
+      'player\'s out-priced them, or the value pick chose another season). ' +
       'Requested Throwbacks live in cards-free-agents.json; both join the throwbacks set in cardSets.js.',
-    cards,
+    cards: nba,
+  };
+  const wnbaBody = {
+    set: WNBA_SET_ID,
+    generatedAt: body.generatedAt,
+    note:
+      'WNBA THROWBACKS — generator-owned (scripts/cardgen/generateCuratedCards.js from ' +
+      'demoted-wnba-super-seasons.json): WNBA Super Seasons the value pick retired. Requested WNBA ' +
+      'Throwbacks live in cards-free-agents.json; both join the wnba-throwbacks set in cardSets.js.',
+    cards: wnba,
   };
   fs.mkdirSync(GEN_DIR, { recursive: true });
   fs.writeFileSync(OUTPUT_FILE, `${JSON.stringify(body, null, 1)}\n`);
-  log(`Curated throwbacks: ${cards.length} card(s).\n  ${OUTPUT_FILE}`);
+  // Written even when empty: the game imports it.
+  fs.writeFileSync(WNBA_OUTPUT_FILE, `${JSON.stringify(wnbaBody, null, 1)}\n`);
+  log(`Curated throwbacks: ${nba.length} NBA, ${wnba.length} WNBA card(s).\n  ${OUTPUT_FILE}\n  ${WNBA_OUTPUT_FILE}`);
   return body;
 }
 

@@ -198,6 +198,19 @@ export function seasonScore(bpmHat, distribution) {
 }
 
 /**
+ * The seasons a legend's pick may choose from, by the tiered floors below —
+ * its own function (2026-09-24) so the Super Season VALUE pick prices exactly
+ * the seasons this rule would have scored. See history.js `eligibleSeasons`.
+ */
+export function legendEligibleSeasons(scored) {
+  const enoughMinutes = scored.filter(s => (s.mpg ?? 0) >= LEGEND_MIN_MPG);
+  const qualified = enoughMinutes.filter(s => (s.games ?? 0) >= (s.minGames ?? 0));
+  if (qualified.length > 0) return { pool: qualified, eligibility: 'both' };
+  if (enoughMinutes.length > 0) return { pool: enoughMinutes, eligibility: 'mpgOnly' };
+  return { pool: scored, eligibility: 'none' };
+}
+
+/**
  * The best season of one career, with the NBA rule's TIERED fallback.
  *
  * Same three tiers and the same order — see history.js's `bestSeason`. Games
@@ -208,14 +221,7 @@ export function seasonScore(bpmHat, distribution) {
  */
 export function bestLegendSeason(seasons) {
   const scored = [...seasons];
-  const enoughMinutes = scored.filter(s => (s.mpg ?? 0) >= LEGEND_MIN_MPG);
-  const qualified = enoughMinutes.filter(s => (s.games ?? 0) >= (s.minGames ?? 0));
-
-  const [pool, eligibility] = qualified.length > 0
-    ? [qualified, 'both']
-    : enoughMinutes.length > 0
-      ? [enoughMinutes, 'mpgOnly']
-      : [scored, 'none'];
+  const { pool, eligibility } = legendEligibleSeasons(scored);
 
   const best = pool.reduce((a, b) => (b.score > a.score ? b : a), pool[0] ?? null);
   return { scored, best, eligibility };

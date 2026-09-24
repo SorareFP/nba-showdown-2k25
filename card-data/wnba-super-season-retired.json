@@ -1,0 +1,124 @@
+{
+ "note": "Seasons that were shipped as a Super Season and are no longer one (superSeasonValue.js, 2026-09-24). Each is emitted as a Throwback (<id>_<season>) on every run, so a card someone may own never vanishes; a season that becomes the Super Season again leaves this list. Written by the generators — do not edit by hand.",
+ "seasons": [
+  {
+   "name": "Candace Parker",
+   "bbrefId": "parkeca01w",
+   "season": 2008,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Chasity Melvin",
+   "bbrefId": "melvich01w",
+   "season": 2001,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Deanna Nolan",
+   "bbrefId": "nolande01w",
+   "season": 2008,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Elena Baranova",
+   "bbrefId": "baranel01w",
+   "season": 2001,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Elena Delle Donne",
+   "bbrefId": "delleel01w",
+   "season": 2015,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Katie Smith",
+   "bbrefId": "smithka01w",
+   "season": 2000,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Lindsay Whalen",
+   "bbrefId": "whaleli01w",
+   "season": 2008,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Lisa Leslie",
+   "bbrefId": "leslili01w",
+   "season": 2004,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Maya Moore",
+   "bbrefId": "moorema01w",
+   "season": 2014,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Michelle Edwards",
+   "bbrefId": "edwarmi01w",
+   "season": 1997,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Michelle Snow",
+   "bbrefId": "snowmi01w",
+   "season": 2005,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Sophia Young-Malcolm",
+   "bbrefId": "youngso01w",
+   "season": 2008,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Sylvia Fowles",
+   "bbrefId": "fowlesy01w",
+   "season": 2017,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Tamika Catchings",
+   "bbrefId": "catchta01w",
+   "season": 2002,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Ticha Penicheiro",
+   "bbrefId": "penicti01w",
+   "season": 2002,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Tina Charles",
+   "bbrefId": "charlti01w",
+   "season": 2016,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Tina Thompson",
+   "bbrefId": "thompti01w",
+   "season": 2000,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  }
+ ]
+}

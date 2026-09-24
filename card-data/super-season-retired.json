@@ -1,0 +1,551 @@
+{
+ "note": "Seasons that were shipped as a Super Season and are no longer one (superSeasonValue.js, 2026-09-24). Each is emitted as a Throwback (<id>_<season>) on every run, so a card someone may own never vanishes; a season that becomes the Super Season again leaves this list. Written by the generators — do not edit by hand.",
+ "seasons": [
+  {
+   "name": "Alperen Şengün",
+   "bbrefId": "sengual01",
+   "season": 2025,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Andrei Kirilenko",
+   "bbrefId": "kirilan01",
+   "season": 2005,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Anfernee Simons",
+   "bbrefId": "simonan01",
+   "season": 2025,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Anthony Davis",
+   "bbrefId": "davisan02",
+   "season": 2015,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Anthony Gill",
+   "bbrefId": "gillan01",
+   "season": 2021,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Bennedict Mathurin",
+   "bbrefId": "mathube01",
+   "season": 2025,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Brandon Ingram",
+   "bbrefId": "ingrabr01",
+   "season": 2021,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Caris LeVert",
+   "bbrefId": "leverca01",
+   "season": 2025,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Charles Barkley",
+   "bbrefId": "barklch01",
+   "season": 1990,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Chris Paul",
+   "bbrefId": "paulch01",
+   "season": 2009,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Clint Capela",
+   "bbrefId": "capelca01",
+   "season": 2018,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Corey Kispert",
+   "bbrefId": "kispeco01",
+   "season": 2023,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Damian Lillard",
+   "bbrefId": "lillada01",
+   "season": 2020,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Darius Garland",
+   "bbrefId": "garlada01",
+   "season": 2025,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "David Robinson",
+   "bbrefId": "robinda01",
+   "season": 1994,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "De'Anthony Melton",
+   "bbrefId": "meltode01",
+   "season": 2022,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "DeAndre Jordan",
+   "bbrefId": "jordade01",
+   "season": 2015,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "DeMar DeRozan",
+   "bbrefId": "derozde01",
+   "season": 2018,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Dennis Rodman",
+   "bbrefId": "rodmade01",
+   "season": 1992,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Dennis Schröder",
+   "bbrefId": "schrode01",
+   "season": 2017,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Derrick White",
+   "bbrefId": "whitede01",
+   "season": 2025,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Desmond Bane",
+   "bbrefId": "banede01",
+   "season": 2025,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Devin Booker",
+   "bbrefId": "bookede01",
+   "season": 2022,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Dillon Brooks",
+   "bbrefId": "brookdi01",
+   "season": 2025,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Dirk Nowitzki",
+   "bbrefId": "nowitdi01",
+   "season": 2006,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Domantas Sabonis",
+   "bbrefId": "sabondo01",
+   "season": 2024,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Draymond Green",
+   "bbrefId": "greendr01",
+   "season": 2016,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Dwyane Wade",
+   "bbrefId": "wadedw01",
+   "season": 2009,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Elton Brand",
+   "bbrefId": "brandel01",
+   "season": 2006,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Fred VanVleet",
+   "bbrefId": "vanvlfr01",
+   "season": 2022,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Giannis Antetokounmpo",
+   "bbrefId": "antetgi01",
+   "season": 2022,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Grant Hill",
+   "bbrefId": "hillgr01",
+   "season": 1997,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Harrison Barnes",
+   "bbrefId": "barneha02",
+   "season": 2022,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Isaac Okoro",
+   "bbrefId": "okorois01",
+   "season": 2023,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Jakob Poeltl",
+   "bbrefId": "poeltja01",
+   "season": 2023,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Jalen Williams",
+   "bbrefId": "willija06",
+   "season": 2025,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "James Harden",
+   "bbrefId": "hardeja01",
+   "season": 2019,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Jaren Jackson Jr.",
+   "bbrefId": "jacksja02",
+   "season": 2023,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Jarred Vanderbilt",
+   "bbrefId": "vandeja01",
+   "season": 2023,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Jarrett Allen",
+   "bbrefId": "allenja01",
+   "season": 2025,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Jason Terry",
+   "bbrefId": "terryja01",
+   "season": 2007,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Jayson Tatum",
+   "bbrefId": "tatumja01",
+   "season": 2023,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Jimmy Butler",
+   "bbrefId": "butleji01",
+   "season": 2023,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Joel Embiid",
+   "bbrefId": "embiijo01",
+   "season": 2022,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "John Stockton",
+   "bbrefId": "stockjo01",
+   "season": 2002,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Jonas Valančiūnas",
+   "bbrefId": "valanjo01",
+   "season": 2021,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Kareem Abdul-Jabbar",
+   "bbrefId": "abdulka01",
+   "season": 1977,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Karl Malone",
+   "bbrefId": "malonka01",
+   "season": 1997,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Kenrich Williams",
+   "bbrefId": "willike04",
+   "season": 2025,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Kentavious Caldwell-Pope",
+   "bbrefId": "caldwke01",
+   "season": 2018,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Kevin Durant",
+   "bbrefId": "duranke01",
+   "season": 2014,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Kobe Bryant",
+   "bbrefId": "bryanko01",
+   "season": 2006,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Kyle Kuzma",
+   "bbrefId": "kuzmaky01",
+   "season": 2022,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Kyle Lowry",
+   "bbrefId": "lowryky01",
+   "season": 2016,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Larry Bird",
+   "bbrefId": "birdla01",
+   "season": 1985,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Luguentz Dort",
+   "bbrefId": "dortlu01",
+   "season": 2025,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Luka Dončić",
+   "bbrefId": "doncilu01",
+   "season": 2024,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Luke Kennard",
+   "bbrefId": "kennalu01",
+   "season": 2025,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Malik Monk",
+   "bbrefId": "monkma01",
+   "season": 2024,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Marcus Smart",
+   "bbrefId": "smartma01",
+   "season": 2020,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Michael Jordan",
+   "bbrefId": "jordami01",
+   "season": 1988,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Mikal Bridges",
+   "bbrefId": "bridgmi01",
+   "season": 2021,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Mitchell Robinson",
+   "bbrefId": "robinmi01",
+   "season": 2020,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Myles Turner",
+   "bbrefId": "turnemy01",
+   "season": 2019,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Naz Reid",
+   "bbrefId": "reidna01",
+   "season": 2025,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Nicolas Batum",
+   "bbrefId": "batumni01",
+   "season": 2014,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Pau Gasol",
+   "bbrefId": "gasolpa01",
+   "season": 2011,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Paul Pierce",
+   "bbrefId": "piercpa01",
+   "season": 2002,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Quentin Grimes",
+   "bbrefId": "grimequ01",
+   "season": 2025,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Royce O'Neale",
+   "bbrefId": "onealro01",
+   "season": 2021,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Rudy Gobert",
+   "bbrefId": "goberru01",
+   "season": 2019,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Rui Hachimura",
+   "bbrefId": "hachiru01",
+   "season": 2025,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Terance Mann",
+   "bbrefId": "mannte01",
+   "season": 2023,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Tim Duncan",
+   "bbrefId": "duncati01",
+   "season": 2002,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Tim Hardaway Jr.",
+   "bbrefId": "hardati02",
+   "season": 2017,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Tyrese Martin",
+   "bbrefId": "martity01",
+   "season": 2025,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Tyus Jones",
+   "bbrefId": "jonesty01",
+   "season": 2023,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Yao Ming",
+   "bbrefId": "mingya01",
+   "season": 2009,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  }
+ ]
+}

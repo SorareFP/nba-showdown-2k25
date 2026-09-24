@@ -7,9 +7,17 @@
 // the generator picked the best season it could see and could not see far
 // enough. Keeping the card and dropping the claim is the fix; this pins that
 // dropping it actually works, in both of the two ways a badge can be carried.
+//
+// AND SINCE THE VALUE PICK (2026-09-24) NOTHING CARRIES IT. Each player's
+// Super Season is now the season his card prices highest among every season
+// he could card (scripts/cardgen/superSeasonValue.js), and "best season" reads
+// that pick (rewardIdentity.js superSeasonMap) — so a Super Season card is its
+// player's best by definition and the audit has nothing to decline. The flag
+// stays as the audit's answer if the two ever disagree again; both render
+// paths are held with fixtures in CardTemplate.test.js ("a reward wears its
+// identity", case b), and the shipped cards are held to the empty list here.
 import { describe, it, expect } from 'vitest';
 import { CARD_SETS } from '../game/cardSets.js';
-import { setBadge } from './sets.js';
 import { SUPER_SEASON_BADGE } from './badges.js';
 
 const flagged = Object.entries(CARD_SETS).flatMap(([set, cards]) =>
@@ -17,8 +25,8 @@ const flagged = Object.entries(CARD_SETS).flatMap(([set, cards]) =>
 );
 
 describe('a card that is not a best season', () => {
-  it('exists — the flag is in use, not dead code', () => {
-    expect(flagged.length).toBeGreaterThan(0);
+  it('is on no shipped card: the value pick made every Super Season its player\'s best', () => {
+    expect(flagged.map(({ set, card }) => `${set}:${card.id}`)).toEqual([]);
   });
 
   it('carries no super-season badge in its own list', () => {
@@ -28,14 +36,6 @@ describe('a card that is not a best season', () => {
     for (const { set, card } of flagged) {
       expect(card.badges ?? [], `${set} ${card.name}`).not.toContain(SUPER_SEASON_BADGE);
     }
-  });
-
-  it('sits in a set that would otherwise have declared the badge for it', () => {
-    // The SET path, and the reason the flag has to exist at all: for these
-    // cards the badge is not on the record, it is on the set, so there is
-    // nothing to delete and the card needs a way to say no.
-    const fromSet = flagged.filter(({ set }) => setBadge(set) === SUPER_SEASON_BADGE);
-    expect(fromSet.length).toBeGreaterThan(0);
   });
 
   it('keeps everything else — this drops a claim, not a card', () => {

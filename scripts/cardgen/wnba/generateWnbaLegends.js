@@ -107,11 +107,18 @@ import {
 import { joinWnbaSeason, per4MinFromTotals, wnbaFeatureRow } from './pool.js';
 import { vorpPerGame, COMPOSITE_WEIGHTS, composite } from './generateWnbaCards.js';
 import * as L from './legends.js';
+import {
+  pickByValue, readRetired, writeRetired, nextRetired, absorbedCard, asThrowback, readShippedSeasons, VALUE_REPICK,
+} from '../superSeasonValue.js';
 
 const GEN_DIR = path.join(REPO_ROOT, 'card-data', 'generated');
 export const LEGENDS_FILE = path.join(REPO_ROOT, 'card-data', 'wnba-legends.json');
 export const CARDS_FILE = path.join(GEN_DIR, `cards-${WNBA_SUPER_SEASON_SET}.json`);
 export const ROSTER_FILE = path.join(GEN_DIR, 'wnba-legends-roster.json');
+/** The value pick's WNBA Throwbacks (2026-09-24): written every run, folded in by generateCuratedCards. */
+export const WNBA_DEMOTED_FILE = path.join(GEN_DIR, 'demoted-wnba-super-seasons.json');
+/** Shipped WNBA Super Seasons that are no longer one — kept as Throwbacks on every run. */
+export const WNBA_RETIRED_FILE = path.join(REPO_ROOT, 'card-data', 'wnba-super-season-retired.json');
 const WNBA_CARDS_FILE = path.join(GEN_DIR, `cards-${WNBA_SET}.json`);
 
 const readJson = file => JSON.parse(fs.readFileSync(file, 'utf8'));
@@ -553,6 +560,13 @@ export function buildWnbaCards({ selections, seasons, reference, calibration }) 
     shotLineTarget: calibration.shotLine.target,
     paint: calibration.paintBoost,
     three: calibration.threePtBoost,
+    // THE POOL'S SCALE, NOT THE BATCH'S (2026-09-24). Fitted over pool plus
+    // selections, a season's Shot Line and 3PT Bonus depended on which other
+    // seasons were built beside it: Maya Moore's 2016 came out Line 14 / 3PT +2
+    // built alone (her requested card) and Line 15 / 3PT +3 inside the legends'
+    // batch, and the two priced on opposite sides of her 2014. The NBA special
+    // sets anchor on the base rows the same way (generateSpecialSets buildSet).
+    referenceCount: poolRows.length,
   });
 
   // The Speed+Power basis is the NBA BPM-EQUIVALENT ARCHIVE — 4,780 cardable NBA
@@ -667,6 +681,75 @@ export function main({ log = console.log } = {}) {
   // legend's line means the same thing as a 2026 player's. A checkout that has
   // not generated it falls back to the pool rule, which is the same population
   // to within the force-included seven.
+  // ── THE VALUE PICK (2026-09-24, superSeasonValue.js) ──────────────────────
+  //
+  // The declared season (the fitted-BPM best) is the incumbent; every other
+  // eligible season with a real log is priced and the most valuable card is
+  // the Super Season. This set's shooting layer is fitted over the batch
+  // itself (no reference count), so a candidate is priced in the batch it
+  // would ship in: the set as it stands with that ONE season swapped in. The
+  // first season stays the Rookie set's; the reference season the base card's.
+  const OPTS = { roundSalary: A.roundSalary, min: A.SALARY_MIN, max: A.SALARY_MAX };
+  const shipped = [...readShippedSeasons(CARDS_FILE), ...readShippedSeasons(WNBA_DEMOTED_FILE)];
+  const retiredBefore = readRetired(WNBA_RETIRED_FILE);
+  const incumbents = buildWnbaCards({ selections, seasons, reference, calibration });
+  PV.priceAgainstBase(incumbents, OPTS);
+  const valueBatch = [...incumbents];
+  let weighed = 0;
+  for (let k = 0; k < selections.length; k += 1) {
+    const sel = selections[k];
+    const first = Math.min(...sel.career.map(c => c.season));
+    const { pool } = L.legendEligibleSeasons(sel.career);
+    for (const row of pool) {
+      if (row.season === sel.best.season || row.season === first || row.season >= WNBA_SEASON) continue;
+      const trial = selections.map((s, i) => (i === k ? { ...s, best: row } : s));
+      const card = buildWnbaCards({ selections: trial, seasons, reference, calibration })
+        .find(c => c.bbrefId === sel.playerId);
+      if (!card) continue;
+      PV.priceAgainstBase([card], OPTS);
+      valueBatch.push(card);
+      weighed += 1;
+    }
+  }
+  const incumbentSeason = new Map(selections.map(s => [s.playerId, s.best.season]));
+  const { winners, repicks, unweighed } = pickByValue(valueBatch, incumbentSeason);
+  if (process.env.VALUE_DEBUG) {
+    for (const c of valueBatch.filter(v => v.name === process.env.VALUE_DEBUG).sort((a, b) => a.season - b.season)) {
+      log(`  debug ${c.name} ${c.season}: $${c.salary}${c.provisional ? ' provisional' : ''} S${c.speed}/P${c.power} line ${c.shotLine} 3PT ${c.threePtBoost} paint ${c.paintBoost} def ${c.defBoost}`);
+    }
+  }
+  const finalSelections = selections.map(s => {
+    const w = winners.get(s.playerId);
+    if (!w || w.season === s.best.season) return s;
+    const best = s.career.find(c => c.season === w.season);
+    return best ? { ...s, best, valuePick: { from: s.best.season } } : s;
+  });
+  selections.splice(0, selections.length, ...finalSelections);
+  log(`value pick: ${weighed} other eligible seasons weighed; ${repicks.length} Super Seasons move` +
+    `${repicks.length ? ` — ${repicks.map(r => `${r.name} ${r.from.season} $${r.from.salary} -> ${r.to.season} $${r.to.salary}`).join('; ')}` : ''}`);
+  log(`value pick: ${unweighed.length} eligible seasons had no real log and were not weighed`);
+  if (process.argv.includes('--list-missing-logs')) {
+    // Narrowed to the seasons that could plausibly win: quoted within two
+    // quote-noise widths ($106 for the WNBA fit) of the player's best weighed card.
+    const quoteFile = path.join(GEN_DIR, 'quote-index.json');
+    const quotes = new Map();
+    if (fs.existsSync(quoteFile)) {
+      for (const [bid, , season, kind, , sal] of JSON.parse(fs.readFileSync(quoteFile, 'utf8')).rows) {
+        if (kind === 'r') quotes.set(`${bid}|${season}`, sal);
+      }
+    }
+    const bar = new Map([...winners].map(([id, c]) => [id, c.salary ?? 0]));
+    // `--all`: every unweighed season (the quote filter missed Maya Moore's 2013).
+    const everything = process.argv.includes('--all');
+    const pairs = unweighed
+      .filter(c => everything || (quotes.get(`${c.bbrefId}|${c.season}`) ?? c.salary ?? 0) >= (bar.get(c.bbrefId) ?? 0) - 2 * 106)
+      .map(c => `${c.bbrefId}:${c.season}`);
+    const listFile = path.join(GEN_DIR, 'wnba-super-season-missing-logs.txt');
+    fs.writeFileSync(listFile, `${pairs.join(',')}
+`);
+    log(`missing logs worth fetching: ${pairs.length} of ${unweighed.length} -> ${listFile}`);
+  }
+
   const cards = buildWnbaCards({ selections, seasons, reference, calibration });
   cards.sort((a, b) => a.name.localeCompare(b.name));
 
@@ -729,6 +812,63 @@ export function main({ log = console.log } = {}) {
   // Priced against the NBA base set, the same common field every other set
   // uses -- these cards share a table with it.
   PV.priceAgainstBase(cards, { roundSalary: A.roundSalary, min: A.SALARY_MIN, max: A.SALARY_MAX });
+
+  // ── WHAT THE VALUE PICK RETIRED, AND WHAT IT ABSORBED ────────────────────
+  // As the NBA set does (generateSpecialSets.js): a shipped season that is no
+  // longer the Super Season becomes a WNBA Throwback, kept on every run by
+  // card-data/wnba-super-season-retired.json; a winning season already built
+  // as a requested or curated card is absorbed (migratedFrom + key alias).
+  {
+    const current = new Map(cards.map(c => [c.bbrefId, c.season]));
+    const names = new Map(valueBatch.map(c => [c.bbrefId, c.name]));
+    const today = new Date().toISOString().slice(0, 10);
+    const retired = nextRetired(retiredBefore, { shipped, current, names, today });
+    writeRetired(retired, WNBA_RETIRED_FILE);
+    const builtByPair = new Map(valueBatch.map(c => [`${c.bbrefId}|${c.season}`, c]));
+    const previous = fs.existsSync(WNBA_DEMOTED_FILE)
+      ? new Map((JSON.parse(fs.readFileSync(WNBA_DEMOTED_FILE, 'utf8')).cards ?? []).map(c => [c.id, c]))
+      : new Map();
+    const out = [];
+    for (const r of retired) {
+      const card = builtByPair.get(`${r.bbrefId}|${r.season}`);
+      if (card) {
+        out.push(asThrowback(card, {
+          set: 'wnba-throwbacks', fromSet: WNBA_SUPER_SEASON_SET, reason: `${VALUE_REPICK} (retired ${r.since})`,
+        }));
+        continue;
+      }
+      const prev = [...previous.values()].find(c => c.bbrefId === r.bbrefId && c.season === r.season);
+      if (prev) {
+        const copy = { ...prev };
+        PV.priceAgainstBase([copy], OPTS);
+        out.push(copy);
+      } else {
+        log(`⚠ retired ${r.name} ${r.season} could not be rebuilt or carried`);
+      }
+    }
+    fs.writeFileSync(WNBA_DEMOTED_FILE, `${JSON.stringify({
+      set: 'wnba-throwbacks',
+      generatedAt: new Date().toISOString(),
+      note: 'WNBA Super Seasons that are no longer a Super Season, as WNBA Throwbacks (the value pick, ' +
+        '2026-09-24; card-data/wnba-super-season-retired.json). generateCuratedCards.js writes them into ' +
+        'cards-wnba-throwbacks.json.',
+      cards: out.sort((a, b) => a.id.localeCompare(b.id)),
+    }, null, 1)}\n`);
+    const readCards = file => (fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')).cards ?? [] : []);
+    const others = [
+      ...readCards(path.join(GEN_DIR, 'cards-free-agents.json')),
+      ...readCards(path.join(GEN_DIR, 'cards-throwbacks.json')).filter(c => !c.demoted),
+      ...readCards(path.join(GEN_DIR, 'cards-wnba-throwbacks.json')).filter(c => !c.demoted),
+    ].filter(c => c.set && c.set !== WNBA_SUPER_SEASON_SET && String(c.bbrefId ?? '').endsWith('w'));
+    const absorbed = [];
+    for (const card of cards) {
+      const from = absorbedCard(card, others);
+      if (!from) continue;
+      card.migratedFrom = from;
+      absorbed.push(`${card.name} ${card.season} <- ${from.set}:${from.id}`);
+    }
+    log(`retired to WNBA Throwbacks: ${retired.length}; absorbed: ${absorbed.length}${absorbed.length ? ` — ${absorbed.join('; ')}` : ''}`);
+  }
 
   const payload = {
     generatedAt: new Date().toISOString(),

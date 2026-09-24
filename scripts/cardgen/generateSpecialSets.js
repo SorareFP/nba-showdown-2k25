@@ -118,6 +118,10 @@ import { indexPositionShares, loadPositionShares } from './positionShares.js';
 import { loadLeagueRows, pickCareer } from './standoutSuperSeasons.js';
 import { readSummerStandouts, buildApiEpmIndex, buildBpmBridge, buildFtLineBridge, loadFullSeasonTables, loadRimProfiles } from './summerStandouts.js';
 import { readLegends } from './legends.js';
+import {
+  candidateSelections, pickByValue, readRetired, writeRetired, nextRetired, absorbedCard, asThrowback,
+  readShippedSeasons, VALUE_REPICK,
+} from './superSeasonValue.js';
 import { PRINTED_SCALE, REFINEMENT_WEIGHT, mapToReferenceScale } from './speedPower.js';
 import { archiveBasis, collectRows, requireArchive } from './epmArchive.js';
 import {
@@ -1357,6 +1361,48 @@ const SOURCES = {
     'card shows is a curation decision with photographs cropped against it',
 };
 
+/**
+ * EVERY SEASON OF EVERY PLAYER in the full Basketball-Reference tables, as one
+ * aggregate line per season (careerSeasons: the TOT/2TM row's totals, the
+ * LAST team's jersey) plus the season's per-possession row — the shape the
+ * value pick builds a candidate from. Keyed playerId -> season -> { line, pp }.
+ *
+ * NOT loadFullSeasonTables: that map keys rows by player and season, so for a
+ * traded season the last team's partial row overwrites the season's total
+ * (Joe Johnson 2016: 24 Miami games in place of 81).
+ */
+export function careerIndex({ first = 1977, last = LAST_SEASON } = {}) {
+  const rowsOf = (season, kind) => {
+    let cached;
+    try { cached = readCache(`bbref-${season}-${kind}-full`); } catch { return []; }
+    return Array.isArray(cached) ? cached : cached?.rows ?? cached?.data ?? [];
+  };
+  const adv = new Map();
+  const pp = new Map();
+  for (let season = first; season <= last; season += 1) {
+    for (const r of rowsOf(season, 'advanced')) {
+      if (!r.playerId) continue;
+      if (!adv.has(r.playerId)) adv.set(r.playerId, []);
+      adv.get(r.playerId).push({ ...r, season });
+    }
+    for (const r of rowsOf(season, 'perPoss')) {
+      if (!r.playerId) continue;
+      const k = `${r.playerId}|${season}`;
+      const prev = pp.get(k);
+      if (!prev || (r.games ?? 0) > (prev.games ?? 0)) pp.set(k, { ...r, season });
+    }
+  }
+  const out = new Map();
+  for (const [id, rows] of adv) {
+    const bySeason = new Map();
+    for (const line of careerSeasons(rows)) {
+      bySeason.set(line.season, { line: { ...line, playerId: id }, pp: pp.get(`${id}|${line.season}`) ?? null });
+    }
+    out.set(id, bySeason);
+  }
+  return out;
+}
+
 export function main({ log = console.log } = {}) {
   const history = readCache(HISTORY_CACHE_KEY);
   if (!history) {
@@ -1747,6 +1793,61 @@ export function main({ log = console.log } = {}) {
   // The five positional shares of the season each card actually shows.
   const positionShares = indexPositionShares(loadPositionShares());
   log(`Split rule: ${A.SPLIT_RULE.name} (see SPLIT_RULE in scripts/cardgen/attributes.js).`);
+  // ── THE VALUE PICK: EVERY ELIGIBLE SEASON BESIDE THE DECLARED ONE ─────────
+  //
+  // (2026-09-24, superSeasonValue.js.) The declared seasons — the box-score
+  // picks, the standouts, the named legends — are the incumbents. Every other
+  // eligible season of the same player with a real game log is built in the
+  // same batch, priced on the base field, and the most valuable card is the
+  // Super Season. The base season and the rookie season stay out: the base
+  // card's rule (BEATEN_BY_BASE) and the Rookie rules the user set (the twin
+  // rule, BEATEN_BY_ROOKIE) still decide those.
+  // SHIPPED: every season a card of it went out as — the Super Season file's,
+  // and the demoted file's Throwbacks (Tim Duncan's 2001-02 was shipped as a
+  // Throwback on 2026-09-22; a later pick must not quietly replace it).
+  const shippedSuperSeasons = [
+    ...readShippedSeasons(OUTPUT_FILES[SUPER_SEASON_SET]),
+    ...readShippedSeasons(DEMOTED_FILE),
+  ];
+  const retiredBefore = readRetired();
+  const incumbentSeason = new Map(selection.superSeason.map(sel => [sel.season.playerId, sel.season.season]));
+  {
+    const index = careerIndex({ first: 1977 });
+    const apiEpm = buildApiEpmIndex();
+    const rookieOf = new Map(selection.rookie.map(sel => [sel.season.playerId, sel.season.season]));
+    const careerOf = id => [...(index.get(id)?.values() ?? [])].map(e => e.line);
+    const selectionFor = (incumbent, season) => {
+      const entry = index.get(incumbent.season.playerId)?.get(season);
+      if (!entry?.pp) return null;
+      const { line, pp } = entry;
+      let epm = season >= 2002 ? apiEpm.get(`${normalizeName(incumbent.player.name)}|${season}`) : null;
+      if (!epm && Number.isFinite(line.bpm)) {
+        const bridge = standoutBridge();
+        epm = {
+          epm: bridge.epmFromBpm(line.bpm),
+          ewinsPerGame: bridge.ewinsPerGameFromVorp(line.vorp, line.games),
+        };
+      }
+      return {
+        player: { name: incumbent.player.name, pos: line.pos ?? incumbent.player.pos },
+        season: {
+          ...line, ...pp,
+          // The aggregate line's jersey and totals, never the per-possession
+          // row's '2TM' or its split.
+          team: line.team, games: line.games, minutes: line.minutes,
+          playerId: incumbent.season.playerId,
+          season,
+          epm: epm?.epm ?? null,
+          ewinsPerGame: epm?.ewinsPerGame ?? null,
+        },
+      };
+    };
+    const exclude = (id, season) => season >= LAST_SEASON || rookieOf.get(id) === season;
+    const candidates = candidateSelections(selection.superSeason, { careerOf, selectionFor, exclude });
+    selection.superSeason.push(...candidates);
+    log(`  value pick: ${candidates.length} other eligible seasons of ${incumbentSeason.size} Super Season players built beside the set`);
+  }
+
   // ── The rim profiles, joined onto every selection ─────────────────────────
   //
   // One map, both sets: paintPct/paintAttempts prefer the real 0-3ft numbers
@@ -1784,6 +1885,9 @@ export function main({ log = console.log } = {}) {
 
   const files = {};
   const builtSets = new Map();
+  let valueBatch = [];
+  let valueRepicks = [];
+  let valueUnweighed = [];
   for (const [set, selections] of [
     [SUPER_SEASON_SET, selection.superSeason],
     [ROOKIE_SET, selection.rookie],
@@ -1793,6 +1897,23 @@ export function main({ log = console.log } = {}) {
     // below decides on the salary: writeSet re-prices identically, so nothing
     // double-counts.
     PV.priceAgainstBase(cards, { roundSalary: A.roundSalary, min: A.SALARY_MIN, max: A.SALARY_MAX });
+    if (set === SUPER_SEASON_SET) {
+      // THE VALUE PICK, decided: one card per player, the most valuable.
+      valueBatch = cards.slice();
+      const { winners, repicks, unweighed } = pickByValue(cards, incumbentSeason);
+      const keep = new Set(winners.values());
+      const kept = [];
+      const keptSelections = [];
+      cards.forEach((card, i) => { if (keep.has(card)) { kept.push(card); keptSelections.push(selections[i]); } });
+      selection.superSeason = keptSelections;
+      valueRepicks = repicks;
+      valueUnweighed = unweighed;
+      builtSets.set(set, kept);
+      log(`  value pick: ${repicks.length} Super Seasons move to a more valuable season` +
+        `${repicks.length ? ` — ${repicks.map(r => `${r.name} ${r.from.season} $${r.from.salary} -> ${r.to.season} $${r.to.salary}`).join('; ')}` : ''}`);
+      log(`  value pick: ${unweighed.length} eligible seasons had no real log and were not weighed (see --list-missing-logs)`);
+      continue;
+    }
     builtSets.set(set, cards);
   }
 
@@ -1846,6 +1967,8 @@ export function main({ log = console.log } = {}) {
     log(`  same-season twins: ${merged.length} collapsed — ${merged.join('; ') || 'none'}`);
   }
 
+  // Who the base card beat, for the reason a retired season prints (below).
+  const beatenByBase = new Set();
   // ── THE CARD HAS TO BEAT THE BASE CARD ────────────────────────────────────
   //
   // A best season is chosen by z-scored BPM and VORP. A card's STRENGTH is a
@@ -1880,6 +2003,7 @@ export function main({ log = console.log } = {}) {
       const base = baseSalaries.get(card.id);
       if (base == null || base < (card.salary ?? 0)) continue;
       ss.splice(ss.indexOf(card), 1);
+      beatenByBase.add(card.bbrefId);
       selection.excluded.superSeason.push({
         name: card.name,
         reason: BEATEN_BY_BASE,
@@ -1906,6 +2030,7 @@ export function main({ log = console.log } = {}) {
     );
   }
 
+  let rookieDemoted = [];
   // ── A SUPER SEASON THE PLAYER'S OWN ROOKIE CARD BEATS IS NOT HIS BEST CARD ──
   //
   // The user (2026-09-22): "Mitchell Robinson's Rookie card is better than his
@@ -1944,17 +2069,113 @@ export function main({ log = console.log } = {}) {
         demoted: `${BEATEN_BY_ROOKIE} (rookie ${rk.seasonLabel} $${rk.salary} against $${card.salary}, 2026-09-22)`,
       });
     }
-    fs.writeFileSync(DEMOTED_FILE, `${JSON.stringify({
-      set: 'throwbacks',
-      generatedAt: new Date().toISOString(),
-      note: 'Super Seasons out-priced by the same player\'s Rookie card (generateSpecialSets.js, 2026-09-22): ' +
-        'the same finished cards as Throwbacks. generateCuratedCards.js folds them into cards-throwbacks.json.',
-      cards: demoted,
-    }, null, 1)}\n`);
+    rookieDemoted = demoted;
     log(
       `  beaten by the rookie card: ${demoted.length} demoted to Throwbacks` +
         `${demoted.length ? ` — ${demoted.map(c => `${c.name} ${c.seasonLabel}`).join('; ')}` : ''}`
     );
+  }
+
+  // ── WHAT THE VALUE PICK RETIRED, AND WHAT IT ABSORBED (2026-09-24) ───────
+  //
+  // Every season that was SHIPPED as a Super Season and is not one now — moved
+  // to a stronger season, or out-priced by the base or Rookie card — becomes a
+  // Throwback, and stays one on every later run through
+  // card-data/super-season-retired.json: an owned card never vanishes. A
+  // winning season that already exists as a requested or curated card is
+  // absorbed: the Super Season card records migratedFrom, the old copy leaves
+  // its set and its key aliases here (cardSets.js).
+  {
+    const ss = builtSets.get(SUPER_SEASON_SET);
+    const current = new Map(ss.map(c => [c.bbrefId, c.season]));
+    const names = new Map(valueBatch.map(c => [c.bbrefId, c.name]));
+    const today = new Date().toISOString().slice(0, 10);
+    const retired = nextRetired(retiredBefore, { shipped: shippedSuperSeasons, current, names, today });
+    writeRetired(retired);
+    const builtByPair = new Map(valueBatch.map(c => [`${c.bbrefId}|${c.season}`, c]));
+    const previousDemoted = fs.existsSync(DEMOTED_FILE)
+      ? new Map((JSON.parse(fs.readFileSync(DEMOTED_FILE, 'utf8')).cards ?? []).map(c => [c.id, c]))
+      : new Map();
+    // ONLY SHIPPED SEASONS become Throwbacks: a winning season the Rookie or
+    // base card then beat was never a card anyone saw, and emitting it would
+    // mint a new one. Each carries the reason its player's Super Season left.
+    const rookieBeat = new Map(rookieDemoted.map(c => [c.bbrefId, c.demoted]));
+    const reasonFor = (bbrefId, since) =>
+      rookieBeat.get(bbrefId)
+      ?? (beatenByBase.has(bbrefId) ? `${BEATEN_BY_BASE} (retired ${since})` : `${VALUE_REPICK} (retired ${since})`);
+    const out = new Map();
+    const carried = [];
+    for (const r of retired) {
+      const card = builtByPair.get(`${r.bbrefId}|${r.season}`);
+      const throwback = card
+        ? asThrowback(card, { reason: reasonFor(r.bbrefId, r.since) })
+        : null;
+      const id = throwback?.id ?? `${playerIdFromName(r.name)}_${r.season}`;
+      if (out.has(id)) continue;
+      if (throwback) { out.set(id, throwback); continue; }
+      // Not in this run's batch (the player left the Super Season universe):
+      // the card it was last built as, repriced on today's line.
+      const prev = previousDemoted.get(id);
+      if (prev) {
+        const copy = { ...prev };
+        PV.priceAgainstBase([copy], { roundSalary: A.roundSalary, min: A.SALARY_MIN, max: A.SALARY_MAX });
+        out.set(id, copy);
+        carried.push(`${r.name} ${r.season}`);
+      } else {
+        log(`  ⚠ retired ${r.name} ${r.season} could not be rebuilt or carried — check super-season-retired.json`);
+      }
+    }
+    const readCards = file => (fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')).cards ?? [] : []);
+    const others = [
+      ...readCards(path.join(GEN_DIR, 'cards-free-agents.json')),
+      ...readCards(path.join(GEN_DIR, 'cards-throwbacks.json')).filter(c => !c.demoted),
+    ].filter(c => c.set && c.set !== SUPER_SEASON_SET);
+    const absorbed = [];
+    for (const card of ss) {
+      const from = absorbedCard(card, others);
+      if (!from) continue;
+      card.migratedFrom = from;
+      absorbed.push(`${card.name} ${card.seasonLabel} <- ${from.set}:${from.id}`);
+    }
+    selection.retired = retired;
+    fs.writeFileSync(DEMOTED_FILE, `${JSON.stringify({
+      set: 'throwbacks',
+      generatedAt: new Date().toISOString(),
+      note: 'Super Seasons that are no longer a Super Season, as Throwbacks (generateSpecialSets.js): ' +
+        'out-priced by the same player\'s Rookie card (2026-09-22), or by another of his seasons, the ' +
+        'base card, or any later rule (the value pick, 2026-09-24; card-data/super-season-retired.json). ' +
+        'generateCuratedCards.js folds them into cards-throwbacks.json.',
+      cards: [...out.values()].sort((a, b) => a.id.localeCompare(b.id)),
+    }, null, 1)}\n`);
+    log(`  retired to Throwbacks: ${retired.length} season(s)${carried.length ? ` (${carried.length} carried over: ${carried.join(', ')})` : ''}`);
+    log(`  absorbed into Super Season: ${absorbed.length}${absorbed.length ? ` — ${absorbed.join('; ')}` : ''}`);
+    if (process.argv.includes('--list-missing-logs')) {
+      // The eligible seasons that were not weighed for want of a real log,
+      // narrowed to the ones that could plausibly win: quoted within two
+      // quote-noise widths of the player's Super Season (or the base card
+      // that beat it). Feed the list to fetchSpecialGameLogs.mjs --only.
+      const quoteFile = path.join(GEN_DIR, 'quote-index.json');
+      const quotes = new Map();
+      if (fs.existsSync(quoteFile)) {
+        for (const [bid, , season, kind, , sal] of JSON.parse(fs.readFileSync(quoteFile, 'utf8')).rows) {
+          if (kind === 'r') quotes.set(`${bid}|${season}`, sal);
+        }
+      }
+      const baseSalaries = loadBaseSalaries();
+      const bar = new Map(valueBatch.map(c => [c.bbrefId, 0]));
+      for (const c of valueBatch) bar.set(c.bbrefId, Math.max(bar.get(c.bbrefId), c.provisional ? 0 : c.salary ?? 0));
+      for (const c of valueBatch) bar.set(c.bbrefId, Math.max(bar.get(c.bbrefId), baseSalaries.get(c.id) ?? 0));
+      // `--all` lists every unweighed season: the quote filter missed Maya
+      // Moore's 2013 (quoted ~$1,220, built $1,520 — three noise widths), so a
+      // thorough run fetches everything and lets the built cards decide.
+      const everything = process.argv.includes('--all');
+      const pairs = valueUnweighed
+        .filter(c => everything || (quotes.get(`${c.bbrefId}|${c.season}`) ?? 0) >= (bar.get(c.bbrefId) ?? 0) - 2 * 124)
+        .map(c => `${c.bbrefId}:${c.season}`);
+      const listFile = path.join(GEN_DIR, 'super-season-missing-logs.txt');
+      fs.writeFileSync(listFile, `${pairs.join(',')}\n`);
+      log(`  missing logs worth fetching: ${pairs.length} of ${valueUnweighed.length} -> ${listFile}`);
+    }
   }
 
   for (const [set, selections, file] of [
@@ -2002,6 +2223,10 @@ export function main({ log = console.log } = {}) {
         // Throwbacks (BEATEN_BY_ROOKIE, 2026-09-22): a fourth way out of this
         // set, counted by the accounting test like the other three.
         demoted: set === SUPER_SEASON_SET ? (selection.demoted ?? []) : [],
+        // The value pick (2026-09-24): which declared seasons moved, and the
+        // shipped seasons now retired to Throwbacks. Not part of the pool
+        // accounting — a moved player still has one card here.
+        ...(set === SUPER_SEASON_SET ? { valueRepicks, retired: selection.retired ?? [] } : {}),
         // The same-season twins this set ceded to the other one — a third
         // category beside carded and excluded, so the one-card-per-pool-player
         // accounting still closes. See the twin rule above.

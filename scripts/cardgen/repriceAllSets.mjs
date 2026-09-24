@@ -66,6 +66,10 @@ const SPECIALS = [
   // ended up on a different line from the Super Season it was compared with.
   'demoted-super-seasons.json',
   'cards-free-agents.json',
+  // The WNBA side of the same two (2026-09-24): the value pick's retired WNBA
+  // Super Seasons, and the file generateCuratedCards writes them into.
+  'demoted-wnba-super-seasons.json',
+  'cards-wnba-throwbacks.json',
 ];
 for (const f of SPECIALS) {
   if (!fs.existsSync(path.join(GEN, f))) { console.log(`${f}: missing, skipped`); continue; }

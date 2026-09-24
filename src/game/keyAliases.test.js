@@ -18,7 +18,15 @@ describe('KEY_ALIASES', () => {
       'team-rewards:Anthony_Parker': 'super-season:Anthony_Parker',
       // The Spurs reward changed id when its season was demoted to a Throwback (2026-09-22).
       'team-rewards:David_Robinson': 'team-rewards:David_Robinson_1994',
+      // The value pick moved these rewards' Super Seasons (2026-09-24); each kept its season.
+      'team-rewards:Kobe_Bryant': 'team-rewards:Kobe_Bryant_2006',
+      'team-rewards:Myles_Turner': 'team-rewards:Myles_Turner_2019',
+      'team-rewards:John_Stockton': 'team-rewards:John_Stockton_2002',
     });
+    for (const [old, now] of [['Kobe_Bryant', 2006], ['Myles_Turner', 2019], ['John_Stockton', 2002]]) {
+      expect(getCardByKey(`team-rewards:${old}`), old).toBe(getCardByKey(`team-rewards:${old}_${now}`));
+      expect(getCardByKey(`team-rewards:${old}_${now}`)?.season, old).toBe(now);
+    }
     expect(getCardByKey('team-rewards:David_Robinson')).toBe(getCardByKey('team-rewards:David_Robinson_1994'));
     expect(getCardByKey('team-rewards:David_Robinson_1994')).toMatchObject({ name: 'David Robinson', wears: 'throwbacks', rewardFor: 'SAS' });
     const parker = getCardByKey('super-season:Anthony_Parker');

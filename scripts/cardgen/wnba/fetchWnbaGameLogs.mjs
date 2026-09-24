@@ -10,7 +10,17 @@ const GEN = path.join(REPO_ROOT, 'card-data', 'generated');
 const SETS = ['cards-wnba.json', 'cards-wnba-super-season.json', 'cards-wnba-rookie.json'];
 
 const pairs = new Map();
-for (const f of SETS) {
+// `--only-file=path`: EXACTLY the comma-separated id:season pairs in that file
+// (2026-09-24) — the WNBA Super Season value pick writes the seasons it could
+// not weigh for want of a log to card-data/generated/wnba-super-season-missing-logs.txt.
+const onlyFile = process.argv.find(a => a.startsWith('--only-file='))?.slice('--only-file='.length);
+if (onlyFile) {
+  for (const p of fs.readFileSync(onlyFile, 'utf8').trim().split(',').filter(Boolean)) {
+    const [id, season] = p.split(':');
+    pairs.set(`${id}|${season}`, { id, season: Number(season), name: id });
+  }
+}
+for (const f of onlyFile ? [] : SETS) {
   const body = JSON.parse(fs.readFileSync(path.join(GEN, f), 'utf8'));
   for (const c of body.cards) {
     if (!c.bbrefId || !c.season) continue;

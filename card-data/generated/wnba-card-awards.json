@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-09T22:03:27.820Z",
+ "generatedAt": "2026-09-24T14:02:51.118Z",
  "source": "Basketball-Reference's WNBA award voting pages (rank-1 rows) and each season page's Finals result. All-Star selections are the remaining gap: they live on per-season All-Star pages this does not fetch yet.",
  "declared": [
   "MVP",
@@ -15,9 +15,8 @@
   1999,
   2000,
   2001,
-  2002,
+  2003,
   2004,
-  2005,
   2006,
   2007,
   2008,
@@ -209,11 +208,10 @@
    {
     "id": "Candace_Parker",
     "name": "Candace Parker",
-    "season": 2008,
+    "season": 2013,
     "bbrefId": "parkeca01w",
     "awards": [
-     "MVP",
-     "ROY"
+     "MVP"
     ],
     "champion": null
    },
@@ -249,24 +247,15 @@
     "champion": "HOU"
    },
    {
-    "id": "Deanna_Nolan",
-    "name": "Deanna Nolan",
-    "season": 2008,
-    "bbrefId": "nolande01w",
-    "awards": [
-     "CHAMP"
-    ],
-    "champion": "DET"
-   },
-   {
     "id": "Elena_Delle_Donne",
     "name": "Elena Delle Donne",
-    "season": 2015,
+    "season": 2019,
     "bbrefId": "delleel01w",
     "awards": [
-     "MVP"
+     "MVP",
+     "CHAMP"
     ],
-    "champion": null
+    "champion": "WAS"
    },
    {
     "id": "Janeth_Arcain",
@@ -291,23 +280,22 @@
    {
     "id": "Lisa_Leslie",
     "name": "Lisa Leslie",
-    "season": 2004,
+    "season": 2006,
     "bbrefId": "leslili01w",
     "awards": [
-     "MVP",
-     "DPOY"
+     "MVP"
     ],
     "champion": null
    },
    {
     "id": "Maya_Moore",
     "name": "Maya Moore",
-    "season": 2014,
+    "season": 2013,
     "bbrefId": "moorema01w",
     "awards": [
-     "MVP"
+     "CHAMP"
     ],
-    "champion": null
+    "champion": "MIN"
    },
    {
     "id": "Sheryl_Swoopes",
@@ -334,33 +322,22 @@
    {
     "id": "Sylvia_Fowles",
     "name": "Sylvia Fowles",
-    "season": 2017,
+    "season": 2011,
     "bbrefId": "fowlesy01w",
     "awards": [
-     "MVP",
-     "CHAMP"
-    ],
-    "champion": "MIN"
-   },
-   {
-    "id": "Tamika_Catchings",
-    "name": "Tamika Catchings",
-    "season": 2002,
-    "bbrefId": "catchta01w",
-    "awards": [
-     "ROY"
+     "DPOY"
     ],
     "champion": null
    },
    {
-    "id": "Tina_Thompson",
-    "name": "Tina Thompson",
-    "season": 2000,
-    "bbrefId": "thompti01w",
+    "id": "Tamika_Catchings",
+    "name": "Tamika Catchings",
+    "season": 2010,
+    "bbrefId": "catchta01w",
     "awards": [
-     "CHAMP"
+     "DPOY"
     ],
-    "champion": "HOU"
+    "champion": null
    },
    {
     "id": "Yolanda_Griffith",
@@ -385,6 +362,16 @@
      "CHAMP"
     ],
     "champion": "IND"
+   },
+   {
+    "id": "Seimone_Augustus",
+    "name": "Seimone Augustus",
+    "season": 2011,
+    "bbrefId": "augusse01w",
+    "awards": [
+     "CHAMP"
+    ],
+    "champion": "MIN"
    },
    {
     "id": "Cheryl_Ford",

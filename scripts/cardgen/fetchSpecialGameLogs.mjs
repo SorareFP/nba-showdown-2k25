@@ -27,7 +27,13 @@ const SETS = [
 // be read off the files above, and the reward batch needed three rookie logs
 // cached BEFORE generateSpecialSets ran, so none shipped provisional. The
 // index file is left alone in this mode — it describes a full sweep.
-const onlyArg = process.argv.find(a => a.startsWith('--only='))?.slice('--only='.length)
+// `--only-file=path` reads the same comma-separated pairs from a file: the
+// Super Season value pick writes its unweighed seasons to
+// card-data/generated/super-season-missing-logs.txt (2026-09-24), hundreds of
+// pairs, too many for a command line.
+const onlyFile = process.argv.find(a => a.startsWith('--only-file='))?.slice('--only-file='.length);
+const onlyArg = (onlyFile ? fs.readFileSync(onlyFile, 'utf8').trim() : null)
+  ?? process.argv.find(a => a.startsWith('--only='))?.slice('--only='.length)
   ?? (process.argv.includes('--only') ? process.argv[process.argv.indexOf('--only') + 1] : null);
 const only = onlyArg
   ? onlyArg.split(',').map(p => { const [id, season] = p.split(':'); return { id, season: Number(season) }; })

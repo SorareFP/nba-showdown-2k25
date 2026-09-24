@@ -481,8 +481,12 @@ describe('the base set\'s card-type badges', () => {
     // players it exists to catch, so nearly all land on the BEST SEASON side.
     // 20/127 on 2026-09-09: the absolute paint line and the any-player-may-spend
     // salary rule repriced the set; one badged card slipped under the line.
-    expect(printed.filter(id => id === SUPER_SEASON_BADGE).length).toBe(22);
-    expect(printed.filter(id => id === BEST_SEASON_BADGE).length).toBe(123);
+    // 140 and 20/120 on 2026-09-24: the currency-rate reprice and the Super
+    // Season VALUE PICK (superSeasonValue.js) — ten badged players found an
+    // earlier season that beats their base card and left for the set, five
+    // came the other way. A measurement of the price, as every note says.
+    expect(printed.filter(id => id === SUPER_SEASON_BADGE).length).toBe(20);
+    expect(printed.filter(id => id === BEST_SEASON_BADGE).length).toBe(120);
     // Everyone who prints ROOKIE is someone the SUPER SEASON fact is also true
     // of — the nesting is what makes this a priority question and not a rule.
     // The tier does not touch it: a rookie card is cheap, its Super Season
@@ -510,8 +514,10 @@ describe('the base set\'s card-type badges', () => {
       // reprice re-cut them: two more Super Season cards now beat their base
       // card's band, so two move from best-season to super-season. The pair
       // still sums to the same 145 gilded-or-badged faces.
-      [SUPER_SEASON_BADGE]: 22,
-      [BEST_SEASON_BADGE]: 123,
+      // 20/120 on 2026-09-24: the currency-rate reprice and the Super Season
+      // value pick moved the line again (140 gilded-or-badged faces).
+      [SUPER_SEASON_BADGE]: 20,
+      [BEST_SEASON_BADGE]: 120,
       // In the id list, never on a base-set record: the STANDOUT, TRADED and
       // TEAM REWARD pills are SET badges, worn by their whole sets and no one
       // else. A base-set player earning one would mean a special-set card had
@@ -956,12 +962,18 @@ describe('the award marks the studio joins on', () => {
   it('joins the special sets by their own ids, not the pool\'s', () => {
     // A Super Season card and a base card can be the same player; they are
     // different cards of different seasons and must not share a mark. Kevin
-    // Durant has a card in both special sets, an MVP on one and a Rookie of the
-    // Year on the other.
+    // Durant has a card in both special sets, an All-Star on one and a Rookie
+    // of the Year on the other.
     const superSeason = SOURCES[SUPER_SEASON_SET].players.find(c => c.id === 'Kevin_Durant');
     const rookie = SOURCES[ROOKIE_SET].players.find(c => c.id === 'Kevin_Durant');
-    expect(superSeason.season).toBe(2014);
-    expect(superSeason.awards).toEqual(['MVP', 'AS']);
+    // 2016 since the value pick (2026-09-24): it out-prices the 2014 MVP year
+    // by ten dollars, and the MVP went with its season to the Throwbacks — the
+    // same player, a third id, the mark on the card that holds the year.
+    expect(superSeason.season).toBe(2016);
+    expect(superSeason.awards).toEqual(['AS']);
+    const mvp = SOURCES.throwbacks.players.find(c => c.id === 'Kevin_Durant_2014');
+    expect(mvp.season).toBe(2014);
+    expect(mvp.awards).toEqual(['MVP', 'AS']);
     // His ROOKIE season carried no All-Star selection, so that card is a
     // one-mark card — the season really is part of the join.
     expect(rookie.season).toBe(2008);

@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-22T17:10:01.915Z",
+ "generatedAt": "2026-09-24T14:01:25.330Z",
  "set": "wnba-set-rewards",
  "note": "SET COMPLETION REWARDS — cards MOVED out of their home special set (see migratedFrom) and earned by completing that set (rewardGoal). Built by scripts/cardgen/generateSetRewards.js from card-data/set-rewards-2026.json; the strongest card by salary of each group is the reward.",
  "cards": [
@@ -11,11 +11,11 @@
    "pos": "C",
    "speed": 7,
    "power": 19,
-   "shotLine": 14,
-   "paintBoost": 2,
+   "shotLine": 13,
+   "paintBoost": 1,
    "threePtBoost": -1,
    "defBoost": 3,
-   "salary": 1470,
+   "salary": 1490,
    "chart": [
     {
      "lo": 1,
@@ -33,13 +33,13 @@
     },
     {
      "lo": 7,
-     "hi": 13,
+     "hi": 12,
      "pts": 2,
      "reb": 1,
      "ast": 0
     },
     {
-     "lo": 14,
+     "lo": 13,
      "hi": 19,
      "pts": 3,
      "reb": 2,

@@ -1,0 +1,1290 @@
+{
+ "set": "wnba-throwbacks",
+ "generatedAt": "2026-09-24T14:11:34.147Z",
+ "note": "WNBA THROWBACKS — generator-owned (scripts/cardgen/generateCuratedCards.js from demoted-wnba-super-seasons.json): WNBA Super Seasons the value pick retired. Requested WNBA Throwbacks live in cards-free-agents.json; both join the wnba-throwbacks set in cardSets.js.",
+ "cards": [
+  {
+   "id": "Elena_Delle_Donne_2015",
+   "name": "Elena Delle Donne",
+   "team": "CHI06",
+   "statRowTeam": "CHI",
+   "pos": "F-G",
+   "speed": 10,
+   "power": 16,
+   "shotLine": 13,
+   "paintBoost": 0,
+   "threePtBoost": -1,
+   "defBoost": 1,
+   "salary": 1540,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 12,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 13,
+     "hi": 21,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 4,
+     "reb": 2,
+     "ast": 0
+    }
+   ],
+   "league": "WNBA",
+   "season": 2015,
+   "seasonLabel": "2015",
+   "games": 31,
+   "mpg": 33.3,
+   "minutes": 1032,
+   "schedule": 34,
+   "bbrefId": "delleel01w",
+   "metrics": {
+    "bpmHat": 10.49,
+    "obpmHat": 9.47,
+    "dbpmHat": 1.02,
+    "seasonZ": 3.07,
+    "per": 32.8,
+    "ws": 8.9,
+    "wsPer40": 0.346,
+    "tsPct": 0.591,
+    "pts100": 36.1
+   },
+   "provisional": false,
+   "set": "wnba-throwbacks",
+   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
+   "demotedFrom": {
+    "set": "wnba-super-season",
+    "id": "Elena_Delle_Donne"
+   }
+  },
+  {
+   "id": "Maya_Moore_2014",
+   "name": "Maya Moore",
+   "team": "MIN11",
+   "statRowTeam": "MIN",
+   "pos": "F",
+   "speed": 13,
+   "power": 13,
+   "shotLine": 14,
+   "paintBoost": 2,
+   "threePtBoost": 0,
+   "defBoost": 1,
+   "salary": 1450,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 7,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2014,
+   "seasonLabel": "2014",
+   "games": 34,
+   "mpg": 34.7,
+   "minutes": 1181,
+   "schedule": 34,
+   "bbrefId": "moorema01w",
+   "metrics": {
+    "bpmHat": 9.1,
+    "obpmHat": 7.89,
+    "dbpmHat": 1.21,
+    "seasonZ": 2.75,
+    "per": 29.4,
+    "ws": 8.3,
+    "wsPer40": 0.283,
+    "tsPct": 0.586,
+    "pts100": 36
+   },
+   "provisional": false,
+   "set": "wnba-throwbacks",
+   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
+   "demotedFrom": {
+    "set": "wnba-super-season",
+    "id": "Maya_Moore"
+   }
+  },
+  {
+   "id": "Sylvia_Fowles_2017",
+   "name": "Sylvia Fowles",
+   "team": "MIN11",
+   "statRowTeam": "MIN",
+   "pos": "C",
+   "speed": 6,
+   "power": 20,
+   "shotLine": 12,
+   "paintBoost": 0,
+   "threePtBoost": -8,
+   "defBoost": 3,
+   "salary": 1320,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 11,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 12,
+     "hi": 20,
+     "pts": 2,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2017,
+   "seasonLabel": "2017",
+   "games": 34,
+   "mpg": 30.8,
+   "minutes": 1048,
+   "schedule": 34,
+   "bbrefId": "fowlesy01w",
+   "metrics": {
+    "bpmHat": 9.63,
+    "obpmHat": 6.49,
+    "dbpmHat": 3.14,
+    "seasonZ": 2.68,
+    "per": 30.8,
+    "ws": 9.2,
+    "wsPer40": 0.35,
+    "tsPct": 0.691,
+    "pts100": 31.5
+   },
+   "provisional": false,
+   "set": "wnba-throwbacks",
+   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
+   "demotedFrom": {
+    "set": "wnba-super-season",
+    "id": "Sylvia_Fowles"
+   }
+  },
+  {
+   "id": "Candace_Parker_2008",
+   "name": "Candace Parker",
+   "team": "LAS97",
+   "statRowTeam": "LAS",
+   "pos": "F-C",
+   "speed": 11,
+   "power": 15,
+   "shotLine": 14,
+   "paintBoost": 2,
+   "threePtBoost": -3,
+   "defBoost": 3,
+   "salary": 1120,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 21,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 2,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2008,
+   "seasonLabel": "2008",
+   "games": 33,
+   "mpg": 33.6,
+   "minutes": 1109,
+   "schedule": 34,
+   "bbrefId": "parkeca01w",
+   "metrics": {
+    "bpmHat": 8.4,
+    "obpmHat": 5.78,
+    "dbpmHat": 2.62,
+    "seasonZ": 2.5,
+    "per": 27.4,
+    "ws": 7.7,
+    "wsPer40": 0.278,
+    "tsPct": 0.582,
+    "pts100": 28.6
+   },
+   "provisional": false,
+   "badges": [
+    "rookie"
+   ],
+   "set": "wnba-throwbacks",
+   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
+   "demotedFrom": {
+    "set": "wnba-super-season",
+    "id": "Candace_Parker"
+   }
+  },
+  {
+   "id": "Lindsay_Whalen_2008",
+   "name": "Lindsay Whalen",
+   "team": "CON03",
+   "statRowTeam": "CON",
+   "pos": "G",
+   "speed": 17,
+   "power": 9,
+   "shotLine": 14,
+   "paintBoost": 1,
+   "threePtBoost": 0,
+   "defBoost": 2,
+   "salary": 1070,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 8,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 9,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 14,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2008,
+   "seasonLabel": "2008",
+   "games": 31,
+   "mpg": 29.3,
+   "minutes": 908,
+   "schedule": 34,
+   "bbrefId": "whaleli01w",
+   "metrics": {
+    "bpmHat": 7.67,
+    "obpmHat": 5.8,
+    "dbpmHat": 1.88,
+    "seasonZ": 2.29,
+    "per": 24.8,
+    "ws": 6.4,
+    "wsPer40": 0.283,
+    "tsPct": 0.58,
+    "pts100": 25
+   },
+   "provisional": false,
+   "set": "wnba-throwbacks",
+   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
+   "demotedFrom": {
+    "set": "wnba-super-season",
+    "id": "Lindsay_Whalen"
+   }
+  },
+  {
+   "id": "Tina_Charles_2016",
+   "name": "Tina Charles",
+   "team": "NYL12",
+   "statRowTeam": "NYL",
+   "pos": "C",
+   "speed": 8,
+   "power": 15,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": -1,
+   "defBoost": 0,
+   "salary": 1070,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 21,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2016,
+   "seasonLabel": "2016",
+   "games": 32,
+   "mpg": 33.7,
+   "minutes": 1077,
+   "schedule": 34,
+   "bbrefId": "charlti01w",
+   "metrics": {
+    "bpmHat": 4.82,
+    "obpmHat": 4.67,
+    "dbpmHat": 0.15,
+    "seasonZ": 1.64,
+    "per": 23.8,
+    "ws": 4.7,
+    "wsPer40": 0.176,
+    "tsPct": 0.499,
+    "pts100": 32.6
+   },
+   "provisional": false,
+   "set": "wnba-throwbacks",
+   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
+   "demotedFrom": {
+    "set": "wnba-super-season",
+    "id": "Tina_Charles"
+   }
+  },
+  {
+   "id": "Lisa_Leslie_2004",
+   "name": "Lisa Leslie",
+   "team": "LAS97",
+   "statRowTeam": "LAS",
+   "pos": "C",
+   "speed": 7,
+   "power": 19,
+   "shotLine": 14,
+   "paintBoost": 2,
+   "threePtBoost": -5,
+   "defBoost": 4,
+   "salary": 1060,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 20,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 2,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2004,
+   "seasonLabel": "2004",
+   "games": 34,
+   "mpg": 33.8,
+   "minutes": 1150,
+   "schedule": 34,
+   "bbrefId": "leslili01w",
+   "metrics": {
+    "bpmHat": 7.31,
+    "obpmHat": 3.68,
+    "dbpmHat": 3.64,
+    "seasonZ": 2.36,
+    "per": 25.3,
+    "ws": 6.8,
+    "wsPer40": 0.236,
+    "tsPct": 0.552,
+    "pts100": 28.8
+   },
+   "provisional": false,
+   "set": "wnba-throwbacks",
+   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
+   "demotedFrom": {
+    "set": "wnba-super-season",
+    "id": "Lisa_Leslie"
+   }
+  },
+  {
+   "id": "Tamika_Catchings_2002",
+   "name": "Tamika Catchings",
+   "team": "IND",
+   "statRowTeam": "IND",
+   "pos": "F",
+   "speed": 13,
+   "power": 13,
+   "shotLine": 14,
+   "paintBoost": -1,
+   "threePtBoost": 2,
+   "defBoost": 3,
+   "salary": 1050,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 21,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2002,
+   "seasonLabel": "2002",
+   "games": 32,
+   "mpg": 36.5,
+   "minutes": 1167,
+   "schedule": 32,
+   "bbrefId": "catchta01w",
+   "metrics": {
+    "bpmHat": 11.77,
+    "obpmHat": 8.49,
+    "dbpmHat": 3.28,
+    "seasonZ": 3.44,
+    "per": 30.9,
+    "ws": 9.2,
+    "wsPer40": 0.315,
+    "tsPct": 0.572,
+    "pts100": 30.7
+   },
+   "provisional": false,
+   "badges": [
+    "rookie"
+   ],
+   "set": "wnba-throwbacks",
+   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
+   "demotedFrom": {
+    "set": "wnba-super-season",
+    "id": "Tamika_Catchings"
+   }
+  },
+  {
+   "id": "Sophia_Young_Malcolm_2008",
+   "name": "Sophia Young-Malcolm",
+   "team": "SAS",
+   "statRowTeam": "SAS",
+   "pos": "F",
+   "speed": 12,
+   "power": 12,
+   "shotLine": 14,
+   "paintBoost": 1,
+   "threePtBoost": -5,
+   "defBoost": 2,
+   "salary": 1000,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 21,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2008,
+   "seasonLabel": "2008",
+   "games": 33,
+   "mpg": 31.9,
+   "minutes": 1054,
+   "schedule": 34,
+   "bbrefId": "youngso01w",
+   "metrics": {
+    "bpmHat": 5.62,
+    "obpmHat": 4.02,
+    "dbpmHat": 1.59,
+    "seasonZ": 1.71,
+    "per": 23.5,
+    "ws": 6.2,
+    "wsPer40": 0.237,
+    "tsPct": 0.55,
+    "pts100": 28.9
+   },
+   "provisional": false,
+   "set": "wnba-throwbacks",
+   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
+   "demotedFrom": {
+    "set": "wnba-super-season",
+    "id": "Sophia_Young_Malcolm"
+   }
+  },
+  {
+   "id": "Tina_Thompson_2000",
+   "name": "Tina Thompson",
+   "team": "HOU",
+   "statRowTeam": "HOU",
+   "pos": "F",
+   "speed": 12,
+   "power": 14,
+   "shotLine": 14,
+   "paintBoost": 0,
+   "threePtBoost": 2,
+   "defBoost": 2,
+   "salary": 920,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    }
+   ],
+   "league": "WNBA",
+   "season": 2000,
+   "seasonLabel": "2000",
+   "games": 32,
+   "mpg": 34,
+   "minutes": 1087,
+   "schedule": 32,
+   "bbrefId": "thompti01w",
+   "metrics": {
+    "bpmHat": 7.18,
+    "obpmHat": 5.33,
+    "dbpmHat": 1.85,
+    "seasonZ": 2.11,
+    "per": 23.9,
+    "ws": 7.2,
+    "wsPer40": 0.264,
+    "tsPct": 0.586,
+    "pts100": 28.4
+   },
+   "provisional": false,
+   "set": "wnba-throwbacks",
+   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
+   "demotedFrom": {
+    "set": "wnba-super-season",
+    "id": "Tina_Thompson"
+   }
+  },
+  {
+   "id": "Elena_Baranova_2001",
+   "name": "Elena Baranova",
+   "team": "MIA",
+   "statRowTeam": "MIA",
+   "pos": "F",
+   "speed": 10,
+   "power": 14,
+   "shotLine": 15,
+   "paintBoost": 1,
+   "threePtBoost": 1,
+   "defBoost": 2,
+   "salary": 820,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 20,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2001,
+   "seasonLabel": "2001",
+   "games": 32,
+   "mpg": 30.8,
+   "minutes": 984,
+   "schedule": 32,
+   "bbrefId": "baranel01w",
+   "metrics": {
+    "bpmHat": 5.56,
+    "obpmHat": 3.13,
+    "dbpmHat": 2.44,
+    "seasonZ": 1.75,
+    "per": 21.3,
+    "ws": 5,
+    "wsPer40": 0.201,
+    "tsPct": 0.523,
+    "pts100": 23.9
+   },
+   "provisional": false,
+   "set": "wnba-throwbacks",
+   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
+   "demotedFrom": {
+    "set": "wnba-super-season",
+    "id": "Elena_Baranova"
+   }
+  },
+  {
+   "id": "Katie_Smith_2000",
+   "name": "Katie Smith",
+   "team": "MIN99",
+   "statRowTeam": "MIN",
+   "pos": "G",
+   "speed": 15,
+   "power": 9,
+   "shotLine": 14,
+   "paintBoost": -1,
+   "threePtBoost": 2,
+   "defBoost": -1,
+   "salary": 810,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 21,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    }
+   ],
+   "league": "WNBA",
+   "season": 2000,
+   "seasonLabel": "2000",
+   "games": 32,
+   "mpg": 37.3,
+   "minutes": 1193,
+   "schedule": 32,
+   "bbrefId": "smithka01w",
+   "metrics": {
+    "bpmHat": 5.6,
+    "obpmHat": 6.15,
+    "dbpmHat": -0.55,
+    "seasonZ": 1.68,
+    "per": 22.3,
+    "ws": 6.4,
+    "wsPer40": 0.213,
+    "tsPct": 0.578,
+    "pts100": 31
+   },
+   "provisional": false,
+   "set": "wnba-throwbacks",
+   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
+   "demotedFrom": {
+    "set": "wnba-super-season",
+    "id": "Katie_Smith"
+   }
+  },
+  {
+   "id": "Deanna_Nolan_2008",
+   "name": "Deanna Nolan",
+   "team": "DET2",
+   "statRowTeam": "DET",
+   "pos": "G-F",
+   "speed": 15,
+   "power": 8,
+   "shotLine": 15,
+   "paintBoost": 2,
+   "threePtBoost": 1,
+   "defBoost": 0,
+   "salary": 780,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2008,
+   "seasonLabel": "2008",
+   "games": 34,
+   "mpg": 33.6,
+   "minutes": 1144,
+   "schedule": 34,
+   "bbrefId": "nolande01w",
+   "metrics": {
+    "bpmHat": 4.42,
+    "obpmHat": 4.22,
+    "dbpmHat": 0.21,
+    "seasonZ": 1.38,
+    "per": 20,
+    "ws": 5.3,
+    "wsPer40": 0.186,
+    "tsPct": 0.541,
+    "pts100": 24.7
+   },
+   "provisional": false,
+   "set": "wnba-throwbacks",
+   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
+   "demotedFrom": {
+    "set": "wnba-super-season",
+    "id": "Deanna_Nolan"
+   }
+  },
+  {
+   "id": "Michelle_Snow_2005",
+   "name": "Michelle Snow",
+   "team": "HOU",
+   "statRowTeam": "HOU",
+   "pos": "C",
+   "speed": 6,
+   "power": 14,
+   "shotLine": 13,
+   "paintBoost": 1,
+   "threePtBoost": -7,
+   "defBoost": 0,
+   "salary": 690,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 12,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 13,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    }
+   ],
+   "league": "WNBA",
+   "season": 2005,
+   "seasonLabel": "2005",
+   "games": 33,
+   "mpg": 29.3,
+   "minutes": 966,
+   "schedule": 34,
+   "bbrefId": "snowmi01w",
+   "metrics": {
+    "bpmHat": 2.67,
+    "obpmHat": 2.4,
+    "dbpmHat": 0.27,
+    "seasonZ": 0.92,
+    "per": 21.6,
+    "ws": 4.7,
+    "wsPer40": 0.194,
+    "tsPct": 0.594,
+    "pts100": 24.5
+   },
+   "provisional": false,
+   "set": "wnba-throwbacks",
+   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
+   "demotedFrom": {
+    "set": "wnba-super-season",
+    "id": "Michelle_Snow"
+   }
+  },
+  {
+   "id": "Chasity_Melvin_2001",
+   "name": "Chasity Melvin",
+   "team": "CLE",
+   "statRowTeam": "CLE",
+   "pos": "C-F",
+   "speed": 7,
+   "power": 14,
+   "shotLine": 15,
+   "paintBoost": 1,
+   "threePtBoost": -4,
+   "defBoost": 1,
+   "salary": 670,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 20,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2001,
+   "seasonLabel": "2001",
+   "games": 27,
+   "mpg": 27.9,
+   "minutes": 754,
+   "schedule": 32,
+   "bbrefId": "melvich01w",
+   "metrics": {
+    "bpmHat": 3.23,
+    "obpmHat": 1.85,
+    "dbpmHat": 1.38,
+    "seasonZ": 1.08,
+    "per": 19.5,
+    "ws": 4.2,
+    "wsPer40": 0.225,
+    "tsPct": 0.526,
+    "pts100": 22
+   },
+   "provisional": false,
+   "set": "wnba-throwbacks",
+   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
+   "demotedFrom": {
+    "set": "wnba-super-season",
+    "id": "Chasity_Melvin"
+   }
+  },
+  {
+   "id": "Ticha_Penicheiro_2002",
+   "name": "Ticha Penicheiro",
+   "team": "SAC",
+   "statRowTeam": "SAC",
+   "pos": "G",
+   "speed": 15,
+   "power": 7,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": -1,
+   "defBoost": 3,
+   "salary": 470,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 8,
+     "pts": 0,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 9,
+     "hi": 15,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 99,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2002,
+   "seasonLabel": "2002",
+   "games": 24,
+   "mpg": 35.5,
+   "minutes": 853,
+   "schedule": 32,
+   "bbrefId": "penicti01w",
+   "metrics": {
+    "bpmHat": 3.92,
+    "obpmHat": 1.29,
+    "dbpmHat": 2.63,
+    "seasonZ": 1.23,
+    "per": 18,
+    "ws": 2.4,
+    "wsPer40": 0.114,
+    "tsPct": 0.497,
+    "pts100": 13.7
+   },
+   "provisional": false,
+   "set": "wnba-throwbacks",
+   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
+   "demotedFrom": {
+    "set": "wnba-super-season",
+    "id": "Ticha_Penicheiro"
+   }
+  },
+  {
+   "id": "Michelle_Edwards_1997",
+   "name": "Michelle Edwards",
+   "team": "CLE",
+   "statRowTeam": "CLE",
+   "pos": "G",
+   "speed": 10,
+   "power": 6,
+   "shotLine": 15,
+   "paintBoost": 1,
+   "threePtBoost": -2,
+   "defBoost": 0,
+   "salary": 310,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 99,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 1997,
+   "seasonLabel": "1997",
+   "games": 20,
+   "mpg": 31.1,
+   "minutes": 622,
+   "schedule": 28,
+   "bbrefId": "edwarmi01w",
+   "metrics": {
+    "bpmHat": -0.01,
+    "obpmHat": -0.3,
+    "dbpmHat": 0.3,
+    "seasonZ": 0.2,
+    "per": 14.4,
+    "ws": 0.8,
+    "wsPer40": 0.05,
+    "tsPct": 0.488,
+    "pts100": 17.8
+   },
+   "provisional": false,
+   "badges": [
+    "rookie"
+   ],
+   "set": "wnba-throwbacks",
+   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
+   "demotedFrom": {
+    "set": "wnba-super-season",
+    "id": "Michelle_Edwards"
+   }
+  }
+ ]
+}

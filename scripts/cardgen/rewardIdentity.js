@@ -17,7 +17,9 @@
 // This module must not import generateTeamRewards.js (freeAgentQuotes does,
 // for NEVER_CARD, and generateTeamRewards imports this — a cycle would leave
 // one side reading uninitialised bindings).
-import { readCache } from './cache.js';
+import fs from 'node:fs';
+import path from 'node:path';
+import { readCache, REPO_ROOT } from './cache.js';
 import { normalizeName } from './resolveTeams.js';
 import { careerSeasons, bestSeason, BEST_SEASON_MIN_GAMES, BEST_SEASON_MIN_MINUTES } from './history.js';
 import { seasonDistribution } from './fetchHistory.js';
@@ -47,11 +49,54 @@ export function unprovableDebutSeasons(seasons) {
  * `career` is careerSeasons() for the player; `distributions` maps season to
  * seasonDistribution(); `unprovable` comes from unprovableDebutSeasons().
  */
-export function classifySeason(career, season, { distributions, unprovable = new Set() }) {
+/**
+ * THE SEASON EACH PLAYER'S SUPER SEASON CARD CARRIES (2026-09-24).
+ *
+ * Since the value pick (superSeasonValue.js) a Super Season is the player's
+ * most VALUABLE season, which the box-score rule below cannot see: only a
+ * built, priced card can. So a player who HAS a Super Season card — in either
+ * league's set, including one a reward has migrated out, or a requested one —
+ * is judged against the season that card carries, and the box-score rule is
+ * the fallback for everyone else. Read from the generated files, which the
+ * Super Season generators write before any step that classifies.
+ */
+export function superSeasonMap(genDir = path.join(REPO_ROOT, 'card-data', 'generated')) {
+  const out = new Map();
+  const cardsOf = f => {
+    const file = path.join(genDir, f);
+    return fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')).cards ?? [] : [];
+  };
+  for (const f of ['cards-super-season.json', 'cards-wnba-super-season.json']) {
+    for (const c of cardsOf(f)) if (c.bbrefId && Number.isFinite(c.season)) out.set(c.bbrefId, c.season);
+  }
+  for (const c of cardsOf('cards-free-agents.json')) {
+    if ((c.set === 'super-season' || c.set === 'wnba-super-season') && c.bbrefId && !out.has(c.bbrefId)) {
+      out.set(c.bbrefId, c.season);
+    }
+  }
+  return out;
+}
+
+/** The season a player's Super Season card pins, or undefined when he has none. */
+const pinnedSuperSeason = (superSeasonOf, career, playerId) => {
+  const id = playerId ?? career.find(r => r?.playerId)?.playerId;
+  return id != null ? superSeasonOf?.get(id) : undefined;
+};
+
+/** Is `season` the player's best — his Super Season card's, or else the box-score best? */
+export function isBestSeason(career, season, top, { superSeasonOf = null, playerId = null } = {}) {
+  const pinned = pinnedSuperSeason(superSeasonOf, career, playerId);
+  if (pinned != null) return pinned === season;
+  return top?.best?.season === season && top.eligibility !== 'none';
+}
+
+export function classifySeason(career, season, { distributions, unprovable = new Set(), superSeasonOf = null, playerId = null }) {
   const first = career[0];
   if (first && first.season === season && !unprovable.has(first.season) && rookieSeasonCounts(first)) {
     return 'rookie';
   }
+  const pinned = pinnedSuperSeason(superSeasonOf, career, playerId);
+  if (pinned != null) return pinned === season ? 'super-season' : 'throwbacks';
   const { best, eligibility } = bestSeason(career, distributions);
   if (best && best.season === season && eligibility !== 'none') return 'super-season';
   return 'throwbacks';
@@ -80,9 +125,11 @@ export const WNBA_SETS = { rookie: 'wnba-rookie', best: 'wnba-super-season', oth
  * (buildWnbaCards: "one gold card wearing the rookie pill too"). `career` is
  * careerOf(playerId, rateArchive(...)) from generateWnbaLegends.js.
  */
-export function classifyWnbaSeason(career, season) {
+export function classifyWnbaSeason(career, season, { superSeasonOf = null, playerId = null } = {}) {
   const first = career[0];
   if (first && first.season === season && wnbaRookieSeasonCounts(first)) return WNBA_SETS.rookie;
+  const pinned = pinnedSuperSeason(superSeasonOf, career, playerId);
+  if (pinned != null) return pinned === season ? WNBA_SETS.best : WNBA_SETS.other;
   const { best, eligibility } = bestLegendSeason(career);
   if (best && best.season === season && eligibility !== 'none') return WNBA_SETS.best;
   return WNBA_SETS.other;
@@ -142,7 +189,11 @@ export function nbaCareerContext({ first = ARCHIVE_FIRST, last = ARCHIVE_LAST } 
     if (!careers.has(playerId)) careers.set(playerId, careerSeasons(rows.get(playerId) ?? []));
     return careers.get(playerId);
   };
-  return { seasons, distributions, unprovable: unprovableDebutSeasons(seasons), careerOf };
+  return {
+    seasons, distributions, unprovable: unprovableDebutSeasons(seasons), careerOf,
+    // The value pick's Super Seasons (2026-09-24), which classifySeason reads first.
+    superSeasonOf: superSeasonMap(),
+  };
 }
 
 /**
@@ -152,12 +203,12 @@ export function nbaCareerContext({ first = ARCHIVE_FIRST, last = ARCHIVE_LAST } 
 export function nbaIdentityFor(ctx, playerId, season) {
   const career = ctx.careerOf(playerId);
   if (career.length === 0) return { wears: 'throwbacks', alsoBest: false, trusted: false };
-  const set = classifySeason(career, season, ctx);
+  const set = classifySeason(career, season, { ...ctx, playerId });
   const top = bestSeason(career, ctx.distributions);
   const line = career.find(s => s.season === season);
   return {
     wears: set,
-    alsoBest: top.best?.season === season && top.eligibility !== 'none',
+    alsoBest: isBestSeason(career, season, top, { superSeasonOf: ctx.superSeasonOf, playerId }),
     // The gold line trusts a season, not a career: the same test the quote
     // index applies to the line it is pricing.
     trusted: (line?.games ?? 0) >= BEST_SEASON_MIN_GAMES && (line?.minutes ?? 0) >= BEST_SEASON_MIN_MINUTES,

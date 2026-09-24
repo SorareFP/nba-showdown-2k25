@@ -24,7 +24,7 @@ import { teamIdFor } from './modes/league.js';
 export const NEWS = [
   {
     id: 'dogged-rare', date: '2026-09-24', title: 'Dogged is a rare',
-    body: 'Dogged (−2 Speed and −2 Power on a fatigued opponent) was far stronger than a common, so it is now a rare: one printed copy and a rare's share of packs.',
+    body: 'Dogged (−2 Speed and −2 Power on a fatigued opponent) was far stronger than a common, so it is now a rare: one printed copy and a rare\'s share of packs.',
     to: 'shop', cta: 'Pack Shop',
   },
   {

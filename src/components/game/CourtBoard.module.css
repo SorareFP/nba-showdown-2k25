@@ -653,3 +653,35 @@
 .court:has(> .zigzagFloor) { min-height: 0; }
 .cardPortrait .cardArtSideImg { object-fit: cover; object-position: 50% 18%; }
 .cardPortrait .cardSidebar { width: auto; flex: 1 1 auto; }
+/* THE ACTIONS ARE NEVER BEHIND A HOVER (2026-09-24). The user, the day the
+   tiles stopped growing unless the photo was hovered: "shot check action
+   buttons are now unclickable. You can't see them until you hover over the
+   card, and then when you move to click on them, they disappear." The Roll,
+   3PT, Paint and rebound buttons live in .rollArea, last but one in the
+   sidebar, so a short tile clipped them first. In a tile the sidebar is a
+   column the height of what is left: the roll area is pinned to its foot at
+   full size, the game line sits just above it and gives way first, then the
+   matchup and effect lines; the name and ratings never shrink. Hovering the
+   photo still grows the tile to show every hidden line. */
+/* The priorities, in one column: the name, the ratings and the roll area
+   never shrink; the text lines are sized from nothing (flex-basis 0) and
+   take what room is left, up to their own height, the matchup line first and
+   the game line last; and only if the fixed parts still do not fit does the
+   photo give way, down to 48px. So an action is never clipped, and never
+   moves when the pointer does. */
+.cardPortrait .cardArtSide { flex: 0 1 auto; min-height: 48px; }
+.cardPortrait .cardSidebar { flex: 1 0 auto; min-height: 0; overflow: hidden; }
+.cardPortrait .cardSidebar > * { flex: 0 0 auto; }
+.cardPortrait .cardSidebar > .advBlock { flex: 3 1 0; min-height: 0; max-height: max-content; overflow: hidden; }
+.cardPortrait .cardSidebar > .boostRow,
+.cardPortrait .cardSidebar > .liveRow { flex: 2 1 0; min-height: 0; max-height: max-content; overflow: hidden; }
+.cardPortrait .cardSidebar > .gameStats { order: 1; flex: 1 1 0; min-height: 0; max-height: max-content; overflow: hidden; }
+.cardPortrait .cardSidebar > .rollArea { order: 2; margin-top: auto; }
+/* Grown on a photo hover: every line at its own height, the photo whole, and
+   past the growth cap it is the text that gives, never the roll area. */
+.zigzagTile:has(.cardArtSide:hover) .cardPortrait .cardArtSide { flex-shrink: 0; }
+.zigzagTile:has(.cardArtSide:hover) .cardPortrait .cardSidebar { flex: 1 1 auto; }
+.zigzagTile:has(.cardArtSide:hover) .cardPortrait .cardSidebar > .advBlock,
+.zigzagTile:has(.cardArtSide:hover) .cardPortrait .cardSidebar > .boostRow,
+.zigzagTile:has(.cardArtSide:hover) .cardPortrait .cardSidebar > .liveRow,
+.zigzagTile:has(.cardArtSide:hover) .cardPortrait .cardSidebar > .gameStats { flex: 0 1 auto; max-height: none; }

@@ -72,8 +72,8 @@
   position: sticky; top: calc(76px / var(--ui-zoom)); height: calc((100vh - 92px) / var(--ui-zoom));
   display: flex; flex-direction: column; gap: 10px; min-height: 0;
 }
-/* Opened, the analytics table scrolls in the lower part of the rail; the log keeps the rest. */
-.railAnalytics { flex: 0 1 auto; max-height: 55%; overflow-y: auto; min-height: 0; }
+/* The rail is the analytics' alone since the log moved under the court (2026-09-24). */
+.railAnalytics { flex: 0 1 auto; max-height: 100%; overflow-y: auto; min-height: 0; }
 /* A 4K screen at 100% scaling: the same game, half again as large. */
 @media (min-width: 3000px) {
   .wideGame { --ui-zoom: 1.5; }

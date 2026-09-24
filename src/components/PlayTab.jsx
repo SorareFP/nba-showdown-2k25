@@ -777,9 +777,11 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
           <div className={styles.wideMain}>
             <Scoreboard game={game} rollGate={gameOpponent === 'ai' ? rollGate(game) : null} />
             {board}
+            {/* UNDER THE COURT, OPEN (the user, 2026-09-24: "Game log did not
+                move to under the cards"): the rail beside keeps the analytics. */}
+            <GameLog log={game.log} defaultOpen />
           </div>
-          <aside className={styles.wideRail} aria-label="Game log and analytics">
-            <GameLog log={game.log} docked />
+          <aside className={styles.wideRail} aria-label="Analytics">
             <div className={styles.railAnalytics}><AnalyticsPanel analytics={game.analytics} /></div>
           </aside>
         </div>

@@ -25,9 +25,10 @@
  *
  *   chart       `scoringRoll` does `score += result.pts` with NO check at all.
  *               Ungated, and the largest channel.
- *   conversion  the chart's REBOUNDS and ASSISTS are currencies. 4 AST buys a
- *               3PT check, 3 REB a paint check, 2 REB a putback — and those ARE
- *               gated, by the shot line less the relevant boost.
+ *   conversion  the chart's REBOUNDS and ASSISTS are currencies. The engine's
+ *               SPEND_COSTS say what each buys (5 AST a 3PT or paint check, 5
+ *               REB a paint check, since 2026-09-23) — and those ARE gated, by
+ *               the shot line less the relevant boost. See `astRate`/`rebRate`.
  *   target      a team spends its POOLED currency on whoever converts best, so
  *               converting well is worth something even to a card that
  *               generates none of the currency itself. Luke Kennard is the case
@@ -42,7 +43,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { REPO_ROOT } from './cache.js';
-import { calcAdv } from '../../src/game/engine.js';
+import { calcAdv, SPEND_COSTS, STARTERS } from '../../src/game/engine.js';
 import { lookupChart } from '../../src/game/cards.js';
 
 /** The engine's own roll clamp. */
@@ -85,6 +86,31 @@ export function hitProb(card, boostKey, contest = 0) {
 
 /** A defender's standing contest, exactly as matchupContest floors it. */
 export const contestOf = card => Math.max(0, card.defBoost ?? 0);
+
+/**
+ * WHAT ONE ASSIST AND ONE REBOUND ARE WORTH, in points, read off the engine's
+ * own prices (2026-09-23).
+ *
+ * These rates were constants written for the economy of early September: 4
+ * AST bought a three, 3 REB a paint check and 2 REB a putback, so a rebound
+ * was priced at a whole paint check's chance — p per REB. The putback went,
+ * both checks moved to 5, and the rebound paint check opened (REBOUND_RULES),
+ * but the constants stayed: the model priced a rebound at about two and a half
+ * times what one buys, and ABOVE an assist, while 600 simulated games had an
+ * assist worth nearly twice a rebound (0.33 against 0.18 points). Every
+ * rebounder was overpriced by it. Now the price is the check a unit buys:
+ *
+ *   assist   the better of a 3PT check (3 × p3) and a paint check (2 × pp),
+ *            each divided by its SPEND_COSTS price
+ *   rebound  a paint check (2 × pp) divided by SPEND_COSTS.reboundPaint
+ *
+ * `p3`/`pp` are the hit chances of whoever spends it (see `convert`).
+ */
+export const astRate = (p3, pp) => Math.max(
+  (3 * p3) / SPEND_COSTS.assistThree,
+  (2 * pp) / SPEND_COSTS.assistPaint,
+);
+export const rebRate = pp => (2 * pp) / SPEND_COSTS.reboundPaint;
 
 /**
  * Play value for every card in `cards`, measured against `field`.
@@ -131,11 +157,12 @@ export function computePlayValue(cards, { field = cards } = {}) {
   // spend rule, which priced Luke Kennard's 12 Shot Line (45% from three, 40%
   // in the paint, boosts 0 and -1) as a 30% shooter.
   const convert = (card, stat) => {
+    const pp = Math.max(hitProb(card, 'paintBoost', fieldContest), fieldHitPaint);
     if (stat === 'ast') {
-      const p = Math.max(hitProb(card, 'threePtBoost', fieldContest), fieldHit3);
-      return (3 / 4) * p;
+      const p3 = Math.max(hitProb(card, 'threePtBoost', fieldContest), fieldHit3);
+      return astRate(p3, pp);
     }
-    return Math.max(hitProb(card, 'paintBoost', fieldContest), fieldHitPaint);
+    return rebRate(pp);
   };
 
   const chart = new Array(n);
@@ -156,11 +183,20 @@ export function computePlayValue(cards, { field = cards } = {}) {
     conv[i] = k / d;
   }
 
+  // THE TARGET: the team's pooled currency, spent by its best converter. A
+  // section's pool is STARTERS rolls' worth; divided by a check's price it is
+  // the checks a section buys, and this card's edge over the median converter
+  // is what each is worth more in its hands. Rebounds joined the pool when
+  // the rebound paint check opened (2026-09-23); with assists at 5 a check,
+  // the assist term is exactly what it was.
   const meanAst = mean(cards.map((_, i) => evAt(i, 0, 'ast')));
+  const meanReb = mean(cards.map((_, i) => evAt(i, 0, 'reb')));
+  const astChecks = (STARTERS * meanAst) / SPEND_COSTS.assistThree;
+  const rebChecks = (STARTERS * meanReb) / SPEND_COSTS.reboundPaint;
   const target = cards.map(c => {
     const e3 = hitProb(c, 'threePtBoost', fieldContest) - fieldHit3;
     const ep = hitProb(c, 'paintBoost', fieldContest) - fieldHitPaint;
-    return meanAst * Math.max(0, Math.max(e3 * 3, ep * 2));
+    return astChecks * Math.max(0, Math.max(e3 * 3, ep * 2)) + rebChecks * Math.max(0, ep * 2);
   });
 
   // Defence: points denied against a real median defender rather than a
@@ -181,8 +217,8 @@ export function computePlayValue(cards, { field = cards } = {}) {
     const c = contestOf(def);
     const p3 = Math.max(hitProb(attacker, 'threePtBoost', c), fieldHit3);
     const pp = Math.max(hitProb(attacker, 'paintBoost', c), fieldHitPaint);
-    return expectedChartValue(attacker, b, 'ast') * (3 / 4) * p3
-         + expectedChartValue(attacker, b, 'reb') * pp;
+    return expectedChartValue(attacker, b, 'ast') * astRate(p3, pp)
+         + expectedChartValue(attacker, b, 'reb') * rebRate(pp);
   };
 
   const defence = cards.map(card => {

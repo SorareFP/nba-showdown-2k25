@@ -97,7 +97,19 @@ export async function main({ log = console.log } = {}) {
   }
   // The Super Seasons the generator demoted (a Rookie card of the player's
   // out-priced them, 2026-09-22): already built, they join as they are.
-  const demoted = [...readDemoted(), ...readDemoted(WNBA_DEMOTED_FILE)];
+  // A RETIRED ROOKIE YEAR IS A ROOKIE CARD, NOT A THROWBACK (the user,
+  // 2026-09-24: "Candace Parker's Rookie card became a throwback instead of a
+  // rookie card... move the rookie card to the rookie set"). Her 2007-08 was
+  // her Super Season, so it had no Rookie card; once the value pick moved the
+  // Super Season it retired here. Forced into the Rookie set now
+  // (wnba-rookie-legends.json), the season is that card's.
+  const rookieSeasons = new Set(['cards-rookie.json', 'cards-wnba-rookie.json']
+    .map(f => path.join(GEN_DIR, f))
+    .filter(f => fs.existsSync(f))
+    .flatMap(f => JSON.parse(fs.readFileSync(f, 'utf8')).cards ?? [])
+    .map(c => `${c.bbrefId}|${c.season}`));
+  const demoted = [...readDemoted(), ...readDemoted(WNBA_DEMOTED_FILE)]
+    .filter(c => !rookieSeasons.has(`${c.bbrefId}|${c.season}`));
   for (const card of demoted) log(`  ${card.name} ${card.seasonLabel}: ${card.set}:${card.id} $${card.salary} (demoted Super Season)`);
   cards.push(...demoted);
   const bySalary = (a, b) => b.salary - a.salary || a.id.localeCompare(b.id);

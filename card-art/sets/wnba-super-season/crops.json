@@ -40,7 +40,7 @@
     "zoom": 1
   },
   "Cynthia_Cooper": {
-    "x": -28.85,
+    "x": -8.78,
     "y": 0,
     "zoom": 1
   },
@@ -68,11 +68,6 @@
     "x": 0,
     "y": -6.48,
     "zoom": 1
-  },
-  "Candace_Parker": {
-    "x": 0.05,
-    "y": 16.12,
-    "zoom": 1.25
   },
   "Chasity_Melvin": {
     "x": 0,
@@ -118,5 +113,15 @@
     "x": -4,
     "y": 1.77,
     "zoom": 1.08
+  },
+  "Elena_Baranova": {
+    "x": 0,
+    "y": -1.46,
+    "zoom": 1
+  },
+  "Elena_Delle_Donne": {
+    "x": 3.81,
+    "y": 0,
+    "zoom": 1
   }
 }

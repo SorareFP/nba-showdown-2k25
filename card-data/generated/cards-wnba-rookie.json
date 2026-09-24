@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-24T13:57:50.148Z",
+ "generatedAt": "2026-09-24T20:00:16.973Z",
  "set": "wnba-rookie",
  "provisional": false,
  "referenceSeason": 2026,
@@ -1238,6 +1238,77 @@
     "wsPer40": 0.086,
     "tsPct": 0.583,
     "pts100": 27.2
+   },
+   "provisional": false
+  },
+  {
+   "id": "Candace_Parker",
+   "name": "Candace Parker",
+   "team": "LAS97",
+   "statRowTeam": "LAS",
+   "pos": "F-C",
+   "speed": 13,
+   "power": 13,
+   "shotLine": 13,
+   "paintBoost": 1,
+   "threePtBoost": -4,
+   "defBoost": 3,
+   "salary": 1140,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 12,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 13,
+     "hi": 21,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 2,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2008,
+   "seasonLabel": "2008",
+   "games": 33,
+   "mpg": 33.6,
+   "minutes": 1109,
+   "schedule": 34,
+   "bbrefId": "parkeca01w",
+   "metrics": {
+    "bpmHat": 8.4,
+    "obpmHat": 5.78,
+    "dbpmHat": 2.62,
+    "seasonZ": 2.5,
+    "per": 27.4,
+    "ws": 7.7,
+    "wsPer40": 0.278,
+    "tsPct": 0.582,
+    "pts100": 28.6
    },
    "provisional": false
   },

@@ -1,6 +1,6 @@
 {
  "note": "DORMANT THROWBACKS — generator-owned Throwbacks with no photo, kept out of every set, pack and list by src/game/cardSets.js and offered to Free Agents requests instead. Written by scripts/studio/dormantThrowbacks.mjs; a photo plus an export brings a card back.",
- "count": 56,
+ "count": 55,
  "keys": [
   "throwbacks:Alperen_Sengun_2025",
   "throwbacks:Anfernee_Simons_2025",
@@ -45,7 +45,6 @@
   "throwbacks:Rui_Hachimura_2025",
   "throwbacks:Terance_Mann_2023",
   "throwbacks:Tyus_Jones_2023",
-  "wnba-throwbacks:Candace_Parker_2008",
   "wnba-throwbacks:Chasity_Melvin_2001",
   "wnba-throwbacks:Deanna_Nolan_2008",
   "wnba-throwbacks:Katie_Smith_2000",

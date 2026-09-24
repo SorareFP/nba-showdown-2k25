@@ -25,6 +25,12 @@ describe('a dormant Throwback', () => {
     expect(Object.values(CARD_SETS).flat().some(c => c.set === 'throwbacks' && c.demotedFrom)).toBe(true);
   });
 
+  it('is never a rookie year that has its Rookie card (Candace Parker 2007-08)', () => {
+    expect(CARD_SETS['wnba-rookie'].find(c => c.id === 'Candace_Parker')?.season).toBe(2008);
+    expect(DORMANT_KEYS.has('wnba-throwbacks:Candace_Parker_2008')).toBe(false);
+    expect(Object.values(CARD_SETS).flat().some(c => c.id === 'Candace_Parker_2008')).toBe(false);
+  });
+
   it('is in no set, so no pack, list or checklist deals it', () => {
     expect(SPECIAL_SETS_IN_PACKS).toEqual(expect.arrayContaining(['throwbacks', 'wnba-throwbacks']));
     for (const key of DORMANT_KEYS) expect(live.has(key), key).toBe(false);
@@ -38,9 +44,12 @@ describe('a dormant Throwback', () => {
   it('is offered to Free Agents like an uncarded season, as a Throwback or its Rookie card', () => {
     // A retired ROOKIE YEAR requests as a Rookie card, the user's rule
     // (2026-09-18): a season that qualifies for Rookie is not a Throwback.
-    // Three were Super Seasons and so had no Rookie card; the request builds
+    // These were Super Seasons and so had no Rookie card; the request builds
     // one, and the dormant Throwback of the same season simply stays asleep.
-    const ROOKIE_YEARS = ['Candace_Parker_2008', 'Michelle_Edwards_1997', 'Tamika_Catchings_2002'];
+    // Candace Parker's 2007-08 left this list on 2026-09-24: forced into the
+    // WNBA Rookie set (wnba-rookie-legends.json) at the user's word, it is a
+    // Rookie card now and generateCuratedCards retires no rookie year.
+    const ROOKIE_YEARS = ['Michelle_Edwards_1997', 'Tamika_Catchings_2002'];
     const rows = quoteIndex.rows;
     const asRookie = [];
     for (const card of DORMANT_CARDS) {

@@ -1,6 +1,6 @@
 {
  "set": "throwbacks",
- "generatedAt": "2026-09-24T14:11:34.147Z",
+ "generatedAt": "2026-09-24T20:01:03.879Z",
  "note": "CURATED THROWBACKS — generator-owned (scripts/cardgen/generateCuratedCards.js from card-data/curated-cards-2026.json, plus demoted-super-seasons.json). Retired rewards that qualify for no other set, and Super Seasons that are no longer a Super Season (a Rookie card of the player's out-priced them, or the value pick chose another season). Requested Throwbacks live in cards-free-agents.json; both join the throwbacks set in cardSets.js.",
  "cards": [
   {

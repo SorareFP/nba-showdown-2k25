@@ -1,6 +1,6 @@
 {
  "set": "wnba-throwbacks",
- "generatedAt": "2026-09-24T14:11:34.147Z",
+ "generatedAt": "2026-09-24T20:01:03.879Z",
  "note": "WNBA THROWBACKS — generator-owned (scripts/cardgen/generateCuratedCards.js from demoted-wnba-super-seasons.json): WNBA Super Seasons the value pick retired. Requested WNBA Throwbacks live in cards-free-agents.json; both join the wnba-throwbacks set in cardSets.js.",
  "cards": [
   {
@@ -225,86 +225,6 @@
    "demotedFrom": {
     "set": "wnba-super-season",
     "id": "Sylvia_Fowles"
-   }
-  },
-  {
-   "id": "Candace_Parker_2008",
-   "name": "Candace Parker",
-   "team": "LAS97",
-   "statRowTeam": "LAS",
-   "pos": "F-C",
-   "speed": 11,
-   "power": 15,
-   "shotLine": 14,
-   "paintBoost": 2,
-   "threePtBoost": -3,
-   "defBoost": 3,
-   "salary": 1120,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 6,
-     "pts": 0,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 7,
-     "hi": 13,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 14,
-     "hi": 21,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 22,
-     "hi": 99,
-     "pts": 2,
-     "reb": 2,
-     "ast": 1
-    }
-   ],
-   "league": "WNBA",
-   "season": 2008,
-   "seasonLabel": "2008",
-   "games": 33,
-   "mpg": 33.6,
-   "minutes": 1109,
-   "schedule": 34,
-   "bbrefId": "parkeca01w",
-   "metrics": {
-    "bpmHat": 8.4,
-    "obpmHat": 5.78,
-    "dbpmHat": 2.62,
-    "seasonZ": 2.5,
-    "per": 27.4,
-    "ws": 7.7,
-    "wsPer40": 0.278,
-    "tsPct": 0.582,
-    "pts100": 28.6
-   },
-   "provisional": false,
-   "badges": [
-    "rookie"
-   ],
-   "set": "wnba-throwbacks",
-   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
-   "demotedFrom": {
-    "set": "wnba-super-season",
-    "id": "Candace_Parker"
    }
   },
   {

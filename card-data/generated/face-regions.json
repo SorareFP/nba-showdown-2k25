@@ -326,12 +326,7 @@
         0.1253,
         0.6923
       ],
-      "badge": [
-        0.8363,
-        0.5826,
-        0.1507,
-        0.0223
-      ]
+      "badge": null
     },
     "2026-27/LeBron_James": {
       "name": [
@@ -417,12 +412,7 @@
         0.1253,
         0.6143
       ],
-      "badge": [
-        0.8363,
-        0.5826,
-        0.1507,
-        0.0223
-      ]
+      "badge": null
     },
     "2026-27/Payton_Pritchard": {
       "name": [
@@ -1281,7 +1271,12 @@
         0.1253,
         0.6875
       ],
-      "badge": null
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
     },
     "2026-27/John_Collins": {
       "name": [
@@ -3327,7 +3322,12 @@
         0.0979,
         0.7163
       ],
-      "badge": null
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
     },
     "super-season/Amen_Thompson": {
       "name": [
@@ -3552,7 +3552,12 @@
         0.1109,
         0.7218
       ],
-      "badge": null
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
     },
     "super-season/Chris_Paul": {
       "name": [
@@ -3746,7 +3751,12 @@
         0.1109,
         0.7315
       ],
-      "badge": null
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
     },
     "super-season/Derrick_Jones_Jr": {
       "name": [
@@ -3806,7 +3816,12 @@
         0.1253,
         0.6941
       ],
-      "badge": null
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
     },
     "super-season/Dirk_Nowitzki": {
       "name": [
@@ -3815,7 +3830,12 @@
         0.1253,
         0.659
       ],
-      "badge": null
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
     },
     "super-season/Domantas_Sabonis": {
       "name": [
@@ -4594,7 +4614,12 @@
         0.1253,
         0.5427
       ],
-      "badge": null
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
     },
     "super-season/Kyle_Lowry": {
       "name": [
@@ -4645,7 +4670,12 @@
         0.1253,
         0.5217
       ],
-      "badge": null
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
     },
     "super-season/Lauri_Markkanen": {
       "name": [
@@ -4797,7 +4827,12 @@
         0.1253,
         0.6865
       ],
-      "badge": null
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
     },
     "super-season/Mike_Conley": {
       "name": [
@@ -4843,7 +4878,12 @@
         0.1253,
         0.4067
       ],
-      "badge": null
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
     },
     "super-season/Nick_Richards": {
       "name": [
@@ -5082,7 +5122,12 @@
         0.1187,
         0.6668
       ],
-      "badge": null
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
     },
     "super-season/Shaedon_Sharpe": {
       "name": [
@@ -5197,7 +5242,12 @@
         0.1044,
         0.687
       ],
-      "badge": null
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
     },
     "super-season/Tobias_Harris": {
       "name": [
@@ -5421,7 +5471,7 @@
       ],
       "badge": [
         0.8363,
-        0.5451,
+        0.5826,
         0.1507,
         0.0223
       ]
@@ -5677,7 +5727,12 @@
         0.1253,
         0.4128
       ],
-      "badge": null
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
     },
     "wnba-super-season/Suzie_McConnell_Serio": {
       "name": [
@@ -5725,7 +5780,7 @@
       ],
       "badge": [
         0.8363,
-        0.5451,
+        0.5826,
         0.1507,
         0.0223
       ]
@@ -8920,7 +8975,12 @@
         0.0796,
         0.7408
       ],
-      "badge": null
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
     },
     "team-rewards/Stephen_Curry": {
       "name": [
@@ -8938,7 +8998,12 @@
         0.1253,
         0.5582
       ],
-      "badge": null
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
     },
     "team-rewards/Paul_George": {
       "name": [
@@ -9099,7 +9164,12 @@
         0.1253,
         0.593
       ],
-      "badge": null
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
     },
     "team-rewards/John_Stockton": {
       "name": [
@@ -9126,7 +9196,12 @@
         0.1253,
         0.5004
       ],
-      "badge": null
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
     },
     "team-rewards/Myles_Turner": {
       "name": [
@@ -10689,7 +10764,12 @@
         0.1044,
         0.7117
       ],
-      "badge": null
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
     },
     "wnba-team-rewards/Seimone_Augustus": {
       "name": [
@@ -10721,7 +10801,12 @@
         0.1253,
         0.634
       ],
-      "badge": null
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
     },
     "wnba-team-rewards/Chamique_Holdsclaw": {
       "name": [
@@ -10748,7 +10833,12 @@
         0.1253,
         0.6349
       ],
-      "badge": null
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
     },
     "wnba-team-rewards/Mwadi_Mabika": {
       "name": [
@@ -10775,7 +10865,12 @@
         0.1253,
         0.5901
       ],
-      "badge": null
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
     },
     "wnba-team-rewards/Sophia_Witherspoon": {
       "name": [
@@ -10981,8 +11076,1237 @@
         0.1507,
         0.0223
       ]
+    },
+    "throwbacks/Darius_Miles_2003": {
+      "name": [
+        0.0252,
+        0.1694,
+        0.1253,
+        0.6231
+      ],
+      "badge": null
+    },
+    "rookie/Cedric_Henderson": {
+      "name": [
+        0.0356,
+        0.1158,
+        0.1044,
+        0.7302
+      ],
+      "badge": null
+    },
+    "throwbacks/Zydrunas_Ilgauskas_2006": {
+      "name": [
+        0.0415,
+        0.1131,
+        0.0926,
+        0.7356
+      ],
+      "badge": null
+    },
+    "throwbacks/Ira_Newble_2004": {
+      "name": [
+        0.0252,
+        0.2116,
+        0.1253,
+        0.5386
+      ],
+      "badge": null
+    },
+    "rookie/Nikoloz_Tskitishvili": {
+      "name": [
+        0.046,
+        0.1559,
+        0.0835,
+        0.65
+      ],
+      "badge": null
+    },
+    "wnba-throwbacks/Maya_Moore_2016": {
+      "name": [
+        0.0252,
+        0.1979,
+        0.1253,
+        0.5661
+      ],
+      "badge": null
+    },
+    "throwbacks/Rafer_Alston_2005": {
+      "name": [
+        0.0252,
+        0.1579,
+        0.1253,
+        0.6462
+      ],
+      "badge": null
+    },
+    "throwbacks/Luke_Ridnour_2005": {
+      "name": [
+        0.0252,
+        0.1578,
+        0.1253,
+        0.6462
+      ],
+      "badge": null
+    },
+    "rookie/Tristan_Thompson": {
+      "name": [
+        0.0356,
+        0.1187,
+        0.1044,
+        0.7245
+      ],
+      "badge": null
+    },
+    "throwbacks/Kyle_Korver_2011": {
+      "name": [
+        0.0252,
+        0.1887,
+        0.1253,
+        0.5845
+      ],
+      "badge": null
+    },
+    "throwbacks/Tyreke_Evans_2013": {
+      "name": [
+        0.0252,
+        0.1601,
+        0.1253,
+        0.6418
+      ],
+      "badge": null
+    },
+    "team-rewards/Vince_Carter": {
+      "name": [
+        0.0252,
+        0.1701,
+        0.1253,
+        0.6216
+      ],
+      "badge": null
+    },
+    "team-rewards/Elton_Brand": {
+      "name": [
+        0.0252,
+        0.1854,
+        0.1253,
+        0.5911
+      ],
+      "badge": null
+    },
+    "super-season/Ivica_Zubac": {
+      "name": [
+        0.0252,
+        0.2051,
+        0.1253,
+        0.5518
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "super-season/Anthony_Parker": {
+      "name": [
+        0.0284,
+        0.1134,
+        0.1187,
+        0.7351
+      ],
+      "badge": null
+    },
+    "super-season/Elton_Brand": {
+      "name": [
+        0.0252,
+        0.1854,
+        0.1253,
+        0.5911
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "super-season/Gilbert_Arenas": {
+      "name": [
+        0.0284,
+        0.1261,
+        0.1187,
+        0.7097
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "super-season/DeAndre_Jordan": {
+      "name": [
+        0.0284,
+        0.1057,
+        0.1187,
+        0.7504
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "rookie/Elton_Brand": {
+      "name": [
+        0.0252,
+        0.1854,
+        0.1253,
+        0.5911
+      ],
+      "badge": null
+    },
+    "rookie/Gilbert_Arenas": {
+      "name": [
+        0.0284,
+        0.1261,
+        0.1187,
+        0.7097
+      ],
+      "badge": null
+    },
+    "rookie/DeAndre_Jordan": {
+      "name": [
+        0.0284,
+        0.1057,
+        0.1187,
+        0.7504
+      ],
+      "badge": null
+    },
+    "throwbacks/Bradley_Beal_2021": {
+      "name": [
+        0.0252,
+        0.158,
+        0.1253,
+        0.6458
+      ],
+      "badge": null
+    },
+    "throwbacks/Mitchell_Robinson_2020": {
+      "name": [
+        0.0389,
+        0.1264,
+        0.0979,
+        0.7091
+      ],
+      "badge": null
+    },
+    "throwbacks/Tim_Duncan_2002": {
+      "name": [
+        0.0252,
+        0.2119,
+        0.1253,
+        0.5381
+      ],
+      "badge": null
+    },
+    "throwbacks/Andrei_Kirilenko_2005": {
+      "name": [
+        0.0356,
+        0.1393,
+        0.1044,
+        0.6834
+      ],
+      "badge": null
+    },
+    "throwbacks/Yao_Ming_2009": {
+      "name": [
+        0.0252,
+        0.2681,
+        0.1253,
+        0.4257
+      ],
+      "badge": null
+    },
+    "team-rewards/David_Robinson_1994": {
+      "name": [
+        0.0284,
+        0.1268,
+        0.1187,
+        0.7083
+      ],
+      "badge": null
+    },
+    "live/Tyrese_Maxey": {
+      "name": [
+        0.0252,
+        0.1534,
+        0.1253,
+        0.6552
+      ],
+      "badge": null
+    },
+    "super-season/Andrew_Nembhard": {
+      "name": [
+        0.0343,
+        0.0994,
+        0.107,
+        0.763
+      ],
+      "badge": null
+    },
+    "super-season/Bam_Adebayo": {
+      "name": [
+        0.0252,
+        0.1738,
+        0.1253,
+        0.6143
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "super-season/Coby_White": {
+      "name": [
+        0.0252,
+        0.2158,
+        0.1253,
+        0.5303
+      ],
+      "badge": null
+    },
+    "super-season/Jerami_Grant": {
+      "name": [
+        0.0252,
+        0.1542,
+        0.1253,
+        0.6535
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "super-season/John_Stockton": {
+      "name": [
+        0.0252,
+        0.1247,
+        0.1253,
+        0.7126
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "super-season/Josh_Green": {
+      "name": [
+        0.0252,
+        0.2028,
+        0.1253,
+        0.5563
+      ],
+      "badge": null
+    },
+    "super-season/Keegan_Murray": {
+      "name": [
+        0.0252,
+        0.1115,
+        0.1253,
+        0.7389
+      ],
+      "badge": null
+    },
+    "super-season/Kelly_Oubre_Jr": {
+      "name": [
+        0.0323,
+        0.1548,
+        0.1109,
+        0.6522
+      ],
+      "badge": null
+    },
+    "super-season/Kobe_Bryant": {
+      "name": [
+        0.0252,
+        0.1839,
+        0.1253,
+        0.5941
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "super-season/Myles_Turner": {
+      "name": [
+        0.0252,
+        0.1509,
+        0.1253,
+        0.6601
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "super-season/Pascal_Siakam": {
+      "name": [
+        0.0252,
+        0.1348,
+        0.1253,
+        0.6923
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "super-season/Sam_Merrill": {
+      "name": [
+        0.0252,
+        0.1851,
+        0.1253,
+        0.5916
+      ],
+      "badge": null
+    },
+    "super-season/Zeke_Nnaji": {
+      "name": [
+        0.0252,
+        0.223,
+        0.1253,
+        0.5159
+      ],
+      "badge": null
+    },
+    "team-rewards/Kobe_Bryant_2006": {
+      "name": [
+        0.0252,
+        0.1839,
+        0.1253,
+        0.5941
+      ],
+      "badge": null
+    },
+    "team-rewards/John_Stockton_2002": {
+      "name": [
+        0.0252,
+        0.1247,
+        0.1253,
+        0.7126
+      ],
+      "badge": null
+    },
+    "team-rewards/Myles_Turner_2019": {
+      "name": [
+        0.0252,
+        0.1509,
+        0.1253,
+        0.6601
+      ],
+      "badge": null
+    },
+    "throwbacks/Giannis_Antetokounmpo_2022": {
+      "name": [
+        0.048,
+        0.1105,
+        0.0796,
+        0.7408
+      ],
+      "badge": null
+    },
+    "throwbacks/James_Harden_2019": {
+      "name": [
+        0.0252,
+        0.1409,
+        0.1253,
+        0.6801
+      ],
+      "badge": null
+    },
+    "throwbacks/Joel_Embiid_2022": {
+      "name": [
+        0.0252,
+        0.2018,
+        0.1253,
+        0.5582
+      ],
+      "badge": null
+    },
+    "throwbacks/Luka_Doncic_2024": {
+      "name": [
+        0.0252,
+        0.193,
+        0.1253,
+        0.5759
+      ],
+      "badge": null
+    },
+    "throwbacks/Kevin_Durant_2014": {
+      "name": [
+        0.0252,
+        0.1609,
+        0.1253,
+        0.6401
+      ],
+      "badge": null
+    },
+    "throwbacks/Dwyane_Wade_2009": {
+      "name": [
+        0.0252,
+        0.1584,
+        0.1253,
+        0.6451
+      ],
+      "badge": null
+    },
+    "throwbacks/Michael_Jordan_1988": {
+      "name": [
+        0.0284,
+        0.1183,
+        0.1187,
+        0.7253
+      ],
+      "badge": null
+    },
+    "throwbacks/Jayson_Tatum_2023": {
+      "name": [
+        0.0252,
+        0.158,
+        0.1253,
+        0.6459
+      ],
+      "badge": null
+    },
+    "throwbacks/Karl_Malone_1997": {
+      "name": [
+        0.0252,
+        0.1779,
+        0.1253,
+        0.6062
+      ],
+      "badge": null
+    },
+    "throwbacks/Larry_Bird_1985": {
+      "name": [
+        0.0252,
+        0.2201,
+        0.1253,
+        0.5217
+      ],
+      "badge": null
+    },
+    "throwbacks/Damian_Lillard_2020": {
+      "name": [
+        0.0284,
+        0.134,
+        0.1187,
+        0.6939
+      ],
+      "badge": null
+    },
+    "throwbacks/Anthony_Davis_2015": {
+      "name": [
+        0.0252,
+        0.1325,
+        0.1253,
+        0.6969
+      ],
+      "badge": null
+    },
+    "throwbacks/Devin_Booker_2022": {
+      "name": [
+        0.0252,
+        0.159,
+        0.1253,
+        0.644
+      ],
+      "badge": null
+    },
+    "throwbacks/Kareem_Abdul_Jabbar_1977": {
+      "name": [
+        0.0441,
+        0.109,
+        0.0874,
+        0.7439
+      ],
+      "badge": null
+    },
+    "throwbacks/Dirk_Nowitzki_2006": {
+      "name": [
+        0.0252,
+        0.1514,
+        0.1253,
+        0.659
+      ],
+      "badge": null
+    },
+    "throwbacks/Jimmy_Butler_2023": {
+      "name": [
+        0.0252,
+        0.1574,
+        0.1253,
+        0.6471
+      ],
+      "badge": null
+    },
+    "throwbacks/Jalen_Williams_2025": {
+      "name": [
+        0.0284,
+        0.1291,
+        0.1187,
+        0.7037
+      ],
+      "badge": null
+    },
+    "throwbacks/Grant_Hill_1997": {
+      "name": [
+        0.0252,
+        0.2244,
+        0.1253,
+        0.513
+      ],
+      "badge": null
+    },
+    "throwbacks/Jonas_Valanciunas_2021": {
+      "name": [
+        0.0388,
+        0.1166,
+        0.0979,
+        0.7287
+      ],
+      "badge": null
+    },
+    "throwbacks/Charles_Barkley_1990": {
+      "name": [
+        0.0323,
+        0.1201,
+        0.1109,
+        0.7218
+      ],
+      "badge": null
+    },
+    "throwbacks/Desmond_Bane_2025": {
+      "name": [
+        0.0252,
+        0.1378,
+        0.1253,
+        0.6862
+      ],
+      "badge": null
+    },
+    "throwbacks/Jaren_Jackson_Jr_2023": {
+      "name": [
+        0.0388,
+        0.1375,
+        0.0979,
+        0.6869
+      ],
+      "badge": null
+    },
+    "throwbacks/Alperen_Sengun_2025": {
+      "name": [
+        0.0284,
+        0.1081,
+        0.1187,
+        0.7457
+      ],
+      "badge": null
+    },
+    "throwbacks/Brandon_Ingram_2021": {
+      "name": [
+        0.0284,
+        0.1016,
+        0.1187,
+        0.7587
+      ],
+      "badge": null
+    },
+    "throwbacks/Darius_Garland_2025": {
+      "name": [
+        0.0284,
+        0.1134,
+        0.1187,
+        0.735
+      ],
+      "badge": null
+    },
+    "throwbacks/Rudy_Gobert_2019": {
+      "name": [
+        0.0252,
+        0.1773,
+        0.1253,
+        0.6073
+      ],
+      "badge": null
+    },
+    "throwbacks/Kyle_Lowry_2016": {
+      "name": [
+        0.0252,
+        0.2095,
+        0.1253,
+        0.5428
+      ],
+      "badge": null
+    },
+    "throwbacks/Chris_Paul_2009": {
+      "name": [
+        0.0252,
+        0.2242,
+        0.1253,
+        0.5134
+      ],
+      "badge": null
+    },
+    "throwbacks/DeMar_DeRozan_2018": {
+      "name": [
+        0.0252,
+        0.1106,
+        0.1253,
+        0.7408
+      ],
+      "badge": null
+    },
+    "throwbacks/Elton_Brand_2006": {
+      "name": [
+        0.0252,
+        0.1854,
+        0.1253,
+        0.5911
+      ],
+      "badge": null
+    },
+    "throwbacks/Jarrett_Allen_2025": {
+      "name": [
+        0.0252,
+        0.1372,
+        0.1253,
+        0.6875
+      ],
+      "badge": null
+    },
+    "throwbacks/Pau_Gasol_2011": {
+      "name": [
+        0.0252,
+        0.2369,
+        0.1253,
+        0.4881
+      ],
+      "badge": null
+    },
+    "throwbacks/Paul_Pierce_2002": {
+      "name": [
+        0.0252,
+        0.2014,
+        0.1253,
+        0.5591
+      ],
+      "badge": null
+    },
+    "throwbacks/Domantas_Sabonis_2024": {
+      "name": [
+        0.0356,
+        0.1099,
+        0.1044,
+        0.7421
+      ],
+      "badge": null
+    },
+    "throwbacks/Draymond_Green_2016": {
+      "name": [
+        0.0291,
+        0.104,
+        0.1174,
+        0.7539
+      ],
+      "badge": null
+    },
+    "throwbacks/Fred_VanVleet_2022": {
+      "name": [
+        0.0252,
+        0.1358,
+        0.1253,
+        0.6904
+      ],
+      "badge": null
+    },
+    "throwbacks/Derrick_White_2025": {
+      "name": [
+        0.0252,
+        0.1387,
+        0.1253,
+        0.6844
+      ],
+      "badge": null
+    },
+    "throwbacks/Clint_Capela_2018": {
+      "name": [
+        0.0252,
+        0.1776,
+        0.1253,
+        0.6067
+      ],
+      "badge": null
+    },
+    "throwbacks/Jason_Terry_2007": {
+      "name": [
+        0.0252,
+        0.1833,
+        0.1253,
+        0.5953
+      ],
+      "badge": null
+    },
+    "throwbacks/Nicolas_Batum_2014": {
+      "name": [
+        0.0252,
+        0.1318,
+        0.1253,
+        0.6983
+      ],
+      "badge": null
+    },
+    "throwbacks/DeAndre_Jordan_2015": {
+      "name": [
+        0.0284,
+        0.1057,
+        0.1187,
+        0.7504
+      ],
+      "badge": null
+    },
+    "throwbacks/Mikal_Bridges_2021": {
+      "name": [
+        0.0252,
+        0.1377,
+        0.1253,
+        0.6865
+      ],
+      "badge": null
+    },
+    "throwbacks/Jakob_Poeltl_2023": {
+      "name": [
+        0.0252,
+        0.1693,
+        0.1253,
+        0.6233
+      ],
+      "badge": null
+    },
+    "throwbacks/De_Anthony_Melton_2022": {
+      "name": [
+        0.0388,
+        0.1255,
+        0.0979,
+        0.7109
+      ],
+      "badge": null
+    },
+    "throwbacks/Anfernee_Simons_2025": {
+      "name": [
+        0.0323,
+        0.1137,
+        0.1109,
+        0.7344
+      ],
+      "badge": null
+    },
+    "throwbacks/Dillon_Brooks_2025": {
+      "name": [
+        0.0252,
+        0.1339,
+        0.1253,
+        0.6941
+      ],
+      "badge": null
+    },
+    "throwbacks/Kyle_Kuzma_2022": {
+      "name": [
+        0.0252,
+        0.2096,
+        0.1253,
+        0.5427
+      ],
+      "badge": null
+    },
+    "throwbacks/Caris_LeVert_2025": {
+      "name": [
+        0.0252,
+        0.1744,
+        0.1253,
+        0.6132
+      ],
+      "badge": null
+    },
+    "throwbacks/Naz_Reid_2025": {
+      "name": [
+        0.0252,
+        0.2776,
+        0.1253,
+        0.4067
+      ],
+      "badge": null
+    },
+    "throwbacks/Malik_Monk_2024": {
+      "name": [
+        0.0252,
+        0.2092,
+        0.1253,
+        0.5435
+      ],
+      "badge": null
+    },
+    "throwbacks/Dennis_Schroder_2017": {
+      "name": [
+        0.0323,
+        0.1152,
+        0.1109,
+        0.7315
+      ],
+      "badge": null
+    },
+    "throwbacks/Tim_Hardaway_Jr_2017": {
+      "name": [
+        0.0356,
+        0.1374,
+        0.1044,
+        0.687
+      ],
+      "badge": null
+    },
+    "throwbacks/Marcus_Smart_2020": {
+      "name": [
+        0.0252,
+        0.1375,
+        0.1253,
+        0.6869
+      ],
+      "badge": null
+    },
+    "throwbacks/Quentin_Grimes_2025": {
+      "name": [
+        0.0284,
+        0.1239,
+        0.1187,
+        0.7141
+      ],
+      "badge": null
+    },
+    "throwbacks/Dennis_Rodman_1992": {
+      "name": [
+        0.0252,
+        0.1163,
+        0.1253,
+        0.7292
+      ],
+      "badge": null
+    },
+    "throwbacks/Harrison_Barnes_2022": {
+      "name": [
+        0.0323,
+        0.1118,
+        0.1109,
+        0.7383
+      ],
+      "badge": null
+    },
+    "throwbacks/Luguentz_Dort_2025": {
+      "name": [
+        0.0252,
+        0.1268,
+        0.1253,
+        0.7083
+      ],
+      "badge": null
+    },
+    "throwbacks/Luke_Kennard_2025": {
+      "name": [
+        0.0252,
+        0.1505,
+        0.1253,
+        0.6609
+      ],
+      "badge": null
+    },
+    "throwbacks/Rui_Hachimura_2025": {
+      "name": [
+        0.0252,
+        0.129,
+        0.1253,
+        0.7039
+      ],
+      "badge": null
+    },
+    "throwbacks/Kenrich_Williams_2025": {
+      "name": [
+        0.0356,
+        0.1289,
+        0.1044,
+        0.7041
+      ],
+      "badge": null
+    },
+    "throwbacks/Jarred_Vanderbilt_2023": {
+      "name": [
+        0.0388,
+        0.1266,
+        0.0979,
+        0.7087
+      ],
+      "badge": null
+    },
+    "throwbacks/Tyus_Jones_2023": {
+      "name": [
+        0.0252,
+        0.2115,
+        0.1253,
+        0.5389
+      ],
+      "badge": null
+    },
+    "throwbacks/Kentavious_Caldwell_Pope_2018": {
+      "name": [
+        0.0532,
+        0.1241,
+        0.0692,
+        0.7137
+      ],
+      "badge": null
+    },
+    "throwbacks/Bennedict_Mathurin_2025": {
+      "name": [
+        0.0415,
+        0.1217,
+        0.0926,
+        0.7185
+      ],
+      "badge": null
+    },
+    "throwbacks/Royce_O_Neale_2021": {
+      "name": [
+        0.0252,
+        0.1479,
+        0.1253,
+        0.6661
+      ],
+      "badge": null
+    },
+    "throwbacks/Terance_Mann_2023": {
+      "name": [
+        0.0252,
+        0.1448,
+        0.1253,
+        0.6723
+      ],
+      "badge": null
+    },
+    "throwbacks/Anthony_Gill_2021": {
+      "name": [
+        0.0252,
+        0.1648,
+        0.1253,
+        0.6323
+      ],
+      "badge": null
+    },
+    "throwbacks/Isaac_Okoro_2023": {
+      "name": [
+        0.0252,
+        0.1886,
+        0.1253,
+        0.5847
+      ],
+      "badge": null
+    },
+    "throwbacks/Corey_Kispert_2023": {
+      "name": [
+        0.0252,
+        0.1435,
+        0.1253,
+        0.6749
+      ],
+      "badge": null
+    },
+    "throwbacks/Tyrese_Martin_2025": {
+      "name": [
+        0.0252,
+        0.136,
+        0.1253,
+        0.6899
+      ],
+      "badge": null
+    },
+    "wnba-throwbacks/Elena_Delle_Donne_2015": {
+      "name": [
+        0.0389,
+        0.1317,
+        0.0979,
+        0.6984
+      ],
+      "badge": null
+    },
+    "wnba-throwbacks/Maya_Moore_2014": {
+      "name": [
+        0.0252,
+        0.1979,
+        0.1253,
+        0.5661
+      ],
+      "badge": null
+    },
+    "wnba-throwbacks/Sylvia_Fowles_2017": {
+      "name": [
+        0.0252,
+        0.1406,
+        0.1253,
+        0.6808
+      ],
+      "badge": null
+    },
+    "wnba-throwbacks/Candace_Parker_2008": {
+      "name": [
+        0.0284,
+        0.1174,
+        0.1187,
+        0.727
+      ],
+      "badge": null
+    },
+    "wnba-throwbacks/Lindsay_Whalen_2008": {
+      "name": [
+        0.0284,
+        0.1188,
+        0.1187,
+        0.7244
+      ],
+      "badge": null
+    },
+    "wnba-throwbacks/Tina_Charles_2016": {
+      "name": [
+        0.0252,
+        0.1686,
+        0.1253,
+        0.6247
+      ],
+      "badge": null
+    },
+    "wnba-throwbacks/Lisa_Leslie_2004": {
+      "name": [
+        0.0252,
+        0.2192,
+        0.1253,
+        0.5234
+      ],
+      "badge": null
+    },
+    "wnba-throwbacks/Tamika_Catchings_2002": {
+      "name": [
+        0.0356,
+        0.1305,
+        0.1044,
+        0.7008
+      ],
+      "badge": null
+    },
+    "wnba-throwbacks/Sophia_Young_Malcolm_2008": {
+      "name": [
+        0.046,
+        0.1097,
+        0.0835,
+        0.7425
+      ],
+      "badge": null
+    },
+    "wnba-throwbacks/Tina_Thompson_2000": {
+      "name": [
+        0.0252,
+        0.1265,
+        0.1253,
+        0.7089
+      ],
+      "badge": null
+    },
+    "wnba-throwbacks/Elena_Baranova_2001": {
+      "name": [
+        0.0284,
+        0.1126,
+        0.1187,
+        0.7366
+      ],
+      "badge": null
+    },
+    "wnba-throwbacks/Katie_Smith_2000": {
+      "name": [
+        0.0252,
+        0.2084,
+        0.1253,
+        0.5452
+      ],
+      "badge": null
+    },
+    "wnba-throwbacks/Deanna_Nolan_2008": {
+      "name": [
+        0.0252,
+        0.1425,
+        0.1253,
+        0.677
+      ],
+      "badge": null
+    },
+    "wnba-throwbacks/Michelle_Snow_2005": {
+      "name": [
+        0.0252,
+        0.123,
+        0.1253,
+        0.7159
+      ],
+      "badge": null
+    },
+    "wnba-throwbacks/Chasity_Melvin_2001": {
+      "name": [
+        0.0284,
+        0.1421,
+        0.1187,
+        0.6776
+      ],
+      "badge": null
+    },
+    "wnba-throwbacks/Ticha_Penicheiro_2002": {
+      "name": [
+        0.0356,
+        0.1412,
+        0.1044,
+        0.6796
+      ],
+      "badge": null
+    },
+    "wnba-throwbacks/Michelle_Edwards_1997": {
+      "name": [
+        0.0363,
+        0.1166,
+        0.1031,
+        0.7287
+      ],
+      "badge": null
     }
   },
-  "generatedAt": "2026-09-14T13:54:59.565Z",
+  "generatedAt": "2026-09-24T14:25:20.124Z",
   "note": "Per-face boxes of the rotated name and the Super Season pill, as fractions of the 843x1181 face, measured by scripts/studio/export.js. Read by src/cards/faceRegions.js for the holographic sheen."
 }

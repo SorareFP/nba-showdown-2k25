@@ -13,7 +13,7 @@
    "paintBoost": 0,
    "threePtBoost": 1,
    "defBoost": 1,
-   "salary": 490,
+   "salary": 470,
    "chart": [
     {
      "lo": 1,
@@ -82,7 +82,7 @@
    "paintBoost": 2,
    "threePtBoost": 3,
    "defBoost": -1,
-   "salary": 480,
+   "salary": 440,
    "chart": [
     {
      "lo": 1,
@@ -151,7 +151,7 @@
    "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": -1,
-   "salary": 1110,
+   "salary": 1220,
    "chart": [
     {
      "lo": 1,
@@ -220,7 +220,7 @@
    "paintBoost": 0,
    "threePtBoost": -4,
    "defBoost": 0,
-   "salary": 1130,
+   "salary": 1180,
    "chart": [
     {
      "lo": 1,
@@ -290,7 +290,7 @@
    "paintBoost": -2,
    "threePtBoost": 1,
    "defBoost": 1,
-   "salary": 530,
+   "salary": 520,
    "chart": [
     {
      "lo": 1,
@@ -352,6 +352,800 @@
    "requested": true,
    "requestId": "EeklL0xNEwWURNgrvr14",
    "builtAt": "2026-09-11T00:43:08.345Z"
+  },
+  {
+   "id": "LeBron_James",
+   "name": "LeBron James",
+   "team": "CLE04",
+   "pos": "SF",
+   "speed": 14,
+   "power": 14,
+   "shotLine": 18,
+   "paintBoost": 5,
+   "threePtBoost": 0,
+   "defBoost": 2,
+   "salary": 1180,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 17,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 18,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2007,
+   "seasonLabel": "2006-07",
+   "age": null,
+   "games": 20,
+   "mpg": 44.6,
+   "bbrefId": "jamesle01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true,
+   "set": "summer-standouts",
+   "requested": true,
+   "requestId": "oSmoXAN5z6eIgMn4lTRq",
+   "builtAt": "2026-09-11T13:01:37.420Z"
+  },
+  {
+   "id": "Cedric_Henderson",
+   "name": "Cedric Henderson",
+   "team": "CLE95",
+   "pos": "SF",
+   "speed": 8,
+   "power": 7,
+   "shotLine": 16,
+   "paintBoost": 2,
+   "threePtBoost": -4,
+   "defBoost": 1,
+   "salary": 340,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 15,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 22,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 1998,
+   "seasonLabel": "1997-98",
+   "age": 22,
+   "games": 82,
+   "mpg": 30.8,
+   "bbrefId": "hendece02",
+   "traded": false,
+   "metrics": {
+    "bpm": -1.6,
+    "vorp": 0.3,
+    "ws": 3.8,
+    "ws48": 0.072,
+    "per": 10.7
+   },
+   "provisional": false,
+   "set": "rookie",
+   "requested": true,
+   "requestId": "UJtiHGZf03Jwy5jIFw7H",
+   "builtAt": "2026-09-16T14:03:10.759Z"
+  },
+  {
+   "id": "Darius_Miles_2003",
+   "name": "Darius Miles",
+   "team": "CLE95",
+   "pos": "SF",
+   "speed": 5,
+   "power": 6,
+   "shotLine": 18,
+   "paintBoost": 4,
+   "threePtBoost": -2,
+   "defBoost": -1,
+   "salary": 150,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 7,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 17,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 18,
+     "hi": 99,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2003,
+   "seasonLabel": "2002-03",
+   "age": 21,
+   "games": 67,
+   "mpg": 30,
+   "bbrefId": "milesda01",
+   "traded": false,
+   "metrics": {
+    "bpm": -3.7,
+    "vorp": -0.9,
+    "ws": -1.3,
+    "ws48": -0.032,
+    "per": 9.7
+   },
+   "provisional": false,
+   "set": "throwbacks",
+   "requested": true,
+   "requestId": "BhOiNk3jZXs9tGnu7YJq",
+   "builtAt": "2026-09-16T14:03:25.707Z"
+  },
+  {
+   "id": "Zydrunas_Ilgauskas_2006",
+   "name": "Zydrunas Ilgauskas",
+   "team": "CLE04",
+   "pos": "C",
+   "speed": 8,
+   "power": 15,
+   "shotLine": 16,
+   "paintBoost": 2,
+   "threePtBoost": -4,
+   "defBoost": 0,
+   "salary": 830,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 21,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 2,
+     "reb": 2,
+     "ast": 0
+    }
+   ],
+   "season": 2006,
+   "seasonLabel": "2005-06",
+   "age": 30,
+   "games": 78,
+   "mpg": 29.3,
+   "bbrefId": "ilgauzy01",
+   "traded": false,
+   "metrics": {
+    "bpm": 1.6,
+    "vorp": 2.1,
+    "ws": 8.7,
+    "ws48": 0.184,
+    "per": 21.9
+   },
+   "provisional": false,
+   "set": "throwbacks",
+   "requested": true,
+   "requestId": "Ha9EltRc0qkyfoRdlXbe",
+   "builtAt": "2026-09-16T14:03:42.683Z"
+  },
+  {
+   "id": "Ira_Newble_2004",
+   "name": "Ira Newble",
+   "team": "CLE04",
+   "pos": "SF",
+   "speed": 5,
+   "power": 5,
+   "shotLine": 16,
+   "paintBoost": -1,
+   "threePtBoost": -4,
+   "defBoost": -1,
+   "salary": 70,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 8,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 9,
+     "hi": 15,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 99,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    }
+   ],
+   "season": 2004,
+   "seasonLabel": "2003-04",
+   "age": 29,
+   "games": 64,
+   "mpg": 19.5,
+   "bbrefId": "newblir01",
+   "traded": false,
+   "metrics": {
+    "bpm": -4.5,
+    "vorp": -0.8,
+    "ws": 0.1,
+    "ws48": 0.004,
+    "per": 6.7
+   },
+   "provisional": false,
+   "set": "throwbacks",
+   "requested": true,
+   "requestId": "hj6l3uPLebL0X7AOdwsU",
+   "builtAt": "2026-09-16T14:35:20.758Z"
+  },
+  {
+   "id": "Nikoloz_Tskitishvili",
+   "name": "Nikoloz Tskitishvili",
+   "team": "DEN",
+   "pos": "SF",
+   "speed": 4,
+   "power": 5,
+   "shotLine": 18,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": -1,
+   "salary": 50,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 8,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 9,
+     "hi": 17,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 18,
+     "hi": 21,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2003,
+   "seasonLabel": "2002-03",
+   "age": 19,
+   "games": 81,
+   "mpg": 16.3,
+   "bbrefId": "tskitni01",
+   "traded": false,
+   "metrics": {
+    "bpm": -5.5,
+    "vorp": -1.2,
+    "ws": -1,
+    "ws48": -0.035,
+    "per": 4.9
+   },
+   "provisional": false,
+   "set": "rookie",
+   "requested": true,
+   "requestId": "lvNFbKoinSBeWeC3hjiL",
+   "builtAt": "2026-09-16T20:29:20.196Z"
+  },
+  {
+   "id": "Maya_Moore_2016",
+   "name": "Maya Moore",
+   "team": "MIN11",
+   "statRowTeam": "MIN",
+   "pos": "F",
+   "speed": 14,
+   "power": 12,
+   "shotLine": 14,
+   "paintBoost": -1,
+   "threePtBoost": 2,
+   "defBoost": 2,
+   "salary": 1410,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2016,
+   "seasonLabel": "2016",
+   "games": 34,
+   "mpg": 29.7,
+   "minutes": 1009,
+   "schedule": 34,
+   "bbrefId": "moorema01w",
+   "metrics": {
+    "bpmHat": 8.08,
+    "obpmHat": 6.07,
+    "dbpmHat": 2.01,
+    "seasonZ": 2.7,
+    "per": 25.3,
+    "ws": 6.6,
+    "wsPer40": 0.262,
+    "tsPct": 0.574,
+    "pts100": 33.3
+   },
+   "provisional": false,
+   "set": "wnba-throwbacks",
+   "requested": true,
+   "requestId": "rXMYaa1kNoDoGI7KaAlt",
+   "builtAt": "2026-09-17T01:50:55.216Z"
+  },
+  {
+   "id": "Rafer_Alston_2005",
+   "name": "Rafer Alston",
+   "team": "TOR96",
+   "pos": "PG",
+   "speed": 13,
+   "power": 8,
+   "shotLine": 16,
+   "paintBoost": -1,
+   "threePtBoost": 1,
+   "defBoost": -1,
+   "salary": 590,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 7,
+     "hi": 15,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2005,
+   "seasonLabel": "2004-05",
+   "age": 28,
+   "games": 80,
+   "mpg": 34,
+   "bbrefId": "alstora01",
+   "traded": false,
+   "metrics": {
+    "bpm": 0.9,
+    "vorp": 2,
+    "ws": 5.5,
+    "ws48": 0.098,
+    "per": 16.5
+   },
+   "provisional": false,
+   "set": "throwbacks",
+   "requested": true,
+   "requestId": "wc2zIjrijUGIPy6Kip1l",
+   "builtAt": "2026-09-18T17:05:18.497Z"
+  },
+  {
+   "id": "Luke_Ridnour_2005",
+   "name": "Luke Ridnour",
+   "team": "SEA06",
+   "pos": "PG",
+   "speed": 12,
+   "power": 7,
+   "shotLine": 16,
+   "paintBoost": -2,
+   "threePtBoost": 1,
+   "defBoost": -1,
+   "salary": 330,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 15,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 21,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2005,
+   "seasonLabel": "2004-05",
+   "age": 23,
+   "games": 82,
+   "mpg": 31.4,
+   "bbrefId": "ridnolu01",
+   "traded": false,
+   "metrics": {
+    "bpm": 0.7,
+    "vorp": 1.8,
+    "ws": 5.4,
+    "ws48": 0.1,
+    "per": 14.6
+   },
+   "provisional": false,
+   "set": "throwbacks",
+   "requested": true,
+   "requestId": "oDBkdqyGafi4KWgOLG8V",
+   "builtAt": "2026-09-21T17:42:43.938Z"
+  },
+  {
+   "id": "Tristan_Thompson",
+   "name": "Tristan Thompson",
+   "team": "CLE16",
+   "pos": "PF",
+   "speed": 4,
+   "power": 5,
+   "shotLine": 18,
+   "paintBoost": 1,
+   "threePtBoost": -2,
+   "defBoost": -2,
+   "salary": 100,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 7,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 17,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 18,
+     "hi": 99,
+     "pts": 2,
+     "reb": 2,
+     "ast": 0
+    }
+   ],
+   "season": 2012,
+   "seasonLabel": "2011-12",
+   "age": 20,
+   "games": 60,
+   "mpg": 23.7,
+   "bbrefId": "thomptr01",
+   "traded": false,
+   "metrics": {
+    "bpm": -4.7,
+    "vorp": -1,
+    "ws": 1.1,
+    "ws48": 0.038,
+    "per": 13.3
+   },
+   "provisional": false,
+   "set": "rookie",
+   "requested": true,
+   "requestId": "w45EfQsds0c0v3TISHqa",
+   "builtAt": "2026-09-21T17:42:52.032Z"
+  },
+  {
+   "id": "Kyle_Korver_2011",
+   "name": "Kyle Korver",
+   "team": "CHI",
+   "pos": "SG",
+   "speed": 12,
+   "power": 8,
+   "shotLine": 15,
+   "paintBoost": -1,
+   "threePtBoost": 3,
+   "defBoost": 1,
+   "salary": 630,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 21,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2011,
+   "seasonLabel": "2010-11",
+   "age": 29,
+   "games": 82,
+   "mpg": 20.1,
+   "bbrefId": "korveky01",
+   "traded": false,
+   "metrics": {
+    "bpm": 1.1,
+    "vorp": 1.3,
+    "ws": 5.1,
+    "ws48": 0.149,
+    "per": 13
+   },
+   "provisional": false,
+   "set": "throwbacks",
+   "requested": true,
+   "requestId": "6obZ9jUyK3ymK5SmfYsD",
+   "builtAt": "2026-09-21T18:42:51.518Z"
+  },
+  {
+   "id": "Tyreke_Evans_2013",
+   "name": "Tyreke Evans",
+   "team": "SAC95",
+   "pos": "SG",
+   "speed": 12,
+   "power": 8,
+   "shotLine": 16,
+   "paintBoost": 2,
+   "threePtBoost": -2,
+   "defBoost": 0,
+   "salary": 770,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 7,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 15,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 20,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2013,
+   "seasonLabel": "2012-13",
+   "age": 23,
+   "games": 65,
+   "mpg": 31,
+   "bbrefId": "evansty01",
+   "traded": false,
+   "metrics": {
+    "bpm": 1.8,
+    "vorp": 1.9,
+    "ws": 4.4,
+    "ws48": 0.105,
+    "per": 18.1
+   },
+   "provisional": false,
+   "set": "throwbacks",
+   "requested": true,
+   "requestId": "f1vXvMxgnd6v8tQkodm3",
+   "builtAt": "2026-09-22T11:52:38.975Z"
   }
  ]
 }

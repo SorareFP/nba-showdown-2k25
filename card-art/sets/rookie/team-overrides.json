@@ -1,4 +1,8 @@
 {
+  "CLE95": {
+    "secondary": "#F94300",
+    "accent": "#000000"
+  },
   "UTA": {
     "primary": "#010101",
     "secondary": "#330072"

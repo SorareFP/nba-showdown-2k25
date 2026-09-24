@@ -2355,7 +2355,7 @@
   {
    "id": "Anthony_Edwards",
    "name": "Anthony Edwards",
-   "team": "MIN",
+   "team": "MIN18",
    "pos": "SG",
    "speed": 9,
    "power": 7,
@@ -8423,7 +8423,7 @@
   {
    "id": "Jaden_McDaniels",
    "name": "Jaden McDaniels",
-   "team": "MIN",
+   "team": "MIN18",
    "pos": "PF",
    "speed": 6,
    "power": 7,
@@ -10920,7 +10920,7 @@
   {
    "id": "Josh_Okogie",
    "name": "Josh Okogie",
-   "team": "MIN",
+   "team": "MIN18",
    "pos": "SG",
    "speed": 9,
    "power": 6,

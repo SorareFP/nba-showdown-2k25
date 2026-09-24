@@ -3393,7 +3393,7 @@
   {
    "id": "Anthony_Edwards",
    "name": "Anthony Edwards",
-   "team": "MIN",
+   "team": "MIN18",
    "pos": "SG",
    "speed": 15,
    "power": 11,
@@ -8511,7 +8511,7 @@
   {
    "id": "Jarred_Vanderbilt",
    "name": "Jarred Vanderbilt",
-   "team": "MIN",
+   "team": "MIN18",
    "pos": "PF",
    "speed": 9,
    "power": 10,
@@ -9957,7 +9957,7 @@
   {
    "id": "Karl_Anthony_Towns",
    "name": "Karl-Anthony Towns",
-   "team": "MIN",
+   "team": "MIN18",
    "pos": "C",
    "speed": 10,
    "power": 18,
@@ -11266,7 +11266,7 @@
   {
    "id": "Leonard_Miller",
    "name": "Leonard Miller",
-   "team": "MIN",
+   "team": "MIN18",
    "pos": "SF",
    "speed": 6,
    "power": 9,
@@ -12141,7 +12141,7 @@
   {
    "id": "Naz_Reid",
    "name": "Naz Reid",
-   "team": "MIN",
+   "team": "MIN18",
    "pos": "PF",
    "speed": 7,
    "power": 12,
@@ -13241,7 +13241,7 @@
   {
    "id": "Rob_Dillingham",
    "name": "Rob Dillingham",
-   "team": "MIN",
+   "team": "MIN18",
    "pos": "PG",
    "speed": 8,
    "power": 5,
@@ -14202,7 +14202,7 @@
   {
    "id": "Terrence_Shannon_Jr",
    "name": "Terrence Shannon Jr.",
-   "team": "MIN",
+   "team": "MIN18",
    "pos": "SG",
    "speed": 7,
    "power": 7,

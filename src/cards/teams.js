@@ -217,6 +217,14 @@ export const HISTORICAL_TEAMS = {
   // been carrying #0C2340 / #78BE20 — today's navy and today's lime — which
   // matched neither the art it sits beside nor the era it names.
   MIN97: { name: 'Timberwolves', city: 'Minnesota', abbr: 'MIN', primary: '#236192', secondary: '#00843D', logo: '/logos/MIN97.png', era: '1997-2017', unverifiedColors: true },
+  // THE 2017 WOLF IN ITS FIRST COLOURWAY (the user, 2026-09-24: "Saved as
+  // MIN18. It's the different wolf colorway. 2026, aka the base set cards and
+  // live, are the first ones that should have MIN"). Installed from
+  // card-art/logo-originals/MIN18.png. SAMPLED FROM THE FILE: #0C2340 midnight
+  // ground (the bulk of the mark), #236192 lake blue, #9EA2A2 silver, the
+  // #78BE20 aurora-green star — the palette the club wore 2017-18 to 2024-25.
+  // MIN.png, the current colourway, begins with the 2025-26 base set.
+  MIN18: { name: 'Timberwolves', city: 'Minnesota', abbr: 'MIN', primary: '#0C2340', secondary: '#78BE20', logo: '/logos/MIN18.png', era: '2017-2025' },
   MEM01: { name: 'Grizzlies', city: 'Memphis',    abbr: 'MEM', primary: '#00285E', secondary: '#6CACE4', logo: '/logos/MEM01.png', era: '2001-2004', unverifiedColors: true },
   PHI97: { name: '76ers',    city: 'Philadelphia', abbr: 'PHI', primary: '#000000', secondary: '#C8102E', logo: '/logos/PHI97.png', era: '1998-2009', unverifiedColors: true },
   ORL89: { name: 'Magic',    city: 'Orlando',     abbr: 'ORL', primary: '#0077C0', secondary: '#000000', logo: '/logos/ORL89.png', era: '1989-2000', unverifiedColors: true },
@@ -313,6 +321,8 @@ export const FRANCHISE_ERAS = {
   MIN: [
     { from: 1989, to: 1996, key: 'MIN89' },
     { from: 1997, to: 2017, key: 'MIN97' },
+    // 2017-18 to 2024-25; the base set's 2025-26 is the first season of MIN.png.
+    { from: 2018, to: 2025, key: 'MIN18' },
   ],
   MEM: [{ from: 2001, to: 2004, key: 'MEM01' }],
   PHI: [

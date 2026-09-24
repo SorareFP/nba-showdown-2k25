@@ -567,3 +567,56 @@
 @media (min-width: 2200px) {
   .wrap { max-width: 1680px; width: 100%; margin: 0 auto; }
 }
+
+/* ── THE ZIG-ZAG FLOOR (2026-09-24) ──────────────────────────────────────────
+   The wide board only (ZigZagFloor, useIsWide). Each team's five are card
+   tiles in the user's sketch: 1, 3, 5 above, 2 and 4 below and between,
+   overlapping their neighbours' corners. Each half is a 4-card-wide band: a
+   tile is a quarter of it and 1.9 of its widths tall, the top row steps 1.5
+   cards, the bottom row starts 0.75 cards in and 0.6 of a tile down — a
+   quarter-card overlap each side. THE TOP ROW LIES ON TOP: where two tiles
+   cross, what is covered is the corner of a lower tile's photo (the art band
+   is 40% of the tile, as deep as the overlap), never a Roll button, a result
+   or a name. Hovering raises any tile and lets it grow to show everything,
+   and outlines its matchup on the other half. The two-second card
+   magnification (CardPeek) is PlayerSlot's own. */
+.zigzagFloor {
+  position: relative; z-index: 1;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 28px;
+  width: 100%; padding: 30px 48px 12px; box-sizing: border-box;
+  align-self: start;
+}
+/* 1.6 tile heights of 1.9 widths each: 4 wide by 3.04 tall. */
+.zigzagHalf { position: relative; aspect-ratio: 4 / 3.04; }
+.zigzagTile {
+  position: absolute; width: 25%; height: calc(100% / 1.6);
+  z-index: 1; transition: box-shadow 0.12s ease;
+}
+.zigzagTop { top: 0; left: calc(var(--zz-col) * 37.5%); z-index: 2; }
+.zigzagLow { top: 37.5%; left: calc(18.75% + var(--zz-col) * 37.5%); z-index: 1; }
+.zigzagTile > .cardFace { height: 100%; }
+.zigzagTile:hover, .zigzagOn { z-index: 10; }
+.zigzagTile:hover > .cardFace, .zigzagOn > .cardFace {
+  height: auto; min-height: 100%; overflow: visible;
+  box-shadow: 0 10px 34px rgba(0,0,0,0.7), 0 0 0 2px var(--zz-team);
+}
+.zigzagLit > .cardFace, .zigzagLit > .placementWaiting { box-shadow: 0 0 0 3px #F59E0B, 0 6px 22px rgba(245,158,11,0.35); }
+.zigzagLit { z-index: 9; }
+.zigzagNum {
+  position: absolute; top: -9px; left: -9px; z-index: 3;
+  width: 20px; height: 20px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 800; color: #0B1526;
+  background: var(--zz-team); box-shadow: 0 1px 4px rgba(0,0,0,0.6);
+}
+.zigzagTile > .placementWaiting, .zigzagTile > div:not(.cardFace):not(.zigzagNum) { height: 100%; box-sizing: border-box; }
+
+/* The card, stood up: art above, the stat block below. */
+.cardPortrait { display: flex; flex-direction: column; overflow: hidden; }
+.cardPortrait .cardArtSide { flex: none; height: 40%; min-height: 56px; }
+/* Nothing lies over the top row, so its photo can be shallower and its numbers get the room. */
+.zigzagTop .cardPortrait .cardArtSide { height: 30%; }
+/* The court sizes to the zig-zag, not to the five rows' old minimum. */
+.court:has(> .zigzagFloor) { min-height: 0; }
+.cardPortrait .cardArtSideImg { object-fit: cover; object-position: 50% 18%; }
+.cardPortrait .cardSidebar { width: auto; flex: 1 1 auto; }

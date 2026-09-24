@@ -23,6 +23,11 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
+    id: 'zigzag-court', date: '2026-09-24', title: 'The court fits a big monitor',
+    body: 'On a wide screen the ten players now stand as cards in two zig-zags, your five on the left and the coach\'s on the right, instead of five rows, so a whole game fits without scrolling. The number on each card pairs the matchups; hover a card to bring it to the front and outline the man it faces, and hold for two seconds to see the whole card. Laptops and phones keep the rows.',
+    to: 'play', cta: 'Play',
+  },
+  {
     id: 'glass-cards', date: '2026-09-23', title: 'Four cards for the glass',
     body: 'New strategy cards for teams that win the boards, now in packs: Kick-Out Three (after your miss, 2 REB sends a 3PT check to a shooter on the kick-out), Grab and Go (3 REB become 2 AST), Rebound and Push (after their miss, 2 REB and your defender on the shooter takes a paint check at +1) and Own the Glass (lead the Rebound Track by 6: 5 REB for two paint checks at +1). Placeholder art for now.',
     to: 'shop', cta: 'Shop',

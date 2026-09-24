@@ -13,6 +13,7 @@ import { useLightbox, ZoomImg } from '../CardLightbox.jsx';
 import { useCardPeek } from '../CardPeek.jsx';
 import { useDialogs } from '../../ui/dialogs.jsx';
 import RollResult from './RollResult.jsx';
+import { useIsWide } from '../../ui/useIsWide.js';
 
 /**
  * A player's markers as the engine counts them: hot minus cold, each worth 2
@@ -41,6 +42,18 @@ function HelpBtn({ section }) {
   };
   return <button className={styles.helpBtn} onClick={handleClick} title="How to Play">?</button>;
 }
+
+/**
+ * THE ZIG-ZAG, ON A BIG MONITOR (2026-09-24). The user, on the wide play page:
+ * "it's causing me to have to scroll down a ton", with a sketch of five
+ * card-shaped boxes staggered in two rows — 1, 3, 5 above and 2, 4 below,
+ * each overlapping its neighbours' corners — "with the same card
+ * magnification when you hold your cursor over a card". Each team's five sit
+ * in their own half of the court, slot numbers pair the matchups, a hovered
+ * tile comes to the front, and the man guarding it (or guarded by it) is
+ * outlined on the other side. Laptops and phones keep the five rows.
+ */
+export const ZIGZAG_TOP = [0, 2, 4];
 
 export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExecCard, onResolve, onSpendAssist, onSpendRebound, onDraftSubmit, onPlacePlayer, onUndoPlace = null, undoPlaceName = null, onTimeout = null, onEndTimeout = null, onSearchCrunch = null, pvpMode = false, myTeamKey = null, isMyTurn = true, defenceIsHuman = false, rollGate = null, aiIq = 1, aiSamples = undefined,
   // WHICH SIDE THE COACH PLAYS, or null when a person plays both (hotseat) or
@@ -77,6 +90,8 @@ export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExec
   // not when the coach does, so Undo means your last pick and brings the
   // coach's reply back with it. PvP brings its own through the props.
   const [placeUndo, setPlaceUndo] = useState(null);
+  // The zig-zag floor on a big monitor (ZigZagFloor); the five rows elsewhere.
+  const wide = useIsWide();
   const humanPlace = (playerId) => {
     const snap = placementSnapshot(game);
     if (soloPlace(playerId)) setPlaceUndo(snap);
@@ -174,6 +189,12 @@ export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExec
             <CourtMarkings />
             <div className={styles.teamLabelA}>TEAM A</div>
             <div className={styles.teamLabelB}>TEAM B</div>
+            {wide ? (
+              <ZigZagFloor game={game} setGame={setGame}
+                onRoll={onRoll} onSpendAssist={onSpendAssist} onSpendRebound={onSpendRebound}
+                onPlacePlayer={placeHandler}
+                pvpMode={pvpMode} myTeamKey={myTeamKey} rollGate={rollGate} readOnlySide={watchOnly} />
+            ) : (
             <div className={styles.matchups}>
               {[0,1,2,3,4].map(i => (
                 <MatchupRow key={i} idx={i} game={game} setGame={setGame}
@@ -182,6 +203,7 @@ export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExec
                   pvpMode={pvpMode} myTeamKey={myTeamKey} isMyTurn={isMyTurn} rollGate={rollGate} readOnlySide={watchOnly} />
               ))}
             </div>
+            )}
             <TrackPanel game={game} side="left" />
             <TrackPanel game={game} side="right" />
           </div>
@@ -1318,86 +1340,141 @@ function MatchupRow({ idx, game, setGame, onRoll, onExecCard, onSpendAssist, onS
   // During placement phase, empty slots need special handling
   const step = game.placementStep ?? 10;
   const inPlacement = game.phase === 'matchup_strats' && step < 10;
+  const side = teamKey => (
+    <SideSlot idx={idx} teamKey={teamKey} game={game} setGame={setGame}
+      onRoll={onRoll} onSpendAssist={onSpendAssist} onSpendRebound={onSpendRebound} onPlacePlayer={onPlacePlayer}
+      pvpMode={pvpMode} myTeamKey={myTeamKey} rollGate={rollGate} readOnlySide={readOnlySide} />
+  );
+  const connector = (
+    <div className={styles.connector}>
+      <div className={styles.connLine}/><div className={styles.slotNum}>{idx+1}</div><div className={styles.connLine}/>
+    </div>
+  );
 
   if (!ap || !bp) {
     if (!inPlacement) {
       return <div className={styles.emptyRow}/>;
     }
-    // Figure out which side is the "next to be placed" given the snake order
-    const order = game.placementOrder || DEFAULT_ORDER;
-    const activeTeam = order[step];
-    const aCount = game.teamA.starters.length;
-    const bCount = game.teamB.starters.length;
-    const isActiveSlotA = activeTeam === 'A' && idx === aCount;
-    const isActiveSlotB = activeTeam === 'B' && idx === bCount;
-
     return (
       <div className={styles.matchupRow}>
-        <div className={styles.placementSlot}>
-          {ap ? (
-            <PlayerSlot player={ap} ps={getPS(game,'A',ap.id)||{}} adv={null}
-              fat={getFatigue(game,'A',idx)} result={null} blocked={null}
-              teamKey="A" idx={idx} phase={game.phase} game={game}
-              defPlayer={null} defSelect={[]} defIdx={0}
-              onDefChange={()=>{}} onRoll={()=>{}} pvpDisabled={true} />
-          ) : isActiveSlotA && (!pvpMode || myTeamKey === 'A') ? (
-            /* Solo's human coaches Team A, so the affordance opens for them
-               too; Team B stays hands-off — the AI places via its effect. */
-            <PlacementAffordance game={game} teamKey="A" onPlacePlayer={onPlacePlayer} />
-          ) : (
-            <div className={styles.placementWaiting}>
-              {activeTeam === 'A' ? 'Team A is placing…' : 'Awaiting pick'}
-            </div>
-          )}
-        </div>
-        <div className={styles.connector}>
-          <div className={styles.connLine}/><div className={styles.slotNum}>{idx+1}</div><div className={styles.connLine}/>
-        </div>
-        <div className={styles.placementSlot}>
-          {bp ? (
-            <PlayerSlot player={bp} ps={getPS(game,'B',bp.id)||{}} adv={null}
-              fat={getFatigue(game,'B',idx)} result={null} blocked={null}
-              teamKey="B" idx={idx} phase={game.phase} game={game}
-              defPlayer={null} defSelect={[]} defIdx={0}
-              onDefChange={()=>{}} onRoll={()=>{}} pvpDisabled={true} />
-          ) : isActiveSlotB && pvpMode && myTeamKey === 'B' ? (
-            <PlacementAffordance game={game} teamKey="B" onPlacePlayer={onPlacePlayer} />
-          ) : (
-            <div className={styles.placementWaiting}>
-              {activeTeam === 'B' ? 'Team B is placing…' : 'Awaiting pick'}
-            </div>
-          )}
-        </div>
+        <div className={styles.placementSlot}>{side('A')}</div>
+        {connector}
+        <div className={styles.placementSlot}>{side('B')}</div>
       </div>
     );
   }
-  const aDefIdx=game.offMatchups.A[idx], bDefIdx=game.offMatchups.B[idx];
-  const aDef=game.teamB.starters[aDefIdx], bDef=game.teamA.starters[bDefIdx];
+  return (
+    <div className={styles.matchupRow}>
+      {side('A')}
+      {connector}
+      {side('B')}
+    </div>
+  );
+}
+
+/**
+ * ONE SIDE OF ONE SLOT: the player placed there, or — during placement — the
+ * picker for the side placing next, or who it is waiting on. The rows above
+ * draw two of these with the slot number between; the wide board's zig-zag
+ * draws each team's five on its own half. One component, so the two layouts
+ * can never offer different buttons for the same player.
+ */
+function SideSlot({ idx, teamKey, game, setGame, onRoll, onSpendAssist, onSpendRebound, onPlacePlayer, pvpMode = false, myTeamKey = null, rollGate = null, readOnlySide = null, portrait = false }) {
+  const me = teamKey === 'A' ? game.teamA : game.teamB;
+  const them = teamKey === 'A' ? game.teamB : game.teamA;
+  const player = me.starters[idx];
+  const opposite = them.starters[idx];
+  const step = game.placementStep ?? 10;
+  const inPlacement = game.phase === 'matchup_strats' && step < 10;
+
+  if (!player || !opposite) {
+    if (!inPlacement) return null;
+    if (player) {
+      return (
+        <PlayerSlot player={player} ps={getPS(game,teamKey,player.id)||{}} adv={null}
+          fat={getFatigue(game,teamKey,idx)} result={null} blocked={null}
+          teamKey={teamKey} idx={idx} phase={game.phase} game={game}
+          defPlayer={null} defSelect={[]} defIdx={0}
+          onDefChange={()=>{}} onRoll={()=>{}} pvpDisabled={true} portrait={portrait} />
+      );
+    }
+    // Figure out which side is the "next to be placed" given the snake order
+    const order = game.placementOrder || DEFAULT_ORDER;
+    const activeTeam = order[step];
+    const isActiveSlot = activeTeam === teamKey && idx === me.starters.length;
+    /* Solo's human coaches Team A, so the affordance opens for them too;
+       Team B stays hands-off — the AI places via its effect. */
+    const mayPlace = teamKey === 'A' ? (!pvpMode || myTeamKey === 'A') : (pvpMode && myTeamKey === 'B');
+    if (isActiveSlot && mayPlace) return <PlacementAffordance game={game} teamKey={teamKey} onPlacePlayer={onPlacePlayer} />;
+    return (
+      <div className={styles.placementWaiting}>
+        {activeTeam === teamKey ? `Team ${teamKey} is placing…` : 'Awaiting pick'}
+      </div>
+    );
+  }
+  const defIdx = game.offMatchups[teamKey][idx];
+  const def = them.starters[defIdx];
   // A side the human watches but does not play (watchOnlyTeam, 2026-09-18):
   // its slots go inert as the other side's do in PvP — no Roll, no Clutch,
   // no AST/REB spend — and never read "Their roll", which in the tutorial sat
   // on the coach's slots during YOUR die. With no coach nothing changes.
-  const inert = k => (pvpMode && myTeamKey !== k) || readOnlySide === k;
-  const locked = k => (readOnlySide === k ? false : rollGate ? !rollGate[k] : false);
+  const inert = (pvpMode && myTeamKey !== teamKey) || readOnlySide === teamKey;
+  const locked = readOnlySide === teamKey ? false : rollGate ? !rollGate[teamKey] : false;
   return (
-    <div className={styles.matchupRow}>
-      <PlayerSlot player={ap} ps={getPS(game,'A',ap.id)||{}} adv={aDef?matchupAdv(game,'A',idx):null}
-        fat={getFatigue(game,'A',idx)} result={(game.rollResults.A||[])[idx]} blocked={game.blockedRolls?.A?.[idx]}
-        teamKey="A" idx={idx} phase={game.phase} game={game}
-        defPlayer={aDef} defSelect={game.teamB.starters} defIdx={aDefIdx}
-        onDefChange={di=>{const g=JSON.parse(JSON.stringify(game));g.offMatchups.A[idx]=di;setGame(g);}}
-        onRoll={()=>onRoll('A',idx)} onClutch={()=>onRoll('A',idx,{clutch:true})} onSpendAssist={onSpendAssist} onSpendRebound={onSpendRebound}
-        pvpDisabled={inert('A')} rollLocked={locked('A')} />
-      <div className={styles.connector}>
-        <div className={styles.connLine}/><div className={styles.slotNum}>{idx+1}</div><div className={styles.connLine}/>
-      </div>
-      <PlayerSlot player={bp} ps={getPS(game,'B',bp.id)||{}} adv={bDef?matchupAdv(game,'B',idx):null}
-        fat={getFatigue(game,'B',idx)} result={(game.rollResults.B||[])[idx]} blocked={game.blockedRolls?.B?.[idx]}
-        teamKey="B" idx={idx} phase={game.phase} game={game}
-        defPlayer={bDef} defSelect={game.teamA.starters} defIdx={bDefIdx}
-        onDefChange={di=>{const g=JSON.parse(JSON.stringify(game));g.offMatchups.B[idx]=di;setGame(g);}}
-        onRoll={()=>onRoll('B',idx)} onClutch={()=>onRoll('B',idx,{clutch:true})} onSpendAssist={onSpendAssist} onSpendRebound={onSpendRebound}
-        pvpDisabled={inert('B')} rollLocked={locked('B')} />
+    <PlayerSlot player={player} ps={getPS(game,teamKey,player.id)||{}} adv={def?matchupAdv(game,teamKey,idx):null}
+      fat={getFatigue(game,teamKey,idx)} result={(game.rollResults[teamKey]||[])[idx]} blocked={game.blockedRolls?.[teamKey]?.[idx]}
+      teamKey={teamKey} idx={idx} phase={game.phase} game={game}
+      defPlayer={def} defSelect={them.starters} defIdx={defIdx}
+      onDefChange={di=>{const g=JSON.parse(JSON.stringify(game));g.offMatchups[teamKey][idx]=di;setGame(g);}}
+      onRoll={()=>onRoll(teamKey,idx)} onClutch={()=>onRoll(teamKey,idx,{clutch:true})} onSpendAssist={onSpendAssist} onSpendRebound={onSpendRebound}
+      pvpDisabled={inert} rollLocked={locked} portrait={portrait} />
+  );
+}
+
+/**
+ * The wide board's floor: each team's five as card tiles in the user's
+ * zig-zag (ZIGZAG_TOP above, the rest below and between), Team A's half on
+ * the left and Team B's on the right. Hovering a tile raises it over its
+ * neighbours' corners and outlines its matchup across the floor: the man
+ * guarding it, and the man it guards.
+ */
+function ZigZagFloor({ game, ...rest }) {
+  const [hover, setHover] = useState(null);
+  if (game.phase === 'draft') return null;
+  // A slot's matchup on the other side: who guards it, and whom it guards.
+  const partners = hover
+    ? (() => {
+        const other = hover.teamKey === 'A' ? 'B' : 'A';
+        const out = new Set();
+        const guard = game.offMatchups?.[hover.teamKey]?.[hover.idx];
+        if (guard != null) out.add(guard);
+        (game.offMatchups?.[other] ?? []).forEach((d, i) => { if (d === hover.idx) out.add(i); });
+        return { teamKey: other, slots: out };
+      })()
+    : null;
+  return (
+    <div className={styles.zigzagFloor}>
+      {['A', 'B'].map(teamKey => (
+        <div key={teamKey} className={`${styles.zigzagHalf} ${teamKey === 'A' ? styles.zigzagA : styles.zigzagB}`}>
+          {[0, 1, 2, 3, 4].map(idx => {
+            const top = ZIGZAG_TOP.includes(idx);
+            const lit = partners?.teamKey === teamKey && partners.slots.has(idx);
+            const on = hover?.teamKey === teamKey && hover.idx === idx;
+            return (
+              <div key={idx}
+                className={`${styles.zigzagTile} ${top ? styles.zigzagTop : styles.zigzagLow} ${lit ? styles.zigzagLit : ''} ${on ? styles.zigzagOn : ''}`}
+                style={{ '--zz-col': top ? ZIGZAG_TOP.indexOf(idx) : [1, 3].indexOf(idx), '--zz-team': teamKey === 'A' ? 'var(--orange)' : 'var(--blue)' }}
+                data-slot={`${teamKey}${idx + 1}`}
+                onMouseEnter={() => setHover({ teamKey, idx })}
+                onMouseLeave={() => setHover(h => (h?.teamKey === teamKey && h.idx === idx ? null : h))}
+              >
+                <span className={styles.zigzagNum}>{idx + 1}</span>
+                <SideSlot idx={idx} teamKey={teamKey} game={game} portrait {...rest} />
+              </div>
+            );
+          })}
+        </div>
+      ))}
     </div>
   );
 }
@@ -1676,7 +1753,7 @@ function needTitle(kind, n, player, lead = null) {
   return `${lead ? `${lead}: ` : ''}${kind} check — D20 ${n.bonus ? sign(n.bonus) + ' ' : ''}vs Shot Line ${player.shotLine}: needs ${Math.max(1, Math.min(21, n.need))}+ (${Math.round(n.pHit * 100)}%)`;
 }
 
-function PlayerSlot({ player, ps, adv, fat, result, blocked, teamKey, idx, phase, game, defPlayer, defSelect, defIdx, onDefChange, onRoll, onClutch = null, onSpendAssist, onSpendRebound, pvpDisabled = false, rollLocked = false }) {
+function PlayerSlot({ player, ps, adv, fat, result, blocked, teamKey, idx, phase, game, defPlayer, defSelect, defIdx, onDefChange, onRoll, onClutch = null, onSpendAssist, onSpendRebound, pvpDisabled = false, rollLocked = false, portrait = false }) {
   // Offensive Board Mastery owes this slot a second roll: the button comes back.
   const extraRoll = phase === 'scoring' && extraRollPending(game, teamKey, idx);
   const lb = useLightbox();
@@ -1700,7 +1777,7 @@ function PlayerSlot({ player, ps, adv, fat, result, blocked, teamKey, idx, phase
   ].filter(Boolean);
 
   return (
-    <div className={`${styles.cardFace} ${styles.cardHoriz} ${glowCheap?styles.cardGlow:''}`} style={{borderColor:col}}>
+    <div className={`${styles.cardFace} ${portrait ? styles.cardPortrait : styles.cardHoriz} ${glowCheap?styles.cardGlow:''}`} style={{borderColor:col}}>
       {/* Left: card art */}
       <div className={styles.cardArtSide} onClick={() => { lb.unpeek?.(); open('player', player); }} style={{cursor:'pointer'}} {...peek}>
         {imgUrl

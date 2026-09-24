@@ -556,19 +556,19 @@ describe('the starter pack\'s favourite-team core', () => {
       expect(rockers.length).toBeGreaterThanOrEqual(2);
       expect(rockers.length).toBeLessThanOrEqual(3);
     }
-    // The Comets: one uncommon, so the top-up adds one rarer card from the
-    // least rare band left. Since the value pick (2026-09-24) the uncommon is
-    // Michelle Snow's 2004-05 — a WNBA Throwback now, her Super Season being
-    // 2005-06 — and the band left is RARE, three deep (Snow's 2005-06, Janeth
-    // Arcain, Tina Thompson's 1999-2000 Throwback), where it was Arcain alone.
+    // The Comets: NO common or uncommon since 2026-09-24, so the core is the
+    // one rarer card the top-up adds, from the least rare band left — RARE:
+    // Janeth Arcain or Michelle Snow's 2005-06. The value pick made Snow's
+    // 2004-05 and Tina Thompson's 1999-2000 Throwbacks, and both went DORMANT
+    // (same logo era as their Super Seasons, so the photo went back and the
+    // Throwback left the packs until someone requests it).
     const byKey = new Map(ALL_CARDS.map(c => [cardKey(c), c]));
     const comet = /^wnba-(super-season|throwbacks):(Michelle_Snow|Janeth_Arcain|Tina_Thompson|Cynthia_Cooper|Sheryl_Swoopes)(_\d{4})?$/;
     for (let n = 0; n < 6; n += 1) {
       const core = keysOf('wnba:HOU').filter(k => comet.test(k));
-      expect(core).toHaveLength(2);
-      expect(core).toContain('wnba-throwbacks:Michelle_Snow_2005');
-      const topUp = core.find(k => k !== 'wnba-throwbacks:Michelle_Snow_2005');
-      expect(getPlayerRarity(byKey.get(topUp)), topUp).toBe('rare');
+      expect(core).toHaveLength(1);
+      expect(['wnba-super-season:Janeth_Arcain', 'wnba-super-season:Michelle_Snow']).toContain(core[0]);
+      expect(getPlayerRarity(byKey.get(core[0])), core[0]).toBe('rare');
     }
     // The Sol: one card, a rare. She is the core — Elena Baranova's 2000-01,
     // a WNBA Throwback since the value pick (2026-09-24) gave her Super Season

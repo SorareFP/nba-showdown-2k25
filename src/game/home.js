@@ -24,7 +24,7 @@ import { teamIdFor } from './modes/league.js';
 export const NEWS = [
   {
     id: 'super-season-value', date: '2026-09-24', title: 'Every Super Season is a career\'s best card',
-    body: 'A player\'s Super Season is now the season that makes his most valuable card, priced the same way as salary, not picked by a stats formula. 104 moved, among them Maya Moore to 2013, Michael Jordan to 1989-90, Larry Bird to 1987-88 and Kobe Bryant to 2008-09. A Super Season you own keeps its place and now shows the new year. Each replaced season comes back as a Throwback of its own, so the Super Season and Throwbacks collections have new cards to find. Salaries were re-measured too, with rebounds and assists priced at what they buy in a game.',
+    body: 'A player\'s Super Season is now the season that makes his most valuable card, priced the same way as salary, not picked by a stats formula. 104 moved, among them Maya Moore to 2013, Michael Jordan to 1989-90, Larry Bird to 1987-88 and Kobe Bryant to 2008-09. A Super Season you own keeps its place and now shows the new year. Some replaced seasons come back as Throwbacks; the rest stay out of packs, and you can ask for any of them through Free Agents. Salaries were re-measured too, with rebounds and assists priced at what they buy in a game.',
     to: 'goals', cta: 'Collections',
   },
   {

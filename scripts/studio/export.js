@@ -36,6 +36,7 @@
 import { chromium } from 'playwright';
 import { spawnSync } from 'node:child_process';
 import { hasMigratedOut } from '../../src/game/cardSets.js';
+import { writeDormant } from './dormantThrowbacks.mjs';
 import { mkdirSync, readFileSync, existsSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
@@ -222,3 +223,9 @@ if (!measureOnly) {
   const t = spawnSync('python', [resolve('scripts/studio/thumbs.py')], { stdio: 'inherit' });
   if (t.error || t.status !== 0) console.warn('thumbs: skipped (python scripts/studio/thumbs.py failed to run) — tiles fall back to the full faces');
 }
+
+// A DORMANT THROWBACK WAKES WITH ITS PHOTO (2026-09-24): a generator-owned
+// Throwback with no photo sits out of every pack (dormantThrowbacks.mjs), so
+// re-read the photos now that a face may have been made for one. Commit
+// card-data/generated/dormant-throwbacks.json with the face.
+writeDormant();

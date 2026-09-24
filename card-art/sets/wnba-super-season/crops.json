@@ -68,5 +68,55 @@
     "x": 0,
     "y": -6.48,
     "zoom": 1
+  },
+  "Candace_Parker": {
+    "x": 0.05,
+    "y": 16.12,
+    "zoom": 1.25
+  },
+  "Chasity_Melvin": {
+    "x": 0,
+    "y": -1.5,
+    "zoom": 1
+  },
+  "Katie_Smith": {
+    "x": 0,
+    "y": 8.51,
+    "zoom": 1
+  },
+  "Lisa_Leslie": {
+    "x": 2.38,
+    "y": 0.83,
+    "zoom": 1.36
+  },
+  "Maya_Moore": {
+    "x": -4.5,
+    "y": 0.47,
+    "zoom": 1.09
+  },
+  "Michelle_Edwards": {
+    "x": -8.91,
+    "y": 0,
+    "zoom": 1
+  },
+  "Michelle_Snow": {
+    "x": -1.28,
+    "y": 45.81,
+    "zoom": 1.56
+  },
+  "Sophia_Young_Malcolm": {
+    "x": -12.17,
+    "y": 0,
+    "zoom": 1
+  },
+  "Tamika_Catchings": {
+    "x": 0,
+    "y": -0.63,
+    "zoom": 1
+  },
+  "Tina_Thompson": {
+    "x": -4,
+    "y": 1.77,
+    "zoom": 1.08
   }
 }

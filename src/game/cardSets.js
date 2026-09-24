@@ -25,6 +25,8 @@ import freeAgents from '../../card-data/generated/cards-free-agents.json' with {
 import throwbacks from '../../card-data/generated/cards-throwbacks.json' with { type: 'json' };
 // …and the WNBA ones, the Super Seasons the value pick retired (2026-09-24).
 import wnbaThrowbacks from '../../card-data/generated/cards-wnba-throwbacks.json' with { type: 'json' };
+// The generator-owned Throwbacks with no photo (scripts/studio/dormantThrowbacks.mjs).
+import dormant from '../../card-data/generated/dormant-throwbacks.json' with { type: 'json' };
 
 export const BASE_SET = '2026-27';
 
@@ -125,8 +127,24 @@ joinFreeAgents(CARD_SETS, freeAgents.cards);
 // are the GENERATOR'S (scripts/cardgen/generateCuratedCards.js writes
 // cards-throwbacks.json from card-data/curated-cards-2026.json), never the
 // user's requests file. Each card names its set, so the join is the same one.
-joinFreeAgents(CARD_SETS, throwbacks.cards);
-joinFreeAgents(CARD_SETS, wnbaThrowbacks.cards);
+//
+// DORMANT THROWBACKS (2026-09-24). The user, on the retired seasons the Super
+// Season value pick left without a photo: "hidden from packs and not occur
+// until someone asks for them via free agents", and "Throwbacks WITHOUT photos
+// should stay dormant." A dormant card joins no set, so no pack, list, market
+// or checklist ever deals it, and the quote index (built from CARD_SETS) offers
+// its season to Free Agents like any uncarded one. It still RESOLVES by key
+// (DORMANT_CARDS, in BY_KEY below), so a copy someone already holds keeps its
+// face. A request built for the season lands in cards-free-agents.json under
+// the same key and is the card from then on: the generator's copy steps aside.
+const REQUESTED = new Set((freeAgents.cards ?? []).map(c => `${c.set}:${c.id}`));
+const GENERATED_THROWBACKS = [...(throwbacks.cards ?? []), ...(wnbaThrowbacks.cards ?? [])]
+  .filter(c => c?.set && !REQUESTED.has(`${c.set}:${c.id}`));
+export const DORMANT_KEYS = new Set(dormant.keys ?? []);
+export const DORMANT_CARDS = GENERATED_THROWBACKS
+  .filter(c => DORMANT_KEYS.has(`${c.set}:${c.id}`) && !hasMigratedOut(c.set, c.id))
+  .map(c => ({ ...c }));
+joinFreeAgents(CARD_SETS, GENERATED_THROWBACKS.filter(c => !DORMANT_KEYS.has(`${c.set}:${c.id}`)));
 
 /** The collection key for a card (or for a bare set+id pair). */
 export function cardKey(card) {
@@ -136,7 +154,8 @@ export function cardKey(card) {
 /** Every card across every set, keyed for collections. */
 export const ALL_CARDS = Object.values(CARD_SETS).flat();
 
-const BY_KEY = new Map(ALL_CARDS.map(c => [cardKey(c), c]));
+// Dormant cards resolve too; a live card of the same key wins.
+const BY_KEY = new Map([...DORMANT_CARDS, ...ALL_CARDS].map(c => [cardKey(c), c]));
 
 /**
  * OLD KEYS THAT STILL HAVE TO RESOLVE, literally and only these.

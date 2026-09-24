@@ -1031,7 +1031,10 @@ describe('the AI drafts what it can sign (2026-09-17)', () => {
     let x = cheaply({ ...d, rights }, ai, MIN_ROSTER);
     const key = x.draftPool.find(k => getCardByKey(k));
     x = { ...x, draftPool: x.draftPool.filter(k => k !== key), league: [...x.league, key], rights: { ...x.rights, [key]: { teamId: ai, kind: 'rookie', pick: 1 } } };
-    x = closeRookies(x, { rng });
+    // The AI-AI trade search runs on the way to tip-off, and which deals it
+    // finds depends on the pool: on 2026-09-24 (56 dormant Throwbacks left it)
+    // it moved this signed pick to Dallas. The budget is spent, as noAiTrades says.
+    x = closeRookies(noAiTrades(x), { rng });
     for (let guard = 0; guard < 10 && x.phase === DPHASE.freeAgency; guard += 1) x = nextFaDay(x, { rng });
     x = startSeason(fillRoster(x, HUMAN_ID), { rng });
     expect(x.contracts[key]).toMatchObject({ teamId: ai, dp: rookieScale(1, 8).dp, years: 3, how: 'rookie' });
@@ -1181,13 +1184,24 @@ describe('the AI budgets for its picks (2026-09-18)', () => {
     const rng = () => 0;   // every expiring player wanted — only the money decides
     const played = finishSeason(startSeason(ownDynasty({ size: 8 }), { rng: seeded(17) }));
     const ai = played.teams.find(t => !t.human).id;
-    const full = exactly(played, ai, MAX_ROSTER);
-    const [expiring, ...rest] = rosterKeys(full, ai);
-    const contracts = { ...full.contracts, [expiring]: { ...full.contracts[expiring], years: 1 } };
-    for (const k of rest) contracts[k] = { ...contracts[k], dp: 5, years: 3 };
+    // The ten are the cheapest cards outside the draft (cheaply), so the AI's
+    // CARD-salary ceiling (aiSalaryCap) never binds and only the DP decides.
+    // On 2026-09-24 the pool's reshuffle handed this roster Shai
+    // Gilgeous-Alexander and a card total over that ceiling: every expiring
+    // man walked, cheap or dear, and the test decided nothing.
+    const full = cheaply(played, ai, MAX_ROSTER);
     const worst = played.teams.map(t => t.id).find(id => id !== ai);
-    const withPicks = { ...full, contracts, pickOwner: { ...full.pickOwner, [pickId(full.year + 1, 1, ai)]: ai, [pickId(full.year + 1, 2, ai)]: ai, [pickId(full.year + 1, 1, worst)]: ai } };
-    const noPicks = { ...withPicks, pickOwner: { ...withPicks.pickOwner, [pickId(full.year + 1, 1, ai)]: worst, [pickId(full.year + 1, 2, ai)]: worst, [pickId(full.year + 1, 1, worst)]: worst } };
+    const windowFor = expiring => {
+      const contracts = { ...full.contracts, [expiring]: { ...full.contracts[expiring], years: 1 } };
+      for (const k of rosterKeys(full, ai).filter(k => k !== expiring)) contracts[k] = { ...contracts[k], dp: 5, years: 3 };
+      const withPicks = { ...full, contracts, pickOwner: { ...full.pickOwner, [pickId(full.year + 1, 1, ai)]: ai, [pickId(full.year + 1, 2, ai)]: ai, [pickId(full.year + 1, 1, worst)]: ai } };
+      const noPicks = { ...withPicks, pickOwner: { ...withPicks.pickOwner, [pickId(full.year + 1, 1, ai)]: worst, [pickId(full.year + 1, 2, ai)]: worst, [pickId(full.year + 1, 1, worst)]: worst } };
+      return { withPicks, noPicks };
+    };
+    // THE EXPIRING MAN IS ONE THE ROOM CAN KEEP: the first on the roster whose
+    // ask the all-room window meets, so which man sits first cannot decide it.
+    const expiring = rosterKeys(full, ai).find(k => endSeason(windowFor(k).noPicks, { rng }).contracts[k]?.dp > 0);
+    const { withPicks, noPicks } = windowFor(expiring);
     // His ask, read off a window with all the room in the world (the floor
     // reads his card, trait, last team and standing — never the money).
     const ask = endSeason(noPicks, { rng }).contracts[expiring]?.dp;

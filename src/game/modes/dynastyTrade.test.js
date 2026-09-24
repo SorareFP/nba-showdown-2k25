@@ -198,7 +198,10 @@ describe('a trade with the AI', () => {
   });
 
   it('moves the live season\'s rosters when it happens mid-season', () => {
-    const s = startSeason(d, { rng: seeded(3) });
+    // The AI-AI trade search at tip-off depends on the pool (2026-09-24: with
+    // the 56 dormant Throwbacks gone it moved a man in this deal, and the deal
+    // went illegal). Spend the budget: this test is about the human's trade.
+    const s = startSeason({ ...d, aiDeals: { year: d.year, n: AI_TRADES_PER_OFFSEASON } }, { rng: seeded(3) });
     const deal = overpay;
     expect(evaluateTrade(s, deal).verdict).toBe('accept');
     const x = makeTrade(s, deal);

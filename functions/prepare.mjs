@@ -107,7 +107,9 @@ for (const file of fs.readdirSync(dataDir)) {
   // dynasty-ages.json: the dynasty's player ages (scripts/dynasty/buildAges.mjs).
   if (!/^cards-.*\.json$/.test(file) && !/^(wnba-)?(player-)?pool.*\.json$/.test(file)
     && file !== 'quote-index.json' && file !== 'dynasty-ages.json'
-    && file !== 'dynasty-contracts.json') continue;
+    && file !== 'dynasty-contracts.json'
+    // dormant-throwbacks.json: cardSets.js keeps those cards out of packs.
+    && file !== 'dormant-throwbacks.json') continue;
   copyFile(path.join(DATA_DIR, file));
   data += 1;
 }

@@ -95,7 +95,10 @@ export const STRATS = [
     desc:'Play after an opponent activates a card that boosts Speed. Their Speed boost is halved (rounded down), and they suffer −1 Assist.' },
   { id:'verticality',         name:'Verticality',        phase:'reaction', side:'def', copies:2, locked:false, color:'#0F766E', rarity:'common',
     desc:'An opponent card just scored with no roll and no check: if your defender on that player has a Defensive Bonus or matches their Power, those points are wiped.' },
-  { id:'dogged',              name:'Dogged',             phase:'scoring',  side:'def', copies:2, locked:false, color:'#78716C', rarity:'common',
+  { id:'dogged',              name:'Dogged',             phase:'scoring',  side:'def', copies:1, locked:false, color:'#78716C', rarity:'rare',
+    // A RARE (2026-09-24, the user: "Dogged is a VERY valuable card and should
+    // be a rare. You can basically knock a star out of the game with it."):
+    // one copy and the rare's share of packs and deck caps; it was a common x2.
     // ANY AMOUNT OF FATIGUE (2026-09-16, the user: "with any amount of
     // fatigue"). The door was the fatigue PENALTY — eight minutes on the
     // tracker — and once the coach rested its players at twelve the AI held

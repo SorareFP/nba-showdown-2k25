@@ -4,54 +4,14 @@
     "y": 0,
     "zoom": 1
   },
-  "Anthony_Davis": {
-    "x": 0,
-    "y": 2.12,
-    "zoom": 1
-  },
   "Brandon_Roy": {
     "x": 0,
     "y": -2.42,
     "zoom": 1
   },
-  "Darius_Garland": {
-    "x": 5.11,
-    "y": 0,
-    "zoom": 1
-  },
-  "Dennis_Rodman": {
-    "x": -2.33,
-    "y": -1.82,
-    "zoom": 1.15
-  },
-  "Dirk_Nowitzki": {
-    "x": -9.86,
-    "y": 0,
-    "zoom": 1
-  },
   "Dwight_Howard": {
     "x": -11.47,
     "y": 0,
-    "zoom": 1
-  },
-  "James_Harden": {
-    "x": 9.14,
-    "y": 0,
-    "zoom": 1
-  },
-  "Jason_Terry": {
-    "x": 9.14,
-    "y": 0,
-    "zoom": 1
-  },
-  "Jimmy_Butler": {
-    "x": -1.61,
-    "y": 0,
-    "zoom": 1
-  },
-  "Joel_Embiid": {
-    "x": 0,
-    "y": 17.58,
     "zoom": 1
   },
   "Jrue_Holiday": {
@@ -64,11 +24,6 @@
     "y": 0,
     "zoom": 1
   },
-  "Kareem_Abdul_Jabbar": {
-    "x": 9.14,
-    "y": 0,
-    "zoom": 1
-  },
   "Karl_Anthony_Towns": {
     "x": 0,
     "y": 3.94,
@@ -77,11 +32,6 @@
   "Kawhi_Leonard": {
     "x": 0,
     "y": -4.54,
-    "zoom": 1
-  },
-  "Kevin_Durant": {
-    "x": 32.44,
-    "y": 0,
     "zoom": 1
   },
   "Khris_Middleton": {
@@ -99,28 +49,13 @@
     "y": -5.61,
     "zoom": 1
   },
-  "Larry_Bird": {
-    "x": 0,
-    "y": 2.85,
-    "zoom": 1
-  },
   "LeBron_James": {
     "x": -19.83,
     "y": 4.7,
     "zoom": 1.18
   },
-  "Luka_Doncic": {
-    "x": 5.91,
-    "y": 0,
-    "zoom": 1
-  },
   "Magic_Johnson": {
     "x": 30.8,
-    "y": 0,
-    "zoom": 1
-  },
-  "Marcus_Smart": {
-    "x": -7.71,
     "y": 0,
     "zoom": 1
   },
@@ -129,11 +64,6 @@
     "y": 0,
     "zoom": 1
   },
-  "Michael_Jordan": {
-    "x": -41.05,
-    "y": 22.88,
-    "zoom": 1.47
-  },
   "Nikola_Jokic": {
     "x": 2.51,
     "y": 0,
@@ -141,11 +71,6 @@
   },
   "Pascal_Siakam": {
     "x": 12.37,
-    "y": 0,
-    "zoom": 1
-  },
-  "Paul_Pierce": {
-    "x": -5.91,
     "y": 0,
     "zoom": 1
   },
@@ -229,11 +154,6 @@
     "y": 0,
     "zoom": 1
   },
-  "Alperen_Sengun": {
-    "x": -2.42,
-    "y": 0,
-    "zoom": 1
-  },
   "Amen_Thompson": {
     "x": -22.24,
     "y": 0,
@@ -243,16 +163,6 @@
     "x": -5,
     "y": -7.36,
     "zoom": 1.18
-  },
-  "Anfernee_Simons": {
-    "x": -6.29,
-    "y": 0,
-    "zoom": 1
-  },
-  "Anthony_Gill": {
-    "x": -19.02,
-    "y": 0,
-    "zoom": 1
   },
   "Austin_Reaves": {
     "x": 23.05,
@@ -281,11 +191,6 @@
   },
   "Brandin_Podziemski": {
     "x": -0.97,
-    "y": 0,
-    "zoom": 1
-  },
-  "Brandon_Ingram": {
-    "x": 0.97,
     "y": 0,
     "zoom": 1
   },
@@ -344,16 +249,6 @@
     "y": -11.5,
     "zoom": 1.23
   },
-  "Corey_Kispert": {
-    "x": 3.49,
-    "y": 0,
-    "zoom": 1
-  },
-  "Daniel_Gafford": {
-    "x": -2.72,
-    "y": 0,
-    "zoom": 1
-  },
   "De_Aaron_Fox": {
     "x": -6.98,
     "y": 0,
@@ -384,20 +279,10 @@
     "y": 0,
     "zoom": 1
   },
-  "Derrick_White": {
-    "x": -12.41,
-    "y": 0,
-    "zoom": 1
-  },
   "Derrick_Jones_Jr": {
     "x": 4.46,
     "y": 0,
     "zoom": 1
-  },
-  "Devin_Booker": {
-    "x": -46.51,
-    "y": -5.08,
-    "zoom": 1.13
   },
   "Donovan_Mitchell": {
     "x": -5.82,
@@ -406,11 +291,6 @@
   },
   "Donte_DiVincenzo": {
     "x": -10.86,
-    "y": 0,
-    "zoom": 1
-  },
-  "Draymond_Green": {
-    "x": -1.94,
     "y": 0,
     "zoom": 1
   },
@@ -459,20 +339,10 @@
     "y": -3.5,
     "zoom": 1.07
   },
-  "Giannis_Antetokounmpo": {
-    "x": 3.1,
-    "y": 0,
-    "zoom": 1
-  },
   "Goga_Bitadze": {
     "x": -8.73,
     "y": 0,
     "zoom": 1
-  },
-  "Grant_Hill": {
-    "x": -62.49,
-    "y": -3.5,
-    "zoom": 1.07
   },
   "Grayson_Allen": {
     "x": 7.18,
@@ -484,18 +354,8 @@
     "y": -1.81,
     "zoom": 1.16
   },
-  "Harrison_Barnes": {
-    "x": 18.23,
-    "y": 0,
-    "zoom": 1
-  },
   "Herbert_Jones": {
     "x": -10.66,
-    "y": 0,
-    "zoom": 1
-  },
-  "Isaac_Okoro": {
-    "x": 3.3,
     "y": 0,
     "zoom": 1
   },
@@ -559,11 +419,6 @@
     "y": 0,
     "zoom": 1
   },
-  "Jalen_Williams": {
-    "x": -12.8,
-    "y": 0,
-    "zoom": 1
-  },
   "Jalen_Wilson": {
     "x": -0.78,
     "y": 0,
@@ -579,18 +434,8 @@
     "y": 0,
     "zoom": 1
   },
-  "Jaren_Jackson_Jr": {
-    "x": -7.57,
-    "y": 0,
-    "zoom": 1
-  },
   "Jarrett_Allen": {
     "x": -24.25,
-    "y": 0,
-    "zoom": 1
-  },
-  "Jayson_Tatum": {
-    "x": -22.11,
     "y": 0,
     "zoom": 1
   },
@@ -612,11 +457,6 @@
   "John_Collins": {
     "x": 0,
     "y": -0.16,
-    "zoom": 1
-  },
-  "Jonas_Valanciunas": {
-    "x": 0.58,
-    "y": 0,
     "zoom": 1
   },
   "Jordan_Clarkson": {
@@ -654,16 +494,6 @@
     "y": 0,
     "zoom": 1
   },
-  "Karl_Malone": {
-    "x": -2.58,
-    "y": 0,
-    "zoom": 1
-  },
-  "Kenrich_Williams": {
-    "x": -14.5,
-    "y": 0,
-    "zoom": 1
-  },
   "Keon_Ellis": {
     "x": -9.83,
     "y": 0,
@@ -681,16 +511,6 @@
   },
   "Kyle_Anderson": {
     "x": -10.96,
-    "y": 0,
-    "zoom": 1
-  },
-  "Kyle_Kuzma": {
-    "x": 41.1,
-    "y": 0,
-    "zoom": 1
-  },
-  "Kyle_Lowry": {
-    "x": 11.93,
     "y": 0,
     "zoom": 1
   },
@@ -714,11 +534,6 @@
     "y": 12.31,
     "zoom": 1
   },
-  "Malik_Monk": {
-    "x": -4.67,
-    "y": -0.41,
-    "zoom": 1.22
-  },
   "Michael_Porter_Jr": {
     "x": 3.87,
     "y": -6.95,
@@ -726,11 +541,6 @@
   },
   "Mitchell_Robinson": {
     "x": -10.31,
-    "y": 0,
-    "zoom": 1
-  },
-  "Naz_Reid": {
-    "x": 20.31,
     "y": 0,
     "zoom": 1
   },
@@ -784,16 +594,6 @@
     "y": -6.46,
     "zoom": 1.26
   },
-  "Rudy_Gobert": {
-    "x": -10.16,
-    "y": 0,
-    "zoom": 1
-  },
-  "Rui_Hachimura": {
-    "x": 17.57,
-    "y": 0,
-    "zoom": 1
-  },
   "Sam_Hauser": {
     "x": 8.86,
     "y": 0,
@@ -811,11 +611,6 @@
   },
   "T_J_McConnell": {
     "x": -9.99,
-    "y": 0,
-    "zoom": 1
-  },
-  "Terance_Mann": {
-    "x": -18.69,
     "y": 0,
     "zoom": 1
   },
@@ -854,11 +649,6 @@
     "y": 0,
     "zoom": 1
   },
-  "Tyus_Jones": {
-    "x": -4.51,
-    "y": 0,
-    "zoom": 1
-  },
   "Vince_Carter": {
     "x": -6,
     "y": 6.64,
@@ -874,11 +664,6 @@
     "y": 0,
     "zoom": 1
   },
-  "Damian_Lillard": {
-    "x": 19.57,
-    "y": 0,
-    "zoom": 1
-  },
   "Ivica_Zubac": {
     "x": -9.14,
     "y": 0,
@@ -889,19 +674,9 @@
     "y": 2.34,
     "zoom": 1
   },
-  "Elton_Brand": {
-    "x": 3.8,
-    "y": 0,
-    "zoom": 1
-  },
   "Gilbert_Arenas": {
     "x": -27.57,
     "y": 0,
-    "zoom": 1
-  },
-  "DeAndre_Jordan": {
-    "x": 0,
-    "y": 4.72,
     "zoom": 1
   }
 }

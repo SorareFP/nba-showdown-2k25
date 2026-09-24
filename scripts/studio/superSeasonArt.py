@@ -14,11 +14,16 @@ order, each idempotent:
   2. ABSORBED -> SUPER SEASON. A Super Season card that absorbed a requested or
      curated card of its season (`migratedFrom`) takes that card's photo and
      crop: it is the same season, already photographed for it.
-  3. A NEW SEASON ON ANOTHER TEAM. A Super Season whose season moved to a
-     different franchise than its photo was taken for loses the photo (it is
-     safe in the Throwback copy from step 1), so the card shows placeholder art
-     and the Photo Hunt lists it — a Hornets photo on a Clippers card is worse
-     than none. Same franchise: the photo stays.
+  3. THE NEW SEASON GETS A NEW PHOTO. A Super Season whose season moved
+     loses the old photo — it is safe in the Throwback copy from step 1 — and
+     shows placeholder art until the Photo Hunt finds its own. The user's rule
+     (2026-09-24), after seeing Maya Moore's 2013 Super Season and 2014
+     Throwback on one image: "Whatever card/season was created/exported/
+     existed first keeps the picture", and "New cards = new photos" — no
+     borrowing a photo from another set either. This used to apply only when
+     the franchise changed, which left 62 same-team pairs showing one photo.
+     Only the COPY is removed (same bytes as the Throwback's photo): a photo
+     dropped on the card since, taken for its new season, is never touched.
 
 Crops files keep their indent (2) and LF. A crops file with the user's own
 uncommitted edits is still edited in place (only new keys are added), and the
@@ -86,6 +91,16 @@ def copy_art(src_set, src_id, dst_set, dst_id, log):
     return done
 
 
+def same_bytes(a, b):
+    try:
+        if os.path.getsize(a) != os.path.getsize(b):
+            return False
+        with open(a, 'rb') as fa, open(b, 'rb') as fb:
+            return fa.read() == fb.read()
+    except OSError:
+        return False
+
+
 def cards_of(name):
     body = load(os.path.join(GEN, name), {}) or {}
     return body.get('cards', []) if isinstance(body, dict) else body
@@ -119,7 +134,7 @@ def main():
             dirty_crops.add(ss_set)
             copy_art(src['set'], src['id'], ss_set, card['id'], log)
             log.append(f'  absorbed {ss_set}/{card["id"]} now wears {src["set"]}/{src["id"]}\'s photo')
-    # 3. a new season on another team loses the old photo
+    # 3. the new season loses the old photo (the retired season keeps it)
     retired = {}
     for demoted_file in ('demoted-super-seasons.json', 'demoted-wnba-super-seasons.json'):
         for card in cards_of(demoted_file):
@@ -134,13 +149,18 @@ def main():
             olds = retired.get((ss_set, card['id']), [])
             if not olds:
                 continue
-            old = max(olds, key=lambda c: c.get('season', 0))
-            if team_code(old.get('team')) == team_code(card.get('team')):
-                continue
             had = photos(ss_set, card['id'])
             if not had:
                 continue
-            hunt.append(f'{card["name"]} {card.get("seasonLabel", card.get("season"))} ({card.get("team")}; photo was {old.get("team")})')
+            default_tb = 'wnba-throwbacks' if ss_set.startswith('wnba') else 'throwbacks'
+            copy_of = [old for old in olds
+                       if any(same_bytes(h, q) for h in had for q in photos(old.get('set') or default_tb, old['id']))]
+            if not copy_of:
+                continue  # its own photo, taken for this season: keep it
+            old = copy_of[0]
+            moved = '' if team_code(old.get('team')) == team_code(card.get('team')) else f'; moved from {old.get("team")}'
+            hunt.append(f'{card["name"]} {card.get("seasonLabel", card.get("season"))} ({card.get("team")}{moved}; '
+                        f'the photo stays on {old.get("set") or default_tb}/{old["id"]})')
             if APPLY:
                 for p in had:
                     os.remove(p)
@@ -150,7 +170,7 @@ def main():
         for set_id in dirty_crops:
             save(os.path.join(ART, set_id, 'crops.json'), crops(set_id))
     print('\n'.join(log) or '  nothing to copy')
-    print(f'\n{len(hunt)} Super Season(s) moved to another team and need a new photo (Photo Hunt):')
+    print(f'\n{len(hunt)} Super Season(s) moved season and need a new photo (Photo Hunt):')
     for h in hunt:
         print('  ' + h)
     try:

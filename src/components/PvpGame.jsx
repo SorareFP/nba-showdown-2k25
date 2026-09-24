@@ -18,6 +18,7 @@ import { canPlayCard } from '../game/canPlay.js';
 import CourtBoard from './game/CourtBoard.jsx';
 import GameOver from './game/GameOver.jsx';
 import GameLog from './game/GameLog.jsx';
+import { useIsRoomy } from '../ui/useIsWide.js';
 import AnalyticsPanel from './game/AnalyticsPanel.jsx';
 import Scoreboard from './game/Scoreboard.jsx';
 import { reportLeagueResult } from '../firebase/serverWrites.js';
@@ -32,6 +33,8 @@ export default function PvpGame({ roomCode, myRole, onLeave }) {
   const leagueReported = useRef(false);
   const { user } = useAuth();
   const { toast, ask } = useDialogs();
+  // Past 1600px the log goes under the court, open (as PlayTab).
+  const roomy = useIsRoomy();
 
   const [meta, setMeta]             = useState(null);
   const [publicGame, setPublicGame] = useState(null);
@@ -517,7 +520,7 @@ export default function PvpGame({ roomCode, myRole, onLeave }) {
 
       <div className={styles.layout}>
         <Scoreboard game={localGame} pvpMode={true} myTeamKey={myTeamKey} isMyTurn={isMyTurn} />
-        <GameLog log={localGame.log} />
+        {!roomy && <GameLog log={localGame.log} />}
         <div className={styles.analyticsSlot}><AnalyticsPanel analytics={localGame.analytics} /></div>
 
         {/* Pending shot check / reaction banner — below game log for visibility */}
@@ -562,6 +565,7 @@ export default function PvpGame({ roomCode, myRole, onLeave }) {
           myTeamKey={myTeamKey}
           isMyTurn={isMyTurn}
         />
+        {roomy && <GameLog log={localGame.log} defaultOpen />}
       </div>
     </div>
   );

@@ -1760,7 +1760,7 @@ function PlayerSlot({ player, ps, adv, fat, result, blocked, teamKey, idx, phase
   const extraRoll = phase === 'scoring' && extraRollPending(game, teamKey, idx);
   const lb = useLightbox();
   const open = lb.open;
-  // Hover two seconds on the art or the name and the whole card comes up (CardPeek.jsx).
+  // Hover a second on the art or the name and the whole card comes up (CardPeek.jsx).
   const peek = useCardPeek(lb, 'player', player);
   const col=teamKey==='A'?'var(--orange)':'var(--blue)';
   const rollCol=adv?(adv.rollBonus>0?'#4ADE80':adv.hasPenalty?'#F87171':'#94A3B8'):'#94A3B8';

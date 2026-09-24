@@ -6,11 +6,11 @@ import styles from './CardLightbox.module.css';
 
 /**
  * THE HOVER MAGNIFIER. The user, 2026-09-16: "If someone hovers over a card,
- * player or strategy, for two seconds, you get the magnified card on screen
+ * player or strategy, for a second, you get the magnified card on screen
  * until they move the mouse."
  *
  * Two pieces. `useCardPeek` is the hover half — handlers a card image spreads
- * onto itself, which start a two-second clock on enter and cancel it on leave
+ * onto itself, which start a one-second clock on enter and cancel it on leave
  * — and `PeekOverlay` is the picture, drawn by the LightboxProvider so there
  * is one of it and it sits above everything. It does not block the pointer,
  * so the card underneath keeps its click, and it goes the moment the mouse
@@ -20,7 +20,9 @@ import styles from './CardLightbox.module.css';
  *
  * Touch has no hover; the hook does nothing where `(hover: hover)` is false.
  */
-export const PEEK_DELAY_MS = 2000;
+// One second since 2026-09-24 (the user: "Reduce the hover time to one
+// second to magnify a player card please"); it was two.
+export const PEEK_DELAY_MS = 1000;
 const GRACE_MS = 250;
 const SLACK_PX = 6;
 

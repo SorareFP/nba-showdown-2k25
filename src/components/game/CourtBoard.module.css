@@ -579,13 +579,16 @@
    quarter-card overlap each side. THE TOP ROW LIES ON TOP: where two tiles
    cross, what is covered is the corner of a lower tile's photo (the art band
    is 40% of the tile, as deep as the overlap), never a Roll button, a result
-   or a name. Hovering raises any tile and lets it grow to show everything,
+   or a name. Hovering its PHOTO raises a tile and lets it grow to show everything,
    and outlines its matchup on the other half. The two-second card
    magnification (CardPeek) is PlayerSlot's own. */
 .zigzagFloor {
   position: relative; z-index: 1;
   display: grid; grid-template-columns: 1fr 1fr; gap: 28px;
-  width: 100%; padding: 30px 48px 12px; box-sizing: border-box;
+  /* 52px under the bottom row: a tile grown on hover (at most 48px, below)
+     stays on the court, which clips (the user, 2026-09-24: "the bottom
+     players' actions fall out of the window when moused over"). */
+  width: 100%; padding: 30px 48px 52px; box-sizing: border-box;
   align-self: start;
 }
 /* 1.6 tile heights of 1.9 widths each: 4 wide by 3.04 tall. */
@@ -597,9 +600,17 @@
 .zigzagTop { top: 0; left: calc(var(--zz-col) * 37.5%); z-index: 2; }
 .zigzagLow { top: 37.5%; left: calc(18.75% + var(--zz-col) * 37.5%); z-index: 1; }
 .zigzagTile > .cardFace { height: 100%; }
-.zigzagTile:hover, .zigzagOn { z-index: 10; }
-.zigzagTile:hover > .cardFace, .zigzagOn > .cardFace {
-  height: auto; min-height: 100%; overflow: visible;
+/* ONLY THE PHOTO GROWS A TILE (2026-09-24). The user: "The action buttons on
+   a card moving when mousing over is incredibly annoying. Those cards don't
+   need to expand unless the mouse is directly over the photo part of it. I do
+   like the opposing matchup lighting up though." Hovering anywhere still
+   lights the matchup (ZigZagFloor's hover state) and rings the tile; only the
+   photo raises it and lets it grow, so a Roll button never moves under the
+   pointer and a raised tile never covers a neighbour's. */
+.zigzagOn > .cardFace { box-shadow: 0 0 0 2px var(--zz-team); }
+.zigzagTile:has(.cardArtSide:hover) { z-index: 10; }
+.zigzagTile:has(.cardArtSide:hover) > .cardFace {
+  height: auto; min-height: 100%; max-height: calc(100% + 48px); overflow: hidden;
   box-shadow: 0 10px 34px rgba(0,0,0,0.7), 0 0 0 2px var(--zz-team);
 }
 .zigzagLit > .cardFace, .zigzagLit > .placementWaiting { box-shadow: 0 0 0 3px #F59E0B, 0 6px 22px rgba(245,158,11,0.35); }
@@ -612,12 +623,32 @@
   background: var(--zz-team); box-shadow: 0 1px 4px rgba(0,0,0,0.6);
 }
 .zigzagTile > .placementWaiting, .zigzagTile > div:not(.cardFace):not(.zigzagNum) { height: 100%; box-sizing: border-box; }
+/* THE PICKER IS NOT A CARD (2026-09-24). The user, on the placement picker
+   squeezed into a 127px tile: "The player selection can still take up
+   max-needed width, but when the player is selected, they fit that smaller
+   lightbox." An open picker floats over the floor at its own width, above
+   every neighbour; a placed player is back to the tile. The court clips
+   (overflow: hidden), so a top-row picker hangs down from its tile and a
+   bottom-row one grows up from it: 160% of a tile is the whole half. */
+.zigzagTile:has(.placementPopover) { z-index: 12; }
+.zigzagTile .placementPopover {
+  position: absolute; top: 0; left: 0; z-index: 12;
+  width: max-content; min-width: 100%; max-width: 320px;
+  max-height: 160%; box-sizing: border-box;
+}
+.zigzagLow .placementPopover { top: auto; bottom: 0; }
+/* The far half anchors on its right edge, so the court never clips it. */
+.zigzagB .placementPopover { left: auto; right: 0; }
 
 /* The card, stood up: art above, the stat block below. */
 .cardPortrait { display: flex; flex-direction: column; overflow: hidden; }
-.cardPortrait .cardArtSide { flex: none; height: 40%; min-height: 56px; }
+/* Sized off the tile's WIDTH (a tile is 1.9 widths tall, so 40% of it is 0.76
+   of a width), not a share of the card's height: a card grown on hover grew
+   its photo into the whole card image and pushed everything below it off the
+   court. The band now stays put and only the hidden lines come into view. */
+.cardPortrait .cardArtSide { flex: none; height: auto; aspect-ratio: 1 / 0.76; min-height: 56px; }
 /* Nothing lies over the top row, so its photo can be shallower and its numbers get the room. */
-.zigzagTop .cardPortrait .cardArtSide { height: 30%; }
+.zigzagTop .cardPortrait .cardArtSide { aspect-ratio: 1 / 0.57; }
 /* The court sizes to the zig-zag, not to the five rows' old minimum. */
 .court:has(> .zigzagFloor) { min-height: 0; }
 .cardPortrait .cardArtSideImg { object-fit: cover; object-position: 50% 18%; }

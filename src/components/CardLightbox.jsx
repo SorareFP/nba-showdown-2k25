@@ -36,7 +36,7 @@ export function ZoomImg({ player = null, strat = null, style = undefined, title 
   const data = type === 'player' ? (typeof player === 'string' ? getCardByKey(player) : player)
     : type === 'strat' ? (typeof strat === 'string' ? getStrat(strat) : strat)
       : null;
-  // Hover two seconds and the whole card comes up (CardPeek.jsx). Hooks run
+  // Hover a second and the whole card comes up (CardPeek.jsx). Hooks run
   // before the early return so their order is stable across renders.
   const peek = useCardPeek(lb, type, data);
   if (!lb || !data) return <img style={style} title={title} {...img} />;

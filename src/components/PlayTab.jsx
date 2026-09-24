@@ -11,7 +11,7 @@ import { boxScoreFor } from '../game/boxScore.js';
 // rejected play reports through the module-level sink rather than through
 // useDialogs(). See notify() in ui/dialogs.jsx.
 import { useDialogs, notify } from '../ui/dialogs.jsx';
-import { useIsWide } from '../ui/useIsWide.js';
+import { useIsWide, useIsRoomy } from '../ui/useIsWide.js';
 import { playCrunch, playBuzzer } from '../game/gameAudio.js';
 import { useAuth } from '../firebase/AuthProvider.jsx';
 import { loadDecks } from '../firebase/savedDecks.js';
@@ -114,6 +114,8 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
   const [restoredPreset, setRestoredPreset] = useState(saved?.preset ?? null);
   const livePreset = preset ?? restoredPreset;
   const wide = useIsWide();
+  // 1600-2200px: the zig-zag court, and the log moves under it, open.
+  const roomy = useIsRoomy();
   const { ask, toast } = useDialogs();
   const { user } = useAuth();
   const uid = user?.uid ?? null;
@@ -785,10 +787,15 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
         <>
           {/* Whose die it is, where the a-b-a-b roll is enforced (2026-09-18). */}
           <Scoreboard game={game} rollGate={gameOpponent === 'ai' ? rollGate(game) : null} />
-          <GameLog log={game.log} />
+          {!roomy && <GameLog log={game.log} />}
           {/* Below the court on a phone (PlayTab.module.css .analyticsSlot). */}
           <div className={styles.analyticsSlot}><AnalyticsPanel analytics={game.analytics} /></div>
           {board}
+          {/* A ROOMY SCREEN (1600-2200px, useIsRoomy) puts the log under the
+              court, open (the user, 2026-09-24: "the Game Log can just be
+              auto-expanded at the bottom of the page too"), so the court
+              starts higher and the whole zig-zag fits the screen. */}
+          {roomy && <GameLog log={game.log} defaultOpen />}
         </>
       )}
     </div>

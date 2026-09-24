@@ -7,8 +7,10 @@ import { ENGINE_STAMP } from '../../game/engine.js';
  * log is always open there and fills the rail's height, so the whole game
  * reads at a glance; there is nothing to fold.
  */
-export default function GameLog({ log, docked = false }) {
-  const [openState, setOpen] = useState(false);
+export default function GameLog({ log, docked = false, defaultOpen = false }) {
+  // `defaultOpen`: under the court on a roomy screen (PlayTab/PvpGame,
+  // useIsRoomy), open from the start and still foldable.
+  const [openState, setOpen] = useState(defaultOpen);
   const open = docked || openState;
   const scrollRef = useRef(null);
   const bottomRef = useRef(null);

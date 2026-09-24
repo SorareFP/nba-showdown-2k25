@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-24T14:02:45.098Z",
+ "generatedAt": "2026-09-24T23:26:01.668Z",
  "source": "Basketball-Reference's season `advanced` tables, awards column — a voted award's suffix is its finishing position, so only -1 is a win — plus the same pages' `advanced_post` table, whose awards column holds one cell a season and that cell is always `Finals MVP-1`, plus each season index page's League Champion row and that team's roster, which is where the ring comes from and which is in no column at all",
  "declared": [
   "MVP",
@@ -14,6 +14,7 @@
  ],
  "seasons": [
   1977,
+  1983,
   1985,
   1986,
   1987,
@@ -62,6 +63,12 @@
    "abbr": "POR",
    "name": "Portland Trail Blazers",
    "roster": 13
+  },
+  {
+   "season": 1983,
+   "abbr": "PHI",
+   "name": "Philadelphia 76ers",
+   "roster": 14
   },
   {
    "season": 1985,
@@ -316,6 +323,12 @@
    "code": "FMVP",
    "name": "Bill Walton",
    "playerId": "waltobi01"
+  },
+  {
+   "season": 1983,
+   "code": "FMVP",
+   "name": "Moses Malone",
+   "playerId": "malonmo01"
   },
   {
    "season": 1985,
@@ -585,12 +598,12 @@
    }
   },
   "super-season": {
-   "cards": 101,
-   "marked": 78,
+   "cards": 104,
+   "marked": 81,
    "multiple": 16,
    "capped": 0,
    "mostHeld": 4,
-   "ifSelectionsCounted": 85,
+   "ifSelectionsCounted": 88,
    "byCode": {
     "MVP": 7,
     "FMVP": 3,
@@ -600,11 +613,11 @@
     "6MOY": 5,
     "CPOY": 0,
     "CHAMP": 11,
-    "AS": 65
+    "AS": 68
    }
   },
   "rookie": {
-   "cards": 118,
+   "cards": 119,
    "marked": 35,
    "multiple": 6,
    "capped": 0,
@@ -642,12 +655,12 @@
    }
   },
   "dissonance": {
-   "cards": 3,
-   "marked": 3,
+   "cards": 6,
+   "marked": 5,
    "multiple": 0,
    "capped": 0,
    "mostHeld": 1,
-   "ifSelectionsCounted": 3,
+   "ifSelectionsCounted": 5,
    "byCode": {
     "MVP": 0,
     "FMVP": 0,
@@ -657,7 +670,7 @@
     "6MOY": 0,
     "CPOY": 0,
     "CHAMP": 0,
-    "AS": 3
+    "AS": 5
    }
   },
   "team-rewards": {
@@ -1682,6 +1695,18 @@
     "awards": []
    },
    {
+    "id": "Deron_Williams",
+    "name": "Deron Williams",
+    "season": 2010,
+    "bbrefId": "willide01",
+    "raw": "MVP-9,AS,NBA2",
+    "rawPost": null,
+    "champion": null,
+    "awards": [
+     "AS"
+    ]
+   },
+   {
     "id": "Derrick_White",
     "name": "Derrick White",
     "season": 2024,
@@ -1726,6 +1751,18 @@
     "rawPost": null,
     "champion": null,
     "awards": []
+   },
+   {
+    "id": "Dominique_Wilkins",
+    "name": "Dominique Wilkins",
+    "season": 1987,
+    "bbrefId": "wilkido01",
+    "raw": "MVP-5,AS,NBA2",
+    "rawPost": null,
+    "champion": null,
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Donovan_Mitchell",
@@ -2449,6 +2486,18 @@
     "awards": []
    },
    {
+    "id": "Tony_Parker",
+    "name": "Tony Parker",
+    "season": 2013,
+    "bbrefId": "parketo01",
+    "raw": "MVP-6,AS,NBA2",
+    "rawPost": null,
+    "champion": null,
+    "awards": [
+     "AS"
+    ]
+   },
+   {
     "id": "Toumani_Camara",
     "name": "Toumani Camara",
     "season": 2025,
@@ -2904,6 +2953,16 @@
     "season": 2019,
     "bbrefId": "aytonde01",
     "raw": "ROY-3",
+    "rawPost": null,
+    "champion": null,
+    "awards": []
+   },
+   {
+    "id": "Deron_Williams",
+    "name": "Deron Williams",
+    "season": 2006,
+    "bbrefId": "willide01",
+    "raw": "ROY-6",
     "rawPost": null,
     "champion": null,
     "awards": []
@@ -4162,6 +4221,40 @@
     "awards": [
      "AS"
     ]
+   },
+   {
+    "id": "Allen_Iverson_MEM",
+    "name": "Allen Iverson",
+    "season": 2010,
+    "bbrefId": "iversal01",
+    "raw": "AS",
+    "rawPost": null,
+    "champion": null,
+    "awards": [
+     "AS"
+    ]
+   },
+   {
+    "id": "Gary_Payton_MIL",
+    "name": "Gary Payton",
+    "season": 2003,
+    "bbrefId": "paytoga01",
+    "raw": "DPOY-11,AS",
+    "rawPost": null,
+    "champion": null,
+    "awards": [
+     "AS"
+    ]
+   },
+   {
+    "id": "Dominique_Wilkins_SAS",
+    "name": "Dominique Wilkins",
+    "season": 1997,
+    "bbrefId": "wilkido01",
+    "raw": "6MOY-7",
+    "rawPost": null,
+    "champion": null,
+    "awards": []
    },
    {
     "id": "Russell_Westbrook",

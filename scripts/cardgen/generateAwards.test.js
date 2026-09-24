@@ -380,8 +380,10 @@ describe('the committed file', () => {
     expect(AWARDS.seasons[0]).toBe(1977);
     expect(AWARDS.seasons.at(-1)).toBe(2026);
     // 42 on 2026-09-09: 1985-86 and 1990-91 joined when the file was
-    // regenerated after the franchise-reward re-pick.
-    expect(AWARDS.seasons).toHaveLength(42);
+    // regenerated after the franchise-reward re-pick. 43 on 2026-09-24:
+    // 1982-83, Dominique Wilkins' Rookie card (the one season fetched from
+    // the archive's 1978-84 gap).
+    expect(AWARDS.seasons).toHaveLength(43);
   });
 
   it('agrees with its own counts', () => {
@@ -442,8 +444,10 @@ describe('the committed file', () => {
     // Kareem's 1976-77, Bird's 1984-85, Malone's 1996-97 and Durant's 2013-14
     // MVPs all left for the Throwbacks with their marks. Thirty-three marked
     // seasons left, thirty-four arrived (Kobe's 2008-09 ring and Finals MVP,
-    // Barkley's 1992-93 MVP among them), so the count barely moves.
-    expect(AWARDS.counts[SUPER_SEASON_SET].marked).toBe(78);
+    // Barkley's 1992-93 MVP among them), so the count barely moves. 81 the
+    // same day: Wilkins 1986-87, Parker 2012-13 and Deron Williams 2009-10
+    // joined as legends, All-Stars all three.
+    expect(AWARDS.counts[SUPER_SEASON_SET].marked).toBe(81);
     // The rookie set moves at last, and only on the ring: no player in that
     // pool was an All-Star as a rookie, but six of them won a title as one.
     //
@@ -496,7 +500,7 @@ describe('the committed file', () => {
     expect(AWARDS.counts[CURRENT_SET].ifSelectionsCounted).toBe(45);
     // 85 on 2026-09-07 with the awards file regenerated against the current
     // Super Season roster — the capstone legends it had gone stale against.
-    expect(AWARDS.counts[SUPER_SEASON_SET].ifSelectionsCounted).toBe(85) /* 85 on 2026-09-24: the value pick (78 marked, the selection-only seasons it moved were a wash less two); 86 on 2026-09-09: Lillard's ring-year card back in Super Season; 90 on 2026-09-22: Arenas, Brand, DeAndre Jordan and Parker joined (the reward/identity batch); 87 later that day: Duncan, Yao and Kirilenko demoted to Throwbacks (BEATEN_BY_ROOKIE) */;
+    expect(AWARDS.counts[SUPER_SEASON_SET].ifSelectionsCounted).toBe(88) /* 88 later on 2026-09-24: Wilkins, Parker and Deron Williams joined as legends (81 marked); 85 on 2026-09-24: the value pick (78 marked, the selection-only seasons it moved were a wash less two); 86 on 2026-09-09: Lillard's ring-year card back in Super Season; 90 on 2026-09-22: Arenas, Brand, DeAndre Jordan and Parker joined (the reward/identity batch); 87 later that day: Duncan, Yao and Kirilenko demoted to Throwbacks (BEATEN_BY_ROOKIE) */;
     // 21, not 25: the rookie playing-time bar, same four bench rings.
     // 24, and equal to `marked`: a rookie card's only trophies are ROY and a
     // ring, neither of which the selection suffix distinguishes.

@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-24T13:40:25.998Z",
+ "generatedAt": "2026-09-24T23:21:12.242Z",
  "set": "super-season",
  "provisional": true,
  "sources": {
@@ -1987,6 +1987,30 @@
    "to": {
     "season": 2017,
     "salary": 960
+   }
+  },
+  {
+   "name": "Tony Parker",
+   "bbrefId": "parketo01",
+   "from": {
+    "season": 2009,
+    "salary": 1220
+   },
+   "to": {
+    "season": 2013,
+    "salary": 1310
+   }
+  },
+  {
+   "name": "Deron Williams",
+   "bbrefId": "willide01",
+   "from": {
+    "season": 2013,
+    "salary": 920
+   },
+   "to": {
+    "season": 2010,
+    "salary": 1000
    }
   }
  ],
@@ -5626,6 +5650,71 @@
    "provisional": false
   },
   {
+   "id": "Deron_Williams",
+   "name": "Deron Williams",
+   "team": "UTA04",
+   "pos": "PG",
+   "speed": 17,
+   "power": 10,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 0,
+   "salary": 1000,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 20,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 2
+    }
+   ],
+   "season": 2010,
+   "seasonLabel": "2009-10",
+   "age": 25,
+   "games": 76,
+   "mpg": 36.9,
+   "bbrefId": "willide01",
+   "traded": false,
+   "metrics": {
+    "bpm": 3.8,
+    "vorp": 4.1,
+    "ws": 10.3,
+    "ws48": 0.177,
+    "per": 20.6
+   },
+   "provisional": false
+  },
+  {
    "id": "Derrick_Jones_Jr",
    "name": "Derrick Jones Jr.",
    "team": "MIA",
@@ -6063,6 +6152,71 @@
     "ws": 7.6,
     "ws48": 0.197,
     "per": 21.9
+   },
+   "provisional": false
+  },
+  {
+   "id": "Dominique_Wilkins",
+   "name": "Dominique Wilkins",
+   "team": "ATL",
+   "pos": "SF",
+   "speed": 14,
+   "power": 13,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": -3,
+   "defBoost": 0,
+   "salary": 1440,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 20,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 1987,
+   "seasonLabel": "1986-87",
+   "age": 27,
+   "games": 79,
+   "mpg": 37.6,
+   "bbrefId": "wilkido01",
+   "traded": false,
+   "metrics": {
+    "bpm": 5.5,
+    "vorp": 5.6,
+    "ws": 12.2,
+    "ws48": 0.197,
+    "per": 23.5
    },
    "provisional": false
   },
@@ -14456,6 +14610,71 @@
     "ws": 7.1,
     "ws48": 0.17,
     "per": 20
+   },
+   "provisional": false
+  },
+  {
+   "id": "Tony_Parker",
+   "name": "Tony Parker",
+   "team": "SAS",
+   "pos": "PG",
+   "speed": 16,
+   "power": 10,
+   "shotLine": 14,
+   "paintBoost": 1,
+   "threePtBoost": -4,
+   "defBoost": -1,
+   "salary": 1310,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 14,
+     "hi": 20,
+     "pts": 3,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2013,
+   "seasonLabel": "2012-13",
+   "age": 30,
+   "games": 66,
+   "mpg": 32.9,
+   "bbrefId": "parketo01",
+   "traded": false,
+   "metrics": {
+    "bpm": 3.6,
+    "vorp": 3.1,
+    "ws": 9.3,
+    "ws48": 0.206,
+    "per": 23
    },
    "provisional": false
   },

@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-24T13:40:26.995Z",
+ "generatedAt": "2026-09-24T23:21:12.948Z",
  "set": "rookie",
  "provisional": true,
  "sources": {
@@ -5951,6 +5951,71 @@
    "provisional": false
   },
   {
+   "id": "Deron_Williams",
+   "name": "Deron Williams",
+   "team": "UTA04",
+   "pos": "PG",
+   "speed": 9,
+   "power": 6,
+   "shotLine": 16,
+   "paintBoost": -2,
+   "threePtBoost": 4,
+   "defBoost": -1,
+   "salary": 420,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 3,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 4,
+     "hi": 15,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 20,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2006,
+   "seasonLabel": "2005-06",
+   "age": 21,
+   "games": 80,
+   "mpg": 28.8,
+   "bbrefId": "willide01",
+   "traded": false,
+   "metrics": {
+    "bpm": -1.7,
+    "vorp": 0.2,
+    "ws": 2.8,
+    "ws48": 0.059,
+    "per": 12.4
+   },
+   "provisional": false
+  },
+  {
    "id": "Desmond_Bane",
    "name": "Desmond Bane",
    "team": "MEM",
@@ -6344,6 +6409,64 @@
     "ws": 0.8,
     "ws48": 0.022,
     "per": 6.9
+   },
+   "provisional": false
+  },
+  {
+   "id": "Dominique_Wilkins",
+   "name": "Dominique Wilkins",
+   "team": "ATL",
+   "pos": "SF",
+   "speed": 10,
+   "power": 9,
+   "shotLine": 16,
+   "paintBoost": 2,
+   "threePtBoost": -4,
+   "defBoost": -1,
+   "salary": 680,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    }
+   ],
+   "season": 1983,
+   "seasonLabel": "1982-83",
+   "age": 23,
+   "games": 82,
+   "mpg": 32.9,
+   "bbrefId": "wilkido01",
+   "traded": false,
+   "metrics": {
+    "bpm": 0.5,
+    "vorp": 1.7,
+    "ws": 5.8,
+    "ws48": 0.103,
+    "per": 16.6
    },
    "provisional": false
   },
@@ -13164,6 +13287,64 @@
    "provisional": false
   },
   {
+   "id": "Lonzo_Ball",
+   "name": "Lonzo Ball",
+   "team": "LAL",
+   "pos": "PG",
+   "speed": 13,
+   "power": 8,
+   "shotLine": 17,
+   "paintBoost": -1,
+   "threePtBoost": 2,
+   "defBoost": 2,
+   "salary": 500,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 7,
+     "pts": 0,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 8,
+     "hi": 16,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 17,
+     "hi": 99,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2018,
+   "seasonLabel": "2017-18",
+   "age": 20,
+   "games": 52,
+   "mpg": 34.2,
+   "bbrefId": "balllo01",
+   "traded": false,
+   "metrics": {
+    "bpm": 1,
+    "vorp": 1.3,
+    "ws": 2,
+    "ws48": 0.053,
+    "per": 12.5
+   },
+   "provisional": false
+  },
+  {
    "id": "Luguentz_Dort",
    "name": "Luguentz Dort",
    "team": "OKC",
@@ -18093,6 +18274,71 @@
     "ws": 3.4,
     "ws48": 0.091,
     "per": 14.8
+   },
+   "provisional": false
+  },
+  {
+   "id": "Tony_Parker",
+   "name": "Tony Parker",
+   "team": "SAS",
+   "pos": "PG",
+   "speed": 11,
+   "power": 6,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": 1,
+   "defBoost": 1,
+   "salary": 320,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 15,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 21,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2002,
+   "seasonLabel": "2001-02",
+   "age": 19,
+   "games": 77,
+   "mpg": 29.4,
+   "bbrefId": "parketo01",
+   "traded": false,
+   "metrics": {
+    "bpm": -1.1,
+    "vorp": 0.6,
+    "ws": 3.8,
+    "ws48": 0.08,
+    "per": 11.7
    },
    "provisional": false
   },

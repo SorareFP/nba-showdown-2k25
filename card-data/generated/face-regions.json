@@ -12314,8 +12314,203 @@
         0.727
       ],
       "badge": null
+    },
+    "dissonance/Shaquille_O_Neal_BOS": {
+      "name": [
+        0.0356,
+        0.1382,
+        0.1044,
+        0.6855
+      ],
+      "badge": null
+    },
+    "dissonance/Allen_Iverson_MEM": {
+      "name": [
+        0.0252,
+        0.1384,
+        0.1253,
+        0.6852
+      ],
+      "badge": null
+    },
+    "dissonance/Gary_Payton_MIL": {
+      "name": [
+        0.0252,
+        0.1837,
+        0.1253,
+        0.5945
+      ],
+      "badge": null
+    },
+    "dissonance/Patrick_Ewing_SEA": {
+      "name": [
+        0.0252,
+        0.1412,
+        0.1253,
+        0.6796
+      ],
+      "badge": null
+    },
+    "dissonance/Dominique_Wilkins_BOS": {
+      "name": [
+        0.0389,
+        0.1289,
+        0.0979,
+        0.704
+      ],
+      "badge": null
+    },
+    "dissonance/Dominique_Wilkins_SAS": {
+      "name": [
+        0.0389,
+        0.1289,
+        0.0979,
+        0.704
+      ],
+      "badge": null
+    },
+    "dissonance/Tony_Parker": {
+      "name": [
+        0.0252,
+        0.1853,
+        0.1253,
+        0.5912
+      ],
+      "badge": null
+    },
+    "dissonance/Dennis_Rodman_LAL": {
+      "name": [
+        0.0252,
+        0.1163,
+        0.1253,
+        0.7292
+      ],
+      "badge": null
+    },
+    "dissonance/Dennis_Rodman_DAL": {
+      "name": [
+        0.0252,
+        0.1163,
+        0.1253,
+        0.7292
+      ],
+      "badge": null
+    },
+    "dissonance/Deron_Williams": {
+      "name": [
+        0.0284,
+        0.1209,
+        0.1187,
+        0.7201
+      ],
+      "badge": null
+    },
+    "dissonance/Ben_Wallace": {
+      "name": [
+        0.0252,
+        0.1769,
+        0.1253,
+        0.608
+      ],
+      "badge": null
+    },
+    "dissonance/Blake_Griffin": {
+      "name": [
+        0.0252,
+        0.1486,
+        0.1253,
+        0.6647
+      ],
+      "badge": null
+    },
+    "dissonance/Lonzo_Ball": {
+      "name": [
+        0.0252,
+        0.2167,
+        0.1253,
+        0.5285
+      ],
+      "badge": null
+    },
+    "super-season/Deron_Williams": {
+      "name": [
+        0.0284,
+        0.1209,
+        0.1187,
+        0.7201
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "super-season/Dominique_Wilkins": {
+      "name": [
+        0.0389,
+        0.1289,
+        0.0979,
+        0.704
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "super-season/Tony_Parker": {
+      "name": [
+        0.0252,
+        0.1853,
+        0.1253,
+        0.5912
+      ],
+      "badge": [
+        0.8363,
+        0.5826,
+        0.1507,
+        0.0223
+      ]
+    },
+    "rookie/Deron_Williams": {
+      "name": [
+        0.0284,
+        0.1209,
+        0.1187,
+        0.7201
+      ],
+      "badge": null
+    },
+    "rookie/Dominique_Wilkins": {
+      "name": [
+        0.0389,
+        0.1289,
+        0.0979,
+        0.704
+      ],
+      "badge": null
+    },
+    "rookie/Lonzo_Ball": {
+      "name": [
+        0.0252,
+        0.2167,
+        0.1253,
+        0.5285
+      ],
+      "badge": null
+    },
+    "rookie/Tony_Parker": {
+      "name": [
+        0.0252,
+        0.1853,
+        0.1253,
+        0.5912
+      ],
+      "badge": null
     }
   },
-  "generatedAt": "2026-09-24T22:58:16.074Z",
+  "generatedAt": "2026-09-24T23:26:19.354Z",
   "note": "Per-face boxes of the rotated name and the Super Season pill, as fractions of the 843x1181 face, measured by scripts/studio/export.js. Read by src/cards/faceRegions.js for the holographic sheen."
 }

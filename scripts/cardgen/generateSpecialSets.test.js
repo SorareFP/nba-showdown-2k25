@@ -481,7 +481,10 @@ describe('the base set\'s badges', () => {
     // four left — Mathurin (his Rookie card now out-prices every season) and
     // Melton, Allen and Tyrese Martin (their base cards out-price them after
     // the currency-rate reprice). Each shipped one is a Throwback now.
-    expect(SUPER.cards.length).toBe(202);
+    // 205 the same evening: three legends at the user's word (Dominique
+    // Wilkins 1986-87, Tony Parker 2012-13, Deron Williams 2009-10, each the
+    // value pick over every eligible season).
+    expect(SUPER.cards.length).toBe(205);
     //
     // AND 321 -> 348 WHEN THE STANDOUT NEWCOMERS' ROOKIE YEARS ARRIVED — every
     // standout outside the pool whose career begins inside the cache-and-EPM
@@ -517,7 +520,12 @@ describe('the base set\'s badges', () => {
     // seasons and rookies too") and all four clear the 20 G / 600 min bar; Beal
     // stays through rookie-legends-2026.json now that he left the team-reward
     // picks. Parker (1997-98: 37 G, 196 min) fails the bar and gets none.
-    expect(ROOKIE.cards.length).toBe(286);
+    // 290 on 2026-09-24, the Dissonance additions: Tony Parker 2001-02, Deron
+    // Williams 2005-06 and Lonzo Ball 2017-18 entered the universe through
+    // their Dissonance picks, and Dominique Wilkins 1982-83 is forced
+    // (rookie-legends-2026.json, the 1983 tables fetched for it). Ben Wallace
+    // (1996-97: 34 G) fails the bar.
+    expect(ROOKIE.cards.length).toBe(290);
     const poolNames = new Set(POOL.map(p => p.name));
     const bothBlocks = [...new Set([
       ...Object.keys(STANDOUTS.superSeasons ?? {}),

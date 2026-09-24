@@ -55,5 +55,9 @@
   "Bradley Beal": {
     "season": 2013,
     "reason": "keep-alive, 2026-09-18: he left the team-reward picks (Wall's 2016-17 is the Wizards reward now), and the rookie candidate universe reads those picks — without this entry the next generateSpecialSets would DELETE rookie:Bradley_Beal (2012-13, $850) and pulled copies must keep resolving"
+  },
+  "Dominique Wilkins": {
+    "season": 1983,
+    "reason": "2026-09-24 — the user: \"He'll need a rookie and Super Season as well\". 1982-83 rookie year, 82g 2697min, in the archive's 1978-84 gap: bbref-1983-advanced-full and -perPoss-full were fetched for this card alone (the other seasons in the gap stay unfetched), plus his 1983 game log"
   }
 }

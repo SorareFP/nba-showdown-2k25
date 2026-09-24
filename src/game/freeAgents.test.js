@@ -102,7 +102,7 @@ describe('where the archive stops', () => {
 
   it('says so in a sentence, the long run first and the stragglers after', () => {
     expect(coverageText()).toBe(
-      'NBA regular seasons from 1984-85 to 2025-26 (plus 1975-76 and 1976-77), playoff runs from 2002 to 2026, ' +
+      'NBA regular seasons from 1984-85 to 2025-26 (plus 1975-76, 1976-77 and 1982-83), playoff runs from 2002 to 2026, ' +
       'and WNBA seasons from 1997 to 2026'
     );
     expect(coverageText({ regular: [[2000, 2010]], playoffs: [] })).toBe('NBA regular seasons from 1999-00 to 2009-10');

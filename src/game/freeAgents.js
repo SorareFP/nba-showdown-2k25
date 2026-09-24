@@ -23,12 +23,13 @@ export const OPEN_REQUEST_LIMIT = 3;
  * WHAT THE ARCHIVE REACHES, in season end years, so the form can say where
  * it stops (the user, 2026-09-10: "you can't go back to Bob Cousy and Bill
  * Russell. That's fine, but we need to say where the cutoff date is"). The
- * cached Basketball-Reference tables jump from 1976-77 to 1984-85, and the
+ * cached Basketball-Reference tables jump from 1976-77 to 1984-85, except
+ * 1982-83, fetched on 2026-09-24 for Dominique Wilkins' rookie card; the
  * playoff table begins in 2002; the WNBA archive is the league's whole life.
  * A test pins this against quote-index.json, so a rebuilt archive cannot
  * leave the sentence stale.
  */
-export const ARCHIVE_COVERAGE = { regular: [[1976, 1977], [1985, 2026]], playoffs: [[2002, 2026]], wnba: [[1997, 2026]] };
+export const ARCHIVE_COVERAGE = { regular: [[1976, 1977], [1983, 1983], [1985, 2026]], playoffs: [[2002, 2026]], wnba: [[1997, 2026]] };
 
 const endLabel = y => `${y - 1}-${String(y % 100).padStart(2, '0')}`;
 const listWords = xs => (xs.length < 2 ? xs.join('') : `${xs.slice(0, -1).join(', ')} and ${xs.at(-1)}`);

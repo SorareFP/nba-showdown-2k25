@@ -166,6 +166,11 @@ export function main({ log = console.log } = {}) {
   // so twins collapsed into one card. Repeat names get the stint's team code
   // in the id: Shaquille_O_Neal_PHO and Shaquille_O_Neal_CLE are two cards
   // with two photo slots.
+  //
+  // A pick may PIN its id (`"id"` in dissonance.json). A second jersey added
+  // for a player who already had one (Ewing's Sonics beside his Magic,
+  // 2026-09-24) would otherwise rename the card people own, and its photo,
+  // crop and face with it: the first card keeps the id it shipped under.
   const nameCount = new Map();
   for (const m of meta) nameCount.set(m.name, (nameCount.get(m.name) ?? 0) + 1);
 
@@ -175,7 +180,7 @@ export function main({ log = console.log } = {}) {
   const cards = buildSet({ selections, currentRows, calibration, biometrics, positionShares, useRealGames: false })
     .map((card, i) => ({
       ...card,
-      id: (nameCount.get(meta[i].name) ?? 1) > 1 ? `${card.id}_${meta[i].team}` : card.id,
+      id: meta[i].id ?? ((nameCount.get(meta[i].name) ?? 1) > 1 ? `${card.id}_${meta[i].team}` : card.id),
       team: franchiseForSeason(canonicalTeam(meta[i].team), meta[i].season),
       season: meta[i].season,
       seasonLabel: seasonLabel(meta[i].season),

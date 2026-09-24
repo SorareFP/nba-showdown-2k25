@@ -128,5 +128,70 @@
     "x": 0,
     "y": 0.47,
     "zoom": 1
+  },
+  "Lonzo_Ball": {
+    "x": -4.68,
+    "y": 0,
+    "zoom": 1
+  },
+  "Allen_Iverson_MEM": {
+    "x": 0,
+    "y": 14.8,
+    "zoom": 1
+  },
+  "Dominique_Wilkins_BOS": {
+    "x": -48.56,
+    "y": 0,
+    "zoom": 1
+  },
+  "Dominique_Wilkins_SAS": {
+    "x": 25.09,
+    "y": 12.77,
+    "zoom": 1.31
+  },
+  "Gary_Payton_MIL": {
+    "x": -32,
+    "y": 53.37,
+    "zoom": 1.64
+  },
+  "Patrick_Ewing_SEA": {
+    "x": 0,
+    "y": 15.13,
+    "zoom": 1
+  },
+  "Tony_Parker": {
+    "x": 0,
+    "y": -4.8,
+    "zoom": 1
+  },
+  "Ben_Wallace": {
+    "x": -8.81,
+    "y": 0,
+    "zoom": 1
+  },
+  "Blake_Griffin": {
+    "x": 13.86,
+    "y": 0,
+    "zoom": 1
+  },
+  "Dennis_Rodman_LAL": {
+    "x": 0,
+    "y": 1.82,
+    "zoom": 1
+  },
+  "Dennis_Rodman_DAL": {
+    "x": 0,
+    "y": 10.61,
+    "zoom": 1
+  },
+  "Deron_Williams": {
+    "x": 19.64,
+    "y": 0,
+    "zoom": 1
+  },
+  "Shaquille_O_Neal_BOS": {
+    "x": -7.25,
+    "y": 6.5,
+    "zoom": 1.13
   }
 }

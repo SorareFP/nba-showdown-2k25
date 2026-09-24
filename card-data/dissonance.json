@@ -35,16 +35,37 @@
       {
         "season": 2008,
         "team": "PHO"
+      },
+      {
+        "season": 2011,
+        "team": "BOS",
+        "note": "37 games in green, the last season (the user's pick, 2026-09-24)"
       }
     ],
-    "Allen Iverson": {
-      "season": 2009,
-      "team": "DET"
-    },
-    "Gary Payton": {
-      "season": 2004,
-      "team": "LAL"
-    },
+    "Allen Iverson": [
+      {
+        "season": 2009,
+        "team": "DET",
+        "id": "Allen_Iverson"
+      },
+      {
+        "season": 2010,
+        "team": "MEM",
+        "note": "three games in Memphis before he went home to Philadelphia (the user's pick, 2026-09-24)"
+      }
+    ],
+    "Gary Payton": [
+      {
+        "season": 2004,
+        "team": "LAL",
+        "id": "Gary_Payton"
+      },
+      {
+        "season": 2003,
+        "team": "MIL",
+        "note": "28 games as a Buck after the Seattle trade (the user's pick, 2026-09-24)"
+      }
+    ],
     "Dwight Howard": [
       {
         "season": 2018,
@@ -71,10 +92,18 @@
       "season": 2013,
       "team": "LAL"
     },
-    "Patrick Ewing": {
-      "season": 2002,
-      "team": "ORL"
-    },
+    "Patrick Ewing": [
+      {
+        "season": 2002,
+        "team": "ORL",
+        "id": "Patrick_Ewing"
+      },
+      {
+        "season": 2001,
+        "team": "SEA",
+        "note": "a SuperSonic at 38, the first year out of New York (the user's pick, 2026-09-24)"
+      }
+    ],
     "Hakeem Olajuwon": {
       "season": 2002,
       "team": "TOR"
@@ -119,6 +148,55 @@
       "season": 2018,
       "team": "LAL",
       "note": "17 Lakers games after the Cleveland trade"
+    },
+    "Dominique Wilkins": [
+      {
+        "season": 1995,
+        "team": "BOS",
+        "note": "the Human Highlight Film in Celtic green (the user's pick, 2026-09-24)"
+      },
+      {
+        "season": 1997,
+        "team": "SAS",
+        "note": "a Spur at 37, back from Greece (the user's pick, 2026-09-24)"
+      }
+    ],
+    "Tony Parker": {
+      "season": 2019,
+      "team": "CHO",
+      "note": "one season in Charlotte after seventeen in San Antonio (the user's pick, 2026-09-24)"
+    },
+    "Dennis Rodman": [
+      {
+        "season": 1999,
+        "team": "LAL",
+        "note": "23 games as a Laker (the user's pick, 2026-09-24: 'Lakers/Mavericks', one card each)"
+      },
+      {
+        "season": 2000,
+        "team": "DAL",
+        "note": "12 games in Dallas, the last stop"
+      }
+    ],
+    "Deron Williams": {
+      "season": 2017,
+      "team": "CLE",
+      "note": "24 games in wine and gold for the Finals run (the user's pick, 2026-09-24)"
+    },
+    "Ben Wallace": {
+      "season": 2009,
+      "team": "CLE",
+      "note": "the user's pick, 2026-09-24. 2008-09 over the 22 games after the 2008 trade: his one full Cavs season, and the better one (BPM 1.6 against 0.2)"
+    },
+    "Blake Griffin": {
+      "season": 2023,
+      "team": "BOS",
+      "note": "a Celtic in the last season (the user's pick, 2026-09-24)"
+    },
+    "Lonzo Ball": {
+      "season": 2026,
+      "team": "CLE",
+      "note": "a Cavalier after the 2025 trade from Chicago (the user's pick, 2026-09-24)"
     },
     "Russell Westbrook": {
       "season": 2020,

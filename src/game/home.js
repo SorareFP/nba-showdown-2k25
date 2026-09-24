@@ -23,6 +23,11 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
+    id: 'dissonance-wave-two', date: '2026-09-24', title: 'Thirteen new Dissonance cards',
+    body: 'More wrong jerseys: Patrick Ewing as a Sonic, Dominique Wilkins as a Celtic and a Spur, Shaq as a Celtic, Tony Parker as a Hornet, Gary Payton as a Buck, Allen Iverson as a Grizzly, Dennis Rodman as a Laker and a Maverick, Deron Williams, Ben Wallace and Lonzo Ball as Cavaliers, and Blake Griffin as a Celtic. Dominique Wilkins, Tony Parker and Deron Williams also get Super Season cards, and Wilkins, Parker, Deron Williams and Lonzo Ball get Rookie cards. Free Agents can now quote 1982-83 seasons too. Photos to come.',
+    to: 'goals', cta: 'Collections',
+  },
+  {
     id: 'rebound-track-split', date: '2026-09-24', title: 'Spending rebounds never moves the track',
     body: 'The rebound track now counts the rebounds each team has won this game, and spending never moves it: a 5-rebound paint check used to hand the other team the lead (and its end-of-section assist). What you hold to spend is the number beside the track, spent like your assists. A card that cancels rebounds (Box Out, Cold Spell, Offensive Foul) takes them off the track too. Strategy cards that spend rebounds still need you to lead the track by what they cost.',
     to: 'play', cta: 'Play',

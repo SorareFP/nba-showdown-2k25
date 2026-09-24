@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-09T21:30:47.696Z",
+ "generatedAt": "2026-09-24T23:16:27.747Z",
  "set": "dissonance",
  "provisional": true,
  "sources": {
@@ -542,6 +542,82 @@
    }
   },
   {
+   "id": "Shaquille_O_Neal_BOS",
+   "name": "Shaquille O'Neal",
+   "team": "BOS",
+   "pos": "C",
+   "speed": 5,
+   "power": 13,
+   "shotLine": 16,
+   "paintBoost": 4,
+   "threePtBoost": -4,
+   "defBoost": 2,
+   "salary": 1030,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 8,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 9,
+     "hi": 9,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 22,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 4,
+     "reb": 2,
+     "ast": 0
+    }
+   ],
+   "season": 2011,
+   "seasonLabel": "2010-11",
+   "age": 38,
+   "games": 37,
+   "mpg": 20.3,
+   "bbrefId": "onealsh01",
+   "traded": false,
+   "metrics": {
+    "bpm": 0.3,
+    "vorp": 0.4,
+    "ws": 2.7,
+    "ws48": 0.174,
+    "per": 17.4
+   },
+   "provisional": true,
+   "stint": {
+    "games": 37,
+    "note": "37 games in green, the last season (the user's pick, 2026-09-24)"
+   }
+  },
+  {
    "id": "Allen_Iverson",
    "name": "Allen Iverson",
    "team": "DET06",
@@ -618,6 +694,82 @@
    }
   },
   {
+   "id": "Allen_Iverson_MEM",
+   "name": "Allen Iverson",
+   "team": "MEM",
+   "pos": "PG",
+   "speed": 9,
+   "power": 5,
+   "shotLine": 13,
+   "paintBoost": -2,
+   "threePtBoost": -5,
+   "defBoost": -3,
+   "salary": 430,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 8,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 9,
+     "hi": 12,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 13,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 21,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 4,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "season": 2010,
+   "seasonLabel": "2009-10",
+   "age": 34,
+   "games": 3,
+   "mpg": 22.3,
+   "bbrefId": "iversal01",
+   "traded": false,
+   "metrics": {
+    "bpm": -1.4,
+    "vorp": 0,
+    "ws": 0.1,
+    "ws48": 0.074,
+    "per": 16.9
+   },
+   "provisional": true,
+   "stint": {
+    "games": 3,
+    "note": "three games in Memphis before he went home to Philadelphia (the user's pick, 2026-09-24)"
+   }
+  },
+  {
    "id": "Gary_Payton",
    "name": "Gary Payton",
    "team": "LAL",
@@ -691,6 +843,82 @@
    "stint": {
     "games": 82,
     "note": null
+   }
+  },
+  {
+   "id": "Gary_Payton_MIL",
+   "name": "Gary Payton",
+   "team": "MIL94",
+   "pos": "PG",
+   "speed": 14,
+   "power": 9,
+   "shotLine": 15,
+   "paintBoost": 1,
+   "threePtBoost": -3,
+   "defBoost": -2,
+   "salary": 1170,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 8,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 9,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 22,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 4,
+     "reb": 1,
+     "ast": 2
+    }
+   ],
+   "season": 2003,
+   "seasonLabel": "2002-03",
+   "age": 34,
+   "games": 28,
+   "mpg": 38.8,
+   "bbrefId": "paytoga01",
+   "traded": false,
+   "metrics": {
+    "bpm": 1.3,
+    "vorp": 0.9,
+    "ws": 2.9,
+    "ws48": 0.128,
+    "per": 20.5
+   },
+   "provisional": true,
+   "stint": {
+    "games": 28,
+    "note": "28 games as a Buck after the Seattle trade (the user's pick, 2026-09-24)"
    }
   },
   {
@@ -1133,6 +1361,82 @@
    "stint": {
     "games": 65,
     "note": null
+   }
+  },
+  {
+   "id": "Patrick_Ewing_SEA",
+   "name": "Patrick Ewing",
+   "team": "SEA",
+   "pos": "C",
+   "speed": 5,
+   "power": 9,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": -4,
+   "defBoost": 0,
+   "salary": 520,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 9,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 21,
+     "pts": 2,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 3,
+     "reb": 4,
+     "ast": 0
+    }
+   ],
+   "season": 2001,
+   "seasonLabel": "2000-01",
+   "age": 38,
+   "games": 79,
+   "mpg": 26.7,
+   "bbrefId": "ewingpa01",
+   "traded": false,
+   "metrics": {
+    "bpm": -3.2,
+    "vorp": -0.6,
+    "ws": 2,
+    "ws48": 0.046,
+    "per": 12.9
+   },
+   "provisional": true,
+   "stint": {
+    "games": 79,
+    "note": "a SuperSonic at 38, the first year out of New York (the user's pick, 2026-09-24)"
    }
   },
   {
@@ -1810,6 +2114,655 @@
    "stint": {
     "games": 17,
     "note": "17 Lakers games after the Cleveland trade"
+   }
+  },
+  {
+   "id": "Dominique_Wilkins_BOS",
+   "name": "Dominique Wilkins",
+   "team": "BOS",
+   "pos": "SF",
+   "speed": 7,
+   "power": 7,
+   "shotLine": 15,
+   "paintBoost": -2,
+   "threePtBoost": 0,
+   "defBoost": -2,
+   "salary": 560,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 5,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 6,
+     "hi": 9,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 21,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 5,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "season": 1995,
+   "seasonLabel": "1994-95",
+   "age": 35,
+   "games": 77,
+   "mpg": 31.5,
+   "bbrefId": "wilkido01",
+   "traded": false,
+   "metrics": {
+    "bpm": 0.1,
+    "vorp": 1.3,
+    "ws": 3.9,
+    "ws48": 0.076,
+    "per": 16.3
+   },
+   "provisional": true,
+   "stint": {
+    "games": 77,
+    "note": "the Human Highlight Film in Celtic green (the user's pick, 2026-09-24)"
+   }
+  },
+  {
+   "id": "Dominique_Wilkins_SAS",
+   "name": "Dominique Wilkins",
+   "team": "SAS",
+   "pos": "SF",
+   "speed": 7,
+   "power": 7,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": -2,
+   "defBoost": -3,
+   "salary": 660,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 8,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 9,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 20,
+     "pts": 4,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 5,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "season": 1997,
+   "seasonLabel": "1996-97",
+   "age": 37,
+   "games": 63,
+   "mpg": 30.9,
+   "bbrefId": "wilkido01",
+   "traded": false,
+   "metrics": {
+    "bpm": 0.3,
+    "vorp": 1.1,
+    "ws": 3.4,
+    "ws48": 0.083,
+    "per": 19.6
+   },
+   "provisional": true,
+   "stint": {
+    "games": 63,
+    "note": "a Spur at 37, back from Greece (the user's pick, 2026-09-24)"
+   }
+  },
+  {
+   "id": "Tony_Parker",
+   "name": "Tony Parker",
+   "team": "CHA",
+   "pos": "PG",
+   "speed": 8,
+   "power": 5,
+   "shotLine": 16,
+   "paintBoost": -1,
+   "threePtBoost": -2,
+   "defBoost": -2,
+   "salary": 510,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 8,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 9,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 22,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 4,
+     "reb": 1,
+     "ast": 2
+    }
+   ],
+   "season": 2019,
+   "seasonLabel": "2018-19",
+   "age": 36,
+   "games": 56,
+   "mpg": 17.9,
+   "bbrefId": "parketo01",
+   "traded": false,
+   "metrics": {
+    "bpm": -2.6,
+    "vorp": -0.1,
+    "ws": 0.9,
+    "ws48": 0.044,
+    "per": 15.3
+   },
+   "provisional": true,
+   "stint": {
+    "games": 56,
+    "note": "one season in Charlotte after seventeen in San Antonio (the user's pick, 2026-09-24)"
+   }
+  },
+  {
+   "id": "Dennis_Rodman_LAL",
+   "name": "Dennis Rodman",
+   "team": "LAL",
+   "pos": "PF",
+   "speed": 6,
+   "power": 8,
+   "shotLine": 18,
+   "paintBoost": 1,
+   "threePtBoost": -2,
+   "defBoost": 0,
+   "salary": 300,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 7,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 15,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 17,
+     "pts": 1,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 18,
+     "hi": 99,
+     "pts": 2,
+     "reb": 3,
+     "ast": 0
+    }
+   ],
+   "season": 1999,
+   "seasonLabel": "1998-99",
+   "age": 37,
+   "games": 23,
+   "mpg": 28.6,
+   "bbrefId": "rodmade01",
+   "traded": false,
+   "metrics": {
+    "bpm": -2,
+    "vorp": 0,
+    "ws": 0.8,
+    "ws48": 0.056,
+    "per": 8
+   },
+   "provisional": true,
+   "stint": {
+    "games": 23,
+    "note": "23 games as a Laker (the user's pick, 2026-09-24: 'Lakers/Mavericks', one card each)"
+   }
+  },
+  {
+   "id": "Dennis_Rodman_DAL",
+   "name": "Dennis Rodman",
+   "team": "DAL80",
+   "pos": "PF",
+   "speed": 6,
+   "power": 8,
+   "shotLine": 18,
+   "paintBoost": 1,
+   "threePtBoost": -2,
+   "defBoost": -1,
+   "salary": 260,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 7,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 17,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 18,
+     "hi": 30,
+     "pts": 2,
+     "reb": 3,
+     "ast": 0
+    },
+    {
+     "lo": 31,
+     "hi": 99,
+     "pts": 2,
+     "reb": 3,
+     "ast": 1
+    }
+   ],
+   "season": 2000,
+   "seasonLabel": "1999-00",
+   "age": 38,
+   "games": 12,
+   "mpg": 32.4,
+   "bbrefId": "rodmade01",
+   "traded": false,
+   "metrics": {
+    "bpm": -3.2,
+    "vorp": -0.1,
+    "ws": 0.6,
+    "ws48": 0.074,
+    "per": 8.4
+   },
+   "provisional": true,
+   "stint": {
+    "games": 12,
+    "note": "12 games in Dallas, the last stop"
+   }
+  },
+  {
+   "id": "Deron_Williams",
+   "name": "Deron Williams",
+   "team": "CLE16",
+   "pos": "PG",
+   "speed": 10,
+   "power": 7,
+   "shotLine": 15,
+   "paintBoost": -1,
+   "threePtBoost": 0,
+   "defBoost": -2,
+   "salary": 600,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 9,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 10,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 11,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 24,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 25,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "season": 2017,
+   "seasonLabel": "2016-17",
+   "age": 32,
+   "games": 24,
+   "mpg": 20.3,
+   "bbrefId": "willide01",
+   "traded": false,
+   "metrics": {
+    "bpm": -3,
+    "vorp": -0.1,
+    "ws": 0.6,
+    "ws48": 0.059,
+    "per": 11.4
+   },
+   "provisional": true,
+   "stint": {
+    "games": 24,
+    "note": "24 games in wine and gold for the Finals run (the user's pick, 2026-09-24)"
+   }
+  },
+  {
+   "id": "Ben_Wallace",
+   "name": "Ben Wallace",
+   "team": "CLE04",
+   "pos": "PF",
+   "speed": 9,
+   "power": 12,
+   "shotLine": 18,
+   "paintBoost": 2,
+   "threePtBoost": -2,
+   "defBoost": 2,
+   "salary": 470,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 5,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 6,
+     "hi": 17,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 18,
+     "hi": 25,
+     "pts": 1,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 26,
+     "hi": 99,
+     "pts": 1,
+     "reb": 4,
+     "ast": 0
+    }
+   ],
+   "season": 2009,
+   "seasonLabel": "2008-09",
+   "age": 34,
+   "games": 56,
+   "mpg": 23.5,
+   "bbrefId": "wallabe01",
+   "traded": false,
+   "metrics": {
+    "bpm": 1.6,
+    "vorp": 1.2,
+    "ws": 3.8,
+    "ws48": 0.138,
+    "per": 12.2
+   },
+   "provisional": true,
+   "stint": {
+    "games": 56,
+    "note": "the user's pick, 2026-09-24. 2008-09 over the 22 games after the 2008 trade: his one full Cavs season, and the better one (BPM 1.6 against 0.2)"
+   }
+  },
+  {
+   "id": "Blake_Griffin",
+   "name": "Blake Griffin",
+   "team": "BOS",
+   "pos": "C",
+   "speed": 6,
+   "power": 10,
+   "shotLine": 13,
+   "paintBoost": -3,
+   "threePtBoost": -2,
+   "defBoost": 2,
+   "salary": 640,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 8,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 9,
+     "hi": 12,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 13,
+     "hi": 18,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 19,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "season": 2023,
+   "seasonLabel": "2022-23",
+   "age": 33,
+   "games": 41,
+   "mpg": 13.9,
+   "bbrefId": "griffbl01",
+   "traded": false,
+   "metrics": {
+    "bpm": 0.1,
+    "vorp": 0.3,
+    "ws": 1.8,
+    "ws48": 0.153,
+    "per": 13.1
+   },
+   "provisional": true,
+   "stint": {
+    "games": 41,
+    "note": "a Celtic in the last season (the user's pick, 2026-09-24)"
+   }
+  },
+  {
+   "id": "Lonzo_Ball",
+   "name": "Lonzo Ball",
+   "team": "CLE",
+   "pos": "PG",
+   "speed": 9,
+   "power": 6,
+   "shotLine": 17,
+   "paintBoost": 0,
+   "threePtBoost": 2,
+   "defBoost": 2,
+   "salary": 440,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 7,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 16,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 17,
+     "hi": 27,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 28,
+     "hi": 99,
+     "pts": 2,
+     "reb": 2,
+     "ast": 2
+    }
+   ],
+   "season": 2026,
+   "seasonLabel": "2025-26",
+   "age": 28,
+   "games": 35,
+   "mpg": 20.8,
+   "bbrefId": "balllo01",
+   "traded": false,
+   "metrics": {
+    "bpm": -1.1,
+    "vorp": 0.2,
+    "ws": 0.6,
+    "ws48": 0.042,
+    "per": 9.5
+   },
+   "provisional": true,
+   "stint": {
+    "games": 35,
+    "note": "a Cavalier after the 2025 trade from Chicago (the user's pick, 2026-09-24)"
    }
   },
   {

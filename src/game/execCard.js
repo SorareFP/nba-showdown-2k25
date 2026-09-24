@@ -4,7 +4,7 @@
 
 import { handOverPriority, getTeam, getOpp, getPS, calcAdv, shotCheck, matchupContest, drawCards, deepClone, getFatigue, recordDefSwitch, burnedSlots, roll20, checkAssistDraw, standingEntry, CROWD_FAVORITE_PTS, satOutLast, bottomedLines } from './engine.js';
 import { creditAllowed, creditCheckDefended, recordPaintCheck, creditPaintScore, noteLastCheck } from './engine.js';
-import { helpTargets, canAnswerCheck, myHouseHolds, foulTroubleTargets, clampTargets, kickOutTargets, pushGuardIdx, OWN_THE_GLASS_LEAD, reboundLeadProblem } from './canPlay.js';
+import { burstTargets, helpTargets, canAnswerCheck, myHouseHolds, foulTroubleTargets, clampTargets, kickOutTargets, pushGuardIdx, OWN_THE_GLASS_LEAD, reboundLeadProblem } from './canPlay.js';
 import { lookupChart } from './cards.js';
 import { getStrat } from './strats.js';
 
@@ -833,6 +833,10 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       const rr = (g.rollResults[teamKey] || [])[idx];
       if (!rr?.isTop) return fail('Player must hit highest scoring tier');
       if ((rr?.pts || 0) < 3) return fail(`Player scored ${rr?.pts} pts (need 3+)`);
+      // Once per player per section (burstTargets, canPlay.js).
+      if (!burstTargets(g, teamKey).includes(idx)) return fail(`${player?.name} has had a Burst of Momentum this section`);
+      if (!g.tempEff[teamKey]) g.tempEff[teamKey] = {};
+      g.tempEff[teamKey].burstIds = [...(g.tempEff[teamKey].burstIds || []), player?.id];
       myT.assists++;
       myT.rebounds++;
       if (g.analytics?.[teamKey]) { g.analytics[teamKey].assistsFromCards++; g.analytics[teamKey].reboundsGenerated++; }

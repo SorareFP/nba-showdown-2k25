@@ -72,7 +72,8 @@ export const STRATS = [
   { id:'burst_of_momentum',   name:'Burst of Momentum',  phase:'post_roll',side:'off', copies:2, locked:false, color:'#DC2626', rarity:'uncommon',
     // 3+, not 5+ (2026-09-16): a chart's top band pays at most 4 points a
     // roll, so the old door never opened once — measured, not guessed.
-    desc:'Player hits their top tier AND scores 3+ pts this segment: +1 AST, +1 REB, and a hot marker.' },
+    // ONCE PER PLAYER PER SECTION (2026-09-24, the user). burstTargets in canPlay.js.
+    desc:'Player hits their top tier AND scores 3+ pts this segment: +1 AST, +1 REB, and a hot marker. Once per player per section.' },
   { id:'flare_screen',        name:'Flare Screen',       phase:'post_roll',side:'off', copies:2, locked:false, color:'#F59E0B', rarity:'uncommon',
     desc:'A player rolled a natural 20: they make a 3PT Shot Check. Success: +3 pts + draw a card.' },
 

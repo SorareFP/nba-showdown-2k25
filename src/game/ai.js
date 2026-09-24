@@ -5,7 +5,7 @@
 
 import { getTeam, getOpp, getPS, calcAdv, matchupAdv, isGhosted, getFatigue, fatigueForMinutes, restMinutes, MAX_STRAIGHT_MINUTES, pickablePool, SPEND_COSTS, REBOUND_RULES, reboundCheckOpen, reboundCheckBonus, clutchAvailable, clutchEligible, burnedSlots, satOutLast, canRollSlot, extraRollPending, checkNeed, crunchSearchOptions } from './engine.js';
 import { lookupChart } from './cards.js';
-import { canPlayCard, helpTargets, staggerPair, myHouseTargets, foulTroubleTargets, clampTargets, kickOutTargets, REBOUND_CARD_COST } from './canPlay.js';
+import { canPlayCard, burstTargets, helpTargets, staggerPair, myHouseTargets, foulTroubleTargets, clampTargets, kickOutTargets, REBOUND_CARD_COST } from './canPlay.js';
 import { getStrat, STRATS, TIMEOUT_RIDERS } from './strats.js';
 import { DEFAULT_ORDER } from './placement.js';
 
@@ -1618,8 +1618,9 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
     }
 
     case 'burst_of_momentum': {
-      const topBig = rolls.findIndex(r => r?.isTop && (r?.pts || 0) >= 3);
-      return { playerIdx: topBig >= 0 ? topBig : 0 };
+      // Once per player per section: the first who has not had one.
+      const [first] = burstTargets(game, teamKey);
+      return { playerIdx: first ?? 0 };
     }
 
     case 'flare_screen': {

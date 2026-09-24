@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { calcAdv, matchupAdv, getTeam, getOpp, getPS, getFatigue, SPEND_COSTS, reboundCheckOpen, reboundCheckBonus, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, lastReturnedCard, undoReturnCard, periodLabel, extraRollPending, checkNeed, fatigueForMinutes, crunchSearchOptions, rollTurnLine } from '../../game/engine.js';
-import { canPlayCard, myHouseTargets, fwdTargets, preRollTargets, helpTargets, foulTroubleTargets, clampTargets, kickOutTargets } from '../../game/canPlay.js';
+import { canPlayCard, burstTargets, myHouseTargets, fwdTargets, preRollTargets, helpTargets, foulTroubleTargets, clampTargets, kickOutTargets } from '../../game/canPlay.js';
 import { resolveGoUnder } from '../../game/execCard.js';
 import { passTurn, MAX_STRAIGHT_MINUTES, restRuleLifted, pickablePool } from '../../game/engine.js';
 import { salaryOrder } from '../../game/teamRules.js';
@@ -324,8 +324,10 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
       case 'burst_of_momentum': {
         // 3+, as canPlay.js reads it (2026-09-16): the picker lagged the rework
         // and told a coach with a legal play there was nobody to choose.
-        eligible = filterStarters(myT.starters, (p, i) => rolls[i]?.isTop && (rolls[i]?.pts || 0) >= 3);
-        label = 'Select player (top tier + 3pts)';
+        // …and once per player per section (burstTargets, 2026-09-24).
+        const bursts = new Set(burstTargets(game, teamKey));
+        eligible = filterStarters(myT.starters, (p, i) => bursts.has(i));
+        label = 'Select player (top tier + 3pts, no Burst yet this section)';
         break;
       }
       case 'drive_the_lane': {

@@ -337,6 +337,25 @@ describe('scoring-phase wave-one cards', () => {
     expect(play(two, 'burst_of_momentum', { playerIdx: 2 }).ok).toBe(false);
   });
 
+  it('Burst of Momentum is once per player per section (the user, 2026-09-24)', () => {
+    const g = game({ hand: ['burst_of_momentum', 'burst_of_momentum'] });
+    g.rollResults.A[2] = { isTop: true, pts: 3, reb: 1, ast: 1 };
+    const once = play(g, 'burst_of_momentum', { playerIdx: 2 });
+    expect(once.ok).toBe(true);
+    // The same player again, this section: refused on the board and in the engine.
+    expect(canPlayCard(once.game, 'A', 'burst_of_momentum').canPlay).toBe(false);
+    expect(canPlayCard(once.game, 'A', 'burst_of_momentum').reason).toMatch(/once per player per section/);
+    expect(play(once.game, 'burst_of_momentum', { playerIdx: 2 }).ok).toBe(false);
+    // Another player who earned it still can.
+    once.game.rollResults.A[4] = { isTop: true, pts: 4, reb: 0, ast: 0 };
+    expect(canPlayCard(once.game, 'A', 'burst_of_momentum').canPlay).toBe(true);
+    expect(play(once.game, 'burst_of_momentum', { playerIdx: 4 }).ok).toBe(true);
+    // And the next section, the first player again (tempEff clears at section end).
+    const next = structuredClone(once.game);
+    next.tempEff.A = {};
+    expect(play(next, 'burst_of_momentum', { playerIdx: 2 }).ok).toBe(true);
+  });
+
   it('Unsung Hero is for $400 or less', () => {
     const A = five('a'); A[2] = p('hero', 10, 10, { salary: 400 });
     const g = game({ A, hand: ['unsung_hero'] });

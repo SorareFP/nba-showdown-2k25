@@ -163,6 +163,25 @@ export function preRollTargets(g, teamKey, cond = () => true) {
  * `{ offSlot, off, def, defIdx, adv }` so the picker and the engine agree on
  * who is eligible, the pattern every other conditional card here follows.
  */
+/**
+ * BURST OF MOMENTUM'S PLAYERS: a top-tier roll of 3+ points this segment, and
+ * no Burst yet this section. ONCE PER PLAYER PER SECTION (the user,
+ * 2026-09-24: "Burst of Momentum should only be able to be applied once per
+ * player per section"). Who has had one is kept by player id in tempEff,
+ * which the engine clears at section end. Slot indices, like the others here,
+ * so the picker, the engine and the coach agree.
+ */
+export function burstTargets(g, teamKey) {
+  const rolls = g.rollResults?.[teamKey] || [];
+  const starters = getTeam(g, teamKey)?.starters || [];
+  const had = new Set(g.tempEff?.[teamKey]?.burstIds || []);
+  const out = [];
+  starters.forEach((p, i) => {
+    if (rolls[i]?.isTop && (rolls[i]?.pts || 0) >= 3 && !had.has(p?.id)) out.push(i);
+  });
+  return out;
+}
+
 export function helpTargets(g, teamKey) {
   const oppKey = teamKey === 'A' ? 'B' : 'A';
   const myT = getTeam(g, teamKey);
@@ -704,6 +723,7 @@ function cardVerdict(g, teamKey, cardId) {
     // 3+, not 5+ (2026-09-16): a top band pays 1-4 points; 5+ never came.
     const ok2 = (g.rollResults[teamKey] || []).some(r => r?.isTop && (r?.pts || 0) >= 3);
     if (!ok2) return no('Need a player who hit top tier AND scored 3+ pts');
+    if (!burstTargets(g, teamKey).length) return no('Burst of Momentum is once per player per section');
     return ok();
   }
 

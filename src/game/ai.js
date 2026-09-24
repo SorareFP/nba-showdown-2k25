@@ -893,7 +893,10 @@ export function aiSpendDecision(game, teamKey, opts = {}) {
     // The shooter is chosen on the check this spend takes: its own bonus, no banked assist.
     const best = bestChanceWith('paint', { extra: reboundCheckBonus(game, teamKey), banked: false });
     if (REBOUND_RULES.paintGate > 0) return { type: 'spend_rebound', rebType: 'paint_check', playerIdx: best.idx };
-    const reb = team.rebounds ?? 0;
+    // With the lead rule the LEAD is what pays (a spend and the cards in hand
+    // both need it), so the surplus is counted on the smaller of the two.
+    const lead = (team.rebounds ?? 0) - (getOpp(game, teamKey).rebounds ?? 0);
+    const reb = REBOUND_RULES.leadToSpend ? Math.min(team.rebounds ?? 0, lead) : (team.rebounds ?? 0);
     const rebReserve = Math.max(0, ...(team.hand || []).map(id => REBOUND_COST[id] || 0));
     const rebSurplus = reb - rebReserve;
     const cost = SPEND_COSTS.reboundPaint;

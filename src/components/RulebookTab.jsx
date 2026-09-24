@@ -236,7 +236,7 @@ export default function RulebookTab() {
         <div className={s.sub}>Rebound Track</div>
         <p>Rebounds accumulate, and are spent like assists:</p>
         <ul>
-          <li><strong>5 REB:</strong> a paint check for any player, at any time; their Paint Bonus applies.</li>
+          <li><strong>5 REB:</strong> a paint check for any player, at any time while the team leads the rebound battle by 5 or more (a spend leaves the track level at worst); their Paint Bonus applies.</li>
         </ul>
         <p>At section end the <strong>differential</strong> pays:</p>
         <ul>

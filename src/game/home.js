@@ -23,6 +23,11 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
+    id: 'rebound-lead', date: '2026-09-24', title: 'Rebound spends need the lead',
+    body: 'Spending rebounds now needs your team to lead the rebound battle by at least what it spends, so a spend can never hand the lead (and its end-of-section assist) to the other side. That goes for the strategy cards that spend rebounds and for the 5-rebound paint check: the check needs a lead of 5, and paying for it leaves the track level at worst. The scoreboard shows "+5: Paint Check" when it is open.',
+    to: 'play', cta: 'Play',
+  },
+  {
     id: 'fixture-kept', date: '2026-09-24', title: 'Leaving a fixture keeps your game',
     body: 'Stepping out of a season or dynasty fixture used to throw the game in progress away. Now "Back to the dynasty" keeps it exactly where you left it, through a page reload too, and the fixture offers "Resume this game". A fixture game you lost earlier may still be under Recover a game on the Play screen.',
     to: 'play', cta: 'Play',
@@ -41,11 +46,6 @@ export const NEWS = [
     id: 'dogged-rare', date: '2026-09-24', title: 'Dogged is a rare',
     body: 'Dogged (−2 Speed and −2 Power on a fatigued opponent) was far stronger than a common, so it is now a rare: one printed copy and a rare\'s share of packs.',
     to: 'shop', cta: 'Pack Shop',
-  },
-  {
-    id: 'rebound-lead', date: '2026-09-24', title: 'Rebound cards need the lead',
-    body: 'A strategy card that spends rebounds now needs your team to lead the rebound battle by at least what it spends, so playing it can never hand the lead (and its end-of-section assist) to the other side. The 5-rebound paint check is unchanged.',
-    to: 'play', cta: 'Play',
   },
   {
     id: 'zigzag-court', date: '2026-09-24', title: 'The court fits a big monitor',

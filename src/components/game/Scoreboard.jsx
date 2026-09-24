@@ -1,5 +1,5 @@
 import styles from './Scoreboard.module.css';
-import { periodLabel, rollTurnLine } from '../../game/engine.js';
+import { periodLabel, rollTurnLine, SPEND_COSTS, REBOUND_RULES } from '../../game/engine.js';
 
 function HelpBtn() {
   const handleClick = (e) => {
@@ -95,8 +95,14 @@ function ReboundDiff({ diff, aReb, bReb }) {
   const leadCol = diff > 0 ? 'var(--orange)' : diff < 0 ? 'var(--blue)' : '#94A3B8';
   const sign = diff > 0 ? '+' : diff < 0 ? '' : '';
 
-  // Threshold markers
-  const has3 = absDiff >= 3;
+  // Threshold markers. The leader may buy a paint check once its lead covers
+  // the price (REBOUND_RULES.leadToSpend), which spends it back to level at
+  // worst; short of that, a lead of leadGate+ at the section's end puts its
+  // next check at +leadBonus. This read "+3: Paint Check" from the gated rule
+  // before 2026-09-23 and still did on 2026-09-24.
+  const cost = SPEND_COSTS.reboundPaint;
+  const canBuy = REBOUND_RULES.leadToSpend ? absDiff >= cost : absDiff > 0;
+  const hasGate = REBOUND_RULES.leadBonus > 0 && absDiff >= REBOUND_RULES.leadGate;
 
   return (
     <div className={styles.rebDiff}>
@@ -124,7 +130,9 @@ function ReboundDiff({ diff, aReb, bReb }) {
       <div className={styles.rebThresholds}>
         {/* +5 Fast Break is gone — the mechanic was removed from the engine and
             the scoreboard was still promising it. */}
-        {has3 && <span className={styles.rebThresh} style={{ color: leadCol }}>+3: Paint Check</span>}
+        {canBuy
+          ? <span className={styles.rebThresh} style={{ color: leadCol }}>+{cost}: Paint Check</span>
+          : hasGate && <span className={styles.rebThresh} style={{ color: leadCol }}>+{REBOUND_RULES.leadGate}: next check +{REBOUND_RULES.leadBonus}</span>}
       </div>
     </div>
   );

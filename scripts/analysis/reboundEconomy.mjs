@@ -29,6 +29,10 @@ export const VARIANTS = {
   // Priced like the assist paint check (5), the glass winner's first check at +2.
   hybrid5: { paintGate: 0, paintBonus: 0, oncePerSection: false, cost: 5, leadBonus: 2, leadGate: 3 },
   open4: { paintGate: 0, paintBonus: 0, oncePerSection: false, cost: 4 },
+  // hybrid5, and the check needs a Rebound Track lead of its cost (2026-09-24).
+  lead5: { paintGate: 0, paintBonus: 0, oncePerSection: false, cost: 5, leadBonus: 2, leadGate: 3, leadToSpend: true },
+  lead4: { paintGate: 0, paintBonus: 0, oncePerSection: false, cost: 4, leadBonus: 2, leadGate: 3, leadToSpend: true },
+  lead3: { paintGate: 0, paintBonus: 0, oncePerSection: false, cost: 3, leadBonus: 2, leadGate: 3, leadToSpend: true },
 };
 
 function rngFrom(seed) {
@@ -86,7 +90,7 @@ export function measure(variant, games, seed) {
   const { cost, ...rules } = variant;
   const saved = { ...REBOUND_RULES };
   const savedCost = SPEND_COSTS.reboundPaint;
-  Object.assign(REBOUND_RULES, { leadBonus: 0, leadGate: 3, ...rules });
+  Object.assign(REBOUND_RULES, { leadBonus: 0, leadGate: 3, leadToSpend: false, ...rules });
   SPEND_COSTS.reboundPaint = cost;
   const rng = rngFrom(seed);
   const sum = { ast: 0, reb: 0, astPts: 0, rebPts: 0, astLeft: 0, rebLeft: 0, score: 0, rebChecks: 0, teams: 0 };

@@ -175,7 +175,7 @@ export default function HowToPlay({ scrollToSection, onStartTutorial, tutorialRu
           <h4>Rebound Track</h4>
           <p>Rebounds accumulate too, and you spend them the way you spend assists:</p>
           <ul>
-            <li><strong>5 REB:</strong> a paint check for any player, any time. Their Paint Bonus rides on the die; the button shows the roll he needs.</li>
+            <li><strong>5 REB:</strong> a paint check for any player, any time <strong>you lead the rebound battle by 5 or more</strong>, so paying for it leaves the track level at worst. Their Paint Bonus rides on the die; the button shows the roll he needs.</li>
           </ul>
           <p>At the end of a section, the <strong>difference</strong> between the teams pays too:</p>
           <ul>

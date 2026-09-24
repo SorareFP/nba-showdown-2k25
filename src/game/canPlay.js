@@ -325,7 +325,8 @@ export const reboundLead = (g, teamKey) =>
  * assist and +2 check at the section's end — to a side that won nothing. With
  * the lead at least the cost, a spend leaves you ahead or level. The engine
  * refuses the same card (execCard.js). The 5-REB rebound paint check is not a
- * card and keeps its own rule (REBOUND_RULES). Null when the card may spend.
+ * card; it takes the same rule through REBOUND_RULES.leadToSpend
+ * (reboundCheckProblem, engine.js). Null when the card may spend.
  */
 export function reboundLeadProblem(g, teamKey, cardId) {
   const cost = REBOUND_CARD_COST[cardId];

@@ -514,8 +514,18 @@ export const SPEND_COSTS = {
  *   open at 8 REB                 3.5      8.5       9.0      122.1
  *   open at 6 REB                 4.9      8.6       6.9      123.4
  *   open at 5 REB                 6.0      8.2       5.7      124.5
- *   open at 5, glass winner +2    6.4      8.1       5.6      124.3   <- SHIPPED
+ *   open at 5, glass winner +2    6.4      8.1       5.6      124.3   <- shipped 09-23
  *   open at 4 REB                 7.8      8.6       4.7      127.0
+ *
+ * 2026-09-24, 400 games a variant, the check needing a track lead of its
+ * cost (leadToSpend, below), glass winner +2:
+ *   the 09-23 rule (no lead)      6.5      8.1       5.6      125.1
+ *   lead 5, costs 5               0.8      8.1      37.8      117.2   <- SHIPPED
+ *   lead 4, costs 4               1.0      7.8      38.0      117.0
+ *   lead 3, costs 3               1.4      7.8      37.7      118.0
+ *
+ * A lead is a difference of two banks that grow together, so it seldom
+ * stands at the price: under the lead rule the check is rare at any cost.
  *
  * So the bank is a currency like the assists: 5 REB buys a paint check for
  * any player at any time, the same price as the assist paint check. The
@@ -532,14 +542,43 @@ export const REBOUND_RULES = {
   /** On the first check after winning a section's glass by `leadGate` or more. */
   leadBonus: 2,
   leadGate: 3,
+  /**
+   * The check needs a Rebound Track LEAD of at least its cost (2026-09-24).
+   * The user: "When I use a paint shot check, all of a sudden the other team
+   * is +5 in rebounds... I should only be able to make a paint shot check if
+   * I'm +3, or whatever we decided on, then rebounds go back to even." The
+   * track is the difference of the two banks, so spending 5 from a level
+   * track put the other side +5 — with its +1 assist and +2 check at the
+   * section's end — for glass it never won. With the lead at least the cost,
+   * a spend leaves you ahead or level: the rebound cards' rule
+   * (reboundLeadProblem, canPlay.js) on the check.
+   */
+  leadToSpend: true,
 };
 
-/** Whether `teamKey` may take a rebound paint check now: the bank covers it and the rule opens it. */
-export function reboundCheckOpen(g, teamKey) {
+/** How far `teamKey` leads the Rebound Track: negative when it trails. */
+const reboundTrackLead = (g, teamKey) =>
+  (getTeam(g, teamKey)?.rebounds ?? 0) - (getOpp(g, teamKey)?.rebounds ?? 0);
+
+/** Why `teamKey` may not take a rebound paint check now, or null when it may. */
+export function reboundCheckProblem(g, teamKey) {
   const t = getTeam(g, teamKey);
-  if (!t || (t.rebounds ?? 0) < SPEND_COSTS.reboundPaint) return false;
-  if (REBOUND_RULES.paintGate <= 0) return true;
-  return Boolean(g.reboundBonuses?.[teamKey]?.paintCheck);
+  if (!t) return 'No team';
+  const cost = SPEND_COSTS.reboundPaint;
+  if ((t.rebounds ?? 0) < cost) return `Need ${cost} rebounds (have ${t.rebounds ?? 0})`;
+  if (REBOUND_RULES.leadToSpend) {
+    const lead = reboundTrackLead(g, teamKey);
+    if (lead < cost) return `Lead the rebound battle by ${cost} to spend ${cost} REB (you ${lead > 0 ? `lead by ${lead}` : lead < 0 ? `trail by ${-lead}` : 'are level'})`;
+  }
+  if (REBOUND_RULES.paintGate > 0 && !g.reboundBonuses?.[teamKey]?.paintCheck) {
+    return `The rebound paint check opens when you win a section's glass by ${REBOUND_RULES.paintGate}+`;
+  }
+  return null;
+}
+
+/** Whether `teamKey` may take a rebound paint check now: the bank covers it, the lead pays for it, and the rule opens it. */
+export function reboundCheckOpen(g, teamKey) {
+  return reboundCheckProblem(g, teamKey) === null;
 }
 
 /** The bonus the next rebound paint check carries: the flat one, and the glass winner's once a section. */
@@ -994,10 +1033,10 @@ export function spendReboundBonus(g, teamKey, type, playerIdx) {
   const ps = getPS(ng, teamKey, player.id) || {};
 
   if (type === 'paint_check') {
-    if (myT.rebounds < SPEND_COSTS.reboundPaint) return { game: ng, ok: false, msg: `Need ${SPEND_COSTS.reboundPaint} rebounds (have ${myT.rebounds})` };
     // The ENGINE refuses a closed check too; the board and the coach only ever
     // offered it when open, and a rule has to hold where it is enforced.
-    if (!reboundCheckOpen(ng, teamKey)) return { game: ng, ok: false, msg: `The rebound paint check opens when you win a section's glass by ${REBOUND_RULES.paintGate}+` };
+    const problem = reboundCheckProblem(ng, teamKey);
+    if (problem) return { game: ng, ok: false, msg: problem };
     const rebBonus = reboundCheckBonus(ng, teamKey);
     myT.rebounds -= SPEND_COSTS.reboundPaint;
     const partsR = [{ label: 'REB', n: rebBonus }, { label: 'contest', n: -(matchupContest(ng, teamKey, playerIdx, 'paint') || 0) }];

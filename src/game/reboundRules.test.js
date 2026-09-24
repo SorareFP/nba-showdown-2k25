@@ -6,7 +6,7 @@
 import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
 import {
   newGame, getTeam, endSection, spendReboundBonus, checkNeed, SPEND_COSTS,
-  REBOUND_RULES, reboundCheckOpen, reboundCheckBonus,
+  REBOUND_RULES, reboundCheckOpen, reboundCheckBonus, reboundCheckProblem,
 } from './engine.js';
 import { aiSpendDecision } from './ai.js';
 
@@ -33,7 +33,7 @@ const GATED = { paintGate: 3, oncePerSection: true, paintBonus: 0, leadBonus: 0,
 
 describe('the rule shipped 2026-09-23', () => {
   it("opens the bank like the assists, at the assist paint check's price, with +2 for a 3+ glass win", () => {
-    expect(REBOUND_RULES).toMatchObject({ paintGate: 0, oncePerSection: false, paintBonus: 0, leadBonus: 2, leadGate: 3 });
+    expect(REBOUND_RULES).toMatchObject({ paintGate: 0, oncePerSection: false, paintBonus: 0, leadBonus: 2, leadGate: 3, leadToSpend: true });
     expect(SPEND_COSTS.reboundPaint).toBe(SPEND_COSTS.assistPaint);
   });
 
@@ -42,6 +42,65 @@ describe('the rule shipped 2026-09-23', () => {
     g.teamA.rebounds = 14; g.teamB.rebounds = 10;
     const lines = endSection(g).log.map(l => l.msg);
     expect(lines.some(m => /Rebound Track lead → .* \+1 AST · next rebound paint check \+2/.test(m))).toBe(true);
+  });
+});
+
+describe('the check needs the lead to pay for it (2026-09-24)', () => {
+  // The user: "When I use a paint shot check, all of a sudden the other team is
+  // +5 in rebounds... I should only be able to make a paint shot check if I'm
+  // +3, or whatever we decided on, then rebounds go back to even."
+  const cost = () => SPEND_COSTS.reboundPaint;
+
+  it('is the shipped rule', () => {
+    expect(REBOUND_RULES.leadToSpend).toBe(true);
+  });
+
+  it('stays shut on a level track, however deep the bank', () => {
+    const g = game();
+    g.teamA.rebounds = 12; g.teamB.rebounds = 12;
+    expect(reboundCheckOpen(g, 'A')).toBe(false);
+    expect(reboundCheckProblem(g, 'A')).toBe(`Lead the rebound battle by ${cost()} to spend ${cost()} REB (you are level)`);
+    const refused = spendReboundBonus(g, 'A', 'paint_check', 0);
+    expect(refused.ok).toBe(false);
+    expect(refused.msg).toContain('are level');
+    expect(getTeam(refused.game, 'A').rebounds).toBe(12);
+  });
+
+  it('opens at a lead of its cost, and the spend leaves the track level', () => {
+    const g = game();
+    g.teamA.rebounds = 12; g.teamB.rebounds = 12 - cost() + 1;
+    expect(reboundCheckProblem(g, 'A')).toMatch(/you lead by 4/);
+    g.teamB.rebounds = 12 - cost();
+    expect(reboundCheckOpen(g, 'A')).toBe(true);
+    const spent = spendReboundBonus(g, 'A', 'paint_check', 0);
+    expect(spent.ok).toBe(true);
+    expect(getTeam(spent.game, 'A').rebounds).toBe(getTeam(spent.game, 'B').rebounds);
+    expect(reboundCheckOpen(spent.game, 'A')).toBe(false);
+  });
+
+  it('never opens for the side that trails', () => {
+    const g = game();
+    g.teamA.rebounds = 9; g.teamB.rebounds = 11;
+    expect(reboundCheckProblem(g, 'A')).toMatch(/you trail by 2/);
+  });
+
+  it('the coach spends only what the lead can pay', () => {
+    const g = game();
+    g.teamA.rebounds = 3 * cost(); g.teamB.rebounds = 3 * cost() - 3;
+    expect(aiSpendDecision(g, 'A')).toBeNull();
+    g.teamB.rebounds = 0;
+    expect(aiSpendDecision(g, 'A')).toMatchObject({ type: 'spend_rebound' });
+    // Its rebound cards need the lead too: a lead of the check's cost is all reserve.
+    g.teamB.rebounds = 3 * cost() - cost();
+    g.teamA.hand = ['offensive_board'];
+    expect(aiSpendDecision(g, 'A')).toBeNull();
+  });
+
+  it('is a dial: off, the bank alone opens it (the rule of 2026-09-23)', () => {
+    REBOUND_RULES.leadToSpend = false;
+    const g = game();
+    g.teamA.rebounds = 12; g.teamB.rebounds = 12;
+    expect(reboundCheckOpen(g, 'A')).toBe(true);
   });
 });
 

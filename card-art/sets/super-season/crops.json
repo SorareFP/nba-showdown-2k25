@@ -720,8 +720,8 @@
     "zoom": 1
   },
   "Dennis_Rodman": {
-    "x": -2.33,
-    "y": -1.82,
+    "x": 2.86,
+    "y": -2.4,
     "zoom": 1.15
   },
   "Derrick_White": {
@@ -877,6 +877,126 @@
   "Tyus_Jones": {
     "x": -4.51,
     "y": 0,
+    "zoom": 1
+  },
+  "Charles_Barkley": {
+    "x": -9.31,
+    "y": 4.34,
+    "zoom": 1.16
+  },
+  "Caris_LeVert": {
+    "x": 10.72,
+    "y": 0,
+    "zoom": 1
+  },
+  "DeMar_DeRozan": {
+    "x": -3.25,
+    "y": -6.43,
+    "zoom": 1.14
+  },
+  "Chris_Paul": {
+    "x": -22.66,
+    "y": 0,
+    "zoom": 1
+  },
+  "Clint_Capela": {
+    "x": -0.73,
+    "y": 0,
+    "zoom": 1
+  },
+  "Daniel_Gafford": {
+    "x": 0.14,
+    "y": 14.69,
+    "zoom": 1.54
+  },
+  "DeAndre_Jordan": {
+    "x": 0,
+    "y": 2.25,
+    "zoom": 1
+  },
+  "Dennis_Schroder": {
+    "x": 11.15,
+    "y": 0,
+    "zoom": 1
+  },
+  "Dillon_Brooks": {
+    "x": -7.53,
+    "y": 0,
+    "zoom": 1
+  },
+  "Fred_VanVleet": {
+    "x": -41.27,
+    "y": 0,
+    "zoom": 1
+  },
+  "Jakob_Poeltl": {
+    "x": 2.61,
+    "y": 0,
+    "zoom": 1
+  },
+  "John_Stockton": {
+    "x": -47.79,
+    "y": 0,
+    "zoom": 1
+  },
+  "Karl_Malone": {
+    "x": -7,
+    "y": -5.03,
+    "zoom": 1.14
+  },
+  "Luke_Kennard": {
+    "x": -7.82,
+    "y": -1.22,
+    "zoom": 1.26
+  },
+  "Kentavious_Caldwell_Pope": {
+    "x": -3.19,
+    "y": 0,
+    "zoom": 1
+  },
+  "Kobe_Bryant": {
+    "x": 7.97,
+    "y": 0,
+    "zoom": 1
+  },
+  "Kelly_Oubre_Jr": {
+    "x": 27.8,
+    "y": 2.94,
+    "zoom": 1.17
+  },
+  "Keegan_Murray": {
+    "x": 0,
+    "y": -4.9,
+    "zoom": 1
+  },
+  "Zeke_Nnaji": {
+    "x": -2.48,
+    "y": 0,
+    "zoom": 1
+  },
+  "Tim_Hardaway_Jr": {
+    "x": -2.31,
+    "y": 0,
+    "zoom": 1
+  },
+  "Royce_O_Neale": {
+    "x": -7.43,
+    "y": 0,
+    "zoom": 1
+  },
+  "Quentin_Grimes": {
+    "x": 4.95,
+    "y": 0,
+    "zoom": 1
+  },
+  "Pau_Gasol": {
+    "x": -9.14,
+    "y": 0,
+    "zoom": 1
+  },
+  "Nicolas_Batum": {
+    "x": 0,
+    "y": 1.81,
     "zoom": 1
   }
 }

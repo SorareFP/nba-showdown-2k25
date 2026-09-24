@@ -5,6 +5,7 @@
 //   npm run export:cards -- --all        every generated set
 //   npm run export:cards -- --all --prune  and delete cards the set no longer has
 //   npm run export:cards -- --all --missing            only faces that do not exist yet
+//   npm run export:cards -- --all --stale              only faces older than their photos (new uploads)
 //   npm run export:cards -- --set rookie --only Buddy_Hield,Landry_Shamet
 //   npm run export:cards -- --set super-season --measure    boxes only, no PNGs
 //
@@ -37,6 +38,7 @@ import { chromium } from 'playwright';
 import { spawnSync } from 'node:child_process';
 import { hasMigratedOut } from '../../src/game/cardSets.js';
 import { writeDormant } from './dormantThrowbacks.mjs';
+import { photoTimes, staleReason } from './staleFaces.mjs';
 import { mkdirSync, readFileSync, existsSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
@@ -114,11 +116,15 @@ const prune = args.includes('--prune');
 const setArg = args.includes('--set') ? args[args.indexOf('--set') + 1] : null;
 // --only a,b,c   export just these card ids (in the set named, or every set with --all)
 // --missing      export only cards that have no face yet
-// Either one turns --prune off: a partial run must never decide what is stale.
+// --stale        export only cards whose photo is newer than their face, or
+//                that have a photo and no face (staleFaces.mjs) — what a
+//                Studio upload leaves behind
+// Any of them turns --prune off: a partial run must never decide what is stale.
 const only = args.includes('--only')
   ? new Set(String(args[args.indexOf('--only') + 1] ?? '').split(',').map(s => s.trim()).filter(Boolean))
   : null;
 const missingOnly = args.includes('--missing');
+const staleOnly = args.includes('--stale');
 // --measure       measure the face's movable gold surfaces (the rotated name,
 //                 the Super Season pill) and write them to face-regions.json
 //                 WITHOUT screenshotting — the fast pass. A normal export
@@ -147,10 +153,13 @@ for (const set of sets) {
   }
   const out = resolve(process.cwd(), 'public', 'cards', set);
   mkdirSync(out, { recursive: true });
+  const photos = staleOnly ? photoTimes(resolve(process.cwd(), 'card-art', 'sets', set, 'photos')) : null;
   const wanted = cards.filter(card =>
     (!only || only.has(card.id)) && (!missingOnly || !existsSync(resolve(out, `${card.id}.png`)))
+    && (!staleOnly || staleReason(photos, card.id, resolve(out, `${card.id}.png`)))
   );
-  if ((only || missingOnly) && wanted.length === 0) { console.log(`${set}: nothing to export`); continue; }
+  if ((only || missingOnly || staleOnly) && wanted.length === 0) { console.log(`${set}: nothing to export`); continue; }
+  if (staleOnly) console.log(`${set}: ${wanted.length} stale — ${wanted.map(c => c.id).join(', ')}`);
 
   let done = 0;
   for (const card of wanted) {
@@ -200,7 +209,7 @@ for (const set of sets) {
   }
   console.log(`${set}: exported ${done}/${wanted.length} to public/cards/${set}/`);
 
-  if (prune && !only && !missingOnly) {
+  if (prune && !only && !missingOnly && !staleOnly) {
     const ids = new Set(cards.map(c => c.id));
     const stale = readdirSync(out).filter(f => f.endsWith('.png') && !ids.has(f.slice(0, -4)));
     for (const f of stale) rmSync(resolve(out, f));

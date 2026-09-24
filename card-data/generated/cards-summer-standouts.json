@@ -82,7 +82,7 @@
    "paintBoost": -1,
    "threePtBoost": -1,
    "defBoost": 2,
-   "salary": 330,
+   "salary": 310,
    "chart": [
     {
      "lo": 1,
@@ -135,7 +135,7 @@
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 760,
+   "salary": 800,
    "chart": [
     {
      "lo": 1,
@@ -202,7 +202,7 @@
    "paintBoost": 1,
    "threePtBoost": -2,
    "defBoost": 2,
-   "salary": 480,
+   "salary": 440,
    "chart": [
     {
      "lo": 1,
@@ -269,7 +269,7 @@
    "paintBoost": 1,
    "threePtBoost": -3,
    "defBoost": 5,
-   "salary": 710,
+   "salary": 640,
    "chart": [
     {
      "lo": 1,
@@ -329,7 +329,7 @@
    "paintBoost": 1,
    "threePtBoost": 4,
    "defBoost": 1,
-   "salary": 810,
+   "salary": 780,
    "chart": [
     {
      "lo": 1,
@@ -396,7 +396,7 @@
    "paintBoost": 1,
    "threePtBoost": 1,
    "defBoost": 2,
-   "salary": 960,
+   "salary": 930,
    "chart": [
     {
      "lo": 1,
@@ -449,7 +449,7 @@
    "paintBoost": -1,
    "threePtBoost": 2,
    "defBoost": 0,
-   "salary": 850,
+   "salary": 840,
    "chart": [
     {
      "lo": 1,
@@ -509,7 +509,7 @@
    "paintBoost": -1,
    "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 690,
+   "salary": 680,
    "chart": [
     {
      "lo": 1,
@@ -629,7 +629,7 @@
    "paintBoost": 2,
    "threePtBoost": 5,
    "defBoost": -1,
-   "salary": 730,
+   "salary": 750,
    "chart": [
     {
      "lo": 1,
@@ -689,7 +689,7 @@
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 2,
-   "salary": 910,
+   "salary": 890,
    "chart": [
     {
      "lo": 1,
@@ -749,7 +749,7 @@
    "paintBoost": -1,
    "threePtBoost": 0,
    "defBoost": 2,
-   "salary": 730,
+   "salary": 750,
    "chart": [
     {
      "lo": 1,
@@ -809,7 +809,7 @@
    "paintBoost": 1,
    "threePtBoost": 1,
    "defBoost": -1,
-   "salary": 1200,
+   "salary": 1240,
    "chart": [
     {
      "lo": 1,
@@ -876,7 +876,7 @@
    "paintBoost": 0,
    "threePtBoost": 4,
    "defBoost": 0,
-   "salary": 1070,
+   "salary": 1080,
    "chart": [
     {
      "lo": 1,
@@ -943,7 +943,7 @@
    "paintBoost": 2,
    "threePtBoost": 1,
    "defBoost": 2,
-   "salary": 880,
+   "salary": 840,
    "chart": [
     {
      "lo": 1,
@@ -1003,7 +1003,7 @@
    "paintBoost": 2,
    "threePtBoost": -3,
    "defBoost": 1,
-   "salary": 430,
+   "salary": 400,
    "chart": [
     {
      "lo": 1,
@@ -1063,7 +1063,7 @@
    "paintBoost": -2,
    "threePtBoost": 1,
    "defBoost": 0,
-   "salary": 930,
+   "salary": 960,
    "chart": [
     {
      "lo": 1,
@@ -1130,7 +1130,7 @@
    "paintBoost": -3,
    "threePtBoost": -2,
    "defBoost": 1,
-   "salary": 720,
+   "salary": 690,
    "chart": [
     {
      "lo": 1,
@@ -1190,7 +1190,7 @@
    "paintBoost": 2,
    "threePtBoost": 3,
    "defBoost": -1,
-   "salary": 1090,
+   "salary": 1120,
    "chart": [
     {
      "lo": 1,
@@ -1250,7 +1250,7 @@
    "paintBoost": 1,
    "threePtBoost": 5,
    "defBoost": 1,
-   "salary": 610,
+   "salary": 600,
    "chart": [
     {
      "lo": 1,
@@ -1317,7 +1317,7 @@
    "paintBoost": 0,
    "threePtBoost": -2,
    "defBoost": -1,
-   "salary": 830,
+   "salary": 880,
    "chart": [
     {
      "lo": 1,
@@ -1384,7 +1384,7 @@
    "paintBoost": -2,
    "threePtBoost": 0,
    "defBoost": 3,
-   "salary": 650,
+   "salary": 610,
    "chart": [
     {
      "lo": 1,
@@ -1437,7 +1437,7 @@
    "paintBoost": 1,
    "threePtBoost": -2,
    "defBoost": 1,
-   "salary": 110,
+   "salary": 80,
    "chart": [
     {
      "lo": 1,
@@ -1490,7 +1490,7 @@
    "paintBoost": 2,
    "threePtBoost": -2,
    "defBoost": 1,
-   "salary": 560,
+   "salary": 520,
    "chart": [
     {
      "lo": 1,
@@ -1550,7 +1550,7 @@
    "paintBoost": 2,
    "threePtBoost": -5,
    "defBoost": 4,
-   "salary": 1370,
+   "salary": 1390,
    "chart": [
     {
      "lo": 1,
@@ -1603,7 +1603,7 @@
    "paintBoost": -1,
    "threePtBoost": 4,
    "defBoost": -1,
-   "salary": 500,
+   "salary": 470,
    "chart": [
     {
      "lo": 1,
@@ -1670,7 +1670,7 @@
    "paintBoost": 1,
    "threePtBoost": 4,
    "defBoost": -1,
-   "salary": 560,
+   "salary": 570,
    "chart": [
     {
      "lo": 1,
@@ -1730,7 +1730,7 @@
    "paintBoost": -3,
    "threePtBoost": 2,
    "defBoost": 3,
-   "salary": 840,
+   "salary": 830,
    "chart": [
     {
      "lo": 1,
@@ -1790,7 +1790,7 @@
    "paintBoost": 4,
    "threePtBoost": 4,
    "defBoost": 2,
-   "salary": 1160,
+   "salary": 1170,
    "chart": [
     {
      "lo": 1,
@@ -1850,7 +1850,7 @@
    "paintBoost": -1,
    "threePtBoost": 3,
    "defBoost": 0,
-   "salary": 690,
+   "salary": 720,
    "chart": [
     {
      "lo": 1,
@@ -1910,7 +1910,7 @@
    "paintBoost": -1,
    "threePtBoost": 3,
    "defBoost": -1,
-   "salary": 1330,
+   "salary": 1380,
    "chart": [
     {
      "lo": 1,
@@ -1970,7 +1970,7 @@
    "paintBoost": 2,
    "threePtBoost": -1,
    "defBoost": 1,
-   "salary": 860,
+   "salary": 880,
    "chart": [
     {
      "lo": 1,
@@ -2030,7 +2030,7 @@
    "paintBoost": 0,
    "threePtBoost": 1,
    "defBoost": 0,
-   "salary": 1590,
+   "salary": 1620,
    "chart": [
     {
      "lo": 1,
@@ -2083,7 +2083,7 @@
    "paintBoost": -2,
    "threePtBoost": 4,
    "defBoost": 2,
-   "salary": 1230,
+   "salary": 1200,
    "chart": [
     {
      "lo": 1,
@@ -2210,7 +2210,7 @@
    "paintBoost": -1,
    "threePtBoost": 3,
    "defBoost": 0,
-   "salary": 480,
+   "salary": 440,
    "chart": [
     {
      "lo": 1,
@@ -2263,7 +2263,7 @@
    "paintBoost": 2,
    "threePtBoost": -1,
    "defBoost": 1,
-   "salary": 590,
+   "salary": 610,
    "chart": [
     {
      "lo": 1,
@@ -2316,7 +2316,7 @@
    "paintBoost": -1,
    "threePtBoost": -2,
    "defBoost": 0,
-   "salary": 780,
+   "salary": 770,
    "chart": [
     {
      "lo": 1,
@@ -2376,7 +2376,7 @@
    "paintBoost": 2,
    "threePtBoost": 0,
    "defBoost": 1,
-   "salary": 1600,
+   "salary": 1630,
    "chart": [
     {
      "lo": 1,
@@ -2496,7 +2496,7 @@
    "paintBoost": -2,
    "threePtBoost": -2,
    "defBoost": 0,
-   "salary": 1100,
+   "salary": 1150,
    "chart": [
     {
      "lo": 1,
@@ -2563,7 +2563,7 @@
    "paintBoost": 2,
    "threePtBoost": -3,
    "defBoost": 4,
-   "salary": 560,
+   "salary": 500,
    "chart": [
     {
      "lo": 1,
@@ -2623,7 +2623,7 @@
    "paintBoost": -3,
    "threePtBoost": 1,
    "defBoost": 1,
-   "salary": 1030,
+   "salary": 1050,
    "chart": [
     {
      "lo": 1,
@@ -2683,7 +2683,7 @@
    "paintBoost": 1,
    "threePtBoost": 0,
    "defBoost": 2,
-   "salary": 950,
+   "salary": 940,
    "chart": [
     {
      "lo": 1,
@@ -2736,7 +2736,7 @@
    "paintBoost": -1,
    "threePtBoost": 0,
    "defBoost": 3,
-   "salary": 710,
+   "salary": 700,
    "chart": [
     {
      "lo": 1,
@@ -2856,7 +2856,7 @@
    "paintBoost": -1,
    "threePtBoost": 3,
    "defBoost": 1,
-   "salary": 1450,
+   "salary": 1460,
    "chart": [
     {
      "lo": 1,
@@ -2909,7 +2909,7 @@
    "paintBoost": 4,
    "threePtBoost": 1,
    "defBoost": 2,
-   "salary": 1350,
+   "salary": 1380,
    "chart": [
     {
      "lo": 1,
@@ -2962,7 +2962,7 @@
    "paintBoost": 1,
    "threePtBoost": -1,
    "defBoost": 0,
-   "salary": 1010,
+   "salary": 1030,
    "chart": [
     {
      "lo": 1,
@@ -3015,7 +3015,7 @@
    "paintBoost": 3,
    "threePtBoost": -2,
    "defBoost": 1,
-   "salary": 490,
+   "salary": 430,
    "chart": [
     {
      "lo": 1,
@@ -3081,7 +3081,7 @@
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 3,
-   "salary": 890,
+   "salary": 850,
    "chart": [
     {
      "lo": 1,
@@ -3147,7 +3147,7 @@
    "paintBoost": 1,
    "threePtBoost": -3,
    "defBoost": 3,
-   "salary": 1470,
+   "salary": 1490,
    "chart": [
     {
      "lo": 1,

@@ -58,6 +58,14 @@ const SPECIALS = [
   'cards-wnba-set-rewards.json',
   // The curated throwbacks (2026-09-22), priced on the same line as everything else.
   'cards-throwbacks.json',
+  // Two more the warning above applies to (2026-09-23), found when the currency
+  // rates moved: generateCuratedCards folds the DEMOTED Super Seasons into
+  // Throwbacks at the salary this file stores, so an unrepriced file quietly
+  // brings the old line back on the next run; and the requested Free Agents,
+  // priced once at build and never again — which is how a requested season
+  // ended up on a different line from the Super Season it was compared with.
+  'demoted-super-seasons.json',
+  'cards-free-agents.json',
 ];
 for (const f of SPECIALS) {
   if (!fs.existsSync(path.join(GEN, f))) { console.log(`${f}: missing, skipped`); continue; }

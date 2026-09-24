@@ -120,6 +120,16 @@ export const rebRate = pp => (2 * pp) / SPEND_COSTS.reboundPaint;
  * a WNBA card and a Super Season card priced against their own small pools
  * would not be, and they meet across sets at the table.
  */
+/**
+ * THE SAME PLAYER, whatever the card's id. A card never plays against its own
+ * player in the field; a special card's id is the player's (`Maya_Moore`) or
+ * the player's with a season (`Maya_Moore_2016`), so the id STEM is compared.
+ * Comparing whole ids let a season-suffixed card face its own base card while
+ * the plain-id card of the same season skipped it — one season, two prices.
+ */
+const idStem = id => String(id ?? '').replace(/_\d{4}$/, '');
+export const samePlayer = (a, b) => a.id === b.id || idStem(a.id) === idStem(b.id);
+
 export function computePlayValue(cards, { field = cards } = {}) {
   const n = cards.length;
   const m = field.length;
@@ -127,7 +137,7 @@ export function computePlayValue(cards, { field = cards } = {}) {
   const bonus = Array.from({ length: n }, () => new Int16Array(m));
   for (let i = 0; i < n; i += 1) {
     for (let j = 0; j < m; j += 1) {
-      bonus[i][j] = cards[i].id === field[j].id ? 0 : calcAdv(cards[i], field[j]).rollBonus;
+      bonus[i][j] = samePlayer(cards[i], field[j]) ? 0 : calcAdv(cards[i], field[j]).rollBonus;
     }
   }
 
@@ -172,7 +182,7 @@ export function computePlayValue(cards, { field = cards } = {}) {
     let k = 0;
     let seen = 0;
     for (let j = 0; j < m; j += 1) {
-      if (cards[i].id === field[j].id) continue;
+      if (samePlayer(cards[i], field[j])) continue;
       const b = bonus[i][j];
       p += evAt(i, b, 'pts');
       k += evAt(i, b, 'ast') * convert(cards[i], 'ast') + evAt(i, b, 'reb') * convert(cards[i], 'reb');
@@ -189,8 +199,13 @@ export function computePlayValue(cards, { field = cards } = {}) {
   // is what each is worth more in its hands. Rebounds joined the pool when
   // the rebound paint check opened (2026-09-23); with assists at 5 a check,
   // the assist term is exactly what it was.
-  const meanAst = mean(cards.map((_, i) => evAt(i, 0, 'ast')));
-  const meanReb = mean(cards.map((_, i) => evAt(i, 0, 'reb')));
+  //
+  // The pool is the FIELD's, not the batch's (2026-09-24). Averaged over the
+  // cards being priced, a card's salary depended on which others were priced
+  // with it: Maya Moore 2016 read $1,410 in the requests file and ~$1,440
+  // priced alone. The field is the table every card meets.
+  const meanAst = mean(field.map(c => expectedChartValue(c, 0, 'ast')));
+  const meanReb = mean(field.map(c => expectedChartValue(c, 0, 'reb')));
   const astChecks = (STARTERS * meanAst) / SPEND_COSTS.assistThree;
   const rebChecks = (STARTERS * meanReb) / SPEND_COSTS.reboundPaint;
   const target = cards.map(c => {
@@ -226,7 +241,7 @@ export function computePlayValue(cards, { field = cards } = {}) {
     let seen = 0;
     for (let i = 0; i < m; i += 1) {
       const attacker = field[i];
-      if (attacker.id === card.id) continue;
+      if (samePlayer(attacker, card)) continue;
       const base = expectedChartValue(attacker, calcAdv(attacker, medianDef).rollBonus, 'pts');
       t += base - expectedChartValue(attacker, calcAdv(attacker, card).rollBonus, 'pts');
       t += convThrough(attacker, medianDef) - convThrough(attacker, card);

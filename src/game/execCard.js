@@ -4,7 +4,7 @@
 
 import { handOverPriority, getTeam, getOpp, getPS, calcAdv, shotCheck, matchupContest, drawCards, deepClone, getFatigue, recordDefSwitch, burnedSlots, roll20, checkAssistDraw, standingEntry, CROWD_FAVORITE_PTS, satOutLast, bottomedLines } from './engine.js';
 import { creditAllowed, creditCheckDefended, recordPaintCheck, creditPaintScore, noteLastCheck } from './engine.js';
-import { helpTargets, canAnswerCheck, myHouseHolds, foulTroubleTargets, clampTargets, kickOutTargets, pushGuardIdx, OWN_THE_GLASS_LEAD } from './canPlay.js';
+import { helpTargets, canAnswerCheck, myHouseHolds, foulTroubleTargets, clampTargets, kickOutTargets, pushGuardIdx, OWN_THE_GLASS_LEAD, reboundLeadProblem } from './canPlay.js';
 import { lookupChart } from './cards.js';
 import { getStrat } from './strats.js';
 
@@ -167,6 +167,9 @@ export function execCard(game, teamKey, cardId, opts = {}) {
 function resolveCard(game, teamKey, cardId, opts = {}) {
   const s = getStrat(cardId);
   if (!s) return { game, ok: false, msg: 'Unknown card: ' + cardId };
+  // A card that spends rebounds needs the lead to pay for them (canPlay.js).
+  const leadProblem = reboundLeadProblem(game, teamKey, cardId);
+  if (leadProblem) return { game, ok: false, msg: leadProblem };
   // Set by a card that stays on the table instead of being spent — see the
   // note beside removeFromHand at the foot of this function.
   let keepInHand = false;

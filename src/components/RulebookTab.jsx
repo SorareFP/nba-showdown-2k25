@@ -243,6 +243,7 @@ export default function RulebookTab() {
           <li><strong>Leading:</strong> +1 stored assist.</li>
           <li><strong>Leading by 3 or more:</strong> the next rebound paint check is at <strong>+2</strong>.</li>
         </ul>
+        <p>A strategy card that spends rebounds needs a rebound lead at least as big as what it spends.</p>
       </Section>
 
       <Section id="fatigue">

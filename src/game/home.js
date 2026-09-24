@@ -23,6 +23,11 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
+    id: 'rebound-lead', date: '2026-09-24', title: 'Rebound cards need the lead',
+    body: 'A strategy card that spends rebounds now needs your team to lead the rebound battle by at least what it spends, so playing it can never hand the lead (and its end-of-section assist) to the other side. The 5-rebound paint check is unchanged.',
+    to: 'play', cta: 'Play',
+  },
+  {
     id: 'zigzag-court', date: '2026-09-24', title: 'The court fits a big monitor',
     body: 'On a wide screen the ten players now stand as cards in two zig-zags, your five on the left and the coach\'s on the right, instead of five rows, so a whole game fits without scrolling. The number on each card pairs the matchups; hover a card to bring it to the front and outline the man it faces, and hold for two seconds to see the whole card. Laptops and phones keep the rows.',
     to: 'play', cta: 'Play',

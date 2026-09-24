@@ -5,7 +5,7 @@
 
 import { getTeam, getOpp, getPS, calcAdv, matchupAdv, isGhosted, getFatigue, fatigueForMinutes, restMinutes, MAX_STRAIGHT_MINUTES, pickablePool, SPEND_COSTS, REBOUND_RULES, reboundCheckOpen, reboundCheckBonus, clutchAvailable, clutchEligible, burnedSlots, satOutLast, canRollSlot, extraRollPending, checkNeed, crunchSearchOptions } from './engine.js';
 import { lookupChart } from './cards.js';
-import { canPlayCard, helpTargets, staggerPair, myHouseTargets, foulTroubleTargets, clampTargets, kickOutTargets } from './canPlay.js';
+import { canPlayCard, helpTargets, staggerPair, myHouseTargets, foulTroubleTargets, clampTargets, kickOutTargets, REBOUND_CARD_COST } from './canPlay.js';
 import { getStrat, STRATS, TIMEOUT_RIDERS } from './strats.js';
 import { DEFAULT_ORDER } from './placement.js';
 
@@ -192,11 +192,7 @@ const SPEND_FLOOR = 0.45;
 /** What the cards that spend assists need — the coach keeps that much back. */
 const ASSIST_COST = { cross_court_dime: 3, pick_and_pop: 2, anticipate_pass: 1, crash_and_kick: 1, three_point_barrage: 1 };
 /** What the cards that spend rebounds cost, for the same reserve on an open rebound check. */
-const REBOUND_COST = {
-  offensive_board: 3, rebound_tap_out: 2, crash_and_kick: 3, transition_outlet: 1, putback_specialist: 2,
-  // The glass cards (2026-09-23).
-  kick_out_three: 2, rebound_and_push: 2, grab_and_go: 3, own_the_glass: 5,
-};
+const REBOUND_COST = REBOUND_CARD_COST;
 
 /** The pick's score: this section's output, half of next section's swing, a little body. */
 export function lineupValue(player, ps) {

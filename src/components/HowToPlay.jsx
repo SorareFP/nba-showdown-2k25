@@ -182,6 +182,7 @@ export default function HowToPlay({ scrollToSection, onStartTutorial, tutorialRu
             <li><strong>Leading:</strong> +1 stored assist.</li>
             <li><strong>Leading by 3 or more:</strong> your next rebound paint check is at <strong>+2</strong>.</li>
           </ul>
+          <p>A <strong>strategy card that spends rebounds</strong> needs your team to lead the rebound battle by at least what it spends, so playing it never hands the lead to the other side.</p>
         </AccordionSection>
 
         <AccordionSection {...sec('fatigue')}>

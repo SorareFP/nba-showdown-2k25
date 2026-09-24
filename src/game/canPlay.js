@@ -283,7 +283,48 @@ function shotReaction(g, teamKey, cardId) {
   }
 }
 
+/**
+ * WHAT A CARD SPENDS FROM THE REBOUND BANK — every card that spends
+ * rebounds, and the one table the lead rule below and the coach's reserve
+ * (ai.js) read.
+ */
+export const REBOUND_CARD_COST = Object.freeze({
+  offensive_board: 3, rebound_tap_out: 2, crash_and_kick: 3, transition_outlet: 1, putback_specialist: 2,
+  kick_out_three: 2, grab_and_go: 3, rebound_and_push: 2, own_the_glass: 5,
+});
+
+/** How far `teamKey` leads the rebound battle (the Rebound Track): negative when it trails. */
+export const reboundLead = (g, teamKey) =>
+  (getTeam(g, teamKey)?.rebounds ?? 0) - (getOpp(g, teamKey)?.rebounds ?? 0);
+
+/**
+ * A CARD THAT SPENDS REBOUNDS NEEDS THE LEAD TO PAY FOR THEM (2026-09-24). The
+ * user: "For cards that use rebounds, the player using it should need to LEAD
+ * the rebounding battle by the cost it takes to play it. It shouldn't just
+ * give unearned rebounds to the other team." The track is the difference of
+ * the two banks, so a spend from a thin lead handed the lead — and its +1
+ * assist and +2 check at the section's end — to a side that won nothing. With
+ * the lead at least the cost, a spend leaves you ahead or level. The engine
+ * refuses the same card (execCard.js). The 5-REB rebound paint check is not a
+ * card and keeps its own rule (REBOUND_RULES). Null when the card may spend.
+ */
+export function reboundLeadProblem(g, teamKey, cardId) {
+  const cost = REBOUND_CARD_COST[cardId];
+  if (!cost) return null;
+  const lead = reboundLead(g, teamKey);
+  if (lead >= cost) return null;
+  return `Lead the rebound battle by ${cost} to spend ${cost} REB (you ${lead > 0 ? `lead by ${lead}` : lead < 0 ? `trail by ${-lead}` : 'are level'})`;
+}
+
 export function canPlayCard(g, teamKey, cardId) {
+  // The card's own conditions first (a wrong phase says so), then the lead.
+  const verdict = cardVerdict(g, teamKey, cardId);
+  if (!verdict.canPlay) return verdict;
+  const lead = reboundLeadProblem(g, teamKey, cardId);
+  return lead ? no(lead) : verdict;
+}
+
+function cardVerdict(g, teamKey, cardId) {
   const myT = getTeam(g, teamKey);
   const oppT = getOpp(g, teamKey);
   const phase = g.phase;

@@ -660,8 +660,8 @@ describe('the tutorial coach (tutorialCoachStep, what TutorialGame dispatches)',
   it('waits while your timeout is on', () => {
     let g = tutorialGame();
     g = playSection(g); g = playSection(g); g = playSection(g);
-    // Somebody rolls before a timeout (timeoutProblem, 2026-09-25).
-    g = tutorialReducer(doRoll(toRolling(g), 'A', 0), { type: 'TIMEOUT', teamKey: 'A' });
+    // The other team rolls before your timeout (timeoutProblem, 2026-09-25).
+    g = tutorialReducer(doRoll(doRoll(toRolling(g), 'A', 0), 'B', 0), { type: 'TIMEOUT', teamKey: 'A' });
     expect(g.timeoutActive).toBe('A');
     // Even with the coach behind on rolls, it does nothing.
     g = doRoll(g, 'A', 1);
@@ -771,11 +771,14 @@ describe('the fourth section: Crunch Time', () => {
     let g = tutorialGame();
     g = playSection(g); g = playSection(g); g = playSection(g);
     g = toRolling(g);
-    // NOBODY HAS ROLLED, SO NO TIMEOUT YET (timeoutProblem, 2026-09-25): the
-    // clutch lesson leads on the opening die, and the timeout's comes after it.
+    // THE COACH HAS NOT ROLLED, SO NO TIMEOUT YET (timeoutProblem, 2026-09-25):
+    // the clutch lesson leads on the opening die, and the timeout's comes once
+    // the coach has answered it.
     expect(liveIds(g)).not.toContain('s4_timeout');
     expect(liveIds(g)).toContain('s4_clutch');
     g = tutorialReducer(g, { type: 'ROLL', teamKey: 'A', idx: 0 });
+    expect(liveIds(g)).not.toContain('s4_timeout');                   // your own roll does not open it
+    g = tutorialReducer(g, { type: 'ROLL', teamKey: 'B', idx: 0 });
     expect(liveIds(g)[0]).toBe('s4_timeout');
     expect(tip('s4_timeout').highlight).toBe('[data-tutorial="timeout"]');
     expect(text('s4_timeout', g)).toContain('one per team in Crunch Time (an overtime brings a fresh one)');
@@ -1214,7 +1217,7 @@ describe('the timeout riders are named, from the list canPlay gates on', () => {
   });
 
   it('the timeout, the search and the resume lessons say which cards they are', () => {
-    let g = doRoll(crunchRolling(), 'A', 0);                // a timeout comes after a roll
+    let g = doRoll(doRoll(crunchRolling(), 'A', 0), 'B', 0); // your timeout comes after the coach's roll
     for (const n of riderNames) expect(text('s4_timeout', g)).toContain(n);
     expect(text('s4_timeout', g)).not.toMatch(/timeout cards/);
     g.teamA.deck = ['reset', 'second_closer', ...g.teamA.deck.filter(id => id !== 'reset' && id !== 'second_closer')];

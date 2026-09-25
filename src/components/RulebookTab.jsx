@@ -273,7 +273,7 @@ export default function RulebookTab() {
           <li><strong>The timeout search:</strong> during your timeout you may take one crunch-only card from your deck into hand, even past the seven-card hand, and the deck is shuffled behind it. Once per timeout.</li>
           <li><strong>Clutch Possession:</strong> once per team, chosen at roll time. The player rolls <strong>2 dice</strong> and keeps the better; each MVP or Clutch Player of the Year award on the card adds a die. Not available at −6 fatigue or worse.</li>
           <li><strong>Extra defensive intensity:</strong> defenders with a positive Def Boost contest shot checks <strong>+1</strong> harder.</li>
-          <li><strong>Timeout:</strong> one per team per game, Crunch Time only, and not until <strong>somebody has rolled</strong> in the section. Play pauses, the team <strong>re-sets its defensive matchups</strong>, may <strong>search the deck</strong> for one crunch-only card, and the timeout-rider window opens.</li>
+          <li><strong>Timeout:</strong> one per team per game, Crunch Time only, and not until <strong>the other team has rolled</strong> in the section — your own roll does not open it. Play pauses, the team <strong>re-sets its defensive matchups</strong>, may <strong>search the deck</strong> for one crunch-only card, and the timeout-rider window opens.</li>
         </ul>
 
         <div className={s.sub}>Crunch-only cards</div>

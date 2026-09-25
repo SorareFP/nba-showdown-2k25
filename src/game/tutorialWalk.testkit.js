@@ -190,7 +190,7 @@ function nextState(g, { tieAtEnd, noClutch, noCards, putBack, onState }) {
   }
   const gate = rollGate(g);
   if (gate.A && pendingRolls(g, 'A') > 0) {
-    // The timeout the moment it is legal — after the first roll (timeoutProblem).
+    // The timeout the moment it is legal — after the coach's first roll (timeoutProblem).
     if (!timeoutProblem(g, 'A')) return tutorialReducer(g, { type: 'TIMEOUT', teamKey: 'A' });
     const r = aiRollDecision(g, 'A');
     return tutorialReducer(g, { type: 'ROLL', teamKey: 'A', idx: r.playerIdx, opts: { clutch: noClutch ? false : r.clutch } });

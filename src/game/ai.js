@@ -2191,8 +2191,8 @@ export function aiRollDecision(game, teamKey) {
 export function aiCrunchDecision(game, teamKey) {
   if (!game.crunch?.active || game.phase !== 'scoring') return null;
   if (game.crunch.timeoutUsed?.[teamKey] || game.timeoutActive) return null;
-  // Legal means after somebody has rolled (timeoutProblem, 2026-09-25): so
-  // "the moment it is legal" below is the first chance after the first die.
+  // Legal means after the other team has rolled (timeoutProblem, 2026-09-25):
+  // so "the moment it is legal" below is the first chance after their first die.
   if (timeoutProblem(game, teamKey)) return null;
   // CALL IT THE MOMENT IT IS LEGAL. The user, 2026-09-14: "the way the timeout
   // works, it makes the most sense to play it ASAP because you get to reset

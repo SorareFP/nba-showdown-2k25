@@ -559,7 +559,7 @@ function timeoutText() {
   // at every Q4 S3 and overtime (2026-09-18).
   // "the coach's matchup search" read as the opponent choosing your defence
   // (2026-09-18); it is aiSetMatchups drawing up YOUR best assignment.
-  return `⏸ Timeout — one per team in Crunch Time (an overtime brings a fresh one), called during the rolling once somebody has rolled. It re-sets your whole defence to the best assignment the game can find for you, lets you search your deck for one crunch-only card, and opens a window for the cards that play only in your own timeout: ${listNames(RIDER_NAMES)}. The coach calls its own the moment it is allowed: right after the first roll.`;
+  return `⏸ Timeout — one per team in Crunch Time (an overtime brings a fresh one), called during the rolling once the other team has rolled. It re-sets your whole defence to the best assignment the game can find for you, lets you search your deck for one crunch-only card, and opens a window for the cards that play only in your own timeout: ${listNames(RIDER_NAMES)}. The coach calls its own the moment it is allowed: right after your first roll.`;
 }
 function searchText(g) {
   const options = crunchSearchOptions(g, 'A');
@@ -924,9 +924,9 @@ export const TUTORIAL_TOOLTIPS = [
     highlight: '[data-tutorial="timeout"]',
     section: 4,
     priority: 100,
-    // When the timeout is LEGAL, not when rolling opens: somebody rolls first
-    // (timeoutProblem, 2026-09-25), so the Clutch lesson comes first, on your
-    // opening roll, and this one right after it.
+    // When the timeout is LEGAL, not when rolling opens: the other team rolls
+    // first (timeoutProblem, 2026-09-25), so the Clutch lesson comes first, on
+    // your opening roll, and this one once the coach has answered it.
     trigger: { phase: 'scoring', condition: (g) => crunchOn(g) && rollingOpen(g) && !timeoutProblem(g, 'A') },
   },
   {

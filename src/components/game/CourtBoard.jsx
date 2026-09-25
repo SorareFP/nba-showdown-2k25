@@ -1501,13 +1501,13 @@ function PhaseBar({ game, setGame, onEndSection, onTimeout = null, onEndTimeout 
           {(segA>0||segB>0) && <span className={styles.segScore}><span style={{color:'var(--orange)'}}>A {segA}</span>–<span style={{color:'var(--blue)'}}>{segB} B</span></span>}
           {!rollingOpen && <button className={styles.passBtn} onClick={pass} disabled={(pvpMode && !isMyTurn) || watchedTurn}>Pass →</button>}
           {onTimeout && game.crunch?.active && rollingOpen && !game.timeoutActive && !game.crunch.timeoutUsed?.[pvpMode ? myTeamKey : 'A'] && (!pvpMode || isMyTurn) && (() => {
-            // Shown, but shut until somebody has rolled (timeoutProblem,
+            // Shown, but shut until the other team has rolled (timeoutProblem,
             // 2026-09-25) — so the button says why rather than vanishing.
             const why = timeoutProblem(game, pvpMode ? myTeamKey : 'A');
             return (
               <button className={styles.passBtn} data-tutorial="timeout" disabled={Boolean(why)} title={why ?? undefined}
                 onClick={() => onTimeout(pvpMode ? myTeamKey : 'A')}>
-                {why ? '⏸ Timeout (after the first roll)' : '⏸ Timeout'}
+                {why ? '⏸ Timeout (after their first roll)' : '⏸ Timeout'}
               </button>
             );
           })()}

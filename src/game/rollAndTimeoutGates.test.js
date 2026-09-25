@@ -4,7 +4,7 @@
 //   "I think one person should have to roll before taking a timeout in
 //    crunch time."
 import { describe, it, expect } from 'vitest';
-import { rollingOpen, passTurn, timeoutProblem, anyoneRolled, CRUNCH_MARGIN } from './engine.js';
+import { rollingOpen, passTurn, timeoutProblem, teamRolled, CRUNCH_MARGIN } from './engine.js';
 import { tutorialReducer } from './tutorialFlow.js';
 import { aiCrunchDecision } from './ai.js';
 import { tutorialStart, openRolling } from './tutorialWalk.testkit.js';
@@ -46,15 +46,19 @@ describe('the crunch-time timeout', () => {
     return { ...g, quarter: 4, section: 3, crunch: { active: true, margin: CRUNCH_MARGIN, used: {}, extra: {}, timeoutUsed: {} } };
   }
 
-  it('opens only once somebody has rolled, for both sides and the coach', () => {
+  it('opens for a side only once the OTHER side has rolled, the coach included', () => {
     const g = crunchRolling();
-    expect(anyoneRolled(g)).toBe(false);
-    expect(timeoutProblem(g, 'A')).toMatch(/Somebody has to roll/);
+    expect(teamRolled(g, 'A') || teamRolled(g, 'B')).toBe(false);
+    expect(timeoutProblem(g, 'A')).toMatch(/The other team has to roll/);
     expect(aiCrunchDecision(g, 'B')).toBeNull();
+    // Your roll opens the coach's timeout, not yours.
     const rolled = tutorialReducer(g, { type: 'ROLL', teamKey: 'A', idx: 0 });
-    expect(anyoneRolled(rolled)).toBe(true);
-    expect(timeoutProblem(rolled, 'A')).toBeNull();
+    expect(teamRolled(rolled, 'A')).toBe(true);
+    expect(timeoutProblem(rolled, 'A')).toMatch(/The other team has to roll/);
     expect(timeoutProblem(rolled, 'B')).toBeNull();
     expect(aiCrunchDecision(rolled, 'B')).toEqual({ type: 'timeout' });
+    // The coach's roll opens yours.
+    const answered = tutorialReducer(rolled, { type: 'ROLL', teamKey: 'B', idx: 0 });
+    expect(timeoutProblem(answered, 'A')).toBeNull();
   });
 });

@@ -820,25 +820,28 @@ export function clutchEligible(g, teamKey, idx) {
  * with applyMatchups) and opens the window the timeout-rider cards play in.
  */
 /** Whether anyone on the floor, either side, has rolled yet this section. */
-export function anyoneRolled(g) {
-  return ['A', 'B'].some(k => (g.rollResults?.[k] || []).some(r => r != null));
+/** Has `teamKey` thrown a die this section? */
+export function teamRolled(g, teamKey) {
+  return (g.rollResults?.[teamKey] || []).some(r => r != null);
 }
 
 /**
  * Why `teamKey` may not call its timeout now, or null when it may — the one
  * reader for the engine's refusal, the board's button and the coach.
  *
- * SOMEBODY ROLLS FIRST (the user, 2026-09-25: "I think one person should have
- * to roll before taking a timeout in crunch time"). Called before a die was
- * thrown, the timeout was a free re-set of the snake's matchups with nothing
- * yet to react to — the coach called it the instant crunch armed.
+ * THE OTHER TEAM ROLLS FIRST (the user, 2026-09-25: "I think one person should
+ * have to roll before taking a timeout in crunch time", then: "I meant from
+ * the opposing team"). Called before a die was thrown, the timeout was a free
+ * re-set of the snake's matchups with nothing yet to react to — the coach
+ * called it the instant crunch armed. Your own roll does not open it: the
+ * huddle answers what the other side has shown, not what you have.
  */
 export function timeoutProblem(g, teamKey) {
   if (!g.crunch?.active) return 'Timeouts are a Crunch Time resource';
   if (g.phase !== 'scoring') return 'Timeouts are called during the Scoring Phase';
   if (g.crunch.timeoutUsed?.[teamKey]) return 'Timeout already used';
   if (g.timeoutActive) return 'A timeout is already in progress';
-  if (!anyoneRolled(g)) return 'Somebody has to roll before a timeout can be called';
+  if (!teamRolled(g, teamKey === 'A' ? 'B' : 'A')) return 'The other team has to roll before you can call a timeout';
   return null;
 }
 

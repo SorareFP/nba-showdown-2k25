@@ -32,8 +32,9 @@ function crunch() {
   g.section = 3;
   g.crunch = { active: true, margin: 4, used: {}, extra: {}, timeoutUsed: {} };
   g.scoringPasses = 99;
-  // Somebody has rolled: a timeout is legal only after that (timeoutProblem).
-  g.rollResults = { A: [{ die: 10, finalRoll: 10, pts: 0, reb: 0, ast: 0 }], B: [] };
+  // Both sides have rolled: a timeout is legal only once the OTHER team has
+  // (timeoutProblem), and these tests call both.
+  g.rollResults = { A: [{ die: 10, finalRoll: 10, pts: 0, reb: 0, ast: 0 }], B: [{ die: 10, finalRoll: 10, pts: 0, reb: 0, ast: 0 }] };
   g.teamA.hand = [filler, filler];
   g.teamA.deck = ['fresh_legs', filler, filler, 'ato_masterpiece', filler, 'unethical_hoops', filler];
   g.teamB.hand = [filler];

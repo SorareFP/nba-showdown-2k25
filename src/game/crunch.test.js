@@ -96,19 +96,24 @@ describe('clutch possessions', () => {
 });
 
 describe('the timeout and its riders', () => {
-  it('waits for the first roll (the user, 2026-09-25: "one person should have to roll before taking a timeout")', () => {
+  it('waits for the OTHER team\'s first roll (the user, 2026-09-25: "I meant from the opposing team")', () => {
     const g = crunchGame();
     const early = spendTimeout(g, 'A');
     expect(early.ok).toBe(false);
-    expect(early.msg).toMatch(/Somebody has to roll/);
-    // Either side's die opens it — the coach's first roll too.
+    expect(early.msg).toMatch(/The other team has to roll/);
+    // Your own die does not open it...
+    g.rollResults = { A: [{ die: 10, finalRoll: 10, pts: 0, reb: 0, ast: 0 }], B: [] };
+    expect(spendTimeout(g, 'A').ok).toBe(false);
+    expect(spendTimeout(g, 'B').ok).toBe(true);                       // ...but it opens theirs
+    // ...theirs does.
     g.rollResults = { A: [], B: [{ die: 10, finalRoll: 10, pts: 0, reb: 0, ast: 0 }] };
     expect(spendTimeout(g, 'A').ok).toBe(true);
+    expect(spendTimeout(g, 'B').ok).toBe(false);
   });
 
   it('is one per team, crunch only, and gates the riders to its window', () => {
     const g = crunchGame();
-    g.rollResults = { A: [{ die: 10, finalRoll: 10, pts: 0, reb: 0, ast: 0 }], B: [] };
+    g.rollResults = { A: [], B: [{ die: 10, finalRoll: 10, pts: 0, reb: 0, ast: 0 }] };   // the other team has rolled
     g.teamA.hand = ['ato_masterpiece'];
     expect(canPlayCard(g, 'A', 'ato_masterpiece').canPlay).toBe(false); // no timeout yet
     const to = spendTimeout(g, 'A');

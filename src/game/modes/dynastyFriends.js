@@ -19,7 +19,7 @@
 // the week's end.
 import {
   DPHASE, humanIds, onClock, draftPick, passPick, aiDraftChoice, simDraft, finishDraft, draftDone,
-  closeSigning, closeResign, drawLottery, closeRookies, nextFaDay, fillRoster, startSeason, endSeason,
+  closeSigning, closeRetirements, closeResign, drawLottery, closeRookies, nextFaDay, fillRoster, startSeason, endSeason,
   freeAgentKeys, rosterKeys, fitsCap, marketDay, tradeProblems, makeTrade, parsePick, pickOwner,
   MAX_ROSTER, teamOf, signContract, floorOf, rosterProblem, tradesOpen,
   createDynasty, negotiate, renounce, signRookie, waive, endDynasty,
@@ -60,6 +60,7 @@ export function advancePhase(d, { rng = Math.random, bids = [], now = Date.now()
       x = finishDraft(simDraft(d, { rng, all: true }), { rng });
       break;
     case DPHASE.signing: x = closeSigning(d, { rng }); break;
+    case DPHASE.retirements: x = closeRetirements(d); break;
     case DPHASE.resign: x = closeResign(d, { rng }); break;
     case DPHASE.lottery: x = stampClock(simDraft(drawLottery(d, { rng }), { rng }), now); break;
     case DPHASE.rookies: x = closeRookies(d, { rng }); break;

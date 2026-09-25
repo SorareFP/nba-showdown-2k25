@@ -10,6 +10,7 @@ import {
   rookieTerms, rookieCommitted, rookieProblem, teamOf, pickId, pickValue, projectedSlot,
   waiverList, onWaivers, waiverOrder, claimWaiver, withdrawClaim, claimProblem, resolveWaivers, seasonTurn,
   AI_TRADES_PER_OFFSEASON, aiSalaryCap, aiSalaryOf, salaryFits, signingFits, floorOf,
+  closeRetirements, retirementsOf, retirementWatch, isOffseason, PHASE_LABEL,
 } from './dynasty.js';
 import { CAP_DP, APRON_DP, AI_APRON_DP, FA_DAYS, fairDp, PERSONALITIES, CONTRACT_YEARS, rookieScale, talentValue, contractValue, preferredYears } from './dynastyMarket.js';
 import { getPlayerRarity } from '../rarity.js';
@@ -135,6 +136,7 @@ const noAiTrades = x => ({ ...x, aiDeals: { year: x.year, n: AI_TRADES_PER_OFFSE
 /** Every offseason decision the human could make, made the lazy way. */
 function autoYear(d, rng) {
   let x = d;
+  if (x.phase === DPHASE.retirements) x = closeRetirements(x);
   if (x.phase === DPHASE.resign) x = closeResign(x);
   if (x.phase === DPHASE.lottery) x = drawLottery(x, { rng });
   if (x.phase === DPHASE.rookieDraft) x = finishDraft(driveDraft(x, rng), { rng });
@@ -1866,6 +1868,62 @@ describe('aging (2026-09-11)', () => {
     t = endSeason(finishSeason(t), { rng });
     expect(ageOf(t, k)).toBe(a0);
     expect(t.retired).toEqual([]);
+    // ...so its offseason has no retirements step: straight to re-signing.
+    expect(t.phase).toBe(DPHASE.resign);
+    expect(retirementWatch(t, HUMAN_ID)).toEqual([]);
+  });
+
+  // RETIREMENTS OPEN THE OFFSEASON (the user, 2026-09-25: "I had a player
+  // retire in my dynasty and had no idea. Player retirements should be the
+  // first part of the off-season.").
+  it('opens the offseason on its retirements: yours with the deal that went, then on to re-signing', () => {
+    const rng = seeded(35);
+    let d = startSeason(aged(), { rng });
+    // Two of the coach's men certain to go: one mid-deal, one whose deal runs out now.
+    const [mid, last] = rosterKeys(d, HUMAN_ID);
+    d = {
+      ...d,
+      joined: { ...d.joined, [mid]: d.year - (45 - baseAge(mid)), [last]: d.year - (45 - baseAge(last)) },
+      contracts: { ...d.contracts, [mid]: { ...d.contracts[mid], years: 3 }, [last]: { ...d.contracts[last], years: 1 } },
+    };
+    const closed = endSeason(finishSeason(d), { rng });
+    expect(closed.phase).toBe(DPHASE.retirements);
+    expect(isOffseason(closed)).toBe(true);
+    expect(PHASE_LABEL[closed.phase]).toBe('Retirements');
+    const r = retirementsOf(closed);
+    expect(r.year).toBe(closed.year);
+    const mine = Object.fromEntries(r.list.filter(x => x.teamId === HUMAN_ID).map(x => [x.key, x]));
+    expect(mine[mid]).toMatchObject({ deal: { years: 2, dp: d.contracts[mid].dp } });   // the deal still to run
+    expect(mine[last]).toMatchObject({ deal: { rights: 'expiring' } });                  // the deal that had just run out
+    for (const x of r.list) {
+      expect(closed.retired).toContain(x.key);
+      expect(x.age).toBeGreaterThanOrEqual(35);
+    }
+    expect(closed.retired.length).toBe(r.list.length);
+    // The league has already moved: the AI re-signed at the turn, as it
+    // always has, and this step only shows what happened.
+    for (const t of closed.teams.filter(t => !t.human)) expect(rightsOf(closed, t.id, 'expiring')).toEqual([]);
+    expect(nextDraftYear(closed)).toBe(closed.year);
+    // On to the window, and nothing else changes.
+    const open = closeRetirements(closed);
+    expect(open.phase).toBe(DPHASE.resign);
+    expect(open.contracts).toEqual(closed.contracts);
+    expect(open.offers).toEqual(closed.offers);
+    expect(() => closeRetirements(open)).toThrow(/retirements step/);
+    // A year later the step is about that year, not this one.
+    expect(retirementsOf({ ...open, year: open.year + 1 }).list).toEqual([]);
+  });
+
+  it('warns of next year\'s roll: a year older, with the Sports Science shift', () => {
+    const d = { ...aged(), year: 2 };
+    // A young man: a join year can raise an age, never lower it.
+    const key = rosterKeys(d, HUMAN_ID).find(k => baseAge(k) <= 30);
+    const at = age => ({ ...d, joined: { ...d.joined, [key]: d.year - (age - baseAge(key)) } });
+    // 33 now is 34 at the turn: no chance yet; 36 now is 37 then.
+    expect(retirementWatch(at(33), HUMAN_ID).map(w => w.key)).not.toContain(key);
+    expect(retirementWatch(at(36), HUMAN_ID).find(w => w.key === key)).toEqual({ key, age: 37, chance: retireChance(37) });
+    const sci = { ...at(36), staff: { [HUMAN_ID]: { science: 3 } } };
+    expect(retirementWatch(sci, HUMAN_ID).find(w => w.key === key)?.chance).toBe(retireChance(35));
   });
 
   it('runs past ten years, and ends when you end it', () => {

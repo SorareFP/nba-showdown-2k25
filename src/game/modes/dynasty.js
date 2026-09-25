@@ -221,6 +221,7 @@ export const DPHASE = {
   draft: 'draft',
   signing: 'signing',
   season: 'season',
+  retirements: 'retirements',
   resign: 'resign',
   lottery: 'lottery',
   rookieDraft: 'rookie-draft',
@@ -229,7 +230,7 @@ export const DPHASE = {
   preseason: 'preseason',
   done: 'done',
 };
-const OFFSEASON = new Set([DPHASE.resign, DPHASE.lottery, DPHASE.rookieDraft, DPHASE.rookies, DPHASE.freeAgency, DPHASE.preseason]);
+const OFFSEASON = new Set([DPHASE.retirements, DPHASE.resign, DPHASE.lottery, DPHASE.rookieDraft, DPHASE.rookies, DPHASE.freeAgency, DPHASE.preseason]);
 export const isOffseason = d => OFFSEASON.has(d.phase);
 
 // ── Small tools ─────────────────────────────────────────────────────────────
@@ -2343,10 +2344,49 @@ export function endSeason(d0, { rng = Math.random } = {}) {
   x = {
     ...x, year, contracts, rights, lastTeam,
     dead: (x.dead ?? []).filter(m => m.through >= year),
-    phase: DPHASE.resign, talks: {}, fa: null, lottery: null,
+    // RETIREMENTS OPEN THE OFFSEASON (the user, 2026-09-25: "I had a player
+    // retire in my dynasty and had no idea. Player retirements should be the
+    // first part of the off-season."). An aging dynasty stops on them before
+    // the re-signing window (closeRetirements); a ten-year one has none.
+    phase: d.aging ? DPHASE.retirements : DPHASE.resign, talks: {}, fa: null, lottery: null,
   };
   // Everyone is a year older now; the old may retire before the window opens.
+  // The AI re-signs and makes its offers now, as it always has, so the
+  // retirements step changes what the coach SEES, not what the league does.
   return aiOfferTurn(aiResign(retirements(x, rng), rng));
+}
+
+/**
+ * Leave the retirements step for the re-signing window. Nothing else moves:
+ * the AI's re-signing and its offers were made at the turn of the year, and
+ * the offers stay open through the window (no new offer turn here).
+ */
+export function closeRetirements(d) {
+  if (d.phase !== DPHASE.retirements) throw new Error('dynasty: not the retirements step');
+  return { ...d, phase: DPHASE.resign, talks: {} };
+}
+
+/** This offseason's retirements: `{ year, list, spared }`, empty when the roll has not run this year. */
+export function retirementsOf(d) {
+  const r = d.retiring;
+  return r?.year === d.year ? r : { year: d.year, list: [], spared: [] };
+}
+
+/**
+ * The chance each of a team's players retires at the NEXT turn of the year —
+ * a year older than now, with the team's Sports Science shift — highest
+ * first, only those with any chance. Empty in a ten-year dynasty.
+ */
+export function retirementWatch(d, teamId) {
+  if (!d.aging) return [];
+  const keys = [...new Set([...rosterKeys(d, teamId), ...Object.keys(d.rights ?? {}).filter(k => d.rights[k].teamId === teamId)])];
+  return keys
+    .map(key => {
+      const age = ageOf(d, key) + 1;
+      return { key, age, chance: retireChance(age - retireShift(d, teamId)) };
+    })
+    .filter(w => w.chance > 0)
+    .sort((a, b) => b.chance - a.chance || b.age - a.age);
 }
 
 /**
@@ -2358,6 +2398,10 @@ function retirements(d, rng) {
   if (!d.aging) return d;
   let x = d;
   const gone = new Set(x.retired ?? []);
+  // What the retirements step shows (retirementsOf): everyone who went, with
+  // the deal that went with him, and who a protection kept.
+  const list = [];
+  const spared = [];
   for (const key of leagueKeys(d)) {
     if (gone.has(key)) continue;
     const age = ageOf(x, key);
@@ -2365,17 +2409,27 @@ function retirements(d, rng) {
     // Sports Science (staff, 2026-09-23): a coach's players start their risk
     // a year or two later, and the one he protected skips this year's roll.
     if (holder && x.protected?.[holder] === key) {
-      if (retireChance(age) > 0) x = say(x, `${cardOf(key)?.name} is protected this year — no retirement roll at ${age}.`);
+      if (retireChance(age) > 0) {
+        x = say(x, `${cardOf(key)?.name} is protected this year — no retirement roll at ${age}.`);
+        spared.push({ key, age, teamId: holder });
+      }
       continue;
     }
     const p = retireChance(age - retireShift(x, holder));
     if (!p || rng() >= p) continue;
+    const k = x.contracts[key];
+    list.push({
+      key, age, teamId: holder,
+      // The deal he walks away from: years still to run and their DP, or the
+      // rights to a deal that had run out, or nothing (a free agent).
+      deal: k ? { years: k.years, dp: k.dp } : x.rights?.[key] ? { rights: x.rights[key].kind } : null,
+    });
     x = { ...x, contracts: omit(x.contracts, key), rights: omit(x.rights, key), retired: [...(x.retired ?? []), key] };
     gone.add(key);
     if (holder) x = say(x, `${cardOf(key)?.name} retires at ${age}, from ${teamOf(x, holder)?.name}.`);
   }
   // A protection is for one turn of the year, used or not.
-  return { ...x, protected: {} };
+  return { ...x, protected: {}, retiring: { year: x.year, list, spared } };
 }
 
 /** End an aging dynasty between seasons — it has no tenth-year finish of its own. */
@@ -2707,7 +2761,7 @@ export const pickOwner = (d, year, round, origin) => d.pickOwner?.[pickId(year, 
 
 /** The first draft still to be made: this offseason's until it starts, then next year's. */
 export function nextDraftYear(d) {
-  return d.phase === DPHASE.resign || d.phase === DPHASE.lottery ? d.year : d.year + 1;
+  return d.phase === DPHASE.retirements || d.phase === DPHASE.resign || d.phase === DPHASE.lottery ? d.year : d.year + 1;
 }
 
 /** A pick in words: "Year 3 1st (BOS)". */
@@ -2924,7 +2978,7 @@ export function tradeProblems(d, deal, v = null) {
       const salAfter = salNow - salaryOfKeys(loses) - salaryOfKeys(relief[team] ?? []) + salaryOfKeys(gains);
       const ceiling = aiSalaryCap(d);
       const unsigned = rightsOf(d, team, 'rookie');
-      const beforeDraft = d.phase === DPHASE.resign || d.phase === DPHASE.lottery;
+      const beforeDraft = d.phase === DPHASE.retirements || d.phase === DPHASE.resign || d.phase === DPHASE.lottery;
       const heldFor = (players, picks) => {
         let seats = players + unsigned.length;
         let h = salaryOfKeys(unsigned);
@@ -3380,6 +3434,7 @@ export const PHASE_LABEL = {
   draft: 'Fantasy draft',
   signing: 'Signing draftees',
   season: 'Season',
+  retirements: 'Retirements',
   resign: 'Re-signing window',
   lottery: 'Draft lottery',
   'rookie-draft': 'Draft',

@@ -26,6 +26,7 @@ import {
   setTeamDeck, importCard, importCandidates, fpOf, FP_IMPORT_COST, FP_FINISH_MAX, FP_PER_SERIES, FP_TITLE, IMPORT_YEARS,
   hireStaff, hireProblem, STAFF_ROLES, STAFF_ORDER, staffTier, protectPlayer, protectProblem, stealPick, stealProblem,
   apronOf, aiDraftChoice, draftDone,
+  closeRetirements, retirementsOf, retirementWatch, RETIRE_FROM, RETIRE_BY,
 } from '../../game/modes/dynasty.js';
 import { loadDecks } from '../../firebase/savedDecks.js';
 import { RARITY_CONFIG, getPlayerRarity } from '../../game/rarity.js';
@@ -94,7 +95,8 @@ function stepsFor(d) {
   if (d.phase === DPHASE.done) return [];
   if (d.year === 1 && d.startMode !== 'own') return [DPHASE.draft, DPHASE.signing, DPHASE.freeAgency, DPHASE.preseason, DPHASE.season];
   if (d.year === 1) return [DPHASE.preseason, DPHASE.season];
-  return [DPHASE.resign, DPHASE.lottery, DPHASE.rookieDraft, DPHASE.rookies, DPHASE.freeAgency, DPHASE.preseason, DPHASE.season];
+  // An aging dynasty's offseason opens on its retirements; a ten-year one has none.
+  return [...(d.aging ? [DPHASE.retirements] : []), DPHASE.resign, DPHASE.lottery, DPHASE.rookieDraft, DPHASE.rookies, DPHASE.freeAgency, DPHASE.preseason, DPHASE.season];
 }
 
 export function PhaseTrack({ d }) {
@@ -177,6 +179,7 @@ export function soloMoves(act, me) {
     autoDraft: () => act(x => simDraft(x, { all: true })),
     finishDraft: () => act(x => finishDraft(x)),
     closeSigning: () => act(x => closeSigning(x)),
+    closeRetirements: () => act(x => closeRetirements(x)),
     closeResign: () => act(x => closeResign(x)),
     drawLottery: () => act(x => drawLottery(x)),
     closeRookies: () => act(x => closeRookies(x)),
@@ -736,6 +739,86 @@ function MarketRow({ d, cardKey, on, onClick, showRival = false }) {
         ? <span className={dy.rowRival}>{q.rival ? `📨 ${teamOf(d, q.rival.teamId)?.abbr ?? 'AI'} ${q.rival.dp}` : ''}</span>
         : <span />}
     </button>
+  );
+}
+
+// ── Retirements: the first thing an aging offseason does ────────────────────
+
+const pct = p => `${Math.round(p * 100)}%`;
+
+/** What went with a retiring player: the deal still to run, a deal just out, or nothing. */
+function retiredDeal(r) {
+  if (!r.deal) return 'a free agent';
+  if (r.deal.rights) return r.deal.rights === 'expiring' ? 'his deal had just run out' : 'unsigned';
+  return `${r.deal.dp} DP × ${plural(r.deal.years, 'year')} left — off your books, no dead money`;
+}
+
+/**
+ * RETIREMENTS (the user, 2026-09-25: "I had a player retire in my dynasty and
+ * had no idea. Player retirements should be the first part of the
+ * off-season."). The first step of an aging dynasty's offseason: who went —
+ * yours first, with the deal that went with him — who a protection kept, and
+ * who of yours faces the roll at the next turn of the year, with the Protect
+ * button where Prime Extension allows it. The roll itself ran at the turn of
+ * the year (dynasty.js retirements); this step only shows it.
+ */
+export function RetirementBoard({ d, moves }) {
+  const me = d.humanId;
+  const { list, spared } = retirementsOf(d);
+  const salary = key => cardOf(key)?.salary ?? 0;
+  const mine = list.filter(r => r.teamId === me);
+  const league = list.filter(r => r.teamId !== me).sort((a, b) => salary(b.key) - salary(a.key));
+  const kept = spared.filter(s => s.teamId === me);
+  const watch = retirementWatch(d, me);
+  const shielded = d.protected?.[me] ?? null;
+  return (
+    <section className={styles.panel}>
+      <div className={dy.panelHead}>
+        <h3 className={styles.panelTitle}>Retirements</h3>
+        <PhaseButton moves={moves} onDone={moves.closeRetirements} label="On to re-signing →" />
+      </div>
+      <p className={dy.intro}>
+        Everyone is a year older. From {RETIRE_FROM} a player may retire at the turn of the year — one in six at {RETIRE_FROM},
+        more each year, certain at {RETIRE_BY}. His contract ends with him (no dead money), and he never comes back.
+      </p>
+
+      <div className={styles.label}>Your team</div>
+      {mine.length ? mine.map(r => (
+        <div key={r.key} className={dy.draftRow}>
+          <PlayerCell cardKey={r.key} age={r.age} />
+          <span><strong>Retired at {r.age}</strong> <span className={styles.muted}>· {retiredDeal(r)}</span></span>
+        </div>
+      )) : <div className={styles.muted}>Nobody of yours retired.</div>}
+      {kept.map(s => (
+        <div key={s.key} className={styles.muted}>🛡 {cardOf(s.key)?.name} was protected — no retirement roll at {s.age}.</div>
+      ))}
+
+      <div className={styles.label} style={{ marginTop: 16 }}>Around the league</div>
+      {league.length ? league.map(r => (
+        <div key={r.key} className={dy.draftRow}>
+          <PlayerCell cardKey={r.key} age={r.age} />
+          <span className={styles.muted}>Retired at {r.age}, {r.teamId ? `from the ${teamOf(d, r.teamId)?.name}` : 'a free agent'}</span>
+        </div>
+      )) : <div className={styles.muted}>Nobody else retired.</div>}
+
+      <div className={styles.label} style={{ marginTop: 16 }}>Your players at risk next offseason</div>
+      {watch.length ? watch.map(w => (
+        <div key={w.key} className={dy.draftRow}>
+          <PlayerCell cardKey={w.key} age={w.age - 1} />
+          <span>
+            {pct(w.chance)} to retire at {w.age}
+            {moves.protect && !protectProblem(d, me, w.key) && (
+              shielded === w.key
+                ? <span className={styles.muted}> · 🛡 protected</span>
+                : <button type="button" className={dy.linkBtn} title="Prime Extension: he skips next year's retirement roll" onClick={() => moves.protect(w.key)}> Protect</button>
+            )}
+          </span>
+        </div>
+      )) : <div className={styles.muted}>Nobody of yours is old enough to retire next year.</div>}
+      {watch.length > 0 && staffTier(d, me, 'science') < 2 && (
+        <div className={styles.muted}>Sports Science in the Front Office starts the risk later, and at tier 2 protects one player a year.</div>
+      )}
+    </section>
   );
 }
 

@@ -41,7 +41,7 @@ import { CAP as CARD_CAP } from '../game/teamRules.js';
 import RosterPicker, { Choice } from './league/RosterPicker.jsx';
 import { SeasonDashboard, MY_ID } from './SeasonTab.jsx';
 import {
-  PhaseTrack, FrontOffice, DraftRoom, SigningBoard, LotteryRoom, RookieSigning, FreeAgency, NewsFeed, TradeDesk, TradeInbox, soloMoves,
+  PhaseTrack, FrontOffice, DraftRoom, SigningBoard, LotteryRoom, RookieSigning, FreeAgency, NewsFeed, TradeDesk, TradeInbox, soloMoves, RetirementBoard,
 } from './dynasty/DynastyScreens.jsx';
 import { FriendsSetup, JoinFriends, FriendsDynastyView } from './dynasty/FriendsDynasty.jsx';
 import PvpGame from './PvpGame.jsx';
@@ -693,6 +693,7 @@ function DynastyView({ d, uid, commit, onPlayFixture, onBack, onAbandon, collect
   let body = null;
   if (d.phase === DPHASE.draft || d.phase === DPHASE.rookieDraft) body = <DraftRoom d={d} moves={moves} />;
   else if (d.phase === DPHASE.signing) body = <SigningBoard d={d} moves={moves} kind="draft" />;
+  else if (d.phase === DPHASE.retirements) body = <RetirementBoard d={d} moves={moves} />;
   else if (d.phase === DPHASE.resign) body = <SigningBoard d={d} moves={moves} kind="expiring" />;
   else if (d.phase === DPHASE.lottery) body = <LotteryRoom d={d} moves={moves} />;
   else if (d.phase === DPHASE.rookies) body = <RookieSigning d={d} moves={moves} />;

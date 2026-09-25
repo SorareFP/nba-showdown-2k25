@@ -23,6 +23,11 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
+    id: 'dynasty-retirements-step', date: '2026-09-25', title: 'Dynasty: the offseason opens on retirements',
+    body: 'In a dynasty where players age, the offseason now starts with its retirements: who retired, your own players first with the contract that went with them, the rest of the league, and which of your players could retire next year, with a Protect button if your Sports Science staff allows it. Then on to re-signing. Before this, a retirement only showed up in the league wire.',
+    to: 'dynasty', cta: 'Dynasty',
+  },
+  {
     id: 'blitz-card', date: '2026-09-25', title: 'New reaction card: Blitz',
     body: 'When the other team announces a 3PT or paint check, Blitz sends two at the shooter: they have to hand that check to someone else on the floor, with the same card bonus. Only that check moves (the rest of a multi-check card stays with the original shooter, whose roll is still spent), and Close Out and the other answers can still follow it. Uncommon, now in packs. Placeholder art for now.',
     to: 'shop', cta: 'Pack Shop',

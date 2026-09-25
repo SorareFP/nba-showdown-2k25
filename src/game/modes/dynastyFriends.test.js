@@ -83,6 +83,15 @@ describe('ready and force', () => {
     expect(d.phase).toBe(DPHASE.season);
     expect(() => advancePhase(d)).toThrow(/still being played/);
   });
+
+  // Retirements open an aging offseason (2026-09-25); with friends, everyone
+  // readies past them like any other step.
+  it('readies past the retirements step to the re-signing window', () => {
+    const d = { ...own(), aging: true, phase: DPHASE.retirements, retiring: { year: 1, list: [], spared: [] } };
+    const next = advancePhase(setReady(setReady(d, A), B), { rng: seeded(9) });
+    expect(next.phase).toBe(DPHASE.resign);
+    expect(allReady(next)).toBe(false);
+  });
 });
 
 /**

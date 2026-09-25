@@ -38,6 +38,7 @@ import LeagueLobby from '../league/LeagueLobby.jsx';
 import { SeasonDashboard, simLeagueAi, simLeagueCoaches } from '../SeasonTab.jsx';
 import {
   PhaseTrack, FrontOffice, DraftRoom, SigningBoard, LotteryRoom, RookieSigning, FreeAgency, NewsFeed, TradeDesk, PhaseButton, TradeInbox,
+  RetirementBoard,
 } from './DynastyScreens.jsx';
 import styles from '../SeasonTab.module.css';
 import dy from './Dynasty.module.css';
@@ -96,7 +97,7 @@ export function friendsMoves({ d, me, isHost = false, send, setBids = async () =
     tick: () => send('tick'),
     // Alone, these close a phase; with friends the phase button readies you
     // instead (PhaseButton), so nothing reaches them.
-    simToMe: noop, autoDraft: noop, finishDraft: noop, closeSigning: noop, closeResign: noop,
+    simToMe: noop, autoDraft: noop, finishDraft: noop, closeSigning: noop, closeRetirements: noop, closeResign: noop,
     drawLottery: noop, closeRookies: noop, nextWeek: noop, startSeason: noop,
   };
 }
@@ -578,6 +579,7 @@ export function FriendsDynastyView({ leagueId, uid, onBack, onPlayFixture, onOpe
   let body = null;
   if (drafting) body = <DraftRoom d={d} moves={moves} />;
   else if (d.phase === DPHASE.signing) body = <SigningBoard d={d} moves={moves} kind="draft" />;
+  else if (d.phase === DPHASE.retirements) body = <RetirementBoard d={d} moves={moves} />;
   else if (d.phase === DPHASE.resign) body = <SigningBoard d={d} moves={moves} kind="expiring" />;
   else if (d.phase === DPHASE.lottery) body = <LotteryRoom d={d} moves={moves} />;
   else if (d.phase === DPHASE.rookies) body = <RookieSigning d={d} moves={moves} />;

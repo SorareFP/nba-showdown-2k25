@@ -230,6 +230,33 @@ describe('each phase', () => {
     expect(view(d)).toContain('draft');
     expect(freeAgentKeys(fillRoster(d, HUMAN_ID)).length).toBeGreaterThan(0);
   });
+  // RETIREMENTS OPEN THE OFFSEASON (the user, 2026-09-25: "I had a player
+  // retire in my dynasty and had no idea").
+  it('an aging dynasty opens its offseason on the retirements: yours named, with the deal, then on to re-signing', () => {
+    const rng = seeded(12);
+    const brought = buildAiLeague(1, { rng: seeded(1) })[0].roster;
+    let d = createDynasty({ id: 'A', size: 4, length: 'online', startMode: 'own', aging: true, rng, human: { name: 'Alex Team', roster: brought } });
+    d = startSeason(d, { rng });
+    const gone = rosterKeys(d, HUMAN_ID)[0];
+    d = {
+      ...d,
+      joined: { ...d.joined, [gone]: d.year - 20 },                          // certain to retire at the turn
+      contracts: { ...d.contracts, [gone]: { ...d.contracts[gone], years: 3 } },
+    };
+    d = endSeason(finish(d), { rng });
+    expect(d.phase).toBe(DPHASE.retirements);
+    const out = view(d);
+    expect(out).toContain('Retirements');
+    expect(out).toContain('On to re-signing');
+    expect(out).toContain(getCardByKey(gone).name);
+    expect(out).toMatch(/Retired at \d+/);
+    expect(out).toContain('× 2 years left — off your books, no dead money');
+    expect(out).toContain('Around the league');
+    expect(out).toContain('Your players at risk next offseason');
+    // The track shows it first, ahead of the window.
+    expect(out.indexOf('Retirements')).toBeLessThan(out.indexOf('Re-signing window'));
+  });
+
   it('the rookie draft prices the slot and keeps a budget to the apron; an unsigned pick follows you into free agency', () => {
     const rng = seeded(9);
     const brought = buildAiLeague(1, { rng: seeded(1) })[0].roster;

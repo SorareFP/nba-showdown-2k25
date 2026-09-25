@@ -24,7 +24,7 @@ import {
   returnCardToDeck,
   spendTimeout, endTimeout, searchCrunchCard,
 } from '../engine.js';
-import { execCard, resolvePendingShotCheck, resolveGoUnder } from '../execCard.js';
+import { execCard, resolvePendingShotCheck, resolveChoice } from '../execCard.js';
 import * as defaultBrain from '../ai.js';
 
 // ── TWO BRAINS ──────────────────────────────────────────────────────────────
@@ -54,23 +54,36 @@ function tryPlay(g, teamKey, action, brains = null) {
   if (!r.ok) return { g, played: false };
   let ng = r.game;
   // Go Under: the offence names its shooter, then the check is taken.
-  if (ng.pendingChoice?.kind === 'go_under') {
-    const off = ng.pendingChoice.teamKey;
-    const rr = resolveGoUnder(ng, brainOf(brains, off).aiGoUnderChoice(ng, off));
-    ng = rr.ok ? rr.game : { ...ng, pendingChoice: null };
-  }
+  ng = answerChoice(ng, brains);
   // A card that opens a shot check hands the DEFENCE its reaction window
-  // before the die is cast.
+  // before the die is cast — twice at most: a Blitz is its own answer, so the
+  // regular one (Close Out and the rest) can follow it on the new shooter.
   if (ng.pendingShotCheck) {
     const defKey = ng.pendingShotCheck.teamKey === 'A' ? 'B' : 'A';
-    const react = brainOf(brains, defKey).aiReactionDecision(ng, defKey, 'shot_check');
-    if (react?.type === 'play_card') {
+    for (let answers = 0; answers < 2 && ng.pendingShotCheck; answers += 1) {
+      const react = brainOf(brains, defKey).aiReactionDecision(ng, defKey, 'shot_check');
+      if (react?.type !== 'play_card') break;
       const rr = execCard(ng, defKey, react.cardId, react.opts || {});
-      if (rr.ok) ng = rr.game;
+      if (!rr.ok) break;
+      ng = answerChoice(rr.game, brains);
     }
     ng = safeResolve(ng);
   }
   return { g: ng, played: true };
+}
+
+/**
+ * The offence answers a waiting choice (Go Under's shooter, a Blitz's new
+ * one) with its own brain. A brain from before Blitz has only
+ * aiGoUnderChoice, which reads the same `slots`.
+ */
+function answerChoice(ng, brains) {
+  if (!ng.pendingChoice) return ng;
+  const off = ng.pendingChoice.teamKey;
+  const brain = brainOf(brains, off);
+  const slot = (brain.aiChoice ?? brain.aiGoUnderChoice)(ng, off) ?? ng.pendingChoice.slots?.[0];
+  const rr = resolveChoice(ng, slot);
+  return rr.ok ? rr.game : { ...ng, pendingChoice: null };
 }
 
 function spendAll(g, key, brains = null) {

@@ -243,7 +243,45 @@ export function myHouseTargets(g, teamKey) {
 
 // The cards that answer an ANNOUNCED shot check (g.pendingShotCheck). One
 // answer per check: the first reaction marks it `reacted`.
-export const SHOT_REACTIONS = ['close_out', 'rim_protector', 'drop_coverage', 'smothering_defense', 'denial', 'hustle_play'];
+export const SHOT_REACTIONS = ['close_out', 'rim_protector', 'drop_coverage', 'smothering_defense', 'denial', 'hustle_play', 'blitz'];
+
+/**
+ * BLITZ (2026-09-25, the user's card): the offence must hand the announced
+ * check to another player on the floor. It is its OWN answer — a check takes
+ * one of the others (psc.reacted) and, separately, one blitz (psc.blitzed) —
+ * so it stacks with Close Out and the rest in either order. Never a free
+ * throw, and there has to be somebody else to take it.
+ */
+export function blitzVerdict(g, teamKey) {
+  const psc = g.pendingShotCheck;
+  if (!psc) return no('Wait for the opponent to announce a shot check');
+  if (psc.teamKey === teamKey) return no('Can only blitz the opponent\'s shot checks');
+  if (psc.type !== '3pt' && psc.type !== 'paint') return no('Blitz answers a 3PT or Paint check');
+  if (psc.blitzed) return no('This check has already been blitzed');
+  if (g.pendingChoice) return no('Wait for the choice in progress');
+  if (!blitzSlots(g).length) return no('Nobody else on the floor to take it');
+  const shooter = getTeam(g, psc.teamKey)?.starters?.[psc.playerIdx];
+  return ok(`${shooter?.name ?? 'The shooter'} must give it up: the offense picks who takes the check`);
+}
+
+/** The players a blitzed check can go to: everyone else the offence has on the floor. */
+export function blitzSlots(g) {
+  const psc = g.pendingShotCheck;
+  if (!psc) return [];
+  const starters = getTeam(g, psc.teamKey)?.starters ?? [];
+  return starters.map((p, i) => (p && i !== psc.playerIdx ? i : -1)).filter(i => i >= 0);
+}
+
+/**
+ * The bonus a paused check carries apart from the shooter's own — its card
+ * bonus as Smothering Defense left it, Close Out's −3 and Hustle Play's
+ * contest — as applyShotCheck will add it. For choosing who takes it.
+ */
+export function pendingCheckExtra(psc) {
+  if (!psc) return 0;
+  const card = psc.smother ? Math.max(0, (psc.bonus || 0) - psc.smother) : (psc.bonus || 0);
+  return card + (psc.closeOutBonus || 0) + (psc.contest || 0);
+}
 
 /**
  * DOES THE DEFENCE ACTUALLY HOLD AN ANSWER TO THIS CHECK?
@@ -353,6 +391,10 @@ function cardVerdict(g, teamKey, cardId) {
 
   // While a shot check is pending, only Close Out is allowed
   if (g.pendingShotCheck && !SHOT_REACTIONS.includes(cardId)) return no('Resolve pending shot check first');
+  // A blitzed check has no shooter until the offence picks one: every answer
+  // (Smothering Defense reads "your defender on them") waits for the pick.
+  if (g.pendingChoice?.kind === 'blitz' && SHOT_REACTIONS.includes(cardId)) return no('Wait for the offense to pick the new shooter');
+  if (cardId === 'blitz') return blitzVerdict(g, teamKey);
   if (SHOT_REACTIONS.includes(cardId) && cardId !== 'close_out') return shotReaction(g, teamKey, cardId);
 
   // ── MATCHUP PHASE ──────────────────────────────────────────────────────

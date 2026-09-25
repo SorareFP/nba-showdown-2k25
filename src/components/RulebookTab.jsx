@@ -220,7 +220,7 @@ export default function RulebookTab() {
           <li><strong>Paint check:</strong> D20 + Paint Bonus, reach the Shot Line → <strong>2 points</strong>.</li>
           <li><strong>Free throw:</strong> D20 + 10, reach the Shot Line → <strong>1 point</strong>.</li>
           <li>Markers and fatigue apply. 3PT and paint checks are contested by the defender's Def Boost. Natural 19–20 and 1–2 on a check give markers too.</li>
-          <li>A 3PT or paint check is <strong>announced</strong> first; the defence may react (Close Out: −3 to a 3PT check and a cold marker on a miss; Coach's Challenge: re-roll).</li>
+          <li>A 3PT or paint check is <strong>announced</strong> first; the defence may react (Close Out: −3 to a 3PT check and a cold marker on a miss; Blitz: the offense gives a 3PT or paint check to another player on the floor, same card bonus, and it does not use up the defence's one other answer; Coach's Challenge: re-roll).</li>
           <li>The log itemises every check: die, card bonus, shooting bonus, markers, and the line it had to reach.</li>
         </ul>
 

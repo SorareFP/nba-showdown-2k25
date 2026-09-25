@@ -135,6 +135,39 @@ export function resolveGoUnder(game, slot) {
 }
 
 /**
+ * BLITZ'S HAND-OFF: the paused check goes to `slot`, the offence's pick of
+ * everyone else on the floor. Same check, same card bonus; the new shooter's
+ * own bonus and defender apply when it resolves (applyShotCheck reads the
+ * slot). `blitzFrom` remembers the original shooter so the REST of a chain
+ * goes back to that player (resolvePendingShotCheck) — only the announced check moves.
+ */
+export function resolveBlitz(game, slot) {
+  const pc = game.pendingChoice;
+  if (!pc || pc.kind !== 'blitz') return { game, ok: false, msg: 'No blitzed check is waiting' };
+  if (!pc.slots.includes(slot)) return { game, ok: false, msg: 'Choose another player on the floor' };
+  const g = deepClone(game);
+  const psc = g.pendingShotCheck;
+  if (!psc) { g.pendingChoice = null; return { game: g, ok: false, msg: 'The blitzed check is gone' }; }
+  const offT = getTeam(g, pc.teamKey);
+  const from = offT.starters[psc.playerIdx];
+  const to = offT.starters[slot];
+  if (!to) return { game, ok: false, msg: 'No such player' };
+  psc.blitzFrom = psc.playerIdx;
+  psc.playerIdx = slot;
+  g.pendingChoice = null;
+  addLog(g, pc.teamKey, `Blitz: ${from?.name} gives it up — ${to.name} takes the ${psc.type === '3pt' ? '3PT' : 'Paint'} check`);
+  return { game: g, ok: true };
+}
+
+/** The offence's pending choice, whichever card opened it (Go Under or Blitz). */
+export function resolveChoice(game, slot) {
+  const kind = game.pendingChoice?.kind;
+  if (kind === 'blitz') return resolveBlitz(game, slot);
+  if (kind === 'go_under') return resolveGoUnder(game, slot);
+  return { game, ok: false, msg: 'No choice is waiting' };
+}
+
+/**
  * A CARD'S DRAW: past the seven-card cap, deck written back (four call
  * sites drew into the hand and never took the cards out of the deck, so a
  * Turnover duplicated two cards and at a full hand drew nothing while
@@ -494,6 +527,26 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       g.pendingShotCheck.reacted = teamKey;
       const target = getTeam(g, g.pendingShotCheck.teamKey).starters[g.pendingShotCheck.playerIdx];
       addLog(g, teamKey, `Close Out: ${target?.name}'s ${g.pendingShotCheck.type.toUpperCase()} check reduced by −3. Miss = cold marker!`);
+      break;
+    }
+
+    case 'blitz': {
+      // THE USER'S CARD (2026-09-25). The check stays paused and the offence
+      // must name another shooter (resolveChoice): its own answer, marked
+      // `blitzed` — not `reacted` — so Close Out and the rest can still come.
+      const psc = g.pendingShotCheck;
+      if (!psc) return fail('No shot check to blitz');
+      if (psc.teamKey === teamKey) return fail('Can only blitz the opponent\'s shot checks');
+      if (psc.type !== '3pt' && psc.type !== 'paint') return fail('Blitz answers a 3PT or Paint check');
+      if (psc.blitzed) return fail('This check has already been blitzed');
+      if (g.pendingChoice) return fail('Wait for the choice in progress');
+      const offT = getTeam(g, psc.teamKey);
+      const slots = offT.starters.map((p, i) => (p && i !== psc.playerIdx ? i : -1)).filter(i => i >= 0);
+      if (!slots.length) return fail('Nobody else on the floor to take it');
+      psc.blitzed = teamKey;
+      g.pendingChoice = { kind: 'blitz', teamKey: psc.teamKey, slots, by: teamKey, from: psc.playerIdx };
+      const shooter = offT.starters[psc.playerIdx];
+      addLog(g, teamKey, `Blitz: two at ${shooter?.name} — the ${psc.type === '3pt' ? '3PT' : 'Paint'} check has to go to someone else`);
       break;
     }
 
@@ -2001,6 +2054,8 @@ export function announceCheck(g, check, carried = 0) {
 export function resolvePendingShotCheck(game) {
   const psc = game.pendingShotCheck;
   if (!psc) return game;
+  // A blitzed check waits for the offence to name its new shooter.
+  if (game.pendingChoice?.kind === 'blitz') return game;
   const g = deepClone(game);
   g.pendingShotCheck = null;
   const r = applyShotCheck(g, psc);
@@ -2009,9 +2064,12 @@ export function resolvePendingShotCheck(game) {
   if (rest.length) {
     const [next, ...after] = rest;
     // The answers the defence just played belong to THAT check, not the next.
-    const clean = { ...psc, ...next, then: after };
+    // So does a Blitz: the rest of the chain goes back to the player the card
+    // was played on, unless the next check names its own shooter.
+    const clean = { ...psc, ...(psc.blitzFrom != null ? { playerIdx: psc.blitzFrom } : {}), ...next, then: after };
     delete clean.smother; delete clean.closeOutBonus; delete clean.contest;
     delete clean.denial; delete clean.rimProtector; delete clean.reacted;
+    delete clean.blitzed; delete clean.blitzFrom;
     announceCheck(g, clean, total);
   } else {
     finishChain(g, psc, total);

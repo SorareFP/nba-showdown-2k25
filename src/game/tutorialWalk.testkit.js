@@ -26,9 +26,9 @@ import {
   newGame, getTeam, passTurn, pickablePool, pendingRolls, rollGate, returnCardToDeck, undoReturnCard,
   crunchSearchOptions, timeoutProblem,
 } from './engine.js';
-import { execCard, resolveGoUnder } from './execCard.js';
+import { execCard, resolveChoice } from './execCard.js';
 import { canPlayCard } from './canPlay.js';
-import { aiDraftPick, aiPlacementPick, aiBuildCardOpts, aiRollDecision, aiGoUnderChoice } from './ai.js';
+import { aiDraftPick, aiPlacementPick, aiBuildCardOpts, aiRollDecision, aiChoice } from './ai.js';
 import { placePlayer, beginPlacement, submitSoloLineup, LINEUPS_LOCKED } from './placement.js';
 import { CARD_MAP } from './cards.js';
 import { CLUTCH_DICE } from './clutchAwards.js';
@@ -136,9 +136,9 @@ function nextState(g, { tieAtEnd, noClutch, noCards, putBack, onState }) {
   // The human's own pauses first: a Go Under choice that is theirs, and the
   // coach's announced checks, which wait for their ▶ Resolve.
   if (g.pendingChoice?.teamKey === 'A') {
-    const r = resolveGoUnder(g, aiGoUnderChoice(g, 'A'));
+    const r = resolveChoice(g, aiChoice(g, 'A'));
     if (r.ok) return r.game;
-    throw new Error(`walk: Go Under choice refused: ${r.msg}`);
+    throw new Error(`walk: ${g.pendingChoice.kind} choice refused: ${r.msg}`);
   }
   if (g.pendingShotCheck && g.pendingShotCheck.teamKey !== 'A') return tutorialReducer(g, { type: 'RESOLVE_CHECK' });
 

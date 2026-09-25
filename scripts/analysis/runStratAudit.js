@@ -28,12 +28,12 @@ import {
   newGame, doRoll, endSection, applyMatchups, spendAssist, spendReboundBonus, STARTERS,
   spendTimeout, endTimeout, searchCrunchCard, MAX_OVERTIMES,
 } from '../../src/game/engine.js';
-import { execCard, resolvePendingShotCheck, resolveGoUnder } from '../../src/game/execCard.js';
+import { execCard, resolvePendingShotCheck, resolveChoice } from '../../src/game/execCard.js';
 import { STRATS, getStrat, CRUNCH_CARDS } from '../../src/game/strats.js';
 import { getStratRarity, STRAT_COPY_CAPS } from '../../src/game/rarity.js';
 import {
   aiDraftPick, aiPlacementPick, aiTurn, aiScoringDecision, aiRollDecision, aiReactionDecision,
-  aiSpendDecision, aiCrunchDecision, aiCrunchSearch, aiSetMatchups, aiGoUnderChoice,
+  aiSpendDecision, aiCrunchDecision, aiCrunchSearch, aiSetMatchups, aiChoice,
 } from '../../src/game/ai.js';
 
 const GAMES = Number(process.argv[2] ?? 400);
@@ -164,23 +164,30 @@ function tryPlay(g, teamKey, action, playedThisGame) {
   playedThisGame.add(`${teamKey}|${action.cardId}`);
   let ng = r.game;
   // Go Under: the offence names its shooter, then the check is taken.
-  if (ng.pendingChoice?.kind === 'go_under') {
-    const off = ng.pendingChoice.teamKey;
-    const rr = resolveGoUnder(ng, aiGoUnderChoice(ng, off));
-    ng = rr.ok ? rr.game : { ...ng, pendingChoice: null };
-  }
+  ng = answerChoice(ng);
   // A card that opens a shot check hands the DEFENCE its reaction window
-  // before the die is cast — the wiring live solo games are missing.
+  // before the die is cast — twice at most, as simulate.js: a Blitz is its
+  // own answer and the regular one can follow it on the new shooter.
   if (ng.pendingShotCheck) {
     const defKey = ng.pendingShotCheck.teamKey === 'A' ? 'B' : 'A';
-    const react = aiReactionDecision(ng, defKey, 'shot_check');
-    if (react?.type === 'play_card') {
+    for (let answers = 0; answers < 2 && ng.pendingShotCheck; answers += 1) {
+      const react = aiReactionDecision(ng, defKey, 'shot_check');
+      if (react?.type !== 'play_card') break;
       const rr = execCard(ng, defKey, react.cardId, react.opts || {});
-      if (rr.ok) { ng = rr.game; playedThisGame.add(`${defKey}|${react.cardId}`); }
+      if (!rr.ok) break;
+      playedThisGame.add(`${defKey}|${react.cardId}`);
+      ng = answerChoice(rr.game);
     }
     ng = safeResolve(ng);
   }
   return { g: ng, played: true };
+}
+
+/** The offence answers a waiting choice (Go Under's shooter, a Blitz's new one). */
+function answerChoice(ng) {
+  if (!ng.pendingChoice) return ng;
+  const rr = resolveChoice(ng, aiChoice(ng, ng.pendingChoice.teamKey));
+  return rr.ok ? rr.game : { ...ng, pendingChoice: null };
 }
 
 // Delegates to aiSpendDecision so the sim measures the exact brain the live

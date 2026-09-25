@@ -5,7 +5,7 @@
 
 import { getTeam, getOpp, getPS, calcAdv, matchupAdv, isGhosted, getFatigue, fatigueForMinutes, restMinutes, MAX_STRAIGHT_MINUTES, pickablePool, SPEND_COSTS, REBOUND_RULES, reboundCheckOpen, reboundCheckBonus, reboundTrackLead, clutchAvailable, clutchEligible, burnedSlots, satOutLast, canRollSlot, extraRollPending, checkNeed, crunchSearchOptions, timeoutProblem } from './engine.js';
 import { lookupChart } from './cards.js';
-import { canPlayCard, burstTargets, helpTargets, staggerPair, myHouseTargets, foulTroubleTargets, clampTargets, kickOutTargets, REBOUND_CARD_COST } from './canPlay.js';
+import { canPlayCard, burstTargets, helpTargets, staggerPair, myHouseTargets, foulTroubleTargets, clampTargets, kickOutTargets, REBOUND_CARD_COST, pendingCheckExtra } from './canPlay.js';
 import { getStrat, STRATS, TIMEOUT_RIDERS } from './strats.js';
 import { DEFAULT_ORDER } from './placement.js';
 
@@ -1104,6 +1104,57 @@ export function aiGoUnderChoice(game, teamKey) {
 }
 
 /**
+ * THE CHANCE A PAUSED CHECK LANDS FOR `slot` of the offence: the check's own
+ * extra (card bonus as answered, Close Out, Hustle Play — pendingCheckExtra)
+ * on top of the player's own bonus, markers, fatigue and defender (checkNeed).
+ */
+function pausedCheckChance(game, psc, slot) {
+  const n = checkNeed(game, psc.teamKey, slot, psc.type, { extra: pendingCheckExtra(psc), banked: false });
+  return Math.min(1, Math.max(0, (21 - n.need) / 20));
+}
+
+/** The offence's answer to a Blitz: the player on the floor likeliest to make the check. */
+export function aiBlitzChoice(game, teamKey) {
+  const pc = game.pendingChoice;
+  const psc = game.pendingShotCheck;
+  if (!pc || pc.kind !== 'blitz' || pc.teamKey !== teamKey || !psc) return null;
+  let best = null;
+  for (const slot of pc.slots) {
+    const pHit = pausedCheckChance(game, psc, slot);
+    if (!best || pHit > best.pHit) best = { slot, pHit };
+  }
+  return best ? best.slot : pc.slots[0];
+}
+
+/** The offence's answer to whichever choice is waiting (resolveChoice). */
+export function aiChoice(game, teamKey) {
+  const kind = game.pendingChoice?.kind;
+  if (kind === 'blitz') return aiBlitzChoice(game, teamKey);
+  if (kind === 'go_under') return aiGoUnderChoice(game, teamKey);
+  return null;
+}
+
+/**
+ * WHAT A BLITZ SAVES, in points: the check as announced against the check
+ * the offence would hand to its best other player. The defence reads the
+ * same public numbers the offence picks by, so it prices the pick the
+ * offence will actually make.
+ */
+export function blitzSaves(game, teamKey) {
+  const psc = game.pendingShotCheck;
+  if (!psc || psc.teamKey === teamKey) return 0;
+  const pts = psc.type === '3pt' ? 3 : 2;
+  const now = pausedCheckChance(game, psc, psc.playerIdx);
+  const starters = getTeam(game, psc.teamKey)?.starters ?? [];
+  let next = 0;
+  starters.forEach((p, i) => { if (p && i !== psc.playerIdx) next = Math.max(next, pausedCheckChance(game, psc, i)); });
+  return pts * (now - next);
+}
+
+/** Below this a Blitz is kept for a better shooter: 0.35 points, a little under what Close Out takes off a three (0.45). */
+export const BLITZ_MIN_SAVE = 0.35;
+
+/**
  * From the defence's chair: what the offence's screen bought them (`gain`)
  * and what this canceller takes back net of its price (`saved`), both in
  * points a section. Zero when there is nothing to answer.
@@ -1186,6 +1237,9 @@ function evaluateCard(game, teamKey, cardId, strat, opts = {}) {
       // The glass (2026-09-23): Putback Specialist's price for its twin;
       // the transition bucket a touch under, the shooter is not chosen.
       kick_out_three: 6, rebound_and_push: 5,
+      // Blitz (2026-09-25): Close Out's price. It is played on its own
+      // reckoning (blitzSaves) in the reaction window; this is its hand value.
+      blitz: 6,
     };
     return reactionValues[cardId] ?? 4;
   }
@@ -2197,7 +2251,15 @@ export function aiReactionDecision(game, teamKey, trigger, opts = {}) {
   // is the three-point one; the rest answer either.
   if (trigger === 'shot_check') {
     const psc = game.pendingShotCheck;
-    if (!psc || psc.reacted) return null;
+    if (!psc) return null;
+    // BLITZ FIRST: it is its own answer (the others can still follow, on the
+    // new shooter), so it goes in when the drop from this shooter to the
+    // offence's best other one is worth the card.
+    if (!psc.blitzed && hand.includes('blitz') && canPlayCard(game, teamKey, 'blitz').canPlay
+      && blitzSaves(game, teamKey) >= BLITZ_MIN_SAVE) {
+      return { type: 'play_card', cardId: 'blitz', opts: {} };
+    }
+    if (psc.reacted) return null;
     const order = psc.type === 'paint'
       ? ['rim_protector', 'drop_coverage', 'smothering_defense', 'hustle_play', 'denial']
       : ['close_out', 'smothering_defense', 'hustle_play', 'denial'];

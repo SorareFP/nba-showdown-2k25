@@ -15,12 +15,12 @@
 //      human rolls, then the coach; the tutorial's coach rolled on a timer and
 //      ignored it. coachMayRoll is rollGate, read the way PlayTab reads it.
 import {
-  endSection, doRoll, rollingOpen, spendAssist, spendReboundBonus, spendTimeout, searchCrunchCard, endTimeout,
+  getTeam, endSection, doRoll, rollingOpen, spendAssist, spendReboundBonus, spendTimeout, searchCrunchCard, endTimeout,
   applyMatchups, rollGate, pendingRolls, deepClone, passTurn, CRUNCH_MARGIN,
 } from './engine.js';
-import { execCard, resolvePendingShotCheck, resolveGoUnder } from './execCard.js';
+import { execCard, resolvePendingShotCheck, resolveChoice } from './execCard.js';
 import {
-  aiSetMatchups, aiTurn, aiScoringDecision, aiRollDecision, aiReactionDecision, aiGoUnderChoice,
+  aiSetMatchups, aiTurn, aiScoringDecision, aiRollDecision, aiReactionDecision, aiChoice,
   aiCrunchDecision, aiCrunchSearch,
 } from './ai.js';
 import { teachingHands } from './tutorialHands.js';
@@ -130,20 +130,23 @@ export function tutorialCoachStep(game) {
   };
   const pass = () => ({ type: 'UPDATE', game: passTurn(game, 'B') });
 
+  // A choice waiting on the coach first (Go Under's shooter, or a Blitz's new
+  // one — the blitzed check stays paused behind it); one waiting on you holds.
+  if (game.pendingChoice) {
+    if (game.pendingChoice.teamKey !== 'B') return null;
+    const r = resolveChoice(game, aiChoice(game, 'B'));
+    return r.ok ? { type: 'UPDATE', game: r.game } : null;
+  }
+
   const psc = game.pendingShotCheck;
   if (psc) {
     if (psc.teamKey !== 'A') return null;
-    if (!psc.reacted) {
+    if (!psc.reacted || (!psc.blitzed && getTeam(game, 'B').hand.includes('blitz'))) {
       const react = aiReactionDecision(game, 'B', 'shot_check');
       const played = react?.type === 'play_card' && card(react.cardId, react.opts);
       if (played) return played;
     }
     return { type: 'RESOLVE_CHECK' };
-  }
-
-  if (game.pendingChoice?.teamKey === 'B') {
-    const r = resolveGoUnder(game, aiGoUnderChoice(game, 'B'));
-    if (r.ok) return { type: 'UPDATE', game: r.game };
   }
 
   if (game.phase === 'matchup_strats') {

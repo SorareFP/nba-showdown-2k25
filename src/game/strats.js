@@ -276,6 +276,14 @@ export const STRATS = [
   { id:'own_the_glass',       name:'Own the Glass',      phase:'scoring',  side:'off', copies:1, locked:false, color:'#166534', rarity:'rare',
     // The dominant front line's card: the lead is the door, the bank the fuel.
     desc:'Your team leads the Rebound Track by 6 or more: spend 5 Rebounds: a player of yours announces two Paint Shot Checks at +1.' },
+  // THE USER'S CARD (2026-09-25): "a reaction strategy card that forces the
+  // offense to select another shooter for an already-announced shot check",
+  // approved as designed ("This is all perfect"). Its own answer, not the
+  // one-per-check answer: Close Out and the rest can still follow, and apply
+  // to the new shooter. Only the check just announced moves; the roll a
+  // roll-replacer spends stays the original player's.
+  { id:'blitz',               name:'Blitz',              phase:'reaction', side:'def', copies:2, locked:false, color:'#9F1239', rarity:'uncommon',
+    desc:'Opponent announces a 3PT or Paint Shot Check: blitz the shooter. The offense must give that check to another player on the floor, with the same card bonus.' },
 ];
 
 export const STRAT_MAP = Object.fromEntries(STRATS.map(s => [s.id, s]));

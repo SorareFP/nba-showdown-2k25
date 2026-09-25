@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { calcAdv, matchupAdv, getTeam, getOpp, getPS, getFatigue, SPEND_COSTS, reboundCheckOpen, reboundCheckBonus, reboundTrackLead, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, lastReturnedCard, undoReturnCard, periodLabel, extraRollPending, checkNeed, fatigueForMinutes, crunchSearchOptions, rollTurnLine, rollingOpen as diceOut, timeoutProblem } from '../../game/engine.js';
-import { canPlayCard, burstTargets, myHouseTargets, fwdTargets, preRollTargets, helpTargets, foulTroubleTargets, clampTargets, kickOutTargets } from '../../game/canPlay.js';
-import { resolveGoUnder } from '../../game/execCard.js';
+import { canPlayCard, burstTargets, myHouseTargets, fwdTargets, preRollTargets, helpTargets, foulTroubleTargets, clampTargets, kickOutTargets, pendingCheckExtra } from '../../game/canPlay.js';
+import { resolveChoice } from '../../game/execCard.js';
 import { choicePreview } from '../../game/cardPreview.js';
 import { passTurn, MAX_STRAIGHT_MINUTES, restRuleLifted, pickablePool } from '../../game/engine.js';
 import { salaryOrder } from '../../game/teamRules.js';
@@ -171,7 +171,8 @@ export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExec
       {game.pendingShotCheck && (
         <PendingBanner game={game} onResolve={onResolve} onExecCard={handleExecCard} readOnlyTeam={watchOnly} />
       )}
-      {!game.pendingShotCheck && game.pendingChoice && (
+      {/* A Blitz's choice sits under the check it paused; Go Under's stands alone. */}
+      {game.pendingChoice && (game.pendingChoice.kind === 'blitz' || !game.pendingShotCheck) && (
         <ChoiceBanner game={game} setGame={setGame} pvpMode={pvpMode} myTeamKey={myTeamKey} />
       )}
 
@@ -662,7 +663,13 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
     const helpers = myT.starters
       .map((p, i) => ({ p, origIdx: i }))
       .filter(({ origIdx }) => origIdx !== chosen.defIdx);
-    const h = await pickFiltered(helpers, 'Who rotates over? (their assignment gets +3)', teamKey, undefined, 'helperIdx');
+    // NAME THE MAN BEING HELPED ON. With one target the first prompt is
+    // skipped, and "Who rotates over?" left the user no idea onto whom
+    // (2026-09-25). Each row's preview shows both rolls it moves: the target's
+    // edge gone, and the helper's own man open at +3.
+    const h = await pickFiltered(helpers,
+      `Who rotates over onto ${chosen.off?.name}? (beating ${chosen.def?.name} by +${chosen.adv}; the helper's own man is left open, +3)`,
+      teamKey, undefined, 'helperIdx');
     if (h === null) return null;
     opts.helperIdx = h;
   }
@@ -2035,7 +2042,35 @@ function ChoiceBanner({ game, setGame, pvpMode = false, myTeamKey = null }) {
   const pc = game.pendingChoice;
   const offT = getTeam(game, pc.teamKey);
   const mine = pvpMode ? myTeamKey === pc.teamKey : pc.teamKey === 'A';
-  const choose = slot => { const r = resolveGoUnder(game, slot); if (r.ok) setGame(r.game); };
+  const choose = slot => { const r = resolveChoice(game, slot); if (r.ok) setGame(r.game); };
+  if (pc.kind === 'blitz') {
+    // BLITZ: the paused check goes to someone else — the offence picks, each
+    // button saying what that player needs on the die for THIS check.
+    const psc = game.pendingShotCheck;
+    const from = offT.starters[pc.from];
+    const label = psc?.type === '3pt' ? '3PT' : 'Paint';
+    return (
+      <div className={styles.pendingBanner}>
+        <div className={styles.pendingInfo}>
+          <span className={styles.pendingTitle}>⏸ Blitz on {from?.name} — {offT.name} picks who takes the {label} check</span>
+          {!mine && <span style={{ color: '#94A3B8', fontSize: 12 }}>Waiting for {offT.name} to choose</span>}
+        </div>
+        {mine && psc && (
+          <div className={styles.pendingActions}>
+            {pc.slots.map(slot => {
+              const p = offT.starters[slot];
+              const need = Math.max(1, Math.min(21, checkNeed(game, pc.teamKey, slot, psc.type, { extra: pendingCheckExtra(psc), banked: false }).need));
+              return (
+                <button key={slot} className={styles.resolveBtn} onClick={() => choose(slot)} title={`Needs ${need}+ on the die`}>
+                  {p?.name} · {need > 20 ? 'no' : `${need}+`}
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    );
+  }
   return (
     <div className={styles.pendingBanner}>
       <div className={styles.pendingInfo}>
@@ -2072,6 +2107,10 @@ function PendingBanner({ game, onResolve, onExecCard, readOnlyTeam = null }) {
   const coPlay=hasCloseOut?canPlayCard(game,defKey,'close_out'):null;
   const lsc=game.lastShotCheck;
   const canChallenge=defLive && Boolean(lsc && lsc.teamKey===psc.teamKey && getTeam(game,defKey).hand.includes('coaches_challenge') && canPlayCard(game,defKey,'coaches_challenge').canPlay);
+  // BLITZ beside Close Out (2026-09-25), and the Resolve that waits while a
+  // blitzed check has no shooter yet.
+  const canBlitz=defLive && getTeam(game,defKey).hand.includes('blitz') && canPlayCard(game,defKey,'blitz').canPlay;
+  const waitingOnBlitz=game.pendingChoice?.kind==='blitz';
   return (
     <div className={styles.pendingBanner}>
       <div className={styles.pendingInfo}>
@@ -2081,6 +2120,7 @@ function PendingBanner({ game, onResolve, onExecCard, readOnlyTeam = null }) {
       </div>
       <div className={styles.pendingActions}>
         {defLive&&hasCloseOut&&coPlay?.canPlay&&<button className={styles.coBtn} onClick={()=>onExecCard(defKey,'close_out',{})}>Close Out −3</button>}
+        {canBlitz&&<button className={styles.coBtn} onClick={()=>onExecCard(defKey,'blitz',{})} title="The offense must give this check to another player on the floor">Blitz {offP?.name?.split(' ').slice(-1)[0]}</button>}
         {/* COACH'S CHALLENGE ON THE CHECK THAT JUST LANDED. A card that takes
             several checks in a row (Green Light) announces the next one the
             moment the last resolves, and the challenge only ever reaches the
@@ -2092,7 +2132,8 @@ function PendingBanner({ game, onResolve, onExecCard, readOnlyTeam = null }) {
             Challenge {game.lastShotCheck?.cardLabel ?? 'the last check'}
           </button>
         )}
-        <button className={styles.resolveBtn} onClick={onResolve}>▶ Resolve</button>
+        <button className={styles.resolveBtn} onClick={onResolve} disabled={waitingOnBlitz}
+          title={waitingOnBlitz ? 'Blitzed: the offense picks the new shooter first' : undefined}>▶ Resolve</button>
       </div>
     </div>
   );

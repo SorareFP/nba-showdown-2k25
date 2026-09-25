@@ -1,8 +1,8 @@
 import { useReducer, useCallback, useState, useEffect, useRef, useMemo } from 'react';
 import { newGame, doRoll, rollingOpen as diceOut, endSection, spendAssist, spendReboundBonus, applyMatchups, spendTimeout, endTimeout, clutchAvailable, passTurn, pendingRolls, rollGate, coachCardWindow, searchCrunchCard } from '../game/engine.js';
-import { aiTurn, aiScoringDecision, aiRollDecision, aiSpendDecision, aiReactionDecision, aiCrunchDecision, aiCrunchSearch, aiSetMatchups, aiGoUnderChoice } from '../game/ai.js';
+import { aiTurn, aiScoringDecision, aiRollDecision, aiSpendDecision, aiReactionDecision, aiCrunchDecision, aiCrunchSearch, aiSetMatchups, aiChoice } from '../game/ai.js';
 import { CLUTCH_DICE } from '../game/clutchAwards.js';
-import { execCard, resolvePendingShotCheck, resolveGoUnder } from '../game/execCard.js';
+import { execCard, resolvePendingShotCheck, resolveChoice } from '../game/execCard.js';
 import { randomizeTeam, MIN_TO_PLAY } from '../game/teamRules.js';
 import { resultFromPlayed } from '../game/modes/season.js';
 import { AI_LEVELS, iqOf, capOf, samplesOf, loadAiLevel, saveAiLevel, payNote } from '../game/aiLevels.js';
@@ -449,12 +449,24 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
         return false;
       };
 
+      // A CHOICE WAITING ON THE COACH comes first — Go Under's shooter, or the
+      // new shooter for a check you blitzed (a blitzed check stays paused
+      // behind it). One waiting on YOU holds everything until you pick.
+      if (game.pendingChoice) {
+        if (game.pendingChoice.teamKey === 'B') {
+          const r = resolveChoice(game, aiChoice(game, 'B'));
+          if (r.ok) dispatch({ type: 'UPDATE', game: r.game });
+        }
+        return;
+      }
+
       // A pending check on the HUMAN's shooter: the AI takes its reaction
       // window, then lets the die fly. The AI's own checks wait for the human.
       if (game.pendingShotCheck) {
         const psc = game.pendingShotCheck;
         if (psc.teamKey === 'A') {
-          if (!psc.reacted) {
+          // Blitz is its own answer: it may still come after Close Out and the rest.
+          if (!psc.reacted || (!psc.blitzed && game.teamB.hand.includes('blitz'))) {
             const react = aiReactionDecision(game, 'B', 'shot_check', { iq });
             if (react?.type === 'play_card' && tryCard(react.cardId, react.opts)) return;
           }
@@ -463,12 +475,6 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
         return;
       }
 
-      // A Go Under check waiting on the coach's choice: name the shooter first.
-      if (game.pendingChoice?.teamKey === 'B') {
-        const slot = aiGoUnderChoice(game, 'B');
-        const r = resolveGoUnder(game, slot);
-        if (r.ok) { dispatch({ type: 'UPDATE', game: r.game }); return; }
-      }
       if (phase === 'matchup_strats' && (game.placementStep ?? 10) >= 10 && game.matchupTurn === 'B') {
         const action = aiTurn(game, 'B', { iq });
         // One card, then the turn is the human's (handOverPriority); or pass.

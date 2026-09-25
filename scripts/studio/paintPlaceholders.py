@@ -796,7 +796,20 @@ def s_own_the_glass(d, s):
     text(d, (W / 2, 120), 'MINE', size=100, fill=GREEN, shadow=WHITE, anchor='mm')
 
 
+def s_blitz(d, s):
+    # Two at the shooter, and the ball has to go somewhere else (2026-09-25).
+    court(d)
+    player(d, 280, H * 0.93, BLUE, pose='stand', number=30)
+    ball(d, (280 - 70, H * 0.93 - 170))
+    player(d, 120, H * 0.9, RED, pose='wide')
+    player(d, 440, H * 0.9, RED, pose='wide')
+    arrow(d, (360, H * 0.55), (W - 300, H * 0.55), fill=YELLOW)
+    player(d, W - 200, H * 0.95, BLUE, pose='stand', number=7)
+    text(d, (W / 2, 130), 'GIVE IT UP', size=80, fill=RED, shadow=WHITE, anchor='mm')
+
+
 SCENES = {
+    'blitz': s_blitz,
     'kick_out_three': s_kick_out_three, 'grab_and_go': s_grab_and_go,
     'rebound_and_push': s_rebound_and_push, 'own_the_glass': s_own_the_glass,
     'double_team': s_double_team, 'pick_up_full_court': s_pick_up_full_court, 'cross_court_dime': s_cross_court_dime,

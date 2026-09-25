@@ -23,6 +23,11 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
+    id: 'blitz-card', date: '2026-09-25', title: 'New reaction card: Blitz',
+    body: 'When the other team announces a 3PT or paint check, Blitz sends two at the shooter: they have to hand that check to someone else on the floor, with the same card bonus. Only that check moves (the rest of a multi-check card stays with the original shooter, whose roll is still spent), and Close Out and the other answers can still follow it. Uncommon, now in packs. Placeholder art for now.',
+    to: 'shop', cta: 'Pack Shop',
+  },
+  {
     id: 'dissonance-wave-two', date: '2026-09-24', title: 'Thirteen new Dissonance cards',
     body: 'More wrong jerseys: Patrick Ewing as a Sonic, Dominique Wilkins as a Celtic and a Spur, Shaq as a Celtic, Tony Parker as a Hornet, Gary Payton as a Buck, Allen Iverson as a Grizzly, Dennis Rodman as a Laker and a Maverick, Deron Williams, Ben Wallace and Lonzo Ball as Cavaliers, and Blake Griffin as a Celtic. Dominique Wilkins, Tony Parker and Deron Williams also get Super Season cards, and Wilkins, Parker, Deron Williams and Lonzo Ball get Rookie cards. Free Agents can now quote 1982-83 seasons too. Photos to come.',
     to: 'goals', cta: 'Collections',

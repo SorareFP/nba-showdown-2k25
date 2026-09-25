@@ -145,7 +145,7 @@ export default function HowToPlay({ scrollToSection, onStartTutorial, tutorialRu
             <li><strong>Free throw:</strong> D20 + 10 &ge; Shot Line &rarr; 1 point</li>
           </ul>
           <p>Hot and cold markers and fatigue apply to checks as well as rolls. A 3PT or paint check is also <strong>contested</strong>: the shooter's matchup defender subtracts their Def Boost from it (one more in Crunch Time). Free throws are never contested.</p>
-          <p>A 3PT or paint check is <strong>announced</strong> before it is rolled, and the defence may answer: <strong>Close Out</strong> takes 3 off a 3PT check and chills the shooter on a miss; <strong>Coach's Challenge</strong> forces a re-roll of any check, twice per game. The log itemises every check — <code>🎲8 +1 card +1 3PT +2 🔥 = 12 vs 13</code> — so you can see what made it or missed it.</p>
+          <p>A 3PT or paint check is <strong>announced</strong> before it is rolled, and the defence may answer: <strong>Close Out</strong> takes 3 off a 3PT check and chills the shooter on a miss; <strong>Blitz</strong> makes the offense hand a 3PT or paint check to another player on the floor (same card bonus; only that check moves), and Close Out and the other answers can still follow it; <strong>Coach's Challenge</strong> forces a re-roll of any check, twice per game. The log itemises every check — <code>🎲8 +1 card +1 3PT +2 🔥 = 12 vs 13</code> — so you can see what made it or missed it.</p>
         </AccordionSection>
 
         <AccordionSection {...sec('cards')}>

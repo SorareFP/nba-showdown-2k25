@@ -12,7 +12,7 @@ import {
 } from '../firebase/pvpGame.js';
 import { ref, get, set } from 'firebase/database';
 import { rtdb } from '../firebase/config.js';
-import { doRoll, endSection, spendAssist, spendReboundBonus, getTeam, emptyAnalytics } from '../game/engine.js';
+import { doRoll, rollingOpen, endSection, spendAssist, spendReboundBonus, getTeam, emptyAnalytics } from '../game/engine.js';
 import { execCard, resolvePendingShotCheck } from '../game/execCard.js';
 import { canPlayCard } from '../game/canPlay.js';
 import CourtBoard from './game/CourtBoard.jsx';
@@ -197,6 +197,8 @@ export default function PvpGame({ roomCode, myRole, onLeave }) {
 
   // ── Action handlers ─────────────────────────────────────────────────────
   const handleRoll = useCallback(async (teamKey, idx) => {
+    // No die before the strategy turn is over (rollingOpen, 2026-09-25).
+    if (!rollingOpen(localGame)) return;
     const updated = doRoll(JSON.parse(JSON.stringify(localGame)), teamKey, idx);
     await syncToFirebase(updated);
   }, [localGame, syncToFirebase]);

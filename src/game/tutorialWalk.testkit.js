@@ -24,7 +24,7 @@
 // function TutorialGame dispatches from (2026-09-18).
 import {
   newGame, getTeam, passTurn, pickablePool, pendingRolls, rollGate, returnCardToDeck, undoReturnCard,
-  crunchSearchOptions,
+  crunchSearchOptions, timeoutProblem,
 } from './engine.js';
 import { execCard, resolveGoUnder } from './execCard.js';
 import { canPlayCard } from './canPlay.js';
@@ -190,7 +190,8 @@ function nextState(g, { tieAtEnd, noClutch, noCards, putBack, onState }) {
   }
   const gate = rollGate(g);
   if (gate.A && pendingRolls(g, 'A') > 0) {
-    if (g.crunch?.active && !g.timeoutActive && !g.crunch.timeoutUsed?.A) return tutorialReducer(g, { type: 'TIMEOUT', teamKey: 'A' });
+    // The timeout the moment it is legal — after the first roll (timeoutProblem).
+    if (!timeoutProblem(g, 'A')) return tutorialReducer(g, { type: 'TIMEOUT', teamKey: 'A' });
     const r = aiRollDecision(g, 'A');
     return tutorialReducer(g, { type: 'ROLL', teamKey: 'A', idx: r.playerIdx, opts: { clutch: noClutch ? false : r.clutch } });
   }

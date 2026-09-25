@@ -819,11 +819,32 @@ export function clutchEligible(g, teamKey, idx) {
  * team fully re-set its defensive matchups mid-section (the caller follows
  * with applyMatchups) and opens the window the timeout-rider cards play in.
  */
+/** Whether anyone on the floor, either side, has rolled yet this section. */
+export function anyoneRolled(g) {
+  return ['A', 'B'].some(k => (g.rollResults?.[k] || []).some(r => r != null));
+}
+
+/**
+ * Why `teamKey` may not call its timeout now, or null when it may — the one
+ * reader for the engine's refusal, the board's button and the coach.
+ *
+ * SOMEBODY ROLLS FIRST (the user, 2026-09-25: "I think one person should have
+ * to roll before taking a timeout in crunch time"). Called before a die was
+ * thrown, the timeout was a free re-set of the snake's matchups with nothing
+ * yet to react to — the coach called it the instant crunch armed.
+ */
+export function timeoutProblem(g, teamKey) {
+  if (!g.crunch?.active) return 'Timeouts are a Crunch Time resource';
+  if (g.phase !== 'scoring') return 'Timeouts are called during the Scoring Phase';
+  if (g.crunch.timeoutUsed?.[teamKey]) return 'Timeout already used';
+  if (g.timeoutActive) return 'A timeout is already in progress';
+  if (!anyoneRolled(g)) return 'Somebody has to roll before a timeout can be called';
+  return null;
+}
+
 export function spendTimeout(g, teamKey) {
-  if (!g.crunch?.active) return { game: g, ok: false, msg: 'Timeouts are a Crunch Time resource' };
-  if (g.phase !== 'scoring') return { game: g, ok: false, msg: 'Timeouts are called during the Scoring Phase' };
-  if (g.crunch.timeoutUsed?.[teamKey]) return { game: g, ok: false, msg: 'Timeout already used' };
-  if (g.timeoutActive) return { game: g, ok: false, msg: 'A timeout is already in progress' };
+  const problem = timeoutProblem(g, teamKey);
+  if (problem) return { game: g, ok: false, msg: problem };
   const ng = deepClone(g);
   ng.crunch.timeoutUsed[teamKey] = true;
   ng.timeoutActive = teamKey;
@@ -1361,6 +1382,19 @@ export function hitsTopTier(card, finalRoll) {
 export function extraRollPending(g, teamKey, idx) {
   const v = g?.tempEff?.[teamKey]?.['extra_roll_' + idx];
   return typeof v === 'number';
+}
+
+/**
+ * WHETHER THE DICE ARE OUT: the scoring phase's strategy turn is over (both
+ * sides passed — passTurn writes 99; the simulators close it at 2). The user,
+ * 2026-09-25: "can you make it impossible to do a scoring roll before the
+ * strategy phase is over? Currently you can still do it before passing." The
+ * board's Roll button and every roll handler (PlayTab, PvpGame) ask here.
+ * doRoll itself does not, so the sims and the tests that roll a bare game
+ * keep working; the gate is on every route a person or the coach rolls by.
+ */
+export function rollingOpen(g) {
+  return g?.phase === 'scoring' && (g.scoringPasses || 0) >= 2;
 }
 
 /** Whether this slot may roll now: never rolled and not blocked, or owed a second roll. */

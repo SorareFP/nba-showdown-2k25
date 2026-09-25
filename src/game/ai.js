@@ -3,7 +3,7 @@
 // Pure functions: takes game state + team key, returns an action object.
 // No React, no side effects. Used by tutorial, solo mode, sim-to-end.
 
-import { getTeam, getOpp, getPS, calcAdv, matchupAdv, isGhosted, getFatigue, fatigueForMinutes, restMinutes, MAX_STRAIGHT_MINUTES, pickablePool, SPEND_COSTS, REBOUND_RULES, reboundCheckOpen, reboundCheckBonus, reboundTrackLead, clutchAvailable, clutchEligible, burnedSlots, satOutLast, canRollSlot, extraRollPending, checkNeed, crunchSearchOptions } from './engine.js';
+import { getTeam, getOpp, getPS, calcAdv, matchupAdv, isGhosted, getFatigue, fatigueForMinutes, restMinutes, MAX_STRAIGHT_MINUTES, pickablePool, SPEND_COSTS, REBOUND_RULES, reboundCheckOpen, reboundCheckBonus, reboundTrackLead, clutchAvailable, clutchEligible, burnedSlots, satOutLast, canRollSlot, extraRollPending, checkNeed, crunchSearchOptions, timeoutProblem } from './engine.js';
 import { lookupChart } from './cards.js';
 import { canPlayCard, burstTargets, helpTargets, staggerPair, myHouseTargets, foulTroubleTargets, clampTargets, kickOutTargets, REBOUND_CARD_COST } from './canPlay.js';
 import { getStrat, STRATS, TIMEOUT_RIDERS } from './strats.js';
@@ -2137,6 +2137,9 @@ export function aiRollDecision(game, teamKey) {
 export function aiCrunchDecision(game, teamKey) {
   if (!game.crunch?.active || game.phase !== 'scoring') return null;
   if (game.crunch.timeoutUsed?.[teamKey] || game.timeoutActive) return null;
+  // Legal means after somebody has rolled (timeoutProblem, 2026-09-25): so
+  // "the moment it is legal" below is the first chance after the first die.
+  if (timeoutProblem(game, teamKey)) return null;
   // CALL IT THE MOMENT IT IS LEGAL. The user, 2026-09-14: "the way the timeout
   // works, it makes the most sense to play it ASAP because you get to reset
   // the defense right away. It's a free 'switch everything' without the roll

@@ -660,10 +660,11 @@ describe('the tutorial coach (tutorialCoachStep, what TutorialGame dispatches)',
   it('waits while your timeout is on', () => {
     let g = tutorialGame();
     g = playSection(g); g = playSection(g); g = playSection(g);
-    g = tutorialReducer(toRolling(g), { type: 'TIMEOUT', teamKey: 'A' });
+    // Somebody rolls before a timeout (timeoutProblem, 2026-09-25).
+    g = tutorialReducer(doRoll(toRolling(g), 'A', 0), { type: 'TIMEOUT', teamKey: 'A' });
     expect(g.timeoutActive).toBe('A');
     // Even with the coach behind on rolls, it does nothing.
-    g = doRoll(g, 'A', 0);
+    g = doRoll(g, 'A', 1);
     expect(g.timeoutActive).toBe('A');
     expect(tutorialCoachStep(g)).toBe(null);
   });
@@ -770,6 +771,11 @@ describe('the fourth section: Crunch Time', () => {
     let g = tutorialGame();
     g = playSection(g); g = playSection(g); g = playSection(g);
     g = toRolling(g);
+    // NOBODY HAS ROLLED, SO NO TIMEOUT YET (timeoutProblem, 2026-09-25): the
+    // clutch lesson leads on the opening die, and the timeout's comes after it.
+    expect(liveIds(g)).not.toContain('s4_timeout');
+    expect(liveIds(g)).toContain('s4_clutch');
+    g = tutorialReducer(g, { type: 'ROLL', teamKey: 'A', idx: 0 });
     expect(liveIds(g)[0]).toBe('s4_timeout');
     expect(tip('s4_timeout').highlight).toBe('[data-tutorial="timeout"]');
     expect(text('s4_timeout', g)).toContain('one per team in Crunch Time (an overtime brings a fresh one)');
@@ -787,13 +793,14 @@ describe('the fourth section: Crunch Time', () => {
     g = tutorialReducer(g, { type: 'END_TIMEOUT' });
     expect(g.timeoutActive).toBe(null);
     expect(clutchAvailable(g, 'A')).toBe(1);
+    g = doRoll(g, 'B', 0);                                  // the coach's die; yours again
     expect(liveIds(g)).toContain('s4_clutch');
     // The coach's award winners are labelled as the coach's.
     const t = text('s4_clutch', g);
     expect(t).not.toMatch(/CPOY/);
     for (const p of g.teamB.starters) if (clutchDiceFor(g, p) > clutchDiceFor(g, {})) expect(t).toContain(`the coach's ${p.name} rolls`);
     const before = g.crunch.used?.A || 0;
-    g = tutorialReducer(g, { type: 'ROLL', teamKey: 'A', idx: 0, opts: { clutch: true } });
+    g = tutorialReducer(g, { type: 'ROLL', teamKey: 'A', idx: 1, opts: { clutch: true } });
     expect(g.crunch.used.A).toBe(before + 1);
     expect(liveIds(g)).not.toContain('s4_clutch');
   });
@@ -1207,7 +1214,7 @@ describe('the timeout riders are named, from the list canPlay gates on', () => {
   });
 
   it('the timeout, the search and the resume lessons say which cards they are', () => {
-    let g = crunchRolling();
+    let g = doRoll(crunchRolling(), 'A', 0);                // a timeout comes after a roll
     for (const n of riderNames) expect(text('s4_timeout', g)).toContain(n);
     expect(text('s4_timeout', g)).not.toMatch(/timeout cards/);
     g.teamA.deck = ['reset', 'second_closer', ...g.teamA.deck.filter(id => id !== 'reset' && id !== 'second_closer')];

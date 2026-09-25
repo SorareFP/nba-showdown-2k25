@@ -145,7 +145,7 @@ export default function RulebookTab() {
         <div className={s.sub}>4. Scoring Card Window</div>
         <ul>
           <li>The same play-or-pass rule. Scoring-phase cards play here: boosts, shot checks, Double Team, This Is My House, standing cards.</li>
-          <li>Two passes in a row open rolling.</li>
+          <li>Two passes in a row open rolling. No scoring roll before then.</li>
         </ul>
 
         <div className={s.sub}>5. Rolling</div>
@@ -273,7 +273,7 @@ export default function RulebookTab() {
           <li><strong>The timeout search:</strong> during your timeout you may take one crunch-only card from your deck into hand, even past the seven-card hand, and the deck is shuffled behind it. Once per timeout.</li>
           <li><strong>Clutch Possession:</strong> once per team, chosen at roll time. The player rolls <strong>2 dice</strong> and keeps the better; each MVP or Clutch Player of the Year award on the card adds a die. Not available at −6 fatigue or worse.</li>
           <li><strong>Extra defensive intensity:</strong> defenders with a positive Def Boost contest shot checks <strong>+1</strong> harder.</li>
-          <li><strong>Timeout:</strong> one per team per game, Crunch Time only. Play pauses, the team <strong>re-sets its defensive matchups</strong>, may <strong>search the deck</strong> for one crunch-only card, and the timeout-rider window opens.</li>
+          <li><strong>Timeout:</strong> one per team per game, Crunch Time only, and not until <strong>somebody has rolled</strong> in the section. Play pauses, the team <strong>re-sets its defensive matchups</strong>, may <strong>search the deck</strong> for one crunch-only card, and the timeout-rider window opens.</li>
         </ul>
 
         <div className={s.sub}>Crunch-only cards</div>

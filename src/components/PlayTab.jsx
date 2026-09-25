@@ -1,5 +1,5 @@
 import { useReducer, useCallback, useState, useEffect, useRef, useMemo } from 'react';
-import { newGame, doRoll, endSection, spendAssist, spendReboundBonus, applyMatchups, spendTimeout, endTimeout, clutchAvailable, passTurn, pendingRolls, rollGate, coachCardWindow, searchCrunchCard } from '../game/engine.js';
+import { newGame, doRoll, rollingOpen as diceOut, endSection, spendAssist, spendReboundBonus, applyMatchups, spendTimeout, endTimeout, clutchAvailable, passTurn, pendingRolls, rollGate, coachCardWindow, searchCrunchCard } from '../game/engine.js';
 import { aiTurn, aiScoringDecision, aiRollDecision, aiSpendDecision, aiReactionDecision, aiCrunchDecision, aiCrunchSearch, aiSetMatchups, aiGoUnderChoice } from '../game/ai.js';
 import { CLUTCH_DICE } from '../game/clutchAwards.js';
 import { execCard, resolvePendingShotCheck, resolveGoUnder } from '../game/execCard.js';
@@ -33,7 +33,8 @@ function gameReducer(state, action) {
   if (!state && action.type !== 'SET') return state;
   switch (action.type) {
     case 'SET':         return action.game;
-    case 'ROLL':        return doRoll(state, action.teamKey, action.idx, action.opts || {});
+    // No die before the strategy turn is over (rollingOpen, 2026-09-25).
+    case 'ROLL':        return diceOut(state) ? doRoll(state, action.teamKey, action.idx, action.opts || {}) : state;
     case 'TIMEOUT': {
       const { game, ok, msg } = spendTimeout(state, action.teamKey);
       if (!ok) { if (!action.silent) notify(msg, { tone: 'error' }); return state; }
@@ -477,7 +478,7 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
       }
 
       if (phase === 'scoring') {
-        const rollingOpen = (game.scoringPasses || 0) >= 99;
+        const rollingOpen = diceOut(game);
 
         if (!rollingOpen && game.scoringTurn === 'B') {
           const action = aiScoringDecision(game, 'B', { iq });

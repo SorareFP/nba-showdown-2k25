@@ -124,7 +124,7 @@ export default function HowToPlay({ scrollToSection, onStartTutorial, tutorialRu
         </AccordionSection>
 
         <AccordionSection {...sec('scoring')}>
-          <p>The <strong>scoring card window</strong> follows, under the same play-or-pass rule. When both sides have passed, <strong>rolling opens</strong>.</p>
+          <p>The <strong>scoring card window</strong> follows, under the same play-or-pass rule. When both sides have passed, <strong>rolling opens</strong>; nobody rolls before then.</p>
           <p>Rolling <strong>alternates</strong>: you roll one player, the coach rolls one, and you get the floor back before their next die. That gap is where reactions live — a card that answers a roll or an announced shot check is played there. A side with nobody left to roll stands aside and the other finishes.</p>
           <h4>Roll Calculation</h4>
           <p className={s.formula}>Final Roll = D20 + Matchup Bonus + Fatigue + Hot/Cold + Card Bonuses</p>
@@ -205,7 +205,7 @@ export default function HowToPlay({ scrollToSection, onStartTutorial, tutorialRu
             <li><strong>Crunch-only cards wait for Crunch Time.</strong> One drawn in any earlier section goes straight to the bottom of your deck and you draw again. They come to hand only when drawn into the crunch section — or through <strong>the timeout search</strong>: during your timeout you may take <strong>one</strong> crunch-only card from your deck into hand and shuffle the rest.</li>
             <li><strong>Clutch Possession:</strong> once per team, chosen at roll time, one player rolls <strong>2 dice</strong> and keeps the better. An MVP or Clutch Player award on the card adds a die each. A player at &minus;6 fatigue or worse cannot use it.</li>
             <li><strong>Extra defensive intensity:</strong> every defender with a positive Def Boost contests shot checks 1 harder.</li>
-            <li><strong>The Timeout:</strong> one per team per game, and one more in each overtime, Crunch Time only. It pauses play, lets you fully re-set your defensive matchups, lets you search the deck for one crunch-only card, and opens the window for the <strong>timeout riders</strong>: ATO Masterpiece (a chosen player takes a check at +2 out of the huddle), Fresh Legs (two players shed 4 minutes), Ice the Hot Hand (strip an opponent's hot markers), Reset (clear your own cold markers).</li>
+            <li><strong>The Timeout:</strong> one per team per game, and one more in each overtime, Crunch Time only, called once <strong>somebody has rolled</strong> in the section. It pauses play, lets you fully re-set your defensive matchups, lets you search the deck for one crunch-only card, and opens the window for the <strong>timeout riders</strong>: ATO Masterpiece (a chosen player takes a check at +2 out of the huddle), Fresh Legs (two players shed 4 minutes), Ice the Hot Hand (strip an opponent's hot markers), Reset (clear your own cold markers).</li>
             <li><strong>Desperation Press:</strong> trailing only — the next opposing top-tier roll must be re-rolled.</li>
             <li><strong>Second Closer:</strong> a second Clutch Possession, for a different player.</li>
             <li><strong>Unethical Hoops:</strong> the card every new account starts with. A player of yours with a Speed or Power advantage draws the foul: four free-throw checks, no bonus &mdash; a free throw carries its own +10.</li>
@@ -252,7 +252,7 @@ export default function HowToPlay({ scrollToSection, onStartTutorial, tutorialRu
             <dt>Crunch Time</dt><dd>The final section, when the margin is 20 or less as it starts.</dd>
             <dt>Overtime</dt><dd>Another Crunch-Time section when the game is tied after regulation — repeated until someone leads.</dd>
             <dt>Clutch Possession</dt><dd>Roll 2 dice (plus award dice) and keep the best. Once per team in Crunch Time.</dd>
-            <dt>Timeout</dt><dd>One per game, Crunch Time only: re-set the defence and play a rider.</dd>
+            <dt>Timeout</dt><dd>One per game, Crunch Time only, after the section's first roll: re-set the defence and play a rider.</dd>
             <dt>Salary Cap</dt><dd>$5,500 across 10 players.</dd>
           </dl>
         </AccordionSection>

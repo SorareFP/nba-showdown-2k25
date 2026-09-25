@@ -15,7 +15,7 @@
 //      human rolls, then the coach; the tutorial's coach rolled on a timer and
 //      ignored it. coachMayRoll is rollGate, read the way PlayTab reads it.
 import {
-  endSection, doRoll, spendAssist, spendReboundBonus, spendTimeout, searchCrunchCard, endTimeout,
+  endSection, doRoll, rollingOpen, spendAssist, spendReboundBonus, spendTimeout, searchCrunchCard, endTimeout,
   applyMatchups, rollGate, pendingRolls, deepClone, passTurn, CRUNCH_MARGIN,
 } from './engine.js';
 import { execCard, resolvePendingShotCheck, resolveGoUnder } from './execCard.js';
@@ -184,7 +184,7 @@ export function tutorialReducer(state, action) {
   if (!state && action.type !== 'SET') return state;
   switch (action.type) {
     case 'SET':            return action.game;
-    case 'ROLL':           return doRoll(state, action.teamKey, action.idx, action.opts || {});
+    case 'ROLL':           return rollingOpen(state) ? doRoll(state, action.teamKey, action.idx, action.opts || {}) : state;
     case 'END_SECTION':    return tutorialEndSection(state);
     case 'EXEC_CARD':      return orKeep(state, execCard(state, action.teamKey, action.cardId, action.opts || {}), 'EXEC_CARD');
     case 'SPEND_ASSIST':   return orKeep(state, spendAssist(state, action.teamKey, action.spendType, action.playerIdx), 'SPEND_ASSIST');

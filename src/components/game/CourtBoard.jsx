@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { calcAdv, matchupAdv, getTeam, getOpp, getPS, getFatigue, SPEND_COSTS, reboundCheckOpen, reboundCheckBonus, reboundTrackLead, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, lastReturnedCard, undoReturnCard, periodLabel, extraRollPending, checkNeed, fatigueForMinutes, crunchSearchOptions, rollTurnLine } from '../../game/engine.js';
+import { calcAdv, matchupAdv, getTeam, getOpp, getPS, getFatigue, SPEND_COSTS, reboundCheckOpen, reboundCheckBonus, reboundTrackLead, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, lastReturnedCard, undoReturnCard, periodLabel, extraRollPending, checkNeed, fatigueForMinutes, crunchSearchOptions, rollTurnLine, rollingOpen as diceOut, timeoutProblem } from '../../game/engine.js';
 import { canPlayCard, burstTargets, myHouseTargets, fwdTargets, preRollTargets, helpTargets, foulTroubleTargets, clampTargets, kickOutTargets } from '../../game/canPlay.js';
 import { resolveGoUnder } from '../../game/execCard.js';
 import { choicePreview } from '../../game/cardPreview.js';
@@ -1381,8 +1381,17 @@ function PhaseBar({ game, setGame, onEndSection, onTimeout = null, onEndTimeout 
         <div className={styles.phaseCtrls}>
           {(segA>0||segB>0) && <span className={styles.segScore}><span style={{color:'var(--orange)'}}>A {segA}</span>–<span style={{color:'var(--blue)'}}>{segB} B</span></span>}
           {!rollingOpen && <button className={styles.passBtn} onClick={pass} disabled={(pvpMode && !isMyTurn) || watchedTurn}>Pass →</button>}
-          {onTimeout && game.crunch?.active && rollingOpen && !game.timeoutActive && !game.crunch.timeoutUsed?.[pvpMode ? myTeamKey : 'A'] && (!pvpMode || isMyTurn) &&
-            <button className={styles.passBtn} data-tutorial="timeout" onClick={() => onTimeout(pvpMode ? myTeamKey : 'A')}>⏸ Timeout</button>}
+          {onTimeout && game.crunch?.active && rollingOpen && !game.timeoutActive && !game.crunch.timeoutUsed?.[pvpMode ? myTeamKey : 'A'] && (!pvpMode || isMyTurn) && (() => {
+            // Shown, but shut until somebody has rolled (timeoutProblem,
+            // 2026-09-25) — so the button says why rather than vanishing.
+            const why = timeoutProblem(game, pvpMode ? myTeamKey : 'A');
+            return (
+              <button className={styles.passBtn} data-tutorial="timeout" disabled={Boolean(why)} title={why ?? undefined}
+                onClick={() => onTimeout(pvpMode ? myTeamKey : 'A')}>
+                {why ? '⏸ Timeout (after the first roll)' : '⏸ Timeout'}
+              </button>
+            );
+          })()}
           {onSearchCrunch && game.timeoutActive === (pvpMode ? myTeamKey : 'A') && crunchSearchOptions(game, pvpMode ? myTeamKey : 'A').length > 0 &&
             <button className={styles.passBtn} data-tutorial="search-deck" onClick={() => onSearchCrunch(pvpMode ? myTeamKey : 'A')} title="Take one crunch-time card from your deck, then shuffle it">🔍 Search deck</button>}
           {onEndTimeout && game.timeoutActive === (pvpMode ? myTeamKey : 'A') &&
@@ -1904,11 +1913,13 @@ function PlayerSlot({ player, ps, adv, fat, result, blocked, teamKey, idx, phase
             :result!=null&&!extraRoll?<RollResult result={result} col={col} />
             :<>
               {result!=null&&<RollResult result={result} col={col} />}
-              <button className={styles.rollBtn} style={{background:col}} onClick={onRoll} disabled={pvpDisabled || rollLocked}
-                title={rollLocked ? 'Their roll — play a reaction now, or wait for the die' : undefined}>
-                {rollLocked ? '🎲 Their roll' : extraRoll ? '🎲 2nd roll −2' : '🎲 Roll'}
+              {/* NO DIE BEFORE THE STRATEGY TURN IS OVER (the user,
+                  2026-09-25): the button waits for both passes. */}
+              <button className={styles.rollBtn} style={{background:col}} onClick={onRoll} disabled={pvpDisabled || rollLocked || !diceOut(game)}
+                title={!diceOut(game) ? 'Rolling opens once both sides pass the strategy turn' : rollLocked ? 'Their roll — play a reaction now, or wait for the die' : undefined}>
+                {!diceOut(game) ? '🎲 After the passes' : rollLocked ? '🎲 Their roll' : extraRoll ? '🎲 2nd roll −2' : '🎲 Roll'}
               </button>
-              {onClutch && !pvpDisabled && !rollLocked && game.crunch?.active && clutchAvailable(game, teamKey) > 0 && fat > -6 &&
+              {onClutch && !pvpDisabled && !rollLocked && diceOut(game) && game.crunch?.active && clutchAvailable(game, teamKey) > 0 && fat > -6 &&
                 <button className={styles.rollBtn} data-tutorial={`clutch-${teamKey}`} style={{background:'#B45309'}} title={`Clutch Possession: roll ${2 + (game.clutchDice?.[player.id] || 0)} dice, keep the best`} onClick={onClutch}>⭐ Clutch ({2 + (game.clutchDice?.[player.id] || 0)})</button>}
             </>}
             {/* Assist spending buttons — costs come from SPEND_COSTS so the

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { calcAdv, matchupAdv, getTeam, getOpp, getPS, getFatigue, SPEND_COSTS, reboundCheckOpen, reboundCheckBonus, reboundTrackLead, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, lastReturnedCard, undoReturnCard, periodLabel, extraRollPending, checkNeed, fatigueForMinutes, crunchSearchOptions, rollTurnLine, rollingOpen as diceOut, timeoutProblem } from '../../game/engine.js';
+import { calcAdv, matchupAdv, getTeam, getOpp, getPS, getFatigue, SPEND_COSTS, reboundCheckOpen, reboundCheckBonus, reboundTrackLead, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, lastReturnedCard, undoReturnCard, periodLabel, extraRollPending, checkNeed, fatigueForMinutes, crunchSearchOptions, rollTurnLine, rollingOpen as diceOut, timeoutProblem, scoringRollModifier, matchupContest } from '../../game/engine.js';
+import { lookupChart } from '../../game/cards.js';
 import { canPlayCard, burstTargets, myHouseTargets, fwdTargets, preRollTargets, helpTargets, foulTroubleTargets, clampTargets, kickOutTargets, pendingCheckExtra } from '../../game/canPlay.js';
 import { resolveChoice } from '../../game/execCard.js';
 import { choicePreview } from '../../game/cardPreview.js';
@@ -159,7 +160,9 @@ export default function CourtBoard({ game, setGame, onRoll, onEndSection, onExec
         // THE TIMEOUT SEARCH: one crunch-only card out of the deck, then a shuffle.
         const options = crunchSearchOptions(game, key);
         if (!options.length) { toast('No crunch-time card left in the deck', { tone: 'error' }); return; }
-        const pick = await openModal({ teamKey: key, cardId: 'timeout_search', players: options.map(id => ({ id, name: getStrat(id)?.name ?? id })), label: 'Search the deck: take one crunch-time card, then shuffle' });
+        const pick = await openModal({ teamKey: key, cardId: 'timeout_search', players: options.map(id => ({ id, name: getStrat(id)?.name ?? id })), label: 'Search the deck: take one crunch-time card, then shuffle',
+          // What each card does — the choice is between cards, not players.
+          extraInfo: options.map(id => getStrat(id)?.desc ?? '') });
         if (pick === null) return;
         onSearchCrunch(key, options[pick]);
       })} pvpMode={pvpMode} myTeamKey={myTeamKey} isMyTurn={isMyTurn} draftSelectedCount={draftSelected.length} onUndoPlace={undoPlace} undoPlaceName={undoName} rollGate={rollGate} readOnlySide={watchOnly} />
@@ -259,14 +262,18 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
   // Helper: pick from filtered eligible list, map back to original starter index.
   // `field`: the option the pick becomes (playerIdx unless the caller says),
   // for the preview; null for a pick whose preview needs more than one field.
-  async function pickFiltered(eligible, label, tKey = teamKey, infoFn, field = 'playerIdx') {
+  // `extraFn(p, origIdx)`: the row's own relevant line, for what the preview
+  // cannot show — a first pick whose card needs a second before it can be
+  // played, or a detail no roll or check carries (2026-09-25 prompt audit).
+  async function pickFiltered(eligible, label, tKey = teamKey, infoFn, field = 'playerIdx', extraFn) {
     if (eligible.length === 0) return null;
     const display = eligible.map(({ p, origIdx }, i) => {
       const info = infoFn ? infoFn(p, origIdx) : '';
       return info ? { ...p, name: `${p.name} ${info}` } : p;
     });
     const preview = field ? previewWith(i => ({ [field]: eligible[i].origIdx })) : null;
-    const pick = await openModal({ teamKey: tKey, cardId, players: display, label, preview });
+    const extraInfo = extraFn ? eligible.map(({ p, origIdx }) => extraFn(p, origIdx) || '') : undefined;
+    const pick = await openModal({ teamKey: tKey, cardId, players: display, label, preview, extraInfo });
     if (pick === null) return null;
     return eligible[pick].origIdx;
   }
@@ -275,6 +282,43 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
   function filterStarters(starters, filterFn) {
     return starters.map((p, i) => ({ p, origIdx: i })).filter(({ p, origIdx }) => filterFn(p, origIdx));
   }
+
+  // ── WHAT A ROW SAYS (the 2026-09-25 prompt audit: "provide relevant info
+  // while choosing") — the readers the per-card lines below are built from.
+  const sgn = n => (n > 0 ? `+${n}` : `${n}`);
+  const defOf = (key, i) => getOpp(game, key)?.starters?.[(game.offMatchups?.[key] || [])[i] ?? i];
+  const rollOf = (key, i, g = game) => scoringRollModifier(g, key, i)?.total;
+  /** The scoring roll's modifier, with a tempEff change on the slot applied (Stagger's +2 Speed). */
+  const rollWith = (key, i, eff) => {
+    const te = { ...(game.tempEff?.[key] || {}) };
+    for (const [k, v] of Object.entries(eff)) te[k + i] = (te[k + i] || 0) + v;
+    return rollOf(key, i, { ...game, tempEff: { ...(game.tempEff || {}), [key]: te } });
+  };
+  const rollLine = (key, i) => { const d = defOf(key, i); const r = rollOf(key, i); return d && r != null ? `Scoring roll vs ${d.name}: ${sgn(r)}` : ''; };
+  const needLine = (key, i, type, extra = 0) => {
+    const { need } = checkNeed(game, key, i, type, { extra, banked: false });
+    const pct = Math.round(Math.min(1, Math.max(0, (21 - need) / 20)) * 100);
+    return `${type === '3pt' ? '3PT' : 'Paint'} check${extra ? ` at ${sgn(extra)}` : ''} needs ${need}+ (${pct}%)`;
+  };
+  /** Expected points / rebounds a roll pays at modifier `mod`, over the twenty faces. */
+  const chartMean = (p, mod, field) => {
+    let sum = 0;
+    for (let die = 1; die <= 20; die += 1) sum += lookupChart(p, Math.max(1, die + mod))?.[field] || 0;
+    return sum / 20;
+  };
+  const chartShare = (p, mod, test) => {
+    let n = 0;
+    for (let die = 1; die <= 20; die += 1) if (test(lookupChart(p, Math.max(1, die + mod)) || {})) n += 1;
+    return Math.round((n / 20) * 100);
+  };
+  const guardedBy = (key, i) => {
+    const oppKey = key === 'A' ? 'B' : 'A';
+    const j = (game.offMatchups?.[oppKey] || []).findIndex(d => d === i);
+    return j >= 0 ? getTeam(game, oppKey).starters[j] : null;
+  };
+  /** A strategy card on a discard or search row: its phase and what it does. */
+  const PHASE_NAME = { matchup: 'Matchup', scoring: 'Scoring', reaction: 'Reaction', pre_roll: 'Pre-roll', post_roll: 'Post-roll' };
+  const cardLine = id => { const st = getStrat(id); return st ? `${PHASE_NAME[st.phase] ?? st.phase} — ${st.desc.length > 110 ? `${st.desc.slice(0, 107)}…` : st.desc}` : ''; };
 
   // ── Cards that pick from filtered MY starters ────────────────────────────
   const filteredPlayerCards = [
@@ -308,12 +352,13 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
   ];
 
   // Cards that show ALL my starters (no filtering — additive, safe post-roll)
-  const unfilteredPlayerCards = [
-    'rebound_tap_out',
-  ];
-
-  if (unfilteredPlayerCards.includes(cardId)) {
-    const idx = await openModal({ teamKey, cardId, players: myT.starters, label: 'Select target player', preview: previewWith(i => ({ playerIdx: i })) });
+  // REBOUND TAP-OUT lists only players with a 3PT Bonus, which is all the
+  // engine takes: the whole five were on offer and half were refused
+  // (2026-09-25 prompt audit).
+  if (cardId === 'rebound_tap_out') {
+    const shooters = filterStarters(myT.starters, p => Boolean(p) && (p.threePtBoost || 0) > 0);
+    if (!shooters.length) { toast('Nobody on the floor has a 3PT Bonus.'); return null; }
+    const idx = await pickFiltered(shooters, 'Who takes the 3PT check at +1? (2 REB for +1 AST)', teamKey);
     if (idx === null) return null;
     opts.playerIdx = idx;
   }
@@ -598,6 +643,52 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
 
     // Build info function for cards that benefit from showing matchup details
     let infoFn = undefined;
+    // THE ROW'S OWN LINE where the preview cannot say it (2026-09-25 audit).
+    const EXTRA = {
+      // The roll it frees is in the preview; the contest it lifts is not.
+      ghost_screen: (p, i) => {
+        const d = defOf(teamKey, i);
+        const c = matchupContest(game, teamKey, i, '3pt');
+        return d && c ? `No defender: shot checks lose ${d.name}'s −${c} contest` : '';
+      },
+      defensive_anchor: (p, i) => {
+        const db = p.defBoost || 0;
+        const man = guardedBy(teamKey, i);
+        return `Def ${sgn(db)} counts ${sgn(2 * db)} this section${man ? `: on ${man.name}` : ''}, and on every check they contest`;
+      },
+      unsung_hero: (p, i) => `${rollLine(teamKey, i)} — two dice, keep the higher`,
+      stretch_five: (p, i) => needLine(teamKey, i, '3pt'),
+      post_domination: (p, i) => {
+        const d = defOf(teamKey, i);
+        const r = rollOf(teamKey, i);
+        const a = d ? calcAdv(p, d, game.tempEff?.[teamKey] || {}, i) : null;
+        return a && r != null ? `Power ${sgn(a.rawPowerDiff)} vs ${d.name} · roll ${sgn(r)} · about ${chartMean(p, r, 'reb').toFixed(1)} REB a roll, doubled` : '';
+      },
+      hustle_play: p => ((p.defBoost || 0) > 0 ? `Def ${sgn(p.defBoost)}: the check −${p.defBoost}` : 'Def +0: no effect'),
+      crowd_favorite: (p, i) => {
+        if (rolls[i] != null) return `Has rolled (${rolls[i].pts ?? 0} pts): the 2 more must come from shot checks`;
+        const r = rollOf(teamKey, i);
+        return r == null ? '' : `${rollLine(teamKey, i)} · 2+ pts on ${chartShare(p, r, row => (row.pts || 0) >= 2)}% of rolls`;
+      },
+      power_move: (p, i) => {
+        const d = defOf(teamKey, i);
+        if (!d) return '';
+        const a = calcAdv(p, d, game.tempEff?.[teamKey] || {}, i);
+        const bump = a.powerAdv >= 5 ? 3 : 2;
+        const r = rollOf(teamKey, i);
+        const same = rollWith(teamKey, i, { p: bump }) === r;
+        return `Power ${sgn(a.rawPowerDiff)} → ${sgn(a.rawPowerDiff + bump)} vs ${d.name}${same ? ` · roll stays ${sgn(r)} (the Speed edge is bigger)` : ''}`;
+      },
+      // The roll it frees is in the preview; the bill comes after.
+      second_wind: (p, i) => {
+        const min = getPS(game, teamKey, p.id)?.minutes || 0;
+        return `${min} min on the tracker (FAT ${getFatigue(game, teamKey, i)}) ignored this section — then +4 min`;
+      },
+      // A TWO-PICK CARD: the partner is not chosen yet, so no preview (it
+      // would run on the engine's default partner) — the pick's own +2.
+      energy_injection: (p, i) => { const d = defOf(teamKey, i); const r = rollOf(teamKey, i); return d && r != null ? `Roll vs ${d.name}: ${sgn(r)} → ${sgn(r + 2)}` : ''; },
+    };
+    const extraFn = EXTRA[cardId];
     // COACH TIP for a card that replaces a roll with shot checks. The user,
     // 2026-09-16, after the coach played You Stand Over There on Shai: "add
     // coach tips that flags these sorts of things to players on lower
@@ -626,7 +717,9 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
       };
     }
 
-    const idx = await pickFiltered(eligible, label, teamKey, infoFn);
+    // The first pick of a two-pick card previews nothing (see energy_injection).
+    const TWO_PICK = ['energy_injection', 'stretch_five'];
+    const idx = await pickFiltered(eligible, label, teamKey, infoFn, TWO_PICK.includes(cardId) ? null : 'playerIdx', extraFn);
     if (idx === null) return null;
     opts.playerIdx = idx;
   }
@@ -655,7 +748,15 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
     if (targets.length === 0) { toast('No opponent yet to roll is beating their defender by +4.'); return null; }
     const t = targets.length === 1 ? 0 : await pickFiltered(
       targets.map(x => ({ p: x.off, origIdx: x.offSlot })),
-      'Who is beating their defender?', teamKey, undefined, 'targetIdx'
+      'Who is beating their defender?', teamKey, undefined, 'targetIdx',
+      // THE EDGE IS THE CHOICE (the user, 2026-09-25, on this prompt): who
+      // each is beating, by how much, and the roll it is worth now.
+      (p, slot) => {
+        const x = targets.find(t => t.offSlot === slot);
+        const oppKey = teamKey === 'A' ? 'B' : 'A';
+        const a = x ? calcAdv(x.off, x.def, game.tempEff?.[oppKey] || {}, slot) : null;
+        return a ? `Beating ${x.def?.name} by +${x.adv} (Speed ${sgn(a.rawSpeedDiff)}, Power ${sgn(a.rawPowerDiff)}) · roll ${sgn(rollOf(oppKey, slot))}` : '';
+      },
     );
     if (t === null) return null;
     const chosen = targets.find(x => x.offSlot === t) ?? targets[0];
@@ -710,9 +811,9 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
   if (cardId === 'pin_down_screen' || cardId === 'lob_city' || cardId === 'denial' || cardId === 'outside_pick') {
     const handWithoutThis = myT.hand.filter(id => id !== cardId);
     if (handWithoutThis.length === 0) { toast('No cards to discard.'); return null; }
-    const discardPlayers = handWithoutThis.map((id, i) => ({ id, name: id.replace(/_/g, ' '), origIdx: i }));
-    const discardDisplay = discardPlayers.map(d => ({ ...d, name: d.name }));
-    const pick = await openModal({ teamKey, cardId, players: discardDisplay, label: `Discard a card for ${cardId.replace(/_/g, ' ')}` });
+    const discardDisplay = handWithoutThis.map((id, i) => ({ id: `${id}#${i}`, name: getStrat(id)?.name ?? id.replace(/_/g, ' ') }));
+    const pick = await openModal({ teamKey, cardId, players: discardDisplay, label: `Discard a card for ${getStrat(cardId)?.name ?? cardId}`,
+      extraInfo: handWithoutThis.map(cardLine) });
     if (pick === null) return null;
     opts.discardId = handWithoutThis[pick];
   }
@@ -769,7 +870,8 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
   if (cardId === 'short_roll_playmaker') {
     const eligible = filterStarters(myT.starters, p => p && (p.speed || 0) >= 8 && (p.power || 0) >= 8);
     if (eligible.length === 0) { toast('Nobody on the floor has Speed 8+ and Power 8+.'); return null; }
-    const pick = await pickFiltered(eligible, 'Who is your short-roll facilitator?', teamKey);
+    const pick = await pickFiltered(eligible, 'Who is your short-roll facilitator?', teamKey, undefined, 'playerIdx',
+      (p, i) => `${needLine(teamKey, i, 'paint')} — +1 AST each hit this period`);
     if (pick === null) return null;
     opts.playerIdx = pick;
   }
@@ -778,7 +880,12 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
   if (cardId === 'pick_and_roll_maestro') {
     const fast = filterStarters(myT.starters, p => p && (p.speed || 0) >= 14);
     if (fast.length === 0) { toast('Nobody on the floor is Speed 14+.'); return null; }
-    const who = await pickFiltered(fast, 'Who runs the pick-and-roll? (Speed 14+)', teamKey);
+    const who = await pickFiltered(fast, 'Who runs the pick-and-roll? (Speed 14+)', teamKey, undefined, null, (p, i) => {
+      const hits = myT.starters.map((q, j) => (q && j !== i ? defenders[offMatchups[j]] : null))
+        .filter(d => d && (p.speed || 0) - (d.speed || 0) >= 5)
+        .map(d => `${d.name} (${(p.speed || 0) - (d.speed || 0)} slower)`);
+      return hits.length ? `Speed ${p.speed}: a paint check if swapped onto ${hits.join(' or ')}` : `Speed ${p.speed}: no swap puts a defender 5+ slower on them`;
+    });
     if (who === null) return null;
     opts.playerIdx = who;
     // The mismatch it BUYS, shown before the choice: this is the whole card.
@@ -852,7 +959,8 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
       toast('Stagger Action needs a Speed 13+ player and a different player with a 3PT Bonus.', { tone: 'error' });
       return null;
     }
-    const idx1 = await pickFiltered(speedEligible, '⚡ Stagger Action — Pick player with Speed 13+');
+    const staggerLine = (p, i) => { const d = defOf(teamKey, i); return d ? `Speed ${p.speed} → ${(p.speed || 0) + 2} vs ${d.name} · roll ${sgn(rollOf(teamKey, i))} → ${sgn(rollWith(teamKey, i, { s: 2 }))}` : ''; };
+    const idx1 = await pickFiltered(speedEligible, '⚡ Stagger Action — Pick player with Speed 13+', teamKey, undefined, null, staggerLine);
     if (idx1 === null) return null;
     opts.playerIdx = idx1;
 
@@ -862,7 +970,9 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
       toast('Nobody else on the floor has a 3PT Bonus for Stagger Action.', { tone: 'error' });
       return null;
     }
-    const idx2 = await pickFiltered(threeEligible, `⚡ Pick player with 3PT bonus`, teamKey, undefined, 'player2Idx');
+    // The preview shows both rolls it moves; say so when it moves nothing.
+    const idx2 = await pickFiltered(threeEligible, `⚡ Pick player with 3PT bonus`, teamKey, undefined, 'player2Idx',
+      (p, i) => (rollWith(teamKey, i, { s: 2 }) === rollOf(teamKey, i) ? `+2 Speed leaves the roll at ${sgn(rollOf(teamKey, i))} (the Power edge is bigger)` : ''));
     if (idx2 === null) return null;
     opts.player2Idx = idx2;
   }
@@ -1004,7 +1114,8 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
     const owed = game.tempEff?.[teamKey] || {};
     const eligible = filterStarters(myT.starters, (p, i) => rolled[i] != null && typeof owed['extra_roll_' + i] !== 'number');
     if (!eligible.length) { toast('Wait until one of your players has rolled', { tone: 'error' }); return null; }
-    const pick = await openModal({ teamKey, cardId, players: eligible.map(e => e.p), label: 'Who takes a second scoring roll at −2?', preview: previewWith(i => ({ playerIdx: eligible[i].origIdx })) });
+    const pick = await openModal({ teamKey, cardId, players: eligible.map(e => e.p), label: 'Who takes a second scoring roll at −2?', preview: previewWith(i => ({ playerIdx: eligible[i].origIdx })),
+      extraInfo: eligible.map(({ origIdx }) => { const d = defOf(teamKey, origIdx); const r = rollOf(teamKey, origIdx); return d && r != null ? `Second roll vs ${d.name}: ${sgn(r - 2)} (roll ${sgn(r)}, −2)` : ''; }) });
     if (pick === null) return null;
     opts.playerIdx = eligible[pick].origIdx;
   }
@@ -1050,9 +1161,10 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
   // to play it on"). The engine now refuses it without both choices.
   if (cardId === 'ato_masterpiece') {
     const sgn = n => (n > 0 ? `+${n}` : `${n}`);
-    // Each row already prints the line and both boosts, so no extra info.
+    // The check type is asked after the pick, so the row shows both.
     const shooters = filterStarters(myT.starters, p => Boolean(p));
-    const who = await pickFiltered(shooters, 'ATO Masterpiece — who takes the shot out of the huddle? (+2)', teamKey);
+    const who = await pickFiltered(shooters, 'ATO Masterpiece — who takes the shot out of the huddle? (+2)', teamKey, undefined, null,
+      (p, i) => `${needLine(teamKey, i, '3pt', 2)} · ${needLine(teamKey, i, 'paint', 2)}`);
     if (who === null) return null;
     opts.playerIdx = who;
     const p = myT.starters[who];

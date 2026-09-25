@@ -129,7 +129,7 @@ describe("the check a Coach's Challenge reaches", () => {
         if (/function shotCheck|const _shotCheck|lsc\.type/.test(code)) return; // definitions; the re-roll itself
         // The wrapper's body — a few lines since it learned to write a
         // preview's check down instead of rolling it (cardPreview.js).
-        if (lines.slice(Math.max(0, i - 8), i).some(l => /const _shotCheck/.test(l))) return;
+        if (lines.slice(Math.max(0, i - 12), i).some(l => /const _shotCheck/.test(l))) return;
         // Up to the next roll (or 60 lines): applyShotCheck notes its check at the end.
         let end = i + 1;
         while (end < lines.length && end < i + 60 && !/(?:_shotCheck|\bshotCheck)\(/.test(lines[end].replace(/\/\/.*$/, ''))) end += 1;

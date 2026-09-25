@@ -230,7 +230,9 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
     // a miss stands in, on the copy the preview throws away.
     if (Array.isArray(g.previewChecks)) {
       g.previewChecks.push({ teamKey, playerIdx: idx, type, bonus: (extra || 0) + _assistShotBonus });
-      return { die: 0, bonus: 0, parts: [], total: 0, hit: false, pts: 0, type };
+      // A neutral face: a 1-2 or 19-20 would hand the copy a cold or hot
+      // marker and the preview would report a roll change the card never makes.
+      return { die: 10, bonus: 0, parts: [], total: 10, hit: false, pts: 0, type };
     }
     return shotCheck(p, type, (extra || 0) + _assistShotBonus - matchupContest(g, teamKey, idx, type), pStats, getFatigue(g, teamKey, idx));
   };

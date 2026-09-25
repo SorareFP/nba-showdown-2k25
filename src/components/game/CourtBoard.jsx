@@ -859,20 +859,9 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
 
   // ── High Screen & Roll ─────────────────────────────────────────────────
   if (cardId === 'high_screen_roll') {
-    const fmtAdv = (a) => {
-      const rb = a.rollBonus > 0 ? `+${a.rollBonus}` : a.hasPenalty ? `${a.rollBonus}` : '0';
-      const sC = a.speedAdv > 0 ? '#4ADE80' : a.speedAdv < 0 ? '#F87171' : '#94A3B8';
-      const pC = a.powerAdv > 0 ? '#4ADE80' : a.powerAdv < 0 ? '#F87171' : '#94A3B8';
-      return `Spd ${a.speedAdv > 0 ? '+' : ''}${a.speedAdv} · Pwr ${a.powerAdv > 0 ? '+' : ''}${a.powerAdv} → Roll ${rb}`;
-    };
-    const matchupInfo = myT.starters.map((p, i) => {
-      const defIdx = offMatchups[i];
-      const def = defenders[defIdx];
-      if (!def) return '';
-      const a = calcAdv(p, def, game.tempEff?.[teamKey] || {}, i);
-      return `vs ${def.name}  |  ${fmtAdv(a)}`;
-    });
-    const s1 = await openModal({ teamKey, cardId, players: myT.starters, label: '⚡ High Screen & Roll — Pick player 1 to swap', extraInfo: matchupInfo });
+    // No info line on the first pick: every picker row prints the current
+    // matchup and roll (pickerMatchup, 2026-09-25), which this one repeated.
+    const s1 = await openModal({ teamKey, cardId, players: myT.starters, label: '⚡ High Screen & Roll — Pick player 1 to swap' });
     if (s1 === null) return null;
     const swapInfo = myT.starters.map((p, i) => {
       if (i === s1) return '⬆ (selected above)';
@@ -1167,6 +1156,31 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
   return opts;
 }
 
+/**
+ * THE MATCHUP ON A PICKER ROW (the user, 2026-09-25: "When playing a card
+ * that makes you choose a player for something, it should probably show who
+ * their current matchup is, and what their roll boost is currently"). For a
+ * starter of `teamKey`: who guards him, the roll bonus the court tile shows
+ * (matchupAdv), and whom he guards when a switch has split the pair. Null
+ * for anyone not on the floor (a bench player, a card in a deck search), and
+ * `pending` while the placement snake has not yet put his man on the floor —
+ * matchupAdv would fall back to the first starter and name the wrong one.
+ */
+export function pickerMatchup(game, teamKey, playerId) {
+  const me = getTeam(game, teamKey);
+  const idx = me?.starters?.findIndex(s => s?.id === playerId) ?? -1;
+  if (idx < 0) return null;
+  const oppKey = teamKey === 'A' ? 'B' : 'A';
+  const opp = getOpp(game, teamKey);
+  const defIdx = (game.offMatchups?.[teamKey] || [])[idx] ?? idx;
+  const def = opp?.starters?.[defIdx];
+  if (!def) return { pending: true };
+  const adv = matchupAdv(game, teamKey, idx);
+  const guardsIdx = (game.offMatchups?.[oppKey] || []).findIndex(d => d === idx);
+  const guards = guardsIdx >= 0 ? opp.starters[guardsIdx] : null;
+  return { vs: def, adv, guards: guards && guards.id !== def.id ? guards : null };
+}
+
 function SelectModal({ modal, game, onClose }) {
   const { teamKey, players, label, extraInfo } = modal;
   const col = teamKey === 'A' ? 'var(--orange)' : 'var(--blue)';
@@ -1186,10 +1200,28 @@ function SelectModal({ modal, game, onClose }) {
               p.defBoost     ? `Def${p.defBoost>0?'+':''}${p.defBoost}` : '',
             ].filter(Boolean).join(' · ');
             const extra = extraInfo?.[i];
+            const mu = pickerMatchup(game, teamKey, p.id);
+            const adv = mu?.adv;
+            const rollCol = adv ? (adv.rollBonus > 0 ? '#4ADE80' : adv.hasPenalty ? '#F87171' : '#94A3B8') : '#94A3B8';
             return (
               <button key={p.id} className={styles.modalBtn} style={{ borderLeftColor: col }} onClick={() => onClose(i)}>
                 <div className={styles.mName}>{p.name}{markerCount(ps) ? ` ${markerEmoji(ps)}` : ''}{fat<0&&<span className={styles.fatTag}> FAT{fat}</span>}</div>
                 <div className={styles.mSub}>S{p.speed} · P{p.power} · Line {p.shotLine}{boosts&&` · ${boosts}`}{min>0&&` · ${min}min`}</div>
+                {mu && (
+                  <div className={styles.mMatchup}>
+                    {mu.pending ? 'No matchup yet' : <>
+                      {adv?.ghosted ? `screened off ${mu.vs.name}` : `vs ${mu.vs.name}`}
+                      {adv && !adv.ghosted && <>
+                        {' · '}
+                        <span style={{ color: adv.speedAdv > 0 ? '#4ADE80' : adv.rawSpeedDiff < 0 ? '#F87171' : '#94A3B8' }}>S{adv.rawSpeedDiff > 0 ? '+' : ''}{adv.rawSpeedDiff}</span>
+                        {' '}
+                        <span style={{ color: adv.powerAdv > 0 ? '#4ADE80' : adv.rawPowerDiff < 0 ? '#F87171' : '#94A3B8' }}>P{adv.rawPowerDiff > 0 ? '+' : ''}{adv.rawPowerDiff}</span>
+                      </>}
+                      {adv && <> · <span style={{ color: rollCol }}>{`Roll ${adv.rollBonus > 0 ? '+' : ''}${adv.rollBonus}${adv.hasPenalty ? ' ⚠' : ''}`}</span></>}
+                      {mu.guards && <> · guards {mu.guards.name}</>}
+                    </>}
+                  </div>
+                )}
                 {extra && <div className={styles.mExtra}>{extra}</div>}
               </button>
             );

@@ -12509,8 +12509,17 @@
         0.5912
       ],
       "badge": null
+    },
+    "throwbacks/Derrick_White_2024": {
+      "name": [
+        0.0252,
+        0.1387,
+        0.1253,
+        0.6844
+      ],
+      "badge": null
     }
   },
-  "generatedAt": "2026-09-25T13:09:10.167Z",
+  "generatedAt": "2026-09-25T13:53:56.425Z",
   "note": "Per-face boxes of the rotated name and the Super Season pill, as fractions of the 843x1181 face, measured by scripts/studio/export.js. Read by src/cards/faceRegions.js for the holographic sheen."
 }

@@ -1146,6 +1146,68 @@
    "requested": true,
    "requestId": "f1vXvMxgnd6v8tQkodm3",
    "builtAt": "2026-09-22T11:52:38.975Z"
+  },
+  {
+   "id": "Derrick_White_2024",
+   "name": "Derrick White",
+   "team": "BOS",
+   "pos": "SG",
+   "speed": 16,
+   "power": 10,
+   "shotLine": 15,
+   "paintBoost": 1,
+   "threePtBoost": 3,
+   "defBoost": 1,
+   "salary": 1060,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 7,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 14,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2024,
+   "seasonLabel": "2023-24",
+   "age": 29,
+   "games": 73,
+   "mpg": 32.6,
+   "bbrefId": "whitede01",
+   "traded": false,
+   "metrics": {
+    "bpm": 3.8,
+    "vorp": 3.5,
+    "ws": 8.5,
+    "ws48": 0.171,
+    "per": 16.9
+   },
+   "provisional": false,
+   "set": "throwbacks",
+   "requested": true,
+   "requestId": "Zj6cBaY2C4JN9TBaZ3ZB",
+   "builtAt": "2026-09-25T13:44:20.540Z"
   }
  ]
 }

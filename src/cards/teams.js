@@ -246,8 +246,12 @@ export const HISTORICAL_TEAMS = {
   // card-art/logo-originals/SAS90.png, white ground stripped. SAMPLED FROM THE
   // FILE: #010101 black (the SPURS lettering and the uniforms) and #EF426F,
   // the pink that is the bulk of the mark; teal #01B2A9 and orange #FF8201
-  // are the other two stripes.
-  SAS90: { name: 'Spurs',     city: 'San Antonio', abbr: 'SAS', primary: '#010101', secondary: '#EF426F', logo: '/logos/SAS90.png', era: '1990-2002' },
+  // are the other two stripes. The WHITE ACCENT is the user's (2026-09-25):
+  // tuned in the Studio on the Rookie set, then "make my SAS90 colours the
+  // default everywhere". pickAccent would take the pink; an accent on the row
+  // is the one place every set inherits from, where a team-overrides.json
+  // entry reaches only its own set.
+  SAS90: { name: 'Spurs',     city: 'San Antonio', abbr: 'SAS', primary: '#010101', secondary: '#EF426F', accent: '#FFFFFF', logo: '/logos/SAS90.png', era: '1990-2002' },
   PHI97: { name: '76ers',    city: 'Philadelphia', abbr: 'PHI', primary: '#000000', secondary: '#C8102E', logo: '/logos/PHI97.png', era: '1998-2009', unverifiedColors: true },
   ORL89: { name: 'Magic',    city: 'Orlando',     abbr: 'ORL', primary: '#0077C0', secondary: '#000000', logo: '/logos/ORL89.png', era: '1989-2000', unverifiedColors: true },
   ORL01: { name: 'Magic',    city: 'Orlando',     abbr: 'ORL', primary: '#0077C0', secondary: '#C4CED4', logo: '/logos/ORL01.png', era: '2001-2010', unverifiedColors: true },

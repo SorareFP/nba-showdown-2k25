@@ -12,13 +12,14 @@ export default function GameLog({ log, docked = false, defaultOpen = false }) {
   // useIsRoomy), open from the start and still foldable.
   const [openState, setOpen] = useState(defaultOpen);
   const open = docked || openState;
+  // NEWEST FIRST (the user, 2026-09-25: "Can we make the most current part of
+  // the game log appear on top and push old stuff down?"). A new line lands at
+  // the top, so the list is brought back to the top when one arrives (within
+  // the log only, never the page). The Copy button keeps the game's own order,
+  // oldest first, since a bug report reads forwards.
   const scrollRef = useRef(null);
-  const bottomRef = useRef(null);
   useEffect(() => {
-    // Scroll only within the log container, not the whole page
-    if (open && scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
+    if (open && scrollRef.current) scrollRef.current.scrollTop = 0;
   }, [log.length, open]);
 
   const last = log[log.length - 1];
@@ -62,12 +63,11 @@ export default function GameLog({ log, docked = false, defaultOpen = false }) {
       </div>
       {open && (
         <div className={styles.scroll} ref={scrollRef}>
-          {log.map((entry, i) => (
+          {log.map((entry, i) => ({ entry, i })).reverse().map(({ entry, i }) => (
             <div key={i} className={`${styles.entry} ${entry.team ? styles['team'+entry.team] : styles.sys}`}>
               {entry.msg}
             </div>
           ))}
-          <div ref={bottomRef} />
         </div>
       )}
     </div>

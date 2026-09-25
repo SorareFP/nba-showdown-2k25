@@ -20,6 +20,11 @@ describe('GameLog docked', () => {
     expect(html).toContain('2 entries');
   });
 
+  it('lists the newest line first (the user, 2026-09-25)', () => {
+    const html = renderToStaticMarkup(<GameLog log={log} defaultOpen />);
+    expect(html.indexOf('Rebound Track lead')).toBeLessThan(html.indexOf('Lineups locked'));
+  });
+
   it('folds to the one-line strip when not docked', () => {
     const html = renderToStaticMarkup(<GameLog log={log} />);
     expect(html).toContain('▼');

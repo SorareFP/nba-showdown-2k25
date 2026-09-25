@@ -5187,7 +5187,7 @@
   {
    "id": "David_Robinson",
    "name": "David Robinson",
-   "team": "SAS",
+   "team": "SAS90",
    "pos": "C",
    "speed": 10,
    "power": 19,
@@ -6213,7 +6213,7 @@
   {
    "id": "Dillon_Brooks",
    "name": "Dillon Brooks",
-   "team": "MEM",
+   "team": "MEM05",
    "pos": "SF",
    "speed": 8,
    "power": 7,
@@ -6415,7 +6415,7 @@
   {
    "id": "Dominique_Wilkins",
    "name": "Dominique Wilkins",
-   "team": "ATL",
+   "team": "ATL73",
    "pos": "SF",
    "speed": 10,
    "power": 9,
@@ -13795,7 +13795,7 @@
   {
    "id": "Marc_Gasol",
    "name": "Marc Gasol",
-   "team": "MEM",
+   "team": "MEM05",
    "pos": "C",
    "speed": 7,
    "power": 12,
@@ -14575,7 +14575,7 @@
   {
    "id": "Mike_Conley",
    "name": "Mike Conley",
-   "team": "MEM",
+   "team": "MEM05",
    "pos": "PG",
    "speed": 9,
    "power": 5,
@@ -18085,7 +18085,7 @@
   {
    "id": "Tim_Duncan",
    "name": "Tim Duncan",
-   "team": "SAS",
+   "team": "SAS90",
    "pos": "PF",
    "speed": 11,
    "power": 15,
@@ -18280,7 +18280,7 @@
   {
    "id": "Tony_Parker",
    "name": "Tony Parker",
-   "team": "SAS",
+   "team": "SAS90",
    "pos": "PG",
    "speed": 11,
    "power": 6,

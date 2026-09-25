@@ -696,7 +696,7 @@
   {
    "id": "Allen_Iverson_MEM",
    "name": "Allen Iverson",
-   "team": "MEM",
+   "team": "MEM05",
    "pos": "PG",
    "speed": 9,
    "power": 5,
@@ -2195,7 +2195,7 @@
   {
    "id": "Dominique_Wilkins_SAS",
    "name": "Dominique Wilkins",
-   "team": "SAS",
+   "team": "SAS90",
    "pos": "SF",
    "speed": 7,
    "power": 7,

@@ -181,6 +181,15 @@ export const HISTORICAL_TEAMS = {
   TOR96: { name: 'Raptors',  city: 'Toronto',     abbr: 'TOR', primary: '#753BBD', secondary: '#CE1141', logo: '/logos/TOR96.png', era: '1996-2006', unverifiedColors: true },
   TOR07: { name: 'Raptors',  city: 'Toronto',     abbr: 'TOR', primary: '#CE1141', secondary: '#000000', logo: '/logos/TOR07.png', era: '2007-2008', unverifiedColors: true },
   TOR09: { name: 'Raptors',  city: 'Toronto',     abbr: 'TOR', primary: '#CE1141', secondary: '#A1A1A4', logo: '/logos/TOR09.png', era: '2009-2015', unverifiedColors: true },
+  // THE PAC-MAN HAWK, 1972-73 to 1994-95 (the user, 2026-09-25, for Dominique
+  // Wilkins' Rookie and Super Season cards; saved as ATL73). SAMPLED FROM THE
+  // FILE: the mark is one red, #CA0628, on white. public/logos/ATL73.png is
+  // HAND-FINISHED, not `installLogos --strip`: the ring is open at the mouth,
+  // so the edge strip took the white that draws the hawk ("you removed the
+  // white from inside the Hawks' actual Hawk logo"). The white inside the
+  // ring's circle is kept, and knocked out only outside it. Don't re-run
+  // installLogos --force over it.
+  ATL73: { name: 'Hawks',    city: 'Atlanta',     abbr: 'ATL', primary: '#CA0628', secondary: '#FFFFFF', logo: '/logos/ATL73.png', era: '1973-1995' },
   ATL96: { name: 'Hawks',    city: 'Atlanta',     abbr: 'ATL', primary: '#E03A3E', secondary: '#FDB927', logo: '/logos/ATL96.png', era: '1996-2007', unverifiedColors: true },
   ATL08: { name: 'Hawks',    city: 'Atlanta',     abbr: 'ATL', primary: '#002B5C', secondary: '#E03A3E', logo: '/logos/ATL08.png', era: '2008-2015', unverifiedColors: true },
   DAL80: { name: 'Mavericks', city: 'Dallas',     abbr: 'DAL', primary: '#00843D', secondary: '#0064B1', logo: '/logos/DAL80.png', era: '1981-2001', unverifiedColors: true },
@@ -226,6 +235,19 @@ export const HISTORICAL_TEAMS = {
   // MIN.png, the current colourway, begins with the 2025-26 base set.
   MIN18: { name: 'Timberwolves', city: 'Minnesota', abbr: 'MIN', primary: '#0C2340', secondary: '#78BE20', logo: '/logos/MIN18.png', era: '2017-2025' },
   MEM01: { name: 'Grizzlies', city: 'Memphis',    abbr: 'MEM', primary: '#00285E', secondary: '#6CACE4', logo: '/logos/MEM01.png', era: '2001-2004', unverifiedColors: true },
+  // THE BEAR WITH THE WORDMARK, 2004-05 to 2017-18 (the user, 2026-09-25,
+  // for Allen Iverson's Grizzlies Dissonance card). Installed from
+  // card-art/logo-originals/MEM05.png, white ground stripped. SAMPLED FROM THE
+  // FILE: #0C2340 navy and #7D9BC1 Beale Street blue, the colours MEM.png
+  // still wears; the 2018-19 rebrand is where MEM.png begins.
+  MEM05: { name: 'Grizzlies', city: 'Memphis',    abbr: 'MEM', primary: '#0C2340', secondary: '#7D9BC1', logo: '/logos/MEM05.png', era: '2005-2018' },
+  // THE FIESTA SPURS, 1989-90 to 2001-02 (the user, 2026-09-25, for Dominique
+  // Wilkins' Spurs Dissonance card). Installed from
+  // card-art/logo-originals/SAS90.png, white ground stripped. SAMPLED FROM THE
+  // FILE: #010101 black (the SPURS lettering and the uniforms) and #EF426F,
+  // the pink that is the bulk of the mark; teal #01B2A9 and orange #FF8201
+  // are the other two stripes.
+  SAS90: { name: 'Spurs',     city: 'San Antonio', abbr: 'SAS', primary: '#010101', secondary: '#EF426F', logo: '/logos/SAS90.png', era: '1990-2002' },
   PHI97: { name: '76ers',    city: 'Philadelphia', abbr: 'PHI', primary: '#000000', secondary: '#C8102E', logo: '/logos/PHI97.png', era: '1998-2009', unverifiedColors: true },
   ORL89: { name: 'Magic',    city: 'Orlando',     abbr: 'ORL', primary: '#0077C0', secondary: '#000000', logo: '/logos/ORL89.png', era: '1989-2000', unverifiedColors: true },
   ORL01: { name: 'Magic',    city: 'Orlando',     abbr: 'ORL', primary: '#0077C0', secondary: '#C4CED4', logo: '/logos/ORL01.png', era: '2001-2010', unverifiedColors: true },
@@ -304,6 +326,7 @@ export const FRANCHISE_ERAS = {
     { from: 2009, to: 2015, key: 'TOR09' },
   ],
   ATL: [
+    { from: 1973, to: 1995, key: 'ATL73' },
     { from: 1996, to: 2007, key: 'ATL96' },
     { from: 2008, to: 2015, key: 'ATL08' },
   ],
@@ -324,7 +347,8 @@ export const FRANCHISE_ERAS = {
     // 2017-18 to 2024-25; the base set's 2025-26 is the first season of MIN.png.
     { from: 2018, to: 2025, key: 'MIN18' },
   ],
-  MEM: [{ from: 2001, to: 2004, key: 'MEM01' }],
+  MEM: [{ from: 2001, to: 2004, key: 'MEM01' }, { from: 2005, to: 2018, key: 'MEM05' }],
+  SAS: [{ from: 1990, to: 2002, key: 'SAS90' }],
   PHI: [
     { from: 1977, to: 1997, key: 'PHI77' },
     { from: 1998, to: 2009, key: 'PHI97' },

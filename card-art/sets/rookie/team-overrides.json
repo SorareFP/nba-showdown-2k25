@@ -3,6 +3,10 @@
     "secondary": "#F94300",
     "accent": "#000000"
   },
+  "SAS90": {
+    "secondary": "#EF426F",
+    "accent": "#FFFFFF"
+  },
   "UTA": {
     "primary": "#010101",
     "secondary": "#330072"

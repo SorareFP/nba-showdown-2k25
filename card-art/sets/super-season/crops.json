@@ -998,5 +998,20 @@
     "x": 0,
     "y": 1.81,
     "zoom": 1
+  },
+  "Tony_Parker": {
+    "x": 14.69,
+    "y": 5.61,
+    "zoom": 1.15
+  },
+  "Deron_Williams": {
+    "x": 0,
+    "y": 6.51,
+    "zoom": 1
+  },
+  "Dominique_Wilkins": {
+    "x": 0,
+    "y": -2.32,
+    "zoom": 1
   }
 }

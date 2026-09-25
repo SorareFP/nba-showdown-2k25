@@ -6158,7 +6158,7 @@
   {
    "id": "Dominique_Wilkins",
    "name": "Dominique Wilkins",
-   "team": "ATL",
+   "team": "ATL73",
    "pos": "SF",
    "speed": 14,
    "power": 13,
@@ -12114,7 +12114,7 @@
   {
    "id": "Mike_Conley",
    "name": "Mike Conley",
-   "team": "MEM",
+   "team": "MEM05",
    "pos": "PG",
    "speed": 18,
    "power": 10,
@@ -13033,7 +13033,7 @@
   {
    "id": "Pau_Gasol",
    "name": "Pau Gasol",
-   "team": "MEM",
+   "team": "MEM05",
    "pos": "C",
    "speed": 8,
    "power": 15,

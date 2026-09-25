@@ -508,7 +508,7 @@
   {
    "id": "David_Robinson_1994",
    "name": "David Robinson",
-   "team": "SAS",
+   "team": "SAS90",
    "pos": "C",
    "speed": 11,
    "power": 19,
@@ -1013,7 +1013,7 @@
   {
    "id": "Marc_Gasol",
    "name": "Marc Gasol",
-   "team": "MEM",
+   "team": "MEM05",
    "pos": "C",
    "speed": 8,
    "power": 16,

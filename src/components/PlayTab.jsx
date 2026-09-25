@@ -782,19 +782,17 @@ export default function PlayTab({ teamA: rosterA, teamB: rosterB, preset = null,
         </button>
       </div>
       {wide ? (
-        // A BIG MONITOR (useIsWide): the scoreboard and the court in the main
-        // column, the log and the analytics docked open in a rail beside them.
+        // A BIG MONITOR (useIsWide): one column at the full width, a size up.
+        // The analytics sat in a 440px rail beside the court until the user
+        // (2026-09-25): "Analytics should be under the scoreboard, collapsable,
+        // the game board should take the width of the screen."
         <div className={styles.wideGame}>
-          <div className={styles.wideMain}>
-            <Scoreboard game={game} rollGate={gameOpponent === 'ai' ? rollGate(game) : null} />
-            {board}
-            {/* UNDER THE COURT, OPEN (the user, 2026-09-24: "Game log did not
-                move to under the cards"): the rail beside keeps the analytics. */}
-            <GameLog log={game.log} defaultOpen />
-          </div>
-          <aside className={styles.wideRail} aria-label="Analytics">
-            <div className={styles.railAnalytics}><AnalyticsPanel analytics={game.analytics} /></div>
-          </aside>
+          <Scoreboard game={game} rollGate={gameOpponent === 'ai' ? rollGate(game) : null} />
+          <AnalyticsPanel analytics={game.analytics} />
+          {board}
+          {/* UNDER THE COURT, OPEN (the user, 2026-09-24: "Game log did not
+              move to under the cards"). */}
+          <GameLog log={game.log} defaultOpen />
         </div>
       ) : (
         <>

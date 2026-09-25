@@ -159,8 +159,8 @@
 .mName      { font-size:14px; font-weight:600; color:#F1F5F9; margin-bottom:3px; display:flex; align-items:center; gap:4px; flex-wrap:wrap; }
 .mSub       { font-size:11px; color:#94A3B8; }
 .mExtra     { font-size:10px; color:#60A5FA; margin-top:3px; line-height:1.4; }
-/* Who guards him and his roll bonus, as the court tile shows it (2026-09-25). */
-.mMatchup   { font-size:11px; color:#CBD5E1; margin-top:2px; }
+/* What playing the card on this choice would do: its check, points, rolls moved (2026-09-25). */
+.mPreview   { font-size:11px; color:#CBD5E1; margin-top:2px; line-height:1.35; }
 .modalCancel { background:rgba(255,255,255,0.07); color:#94A3B8; padding:8px 18px; border-radius:6px; font-size:13px; width:100%; }
 .modalCancel:hover { background:rgba(255,255,255,0.12); }
 

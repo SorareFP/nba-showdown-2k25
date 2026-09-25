@@ -192,8 +192,15 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
   // matchup contest: every card-initiated 3PT/paint check here shoots with the
   // card's chosen player (idx), so their assigned defender's Defensive Bonus
   // contests it in one place.
-  const _shotCheck = (p, type, extra, pStats) =>
-    shotCheck(p, type, (extra || 0) + _assistShotBonus - matchupContest(g, teamKey, idx, type), pStats, getFatigue(g, teamKey, idx));
+  const _shotCheck = (p, type, extra, pStats) => {
+    // A preview writes the check down and rolls nothing (see announceCheck):
+    // a miss stands in, on the copy the preview throws away.
+    if (Array.isArray(g.previewChecks)) {
+      g.previewChecks.push({ teamKey, playerIdx: idx, type, bonus: (extra || 0) + _assistShotBonus });
+      return { die: 0, bonus: 0, parts: [], total: 0, hit: false, pts: 0, type };
+    }
+    return shotCheck(p, type, (extra || 0) + _assistShotBonus - matchupContest(g, teamKey, idx, type), pStats, getFatigue(g, teamKey, idx));
+  };
 
   const player    = myT.starters[idx];
   const ps        = getPS(g, teamKey, player?.id) || {};
@@ -1968,6 +1975,14 @@ function finishChain(g, psc, total) {
  * Ball's two paint checks be interrupted after the first one.
  */
 export function announceCheck(g, check, carried = 0) {
+  // A PREVIEW (cardPreview.js) plays the card on a copy to show a picker what
+  // it would do: the checks are written down, not rolled — every one in the
+  // chain, and the copy stops here as if the check were awaiting an answer.
+  if (Array.isArray(g.previewChecks)) {
+    g.previewChecks.push({ ...check, then: [] });
+    for (const next of check.then ?? []) g.previewChecks.push({ ...check, ...next, then: [] });
+    return true;
+  }
   if (canAnswerCheck(g, check)) {
     g.pendingShotCheck = { ...check, carried };
     return true; // paused: the caller stops here and the UI resolves

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { calcAdv, matchupAdv, getTeam, getOpp, getPS, getFatigue, SPEND_COSTS, reboundCheckOpen, reboundCheckBonus, reboundTrackLead, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, lastReturnedCard, undoReturnCard, periodLabel, extraRollPending, checkNeed, fatigueForMinutes, crunchSearchOptions, rollTurnLine } from '../../game/engine.js';
 import { canPlayCard, burstTargets, myHouseTargets, fwdTargets, preRollTargets, helpTargets, foulTroubleTargets, clampTargets, kickOutTargets } from '../../game/canPlay.js';
 import { resolveGoUnder } from '../../game/execCard.js';
+import { choicePreview } from '../../game/cardPreview.js';
 import { passTurn, MAX_STRAIGHT_MINUTES, restRuleLifted, pickablePool } from '../../game/engine.js';
 import { salaryOrder } from '../../game/teamRules.js';
 import { getStrat } from '../../game/strats.js';
@@ -248,14 +249,23 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
   const offMatchups = game.offMatchups[teamKey] || [];
   const defenders = oppT.starters;
 
-  // Helper: pick from filtered eligible list, map back to original starter index
-  async function pickFiltered(eligible, label, tKey = teamKey, infoFn) {
+  // WHAT EACH CHOICE WOULD DO (choicePreview, 2026-09-25): the picker plays
+  // the card on a copy with `optsFor(row)` merged over the options chosen so
+  // far, and shows only what that changes. `optsFor` names the field the pick
+  // becomes — the same one the caller sets after the pick.
+  const previewWith = optsFor => ({ teamKey, base: { ...opts }, optsFor });
+
+  // Helper: pick from filtered eligible list, map back to original starter index.
+  // `field`: the option the pick becomes (playerIdx unless the caller says),
+  // for the preview; null for a pick whose preview needs more than one field.
+  async function pickFiltered(eligible, label, tKey = teamKey, infoFn, field = 'playerIdx') {
     if (eligible.length === 0) return null;
     const display = eligible.map(({ p, origIdx }, i) => {
       const info = infoFn ? infoFn(p, origIdx) : '';
       return info ? { ...p, name: `${p.name} ${info}` } : p;
     });
-    const pick = await openModal({ teamKey: tKey, cardId, players: display, label });
+    const preview = field ? previewWith(i => ({ [field]: eligible[i].origIdx })) : null;
+    const pick = await openModal({ teamKey: tKey, cardId, players: display, label, preview });
     if (pick === null) return null;
     return eligible[pick].origIdx;
   }
@@ -302,7 +312,7 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
   ];
 
   if (unfilteredPlayerCards.includes(cardId)) {
-    const idx = await openModal({ teamKey, cardId, players: myT.starters, label: 'Select target player' });
+    const idx = await openModal({ teamKey, cardId, players: myT.starters, label: 'Select target player', preview: previewWith(i => ({ playerIdx: i })) });
     if (idx === null) return null;
     opts.playerIdx = idx;
   }
@@ -644,7 +654,7 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
     if (targets.length === 0) { toast('No opponent yet to roll is beating their defender by +4.'); return null; }
     const t = targets.length === 1 ? 0 : await pickFiltered(
       targets.map(x => ({ p: x.off, origIdx: x.offSlot })),
-      'Who is beating their defender?', teamKey
+      'Who is beating their defender?', teamKey, undefined, 'targetIdx'
     );
     if (t === null) return null;
     const chosen = targets.find(x => x.offSlot === t) ?? targets[0];
@@ -652,7 +662,7 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
     const helpers = myT.starters
       .map((p, i) => ({ p, origIdx: i }))
       .filter(({ origIdx }) => origIdx !== chosen.defIdx);
-    const h = await pickFiltered(helpers, 'Who rotates over? (their assignment gets +3)', teamKey);
+    const h = await pickFiltered(helpers, 'Who rotates over? (their assignment gets +3)', teamKey, undefined, 'helperIdx');
     if (h === null) return null;
     opts.helperIdx = h;
   }
@@ -660,7 +670,7 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
   // ── Stretch Five: the teammate who takes the paint check ───────────────
   if (cardId === 'stretch_five') {
     const mates = myT.starters.map((p, i) => ({ p, origIdx: i })).filter(({ origIdx }) => origIdx !== opts.playerIdx);
-    const m = await pickFiltered(mates, 'Select the teammate for the paint check at +2', teamKey);
+    const m = await pickFiltered(mates, 'Select the teammate for the paint check at +2', teamKey, undefined, 'player2Idx');
     if (m === null) return null;
     opts.player2Idx = m;
   }
@@ -685,7 +695,7 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
     });
     if (extra) {
       const shooters = myT.starters.map((p, i) => ({ p, origIdx: i }));
-      const s = await pickFiltered(shooters, 'Who takes the extra 3PT check?', teamKey);
+      const s = await pickFiltered(shooters, 'Who takes the extra 3PT check?', teamKey, undefined, 'extraShooterIdx');
       if (s !== null) opts.extraShooterIdx = s;
     }
   }
@@ -726,9 +736,9 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
     if (eligible.length === 0) { toast('None of its players are on the floor.'); return null; }
     if (ui.defenceIsHuman) {
       const label = n => `DEFENCE: who takes check ${n} of 2? (paint at +2)`;
-      const first = await pickFiltered(eligible, label(1), teamKey);
+      const first = await pickFiltered(eligible, label(1), teamKey, undefined, null);
       if (first === null) return null;
-      const second = await pickFiltered(eligible, label(2), teamKey);
+      const second = await pickFiltered(eligible, label(2), teamKey, undefined, null);
       if (second === null) return null;
       opts.allocation = [first, second];
     }
@@ -777,7 +787,8 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
         const d = defenders[offMatchups[origIdx]];
         const gap = (mine?.speed || 0) - (d?.speed || 0);
         return `→ draws ${d?.name}, ${gap >= 5 ? `${gap} slower — CHECK` : `only ${gap} slower, no check`}`;
-      }
+      },
+      'player2Idx'
     );
     if (mate === null) return null;
     opts.player2Idx = mate;
@@ -789,7 +800,7 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
     if (!scorer || scorer.teamKey !== teamKey) { toast('No paint score of yours to play off.'); return null; }
     const mates = filterStarters(myT.starters, (p, i) => p && i !== scorer.playerIdx);
     if (mates.length === 0) { toast('No teammate to kick out to.'); return null; }
-    const mate = await pickFiltered(mates, 'Kick it out to whom?', teamKey);
+    const mate = await pickFiltered(mates, 'Kick it out to whom?', teamKey, undefined, 'player2Idx');
     if (mate === null) return null;
     opts.player2Idx = mate;
   }
@@ -844,7 +855,7 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
       toast('Nobody else on the floor has a 3PT Bonus for Stagger Action.', { tone: 'error' });
       return null;
     }
-    const idx2 = await pickFiltered(threeEligible, `⚡ Pick player with 3PT bonus`);
+    const idx2 = await pickFiltered(threeEligible, `⚡ Pick player with 3PT bonus`, teamKey, undefined, 'player2Idx');
     if (idx2 === null) return null;
     opts.player2Idx = idx2;
   }
@@ -852,16 +863,24 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
     // Both players must have salary < $400 — filter the second pick
     const cheapPlayers = filterStarters(myT.starters, (p, i) => (p.salary || 0) < 400 && i !== opts.playerIdx);
     if (cheapPlayers.length === 0) { toast('No second player with salary under $400.'); return null; }
-    const idx2 = await pickFiltered(cheapPlayers, 'Select second player (salary < $400)');
+    const idx2 = await pickFiltered(cheapPlayers, 'Select second player (salary < $400)', teamKey, undefined, 'player2Idx');
     if (idx2 === null) return null;
     opts.player2Idx = idx2;
   }
 
   // ── High Screen & Roll ─────────────────────────────────────────────────
   if (cardId === 'high_screen_roll') {
-    // No info line on the first pick: every picker row prints the current
-    // matchup and roll (pickerMatchup, 2026-09-25), which this one repeated.
-    const s1 = await openModal({ teamKey, cardId, players: myT.starters, label: '⚡ High Screen & Roll — Pick player 1 to swap' });
+    // A SWAP CARD: the current matchup is exactly what the choice is about,
+    // so the first pick shows it (the generic picker line that briefly
+    // replaced this was withdrawn for being shown where it was not relevant).
+    const matchupInfo = myT.starters.map((p, i) => {
+      const def = defenders[offMatchups[i]];
+      if (!def) return '';
+      const a = calcAdv(p, def, game.tempEff?.[teamKey] || {}, i);
+      const rb = a.rollBonus > 0 ? `+${a.rollBonus}` : a.hasPenalty ? `${a.rollBonus}` : '0';
+      return `vs ${def.name}  |  Spd ${a.speedAdv > 0 ? '+' : ''}${a.speedAdv} · Pwr ${a.powerAdv > 0 ? '+' : ''}${a.powerAdv} → Roll ${rb}`;
+    });
+    const s1 = await openModal({ teamKey, cardId, players: myT.starters, label: '⚡ High Screen & Roll — Pick player 1 to swap', extraInfo: matchupInfo });
     if (s1 === null) return null;
     const swapInfo = myT.starters.map((p, i) => {
       if (i === s1) return '⬆ (selected above)';
@@ -901,6 +920,7 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
         const ftPts = (4 * Math.min(1, Math.max(0, (21 - ((p.shotLine || 99) - 10)) / 20))).toFixed(1);
         return `Shot line ${p.shotLine} — four FTs are worth about ${ftPts} pts`;
       }),
+      preview: previewWith(i => ({ targetIdx: targets[i].origIdx })),
     });
     if (pick === null) return null;
     opts.targetIdx = targets[pick].origIdx;
@@ -916,6 +936,7 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
       teamKey: oppKey, cardId, players: targets.map(t => t.def),
       label: 'Who picks up the foul? (sits out the whole next section)',
       extraInfo: targets.map(({ off, def, adv }) => `Beaten by ${adv} — your ${off.name} on ${def.name} (S${def.speed}/P${def.power})`),
+      preview: previewWith(i => ({ defIdx: targets[i].defIdx })),
     });
     if (pick === null) return null;
     opts.defIdx = targets[pick].defIdx;
@@ -936,6 +957,7 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
     );
     const pick = await openModal({
       teamKey: oppKey, cardId, players: display, label: 'Shut out which opponent?', extraInfo,
+      preview: previewWith(i => ({ offSlot: targets[i].offSlot })),
     });
     if (pick === null) return null;
     opts.offSlot = targets[pick].offSlot;
@@ -947,7 +969,7 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
       const ps = getPS(game, oppKey, p.id);
       return `${ps?.minutes || 0} min on the fatigue tracker`;
     });
-    const pick = await openModal({ teamKey: oppKey, cardId, players: oppT.starters, label: 'Hound which opponent? (−1 roll + 4 min fatigue)', extraInfo: minsInfo });
+    const pick = await openModal({ teamKey: oppKey, cardId, players: oppT.starters, label: 'Hound which opponent? (−1 roll + 4 min fatigue)', extraInfo: minsInfo, preview: previewWith(i => ({ targetIdx: i })) });
     if (pick === null) return null;
     opts.targetIdx = pick;
   }
@@ -963,7 +985,7 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
       return null;
     }
     const display = eligible.map(({ p }) => p);
-    const pick = await openModal({ teamKey: oppKey, cardId, players: display, label: 'Trap which opponent? (+6/+6 to their defender — but they get +3 on their next roll)' });
+    const pick = await openModal({ teamKey: oppKey, cardId, players: display, label: 'Trap which opponent? (+6/+6 to their defender — but they get +3 on their next roll)', preview: previewWith(i => ({ targetIdx: eligible[i].origIdx })) });
     if (pick === null) return null;
     opts.targetIdx = eligible[pick].origIdx;
   }
@@ -975,7 +997,7 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
     const owed = game.tempEff?.[teamKey] || {};
     const eligible = filterStarters(myT.starters, (p, i) => rolled[i] != null && typeof owed['extra_roll_' + i] !== 'number');
     if (!eligible.length) { toast('Wait until one of your players has rolled', { tone: 'error' }); return null; }
-    const pick = await openModal({ teamKey, cardId, players: eligible.map(e => e.p), label: 'Who takes a second scoring roll at −2?' });
+    const pick = await openModal({ teamKey, cardId, players: eligible.map(e => e.p), label: 'Who takes a second scoring roll at −2?', preview: previewWith(i => ({ playerIdx: eligible[i].origIdx })) });
     if (pick === null) return null;
     opts.playerIdx = eligible[pick].origIdx;
   }
@@ -993,6 +1015,7 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
       teamKey: oppKey, cardId, players: eligible.map(e => e.p),
       label: 'Ice which opponent? (strips every hot marker)',
       extraInfo: eligible.map(e => `${e.hot} hot marker${e.hot > 1 ? 's' : ''}`),
+      preview: previewWith(i => ({ targetIdx: eligible[i].origIdx })),
     });
     if (pick === null) return null;
     opts.targetIdx = eligible[pick].origIdx;
@@ -1008,6 +1031,7 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
       teamKey: oppKey, cardId, players: eligible.map(e => e.p),
       label: 'Clamp which opponent? (two dice, keep the lower)',
       extraInfo: eligible.map(e => `$${e.p.salary}`),
+      preview: previewWith(i => ({ targetIdx: eligible[i].origIdx })),
     });
     if (pick === null) return null;
     opts.targetIdx = eligible[pick].origIdx;
@@ -1051,7 +1075,7 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
         cancelLabel: 'Just one',
       });
       if (more) {
-        const second = await pickFiltered(rest, 'Fresh Legs — and who else? (−4 minutes)', teamKey, info);
+        const second = await pickFiltered(rest, 'Fresh Legs — and who else? (−4 minutes)', teamKey, info, 'player2Idx');
         if (second !== null) opts.player2Idx = second;
       }
     }
@@ -1067,6 +1091,7 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
       teamKey, cardId, players: eligible.map(e => e.p),
       label: 'Who takes the deep breath? (clears every cold marker)',
       extraInfo: eligible.map(e => `${e.cold} cold marker${e.cold > 1 ? 's' : ''}`),
+      preview: previewWith(i => ({ playerIdx: eligible[i].origIdx })),
     });
     if (pick === null) return null;
     opts.playerIdx = eligible[pick].origIdx;
@@ -1156,35 +1181,59 @@ export async function buildOpts(game, teamKey, cardId, base, openModal, ui = {})
   return opts;
 }
 
+const signed = n => (n > 0 ? `+${n}` : `${n}`);
+const CHECK_NAME = { '3pt': '3PT', paint: 'Paint', ft: 'Free throw' };
+
 /**
- * THE MATCHUP ON A PICKER ROW (the user, 2026-09-25: "When playing a card
- * that makes you choose a player for something, it should probably show who
- * their current matchup is, and what their roll boost is currently"). For a
- * starter of `teamKey`: who guards him, the roll bonus the court tile shows
- * (matchupAdv), and whom he guards when a switch has split the pair. Null
- * for anyone not on the floor (a bench player, a card in a deck search), and
- * `pending` while the placement snake has not yet put his man on the floor —
- * matchupAdv would fall back to the first starter and name the wrong one.
+ * THE RELEVANT LINES FOR ONE CHOICE (2026-09-25). The user asked for each
+ * player's matchup and roll on the picker, then, a card later: "it's
+ * confusing when I play a card for a 3pt shot check and it shows the matchup
+ * details as if they are relevant to the shot check... we need all the
+ * *relevant* details on the choice prompt." So a row says only what playing
+ * the card on that choice would do (choicePreview, cardPreview.js): the check
+ * it announces and what the die needs, points it scores outright, and every
+ * scoring roll it moves, before -> after. Nothing for a card that does none.
+ * `picked`: the row's own player, `{ teamKey, idx }`, so his lines say "Roll"
+ * and "3PT check" without repeating his name.
  */
-export function pickerMatchup(game, teamKey, playerId) {
-  const me = getTeam(game, teamKey);
-  const idx = me?.starters?.findIndex(s => s?.id === playerId) ?? -1;
-  if (idx < 0) return null;
-  const oppKey = teamKey === 'A' ? 'B' : 'A';
-  const opp = getOpp(game, teamKey);
-  const defIdx = (game.offMatchups?.[teamKey] || [])[idx] ?? idx;
-  const def = opp?.starters?.[defIdx];
-  if (!def) return { pending: true };
-  const adv = matchupAdv(game, teamKey, idx);
-  const guardsIdx = (game.offMatchups?.[oppKey] || []).findIndex(d => d === idx);
-  const guards = guardsIdx >= 0 ? opp.starters[guardsIdx] : null;
-  return { vs: def, adv, guards: guards && guards.id !== def.id ? guards : null };
+export function previewLines(pv, picked = {}) {
+  if (!pv) return [];
+  const lines = [];
+  const groups = new Map();
+  for (const c of pv.checks) {
+    const key = `${c.teamKey}${c.idx}|${c.type}|${c.need}|${JSON.stringify(c.parts)}`;
+    const g = groups.get(key);
+    if (g) g.count += 1; else groups.set(key, { ...c, count: 1 });
+  }
+  for (const c of groups.values()) {
+    const who = c.teamKey === picked.teamKey && c.idx === picked.idx ? '' : ` for ${c.name}`;
+    const what = c.count > 1 ? `${c.count === 2 ? 'Two' : c.count} ${CHECK_NAME[c.type]} checks` : `${CHECK_NAME[c.type]} check`;
+    const pct = Math.round(Math.min(1, Math.max(0, (21 - c.need) / 20)) * 100);
+    const need = c.need <= 1 ? 'makes it on any roll' : c.need >= 21 ? `needs ${c.need}, can't make it` : `needs ${c.need}+ on the die (${pct}%)`;
+    const parts = c.parts.map(p => `${p.label} ${signed(p.n)}`).join(' · ');
+    lines.push({ text: `${what}${who}: ${need}${parts ? ` — ${parts}` : ''}`, tone: pct >= 50 ? 'good' : pct >= 30 ? 'flat' : 'bad' });
+  }
+  if (pv.points > 0) lines.push({ text: `+${pv.points} pts now`, tone: 'good' });
+  for (const s of pv.skips ?? []) {
+    const mine = s.teamKey === picked.teamKey && s.idx === picked.idx;
+    lines.push({ text: mine ? 'Replaces the scoring roll' : `${s.name} loses the scoring roll`, tone: 'flat' });
+  }
+  for (const r of pv.rolls) {
+    const mine = r.teamKey === picked.teamKey && r.idx === picked.idx;
+    const who = mine ? 'Roll' : `${r.name}'s roll`;
+    // Better for the side that owns the card is green; the preview does not
+    // know which side that is, so the caller's tone reads the direction.
+    lines.push({ text: `${who}${r.vs ? ` vs ${r.vs}` : ''}: ${signed(r.before)} → ${signed(r.after)}`, delta: r.after - r.before, teamKey: r.teamKey });
+  }
+  return lines;
 }
 
 function SelectModal({ modal, game, onClose }) {
-  const { teamKey, players, label, extraInfo } = modal;
+  const { teamKey, players, label, extraInfo, preview } = modal;
   const col = teamKey === 'A' ? 'var(--orange)' : 'var(--blue)';
   const stats = getTeam(game, teamKey).stats;
+  const starters = getTeam(game, teamKey)?.starters ?? [];
+  const toneCol = { good: '#4ADE80', flat: '#CBD5E1', bad: '#F87171' };
   return (
     <div className={styles.overlay} onClick={() => onClose(null)}>
       <div className={styles.modalBox} onClick={e => e.stopPropagation()}>
@@ -1200,28 +1249,17 @@ function SelectModal({ modal, game, onClose }) {
               p.defBoost     ? `Def${p.defBoost>0?'+':''}${p.defBoost}` : '',
             ].filter(Boolean).join(' · ');
             const extra = extraInfo?.[i];
-            const mu = pickerMatchup(game, teamKey, p.id);
-            const adv = mu?.adv;
-            const rollCol = adv ? (adv.rollBonus > 0 ? '#4ADE80' : adv.hasPenalty ? '#F87171' : '#94A3B8') : '#94A3B8';
+            const pv = preview ? choicePreview(game, preview.teamKey, modal.cardId, { ...preview.base, ...preview.optsFor(i) }) : null;
+            const lines = previewLines(pv, { teamKey, idx: starters.findIndex(s => s?.id === p.id) });
             return (
               <button key={p.id} className={styles.modalBtn} style={{ borderLeftColor: col }} onClick={() => onClose(i)}>
                 <div className={styles.mName}>{p.name}{markerCount(ps) ? ` ${markerEmoji(ps)}` : ''}{fat<0&&<span className={styles.fatTag}> FAT{fat}</span>}</div>
                 <div className={styles.mSub}>S{p.speed} · P{p.power} · Line {p.shotLine}{boosts&&` · ${boosts}`}{min>0&&` · ${min}min`}</div>
-                {mu && (
-                  <div className={styles.mMatchup}>
-                    {mu.pending ? 'No matchup yet' : <>
-                      {adv?.ghosted ? `screened off ${mu.vs.name}` : `vs ${mu.vs.name}`}
-                      {adv && !adv.ghosted && <>
-                        {' · '}
-                        <span style={{ color: adv.speedAdv > 0 ? '#4ADE80' : adv.rawSpeedDiff < 0 ? '#F87171' : '#94A3B8' }}>S{adv.rawSpeedDiff > 0 ? '+' : ''}{adv.rawSpeedDiff}</span>
-                        {' '}
-                        <span style={{ color: adv.powerAdv > 0 ? '#4ADE80' : adv.rawPowerDiff < 0 ? '#F87171' : '#94A3B8' }}>P{adv.rawPowerDiff > 0 ? '+' : ''}{adv.rawPowerDiff}</span>
-                      </>}
-                      {adv && <> · <span style={{ color: rollCol }}>{`Roll ${adv.rollBonus > 0 ? '+' : ''}${adv.rollBonus}${adv.hasPenalty ? ' ⚠' : ''}`}</span></>}
-                      {mu.guards && <> · guards {mu.guards.name}</>}
-                    </>}
-                  </div>
-                )}
+                {lines.map((l, k) => {
+                  // A roll line: better for the card's side is green, worse red.
+                  const tone = l.tone ?? (l.delta === 0 ? 'flat' : ((l.delta > 0) === (l.teamKey === preview?.teamKey) ? 'good' : 'bad'));
+                  return <div key={k} className={styles.mPreview} style={{ color: toneCol[tone] }}>{l.text}</div>;
+                })}
                 {extra && <div className={styles.mExtra}>{extra}</div>}
               </button>
             );

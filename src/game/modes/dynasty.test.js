@@ -4,7 +4,7 @@ import {
   createDynasty, HUMAN_ID, MIN_ROSTER, MAX_ROSTER, DPHASE, RANDOM_POOL_PER_TEAM, FANTASY_ROUNDS,
   rosterKeys, contractsOf, payroll, freeAgentKeys, universe, rightsOf, quote, negotiate, waive, renounce,
   onClock, draftPick, draftAvailable, simDraft, aiDraftChoice, finishDraft, closeSigning, nextFaDay, fillRoster,
-  startSeason, endSeason, closeResign, lotteryOdds, drawLottery, signRookie, closeRookies, classFor,
+  startSeason, endSeason, closeResign, lotteryOdds, drawLottery, signRookie, closeRookies, classFor, nextDraftYear,
   projectedPayroll, summarizeDynasty, deadMoney, leagueKeys, passPick, classSize, ROOKIE_ROUNDS, buildDraftClass,
   baseAge, ageOf, retireChance, endDynasty, lotteryWeights, contractFor, aiCapDp, aiApronDp, tradeProblems,
   rookieTerms, rookieCommitted, rookieProblem, teamOf, pickId, pickValue, projectedSlot,
@@ -1140,13 +1140,25 @@ describe('the AI budgets for its picks (2026-09-18)', () => {
       .sort((x, y) => standings(played.season).find(r => r.id === y).rank - standings(played.season).find(r => r.id === x).rank)[0];
     const spare = played.draftPool.filter(k => !(played.draftClass?.keys ?? []).includes(k) && getCardByKey(k));
     const easy = { ...played, traits: { ...played.traits, ...Object.fromEntries(spare.map(k => [k, 'easy'])) } };
-    const ten = spare.filter(k => floorOf(easy, k, ai, preferredYears('easy'), 1) === 5).slice(0, MAX_ROSTER);
+    // THE CHEAPEST TEN CARDS, not the first ten found: the case is about the
+    // DP budget, so the card-salary ceiling must have nothing to say (the
+    // precondition below). Taking the first ten let one card added to the
+    // pool deal a dearer ten past $5,500 — a Free Agents build did, 2026-09-25.
+    const ten = spare.filter(k => floorOf(easy, k, ai, preferredYears('easy'), 1) === 5)
+      .sort((a, b) => getCardByKey(a).salary - getCardByKey(b).salary)
+      .slice(0, MAX_ROSTER);
     expect(ten).toHaveLength(MAX_ROSTER);
     const contracts = Object.fromEntries(Object.entries(easy.contracts).filter(([, c]) => c.teamId !== ai));
     for (const k of ten) contracts[k] = { teamId: ai, dp: 1, years: 1, since: easy.year, how: 'fill' };
     const dead = aiApronDp(played) - 60;
+    // AND A CHEAP CLASS, pinned: the seeded draw moves with the pool, and one
+    // new card (2026-09-25) drew Michael Jordan's $2,080 Super Season into it,
+    // which the ceiling then had to reserve for twice. The case is the DP
+    // budget, so the class keeps only cards of $1,000 or less.
+    const cheapClass = classFor(easy).filter(k => (getCardByKey(k)?.salary ?? Infinity) <= 1000);
     const d = {
       ...easy, contracts, league: [...easy.league, ...ten], draftPool: easy.draftPool.filter(k => !ten.includes(k)),
+      draftClass: { ...(easy.draftClass ?? {}), year: nextDraftYear(easy), keys: cheapClass },
       dead: [...easy.dead, { teamId: ai, key: 'x', dp: dead, through: easy.year + 1 }],
       pickOwner: { ...easy.pickOwner, [pickId(easy.year + 1, 1, worst)]: ai, [pickId(easy.year + 1, 2, ai)]: HUMAN_ID },
     };

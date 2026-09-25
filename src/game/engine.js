@@ -751,6 +751,29 @@ export function matchupAdv(g, teamKey, idx) {
   return calcAdv(player, def, g.tempEff?.[teamKey] || {}, idx, g.tempDefEff?.[oppKey], defIdx);
 }
 
+/**
+ * WHAT `idx`'S NEXT SCORING ROLL WOULD CARRY, read without rolling: the
+ * matchup (a helped defender's man keeps no positive part), the card roll
+ * bonuses on his slot (tempEff r<idx>), fatigue and the hot/cold markers —
+ * doRoll's own sum, in its order. Left out: the open man (Double Team's +3
+ * rides on whichever roll the offence makes next, not on a player) and a
+ * pending second roll's modifier. For the card pickers' before/after
+ * (cardPreview.js); a test pins it against doRoll.
+ */
+export function scoringRollModifier(g, teamKey, idx) {
+  const adv = matchupAdv(g, teamKey, idx);
+  if (!adv) return null;
+  const defIdx = (g.offMatchups?.[teamKey] || [])[idx] ?? idx;
+  let matchup = adv.rollBonus;
+  if (matchup > 0 && g.tempDefEff?.[teamKey === 'A' ? 'B' : 'A']?.[defIdx]?.anchor) matchup = 0;
+  const card = g.tempEff?.[teamKey]?.['r' + idx] || 0;
+  const fatigue = getFatigue(g, teamKey, idx);
+  const player = getTeam(g, teamKey)?.starters?.[idx];
+  const ps = (player && getPS(g, teamKey, player.id)) || {};
+  const markers = ((ps.hot || 0) - (ps.cold || 0)) * 2;
+  return { matchup, card, fatigue, markers, total: matchup + card + fatigue + markers };
+}
+
 export function matchupContest(g, teamKey, idx, type) {
   if (!contestConfig.enabled) return 0;
   if (type === 'ft') return 0;

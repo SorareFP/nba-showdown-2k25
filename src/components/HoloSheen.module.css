@@ -22,6 +22,16 @@
   pointer-events: none;
   z-index: 2;
 }
+/* THE PHOTO'S LAYER BLENDS WITH THE PICTURE BENEATH IT. A clipped or masked
+   `.region` is a stacking context, and blending never crosses one: whatever a
+   `.foil` inside it asks for, it can only blend with the empty region, so it
+   paints flat. This layer is the outermost thing in the card's isolated group
+   (`.holo`), the one place a blend reaches the photo — which is why the photo
+   region has a face layer of its own (HoloSheen.jsx). The gold regions sit in
+   the other, unblended layer and paint flat, the look the user approved. */
+.face[data-blend] {
+  mix-blend-mode: color-dodge;
+}
 .region {
   position: absolute;
   inset: 0;
@@ -52,8 +62,8 @@
 
 /* The rainbow: a broad spectral band that slides with the pointer, over a
    fine diagonal grating that reads as the diffraction lines of real foil.
-   Colour-dodge lifts the print's own highlights into the hue under them, so
-   the sheen belongs to the photo (or the gold) rather than sitting on it. */
+   Painted flat, at its opacity, over the gold surfaces (see `.face[data-blend]`
+   for why nothing inside a region can blend with the card). */
 .foil {
   background:
     repeating-linear-gradient(115deg, rgba(255,255,255,0) 0 5px, rgba(255,255,255,0.07) 5px 6px),
@@ -70,9 +80,45 @@
     );
   background-size: 100% 100%, 260% 260%;
   background-position: 0 0, var(--mx) var(--my);
-  mix-blend-mode: color-dodge;
-  opacity: 0.42;
+  opacity: var(--foil-rest, 0.42);
   transition: opacity 0.25s;
+}
+
+/* THE PHOTO'S FOIL (the user, 2026-09-28: "The holographic foil is very off
+   on some players. A'ja Wilson for one."). Painted flat, the rainbow above was
+   a coloured filter over the whole photo — a red, then yellow, then green
+   wash as it drifted — and on a dark photo (A'ja Wilson's black jersey in a
+   night arena) nothing but the wash. It now colour-dodges into the picture
+   (`.face[data-blend]`), and dodge divides the photo by (1 − the foil's
+   colour), so the colours are DIM: the same hues at about a third of full
+   strength multiply the photo's light by 1.1 to 1.6 instead of sending a
+   channel to white. Black stays black, the dark field barely moves, and the
+   colour shows where the picture is already bright — a white jersey, the
+   lettering, the light on skin — which is where real foil shows it. Five hue
+   cycles in place of one broad band make it iridescent rather than one colour
+   at a time. Opacity here is the dodge's strength, not a tint's, so it runs
+   higher than the gold's. */
+.region[data-region="photo"] {
+  --foil-rest: 0.7;
+  --foil-lit: 0.9;
+  --foil-peak: 1;
+}
+.region[data-region="photo"] .foil {
+  background:
+    repeating-linear-gradient(115deg, rgba(255,255,255,0) 0 5px, rgba(255,255,255,0.10) 5px 6px),
+    repeating-linear-gradient(
+      115deg,
+      rgb(92, 25, 25) 0%,
+      rgb(92, 76, 0) 3.33%,
+      rgb(25, 92, 47) 6.67%,
+      rgb(22, 72, 92) 10%,
+      rgb(54, 32, 92) 13.33%,
+      rgb(92, 32, 79) 16.67%,
+      rgb(92, 25, 25) 20%
+    );
+  /* The shorthand above reset these; the pointer still drives the rainbow. */
+  background-size: 100% 100%, 200% 200%;
+  background-position: 0 0, var(--mx) var(--my);
 }
 /* The drift runs only where the component asked for it (`idle`): one card on
    a stage, not a grid of Super Season tiles all turning at once. */
@@ -81,7 +127,7 @@
 }
 .holo[data-lit] .foil {
   animation: none;
-  opacity: 0.62;
+  opacity: var(--foil-lit, 0.62);
 }
 
 /* The glare under the cursor: a soft white bloom that only exists while a
@@ -115,9 +161,9 @@
   opacity: 0.7;
 }
 @keyframes holoSweep {
-  0%   { background-position: 0 0, -60% 120%; opacity: 0.30; }
-  45%  { opacity: 0.92; }
-  100% { background-position: 0 0, 160% -20%; opacity: 0.42; }
+  0%   { background-position: 0 0, -60% 120%; opacity: calc(var(--foil-rest, 0.42) * 0.7); }
+  45%  { opacity: var(--foil-peak, 0.92); }
+  100% { background-position: 0 0, 160% -20%; opacity: var(--foil-rest, 0.42); }
 }
 
 /* A sweep is a single flash across the card, so it is the one piece of this
@@ -125,5 +171,5 @@
    rule above already zeroes the drift, and this keeps the foil visible at
    its resting brightness instead of frozen mid-sweep. */
 @media (prefers-reduced-motion: reduce) {
-  .holo[data-sweep] .foil { animation: none; opacity: 0.5; }
+  .holo[data-sweep] .foil { animation: none; opacity: var(--foil-rest, 0.42); }
 }

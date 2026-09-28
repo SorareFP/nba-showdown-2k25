@@ -161,6 +161,21 @@ export default function Holo({ active = true, regions = DEFAULT_REGIONS, idle = 
   if (!active) {
     return <Tag className={className} {...rest}>{children}</Tag>;
   }
+  // THE PHOTO BLENDS WITH THE PICTURE; THE GOLD PAINTS OVER IT (2026-09-28).
+  // A clipped or masked element is a stacking context, and a stacking
+  // context blends its children only with each other — so a `.foil` inside a
+  // `.region` never reached the card below, whatever its mix-blend-mode said,
+  // and every region painted its rainbow flat at its opacity. On the gold
+  // that is the approved look. On a photo it was a coloured filter over the
+  // whole picture, worst on a dark one (the user, on A'ja Wilson: "very
+  // off"). So the photo gets a face layer of its own, and THAT layer — the
+  // outermost thing in the card's isolated group — carries the blend
+  // (HoloSheen.module.css, `.face[data-blend]`).
+  const all = regions.map(asRegion);
+  const layers = [
+    { blend: true, list: all.filter(r => r.key === 'photo') },
+    { blend: false, list: all.filter(r => r.key !== 'photo') },
+  ].filter(l => l.list.length);
   return (
     <Tag
       ref={attach}
@@ -173,26 +188,28 @@ export default function Holo({ active = true, regions = DEFAULT_REGIONS, idle = 
       {...rest}
     >
       {children}
-      <span className={styles.face} aria-hidden="true">
-        {regions.map(asRegion).map(({ key, clip, mask }) => (
-          <span
-            key={key}
-            className={styles.region}
-            data-region={key}
-            data-mask={mask ? '' : undefined}
-            style={{
-              clipPath: clip,
-              // The region span covers the WHOLE card and is only clipped, so
-              // a mask sized to it lands on the face pixel for pixel — see the
-              // note in faceRegions.js for why the mask is the card itself.
-              ...(mask ? { maskImage: `url(${mask})`, WebkitMaskImage: `url(${mask})` } : null),
-            }}
-          >
-            <span className={styles.foil} />
-            <span className={styles.glare} />
-          </span>
-        ))}
-      </span>
+      {layers.map(({ blend, list }) => (
+        <span key={blend ? 'photo' : 'gold'} className={styles.face} data-blend={blend ? '' : undefined} aria-hidden="true">
+          {list.map(({ key, clip, mask }) => (
+            <span
+              key={key}
+              className={styles.region}
+              data-region={key}
+              data-mask={mask ? '' : undefined}
+              style={{
+                clipPath: clip,
+                // The region span covers the WHOLE card and is only clipped, so
+                // a mask sized to it lands on the face pixel for pixel — see the
+                // note in faceRegions.js for why the mask is the card itself.
+                ...(mask ? { maskImage: `url(${mask})`, WebkitMaskImage: `url(${mask})` } : null),
+              }}
+            >
+              <span className={styles.foil} />
+              <span className={styles.glare} />
+            </span>
+          ))}
+        </span>
+      ))}
     </Tag>
   );
 }

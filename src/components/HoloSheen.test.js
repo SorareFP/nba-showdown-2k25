@@ -68,6 +68,27 @@ describe('HoloSheen', () => {
 
   it('keeps the face container as the one thing the layers are positioned in', () => {
     const out = html({ active: true });
-    expect(count(out, /class="[^"]*face[^"]*" aria-hidden="true"/g)).toBe(1);
+    expect(count(out, /class="[^"]*face[^"]*"( data-blend="")? aria-hidden="true"/g)).toBe(1);
+  });
+
+  // THE PHOTO BLENDS, THE GOLD PAINTS (the user, 2026-09-28, on A'ja Wilson:
+  // "very off"). A clipped region is a stacking context, so a blend inside
+  // one never reaches the card; the photo gets a face layer of its own that
+  // carries the blend, and the gold regions stay in an unblended one.
+  it('puts the photo in its own blended layer and the gold in a plain one', () => {
+    const photoOnly = html({ active: true });
+    expect(count(photoOnly, /data-blend=""/g)).toBe(1);
+    const gilded = html({ active: true, regions: ['photo', 'band', 'frame'] });
+    expect(count(gilded, /class="[^"]*face[^"]*"( data-blend="")? aria-hidden="true"/g)).toBe(2);
+    expect(count(gilded, /data-blend=""/g)).toBe(1);
+    const [blended, plain] = gilded.split(/(?=<span class="[^"]*face[^"]*" aria-hidden="true">)/).slice(0, 2);
+    expect(blended).toContain('data-blend=""');
+    expect(blended).toContain('data-region="photo"');
+    expect(blended).not.toContain('data-region="band"');
+    expect(plain).toContain('data-region="band"');
+    expect(plain).toContain('data-region="frame"');
+    expect(plain).not.toContain('data-region="photo"');
+    // Gold alone (a Super Season below legendary) has no blended layer at all.
+    expect(html({ active: true, regions: ['band', 'frame'] })).not.toContain('data-blend');
   });
 });

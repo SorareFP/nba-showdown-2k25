@@ -52,19 +52,45 @@ import styles from './HoloSheen.module.css';
 const DEFAULT_REGIONS = ['photo'];
 const asRegion = r => (typeof r === 'string' ? { key: r, clip: clipPathFor(r) } : r);
 
-/** The rectangle (relative to `box`) an <img> paints its picture in, under its object-fit and object-position. */
+/**
+ * Where `el` sits inside `box` in LAYOUT pixels — offsets and sizes, which no
+ * transform touches. The measurement used to be two getBoundingClientRects,
+ * and a bounding rect is the box AFTER every transform on the way up: the
+ * pack reveal turns the foil on as the card flips, mid-way through a rotateY
+ * and the legendary's settle-bounce, so the face was measured squashed and
+ * kept that size once the card came to rest (the user, 2026-09-28: a small
+ * ghost of Gilbert Arenas's card over his own). The layers are positioned
+ * inside the box's own untransformed space, so that is the space to measure
+ * in. Null when the offset chain does not lead to the box (no layout yet).
+ */
+function layoutIn(el, box) {
+  let x = 0;
+  let y = 0;
+  let n = el;
+  while (n && n !== box) {
+    x += n.offsetLeft;
+    y += n.offsetTop;
+    const parent = n.offsetParent;
+    // An offset is from the parent's padding edge; past an intermediate
+    // parent on the way to the box, its border counts too.
+    if (parent && parent !== box) { x += parent.clientLeft; y += parent.clientTop; }
+    n = parent;
+  }
+  return n === box ? { x, y, w: el.offsetWidth, h: el.offsetHeight } : null;
+}
+
+/** The rectangle (relative to `box`, in its untransformed layout) an <img> paints its picture in, under its object-fit and object-position. */
 export function drawnRect(img, box) {
-  const b = box.getBoundingClientRect();
-  const i = img.getBoundingClientRect();
+  const i = layoutIn(img, box) ?? { x: 0, y: 0, w: box.clientWidth, h: box.clientHeight };
   const nw = img.naturalWidth || 0;
   const nh = img.naturalHeight || 0;
-  if (!nw || !nh || !i.width || !i.height) return { x: i.left - b.left, y: i.top - b.top, w: i.width, h: i.height };
+  if (!nw || !nh || !i.w || !i.h) return i;
   const cs = getComputedStyle(img);
   const fit = cs.objectFit || 'fill';
-  let w = i.width;
-  let h = i.height;
+  let w = i.w;
+  let h = i.h;
   if (fit === 'contain' || fit === 'cover' || fit === 'scale-down') {
-    const scale = fit === 'cover' ? Math.max(i.width / nw, i.height / nh) : Math.min(i.width / nw, i.height / nh);
+    const scale = fit === 'cover' ? Math.max(i.w / nw, i.h / nh) : Math.min(i.w / nw, i.h / nh);
     w = nw * (fit === 'scale-down' ? Math.min(scale, 1) : scale);
     h = nh * (fit === 'scale-down' ? Math.min(scale, 1) : scale);
   } else if (fit === 'none') {
@@ -74,8 +100,8 @@ export function drawnRect(img, box) {
   const [px = '50%', py = '50%'] = String(cs.objectPosition || '50% 50%').split(/\s+/);
   const along = (v, room) => (v.endsWith('%') ? (parseFloat(v) / 100) * room : parseFloat(v) || 0);
   return {
-    x: i.left - b.left + along(px, i.width - w),
-    y: i.top - b.top + along(py, i.height - h),
+    x: i.x + along(px, i.w - w),
+    y: i.y + along(py, i.h - h),
     w,
     h,
   };
@@ -143,8 +169,13 @@ export default function Holo({ active = true, regions = DEFAULT_REGIONS, idle = 
       const b = el.getBoundingClientRect();
       const f = face.current;
       if (!f.w || !f.h) return;
-      const mx = Math.max(-0.2, Math.min(1.2, (clientX - b.left - f.x) / f.w));
-      const my = Math.max(-0.2, Math.min(1.2, (clientY - b.top - f.y) / f.h));
+      // The face is in layout pixels (drawnRect); the pointer is on screen,
+      // where a scaled card is bigger or smaller than its layout. Back into
+      // the box's own pixels first.
+      const sx = el.offsetWidth ? b.width / el.offsetWidth : 1;
+      const sy = el.offsetHeight ? b.height / el.offsetHeight : 1;
+      const mx = Math.max(-0.2, Math.min(1.2, ((clientX - b.left) / (sx || 1) - f.x) / f.w));
+      const my = Math.max(-0.2, Math.min(1.2, ((clientY - b.top) / (sy || 1) - f.y) / f.h));
       el.style.setProperty('--mx', `${(mx * 100).toFixed(1)}%`);
       el.style.setProperty('--my', `${(my * 100).toFixed(1)}%`);
       el.dataset.lit = '';

@@ -1208,6 +1208,219 @@
    "requested": true,
    "requestId": "Zj6cBaY2C4JN9TBaZ3ZB",
    "builtAt": "2026-09-25T13:44:20.540Z"
+  },
+  {
+   "id": "Elena_Delle_Donne_2014",
+   "name": "Elena Delle Donne",
+   "team": "CHI06",
+   "statRowTeam": "CHI",
+   "pos": "F-G",
+   "speed": 11,
+   "power": 14,
+   "shotLine": 14,
+   "paintBoost": -2,
+   "threePtBoost": 0,
+   "defBoost": 0,
+   "salary": 1170,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 7,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 13,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    }
+   ],
+   "league": "WNBA",
+   "season": 2014,
+   "seasonLabel": "2014",
+   "games": 16,
+   "mpg": 25.5,
+   "minutes": 408,
+   "schedule": 34,
+   "bbrefId": "delleel01w",
+   "metrics": {
+    "bpmHat": 7.01,
+    "obpmHat": 7.48,
+    "dbpmHat": -0.48,
+    "seasonZ": 2.14,
+    "per": 28.5,
+    "ws": 2.7,
+    "wsPer40": 0.268,
+    "tsPct": 0.568,
+    "pts100": 36.5
+   },
+   "provisional": false,
+   "set": "wnba-throwbacks",
+   "requested": true,
+   "requestId": "ijowTwo4VjhTGEeEj6ED",
+   "builtAt": "2026-09-28T15:10:58.401Z"
+  },
+  {
+   "id": "Nick_Young_2015",
+   "name": "Nick Young",
+   "team": "LAL",
+   "pos": "SG",
+   "speed": 9,
+   "power": 6,
+   "shotLine": 18,
+   "paintBoost": 3,
+   "threePtBoost": 5,
+   "defBoost": -2,
+   "salary": 640,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 5,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 6,
+     "hi": 7,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 12,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 13,
+     "hi": 17,
+     "pts": 3,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 18,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    }
+   ],
+   "season": 2015,
+   "seasonLabel": "2014-15",
+   "age": 29,
+   "games": 42,
+   "mpg": 23.8,
+   "bbrefId": "youngni01",
+   "traded": false,
+   "metrics": {
+    "bpm": -1.3,
+    "vorp": 0.2,
+    "ws": 1.2,
+    "ws48": 0.058,
+    "per": 14.2
+   },
+   "provisional": false,
+   "set": "throwbacks",
+   "requested": true,
+   "requestId": "OrvZ3v4Fy6BYtwrdmZMc",
+   "builtAt": "2026-09-28T15:11:09.778Z"
+  },
+  {
+   "id": "Ed_Davis_2022",
+   "name": "Ed Davis",
+   "team": "CLE17",
+   "pos": "C",
+   "speed": 5,
+   "power": 9,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": -5,
+   "defBoost": 3,
+   "salary": 610,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 10,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 11,
+     "hi": 12,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 13,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "season": 2022,
+   "seasonLabel": "2021-22",
+   "age": 32,
+   "games": 31,
+   "mpg": 6.5,
+   "bbrefId": "davised01",
+   "traded": false,
+   "metrics": {
+    "bpm": -1.8,
+    "vorp": 0,
+    "ws": 0.5,
+    "ws48": 0.126,
+    "per": 9.3
+   },
+   "provisional": true,
+   "set": "throwbacks",
+   "requested": true,
+   "requestId": "3nK7OvvcwYL6iDZGBEDM",
+   "builtAt": "2026-09-29T16:31:33.020Z"
   }
  ]
 }

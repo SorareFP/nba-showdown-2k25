@@ -3,6 +3,11 @@
     "secondary": "#F94300",
     "accent": "#000000"
   },
+  "NOH": {
+    "primary": "#00778B",
+    "secondary": "#280071",
+    "accent": "#FFC72C"
+  },
   "UTA": {
     "primary": "#010101",
     "secondary": "#330072"

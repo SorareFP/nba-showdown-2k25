@@ -12518,8 +12518,26 @@
         0.6844
       ],
       "badge": null
+    },
+    "throwbacks/Nick_Young_2015": {
+      "name": [
+        0.0252,
+        0.2146,
+        0.1253,
+        0.5328
+      ],
+      "badge": null
+    },
+    "wnba-throwbacks/Elena_Delle_Donne_2014": {
+      "name": [
+        0.0389,
+        0.1317,
+        0.0979,
+        0.6984
+      ],
+      "badge": null
     }
   },
-  "generatedAt": "2026-09-25T13:53:56.425Z",
+  "generatedAt": "2026-09-28T15:14:37.224Z",
   "note": "Per-face boxes of the rotated name and the Super Season pill, as fractions of the 843x1181 face, measured by scripts/studio/export.js. Read by src/cards/faceRegions.js for the holographic sheen."
 }

@@ -1,4 +1,9 @@
 {
+  "CHI06": {
+    "primary": "#FFFFFF",
+    "secondary": "#4891DC",
+    "accent": "#FFCC00"
+  },
   "MIN11": {
     "secondary": "#00B803",
     "accent": "#FFFFFF"

@@ -3,7 +3,7 @@
 // Never mutates — always returns a new object via deepClone
 
 import { handOverPriority, getTeam, getOpp, getPS, calcAdv, shotCheck, matchupContest, drawCards, deepClone, getFatigue, recordDefSwitch, burnedSlots, roll20, checkAssistDraw, standingEntry, CROWD_FAVORITE_PTS, satOutLast, bottomedLines } from './engine.js';
-import { creditAllowed, creditCheckDefended, recordPaintCheck, creditPaintScore, noteLastCheck, gainRebounds, loseRebounds, reboundTrackLead } from './engine.js';
+import { creditAllowed, creditCheckDefended, recordPaintCheck, creditPaintScore, noteLastCheck, challengeTarget, gainRebounds, loseRebounds, reboundTrackLead } from './engine.js';
 import { burstTargets, helpTargets, canAnswerCheck, myHouseHolds, foulTroubleTargets, clampTargets, kickOutTargets, pushGuardIdx, OWN_THE_GLASS_LEAD, reboundLeadProblem } from './canPlay.js';
 import { lookupChart } from './cards.js';
 import { getStrat } from './strats.js';
@@ -1140,14 +1140,14 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
     }
 
     case 'coaches_challenge': {
-      // Re-roll opponent's most recent non-scoring shot check
-      // Hard limit: 2 per game per team
+      // Re-roll the opponent's best made shot check of the section — the
+      // engine's pick (challengeTarget), the same one the card's info line
+      // and the board's button named. Hard limit: 2 per game per team.
       if (!g.challengesUsed) g.challengesUsed = { A: 0, B: 0 };
       if (g.challengesUsed[teamKey] >= 2) return fail("Coach's Challenge: already used 2 this game");
 
-      const lsc = g.lastShotCheck;
-      if (!lsc) return fail('No recent shot check to challenge');
-      if (lsc.teamKey === teamKey) return fail("Can only challenge opponent's shot checks");
+      const lsc = challengeTarget(g, teamKey);
+      if (!lsc) return fail('No made shot check of theirs to challenge this section');
 
       const oppKey2 = lsc.teamKey;
       const ccPlayer = getTeam(g, oppKey2).starters[lsc.playerIdx];
@@ -1216,7 +1216,11 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       }
 
       g.challengesUsed[teamKey]++;
-      g.lastShotCheck = null; // Can't challenge the same check twice
+      // This check is spent: it leaves the section's list, and the "last
+      // check" record with it when it was that one. The re-roll's result is
+      // not recorded, so nobody challenges the same check twice.
+      g.shotChecks = (g.shotChecks ?? []).map(c => (lsc.seq != null && c.seq === lsc.seq ? { ...c, challenged: true } : c));
+      if (g.lastShotCheck && (g.lastShotCheck === lsc || g.lastShotCheck.seq === lsc.seq)) g.lastShotCheck = null;
 
       const diff = (newR.hit ? newR.pts : 0) - oldPts;
       addLog(g, teamKey, `Coach's Challenge: ${ccPlayer.name}'s ${lsc.cardLabel} re-rolled! ${scStr(oldResult)}→${scStr(newR)} (${diff >= 0 ? '+' : ''}${diff}pts)`);

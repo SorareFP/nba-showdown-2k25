@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { calcAdv, matchupAdv, getTeam, getOpp, getPS, getFatigue, SPEND_COSTS, reboundCheckOpen, reboundCheckBonus, reboundTrackLead, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, lastReturnedCard, undoReturnCard, periodLabel, extraRollPending, checkNeed, fatigueForMinutes, crunchSearchOptions, rollTurnLine, rollingOpen as diceOut, timeoutProblem, scoringRollModifier, matchupContest } from '../../game/engine.js';
+import { challengeTarget, calcAdv, matchupAdv, getTeam, getOpp, getPS, getFatigue, SPEND_COSTS, reboundCheckOpen, reboundCheckBonus, reboundTrackLead, clutchAvailable, burnedSlots, satOutLast, returnCardToDeck, lastReturnedCard, undoReturnCard, periodLabel, extraRollPending, checkNeed, fatigueForMinutes, crunchSearchOptions, rollTurnLine, rollingOpen as diceOut, timeoutProblem, scoringRollModifier, matchupContest } from '../../game/engine.js';
 import { lookupChart } from '../../game/cards.js';
 import { canPlayCard, burstTargets, myHouseTargets, fwdTargets, preRollTargets, helpTargets, foulTroubleTargets, clampTargets, kickOutTargets, pendingCheckExtra } from '../../game/canPlay.js';
 import { resolveChoice } from '../../game/execCard.js';
@@ -2217,8 +2217,10 @@ function PendingBanner({ game, onResolve, onExecCard, readOnlyTeam = null }) {
   const defLive = defKey !== readOnlyTeam;
   const hasCloseOut=getTeam(game,defKey).hand.includes('close_out');
   const coPlay=hasCloseOut?canPlayCard(game,defKey,'close_out'):null;
-  const lsc=game.lastShotCheck;
-  const canChallenge=defLive && Boolean(lsc && lsc.teamKey===psc.teamKey && getTeam(game,defKey).hand.includes('coaches_challenge') && canPlayCard(game,defKey,'coaches_challenge').canPlay);
+  // THE CHALLENGE NAMES ITS TARGET (challengeTarget, 2026-09-29): their best
+  // made check of the section, not whichever check happened to come last.
+  const target=defLive ? challengeTarget(game,defKey) : null;
+  const canChallenge=Boolean(target && getTeam(game,defKey).hand.includes('coaches_challenge') && canPlayCard(game,defKey,'coaches_challenge').canPlay);
   // BLITZ beside Close Out (2026-09-25), and the Resolve that waits while a
   // blitzed check has no shooter yet.
   const canBlitz=defLive && getTeam(game,defKey).hand.includes('blitz') && canPlayCard(game,defKey,'blitz').canPlay;
@@ -2233,15 +2235,15 @@ function PendingBanner({ game, onResolve, onExecCard, readOnlyTeam = null }) {
       <div className={styles.pendingActions}>
         {defLive&&hasCloseOut&&coPlay?.canPlay&&<button className={styles.coBtn} onClick={()=>onExecCard(defKey,'close_out',{})}>Close Out −3</button>}
         {canBlitz&&<button className={styles.coBtn} onClick={()=>onExecCard(defKey,'blitz',{})} title="The offense must give this check to another player on the floor">Blitz {offP?.name?.split(' ').slice(-1)[0]}</button>}
-        {/* COACH'S CHALLENGE ON THE CHECK THAT JUST LANDED. A card that takes
+        {/* COACH'S CHALLENGE, WHILE THE NEXT CHECK WAITS. A card that takes
             several checks in a row (Green Light) announces the next one the
-            moment the last resolves, and the challenge only ever reaches the
-            most recent — so the defence could never pick the one to re-roll
-            (the user, 2026-09-08). While the next check waits here, the
-            previous one is still the "last" and can be challenged. */}
+            moment the last resolves (the user, 2026-09-08); this button is the
+            defence's window on the ones already landed. The target is their
+            best made check of the section (challengeTarget), named here. */}
         {canChallenge && (
-          <button className={styles.coBtn} onClick={()=>onExecCard(defKey,'coaches_challenge',{})}>
-            Challenge {game.lastShotCheck?.cardLabel ?? 'the last check'}
+          <button className={styles.coBtn} onClick={()=>onExecCard(defKey,'coaches_challenge',{})}
+            title={canPlayCard(game,defKey,'coaches_challenge').reason}>
+            Challenge {getTeam(game,target.teamKey).starters[target.playerIdx]?.name?.split(' ').slice(-1)[0]}'s {target.cardLabel} ({target.pts} pts)
           </button>
         )}
         <button className={styles.resolveBtn} onClick={onResolve} disabled={waitingOnBlitz}

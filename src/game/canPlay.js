@@ -2,7 +2,7 @@
 // Returns { canPlay: bool, reason: string }
 
 import { CRUNCH_CARDS, TIMEOUT_RIDERS } from './strats.js';
-import { getTeam, getOpp, getPS, getFatigue, calcAdv, burnedSlots, satOutLast, reboundTrackLead } from './engine.js';
+import { getTeam, getOpp, getPS, getFatigue, calcAdv, burnedSlots, satOutLast, reboundTrackLead, challengeTarget, rerollOdds } from './engine.js';
 
 const ok = (r = '') => ({ canPlay: true, reason: r });
 const no = (r) => ({ canPlay: false, reason: r });
@@ -389,8 +389,13 @@ function cardVerdict(g, teamKey, cardId) {
 
   if (phase === 'draft') return no('Cannot play cards during draft');
 
-  // While a shot check is pending, only Close Out is allowed
-  if (g.pendingShotCheck && !SHOT_REACTIONS.includes(cardId)) return no('Resolve pending shot check first');
+  // While a shot check is pending, only the answers to it are allowed — and
+  // Coach's Challenge, which re-rolls a check that has ALREADY landed, never
+  // the pending one. The board's banner offers it there so a chain of checks
+  // (Green Light) can be challenged one behind (the user, 2026-09-08); when
+  // Blitz brought this list in, the gate shut that button without anyone
+  // noticing (found 2026-09-29).
+  if (g.pendingShotCheck && !SHOT_REACTIONS.includes(cardId) && cardId !== 'coaches_challenge') return no('Resolve pending shot check first');
   // A blitzed check has no shooter until the offence picks one: every answer
   // (Smothering Defense reads "your defender on them") waits for the pick.
   if (g.pendingChoice?.kind === 'blitz' && SHOT_REACTIONS.includes(cardId)) return no('Wait for the offense to pick the new shooter');
@@ -660,13 +665,15 @@ function cardVerdict(g, teamKey, cardId) {
     if (phase !== 'scoring') return no('Only playable during Scoring Phase');
     const used = g.challengesUsed?.[teamKey] || 0;
     if (used >= 2) return no("Already used 2 Coach's Challenges this game");
-    if (!g.lastShotCheck) return no('No recent shot check to challenge');
-    if (g.lastShotCheck.teamKey === teamKey) return no("Can only challenge opponent's shot checks");
-    // Name the target, so nobody challenges a check they did not mean to
-    // (the user, 2026-09-18, whose Challenge hit an older Bully Ball miss).
-    const lsc = g.lastShotCheck;
-    const who = getOpp(g, teamKey)?.starters?.[lsc.playerIdx]?.name;
-    return ok(`Re-roll ${who ? `${who}'s ` : ''}${lsc.cardLabel ?? 'last shot check'} (${lsc.result?.hit ? `a make, ${lsc.pts} pts` : 'a miss'})`);
+    // THE TARGET IS CHOSEN FOR YOU (challengeTarget, 2026-09-29): their best
+    // made check this section. Named here with the re-roll's chance to miss,
+    // so nobody spends a challenge on a check they did not mean to (the
+    // user, 2026-09-18, whose Challenge hit an older Bully Ball miss).
+    const t = challengeTarget(g, teamKey);
+    if (!t) return no('No made shot check of theirs to challenge this section');
+    const who = getOpp(g, teamKey)?.starters?.[t.playerIdx]?.name;
+    const { need, pMiss } = rerollOdds(g, t);
+    return ok(`Re-roll ${who ? `${who}'s ` : ''}${t.cardLabel ?? 'shot check'} (a make, ${t.pts} pts) — ${Math.round(pMiss * 100)}% to miss (needs ${need}+)`);
   }
 
   if (cardId === 'delayed_slip') {

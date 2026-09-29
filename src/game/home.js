@@ -23,6 +23,11 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
+    id: 'challenge-best-make', date: '2026-09-29', title: "Coach's Challenge re-rolls their best make",
+    body: "Coach's Challenge no longer re-rolls whatever shot check happened last. It targets the opponent's best made check of the section: the most points, the most recent if tied, and never a miss. The card and the Challenge button name the check and give the re-roll's chance to miss before you commit.",
+    to: 'play', cta: 'Play',
+  },
+  {
     id: 'dynasty-retirements-step', date: '2026-09-25', title: 'Dynasty: the offseason opens on retirements',
     body: 'In a dynasty where players age, the offseason now starts with its retirements: who retired, your own players first with the contract that went with them, the rest of the league, and which of your players could retire next year, with a Protect button if your Sports Science staff allows it. Then on to re-signing. Before this, a retirement only showed up in the league wire.',
     to: 'dynasty', cta: 'Dynasty',

@@ -3,7 +3,7 @@
 //     miss can only turn it into a make — it did, for three)
 //   - Double Team is once per section
 import { describe, it, expect, vi } from 'vitest';
-import { newGame, getTeam, spendReboundBonus, spendAssist } from './engine.js';
+import { newGame, getTeam, spendReboundBonus, spendAssist, noteLastCheck, challengeTarget, endSection } from './engine.js';
 import { execCard } from './execCard.js';
 import { canPlayCard } from './canPlay.js';
 import { aiScoringDecision, aiReactionDecision } from './ai.js';
@@ -33,10 +33,12 @@ function scoring({ bHand = [] } = {}) {
 describe("the AI's Coach's Challenge", () => {
   const lastCheck = hit => ({ teamKey: 'A', playerIdx: 0, playerId: 'a0', type: '3pt', result: { hit, pts: hit ? 3 : 0, die: 9 }, pts: hit ? 3 : 0, cardLabel: 'x' });
 
-  it('is never spent on a miss', () => {
+  it('is never spent on a miss — since 2026-09-29 the rule offers none (challengeTarget), and the coach has nothing to decline', () => {
     const g = scoring({ bHand: ['coaches_challenge'] });
     g.lastShotCheck = lastCheck(false);
-    expect(canPlayCard(g, 'B', 'coaches_challenge').canPlay).toBe(true);   // the rule allows it; the coach declines
+    const can = canPlayCard(g, 'B', 'coaches_challenge');
+    expect(can.canPlay).toBe(false);
+    expect(can.reason ?? can.msg ?? '').toMatch(/No made shot check/);
     expect(aiScoringDecision(g, 'B').type).toBe('pass');
     expect(aiReactionDecision(g, 'B', 'opp_scored')).toBeNull();
   });
@@ -137,6 +139,79 @@ describe("the check a Coach's Challenge reaches", () => {
       });
     }
     expect(missing).toEqual([]);
+  });
+});
+
+// THE BEST MAKE OF THE SECTION, NOT THE LAST CHECK (the user, 2026-09-29:
+// "with the speed at which the AI plays cards and shot checks, it's hard to
+// challenge the right thing ... just default to the last made 3 pointer and
+// then look for a 2-pointer if that one is missing").
+describe("the check a Coach's Challenge reaches — the section's best make", () => {
+  const rec = (g, playerIdx, type, hit, label) => noteLastCheck(g, {
+    teamKey: 'A', playerIdx, player: getTeam(g, 'A').starters[playerIdx], type, label,
+    result: { hit, pts: hit ? (type === '3pt' ? 3 : type === 'paint' ? 2 : 1) : 0, die: 10, type },
+  });
+
+  it('is the most points, the most recent among equals — never a miss, never merely the last', () => {
+    const g = scoring({ bHand: ['coaches_challenge'] });
+    rec(g, 0, '3pt', true, 'Green Light 3PT');
+    rec(g, 1, '3pt', true, 'Flare Screen');          // three points too, and later
+    rec(g, 2, 'paint', true, 'Bully Ball paint');
+    rec(g, 3, 'ft', true, 'And-One free throw');
+    rec(g, 4, '3pt', false, 'a miss');                // the last check of all
+    expect(challengeTarget(g, 'B')).toMatchObject({ playerIdx: 1, cardLabel: 'Flare Screen', pts: 3 });
+    // The card says which, and what the re-roll would need.
+    const can = canPlayCard(g, 'B', 'coaches_challenge');
+    expect(can.canPlay).toBe(true);
+    expect(can.reason ?? can.msg ?? '').toMatch(/^Re-roll a1's Flare Screen \(a make, 3 pts\) — \d+% to miss \(needs \d+\+\)/);
+    // Their own checks are never targets.
+    expect(challengeTarget(g, 'A')).toBeNull();
+  });
+
+  it('moves on to the next best once one is spent, and a new section starts clean', () => {
+    const g = scoring({ bHand: ['coaches_challenge', 'coaches_challenge'] });
+    rec(g, 0, '3pt', true, 'Green Light 3PT');
+    rec(g, 2, 'paint', true, 'Bully Ball paint');
+    rec(g, 3, 'ft', true, 'And-One free throw');
+    const r1 = execCard(g, 'B', 'coaches_challenge', {});
+    expect(r1.ok).toBe(true);
+    expect(r1.game.log.at(-1).msg).toMatch(/a0's Green Light 3PT re-rolled/);
+    // The three is spent whatever it re-rolled to; the two is next.
+    expect(challengeTarget(r1.game, 'B')).toMatchObject({ playerIdx: 2, pts: 2 });
+    const r2 = execCard(r1.game, 'B', 'coaches_challenge', {});
+    expect(r2.ok).toBe(true);
+    expect(r2.game.log.at(-1).msg).toMatch(/a2's Bully Ball paint re-rolled/);
+    expect(challengeTarget(r2.game, 'B')).toMatchObject({ playerIdx: 3, pts: 1 });   // the free throw is what is left...
+    expect(canPlayCard(r2.game, 'B', 'coaches_challenge').canPlay).toBe(false);      // ...and both challenges are gone
+    // The section is the window.
+    const next = endSection(g);
+    expect(next.shotChecks).toEqual([]);
+    expect(challengeTarget(next, 'B')).toBeNull();
+  });
+
+  it('can be played while the NEXT check is pending — the banner button on a chain of checks (2026-09-08), shut by the Blitz gate until 2026-09-29', () => {
+    const g = scoring({ bHand: ['coaches_challenge'] });
+    rec(g, 0, '3pt', true, 'Green Light 3PT');
+    g.pendingShotCheck = { teamKey: 'A', playerIdx: 1, type: '3pt', bonus: 2, cardLabel: 'Green Light 3PT' };
+    const can = canPlayCard(g, 'B', 'coaches_challenge');
+    expect(can.canPlay).toBe(true);
+    expect(can.reason ?? '').toMatch(/a0's Green Light 3PT/);
+    // Any other card still waits for the check.
+    expect(canPlayCard({ ...g, teamB: { ...g.teamB, hand: ['double_team'] } }, 'B', 'double_team').reason ?? '').toMatch(/pending shot check/);
+    const r = execCard(g, 'B', 'coaches_challenge', {});
+    expect(r.ok).toBe(true);
+    expect(r.game.pendingShotCheck).toEqual(g.pendingShotCheck);                    // the pending check is untouched
+  });
+
+  it('reads an older save that carries only its last check', () => {
+    const g = scoring({ bHand: ['coaches_challenge'] });
+    delete g.shotChecks;
+    g.lastShotCheck = { teamKey: 'A', playerIdx: 0, playerId: 'a0', type: 'paint', result: { hit: true, pts: 2, die: 9 }, pts: 2, cardLabel: 'Post Up' };
+    expect(challengeTarget(g, 'B')).toMatchObject({ cardLabel: 'Post Up' });
+    const r = execCard(g, 'B', 'coaches_challenge', {});
+    expect(r.ok).toBe(true);
+    expect(r.game.lastShotCheck).toBeNull();                                        // spent, so not twice
+    expect(challengeTarget(r.game, 'B')).toBeNull();
   });
 });
 

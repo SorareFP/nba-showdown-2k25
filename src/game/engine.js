@@ -219,6 +219,7 @@ export function newGame(rosterA, rosterB, deckConfigA, deckConfigB, opts = {}) {
     scoringPasses: 0,
     pendingShotCheck: null,
     lastShotCheck: null, // { teamKey, playerIdx, playerId, type, result, pts, cardLabel }
+    shotChecks: [],      // every check this section, the same records — what a Coach's Challenge picks from (challengeTarget)
     challengesUsed: { A: 0, B: 0 },
     rollResults: { A: [], B: [] },
     tempEff: {},
@@ -1030,10 +1031,61 @@ export function creditPaintScore(g, teamKey, playerIdx, player) {
  * what the re-roll adds — a number or shotCheck's parts array.
  */
 export function noteLastCheck(g, { teamKey, playerIdx, player, type, result, label, bonus = 0, pool = 'card', specialRoll, onHit, closeOutApplied = false }) {
-  g.lastShotCheck = {
+  g.checkSeq = (g.checkSeq || 0) + 1;
+  const rec = {
+    seq: g.checkSeq,
     teamKey, playerIdx, playerId: player?.id, type, result, pts: result.pts,
     cardLabel: label, bonus, pool, specialRoll, onHit, closeOutApplied,
   };
+  g.lastShotCheck = rec;
+  // The section's list, for the Challenge (challengeTarget).
+  g.shotChecks = [...(g.shotChecks ?? []), rec];
+}
+
+/**
+ * THE CHECK A COACH'S CHALLENGE RE-ROLLS (the user, 2026-09-29: "with the
+ * speed at which the AI plays cards and shot checks, it's hard to challenge
+ * the right thing"). The card reached only the LAST check, and after a burst
+ * of spends and free throws the last check was rarely the one worth
+ * re-rolling. Now: the opponent's best MADE check of this section that has
+ * not been challenged — the most points first, the most recent among
+ * equals. Never a miss: a re-roll of a miss can only make it. The section is
+ * the window (endSection clears the list); an older save that carries only
+ * its last check reads that. Null when there is nothing to challenge.
+ */
+export function challengeTarget(g, teamKey) {
+  const list = g.shotChecks?.length ? g.shotChecks : (g.lastShotCheck ? [g.lastShotCheck] : []);
+  let best = null;
+  for (const c of list) {
+    if (!c || c.teamKey === teamKey || c.challenged || !c.result?.hit) continue;
+    // The slot still holds the player who rolled (it does within a section; a guard).
+    const p = getTeam(g, c.teamKey)?.starters?.[c.playerIdx];
+    if (!p || (c.playerId && p.id !== c.playerId)) continue;
+    if (!best || (c.pts || 0) >= (best.pts || 0)) best = c;
+  }
+  return best;
+}
+
+/**
+ * What a Challenge's re-roll of `c` would need on the die, and its chance to
+ * MISS — the number a coach wants before spending one of two challenges.
+ * Mirrors shotCheck with the check's own recorded bonus (a card's number, or
+ * a spend's parts), the printed boost, the free throw's +10, and the
+ * shooter's markers and fatigue as they stand NOW, since the re-roll reads
+ * them fresh.
+ */
+export function rerollOdds(g, c) {
+  const player = getTeam(g, c.teamKey)?.starters?.[c.playerIdx];
+  if (!player) return { need: 21, pMiss: 1 };
+  const ps = getPS(g, c.teamKey, player.id) || {};
+  let bonus = Array.isArray(c.bonus) ? c.bonus.reduce((s, p) => s + (p?.n || 0), 0) : (c.bonus || 0);
+  bonus += c.type === '3pt' ? (player.threePtBoost || 0) : c.type === 'paint' ? (player.paintBoost || 0) : 0;
+  if (c.type === 'ft') bonus += 10;
+  bonus += ((ps.hot || 0) - (ps.cold || 0)) * 2;
+  if (c.type !== 'ft') bonus += getFatigue(g, c.teamKey, c.playerIdx);
+  const need = (player.shotLine || 99) - bonus;
+  const pHit = Math.min(1, Math.max(0, (21 - need) / 20));
+  return { need, pMiss: 1 - pHit };
 }
 
 export function spendAssist(g, teamKey, type, playerIdx) {
@@ -1736,7 +1788,7 @@ export function endSection(g) {
   ng.lastDoubleTeam = null; ng.lastRoll = null; ng.lastCheckMiss = null; ng.lastPaintScore = null;
   ng.lastAutoScore = null;
   ng.matchupsSet = {};
-  ng.rollResults = { A: [], B: [] }; ng.pendingShotCheck = null; ng.lastShotCheck = null;
+  ng.rollResults = { A: [], B: [] }; ng.pendingShotCheck = null; ng.lastShotCheck = null; ng.shotChecks = [];
   // reboundBonuses were set earlier in this function — they persist to the next section's scoring phase
 
   if (ng.section < 3) {

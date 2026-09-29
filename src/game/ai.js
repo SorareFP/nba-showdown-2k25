@@ -3,7 +3,7 @@
 // Pure functions: takes game state + team key, returns an action object.
 // No React, no side effects. Used by tutorial, solo mode, sim-to-end.
 
-import { getTeam, getOpp, getPS, calcAdv, matchupAdv, isGhosted, getFatigue, fatigueForMinutes, restMinutes, MAX_STRAIGHT_MINUTES, pickablePool, SPEND_COSTS, REBOUND_RULES, reboundCheckOpen, reboundCheckBonus, reboundTrackLead, clutchAvailable, clutchEligible, burnedSlots, satOutLast, canRollSlot, extraRollPending, checkNeed, crunchSearchOptions, timeoutProblem } from './engine.js';
+import { challengeTarget, getTeam, getOpp, getPS, calcAdv, matchupAdv, isGhosted, getFatigue, fatigueForMinutes, restMinutes, MAX_STRAIGHT_MINUTES, pickablePool, SPEND_COSTS, REBOUND_RULES, reboundCheckOpen, reboundCheckBonus, reboundTrackLead, clutchAvailable, clutchEligible, burnedSlots, satOutLast, canRollSlot, extraRollPending, checkNeed, crunchSearchOptions, timeoutProblem } from './engine.js';
 import { lookupChart } from './cards.js';
 import { canPlayCard, burstTargets, helpTargets, staggerPair, myHouseTargets, foulTroubleTargets, clampTargets, kickOutTargets, REBOUND_CARD_COST, pendingCheckExtra } from './canPlay.js';
 import { getStrat, STRATS, TIMEOUT_RIDERS } from './strats.js';
@@ -1204,14 +1204,14 @@ function evaluateCard(game, teamKey, cardId, strat, opts = {}) {
     const { saved } = switchCancelValue(game, teamKey, cardId);
     return saved >= SWITCH_FLOOR ? Math.min(10, 3 + 2 * saved) : 0;
   }
-  // COACH'S CHALLENGE RE-ROLLS THE OTHER SIDE'S LAST CHECK. A re-roll of a
-  // miss can only turn it into a make (the user, 2026-09-09: "AI played
-  // coach's challenge on my miss, which converted into a make"). Only a make
-  // is worth challenging, and a three more than a two.
+  // COACH'S CHALLENGE RE-ROLLS THE OTHER SIDE'S BEST MADE CHECK THIS SECTION
+  // (challengeTarget, the same pick the human gets). A re-roll of a miss can
+  // only turn it into a make (the user, 2026-09-09: "AI played coach's
+  // challenge on my miss, which converted into a make"), and the target rule
+  // never offers one; a three is worth more than a two.
   if (cardId === 'coaches_challenge') {
-    const lsc = game.lastShotCheck;
-    if (!lsc || lsc.teamKey === teamKey || !lsc.result?.hit) return 0;
-    return 4 + (lsc.pts || 0);
+    const t = challengeTarget(game, teamKey);
+    return t ? 4 + (t.pts || 0) : 0;
   }
 
   // Phase gating — matchup cards only in matchup phase, etc.
@@ -1880,13 +1880,8 @@ export function aiBuildCardOpts(game, teamKey, cardId) {
     }
 
     case 'coaches_challenge': {
-      // Target opponent's highest-scoring roll
-      const oppRolls = game.rollResults[oppKey] || [];
-      let bestIdx = 0, bestPts = 0;
-      oppRolls.forEach((r, i) => {
-        if (r && (r.pts || 0) > bestPts) { bestPts = r.pts; bestIdx = i; }
-      });
-      return { playerIdx: bestIdx };
+      // The engine picks the check (challengeTarget); there is nothing to choose.
+      return {};
     }
 
     case 'anticipate_pass': {
@@ -2291,8 +2286,8 @@ export function aiReactionDecision(game, teamKey, trigger, opts = {}) {
     if (best) return { type: 'play_card', cardId: best.cardId, opts: aiBuildCardOpts(game, teamKey, best.cardId) };
   }
 
-  // Coach's Challenge: only a make is worth re-rolling
-  if (trigger === 'opp_scored' && hand.includes('coaches_challenge') && game.lastShotCheck?.result?.hit && game.lastShotCheck.teamKey !== teamKey) {
+  // Coach's Challenge: only a make is worth re-rolling, and challengeTarget offers nothing else
+  if (trigger === 'opp_scored' && hand.includes('coaches_challenge') && challengeTarget(game, teamKey)) {
     const check = canPlayCard(game, teamKey, 'coaches_challenge');
     if (check.canPlay) {
       const opts = aiBuildCardOpts(game, teamKey, 'coaches_challenge');

@@ -98,6 +98,7 @@ export default function PvpGame({ roomCode, myRole, onLeave }) {
     g.endSectionVotes = g.endSectionVotes || { A: false, B: false };
     g.challengesUsed = g.challengesUsed || { A: 0, B: 0 };
     g.lastShotCheck = g.lastShotCheck || null;
+    g.shotChecks  = g.shotChecks  || [];
     g.log         = g.log         || [];
     g.rollResults = g.rollResults || { A: [], B: [] };
     g.rollResults.A = g.rollResults.A || [];

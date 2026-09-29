@@ -76,7 +76,7 @@ import { pathToFileURL } from 'node:url';
 import { readCache, REPO_ROOT } from './cache.js';
 import { normalizeName } from './resolveTeams.js';
 import { computeStatBands, delayUpperBands, effectiveRollCdf, placeBandsOnCdf, usageAccessShift } from './bands.js';
-import { reconcileBandsByRoll, shapeChart, MAX_CHART_TIERS, MAX_PRINTED_ROWS } from './generate.js';
+import { reconcileBandsByRoll, reconcileConditional, shapeChart, MAX_CHART_TIERS, MAX_PRINTED_ROWS } from './generate.js';
 import { isBlankTier } from './zeroFloor.js';
 import { applyOverrides } from './overrides.js';
 import * as V from './variance.js';
@@ -265,15 +265,15 @@ export function buildCard({
     const placed = rollCdf
       ? placeBandsOnCdf(computeStatBands(games, stat), rollCdf)
       : computeStatBands(games, stat);
-    // The usage gate touches the SCORING spine only. Boards and assists never
-    // needed the ball; reconcileBandsByRoll reads them at their own ungated
-    // positions, so the variance the gate would have dragged along survives.
+    // The usage gate touches the SCORING spine only. Boards and assists ride
+    // the spine as what he did alongside those points (reconcileConditional);
+    // their own ladders here are the fallback for a card with no real rows.
     bands[stat] = stat === 'pts' ? delayUpperBands(placed, usageAccessShift(rate?.usage)) : placed;
   }
   // The shot line is an INPUT to the chart's shape, not just a number printed
   // beside it: the chart is made to break exactly there so the card's one arrow
   // has a real dividing line to sit on. See forceBandBoundary.
-  const chart = shapeChart(reconcileBandsByRoll(bands), {
+  const chart = shapeChart(reconcileConditional({ ...bands, games: realGames }), {
     shotLine,
     // CDF placement already prices the ceiling at its earned frequency; the
     // fixed +2 delay on top of that would punish it twice.

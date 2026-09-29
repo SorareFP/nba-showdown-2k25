@@ -32,3 +32,7 @@ card-art/photo-hunt.html
 # faces with stale ones — gh-pages keeps whatever a deploy does not touch.
 public/cards/live
 public/cards/thumbs/live
+
+# Saved copies of card-data/generated taken before a chart-method change (the user, 2026-09-29:
+# "keep a save of the current cards so we can easily revert"). Local only; git tags carry the same.
+card-data/snapshots

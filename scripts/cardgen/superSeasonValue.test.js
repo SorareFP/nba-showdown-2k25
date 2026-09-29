@@ -58,6 +58,42 @@ describe('pickByValue', () => {
     expect(winners.get('a').season).toBe(2014);
     expect(unweighed.map(c => c.season)).toEqual([2013]);
   });
+
+  // THE SHIPPED SEASON HOLDS THE CARD (2026-09-29): a rebuild that changed only
+  // rebounds and assists re-chose fifteen Super Seasons on gaps of $0-50.
+  describe('with a holder and a margin', () => {
+    const declared = new Map([['a', 2014]]);
+    const holder = new Map([['a', 2016]]);   // 2016 ships today, though 2014 is the declared season
+
+    it('keeps the shipped season against a challenger inside the margin, ties included', () => {
+      const { winners, repicks } = pickByValue([card('a', 2014, 1420), card('a', 2016, 1400), card('a', 2018, 1440)], declared, { holderSeason: holder, margin: 50 });
+      expect(winners.get('a').season).toBe(2016);
+      expect(repicks).toEqual([]);
+    });
+
+    it('hands the card over when a challenger clears the margin, and reports the move from the holder', () => {
+      const { winners, repicks } = pickByValue([card('a', 2014, 1400), card('a', 2016, 1400), card('a', 2018, 1460)], declared, { holderSeason: holder, margin: 50 });
+      expect(winners.get('a').season).toBe(2018);
+      expect(repicks).toEqual([{ name: 'a', bbrefId: 'a', from: { season: 2016, salary: 1400 }, to: { season: 2018, salary: 1460 } }]);
+    });
+
+    it('lets challengers that both clear the holder compete on price alone', () => {
+      const { winners } = pickByValue([card('a', 2016, 1400), card('a', 2018, 1460), card('a', 2019, 1470)], declared, { holderSeason: holder, margin: 50 });
+      expect(winners.get('a').season).toBe(2019);
+    });
+
+    it('applies no margin to a player with nothing shipped, and none when the shipped season is not in the batch', () => {
+      const plain = pickByValue([card('b', 2001, 800), card('b', 2003, 810)], new Map([['b', 2001]]), { holderSeason: holder, margin: 50 });
+      expect(plain.winners.get('b').season).toBe(2003);
+      const gone = pickByValue([card('a', 2014, 1400), card('a', 2018, 1410)], declared, { holderSeason: new Map([['a', 1999]]), margin: 50 });
+      expect(gone.winners.get('a').season).toBe(2018);
+    });
+
+    it('is the old rule at margin zero', () => {
+      const { winners } = pickByValue([card('a', 2014, 1400), card('a', 2016, 1400), card('a', 2018, 1410)], declared, { holderSeason: holder, margin: 0 });
+      expect(winners.get('a').season).toBe(2018);
+    });
+  });
 });
 
 describe('nextRetired', () => {

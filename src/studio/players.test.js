@@ -485,7 +485,9 @@ describe('the base set\'s card-type badges', () => {
     // Season VALUE PICK (superSeasonValue.js) — ten badged players found an
     // earlier season that beats their base card and left for the set, five
     // came the other way. A measurement of the price, as every note says.
-    expect(printed.filter(id => id === SUPER_SEASON_BADGE).length).toBe(20);
+    // 19 on 2026-09-29 (the conditional-rows rebuild): three base cards handed
+    // the pill back to returning Super Season cards, two took it.
+    expect(printed.filter(id => id === SUPER_SEASON_BADGE).length).toBe(19);
     expect(printed.filter(id => id === BEST_SEASON_BADGE).length).toBe(120);
     // Everyone who prints ROOKIE is someone the SUPER SEASON fact is also true
     // of — the nesting is what makes this a priority question and not a rule.
@@ -516,7 +518,10 @@ describe('the base set\'s card-type badges', () => {
       // still sums to the same 145 gilded-or-badged faces.
       // 20/120 on 2026-09-24: the currency-rate reprice and the Super Season
       // value pick moved the line again (140 gilded-or-badged faces).
-      [SUPER_SEASON_BADGE]: 20,
+      // 19/120 on 2026-09-29 (the conditional-rows rebuild, 139 faces): three
+      // base cards handed the pill back to returning Super Season cards, two
+      // took it.
+      [SUPER_SEASON_BADGE]: 19,
       [BEST_SEASON_BADGE]: 120,
       // In the id list, never on a base-set record: the STANDOUT, TRADED and
       // TEAM REWARD pills are SET badges, worn by their whole sets and no one

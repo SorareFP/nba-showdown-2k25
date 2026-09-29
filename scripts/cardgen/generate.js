@@ -5,7 +5,7 @@
 // floor, the forced shot-line break, then the identical-tier merge) ->
 // applyOverrides (Task 6) -> toRawCardFormat.
 
-import { computeStatBands } from './bands.js';
+import { computeStatBands, conditionalStatValues } from './bands.js';
 import { enforceZeroTiers } from './zeroFloor.js';
 import { applyOverrides } from './overrides.js';
 import * as basketballReference from './sources/basketballReference.js';
@@ -126,9 +126,14 @@ export function forceBandBoundary(chart, roll, { firstMovable = 1 } = {}) {
   // deep inside a wide flat tier, two boundaries equidistant at 7, and the
   // stable sort picked the one that turned rolls 5-11 into blanks. A move that
   // grows a zero tier loses to ANY other candidate, distance second.
-  const extendsBlank = i =>
-    next[i].lo < roll &&
-    next[i - 1].pts === 0 && next[i - 1].reb === 0 && next[i - 1].ast === 0;
+  //
+  // A ZERO TIER IS ONE WITH NO POINTS. This read 0/0/0 until 2026-09-29, when
+  // the conditional rows (reconcileConditional) put a rebound or an assist on
+  // most no-scoring tiers and the tie-break silently flipped on three cards:
+  // Kawhi Leonard's three-point row moved from roll 13 to roll 10 and Stephen
+  // Curry's from 10 to 13, $280 and $230 of salary from a rule about rebounds.
+  // The floor being hollowed is the SCORING floor, so points are the test.
+  const extendsBlank = i => next[i].lo < roll && next[i - 1].pts === 0;
   reachable.sort((a, b) =>
     (extendsBlank(a) - extendsBlank(b)) ||
     (Math.abs(next[a].lo - roll) - Math.abs(next[b].lo - roll)));
@@ -345,6 +350,38 @@ export function reconcileBandsByRoll({ pts, reb, ast }) {
       ast: last ? ast[ast.length - 1].value : at(ast, probe),
     };
   });
+}
+
+/**
+ * ROWS THAT SAY WHAT HAPPENED TOGETHER (the user, 2026-09-29). The points
+ * bands are the spine as ever; each row's rebounds and assists are what the
+ * player averaged in the games that made that row (conditionalStatValues in
+ * bands.js — the reasoning is there). `games` are the joint rows the points
+ * were cut from; without them, or on an all-synthetic card, the per-stat
+ * ladders are read by roll exactly as before (reconcileBandsByRoll), so every
+ * card that could be built still can.
+ */
+/**
+ * THE SWITCH BACK. `CHART_ROWS=legacy` in the environment makes every
+ * generator read the per-stat ladders by roll exactly as before 2026-09-29 —
+ * the one-line revert the user asked for ("keep a save of the current cards
+ * so we can easily revert"), and the control run for measuring what the
+ * conditional rows alone change against today's inputs.
+ */
+export const LEGACY_ROWS = typeof process !== 'undefined' && process.env?.CHART_ROWS === 'legacy';
+
+export function reconcileConditional({ pts, reb, ast, games = null }) {
+  const cond = games && !LEGACY_ROWS
+    ? { reb: conditionalStatValues(games, pts, 'reb'), ast: conditionalStatValues(games, pts, 'ast') }
+    : null;
+  if (!cond?.reb || !cond?.ast) return reconcileBandsByRoll({ pts, reb, ast });
+  return pts.map((tier, i) => ({
+    lo: tier.lo,
+    hi: tier.hi,
+    pts: tier.value,
+    reb: cond.reb[i].value,
+    ast: cond.ast[i].value,
+  }));
 }
 
 export function toRawCardFormat(chart) {

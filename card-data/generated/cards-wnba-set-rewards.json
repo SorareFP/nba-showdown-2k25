@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-24T14:01:25.330Z",
+ "generatedAt": "2026-09-29T17:30:48.928Z",
  "set": "wnba-set-rewards",
  "note": "SET COMPLETION REWARDS — cards MOVED out of their home special set (see migratedFrom) and earned by completing that set (rewardGoal). Built by scripts/cardgen/generateSetRewards.js from card-data/set-rewards-2026.json; the strongest card by salary of each group is the reward.",
  "cards": [
@@ -15,7 +15,7 @@
    "paintBoost": 1,
    "threePtBoost": -1,
    "defBoost": 3,
-   "salary": 1490,
+   "salary": 1470,
    "chart": [
     {
      "lo": 1,
@@ -42,7 +42,7 @@
      "lo": 13,
      "hi": 19,
      "pts": 3,
-     "reb": 2,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -96,7 +96,7 @@
    "paintBoost": -1,
    "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 1130,
+   "salary": 1160,
    "chart": [
     {
      "lo": 1,
@@ -117,21 +117,21 @@
      "hi": 13,
      "pts": 2,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 14,
      "hi": 21,
      "pts": 3,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 22,
      "hi": 99,
      "pts": 3,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "league": "WNBA",

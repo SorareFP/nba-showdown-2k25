@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-24T23:21:12.948Z",
+ "generatedAt": "2026-09-29T17:26:14.682Z",
  "set": "rookie",
  "provisional": true,
  "sources": {
@@ -981,7 +981,7 @@
    "paintBoost": 1,
    "threePtBoost": -2,
    "defBoost": 0,
-   "salary": 160,
+   "salary": 170,
    "chart": [
     {
      "lo": 1,
@@ -992,31 +992,31 @@
     },
     {
      "lo": 3,
+     "hi": 8,
+     "pts": 0,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 9,
      "hi": 10,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 11,
      "hi": 15,
      "pts": 1,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
      "lo": 16,
-     "hi": 22,
-     "pts": 1,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 23,
      "hi": 99,
      "pts": 1,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2015,
@@ -1060,13 +1060,20 @@
      "hi": 6,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
-     "hi": 15,
+     "hi": 7,
      "pts": 1,
      "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 15,
+     "pts": 1,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -1074,13 +1081,13 @@
      "hi": 20,
      "pts": 2,
      "reb": 0,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 21,
      "hi": 99,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 1
     }
    ],
@@ -1111,7 +1118,7 @@
    "paintBoost": -1,
    "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 110,
+   "salary": 120,
    "chart": [
     {
      "lo": 1,
@@ -1122,6 +1129,13 @@
     },
     {
      "lo": 3,
+     "hi": 10,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 11,
      "hi": 12,
      "pts": 0,
      "reb": 0,
@@ -1131,7 +1145,7 @@
      "lo": 13,
      "hi": 14,
      "pts": 1,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
@@ -1176,7 +1190,7 @@
    "paintBoost": -2,
    "threePtBoost": -1,
    "defBoost": -1,
-   "salary": 260,
+   "salary": 280,
    "chart": [
     {
      "lo": 1,
@@ -1189,11 +1203,18 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 4,
+     "hi": 8,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 9,
      "hi": 13,
      "pts": 1,
      "reb": 0,
@@ -1201,17 +1222,10 @@
     },
     {
      "lo": 14,
-     "hi": 23,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 24,
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2022,
@@ -1254,7 +1268,7 @@
      "lo": 3,
      "hi": 5,
      "pts": 0,
-     "reb": 0,
+     "reb": 2,
      "ast": 0
     },
     {
@@ -1266,23 +1280,16 @@
     },
     {
      "lo": 12,
-     "hi": 14,
-     "pts": 1,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 15,
      "hi": 23,
      "pts": 1,
-     "reb": 2,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 24,
      "hi": 99,
      "pts": 1,
-     "reb": 2,
+     "reb": 1,
      "ast": 1
     }
    ],
@@ -1313,7 +1320,7 @@
    "paintBoost": 3,
    "threePtBoost": -4,
    "defBoost": 0,
-   "salary": 520,
+   "salary": 540,
    "chart": [
     {
      "lo": 1,
@@ -1327,7 +1334,7 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
@@ -1340,14 +1347,14 @@
      "lo": 16,
      "hi": 21,
      "pts": 2,
-     "reb": 1,
+     "reb": 2,
      "ast": 0
     },
     {
      "lo": 22,
      "hi": 99,
      "pts": 2,
-     "reb": 2,
+     "reb": 1,
      "ast": 0
     }
    ],
@@ -1378,7 +1385,7 @@
    "paintBoost": 2,
    "threePtBoost": 2,
    "defBoost": -1,
-   "salary": 340,
+   "salary": 360,
    "chart": [
     {
      "lo": 1,
@@ -1392,10 +1399,17 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
+     "hi": 11,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 12,
      "hi": 16,
      "pts": 2,
      "reb": 1,
@@ -1405,8 +1419,8 @@
      "lo": 17,
      "hi": 99,
      "pts": 2,
-     "reb": 2,
-     "ast": 1
+     "reb": 1,
+     "ast": 0
     }
    ],
    "season": 2025,
@@ -1439,7 +1453,7 @@
    "paintBoost": -2,
    "threePtBoost": -4,
    "defBoost": -2,
-   "salary": 320,
+   "salary": 340,
    "chart": [
     {
      "lo": 1,
@@ -1680,16 +1694,9 @@
     },
     {
      "lo": 16,
-     "hi": 20,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 21,
      "hi": 99,
      "pts": 2,
-     "reb": 2,
+     "reb": 1,
      "ast": 1
     }
    ],
@@ -1720,7 +1727,7 @@
    "paintBoost": 2,
    "threePtBoost": -3,
    "defBoost": 0,
-   "salary": 690,
+   "salary": 680,
    "chart": [
     {
      "lo": 1,
@@ -1792,7 +1799,7 @@
    "paintBoost": 2,
    "threePtBoost": -4,
    "defBoost": 2,
-   "salary": 700,
+   "salary": 710,
    "chart": [
     {
      "lo": 1,
@@ -1805,11 +1812,18 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 1,
+     "reb": 2,
      "ast": 0
     },
     {
      "lo": 4,
+     "hi": 7,
+     "pts": 1,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 8,
      "hi": 15,
      "pts": 1,
      "reb": 1,
@@ -1817,16 +1831,9 @@
     },
     {
      "lo": 16,
-     "hi": 21,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 22,
      "hi": 99,
      "pts": 2,
-     "reb": 2,
+     "reb": 1,
      "ast": 1
     }
    ],
@@ -1857,7 +1864,7 @@
    "paintBoost": 6,
    "threePtBoost": -2,
    "defBoost": 2,
-   "salary": 840,
+   "salary": 820,
    "chart": [
     {
      "lo": 1,
@@ -1871,7 +1878,7 @@
      "hi": 3,
      "pts": 0,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 4,
@@ -1882,16 +1889,9 @@
     },
     {
      "lo": 18,
-     "hi": 22,
-     "pts": 2,
-     "reb": 2,
-     "ast": 0
-    },
-    {
-     "lo": 23,
      "hi": 99,
      "pts": 2,
-     "reb": 3,
+     "reb": 2,
      "ast": 0
     }
    ],
@@ -1922,7 +1922,7 @@
    "paintBoost": 3,
    "threePtBoost": -3,
    "defBoost": 2,
-   "salary": 600,
+   "salary": 590,
    "chart": [
     {
      "lo": 1,
@@ -1935,7 +1935,7 @@
      "lo": 3,
      "hi": 7,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -1956,7 +1956,7 @@
      "lo": 25,
      "hi": 99,
      "pts": 1,
-     "reb": 1,
+     "reb": 0,
      "ast": 1
     }
    ],
@@ -1987,7 +1987,7 @@
    "paintBoost": 2,
    "threePtBoost": -1,
    "defBoost": 2,
-   "salary": 1170,
+   "salary": 1150,
    "chart": [
     {
      "lo": 1,
@@ -2072,18 +2072,11 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 4,
-     "hi": 7,
-     "pts": 1,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 8,
      "hi": 15,
      "pts": 1,
      "reb": 0,
@@ -2094,7 +2087,7 @@
      "hi": 22,
      "pts": 2,
      "reb": 0,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 23,
@@ -2131,7 +2124,7 @@
    "paintBoost": 4,
    "threePtBoost": -1,
    "defBoost": -2,
-   "salary": 380,
+   "salary": 450,
    "chart": [
     {
      "lo": 1,
@@ -2151,14 +2144,21 @@
      "lo": 8,
      "hi": 16,
      "pts": 2,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 17,
-     "hi": 99,
+     "hi": 21,
      "pts": 2,
      "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 2,
+     "reb": 0,
      "ast": 0
     }
    ],
@@ -2189,7 +2189,7 @@
    "paintBoost": 1,
    "threePtBoost": -3,
    "defBoost": 1,
-   "salary": 830,
+   "salary": 780,
    "chart": [
     {
      "lo": 1,
@@ -2202,8 +2202,8 @@
      "lo": 3,
      "hi": 7,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 8,
@@ -2214,10 +2214,17 @@
     },
     {
      "lo": 15,
+     "hi": 21,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 22,
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 1994,
@@ -2258,24 +2265,38 @@
     },
     {
      "lo": 3,
+     "hi": 5,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 6,
      "hi": 9,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 10,
      "hi": 16,
      "pts": 1,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 17,
+     "hi": 24,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 25,
      "hi": 99,
      "pts": 1,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2024,
@@ -2305,7 +2326,7 @@
    "paintBoost": 5,
    "threePtBoost": -3,
    "defBoost": 1,
-   "salary": 990,
+   "salary": 950,
    "chart": [
     {
      "lo": 1,
@@ -2332,7 +2353,7 @@
      "lo": 17,
      "hi": 99,
      "pts": 2,
-     "reb": 2,
+     "reb": 1,
      "ast": 0
     }
    ],
@@ -2376,7 +2397,7 @@
      "lo": 3,
      "hi": 7,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -2397,7 +2418,7 @@
      "lo": 22,
      "hi": 99,
      "pts": 3,
-     "reb": 1,
+     "reb": 0,
      "ast": 1
     }
    ],
@@ -2456,14 +2477,14 @@
      "hi": 21,
      "pts": 2,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 22,
      "hi": 99,
      "pts": 2,
-     "reb": 2,
-     "ast": 1
+     "reb": 1,
+     "ast": 0
     }
    ],
    "season": 2024,
@@ -2493,7 +2514,7 @@
    "paintBoost": -1,
    "threePtBoost": -2,
    "defBoost": -1,
-   "salary": 300,
+   "salary": 330,
    "chart": [
     {
      "lo": 1,
@@ -2506,36 +2527,36 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 4,
      "hi": 12,
      "pts": 1,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 13,
      "hi": 15,
      "pts": 1,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 16,
      "hi": 24,
      "pts": 1,
-     "reb": 1,
-     "ast": 0
+     "reb": 0,
+     "ast": 1
     },
     {
      "lo": 25,
      "hi": 99,
      "pts": 1,
-     "reb": 1,
-     "ast": 1
+     "reb": 0,
+     "ast": 0
     }
    ],
    "season": 2022,
@@ -2565,7 +2586,7 @@
    "paintBoost": 0,
    "threePtBoost": -1,
    "defBoost": 0,
-   "salary": 220,
+   "salary": 240,
    "chart": [
     {
      "lo": 1,
@@ -2578,15 +2599,22 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 4,
-     "hi": 13,
+     "hi": 8,
      "pts": 1,
      "reb": 0,
      "ast": 0
+    },
+    {
+     "lo": 9,
+     "hi": 13,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
     },
     {
      "lo": 14,
@@ -2600,7 +2628,7 @@
      "hi": 99,
      "pts": 1,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2022,
@@ -2630,7 +2658,7 @@
    "paintBoost": 3,
    "threePtBoost": -2,
    "defBoost": 1,
-   "salary": 510,
+   "salary": 520,
    "chart": [
     {
      "lo": 1,
@@ -2643,29 +2671,29 @@
      "lo": 3,
      "hi": 4,
      "pts": 0,
-     "reb": 0,
+     "reb": 2,
      "ast": 0
     },
     {
      "lo": 5,
-     "hi": 17,
+     "hi": 8,
      "pts": 1,
      "reb": 1,
      "ast": 0
     },
     {
+     "lo": 9,
+     "hi": 17,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
      "lo": 18,
-     "hi": 22,
+     "hi": 99,
      "pts": 2,
      "reb": 1,
      "ast": 0
-    },
-    {
-     "lo": 23,
-     "hi": 99,
-     "pts": 2,
-     "reb": 2,
-     "ast": 1
     }
    ],
    "season": 2018,
@@ -2695,7 +2723,7 @@
    "paintBoost": -2,
    "threePtBoost": -1,
    "defBoost": 0,
-   "salary": 200,
+   "salary": 210,
    "chart": [
     {
      "lo": 1,
@@ -2715,7 +2743,7 @@
      "lo": 7,
      "hi": 13,
      "pts": 1,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -2729,7 +2757,7 @@
      "lo": 24,
      "hi": 99,
      "pts": 1,
-     "reb": 1,
+     "reb": 0,
      "ast": 1
     }
    ],
@@ -2760,7 +2788,7 @@
    "paintBoost": 5,
    "threePtBoost": -3,
    "defBoost": 3,
-   "salary": 1170,
+   "salary": 1120,
    "chart": [
     {
      "lo": 1,
@@ -2785,17 +2813,10 @@
     },
     {
      "lo": 17,
-     "hi": 20,
+     "hi": 99,
      "pts": 2,
      "reb": 1,
      "ast": 1
-    },
-    {
-     "lo": 21,
-     "hi": 99,
-     "pts": 2,
-     "reb": 2,
-     "ast": 2
     }
    ],
    "season": 2018,
@@ -2825,7 +2846,7 @@
    "paintBoost": 0,
    "threePtBoost": 2,
    "defBoost": -3,
-   "salary": 520,
+   "salary": 540,
    "chart": [
     {
      "lo": 1,
@@ -2839,7 +2860,7 @@
      "hi": 6,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
@@ -2890,7 +2911,7 @@
    "paintBoost": 1,
    "threePtBoost": 2,
    "defBoost": -1,
-   "salary": 100,
+   "salary": 130,
    "chart": [
     {
      "lo": 1,
@@ -2903,15 +2924,22 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 4,
-     "hi": 16,
+     "hi": 8,
      "pts": 1,
      "reb": 0,
      "ast": 0
+    },
+    {
+     "lo": 9,
+     "hi": 16,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
     },
     {
      "lo": 17,
@@ -3006,7 +3034,7 @@
    "paintBoost": 1,
    "threePtBoost": -1,
    "defBoost": -2,
-   "salary": 130,
+   "salary": 140,
    "chart": [
     {
      "lo": 1,
@@ -3019,11 +3047,18 @@
      "lo": 3,
      "hi": 5,
      "pts": 0,
-     "reb": 1,
+     "reb": 2,
      "ast": 0
     },
     {
      "lo": 6,
+     "hi": 7,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 8,
      "hi": 16,
      "pts": 1,
      "reb": 1,
@@ -3031,16 +3066,9 @@
     },
     {
      "lo": 17,
-     "hi": 21,
-     "pts": 1,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 22,
      "hi": 99,
      "pts": 1,
-     "reb": 2,
+     "reb": 1,
      "ast": 0
     }
    ],
@@ -3071,7 +3099,7 @@
    "paintBoost": 1,
    "threePtBoost": 4,
    "defBoost": -1,
-   "salary": 850,
+   "salary": 910,
    "chart": [
     {
      "lo": 1,
@@ -3084,7 +3112,7 @@
      "lo": 3,
      "hi": 4,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -3099,7 +3127,7 @@
      "hi": 15,
      "pts": 2,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 16,
@@ -3136,7 +3164,7 @@
    "paintBoost": 0,
    "threePtBoost": -4,
    "defBoost": 0,
-   "salary": 80,
+   "salary": 100,
    "chart": [
     {
      "lo": 1,
@@ -3149,29 +3177,36 @@
      "lo": 3,
      "hi": 5,
      "pts": 0,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 6,
+     "hi": 9,
+     "pts": 0,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 10,
+     "hi": 14,
+     "pts": 0,
      "reb": 0,
      "ast": 0
     },
     {
-     "lo": 6,
+     "lo": 15,
      "hi": 15,
-     "pts": 0,
+     "pts": 1,
      "reb": 1,
      "ast": 0
     },
     {
      "lo": 16,
-     "hi": 24,
-     "pts": 1,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 25,
      "hi": 99,
      "pts": 1,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2004,
@@ -3273,7 +3308,7 @@
    "paintBoost": 1,
    "threePtBoost": 1,
    "defBoost": 0,
-   "salary": 590,
+   "salary": 580,
    "chart": [
     {
      "lo": 1,
@@ -3287,7 +3322,7 @@
      "hi": 3,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 4,
@@ -3298,16 +3333,9 @@
     },
     {
      "lo": 16,
-     "hi": 23,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 24,
      "hi": 99,
      "pts": 2,
-     "reb": 2,
+     "reb": 1,
      "ast": 1
     }
    ],
@@ -3338,7 +3366,7 @@
    "paintBoost": 1,
    "threePtBoost": -1,
    "defBoost": -1,
-   "salary": 140,
+   "salary": 150,
    "chart": [
     {
      "lo": 1,
@@ -3403,7 +3431,7 @@
    "paintBoost": 0,
    "threePtBoost": 1,
    "defBoost": -2,
-   "salary": 400,
+   "salary": 420,
    "chart": [
     {
      "lo": 1,
@@ -3424,21 +3452,14 @@
      "hi": 15,
      "pts": 2,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 16,
-     "hi": 21,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 22,
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2024,
@@ -3468,7 +3489,7 @@
    "paintBoost": -1,
    "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 1020,
+   "salary": 1010,
    "chart": [
     {
      "lo": 1,
@@ -3540,7 +3561,7 @@
    "paintBoost": -1,
    "threePtBoost": 2,
    "defBoost": -3,
-   "salary": 360,
+   "salary": 400,
    "chart": [
     {
      "lo": 1,
@@ -3553,14 +3574,14 @@
      "lo": 3,
      "hi": 5,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 6,
      "hi": 6,
      "pts": 1,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -3568,14 +3589,21 @@
      "hi": 16,
      "pts": 2,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 17,
+     "hi": 21,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 22,
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2022,
@@ -3618,8 +3646,8 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 4,
@@ -3630,16 +3658,9 @@
     },
     {
      "lo": 17,
-     "hi": 21,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 22,
      "hi": 99,
      "pts": 2,
-     "reb": 2,
+     "reb": 1,
      "ast": 0
     }
    ],
@@ -3670,7 +3691,7 @@
    "paintBoost": 0,
    "threePtBoost": -1,
    "defBoost": 1,
-   "salary": 210,
+   "salary": 230,
    "chart": [
     {
      "lo": 1,
@@ -3681,31 +3702,31 @@
     },
     {
      "lo": 3,
+     "hi": 5,
+     "pts": 0,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 6,
      "hi": 8,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 9,
      "hi": 16,
      "pts": 1,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 17,
-     "hi": 23,
-     "pts": 1,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 24,
      "hi": 99,
      "pts": 1,
-     "reb": 1,
-     "ast": 1
+     "reb": 0,
+     "ast": 0
     }
    ],
    "season": 2019,
@@ -3735,7 +3756,7 @@
    "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": -1,
-   "salary": 130,
+   "salary": 140,
    "chart": [
     {
      "lo": 1,
@@ -3748,11 +3769,18 @@
      "lo": 3,
      "hi": 5,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 6,
+     "hi": 8,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 9,
      "hi": 17,
      "pts": 1,
      "reb": 0,
@@ -3762,7 +3790,7 @@
      "lo": 18,
      "hi": 23,
      "pts": 1,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
@@ -3800,7 +3828,7 @@
    "paintBoost": -2,
    "threePtBoost": 1,
    "defBoost": -1,
-   "salary": 70,
+   "salary": 60,
    "chart": [
     {
      "lo": 1,
@@ -3814,17 +3842,24 @@
      "hi": 8,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 9,
      "hi": 15,
      "pts": 1,
      "reb": 0,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 16,
+     "hi": 23,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 24,
      "hi": 99,
      "pts": 1,
      "reb": 1,
@@ -3858,7 +3893,7 @@
    "paintBoost": -1,
    "threePtBoost": 4,
    "defBoost": -1,
-   "salary": 410,
+   "salary": 450,
    "chart": [
     {
      "lo": 1,
@@ -3871,7 +3906,7 @@
      "lo": 3,
      "hi": 7,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -3879,13 +3914,13 @@
      "hi": 15,
      "pts": 2,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 16,
      "hi": 20,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
@@ -3893,7 +3928,7 @@
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2017,
@@ -3923,7 +3958,7 @@
    "paintBoost": -2,
    "threePtBoost": 1,
    "defBoost": -1,
-   "salary": 690,
+   "salary": 700,
    "chart": [
     {
      "lo": 1,
@@ -3936,18 +3971,11 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 4,
-     "hi": 8,
-     "pts": 2,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 9,
      "hi": 15,
      "pts": 2,
      "reb": 1,
@@ -3955,10 +3983,17 @@
     },
     {
      "lo": 16,
+     "hi": 21,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 22,
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2022,
@@ -3988,7 +4023,7 @@
    "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": 0,
-   "salary": 480,
+   "salary": 540,
    "chart": [
     {
      "lo": 1,
@@ -4001,18 +4036,32 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 4,
+     "hi": 7,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 8,
      "hi": 14,
      "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 22,
+     "pts": 2,
      "reb": 0,
      "ast": 0
     },
     {
-     "lo": 15,
+     "lo": 23,
      "hi": 99,
      "pts": 2,
      "reb": 1,
@@ -4046,7 +4095,7 @@
    "paintBoost": 0,
    "threePtBoost": -1,
    "defBoost": 0,
-   "salary": 510,
+   "salary": 500,
    "chart": [
     {
      "lo": 1,
@@ -4059,18 +4108,11 @@
      "lo": 3,
      "hi": 4,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 5,
-     "hi": 7,
-     "pts": 1,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 8,
      "hi": 13,
      "pts": 1,
      "reb": 1,
@@ -4080,7 +4122,7 @@
      "lo": 14,
      "hi": 22,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
@@ -4131,8 +4173,8 @@
      "lo": 3,
      "hi": 7,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 8,
@@ -4145,7 +4187,7 @@
      "lo": 16,
      "hi": 21,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
@@ -4153,7 +4195,7 @@
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2004,
@@ -4183,7 +4225,7 @@
    "paintBoost": 1,
    "threePtBoost": 3,
    "defBoost": 1,
-   "salary": 530,
+   "salary": 550,
    "chart": [
     {
      "lo": 1,
@@ -4210,15 +4252,15 @@
      "lo": 15,
      "hi": 23,
      "pts": 2,
-     "reb": 1,
-     "ast": 0
+     "reb": 0,
+     "ast": 1
     },
     {
      "lo": 24,
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2024,
@@ -4248,7 +4290,7 @@
    "paintBoost": 3,
    "threePtBoost": -4,
    "defBoost": 0,
-   "salary": 1230,
+   "salary": 1220,
    "chart": [
     {
      "lo": 1,
@@ -4320,7 +4362,7 @@
    "paintBoost": -1,
    "threePtBoost": 2,
    "defBoost": -3,
-   "salary": 180,
+   "salary": 200,
    "chart": [
     {
      "lo": 1,
@@ -4334,7 +4376,7 @@
      "hi": 4,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 5,
@@ -4385,7 +4427,7 @@
    "paintBoost": 2,
    "threePtBoost": -1,
    "defBoost": 2,
-   "salary": 1210,
+   "salary": 1180,
    "chart": [
     {
      "lo": 1,
@@ -4419,7 +4461,7 @@
      "lo": 21,
      "hi": 99,
      "pts": 3,
-     "reb": 2,
+     "reb": 1,
      "ast": 1
     }
    ],
@@ -4450,7 +4492,7 @@
    "paintBoost": -2,
    "threePtBoost": -3,
    "defBoost": 2,
-   "salary": 980,
+   "salary": 970,
    "chart": [
     {
      "lo": 1,
@@ -4508,7 +4550,7 @@
    "paintBoost": 6,
    "threePtBoost": -2,
    "defBoost": 1,
-   "salary": 1080,
+   "salary": 990,
    "chart": [
     {
      "lo": 1,
@@ -4522,28 +4564,28 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
      "hi": 12,
      "pts": 2,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 13,
      "hi": 17,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 18,
      "hi": 99,
      "pts": 2,
-     "reb": 2,
-     "ast": 1
+     "reb": 1,
+     "ast": 0
     }
    ],
    "season": 1994,
@@ -4573,7 +4615,7 @@
    "paintBoost": 2,
    "threePtBoost": 1,
    "defBoost": 0,
-   "salary": 190,
+   "salary": 200,
    "chart": [
     {
      "lo": 1,
@@ -4586,8 +4628,8 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 7,
@@ -4600,7 +4642,7 @@
      "lo": 16,
      "hi": 22,
      "pts": 1,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
@@ -4608,7 +4650,7 @@
      "hi": 99,
      "pts": 1,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2023,
@@ -4638,7 +4680,7 @@
    "paintBoost": -1,
    "threePtBoost": 2,
    "defBoost": -2,
-   "salary": 320,
+   "salary": 340,
    "chart": [
     {
      "lo": 1,
@@ -4651,29 +4693,22 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 7,
-     "hi": 11,
-     "pts": 2,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 12,
      "hi": 16,
      "pts": 2,
-     "reb": 1,
-     "ast": 0
+     "reb": 0,
+     "ast": 1
     },
     {
      "lo": 17,
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2020,
@@ -4703,7 +4738,7 @@
    "paintBoost": 1,
    "threePtBoost": 0,
    "defBoost": -1,
-   "salary": 30,
+   "salary": 50,
    "chart": [
     {
      "lo": 1,
@@ -4714,10 +4749,17 @@
     },
     {
      "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 7,
      "hi": 8,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 9,
@@ -4728,10 +4770,17 @@
     },
     {
      "lo": 18,
+     "hi": 24,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 25,
      "hi": 99,
      "pts": 1,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2025,
@@ -4761,7 +4810,7 @@
    "paintBoost": -1,
    "threePtBoost": 5,
    "defBoost": -3,
-   "salary": 220,
+   "salary": 240,
    "chart": [
     {
      "lo": 1,
@@ -4832,11 +4881,18 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 4,
+     "hi": 8,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 9,
      "hi": 12,
      "pts": 1,
      "reb": 0,
@@ -4844,6 +4900,13 @@
     },
     {
      "lo": 13,
+     "hi": 23,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 24,
      "hi": 99,
      "pts": 1,
      "reb": 1,
@@ -4890,11 +4953,18 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 7,
+     "hi": 7,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 8,
      "hi": 14,
      "pts": 1,
      "reb": 0,
@@ -4904,7 +4974,7 @@
      "lo": 15,
      "hi": 19,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 1
     },
     {
@@ -4912,7 +4982,7 @@
      "hi": 99,
      "pts": 3,
      "reb": 1,
-     "ast": 2
+     "ast": 1
     }
    ],
    "season": 2024,
@@ -4942,7 +5012,7 @@
    "paintBoost": -3,
    "threePtBoost": 0,
    "defBoost": -2,
-   "salary": 650,
+   "salary": 630,
    "chart": [
     {
      "lo": 1,
@@ -4955,8 +5025,8 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 7,
@@ -4970,13 +5040,13 @@
      "hi": 20,
      "pts": 2,
      "reb": 0,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 21,
      "hi": 99,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 1
     }
    ],
@@ -5007,7 +5077,7 @@
    "paintBoost": 5,
    "threePtBoost": -3,
    "defBoost": 2,
-   "salary": 440,
+   "salary": 470,
    "chart": [
     {
      "lo": 1,
@@ -5020,8 +5090,8 @@
      "lo": 3,
      "hi": 7,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 8,
@@ -5065,7 +5135,7 @@
    "paintBoost": -1,
    "threePtBoost": 1,
    "defBoost": 1,
-   "salary": 210,
+   "salary": 230,
    "chart": [
     {
      "lo": 1,
@@ -5076,10 +5146,17 @@
     },
     {
      "lo": 3,
+     "hi": 7,
+     "pts": 0,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 8,
      "hi": 9,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 10,
@@ -5100,7 +5177,7 @@
      "hi": 99,
      "pts": 1,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2007,
@@ -5130,7 +5207,7 @@
    "paintBoost": -2,
    "threePtBoost": 1,
    "defBoost": -3,
-   "salary": 90,
+   "salary": 110,
    "chart": [
     {
      "lo": 1,
@@ -5143,7 +5220,7 @@
      "lo": 3,
      "hi": 7,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -5155,16 +5232,9 @@
     },
     {
      "lo": 16,
-     "hi": 20,
-     "pts": 2,
-     "reb": 0,
-     "ast": 1
-    },
-    {
-     "lo": 21,
      "hi": 99,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 1
     }
    ],
@@ -5267,7 +5337,7 @@
    "paintBoost": 0,
    "threePtBoost": 1,
    "defBoost": -2,
-   "salary": 240,
+   "salary": 250,
    "chart": [
     {
      "lo": 1,
@@ -5332,7 +5402,7 @@
    "paintBoost": 2,
    "threePtBoost": -1,
    "defBoost": -2,
-   "salary": 140,
+   "salary": 180,
    "chart": [
     {
      "lo": 1,
@@ -5346,14 +5416,14 @@
      "hi": 7,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 8,
      "hi": 16,
      "pts": 1,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 17,
@@ -5367,7 +5437,7 @@
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2018,
@@ -5397,7 +5467,7 @@
    "paintBoost": 0,
    "threePtBoost": 2,
    "defBoost": -2,
-   "salary": 170,
+   "salary": 190,
    "chart": [
     {
      "lo": 1,
@@ -5410,8 +5480,8 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 7,
@@ -5422,6 +5492,13 @@
     },
     {
      "lo": 17,
+     "hi": 21,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 22,
      "hi": 99,
      "pts": 2,
      "reb": 1,
@@ -5455,7 +5532,7 @@
    "paintBoost": 0,
    "threePtBoost": 2,
    "defBoost": 1,
-   "salary": 160,
+   "salary": 190,
    "chart": [
     {
      "lo": 1,
@@ -5468,18 +5545,25 @@
      "lo": 3,
      "hi": 9,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 10,
      "hi": 16,
      "pts": 1,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 17,
+     "hi": 22,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 23,
      "hi": 99,
      "pts": 1,
      "reb": 1,
@@ -5513,7 +5597,7 @@
    "paintBoost": 4,
    "threePtBoost": -4,
    "defBoost": -1,
-   "salary": 860,
+   "salary": 830,
    "chart": [
     {
      "lo": 1,
@@ -5527,7 +5611,7 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
@@ -5540,7 +5624,7 @@
      "lo": 16,
      "hi": 21,
      "pts": 2,
-     "reb": 2,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -5548,7 +5632,7 @@
      "hi": 99,
      "pts": 2,
      "reb": 2,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2019,
@@ -5578,7 +5662,7 @@
    "paintBoost": 6,
    "threePtBoost": -2,
    "defBoost": 0,
-   "salary": 290,
+   "salary": 300,
    "chart": [
     {
      "lo": 1,
@@ -5589,13 +5673,6 @@
     },
     {
      "lo": 3,
-     "hi": 9,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 10,
      "hi": 11,
      "pts": 0,
      "reb": 1,
@@ -5612,7 +5689,7 @@
      "lo": 18,
      "hi": 22,
      "pts": 1,
-     "reb": 2,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -5650,7 +5727,7 @@
    "paintBoost": 2,
    "threePtBoost": -4,
    "defBoost": -1,
-   "salary": 250,
+   "salary": 260,
    "chart": [
     {
      "lo": 1,
@@ -5721,14 +5798,21 @@
      "lo": 3,
      "hi": 5,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 6,
-     "hi": 14,
+     "hi": 9,
      "pts": 1,
      "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 10,
+     "hi": 14,
+     "pts": 1,
+     "reb": 0,
      "ast": 0
     },
     {
@@ -5779,7 +5863,7 @@
      "lo": 3,
      "hi": 4,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -5791,16 +5875,9 @@
     },
     {
      "lo": 18,
-     "hi": 21,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 22,
      "hi": 99,
      "pts": 2,
-     "reb": 2,
+     "reb": 1,
      "ast": 0
     }
    ],
@@ -5831,7 +5908,7 @@
    "paintBoost": 1,
    "threePtBoost": -1,
    "defBoost": -2,
-   "salary": 110,
+   "salary": 150,
    "chart": [
     {
      "lo": 1,
@@ -5844,29 +5921,22 @@
      "lo": 3,
      "hi": 9,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 10,
      "hi": 16,
      "pts": 1,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 17,
-     "hi": 20,
+     "hi": 99,
      "pts": 2,
      "reb": 0,
      "ast": 0
-    },
-    {
-     "lo": 21,
-     "hi": 99,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
     }
    ],
    "season": 2014,
@@ -5896,7 +5966,7 @@
    "paintBoost": -3,
    "threePtBoost": -3,
    "defBoost": 0,
-   "salary": 290,
+   "salary": 310,
    "chart": [
     {
      "lo": 1,
@@ -5907,6 +5977,13 @@
     },
     {
      "lo": 3,
+     "hi": 7,
+     "pts": 0,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 8,
      "hi": 8,
      "pts": 0,
      "reb": 0,
@@ -5916,7 +5993,7 @@
      "lo": 9,
      "hi": 14,
      "pts": 1,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -5930,7 +6007,7 @@
      "lo": 21,
      "hi": 99,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 1
     }
    ],
@@ -5961,7 +6038,7 @@
    "paintBoost": -2,
    "threePtBoost": 4,
    "defBoost": -1,
-   "salary": 420,
+   "salary": 480,
    "chart": [
     {
      "lo": 1,
@@ -5975,14 +6052,14 @@
      "hi": 3,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 4,
      "hi": 15,
      "pts": 1,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 16,
@@ -5996,7 +6073,7 @@
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2006,
@@ -6026,7 +6103,7 @@
    "paintBoost": -2,
    "threePtBoost": 3,
    "defBoost": 0,
-   "salary": 450,
+   "salary": 470,
    "chart": [
     {
      "lo": 1,
@@ -6040,7 +6117,7 @@
      "hi": 6,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
@@ -6051,17 +6128,10 @@
     },
     {
      "lo": 15,
-     "hi": 22,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 23,
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2021,
@@ -6091,7 +6161,7 @@
    "paintBoost": 2,
    "threePtBoost": 1,
    "defBoost": -2,
-   "salary": 250,
+   "salary": 270,
    "chart": [
     {
      "lo": 1,
@@ -6105,10 +6175,17 @@
      "hi": 3,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 4,
+     "hi": 7,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 8,
      "hi": 15,
      "pts": 1,
      "reb": 0,
@@ -6126,7 +6203,7 @@
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2016,
@@ -6156,7 +6233,7 @@
    "paintBoost": 0,
    "threePtBoost": 1,
    "defBoost": 1,
-   "salary": 330,
+   "salary": 340,
    "chart": [
     {
      "lo": 1,
@@ -6169,11 +6246,18 @@
      "lo": 3,
      "hi": 5,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 6,
+     "hi": 8,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 9,
      "hi": 15,
      "pts": 1,
      "reb": 0,
@@ -6183,7 +6267,7 @@
      "lo": 16,
      "hi": 22,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
@@ -6191,7 +6275,7 @@
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2021,
@@ -6221,7 +6305,7 @@
    "paintBoost": 1,
    "threePtBoost": 1,
    "defBoost": -1,
-   "salary": 310,
+   "salary": 320,
    "chart": [
     {
      "lo": 1,
@@ -6235,7 +6319,7 @@
      "hi": 6,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
@@ -6351,7 +6435,7 @@
    "paintBoost": 0,
    "threePtBoost": 2,
    "defBoost": 0,
-   "salary": 210,
+   "salary": 220,
    "chart": [
     {
      "lo": 1,
@@ -6364,36 +6448,29 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 4,
      "hi": 8,
      "pts": 1,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 9,
      "hi": 16,
      "pts": 1,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
      "lo": 17,
-     "hi": 23,
-     "pts": 1,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 24,
      "hi": 99,
      "pts": 1,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2017,
@@ -6423,7 +6500,7 @@
    "paintBoost": 2,
    "threePtBoost": -4,
    "defBoost": -1,
-   "salary": 680,
+   "salary": 710,
    "chart": [
     {
      "lo": 1,
@@ -6444,7 +6521,7 @@
      "hi": 15,
      "pts": 2,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 16,
@@ -6494,29 +6571,36 @@
      "lo": 3,
      "hi": 4,
      "pts": 0,
-     "reb": 1,
+     "reb": 2,
      "ast": 0
     },
     {
      "lo": 5,
+     "hi": 8,
+     "pts": 1,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 9,
      "hi": 16,
      "pts": 1,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 17,
      "hi": 22,
      "pts": 1,
-     "reb": 2,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 23,
      "hi": 99,
      "pts": 1,
-     "reb": 3,
-     "ast": 1
+     "reb": 2,
+     "ast": 0
     }
    ],
    "season": 2025,
@@ -6546,7 +6630,7 @@
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 1150,
+   "salary": 1120,
    "chart": [
     {
      "lo": 1,
@@ -6560,21 +6644,21 @@
      "hi": 3,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 4,
      "hi": 14,
      "pts": 2,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 15,
      "hi": 99,
      "pts": 3,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2018,
@@ -6604,7 +6688,7 @@
    "paintBoost": 2,
    "threePtBoost": 0,
    "defBoost": 1,
-   "salary": 160,
+   "salary": 170,
    "chart": [
     {
      "lo": 1,
@@ -6617,7 +6701,7 @@
      "lo": 3,
      "hi": 10,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -6625,27 +6709,20 @@
      "hi": 12,
      "pts": 0,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 13,
      "hi": 17,
      "pts": 1,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
      "lo": 18,
-     "hi": 22,
-     "pts": 1,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 23,
      "hi": 99,
      "pts": 1,
-     "reb": 2,
+     "reb": 1,
      "ast": 0
     }
    ],
@@ -6672,11 +6749,11 @@
    "pos": "PF",
    "speed": 8,
    "power": 12,
-   "shotLine": 16,
-   "paintBoost": 3,
-   "threePtBoost": -4,
+   "shotLine": 17,
+   "paintBoost": 4,
+   "threePtBoost": -3,
    "defBoost": 0,
-   "salary": 640,
+   "salary": 620,
    "chart": [
     {
      "lo": 1,
@@ -6694,13 +6771,13 @@
     },
     {
      "lo": 7,
-     "hi": 15,
+     "hi": 16,
      "pts": 1,
      "reb": 1,
      "ast": 0
     },
     {
-     "lo": 16,
+     "lo": 17,
      "hi": 21,
      "pts": 2,
      "reb": 1,
@@ -6741,7 +6818,7 @@
    "paintBoost": 1,
    "threePtBoost": -2,
    "defBoost": 0,
-   "salary": 690,
+   "salary": 660,
    "chart": [
     {
      "lo": 1,
@@ -6755,7 +6832,7 @@
      "hi": 6,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
@@ -6766,6 +6843,13 @@
     },
     {
      "lo": 16,
+     "hi": 20,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 21,
      "hi": 99,
      "pts": 2,
      "reb": 1,
@@ -6799,7 +6883,7 @@
    "paintBoost": 0,
    "threePtBoost": -1,
    "defBoost": 2,
-   "salary": 250,
+   "salary": 240,
    "chart": [
     {
      "lo": 1,
@@ -6812,15 +6896,15 @@
      "lo": 3,
      "hi": 8,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 9,
      "hi": 10,
      "pts": 0,
-     "reb": 1,
-     "ast": 0
+     "reb": 0,
+     "ast": 1
     },
     {
      "lo": 11,
@@ -6831,9 +6915,16 @@
     },
     {
      "lo": 17,
+     "hi": 24,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 25,
      "hi": 99,
      "pts": 1,
-     "reb": 2,
+     "reb": 1,
      "ast": 1
     }
    ],
@@ -6864,7 +6955,7 @@
    "paintBoost": 0,
    "threePtBoost": -5,
    "defBoost": -1,
-   "salary": 710,
+   "salary": 700,
    "chart": [
     {
      "lo": 1,
@@ -6878,7 +6969,7 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
@@ -6889,16 +6980,9 @@
     },
     {
      "lo": 15,
-     "hi": 21,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 22,
      "hi": 99,
      "pts": 2,
-     "reb": 2,
+     "reb": 1,
      "ast": 0
     }
    ],
@@ -6929,7 +7013,7 @@
    "paintBoost": 0,
    "threePtBoost": -4,
    "defBoost": -1,
-   "salary": 390,
+   "salary": 410,
    "chart": [
     {
      "lo": 1,
@@ -6943,7 +7027,7 @@
      "hi": 6,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
@@ -6987,7 +7071,7 @@
    "paintBoost": 5,
    "threePtBoost": -1,
    "defBoost": 2,
-   "salary": 830,
+   "salary": 810,
    "chart": [
     {
      "lo": 1,
@@ -7001,7 +7085,7 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
@@ -7022,7 +7106,7 @@
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2022,
@@ -7052,7 +7136,7 @@
    "paintBoost": -1,
    "threePtBoost": 1,
    "defBoost": 0,
-   "salary": 700,
+   "salary": 680,
    "chart": [
     {
      "lo": 1,
@@ -7065,7 +7149,7 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -7086,7 +7170,7 @@
      "lo": 21,
      "hi": 99,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 1
     }
    ],
@@ -7117,7 +7201,7 @@
    "paintBoost": -1,
    "threePtBoost": -1,
    "defBoost": 0,
-   "salary": 80,
+   "salary": 100,
    "chart": [
     {
      "lo": 1,
@@ -7128,10 +7212,17 @@
     },
     {
      "lo": 3,
+     "hi": 9,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 10,
      "hi": 10,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 11,
@@ -7142,16 +7233,9 @@
     },
     {
      "lo": 17,
-     "hi": 21,
-     "pts": 1,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 22,
      "hi": 99,
      "pts": 1,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     }
    ],
@@ -7182,7 +7266,7 @@
    "paintBoost": 0,
    "threePtBoost": -4,
    "defBoost": 1,
-   "salary": 540,
+   "salary": 530,
    "chart": [
     {
      "lo": 1,
@@ -7260,22 +7344,22 @@
      "lo": 3,
      "hi": 5,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 6,
-     "hi": 12,
-     "pts": 1,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 13,
-     "hi": 17,
+     "hi": 7,
      "pts": 1,
      "reb": 0,
      "ast": 1
+    },
+    {
+     "lo": 8,
+     "hi": 17,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
     },
     {
      "lo": 18,
@@ -7312,7 +7396,7 @@
    "paintBoost": 0,
    "threePtBoost": 1,
    "defBoost": -2,
-   "salary": 480,
+   "salary": 530,
    "chart": [
     {
      "lo": 1,
@@ -7325,25 +7409,32 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 4,
      "hi": 7,
      "pts": 1,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 8,
      "hi": 15,
      "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 21,
+     "pts": 2,
      "reb": 0,
      "ast": 0
     },
     {
-     "lo": 16,
+     "lo": 22,
      "hi": 99,
      "pts": 2,
      "reb": 1,
@@ -7377,7 +7468,7 @@
    "paintBoost": 1,
    "threePtBoost": 3,
    "defBoost": 0,
-   "salary": 310,
+   "salary": 330,
    "chart": [
     {
      "lo": 1,
@@ -7390,14 +7481,14 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 4,
      "hi": 8,
      "pts": 1,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -7405,13 +7496,13 @@
      "hi": 17,
      "pts": 1,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 18,
      "hi": 23,
      "pts": 1,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
@@ -7419,7 +7510,7 @@
      "hi": 99,
      "pts": 1,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2014,
@@ -7449,7 +7540,7 @@
    "paintBoost": 1,
    "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 630,
+   "salary": 610,
    "chart": [
     {
      "lo": 1,
@@ -7463,21 +7554,14 @@
      "hi": 4,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 5,
-     "hi": 7,
-     "pts": 1,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 8,
      "hi": 14,
      "pts": 1,
      "reb": 0,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 15,
@@ -7527,7 +7611,7 @@
      "lo": 3,
      "hi": 5,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -7579,7 +7663,7 @@
    "paintBoost": -1,
    "threePtBoost": 1,
    "defBoost": -2,
-   "salary": 100,
+   "salary": 120,
    "chart": [
     {
      "lo": 1,
@@ -7592,8 +7676,8 @@
      "lo": 3,
      "hi": 5,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 6,
@@ -7606,7 +7690,7 @@
      "lo": 16,
      "hi": 22,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
@@ -7614,7 +7698,7 @@
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2024,
@@ -7644,7 +7728,7 @@
    "paintBoost": 1,
    "threePtBoost": -4,
    "defBoost": 0,
-   "salary": 1200,
+   "salary": 1190,
    "chart": [
     {
      "lo": 1,
@@ -7801,8 +7885,8 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 7,
@@ -7815,7 +7899,7 @@
      "lo": 17,
      "hi": 21,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
@@ -7823,7 +7907,7 @@
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2013,
@@ -7866,7 +7950,7 @@
      "lo": 3,
      "hi": 8,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -7874,13 +7958,13 @@
      "hi": 15,
      "pts": 1,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 16,
      "hi": 22,
      "pts": 1,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
@@ -7888,7 +7972,7 @@
      "hi": 99,
      "pts": 1,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2022,
@@ -7918,7 +8002,7 @@
    "paintBoost": 0,
    "threePtBoost": 5,
    "defBoost": -1,
-   "salary": 870,
+   "salary": 860,
    "chart": [
     {
      "lo": 1,
@@ -7931,14 +8015,14 @@
      "lo": 3,
      "hi": 4,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 5,
      "hi": 7,
      "pts": 1,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -7950,6 +8034,13 @@
     },
     {
      "lo": 17,
+     "hi": 20,
+     "pts": 3,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 21,
      "hi": 99,
      "pts": 3,
      "reb": 1,
@@ -7983,7 +8074,7 @@
    "paintBoost": -1,
    "threePtBoost": -2,
    "defBoost": -1,
-   "salary": 100,
+   "salary": 110,
    "chart": [
     {
      "lo": 1,
@@ -7997,7 +8088,7 @@
      "hi": 7,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 8,
@@ -8018,7 +8109,7 @@
      "hi": 99,
      "pts": 1,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2021,
@@ -8048,7 +8139,7 @@
    "paintBoost": 1,
    "threePtBoost": -2,
    "defBoost": -2,
-   "salary": 120,
+   "salary": 150,
    "chart": [
     {
      "lo": 1,
@@ -8061,21 +8152,21 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 1
     },
     {
      "lo": 4,
      "hi": 15,
      "pts": 1,
-     "reb": 0,
+     "reb": 1,
      "ast": 1
     },
     {
      "lo": 16,
      "hi": 99,
      "pts": 1,
-     "reb": 1,
+     "reb": 0,
      "ast": 1
     }
    ],
@@ -8106,7 +8197,7 @@
    "paintBoost": -2,
    "threePtBoost": -4,
    "defBoost": 1,
-   "salary": 520,
+   "salary": 510,
    "chart": [
     {
      "lo": 1,
@@ -8119,8 +8210,8 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 2,
+     "ast": 1
     },
     {
      "lo": 4,
@@ -8171,7 +8262,7 @@
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": -2,
-   "salary": 1030,
+   "salary": 1020,
    "chart": [
     {
      "lo": 1,
@@ -8243,7 +8334,7 @@
    "paintBoost": 0,
    "threePtBoost": -5,
    "defBoost": -1,
-   "salary": 330,
+   "salary": 350,
    "chart": [
     {
      "lo": 1,
@@ -8256,29 +8347,29 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
+     "reb": 2,
      "ast": 0
     },
     {
      "lo": 7,
-     "hi": 14,
+     "hi": 7,
      "pts": 1,
      "reb": 1,
      "ast": 0
     },
     {
+     "lo": 8,
+     "hi": 14,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
      "lo": 15,
-     "hi": 19,
+     "hi": 99,
      "pts": 2,
      "reb": 1,
      "ast": 0
-    },
-    {
-     "lo": 20,
-     "hi": 99,
-     "pts": 2,
-     "reb": 2,
-     "ast": 1
     }
    ],
    "season": 2017,
@@ -8321,21 +8412,21 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 1
     },
     {
      "lo": 7,
      "hi": 15,
      "pts": 2,
-     "reb": 0,
+     "reb": 1,
      "ast": 1
     },
     {
      "lo": 16,
      "hi": 99,
      "pts": 3,
-     "reb": 1,
+     "reb": 0,
      "ast": 1
     }
    ],
@@ -8379,11 +8470,18 @@
      "lo": 3,
      "hi": 5,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 6,
+     "hi": 7,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 8,
      "hi": 16,
      "pts": 1,
      "reb": 0,
@@ -8393,7 +8491,7 @@
      "lo": 17,
      "hi": 22,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
@@ -8489,7 +8587,7 @@
    "paintBoost": -1,
    "threePtBoost": 5,
    "defBoost": -2,
-   "salary": 380,
+   "salary": 420,
    "chart": [
     {
      "lo": 1,
@@ -8502,11 +8600,18 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 7,
+     "hi": 7,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 8,
      "hi": 16,
      "pts": 1,
      "reb": 0,
@@ -8517,14 +8622,14 @@
      "hi": 21,
      "pts": 3,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 22,
      "hi": 99,
      "pts": 4,
-     "reb": 1,
-     "ast": 1
+     "reb": 0,
+     "ast": 0
     }
    ],
    "season": 2023,
@@ -8554,7 +8659,7 @@
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 240,
+   "salary": 230,
    "chart": [
     {
      "lo": 1,
@@ -8567,21 +8672,14 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 4,
-     "hi": 8,
-     "pts": 1,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 9,
      "hi": 14,
      "pts": 1,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
@@ -8632,8 +8730,8 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 4,
@@ -8684,7 +8782,7 @@
    "paintBoost": -1,
    "threePtBoost": -6,
    "defBoost": 0,
-   "salary": 120,
+   "salary": 140,
    "chart": [
     {
      "lo": 1,
@@ -8697,13 +8795,20 @@
      "lo": 3,
      "hi": 10,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 11,
-     "hi": 13,
+     "hi": 12,
      "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 13,
+     "hi": 13,
+     "pts": 1,
      "reb": 1,
      "ast": 0
     },
@@ -8718,7 +8823,7 @@
      "lo": 24,
      "hi": 99,
      "pts": 2,
-     "reb": 2,
+     "reb": 1,
      "ast": 0
     }
    ],
@@ -8749,7 +8854,7 @@
    "paintBoost": 1,
    "threePtBoost": 0,
    "defBoost": -1,
-   "salary": 400,
+   "salary": 420,
    "chart": [
     {
      "lo": 1,
@@ -8763,21 +8868,21 @@
      "hi": 6,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
      "hi": 14,
      "pts": 1,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 15,
      "hi": 21,
      "pts": 2,
      "reb": 0,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 22,
@@ -8814,7 +8919,7 @@
    "paintBoost": 2,
    "threePtBoost": -5,
    "defBoost": 0,
-   "salary": 470,
+   "salary": 450,
    "chart": [
     {
      "lo": 1,
@@ -8839,6 +8944,13 @@
     },
     {
      "lo": 15,
+     "hi": 22,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 23,
      "hi": 99,
      "pts": 2,
      "reb": 2,
@@ -8872,7 +8984,7 @@
    "paintBoost": 1,
    "threePtBoost": 1,
    "defBoost": -2,
-   "salary": 300,
+   "salary": 340,
    "chart": [
     {
      "lo": 1,
@@ -8885,29 +8997,29 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 7,
      "hi": 15,
      "pts": 2,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 16,
      "hi": 21,
      "pts": 2,
-     "reb": 1,
-     "ast": 0
+     "reb": 0,
+     "ast": 1
     },
     {
      "lo": 22,
      "hi": 99,
      "pts": 2,
-     "reb": 1,
-     "ast": 1
+     "reb": 0,
+     "ast": 0
     }
    ],
    "season": 2022,
@@ -8937,7 +9049,7 @@
    "paintBoost": 0,
    "threePtBoost": -1,
    "defBoost": 0,
-   "salary": 450,
+   "salary": 430,
    "chart": [
     {
      "lo": 1,
@@ -8951,21 +9063,14 @@
      "hi": 3,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 4,
-     "hi": 6,
-     "pts": 1,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 7,
      "hi": 11,
      "pts": 1,
      "reb": 0,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 12,
@@ -9009,7 +9114,7 @@
    "paintBoost": 1,
    "threePtBoost": 0,
    "defBoost": 1,
-   "salary": 680,
+   "salary": 710,
    "chart": [
     {
      "lo": 1,
@@ -9022,22 +9127,29 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 7,
      "hi": 14,
      "pts": 2,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 15,
-     "hi": 99,
+     "hi": 22,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
     }
    ],
    "season": 2023,
@@ -9067,7 +9179,7 @@
    "paintBoost": 0,
    "threePtBoost": 1,
    "defBoost": -1,
-   "salary": 170,
+   "salary": 180,
    "chart": [
     {
      "lo": 1,
@@ -9080,11 +9192,18 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 7,
+     "hi": 8,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 9,
      "hi": 15,
      "pts": 1,
      "reb": 0,
@@ -9101,7 +9220,7 @@
      "lo": 22,
      "hi": 99,
      "pts": 2,
-     "reb": 2,
+     "reb": 1,
      "ast": 1
     }
    ],
@@ -9132,7 +9251,7 @@
    "paintBoost": 1,
    "threePtBoost": 1,
    "defBoost": -1,
-   "salary": 290,
+   "salary": 320,
    "chart": [
     {
      "lo": 1,
@@ -9145,21 +9264,21 @@
      "lo": 3,
      "hi": 7,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 8,
      "hi": 15,
      "pts": 1,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 16,
      "hi": 20,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
@@ -9167,7 +9286,7 @@
      "hi": 99,
      "pts": 3,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2017,
@@ -9197,7 +9316,7 @@
    "paintBoost": -1,
    "threePtBoost": 1,
    "defBoost": -1,
-   "salary": 290,
+   "salary": 310,
    "chart": [
     {
      "lo": 1,
@@ -9211,17 +9330,10 @@
      "hi": 3,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 4,
-     "hi": 7,
-     "pts": 1,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 8,
      "hi": 15,
      "pts": 1,
      "reb": 0,
@@ -9269,7 +9381,7 @@
    "paintBoost": 0,
    "threePtBoost": -3,
    "defBoost": 0,
-   "salary": 460,
+   "salary": 470,
    "chart": [
     {
      "lo": 1,
@@ -9282,11 +9394,18 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 4,
+     "hi": 6,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 7,
      "hi": 14,
      "pts": 1,
      "reb": 0,
@@ -9334,7 +9453,7 @@
    "paintBoost": -2,
    "threePtBoost": 1,
    "defBoost": 1,
-   "salary": 560,
+   "salary": 540,
    "chart": [
     {
      "lo": 1,
@@ -9347,8 +9466,8 @@
      "lo": 3,
      "hi": 7,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 8,
@@ -9361,7 +9480,7 @@
      "lo": 16,
      "hi": 20,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
@@ -9369,7 +9488,7 @@
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2010,
@@ -9412,18 +9531,11 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 4,
-     "hi": 7,
-     "pts": 1,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 8,
      "hi": 15,
      "pts": 1,
      "reb": 1,
@@ -9440,7 +9552,7 @@
      "lo": 22,
      "hi": 99,
      "pts": 2,
-     "reb": 2,
+     "reb": 1,
      "ast": 1
     }
    ],
@@ -9529,7 +9641,7 @@
    "paintBoost": 4,
    "threePtBoost": -3,
    "defBoost": 0,
-   "salary": 510,
+   "salary": 500,
    "chart": [
     {
      "lo": 1,
@@ -9554,16 +9666,9 @@
     },
     {
      "lo": 17,
-     "hi": 21,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 22,
      "hi": 99,
      "pts": 2,
-     "reb": 2,
+     "reb": 1,
      "ast": 0
     }
    ],
@@ -9594,7 +9699,7 @@
    "paintBoost": 0,
    "threePtBoost": -3,
    "defBoost": 1,
-   "salary": 230,
+   "salary": 250,
    "chart": [
     {
      "lo": 1,
@@ -9607,21 +9712,21 @@
      "lo": 3,
      "hi": 8,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 9,
      "hi": 16,
      "pts": 1,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 17,
      "hi": 23,
      "pts": 1,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
@@ -9629,7 +9734,7 @@
      "hi": 99,
      "pts": 1,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2002,
@@ -9659,7 +9764,7 @@
    "paintBoost": -1,
    "threePtBoost": -2,
    "defBoost": 1,
-   "salary": 670,
+   "salary": 650,
    "chart": [
     {
      "lo": 1,
@@ -9672,7 +9777,7 @@
      "lo": 3,
      "hi": 7,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 1
     },
     {
@@ -9684,6 +9789,13 @@
     },
     {
      "lo": 16,
+     "hi": 21,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 22,
      "hi": 99,
      "pts": 2,
      "reb": 1,
@@ -9717,7 +9829,7 @@
    "paintBoost": 3,
    "threePtBoost": 1,
    "defBoost": -1,
-   "salary": 450,
+   "salary": 460,
    "chart": [
     {
      "lo": 1,
@@ -9730,8 +9842,8 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 4,
@@ -9782,7 +9894,7 @@
    "paintBoost": -2,
    "threePtBoost": -3,
    "defBoost": -1,
-   "salary": 340,
+   "salary": 330,
    "chart": [
     {
      "lo": 1,
@@ -9795,22 +9907,22 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 4,
      "hi": 7,
      "pts": 1,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 8,
      "hi": 14,
      "pts": 1,
      "reb": 0,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 15,
@@ -9867,7 +9979,7 @@
      "lo": 3,
      "hi": 4,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -9895,7 +10007,7 @@
      "lo": 18,
      "hi": 99,
      "pts": 3,
-     "reb": 2,
+     "reb": 1,
      "ast": 1
     }
    ],
@@ -9926,7 +10038,7 @@
    "paintBoost": 1,
    "threePtBoost": 1,
    "defBoost": -1,
-   "salary": 230,
+   "salary": 240,
    "chart": [
     {
      "lo": 1,
@@ -9939,11 +10051,18 @@
      "lo": 3,
      "hi": 5,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 6,
+     "hi": 7,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 8,
      "hi": 15,
      "pts": 1,
      "reb": 0,
@@ -9953,7 +10072,7 @@
      "lo": 16,
      "hi": 21,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
@@ -10012,21 +10131,14 @@
      "hi": 14,
      "pts": 1,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 15,
-     "hi": 21,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 22,
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2025,
@@ -10059,7 +10171,7 @@
    "paintBoost": 1,
    "threePtBoost": 2,
    "defBoost": 1,
-   "salary": 320,
+   "salary": 330,
    "chart": [
     {
      "lo": 1,
@@ -10072,14 +10184,14 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 7,
      "hi": 8,
      "pts": 0,
-     "reb": 1,
+     "reb": 2,
      "ast": 0
     },
     {
@@ -10100,7 +10212,7 @@
      "lo": 23,
      "hi": 99,
      "pts": 2,
-     "reb": 2,
+     "reb": 1,
      "ast": 1
     }
    ],
@@ -10131,7 +10243,7 @@
    "paintBoost": 0,
    "threePtBoost": 4,
    "defBoost": 1,
-   "salary": 870,
+   "salary": 830,
    "chart": [
     {
      "lo": 1,
@@ -10145,28 +10257,21 @@
      "hi": 6,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
      "hi": 15,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
      "lo": 16,
-     "hi": 20,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 21,
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2018,
@@ -10209,7 +10314,7 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -10261,7 +10366,7 @@
    "paintBoost": 1,
    "threePtBoost": -2,
    "defBoost": 0,
-   "salary": 320,
+   "salary": 310,
    "chart": [
     {
      "lo": 1,
@@ -10326,7 +10431,7 @@
    "paintBoost": 2,
    "threePtBoost": 1,
    "defBoost": 3,
-   "salary": 1540,
+   "salary": 1530,
    "chart": [
     {
      "lo": 1,
@@ -10398,7 +10503,7 @@
    "paintBoost": 5,
    "threePtBoost": -1,
    "defBoost": 0,
-   "salary": 590,
+   "salary": 600,
    "chart": [
     {
      "lo": 1,
@@ -10412,7 +10517,7 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
@@ -10463,7 +10568,7 @@
    "paintBoost": 1,
    "threePtBoost": -4,
    "defBoost": 2,
-   "salary": 670,
+   "salary": 660,
    "chart": [
     {
      "lo": 1,
@@ -10593,7 +10698,7 @@
    "paintBoost": 2,
    "threePtBoost": -5,
    "defBoost": 0,
-   "salary": 570,
+   "salary": 560,
    "chart": [
     {
      "lo": 1,
@@ -10606,8 +10711,8 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 4,
@@ -10618,16 +10723,9 @@
     },
     {
      "lo": 15,
-     "hi": 22,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 23,
      "hi": 99,
      "pts": 2,
-     "reb": 2,
+     "reb": 1,
      "ast": 0
     }
    ],
@@ -10716,7 +10814,7 @@
    "paintBoost": -1,
    "threePtBoost": 2,
    "defBoost": -2,
-   "salary": 230,
+   "salary": 250,
    "chart": [
     {
      "lo": 1,
@@ -10729,11 +10827,18 @@
      "lo": 3,
      "hi": 4,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 5,
+     "hi": 7,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 8,
      "hi": 16,
      "pts": 1,
      "reb": 0,
@@ -10741,6 +10846,13 @@
     },
     {
      "lo": 17,
+     "hi": 20,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 21,
      "hi": 99,
      "pts": 2,
      "reb": 1,
@@ -10777,7 +10889,7 @@
    "paintBoost": -3,
    "threePtBoost": -1,
    "defBoost": 2,
-   "salary": 590,
+   "salary": 580,
    "chart": [
     {
      "lo": 1,
@@ -10791,34 +10903,34 @@
      "hi": 6,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
      "hi": 7,
      "pts": 1,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 8,
      "hi": 13,
      "pts": 1,
      "reb": 0,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 14,
      "hi": 22,
      "pts": 2,
-     "reb": 0,
+     "reb": 1,
      "ast": 1
     },
     {
      "lo": 23,
      "hi": 99,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 1
     }
    ],
@@ -10849,7 +10961,7 @@
    "paintBoost": 0,
    "threePtBoost": -2,
    "defBoost": 0,
-   "salary": 440,
+   "salary": 410,
    "chart": [
     {
      "lo": 1,
@@ -10877,13 +10989,13 @@
      "hi": 20,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 21,
      "hi": 99,
      "pts": 2,
-     "reb": 2,
+     "reb": 1,
      "ast": 1
     }
    ],
@@ -10914,7 +11026,7 @@
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 1,
-   "salary": 350,
+   "salary": 340,
    "chart": [
     {
      "lo": 1,
@@ -10928,7 +11040,7 @@
      "hi": 5,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 6,
@@ -10946,17 +11058,10 @@
     },
     {
      "lo": 15,
-     "hi": 22,
-     "pts": 1,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 23,
      "hi": 99,
      "pts": 1,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2018,
@@ -10986,7 +11091,7 @@
    "paintBoost": 4,
    "threePtBoost": -1,
    "defBoost": 0,
-   "salary": 560,
+   "salary": 550,
    "chart": [
     {
      "lo": 1,
@@ -10999,11 +11104,18 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 4,
+     "hi": 7,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 8,
      "hi": 16,
      "pts": 1,
      "reb": 1,
@@ -11020,8 +11132,8 @@
      "lo": 21,
      "hi": 99,
      "pts": 2,
-     "reb": 2,
-     "ast": 1
+     "reb": 1,
+     "ast": 0
     }
    ],
    "season": 2004,
@@ -11051,7 +11163,7 @@
    "paintBoost": 1,
    "threePtBoost": -1,
    "defBoost": 0,
-   "salary": 220,
+   "salary": 230,
    "chart": [
     {
      "lo": 1,
@@ -11064,8 +11176,8 @@
      "lo": 3,
      "hi": 7,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 8,
@@ -11076,6 +11188,13 @@
     },
     {
      "lo": 17,
+     "hi": 22,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 23,
      "hi": 99,
      "pts": 1,
      "reb": 1,
@@ -11181,7 +11300,7 @@
    "paintBoost": 1,
    "threePtBoost": -2,
    "defBoost": -1,
-   "salary": 250,
+   "salary": 280,
    "chart": [
     {
      "lo": 1,
@@ -11194,29 +11313,29 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 4,
+     "hi": 7,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 8,
      "hi": 15,
      "pts": 1,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 16,
-     "hi": 20,
+     "hi": 99,
      "pts": 2,
      "reb": 0,
      "ast": 0
-    },
-    {
-     "lo": 21,
-     "hi": 99,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
     }
    ],
    "season": 2005,
@@ -11259,8 +11378,8 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 4,
@@ -11311,7 +11430,7 @@
    "paintBoost": -1,
    "threePtBoost": 0,
    "defBoost": -2,
-   "salary": 270,
+   "salary": 300,
    "chart": [
     {
      "lo": 1,
@@ -11324,18 +11443,32 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 4,
+     "hi": 7,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 8,
      "hi": 14,
      "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 21,
+     "pts": 2,
      "reb": 0,
      "ast": 0
     },
     {
-     "lo": 15,
+     "lo": 22,
      "hi": 99,
      "pts": 2,
      "reb": 1,
@@ -11372,7 +11505,7 @@
    "paintBoost": 2,
    "threePtBoost": -2,
    "defBoost": 1,
-   "salary": 580,
+   "salary": 570,
    "chart": [
     {
      "lo": 1,
@@ -11385,11 +11518,18 @@
      "lo": 3,
      "hi": 4,
      "pts": 0,
-     "reb": 1,
+     "reb": 2,
      "ast": 0
     },
     {
      "lo": 5,
+     "hi": 6,
+     "pts": 1,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 7,
      "hi": 11,
      "pts": 1,
      "reb": 1,
@@ -11406,7 +11546,7 @@
      "lo": 18,
      "hi": 99,
      "pts": 2,
-     "reb": 3,
+     "reb": 2,
      "ast": 1
     }
    ],
@@ -11434,10 +11574,10 @@
    "speed": 6,
    "power": 9,
    "shotLine": 18,
-   "paintBoost": 3,
+   "paintBoost": 4,
    "threePtBoost": -2,
    "defBoost": 1,
-   "salary": 770,
+   "salary": 810,
    "chart": [
     {
      "lo": 1,
@@ -11509,7 +11649,7 @@
    "paintBoost": 2,
    "threePtBoost": -4,
    "defBoost": 0,
-   "salary": 1260,
+   "salary": 1240,
    "chart": [
     {
      "lo": 1,
@@ -11523,7 +11663,7 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
@@ -11534,6 +11674,13 @@
     },
     {
      "lo": 14,
+     "hi": 20,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 21,
      "hi": 99,
      "pts": 3,
      "reb": 2,
@@ -11567,7 +11714,7 @@
    "paintBoost": 0,
    "threePtBoost": -5,
    "defBoost": 0,
-   "salary": 410,
+   "salary": 440,
    "chart": [
     {
      "lo": 1,
@@ -11580,29 +11727,29 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 7,
-     "hi": 12,
+     "hi": 8,
      "pts": 1,
      "reb": 1,
      "ast": 0
     },
     {
-     "lo": 13,
-     "hi": 22,
-     "pts": 2,
+     "lo": 9,
+     "hi": 12,
+     "pts": 1,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
-     "lo": 23,
+     "lo": 13,
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2025,
@@ -11632,7 +11779,7 @@
    "paintBoost": 2,
    "threePtBoost": 0,
    "defBoost": 2,
-   "salary": 580,
+   "salary": 570,
    "chart": [
     {
      "lo": 1,
@@ -11646,7 +11793,7 @@
      "hi": 3,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 4,
@@ -11690,7 +11837,7 @@
    "paintBoost": -1,
    "threePtBoost": 3,
    "defBoost": -1,
-   "salary": 490,
+   "salary": 500,
    "chart": [
     {
      "lo": 1,
@@ -11703,18 +11850,11 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 4,
-     "hi": 8,
-     "pts": 1,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 9,
      "hi": 14,
      "pts": 1,
      "reb": 1,
@@ -11722,6 +11862,13 @@
     },
     {
      "lo": 15,
+     "hi": 23,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 24,
      "hi": 99,
      "pts": 2,
      "reb": 1,
@@ -11755,7 +11902,7 @@
    "paintBoost": -1,
    "threePtBoost": -5,
    "defBoost": 1,
-   "salary": 580,
+   "salary": 570,
    "chart": [
     {
      "lo": 1,
@@ -11768,8 +11915,8 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 2,
+     "ast": 1
     },
     {
      "lo": 4,
@@ -11789,7 +11936,7 @@
      "lo": 22,
      "hi": 99,
      "pts": 2,
-     "reb": 3,
+     "reb": 2,
      "ast": 0
     }
    ],
@@ -11820,7 +11967,7 @@
    "paintBoost": 0,
    "threePtBoost": 1,
    "defBoost": -1,
-   "salary": 130,
+   "salary": 140,
    "chart": [
     {
      "lo": 1,
@@ -11838,9 +11985,16 @@
     },
     {
      "lo": 10,
-     "hi": 15,
+     "hi": 10,
      "pts": 1,
      "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 11,
+     "hi": 15,
+     "pts": 1,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -11854,7 +12008,7 @@
      "lo": 22,
      "hi": 99,
      "pts": 2,
-     "reb": 2,
+     "reb": 1,
      "ast": 0
     }
    ],
@@ -11898,7 +12052,7 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -11912,7 +12066,7 @@
      "lo": 12,
      "hi": 16,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 1
     },
     {
@@ -11950,7 +12104,7 @@
    "paintBoost": 0,
    "threePtBoost": 2,
    "defBoost": 0,
-   "salary": 240,
+   "salary": 260,
    "chart": [
     {
      "lo": 1,
@@ -11978,14 +12132,14 @@
      "hi": 24,
      "pts": 1,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 25,
      "hi": 99,
      "pts": 1,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2019,
@@ -12026,6 +12180,13 @@
     },
     {
      "lo": 3,
+     "hi": 5,
+     "pts": 0,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 6,
      "hi": 9,
      "pts": 0,
      "reb": 0,
@@ -12080,7 +12241,7 @@
    "paintBoost": 1,
    "threePtBoost": -2,
    "defBoost": -1,
-   "salary": 650,
+   "salary": 670,
    "chart": [
     {
      "lo": 1,
@@ -12098,24 +12259,24 @@
     },
     {
      "lo": 4,
-     "hi": 15,
+     "hi": 7,
      "pts": 2,
      "reb": 0,
      "ast": 0
     },
     {
-     "lo": 16,
-     "hi": 21,
-     "pts": 3,
-     "reb": 1,
-     "ast": 0
+     "lo": 8,
+     "hi": 15,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
     },
     {
-     "lo": 22,
+     "lo": 16,
      "hi": 99,
      "pts": 3,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2008,
@@ -12145,7 +12306,7 @@
    "paintBoost": 2,
    "threePtBoost": -4,
    "defBoost": 1,
-   "salary": 480,
+   "salary": 470,
    "chart": [
     {
      "lo": 1,
@@ -12158,11 +12319,18 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 4,
+     "hi": 7,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 8,
      "hi": 15,
      "pts": 1,
      "reb": 1,
@@ -12210,7 +12378,7 @@
    "paintBoost": -1,
    "threePtBoost": 4,
    "defBoost": -1,
-   "salary": 340,
+   "salary": 380,
    "chart": [
     {
      "lo": 1,
@@ -12224,13 +12392,13 @@
      "hi": 7,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 8,
      "hi": 15,
      "pts": 1,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -12244,7 +12412,7 @@
      "lo": 24,
      "hi": 99,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 1
     }
    ],
@@ -12275,7 +12443,7 @@
    "paintBoost": 1,
    "threePtBoost": -3,
    "defBoost": -2,
-   "salary": 330,
+   "salary": 340,
    "chart": [
     {
      "lo": 1,
@@ -12289,7 +12457,7 @@
      "hi": 3,
      "pts": 0,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 4,
@@ -12333,7 +12501,7 @@
    "paintBoost": 0,
    "threePtBoost": 1,
    "defBoost": -3,
-   "salary": 310,
+   "salary": 330,
    "chart": [
     {
      "lo": 1,
@@ -12346,8 +12514,8 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 7,
@@ -12361,7 +12529,7 @@
      "hi": 21,
      "pts": 2,
      "reb": 0,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 22,
@@ -12394,11 +12562,11 @@
    "pos": "SG",
    "speed": 9,
    "power": 7,
-   "shotLine": 15,
-   "paintBoost": 2,
-   "threePtBoost": 3,
+   "shotLine": 16,
+   "paintBoost": 3,
+   "threePtBoost": 4,
    "defBoost": -2,
-   "salary": 590,
+   "salary": 610,
    "chart": [
     {
      "lo": 1,
@@ -12411,25 +12579,25 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 4,
      "hi": 7,
      "pts": 1,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 8,
-     "hi": 14,
+     "hi": 15,
      "pts": 2,
      "reb": 0,
      "ast": 0
     },
     {
-     "lo": 15,
+     "lo": 16,
      "hi": 19,
      "pts": 2,
      "reb": 0,
@@ -12440,7 +12608,7 @@
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2012,
@@ -12470,7 +12638,7 @@
    "paintBoost": -1,
    "threePtBoost": 1,
    "defBoost": 0,
-   "salary": 820,
+   "salary": 810,
    "chart": [
     {
      "lo": 1,
@@ -12556,7 +12724,7 @@
      "hi": 10,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 11,
@@ -12570,7 +12738,7 @@
      "hi": 22,
      "pts": 1,
      "reb": 0,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 23,
@@ -12607,7 +12775,7 @@
    "paintBoost": 0,
    "threePtBoost": -2,
    "defBoost": 0,
-   "salary": 220,
+   "salary": 230,
    "chart": [
     {
      "lo": 1,
@@ -12620,18 +12788,11 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 7,
-     "hi": 9,
-     "pts": 1,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 10,
      "hi": 15,
      "pts": 1,
      "reb": 1,
@@ -12639,6 +12800,13 @@
     },
     {
      "lo": 16,
+     "hi": 22,
+     "pts": 1,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 23,
      "hi": 99,
      "pts": 1,
      "reb": 1,
@@ -12672,7 +12840,7 @@
    "paintBoost": -1,
    "threePtBoost": -2,
    "defBoost": 0,
-   "salary": 400,
+   "salary": 420,
    "chart": [
     {
      "lo": 1,
@@ -12685,11 +12853,18 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 2,
+     "ast": 1
     },
     {
      "lo": 4,
+     "hi": 7,
+     "pts": 1,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 8,
      "hi": 12,
      "pts": 1,
      "reb": 1,
@@ -12706,7 +12881,7 @@
      "lo": 22,
      "hi": 99,
      "pts": 2,
-     "reb": 2,
+     "reb": 1,
      "ast": 1
     }
    ],
@@ -12737,7 +12912,7 @@
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": -1,
-   "salary": 610,
+   "salary": 620,
    "chart": [
     {
      "lo": 1,
@@ -12758,21 +12933,14 @@
      "hi": 14,
      "pts": 2,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 15,
-     "hi": 20,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 21,
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2018,
@@ -12802,7 +12970,7 @@
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": -1,
-   "salary": 1030,
+   "salary": 980,
    "chart": [
     {
      "lo": 1,
@@ -12815,18 +12983,25 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 7,
      "hi": 14,
      "pts": 2,
      "reb": 0,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 15,
+     "hi": 20,
+     "pts": 3,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 21,
      "hi": 99,
      "pts": 3,
      "reb": 1,
@@ -12873,7 +13048,7 @@
      "lo": 3,
      "hi": 7,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -12887,7 +13062,7 @@
      "lo": 16,
      "hi": 23,
      "pts": 1,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
@@ -12941,22 +13116,22 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 7,
      "hi": 15,
      "pts": 2,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 16,
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2000,
@@ -12986,7 +13161,7 @@
    "paintBoost": 5,
    "threePtBoost": -3,
    "defBoost": -1,
-   "salary": 840,
+   "salary": 850,
    "chart": [
     {
      "lo": 1,
@@ -13058,7 +13233,7 @@
    "paintBoost": -2,
    "threePtBoost": 1,
    "defBoost": 1,
-   "salary": 870,
+   "salary": 860,
    "chart": [
     {
      "lo": 1,
@@ -13116,7 +13291,7 @@
    "paintBoost": -2,
    "threePtBoost": 4,
    "defBoost": -1,
-   "salary": 360,
+   "salary": 380,
    "chart": [
     {
      "lo": 1,
@@ -13143,14 +13318,14 @@
      "lo": 16,
      "hi": 22,
      "pts": 2,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 23,
      "hi": 99,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 1
     }
    ],
@@ -13195,7 +13370,7 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
@@ -13239,7 +13414,7 @@
    "paintBoost": 2,
    "threePtBoost": -2,
    "defBoost": -1,
-   "salary": 640,
+   "salary": 630,
    "chart": [
     {
      "lo": 1,
@@ -13252,7 +13427,7 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -13264,6 +13439,13 @@
     },
     {
      "lo": 16,
+     "hi": 21,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 22,
      "hi": 99,
      "pts": 2,
      "reb": 1,
@@ -13297,7 +13479,7 @@
    "paintBoost": -1,
    "threePtBoost": 2,
    "defBoost": 2,
-   "salary": 500,
+   "salary": 490,
    "chart": [
     {
      "lo": 1,
@@ -13355,7 +13537,7 @@
    "paintBoost": 1,
    "threePtBoost": 2,
    "defBoost": 0,
-   "salary": 250,
+   "salary": 260,
    "chart": [
     {
      "lo": 1,
@@ -13368,8 +13550,8 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 7,
@@ -13420,7 +13602,7 @@
    "paintBoost": 2,
    "threePtBoost": -4,
    "defBoost": 1,
-   "salary": 610,
+   "salary": 590,
    "chart": [
     {
      "lo": 1,
@@ -13433,11 +13615,18 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 4,
+     "hi": 7,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 8,
      "hi": 15,
      "pts": 1,
      "reb": 1,
@@ -13445,17 +13634,10 @@
     },
     {
      "lo": 16,
-     "hi": 20,
+     "hi": 99,
      "pts": 2,
      "reb": 1,
      "ast": 0
-    },
-    {
-     "lo": 21,
-     "hi": 99,
-     "pts": 2,
-     "reb": 2,
-     "ast": 1
     }
    ],
    "season": 2008,
@@ -13485,7 +13667,7 @@
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 1160,
+   "salary": 1140,
    "chart": [
     {
      "lo": 1,
@@ -13543,7 +13725,7 @@
    "paintBoost": -1,
    "threePtBoost": 4,
    "defBoost": 0,
-   "salary": 380,
+   "salary": 400,
    "chart": [
     {
      "lo": 1,
@@ -13556,8 +13738,8 @@
      "lo": 3,
      "hi": 7,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 8,
@@ -13570,7 +13752,7 @@
      "lo": 16,
      "hi": 22,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
@@ -13578,7 +13760,7 @@
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2018,
@@ -13680,7 +13862,7 @@
    "paintBoost": 2,
    "threePtBoost": 3,
    "defBoost": -2,
-   "salary": 320,
+   "salary": 340,
    "chart": [
     {
      "lo": 1,
@@ -13694,7 +13876,7 @@
      "hi": 6,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
@@ -13705,6 +13887,13 @@
     },
     {
      "lo": 8,
+     "hi": 12,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 13,
      "hi": 17,
      "pts": 2,
      "reb": 0,
@@ -13714,7 +13903,7 @@
      "lo": 18,
      "hi": 99,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 1
     }
    ],
@@ -13745,7 +13934,7 @@
    "paintBoost": 1,
    "threePtBoost": 0,
    "defBoost": 3,
-   "salary": 750,
+   "salary": 720,
    "chart": [
     {
      "lo": 1,
@@ -13758,22 +13947,36 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 4,
+     "hi": 7,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 8,
      "hi": 14,
      "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 22,
+     "pts": 2,
      "reb": 0,
      "ast": 0
     },
     {
-     "lo": 15,
+     "lo": 23,
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2003,
@@ -13803,7 +14006,7 @@
    "paintBoost": 4,
    "threePtBoost": -4,
    "defBoost": 0,
-   "salary": 860,
+   "salary": 870,
    "chart": [
     {
      "lo": 1,
@@ -13895,7 +14098,7 @@
      "lo": 8,
      "hi": 16,
      "pts": 1,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -13909,7 +14112,7 @@
      "lo": 23,
      "hi": 99,
      "pts": 1,
-     "reb": 1,
+     "reb": 0,
      "ast": 1
     }
    ],
@@ -13940,7 +14143,7 @@
    "paintBoost": -1,
    "threePtBoost": -3,
    "defBoost": 1,
-   "salary": 510,
+   "salary": 500,
    "chart": [
     {
      "lo": 1,
@@ -13953,28 +14156,21 @@
      "lo": 3,
      "hi": 7,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 1
     },
     {
      "lo": 8,
      "hi": 14,
      "pts": 1,
-     "reb": 0,
+     "reb": 1,
      "ast": 1
     },
     {
      "lo": 15,
-     "hi": 22,
-     "pts": 1,
-     "reb": 0,
-     "ast": 1
-    },
-    {
-     "lo": 23,
      "hi": 99,
      "pts": 1,
-     "reb": 1,
+     "reb": 0,
      "ast": 1
     }
    ],
@@ -14005,7 +14201,7 @@
    "paintBoost": 4,
    "threePtBoost": -3,
    "defBoost": 1,
-   "salary": 620,
+   "salary": 610,
    "chart": [
     {
      "lo": 1,
@@ -14018,8 +14214,8 @@
      "lo": 3,
      "hi": 5,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 6,
@@ -14039,7 +14235,7 @@
      "lo": 17,
      "hi": 99,
      "pts": 2,
-     "reb": 3,
+     "reb": 2,
      "ast": 0
     }
    ],
@@ -14070,7 +14266,7 @@
    "paintBoost": 2,
    "threePtBoost": -2,
    "defBoost": -2,
-   "salary": 680,
+   "salary": 690,
    "chart": [
     {
      "lo": 1,
@@ -14148,14 +14344,14 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 7,
      "hi": 14,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
@@ -14193,7 +14389,7 @@
    "paintBoost": 1,
    "threePtBoost": -3,
    "defBoost": -1,
-   "salary": 290,
+   "salary": 300,
    "chart": [
     {
      "lo": 1,
@@ -14221,14 +14417,14 @@
      "hi": 21,
      "pts": 1,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 22,
      "hi": 99,
      "pts": 1,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 1996,
@@ -14258,7 +14454,7 @@
    "paintBoost": 0,
    "threePtBoost": -6,
    "defBoost": 2,
-   "salary": 1610,
+   "salary": 1550,
    "chart": [
     {
      "lo": 1,
@@ -14272,21 +14468,28 @@
      "hi": 6,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
      "hi": 13,
      "pts": 3,
-     "reb": 1,
-     "ast": 0
+     "reb": 0,
+     "ast": 1
     },
     {
      "lo": 14,
-     "hi": 99,
+     "hi": 20,
      "pts": 3,
      "reb": 1,
      "ast": 1
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
     }
    ],
    "season": 1985,
@@ -14316,7 +14519,7 @@
    "paintBoost": 2,
    "threePtBoost": 3,
    "defBoost": -1,
-   "salary": 780,
+   "salary": 810,
    "chart": [
     {
      "lo": 1,
@@ -14329,7 +14532,7 @@
      "lo": 3,
      "hi": 4,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -14337,7 +14540,7 @@
      "hi": 6,
      "pts": 1,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
@@ -14401,8 +14604,8 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 7,
@@ -14413,16 +14616,9 @@
     },
     {
      "lo": 15,
-     "hi": 21,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 22,
      "hi": 99,
      "pts": 2,
-     "reb": 2,
+     "reb": 1,
      "ast": 0
     }
    ],
@@ -14453,7 +14649,7 @@
    "paintBoost": -1,
    "threePtBoost": -1,
    "defBoost": 0,
-   "salary": 210,
+   "salary": 220,
    "chart": [
     {
      "lo": 1,
@@ -14467,7 +14663,7 @@
      "hi": 7,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 8,
@@ -14488,7 +14684,7 @@
      "hi": 99,
      "pts": 1,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2019,
@@ -14518,7 +14714,7 @@
    "paintBoost": 0,
    "threePtBoost": -3,
    "defBoost": -2,
-   "salary": 330,
+   "salary": 340,
    "chart": [
     {
      "lo": 1,
@@ -14532,13 +14728,13 @@
      "hi": 6,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
      "hi": 14,
      "pts": 1,
-     "reb": 0,
+     "reb": 1,
      "ast": 1
     },
     {
@@ -14546,13 +14742,13 @@
      "hi": 20,
      "pts": 2,
      "reb": 0,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 21,
      "hi": 99,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 1
     }
    ],
@@ -14583,7 +14779,7 @@
    "paintBoost": 0,
    "threePtBoost": -1,
    "defBoost": -1,
-   "salary": 320,
+   "salary": 340,
    "chart": [
     {
      "lo": 1,
@@ -14596,18 +14792,32 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 4,
-     "hi": 16,
+     "hi": 7,
      "pts": 1,
      "reb": 0,
      "ast": 0
     },
     {
+     "lo": 8,
+     "hi": 16,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
      "lo": 17,
+     "hi": 21,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 22,
      "hi": 99,
      "pts": 2,
      "reb": 1,
@@ -14641,7 +14851,7 @@
    "paintBoost": 1,
    "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 350,
+   "salary": 370,
    "chart": [
     {
      "lo": 1,
@@ -14654,7 +14864,7 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -14662,7 +14872,7 @@
      "hi": 8,
      "pts": 1,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 9,
@@ -14673,16 +14883,9 @@
     },
     {
      "lo": 15,
-     "hi": 23,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 24,
      "hi": 99,
      "pts": 2,
-     "reb": 2,
+     "reb": 1,
      "ast": 0
     }
    ],
@@ -14713,7 +14916,7 @@
    "paintBoost": 6,
    "threePtBoost": -2,
    "defBoost": 2,
-   "salary": 590,
+   "salary": 580,
    "chart": [
     {
      "lo": 1,
@@ -14726,8 +14929,8 @@
      "lo": 3,
      "hi": 4,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 5,
@@ -14740,7 +14943,7 @@
      "lo": 18,
      "hi": 23,
      "pts": 2,
-     "reb": 2,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -14748,7 +14951,7 @@
      "hi": 99,
      "pts": 2,
      "reb": 2,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2019,
@@ -14778,7 +14981,7 @@
    "paintBoost": -2,
    "threePtBoost": -1,
    "defBoost": -1,
-   "salary": 160,
+   "salary": 170,
    "chart": [
     {
      "lo": 1,
@@ -14796,9 +14999,16 @@
     },
     {
      "lo": 9,
-     "hi": 13,
+     "hi": 10,
      "pts": 1,
      "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 11,
+     "hi": 13,
+     "pts": 1,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -14812,7 +15022,7 @@
      "lo": 22,
      "hi": 99,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     }
    ],
@@ -14856,8 +15066,8 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 4,
@@ -14868,16 +15078,9 @@
     },
     {
      "lo": 16,
-     "hi": 20,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 21,
      "hi": 99,
      "pts": 2,
-     "reb": 2,
+     "reb": 1,
      "ast": 0
     }
    ],
@@ -14922,10 +15125,17 @@
      "hi": 6,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
+     "hi": 8,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 9,
      "hi": 17,
      "pts": 1,
      "reb": 1,
@@ -14933,6 +15143,13 @@
     },
     {
      "lo": 18,
+     "hi": 22,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 23,
      "hi": 99,
      "pts": 2,
      "reb": 1,
@@ -14966,7 +15183,7 @@
    "paintBoost": 1,
    "threePtBoost": 0,
    "defBoost": 1,
-   "salary": 480,
+   "salary": 450,
    "chart": [
     {
      "lo": 1,
@@ -14979,7 +15196,7 @@
      "lo": 3,
      "hi": 5,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -14993,7 +15210,7 @@
      "lo": 15,
      "hi": 22,
      "pts": 1,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
@@ -15031,7 +15248,7 @@
    "paintBoost": -1,
    "threePtBoost": -4,
    "defBoost": 1,
-   "salary": 900,
+   "salary": 890,
    "chart": [
     {
      "lo": 1,
@@ -15096,7 +15313,7 @@
    "paintBoost": 3,
    "threePtBoost": -3,
    "defBoost": 0,
-   "salary": 270,
+   "salary": 280,
    "chart": [
     {
      "lo": 1,
@@ -15109,7 +15326,7 @@
      "lo": 3,
      "hi": 7,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -15130,7 +15347,7 @@
      "lo": 22,
      "hi": 99,
      "pts": 2,
-     "reb": 2,
+     "reb": 1,
      "ast": 1
     }
    ],
@@ -15161,7 +15378,7 @@
    "paintBoost": 2,
    "threePtBoost": 2,
    "defBoost": 0,
-   "salary": 260,
+   "salary": 280,
    "chart": [
     {
      "lo": 1,
@@ -15174,29 +15391,29 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 7,
-     "hi": 16,
+     "hi": 8,
      "pts": 1,
      "reb": 0,
      "ast": 0
     },
     {
-     "lo": 17,
-     "hi": 21,
+     "lo": 9,
+     "hi": 16,
      "pts": 1,
-     "reb": 1,
-     "ast": 0
+     "reb": 0,
+     "ast": 1
     },
     {
-     "lo": 22,
+     "lo": 17,
      "hi": 99,
      "pts": 1,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2016,
@@ -15226,7 +15443,7 @@
    "paintBoost": -1,
    "threePtBoost": -2,
    "defBoost": 1,
-   "salary": 440,
+   "salary": 410,
    "chart": [
     {
      "lo": 1,
@@ -15239,11 +15456,18 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 4,
+     "hi": 7,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 8,
      "hi": 12,
      "pts": 1,
      "reb": 0,
@@ -15253,7 +15477,7 @@
      "lo": 13,
      "hi": 23,
      "pts": 1,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
@@ -15261,7 +15485,7 @@
      "hi": 99,
      "pts": 1,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2018,
@@ -15291,7 +15515,7 @@
    "paintBoost": 4,
    "threePtBoost": -4,
    "defBoost": 1,
-   "salary": 390,
+   "salary": 410,
    "chart": [
     {
      "lo": 1,
@@ -15304,18 +15528,11 @@
      "lo": 3,
      "hi": 8,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 9,
-     "hi": 10,
-     "pts": 1,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 11,
      "hi": 15,
      "pts": 1,
      "reb": 1,
@@ -15323,16 +15540,9 @@
     },
     {
      "lo": 16,
-     "hi": 21,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 22,
      "hi": 99,
      "pts": 2,
-     "reb": 2,
+     "reb": 1,
      "ast": 0
     }
    ],
@@ -15363,7 +15573,7 @@
    "paintBoost": 3,
    "threePtBoost": -5,
    "defBoost": 0,
-   "salary": 260,
+   "salary": 280,
    "chart": [
     {
      "lo": 1,
@@ -15376,8 +15586,8 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 7,
@@ -15404,7 +15614,7 @@
      "lo": 25,
      "hi": 99,
      "pts": 1,
-     "reb": 2,
+     "reb": 1,
      "ast": 1
     }
    ],
@@ -15448,22 +15658,29 @@
      "lo": 3,
      "hi": 7,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 8,
      "hi": 15,
      "pts": 1,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
      "lo": 16,
-     "hi": 99,
+     "hi": 21,
      "pts": 2,
      "reb": 1,
      "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
     }
    ],
    "season": 2020,
@@ -15493,7 +15710,7 @@
    "paintBoost": 1,
    "threePtBoost": -1,
    "defBoost": -1,
-   "salary": 680,
+   "salary": 670,
    "chart": [
     {
      "lo": 1,
@@ -15507,7 +15724,7 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
@@ -15518,6 +15735,13 @@
     },
     {
      "lo": 17,
+     "hi": 21,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 22,
      "hi": 99,
      "pts": 3,
      "reb": 1,
@@ -15551,7 +15775,7 @@
    "paintBoost": 1,
    "threePtBoost": -4,
    "defBoost": 1,
-   "salary": 230,
+   "salary": 240,
    "chart": [
     {
      "lo": 1,
@@ -15565,13 +15789,20 @@
      "hi": 7,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 8,
-     "hi": 15,
+     "hi": 9,
      "pts": 1,
      "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 10,
+     "hi": 15,
+     "pts": 1,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -15605,11 +15836,11 @@
    "pos": "C",
    "speed": 8,
    "power": 13,
-   "shotLine": 16,
-   "paintBoost": 1,
-   "threePtBoost": -4,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": -5,
    "defBoost": 1,
-   "salary": 1090,
+   "salary": 1100,
    "chart": [
     {
      "lo": 1,
@@ -15634,13 +15865,13 @@
     },
     {
      "lo": 10,
-     "hi": 15,
+     "hi": 14,
      "pts": 2,
      "reb": 1,
      "ast": 0
     },
     {
-     "lo": 16,
+     "lo": 15,
      "hi": 22,
      "pts": 3,
      "reb": 2,
@@ -15681,7 +15912,7 @@
    "paintBoost": 1,
    "threePtBoost": 1,
    "defBoost": 0,
-   "salary": 180,
+   "salary": 200,
    "chart": [
     {
      "lo": 1,
@@ -15695,7 +15926,7 @@
      "hi": 7,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 8,
@@ -15739,7 +15970,7 @@
    "paintBoost": 5,
    "threePtBoost": -3,
    "defBoost": 0,
-   "salary": 900,
+   "salary": 870,
    "chart": [
     {
      "lo": 1,
@@ -15766,7 +15997,7 @@
      "lo": 17,
      "hi": 99,
      "pts": 2,
-     "reb": 2,
+     "reb": 1,
      "ast": 1
     }
    ],
@@ -15810,7 +16041,7 @@
      "lo": 3,
      "hi": 4,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -15818,7 +16049,7 @@
      "hi": 7,
      "pts": 1,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 8,
@@ -15829,17 +16060,10 @@
     },
     {
      "lo": 14,
-     "hi": 22,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 23,
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2011,
@@ -15869,7 +16093,7 @@
    "paintBoost": -2,
    "threePtBoost": 3,
    "defBoost": 0,
-   "salary": 990,
+   "salary": 960,
    "chart": [
     {
      "lo": 1,
@@ -15882,15 +16106,15 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 4,
      "hi": 7,
      "pts": 1,
-     "reb": 1,
-     "ast": 0
+     "reb": 0,
+     "ast": 1
     },
     {
      "lo": 8,
@@ -15901,17 +16125,10 @@
     },
     {
      "lo": 15,
-     "hi": 21,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 22,
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 1999,
@@ -15941,7 +16158,7 @@
    "paintBoost": 0,
    "threePtBoost": 4,
    "defBoost": 0,
-   "salary": 390,
+   "salary": 450,
    "chart": [
     {
      "lo": 1,
@@ -15954,21 +16171,28 @@
      "lo": 3,
      "hi": 4,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 5,
+     "hi": 7,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 8,
      "hi": 15,
      "pts": 1,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 16,
      "hi": 22,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
@@ -15976,7 +16200,7 @@
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2021,
@@ -16019,7 +16243,7 @@
      "lo": 3,
      "hi": 5,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -16071,7 +16295,7 @@
    "paintBoost": 3,
    "threePtBoost": -2,
    "defBoost": -1,
-   "salary": 330,
+   "salary": 340,
    "chart": [
     {
      "lo": 1,
@@ -16084,18 +16308,11 @@
      "lo": 3,
      "hi": 7,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 8,
-     "hi": 8,
-     "pts": 1,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 9,
      "hi": 10,
      "pts": 1,
      "reb": 1,
@@ -16112,7 +16329,7 @@
      "lo": 18,
      "hi": 99,
      "pts": 2,
-     "reb": 2,
+     "reb": 1,
      "ast": 0
     }
    ],
@@ -16143,7 +16360,7 @@
    "paintBoost": -1,
    "threePtBoost": 3,
    "defBoost": 1,
-   "salary": 320,
+   "salary": 340,
    "chart": [
     {
      "lo": 1,
@@ -16156,14 +16373,14 @@
      "lo": 3,
      "hi": 7,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 8,
      "hi": 9,
      "pts": 1,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -16171,21 +16388,21 @@
      "hi": 14,
      "pts": 1,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 15,
      "hi": 22,
      "pts": 1,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
      "lo": 23,
      "hi": 99,
      "pts": 2,
-     "reb": 1,
-     "ast": 1
+     "reb": 0,
+     "ast": 0
     }
    ],
    "season": 2022,
@@ -16215,7 +16432,7 @@
    "paintBoost": -3,
    "threePtBoost": 3,
    "defBoost": 0,
-   "salary": 460,
+   "salary": 500,
    "chart": [
     {
      "lo": 1,
@@ -16229,13 +16446,20 @@
      "hi": 6,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
-     "hi": 14,
+     "hi": 7,
      "pts": 1,
      "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 14,
+     "pts": 1,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -16280,7 +16504,7 @@
    "paintBoost": 1,
    "threePtBoost": -2,
    "defBoost": 2,
-   "salary": 790,
+   "salary": 780,
    "chart": [
     {
      "lo": 1,
@@ -16358,18 +16582,11 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 4,
-     "hi": 7,
-     "pts": 1,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 8,
      "hi": 16,
      "pts": 1,
      "reb": 1,
@@ -16377,6 +16594,13 @@
     },
     {
      "lo": 17,
+     "hi": 21,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 22,
      "hi": 99,
      "pts": 2,
      "reb": 1,
@@ -16410,7 +16634,7 @@
    "paintBoost": -2,
    "threePtBoost": 0,
    "defBoost": -1,
-   "salary": 430,
+   "salary": 440,
    "chart": [
     {
      "lo": 1,
@@ -16438,14 +16662,14 @@
      "hi": 21,
      "pts": 2,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 22,
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 1997,
@@ -16475,7 +16699,7 @@
    "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": -1,
-   "salary": 130,
+   "salary": 140,
    "chart": [
     {
      "lo": 1,
@@ -16486,30 +16710,37 @@
     },
     {
      "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 7,
      "hi": 8,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 9,
      "hi": 12,
      "pts": 1,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 13,
      "hi": 17,
      "pts": 1,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
      "lo": 18,
      "hi": 99,
      "pts": 1,
-     "reb": 2,
+     "reb": 1,
      "ast": 1
     }
    ],
@@ -16540,7 +16771,7 @@
    "paintBoost": 2,
    "threePtBoost": 3,
    "defBoost": 1,
-   "salary": 170,
+   "salary": 200,
    "chart": [
     {
      "lo": 1,
@@ -16554,28 +16785,28 @@
      "hi": 10,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 11,
      "hi": 17,
      "pts": 1,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 18,
      "hi": 21,
      "pts": 1,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 22,
      "hi": 99,
      "pts": 2,
-     "reb": 1,
-     "ast": 1
+     "reb": 0,
+     "ast": 0
     }
    ],
    "season": 2025,
@@ -16605,7 +16836,7 @@
    "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": -2,
-   "salary": 230,
+   "salary": 240,
    "chart": [
     {
      "lo": 1,
@@ -16618,14 +16849,21 @@
      "lo": 3,
      "hi": 7,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 8,
-     "hi": 17,
+     "hi": 12,
      "pts": 2,
      "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 13,
+     "hi": 17,
+     "pts": 2,
+     "reb": 0,
      "ast": 0
     },
     {
@@ -16676,18 +16914,11 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 4,
-     "hi": 7,
-     "pts": 1,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 8,
      "hi": 15,
      "pts": 1,
      "reb": 1,
@@ -16697,15 +16928,15 @@
      "lo": 16,
      "hi": 22,
      "pts": 1,
-     "reb": 1,
-     "ast": 0
+     "reb": 0,
+     "ast": 1
     },
     {
      "lo": 23,
      "hi": 99,
      "pts": 1,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 1993,
@@ -16735,7 +16966,7 @@
    "paintBoost": -2,
    "threePtBoost": -5,
    "defBoost": 0,
-   "salary": 370,
+   "salary": 360,
    "chart": [
     {
      "lo": 1,
@@ -16748,11 +16979,18 @@
      "lo": 3,
      "hi": 4,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 5,
+     "hi": 7,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 8,
      "hi": 12,
      "pts": 1,
      "reb": 0,
@@ -16762,7 +17000,7 @@
      "lo": 13,
      "hi": 22,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
@@ -16770,7 +17008,7 @@
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2025,
@@ -16813,14 +17051,14 @@
      "lo": 3,
      "hi": 5,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 6,
      "hi": 8,
      "pts": 0,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
@@ -16841,7 +17079,7 @@
      "lo": 24,
      "hi": 99,
      "pts": 2,
-     "reb": 2,
+     "reb": 1,
      "ast": 1
     }
    ],
@@ -16872,7 +17110,7 @@
    "paintBoost": 3,
    "threePtBoost": -1,
    "defBoost": -2,
-   "salary": 410,
+   "salary": 440,
    "chart": [
     {
      "lo": 1,
@@ -16885,8 +17123,8 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 7,
@@ -16930,7 +17168,7 @@
    "paintBoost": -1,
    "threePtBoost": -1,
    "defBoost": -1,
-   "salary": 530,
+   "salary": 520,
    "chart": [
     {
      "lo": 1,
@@ -16944,7 +17182,7 @@
      "hi": 6,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
@@ -16958,7 +17196,7 @@
      "hi": 16,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 17,
@@ -17008,8 +17246,8 @@
      "lo": 3,
      "hi": 4,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 5,
@@ -17027,17 +17265,10 @@
     },
     {
      "lo": 14,
-     "hi": 22,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 23,
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2025,
@@ -17067,7 +17298,7 @@
    "paintBoost": 0,
    "threePtBoost": 5,
    "defBoost": -1,
-   "salary": 470,
+   "salary": 500,
    "chart": [
     {
      "lo": 1,
@@ -17080,18 +17311,25 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 4,
      "hi": 16,
      "pts": 1,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 17,
+     "hi": 21,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 22,
      "hi": 99,
      "pts": 2,
      "reb": 1,
@@ -17125,7 +17363,7 @@
    "paintBoost": -1,
    "threePtBoost": -4,
    "defBoost": 1,
-   "salary": 600,
+   "salary": 590,
    "chart": [
     {
      "lo": 1,
@@ -17262,7 +17500,7 @@
    "paintBoost": 3,
    "threePtBoost": -2,
    "defBoost": 1,
-   "salary": 600,
+   "salary": 580,
    "chart": [
     {
      "lo": 1,
@@ -17275,8 +17513,8 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 4,
@@ -17297,7 +17535,7 @@
      "hi": 17,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 18,
@@ -17399,7 +17637,7 @@
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": -2,
-   "salary": 190,
+   "salary": 200,
    "chart": [
     {
      "lo": 1,
@@ -17412,11 +17650,18 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 4,
+     "hi": 7,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 8,
      "hi": 14,
      "pts": 1,
      "reb": 0,
@@ -17424,6 +17669,13 @@
     },
     {
      "lo": 15,
+     "hi": 21,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 22,
      "hi": 99,
      "pts": 2,
      "reb": 1,
@@ -17457,7 +17709,7 @@
    "paintBoost": 0,
    "threePtBoost": 1,
    "defBoost": 0,
-   "salary": 410,
+   "salary": 390,
    "chart": [
     {
      "lo": 1,
@@ -17471,7 +17723,7 @@
      "hi": 6,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
@@ -17482,6 +17734,13 @@
     },
     {
      "lo": 16,
+     "hi": 21,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 22,
      "hi": 99,
      "pts": 2,
      "reb": 1,
@@ -17511,11 +17770,11 @@
    "pos": "C",
    "speed": 7,
    "power": 18,
-   "shotLine": 18,
-   "paintBoost": 6,
-   "threePtBoost": -2,
+   "shotLine": 17,
+   "paintBoost": 5,
+   "threePtBoost": -3,
    "defBoost": 2,
-   "salary": 1410,
+   "salary": 1400,
    "chart": [
     {
      "lo": 1,
@@ -17529,7 +17788,7 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
@@ -17540,13 +17799,13 @@
     },
     {
      "lo": 12,
-     "hi": 17,
+     "hi": 16,
      "pts": 3,
-     "reb": 2,
+     "reb": 1,
      "ast": 0
     },
     {
-     "lo": 18,
+     "lo": 17,
      "hi": 99,
      "pts": 3,
      "reb": 2,
@@ -17580,7 +17839,7 @@
    "paintBoost": -1,
    "threePtBoost": 2,
    "defBoost": -2,
-   "salary": 130,
+   "salary": 140,
    "chart": [
     {
      "lo": 1,
@@ -17608,14 +17867,14 @@
      "hi": 20,
      "pts": 2,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 21,
      "hi": 99,
      "pts": 3,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2023,
@@ -17645,7 +17904,7 @@
    "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": -1,
-   "salary": 860,
+   "salary": 820,
    "chart": [
     {
      "lo": 1,
@@ -17658,8 +17917,8 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 7,
@@ -17670,6 +17929,13 @@
     },
     {
      "lo": 15,
+     "hi": 21,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 22,
      "hi": 99,
      "pts": 2,
      "reb": 1,
@@ -17717,10 +17983,17 @@
      "hi": 3,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 4,
+     "hi": 7,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 8,
      "hi": 15,
      "pts": 1,
      "reb": 0,
@@ -17728,17 +18001,10 @@
     },
     {
      "lo": 16,
-     "hi": 20,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 21,
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2001,
@@ -17768,7 +18034,7 @@
    "paintBoost": 1,
    "threePtBoost": -1,
    "defBoost": -2,
-   "salary": 510,
+   "salary": 550,
    "chart": [
     {
      "lo": 1,
@@ -17782,21 +18048,21 @@
      "hi": 3,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 4,
      "hi": 7,
      "pts": 1,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 8,
      "hi": 16,
      "pts": 2,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 17,
@@ -17810,7 +18076,7 @@
      "hi": 99,
      "pts": 3,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2025,
@@ -17840,7 +18106,7 @@
    "paintBoost": -3,
    "threePtBoost": 0,
    "defBoost": -1,
-   "salary": 120,
+   "salary": 140,
    "chart": [
     {
      "lo": 1,
@@ -17854,7 +18120,7 @@
      "hi": 13,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 14,
@@ -17867,15 +18133,15 @@
      "lo": 15,
      "hi": 21,
      "pts": 1,
-     "reb": 0,
+     "reb": 1,
      "ast": 1
     },
     {
      "lo": 22,
      "hi": 99,
      "pts": 2,
-     "reb": 1,
-     "ast": 2
+     "reb": 0,
+     "ast": 1
     }
    ],
    "season": 1997,
@@ -17905,7 +18171,7 @@
    "paintBoost": -2,
    "threePtBoost": -4,
    "defBoost": 0,
-   "salary": 500,
+   "salary": 480,
    "chart": [
     {
      "lo": 1,
@@ -17919,28 +18185,21 @@
      "hi": 6,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
      "hi": 13,
      "pts": 1,
-     "reb": 1,
+     "reb": 0,
      "ast": 1
     },
     {
      "lo": 14,
-     "hi": 21,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 22,
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 2
+     "ast": 1
     }
    ],
    "season": 2016,
@@ -17988,6 +18247,13 @@
     },
     {
      "lo": 8,
+     "hi": 12,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 13,
      "hi": 17,
      "pts": 2,
      "reb": 1,
@@ -17997,7 +18263,7 @@
      "lo": 18,
      "hi": 99,
      "pts": 2,
-     "reb": 2,
+     "reb": 1,
      "ast": 0
     }
    ],
@@ -18028,7 +18294,7 @@
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 200,
+   "salary": 210,
    "chart": [
     {
      "lo": 1,
@@ -18042,7 +18308,7 @@
      "hi": 6,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
@@ -18053,16 +18319,9 @@
     },
     {
      "lo": 15,
-     "hi": 23,
-     "pts": 1,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 24,
      "hi": 99,
      "pts": 1,
-     "reb": 2,
+     "reb": 1,
      "ast": 0
     }
    ],
@@ -18093,7 +18352,7 @@
    "paintBoost": 1,
    "threePtBoost": -6,
    "defBoost": 2,
-   "salary": 1860,
+   "salary": 1850,
    "chart": [
     {
      "lo": 1,
@@ -18165,7 +18424,7 @@
    "paintBoost": 1,
    "threePtBoost": 0,
    "defBoost": -2,
-   "salary": 260,
+   "salary": 280,
    "chart": [
     {
      "lo": 1,
@@ -18179,7 +18438,7 @@
      "hi": 3,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 4,
@@ -18230,7 +18489,7 @@
    "paintBoost": 2,
    "threePtBoost": 1,
    "defBoost": -1,
-   "salary": 570,
+   "salary": 610,
    "chart": [
     {
      "lo": 1,
@@ -18244,13 +18503,13 @@
      "hi": 6,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
      "hi": 15,
      "pts": 2,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -18288,7 +18547,7 @@
    "paintBoost": 0,
    "threePtBoost": 1,
    "defBoost": 1,
-   "salary": 320,
+   "salary": 310,
    "chart": [
     {
      "lo": 1,
@@ -18353,7 +18612,7 @@
    "paintBoost": 0,
    "threePtBoost": 1,
    "defBoost": 0,
-   "salary": 310,
+   "salary": 300,
    "chart": [
     {
      "lo": 1,
@@ -18366,8 +18625,8 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 4,
@@ -18418,7 +18677,7 @@
    "paintBoost": 1,
    "threePtBoost": -2,
    "defBoost": -1,
-   "salary": 820,
+   "salary": 810,
    "chart": [
     {
      "lo": 1,
@@ -18490,7 +18749,7 @@
    "paintBoost": -2,
    "threePtBoost": 1,
    "defBoost": -3,
-   "salary": 600,
+   "salary": 590,
    "chart": [
     {
      "lo": 1,
@@ -18503,7 +18762,7 @@
      "lo": 3,
      "hi": 7,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 1
     },
     {
@@ -18517,7 +18776,7 @@
      "lo": 16,
      "hi": 21,
      "pts": 3,
-     "reb": 1,
+     "reb": 0,
      "ast": 1
     },
     {
@@ -18525,7 +18784,7 @@
      "hi": 99,
      "pts": 3,
      "reb": 1,
-     "ast": 2
+     "ast": 1
     }
    ],
    "season": 2019,
@@ -18555,7 +18814,7 @@
    "paintBoost": -1,
    "threePtBoost": 2,
    "defBoost": -1,
-   "salary": 240,
+   "salary": 270,
    "chart": [
     {
      "lo": 1,
@@ -18568,15 +18827,22 @@
      "lo": 3,
      "hi": 4,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 5,
+     "hi": 7,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 8,
      "hi": 11,
      "pts": 1,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 12,
@@ -18620,7 +18886,7 @@
    "paintBoost": 2,
    "threePtBoost": -3,
    "defBoost": 0,
-   "salary": 340,
+   "salary": 390,
    "chart": [
     {
      "lo": 1,
@@ -18633,14 +18899,14 @@
      "lo": 3,
      "hi": 5,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 6,
      "hi": 14,
      "pts": 1,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -18654,7 +18920,7 @@
      "lo": 21,
      "hi": 99,
      "pts": 2,
-     "reb": 2,
+     "reb": 1,
      "ast": 1
     }
    ],
@@ -18685,7 +18951,7 @@
    "paintBoost": 0,
    "threePtBoost": 5,
    "defBoost": -1,
-   "salary": 300,
+   "salary": 330,
    "chart": [
     {
      "lo": 1,
@@ -18698,11 +18964,18 @@
      "lo": 3,
      "hi": 8,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 9,
+     "hi": 10,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 11,
      "hi": 16,
      "pts": 1,
      "reb": 0,
@@ -18712,7 +18985,7 @@
      "lo": 17,
      "hi": 23,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
@@ -18720,7 +18993,7 @@
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2022,
@@ -18750,7 +19023,7 @@
    "paintBoost": -2,
    "threePtBoost": 1,
    "defBoost": 0,
-   "salary": 210,
+   "salary": 240,
    "chart": [
     {
      "lo": 1,
@@ -18763,21 +19036,28 @@
      "lo": 3,
      "hi": 4,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 5,
+     "hi": 8,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 9,
      "hi": 15,
      "pts": 1,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 16,
      "hi": 23,
      "pts": 1,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
@@ -18785,7 +19065,7 @@
      "hi": 99,
      "pts": 1,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2025,
@@ -18815,7 +19095,7 @@
    "paintBoost": -1,
    "threePtBoost": 4,
    "defBoost": -1,
-   "salary": 440,
+   "salary": 460,
    "chart": [
     {
      "lo": 1,
@@ -18880,7 +19160,7 @@
    "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": -1,
-   "salary": 620,
+   "salary": 630,
    "chart": [
     {
      "lo": 1,
@@ -18894,7 +19174,7 @@
      "hi": 7,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 8,
@@ -18915,7 +19195,7 @@
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2021,
@@ -18945,7 +19225,7 @@
    "paintBoost": -2,
    "threePtBoost": 0,
    "defBoost": -1,
-   "salary": 310,
+   "salary": 320,
    "chart": [
     {
      "lo": 1,
@@ -18959,7 +19239,7 @@
      "hi": 5,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 6,
@@ -19010,7 +19290,7 @@
    "paintBoost": 2,
    "threePtBoost": 1,
    "defBoost": 3,
-   "salary": 1450,
+   "salary": 1400,
    "chart": [
     {
      "lo": 1,
@@ -19024,7 +19304,7 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
@@ -19035,6 +19315,13 @@
     },
     {
      "lo": 16,
+     "hi": 20,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 21,
      "hi": 99,
      "pts": 3,
      "reb": 2,
@@ -19068,7 +19355,7 @@
    "paintBoost": 0,
    "threePtBoost": -3,
    "defBoost": 0,
-   "salary": 870,
+   "salary": 860,
    "chart": [
     {
      "lo": 1,
@@ -19081,21 +19368,21 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 7,
      "hi": 14,
      "pts": 2,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 15,
      "hi": 21,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
@@ -19133,7 +19420,7 @@
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": -1,
-   "salary": 80,
+   "salary": 90,
    "chart": [
     {
      "lo": 1,
@@ -19146,7 +19433,7 @@
      "lo": 3,
      "hi": 10,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -19160,7 +19447,7 @@
      "lo": 15,
      "hi": 23,
      "pts": 1,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
@@ -19198,7 +19485,7 @@
    "paintBoost": 3,
    "threePtBoost": -3,
    "defBoost": 1,
-   "salary": 620,
+   "salary": 600,
    "chart": [
     {
      "lo": 1,
@@ -19211,18 +19498,11 @@
      "lo": 3,
      "hi": 4,
      "pts": 0,
-     "reb": 0,
+     "reb": 2,
      "ast": 0
     },
     {
      "lo": 5,
-     "hi": 5,
-     "pts": 1,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 6,
      "hi": 11,
      "pts": 1,
      "reb": 1,
@@ -19239,7 +19519,7 @@
      "lo": 17,
      "hi": 99,
      "pts": 2,
-     "reb": 2,
+     "reb": 1,
      "ast": 1
     }
    ],
@@ -19270,7 +19550,7 @@
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 770,
+   "salary": 760,
    "chart": [
     {
      "lo": 1,
@@ -19414,7 +19694,7 @@
    "paintBoost": 0,
    "threePtBoost": -3,
    "defBoost": -1,
-   "salary": 140,
+   "salary": 160,
    "chart": [
     {
      "lo": 1,
@@ -19428,7 +19708,7 @@
      "hi": 8,
      "pts": 0,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 9,
@@ -19449,7 +19729,7 @@
      "hi": 99,
      "pts": 2,
      "reb": 2,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2025,
@@ -19479,7 +19759,7 @@
    "paintBoost": -1,
    "threePtBoost": 0,
    "defBoost": -2,
-   "salary": 420,
+   "salary": 430,
    "chart": [
     {
      "lo": 1,
@@ -19492,8 +19772,8 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 4,
@@ -19544,7 +19824,7 @@
    "paintBoost": 3,
    "threePtBoost": -2,
    "defBoost": 0,
-   "salary": 760,
+   "salary": 750,
    "chart": [
     {
      "lo": 1,
@@ -19557,8 +19837,8 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 1,
-     "ast": 0
+     "reb": 2,
+     "ast": 1
     },
     {
      "lo": 7,
@@ -19569,6 +19849,13 @@
     },
     {
      "lo": 16,
+     "hi": 21,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 22,
      "hi": 99,
      "pts": 2,
      "reb": 2,
@@ -19605,7 +19892,7 @@
    "paintBoost": 2,
    "threePtBoost": 2,
    "defBoost": -3,
-   "salary": 120,
+   "salary": 140,
    "chart": [
     {
      "lo": 1,
@@ -19618,8 +19905,8 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 4,
@@ -19670,7 +19957,7 @@
    "paintBoost": 1,
    "threePtBoost": -2,
    "defBoost": -1,
-   "salary": 480,
+   "salary": 500,
    "chart": [
     {
      "lo": 1,
@@ -19683,11 +19970,18 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 4,
+     "hi": 7,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 8,
      "hi": 12,
      "pts": 1,
      "reb": 0,
@@ -19735,7 +20029,7 @@
    "paintBoost": 4,
    "threePtBoost": 0,
    "defBoost": -1,
-   "salary": 1350,
+   "salary": 1340,
    "chart": [
     {
      "lo": 1,
@@ -19748,14 +20042,14 @@
      "lo": 3,
      "hi": 5,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 6,
      "hi": 6,
      "pts": 2,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -19776,7 +20070,7 @@
      "lo": 18,
      "hi": 99,
      "pts": 4,
-     "reb": 2,
+     "reb": 1,
      "ast": 1
     }
    ],

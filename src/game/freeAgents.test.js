@@ -15,14 +15,18 @@ describe('the free-agent price', () => {
     expect(FA_PACK_WEIGHT).toBe(0.2);
     // 1080/3760 since the 2026-09-24 reprice: the pack-odds half reads the
     // base booster's rarity shares, and the currency-rate line moved them.
-    expect(RARITY_ORDER.map(r => freeAgentPrice('throwbacks', r))).toEqual([100, 260, 1080, 3760, 9100]);
+    // 1110/3680/8980 since the 2026-09-29 conditional-rows rebuild: the same
+    // rule over a repriced pool (rebounds and assists on each row are now
+    // what the player did on those nights; the points ladders are unchanged).
+    expect(RARITY_ORDER.map(r => freeAgentPrice('throwbacks', r))).toEqual([100, 260, 1110, 3680, 8980]);
     // The rookie rare price is 970 since 2026-09-22: pack odds are read off the
     // set, and the reward/identity batch put four rookie years into it (Wall,
     // Brand, Arenas, DeAndre Jordan), which moved the rare share one rounding
     // step. The lean and the table are untouched.
     // 960/3120 since the 2026-09-24 reprice, the same shares moving in the
-    // Rookie set's own pack.
-    expect(RARITY_ORDER.map(r => freeAgentPrice('rookie', r))).toEqual([100, 220, 960, 3120, 7580]);
+    // Rookie set's own pack. 970 again since the 2026-09-29 conditional-rows
+    // rebuild repriced the Rookie set (one rounding step of its rare share).
+    expect(RARITY_ORDER.map(r => freeAgentPrice('rookie', r))).toEqual([100, 220, 970, 3120, 7580]);
   });
 
   it('sits between the table and the pack-odds cost, and climbs with rarity', () => {

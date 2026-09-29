@@ -5,10 +5,12 @@ vi.mock('./sources/basketballReference.js', () => ({
 }));
 vi.mock('./bands.js', () => ({
   computeStatBands: vi.fn(),
+  conditionalStatValues: vi.fn(),
 }));
 
 import {
   reconcileBands,
+  reconcileConditional,
   toRawCardFormat,
   generatePlayerChart,
   mergeIdenticalTiers,
@@ -18,7 +20,35 @@ import {
   MAX_PRINTED_ROWS,
 } from './generate.js';
 import * as basketballReference from './sources/basketballReference.js';
-import { computeStatBands } from './bands.js';
+import { computeStatBands, conditionalStatValues } from './bands.js';
+
+// ROWS THAT SAY WHAT HAPPENED TOGETHER (the user, 2026-09-29): the points
+// spine as ever, rebounds and assists per band from the games in it.
+describe('reconcileConditional', () => {
+  const pts = [{ lo: 1, hi: 4, value: 0, slots: 4, threshold: 0.5 }, { lo: 5, hi: 12, value: 2, slots: 10, threshold: 2 }, { lo: 13, hi: 25, value: 3, slots: 11, threshold: 9 }];
+  const reb = [{ lo: 1, hi: 5, value: 0 }, { lo: 6, hi: 15, value: 1 }, { lo: 16, hi: 25, value: 2 }];
+  const ast = [{ lo: 1, hi: 2, value: 0 }, { lo: 3, hi: 20, value: 1 }, { lo: 21, hi: 25, value: 3 }];
+
+  it('puts each band\'s own rebounds and assists on the points spine — a ladder that may fall', () => {
+    conditionalStatValues.mockImplementation((games, bands, stat) =>
+      (stat === 'ast' ? [3, 2, 1] : [1, 1, 2]).map(value => ({ value, raw: value, games: 5 })));
+    const chart = reconcileConditional({ pts, reb, ast, games: [{ minutes: 30, pts: 1, reb: 2, ast: 9 }] });
+    expect(chart).toEqual([
+      { lo: 1, hi: 4, pts: 0, reb: 1, ast: 3 },
+      { lo: 5, hi: 12, pts: 2, reb: 1, ast: 2 },
+      { lo: 13, hi: 25, pts: 3, reb: 2, ast: 1 },
+    ]);
+    expect(conditionalStatValues).toHaveBeenCalledWith(expect.any(Array), pts, 'reb');
+    expect(conditionalStatValues).toHaveBeenCalledWith(expect.any(Array), pts, 'ast');
+  });
+
+  it('falls back to the per-stat ladders read by roll when there are no joint rows', () => {
+    conditionalStatValues.mockReturnValue(null);
+    const expected = reconcileConditional({ pts, reb, ast, games: null });
+    expect(expected.map(t => [t.pts, t.reb, t.ast])).toEqual([[0, 0, 0], [2, 1, 1], [3, 2, 3]]);   // reconcileBandsByRoll's reading, probed at each tier's midpoint
+    expect(reconcileConditional({ pts, reb, ast, games: [{ minutes: 30, pts: 4 }] })).toEqual(expected);   // null from the module: the same fallback
+  });
+});
 
 describe('reconcileBands', () => {
   it('combines independently-computed PTS/REB/AST bands onto one roll-range table using the PTS ranges as the shared spine', () => {

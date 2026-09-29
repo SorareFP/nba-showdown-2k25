@@ -80,7 +80,22 @@ export function candidateSelections(incumbents, { careerOf, selectionFor, exclud
  * does not compete; it is returned in `unweighed` so the log can be fetched.
  * Returns the winners in the incumbents' order, the repicks, and the losers.
  */
-export function pickByValue(cards, incumbentSeason, { idOf = c => c.bbrefId } = {}) {
+/**
+ * WHAT A CHALLENGER MUST BEAT THE SHIPPED SEASON BY, in dollars.
+ *
+ * A price moves a little on every rebuild — the pool, the shooting basis, a
+ * player's own last-82 window — and with a bar of one dollar the pick moved
+ * with it: the 2026-09-29 rebuild, which changed nothing but the rebounds
+ * and assists on each row, re-chose fifteen Super Seasons on gaps of $0 to
+ * $50 (Clint Capela 2020-21 to 2018-19 at $1,010 apiece), retiring fifteen
+ * shipped cards to Throwbacks and minting fifteen that needed photos. So the
+ * season that SHIPS is the holder, and a challenger takes the card only by
+ * clearing it by this much. A player with no shipped Super Season is picked
+ * on the plain rule; nothing owned is at stake. Zero restores the old bar.
+ */
+export const REPICK_MARGIN = 50;
+
+export function pickByValue(cards, incumbentSeason, { idOf = c => c.bbrefId, holderSeason = null, margin = 0 } = {}) {
   const byPlayer = new Map();
   for (const card of cards) {
     const id = idOf(card);
@@ -94,19 +109,28 @@ export function pickByValue(cards, incumbentSeason, { idOf = c => c.bbrefId } = 
   for (const [id, group] of byPlayer) {
     const own = incumbentSeason.get(id);
     const incumbent = group.find(c => c.season === own) ?? null;
-    let best = incumbent;
+    // THE HOLDER: the season shipped today when it is in the batch, else the
+    // declared season. A challenger clears the holder by `margin` (see
+    // REPICK_MARGIN); once one has, the rest compete on price alone.
+    const held = holderSeason?.get(id);
+    const shippedHolder = held != null ? group.find(c => c.season === held && !c.provisional) ?? null : null;
+    const holder = shippedHolder ?? incumbent;
+    const bar = shippedHolder ? margin : 0;
+    let best = holder;
     for (const card of group) {
-      if (card === incumbent) continue;
+      if (card === holder) continue;
       if (card.provisional) { unweighed.push(card); continue; }
-      if (!best || (card.salary ?? 0) > (best.salary ?? 0)) best = card;
+      if (!best) { best = card; continue; }
+      const need = best === holder ? (holder.salary ?? 0) + bar : (best.salary ?? 0);
+      if ((card.salary ?? 0) > need) best = card;
     }
     if (!best) continue;
     winners.set(id, best);
     for (const card of group) if (card !== best && !card.provisional) losers.push(card);
-    if (incumbent && best !== incumbent) {
+    if (holder && best !== holder) {
       repicks.push({
         name: best.name, bbrefId: id,
-        from: { season: incumbent.season, salary: incumbent.salary },
+        from: { season: holder.season, salary: holder.salary },
         to: { season: best.season, salary: best.salary },
       });
     }

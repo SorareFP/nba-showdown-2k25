@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-24T14:01:25.329Z",
+ "generatedAt": "2026-09-29T17:30:48.926Z",
  "set": "set-rewards",
  "note": "SET COMPLETION REWARDS — cards MOVED out of their home special set (see migratedFrom) and earned by completing that set (rewardGoal). Built by scripts/cardgen/generateSetRewards.js from card-data/set-rewards-2026.json; the strongest card by salary of each group is the reward.",
  "cards": [
@@ -14,7 +14,7 @@
    "paintBoost": -1,
    "threePtBoost": 1,
    "defBoost": 2,
-   "salary": 2010,
+   "salary": 1920,
    "chart": [
     {
      "lo": 1,
@@ -27,8 +27,8 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 1,
-     "ast": 1
+     "reb": 2,
+     "ast": 2
     },
     {
      "lo": 7,
@@ -39,17 +39,10 @@
     },
     {
      "lo": 16,
-     "hi": 21,
+     "hi": 99,
      "pts": 4,
      "reb": 1,
      "ast": 1
-    },
-    {
-     "lo": 22,
-     "hi": 99,
-     "pts": 4,
-     "reb": 2,
-     "ast": 2
     }
    ],
    "season": 2017,
@@ -89,7 +82,7 @@
    "paintBoost": 0,
    "threePtBoost": -6,
    "defBoost": 2,
-   "salary": 1610,
+   "salary": 1550,
    "chart": [
     {
      "lo": 1,
@@ -103,21 +96,28 @@
      "hi": 6,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
      "hi": 13,
      "pts": 3,
-     "reb": 1,
-     "ast": 0
+     "reb": 0,
+     "ast": 1
     },
     {
      "lo": 14,
-     "hi": 99,
+     "hi": 20,
      "pts": 3,
      "reb": 1,
      "ast": 1
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
     }
    ],
    "season": 1985,
@@ -157,7 +157,7 @@
    "paintBoost": 1,
    "threePtBoost": -3,
    "defBoost": 3,
-   "salary": 1500,
+   "salary": 1430,
    "chart": [
     {
      "lo": 1,
@@ -170,8 +170,8 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 7,
@@ -182,6 +182,13 @@
     },
     {
      "lo": 15,
+     "hi": 21,
+     "pts": 3,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 22,
      "hi": 99,
      "pts": 3,
      "reb": 1,
@@ -220,7 +227,7 @@
    "paintBoost": 0,
    "threePtBoost": -2,
    "defBoost": 0,
-   "salary": 1490,
+   "salary": 1480,
    "chart": [
     {
      "lo": 1,

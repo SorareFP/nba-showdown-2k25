@@ -403,7 +403,13 @@ describe('every AI path', () => {
       out.forEach(k => used.add(k));
       return out;
     };
-    const wings = () => [...take(k => group(k) === 'G', 545, 5), ...take(k => group(k) === 'F', 545, 5)];
+    // $548, not $545, since the 2026-09-29 conditional-rows reprice: the
+    // guards nearest $545 then sat at $520-550, the wing teams summed low,
+    // the crossing rose to $740 and the centres it forced ($770-840) carried
+    // more talent than a $540 wing — the centre team stopped accepting. This
+    // is the pool change the note above says shows up here; a sweep put the
+    // sums back just under $5,500 at $548 (crossing $660, centres $680-770).
+    const wings = () => [...take(k => group(k) === 'G', 548, 5), ...take(k => group(k) === 'F', 548, 5)];
     const A = wings();
     const C = wings();
     // A wing team's salary without its dearest man: any centre dearer than

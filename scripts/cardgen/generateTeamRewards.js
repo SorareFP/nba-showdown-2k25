@@ -246,6 +246,14 @@ function assertEarnedBands(cards) {
     })
     .filter(Boolean);
   if (wrong.length === 0) return;
+  // REWARD_BANDS=warn: a REVIEW build only (2026-09-29, the conditional-rows
+  // rebuild), when every salary has just moved and the re-pick is queued
+  // behind the user's look at the new charts. The ladder is still reported;
+  // it is not silently tolerated, and a deploy never runs with this set.
+  if (process.env.REWARD_BANDS === 'warn') {
+    console.warn(`⚠ Team rewards are out of their earned difficulty bands (REWARD_BANDS=warn — re-pick before deploying):\n${wrong.join('\n')}`);
+    return;
+  }
   throw new Error(
     `Team rewards are out of their earned difficulty bands:\n${wrong.join('\n')}\n` +
       'Re-pick with: node scripts/cardgen/teamRewardCandidates.js <TEAM>'

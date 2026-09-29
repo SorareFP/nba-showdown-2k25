@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, it, expect } from 'vitest';
-import { computeStatBands } from './bands.js';
+import { computeStatBands, conditionalStatValues } from './bands.js';
 
 const jokicGames = JSON.parse(
   readFileSync(new URL('../../card-data/fixtures/jokic-2023-24-gamelog.json', import.meta.url))
@@ -60,5 +60,53 @@ describe('computeStatBands', () => {
     const gamesString = Array.from({ length: 40 }, (_, i) => ({ minutes: '30:00', pts: i % 31 }));
     const gamesNumeric = Array.from({ length: 40 }, (_, i) => ({ minutes: 30, pts: i % 31 }));
     expect(computeStatBands(gamesString, 'pts')).toEqual(computeStatBands(gamesNumeric, 'pts'));
+  });
+
+  it('keeps the cut each band was made from, so a game can be placed in a band again', () => {
+    const games = Array.from({ length: 40 }, (_, i) => ({ minutes: 30, pts: i % 31 }));
+    const bands = computeStatBands(games, 'pts');
+    for (let i = 1; i < bands.length; i++) expect(bands[i].threshold).toBeGreaterThanOrEqual(bands[i - 1].threshold);
+  });
+});
+
+// WHAT HE DID ALONGSIDE THOSE POINTS (the user, 2026-09-29): each points
+// band's rebounds and assists are the average over the games that landed in
+// it, not a rung of the stat's own ladder.
+describe('conditionalStatValues', () => {
+  // A passer whose assists FALL as his points rise: quiet nights 6-10 pts with
+  // 14 assists, big nights 24-30 pts with 1. Rebounds flat at 8 throughout
+  // (8 in 34 minutes is 1.0 on the chart's scale, so a flat stat has a flat
+  // integer answer).
+  const nash = Array.from({ length: 60 }, (_, i) => {
+    const big = i % 2 === 0;
+    return { minutes: 34, pts: big ? 24 + (i % 7) : 6 + (i % 5), ast: big ? 1 : 14, reb: 8 };
+  });
+
+  it('gives the low-points bands the high assists that happened there, and lets the ladder fall', () => {
+    const pts = computeStatBands(nash, 'pts');
+    const ast = conditionalStatValues(nash, pts, 'ast');
+    expect(ast).toHaveLength(5);
+    expect(ast[0].value).toBeGreaterThan(ast[4].value);         // 12 on the quiet nights beats 6 on the big ones
+    expect(ast.every(b => b.games > 0)).toBe(true);
+    // The per-stat ladder the old reconcile read would have said the reverse.
+    const ladder = computeStatBands(nash, 'ast').map(b => b.value);
+    expect(ladder[4]).toBeGreaterThanOrEqual(ladder[0]);
+  });
+
+  it('keeps a flat stat flat, and preserves the expected value', () => {
+    const pts = computeStatBands(nash, 'pts');
+    const reb = conditionalStatValues(nash, pts, 'reb');
+    expect(reb.map(b => b.value)).toEqual([1, 1, 1, 1, 1]);
+    const slots = pts.map(b => b.slots);
+    const total = slots.reduce((a, b) => a + b, 0);
+    const ev = reb.reduce((s, b, i) => s + b.value * slots[i], 0) / total;
+    const raw = reb.reduce((s, b, i) => s + b.raw * slots[i], 0) / total;
+    expect(Math.abs(ev - raw)).toBeLessThan(1);
+  });
+
+  it('is null when no game carries both stats, so the caller can fall back', () => {
+    const pts = computeStatBands(nash, 'pts');
+    expect(conditionalStatValues(nash.map(({ minutes, pts: p }) => ({ minutes, pts: p })), pts, 'ast')).toBeNull();
+    expect(conditionalStatValues(nash, pts.map(({ threshold, ...b }) => b), 'ast')).toBeNull();   // bands without their cuts
   });
 });

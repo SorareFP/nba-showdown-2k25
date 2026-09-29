@@ -500,7 +500,7 @@ describe('the committed file', () => {
     expect(AWARDS.counts[CURRENT_SET].ifSelectionsCounted).toBe(45);
     // 85 on 2026-09-07 with the awards file regenerated against the current
     // Super Season roster — the capstone legends it had gone stale against.
-    expect(AWARDS.counts[SUPER_SEASON_SET].ifSelectionsCounted).toBe(88) /* 88 later on 2026-09-24: Wilkins, Parker and Deron Williams joined as legends (81 marked); 85 on 2026-09-24: the value pick (78 marked, the selection-only seasons it moved were a wash less two); 86 on 2026-09-09: Lillard's ring-year card back in Super Season; 90 on 2026-09-22: Arenas, Brand, DeAndre Jordan and Parker joined (the reward/identity batch); 87 later that day: Duncan, Yao and Kirilenko demoted to Throwbacks (BEATEN_BY_ROOKIE) */;
+    expect(AWARDS.counts[SUPER_SEASON_SET].ifSelectionsCounted).toBe(87) /* 87 on 2026-09-29: the conditional-rows rebuild moved five cards across the beaten-by-base and rookie rules (Camara and Watford out, Hartenstein, M. Robinson and T. Martin back), one marked season fewer; 88 later on 2026-09-24: Wilkins, Parker and Deron Williams joined as legends (81 marked); 85 on 2026-09-24: the value pick (78 marked, the selection-only seasons it moved were a wash less two); 86 on 2026-09-09: Lillard's ring-year card back in Super Season; 90 on 2026-09-22: Arenas, Brand, DeAndre Jordan and Parker joined (the reward/identity batch); 87 later that day: Duncan, Yao and Kirilenko demoted to Throwbacks (BEATEN_BY_ROOKIE) */;
     // 21, not 25: the rookie playing-time bar, same four bench rings.
     // 24, and equal to `marked`: a rookie card's only trophies are ROY and a
     // ring, neither of which the selection suffix distinguishes.

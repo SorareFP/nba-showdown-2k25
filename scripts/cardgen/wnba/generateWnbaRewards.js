@@ -267,6 +267,12 @@ function assertEarnedBands(cards) {
     })
     .filter(Boolean);
   if (wrong.length === 0) return;
+  // REWARD_BANDS=warn: a REVIEW build only — see the same switch in
+  // generateTeamRewards.js. Reported, never silently tolerated.
+  if (process.env.REWARD_BANDS === 'warn') {
+    console.warn(`⚠ WNBA rewards are out of their earned difficulty bands (REWARD_BANDS=warn — re-pick before deploying):\n${wrong.join('\n')}`);
+    return;
+  }
   throw new Error(
     `WNBA rewards are out of their earned difficulty bands:\n${wrong.join('\n')}\n` +
       'Re-pick with: node scripts/cardgen/wnba/wnbaRewardCandidates.js <TEAM>'

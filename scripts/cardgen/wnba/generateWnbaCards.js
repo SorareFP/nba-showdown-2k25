@@ -64,7 +64,7 @@ import { readCache, REPO_ROOT } from '../cache.js';
 import { normalizeName } from '../resolveTeams.js';
 import { computeStatBands, delayUpperBands, usageAccessShift } from '../bands.js';
 import { loadWnbaSeasonRealGames } from '../realGames.js';
-import { reconcileBandsByRoll, shapeChart, MAX_CHART_TIERS } from '../generate.js';
+import { reconcileBandsByRoll, reconcileConditional, shapeChart, MAX_CHART_TIERS } from '../generate.js';
 import * as V from '../variance.js';
 import * as A from '../attributes.js';
 import * as B from './bigness.js';
@@ -304,13 +304,14 @@ export function buildWnbaCard({ row, team, shooting, speedPowerTotal, calibratio
       }),
       stat
     );
-    // The usage gate touches the SCORING spine only; boards and assists are
-    // read from their own ungated layouts by reconcileBandsByRoll.
+    // The usage gate touches the SCORING spine only; boards and assists ride
+    // it as what she did alongside those points (reconcileConditional), their
+    // own ladders the fallback for a synthetic card.
     bands[stat] = stat === 'pts'
       ? delayUpperBands(placedBands, usageAccessShift(row.usgPct))
       : placedBands;
   }
-  const chart = shapeChart(reconcileBandsByRoll(bands), { shotLine });
+  const chart = shapeChart(reconcileConditional({ ...bands, games: realGames }), { shotLine });
 
   const card = {
     id: playerIdFromName(row.name),

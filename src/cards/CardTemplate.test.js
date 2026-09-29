@@ -1749,7 +1749,10 @@ describe('the season and the card-type badge', () => {
     // Season VALUE PICK (superSeasonValue.js) — ten badged players found an
     // earlier season that beats their base card and left for the set, five
     // came the other way. A measurement of the price, as every note says.
-    expect(superSeason.length).toBe(140);
+    // 139 on 2026-09-29 (the conditional-rows rebuild): Hartenstein, Mitchell
+    // Robinson and Tyrese Martin's Super Season cards came back and their base
+    // cards lost the pill; Camara's and Watford's base cards gained it.
+    expect(superSeason.length).toBe(139);
     for (const player of superSeason) {
       const html = render({ card: player, set: CURRENT_SET });
       expect(html, player.name).not.toContain('ROOKIE');
@@ -1798,11 +1801,11 @@ describe('the season and the card-type badge', () => {
     // Season VALUE PICK (superSeasonValue.js) — ten badged players found an
     // earlier season that beats their base card and left for the set, five
     // came the other way. A measurement of the price, as every note says.
-    expect(gilded.length).toBe(20);
+    expect(gilded.length).toBe(19);   // 19 on 2026-09-29, see the 139 above
     // 125 on 2026-09-07: the beaten-by-base rule's 39 are mostly cheap role
     // players, so nearly all of them land on the BEST SEASON side of the line.
     expect(superSeason.length - gilded.length).toBe(120);
-    expect(BADGE_FILE.counts.printed[SUPER_SEASON_BADGE]).toBe(20);
+    expect(BADGE_FILE.counts.printed[SUPER_SEASON_BADGE]).toBe(19);
     expect(BADGE_FILE.counts.printed[BEST_SEASON_BADGE]).toBe(120);
     expect(BADGE_FILE.counts.printed[ROOKIE_BADGE]).toBe(33);
   });

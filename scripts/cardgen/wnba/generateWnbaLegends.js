@@ -79,7 +79,7 @@ import { readCache, REPO_ROOT } from '../cache.js';
 import { normalizeName } from '../resolveTeams.js';
 import { computeStatBands, delayUpperBands, usageAccessShift } from '../bands.js';
 import { loadWnbaSeasonRealGames } from '../realGames.js';
-import { reconcileBandsByRoll, shapeChart, MAX_CHART_TIERS } from '../generate.js';
+import { reconcileBandsByRoll, reconcileConditional, shapeChart, MAX_CHART_TIERS } from '../generate.js';
 import * as V from '../variance.js';
 import * as A from '../attributes.js';
 import * as B from './bigness.js';
@@ -108,7 +108,7 @@ import { joinWnbaSeason, per4MinFromTotals, wnbaFeatureRow } from './pool.js';
 import { vorpPerGame, COMPOSITE_WEIGHTS, composite } from './generateWnbaCards.js';
 import * as L from './legends.js';
 import {
-  pickByValue, readRetired, writeRetired, nextRetired, absorbedCard, asThrowback, readShippedSeasons, VALUE_REPICK,
+  pickByValue, readRetired, writeRetired, nextRetired, absorbedCard, asThrowback, readShippedSeasons, VALUE_REPICK, REPICK_MARGIN,
 } from '../superSeasonValue.js';
 
 const GEN_DIR = path.join(REPO_ROOT, 'card-data', 'generated');
@@ -360,13 +360,14 @@ export function buildLegendCard({ row, shooting, speedPowerTotal, calibration, r
       }),
       stat
     );
-    // The usage gate touches the SCORING spine only; boards and assists are
-    // read from their own ungated layouts by reconcileBandsByRoll.
+    // The usage gate touches the SCORING spine only; boards and assists ride
+    // it as what she did alongside those points (reconcileConditional), their
+    // own ladders the fallback for a synthetic card.
     bands[stat] = stat === 'pts'
       ? delayUpperBands(placedBands, usageAccessShift(row.usgPct))
       : placedBands;
   }
-  const chart = shapeChart(reconcileBandsByRoll(bands), { shotLine });
+  const chart = shapeChart(reconcileConditional({ ...bands, games: realGames }), { shotLine });
 
   const card = {
     id: playerIdFromName(shownName),
@@ -712,7 +713,12 @@ export function main({ log = console.log } = {}) {
     }
   }
   const incumbentSeason = new Map(selections.map(s => [s.playerId, s.best.season]));
-  const { winners, repicks, unweighed } = pickByValue(valueBatch, incumbentSeason);
+  // The shipped season holds the card until a challenger clears it by
+  // REPICK_MARGIN — see superSeasonValue.js.
+  const { winners, repicks, unweighed } = pickByValue(valueBatch, incumbentSeason, {
+    holderSeason: new Map(readShippedSeasons(CARDS_FILE)),
+    margin: REPICK_MARGIN,
+  });
   if (process.env.VALUE_DEBUG) {
     for (const c of valueBatch.filter(v => v.name === process.env.VALUE_DEBUG).sort((a, b) => a.season - b.season)) {
       log(`  debug ${c.name} ${c.season}: $${c.salary}${c.provisional ? ' provisional' : ''} S${c.speed}/P${c.power} line ${c.shotLine} 3PT ${c.threePtBoost} paint ${c.paintBoost} def ${c.defBoost}`);

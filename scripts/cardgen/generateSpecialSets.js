@@ -107,7 +107,7 @@ import { readCache, REPO_ROOT } from './cache.js';
 import { normalizeName } from './resolveTeams.js';
 import { computeStatBands, delayFloor, delayUpperBands, usageAccessShift } from './bands.js';
 import { historicalTeamDefense, loadSeasonRealGames } from './realGames.js';
-import { reconcileBandsByRoll, shapeChart } from './generate.js';
+import { reconcileBandsByRoll, reconcileConditional, shapeChart } from './generate.js';
 import * as V from './variance.js';
 import * as A from './attributes.js';
 import * as PV from './playValue.js';
@@ -120,7 +120,7 @@ import { readSummerStandouts, buildApiEpmIndex, buildBpmBridge, buildFtLineBridg
 import { readLegends } from './legends.js';
 import {
   candidateSelections, pickByValue, readRetired, writeRetired, nextRetired, absorbedCard, asThrowback,
-  readShippedSeasons, VALUE_REPICK,
+  readShippedSeasons, VALUE_REPICK, REPICK_MARGIN,
 } from './superSeasonValue.js';
 import { PRINTED_SCALE, REFINEMENT_WEIGHT, mapToReferenceScale } from './speedPower.js';
 import { archiveBasis, collectRows, requireArchive } from './epmArchive.js';
@@ -612,16 +612,17 @@ export function buildHistoricalCard({
       }),
       stat
     );
-    // The usage gate touches the SCORING spine only; boards and assists are
-    // read from their own ungated layouts by reconcileBandsByRoll — and every
-    // stat's floor is delayed by the evidence the season lacks (delayFloor):
+    // The usage gate touches the SCORING spine only; boards and assists ride
+    // it as what he did alongside those points (reconcileConditional), their
+    // own ladders the fallback for a synthetic card — and every stat's floor
+    // is delayed by the evidence the season lacks (delayFloor):
     // a 115-minute rookie prints zeroes where a full season prints points.
     const floored = delayFloor(placedBands, chartTrust);
     bands[stat] = stat === 'pts'
       ? delayUpperBands(floored, usageAccessShift(season.usgPct))
       : floored;
   }
-  const chart = shapeChart(reconcileBandsByRoll(bands), { shotLine });
+  const chart = shapeChart(reconcileConditional({ ...bands, games: realGames }), { shotLine });
 
   const card = {
     id: playerIdFromName(player.name),
@@ -1900,7 +1901,13 @@ export function main({ log = console.log } = {}) {
     if (set === SUPER_SEASON_SET) {
       // THE VALUE PICK, decided: one card per player, the most valuable.
       valueBatch = cards.slice();
-      const { winners, repicks, unweighed } = pickByValue(cards, incumbentSeason);
+      // The season that ships holds the card until a challenger clears it by
+      // REPICK_MARGIN (superSeasonValue.js): a rebuild's pricing noise no
+      // longer retires shipped cards and mints photo-less ones.
+      const { winners, repicks, unweighed } = pickByValue(cards, incumbentSeason, {
+        holderSeason: new Map(readShippedSeasons(OUTPUT_FILES[SUPER_SEASON_SET])),
+        margin: REPICK_MARGIN,
+      });
       const keep = new Set(winners.values());
       const kept = [];
       const keptSelections = [];

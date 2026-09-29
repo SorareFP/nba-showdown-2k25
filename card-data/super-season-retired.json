@@ -436,13 +436,6 @@
    "reason": "another season of the player is the stronger card — a Throwback instead"
   },
   {
-   "name": "Mitchell Robinson",
-   "bbrefId": "robinmi01",
-   "season": 2020,
-   "since": "2026-09-24",
-   "reason": "another season of the player is the stronger card — a Throwback instead"
-  },
-  {
    "name": "Myles Turner",
    "bbrefId": "turnemy01",
    "season": 2019,
@@ -527,10 +520,17 @@
    "reason": "another season of the player is the stronger card — a Throwback instead"
   },
   {
-   "name": "Tyrese Martin",
-   "bbrefId": "martity01",
+   "name": "Toumani Camara",
+   "bbrefId": "camarto01",
    "season": 2025,
-   "since": "2026-09-24",
+   "since": "2026-09-29",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Trendon Watford",
+   "bbrefId": "watfotr01",
+   "season": 2023,
+   "since": "2026-09-29",
    "reason": "another season of the player is the stronger card — a Throwback instead"
   },
   {

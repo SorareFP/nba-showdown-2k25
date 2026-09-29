@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-24T14:02:51.118Z",
+ "generatedAt": "2026-09-29T17:31:19.482Z",
  "source": "Basketball-Reference's WNBA award voting pages (rank-1 rows) and each season page's Finals result. All-Star selections are the remaining gap: they live on per-season All-Star pages this does not fetch yet.",
  "declared": [
   "MVP",
@@ -88,6 +88,17 @@
     "season": 2024,
     "bbrefId": "clarkca02w",
     "awards": [
+     "ROY"
+    ],
+    "champion": null
+   },
+   {
+    "id": "Candace_Parker",
+    "name": "Candace Parker",
+    "season": 2008,
+    "bbrefId": "parkeca01w",
+    "awards": [
+     "MVP",
      "ROY"
     ],
     "champion": null

@@ -87,7 +87,20 @@ function toCardValue(raw) {
  * toward the smallest total per-band deviation, so the chart never drifts
  * from the raw shape further than EV requires.
  */
-function evRoundValues(raws, slots) {
+/**
+ * THE EXPECTED-VALUE CORRIDOR, in chart slots, for a conditional rounding.
+ * Five conditional averages sit close together (Nash's assists per band run
+ * 1.49 down to 1.27), so rounding each to its nearest integer sends the whole
+ * stat one way and its expected value walks off (all 1s for a 1.37 average).
+ * Roundings that drift further than this are ranked behind every rounding
+ * that does not; inside the corridor the ordinary rule decides.
+ */
+const EV_SLOT_TOLERANCE = 2.5;
+
+/** The games' worth of the player's own overall rate a band's average is shrunk toward (conditionalStatValues). */
+const CONDITIONAL_PRIOR_GAMES = 8;
+
+function evRoundValues(raws, slots, { monotone = true, maxTurns = Infinity, evTolerance = Infinity } = {}) {
   const total = slots.reduce((a, b) => a + b, 0);
   const rawEv = raws.reduce((s, v, i) => s + v * slots[i], 0) / total;
   const options = raws.map(v => {
@@ -104,9 +117,11 @@ function evRoundValues(raws, slots) {
   // of 354 cards carried a >=2 jump inside their scoring rows. A genuine
   // boom-or-bust scorer, whose raw gap at the ceiling IS large, still keeps
   // his cliff — which is the point.
-  const maxJump = raws.map((v, i) => (i === 0 ? Infinity : Math.max(1, Math.floor(v - raws[i - 1] + 1))));
+  // `monotone: false` (conditionalStatValues): the ladder may fall as well as
+  // rise, and the earned-variance ceiling then bounds the jump either way.
+  const maxJump = raws.map((v, i) => (i === 0 ? Infinity : Math.max(1, Math.floor(Math.abs(v - raws[i - 1]) + 1))));
   let best = null;
-  const walk = (i, acc, evAcc, devAcc) => {
+  const walk = (i, acc, evAcc, devAcc, lastDir, turns) => {
     if (i === raws.length) {
       // Per-band deviation is PRIMARY, EV drift is the tiebreak. The old
       // ordering flattened Tomlin's [0, 1.12, 1.40, 1.88, 2.998] into
@@ -114,24 +129,46 @@ function evRoundValues(raws, slots) {
       // 0.016 — the anti-identity outcome. Ranked by per-band deviation
       // instead, [0, 1, 1, 2, 3] wins 3.20 vs 15.75, which is what the
       // smell test wants: the ladder his raw values actually describe.
+      //
+      // THE CORRIDOR (conditionalStatValues, `evTolerance`): a rounding that
+      // drifts from the raw expected value by more than the tolerance ranks
+      // behind every one that does not — and inside the corridor the same
+      // deviation rule decides, so a passer whose assists live on his quiet
+      // nights still prints them there rather than an EV-perfect flat line.
+      // Tried and dropped on the way: expected value FIRST (rounds a
+      // quiet-nights passer to 1-1-1-1-1, the anti-identity outcome again)
+      // and a smoothness tiebreak (prefers flat, and the set lost distinct
+      // rows). The zigzag is handled below as a constraint instead.
       const err = Math.abs(evAcc / total - rawEv);
-      if (!best || devAcc < best.dev - 1e-12 || (devAcc - best.dev <= 1e-12 && err < best.err)) {
-        best = { err, dev: devAcc, values: [...acc] };
+      const outside = err * total > evTolerance ? 1 : 0;
+      if (!best || outside < best.outside
+        || (outside === best.outside && (devAcc < best.dev - 1e-12 || (devAcc - best.dev <= 1e-12 && err < best.err)))) {
+        best = { err, dev: devAcc, outside, values: [...acc] };
       }
       return;
     }
     for (const v of options[i]) {
+      let dir = lastDir;
+      let t = turns;
       if (acc.length) {
         const prev = acc[acc.length - 1];
-        if (v < prev) continue;             // monotone
-        if (v - prev > maxJump[i]) continue; // earned-variance ceiling
+        if (monotone && v < prev) continue;          // monotone
+        if (Math.abs(v - prev) > maxJump[i]) continue; // earned-variance ceiling
+        // `maxTurns`: how often the ladder may change direction (flat steps
+        // do not count). One is a rise, a fall, or a single hump — all of
+        // which real profiles have; 1-0-1-0 is what half a rebound a band
+        // rounds into, and it is noise, so a conditional rounding allows one.
+        const step = Math.sign(v - prev);
+        if (step && lastDir && step !== lastDir) t += 1;
+        if (t > maxTurns) continue;
+        if (step) dir = step;
       }
       acc.push(v);
-      walk(i + 1, acc, evAcc + v * slots[i], devAcc + Math.abs(v - raws[i]) * slots[i]);
+      walk(i + 1, acc, evAcc + v * slots[i], devAcc + Math.abs(v - raws[i]) * slots[i], dir, t);
       acc.pop();
     }
   };
-  walk(0, [], 0, 0);
+  walk(0, [], 0, 0, 0, 0);
   // The constraint can in principle exclude every candidate (a raw ladder
   // that already jumps by more than its own gaps allow). Falling back to
   // per-band nearest rounding keeps a chart printable rather than throwing.
@@ -245,7 +282,9 @@ export function computeStatBands(games, statKey) {
   let start = 1;
   const bands = values.map((value, i) => {
     const width = slots[i];
-    const band = { lo: start, hi: start + width - 1, value, slots: width };
+    // `threshold` is the cut the band was made from, kept so a game can be
+    // placed in a band again later (conditionalStatValues).
+    const band = { lo: start, hi: start + width - 1, value, slots: width, threshold: thresholds[i] };
     start += width;
     return band;
   });
@@ -258,6 +297,83 @@ export function computeStatBands(games, statKey) {
   }
 
   return bands;
+}
+
+/**
+ * WHAT HE DID ALONGSIDE THOSE POINTS (the user, 2026-09-29).
+ *
+ * Every chart's rebounds and assists rose with its points, on all 1,296 cards,
+ * because each stat was cut into its own ascending ladder and the ladders were
+ * read at the same rung. Steve Nash's 2009-10 log says otherwise: his points
+ * and assists are uncorrelated (-0.05), his lowest-scoring fifth of games
+ * carried 10.5 assists and his highest 9.7 — and the card printed 0/0/1 on
+ * the quiet nights and 2/1/2 on the big ones. The user: "I don't love that
+ * high-end stats produce so in-tandem ... rooted in how we made these charts
+ * ... realism tweaks while retaining the current mechanics."
+ *
+ * So the POINTS ladder stays the spine, exactly as cut, placed and gated. This
+ * gives each of its bands the minutes-weighted average of the stat over the
+ * games that LANDED in that band — what actually happened alongside those
+ * points — on the same per-minute-times-four scale the thresholds use, and
+ * rounds the five together (evRoundValues) without the monotone constraint:
+ * a passer's assists may fall as his points rise, because they did — inside
+ * an expected-value corridor, and with at most one change of direction, so
+ * the ladder is a rise, a fall or a hump and never rounding noise. The
+ * average rather than a percentile also brings the top row's boards and
+ * assists down to what a big scoring night really carried.
+ *
+ * `ptsBands` are computeStatBands' points bands (their `threshold` places a
+ * game; their `slots` weight the rounding), before or after placement — both
+ * survive the copies. `games` are the joint rows the points were cut from.
+ * Returns one `{ value, raw, games }` per band, or null when no row carries
+ * both stats (an all-synthetic card), so the caller can fall back to the
+ * per-stat ladders.
+ */
+export function conditionalStatValues(games, ptsBands, statKey) {
+  const n = ptsBands?.length ?? 0;
+  if (!n || ptsBands.some(b => !Number.isFinite(b.threshold))) return null;
+  const sum = new Array(n).fill(0);
+  const weight = new Array(n).fill(0);
+  const count = new Array(n).fill(0);
+  for (const g of games ?? []) {
+    if (!Number.isFinite(g?.pts) || !Number.isFinite(g?.[statKey]) || g.minutes == null) continue;
+    const minutes = minutesToDecimal(g.minutes);
+    if (!(minutes > 0)) continue;
+    const p = normalize(g.pts, minutes);
+    let i = ptsBands.findIndex(b => p <= b.threshold);
+    if (i < 0) i = n - 1;
+    sum[i] += normalize(g[statKey], minutes) * minutes;
+    weight[i] += minutes;
+    count[i] += 1;
+  }
+  if (!count.some(c => c > 0)) return null;
+  // THE BOTTOM BAND IS THREE OR FOUR NIGHTS. The cuts put 5% of a player's
+  // games in his lowest band and 15% in the next, and an average over four
+  // games is noise — Jokic's rebounds read 2, 1, 1, 2 down the card because
+  // his four worst scoring nights happened to be big board nights. So each
+  // band's average is shrunk toward the player's OWN overall rate by how few
+  // games it holds: a band of four games keeps a third of its own reading, a
+  // band of twenty most of it, and the shape that survives is the one his
+  // season actually repeats.
+  const overall = weight.reduce((a, b) => a + b, 0) > 0
+    ? sum.reduce((a, b) => a + b, 0) / weight.reduce((a, b) => a + b, 0)
+    : 0;
+  const shrunk = i => {
+    const own = sum[i] / weight[i];
+    return (count[i] * own + CONDITIONAL_PRIOR_GAMES * overall) / (count[i] + CONDITIONAL_PRIOR_GAMES);
+  };
+  const raws = sum.map((s, i) => {
+    if (weight[i] > 0) return shrunk(i) * 4;
+    // A band no game landed in (a cut can sit between two observed values):
+    // the nearest band that has games speaks for it.
+    for (let d = 1; d < n; d += 1) {
+      if (i - d >= 0 && weight[i - d] > 0) return shrunk(i - d) * 4;
+      if (i + d < n && weight[i + d] > 0) return shrunk(i + d) * 4;
+    }
+    return 0;
+  });
+  const values = evRoundValues(raws, ptsBands.map(b => b.slots ?? 1), { monotone: false, maxTurns: 1, evTolerance: EV_SLOT_TOLERANCE });
+  return raws.map((raw, i) => ({ value: values[i], raw, games: count[i] }));
 }
 
 /**

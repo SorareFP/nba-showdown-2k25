@@ -1,6 +1,6 @@
 {
  "set": "wnba-throwbacks",
- "generatedAt": "2026-09-24T20:01:03.879Z",
+ "generatedAt": "2026-09-29T17:28:00.791Z",
  "note": "WNBA THROWBACKS — generator-owned (scripts/cardgen/generateCuratedCards.js from demoted-wnba-super-seasons.json): WNBA Super Seasons the value pick retired. Requested WNBA Throwbacks live in cards-free-agents.json; both join the wnba-throwbacks set in cardSets.js.",
  "cards": [
   {

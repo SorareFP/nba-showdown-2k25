@@ -5,6 +5,14 @@
 //
 //   node scripts/cardgen/rarityShift.mjs [--from <ref>] [--id <receipt id>] [--cutoff <ISO time>] [--out <file>]
 //
+// WITH NO --out IT RE-CUTS THE NEWEST TABLE (2026-09-30), under that table's
+// own id and from its own ref: the pre-deploy step is always this one bare
+// command. rarity-shift.json went live that afternoon and a second table
+// followed hours later; a bare run that rewrote the live table would have
+// repriced receipts accounts were already claiming. A NEW change starts a new
+// file: --out rarity-shift-<n>.json --id rarity-shift:<date>-<n> --from <the
+// commit that was deployed>, and an import in src/game/rarityShift.js.
+//
 //   --from     the shipped cards. Default: the tag cut before the 2026-09-29
 //              chart rebuild, cards-before-conditional-rows.
 //   --id       the receipt id every account claims under. Default
@@ -32,17 +40,21 @@ import * as now from '../../src/game/cardSets.js';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '..', '..');
-// `--out rarity-shift-2.json`: a deployed table is never rewritten; the next
-// change is cut into the next file (src/game/rarityShift.js imports each).
-const OUT = path.join(ROOT, 'card-data', 'generated', process.argv.includes('--out') ? process.argv[process.argv.indexOf('--out') + 1] : 'rarity-shift.json');
-
 const arg = name => {
   const i = process.argv.indexOf(`--${name}`);
   return i > 0 ? process.argv[i + 1] : undefined;
 };
-const REF = arg('from') ?? 'cards-before-conditional-rows';
+const GEN = path.join(ROOT, 'card-data', 'generated');
+// The newest table on disk: rarity-shift-<highest n>.json, else rarity-shift.json.
+const newest = fs.readdirSync(GEN)
+  .map(f => f.match(/^rarity-shift(?:-(\d+))?\.json$/))
+  .filter(Boolean)
+  .sort((a, b) => Number(b[1] ?? 1) - Number(a[1] ?? 1))[0]?.[0];
+const OUT = path.join(GEN, arg('out') ?? newest ?? 'rarity-shift.json');
+const current = !arg('out') && fs.existsSync(OUT) ? JSON.parse(fs.readFileSync(OUT, 'utf8')) : null;
+const REF = arg('from') ?? current?.fromCommit ?? 'cards-before-conditional-rows';
 const TODAY = new Date().toISOString().slice(0, 10);
-const ID = arg('id') ?? `rarity-shift:${TODAY}`;
+const ID = arg('id') ?? current?.id ?? `rarity-shift:${TODAY}`;
 const CUTOFF = new Date(arg('cutoff') ?? Date.now()).toISOString();
 
 const git = (...args) => execFileSync('git', args, { cwd: ROOT, maxBuffer: 1 << 30 });

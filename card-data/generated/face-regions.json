@@ -12545,8 +12545,17 @@
         0.4002
       ],
       "badge": null
+    },
+    "summer-standouts/Richard_Jefferson": {
+      "name": [
+        0.0388,
+        0.1203,
+        0.0979,
+        0.7212
+      ],
+      "badge": null
     }
   },
-  "generatedAt": "2026-09-30T11:31:07.554Z",
+  "generatedAt": "2026-09-30T12:05:27.034Z",
   "note": "Per-face boxes of the rotated name and the Super Season pill, as fractions of the 843x1181 face, measured by scripts/studio/export.js. Read by src/cards/faceRegions.js for the holographic sheen."
 }

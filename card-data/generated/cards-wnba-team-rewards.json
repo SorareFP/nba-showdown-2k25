@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-30T11:44:17.422Z",
+ "generatedAt": "2026-09-30T16:52:18.103Z",
  "set": "wnba-team-rewards",
  "provisional": true,
  "sources": {
@@ -20,9 +20,9 @@
    "power": 12,
    "shotLine": 15,
    "paintBoost": -1,
-   "threePtBoost": -2,
+   "threePtBoost": -1,
    "defBoost": 1,
-   "salary": 1440,
+   "salary": 1430,
    "chart": [
     {
      "lo": 1,
@@ -81,6 +81,82 @@
    "provisional": false,
    "rewardFor": "ATL",
    "rewardGoal": "wnba-team-ATL",
+   "wears": "wnba-throwbacks",
+   "badges": [
+    "throwback"
+   ]
+  },
+  {
+   "id": "Tamika_Catchings",
+   "name": "Tamika Catchings",
+   "team": "IND",
+   "statRowTeam": "IND",
+   "pos": "F",
+   "speed": 13,
+   "power": 13,
+   "shotLine": 14,
+   "paintBoost": -1,
+   "threePtBoost": 1,
+   "defBoost": 3,
+   "salary": 1330,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 20,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2012,
+   "seasonLabel": "2012",
+   "games": 34,
+   "mpg": 30.5,
+   "minutes": 1036,
+   "bbrefId": "catchta01w",
+   "metrics": {
+    "bpmHat": 9.47,
+    "obpmHat": 6.46,
+    "dbpmHat": 3.01,
+    "seasonZ": 0,
+    "per": 27.3,
+    "ws": 7.8,
+    "wsPer40": 0.301,
+    "tsPct": 0.552,
+    "pts100": 30.6
+   },
+   "provisional": false,
+   "rewardFor": "IND",
+   "rewardGoal": "wnba-team-IND",
    "wears": "wnba-throwbacks",
    "badges": [
     "throwback"
@@ -157,82 +233,6 @@
    ]
   },
   {
-   "id": "Tamika_Catchings",
-   "name": "Tamika Catchings",
-   "team": "IND",
-   "statRowTeam": "IND",
-   "pos": "F",
-   "speed": 13,
-   "power": 13,
-   "shotLine": 14,
-   "paintBoost": -1,
-   "threePtBoost": 0,
-   "defBoost": 3,
-   "salary": 1300,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 6,
-     "pts": 0,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 7,
-     "hi": 13,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 14,
-     "hi": 20,
-     "pts": 3,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 21,
-     "hi": 99,
-     "pts": 3,
-     "reb": 1,
-     "ast": 1
-    }
-   ],
-   "league": "WNBA",
-   "season": 2012,
-   "seasonLabel": "2012",
-   "games": 34,
-   "mpg": 30.5,
-   "minutes": 1036,
-   "bbrefId": "catchta01w",
-   "metrics": {
-    "bpmHat": 9.47,
-    "obpmHat": 6.46,
-    "dbpmHat": 3.01,
-    "seasonZ": 0,
-    "per": 27.3,
-    "ws": 7.8,
-    "wsPer40": 0.301,
-    "tsPct": 0.552,
-    "pts100": 30.6
-   },
-   "provisional": false,
-   "rewardFor": "IND",
-   "rewardGoal": "wnba-team-IND",
-   "wears": "wnba-throwbacks",
-   "badges": [
-    "throwback"
-   ]
-  },
-  {
    "id": "Becky_Hammon",
    "name": "Becky Hammon",
    "team": "SAS",
@@ -244,7 +244,7 @@
    "paintBoost": 1,
    "threePtBoost": 2,
    "defBoost": -1,
-   "salary": 1220,
+   "salary": 1210,
    "chart": [
     {
      "lo": 1,
@@ -318,7 +318,7 @@
    "power": 9,
    "shotLine": 14,
    "paintBoost": 1,
-   "threePtBoost": 0,
+   "threePtBoost": -1,
    "defBoost": 0,
    "salary": 1180,
    "chart": [
@@ -394,9 +394,9 @@
    "power": 12,
    "shotLine": 12,
    "paintBoost": 0,
-   "threePtBoost": -2,
+   "threePtBoost": -1,
    "defBoost": 1,
-   "salary": 1160,
+   "salary": 1170,
    "chart": [
     {
      "lo": 1,
@@ -448,9 +448,80 @@
    "provisional": false,
    "rewardFor": "PHO",
    "rewardGoal": "wnba-team-PHO",
+   "bandException": "Super-rare where Phoenix earns rare: $1,170 after the 2026-09-30 reprice, and it is also the floor the new rule sets (the best card Phoenix asks for, Kelsey Plum, + $50). The user kept the current WNBA rewards that day: \"with how small WNBA collections are, I'm OK with the current rewards.\"",
    "wears": "wnba-super-season",
    "badges": [
     "super-season"
+   ]
+  },
+  {
+   "id": "Mwadi_Mabika",
+   "name": "Mwadi Mabika",
+   "team": "LAS97",
+   "statRowTeam": "LAS",
+   "pos": "G",
+   "speed": 15,
+   "power": 9,
+   "shotLine": 14,
+   "paintBoost": -1,
+   "threePtBoost": 2,
+   "defBoost": 0,
+   "salary": 1000,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 14,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2002,
+   "seasonLabel": "2002",
+   "games": 32,
+   "mpg": 32.8,
+   "minutes": 1050,
+   "bbrefId": "mabikmw01w",
+   "metrics": {
+    "bpmHat": 5.37,
+    "obpmHat": 4.97,
+    "dbpmHat": 0.41,
+    "seasonZ": 0,
+    "per": 21,
+    "ws": 5.9,
+    "wsPer40": 0.226,
+    "tsPct": 0.543,
+    "pts100": 27.9
+   },
+   "provisional": false,
+   "rewardFor": "LAS",
+   "rewardGoal": "wnba-team-LAS",
+   "bandException": "Super-rare where Los Angeles earns rare: Mabika 2002 prices $1,000. The user chose it on 2026-09-30 (\"Think we just go to a better Mabika card here\") under the new floor rule (a reward beats the best card its roster asks for, Nneka Ogwumike + $50 = $880), which the rare band sits under.",
+   "wears": "wnba-throwbacks",
+   "badges": [
+    "throwback"
    ]
   },
   {
@@ -623,9 +694,9 @@
    "power": 12,
    "shotLine": 12,
    "paintBoost": -1,
-   "threePtBoost": -2,
+   "threePtBoost": 0,
    "defBoost": 3,
-   "salary": 860,
+   "salary": 900,
    "chart": [
     {
      "lo": 1,
@@ -699,9 +770,9 @@
    "power": 11,
    "shotLine": 16,
    "paintBoost": 2,
-   "threePtBoost": -1,
+   "threePtBoost": -2,
    "defBoost": 0,
-   "salary": 810,
+   "salary": 800,
    "chart": [
     {
      "lo": 1,
@@ -766,82 +837,6 @@
    ]
   },
   {
-   "id": "Mwadi_Mabika",
-   "name": "Mwadi Mabika",
-   "team": "LAS97",
-   "statRowTeam": "LAS",
-   "pos": "G",
-   "speed": 15,
-   "power": 8,
-   "shotLine": 14,
-   "paintBoost": -2,
-   "threePtBoost": 0,
-   "defBoost": 1,
-   "salary": 740,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 3,
-     "pts": 0,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 4,
-     "hi": 13,
-     "pts": 1,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 14,
-     "hi": 21,
-     "pts": 2,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 22,
-     "hi": 99,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    }
-   ],
-   "league": "WNBA",
-   "season": 2001,
-   "seasonLabel": "2001",
-   "games": 28,
-   "mpg": 29.6,
-   "minutes": 828,
-   "bbrefId": "mabikmw01w",
-   "metrics": {
-    "bpmHat": 5.01,
-    "obpmHat": 3.99,
-    "dbpmHat": 1.02,
-    "seasonZ": 0,
-    "per": 19.3,
-    "ws": 4.3,
-    "wsPer40": 0.209,
-    "tsPct": 0.538,
-    "pts100": 21.4
-   },
-   "provisional": false,
-   "rewardFor": "LAS",
-   "rewardGoal": "wnba-team-LAS",
-   "wears": "wnba-throwbacks",
-   "badges": [
-    "throwback"
-   ]
-  },
-  {
    "id": "Nykesha_Sales",
    "name": "Nykesha Sales",
    "team": "CON03",
@@ -851,9 +846,9 @@
    "power": 10,
    "shotLine": 15,
    "paintBoost": 0,
-   "threePtBoost": 1,
+   "threePtBoost": 2,
    "defBoost": 1,
-   "salary": 720,
+   "salary": 750,
    "chart": [
     {
      "lo": 1,
@@ -920,9 +915,9 @@
    "power": 7,
    "shotLine": 15,
    "paintBoost": -3,
-   "threePtBoost": 1,
+   "threePtBoost": 2,
    "defBoost": -1,
-   "salary": 640,
+   "salary": 660,
    "chart": [
     {
      "lo": 1,

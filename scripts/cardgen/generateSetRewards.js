@@ -23,7 +23,7 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { REPO_ROOT } from './cache.js';
 import { setBadge } from '../../src/cards/sets.js';
-import { SUPER_SEASON_BADGE } from '../../src/cards/badges.js';
+import { SUPER_SEASON_BADGE, THROWBACK_BADGE } from '../../src/cards/badges.js';
 import { wornByMigrated } from './rewardIdentity.js';
 
 const GEN_DIR = path.join(REPO_ROOT, 'card-data', 'generated');
@@ -41,6 +41,9 @@ export const ORIGIN_BADGE = {
   dissonance: 'dissonance',
   'wnba-super-season': 'super-season',
   'wnba-rookie': 'rookie',
+  // The whole-set reward is a Throwback built for it (2026-09-30: Giannis
+  // 2022-23, curated-cards-2026.json), moved in like any other.
+  throwbacks: THROWBACK_BADGE,
 };
 
 const readJson = file => JSON.parse(fs.readFileSync(file, 'utf8'));
@@ -87,7 +90,15 @@ export function main({ log = console.log } = {}) {
     const cards = readJson(file).cards;
     const { best, present, missing } = chooseReward(group, cards);
     if (!best) throw new Error(`${goal}: none of ${group.candidates.join(', ')} is in ${group.set}.`);
-    out[leagueOf(group.set)].push(moveCard(best, { set: group.set, goal }));
+    const moved = moveCard(best, { set: group.set, goal });
+    // A PINNED ID (2026-09-30): the collision rule below renames a reward
+    // whose player has two rewards in the set, and un-renames it when one
+    // leaves, which would orphan every earned copy. Westbrook's Dissonance
+    // reward has been Russell_Westbrook_2020 since the 2016-17 capstone sat
+    // beside it; `id` keeps it so.
+    if (group.id) moved.pinnedId = group.id;
+    if (group.floorException) moved.floorException = group.floorException;
+    out[leagueOf(group.set)].push(moved);
     report.push(
       `  ${goal.padEnd(24)} ${best.name} ${best.seasonLabel ?? best.season} $${best.salary}` +
       ` (of ${present.length} present${missing.length ? `; missing: ${missing.join(', ')}` : ''})`
@@ -103,6 +114,7 @@ export function main({ log = console.log } = {}) {
     const count = new Map();
     for (const c of list) count.set(c.id, (count.get(c.id) ?? 0) + 1);
     for (const c of list) if (count.get(c.id) > 1) c.id = `${c.id}_${c.season}`;
+    for (const c of list) if (c.pinnedId) { c.id = c.pinnedId; delete c.pinnedId; }
   }
   for (const [league, file] of Object.entries(OUTPUT_FILES)) {
     const payload = {

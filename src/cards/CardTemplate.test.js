@@ -1802,12 +1802,13 @@ describe('the season and the card-type badge', () => {
     // Season VALUE PICK (superSeasonValue.js) — ten badged players found an
     // earlier season that beats their base card and left for the set, five
     // came the other way. A measurement of the price, as every note says.
-    expect(gilded.length).toBe(18);   // 18 on 2026-09-30, see the 142 above
+    // 17/125 on 2026-09-30, the three-line reprice (every NBA three line re-cut): one badged base card slipped under the gold line.
+    expect(gilded.length).toBe(17);
     // 125 on 2026-09-07: the beaten-by-base rule's 39 are mostly cheap role
     // players, so nearly all of them land on the BEST SEASON side of the line.
-    expect(superSeason.length - gilded.length).toBe(124);
-    expect(BADGE_FILE.counts.printed[SUPER_SEASON_BADGE]).toBe(18);
-    expect(BADGE_FILE.counts.printed[BEST_SEASON_BADGE]).toBe(124);
+    expect(superSeason.length - gilded.length).toBe(125);
+    expect(BADGE_FILE.counts.printed[SUPER_SEASON_BADGE]).toBe(17);
+    expect(BADGE_FILE.counts.printed[BEST_SEASON_BADGE]).toBe(125);
     expect(BADGE_FILE.counts.printed[ROOKIE_BADGE]).toBe(33);
   });
 
@@ -2056,7 +2057,8 @@ describe('the generated award file, on the cards it belongs to', () => {
     // for no other set keeps its season's awards — Beal's 2020-21 All-Star nod
     // travels with the card into cards-throwbacks.json, not with the set it left.
     expect(Object.keys(AWARDS_FILE.sets).sort()).toEqual(
-      [CURRENT_SET, ROOKIE_SET, SUMMER_STANDOUTS_SET, SUPER_SEASON_SET, 'dissonance', 'team-rewards', 'throwbacks'].sort()
+      // set-rewards since 2026-09-30 (the tiers and each set's top card moved there).
+      [CURRENT_SET, ROOKIE_SET, SUMMER_STANDOUTS_SET, SUPER_SEASON_SET, 'dissonance', 'team-rewards', 'set-rewards', 'throwbacks'].sort()
     );
     // The WNBA sets are absent, and that is a data gap rather than a decision:
     // Basketball-Reference serves that league under a different path and the
@@ -2224,13 +2226,16 @@ describe('the generated award file, on the cards it belongs to', () => {
     // Beal's 2012-13 stayed through rookie-legends-2026.json when he left the
     // team-reward picks. Wall, Arenas and DeAndre Jordan's rookie years came
     // too, and none of the three won anything as a rookie.
+    // 35 -> 38 ON 2026-09-30, the reward re-pick: Jordan's, Chris Paul's and
+    // Jason Kidd's rookie cards came home from the rewards, Derrick Rose's
+    // 2008-09 joined, and David Robinson's left to be the Rookie set reward.
     const rookies = marked(ROOKIE_SET);
-    expect(rookies.length).toBe(35);
-    expect(rookies.filter(r => r.awards.includes('ROY')).length).toBe(28);
-    // Two ROYs live on reward cards now — Chris Paul's 2005-06 Hornets rookie
-    // year is New Orleans's, and LaMelo's went back to the rookie set when the
-    // downgrade rule replaced him.
-    expect(AWARDS_FILE.counts['team-rewards'].byCode.ROY).toBe(2);
+    expect(rookies.length).toBe(38);
+    expect(rookies.filter(r => r.awards.includes('ROY')).length).toBe(31);
+    // No ROY lives on a team reward since then (Paul's and Kidd's went home);
+    // Robinson's is on the Rookie set reward.
+    expect(AWARDS_FILE.counts['team-rewards'].byCode.ROY).toBe(0);
+    expect(AWARDS_FILE.counts['set-rewards'].byCode.ROY).toBe(1);
     // ALL-STAR ONCE DID NOT MOVE THIS SET AT ALL, and this pin existed so that
     // "a pool change which adds one is visible here". It worked: Blake Griffin
     // (`MVP-10,ROY-1,AS`, 2010-11) was named as the exact case that would move
@@ -2247,7 +2252,9 @@ describe('the generated award file, on the cards it belongs to', () => {
     // none of the eleven is one. ONE EXCEPTION since the nineties arrived:
     // rookie Shaquille O'Neal was an All-Star, the only rookie in the set who
     // was — so his card reads ROY+AS and everyone else's stays one mark.
-    const ROOKIE_ALL_STARS = ["Shaquille O'Neal", 'Blake Griffin', 'Patrick Ewing', 'David Robinson', 'Grant Hill', 'Tim Duncan'];
+    // Jordan since 2026-09-30, home from the Rookie set reward; Robinson's card
+    // left to be it (the name stays listed, harmless when absent).
+    const ROOKIE_ALL_STARS = ["Shaquille O'Neal", 'Blake Griffin', 'Patrick Ewing', 'David Robinson', 'Grant Hill', 'Tim Duncan', 'Michael Jordan'];
     const ROOKIE_ALL_STARS_NO_TROPHY = ['Hakeem Olajuwon', 'Yao Ming'];
     for (const r of rookies) {
       if (ROOKIE_ALL_STARS.includes(r.name)) {
@@ -2260,7 +2267,7 @@ describe('the generated award file, on the cards it belongs to', () => {
       }
       expect(r.awards, r.name).toEqual(r.champion ? ['CHAMP'] : ['ROY']);
     }
-    expect(rookies.filter(r => r.awards.includes('ROY'))).toHaveLength(28); // 28 on 2026-09-22: Elton Brand's co-ROY
+    expect(rookies.filter(r => r.awards.includes('ROY'))).toHaveLength(31); // 28 on 2026-09-22: Elton Brand's co-ROY; 31 on 2026-09-30 (see above)
     // 4, not 8: the rookie playing-time bar removed exactly the profile a ring
     // reaches without a rookie ever earning minutes — a title team's bench.
     // 5 on 2026-09-09, with the regenerated file.

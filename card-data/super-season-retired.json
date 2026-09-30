@@ -142,6 +142,13 @@
    "reason": "another season of the player is the stronger card — a Throwback instead"
   },
   {
+   "name": "DeMar DeRozan",
+   "bbrefId": "derozde01",
+   "season": 2022,
+   "since": "2026-09-30",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
    "name": "Dennis Rodman",
    "bbrefId": "rodmade01",
    "season": 1992,
@@ -335,6 +342,20 @@
    "bbrefId": "valanjo01",
    "season": 2021,
    "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Jrue Holiday",
+   "bbrefId": "holidjr01",
+   "season": 2022,
+   "since": "2026-09-30",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Julius Erving",
+   "bbrefId": "ervinju01",
+   "season": 1977,
+   "since": "2026-09-30",
    "reason": "another season of the player is the stronger card — a Throwback instead"
   },
   {

@@ -19,7 +19,9 @@ describe('the free-agent price', () => {
     // rule over a repriced pool (rebounds and assists on each row are now
     // what the player did on those nights; the points ladders are unchanged).
     // 3660 since the 2026-09-30 never-worse rows repriced the pool again.
-    expect(RARITY_ORDER.map(r => freeAgentPrice('throwbacks', r))).toEqual([100, 260, 1110, 3660, 8980]);
+    // 1100/3720/8850 since the 2026-09-30 reward re-pick and three-line reprice
+    // (the Throwbacks set gained the outgoing rewards; every salary moved).
+    expect(RARITY_ORDER.map(r => freeAgentPrice('throwbacks', r))).toEqual([100, 260, 1100, 3720, 8850]);
     // The rookie rare price is 970 since 2026-09-22: pack odds are read off the
     // set, and the reward/identity batch put four rookie years into it (Wall,
     // Brand, Arenas, DeAndre Jordan), which moved the rare share one rounding
@@ -28,7 +30,9 @@ describe('the free-agent price', () => {
     // Rookie set's own pack. 970 again since the 2026-09-29 conditional-rows
     // rebuild repriced the Rookie set (one rounding step of its rare share).
     // 3090 since the 2026-09-30 never-worse rows.
-    expect(RARITY_ORDER.map(r => freeAgentPrice('rookie', r))).toEqual([100, 220, 970, 3090, 7580]);
+    // 230/990/3210/7380 since the 2026-09-30 re-pick (eight new rookie cards,
+    // the three-line reprice).
+    expect(RARITY_ORDER.map(r => freeAgentPrice('rookie', r))).toEqual([100, 230, 990, 3210, 7380]);
   });
 
   it('sits between the table and the pack-odds cost, and climbs with rarity', () => {
@@ -108,7 +112,7 @@ describe('where the archive stops', () => {
 
   it('says so in a sentence, the long run first and the stragglers after', () => {
     expect(coverageText()).toBe(
-      'NBA regular seasons from 1984-85 to 2025-26 (plus 1975-76, 1976-77 and 1982-83), playoff runs from 2002 to 2026, ' +
+      'NBA regular seasons from 1984-85 to 2025-26 (plus 1975-76, 1976-77, 1980-81 and 1982-83), playoff runs from 2002 to 2026, ' +
       'and WNBA seasons from 1997 to 2026'
     );
     expect(coverageText({ regular: [[2000, 2010]], playoffs: [] })).toBe('NBA regular seasons from 1999-00 to 2009-10');

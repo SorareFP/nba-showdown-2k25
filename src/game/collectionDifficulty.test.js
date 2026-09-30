@@ -138,22 +138,24 @@ describe('the shipped reward cards obey the ladder', () => {
   // The same invariant generateTeamRewards asserts at build time, checked here
   // against the JSON that actually ships — so a hand-edit to the generated file
   // fails too, not just a regeneration.
-  it('prices every franchise reward into its earned band', () => {
+  // THE FLOOR REPLACED THE BAND (2026-09-30). The user: "all collection
+  // rewards should be better than the best card in the collection as kind of
+  // a rule", the margin $50. A reward that cannot clear it declares a
+  // floorException saying why (nothing in Heat history clears Giannis).
+  it('beats the best card its roster asks for by $50, or says why it cannot', () => {
+    const best = team => Math.max(...CARD_SETS[BASE_SET].filter(c => c.team === team).map(c => c.salary));
     const wrong = CARD_SETS['team-rewards']
-      .map(card => {
-        // A pick may declare a band exception, and must say why. Philadelphia's
-        // is Julius Erving at twenty dollars under the legendary floor, because
-        // every Philly-jersey card above it belongs to a player on the very
-        // roster the reward is for.
-        if (card.bandException) return null;
-        const want = rewardBandFor(`nba-team-${card.rewardFor}`);
-        const got = getPlayerRarity(card);
-        return want && got !== want.band
-          ? `${card.rewardFor} ${card.name} $${card.salary} is ${got}, earns ${want.band}`
-          : null;
-      })
-      .filter(Boolean);
+      .filter(card => card.salary < best(card.rewardFor) + 50 && !card.floorException)
+      .map(card => `${card.rewardFor} ${card.name} $${card.salary} under the floor $${best(card.rewardFor) + 50}`);
     expect(wrong).toEqual([]);
+  });
+
+  it('declares only the exceptions the user ruled on', () => {
+    const excused = CARD_SETS['team-rewards'].filter(c => c.floorException).map(c => c.rewardFor).sort();
+    // Denver (the roster rule leaves no Nugget above it), Detroit, the Lakers,
+    // Miami, Oklahoma City, Philadelphia, San Antonio and Toronto: rosters led
+    // by a card nothing in the franchise's history clears.
+    expect(excused).toEqual(['DEN', 'DET', 'LAL', 'MIA', 'OKC', 'PHI', 'SAS', 'TOR']);
   });
 
   it('gives the hardest roster a card worth more than the easiest', () => {
@@ -175,27 +177,25 @@ describe('the shipped reward cards obey the ladder', () => {
     }
   });
 
-  it('lets the TIERS stand above the base set, and the capstone above them', () => {
-    // The deliberate exception, and it is the tier level rather than one card:
-    // a conference is roughly seven times the hardest single roster and the
-    // full set is sixteen, so both earn cards the base set cannot offer. What
-    // must stay singular is the TOP — a capstone that ties a conference would
-    // make the largest goal in the game no better than a third of it.
-    const rewards = CARD_SETS['team-rewards'];
-    const apex = Math.max(...CARD_SETS[BASE_SET].map(c => c.salary));
-    const above = rewards.filter(c => c.salary >= apex);
-    expect(above.every(c => !c.rewardFor)).toBe(true);
-    const top = rewards.reduce((a, b) => (b.salary > a.salary ? b : a));
-    expect(top.rewardGoal).toBe('nba-set');
-    expect(rewards.filter(c => c.salary === top.salary)).toHaveLength(1);
+  // THE TIERS ARE SET REWARDS SINCE 2026-09-30 (the user: "I'd lean 'set'").
+  const TIER_GOALS = ['nba-conference-East', 'nba-conference-West', 'nba-set'];
+  const tiers = () => CARD_SETS['set-rewards'].filter(c => TIER_GOALS.includes(c.rewardGoal));
+
+  it('keeps no tier in the team reward set', () => {
+    expect(CARD_SETS['team-rewards'].filter(c => !c.rewardFor)).toEqual([]);
+    expect(tiers().map(c => c.rewardGoal).sort()).toEqual([...TIER_GOALS].sort());
   });
 
   it('ranks the tier rewards above every franchise reward', () => {
     const franchise = CARD_SETS['team-rewards'].filter(c => c.rewardFor);
-    const tiers = CARD_SETS['team-rewards'].filter(c => !c.rewardFor);
-    expect(tiers).toHaveLength(3);
-    expect(Math.min(...tiers.map(c => c.salary)))
+    expect(Math.min(...tiers().map(c => c.salary)))
       .toBeGreaterThan(Math.max(...franchise.map(c => c.salary)));
+  });
+
+  it('lets the whole-set reward clear the best card in the set', () => {
+    const apex = Math.max(...CARD_SETS[BASE_SET].map(c => c.salary));
+    const whole = tiers().find(c => c.rewardGoal === 'nba-set');
+    expect(whole.salary).toBeGreaterThanOrEqual(apex + 50);
   });
 });
 
@@ -220,21 +220,16 @@ describe('a reward is always an upgrade', () => {
     expect(worse).toEqual([]);
   });
 
-  it('prefers a player who is NOT on the roster being completed', () => {
-    // The user's rule: the reward should be absent from THAT TEAM'S base set,
-    // so finishing a roster hands you a card you could not already have. Two
-    // franchises cannot satisfy it — every Denver season above the band is
-    // Jokic's and every Portland one is Lillard's, both on their own rosters —
-    // and those fall back to an on-roster UPGRADE, which the test above still
-    // guarantees. Pinned so a third exception has to be argued for.
+  it('is never a player on the roster being completed', () => {
+    // A preference until 2026-09-30 (Denver's Jokic was the one exception);
+    // a rule since. The user: "I don't love the idea of getting the current
+    // Joker card just to get a better Joker card. I'm not sure players on the
+    // current roster should have their own team reward cards."
     const onRoster = CARD_SETS['team-rewards']
       .filter(c => c.rewardFor)
       .filter(c => (TEAM_ROSTERS[c.rewardFor] ?? []).some(k => base.get(c.name)?.id === k))
       .map(c => c.rewardFor);
-    // ['DEN'] since 2026-09-09: Portland's reward is Wesley Matthews's 2014-15,
-    // off the roster, after the paint-line reprice dropped POR to super-rare
-    // and Lillard's 2019-20 went back to Super Season.
-    expect(onRoster.sort()).toEqual(['DEN']);
+    expect(onRoster).toEqual([]);
   });
 
   it('prints the jersey of the franchise it rewards, with no exceptions', () => {
@@ -257,8 +252,17 @@ describe('migrated rewards', () => {
   const rewards = CARD_SETS['team-rewards'];
   const moved = rewards.filter(c => c.migratedFrom);
 
-  it('moves most of the set rather than building it', () => {
-    expect(moved.length).toBeGreaterThan(rewards.length / 2);
+  // Most of the set was moved until the 2026-09-30 re-pick, which builds most
+  // of it (the floor needs seasons no set held). What must hold either way:
+  // a BUILT reward is a season no other set carries, or a moved one would
+  // have been the honest card.
+  it('builds a reward only for a season no other set already carries', () => {
+    const others = Object.entries(CARD_SETS)
+      .filter(([set]) => !['team-rewards', 'live'].includes(set))
+      .flatMap(([, cards]) => cards)
+      .map(c => `${c.name}|${c.season ?? 2026}`);
+    const dupes = rewards.filter(c => !c.migratedFrom && others.includes(`${c.name}|${c.season}`)).map(c => `${c.name} ${c.season}`);
+    expect(dupes).toEqual([]);
   });
 
   it('never leaves a copy behind in the set it came from', () => {
@@ -307,9 +311,12 @@ describe('migrated rewards', () => {
     expect(new Set(goals).size).toBe(rewards.length);
   });
 
-  it('never repeats a player across the reward set', () => {
+  it('repeats no player across the reward set but the one the user approved', () => {
+    // LeBron James rewards both Cleveland (the 2016 title) and the Lakers (the
+    // 2020 bubble title) since 2026-09-30, both on the approved proposal.
     const names = rewards.map(c => c.name);
-    expect(new Set(names).size).toBe(names.length);
+    const twice = [...new Set(names.filter((n, i) => names.indexOf(n) !== i))];
+    expect(twice).toEqual(['LeBron James']);
   });
 
   it('leaves each source set large enough to still be worth opening', () => {

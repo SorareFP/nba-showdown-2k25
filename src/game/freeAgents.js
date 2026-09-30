@@ -29,7 +29,7 @@ export const OPEN_REQUEST_LIMIT = 3;
  * A test pins this against quote-index.json, so a rebuilt archive cannot
  * leave the sentence stale.
  */
-export const ARCHIVE_COVERAGE = { regular: [[1976, 1977], [1983, 1983], [1985, 2026]], playoffs: [[2002, 2026]], wnba: [[1997, 2026]] };
+export const ARCHIVE_COVERAGE = { regular: [[1976, 1977], [1981, 1981], [1983, 1983], [1985, 2026]], playoffs: [[2002, 2026]], wnba: [[1997, 2026]] };
 
 const endLabel = y => `${y - 1}-${String(y % 100).padStart(2, '0')}`;
 const listWords = xs => (xs.length < 2 ? xs.join('') : `${xs.slice(0, -1).join(', ')} and ${xs.at(-1)}`);

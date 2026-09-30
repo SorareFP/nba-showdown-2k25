@@ -53,19 +53,28 @@ import { buildSet, resolvePlayerIds } from './generateSpecialSets.js';
 import { CALIBRATION_FILE } from './calibrateAttributes.js';
 import { indexBiometrics, loadBiometrics } from './biometrics.js';
 import { indexPositionShares, loadPositionShares } from './positionShares.js';
-import { buildApiEpmIndex } from './summerStandouts.js';
+import { buildApiEpmIndex, buildBpmBridge } from './summerStandouts.js';
+import { archiveBasis, requireArchive } from './epmArchive.js';
 import {
   NEVER_CARD, REWARDS_FILE, MIN_SYNTH_GAMES, CAP_SYNTH_MPG,
 } from './generateTeamRewards.js';
 import * as PV from './playValue.js';
 import * as A from './attributes.js';
-import { CARD_SETS } from '../../src/game/cardSets.js';
+import { CARD_SETS, BASE_SET } from '../../src/game/cardSets.js';
 
 const GEN_DIR = path.join(REPO_ROOT, 'card-data', 'generated');
 export const OUTPUT_FILE = path.join(GEN_DIR, 'team-reward-candidates.json');
 
-/** EPM begins in 2002, and a card without it has no Speed+Power basis. */
+/**
+ * EPM begins in 2002. An earlier season crosses the PRE-2002 BPM BRIDGE — the
+ * one generateTeamRewards, the Super Season legends and the Free Agents builder
+ * use — so `--first 1977` reaches back as far as the season caches go
+ * (2026-09-30, "widen the pool": the user, so rewards can clear the best card
+ * in their collection).
+ */
 const FIRST_SEASON = 2002;
+let bridgeInstance = null;
+const bridge = () => (bridgeInstance ??= buildBpmBridge(archiveBasis(requireArchive())));
 const LAST_SEASON = 2026;
 
 /** Enough of a season that the card is a real season rather than a cameo. */
@@ -90,6 +99,13 @@ const RELOCATED = {
   VAN: 'MEM',
   WSB: 'WAS',
   PHO: 'PHX',
+  // The seasons before 2002 (--first, 2026-09-30): the Braves and the San
+  // Diego Clippers are the Clippers, the New Orleans Jazz are Utah, the Kansas
+  // City Kings are Sacramento, the New York Nets are Brooklyn.
+  BUF: 'LAC', SDC: 'LAC',
+  NOJ: 'UTA',
+  KCK: 'SAC',
+  NYN: 'BKN',
 };
 
 /** The current franchise a stint's collection belongs to, or null for aggregates. */
@@ -138,6 +154,21 @@ function seasonRows(season, kind) {
   return Array.isArray(cached) ? cached : cached?.rows ?? cached?.data ?? [];
 }
 
+/**
+ * `franchise|name` for every player on a franchise's CURRENT roster.
+ *
+ * THE USER'S RULE (2026-09-30), on Denver's reward being a better Jokić: "I
+ * don't love the idea of getting the current Joker card just to get a better
+ * Joker card. I'm not sure players on the current roster should have their own
+ * team reward cards." So a team reward is never a player that franchise's
+ * 2026-27 roster already holds; he can still reward another franchise.
+ */
+export function currentRosters() {
+  const keys = new Set();
+  for (const card of CARD_SETS[BASE_SET] ?? []) keys.add(`${franchiseOf(card.team)}|${normalizeName(card.name)}`);
+  return keys;
+}
+
 /** A player's season-wide minutes, from the aggregate row where one exists. */
 function seasonMinutes(rows, name) {
   let best = 0;
@@ -156,13 +187,14 @@ function seasonMinutes(rows, name) {
  * franchises he played for, because the card prints the stint and the stint is
  * what a collection is rewarding.
  */
-export function gatherCandidates({ franchises = null, log = console.log, byPlayer = true } = {}) {
+export function gatherCandidates({ franchises = null, log = console.log, byPlayer = true, firstSeason = FIRST_SEASON } = {}) {
   const carded = alreadyCarded({ byPlayer });
+  const onRoster = currentRosters();
   const apiEpm = buildApiEpmIndex();
   const want = franchises ? new Set(franchises) : null;
   const out = [];
 
-  for (let season = FIRST_SEASON; season <= LAST_SEASON; season++) {
+  for (let season = firstSeason; season <= LAST_SEASON; season++) {
     const adv = seasonRows(season, 'advanced');
     if (adv.length === 0) continue;
     const pp = seasonRows(season, 'perPoss');
@@ -182,11 +214,17 @@ export function gatherCandidates({ franchises = null, log = console.log, byPlaye
       const norm = normalizeName(row.name);
       if (NEVER_CARD.has(norm)) continue;
       if (carded.has(byPlayer ? norm : `${norm}|${season}`)) continue;
+      if (onRoster.has(`${franchise}|${norm}`)) continue;
 
       const key = `${norm}|${row.team}`;
       const ppRow = ppByKey.get(key);
       if (!ppRow) continue;
-      const epm = apiEpm.get(`${norm}|${season}`);
+      // The dunksandthrees index first; the BPM bridge where it has nothing
+      // (every season before 2002), exactly as generateTeamRewards builds a pick.
+      let epm = apiEpm.get(`${norm}|${season}`);
+      if ((!epm || epm.epm == null) && Number.isFinite(row.bpm)) {
+        epm = { epm: bridge().epmFromBpm(row.bpm), ewinsPerGame: bridge().ewinsPerGameFromVorp(row.vorp, row.games) };
+      }
       if (!epm || epm.epm == null) continue;
 
       out.push({
@@ -205,7 +243,7 @@ export function gatherCandidates({ franchises = null, log = console.log, byPlaye
       });
     }
   }
-  log(`Candidates gathered: ${out.length} stints across ${FIRST_SEASON}-${LAST_SEASON}.`);
+  log(`Candidates gathered: ${out.length} stints across ${firstSeason}-${LAST_SEASON}.`);
   return out;
 }
 
@@ -292,8 +330,8 @@ export function priceCandidates(candidates, opts = {}) {
   }));
 }
 
-export function main({ franchises = null, log = console.log, useRealGames = false, byPlayer = true } = {}) {
-  let candidates = gatherCandidates({ franchises, log, byPlayer });
+export function main({ franchises = null, log = console.log, useRealGames = false, byPlayer = true, firstSeason = FIRST_SEASON } = {}) {
+  let candidates = gatherCandidates({ franchises, log, byPlayer, firstSeason });
   if (useRealGames) {
     const before = candidates.length;
     candidates = candidates.filter(c => hasGameLog(c.advRow.playerId, c.season));
@@ -314,7 +352,7 @@ export function main({ franchises = null, log = console.log, useRealGames = fals
 
   const body = {
     generatedAt: new Date().toISOString(),
-    filters: { firstSeason: FIRST_SEASON, lastSeason: LAST_SEASON, minGames: MIN_GAMES, minMpg: MIN_MPG },
+    filters: { firstSeason, lastSeason: LAST_SEASON, minGames: MIN_GAMES, minMpg: MIN_MPG, byPlayer },
     useRealGames,
     note: useRealGames
       ? 'Priced on REAL GAME LOGS, the way the cards are built. Within ~$70 of what the generator will print.'
@@ -330,8 +368,11 @@ export function main({ franchises = null, log = console.log, useRealGames = fals
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const argv = process.argv.slice(2);
-  const args = argv.filter(a => !a.startsWith('-'));
+  const firstAt = argv.indexOf('--first');
+  const firstSeason = firstAt >= 0 ? Number(argv[firstAt + 1]) : FIRST_SEASON;
+  const args = argv.filter((a, i) => !a.startsWith('-') && (firstAt < 0 || i !== firstAt + 1));
   main({
+    firstSeason,
     franchises: args.length ? args : null,
     useRealGames: argv.includes('--real'),
     byPlayer: !argv.includes('--by-season'),

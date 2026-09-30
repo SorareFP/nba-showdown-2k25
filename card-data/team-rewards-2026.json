@@ -1,38 +1,85 @@
 {
-  "_comment": "TEAM COMPLETION REWARDS: collect a franchise’s entire 2026-27 roster, earn that team’s reward card. THREE SECTIONS. `migrated` MOVES a card out of Super Season / Rookie / Summer Standouts into this set — it leaves its old set entirely, keeps its original badge, and gains the TEAM REWARD pill above it. `picks` builds a card from scratch for the three franchises nothing sensible could be moved to. `tiers` is the conference and full-set rewards, which are not franchise-bound. WHY MIGRATION. The ladder could not be built any other way: a franchise is hard to collect because its current roster is stacked, and those same franchises have had their history most thoroughly mined by the special sets, so the hardest rosters had the THINNEST fresh candidate pools. Only 3 of the 10 hardest could reach the legendary band from scratch; eight of the ten easiest could offer a better card than the median of the ten hardest. Moving the mined history back into rewards fixes supply without duplicating a single card.",
+  "_comment": "TEAM COMPLETION REWARDS: collect a franchise’s entire 2026-27 roster, earn that team’s reward card. THREE SECTIONS. `migrated` MOVES a card out of Super Season / Rookie / Summer Standouts into this set — it leaves its old set entirely, keeps its original badge, and gains the TEAM REWARD pill above it. `picks` builds a card from scratch for the three franchises nothing sensible could be moved to. `tiers` is the conference and full-set rewards, which are not franchise-bound. WHY MIGRATION. The ladder could not be built any other way: a franchise is hard to collect because its current roster is stacked, and those same franchises have had their history most thoroughly mined by the special sets, so the hardest rosters had the THINNEST fresh candidate pools. Only 3 of the 10 hardest could reach the legendary band from scratch; eight of the ten easiest could offer a better card than the median of the ten hardest. Moving the mined history back into rewards fixes supply without duplicating a single card. THE FLOOR (2026-09-30): a reward must beat the best card its roster asks for by $50, and may never be a player on that franchise's current roster; a pick that cannot carries a floorException saying why. The conference and whole-set rewards moved to card-data/set-rewards-2026.json the same day (the user: \"I'd lean 'set.'\").",
   "picks": {
+    "ATL": {
+      "name": "Dominique Wilkins",
+      "season": 1989,
+      "team": "ATL",
+      "note": "The Hawks' icon; his lowest-priced season that clears. the collection-reward re-pick of 2026-09-30 (the user: \"all collection rewards should be better than the best card in the collection\"; floor = the best card the roster asks for + $50), approved on the proposal page"
+    },
+    "BKN": {
+      "name": "Jason Kidd",
+      "season": 2003,
+      "team": "NJN",
+      "id": "Jason_Kidd_2003",
+      "note": "Second straight Finals. Id pinned with the season: team-rewards:Jason_Kidd was the Dallas reward (his 1994-95 rookie card), which goes back to the Rookie set. the collection-reward re-pick of 2026-09-30 (the user: \"all collection rewards should be better than the best card in the collection\"; floor = the best card the roster asks for + $50), approved on the proposal page"
+    },
+    "BOS": {
+      "name": "Larry Bird",
+      "season": 1986,
+      "team": "BOS",
+      "note": "Third straight MVP and the title (the user: \"Bird makes sense here\"). the collection-reward re-pick of 2026-09-30 (the user: \"all collection rewards should be better than the best card in the collection\"; floor = the best card the roster asks for + $50), approved on the proposal page"
+    },
+    "CHA": {
+      "name": "Kemba Walker",
+      "season": 2016,
+      "team": "CHO",
+      "note": "The franchise scoring leader (the user: \"I love the Kemba card here\"). the collection-reward re-pick of 2026-09-30 (the user: \"all collection rewards should be better than the best card in the collection\"; floor = the best card the roster asks for + $50), approved on the proposal page"
+    },
+    "CLE": {
+      "name": "LeBron James",
+      "season": 2016,
+      "team": "CLE",
+      "id": "LeBron_James_2016",
+      "note": "The 2016 title. Two LeBron rewards (Cleveland and the Lakers) so both ids carry the season. the collection-reward re-pick of 2026-09-30 (the user: \"all collection rewards should be better than the best card in the collection\"; floor = the best card the roster asks for + $50), approved on the proposal page"
+    },
+    "DAL": {
+      "name": "Dirk Nowitzki",
+      "season": 2011,
+      "team": "DAL",
+      "note": "The 2011 title (the user: \"That Dirk card makes sense\"). the collection-reward re-pick of 2026-09-30 (the user: \"all collection rewards should be better than the best card in the collection\"; floor = the best card the roster asks for + $50), approved on the proposal page"
+    },
+    "DEN": {
+      "name": "Alex English",
+      "season": 1983,
+      "team": "DEN",
+      "floorException": "$90 under the floor, and the strongest Nugget allowed: the user ruled on 2026-09-30 that no reward is a player on the franchise's current roster (\"I don't love the idea of getting the current Joker card just to get a better Joker card\"), which rules out Jokic and Jamal Murray. English's 1982-83 scoring title tops the rest (Michael Adams 1990-91, Walter Davis 1989-90, Kiki Vandeweghe 1982-83).",
+      "note": "the collection-reward re-pick of 2026-09-30 (the user: \"all collection rewards should be better than the best card in the collection\"; floor = the best card the roster asks for + $50), approved on the proposal page"
+    },
     "DET": {
       "name": "Blake Griffin",
       "season": 2019,
       "team": "DET",
       "epm": 3.15,
-      "goal": "nba-team-DET"
+      "goal": "nba-team-DET",
+      "floorException": "$50 under the floor: no Piston outside the roster clears Cade Cunningham. Blake Griffin 2018-19 is the strongest (Cade's own 2024-25 is $30 short and he is on the roster)."
     },
-    "NYK": {
-      "name": "Allan Houston",
-      "season": 2003,
-      "team": "NYK",
-      "epm": 1.06,
-      "goal": "nba-team-NYK"
-    },
-    "MIN": {
-      "name": "Sam Cassell",
-      "season": 2004,
-      "team": "MIN",
-      "goal": "nba-team-MIN"
-    },
-    "MIA": {
-      "name": "Alonzo Mourning",
+    "HOU": {
+      "name": "Yao Ming",
       "season": 2006,
-      "team": "MIA",
-      "goal": "nba-team-MIA",
-      "bandException": "Declared on 2026-09-07 at $860, forty dollars under Miami's super-rare floor; the user, shown the gap: \"Mourning is a fun enough card that it seems fine as a reward.\" His 2005-06 is the Heat's title season and the last real year of a franchise icon; the alternatives price in band but mean nothing to Miami. REFRESHED 2026-09-22: he now prints $1000, INSIDE super-rare ($930-1329) — the reprices since moved him up, so the exception is dormant and kept only so the next drift below the line is a decision already made, not a build failure."
+      "team": "HOU",
+      "note": "The user: \"I actually think I like Yao as a Houston reward\". the collection-reward re-pick of 2026-09-30 (the user: \"all collection rewards should be better than the best card in the collection\"; floor = the best card the roster asks for + $50), approved on the proposal page"
     },
-    "CHA": {
-      "name": "Gerald Wallace",
-      "season": 2007,
-      "team": "CHA",
-      "goal": "nba-team-CHA"
+    "IND": {
+      "name": "Reggie Miller",
+      "season": 1996,
+      "team": "IND",
+      "note": "The user: \"If it is a matter of keeping it in band, use the 1320 version\". the collection-reward re-pick of 2026-09-30 (the user: \"all collection rewards should be better than the best card in the collection\"; floor = the best card the roster asks for + $50), approved on the proposal page"
+    },
+    "LAC": {
+      "name": "Chris Paul",
+      "season": 2015,
+      "team": "LAC",
+      "id": "Chris_Paul_2015",
+      "note": "Lob City. Id pinned with the season: team-rewards:Chris_Paul was the New Orleans reward (his rookie card), which goes back to the Rookie set. the collection-reward re-pick of 2026-09-30 (the user: \"all collection rewards should be better than the best card in the collection\"; floor = the best card the roster asks for + $50), approved on the proposal page"
+    },
+    "LAL": {
+      "name": "LeBron James",
+      "season": 2020,
+      "team": "LAL",
+      "id": "LeBron_James_2020",
+      "floorException": "$50 under the floor: no Lakers season without a card clears Luka Doncic. Magic 1989-90, Shaq 1999-2000, Kareem 1985-86 and Kobe 2008-09 are all Super Season cards already, all under Luka. The bubble title year; his 2020-21 ($20 short) was 45 games.",
+      "note": "the collection-reward re-pick of 2026-09-30 (the user: \"all collection rewards should be better than the best card in the collection\"; floor = the best card the roster asks for + $50), approved on the proposal page"
     },
     "MEM": {
       "name": "Marc Gasol",
@@ -41,12 +88,62 @@
       "goal": "nba-team-MEM",
       "note": "His All-NBA year. Replaces his own 2013-14 ($850) after MEM moved up to super-rare on 2026-09-09. $1100 on his real log."
     },
-    "ATL": {
-      "name": "Josh Smith",
-      "season": 2009,
-      "team": "ATL",
-      "goal": "nba-team-ATL",
-      "bandException": "Declared after the 2026-09-12 bench-curve reprice at $850, a hundred dollars under the super-rare floor Atlanta then earned: the reprice moved BOTH sides of the test, and shown the gap and the option to re-pick against real game logs, the user said \"just use Smith\" - a decision, not a rounding artefact. His 2008-09 is the Josh Smith season Atlanta remembers. REFRESHED 2026-09-22: Atlanta earns RARE now and he prints $840, INSIDE rare ($700-929); the exception is dormant and stays declared for the next time the line moves under him."
+    "MIL": {
+      "name": "Michael Redd",
+      "season": 2006,
+      "team": "MIL",
+      "note": "The user: \"Definitely think it's Michael Redd here\". the collection-reward re-pick of 2026-09-30 (the user: \"all collection rewards should be better than the best card in the collection\"; floor = the best card the roster asks for + $50), approved on the proposal page"
+    },
+    "MIN": {
+      "name": "Kevin Love",
+      "season": 2014,
+      "team": "MIN",
+      "note": "the collection-reward re-pick of 2026-09-30 (the user: \"all collection rewards should be better than the best card in the collection\"; floor = the best card the roster asks for + $50), approved on the proposal page"
+    },
+    "NYK": {
+      "name": "Patrick Ewing",
+      "season": 1990,
+      "team": "NYK",
+      "note": "His career-high scoring year (the user: \"Ewing is correct for Knicks reward\"). the collection-reward re-pick of 2026-09-30 (the user: \"all collection rewards should be better than the best card in the collection\"; floor = the best card the roster asks for + $50), approved on the proposal page"
+    },
+    "OKC": {
+      "name": "Russell Westbrook",
+      "season": 2015,
+      "team": "OKC",
+      "floorException": "$200 under the floor: nothing in Thunder history clears Shai Gilgeous-Alexander. The user, 2026-09-30: \"I'm OK with Shai being the most valuable card. The reward for finishing OKC is basically Shai + finishing the Western/NBA sets.\"",
+      "note": "His scoring title. the collection-reward re-pick of 2026-09-30 (the user: \"all collection rewards should be better than the best card in the collection\"; floor = the best card the roster asks for + $50), approved on the proposal page"
+    },
+    "ORL": {
+      "name": "Shaquille O'Neal",
+      "season": 1995,
+      "team": "ORL",
+      "note": "Scoring title and the Finals. the collection-reward re-pick of 2026-09-30 (the user: \"all collection rewards should be better than the best card in the collection\"; floor = the best card the roster asks for + $50), approved on the proposal page"
+    },
+    "PHX": {
+      "name": "Steve Nash",
+      "season": 2006,
+      "team": "PHO",
+      "id": "Steve_Nash_2006",
+      "note": "Second MVP (the user: \"Nash is right here\"). Id pinned with the season: team-rewards:Steve_Nash was his 2009-10 Summer Standouts card, which goes back to that set. the collection-reward re-pick of 2026-09-30 (the user: \"all collection rewards should be better than the best card in the collection\"; floor = the best card the roster asks for + $50), approved on the proposal page"
+    },
+    "POR": {
+      "name": "Clyde Drexler",
+      "season": 1990,
+      "team": "POR",
+      "note": "The 1990 Finals. the collection-reward re-pick of 2026-09-30 (the user: \"all collection rewards should be better than the best card in the collection\"; floor = the best card the roster asks for + $50), approved on the proposal page"
+    },
+    "SAC": {
+      "name": "Peja Stojaković",
+      "season": 2004,
+      "team": "SAC",
+      "note": "The user: \"Need Peja and he'll be a fun card in the game\". the collection-reward re-pick of 2026-09-30 (the user: \"all collection rewards should be better than the best card in the collection\"; floor = the best card the roster asks for + $50), approved on the proposal page"
+    },
+    "SAS": {
+      "name": "Tim Duncan",
+      "season": 2005,
+      "team": "SAS",
+      "floorException": "$600 under the floor: nothing in Spurs history clears Victor Wembanyama. The user, 2026-09-30: \"The reward here is Wemby + finishing West/NBA set.\"",
+      "note": "The 2005 title. the collection-reward re-pick of 2026-09-30 (the user: \"all collection rewards should be better than the best card in the collection\"; floor = the best card the roster asks for + $50), approved on the proposal page"
     },
     "TOR": {
       "name": "Vince Carter",
@@ -54,157 +151,51 @@
       "team": "TOR",
       "goal": "nba-team-TOR",
       "note": "The user, 2026-09-18: \"Go with Vince, Wall and Brand.\" Replaces Anthony Parker 2006-07 after Kawhi Leonard's move to Toronto took TOR from rare to legendary (8th hardest). His 2000-01 is the Super Season capstone and 1998-99 his Rookie card, so 1999-2000 — the dunk-contest year — is the Raptors reward. Priced over the pre-2002 BPM bridge (no dunksandthrees EPM before 2002).",
-      "bandException": "Twenty dollars under the legendary floor: $1310 against $1330, the number generateTeamRewards printed on 2026-09-22 (the pre-2002 BPM bridge; it priced $620 with no EPM at all). The user picked him by name on 2026-09-18 — \"Go with Vince, Wall and Brand\" — knowing NO uncarded Raptors season reaches legendary: Bosh 2010 $1250, Lowry 2017 $1170, Vince 2003 $1160, and his 2000-01 ($1480) is already the Super Season capstone. The same size of exception Philadelphia carries for Erving, declared rather than hidden. Drop this field if a reprice lifts him to $1330."
+      "floorException": "Far under the floor: nothing in Raptors history comes near Kawhi Leonard's $2,030 base card, and Vince Carter 1999-2000 is still the strongest Raptors season available (the user: \"Just a cool card. Anyone would be happy with it.\")."
     },
-    "HOU": {
-      "name": "Luis Scola",
-      "season": 2011,
-      "team": "HOU",
-      "goal": "nba-team-HOU"
+    "UTA": {
+      "name": "Karl Malone",
+      "season": 1999,
+      "team": "UTA",
+      "note": "His second MVP. the collection-reward re-pick of 2026-09-30 (the user: \"all collection rewards should be better than the best card in the collection\"; floor = the best card the roster asks for + $50), approved on the proposal page"
     },
-    "CHI": {
-      "name": "Luol Deng",
-      "season": 2011,
-      "team": "CHI",
-      "goal": "nba-team-CHI"
-    },
-    "POR": {
-      "name": "Wesley Matthews",
-      "season": 2015,
-      "team": "POR",
-      "goal": "nba-team-POR",
-      "note": "Replaces the migrated Lillard 2019-20 ($1340, legendary) after the 2026-09-09 reprice dropped POR to super-rare. $930 on his real log; the user chose him over Whiteside 2019-20 ($1080)."
-    },
-    "LAC": {
-      "name": "Elton Brand",
-      "season": 2003,
-      "team": "LAC",
-      "goal": "nba-team-LAC",
-      "note": "The user, 2026-09-18: \"Go with Vince, Wall and Brand.\" Brandon Ingram's move to the Clippers took LAC from super-rare to rare (29th), so Zubac's migrated 2024-25 ($1090) went back to Super Season and this is built fresh. His 2005-06 is his Super Season card (legends-2026.json); 2002-03 is the reward, a Throwback by the identity rule."
+    "WAS": {
+      "name": "Bradley Beal",
+      "season": 2020,
+      "team": "WAS",
+      "note": "30.5 points a game (the user: \"Beal is good\"). the collection-reward re-pick of 2026-09-30 (the user: \"all collection rewards should be better than the best card in the collection\"; floor = the best card the roster asks for + $50), approved on the proposal page"
     }
   },
   "_excluded": {
     "Enes Kanter / Enes Freedom": "excluded from this game permanently, by the owner's decision. Do not re-add under either name."
   },
-  "_tierComment": "PICKS TARGET THE LOW END OF THEIR BAND, which is what keeps each source set’s marquee card where it is: Curry’s 2015-16, LeBron’s 2008-09, Embiid’s 2021-22 and Gilgeous-Alexander’s 2024-25 all stay in Super Season. THE CONFERENCE ODDITY IS FIXED. The East reward was a Houston card because only Giannis cleared the franchise ceiling from an Eastern team, and he was the capstone. Two moves solved it: Oklahoma City dropped from Gilgeous-Alexander ($1,680) to Paul George ($1,500), lowering the ceiling, and the three tiers are now BUILT from seasons no set holds rather than moved from ones that do. Every tier is conference-correct and above every franchise reward: LeBron’s 2009-10 MVP year for the East, Curry’s 2020-21 for the West, and Giannis’ 2019-20 MVP+DPOY season — $2,030, the best card in the game — for all 348 cards.",
-  "tiers": {
-    "nba-conference-East": {
-      "set": "super-season",
-      "id": "Joel_Embiid",
-      "goal": "nba-conference-East",
-      "_comment": "2026-09-24: the Super Season value pick made Joel Embiid's 2023 his/her Super Season, so the reward migrates from it and wears the gold (the John Wall precedent) rather than printing the same season twice. Was a built pick."
-    },
-    "nba-conference-West": {
-      "name": "Stephen Curry",
-      "season": 2021,
-      "team": "GSW",
-      "goal": "nba-conference-West"
-    },
-    "nba-set": {
-      "set": "super-season",
-      "id": "Giannis_Antetokounmpo",
-      "goal": "nba-set",
-      "_comment": "2026-09-24: the Super Season value pick made Giannis Antetokounmpo's 2020 his/her Super Season, so the reward migrates from it and wears the gold (the John Wall precedent) rather than printing the same season twice. Was a built pick."
-    }
-  },
   "migrated": {
-    "OKC": {
+    "CHI": {
       "set": "super-season",
-      "id": "Paul_George",
-      "goal": "nba-team-OKC"
-    },
-    "CLE": {
-      "set": "summer-standouts",
-      "id": "Kyrie_Irving",
-      "goal": "nba-team-CLE"
-    },
-    "BOS": {
-      "set": "summer-standouts",
-      "id": "Kevin_Garnett",
-      "goal": "nba-team-BOS"
-    },
-    "PHI": {
-      "set": "super-season",
-      "id": "Julius_Erving",
-      "goal": "nba-team-PHI",
-      "bandException": "Dr. J's 1976-77 prints $1290 (2026-09-22; it was $1,180 when this was declared), forty dollars under the legendary floor of $1330. Philadelphia has no off-roster Philly-jersey card above it: Barkley's 1989-90 is $1,160 and everything higher is Joel Embiid, who is ON the 2026-27 roster this reward is for. Forty dollars is not worth rewarding a roster with a better copy of a player already in it."
-    },
-    "SAS": {
-      "set": "throwbacks",
-      "id": "David_Robinson_1994",
-      "goal": "nba-team-SAS",
-      "_comment": "2026-09-22: his 1989-90 Rookie card ($2230) out-prices this 1993-94 season ($1440), so the Super Season generator demotes it to a Throwback (BEATEN_BY_ROOKIE) and the reward migrates from there — the user: 'The Super Season card should be a throwback.' The old key team-rewards:David_Robinson is aliased in cardSets.js."
+      "id": "Derrick_Rose",
+      "note": "His 2010-11 MVP season, his Super Season card, moved in (the John Wall precedent). The user: \"Def need Derrick Rose cards\". the collection-reward re-pick of 2026-09-30 (the user: \"all collection rewards should be better than the best card in the collection\"; floor = the best card the roster asks for + $50), approved on the proposal page"
     },
     "GSW": {
       "set": "summer-standouts",
       "id": "Kevin_Durant",
       "goal": "nba-team-GSW"
     },
-    "DEN": {
-      "set": "summer-standouts",
-      "id": "Jamal_Murray",
-      "goal": "nba-team-DEN"
-    },
-    "LAL": {
+    "MIA": {
       "set": "throwbacks",
-      "id": "Kobe_Bryant_2006",
-      "goal": "nba-team-LAL",
-      "_comment": "2026-09-24: the Super Season value pick moved Kobe_Bryant's Super Season to 2009; this reward keeps its 2006 season by migrating from the retired Throwback (the David Robinson precedent). Alias the old key team-rewards:Kobe_Bryant -> ...:Kobe_Bryant_2006 in cardSets.js KEY_ALIASES."
-    },
-    "ORL": {
-      "set": "summer-standouts",
-      "id": "Jameer_Nelson",
-      "goal": "nba-team-ORL"
-    },
-    "IND": {
-      "set": "throwbacks",
-      "id": "Myles_Turner_2019",
-      "goal": "nba-team-IND",
-      "bandException": "Declared after the 2026-09-12 bench-curve reprice, when Indiana earned rare and Turner's 2018-19 landed at $960, eleven dollars over the rare ceiling - one rounding step, smaller than Philadelphia's twenty and Miami's forty. REFRESHED 2026-09-22: Indiana earns SUPER-RARE now and he still prints $960, INSIDE super-rare ($930-1329); the exception is dormant and stays declared for the next time the line moves. Nothing about the pick is wrong; the line moved under it, twice.",
-      "_comment": "2026-09-24: the Super Season value pick moved Myles_Turner's Super Season to 2023; this reward keeps its 2019 season by migrating from the retired Throwback (the David Robinson precedent). Alias the old key team-rewards:Myles_Turner -> ...:Myles_Turner_2019 in cardSets.js KEY_ALIASES."
+      "id": "Dwyane_Wade_2009",
+      "floorException": "$400 under the floor: nothing in Heat history clears Giannis Antetokounmpo's $1,960 base card. The user, 2026-09-30: \"I think this is mostly just a problem with the Giannis card in its current form\". Wade's 2008-09 scoring title; the card was a dormant Throwback (the value pick moved his Super Season to 2009-10), so it moves in rather than being built twice.",
+      "note": "the collection-reward re-pick of 2026-09-30 (the user: \"all collection rewards should be better than the best card in the collection\"; floor = the best card the roster asks for + $50), approved on the proposal page"
     },
     "NOP": {
-      "set": "rookie",
-      "id": "Chris_Paul",
-      "goal": "nba-team-NOP"
-    },
-    "UTA": {
       "set": "throwbacks",
-      "id": "John_Stockton_2002",
-      "goal": "nba-team-UTA",
-      "_comment": "2026-09-24: the Super Season value pick moved John_Stockton's Super Season to 1995; this reward keeps its 2002 season by migrating from the retired Throwback (the David Robinson precedent). Alias the old key team-rewards:John_Stockton -> ...:John_Stockton_2002 in cardSets.js KEY_ALIASES."
+      "id": "Anthony_Davis_2015",
+      "note": "The user: \"I think AD is the right one here\". The card was a dormant Throwback, so it moves in rather than being built twice. the collection-reward re-pick of 2026-09-30 (the user: \"all collection rewards should be better than the best card in the collection\"; floor = the best card the roster asks for + $50), approved on the proposal page"
     },
-    "PHX": {
-      "set": "summer-standouts",
-      "id": "Steve_Nash",
-      "goal": "nba-team-PHX"
-    },
-    "DAL": {
-      "set": "rookie",
-      "id": "Jason_Kidd",
-      "goal": "nba-team-DAL",
-      "bandException": "Declared 2026-09-24 after the salary model's rebound and assist rates were corrected (e55a187c, 2cb684eb): his 1994-95 Rookie card went $700 -> $670, thirty dollars under the rare floor Dallas earns. The Mourning precedent: a small miss on a reward people may already hold is documented, not re-picked."
-    },
-    "SAC": {
-      "set": "summer-standouts",
-      "id": "Mike_Bibby",
-      "goal": "nba-team-SAC"
-    },
-    "BKN": {
+    "PHI": {
       "set": "super-season",
-      "id": "Nic_Claxton",
-      "goal": "nba-team-BKN"
-    },
-    "MIL": {
-      "set": "super-season",
-      "id": "Bobby_Portis",
-      "goal": "nba-team-MIL"
-    },
-    "WAS": {
-      "set": "super-season",
-      "id": "John_Wall",
-      "goal": "nba-team-WAS",
-      "note": "The user, 2026-09-18: \"Use the best card, if it's a super season, make it as such.\" Kawhi's move took WAS from legendary to super-rare (11th); Beal's 2020-21 ($1540) became a curated Throwback (card-data/curated-cards-2026.json) and Wall's 2016-17, his best season by the rule, is his Super Season card moved in — exactly as Zubac's was for LAC."
+      "id": "Julius_Erving",
+      "goal": "nba-team-PHI",
+      "floorException": "$30 under the floor. The user, 2026-09-30: \"I think we might be able to work a Dr. J card to stay as the reward here.\" His 1980-81 MVP season (the 1980-81 archive was cached for it) prices $1,540 and beats his 1976-77 by enough that the value pick makes it his Super Season, so the reward moves with it; only Joel Embiid, on the roster, clears outright."
     }
   }
 }

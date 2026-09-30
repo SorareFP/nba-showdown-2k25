@@ -101,7 +101,7 @@ export function readTeamRewards(file = REWARDS_FILE) {
     const goal = p.goal ?? (franchise ? `nba-team-${franchise}` : key);
     // A row naming a SET and an ID is a card to move; a row naming a player and
     // a season is a card to build.
-    if (p.set && p.id) { moved.push({ franchise, goal, set: p.set, id: p.id, bandException: p.bandException }); return; }
+    if (p.set && p.id) { moved.push({ franchise, goal, set: p.set, id: p.id, bandException: p.bandException, floorException: p.floorException }); return; }
     guard(key, p.name);
     built.push({ franchise, goal, ...p });
   };
@@ -158,7 +158,7 @@ export const ORIGIN_BADGE = {
  * (wornByMigrated in rewardIdentity.js — Stockton's ruling); a BUILT card is
  * judged by the Free Agents classifier (wornByBuilt below).
  */
-function moveCard({ set, id, franchise, goal, bandException }) {
+function moveCard({ set, id, franchise, goal, bandException, floorException }) {
   const file = path.join(GEN_DIR, `cards-${set}.json`);
   if (!fs.existsSync(file)) throw new Error(`Cannot migrate from ${set}: ${file} does not exist.`);
   const source = JSON.parse(fs.readFileSync(file, 'utf8')).cards.find(c => c.id === id);
@@ -179,6 +179,7 @@ function moveCard({ set, id, franchise, goal, bandException }) {
     rewardFor: franchise,
     rewardGoal: goal,
     ...(bandException ? { bandException } : {}),
+    ...(floorException ? { floorException } : {}),
   };
 }
 
@@ -223,6 +224,50 @@ function seasonMinutes(rows, name) {
  * A ladder that can quietly flatten is worse than no ladder, because it still
  * looks like one. So the check runs at generation time and stops the build.
  */
+/**
+ * EVERY REWARD BEATS THE BEST CARD ITS ROSTER ASKS FOR, and is never a player
+ * on that roster (2026-09-30).
+ *
+ * The user: "all collection rewards should be better than the best card in
+ * the collection as kind of a rule", with the margin set at $50 (the floor is
+ * the roster's best card + FLOOR_MARGIN). And on Denver's reward being a
+ * better Jokic: "I'm not sure players on the current roster should have their
+ * own team reward cards." The difficulty ladder (assertEarnedBands) was the
+ * rule before this; the floor replaces it for the NBA thirty. A pick that
+ * cannot clear carries a `floorException` saying why, the way a band
+ * exception did: nothing in Heat history clears Giannis at $1,960.
+ */
+export const FLOOR_MARGIN = 50;
+export function floorFor(team) {
+  const best = Math.max(0, ...(CARD_SETS[BASE_SET] ?? []).filter(c => c.team === team).map(c => c.salary ?? 0));
+  return best + FLOOR_MARGIN;
+}
+function assertFloors(cards) {
+  const roster = new Map();
+  for (const c of CARD_SETS[BASE_SET] ?? []) roster.set(`${c.team}|${normalizeName(c.name)}`, c);
+  const wrong = [];
+  for (const card of cards) {
+    if (!card.rewardFor) continue;
+    if (roster.has(`${card.rewardFor}|${normalizeName(card.name)}`)) {
+      wrong.push(`  ${card.rewardFor}: ${card.name} is on the ${card.rewardFor} roster; a team reward never is (the user, 2026-09-30).`);
+      continue;
+    }
+    const floor = floorFor(card.rewardFor);
+    if (card.salary < floor && !card.floorException) {
+      wrong.push(`  ${card.rewardFor}: ${card.name} ${card.seasonLabel} prices $${card.salary}, under the floor of $${floor} (best card + $${FLOOR_MARGIN}); re-pick or declare a floorException.`);
+    }
+  }
+  if (wrong.length === 0) return;
+  if (process.env.REWARD_BANDS === 'warn') {
+    console.warn(`⚠ Team rewards fail the floor (REWARD_BANDS=warn — re-pick before deploying):\n${wrong.join('\n')}`);
+    return;
+  }
+  throw new Error(`Team rewards fail the floor:\n${wrong.join('\n')}\nRe-pick with: node scripts/cardgen/teamRewardCandidates.js <TEAM>`);
+}
+
+// The difficulty ladder, kept for the record and for the WNBA set's use of the
+// same bands; the NBA thirty answer to assertFloors since 2026-09-30.
+// eslint-disable-next-line no-unused-vars
 function assertEarnedBands(cards) {
   const wrong = cards
     .map(card => {
@@ -441,6 +486,12 @@ export function main({ log = console.log, enforceBands = true } = {}) {
     // wants him anyway ("Mourning is a fun enough card that it seems fine as
     // a reward", 2026-09-07).
     ...(meta[i].bandException ? { bandException: meta[i].bandException } : {}),
+    ...(meta[i].floorException ? { floorException: meta[i].floorException } : {}),
+    // A PINNED ID (2026-09-30). A built card takes its player's id, and a
+    // re-pick can hand a player's id to a different season than the reward
+    // leaving under it (Kidd, Chris Paul, Nash), which would hand anyone who
+    // earned the old card the new one. The pick names a season-qualified id.
+    ...(meta[i].id ? { id: meta[i].id } : {}),
   }));
 
   PV.priceAgainstBase(cards, { roundSalary: A.roundSalary, min: A.SALARY_MIN, max: A.SALARY_MAX });
@@ -465,7 +516,7 @@ export function main({ log = console.log, enforceBands = true } = {}) {
   // every salary at once instead of learning them one thrown error at a time.
   // Nothing that writes the shipped file uses it.
   if (enforceBands) {
-    assertEarnedBands(cards);
+    assertFloors(cards);
     assertUpgrades(cards);
   }
 

@@ -7,6 +7,98 @@
       "season": 2021,
       "set": "throwbacks",
       "why": "The Wizards reward until 2026-09-18, when John Wall's 2016-17 Super Season took the goal (the user: \"Go with Vince, Wall and Brand\"). His 31-a-game year is nobody's best season by the rule (2018-19 is) and not his rookie year (2012-13, carded), so it keeps its card as a Throwback rather than vanishing. Nobody had earned it: \"No one has them yet, it doesn't matter. But it should just change face.\""
+    },
+    {
+      "bbrefId": "griffbl01",
+      "name": "Blake Griffin",
+      "season": 2014,
+      "set": "throwbacks",
+      "why": "the user, 2026-09-30: \"I think we def need a Blake Clippers card if we don't have one other than the rookie.\" His best season is the 2018-19 Pistons card (Detroit's reward), so this is a Throwback."
+    },
+    {
+      "bbrefId": "willilo02",
+      "name": "Lou Williams",
+      "season": 2020,
+      "set": "throwbacks",
+      "why": "the user, 2026-09-30: \"we need some Lou Will somewhere too. Something that makes him useful as a 6th man, but not too expensive.\" His Sixth Man award seasons price $1,030-1,260; 2019-20 with the Clippers is $800."
+    },
+    {
+      "bbrefId": "antetgi01",
+      "name": "Giannis Antetokounmpo",
+      "season": 2023,
+      "set": "throwbacks",
+      "why": "the Complete 2026-27 Set reward from 2026-09-30, built here and moved into set-rewards (set-rewards-2026.json nba-set)."
+    },
+    {
+      "bbrefId": "curryst01",
+      "name": "Stephen Curry",
+      "season": 2021,
+      "set": "throwbacks",
+      "why": "the Western Conference reward until 2026-09-30, when his 2015-16 Super Season took the goal (the user: \"Would make sense here\"); it keeps its card as a Throwback.",
+      "wasReward": "team-rewards:Stephen_Curry"
+    },
+    {
+      "bbrefId": "smithjo03",
+      "name": "Josh Smith",
+      "season": 2009,
+      "set": "throwbacks",
+      "why": "the Atlanta reward until 2026-09-30 (Dominique Wilkins took the goal); it keeps its card as a Throwback.",
+      "wasReward": "team-rewards:Josh_Smith"
+    },
+    {
+      "bbrefId": "denglu01",
+      "name": "Luol Deng",
+      "season": 2011,
+      "set": "throwbacks",
+      "why": "the Chicago reward until 2026-09-30 (Derrick Rose took the goal); it keeps its card as a Throwback.",
+      "wasReward": "team-rewards:Luol_Deng"
+    },
+    {
+      "bbrefId": "scolalu01",
+      "name": "Luis Scola",
+      "season": 2011,
+      "set": "throwbacks",
+      "why": "the Houston reward until 2026-09-30 (Yao Ming took the goal); it keeps its card as a Throwback.",
+      "wasReward": "team-rewards:Luis_Scola"
+    },
+    {
+      "bbrefId": "brandel01",
+      "name": "Elton Brand",
+      "season": 2003,
+      "set": "throwbacks",
+      "why": "the Clippers reward until 2026-09-30 (Chris Paul took the goal); it keeps its card as a Throwback.",
+      "wasReward": "team-rewards:Elton_Brand"
+    },
+    {
+      "bbrefId": "mournal01",
+      "name": "Alonzo Mourning",
+      "season": 2006,
+      "set": "throwbacks",
+      "why": "the Miami reward until 2026-09-30 (Dwyane Wade took the goal); it keeps its card as a Throwback.",
+      "wasReward": "team-rewards:Alonzo_Mourning"
+    },
+    {
+      "bbrefId": "houstal01",
+      "name": "Allan Houston",
+      "season": 2003,
+      "set": "throwbacks",
+      "why": "the Knicks reward until 2026-09-30 (Patrick Ewing took the goal); it keeps its card as a Throwback.",
+      "wasReward": "team-rewards:Allan_Houston"
+    },
+    {
+      "bbrefId": "cassesa01",
+      "name": "Sam Cassell",
+      "season": 2004,
+      "set": "throwbacks",
+      "why": "the Minnesota reward until 2026-09-30 (Kevin Love took the goal). It wore Super Season gold as his best season, but the value pick moved his Super Season to 1997-98 the same day, so it keeps its card as a Throwback.",
+      "wasReward": "team-rewards:Sam_Cassell"
+    },
+    {
+      "bbrefId": "mariosh01",
+      "name": "Shawn Marion",
+      "season": 2007,
+      "set": "throwbacks",
+      "why": "the user, 2026-09-30: \"we need some Marion cards\". 2006-07 is his most valuable season, but his 1999-2000 rookie card beats it, so it is not a Super Season; it keeps a card as a Throwback beside the rookie card."
     }
   ]
 }

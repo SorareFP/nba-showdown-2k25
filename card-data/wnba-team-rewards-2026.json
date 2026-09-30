@@ -57,7 +57,8 @@
       "season": 2011,
       "team": "PHO",
       "goal": "wnba-team-PHO",
-      "note": "All-WNBA First Team at her peak, the Mercury's engine across both title eras. PHO's earned band rose to super-rare with the 0.88 league factor (2026-09-06) while Bonner 2014 fell to $700; Taylor's 2007 title season prices $1180, twenty dollars under the legendary line, so 2011 at $1040 holds the band through a reprice. Michele Timms 1997 was the first pick here and built to $900, one dollar over the old rare ceiling. ~$1040."
+      "note": "All-WNBA First Team at her peak, the Mercury's engine across both title eras. PHO's earned band rose to super-rare with the 0.88 league factor (2026-09-06) while Bonner 2014 fell to $700; Taylor's 2007 title season prices $1180, twenty dollars under the legendary line, so 2011 at $1040 holds the band through a reprice. Michele Timms 1997 was the first pick here and built to $900, one dollar over the old rare ceiling. ~$1040.",
+      "bandException": "Super-rare where Phoenix earns rare: $1,170 after the 2026-09-30 reprice, and it is also the floor the new rule sets (the best card Phoenix asks for, Kelsey Plum, + $50). The user kept the current WNBA rewards that day: \"with how small WNBA collections are, I'm OK with the current rewards.\""
     },
     "SEA": {
       "name": "Alysha Clark",
@@ -76,10 +77,11 @@
     },
     "LAS": {
       "name": "Mwadi Mabika",
-      "season": 2001,
+      "season": 2002,
       "team": "LAS",
       "goal": "wnba-team-LAS",
-      "note": "The Sparks' first title, from an All-Star who was there from 1997 and won both. Tamecka Dixon 1997 fell to $670 under the rare floor with the 0.88 league factor (2026-09-06); Mabika 2000 prices $890 at the ceiling, 2001 $800 mid-band. Nikki Teasley 2003 was the first pick and rebuilt to $690. ~$800."
+      "note": "2026-09-30: the user, \"Think we just go to a better Mabika card here -- can probably even keep the pic\". 2001-02 clears the floor (Nneka Ogwumike + $50); the id stays Mwadi_Mabika, so the photo carries over. Was 2001, the first Sparks title. The Sparks' first title, from an All-Star who was there from 1997 and won both. Tamecka Dixon 1997 fell to $670 under the rare floor with the 0.88 league factor (2026-09-06); Mabika 2000 prices $890 at the ceiling, 2001 $800 mid-band. Nikki Teasley 2003 was the first pick and rebuilt to $690. ~$800.",
+      "bandException": "Super-rare where Los Angeles earns rare: Mabika 2002 prices $1,000. The user chose it on 2026-09-30 (\"Think we just go to a better Mabika card here\") under the new floor rule (a reward beats the best card its roster asks for, Nneka Ogwumike + $50 = $880), which the rare band sits under."
     },
     "CON": {
       "name": "Nykesha Sales",

@@ -1674,6 +1674,20 @@ export function main({ log = console.log } = {}) {
         return [];
       }
     };
+    // CURATED THROWBACKS TOO (2026-09-30). A reward re-pick sends the outgoing
+    // card to curated-cards-2026.json, and a name that left the team rewards
+    // without landing anywhere else in this list lost its ROOKIE card on the
+    // next run — Allan Houston, Alonzo Mourning, Josh Smith, Luis Scola and
+    // Luol Deng did, the first time the 2026-09-30 re-pick ran.
+    const curatedThrowbackNames = () => {
+      try {
+        const file = path.join(REPO_ROOT, 'card-data', 'curated-cards-2026.json');
+        if (!fs.existsSync(file)) return [];
+        return (readJson(file).cards ?? []).map(c => c?.name).filter(Boolean);
+      } catch {
+        return [];
+      }
+    };
     const rookieNames = [...new Set([
       ...Object.keys(standoutBlocks.playoffCards ?? {}),
       ...Object.keys(standoutBlocks.superSeasons ?? {}),
@@ -1681,6 +1695,7 @@ export function main({ log = console.log } = {}) {
       ...curatedNames('legends-2026.json'),
       ...curatedNames('dissonance.json'),
       ...teamRewardNames(),
+      ...curatedThrowbackNames(),
     ])].filter(n => !poolNames.has(exactKey(n)));
     if (rookieNames.length) {
       // From 1986: the tables reach Rodman's 1986-87 and Pippen's 1987-88

@@ -1165,8 +1165,10 @@ function resolveCard(game, teamKey, cardId, opts = {}) {
       const ccTeam = getTeam(g, oppKey2);
       ccTeam.score -= oldPts;
       if (ccPs) ccPs.pts = (ccPs.pts || 0) - oldPts;
-      creditAllowed(g, oppKey2, lsc.playerIdx, -oldPts);
-      creditCheckDefended(g, oppKey2, lsc.playerIdx, oldResult.type ?? lsc.type, oldResult, 0, -1);
+      // Taken back from the man who guarded the shot, not whoever guards the
+      // shooter now (a switch since would have moved it; noteLastCheck).
+      creditAllowed(g, oppKey2, lsc.playerIdx, -oldPts, lsc.defenderId ?? null);
+      creditCheckDefended(g, oppKey2, lsc.playerIdx, oldResult.type ?? lsc.type, oldResult, 0, -1, lsc.defenderId ?? null);
       if ((oldResult.type ?? lsc.type) === 'paint') recordPaintCheck(g, oppKey2, ccPlayer.id, oldResult.hit, -1);
       // Analytics: reverse the old result from the tally it was booked in — a
       // spend check's points sit in assistSpendPts / reboundBonusPts, not the

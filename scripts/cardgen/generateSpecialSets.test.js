@@ -187,7 +187,7 @@ describe.each([
     // into any generated set. Also a named list, also not a loophole.
     const legends = new Set([
       ...readLegends().map(l => l.name), ...ROOKIE_LEGEND_NAMES,
-      ...DISSONANCE_NAMES, ...TEAM_REWARD_NAMES,
+      ...DISSONANCE_NAMES, ...TEAM_REWARD_NAMES, ...CURATED_NAMES,
     ]);
     for (const card of file.cards) {
       expect(
@@ -211,6 +211,10 @@ describe.each([
     // An off-pool legend whose season was demoted to Throwbacks (2026-09-22)
     // is still this set's business: counted on both sides, like a carded one.
     const demotedNames = new Set((file.demoted ?? []).map(d => d.name));
+    // …and one whose rookie year is also his best (the twin rule cedes it to
+    // Super Season): Arvydas Sabonis, 1995-96, an off-pool legend since
+    // 2026-09-30, counted where he went like a carded one.
+    const cededNames = new Set((file.mergedIntoTwin ?? []).map(d => d?.name ?? d));
     const offPool = [...new Set([
       ...Object.keys(STANDOUTS.superSeasons ?? {}),
       ...Object.keys(STANDOUTS.playoffCards ?? {}),
@@ -218,7 +222,8 @@ describe.each([
       ...ROOKIE_LEGEND_NAMES,
       ...DISSONANCE_NAMES,
       ...TEAM_REWARD_NAMES,
-    ])].filter(name => (carded.has(name) || demotedNames.has(name)) && !pool.has(name)).length;
+      ...CURATED_NAMES,
+    ])].filter(name => (carded.has(name) || demotedNames.has(name) || cededNames.has(name)) && !pool.has(name)).length;
     const ceded = (file.mergedIntoTwin ?? []).length;
     // The playing-time cut is a THIRD way out of the rookie set, and it has to
     // be counted here or the rule stops being "everyone is accounted for" and
@@ -260,6 +265,11 @@ const DISSONANCE_NAMES = Object.keys(
 const TEAM_REWARD_NAMES = Object.values(
   JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'card-data', 'team-rewards-2026.json'), 'utf8')).picks ?? {}
 ).map(v => v?.name).filter(Boolean);
+// The curated Throwbacks' names join the rookie universe (2026-09-30): an
+// outgoing reward lands there, and its rookie card must not go with it.
+const CURATED_NAMES = (
+  JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'card-data', 'curated-cards-2026.json'), 'utf8')).cards ?? []
+).map(c => c?.name).filter(Boolean);
 
 describe('Super Season', () => {
   it('excludes the players having their best season right now', () => {
@@ -490,7 +500,13 @@ describe('the base set\'s badges', () => {
     // Camara's; the rookie rule took Watford's. The value pick itself moved
     // nobody — the shipped season now holds the card by REPICK_MARGIN.
     // 203 on 2026-09-30, the never-worse rows: Camara's and Watford's Super Seasons left under the base-card and Rookie-card rules, and the $50 holder margin kept the four dropped ones from flipping back.
-    expect(SUPER.cards.length).toBe(203);
+    // 214 on 2026-09-30, the reward re-pick: eleven new Super Seasons — Rose
+    // (Chicago's reward, moved out), Millsap, Dell Curry, Cousins, Bernard King,
+    // Sabonis, Dantley and Porzingis at the user's word, and Wallace, Cassell
+    // (1997-98) and Matthews from the rewards that left. Seven more came home
+    // from the rewards and Curry's and Giannis' left for set rewards; the file
+    // counts the home set, moved cards included.
+    expect(SUPER.cards.length).toBe(214);
     //
     // AND 321 -> 348 WHEN THE STANDOUT NEWCOMERS' ROOKIE YEARS ARRIVED — every
     // standout outside the pool whose career begins inside the cache-and-EPM
@@ -531,7 +547,10 @@ describe('the base set\'s badges', () => {
     // their Dissonance picks, and Dominique Wilkins 1982-83 is forced
     // (rookie-legends-2026.json, the 1983 tables fetched for it). Ben Wallace
     // (1996-97: 34 G) fails the bar.
-    expect(ROOKIE.cards.length).toBe(290);
+    // 298 on 2026-09-30, the reward re-pick: Rose, Millsap, Dell Curry, Cousins,
+    // Porzingis, Marion, Peja and Reggie Miller joined (Sabonis' rookie year is
+    // his Super Season, the twin rule).
+    expect(ROOKIE.cards.length).toBe(298);
     const poolNames = new Set(POOL.map(p => p.name));
     const bothBlocks = [...new Set([
       ...Object.keys(STANDOUTS.superSeasons ?? {}),
@@ -549,8 +568,11 @@ describe('the base set\'s badges', () => {
     // off-pool count has to as well — see DISSONANCE_NAMES above.
     const rookieOffPool = [...new Set([
       ...bothBlocks, ...readLegends().map(l => l.name), ...ROOKIE_LEGEND_NAMES,
-      ...DISSONANCE_NAMES, ...TEAM_REWARD_NAMES,
-    ])].filter(name => ROOKIE.cards.some(c => c.name === name) && !poolNames.has(name)).length;
+      ...DISSONANCE_NAMES, ...TEAM_REWARD_NAMES, ...CURATED_NAMES,
+    ])].filter(name => (ROOKIE.cards.some(c => c.name === name)
+      // An off-pool legend whose rookie year the twin rule cedes to Super
+      // Season (Sabonis, 2026-09-30) is counted where he went.
+      || (ROOKIE.mergedIntoTwin ?? []).some(d => (d?.name ?? d) === name)) && !poolNames.has(name)).length;
     expect(SUPER.cards.length + SUPER.excluded.length + (SUPER.mergedIntoTwin ?? []).length + (SUPER.demoted ?? []).length)
       .toBe(POOL.length + ssOffPool);
     // The playing-time bar is the third exit from the rookie set, alongside the
@@ -637,10 +659,12 @@ describe('the base set\'s badges', () => {
     // beats their base card, and joined the Super Season set; five went the
     // other way). A measurement, as every note above says.
     // 124/18 on 2026-09-30, the never-worse rows: Camara's and Watford's Super Seasons left under the base-card and Rookie-card rules, and the $50 holder margin kept the four dropped ones from flipping back.
-    expect(counts.printed[BEST_SEASON_BADGE]).toBe(124);
+    // 125/17 on 2026-09-30, the three-line reprice: one more base card fell
+    // under SUPER_SEASON_MIN_SALARY.
+    expect(counts.printed[BEST_SEASON_BADGE]).toBe(125);
     // 19 on 2026-09-29: three base cards handed the pill back to their
     // returning Super Season cards, two took it (see the 206 above).
-    expect(counts.printed[SUPER_SEASON_BADGE]).toBe(18);
+    expect(counts.printed[SUPER_SEASON_BADGE]).toBe(17);
     // Nobody loses their pill entirely in the resolution.
     expect(BADGE_IDS.reduce((n, id) => n + counts.printed[id], 0)).toBe(counts.players);
     expect(counts.multiple).toBe(ROOKIE.excluded.length);

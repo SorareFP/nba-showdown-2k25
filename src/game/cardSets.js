@@ -176,14 +176,65 @@ export const KEY_ALIASES = Object.freeze({
   'team-rewards:Anthony_Parker': 'super-season:Anthony_Parker',
   // The Spurs reward's card kept its numbers and changed its id when its
   // season was demoted to a Throwback (2026-09-22, BEATEN_BY_ROOKIE).
-  'team-rewards:David_Robinson': 'team-rewards:David_Robinson_1994',
+  'team-rewards:David_Robinson': 'throwbacks:David_Robinson_1994',
   // THE SUPER SEASON VALUE PICK (2026-09-24) moved three Super Seasons a
   // franchise reward migrates from; each reward keeps its own season by
   // migrating from that season's retired Throwback, and changes id with it
   // (syncRewardsToSuperSeasons.py) — the Robinson precedent, three times.
-  'team-rewards:Kobe_Bryant': 'team-rewards:Kobe_Bryant_2006',
-  'team-rewards:Myles_Turner': 'team-rewards:Myles_Turner_2019',
-  'team-rewards:John_Stockton': 'team-rewards:John_Stockton_2002',
+  'team-rewards:Kobe_Bryant': 'throwbacks:Kobe_Bryant_2006',
+  'team-rewards:Myles_Turner': 'throwbacks:Myles_Turner_2019',
+  'team-rewards:John_Stockton': 'throwbacks:John_Stockton_2002',
+  // (Those four point past the reward set since 2026-09-30: each reward went
+  // back to the set it came from — below.)
+
+  // THE COLLECTION-REWARD RE-PICK (2026-09-30). Every reward now beats the best
+  // card its collection asks for (the user's floor rule), and the conference
+  // and whole-set rewards moved to set-rewards. An old reward key lands on
+  // the card it is now, wherever that is, so an earned copy never vanishes:
+  //
+  // …the conference and whole-set rewards, now set rewards (or a Throwback),
+  'team-rewards:Joel_Embiid': 'set-rewards:Joel_Embiid',
+  'team-rewards:Giannis_Antetokounmpo': 'set-rewards:Giannis_Antetokounmpo',
+  'team-rewards:Stephen_Curry': 'throwbacks:Stephen_Curry_2021',
+  // …franchise rewards moved in from another set, gone home again,
+  'team-rewards:Paul_George': 'super-season:Paul_George',
+  'team-rewards:Kyrie_Irving': 'summer-standouts:Kyrie_Irving',
+  'team-rewards:Kevin_Garnett': 'summer-standouts:Kevin_Garnett',
+  'team-rewards:Jamal_Murray': 'summer-standouts:Jamal_Murray',
+  'team-rewards:Jameer_Nelson': 'summer-standouts:Jameer_Nelson',
+  'team-rewards:Steve_Nash': 'summer-standouts:Steve_Nash',
+  'team-rewards:Mike_Bibby': 'summer-standouts:Mike_Bibby',
+  'team-rewards:Nic_Claxton': 'super-season:Nic_Claxton',
+  'team-rewards:Bobby_Portis': 'super-season:Bobby_Portis',
+  'team-rewards:John_Wall': 'super-season:John_Wall',
+  'team-rewards:Chris_Paul': 'rookie:Chris_Paul',
+  'team-rewards:Jason_Kidd': 'rookie:Jason_Kidd',
+  'team-rewards:David_Robinson_1994': 'throwbacks:David_Robinson_1994',
+  'team-rewards:Kobe_Bryant_2006': 'throwbacks:Kobe_Bryant_2006',
+  'team-rewards:Myles_Turner_2019': 'throwbacks:Myles_Turner_2019',
+  'team-rewards:John_Stockton_2002': 'throwbacks:John_Stockton_2002',
+  // …franchise rewards built for the goal, kept as the card they are
+  // (curated-cards-2026.json; legends-2026.json for the three that were
+  // Super Seasons),
+  'team-rewards:Josh_Smith': 'throwbacks:Josh_Smith_2009',
+  'team-rewards:Luol_Deng': 'throwbacks:Luol_Deng_2011',
+  'team-rewards:Luis_Scola': 'throwbacks:Luis_Scola_2011',
+  'team-rewards:Elton_Brand': 'throwbacks:Elton_Brand_2003',
+  'team-rewards:Alonzo_Mourning': 'throwbacks:Alonzo_Mourning_2006',
+  'team-rewards:Allan_Houston': 'throwbacks:Allan_Houston_2003',
+  'team-rewards:Sam_Cassell': 'throwbacks:Sam_Cassell_2004',
+  'team-rewards:Gerald_Wallace': 'super-season:Gerald_Wallace',
+  'team-rewards:Wesley_Matthews': 'super-season:Wesley_Matthews',
+  // …and the special-set rewards that went back into their sets when each
+  // set's own top card became its reward.
+  'set-rewards:Russell_Westbrook_2017': 'super-season:Russell_Westbrook',
+  'set-rewards:Michael_Jordan': 'rookie:Michael_Jordan',
+  'set-rewards:Dwyane_Wade': 'summer-standouts:Dwyane_Wade',
+  'wnba-set-rewards:Jonquel_Jones': 'wnba-super-season:Jonquel_Jones',
+  'wnba-set-rewards:Candice_Wiggins': 'wnba-rookie:Candice_Wiggins',
+  // Two older aliases whose target has since moved into a reward.
+  'throwbacks:Stephen_Curry_2016': 'set-rewards:Stephen_Curry',
+  'wnba-throwbacks:Diana_Taurasi_2008': 'wnba-set-rewards:Diana_Taurasi',
 });
 
 /**
@@ -214,6 +265,13 @@ export const DERIVED_ALIASES = new Map([
   ...[[superSeason.cards, 'super-season', 'throwbacks'], [wnbaSuperSeason.cards, 'wnba-super-season', 'wnba-throwbacks']].flatMap(([cards, set, back]) =>
     cards.filter(c => c.id && Number.isFinite(c.season) && !hasMigratedOut(set, c.id))
       .map(c => [`${back}:${c.id}_${c.season}`, `${set}:${c.id}`])),
+  //   moved      a card MOVED into a reward (`migratedFrom`, 2026-09-30):
+  //              the copies pulled from packs before the move resolve to the
+  //              reward card, the same card. Until this, a move orphaned
+  //              them (25 keys after the 2026-09-24 value pick).
+  ...[[teamRewards.cards, 'team-rewards'], [wnbaTeamRewards.cards, 'wnba-team-rewards'],
+    [setRewards.cards, 'set-rewards'], [wnbaSetRewards.cards, 'wnba-set-rewards']].flatMap(([cards, set]) =>
+    cards.filter(c => c.migratedFrom).map(c => [`${c.migratedFrom.set}:${c.migratedFrom.id}`, `${set}:${c.id}`])),
   ...[[superSeason.cards, 'super-season'], [wnbaSuperSeason.cards, 'wnba-super-season']].flatMap(([cards, set]) =>
     cards.filter(c => c.migratedFrom).map(c => [`${c.migratedFrom.set}:${c.migratedFrom.id}`, `${set}:${c.id}`])),
   ...[...throwbacks.cards, ...wnbaThrowbacks.cards]

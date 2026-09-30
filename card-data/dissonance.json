@@ -202,6 +202,23 @@
       "season": 2020,
       "team": "HOU",
       "note": "the user's pick for the Dissonance completion reward (2026-09-06): one season as a Rocket beside Harden, 57 games at 27.2 ppg, a pairing with no card anywhere"
-    }
+    },
+    "Derrick Rose": [
+      {
+        "season": 2017,
+        "team": "NYK",
+        "note": "his first Knicks season, after the Bulls trade (the user, 2026-09-30: \"Could probably add a few Dissonance cards for him\")"
+      },
+      {
+        "season": 2019,
+        "team": "MIN",
+        "note": "the 50-point night in Minnesota (the user's ask, 2026-09-30)"
+      },
+      {
+        "season": 2020,
+        "team": "DET",
+        "note": "a season as a Piston (the user's ask, 2026-09-30)"
+      }
+    ]
   }
 }

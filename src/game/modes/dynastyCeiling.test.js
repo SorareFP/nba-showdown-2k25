@@ -409,7 +409,9 @@ describe('every AI path', () => {
     // more talent than a $540 wing — the centre team stopped accepting. This
     // is the pool change the note above says shows up here; a sweep put the
     // sums back just under $5,500 at $548 (crossing $660, centres $680-770).
-    const wings = () => [...take(k => group(k) === 'G', 548, 5), ...take(k => group(k) === 'F', 548, 5)];
+    // $543 since the 2026-09-30 three-line reprice: at $548 a wing team summed
+    // $5,560; a sweep passes $541-545, and the middle holds.
+    const wings = () => [...take(k => group(k) === 'G', 543, 5), ...take(k => group(k) === 'F', 543, 5)];
     const A = wings();
     const C = wings();
     // A wing team's salary without its dearest man: any centre dearer than

@@ -1,6 +1,6 @@
 {
  "set": "wnba-throwbacks",
- "generatedAt": "2026-09-30T11:43:12.285Z",
+ "generatedAt": "2026-09-30T16:49:47.237Z",
  "note": "WNBA THROWBACKS — generator-owned (scripts/cardgen/generateCuratedCards.js from demoted-wnba-super-seasons.json): WNBA Super Seasons the value pick retired. Requested WNBA Throwbacks live in cards-free-agents.json; both join the wnba-throwbacks set in cardSets.js.",
  "cards": [
   {
@@ -15,7 +15,7 @@
    "paintBoost": 0,
    "threePtBoost": -1,
    "defBoost": 1,
-   "salary": 1500,
+   "salary": 1490,
    "chart": [
     {
      "lo": 1,
@@ -90,7 +90,7 @@
    "power": 13,
    "shotLine": 14,
    "paintBoost": 2,
-   "threePtBoost": 0,
+   "threePtBoost": 1,
    "defBoost": 1,
    "salary": 1400,
    "chart": [
@@ -162,7 +162,7 @@
    "paintBoost": 0,
    "threePtBoost": -8,
    "defBoost": 3,
-   "salary": 1250,
+   "salary": 1240,
    "chart": [
     {
      "lo": 1,
@@ -237,9 +237,9 @@
    "power": 9,
    "shotLine": 14,
    "paintBoost": 1,
-   "threePtBoost": 0,
+   "threePtBoost": -1,
    "defBoost": 2,
-   "salary": 1050,
+   "salary": 1040,
    "chart": [
     {
      "lo": 1,
@@ -316,7 +316,7 @@
    "paintBoost": -1,
    "threePtBoost": 2,
    "defBoost": 3,
-   "salary": 1050,
+   "salary": 1040,
    "chart": [
     {
      "lo": 1,
@@ -394,7 +394,7 @@
    "power": 15,
    "shotLine": 16,
    "paintBoost": 0,
-   "threePtBoost": -1,
+   "threePtBoost": 0,
    "defBoost": 0,
    "salary": 1030,
    "chart": [
@@ -466,7 +466,7 @@
    "paintBoost": 2,
    "threePtBoost": -5,
    "defBoost": 4,
-   "salary": 1020,
+   "salary": 1010,
    "chart": [
     {
      "lo": 1,
@@ -541,7 +541,7 @@
    "power": 12,
    "shotLine": 14,
    "paintBoost": 1,
-   "threePtBoost": -5,
+   "threePtBoost": -6,
    "defBoost": 2,
    "salary": 990,
    "chart": [
@@ -989,7 +989,7 @@
    "power": 14,
    "shotLine": 15,
    "paintBoost": 1,
-   "threePtBoost": -4,
+   "threePtBoost": -5,
    "defBoost": 1,
    "salary": 660,
    "chart": [
@@ -1059,7 +1059,7 @@
    "power": 7,
    "shotLine": 16,
    "paintBoost": 0,
-   "threePtBoost": -1,
+   "threePtBoost": -2,
    "defBoost": 3,
    "salary": 450,
    "chart": [

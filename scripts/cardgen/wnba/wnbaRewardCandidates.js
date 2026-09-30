@@ -86,23 +86,33 @@ export function franchiseOf(team) {
   return code;
 }
 
-/** Names any other WNBA set already holds. */
-export function alreadyCarded() {
+/**
+ * Names any other WNBA set already holds — or, with `bySeason` (2026-09-30,
+ * "widen the pool"), the (name, season) pairs any WNBA set but the team
+ * rewards holds, so another season of a carded player can be a reward, as
+ * the NBA search's --by-season allows.
+ */
+export const CURRENT_WNBA_SEASON = 2026;
+const keyOf = (name, season, bySeason) => (bySeason ? `${normalizeName(name)}|${season}` : normalizeName(name));
+export function alreadyCarded({ bySeason = false } = {}) {
   const names = new Set();
-  for (const setId of ['wnba', 'wnba-super-season', 'wnba-rookie']) {
-    for (const card of CARD_SETS[setId] ?? []) names.add(normalizeName(card.name));
+  const sets = bySeason
+    ? ['wnba', 'wnba-super-season', 'wnba-rookie', 'wnba-set-rewards', 'wnba-throwbacks']
+    : ['wnba', 'wnba-super-season', 'wnba-rookie'];
+  for (const setId of sets) {
+    for (const card of CARD_SETS[setId] ?? []) names.add(keyOf(card.name, card.season ?? CURRENT_WNBA_SEASON, bySeason));
   }
   return names;
 }
 
-export function main({ franchises = null, log = console.log } = {}) {
+export function main({ franchises = null, log = console.log, bySeason = false } = {}) {
   const model = JSON.parse(fs.readFileSync(MODEL_FILE, 'utf8'));
   const { loaded } = loadArchive();
   if (loaded.length === 0) {
     throw new Error('No cached WNBA seasons — run scripts/cardgen/wnba/fetchWnbaHistory.js first.');
   }
   const seasons = rateArchive(loaded, model);
-  const carded = alreadyCarded();
+  const carded = alreadyCarded({ bySeason });
   const want = franchises ? new Set(franchises) : null;
 
   const out = [];
@@ -114,7 +124,7 @@ export function main({ franchises = null, log = console.log } = {}) {
       const games = row.games ?? 0;
       if (games < MIN_GAMES) continue;
       if ((row.mpg ?? (row.minutes ?? 0) / (games || 1)) < MIN_MPG) continue;
-      if (carded.has(normalizeName(row.name))) continue;
+      if (carded.has(keyOf(row.name, season, bySeason))) continue;
       if (row.bpmHat == null) continue;
 
       out.push({
@@ -147,7 +157,7 @@ export function main({ franchises = null, log = console.log } = {}) {
       'Ranked by the fitted BPM equivalent, NOT priced. A WNBA card is priced off a real ' +
       'game log and only the current sets have those cached, so these are a shortlist to ' +
       'pick from and then price.',
-    filters: { minGames: MIN_GAMES, minMpg: MIN_MPG },
+    filters: { minGames: MIN_GAMES, minMpg: MIN_MPG, bySeason },
     byFranchise,
   };
   fs.mkdirSync(GEN_DIR, { recursive: true });
@@ -159,5 +169,5 @@ export function main({ franchises = null, log = console.log } = {}) {
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const args = process.argv.slice(2).filter(a => !a.startsWith('-'));
-  main({ franchises: args.length ? args : null });
+  main({ franchises: args.length ? args : null, bySeason: process.argv.includes('--by-season') });
 }

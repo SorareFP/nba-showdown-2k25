@@ -104,9 +104,30 @@ export function isBestSeason(career, season, top, { superSeasonOf = null, player
   return top?.best?.season === season && top.eligibility !== 'none';
 }
 
+/**
+ * THE 1976 MERGER'S VETERANS (2026-09-30). The NBA tables open in 1975-76, so
+ * a player first seen in 1976-77 reads as a debut, but the merger brought in
+ * four ABA teams and a dispersal draft: Julius Erving's 1976-77 was his sixth
+ * pro season, and his retired Super Season (the value pick moved it to his
+ * 1980-81 MVP year) was quoting as a ROOKIE card. The ABA's 1975-76 player
+ * list (Basketball-Reference, cached as bbref-aba-1976-players) says who.
+ * Empty when the cache is absent, which reads every 1976-77 first season as a
+ * debut, as before.
+ */
+export const MERGER_SEASON = 1977;
+let mergerVets = null;
+export function abaMergerPlayers() {
+  if (mergerVets) return mergerVets;
+  let rows = null;
+  try { rows = readCache('bbref-aba-1976-players'); } catch { rows = null; }
+  mergerVets = new Set((Array.isArray(rows) ? rows : []).map(r => r.playerId));
+  return mergerVets;
+}
+
 export function classifySeason(career, season, { distributions, unprovable = new Set(), superSeasonOf = null, playerId = null }) {
   const first = career[0];
-  if (first && first.season === season && !unprovable.has(first.season) && rookieSeasonCounts(first)) {
+  const mergerVet = first?.season === MERGER_SEASON && abaMergerPlayers().has(playerId ?? first?.playerId);
+  if (first && first.season === season && !unprovable.has(first.season) && !mergerVet && rookieSeasonCounts(first)) {
     return 'rookie';
   }
   const pinned = pinnedSuperSeason(superSeasonOf, career, playerId);

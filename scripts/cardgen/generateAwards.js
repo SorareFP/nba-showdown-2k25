@@ -640,6 +640,12 @@ async function main() {
     // their awards were already joined under the OLD set id; leaving them there
     // would strand Jokić's MVP on a set that no longer holds his card.
     { set: TEAM_REWARDS_SET, cards: teamRewards.cards },
+    // THE SET REWARDS TOO (2026-09-30). The conference and whole-set rewards
+    // moved here from team-rewards, and each special set's top card became its
+    // reward; left out, Giannis' MVP, Embiid's and Curry's would have dropped
+    // off their faces with the move — as Jordan's Rookie of the Year already
+    // had, unnoticed, since 2026-09-06.
+    { set: 'set-rewards', cards: readJson(path.join(GEN_DIR, 'cards-set-rewards.json')).cards },
     // A retired reward that became a Throwback keeps its season's awards too —
     // Beal's 2020-21 All-Star nod travels with the card, not the set it left.
     { set: THROWBACKS_SET, cards: throwbacks.cards },

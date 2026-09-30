@@ -3,7 +3,7 @@
  "id": "rarity-shift:2026-09-30",
  "from": "cards-before-conditional-rows",
  "fromCommit": "949624d2d383c4059e6de372ebb9b45579b5c686",
- "cutoff": "2026-09-30T12:26:32.171Z",
+ "cutoff": "2026-09-30T17:10:49.906Z",
  "rates": {
   "common": 2,
   "uncommon": 5,
@@ -12,32 +12,21 @@
   "legendary": 250
  },
  "summary": {
-  "keys": 66,
-  "down": 33,
-  "up": 33,
+  "keys": 72,
+  "down": 35,
+  "up": 37,
   "moves": {
-   "uncommon -> rare": 8,
-   "common -> uncommon": 19,
+   "common -> uncommon": 17,
    "super-rare -> rare": 14,
-   "legendary -> super-rare": 8,
-   "uncommon -> common": 4,
-   "rare -> uncommon": 7,
-   "super-rare -> legendary": 3,
-   "rare -> super-rare": 3
+   "legendary -> super-rare": 10,
+   "rare -> uncommon": 6,
+   "uncommon -> rare": 11,
+   "uncommon -> common": 5,
+   "rare -> super-rare": 6,
+   "super-rare -> legendary": 3
   }
  },
  "shifts": {
-  "Aaron_Gordon": {
-   "from": "uncommon",
-   "to": "rare",
-   "coins": -40,
-   "name": "Aaron Gordon",
-   "season": null,
-   "salary": [
-    690,
-    720
-   ]
-  },
   "Ace_Bailey": {
    "from": "common",
    "to": "uncommon",
@@ -60,6 +49,28 @@
     910
    ]
   },
+  "Anthony_Davis": {
+   "from": "legendary",
+   "to": "super-rare",
+   "coins": 150,
+   "name": "Anthony Davis",
+   "season": null,
+   "salary": [
+    1370,
+    1320
+   ]
+  },
+  "Bones_Hyland": {
+   "from": "rare",
+   "to": "uncommon",
+   "coins": 40,
+   "name": "Bones Hyland",
+   "season": null,
+   "salary": [
+    700,
+    670
+   ]
+  },
   "Brandon_Miller": {
    "from": "super-rare",
    "to": "rare",
@@ -68,7 +79,29 @@
    "season": null,
    "salary": [
     930,
-    910
+    880
+   ]
+  },
+  "Collin_Gillespie": {
+   "from": "rare",
+   "to": "uncommon",
+   "coins": 40,
+   "name": "Collin Gillespie",
+   "season": null,
+   "salary": [
+    720,
+    690
+   ]
+  },
+  "Darius_Garland": {
+   "from": "super-rare",
+   "to": "rare",
+   "coins": 55,
+   "name": "Darius Garland",
+   "season": null,
+   "salary": [
+    930,
+    900
    ]
   },
   "Davion_Mitchell": {
@@ -79,7 +112,7 @@
    "season": null,
    "salary": [
     410,
-    420
+    450
    ]
   },
   "Isaiah_Hartenstein": {
@@ -101,18 +134,18 @@
    "season": null,
    "salary": [
     1340,
-    1300
+    1290
    ]
   },
-  "James_Harden": {
-   "from": "super-rare",
+  "Jaylin_Williams": {
+   "from": "uncommon",
    "to": "rare",
-   "coins": 55,
-   "name": "James Harden",
+   "coins": -40,
+   "name": "Jaylin Williams",
    "season": null,
    "salary": [
-    930,
-    910
+    670,
+    700
    ]
   },
   "Jimmy_Butler": {
@@ -126,15 +159,15 @@
     920
    ]
   },
-  "Jrue_Holiday": {
-   "from": "super-rare",
-   "to": "rare",
-   "coins": 55,
-   "name": "Jrue Holiday",
+  "Josh_Green": {
+   "from": "uncommon",
+   "to": "common",
+   "coins": 3,
+   "name": "Josh Green",
    "season": null,
    "salary": [
-    950,
-    910
+    420,
+    410
    ]
   },
   "Justin_Champagnie": {
@@ -159,6 +192,39 @@
     420
    ]
   },
+  "Kel_el_Ware": {
+   "from": "uncommon",
+   "to": "rare",
+   "coins": -40,
+   "name": "Kel'el Ware",
+   "season": null,
+   "salary": [
+    670,
+    700
+   ]
+  },
+  "Kenrich_Williams": {
+   "from": "common",
+   "to": "uncommon",
+   "coins": -3,
+   "name": "Kenrich Williams",
+   "season": null,
+   "salary": [
+    380,
+    420
+   ]
+  },
+  "Keyonte_George": {
+   "from": "uncommon",
+   "to": "rare",
+   "coins": -40,
+   "name": "Keyonte George",
+   "season": null,
+   "salary": [
+    680,
+    700
+   ]
+  },
   "Terrence_Shannon_Jr": {
    "from": "uncommon",
    "to": "common",
@@ -170,6 +236,17 @@
     410
    ]
   },
+  "Tyler_Herro": {
+   "from": "rare",
+   "to": "super-rare",
+   "coins": -55,
+   "name": "Tyler Herro",
+   "season": null,
+   "salary": [
+    880,
+    960
+   ]
+  },
   "VJ_Edgecombe": {
    "from": "common",
    "to": "uncommon",
@@ -179,28 +256,6 @@
    "salary": [
     410,
     420
-   ]
-  },
-  "Vit_Krejci": {
-   "from": "common",
-   "to": "uncommon",
-   "coins": -3,
-   "name": "Vít Krejčí",
-   "season": null,
-   "salary": [
-    410,
-    430
-   ]
-  },
-  "Zach_LaVine": {
-   "from": "uncommon",
-   "to": "rare",
-   "coins": -40,
-   "name": "Zach LaVine",
-   "season": null,
-   "salary": [
-    660,
-    700
    ]
   },
   "rookie:Andrew_Wiggins": {
@@ -225,17 +280,6 @@
     920
    ]
   },
-  "rookie:Buddy_Hield": {
-   "from": "common",
-   "to": "uncommon",
-   "coins": -3,
-   "name": "Buddy Hield",
-   "season": "2016-17",
-   "salary": [
-    410,
-    440
-   ]
-  },
   "rookie:Cade_Cunningham": {
    "from": "uncommon",
    "to": "rare",
@@ -256,17 +300,6 @@
    "salary": [
     400,
     420
-   ]
-  },
-  "rookie:Jaden_Hardy": {
-   "from": "common",
-   "to": "uncommon",
-   "coins": -3,
-   "name": "Jaden Hardy",
-   "season": "2022-23",
-   "salary": [
-    380,
-    430
    ]
   },
   "rookie:Jalen_Brunson": {
@@ -302,6 +335,28 @@
     440
    ]
   },
+  "rookie:Matas_Buzelis": {
+   "from": "common",
+   "to": "uncommon",
+   "coins": -3,
+   "name": "Matas Buzelis",
+   "season": "2024-25",
+   "salary": [
+    410,
+    430
+   ]
+  },
+  "rookie:Paul_Pierce": {
+   "from": "super-rare",
+   "to": "rare",
+   "coins": 55,
+   "name": "Paul Pierce",
+   "season": "1998-99",
+   "salary": [
+    990,
+    920
+   ]
+  },
   "rookie:Payton_Pritchard": {
    "from": "common",
    "to": "uncommon",
@@ -310,7 +365,7 @@
    "season": "2020-21",
    "salary": [
     390,
-    460
+    440
    ]
   },
   "rookie:Rui_Hachimura": {
@@ -321,7 +376,51 @@
    "season": "2019-20",
    "salary": [
     410,
-    440
+    430
+   ]
+  },
+  "rookie:Zion_Williamson": {
+   "from": "legendary",
+   "to": "super-rare",
+   "coins": 150,
+   "name": "Zion Williamson",
+   "season": "2019-20",
+   "salary": [
+    1350,
+    1320
+   ]
+  },
+  "summer-standouts:Daniel_Gibson": {
+   "from": "uncommon",
+   "to": "rare",
+   "coins": -40,
+   "name": "Daniel Gibson",
+   "season": "2006-07",
+   "salary": [
+    680,
+    710
+   ]
+  },
+  "summer-standouts:Dennis_Rodman": {
+   "from": "uncommon",
+   "to": "common",
+   "coins": 3,
+   "name": "Dennis Rodman",
+   "season": "1995-96",
+   "salary": [
+    430,
+    410
+   ]
+  },
+  "summer-standouts:Jared_Dudley": {
+   "from": "uncommon",
+   "to": "rare",
+   "coins": -40,
+   "name": "Jared Dudley",
+   "season": "2009-10",
+   "salary": [
+    690,
+    700
    ]
   },
   "summer-standouts:Josh_Howard": {
@@ -335,26 +434,15 @@
     890
    ]
   },
-  "summer-standouts:Max_Strus": {
+  "super-season:Dennis_Schroder": {
    "from": "rare",
-   "to": "uncommon",
-   "coins": 40,
-   "name": "Max Strus",
-   "season": "2021-22",
-   "salary": [
-    700,
-    690
-   ]
-  },
-  "super-season:Brandon_Ingram": {
-   "from": "super-rare",
-   "to": "legendary",
-   "coins": -150,
-   "name": "Brandon Ingram",
+   "to": "super-rare",
+   "coins": -55,
+   "name": "Dennis Schröder",
    "season": "2019-20",
    "salary": [
-    1310,
-    1340
+    900,
+    940
    ]
   },
   "super-season:Desmond_Bane": {
@@ -365,7 +453,7 @@
    "season": "2022-23",
    "salary": [
     1350,
-    1290
+    1280
    ]
   },
   "super-season:Donte_DiVincenzo": {
@@ -376,7 +464,7 @@
    "season": "2023-24",
    "salary": [
     870,
-    950
+    940
    ]
   },
   "super-season:Gilbert_Arenas": {
@@ -387,7 +475,7 @@
    "season": "2005-06",
    "salary": [
     1330,
-    1260
+    1270
    ]
   },
   "super-season:Jalen_Williams": {
@@ -398,18 +486,7 @@
    "season": "2023-24",
    "salary": [
     1340,
-    1320
-   ]
-  },
-  "super-season:Jaren_Jackson_Jr": {
-   "from": "legendary",
-   "to": "super-rare",
-   "coins": 150,
-   "name": "Jaren Jackson Jr.",
-   "season": "2024-25",
-   "salary": [
-    1350,
-    1320
+    1280
    ]
   },
   "super-season:Josh_Hart": {
@@ -434,17 +511,6 @@
     670
    ]
   },
-  "super-season:Mikal_Bridges": {
-   "from": "super-rare",
-   "to": "rare",
-   "coins": 55,
-   "name": "Mikal Bridges",
-   "season": "2022-23",
-   "salary": [
-    960,
-    920
-   ]
-  },
   "super-season:Nick_Richards": {
    "from": "common",
    "to": "uncommon",
@@ -464,7 +530,7 @@
    "season": "2024-25",
    "salary": [
     690,
-    730
+    750
    ]
   },
   "super-season:Patrick_Williams": {
@@ -475,7 +541,7 @@
    "season": "2022-23",
    "salary": [
     410,
-    450
+    430
    ]
   },
   "super-season:Paul_Pierce": {
@@ -489,15 +555,15 @@
     1320
    ]
   },
-  "super-season:Tyus_Jones": {
-   "from": "rare",
-   "to": "uncommon",
-   "coins": 40,
-   "name": "Tyus Jones",
-   "season": "2021-22",
+  "super-season:Ty_Jerome": {
+   "from": "legendary",
+   "to": "super-rare",
+   "coins": 150,
+   "name": "Ty Jerome",
+   "season": "2024-25",
    "salary": [
-    720,
-    670
+    1350,
+    1320
    ]
   },
   "super-season:Yao_Ming": {
@@ -522,6 +588,39 @@
     910
    ]
   },
+  "team-rewards:Jameer_Nelson": {
+   "from": "super-rare",
+   "to": "rare",
+   "coins": 55,
+   "name": "Jameer Nelson",
+   "season": "2009-10",
+   "salary": [
+    970,
+    920
+   ]
+  },
+  "team-rewards:Julius_Erving": {
+   "from": "super-rare",
+   "to": "legendary",
+   "coins": -150,
+   "name": "Julius Erving",
+   "season": "1980-81",
+   "salary": [
+    1290,
+    1530
+   ]
+  },
+  "team-rewards:Kyrie_Irving": {
+   "from": "legendary",
+   "to": "super-rare",
+   "coins": 150,
+   "name": "Kyrie Irving",
+   "season": "2015-16",
+   "salary": [
+    1390,
+    1320
+   ]
+  },
   "throwbacks:Dennis_Schroder_2017": {
    "from": "rare",
    "to": "uncommon",
@@ -530,7 +629,18 @@
    "season": "2016-17",
    "salary": [
     700,
-    680
+    670
+   ]
+  },
+  "throwbacks:Jason_Terry_2007": {
+   "from": "super-rare",
+   "to": "rare",
+   "coins": 55,
+   "name": "Jason Terry",
+   "season": "2006-07",
+   "salary": [
+    990,
+    920
    ]
   },
   "throwbacks:Marcus_Smart_2020": {
@@ -541,7 +651,7 @@
    "season": "2019-20",
    "salary": [
     680,
-    700
+    730
    ]
   },
   "throwbacks:Nicolas_Batum_2014": {
@@ -552,7 +662,7 @@
    "season": "2013-14",
    "salary": [
     940,
-    910
+    920
    ]
   },
   "throwbacks:Quentin_Grimes_2025": {
@@ -563,7 +673,7 @@
    "season": "2024-25",
    "salary": [
     670,
-    750
+    710
    ]
   },
   "throwbacks:Yao_Ming_2009": {
@@ -585,18 +695,7 @@
    "season": "2023",
    "salary": [
     950,
-    910
-   ]
-  },
-  "wnba-rookie:Ariel_Atkins": {
-   "from": "rare",
-   "to": "uncommon",
-   "coins": 40,
-   "name": "Ariel Atkins",
-   "season": "2018",
-   "salary": [
-    700,
-    680
+    900
    ]
   },
   "wnba-super-season:Elena_Baranova": {
@@ -607,7 +706,7 @@
    "season": "2004",
    "salary": [
     870,
-    940
+    930
    ]
   },
   "wnba-team-rewards:Cappie_Pondexter": {
@@ -621,15 +720,15 @@
     1320
    ]
   },
-  "wnba-team-rewards:Tamika_Catchings": {
-   "from": "legendary",
+  "wnba-team-rewards:Mwadi_Mabika": {
+   "from": "rare",
    "to": "super-rare",
-   "coins": 150,
-   "name": "Tamika Catchings",
-   "season": "2012",
+   "coins": -55,
+   "name": "Mwadi Mabika",
+   "season": "2002",
    "salary": [
-    1340,
-    1300
+    760,
+    1000
    ]
   },
   "wnba-throwbacks:Michelle_Snow_2005": {
@@ -687,17 +786,6 @@
     910
    ]
   },
-  "wnba:Laura_Juskaite": {
-   "from": "common",
-   "to": "uncommon",
-   "coins": -3,
-   "name": "Laura Juškaitė",
-   "season": "2026",
-   "salary": [
-    400,
-    420
-   ]
-  },
   "wnba:Monique_Billings": {
    "from": "uncommon",
    "to": "common",
@@ -709,28 +797,6 @@
     400
    ]
   },
-  "wnba:Nia_Coffey": {
-   "from": "uncommon",
-   "to": "common",
-   "coins": 3,
-   "name": "Nia Coffey",
-   "season": "2026",
-   "salary": [
-    420,
-    410
-   ]
-  },
-  "wnba:Rhyne_Howard": {
-   "from": "super-rare",
-   "to": "rare",
-   "coins": 55,
-   "name": "Rhyne Howard",
-   "season": "2026",
-   "salary": [
-    980,
-    920
-   ]
-  },
   "wnba:Skylar_Diggins": {
    "from": "uncommon",
    "to": "rare",
@@ -739,7 +805,7 @@
    "season": "2025+2026",
    "salary": [
     680,
-    730
+    720
    ]
   },
   "wnba:Sophie_Cunningham": {

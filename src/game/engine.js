@@ -705,9 +705,9 @@ export function creditAllowed(g, teamKey, slotOrId, pts, defId = null) {
  * off events that already happen, the cheap step toward blocks and steals
  * the user asked about on 2026-09-10.
  */
-export function creditCheckDefended(g, teamKey, slotOrId, type, r, contest = 0, delta = 1) {
+export function creditCheckDefended(g, teamKey, slotOrId, type, r, contest = 0, delta = 1, defId = null) {
   if (!r || type === 'ft') return false;
-  const dps = defenderPS(g, teamKey, slotOrId);
+  const dps = defenderPS(g, teamKey, slotOrId, defId);
   if (!dps) return false;
   dps.dca = Math.max(0, (dps.dca || 0) + delta);
   if (r.hit) dps.dcm = Math.max(0, (dps.dcm || 0) + delta);
@@ -1032,10 +1032,19 @@ export function creditPaintScore(g, teamKey, playerIdx, player) {
  */
 export function noteLastCheck(g, { teamKey, playerIdx, player, type, result, label, bonus = 0, pool = 'card', specialRoll, onHit, closeOutApplied = false }) {
   g.checkSeq = (g.checkSeq || 0) + 1;
+  // WHO GUARDED THE SHOT, as the check was taken (2026-09-30). A Challenge
+  // reaches back through the section, and a switch card may have moved the
+  // shooter's man since: reversing against whoever guards him NOW took the
+  // attempt off a defender who never contested it (clamped at zero, so the
+  // defense's attempts outran the offense's — a seeded sim caught it after a
+  // Veer Switch).
+  const defKey = teamKey === 'A' ? 'B' : 'A';
+  const defIdx = (g.offMatchups?.[teamKey] || [])[playerIdx] ?? playerIdx;
   const rec = {
     seq: g.checkSeq,
     teamKey, playerIdx, playerId: player?.id, type, result, pts: result.pts,
     cardLabel: label, bonus, pool, specialRoll, onHit, closeOutApplied,
+    defenderId: getTeam(g, defKey)?.starters?.[defIdx]?.id ?? null,
   };
   g.lastShotCheck = rec;
   // The section's list, for the Challenge (challengeTarget).

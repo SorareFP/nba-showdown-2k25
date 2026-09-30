@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-30T11:44:14.330Z",
+ "generatedAt": "2026-09-30T16:50:52.631Z",
  "set": "wnba-rookie",
  "provisional": false,
  "referenceSeason": 2026,
@@ -486,7 +486,7 @@
    "paintBoost": -1,
    "threePtBoost": -5,
    "defBoost": 0,
-   "salary": 1180,
+   "salary": 1170,
    "chart": [
     {
      "lo": 1,
@@ -548,9 +548,9 @@
    "power": 14,
    "shotLine": 13,
    "paintBoost": 1,
-   "threePtBoost": -7,
+   "threePtBoost": -6,
    "defBoost": 1,
-   "salary": 910,
+   "salary": 900,
    "chart": [
     {
      "lo": 1,
@@ -612,9 +612,9 @@
    "power": 6,
    "shotLine": 16,
    "paintBoost": -1,
-   "threePtBoost": 2,
+   "threePtBoost": 1,
    "defBoost": -1,
-   "salary": 550,
+   "salary": 530,
    "chart": [
     {
      "lo": 1,
@@ -676,7 +676,7 @@
    "power": 8,
    "shotLine": 16,
    "paintBoost": 0,
-   "threePtBoost": -4,
+   "threePtBoost": -3,
    "defBoost": 0,
    "salary": 380,
    "chart": [
@@ -747,9 +747,9 @@
    "power": 8,
    "shotLine": 15,
    "paintBoost": 0,
-   "threePtBoost": 1,
+   "threePtBoost": 2,
    "defBoost": 0,
-   "salary": 680,
+   "salary": 700,
    "chart": [
     {
      "lo": 1,
@@ -818,9 +818,9 @@
    "power": 7,
    "shotLine": 16,
    "paintBoost": -1,
-   "threePtBoost": 2,
+   "threePtBoost": 3,
    "defBoost": -2,
-   "salary": 710,
+   "salary": 730,
    "chart": [
     {
      "lo": 1,
@@ -889,9 +889,9 @@
    "power": 9,
    "shotLine": 15,
    "paintBoost": 0,
-   "threePtBoost": 1,
+   "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 670,
+   "salary": 640,
    "chart": [
     {
      "lo": 1,
@@ -962,7 +962,7 @@
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 2,
-   "salary": 1290,
+   "salary": 1280,
    "chart": [
     {
      "lo": 1,
@@ -1026,7 +1026,7 @@
    "paintBoost": 1,
    "threePtBoost": -7,
    "defBoost": 1,
-   "salary": 990,
+   "salary": 980,
    "chart": [
     {
      "lo": 1,
@@ -1159,9 +1159,9 @@
    "power": 9,
    "shotLine": 14,
    "paintBoost": 0,
-   "threePtBoost": 0,
+   "threePtBoost": 1,
    "defBoost": -1,
-   "salary": 810,
+   "salary": 840,
    "chart": [
     {
      "lo": 1,
@@ -1225,7 +1225,7 @@
    "paintBoost": 1,
    "threePtBoost": -4,
    "defBoost": 3,
-   "salary": 1150,
+   "salary": 1140,
    "chart": [
     {
      "lo": 1,
@@ -1289,7 +1289,7 @@
    "paintBoost": -1,
    "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 1120,
+   "salary": 1110,
    "chart": [
     {
      "lo": 1,
@@ -1351,9 +1351,9 @@
    "power": 9,
    "shotLine": 14,
    "paintBoost": 0,
-   "threePtBoost": 0,
+   "threePtBoost": 2,
    "defBoost": -2,
-   "salary": 940,
+   "salary": 990,
    "chart": [
     {
      "lo": 1,
@@ -1486,7 +1486,7 @@
    "power": 4,
    "shotLine": 17,
    "paintBoost": 1,
-   "threePtBoost": 0,
+   "threePtBoost": 1,
    "defBoost": 0,
    "salary": 200,
    "chart": [
@@ -1628,7 +1628,7 @@
    "power": 9,
    "shotLine": 14,
    "paintBoost": 0,
-   "threePtBoost": -6,
+   "threePtBoost": -5,
    "defBoost": -1,
    "salary": 680,
    "chart": [
@@ -1699,9 +1699,9 @@
    "power": 6,
    "shotLine": 16,
    "paintBoost": 0,
-   "threePtBoost": 2,
+   "threePtBoost": 1,
    "defBoost": -1,
-   "salary": 360,
+   "salary": 340,
    "chart": [
     {
      "lo": 1,
@@ -1763,9 +1763,9 @@
    "power": 6,
    "shotLine": 17,
    "paintBoost": 0,
-   "threePtBoost": 3,
+   "threePtBoost": 2,
    "defBoost": 0,
-   "salary": 250,
+   "salary": 230,
    "chart": [
     {
      "lo": 1,
@@ -1905,7 +1905,7 @@
    "power": 6,
    "shotLine": 18,
    "paintBoost": 0,
-   "threePtBoost": 1,
+   "threePtBoost": 2,
    "defBoost": 1,
    "salary": 310,
    "chart": [
@@ -2120,7 +2120,7 @@
    "paintBoost": 1,
    "threePtBoost": 0,
    "defBoost": 1,
-   "salary": 480,
+   "salary": 470,
    "chart": [
     {
      "lo": 1,
@@ -2262,7 +2262,7 @@
    "paintBoost": -1,
    "threePtBoost": 2,
    "defBoost": -1,
-   "salary": 230,
+   "salary": 220,
    "chart": [
     {
      "lo": 1,
@@ -2331,9 +2331,9 @@
    "power": 4,
    "shotLine": 16,
    "paintBoost": 0,
-   "threePtBoost": 2,
+   "threePtBoost": 1,
    "defBoost": 0,
-   "salary": 240,
+   "salary": 220,
    "chart": [
     {
      "lo": 1,
@@ -2473,9 +2473,9 @@
    "power": 4,
    "shotLine": 17,
    "paintBoost": -1,
-   "threePtBoost": 3,
+   "threePtBoost": 4,
    "defBoost": -2,
-   "salary": 350,
+   "salary": 370,
    "chart": [
     {
      "lo": 1,
@@ -2537,9 +2537,9 @@
    "power": 4,
    "shotLine": 16,
    "paintBoost": -2,
-   "threePtBoost": 2,
+   "threePtBoost": 3,
    "defBoost": -2,
-   "salary": 140,
+   "salary": 160,
    "chart": [
     {
      "lo": 1,
@@ -2672,9 +2672,9 @@
    "power": 6,
    "shotLine": 14,
    "paintBoost": -1,
-   "threePtBoost": 0,
+   "threePtBoost": 1,
    "defBoost": -2,
-   "salary": 340,
+   "salary": 370,
    "chart": [
     {
      "lo": 1,
@@ -2864,7 +2864,7 @@
    "power": 11,
    "shotLine": 14,
    "paintBoost": 1,
-   "threePtBoost": 0,
+   "threePtBoost": -1,
    "defBoost": 2,
    "salary": 790,
    "chart": [
@@ -2928,7 +2928,7 @@
    "power": 5,
    "shotLine": 17,
    "paintBoost": 0,
-   "threePtBoost": 0,
+   "threePtBoost": 1,
    "defBoost": 1,
    "salary": 220,
    "chart": [
@@ -3143,7 +3143,7 @@
    "paintBoost": 2,
    "threePtBoost": -6,
    "defBoost": 1,
-   "salary": 1000,
+   "salary": 990,
    "chart": [
     {
      "lo": 1,
@@ -3212,9 +3212,9 @@
    "power": 9,
    "shotLine": 15,
    "paintBoost": 1,
-   "threePtBoost": 1,
+   "threePtBoost": 0,
    "defBoost": -1,
-   "salary": 1030,
+   "salary": 1000,
    "chart": [
     {
      "lo": 1,
@@ -3276,9 +3276,9 @@
    "power": 8,
    "shotLine": 16,
    "paintBoost": -2,
-   "threePtBoost": 2,
+   "threePtBoost": 3,
    "defBoost": 1,
-   "salary": 810,
+   "salary": 840,
    "chart": [
     {
      "lo": 1,
@@ -3489,7 +3489,7 @@
    "power": 4,
    "shotLine": 17,
    "paintBoost": -1,
-   "threePtBoost": 0,
+   "threePtBoost": 1,
    "defBoost": -1,
    "salary": 140,
    "chart": [
@@ -3553,9 +3553,9 @@
    "power": 7,
    "shotLine": 16,
    "paintBoost": 0,
-   "threePtBoost": 2,
+   "threePtBoost": 1,
    "defBoost": 0,
-   "salary": 200,
+   "salary": 180,
    "chart": [
     {
      "lo": 1,
@@ -3624,7 +3624,7 @@
    "power": 6,
    "shotLine": 15,
    "paintBoost": 0,
-   "threePtBoost": -2,
+   "threePtBoost": -1,
    "defBoost": 1,
    "salary": 470,
    "chart": [
@@ -3697,7 +3697,7 @@
    "paintBoost": 1,
    "threePtBoost": -5,
    "defBoost": 1,
-   "salary": 850,
+   "salary": 840,
    "chart": [
     {
      "lo": 1,

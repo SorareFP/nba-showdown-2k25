@@ -18,7 +18,9 @@ import { REPO_ROOT, readCache, writeCache, politeDelay, DEFAULT_REQUEST_SPACING_
 import { fetchWnbaGameLogFull } from '../sources/basketballReference.js';
 
 const CANDIDATES = path.join(REPO_ROOT, 'card-data', 'generated', 'wnba-reward-candidates.json');
-const PER_FRANCHISE = 25;
+// `--per N` narrows it (2026-09-30: the by-season re-pick fetched the top 15).
+const perAt = process.argv.indexOf('--per');
+const PER_FRANCHISE = perAt >= 0 ? Number(process.argv[perAt + 1]) : 25;
 
 if (!fs.existsSync(CANDIDATES)) {
   console.error('No candidate file. Run: node scripts/cardgen/wnba/wnbaRewardCandidates.js');
@@ -30,7 +32,7 @@ const { byFranchise } = JSON.parse(fs.readFileSync(CANDIDATES, 'utf8'));
 // by MOVING a card out of WNBA Super Season or WNBA Rookie and need no logs at
 // all, so fetching all fifteen is most of an hour spent on cards that will
 // never be built.
-const only = new Set(process.argv.slice(2).filter(a => !a.startsWith('-')));
+const only = new Set(process.argv.slice(2).filter((a, i) => !a.startsWith('-') && (perAt < 0 || i + 2 !== perAt + 1)));
 const pairs = new Map();
 for (const [franchise, rows] of Object.entries(byFranchise)) {
   if (only.size && !only.has(franchise)) continue;

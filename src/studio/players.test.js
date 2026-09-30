@@ -488,8 +488,9 @@ describe('the base set\'s card-type badges', () => {
     // 19 on 2026-09-29 (the conditional-rows rebuild): three base cards handed
     // the pill back to returning Super Season cards, two took it.
     // 18/124 on 2026-09-30, the never-worse rows: Camara's and Watford's Super Seasons left under the base-card and Rookie-card rules, and the $50 holder margin kept the four dropped ones from flipping back.
-    expect(printed.filter(id => id === SUPER_SEASON_BADGE).length).toBe(18);
-    expect(printed.filter(id => id === BEST_SEASON_BADGE).length).toBe(124);
+    // 17/125 on 2026-09-30, the three-line reprice (every NBA three line re-cut): one badged base card slipped under the gold line.
+    expect(printed.filter(id => id === SUPER_SEASON_BADGE).length).toBe(17);
+    expect(printed.filter(id => id === BEST_SEASON_BADGE).length).toBe(125);
     // Everyone who prints ROOKIE is someone the SUPER SEASON fact is also true
     // of — the nesting is what makes this a priority question and not a rule.
     // The tier does not touch it: a rookie card is cheap, its Super Season
@@ -523,8 +524,10 @@ describe('the base set\'s card-type badges', () => {
       // base cards handed the pill back to returning Super Season cards, two
       // took it.
       // 18/124 on 2026-09-30, the never-worse rows: Camara's and Watford's Super Seasons left under the base-card and Rookie-card rules, and the $50 holder margin kept the four dropped ones from flipping back (142 faces).
-      [SUPER_SEASON_BADGE]: 18,
-      [BEST_SEASON_BADGE]: 124,
+      // 17/125 on 2026-09-30, the three-line reprice: one badged base card
+      // slipped under the gold line (142 faces still).
+      [SUPER_SEASON_BADGE]: 17,
+      [BEST_SEASON_BADGE]: 125,
       // In the id list, never on a base-set record: the STANDOUT, TRADED and
       // TEAM REWARD pills are SET badges, worn by their whole sets and no one
       // else. A base-set player earning one would mean a special-set card had

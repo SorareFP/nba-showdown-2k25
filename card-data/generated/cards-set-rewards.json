@@ -1,20 +1,20 @@
 {
- "generatedAt": "2026-09-30T11:44:29.933Z",
+ "generatedAt": "2026-09-30T16:50:55.959Z",
  "set": "set-rewards",
  "note": "SET COMPLETION REWARDS — cards MOVED out of their home special set (see migratedFrom) and earned by completing that set (rewardGoal). Built by scripts/cardgen/generateSetRewards.js from card-data/set-rewards-2026.json; the strongest card by salary of each group is the reward.",
  "cards": [
   {
-   "id": "Russell_Westbrook_2017",
-   "name": "Russell Westbrook",
-   "team": "OKC",
-   "pos": "PG",
-   "speed": 18,
-   "power": 12,
-   "shotLine": 16,
-   "paintBoost": -1,
-   "threePtBoost": 1,
-   "defBoost": 2,
-   "salary": 1920,
+   "id": "Giannis_Antetokounmpo",
+   "name": "Giannis Antetokounmpo",
+   "team": "MIL",
+   "pos": "PF",
+   "speed": 13,
+   "power": 17,
+   "shotLine": 15,
+   "paintBoost": 3,
+   "threePtBoost": -1,
+   "defBoost": 4,
+   "salary": 2260,
    "chart": [
     {
      "lo": 1,
@@ -32,32 +32,32 @@
     },
     {
      "lo": 7,
-     "hi": 15,
-     "pts": 3,
-     "reb": 1,
-     "ast": 2
+     "hi": 14,
+     "pts": 4,
+     "reb": 2,
+     "ast": 0
     },
     {
-     "lo": 16,
+     "lo": 15,
      "hi": 99,
      "pts": 4,
-     "reb": 1,
+     "reb": 2,
      "ast": 1
     }
    ],
-   "season": 2017,
-   "seasonLabel": "2016-17",
-   "age": 28,
-   "games": 81,
-   "mpg": 34.6,
-   "bbrefId": "westbru01",
+   "season": 2020,
+   "seasonLabel": "2019-20",
+   "age": 25,
+   "games": 63,
+   "mpg": 30.4,
+   "bbrefId": "antetgi01",
    "traded": false,
    "metrics": {
-    "bpm": 11.1,
-    "vorp": 9.3,
-    "ws": 13.1,
-    "ws48": 0.224,
-    "per": 30.6
+    "bpm": 11.5,
+    "vorp": 6.6,
+    "ws": 11.1,
+    "ws48": 0.279,
+    "per": 31.9
    },
    "provisional": false,
    "set": "set-rewards",
@@ -67,22 +67,22 @@
    "wears": "super-season",
    "migratedFrom": {
     "set": "super-season",
-    "id": "Russell_Westbrook"
+    "id": "Giannis_Antetokounmpo"
    },
    "rewardGoal": "set-super-season"
   },
   {
-   "id": "Michael_Jordan",
-   "name": "Michael Jordan",
-   "team": "CHI",
-   "pos": "SG",
-   "speed": 18,
-   "power": 12,
-   "shotLine": 14,
-   "paintBoost": 0,
-   "threePtBoost": -6,
-   "defBoost": 2,
-   "salary": 1590,
+   "id": "David_Robinson",
+   "name": "David Robinson",
+   "team": "SAS90",
+   "pos": "C",
+   "speed": 10,
+   "power": 19,
+   "shotLine": 15,
+   "paintBoost": 2,
+   "threePtBoost": -5,
+   "defBoost": 3,
+   "salary": 2080,
    "chart": [
     {
      "lo": 1,
@@ -93,41 +93,55 @@
     },
     {
      "lo": 3,
-     "hi": 6,
+     "hi": 4,
      "pts": 0,
      "reb": 0,
-     "ast": 1
+     "ast": 0
     },
     {
-     "lo": 7,
-     "hi": 13,
-     "pts": 3,
-     "reb": 0,
-     "ast": 1
-    },
-    {
-     "lo": 14,
-     "hi": 99,
-     "pts": 3,
+     "lo": 5,
+     "hi": 8,
+     "pts": 1,
      "reb": 1,
-     "ast": 1
+     "ast": 0
+    },
+    {
+     "lo": 9,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 20,
+     "pts": 3,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 5,
+     "reb": 4,
+     "ast": 0
     }
    ],
-   "season": 1985,
-   "seasonLabel": "1984-85",
-   "age": 21,
+   "season": 1990,
+   "seasonLabel": "1989-90",
+   "age": 24,
    "games": 82,
-   "mpg": 38.3,
-   "bbrefId": "jordami01",
+   "mpg": 36.6,
+   "bbrefId": "robinda01",
    "traded": false,
    "metrics": {
-    "bpm": 7.3,
-    "vorp": 7.4,
-    "ws": 14,
-    "ws48": 0.213,
-    "per": 25.8
+    "bpm": 6.9,
+    "vorp": 6.8,
+    "ws": 15.1,
+    "ws48": 0.241,
+    "per": 26.3
    },
-   "provisional": false,
+   "provisional": true,
    "set": "set-rewards",
    "badges": [
     "rookie"
@@ -135,22 +149,22 @@
    "wears": "rookie",
    "migratedFrom": {
     "set": "rookie",
-    "id": "Michael_Jordan"
+    "id": "David_Robinson"
    },
    "rewardGoal": "set-rookie"
   },
   {
-   "id": "Dwyane_Wade",
-   "name": "Dwyane Wade",
-   "team": "MIA",
-   "pos": "SG",
-   "speed": 18,
-   "power": 12,
-   "shotLine": 15,
-   "paintBoost": 1,
-   "threePtBoost": -3,
+   "id": "Anthony_Davis",
+   "name": "Anthony Davis",
+   "team": "LAL",
+   "pos": "C",
+   "speed": 12,
+   "power": 18,
+   "shotLine": 14,
+   "paintBoost": 2,
+   "threePtBoost": -2,
    "defBoost": 3,
-   "salary": 1420,
+   "salary": 1880,
    "chart": [
     {
      "lo": 1,
@@ -163,30 +177,37 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
-     "ast": 1
+     "reb": 1,
+     "ast": 0
     },
     {
      "lo": 7,
-     "hi": 14,
-     "pts": 2,
-     "reb": 0,
+     "hi": 13,
+     "pts": 3,
+     "reb": 1,
      "ast": 1
     },
     {
-     "lo": 15,
-     "hi": 99,
+     "lo": 14,
+     "hi": 20,
      "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 4,
      "reb": 1,
      "ast": 0
     }
    ],
-   "season": 2006,
-   "seasonLabel": "2005-06",
+   "season": 2020,
+   "seasonLabel": "2019-20",
    "age": null,
-   "games": 23,
-   "mpg": 41.7,
-   "bbrefId": "wadedw01",
+   "games": 21,
+   "mpg": 36.6,
+   "bbrefId": "davisan02",
    "traded": false,
    "metrics": {},
    "provisional": false,
@@ -198,7 +219,7 @@
    "wears": "summer-standouts",
    "migratedFrom": {
     "set": "summer-standouts",
-    "id": "Dwyane_Wade"
+    "id": "Anthony_Davis"
    },
    "rewardGoal": "set-summer-standouts"
   },
@@ -287,6 +308,227 @@
     "id": "Russell_Westbrook"
    },
    "rewardGoal": "set-dissonance"
+  },
+  {
+   "id": "Joel_Embiid",
+   "name": "Joel Embiid",
+   "team": "PHI",
+   "pos": "C",
+   "speed": 10,
+   "power": 20,
+   "shotLine": 15,
+   "paintBoost": 3,
+   "threePtBoost": -1,
+   "defBoost": 2,
+   "salary": 2060,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 21,
+     "pts": 4,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 4,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "season": 2023,
+   "seasonLabel": "2022-23",
+   "age": 28,
+   "games": 66,
+   "mpg": 34.6,
+   "bbrefId": "embiijo01",
+   "traded": false,
+   "metrics": {
+    "bpm": 9.2,
+    "vorp": 6.4,
+    "ws": 12.3,
+    "ws48": 0.259,
+    "per": 31.4
+   },
+   "provisional": false,
+   "set": "set-rewards",
+   "badges": [
+    "super-season"
+   ],
+   "wears": "super-season",
+   "migratedFrom": {
+    "set": "super-season",
+    "id": "Joel_Embiid"
+   },
+   "rewardGoal": "nba-conference-East",
+   "floorException": "$10 under the floor (Kawhi Leonard + $50). The user: \"This is fine.\""
+  },
+  {
+   "id": "Stephen_Curry",
+   "name": "Stephen Curry",
+   "team": "GSW",
+   "pos": "PG",
+   "speed": 19,
+   "power": 11,
+   "shotLine": 13,
+   "paintBoost": 0,
+   "threePtBoost": 1,
+   "defBoost": 2,
+   "salary": 2130,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 7,
+     "hi": 12,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 13,
+     "hi": 99,
+     "pts": 4,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2016,
+   "seasonLabel": "2015-16",
+   "age": 27,
+   "games": 79,
+   "mpg": 34.2,
+   "bbrefId": "curryst01",
+   "traded": false,
+   "metrics": {
+    "bpm": 11.9,
+    "vorp": 9.5,
+    "ws": 17.9,
+    "ws48": 0.318,
+    "per": 31.5
+   },
+   "provisional": false,
+   "set": "set-rewards",
+   "badges": [
+    "super-season"
+   ],
+   "wears": "super-season",
+   "migratedFrom": {
+    "set": "super-season",
+    "id": "Stephen_Curry"
+   },
+   "rewardGoal": "nba-conference-West",
+   "floorException": "$20 under the floor (Wembanyama + $50); nothing from a Western team clears. The user: \"I thought the 15-16 card was like 2200 salary or something. Would make sense here.\""
+  },
+  {
+   "id": "Giannis_Antetokounmpo_2023",
+   "name": "Giannis Antetokounmpo",
+   "team": "MIL",
+   "pos": "PF",
+   "speed": 12,
+   "power": 17,
+   "shotLine": 17,
+   "paintBoost": 5,
+   "threePtBoost": -1,
+   "defBoost": 3,
+   "salary": 2190,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 2,
+     "ast": 1
+    },
+    {
+     "lo": 7,
+     "hi": 11,
+     "pts": 4,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 12,
+     "hi": 16,
+     "pts": 4,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 17,
+     "hi": 99,
+     "pts": 4,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "season": 2023,
+   "seasonLabel": "2022-23",
+   "age": 28,
+   "games": 63,
+   "mpg": 32.1,
+   "bbrefId": "antetgi01",
+   "traded": false,
+   "metrics": {
+    "bpm": 8.5,
+    "vorp": 5.4,
+    "ws": 8.6,
+    "ws48": 0.204,
+    "per": 29
+   },
+   "provisional": false,
+   "set": "set-rewards",
+   "curated": "the Complete 2026-27 Set reward from 2026-09-30, built here and moved into set-rewards (set-rewards-2026.json nba-set).",
+   "badges": [
+    "throwback"
+   ],
+   "wears": "throwbacks",
+   "migratedFrom": {
+    "set": "throwbacks",
+    "id": "Giannis_Antetokounmpo_2023"
+   },
+   "rewardGoal": "nba-set"
   }
  ]
 }

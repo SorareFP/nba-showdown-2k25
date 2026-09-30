@@ -1492,6 +1492,70 @@
    "requested": true,
    "requestId": "00Me0998HPaIDavksTGK",
    "builtAt": "2026-09-30T11:30:40.914Z"
+  },
+  {
+   "id": "Tristan_Thompson",
+   "name": "Tristan Thompson",
+   "team": "CLE16",
+   "pos": "C",
+   "speed": 6,
+   "power": 11,
+   "shotLine": 13,
+   "paintBoost": -2,
+   "threePtBoost": -7,
+   "defBoost": 0,
+   "salary": 280,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 8,
+     "pts": 0,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 9,
+     "hi": 12,
+     "pts": 1,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 13,
+     "hi": 99,
+     "pts": 1,
+     "reb": 2,
+     "ast": 0
+    }
+   ],
+   "season": 2016,
+   "seasonLabel": "2015-16",
+   "age": null,
+   "games": 21,
+   "mpg": 29.6,
+   "bbrefId": "thomptr01",
+   "traded": false,
+   "metrics": {},
+   "provisional": false,
+   "playoffRun": true,
+   "set": "summer-standouts",
+   "requested": true,
+   "requestId": "OOKtPCYigJmNfUILJURP",
+   "builtAt": "2026-09-30T12:20:34.941Z"
   }
  ]
 }

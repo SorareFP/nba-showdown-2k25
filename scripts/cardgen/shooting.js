@@ -622,6 +622,15 @@ export function rawLines({ tsPct, paintPct, threePct }) {
     // own Shot Line — the mirror of exactThreeStrength below.
     exactPaintLine: paint,
     exactPaintGap: ts != null && paint != null ? ts - paint : null,
+    // The three line the 3PT Boost is built from, UNROUNDED (2026-09-30). The
+    // rounded `threeLine` above fed the map until then, and the map stretches
+    // the three's spread about threefold, so each whole face of 3P% became
+    // three printed faces: every NBA card printed an effective three line of
+    // 12, 15, 18 or 20 and nothing between (the WNBA 12/14/17/20). Curry's 45%
+    // and a 38% shooter shared the 12. The user, shown it: "the more effective
+    // 3pt shot lines would be good". The paint line made the same move on
+    // 2026-09-09 (exactPaintLine).
+    exactThreeLine: three,
     exactThreeGap: ts != null && three != null ? ts - three : null,
     // What the 3PT Boost is actually built from: the player's OWN three-point
     // line, negated so a better shooter scores higher, and compared against the
@@ -727,7 +736,7 @@ export function buildShootingLayer(players, { shotLineTarget, paint = {}, three 
   // shot threes like a league-average starter.
   const threeReference = raw.slice(0, threeReferencePlayers.length);
   const threeLineMap = fitLinearMap(
-    threeReference.map(r => r.threeLine).filter(Number.isFinite),
+    threeReference.map(r => r.exactThreeLine).filter(Number.isFinite),
     threeLineTarget
   );
   const threeStrength = meanSd(raw.map(r => r.exactThreeStrength));
@@ -813,7 +822,7 @@ export function buildShootingLayer(players, { shotLineTarget, paint = {}, three 
         // gap into compressBoost as a raw SIGNAL, which re-centred and rescaled
         // it and let a specialist's own threes inside TS% cancel his boost. Here
         // the gap is an OFFSET between two lines that are each already absolute.
-        threePtBoost: threePtBoostFor(shotLine, raw[i].threeLine, threeShape),
+        threePtBoost: threePtBoostFor(shotLine, raw[i].exactThreeLine, threeShape),
       };
     }),
   };

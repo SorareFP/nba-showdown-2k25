@@ -324,4 +324,15 @@ describe('buildShootingLayer — the 3PT boost', () => {
     const built = build();
     expect(built.paintShape.scale).toBeCloseTo(built.map.scale, 10);
   });
+
+  // EVERY FACE OF THE THREE LINE IS REACHABLE (2026-09-30). The map stretched a
+  // ROUNDED raw line about threefold, so the whole NBA printed 12, 15, 18 or 20
+  // and nothing between; Curry's 45% shared the 12 with 70 other cards.
+  it('spreads effective three lines across the range, not onto every third face', () => {
+    const spread = Array.from({ length: 80 }, (_, i) => shooter(0.56, 0.28 + i * 0.002));
+    const built = buildShootingLayer(spread, { shotLineTarget, three: { targetSd: 1.5118, deadband: 1.35 } });
+    const effective = new Set(built.players.map(p => p.shotLine - p.threePtBoost));
+    expect(effective.size).toBeGreaterThan(5);
+    for (const line of [13, 14, 16, 17]) expect(effective.has(line), `line ${line}`).toBe(true);
+  });
 });

@@ -1,21 +1,21 @@
 {
- "generatedAt": "2026-09-30T11:44:29.935Z",
+ "generatedAt": "2026-09-30T16:50:55.960Z",
  "set": "wnba-set-rewards",
  "note": "SET COMPLETION REWARDS — cards MOVED out of their home special set (see migratedFrom) and earned by completing that set (rewardGoal). Built by scripts/cardgen/generateSetRewards.js from card-data/set-rewards-2026.json; the strongest card by salary of each group is the reward.",
  "cards": [
   {
-   "id": "Jonquel_Jones",
-   "name": "Jonquel Jones",
-   "team": "CON",
-   "statRowTeam": "CON",
-   "pos": "C",
-   "speed": 7,
-   "power": 19,
+   "id": "Diana_Taurasi",
+   "name": "Diana Taurasi",
+   "team": "PHO97",
+   "statRowTeam": "PHO",
+   "pos": "G",
+   "speed": 16,
+   "power": 10,
    "shotLine": 13,
-   "paintBoost": 1,
-   "threePtBoost": -1,
-   "defBoost": 3,
-   "salary": 1470,
+   "paintBoost": 0,
+   "threePtBoost": 1,
+   "defBoost": 0,
+   "salary": 1920,
    "chart": [
     {
      "lo": 1,
@@ -34,43 +34,36 @@
     {
      "lo": 7,
      "hi": 12,
-     "pts": 2,
-     "reb": 1,
+     "pts": 3,
+     "reb": 0,
      "ast": 0
     },
     {
      "lo": 13,
-     "hi": 19,
-     "pts": 3,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 20,
      "hi": 99,
-     "pts": 3,
-     "reb": 2,
+     "pts": 4,
+     "reb": 1,
      "ast": 1
     }
    ],
    "league": "WNBA",
-   "season": 2021,
-   "seasonLabel": "2021",
-   "games": 27,
-   "mpg": 31.7,
-   "minutes": 856,
-   "schedule": 32,
-   "bbrefId": "jonesjo01w",
+   "season": 2008,
+   "seasonLabel": "2008",
+   "games": 34,
+   "mpg": 31.9,
+   "minutes": 1083,
+   "schedule": 34,
+   "bbrefId": "tauradi01w",
    "metrics": {
-    "bpmHat": 9.28,
-    "obpmHat": 6.22,
-    "dbpmHat": 3.07,
-    "seasonZ": 2.75,
-    "per": 28.3,
-    "ws": 6.6,
-    "wsPer40": 0.307,
-    "tsPct": 0.614,
-    "pts100": 33
+    "bpmHat": 8.15,
+    "obpmHat": 8.61,
+    "dbpmHat": -0.46,
+    "seasonZ": 2.43,
+    "per": 29.7,
+    "ws": 7.4,
+    "wsPer40": 0.273,
+    "tsPct": 0.596,
+    "pts100": 36.7
    },
    "provisional": false,
    "set": "wnba-set-rewards",
@@ -80,23 +73,23 @@
    "wears": "wnba-super-season",
    "migratedFrom": {
     "set": "wnba-super-season",
-    "id": "Jonquel_Jones"
+    "id": "Diana_Taurasi"
    },
    "rewardGoal": "set-wnba-super-season"
   },
   {
-   "id": "Candice_Wiggins",
-   "name": "Candice Wiggins",
-   "team": "MIN99",
-   "statRowTeam": "MIN",
-   "pos": "G",
-   "speed": 14,
-   "power": 9,
+   "id": "Breanna_Stewart",
+   "name": "Breanna Stewart",
+   "team": "SEA",
+   "statRowTeam": "SEA",
+   "pos": "F",
+   "speed": 12,
+   "power": 13,
    "shotLine": 14,
-   "paintBoost": -1,
+   "paintBoost": 0,
    "threePtBoost": 0,
-   "defBoost": 0,
-   "salary": 1120,
+   "defBoost": 2,
+   "salary": 1280,
    "chart": [
     {
      "lo": 1,
@@ -109,14 +102,14 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 1
     },
     {
      "lo": 7,
      "hi": 13,
      "pts": 2,
-     "reb": 0,
+     "reb": 1,
      "ast": 1
     },
     {
@@ -128,23 +121,23 @@
     }
    ],
    "league": "WNBA",
-   "season": 2008,
-   "seasonLabel": "2008",
-   "games": 30,
-   "mpg": 27.5,
-   "minutes": 824,
+   "season": 2016,
+   "seasonLabel": "2016",
+   "games": 34,
+   "mpg": 34.7,
+   "minutes": 1179,
    "schedule": 34,
-   "bbrefId": "wiggica01w",
+   "bbrefId": "stewabr01w",
    "metrics": {
-    "bpmHat": 4.73,
-    "obpmHat": 4.41,
-    "dbpmHat": 0.32,
-    "seasonZ": 1.46,
-    "per": 23.1,
-    "ws": 4.5,
-    "wsPer40": 0.217,
-    "tsPct": 0.553,
-    "pts100": 29.1
+    "bpmHat": 6.21,
+    "obpmHat": 4.28,
+    "dbpmHat": 1.93,
+    "seasonZ": 2.09,
+    "per": 22.9,
+    "ws": 5.7,
+    "wsPer40": 0.193,
+    "tsPct": 0.576,
+    "pts100": 27.4
    },
    "provisional": false,
    "set": "wnba-set-rewards",
@@ -154,7 +147,7 @@
    "wears": "wnba-rookie",
    "migratedFrom": {
     "set": "wnba-rookie",
-    "id": "Candice_Wiggins"
+    "id": "Breanna_Stewart"
    },
    "rewardGoal": "set-wnba-rookie"
   }

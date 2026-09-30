@@ -13,22 +13,38 @@ import { KEY_ALIASES, canonicalKey, getCardByKey, cardKey, CARD_SETS } from './c
 import { collectedKeys, collectableKeys } from './collections.js';
 
 describe('KEY_ALIASES', () => {
-  it('holds exactly the one old key, and its target is a live card', () => {
-    expect(KEY_ALIASES).toEqual({
-      'team-rewards:Anthony_Parker': 'super-season:Anthony_Parker',
-      // The Spurs reward changed id when its season was demoted to a Throwback (2026-09-22).
-      'team-rewards:David_Robinson': 'team-rewards:David_Robinson_1994',
-      // The value pick moved these rewards' Super Seasons (2026-09-24); each kept its season.
-      'team-rewards:Kobe_Bryant': 'team-rewards:Kobe_Bryant_2006',
-      'team-rewards:Myles_Turner': 'team-rewards:Myles_Turner_2019',
-      'team-rewards:John_Stockton': 'team-rewards:John_Stockton_2002',
-    });
-    for (const [old, now] of [['Kobe_Bryant', 2006], ['Myles_Turner', 2019], ['John_Stockton', 2002]]) {
-      expect(getCardByKey(`team-rewards:${old}`), old).toBe(getCardByKey(`team-rewards:${old}_${now}`));
-      expect(getCardByKey(`team-rewards:${old}_${now}`)?.season, old).toBe(now);
+  // THE RULE, not the list (2026-09-30): the reward re-pick grew the list to
+  // forty-odd keys, every one an old key whose card moved. Each must name a
+  // key that no longer resolves on its own, and land on a live card.
+  it('names only keys that no longer resolve, each landing on a live card', () => {
+    const live = new Set(Object.values(CARD_SETS).flat().map(cardKey));
+    for (const [old, now] of Object.entries(KEY_ALIASES)) {
+      expect(live.has(now), `${old} -> ${now} is a live card`).toBe(true);
+      expect(live.has(old), `${old} is not itself a live key`).toBe(false);
+      expect(getCardByKey(old), old).toBe(getCardByKey(now));
     }
-    expect(getCardByKey('team-rewards:David_Robinson')).toBe(getCardByKey('team-rewards:David_Robinson_1994'));
-    expect(getCardByKey('team-rewards:David_Robinson_1994')).toMatchObject({ name: 'David Robinson', wears: 'throwbacks', rewardFor: 'SAS' });
+  });
+
+  it('lands each kind of 2026-09-30 move on the same player and season', () => {
+    const same = (old, now, season) => {
+      expect(getCardByKey(old), old).toBe(getCardByKey(now));
+      expect(getCardByKey(now)?.season, now).toBe(season);
+    };
+    same('team-rewards:Josh_Smith', 'throwbacks:Josh_Smith_2009', 2009);            // a built reward, now a Throwback
+    same('team-rewards:Gerald_Wallace', 'super-season:Gerald_Wallace', 2007);       // …or his Super Season
+    same('team-rewards:Kevin_Garnett', 'summer-standouts:Kevin_Garnett', 2012);     // a moved reward, home again
+    same('team-rewards:Joel_Embiid', 'set-rewards:Joel_Embiid', 2023);              // a conference reward, now a set reward
+    same('set-rewards:Michael_Jordan', 'rookie:Michael_Jordan', 1985);              // a set reward back in its set
+    same('team-rewards:Kobe_Bryant', 'throwbacks:Kobe_Bryant_2006', 2006);           // an older alias, re-aimed
+    same('team-rewards:David_Robinson', 'throwbacks:David_Robinson_1994', 1994);
+    // Pulled from a pack before the card moved into a reward (the derived rule).
+    same('super-season:Stephen_Curry', 'set-rewards:Stephen_Curry', 2016);
+    same('rookie:David_Robinson', 'set-rewards:David_Robinson', 1990);
+    same('throwbacks:Dwyane_Wade_2009', 'team-rewards:Dwyane_Wade_2009', 2009);
+  });
+
+  it('keeps the first old key, Anthony Parker, on his Super Season', () => {
+    expect(KEY_ALIASES['team-rewards:Anthony_Parker']).toBe('super-season:Anthony_Parker');
     const parker = getCardByKey('super-season:Anthony_Parker');
     expect(parker).toBeTruthy();
     expect(parker.set).toBe('super-season');

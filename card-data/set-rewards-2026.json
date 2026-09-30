@@ -1,61 +1,71 @@
 {
-  "_comment": "SET COMPLETION REWARDS: collect every card in a special set, earn that set's capstone. Each group names the cards built for it (all of them join the set), and the STRONGEST BY SALARY is moved out into the set-rewards set — it leaves its home set entirely, keeps its origin badge, and gains the SET REWARD pill — so the set is completable without it and the reward is not a duplicate. The user's rule (2026-09-06): a reward's player-and-team pairing should have no card in any set (A), or failing that no base card (B); every candidate here is A. Regenerate: node scripts/cardgen/generateSetRewards.js (after the home sets).",
+  "_comment": "SET COMPLETION REWARDS: complete a set, earn its reward. Each group names the card(s) in a home set the reward is MOVED out of; the strongest by salary of the group moves into set-rewards (or wnba-set-rewards), leaves its home set, keeps its origin badge and gains the SET REWARD pill. Since 2026-09-30 a reward should beat the best card the set asks for (the user's floor rule), so most groups are one card: the set's own top card, moved out. The conference and whole-set rewards moved here from team-rewards-2026.json the same day. `id` pins a reward's id when the collision rule would otherwise rename it. Regenerate: node scripts/cardgen/generateSetRewards.js (after the home sets).",
   "groups": {
     "set-super-season": {
       "set": "super-season",
       "candidates": [
-        "Chris_Paul",
-        "Russell_Westbrook",
-        "Dwyane_Wade",
-        "Tracy_McGrady",
-        "Clyde_Drexler",
-        "Karl_Malone",
-        "Hakeem_Olajuwon",
-        "Vince_Carter"
-      ]
+        "Giannis_Antetokounmpo"
+      ],
+      "why": "Giannis 2019-20 ($2,270), the only card in the game above the set's floor (Jokic 2021-22 + $50); it was the whole-set reward until 2026-09-30."
     },
     "set-rookie": {
       "set": "rookie",
       "candidates": [
-        "Michael_Jordan",
-        "Ben_Simmons",
-        "Chris_Webber",
-        "Anfernee_Hardaway",
-        "Mark_Jackson",
-        "Blake_Griffin",
-        "Vince_Carter"
-      ]
+        "David_Robinson"
+      ],
+      "why": "The set's top card moved out: the best left is Tim Duncan, so it clears (the user: \"Correct\")."
     },
     "set-summer-standouts": {
       "set": "summer-standouts",
       "candidates": [
-        "Dwyane_Wade"
-      ]
+        "Anthony_Davis"
+      ],
+      "why": "The set's top card moved out (the user: \"Correct\")."
     },
     "set-dissonance": {
       "set": "dissonance",
       "candidates": [
         "Russell_Westbrook"
-      ]
+      ],
+      "id": "Russell_Westbrook_2020",
+      "why": "Unchanged; the id keeps the season it has carried since the 2016-17 capstone shared the set."
     },
     "set-wnba-super-season": {
       "set": "wnba-super-season",
       "candidates": [
-        "Cynthia_Cooper",
-        "Yolanda_Griffith",
-        "Brandy_Reed",
-        "Jonquel_Jones",
-        "Chelsea_Gray"
-      ]
+        "Diana_Taurasi"
+      ],
+      "why": "The set's top card moved out (the user: \"Both correct\")."
     },
     "set-wnba-rookie": {
       "set": "wnba-rookie",
       "candidates": [
-        "Tina_Charles",
-        "Chiney_Ogwumike",
-        "Cappie_Pondexter",
-        "Candice_Wiggins"
-      ]
+        "Breanna_Stewart"
+      ],
+      "why": "The set's top card moved out (the user: \"Both correct\")."
+    },
+    "nba-conference-East": {
+      "set": "super-season",
+      "candidates": [
+        "Joel_Embiid"
+      ],
+      "floorException": "$10 under the floor (Kawhi Leonard + $50). The user: \"This is fine.\"",
+      "why": "His 2022-23 MVP season."
+    },
+    "nba-conference-West": {
+      "set": "super-season",
+      "candidates": [
+        "Stephen_Curry"
+      ],
+      "floorException": "$20 under the floor (Wembanyama + $50); nothing from a Western team clears. The user: \"I thought the 15-16 card was like 2200 salary or something. Would make sense here.\"",
+      "why": "His 2015-16 Super Season, moved out of the set; his 2020-21 card (the West reward until 2026-09-30) became a Throwback."
+    },
+    "nba-set": {
+      "set": "throwbacks",
+      "candidates": [
+        "Giannis_Antetokounmpo_2023"
+      ],
+      "why": "Giannis 2022-23, built as a Throwback (curated-cards-2026.json) and moved in; his 2019-20 went to the Super Season set."
     }
   }
 }

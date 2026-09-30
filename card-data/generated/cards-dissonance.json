@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-30T11:44:08.022Z",
+ "generatedAt": "2026-09-30T16:50:28.263Z",
  "set": "dissonance",
  "provisional": true,
  "sources": {
@@ -96,7 +96,7 @@
    "paintBoost": -1,
    "threePtBoost": -2,
    "defBoost": -1,
-   "salary": 900,
+   "salary": 890,
    "chart": [
     {
      "lo": 1,
@@ -172,7 +172,7 @@
    "paintBoost": 4,
    "threePtBoost": -4,
    "defBoost": 2,
-   "salary": 1080,
+   "salary": 1070,
    "chart": [
     {
      "lo": 1,
@@ -246,7 +246,7 @@
    "power": 8,
    "shotLine": 17,
    "paintBoost": 2,
-   "threePtBoost": -1,
+   "threePtBoost": 0,
    "defBoost": 1,
    "salary": 560,
    "chart": [
@@ -322,7 +322,7 @@
    "power": 6,
    "shotLine": 16,
    "paintBoost": 1,
-   "threePtBoost": -2,
+   "threePtBoost": -1,
    "defBoost": -1,
    "salary": 400,
    "chart": [
@@ -628,7 +628,7 @@
    "paintBoost": -2,
    "threePtBoost": -2,
    "defBoost": 0,
-   "salary": 840,
+   "salary": 830,
    "chart": [
     {
      "lo": 1,
@@ -702,7 +702,7 @@
    "power": 5,
    "shotLine": 13,
    "paintBoost": -2,
-   "threePtBoost": -5,
+   "threePtBoost": -6,
    "defBoost": -3,
    "salary": 430,
    "chart": [
@@ -778,7 +778,7 @@
    "power": 8,
    "shotLine": 15,
    "paintBoost": 1,
-   "threePtBoost": 0,
+   "threePtBoost": -1,
    "defBoost": 0,
    "salary": 1140,
    "chart": [
@@ -854,9 +854,9 @@
    "power": 9,
    "shotLine": 15,
    "paintBoost": 1,
-   "threePtBoost": -3,
+   "threePtBoost": -2,
    "defBoost": -2,
-   "salary": 1160,
+   "salary": 1150,
    "chart": [
     {
      "lo": 1,
@@ -1008,7 +1008,7 @@
    "paintBoost": 0,
    "threePtBoost": -5,
    "defBoost": 1,
-   "salary": 530,
+   "salary": 520,
    "chart": [
     {
      "lo": 1,
@@ -1075,9 +1075,9 @@
    "power": 11,
    "shotLine": 16,
    "paintBoost": -2,
-   "threePtBoost": 1,
+   "threePtBoost": 2,
    "defBoost": -1,
-   "salary": 820,
+   "salary": 840,
    "chart": [
     {
      "lo": 1,
@@ -1151,9 +1151,9 @@
    "power": 10,
    "shotLine": 15,
    "paintBoost": -1,
-   "threePtBoost": 3,
+   "threePtBoost": 2,
    "defBoost": -1,
-   "salary": 830,
+   "salary": 810,
    "chart": [
     {
      "lo": 1,
@@ -1227,9 +1227,9 @@
    "power": 7,
    "shotLine": 14,
    "paintBoost": 0,
-   "threePtBoost": -1,
+   "threePtBoost": 0,
    "defBoost": -1,
-   "salary": 810,
+   "salary": 830,
    "chart": [
     {
      "lo": 1,
@@ -1374,7 +1374,7 @@
    "paintBoost": 0,
    "threePtBoost": -4,
    "defBoost": 0,
-   "salary": 520,
+   "salary": 510,
    "chart": [
     {
      "lo": 1,
@@ -1524,9 +1524,9 @@
    "power": 8,
    "shotLine": 16,
    "paintBoost": -1,
-   "threePtBoost": -2,
+   "threePtBoost": -1,
    "defBoost": 1,
-   "salary": 1110,
+   "salary": 1100,
    "chart": [
     {
      "lo": 1,
@@ -1600,9 +1600,9 @@
    "power": 8,
    "shotLine": 16,
    "paintBoost": 1,
-   "threePtBoost": 1,
+   "threePtBoost": 2,
    "defBoost": 0,
-   "salary": 950,
+   "salary": 970,
    "chart": [
     {
      "lo": 1,
@@ -1754,7 +1754,7 @@
    "paintBoost": -3,
    "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 470,
+   "salary": 460,
    "chart": [
     {
      "lo": 1,
@@ -1828,7 +1828,7 @@
    "power": 6,
    "shotLine": 15,
    "paintBoost": -2,
-   "threePtBoost": 0,
+   "threePtBoost": -1,
    "defBoost": 0,
    "salary": 210,
    "chart": [
@@ -1897,9 +1897,9 @@
    "power": 5,
    "shotLine": 17,
    "paintBoost": 1,
-   "threePtBoost": 2,
+   "threePtBoost": 3,
    "defBoost": 1,
-   "salary": 430,
+   "salary": 460,
    "chart": [
     {
      "lo": 1,
@@ -1973,7 +1973,7 @@
    "power": 9,
    "shotLine": 15,
    "paintBoost": -1,
-   "threePtBoost": 0,
+   "threePtBoost": -1,
    "defBoost": -2,
    "salary": 930,
    "chart": [
@@ -2049,9 +2049,9 @@
    "power": 5,
    "shotLine": 17,
    "paintBoost": 0,
-   "threePtBoost": 2,
+   "threePtBoost": 3,
    "defBoost": -4,
-   "salary": 330,
+   "salary": 360,
    "chart": [
     {
      "lo": 1,
@@ -2125,9 +2125,9 @@
    "power": 7,
    "shotLine": 15,
    "paintBoost": -2,
-   "threePtBoost": 0,
+   "threePtBoost": 1,
    "defBoost": -2,
-   "salary": 560,
+   "salary": 580,
    "chart": [
     {
      "lo": 1,
@@ -2201,7 +2201,7 @@
    "power": 7,
    "shotLine": 16,
    "paintBoost": 0,
-   "threePtBoost": -2,
+   "threePtBoost": -1,
    "defBoost": -3,
    "salary": 660,
    "chart": [
@@ -2355,7 +2355,7 @@
    "paintBoost": 1,
    "threePtBoost": -2,
    "defBoost": 0,
-   "salary": 300,
+   "salary": 290,
    "chart": [
     {
      "lo": 1,
@@ -2705,7 +2705,7 @@
    "power": 6,
    "shotLine": 17,
    "paintBoost": 0,
-   "threePtBoost": 2,
+   "threePtBoost": 1,
    "defBoost": 2,
    "salary": 430,
    "chart": [
@@ -2839,6 +2839,234 @@
    "stint": {
     "games": 57,
     "note": "the user's pick for the Dissonance completion reward (2026-09-06): one season as a Rocket beside Harden, 57 games at 27.2 ppg, a pairing with no card anywhere"
+   }
+  },
+  {
+   "id": "Derrick_Rose_NYK",
+   "name": "Derrick Rose",
+   "team": "NYK",
+   "pos": "PG",
+   "speed": 9,
+   "power": 6,
+   "shotLine": 16,
+   "paintBoost": -1,
+   "threePtBoost": -4,
+   "defBoost": -2,
+   "salary": 660,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 8,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 9,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 21,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 4,
+     "reb": 1,
+     "ast": 2
+    }
+   ],
+   "season": 2017,
+   "seasonLabel": "2016-17",
+   "age": 28,
+   "games": 64,
+   "mpg": 32.5,
+   "bbrefId": "rosede01",
+   "traded": false,
+   "metrics": {
+    "bpm": -1,
+    "vorp": 0.5,
+    "ws": 3,
+    "ws48": 0.068,
+    "per": 17
+   },
+   "provisional": true,
+   "stint": {
+    "games": 64,
+    "note": "his first Knicks season, after the Bulls trade (the user, 2026-09-30: \"Could probably add a few Dissonance cards for him\")"
+   }
+  },
+  {
+   "id": "Derrick_Rose_MIN",
+   "name": "Derrick Rose",
+   "team": "MIN18",
+   "pos": "PG",
+   "speed": 11,
+   "power": 7,
+   "shotLine": 16,
+   "paintBoost": 1,
+   "threePtBoost": 1,
+   "defBoost": -2,
+   "salary": 990,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 7,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 8,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 23,
+     "pts": 4,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 24,
+     "hi": 99,
+     "pts": 5,
+     "reb": 1,
+     "ast": 2
+    }
+   ],
+   "season": 2019,
+   "seasonLabel": "2018-19",
+   "age": 30,
+   "games": 51,
+   "mpg": 27.3,
+   "bbrefId": "rosede01",
+   "traded": false,
+   "metrics": {
+    "bpm": 1.4,
+    "vorp": 1.2,
+    "ws": 3,
+    "ws48": 0.102,
+    "per": 19.5
+   },
+   "provisional": true,
+   "stint": {
+    "games": 51,
+    "note": "the 50-point night in Minnesota (the user's ask, 2026-09-30)"
+   }
+  },
+  {
+   "id": "Derrick_Rose_DET",
+   "name": "Derrick Rose",
+   "team": "DET",
+   "pos": "PG",
+   "speed": 11,
+   "power": 6,
+   "shotLine": 15,
+   "paintBoost": 0,
+   "threePtBoost": -1,
+   "defBoost": -2,
+   "salary": 930,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 8,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 9,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 23,
+     "pts": 4,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 24,
+     "hi": 99,
+     "pts": 5,
+     "reb": 1,
+     "ast": 2
+    }
+   ],
+   "season": 2020,
+   "seasonLabel": "2019-20",
+   "age": 31,
+   "games": 50,
+   "mpg": 26,
+   "bbrefId": "rosede01",
+   "traded": false,
+   "metrics": {
+    "bpm": 2.2,
+    "vorp": 1.4,
+    "ws": 2.5,
+    "ws48": 0.092,
+    "per": 21
+   },
+   "provisional": true,
+   "stint": {
+    "games": 50,
+    "note": "a season as a Piston (the user's ask, 2026-09-30)"
    }
   }
  ]

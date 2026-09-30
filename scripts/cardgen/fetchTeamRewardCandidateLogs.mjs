@@ -48,16 +48,63 @@ if (!fs.existsSync(CANDIDATES_FILE)) {
 const { byFranchise } = JSON.parse(fs.readFileSync(CANDIDATES_FILE, 'utf8'));
 const floor = per100Needed(FLOOR_TARGET);
 
-const pairs = new Map();
-for (const rows of Object.values(byFranchise)) {
-  for (const r of rows.filter(x => x.salary >= floor).slice(0, PER_FRANCHISE)) {
-    pairs.set(`${r.bbrefId ?? r.name}|${r.season}`, r);
+// --to-floor (2026-09-30): the user's rule that a reward beats the best card
+// in its collection. Each franchise shortlists against ITS OWN floor — the
+// best card its roster requires plus REWARD_MARGIN — reaching SLACK below it
+// (the fit's residual sd is ~$103), up to --per seasons, and always at least
+// the franchise's top few so a short franchise still shows its best options.
+const argv = process.argv.slice(2);
+const flag = (name, dflt) => {
+  const i = argv.indexOf(`--${name}`);
+  return i >= 0 ? Number(argv[i + 1]) : dflt;
+};
+const TO_FLOOR = argv.includes('--to-floor');
+const REWARD_MARGIN = flag('margin', 50);
+const SLACK = flag('slack', 150);
+const PER = flag('per', 12);
+const AT_LEAST = flag('at-least', 4);
+
+async function franchiseFloors() {
+  const { GOALS } = await import('../../src/game/collections.js');
+  const { getCardByKey } = await import('../../src/game/cardSets.js');
+  const out = {};
+  for (const g of GOALS) {
+    const m = /^nba-team-([A-Z]{3})$/.exec(g.id);
+    if (!m) continue;
+    const best = Math.max(0, ...g.requires.map(k => getCardByKey(k)?.salary ?? 0));
+    out[m[1]] = best + REWARD_MARGIN;
   }
+  return out;
 }
-console.log(
-  `shortlist: ${pairs.size} (player, season) pairs at per-100 >= $${floor} ` +
-    `(~$${FLOOR_TARGET} real), max ${PER_FRANCHISE} per franchise`
-);
+
+const pairs = new Map();
+if (TO_FLOOR) {
+  const floors = await franchiseFloors();
+  for (const [franchise, rows] of Object.entries(byFranchise)) {
+    const need = per100Needed((floors[franchise] ?? FLOOR_TARGET) - SLACK);
+    const sorted = [...rows].sort((a, b) => b.salary - a.salary);
+    const pick = sorted.filter(x => x.salary >= need).slice(0, PER);
+    for (const r of pick.length >= AT_LEAST ? pick : sorted.slice(0, AT_LEAST)) {
+      pairs.set(`${r.bbrefId ?? r.name}|${r.season}`, r);
+    }
+  }
+  console.log(`shortlist: ${pairs.size} (player, season) pairs within $${SLACK} of each franchise's floor (best card + $${REWARD_MARGIN}), max ${PER} per franchise`);
+} else {
+  for (const rows of Object.values(byFranchise)) {
+    for (const r of rows.filter(x => x.salary >= floor).slice(0, PER_FRANCHISE)) {
+      pairs.set(`${r.bbrefId ?? r.name}|${r.season}`, r);
+    }
+  }
+  console.log(
+    `shortlist: ${pairs.size} (player, season) pairs at per-100 >= $${floor} ` +
+      `(~$${FLOOR_TARGET} real), max ${PER_FRANCHISE} per franchise`
+  );
+}
+if (argv.includes('--dry-run')) {
+  const missing = [...pairs.values()].filter(r => r.bbrefId && !readCache(`gamelog-full-${r.bbrefId}-${r.season}`));
+  console.log(`dry run: ${missing.length} of ${pairs.size} logs to fetch`);
+  process.exit(0);
+}
 
 let fetched = 0;
 let cached = 0;

@@ -168,6 +168,26 @@ describe("the check a Coach's Challenge reaches — the section's best make", ()
     expect(challengeTarget(g, 'A')).toBeNull();
   });
 
+  // A SWITCH BETWEEN THE CHECK AND THE CHALLENGE (2026-09-30). The reversal
+  // took the attempt back from whoever guarded the shooter NOW, clamped at
+  // zero, so after a Veer Switch the defense's attempts outran the offense's
+  // (the seeded whole-game invariant in granularStats.test.js caught it).
+  it('takes the reversed attempt and points back from the man who guarded the shot, not the one guarding him now', () => {
+    const g = scoring({ bHand: ['coaches_challenge'] });
+    const bPs = i => getTeam(g, 'B').stats.find(s => s.id === `b${i}`);
+    bPs(0).dca = 1; bPs(0).dcm = 1; bPs(0).alw = 3;       // b0 guarded a0's three, which went in
+    rec(g, 0, '3pt', true, 'Green Light 3PT');
+    g.offMatchups.A = [1, 0, 2, 3, 4];                    // a switch: b1 guards a0 now
+    vi.spyOn(Math, 'random').mockReturnValue(0);          // the re-roll misses
+    const r = execCard(g, 'B', 'coaches_challenge', {});
+    vi.restoreAllMocks();
+    expect(r.ok).toBe(true);
+    const after = i => getTeam(r.game, 'B').stats.find(s => s.id === `b${i}`);
+    expect(after(0)).toMatchObject({ dcm: 0, alw: 0 });  // the make is off the man who allowed it
+    expect(after(0).dca).toBe(0);
+    expect(after(1).dca).toBe(1);                         // the re-roll is against the man there now
+  });
+
   it('moves on to the next best once one is spent, and a new section starts clean', () => {
     const g = scoring({ bHand: ['coaches_challenge', 'coaches_challenge'] });
     rec(g, 0, '3pt', true, 'Green Light 3PT');

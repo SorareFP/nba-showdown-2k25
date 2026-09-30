@@ -18,6 +18,12 @@
 // (Giannis 2019-20, Embiid 2022-23 — migrated from it, the identity
 // unchanged in kind). Stockton is no longer a flag and a ruling: his 2001-02
 // is a Throwback card, and the reward wears the set it came from like any other.
+//
+// RE-CUT BY THE COLLECTION-REWARD RE-PICK (2026-09-30). Every reward now beats
+// the best card its collection asks for, the conference and whole-set rewards
+// moved to set-rewards, and each special set's own top card became its reward.
+// The table below is read off that build; the verdicts the sweep and the user
+// made (Summer Standouts is an identity, bronze under the gold line) stand.
 import { describe, it, expect } from 'vitest';
 import { CARD_SETS, getCardByKey, cardKey } from './cardSets.js';
 import { cardTreatment, setBadge, setTreatment } from '../cards/sets.js';
@@ -27,69 +33,62 @@ const REWARD_SETS = ['team-rewards', 'wnba-team-rewards', 'set-rewards', 'wnba-s
 
 /** key -> the set whose look the reward wears. The whole reward roster, nothing left off. */
 const WEARS = {
-  // ── NBA team rewards (33): 13 built, 20 moved ────────────────────────────
-  // 2019-20 (the set tier) and 2022-23 (the East tier) are their Super Seasons
-  // since the value pick, so both rewards migrate from that set now.
-  'team-rewards:Giannis_Antetokounmpo': 'super-season',
-  'team-rewards:Joel_Embiid': 'super-season',
-  'team-rewards:Stephen_Curry': 'throwbacks', // 2020-21, the West tier; his best is 2015-16 (carded)
-  'team-rewards:Paul_George': 'super-season',
+  // ── NBA team rewards (30) since the 2026-09-30 re-pick ─────────────────
+  'team-rewards:Russell_Westbrook': 'throwbacks',
+  'team-rewards:LeBron_James_2016': 'throwbacks',
+  'team-rewards:LeBron_James_2020': 'throwbacks',
+  'team-rewards:Larry_Bird': 'throwbacks',
+  'team-rewards:Dwyane_Wade_2009': 'throwbacks', // moved from the dormant Throwback: his Super Season is 2009-10
   'team-rewards:Kevin_Durant': 'summer-standouts', // a playoff run keeps its identity (the user's ruling)
-  'team-rewards:Jamal_Murray': 'summer-standouts',
-  // 2005-06, retired to a Throwback when 2008-09 took his Super Season.
-  'team-rewards:Kobe_Bryant_2006': 'throwbacks',
-  // 2026-09-22: his 1989-90 Rookie card out-prices the 1993-94 season, which
-  // the Super Season generator demotes to a Throwback; the reward migrates from there.
-  'team-rewards:David_Robinson_1994': 'throwbacks',
-  'team-rewards:Blake_Griffin': 'super-season', // built; 2018-19 is his best by the rule (2.30 over 2.26)
-  'team-rewards:Kevin_Garnett': 'summer-standouts',
-  'team-rewards:Kyrie_Irving': 'summer-standouts',
-  'team-rewards:Vince_Carter': 'throwbacks', // 1999-2000, the re-pick; his best (2000-01) and rookie year are carded
-  'team-rewards:Julius_Erving': 'super-season',
-  'team-rewards:John_Wall': 'super-season', // 2016-17, migrated in: "if it's a super season, make it as such"
+  'team-rewards:Kevin_Love': 'super-season', // built; 2013-14 is his best by the rule, and he has no Super Season card
+  'team-rewards:Tim_Duncan': 'throwbacks', // his 1997-98 rookie card beats every later season, so none is a Super Season
+  'team-rewards:Anthony_Davis_2015': 'throwbacks', // moved from the dormant Throwback
+  'team-rewards:Julius_Erving': 'super-season', // 1980-81, his Super Season since the value pick weighed it (2026-09-30)
+  'team-rewards:Dirk_Nowitzki': 'throwbacks',
+  'team-rewards:Shaquille_O_Neal': 'throwbacks',
+  'team-rewards:Karl_Malone': 'throwbacks',
+  'team-rewards:Patrick_Ewing': 'throwbacks',
+  'team-rewards:Bradley_Beal': 'throwbacks',
+  'team-rewards:Clyde_Drexler': 'throwbacks',
+  'team-rewards:Blake_Griffin': 'super-season', // built; 2018-19 is his best by the rule
+  'team-rewards:Alex_English': 'super-season', // built; his 1982-83 scoring title is his best
+  'team-rewards:Vince_Carter': 'throwbacks',
+  'team-rewards:Yao_Ming': 'throwbacks',
+  'team-rewards:Reggie_Miller': 'throwbacks',
+  'team-rewards:Kemba_Walker': 'throwbacks',
+  'team-rewards:Derrick_Rose': 'super-season', // 2010-11, his Super Season, moved in (the John Wall precedent)
   'team-rewards:Marc_Gasol': 'throwbacks',
-  'team-rewards:Alonzo_Mourning': 'throwbacks',
-  'team-rewards:Chris_Paul': 'rookie',
-  'team-rewards:John_Stockton_2002': 'throwbacks', // 2001-02, a Throwback card since the value pick
-  'team-rewards:Sam_Cassell': 'super-season',
-  'team-rewards:Wesley_Matthews': 'super-season',
-  'team-rewards:Myles_Turner_2019': 'throwbacks', // 2018-19, retired to a Throwback by the value pick
-  'team-rewards:Allan_Houston': 'throwbacks',
-  'team-rewards:Jameer_Nelson': 'summer-standouts',
-  'team-rewards:Nic_Claxton': 'super-season', // $890 since the 2026-09-24 reprice: under the gold line, bronze
-  'team-rewards:Gerald_Wallace': 'super-season', // $870 since the reprice (was $900, on the line): bronze
-  'team-rewards:Bobby_Portis': 'super-season', // under the gold line: bronze with TEAM REWARD over BEST SEASON
-  'team-rewards:Josh_Smith': 'throwbacks',
-  'team-rewards:Steve_Nash': 'summer-standouts',
-  'team-rewards:Elton_Brand': 'throwbacks', // 2002-03, the re-pick; his best (2005-06) is his Super Season card
-  'team-rewards:Luol_Deng': 'throwbacks',
-  'team-rewards:Mike_Bibby': 'summer-standouts',
-  'team-rewards:Luis_Scola': 'throwbacks',
-  'team-rewards:Jason_Kidd': 'rookie',
-  // ── WNBA team rewards (13): 12 built, 1 moved ────────────────────────────
+  'team-rewards:Dominique_Wilkins': 'throwbacks',
+  'team-rewards:Michael_Redd': 'super-season',
+  'team-rewards:Steve_Nash_2006': 'throwbacks',
+  'team-rewards:Chris_Paul_2015': 'throwbacks',
+  'team-rewards:Peja_Stojakovic': 'super-season',
+  'team-rewards:Jason_Kidd_2003': 'super-season',
+  // ── WNBA team rewards (13) ──────────────────────────────────────────────
   'wnba-team-rewards:Angel_McCoughtry': 'wnba-throwbacks',
   'wnba-team-rewards:Tamika_Catchings': 'wnba-throwbacks',
   'wnba-team-rewards:Cappie_Pondexter': 'wnba-super-season',
-  // 2010-11, the Lynx re-pick (2026-09-24): her 2006-07 priced legendary once
-  // the salary model and the WNBA shooting scale were corrected, over the band
-  // Minnesota earns. 2011 is the Lynx's first title, a Throwback season.
-  'wnba-team-rewards:Seimone_Augustus': 'wnba-throwbacks',
   'wnba-team-rewards:Becky_Hammon': 'wnba-super-season',
+  'wnba-team-rewards:Seimone_Augustus': 'wnba-throwbacks',
   'wnba-team-rewards:Penny_Taylor': 'wnba-super-season',
-  'wnba-team-rewards:Chamique_Holdsclaw': 'wnba-throwbacks', // 1999-2000, the Mystics re-pick (2026-09-24)
-  'wnba-team-rewards:Cheryl_Ford': 'wnba-super-season',
-  'wnba-team-rewards:Alysha_Clark': 'wnba-super-season',
-  'wnba-team-rewards:Epiphanny_Prince': 'wnba-throwbacks',
   'wnba-team-rewards:Mwadi_Mabika': 'wnba-throwbacks',
+  'wnba-team-rewards:Cheryl_Ford': 'wnba-super-season',
+  'wnba-team-rewards:Epiphanny_Prince': 'wnba-throwbacks',
+  'wnba-team-rewards:Alysha_Clark': 'wnba-super-season',
+  'wnba-team-rewards:Chamique_Holdsclaw': 'wnba-throwbacks',
   'wnba-team-rewards:Nykesha_Sales': 'wnba-throwbacks',
   'wnba-team-rewards:Sophia_Witherspoon': 'wnba-throwbacks',
-  // ── set rewards (4 + 2), all moved ───────────────────────────────────────
-  'set-rewards:Russell_Westbrook_2017': 'super-season',
-  'set-rewards:Michael_Jordan': 'rookie',
-  'set-rewards:Dwyane_Wade': 'summer-standouts',
+  // ── set rewards (7): the special sets, the conferences and the whole set ─
+  'set-rewards:Giannis_Antetokounmpo': 'super-season',
+  'set-rewards:David_Robinson': 'rookie',
+  'set-rewards:Anthony_Davis': 'summer-standouts',
   'set-rewards:Russell_Westbrook_2020': 'dissonance',
-  'wnba-set-rewards:Jonquel_Jones': 'wnba-super-season',
-  'wnba-set-rewards:Candice_Wiggins': 'wnba-rookie',
+  'set-rewards:Joel_Embiid': 'super-season',
+  'set-rewards:Stephen_Curry': 'super-season', // the West reward: his 2015-16 Super Season, moved out of the set
+  'set-rewards:Giannis_Antetokounmpo_2023': 'throwbacks', // the whole-set reward, built as a Throwback and moved in
+  // ── WNBA set rewards (2) ────────────────────────────────────────────────
+  'wnba-set-rewards:Diana_Taurasi': 'wnba-super-season',
+  'wnba-set-rewards:Breanna_Stewart': 'wnba-rookie',
 };
 
 const rewards = REWARD_SETS.flatMap(set => CARD_SETS[set]);
@@ -136,14 +135,6 @@ describe('every reward wears its identity', () => {
 
   it('draws the worn look, and falls back to the bronze reward look when the tier withholds gold', () => {
     const treat = card => cardTreatment(card.set, card.salary, card.badges ?? [], card.wears);
-    const portis = getCardByKey('team-rewards:Bobby_Portis');
-    expect(portis.salary).toBeLessThan(SUPER_SEASON_MIN_SALARY);
-    expect(treat(portis)).toEqual(setTreatment('team-rewards'));
-    // Wesley Matthews is the cheapest reward over the line since the 2026-09-24
-    // reprice took Gerald Wallace from $900 (on it — inclusive) to $870.
-    const matthews = getCardByKey('team-rewards:Wesley_Matthews');
-    expect(matthews.salary).toBeGreaterThanOrEqual(SUPER_SEASON_MIN_SALARY);
-    expect(treat(matthews)).toEqual(cardTreatment('super-season', matthews.salary, matthews.badges));
     // And every reward wearing Super Season follows the line, whichever side.
     for (const card of rewards.filter(c => c.wears === 'super-season')) {
       expect(treat(card), cardKey(card)).toEqual(card.salary >= SUPER_SEASON_MIN_SALARY
@@ -161,20 +152,31 @@ describe('every reward wears its identity', () => {
     }
   });
 
-  it('the three outgoing rewards are gone from the reward set and live where they qualify', () => {
-    expect(getCardByKey('team-rewards:Bradley_Beal')).toBeUndefined();
-    expect(getCardByKey('team-rewards:Ivica_Zubac')).toBeUndefined();
-    // Parker's old key resolves through the alias only (keyAliases.test.js).
+  it('the rewards that left on 2026-09-30 are gone from the reward sets and live where they qualify', () => {
+    // Built rewards that left keep their card: a Throwback, or a Super Season
+    // when that season was the player's best.
+    for (const [old, now] of [
+      ['Josh_Smith', 'throwbacks:Josh_Smith_2009'], ['Luol_Deng', 'throwbacks:Luol_Deng_2011'],
+      ['Luis_Scola', 'throwbacks:Luis_Scola_2011'], ['Elton_Brand', 'throwbacks:Elton_Brand_2003'],
+      ['Alonzo_Mourning', 'throwbacks:Alonzo_Mourning_2006'], ['Allan_Houston', 'throwbacks:Allan_Houston_2003'],
+      ['Sam_Cassell', 'throwbacks:Sam_Cassell_2004'], ['Gerald_Wallace', 'super-season:Gerald_Wallace'],
+      ['Wesley_Matthews', 'super-season:Wesley_Matthews'], ['Stephen_Curry', 'throwbacks:Stephen_Curry_2021'],
+    ]) {
+      expect(CARD_SETS['team-rewards'].some(c => c.id === old), old).toBe(false);
+      expect(CARD_SETS[now.split(':')[0]].some(c => cardKey(c) === now), now).toBe(true);
+    }
+    // Moved rewards went home: Wall's Super Season is back in its set.
+    expect(getCardByKey('super-season:John_Wall')?.season).toBe(2017);
+    expect(getCardByKey('rookie:Michael_Jordan')?.season).toBe(1985);
+    // The older outgoing three still live where they qualify.
     expect(CARD_SETS['team-rewards'].some(c => c.id === 'Anthony_Parker')).toBe(false);
     expect(getCardByKey('super-season:Anthony_Parker')?.season).toBe(2007);
-    expect(getCardByKey('super-season:Ivica_Zubac')?.season).toBe(2025);
     expect(getCardByKey('throwbacks:Bradley_Beal_2021')?.season).toBe(2021);
-    // Wall's Super Season card is the reward, so it is hidden in its home set.
-    expect(getCardByKey('super-season:John_Wall')).toBeUndefined();
-    expect(getCardByKey('team-rewards:John_Wall')?.migratedFrom).toEqual({ set: 'super-season', id: 'John_Wall' });
     // And the batch's new cards exist.
-    for (const key of ['super-season:Elton_Brand', 'super-season:Gilbert_Arenas', 'super-season:DeAndre_Jordan',
-      'rookie:John_Wall', 'rookie:Elton_Brand', 'rookie:Gilbert_Arenas', 'rookie:DeAndre_Jordan']) {
+    for (const key of ['super-season:Paul_Millsap', 'super-season:Dell_Curry', 'super-season:DeMarcus_Cousins',
+      'super-season:Bernard_King', 'super-season:Arvydas_Sabonis', 'super-season:Adrian_Dantley', 'super-season:Kristaps_Porzingis',
+      'rookie:Derrick_Rose', 'dissonance:Derrick_Rose_NYK', 'dissonance:Derrick_Rose_MIN', 'dissonance:Derrick_Rose_DET',
+      'throwbacks:Blake_Griffin_2014', 'throwbacks:Lou_Williams_2020', 'throwbacks:Shawn_Marion_2007', 'rookie:Shawn_Marion']) {
       expect(getCardByKey(key), key).toBeTruthy();
     }
   });

@@ -17,8 +17,8 @@
     "reason": "MVP, 28.7/10.5/6.6, BPM 8.8"
   },
   "Julius Erving": {
-    "season": 1977,
-    "reason": "first NBA season after the ABA merger, BPM 4.5"
+    "season": 1981,
+    "reason": "MVP, 24.6/8.0/4.4 (the 1980-81 archive was cached 2026-09-30 for it: the user, \"I think we might be able to work a Dr. J card to stay as the reward\"). Was 1976-77, the first NBA season after the ABA merger; that season becomes a Throwback."
   },
   "Kobe Bryant": {
     "season": 2006,
@@ -131,5 +131,53 @@
   "Deron Williams": {
     "season": 2013,
     "reason": "2026-09-24 — the user: \"Give Tony Parker and Deron Williams Super Seasons too\", with his Cavaliers Dissonance card. 2012-13 is his best by the box-score rule (BPM 3.8, VORP 4.2); the value pick weighs every eligible season"
+  },
+  "Paul Millsap": {
+    "season": 2015,
+    "reason": "2026-09-30 — the user, 2026-09-30: \"Definitely would love to get some Paul Millsap cards somewhere\"; the value pick settles the season"
+  },
+  "Dell Curry": {
+    "season": 1994,
+    "reason": "2026-09-30 — the user, 2026-09-30: \"Would be fun to have Dell Curry somewhere\"; the value pick settles the season"
+  },
+  "DeMarcus Cousins": {
+    "season": 2016,
+    "reason": "2026-09-30 — the user, 2026-09-30: \"Need Boogie somewhere\"; the value pick settles the season"
+  },
+  "Bernard King": {
+    "season": 1985,
+    "reason": "2026-09-30 — the user, 2026-09-30: \"need some Bernard King somewhere\"; the value pick settles the season"
+  },
+  "Shawn Marion": {
+    "season": 2006,
+    "reason": "2026-09-30 — the user, 2026-09-30: \"we need some Marion cards\"; the value pick settles the season"
+  },
+  "Arvydas Sabonis": {
+    "season": 1996,
+    "reason": "2026-09-30 — the user, 2026-09-30: \"Having Sabonis somewhere would be cool too\"; the value pick settles the season"
+  },
+  "Adrian Dantley": {
+    "season": 1986,
+    "reason": "2026-09-30 — the user, 2026-09-30: \"I like having a Dantley card somewhere\"; the value pick settles the season"
+  },
+  "Kristaps Porziņģis": {
+    "season": 2023,
+    "reason": "2026-09-30 — the user, 2026-09-30: \"need some Staps somewhere\"; the value pick settles the season"
+  },
+  "Derrick Rose": {
+    "season": 2011,
+    "reason": "2026-09-30 — the user, 2026-09-30: \"Def need Derrick Rose cards... Rookie, super season, all of it.\" The MVP year; it is the Bulls reward, moved in (the John Wall precedent); the value pick settles the season"
+  },
+  "Gerald Wallace": {
+    "season": 2007,
+    "reason": "2026-09-30 — the Charlotte reward until 2026-09-30; it wore Super Season gold as his best season, so it becomes his Super Season card when Kemba Walker takes the goal; the value pick settles the season"
+  },
+  "Sam Cassell": {
+    "season": 2004,
+    "reason": "2026-09-30 — the Minnesota reward until 2026-09-30; it wore Super Season gold as his best season, but the value pick found 1997-98 more valuable, so his Super Season is 1997-98 and the 2003-04 reward keeps its card as a Throwback; the value pick settles the season"
+  },
+  "Wesley Matthews": {
+    "season": 2015,
+    "reason": "2026-09-30 — the Portland reward until 2026-09-30; it wore Super Season gold as his best season, so it becomes his Super Season card when Clyde Drexler takes the goal; the value pick settles the season"
   }
 }

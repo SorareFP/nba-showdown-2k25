@@ -23,6 +23,11 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
+    id: 'rewards-beat-the-collection', date: '2026-09-30', title: 'Every collection reward re-picked, and new cards',
+    body: "A collection's reward now beats the best card that collection asks for, and is never a player on that team's current roster. New rewards include Derrick Rose's MVP season for Chicago, Dirk's 2011 title for Dallas, Larry Bird's 1985-86 for Boston, Yao Ming for Houston, Dr. J's 1980-81 MVP for Philadelphia and Alex English for Denver. The conference and full-set rewards are Set Rewards now, and each special set's reward is its own best card. A reward that left keeps its card: it went back to its set or became a Throwback, and anyone who earned it still has it. New cards: Super Seasons for Bernard King, Adrian Dantley, Arvydas Sabonis, DeMarcus Cousins, Kristaps Porzingis, Paul Millsap and Dell Curry; Rose's rookie card and three Dissonance cards; and Throwbacks for Blake Griffin, Lou Williams and Shawn Marion (those three join packs once their photos are in). Three-point lines also got finer: they used to land only on 12, 15, 18 or 20, and now use every number between.",
+    to: 'collection', cta: 'Collection',
+  },
+  {
     id: 'green-light-once-hidden-bench', date: '2026-09-30', title: 'Green Light once per player; the coach\'s bench stays hidden while it places',
     body: "Green Light can be played on a player once per section now; a second one on the same shooter is refused, and the coach follows the same rule. And while the coach is still placing its five, its bench no longer shows the fatigue tracker, so you can't tell who has to sit before its lineup is down. Everything shows again once its fifth player is placed.",
     to: 'play', cta: 'Play',

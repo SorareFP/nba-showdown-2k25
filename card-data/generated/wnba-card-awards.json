@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-30T11:45:11.785Z",
+ "generatedAt": "2026-09-30T16:53:43.785Z",
  "source": "Basketball-Reference's WNBA award voting pages (rank-1 rows) and each season page's Finals result. All-Star selections are the remaining gap: they live on per-season All-Star pages this does not fetch yet.",
  "declared": [
   "MVP",
@@ -15,6 +15,7 @@
   1999,
   2000,
   2001,
+  2002,
   2003,
   2004,
   2006,
@@ -396,6 +397,16 @@
     "champion": "MIN"
    },
    {
+    "id": "Mwadi_Mabika",
+    "name": "Mwadi Mabika",
+    "season": 2002,
+    "bbrefId": "mabikmw01w",
+    "awards": [
+     "CHAMP"
+    ],
+    "champion": "LAS"
+   },
+   {
     "id": "Cheryl_Ford",
     "name": "Cheryl Ford",
     "season": 2006,
@@ -414,16 +425,6 @@
      "CHAMP"
     ],
     "champion": "SEA"
-   },
-   {
-    "id": "Mwadi_Mabika",
-    "name": "Mwadi Mabika",
-    "season": 2001,
-    "bbrefId": "mabikmw01w",
-    "awards": [
-     "CHAMP"
-    ],
-    "champion": "LAS"
    }
   ]
  }

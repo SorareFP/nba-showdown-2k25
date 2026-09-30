@@ -487,8 +487,9 @@ describe('the base set\'s card-type badges', () => {
     // came the other way. A measurement of the price, as every note says.
     // 19 on 2026-09-29 (the conditional-rows rebuild): three base cards handed
     // the pill back to returning Super Season cards, two took it.
-    expect(printed.filter(id => id === SUPER_SEASON_BADGE).length).toBe(19);
-    expect(printed.filter(id => id === BEST_SEASON_BADGE).length).toBe(120);
+    // 18/124 on 2026-09-30, the never-worse rows: Camara's and Watford's Super Seasons left under the base-card and Rookie-card rules, and the $50 holder margin kept the four dropped ones from flipping back.
+    expect(printed.filter(id => id === SUPER_SEASON_BADGE).length).toBe(18);
+    expect(printed.filter(id => id === BEST_SEASON_BADGE).length).toBe(124);
     // Everyone who prints ROOKIE is someone the SUPER SEASON fact is also true
     // of — the nesting is what makes this a priority question and not a rule.
     // The tier does not touch it: a rookie card is cheap, its Super Season
@@ -521,8 +522,9 @@ describe('the base set\'s card-type badges', () => {
       // 19/120 on 2026-09-29 (the conditional-rows rebuild, 139 faces): three
       // base cards handed the pill back to returning Super Season cards, two
       // took it.
-      [SUPER_SEASON_BADGE]: 19,
-      [BEST_SEASON_BADGE]: 120,
+      // 18/124 on 2026-09-30, the never-worse rows: Camara's and Watford's Super Seasons left under the base-card and Rookie-card rules, and the $50 holder margin kept the four dropped ones from flipping back (142 faces).
+      [SUPER_SEASON_BADGE]: 18,
+      [BEST_SEASON_BADGE]: 124,
       // In the id list, never on a base-set record: the STANDOUT, TRADED and
       // TEAM REWARD pills are SET badges, worn by their whole sets and no one
       // else. A base-set player earning one would mean a special-set card had
@@ -997,7 +999,12 @@ describe('the award marks the studio joins on', () => {
     }
     const legendsMarked = SOURCES[WNBA_SUPER_SEASON_SET].players.filter(c => c.awards.length > 0);
     expect(legendsMarked.length).toBeGreaterThanOrEqual(8);
-    expect(SOURCES[WNBA_SET].players.every(c => c.awards.length === 0)).toBe(true);
+    // The 2026 season's own awards arrive as they are voted: Olivia Miles'
+    // Rookie of the Year was the first, on 2026-09-30 (generateWnbaAwards read
+    // the new voting page). A base card carries only its own season's awards.
+    const marked = SOURCES[WNBA_SET].players.filter(c => c.awards.length > 0);
+    expect(marked.map(c => c.name)).toContain('Olivia Miles');
+    expect(marked.length).toBeLessThanOrEqual(6);
   });
 
   it('never records a code the template cannot draw', () => {

@@ -489,7 +489,8 @@ describe('the base set\'s badges', () => {
     // Mitchell Robinson and Tyrese Martin their Super Seasons back and took
     // Camara's; the rookie rule took Watford's. The value pick itself moved
     // nobody — the shipped season now holds the card by REPICK_MARGIN.
-    expect(SUPER.cards.length).toBe(206);
+    // 203 on 2026-09-30, the never-worse rows: Camara's and Watford's Super Seasons left under the base-card and Rookie-card rules, and the $50 holder margin kept the four dropped ones from flipping back.
+    expect(SUPER.cards.length).toBe(203);
     //
     // AND 321 -> 348 WHEN THE STANDOUT NEWCOMERS' ROOKIE YEARS ARRIVED — every
     // standout outside the pool whose career begins inside the cache-and-EPM
@@ -635,10 +636,11 @@ describe('the base set\'s badges', () => {
     // the base badges — 173 badged players, not 178 (ten found a season that
     // beats their base card, and joined the Super Season set; five went the
     // other way). A measurement, as every note above says.
-    expect(counts.printed[BEST_SEASON_BADGE]).toBe(120);
+    // 124/18 on 2026-09-30, the never-worse rows: Camara's and Watford's Super Seasons left under the base-card and Rookie-card rules, and the $50 holder margin kept the four dropped ones from flipping back.
+    expect(counts.printed[BEST_SEASON_BADGE]).toBe(124);
     // 19 on 2026-09-29: three base cards handed the pill back to their
     // returning Super Season cards, two took it (see the 206 above).
-    expect(counts.printed[SUPER_SEASON_BADGE]).toBe(19);
+    expect(counts.printed[SUPER_SEASON_BADGE]).toBe(18);
     // Nobody loses their pill entirely in the resolution.
     expect(BADGE_IDS.reduce((n, id) => n + counts.printed[id], 0)).toBe(counts.players);
     expect(counts.multiple).toBe(ROOKIE.excluded.length);

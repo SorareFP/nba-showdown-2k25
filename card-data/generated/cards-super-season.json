@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-29T17:26:13.913Z",
+ "generatedAt": "2026-09-30T11:43:06.960Z",
  "set": "super-season",
  "provisional": true,
  "sources": {
@@ -740,7 +740,17 @@
    "badge": "super-season"
   },
   {
+   "name": "Jaden McDaniels",
+   "reason": "best season is the current one — its card is stronger",
+   "badge": "super-season"
+  },
+  {
    "name": "P.J. Washington",
+   "reason": "best season is the current one — its card is stronger",
+   "badge": "super-season"
+  },
+  {
+   "name": "Bennedict Mathurin",
    "reason": "best season is the current one — its card is stronger",
    "badge": "super-season"
   },
@@ -761,6 +771,11 @@
   },
   {
    "name": "Bilal Coulibaly",
+   "reason": "best season is the current one — its card is stronger",
+   "badge": "super-season"
+  },
+  {
+   "name": "Isaiah Hartenstein",
    "reason": "best season is the current one — its card is stronger",
    "badge": "super-season"
   },
@@ -825,6 +840,11 @@
    "badge": "super-season"
   },
   {
+   "name": "Tyrese Martin",
+   "reason": "best season is the current one — its card is stronger",
+   "badge": "super-season"
+  },
+  {
    "name": "Isaiah Jackson",
    "reason": "best season is the current one — its card is stronger",
    "badge": "super-season"
@@ -855,11 +875,6 @@
    "badge": "super-season"
   },
   {
-   "name": "Jaden McDaniels",
-   "reason": "best season is the current one — its card is stronger",
-   "badge": "super-season"
-  },
-  {
    "name": "Peyton Watson",
    "reason": "best season is the current one — its card is stronger",
    "badge": "super-season"
@@ -880,17 +895,17 @@
    "badge": "super-season"
   }
  ],
- "excludedCount": 172,
+ "excludedCount": 175,
  "excludedThin": [],
  "excludedThinCount": 0,
  "demoted": [
   {
-   "name": "Bennedict Mathurin",
-   "season": 2025,
-   "seasonLabel": "2024-25",
-   "salary": 530,
+   "name": "Mitchell Robinson",
+   "season": 2020,
+   "seasonLabel": "2019-20",
+   "salary": 620,
    "to": "throwbacks",
-   "id": "Bennedict_Mathurin_2025",
+   "id": "Mitchell_Robinson_2020",
    "reason": "the player's Rookie card is stronger — a Throwback instead"
   },
   {
@@ -906,34 +921,34 @@
    "name": "Yao Ming",
    "season": 2009,
    "seasonLabel": "2008-09",
-   "salary": 1320,
+   "salary": 1350,
    "to": "throwbacks",
    "id": "Yao_Ming_2009",
    "reason": "the player's Rookie card is stronger — a Throwback instead"
   },
   {
    "name": "Tim Duncan",
-   "season": 2007,
-   "seasonLabel": "2006-07",
+   "season": 2005,
+   "seasonLabel": "2004-05",
    "salary": 1560,
    "to": "throwbacks",
-   "id": "Tim_Duncan_2007",
+   "id": "Tim_Duncan_2005",
    "reason": "the player's Rookie card is stronger — a Throwback instead"
   },
   {
    "name": "David Robinson",
-   "season": 1992,
-   "seasonLabel": "1991-92",
+   "season": 1991,
+   "seasonLabel": "1990-91",
    "salary": 1550,
    "to": "throwbacks",
-   "id": "David_Robinson_1992",
+   "id": "David_Robinson_1991",
    "reason": "the player's Rookie card is stronger — a Throwback instead"
   },
   {
    "name": "Andrei Kirilenko",
    "season": 2003,
    "seasonLabel": "2002-03",
-   "salary": 1090,
+   "salary": 1080,
    "to": "throwbacks",
    "id": "Andrei_Kirilenko_2003",
    "reason": "the player's Rookie card is stronger — a Throwback instead"
@@ -941,15 +956,15 @@
  ],
  "valueRepicks": [
   {
-   "name": "Jaden McDaniels",
-   "bbrefId": "mcdanja02",
+   "name": "CJ McCollum",
+   "bbrefId": "mccolcj01",
    "from": {
-    "season": 2025,
-    "salary": 680
+    "season": 2024,
+    "salary": 1100
    },
    "to": {
-    "season": 2023,
-    "salary": 690
+    "season": 2017,
+    "salary": 1180
    }
   },
   {
@@ -961,7 +976,7 @@
    },
    "to": {
     "season": 2024,
-    "salary": 420
+    "salary": 430
    }
   },
   {
@@ -969,11 +984,11 @@
    "bbrefId": "achiupr01",
    "from": {
     "season": 2024,
-    "salary": 370
+    "salary": 360
    },
    "to": {
     "season": 2022,
-    "salary": 390
+    "salary": 410
    }
   },
   {
@@ -981,11 +996,11 @@
    "bbrefId": "hardyja02",
    "from": {
     "season": 2023,
-    "salary": 420
+    "salary": 430
    },
    "to": {
     "season": 2024,
-    "salary": 570
+    "salary": 550
    }
   },
   {
@@ -1001,6 +1016,18 @@
    }
   },
   {
+   "name": "Clint Capela",
+   "bbrefId": "capelca01",
+   "from": {
+    "season": 2021,
+    "salary": 960
+   },
+   "to": {
+    "season": 2019,
+    "salary": 1030
+   }
+  },
+  {
    "name": "Tim Duncan",
    "bbrefId": "duncati01",
    "from": {
@@ -1008,7 +1035,7 @@
     "salary": 1160
    },
    "to": {
-    "season": 2007,
+    "season": 2005,
     "salary": 1560
    }
   },
@@ -1017,10 +1044,10 @@
    "bbrefId": "robinda01",
    "from": {
     "season": 1994,
-    "salary": 1440
+    "salary": 1430
    },
    "to": {
-    "season": 1992,
+    "season": 1991,
     "salary": 1550
    }
   },
@@ -1029,10 +1056,22 @@
    "bbrefId": "kirilan01",
    "from": {
     "season": 2005,
-    "salary": 1030
+    "salary": 1070
    },
    "to": {
     "season": 2003,
+    "salary": 1080
+   }
+  },
+  {
+   "name": "Elton Brand",
+   "bbrefId": "brandel01",
+   "from": {
+    "season": 2002,
+    "salary": 1030
+   },
+   "to": {
+    "season": 2006,
     "salary": 1090
    }
   }
@@ -1231,13 +1270,6 @@
    "name": "Dwyane Wade",
    "bbrefId": "wadedw01",
    "season": 2009,
-   "since": "2026-09-24",
-   "reason": "another season of the player is the stronger card — a Throwback instead"
-  },
-  {
-   "name": "Elton Brand",
-   "bbrefId": "brandel01",
-   "season": 2006,
    "since": "2026-09-24",
    "reason": "another season of the player is the stronger card — a Throwback instead"
   },
@@ -1473,6 +1505,13 @@
    "reason": "another season of the player is the stronger card — a Throwback instead"
   },
   {
+   "name": "Mitchell Robinson",
+   "bbrefId": "robinmi01",
+   "season": 2020,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
    "name": "Myles Turner",
    "bbrefId": "turnemy01",
    "season": 2019,
@@ -1557,6 +1596,13 @@
    "reason": "another season of the player is the stronger card — a Throwback instead"
   },
   {
+   "name": "Tyrese Martin",
+   "bbrefId": "martity01",
+   "season": 2025,
+   "since": "2026-09-24",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
    "name": "Tyus Jones",
    "bbrefId": "jonesty01",
    "season": 2023,
@@ -1571,17 +1617,38 @@
    "reason": "another season of the player is the stronger card — a Throwback instead"
   },
   {
+   "name": "CJ McCollum",
+   "bbrefId": "mccolcj01",
+   "season": 2024,
+   "since": "2026-09-30",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Clint Capela",
+   "bbrefId": "capelca01",
+   "season": 2021,
+   "since": "2026-09-30",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
+   "name": "Elton Brand",
+   "bbrefId": "brandel01",
+   "season": 2002,
+   "since": "2026-09-30",
+   "reason": "another season of the player is the stronger card — a Throwback instead"
+  },
+  {
    "name": "Toumani Camara",
    "bbrefId": "camarto01",
    "season": 2025,
-   "since": "2026-09-29",
+   "since": "2026-09-30",
    "reason": "another season of the player is the stronger card — a Throwback instead"
   },
   {
    "name": "Trendon Watford",
    "bbrefId": "watfotr01",
    "season": 2023,
-   "since": "2026-09-29",
+   "since": "2026-09-30",
    "reason": "another season of the player is the stronger card — a Throwback instead"
   }
  ],
@@ -1689,7 +1756,7 @@
    "paintBoost": 3,
    "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 1040,
+   "salary": 1080,
    "chart": [
     {
      "lo": 1,
@@ -1710,17 +1777,10 @@
      "hi": 14,
      "pts": 2,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 15,
-     "hi": 20,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 21,
      "hi": 99,
      "pts": 2,
      "reb": 1,
@@ -1754,7 +1814,7 @@
    "paintBoost": -1,
    "threePtBoost": 2,
    "defBoost": 0,
-   "salary": 600,
+   "salary": 620,
    "chart": [
     {
      "lo": 1,
@@ -1768,14 +1828,14 @@
      "hi": 6,
      "pts": 0,
      "reb": 0,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 7,
      "hi": 13,
      "pts": 1,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 14,
@@ -1877,7 +1937,7 @@
    "paintBoost": 1,
    "threePtBoost": -2,
    "defBoost": 2,
-   "salary": 1100,
+   "salary": 1090,
    "chart": [
     {
      "lo": 1,
@@ -1935,7 +1995,7 @@
    "paintBoost": -2,
    "threePtBoost": 2,
    "defBoost": 2,
-   "salary": 760,
+   "salary": 800,
    "chart": [
     {
      "lo": 1,
@@ -1949,7 +2009,7 @@
      "hi": 7,
      "pts": 0,
      "reb": 0,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 8,
@@ -1960,13 +2020,6 @@
     },
     {
      "lo": 14,
-     "hi": 22,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 23,
      "hi": 99,
      "pts": 2,
      "reb": 1,
@@ -2000,7 +2053,7 @@
    "paintBoost": 0,
    "threePtBoost": -3,
    "defBoost": 2,
-   "salary": 1180,
+   "salary": 1170,
    "chart": [
     {
      "lo": 1,
@@ -2058,7 +2111,7 @@
    "paintBoost": 2,
    "threePtBoost": -6,
    "defBoost": 1,
-   "salary": 1540,
+   "salary": 1530,
    "chart": [
     {
      "lo": 1,
@@ -2072,7 +2125,7 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
@@ -2239,7 +2292,7 @@
    "paintBoost": 0,
    "threePtBoost": -3,
    "defBoost": 0,
-   "salary": 560,
+   "salary": 590,
    "chart": [
     {
      "lo": 1,
@@ -2252,7 +2305,7 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -2260,7 +2313,7 @@
      "hi": 14,
      "pts": 1,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 15,
@@ -2304,7 +2357,7 @@
    "paintBoost": -2,
    "threePtBoost": 3,
    "defBoost": -3,
-   "salary": 870,
+   "salary": 880,
    "chart": [
     {
      "lo": 1,
@@ -2329,16 +2382,9 @@
     },
     {
      "lo": 15,
-     "hi": 20,
-     "pts": 3,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 21,
      "hi": 99,
      "pts": 3,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     }
    ],
@@ -2369,7 +2415,7 @@
    "paintBoost": 4,
    "threePtBoost": -2,
    "defBoost": 1,
-   "salary": 1630,
+   "salary": 1620,
    "chart": [
     {
      "lo": 1,
@@ -2434,7 +2480,7 @@
    "paintBoost": 0,
    "threePtBoost": 4,
    "defBoost": 0,
-   "salary": 1450,
+   "salary": 1470,
    "chart": [
     {
      "lo": 1,
@@ -2448,7 +2494,7 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 7,
@@ -2462,7 +2508,7 @@
      "hi": 20,
      "pts": 3,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 21,
@@ -2519,14 +2565,14 @@
      "lo": 7,
      "hi": 8,
      "pts": 1,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
      "lo": 9,
      "hi": 12,
      "pts": 1,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -2571,7 +2617,7 @@
    "paintBoost": 1,
    "threePtBoost": 3,
    "defBoost": 0,
-   "salary": 760,
+   "salary": 780,
    "chart": [
     {
      "lo": 1,
@@ -2585,14 +2631,14 @@
      "hi": 8,
      "pts": 0,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 9,
      "hi": 14,
      "pts": 1,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 15,
@@ -2629,7 +2675,7 @@
    "paintBoost": 1,
    "threePtBoost": 0,
    "defBoost": -1,
-   "salary": 1120,
+   "salary": 1130,
    "chart": [
     {
      "lo": 1,
@@ -2642,7 +2688,7 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 1,
+     "reb": 0,
      "ast": 1
     },
     {
@@ -2656,7 +2702,7 @@
      "lo": 15,
      "hi": 21,
      "pts": 3,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -2694,7 +2740,7 @@
    "paintBoost": 2,
    "threePtBoost": -2,
    "defBoost": 2,
-   "salary": 1230,
+   "salary": 1220,
    "chart": [
     {
      "lo": 1,
@@ -2759,7 +2805,7 @@
    "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": 0,
-   "salary": 810,
+   "salary": 820,
    "chart": [
     {
      "lo": 1,
@@ -2791,16 +2837,9 @@
     },
     {
      "lo": 15,
-     "hi": 20,
-     "pts": 2,
-     "reb": 2,
-     "ast": 0
-    },
-    {
-     "lo": 21,
      "hi": 99,
      "pts": 2,
-     "reb": 1,
+     "reb": 2,
      "ast": 0
     }
    ],
@@ -2831,7 +2870,7 @@
    "paintBoost": -1,
    "threePtBoost": 0,
    "defBoost": 1,
-   "salary": 620,
+   "salary": 650,
    "chart": [
     {
      "lo": 1,
@@ -2845,31 +2884,24 @@
      "hi": 3,
      "pts": 0,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 4,
      "hi": 7,
      "pts": 1,
-     "reb": 1,
-     "ast": 1
+     "reb": 0,
+     "ast": 0
     },
     {
      "lo": 8,
      "hi": 14,
      "pts": 1,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 15,
-     "hi": 22,
-     "pts": 2,
      "reb": 1,
      "ast": 0
     },
     {
-     "lo": 23,
+     "lo": 15,
      "hi": 99,
      "pts": 2,
      "reb": 1,
@@ -2903,7 +2935,7 @@
    "paintBoost": 1,
    "threePtBoost": 4,
    "defBoost": 0,
-   "salary": 1320,
+   "salary": 1340,
    "chart": [
     {
      "lo": 1,
@@ -2928,17 +2960,10 @@
     },
     {
      "lo": 16,
-     "hi": 21,
-     "pts": 3,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 22,
      "hi": 99,
      "pts": 3,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     }
    ],
    "season": 2020,
@@ -2981,7 +3006,7 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
@@ -2993,13 +3018,6 @@
     },
     {
      "lo": 15,
-     "hi": 20,
-     "pts": 3,
-     "reb": 0,
-     "ast": 1
-    },
-    {
-     "lo": 21,
      "hi": 99,
      "pts": 3,
      "reb": 1,
@@ -3033,7 +3051,7 @@
    "paintBoost": -1,
    "threePtBoost": 3,
    "defBoost": -2,
-   "salary": 520,
+   "salary": 530,
    "chart": [
     {
      "lo": 1,
@@ -3047,14 +3065,14 @@
      "hi": 3,
      "pts": 0,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 4,
      "hi": 7,
      "pts": 1,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 8,
@@ -3068,14 +3086,14 @@
      "hi": 21,
      "pts": 2,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 22,
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     }
    ],
    "season": 2025,
@@ -3430,7 +3448,7 @@
      "hi": 7,
      "pts": 0,
      "reb": 0,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 8,
@@ -3441,13 +3459,6 @@
     },
     {
      "lo": 16,
-     "hi": 20,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 21,
      "hi": 99,
      "pts": 2,
      "reb": 1,
@@ -3611,7 +3622,7 @@
    "paintBoost": 1,
    "threePtBoost": -1,
    "defBoost": -1,
-   "salary": 850,
+   "salary": 860,
    "chart": [
     {
      "lo": 1,
@@ -3636,17 +3647,10 @@
     },
     {
      "lo": 14,
-     "hi": 22,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 23,
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     }
    ],
    "season": 2025,
@@ -3668,15 +3672,15 @@
   {
    "id": "CJ_McCollum",
    "name": "CJ McCollum",
-   "team": "NOP",
-   "pos": "PG",
-   "speed": 14,
-   "power": 8,
-   "shotLine": 16,
-   "paintBoost": -2,
-   "threePtBoost": 4,
-   "defBoost": 0,
-   "salary": 1090,
+   "team": "POR",
+   "pos": "SG",
+   "speed": 15,
+   "power": 9,
+   "shotLine": 15,
+   "paintBoost": -1,
+   "threePtBoost": 3,
+   "defBoost": -1,
+   "salary": 1180,
    "chart": [
     {
      "lo": 1,
@@ -3687,61 +3691,61 @@
     },
     {
      "lo": 3,
-     "hi": 6,
+     "hi": 7,
      "pts": 0,
      "reb": 1,
      "ast": 0
     },
     {
-     "lo": 7,
-     "hi": 15,
+     "lo": 8,
+     "hi": 14,
      "pts": 2,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
-     "lo": 16,
-     "hi": 20,
+     "lo": 15,
+     "hi": 21,
      "pts": 3,
      "reb": 0,
      "ast": 1
     },
     {
-     "lo": 21,
+     "lo": 22,
      "hi": 99,
      "pts": 3,
      "reb": 1,
      "ast": 1
     }
    ],
-   "season": 2024,
-   "seasonLabel": "2023-24",
-   "age": 32,
-   "games": 66,
-   "mpg": 32.7,
+   "season": 2017,
+   "seasonLabel": "2016-17",
+   "age": 25,
+   "games": 80,
+   "mpg": 35,
    "bbrefId": "mccolcj01",
    "traded": false,
    "metrics": {
-    "bpm": 3.1,
+    "bpm": 2,
     "vorp": 2.8,
-    "ws": 5.9,
-    "ws48": 0.132,
-    "per": 17.9
+    "ws": 7.6,
+    "ws48": 0.131,
+    "per": 19.9
    },
    "provisional": false
   },
   {
    "id": "Clint_Capela",
    "name": "Clint Capela",
-   "team": "ATL",
+   "team": "HOU03",
    "pos": "C",
-   "speed": 10,
+   "speed": 9,
    "power": 16,
    "shotLine": 18,
-   "paintBoost": 4,
+   "paintBoost": 6,
    "threePtBoost": -2,
    "defBoost": 0,
-   "salary": 960,
+   "salary": 1030,
    "chart": [
     {
      "lo": 1,
@@ -3754,8 +3758,8 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 2,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 7,
@@ -3772,19 +3776,19 @@
      "ast": 0
     }
    ],
-   "season": 2021,
-   "seasonLabel": "2020-21",
-   "age": 26,
-   "games": 63,
-   "mpg": 30.1,
+   "season": 2019,
+   "seasonLabel": "2018-19",
+   "age": 24,
+   "games": 67,
+   "mpg": 33.6,
    "bbrefId": "capelca01",
    "traded": false,
    "metrics": {
-    "bpm": 2.7,
-    "vorp": 2.2,
-    "ws": 8.2,
-    "ws48": 0.207,
-    "per": 24.3
+    "bpm": 3,
+    "vorp": 2.8,
+    "ws": 10.8,
+    "ws48": 0.23,
+    "per": 23.8
    },
    "provisional": false
   },
@@ -3799,7 +3803,7 @@
    "paintBoost": 1,
    "threePtBoost": 0,
    "defBoost": 2,
-   "salary": 1490,
+   "salary": 1500,
    "chart": [
     {
      "lo": 1,
@@ -3813,14 +3817,14 @@
      "hi": 6,
      "pts": 0,
      "reb": 0,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 7,
      "hi": 14,
      "pts": 2,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 15,
@@ -3877,21 +3881,14 @@
      "lo": 7,
      "hi": 14,
      "pts": 2,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 15,
-     "hi": 21,
-     "pts": 3,
-     "reb": 0,
-     "ast": 1
-    },
-    {
-     "lo": 22,
      "hi": 99,
      "pts": 3,
-     "reb": 1,
+     "reb": 0,
      "ast": 1
     }
    ],
@@ -3935,7 +3932,7 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -3987,7 +3984,7 @@
    "paintBoost": 0,
    "threePtBoost": 1,
    "defBoost": -2,
-   "salary": 490,
+   "salary": 500,
    "chart": [
     {
      "lo": 1,
@@ -4000,7 +3997,7 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -4052,7 +4049,7 @@
    "paintBoost": -2,
    "threePtBoost": 2,
    "defBoost": -1,
-   "salary": 1950,
+   "salary": 1960,
    "chart": [
     {
      "lo": 1,
@@ -4066,27 +4063,20 @@
      "hi": 6,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
      "hi": 13,
      "pts": 3,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 14,
-     "hi": 20,
-     "pts": 4,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 21,
      "hi": 99,
      "pts": 4,
-     "reb": 0,
+     "reb": 1,
      "ast": 1
     }
    ],
@@ -4117,7 +4107,7 @@
    "paintBoost": 2,
    "threePtBoost": -6,
    "defBoost": 2,
-   "salary": 800,
+   "salary": 810,
    "chart": [
     {
      "lo": 1,
@@ -4131,14 +4121,14 @@
      "hi": 7,
      "pts": 0,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 8,
      "hi": 13,
      "pts": 1,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 14,
@@ -4182,7 +4172,7 @@
    "paintBoost": -2,
    "threePtBoost": 4,
    "defBoost": -1,
-   "salary": 1280,
+   "salary": 1270,
    "chart": [
     {
      "lo": 1,
@@ -4240,7 +4230,7 @@
    "paintBoost": 1,
    "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 1420,
+   "salary": 1440,
    "chart": [
     {
      "lo": 1,
@@ -4265,16 +4255,9 @@
     },
     {
      "lo": 15,
-     "hi": 21,
-     "pts": 3,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 22,
      "hi": 99,
      "pts": 3,
-     "reb": 0,
+     "reb": 1,
      "ast": 1
     }
    ],
@@ -4305,7 +4288,7 @@
    "paintBoost": -1,
    "threePtBoost": 3,
    "defBoost": -1,
-   "salary": 940,
+   "salary": 990,
    "chart": [
     {
      "lo": 1,
@@ -4319,27 +4302,20 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 7,
      "hi": 14,
      "pts": 2,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 15,
-     "hi": 20,
-     "pts": 3,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 21,
      "hi": 99,
      "pts": 3,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     }
    ],
@@ -4370,7 +4346,7 @@
    "paintBoost": 1,
    "threePtBoost": -7,
    "defBoost": 1,
-   "salary": 1370,
+   "salary": 1400,
    "chart": [
     {
      "lo": 1,
@@ -4384,7 +4360,7 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 7,
@@ -4405,7 +4381,7 @@
      "hi": 99,
      "pts": 3,
      "reb": 2,
-     "ast": 0
+     "ast": 1
     }
    ],
    "season": 2022,
@@ -4435,7 +4411,7 @@
    "paintBoost": 3,
    "threePtBoost": -5,
    "defBoost": 1,
-   "salary": 950,
+   "salary": 970,
    "chart": [
     {
      "lo": 1,
@@ -4456,7 +4432,7 @@
      "hi": 14,
      "pts": 1,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 15,
@@ -4493,7 +4469,7 @@
    "paintBoost": 0,
    "threePtBoost": 1,
    "defBoost": 2,
-   "salary": 1220,
+   "salary": 1210,
    "chart": [
     {
      "lo": 1,
@@ -4551,7 +4527,7 @@
    "paintBoost": 0,
    "threePtBoost": -3,
    "defBoost": -1,
-   "salary": 1220,
+   "salary": 1210,
    "chart": [
     {
      "lo": 1,
@@ -4616,7 +4592,7 @@
    "paintBoost": 6,
    "threePtBoost": -2,
    "defBoost": 0,
-   "salary": 840,
+   "salary": 850,
    "chart": [
     {
      "lo": 1,
@@ -4637,14 +4613,14 @@
      "hi": 7,
      "pts": 1,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 8,
      "hi": 12,
      "pts": 1,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 13,
@@ -4688,7 +4664,7 @@
    "paintBoost": -1,
    "threePtBoost": 0,
    "defBoost": -1,
-   "salary": 870,
+   "salary": 880,
    "chart": [
     {
      "lo": 1,
@@ -4702,7 +4678,7 @@
      "hi": 6,
      "pts": 0,
      "reb": 0,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 7,
@@ -4713,13 +4689,6 @@
     },
     {
      "lo": 15,
-     "hi": 21,
-     "pts": 3,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 22,
      "hi": 99,
      "pts": 3,
      "reb": 1,
@@ -4753,7 +4722,7 @@
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 940,
+   "salary": 970,
    "chart": [
     {
      "lo": 1,
@@ -4766,7 +4735,7 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 1,
+     "reb": 0,
      "ast": 1
     },
     {
@@ -4780,7 +4749,7 @@
      "lo": 15,
      "hi": 99,
      "pts": 2,
-     "reb": 0,
+     "reb": 1,
      "ast": 1
     }
    ],
@@ -4832,14 +4801,14 @@
      "hi": 7,
      "pts": 1,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 8,
      "hi": 11,
      "pts": 1,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 12,
@@ -4876,7 +4845,7 @@
    "paintBoost": 1,
    "threePtBoost": 3,
    "defBoost": 1,
-   "salary": 1060,
+   "salary": 1080,
    "chart": [
     {
      "lo": 1,
@@ -4897,7 +4866,7 @@
      "hi": 14,
      "pts": 2,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 15,
@@ -5003,7 +4972,7 @@
    "paintBoost": 2,
    "threePtBoost": 0,
    "defBoost": -1,
-   "salary": 1520,
+   "salary": 1510,
    "chart": [
     {
      "lo": 1,
@@ -5068,7 +5037,7 @@
    "paintBoost": -1,
    "threePtBoost": 1,
    "defBoost": -1,
-   "salary": 870,
+   "salary": 880,
    "chart": [
     {
      "lo": 1,
@@ -5082,7 +5051,7 @@
      "hi": 6,
      "pts": 0,
      "reb": 0,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 7,
@@ -5103,7 +5072,7 @@
      "hi": 99,
      "pts": 3,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     }
    ],
    "season": 2021,
@@ -5133,7 +5102,7 @@
    "paintBoost": 2,
    "threePtBoost": -1,
    "defBoost": 1,
-   "salary": 1530,
+   "salary": 1520,
    "chart": [
     {
      "lo": 1,
@@ -5191,7 +5160,7 @@
    "paintBoost": 4,
    "threePtBoost": -2,
    "defBoost": 1,
-   "salary": 1190,
+   "salary": 1180,
    "chart": [
     {
      "lo": 1,
@@ -5256,7 +5225,7 @@
    "paintBoost": 0,
    "threePtBoost": -3,
    "defBoost": 0,
-   "salary": 1400,
+   "salary": 1390,
    "chart": [
     {
      "lo": 1,
@@ -5321,7 +5290,7 @@
    "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": 1,
-   "salary": 1760,
+   "salary": 1750,
    "chart": [
     {
      "lo": 1,
@@ -5386,7 +5355,7 @@
    "paintBoost": -4,
    "threePtBoost": 2,
    "defBoost": 1,
-   "salary": 870,
+   "salary": 950,
    "chart": [
     {
      "lo": 1,
@@ -5400,7 +5369,7 @@
      "hi": 3,
      "pts": 0,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 4,
@@ -5414,14 +5383,14 @@
      "hi": 13,
      "pts": 2,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 14,
      "hi": 21,
      "pts": 2,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 22,
@@ -5581,7 +5550,7 @@
    "paintBoost": 3,
    "threePtBoost": -5,
    "defBoost": 2,
-   "salary": 1540,
+   "salary": 1530,
    "chart": [
     {
      "lo": 1,
@@ -5711,7 +5680,7 @@
    "paintBoost": 4,
    "threePtBoost": -2,
    "defBoost": 2,
-   "salary": 1610,
+   "salary": 1600,
    "chart": [
     {
      "lo": 1,
@@ -5770,13 +5739,13 @@
    "name": "Elton Brand",
    "team": "LAC84",
    "pos": "PF",
-   "speed": 11,
-   "power": 15,
-   "shotLine": 16,
-   "paintBoost": 4,
-   "threePtBoost": -4,
-   "defBoost": 0,
-   "salary": 1030,
+   "speed": 12,
+   "power": 16,
+   "shotLine": 14,
+   "paintBoost": 1,
+   "threePtBoost": -6,
+   "defBoost": 2,
+   "salary": 1090,
    "chart": [
     {
      "lo": 1,
@@ -5790,36 +5759,43 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 7,
-     "hi": 15,
+     "hi": 13,
      "pts": 2,
      "reb": 1,
      "ast": 0
     },
     {
-     "lo": 16,
-     "hi": 99,
+     "lo": 14,
+     "hi": 20,
      "pts": 2,
      "reb": 1,
      "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
     }
    ],
-   "season": 2002,
-   "seasonLabel": "2001-02",
-   "age": 22,
-   "games": 80,
-   "mpg": 37.8,
+   "season": 2006,
+   "seasonLabel": "2005-06",
+   "age": 26,
+   "games": 79,
+   "mpg": 39.2,
    "bbrefId": "brandel01",
    "traded": false,
    "metrics": {
-    "bpm": 4.3,
-    "vorp": 4.8,
-    "ws": 13.6,
-    "ws48": 0.216,
-    "per": 23.6
+    "bpm": 6.7,
+    "vorp": 6.8,
+    "ws": 14.8,
+    "ws48": 0.229,
+    "per": 26.5
    },
    "provisional": false
   },
@@ -5899,7 +5875,7 @@
    "paintBoost": 1,
    "threePtBoost": -3,
    "defBoost": 1,
-   "salary": 1250,
+   "salary": 1260,
    "chart": [
     {
      "lo": 1,
@@ -5912,14 +5888,14 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
      "lo": 7,
      "hi": 14,
      "pts": 2,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -6022,7 +5998,7 @@
    "paintBoost": -3,
    "threePtBoost": 0,
    "defBoost": 1,
-   "salary": 570,
+   "salary": 540,
    "chart": [
     {
      "lo": 1,
@@ -6035,22 +6011,15 @@
      "lo": 3,
      "hi": 3,
      "pts": 0,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
      "lo": 4,
-     "hi": 7,
-     "pts": 1,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 8,
      "hi": 14,
      "pts": 1,
      "reb": 0,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 15,
@@ -6063,8 +6032,8 @@
      "lo": 23,
      "hi": 99,
      "pts": 2,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     }
    ],
    "season": 2022,
@@ -6094,7 +6063,7 @@
    "paintBoost": 2,
    "threePtBoost": 3,
    "defBoost": 0,
-   "salary": 920,
+   "salary": 910,
    "chart": [
     {
      "lo": 1,
@@ -6108,21 +6077,28 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 7,
      "hi": 14,
      "pts": 2,
      "reb": 0,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 15,
-     "hi": 99,
+     "hi": 20,
      "pts": 2,
      "reb": 0,
      "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
     }
    ],
    "season": 2018,
@@ -6152,7 +6128,7 @@
    "paintBoost": 0,
    "threePtBoost": -3,
    "defBoost": 3,
-   "salary": 930,
+   "salary": 970,
    "chart": [
     {
      "lo": 1,
@@ -6166,17 +6142,10 @@
      "hi": 4,
      "pts": 0,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 5,
-     "hi": 8,
-     "pts": 1,
-     "reb": 0,
-     "ast": 1
-    },
-    {
-     "lo": 9,
      "hi": 11,
      "pts": 1,
      "reb": 0,
@@ -6187,7 +6156,7 @@
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     }
    ],
    "season": 2022,
@@ -6275,7 +6244,7 @@
    "paintBoost": 3,
    "threePtBoost": 0,
    "defBoost": 4,
-   "salary": 2280,
+   "salary": 2270,
    "chart": [
     {
      "lo": 1,
@@ -6346,14 +6315,14 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 1,
+     "reb": 0,
      "ast": 1
     },
     {
      "lo": 7,
      "hi": 14,
      "pts": 2,
-     "reb": 0,
+     "reb": 1,
      "ast": 1
     },
     {
@@ -6456,7 +6425,7 @@
    "paintBoost": 1,
    "threePtBoost": -3,
    "defBoost": 0,
-   "salary": 1310,
+   "salary": 1350,
    "chart": [
     {
      "lo": 1,
@@ -6470,7 +6439,7 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 7,
@@ -6484,7 +6453,7 @@
      "hi": 99,
      "pts": 3,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     }
    ],
    "season": 2000,
@@ -6579,7 +6548,7 @@
    "paintBoost": 2,
    "threePtBoost": -5,
    "defBoost": 4,
-   "salary": 1540,
+   "salary": 1530,
    "chart": [
     {
      "lo": 1,
@@ -6644,7 +6613,7 @@
    "paintBoost": 1,
    "threePtBoost": 0,
    "defBoost": -1,
-   "salary": 750,
+   "salary": 740,
    "chart": [
     {
      "lo": 1,
@@ -6658,7 +6627,7 @@
      "hi": 7,
      "pts": 0,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 8,
@@ -6669,17 +6638,10 @@
     },
     {
      "lo": 15,
-     "hi": 22,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 23,
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2021,
@@ -6709,7 +6671,7 @@
    "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": 2,
-   "salary": 670,
+   "salary": 690,
    "chart": [
     {
      "lo": 1,
@@ -6722,7 +6684,7 @@
      "lo": 3,
      "hi": 7,
      "pts": 0,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
@@ -6736,7 +6698,7 @@
      "lo": 15,
      "hi": 22,
      "pts": 2,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -6822,71 +6784,6 @@
    "provisional": false
   },
   {
-   "id": "Isaiah_Hartenstein",
-   "name": "Isaiah Hartenstein",
-   "team": "LAC16",
-   "pos": "C",
-   "speed": 7,
-   "power": 12,
-   "shotLine": 14,
-   "paintBoost": 1,
-   "threePtBoost": -4,
-   "defBoost": 3,
-   "salary": 880,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 4,
-     "pts": 0,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 5,
-     "hi": 7,
-     "pts": 1,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 8,
-     "hi": 13,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 14,
-     "hi": 99,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    }
-   ],
-   "season": 2022,
-   "seasonLabel": "2021-22",
-   "age": 23,
-   "games": 68,
-   "mpg": 17.9,
-   "bbrefId": "harteis01",
-   "traded": false,
-   "metrics": {
-    "bpm": 4.5,
-    "vorp": 2,
-    "ws": 5.5,
-    "ws48": 0.215,
-    "per": 22
-   },
-   "provisional": false
-  },
-  {
    "id": "Ivica_Zubac",
    "name": "Ivica Zubac",
    "team": "LAC",
@@ -6955,7 +6852,7 @@
    "paintBoost": 0,
    "threePtBoost": 1,
    "defBoost": 1,
-   "salary": 1670,
+   "salary": 1650,
    "chart": [
     {
      "lo": 1,
@@ -6968,7 +6865,7 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 1
     },
     {
@@ -6980,6 +6877,13 @@
     },
     {
      "lo": 16,
+     "hi": 20,
+     "pts": 4,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 21,
      "hi": 99,
      "pts": 4,
      "reb": 1,
@@ -7013,7 +6917,7 @@
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 640,
+   "salary": 630,
    "chart": [
     {
      "lo": 1,
@@ -7143,7 +7047,7 @@
    "paintBoost": 2,
    "threePtBoost": -5,
    "defBoost": 1,
-   "salary": 960,
+   "salary": 1010,
    "chart": [
     {
      "lo": 1,
@@ -7157,7 +7061,7 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 7,
@@ -7171,14 +7075,14 @@
      "hi": 21,
      "pts": 2,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 22,
      "hi": 99,
      "pts": 2,
      "reb": 2,
-     "ast": 0
+     "ast": 1
     }
    ],
    "season": 2022,
@@ -7208,7 +7112,7 @@
    "paintBoost": -2,
    "threePtBoost": 3,
    "defBoost": 0,
-   "salary": 1900,
+   "salary": 1850,
    "chart": [
     {
      "lo": 1,
@@ -7221,28 +7125,21 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 7,
      "hi": 14,
      "pts": 3,
-     "reb": 0,
-     "ast": 1
+     "reb": 1,
+     "ast": 0
     },
     {
      "lo": 15,
-     "hi": 20,
-     "pts": 4,
-     "reb": 0,
-     "ast": 1
-    },
-    {
-     "lo": 21,
      "hi": 99,
      "pts": 4,
-     "reb": 1,
+     "reb": 0,
      "ast": 1
     }
    ],
@@ -7273,7 +7170,7 @@
    "paintBoost": 0,
    "threePtBoost": 1,
    "defBoost": -1,
-   "salary": 800,
+   "salary": 790,
    "chart": [
     {
      "lo": 1,
@@ -7338,7 +7235,7 @@
    "paintBoost": -1,
    "threePtBoost": -3,
    "defBoost": -1,
-   "salary": 1140,
+   "salary": 1130,
    "chart": [
     {
      "lo": 1,
@@ -7410,7 +7307,7 @@
    "paintBoost": 1,
    "threePtBoost": 3,
    "defBoost": 0,
-   "salary": 1330,
+   "salary": 1320,
    "chart": [
     {
      "lo": 1,
@@ -7423,28 +7320,21 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
      "lo": 7,
      "hi": 14,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
      "lo": 15,
-     "hi": 20,
-     "pts": 3,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 21,
      "hi": 99,
      "pts": 3,
-     "reb": 0,
+     "reb": 1,
      "ast": 1
     }
    ],
@@ -7605,7 +7495,7 @@
    "paintBoost": 2,
    "threePtBoost": 0,
    "defBoost": 1,
-   "salary": 2050,
+   "salary": 2030,
    "chart": [
     {
      "lo": 1,
@@ -7749,14 +7639,21 @@
      "hi": 14,
      "pts": 3,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 15,
-     "hi": 99,
+     "hi": 20,
      "pts": 3,
      "reb": 1,
      "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
     }
    ],
    "season": 2025,
@@ -7804,31 +7701,24 @@
     },
     {
      "lo": 5,
-     "hi": 8,
-     "pts": 1,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 9,
      "hi": 17,
      "pts": 1,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 18,
      "hi": 24,
      "pts": 1,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 25,
      "hi": 99,
      "pts": 1,
      "reb": 2,
-     "ast": 0
+     "ast": 1
     }
    ],
    "season": 2021,
@@ -7858,7 +7748,7 @@
    "paintBoost": 0,
    "threePtBoost": -1,
    "defBoost": 0,
-   "salary": 1070,
+   "salary": 1060,
    "chart": [
     {
      "lo": 1,
@@ -7923,7 +7813,7 @@
    "paintBoost": 3,
    "threePtBoost": 0,
    "defBoost": 1,
-   "salary": 1610,
+   "salary": 1630,
    "chart": [
     {
      "lo": 1,
@@ -7948,13 +7838,6 @@
     },
     {
      "lo": 15,
-     "hi": 20,
-     "pts": 3,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 21,
      "hi": 99,
      "pts": 3,
      "reb": 1,
@@ -7988,7 +7871,7 @@
    "paintBoost": 0,
    "threePtBoost": 4,
    "defBoost": -1,
-   "salary": 1000,
+   "salary": 990,
    "chart": [
     {
      "lo": 1,
@@ -8008,21 +7891,14 @@
      "lo": 7,
      "hi": 15,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 1
     },
     {
      "lo": 16,
-     "hi": 20,
-     "pts": 3,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 21,
      "hi": 99,
      "pts": 3,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     }
    ],
@@ -8118,7 +7994,7 @@
    "paintBoost": -1,
    "threePtBoost": 5,
    "defBoost": 1,
-   "salary": 450,
+   "salary": 470,
    "chart": [
     {
      "lo": 1,
@@ -8129,17 +8005,10 @@
     },
     {
      "lo": 3,
-     "hi": 5,
+     "hi": 8,
      "pts": 0,
      "reb": 1,
      "ast": 1
-    },
-    {
-     "lo": 6,
-     "hi": 8,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
     },
     {
      "lo": 9,
@@ -8190,7 +8059,7 @@
    "paintBoost": 2,
    "threePtBoost": -1,
    "defBoost": 2,
-   "salary": 1400,
+   "salary": 1390,
    "chart": [
     {
      "lo": 1,
@@ -8255,7 +8124,7 @@
    "paintBoost": 3,
    "threePtBoost": 0,
    "defBoost": 2,
-   "salary": 2030,
+   "salary": 2070,
    "chart": [
     {
      "lo": 1,
@@ -8268,7 +8137,7 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 2,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -8280,9 +8149,16 @@
     },
     {
      "lo": 15,
-     "hi": 99,
+     "hi": 21,
      "pts": 4,
      "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 4,
+     "reb": 2,
      "ast": 1
     }
    ],
@@ -8313,7 +8189,7 @@
    "paintBoost": 2,
    "threePtBoost": -1,
    "defBoost": 0,
-   "salary": 1190,
+   "salary": 1180,
    "chart": [
     {
      "lo": 1,
@@ -8371,7 +8247,7 @@
    "paintBoost": 3,
    "threePtBoost": 3,
    "defBoost": 2,
-   "salary": 1220,
+   "salary": 1280,
    "chart": [
     {
      "lo": 1,
@@ -8392,14 +8268,14 @@
      "hi": 14,
      "pts": 1,
      "reb": 0,
-     "ast": 1
+     "ast": 2
     },
     {
      "lo": 15,
      "hi": 21,
      "pts": 2,
      "reb": 0,
-     "ast": 1
+     "ast": 2
     },
     {
      "lo": 22,
@@ -8436,7 +8312,7 @@
    "paintBoost": 0,
    "threePtBoost": 1,
    "defBoost": 0,
-   "salary": 1180,
+   "salary": 1170,
    "chart": [
     {
      "lo": 1,
@@ -8566,7 +8442,7 @@
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 1110,
+   "salary": 1100,
    "chart": [
     {
      "lo": 1,
@@ -8580,28 +8456,28 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 7,
      "hi": 14,
      "pts": 3,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 15,
      "hi": 20,
      "pts": 3,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 21,
      "hi": 99,
      "pts": 3,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     }
    ],
    "season": 2021,
@@ -8689,7 +8565,7 @@
    "paintBoost": 0,
    "threePtBoost": -2,
    "defBoost": -1,
-   "salary": 500,
+   "salary": 490,
    "chart": [
     {
      "lo": 1,
@@ -8754,7 +8630,7 @@
    "paintBoost": 0,
    "threePtBoost": -1,
    "defBoost": 2,
-   "salary": 700,
+   "salary": 690,
    "chart": [
     {
      "lo": 1,
@@ -8830,23 +8706,16 @@
     },
     {
      "lo": 5,
-     "hi": 8,
-     "pts": 1,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 9,
      "hi": 16,
      "pts": 1,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 17,
      "hi": 22,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
@@ -8884,7 +8753,7 @@
    "paintBoost": -2,
    "threePtBoost": 2,
    "defBoost": 0,
-   "salary": 1400,
+   "salary": 1350,
    "chart": [
     {
      "lo": 1,
@@ -8898,7 +8767,7 @@
      "hi": 6,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
@@ -8909,6 +8778,13 @@
     },
     {
      "lo": 14,
+     "hi": 21,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 22,
      "hi": 99,
      "pts": 3,
      "reb": 1,
@@ -8942,7 +8818,7 @@
    "paintBoost": -3,
    "threePtBoost": -6,
    "defBoost": 1,
-   "salary": 1270,
+   "salary": 1260,
    "chart": [
     {
      "lo": 1,
@@ -9021,28 +8897,21 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 7,
      "hi": 15,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 16,
-     "hi": 20,
-     "pts": 3,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 21,
      "hi": 99,
      "pts": 3,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     }
    ],
    "season": 2021,
@@ -9072,7 +8941,7 @@
    "paintBoost": -1,
    "threePtBoost": -4,
    "defBoost": 2,
-   "salary": 1250,
+   "salary": 1300,
    "chart": [
     {
      "lo": 1,
@@ -9086,7 +8955,7 @@
      "hi": 6,
      "pts": 0,
      "reb": 2,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 7,
@@ -9100,14 +8969,14 @@
      "hi": 20,
      "pts": 3,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 21,
      "hi": 99,
      "pts": 3,
      "reb": 2,
-     "ast": 0
+     "ast": 1
     }
    ],
    "season": 2019,
@@ -9137,7 +9006,7 @@
    "paintBoost": 3,
    "threePtBoost": -5,
    "defBoost": 1,
-   "salary": 1510,
+   "salary": 1550,
    "chart": [
     {
      "lo": 1,
@@ -9158,17 +9027,10 @@
      "hi": 14,
      "pts": 3,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 15,
-     "hi": 20,
-     "pts": 3,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 21,
      "hi": 99,
      "pts": 3,
      "reb": 1,
@@ -9202,7 +9064,7 @@
    "paintBoost": 3,
    "threePtBoost": -3,
    "defBoost": 1,
-   "salary": 1590,
+   "salary": 1600,
    "chart": [
     {
      "lo": 1,
@@ -9222,7 +9084,7 @@
      "lo": 7,
      "hi": 14,
      "pts": 3,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
@@ -9236,7 +9098,7 @@
      "lo": 21,
      "hi": 99,
      "pts": 3,
-     "reb": 1,
+     "reb": 2,
      "ast": 1
     }
    ],
@@ -9267,7 +9129,7 @@
    "paintBoost": 3,
    "threePtBoost": 3,
    "defBoost": 1,
-   "salary": 1640,
+   "salary": 1700,
    "chart": [
     {
      "lo": 1,
@@ -9292,17 +9154,10 @@
     },
     {
      "lo": 15,
-     "hi": 20,
-     "pts": 3,
-     "reb": 2,
-     "ast": 1
-    },
-    {
-     "lo": 21,
      "hi": 99,
      "pts": 3,
      "reb": 2,
-     "ast": 0
+     "ast": 1
     }
    ],
    "season": 2019,
@@ -9332,7 +9187,7 @@
    "paintBoost": 0,
    "threePtBoost": -1,
    "defBoost": -1,
-   "salary": 790,
+   "salary": 780,
    "chart": [
     {
      "lo": 1,
@@ -9390,7 +9245,7 @@
    "paintBoost": 0,
    "threePtBoost": -1,
    "defBoost": -2,
-   "salary": 650,
+   "salary": 640,
    "chart": [
     {
      "lo": 1,
@@ -9527,7 +9382,7 @@
    "paintBoost": 0,
    "threePtBoost": 4,
    "defBoost": -1,
-   "salary": 670,
+   "salary": 640,
    "chart": [
     {
      "lo": 1,
@@ -9548,7 +9403,7 @@
      "hi": 15,
      "pts": 2,
      "reb": 0,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 16,
@@ -9562,7 +9417,7 @@
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     }
    ],
    "season": 2022,
@@ -9592,7 +9447,7 @@
    "paintBoost": -1,
    "threePtBoost": 1,
    "defBoost": 2,
-   "salary": 430,
+   "salary": 420,
    "chart": [
     {
      "lo": 1,
@@ -9606,7 +9461,7 @@
      "hi": 7,
      "pts": 0,
      "reb": 0,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 8,
@@ -9627,7 +9482,7 @@
      "hi": 99,
      "pts": 1,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     }
    ],
    "season": 2025,
@@ -9715,7 +9570,7 @@
    "paintBoost": 1,
    "threePtBoost": 2,
    "defBoost": 0,
-   "salary": 850,
+   "salary": 920,
    "chart": [
     {
      "lo": 1,
@@ -9736,14 +9591,14 @@
      "hi": 13,
      "pts": 2,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 14,
      "hi": 20,
      "pts": 2,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 21,
@@ -9903,7 +9758,7 @@
    "paintBoost": 1,
    "threePtBoost": -3,
    "defBoost": 0,
-   "salary": 380,
+   "salary": 370,
    "chart": [
     {
      "lo": 1,
@@ -9975,7 +9830,7 @@
    "paintBoost": 2,
    "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 1480,
+   "salary": 1490,
    "chart": [
     {
      "lo": 1,
@@ -9996,7 +9851,7 @@
      "hi": 14,
      "pts": 3,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 15,
@@ -10010,7 +9865,7 @@
      "hi": 99,
      "pts": 3,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     }
    ],
    "season": 2009,
@@ -10040,7 +9895,7 @@
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 3,
-   "salary": 420,
+   "salary": 440,
    "chart": [
     {
      "lo": 1,
@@ -10051,13 +9906,6 @@
     },
     {
      "lo": 3,
-     "hi": 3,
-     "pts": 0,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 4,
      "hi": 8,
      "pts": 0,
      "reb": 1,
@@ -10075,7 +9923,7 @@
      "hi": 23,
      "pts": 1,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 24,
@@ -10112,7 +9960,7 @@
    "paintBoost": -1,
    "threePtBoost": 0,
    "defBoost": 2,
-   "salary": 760,
+   "salary": 770,
    "chart": [
     {
      "lo": 1,
@@ -10137,17 +9985,10 @@
     },
     {
      "lo": 15,
-     "hi": 21,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 22,
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     }
    ],
    "season": 2021,
@@ -10235,7 +10076,7 @@
    "paintBoost": 1,
    "threePtBoost": 3,
    "defBoost": 0,
-   "salary": 1120,
+   "salary": 1150,
    "chart": [
     {
      "lo": 1,
@@ -10249,7 +10090,7 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 7,
@@ -10263,7 +10104,7 @@
      "hi": 20,
      "pts": 2,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 21,
@@ -10358,7 +10199,7 @@
    "paintBoost": 4,
    "threePtBoost": -2,
    "defBoost": 0,
-   "salary": 1480,
+   "salary": 1470,
    "chart": [
     {
      "lo": 1,
@@ -10474,7 +10315,7 @@
    "paintBoost": 0,
    "threePtBoost": 2,
    "defBoost": -1,
-   "salary": 1390,
+   "salary": 1380,
    "chart": [
     {
      "lo": 1,
@@ -10545,25 +10386,18 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
-     "ast": 1
+     "reb": 1,
+     "ast": 0
     },
     {
      "lo": 7,
      "hi": 14,
      "pts": 3,
-     "reb": 1,
+     "reb": 0,
      "ast": 1
     },
     {
      "lo": 15,
-     "hi": 20,
-     "pts": 3,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 21,
      "hi": 99,
      "pts": 3,
      "reb": 1,
@@ -10597,7 +10431,7 @@
    "paintBoost": -1,
    "threePtBoost": -3,
    "defBoost": 4,
-   "salary": 750,
+   "salary": 740,
    "chart": [
     {
      "lo": 1,
@@ -10669,7 +10503,7 @@
    "paintBoost": -1,
    "threePtBoost": 2,
    "defBoost": -1,
-   "salary": 680,
+   "salary": 670,
    "chart": [
     {
      "lo": 1,
@@ -10683,20 +10517,13 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 7,
-     "hi": 11,
-     "pts": 2,
-     "reb": 1,
      "ast": 1
     },
     {
-     "lo": 12,
+     "lo": 7,
      "hi": 16,
      "pts": 2,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -10734,7 +10561,7 @@
    "paintBoost": 2,
    "threePtBoost": -1,
    "defBoost": 1,
-   "salary": 2000,
+   "salary": 1990,
    "chart": [
     {
      "lo": 1,
@@ -10792,7 +10619,7 @@
    "paintBoost": -1,
    "threePtBoost": 4,
    "defBoost": 0,
-   "salary": 800,
+   "salary": 770,
    "chart": [
     {
      "lo": 1,
@@ -10813,14 +10640,21 @@
      "hi": 15,
      "pts": 2,
      "reb": 0,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 16,
-     "hi": 99,
+     "hi": 21,
      "pts": 2,
      "reb": 1,
      "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
     }
    ],
    "season": 2022,
@@ -10850,7 +10684,7 @@
    "paintBoost": -1,
    "threePtBoost": 1,
    "defBoost": 2,
-   "salary": 1630,
+   "salary": 1620,
    "chart": [
     {
      "lo": 1,
@@ -10929,10 +10763,17 @@
      "hi": 14,
      "pts": 2,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 15,
+     "hi": 20,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 21,
      "hi": 99,
      "pts": 3,
      "reb": 1,
@@ -10966,7 +10807,7 @@
    "paintBoost": 1,
    "threePtBoost": 3,
    "defBoost": 3,
-   "salary": 1490,
+   "salary": 1570,
    "chart": [
     {
      "lo": 1,
@@ -10991,17 +10832,10 @@
     },
     {
      "lo": 15,
-     "hi": 21,
+     "hi": 99,
      "pts": 3,
      "reb": 1,
      "ast": 1
-    },
-    {
-     "lo": 22,
-     "hi": 99,
-     "pts": 3,
-     "reb": 0,
-     "ast": 0
     }
    ],
    "season": 2008,
@@ -11096,7 +10930,7 @@
    "paintBoost": 1,
    "threePtBoost": -1,
    "defBoost": 2,
-   "salary": 2000,
+   "salary": 1990,
    "chart": [
     {
      "lo": 1,
@@ -11117,21 +10951,21 @@
      "hi": 13,
      "pts": 3,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 14,
      "hi": 20,
      "pts": 4,
      "reb": 0,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 21,
      "hi": 99,
      "pts": 4,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     }
    ],
    "season": 1990,
@@ -11219,7 +11053,7 @@
    "paintBoost": 1,
    "threePtBoost": 1,
    "defBoost": 0,
-   "salary": 930,
+   "salary": 920,
    "chart": [
     {
      "lo": 1,
@@ -11284,7 +11118,7 @@
    "paintBoost": -1,
    "threePtBoost": 3,
    "defBoost": 1,
-   "salary": 1430,
+   "salary": 1420,
    "chart": [
     {
      "lo": 1,
@@ -11390,71 +11224,6 @@
    "provisional": false
   },
   {
-   "id": "Mitchell_Robinson",
-   "name": "Mitchell Robinson",
-   "team": "NYK",
-   "pos": "C",
-   "speed": 7,
-   "power": 11,
-   "shotLine": 18,
-   "paintBoost": 6,
-   "threePtBoost": -2,
-   "defBoost": 1,
-   "salary": 580,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 7,
-     "pts": 0,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 8,
-     "hi": 17,
-     "pts": 1,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 18,
-     "hi": 22,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 23,
-     "hi": 99,
-     "pts": 2,
-     "reb": 2,
-     "ast": 0
-    }
-   ],
-   "season": 2020,
-   "seasonLabel": "2019-20",
-   "age": 21,
-   "games": 61,
-   "mpg": 23.1,
-   "bbrefId": "robinmi01",
-   "traded": false,
-   "metrics": {
-    "bpm": 2.9,
-    "vorp": 1.8,
-    "ws": 6.8,
-    "ws48": 0.23,
-    "per": 23.5
-   },
-   "provisional": false
-  },
-  {
    "id": "Myles_Turner",
    "name": "Myles Turner",
    "team": "IND",
@@ -11465,7 +11234,7 @@
    "paintBoost": 1,
    "threePtBoost": -1,
    "defBoost": 1,
-   "salary": 1190,
+   "salary": 1200,
    "chart": [
     {
      "lo": 1,
@@ -11479,14 +11248,14 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 7,
      "hi": 13,
      "pts": 2,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 14,
@@ -11523,7 +11292,7 @@
    "paintBoost": 1,
    "threePtBoost": 3,
    "defBoost": 1,
-   "salary": 1020,
+   "salary": 1050,
    "chart": [
     {
      "lo": 1,
@@ -11537,14 +11306,14 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 7,
      "hi": 14,
      "pts": 2,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 15,
@@ -11646,7 +11415,7 @@
    "paintBoost": 5,
    "threePtBoost": -2,
    "defBoost": 0,
-   "salary": 420,
+   "salary": 450,
    "chart": [
     {
      "lo": 1,
@@ -11660,14 +11429,21 @@
      "hi": 3,
      "pts": 0,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 4,
-     "hi": 17,
+     "hi": 7,
      "pts": 1,
      "reb": 1,
      "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 17,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 18,
@@ -11711,7 +11487,7 @@
    "paintBoost": 2,
    "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 940,
+   "salary": 930,
    "chart": [
     {
      "lo": 1,
@@ -11769,7 +11545,7 @@
    "paintBoost": 0,
    "threePtBoost": -3,
    "defBoost": 5,
-   "salary": 2150,
+   "salary": 2140,
    "chart": [
     {
      "lo": 1,
@@ -11834,7 +11610,7 @@
    "paintBoost": 1,
    "threePtBoost": 0,
    "defBoost": 1,
-   "salary": 720,
+   "salary": 730,
    "chart": [
     {
      "lo": 1,
@@ -11848,14 +11624,14 @@
      "hi": 3,
      "pts": 0,
      "reb": 0,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 4,
      "hi": 6,
      "pts": 1,
      "reb": 0,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 7,
@@ -11869,7 +11645,7 @@
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     }
    ],
    "season": 2025,
@@ -11899,7 +11675,7 @@
    "paintBoost": 2,
    "threePtBoost": 0,
    "defBoost": 2,
-   "salary": 1440,
+   "salary": 1470,
    "chart": [
     {
      "lo": 1,
@@ -11924,17 +11700,10 @@
     },
     {
      "lo": 15,
-     "hi": 20,
-     "pts": 3,
-     "reb": 2,
-     "ast": 1
-    },
-    {
-     "lo": 21,
      "hi": 99,
      "pts": 3,
      "reb": 2,
-     "ast": 0
+     "ast": 1
     }
    ],
    "season": 2019,
@@ -12107,14 +11876,14 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
      "lo": 7,
      "hi": 11,
      "pts": 2,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -12217,7 +11986,7 @@
    "paintBoost": -1,
    "threePtBoost": 4,
    "defBoost": 0,
-   "salary": 430,
+   "salary": 450,
    "chart": [
     {
      "lo": 1,
@@ -12231,14 +12000,14 @@
      "hi": 7,
      "pts": 0,
      "reb": 0,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 8,
      "hi": 15,
      "pts": 1,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 16,
@@ -12275,7 +12044,7 @@
    "paintBoost": 0,
    "threePtBoost": -6,
    "defBoost": 0,
-   "salary": 1140,
+   "salary": 1130,
    "chart": [
     {
      "lo": 1,
@@ -12340,7 +12109,7 @@
    "paintBoost": 0,
    "threePtBoost": 4,
    "defBoost": 2,
-   "salary": 1630,
+   "salary": 1620,
    "chart": [
     {
      "lo": 1,
@@ -12354,7 +12123,7 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
@@ -12405,7 +12174,7 @@
    "paintBoost": 1,
    "threePtBoost": 0,
    "defBoost": 1,
-   "salary": 1340,
+   "salary": 1320,
    "chart": [
     {
      "lo": 1,
@@ -12426,21 +12195,14 @@
      "hi": 14,
      "pts": 2,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 15,
-     "hi": 20,
-     "pts": 3,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 21,
      "hi": 99,
      "pts": 3,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2005,
@@ -12535,7 +12297,7 @@
    "paintBoost": -1,
    "threePtBoost": 1,
    "defBoost": 0,
-   "salary": 780,
+   "salary": 740,
    "chart": [
     {
      "lo": 1,
@@ -12555,7 +12317,7 @@
      "lo": 8,
      "hi": 12,
      "pts": 1,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -12563,14 +12325,14 @@
      "hi": 23,
      "pts": 2,
      "reb": 0,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 24,
      "hi": 99,
      "pts": 2,
-     "reb": 1,
-     "ast": 0
+     "reb": 0,
+     "ast": 1
     }
    ],
    "season": 2023,
@@ -12600,7 +12362,7 @@
    "paintBoost": -1,
    "threePtBoost": 1,
    "defBoost": -1,
-   "salary": 870,
+   "salary": 860,
    "chart": [
     {
      "lo": 1,
@@ -12730,7 +12492,7 @@
    "paintBoost": 1,
    "threePtBoost": 4,
    "defBoost": 0,
-   "salary": 590,
+   "salary": 600,
    "chart": [
     {
      "lo": 1,
@@ -12765,7 +12527,7 @@
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     }
    ],
    "season": 2025,
@@ -12809,7 +12571,7 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
@@ -12853,7 +12615,7 @@
    "paintBoost": 3,
    "threePtBoost": 3,
    "defBoost": -1,
-   "salary": 740,
+   "salary": 720,
    "chart": [
     {
      "lo": 1,
@@ -12866,25 +12628,18 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 1,
+     "reb": 0,
      "ast": 1
     },
     {
      "lo": 7,
      "hi": 14,
      "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 15,
-     "hi": 21,
-     "pts": 2,
      "reb": 0,
      "ast": 0
     },
     {
-     "lo": 22,
+     "lo": 15,
      "hi": 99,
      "pts": 2,
      "reb": 1,
@@ -12932,14 +12687,14 @@
      "hi": 6,
      "pts": 0,
      "reb": 2,
-     "ast": 2
+     "ast": 1
     },
     {
      "lo": 7,
      "hi": 15,
      "pts": 3,
      "reb": 1,
-     "ast": 1
+     "ast": 2
     },
     {
      "lo": 16,
@@ -13059,13 +12814,6 @@
     },
     {
      "lo": 4,
-     "hi": 8,
-     "pts": 1,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 9,
      "hi": 12,
      "pts": 1,
      "reb": 1,
@@ -13073,10 +12821,17 @@
     },
     {
      "lo": 13,
-     "hi": 99,
+     "hi": 23,
      "pts": 2,
      "reb": 0,
      "ast": 0
+    },
+    {
+     "lo": 24,
+     "hi": 99,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
     }
    ],
    "season": 2025,
@@ -13164,7 +12919,7 @@
    "paintBoost": 4,
    "threePtBoost": 2,
    "defBoost": 3,
-   "salary": 1200,
+   "salary": 1210,
    "chart": [
     {
      "lo": 1,
@@ -13178,14 +12933,21 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 7,
-     "hi": 16,
+     "hi": 11,
      "pts": 2,
      "reb": 1,
      "ast": 0
+    },
+    {
+     "lo": 12,
+     "hi": 16,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 17,
@@ -13222,7 +12984,7 @@
    "paintBoost": 2,
    "threePtBoost": 0,
    "defBoost": -1,
-   "salary": 800,
+   "salary": 790,
    "chart": [
     {
      "lo": 1,
@@ -13287,7 +13049,7 @@
    "paintBoost": 1,
    "threePtBoost": -1,
    "defBoost": 3,
-   "salary": 2070,
+   "salary": 2050,
    "chart": [
     {
      "lo": 1,
@@ -13345,7 +13107,7 @@
    "paintBoost": 3,
    "threePtBoost": -5,
    "defBoost": 2,
-   "salary": 1490,
+   "salary": 1560,
    "chart": [
     {
      "lo": 1,
@@ -13359,7 +13121,7 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 7,
@@ -13373,14 +13135,14 @@
      "hi": 20,
      "pts": 3,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 21,
      "hi": 99,
      "pts": 3,
      "reb": 2,
-     "ast": 0
+     "ast": 1
     }
    ],
    "season": 2000,
@@ -13410,7 +13172,7 @@
    "paintBoost": 0,
    "threePtBoost": 1,
    "defBoost": 2,
-   "salary": 2160,
+   "salary": 2140,
    "chart": [
     {
      "lo": 1,
@@ -13424,14 +13186,14 @@
      "hi": 6,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
      "hi": 12,
      "pts": 3,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 13,
@@ -13468,7 +13230,7 @@
    "paintBoost": 1,
    "threePtBoost": -3,
    "defBoost": 0,
-   "salary": 1060,
+   "salary": 1050,
    "chart": [
     {
      "lo": 1,
@@ -13533,7 +13295,7 @@
    "paintBoost": 1,
    "threePtBoost": 1,
    "defBoost": 0,
-   "salary": 460,
+   "salary": 480,
    "chart": [
     {
      "lo": 1,
@@ -13547,28 +13309,21 @@
      "hi": 7,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 8,
      "hi": 15,
      "pts": 1,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 16,
-     "hi": 22,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 23,
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2022,
@@ -13670,7 +13425,7 @@
    "paintBoost": 2,
    "threePtBoost": -4,
    "defBoost": 0,
-   "salary": 870,
+   "salary": 860,
    "chart": [
     {
      "lo": 1,
@@ -13684,14 +13439,14 @@
      "hi": 7,
      "pts": 0,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 8,
      "hi": 13,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 14,
@@ -13748,7 +13503,7 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -13800,7 +13555,7 @@
    "paintBoost": 1,
    "threePtBoost": 0,
    "defBoost": 1,
-   "salary": 1180,
+   "salary": 1170,
    "chart": [
     {
      "lo": 1,
@@ -13858,7 +13613,7 @@
    "paintBoost": 1,
    "threePtBoost": -4,
    "defBoost": -1,
-   "salary": 1300,
+   "salary": 1290,
    "chart": [
     {
      "lo": 1,
@@ -13923,7 +13678,7 @@
    "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": 1,
-   "salary": 1610,
+   "salary": 1670,
    "chart": [
     {
      "lo": 1,
@@ -13948,17 +13703,10 @@
     },
     {
      "lo": 15,
-     "hi": 20,
-     "pts": 3,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 21,
      "hi": 99,
      "pts": 3,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     }
    ],
    "season": 2003,
@@ -13988,7 +13736,7 @@
    "paintBoost": -2,
    "threePtBoost": 3,
    "defBoost": -2,
-   "salary": 1550,
+   "salary": 1540,
    "chart": [
     {
      "lo": 1,
@@ -14053,7 +13801,7 @@
    "paintBoost": -5,
    "threePtBoost": 1,
    "defBoost": 1,
-   "salary": 1310,
+   "salary": 1330,
    "chart": [
     {
      "lo": 1,
@@ -14067,14 +13815,14 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 7,
      "hi": 12,
      "pts": 2,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 13,
@@ -14118,7 +13866,7 @@
    "paintBoost": -1,
    "threePtBoost": 2,
    "defBoost": -1,
-   "salary": 1260,
+   "salary": 1300,
    "chart": [
     {
      "lo": 1,
@@ -14143,17 +13891,10 @@
     },
     {
      "lo": 14,
-     "hi": 20,
-     "pts": 3,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 21,
      "hi": 99,
      "pts": 3,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     }
    ],
    "season": 2025,
@@ -14183,7 +13924,7 @@
    "paintBoost": -3,
    "threePtBoost": -2,
    "defBoost": 0,
-   "salary": 1340,
+   "salary": 1350,
    "chart": [
     {
      "lo": 1,
@@ -14208,16 +13949,9 @@
     },
     {
      "lo": 13,
-     "hi": 20,
-     "pts": 3,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 21,
      "hi": 99,
      "pts": 3,
-     "reb": 0,
+     "reb": 1,
      "ast": 1
     }
    ],
@@ -14238,71 +13972,6 @@
    "provisional": false
   },
   {
-   "id": "Tyrese_Martin",
-   "name": "Tyrese Martin",
-   "team": "BKN",
-   "pos": "SG",
-   "speed": 7,
-   "power": 6,
-   "shotLine": 16,
-   "paintBoost": 1,
-   "threePtBoost": 1,
-   "defBoost": -1,
-   "salary": 320,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 4,
-     "pts": 0,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 5,
-     "hi": 15,
-     "pts": 1,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 16,
-     "hi": 21,
-     "pts": 2,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 22,
-     "hi": 99,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    }
-   ],
-   "season": 2025,
-   "seasonLabel": "2024-25",
-   "age": 25,
-   "games": 60,
-   "mpg": 21.9,
-   "bbrefId": "martity01",
-   "traded": false,
-   "metrics": {
-    "bpm": -2.6,
-    "vorp": -0.2,
-    "ws": 0.9,
-    "ws48": 0.033,
-    "per": 10.9
-   },
-   "provisional": false
-  },
-  {
    "id": "Tyus_Jones",
    "name": "Tyus Jones",
    "team": "MEM",
@@ -14313,7 +13982,7 @@
    "paintBoost": -2,
    "threePtBoost": 0,
    "defBoost": 1,
-   "salary": 680,
+   "salary": 670,
    "chart": [
     {
      "lo": 1,
@@ -14385,7 +14054,7 @@
    "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": 0,
-   "salary": 1420,
+   "salary": 1480,
    "chart": [
     {
      "lo": 1,
@@ -14398,8 +14067,8 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 1,
-     "ast": 1
+     "reb": 0,
+     "ast": 0
     },
     {
      "lo": 7,
@@ -14412,7 +14081,7 @@
      "lo": 15,
      "hi": 20,
      "pts": 3,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -14420,7 +14089,7 @@
      "hi": 99,
      "pts": 3,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     }
    ],
    "season": 2001,
@@ -14450,7 +14119,7 @@
    "paintBoost": 2,
    "threePtBoost": -1,
    "defBoost": 1,
-   "salary": 1020,
+   "salary": 1110,
    "chart": [
     {
      "lo": 1,
@@ -14470,18 +14139,11 @@
      "lo": 7,
      "hi": 13,
      "pts": 2,
-     "reb": 1,
-     "ast": 0
+     "reb": 2,
+     "ast": 1
     },
     {
      "lo": 14,
-     "hi": 20,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 21,
      "hi": 99,
      "pts": 2,
      "reb": 2,
@@ -14536,7 +14198,7 @@
      "hi": 14,
      "pts": 3,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 15,
@@ -14550,7 +14212,7 @@
      "hi": 99,
      "pts": 3,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     }
    ],
    "season": 2021,
@@ -14638,7 +14300,7 @@
    "paintBoost": 2,
    "threePtBoost": -4,
    "defBoost": 0,
-   "salary": 1370,
+   "salary": 1380,
    "chart": [
     {
      "lo": 1,
@@ -14652,7 +14314,7 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 7,
@@ -14663,13 +14325,6 @@
     },
     {
      "lo": 16,
-     "hi": 20,
-     "pts": 3,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 21,
      "hi": 99,
      "pts": 3,
      "reb": 1,

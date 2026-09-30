@@ -1,6 +1,6 @@
 {
  "set": "throwbacks",
- "generatedAt": "2026-09-29T17:26:13.347Z",
+ "generatedAt": "2026-09-30T11:43:06.080Z",
  "note": "Super Seasons that are no longer a Super Season, as Throwbacks (generateSpecialSets.js): out-priced by the same player's Rookie card (2026-09-22), or by another of his seasons, the base card, or any later rule (the value pick, 2026-09-24; card-data/super-season-retired.json). generateCuratedCards.js folds them into cards-throwbacks.json.",
  "cards": [
   {
@@ -14,7 +14,7 @@
    "paintBoost": 1,
    "threePtBoost": -2,
    "defBoost": 2,
-   "salary": 1190,
+   "salary": 1180,
    "chart": [
     {
      "lo": 1,
@@ -85,7 +85,7 @@
    "paintBoost": 2,
    "threePtBoost": -3,
    "defBoost": 4,
-   "salary": 1030,
+   "salary": 1070,
    "chart": [
     {
      "lo": 1,
@@ -99,7 +99,7 @@
      "hi": 4,
      "pts": 0,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 5,
@@ -113,17 +113,10 @@
      "hi": 14,
      "pts": 2,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 15,
-     "hi": 21,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 22,
      "hi": 99,
      "pts": 2,
      "reb": 1,
@@ -146,7 +139,7 @@
    },
    "provisional": false,
    "set": "throwbacks",
-   "demoted": "the player's Rookie card is stronger — a Throwback instead (rookie 2001-02 $1150 against $1090, 2026-09-22)",
+   "demoted": "the player's Rookie card is stronger — a Throwback instead (rookie 2001-02 $1140 against $1080, 2026-09-22)",
    "demotedFrom": {
     "set": "super-season",
     "id": "Andrei_Kirilenko"
@@ -181,13 +174,6 @@
     },
     {
      "lo": 4,
-     "hi": 7,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 8,
      "hi": 15,
      "pts": 2,
      "reb": 0,
@@ -198,13 +184,13 @@
      "hi": 21,
      "pts": 3,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 22,
      "hi": 99,
      "pts": 3,
-     "reb": 0,
+     "reb": 1,
      "ast": 1
     }
    ],
@@ -241,7 +227,7 @@
    "paintBoost": 3,
    "threePtBoost": -5,
    "defBoost": 2,
-   "salary": 1510,
+   "salary": 1540,
    "chart": [
     {
      "lo": 1,
@@ -255,7 +241,7 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 7,
@@ -266,10 +252,17 @@
     },
     {
      "lo": 15,
-     "hi": 99,
+     "hi": 21,
      "pts": 3,
      "reb": 1,
      "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
     }
    ],
    "season": 2015,
@@ -383,7 +376,7 @@
    "paintBoost": -1,
    "threePtBoost": 1,
    "defBoost": -2,
-   "salary": 530,
+   "salary": 510,
    "chart": [
     {
      "lo": 1,
@@ -397,14 +390,14 @@
      "hi": 6,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
      "hi": 15,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 16,
@@ -437,7 +430,7 @@
    },
    "provisional": false,
    "set": "throwbacks",
-   "demoted": "the player's Rookie card is stronger — a Throwback instead (rookie 2022-23 $540 against $530, 2026-09-22)",
+   "demoted": "best season is the current one — its card is stronger (retired 2026-09-24)",
    "demotedFrom": {
     "set": "super-season",
     "id": "Bennedict_Mathurin"
@@ -454,7 +447,7 @@
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": -1,
-   "salary": 1190,
+   "salary": 1180,
    "chart": [
     {
      "lo": 1,
@@ -525,7 +518,7 @@
    "paintBoost": -1,
    "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 720,
+   "salary": 710,
    "chart": [
     {
      "lo": 1,
@@ -667,7 +660,7 @@
    "paintBoost": 0,
    "threePtBoost": -1,
    "defBoost": 4,
-   "salary": 1090,
+   "salary": 1080,
    "chart": [
     {
      "lo": 1,
@@ -721,6 +714,70 @@
    }
   },
   {
+   "id": "CJ_McCollum_2024",
+   "name": "CJ McCollum",
+   "team": "NOP",
+   "pos": "PG",
+   "speed": 14,
+   "power": 8,
+   "shotLine": 16,
+   "paintBoost": -2,
+   "threePtBoost": 4,
+   "defBoost": 0,
+   "salary": 1100,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 15,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2024,
+   "seasonLabel": "2023-24",
+   "age": 32,
+   "games": 66,
+   "mpg": 32.7,
+   "bbrefId": "mccolcj01",
+   "traded": false,
+   "metrics": {
+    "bpm": 3.1,
+    "vorp": 2.8,
+    "ws": 5.9,
+    "ws48": 0.132,
+    "per": 17.9
+   },
+   "provisional": false,
+   "set": "throwbacks",
+   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-30)",
+   "demotedFrom": {
+    "set": "super-season",
+    "id": "CJ_McCollum"
+   }
+  },
+  {
    "id": "Clint_Capela_2018",
    "name": "Clint Capela",
    "team": "HOU03",
@@ -745,7 +802,7 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
@@ -792,6 +849,70 @@
    }
   },
   {
+   "id": "Clint_Capela_2021",
+   "name": "Clint Capela",
+   "team": "ATL",
+   "pos": "C",
+   "speed": 10,
+   "power": 16,
+   "shotLine": 18,
+   "paintBoost": 4,
+   "threePtBoost": -2,
+   "defBoost": 0,
+   "salary": 960,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 2,
+     "ast": 1
+    },
+    {
+     "lo": 7,
+     "hi": 17,
+     "pts": 2,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 18,
+     "hi": 99,
+     "pts": 2,
+     "reb": 2,
+     "ast": 0
+    }
+   ],
+   "season": 2021,
+   "seasonLabel": "2020-21",
+   "age": 26,
+   "games": 63,
+   "mpg": 30.1,
+   "bbrefId": "capelca01",
+   "traded": false,
+   "metrics": {
+    "bpm": 2.7,
+    "vorp": 2.2,
+    "ws": 8.2,
+    "ws48": 0.207,
+    "per": 24.3
+   },
+   "provisional": false,
+   "set": "throwbacks",
+   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-30)",
+   "demotedFrom": {
+    "set": "super-season",
+    "id": "Clint_Capela"
+   }
+  },
+  {
    "id": "Corey_Kispert_2023",
    "name": "Corey Kispert",
    "team": "WAS",
@@ -802,7 +923,7 @@
    "paintBoost": -1,
    "threePtBoost": 1,
    "defBoost": -1,
-   "salary": 390,
+   "salary": 410,
    "chart": [
     {
      "lo": 1,
@@ -815,28 +936,21 @@
      "lo": 3,
      "hi": 7,
      "pts": 0,
-     "reb": 0,
-     "ast": 1
+     "reb": 1,
+     "ast": 0
     },
     {
      "lo": 8,
      "hi": 12,
      "pts": 1,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 13,
-     "hi": 22,
-     "pts": 2,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 23,
      "hi": 99,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     }
    ],
@@ -893,14 +1007,21 @@
      "lo": 7,
      "hi": 14,
      "pts": 3,
-     "reb": 1,
+     "reb": 0,
      "ast": 1
     },
     {
      "lo": 15,
-     "hi": 99,
+     "hi": 21,
      "pts": 3,
      "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
      "ast": 1
     }
    ],
@@ -937,7 +1058,7 @@
    "paintBoost": -1,
    "threePtBoost": 3,
    "defBoost": -1,
-   "salary": 1230,
+   "salary": 1220,
    "chart": [
     {
      "lo": 1,
@@ -1008,7 +1129,7 @@
    "paintBoost": 1,
    "threePtBoost": -5,
    "defBoost": 4,
-   "salary": 1440,
+   "salary": 1430,
    "chart": [
     {
      "lo": 1,
@@ -1062,7 +1183,7 @@
    },
    "provisional": false,
    "set": "throwbacks",
-   "demoted": "the player's Rookie card is stronger — a Throwback instead (rookie 1989-90 $2100 against $1550, 2026-09-22)",
+   "demoted": "the player's Rookie card is stronger — a Throwback instead (rookie 1989-90 $2080 against $1550, 2026-09-22)",
    "demotedFrom": {
     "set": "super-season",
     "id": "David_Robinson"
@@ -1079,7 +1200,7 @@
    "paintBoost": 0,
    "threePtBoost": 5,
    "defBoost": 2,
-   "salary": 830,
+   "salary": 820,
    "chart": [
     {
      "lo": 1,
@@ -1097,13 +1218,6 @@
     },
     {
      "lo": 4,
-     "hi": 7,
-     "pts": 1,
-     "reb": 0,
-     "ast": 1
-    },
-    {
-     "lo": 8,
      "hi": 16,
      "pts": 1,
      "reb": 1,
@@ -1113,7 +1227,7 @@
      "lo": 17,
      "hi": 21,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
@@ -1157,7 +1271,7 @@
    "paintBoost": 4,
    "threePtBoost": -4,
    "defBoost": 1,
-   "salary": 900,
+   "salary": 910,
    "chart": [
     {
      "lo": 1,
@@ -1170,14 +1284,14 @@
      "lo": 3,
      "hi": 7,
      "pts": 0,
-     "reb": 2,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 8,
      "hi": 15,
      "pts": 1,
-     "reb": 1,
+     "reb": 2,
      "ast": 0
     },
     {
@@ -1221,7 +1335,7 @@
    "paintBoost": 2,
    "threePtBoost": -2,
    "defBoost": -1,
-   "salary": 1050,
+   "salary": 1060,
    "chart": [
     {
      "lo": 1,
@@ -1246,17 +1360,10 @@
     },
     {
      "lo": 16,
-     "hi": 21,
-     "pts": 3,
-     "reb": 0,
-     "ast": 1
-    },
-    {
-     "lo": 22,
      "hi": 99,
      "pts": 3,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     }
    ],
    "season": 2018,
@@ -1292,7 +1399,7 @@
    "paintBoost": 6,
    "threePtBoost": 0,
    "defBoost": 1,
-   "salary": 670,
+   "salary": 650,
    "chart": [
     {
      "lo": 1,
@@ -1305,28 +1412,21 @@
      "lo": 3,
      "hi": 7,
      "pts": 0,
-     "reb": 2,
+     "reb": 1,
      "ast": 1
     },
     {
      "lo": 8,
      "hi": 17,
      "pts": 1,
-     "reb": 2,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 18,
-     "hi": 23,
-     "pts": 1,
-     "reb": 2,
-     "ast": 0
-    },
-    {
-     "lo": 24,
      "hi": 99,
      "pts": 1,
-     "reb": 1,
+     "reb": 2,
      "ast": 0
     }
    ],
@@ -1434,7 +1534,7 @@
    "paintBoost": -2,
    "threePtBoost": 1,
    "defBoost": 1,
-   "salary": 1010,
+   "salary": 1030,
    "chart": [
     {
      "lo": 1,
@@ -1448,14 +1548,14 @@
      "hi": 6,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
      "hi": 12,
      "pts": 2,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 13,
@@ -1498,7 +1598,7 @@
    "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": 1,
-   "salary": 1200,
+   "salary": 1190,
    "chart": [
     {
      "lo": 1,
@@ -1626,7 +1726,7 @@
    "paintBoost": -2,
    "threePtBoost": 4,
    "defBoost": 0,
-   "salary": 770,
+   "salary": 760,
    "chart": [
     {
      "lo": 1,
@@ -1690,7 +1790,7 @@
    "paintBoost": -1,
    "threePtBoost": -1,
    "defBoost": 0,
-   "salary": 1360,
+   "salary": 1350,
    "chart": [
     {
      "lo": 1,
@@ -1754,7 +1854,7 @@
    "paintBoost": 1,
    "threePtBoost": -3,
    "defBoost": 2,
-   "salary": 1040,
+   "salary": 1030,
    "chart": [
     {
      "lo": 1,
@@ -1832,7 +1932,7 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
@@ -1882,7 +1982,7 @@
    "paintBoost": 2,
    "threePtBoost": -3,
    "defBoost": 2,
-   "salary": 1580,
+   "salary": 1610,
    "chart": [
     {
      "lo": 1,
@@ -1917,7 +2017,7 @@
      "hi": 99,
      "pts": 3,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     }
    ],
    "season": 2009,
@@ -1943,17 +2043,17 @@
    }
   },
   {
-   "id": "Elton_Brand_2006",
+   "id": "Elton_Brand_2002",
    "name": "Elton Brand",
    "team": "LAC84",
    "pos": "PF",
-   "speed": 12,
-   "power": 16,
-   "shotLine": 14,
-   "paintBoost": 1,
-   "threePtBoost": -6,
-   "defBoost": 2,
-   "salary": 1060,
+   "speed": 11,
+   "power": 15,
+   "shotLine": 16,
+   "paintBoost": 4,
+   "threePtBoost": -4,
+   "defBoost": 0,
+   "salary": 1030,
    "chart": [
     {
      "lo": 1,
@@ -1971,36 +2071,36 @@
     },
     {
      "lo": 7,
-     "hi": 13,
+     "hi": 15,
      "pts": 2,
      "reb": 1,
      "ast": 0
     },
     {
-     "lo": 14,
+     "lo": 16,
      "hi": 99,
      "pts": 2,
      "reb": 1,
      "ast": 0
     }
    ],
-   "season": 2006,
-   "seasonLabel": "2005-06",
-   "age": 26,
-   "games": 79,
-   "mpg": 39.2,
+   "season": 2002,
+   "seasonLabel": "2001-02",
+   "age": 22,
+   "games": 80,
+   "mpg": 37.8,
    "bbrefId": "brandel01",
    "traded": false,
    "metrics": {
-    "bpm": 6.7,
-    "vorp": 6.8,
-    "ws": 14.8,
-    "ws48": 0.229,
-    "per": 26.5
+    "bpm": 4.3,
+    "vorp": 4.8,
+    "ws": 13.6,
+    "ws48": 0.216,
+    "per": 23.6
    },
    "provisional": false,
    "set": "throwbacks",
-   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
+   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-30)",
    "demotedFrom": {
     "set": "super-season",
     "id": "Elton_Brand"
@@ -2030,7 +2130,7 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -2081,7 +2181,7 @@
    "paintBoost": 3,
    "threePtBoost": -3,
    "defBoost": 4,
-   "salary": 2070,
+   "salary": 2060,
    "chart": [
     {
      "lo": 1,
@@ -2152,7 +2252,7 @@
    "paintBoost": 3,
    "threePtBoost": -5,
    "defBoost": 3,
-   "salary": 1280,
+   "salary": 1270,
    "chart": [
     {
      "lo": 1,
@@ -2319,16 +2419,9 @@
     },
     {
      "lo": 14,
-     "hi": 24,
-     "pts": 1,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 25,
      "hi": 99,
      "pts": 1,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     }
    ],
@@ -2365,7 +2458,7 @@
    "paintBoost": 2,
    "threePtBoost": -5,
    "defBoost": 1,
-   "salary": 850,
+   "salary": 900,
    "chart": [
     {
      "lo": 1,
@@ -2386,14 +2479,14 @@
      "hi": 14,
      "pts": 2,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 15,
      "hi": 22,
      "pts": 2,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 23,
@@ -2436,7 +2529,7 @@
    "paintBoost": 1,
    "threePtBoost": 0,
    "defBoost": 1,
-   "salary": 1280,
+   "salary": 1270,
    "chart": [
     {
      "lo": 1,
@@ -2507,7 +2600,7 @@
    "paintBoost": -3,
    "threePtBoost": 2,
    "defBoost": 2,
-   "salary": 2030,
+   "salary": 2060,
    "chart": [
     {
      "lo": 1,
@@ -2521,7 +2614,7 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 7,
@@ -2532,13 +2625,6 @@
     },
     {
      "lo": 14,
-     "hi": 20,
-     "pts": 4,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 21,
      "hi": 99,
      "pts": 4,
      "reb": 1,
@@ -2578,7 +2664,7 @@
    "paintBoost": -1,
    "threePtBoost": -1,
    "defBoost": 2,
-   "salary": 1190,
+   "salary": 1180,
    "chart": [
     {
      "lo": 1,
@@ -2713,7 +2799,7 @@
    "paintBoost": 2,
    "threePtBoost": -6,
    "defBoost": 1,
-   "salary": 1030,
+   "salary": 1060,
    "chart": [
     {
      "lo": 1,
@@ -2726,29 +2812,22 @@
      "lo": 3,
      "hi": 7,
      "pts": 0,
-     "reb": 1,
+     "reb": 2,
      "ast": 0
     },
     {
      "lo": 8,
      "hi": 13,
      "pts": 2,
-     "reb": 1,
-     "ast": 1
+     "reb": 2,
+     "ast": 0
     },
     {
      "lo": 14,
-     "hi": 22,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 23,
      "hi": 99,
      "pts": 2,
-     "reb": 2,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     }
    ],
    "season": 2025,
@@ -2855,7 +2934,7 @@
    "paintBoost": 1,
    "threePtBoost": 0,
    "defBoost": 1,
-   "salary": 1520,
+   "salary": 1510,
    "chart": [
     {
      "lo": 1,
@@ -2926,7 +3005,7 @@
    "paintBoost": 0,
    "threePtBoost": -3,
    "defBoost": 2,
-   "salary": 1310,
+   "salary": 1330,
    "chart": [
     {
      "lo": 1,
@@ -2951,17 +3030,10 @@
     },
     {
      "lo": 15,
-     "hi": 20,
-     "pts": 3,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 21,
      "hi": 99,
      "pts": 3,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     }
    ],
    "season": 2023,
@@ -2997,7 +3069,7 @@
    "paintBoost": 4,
    "threePtBoost": 1,
    "defBoost": 2,
-   "salary": 2060,
+   "salary": 1990,
    "chart": [
     {
      "lo": 1,
@@ -3011,28 +3083,28 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
      "hi": 15,
      "pts": 3,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 16,
      "hi": 21,
      "pts": 4,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 22,
      "hi": 99,
      "pts": 4,
      "reb": 2,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2022,
@@ -3068,7 +3140,7 @@
    "paintBoost": 0,
    "threePtBoost": -4,
    "defBoost": 1,
-   "salary": 950,
+   "salary": 930,
    "chart": [
     {
      "lo": 1,
@@ -3081,28 +3153,21 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 1
     },
     {
      "lo": 7,
      "hi": 13,
      "pts": 1,
-     "reb": 0,
+     "reb": 1,
      "ast": 1
     },
     {
      "lo": 14,
-     "hi": 20,
-     "pts": 2,
-     "reb": 0,
-     "ast": 1
-    },
-    {
-     "lo": 21,
      "hi": 99,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 1
     }
    ],
@@ -3139,7 +3204,7 @@
    "paintBoost": 0,
    "threePtBoost": -4,
    "defBoost": 0,
-   "salary": 1240,
+   "salary": 1230,
    "chart": [
     {
      "lo": 1,
@@ -3203,7 +3268,7 @@
    "paintBoost": -2,
    "threePtBoost": -5,
    "defBoost": 3,
-   "salary": 1380,
+   "salary": 1370,
    "chart": [
     {
      "lo": 1,
@@ -3274,7 +3339,7 @@
    "paintBoost": 3,
    "threePtBoost": -5,
    "defBoost": 1,
-   "salary": 1540,
+   "salary": 1580,
    "chart": [
     {
      "lo": 1,
@@ -3295,17 +3360,10 @@
      "hi": 14,
      "pts": 2,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 15,
-     "hi": 20,
-     "pts": 3,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 21,
      "hi": 99,
      "pts": 3,
      "reb": 1,
@@ -3345,7 +3403,7 @@
    "paintBoost": 1,
    "threePtBoost": 0,
    "defBoost": 1,
-   "salary": 560,
+   "salary": 550,
    "chart": [
     {
      "lo": 1,
@@ -3363,23 +3421,16 @@
     },
     {
      "lo": 7,
-     "hi": 9,
-     "pts": 1,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 10,
      "hi": 14,
      "pts": 1,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
      "lo": 15,
      "hi": 22,
      "pts": 2,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
@@ -3423,7 +3474,7 @@
    "paintBoost": 1,
    "threePtBoost": 1,
    "defBoost": 1,
-   "salary": 520,
+   "salary": 530,
    "chart": [
     {
      "lo": 1,
@@ -3437,14 +3488,14 @@
      "hi": 7,
      "pts": 0,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 8,
      "hi": 15,
      "pts": 1,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 16,
@@ -3494,7 +3545,7 @@
    "paintBoost": 3,
    "threePtBoost": 3,
    "defBoost": 1,
-   "salary": 1710,
+   "salary": 1700,
    "chart": [
     {
      "lo": 1,
@@ -3565,7 +3616,7 @@
    "paintBoost": 0,
    "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 1420,
+   "salary": 1430,
    "chart": [
     {
      "lo": 1,
@@ -3586,7 +3637,7 @@
      "hi": 14,
      "pts": 3,
      "reb": 0,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 15,
@@ -3600,7 +3651,7 @@
      "hi": 99,
      "pts": 3,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     }
    ],
    "season": 2006,
@@ -3650,7 +3701,7 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
@@ -3707,7 +3758,7 @@
    "paintBoost": 0,
    "threePtBoost": 4,
    "defBoost": 1,
-   "salary": 1120,
+   "salary": 1160,
    "chart": [
     {
      "lo": 1,
@@ -3720,7 +3771,7 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 1,
+     "reb": 0,
      "ast": 0
     },
     {
@@ -3734,7 +3785,7 @@
      "lo": 16,
      "hi": 99,
      "pts": 2,
-     "reb": 0,
+     "reb": 1,
      "ast": 1
     }
    ],
@@ -3771,7 +3822,7 @@
    "paintBoost": 0,
    "threePtBoost": -1,
    "defBoost": 2,
-   "salary": 1500,
+   "salary": 1520,
    "chart": [
     {
      "lo": 1,
@@ -3785,7 +3836,7 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 7,
@@ -3796,13 +3847,6 @@
     },
     {
      "lo": 14,
-     "hi": 20,
-     "pts": 3,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 21,
      "hi": 99,
      "pts": 3,
      "reb": 1,
@@ -3842,7 +3886,7 @@
    "paintBoost": -2,
    "threePtBoost": 4,
    "defBoost": 1,
-   "salary": 630,
+   "salary": 650,
    "chart": [
     {
      "lo": 1,
@@ -3856,14 +3900,14 @@
      "hi": 8,
      "pts": 0,
      "reb": 0,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 9,
      "hi": 15,
      "pts": 1,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 16,
@@ -3906,7 +3950,7 @@
    "paintBoost": 2,
    "threePtBoost": 2,
    "defBoost": 2,
-   "salary": 1810,
+   "salary": 1800,
    "chart": [
     {
      "lo": 1,
@@ -3970,7 +4014,7 @@
    "paintBoost": -1,
    "threePtBoost": 2,
    "defBoost": 0,
-   "salary": 630,
+   "salary": 650,
    "chart": [
     {
      "lo": 1,
@@ -3988,13 +4032,6 @@
     },
     {
      "lo": 4,
-     "hi": 8,
-     "pts": 1,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 9,
      "hi": 13,
      "pts": 1,
      "reb": 0,
@@ -4002,17 +4039,10 @@
     },
     {
      "lo": 14,
-     "hi": 23,
-     "pts": 2,
-     "reb": 0,
-     "ast": 1
-    },
-    {
-     "lo": 24,
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     }
    ],
    "season": 2025,
@@ -4048,7 +4078,7 @@
    "paintBoost": -1,
    "threePtBoost": 0,
    "defBoost": -1,
-   "salary": 730,
+   "salary": 720,
    "chart": [
     {
      "lo": 1,
@@ -4112,7 +4142,7 @@
    "paintBoost": -1,
    "threePtBoost": 2,
    "defBoost": 1,
-   "salary": 670,
+   "salary": 700,
    "chart": [
     {
      "lo": 1,
@@ -4132,22 +4162,15 @@
      "lo": 7,
      "hi": 16,
      "pts": 1,
-     "reb": 0,
+     "reb": 1,
      "ast": 1
     },
     {
      "lo": 17,
-     "hi": 21,
+     "hi": 99,
      "pts": 2,
      "reb": 0,
      "ast": 1
-    },
-    {
-     "lo": 22,
-     "hi": 99,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
     }
    ],
    "season": 2020,
@@ -4254,7 +4277,7 @@
    "paintBoost": 1,
    "threePtBoost": 1,
    "defBoost": 1,
-   "salary": 890,
+   "salary": 860,
    "chart": [
     {
      "lo": 1,
@@ -4267,7 +4290,7 @@
      "lo": 3,
      "hi": 7,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -4279,6 +4302,13 @@
     },
     {
      "lo": 13,
+     "hi": 22,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 23,
      "hi": 99,
      "pts": 2,
      "reb": 1,
@@ -4308,6 +4338,77 @@
    }
   },
   {
+   "id": "Mitchell_Robinson_2020",
+   "name": "Mitchell Robinson",
+   "team": "NYK",
+   "pos": "C",
+   "speed": 7,
+   "power": 11,
+   "shotLine": 18,
+   "paintBoost": 6,
+   "threePtBoost": -2,
+   "defBoost": 1,
+   "salary": 620,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 7,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 17,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 18,
+     "hi": 22,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 23,
+     "hi": 99,
+     "pts": 2,
+     "reb": 2,
+     "ast": 0
+    }
+   ],
+   "season": 2020,
+   "seasonLabel": "2019-20",
+   "age": 21,
+   "games": 61,
+   "mpg": 23.1,
+   "bbrefId": "robinmi01",
+   "traded": false,
+   "metrics": {
+    "bpm": 2.9,
+    "vorp": 1.8,
+    "ws": 6.8,
+    "ws48": 0.23,
+    "per": 23.5
+   },
+   "provisional": false,
+   "set": "throwbacks",
+   "demoted": "the player's Rookie card is stronger — a Throwback instead (rookie 2018-19 $580 against $620, 2026-09-22)",
+   "demotedFrom": {
+    "set": "super-season",
+    "id": "Mitchell_Robinson"
+   }
+  },
+  {
    "id": "Myles_Turner_2019",
    "name": "Myles Turner",
    "team": "IND",
@@ -4318,7 +4419,7 @@
    "paintBoost": 1,
    "threePtBoost": 0,
    "defBoost": 2,
-   "salary": 890,
+   "salary": 880,
    "chart": [
     {
      "lo": 1,
@@ -4382,7 +4483,7 @@
    "paintBoost": -1,
    "threePtBoost": 3,
    "defBoost": 1,
-   "salary": 740,
+   "salary": 730,
    "chart": [
     {
      "lo": 1,
@@ -4467,21 +4568,14 @@
      "hi": 13,
      "pts": 1,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 14,
-     "hi": 22,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 23,
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2014,
@@ -4588,7 +4682,7 @@
    "paintBoost": 0,
    "threePtBoost": 3,
    "defBoost": 1,
-   "salary": 1090,
+   "salary": 1080,
    "chart": [
     {
      "lo": 1,
@@ -4659,7 +4753,7 @@
    "paintBoost": 1,
    "threePtBoost": 3,
    "defBoost": -1,
-   "salary": 740,
+   "salary": 750,
    "chart": [
     {
      "lo": 1,
@@ -4691,17 +4785,10 @@
     },
     {
      "lo": 15,
-     "hi": 21,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 22,
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     }
    ],
    "season": 2025,
@@ -4808,7 +4895,7 @@
    "paintBoost": 6,
    "threePtBoost": -2,
    "defBoost": 3,
-   "salary": 1150,
+   "salary": 1140,
    "chart": [
     {
      "lo": 1,
@@ -4822,14 +4909,14 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
      "hi": 12,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 13,
@@ -4879,7 +4966,7 @@
    "paintBoost": 2,
    "threePtBoost": 3,
    "defBoost": -1,
-   "salary": 580,
+   "salary": 600,
    "chart": [
     {
      "lo": 1,
@@ -4893,14 +4980,14 @@
      "hi": 7,
      "pts": 0,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 8,
      "hi": 14,
      "pts": 1,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 15,
@@ -5075,7 +5162,7 @@
    },
    "provisional": false,
    "set": "throwbacks",
-   "demoted": "the player's Rookie card is stronger — a Throwback instead (rookie 1997-98 $1850 against $1560, 2026-09-22)",
+   "demoted": "the player's Rookie card is stronger — a Throwback instead (rookie 1997-98 $1840 against $1560, 2026-09-22)",
    "demotedFrom": {
     "set": "super-season",
     "id": "Tim_Duncan"
@@ -5092,7 +5179,7 @@
    "paintBoost": 1,
    "threePtBoost": 0,
    "defBoost": 0,
-   "salary": 700,
+   "salary": 710,
    "chart": [
     {
      "lo": 1,
@@ -5105,7 +5192,7 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -5127,7 +5214,7 @@
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     }
    ],
    "season": 2017,
@@ -5163,7 +5250,7 @@
    "paintBoost": -1,
    "threePtBoost": 0,
    "defBoost": 1,
-   "salary": 600,
+   "salary": 590,
    "chart": [
     {
      "lo": 1,
@@ -5217,7 +5304,7 @@
    },
    "provisional": false,
    "set": "throwbacks",
-   "demoted": "best season is the current one — its card is stronger (retired 2026-09-29)",
+   "demoted": "best season is the current one — its card is stronger (retired 2026-09-30)",
    "demotedFrom": {
     "set": "super-season",
     "id": "Toumani_Camara"
@@ -5288,10 +5375,81 @@
    },
    "provisional": false,
    "set": "throwbacks",
-   "demoted": "the player's Rookie card is stronger — a Throwback instead (rookie 2021-22 $390 against $350, 2026-09-22)",
+   "demoted": "the player's Rookie card is stronger — a Throwback instead (rookie 2021-22 $410 against $350, 2026-09-22)",
    "demotedFrom": {
     "set": "super-season",
     "id": "Trendon_Watford"
+   }
+  },
+  {
+   "id": "Tyrese_Martin_2025",
+   "name": "Tyrese Martin",
+   "team": "BKN",
+   "pos": "SG",
+   "speed": 7,
+   "power": 6,
+   "shotLine": 16,
+   "paintBoost": 1,
+   "threePtBoost": 1,
+   "defBoost": -1,
+   "salary": 320,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 4,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 5,
+     "hi": 15,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 21,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    }
+   ],
+   "season": 2025,
+   "seasonLabel": "2024-25",
+   "age": 25,
+   "games": 60,
+   "mpg": 21.9,
+   "bbrefId": "martity01",
+   "traded": false,
+   "metrics": {
+    "bpm": -2.6,
+    "vorp": -0.2,
+    "ws": 0.9,
+    "ws48": 0.033,
+    "per": 10.9
+   },
+   "provisional": false,
+   "set": "throwbacks",
+   "demoted": "best season is the current one — its card is stronger (retired 2026-09-24)",
+   "demotedFrom": {
+    "set": "super-season",
+    "id": "Tyrese_Martin"
    }
   },
   {
@@ -5305,7 +5463,7 @@
    "paintBoost": -2,
    "threePtBoost": 1,
    "defBoost": 0,
-   "salary": 530,
+   "salary": 550,
    "chart": [
     {
      "lo": 1,
@@ -5319,21 +5477,14 @@
      "hi": 3,
      "pts": 0,
      "reb": 0,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 4,
-     "hi": 7,
-     "pts": 1,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 8,
      "hi": 15,
      "pts": 1,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 16,
@@ -5376,7 +5527,7 @@
    "paintBoost": 1,
    "threePtBoost": -6,
    "defBoost": 2,
-   "salary": 1320,
+   "salary": 1350,
    "chart": [
     {
      "lo": 1,
@@ -5390,7 +5541,7 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 7,
@@ -5411,7 +5562,7 @@
      "hi": 99,
      "pts": 3,
      "reb": 2,
-     "ast": 0
+     "ast": 1
     }
    ],
    "season": 2009,
@@ -5430,7 +5581,7 @@
    },
    "provisional": false,
    "set": "throwbacks",
-   "demoted": "the player's Rookie card is stronger — a Throwback instead (rookie 2002-03 $1440 against $1320, 2026-09-22)",
+   "demoted": "the player's Rookie card is stronger — a Throwback instead (rookie 2002-03 $1440 against $1350, 2026-09-22)",
    "demotedFrom": {
     "set": "super-season",
     "id": "Yao_Ming"

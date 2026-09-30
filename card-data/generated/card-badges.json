@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-29T17:26:14.689Z",
+ "generatedAt": "2026-09-30T11:43:08.043Z",
  "set": "2026-27",
  "provisional": true,
  "source": "the Super Season and Rookie exclusion lists: a player whose best or rookie season is 2026 gets no card in that set, because his base card already IS that season — so the fact is printed on the base card as a badge instead",
@@ -15,10 +15,10 @@
   "live"
  ],
  "counts": {
-  "players": 172,
+  "players": 175,
   "applies": {
    "rookie": 33,
-   "super-season": 172,
+   "super-season": 175,
    "best-season": 0,
    "summer-standout": 0,
    "dissonance": 0,
@@ -29,8 +29,8 @@
   },
   "printed": {
    "rookie": 33,
-   "super-season": 19,
-   "best-season": 120,
+   "super-season": 18,
+   "best-season": 124,
    "summer-standout": 0,
    "dissonance": 0,
    "team-reward": 0,
@@ -116,6 +116,13 @@
   {
    "id": "Ben_Sheppard",
    "name": "Ben Sheppard",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Bennedict_Mathurin",
+   "name": "Bennedict Mathurin",
    "badges": [
     "super-season"
    ]
@@ -414,6 +421,13 @@
   {
    "id": "Isaiah_Collier",
    "name": "Isaiah Collier",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Isaiah_Hartenstein",
+   "name": "Isaiah Hartenstein",
    "badges": [
     "super-season"
    ]
@@ -1200,6 +1214,13 @@
   {
    "id": "Tristan_Vukcevic",
    "name": "Tristan Vukcevic",
+   "badges": [
+    "super-season"
+   ]
+  },
+  {
+   "id": "Tyrese_Martin",
+   "name": "Tyrese Martin",
    "badges": [
     "super-season"
    ]

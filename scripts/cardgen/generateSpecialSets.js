@@ -2002,13 +2002,28 @@ export function main({ log = console.log } = {}) {
   // roster does. A missing base file returns an empty map and drops nobody,
   // which is the old behaviour exactly; a STALE one compares against stale
   // prices, so run the base set first after any repricing.
+  //
+  // ── AND WHAT SHIPPED HOLDS ITS PLACE (2026-09-30) ─────────────────────────
+  //
+  // With no margin this rule flipped on pricing noise: the conditional-rows
+  // rebuild brought back four Super Seasons that had been dropped, each on a
+  // gap of a few dollars, each a photo-less card minted. So a DROPPED one
+  // comes back only when it beats its base card by REPICK_MARGIN (the value
+  // pick's margin, superSeasonValue.js). The margin never runs the other
+  // way: a Super Season weaker than the same player's base card is the one
+  // thing the set may not print (the user, 2026-09-07), so a shipped one that
+  // is beaten — or merely tied — still leaves.
+  const shippedSuperSeasonPlayers = new Set(readShippedSeasons(OUTPUT_FILES[SUPER_SEASON_SET]).map(([id]) => id));
+  const holdsAgainst = (card, rival) => (shippedSuperSeasonPlayers.has(card.bbrefId)
+    ? rival < (card.salary ?? 0)
+    : rival < (card.salary ?? 0) - REPICK_MARGIN);
   {
     const ss = builtSets.get(SUPER_SEASON_SET);
     const baseSalaries = loadBaseSalaries();
     const demoted = [];
     for (const card of [...ss]) {
       const base = baseSalaries.get(card.id);
-      if (base == null || base < (card.salary ?? 0)) continue;
+      if (base == null || holdsAgainst(card, base)) continue;
       ss.splice(ss.indexOf(card), 1);
       beatenByBase.add(card.bbrefId);
       selection.excluded.superSeason.push({
@@ -2057,7 +2072,8 @@ export function main({ log = console.log } = {}) {
     const demoted = [];
     for (const card of [...ss]) {
       const rk = rookies.get(card.name);
-      if (!rk || rk.season === card.season || !((rk.salary ?? 0) > (card.salary ?? 0))) continue;
+      // The same holder margin as the base-card rule above (2026-09-30).
+      if (!rk || rk.season === card.season || holdsAgainst(card, rk.salary ?? 0)) continue;
       ss.splice(ss.indexOf(card), 1);
       // Not an EXCLUSION (that list means "the fact prints on the base card"
       // and feeds card-badges.json): a move, written under `demoted` so the

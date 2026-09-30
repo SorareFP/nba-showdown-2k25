@@ -1,6 +1,6 @@
 {
  "set": "wnba-throwbacks",
- "generatedAt": "2026-09-29T17:28:00.791Z",
+ "generatedAt": "2026-09-30T11:43:12.285Z",
  "note": "WNBA THROWBACKS — generator-owned (scripts/cardgen/generateCuratedCards.js from demoted-wnba-super-seasons.json): WNBA Super Seasons the value pick retired. Requested WNBA Throwbacks live in cards-free-agents.json; both join the wnba-throwbacks set in cardSets.js.",
  "cards": [
   {
@@ -15,7 +15,7 @@
    "paintBoost": 0,
    "threePtBoost": -1,
    "defBoost": 1,
-   "salary": 1540,
+   "salary": 1500,
    "chart": [
     {
      "lo": 1,
@@ -49,7 +49,7 @@
      "lo": 22,
      "hi": 99,
      "pts": 4,
-     "reb": 2,
+     "reb": 1,
      "ast": 0
     }
    ],
@@ -92,7 +92,7 @@
    "paintBoost": 2,
    "threePtBoost": 0,
    "defBoost": 1,
-   "salary": 1450,
+   "salary": 1400,
    "chart": [
     {
      "lo": 1,
@@ -106,21 +106,21 @@
      "hi": 7,
      "pts": 0,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 8,
      "hi": 13,
      "pts": 2,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 14,
      "hi": 99,
      "pts": 3,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "league": "WNBA",
@@ -162,7 +162,7 @@
    "paintBoost": 0,
    "threePtBoost": -8,
    "defBoost": 3,
-   "salary": 1320,
+   "salary": 1250,
    "chart": [
     {
      "lo": 1,
@@ -176,7 +176,7 @@
      "hi": 6,
      "pts": 0,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
@@ -189,7 +189,7 @@
      "lo": 12,
      "hi": 20,
      "pts": 2,
-     "reb": 2,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -197,7 +197,7 @@
      "hi": 99,
      "pts": 3,
      "reb": 2,
-     "ast": 1
+     "ast": 0
     }
    ],
    "league": "WNBA",
@@ -239,7 +239,7 @@
    "paintBoost": 1,
    "threePtBoost": 0,
    "defBoost": 2,
-   "salary": 1070,
+   "salary": 1050,
    "chart": [
     {
      "lo": 1,
@@ -253,21 +253,21 @@
      "hi": 3,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 4,
      "hi": 8,
      "pts": 1,
-     "reb": 0,
-     "ast": 0
+     "reb": 1,
+     "ast": 1
     },
     {
      "lo": 9,
      "hi": 13,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     },
     {
      "lo": 14,
@@ -302,160 +302,6 @@
    "demotedFrom": {
     "set": "wnba-super-season",
     "id": "Lindsay_Whalen"
-   }
-  },
-  {
-   "id": "Tina_Charles_2016",
-   "name": "Tina Charles",
-   "team": "NYL12",
-   "statRowTeam": "NYL",
-   "pos": "C",
-   "speed": 8,
-   "power": 15,
-   "shotLine": 16,
-   "paintBoost": 0,
-   "threePtBoost": -1,
-   "defBoost": 0,
-   "salary": 1070,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 6,
-     "pts": 0,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 7,
-     "hi": 15,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 16,
-     "hi": 21,
-     "pts": 3,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 22,
-     "hi": 99,
-     "pts": 3,
-     "reb": 2,
-     "ast": 1
-    }
-   ],
-   "league": "WNBA",
-   "season": 2016,
-   "seasonLabel": "2016",
-   "games": 32,
-   "mpg": 33.7,
-   "minutes": 1077,
-   "schedule": 34,
-   "bbrefId": "charlti01w",
-   "metrics": {
-    "bpmHat": 4.82,
-    "obpmHat": 4.67,
-    "dbpmHat": 0.15,
-    "seasonZ": 1.64,
-    "per": 23.8,
-    "ws": 4.7,
-    "wsPer40": 0.176,
-    "tsPct": 0.499,
-    "pts100": 32.6
-   },
-   "provisional": false,
-   "set": "wnba-throwbacks",
-   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
-   "demotedFrom": {
-    "set": "wnba-super-season",
-    "id": "Tina_Charles"
-   }
-  },
-  {
-   "id": "Lisa_Leslie_2004",
-   "name": "Lisa Leslie",
-   "team": "LAS97",
-   "statRowTeam": "LAS",
-   "pos": "C",
-   "speed": 7,
-   "power": 19,
-   "shotLine": 14,
-   "paintBoost": 2,
-   "threePtBoost": -5,
-   "defBoost": 4,
-   "salary": 1060,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 6,
-     "pts": 0,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 7,
-     "hi": 13,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 14,
-     "hi": 20,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 21,
-     "hi": 99,
-     "pts": 2,
-     "reb": 2,
-     "ast": 1
-    }
-   ],
-   "league": "WNBA",
-   "season": 2004,
-   "seasonLabel": "2004",
-   "games": 34,
-   "mpg": 33.8,
-   "minutes": 1150,
-   "schedule": 34,
-   "bbrefId": "leslili01w",
-   "metrics": {
-    "bpmHat": 7.31,
-    "obpmHat": 3.68,
-    "dbpmHat": 3.64,
-    "seasonZ": 2.36,
-    "per": 25.3,
-    "ws": 6.8,
-    "wsPer40": 0.236,
-    "tsPct": 0.552,
-    "pts100": 28.8
-   },
-   "provisional": false,
-   "set": "wnba-throwbacks",
-   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
-   "demotedFrom": {
-    "set": "wnba-super-season",
-    "id": "Lisa_Leslie"
    }
   },
   {
@@ -539,6 +385,153 @@
    }
   },
   {
+   "id": "Tina_Charles_2016",
+   "name": "Tina Charles",
+   "team": "NYL12",
+   "statRowTeam": "NYL",
+   "pos": "C",
+   "speed": 8,
+   "power": 15,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": -1,
+   "defBoost": 0,
+   "salary": 1030,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 7,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    }
+   ],
+   "league": "WNBA",
+   "season": 2016,
+   "seasonLabel": "2016",
+   "games": 32,
+   "mpg": 33.7,
+   "minutes": 1077,
+   "schedule": 34,
+   "bbrefId": "charlti01w",
+   "metrics": {
+    "bpmHat": 4.82,
+    "obpmHat": 4.67,
+    "dbpmHat": 0.15,
+    "seasonZ": 1.64,
+    "per": 23.8,
+    "ws": 4.7,
+    "wsPer40": 0.176,
+    "tsPct": 0.499,
+    "pts100": 32.6
+   },
+   "provisional": false,
+   "set": "wnba-throwbacks",
+   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
+   "demotedFrom": {
+    "set": "wnba-super-season",
+    "id": "Tina_Charles"
+   }
+  },
+  {
+   "id": "Lisa_Leslie_2004",
+   "name": "Lisa Leslie",
+   "team": "LAS97",
+   "statRowTeam": "LAS",
+   "pos": "C",
+   "speed": 7,
+   "power": 19,
+   "shotLine": 14,
+   "paintBoost": 2,
+   "threePtBoost": -5,
+   "defBoost": 4,
+   "salary": 1020,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 20,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "league": "WNBA",
+   "season": 2004,
+   "seasonLabel": "2004",
+   "games": 34,
+   "mpg": 33.8,
+   "minutes": 1150,
+   "schedule": 34,
+   "bbrefId": "leslili01w",
+   "metrics": {
+    "bpmHat": 7.31,
+    "obpmHat": 3.68,
+    "dbpmHat": 3.64,
+    "seasonZ": 2.36,
+    "per": 25.3,
+    "ws": 6.8,
+    "wsPer40": 0.236,
+    "tsPct": 0.552,
+    "pts100": 28.8
+   },
+   "provisional": false,
+   "set": "wnba-throwbacks",
+   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
+   "demotedFrom": {
+    "set": "wnba-super-season",
+    "id": "Lisa_Leslie"
+   }
+  },
+  {
    "id": "Sophia_Young_Malcolm_2008",
    "name": "Sophia Young-Malcolm",
    "team": "SAS",
@@ -550,7 +543,7 @@
    "paintBoost": 1,
    "threePtBoost": -5,
    "defBoost": 2,
-   "salary": 1000,
+   "salary": 990,
    "chart": [
     {
      "lo": 1,
@@ -627,7 +620,7 @@
    "paintBoost": 0,
    "threePtBoost": 2,
    "defBoost": 2,
-   "salary": 920,
+   "salary": 950,
    "chart": [
     {
      "lo": 1,
@@ -648,7 +641,7 @@
      "hi": 13,
      "pts": 1,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 14,
@@ -686,83 +679,6 @@
    }
   },
   {
-   "id": "Elena_Baranova_2001",
-   "name": "Elena Baranova",
-   "team": "MIA",
-   "statRowTeam": "MIA",
-   "pos": "F",
-   "speed": 10,
-   "power": 14,
-   "shotLine": 15,
-   "paintBoost": 1,
-   "threePtBoost": 1,
-   "defBoost": 2,
-   "salary": 820,
-   "chart": [
-    {
-     "lo": 1,
-     "hi": 2,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 3,
-     "hi": 6,
-     "pts": 0,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 7,
-     "hi": 14,
-     "pts": 1,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 15,
-     "hi": 20,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 21,
-     "hi": 99,
-     "pts": 2,
-     "reb": 1,
-     "ast": 1
-    }
-   ],
-   "league": "WNBA",
-   "season": 2001,
-   "seasonLabel": "2001",
-   "games": 32,
-   "mpg": 30.8,
-   "minutes": 984,
-   "schedule": 32,
-   "bbrefId": "baranel01w",
-   "metrics": {
-    "bpmHat": 5.56,
-    "obpmHat": 3.13,
-    "dbpmHat": 2.44,
-    "seasonZ": 1.75,
-    "per": 21.3,
-    "ws": 5,
-    "wsPer40": 0.201,
-    "tsPct": 0.523,
-    "pts100": 23.9
-   },
-   "provisional": false,
-   "set": "wnba-throwbacks",
-   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
-   "demotedFrom": {
-    "set": "wnba-super-season",
-    "id": "Elena_Baranova"
-   }
-  },
-  {
    "id": "Katie_Smith_2000",
    "name": "Katie Smith",
    "team": "MIN99",
@@ -788,7 +704,7 @@
      "hi": 6,
      "pts": 0,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 7,
@@ -851,7 +767,7 @@
    "paintBoost": 2,
    "threePtBoost": 1,
    "defBoost": 0,
-   "salary": 780,
+   "salary": 800,
    "chart": [
     {
      "lo": 1,
@@ -872,7 +788,7 @@
      "hi": 14,
      "pts": 1,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 15,
@@ -910,6 +826,83 @@
    }
   },
   {
+   "id": "Elena_Baranova_2001",
+   "name": "Elena Baranova",
+   "team": "MIA",
+   "statRowTeam": "MIA",
+   "pos": "F",
+   "speed": 10,
+   "power": 14,
+   "shotLine": 15,
+   "paintBoost": 1,
+   "threePtBoost": 1,
+   "defBoost": 2,
+   "salary": 790,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 15,
+     "hi": 20,
+     "pts": 2,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    }
+   ],
+   "league": "WNBA",
+   "season": 2001,
+   "seasonLabel": "2001",
+   "games": 32,
+   "mpg": 30.8,
+   "minutes": 984,
+   "schedule": 32,
+   "bbrefId": "baranel01w",
+   "metrics": {
+    "bpmHat": 5.56,
+    "obpmHat": 3.13,
+    "dbpmHat": 2.44,
+    "seasonZ": 1.75,
+    "per": 21.3,
+    "ws": 5,
+    "wsPer40": 0.201,
+    "tsPct": 0.523,
+    "pts100": 23.9
+   },
+   "provisional": false,
+   "set": "wnba-throwbacks",
+   "demoted": "another season of the player is the stronger card — a Throwback instead (retired 2026-09-24)",
+   "demotedFrom": {
+    "set": "wnba-super-season",
+    "id": "Elena_Baranova"
+   }
+  },
+  {
    "id": "Michelle_Snow_2005",
    "name": "Michelle Snow",
    "team": "HOU",
@@ -921,7 +914,7 @@
    "paintBoost": 1,
    "threePtBoost": -7,
    "defBoost": 0,
-   "salary": 690,
+   "salary": 720,
    "chart": [
     {
      "lo": 1,
@@ -946,10 +939,17 @@
     },
     {
      "lo": 13,
-     "hi": 99,
+     "hi": 20,
      "pts": 2,
      "reb": 1,
      "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
     }
    ],
    "league": "WNBA",
@@ -991,7 +991,7 @@
    "paintBoost": 1,
    "threePtBoost": -4,
    "defBoost": 1,
-   "salary": 670,
+   "salary": 660,
    "chart": [
     {
      "lo": 1,
@@ -1004,7 +1004,7 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 0
     },
     {
@@ -1012,21 +1012,14 @@
      "hi": 14,
      "pts": 1,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 15,
-     "hi": 20,
-     "pts": 2,
-     "reb": 1,
-     "ast": 0
-    },
-    {
-     "lo": 21,
      "hi": 99,
      "pts": 2,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "league": "WNBA",
@@ -1068,7 +1061,7 @@
    "paintBoost": 0,
    "threePtBoost": -1,
    "defBoost": 3,
-   "salary": 470,
+   "salary": 450,
    "chart": [
     {
      "lo": 1,
@@ -1079,16 +1072,9 @@
     },
     {
      "lo": 3,
-     "hi": 3,
-     "pts": 0,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 4,
      "hi": 8,
      "pts": 0,
-     "reb": 0,
+     "reb": 1,
      "ast": 1
     },
     {
@@ -1100,6 +1086,13 @@
     },
     {
      "lo": 16,
+     "hi": 23,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 24,
      "hi": 99,
      "pts": 1,
      "reb": 1,

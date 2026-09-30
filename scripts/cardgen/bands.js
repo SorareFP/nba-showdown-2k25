@@ -100,7 +100,31 @@ const EV_SLOT_TOLERANCE = 2.5;
 /** The games' worth of the player's own overall rate a band's average is shrunk toward (conditionalStatValues). */
 const CONDITIONAL_PRIOR_GAMES = 8;
 
-function evRoundValues(raws, slots, { monotone = true, maxTurns = Infinity, evTolerance = Infinity } = {}) {
+/**
+ * Every rounding the rules allow, best first — `evRoundValues` takes the
+ * first. A caller that has to satisfy something the per-stat search cannot see
+ * (reconcileConditional: no row may be worth less than the row below it, which
+ * reads rebounds, assists AND points together) walks down this list instead.
+ */
+function evRoundCandidates(raws, slots, opts = {}) {
+  const out = [];
+  evRoundWalk(raws, slots, opts, c => out.push(c));
+  return out.sort((a, b) => a.outside - b.outside || a.dev - b.dev || a.err - b.err);
+}
+
+function evRoundValues(raws, slots, opts = {}) {
+  let best = null;
+  evRoundWalk(raws, slots, opts, c => {
+    if (!best || c.outside < best.outside
+      || (c.outside === best.outside && (c.dev < best.dev - 1e-12 || (c.dev - best.dev <= 1e-12 && c.err < best.err)))) best = c;
+  });
+  // The constraint can in principle exclude every candidate (a raw ladder
+  // that already jumps by more than its own gaps allow). Falling back to
+  // per-band nearest rounding keeps a chart printable rather than throwing.
+  return best?.values ?? raws.map(v => Math.round(roundDown(v, 1)));
+}
+
+function evRoundWalk(raws, slots, { monotone = true, maxTurns = Infinity, evTolerance = Infinity } = {}, emit) {
   const total = slots.reduce((a, b) => a + b, 0);
   const rawEv = raws.reduce((s, v, i) => s + v * slots[i], 0) / total;
   const options = raws.map(v => {
@@ -120,7 +144,6 @@ function evRoundValues(raws, slots, { monotone = true, maxTurns = Infinity, evTo
   // `monotone: false` (conditionalStatValues): the ladder may fall as well as
   // rise, and the earned-variance ceiling then bounds the jump either way.
   const maxJump = raws.map((v, i) => (i === 0 ? Infinity : Math.max(1, Math.floor(Math.abs(v - raws[i - 1]) + 1))));
-  let best = null;
   const walk = (i, acc, evAcc, devAcc, lastDir, turns) => {
     if (i === raws.length) {
       // Per-band deviation is PRIMARY, EV drift is the tiebreak. The old
@@ -141,10 +164,7 @@ function evRoundValues(raws, slots, { monotone = true, maxTurns = Infinity, evTo
       // rows). The zigzag is handled below as a constraint instead.
       const err = Math.abs(evAcc / total - rawEv);
       const outside = err * total > evTolerance ? 1 : 0;
-      if (!best || outside < best.outside
-        || (outside === best.outside && (devAcc < best.dev - 1e-12 || (devAcc - best.dev <= 1e-12 && err < best.err)))) {
-        best = { err, dev: devAcc, outside, values: [...acc] };
-      }
+      emit({ err, dev: devAcc, outside, values: [...acc] });
       return;
     }
     for (const v of options[i]) {
@@ -169,10 +189,6 @@ function evRoundValues(raws, slots, { monotone = true, maxTurns = Infinity, evTo
     }
   };
   walk(0, [], 0, 0, 0, 0);
-  // The constraint can in principle exclude every candidate (a raw ladder
-  // that already jumps by more than its own gaps allow). Falling back to
-  // per-band nearest rounding keeps a chart printable rather than throwing.
-  return best?.values ?? raws.map(v => Math.round(roundDown(v, 1)));
 }
 
 /**
@@ -330,6 +346,27 @@ export function computeStatBands(games, statKey) {
  * per-stat ladders.
  */
 export function conditionalStatValues(games, ptsBands, statKey) {
+  const cond = conditionalStatRaws(games, ptsBands, statKey);
+  if (!cond) return null;
+  const values = evRoundValues(cond.raws, ptsBands.map(b => b.slots ?? 1), CONDITIONAL_ROUNDING);
+  return cond.raws.map((raw, i) => ({ value: values[i], raw, games: cond.games[i] }));
+}
+
+/** The rules a conditional rounding runs under — see conditionalStatValues. */
+export const CONDITIONAL_ROUNDING = { monotone: false, maxTurns: 1, evTolerance: EV_SLOT_TOLERANCE };
+
+/** Every rounding of one stat's conditional averages the rules allow, best first (evRoundCandidates). */
+export function conditionalRoundings(raws, slots) {
+  return evRoundCandidates(raws, slots, CONDITIONAL_ROUNDING);
+}
+
+/**
+ * The averaging half of conditionalStatValues, unrounded: `{ raws, games }`
+ * per points band, or null. reconcileConditional rounds rebounds and assists
+ * TOGETHER from these, because the rule that decides between roundings (no row
+ * worth less than the row below it) reads both stats and the points at once.
+ */
+export function conditionalStatRaws(games, ptsBands, statKey) {
   const n = ptsBands?.length ?? 0;
   if (!n || ptsBands.some(b => !Number.isFinite(b.threshold))) return null;
   const sum = new Array(n).fill(0);
@@ -372,8 +409,7 @@ export function conditionalStatValues(games, ptsBands, statKey) {
     }
     return 0;
   });
-  const values = evRoundValues(raws, ptsBands.map(b => b.slots ?? 1), { monotone: false, maxTurns: 1, evTolerance: EV_SLOT_TOLERANCE });
-  return raws.map((raw, i) => ({ value: values[i], raw, games: count[i] }));
+  return { raws, games: count };
 }
 
 /**

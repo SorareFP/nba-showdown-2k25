@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-29T17:31:19.482Z",
+ "generatedAt": "2026-09-30T11:45:11.785Z",
  "source": "Basketball-Reference's WNBA award voting pages (rank-1 rows) and each season page's Finals result. All-Star selections are the remaining gap: they live on per-season All-Star pages this does not fetch yet.",
  "declared": [
   "MVP",
@@ -40,7 +40,18 @@
   2026
  ],
  "sets": {
-  "wnba": [],
+  "wnba": [
+   {
+    "id": "Olivia_Miles",
+    "name": "Olivia Miles",
+    "season": 2026,
+    "bbrefId": "milesol01w",
+    "awards": [
+     "ROY"
+    ],
+    "champion": null
+   }
+  ],
   "wnba-rookie": [
    {
     "id": "A_ja_Wilson",

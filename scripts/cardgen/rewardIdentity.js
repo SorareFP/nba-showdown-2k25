@@ -23,7 +23,7 @@ import { readCache, REPO_ROOT } from './cache.js';
 import { normalizeName } from './resolveTeams.js';
 import { careerSeasons, bestSeason, BEST_SEASON_MIN_GAMES, BEST_SEASON_MIN_MINUTES } from './history.js';
 import { seasonDistribution } from './fetchHistory.js';
-import { rookieSeasonCounts } from './generateSpecialSets.js';
+import { rookieSeasonCounts, BEATEN_BY_BASE, BEATEN_BY_ROOKIE } from './generateSpecialSets.js';
 import { SUPER_SEASON_MIN_SALARY } from '../../src/cards/badges.js';
 import { bestLegendSeason } from './wnba/legends.js';
 import { wnbaRookieSeasonCounts } from './wnba/generateWnbaRookies.js';
@@ -73,6 +73,20 @@ export function superSeasonMap(genDir = path.join(REPO_ROOT, 'card-data', 'gener
     if ((c.set === 'super-season' || c.set === 'wnba-super-season') && c.bbrefId && !out.has(c.bbrefId)) {
       out.set(c.bbrefId, c.season);
     }
+  }
+  // A SUPER SEASON HIS BASE CARD BEAT (BEATEN_BY_BASE) left because his best
+  // season is the CURRENT one — so that is the season pinned. Without it the
+  // box-score fallback crowned the retired season again, and a Free Agents
+  // request for Toumani Camara's 2024-25 quoted as a Super Season: a card his
+  // own base card beats, the one thing that set may not print (2026-09-30).
+  // And one his ROOKIE card beat (BEATEN_BY_ROOKIE — Trendon Watford's
+  // 2022-23, the same day) pins the rookie season, the card that beat it.
+  const rookieSeason = new Map(cardsOf('cards-rookie.json').filter(c => c.bbrefId).map(c => [c.bbrefId, c.season]));
+  for (const c of cardsOf('demoted-super-seasons.json')) {
+    if (!c.bbrefId || out.has(c.bbrefId)) continue;
+    const why = String(c.demoted ?? '');
+    if (why.startsWith(BEATEN_BY_BASE)) out.set(c.bbrefId, ARCHIVE_LAST);
+    else if (why.startsWith(BEATEN_BY_ROOKIE) && rookieSeason.has(c.bbrefId)) out.set(c.bbrefId, rookieSeason.get(c.bbrefId));
   }
   return out;
 }

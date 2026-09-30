@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-29T17:30:48.926Z",
+ "generatedAt": "2026-09-30T11:44:29.933Z",
  "set": "set-rewards",
  "note": "SET COMPLETION REWARDS — cards MOVED out of their home special set (see migratedFrom) and earned by completing that set (rewardGoal). Built by scripts/cardgen/generateSetRewards.js from card-data/set-rewards-2026.json; the strongest card by salary of each group is the reward.",
  "cards": [
@@ -28,14 +28,14 @@
      "hi": 6,
      "pts": 0,
      "reb": 2,
-     "ast": 2
+     "ast": 1
     },
     {
      "lo": 7,
      "hi": 15,
      "pts": 3,
      "reb": 1,
-     "ast": 1
+     "ast": 2
     },
     {
      "lo": 16,
@@ -82,7 +82,7 @@
    "paintBoost": 0,
    "threePtBoost": -6,
    "defBoost": 2,
-   "salary": 1550,
+   "salary": 1590,
    "chart": [
     {
      "lo": 1,
@@ -107,17 +107,10 @@
     },
     {
      "lo": 14,
-     "hi": 20,
-     "pts": 3,
-     "reb": 1,
-     "ast": 1
-    },
-    {
-     "lo": 21,
      "hi": 99,
      "pts": 3,
      "reb": 1,
-     "ast": 0
+     "ast": 1
     }
    ],
    "season": 1985,
@@ -157,7 +150,7 @@
    "paintBoost": 1,
    "threePtBoost": -3,
    "defBoost": 3,
-   "salary": 1430,
+   "salary": 1420,
    "chart": [
     {
      "lo": 1,
@@ -170,7 +163,7 @@
      "lo": 3,
      "hi": 6,
      "pts": 0,
-     "reb": 1,
+     "reb": 0,
      "ast": 1
     },
     {
@@ -178,21 +171,14 @@
      "hi": 14,
      "pts": 2,
      "reb": 0,
-     "ast": 0
+     "ast": 1
     },
     {
      "lo": 15,
-     "hi": 21,
-     "pts": 3,
-     "reb": 0,
-     "ast": 0
-    },
-    {
-     "lo": 22,
      "hi": 99,
      "pts": 3,
      "reb": 1,
-     "ast": 1
+     "ast": 0
     }
    ],
    "season": 2006,
@@ -227,7 +213,7 @@
    "paintBoost": 0,
    "threePtBoost": -2,
    "defBoost": 0,
-   "salary": 1480,
+   "salary": 1460,
    "chart": [
     {
      "lo": 1,

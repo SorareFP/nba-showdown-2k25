@@ -3,14 +3,20 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 vi.mock('./sources/basketballReference.js', () => ({
   fetchGameLog: vi.fn(),
 }));
-vi.mock('./bands.js', () => ({
+// Only computeStatBands is stubbed (generatePlayerChart's tests); the
+// conditional averaging and rounding run for real.
+vi.mock('./bands.js', async importOriginal => ({
+  ...(await importOriginal()),
   computeStatBands: vi.fn(),
-  conditionalStatValues: vi.fn(),
 }));
 
 import {
   reconcileBands,
   reconcileConditional,
+  roundTogether,
+  neverWorseUpward,
+  rowValue,
+  ROW_VALUE,
   toRawCardFormat,
   generatePlayerChart,
   mergeIdenticalTiers,
@@ -20,7 +26,7 @@ import {
   MAX_PRINTED_ROWS,
 } from './generate.js';
 import * as basketballReference from './sources/basketballReference.js';
-import { computeStatBands, conditionalStatValues } from './bands.js';
+import { computeStatBands } from './bands.js';
 
 // ROWS THAT SAY WHAT HAPPENED TOGETHER (the user, 2026-09-29): the points
 // spine as ever, rebounds and assists per band from the games in it.
@@ -29,24 +35,55 @@ describe('reconcileConditional', () => {
   const reb = [{ lo: 1, hi: 5, value: 0 }, { lo: 6, hi: 15, value: 1 }, { lo: 16, hi: 25, value: 2 }];
   const ast = [{ lo: 1, hi: 2, value: 0 }, { lo: 3, hi: 20, value: 1 }, { lo: 21, hi: 25, value: 3 }];
 
-  it('puts each band\'s own rebounds and assists on the points spine — a ladder that may fall', () => {
-    conditionalStatValues.mockImplementation((games, bands, stat) =>
-      (stat === 'ast' ? [3, 2, 1] : [1, 1, 2]).map(value => ({ value, raw: value, games: 5 })));
-    const chart = reconcileConditional({ pts, reb, ast, games: [{ minutes: 30, pts: 1, reb: 2, ast: 9 }] });
-    expect(chart).toEqual([
-      { lo: 1, hi: 4, pts: 0, reb: 1, ast: 3 },
-      { lo: 5, hi: 12, pts: 2, reb: 1, ast: 2 },
-      { lo: 13, hi: 25, pts: 3, reb: 2, ast: 1 },
-    ]);
-    expect(conditionalStatValues).toHaveBeenCalledWith(expect.any(Array), pts, 'reb');
-    expect(conditionalStatValues).toHaveBeenCalledWith(expect.any(Array), pts, 'ast');
-  });
-
   it('falls back to the per-stat ladders read by roll when there are no joint rows', () => {
-    conditionalStatValues.mockReturnValue(null);
     const expected = reconcileConditional({ pts, reb, ast, games: null });
     expect(expected.map(t => [t.pts, t.reb, t.ast])).toEqual([[0, 0, 0], [2, 1, 1], [3, 2, 3]]);   // reconcileBandsByRoll's reading, probed at each tier's midpoint
-    expect(reconcileConditional({ pts, reb, ast, games: [{ minutes: 30, pts: 4 }] })).toEqual(expected);   // null from the module: the same fallback
+    expect(reconcileConditional({ pts, reb, ast, games: [{ minutes: 30, pts: 4 }] })).toEqual(expected);   // no rebounds or assists on the rows: the same fallback
+  });
+});
+
+// A HIGHER ROW IS NEVER WORSE (the user, 2026-09-30, on De'Anthony Melton's
+// 16-19: 3/1/0 over 20+: 3/0/0): every roll bonus has to be good news.
+describe('a higher row is never worth less than the row below it', () => {
+  it('prices a row at its points plus 0.2 a rebound and 0.3 an assist, the engine\'s prices at even odds', () => {
+    expect(ROW_VALUE).toEqual({ reb: 0.2, ast: 0.3 });
+    expect(rowValue({ pts: 3, reb: 1, ast: 0 })).toBeCloseTo(3.2, 12);
+    expect(rowValue({ pts: 3, reb: 0, ast: 0 })).toBe(3);
+  });
+
+  it('lifts a row the shave left short to the row below it, and the pair then merges (Melton)', () => {
+    // As cut: 16-19 3/1/0 under a top row of 4/0/0 — worth more. The shave
+    // takes the top row to 3/0/0, worth less than 3/1/0.
+    const cut = [
+      { lo: 1, hi: 2, pts: 0, reb: 0, ast: 0 }, { lo: 3, hi: 3, pts: 1, reb: 0, ast: 1 },
+      { lo: 4, hi: 8, pts: 1, reb: 1, ast: 1 }, { lo: 9, hi: 15, pts: 2, reb: 1, ast: 1 },
+      { lo: 16, hi: 19, pts: 3, reb: 1, ast: 0 }, { lo: 20, hi: 25, pts: 4, reb: 0, ast: 0 },
+    ];
+    const chart = shapeChart(cut, { shotLine: 16, ceilingDelay: 0 });
+    expect(chart.map(t => `${t.lo}-${t.hi}: ${t.pts}/${t.reb}/${t.ast}`)).toEqual([
+      '1-2: 0/0/0', '3-3: 0/0/1', '4-8: 1/1/1', '9-15: 2/1/1', '16-25: 3/1/0',
+    ]);
+    for (let i = 1; i < chart.length; i += 1) expect(rowValue(chart[i])).toBeGreaterThanOrEqual(rowValue(chart[i - 1]));
+  });
+
+  it('leaves a trade that is worth more alone: a point for an assist climbs', () => {
+    const chart = [{ lo: 1, hi: 2, pts: 0, reb: 0, ast: 0 }, { lo: 3, hi: 9, pts: 2, reb: 1, ast: 1 }, { lo: 10, hi: 25, pts: 3, reb: 1, ast: 0 }];
+    expect(neverWorseUpward(chart)).toEqual(chart);
+  });
+
+  it('rounds rebounds and assists together to keep every band climbing, at the least cost to the averages', () => {
+    // Equal points in the top two bands; alone, each stat rounds its top band
+    // down (1.4 -> 1, 0.6 -> 1 and 0.4 -> 0) and the top band ends worth less.
+    const ptsValues = [0, 2, 3, 3];
+    const slots = [4, 8, 7, 6];
+    const rebRaws = [0.9, 1.1, 1.6, 1.4];
+    const astRaws = [0.6, 0.9, 0.6, 0.4];
+    const { reb, ast } = roundTogether(ptsValues, rebRaws, astRaws, slots);
+    const rows = ptsValues.map((p, i) => ({ pts: p, reb: reb[i], ast: ast[i] }));
+    for (let i = 1; i < rows.length; i += 1) expect(rowValue(rows[i])).toBeGreaterThanOrEqual(rowValue(rows[i - 1]) - 1e-9);
+    // Still the player's own numbers: every value is its average's floor or ceiling.
+    rebRaws.forEach((v, i) => expect([Math.floor(v), Math.ceil(v)]).toContain(reb[i]));
+    astRaws.forEach((v, i) => expect([Math.floor(v), Math.ceil(v)]).toContain(ast[i]));
   });
 });
 

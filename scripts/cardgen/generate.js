@@ -5,7 +5,8 @@
 // floor, the forced shot-line break, then the identical-tier merge) ->
 // applyOverrides (Task 6) -> toRawCardFormat.
 
-import { computeStatBands, conditionalStatValues } from './bands.js';
+import { computeStatBands, conditionalStatRaws, conditionalRoundings } from './bands.js';
+import { SPEND_COSTS } from '../../src/game/engine.js';
 import { enforceZeroTiers } from './zeroFloor.js';
 import { applyOverrides } from './overrides.js';
 import * as basketballReference from './sources/basketballReference.js';
@@ -226,6 +227,50 @@ export function topTierShave(topPts, { shave = TOP_TIER_SHAVE, softCap = TOP_TIE
 }
 
 /**
+ * WHAT A ROW IS WORTH, in points: its points, plus its rebounds and assists at
+ * the prices the engine sets for them (SPEND_COSTS) at even odds — an assist
+ * is three-fifths of a 50% three (0.3 of a point), a rebound two-fifths of a
+ * 50% paint check (0.2). The salary model prices them at each card's own hit
+ * chances; the chart rule uses one fixed exchange so it reads the same on
+ * every card and anyone can check it by eye.
+ */
+export const ROW_VALUE = {
+  reb: (2 * 0.5) / SPEND_COSTS.reboundPaint,
+  ast: (3 * 0.5) / SPEND_COSTS.assistThree,
+};
+export const rowValue = t => (t.pts ?? 0) + ROW_VALUE.reb * (t.reb ?? 0) + ROW_VALUE.ast * (t.ast ?? 0);
+
+/**
+ * A HIGHER ROW IS NEVER WORSE (the user, 2026-09-30, on De'Anthony Melton's
+ * 16-19: 3/1/0 over 20+: 3/0/0): "it starts messing with the simple idea of
+ * 'we want to add as much to this player's roll bonus' as possible. We
+ * shouldn't be trying to hit lower chart amounts." Every roll bonus has to be
+ * good news, so no row may be worth less (rowValue) than the row below it.
+ *
+ * The rounding keeps this wherever it can (reconcileConditional). What it
+ * cannot see is the ceiling shave, which takes a point off the top row after
+ * the rows are cut — Melton's 4/0/0 became 3/0/0 under a 3/1/0. The shave is
+ * wanted (the user: "shave down upper outliers"), so it stays, and the row it
+ * leaves short is LIFTED instead: it takes each stat at least as high as the
+ * row below it, which makes it worth at least as much; an identical pair then
+ * merges (mergeIdenticalTiers), the shot-line break permitting. Charts whose
+ * every stat already climbs (the per-stat ladders) never trip it.
+ */
+export function neverWorseUpward(chart) {
+  if (!Array.isArray(chart) || chart.length < 2) return chart;
+  const out = chart.map(t => ({ ...t }));
+  for (let i = 1; i < out.length; i += 1) {
+    const below = out[i - 1];
+    const row = out[i];
+    if (rowValue(row) >= rowValue(below) - 1e-9) continue;
+    row.pts = Math.max(row.pts, below.pts);
+    row.reb = Math.max(row.reb, below.reb);
+    row.ast = Math.max(row.ast, below.ast);
+  }
+  return out;
+}
+
+/**
  * Pull in the top tier. Never below the tier beneath it -- a ceiling that sinks
  * under its own floor is not a suppressed chart, it is a broken one.
  */
@@ -253,9 +298,13 @@ export function shapeChart(chart, { shotLine = null, ceilingDelay = TOP_TIER_DEL
   // placement already prices the ceiling at its earned frequency, and a fixed
   // +2 on top of that would punish it twice. The magnitude shave still runs.
   const suppressed = suppressCeiling(floored, { delay: ceilingDelay });
+  // AFTER the shave, because the shave is what can break it: De'Anthony
+  // Melton's top row was 4/0/0 over a 3/1/0, and shaved to 3/0/0 it paid less
+  // than the row beneath. See neverWorseUpward.
+  const climbing = neverWorseUpward(suppressed);
   // firstMovable = 2: tier 0 is the blank tier and tier 1 is where the
   // statistics resume, so the lowest boundary a shot line may move is tier 2's.
-  const { chart: broken } = forceBandBoundary(suppressed, shotLine, { firstMovable: 2 });
+  const { chart: broken } = forceBandBoundary(climbing, shotLine, { firstMovable: 2 });
   // The merge still runs LAST: shaving the top tier can make it identical to
   // the tier beneath it, and only mergeIdenticalTiers collapses that -- running
   // suppression after the merge printed Toumani Camara with two identical
@@ -372,16 +421,52 @@ export const LEGACY_ROWS = typeof process !== 'undefined' && process.env?.CHART_
 
 export function reconcileConditional({ pts, reb, ast, games = null }) {
   const cond = games && !LEGACY_ROWS
-    ? { reb: conditionalStatValues(games, pts, 'reb'), ast: conditionalStatValues(games, pts, 'ast') }
+    ? { reb: conditionalStatRaws(games, pts, 'reb'), ast: conditionalStatRaws(games, pts, 'ast') }
     : null;
   if (!cond?.reb || !cond?.ast) return reconcileBandsByRoll({ pts, reb, ast });
+  const { reb: rebValues, ast: astValues } = roundTogether(pts.map(b => b.value), cond.reb.raws, cond.ast.raws, pts.map(b => b.slots ?? 1));
   return pts.map((tier, i) => ({
     lo: tier.lo,
     hi: tier.hi,
     pts: tier.value,
-    reb: cond.reb[i].value,
-    ast: cond.ast[i].value,
+    reb: rebValues[i],
+    ast: astValues[i],
   }));
+}
+
+/**
+ * Rebounds and assists rounded as a PAIR, so that no band is worth less than
+ * the band below it (neverWorseUpward says why). Each stat's roundings come
+ * best-first from its own rules (conditionalRoundings: the expected-value
+ * corridor, one change of direction); the pair is the best by the same
+ * measures summed — outside the corridor, then deviation, then drift — among
+ * those that keep every band at least as valuable as the one below. When no
+ * pair can (a band of more points carrying far fewer boards and assists than
+ * the one beneath it), the best pair is taken and neverWorseUpward lifts the
+ * short row after the chart is shaped.
+ */
+export function roundTogether(ptsValues, rebRaws, astRaws, slots) {
+  const rebs = conditionalRoundings(rebRaws, slots);
+  const asts = conditionalRoundings(astRaws, slots);
+  const climbs = (r, a) => ptsValues.every((p, i) => i === 0
+    || rowValue({ pts: p, reb: r[i], ast: a[i] }) >= rowValue({ pts: ptsValues[i - 1], reb: r[i - 1], ast: a[i - 1] }) - 1e-9);
+  const rank = (r, a) => [r.outside + a.outside, r.dev + a.dev, r.err + a.err];
+  const before = (x, y) => x[0] - y[0] || x[1] - y[1] || x[2] - y[2];
+  let best = null;
+  let fallback = null;
+  for (const r of rebs) {
+    for (const a of asts) {
+      const key = rank(r, a);
+      if (!fallback || before(key, fallback.key) < 0) fallback = { key, r, a };
+      if ((!best || before(key, best.key) < 0) && climbs(r.values, a.values)) best = { key, r, a };
+    }
+  }
+  const pick = best ?? fallback;
+  const nearest = raws => raws.map(v => Math.round(v));
+  return {
+    reb: pick?.r.values ?? nearest(rebRaws),
+    ast: pick?.a.values ?? nearest(astRaws),
+  };
 }
 
 export function toRawCardFormat(chart) {

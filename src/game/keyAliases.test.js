@@ -66,3 +66,20 @@ describe('KEY_ALIASES', () => {
     expect([...collectableKeys({ 'team-rewards:Nobody_Here': { count: 1 } })]).toEqual([]);
   });
 });
+
+// A THROWBACK WHOSE SEASON IS THE SUPER SEASON AGAIN (2026-09-30). Elton
+// Brand's 2005-06 was retired to a dormant Throwback by the value pick on
+// 2026-09-24 and is his Super Season again since the never-worse rebuild; the
+// Throwback's key must land on the Super Season, the same season.
+describe('a returned Throwback', () => {
+  it('resolves to the Super Season of the same season', () => {
+    const ss = getCardByKey('super-season:Elton_Brand');
+    expect(ss?.season).toBe(2006);
+    expect(getCardByKey('throwbacks:Elton_Brand_2006')).toBe(ss);
+    expect(canonicalKey('throwbacks:Elton_Brand_2006')).toBe('super-season:Elton_Brand');
+  });
+
+  it('never outranks a live card of the same key', () => {
+    for (const card of CARD_SETS.throwbacks ?? []) expect(getCardByKey(cardKey(card))).toBe(card);
+  });
+});

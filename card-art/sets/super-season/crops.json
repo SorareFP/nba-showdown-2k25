@@ -229,11 +229,6 @@
     "y": 0,
     "zoom": 1
   },
-  "CJ_McCollum": {
-    "x": 13.38,
-    "y": 0,
-    "zoom": 1
-  },
   "Clyde_Drexler": {
     "x": 0,
     "y": 14.6,
@@ -724,11 +719,6 @@
     "y": -2.4,
     "zoom": 1.15
   },
-  "Derrick_White": {
-    "x": -12.41,
-    "y": 0,
-    "zoom": 1
-  },
   "Devin_Booker": {
     "x": -46.51,
     "y": -5.08,
@@ -899,11 +889,6 @@
     "y": 0,
     "zoom": 1
   },
-  "Clint_Capela": {
-    "x": -0.73,
-    "y": 0,
-    "zoom": 1
-  },
   "Daniel_Gafford": {
     "x": 0.14,
     "y": 14.69,
@@ -931,11 +916,6 @@
   },
   "Jakob_Poeltl": {
     "x": 2.61,
-    "y": 0,
-    "zoom": 1
-  },
-  "John_Stockton": {
-    "x": -47.79,
     "y": 0,
     "zoom": 1
   },
@@ -1012,6 +992,11 @@
   "Dominique_Wilkins": {
     "x": 0,
     "y": -2.32,
+    "zoom": 1
+  },
+  "Derrick_White": {
+    "x": -1.07,
+    "y": 0,
     "zoom": 1
   }
 }

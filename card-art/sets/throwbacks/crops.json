@@ -208,5 +208,45 @@
     "x": -9.52,
     "y": -4.97,
     "zoom": 1.15
+  },
+  "CJ_McCollum_2024": {
+    "x": 13.38,
+    "y": 0,
+    "zoom": 1
+  },
+  "Clint_Capela_2021": {
+    "x": -0.73,
+    "y": 0,
+    "zoom": 1
+  },
+  "Derrick_White_2025": {
+    "x": -12.41,
+    "y": 0,
+    "zoom": 1
+  },
+  "John_Stockton_2002": {
+    "x": -47.79,
+    "y": 0,
+    "zoom": 1
+  },
+  "Kentavious_Caldwell_Pope_2018": {
+    "x": -3.19,
+    "y": 0,
+    "zoom": 1
+  },
+  "Luke_Kennard_2025": {
+    "x": -7.82,
+    "y": -1.22,
+    "zoom": 1.26
+  },
+  "Toumani_Camara_2025": {
+    "x": -26.11,
+    "y": 0,
+    "zoom": 1
+  },
+  "Trendon_Watford_2023": {
+    "x": -13.38,
+    "y": 0,
+    "zoom": 1
   }
 }

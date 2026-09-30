@@ -207,6 +207,13 @@ export const KEY_ALIASES = Object.freeze({
  */
 const setOf = (card, fallback) => card.set ?? fallback;
 export const DERIVED_ALIASES = new Map([
+  //   returned   the Throwback of a season that is the player's Super Season
+  //              AGAIN (the value pick moved back to it: Elton Brand's 2005-06
+  //              on 2026-09-30) resolves to the Super Season, the same season.
+  //              First in the list, so every other kind of alias outranks it.
+  ...[[superSeason.cards, 'super-season', 'throwbacks'], [wnbaSuperSeason.cards, 'wnba-super-season', 'wnba-throwbacks']].flatMap(([cards, set, back]) =>
+    cards.filter(c => c.id && Number.isFinite(c.season) && !hasMigratedOut(set, c.id))
+      .map(c => [`${back}:${c.id}_${c.season}`, `${set}:${c.id}`])),
   ...[[superSeason.cards, 'super-season'], [wnbaSuperSeason.cards, 'wnba-super-season']].flatMap(([cards, set]) =>
     cards.filter(c => c.migratedFrom).map(c => [`${c.migratedFrom.set}:${c.migratedFrom.id}`, `${set}:${c.id}`])),
   ...[...throwbacks.cards, ...wnbaThrowbacks.cards]

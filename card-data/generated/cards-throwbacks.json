@@ -1,6 +1,6 @@
 {
  "set": "throwbacks",
- "generatedAt": "2026-09-30T16:49:47.237Z",
+ "generatedAt": "2026-09-30T22:16:00.815Z",
  "note": "CURATED THROWBACKS — generator-owned (scripts/cardgen/generateCuratedCards.js from card-data/curated-cards-2026.json, plus demoted-super-seasons.json). Retired rewards that qualify for no other set, and Super Seasons that are no longer a Super Season (a Rookie card of the player's out-priced them, or the value pick chose another season). Requested Throwbacks live in cards-free-agents.json; both join the throwbacks set in cardSets.js.",
  "cards": [
   {
@@ -1427,6 +1427,73 @@
    }
   },
   {
+   "id": "DeMarcus_Cousins_2016",
+   "name": "DeMarcus Cousins",
+   "team": "SAC95",
+   "pos": "C",
+   "speed": 9,
+   "power": 16,
+   "shotLine": 16,
+   "paintBoost": 0,
+   "threePtBoost": 0,
+   "defBoost": 1,
+   "salary": 1340,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 15,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 20,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "season": 2016,
+   "seasonLabel": "2015-16",
+   "age": 25,
+   "games": 65,
+   "mpg": 34.6,
+   "bbrefId": "couside01",
+   "traded": false,
+   "metrics": {
+    "bpm": 3.3,
+    "vorp": 3,
+    "ws": 5.7,
+    "ws48": 0.122,
+    "per": 23.6
+   },
+   "provisional": false,
+   "set": "throwbacks",
+   "curated": "the user, 2026-09-30, on a photo left in the team-rewards folder from the first reward picks (2026-09-04): \"Can we re-assign that somewhere?\" and, shown the plan, \"Yeah go for it\". The photo is a Kings one; his Super Season (2016-17) wears New Orleans by the last-team rule, so the Sacramento years had no card. 2015-16, his All-NBA season."
+  },
+  {
    "id": "Jimmy_Butler_2023",
    "name": "Jimmy Butler",
    "team": "MIA",
@@ -1826,6 +1893,73 @@
     "set": "super-season",
     "id": "Julius_Erving"
    }
+  },
+  {
+   "id": "Baron_Davis_2007",
+   "name": "Baron Davis",
+   "team": "GSW98",
+   "pos": "PG",
+   "speed": 16,
+   "power": 10,
+   "shotLine": 16,
+   "paintBoost": 3,
+   "threePtBoost": 0,
+   "defBoost": 1,
+   "salary": 1220,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 7,
+     "hi": 15,
+     "pts": 2,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 16,
+     "hi": 20,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2007,
+   "seasonLabel": "2006-07",
+   "age": 27,
+   "games": 63,
+   "mpg": 35.3,
+   "bbrefId": "davisba01",
+   "traded": false,
+   "metrics": {
+    "bpm": 3.6,
+    "vorp": 3.2,
+    "ws": 6.4,
+    "ws48": 0.139,
+    "per": 21
+   },
+   "provisional": false,
+   "set": "throwbacks",
+   "curated": "the user, 2026-09-30, on a photo left in the team-rewards folder from the first reward picks (2026-09-04): \"Can we re-assign that somewhere?\" and, shown the plan, \"Yeah go for it\". The photo is the Warriors of the We Believe year; his most valuable season is New Orleans 2003-04, so this one is a Throwback."
   },
   {
    "id": "Charles_Barkley_1990",
@@ -2515,6 +2649,73 @@
     "set": "super-season",
     "id": "Rudy_Gobert"
    }
+  },
+  {
+   "id": "Corey_Maggette_2008",
+   "name": "Corey Maggette",
+   "team": "LAC84",
+   "pos": "SF",
+   "speed": 12,
+   "power": 11,
+   "shotLine": 17,
+   "paintBoost": 5,
+   "threePtBoost": 2,
+   "defBoost": -1,
+   "salary": 1110,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 16,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 17,
+     "hi": 21,
+     "pts": 3,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 22,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2008,
+   "seasonLabel": "2007-08",
+   "age": 28,
+   "games": 70,
+   "mpg": 35.7,
+   "bbrefId": "maggeco01",
+   "traded": false,
+   "metrics": {
+    "bpm": 1.9,
+    "vorp": 2.4,
+    "ws": 6.9,
+    "ws48": 0.133,
+    "per": 19.3
+   },
+   "provisional": false,
+   "set": "throwbacks",
+   "curated": "the user, 2026-09-30, on a photo left in the team-rewards folder from the first reward picks (2026-09-04): \"Can we re-assign that somewhere?\" and, shown the plan, \"Yeah go for it\". The photo is a Clippers one; 2007-08 (22.1 a game) is not the season the value pick calls his best, so it is a Throwback."
   },
   {
    "id": "Kyle_Lowry_2016",

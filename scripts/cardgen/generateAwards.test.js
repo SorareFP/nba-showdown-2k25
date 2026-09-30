@@ -454,8 +454,10 @@ describe('the committed file', () => {
     // Rose, whose MVP is Chicago's reward) and the Super Seasons that came
     // home from the rewards (Paul George, Wall, Claxton, Portis, Wallace,
     // Matthews, Westbrook's 2016-17). 88 when Magic's 1989-90 moved out to
-    // be the Lakers reward.
-    expect(AWARDS.counts[SUPER_SEASON_SET].marked).toBe(88);
+    // be the Lakers reward. 91 with the stray-photo Super Seasons: Jamison
+    // 2007-08, Bynum 2011-12 and Webber 1999-2000 were All-Stars (Rubio's
+    // 2015-16 was not).
+    expect(AWARDS.counts[SUPER_SEASON_SET].marked).toBe(91);
     // The rookie set moves at last, and only on the ring: no player in that
     // pool was an All-Star as a rookie, but six of them won a title as one.
     //
@@ -521,7 +523,7 @@ describe('the committed file', () => {
     expect(AWARDS.counts[CURRENT_SET].ifSelectionsCounted).toBe(45);
     // 85 on 2026-09-07 with the awards file regenerated against the current
     // Super Season roster — the capstone legends it had gone stale against.
-    expect(AWARDS.counts[SUPER_SEASON_SET].ifSelectionsCounted).toBe(93) /* 93 later on 2026-09-30: Magic 1989-90 moved out to be the Lakers reward; 94 on 2026-09-30, the reward re-pick: the new legends and the Super Seasons home from the rewards;  87 on 2026-09-29: the conditional-rows rebuild moved five cards across the beaten-by-base and rookie rules (Camara and Watford out, Hartenstein, M. Robinson and T. Martin back), one marked season fewer; 88 later on 2026-09-24: Wilkins, Parker and Deron Williams joined as legends (81 marked); 85 on 2026-09-24: the value pick (78 marked, the selection-only seasons it moved were a wash less two); 86 on 2026-09-09: Lillard's ring-year card back in Super Season; 90 on 2026-09-22: Arenas, Brand, DeAndre Jordan and Parker joined (the reward/identity batch); 87 later that day: Duncan, Yao and Kirilenko demoted to Throwbacks (BEATEN_BY_ROOKIE) */;
+    expect(AWARDS.counts[SUPER_SEASON_SET].ifSelectionsCounted).toBe(96) /* 96 with the stray-photo Super Seasons (Jamison, Bynum, Webber); 93 later on 2026-09-30: Magic 1989-90 moved out to be the Lakers reward; 94 on 2026-09-30, the reward re-pick: the new legends and the Super Seasons home from the rewards;  87 on 2026-09-29: the conditional-rows rebuild moved five cards across the beaten-by-base and rookie rules (Camara and Watford out, Hartenstein, M. Robinson and T. Martin back), one marked season fewer; 88 later on 2026-09-24: Wilkins, Parker and Deron Williams joined as legends (81 marked); 85 on 2026-09-24: the value pick (78 marked, the selection-only seasons it moved were a wash less two); 86 on 2026-09-09: Lillard's ring-year card back in Super Season; 90 on 2026-09-22: Arenas, Brand, DeAndre Jordan and Parker joined (the reward/identity batch); 87 later that day: Duncan, Yao and Kirilenko demoted to Throwbacks (BEATEN_BY_ROOKIE) */;
     // 21, not 25: the rookie playing-time bar, same four bench rings.
     // 24, and equal to `marked`: a rookie card's only trophies are ROY and a
     // ring, neither of which the selection suffix distinguishes.

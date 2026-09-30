@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-30T16:45:59.670Z",
+ "generatedAt": "2026-09-30T22:14:23.241Z",
  "set": "super-season",
  "provisional": true,
  "sources": {
@@ -2425,6 +2425,64 @@
    "provisional": false
   },
   {
+   "id": "Andrew_Bynum",
+   "name": "Andrew Bynum",
+   "team": "LAL",
+   "pos": "C",
+   "speed": 8,
+   "power": 16,
+   "shotLine": 16,
+   "paintBoost": 4,
+   "threePtBoost": -4,
+   "defBoost": 0,
+   "salary": 950,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 1
+    },
+    {
+     "lo": 7,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 99,
+     "pts": 2,
+     "reb": 2,
+     "ast": 0
+    }
+   ],
+   "season": 2012,
+   "seasonLabel": "2011-12",
+   "age": 24,
+   "games": 60,
+   "mpg": 35.2,
+   "bbrefId": "bynuman01",
+   "traded": false,
+   "metrics": {
+    "bpm": 2.9,
+    "vorp": 2.6,
+    "ws": 8,
+    "ws48": 0.183,
+    "per": 22.9
+   },
+   "provisional": false
+  },
+  {
    "id": "Andrew_Nembhard",
    "name": "Andrew Nembhard",
    "team": "IND",
@@ -2544,6 +2602,64 @@
     "ws": 2.5,
     "ws48": 0.054,
     "per": 14.8
+   },
+   "provisional": false
+  },
+  {
+   "id": "Antawn_Jamison",
+   "name": "Antawn Jamison",
+   "team": "WAS97",
+   "pos": "PF",
+   "speed": 10,
+   "power": 14,
+   "shotLine": 16,
+   "paintBoost": 2,
+   "threePtBoost": 1,
+   "defBoost": -1,
+   "salary": 820,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 15,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 16,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    }
+   ],
+   "season": 2008,
+   "seasonLabel": "2007-08",
+   "age": 31,
+   "games": 79,
+   "mpg": 38.7,
+   "bbrefId": "jamisan01",
+   "traded": false,
+   "metrics": {
+    "bpm": 1.7,
+    "vorp": 2.9,
+    "ws": 9.2,
+    "ws48": 0.144,
+    "per": 20.3
    },
    "provisional": false
   },
@@ -3884,6 +4000,71 @@
     "ws": 10.6,
     "ws48": 0.264,
     "per": 26.2
+   },
+   "provisional": false
+  },
+  {
+   "id": "Chris_Webber",
+   "name": "Chris Webber",
+   "team": "SAC95",
+   "pos": "PF",
+   "speed": 12,
+   "power": 16,
+   "shotLine": 15,
+   "paintBoost": 3,
+   "threePtBoost": -4,
+   "defBoost": 2,
+   "salary": 1470,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 7,
+     "hi": 14,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 15,
+     "hi": 20,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 21,
+     "hi": 99,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2000,
+   "seasonLabel": "1999-00",
+   "age": 26,
+   "games": 75,
+   "mpg": 38.4,
+   "bbrefId": "webbech01",
+   "traded": false,
+   "metrics": {
+    "bpm": 5.7,
+    "vorp": 5.6,
+    "ws": 10.7,
+    "ws48": 0.179,
+    "per": 23.4
    },
    "provisional": false
   },
@@ -12986,6 +13167,64 @@
     "ws": 4.8,
     "ws48": 0.108,
     "per": 11.7
+   },
+   "provisional": false
+  },
+  {
+   "id": "Ricky_Rubio",
+   "name": "Ricky Rubio",
+   "team": "MIN97",
+   "pos": "PG",
+   "speed": 16,
+   "power": 10,
+   "shotLine": 17,
+   "paintBoost": -1,
+   "threePtBoost": 1,
+   "defBoost": 1,
+   "salary": 800,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 6,
+     "pts": 0,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 7,
+     "hi": 16,
+     "pts": 1,
+     "reb": 0,
+     "ast": 1
+    },
+    {
+     "lo": 17,
+     "hi": 99,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1
+    }
+   ],
+   "season": 2016,
+   "seasonLabel": "2015-16",
+   "age": 25,
+   "games": 76,
+   "mpg": 30.6,
+   "bbrefId": "rubiori01",
+   "traded": false,
+   "metrics": {
+    "bpm": 1.8,
+    "vorp": 2.3,
+    "ws": 5.8,
+    "ws48": 0.119,
+    "per": 17.6
    },
    "provisional": false
   },

@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-30T17:48:26.295Z",
+ "generatedAt": "2026-09-30T22:20:08.685Z",
  "source": "Basketball-Reference's season `advanced` tables, awards column — a voted award's suffix is its finishing position, so only -1 is a win — plus the same pages' `advanced_post` table, whose awards column holds one cell a season and that cell is always `Finals MVP-1`, plus each season index page's League Champion row and that team's roster, which is where the ring comes from and which is in no column at all",
  "declared": [
   "MVP",
@@ -624,12 +624,12 @@
    }
   },
   "super-season": {
-   "cards": 111,
-   "marked": 88,
+   "cards": 114,
+   "marked": 91,
    "multiple": 15,
    "capped": 0,
    "mostHeld": 4,
-   "ifSelectionsCounted": 93,
+   "ifSelectionsCounted": 96,
    "byCode": {
     "MVP": 6,
     "FMVP": 3,
@@ -639,11 +639,11 @@
     "6MOY": 6,
     "CPOY": 0,
     "CHAMP": 12,
-    "AS": 73
+    "AS": 76
    }
   },
   "rookie": {
-   "cards": 125,
+   "cards": 126,
    "marked": 38,
    "multiple": 6,
    "capped": 0,
@@ -738,12 +738,12 @@
    }
   },
   "throwbacks": {
-   "cards": 65,
-   "marked": 46,
+   "cards": 67,
+   "marked": 47,
    "multiple": 8,
    "capped": 0,
    "mostHeld": 3,
-   "ifSelectionsCounted": 53,
+   "ifSelectionsCounted": 54,
    "byCode": {
     "MVP": 6,
     "FMVP": 0,
@@ -753,7 +753,7 @@
     "6MOY": 0,
     "CPOY": 0,
     "CHAMP": 4,
-    "AS": 42
+    "AS": 43
    }
   }
  },
@@ -1526,6 +1526,30 @@
     ]
    },
    {
+    "id": "Andrew_Bynum",
+    "name": "Andrew Bynum",
+    "season": 2012,
+    "bbrefId": "bynuman01",
+    "raw": "AS,NBA2",
+    "rawPost": null,
+    "champion": null,
+    "awards": [
+     "AS"
+    ]
+   },
+   {
+    "id": "Antawn_Jamison",
+    "name": "Antawn Jamison",
+    "season": 2008,
+    "bbrefId": "jamisan01",
+    "raw": "MVP-14,AS",
+    "rawPost": null,
+    "champion": null,
+    "awards": [
+     "AS"
+    ]
+   },
+   {
     "id": "Anthony_Davis",
     "name": "Anthony Davis",
     "season": 2018,
@@ -1674,6 +1698,18 @@
     "rawPost": null,
     "champion": null,
     "awards": []
+   },
+   {
+    "id": "Chris_Webber",
+    "name": "Chris Webber",
+    "season": 2000,
+    "bbrefId": "webbech01",
+    "raw": "MVP-9,AS,NBA3",
+    "rawPost": null,
+    "champion": null,
+    "awards": [
+     "AS"
+    ]
    },
    {
     "id": "Clyde_Drexler",
@@ -3878,6 +3914,16 @@
     "awards": []
    },
    {
+    "id": "Ricky_Rubio",
+    "name": "Ricky Rubio",
+    "season": 2012,
+    "bbrefId": "rubiori01",
+    "raw": "ROY-2",
+    "rawPost": null,
+    "champion": null,
+    "awards": []
+   },
+   {
     "id": "RJ_Barrett",
     "name": "RJ Barrett",
     "season": 2020,
@@ -5233,6 +5279,18 @@
     ]
    },
    {
+    "id": "DeMarcus_Cousins_2016",
+    "name": "DeMarcus Cousins",
+    "season": 2016,
+    "bbrefId": "couside01",
+    "raw": "AS,NBA2",
+    "rawPost": null,
+    "champion": null,
+    "awards": [
+     "AS"
+    ]
+   },
+   {
     "id": "Jimmy_Butler_2023",
     "name": "Jimmy Butler",
     "season": 2023,
@@ -5300,6 +5358,16 @@
     "awards": [
      "AS"
     ]
+   },
+   {
+    "id": "Baron_Davis_2007",
+    "name": "Baron Davis",
+    "season": 2007,
+    "bbrefId": "davisba01",
+    "raw": "MVP-15",
+    "rawPost": null,
+    "champion": null,
+    "awards": []
    },
    {
     "id": "Charles_Barkley_1990",

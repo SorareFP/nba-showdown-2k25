@@ -506,7 +506,10 @@ describe('the base set\'s badges', () => {
     // (1997-98) and Matthews from the rewards that left. Seven more came home
     // from the rewards and Curry's and Giannis' left for set rewards; the file
     // counts the home set, moved cards included.
-    expect(SUPER.cards.length).toBe(214);
+    // 218 later on 2026-09-30: Jamison 2007-08, Bynum 2011-12, Webber
+    // 1999-2000 and Rubio 2015-16, for photos left in the team-rewards folder
+    // by the first reward picks (the user: "Yeah go for it").
+    expect(SUPER.cards.length).toBe(218);
     //
     // AND 321 -> 348 WHEN THE STANDOUT NEWCOMERS' ROOKIE YEARS ARRIVED — every
     // standout outside the pool whose career begins inside the cache-and-EPM
@@ -550,7 +553,9 @@ describe('the base set\'s badges', () => {
     // 298 on 2026-09-30, the reward re-pick: Rose, Millsap, Dell Curry, Cousins,
     // Porzingis, Marion, Peja and Reggie Miller joined (Sabonis' rookie year is
     // his Super Season, the twin rule).
-    expect(ROOKIE.cards.length).toBe(298);
+    // 302 later that day: Jamison, Rubio, Baron Davis and Maggette entered the
+    // universe with the stray-photo cards (Bynum's 2005-06 fails the bar).
+    expect(ROOKIE.cards.length).toBe(302);
     const poolNames = new Set(POOL.map(p => p.name));
     const bothBlocks = [...new Set([
       ...Object.keys(STANDOUTS.superSeasons ?? {}),

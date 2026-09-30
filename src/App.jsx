@@ -11,6 +11,7 @@ import WelcomeTab from './components/WelcomeTab.jsx';
 import HomeTab from './components/HomeTab.jsx';
 import Skeleton from './ui/Skeleton.jsx';
 import SignupBonus from './components/SignupBonus.jsx';
+import RarityShiftSettler from './components/RarityShiftSettler.jsx';
 import CollectionTab from './components/CollectionTab.jsx';
 import PackOpeningDemo, { isPackDemo, demoKind } from './components/PackOpeningDemo.jsx';
 import PvpLobby from './components/PvpLobby.jsx';
@@ -313,6 +314,8 @@ function AppInner() {
           onDismiss={dismissBonus}
         />
       )}
+      {/* Pays for cards that changed rarity, once per account (game/rarityShift.js). */}
+      {user && !tutorialMode && <RarityShiftSettler />}
       <main className={styles.main}>
         {/* A crash shows a way back, never a blank page (ui/ErrorBoundary.jsx). */}
         <ErrorBoundary>

@@ -60,6 +60,7 @@ import { getCardByKey } from '../game/cardSets.js';
 import { burnValueFor, listingFloor, checkListingPrice } from '../game/marketRules.js';
 import { settleGameReward, todayKey, sanitizeBox, payFactorOf } from '../game/coinRewards.js';
 import { dynastyClaim, soloSeasonPurse, SIMMED_OUT } from '../game/modes/prizes.js';
+import { rarityShiftPayout, RARITY_SHIFT } from '../game/rarityShift.js';
 
 /**
  * FLIP THIS AFTER `firebase deploy --only functions`.
@@ -114,6 +115,7 @@ const server = {
   claimGameReward: (uid, claim) => call('claimGameReward', claim),
   claimSeasonReward: (uid, seasonId) => call('claimSeasonReward', { seasonId }),
   claimDynastyReward: (uid, dynastyId, year) => call('claimDynastyReward', { dynastyId, year }),
+  settleRarityShift: () => call('settleRarityShift', {}),
   setFavoriteTeam: (uid, team) => call('setFavoriteTeam', { team }),
   collectCard: (uid, cardKey) => call('collectCard', { cardKey }),
   collectAllCards: () => call('collectAllCards', {}),
@@ -226,6 +228,32 @@ const direct = {
       tx.set(doc(db, 'users', uid), { currency: increment(coins) }, { merge: true });
     });
     return { seasonId, coins, label };
+  },
+
+  /**
+   * The rarity-change settlement, in the browser: the server's rule over the
+   * same ledger, under the same `claims/<id>` receipt.
+   */
+  async settleRarityShift(uid) {
+    const id = RARITY_SHIFT?.id;
+    if (!id || id.includes('/')) return { id: null, coins: 0, net: 0, lines: [] };
+    const claimRef = doc(db, 'users', uid, 'claims', id);
+    const copies = await getDocs(collection(db, 'users', uid, 'copies'));
+    return runTransaction(db, async tx => {
+      const claim = await tx.get(claimRef);
+      if (claim.exists()) {
+        const r = claim.data() ?? {};
+        return { id, coins: r.coins ?? 0, net: r.net ?? 0, cards: r.cards ?? (r.lines ?? []).length, lines: r.lines ?? [], already: true };
+      }
+      const pay = rarityShiftPayout(copies.docs.map(d => d.data()));
+      const lines = pay.lines.slice(0, 50);
+      tx.set(claimRef, {
+        claimedAt: serverTimestamp(), coins: pay.coins, net: pay.net, cards: pay.lines.length, reward: null,
+        label: 'Rarity changes', shift: id, lines,
+      });
+      if (pay.coins > 0) tx.set(doc(db, 'users', uid), { currency: increment(pay.coins) }, { merge: true });
+      return { id, coins: pay.coins, net: pay.net, cards: pay.lines.length, lines };
+    });
   },
 
   /** A dynasty year's title money, or the ten-year bonus — the server's rule, in the browser. */
@@ -414,6 +442,8 @@ export const claimGameReward = (uid, claim) => impl.claimGameReward(uid, claim);
 export const claimSeasonReward = (uid, seasonId) => impl.claimSeasonReward(uid, seasonId);
 /** Pay a dynasty year's title money (`year` 1–10) or its ten-year bonus (`'complete'`), once. */
 export const claimDynastyReward = (uid, dynastyId, year) => impl.claimDynastyReward(uid, dynastyId, year);
+/** Settle this account's rarity changes once: `{ id, coins, net, lines, already? }` (rarityShift.js). */
+export const settleRarityShift = uid => impl.settleRarityShift(uid);
 /** Name a favourite team, once and for good. `team` is league-qualified: "nba:MIL". */
 export const setFavoriteTeam = (uid, team) => impl.setFavoriteTeam(uid, team);
 /** Put one owned copy into the collection. Returns `{ cardKey, copyId }`. */

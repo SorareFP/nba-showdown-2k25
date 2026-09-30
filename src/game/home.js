@@ -23,6 +23,11 @@ import { teamIdFor } from './modes/league.js';
  */
 export const NEWS = [
   {
+    id: 'charts-rows-follow-points', date: '2026-09-30', title: 'New charts, and coins for cards that changed rarity',
+    body: "Every card's chart was rebuilt. The rebounds and assists on each points row are now what the player actually averaged on the nights they scored that much, so a big scoring row no longer means more of everything, and a higher row is never worth less than the one below it. The points ladders are unchanged on nearly every card. A few cards crossed a rarity line with their new salaries. If you held any from before the change, you were paid once, on your next visit: the difference in burn value for every copy (40 coins for a rare that is now uncommon, 150 for a legendary that is now super-rare), with cards that moved up counted against it, and never below zero.",
+    to: 'collection', cta: 'Collection',
+  },
+  {
     id: 'challenge-best-make', date: '2026-09-29', title: "Coach's Challenge re-rolls their best make",
     body: "Coach's Challenge no longer re-rolls whatever shot check happened last. It targets the opponent's best made check of the section: the most points, the most recent if tied, and never a miss. The card and the Challenge button name the check and give the re-roll's chance to miss before you commit.",
     to: 'play', cta: 'Play',

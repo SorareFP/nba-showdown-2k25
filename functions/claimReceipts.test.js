@@ -71,6 +71,7 @@ vi.mock('./shared/src/game/modes/league.js', () => import('../src/game/modes/lea
 vi.mock('./shared/src/game/modes/dynasty.js', () => import('../src/game/modes/dynasty.js'));
 vi.mock('./shared/src/game/modes/dynastyFriends.js', () => import('../src/game/modes/dynastyFriends.js'));
 vi.mock('./shared/src/game/modes/seasonPack.js', () => import('../src/game/modes/seasonPack.js'));
+vi.mock('./shared/src/game/rarityShift.js', () => import('../src/game/rarityShift.js'));
 
 const { claimGameReward, claimSeasonReward } = await import('./index.js');
 const { REWARD, DAILY_MILESTONE_CAP } = await import('../src/game/coinRewards.js');

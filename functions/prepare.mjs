@@ -76,6 +76,9 @@ const COPY = [
   // Free Agents: the request rules and the price, and the never-card list.
   'src/game/freeAgents.js',
   'src/game/neverCard.js',
+  // The one-time settlement for cards that changed rarity (2026-09-30) and
+  // its table, rarity-shift.json, below.
+  'src/game/rarityShift.js',
 ];
 
 /** The generated card data those modules import. */
@@ -109,7 +112,9 @@ for (const file of fs.readdirSync(dataDir)) {
     && file !== 'quote-index.json' && file !== 'dynasty-ages.json'
     && file !== 'dynasty-contracts.json'
     // dormant-throwbacks.json: cardSets.js keeps those cards out of packs.
-    && file !== 'dormant-throwbacks.json') continue;
+    && file !== 'dormant-throwbacks.json'
+    // rarity-shift.json: settleRarityShift prices a rarity change from it.
+    && file !== 'rarity-shift.json') continue;
   copyFile(path.join(DATA_DIR, file));
   data += 1;
 }

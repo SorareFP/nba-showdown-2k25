@@ -1421,6 +1421,77 @@
    "requested": true,
    "requestId": "3nK7OvvcwYL6iDZGBEDM",
    "builtAt": "2026-09-29T16:31:33.020Z"
+  },
+  {
+   "id": "Richard_Jefferson",
+   "name": "Richard Jefferson",
+   "team": "CLE16",
+   "pos": "SF",
+   "speed": 7,
+   "power": 8,
+   "shotLine": 14,
+   "paintBoost": 1,
+   "threePtBoost": -1,
+   "defBoost": 0,
+   "salary": 570,
+   "chart": [
+    {
+     "lo": 1,
+     "hi": 2,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 3,
+     "hi": 7,
+     "pts": 0,
+     "reb": 0,
+     "ast": 0
+    },
+    {
+     "lo": 8,
+     "hi": 13,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 14,
+     "hi": 19,
+     "pts": 2,
+     "reb": 1,
+     "ast": 0
+    },
+    {
+     "lo": 20,
+     "hi": 27,
+     "pts": 2,
+     "reb": 2,
+     "ast": 0
+    },
+    {
+     "lo": 28,
+     "hi": 99,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1
+    }
+   ],
+   "season": 2016,
+   "seasonLabel": "2015-16",
+   "age": null,
+   "games": 21,
+   "mpg": 18.2,
+   "bbrefId": "jefferi01",
+   "traded": false,
+   "metrics": {},
+   "provisional": true,
+   "playoffRun": true,
+   "set": "summer-standouts",
+   "requested": true,
+   "requestId": "00Me0998HPaIDavksTGK",
+   "builtAt": "2026-09-30T11:30:40.914Z"
   }
  ]
 }
